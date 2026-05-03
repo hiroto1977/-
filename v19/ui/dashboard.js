@@ -326,7 +326,8 @@ async function claudeStream({ apiKey, model, maxTokens, system, messages, signal
         fullText += evt.delta.text;
         onText?.(evt.delta.text);
       } else if (evt.type === 'message_delta' && evt.usage) {
-        usage = evt.usage;
+        // Merge: message_start carries input_tokens, message_delta carries output_tokens
+        usage = { ...(usage || {}), ...evt.usage };
       } else if (evt.type === 'message_start' && evt.message?.usage) {
         usage = { ...evt.message.usage, ...(usage || {}) };
       } else if (evt.type === 'error') {
