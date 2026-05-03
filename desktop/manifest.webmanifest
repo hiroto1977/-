@@ -1,0 +1,26 @@
+{
+  "name": "みんなのデスクトップ",
+  "short_name": "Desktop",
+  "description": "誰でも使えるシンプルな業務用デスクトップ。タスク・メモ・カレンダー・電卓・連絡先・タイマー。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1f6feb",
+  "background_color": "#f5f7fb",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%231f6feb'/%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' font-family='system-ui' font-size='112' fill='white' font-weight='800'%3ED%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%231f6feb'/%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' font-family='system-ui' font-size='300' fill='white' font-weight='800'%3ED%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
