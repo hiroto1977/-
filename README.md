@@ -7,7 +7,10 @@
 |---|---|
 | **`/desktop/`** | みんなのデスクトップ — 6 つの業務アプリ統合（タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー） |
 | **`/v19/ui/`** | v19 ダッシュボード — 複数の AI プロバイダ（Ollama / Anthropic / Google）と統一 UI で対話 |
+| **`/cowork/`** | ローカル AI と Chat する最短ルート（CLI + 自動起動スクリプト） |
 | **`/governance/`** | ローカルファースト業務運用のガバナンス文書群（法制度・データ分類・運用・士業別ルール 他） |
+| **`/funding/`** | 経営戦略 × 資金調達（補助金・助成金・公庫融資・民間融資）フレームワーク + 9 プログラム別チェックリスト |
+| **`/templates/`** | 汎用業務テンプレ集（人事 / 法務 / オペ / 営業 / 危機 / マーケ / 財務） |
 | **`/scripts/`** | 業務開始前チェック (`preflight.sh`) と PII 検出 (`pii-scan.sh`) |
 | **`/CLAUDE.md`** | AI 支援者（Claude Code 等）が従うルール |
 | **`/LOCAL_LLM_GUIDE.md`** | Claude Code を含む全コミュニケーションをローカル LLM 化する選択肢 (A/B/C) |
@@ -134,6 +137,55 @@ node /path/to/test_*.mjs
 検証内容: プロバイダ別リクエスト形状 / SSE・NDJSON ストリーム解析 / セッション分離 / プリセット解決 / Markdown 描画 + XSS / 画像マーシャリング。
 
 ---
+
+## ローカル AI Chat の最短起動 (`cowork/`)
+
+ご自身の PC で **3 通りの方法** でローカル LLM と即対話できます。
+
+```bash
+# A. ターミナルだけで対話 (1 コマンド)
+python3 cowork/local-chat-cli.py
+
+# B. ブラウザで GUI 対話
+python3 -m http.server 8000
+# → http://127.0.0.1:8000/v19/ui/dashboard.html
+
+# C. 全部自動で立ち上げる (Ollama 確認 + サーバー + ブラウザ + CLI)
+bash cowork/local-cowork.sh
+```
+
+CLI の機能: マルチターン履歴、`/model` でモデル切替、`/system` でプロンプト変更、`/save` で Markdown 保存、`/usage` でトークン使用量。詳細は [`cowork/README.md`](cowork/README.md)。
+
+## 経営戦略 × 資金調達 (`funding/`)
+
+補助金・助成金・公庫融資・民間融資 を **戦略的に組み合わせる** ためのフレームワーク + テンプレ + チェックリスト。
+
+| ファイル | 内容 |
+|---|---|
+| [`funding/README.md`](funding/README.md) | 哲学 + 5 つの原則 + 4 種の資金調達 早見表 |
+| [`funding/01_LANDSCAPE.md`](funding/01_LANDSCAPE.md) | 補助金 / 助成金 / 公庫 / 民間 の本質的違い |
+| [`funding/02_DECISION.md`](funding/02_DECISION.md) | 状況別 10 ケースの判断フロー + 自己診断 12 問 |
+| [`funding/03_PROGRAMS.md`](funding/03_PROGRAMS.md) | 主要プログラム カタログ (補助金 / 助成金 / 公庫 / 民間) |
+| [`funding/04_APPLICATION.md`](funding/04_APPLICATION.md) | 申請ライフサイクル + リスク チェックリスト |
+| [`funding/05_BUSINESS_PLAN.md`](funding/05_BUSINESS_PLAN.md) | 事業計画書 ひな形 (15 セクション) |
+| [`funding/06_FINANCIAL_MODEL.md`](funding/06_FINANCIAL_MODEL.md) | 財務モデル (3〜5 年) シート構成 + KPI |
+| [`funding/07_AI_PROMPTS.md`](funding/07_AI_PROMPTS.md) | 申請書ドラフト用 AI プロンプト 12 種 |
+| [`funding/checklists/`](funding/checklists/) | 9 プログラム別 チェックリスト (ものづくり / 持続化 / IT 導入 / 事業承継 / 公庫国民 / 公庫中小 / 民間融資 / キャリアアップ / 雇用調整) |
+| [`funding/docs/`](funding/docs/) | 公庫面談 自己紹介 / 銀行面談 アジェンダ / 不採択 振り返り / 経営者保証解除 申請 |
+
+## 汎用業務テンプレ (`templates/`)
+
+| サブディレクトリ | 内容 |
+|---|---|
+| [`templates/hr/`](templates/hr/) | 求人票 / 面接シート / 雇用契約書 / 1on1 シート |
+| [`templates/legal/`](templates/legal/) | NDA / 業務委託契約 / プライバシーポリシー / 利用規約 / 特商法表記 |
+| [`templates/ops/`](templates/ops/) | SOP 標準作業手順 / 月次経営レビュー / インシデント報告 |
+| [`templates/sales/`](templates/sales/) | 提案書 / 見積書 / 請求書 (インボイス対応) |
+| [`templates/crisis/`](templates/crisis/) | 売上急落 / 取引先倒産 / SNS 炎上 |
+| [`templates/marketing/`](templates/marketing/) | プレスリリース |
+| [`templates/finance/`](templates/finance/) | 24 ヶ月 資金繰り表 |
+
+詳細は [`templates/README.md`](templates/README.md)。
 
 ## ガバナンス文書 (`governance/`)
 
