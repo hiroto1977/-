@@ -534,6 +534,24 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 }
 .preset-chip-clear:hover { border-color: var(--c-danger); color: var(--c-danger); background: transparent; }
 
+/* Data-class warning banner — shown when on a cloud provider */
+.class-banner {
+  display: flex; align-items: flex-start; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  background: #fff7e6;
+  color: #663c00;
+  border-bottom: 1px solid #f5c97a;
+  font-size: .85rem;
+}
+[data-theme="dark"] .class-banner {
+  background: #3a2900; color: #ffd591; border-bottom-color: #8c5800;
+}
+[data-theme="contrast"] .class-banner {
+  background: #000; color: #ffe600; border-bottom: 1px solid #ffe600;
+}
+.class-banner-icon { font-size: 1.1rem; flex-shrink: 0; }
+.class-banner-text a { font-weight: 600; }
+
 .chat-log {
   padding: var(--sp-4) var(--sp-5);
   display: flex; flex-direction: column; gap: var(--sp-3);

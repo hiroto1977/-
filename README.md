@@ -7,6 +7,10 @@
 |---|---|
 | **`/desktop/`** | みんなのデスクトップ — 6 つの業務アプリ統合（タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー） |
 | **`/v19/ui/`** | v19 ダッシュボード — 複数の AI プロバイダ（Ollama / Anthropic / Google）と統一 UI で対話 |
+| **`/governance/`** | ローカルファースト業務運用のガバナンス文書群（法制度・データ分類・運用・士業別ルール 他） |
+| **`/scripts/`** | 業務開始前チェック (`preflight.sh`) と PII 検出 (`pii-scan.sh`) |
+| **`/CLAUDE.md`** | AI 支援者（Claude Code 等）が従うルール |
+| **`/LOCAL_LLM_GUIDE.md`** | Claude Code を含む全コミュニケーションをローカル LLM 化する選択肢 (A/B/C) |
 
 ## 起動
 
@@ -130,6 +134,32 @@ node /path/to/test_*.mjs
 検証内容: プロバイダ別リクエスト形状 / SSE・NDJSON ストリーム解析 / セッション分離 / プリセット解決 / Markdown 描画 + XSS / 画像マーシャリング。
 
 ---
+
+## ガバナンス文書 (`governance/`)
+
+業務で AI を使う際のルールと仕組みを言語化。日本法 + 士業別 + 実務テンプレ。
+
+| ファイル | 内容 |
+|---|---|
+| [`governance/README.md`](governance/README.md) | 哲学・ナビゲーション・5 つの原則 |
+| [`governance/01_LEGAL_FRAMEWORK.md`](governance/01_LEGAL_FRAMEWORK.md) | 関連する日本法 (APPI / マイナンバー / 不正競争防止 / 著作権 / 労基 / 電帳 / GDPR) |
+| [`governance/02_DATA_CLASSIFICATION.md`](governance/02_DATA_CLASSIFICATION.md) | 5 段階データ分類 + 取扱マトリクス + 50 ケース集 (**最初に読む**) |
+| [`governance/03_OPERATIONS.md`](governance/03_OPERATIONS.md) | 日常運用ルール・ファイル管理・ログ・**インシデント対応 (報告期限含む)** |
+| [`governance/04_VENDOR_REVIEW.md`](governance/04_VENDOR_REVIEW.md) | クラウド AI ベンダ評価チェックリスト |
+| [`governance/05_TEMPLATES.md`](governance/05_TEMPLATES.md) | プロンプト・チェックリストのテンプレ集 |
+| [`governance/06_ONBOARDING.md`](governance/06_ONBOARDING.md) | 新メンバー オンボーディング手順 |
+| [`governance/07_PROFESSIONAL_RULES.md`](governance/07_PROFESSIONAL_RULES.md) | **士業別ルールとスキーム** (弁護士/会計士/税理士/司法書士/行政書士/社労士/弁理士/不動産鑑定士/中小企業診断士/土地家屋調査士/医師 他) |
+
+⚠️ **法的免責**: 本ドキュメント群は一般的整理であり、解釈・適用は必ず有資格専門家へ。
+
+### 実行可能スクリプト
+
+```bash
+bash scripts/preflight.sh                  # 業務開始前の自動チェック (Ollama / 暗号化 / git / コマンド / 文書)
+bash scripts/pii-scan.sh path/to/file.txt  # ファイル内の PII 検出
+bash scripts/pii-scan.sh --staged           # git ステージ済の差分のみ
+bash scripts/pii-scan.sh --diff             # git のすべての変更
+```
 
 ## ライセンス
 

@@ -1213,6 +1213,12 @@ function renderProviderPicker() {
 function updateLocalBadge() {
   const badge = document.getElementById('localBadge');
   if (badge) badge.hidden = !state.settings.localOnly;
+  // Class warning banner: show when on a cloud provider
+  const banner = document.getElementById('classBanner');
+  if (banner) {
+    banner.hidden = state.settings.localOnly
+      || isLocalProvider(state.chat.activeProviderId);
+  }
 }
 
 function applyProviderToForm() {
@@ -1261,6 +1267,7 @@ function applyProviderToForm() {
       dl.appendChild(opt);
     }
   }
+  updateLocalBadge(); // refresh class-warning banner based on active provider
 }
 
 function bindClaudeUI() {
