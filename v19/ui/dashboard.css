@@ -414,6 +414,66 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 .chat-head h2 { margin: 0; font-size: 1.1rem; }
 .chat-actions { display: flex; align-items: center; gap: var(--sp-2); }
 
+/* Session tabs */
+.session-tabs {
+  display: flex; align-items: stretch; gap: 2px;
+  padding: var(--sp-2) var(--sp-3) 0;
+  border-bottom: 1px solid var(--c-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.session-tab {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  background: transparent; border: 1px solid transparent;
+  border-bottom: none;
+  padding: 6px var(--sp-3);
+  border-radius: 6px 6px 0 0;
+  color: var(--c-text-muted); font-weight: 500;
+  font-size: .9rem;
+  max-width: 220px;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.session-tab:hover { background: var(--c-surface-2); color: var(--c-text); }
+.session-tab.active {
+  background: var(--c-bg);
+  border-color: var(--c-border);
+  color: var(--c-text);
+  font-weight: 600;
+  margin-bottom: -1px;
+  padding-bottom: 7px;
+}
+.session-tab-title {
+  overflow: hidden; text-overflow: ellipsis; max-width: 160px;
+}
+.session-tab-title[contenteditable="true"]:focus {
+  outline: 2px solid var(--c-primary); outline-offset: 2px;
+  background: var(--c-surface-2); padding: 0 4px; border-radius: 3px;
+}
+.session-tab-close {
+  background: transparent; border: 0; padding: 0;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: inherit; opacity: .5;
+  font-size: 16px; line-height: 1;
+}
+.session-tab:hover .session-tab-close,
+.session-tab.active .session-tab-close { opacity: 1; }
+.session-tab-close:hover { background: var(--c-danger); color: white; opacity: 1; }
+.session-new {
+  background: transparent; border: 1px dashed var(--c-border);
+  border-bottom: none;
+  padding: 6px var(--sp-3);
+  border-radius: 6px 6px 0 0;
+  color: var(--c-text-muted); font-weight: 600;
+  font-size: .85rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.session-new:hover { color: var(--c-primary); border-color: var(--c-primary); background: var(--c-surface-2); }
+
 .chat-log {
   padding: var(--sp-4) var(--sp-5);
   display: flex; flex-direction: column; gap: var(--sp-3);

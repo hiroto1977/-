@@ -13,7 +13,8 @@ const DEFAULT_DATA = {
     maxTokens: 4096,
     systemPrompt: '',
     rememberKey: true,
-    history: [], // [{role: 'user'|'assistant', content: string}]
+    sessions: [], // [{id, title, autoTitle, createdAt, updatedAt, history:[{role,content,error?}]}]
+    activeSessionId: null,
   },
 };
 
@@ -23,14 +24,22 @@ const Storage = {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return structuredClone(DEFAULT_DATA);
       const parsed = JSON.parse(raw);
-      return deepMerge(structuredClone(DEFAULT_DATA), parsed);
+      const merged = deepMerge(structuredClone(DEFAULT_DATA), parsed);
+      // Migration: legacy single `history` array → wrap as a single session
+      if (Array.isArray(parsed?.claude?.history) && parsed.claude.history.length
+          && (!merged.claude.sessions || !merged.claude.sessions.length)) {
+        merged.claude.sessions = [makeSession({ history: parsed.claude.history,
+          title: deriveTitleFromHistory(parsed.claude.history), autoTitle: true })];
+        merged.claude.activeSessionId = merged.claude.sessions[0].id;
+      }
+      delete merged.claude.history;
+      return merged;
     } catch (e) {
       console.error('storage load failed', e);
       return structuredClone(DEFAULT_DATA);
     }
   },
   save(data) {
-    // If "remember key" is off, don't persist the API key
     const toPersist = structuredClone(data);
     if (!toPersist.claude.rememberKey) toPersist.claude.apiKey = '';
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersist)); }
@@ -38,6 +47,44 @@ const Storage = {
   },
   reset() { localStorage.removeItem(STORAGE_KEY); },
 };
+
+function makeSession({ id, title, autoTitle = true, history = [] } = {}) {
+  const now = Date.now();
+  return {
+    id: id || ('sess_' + now.toString(36) + Math.random().toString(36).slice(2, 6)),
+    title: title || '新しい会話',
+    autoTitle,
+    createdAt: now,
+    updatedAt: now,
+    history,
+  };
+}
+function deriveTitleFromHistory(history) {
+  const first = history.find(m => m.role === 'user');
+  if (!first) return '新しい会話';
+  return first.content.replace(/\s+/g, ' ').trim().slice(0, 30) || '新しい会話';
+}
+function getActiveSession() {
+  let s = state.claude.sessions.find(x => x.id === state.claude.activeSessionId);
+  if (!s) {
+    s = state.claude.sessions[0];
+    if (!s) {
+      s = makeSession();
+      state.claude.sessions.push(s);
+    }
+    state.claude.activeSessionId = s.id;
+  }
+  return s;
+}
+function ensureSessions() {
+  if (!state.claude.sessions || !state.claude.sessions.length) {
+    const s = makeSession();
+    state.claude.sessions = [s];
+    state.claude.activeSessionId = s.id;
+  } else if (!state.claude.sessions.find(x => x.id === state.claude.activeSessionId)) {
+    state.claude.activeSessionId = state.claude.sessions[0].id;
+  }
+}
 
 function deepMerge(target, src) {
   for (const k of Object.keys(src || {})) {
@@ -208,8 +255,10 @@ document.getElementById('resetAllBtn').addEventListener('click', async () => {
   if (!ok) return;
   Storage.reset();
   Object.assign(state, structuredClone(DEFAULT_DATA));
+  ensureSessions();
   applyTheme();
   initClaudeUI();
+  renderSessionTabs();
   toast('全データを削除しました', 'success');
 });
 
@@ -598,16 +647,22 @@ function bindClaudeUI() {
       return;
     }
 
-    state.claude.history.push({ role: 'user', content: text });
+    const session = getActiveSession();
+    session.history.push({ role: 'user', content: text });
+    session.updatedAt = Date.now();
+    // Auto-title from first user message if user hasn't renamed yet
+    if (session.autoTitle) {
+      session.title = deriveTitleFromHistory(session.history);
+    }
     chatInput.value = '';
     charCount.textContent = '0 文字';
     persist();
+    renderSessionTabs();
     renderChat();
 
-    // Add empty assistant placeholder
     const assistantMsg = { role: 'assistant', content: '' };
-    state.claude.history.push(assistantMsg);
-    const assistantEl = renderChat({ streamingIndex: state.claude.history.length - 1 });
+    session.history.push(assistantMsg);
+    const assistantEl = renderChat({ streamingIndex: session.history.length - 1 });
 
     sendBtn.disabled = true;
     stopBtn.hidden = false;
@@ -620,8 +675,7 @@ function bindClaudeUI() {
         model: state.claude.model,
         maxTokens: state.claude.maxTokens,
         system: state.claude.systemPrompt,
-        // Send full history (excluding the empty assistant placeholder we just added)
-        messages: state.claude.history.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+        messages: session.history.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
         signal: abortCtrl.signal,
         onText: (delta) => {
           assistantMsg.content += delta;
@@ -633,6 +687,7 @@ function bindClaudeUI() {
           }
         },
       });
+      session.updatedAt = Date.now();
       persist();
       updateClaudeStatus('ok', `完了（${state.claude.model}）`);
       if (usage) {
@@ -645,12 +700,12 @@ function bindClaudeUI() {
         assistantMsg.content += '\n\n[ 停止しました ]';
         updateClaudeStatus('unknown', '停止');
       } else {
-        // Convert the placeholder into an error message
-        state.claude.history.pop(); // remove empty assistant
-        state.claude.history.push({ role: 'assistant', content: `エラー: ${err.message}`, error: true });
+        session.history.pop();
+        session.history.push({ role: 'assistant', content: `エラー: ${err.message}`, error: true });
         updateClaudeStatus('error', err.message);
         toast(err.message, 'error', 5000);
       }
+      session.updatedAt = Date.now();
       persist();
       renderChat();
     } finally {
@@ -665,22 +720,29 @@ function bindClaudeUI() {
   });
 
   clearChatBtn.addEventListener('click', async () => {
-    if (!state.claude.history.length) return;
-    const ok = await confirmDialog('チャット履歴をすべて削除しますか？');
+    const session = getActiveSession();
+    if (!session.history.length) return;
+    const ok = await confirmDialog('この会話のメッセージをすべて削除しますか？（タブ自体は残ります）');
     if (!ok) return;
-    state.claude.history = [];
+    session.history = [];
+    session.autoTitle = true;
+    session.title = '新しい会話';
+    session.updatedAt = Date.now();
     persist();
+    renderSessionTabs();
     renderChat();
     document.getElementById('usageInfo').textContent = 'トークン: -';
-    toast('履歴を削除しました', 'success');
+    toast('この会話を消去しました', 'success');
   });
 
   exportChatBtn.addEventListener('click', () => {
-    if (!state.claude.history.length) {
+    const session = getActiveSession();
+    if (!session.history.length) {
       toast('書き出すメッセージがありません', 'error');
       return;
     }
-    const md = state.claude.history.map(m => {
+    const header = `# ${session.title}\n\n`;
+    const md = header + session.history.map(m => {
       const label = m.role === 'user' ? '## ユーザー' : '## Claude';
       return `${label}\n\n${m.content}\n`;
     }).join('\n');
@@ -688,16 +750,136 @@ function bindClaudeUI() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `claude-chat-${new Date().toISOString().slice(0,10)}.md`;
+    const safeName = session.title.replace(/[^\p{L}\p{N}_-]+/gu, '-').slice(0, 40) || 'session';
+    a.download = `claude-${safeName}-${new Date().toISOString().slice(0,10)}.md`;
     a.click();
     URL.revokeObjectURL(url);
     toast('書き出しました', 'success');
   });
+
+  // ----- Session tabs -----
+  document.getElementById('newSessionBtn').addEventListener('click', () => {
+    createSessionAndSwitch();
+  });
+}
+
+function createSessionAndSwitch() {
+  const s = makeSession();
+  state.claude.sessions.push(s);
+  state.claude.activeSessionId = s.id;
+  persist();
+  renderSessionTabs();
+  renderChat();
+  document.getElementById('usageInfo').textContent = 'トークン: -';
+  document.getElementById('chatInput')?.focus();
+}
+
+async function deleteSession(id) {
+  const idx = state.claude.sessions.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  const s = state.claude.sessions[idx];
+  if (s.history.length) {
+    const ok = await confirmDialog(`「${s.title}」を削除しますか？（メッセージも消えます）`);
+    if (!ok) return;
+  }
+  state.claude.sessions.splice(idx, 1);
+  if (!state.claude.sessions.length) {
+    const fresh = makeSession();
+    state.claude.sessions.push(fresh);
+    state.claude.activeSessionId = fresh.id;
+  } else if (state.claude.activeSessionId === id) {
+    state.claude.activeSessionId = state.claude.sessions[Math.max(0, idx - 1)].id;
+  }
+  persist();
+  renderSessionTabs();
+  renderChat();
+}
+
+function switchSession(id) {
+  if (state.claude.activeSessionId === id) return;
+  state.claude.activeSessionId = id;
+  persist();
+  renderSessionTabs();
+  renderChat();
+  document.getElementById('usageInfo').textContent = 'トークン: -';
+}
+
+function renameSession(id, newTitle) {
+  const s = state.claude.sessions.find(x => x.id === id);
+  if (!s) return;
+  const t = newTitle.trim().slice(0, 60);
+  s.title = t || '新しい会話';
+  s.autoTitle = false;
+  s.updatedAt = Date.now();
+  persist();
+  renderSessionTabs();
+}
+
+function renderSessionTabs() {
+  const wrap = document.getElementById('sessionTabs');
+  if (!wrap) return;
+  // Keep the new-session button, replace tabs
+  const newBtn = document.getElementById('newSessionBtn');
+  wrap.innerHTML = '';
+  for (const s of state.claude.sessions) {
+    const tab = document.createElement('div');
+    tab.className = 'session-tab' + (s.id === state.claude.activeSessionId ? ' active' : '');
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-selected', s.id === state.claude.activeSessionId ? 'true' : 'false');
+    tab.tabIndex = 0;
+
+    const title = document.createElement('span');
+    title.className = 'session-tab-title';
+    title.textContent = s.title;
+    title.title = `${s.title}\n（ダブルクリックで名前変更）`;
+
+    const close = document.createElement('button');
+    close.className = 'session-tab-close';
+    close.type = 'button';
+    close.setAttribute('aria-label', `「${s.title}」を削除`);
+    close.textContent = '×';
+
+    tab.addEventListener('click', e => {
+      if (e.target === close || title.isContentEditable) return;
+      switchSession(s.id);
+    });
+    tab.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchSession(s.id); }
+    });
+    title.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      title.contentEditable = 'true';
+      title.focus();
+      // Select all text
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+    });
+    title.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); title.blur(); }
+      if (e.key === 'Escape') { title.textContent = s.title; title.blur(); }
+    });
+    title.addEventListener('blur', () => {
+      if (title.contentEditable === 'true') {
+        title.contentEditable = 'false';
+        renameSession(s.id, title.textContent);
+      }
+    });
+    close.addEventListener('click', e => {
+      e.stopPropagation();
+      deleteSession(s.id);
+    });
+
+    tab.append(title, close);
+    wrap.appendChild(tab);
+  }
+  if (newBtn) wrap.appendChild(newBtn);
 }
 
 function renderChat({ streamingIndex } = {}) {
   const log = document.getElementById('chatLog');
-  const history = state.claude.history;
+  const history = getActiveSession().history;
   log.innerHTML = '';
   if (!history.length) {
     log.innerHTML = `
@@ -745,11 +927,13 @@ function scrollChatToBottom() {
    Boot
    ========================================================= */
 function boot() {
+  ensureSessions();
   applyTheme();
   renderSidebar();
   renderOverview();
   initClaudeUI();
   bindClaudeUI();
+  renderSessionTabs();
 
   // Default to overview if no hash
   if (!location.hash) location.hash = '#overview';

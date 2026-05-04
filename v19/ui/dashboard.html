@@ -160,10 +160,16 @@
             <h2 id="chatTitle">チャット</h2>
             <div class="chat-actions">
               <span class="muted" id="usageInfo">トークン: -</span>
-              <button class="btn btn-small" id="clearChatBtn" type="button">履歴クリア</button>
+              <button class="btn btn-small" id="clearChatBtn" type="button">この会話を消去</button>
               <button class="btn btn-small" id="exportChatBtn" type="button">書き出し</button>
             </div>
           </header>
+
+          <div class="session-tabs" id="sessionTabs" role="tablist" aria-label="会話セッション">
+            <!-- tabs rendered by JS -->
+            <button class="session-new" id="newSessionBtn" type="button"
+              aria-label="新しい会話を開始">＋ 新規</button>
+          </div>
 
           <div class="chat-log" id="chatLog" aria-live="polite" aria-atomic="false">
             <div class="empty">
