@@ -112,7 +112,10 @@ function getSessionSystemPrompt(s) {
 function deriveTitleFromHistory(history) {
   const first = history.find(m => m.role === 'user');
   if (!first) return '新しい会話';
-  return first.content.replace(/\s+/g, ' ').trim().slice(0, 30) || '新しい会話';
+  const text = (typeof first.content === 'string')
+    ? first.content
+    : (textOf(first.content) || (hasImages(first.content) ? '🖼 画像' : ''));
+  return text.replace(/\s+/g, ' ').trim().slice(0, 30) || '新しい会話';
 }
 function getActiveSession() {
   let s = state.chat.sessions.find(x => x.id === state.chat.activeSessionId);
@@ -613,6 +616,26 @@ async function safeErrorBody(res) {
   } catch { return ''; }
 }
 
+// ---------- Message content helpers ----------
+// Internal format: content is either a string (text-only) or
+//   [{type:'text', text}, {type:'image', dataUrl:'data:image/...;base64,...', mimeType}]
+function partsOf(content) {
+  if (typeof content === 'string') return [{ type: 'text', text: content }];
+  return Array.isArray(content) ? content : [];
+}
+function textOf(content) {
+  return partsOf(content).filter(p => p.type === 'text').map(p => p.text).join('');
+}
+function imagesOf(content) {
+  return partsOf(content).filter(p => p.type === 'image');
+}
+function hasImages(content) { return imagesOf(content).length > 0; }
+function dataUrlPayload(dataUrl) {
+  // "data:image/jpeg;base64,XXXX" → "XXXX"
+  const i = dataUrl.indexOf(',');
+  return i < 0 ? dataUrl : dataUrl.slice(i + 1);
+}
+
 // ---------- Anthropic ----------
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
@@ -635,7 +658,27 @@ async function anthropicSendStream({ apiKey, model, maxTokens, system, messages,
   if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'anthropic' });
   if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'anthropic' });
 
-  const body = { model, max_tokens: maxTokens, messages, stream: true };
+  // Convert internal {role, content} → Anthropic native, with image support
+  const anthropicMessages = messages.map(m => {
+    const parts = partsOf(m.content);
+    const blocks = parts.map(p => {
+      if (p.type === 'image') {
+        return {
+          type: 'image',
+          source: { type: 'base64', media_type: p.mimeType || 'image/jpeg',
+                    data: dataUrlPayload(p.dataUrl) },
+        };
+      }
+      return { type: 'text', text: p.text };
+    });
+    // If only one text block, send as plain string for compactness
+    return {
+      role: m.role,
+      content: (blocks.length === 1 && blocks[0].type === 'text') ? blocks[0].text : blocks,
+    };
+  });
+
+  const body = { model, max_tokens: maxTokens, messages: anthropicMessages, stream: true };
   if (system && system.trim()) body.system = system;
 
   let res;
@@ -690,11 +733,19 @@ async function googleSendStream({ apiKey, model, maxTokens, system, messages, si
   if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'google' });
   if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'google' });
 
-  // Convert messages → Gemini's contents shape (role: 'user'|'model', parts:[{text}])
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }],
-  }));
+  // Convert messages → Gemini's contents shape with image support
+  const contents = messages.map(m => {
+    const parts = [];
+    for (const p of partsOf(m.content)) {
+      if (p.type === 'image') {
+        parts.push({ inlineData: { mimeType: p.mimeType || 'image/jpeg',
+                                    data: dataUrlPayload(p.dataUrl) }});
+      } else {
+        parts.push({ text: p.text });
+      }
+    }
+    return { role: m.role === 'assistant' ? 'model' : 'user', parts };
+  });
 
   const body = {
     contents,
@@ -763,11 +814,15 @@ async function ollamaSendStream({ apiKey, model, maxTokens, system, messages, si
   const base = (apiKey || OLLAMA_DEFAULT_BASE).replace(/\/$/, '');
   if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'ollama' });
 
-  // Build /api/chat request body
+  // Build /api/chat request body. Ollama image format: {role, content, images: ["base64..."]}
   const ollamaMessages = [];
   if (system && system.trim()) ollamaMessages.push({ role: 'system', content: system });
   for (const m of messages) {
-    ollamaMessages.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content });
+    const text = textOf(m.content);
+    const imgs = imagesOf(m.content);
+    const out = { role: m.role === 'assistant' ? 'assistant' : 'user', content: text };
+    if (imgs.length) out.images = imgs.map(p => dataUrlPayload(p.dataUrl));
+    ollamaMessages.push(out);
   }
 
   const body = {
@@ -850,10 +905,15 @@ const PROVIDERS = {
     keyLabelOverride: 'サーバー URL',
     keyHelpOverride: 'API キー不要。Ollama サーバーのベース URL（既定: http://localhost:11434）',
     defaultModel: 'llama3.2',
-    modelSuggestions: ['llama3.2', 'llama3.1', 'qwen2.5', 'gemma3', 'mistral', 'phi4', 'deepseek-r1'],
+    modelSuggestions: [
+      'llama3.2', 'llama3.1', 'qwen2.5', 'gemma3', 'mistral', 'phi4', 'deepseek-r1',
+      // Vision-capable (画像入力対応)
+      'llama3.2-vision', 'llava', 'gemma3:vision', 'minicpm-v',
+    ],
     note: 'お手元の PC で動作する Ollama に接続します（API キー不要・通信は外部に出ません）。' +
           '事前に <code>ollama serve</code> を起動し、ブラウザから呼ぶ場合は環境変数 ' +
-          '<code>OLLAMA_ORIGINS=*</code> を設定してください。',
+          '<code>OLLAMA_ORIGINS=*</code> を設定してください。' +
+          '画像を送る場合は <code>llama3.2-vision</code> や <code>llava</code> などのビジョン対応モデルを指定してください。',
     sendStream: ollamaSendStream,
   },
   anthropic: {
@@ -886,6 +946,126 @@ const PROVIDERS = {
    AI integration UI (provider-agnostic)
    ========================================================= */
 let abortCtrl = null;
+
+// Pending attachments staged for the next outgoing message
+// shape: [{name, mimeType, dataUrl, sizeBytes}]
+let pendingAttachments = [];
+
+const MAX_IMAGE_LONG_EDGE = 1568; // Anthropic-recommended max
+const JPEG_QUALITY = 0.85;
+const MAX_ATTACHMENTS_PER_MESSAGE = 5;
+const MAX_RAW_FILE_SIZE = 20 * 1024 * 1024; // 20MB hard cap on input file
+
+// Read an image file, downscale if needed, and return a data URL + metadata
+async function processImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    throw new Error(`画像ファイルではありません: ${file.name}`);
+  }
+  if (file.size > MAX_RAW_FILE_SIZE) {
+    throw new Error(`ファイルが大きすぎます (${formatBytes(file.size)} / 上限 ${formatBytes(MAX_RAW_FILE_SIZE)}): ${file.name}`);
+  }
+  const dataUrl = await readFileAsDataURL(file);
+  const img = await loadImage(dataUrl);
+
+  const longEdge = Math.max(img.naturalWidth, img.naturalHeight);
+  if (longEdge <= MAX_IMAGE_LONG_EDGE && file.size <= 1.5 * 1024 * 1024) {
+    // Small enough already — keep original (preserves transparency for PNG)
+    return {
+      name: file.name, mimeType: file.type,
+      dataUrl, sizeBytes: file.size,
+      width: img.naturalWidth, height: img.naturalHeight,
+    };
+  }
+
+  // Downscale to JPEG
+  const scale = Math.min(1, MAX_IMAGE_LONG_EDGE / longEdge);
+  const w = Math.round(img.naturalWidth * scale);
+  const h = Math.round(img.naturalHeight * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  // Paint a white background for transparent PNGs (JPEG has no alpha)
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(img, 0, 0, w, h);
+  const newDataUrl = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+  return {
+    name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+    mimeType: 'image/jpeg',
+    dataUrl: newDataUrl,
+    sizeBytes: Math.round(newDataUrl.length * 0.75), // approx base64 → bytes
+    width: w, height: h,
+  };
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(new Error('ファイル読み込みに失敗しました'));
+    r.readAsDataURL(file);
+  });
+}
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('画像をデコードできません'));
+    img.src = src;
+  });
+}
+function formatBytes(n) {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(1)} MB`;
+}
+
+async function addAttachmentFiles(files) {
+  for (const file of files) {
+    if (pendingAttachments.length >= MAX_ATTACHMENTS_PER_MESSAGE) {
+      toast(`添付は ${MAX_ATTACHMENTS_PER_MESSAGE} 枚までです`, 'error');
+      break;
+    }
+    try {
+      const att = await processImageFile(file);
+      pendingAttachments.push(att);
+    } catch (e) {
+      toast(e.message, 'error', 5000);
+    }
+  }
+  renderAttachmentBar();
+}
+
+function clearAttachments() {
+  pendingAttachments = [];
+  renderAttachmentBar();
+}
+
+function renderAttachmentBar() {
+  const bar = document.getElementById('attachmentBar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  if (!pendingAttachments.length) {
+    bar.hidden = true;
+    return;
+  }
+  bar.hidden = false;
+  pendingAttachments.forEach((att, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'attachment-chip';
+    chip.title = `${att.name} • ${formatBytes(att.sizeBytes)} • ${att.width}×${att.height}`;
+    chip.innerHTML = `
+      <img src="${att.dataUrl}" alt="${escapeHtml(att.name)}" />
+      <span class="meta">${formatBytes(att.sizeBytes)}</span>
+      <button type="button" class="remove" aria-label="削除">×</button>
+    `;
+    chip.querySelector('.remove').addEventListener('click', () => {
+      pendingAttachments.splice(i, 1);
+      renderAttachmentBar();
+    });
+    bar.appendChild(chip);
+  });
+}
 
 function initClaudeUI() {
   renderProviderPicker();
@@ -1137,6 +1317,47 @@ function bindClaudeUI() {
   const clearChatBtn = document.getElementById('clearChatBtn');
   const exportChatBtn = document.getElementById('exportChatBtn');
   const charCount = document.getElementById('charCount');
+  const attachBtn = document.getElementById('attachBtn');
+  const attachInput = document.getElementById('attachInput');
+
+  // ----- Attachments: file picker -----
+  attachBtn.addEventListener('click', () => attachInput.click());
+  attachInput.addEventListener('change', async () => {
+    if (attachInput.files?.length) {
+      await addAttachmentFiles([...attachInput.files]);
+    }
+    attachInput.value = ''; // allow re-selecting the same file
+  });
+
+  // ----- Attachments: clipboard paste -----
+  chatInput.addEventListener('paste', async e => {
+    const imgs = [...(e.clipboardData?.items || [])]
+      .filter(it => it.type?.startsWith('image/'))
+      .map(it => it.getAsFile())
+      .filter(Boolean);
+    if (imgs.length) {
+      e.preventDefault(); // don't paste binary garbage into the textarea
+      await addAttachmentFiles(imgs);
+    }
+  });
+
+  // ----- Attachments: drag & drop on the chat input area -----
+  chatForm.addEventListener('dragover', e => {
+    if (e.dataTransfer?.types?.includes('Files')) {
+      e.preventDefault();
+      chatForm.classList.add('dragover');
+    }
+  });
+  chatForm.addEventListener('dragleave', e => {
+    if (e.target === chatForm) chatForm.classList.remove('dragover');
+  });
+  chatForm.addEventListener('drop', async e => {
+    if (e.dataTransfer?.files?.length) {
+      e.preventDefault();
+      chatForm.classList.remove('dragover');
+      await addAttachmentFiles([...e.dataTransfer.files]);
+    }
+  });
 
   chatInput.addEventListener('input', () => {
     charCount.textContent = `${chatInput.value.length} 文字`;
@@ -1151,7 +1372,8 @@ function bindClaudeUI() {
     e.preventDefault();
     captureForm();
     const text = chatInput.value.trim();
-    if (!text) return;
+    const atts = pendingAttachments;
+    if (!text && !atts.length) return;
     const cfg = getActiveProviderConfig();
     const provider = getActiveProvider();
     if (!cfg.apiKey) {
@@ -1160,13 +1382,25 @@ function bindClaudeUI() {
     }
 
     const session = getActiveSession();
-    session.history.push({ role: 'user', content: text });
+    // Build user content: parts[] if attachments present, else plain string
+    let userContent;
+    if (atts.length) {
+      userContent = [];
+      for (const a of atts) {
+        userContent.push({ type: 'image', dataUrl: a.dataUrl, mimeType: a.mimeType });
+      }
+      if (text) userContent.push({ type: 'text', text });
+    } else {
+      userContent = text;
+    }
+    session.history.push({ role: 'user', content: userContent });
     session.updatedAt = Date.now();
     if (session.autoTitle) {
       session.title = deriveTitleFromHistory(session.history);
     }
     chatInput.value = '';
     charCount.textContent = '0 文字';
+    clearAttachments();
     persist();
     renderSessionTabs();
     renderChat();
@@ -1255,7 +1489,10 @@ function bindClaudeUI() {
     const header = `# ${session.title}\n\n`;
     const md = header + session.history.map(m => {
       const label = m.role === 'user' ? '## ユーザー' : '## Claude';
-      return `${label}\n\n${m.content}\n`;
+      const text = (typeof m.content === 'string') ? m.content : textOf(m.content);
+      const imgCount = (typeof m.content === 'string') ? 0 : imagesOf(m.content).length;
+      const imgNote = imgCount ? `\n\n_(添付画像 ${imgCount} 枚 / 書き出しには含まれません)_` : '';
+      return `${label}\n\n${text}${imgNote}\n`;
     }).join('\n');
     const blob = new Blob([md], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -1414,13 +1651,30 @@ function renderChat({ streamingIndex } = {}) {
     role.textContent = m.role === 'user' ? 'あなた' : 'Claude';
     const body = document.createElement('div');
     body.className = 'msg-body';
-    if (m.role === 'assistant' && !m.error && m.content) {
-      body.innerHTML = renderMarkdown(m.content);
+
+    const text = (typeof m.content === 'string') ? m.content : textOf(m.content);
+    const imgs = (typeof m.content === 'string') ? [] : imagesOf(m.content);
+
+    if (m.role === 'assistant' && !m.error && text) {
+      body.innerHTML = renderMarkdown(text);
       activateCopyButtons(body);
     } else {
-      body.textContent = m.content || (i === streamingIndex ? '' : '');
+      body.textContent = text || (i === streamingIndex ? '' : '');
     }
-    if (i === streamingIndex && !m.content) {
+    if (imgs.length) {
+      const gallery = document.createElement('div');
+      gallery.className = 'msg-images';
+      for (const im of imgs) {
+        const img = document.createElement('img');
+        img.src = im.dataUrl;
+        img.alt = '添付画像';
+        img.loading = 'lazy';
+        img.addEventListener('click', () => window.open(im.dataUrl, '_blank'));
+        gallery.appendChild(img);
+      }
+      body.appendChild(gallery);
+    }
+    if (i === streamingIndex && !text) {
       const typing = document.createElement('span');
       typing.className = 'typing';
       body.appendChild(typing);

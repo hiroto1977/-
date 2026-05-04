@@ -190,11 +190,16 @@
             </div>
           </div>
 
+          <div class="attachment-bar" id="attachmentBar" hidden aria-label="添付画像"></div>
+
           <form class="chat-input" id="chatForm">
             <textarea id="chatInput" class="input" rows="3"
-              placeholder="メッセージを入力 ( Ctrl/⌘ + Enter で送信 )"
-              aria-label="Claude への質問"></textarea>
+              placeholder="メッセージを入力 ( Ctrl/⌘ + Enter で送信、画像は貼り付け / D&D 可)"
+              aria-label="AI への質問"></textarea>
+            <input type="file" id="attachInput" hidden accept="image/*" multiple />
             <div class="chat-input-actions">
+              <button class="btn btn-small" id="attachBtn" type="button"
+                aria-label="画像を添付">📎 画像</button>
               <span class="muted" id="charCount">0 文字</span>
               <button class="btn btn-danger" id="stopBtn" type="button" hidden>停止</button>
               <button class="btn btn-primary" id="sendBtn" type="submit">送信</button>
