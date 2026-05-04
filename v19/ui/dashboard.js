@@ -6,7 +6,7 @@
 // ---------- Storage ----------
 const STORAGE_KEY = 'v19-dashboard-v1';
 const DEFAULT_DATA = {
-  settings: { theme: 'light' },
+  settings: { theme: 'light', localOnly: false },
   chat: {
     activeProviderId: 'ollama',
     sessions: [], // [{id, title, autoTitle, presetId, systemPrompt, createdAt, updatedAt, history}]
@@ -140,6 +140,18 @@ function ensureSessions() {
 }
 
 // ---------- Provider registry ----------
+const LOCAL_PROVIDER_IDS = new Set(['ollama']);
+function isLocalProvider(id) { return LOCAL_PROVIDER_IDS.has(id); }
+function visibleProviders() {
+  const all = Object.values(PROVIDERS);
+  return state.settings.localOnly ? all.filter(p => isLocalProvider(p.id)) : all;
+}
+// If local-only is on but the active provider is a cloud one, snap to ollama.
+function reconcileLocalOnly() {
+  if (state.settings.localOnly && !isLocalProvider(state.chat.activeProviderId)) {
+    state.chat.activeProviderId = 'ollama';
+  }
+}
 function getActiveProvider() {
   return PROVIDERS[state.chat.activeProviderId] || PROVIDERS.anthropic;
 }
@@ -403,6 +415,29 @@ function setGlobalStatus(state, text) {
 }
 
 // ---------- Settings actions ----------
+const localOnlyToggle = document.getElementById('localOnlyToggle');
+function applyLocalOnly() {
+  localOnlyToggle.checked = !!state.settings.localOnly;
+  reconcileLocalOnly();
+  updateLocalBadge();
+}
+localOnlyToggle.addEventListener('change', () => {
+  state.settings.localOnly = localOnlyToggle.checked;
+  const switched = state.settings.localOnly
+    && !isLocalProvider(state.chat.activeProviderId);
+  reconcileLocalOnly();
+  persist();
+  updateLocalBadge();
+  // Refresh provider picker + form to reflect the new visible set
+  if (typeof renderProviderPicker === 'function') renderProviderPicker();
+  if (typeof applyProviderToForm === 'function') applyProviderToForm();
+  if (state.settings.localOnly) {
+    toast(`ローカル専用モード ON${switched ? ' — Ollama に切り替えました' : ''}`, 'success');
+  } else {
+    toast('ローカル専用モード OFF', 'success');
+  }
+});
+
 document.getElementById('exportAllBtn').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -424,6 +459,7 @@ document.getElementById('resetAllBtn').addEventListener('click', async () => {
   Object.assign(state, structuredClone(DEFAULT_DATA));
   ensureSessions();
   applyTheme();
+  applyLocalOnly();
   initClaudeUI();
   renderSessionTabs();
   toast('全データを削除しました', 'success');
@@ -1142,7 +1178,7 @@ function renderProviderPicker() {
   const wrap = document.getElementById('providerPicker');
   if (!wrap) return;
   wrap.innerHTML = '';
-  for (const p of Object.values(PROVIDERS)) {
+  for (const p of visibleProviders()) {
     const lbl = document.createElement('label');
     const radio = document.createElement('input');
     radio.type = 'radio';
@@ -1163,6 +1199,20 @@ function renderProviderPicker() {
     lbl.append(radio, span);
     wrap.appendChild(lbl);
   }
+  // Hidden-providers note when local-only is on
+  if (state.settings.localOnly) {
+    const note = document.createElement('span');
+    note.className = 'provider-hidden-note';
+    const hidden = Object.values(PROVIDERS).filter(p => !isLocalProvider(p.id)).length;
+    note.textContent = `🔒 ローカル専用モード中 (クラウド ${hidden} 件を非表示)`;
+    wrap.appendChild(note);
+  }
+  updateLocalBadge();
+}
+
+function updateLocalBadge() {
+  const badge = document.getElementById('localBadge');
+  if (badge) badge.hidden = !state.settings.localOnly;
 }
 
 function applyProviderToForm() {
@@ -1698,6 +1748,7 @@ function scrollChatToBottom() {
 function boot() {
   ensureSessions();
   applyTheme();
+  applyLocalOnly();
   renderSidebar();
   renderOverview();
   initClaudeUI();

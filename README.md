@@ -95,6 +95,14 @@ ollama pull llama3.2-vision           # 画像入力対応
 
 ブラウザで v19 ダッシュボードを開き、プロバイダ「🏠 Ollama (ローカル)」が選択された状態で送信してください。
 
+### 🔒 ローカル専用モード
+
+設定 → プライバシー → 「ローカル専用モード」をオンにすると、Anthropic / Google のプロバイダが UI から消え、Ollama のみが選択可能になります。機密データを扱う場面で、誤ってクラウド API へ送信するのを防げます。
+
+### Claude Code 自体をローカル LLM 化したい場合
+
+「ブラウザでの対話」ではなく **Claude Code CLI そのもの** をローカル LLM で動かしたい・あるいは Claude Code 以外の代替 (Aider / Continue / gptme / opencode 等) を使いたい場合は、[**LOCAL_LLM_GUIDE.md**](LOCAL_LLM_GUIDE.md) に 3 系統の選択肢と実践手順をまとめています。
+
 ### ファイル構成
 
 ```

@@ -27,6 +27,8 @@
 
     <div class="topbar-spacer"></div>
 
+    <span class="local-badge" id="localBadge" hidden title="クラウドプロバイダ非表示・Ollama 強制">🔒 ローカル専用</span>
+
     <div class="status-pill" id="statusPill" aria-live="polite">
       <span class="status-dot" data-state="unknown"></span>
       <span class="status-text">待機中</span>
@@ -226,6 +228,17 @@
         </section>
 
         <section class="card">
+          <h2>プライバシー</h2>
+          <div class="setting">
+            <label class="check">
+              <input type="checkbox" id="localOnlyToggle" />
+              <span><strong>🔒 ローカル専用モード</strong> — クラウドプロバイダ (Anthropic / Google) を非表示にし、Ollama (ローカル LLM) のみを利用</span>
+            </label>
+            <p class="setting-help muted">機密データを扱う場面で、誤って外部サービスへ送信するのを防ぎます。オンにすると現在クラウドプロバイダ選択中でも自動的に Ollama に切り替わります。</p>
+          </div>
+        </section>
+
+        <section class="card">
           <h2>保存データ</h2>
           <p class="muted">この端末（ブラウザ）に保存されている設定とチャット履歴を管理します。</p>
           <div class="row">
@@ -238,7 +251,7 @@
           <h2>このダッシュボードについて</h2>
           <ul class="kv">
             <li><span>バージョン</span><span>v19.1.0</span></li>
-            <li><span>連携可能サービス</span><span>1 (Claude AI)</span></li>
+            <li><span>連携可能サービス</span><span>3 (Ollama / Anthropic / Google)</span></li>
             <li><span>データ保存先</span><span>ブラウザ localStorage のみ</span></li>
           </ul>
         </section>

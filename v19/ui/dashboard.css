@@ -160,6 +160,28 @@ code {
 }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 
+.local-badge {
+  display: inline-flex; align-items: center;
+  background: #dcfce7;
+  color: #14532d;
+  font-weight: 700; font-size: .8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #86efac;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .local-badge {
+  background: #064e3b; color: #6ee7b7; border-color: #10b981;
+}
+[data-theme="contrast"] .local-badge {
+  background: #000; color: #6bff7a; border-color: #6bff7a;
+}
+.provider-hidden-note {
+  display: inline-flex; align-items: center;
+  font-size: .8rem; color: var(--c-text-muted);
+  font-style: italic; padding-left: var(--sp-2);
+}
+
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: var(--tap); height: var(--tap);
