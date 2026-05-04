@@ -7,14 +7,16 @@
 const STORAGE_KEY = 'v19-dashboard-v1';
 const DEFAULT_DATA = {
   settings: { theme: 'light' },
-  claude: {
-    apiKey: '',
-    model: 'claude-opus-4-7',
-    maxTokens: 4096,
+  chat: {
+    activeProviderId: 'ollama',
     systemPrompt: '',
-    rememberKey: true,
     sessions: [], // [{id, title, autoTitle, createdAt, updatedAt, history:[{role,content,error?}]}]
     activeSessionId: null,
+  },
+  providers: {
+    ollama:    { apiKey: 'http://localhost:11434', model: 'llama3.2',          maxTokens: 4096, rememberKey: true },
+    anthropic: { apiKey: '',                       model: 'claude-opus-4-7',   maxTokens: 4096, rememberKey: true },
+    google:    { apiKey: '',                       model: 'gemini-2.5-flash',  maxTokens: 4096, rememberKey: true },
   },
 };
 
@@ -25,14 +27,36 @@ const Storage = {
       if (!raw) return structuredClone(DEFAULT_DATA);
       const parsed = JSON.parse(raw);
       const merged = deepMerge(structuredClone(DEFAULT_DATA), parsed);
-      // Migration: legacy single `history` array → wrap as a single session
-      if (Array.isArray(parsed?.claude?.history) && parsed.claude.history.length
-          && (!merged.claude.sessions || !merged.claude.sessions.length)) {
-        merged.claude.sessions = [makeSession({ history: parsed.claude.history,
-          title: deriveTitleFromHistory(parsed.claude.history), autoTitle: true })];
-        merged.claude.activeSessionId = merged.claude.sessions[0].id;
+
+      // Migration from legacy state.claude.* → state.chat + state.providers.anthropic
+      if (parsed.claude) {
+        if (!merged.chat.systemPrompt && parsed.claude.systemPrompt) {
+          merged.chat.systemPrompt = parsed.claude.systemPrompt;
+        }
+        if (Array.isArray(parsed.claude.sessions) && parsed.claude.sessions.length
+            && (!merged.chat.sessions || !merged.chat.sessions.length)) {
+          merged.chat.sessions = parsed.claude.sessions;
+          merged.chat.activeSessionId = parsed.claude.activeSessionId
+            || parsed.claude.sessions[0]?.id || null;
+        }
+        Object.assign(merged.providers.anthropic, {
+          apiKey: parsed.claude.apiKey ?? merged.providers.anthropic.apiKey,
+          model: parsed.claude.model ?? merged.providers.anthropic.model,
+          maxTokens: parsed.claude.maxTokens ?? merged.providers.anthropic.maxTokens,
+          rememberKey: parsed.claude.rememberKey ?? merged.providers.anthropic.rememberKey,
+        });
+        // Legacy: single-history (pre-multi-session) → wrap as a session
+        if (Array.isArray(parsed.claude.history) && parsed.claude.history.length
+            && (!merged.chat.sessions || !merged.chat.sessions.length)) {
+          merged.chat.sessions = [makeSession({
+            history: parsed.claude.history,
+            title: deriveTitleFromHistory(parsed.claude.history),
+            autoTitle: true,
+          })];
+          merged.chat.activeSessionId = merged.chat.sessions[0].id;
+        }
+        delete merged.claude;
       }
-      delete merged.claude.history;
       return merged;
     } catch (e) {
       console.error('storage load failed', e);
@@ -41,7 +65,10 @@ const Storage = {
   },
   save(data) {
     const toPersist = structuredClone(data);
-    if (!toPersist.claude.rememberKey) toPersist.claude.apiKey = '';
+    // Per-provider rememberKey honoring
+    for (const id of Object.keys(toPersist.providers || {})) {
+      if (!toPersist.providers[id].rememberKey) toPersist.providers[id].apiKey = '';
+    }
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersist)); }
     catch (e) { toast('保存に失敗しました（容量不足の可能性）', 'error'); }
   },
@@ -65,25 +92,38 @@ function deriveTitleFromHistory(history) {
   return first.content.replace(/\s+/g, ' ').trim().slice(0, 30) || '新しい会話';
 }
 function getActiveSession() {
-  let s = state.claude.sessions.find(x => x.id === state.claude.activeSessionId);
+  let s = state.chat.sessions.find(x => x.id === state.chat.activeSessionId);
   if (!s) {
-    s = state.claude.sessions[0];
+    s = state.chat.sessions[0];
     if (!s) {
       s = makeSession();
-      state.claude.sessions.push(s);
+      state.chat.sessions.push(s);
     }
-    state.claude.activeSessionId = s.id;
+    state.chat.activeSessionId = s.id;
   }
   return s;
 }
 function ensureSessions() {
-  if (!state.claude.sessions || !state.claude.sessions.length) {
+  if (!state.chat.sessions || !state.chat.sessions.length) {
     const s = makeSession();
-    state.claude.sessions = [s];
-    state.claude.activeSessionId = s.id;
-  } else if (!state.claude.sessions.find(x => x.id === state.claude.activeSessionId)) {
-    state.claude.activeSessionId = state.claude.sessions[0].id;
+    state.chat.sessions = [s];
+    state.chat.activeSessionId = s.id;
+  } else if (!state.chat.sessions.find(x => x.id === state.chat.activeSessionId)) {
+    state.chat.activeSessionId = state.chat.sessions[0].id;
   }
+}
+
+// ---------- Provider registry ----------
+function getActiveProvider() {
+  return PROVIDERS[state.chat.activeProviderId] || PROVIDERS.anthropic;
+}
+function getActiveProviderConfig() {
+  const id = getActiveProvider().id;
+  if (!state.providers[id]) {
+    state.providers[id] = { apiKey: '', model: PROVIDERS[id].defaultModel,
+                            maxTokens: 4096, rememberKey: true };
+  }
+  return state.providers[id];
 }
 
 function deepMerge(target, src) {
@@ -131,11 +171,11 @@ function confirmDialog(message, title = '確認') {
 const INTEGRATIONS = [
   {
     id: 'claude',
-    name: 'Claude AI',
-    sub: 'Anthropic 社の対話 AI',
+    name: 'AI チャット',
+    sub: 'Claude / Gemini を切替可能',
     icon: '🤖',
     iconClass: 'claude',
-    desc: 'Claude API と直接連携してチャットや要約・翻訳・コード生成などができます。',
+    desc: '複数の AI プロバイダと直接連携してチャット・要約・翻訳・コード生成などができます。',
     route: 'integration-claude',
   },
 ];
@@ -395,18 +435,63 @@ function activateCopyButtons(container) {
 }
 
 /* =========================================================
-   Anthropic (Claude) client — browser-direct
+   Provider clients — all browser-direct, all stream text deltas
+   Common interface:
+     sendStream({ apiKey, model, maxTokens, system, messages, signal, onText })
+       → Promise<{ text: string, usage: { input_tokens?, output_tokens? } | null }>
    ========================================================= */
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_VERSION = '2023-06-01';
 
-class AnthropicError extends Error {
-  constructor(message, { status, type } = {}) {
+class ProviderError extends Error {
+  constructor(message, { status, type, providerId } = {}) {
     super(message);
-    this.status = status;
-    this.type = type;
+    this.status = status; this.type = type; this.providerId = providerId;
   }
 }
+// Back-compat alias (older code path may still throw AnthropicError-named)
+const AnthropicError = ProviderError;
+
+const HTTP_ERR_JA = {
+  400: 'リクエスト不正',
+  401: 'API キーが無効です',
+  403: 'アクセス権限がありません（CORS / 課金状態をご確認ください）',
+  404: 'モデルが見つかりません',
+  413: 'リクエストが大きすぎます',
+  429: 'レート制限に達しました。少し待ってから再試行してください',
+  500: 'プロバイダ側のエラーです。少し待って再試行してください',
+  529: 'API が混雑しています。少し待って再試行してください',
+};
+
+async function readSseLines(response, handleEvent) {
+  if (!response.body) throw new ProviderError('ストリーミング応答を取得できません');
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue;
+      const payload = line.slice(5).trim();
+      if (!payload || payload === '[DONE]') continue;
+      try { handleEvent(JSON.parse(payload)); }
+      catch { /* skip malformed JSON chunk */ }
+    }
+  }
+}
+
+async function safeErrorBody(res) {
+  try {
+    const j = await res.json();
+    return j?.error?.message || j?.message || JSON.stringify(j);
+  } catch { return ''; }
+}
+
+// ---------- Anthropic ----------
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const ANTHROPIC_VERSION = '2023-06-01';
 
 /**
  * Send a streaming Messages request to Claude.
@@ -422,16 +507,11 @@ class AnthropicError extends Error {
  * @param {(usage:object) => void} [opts.onUsage] — called once with final usage
  * @returns {Promise<{text:string, usage:object|null}>}
  */
-async function claudeStream({ apiKey, model, maxTokens, system, messages, signal, onText, onUsage }) {
-  if (!apiKey) throw new AnthropicError('API キーが設定されていません');
-  if (!messages?.length) throw new AnthropicError('メッセージが空です');
+async function anthropicSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
+  if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'anthropic' });
+  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'anthropic' });
 
-  const body = {
-    model,
-    max_tokens: maxTokens,
-    messages,
-    stream: true,
-  };
+  const body = { model, max_tokens: maxTokens, messages, stream: true };
   if (system && system.trim()) body.system = system;
 
   let res;
@@ -449,34 +529,156 @@ async function claudeStream({ apiKey, model, maxTokens, system, messages, signal
     });
   } catch (err) {
     if (err.name === 'AbortError') throw err;
-    throw new AnthropicError(`接続エラー: ${err.message}（CORS / ネットワーク制限の可能性）`);
+    throw new ProviderError(`接続エラー: ${err.message}（CORS / ネットワーク制限の可能性）`,
+      { providerId: 'anthropic' });
   }
 
   if (!res.ok) {
-    let detail = '';
-    try {
-      const errBody = await res.json();
-      detail = errBody?.error?.message || JSON.stringify(errBody);
-    } catch { /* non-JSON */ }
-    const map = {
-      400: 'リクエスト不正',
-      401: 'API キーが無効です',
-      403: 'アクセス権限がありません',
-      404: 'モデルが見つかりません',
-      413: 'リクエストが大きすぎます',
-      429: 'レート制限に達しました。少し待ってから再試行してください',
-      500: 'Anthropic 側のエラーです。少し待って再試行してください',
-      529: 'API が混雑しています。少し待って再試行してください',
-    };
-    throw new AnthropicError(
-      `${map[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
-      { status: res.status },
+    const detail = await safeErrorBody(res);
+    throw new ProviderError(
+      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
+      { status: res.status, providerId: 'anthropic' },
     );
   }
 
-  if (!res.body) throw new AnthropicError('ストリーミング応答がサポートされていません');
+  let fullText = '';
+  let usage = null;
+  await readSseLines(res, (evt) => {
+    if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+      fullText += evt.delta.text;
+      onText?.(evt.delta.text);
+    } else if (evt.type === 'message_delta' && evt.usage) {
+      usage = { ...(usage || {}), ...evt.usage };
+    } else if (evt.type === 'message_start' && evt.message?.usage) {
+      usage = { ...evt.message.usage, ...(usage || {}) };
+    } else if (evt.type === 'error') {
+      throw new ProviderError(evt.error?.message || 'API エラー',
+        { type: evt.error?.type, providerId: 'anthropic' });
+    }
+  });
+  return { text: fullText, usage };
+}
 
-  // Parse SSE
+// ---------- Google Gemini ----------
+const GOOGLE_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+async function googleSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
+  if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'google' });
+  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'google' });
+
+  // Convert messages → Gemini's contents shape (role: 'user'|'model', parts:[{text}])
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }],
+  }));
+
+  const body = {
+    contents,
+    generationConfig: { maxOutputTokens: maxTokens },
+  };
+  if (system && system.trim()) {
+    body.systemInstruction = { parts: [{ text: system }] };
+  }
+
+  // streamGenerateContent with alt=sse returns SSE
+  const url = `${GOOGLE_API_BASE}/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
+      },
+      body: JSON.stringify(body),
+      signal,
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') throw err;
+    throw new ProviderError(`接続エラー: ${err.message}（CORS / ネットワーク制限の可能性）`,
+      { providerId: 'google' });
+  }
+
+  if (!res.ok) {
+    const detail = await safeErrorBody(res);
+    throw new ProviderError(
+      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
+      { status: res.status, providerId: 'google' },
+    );
+  }
+
+  let fullText = '';
+  let usage = null;
+  await readSseLines(res, (evt) => {
+    // Each SSE chunk is a GenerateContentResponse fragment
+    const parts = evt?.candidates?.[0]?.content?.parts || [];
+    for (const p of parts) {
+      if (typeof p.text === 'string' && p.text) {
+        fullText += p.text;
+        onText?.(p.text);
+      }
+    }
+    if (evt?.usageMetadata) {
+      // Normalize to {input_tokens, output_tokens} for the UI
+      usage = {
+        input_tokens:  evt.usageMetadata.promptTokenCount,
+        output_tokens: evt.usageMetadata.candidatesTokenCount,
+      };
+    }
+  });
+  return { text: fullText, usage };
+}
+
+// ---------- Ollama (local) ----------
+const OLLAMA_DEFAULT_BASE = 'http://localhost:11434';
+
+async function ollamaSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
+  // For Ollama: apiKey field is repurposed as the base URL (default localhost:11434).
+  // No actual auth header — local-only by design.
+  const base = (apiKey || OLLAMA_DEFAULT_BASE).replace(/\/$/, '');
+  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'ollama' });
+
+  // Build /api/chat request body
+  const ollamaMessages = [];
+  if (system && system.trim()) ollamaMessages.push({ role: 'system', content: system });
+  for (const m of messages) {
+    ollamaMessages.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content });
+  }
+
+  const body = {
+    model,
+    messages: ollamaMessages,
+    stream: true,
+    options: { num_predict: maxTokens },
+  };
+
+  let res;
+  try {
+    res = await fetch(`${base}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal,
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') throw err;
+    throw new ProviderError(
+      `Ollama に接続できません: ${err.message}\n` +
+      `ヒント: ターミナルで \`ollama serve\` が起動済みで、` +
+      `OLLAMA_ORIGINS=* または このページの Origin を許可していますか？`,
+      { providerId: 'ollama' });
+  }
+
+  if (!res.ok) {
+    const detail = await safeErrorBody(res);
+    throw new ProviderError(
+      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
+      { status: res.status, providerId: 'ollama' });
+  }
+  if (!res.body) throw new ProviderError('ストリーミング応答を取得できません');
+
+  // Ollama returns NDJSON (newline-delimited JSON), one object per line — not SSE.
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
@@ -490,65 +692,171 @@ async function claudeStream({ apiKey, model, maxTokens, system, messages, signal
     const lines = buffer.split('\n');
     buffer = lines.pop() ?? '';
     for (const line of lines) {
-      if (!line.startsWith('data:')) continue;
-      const payload = line.slice(5).trim();
-      if (!payload || payload === '[DONE]') continue;
+      const trimmed = line.trim();
+      if (!trimmed) continue;
       let evt;
-      try { evt = JSON.parse(payload); } catch { continue; }
-
-      if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
-        fullText += evt.delta.text;
-        onText?.(evt.delta.text);
-      } else if (evt.type === 'message_delta' && evt.usage) {
-        // Merge: message_start carries input_tokens, message_delta carries output_tokens
-        usage = { ...(usage || {}), ...evt.usage };
-      } else if (evt.type === 'message_start' && evt.message?.usage) {
-        usage = { ...evt.message.usage, ...(usage || {}) };
-      } else if (evt.type === 'error') {
-        throw new AnthropicError(evt.error?.message || 'API エラー', { type: evt.error?.type });
+      try { evt = JSON.parse(trimmed); } catch { continue; }
+      if (evt.error) {
+        throw new ProviderError(evt.error, { providerId: 'ollama' });
+      }
+      if (evt.message?.content) {
+        fullText += evt.message.content;
+        onText?.(evt.message.content);
+      }
+      if (evt.done) {
+        usage = {
+          input_tokens:  evt.prompt_eval_count,
+          output_tokens: evt.eval_count,
+        };
       }
     }
   }
-
-  onUsage?.(usage);
   return { text: fullText, usage };
 }
 
+// ---------- Provider registry ----------
+const PROVIDERS = {
+  ollama: {
+    id: 'ollama',
+    label: 'Ollama (ローカル)',
+    icon: '🏠',
+    keyHint: 'http://localhost:11434',
+    keyDocsUrl: 'https://ollama.com/',
+    keyDocsLabel: 'Ollama 公式サイト',
+    keyLabelOverride: 'サーバー URL',
+    keyHelpOverride: 'API キー不要。Ollama サーバーのベース URL（既定: http://localhost:11434）',
+    defaultModel: 'llama3.2',
+    modelSuggestions: ['llama3.2', 'llama3.1', 'qwen2.5', 'gemma3', 'mistral', 'phi4', 'deepseek-r1'],
+    note: 'お手元の PC で動作する Ollama に接続します（API キー不要・通信は外部に出ません）。' +
+          '事前に <code>ollama serve</code> を起動し、ブラウザから呼ぶ場合は環境変数 ' +
+          '<code>OLLAMA_ORIGINS=*</code> を設定してください。',
+    sendStream: ollamaSendStream,
+  },
+  anthropic: {
+    id: 'anthropic',
+    label: 'Anthropic Claude',
+    icon: '🤖',
+    keyHint: 'sk-ant-api03-...',
+    keyDocsUrl: 'https://console.anthropic.com/',
+    keyDocsLabel: 'Anthropic Console',
+    defaultModel: 'claude-opus-4-7',
+    modelSuggestions: ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5'],
+    note: 'Anthropic 社の Claude API と直接通信します（クラウド・有償）。',
+    sendStream: anthropicSendStream,
+  },
+  google: {
+    id: 'google',
+    label: 'Google Gemini',
+    icon: '✨',
+    keyHint: 'AIza...',
+    keyDocsUrl: 'https://aistudio.google.com/apikey',
+    keyDocsLabel: 'Google AI Studio',
+    defaultModel: 'gemini-2.5-flash',
+    modelSuggestions: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'],
+    note: 'Google AI Studio の Gemini API と直接通信します（クラウド・無料枠あり）。',
+    sendStream: googleSendStream,
+  },
+};
+
 /* =========================================================
-   Claude integration UI
+   AI integration UI (provider-agnostic)
    ========================================================= */
 let abortCtrl = null;
 
 function initClaudeUI() {
-  const c = state.claude;
-
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const modelSelect = document.getElementById('modelSelect');
-  const maxTokensInput = document.getElementById('maxTokensInput');
-  const systemPromptInput = document.getElementById('systemPromptInput');
-  const rememberKey = document.getElementById('rememberKey');
-
-  apiKeyInput.value = c.apiKey || '';
-  modelSelect.value = c.model;
-  maxTokensInput.value = c.maxTokens;
-  systemPromptInput.value = c.systemPrompt || '';
-  rememberKey.checked = c.rememberKey !== false;
-
-  updateClaudeStatus(c.apiKey ? 'unknown' : 'unknown',
-    c.apiKey ? 'キー設定済み（未テスト）' : 'API キーが未設定');
-
+  renderProviderPicker();
+  applyProviderToForm();
+  document.getElementById('systemPromptInput').value = state.chat.systemPrompt || '';
+  const cfg = getActiveProviderConfig();
+  document.getElementById('rememberKey').checked = cfg.rememberKey !== false;
+  updateClaudeStatus('unknown', cfg.apiKey ? 'キー設定済み（未テスト）' : 'API キーが未設定');
   renderChat();
 }
 
 function updateClaudeStatus(stateName, text) {
   document.getElementById('claudeStatusDot').dataset.state = stateName;
   document.getElementById('claudeStatusText').textContent = text;
-  setGlobalStatus(stateName, `Claude: ${text}`);
+  setGlobalStatus(stateName, `${getActiveProvider().label}: ${text}`);
+}
+
+function renderProviderPicker() {
+  const wrap = document.getElementById('providerPicker');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  for (const p of Object.values(PROVIDERS)) {
+    const lbl = document.createElement('label');
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'provider';
+    radio.value = p.id;
+    radio.checked = (state.chat.activeProviderId === p.id);
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      state.chat.activeProviderId = p.id;
+      persist();
+      applyProviderToForm();
+      const cfg = getActiveProviderConfig();
+      updateClaudeStatus('unknown', cfg.apiKey ? 'キー設定済み（未テスト）' : 'API キーが未設定');
+      document.getElementById('usageInfo').textContent = 'トークン: -';
+    });
+    const span = document.createElement('span');
+    span.textContent = `${p.icon} ${p.label}`;
+    lbl.append(radio, span);
+    wrap.appendChild(lbl);
+  }
+}
+
+function applyProviderToForm() {
+  const provider = getActiveProvider();
+  const cfg = getActiveProviderConfig();
+  const isLocal = !!provider.keyLabelOverride; // Ollama-style URL field, no real "key"
+
+  // Provider note + key docs link
+  const note = document.getElementById('providerNote');
+  if (note) {
+    note.innerHTML = `${provider.note} `
+      + `(参考: <a href="${escapeHtml(provider.keyDocsUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(provider.keyDocsLabel)}</a>)`;
+  }
+
+  // Re-label "API キー" field for local providers
+  const keyLabelEl = document.querySelector('label[for="apiKeyInput"]');
+  if (keyLabelEl) {
+    keyLabelEl.firstChild && (keyLabelEl.firstChild.nodeValue = (provider.keyLabelOverride || 'API キー') + '\n');
+  }
+  const keyHelp = document.getElementById('apiKeyHelp');
+  if (keyHelp) {
+    keyHelp.textContent = provider.keyHelpOverride
+      || `${provider.label} の API キー（例: ${provider.keyHint}）`;
+  }
+
+  // Inputs reflect this provider's config
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  apiKeyInput.value = cfg.apiKey || (isLocal ? provider.keyHint : '');
+  apiKeyInput.placeholder = provider.keyHint;
+  // Local providers (Ollama): URL — show as text. Cloud providers: hide as password.
+  apiKeyInput.type = isLocal ? 'url' : 'password';
+  document.getElementById('toggleKeyBtn').textContent = isLocal ? '隠す' : '表示';
+  document.getElementById('toggleKeyBtn').hidden = isLocal;
+
+  document.getElementById('modelInput').value = cfg.model || provider.defaultModel;
+  document.getElementById('maxTokensInput').value = cfg.maxTokens || 4096;
+  document.getElementById('rememberKey').checked = cfg.rememberKey !== false;
+
+  // Refresh datalist for this provider's model suggestions
+  const dl = document.getElementById('modelSuggestions');
+  if (dl) {
+    dl.innerHTML = '';
+    for (const m of (provider.modelSuggestions || [])) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      dl.appendChild(opt);
+    }
+  }
 }
 
 function bindClaudeUI() {
   const apiKeyInput = document.getElementById('apiKeyInput');
-  const modelSelect = document.getElementById('modelSelect');
+  const modelInput = document.getElementById('modelInput');
   const maxTokensInput = document.getElementById('maxTokensInput');
   const systemPromptInput = document.getElementById('systemPromptInput');
   const rememberKey = document.getElementById('rememberKey');
@@ -564,28 +872,28 @@ function bindClaudeUI() {
   });
 
   function captureForm() {
-    state.claude.apiKey = apiKeyInput.value.trim();
-    state.claude.model = modelSelect.value;
-    state.claude.maxTokens = Math.max(64, Math.min(64000, parseInt(maxTokensInput.value, 10) || 4096));
-    state.claude.systemPrompt = systemPromptInput.value;
-    state.claude.rememberKey = rememberKey.checked;
+    const cfg = getActiveProviderConfig();
+    cfg.apiKey = apiKeyInput.value.trim();
+    cfg.model = modelInput.value.trim() || getActiveProvider().defaultModel;
+    cfg.maxTokens = Math.max(64, Math.min(64000, parseInt(maxTokensInput.value, 10) || 4096));
+    cfg.rememberKey = rememberKey.checked;
+    state.chat.systemPrompt = systemPromptInput.value;
   }
 
   saveBtn.addEventListener('click', () => {
     captureForm();
     persist();
-    if (state.claude.apiKey) {
-      updateClaudeStatus('unknown', 'キー設定済み（未テスト）');
-    } else {
-      updateClaudeStatus('unknown', 'API キーが未設定');
-    }
+    const cfg = getActiveProviderConfig();
+    updateClaudeStatus('unknown', cfg.apiKey ? 'キー設定済み（未テスト）' : 'API キーが未設定');
     toast('設定を保存しました', 'success');
   });
 
   testBtn.addEventListener('click', async () => {
     captureForm();
     persist();
-    if (!state.claude.apiKey) {
+    const cfg = getActiveProviderConfig();
+    const provider = getActiveProvider();
+    if (!cfg.apiKey) {
       updateClaudeStatus('error', 'API キーが未設定');
       toast('API キーを入力してください', 'error');
       return;
@@ -593,13 +901,13 @@ function bindClaudeUI() {
     updateClaudeStatus('loading', '接続テスト中…');
     testBtn.disabled = true;
     try {
-      const { text } = await claudeStream({
-        apiKey: state.claude.apiKey,
-        model: state.claude.model,
+      const { text } = await provider.sendStream({
+        apiKey: cfg.apiKey,
+        model: cfg.model,
         maxTokens: 64,
         messages: [{ role: 'user', content: 'こんにちは。短く 1 文で挨拶してください。' }],
       });
-      updateClaudeStatus('ok', `接続成功（${state.claude.model}）`);
+      updateClaudeStatus('ok', `接続成功（${cfg.model}）`);
       toast(`接続OK: ${text.slice(0, 60)}`, 'success', 4000);
     } catch (err) {
       updateClaudeStatus('error', err.message || '接続失敗');
@@ -610,9 +918,10 @@ function bindClaudeUI() {
   });
 
   clearKeyBtn.addEventListener('click', async () => {
-    const ok = await confirmDialog('保存されている API キーを削除しますか？');
+    const ok = await confirmDialog('保存されている API キーを削除しますか？（このプロバイダのみ）');
     if (!ok) return;
-    state.claude.apiKey = '';
+    const cfg = getActiveProviderConfig();
+    cfg.apiKey = '';
     apiKeyInput.value = '';
     persist();
     updateClaudeStatus('unknown', 'API キーが未設定');
@@ -642,7 +951,9 @@ function bindClaudeUI() {
     captureForm();
     const text = chatInput.value.trim();
     if (!text) return;
-    if (!state.claude.apiKey) {
+    const cfg = getActiveProviderConfig();
+    const provider = getActiveProvider();
+    if (!cfg.apiKey) {
       toast('先に API キーを設定してください', 'error');
       return;
     }
@@ -650,7 +961,6 @@ function bindClaudeUI() {
     const session = getActiveSession();
     session.history.push({ role: 'user', content: text });
     session.updatedAt = Date.now();
-    // Auto-title from first user message if user hasn't renamed yet
     if (session.autoTitle) {
       session.title = deriveTitleFromHistory(session.history);
     }
@@ -670,11 +980,11 @@ function bindClaudeUI() {
     updateClaudeStatus('loading', '応答生成中…');
 
     try {
-      const { usage } = await claudeStream({
-        apiKey: state.claude.apiKey,
-        model: state.claude.model,
-        maxTokens: state.claude.maxTokens,
-        system: state.claude.systemPrompt,
+      const { usage } = await provider.sendStream({
+        apiKey: cfg.apiKey,
+        model: cfg.model,
+        maxTokens: cfg.maxTokens,
+        system: state.chat.systemPrompt,
         messages: session.history.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
         signal: abortCtrl.signal,
         onText: (delta) => {
@@ -689,7 +999,7 @@ function bindClaudeUI() {
       });
       session.updatedAt = Date.now();
       persist();
-      updateClaudeStatus('ok', `完了（${state.claude.model}）`);
+      updateClaudeStatus('ok', `完了（${cfg.model}）`);
       if (usage) {
         document.getElementById('usageInfo').textContent =
           `入力: ${usage.input_tokens ?? '-'} / 出力: ${usage.output_tokens ?? '-'} トークン`;
@@ -765,8 +1075,8 @@ function bindClaudeUI() {
 
 function createSessionAndSwitch() {
   const s = makeSession();
-  state.claude.sessions.push(s);
-  state.claude.activeSessionId = s.id;
+  state.chat.sessions.push(s);
+  state.chat.activeSessionId = s.id;
   persist();
   renderSessionTabs();
   renderChat();
@@ -775,20 +1085,20 @@ function createSessionAndSwitch() {
 }
 
 async function deleteSession(id) {
-  const idx = state.claude.sessions.findIndex(x => x.id === id);
+  const idx = state.chat.sessions.findIndex(x => x.id === id);
   if (idx < 0) return;
-  const s = state.claude.sessions[idx];
+  const s = state.chat.sessions[idx];
   if (s.history.length) {
     const ok = await confirmDialog(`「${s.title}」を削除しますか？（メッセージも消えます）`);
     if (!ok) return;
   }
-  state.claude.sessions.splice(idx, 1);
-  if (!state.claude.sessions.length) {
+  state.chat.sessions.splice(idx, 1);
+  if (!state.chat.sessions.length) {
     const fresh = makeSession();
-    state.claude.sessions.push(fresh);
-    state.claude.activeSessionId = fresh.id;
-  } else if (state.claude.activeSessionId === id) {
-    state.claude.activeSessionId = state.claude.sessions[Math.max(0, idx - 1)].id;
+    state.chat.sessions.push(fresh);
+    state.chat.activeSessionId = fresh.id;
+  } else if (state.chat.activeSessionId === id) {
+    state.chat.activeSessionId = state.chat.sessions[Math.max(0, idx - 1)].id;
   }
   persist();
   renderSessionTabs();
@@ -796,8 +1106,8 @@ async function deleteSession(id) {
 }
 
 function switchSession(id) {
-  if (state.claude.activeSessionId === id) return;
-  state.claude.activeSessionId = id;
+  if (state.chat.activeSessionId === id) return;
+  state.chat.activeSessionId = id;
   persist();
   renderSessionTabs();
   renderChat();
@@ -805,7 +1115,7 @@ function switchSession(id) {
 }
 
 function renameSession(id, newTitle) {
-  const s = state.claude.sessions.find(x => x.id === id);
+  const s = state.chat.sessions.find(x => x.id === id);
   if (!s) return;
   const t = newTitle.trim().slice(0, 60);
   s.title = t || '新しい会話';
@@ -821,11 +1131,11 @@ function renderSessionTabs() {
   // Keep the new-session button, replace tabs
   const newBtn = document.getElementById('newSessionBtn');
   wrap.innerHTML = '';
-  for (const s of state.claude.sessions) {
+  for (const s of state.chat.sessions) {
     const tab = document.createElement('div');
-    tab.className = 'session-tab' + (s.id === state.claude.activeSessionId ? ' active' : '');
+    tab.className = 'session-tab' + (s.id === state.chat.activeSessionId ? ' active' : '');
     tab.setAttribute('role', 'tab');
-    tab.setAttribute('aria-selected', s.id === state.claude.activeSessionId ? 'true' : 'false');
+    tab.setAttribute('aria-selected', s.id === state.chat.activeSessionId ? 'true' : 'false');
     tab.tabIndex = 0;
 
     const title = document.createElement('span');

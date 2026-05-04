@@ -78,15 +78,15 @@
         <ul class="card-grid" id="integrationsGrid"></ul>
       </section>
 
-      <!-- Section: Claude integration -->
+      <!-- Section: AI integration (Claude / Gemini, switchable) -->
       <section class="route" data-route="integration-claude" hidden aria-labelledby="claudeTitle">
         <header class="route-header">
           <div>
             <h1 id="claudeTitle">
               <span class="badge">連携</span>
-              Claude AI
+              AI チャット
             </h1>
-            <p class="lead">Anthropic 社の Claude API と直接通信します。API キーはこの端末内（ブラウザ）にだけ保存されます。</p>
+            <p class="lead">Claude / Gemini など複数の AI と直接通信します。API キーはこの端末内（ブラウザ）にだけ保存されます。プロバイダを切り替えても会話履歴は引き継がれます。</p>
           </div>
           <div class="route-status">
             <span class="status-dot" id="claudeStatusDot" data-state="unknown"></span>
@@ -98,14 +98,23 @@
         <details class="card config-card" id="claudeConfig" open>
           <summary><strong>接続設定</strong> <span class="muted">(クリックで開閉)</span></summary>
           <div class="config-body">
+
+            <div class="form-row">
+              <label>連携するサービス</label>
+              <div class="seg" role="radiogroup" aria-label="プロバイダ" id="providerPicker">
+                <!-- rendered by JS based on PROVIDERS registry -->
+              </div>
+              <p class="hint" id="providerNote"></p>
+            </div>
+
             <div class="form-row">
               <label for="apiKeyInput">
                 API キー
-                <small>Anthropic Console で発行された <code>sk-ant-…</code> 形式のキー</small>
+                <small id="apiKeyHelp"></small>
               </label>
               <div class="input-group">
                 <input type="password" id="apiKeyInput" class="input" autocomplete="off"
-                  placeholder="sk-ant-api03-..." spellcheck="false" />
+                  placeholder="" spellcheck="false" />
                 <button class="btn" id="toggleKeyBtn" type="button" aria-label="キー表示切替">表示</button>
               </div>
               <p class="hint">
@@ -119,12 +128,10 @@
 
             <div class="form-row form-row-2">
               <div>
-                <label for="modelSelect">モデル</label>
-                <select id="modelSelect" class="input">
-                  <option value="claude-opus-4-7">Claude Opus 4.7（最高性能・推奨）</option>
-                  <option value="claude-sonnet-4-6">Claude Sonnet 4.6（バランス型）</option>
-                  <option value="claude-haiku-4-5">Claude Haiku 4.5（高速・低コスト）</option>
-                </select>
+                <label for="modelInput">モデル</label>
+                <input type="text" id="modelInput" class="input" list="modelSuggestions"
+                  spellcheck="false" autocomplete="off" />
+                <datalist id="modelSuggestions"></datalist>
               </div>
               <div>
                 <label for="maxTokensInput">最大出力トークン</label>
