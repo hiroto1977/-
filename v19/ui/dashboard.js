@@ -9,8 +9,7 @@ const DEFAULT_DATA = {
   settings: { theme: 'light' },
   chat: {
     activeProviderId: 'ollama',
-    systemPrompt: '',
-    sessions: [], // [{id, title, autoTitle, createdAt, updatedAt, history:[{role,content,error?}]}]
+    sessions: [], // [{id, title, autoTitle, presetId, systemPrompt, createdAt, updatedAt, history}]
     activeSessionId: null,
   },
   providers: {
@@ -30,9 +29,6 @@ const Storage = {
 
       // Migration from legacy state.claude.* → state.chat + state.providers.anthropic
       if (parsed.claude) {
-        if (!merged.chat.systemPrompt && parsed.claude.systemPrompt) {
-          merged.chat.systemPrompt = parsed.claude.systemPrompt;
-        }
         if (Array.isArray(parsed.claude.sessions) && parsed.claude.sessions.length
             && (!merged.chat.sessions || !merged.chat.sessions.length)) {
           merged.chat.sessions = parsed.claude.sessions;
@@ -55,7 +51,24 @@ const Storage = {
           })];
           merged.chat.activeSessionId = merged.chat.sessions[0].id;
         }
+        // Hoist legacy global system prompt into the first session (if it has none)
+        if (parsed.claude.systemPrompt
+            && merged.chat.sessions[0]
+            && !merged.chat.sessions[0].systemPrompt) {
+          merged.chat.sessions[0].systemPrompt = parsed.claude.systemPrompt;
+        }
         delete merged.claude;
+      }
+      // Hoist legacy global state.chat.systemPrompt (from the previous schema iteration)
+      if (parsed.chat?.systemPrompt && merged.chat.sessions[0]
+          && !merged.chat.sessions[0].systemPrompt) {
+        merged.chat.sessions[0].systemPrompt = parsed.chat.systemPrompt;
+      }
+      delete merged.chat.systemPrompt;
+      // Backfill missing per-session fields for older sessions
+      for (const s of (merged.chat.sessions || [])) {
+        if (!('systemPrompt' in s)) s.systemPrompt = '';
+        if (!('presetId' in s)) s.presetId = null;
       }
       return merged;
     } catch (e) {
@@ -75,7 +88,8 @@ const Storage = {
   reset() { localStorage.removeItem(STORAGE_KEY); },
 };
 
-function makeSession({ id, title, autoTitle = true, history = [] } = {}) {
+function makeSession({ id, title, autoTitle = true, history = [],
+                       presetId = null, systemPrompt = '' } = {}) {
   const now = Date.now();
   return {
     id: id || ('sess_' + now.toString(36) + Math.random().toString(36).slice(2, 6)),
@@ -84,7 +98,16 @@ function makeSession({ id, title, autoTitle = true, history = [] } = {}) {
     createdAt: now,
     updatedAt: now,
     history,
+    presetId,    // ID of an active built-in preset, or null
+    systemPrompt, // free-form (overrides preset if both set; preset application copies into here)
   };
+}
+
+function getSessionSystemPrompt(s) {
+  // Free-form text takes precedence; if empty fall back to preset's prompt
+  if (s.systemPrompt && s.systemPrompt.trim()) return s.systemPrompt;
+  const preset = getPresetById(s.presetId);
+  return preset ? preset.systemPrompt : '';
 }
 function deriveTitleFromHistory(history) {
   const first = history.find(m => m.role === 'user');
@@ -168,6 +191,107 @@ function confirmDialog(message, title = '確認') {
 }
 
 // ---------- Integrations registry ----------
+// ---------- Prompt presets (built-in) ----------
+const BUILTIN_PRESETS = [
+  {
+    id: 'translate',
+    icon: '🌐',
+    label: '翻訳',
+    desc: '日本語 ⇔ 英語の双方向翻訳',
+    systemPrompt:
+      'あなたはプロの翻訳者です。ユーザーが入力した文章を、日本語であれば自然な英語に、' +
+      'それ以外の言語であれば自然な日本語に翻訳してください。\n' +
+      '- 原文の意味と語調を忠実に保つ\n' +
+      '- 必要に応じて短い注釈を [] で添える\n' +
+      '- 翻訳結果のみを返し、前置きは書かない',
+  },
+  {
+    id: 'summarize',
+    icon: '📝',
+    label: '要約',
+    desc: '長文を 3〜5 行で要約',
+    systemPrompt:
+      'ユーザーが提示した文章を、日本語で 3〜5 行に要約してください。\n' +
+      '- 結論 → 根拠 → 補足 の順に箇条書き\n' +
+      '- 固有名詞・数値はそのまま残す\n' +
+      '- 解説や前置きは書かず、要約のみを返す',
+  },
+  {
+    id: 'proofread',
+    icon: '✏️',
+    label: '校正',
+    desc: '日本語の誤字・脱字・表現の改善案',
+    systemPrompt:
+      'ユーザーが提示した日本語の文章を校正してください。\n' +
+      '- 誤字脱字、不自然な表現、文法ミスを指摘\n' +
+      '- 修正前 → 修正後 の対比で示す\n' +
+      '- 全体としての改善版を最後にまとめて提示\n' +
+      '- 大幅な書き換えはせず、原文の意図を尊重する',
+  },
+  {
+    id: 'code-review',
+    icon: '🔍',
+    label: 'コードレビュー',
+    desc: 'バグ・改善点・代替案を指摘',
+    systemPrompt:
+      'あなたはシニアソフトウェアエンジニアです。提示されたコードを以下の観点でレビューしてください。\n' +
+      '1. 明らかなバグや潜在的な不具合\n' +
+      '2. パフォーマンス・セキュリティ上の懸念\n' +
+      '3. 可読性・保守性の改善案\n' +
+      '4. より慣用的な書き方\n' +
+      '見つかった問題ごとに「重要度 (高/中/低)」と修正例を示してください。',
+  },
+  {
+    id: 'code-explain',
+    icon: '🧪',
+    label: 'コード解説',
+    desc: 'プログラムを段階的に解説',
+    systemPrompt:
+      '提示されたコードを、初学者にもわかるよう日本語で解説してください。\n' +
+      '- 概要 → 主要な処理の流れ → 重要な行の意味 の順で説明\n' +
+      '- 専門用語は初出時に短く補足する\n' +
+      '- 必要に応じて簡単な実行例を示す',
+  },
+  {
+    id: 'biz-mail',
+    icon: '📧',
+    label: 'ビジネスメール',
+    desc: '丁寧なメール文面を生成',
+    systemPrompt:
+      'ユーザーの依頼に基づいて、日本語のビジネスメール文面を作成してください。\n' +
+      '- 件名・宛名・本文・締めの構成\n' +
+      '- 敬語は適切に、過剰にはしない\n' +
+      '- 1〜2 段落で簡潔に\n' +
+      '- 不明な情報は [ ] で穴埋め指示として残す',
+  },
+  {
+    id: 'brainstorm',
+    icon: '🎯',
+    label: 'ブレスト',
+    desc: 'テーマからアイデアを多面的に展開',
+    systemPrompt:
+      'ユーザーが提示したテーマや課題に対し、創造的なアイデアを 7〜10 個出してください。\n' +
+      '- 視点の異なる切り口を意識する (実用 / 革新 / 安価 / 他業界の応用 など)\n' +
+      '- 各案は 1〜2 行で簡潔に\n' +
+      '- 最後に「特に有望な 3 つ」とその理由を示す',
+  },
+  {
+    id: 'minutes',
+    icon: '📊',
+    label: '議事録整形',
+    desc: '雑記から構造化した議事録に',
+    systemPrompt:
+      'ユーザーが提示する会議の生メモやチャットログから、構造化された議事録を作成してください。\n' +
+      '構成: 日時/参加者(推定) → 主要トピック → 決定事項 → ToDo (担当・期限) → 次回宿題\n' +
+      '- 元メモにない情報は推測せず「(記載なし)」と書く\n' +
+      '- ToDo は箇条書きで「[担当] 内容 (期限)」形式',
+  },
+];
+
+function getPresetById(id) {
+  return BUILTIN_PRESETS.find(p => p.id === id) || null;
+}
+
 const INTEGRATIONS = [
   {
     id: 'claude',
@@ -766,11 +890,66 @@ let abortCtrl = null;
 function initClaudeUI() {
   renderProviderPicker();
   applyProviderToForm();
-  document.getElementById('systemPromptInput').value = state.chat.systemPrompt || '';
+  applySessionToForm();
   const cfg = getActiveProviderConfig();
   document.getElementById('rememberKey').checked = cfg.rememberKey !== false;
   updateClaudeStatus('unknown', cfg.apiKey ? 'キー設定済み（未テスト）' : 'API キーが未設定');
+  renderPresets();
   renderChat();
+}
+
+// Sync the system-prompt textarea with the active session
+function applySessionToForm() {
+  const session = getActiveSession();
+  const ta = document.getElementById('systemPromptInput');
+  if (ta) ta.value = getSessionSystemPrompt(session);
+}
+
+function renderPresets() {
+  const bar = document.getElementById('presetBar');
+  if (!bar) return;
+  // Keep the leading label, replace the chips
+  bar.innerHTML = '<span class="preset-label">モード:</span>';
+  const session = getActiveSession();
+
+  // Default / clear chip
+  const clearChip = document.createElement('button');
+  clearChip.type = 'button';
+  clearChip.className = 'preset-chip preset-chip-clear' + (!session.presetId ? ' active' : '');
+  clearChip.textContent = '✕ なし';
+  clearChip.title = 'プリセット未適用 (システムプロンプトを自由記述に戻す)';
+  clearChip.addEventListener('click', () => applyPreset(null));
+  bar.appendChild(clearChip);
+
+  for (const p of BUILTIN_PRESETS) {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'preset-chip' + (session.presetId === p.id ? ' active' : '');
+    chip.textContent = `${p.icon} ${p.label}`;
+    chip.title = `${p.label} — ${p.desc}\nクリックで適用 / 再クリックで解除`;
+    chip.setAttribute('aria-pressed', session.presetId === p.id ? 'true' : 'false');
+    chip.addEventListener('click', () => applyPreset(session.presetId === p.id ? null : p.id));
+    bar.appendChild(chip);
+  }
+}
+
+// Apply a preset (or clear it) to the active session
+function applyPreset(presetId) {
+  const session = getActiveSession();
+  const preset = getPresetById(presetId);
+  session.presetId = preset ? preset.id : null;
+  // Copy preset's prompt into systemPrompt so the user can tweak it from the textarea.
+  session.systemPrompt = preset ? preset.systemPrompt : '';
+  session.updatedAt = Date.now();
+  persist();
+  applySessionToForm();
+  renderPresets();
+  if (preset) {
+    toast(`「${preset.label}」モードを適用しました`, 'success');
+    document.getElementById('chatInput')?.focus();
+  } else {
+    toast('プリセットを解除しました', 'success');
+  }
 }
 
 function updateClaudeStatus(stateName, text) {
@@ -877,8 +1056,30 @@ function bindClaudeUI() {
     cfg.model = modelInput.value.trim() || getActiveProvider().defaultModel;
     cfg.maxTokens = Math.max(64, Math.min(64000, parseInt(maxTokensInput.value, 10) || 4096));
     cfg.rememberKey = rememberKey.checked;
-    state.chat.systemPrompt = systemPromptInput.value;
+    // System prompt is now per-session
+    const session = getActiveSession();
+    const newPrompt = systemPromptInput.value;
+    if (newPrompt !== session.systemPrompt) {
+      session.systemPrompt = newPrompt;
+      // Manual edit: if it diverges from the active preset's prompt, clear preset link
+      const activePreset = getPresetById(session.presetId);
+      if (activePreset && newPrompt.trim() !== activePreset.systemPrompt.trim()) {
+        session.presetId = null;
+        renderPresets();
+      }
+      session.updatedAt = Date.now();
+    }
   }
+
+  // Clear preset binding the moment user starts typing in the system-prompt textarea
+  systemPromptInput.addEventListener('input', () => {
+    const session = getActiveSession();
+    const activePreset = getPresetById(session.presetId);
+    if (activePreset && systemPromptInput.value.trim() !== activePreset.systemPrompt.trim()) {
+      session.presetId = null;
+      renderPresets();
+    }
+  });
 
   saveBtn.addEventListener('click', () => {
     captureForm();
@@ -984,7 +1185,7 @@ function bindClaudeUI() {
         apiKey: cfg.apiKey,
         model: cfg.model,
         maxTokens: cfg.maxTokens,
-        system: state.chat.systemPrompt,
+        system: getSessionSystemPrompt(session),
         messages: session.history.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
         signal: abortCtrl.signal,
         onText: (delta) => {
@@ -1032,7 +1233,7 @@ function bindClaudeUI() {
   clearChatBtn.addEventListener('click', async () => {
     const session = getActiveSession();
     if (!session.history.length) return;
-    const ok = await confirmDialog('この会話のメッセージをすべて削除しますか？（タブ自体は残ります）');
+    const ok = await confirmDialog('この会話のメッセージをすべて削除しますか？（タブとモードは残ります）');
     if (!ok) return;
     session.history = [];
     session.autoTitle = true;
@@ -1079,6 +1280,8 @@ function createSessionAndSwitch() {
   state.chat.activeSessionId = s.id;
   persist();
   renderSessionTabs();
+  renderPresets();
+  applySessionToForm();
   renderChat();
   document.getElementById('usageInfo').textContent = 'トークン: -';
   document.getElementById('chatInput')?.focus();
@@ -1110,6 +1313,8 @@ function switchSession(id) {
   state.chat.activeSessionId = id;
   persist();
   renderSessionTabs();
+  renderPresets();
+  applySessionToForm();
   renderChat();
   document.getElementById('usageInfo').textContent = 'トークン: -';
 }

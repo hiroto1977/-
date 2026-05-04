@@ -474,6 +474,44 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 }
 .session-new:hover { color: var(--c-primary); border-color: var(--c-primary); background: var(--c-surface-2); }
 
+/* Preset chips */
+.preset-bar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--c-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  background: var(--c-bg);
+}
+.preset-label {
+  font-size: .8rem; color: var(--c-text-muted);
+  font-weight: 600; flex-shrink: 0;
+  margin-right: 2px;
+}
+.preset-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: .85rem; font-weight: 500;
+  color: var(--c-text);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--transition), border-color var(--transition);
+}
+.preset-chip:hover { border-color: var(--c-primary); background: var(--c-surface-2); }
+.preset-chip.active {
+  background: var(--c-primary); color: var(--c-primary-text);
+  border-color: var(--c-primary);
+}
+.preset-chip-clear {
+  background: transparent; border: 1px dashed var(--c-border);
+  color: var(--c-text-muted);
+}
+.preset-chip-clear:hover { border-color: var(--c-danger); color: var(--c-danger); background: transparent; }
+
 .chat-log {
   padding: var(--sp-4) var(--sp-5);
   display: flex; flex-direction: column; gap: var(--sp-3);
