@@ -44,6 +44,17 @@ run_bash_unit() {
   return $rc
 }
 
+run_integration() {
+  local rc=0
+  shopt -s nullglob
+  for f in "$SCRIPT_DIR"/integration/*.sh; do
+    [[ -f "$f" ]] || continue
+    if ! bash "$f"; then rc=1; fi
+  done
+  shopt -u nullglob
+  return $rc
+}
+
 run_js_tests() {
   if ! command -v node >/dev/null 2>&1; then
     echo -e "${C_DIM}node 未インストール → JS テストはスキップ${C_RST}"
@@ -73,13 +84,15 @@ case "$target" in
   unit) run_suite "Bash Unit" run_bash_unit ;;
   js)   run_suite "JS Unit"   run_js_tests ;;
   ps)   run_suite "PS 構造"   run_ps_tests ;;
+  integration) run_suite "Integration" run_integration ;;
   all)
     run_suite "Bash Unit" run_bash_unit
     run_suite "JS Unit"   run_js_tests
     run_suite "PS 構造"   run_ps_tests
+    run_suite "Integration" run_integration
     ;;
   *)
-    echo "未知のターゲット: $target  (使えるのは all|unit|js|ps)"
+    echo "未知のターゲット: $target  (使えるのは all|unit|js|ps|integration)"
     exit 2
     ;;
 esac
