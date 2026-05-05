@@ -19,6 +19,12 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR_AUDIT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR_AUDIT/lib/audit.sh" ]] && source "$SCRIPT_DIR_AUDIT/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "storage_orchestrator.start" "args=$*"
+
 DRY_ALL=0
 AUTO_CLEANUP=0
 JSON_REPORT=0

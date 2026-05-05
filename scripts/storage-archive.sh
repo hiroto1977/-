@@ -16,6 +16,12 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "storage_archive.start" "args=$*"
+
 CONF="${HOME}/.config/storage-archive.conf"
 DRY=1
 TARGET_CLASS=""
@@ -184,11 +190,13 @@ while IFS='|' read -r path class remote; do
     echo -e "    ${C_OK}実行中…${C_RST}"
     if rclone copy "$path" "$remote" --progress --transfers 4 --checkers 8; then
       echo -e "    ${C_OK}✅ アップロード完了${C_RST}"
+      audit_log "storage_archive.copy" "class=$class src=$path remote=$remote bytes=$size"
       # ローカル コピーは削除しない (3-2-1 の原則: アーカイブは追加)
       # 削除する場合は別途人間判断で。
       processed=$((processed + 1))
     else
       echo -e "    ${C_E}❌ rclone 失敗${C_RST}"
+      audit_log "storage_archive.failed" "class=$class src=$path remote=$remote"
     fi
   fi
   echo ""

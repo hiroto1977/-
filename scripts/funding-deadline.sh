@@ -21,6 +21,12 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "funding_deadline.start" "args=$*"
+
 CSV="${HOME}/.funding-deadlines.csv"
 WARN_DAYS=30
 
@@ -135,6 +141,8 @@ echo ""
 echo "============================================================"
 echo -e " 件数: 期限超過 ${#PAST[@]} / 急ぎ ${#URGENT[@]} / 注意 ${#WARN[@]} / 余裕 ${#NORMAL[@]}"
 echo "============================================================"
+
+audit_log "funding_deadline.summary" "past=${#PAST[@]} urgent=${#URGENT[@]} warn=${#WARN[@]} normal=${#NORMAL[@]}"
 
 # 異常 (期限超過 or 急ぎ) があれば exit 1 で cron アラート連動可
 if [[ ${#PAST[@]} -gt 0 || ${#URGENT[@]} -gt 0 ]]; then

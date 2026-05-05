@@ -6,6 +6,12 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "preflight.start" ""
+
 # Colors (TTY のみ)
 if [[ -t 1 ]]; then
   C_OK="\033[1;32m"; C_NG="\033[1;31m"; C_WARN="\033[1;33m"; C_RST="\033[0m"
@@ -127,6 +133,8 @@ echo ""
 echo "==============================="
 echo "  PASS: $PASS  /  WARN: $WARN  /  FAIL: $FAIL"
 echo "==============================="
+
+audit_log "preflight.summary" "pass=$PASS warn=$WARN fail=$FAIL"
 
 if [[ "$FAIL" -gt 0 ]]; then
   echo ""

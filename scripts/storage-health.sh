@@ -12,6 +12,11 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+
 VERBOSE=0
 JSON=0
 TARGET="${HOME}"
@@ -303,6 +308,8 @@ else
   echo -e " ${C_BAD}❌ 改善必要。governance/10_STORAGE_HYGIENE.md §5-§6 を参照${C_RST}"
   echo "    bash scripts/storage-cleanup.sh"
 fi
+
+audit_log "storage_health" "issues=$score disk_free=${DISK_FREE_PCT}% mem_gb=${MEM_GB} swap=${SWAP_PCT}%"
 
 # 警告 4 件以上 で exit 1 (cron アラート連動)
 if [[ "$score" -gt 3 ]]; then exit 1; fi

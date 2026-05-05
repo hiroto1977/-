@@ -24,10 +24,17 @@
 set -u
 LANG=ja_JP.UTF-8
 
+# Audit logging
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
+type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "pii_scan.start" "args=$*"
+
 if [[ $# -lt 1 ]]; then
   echo "用法: $0 <パス1> [パス2] ..." >&2
   echo "      $0 --staged" >&2
   echo "      $0 --diff" >&2
+  audit_log "pii_scan.usage" "missing args"
   exit 2
 fi
 
@@ -96,17 +103,20 @@ declare -A PATTERNS=(
   ["日本の携帯電話"]="(^|[^0-9])0[789]0-[0-9]{4}-[0-9]{4}([^0-9]|$)"
   ["銀行口座 (7 桁)"]="(口座|普通|当座)[^0-9]{0,5}[0-9]{7}([^0-9]|$)"
   ["パスポート番号風"]="(^|[^A-Z0-9])[A-Z]{2}[0-9]{7}([^A-Z0-9]|$)"
+  ["健康保険証 番号 / 記号"]="(保険者番号|健康保険|被保険者証)[^0-9]{0,10}[0-9]{6,8}"
   ["API キー: sk-... (Anthropic/OpenAI)"]="sk-(ant-)?[A-Za-z0-9_-]{20,}"
   ["API キー: AIza... (Google)"]="AIza[0-9A-Za-z_-]{35}"
   ["API キー: ghp_... (GitHub PAT)"]="gh[pousr]_[A-Za-z0-9]{36,}"
   ["API キー: xoxb-... (Slack)"]="xox[baprs]-[A-Za-z0-9-]{10,}"
   ["JWT トークン"]="eyJ[A-Za-z0-9_-]{10,}\\.eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}"
   ["AWS Access Key ID"]="(AKIA|ASIA)[0-9A-Z]{16}"
+  ["GCP Service Account JSON"]="\"type\"[[:space:]]*:[[:space:]]*\"service_account\""
+  ["JKS keystore 設定"]="(keystoreType[[:space:]]*=[[:space:]]*JKS|keyStorePassword[[:space:]]*=|key[Ss]tore\\.path)"
   ["秘密鍵 BEGIN ブロック"]="-----BEGIN [A-Z ]*PRIVATE KEY-----"
 )
 
 # ホワイトリスト (誤検知パターン)
-WHITELIST_REGEX='\.lock$|\.min\.js$|node_modules|\.git/|テスト[ _]太郎|0X0-XXXX-XXXX|\[氏名|example\.com|test@'
+WHITELIST_REGEX='\.lock$|\.min\.js$|node_modules|\.git/|テスト[ _]太郎|0X0-XXXX-XXXX|\[氏名|example\.com|test@|0{32,}'
 
 scan_file() {
   local f="$1"
@@ -152,6 +162,7 @@ done
 echo ""
 if [[ "$HIT" -eq 0 ]]; then
   echo "✅ PII らしきパターンの検出なし"
+  audit_log "pii_scan.clean" "files=${#TARGETS[@]}"
   exit 0
 else
   echo "❌ ${HIT} 件の疑わしいパターンを検出"
@@ -160,5 +171,6 @@ else
   echo "  - 検出値が本物の機密なら削除またはマスキング"
   echo "  - テスト用ダミーで誤検知なら governance/05_TEMPLATES.md の命名規則に置換"
   echo "  - ホワイトリストに追加すべきなら scripts/pii-scan.sh の WHITELIST_REGEX を更新"
+  audit_log "pii_scan.hits" "files=${#TARGETS[@]} hits=$HIT"
   exit 1
 fi

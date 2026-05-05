@@ -204,6 +204,7 @@ CLI の機能: マルチターン履歴、`/model` でモデル切替、`/system
 | [`governance/08_ATTACK_CATALOG.md`](governance/08_ATTACK_CATALOG.md) | **30+ 攻撃シナリオ** (MITRE ATT&CK 紐付・各シナリオに既存対策と補強提案) |
 | [`governance/09_INCIDENT_PLAYBOOK.md`](governance/09_INCIDENT_PLAYBOOK.md) | **8 シナリオ IR プレイブック** (検知→60秒対応→評価→封じ込め→復旧→学び) |
 | [`governance/10_STORAGE_HYGIENE.md`](governance/10_STORAGE_HYGIENE.md) | **ストレージ衛生** — クラス別保存先 + ライフサイクル 5 段階 + 日次/週次/月次ルーティン |
+| [`governance/11_PLATFORM_NOTES.md`](governance/11_PLATFORM_NOTES.md) | **プラットフォーム別手順** (BitLocker/FileVault/LUKS、Scheduled Task/launchd/systemd) |
 
 ⚠️ **法的免責**: 本ドキュメント群は一般的整理であり、解釈・適用は必ず有資格専門家へ。
 
@@ -219,7 +220,13 @@ bash scripts/storage-health.sh                     # ストレージ健康診断
 bash scripts/storage-cleanup.sh                    # 安全削除 (--dry-run 既定)
 bash scripts/storage-archive.sh --plan             # クラス別アーカイブ計画 (rclone)
 bash scripts/storage-orchestrator.sh --routine daily   # 日次 / weekly / monthly
+bash scripts/storage-cleanup.sh --apply                # trash-first (~/.local/state/storage-hygiene/trash/ へ退避、30 日後 purge)
+bash scripts/storage-cleanup.sh --restore              # 直近 trash バッチを元の場所に復元
+bash scripts/storage-cleanup.sh --list-trash           # trash の中身一覧
+bash scripts/audit-verify.sh                           # 監査ログ SHA-256 連鎖の改竄検知
 ```
+
+すべてのスクリプトは `~/.claude/audit.jsonl` に実行記録を残し、`audit-verify.sh` で改竄検知できます (詳細: [`scripts/lib/audit.sh`](scripts/lib/audit.sh))。
 
 ## ライセンス
 
