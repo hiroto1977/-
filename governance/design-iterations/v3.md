@@ -1,0 +1,328 @@
+# 12. 統合システム 設計図 (System Design)
+
+> **目的**: 現存する全構成要素 (UI / AI / ストレージ / 監査 / ガバナンス / テスト / OS 別) を一つの設計に統合し、責務・信頼境界・不変条件・失敗モードを明確化する。
+>
+> **読み手**: AI 支援者・運用者・レビュア。
+> **更新方針**: 反復的 (iteration) に書き直す。各反復で `design-iterations/v{N}.md` に履歴。
+> **現バージョン**: **v3**
+
+---
+
+## 0. TL;DR (3 行)
+
+このシステムは「**ローカル ファースト × ガバナンス強制 × クロス OS 監査**」の 3 軸。
+
+1. 既定で外部送信ゼロ (Ollama)。クラウド AI は明示選択時のみ、ローカル専用モード ON で UI 経路を遮断
+2. ルールはドキュメントだけでなく **pre-commit hook / pii-scan / chain-hash audit / trash-first / 月次 audit backup** で実行可能化
+3. テストは **依存ゼロ** で 80+ 件 (bash + node vm + PowerShell 構造)
+
+⚠️ 「物理的に送信不能」では**ない** — DevTools / 直接 fetch / 設定改変での迂回は可能 (詳細 §6.2)。
+
+---
+
+## 1. 階層 モデル (Layer Model)
+
+下から上に積み上がる ([参考: OSI 流] L1=基盤、L7=人間)。
+
+```
+┌─ L7 ───────────────────────────────────────────────────────┐
+│ Governance Docs (governance/ 12 本, funding/, templates/)  │  人間の意思決定
+├─ L6 ───────────────────────────────────────────────────────┤
+│ User Interface                                             │  人間の操作
+│  desktop/ (AI 非依存) | v19/ui/ (AI) | cowork/ (CLI 起動)  │
+├─ L5 ───────────────────────────────────────────────────────┤
+│ AI Provider Abstraction                                    │  ブラウザ → API
+│  Ollama (local) | Anthropic | Google                       │
+│  ローカル専用モードで Anthropic/Google を遮断 (UI レベル)   │
+├─ L4 ───────────────────────────────────────────────────────┤
+│ Operational Scripts                                        │  日次運用
+│  preflight / storage-* / funding-deadline / pii-scan       │
+├─ L3 ───────────────────────────────────────────────────────┤
+│ Safety Enforcement                                         │  節目で強制
+│  pre-commit hook | trash-first | audit backup (月次)       │
+├─ L2 ───────────────────────────────────────────────────────┤
+│ Audit (Cross-OS, Tamper-Evident)                           │  全層が書き込む
+│  lib/audit.sh + win/lib/audit.ps1 → ~/.claude/audit.jsonl  │
+│  audit-verify.sh + v19 #audit ビューア + 月次 .bak.YYYYMM   │
+├─ L1 ───────────────────────────────────────────────────────┤
+│ Test Harness (依存ゼロ)                                    │  全層を検証
+│  tests/{lib,unit,js,ps} + smoke-test.sh                    │
+└────────────────────────────────────────────────────────────┘
+```
+
+**設計原則 (各層共通)**:
+- **静的のみ**: ビルドステップなし。`python3 -m http.server 8000` だけで動く
+- **ローカル ファースト**: 既定で外部送信ゼロ。クラウドは明示的選択のみ
+- **依存最小**: bash / python3 / node があれば動く。npm 不要
+- **冪等**: 同じ操作を 2 回実行しても結果は同じ
+- **trash-first (ユーザーデータ)**: ユーザー データの削除は `~/.local/state/storage-hygiene/trash/<batch-ts>/` を経由
+- **直接 rm 例外** (`--aggressive` 時): rebuild artifacts (`node_modules`, 90 日超ログ) は直接削除可。再生成可能と判断
+- **chain-of-custody**: 全 **ユーザー実行型** script は `audit_log` で開始 (`*.start`) と結果を記録
+
+### 1.1 「ユーザー実行型 script」の定義 (INV-3 で参照)
+
+> **ユーザー実行型** = `scripts/*.sh` のうち、ユーザーまたは cron / Task Scheduler が直接呼ぶもの。
+> `lib/*.sh` などのライブラリ、`hooks/pre-commit` などのフレームワーク呼び出し、`audit-verify.sh` (検証専用 / 循環防止のため例外) は除く。
+
+具体的に求める対象 (8 本): `preflight.sh`, `pii-scan.sh`, `storage-health.sh`, `storage-cleanup.sh`, `storage-archive.sh`, `storage-orchestrator.sh`, `funding-deadline.sh`, `install-hooks.sh`
+
+### 1.2 各層が扱える データ クラス
+`02_DATA_CLASSIFICATION.md` の C0–C4 がどの層を通過できるか:
+
+| 層 | C0 公開 | C1 社内 | C2 取引先 | C3 機密 | C4 法定機微 |
+|----|----|----|----|----|----|
+| L1 テスト | ダミーのみ | — | — | — | — |
+| L2 監査ログ | ✓ メタ情報 (event 名等) | ✓ | ✓ | △ details に PII を入れない | △ 同左 |
+| L3 強制 | — (制御メタのみ) | — | — | — | — |
+| L4 スクリプト | ✓ | ✓ | ✓ | ✓ | ✓ (ローカル端末内・archive は C4 拒否) |
+| L5 AI / Ollama | ✓ | ✓ | ✓ | ✓ | △ ローカルだが法定機微は AI 入力自体が要承認 |
+| L5 AI / Anthropic | ✓ | △ (ベンダー設定確認) | ✗ (`02` 既定) | ✗ | ✗ |
+| L5 AI / Google | ✓ | △ (同上) | ✗ | ✗ | ✗ |
+| L6 UI | ✓ | ✓ | ✓ | ✓ | △ 表示は可、外部送信は L5 で防ぐ |
+| L7 文書 (公開) | ✓ | ✗ | ✗ | ✗ | ✗ |
+| L7 文書 (社内) | ✓ | ✓ | △ 取引先承認後 | ✗ | ✗ |
+
+---
+
+## 2. 信頼境界 (Trust Boundaries)
+
+```
+┌─ ローカル端末 (User-controlled, not "trusted by system") ──┐
+│                                                            │
+│  Browser localStorage  ← user-readable (DevTools 経由)     │
+│  Filesystem ~/                                             │
+│  ~/.claude/audit.jsonl  ← append-only (改竄は検出可、防げない)│
+│  ~/.claude/audit-backups/audit.jsonl.bak.YYYYMM (月次)     │
+│  localhost:11434 (Ollama)  ← ループバック                   │
+│                                                            │
+└─────────────────┬───────────────────────────────┬──────────┘
+                  │ ① クラウド AI                  │ ③ Git push
+                  │ (C0-C2 のみ許可)              │ (PII スキャン後)
+                  ▼                               ▼
+        ┌──────────────────┐          ┌──────────────────┐
+        │ api.anthropic.com│          │  GitHub remote    │
+        │ generativelang.. │          │  (private repo)   │
+        │ rclone crypt:    │          │  + secret scan    │
+        └──────────────────┘          └──────────────────┘
+        rclone crypt は **client-side**     gitleaks は未導入
+        暗号化なので、ベンダーの        (CI なし方針との
+        平文閲覧リスクは大幅低減。       折衷で検討中 §10 #4)
+        ただしメタデータ・通信履歴は
+        ベンダー側に残る (mitigates,
+        not eliminates)。
+                  ▲
+                  │ ② 戻り (ストリーム / アーカイブ ファイル)
+                  │
+        (戻りも信頼境界外と想定し、UI は XSS 安全レンダ)
+```
+
+---
+
+## 3. データフロー
+
+### 3.1 ローカル AI 会話 (Ollama)
+```
+User → v19/ui/dashboard.js
+     → POST localhost:11434/api/chat (NDJSON)
+     → ストリーム解析 → DOM 描画
+     → state.chat.sessions[i] (localStorage に永続化)
+```
+監査: ブラウザ側は未対応 (§10 #1)。Ollama 本体のログは `~/.ollama/` に残る。
+
+### 3.2 クラウド AI 会話 (Anthropic, Google)
+```
+User → v19/ui/dashboard.js
+     → reconcileLocalOnly() ガード (settings.localOnly が ON なら強制 ollama)
+     → POST api.anthropic.com or generativelanguage (SSE)
+     → ストリーム解析 → DOM
+     → state.chat.sessions[i]
+```
+401 (キー無効) は dashboard.js:713 で `'API キーが無効です'` を UI トースト。
+
+### 3.3 commit
+```
+User → git commit
+     → .git/hooks/pre-commit (symlink → scripts/hooks/pre-commit)
+     → bash scripts/pii-scan.sh --staged
+        - HIT  → exit 1 (commit ブロック)
+        - clean → 既存 audit.jsonl の verify (警告レベル、ブロックしない)
+     → audit_log "pre_commit.pass" "staged=N"
+     → 通常の commit が継続
+```
+迂回: `git commit --no-verify` で hook を bypass 可 (CLAUDE.md 上は人間承認必須)。
+
+### 3.4 ストレージ運用 (月次)
+```
+cron / 手動 → bash scripts/storage-orchestrator.sh --routine monthly
+           → storage-health.sh (診断)
+           → storage-cleanup.sh --apply --aggressive
+              (trash-first; ただし node_modules / 古ログは直接 rm)
+           → storage-archive.sh --plan (rclone, クラス別、C4 拒否)
+           → audit.jsonl を ~/.claude/audit-backups/audit.jsonl.bak.YYYYMM に保全 (v3 で追加)
+           → audit_rotate (古い audit.jsonl 行を削除、チェーン切断)
+           → 各ステップが audit_log
+```
+
+### 3.5 監査ログ 検証
+- CLI: `bash scripts/audit-verify.sh` (改竄あれば exit 1)
+- UI: `http://127.0.0.1:8000/v19/ui/dashboard.html#audit` (SubtleCrypto で SHA-256 再計算、改竄行ハイライト)
+
+### 3.6 cowork CLI 起動 (ワンショット)
+```
+User → bash cowork/local-cowork.sh
+     → Ollama 起動チェック (なければ start)
+     → python3 -m http.server 8000 (バックグラウンド)
+     → ブラウザ起動 (xdg-open / open)
+     → cowork/local-chat-cli.py を foreground で対話
+     → 終了時にサーバ停止
+```
+ワンステップで Ollama + サーバ + ブラウザ + CLI が揃う。テストは未整備 (§10 #8)。
+
+### 3.7 desktop アプリ (AI 非依存)
+`desktop/` の 6 業務アプリ (タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー) は **AI を一切使わない**。L6 だけで完結し、L2 監査ログにも書かない (機微情報を扱う設計ではないため)。完全オフライン PWA として独立運用される。
+
+---
+
+## 4. 不変条件 (Invariants)
+
+実行時に**必ず**真であるべき条件。違反したら設計バグ。
+
+| ID | 不変条件 | 守る場所 | 検証 |
+|----|---------|---------|-----|
+| **INV-1** | `localOnly=true` のとき UI から Anthropic/Google が選択不能 | `dashboard.js:144-150 isLocalProvider/visibleProviders/reconcileLocalOnly` | `tests/js/test_localonly.mjs` (9 件) |
+| **INV-2** | `audit.jsonl` の各行は `prev_hash` で前行と連鎖。`chain_hash = SHA256(prev_hash + body)` を満たす | `lib/audit.sh:_audit_sha256` `lib/audit.ps1:Get-Sha256Hex` | `tests/unit/test-audit-lib.sh` (4 件) + 監査ビューア (SubtleCrypto) |
+| **INV-3** | §1.1 で定義した「ユーザー実行型 script」(8 本) は全て `audit_log "<name>.start"` を呼ぶ | 各 script 冒頭 | `grep "audit_log.*\.start" scripts/*.sh` で 8/8 確認 |
+| **INV-4** | **ユーザー データ** の削除は `_trash_move` で trash 経由。例外: rebuild artifacts (node_modules, 90 日超ログ) は `--aggressive` 時に直接 rm 可 | `storage-cleanup.sh:181 _trash_move` | `tests/unit/test-storage-cleanup.sh` (5 件) |
+| **INV-5** | C4 データは絶対にクラウド (rclone remote) に送信されない | `storage-archive.sh:154 C4 ガード` | `tests/unit/test-storage-archive.sh: t_c4_class_rejected` |
+| **INV-6** | PII を含む commit は pre-commit hook (インストール済前提) に阻止される | `scripts/hooks/pre-commit` + `pii-scan.sh:--staged` | `tests/unit/test-hooks.sh` (4 件) |
+| **INV-8** | UI の Markdown / HTML レンダは XSS 安全 (`<script>`, `javascript:` link, インライン event 全て無害化) | `dashboard.js: renderMarkdown` | `tests/js/test_md.mjs` (XSS via tag, javascript: link 含む 13 件) |
+| **INV-9** | Anthropic SSE で `usage` の `input_tokens` (`message_start`) と `output_tokens` (`message_delta`) が両方保持される | `dashboard.js:claudeStream usage = {...usage, ...evt.usage}` | `tests/js/test_providers.mjs:103` |
+| **INV-10** | `audit.jsonl` への改竄 (任意の行の本文書き換え) は `audit-verify.sh` で必ず検出される | `audit-verify.sh: 行ごとに hash 再計算` | `tests/unit/test-audit-lib.sh: t_chain_break_on_tamper` |
+
+### 4.1 設計目標 (INV ではない — 自動テストが無い)
+| ID | 目標 | 状態 |
+|----|------|------|
+| **GOAL-7** | bash と PowerShell が書く `audit.jsonl` 行はバイト互換 | 手動確認のみ。自動化は §10 #2 |
+
+(v3 で INV-7 を「設計目標」に降格 — invariants は自動テストで担保すべきという原則に従う)
+
+---
+
+## 5. 失敗モード (Failure Modes)
+
+| 故障 | 影響 | 検出 | 復旧 | カバー状態 |
+|------|------|------|------|----------|
+| Ollama 未起動 | v19 で fetch エラー | `preflight.sh` / 接続テスト ボタン | `OLLAMA_ORIGINS=* ollama serve` | ✅ |
+| `OLLAMA_ORIGINS` 未設定 | ブラウザから 403 | DevTools Console + preflight | systemd / launchd / 環境変数 | ✅ |
+| Anthropic / Google API キー失効 | 401 | UI トースト (`dashboard.js:713`) | UI で再入力 | ✅ |
+| `audit.jsonl` チェーン切断 | verify が exit 1 | `audit-verify.sh` / pre-commit 警告 | 意図的ローテーションなら ok。そうでなければ調査 | ✅ |
+| `audit.jsonl` 削除 / 破損 | 履歴消失 | 月次 backup (`~/.claude/audit-backups/`) との突き合わせ | バックアップ復元 (v3 で実装) | ✅ |
+| バックアップごと削除 | 全履歴消失 | (検出機構なし) | オフライン媒体 / 別端末 への手動コピー — **未対応 (§10 #11)** | ❌ |
+| pre-commit が PII を見落とす | 機密 push | (検出機構なし) | GitHub secret scanning に依存 — gitleaks 検討 (§10 #4) | ⚠️ |
+| storage-cleanup の誤削除 | データ消失感 | trash 一覧 | `--restore` で復旧 | ✅ |
+| storage-archive 中の rclone クラッシュ | 部分転送 | 転送ログ + verify | rclone copy は冪等 → 再実行 | ⚠️ (リジューム手順は §10 #5) |
+| ブラウザ localStorage 満杯 | 新規セッション保存失敗 | UI 警告なし — **未対応 (§10 #6)** | 設定 → 全データ書き出し → 個別削除 | ❌ |
+| Service Worker の旧キャッシュ | 古い UI | バージョンずれ | 設定 → 「アプリを更新」 | ⚠️ (§10 #7) |
+| Vision モデル未取得 | "model does not support images" | UI トースト | `ollama pull llama3.2-vision` | ✅ |
+
+---
+
+## 6. 保証と制約 (Guarantees & Limitations)
+
+### 6.1 保証する (Honest)
+- ✓ **ローカル専用モード ON のとき、UI 経由で Anthropic / Google を選択する経路は存在しない**
+- ✓ pre-commit hook がインストール済なら、PII の commit は (`--no-verify` 以外で) 不可能
+- ✓ trash-first により、**ユーザー データ** が一度の操作で恒久削除されることはない (既定 30 日猶予)
+- ✓ 監査ログ追記改竄は `audit-verify.sh` で必ず検出される
+- ✓ 監査ログは月次バックアップされ、本体ファイル削除でも前月分まで復元可
+- ✓ XSS: `<script>`, `javascript:` link, インライン event は `tests/js/test_md.mjs` で阻止確認
+
+### 6.2 保証しない (Limitations)
+- ✗ **「物理的に送信不能」ではない** — ローカル専用モードは UI レベルの遮断。DevTools コンソール / `localStorage.setItem('settings', ...)` 改変 / 直接 `fetch()` で迂回可能。**情報の機密度が高いほど運用ルール (§02) と物理分離 (オフライン端末) を併用すべき**
+- ✗ rclone crypt は client-side 暗号化でベンダーの**平文閲覧**は防ぐが、**通信メタデータ・転送履歴** はベンダー側に残る (mitigates, not eliminates)
+- ✗ ブラウザのメモリ ダンプ / DevTools 経由の API キー漏洩は防げない (localStorage は OS のセキュリティに依存)
+- ✗ Ollama のモデル ファイル自体の改竄は検出しない (model hash 検証は未実装)
+- ✗ クラウド AI 側のログ保持や学習除外 はベンダー設定 / ポリシーに依存 (`04_VENDOR_REVIEW.md`)
+- ✗ ローカル専用モードは "選択肢を消す" だけで、すでに送信済の API 履歴を消すわけではない
+- ✗ Windows PowerShell スクリプトの実機テストは手動 (Linux サンドボックスでは構造のみチェック)
+- ✗ pre-commit hook は `--no-verify` で迂回可能 (人間承認を CLAUDE.md で要求するが物理強制ではない)
+- ✗ シングルサインオン / RBAC はない (個人 / 小規模事業者向け設計)
+- ✗ rebuild artifacts (`node_modules`, 90 日超ログ) は trash を経由せず直接 `rm` (再生成可能と判断)
+- ✗ 監査ログ全体 (本体 + バックアップ) を同一端末で管理する以上、端末紛失/破損で全消失する可能性 (§10 #11)
+
+---
+
+## 7. エントリ ポイント
+
+| 役割 | 最初に読む | 次に読む | 実行する |
+|-----|----------|---------|---------|
+| 新メンバー | `governance/06_ONBOARDING.md` | `02_DATA_CLASSIFICATION.md` | `bash scripts/preflight.sh` |
+| AI 支援者 | `CLAUDE.md` | この `12_SYSTEM_DESIGN.md` | (作業前) `preflight.sh` |
+| 運用者 (日次) | `governance/03_OPERATIONS.md` | `10_STORAGE_HYGIENE.md` | `storage-orchestrator.sh --routine daily` |
+| 経営者 | `funding/README.md` | `02_DATA_CLASSIFICATION.md` | (適用時) `funding/checklists/` |
+| 士業 | `governance/07_PROFESSIONAL_RULES.md` | `01_LEGAL_FRAMEWORK.md` | (該当節) |
+| インシデント対応 | `governance/09_INCIDENT_PLAYBOOK.md` | `08_ATTACK_CATALOG.md` | (該当 シナリオ) |
+| 監査人 | この設計図 §4 (INV) + GOAL | `audit-verify.sh` | `bash scripts/audit-verify.sh` |
+| レビュア | この設計図 §5–6 | `tests/README.md` | `bash tests/smoke-test.sh` |
+
+---
+
+## 8. 構成要素マップ (File → Purpose)
+
+省略 — v1.md / v2.md と同じ。差分のみ:
+
+### v3 で更新
+- `storage-orchestrator.sh`: 月次に **audit backup** を追加 (rotate の前に `~/.claude/audit-backups/audit.jsonl.bak.YYYYMM`)
+
+---
+
+## 9. 拡張ポイント
+
+新 AI プロバイダの追加 / 新 script / 新ガバナンス文書の追加は v1 と同じ — `design-iterations/v1.md` 参照。
+
+---
+
+## 10. 既知の課題 (Open Issues)
+
+| # | 重要度 | 課題 | 対策案 | 状態 |
+|---|------|------|------|------|
+| 1 | 中 | UI からの操作 (チャット送信等) が `audit.jsonl` に記録されない | `dashboard.js` に `audit_log_browser()` を実装、IndexedDB → file picker で merge | 未着手 |
+| 2 | 高 | bash↔PowerShell の `audit.jsonl` バイト互換が手動検証 | `tests/integration/audit-cross-os.sh` で同入力 → 同 1 行を比較 (PowerShell 不在時はスキップ) | 未着手 |
+| 3 | 高 | `audit.jsonl` のバックアップ戦略 | 月次ルーティンに組込 | **v3 で実装済** |
+| 4 | 中 | PII スキャンの偽陰性に対するセカンドラインがない | `gitleaks` を **オプショナル** で導入 (CI なし方針との折衷: pre-commit でローカル実行) | 未着手 |
+| 5 | 低 | rclone 中断後のリジューム手順未文書化 | `governance/10_STORAGE_HYGIENE.md` に節追加 | 未着手 |
+| 6 | 中 | ブラウザ localStorage 容量警告 UI なし | 設定画面で `(JSON.stringify(state).length / 5MB) * 100%` 表示 + 90% 超で警告 | 未着手 |
+| 7 | 低 | Service Worker のバージョン管理戦略 | SW URL に hash クエリ、または明示的「更新」ボタン | 未着手 |
+| 8 | 低 | `cowork/*` のテストなし | `--help` 出力検証 + Ollama 不在時のフォールバック確認 | 未着手 |
+| 9 | 低 | `storage-orchestrator.sh` のテストなし | dry-all で sub-step が呼ばれるか検証 | 未着手 |
+| 10 | 低 | INV-3 の例外文書化 (audit-verify は audit_log を呼ばない) | 本ドキュメントで明示 | **v2 で対応済** |
+| 11 | 高 | 監査ログ全体 (本体 + .bak) を同一端末管理 → 端末紛失で全消失 | 月次 backup を別媒体 (USB) / 別端末にコピーする運用節を `03_OPERATIONS.md` に追加 | 未着手 |
+
+---
+
+## 11. 反復履歴 (v1 → v3)
+
+### v1 → v2 の変更
+- TL;DR を honest に (「物理的に送信不能」削除)
+- 層番号を反転 (L1=foundation, L7=top)
+- §1.1 各層 × C0–C4 マトリクス追加
+- §2 信頼境界を ASCII 図化 (3 方向境界)
+- INV-3 の例外を明記 (audit-verify)
+- INV-4 の例外を明記 (rebuild artifacts)
+- §5 と §10 の重複解消 (失敗モードに ✅⚠️❌ カバー状態)
+- §6.2 強化 (ローカル専用モードの限界、rebuild artifacts)
+- `storage-health.sh` に `audit_log "storage_health.start"` 追加 (INV-3 違反解消)
+
+### v2 → v3 の変更
+- §1.1 「ユーザー実行型 script」の定義を独立節として明示 (8 本を列挙)
+- §1.2 (旧 §1.1) C0–C4 マトリクスで AI を Ollama / Anthropic / Google で分離
+- §2 信頼境界に rclone crypt の「mitigates not eliminates」を明記
+- §3.6 cowork CLI 起動フローを追加
+- §3.7 desktop の AI 非依存性を明記 (L6 だけで完結)
+- INV-7 を「設計目標 (GOAL-7)」に降格 (自動テスト不在ゆえ INV ではない)
+- §6 保証に「監査ログ月次バックアップ」追加、制約に「同一端末管理ゆえ端末紛失で全消失」追加
+- §10 #11 に同上の課題を追加 (高優先度)
+- **コード**: `storage-orchestrator.sh` の monthly に audit backup 追加 (`~/.claude/audit-backups/audit.jsonl.bak.YYYYMM`)
+
+### v4 (予定)
+解析中で出てくる問題に応じて。次の想定: §10 #2 (cross-OS audit テスト) と §10 #11 (オフライン バックアップ ガイド) の対処。

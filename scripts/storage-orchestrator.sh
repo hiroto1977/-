@@ -93,10 +93,22 @@ case "$ROUTINE" in
     exit 0
     ;;
   monthly)
-    [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_BLD}■ Monthly Routine${C_RST}: health → cleanup --apply --aggressive → archive --plan + audit rotate"
+    [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_BLD}■ Monthly Routine${C_RST}: health → cleanup --apply --aggressive → archive --plan + audit backup + audit rotate"
     AUTO_CLEANUP=1  # cleanup は自動実行
     # archive はインタラクティブのまま (人間判断必須)
-    # 監査ログのローテーション (90 日より古い行を削除、チェーンは故意に切断される)
+
+    # audit.jsonl のバックアップ (ローテーションで失う履歴の保全)
+    AUDIT_LOG_PATH_LOCAL="${AUDIT_LOG_PATH:-${HOME}/.claude/audit.jsonl}"
+    if [[ -f "$AUDIT_LOG_PATH_LOCAL" ]]; then
+      BAK_DIR="${HOME}/.claude/audit-backups"
+      mkdir -p "$BAK_DIR"
+      BAK_FILE="${BAK_DIR}/audit.jsonl.bak.$(date +%Y%m)"
+      cp -p "$AUDIT_LOG_PATH_LOCAL" "$BAK_FILE"
+      audit_log "audit.backup" "dst=$BAK_FILE size=$(wc -c < "$BAK_FILE" 2>/dev/null || echo 0)"
+      [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_DIM}  → audit.jsonl をバックアップ (${BAK_FILE})${C_RST}"
+    fi
+
+    # 監査ログのローテーション (古い行を削除、チェーンは故意に切断される)
     if type audit_rotate >/dev/null 2>&1; then
       audit_log "audit.rotate.start" "retention_days=${AUDIT_LOG_RETENTION_DAYS:-365}"
       audit_rotate "${AUDIT_LOG_RETENTION_DAYS:-365}"

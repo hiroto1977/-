@@ -16,6 +16,7 @@ LANG=ja_JP.UTF-8
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [[ -f "$SCRIPT_DIR/lib/audit.sh" ]] && source "$SCRIPT_DIR/lib/audit.sh"
 type audit_log >/dev/null 2>&1 || audit_log() { :; }
+audit_log "storage_health.start" "args=$*"
 
 VERBOSE=0
 JSON=0
