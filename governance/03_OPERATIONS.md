@@ -4,6 +4,8 @@
 
 ```
 □ scripts/preflight.sh を実行 → 全項目が ✅
+□ scripts/storage-orchestrator.sh --routine daily (健康診断のみ)
+□ scripts/funding-deadline.sh (補助金/融資期限の警告)
 □ Ollama サーバー起動確認 (curl http://localhost:11434/api/tags)
 □ 暗号化ボリュームのマウント確認
 □ ネットワーク (社内 / 公衆 / VPN) を確認
@@ -166,6 +168,22 @@ echo "$(date -Iseconds) [user=$USER] [tool=ollama] [model=llama3.2] [class=C2] [
 - 模擬インシデント対応訓練
 - データ分類クイズ
 - 新規ガイドラインの周知
+
+## H-2. 週次・月次の自動ルーティン (storage-orchestrator)
+
+| 周期 | コマンド | 内容 |
+|---|---|---|
+| **毎日** | `bash scripts/storage-orchestrator.sh --routine daily` | health のみ (1 分以内) |
+| **毎週** | `bash scripts/storage-orchestrator.sh --routine weekly` | health → cleanup --dry-run (5 分) |
+| **毎月** | `bash scripts/storage-orchestrator.sh --routine monthly` | health → cleanup --apply --aggressive → archive --plan (15 分) |
+| **手動** | `bash scripts/storage-orchestrator.sh` | インタラクティブ (各ステップで確認) |
+
+**cron 連携例** (毎週月曜 9:00 に weekly):
+```sh
+0 9 * * 1  cd /path/to/repo && bash scripts/storage-orchestrator.sh --routine weekly --json-report > /tmp/storage-weekly.json
+```
+
+詳細ポリシー: `10_STORAGE_HYGIENE.md`。
 
 ## I. ツール棚卸し (半期に 1 回)
 

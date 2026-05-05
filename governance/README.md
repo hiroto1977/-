@@ -40,10 +40,15 @@
 | [`07_PROFESSIONAL_RULES.md`](07_PROFESSIONAL_RULES.md) | 14 士業別 AI 利用ルール とスキーム | 該当士業者 |
 | [`08_ATTACK_CATALOG.md`](08_ATTACK_CATALOG.md) | 30+ 攻撃シナリオ (MITRE ATT&CK 紐付) | 経営者・管理者 |
 | [`09_INCIDENT_PLAYBOOK.md`](09_INCIDENT_PLAYBOOK.md) | 8 シナリオ × 5 ステップの IR プレイブック | 全員 |
+| [`10_STORAGE_HYGIENE.md`](10_STORAGE_HYGIENE.md) | ストレージ衛生 — クラス別保存先・ライフサイクル・ルーティン | 全員 |
 | [`../CLAUDE.md`](../CLAUDE.md) | AI 支援者（Claude Code 等）が従うルール | AI 自身 |
 | [`../scripts/preflight.sh`](../scripts/preflight.sh) | 業務開始前の自動チェック | 実行可能 |
 | [`../scripts/pii-scan.sh`](../scripts/pii-scan.sh) | ファイルから PII 検出 | 実行可能 |
 | [`../scripts/funding-deadline.sh`](../scripts/funding-deadline.sh) | 補助金/助成金/融資 期限ダッシュボード | 実行可能 |
+| [`../scripts/storage-health.sh`](../scripts/storage-health.sh) | ストレージ健康診断 (空き容量/メモリ/swap/inode/キャッシュ) | 実行可能 |
+| [`../scripts/storage-cleanup.sh`](../scripts/storage-cleanup.sh) | 安全削除 (キャッシュ/一時/古いログ) — `--dry-run` 既定 | 実行可能 |
+| [`../scripts/storage-archive.sh`](../scripts/storage-archive.sh) | rclone でクラス別アーカイブ (暗号化必須クラスは crypt) | 実行可能 |
+| [`../scripts/storage-orchestrator.sh`](../scripts/storage-orchestrator.sh) | health→cleanup→archive のオーケストレータ (daily/weekly/monthly) | 実行可能 |
 
 ## このガバナンスの守備範囲
 
