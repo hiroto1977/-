@@ -403,6 +403,15 @@ const INTEGRATIONS = [
     desc: '複数の AI プロバイダと直接連携してチャット・要約・翻訳・コード生成などができます。',
     route: 'integration-claude',
   },
+  {
+    id: 'audit',
+    name: '監査ログ ビューア',
+    sub: 'audit.jsonl を可視化 + 改竄検知',
+    icon: '🔍',
+    iconClass: 'audit',
+    desc: '~/.claude/audit.jsonl を読み込み、SHA-256 連鎖の整合性検証とイベント可視化を完全クライアントサイドで行います。',
+    route: 'audit',
+  },
 ];
 
 // ---------- Theme ----------
@@ -467,7 +476,7 @@ function renderOverview() {
 }
 
 // ---------- Router ----------
-const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude'];
+const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude', 'audit'];
 function currentRoute() {
   const hash = (location.hash || '#overview').replace(/^#/, '');
   return ROUTES.includes(hash) ? hash : '404';
@@ -1838,6 +1847,266 @@ function scrollChatToBottom() {
 /* =========================================================
    Boot
    ========================================================= */
+/* =========================================================
+   Audit Log Viewer (クライアントサイド・SHA-256 連鎖検証)
+   ========================================================= */
+
+const ZERO_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
+
+// audit.sh の _audit_json_escape と一致させる
+function auditJsonEscape(s) {
+  return String(s ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\t/g, '\\t');
+}
+
+// audit.sh の printf '{"ts":"%s",...,"prev_hash":"%s"' と一致させる
+function reconstructAuditBody(e) {
+  return '{"ts":"' + auditJsonEscape(e.ts) + '","host":"' + auditJsonEscape(e.host) +
+    '","user":"' + auditJsonEscape(e.user) + '","pid":' + e.pid +
+    ',"script":"' + auditJsonEscape(e.script) + '","event":"' + auditJsonEscape(e.event) +
+    '","details":"' + auditJsonEscape(e.details) + '","prev_hash":"' + e.prev_hash + '"';
+}
+
+async function sha256Hex(text) {
+  const buf = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hashBuf))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// 重大度推測 (governance/05 系統と同じ規則)
+function auditEventSeverity(event) {
+  const e = String(event || '').toLowerCase();
+  if (/(blocked|aborted|threat|fail|tamper|alert)/.test(e)) return 'bad';
+  if (/(warn|noteworthy|hits|protected)/.test(e)) return 'warn';
+  return 'info';
+}
+
+let _auditState = {
+  entries: [],
+  filename: '',
+  verifyResult: null,
+};
+
+function bindAuditLoader() {
+  const loader = document.getElementById('auditLoader');
+  const input = document.getElementById('auditFileInput');
+  if (!loader || !input) return;
+
+  input.addEventListener('change', async () => {
+    if (input.files?.[0]) await loadAuditFile(input.files[0]);
+  });
+
+  loader.addEventListener('dragover', e => {
+    if (e.dataTransfer?.types?.includes('Files')) {
+      e.preventDefault();
+      loader.classList.add('dragover');
+    }
+  });
+  loader.addEventListener('dragleave', () => loader.classList.remove('dragover'));
+  loader.addEventListener('drop', async e => {
+    if (e.dataTransfer?.files?.length) {
+      e.preventDefault();
+      loader.classList.remove('dragover');
+      await loadAuditFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  // Filters
+  document.getElementById('auditEventFilter')?.addEventListener('input', renderAuditEvents);
+  document.getElementById('auditScriptFilter')?.addEventListener('input', renderAuditEvents);
+  document.getElementById('auditLimit')?.addEventListener('change', renderAuditEvents);
+}
+
+async function loadAuditFile(file) {
+  try {
+    const text = await file.text();
+    const lines = text.split('\n').filter(l => l.trim());
+    const entries = [];
+    const parseErrors = [];
+    lines.forEach((line, i) => {
+      try {
+        const obj = JSON.parse(line);
+        entries.push(obj);
+      } catch {
+        parseErrors.push({ line: i + 1, content: line.slice(0, 80) });
+      }
+    });
+    _auditState.entries = entries;
+    _auditState.filename = file.name;
+    _auditState.parseErrors = parseErrors;
+    toast(`読み込み完了: ${entries.length} エントリ${parseErrors.length ? ` (パース失敗 ${parseErrors.length} 行)` : ''}`, 'success');
+
+    renderAuditSummary();
+    renderAuditEvents();
+    await verifyAuditChain();
+  } catch (err) {
+    toast(`読み込みエラー: ${err.message}`, 'error', 5000);
+  }
+}
+
+function renderAuditSummary() {
+  const card = document.getElementById('auditSummary');
+  const body = document.getElementById('auditSummaryBody');
+  if (!card || !body) return;
+  card.hidden = false;
+  const entries = _auditState.entries;
+  if (!entries.length) { body.innerHTML = '<p class="muted">エントリ なし</p>'; return; }
+
+  // 集計
+  const tsList = entries.map(e => e.ts).filter(Boolean).sort();
+  const tsFirst = tsList[0] || '-';
+  const tsLast = tsList[tsList.length - 1] || '-';
+  const byScript = {};
+  const byEvent = {};
+  for (const e of entries) {
+    byScript[e.script || '?'] = (byScript[e.script || '?'] || 0) + 1;
+    byEvent[e.event || '?'] = (byEvent[e.event || '?'] || 0) + 1;
+  }
+  const topScripts = Object.entries(byScript).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const maxScriptCount = topScripts[0]?.[1] || 1;
+  const topEvents = Object.entries(byEvent).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  body.innerHTML = `
+    <ul class="audit-stats">
+      <li class="audit-stat"><div class="audit-stat-label">エントリ総数</div>
+        <div class="audit-stat-value">${entries.length.toLocaleString()}</div></li>
+      <li class="audit-stat"><div class="audit-stat-label">スクリプト数</div>
+        <div class="audit-stat-value">${Object.keys(byScript).length}</div></li>
+      <li class="audit-stat"><div class="audit-stat-label">イベント種類</div>
+        <div class="audit-stat-value">${Object.keys(byEvent).length}</div></li>
+      <li class="audit-stat"><div class="audit-stat-label">最古</div>
+        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(tsFirst.replace('T', ' ').slice(0, 19))}</div></li>
+      <li class="audit-stat"><div class="audit-stat-label">最新</div>
+        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(tsLast.replace('T', ' ').slice(0, 19))}</div></li>
+    </ul>
+
+    <h3 style="margin-top:var(--sp-4)">スクリプト別 件数</h3>
+    <div class="audit-script-bars">
+      ${topScripts.map(([name, n]) => `
+        <div class="audit-script-bar">
+          <span class="audit-script-bar-name">${escapeHtml(name)}</span>
+          <span class="audit-script-bar-fill" style="width:${(n / maxScriptCount * 100).toFixed(1)}%"></span>
+          <span class="audit-script-bar-count">${n}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <h3 style="margin-top:var(--sp-4)">イベント種別 (上位 5)</h3>
+    <ul style="padding-left:1.2em">
+      ${topEvents.map(([name, n]) =>
+        `<li><strong>${escapeHtml(name)}</strong> — ${n} 件</li>`).join('')}
+    </ul>
+  `;
+}
+
+async function verifyAuditChain() {
+  const card = document.getElementById('auditIntegrity');
+  const body = document.getElementById('auditIntegrityBody');
+  if (!card || !body) return;
+  card.hidden = false;
+  body.innerHTML = '<p class="muted">検証中...</p>';
+
+  const entries = _auditState.entries;
+  if (!entries.length) {
+    body.innerHTML = '<p class="muted">エントリ なし</p>';
+    return;
+  }
+
+  let prev = ZERO_HASH;
+  const breaks = [];
+  let okCount = 0;
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    if (!e.chain_hash || !e.prev_hash) {
+      breaks.push({ line: i + 1, reason: 'chain_hash/prev_hash 抽出失敗' });
+      prev = e.chain_hash || prev;
+      continue;
+    }
+    const body_str = reconstructAuditBody(e);
+    const computed = await sha256Hex(prev + body_str);
+    if (computed === e.chain_hash) {
+      if (e.prev_hash !== prev) {
+        breaks.push({ line: i + 1, reason: `連鎖切断 (prev=${e.prev_hash.slice(0, 8)}.. 期待=${prev.slice(0, 8)}..)` });
+      } else {
+        okCount++;
+      }
+    } else {
+      breaks.push({ line: i + 1, reason: '改竄疑い (chain_hash 再計算 不一致)' });
+    }
+    prev = e.chain_hash;
+  }
+
+  _auditState.verifyResult = { total: entries.length, ok: okCount, breaks };
+
+  if (breaks.length === 0) {
+    body.innerHTML = `
+      <div class="audit-integrity-banner ok">
+        ✅ チェーンは整合 — ${entries.length.toLocaleString()} エントリすべて検証成功
+      </div>
+      <p class="muted">SHA-256 連鎖を再計算し、改竄痕跡なし。</p>
+    `;
+  } else {
+    body.innerHTML = `
+      <div class="audit-integrity-banner bad">
+        ❌ チェーン不整合: ${breaks.length} / ${entries.length} エントリで検出
+      </div>
+      <p>原因の候補: 並行実行による race / 手作業でのログ編集 / ローテーション境界</p>
+      <ul class="audit-breaks">
+        ${breaks.slice(0, 30).map(b => `<li>L${b.line}: ${escapeHtml(b.reason)}</li>`).join('')}
+        ${breaks.length > 30 ? `<li class="muted">... 残り ${breaks.length - 30} 件 (省略)</li>` : ''}
+      </ul>
+    `;
+  }
+}
+
+function renderAuditEvents() {
+  const card = document.getElementById('auditEvents');
+  const body = document.getElementById('auditEventsBody');
+  if (!card || !body) return;
+  card.hidden = false;
+
+  const eventFilter = (document.getElementById('auditEventFilter')?.value || '').toLowerCase();
+  const scriptFilter = (document.getElementById('auditScriptFilter')?.value || '').toLowerCase();
+  const limit = parseInt(document.getElementById('auditLimit')?.value || '100', 10);
+
+  let filtered = _auditState.entries.filter(e => {
+    if (eventFilter && !String(e.event || '').toLowerCase().includes(eventFilter)) return false;
+    if (scriptFilter && !String(e.script || '').toLowerCase().includes(scriptFilter)) return false;
+    return true;
+  });
+  // 最新が先頭
+  filtered = filtered.slice().reverse().slice(0, limit);
+
+  if (!filtered.length) {
+    body.innerHTML = '<p class="muted">該当エントリなし</p>';
+    return;
+  }
+
+  const rows = filtered.map(e => {
+    const sev = auditEventSeverity(e.event);
+    return `<tr>
+      <td class="col-ts">${escapeHtml((e.ts || '').replace('T', ' ').slice(0, 19))}</td>
+      <td class="col-event severity-${sev}">${escapeHtml(e.event || '')}</td>
+      <td class="col-script">${escapeHtml(e.script || '')}</td>
+      <td class="col-details">${escapeHtml(e.details || '')}</td>
+    </tr>`;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="audit-table-wrap">
+      <table class="audit-table">
+        <thead><tr><th>時刻</th><th>イベント</th><th>スクリプト</th><th>詳細</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <p class="muted" style="margin-top:var(--sp-2)">表示: ${filtered.length} / ${_auditState.entries.length} 件</p>
+  `;
+}
+
 function boot() {
   ensureSessions();
   applyTheme();
@@ -1847,6 +2116,7 @@ function boot() {
   initClaudeUI();
   bindClaudeUI();
   renderSessionTabs();
+  bindAuditLoader();
 
   // Default to overview if no hash
   if (!location.hash) location.hash = '#overview';

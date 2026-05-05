@@ -265,6 +265,64 @@
         </section>
       </section>
 
+      <!-- Section: Audit Log Viewer -->
+      <section class="route" data-route="audit" hidden aria-labelledby="auditTitle">
+        <header class="route-header">
+          <div>
+            <h1 id="auditTitle">
+              <span class="badge">監査</span>
+              監査ログ ビューア
+            </h1>
+            <p class="lead">
+              <code>~/.claude/audit.jsonl</code> を読み込んで時系列・スクリプト別・改竄検知の可視化を行います。
+              ファイルはブラウザ内のみで処理され、外部送信されません。
+            </p>
+          </div>
+        </header>
+
+        <section class="card">
+          <h2>ログファイル選択</h2>
+          <div class="audit-loader" id="auditLoader">
+            <input type="file" id="auditFileInput" accept=".jsonl,.log,.json,application/json,text/plain" />
+            <p class="hint">
+              📁 ファイル選択 または この領域に <code>audit.jsonl</code> をドラッグ&ドロップ。
+              既定の保存場所: <code>~/.claude/audit.jsonl</code>
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="auditSummary" hidden>
+          <h2>サマリ</h2>
+          <div id="auditSummaryBody"></div>
+        </section>
+
+        <section class="card" id="auditIntegrity" hidden>
+          <h2>整合性検証 (SHA-256 チェーン)</h2>
+          <div id="auditIntegrityBody"></div>
+        </section>
+
+        <section class="card" id="auditEvents" hidden>
+          <h2>イベント一覧</h2>
+          <div class="audit-filters">
+            <label>イベント フィルタ
+              <input type="text" id="auditEventFilter" class="input" placeholder="例: storage_cleanup" />
+            </label>
+            <label>スクリプト フィルタ
+              <input type="text" id="auditScriptFilter" class="input" placeholder="例: storage-health" />
+            </label>
+            <label>表示件数
+              <select id="auditLimit" class="input">
+                <option value="50">50</option>
+                <option value="100" selected>100</option>
+                <option value="500">500</option>
+                <option value="9999">全件</option>
+              </select>
+            </label>
+          </div>
+          <div id="auditEventsBody"></div>
+        </section>
+      </section>
+
       <!-- Section: 404 -->
       <section class="route" data-route="404" hidden>
         <h1>ページが見つかりません</h1>
