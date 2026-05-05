@@ -1,0 +1,35 @@
+# PII positive — pii-scan で全て検出される想定の合成データ
+# このファイル自体は意図的にダミーで、本物の機密ではない (governance/05 の命名規則準拠)
+
+担当者: テスト 太郎
+電話: 080-1234-5678 (固定: 03-1234-5678)
+メール: tanaka@example.co.jp
+保険者番号 12345678 の被保険者
+銀行口座 普通 1234567
+パスポート: AB1234567
+マイナンバー風: 1234-5678-9012
+
+API キー (合成):
+- sk-ant-api03-AAAAAAAAAAAAAAAAAAAAAA
+- AIzaXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+- ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+- xoxb-12345-67890-abcde
+- AKIA1234567890ABCDEF
+
+JWT:
+- eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4ifQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+GCP service account (合成):
+{
+  "type": "service_account",
+  "project_id": "test-project"
+}
+
+JKS:
+keystoreType=JKS
+keyStorePassword=changeit
+
+秘密鍵:
+-----BEGIN RSA PRIVATE KEY-----
+DUMMY
+-----END RSA PRIVATE KEY-----

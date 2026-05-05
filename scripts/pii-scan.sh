@@ -127,7 +127,7 @@ scan_file() {
   for label in "${!PATTERNS[@]}"; do
     local pattern="${PATTERNS[$label]}"
     local matches
-    matches=$(grep -anHE "$pattern" "$f" 2>/dev/null | grep -vE "$WHITELIST_REGEX" || true)
+    matches=$(grep -anHE -e "$pattern" "$f" 2>/dev/null | grep -vE "$WHITELIST_REGEX" || true)
     [[ -z "$matches" ]] && continue
 
     # クレカは Luhn で再検証
