@@ -207,6 +207,8 @@ CLI の機能: マルチターン履歴、`/model` でモデル切替、`/system
 | [`governance/09_INCIDENT_PLAYBOOK.md`](governance/09_INCIDENT_PLAYBOOK.md) | **8 シナリオ IR プレイブック** (検知→60秒対応→評価→封じ込め→復旧→学び) |
 | [`governance/10_STORAGE_HYGIENE.md`](governance/10_STORAGE_HYGIENE.md) | **ストレージ衛生** — クラス別保存先 + ライフサイクル 5 段階 + 日次/週次/月次ルーティン |
 | [`governance/11_PLATFORM_NOTES.md`](governance/11_PLATFORM_NOTES.md) | **プラットフォーム別手順** (BitLocker/FileVault/LUKS、Scheduled Task/launchd/systemd) |
+| [`governance/12_SYSTEM_DESIGN.md`](governance/12_SYSTEM_DESIGN.md) | **統合システム設計図** (10+ 反復で改稿、層モデル/INV/失敗モード/保証/制約) |
+| [`governance/13_TEAM_ORCHESTRATION.md`](governance/13_TEAM_ORCHESTRATION.md) | **4 チーム × 4 役 + PDCA/OODA** によるオーケストレーション AI 仕組み |
 
 ⚠️ **法的免責**: 本ドキュメント群は一般的整理であり、解釈・適用は必ず有資格専門家へ。
 
@@ -228,6 +230,11 @@ bash scripts/storage-cleanup.sh --list-trash           # trash の中身一覧
 bash scripts/audit-verify.sh                           # 監査ログ SHA-256 連鎖の改竄検知
 bash scripts/install-hooks.sh                          # git pre-commit に PII スキャンを仕込む
 bash scripts/install-hooks.sh --status                 # 現状確認 / --uninstall で取り外し
+bash scripts/audit-export.sh ~/Desktop/audit-bak       # 監査ログを USB 等にオフライン エクスポート
+bash scripts/orchestrate.sh --cycle pdca               # オーケストレーション AI 4 チーム × 4 役 (週次)
+bash scripts/orchestrate.sh --cycle ooda --trigger preflight  # 異常事態 (60 秒対応)
+bash scripts/orchestrate.sh --status                   # チーム活動 / ハンドオフ / インシデント の状況
+bash scripts/orchestrate.sh --prompt-for alpha.1       # 親エージェントへ sub-agent prompt を出力
 ```
 
 すべてのスクリプトは `~/.claude/audit.jsonl` に実行記録を残し、`audit-verify.sh` で改竄検知できます (詳細: [`scripts/lib/audit.sh`](scripts/lib/audit.sh))。
