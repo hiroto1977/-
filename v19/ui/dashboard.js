@@ -1566,6 +1566,8 @@ function bindClaudeUI() {
     abortCtrl = new AbortController();
     updateClaudeStatus('loading', '応答生成中…');
 
+    auditLogBrowser('chat.send', `provider=${provider.id} model=${cfg.model} text_len=${text.length} attachments=${atts.length}`);
+
     try {
       const { usage } = await provider.sendStream({
         apiKey: cfg.apiKey,
@@ -1591,16 +1593,19 @@ function bindClaudeUI() {
         document.getElementById('usageInfo').textContent =
           `入力: ${usage.input_tokens ?? '-'} / 出力: ${usage.output_tokens ?? '-'} トークン`;
       }
+      auditLogBrowser('chat.success', `provider=${provider.id} model=${cfg.model} input=${usage?.input_tokens ?? '?'} output=${usage?.output_tokens ?? '?'}`);
       renderChat();
     } catch (err) {
       if (err.name === 'AbortError') {
         assistantMsg.content += '\n\n[ 停止しました ]';
         updateClaudeStatus('unknown', '停止');
+        auditLogBrowser('chat.aborted', `provider=${provider.id}`);
       } else {
         session.history.pop();
         session.history.push({ role: 'assistant', content: `エラー: ${err.message}`, error: true });
         updateClaudeStatus('error', err.message);
         toast(err.message, 'error', 5000);
+        auditLogBrowser('chat.error', `provider=${provider.id} msg=${String(err.message || '').slice(0, 100)}`);
       }
       session.updatedAt = Date.now();
       persist();
@@ -1891,10 +1896,108 @@ let _auditState = {
   verifyResult: null,
 };
 
+// ─────────────────────────────────────────
+// ブラウザ側 audit ログ (governance/12 §10 #1 v6 で実装)
+// localStorage に独立チェーンとして書き込み、export で JSONL を file-system 版と
+// 同じ形式で取り出せる。bash/PS audit.sh とフィールド順は揃えてある。
+// ─────────────────────────────────────────
+const BROWSER_AUDIT_KEY = 'v19.audit.entries';
+const BROWSER_AUDIT_MAX = 2000;  // FIFO で古いものから捨てる
+
+function _browserAuditLoad() {
+  try {
+    const raw = localStorage.getItem(BROWSER_AUDIT_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
+function _browserAuditSave(arr) {
+  try {
+    // FIFO eviction: 上限超えたら古いものから削除 (チェーンは切れるが先頭に新 genesis 行を挿入)
+    if (arr.length > BROWSER_AUDIT_MAX) {
+      arr = arr.slice(arr.length - BROWSER_AUDIT_MAX);
+    }
+    localStorage.setItem(BROWSER_AUDIT_KEY, JSON.stringify(arr));
+  } catch (e) { /* localStorage 容量超過などは黙殺 (UI 操作を阻害しない) */ }
+}
+
+async function auditLogBrowser(event, details = '') {
+  // 失敗してもユーザー操作を阻害しないよう、try で全包み
+  try {
+    const entries = _browserAuditLoad();
+    const prev = entries.length
+      ? entries[entries.length - 1].chain_hash
+      : '0000000000000000000000000000000000000000000000000000000000000000';
+    const ts = new Date().toISOString();
+    const e = {
+      ts,
+      host: 'browser',
+      user: navigator.userAgent.slice(0, 60).replace(/[^\w\s\.\-/]/g, '_'),
+      pid: 0,
+      script: 'dashboard.js',
+      event: String(event || 'unknown'),
+      details: String(details || ''),
+      prev_hash: prev,
+    };
+    const body = reconstructAuditBody(e);
+    const chain = await sha256Hex(prev + body);
+    e.chain_hash = chain;
+    entries.push(e);
+    _browserAuditSave(entries);
+  } catch (err) {
+    // 黙殺 (debug は console)
+    if (typeof console !== 'undefined') console.warn('audit failed:', err);
+  }
+}
+
+// JSONL として export (audit-verify.sh で検証可能な形式)
+function exportBrowserAuditAsJsonl() {
+  const entries = _browserAuditLoad();
+  const lines = entries.map(e => {
+    const body = reconstructAuditBody(e);
+    return body + ',"chain_hash":"' + e.chain_hash + '"}';
+  });
+  return lines.join('\n') + (lines.length ? '\n' : '');
+}
+
 function bindAuditLoader() {
   const loader = document.getElementById('auditLoader');
   const input = document.getElementById('auditFileInput');
   if (!loader || !input) return;
+
+  // ブラウザ audit の書き出し / 消去
+  const exportBtn = document.getElementById('auditBrowserExportBtn');
+  const clearBtn = document.getElementById('auditBrowserClearBtn');
+  const countEl = document.getElementById('auditBrowserCount');
+  const updateCount = () => {
+    if (!countEl) return;
+    const n = _browserAuditLoad().length;
+    countEl.textContent = n ? `(${n} 件)` : '(空)';
+  };
+  updateCount();
+  exportBtn?.addEventListener('click', () => {
+    const jsonl = exportBrowserAuditAsJsonl();
+    if (!jsonl) { toast('ブラウザ audit は空です', 'warn'); return; }
+    const blob = new Blob([jsonl], { type: 'application/jsonl' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `browser-audit-${new Date().toISOString().replace(/[:.]/g, '-')}.jsonl`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    auditLogBrowser('audit.export', `count=${_browserAuditLoad().length}`);
+    toast('ダウンロード開始', 'ok');
+  });
+  clearBtn?.addEventListener('click', async () => {
+    const ok = await confirmDialog('このブラウザの audit ログを全て消去しますか？');
+    if (!ok) return;
+    auditLogBrowser('audit.clear', '');  // 消去前に最後の記録
+    localStorage.removeItem(BROWSER_AUDIT_KEY);
+    updateCount();
+    toast('ブラウザ audit を消去しました', 'ok');
+  });
 
   input.addEventListener('change', async () => {
     if (input.files?.[0]) await loadAuditFile(input.files[0]);

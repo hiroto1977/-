@@ -291,6 +291,19 @@
           </div>
         </section>
 
+        <section class="card">
+          <h2>このブラウザの audit ログ</h2>
+          <p class="muted">
+            ブラウザでの操作 (チャット送信・成功・エラー 等) は localStorage に SHA-256 連鎖で記録されます。
+            JSONL として書き出して <code>scripts/audit-verify.sh</code> で検証可能。
+          </p>
+          <div class="audit-actions">
+            <button class="btn" id="auditBrowserExportBtn" type="button">📥 JSONL を書き出す</button>
+            <button class="btn-ghost" id="auditBrowserClearBtn" type="button">🗑️ ブラウザ audit を消去</button>
+            <span id="auditBrowserCount" class="muted"></span>
+          </div>
+        </section>
+
         <section class="card" id="auditSummary" hidden>
           <h2>サマリ</h2>
           <div id="auditSummaryBody"></div>
