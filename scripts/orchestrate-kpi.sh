@@ -188,13 +188,9 @@ PY
 }
 
 # ── 出力 ──
-read alpha_covered alpha_total alpha_rate <<<"$(kpi_alpha)"
-read beta_n beta_median <<<"$(kpi_beta)"
-read gamma_pass gamma_fail gamma_rate <<<"$(kpi_gamma)"
-read delta_count delta_median <<<"$(kpi_delta)"
-inv12_violations=$(inv12_check)
-
+# --check は INV-12 のみで早期終了 (γ smoke-test を回さない → 再帰防止)
 if [[ "$CHECK_ONLY" -eq 1 ]]; then
+  inv12_violations=$(inv12_check)
   if [[ "$inv12_violations" -gt 0 ]]; then
     echo -e "${C_E}❌ INV-12 違反: $inv12_violations 件の issue が複数チームに重複 scoped されている${C_RST}"
     audit_log "orchestrate_kpi.inv12_violation" "count=$inv12_violations"
@@ -203,6 +199,12 @@ if [[ "$CHECK_ONLY" -eq 1 ]]; then
   echo -e "${C_OK}✅ INV-12: 重複 scoped なし${C_RST}"
   exit 0
 fi
+
+read alpha_covered alpha_total alpha_rate <<<"$(kpi_alpha)"
+read beta_n beta_median <<<"$(kpi_beta)"
+read gamma_pass gamma_fail gamma_rate <<<"$(kpi_gamma)"
+read delta_count delta_median <<<"$(kpi_delta)"
+inv12_violations=$(inv12_check)
 
 if [[ "$JSON" -eq 1 ]]; then
   cat <<EOF
