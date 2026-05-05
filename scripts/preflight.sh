@@ -30,7 +30,7 @@ echo "==============================="
 
 # 1) Ollama サーバ稼働確認
 echo ""
-echo "[1/7] Ollama (ローカル LLM)"
+echo "[1/8] Ollama (ローカル LLM)"
 OLLAMA_URL="${OLLAMA_HOST:-http://localhost:11434}"
 if curl -fsS -o /dev/null --max-time 3 "${OLLAMA_URL}/api/tags"; then
   ok "Ollama 稼働中 (${OLLAMA_URL})"
@@ -48,7 +48,7 @@ fi
 
 # 2) OLLAMA_ORIGINS の設定確認 (環境変数 or 既知の起動コマンド)
 echo ""
-echo "[2/7] CORS 設定 (OLLAMA_ORIGINS)"
+echo "[2/8] CORS 設定 (OLLAMA_ORIGINS)"
 if [[ -n "${OLLAMA_ORIGINS:-}" ]]; then
   ok "OLLAMA_ORIGINS=${OLLAMA_ORIGINS}"
 else
@@ -58,7 +58,7 @@ fi
 
 # 3) 静的サーバが動作しているか (v19 ダッシュボード)
 echo ""
-echo "[3/7] v19 ダッシュボード (静的サーバ)"
+echo "[3/8] v19 ダッシュボード (静的サーバ)"
 if curl -fsS -o /dev/null --max-time 2 http://127.0.0.1:8000/v19/ui/dashboard.html; then
   ok "ダッシュボード配信中 (http://127.0.0.1:8000/v19/ui/dashboard.html)"
 else
@@ -67,7 +67,7 @@ fi
 
 # 4) ディスク暗号化の状態 (OS 別)
 echo ""
-echo "[4/7] ディスク暗号化"
+echo "[4/8] ディスク暗号化"
 case "$(uname)" in
   Darwin)
     if fdesetup status 2>/dev/null | grep -q "FileVault is On"; then
@@ -93,7 +93,7 @@ esac
 
 # 5) git の状態 (リポジトリ内なら未コミット変更を警告)
 echo ""
-echo "[5/7] git の状態"
+echo "[5/8] git の状態"
 if git -C "$(pwd)" rev-parse --git-dir > /dev/null 2>&1; then
   branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
   uncomm=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
@@ -108,7 +108,7 @@ fi
 
 # 6) 必要コマンドの存在
 echo ""
-echo "[6/7] 必須コマンド"
+echo "[6/8] 必須コマンド"
 for cmd in python3 curl git; do
   if command -v "$cmd" > /dev/null; then
     ok "$cmd: $(command -v $cmd)"
@@ -119,7 +119,7 @@ done
 
 # 7) ガバナンス文書の存在
 echo ""
-echo "[7/7] ガバナンス文書"
+echo "[7/8] ガバナンス文書"
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 for f in governance/02_DATA_CLASSIFICATION.md governance/03_OPERATIONS.md CLAUDE.md; do
   if [[ -f "$ROOT_DIR/$f" ]]; then
@@ -128,6 +128,26 @@ for f in governance/02_DATA_CLASSIFICATION.md governance/03_OPERATIONS.md CLAUDE
     ng "$f が見つからない (cwd 配下に governance/ があるか確認)"
   fi
 done
+
+# 8) 監査ログ チェーン整合 (INV-2 / INV-10)
+echo ""
+echo "[8/8] 監査ログ チェーン整合"
+AUDIT_LOG="${AUDIT_LOG_PATH:-${HOME}/.claude/audit.jsonl}"
+AUDIT_VERIFY="$ROOT_DIR/scripts/audit-verify.sh"
+if [[ ! -f "$AUDIT_LOG" ]]; then
+  warn "audit.jsonl が無い (まだ何も実行していない or 別端末)"
+elif [[ ! -f "$AUDIT_VERIFY" ]]; then
+  warn "audit-verify.sh が無い"
+else
+  if bash "$AUDIT_VERIFY" "$AUDIT_LOG" >/dev/null 2>&1; then
+    audit_lines=$(wc -l < "$AUDIT_LOG" | tr -d ' ')
+    ok "audit.jsonl チェーン整合 ($audit_lines 行)"
+  else
+    ng "audit-verify.sh が exit 1 — 改竄疑い。bash scripts/audit-verify.sh で詳細確認"
+    echo "    対処: governance/09_INCIDENT_PLAYBOOK.md の IR-3 シナリオを参照"
+    echo "    回復: bash scripts/audit-export.sh のバックアップから整合性復旧"
+  fi
+fi
 
 echo ""
 echo "==============================="
