@@ -21,7 +21,8 @@ tests/
 │   ├── test-storage-health.sh
 │   ├── test-storage-archive.sh
 │   ├── test-funding-deadline.sh
-│   └── test-preflight.sh
+│   ├── test-preflight.sh
+│   └── test-hooks.sh
 ├── js/                     # ブラウザ JS の単体テスト (Node.js vm 経由)
 │   ├── test_localonly.mjs
 │   ├── test_providers.mjs
@@ -70,6 +71,7 @@ bash tests/ps/structural-check.sh
 | ストレージ | `test-storage-archive.sh` | `--setup` 案内 / rclone 不在時の案内 / C4 拒否 |
 | 資金 | `test-funding-deadline.sh` | CSV 雛形 / 期限分類 (急ぎ/注意/余裕あり) / exit 1 |
 | 起動前 | `test-preflight.sh` | 7 チェック セクション / Score 行 |
+| Git フック | `test-hooks.sh` | install/status/uninstall サイクル / PII 阻止 / クリーン許可 / `--no-verify` 回避 |
 | UI | `test_localonly.mjs` | ローカル専用モードの可視性と active 強制 |
 | UI | `test_providers.mjs` | 3 プロバイダ (Ollama/Anthropic/Google) の挙動 |
 | UI | `test_sessions.mjs` | セッション CRUD と LRU |

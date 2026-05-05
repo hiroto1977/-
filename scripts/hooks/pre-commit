@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# pre-commit — PII 検出と監査ログ整合の自己検査
+#
+# このフックはステージ済の差分に PII 候補があれば commit をブロックする。
+# 緊急回避は `git commit --no-verify` だが、CLAUDE.md のルール上は
+# 推奨されない (人間承認が必要)。
+
+set -u
+
+# git の作業ディレクトリ ルートを取得 (worktree でも動く)
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+[[ -z "$ROOT" ]] && { echo "git リポジトリ外で pre-commit が呼ばれた"; exit 0; }
+
+PII_SCAN="$ROOT/scripts/pii-scan.sh"
+AUDIT_VERIFY="$ROOT/scripts/audit-verify.sh"
+AUDIT_LIB="$ROOT/scripts/lib/audit.sh"
+
+# 1) ステージ済の差分に PII が無いか
+if [[ -x "$PII_SCAN" || -f "$PII_SCAN" ]]; then
+  if ! bash "$PII_SCAN" --staged; then
+    echo ""
+    echo "❌ pre-commit: ステージ済ファイルに PII 候補が含まれています"
+    echo ""
+    echo "対処:"
+    echo "  - 検出値が本物の機密なら 'git restore --staged <file>' して内容を修正"
+    echo "  - ダミー データなら governance/05_TEMPLATES.md の命名規則に置換"
+    echo "    (例: 山田太郎 → テスト 太郎、090-1234-5678 → 0X0-XXXX-XXXX)"
+    echo "  - 既知の誤検知なら scripts/pii-scan.sh の WHITELIST_REGEX を更新"
+    echo ""
+    echo "  どうしても今すぐ commit したい場合 (人間承認が前提):"
+    echo "    git commit --no-verify"
+    exit 1
+  fi
+fi
+
+# 2) 既存の監査ログが改竄されていないか (任意・あれば)
+AUDIT_LOG="${AUDIT_LOG_PATH:-$HOME/.claude/audit.jsonl}"
+if [[ -f "$AUDIT_LOG" && -f "$AUDIT_VERIFY" ]]; then
+  if ! bash "$AUDIT_VERIFY" "$AUDIT_LOG" >/dev/null 2>&1; then
+    echo ""
+    echo "⚠️  pre-commit: 監査ログ ($AUDIT_LOG) のチェーン検証に失敗"
+    echo "   詳細: bash scripts/audit-verify.sh"
+    echo "   commit は中断しません (commit と監査ログは独立) が、原因調査を推奨"
+  fi
+fi
+
+# 3) このフック自身の実行を監査ログに残す
+if [[ -f "$AUDIT_LIB" ]]; then
+  STAGED_COUNT=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | wc -l)
+  source "$AUDIT_LIB" 2>/dev/null || true
+  type audit_log >/dev/null 2>&1 && audit_log "pre_commit.pass" "staged=$STAGED_COUNT"
+fi
+
+exit 0

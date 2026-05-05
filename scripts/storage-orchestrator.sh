@@ -93,9 +93,16 @@ case "$ROUTINE" in
     exit 0
     ;;
   monthly)
-    [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_BLD}■ Monthly Routine${C_RST}: health → cleanup --apply --aggressive → archive --plan"
+    [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_BLD}■ Monthly Routine${C_RST}: health → cleanup --apply --aggressive → archive --plan + audit rotate"
     AUTO_CLEANUP=1  # cleanup は自動実行
     # archive はインタラクティブのまま (人間判断必須)
+    # 監査ログのローテーション (90 日より古い行を削除、チェーンは故意に切断される)
+    if type audit_rotate >/dev/null 2>&1; then
+      audit_log "audit.rotate.start" "retention_days=${AUDIT_LOG_RETENTION_DAYS:-365}"
+      audit_rotate "${AUDIT_LOG_RETENTION_DAYS:-365}"
+      audit_log "audit.rotate.done" ""
+      [[ "$JSON_REPORT" -eq 0 ]] && echo -e "${C_DIM}  → audit.jsonl をローテーション (${AUDIT_LOG_RETENTION_DAYS:-365} 日)${C_RST}"
+    fi
     ;;
   "")
     : # 通常モード

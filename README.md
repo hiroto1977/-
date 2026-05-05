@@ -226,9 +226,13 @@ bash scripts/storage-cleanup.sh --apply                # trash-first (~/.local/s
 bash scripts/storage-cleanup.sh --restore              # 直近 trash バッチを元の場所に復元
 bash scripts/storage-cleanup.sh --list-trash           # trash の中身一覧
 bash scripts/audit-verify.sh                           # 監査ログ SHA-256 連鎖の改竄検知
+bash scripts/install-hooks.sh                          # git pre-commit に PII スキャンを仕込む
+bash scripts/install-hooks.sh --status                 # 現状確認 / --uninstall で取り外し
 ```
 
 すべてのスクリプトは `~/.claude/audit.jsonl` に実行記録を残し、`audit-verify.sh` で改竄検知できます (詳細: [`scripts/lib/audit.sh`](scripts/lib/audit.sh))。
+
+`scripts/install-hooks.sh` を実行しておくと、commit する直前に `pii-scan.sh --staged` が走り、PII を含む commit が物理的にブロックされます。緊急回避は `git commit --no-verify` (CLAUDE.md ルール上は人間承認が前提)。月次ルーティン (`storage-orchestrator.sh --routine monthly`) では `audit.jsonl` も自動でローテーション (90 日 既定)。
 
 **Windows 用 PowerShell スクリプト** は [`scripts/win/`](scripts/win/) — preflight / BitLocker / Defender 除外 / Scheduled Task / WSL2 セットアップ。bash 版と同じ `~/.claude/audit.jsonl` に書き込むため、ブラウザの監査ログビューア (`#audit`) で OS 横断の実行記録を可視化できます。
 
