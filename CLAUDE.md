@@ -32,8 +32,10 @@
    - 静的・ビルド不要 を維持。ビルドステップを足さない
 
 6. **テスト**
-   - 新機能には Node.js (vm モジュール) を使った単体テストを `/tmp/test_*.mjs` で書き、回帰確認 (provider/session/markdown/preset/images/localOnly)
-   - テストファイルはコミットしない (リポジトリは静的のため)
+   - 新機能には `tests/` 配下にテストを追加 (Bash 単体は `tests/unit/`、ブラウザ JS は `tests/js/`、PowerShell は `tests/ps/`)
+   - 共通アサーションは `tests/lib/assert.sh` を `source` する
+   - 全体回帰: `bash tests/smoke-test.sh` (provider/session/markdown/preset/images/localOnly + PII + audit + storage)
+   - **既知の例外**: 探索的に `/tmp/test_*.mjs` を書く一時テストはコミットしない (永続テストは `tests/` に置く)
 
 7. **エラーメッセージの言語**
    - ユーザー向けメッセージは日本語

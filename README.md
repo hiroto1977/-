@@ -128,13 +128,15 @@ v19/ui/
 
 ### テスト
 
-ヘッドレスでロジックを検証する単体テストが付属（API キー不要）:
+ヘッドレスでロジックを検証する単体テスト (`tests/`) が付属（API キー不要）:
 
 ```bash
-node /path/to/test_*.mjs
+bash tests/smoke-test.sh           # 全部 (Bash + JS + PowerShell 構造)
+bash tests/smoke-test.sh js        # ブラウザ JS のみ
+bash tests/smoke-test.sh unit      # シェル スクリプト 単体テスト
 ```
 
-検証内容: プロバイダ別リクエスト形状 / SSE・NDJSON ストリーム解析 / セッション分離 / プリセット解決 / Markdown 描画 + XSS / 画像マーシャリング。
+検証内容: プロバイダ別リクエスト形状 / SSE・NDJSON ストリーム解析 / セッション分離 / プリセット解決 / Markdown 描画 + XSS / 画像マーシャリング / PII 検出 / 監査ログ チェーン整合 / ストレージ trash-first / 期限分類。詳細は [`tests/README.md`](tests/README.md)。
 
 ---
 
