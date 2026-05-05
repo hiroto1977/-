@@ -10,6 +10,9 @@ Windows ネイティブと macOS 固有の操作はここに集約する。
 
 ## A. Windows
 
+> 💡 本節のコマンドは [`scripts/win/`](../scripts/win/) に **PowerShell スクリプト化** 済み。
+> 個別実行例 + 一括セットアップ手順は [`scripts/win/README.md`](../scripts/win/README.md) を参照。
+
 ### A-1. WSL を推奨
 
 本リポジトリのスクリプト群を Windows で動かす最も安全な経路は **WSL2 (Ubuntu)**:

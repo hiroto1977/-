@@ -52,6 +52,7 @@
 | [`../scripts/storage-orchestrator.sh`](../scripts/storage-orchestrator.sh) | health→cleanup→archive オーケストレータ | 実行可能 |
 | [`../scripts/audit-verify.sh`](../scripts/audit-verify.sh) | 監査ログの SHA-256 連鎖検証 (改竄検知) | 実行可能 |
 | [`../scripts/lib/audit.sh`](../scripts/lib/audit.sh) | 監査ログ ライブラリ (各スクリプトが source) | source 用 |
+| [`../scripts/win/`](../scripts/win/) | Windows 用 PowerShell スクリプト (preflight / BitLocker / Defender / Scheduled Task / WSL) | Win 環境 |
 
 ## このガバナンスの守備範囲
 
