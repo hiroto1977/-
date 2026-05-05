@@ -15,7 +15,7 @@ PII_SCAN="$ROOT/scripts/pii-scan.sh"
 AUDIT_VERIFY="$ROOT/scripts/audit-verify.sh"
 AUDIT_LIB="$ROOT/scripts/lib/audit.sh"
 
-# 1) ステージ済の差分に PII が無いか
+# 1) ステージ済の差分に PII が無いか (一次防御)
 if [[ -x "$PII_SCAN" || -f "$PII_SCAN" ]]; then
   if ! bash "$PII_SCAN" --staged; then
     echo ""
@@ -33,7 +33,25 @@ if [[ -x "$PII_SCAN" || -f "$PII_SCAN" ]]; then
   fi
 fi
 
-# 2) 既存の監査ログが改竄されていないか (任意・あれば)
+# 2) gitleaks があれば二次防御として実行 (任意・PATH に居れば自動で走る)
+#    ガバナンス上は OPTIONAL: 環境に gitleaks が無くても commit は通る。
+#    DISABLE_GITLEAKS=1 で明示的にスキップ可能。
+if [[ "${DISABLE_GITLEAKS:-0}" != "1" ]] && command -v gitleaks >/dev/null 2>&1; then
+  # protect mode: ステージ済の差分のみ走査
+  if ! gitleaks protect --staged --no-banner --redact 2>&1; then
+    echo ""
+    echo "❌ pre-commit: gitleaks がシークレットを検出しました (二次防御)"
+    echo ""
+    echo "対処:"
+    echo "  - 検出された行を修正/削除して再 stage"
+    echo "  - 誤検知なら .gitleaks.toml で allowlist を追加"
+    echo "  - gitleaks 自体を一時的に外す: DISABLE_GITLEAKS=1 git commit ..."
+    echo "    (人間承認が前提)"
+    exit 1
+  fi
+fi
+
+# 3) 既存の監査ログが改竄されていないか (任意・あれば)
 AUDIT_LOG="${AUDIT_LOG_PATH:-$HOME/.claude/audit.jsonl}"
 if [[ -f "$AUDIT_LOG" && -f "$AUDIT_VERIFY" ]]; then
   if ! bash "$AUDIT_VERIFY" "$AUDIT_LOG" >/dev/null 2>&1; then
@@ -44,7 +62,7 @@ if [[ -f "$AUDIT_LOG" && -f "$AUDIT_VERIFY" ]]; then
   fi
 fi
 
-# 3) このフック自身の実行を監査ログに残す
+# 4) このフック自身の実行を監査ログに残す
 if [[ -f "$AUDIT_LIB" ]]; then
   STAGED_COUNT=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | wc -l)
   source "$AUDIT_LIB" 2>/dev/null || true
