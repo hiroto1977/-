@@ -292,6 +292,37 @@ cmd_prompt_for() {
     || echo "(板 空)"
   echo "\`\`\`"
   echo ""
+  # α1 (Strategist) には §10 Open Issues も埋め込む (live context)
+  if [[ "$role" == "alpha.1" ]]; then
+    local design_doc="$ROOT_DIR/governance/12_SYSTEM_DESIGN.md"
+    if [[ -f "$design_doc" ]]; then
+      echo "## governance/12 §10 Open Issues (現状)"
+      echo ""
+      echo "**未着手** または検討中の課題のみ抽出 (実装済は省略):"
+      echo ""
+      python3 - "$design_doc" <<'PY' 2>/dev/null || echo "(§10 解析失敗)"
+import sys, re
+with open(sys.argv[1], encoding='utf-8') as f:
+    text = f.read()
+# §10 セクション抽出
+m = re.search(r'^## 10\. .*?\n(.*?)(?=\n^## \d|\Z)', text, flags=re.S | re.M)
+if not m:
+    sys.exit()
+section = m.group(1)
+# テーブル行: | N | 重要度 | 課題 | 対策案 | 状態 |
+rows = re.findall(r'^\| (\d+) \| (高|中|低) \| (.*?) \| (.*?) \| (.*?) \|$', section, flags=re.M)
+unresolved = [r for r in rows if '実装済' not in r[4] and '対応済' not in r[4]]
+print(f"未着手: {len(unresolved)} 件 / 全 {len(rows)} 件\n")
+for n, prio, issue, plan, status in unresolved:
+    print(f"- **#{n}** [{prio}] {issue[:80]}")
+    print(f"  対策案: {plan[:100]}")
+    print(f"  状態: {status}")
+if not unresolved:
+    print("(全課題 実装済 — α1 は新たな歪みの発見モードに入るべき)")
+PY
+      echo ""
+    fi
+  fi
   echo "## あなたの役: $upper_role"
   echo ""
   echo "上記ブリーフから ${upper_role} のセクションだけを実行してください。終わったら:"

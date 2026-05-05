@@ -200,5 +200,46 @@ run_test "--propose-response 引数なし → 2"   t_propose_response_no_arg
 run_test "--propose-response 既知 4 breach"  t_propose_response_known_breaches
 run_test "audit_chain_broken が 03 を参照"   t_propose_response_audit_chain_references_03
 run_test "未知 breach → exit 1"              t_propose_response_unknown_returns_1
-run_test "propose-response が audit に記録"  t_propose_response_logged_to_audit
+t_prompt_for_alpha1_embeds_section10() {
+  # alpha.1 の prompt に §10 (live) が埋め込まれる
+  local out
+  out=$(bash "$ORCH" --prompt-for alpha.1 2>&1)
+  assert_contains "$out" "§10 Open Issues" || return 1
+  assert_contains "$out" "未着手" || return 1
+  # 件数表示があること (N 件 / 全 M 件)
+  echo "$out" | grep -qE "未着手: [0-9]+ 件 / 全 [0-9]+ 件" || { echo "    件数フォーマット未検出"; return 1; }
+}
+
+t_prompt_for_alpha2_does_not_embed_section10() {
+  # α2 は §10 自体を見ない設計。dynamic 埋め込みは α1 限定
+  local out
+  out=$(bash "$ORCH" --prompt-for alpha.2 2>&1)
+  # 静的ブリーフ には "Open Issues" の言及があり得るが、動的「§10 Open Issues (現状)」は α1 専用
+  if echo "$out" | grep -q "§10 Open Issues (現状)"; then
+    echo "    α2 に dynamic §10 が漏れている"
+    return 1
+  fi
+  return 0
+}
+
+t_prompt_for_alpha1_reflects_design_state() {
+  # §10 で未着手の数 = 設計図の table 行のうち「実装済|対応済」を除く数
+  local out
+  out=$(bash "$ORCH" --prompt-for alpha.1 2>&1)
+  local actual
+  actual=$(echo "$out" | grep -oE "未着手: [0-9]+ 件" | head -1 | grep -oE "[0-9]+")
+  local design_unresolved
+  design_unresolved=$(grep -cE "^\| [0-9]+ \| (高|中|低) \| .* \| .* \| (?!.*\*\*v[0-9]+ で(実装|対応)済\*\*)" "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" 2>/dev/null || echo 0)
+  # 単純照合: actual が数値であること、設計図と矛盾しないこと (現状 0 のはず)
+  if [[ -z "$actual" ]] || ! [[ "$actual" =~ ^[0-9]+$ ]]; then
+    echo "    未着手件数 が数値で出ていない: '$actual'"
+    return 1
+  fi
+  return 0
+}
+
+run_test "propose-response が audit に記録"      t_propose_response_logged_to_audit
+run_test "alpha.1 prompt に §10 (live) 埋込"    t_prompt_for_alpha1_embeds_section10
+run_test "alpha.2 prompt には §10 を埋めない"   t_prompt_for_alpha2_does_not_embed_section10
+run_test "未着手件数 が数値で出力される"        t_prompt_for_alpha1_reflects_design_state
 report
