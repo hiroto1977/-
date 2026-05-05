@@ -102,7 +102,11 @@ audit_log() {
   return 0
 }
 
-# ----- ローテーション (古い行を削除) -----
+# ----- ローテーション (古い行を削除 + 残行を 再チェーン化) -----
+# v15 で改修: 削除後に (1) audit.rotation.checkpoint を新 genesis として挿入、
+# (2) 残行の prev_hash / chain_hash を 再計算。これにより rotate 後も
+# audit-verify が通る (INV-2 / INV-10 を維持)。
+# checkpoint の details に旧チェーンの最終 chain_hash を記録 → forensic 継続性。
 audit_rotate() {
   local days="${1:-$AUDIT_LOG_RETENTION_DAYS}"
   [[ ! -f "$AUDIT_LOG_PATH" ]] && return 0
@@ -113,18 +117,81 @@ audit_rotate() {
               || echo 0)
   [[ "$cutoff_epoch" -eq 0 ]] && return 0
 
-  # 各行の "ts" を読み、cutoff より新しいものだけ残す
-  # 注意: このローテーションでチェーンは「切断」される (intentional)
-  local tmp
-  tmp=$(mktemp 2>/dev/null) || return 0
+  local cutoff_iso
+  cutoff_iso=$(date -d "@$cutoff_epoch" -Iseconds 2>/dev/null \
+            || date -j -f %s $cutoff_epoch -Iseconds 2>/dev/null \
+            || echo "")
+  [[ -z "$cutoff_iso" ]] && return 0
 
-  awk -v cutoff="$cutoff_epoch" '
-  {
-    match($0, /"ts":"[^"]+"/);
-    ts_str = substr($0, RSTART+6, RLENGTH-7);
-    # ISO 8601 を epoch に変換するのは awk で困難なので、生 ts を比較
-    # 簡易: 文字列比較で十分 (ISO 8601 は辞書順 = 時系列順)
-    if (ts_str >= cutoff_iso) print;
-  }' cutoff_iso="$(date -d @$cutoff_epoch -Iseconds 2>/dev/null || date -j -f %s $cutoff_epoch -Iseconds 2>/dev/null)" \
-     "$AUDIT_LOG_PATH" > "$tmp" && mv "$tmp" "$AUDIT_LOG_PATH" || rm -f "$tmp"
+  # Python で 1) cutoff より古い行を集め最終 chain_hash を取得
+  #          2) checkpoint event を 新 genesis として先頭に挿入
+  #          3) 残行の prev_hash/chain_hash を再計算 (バイト互換維持)
+  python3 - "$AUDIT_LOG_PATH" "$cutoff_iso" <<'PY' || return 0
+import sys, json, hashlib, os, tempfile
+from datetime import datetime, timezone
+log_path = sys.argv[1]
+cutoff_iso = sys.argv[2]
+ZERO = '0' * 64
+
+def escape(s):
+    return str(s if s is not None else '').replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n').replace('\t', '\\t')
+
+def reconstruct_body(e, prev_hash):
+    return ('{"ts":"' + escape(e['ts']) + '","host":"' + escape(e.get('host', '')) +
+            '","user":"' + escape(e.get('user', '')) + '","pid":' + str(e.get('pid', 0)) +
+            ',"script":"' + escape(e.get('script', '')) + '","event":"' + escape(e.get('event', '')) +
+            '","details":"' + escape(e.get('details', '')) + '","prev_hash":"' + prev_hash + '"')
+
+keep, last_old_hash = [], None
+with open(log_path, 'r', encoding='utf-8') as f:
+    for line in f:
+        line = line.rstrip('\n')
+        if not line: continue
+        try:
+            e = json.loads(line)
+        except Exception:
+            continue
+        if e.get('ts', '') >= cutoff_iso:
+            keep.append(e)
+        else:
+            last_old_hash = e.get('chain_hash')
+
+# 削除対象なし → no-op
+if last_old_hash is None:
+    sys.exit(0)
+
+# 1) 新 genesis: rotation checkpoint
+ts_now = datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds')
+checkpoint = {
+    'ts': ts_now,
+    'host': (os.uname().nodename if hasattr(os, 'uname') else 'unknown'),
+    'user': os.environ.get('USER', os.environ.get('USERNAME', 'unknown')),
+    'pid': os.getpid(),
+    'script': 'audit.sh',
+    'event': 'audit.rotation.checkpoint',
+    'details': f'old_chain_last={last_old_hash} retained={len(keep)} cutoff={cutoff_iso}',
+}
+
+# 2) チェーン構築
+new_lines = []
+prev = ZERO
+body = reconstruct_body(checkpoint, prev)
+chain = hashlib.sha256((prev + body).encode('utf-8')).hexdigest()
+new_lines.append(body + ',"chain_hash":"' + chain + '"}')
+prev = chain
+
+for e in keep:
+    body = reconstruct_body(e, prev)
+    chain = hashlib.sha256((prev + body).encode('utf-8')).hexdigest()
+    new_lines.append(body + ',"chain_hash":"' + chain + '"}')
+    prev = chain
+
+# 3) atomic write
+dir_ = os.path.dirname(log_path) or '.'
+tmp_fd, tmp_path = tempfile.mkstemp(prefix='audit-rot-', dir=dir_)
+with os.fdopen(tmp_fd, 'w', encoding='utf-8') as f:
+    for l in new_lines:
+        f.write(l + '\n')
+os.replace(tmp_path, log_path)
+PY
 }

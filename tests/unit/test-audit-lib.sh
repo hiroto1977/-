@@ -70,9 +70,84 @@ t_chain_genesis_zero() {
   assert_contains "$first_line" '"prev_hash":"0000000000000000000000000000000000000000000000000000000000000000"' || return 1
 }
 
+t_rotate_preserves_chain_integrity() {
+  # rotate 後も audit-verify が通ること (v15 で修正)
+  local tmp; tmp=$(mktemp -d)
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_log 'old1' 'A'
+    audit_log 'old2' 'B'
+    audit_log 'recent' 'C'
+  "
+  python3 -c "
+import re
+from datetime import datetime, timedelta, timezone
+old = (datetime.now(timezone.utc) - timedelta(days=400)).isoformat()
+with open('$tmp/audit.jsonl') as f: lines = f.readlines()
+for i in [0, 1]:
+    lines[i] = re.sub(r'\"ts\":\"[^\"]+\"', f'\"ts\":\"{old}\"', lines[i], count=1)
+with open('$tmp/audit.jsonl', 'w') as f: f.writelines(lines)
+"
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_rotate 365
+  "
+  bash "$AUDIT_VERIFY" "$tmp/audit.jsonl" >/dev/null 2>&1
+  local rc=$?
+  rm -rf "$tmp"
+  assert_exit_code "$rc" 0 "rotate 後の verify が通る"
+}
+
+t_rotate_inserts_checkpoint() {
+  local tmp; tmp=$(mktemp -d)
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_log 'old' 'A'
+    audit_log 'recent' 'B'
+  "
+  python3 -c "
+import re
+from datetime import datetime, timedelta, timezone
+old = (datetime.now(timezone.utc) - timedelta(days=400)).isoformat()
+with open('$tmp/audit.jsonl') as f: lines = f.readlines()
+lines[0] = re.sub(r'\"ts\":\"[^\"]+\"', f'\"ts\":\"{old}\"', lines[0], count=1)
+with open('$tmp/audit.jsonl', 'w') as f: f.writelines(lines)
+"
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_rotate 365
+  "
+  local first
+  first=$(head -1 "$tmp/audit.jsonl")
+  rm -rf "$tmp"
+  assert_contains "$first" 'audit.rotation.checkpoint' || return 1
+  assert_contains "$first" 'old_chain_last=' || return 1
+  assert_contains "$first" '"prev_hash":"0000000000000000000000000000000000000000000000000000000000000000"' || return 1
+}
+
+t_rotate_noop_if_nothing_to_remove() {
+  local tmp; tmp=$(mktemp -d)
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_log 'a' '1'
+    audit_log 'b' '2'
+  "
+  local before; before=$(wc -l < "$tmp/audit.jsonl")
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+    source '$AUDIT_LIB'
+    audit_rotate 365
+  "
+  local after; after=$(wc -l < "$tmp/audit.jsonl")
+  rm -rf "$tmp"
+  assert_eq "$before" "$after" "no-op (削除対象なし)"
+}
+
 echo "== test-audit-lib =="
 run_test "chain intact (3 entries)"           t_chain_intact
 run_test "chain break on tamper"              t_chain_break_on_tamper
 run_test "AUDIT_LOG_OFF=1 で記録抑止"          t_audit_log_off
 run_test "genesis prev_hash = 64 zeros"        t_chain_genesis_zero
+run_test "rotate 後 verify が通る"             t_rotate_preserves_chain_integrity
+run_test "rotate が checkpoint event を挿入"   t_rotate_inserts_checkpoint
+run_test "rotate no-op (削除対象なし)"         t_rotate_noop_if_nothing_to_remove
 report
