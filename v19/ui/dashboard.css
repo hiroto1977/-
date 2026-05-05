@@ -866,6 +866,25 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 .audit-script-bar-fill { height: 16px; background: var(--c-primary); border-radius: 4px; min-width: 2px; }
 .audit-script-bar-count { text-align: right; font-size: .85rem; color: var(--c-text-muted); font-variant-numeric: tabular-nums; }
 
+.storage-meter { margin-bottom: var(--sp-3); }
+.storage-meter-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: var(--sp-1);
+}
+.storage-label { font-weight: 600; font-size: .9rem; }
+.storage-value { font-variant-numeric: tabular-nums; font-size: .9rem; color: var(--c-text-muted); }
+.storage-bar {
+  height: 8px; background: var(--c-border); border-radius: 4px; overflow: hidden;
+}
+.storage-bar-fill {
+  height: 100%; background: var(--c-primary); transition: width .3s ease, background .3s ease;
+}
+.storage-bar-fill.warn { background: #f59e0b; }
+.storage-bar-fill.danger { background: #ef4444; }
+
+.audit-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; margin-top: var(--sp-2); }
+.audit-actions .muted { font-variant-numeric: tabular-nums; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

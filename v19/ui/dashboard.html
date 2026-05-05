@@ -249,6 +249,18 @@
         <section class="card">
           <h2>保存データ</h2>
           <p class="muted">この端末（ブラウザ）に保存されている設定とチャット履歴を管理します。</p>
+          <div class="storage-meter" id="storageMeter">
+            <div class="storage-meter-row">
+              <span class="storage-label">localStorage 使用量</span>
+              <span class="storage-value" id="storageUsageText">…</span>
+            </div>
+            <div class="storage-bar">
+              <div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div>
+            </div>
+            <p class="muted" id="storageHint">
+              ブラウザの localStorage は通常 5 MB 程度。70% を超えたら不要セッションを書き出して削除してください。
+            </p>
+          </div>
           <div class="row">
             <button class="btn" id="exportAllBtn">全データを書き出す</button>
             <button class="btn btn-danger" id="resetAllBtn">全データを削除</button>

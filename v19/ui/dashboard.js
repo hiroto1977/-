@@ -560,6 +560,64 @@ document.getElementById('resetAllBtn').addEventListener('click', async () => {
   toast('全データを削除しました', 'success');
 });
 
+// ─────────────────────────────────────────
+// localStorage 容量メーター (governance/12 §10 #6 v8 で実装)
+// 5 MB を上限に推定し、70% 警告 / 90% 危険を視覚化。
+// ─────────────────────────────────────────
+const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024;  // 5 MB は最も保守的な見積もり
+function estimateLocalStorageUsage() {
+  let total = 0;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const val = localStorage.getItem(key) ?? '';
+      // UTF-16 で 2 byte/char と概算
+      total += (key.length + val.length) * 2;
+    }
+  } catch {}
+  return total;
+}
+function fmtBytes(n) {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(2)} MB`;
+}
+function updateStorageMeter() {
+  const used = estimateLocalStorageUsage();
+  const pct = Math.min(100, (used / STORAGE_LIMIT_BYTES) * 100);
+  const text = document.getElementById('storageUsageText');
+  const fill = document.getElementById('storageBarFill');
+  const hint = document.getElementById('storageHint');
+  if (text) text.textContent = `${fmtBytes(used)} / 約 5 MB (${pct.toFixed(1)}%)`;
+  if (fill) {
+    fill.style.width = pct + '%';
+    fill.classList.remove('warn', 'danger');
+    if (pct >= 90) fill.classList.add('danger');
+    else if (pct >= 70) fill.classList.add('warn');
+  }
+  if (hint) {
+    if (pct >= 90) {
+      hint.textContent = '⚠️ 容量逼迫: 新規セッションが保存できなくなる恐れがあります。「全データを書き出す」→ 不要セッションを削除してください。';
+      hint.style.color = '#ef4444';
+    } else if (pct >= 70) {
+      hint.textContent = '⚠️ 70% 超過: 古いセッションを書き出して削除する時期です。';
+      hint.style.color = '#f59e0b';
+    } else {
+      hint.textContent = 'ブラウザの localStorage は通常 5 MB 程度。70% を超えたら不要セッションを書き出して削除してください。';
+      hint.style.color = '';
+    }
+  }
+}
+// 設定タブ表示時 + 周期的更新
+window.addEventListener('hashchange', () => {
+  if (location.hash === '#settings') updateStorageMeter();
+});
+// 初回 + 30 秒ごと (タブが見える時のみ)
+setTimeout(updateStorageMeter, 100);
+setInterval(() => {
+  if (location.hash === '#settings' && !document.hidden) updateStorageMeter();
+}, 30000);
+
 // ---------- HTML utils ----------
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => (
