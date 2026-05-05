@@ -343,6 +343,46 @@ Ollama モデル (~/.ollama/models/) は 1 モデルあたり 4〜40 GB。
 
 ---
 
+## 12.5. rclone 中断時の リジューム 手順
+
+`storage-archive.sh` 経由で rclone がクラウドにアーカイブを送信中、ネットワーク断 / プロセス kill で中断した場合の対処。
+
+**rclone copy / sync は冪等に設計されている** ため、原則として**同じコマンドを再実行すれば続きから**再開できる。`rclone copy` は転送先のサイズ + 修正時刻 (デフォルト) で重複を判定し、既に存在する同一ファイルはスキップする。
+
+### 手順
+
+```sh
+# 1. 中断箇所の確認 (どこまで送ったか)
+rclone size <remote>:<path>
+rclone ls <remote>:<path> | wc -l
+
+# 2. 同じコマンドで再実行 (storage-archive.sh はこれを内部で呼ぶ)
+bash scripts/storage-archive.sh --plan --class C2  # 計画 確認
+bash scripts/storage-archive.sh --apply --class C2 # 実行 (再実行可)
+
+# 3. 大型ファイル (>5 GB) は --transfers と --checkers を低めに
+rclone copy <src> <remote>:<dst> \
+  --transfers=2 --checkers=4 \
+  --bwlimit 10M \
+  --retries 5 \
+  --low-level-retries 10 \
+  -P  # プログレス表示
+```
+
+### 注意点
+
+1. **`--update` は使わない**: ローカル時刻が同じでもファイル内容が変わっていると上書きされない事故がある
+2. **`--copy-links` の有無に注意**: シンボリックリンクの扱いが起動毎に変わるとループする
+3. **crypt remote**: 暗号化済の場合、先方の名前は obfuscate されているため `rclone lsd` で英数字混じりの名前が見えるのは正常
+4. **大量小ファイル**: `--fast-list` で一括 list、`--checkers=8` 程度で速度向上
+5. **転送途中で止めてはいけないファイル**: tar 中の途中ファイルなど。`storage-archive.sh` が tar を完成させてから rclone を呼ぶ設計
+
+### rclone のステート
+
+`~/.config/rclone/transfer.log` に転送ログ。中断後の再実行で「skipped (Match)」が大量に出れば正常 (再開できている)。
+
+---
+
 ## 13. 関連文書
 
 - `02_DATA_CLASSIFICATION.md` — どのデータを どこに置くか

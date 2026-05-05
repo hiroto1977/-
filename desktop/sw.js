@@ -1,6 +1,8 @@
 /* Service Worker — minna-desktop
-   オフライン対応のためのキャッシュファースト戦略 */
-const CACHE = 'minna-desktop-v1';
+   オフライン対応のためのキャッシュファースト戦略
+   バージョン管理: CACHE_VERSION を上げると古いキャッシュが activate 時に削除される */
+const CACHE_VERSION = 'v2';  // 上げる度に旧キャッシュを破棄
+const CACHE = `minna-desktop-${CACHE_VERSION}`;
 const ASSETS = [
   './',
   './index.html',
@@ -16,9 +18,19 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      // 旧バージョンのキャッシュを全削除 ('minna-desktop-' で始まり、現バージョンと違うもの)
+      Promise.all(
+        keys
+          .filter(k => k.startsWith('minna-desktop-') && k !== CACHE)
+          .map(k => caches.delete(k))
+      )
     ).then(() => self.clients.claim())
   );
+});
+
+// クライアントから 'SKIP_WAITING' を受け取ったら即座に新 SW を有効化
+self.addEventListener('message', e => {
+  if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', e => {
