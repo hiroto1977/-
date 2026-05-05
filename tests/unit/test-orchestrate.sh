@@ -141,6 +141,48 @@ t_audit_chain_intact() {
   assert_exit_code "$rc" 0 "audit-verify 通過" || return 1
 }
 
+t_propose_response_no_arg() {
+  bash "$ORCH" --propose-response >/dev/null 2>&1
+  assert_exit_code "$?" 2 "no arg → exit 2"
+}
+
+t_propose_response_known_breaches() {
+  for b in audit_chain_broken chat_error_storm inv12_concurrent_scope pii_scan_stale; do
+    local out
+    out=$(bash "$ORCH" --propose-response "$b" 2>&1)
+    if [[ "$?" -ne 0 ]]; then
+      echo "    $b → exit non-zero"
+      return 1
+    fi
+    assert_contains "$out" "OODA Decide" || return 1
+    assert_contains "$out" "60 秒で実行" || return 1
+  done
+  return 0
+}
+
+t_propose_response_audit_chain_references_03() {
+  local out
+  out=$(bash "$ORCH" --propose-response audit_chain_broken 2>&1)
+  # 復旧手順に backup ガイド 03 への言及
+  assert_contains "$out" "03_OPERATIONS" || return 1
+  assert_contains "$out" "audit-backups" || return 1
+}
+
+t_propose_response_unknown_returns_1() {
+  bash "$ORCH" --propose-response bogus_breach >/dev/null 2>&1
+  assert_exit_code "$?" 1 "unknown breach → exit 1"
+}
+
+t_propose_response_logged_to_audit() {
+  local tmp; tmp=$(mktemp -d)
+  AUDIT_LOG_PATH="$tmp/audit.jsonl" bash "$ORCH" --propose-response audit_chain_broken >/dev/null 2>&1
+  local content
+  content=$(cat "$tmp/audit.jsonl" 2>/dev/null)
+  rm -rf "$tmp"
+  assert_contains "$content" 'orchestrate.propose_response' || return 1
+  assert_contains "$content" 'breach=audit_chain_broken' || return 1
+}
+
 echo "== test-orchestrate =="
 run_test "--help が PDCA/OODA を含む"      t_help
 run_test "--emit で audit.jsonl に記録"     t_emit_writes_to_audit
@@ -154,4 +196,9 @@ run_test "未知 cycle → exit 2"               t_cycle_unknown_rejected
 run_test "--prompt-for alpha.1 が α1 で出る" t_prompt_for_alpha1
 run_test "全 4 チームの prompt-for が動く"  t_prompt_for_each_team
 run_test "板 自身が audit-verify で通る"    t_audit_chain_intact
+run_test "--propose-response 引数なし → 2"   t_propose_response_no_arg
+run_test "--propose-response 既知 4 breach"  t_propose_response_known_breaches
+run_test "audit_chain_broken が 03 を参照"   t_propose_response_audit_chain_references_03
+run_test "未知 breach → exit 1"              t_propose_response_unknown_returns_1
+run_test "propose-response が audit に記録"  t_propose_response_logged_to_audit
 report

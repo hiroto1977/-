@@ -188,7 +188,10 @@ run_once() {
   echo ""
   if [[ "$breached" -gt 0 ]]; then
     echo -e "${C_E}━━ ⚠️  $breached 件の breach 検出 ━━${C_RST}"
-    echo -e "  次の手: bash scripts/orchestrate.sh --cycle ooda --trigger watch"
+    echo -e "  次の手:"
+    echo -e "    1) OODA サイクル起動: bash scripts/orchestrate.sh --cycle ooda --trigger watch"
+    echo -e "    2) 個別 breach の対応案: bash scripts/orchestrate.sh --propose-response <breach-type>"
+    echo -e "       (breach-type は上記 BREACH:... の : 後ろの識別子)"
     audit_log "orchestrate_watch.breach" "count=$breached"
     return 1
   else

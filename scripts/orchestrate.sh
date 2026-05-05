@@ -154,6 +154,107 @@ cmd_cycle() {
   esac
 }
 
+cmd_propose_response() {
+  local breach="${1:-}"
+  if [[ -z "$breach" ]]; then
+    echo "用法: $0 --propose-response <breach-type>" >&2
+    echo "" >&2
+    echo "対応する breach-type:" >&2
+    echo "  audit_chain_broken      INV-2/INV-10 違反: 監査ログ改竄疑い" >&2
+    echo "  chat_error_storm        過去 1h で chat.error 多発" >&2
+    echo "  inv12_concurrent_scope  同 issue を複数チームが同時着手" >&2
+    echo "  pii_scan_stale          PII クリーン実行が古い" >&2
+    return 2
+  fi
+  echo -e "${C_HDR}━━ OODA Decide: 推奨対応 (breach=$breach) ━━${C_RST}"
+  echo ""
+  case "$breach" in
+    audit_chain_broken)
+      cat <<EOF
+  ${C_BLD}対応カテゴリ${C_RST}: 監査ログ 改竄疑い (INV-10 違反)
+  ${C_BLD}IR プレイブック${C_RST}: governance/09_INCIDENT_PLAYBOOK.md (該当 シナリオなし → 即興 IR)
+
+  ${C_BLD}60 秒で実行${C_RST}:
+    1. 別端末で最新 backup を verify:
+       \$ scp <other-host>:~/.claude/audit.jsonl /tmp/other.jsonl
+       \$ bash scripts/audit-verify.sh /tmp/other.jsonl
+    2. 改竄行を特定:
+       \$ bash scripts/audit-verify.sh ~/.claude/audit.jsonl 2>&1 | grep "改竄"
+    3. backup から復旧 (運用ガイド: 03_OPERATIONS.md D-4):
+       \$ tar -xzf ~/.claude/audit-backups/audit.jsonl.bak.YYYYMM.tar.gz
+       \$ diff ~/.claude/audit.jsonl <展開先>/audit.jsonl
+
+  ${C_BLD}並行 アクション${C_RST}:
+    α: 攻撃カタログ 08 と照合し新シナリオ候補に追加
+    γ: 改竄パターンを再発防止テストに追加
+    δ: 03_OPERATIONS の IR-3 を更新
+EOF
+      ;;
+    chat_error_storm)
+      cat <<EOF
+  ${C_BLD}対応カテゴリ${C_RST}: クラウド AI 障害 or CORS 失効
+  ${C_BLD}IR プレイブック${C_RST}: governance/09_INCIDENT_PLAYBOOK.md I-2 周辺 (機密漏れリスク監視も)
+
+  ${C_BLD}60 秒で実行${C_RST}:
+    1. ローカル専用モードに即切替 (UI 経由 or localStorage):
+       v19 ダッシュボード → 設定 → ローカル専用 ON
+    2. 直近の chat.error 内容を確認:
+       \$ grep '"event":"chat.error"' ~/.claude/audit.jsonl | tail -5
+    3. preflight で OLLAMA_ORIGINS / Anthropic / Google を確認:
+       \$ bash scripts/preflight.sh
+
+  ${C_BLD}並行 アクション${C_RST}:
+    β: localOnly 自動切替を実装するか検討 (新 INV 候補)
+    γ: chat.error の発火条件をテスト
+    δ: ベンダー 障害 連絡 リスト (03 G 節) を確認
+EOF
+      ;;
+    inv12_concurrent_scope)
+      cat <<EOF
+  ${C_BLD}対応カテゴリ${C_RST}: 重複着手 (INV-12 違反)
+  ${C_BLD}IR プレイブック${C_RST}: 運用問題 (governance/13_TEAM_ORCHESTRATION §9 失敗モード)
+
+  ${C_BLD}60 秒で実行${C_RST}:
+    1. 重複 issue を特定:
+       \$ grep '"event":"team\..*\.1\.scoped"' ~/.claude/audit.jsonl | tail -10
+    2. 後発チームに撤退要請:
+       \$ bash scripts/orchestrate.sh --emit team.<TEAM>.1.bounce "issue=<N> reason=duplicate"
+    3. 先発チームに完遂を委ねる、または α1 が再分担:
+       \$ bash scripts/orchestrate.sh --handoff <late> <first> "issue=<N> takeover"
+
+  ${C_BLD}並行 アクション${C_RST}:
+    α: 重複が起きた根本原因を §9 失敗モードに追加
+    γ: orchestrate.sh --emit に「同 issue の team.1.scoped 重複検出」を組込
+EOF
+      ;;
+    pii_scan_stale)
+      cat <<EOF
+  ${C_BLD}対応カテゴリ${C_RST}: PII セカンドラインの 鮮度低下 (INV-6 関連)
+  ${C_BLD}IR プレイブック${C_RST}: governance/09_INCIDENT_PLAYBOOK.md I-1 (シークレット コミット) 周辺
+
+  ${C_BLD}60 秒で実行${C_RST}:
+    1. 即時 PII スキャン (作業 ディレクトリ全体):
+       \$ bash scripts/pii-scan.sh --diff
+    2. ステージ 済の差分も:
+       \$ bash scripts/pii-scan.sh --staged
+    3. (gitleaks があれば二次防御):
+       \$ gitleaks detect --no-banner --redact
+
+  ${C_BLD}並行 アクション${C_RST}:
+    β: 自動 PII スキャンを daily routine (storage-orchestrator) に組込
+    δ: 03 ルーティン に「日次 PII スキャン」を追加
+EOF
+      ;;
+    *)
+      echo "  未対応の breach-type: $breach" >&2
+      echo "  対応する breach-type は --help で確認" >&2
+      return 1
+      ;;
+  esac
+  echo ""
+  audit_log "orchestrate.propose_response" "breach=$breach"
+}
+
 cmd_prompt_for() {
   local role="${1:-}"
   if [[ -z "$role" ]]; then
@@ -251,6 +352,8 @@ case "${1:-}" in
     ;;
   --prompt-for)
     shift; cmd_prompt_for "$@" ;;
+  --propose-response)
+    shift; cmd_propose_response "$@" ;;
   *)
     echo "未知のコマンド: $1" >&2
     usage
