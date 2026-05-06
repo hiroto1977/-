@@ -11,6 +11,9 @@ import {
   auditLogBrowser, exportBrowserAuditAsJsonl, loadBrowserAudit, clearBrowserAudit,
 } from './modules/audit-browser.js';
 import { escapeHtml, renderMarkdown, activateCopyButtons as _activateCopyButtonsRaw } from './modules/markdown.js';
+import {
+  parseTasksFromAudit, tasksToArray, stateBadge, formatTaskTimeline,
+} from './modules/journal.js';
 
 // dashboard 用 wrapper: copy 失敗時に toast を呼ぶ (toast は dashboard 専用)
 function activateCopyButtons(container) {
@@ -490,7 +493,7 @@ function renderOverview() {
 }
 
 // ---------- Router ----------
-const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude', 'audit', 'orchestrate', 'governance'];
+const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude', 'audit', 'orchestrate', 'governance', 'journal'];
 function currentRoute() {
   const hash = (location.hash || '#overview').replace(/^#/, '');
   return ROUTES.includes(hash) ? hash : '404';
@@ -2469,6 +2472,148 @@ function renderGovList() {
   });
 }
 
+// ─────────────────────────────────────────
+// 業務 引継ぎ Free (#journal、PDCA #23 v34)
+// audit.jsonl を読み込んで work.task.* を タスク別に集約・可視化。
+// 純粋ロジックは modules/journal.js に分離 (テスト容易性)。
+// ─────────────────────────────────────────
+const JOURNAL_CACHE_KEY = 'v19.journal.audit_cache';
+const JOURNAL_CACHE_MAX_BYTES = 500 * 1024; // 500 KB (ORCH_CACHE と同じ方針)
+
+let _journalState = { tasksMap: new Map(), name: '', ts: 0 };
+
+function _saveJournalCache(name, text) {
+  try {
+    if (text.length * 2 > JOURNAL_CACHE_MAX_BYTES) {
+      const lines = text.split('\n');
+      let acc = '';
+      for (let i = lines.length - 1; i >= 0; i--) {
+        const next = acc ? lines[i] + '\n' + acc : lines[i];
+        if (next.length * 2 > JOURNAL_CACHE_MAX_BYTES) break;
+        acc = next;
+      }
+      text = acc;
+    }
+    localStorage.setItem(JOURNAL_CACHE_KEY, JSON.stringify({ name, text, ts: Date.now() }));
+  } catch (e) { /* QuotaExceeded 等は黙殺 */ }
+}
+
+function _loadJournalCache() {
+  try {
+    const raw = localStorage.getItem(JOURNAL_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function bindJournal() {
+  const fileInput = document.getElementById('journalFileInput');
+  if (!fileInput) return;
+  // 起動時に キャッシュ から自動復元
+  const cached = _loadJournalCache();
+  if (cached?.text) {
+    const events = cached.text.split('\n').map(parseAuditLineSimple).filter(Boolean);
+    _journalState.tasksMap = parseTasksFromAudit(events);
+    _journalState.name = cached.name;
+    _journalState.ts = cached.ts;
+    const updEl = document.getElementById('journalLastUpdate');
+    if (updEl) {
+      const ago = Math.round((Date.now() - cached.ts) / 60000);
+      updEl.textContent = `(キャッシュから復元: ${cached.name}, ${ago} 分前)`;
+    }
+    renderJournal();
+  }
+  fileInput.addEventListener('change', async () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    const text = await f.text();
+    const events = text.split('\n').map(parseAuditLineSimple).filter(Boolean);
+    _journalState.tasksMap = parseTasksFromAudit(events);
+    _journalState.name = f.name;
+    _journalState.ts = Date.now();
+    _saveJournalCache(f.name, text);
+    const updEl = document.getElementById('journalLastUpdate');
+    if (updEl) updEl.textContent = `更新: ${new Date().toLocaleString('ja-JP')} / ${events.length} events`;
+    renderJournal();
+  });
+  // フィルタ/検索 変更で 再描画
+  document.getElementById('journalStateFilter')?.addEventListener('change', renderJournal);
+  document.getElementById('journalSearchBox')?.addEventListener('input', renderJournal);
+}
+
+function _getJournalFilter() {
+  const checked = document.querySelector('input[name="journalState"]:checked');
+  return checked ? checked.value : 'all';
+}
+
+function renderJournal() {
+  const tasksMap = _journalState.tasksMap;
+  const summaryCard = document.getElementById('journalSummary');
+  const controlsCard = document.getElementById('journalControls');
+  const tasksCard = document.getElementById('journalTasksCard');
+  if (tasksMap.size === 0) {
+    summaryCard?.setAttribute('hidden', '');
+    controlsCard?.setAttribute('hidden', '');
+    tasksCard?.setAttribute('hidden', '');
+    return;
+  }
+  summaryCard?.removeAttribute('hidden');
+  controlsCard?.removeAttribute('hidden');
+  tasksCard?.removeAttribute('hidden');
+
+  // サマリ (状態別 件数)
+  const counts = { active: 0, blocked: 0, handoff: 0, complete: 0, unknown: 0 };
+  for (const t of tasksMap.values()) counts[t.state] = (counts[t.state] || 0) + 1;
+  const grid = document.getElementById('journalSummaryGrid');
+  if (grid) {
+    grid.innerHTML = ['active', 'blocked', 'handoff', 'complete', 'unknown'].map(s => {
+      const b = stateBadge(s);
+      return `<div class="kpi-tile ${escapeHtml(b.cls)}">
+        <h3>${b.icon} ${escapeHtml(b.label)}</h3>
+        <div class="kpi-val">${counts[s] || 0}</div>
+        <div class="kpi-sub">タスク</div>
+      </div>`;
+    }).join('');
+  }
+
+  // タスク一覧
+  const stateFilter = _getJournalFilter();
+  const search = document.getElementById('journalSearchBox')?.value || '';
+  const arr = tasksToArray(tasksMap, { stateFilter, search });
+  const list = document.getElementById('journalTaskList');
+  if (!list) return;
+  if (arr.length === 0) {
+    list.innerHTML = '<li class="muted">該当 タスクなし</li>';
+    return;
+  }
+  list.innerHTML = arr.map((t, i) => {
+    const b = stateBadge(t.state);
+    const tl = formatTaskTimeline(t);
+    const lastTs = (t.lastTs || '').slice(0, 19).replace('T', ' ');
+    return `<li class="journal-card ${escapeHtml(b.cls)}">
+      <details>
+        <summary class="journal-summary">
+          <span class="journal-state-icon" title="${escapeHtml(b.label)}">${b.icon}</span>
+          <span class="journal-id"><code>${escapeHtml(t.id)}</code></span>
+          <span class="journal-title">${escapeHtml(t.title || '(タイトル未設定)')}</span>
+          <span class="journal-meta muted">
+            ${t.stakeholder ? `担当: ${escapeHtml(t.stakeholder)}` : ''}
+            ${t.deadline ? ` / 期限: ${escapeHtml(t.deadline)}` : ''}
+            ${lastTs ? ` / 最終: ${escapeHtml(lastTs)}` : ''}
+          </span>
+        </summary>
+        <ol class="journal-timeline">
+          ${tl.map(e => `<li>
+            <span class="journal-tl-ts">${escapeHtml(e.ts)}</span>
+            <span class="journal-tl-event"><code>${escapeHtml(e.eventShort)}</code></span>
+            <span class="journal-tl-details">${escapeHtml(e.details)}</span>
+          </li>`).join('')}
+        </ol>
+      </details>
+    </li>`;
+  }).join('');
+}
+
 function boot() {
   ensureSessions();
   applyTheme();
@@ -2481,6 +2626,7 @@ function boot() {
   bindAuditLoader();
   bindOrchestrate();
   bindGovernance();
+  bindJournal();
 
   // Default to overview if no hash
   if (!location.hash) location.hash = '#overview';

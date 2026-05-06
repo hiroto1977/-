@@ -957,6 +957,59 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 .affect-bar-fill { height: 100%; background: linear-gradient(90deg, var(--c-primary), #8b5cf6); transition: width .25s ease; }
 .affect-val { text-align: right; font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--c-text-muted); }
 
+/* Work Journal (#journal、PDCA #23 v34、governance/16 を UI で 可視化) */
+.journal-filters {
+  display: flex; flex-wrap: wrap; gap: var(--sp-3);
+  align-items: center; margin: var(--sp-2) 0;
+}
+.journal-filters .input { max-width: 320px; }
+.journal-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.journal-card {
+  border: 1px solid var(--c-border); border-radius: var(--r-md);
+  background: var(--c-surface);
+  border-left-width: 4px;
+}
+.journal-card.journal-active   { border-left-color: #22c55e; }
+.journal-card.journal-blocked  { border-left-color: #eab308; }
+.journal-card.journal-handoff  { border-left-color: #a855f7; }
+.journal-card.journal-complete { border-left-color: #94a3b8; }
+.journal-card.journal-unknown  { border-left-color: var(--c-border); }
+.journal-summary {
+  list-style: none; cursor: pointer;
+  padding: var(--sp-2) var(--sp-3);
+  display: grid;
+  grid-template-columns: 24px minmax(140px, 1fr) 2fr auto;
+  gap: var(--sp-2); align-items: baseline;
+}
+.journal-summary::-webkit-details-marker { display: none; }
+.journal-state-icon { font-size: 1.1rem; }
+.journal-id code { font-size: .85rem; }
+.journal-title { font-weight: 600; }
+.journal-meta { font-size: .85rem; }
+.journal-timeline {
+  list-style: none; padding: var(--sp-2) var(--sp-3);
+  margin: 0; border-top: 1px solid var(--c-border);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.journal-timeline li {
+  display: grid; grid-template-columns: 160px 140px 1fr;
+  gap: var(--sp-2); font-size: .85rem;
+  font-variant-numeric: tabular-nums;
+}
+.journal-tl-ts { color: var(--c-text-muted); }
+.journal-tl-event code { font-size: .8rem; }
+.journal-tl-details { word-break: break-all; }
+
+@media (max-width: 720px) {
+  .journal-summary { grid-template-columns: 24px 1fr; grid-auto-rows: auto; }
+  .journal-summary .journal-meta { grid-column: 1 / -1; }
+  .journal-summary .journal-title { grid-column: 1 / -1; }
+  .journal-timeline li { grid-template-columns: 1fr; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

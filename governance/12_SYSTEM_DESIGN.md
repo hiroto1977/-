@@ -1,8 +1,8 @@
 # 12. 統合システム 設計図 (System Blueprint)
 
-> **現バージョン**: **v33 (集大成 / 全面書直し)**
+> **現バージョン**: **v34 (集大成 + #journal ルート 実装)**
 >
-> **目的**: 32 サイクル分 (PDCA × 21 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
+> **目的**: 33 サイクル分 (PDCA × 22 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
 >
 > **読み手**: 新規セッション (Claude / 別 AI / 人間)、レビュア、運用者
 > **読了時間**: 30 分 (詳細は各 governance docs と design-iterations/v{N}.md へ)
@@ -428,22 +428,23 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 | **Phase 4: 運用最適化** | v21-v25 | preflight FAST + knowledge / README drift sniff + audit-verify Python (600x) + --auto モード |
 | **Phase 5: 品質統合** | v26-v30 | regression suite + 包括監査 + hook self-diagnosis + dashboard.js モジュール化 (affect/audit-browser/markdown) |
 | **Phase 6: 業務継続性** | v31-v32 | 業務 引継ぎ Free システム (governance/16) + Resilience テスト 15 件 |
-| **Phase 7: 集大成** | **v33** | 設計図 全面書直し (本文書) |
+| **Phase 7: 集大成** | v33 | 設計図 全面書直し (本文書) |
+| **Phase 8: 業務 UI 統合** | **v34** | v19 `#journal` ルート 実装 — governance/16 を タスク別 ガント風に 可視化 (`modules/journal.js` + 状態色 + キャッシュ + 55 unit tests) |
 
-詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 33) に保存。
+詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 34) に保存。
 
 ---
 
 ## 14. 既知の課題 (Open Issues)
 
-§10 課題 32 件は全て実装済 (v1-v32)。新 課題は α1 が次サイクル で scope 候補:
+§10 課題 33 件は全て実装済 (v1-v33)。**#34 (v34): v19 `#journal` ルート 実装 完了** — governance/16 を タスク別 ガント風に 可視化、`v19/ui/modules/journal.js` (純粋ロジック層) + `bindJournal()` (DOM バインド) + `.journal-*` 状態色 + localStorage キャッシュ (`v19.journal.audit_cache`) + 55 unit tests。残る候補は α1 が次サイクル で scope:
 
-- 残り dashboard.js モジュール化 (~1500 行 が目標、現 2493 行)
+- 残り dashboard.js モジュール化 (~1500 行 が目標、現 ~2620 行)
   - providers.js / sessions.js / audit-viewer.js / orchestrate-view.js
 - L8 KPI トレンド (7 日 / 30 日 ウィンドウ)
-- v19 ダッシュボード `#journal` ルート (governance/16 専用 UI)
 - アクセシビリティ 強化 (新ルートの ARIA / focus order)
 - pwsh 実機テスト (Windows / macOS)
+- `#journal` での タスク 横断検索 (DSL: `state:blocked deadline<2026-06`)
 
 ---
 
@@ -459,11 +460,12 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - 新セッション → `governance/14_SESSION_KNOWLEDGE.md`
 - 業務工程 → `governance/16_WORK_JOURNAL.md`
 - テスト → `tests/README.md`
-- 反復 履歴 → `governance/design-iterations/v{1-33}.md`
+- 反復 履歴 → `governance/design-iterations/v{1-34}.md`
 
 ---
 
 ## 16. 改定履歴
 
 - v1-v32 (2026-05): 各サイクルの増分改稿 — 詳細は `design-iterations/v{N}.md`
-- **v33 (2026-05): 全面書直し** — 32 サイクルの集大成、構造を 16 章 に再編、Phase 1-7 で進化を総括、新規読者の 30 分 把握 を最適化
+- v33 (2026-05): 全面書直し — 32 サイクルの集大成、構造を 16 章 に再編、Phase 1-7 で進化を総括、新規読者の 30 分 把握 を最適化
+- **v34 (2026-05): #journal UI 実装 (PDCA #23)** — governance/16 を v19 ダッシュボードで可視化 (`modules/journal.js` 純粋ロジック層 + `bindJournal()` DOM バインド + 状態色 + localStorage キャッシュ + 55 unit tests)、Phase 8 (業務 UI 統合) を開始

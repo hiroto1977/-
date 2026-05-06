@@ -24,6 +24,7 @@
       <a href="#integrations" data-route="integrations">連携</a>
       <a href="#orchestrate" data-route="orchestrate">運用</a>
       <a href="#governance" data-route="governance">文書</a>
+      <a href="#journal" data-route="journal">業務</a>
       <a href="#audit" data-route="audit">監査</a>
       <a href="#settings" data-route="settings">設定</a>
     </nav>
@@ -450,6 +451,60 @@
           <div class="row">
             <button class="btn-ghost" id="govCloseBtn" type="button">閉じる</button>
           </div>
+        </section>
+      </section>
+
+      <!-- Section: Work Journal (#journal、governance/16 を UI で 可視化、PDCA #23 v34) -->
+      <section class="route" data-route="journal" hidden aria-labelledby="journalTitle">
+        <header class="route-header">
+          <div>
+            <h1 id="journalTitle">
+              <span class="badge">業務</span>
+              業務 引継ぎ Free
+            </h1>
+            <p class="lead">
+              <code>~/.claude/audit.jsonl</code> を読み込み、<code>work.task.*</code> イベントをタスク別に集約して状態 (アクティブ / ブロック / 引継ぎ準備 / 完了) を可視化します。
+              詳細: <code>governance/16_WORK_JOURNAL.md</code>。 ファイルはブラウザ内のみで処理されます。
+            </p>
+          </div>
+        </header>
+
+        <section class="card">
+          <h2>ログファイル選択</h2>
+          <div class="audit-loader" id="journalLoader">
+            <input type="file" id="journalFileInput" accept=".jsonl,.log,.json,application/json,text/plain" />
+            <p class="hint">
+              📁 ファイル選択 / D&D。 <code>scripts/work-journal.sh --start ...</code> 等で書かれた
+              <code>work.task.*</code> イベントを抽出してタスク別に表示します。
+            </p>
+          </div>
+          <div class="row">
+            <span class="muted" id="journalLastUpdate"></span>
+          </div>
+        </section>
+
+        <section class="card" id="journalSummary" hidden>
+          <h2>サマリ</h2>
+          <div class="kpi-grid" id="journalSummaryGrid"></div>
+        </section>
+
+        <section class="card" id="journalControls" hidden>
+          <h2>絞り込み</h2>
+          <div class="journal-filters">
+            <div class="seg" role="radiogroup" aria-label="状態フィルタ" id="journalStateFilter">
+              <label><input type="radio" name="journalState" value="all" checked /><span>全て</span></label>
+              <label><input type="radio" name="journalState" value="active" /><span>🟢 アクティブ</span></label>
+              <label><input type="radio" name="journalState" value="blocked" /><span>🟡 ブロック</span></label>
+              <label><input type="radio" name="journalState" value="handoff" /><span>🟣 引継ぎ準備</span></label>
+              <label><input type="radio" name="journalState" value="complete" /><span>⚪ 完了</span></label>
+            </div>
+            <input type="search" id="journalSearchBox" class="input" placeholder="タスク ID / タイトル / 担当 で検索" />
+          </div>
+        </section>
+
+        <section class="card" id="journalTasksCard" hidden>
+          <h2>タスク一覧</h2>
+          <ul class="journal-list" id="journalTaskList"></ul>
         </section>
       </section>
 

@@ -14,8 +14,9 @@
 2. **L8 オーケストレーション AI** が 4 チーム × 4 役で PDCA/OODA を回し、自分で歪みを発見し自分で塞ぐ
 3. **板 (`~/.claude/audit.jsonl`)** に SHA-256 連鎖で全活動を記録、改竄検知可能
 
-設計図 **v33**、PDCA × **22** + OODA × **2** が稼働実績。§10 課題は全 **33** 件 実装済。
+設計図 **v34**、PDCA × **23** + OODA × **2** が稼働実績。§10 課題は全 **34** 件 実装済。
 v31 で **業務 引継ぎ Free システム** (governance/16 + work-journal.sh)、v32 で **Resilience テスト 15 件** (tests/resilience/) — 業務記録が止まらないことを機械検証。
+v33 で **設計図 全面書直し** (16 章で 30 分把握)、v34 で v19 `#journal` UI ルート (governance/16 を タスク別 ガント風に 可視化、`modules/journal.js` 純粋ロジック + 55 unit tests)。
 v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化、v22 で knowledge doc を drift sniff 連動更新、v23 で README を drift sniff 連動更新、v24 で `orchestrate.sh --auto` (bootstrap/pdca/ooda/monitor) 半自動モード追加、v25 で audit-verify を Python 化 (smoke 19s、v21 比 5.7x)、v26 で 過去の罠 12 件を回帰テスト化 (tests/regression/)。
 
 ---
