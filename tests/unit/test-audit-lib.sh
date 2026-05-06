@@ -142,6 +142,25 @@ t_rotate_noop_if_nothing_to_remove() {
   assert_eq "$before" "$after" "no-op (削除対象なし)"
 }
 
+t_concurrent_writes_no_race() {
+  # 30 並列書込でチェーンが破断しないこと (v17 flock)
+  local tmp; tmp=$(mktemp -d)
+  for i in $(seq 1 30); do
+    AUDIT_LOG_PATH="$tmp/audit.jsonl" bash -c "
+      source '$AUDIT_LIB'
+      audit_log 'parallel.test' 'i=$i'
+    " &
+  done
+  wait
+  local lines
+  lines=$(wc -l < "$tmp/audit.jsonl")
+  bash "$AUDIT_VERIFY" "$tmp/audit.jsonl" >/dev/null 2>&1
+  local rc=$?
+  rm -rf "$tmp"
+  assert_eq "$lines" "30" "30 行 書込まれた" || return 1
+  assert_exit_code "$rc" 0 "30 並列でも verify 通過" || return 1
+}
+
 echo "== test-audit-lib =="
 run_test "chain intact (3 entries)"           t_chain_intact
 run_test "chain break on tamper"              t_chain_break_on_tamper
@@ -150,4 +169,5 @@ run_test "genesis prev_hash = 64 zeros"        t_chain_genesis_zero
 run_test "rotate 後 verify が通る"             t_rotate_preserves_chain_integrity
 run_test "rotate が checkpoint event を挿入"   t_rotate_inserts_checkpoint
 run_test "rotate no-op (削除対象なし)"         t_rotate_noop_if_nothing_to_remove
+run_test "30 並列書込でチェーン破断なし"     t_concurrent_writes_no_race
 report

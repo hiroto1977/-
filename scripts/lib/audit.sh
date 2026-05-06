@@ -67,7 +67,16 @@ audit_log() {
   # ログディレクトリ作成
   mkdir -p "$(dirname "$AUDIT_LOG_PATH")" 2>/dev/null || return 0
 
-  # 前のチェーン (なければゼロ)
+  # 並行書込 レース 防止 (INV-2 強化、v17)
+  # flock で read-prev → compute-chain → write を一度に直列化
+  local lockfile="${AUDIT_LOG_PATH}.lock"
+  exec 200>>"$lockfile"
+  if command -v flock >/dev/null 2>&1; then
+    # 5 秒以内にロックが取れなければスキップ (audit が業務を阻害しないように)
+    flock -w 5 200 || { exec 200>&-; return 0; }
+  fi
+
+  # 前のチェーン (なければゼロ) ─ ロック内で最新行を読む
   local prev
   prev=$(_audit_last_hash)
   [[ -z "$prev" ]] && prev="0000000000000000000000000000000000000000000000000000000000000000"
@@ -98,6 +107,9 @@ audit_log() {
 
   # 完成 JSON 行 (1 行)
   printf '%s,"chain_hash":"%s"}\n' "$body" "$chain" >> "$AUDIT_LOG_PATH"
+
+  # ロック解放 (fd を閉じる → flock も解除される)
+  exec 200>&-
 
   return 0
 }
