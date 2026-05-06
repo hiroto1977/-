@@ -144,3 +144,31 @@ export const OODA_RESPONSES = {
 export function formatBoardTs(ts) {
   return (ts || '').replace('T', ' ').slice(0, 19);
 }
+
+// L8 KPI トレンド ウィンドウ (PDCA #27 v38、governance/12 §10 #38):
+// events を 「直近 N 日」 でフィルタしてから computeOrchestrateKPI を呼ぶ。
+// windowDays = 0 (or null/undefined) は 全期間 を意味する。
+// now は引数で受け取り、Node テストでも決定論的に検証可能。
+//
+// 戻り値: { kpi, windowStartTs, windowEndTs, totalEventsInWindow }
+export function computeKpiTrend(events, windowDays, now = Date.now()) {
+  if (!windowDays || windowDays <= 0) {
+    return {
+      kpi: computeOrchestrateKPI(events),
+      windowStartTs: null,
+      windowEndTs: new Date(now).toISOString(),
+      totalEventsInWindow: events.length,
+    };
+  }
+  const cutoffMs = now - (windowDays * 24 * 60 * 60 * 1000);
+  const filtered = (events || []).filter(e => {
+    const t = Date.parse(e.ts);
+    return Number.isFinite(t) && t >= cutoffMs;
+  });
+  return {
+    kpi: computeOrchestrateKPI(filtered),
+    windowStartTs: new Date(cutoffMs).toISOString(),
+    windowEndTs: new Date(now).toISOString(),
+    totalEventsInWindow: filtered.length,
+  };
+}

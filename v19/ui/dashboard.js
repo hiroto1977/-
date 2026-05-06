@@ -16,7 +16,7 @@ import {
 } from './modules/journal.js';
 import {
   parseAuditLineSimple, computeOrchestrateKPI, filterBoardEvents,
-  boardRowClass, formatBoardTs, OODA_RESPONSES,
+  boardRowClass, formatBoardTs, OODA_RESPONSES, computeKpiTrend,
 } from './modules/orchestrate.js';
 import {
   PROVIDERS, ProviderError, textOf, imagesOf, hasImages,
@@ -495,14 +495,20 @@ function navigate() {
   document.querySelectorAll('.route').forEach(s => {
     s.hidden = s.dataset.route !== route;
   });
-  // Update top nav
+  // Update top nav (ARIA + visual)
   document.querySelectorAll('.topnav a').forEach(a => {
-    a.classList.toggle('active', a.dataset.route === route ||
-      (a.dataset.route === 'integrations' && route === 'integration-claude'));
+    const isActive = a.dataset.route === route ||
+      (a.dataset.route === 'integrations' && route === 'integration-claude');
+    a.classList.toggle('active', isActive);
+    if (isActive) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
   });
   // Update sidebar
   document.querySelectorAll('.integration-link').forEach(a => {
-    a.classList.toggle('active', a.dataset.route === route);
+    const isActive = a.dataset.route === route;
+    a.classList.toggle('active', isActive);
+    if (isActive) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
   });
   // Focus content for screen readers
   document.getElementById('content').focus({ preventScroll: false });
@@ -1793,8 +1799,15 @@ function _loadGovCache() {
 // boardRowClass / formatBoardTs / OODA_RESPONSES は modules/orchestrate.js から import
 // (PDCA #25 v36 抽出、純粋ロジック層として独立テスト可能)
 
+function _getKpiWindow() {
+  const checked = document.querySelector('input[name="kpiWindow"]:checked');
+  return checked ? parseInt(checked.value, 10) : 0;
+}
+
 function renderOrchestrateKPI(events) {
-  const kpi = computeOrchestrateKPI(events);
+  const windowDays = _getKpiWindow();
+  const trend = computeKpiTrend(events, windowDays);
+  const kpi = trend.kpi;
   for (const team of ['alpha', 'beta', 'gamma', 'delta']) {
     const v = document.getElementById(`kpi_${team}`);
     const s = document.getElementById(`kpi_${team}_sub`);
@@ -1802,7 +1815,10 @@ function renderOrchestrateKPI(events) {
     if (s) s.textContent = kpi[team].sub;
   }
   const updEl = document.getElementById('orchestrateLastUpdate');
-  if (updEl) updEl.textContent = `更新: ${new Date().toLocaleString('ja-JP')} / ${events.length} events`;
+  if (updEl) {
+    const windowLabel = windowDays > 0 ? `直近 ${windowDays} 日` : '全期間';
+    updEl.textContent = `更新: ${new Date().toLocaleString('ja-JP')} / ${trend.totalEventsInWindow} events (${windowLabel})`;
+  }
 }
 
 function renderBoard(events) {
@@ -1851,6 +1867,10 @@ function bindOrchestrate() {
   });
   ['boardFilterTeam', 'boardFilterHandoff', 'boardFilterIncident', 'boardFilterCycle'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', () => renderBoard(_orchState.events));
+  });
+  // KPI ウィンドウ 切替 (PDCA #27 v38、computeKpiTrend で再計算)
+  document.querySelectorAll('input[name="kpiWindow"]').forEach(r => {
+    r.addEventListener('change', () => renderOrchestrateKPI(_orchState.events));
   });
   // propose-response (modules/orchestrate.js の OODA_RESPONSES から)
   const sel = document.getElementById('proposeBreachSelect');
@@ -1999,6 +2019,16 @@ function bindJournal() {
   // フィルタ/検索 変更で 再描画
   document.getElementById('journalStateFilter')?.addEventListener('change', renderJournal);
   document.getElementById('journalSearchBox')?.addEventListener('input', renderJournal);
+  // DSL 例 チップ (PDCA #27 v38) — クリックで search box に投入 + 再描画
+  document.querySelectorAll('.journal-dsl-examples [data-dsl-query]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = document.getElementById('journalSearchBox');
+      if (!box) return;
+      box.value = btn.dataset.dslQuery;
+      box.focus();
+      renderJournal();
+    });
+  });
 }
 
 function _getJournalFilter() {

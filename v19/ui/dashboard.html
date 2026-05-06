@@ -384,18 +384,23 @@
           </div>
         </header>
 
-        <section class="card">
-          <h2>4 チーム KPI</h2>
-          <div class="kpi-grid">
-            <div class="kpi-tile" data-team="alpha"><h3>α アーキ</h3><div class="kpi-val" id="kpi_alpha">…</div><div class="kpi-sub" id="kpi_alpha_sub"></div></div>
-            <div class="kpi-tile" data-team="beta"><h3>β 実装</h3><div class="kpi-val" id="kpi_beta">…</div><div class="kpi-sub" id="kpi_beta_sub"></div></div>
-            <div class="kpi-tile" data-team="gamma"><h3>γ 品質</h3><div class="kpi-val" id="kpi_gamma">…</div><div class="kpi-sub" id="kpi_gamma_sub"></div></div>
-            <div class="kpi-tile" data-team="delta"><h3>δ 運用</h3><div class="kpi-val" id="kpi_delta">…</div><div class="kpi-sub" id="kpi_delta_sub"></div></div>
+        <section class="card" aria-labelledby="kpiHeader">
+          <h2 id="kpiHeader">4 チーム KPI</h2>
+          <div class="kpi-window-picker" role="radiogroup" aria-label="KPI 集計期間">
+            <label><input type="radio" name="kpiWindow" value="7" /><span>直近 7 日</span></label>
+            <label><input type="radio" name="kpiWindow" value="30" /><span>直近 30 日</span></label>
+            <label><input type="radio" name="kpiWindow" value="0" checked /><span>全期間</span></label>
           </div>
-          <p class="muted">KPI は <code>~/.claude/audit.jsonl</code> + <code>governance/12</code> から計算。 ファイル選択で更新します。</p>
+          <div class="kpi-grid" role="list">
+            <div class="kpi-tile" data-team="alpha" role="listitem" aria-label="α アーキ KPI"><h3>α アーキ</h3><div class="kpi-val" id="kpi_alpha" aria-live="polite">…</div><div class="kpi-sub" id="kpi_alpha_sub"></div></div>
+            <div class="kpi-tile" data-team="beta"  role="listitem" aria-label="β 実装 KPI"><h3>β 実装</h3><div class="kpi-val" id="kpi_beta" aria-live="polite">…</div><div class="kpi-sub" id="kpi_beta_sub"></div></div>
+            <div class="kpi-tile" data-team="gamma" role="listitem" aria-label="γ 品質 KPI"><h3>γ 品質</h3><div class="kpi-val" id="kpi_gamma" aria-live="polite">…</div><div class="kpi-sub" id="kpi_gamma_sub"></div></div>
+            <div class="kpi-tile" data-team="delta" role="listitem" aria-label="δ 運用 KPI"><h3>δ 運用</h3><div class="kpi-val" id="kpi_delta" aria-live="polite">…</div><div class="kpi-sub" id="kpi_delta_sub"></div></div>
+          </div>
+          <p class="muted">KPI は <code>~/.claude/audit.jsonl</code> + <code>governance/12</code> から計算。 ファイル選択で更新、期間ピッカーで再計算します。</p>
           <div class="row">
-            <input type="file" id="orchestrateAuditInput" accept=".jsonl,.log,.json,application/json,text/plain" />
-            <span class="muted" id="orchestrateLastUpdate"></span>
+            <input type="file" id="orchestrateAuditInput" accept=".jsonl,.log,.json,application/json,text/plain" aria-label="audit.jsonl ファイルを選択" />
+            <span class="muted" id="orchestrateLastUpdate" aria-live="polite"></span>
           </div>
         </section>
 
@@ -498,16 +503,27 @@
               <label><input type="radio" name="journalState" value="handoff" /><span>🟣 引継ぎ準備</span></label>
               <label><input type="radio" name="journalState" value="complete" /><span>⚪ 完了</span></label>
             </div>
-            <input type="search" id="journalSearchBox" class="input" placeholder='例: "見積 state:blocked deadline<2026-06 has:artifact stakeholder:alice"' />
+            <input type="search" id="journalSearchBox" class="input"
+              aria-describedby="journalDslHint"
+              placeholder='例: "見積 state:blocked deadline<2026-06 has:artifact stakeholder:alice"' />
           </div>
-          <p class="hint muted">
+          <div class="journal-dsl-examples" role="toolbar" aria-label="DSL クエリ例">
+            <span class="dsl-examples-label">例:</span>
+            <button class="chip" type="button" data-dsl-query="state:active">🟢 進行中</button>
+            <button class="chip" type="button" data-dsl-query="state:blocked">🟡 ブロック中</button>
+            <button class="chip" type="button" data-dsl-query="state:handoff">🟣 引継ぎ待ち</button>
+            <button class="chip" type="button" data-dsl-query="has:artifact">📎 成果物あり</button>
+            <button class="chip" type="button" data-dsl-query="has:decision">✅ 意思決定あり</button>
+            <button class="chip" type="button" data-dsl-query="" aria-label="フィルタ クリア">✖ クリア</button>
+          </div>
+          <p id="journalDslHint" class="hint muted">
             DSL: <code>state:active|blocked|handoff|complete</code> /
             <code>stakeholder:&lt;名&gt;</code> /
             <code>id:&lt;ID&gt;</code> /
             <code>deadline&lt;YYYY-MM-DD</code> /
             <code>deadline&gt;YYYY-MM-DD</code> /
             <code>has:artifact|handoff|block|decision</code>。
-            自由語は id/title/担当 を AND マッチ。
+            自由語は id/title/担当 を AND マッチ。チップ クリックで例を投入。
           </p>
         </section>
 

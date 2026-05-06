@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const {
   parseAuditLineSimple, computeOrchestrateKPI, countInv12Violations,
   filterBoardEvents, boardRowClass, formatBoardTs, OODA_RESPONSES,
+  computeKpiTrend,
 } = await import(path.join(ROOT, 'v19/ui/modules/orchestrate.js'));
 
 const tests = [];
@@ -150,6 +151,47 @@ for (const key of ['audit_chain_broken', 'chat_error_storm', 'inv12_concurrent_s
   T(`OODA: ${key} steps 3 件`, r.steps.length === 3);
 }
 
+// ── 7.5 computeKpiTrend (v38、PDCA #27) ──
+{
+  const FIXED_NOW = Date.parse('2026-05-30T00:00:00Z');
+  const dayMs = 86400000;
+  const events = [
+    // 40 日前 (windowOutside)
+    { ts: new Date(FIXED_NOW - 40 * dayMs).toISOString(), event: 'pdca.cycle.complete', details: 'old' },
+    // 20 日前 (30d 内、7d 外)
+    { ts: new Date(FIXED_NOW - 20 * dayMs).toISOString(), event: 'pdca.cycle.complete', details: 'mid' },
+    // 3 日前 (7d 内)
+    { ts: new Date(FIXED_NOW - 3 * dayMs).toISOString(), event: 'pdca.cycle.complete', details: 'recent' },
+  ];
+  const trendAll = computeKpiTrend(events, 0, FIXED_NOW);
+  T('trend: 全期間 → 全 events',
+    trendAll.totalEventsInWindow === 3 && trendAll.kpi.alpha.label === '3 サイクル完遂');
+  T('trend: 全期間 → windowStartTs null',
+    trendAll.windowStartTs === null);
+
+  const trend30 = computeKpiTrend(events, 30, FIXED_NOW);
+  T('trend: 30d → 2 events (mid + recent)',
+    trend30.totalEventsInWindow === 2 && trend30.kpi.alpha.label === '2 サイクル完遂');
+  T('trend: 30d → windowStartTs 設定',
+    trend30.windowStartTs && trend30.windowEndTs);
+
+  const trend7 = computeKpiTrend(events, 7, FIXED_NOW);
+  T('trend: 7d → 1 event (recent のみ)',
+    trend7.totalEventsInWindow === 1 && trend7.kpi.alpha.label === '1 サイクル完遂');
+
+  T('trend: 不正 ts は スキップ (cutoff フィルタで除外)',
+    computeKpiTrend([{ ts: 'bad', event: 'pdca.cycle.complete' }], 7, FIXED_NOW)
+      .totalEventsInWindow === 0);
+  T('trend: null windowDays → 全期間',
+    computeKpiTrend(events, null, FIXED_NOW).totalEventsInWindow === 3);
+  T('trend: 負の windowDays → 全期間',
+    computeKpiTrend(events, -1, FIXED_NOW).totalEventsInWindow === 3);
+  T('trend: 空配列',
+    computeKpiTrend([], 7, FIXED_NOW).totalEventsInWindow === 0);
+  T('trend: now 既定 = Date.now',
+    typeof computeKpiTrend([], 0).windowEndTs === 'string');
+}
+
 // ── 8. drift sniff: dashboard.js が orchestrate モジュール を import + 使用 ──
 const dashSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.js'), 'utf8');
 T('dashboard.js が orchestrate モジュール を import',
@@ -162,6 +204,22 @@ T('dashboard.js: 旧 inline RESPONSES 削除済み',
   !/const\s+RESPONSES\s*=\s*\{\s*\n\s*audit_chain_broken/.test(dashSrc));
 T('dashboard.js: OODA_RESPONSES を使用',
   dashSrc.includes('OODA_RESPONSES'));
+
+// v38 (PDCA #27): KPI ウィンドウ ピッカー + computeKpiTrend
+T('dashboard.js: computeKpiTrend を import',
+  /import\s*\{[^}]*computeKpiTrend[^}]*\}\s*from\s*['"]\.\/modules\/orchestrate\.js['"]/.test(
+    dashSrc.replace(/\s+/g, ' ')));
+T('dashboard.js: kpiWindow radio 切替 ハンドラ',
+  /input\[name="kpiWindow"\]/.test(dashSrc));
+const htmlSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.html'), 'utf8');
+T('dashboard.html: KPI ウィンドウ ピッカー 3 オプション',
+  /name="kpiWindow"[^>]*value="7"/.test(htmlSrc) &&
+  /name="kpiWindow"[^>]*value="30"/.test(htmlSrc) &&
+  /name="kpiWindow"[^>]*value="0"/.test(htmlSrc));
+T('dashboard.html: kpi-tile に role="listitem"',
+  /role="listitem"\s+aria-label/.test(htmlSrc));
+T('dashboard.html: KPI val に aria-live',
+  /id="kpi_alpha"[^>]*aria-live/.test(htmlSrc));
 
 // ── レポート ──
 let pass = 0, fail = 0;

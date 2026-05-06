@@ -247,6 +247,20 @@ const cssSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.css'), 'utf8');
 T('dashboard.css に .journal-card', cssSrc.includes('.journal-card'));
 T('dashboard.css に .journal-active 状態色', cssSrc.includes('.journal-active'));
 
+// v38 (PDCA #27): DSL 例 チップ + ARIA
+T('dashboard.html: DSL 例 ツールバー (role + aria-label)',
+  /class="journal-dsl-examples"\s+role="toolbar"/.test(htmlSrc));
+T('dashboard.html: 6 つの 例 chip',
+  (htmlSrc.match(/data-dsl-query=/g) || []).length === 6);
+T('dashboard.html: クリア chip (空 query)',
+  /data-dsl-query=""/.test(htmlSrc));
+T('dashboard.html: search box に aria-describedby',
+  /id="journalSearchBox"[^>]*aria-describedby="journalDslHint"/.test(htmlSrc));
+T('dashboard.css: .journal-dsl-examples スタイル',
+  cssSrc.includes('.journal-dsl-examples'));
+T('dashboard.js: data-dsl-query クリック ハンドラ',
+  dashSrc.includes('data-dsl-query'));
+
 // ── レポート ──
 let pass = 0, fail = 0;
 for (const [name, ok] of tests) {
