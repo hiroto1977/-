@@ -274,21 +274,31 @@ cmd_auto() {
   esac
 }
 
-# ── 起動時 標準シーケンス: preflight + status + KPI + watcher ──
+# ── 起動時 標準シーケンス: preflight + hook + status + KPI + watcher ──
 auto_bootstrap() {
   echo -e "${C_HDR}━━ 自動モード: bootstrap ━━${C_RST}"
-  echo "  実行内容: preflight (FAST) → orchestrate status → KPI → watcher (once)"
+  echo "  実行内容: preflight (FAST) → pre-commit hook 状態 → status → KPI → watcher (once)"
   echo ""
-  echo -e "${C_BLD}── (1/4) preflight (FAST) ──${C_RST}"
+  echo -e "${C_BLD}── (1/5) preflight (FAST) ──${C_RST}"
   PREFLIGHT_FAST=1 bash "$ROOT_DIR/scripts/preflight.sh" 2>&1 | tail -8
   echo ""
-  echo -e "${C_BLD}── (2/4) orchestrate status ──${C_RST}"
+  echo -e "${C_BLD}── (2/5) pre-commit hook 状態 (INV-6) ──${C_RST}"
+  local hook_path="$ROOT_DIR/.git/hooks/pre-commit"
+  if [[ -L "$hook_path" ]] || [[ -f "$hook_path" ]]; then
+    echo -e "  ${C_OK}✅ hook インストール済${C_RST} ($(readlink "$hook_path" 2>/dev/null || echo "$hook_path"))"
+  else
+    echo -e "  ${C_E}❌ pre-commit hook が 未インストール${C_RST} — INV-6 (PII commit 阻止) が無効"
+    echo -e "  ${C_BLD}対処${C_RST}: bash scripts/install-hooks.sh"
+    audit_log "orchestrate.bootstrap.hook_missing" ""
+  fi
+  echo ""
+  echo -e "${C_BLD}── (3/5) orchestrate status ──${C_RST}"
   cmd_status 2>&1 | head -20
   echo ""
-  echo -e "${C_BLD}── (3/4) KPI ──${C_RST}"
+  echo -e "${C_BLD}── (4/5) KPI ──${C_RST}"
   ORCHESTRATE_KPI_NO_GAMMA=1 bash "$ROOT_DIR/scripts/orchestrate-kpi.sh" 2>&1 | head -10
   echo ""
-  echo -e "${C_BLD}── (4/4) watcher (once) ──${C_RST}"
+  echo -e "${C_BLD}── (5/5) watcher (once) ──${C_RST}"
   bash "$ROOT_DIR/scripts/orchestrate-watch.sh" --once 2>&1 | tail -10
   echo ""
   echo -e "${C_HDR}━━ bootstrap 完了 ━━${C_RST}"

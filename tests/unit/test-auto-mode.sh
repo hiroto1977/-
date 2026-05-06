@@ -77,6 +77,13 @@ t_auto_bootstrap_function_exists() {
   grep -q '^auto_bootstrap()' "$ORCH" || { echo "    auto_bootstrap 関数 不在"; return 1; }
 }
 
+t_auto_bootstrap_checks_hook_install() {
+  # bootstrap が pre-commit hook 状態を検査するか (sniff)
+  grep -q "pre-commit hook 状態" "$ORCH" || { echo "    bootstrap に hook チェックなし"; return 1; }
+  grep -q "INV-6" "$ORCH" || { echo "    bootstrap が INV-6 を言及していない"; return 1; }
+  grep -q "install-hooks.sh" "$ORCH" || { echo "    対処コマンド 不在"; return 1; }
+}
+
 t_auto_monitor_function_exists() {
   grep -q '^auto_monitor()' "$ORCH" || { echo "    auto_monitor 関数 不在"; return 1; }
 }
@@ -95,6 +102,7 @@ run_test "--auto ooda が動く"                      t_auto_ooda_runs
 run_test "--auto ooda が breach → propose-response" t_auto_ooda_breach_triggers_propose_response
 run_test "--auto bogus → exit 2"                  t_auto_unknown_mode_returns_2
 run_test "auto_bootstrap 関数 定義"               t_auto_bootstrap_function_exists
+run_test "bootstrap が pre-commit hook 状態 検査"  t_auto_bootstrap_checks_hook_install
 run_test "auto_monitor 関数 定義"                 t_auto_monitor_function_exists
 run_test "--help が --auto を含む"                 t_help_mentions_auto
 report
