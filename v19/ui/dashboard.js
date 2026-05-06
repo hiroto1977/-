@@ -21,6 +21,17 @@ import {
 import {
   PROVIDERS, ProviderError, textOf, imagesOf, hasImages,
 } from './modules/providers.js';
+import {
+  makeSession, getSessionSystemPrompt as _getSessionSystemPrompt,
+  deriveTitleFromHistory as _deriveTitleFromHistory,
+  sanitizeTitle, nextActiveSessionId, ensureSessionsShape,
+  getActiveSessionFrom, exportFileName,
+} from './modules/sessions.js';
+import {
+  ZERO_HASH, auditEventSeverity, parseAuditJsonl,
+  summarizeAuditEntries, verifyAuditChain as _verifyAuditChain,
+  filterAuditEntries, formatAuditTs,
+} from './modules/audit-viewer.js';
 
 // dashboard 用 wrapper: copy 失敗時に toast を呼ぶ (toast は dashboard 専用)
 function activateCopyButtons(container) {
@@ -112,55 +123,28 @@ const Storage = {
   reset() { localStorage.removeItem(STORAGE_KEY); },
 };
 
-function makeSession({ id, title, autoTitle = true, history = [],
-                       presetId = null, systemPrompt = '' } = {}) {
-  const now = Date.now();
-  return {
-    id: id || ('sess_' + now.toString(36) + Math.random().toString(36).slice(2, 6)),
-    title: title || '新しい会話',
-    autoTitle,
-    createdAt: now,
-    updatedAt: now,
-    history,
-    presetId,    // ID of an active built-in preset, or null
-    systemPrompt, // free-form (overrides preset if both set; preset application copies into here)
-  };
-}
-
+// makeSession / sanitizeTitle / nextActiveSessionId / ensureSessionsShape /
+// getActiveSessionFrom / exportFileName は modules/sessions.js から import (PDCA #26 v37)
+// 以下は dashboard.js 内の薄い wrapper (state / preset カタログ依存)
 function getSessionSystemPrompt(s) {
-  // Free-form text takes precedence; if empty fall back to preset's prompt
-  if (s.systemPrompt && s.systemPrompt.trim()) return s.systemPrompt;
-  const preset = getPresetById(s.presetId);
-  return preset ? preset.systemPrompt : '';
+  return _getSessionSystemPrompt(s, getPresetById);
 }
 function deriveTitleFromHistory(history) {
-  const first = history.find(m => m.role === 'user');
-  if (!first) return '新しい会話';
-  const text = (typeof first.content === 'string')
-    ? first.content
-    : (textOf(first.content) || (hasImages(first.content) ? '🖼 画像' : ''));
-  return text.replace(/\s+/g, ' ').trim().slice(0, 30) || '新しい会話';
+  return _deriveTitleFromHistory(history, { textOf, hasImages });
 }
 function getActiveSession() {
-  let s = state.chat.sessions.find(x => x.id === state.chat.activeSessionId);
+  let s = getActiveSessionFrom(state.chat.sessions, state.chat.activeSessionId);
   if (!s) {
-    s = state.chat.sessions[0];
-    if (!s) {
-      s = makeSession();
-      state.chat.sessions.push(s);
-    }
+    s = makeSession();
+    state.chat.sessions.push(s);
+    state.chat.activeSessionId = s.id;
+  } else if (state.chat.activeSessionId !== s.id) {
     state.chat.activeSessionId = s.id;
   }
   return s;
 }
 function ensureSessions() {
-  if (!state.chat.sessions || !state.chat.sessions.length) {
-    const s = makeSession();
-    state.chat.sessions = [s];
-    state.chat.activeSessionId = s.id;
-  } else if (!state.chat.sessions.find(x => x.id === state.chat.activeSessionId)) {
-    state.chat.activeSessionId = state.chat.sessions[0].id;
-  }
+  ensureSessionsShape(state.chat);
 }
 
 // ---------- Provider registry ----------
@@ -1323,8 +1307,7 @@ function bindClaudeUI() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const safeName = session.title.replace(/[^\p{L}\p{N}_-]+/gu, '-').slice(0, 40) || 'session';
-    a.download = `claude-${safeName}-${new Date().toISOString().slice(0,10)}.md`;
+    a.download = exportFileName(session.title);
     a.click();
     URL.revokeObjectURL(url);
     toast('書き出しました', 'success');
@@ -1362,8 +1345,9 @@ async function deleteSession(id) {
     const fresh = makeSession();
     state.chat.sessions.push(fresh);
     state.chat.activeSessionId = fresh.id;
-  } else if (state.chat.activeSessionId === id) {
-    state.chat.activeSessionId = state.chat.sessions[Math.max(0, idx - 1)].id;
+  } else {
+    state.chat.activeSessionId = nextActiveSessionId(
+      state.chat.sessions, idx, state.chat.activeSessionId, id);
   }
   persist();
   renderSessionTabs();
@@ -1384,8 +1368,7 @@ function switchSession(id) {
 function renameSession(id, newTitle) {
   const s = state.chat.sessions.find(x => x.id === id);
   if (!s) return;
-  const t = newTitle.trim().slice(0, 60);
-  s.title = t || '新しい会話';
+  s.title = sanitizeTitle(newTitle);
   s.autoTitle = false;
   s.updatedAt = Date.now();
   persist();
@@ -1524,19 +1507,12 @@ function scrollChatToBottom() {
    Audit Log Viewer (クライアントサイド・SHA-256 連鎖検証)
    ========================================================= */
 
-const ZERO_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
-
+// ZERO_HASH / auditEventSeverity / parseAuditJsonl / summarizeAuditEntries /
+// verifyAuditChain (注入版) / filterAuditEntries / formatAuditTs は
+// modules/audit-viewer.js から import (PDCA #26 v37)
 // auditJsonEscape / reconstructAuditBody / sha256Hex / auditLogBrowser /
 // exportBrowserAuditAsJsonl / BROWSER_AUDIT_KEY / BROWSER_AUDIT_MAX は
 // modules/audit-browser.js から import 済 (v29 でモジュール分割)
-
-// 重大度推測 (governance/05 系統と同じ規則)
-function auditEventSeverity(event) {
-  const e = String(event || '').toLowerCase();
-  if (/(blocked|aborted|threat|fail|tamper|alert)/.test(e)) return 'bad';
-  if (/(warn|noteworthy|hits|protected)/.test(e)) return 'warn';
-  return 'info';
-}
 
 let _auditState = {
   entries: [],
@@ -1612,17 +1588,7 @@ function bindAuditLoader() {
 async function loadAuditFile(file) {
   try {
     const text = await file.text();
-    const lines = text.split('\n').filter(l => l.trim());
-    const entries = [];
-    const parseErrors = [];
-    lines.forEach((line, i) => {
-      try {
-        const obj = JSON.parse(line);
-        entries.push(obj);
-      } catch {
-        parseErrors.push({ line: i + 1, content: line.slice(0, 80) });
-      }
-    });
+    const { entries, parseErrors } = parseAuditJsonl(text);
     _auditState.entries = entries;
     _auditState.filename = file.name;
     _auditState.parseErrors = parseErrors;
@@ -1644,40 +1610,27 @@ function renderAuditSummary() {
   const entries = _auditState.entries;
   if (!entries.length) { body.innerHTML = '<p class="muted">エントリ なし</p>'; return; }
 
-  // 集計
-  const tsList = entries.map(e => e.ts).filter(Boolean).sort();
-  const tsFirst = tsList[0] || '-';
-  const tsLast = tsList[tsList.length - 1] || '-';
-  const byScript = {};
-  const byEvent = {};
-  for (const e of entries) {
-    byScript[e.script || '?'] = (byScript[e.script || '?'] || 0) + 1;
-    byEvent[e.event || '?'] = (byEvent[e.event || '?'] || 0) + 1;
-  }
-  const topScripts = Object.entries(byScript).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const maxScriptCount = topScripts[0]?.[1] || 1;
-  const topEvents = Object.entries(byEvent).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
+  const s = summarizeAuditEntries(entries);
   body.innerHTML = `
     <ul class="audit-stats">
       <li class="audit-stat"><div class="audit-stat-label">エントリ総数</div>
-        <div class="audit-stat-value">${entries.length.toLocaleString()}</div></li>
+        <div class="audit-stat-value">${s.total.toLocaleString()}</div></li>
       <li class="audit-stat"><div class="audit-stat-label">スクリプト数</div>
-        <div class="audit-stat-value">${Object.keys(byScript).length}</div></li>
+        <div class="audit-stat-value">${s.scriptCount}</div></li>
       <li class="audit-stat"><div class="audit-stat-label">イベント種類</div>
-        <div class="audit-stat-value">${Object.keys(byEvent).length}</div></li>
+        <div class="audit-stat-value">${s.eventTypeCount}</div></li>
       <li class="audit-stat"><div class="audit-stat-label">最古</div>
-        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(tsFirst.replace('T', ' ').slice(0, 19))}</div></li>
+        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(formatAuditTs(s.tsFirst))}</div></li>
       <li class="audit-stat"><div class="audit-stat-label">最新</div>
-        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(tsLast.replace('T', ' ').slice(0, 19))}</div></li>
+        <div class="audit-stat-value" style="font-size:.95rem">${escapeHtml(formatAuditTs(s.tsLast))}</div></li>
     </ul>
 
     <h3 style="margin-top:var(--sp-4)">スクリプト別 件数</h3>
     <div class="audit-script-bars">
-      ${topScripts.map(([name, n]) => `
+      ${s.topScripts.map(([name, n]) => `
         <div class="audit-script-bar">
           <span class="audit-script-bar-name">${escapeHtml(name)}</span>
-          <span class="audit-script-bar-fill" style="width:${(n / maxScriptCount * 100).toFixed(1)}%"></span>
+          <span class="audit-script-bar-fill" style="width:${(n / s.maxScriptCount * 100).toFixed(1)}%"></span>
           <span class="audit-script-bar-count">${n}</span>
         </div>
       `).join('')}
@@ -1685,7 +1638,7 @@ function renderAuditSummary() {
 
     <h3 style="margin-top:var(--sp-4)">イベント種別 (上位 5)</h3>
     <ul style="padding-left:1.2em">
-      ${topEvents.map(([name, n]) =>
+      ${s.topEvents.map(([name, n]) =>
         `<li><strong>${escapeHtml(name)}</strong> — ${n} 件</li>`).join('')}
     </ul>
   `;
@@ -1704,31 +1657,13 @@ async function verifyAuditChain() {
     return;
   }
 
-  let prev = ZERO_HASH;
-  const breaks = [];
-  let okCount = 0;
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    if (!e.chain_hash || !e.prev_hash) {
-      breaks.push({ line: i + 1, reason: 'chain_hash/prev_hash 抽出失敗' });
-      prev = e.chain_hash || prev;
-      continue;
-    }
-    const body_str = reconstructAuditBody(e);
-    const computed = await sha256Hex(prev + body_str);
-    if (computed === e.chain_hash) {
-      if (e.prev_hash !== prev) {
-        breaks.push({ line: i + 1, reason: `連鎖切断 (prev=${e.prev_hash.slice(0, 8)}.. 期待=${prev.slice(0, 8)}..)` });
-      } else {
-        okCount++;
-      }
-    } else {
-      breaks.push({ line: i + 1, reason: '改竄疑い (chain_hash 再計算 不一致)' });
-    }
-    prev = e.chain_hash;
-  }
-
-  _auditState.verifyResult = { total: entries.length, ok: okCount, breaks };
+  // 純粋検証 ロジック は modules/audit-viewer.js — sha256/reconstructBody は注入
+  const result = await _verifyAuditChain(entries, {
+    sha256Hex,
+    reconstructBody: reconstructAuditBody,
+  });
+  _auditState.verifyResult = result;
+  const { breaks } = result;
 
   if (breaks.length === 0) {
     body.innerHTML = `
@@ -1757,17 +1692,10 @@ function renderAuditEvents() {
   if (!card || !body) return;
   card.hidden = false;
 
-  const eventFilter = (document.getElementById('auditEventFilter')?.value || '').toLowerCase();
-  const scriptFilter = (document.getElementById('auditScriptFilter')?.value || '').toLowerCase();
+  const eventQ = document.getElementById('auditEventFilter')?.value || '';
+  const scriptQ = document.getElementById('auditScriptFilter')?.value || '';
   const limit = parseInt(document.getElementById('auditLimit')?.value || '100', 10);
-
-  let filtered = _auditState.entries.filter(e => {
-    if (eventFilter && !String(e.event || '').toLowerCase().includes(eventFilter)) return false;
-    if (scriptFilter && !String(e.script || '').toLowerCase().includes(scriptFilter)) return false;
-    return true;
-  });
-  // 最新が先頭
-  filtered = filtered.slice().reverse().slice(0, limit);
+  const filtered = filterAuditEntries(_auditState.entries, { eventQ, scriptQ, limit });
 
   if (!filtered.length) {
     body.innerHTML = '<p class="muted">該当エントリなし</p>';
@@ -1777,7 +1705,7 @@ function renderAuditEvents() {
   const rows = filtered.map(e => {
     const sev = auditEventSeverity(e.event);
     return `<tr>
-      <td class="col-ts">${escapeHtml((e.ts || '').replace('T', ' ').slice(0, 19))}</td>
+      <td class="col-ts">${escapeHtml(formatAuditTs(e.ts))}</td>
       <td class="col-event severity-${sev}">${escapeHtml(e.event || '')}</td>
       <td class="col-script">${escapeHtml(e.script || '')}</td>
       <td class="col-details">${escapeHtml(e.details || '')}</td>

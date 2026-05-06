@@ -38,17 +38,24 @@ function extractArr(src, name) {
   throw new Error('unterminated array');
 }
 
+// v37 (PDCA #26) で makeSession / deriveTitleFromHistory / getSessionSystemPrompt は
+// modules/sessions.js に分離。BUILTIN_PRESETS / getPresetById は dashboard.js に残存。
+const S = await import(path.join(ROOT, 'v19/ui/modules/sessions.js'));
+
 let code = extractArr(src, "BUILTIN_PRESETS").replace("const BUILTIN_PRESETS", "var BUILTIN_PRESETS") + "\n";
-for (const h of [
-  'function getPresetById',
-  'function makeSession',
-  'function deriveTitleFromHistory',
-  'function getSessionSystemPrompt',
-]) code += extractAt(src, h) + '\n';
+code += extractAt(src, 'function getPresetById') + '\n';
 
 const ctx = { console };
 vm.createContext(ctx);
 vm.runInContext(code, ctx);
+
+// session 関数群を ctx に bind (BUILTIN_PRESETS lookup は ctx.getPresetById 経由)
+ctx.makeSession = S.makeSession;
+ctx.deriveTitleFromHistory = (h) => S.deriveTitleFromHistory(h, {
+  textOf: (c) => Array.isArray(c) ? c.filter(p => p.type === 'text').map(p => p.text).join('') : (typeof c === 'string' ? c : ''),
+  hasImages: (c) => Array.isArray(c) && c.some(p => p.type === 'image'),
+});
+ctx.getSessionSystemPrompt = (s) => S.getSessionSystemPrompt(s, ctx.getPresetById);
 
 const tests = [];
 
