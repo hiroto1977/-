@@ -6,13 +6,17 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const DASHBOARD_JS = path.join(ROOT, 'v19/ui/dashboard.js');
+// v36 (PDCA #25) で provider 層は modules/providers.js に分離済み
+const PROVIDERS_JS = path.join(ROOT, 'v19/ui/modules/providers.js');
 
-const src = fs.readFileSync(DASHBOARD_JS, 'utf8');
+const src = fs.readFileSync(PROVIDERS_JS, 'utf8');
 
 function extractAt(src, header) {
-  const start = src.indexOf(header);
+  // providers.js は `export function ...` も許容 — 両形を試す
+  let start = src.indexOf(header);
+  if (start < 0) start = src.indexOf('export ' + header);
   if (start < 0) throw new Error('not found: ' + header);
+  if (src.slice(start).startsWith('export ')) start += 7;
   let i = src.indexOf('(', start);
   let pdepth = 1; i++;
   for (; i < src.length && pdepth > 0; i++) {
@@ -28,8 +32,10 @@ function extractAt(src, header) {
   throw new Error('unterminated');
 }
 function extractClass(src, name) {
-  const start = src.indexOf('class ' + name);
-  if (start < 0) throw new Error('class not found: ' + name);
+  // providers.js は `export class ...` の形 — class 検索は接頭辞除外
+  const re = new RegExp(`(?:export\\s+)?class\\s+${name}\\b`);
+  const m = src.match(re); if (!m) throw new Error('class not found: ' + name);
+  const start = m.index + (m[0].startsWith('export') ? 7 : 0);
   let i = src.indexOf('{', start);
   let depth = 0;
   for (; i < src.length; i++) {
@@ -39,7 +45,8 @@ function extractClass(src, name) {
   throw new Error('unterminated class: ' + name);
 }
 function extractConst(src, name) {
-  const re = new RegExp(`const\\s+${name}\\s*=\\s*([^;]+);`);
+  // providers.js は `export const ...` の形も許容
+  const re = new RegExp(`(?:export\\s+)?const\\s+${name}\\s*=\\s*([^;]+);`);
   const m = src.match(re); if (!m) throw new Error('not found const: ' + name);
   return `const ${name} = ${m[1]};`;
 }

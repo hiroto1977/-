@@ -14,6 +14,13 @@ import { escapeHtml, renderMarkdown, activateCopyButtons as _activateCopyButtons
 import {
   parseTasksFromAudit, tasksToArray, stateBadge, formatTaskTimeline,
 } from './modules/journal.js';
+import {
+  parseAuditLineSimple, computeOrchestrateKPI, filterBoardEvents,
+  boardRowClass, formatBoardTs, OODA_RESPONSES,
+} from './modules/orchestrate.js';
+import {
+  PROVIDERS, ProviderError, textOf, imagesOf, hasImages,
+} from './modules/providers.js';
 
 // dashboard 用 wrapper: copy 失敗時に toast を呼ぶ (toast は dashboard 専用)
 function activateCopyButtons(container) {
@@ -720,386 +727,8 @@ setInterval(() => {
 // import 済み (v30、INV-8 XSS 安全層 を セキュリティ境界 として独立)
 // activateCopyButtons は dashboard 専用の toast 連携 wrapper を上で定義 (line 13)
 
-/* =========================================================
-   Provider clients — all browser-direct, all stream text deltas
-   Common interface:
-     sendStream({ apiKey, model, maxTokens, system, messages, signal, onText })
-       → Promise<{ text: string, usage: { input_tokens?, output_tokens? } | null }>
-   ========================================================= */
-
-class ProviderError extends Error {
-  constructor(message, { status, type, providerId } = {}) {
-    super(message);
-    this.status = status; this.type = type; this.providerId = providerId;
-  }
-}
-// Back-compat alias (older code path may still throw AnthropicError-named)
-const AnthropicError = ProviderError;
-
-const HTTP_ERR_JA = {
-  400: 'リクエスト不正',
-  401: 'API キーが無効です',
-  403: 'アクセス権限がありません（CORS / 課金状態をご確認ください）',
-  404: 'モデルが見つかりません',
-  413: 'リクエストが大きすぎます',
-  429: 'レート制限に達しました。少し待ってから再試行してください',
-  500: 'プロバイダ側のエラーです。少し待って再試行してください',
-  529: 'API が混雑しています。少し待って再試行してください',
-};
-
-async function readSseLines(response, handleEvent) {
-  if (!response.body) throw new ProviderError('ストリーミング応答を取得できません');
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-    for (const line of lines) {
-      if (!line.startsWith('data:')) continue;
-      const payload = line.slice(5).trim();
-      if (!payload || payload === '[DONE]') continue;
-      try { handleEvent(JSON.parse(payload)); }
-      catch { /* skip malformed JSON chunk */ }
-    }
-  }
-}
-
-async function safeErrorBody(res) {
-  try {
-    const j = await res.json();
-    return j?.error?.message || j?.message || JSON.stringify(j);
-  } catch { return ''; }
-}
-
-// ---------- Message content helpers ----------
-// Internal format: content is either a string (text-only) or
-//   [{type:'text', text}, {type:'image', dataUrl:'data:image/...;base64,...', mimeType}]
-function partsOf(content) {
-  if (typeof content === 'string') return [{ type: 'text', text: content }];
-  return Array.isArray(content) ? content : [];
-}
-function textOf(content) {
-  return partsOf(content).filter(p => p.type === 'text').map(p => p.text).join('');
-}
-function imagesOf(content) {
-  return partsOf(content).filter(p => p.type === 'image');
-}
-function hasImages(content) { return imagesOf(content).length > 0; }
-function dataUrlPayload(dataUrl) {
-  // "data:image/jpeg;base64,XXXX" → "XXXX"
-  const i = dataUrl.indexOf(',');
-  return i < 0 ? dataUrl : dataUrl.slice(i + 1);
-}
-
-// ---------- Anthropic ----------
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_VERSION = '2023-06-01';
-
-/**
- * Send a streaming Messages request to Claude.
- *
- * @param {object}   opts
- * @param {string}   opts.apiKey
- * @param {string}   opts.model
- * @param {number}   opts.maxTokens
- * @param {string}   [opts.system]
- * @param {Array<{role:string, content:string}>} opts.messages
- * @param {AbortSignal} [opts.signal]
- * @param {(text:string) => void} [opts.onText]   — called for each text delta
- * @param {(usage:object) => void} [opts.onUsage] — called once with final usage
- * @returns {Promise<{text:string, usage:object|null}>}
- */
-async function anthropicSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
-  if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'anthropic' });
-  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'anthropic' });
-
-  // Convert internal {role, content} → Anthropic native, with image support
-  const anthropicMessages = messages.map(m => {
-    const parts = partsOf(m.content);
-    const blocks = parts.map(p => {
-      if (p.type === 'image') {
-        return {
-          type: 'image',
-          source: { type: 'base64', media_type: p.mimeType || 'image/jpeg',
-                    data: dataUrlPayload(p.dataUrl) },
-        };
-      }
-      return { type: 'text', text: p.text };
-    });
-    // If only one text block, send as plain string for compactness
-    return {
-      role: m.role,
-      content: (blocks.length === 1 && blocks[0].type === 'text') ? blocks[0].text : blocks,
-    };
-  });
-
-  const body = { model, max_tokens: maxTokens, messages: anthropicMessages, stream: true };
-  if (system && system.trim()) body.system = system;
-
-  let res;
-  try {
-    res = await fetch(ANTHROPIC_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': ANTHROPIC_VERSION,
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify(body),
-      signal,
-    });
-  } catch (err) {
-    if (err.name === 'AbortError') throw err;
-    throw new ProviderError(`接続エラー: ${err.message}（CORS / ネットワーク制限の可能性）`,
-      { providerId: 'anthropic' });
-  }
-
-  if (!res.ok) {
-    const detail = await safeErrorBody(res);
-    throw new ProviderError(
-      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
-      { status: res.status, providerId: 'anthropic' },
-    );
-  }
-
-  let fullText = '';
-  let usage = null;
-  await readSseLines(res, (evt) => {
-    if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
-      fullText += evt.delta.text;
-      onText?.(evt.delta.text);
-    } else if (evt.type === 'message_delta' && evt.usage) {
-      usage = { ...(usage || {}), ...evt.usage };
-    } else if (evt.type === 'message_start' && evt.message?.usage) {
-      usage = { ...evt.message.usage, ...(usage || {}) };
-    } else if (evt.type === 'error') {
-      throw new ProviderError(evt.error?.message || 'API エラー',
-        { type: evt.error?.type, providerId: 'anthropic' });
-    }
-  });
-  return { text: fullText, usage };
-}
-
-// ---------- Google Gemini ----------
-const GOOGLE_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
-
-async function googleSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
-  if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'google' });
-  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'google' });
-
-  // Convert messages → Gemini's contents shape with image support
-  const contents = messages.map(m => {
-    const parts = [];
-    for (const p of partsOf(m.content)) {
-      if (p.type === 'image') {
-        parts.push({ inlineData: { mimeType: p.mimeType || 'image/jpeg',
-                                    data: dataUrlPayload(p.dataUrl) }});
-      } else {
-        parts.push({ text: p.text });
-      }
-    }
-    return { role: m.role === 'assistant' ? 'model' : 'user', parts };
-  });
-
-  const body = {
-    contents,
-    generationConfig: { maxOutputTokens: maxTokens },
-  };
-  if (system && system.trim()) {
-    body.systemInstruction = { parts: [{ text: system }] };
-  }
-
-  // streamGenerateContent with alt=sse returns SSE
-  const url = `${GOOGLE_API_BASE}/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
-
-  let res;
-  try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
-      },
-      body: JSON.stringify(body),
-      signal,
-    });
-  } catch (err) {
-    if (err.name === 'AbortError') throw err;
-    throw new ProviderError(`接続エラー: ${err.message}（CORS / ネットワーク制限の可能性）`,
-      { providerId: 'google' });
-  }
-
-  if (!res.ok) {
-    const detail = await safeErrorBody(res);
-    throw new ProviderError(
-      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
-      { status: res.status, providerId: 'google' },
-    );
-  }
-
-  let fullText = '';
-  let usage = null;
-  await readSseLines(res, (evt) => {
-    // Each SSE chunk is a GenerateContentResponse fragment
-    const parts = evt?.candidates?.[0]?.content?.parts || [];
-    for (const p of parts) {
-      if (typeof p.text === 'string' && p.text) {
-        fullText += p.text;
-        onText?.(p.text);
-      }
-    }
-    if (evt?.usageMetadata) {
-      // Normalize to {input_tokens, output_tokens} for the UI
-      usage = {
-        input_tokens:  evt.usageMetadata.promptTokenCount,
-        output_tokens: evt.usageMetadata.candidatesTokenCount,
-      };
-    }
-  });
-  return { text: fullText, usage };
-}
-
-// ---------- Ollama (local) ----------
-const OLLAMA_DEFAULT_BASE = 'http://localhost:11434';
-
-async function ollamaSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
-  // For Ollama: apiKey field is repurposed as the base URL (default localhost:11434).
-  // No actual auth header — local-only by design.
-  const base = (apiKey || OLLAMA_DEFAULT_BASE).replace(/\/$/, '');
-  if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'ollama' });
-
-  // Build /api/chat request body. Ollama image format: {role, content, images: ["base64..."]}
-  const ollamaMessages = [];
-  if (system && system.trim()) ollamaMessages.push({ role: 'system', content: system });
-  for (const m of messages) {
-    const text = textOf(m.content);
-    const imgs = imagesOf(m.content);
-    const out = { role: m.role === 'assistant' ? 'assistant' : 'user', content: text };
-    if (imgs.length) out.images = imgs.map(p => dataUrlPayload(p.dataUrl));
-    ollamaMessages.push(out);
-  }
-
-  const body = {
-    model,
-    messages: ollamaMessages,
-    stream: true,
-    options: { num_predict: maxTokens },
-  };
-
-  let res;
-  try {
-    res = await fetch(`${base}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal,
-    });
-  } catch (err) {
-    if (err.name === 'AbortError') throw err;
-    throw new ProviderError(
-      `Ollama に接続できません: ${err.message}\n` +
-      `ヒント: ターミナルで \`ollama serve\` が起動済みで、` +
-      `OLLAMA_ORIGINS=* または このページの Origin を許可していますか？`,
-      { providerId: 'ollama' });
-  }
-
-  if (!res.ok) {
-    const detail = await safeErrorBody(res);
-    throw new ProviderError(
-      `${HTTP_ERR_JA[res.status] || `HTTP ${res.status}`}${detail ? ` — ${detail}` : ''}`,
-      { status: res.status, providerId: 'ollama' });
-  }
-  if (!res.body) throw new ProviderError('ストリーミング応答を取得できません');
-
-  // Ollama returns NDJSON (newline-delimited JSON), one object per line — not SSE.
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let fullText = '';
-  let usage = null;
-
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      let evt;
-      try { evt = JSON.parse(trimmed); } catch { continue; }
-      if (evt.error) {
-        throw new ProviderError(evt.error, { providerId: 'ollama' });
-      }
-      if (evt.message?.content) {
-        fullText += evt.message.content;
-        onText?.(evt.message.content);
-      }
-      if (evt.done) {
-        usage = {
-          input_tokens:  evt.prompt_eval_count,
-          output_tokens: evt.eval_count,
-        };
-      }
-    }
-  }
-  return { text: fullText, usage };
-}
-
-// ---------- Provider registry ----------
-const PROVIDERS = {
-  ollama: {
-    id: 'ollama',
-    label: 'Ollama (ローカル)',
-    icon: '🏠',
-    keyHint: 'http://localhost:11434',
-    keyDocsUrl: 'https://ollama.com/',
-    keyDocsLabel: 'Ollama 公式サイト',
-    keyLabelOverride: 'サーバー URL',
-    keyHelpOverride: 'API キー不要。Ollama サーバーのベース URL（既定: http://localhost:11434）',
-    defaultModel: 'llama3.2',
-    modelSuggestions: [
-      'llama3.2', 'llama3.1', 'qwen2.5', 'gemma3', 'mistral', 'phi4', 'deepseek-r1',
-      // Vision-capable (画像入力対応)
-      'llama3.2-vision', 'llava', 'gemma3:vision', 'minicpm-v',
-    ],
-    note: 'お手元の PC で動作する Ollama に接続します（API キー不要・通信は外部に出ません）。' +
-          '事前に <code>ollama serve</code> を起動し、ブラウザから呼ぶ場合は環境変数 ' +
-          '<code>OLLAMA_ORIGINS=*</code> を設定してください。' +
-          '画像を送る場合は <code>llama3.2-vision</code> や <code>llava</code> などのビジョン対応モデルを指定してください。',
-    sendStream: ollamaSendStream,
-  },
-  anthropic: {
-    id: 'anthropic',
-    label: 'Anthropic Claude',
-    icon: '🤖',
-    keyHint: 'sk-ant-api03-...',
-    keyDocsUrl: 'https://console.anthropic.com/',
-    keyDocsLabel: 'Anthropic Console',
-    defaultModel: 'claude-opus-4-7',
-    modelSuggestions: ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5'],
-    note: 'Anthropic 社の Claude API と直接通信します（クラウド・有償）。',
-    sendStream: anthropicSendStream,
-  },
-  google: {
-    id: 'google',
-    label: 'Google Gemini',
-    icon: '✨',
-    keyHint: 'AIza...',
-    keyDocsUrl: 'https://aistudio.google.com/apikey',
-    keyDocsLabel: 'Google AI Studio',
-    defaultModel: 'gemini-2.5-flash',
-    modelSuggestions: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'],
-    note: 'Google AI Studio の Gemini API と直接通信します（クラウド・無料枠あり）。',
-    sendStream: googleSendStream,
-  },
-};
+// Provider clients は modules/providers.js に移動 (PDCA #25 v36)
+// PROVIDERS / ProviderError / textOf / imagesOf / hasImages は import 済み
 
 /* =========================================================
    AI integration UI (provider-agnostic)
@@ -2232,56 +1861,9 @@ function _loadGovCache() {
   } catch { return []; }
 }
 
-function parseAuditLineSimple(line) {
-  // 既存 parseAuditLine が使えるが、本モジュール用に最小版を持つ (依存削減)
-  if (!line.trim()) return null;
-  try { return JSON.parse(line); } catch { return null; }
-}
-
-function computeOrchestrateKPI(events) {
-  // α: INV カバレッジは governance/12 が無いとブラウザ側で正確に出せない
-  //    → 「最新 PDCA cycle」と「最新 INV-12 検出」のヒューリスティックに留める
-  const cycles = events.filter(e => e.event === 'pdca.cycle.complete').length;
-  const incidents = events.filter(e => e.event?.startsWith('incident.')).length;
-  const containedIncidents = events.filter(e => e.event === 'incident.contained' || e.event === 'incident.resolved').length;
-  // β: 各 sample で alpha.1.scoped → pdca.cycle.complete の経過秒
-  const scoped = [];
-  const completed = [];
-  for (const e of events) {
-    const t = Date.parse(e.ts);
-    if (!Number.isFinite(t)) continue;
-    if (e.event?.endsWith('.1.scoped')) scoped.push(t);
-    if (e.event === 'pdca.cycle.complete') completed.push(t);
-  }
-  const deltas = [];
-  let ci = 0;
-  for (const s of scoped) {
-    while (ci < completed.length && completed[ci] < s) ci++;
-    if (ci < completed.length) { deltas.push((completed[ci] - s) / 1000); ci++; }
-  }
-  deltas.sort((a, b) => a - b);
-  const beta_median = deltas.length ? Math.round(deltas[Math.floor(deltas.length / 2)]) : 0;
-  // γ: チェーン整合 (連鎖検証は audit ビューア側で実施されるため、ここでは INV-12 違反の有無)
-  const inv12_violations = (() => {
-    const issues = {};
-    for (const e of events) {
-      const m = e.event?.match(/^team\.(\w+)\.1\.scoped$/);
-      if (m) {
-        const team = m[1];
-        const im = (e.details || '').match(/issue=(\S+)/);
-        if (im) (issues[im[1]] = issues[im[1]] || new Set()).add(team);
-      }
-    }
-    return Object.values(issues).filter(s => s.size > 1).length;
-  })();
-  // δ: 直近 cycle.complete までの全 cycle 数 (運用継続性 指標)
-  return {
-    alpha: { label: `${cycles} サイクル完遂`, sub: `INV-12: ${inv12_violations === 0 ? 'OK' : '⚠️ ' + inv12_violations}` },
-    beta: { label: `${deltas.length} 件 / 中央 ${beta_median}s`, sub: 'PDCA scope→complete' },
-    gamma: { label: `${containedIncidents}/${incidents} 解消`, sub: 'インシデント' },
-    delta: { label: `${cycles + Math.max(0, incidents - containedIncidents)} 活動件`, sub: '完遂 + 進行中' },
-  };
-}
+// parseAuditLineSimple / computeOrchestrateKPI / filterBoardEvents /
+// boardRowClass / formatBoardTs / OODA_RESPONSES は modules/orchestrate.js から import
+// (PDCA #25 v36 抽出、純粋ロジック層として独立テスト可能)
 
 function renderOrchestrateKPI(events) {
   const kpi = computeOrchestrateKPI(events);
@@ -2298,31 +1880,19 @@ function renderOrchestrateKPI(events) {
 function renderBoard(events) {
   const list = document.getElementById('boardList');
   if (!list) return;
-  const ft = document.getElementById('boardFilterTeam')?.checked;
-  const fh = document.getElementById('boardFilterHandoff')?.checked;
-  const fi = document.getElementById('boardFilterIncident')?.checked;
-  const fc = document.getElementById('boardFilterCycle')?.checked;
-  const filtered = events.filter(e => {
-    const ev = e.event || '';
-    if (ev.startsWith('team.') && ft) return true;
-    if (ev.startsWith('handoff.') && fh) return true;
-    if (ev.startsWith('incident.') && fi) return true;
-    if (/cycle/.test(ev) && fc) return true;
-    return false;
-  }).slice(-30).reverse();
+  const flags = {
+    team:     document.getElementById('boardFilterTeam')?.checked,
+    handoff:  document.getElementById('boardFilterHandoff')?.checked,
+    incident: document.getElementById('boardFilterIncident')?.checked,
+    cycle:    document.getElementById('boardFilterCycle')?.checked,
+  };
+  const filtered = filterBoardEvents(events, flags);
   if (!filtered.length) { list.innerHTML = '<p class="muted">該当 イベントなし</p>'; return; }
-  const rows = filtered.map(e => {
-    const cls = e.event?.startsWith('incident.') ? 'board-incident'
-              : e.event?.startsWith('handoff.')  ? 'board-handoff'
-              : 'board-team';
-    const ts = (e.ts || '').replace('T', ' ').slice(0, 19);
-    return `<div class="board-row ${cls}">
-      <span class="board-ts">${escapeHtml(ts)}</span>
+  list.innerHTML = filtered.map(e => `<div class="board-row ${boardRowClass(e.event)}">
+      <span class="board-ts">${escapeHtml(formatBoardTs(e.ts))}</span>
       <span class="board-event">${escapeHtml(e.event || '')}</span>
       <span class="board-details">${escapeHtml(e.details || '')}</span>
-    </div>`;
-  }).join('');
-  list.innerHTML = rows;
+    </div>`).join('');
 }
 
 function bindOrchestrate() {
@@ -2354,49 +1924,11 @@ function bindOrchestrate() {
   ['boardFilterTeam', 'boardFilterHandoff', 'boardFilterIncident', 'boardFilterCycle'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', () => renderBoard(_orchState.events));
   });
-  // propose-response (4 breach)
-  const RESPONSES = {
-    audit_chain_broken: {
-      cat: '監査ログ 改竄疑い (INV-10 違反)',
-      ir: 'governance/09_INCIDENT_PLAYBOOK.md (該当 シナリオなし → 即興 IR)',
-      steps: [
-        '別端末で最新 backup を verify (audit-export.sh)',
-        'audit-verify.sh で改竄行を特定 (連鎖切断 行番号確認)',
-        '~/.claude/audit-backups/ から復旧 (03_OPERATIONS D-4 参照)',
-      ],
-    },
-    chat_error_storm: {
-      cat: 'クラウド AI 障害 or CORS 失効',
-      ir: 'governance/09 I-2 周辺',
-      steps: [
-        'ローカル専用モードに即切替 (設定 → ローカル専用 ON)',
-        '直近の chat.error 内容確認 (#audit ビューアでフィルタ)',
-        'preflight で OLLAMA_ORIGINS / API キー確認',
-      ],
-    },
-    inv12_concurrent_scope: {
-      cat: '重複着手 (INV-12 違反 / 運用問題)',
-      ir: 'governance/13 §9 失敗モード',
-      steps: [
-        '重複 issue を特定 (board の team.*.1.scoped を確認)',
-        '後発チームに撤退要請 (team.<TEAM>.1.bounce イベント)',
-        'α1 が再分担',
-      ],
-    },
-    pii_scan_stale: {
-      cat: 'PII セカンドラインの 鮮度 低下 (INV-6 関連)',
-      ir: 'governance/09 I-1 周辺',
-      steps: [
-        'pii-scan.sh --diff を即実行',
-        'pii-scan.sh --staged で 直前 commit 候補も走査',
-        'gitleaks があれば二次防御として走らせる',
-      ],
-    },
-  };
+  // propose-response (modules/orchestrate.js の OODA_RESPONSES から)
   const sel = document.getElementById('proposeBreachSelect');
   const out = document.getElementById('proposeOutput');
   sel?.addEventListener('change', () => {
-    const r = RESPONSES[sel.value];
+    const r = OODA_RESPONSES[sel.value];
     if (!r) { if (out) out.innerHTML = ''; return; }
     if (!out) return;
     out.innerHTML = `

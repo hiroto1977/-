@@ -1,8 +1,8 @@
 # 12. 統合システム 設計図 (System Blueprint)
 
-> **現バージョン**: **v35 (#journal DSL 検索 — 横断条件で業務状態を即座に絞る)**
+> **現バージョン**: **v36 (v19 最適化再構築 — providers / orchestrate モジュール抽出、dashboard.js 2620 → 2170 行)**
 >
-> **目的**: 34 サイクル分 (PDCA × 23 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
+> **目的**: 35 サイクル分 (PDCA × 24 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
 >
 > **読み手**: 新規セッション (Claude / 別 AI / 人間)、レビュア、運用者
 > **読了時間**: 30 分 (詳細は各 governance docs と design-iterations/v{N}.md へ)
@@ -429,18 +429,20 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 | **Phase 5: 品質統合** | v26-v30 | regression suite + 包括監査 + hook self-diagnosis + dashboard.js モジュール化 (affect/audit-browser/markdown) |
 | **Phase 6: 業務継続性** | v31-v32 | 業務 引継ぎ Free システム (governance/16) + Resilience テスト 15 件 |
 | **Phase 7: 集大成** | v33 | 設計図 全面書直し (本文書) |
-| **Phase 8: 業務 UI 統合** | v34-**v35** | v34: v19 `#journal` ルート 実装 (modules/journal.js + 状態色 + キャッシュ + 55 unit tests)、**v35: 横断検索 DSL** (`state:` / `deadline<` / `deadline>` / `has:` / `stakeholder:` / `id:` / 自由語 AND、74 unit tests) |
+| **Phase 8: 業務 UI 統合** | v34-v35 | v34: v19 `#journal` ルート 実装 (modules/journal.js + 状態色 + キャッシュ + 55 unit tests)、v35: 横断検索 DSL (`state:` / `deadline<` / `deadline>` / `has:` / `stakeholder:` / `id:` / 自由語 AND、74 unit tests) |
+| **Phase 9: モジュール 集大成** | **v36** | dashboard.js を 2620 → 2170 行 (-450) に縮小、`modules/orchestrate.js` (48 unit tests) と `modules/providers.js` (57 unit tests) に純粋ロジック層を抽出。L6 UI 層が 6 モジュール (markdown / audit-browser / affect / journal / orchestrate / providers) で構成、各々 INV 境界を独立検証可能に |
 
-詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 35) に保存。
+詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 36) に保存。
 
 ---
 
 ## 14. 既知の課題 (Open Issues)
 
-§10 課題 34 件は全て実装済 (v1-v34)。**#35 (v35): #journal 横断検索 DSL 実装 完了** — `modules/journal.js` に `parseQuery()` + `matchTask()` 純粋関数を追加、`state:` / `stakeholder:` / `id:` / `deadline<` / `deadline>` / `has:` の 6 演算子 + 自由語 AND、UI search box が DSL を解釈、74 unit tests (DSL 19 件)。残る候補は α1 が次サイクル で scope:
+§10 課題 35 件は全て実装済 (v1-v35)。**#36 (v36): v19 最適化再構築 完了** — `modules/orchestrate.js` (純粋 KPI 計算 + INV-12 検出 + board フィルタ + OODA_RESPONSES、48 unit tests) と `modules/providers.js` (3 プロバイダ sender + ProviderError + content helpers、57 unit tests) を抽出、dashboard.js を 2620 → 2170 行 (-450) に縮小。drift sniff も新構造に追従 (test_providers / test_images / test_integration を providers.js から extract に変更)。残る候補は α1 が次サイクル で scope:
 
-- 残り dashboard.js モジュール化 (~1500 行 が目標、現 ~2620 行)
-  - providers.js / sessions.js / audit-viewer.js / orchestrate-view.js
+- 残り dashboard.js モジュール化 (~1500 行 目標、現 2170 行)
+  - sessions.js (会話セッション CRUD、~200 行)
+  - audit-viewer.js (#audit DOM 層、~250 行)
 - L8 KPI トレンド (7 日 / 30 日 ウィンドウ)
 - アクセシビリティ 強化 (新ルートの ARIA / focus order)
 - pwsh 実機テスト (Windows / macOS)
@@ -460,7 +462,7 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - 新セッション → `governance/14_SESSION_KNOWLEDGE.md`
 - 業務工程 → `governance/16_WORK_JOURNAL.md`
 - テスト → `tests/README.md`
-- 反復 履歴 → `governance/design-iterations/v{1-35}.md`
+- 反復 履歴 → `governance/design-iterations/v{1-36}.md`
 
 ---
 
@@ -469,4 +471,5 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - v1-v32 (2026-05): 各サイクルの増分改稿 — 詳細は `design-iterations/v{N}.md`
 - v33 (2026-05): 全面書直し — 32 サイクルの集大成、構造を 16 章 に再編、Phase 1-7 で進化を総括、新規読者の 30 分 把握 を最適化
 - v34 (2026-05): #journal UI 実装 (PDCA #23) — governance/16 を v19 ダッシュボードで可視化 (`modules/journal.js` 純粋ロジック層 + `bindJournal()` DOM バインド + 状態色 + localStorage キャッシュ + 55 unit tests)、Phase 8 (業務 UI 統合) を開始
-- **v35 (2026-05): #journal DSL 検索 (PDCA #24)** — `parseQuery()` + `matchTask()` で `state:` / `stakeholder:` / `id:` / `deadline<` / `deadline>` / `has:` の 6 演算子 + 自由語 AND を解釈、UI search box から複合条件で業務状態を即座に絞れる (74 unit tests、DSL 19 件)
+- v35 (2026-05): #journal DSL 検索 (PDCA #24) — `parseQuery()` + `matchTask()` で `state:` / `stakeholder:` / `id:` / `deadline<` / `deadline>` / `has:` の 6 演算子 + 自由語 AND を解釈、UI search box から複合条件で業務状態を即座に絞れる (74 unit tests、DSL 19 件)
+- **v36 (2026-05): v19 最適化再構築 (PDCA #25)** — Phase 9 開始、35 反復の学びから dashboard.js を 2620 → 2170 行 (-450) に縮小。`modules/orchestrate.js` (KPI 計算 + INV-12 検出 + board フィルタ + OODA_RESPONSES、48 unit tests) と `modules/providers.js` (3 プロバイダ sender + ProviderError + content helpers、57 unit tests) に純粋ロジック層を抽出。L6 UI が 6 モジュール構成 (markdown/audit-browser/affect/journal/orchestrate/providers) になり、各 INV 境界を独立検証可能に

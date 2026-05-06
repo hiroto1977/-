@@ -37,9 +37,14 @@ tests.push(['HTML に proposeBreachSelect (4 オプション)',
   /chat_error_storm/.test(HTML) &&
   /inv12_concurrent_scope/.test(HTML) &&
   /pii_scan_stale/.test(HTML)]);
-tests.push(['JS に computeOrchestrateKPI', /function computeOrchestrateKPI/.test(JS)]);
-tests.push(['JS に renderBoard', /function renderBoard/.test(JS)]);
+// v36 (PDCA #25) で computeOrchestrateKPI は modules/orchestrate.js に抽出
+const ORCH_MOD = fs.readFileSync(path.join(ROOT, 'v19/ui/modules/orchestrate.js'), 'utf8');
+tests.push(['orchestrate モジュール に computeOrchestrateKPI',
+  /export function computeOrchestrateKPI/.test(ORCH_MOD)]);
+tests.push(['JS に renderBoard (DOM 層は dashboard.js)', /function renderBoard/.test(JS)]);
 tests.push(['JS に bindOrchestrate', /function bindOrchestrate/.test(JS)]);
+tests.push(['JS が orchestrate モジュール を import',
+  /from\s*['"]\.\/modules\/orchestrate\.js['"]/.test(JS)]);
 
 // ── #governance 機能 ──
 tests.push(['HTML に govFileInput', /id="govFileInput"/.test(HTML)]);
