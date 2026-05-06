@@ -14,7 +14,8 @@ t_doc_exists() {
 t_reflects_current_design_version() {
   # 現行 governance/12 のバージョン (v21) が知識文書にも反映されているか
   local design_v
-  design_v=$(grep -oE 'v[0-9]+ \(PDCA #[0-9]+' "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" | head -1 | grep -oE 'v[0-9]+')
+  # v33 から「集大成」表記も受け入れる: 「現バージョン: **vN (...)**」を抽出
+  design_v=$(grep -oE '現バージョン.*\*\*v[0-9]+' "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" | head -1 | grep -oE 'v[0-9]+')
   if [[ -z "$design_v" ]]; then echo "    design version 抽出失敗"; return 1; fi
   if ! grep -q "設計図 \*\*$design_v\*\*" "$DOC"; then
     echo "    knowledge が design version $design_v を反映していない"

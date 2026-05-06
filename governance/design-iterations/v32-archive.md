@@ -1,0 +1,994 @@
+# 12. 統合システム 設計図 (System Design)
+
+> **目的**: 現存する全構成要素 (UI / AI / ストレージ / 監査 / ガバナンス / テスト / OS 別) を一つの設計に統合し、責務・信頼境界・不変条件・失敗モードを明確化する。
+>
+> **読み手**: AI 支援者・運用者・レビュア。
+> **更新方針**: 反復的 (iteration) に書き直す。各反復で `design-iterations/v{N}.md` に履歴。
+> **現バージョン**: **v32 (PDCA #21 — Resilience テスト 15 件 + 業務記録 が止まらないことを保証)**
+
+---
+
+## 0. TL;DR (3 行)
+
+このシステムは「**ローカル ファースト × ガバナンス強制 × クロス OS 監査**」の 3 軸。
+
+1. 既定で外部送信ゼロ (Ollama)。クラウド AI は明示選択時のみ、ローカル専用モード ON で UI 経路を遮断
+2. ルールはドキュメントだけでなく **pre-commit hook / pii-scan / chain-hash audit / trash-first / 月次 audit backup** で実行可能化
+3. テストは **依存ゼロ** で 80+ 件 (bash + node vm + PowerShell 構造)
+
+⚠️ 「物理的に送信不能」では**ない** — DevTools / 直接 fetch / 設定改変での迂回は可能 (詳細 §6.2)。
+
+---
+
+## 1. 階層 モデル (Layer Model)
+
+下から上に積み上がる ([参考: OSI 流] L1=基盤、L7=人間)。
+
+```
+┌─ L8 ───────────────────────────────────────────────────────┐
+│ Orchestration (4 teams × 4 roles + PDCA/OODA)              │  AI チーム自律運用
+│  scripts/orchestrate.sh + scripts/teams/ + scripts/cycles/ │
+│  governance/13_TEAM_ORCHESTRATION.md                       │
+├─ L7 ───────────────────────────────────────────────────────┤
+│ Governance Docs (governance/ 13 本, funding/, templates/)  │  人間の意思決定
+├─ L6 ───────────────────────────────────────────────────────┤
+│ User Interface                                             │  人間の操作
+│  desktop/ (AI 非依存) | v19/ui/ (AI) | cowork/ (CLI 起動)  │
+├─ L5 ───────────────────────────────────────────────────────┤
+│ AI Provider Abstraction                                    │  ブラウザ → API
+│  Ollama (local) | Anthropic | Google                       │
+│  ローカル専用モードで Anthropic/Google を遮断 (UI レベル)   │
+├─ L4 ───────────────────────────────────────────────────────┤
+│ Operational Scripts                                        │  日次運用
+│  preflight / storage-* / funding-deadline / pii-scan       │
+├─ L3 ───────────────────────────────────────────────────────┤
+│ Safety Enforcement                                         │  節目で強制
+│  pre-commit hook | trash-first | audit backup (月次)       │
+├─ L2 ───────────────────────────────────────────────────────┤
+│ Audit (Cross-OS, Tamper-Evident)                           │  全層が書き込む
+│  lib/audit.sh + win/lib/audit.ps1 → ~/.claude/audit.jsonl  │
+│  audit-verify.sh + v19 #audit ビューア + 月次 .bak.YYYYMM   │
+├─ L1 ───────────────────────────────────────────────────────┤
+│ Test Harness (依存ゼロ)                                    │  全層を検証
+│  tests/{lib,unit,js,ps} + smoke-test.sh                    │
+└────────────────────────────────────────────────────────────┘
+```
+
+**設計原則 (各層共通)**:
+- **静的のみ**: ビルドステップなし。`python3 -m http.server 8000` だけで動く
+- **ローカル ファースト**: 既定で外部送信ゼロ。クラウドは明示的選択のみ
+- **依存最小**: bash / python3 / node があれば動く。npm 不要
+- **冪等**: 同じ操作を 2 回実行しても結果は同じ
+- **trash-first (ユーザーデータ)**: ユーザー データの削除は `~/.local/state/storage-hygiene/trash/<batch-ts>/` を経由
+- **直接 rm 例外** (`--aggressive` 時): rebuild artifacts (`node_modules`, 90 日超ログ) は直接削除可。再生成可能と判断
+- **chain-of-custody**: 全 **ユーザー実行型** script は `audit_log` で開始 (`*.start`) と結果を記録
+
+### 1.1 「ユーザー実行型 script」の定義 (INV-3 で参照)
+
+> **ユーザー実行型** = `scripts/*.sh` のうち、ユーザーまたは cron / Task Scheduler が直接呼ぶもの。
+> `lib/*.sh` などのライブラリ、`hooks/pre-commit` などのフレームワーク呼び出し、`audit-verify.sh` (検証専用 / 循環防止のため例外) は除く。
+
+具体的に求める対象 (8 本): `preflight.sh`, `pii-scan.sh`, `storage-health.sh`, `storage-cleanup.sh`, `storage-archive.sh`, `storage-orchestrator.sh`, `funding-deadline.sh`, `install-hooks.sh`
+
+### 1.2 各層が扱える データ クラス
+`02_DATA_CLASSIFICATION.md` の C0–C4 がどの層を通過できるか:
+
+| 層 | C0 公開 | C1 社内 | C2 取引先 | C3 機密 | C4 法定機微 |
+|----|----|----|----|----|----|
+| L1 テスト | ダミーのみ | — | — | — | — |
+| L2 監査ログ | ✓ メタ情報 (event 名等) | ✓ | ✓ | △ details に PII を入れない | △ 同左 |
+| L3 強制 | — (制御メタのみ) | — | — | — | — |
+| L4 スクリプト | ✓ | ✓ | ✓ | ✓ | ✓ (ローカル端末内・archive は C4 拒否) |
+| L5 AI / Ollama | ✓ | ✓ | ✓ | ✓ | △ ローカルだが法定機微は AI 入力自体が要承認 |
+| L5 AI / Anthropic | ✓ | △ (ベンダー設定確認) | ✗ (`02` 既定) | ✗ | ✗ |
+| L5 AI / Google | ✓ | △ (同上) | ✗ | ✗ | ✗ |
+| L6 UI | ✓ | ✓ | ✓ | ✓ | △ 表示は可、外部送信は L5 で防ぐ |
+| L7 文書 (公開) | ✓ | ✗ | ✗ | ✗ | ✗ |
+| L7 文書 (社内) | ✓ | ✓ | △ 取引先承認後 | ✗ | ✗ |
+
+---
+
+## 2. 信頼境界 (Trust Boundaries)
+
+```
+┌─ ローカル端末 (User-controlled, not "trusted by system") ──┐
+│                                                            │
+│  Browser localStorage  ← user-readable (DevTools 経由)     │
+│  Filesystem ~/                                             │
+│  ~/.claude/audit.jsonl  ← append-only (改竄は検出可、防げない)│
+│  ~/.claude/audit-backups/audit.jsonl.bak.YYYYMM (月次)     │
+│  localhost:11434 (Ollama)  ← ループバック                   │
+│                                                            │
+└─────────────────┬───────────────────────────────┬──────────┘
+                  │ ① クラウド AI                  │ ③ Git push
+                  │ (C0-C2 のみ許可)              │ (PII スキャン後)
+                  ▼                               ▼
+        ┌──────────────────┐          ┌──────────────────┐
+        │ api.anthropic.com│          │  GitHub remote    │
+        │ generativelang.. │          │  (private repo)   │
+        │ rclone crypt:    │          │  + secret scan    │
+        └──────────────────┘          └──────────────────┘
+        rclone crypt は **client-side**     gitleaks は未導入
+        暗号化なので、ベンダーの        (CI なし方針との
+        平文閲覧リスクは大幅低減。       折衷で検討中 §10 #4)
+        ただしメタデータ・通信履歴は
+        ベンダー側に残る (mitigates,
+        not eliminates)。
+                  ▲
+                  │ ② 戻り (ストリーム / アーカイブ ファイル)
+                  │
+        (戻りも信頼境界外と想定し、UI は XSS 安全レンダ)
+```
+
+---
+
+## 3. データフロー
+
+### 3.1 ローカル AI 会話 (Ollama)
+```
+User → v19/ui/dashboard.js
+     → POST localhost:11434/api/chat (NDJSON)
+     → ストリーム解析 → DOM 描画
+     → state.chat.sessions[i] (localStorage に永続化)
+```
+監査: ブラウザ側は未対応 (§10 #1)。Ollama 本体のログは `~/.ollama/` に残る。
+
+### 3.2 クラウド AI 会話 (Anthropic, Google)
+```
+User → v19/ui/dashboard.js
+     → reconcileLocalOnly() ガード (settings.localOnly が ON なら強制 ollama)
+     → POST api.anthropic.com or generativelanguage (SSE)
+     → ストリーム解析 → DOM
+     → state.chat.sessions[i]
+```
+401 (キー無効) は dashboard.js:713 で `'API キーが無効です'` を UI トースト。
+
+### 3.3 commit
+```
+User → git commit
+     → .git/hooks/pre-commit (symlink → scripts/hooks/pre-commit)
+     → bash scripts/pii-scan.sh --staged
+        - HIT  → exit 1 (commit ブロック)
+        - clean → 既存 audit.jsonl の verify (警告レベル、ブロックしない)
+     → audit_log "pre_commit.pass" "staged=N"
+     → 通常の commit が継続
+```
+迂回: `git commit --no-verify` で hook を bypass 可 (CLAUDE.md 上は人間承認必須)。
+
+### 3.4 ストレージ運用 (月次)
+```
+cron / 手動 → bash scripts/storage-orchestrator.sh --routine monthly
+           → storage-health.sh (診断)
+           → storage-cleanup.sh --apply --aggressive
+              (trash-first; ただし node_modules / 古ログは直接 rm)
+           → storage-archive.sh --plan (rclone, クラス別、C4 拒否)
+           → audit.jsonl を ~/.claude/audit-backups/audit.jsonl.bak.YYYYMM に保全 (v3 で追加)
+           → audit_rotate (古い audit.jsonl 行を削除、チェーン切断)
+           → 各ステップが audit_log
+```
+
+### 3.5 監査ログ 検証
+- CLI: `bash scripts/audit-verify.sh` (改竄あれば exit 1)
+- UI: `http://127.0.0.1:8000/v19/ui/dashboard.html#audit` (SubtleCrypto で SHA-256 再計算、改竄行ハイライト)
+
+### 3.6 cowork CLI 起動 (ワンショット)
+```
+User → bash cowork/local-cowork.sh
+     → Ollama 起動チェック (なければ start)
+     → python3 -m http.server 8000 (バックグラウンド)
+     → ブラウザ起動 (xdg-open / open)
+     → cowork/local-chat-cli.py を foreground で対話
+     → 終了時にサーバ停止
+```
+ワンステップで Ollama + サーバ + ブラウザ + CLI が揃う。テストは未整備 (§10 #8)。
+
+### 3.7 desktop アプリ (AI 非依存)
+`desktop/` の 6 業務アプリ (タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー) は **AI を一切使わない**。L6 だけで完結し、L2 監査ログにも書かない (機微情報を扱う設計ではないため)。完全オフライン PWA として独立運用される。
+
+---
+
+## 4. 不変条件 (Invariants)
+
+実行時に**必ず**真であるべき条件。違反したら設計バグ。
+
+| ID | 不変条件 | 守る場所 | 検証 |
+|----|---------|---------|-----|
+| **INV-1** | `localOnly=true` のとき UI から Anthropic/Google が選択不能 | `dashboard.js:144-150 isLocalProvider/visibleProviders/reconcileLocalOnly` | `tests/js/test_localonly.mjs` (9 件) |
+| **INV-2** | `audit.jsonl` の各行は `prev_hash` で前行と連鎖。`chain_hash = SHA256(prev_hash + body)` を満たす | `lib/audit.sh:_audit_sha256` `lib/audit.ps1:Get-Sha256Hex` | `tests/unit/test-audit-lib.sh` (4 件) + 監査ビューア (SubtleCrypto) |
+| **INV-3** | §1.1 で定義した「ユーザー実行型 script」(8 本) は全て `audit_log "<name>.start"` を呼ぶ | 各 script 冒頭 | `tests/unit/test-inv3-audit-start.sh` で全 8 本を機械検証 |
+| **INV-4** | **ユーザー データ** の削除は `_trash_move` で trash 経由。例外: rebuild artifacts (node_modules, 90 日超ログ) は `--aggressive` 時に直接 rm 可 | `storage-cleanup.sh:181 _trash_move` | `tests/unit/test-storage-cleanup.sh` (5 件) |
+| **INV-5** | C4 データは絶対にクラウド (rclone remote) に送信されない | `storage-archive.sh:154 C4 ガード` | `tests/unit/test-storage-archive.sh: t_c4_class_rejected` |
+| **INV-6** | PII を含む commit は pre-commit hook (インストール済前提) に阻止される | `scripts/hooks/pre-commit` + `pii-scan.sh:--staged` | `tests/unit/test-hooks.sh` (4 件) |
+| **INV-8** | UI の Markdown / HTML レンダは XSS 安全 (`<script>`, `javascript:` link, インライン event 全て無害化) | `dashboard.js: renderMarkdown` | `tests/js/test_md.mjs` (XSS via tag, javascript: link 含む 13 件) |
+| **INV-9** | Anthropic SSE で `usage` の `input_tokens` (`message_start`) と `output_tokens` (`message_delta`) が両方保持される | `dashboard.js:claudeStream usage = {...usage, ...evt.usage}` | `tests/js/test_providers.mjs:103` |
+| **INV-10** | `audit.jsonl` への改竄 (任意の行の本文書き換え) は `audit-verify.sh` で必ず検出される | `audit-verify.sh: 行ごとに hash 再計算` | `tests/unit/test-audit-lib.sh: t_chain_break_on_tamper` |
+| **INV-11** | L8 のチーム間ハンドオフは `orchestrate.sh --handoff` 経由でのみ行い、必ず `audit.jsonl` に `handoff.<from>.<to>` イベントが残る (口頭・直接編集等の bypass は禁止) | `scripts/orchestrate.sh: cmd_handoff` | `tests/unit/test-orchestrate.sh: t_handoff_records_team_pair` |
+| **INV-12** | 同一 issue ID に対し同時に複数チームが `team.<X>.1.scoped` を出してはいけない (重複着手は二重実装の温床) | `scripts/orchestrate-kpi.sh: 重複検出` | `tests/unit/test-orchestrate-kpi.sh: t_detects_concurrent_scope` |
+
+### 4.1 設計目標 (INV ではない — 自動テストが無い)
+| ID | 目標 | 状態 |
+|----|------|------|
+| **GOAL-7** | bash と PowerShell が書く `audit.jsonl` 行はバイト互換 | 手動確認のみ。自動化は §10 #2 |
+
+(v3 で INV-7 を「設計目標」に降格 — invariants は自動テストで担保すべきという原則に従う)
+
+---
+
+## 5. 失敗モード (Failure Modes)
+
+| 故障 | 影響 | 検出 | 復旧 | カバー状態 |
+|------|------|------|------|----------|
+| Ollama 未起動 | v19 で fetch エラー | `preflight.sh` / 接続テスト ボタン | `OLLAMA_ORIGINS=* ollama serve` | ✅ |
+| `OLLAMA_ORIGINS` 未設定 | ブラウザから 403 | DevTools Console + preflight | systemd / launchd / 環境変数 | ✅ |
+| Anthropic / Google API キー失効 | 401 | UI トースト (`dashboard.js:713`) | UI で再入力 | ✅ |
+| `audit.jsonl` チェーン切断 | verify が exit 1 | `audit-verify.sh` / pre-commit 警告 | 意図的ローテーションなら ok。そうでなければ調査 | ✅ |
+| `audit.jsonl` 削除 / 破損 | 履歴消失 | 月次 backup (`~/.claude/audit-backups/`) との突き合わせ | バックアップ復元 (v3 で実装) | ✅ |
+| バックアップごと削除 | 全履歴消失 | (検出機構なし) | オフライン媒体 / 別端末 への手動コピー — **未対応 (§10 #11)** | ❌ |
+| pre-commit が PII を見落とす | 機密 push | (検出機構なし) | GitHub secret scanning に依存 — gitleaks 検討 (§10 #4) | ⚠️ |
+| storage-cleanup の誤削除 | データ消失感 | trash 一覧 | `--restore` で復旧 | ✅ |
+| storage-archive 中の rclone クラッシュ | 部分転送 | 転送ログ + verify | rclone copy は冪等 → 再実行 | ⚠️ (リジューム手順は §10 #5) |
+| ブラウザ localStorage 満杯 | 新規セッション保存失敗 | UI 警告なし — **未対応 (§10 #6)** | 設定 → 全データ書き出し → 個別削除 | ❌ |
+| Service Worker の旧キャッシュ | 古い UI | バージョンずれ | 設定 → 「アプリを更新」 | ⚠️ (§10 #7) |
+| Vision モデル未取得 | "model does not support images" | UI トースト | `ollama pull llama3.2-vision` | ✅ |
+
+---
+
+## 6. 保証と制約 (Guarantees & Limitations)
+
+### 6.1 保証する (Honest)
+- ✓ **ローカル専用モード ON のとき、UI 経由で Anthropic / Google を選択する経路は存在しない**
+- ✓ pre-commit hook がインストール済なら、PII の commit は (`--no-verify` 以外で) 不可能
+- ✓ trash-first により、**ユーザー データ** が一度の操作で恒久削除されることはない (既定 30 日猶予)
+- ✓ 監査ログ追記改竄は `audit-verify.sh` で必ず検出される
+- ✓ 監査ログは月次バックアップされ、本体ファイル削除でも前月分まで復元可
+- ✓ XSS: `<script>`, `javascript:` link, インライン event は `tests/js/test_md.mjs` で阻止確認
+
+### 6.2 保証しない (Limitations)
+- ✗ **「物理的に送信不能」ではない** — ローカル専用モードは UI レベルの遮断。DevTools コンソール / `localStorage.setItem('settings', ...)` 改変 / 直接 `fetch()` で迂回可能。**情報の機密度が高いほど運用ルール (§02) と物理分離 (オフライン端末) を併用すべき**
+- ✗ rclone crypt は client-side 暗号化でベンダーの**平文閲覧**は防ぐが、**通信メタデータ・転送履歴** はベンダー側に残る (mitigates, not eliminates)
+- ✗ ブラウザのメモリ ダンプ / DevTools 経由の API キー漏洩は防げない (localStorage は OS のセキュリティに依存)
+- ✗ Ollama のモデル ファイル自体の改竄は検出しない (model hash 検証は未実装)
+- ✗ クラウド AI 側のログ保持や学習除外 はベンダー設定 / ポリシーに依存 (`04_VENDOR_REVIEW.md`)
+- ✗ ローカル専用モードは "選択肢を消す" だけで、すでに送信済の API 履歴を消すわけではない
+- ✗ Windows PowerShell スクリプトの実機テストは手動 (Linux サンドボックスでは構造のみチェック)
+- ✗ pre-commit hook は `--no-verify` で迂回可能 (人間承認を CLAUDE.md で要求するが物理強制ではない)
+- ✗ シングルサインオン / RBAC はない (個人 / 小規模事業者向け設計)
+- ✗ rebuild artifacts (`node_modules`, 90 日超ログ) は trash を経由せず直接 `rm` (再生成可能と判断)
+- ✗ 監査ログ全体 (本体 + バックアップ) を同一端末で管理する以上、端末紛失/破損で全消失する可能性 (§10 #11)
+
+---
+
+## 7. エントリ ポイント
+
+| 役割 | 最初に読む | 次に読む | 実行する |
+|-----|----------|---------|---------|
+| 新メンバー | `governance/06_ONBOARDING.md` | `02_DATA_CLASSIFICATION.md` | `bash scripts/preflight.sh` |
+| AI 支援者 | `CLAUDE.md` | この `12_SYSTEM_DESIGN.md` | (作業前) `preflight.sh` |
+| 運用者 (日次) | `governance/03_OPERATIONS.md` | `10_STORAGE_HYGIENE.md` | `storage-orchestrator.sh --routine daily` |
+| 経営者 | `funding/README.md` | `02_DATA_CLASSIFICATION.md` | (適用時) `funding/checklists/` |
+| 士業 | `governance/07_PROFESSIONAL_RULES.md` | `01_LEGAL_FRAMEWORK.md` | (該当節) |
+| インシデント対応 | `governance/09_INCIDENT_PLAYBOOK.md` | `08_ATTACK_CATALOG.md` | (該当 シナリオ) |
+| 監査人 | この設計図 §4 (INV) + GOAL | `audit-verify.sh` | `bash scripts/audit-verify.sh` |
+| レビュア | この設計図 §5–6 | `tests/README.md` | `bash tests/smoke-test.sh` |
+
+---
+
+## 8. 構成要素マップ (File → Purpose)
+
+省略 — v1.md / v2.md と同じ。差分のみ:
+
+### v3 で更新
+- `storage-orchestrator.sh`: 月次に **audit backup** を追加 (rotate の前に `~/.claude/audit-backups/audit.jsonl.bak.YYYYMM`)
+
+---
+
+## 9. 拡張ポイント
+
+新 AI プロバイダの追加 / 新 script / 新ガバナンス文書の追加は v1 と同じ — `design-iterations/v1.md` 参照。
+
+---
+
+## 10. 既知の課題 (Open Issues)
+
+| # | 重要度 | 課題 | 対策案 | 状態 |
+|---|------|------|------|------|
+| 1 | 中 | UI からの操作 (チャット送信等) が `audit.jsonl` に記録されない | `dashboard.js` に `auditLogBrowser()` (localStorage チェーン) + `exportBrowserAuditAsJsonl` + 監査ビューアに「JSONL 書き出し」ボタン。chat.send / success / aborted / error / audit.export / audit.clear をフック。書き出した JSONL は `audit-verify.sh` でそのまま検証可 | **v6 で実装済** |
+| 2 | 高 | bash↔PowerShell の `audit.jsonl` バイト互換が手動検証 | `tests/integration/audit-cross-os.sh` (Python spec 検証 + pwsh 不在時スキップ + 相互運用 チェーン維持テスト) | **v5 で実装済** |
+| 3 | 高 | `audit.jsonl` のバックアップ戦略 | 月次ルーティンに組込 | **v3 で実装済** |
+| 4 | 中 | PII スキャンの偽陰性に対するセカンドラインがない | `scripts/hooks/pre-commit` に `gitleaks protect --staged --redact` を追加。PATH に居れば自動実行、`DISABLE_GITLEAKS=1` で個別スキップ可 | **v7 で実装済** |
+| 5 | 低 | rclone 中断後のリジューム手順未文書化 | `governance/10_STORAGE_HYGIENE.md §12.5` 節 追加 | **v9 で実装済** |
+| 6 | 中 | ブラウザ localStorage 容量警告 UI なし | 設定画面に `.storage-meter` 追加。UTF-16 で (key+val)*2 byte 概算 → 5MB 比で % 表示。70% で warn (橙)、90% で danger (赤) のバー塗り + ヒント文言切替 | **v8 で実装済** |
+| 7 | 低 | Service Worker のバージョン管理戦略 | `desktop/sw.js` に `CACHE_VERSION` 定数 + activate で prefix-match 旧キャッシュ削除 + SKIP_WAITING メッセージ ハンドラ。`tests/js/test_sw_versioning.mjs` (7 件) | **v9 で実装済** |
+| 8 | 低 | `cowork/*` のテストなし | `tests/unit/test-cowork.sh` (5 件): --help / py_compile / Ollama 不在時クラッシュ抑止 / shebang | **v9 で実装済** |
+| 9 | 低 | `storage-orchestrator.sh` のテストなし | `tests/unit/test-storage-orchestrator.sh` (5 件): --help / 未知 routine 拒否 / daily が health 呼出 / --dry-run でファイル不変 / monthly に audit_rotate + audit.backup | **v9 で実装済** |
+| 10 | 低 | INV-3 の例外文書化 (audit-verify は audit_log を呼ばない) | 本ドキュメントで明示 | **v2 で対応済** |
+| 11 | 高 | 監査ログ全体 (本体 + .bak) を同一端末管理 → 端末紛失で全消失 | `scripts/audit-export.sh` + `03_OPERATIONS.md D-4` 節 | **v4 で実装済** |
+| 12 | 高 | L8 のオーケストレーション 自体に INV / KPI が無い (引継ぎ bypass・重複着手を防げない / 改善計測ができない) | INV-11 (handoff 監査性) + INV-12 (排他着手) を追加。`scripts/orchestrate-kpi.sh` で 4 チーム KPI を JSON 出力。`tests/unit/test-orchestrate-kpi.sh` でカバー | **v11 で実装済** |
+| 13 | 高 | OODA は人間トリガー依存 — 自動監視がなく、preflight や audit-verify が異常を出しても気づかれない可能性がある | `scripts/orchestrate-watch.sh` で 4 チェック (W1 audit chain / W2 chat.error 嵐 / W3 INV-12 違反 / W4 PII クリーン 鮮度) を `--once` または `--loop N` で実行。breached なら `incident.detected` を板に発火 + exit 1。`tests/unit/test-orchestrate-watch.sh` (9 件) | **v13 で実装済** |
+| 14 | 中 | watcher は breach を検出するが、Orient/Decide が手動で 09 IR Playbook を引く必要がある | `orchestrate.sh --propose-response <breach-type>` で 4 breach を IR シナリオへ自動マッピング、60 秒対応コマンドを表示。watcher が breach 時に `--propose-response` への誘導を出す。`tests/unit/test-orchestrate.sh` 12 → 17 件 | **v14 で実装済** |
+| 15 | 高 | `audit_rotate` がチェーン整合を破壊する設計欠陥 — `storage-orchestrator --routine monthly` 後に必ず `audit-verify` が exit 1、watcher も毎月 false alarm | `lib/audit.sh:audit_rotate` を改修: cutoff 削除後に新 genesis として `audit.rotation.checkpoint` イベントを挿入、残行の `prev_hash`/`chain_hash` を再計算。checkpoint の `details` に旧チェーンの最終 hash を保存 (forensic continuity)。`tests/unit/test-audit-lib.sh` 4 → 7 件。**注意**: PowerShell 版 `audit.ps1` には rotate 未実装 (rotate は bash 専用 `storage-orchestrator.sh` からのみ呼ばれるため範囲外) | **v15 で実装済** |
+| 16 | 中 | `--prompt-for alpha.1` 出力に §10 が含まれず、sub-agent が α1 役で起動しても別途 governance/12 を読み直す必要がある (prompt 自己完結性の欠如) | `cmd_prompt_for` に §10 抽出を追加 — Python で governance/12 §10 をパースし、未着手 (実装/対応済を除く) のみ `#N [優先度] 課題 / 対策案 / 状態` で表示。alpha.1 限定 (他チーム/他役には漏らさない)。全課題 完了時は「α1 は新たな歪みの発見モードに入るべき」と明示。`tests/unit/test-orchestrate.sh` 17 → 20 件 | **v16 で実装済** |
+| 17 | 高 | `audit_log` に 並行書込 race ─ 同時実行で同じ prev_hash を使った 2 行が出ると チェーン破断 (tamper ではないが INV-2 違反扱い、watcher false alarm) | `lib/audit.sh:audit_log` に `flock -w 5 200`/`exec 200>>${AUDIT_LOG_PATH}.lock` を追加し、read-prev → compute-chain → write を直列化。`flock` がない環境ではロックなしフォールバック (audit を業務阻害させない設計優先)。`tests/unit/test-audit-lib.sh` 7 → 8 件 (30 並列書込でチェーン破断なしを確認) | **v17 で実装済** |
+| 18 | 中 | 環境/状況に応じて応答スタイルを毎ターン変える機能がない (砕け会話で過剰丁寧、急ぎ問合せに前置き、等) | **affect-aware adaptive chat** (gender-blind, PAD-like 4 次元). `dashboard.js: classifyAffect / affectStyleModifier`、4 次元 (valence/arousal/urgency/formality) を heuristic 推定して system prompt にスタイル ヒント を追記。`governance/15_AFFECT_ETHICS.md` で **性別/年齢/民族 等 protected attribute での分類禁止** を明文化、テストでも担保。完全 オプトイン、ローカル処理、推定値 ユーザー可視化。`tests/js/test_affect.mjs` (22 件 ─ 含 gender-blind / 年齢-blind / privacy 確認) | **v18 で実装済** |
+| 19 | 高 | 全機能が分散 (CLI / shell / 別 page) — v19 ダッシュボード だけでは L8 や governance を見られず、運用者が複数ツールを使い分ける必要がある | **v19 統合**: `#orchestrate` ルート (4 KPI タイル + 板 30 件 + 4 breach 対応案 ジェネレータ) と `#governance` ルート (governance/funding/templates の md を ロード → XSS 安全 レンダ + 検索) を追加。既存 5 ルート は無傷 (regression test 済)。大型 refactor 回避で 既存 dashboard.js 拡張のみ。`tests/js/test_integration.mjs` (38 件 ─ 含 ROUTES 整合 / KPI 計算 / 板 フィルタ / 既存ルート 残存) | **v19 で実装済** |
+| 20 | 中 | `#orchestrate` / `#governance` でロードした audit.jsonl と md 文書が リロードで消える。朝のチェックの度に file picker からロードし直す必要 (UX 低下) | localStorage に LRU キャッシュ: `v19.orch.audit_cache` (1 件、500KB 上限、超過は末尾保持) + `v19.gov.docs_cache` (5 件 LRU、各 500KB 上限) を追加。ルート 表示時に自動復元、file picker は「上書き / 追加」用に残す。容量は既存 storage meter (5MB 監視) と整合。`tests/js/test_v20_cache.mjs` (25 件 ─ 含 LRU / 容量超過時の切詰 / 起動時復元 / 既存 INV regression) | **v20 で実装済** |
+| 21 | 高 | smoke-test 実行に 1m48s 必要 (test-preflight が 62.7s で律速、curl タイムアウト 4 回 + audit-verify が bash で 2200 行 hash) — 開発 体験の最大の摩擦 | `preflight.sh` に `PREFLIGHT_FAST=1` 環境変数 (および分離フラグ `PREFLIGHT_SKIP_NET=1` `PREFLIGHT_SKIP_AUDIT_VERIFY=1`) を追加。テスト時に curl + audit-verify を skip し、本番 preflight の挙動は変えない。test-preflight は 62.7s → 1.2s (52x)、smoke 全体 1m48s → 48s (2.2x)。既存 4 テストを refactor + 2 テスト 追加 (FAST flag 動作確認、5 秒以内 完了 担保) | **v21 で実装済** |
+| 22 | 中 | `governance/14_SESSION_KNOWLEDGE.md` (新セッション ブートストラップ) が v17 までしか反映されておらず、v18-v21 で追加された affect-aware / 統合 / cache / FAST flag が継承されない | `governance/14` を更新: §0 三行サマリ を v21 に / §3 チート シートにテスト時間記載 / §4.2 罠リストに 5 件追加 (race / gender-blind / ESM 分割 / FAST flag / KPI parsing) / §5 倫理ガード参照 / §9 暗黙の判断に 4 件追加 / §11.5 v18-v21 機能 サマリ 追加 / `tests/unit/test-knowledge-doc.sh` (7 件 drift sniff: design version 反映 / 主要機能言及 / 罠記載 / INV uniq 件数 / 倫理ガード 参照 / 起動チェック コマンド 不変) | **v22 で実装済** |
+| 23 | 中 | `README.md` が v8 で止まっていて L8 / 統合ルート / 感情適応 / FAST flag が反映されていない (新規読者が古い情報を見る) | README 全面更新: パス表 で v19 を 7 ルート (orchestrate / governance 含) として明示、scripts セクションに L8 5 コマンド + audit-export + PREFLIGHT_FAST 追記、governance docs 一覧を 11 → 15 本 に拡張。drift sniff `tests/unit/test-readme-sync.sh` (7 件: governance 01-15 全言及 / L8 主要コマンド 5 種 / v19 ルート / 最近の機能 4 種 / 言及 script 実在性 / 進化 数値) | **v23 で実装済** |
+| 24 | 高 | 各 PDCA サイクルで「次に何のコマンドを打つか」を毎回考えるのが摩擦。orchestrate.sh の機能を組合せて使うが手順を覚えていないと始められない | `orchestrate.sh --auto <mode>` 4 モードを追加: `bootstrap` (preflight FAST + status + KPI + watch を順次実行)、`pdca` (§10 最高優先 未着手 を抽出 → 板の進行状況 から「次に打つ 1 行」を提示)、`ooda` (watcher → breach 時 自動 propose-response)、`monitor` (60s ループで watcher、breach 時に応答)。半自動 — 各人間判断点 (実装内容 / commit message) は残す。`tests/unit/test-auto-mode.sh` (9 件) | **v24 で実装済** |
+| 25 | 高 | `audit-verify.sh` が bash で 1 行毎に sha256sum 起動 → 2200 行で 30s。test-hooks (42s) / test-auto-mode (41s) の律速。watcher / preflight / pre-commit が常時 待たされる | `scripts/audit-verify.sh` の内部実装を Python に切替 (`python3 -` で標準入力 から実行)。bash entry / 出力フォーマット / exit code は完全互換、python3 不在時は bash フォールバック。**30秒 → 0.05秒 = 600x**、smoke 全体 48s → 19s = **2.5x (v21 比 5.7x)**。test-hooks 42s → 1.1s、test-auto-mode 41s → 1.2s | **v25 で実装済** |
+| 26 | 中 | governance/14 §4.2 で言及されている過去の罠 12 件 が、各 unit test に散らばっていて回帰退行を一望できない。新サイクルで 罠 が再発しても気づきにくい | `tests/regression/test-known-bugs.sh` (12 件) を新設し、smoke-test に新スイート `Regression` として追加。各テストは「既存テストが残っている (drift sniff)」+「直接実行で罠 が再発しない (機能検証)」の両方をカバー。`audit-verify` の性能退行 (5000 行 <5s) も含める。実行 1 秒。 | **v26 で実装済** |
+| 27 | 高 | 包括監査 で 4 件の歪み発見: (1) README に「22 反復」が drift (現状 v26)、test-readme-sync が拾えなかった (2) 倫理ガード 7 軸 のうち gender/age 2 軸 のみテスト、5 軸 (民族/宗教/性的指向/政治志向/障害) 未検証 (3) テスト → INV-N trace が片方向 (テストから INV-N を遡れない) (4) drift sniff の sniff ロジックが「N 反復」の数値を機械検証していない | (1) README を「26 反復」に同期、(4) test-readme-sync の `t_design_version_progressed` を design version (v26) と「N 反復」を厳密一致 検証 に強化 (2) `tests/js/test_affect.mjs` に 5 軸 × 8 ケース (民族/民族2/宗教/宗教2/性的指向/政治/政治2/障害) で 4 次元 max 差 < 0.10 を機械検証、22 → 30 件 pass (3) 主要 9 テスト ファイル (unit + js) の冒頭 に `# INV: INV-N: <一行説明>` コメント追加、INV-1 から INV-12 全部 (INV-7=GOAL 除く) で grep -rE "INV-N" がヒット | **v27 で実装済** |
+| 28 | 高 | 監査 続行で発覚: 本リポジトリ自体で `.git/hooks/pre-commit` が **未インストール** → INV-6 (PII commit 阻止) が物理強制されていない。新セッションが手動で `install-hooks.sh` を実行しないと CLAUDE.md ルール 2 は文書のみで稼働 | 即時 `bash scripts/install-hooks.sh` 実行 (INV-6 即復活)。`scripts/orchestrate.sh:auto_bootstrap` に新ステップ `(2/5) pre-commit hook 状態 (INV-6)` を追加。未インストール 検知時 ❌ + 「対処: bash scripts/install-hooks.sh」を表示 + audit に `orchestrate.bootstrap.hook_missing` を発火。`tests/unit/test-auto-mode.sh` に sniff 1 件追加 (10/10 pass) | **v28 で実装済** |
+| 29 | 高 | `dashboard.js` が 2757 行で巨大化、テスト/レビュー/編集 が困難。governance/14 §4.2 で「ESM 分割は INV を壊すリスク高」と保留 | drift sniff インフラ + ESM ネイティブ サポート + INV 自動検証 が揃った今、安全に段階分割可能。`v19/ui/modules/{affect,audit-browser}.js` を抽出 (合計 ~150 行)、dashboard.js は ESM `import` で受け取り、HTML は `type="module"` (既に v18 から)。drift sniff を **file-aware** (dashboard or modules どちらかにあれば OK) に更新、テスト 全合格 維持。dashboard.js は 2757 → **2614 行 (143 行削減)**、smoke 19s → **15s (1.3x 高速化)** | **v29 で実装済 (将来 さらに分割 予定)** |
+| 30 | 高 | INV-8 (UI Markdown は XSS 安全) のロジック (`escapeHtml` + `renderMarkdown` + `activateCopyButtons`) が dashboard.js (700-840 行) に紛れていて セキュリティ境界が見えにくい | `v19/ui/modules/markdown.js` を新設、3 関数 + コメント (subset 仕様 / 戦略) を移動。**XSS 安全層 が独立ファイル として明確化**、レビュア が 1 ファイルだけ精査すれば INV-8 を検証できる。`activateCopyButtons` は callback 引数で toast 注入可能 にし dashboard 専用ロジックを 切り離す。`tests/js/test_md.mjs` を `extractAcross([headers], [sources])` で dashboard / modules 両方から探す形に拡張 + `export` prefix 自動 剥がし。dashboard.js: 2614 → **2493 行 (合計 264 行削減 / 9.6%)** | **v30 で実装済** |
+| 31 | 高 | 担当者が突然変わった時に業務文脈 (誰と何を約束 / どう判断 / 成果物 はどこ) を引き継ぐ仕組みが ない。governance/14 はシステム引継ぎ用、業務引継ぎは未対応 | **業務 引継ぎ Free システム** を 既存 `~/.claude/audit.jsonl` の `work.task.*` event prefix で実現。`governance/16_WORK_JOURNAL.md` (運用ルール + 8 event タイプ + 法令整合 + 統合図) + `scripts/work-journal.sh` (12 サブコマンド: --start / --decision / --comm / --artifact / --block / --resume / --handoff / --complete / --list / --show / --export / --audit)。SHA-256 連鎖で改竄検知済 (INV-2/10 継承)、audit-export / watcher / rotate が自動でカバー。`tests/unit/test-work-journal.sh` (14 件 全合格) | **v31 で実装済** |
+| 32 | 高 | 業務記録 システム が **止まらない** ことを保証するテストがない。ファイル破損/lock 競合/権限/特殊入力 等で 黙って 失敗 する可能性 | `tests/resilience/test-resilience.sh` (15 件) を 新スイート Resilience として追加: A) audit ファイル異常 5 (no file / no dir / empty / corrupted / binary) / B) 権限・リソース 3 (lock 競合 timeout / 30 並列 / read-only) / C) 入力 異常 4 (空 / 8KB / 改行タブ引用符 / UTF-8) / D) work-journal 特有 3 (重複 start / complete 後追記 / 100 イベント show 速度)。**副次バグ修正**: `emit_work` で `set -u` + `$3` 未指定 で エラー → `${3:-}` で fix、`[[ -n "$extra" ]] && echo` 末尾 false 返却 → `return 0` 明示 | **v32 で実装済** |
+
+---
+
+## 11. 反復履歴 (v1 → v3)
+
+### v1 → v2 の変更
+- TL;DR を honest に (「物理的に送信不能」削除)
+- 層番号を反転 (L1=foundation, L7=top)
+- §1.1 各層 × C0–C4 マトリクス追加
+- §2 信頼境界を ASCII 図化 (3 方向境界)
+- INV-3 の例外を明記 (audit-verify)
+- INV-4 の例外を明記 (rebuild artifacts)
+- §5 と §10 の重複解消 (失敗モードに ✅⚠️❌ カバー状態)
+- §6.2 強化 (ローカル専用モードの限界、rebuild artifacts)
+- `storage-health.sh` に `audit_log "storage_health.start"` 追加 (INV-3 違反解消)
+
+### v2 → v3 の変更
+- §1.1 「ユーザー実行型 script」の定義を独立節として明示 (8 本を列挙)
+- §1.2 (旧 §1.1) C0–C4 マトリクスで AI を Ollama / Anthropic / Google で分離
+- §2 信頼境界に rclone crypt の「mitigates not eliminates」を明記
+- §3.6 cowork CLI 起動フローを追加
+- §3.7 desktop の AI 非依存性を明記 (L6 だけで完結)
+- INV-7 を「設計目標 (GOAL-7)」に降格 (自動テスト不在ゆえ INV ではない)
+- §6 保証に「監査ログ月次バックアップ」追加、制約に「同一端末管理ゆえ端末紛失で全消失」追加
+- §10 #11 に同上の課題を追加 (高優先度)
+- **コード**: `storage-orchestrator.sh` の monthly に audit backup 追加 (`~/.claude/audit-backups/audit.jsonl.bak.YYYYMM`)
+
+### v3 → v4 の変更
+- 課題 #11 (高) を実装: `scripts/audit-export.sh` (監査ログ + 月次 .bak をまとめて tar.gz で出力、sha256 manifest 付き) と `governance/03_OPERATIONS.md D-4` 節 (オフライン バックアップ運用ガイド)
+- `tests/unit/test-audit-export.sh` (4 件) を追加
+
+### v4 → v5 の変更
+- 課題 #2 (高) を実装: `tests/integration/audit-cross-os.sh`
+  - bash 出力を Python 「spec 実装」で再計算 → chain_hash 一致を検証
+  - 3 連鎖の prev_hash 連続性を検証
+  - pwsh 利用可能環境では PS 出力も同 spec で検証 + bash → pwsh の連続書き込みでチェーン維持を `audit-verify.sh` で確認
+  - pwsh 不在環境では skip (Linux サンドボックスでも CI 失敗にならない)
+- `tests/smoke-test.sh` に `integration` ターゲット追加 (`bash tests/smoke-test.sh integration`)
+
+### v5 → v6 の変更
+- 課題 #1 (中) を実装: ブラウザ側 audit ロギング
+  - `dashboard.js` に `auditLogBrowser` (localStorage に SHA-256 連鎖で書き込み、上限 2000 件 FIFO)
+  - `exportBrowserAuditAsJsonl` (audit-verify.sh と互換の JSONL を生成)
+  - 監査ビューアに「JSONL 書き出し」「ブラウザ audit を消去」ボタン (件数表示付)
+  - チャット送信 (`chat.send`) / 成功 (`chat.success`) / 停止 (`chat.aborted`) / エラー (`chat.error`) をフック
+  - `tests/js/test_audit_browser.mjs` (16 件): drift sniff + チェーン整合 + JSONL export + JSON エスケープ + FIFO
+
+### v6 → v7 の変更
+- 課題 #4 (中) を実装: gitleaks optional in pre-commit
+  - `scripts/hooks/pre-commit` に gitleaks 呼び出しを追加 (PATH に居れば自動)
+  - `DISABLE_GITLEAKS=1` 環境変数で個別スキップ可能 (人間承認 前提)
+  - tests/unit/test-hooks.sh に 2 件追加 (sniff + DISABLE フラグ動作)
+
+### v7 → v8 の変更
+- 課題 #6 (中) を実装: localStorage 容量メーター UI
+  - `dashboard.html` 設定タブに `.storage-meter` (使用量テキスト + バー + ヒント)
+  - `dashboard.css` に warn (橙) / danger (赤) スタイル
+  - `dashboard.js` に `estimateLocalStorageUsage` (UTF-16 概算) + `updateStorageMeter` (70% / 90% 閾値) + 30 秒周期更新 + hashchange 連動
+  - `tests/js/test_storage_meter.mjs` (15 件): drift sniff + 計算 + 閾値分類
+
+### v31 → v32 の変更 (PDCA Cycle #21 — Resilience テスト 15 件)
+ユーザー要求「上記の仕組みが止まらない様にテストを実施して」。
+業務記録 システム が **黙って 失敗** する可能性 を 機械検証 で潰す。
+
+新規 `tests/resilience/test-resilience.sh` (15 件):
+
+A. audit.jsonl 異常 (5 件):
+- A1: ファイル無し → `mkdir -p` で 自動作成
+- A2: 親ディレクトリすら 無い → 同上
+- A3: 空ファイル → genesis (prev_hash=64 zeros) で開始
+- A4: 壊れた JSON 行 → 追記 続行 (audit-verify は検出するが、業務操作 は止まらない)
+- A5: バイナリ汚染 → 追記 続行 (verify は exit 1)
+
+B. 権限 / リソース (3 件):
+- B1: 別プロセスが lock 保持 → 5s × 2 audit_log = 12s 以内 で諦め、業務継続
+- B2: 30 並列 work-journal --start → flock で直列化、チェーン整合 維持 (v17 継承)
+- B3: read-only ファイル → 業務操作 続行 (audit 失敗 ≠ 業務 失敗)
+
+C. 入力 異常 (4 件):
+- C1: details 省略 → OK (task-id だけで動作)
+- C2: 8KB の details → JSON 妥当 維持
+- C3: 改行 / タブ / 引用符 / バックスラッシュ → escape されて JSON parse 可能
+- C4: 日本語 + 絵文字 → UTF-8 で保持 (CharSet 化 け なし)
+
+D. work-journal 特有 (3 件):
+- D1: 同 task-id で 2 回 --start → 両方記録 (運用 監視に委ねる)
+- D2: --complete 後の追加 event → 拒否しない (再オープン 想定)
+- D3: 100 イベント の --show → 5 秒以内
+
+副次バグ修正 (テスト実装中に発覚):
+- `scripts/work-journal.sh:emit_work` で `set -u` 下 で `$3` 未指定 エラー
+  → `local extra="${3:-}"` に修正
+- 末尾 `[[ -n "$extra" ]] && echo "..."` が空 $extra で false 返却 → 関数全体 exit 1
+  → `return 0` を明示
+
+`tests/smoke-test.sh` に新スイート `Resilience` を追加 (`bash tests/smoke-test.sh resilience`)。
+全 6 スイート (Bash Unit + JS + PS + Integration + Regression + Resilience) 合格、smoke 50.9s。
+
+設計の意義:
+- **静的テスト** (unit) は仕様 を検証、**Resilience** は環境ストレス下の挙動 を検証
+- 「黙って 失敗」を機械的に潰す → 運用障害の早期検出
+- regression と resilience を分けることで、バグ再発防止 と 環境耐性 を 別レイヤで管理
+
+### v30 → v31 の変更 (PDCA Cycle #20 — 業務 引継ぎ Free システム)
+ユーザー要求「業務の引継ぎを全く必要としない突然担当者が変わっても良い様に
+常に業務の全行程を記録していくシステム」。
+governance/14 (システム継承) の業務側 拡張として、新層を追加。
+
+設計方針:
+- 既存 `~/.claude/audit.jsonl` を 業務記録の 共通基盤 として再利用 (新規 DB なし)
+- event prefix `work.task.*` で 業務領域 を識別、audit-verify / audit-export /
+  audit-rotate / watcher が**全部 自動的に カバー**
+- 8 種類の event (start/decision/comm/artifact/block/resume/handoff/complete) で
+  業務工程 を 正規化、CLI で 1 コマンド で記録可能 (3 分以内)
+- C3+ 機微情報 は `path=...` 経由 で間接参照 (PII 直接記載 禁止)
+
+新規:
+- `governance/16_WORK_JOURNAL.md` (10 章): 設計原則 / 運用ルール / CLI / v19 統合 /
+  既存 INV 整合 / 統合図 / データ クラス + 法令 / ユースケース / 監査 強み
+- `scripts/work-journal.sh` (12 サブコマンド):
+  - 8 event タイプ + --list (active のみ / --all で完了済も) +
+    --show <task-id> (時系列) + --export <task-id> (Markdown) +
+    --audit (work.task.* のみ JSONL 出力 / audit-verify とパイプ可)
+  - すべて Python embedded で 高速 (>1万 イベント / 秒)
+- `tests/unit/test-work-journal.sh` (14 件 全合格):
+  全 8 event タイプ / チェーン整合 / show 時系列 / list active / export Markdown /
+  task ID フィルタ / handoff なし時の警告 / INV-3 audit start
+
+引継ぎ E2E:
+1. A さん 退勤 直前: `--handoff <task> "next=... open=..."` + `--artifact <task> path=...`
+2. B さん 翌朝: `--list` → `--show <task>` で **start から最新 handoff まで全文脈**
+
+法的観点 (governance/03 / 04 と整合):
+- タイムスタンプ + SHA-256 連鎖 = 改竄不能 台帳 (J-SOX / 電子帳簿法 等の改竄防止 要件)
+- append-only = 既存ログ書換 で audit-verify exit 1
+- path 経由 = 業務 詳細 (契約・個人情報) を間接参照、漏洩リスク低
+- (法的助言ではない、専門家確認推奨 — CLAUDE.md ルール)
+
+### v29 → v30 の変更 (PDCA Cycle #19 — markdown.js 抽出、INV-8 を独立境界に)
+INV-8 (UI Markdown は XSS 安全) を担う escapeHtml / renderMarkdown /
+activateCopyButtons は dashboard.js 700-840 行 に紛れていて、
+セキュリティ レビューで 該当行 を毎回探す必要があった。
+
+実装:
+- `v19/ui/modules/markdown.js` 新設 (~150 行):
+  - `export function escapeHtml` (5 文字 HTML エスケープ)
+  - `export function renderMarkdown` (Tiny safe MD renderer、subset)
+  - `export function activateCopyButtons(container, onCopyError)`
+    onCopyError は callback で dashboard 専用 toast を注入可能
+- dashboard.js:
+  - 冒頭で `import { escapeHtml, renderMarkdown, activateCopyButtons as _raw }`
+  - 同名 wrapper を作って toast を内包
+  - 700-840 行の inline 定義を削除
+
+drift sniff の進化 (v30 パターン):
+- v29: `inDashOrModule(sym) = dashSrc.includes || moduleSrc.includes`
+- v30: `extractAcross([headers], [sources])` で「export 含む / 含まない」両方
+  の宣言を ファイル横断 で探す + vm 注入時に export prefix を剥がす
+- これで再エクスポート / 名前変更 にも追従可能
+
+実測:
+- dashboard.js: 2614 → 2493 行 (累計 -264 行、-9.6%)
+- smoke: 15.6s 維持 (regression なし)
+- test_md.mjs: 13 件 全合格
+
+セキュリティ意義:
+- 「INV-8 を確認したい」レビュア は modules/markdown.js 1 ファイル のみ精査でよくなった
+- 仕様コメント (subset / 戦略) も移動先 集約
+
+### v28 → v29 の変更 (PDCA Cycle #18 — dashboard.js ESM モジュール化 開始)
+ユーザー要求「上記全てを踏まえた上で、コードを書き直して」。
+governance/14 §4.2 で「ESM 分割は INV (XSS / audit chain / etc.) を
+壊すリスク高」と保留 にしていたが、現状の drift sniff + 200+ テスト +
+ブラウザ ESM ネイティブ サポート (v18 から `<script type="module">`) が
+揃ったので、**段階的・安全に** 分割する条件が整っている。
+
+実装:
+- `v19/ui/modules/` を新設、第一弾として 自己完結的な 2 モジュール 抽出:
+  - `affect.js` (~70 行): AFFECT_MARKERS / classifyAffect / affectStyleModifier
+    governance/15 倫理ガード の核ロジック、外部依存ゼロ
+  - `audit-browser.js` (~80 行): auditJsonEscape / reconstructAuditBody /
+    sha256Hex (SubtleCrypto) / auditLogBrowser / exportBrowserAuditAsJsonl /
+    BROWSER_AUDIT_KEY / loadBrowserAudit / clearBrowserAudit
+- `dashboard.js`:
+  - 冒頭に `import` 文を追加 (named imports)
+  - 既存 inline 定義を削除 (コメントで移転先を明示)
+  - レガシー互換 alias `_browserAuditLoad = loadBrowserAudit`
+
+drift sniff の進化:
+- 旧: `dashSrc.includes('function classifyAffect')` (単一ファイル前提)
+- 新: `inDashOrModule(sym) = dashSrc.includes(sym) || moduleSrc.includes(sym)`
+  ファイル横断で symbol を検知。リファクタ で 移動 しても sniff は壊れない
+- `tests/js/test_affect.mjs` / `test_audit_browser.mjs` / `test_v20_cache.mjs`
+  の 3 テスト で 同様 に拡張
+- 新規: 「dashboard.js が モジュール を import している」検証
+
+実測:
+- dashboard.js: **2757 → 2614 行 (143 行削減)**
+- smoke 全体: **19.7s → 15.3s (1.3x 高速化、fs read 並列化 の副次効果)**
+- 全 5 スイート 合格、337 + α 件 全 pass
+
+設計原則 (将来の分割で守るべき):
+1. 自己完結的な機能 (外部 state を触らない pure 関数 + 自己完結 storage アクセス) から抽出
+2. governance/15 のような倫理ガード は最初に分離 (誰でも検証可能に)
+3. drift sniff は ファイル横断 で書く (v29 のパターンを踏襲)
+4. 既存 INV を 1 つも壊さない (smoke 全合格 で確認)
+
+将来 抽出 候補 (見積 行数):
+- markdown.js (~200 行): renderMarkdown / activateCopyButtons / XSS 安全層
+- providers.js (~400 行): anthropicSendStream / googleSendStream / ollamaSendStream
+- sessions.js (~150 行): セッション管理 / マイグレーション
+- audit-viewer.js (~250 行): #audit ルート の表示ロジック
+- orchestrate-view.js (~150 行): #orchestrate ルート
+
+完了時 dashboard.js は ~1500 行 (~45% 削減) に収まる見込み。
+
+### v27 → v28 の変更 (PDCA Cycle #17 — pre-commit hook 自己診断 を bootstrap に組込)
+PDCA #16 の 監査 で「実装すべきこと」を ユーザー指示で詰めると、見過ごしていた
+重大な 実運用 問題 が発覚: 本リポジトリ自体で `.git/hooks/pre-commit` が
+未インストール状態だった ─ INV-6 (PII commit 阻止) は「インストール済前提」の
+保証なので、本リポでの commit は PII を含めても止まらなかった。
+
+即時対応:
+- `bash scripts/install-hooks.sh` を実行 (.git/hooks/pre-commit が symlink される)
+- INV-6 が物理強制 状態 に復活
+
+再発防止 (PDCA #17):
+- `auto_bootstrap` に新ステップ追加: `(2/5) pre-commit hook 状態 (INV-6)`
+  - hook 存在チェック、未インストール時 ❌ 表示 + 対処コマンド提示
+  - 検知時 audit に `orchestrate.bootstrap.hook_missing` を記録
+- `tests/unit/test-auto-mode.sh` に sniff テスト 1 件 (9 → 10 件 pass)
+
+哲学的観点:
+- 「ルール文書」「テスト」「INV」が揃っていても、本番 install を忘れたら
+  保証が失われる。**起動時 self-diagnosis** が無いと気づけない
+- 朝の最初に `--auto bootstrap` を打つだけで全てが見える状態に近づく
+
+### v26 → v27 の変更 (PDCA Cycle #16 — 包括監査 4 問題 一括修正)
+ユーザー要求「問題点がないか徹底的に洗い出し対策を打ち再度テストを実施」。
+α1 が 7 領域 (テスト / コード品質 / セキュリティ / INV / 文書整合 / 運用安全性 /
+性能) を機械的に走査 → 4 件の歪みを発見。同サイクルで全部修正:
+
+問題 と 修正:
+1. **README drift**: 「22 反復」と書かれていたが現状 v26
+   → README を「26 反復」に同期、test-readme-sync の sniff を強化
+   ─ 具体的に: design version 抽出 → README に「{N} 反復」が含まれるか正規表現一致
+2. **倫理ガード カバレッジ不足**: 7 protected attributes のうち 2 軸のみ
+   → 民族/宗教/性的指向/政治志向/障害 で 8 ケース 追加、各 4 次元 max 差 < 0.10
+   ─ 例: 「日本人として」vs「中国人として」の base text に対し classifyAffect の
+        4 次元 (valence/arousal/urgency/formality) max 差 が 0.10 未満
+3. **INV-N trace 片方向**: テスト から INV-N を遡れない
+   → 主要 9 テスト ファイル冒頭に `# INV: INV-N: <一行説明>` コメント追加
+   ─ INV-1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12 全てが grep -rE "INV-N" でヒット
+4. **drift sniff 機能不足**: `t_design_version_progressed` が「22 反復」固定文字列
+   → design.md の v番号 を 抽出して動的検証
+
+監査 結果 (確認済 問題なし):
+- ✓ dashboard.js innerHTML は全 escapeHtml 経由 (XSS 安全)
+- ✓ pii-scan パターン数は実装と整合 (16 静的 + Luhn 動的)
+- ✓ `set -u` は library を除き全 user-script で有効
+- ✓ smoke 全 5 スイート合格 (~17s、133 pass)
+
+セッション統計:
+- 22 ユニット + 11 JS + 1 PS + 4 integration + 12 regression = 50 スクリプト 内 200+ 件
+- INV trace 完全 (12 INV のうち 11 件 が テスト で言及、INV-7 は GOAL-7 で除外)
+- governance docs 16 本、3 文書 三角整合 (drift sniff 2 つ稼働)
+
+### v25 → v26 の変更 (PDCA Cycle #15 — 過去の罠 12 件を回帰テスト化)
+governance/14 §4.2 の罠リストは「文書」だが、機械検証されていないものが多い。
+新サイクル で 罠 が 再発した時に 既存 unit テストが落ちるとは限らない
+(罠 と テストの 紐付けが弱い)。
+
+実装:
+- `tests/regression/test-known-bugs.sh` (12 件):
+  各罠に対応するテストを 1 ファイル に集約
+  - 既存 unit でカバー済 5 件 → drift sniff (テスト 関数 が消えていないか)
+  - 機能 直接検証 7 件:
+    * 罠1 KPI --check 再帰防止 (1 秒以内)
+    * 罠4 USER unset で動作 (env -i で起動)
+    * 罠6 pii-scan PRIVATE KEY 検出
+    * 罠7 preflight ステップ番号 連番
+    * 罠11 PREFLIGHT_FAST 識別可能
+    * 罠13 audit-verify Python 化 + 5000 行 <5s 性能保証
+    * 罠14 --auto 4 モード 存在
+- `tests/smoke-test.sh` に新スイート `Regression` を追加
+  (`bash tests/smoke-test.sh regression` で個別実行可)
+
+性能 配慮:
+- 5000 行 audit.jsonl の生成 を bash for で書くと 5000 × audit_log = 数百秒
+  → Python で audit.sh と同じ チェーン計算 を inline、~10ms で生成完了
+- regression suite 全体 1 秒、smoke 全体 19s → 19.5s に微増のみ
+
+### v24 → v25 の変更 (PDCA Cycle #14 — audit-verify を Python 化、smoke 19s)
+v21 で preflight に FAST flag 追加 → v25 で `audit-verify` 自体を高速化。
+v24 の `--auto` モード を per-test 計測すると test-hooks (42s) と
+test-auto-mode (41s) が新律速。両方の根本原因は audit-verify が
+bash で 2200 行を sha256sum 起動 → ~30s。
+
+修正:
+- `scripts/audit-verify.sh` の内部実装を Python に切替
+  - bash entry / 引数解析 / 出力フォーマット / exit code は完全互換
+  - `exec python3 - <args> <<'PY' ... PY` で標準入力からスクリプト実行
+  - python3 不在時は bash フォールバック (極稀)
+
+実測:
+- audit-verify 単体 (2200 行): **30s → 0.05s** (600x)
+- test-hooks: 42s → 1.1s (38x)
+- test-auto-mode: 41s → 1.2s (34x)
+- smoke 全体: **48s → 19s** (2.5x)
+- v21 (1m48s) からの累積: **5.7x 高速化**
+
+整合:
+- 既存 4 テスト (test-audit-lib / test-orchestrate-watch 等) 全合格
+- 出力フォーマット完全互換: 「✅ チェーンは整合 (改竄痕跡なし)」/
+  「❌ チェーン不整合検出: L◯ 連鎖切断 (prev_hash=◯◯..)」が変わらず
+- L2089 の historical race も 同じ位置で検出される
+
+### v23 → v24 の変更 (PDCA Cycle #13 — `--auto` モード 4 種で半自動化)
+これまで PDCA サイクルは「α1 scope → α2 design → ... → commit」の手順を
+毎回 自分で 思い出して 各コマンドを打つ必要があった。次の Claude が
+リポを引き継いだ時、コマンド体系を覚える前に 立ち往生する可能性。
+
+実装:
+- `scripts/orchestrate.sh --auto <mode>` 4 モード:
+  - `bootstrap`: 朝の起動チェック (preflight FAST + status + KPI + watcher --once
+    の 4 段を順次実行 + 要約表示)
+  - `pdca`: §10 を Python で parse → 最高優先 未着手 を取得 → 板から
+    `issue=N` 関連の最終 team イベントを抽出 → どの段階か判定して
+    「次に打つ 1 行コマンド」を提示
+  - `ooda`: watcher --once → breach 時に各 breach タイプを propose-response で
+    自動展開 (1 アクションで 異常検出 + 対応案 表示)
+  - `monitor`: 60s 周期で auto_ooda を回す (Ctrl-C で停止)
+
+半自動の哲学:
+- 完全自律 (sub-agent 自動起動 等) は harness の制約と人間の判断を尊重するため避ける
+- 「次の手 を 1 つだけ」提示することで、人間 / claude が考える脳みそを節約しつつ
+  実装内容 / commit message 等の判断点は人間に残す
+- 全モードが audit log に `orchestrate.auto.{mode}` を記録 → サイクル参加状況を 後追い可
+
+新規テスト:
+- `tests/unit/test-auto-mode.sh` (9 件): デフォルト bootstrap / pdca が動く /
+  pdca が audit に記録 / ooda が動く / ooda が breach → propose-response /
+  未知 mode → exit 2 / auto_bootstrap 関数 定義 / auto_monitor 関数 定義 /
+  --help が --auto を含む
+
+副次の効果:
+- 新セッション: `bash scripts/orchestrate.sh --auto bootstrap` 1 行で全状態把握
+- crontab/systemd: `--auto monitor` を仕掛ければ 自動応答付き watcher が常駐
+
+### v22 → v23 の変更 (PDCA Cycle #12 — README sync + drift sniff)
+README.md が v8 状態 (overview / integrations / settings の 3 ルートしか
+言及せず、L8 / 感情適応 / FAST flag / 統合ルート 全部欠落)。新規読者が古い
+情報を見て混乱するリスク。v22 の knowledge doc と同じパターンで処理:
+
+更新:
+- パス表: `/v19/ui/` を「7 ルート 統合」に書き換え (orchestrate / governance 含)
+- scripts セクション: L8 5 コマンド (orchestrate / orchestrate-watch / orchestrate-kpi / propose-response / prompt-for) + audit-export + PREFLIGHT_FAST を追記
+- governance docs 一覧: 11 → 15 本 (12 設計 / 13 チーム / 14 知識 / 15 倫理)
+- 「scripts/ には 21 本」と明示 (旧文書は preflight + pii-scan の 2 本だけ言及)
+
+drift sniff テスト:
+- `tests/unit/test-readme-sync.sh` (7 件):
+  README 存在 / governance 01-15 全部言及 / L8 主要コマンド 5 種 /
+  v19 7 ルート / v18-v22 機能 4 種 (感情適応 / PREFLIGHT_FAST / audit-export / ストレージ) /
+  README が言及する `bash scripts/...` パスが実在 / 進化 数値 (22 反復 等)
+
+副次の効果:
+- v22 で作った knowledge doc drift sniff と合わせて、**設計図 / knowledge / README**
+  の 3 文書が機械的に同期維持される ─ governance のメタ品質保証層が完成
+- 今回も drift sniff が機能した: governance/12 を v23 にした時点で
+  test-knowledge-doc.sh が「knowledge doc が v23 を反映していない」と
+  検出 (governance/14 §0 を v22 → v23 に更新する必要が判明)
+
+### v21 → v22 の変更 (PDCA Cycle #11 — knowledge doc 更新 + drift sniff)
+v18-v21 で 4 サイクル分の機能追加 / 学びがあったが、ブートストラップ
+文書 (governance/14) は v17 までしか反映されていなかった。新セッションが
+古い情報を読むと知見が失われる。
+
+更新内容:
+- §0 (3 行サマリ): v16 → v21 に、PDCA × 5 → × 10、課題 16 → 21 件
+- §3 (チート シート): テスト時間 (~48s) と PREFLIGHT_FAST フラグを記載
+- §4.2 (過去の罠): 5 件追加
+  - 並行書込 race と flock (v17)
+  - gender-blind 設計と APPI/EU AI Act (v18)
+  - dashboard.js ESM 分割 を見送った理由 (v19)
+  - PREFLIGHT_FAST=1 を本番では使わない (v21)
+  - KPI alpha は §4 検証カラムを parse (v11)
+- §5 (INV): governance/15 倫理ガード への参照、性別/年齢/民族 等の 推定禁止
+- §9 (暗黙の判断): 4 件追加 (gender-blind / 大型 refactor 回避 / localStorage / FAST 本番不変)
+- §11.5 (新規節): v18-v21 の主要機能 サマリ — 新セッション 即時把握用
+
+新規テスト:
+- `tests/unit/test-knowledge-doc.sh` (7 件):
+  doc 存在 / design version 反映 / v18-v21 主要機能 言及 /
+  最近の罠 §4.2 反映 / INV uniq 件数 一致 / 倫理ガード参照 / 起動チェック コマンド不変
+- 将来 design ドキュメントが進化したら、knowledge doc が drift していないかを CI 的に検出
+
+設計上の意義:
+- 「設計の体系」(governance/12) は静的、「運用の知恵」(governance/14) は動的
+- 両者を分けて管理することで、設計変更とノウハウ蓄積のサイクルが独立して回る
+- drift sniff テスト で knowledge doc の鮮度を機械監視
+
+### v20 → v21 の変更 (PDCA Cycle #10 — テスト時間 1m48s → 48s)
+v20 で運用してみると smoke-test が 1m48s = 開発体験の最大の摩擦。
+α1 の per-test 計測で test-preflight 62.7s が律速と特定:
+- preflight が curl --max-time 3 を 2 回実行 (Ollama / dashboard) → 6s
+- audit-verify が bash で 2200 行を sha256sum 起動 × 2200 → 30s
+- これを 4 テスト × ≒ 95s
+
+修正:
+- `scripts/preflight.sh` に環境変数:
+  - `PREFLIGHT_SKIP_NET=1` ─ ネット チェック (Step 1, 3) を skip
+  - `PREFLIGHT_SKIP_AUDIT_VERIFY=1` ─ Step 8 の audit-verify を skip
+  - `PREFLIGHT_FAST=1` ─ 上記 両方を ON にする shorthand
+- 本番運用 (人間が朝に preflight) では何も指定しないので変わらない
+- テスト用に `tests/unit/test-preflight.sh` で `PREFLIGHT_FAST=1` /
+  `PREFLIGHT_SKIP_NET=1` を使い分け (audit-verify を試したいテストは
+  SKIP_NET だけ ON、curl 待ちは省略するが verify は走らせる)
+
+実測:
+- test-preflight: **62.7s → 1.2s** (52x 高速化)
+- smoke-test 全体: **1m48s → 48s** (2.2x 高速化)
+- 開発 PDCA サイクル時間 が 1 件あたり 1 分短縮
+
+副次:
+- `tests/unit/test-preflight.sh`: 4 → 6 件 (FAST flag 動作確認 + <5s 担保)
+
+### v19 → v20 の変更 (PDCA Cycle #9 — 統合ルートに localStorage キャッシュ)
+v19 で #orchestrate と #governance を追加したが、運用してみるとリロードで
+ロード状態が消えるのが UX 上の摩擦。朝の起動チェックで毎回 file picker は不便。
+
+実装:
+- `v19/ui/dashboard.js`:
+  - `_saveOrchCache(name, text)`: 500KB 上限、超過時は末尾の N 行のみ保持
+    (audit.jsonl は新しい event ほど価値が高いので末尾優先)
+  - `_loadOrchCache()`: 起動時 自動復元、`{name, text, ts}` 形式
+  - `_saveGovCache(docs)`: LRU 5 件まで、各 500KB 上限、超過時は半分に切詰
+  - `_loadGovCache()`: 起動時 自動復元
+  - `bindOrchestrate` / `bindGovernance` の冒頭で キャッシュ復元 + file picker は
+    「上書き / 追加」用として残存
+- 既存 `STORAGE_LIMIT_BYTES` (5MB 監視) で 全体容量も把握される (整合)
+
+副次の効果:
+- 朝の運用フロー が「v19 を開く → 即 KPI / 板 が見える」に短縮
+- ストレージ メーター が容量逼迫を 70%/90% で警告 → ユーザーは古い キャッシュを削除可
+- `state` 全データ削除 ボタン で キャッシュも一緒に消える (整合)
+
+範囲外:
+- `state.affect.history` のような 既存 永続化機構との 統合 (将来 統一可)
+
+### v18 → v19 の変更 (PDCA Cycle #8 — v19 統合 ダッシュボード)
+ユーザー要望「全機能を v19 に統合し最適化されたシステムに再構築」。
+
+設計判断:
+- 大型 refactor (dashboard.js 2400 行 を モジュール 分割) は 既存 INV を壊すリスクが高い
+- 代わりに **既存 5 ルート に 2 つを追加** する 漸進的拡張 (incremental) を選択
+- desktop/ apps は独立 PWA として維持 (URL: /desktop/index.html、v19 から リンクできる)
+- governance/funding/templates は md ファイルなので ブラウザで file picker → レンダ する 軽量 アプローチ
+
+新規 ルート:
+- `#orchestrate` (運用): 4 チーム KPI タイル + 板 30 件 + propose-response UI
+  - audit.jsonl を file picker でロード (ブラウザは ~/.claude/ を直接見られないため)
+  - KPI を「サイクル数 / cycle 中央時間 / インシデント解消率 / INV-12 違反」で表示
+  - 板は 4 種フィルタ (team / handoff / incident / cycle) で切替
+  - propose-response: 4 breach タイプ ドロップダウン → 該当 IR + 60 秒対応 ステップ表示
+- `#governance` (文書): governance/15 + funding + templates の md を統合 ブラウズ
+  - file picker で複数 md をロード (順不同)
+  - 検索 box でタイトル + 本文 横断検索
+  - クリックで Markdown レンダ (renderMarkdown 再利用、XSS 安全)
+  - copy ボタン (コードブロック) も既存 activateCopyButtons を再利用
+
+実装:
+- `v19/ui/dashboard.html`: navi に 2 リンク + 2 セクション 追加
+- `v19/ui/dashboard.js`: ROUTES 拡張、computeOrchestrateKPI / renderBoard /
+  bindOrchestrate / bindGovernance / renderGovList を追加 (既存コードに非破壊)
+- `v19/ui/dashboard.css`: .kpi-grid / .board-row / .propose-output / .gov-list
+  / .gov-viewer スタイル
+- `tests/js/test_integration.mjs` (38 件): 全ルート整合 + KPI 計算 + 板フィルタ
+  + 既存ルート残存
+
+注: dashboard.js は 2400 → 2700 行に。将来 ESM module 分割 を検討。
+
+### v17 → v18 の変更 (PDCA Cycle #7 — affect-aware adaptive chat、gender-blind 設計)
+ユーザーから「男女別の感情を分析しミリ秒単位 PDCA で環境適応する chat bot」を
+要望されたが、α1 解析で以下の衝突を検出 → スコープ調整:
+
+衝突:
+- 男女別分類 → APPI 要配慮個人情報 + EU AI Act 抵触 + 科学的根拠なし
+- ミリ秒単位 → トークン毎は LLM API 制約で困難、発話毎なら可能
+- 「データとして集め」→ C3 機微情報、明示同意 + ローカル処理 必須
+
+調整後 (ユーザー承認):
+- gender-blind の **affect-aware adaptive chat** を v19 に追加
+- PAD-like 4 次元 (valence/arousal/urgency/formality) で発話の温度感を推定
+- 応答スタイル を毎ターン heuristic 適応 (急ぎなら短く、不快なら共感的、敬語に揃える 等)
+- 完全 オプトイン (既定 OFF)、推定値 ユーザー可視化、外部送信ゼロ
+
+新規:
+- `governance/15_AFFECT_ETHICS.md` (実装上禁止事項 + 透明性 + APPI/EU AI Act 整合 + 免責)
+- `v19/ui/dashboard.js`: `classifyAffect / affectStyleModifier / pushAffectHistory / clearAffectData / updateAffectMeters` + chat send への wire (opt-in 時のみ)
+- `v19/ui/dashboard.html`: 設定タブに 4 次元バー + 試験バッジ + opt-in トグル + clear ボタン
+- `v19/ui/dashboard.css`: `.affect-card` 関連スタイル (gradient bar)
+- `tests/js/test_affect.mjs` (22 件): drift sniff / clamp / 各次元 / **gender-blind** / 年齢-blind / privacy / determinism / style modifier
+
+倫理ガード (実装で担保):
+- 性別/年齢/民族 マーカ を含む 入力 でも 結果 が 同一 (テスト済)
+- audit ログには「分類器が走った」事実のみ記録、推定値は記録しない
+- opt-in 必須、初回 ON 時に確認ダイアログ
+- 削除ボタン で affect データ のみ wipe
+
+### v16 → v17 の変更 (PDCA Cycle #6 — フレッシュ セッション が 自分で 発見した race を flock で修正)
+**新セッションのドッグフード成果**。`governance/14_SESSION_KNOWLEDGE.md` を commit
+直後、新セッションとして起動した最初の orchestrate-watch.sh --once で
+`w1_audit_chain : BREACH:audit_chain_broken` を検出。
+
+調査:
+- audit-verify.sh で「L2089: 連鎖切断 (prev_hash=39d4f2bd.. 期待=59413dde..)」
+- L2087-L2090 の ts はすべて 22:26:07 ─ 同秒 4 イベント
+- L2088 (storage-archive.start) と L2089 (orchestrate-watch.start) が両方
+  prev=39d4f2bd を使用 → 並行書込 race (tamper ではない)
+- 過去のテスト並列実行時の残骸 (もう発生していない)
+
+修正:
+- `lib/audit.sh:audit_log` に flock 追加
+  - `exec 200>>"${AUDIT_LOG_PATH}.lock"` で fd を開き
+  - `flock -w 5 200` で 5 秒以内に排他ロック取得
+  - read-prev → compute-chain → write を一度に直列化
+  - 完了後 `exec 200>&-` で fd を閉じてロック解放
+  - `flock` がない環境はフォールバック (audit 失敗で業務を止めない)
+- 30 並列書込テストで チェーン破断ゼロ を確認
+
+副次の効果:
+- watcher (W1) が race による false alarm を出さなくなる
+- 既存の break (L2089) は historical なので残る ─ 次回 audit_rotate で
+  rotation.checkpoint 経由で新 genesis として整理される
+
+範囲外:
+- PowerShell `audit.ps1` には Mutex 等の同等機構が未実装 (将来 課題)
+
+### v15 → v16 の変更 (PDCA Cycle #5 — --prompt-for に live §10 埋込)
+α1 (Strategist) が役の sub-agent として起動された時、§10 を別途読みに行く
+必要があった。これでは prompt が自己完結せず、起動時に governance/12 を
+別途読む手間 + 競合リスク (途中で書き換わる) があった。
+
+修正:
+- `scripts/orchestrate.sh:cmd_prompt_for`:
+  alpha.1 限定で §10 をリアル抽出 (Python で markdown table を parse)
+  未着手 (実装済/対応済を除く) のみ表示し、件数 N/M を明示
+  全課題 完了時は「α1 は新たな歪みの発見モードに入るべき」と明示
+- `tests/unit/test-orchestrate.sh`: 17 → 20 件
+  alpha.1 のみ embed、alpha.2 / beta.* は漏らさない、件数フォーマット
+
+### v14 → v15 の変更 (PDCA Cycle #4 — audit_rotate チェーン整合バグ修正)
+**実バグ修正**。v14 の watcher で動作確認中、`storage-orchestrator --routine monthly` 後に必ず audit-verify が exit 1 を返す問題を発見。
+原因: `audit_rotate` は cutoff 以前の行を awk で削除するだけで、残った行の
+`prev_hash` は今や存在しない行を指したまま → `audit-verify` が「L1: 連鎖切断
+prev_hash=...期待=00000000..」で失敗。
+
+修正:
+- `lib/audit.sh:audit_rotate` を再実装 (Python による)
+  1. cutoff 以前の最終 `chain_hash` を記録 (forensic 用)
+  2. 先頭に `audit.rotation.checkpoint` イベントを挿入 (新 genesis)
+     - `prev_hash` = 64 zeros, `details` = 旧チェーン最終 hash + 残行数 + cutoff
+  3. 残行の `prev_hash`/`chain_hash` を再計算 (バイト互換維持)
+  4. atomic write
+- `tests/unit/test-audit-lib.sh`: 4 → 7 件
+  - rotate 後の verify 通過
+  - checkpoint 挿入確認
+  - 削除対象なしで no-op
+
+副次の効果:
+- watcher (W1) の monthly false alarm 解消 (rotate 後も audit-verify 通過)
+- preflight Step 8 が monthly に正しく ✅ を出す
+- forensic continuity: 旧チェーンの最終 hash が checkpoint の `details` に
+  残るので、過去の audit-export.sh バックアップと突合可能
+
+範囲外:
+- PowerShell 版 `audit.ps1` には rotate 未実装 (rotate は bash 専用
+  `storage-orchestrator.sh` からのみ呼ばれるため、PS 側は書き込み専用で OK)
+
+### v13 → v14 の変更 (PDCA Cycle #3 — breach 自動 → IR シナリオ提示)
+v13 の watcher は breach を発見しても「次は OODA を起動してください」とだけ
+言い、Orient/Decide ステップは人間が 09 IR Playbook から手動で引く必要が
+あった。v14 で「breach の種類 → IR シナリオ + 60 秒対応コマンド」の
+自動マッピングを追加。
+
+新規:
+- `scripts/orchestrate.sh --propose-response <breach-type>`:
+  4 種の breach (audit_chain_broken / chat_error_storm /
+  inv12_concurrent_scope / pii_scan_stale) を IR プレイブック該当 シナリオに
+  対応付け、60 秒で実行できるコマンド + 並行アクション (α/γ/δ) を表示
+- `scripts/orchestrate-watch.sh`: breach 検出時に `--propose-response` への
+  誘導 出力を追加 (人間が breach-type をコピペするだけで対応案が出る)
+- `tests/unit/test-orchestrate.sh`: 12 → 17 件 (--propose-response の 5 ケース)
+
+### v12 → v13 の変更 (PDCA Cycle #2 — OODA 自動起動の見張り)
+v12 で OODA を初稼働させて気づいた歪み: **OODA トリガーが人間依存**。
+preflight / audit-verify が異常を出しても、誰も気づかなければ無音。
+本当のオーケストレーション AI は自分で監視し自分で発火するべき。
+
+新規スクリプト:
+- `scripts/orchestrate-watch.sh`:
+  - `--once` 1 回チェック / `--loop N` 常駐 / `--thresholds` 設定確認
+  - W1: audit-verify が exit 0 (INV-2 / INV-10)
+  - W2: 過去 1h の chat.error が < `WATCH_CHAT_ERROR_LIMIT` (既定 5)
+  - W3: INV-12 違反 (重複 scoped) が 0
+  - W4: 最終 `pii_scan.clean` イベントが `WATCH_PII_CLEAN_MAX_HOURS` (既定 24h) 以内
+  - breached なら `incident.detected watch=<wN> reason=<理由>` を板に発火、exit 1
+
+新規テスト:
+- `tests/unit/test-orchestrate-watch.sh` (9 件):
+  クリーン → exit 0 / tamper / storm / INV-12 / PII stale / incident 発火 / 未知引数
+
+新規 INV / 課題:
+- §10 #13 (高): 自動監視が無い問題を解消 — v13 で実装済
+
+### v11 → v12 の変更 (OODA Cycle #1 — preflight が audit-verify を呼んでいない)
+**初の OODA 稼働**。事前の PDCA #1 で α1 が KPI を見ていて発見:
+preflight.sh は 7 ステップあったが audit-verify を呼んでおらず、INV-10
+(改竄検知) は audit-verify を手動実行しないと発火しない盲点だった。
+
+OODA フロー (audit.jsonl に全段階が記録):
+- Observe: `incident.detected trigger=audit_check_missing`
+- Orient:  `incident.oriented scenario=monitoring_gap class=C0_meta inv=INV-10_coverage_gap`
+- Decide:  `incident.decided playbook=integrate_audit_verify_into_preflight steps=3`
+- Act:     β3 が preflight.sh に [8/8] 監査ログ チェーン整合 ステップを追加 +
+           γ3 が test-preflight.sh に 2 件追加 (clean chain / tamper detection)
+- 終了:    `incident.contained` → smoke-test 通過 → `incident.resolved`
+
+修正:
+- `scripts/preflight.sh`: 7 → 8 ステップ。最後に audit-verify.sh を呼び、
+  改竄検知時は IR-3 シナリオへの誘導を出す
+- `tests/unit/test-preflight.sh`: 2 → 4 件 (clean chain detected /
+  tamper detected + IR-3 hint)
+
+### v10 → v11 の変更 (PDCA Cycle #1 — L8 自己内省で生まれた課題 #12 を解消)
+本サイクルは **新設の L8 オーケストレーションを使って実行された** (audit.jsonl に
+`team.alpha.1.scoped` から `pdca.cycle.complete` までの全ハンドオフが残る)。
+
+- 新 INV-11 (handoff 監査性): orchestrate.sh の `--handoff` 経由のみで チーム間引継ぎ可。直接編集 bypass を明示禁止
+- 新 INV-12 (排他着手): 同 issue を複数チーム同時 scoped 不可。`orchestrate-kpi.sh` で重複検出
+- 新 `scripts/orchestrate-kpi.sh`: 4 チーム KPI を JSON / テーブル で出力
+  - α: INV カバレッジ (テスト ある INV / 全 INV)
+  - β: サイクル完遂時間 (scope → cycle.complete)
+  - γ: テスト pass 率
+  - δ: governance 文書 鮮度 (最終 commit からの中央経過日数)
+- `tests/unit/test-orchestrate-kpi.sh`: 重複 scoped 検出 + KPI 計算 + JSON 出力検証
+
+### v9 → v10 の変更 (オーケストレーション 層 追加)
+- **新層 L8 (Orchestration)** を追加。4 チーム × 4 役 = 16 ロールの sub-agent 群と PDCA/OODA サイクルで自律運用
+- `governance/13_TEAM_ORCHESTRATION.md`: 全体仕様
+- `scripts/orchestrate.sh`: --emit / --handoff / --status / --board / --cycle / --prompt-for の 6 コマンド
+- `scripts/teams/{alpha,beta,gamma,delta}.md`: 各チームの 4 役 prompt template
+- `scripts/cycles/{pdca,ooda}.md`: 通常運転 / 異常事態 サイクル定義
+- **板 (board)** = `~/.claude/audit.jsonl` を再利用 (新規 DB 不要、既存 SHA-256 連鎖で監査保護)
+- `tests/unit/test-orchestrate.sh` (12 件): emit / handoff / status / board / cycle / prompt-for / chain 整合
+- 親エージェント (Claude Code 等) は `--prompt-for <role>` の出力を Agent ツールの prompt として使い、各役を sub-agent として呼ぶ
+- 既存 INV / 失敗モードは全て引き続き有効。L8 が「監視 + 改善 + 緊急対応」の自律ループを追加
+
+### v8 → v9 の変更 (低優先度の 4 課題 一括処理)
+- 課題 #5: rclone 中断後のリジューム手順を `governance/10_STORAGE_HYGIENE.md §12.5` に追加 (再実行で続きから / 注意点 5 つ / 大量小ファイルの最適化)
+- 課題 #7: `desktop/sw.js` にバージョン管理 (`CACHE_VERSION` 定数 + activate で旧キャッシュ削除 + `SKIP_WAITING` メッセージ ハンドラ)
+- 課題 #8: `tests/unit/test-cowork.sh` (5 件) で cowork CLI を初テスト
+- 課題 #9: `tests/unit/test-storage-orchestrator.sh` (5 件) で routine / dry-run / monthly コードレベル sniff
+- `tests/js/test_sw_versioning.mjs` (7 件) で SW のバージョン管理 spec を確認
+
+### v10 以降 (予定なし)
+§10 の全課題が「実装済」または「対応不要」になった。新たな課題が見つかれば §10 に追加して対処する。

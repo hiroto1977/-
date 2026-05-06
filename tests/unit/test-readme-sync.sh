@@ -74,7 +74,8 @@ t_design_version_progressed() {
   # ─ design_v25 までは「22 反復」のような旧表記が drift して気づけなかった
   # ─ v26 から: design_iterations の最新数 と README の数値 を一致させる
   local design_v
-  design_v=$(grep -oE 'v[0-9]+ \(PDCA #[0-9]+' "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" | head -1 | grep -oE '[0-9]+' | head -1)
+  # v33 から「集大成」表記も受け入れる: 「現バージョン: **vN (...)**」から数値を抽出
+  design_v=$(grep -oE '現バージョン.*\*\*v[0-9]+' "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" | head -1 | grep -oE '[0-9]+' | head -1)
   if [[ -z "$design_v" ]]; then echo "    design version 抽出失敗"; return 1; fi
   if ! grep -qE "${design_v} 反復" "$README"; then
     echo "    README が design v${design_v} (=「${design_v} 反復」) を反映していない"
