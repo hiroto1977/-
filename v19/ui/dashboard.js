@@ -2434,6 +2434,66 @@ function renderAuditEvents() {
 // ─────────────────────────────────────────
 let _orchState = { events: [] };
 
+// localStorage 永続化 (governance/12 §10 #20 v20 で実装)
+const ORCH_CACHE_KEY = 'v19.orch.audit_cache';
+const ORCH_CACHE_MAX_BYTES = 500 * 1024; // 500 KB
+const GOV_CACHE_KEY = 'v19.gov.docs_cache';
+const GOV_CACHE_MAX_DOCS = 5;
+const GOV_CACHE_MAX_BYTES_PER_DOC = 500 * 1024;
+
+function _saveOrchCache(name, text) {
+  try {
+    if (text.length * 2 > ORCH_CACHE_MAX_BYTES) {
+      // 大きすぎる → 末尾 N 行のみキャッシュ (古い 行 は捨てる、ヘッダなどない)
+      const lines = text.split('\n');
+      let acc = '';
+      for (let i = lines.length - 1; i >= 0; i--) {
+        const next = acc ? lines[i] + '\n' + acc : lines[i];
+        if (next.length * 2 > ORCH_CACHE_MAX_BYTES) break;
+        acc = next;
+      }
+      text = acc;
+    }
+    localStorage.setItem(ORCH_CACHE_KEY, JSON.stringify({ name, text, ts: Date.now() }));
+  } catch (e) { /* QuotaExceeded 等は黙殺 */ }
+}
+
+function _loadOrchCache() {
+  try {
+    const raw = localStorage.getItem(ORCH_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function _saveGovCache(docs) {
+  // LRU: 最大 5 件、各 500KB 以下、超過は古いものから削除
+  const trimmed = docs.slice(-GOV_CACHE_MAX_DOCS).map(d => ({
+    name: d.name,
+    text: d.text.length * 2 > GOV_CACHE_MAX_BYTES_PER_DOC
+          ? d.text.slice(0, Math.floor(GOV_CACHE_MAX_BYTES_PER_DOC / 2))
+          : d.text,
+    ts: d.ts || Date.now(),
+  }));
+  try {
+    localStorage.setItem(GOV_CACHE_KEY, JSON.stringify(trimmed));
+  } catch (e) {
+    // QuotaExceeded → さらに半分に削る
+    if (trimmed.length > 1) {
+      try { localStorage.setItem(GOV_CACHE_KEY, JSON.stringify(trimmed.slice(-Math.floor(trimmed.length / 2)))); } catch {}
+    }
+  }
+}
+
+function _loadGovCache() {
+  try {
+    const raw = localStorage.getItem(GOV_CACHE_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
 function parseAuditLineSimple(line) {
   // 既存 parseAuditLine が使えるが、本モジュール用に最小版を持つ (依存削減)
   if (!line.trim()) return null;
@@ -2530,6 +2590,19 @@ function renderBoard(events) {
 function bindOrchestrate() {
   const fileInput = document.getElementById('orchestrateAuditInput');
   if (!fileInput) return;
+  // 起動時に キャッシュ から自動復元 (リロードで消えない)
+  const cached = _loadOrchCache();
+  if (cached?.text) {
+    const events = cached.text.split('\n').map(parseAuditLineSimple).filter(Boolean);
+    _orchState.events = events;
+    renderOrchestrateKPI(events);
+    renderBoard(events);
+    const updEl = document.getElementById('orchestrateLastUpdate');
+    if (updEl) {
+      const ago = Math.round((Date.now() - cached.ts) / 60000);
+      updEl.textContent = `(キャッシュから復元: ${cached.name}, ${ago} 分前)`;
+    }
+  }
   fileInput.addEventListener('change', async () => {
     const f = fileInput.files?.[0];
     if (!f) return;
@@ -2538,6 +2611,7 @@ function bindOrchestrate() {
     _orchState.events = events;
     renderOrchestrateKPI(events);
     renderBoard(events);
+    _saveOrchCache(f.name, text);  // ロード成功で キャッシュ保存
   });
   ['boardFilterTeam', 'boardFilterHandoff', 'boardFilterIncident', 'boardFilterCycle'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', () => renderBoard(_orchState.events));
@@ -2600,19 +2674,25 @@ function bindOrchestrate() {
 // 文書 ブラウザ (#governance ルート、v19 で実装)
 // .md を file picker でロード → renderMarkdown でレンダ + 検索
 // ─────────────────────────────────────────
-let _govDocs = []; // [{ name, text }, ...]
+let _govDocs = []; // [{ name, text, ts }, ...]
 
 function bindGovernance() {
   const fileInput = document.getElementById('govFileInput');
   if (!fileInput) return;
+  // 起動時 キャッシュから復元
+  _govDocs = _loadGovCache();
+  if (_govDocs.length > 0) renderGovList();
   fileInput.addEventListener('change', async () => {
     const files = Array.from(fileInput.files || []);
     for (const f of files) {
       const text = await f.text();
       const existing = _govDocs.find(d => d.name === f.name);
-      if (existing) existing.text = text;
-      else _govDocs.push({ name: f.name, text });
+      if (existing) { existing.text = text; existing.ts = Date.now(); }
+      else _govDocs.push({ name: f.name, text, ts: Date.now() });
     }
+    // LRU + 容量超過対策のため毎回 trim (saveCache 内で実施)
+    _saveGovCache(_govDocs);
+    _govDocs = _loadGovCache();  // saved 反映 (trim 後の docs を使う)
     renderGovList();
   });
   document.getElementById('govSearchBox')?.addEventListener('input', renderGovList);
