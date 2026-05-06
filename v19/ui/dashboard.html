@@ -246,6 +246,29 @@
           </div>
         </section>
 
+        <section class="card affect-card disabled" id="affectCard">
+          <h2>🎭 感情適応モード <span class="badge-experimental">試験</span></h2>
+          <p class="muted">
+            あなたの発話から 4 次元 (快/不快、鎮静/興奮、急ぎ/余裕、砕け/丁寧) を heuristic 推定し、応答スタイルを毎ターン調整します。<br>
+            <strong>性別・年齢・民族 等での分類は行いません</strong>。診断/医療目的では使えません。詳細: <code>governance/15_AFFECT_ETHICS.md</code>
+          </p>
+          <div class="setting-row">
+            <label class="toggle">
+              <input type="checkbox" id="affectToggle" />
+              <span>感情適応 有効化 (既定: OFF)</span>
+            </label>
+          </div>
+          <div class="affect-meters" id="affectMeters">
+            <div class="affect-row"><span class="affect-label">valence (快/不快)</span><div class="affect-bar"><div class="affect-bar-fill" id="affectBar_valence" style="width:50%"></div></div><span class="affect-val" id="affectVal_valence">0.50</span></div>
+            <div class="affect-row"><span class="affect-label">arousal (鎮静/興奮)</span><div class="affect-bar"><div class="affect-bar-fill" id="affectBar_arousal" style="width:50%"></div></div><span class="affect-val" id="affectVal_arousal">0.50</span></div>
+            <div class="affect-row"><span class="affect-label">urgency (急ぎ/余裕)</span><div class="affect-bar"><div class="affect-bar-fill" id="affectBar_urgency" style="width:50%"></div></div><span class="affect-val" id="affectVal_urgency">0.50</span></div>
+            <div class="affect-row"><span class="affect-label">formality (砕け/丁寧)</span><div class="affect-bar"><div class="affect-bar-fill" id="affectBar_formality" style="width:50%"></div></div><span class="affect-val" id="affectVal_formality">0.50</span></div>
+          </div>
+          <div class="row">
+            <button class="btn-ghost" id="affectClearBtn" type="button">🗑️ 感情データを消去</button>
+          </div>
+        </section>
+
         <section class="card">
           <h2>保存データ</h2>
           <p class="muted">この端末（ブラウザ）に保存されている設定とチャット履歴を管理します。</p>

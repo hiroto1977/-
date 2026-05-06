@@ -885,6 +885,20 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
 .audit-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; margin-top: var(--sp-2); }
 .audit-actions .muted { font-variant-numeric: tabular-nums; }
 
+/* Affect-aware adaptive chat (governance/15) */
+.affect-card.disabled .affect-meters { opacity: 0.4; pointer-events: none; }
+.affect-card .badge-experimental {
+  display: inline-block; padding: 2px 8px; margin-left: var(--sp-2);
+  background: #eab308; color: #000; border-radius: 4px;
+  font-size: 0.7rem; font-weight: 600; vertical-align: middle;
+}
+.affect-meters { display: flex; flex-direction: column; gap: var(--sp-2); margin: var(--sp-3) 0; }
+.affect-row { display: grid; grid-template-columns: 180px 1fr 60px; gap: var(--sp-2); align-items: center; }
+.affect-label { font-size: .85rem; font-weight: 500; }
+.affect-bar { height: 8px; background: var(--c-border); border-radius: 4px; overflow: hidden; }
+.affect-bar-fill { height: 100%; background: linear-gradient(90deg, var(--c-primary), #8b5cf6); transition: width .25s ease; }
+.affect-val { text-align: right; font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--c-text-muted); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
