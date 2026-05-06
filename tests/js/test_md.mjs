@@ -7,14 +7,16 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
 const DASHBOARD_JS = path.join(ROOT, 'v19/ui/dashboard.js');
+const MD_MODULE = path.join(ROOT, 'v19/ui/modules/markdown.js');
 
+// v30 から markdown は modules/markdown.js に移動。dashboard.js には import 済
 const src = fs.readFileSync(DASHBOARD_JS, 'utf8');
+const mdSrc = fs.existsSync(MD_MODULE) ? fs.readFileSync(MD_MODULE, 'utf8') : '';
 
 // Brace-balanced extraction starting from a function declaration.
 function extract(src, header) {
   const start = src.indexOf(header);
   if (start < 0) return null;
-  // Find first '{' after the header
   let i = src.indexOf('{', start);
   let depth = 0;
   for (; i < src.length; i++) {
@@ -25,13 +27,26 @@ function extract(src, header) {
   return null;
 }
 
-const escFn = extract(src, 'function escapeHtml');
-const mdFn  = extract(src, 'function renderMarkdown');
-if (!escFn || !mdFn) { console.error('functions not found'); process.exit(2); }
+// v30 から: dashboard.js になければ modules/markdown.js から取る
+function extractAcross(headers, sources) {
+  for (const header of headers) {
+    for (const source of sources) {
+      const r = extract(source, header);
+      if (r) return r;
+    }
+  }
+  return null;
+}
+
+const escFn = extractAcross(['function escapeHtml', 'export function escapeHtml'], [src, mdSrc]);
+const mdFn  = extractAcross(['function renderMarkdown', 'export function renderMarkdown'], [src, mdSrc]);
+if (!escFn || !mdFn) { console.error('functions not found in dashboard.js or modules/markdown.js'); process.exit(2); }
+// export prefix を vm 用に剥がす
+const stripExport = (s) => s.replace(/^export\s+/, '');
 
 const ctx = { console };
 vm.createContext(ctx);
-vm.runInContext(escFn + '\n' + mdFn, ctx);
+vm.runInContext(stripExport(escFn) + '\n' + stripExport(mdFn), ctx);
 
 const cases = [
   ['plain paragraph', 'こんにちは。',
