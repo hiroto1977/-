@@ -498,8 +498,17 @@
               <label><input type="radio" name="journalState" value="handoff" /><span>🟣 引継ぎ準備</span></label>
               <label><input type="radio" name="journalState" value="complete" /><span>⚪ 完了</span></label>
             </div>
-            <input type="search" id="journalSearchBox" class="input" placeholder="タスク ID / タイトル / 担当 で検索" />
+            <input type="search" id="journalSearchBox" class="input" placeholder='例: "見積 state:blocked deadline<2026-06 has:artifact stakeholder:alice"' />
           </div>
+          <p class="hint muted">
+            DSL: <code>state:active|blocked|handoff|complete</code> /
+            <code>stakeholder:&lt;名&gt;</code> /
+            <code>id:&lt;ID&gt;</code> /
+            <code>deadline&lt;YYYY-MM-DD</code> /
+            <code>deadline&gt;YYYY-MM-DD</code> /
+            <code>has:artifact|handoff|block|decision</code>。
+            自由語は id/title/担当 を AND マッチ。
+          </p>
         </section>
 
         <section class="card" id="journalTasksCard" hidden>

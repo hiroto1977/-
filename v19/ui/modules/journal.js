@@ -71,18 +71,65 @@ export function parseTasksFromAudit(auditEvents) {
   return tasks;
 }
 
+// 横断検索 DSL (PDCA #24 v35)
+// 例: "見積 state:blocked deadline<2026-06 has:artifact stakeholder:alice"
+//   - 自由語 (free): id / title / stakeholder の小文字部分一致 (AND)
+//   - state:active|blocked|handoff|complete|unknown — 状態 フィルタ
+//   - stakeholder:<token> — stakeholder 部分一致 (大文字小文字不問)
+//   - id:<token>          — id 部分一致 (大文字小文字不問)
+//   - deadline<YYYY-MM-DD or deadline>YYYY-MM-DD — 辞書比較 (ISO 日付ならそのまま大小)
+//   - has:artifact / has:handoff / has:block / has:decision — 該当 event の存在
+// 不正な key は free に降格 (失敗で空配列にしない)。
+export function parseQuery(q) {
+  const out = {
+    free: [], state: null, stakeholder: null, idQ: null,
+    deadlineLT: null, deadlineGT: null, has: new Set(),
+  };
+  if (!q) return out;
+  const tokens = String(q).trim().split(/\s+/).filter(Boolean);
+  for (const tok of tokens) {
+    let m;
+    if ((m = tok.match(/^state:([a-z]+)$/i))) out.state = m[1].toLowerCase();
+    else if ((m = tok.match(/^stakeholder:(.+)$/i))) out.stakeholder = m[1].toLowerCase();
+    else if ((m = tok.match(/^id:(.+)$/i))) out.idQ = m[1].toLowerCase();
+    else if ((m = tok.match(/^deadline<(.+)$/i))) out.deadlineLT = m[1];
+    else if ((m = tok.match(/^deadline>(.+)$/i))) out.deadlineGT = m[1];
+    else if ((m = tok.match(/^has:(artifact|handoff|block|decision|comm|resume|complete|start)$/i))) out.has.add(m[1].toLowerCase());
+    else out.free.push(tok.toLowerCase());
+  }
+  return out;
+}
+
+export function matchTask(task, query) {
+  // free: id/title/stakeholder 連結文字列 に全 free 語が含まれる
+  if (query.free.length) {
+    const text = (task.id + ' ' + task.title + ' ' + task.stakeholder).toLowerCase();
+    for (const f of query.free) if (!text.includes(f)) return false;
+  }
+  if (query.state && task.state !== query.state) return false;
+  if (query.stakeholder && !(task.stakeholder || '').toLowerCase().includes(query.stakeholder)) return false;
+  if (query.idQ && !(task.id || '').toLowerCase().includes(query.idQ)) return false;
+  if (query.deadlineLT) {
+    if (!task.deadline || !(task.deadline < query.deadlineLT)) return false;
+  }
+  if (query.deadlineGT) {
+    if (!task.deadline || !(task.deadline > query.deadlineGT)) return false;
+  }
+  if (query.has.size) {
+    const evSet = new Set((task.events || []).map(e => (e.event || '').replace('work.task.', '')));
+    for (const h of query.has) if (!evSet.has(h)) return false;
+  }
+  return true;
+}
+
 // タスク マップ → 配列 + ソート (lastTs 降順)
+// search は DSL (parseQuery 経由) で解釈。stateFilter は UI radio との併用 (DSL の state: が優先)。
 export function tasksToArray(tasksMap, { stateFilter = 'all', search = '' } = {}) {
   const arr = Array.from(tasksMap.values());
-  const filtered = arr.filter(t => {
-    if (stateFilter !== 'all' && t.state !== stateFilter) return false;
-    if (search) {
-      const s = search.toLowerCase();
-      const text = (t.id + ' ' + t.title + ' ' + t.stakeholder).toLowerCase();
-      if (!text.includes(s)) return false;
-    }
-    return true;
-  });
+  const q = parseQuery(search);
+  // UI radio は DSL に state: が無いときだけ適用 (DSL が明示なら radio 上書き)
+  if (!q.state && stateFilter && stateFilter !== 'all') q.state = stateFilter;
+  const filtered = arr.filter(t => matchTask(t, q));
   filtered.sort((a, b) => (b.lastTs || '').localeCompare(a.lastTs || ''));
   return filtered;
 }

@@ -13,6 +13,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const {
   deriveTaskState, extractKey, parseTasksFromAudit, tasksToArray,
   stateBadge, formatTaskTimeline, isHandoffReady, getArtifactPaths,
+  parseQuery, matchTask,
 } = await import(path.join(ROOT, 'v19/ui/modules/journal.js'));
 
 const tests = [];
@@ -163,7 +164,67 @@ T('stateBadge: 不明値 → unknown フォールバック',
     paths.length === 2 && paths.includes('/tmp/report.pdf') && paths.includes('/tmp/sheet.xlsx'));
 }
 
-// ── 9. drift sniff: dashboard.js が journal モジュール を import + bind ──
+// ── 9. parseQuery (DSL、PDCA #24 v35) ──
+T('parseQuery: 空文字 → 全フィールド初期値',
+  (() => { const q = parseQuery(''); return q.free.length === 0 && q.state === null && q.has.size === 0; })());
+T('parseQuery: state:blocked',
+  parseQuery('state:blocked').state === 'blocked');
+T('parseQuery: stakeholder:Alice 小文字化',
+  parseQuery('stakeholder:Alice').stakeholder === 'alice');
+T('parseQuery: id:T-001',
+  parseQuery('id:T-001').idQ === 't-001');
+T('parseQuery: deadline<2026-06',
+  parseQuery('deadline<2026-06').deadlineLT === '2026-06');
+T('parseQuery: deadline>2026-05-01',
+  parseQuery('deadline>2026-05-01').deadlineGT === '2026-05-01');
+T('parseQuery: has:artifact',
+  parseQuery('has:artifact').has.has('artifact'));
+T('parseQuery: 不正 key → free に降格',
+  (() => { const q = parseQuery('foo:bar'); return q.free.length === 1 && q.free[0] === 'foo:bar'; })());
+T('parseQuery: 複合クエリ',
+  (() => {
+    const q = parseQuery('見積 state:blocked deadline<2026-06 has:artifact stakeholder:alice');
+    return q.state === 'blocked' && q.deadlineLT === '2026-06'
+        && q.has.has('artifact') && q.stakeholder === 'alice'
+        && q.free.length === 1 && q.free[0] === '見積';
+  })());
+
+// ── 10. matchTask + tasksToArray DSL 統合 ──
+{
+  const audit = [
+    { ts: '2026-04-01T09:00:00Z', event: 'work.task.start', details: 'task=T-A title=見積α stakeholder=alice deadline=2026-05-15' },
+    { ts: '2026-04-02T09:00:00Z', event: 'work.task.block', details: 'task=T-A reason=承認待ち' },
+    { ts: '2026-04-01T10:00:00Z', event: 'work.task.start', details: 'task=T-B title=契約β stakeholder=bob deadline=2026-07-01' },
+    { ts: '2026-04-03T10:00:00Z', event: 'work.task.artifact', details: 'task=T-B path=/tmp/contract.pdf' },
+    { ts: '2026-04-01T11:00:00Z', event: 'work.task.start', details: 'task=T-C title=報告γ stakeholder=alice deadline=2026-06-15' },
+    { ts: '2026-04-02T11:00:00Z', event: 'work.task.complete', details: 'task=T-C' },
+  ];
+  const m = parseTasksFromAudit(audit);
+  const ids = a => a.map(t => t.id).sort().join(',');
+
+  T('DSL: state:blocked → T-A',
+    ids(tasksToArray(m, { search: 'state:blocked' })) === 'T-A');
+  T('DSL: deadline<2026-06 → T-A (5/15) のみ (T-C=6/15, T-B=7/1 は不適)',
+    ids(tasksToArray(m, { search: 'deadline<2026-06' })) === 'T-A');
+  T('DSL: deadline>2026-06 → T-B (7/1) のみ (T-C=6/15 は >6/15 でない)',
+    ids(tasksToArray(m, { search: 'deadline>2026-06-15' })) === 'T-B');
+  T('DSL: has:artifact → T-B のみ',
+    ids(tasksToArray(m, { search: 'has:artifact' })) === 'T-B');
+  T('DSL: stakeholder:alice → T-A,T-C',
+    ids(tasksToArray(m, { search: 'stakeholder:alice' })) === 'T-A,T-C');
+  T('DSL: 自由語 + state 複合 (alice + state:blocked → T-A)',
+    ids(tasksToArray(m, { search: 'alice state:blocked' })) === 'T-A');
+  T('DSL: state: が UI radio を上書き (radio=complete + DSL=state:blocked → T-A)',
+    ids(tasksToArray(m, { stateFilter: 'complete', search: 'state:blocked' })) === 'T-A');
+  T('UI radio のみ (radio=complete, search 空) → T-C',
+    ids(tasksToArray(m, { stateFilter: 'complete', search: '' })) === 'T-C');
+  T('DSL: id:T-A → T-A',
+    ids(tasksToArray(m, { search: 'id:T-A' })) === 'T-A');
+  T('DSL: 該当なし → 空配列',
+    tasksToArray(m, { search: 'state:nope' }).length === 0);
+}
+
+// ── 11. drift sniff: dashboard.js が journal モジュール を import + bind ──
 const dashSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.js'), 'utf8');
 T('dashboard.js が journal モジュール を import',
   dashSrc.includes("from './modules/journal.js'"));
