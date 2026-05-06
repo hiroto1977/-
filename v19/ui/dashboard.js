@@ -476,7 +476,7 @@ function renderOverview() {
 }
 
 // ---------- Router ----------
-const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude', 'audit'];
+const ROUTES = ['overview', 'integrations', 'settings', 'integration-claude', 'audit', 'orchestrate', 'governance'];
 function currentRoute() {
   const hash = (location.hash || '#overview').replace(/^#/, '');
   return ROUTES.includes(hash) ? hash : '404';
@@ -2428,6 +2428,232 @@ function renderAuditEvents() {
   `;
 }
 
+// ─────────────────────────────────────────
+// 運用 ダッシュボード (#orchestrate ルート、v19 で実装)
+// audit.jsonl をロードして KPI / 板 / breach 対応案 を可視化
+// ─────────────────────────────────────────
+let _orchState = { events: [] };
+
+function parseAuditLineSimple(line) {
+  // 既存 parseAuditLine が使えるが、本モジュール用に最小版を持つ (依存削減)
+  if (!line.trim()) return null;
+  try { return JSON.parse(line); } catch { return null; }
+}
+
+function computeOrchestrateKPI(events) {
+  // α: INV カバレッジは governance/12 が無いとブラウザ側で正確に出せない
+  //    → 「最新 PDCA cycle」と「最新 INV-12 検出」のヒューリスティックに留める
+  const cycles = events.filter(e => e.event === 'pdca.cycle.complete').length;
+  const incidents = events.filter(e => e.event?.startsWith('incident.')).length;
+  const containedIncidents = events.filter(e => e.event === 'incident.contained' || e.event === 'incident.resolved').length;
+  // β: 各 sample で alpha.1.scoped → pdca.cycle.complete の経過秒
+  const scoped = [];
+  const completed = [];
+  for (const e of events) {
+    const t = Date.parse(e.ts);
+    if (!Number.isFinite(t)) continue;
+    if (e.event?.endsWith('.1.scoped')) scoped.push(t);
+    if (e.event === 'pdca.cycle.complete') completed.push(t);
+  }
+  const deltas = [];
+  let ci = 0;
+  for (const s of scoped) {
+    while (ci < completed.length && completed[ci] < s) ci++;
+    if (ci < completed.length) { deltas.push((completed[ci] - s) / 1000); ci++; }
+  }
+  deltas.sort((a, b) => a - b);
+  const beta_median = deltas.length ? Math.round(deltas[Math.floor(deltas.length / 2)]) : 0;
+  // γ: チェーン整合 (連鎖検証は audit ビューア側で実施されるため、ここでは INV-12 違反の有無)
+  const inv12_violations = (() => {
+    const issues = {};
+    for (const e of events) {
+      const m = e.event?.match(/^team\.(\w+)\.1\.scoped$/);
+      if (m) {
+        const team = m[1];
+        const im = (e.details || '').match(/issue=(\S+)/);
+        if (im) (issues[im[1]] = issues[im[1]] || new Set()).add(team);
+      }
+    }
+    return Object.values(issues).filter(s => s.size > 1).length;
+  })();
+  // δ: 直近 cycle.complete までの全 cycle 数 (運用継続性 指標)
+  return {
+    alpha: { label: `${cycles} サイクル完遂`, sub: `INV-12: ${inv12_violations === 0 ? 'OK' : '⚠️ ' + inv12_violations}` },
+    beta: { label: `${deltas.length} 件 / 中央 ${beta_median}s`, sub: 'PDCA scope→complete' },
+    gamma: { label: `${containedIncidents}/${incidents} 解消`, sub: 'インシデント' },
+    delta: { label: `${cycles + Math.max(0, incidents - containedIncidents)} 活動件`, sub: '完遂 + 進行中' },
+  };
+}
+
+function renderOrchestrateKPI(events) {
+  const kpi = computeOrchestrateKPI(events);
+  for (const team of ['alpha', 'beta', 'gamma', 'delta']) {
+    const v = document.getElementById(`kpi_${team}`);
+    const s = document.getElementById(`kpi_${team}_sub`);
+    if (v) v.textContent = kpi[team].label;
+    if (s) s.textContent = kpi[team].sub;
+  }
+  const updEl = document.getElementById('orchestrateLastUpdate');
+  if (updEl) updEl.textContent = `更新: ${new Date().toLocaleString('ja-JP')} / ${events.length} events`;
+}
+
+function renderBoard(events) {
+  const list = document.getElementById('boardList');
+  if (!list) return;
+  const ft = document.getElementById('boardFilterTeam')?.checked;
+  const fh = document.getElementById('boardFilterHandoff')?.checked;
+  const fi = document.getElementById('boardFilterIncident')?.checked;
+  const fc = document.getElementById('boardFilterCycle')?.checked;
+  const filtered = events.filter(e => {
+    const ev = e.event || '';
+    if (ev.startsWith('team.') && ft) return true;
+    if (ev.startsWith('handoff.') && fh) return true;
+    if (ev.startsWith('incident.') && fi) return true;
+    if (/cycle/.test(ev) && fc) return true;
+    return false;
+  }).slice(-30).reverse();
+  if (!filtered.length) { list.innerHTML = '<p class="muted">該当 イベントなし</p>'; return; }
+  const rows = filtered.map(e => {
+    const cls = e.event?.startsWith('incident.') ? 'board-incident'
+              : e.event?.startsWith('handoff.')  ? 'board-handoff'
+              : 'board-team';
+    const ts = (e.ts || '').replace('T', ' ').slice(0, 19);
+    return `<div class="board-row ${cls}">
+      <span class="board-ts">${escapeHtml(ts)}</span>
+      <span class="board-event">${escapeHtml(e.event || '')}</span>
+      <span class="board-details">${escapeHtml(e.details || '')}</span>
+    </div>`;
+  }).join('');
+  list.innerHTML = rows;
+}
+
+function bindOrchestrate() {
+  const fileInput = document.getElementById('orchestrateAuditInput');
+  if (!fileInput) return;
+  fileInput.addEventListener('change', async () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    const text = await f.text();
+    const events = text.split('\n').map(parseAuditLineSimple).filter(Boolean);
+    _orchState.events = events;
+    renderOrchestrateKPI(events);
+    renderBoard(events);
+  });
+  ['boardFilterTeam', 'boardFilterHandoff', 'boardFilterIncident', 'boardFilterCycle'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', () => renderBoard(_orchState.events));
+  });
+  // propose-response (4 breach)
+  const RESPONSES = {
+    audit_chain_broken: {
+      cat: '監査ログ 改竄疑い (INV-10 違反)',
+      ir: 'governance/09_INCIDENT_PLAYBOOK.md (該当 シナリオなし → 即興 IR)',
+      steps: [
+        '別端末で最新 backup を verify (audit-export.sh)',
+        'audit-verify.sh で改竄行を特定 (連鎖切断 行番号確認)',
+        '~/.claude/audit-backups/ から復旧 (03_OPERATIONS D-4 参照)',
+      ],
+    },
+    chat_error_storm: {
+      cat: 'クラウド AI 障害 or CORS 失効',
+      ir: 'governance/09 I-2 周辺',
+      steps: [
+        'ローカル専用モードに即切替 (設定 → ローカル専用 ON)',
+        '直近の chat.error 内容確認 (#audit ビューアでフィルタ)',
+        'preflight で OLLAMA_ORIGINS / API キー確認',
+      ],
+    },
+    inv12_concurrent_scope: {
+      cat: '重複着手 (INV-12 違反 / 運用問題)',
+      ir: 'governance/13 §9 失敗モード',
+      steps: [
+        '重複 issue を特定 (board の team.*.1.scoped を確認)',
+        '後発チームに撤退要請 (team.<TEAM>.1.bounce イベント)',
+        'α1 が再分担',
+      ],
+    },
+    pii_scan_stale: {
+      cat: 'PII セカンドラインの 鮮度 低下 (INV-6 関連)',
+      ir: 'governance/09 I-1 周辺',
+      steps: [
+        'pii-scan.sh --diff を即実行',
+        'pii-scan.sh --staged で 直前 commit 候補も走査',
+        'gitleaks があれば二次防御として走らせる',
+      ],
+    },
+  };
+  const sel = document.getElementById('proposeBreachSelect');
+  const out = document.getElementById('proposeOutput');
+  sel?.addEventListener('change', () => {
+    const r = RESPONSES[sel.value];
+    if (!r) { if (out) out.innerHTML = ''; return; }
+    if (!out) return;
+    out.innerHTML = `
+      <h3>OODA Decide: ${escapeHtml(r.cat)}</h3>
+      <p><strong>IR プレイブック:</strong> <code>${escapeHtml(r.ir)}</code></p>
+      <p><strong>60 秒で実行:</strong></p>
+      <ol>${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+    `;
+  });
+}
+
+// ─────────────────────────────────────────
+// 文書 ブラウザ (#governance ルート、v19 で実装)
+// .md を file picker でロード → renderMarkdown でレンダ + 検索
+// ─────────────────────────────────────────
+let _govDocs = []; // [{ name, text }, ...]
+
+function bindGovernance() {
+  const fileInput = document.getElementById('govFileInput');
+  if (!fileInput) return;
+  fileInput.addEventListener('change', async () => {
+    const files = Array.from(fileInput.files || []);
+    for (const f of files) {
+      const text = await f.text();
+      const existing = _govDocs.find(d => d.name === f.name);
+      if (existing) existing.text = text;
+      else _govDocs.push({ name: f.name, text });
+    }
+    renderGovList();
+  });
+  document.getElementById('govSearchBox')?.addEventListener('input', renderGovList);
+  document.getElementById('govCloseBtn')?.addEventListener('click', () => {
+    document.getElementById('govViewerCard')?.setAttribute('hidden', '');
+  });
+}
+
+function renderGovList() {
+  const list = document.getElementById('govList');
+  if (!list) return;
+  const q = (document.getElementById('govSearchBox')?.value || '').toLowerCase().trim();
+  const filtered = q
+    ? _govDocs.filter(d => d.name.toLowerCase().includes(q) || d.text.toLowerCase().includes(q))
+    : _govDocs;
+  if (!filtered.length) {
+    list.innerHTML = '<li class="muted">該当 文書なし</li>';
+    return;
+  }
+  list.innerHTML = filtered.map((d, i) => {
+    const idx = _govDocs.indexOf(d);
+    const heading = (d.text.match(/^#\s+(.+)$/m) || [])[1] || d.name;
+    return `<li><a href="#" data-doc-idx="${idx}">${escapeHtml(d.name)}</a> <span class="muted">— ${escapeHtml(heading.slice(0, 60))}</span></li>`;
+  }).join('');
+  list.querySelectorAll('a[data-doc-idx]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const idx = parseInt(a.dataset.docIdx, 10);
+      const doc = _govDocs[idx];
+      if (!doc) return;
+      const card = document.getElementById('govViewerCard');
+      const title = document.getElementById('govViewerTitle');
+      const viewer = document.getElementById('govViewer');
+      if (title) title.textContent = doc.name;
+      if (viewer) viewer.innerHTML = renderMarkdown(doc.text);
+      if (card) card.removeAttribute('hidden');
+      activateCopyButtons(viewer);
+    });
+  });
+}
+
 function boot() {
   ensureSessions();
   applyTheme();
@@ -2438,6 +2664,8 @@ function boot() {
   bindClaudeUI();
   renderSessionTabs();
   bindAuditLoader();
+  bindOrchestrate();
+  bindGovernance();
 
   // Default to overview if no hash
   if (!location.hash) location.hash = '#overview';

@@ -22,6 +22,9 @@
     <nav class="topnav" aria-label="グローバルナビゲーション">
       <a href="#overview" data-route="overview">概要</a>
       <a href="#integrations" data-route="integrations">連携</a>
+      <a href="#orchestrate" data-route="orchestrate">運用</a>
+      <a href="#governance" data-route="governance">文書</a>
+      <a href="#audit" data-route="audit">監査</a>
       <a href="#settings" data-route="settings">設定</a>
     </nav>
 
@@ -368,6 +371,85 @@
             </label>
           </div>
           <div id="auditEventsBody"></div>
+        </section>
+      </section>
+
+      <!-- Section: Orchestration (L8 KPI + 板 + watcher + propose-response) -->
+      <section class="route" data-route="orchestrate" hidden aria-labelledby="orchestrateTitle">
+        <header class="hero">
+          <div>
+            <h1 id="orchestrateTitle">運用ダッシュボード</h1>
+            <p class="muted">L8 オーケストレーション (4 チーム × 4 役 + PDCA/OODA) の状態を可視化。詳細: <code>governance/13</code></p>
+          </div>
+        </header>
+
+        <section class="card">
+          <h2>4 チーム KPI</h2>
+          <div class="kpi-grid">
+            <div class="kpi-tile" data-team="alpha"><h3>α アーキ</h3><div class="kpi-val" id="kpi_alpha">…</div><div class="kpi-sub" id="kpi_alpha_sub"></div></div>
+            <div class="kpi-tile" data-team="beta"><h3>β 実装</h3><div class="kpi-val" id="kpi_beta">…</div><div class="kpi-sub" id="kpi_beta_sub"></div></div>
+            <div class="kpi-tile" data-team="gamma"><h3>γ 品質</h3><div class="kpi-val" id="kpi_gamma">…</div><div class="kpi-sub" id="kpi_gamma_sub"></div></div>
+            <div class="kpi-tile" data-team="delta"><h3>δ 運用</h3><div class="kpi-val" id="kpi_delta">…</div><div class="kpi-sub" id="kpi_delta_sub"></div></div>
+          </div>
+          <p class="muted">KPI は <code>~/.claude/audit.jsonl</code> + <code>governance/12</code> から計算。 ファイル選択で更新します。</p>
+          <div class="row">
+            <input type="file" id="orchestrateAuditInput" accept=".jsonl,.log,.json,application/json,text/plain" />
+            <span class="muted" id="orchestrateLastUpdate"></span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>板 (orchestration events、直近 30 件)</h2>
+          <div class="board-filters">
+            <label><input type="checkbox" id="boardFilterTeam" checked /> team.*</label>
+            <label><input type="checkbox" id="boardFilterHandoff" checked /> handoff.*</label>
+            <label><input type="checkbox" id="boardFilterIncident" checked /> incident.*</label>
+            <label><input type="checkbox" id="boardFilterCycle" checked /> *.cycle.*</label>
+          </div>
+          <div class="board-list" id="boardList"><p class="muted">audit.jsonl をロードしてください</p></div>
+        </section>
+
+        <section class="card">
+          <h2>OODA 対応案 ジェネレータ</h2>
+          <p class="muted"><code>scripts/orchestrate.sh --propose-response</code> をブラウザで再現。</p>
+          <div class="row">
+            <select id="proposeBreachSelect">
+              <option value="">-- breach タイプを選択 --</option>
+              <option value="audit_chain_broken">audit_chain_broken (INV-2/INV-10)</option>
+              <option value="chat_error_storm">chat_error_storm (クラウド AI 障害)</option>
+              <option value="inv12_concurrent_scope">inv12_concurrent_scope (重複着手)</option>
+              <option value="pii_scan_stale">pii_scan_stale (PII クリーン 鮮度低下)</option>
+            </select>
+          </div>
+          <div id="proposeOutput" class="propose-output"></div>
+        </section>
+      </section>
+
+      <!-- Section: Governance (文書ブラウザ) -->
+      <section class="route" data-route="governance" hidden aria-labelledby="govTitle">
+        <header class="hero">
+          <div>
+            <h1 id="govTitle">ガバナンス・テンプレ ブラウザ</h1>
+            <p class="muted">governance/ 16 本 + funding/ + templates/ をローカルから直接ロード。Markdown を XSS 安全 にレンダ。</p>
+          </div>
+        </header>
+
+        <section class="card">
+          <h2>文書を選択</h2>
+          <p class="muted">📁 ファイル選択 (.md): governance/* / funding/* / templates/* のいずれか</p>
+          <input type="file" id="govFileInput" accept=".md,text/markdown" multiple />
+          <div class="gov-search">
+            <input type="search" id="govSearchBox" placeholder="読み込み済 文書から検索 (タイトル / 本文)" />
+          </div>
+          <ul class="gov-list" id="govList"><li class="muted">.md ファイルをロード してください</li></ul>
+        </section>
+
+        <section class="card" id="govViewerCard" hidden>
+          <h2 id="govViewerTitle">—</h2>
+          <div class="gov-viewer" id="govViewer"></div>
+          <div class="row">
+            <button class="btn-ghost" id="govCloseBtn" type="button">閉じる</button>
+          </div>
         </section>
       </section>
 
