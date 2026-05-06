@@ -66,6 +66,17 @@ run_regression() {
   return $rc
 }
 
+run_resilience() {
+  local rc=0
+  shopt -s nullglob
+  for f in "$SCRIPT_DIR"/resilience/*.sh; do
+    [[ -f "$f" ]] || continue
+    if ! bash "$f"; then rc=1; fi
+  done
+  shopt -u nullglob
+  return $rc
+}
+
 run_js_tests() {
   if ! command -v node >/dev/null 2>&1; then
     echo -e "${C_DIM}node 未インストール → JS テストはスキップ${C_RST}"
@@ -97,15 +108,17 @@ case "$target" in
   ps)   run_suite "PS 構造"   run_ps_tests ;;
   integration) run_suite "Integration" run_integration ;;
   regression)  run_suite "Regression"  run_regression ;;
+  resilience)  run_suite "Resilience"  run_resilience ;;
   all)
     run_suite "Bash Unit" run_bash_unit
     run_suite "JS Unit"   run_js_tests
     run_suite "PS 構造"   run_ps_tests
     run_suite "Integration" run_integration
     run_suite "Regression" run_regression
+    run_suite "Resilience" run_resilience
     ;;
   *)
-    echo "未知のターゲット: $target  (使えるのは all|unit|js|ps|integration|regression)"
+    echo "未知のターゲット: $target  (使えるのは all|unit|js|ps|integration|regression|resilience)"
     exit 2
     ;;
 esac

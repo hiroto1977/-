@@ -44,8 +44,8 @@ AUDIT_LOG="${AUDIT_LOG_PATH:-${HOME}/.claude/audit.jsonl}"
 # ── ヘルパー: イベント発火 ──
 emit_work() {
   local event_suffix="$1"
-  local task_id="$2"
-  local extra="$3"
+  local task_id="${2:-}"
+  local extra="${3:-}"
   if [[ -z "$task_id" ]]; then
     echo "用法: --${event_suffix} <task-id> <details>" >&2
     return 2
@@ -55,6 +55,7 @@ emit_work() {
   audit_log "work.task.${event_suffix}" "$details"
   echo -e "${C_OK}✓${C_RST} 記録: ${C_BLD}work.task.${event_suffix}${C_RST}  ${task_id}"
   [[ -n "$extra" ]] && echo "    $extra"
+  return 0
 }
 
 # ── --list: アクティブ タスク (start あり / complete なし) ──
