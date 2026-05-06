@@ -29,7 +29,8 @@ import {
 } from './modules/sessions.js';
 import {
   ZERO_HASH, auditEventSeverity, parseAuditJsonl,
-  summarizeAuditEntries, verifyAuditChain as _verifyAuditChain,
+  summarizeAuditEntries, summarizeAuditTrend,
+  verifyAuditChain as _verifyAuditChain,
   filterAuditEntries, formatAuditTs,
 } from './modules/audit-viewer.js';
 
@@ -1589,6 +1590,10 @@ function bindAuditLoader() {
   document.getElementById('auditEventFilter')?.addEventListener('input', renderAuditEvents);
   document.getElementById('auditScriptFilter')?.addEventListener('input', renderAuditEvents);
   document.getElementById('auditLimit')?.addEventListener('change', renderAuditEvents);
+  // 監査ログ ウィンドウ 切替 (PDCA #28 v39、summarizeAuditTrend で再計算)
+  document.querySelectorAll('input[name="auditWindow"]').forEach(r => {
+    r.addEventListener('change', renderAuditSummary);
+  });
 }
 
 async function loadAuditFile(file) {
@@ -1608,6 +1613,11 @@ async function loadAuditFile(file) {
   }
 }
 
+function _getAuditWindow() {
+  const checked = document.querySelector('input[name="auditWindow"]:checked');
+  return checked ? parseInt(checked.value, 10) : 0;
+}
+
 function renderAuditSummary() {
   const card = document.getElementById('auditSummary');
   const body = document.getElementById('auditSummaryBody');
@@ -1616,8 +1626,14 @@ function renderAuditSummary() {
   const entries = _auditState.entries;
   if (!entries.length) { body.innerHTML = '<p class="muted">エントリ なし</p>'; return; }
 
-  const s = summarizeAuditEntries(entries);
+  const windowDays = _getAuditWindow();
+  const trend = summarizeAuditTrend(entries, windowDays);
+  const s = trend.summary;
+  const windowLabel = windowDays > 0
+    ? `直近 ${windowDays} 日 (${trend.totalEntriesInWindow} / ${entries.length} エントリ)`
+    : '全期間';
   body.innerHTML = `
+    <p class="muted" style="margin: 0 0 var(--sp-2)">期間: <strong>${escapeHtml(windowLabel)}</strong></p>` + `
     <ul class="audit-stats">
       <li class="audit-stat"><div class="audit-stat-label">エントリ総数</div>
         <div class="audit-stat-value">${s.total.toLocaleString()}</div></li>

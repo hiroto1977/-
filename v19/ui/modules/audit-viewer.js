@@ -121,3 +121,31 @@ export function filterAuditEntries(entries, { eventQ = '', scriptQ = '', limit =
 export function formatAuditTs(ts) {
   return String(ts || '').replace('T', ' ').slice(0, 19);
 }
+
+// 監査ログ トレンド ウィンドウ (PDCA #28 v39、governance/12 §10 #39):
+// entries を 「直近 N 日」 でフィルタしてから summarizeAuditEntries を呼ぶ。
+// windowDays = 0 (or null/undefined) は 全期間 を意味する。
+// now は引数で受け取り、Node テストでも決定論的に検証可能。
+//
+// 戻り値: { summary, windowStartTs, windowEndTs, totalEntriesInWindow }
+export function summarizeAuditTrend(entries, windowDays, now = Date.now()) {
+  if (!windowDays || windowDays <= 0) {
+    return {
+      summary: summarizeAuditEntries(entries),
+      windowStartTs: null,
+      windowEndTs: new Date(now).toISOString(),
+      totalEntriesInWindow: (entries || []).length,
+    };
+  }
+  const cutoffMs = now - (windowDays * 24 * 60 * 60 * 1000);
+  const filtered = (entries || []).filter(e => {
+    const t = Date.parse(e.ts);
+    return Number.isFinite(t) && t >= cutoffMs;
+  });
+  return {
+    summary: summarizeAuditEntries(filtered),
+    windowStartTs: new Date(cutoffMs).toISOString(),
+    windowEndTs: new Date(now).toISOString(),
+    totalEntriesInWindow: filtered.length,
+  };
+}

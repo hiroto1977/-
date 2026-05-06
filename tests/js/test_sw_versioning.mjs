@@ -24,7 +24,21 @@ tests.push(['message: SKIP_WAITING', SW.includes("'SKIP_WAITING'") && SW.include
 
 // 5. fetch ハンドラはまだ動く
 tests.push(['fetch handler 残存', SW.includes("addEventListener('fetch'")]);
-tests.push(['cache-first 戦略', SW.includes('caches.match')]);
+tests.push(['caches.match を使用 (オフライン fallback)', SW.includes('caches.match')]);
+
+// v39 (PDCA #28): stale-while-revalidate 戦略
+tests.push(['SWR: staleWhileRevalidate 関数あり', /function\s+staleWhileRevalidate/.test(SW)]);
+tests.push(['SWR: cached || networkPromise の即時返却',
+  /cached\s*\|\|\s*networkPromise/.test(SW)]);
+tests.push(['SWR: ナビゲーション fallback (index.html)',
+  SW.includes("caches.match('./index.html')") || SW.includes('navigationFallback')]);
+tests.push(['SWR: cross-origin は介入なし',
+  /url\.origin\s*!==\s*location\.origin/.test(SW)]);
+tests.push(['CACHE_VERSION が v3 以降 (改善後)',
+  /CACHE_VERSION\s*=\s*['"]v[3-9]['"]/.test(SW)
+  || /CACHE_VERSION\s*=\s*['"]v\d{2,}['"]/.test(SW)]);
+tests.push(['SWR: req.method !== GET なら return (POST 等を skip)',
+  /req\.method\s*!==\s*['"]GET['"]/.test(SW)]);
 
 let pass = 0, fail = 0;
 for (const [name, ok] of tests) {

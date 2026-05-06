@@ -169,6 +169,42 @@ T('formatTs: ISO → space',
 T('formatTs: 空 → 空', M.formatAuditTs('') === '');
 T('formatTs: null → 空', M.formatAuditTs(null) === '');
 
+// ── 7.5 summarizeAuditTrend (v39、PDCA #28) ──
+{
+  const FIXED_NOW = Date.parse('2026-05-30T00:00:00Z');
+  const dayMs = 86400000;
+  const entries = [
+    { ts: new Date(FIXED_NOW - 40 * dayMs).toISOString(), script: 'old.sh',    event: 'old.start' },
+    { ts: new Date(FIXED_NOW - 20 * dayMs).toISOString(), script: 'mid.sh',    event: 'mid.start' },
+    { ts: new Date(FIXED_NOW - 3 * dayMs).toISOString(),  script: 'recent.sh', event: 'recent.start' },
+  ];
+  const trendAll = M.summarizeAuditTrend(entries, 0, FIXED_NOW);
+  T('audit trend: 全期間 → 3 件',
+    trendAll.totalEntriesInWindow === 3 && trendAll.summary.total === 3);
+  T('audit trend: 全期間 → windowStartTs null',
+    trendAll.windowStartTs === null);
+
+  const trend30 = M.summarizeAuditTrend(entries, 30, FIXED_NOW);
+  T('audit trend: 30d → 2 件 (mid + recent)',
+    trend30.totalEntriesInWindow === 2 && trend30.summary.total === 2);
+  T('audit trend: 30d → windowStartTs 設定',
+    trend30.windowStartTs && trend30.windowEndTs);
+
+  const trend7 = M.summarizeAuditTrend(entries, 7, FIXED_NOW);
+  T('audit trend: 7d → 1 件 (recent)',
+    trend7.totalEntriesInWindow === 1 && trend7.summary.scriptCount === 1);
+
+  T('audit trend: 不正 ts は スキップ',
+    M.summarizeAuditTrend([{ ts: 'bad', script: 's' }], 7, FIXED_NOW)
+      .totalEntriesInWindow === 0);
+  T('audit trend: null windowDays → 全期間',
+    M.summarizeAuditTrend(entries, null, FIXED_NOW).totalEntriesInWindow === 3);
+  T('audit trend: 空配列',
+    M.summarizeAuditTrend([], 7, FIXED_NOW).totalEntriesInWindow === 0);
+  T('audit trend: now 既定 = Date.now',
+    typeof M.summarizeAuditTrend([], 0).windowEndTs === 'string');
+}
+
 // ── 8. drift sniff: dashboard.js が audit-viewer モジュール を import + 重複なし ──
 const dashSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.js'), 'utf8');
 T('dashboard.js が audit-viewer モジュール を import',
@@ -179,12 +215,26 @@ T('dashboard.js: auditEventSeverity 重複定義なし',
   !/^function\s+auditEventSeverity\s*\(/m.test(dashSrc));
 T('dashboard.js: parseAuditJsonl を使用',
   /parseAuditJsonl\s*\(/.test(dashSrc));
-T('dashboard.js: summarizeAuditEntries を使用',
-  /summarizeAuditEntries\s*\(/.test(dashSrc));
+T('dashboard.js: summarizeAuditEntries または summarizeAuditTrend を使用',
+  /summarize(AuditEntries|AuditTrend)\s*\(/.test(dashSrc));
 T('dashboard.js: filterAuditEntries を使用',
   /filterAuditEntries\s*\(/.test(dashSrc));
 T('dashboard.js: verifyAuditChain (注入版) を使用',
   /_verifyAuditChain\s*\(/.test(dashSrc));
+
+// v39 (PDCA #28): audit ウィンドウ ピッカー + summarizeAuditTrend
+T('dashboard.js: summarizeAuditTrend を import',
+  /import\s*\{[^}]*summarizeAuditTrend[^}]*\}\s*from\s*['"]\.\/modules\/audit-viewer\.js['"]/.test(
+    dashSrc.replace(/\s+/g, ' ')));
+T('dashboard.js: auditWindow radio 切替',
+  /input\[name="auditWindow"\]/.test(dashSrc));
+const htmlSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.html'), 'utf8');
+T('dashboard.html: 監査 ウィンドウ ピッカー 3 オプション',
+  /name="auditWindow"[^>]*value="7"/.test(htmlSrc) &&
+  /name="auditWindow"[^>]*value="30"/.test(htmlSrc) &&
+  /name="auditWindow"[^>]*value="0"/.test(htmlSrc));
+T('dashboard.html: auditSummary に aria-labelledby',
+  /id="auditSummary"[^>]*aria-labelledby="auditSummaryHeader"/.test(htmlSrc));
 
 // ── レポート ──
 let pass = 0, fail = 0;

@@ -109,6 +109,65 @@ const tests = [];
     body.max_tokens === 100 && body.system === 'be brief' && body.stream === true]);
   tests.push(['Anthropic: 本文組み立て', r.text === 'Hello world' && txt === 'Hello world']);
   tests.push(['Anthropic: usage 両方保持', r.usage?.input_tokens === 11 && r.usage?.output_tokens === 2]);
+  tests.push(['Anthropic: thinkingBudget 未指定で thinking フィールドなし',
+    body.thinking === undefined && r.thinking === undefined]);
+}
+
+// 1.5 Anthropic: 拡張思考 (thinking_delta、v39 PDCA #28)
+{
+  const get = fakeFetch([
+    'event: message_start\ndata: {"type":"message_start","message":{"id":"m","usage":{"input_tokens":50}}}\n\n',
+    // thinking ブロック (Claude 4 系 拡張思考)
+    'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"thinking_delta","thinking":"問題を"}}\n\n',
+    'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"thinking_delta","thinking":"分析中..."}}\n\n',
+    // text ブロック (通常応答)
+    'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":"答えは 42"}}\n\n',
+    'event: message_delta\ndata: {"type":"message_delta","usage":{"output_tokens":12}}\n\n',
+  ]);
+  let txt = '', think = '';
+  const r = await ctx.anthropicSendStream({
+    apiKey: 'sk-ant-test', model: 'claude-opus-4-7', maxTokens: 8000, system: '',
+    thinkingBudget: 4096,
+    messages: [{ role: 'user', content: 'むずかしい問題' }],
+    onText: d => { txt += d; },
+    onThinking: d => { think += d; },
+  });
+  const req = get();
+  const body = JSON.parse(req.body);
+  tests.push(['Anthropic 思考: body.thinking.type=enabled',
+    body.thinking?.type === 'enabled']);
+  tests.push(['Anthropic 思考: budget_tokens は max_tokens-1 以下',
+    body.thinking?.budget_tokens === 4096 && body.thinking.budget_tokens < body.max_tokens]);
+  tests.push(['Anthropic 思考: thinking_delta は別 callback (onThinking) に流れる',
+    think === '問題を分析中...' && r.thinking === '問題を分析中...']);
+  tests.push(['Anthropic 思考: text_delta は分離して text に',
+    txt === '答えは 42' && r.text === '答えは 42']);
+  tests.push(['Anthropic 思考: usage 維持',
+    r.usage?.input_tokens === 50 && r.usage?.output_tokens === 12]);
+}
+
+// 1.6 Anthropic: thinkingBudget が 1024 未満なら無効 (Anthropic 仕様)
+{
+  fakeFetch([
+    'event: message_start\ndata: {"type":"message_start","message":{"id":"m","usage":{}}}\n\n',
+    'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":"hi"}}\n\n',
+  ]);
+  let captured;
+  ctx.fetch = async (url, opts) => {
+    captured = opts;
+    const enc = new TextEncoder();
+    const stream = new ReadableStream({
+      start(c) { c.enqueue(enc.encode('event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":"x"}}\n\n')); c.close(); }
+    });
+    return new Response(stream, { status: 200 });
+  };
+  await ctx.anthropicSendStream({
+    apiKey: 'k', model: 'm', maxTokens: 100, thinkingBudget: 500,
+    messages: [{ role: 'user', content: 'x' }],
+  });
+  const body = JSON.parse(captured.body);
+  tests.push(['Anthropic 思考: budget < 1024 は無効化 (body.thinking なし)',
+    body.thinking === undefined]);
 }
 
 // 2. Google

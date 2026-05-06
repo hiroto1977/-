@@ -83,7 +83,7 @@ export function dataUrlPayload(dataUrl) {
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 
-async function anthropicSendStream({ apiKey, model, maxTokens, system, messages, signal, onText }) {
+async function anthropicSendStream({ apiKey, model, maxTokens, system, messages, signal, onText, onThinking, thinkingBudget }) {
   if (!apiKey) throw new ProviderError('API キーが設定されていません', { providerId: 'anthropic' });
   if (!messages?.length) throw new ProviderError('メッセージが空です', { providerId: 'anthropic' });
 
@@ -107,6 +107,12 @@ async function anthropicSendStream({ apiKey, model, maxTokens, system, messages,
 
   const body = { model, max_tokens: maxTokens, messages: anthropicMessages, stream: true };
   if (system && system.trim()) body.system = system;
+  // Claude 4 系 拡張思考 (v39、PDCA #28): thinkingBudget が正の数なら有効化
+  // Anthropic 仕様: thinking.budget_tokens は max_tokens 以下、最低 1024
+  // 注: 拡張思考有効時は temperature/top_p/top_k は固定値推奨 (公式 docs 参照)
+  if (Number.isFinite(thinkingBudget) && thinkingBudget >= 1024) {
+    body.thinking = { type: 'enabled', budget_tokens: Math.min(thinkingBudget, maxTokens - 1) };
+  }
 
   let res;
   try {
@@ -136,11 +142,19 @@ async function anthropicSendStream({ apiKey, model, maxTokens, system, messages,
   }
 
   let fullText = '';
+  let fullThinking = '';
   let usage = null;
   await readSseLines(res, (evt) => {
-    if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
-      fullText += evt.delta.text;
-      onText?.(evt.delta.text);
+    if (evt.type === 'content_block_delta') {
+      // text_delta: 通常の応答テキスト (アシスタント発話)
+      // thinking_delta: 拡張思考 (Claude 4 系、v39 で対応) — 推論過程
+      if (evt.delta?.type === 'text_delta') {
+        fullText += evt.delta.text;
+        onText?.(evt.delta.text);
+      } else if (evt.delta?.type === 'thinking_delta') {
+        fullThinking += evt.delta.thinking;
+        onThinking?.(evt.delta.thinking);
+      }
     } else if (evt.type === 'message_delta' && evt.usage) {
       usage = { ...(usage || {}), ...evt.usage };
     } else if (evt.type === 'message_start' && evt.message?.usage) {
@@ -150,7 +164,9 @@ async function anthropicSendStream({ apiKey, model, maxTokens, system, messages,
         { type: evt.error?.type, providerId: 'anthropic' });
     }
   });
-  return { text: fullText, usage };
+  const result = { text: fullText, usage };
+  if (fullThinking) result.thinking = fullThinking;
+  return result;
 }
 
 // ---------- Google Gemini ----------

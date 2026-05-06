@@ -1,8 +1,8 @@
 # 12. 統合システム 設計図 (System Blueprint)
 
-> **現バージョン**: **v38 (UX 統合 — KPI トレンド 7d/30d + ARIA 強化 + #journal DSL 例ボタン)**
+> **現バージョン**: **v39 (拡張思考 + 監査トレンド + PWA SWR — 観測性 と オフライン体験 強化)**
 >
-> **目的**: 37 サイクル分 (PDCA × 26 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
+> **目的**: 38 サイクル分 (PDCA × 27 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
 >
 > **読み手**: 新規セッション (Claude / 別 AI / 人間)、レビュア、運用者
 > **読了時間**: 30 分 (詳細は各 governance docs と design-iterations/v{N}.md へ)
@@ -431,21 +431,24 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 | **Phase 7: 集大成** | v33 | 設計図 全面書直し (本文書) |
 | **Phase 8: 業務 UI 統合** | v34-v35 | v34: v19 `#journal` ルート 実装 (modules/journal.js + 状態色 + キャッシュ + 55 unit tests)、v35: 横断検索 DSL (`state:` / `deadline<` / `deadline>` / `has:` / `stakeholder:` / `id:` / 自由語 AND、74 unit tests) |
 | **Phase 9: モジュール 集大成** | v36-v37 | v36: orchestrate.js + providers.js 抽出、v37: sessions.js + audit-viewer.js 抽出。dashboard.js 2620→2098、L6 UI が 8 モジュール 構成 |
-| **Phase 10: UX 統合** | **v38** | KPI トレンド (7d/30d/全期間)、ARIA 強化 (aria-current / aria-live / role="listitem")、#journal DSL 例 チップ (進行中 / ブロック / 引継ぎ待ち / 成果物あり / 意思決定あり / クリア) — 業務担当者が複合条件を 1 クリック で投入可能に |
+| **Phase 10: UX 統合** | v38-**v39** | v38: KPI トレンド + ARIA + #journal DSL 例、**v39: 拡張思考 (Anthropic thinking_delta) + 監査トレンド (summarizeAuditTrend) + PWA stale-while-revalidate** — Claude 4 系 拡張思考の 推論過程 を可視化、監査ログを期間別 で見られる、オフライン 体験 が SWR で 改善 |
 
-詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 38) に保存。
+詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 39) に保存。
 
 ---
 
 ## 14. 既知の課題 (Open Issues)
 
-§10 課題 37 件は全て実装済 (v1-v37)。**#38 (v38): UX 統合 完了** — (a) `computeKpiTrend(events, windowDays, now)` で 7 日 / 30 日 / 全期間 KPI 切替 (Node テストでは now 注入で決定論)、(b) ARIA 強化 (aria-current / aria-live / role="listitem")、(c) `#journal` DSL 例 6 チップ (進行中 / ブロック / 引継ぎ待ち / 成果物あり / 意思決定あり / クリア) で複合 DSL を 1 クリック投入可能に。新規 13 unit tests を既存 test_orchestrate / test_journal に追加。残る候補は α1 が次サイクル で scope:
+§10 課題 38 件は全て実装済 (v1-v38)。**#39 (v39): 拡張思考 + 監査トレンド + PWA SWR 完了** —
+(a) `providers.js#anthropicSendStream` が `thinking_delta` を別 callback (`onThinking`) に流し、`thinkingBudget >= 1024` で `body.thinking={type:enabled,budget_tokens}` を自動設定 (Claude 4 系 拡張思考)、
+(b) `audit-viewer.js#summarizeAuditTrend(entries, windowDays, now)` で監査ログを 7 日 / 30 日 / 全期間 切替 (now 注入で決定論)、
+(c) `desktop/sw.js` v2 → v3、cache-first → stale-while-revalidate に変更、ナビゲーション fallback と GET-only 制限を厳密化、cross-origin は SW 介入なしに整理。
+新規 24 unit tests (audit trend 10 + thinking_delta 7 + SWR 7) + drift sniff 拡張。残る候補:
 
 - pwsh 実機テスト (Windows / macOS) — このリポは Linux で開発、pwsh 実機検証は手動
-- providers.js の Anthropic SSE thinking_delta 対応 (Claude 4 系 拡張思考)
-- 監査ログ 7 日 / 30 日 トレンド (audit-viewer.js に類似 windowing)
-- #journal タスク カード に「子タスク」概念 (governance/16 Phase 2 検討)
-- desktop/ PWA の Service Worker キャッシュ 戦略 改善 (オフライン優先)
+- `#journal` タスク カード に「子タスク」概念 (governance/16 Phase 2)
+- KPI トレンド の グラフ可視化 (Sparkline、現状はテキストのみ)
+- desktop/ PWA の オフライン時 UI フィードバック (banner + queued sync)
 
 ---
 
@@ -461,7 +464,7 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - 新セッション → `governance/14_SESSION_KNOWLEDGE.md`
 - 業務工程 → `governance/16_WORK_JOURNAL.md`
 - テスト → `tests/README.md`
-- 反復 履歴 → `governance/design-iterations/v{1-38}.md`
+- 反復 履歴 → `governance/design-iterations/v{1-39}.md`
 
 ---
 
@@ -473,4 +476,5 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - v35 (2026-05): #journal DSL 検索 (PDCA #24) — `parseQuery()` + `matchTask()` で `state:` / `stakeholder:` / `id:` / `deadline<` / `deadline>` / `has:` の 6 演算子 + 自由語 AND を解釈、UI search box から複合条件で業務状態を即座に絞れる (74 unit tests、DSL 19 件)
 - v36 (2026-05): v19 最適化再構築 (PDCA #25) — Phase 9 開始、35 反復の学びから dashboard.js を 2620 → 2170 行 (-450) に縮小。`modules/orchestrate.js` (KPI 計算 + INV-12 検出 + board フィルタ + OODA_RESPONSES、48 unit tests) と `modules/providers.js` (3 プロバイダ sender + ProviderError + content helpers、57 unit tests) に純粋ロジック層を抽出。L6 UI が 6 モジュール構成 (markdown/audit-browser/affect/journal/orchestrate/providers) になり、各 INV 境界を独立検証可能に
 - v37 (2026-05): sessions.js + audit-viewer.js 抽出 (PDCA #26) — dashboard.js 2170 → 2098 行、L6 UI 8 モジュール構成に到達 (markdown/audit-browser/affect/journal/orchestrate/providers/sessions/audit-viewer)
-- **v38 (2026-05): UX 統合 (PDCA #27)** — Phase 10 開始。(a) `computeKpiTrend()` で L8 KPI 7d/30d/全期間 切替 (now 注入で決定論的にテスト可能、10 unit tests)、(b) ARIA 強化 (aria-current="page" / aria-live / role="listitem" / aria-describedby)、(c) `#journal` DSL 例 6 チップ で複合 DSL を 1 クリック投入可能に
+- v38 (2026-05): UX 統合 (PDCA #27) — Phase 10 開始。(a) `computeKpiTrend()` で L8 KPI 7d/30d/全期間 切替、(b) ARIA 強化、(c) `#journal` DSL 例 6 チップ
+- **v39 (2026-05): 拡張思考 + 監査トレンド + PWA SWR (PDCA #28)** — (a) `providers.js` Anthropic `thinking_delta` 対応 (Claude 4 系 拡張思考、`onThinking` callback / `thinkingBudget` パラメータ)、(b) `audit-viewer.js#summarizeAuditTrend` で監査ログを 7d/30d/全期間 切替、(c) `desktop/sw.js` v3 (stale-while-revalidate + ナビゲーション fallback + cross-origin 介入なし)。新規 24 unit tests
