@@ -6,12 +6,14 @@
 | パス | 内容 |
 |---|---|
 | **`/desktop/`** | みんなのデスクトップ — 6 つの業務アプリ統合（タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー） |
-| **`/v19/ui/`** | v19 ダッシュボード — 複数の AI プロバイダ（Ollama / Anthropic / Google）と統一 UI で対話 |
+| **`/v19/ui/`** | v19 ダッシュボード — **7 ルート 統合** UI (overview / integrations / **integration-claude** / **orchestrate** / **governance** / audit / settings)。3 AI プロバイダ + ローカル専用モード + 感情適応モード + ブラウザ audit + ストレージメーター |
 | **`/cowork/`** | ローカル AI と Chat する最短ルート（CLI + 自動起動スクリプト） |
-| **`/governance/`** | ローカルファースト業務運用のガバナンス文書群（法制度・データ分類・運用・士業別ルール 他） |
+| **`/governance/`** | ローカルファースト業務運用のガバナンス文書群 16 本（法制度・データ分類・運用・士業別ルール・**統合システム設計図 (22 反復)**・**チーム オーケストレーション (4 × 4)**・**ブートストラップ知識**・**感情倫理ガード** 他） |
 | **`/funding/`** | 経営戦略 × 資金調達（補助金・助成金・公庫融資・民間融資）フレームワーク + 9 プログラム別チェックリスト |
 | **`/templates/`** | 汎用業務テンプレ集（人事 / 法務 / オペ / 営業 / 危機 / マーケ / 財務） |
-| **`/scripts/`** | 業務開始前チェック (`preflight.sh`) と PII 検出 (`pii-scan.sh`) |
+| **`/scripts/`** | 21 本 — preflight / PII 検出 / ストレージ衛生 / 監査 / **L8 オーケストレーション (orchestrate / orchestrate-watch / orchestrate-kpi)** / 4 チーム ブリーフ / PDCA・OODA サイクル定義 |
+| **`/scripts/win/`** | Windows PowerShell 6 本 (preflight / BitLocker / Defender / Task / WSL2 / audit) |
+| **`/tests/`** | 24 ファイル / 200+ テスト (smoke-test ~48s) — bash unit / browser JS (Node vm) / PowerShell 構造 / cross-OS integration |
 | **`/CLAUDE.md`** | AI 支援者（Claude Code 等）が従うルール |
 | **`/LOCAL_LLM_GUIDE.md`** | Claude Code を含む全コミュニケーションをローカル LLM 化する選択肢 (A/B/C) |
 
@@ -207,8 +209,10 @@ CLI の機能: マルチターン履歴、`/model` でモデル切替、`/system
 | [`governance/09_INCIDENT_PLAYBOOK.md`](governance/09_INCIDENT_PLAYBOOK.md) | **8 シナリオ IR プレイブック** (検知→60秒対応→評価→封じ込め→復旧→学び) |
 | [`governance/10_STORAGE_HYGIENE.md`](governance/10_STORAGE_HYGIENE.md) | **ストレージ衛生** — クラス別保存先 + ライフサイクル 5 段階 + 日次/週次/月次ルーティン |
 | [`governance/11_PLATFORM_NOTES.md`](governance/11_PLATFORM_NOTES.md) | **プラットフォーム別手順** (BitLocker/FileVault/LUKS、Scheduled Task/launchd/systemd) |
-| [`governance/12_SYSTEM_DESIGN.md`](governance/12_SYSTEM_DESIGN.md) | **統合システム設計図** (10+ 反復で改稿、層モデル/INV/失敗モード/保証/制約) |
+| [`governance/12_SYSTEM_DESIGN.md`](governance/12_SYSTEM_DESIGN.md) | **統合システム設計図** (22 反復で改稿、L1-L8 層モデル / 12 INV / 失敗モード / 保証/制約) |
 | [`governance/13_TEAM_ORCHESTRATION.md`](governance/13_TEAM_ORCHESTRATION.md) | **4 チーム × 4 役 + PDCA/OODA** によるオーケストレーション AI 仕組み |
+| [`governance/14_SESSION_KNOWLEDGE.md`](governance/14_SESSION_KNOWLEDGE.md) | **新セッション ブートストラップ知識** (30 秒で読める落とし穴 + チートシート + 暗黙の判断) |
+| [`governance/15_AFFECT_ETHICS.md`](governance/15_AFFECT_ETHICS.md) | **感情適応モード倫理ガード** (gender-blind / protected attribute 禁止 / APPI・EU AI Act 整合) |
 
 ⚠️ **法的免責**: 本ドキュメント群は一般的整理であり、解釈・適用は必ず有資格専門家へ。
 
@@ -230,6 +234,20 @@ bash scripts/storage-cleanup.sh --list-trash           # trash の中身一覧
 bash scripts/audit-verify.sh                           # 監査ログ SHA-256 連鎖の改竄検知
 bash scripts/install-hooks.sh                          # git pre-commit に PII スキャンを仕込む
 bash scripts/install-hooks.sh --status                 # 現状確認 / --uninstall で取り外し
+bash scripts/audit-export.sh /Volumes/USB/audit-bak    # 監査ログをオフライン媒体へ tar.gz + sha256 で書出
+PREFLIGHT_FAST=1 bash scripts/preflight.sh             # テスト用 高速モード (curl + audit-verify を skip)
+
+# L8 オーケストレーション AI (4 チーム × 4 役 + PDCA/OODA、v10 から)
+bash scripts/orchestrate.sh --cycle pdca               # 通常 PDCA サイクル起動
+bash scripts/orchestrate.sh --cycle ooda --trigger watch  # 異常時 OODA (60 秒対応)
+bash scripts/orchestrate.sh --status                   # チーム活動 / ハンドオフ / インシデント の状態
+bash scripts/orchestrate.sh --board --tail 50          # 板の直近 50 件 (audit.jsonl)
+bash scripts/orchestrate.sh --prompt-for alpha.1       # sub-agent 起動用 prompt (live §10 込)
+bash scripts/orchestrate.sh --propose-response audit_chain_broken  # breach → IR Playbook 自動マッピング
+bash scripts/orchestrate-watch.sh --once               # 4 異常チェック (W1 audit / W2 chat.error / W3 INV-12 / W4 PII)
+bash scripts/orchestrate-watch.sh --loop 60            # 60 秒ごと 自動監視 (常駐)
+bash scripts/orchestrate-kpi.sh                        # 4 チーム KPI (α INV カバレッジ / β cycle 中央時間 / γ pass 率 / δ 文書鮮度)
+bash scripts/orchestrate-kpi.sh --check                # INV-12 違反のみ高速チェック
 bash scripts/audit-export.sh ~/Desktop/audit-bak       # 監査ログを USB 等にオフライン エクスポート
 bash scripts/orchestrate.sh --cycle pdca               # オーケストレーション AI 4 チーム × 4 役 (週次)
 bash scripts/orchestrate.sh --cycle ooda --trigger preflight  # 異常事態 (60 秒対応)

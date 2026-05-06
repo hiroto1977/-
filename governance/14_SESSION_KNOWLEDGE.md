@@ -14,8 +14,8 @@
 2. **L8 オーケストレーション AI** が 4 チーム × 4 役で PDCA/OODA を回し、自分で歪みを発見し自分で塞ぐ
 3. **板 (`~/.claude/audit.jsonl`)** に SHA-256 連鎖で全活動を記録、改竄検知可能
 
-設計図 **v21**、PDCA × **10** + OODA × **2** が稼働実績。§10 課題は全 **21** 件 実装済。
-v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化。
+設計図 **v23**、PDCA × **12** + OODA × **2** が稼働実績。§10 課題は全 **23** 件 実装済。
+v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化、v22 で knowledge doc を drift sniff 連動更新、v23 で README を drift sniff 連動更新。
 
 ---
 
