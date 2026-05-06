@@ -14,8 +14,8 @@
 2. **L8 オーケストレーション AI** が 4 チーム × 4 役で PDCA/OODA を回し、自分で歪みを発見し自分で塞ぐ
 3. **板 (`~/.claude/audit.jsonl`)** に SHA-256 連鎖で全活動を記録、改竄検知可能
 
-設計図 **v23**、PDCA × **12** + OODA × **2** が稼働実績。§10 課題は全 **23** 件 実装済。
-v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化、v22 で knowledge doc を drift sniff 連動更新、v23 で README を drift sniff 連動更新。
+設計図 **v24**、PDCA × **13** + OODA × **2** が稼働実績。§10 課題は全 **24** 件 実装済。
+v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化、v22 で knowledge doc を drift sniff 連動更新、v23 で README を drift sniff 連動更新、v24 で `orchestrate.sh --auto` (bootstrap/pdca/ooda/monitor) 半自動モード追加。
 
 ---
 
@@ -51,14 +51,26 @@ L1  Tests         : tests/{unit,js,ps,integration} + smoke-test.sh
 ## 2. 30 秒で 起動チェック
 
 ```sh
-bash scripts/preflight.sh                     # 8 チェック (OK なら全部 ✅)
+bash scripts/orchestrate.sh --auto bootstrap   # ★ v24 から: 上記 4 つを 1 コマンドで
+# (内訳: preflight FAST + status + KPI + watcher --once)
+
+# 個別実行も可
+bash scripts/preflight.sh                     # 8 チェック (本番)
 bash scripts/orchestrate.sh --status          # チーム活動状況
 bash scripts/orchestrate-kpi.sh               # 4 チーム KPI
 bash scripts/orchestrate-watch.sh --once      # 4 異常チェック (clean なら exit 0)
-bash tests/smoke-test.sh                       # 全テスト (~ 1m25s)
+bash tests/smoke-test.sh                       # 全テスト (~ 48s, v21 から)
 ```
 
 「今、何が動いていて、何が壊れているか」が 1 分で分かる。
+
+### サイクル実行 — v24 から半自動
+
+```sh
+bash scripts/orchestrate.sh --auto pdca       # 次に打つ 1 行コマンドを提示
+bash scripts/orchestrate.sh --auto ooda       # watcher → breach → 自動応答
+bash scripts/orchestrate.sh --auto monitor 60 # 60s ループ で 監視 + 自動応答
+```
 
 ---
 

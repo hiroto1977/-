@@ -18,6 +18,10 @@
 #   bash scripts/orchestrate.sh --status
 #   bash scripts/orchestrate.sh --board --tail 50
 #   bash scripts/orchestrate.sh --prompt-for alpha.1
+#   bash scripts/orchestrate.sh --auto bootstrap     # 起動チェック (preflight + status + KPI + watch)
+#   bash scripts/orchestrate.sh --auto pdca          # 次の PDCA コマンドを 1 つ提示
+#   bash scripts/orchestrate.sh --auto ooda          # watcher → breach → 自動応答
+#   bash scripts/orchestrate.sh --auto monitor 60    # 60s ループで監視
 #
 # 詳細: governance/13_TEAM_ORCHESTRATION.md
 
@@ -255,6 +259,176 @@ EOF
   audit_log "orchestrate.propose_response" "breach=$breach"
 }
 
+cmd_auto() {
+  local mode="${1:-bootstrap}"
+  case "$mode" in
+    bootstrap) auto_bootstrap ;;
+    pdca)      auto_pdca ;;
+    ooda)      auto_ooda ;;
+    monitor)   auto_monitor "${2:-60}" ;;
+    *)
+      echo "用法: $0 --auto <mode> [interval]" >&2
+      echo "  mode: bootstrap | pdca | ooda | monitor" >&2
+      return 2
+      ;;
+  esac
+}
+
+# ── 起動時 標準シーケンス: preflight + status + KPI + watcher ──
+auto_bootstrap() {
+  echo -e "${C_HDR}━━ 自動モード: bootstrap ━━${C_RST}"
+  echo "  実行内容: preflight (FAST) → orchestrate status → KPI → watcher (once)"
+  echo ""
+  echo -e "${C_BLD}── (1/4) preflight (FAST) ──${C_RST}"
+  PREFLIGHT_FAST=1 bash "$ROOT_DIR/scripts/preflight.sh" 2>&1 | tail -8
+  echo ""
+  echo -e "${C_BLD}── (2/4) orchestrate status ──${C_RST}"
+  cmd_status 2>&1 | head -20
+  echo ""
+  echo -e "${C_BLD}── (3/4) KPI ──${C_RST}"
+  ORCHESTRATE_KPI_NO_GAMMA=1 bash "$ROOT_DIR/scripts/orchestrate-kpi.sh" 2>&1 | head -10
+  echo ""
+  echo -e "${C_BLD}── (4/4) watcher (once) ──${C_RST}"
+  bash "$ROOT_DIR/scripts/orchestrate-watch.sh" --once 2>&1 | tail -10
+  echo ""
+  echo -e "${C_HDR}━━ bootstrap 完了 ━━${C_RST}"
+  audit_log "orchestrate.auto.bootstrap" ""
+}
+
+# ── PDCA 自動: 次の手 を 1 つ提示 ──
+auto_pdca() {
+  echo -e "${C_HDR}━━ 自動モード: PDCA 次の手 ━━${C_RST}"
+  echo ""
+  local audit="${AUDIT_LOG_PATH:-${HOME}/.claude/audit.jsonl}"
+  local design="$ROOT_DIR/governance/12_SYSTEM_DESIGN.md"
+
+  # 1. §10 から最高優先 未着手 課題を取得
+  local issue
+  issue=$(python3 - "$design" <<'PY' 2>/dev/null
+import sys, re
+with open(sys.argv[1], encoding='utf-8') as f: text = f.read()
+m = re.search(r'^## 10\..*?\n(.*?)(?=\n^## \d|\Z)', text, flags=re.S | re.M)
+if not m: sys.exit(0)
+section = m.group(1)
+rows = re.findall(r'^\| (\d+) \| (高|中|低) \| (.*?) \| (.*?) \| (.*?) \|$', section, flags=re.M)
+unresolved = [r for r in rows if '実装済' not in r[4] and '対応済' not in r[4]]
+if not unresolved: sys.exit(0)
+order = {'高': 0, '中': 1, '低': 2}
+unresolved.sort(key=lambda r: order.get(r[1], 9))
+n, prio, issue_t, plan, status = unresolved[0]
+print(f"{n}\t{prio}\t{issue_t[:80]}")
+PY
+)
+
+  if [[ -z "$issue" ]]; then
+    echo -e "  ${C_OK}✅ §10 全課題 実装済${C_RST}"
+    echo ""
+    echo "  α1 は新たな歪みの発見モードに入るべきです。"
+    echo "  推奨アクション:"
+    echo "    bash scripts/orchestrate.sh --auto bootstrap   # 起動チェック で 異常 発見"
+    echo "    bash scripts/orchestrate-kpi.sh                # KPI で 改善余地 確認"
+    echo "    bash scripts/orchestrate-watch.sh --once       # watcher で 健康診断"
+    audit_log "orchestrate.auto.pdca" "result=all_resolved"
+    return 0
+  fi
+
+  local n prio title
+  n=$(echo "$issue" | cut -f1)
+  prio=$(echo "$issue" | cut -f2)
+  title=$(echo "$issue" | cut -f3)
+
+  echo -e "  ${C_BLD}最高優先 未着手 課題${C_RST}: #$n [${prio}] $title"
+  echo ""
+
+  # 2. 板で進行中の sub-cycle 状態を判定 (この issue の team.*.N.* の最終)
+  local last_event=""
+  if [[ -f "$audit" ]]; then
+    last_event=$(grep "issue=$n" "$audit" 2>/dev/null \
+                 | grep -oE '"event":"team\.[^"]+"' \
+                 | tail -1 \
+                 | sed 's/"event":"//;s/"$//')
+  fi
+
+  # 3. 次の手を提示
+  echo -e "  ${C_BLD}次の手${C_RST}:"
+  if [[ -z "$last_event" ]]; then
+    echo "    bash scripts/orchestrate.sh --emit team.alpha.1.scoped \"issue=$n priority=$prio title=...\""
+    echo "    bash scripts/orchestrate.sh --handoff alpha.1 alpha.2 \"issue=$n design needed\""
+  else
+    case "$last_event" in
+      team.alpha.1.scoped)
+        echo "    (alpha.1 完了) → α2 設計 へ"
+        echo "    bash scripts/orchestrate.sh --emit team.alpha.2.designed \"issue=$n design summary\"" ;;
+      team.alpha.2.designed)
+        echo "    (alpha.2 完了) → α3 文書化 (governance/12 §10 の状態 更新) へ"
+        echo "    bash scripts/orchestrate.sh --emit team.alpha.3.documented \"issue=$n\"" ;;
+      team.alpha.3.documented|team.beta.1.scoped)
+        echo "    (α 完了 → β 実装段階) コードを書いてください、終わったら:"
+        echo "    bash scripts/orchestrate.sh --emit team.beta.3.implemented \"issue=$n files=...\"" ;;
+      team.beta.3.implemented)
+        echo "    (β 完了 → γ テスト段階) tests/ に追加してください、終わったら:"
+        echo "    bash scripts/orchestrate.sh --emit team.gamma.3.implemented \"issue=$n N tests\""
+        echo "    bash tests/smoke-test.sh   # 全合格 を確認" ;;
+      team.gamma.3.implemented)
+        echo "    (γ 完了 → 査読段階)"
+        echo "    bash scripts/audit-verify.sh && bash scripts/orchestrate-kpi.sh --check"
+        echo "    bash scripts/orchestrate.sh --emit team.gamma.4.passed \"issue=$n reviews=...\""
+        echo "    bash scripts/orchestrate.sh --emit team.alpha.4.passed \"issue=$n INV consistent\"" ;;
+      team.gamma.4.passed|team.alpha.4.passed)
+        echo "    (査読 完了 → Act commit + push)"
+        echo "    git add -A && git commit -m \"design: ... v=N\""
+        echo "    bash scripts/orchestrate.sh --emit pdca.cycle.complete \"issue=$n v=N\"" ;;
+      *)
+        echo "    最後のイベント: $last_event (cycles/pdca.md 参照)" ;;
+    esac
+  fi
+  echo ""
+  echo -e "  ${C_DIM}詳細: scripts/cycles/pdca.md${C_RST}"
+  audit_log "orchestrate.auto.pdca" "issue=$n last=$last_event"
+}
+
+# ── OODA 自動: watcher → breach → propose-response ──
+auto_ooda() {
+  echo -e "${C_HDR}━━ 自動モード: OODA ━━${C_RST}"
+  echo ""
+  echo "  watcher --once 実行中..."
+  local out rc
+  out=$(bash "$ROOT_DIR/scripts/orchestrate-watch.sh" --once 2>&1)
+  rc=$?
+  echo "$out" | tail -10
+  if [[ "$rc" -eq 0 ]]; then
+    echo ""
+    echo -e "  ${C_OK}✅ 異常なし${C_RST}"
+    audit_log "orchestrate.auto.ooda" "result=healthy"
+    return 0
+  fi
+  # breach 検出 → 各 breach タイプに対し propose-response
+  local breaches
+  breaches=$(echo "$out" | grep -oE 'BREACH:[a-z_0-9]+' | cut -d: -f2 | sort -u)
+  echo ""
+  echo -e "  ${C_E}━━ 自動応答: 各 breach の対応案 ━━${C_RST}"
+  for b in $breaches; do
+    echo ""
+    cmd_propose_response "$b" 2>&1 | tail -20
+  done
+  audit_log "orchestrate.auto.ooda" "result=breach count=$(echo "$breaches" | wc -w | tr -d ' ')"
+  return 1
+}
+
+# ── monitor: --loop 60s ラッパー、breach 時に propose-response ──
+auto_monitor() {
+  local interval="${1:-60}"
+  echo -e "${C_HDR}━━ 自動モード: monitor (${interval}s ごと) ━━${C_RST}"
+  echo "  Ctrl-C で停止。breach 検出時 は 自動応答 を表示します。"
+  trap 'audit_log "orchestrate.auto.monitor.stopped" ""; exit 0' INT TERM
+  while true; do
+    auto_ooda || true
+    echo ""
+    echo -e "${C_DIM}次回まで ${interval} 秒...${C_RST}"
+    sleep "$interval"
+  done
+}
+
 cmd_prompt_for() {
   local role="${1:-}"
   if [[ -z "$role" ]]; then
@@ -385,6 +559,8 @@ case "${1:-}" in
     shift; cmd_prompt_for "$@" ;;
   --propose-response)
     shift; cmd_propose_response "$@" ;;
+  --auto)
+    shift; cmd_auto "$@" ;;
   *)
     echo "未知のコマンド: $1" >&2
     usage
