@@ -14,7 +14,8 @@
 2. **L8 オーケストレーション AI** が 4 チーム × 4 役で PDCA/OODA を回し、自分で歪みを発見し自分で塞ぐ
 3. **板 (`~/.claude/audit.jsonl`)** に SHA-256 連鎖で全活動を記録、改竄検知可能
 
-設計図 v16、PDCA × 5 + OODA × 1 が既に稼働実績あり。§10 課題は全 16 件 実装済。
+設計図 **v21**、PDCA × **10** + OODA × **2** が稼働実績。§10 課題は全 **21** 件 実装済。
+v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化。
 
 ---
 
@@ -72,6 +73,13 @@ bash scripts/orchestrate.sh --handoff alpha.1 alpha.2 "issue=N context"
 bash scripts/orchestrate.sh --emit pdca.cycle.complete "issue=N v=NN"
 ```
 
+### テスト (v21 で 2.2x 高速化)
+```sh
+bash tests/smoke-test.sh                       # 全部 (~ 48s — v21 から)
+PREFLIGHT_FAST=1 bash scripts/preflight.sh     # ネット + audit-verify skip (テスト用)
+PREFLIGHT_SKIP_NET=1 ...                       # ネットだけ skip (audit-verify は走らせたい時)
+```
+
 ### 異常時 (OODA)
 ```sh
 bash scripts/orchestrate-watch.sh --once                      # 一度だけ
@@ -118,6 +126,13 @@ bash scripts/storage-orchestrator.sh --routine monthly          # 月次 (rotate
 | pwsh 不在環境で signing 失敗 | テスト用 git repo に `git config commit.gpgsign false` を入れる |
 | `pii-scan.sh` の grep が `-----BEGIN ...` をオプションと誤解釈 | `grep -anHE -e "$pattern"` で `-e` 明示 |
 | 7 ステップだった preflight に 8 ステップ目を追加するとき step 番号を全部書き換え忘れる | sed で一括置換 |
+| 並行書込で同じ prev_hash を 2 行が使い チェーン破断 (v17 で発覚) | `audit_log` に flock 追加済。並列テストでも race しない |
+| 男女別 / 年齢別 で感情分類すると APPI / EU AI Act / 科学的根拠 全てに抵触 | gender-blind を選択。protected attribute 推定を実装上 禁止、テストで担保 (governance/15) |
+| dashboard.js を ESM 分割しようとすると INV (XSS, audit chain, etc.) を壊すリスク | 漸進的拡張 (新ルート追加) を選択、大型 refactor は将来課題 |
+| smoke-test の test-preflight が curl タイムアウト × 4 回 + audit-verify (bash 2200 行) で 62.7s | `PREFLIGHT_FAST=1` でテスト時のみ skip。本番 preflight は変えない (人間が朝に走らせる) |
+| `--prompt-for` が静的ブリーフだけで §10 が古い情報になりやすい | alpha.1 限定で governance/12 §10 を Python で動的抽出 (v16 から) |
+| `#orchestrate` ロード結果がリロードで消える | localStorage キャッシュ (LRU 5 件 / 各 500KB)、storage meter と整合 (v20 から) |
+| `kpi_alpha` が tests/ で grep INV-N するが、INV-N 文字列は test ファイル名にない | 設計図 §4 の「検証」カラムを Python で parse (v11 から) |
 
 ### 4.3 依存追加 / ビルド導入の禁止 (CLAUDE.md 厳守)
 - npm / pip パッケージを足さない (bash + node + python3 + 標準ツールのみ)
@@ -126,12 +141,12 @@ bash scripts/storage-orchestrator.sh --routine monthly          # 月次 (rotate
 
 ---
 
-## 5. INV (不変条件) ─ 全 11 件、自動テスト カバー 100%
+## 5. INV (不変条件) ─ 全 11 件、自動テスト カバー 100% + 倫理ガード (governance/15)
 
 | ID | 不変条件 | テスト |
 |---|---|---|
 | INV-1 | localOnly=true で UI から Anthropic/Google 不可視 | tests/js/test_localonly.mjs |
-| INV-2 | audit.jsonl の各行が SHA-256 連鎖 | tests/unit/test-audit-lib.sh |
+| INV-2 | audit.jsonl の各行が SHA-256 連鎖 (v17 から flock で並行書込安全) | tests/unit/test-audit-lib.sh |
 | INV-3 | user-script (8 本) が `audit_log "*.start"` を呼ぶ | tests/unit/test-inv3-audit-start.sh |
 | INV-4 | ユーザー データ削除は trash 経由 (rebuild artifacts は例外) | tests/unit/test-storage-cleanup.sh |
 | INV-5 | C4 はクラウドに送信不可 | tests/unit/test-storage-archive.sh |
@@ -141,6 +156,11 @@ bash scripts/storage-orchestrator.sh --routine monthly          # 月次 (rotate
 | INV-10 | audit.jsonl 改竄は audit-verify で検出 | tests/unit/test-audit-lib.sh |
 | INV-11 | チーム間 handoff は orchestrate.sh 経由のみ | tests/unit/test-orchestrate.sh |
 | INV-12 | 同 issue を複数チーム同時 scoped 不可 | tests/unit/test-orchestrate-kpi.sh |
+
+**倫理ガード** (governance/15、v18 から):
+- **性別 / 年齢 / 民族 / 宗教 / 性的指向 / 政治志向 / 障害有無** での感情分類 全禁止
+- 推定値はユーザーに常時可視化、外部送信ゼロ
+- `tests/js/test_affect.mjs` で「男性/女性 表記 で valence 差 < 0.05」を機械検証
 
 INV-7 は GOAL-7 (バイト互換) に降格 — pwsh 不在環境では検証不能のため。
 
@@ -251,6 +271,10 @@ pkill -f "orchestrate-watch.sh --loop"
 - **node_modules / 90日超ログ は trash 経由しない**: 再生成可能なので INV-4 の例外
 - **bash↔PowerShell バイト互換**: `audit.ps1` に rotate 未実装 (storage-orchestrator は bash 専用なので OK)
 - **テスト用 git repo は gpgsign=false**: サンドボックスで signing が壊れている
+- **男女別 感情分類は受け取らない (v18)**: ユーザー要求でも APPI / EU AI Act / 科学的根拠 で抵触 → α1 が対案を出して合意
+- **dashboard.js を ESM 分割しない (v19)**: 2700 行で巨大だが大型 refactor は INV を壊すリスク高 → 漸進的拡張で済ませる
+- **#orchestrate / #governance の永続化 は localStorage (v20)**: IndexedDB は API が複雑、localStorage で 5MB あれば十分、storage meter で容量監視
+- **`PREFLIGHT_FAST=1` は本番では使わない (v21)**: 人間が朝に走らせる preflight では curl + audit-verify の本物の結果が欲しい。テスト用フラグは本番運用に影響させない設計
 
 ---
 
@@ -285,6 +309,32 @@ pkill -f "orchestrate-watch.sh --loop"
 | commit + push | リモートで `gh pr view` で見える |
 
 ---
+
+## 11.5. v18-v21 で追加された 主要機能 (新セッションが知るべき)
+
+### v18 (governance/15) — affect-aware adaptive chat (gender-blind)
+- 4 次元 PAD-like (valence/arousal/urgency/formality) を heuristic 推定
+- 設定 → 「🎭 感情適応モード」を ON で起動 (既定 OFF)
+- 推定値はユーザーに常時可視化、外部送信ゼロ
+- 性別/年齢/民族 等での分類は実装上 禁止、テスト で機械検証
+- 関連: `dashboard.js: classifyAffect / affectStyleModifier`、`tests/js/test_affect.mjs`
+
+### v19 — v19 統合 ダッシュボード
+- ナビ に `#orchestrate` (運用) と `#governance` (文書) を追加
+- `#orchestrate`: 4 KPI タイル + 板 30 件 + propose-response (4 breach × IR シナリオ)
+- `#governance`: governance/funding/templates の md を file picker で複数ロード + 検索
+- 既存 5 ルート は無傷 (regression テスト 5 件で担保)
+
+### v20 — localStorage キャッシュ層
+- `#orchestrate` audit.jsonl を 1 件キャッシュ (500KB 上限、超過時は末尾保持)
+- `#governance` md を LRU 5 件 (各 500KB 上限)
+- 起動時に自動復元、file picker は 「上書き / 追加」用に残る
+- storage meter (5MB 監視) と整合
+
+### v21 — テスト 2.2x 高速化
+- `preflight.sh` に `PREFLIGHT_FAST=1` (and `_SKIP_NET=1` / `_SKIP_AUDIT_VERIFY=1`)
+- test-preflight: 62.7s → 1.2s (52x)、smoke 全体 1m48s → 48s (2.2x)
+- 本番 preflight (人間が朝に走らせる) は変えない
 
 ## 12. このセッションで学んだ「やってよかった」こと
 
