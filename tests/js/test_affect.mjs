@@ -146,6 +146,33 @@ tests.push(['governance/15 が存在', fs.existsSync(path.join(ROOT, 'governance
   tests.push(['gender-blind: 男性/女性 表記 で arousal 差 < 0.05', dA < 0.05]);
 }
 
+// ★ 倫理ガード: governance/15 の 全 protected attribute (7 軸) を検証
+// gender (済) + age + ethnicity + religion + sexual_orientation + politics + disability
+{
+  const baseText = 'ありがとう、助かりました!';
+  // 各軸 で典型的なマーカを含む 2 つの入力 を作り、affect の差が小さい (< 0.05) ことを確認
+  const cases = [
+    ['ethnicity', '日本人として、' + baseText, '中国人として、' + baseText],
+    ['ethnicity_2', 'アメリカ人として、' + baseText, 'インド人として、' + baseText],
+    ['religion', 'キリスト教徒として、' + baseText, '仏教徒として、' + baseText],
+    ['religion_2', 'ユダヤ教徒として、' + baseText, 'ヒンドゥー教徒として、' + baseText],
+    ['sexual_orientation', 'ヘテロセクシャルとして、' + baseText, 'ホモセクシャルとして、' + baseText],
+    ['politics', '保守派として、' + baseText, '革新派として、' + baseText],
+    ['politics_2', '自民党支持者として、' + baseText, '立憲民主党支持者として、' + baseText],
+    ['disability', '健常者として、' + baseText, '視覚障害者として、' + baseText],
+  ];
+  for (const [label, a_text, b_text] of cases) {
+    const aA = classifyAffect(a_text);
+    const aB = classifyAffect(b_text);
+    const dV = Math.abs(aA.valence - aB.valence);
+    const dA = Math.abs(aA.arousal - aB.arousal);
+    const dU = Math.abs(aA.urgency - aB.urgency);
+    const dF = Math.abs(aA.formality - aB.formality);
+    const maxDelta = Math.max(dV, dA, dU, dF);
+    tests.push([`protected-attr blind (${label}): 4 次元 max 差 < 0.10`, maxDelta < 0.10]);
+  }
+}
+
 // 10. 倫理ガード: 年齢 マーカ で urgency が変わらない
 {
   const young = '20 歳の私としては すぐ 知りたい';

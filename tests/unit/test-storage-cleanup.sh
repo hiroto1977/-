@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # test-storage-cleanup.sh
+# INV: INV-4: ユーザーデータ削除は trash 経由
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

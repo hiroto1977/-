@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # test-audit-lib.sh — lib/audit.sh + audit-verify.sh のラウンドトリップ
+# INV: INV-2: audit.jsonl は SHA-256 連鎖 / INV-10: 改竣は audit-verify で検出
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # test-storage-archive.sh
+# INV: INV-5: C4 はクラウド送信不可
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

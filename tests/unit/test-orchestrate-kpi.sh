@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # test-orchestrate-kpi.sh — INV-12 (排他着手) と 4 KPI 計算を検証
+# INV: INV-12: 同 issue ID を複数チームが同時 scoped 不可
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # test-orchestrate.sh
+# INV: INV-11: チーム間 handoff は orchestrate.sh --handoff 経由のみ
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

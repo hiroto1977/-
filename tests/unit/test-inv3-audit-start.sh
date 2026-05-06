@@ -2,6 +2,7 @@
 # test-inv3-audit-start.sh — INV-3 検証
 # governance/12 §1.1 で定義された「ユーザー実行型 script」全てが
 # 冒頭で audit_log "<name>.start" を呼んでいることを機械検証。
+# INV: INV-3: user-script (8 本) が audit_log "*.start" を呼ぶ
 set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"

@@ -70,10 +70,14 @@ t_referenced_scripts_exist() {
 }
 
 t_design_version_progressed() {
-  # 設計図 のバージョン (v22+) が README にも示唆されている
-  # 「22 反復」「16 本」など 現状を反映する 数値 表記
-  if ! grep -qE "(22 反復|22\+ 反復|22 \+ 反復|16 本|15 governance)" "$README"; then
-    echo "    現状の規模を反映する数値表記がない"
+  # 設計図 のバージョン (vN) と README の「N 反復」記述 が一致
+  # ─ design_v25 までは「22 反復」のような旧表記が drift して気づけなかった
+  # ─ v26 から: design_iterations の最新数 と README の数値 を一致させる
+  local design_v
+  design_v=$(grep -oE 'v[0-9]+ \(PDCA #[0-9]+' "$ROOT_DIR/governance/12_SYSTEM_DESIGN.md" | head -1 | grep -oE '[0-9]+' | head -1)
+  if [[ -z "$design_v" ]]; then echo "    design version 抽出失敗"; return 1; fi
+  if ! grep -qE "${design_v} 反復" "$README"; then
+    echo "    README が design v${design_v} (=「${design_v} 反復」) を反映していない"
     return 1
   fi
 }

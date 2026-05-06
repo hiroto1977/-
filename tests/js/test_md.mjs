@@ -1,3 +1,4 @@
+// INV: INV-8: UI Markdown は XSS 安全 (escape → markup の順)
 import fs from 'fs';
 import vm from 'vm';
 import path from 'path';

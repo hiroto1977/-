@@ -1,3 +1,4 @@
+// INV: INV-1: localOnly=true で UI から Anthropic/Google 不可視
 import fs from 'fs';
 import vm from 'vm';
 import path from 'path';

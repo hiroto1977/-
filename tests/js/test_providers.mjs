@@ -1,3 +1,4 @@
+// INV: INV-9: Anthropic SSE で input/output_tokens 両方保持
 import fs from 'fs';
 import vm from 'vm';
 import path from 'path';
