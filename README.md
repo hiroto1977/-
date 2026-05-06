@@ -8,7 +8,7 @@
 | **`/desktop/`** | みんなのデスクトップ — 6 つの業務アプリ統合（タスク / メモ / カレンダー / 電卓 / 連絡先 / タイマー） |
 | **`/v19/ui/`** | v19 ダッシュボード — **7 ルート 統合** UI (overview / integrations / **integration-claude** / **orchestrate** / **governance** / audit / settings)。3 AI プロバイダ + ローカル専用モード + 感情適応モード + ブラウザ audit + ストレージメーター |
 | **`/cowork/`** | ローカル AI と Chat する最短ルート（CLI + 自動起動スクリプト） |
-| **`/governance/`** | ローカルファースト業務運用のガバナンス文書群 16 本（法制度・データ分類・運用・士業別ルール・**統合システム設計図 (30 反復)**・**チーム オーケストレーション (4 × 4)**・**ブートストラップ知識**・**感情倫理ガード** 他） |
+| **`/governance/`** | ローカルファースト業務運用のガバナンス文書群 16 本（法制度・データ分類・運用・士業別ルール・**統合システム設計図 (31 反復)**・**チーム オーケストレーション (4 × 4)**・**ブートストラップ知識**・**感情倫理ガード** 他） |
 | **`/funding/`** | 経営戦略 × 資金調達（補助金・助成金・公庫融資・民間融資）フレームワーク + 9 プログラム別チェックリスト |
 | **`/templates/`** | 汎用業務テンプレ集（人事 / 法務 / オペ / 営業 / 危機 / マーケ / 財務） |
 | **`/scripts/`** | 21 本 — preflight / PII 検出 / ストレージ衛生 / 監査 / **L8 オーケストレーション (orchestrate / orchestrate-watch / orchestrate-kpi)** / 4 チーム ブリーフ / PDCA・OODA サイクル定義 |
@@ -213,6 +213,7 @@ CLI の機能: マルチターン履歴、`/model` でモデル切替、`/system
 | [`governance/13_TEAM_ORCHESTRATION.md`](governance/13_TEAM_ORCHESTRATION.md) | **4 チーム × 4 役 + PDCA/OODA** によるオーケストレーション AI 仕組み |
 | [`governance/14_SESSION_KNOWLEDGE.md`](governance/14_SESSION_KNOWLEDGE.md) | **新セッション ブートストラップ知識** (30 秒で読める落とし穴 + チートシート + 暗黙の判断) |
 | [`governance/15_AFFECT_ETHICS.md`](governance/15_AFFECT_ETHICS.md) | **感情適応モード倫理ガード** (gender-blind / protected attribute 禁止 / APPI・EU AI Act 整合) |
+| [`governance/16_WORK_JOURNAL.md`](governance/16_WORK_JOURNAL.md) | **業務 引継ぎ Free システム** (8 event タイプで業務工程を audit.jsonl に統合記録、担当変更時に全文脈 30 分で把握) |
 
 ⚠️ **法的免責**: 本ドキュメント群は一般的整理であり、解釈・適用は必ず有資格専門家へ。
 
@@ -248,6 +249,17 @@ bash scripts/orchestrate-watch.sh --once               # 4 異常チェック (W
 bash scripts/orchestrate-watch.sh --loop 60            # 60 秒ごと 自動監視 (常駐)
 bash scripts/orchestrate-kpi.sh                        # 4 チーム KPI (α INV カバレッジ / β cycle 中央時間 / γ pass 率 / δ 文書鮮度)
 bash scripts/orchestrate-kpi.sh --check                # INV-12 違反のみ高速チェック
+
+# 業務 引継ぎ Free システム (governance/16、v31 から)
+bash scripts/work-journal.sh --start    <task-id> "title=... stakeholder=..."
+bash scripts/work-journal.sh --decision <task-id> "chose=... why=..."
+bash scripts/work-journal.sh --comm     <task-id> "with=... summary=..."
+bash scripts/work-journal.sh --artifact <task-id> "path=... status=draft|review|final"
+bash scripts/work-journal.sh --handoff  <task-id> "next=... open=..."
+bash scripts/work-journal.sh --complete <task-id> "outcome=... retro=..."
+bash scripts/work-journal.sh --list                    # active タスク 一覧
+bash scripts/work-journal.sh --show     <task-id>      # 全イベント 時系列
+bash scripts/work-journal.sh --export   <task-id>      # Markdown サマリ
 bash scripts/audit-export.sh ~/Desktop/audit-bak       # 監査ログを USB 等にオフライン エクスポート
 bash scripts/orchestrate.sh --cycle pdca               # オーケストレーション AI 4 チーム × 4 役 (週次)
 bash scripts/orchestrate.sh --cycle ooda --trigger preflight  # 異常事態 (60 秒対応)
