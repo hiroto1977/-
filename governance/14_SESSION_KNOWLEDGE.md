@@ -14,9 +14,9 @@
 2. **L8 オーケストレーション AI** が 4 チーム × 4 役で PDCA/OODA を回し、自分で歪みを発見し自分で塞ぐ
 3. **板 (`~/.claude/audit.jsonl`)** に SHA-256 連鎖で全活動を記録、改竄検知可能
 
-設計図 **v39**、PDCA × **28** + OODA × **2** が稼働実績。§10 課題は全 **39** 件 実装済。
+設計図 **v40**、PDCA × **29** + OODA × **2** が稼働実績。§10 課題は全 **40** 件 実装済。
 v31 で **業務 引継ぎ Free システム** (governance/16 + work-journal.sh)、v32 で **Resilience テスト 15 件** (tests/resilience/) — 業務記録が止まらないことを機械検証。
-v33 で **設計図 全面書直し** (16 章で 30 分把握)、v34-v35 で `#journal` UI + DSL、v36-v37 で v19 最適化再構築 (L6 UI 8 モジュール)、v38 で UX 統合 (KPI トレンド + ARIA + DSL 例)、**v39 で 観測性 + オフライン強化** — Anthropic 拡張思考 (thinking_delta + thinkingBudget) + 監査ログ 7d/30d トレンド + PWA SW v3 (stale-while-revalidate)。
+v33 で **設計図 全面書直し** (16 章で 30 分把握)、v34-v35 で `#journal` UI + DSL、v36-v37 で v19 最適化再構築 (L6 UI 8 モジュール)、v38 で UX 統合、v39 で 観測性 + オフライン強化、**v40 で #journal 親子タスク** — governance/16 Phase 2、`parent=<ID>` 規約 + `tasksToTree()` + ネスト UI + DSL `parent:<ID>|none|any` (Phase 11 業務階層 開始)。
 v18 で affect-aware (gender-blind) chat、v19 で v19 ダッシュボード統合、v20 で永続キャッシュ、v21 で テスト 2.2x 高速化、v22 で knowledge doc を drift sniff 連動更新、v23 で README を drift sniff 連動更新、v24 で `orchestrate.sh --auto` (bootstrap/pdca/ooda/monitor) 半自動モード追加、v25 で audit-verify を Python 化 (smoke 19s、v21 比 5.7x)、v26 で 過去の罠 12 件を回帰テスト化 (tests/regression/)。
 
 ---

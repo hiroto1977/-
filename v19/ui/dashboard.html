@@ -519,16 +519,20 @@
             <button class="chip" type="button" data-dsl-query="state:handoff">🟣 引継ぎ待ち</button>
             <button class="chip" type="button" data-dsl-query="has:artifact">📎 成果物あり</button>
             <button class="chip" type="button" data-dsl-query="has:decision">✅ 意思決定あり</button>
+            <button class="chip" type="button" data-dsl-query="parent:none">🌳 ルートのみ</button>
+            <button class="chip" type="button" data-dsl-query="parent:any">🌿 子タスクのみ</button>
             <button class="chip" type="button" data-dsl-query="" aria-label="フィルタ クリア">✖ クリア</button>
           </div>
           <p id="journalDslHint" class="hint muted">
             DSL: <code>state:active|blocked|handoff|complete</code> /
             <code>stakeholder:&lt;名&gt;</code> /
             <code>id:&lt;ID&gt;</code> /
+            <code>parent:&lt;ID&gt;|none|any</code> /
             <code>deadline&lt;YYYY-MM-DD</code> /
             <code>deadline&gt;YYYY-MM-DD</code> /
             <code>has:artifact|handoff|block|decision</code>。
             自由語は id/title/担当 を AND マッチ。チップ クリックで例を投入。
+            子タスクは <code>parent=&lt;親 ID&gt;</code> を <code>--start</code> の details に記載。
           </p>
         </section>
 

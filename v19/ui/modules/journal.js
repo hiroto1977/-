@@ -51,6 +51,7 @@ export function parseTasksFromAudit(auditEvents) {
         title: '',
         stakeholder: '',
         deadline: '',
+        parent: '',  // v40 PDCA #29 — 親タスク ID (未設定 = ルート)
         lastTs: '',
       });
     }
@@ -62,6 +63,7 @@ export function parseTasksFromAudit(auditEvents) {
       if (!t.title) t.title = extractKey(d, 'title');
       if (!t.stakeholder) t.stakeholder = extractKey(d, 'stakeholder');
       if (!t.deadline) t.deadline = extractKey(d, 'deadline');
+      if (!t.parent) t.parent = extractKey(d, 'parent');  // governance/16 Phase 2
     }
   }
   // 状態を後から決定
@@ -82,7 +84,7 @@ export function parseTasksFromAudit(auditEvents) {
 // 不正な key は free に降格 (失敗で空配列にしない)。
 export function parseQuery(q) {
   const out = {
-    free: [], state: null, stakeholder: null, idQ: null,
+    free: [], state: null, stakeholder: null, idQ: null, parent: null,
     deadlineLT: null, deadlineGT: null, has: new Set(),
   };
   if (!q) return out;
@@ -92,6 +94,7 @@ export function parseQuery(q) {
     if ((m = tok.match(/^state:([a-z]+)$/i))) out.state = m[1].toLowerCase();
     else if ((m = tok.match(/^stakeholder:(.+)$/i))) out.stakeholder = m[1].toLowerCase();
     else if ((m = tok.match(/^id:(.+)$/i))) out.idQ = m[1].toLowerCase();
+    else if ((m = tok.match(/^parent:(.+)$/i))) out.parent = m[1].toLowerCase();
     else if ((m = tok.match(/^deadline<(.+)$/i))) out.deadlineLT = m[1];
     else if ((m = tok.match(/^deadline>(.+)$/i))) out.deadlineGT = m[1];
     else if ((m = tok.match(/^has:(artifact|handoff|block|decision|comm|resume|complete|start)$/i))) out.has.add(m[1].toLowerCase());
@@ -109,6 +112,13 @@ export function matchTask(task, query) {
   if (query.state && task.state !== query.state) return false;
   if (query.stakeholder && !(task.stakeholder || '').toLowerCase().includes(query.stakeholder)) return false;
   if (query.idQ && !(task.id || '').toLowerCase().includes(query.idQ)) return false;
+  if (query.parent !== null) {
+    const p = (task.parent || '').toLowerCase();
+    // 特殊値: parent:none = ルートタスクのみ、parent:any = 子タスクのみ
+    if (query.parent === 'none') { if (p !== '') return false; }
+    else if (query.parent === 'any') { if (p === '') return false; }
+    else if (!p.includes(query.parent)) return false;
+  }
   if (query.deadlineLT) {
     if (!task.deadline || !(task.deadline < query.deadlineLT)) return false;
   }
@@ -132,6 +142,37 @@ export function tasksToArray(tasksMap, { stateFilter = 'all', search = '' } = {}
   const filtered = arr.filter(t => matchTask(t, q));
   filtered.sort((a, b) => (b.lastTs || '').localeCompare(a.lastTs || ''));
   return filtered;
+}
+
+// タスク マップ → ツリー (governance/16 Phase 2、PDCA #29 v40)
+// {parent_id || ''} → [子タスク, ...] にグループ化。
+// ルート (parent='') を返し、各タスク に { children: [...] } を再帰付与。
+// 親不在の子 (parent ID が マップに存在しない) は ルート に格上げ + isOrphan=true。
+//
+// フィルタ済み配列 (tasksToArray の出力) を受けても動くよう、引数は
+// Map | Iterable<task> 両対応。
+export function tasksToTree(tasksMapOrArray) {
+  const all = Array.isArray(tasksMapOrArray) || tasksMapOrArray instanceof Map
+    ? Array.from(tasksMapOrArray instanceof Map ? tasksMapOrArray.values() : tasksMapOrArray)
+    : [];
+  const byId = new Map(all.map(t => [t.id, { ...t, children: [] }]));
+  const roots = [];
+  for (const t of byId.values()) {
+    const pid = t.parent || '';
+    if (pid && byId.has(pid)) {
+      byId.get(pid).children.push(t);
+    } else {
+      if (pid && !byId.has(pid)) t.isOrphan = true;  // 親不在 = orphan
+      roots.push(t);
+    }
+  }
+  // 各レベルで lastTs 降順
+  const sortRec = (arr) => {
+    arr.sort((a, b) => (b.lastTs || '').localeCompare(a.lastTs || ''));
+    for (const t of arr) sortRec(t.children);
+  };
+  sortRec(roots);
+  return roots;
 }
 
 // 状態 → アイコン + ラベル

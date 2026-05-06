@@ -12,7 +12,8 @@ import {
 } from './modules/audit-browser.js';
 import { escapeHtml, renderMarkdown, activateCopyButtons as _activateCopyButtonsRaw } from './modules/markdown.js';
 import {
-  parseTasksFromAudit, tasksToArray, stateBadge, formatTaskTimeline,
+  parseTasksFromAudit, tasksToArray, tasksToTree,
+  stateBadge, formatTaskTimeline,
 } from './modules/journal.js';
 import {
   parseAuditLineSimple, computeOrchestrateKPI, filterBoardEvents,
@@ -2092,20 +2093,35 @@ function renderJournal() {
     list.innerHTML = '<li class="muted">該当 タスクなし</li>';
     return;
   }
-  list.innerHTML = arr.map((t, i) => {
-    const b = stateBadge(t.state);
-    const tl = formatTaskTimeline(t);
-    const lastTs = (t.lastTs || '').slice(0, 19).replace('T', ' ');
-    return `<li class="journal-card ${escapeHtml(b.cls)}">
-      <details>
+  // governance/16 Phase 2 (PDCA #29 v40): 親子 ツリー描画
+  // tasksToTree は フィルタ後の配列 を 受け取り、親が フィルタ外 なら子を ルート に格上げ。
+  const tree = tasksToTree(arr);
+  list.innerHTML = tree.map(root => _renderJournalNode(root, 0)).join('');
+}
+
+function _renderJournalNode(t, depth) {
+  const b = stateBadge(t.state);
+  const tl = formatTaskTimeline(t);
+  const lastTs = (t.lastTs || '').slice(0, 19).replace('T', ' ');
+  const childCount = (t.children || []).length;
+  const childMarker = childCount > 0 ? ` 🌿×${childCount}` : '';
+  const orphanMarker = t.isOrphan ? ' 🪶 親不在' : '';
+  const parentMarker = (depth === 0 && t.parent) ? ` ↳ 親: <code>${escapeHtml(t.parent)}</code>` : '';
+  const childrenHtml = childCount > 0
+    ? `<ul class="journal-children">${(t.children || []).map(c => _renderJournalNode(c, depth + 1)).join('')}</ul>`
+    : '';
+  const cardClass = depth > 0 ? `${escapeHtml(b.cls)} is-child depth-${Math.min(depth, 4)}` : escapeHtml(b.cls);
+  return `<li class="journal-card ${cardClass}">
+      <details${depth > 0 ? '' : ''}>
         <summary class="journal-summary">
           <span class="journal-state-icon" title="${escapeHtml(b.label)}">${b.icon}</span>
-          <span class="journal-id"><code>${escapeHtml(t.id)}</code></span>
+          <span class="journal-id"><code>${escapeHtml(t.id)}</code>${childMarker}${orphanMarker}</span>
           <span class="journal-title">${escapeHtml(t.title || '(タイトル未設定)')}</span>
           <span class="journal-meta muted">
             ${t.stakeholder ? `担当: ${escapeHtml(t.stakeholder)}` : ''}
             ${t.deadline ? ` / 期限: ${escapeHtml(t.deadline)}` : ''}
             ${lastTs ? ` / 最終: ${escapeHtml(lastTs)}` : ''}
+            ${parentMarker}
           </span>
         </summary>
         <ol class="journal-timeline">
@@ -2116,8 +2132,8 @@ function renderJournal() {
           </li>`).join('')}
         </ol>
       </details>
+      ${childrenHtml}
     </li>`;
-  }).join('');
 }
 
 function boot() {

@@ -13,7 +13,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const {
   deriveTaskState, extractKey, parseTasksFromAudit, tasksToArray,
   stateBadge, formatTaskTimeline, isHandoffReady, getArtifactPaths,
-  parseQuery, matchTask,
+  parseQuery, matchTask, tasksToTree,
 } = await import(path.join(ROOT, 'v19/ui/modules/journal.js'));
 
 const tests = [];
@@ -250,8 +250,8 @@ T('dashboard.css に .journal-active 状態色', cssSrc.includes('.journal-activ
 // v38 (PDCA #27): DSL 例 チップ + ARIA
 T('dashboard.html: DSL 例 ツールバー (role + aria-label)',
   /class="journal-dsl-examples"\s+role="toolbar"/.test(htmlSrc));
-T('dashboard.html: 6 つの 例 chip',
-  (htmlSrc.match(/data-dsl-query=/g) || []).length === 6);
+T('dashboard.html: 8 つの 例 chip (v40 で parent:none/any 追加)',
+  (htmlSrc.match(/data-dsl-query=/g) || []).length === 8);
 T('dashboard.html: クリア chip (空 query)',
   /data-dsl-query=""/.test(htmlSrc));
 T('dashboard.html: search box に aria-describedby',
@@ -260,6 +260,85 @@ T('dashboard.css: .journal-dsl-examples スタイル',
   cssSrc.includes('.journal-dsl-examples'));
 T('dashboard.js: data-dsl-query クリック ハンドラ',
   dashSrc.includes('data-dsl-query'));
+
+// ── 12. 子タスク (governance/16 Phase 2、v40 PDCA #29) ──
+{
+  const audit = [
+    { ts: '2026-06-01T09:00:00Z', event: 'work.task.start',
+      details: 'task=P-1 title=親A stakeholder=alice deadline=2026-07-31' },
+    { ts: '2026-06-01T10:00:00Z', event: 'work.task.start',
+      details: 'task=C-1 parent=P-1 title=子A1 stakeholder=bob' },
+    { ts: '2026-06-01T11:00:00Z', event: 'work.task.start',
+      details: 'task=C-2 parent=P-1 title=子A2 deadline=2026-06-15' },
+    { ts: '2026-06-02T09:00:00Z', event: 'work.task.start',
+      details: 'task=P-2 title=親B (子なし)' },
+    // 親不在 (orphan)
+    { ts: '2026-06-02T10:00:00Z', event: 'work.task.start',
+      details: 'task=O-1 parent=P-MISSING title=孤児' },
+  ];
+  const m = parseTasksFromAudit(audit);
+
+  // parent フィールド 抽出
+  T('parent: P-1 → ルート (parent="")',
+    m.get('P-1').parent === '');
+  T('parent: C-1 → P-1',
+    m.get('C-1').parent === 'P-1');
+  T('parent: C-2 → P-1',
+    m.get('C-2').parent === 'P-1');
+
+  // tasksToTree
+  const tree = tasksToTree(m);
+  T('tree: 3 ルート (P-1 + P-2 + O-1)',
+    tree.length === 3 && tree.every(t => Array.isArray(t.children)));
+  const p1 = tree.find(t => t.id === 'P-1');
+  T('tree: P-1 の children = 2 (C-1, C-2)',
+    p1.children.length === 2 &&
+    p1.children.map(c => c.id).sort().join(',') === 'C-1,C-2');
+  const o1 = tree.find(t => t.id === 'O-1');
+  T('tree: O-1 は orphan (親不在 → ルート 昇格)',
+    o1 && o1.isOrphan === true);
+  T('tree: P-2 は children=[]',
+    tree.find(t => t.id === 'P-2').children.length === 0);
+
+  // tasksToTree: 配列受け取り (フィルタ済 array)
+  const filtered = [m.get('P-1'), m.get('C-1')];
+  const tree2 = tasksToTree(filtered);
+  T('tree: 配列入力 + 親存在 → 1 ルート + 1 子',
+    tree2.length === 1 && tree2[0].children.length === 1);
+  const filtered2 = [m.get('C-1'), m.get('C-2')]; // 親不在
+  const tree3 = tasksToTree(filtered2);
+  T('tree: フィルタで 親が落ちた子は ルート 昇格',
+    tree3.length === 2 && tree3.every(t => t.children.length === 0));
+
+  // DSL: parent:
+  T('DSL: parent:P-1 → C-1, C-2',
+    tasksToArray(m, { search: 'parent:P-1' }).map(t => t.id).sort().join(',')
+      === 'C-1,C-2');
+  // O-1.parent = 'P-MISSING' は truthy → parent:any に該当、parent:none に該当しない
+  T('DSL: parent:none → P-1, P-2 のみ (parent="")',
+    tasksToArray(m, { search: 'parent:none' }).length === 2 &&
+    tasksToArray(m, { search: 'parent:none' }).every(t => !t.parent));
+  T('DSL: parent:any → C-1, C-2, O-1 (parent 値あり、orphan 含む)',
+    tasksToArray(m, { search: 'parent:any' }).length === 3 &&
+    tasksToArray(m, { search: 'parent:any' }).every(t => !!t.parent));
+  T('parseQuery: parent:none',
+    parseQuery('parent:none').parent === 'none');
+  T('parseQuery: parent:any',
+    parseQuery('parent:any').parent === 'any');
+}
+
+// drift sniff 追加 (v40)
+T('dashboard.js: tasksToTree を import',
+  /import\s*\{[^}]*tasksToTree[^}]*\}\s*from\s*['"]\.\/modules\/journal\.js['"]/.test(
+    dashSrc.replace(/\s+/g, ' ')));
+T('dashboard.html: parent:none + parent:any chip',
+  /data-dsl-query="parent:none"/.test(htmlSrc) &&
+  /data-dsl-query="parent:any"/.test(htmlSrc));
+T('dashboard.css: .journal-children + .is-child',
+  cssSrc.includes('.journal-children') && cssSrc.includes('.is-child'));
+T('governance/16: Phase 2 セクション 存在',
+  fs.readFileSync(path.join(ROOT, 'governance/16_WORK_JOURNAL.md'), 'utf8')
+    .includes('Phase 2: 子タスク'));
 
 // ── レポート ──
 let pass = 0, fail = 0;

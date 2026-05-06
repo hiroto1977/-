@@ -1,8 +1,8 @@
 # 12. 統合システム 設計図 (System Blueprint)
 
-> **現バージョン**: **v39 (拡張思考 + 監査トレンド + PWA SWR — 観測性 と オフライン体験 強化)**
+> **現バージョン**: **v40 (#journal 親子タスク — governance/16 Phase 2、業務階層化)**
 >
-> **目的**: 38 サイクル分 (PDCA × 27 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
+> **目的**: 39 サイクル分 (PDCA × 28 + OODA × 2 + 初期構築 9) で築いた システムを、新規読者が **30 分で全体像** を把握できる形に整理。
 >
 > **読み手**: 新規セッション (Claude / 別 AI / 人間)、レビュア、運用者
 > **読了時間**: 30 分 (詳細は各 governance docs と design-iterations/v{N}.md へ)
@@ -431,24 +431,22 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 | **Phase 7: 集大成** | v33 | 設計図 全面書直し (本文書) |
 | **Phase 8: 業務 UI 統合** | v34-v35 | v34: v19 `#journal` ルート 実装 (modules/journal.js + 状態色 + キャッシュ + 55 unit tests)、v35: 横断検索 DSL (`state:` / `deadline<` / `deadline>` / `has:` / `stakeholder:` / `id:` / 自由語 AND、74 unit tests) |
 | **Phase 9: モジュール 集大成** | v36-v37 | v36: orchestrate.js + providers.js 抽出、v37: sessions.js + audit-viewer.js 抽出。dashboard.js 2620→2098、L6 UI が 8 モジュール 構成 |
-| **Phase 10: UX 統合** | v38-**v39** | v38: KPI トレンド + ARIA + #journal DSL 例、**v39: 拡張思考 (Anthropic thinking_delta) + 監査トレンド (summarizeAuditTrend) + PWA stale-while-revalidate** — Claude 4 系 拡張思考の 推論過程 を可視化、監査ログを期間別 で見られる、オフライン 体験 が SWR で 改善 |
+| **Phase 10: UX 統合** | v38-v39 | v38: KPI トレンド + ARIA + #journal DSL 例、v39: 拡張思考 + 監査トレンド + PWA SWR |
+| **Phase 11: 業務階層** | **v40** | governance/16 Phase 2 — `parent=<ID>` 規約で親子タスク、`tasksToTree()` 純粋関数 + ネスト UI 描画 (children ボーダー / depth-2..4 / 🪶 親不在 マーク) + DSL `parent:<ID>|none|any` 拡張 (8 例 chip)。CLI は free-form details で 互換維持 (新フラグ 不要) |
 
-詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 39) に保存。
+詳細 反復履歴 は `governance/design-iterations/v{N}.md` (1 ≤ N ≤ 40) に保存。
 
 ---
 
 ## 14. 既知の課題 (Open Issues)
 
-§10 課題 38 件は全て実装済 (v1-v38)。**#39 (v39): 拡張思考 + 監査トレンド + PWA SWR 完了** —
-(a) `providers.js#anthropicSendStream` が `thinking_delta` を別 callback (`onThinking`) に流し、`thinkingBudget >= 1024` で `body.thinking={type:enabled,budget_tokens}` を自動設定 (Claude 4 系 拡張思考)、
-(b) `audit-viewer.js#summarizeAuditTrend(entries, windowDays, now)` で監査ログを 7 日 / 30 日 / 全期間 切替 (now 注入で決定論)、
-(c) `desktop/sw.js` v2 → v3、cache-first → stale-while-revalidate に変更、ナビゲーション fallback と GET-only 制限を厳密化、cross-origin は SW 介入なしに整理。
-新規 24 unit tests (audit trend 10 + thinking_delta 7 + SWR 7) + drift sniff 拡張。残る候補:
+§10 課題 39 件は全て実装済 (v1-v39)。**#40 (v40): #journal 親子タスク 完了** — governance/16 Phase 2 を実装。`parent=<親 ID>` を `--start` の details に含めるだけで親子関係を表現 (CLI 新フラグ不要、後方互換)。`modules/journal.js` に `tasksToTree(map | array)` 純粋関数を追加 (フィルタで親が落ちた子は ルート 昇格 + isOrphan マーク)、DSL に `parent:<ID>|none|any` の 3 形式追加、UI に「🌳 ルートのみ / 🌿 子タスクのみ」chip 追加で 8 例 chip に。新規 19 unit tests + governance/16 §10 Phase 2 章追加。残る候補:
 
-- pwsh 実機テスト (Windows / macOS) — このリポは Linux で開発、pwsh 実機検証は手動
-- `#journal` タスク カード に「子タスク」概念 (governance/16 Phase 2)
+- pwsh 実機テスト (Windows / macOS) — Linux で開発、pwsh 実機検証は手動
 - KPI トレンド の グラフ可視化 (Sparkline、現状はテキストのみ)
 - desktop/ PWA の オフライン時 UI フィードバック (banner + queued sync)
+- providers.js の Google Gemini thinking 対応 (`thoughts: true` 配信が始まれば)
+- 監査ログ ビューア で「日付ヒートマップ」(時間帯 別 イベント密度)
 
 ---
 
@@ -464,7 +462,7 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - 新セッション → `governance/14_SESSION_KNOWLEDGE.md`
 - 業務工程 → `governance/16_WORK_JOURNAL.md`
 - テスト → `tests/README.md`
-- 反復 履歴 → `governance/design-iterations/v{1-39}.md`
+- 反復 履歴 → `governance/design-iterations/v{1-40}.md`
 
 ---
 
@@ -477,4 +475,5 @@ bash scripts/orchestrate.sh --auto ooda                 # watcher → propose-re
 - v36 (2026-05): v19 最適化再構築 (PDCA #25) — Phase 9 開始、35 反復の学びから dashboard.js を 2620 → 2170 行 (-450) に縮小。`modules/orchestrate.js` (KPI 計算 + INV-12 検出 + board フィルタ + OODA_RESPONSES、48 unit tests) と `modules/providers.js` (3 プロバイダ sender + ProviderError + content helpers、57 unit tests) に純粋ロジック層を抽出。L6 UI が 6 モジュール構成 (markdown/audit-browser/affect/journal/orchestrate/providers) になり、各 INV 境界を独立検証可能に
 - v37 (2026-05): sessions.js + audit-viewer.js 抽出 (PDCA #26) — dashboard.js 2170 → 2098 行、L6 UI 8 モジュール構成に到達 (markdown/audit-browser/affect/journal/orchestrate/providers/sessions/audit-viewer)
 - v38 (2026-05): UX 統合 (PDCA #27) — Phase 10 開始。(a) `computeKpiTrend()` で L8 KPI 7d/30d/全期間 切替、(b) ARIA 強化、(c) `#journal` DSL 例 6 チップ
-- **v39 (2026-05): 拡張思考 + 監査トレンド + PWA SWR (PDCA #28)** — (a) `providers.js` Anthropic `thinking_delta` 対応 (Claude 4 系 拡張思考、`onThinking` callback / `thinkingBudget` パラメータ)、(b) `audit-viewer.js#summarizeAuditTrend` で監査ログを 7d/30d/全期間 切替、(c) `desktop/sw.js` v3 (stale-while-revalidate + ナビゲーション fallback + cross-origin 介入なし)。新規 24 unit tests
+- v39 (2026-05): 拡張思考 + 監査トレンド + PWA SWR (PDCA #28) — (a) Anthropic `thinking_delta` 対応、(b) `summarizeAuditTrend` で監査ログ 7d/30d/全期間、(c) `desktop/sw.js` v3 SWR
+- **v40 (2026-05): #journal 親子タスク (PDCA #29)** — Phase 11 (業務階層) 開始。governance/16 Phase 2 実装: `parent=<ID>` 規約 (CLI 新フラグ不要、free-form details で互換維持)、`tasksToTree()` で 親→子→孫 の ツリー構築、ネスト UI 描画 (.journal-children + .is-child + depth クラス)、DSL `parent:<ID>|none|any` (8 例 chip)、19 新 unit tests

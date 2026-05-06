@@ -1003,6 +1003,17 @@ textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
   list-style: none; padding: 0; margin: 0;
   display: flex; flex-direction: column; gap: var(--sp-2);
 }
+/* governance/16 Phase 2 (v40, PDCA #29): 親子 ネスト描画 */
+.journal-children {
+  list-style: none; padding: 0; margin: var(--sp-1) 0 0 var(--sp-3);
+  display: flex; flex-direction: column; gap: var(--sp-1);
+  border-left: 2px dashed var(--c-border);
+  padding-left: var(--sp-3);
+}
+.journal-card.is-child { background: var(--c-surface); }
+.journal-card.is-child.depth-2 { opacity: 0.95; }
+.journal-card.is-child.depth-3 { opacity: 0.9; }
+.journal-card.is-child.depth-4 { opacity: 0.85; }
 .journal-card {
   border: 1px solid var(--c-border); border-radius: var(--r-md);
   background: var(--c-surface);

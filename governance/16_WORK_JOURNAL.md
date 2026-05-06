@@ -243,6 +243,49 @@ bash scripts/work-journal.sh --handoff <task> "next=... open=..."
 
 ---
 
-## 10. 改定履歴
+## 10. Phase 2: 子タスク (v40 / PDCA #29)
+
+業務 1 件 を 細分化したい場合の 規約。CLI / 監査 ログ スキーマ / UI の すべてが
+**追加情報のみ** で互換性を維持 — 既存タスクは ルート扱い のまま動く。
+
+### 規約
+
+- 親タスク を `--start` し、ID を控える (例: `20260601-契約検討`)
+- 子タスク も通常通り `--start` するが、details に `parent=<親 ID>` を含める
+
+```sh
+# 親
+bash scripts/work-journal.sh --start 20260601-契約検討 \
+  "title=新規取引契約 stakeholder=A社田中部長 deadline=2026-07-31"
+
+# 子 (parent= で紐付け)
+bash scripts/work-journal.sh --start 20260601-契約検討-条項精査 \
+  "parent=20260601-契約検討 title=条項精査 deadline=2026-06-15"
+bash scripts/work-journal.sh --start 20260601-契約検討-見積添付 \
+  "parent=20260601-契約検討 title=見積書添付"
+```
+
+### 親子関係の解釈
+
+- 親 ID は `.start` イベントの details に **1 度だけ** 記録 (以降のイベントには不要)
+- 親が監査ログに存在しない子は **🪶 親不在** マークで UI に出す (削除や typo の発見)
+- 子 → 親 の 1:N 関係 (1 子は 1 親のみ)。多段ネストは可 (孫まで)
+
+### v19 ダッシュボード `#journal`
+
+- 親カードの下に 子カードが インデント (`.journal-children` ボーダー付)
+- 親が DSL フィルタ で 落ちた場合、子は ルートに昇格 + 「↳ 親: <ID>」マーク
+- DSL 拡張: `parent:none` (ルートのみ) / `parent:any` (子のみ) / `parent:<ID>` (特定 親 配下)
+
+### 法的・監査観点
+
+子タスク も `work.task.*` の 通常イベント なので、INV-2 (chain hash) / INV-10
+(改竄検知) は そのまま 適用。J-SOX / 電子帳簿法 上の 「業務記録の階層化」要件にも
+適合 (専門家確認推奨)。
+
+---
+
+## 11. 改定履歴
 
 - 2026-05: v31 で初版 (governance/16_WORK_JOURNAL.md として独立)
+- 2026-05: v40 で Phase 2 (親子タスク) 追加 — `parent=<ID>` 規約 + UI ネスト 描画 + DSL 拡張
