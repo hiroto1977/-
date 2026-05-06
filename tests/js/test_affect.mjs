@@ -67,14 +67,18 @@ function affectStyleModifier(a) {
 
 const tests = [];
 
-// 1. drift sniff: dashboard.js が必須シンボルを持っている
-tests.push(['dashboard.js に classifyAffect', dashSrc.includes('function classifyAffect')]);
-tests.push(['dashboard.js に affectStyleModifier', dashSrc.includes('function affectStyleModifier')]);
-tests.push(['dashboard.js に AFFECT_MARKERS', dashSrc.includes('AFFECT_MARKERS')]);
+// 1. drift sniff: dashboard.js + modules/ で 必須シンボル 公開 (v29 から file-aware)
+const affectModuleSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/modules/affect.js'), 'utf8');
+const inDashOrModule = (sym) => dashSrc.includes(sym) || affectModuleSrc.includes(sym);
+tests.push(['classifyAffect (dashboard or modules)', inDashOrModule('function classifyAffect')]);
+tests.push(['affectStyleModifier (dashboard or modules)', inDashOrModule('function affectStyleModifier')]);
+tests.push(['AFFECT_MARKERS (dashboard or modules)', inDashOrModule('AFFECT_MARKERS')]);
 tests.push(['dashboard.js に opt-in ガード', dashSrc.includes('state.affect?.optedIn === true')]);
 tests.push(['dashboard.js が auditLogBrowser に値を渡さない (privacy)',
   dashSrc.includes("auditLogBrowser('affect.classified', '')")]);
 tests.push(['governance/15 が存在', fs.existsSync(path.join(ROOT, 'governance/15_AFFECT_ETHICS.md'))]);
+tests.push(['dashboard.js が affect モジュール を import',
+  dashSrc.includes("from './modules/affect.js'")]);
 
 // 2. 4 次元 すべて [0, 1] に clamp
 {

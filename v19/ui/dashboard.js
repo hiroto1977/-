@@ -3,6 +3,14 @@
    ハッシュルーター + 連携サービス管理 + Claude 連携
    ========================================================= */
 
+// ── ESM modules (v29 から、governance/12 §10 #29) ──
+import { AFFECT_MARKERS, classifyAffect, affectStyleModifier } from './modules/affect.js';
+import {
+  BROWSER_AUDIT_KEY, BROWSER_AUDIT_MAX,
+  auditJsonEscape, reconstructAuditBody, sha256Hex,
+  auditLogBrowser, exportBrowserAuditAsJsonl, loadBrowserAudit, clearBrowserAudit,
+} from './modules/audit-browser.js';
+
 // ---------- Storage ----------
 const STORAGE_KEY = 'v19-dashboard-v1';
 const DEFAULT_DATA = {
@@ -609,75 +617,7 @@ document.getElementById('resetAllBtn').addEventListener('click', async () => {
 // 詳細: governance/15_AFFECT_ETHICS.md
 // ─────────────────────────────────────────
 
-// 推定マーカ (governance/15 で透明性を担保するため、ここに全部書く)
-const AFFECT_MARKERS = {
-  valence_pos: ['ありがと', 'いいね', '最高', '素晴らし', 'すごい', '成功', '助かっ', 'うまくいっ', 'OK', 'いい感じ', '完璧', '神'],
-  valence_neg: ['困っ', 'だめ', '無理', '最悪', '嫌だ', '失敗', 'エラー', 'うまくいかな', 'できな', 'やめ', 'つらい', 'しんどい', 'バグ'],
-  urgency_hi: ['急', 'すぐ', '至急', '今日中', '明日まで', '助けて', 'ASAP', '緊急', '間に合', '早く', 'やばい'],
-  formality_hi_endings: ['です。', 'ます。', 'です', 'ます', 'ございます', 'いたします', 'お願いいたします', '存じます', '申し上げ'],
-  formality_lo_markers: ['だよ', 'じゃん', 'だね', 'やん', 'っしょ', 'かな〜'],
-};
-
-function _affectCount(text, list) {
-  let n = 0;
-  for (const m of list) {
-    const idx = text.split(m).length - 1;
-    n += idx;
-  }
-  return n;
-}
-
-function _clamp01(x) { return Math.max(0, Math.min(1, x)); }
-
-// 主関数: 発話 → 4 次元 + 説明
-function classifyAffect(text) {
-  const empty = { valence: 0.5, arousal: 0.5, urgency: 0.5, formality: 0.5, evidence: { length: 0 } };
-  if (typeof text !== 'string' || !text.trim()) return empty;
-  const t = text.trim();
-  const len = t.length;
-
-  // valence: pos / neg マーカ の差
-  const pos = _affectCount(t, AFFECT_MARKERS.valence_pos);
-  const neg = _affectCount(t, AFFECT_MARKERS.valence_neg);
-  const valence = _clamp01(0.5 + (pos - neg) * 0.15);
-
-  // arousal: ! 数 / 反復文字 / 絵文字推定
-  const exclam = (t.match(/[!!]/g) || []).length;
-  const question = (t.match(/[??]/g) || []).length;
-  const repeat = (t.match(/(.)\1{2,}/g) || []).length; // 「あああ」「ーーー」
-  const emoji = (t.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu) || []).length;
-  const arousalRaw = exclam * 0.15 + question * 0.05 + repeat * 0.2 + emoji * 0.1;
-  const arousal = _clamp01(0.3 + arousalRaw);
-
-  // urgency: 急ぎ系語彙
-  const urg = _affectCount(t, AFFECT_MARKERS.urgency_hi);
-  const urgency = _clamp01(0.3 + urg * 0.25);
-
-  // formality: 敬語末尾 vs 砕け末尾
-  const formHi = _affectCount(t, AFFECT_MARKERS.formality_hi_endings);
-  const formLo = _affectCount(t, AFFECT_MARKERS.formality_lo_markers);
-  // 文末1文字が「。」なら formal 寄り
-  const endsPeriod = /[。.]\s*$/.test(t) ? 1 : 0;
-  const formality = _clamp01(0.5 + (formHi - formLo) * 0.18 + endsPeriod * 0.05);
-
-  return {
-    valence, arousal, urgency, formality,
-    evidence: { length: len, pos, neg, exclam, question, repeat, emoji, urg, formHi, formLo, endsPeriod }
-  };
-}
-
-// 4 次元 → system prompt modifier (応答スタイル)
-function affectStyleModifier(a) {
-  if (!a) return '';
-  const lines = [];
-  if (a.urgency > 0.7) lines.push('ユーザーは急いでいます。前置きを省き短く即答してください。');
-  if (a.valence < 0.35) lines.push('ユーザーは困っているか不快を示しています。共感を示しつつ問題解決にフォーカスしてください。');
-  if (a.formality > 0.7) lines.push('ユーザーは丁寧語で話しています。敬語で論理的に応答してください。');
-  if (a.formality < 0.35 && a.arousal > 0.6) lines.push('ユーザーは砕けた高テンションです。フランクに、ただし内容は正確に。');
-  if (a.arousal < 0.3 && a.formality > 0.5) lines.push('ユーザーは落ち着いて丁寧です。じっくり詳細に応答してください。');
-  if (lines.length === 0) return '';
-  return '\n\n[応答スタイル ヒント (heuristic 推定): ' + lines.join(' ') + ']';
-}
+// AFFECT_MARKERS / classifyAffect / affectStyleModifier は modules/affect.js から import 済み (v29)
 
 // セッション履歴 (直近 10 件、可視化用)
 function pushAffectHistory(a) {
@@ -2076,29 +2016,9 @@ function scrollChatToBottom() {
 
 const ZERO_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
 
-// audit.sh の _audit_json_escape と一致させる
-function auditJsonEscape(s) {
-  return String(s ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"')
-    .replace(/\n/g, '\\n')
-    .replace(/\t/g, '\\t');
-}
-
-// audit.sh の printf '{"ts":"%s",...,"prev_hash":"%s"' と一致させる
-function reconstructAuditBody(e) {
-  return '{"ts":"' + auditJsonEscape(e.ts) + '","host":"' + auditJsonEscape(e.host) +
-    '","user":"' + auditJsonEscape(e.user) + '","pid":' + e.pid +
-    ',"script":"' + auditJsonEscape(e.script) + '","event":"' + auditJsonEscape(e.event) +
-    '","details":"' + auditJsonEscape(e.details) + '","prev_hash":"' + e.prev_hash + '"';
-}
-
-async function sha256Hex(text) {
-  const buf = new TextEncoder().encode(text);
-  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hashBuf))
-    .map(b => b.toString(16).padStart(2, '0')).join('');
-}
+// auditJsonEscape / reconstructAuditBody / sha256Hex / auditLogBrowser /
+// exportBrowserAuditAsJsonl / BROWSER_AUDIT_KEY / BROWSER_AUDIT_MAX は
+// modules/audit-browser.js から import 済 (v29 でモジュール分割)
 
 // 重大度推測 (governance/05 系統と同じ規則)
 function auditEventSeverity(event) {
@@ -2114,71 +2034,8 @@ let _auditState = {
   verifyResult: null,
 };
 
-// ─────────────────────────────────────────
-// ブラウザ側 audit ログ (governance/12 §10 #1 v6 で実装)
-// localStorage に独立チェーンとして書き込み、export で JSONL を file-system 版と
-// 同じ形式で取り出せる。bash/PS audit.sh とフィールド順は揃えてある。
-// ─────────────────────────────────────────
-const BROWSER_AUDIT_KEY = 'v19.audit.entries';
-const BROWSER_AUDIT_MAX = 2000;  // FIFO で古いものから捨てる
-
-function _browserAuditLoad() {
-  try {
-    const raw = localStorage.getItem(BROWSER_AUDIT_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch { return []; }
-}
-
-function _browserAuditSave(arr) {
-  try {
-    // FIFO eviction: 上限超えたら古いものから削除 (チェーンは切れるが先頭に新 genesis 行を挿入)
-    if (arr.length > BROWSER_AUDIT_MAX) {
-      arr = arr.slice(arr.length - BROWSER_AUDIT_MAX);
-    }
-    localStorage.setItem(BROWSER_AUDIT_KEY, JSON.stringify(arr));
-  } catch (e) { /* localStorage 容量超過などは黙殺 (UI 操作を阻害しない) */ }
-}
-
-async function auditLogBrowser(event, details = '') {
-  // 失敗してもユーザー操作を阻害しないよう、try で全包み
-  try {
-    const entries = _browserAuditLoad();
-    const prev = entries.length
-      ? entries[entries.length - 1].chain_hash
-      : '0000000000000000000000000000000000000000000000000000000000000000';
-    const ts = new Date().toISOString();
-    const e = {
-      ts,
-      host: 'browser',
-      user: navigator.userAgent.slice(0, 60).replace(/[^\w\s\.\-/]/g, '_'),
-      pid: 0,
-      script: 'dashboard.js',
-      event: String(event || 'unknown'),
-      details: String(details || ''),
-      prev_hash: prev,
-    };
-    const body = reconstructAuditBody(e);
-    const chain = await sha256Hex(prev + body);
-    e.chain_hash = chain;
-    entries.push(e);
-    _browserAuditSave(entries);
-  } catch (err) {
-    // 黙殺 (debug は console)
-    if (typeof console !== 'undefined') console.warn('audit failed:', err);
-  }
-}
-
-// JSONL として export (audit-verify.sh で検証可能な形式)
-function exportBrowserAuditAsJsonl() {
-  const entries = _browserAuditLoad();
-  const lines = entries.map(e => {
-    const body = reconstructAuditBody(e);
-    return body + ',"chain_hash":"' + e.chain_hash + '"}';
-  });
-  return lines.join('\n') + (lines.length ? '\n' : '');
-}
+// レガシー互換 ヘルパ (audit-browser モジュール未使用箇所)
+const _browserAuditLoad = loadBrowserAudit;
 
 function bindAuditLoader() {
   const loader = document.getElementById('auditLoader');

@@ -91,9 +91,14 @@ const dashSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/dashboard.js'), 'utf8');
 const tests = [];
 
 // 1. dashboard.js が必須シンボルを公開している (drift sniff)
-tests.push(['dashboard.js に auditLogBrowser', dashSrc.includes('async function auditLogBrowser')]);
-tests.push(['dashboard.js に exportBrowserAuditAsJsonl', dashSrc.includes('function exportBrowserAuditAsJsonl')]);
-tests.push(['dashboard.js に BROWSER_AUDIT_KEY', dashSrc.includes("const BROWSER_AUDIT_KEY = 'v19.audit.entries'")]);
+// v29 から: 機能は modules/audit-browser.js に移動。dashboard.js は import するだけ
+const abModuleSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/modules/audit-browser.js'), 'utf8');
+const auditInDashOrMod = (sym) => dashSrc.includes(sym) || abModuleSrc.includes(sym);
+tests.push(['auditLogBrowser (dashboard or modules)', auditInDashOrMod('async function auditLogBrowser')]);
+tests.push(['exportBrowserAuditAsJsonl (dashboard or modules)', auditInDashOrMod('function exportBrowserAuditAsJsonl')]);
+tests.push(['BROWSER_AUDIT_KEY (dashboard or modules)', auditInDashOrMod("BROWSER_AUDIT_KEY = 'v19.audit.entries'")]);
+tests.push(['dashboard.js が audit-browser モジュール を import',
+  dashSrc.includes("from './modules/audit-browser.js'")]);
 tests.push(['dashboard.js が chat.send を audit', dashSrc.includes("auditLogBrowser('chat.send'")]);
 tests.push(['dashboard.js が chat.success を audit', dashSrc.includes("auditLogBrowser('chat.success'")]);
 tests.push(['dashboard.js が chat.error を audit', dashSrc.includes("auditLogBrowser('chat.error'")]);

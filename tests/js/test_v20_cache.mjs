@@ -152,7 +152,9 @@ storage.clear();
 }
 
 // ── 既存 INV を壊さない (regression sniff) ──
-tests.push(['既存 BROWSER_AUDIT_KEY 残存', JS.includes("v19.audit.entries")]);
+// v29 から audit-browser は modules/ に移動 → 文字列は dashboard.js または modules/ にある
+const audModSrc = fs.readFileSync(path.join(ROOT, 'v19/ui/modules/audit-browser.js'), 'utf8');
+tests.push(['既存 BROWSER_AUDIT_KEY 残存', JS.includes("v19.audit.entries") || audModSrc.includes("v19.audit.entries")]);
 tests.push(['既存 STORAGE_LIMIT_BYTES 残存', /STORAGE_LIMIT_BYTES = 5 \* 1024 \* 1024/.test(JS)]);
 tests.push(['既存 AFFECT_MARKERS 残存', JS.includes('AFFECT_MARKERS')]);
 tests.push(['既存 ROUTES 9 ルート残存',
