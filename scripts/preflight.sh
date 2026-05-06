@@ -28,11 +28,17 @@ echo " preflight: $(date '+%Y-%m-%d %H:%M:%S')"
 echo " host: $(hostname)"
 echo "==============================="
 
+# PREFLIGHT_SKIP_NET=1 で ネットワーク チェック を省略 (テスト時 高速化、v21)
+SKIP_NET="${PREFLIGHT_SKIP_NET:-${PREFLIGHT_FAST:-0}}"
+SKIP_AUDIT="${PREFLIGHT_SKIP_AUDIT_VERIFY:-${PREFLIGHT_FAST:-0}}"
+
 # 1) Ollama サーバ稼働確認
 echo ""
 echo "[1/8] Ollama (ローカル LLM)"
 OLLAMA_URL="${OLLAMA_HOST:-http://localhost:11434}"
-if curl -fsS -o /dev/null --max-time 3 "${OLLAMA_URL}/api/tags"; then
+if [[ "$SKIP_NET" == "1" ]]; then
+  warn "Ollama 接続チェック スキップ (PREFLIGHT_SKIP_NET=1)"
+elif curl -fsS -o /dev/null --max-time 3 "${OLLAMA_URL}/api/tags"; then
   ok "Ollama 稼働中 (${OLLAMA_URL})"
   models=$(curl -fsS --max-time 3 "${OLLAMA_URL}/api/tags" | grep -oE '"name":"[^"]+"' | sed 's/"name":"//;s/"$//' | head -10)
   if [[ -n "$models" ]]; then
@@ -59,7 +65,9 @@ fi
 # 3) 静的サーバが動作しているか (v19 ダッシュボード)
 echo ""
 echo "[3/8] v19 ダッシュボード (静的サーバ)"
-if curl -fsS -o /dev/null --max-time 2 http://127.0.0.1:8000/v19/ui/dashboard.html; then
+if [[ "$SKIP_NET" == "1" ]]; then
+  warn "静的サーバ接続チェック スキップ (PREFLIGHT_SKIP_NET=1)"
+elif curl -fsS -o /dev/null --max-time 2 http://127.0.0.1:8000/v19/ui/dashboard.html; then
   ok "ダッシュボード配信中 (http://127.0.0.1:8000/v19/ui/dashboard.html)"
 else
   warn "静的サーバ未起動 — 'python3 -m http.server 8000' をリポジトリ ルートで実行"
@@ -134,7 +142,9 @@ echo ""
 echo "[8/8] 監査ログ チェーン整合"
 AUDIT_LOG="${AUDIT_LOG_PATH:-${HOME}/.claude/audit.jsonl}"
 AUDIT_VERIFY="$ROOT_DIR/scripts/audit-verify.sh"
-if [[ ! -f "$AUDIT_LOG" ]]; then
+if [[ "$SKIP_AUDIT" == "1" ]]; then
+  warn "監査ログ チェーン整合 スキップ (PREFLIGHT_SKIP_AUDIT_VERIFY=1 / PREFLIGHT_FAST=1)"
+elif [[ ! -f "$AUDIT_LOG" ]]; then
   warn "audit.jsonl が無い (まだ何も実行していない or 別端末)"
 elif [[ ! -f "$AUDIT_VERIFY" ]]; then
   warn "audit-verify.sh が無い"
