@@ -1,24 +1,39 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
+
+function ts(unix: number): string {
+  return new Date(unix * 1000).toISOString().slice(0, 10);
+}
 
 export function CanvaPage() {
+  const { designs, brandKits } = SNAPSHOT.canva;
+
   return (
-    <ServicePage
-      intro="Canva のデザイン・フォルダ・コメントを管理します。"
-      features={[
-        { title: 'Designs', description: 'デザイン検索・取得・サムネイル表示。' },
-        { title: 'Generate', description: 'デザイン生成・候補からの作成。' },
-        { title: 'Edit Transactions', description: '編集セッションの開始・コミット・キャンセル。' },
-        { title: 'Folders', description: 'フォルダ作成と移動。' },
-        { title: 'Comments', description: 'デザインへのコメント追加・返信。' },
-        { title: 'Export', description: 'デザインの書き出しと形式取得。' },
-        { title: 'Brand Kits', description: 'ブランドキットとアセット参照。' },
-        {
-          title: 'Docs',
-          description: 'Canva Connect API ドキュメント。',
-          action: 'Open',
-          href: 'https://www.canva.dev/',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar who={<>Canva · ブランドキット {brandKits.length} · デザイン {designs.length}+</>} />
+
+      <Section title="Recent Designs" count={designs.length}>
+        <DataList
+          items={designs.map((d) => ({
+            key: d.id,
+            title: d.title,
+            meta: `${d.pageCount} ページ · 更新 ${ts(d.updatedAt)}`,
+            thumbnailUrl: d.thumbnailUrl,
+            href: d.viewUrl,
+          }))}
+        />
+      </Section>
+
+      <Section title="Brand Kits" count={brandKits.length}>
+        <DataList
+          items={brandKits.map((b) => ({
+            key: b.id,
+            title: `Brand Kit ${b.id}`,
+            meta: 'ブランドキットを開いて適用 → generate-design でデザイン生成可能',
+          }))}
+        />
+      </Section>
+    </div>
   );
 }

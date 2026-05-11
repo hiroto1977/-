@@ -9,9 +9,11 @@ services (GitHub, WordPress.com, Atlassian, Notion, Google Drive, Google Calenda
 through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
 are bundled by `vite-plugin-electron`.
 
-The app is currently a UI skeleton: each service page lists its planned features as cards. The shared
-API clients in `src/shared/api/*` define the interface but throw `NotConfiguredError` until credentials
-are wired up — implementations against each service's official REST API are intentionally deferred.
+Each service page renders a live data snapshot fetched via MCP servers and stored in
+`src/renderer/data/snapshot.ts`. The snapshot is regenerated manually by running the MCP tools and
+overwriting that file — there is no live fetch from the renderer yet. The shared API clients in
+`src/shared/api/*` define the interface but throw `NotConfiguredError` until credentials are wired
+up; their methods are the eventual replacement for the static snapshot.
 
 ## Commands
 
@@ -42,10 +44,11 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
   service means: create a page in `src/renderer/pages/`, create an API client in `src/shared/api/`,
   and append an entry to `SERVICES`.
 
-Page composition: every service page renders the shared `components/ServicePage.tsx`, passing an
-`intro`, a `status` badge (`mock` / `connected` / `unconfigured`), and a `features` array. The card
-grid, status badge, and "open external link" buttons are all handled by `ServicePage`. Keep service
-pages declarative — push presentation logic into `ServicePage`, not into individual pages.
+Page composition: each service page reads its slice of `data/snapshot.ts` and renders it with the
+shared `components/StatusBar.tsx` + `Section` (header + count) + `components/DataList.tsx` (cards
+with optional thumbnail, meta, badge, and "open external" button). Keep service pages declarative
+— if a new visual primitive is needed by more than one page, add it under `components/` rather than
+duplicating markup.
 
 API clients (`src/shared/api/*.ts`): each exports a class implementing `ServiceClient` (`id`,
 `isConfigured()`). Methods that need credentials must guard with `if (!this.isConfigured()) throw new

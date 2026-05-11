@@ -1,21 +1,24 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
 
 export function GmailPage() {
+  const { threads } = SNAPSHOT.gmail;
+
   return (
-    <ServicePage
-      intro="Gmail のスレッド・ドラフト・ラベルを操作します。"
-      features={[
-        { title: 'Threads', description: 'クエリでスレッドを検索・表示。' },
-        { title: 'Drafts', description: 'ドラフト一覧と新規作成。' },
-        { title: 'Labels', description: 'ラベル一覧と作成。' },
-        { title: 'Thread View', description: 'スレッド詳細と返信。' },
-        {
-          title: 'Docs',
-          description: 'Gmail API ドキュメント。',
-          action: 'Open',
-          href: 'https://developers.google.com/gmail/api',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar who={<>Gmail 受信トレイ · 直近 {threads.length} スレッド</>} />
+
+      <Section title="Inbox" count={threads.length}>
+        <DataList
+          items={threads.map((t) => ({
+            key: t.id,
+            title: t.subject,
+            meta: `${t.sender} · ${t.date}`,
+            href: `https://mail.google.com/mail/u/0/#inbox/${t.id}`,
+          }))}
+        />
+      </Section>
+    </div>
   );
 }

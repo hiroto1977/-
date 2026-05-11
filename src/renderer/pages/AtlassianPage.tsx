@@ -1,22 +1,48 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
 
 export function AtlassianPage() {
+  const { sites, jiraProjects } = SNAPSHOT.atlassian;
+  const site = sites[0];
+
   return (
-    <ServicePage
-      intro="Jira / Confluence / Compass を統合表示します。"
-      features={[
-        { title: 'Jira Issues', description: 'JQL 検索・課題作成・編集・遷移。' },
-        { title: 'Jira Worklog', description: 'ワークログとコメントの追加。' },
-        { title: 'Confluence Pages', description: 'スペース・ページ参照と更新。' },
-        { title: 'Confluence Comments', description: 'インライン / フッターコメント。' },
-        { title: 'Compass Components', description: 'コンポーネントとリレーションの管理。' },
-        {
-          title: 'Docs',
-          description: 'Atlassian Developer ドキュメント。',
-          action: 'Open',
-          href: 'https://developer.atlassian.com/',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar
+        who={
+          site ? (
+            <>
+              <strong>{site.name}</strong>
+              <span style={{ color: 'var(--text-muted)', marginLeft: 8 }}>{site.url}</span>
+            </>
+          ) : (
+            'no Atlassian site'
+          )
+        }
+        right={
+          site ? (
+            <button onClick={() => window.serviceHub?.openExternal(site.url)}>サイトを開く</button>
+          ) : null
+        }
+      />
+
+      <Section title="Jira Projects" count={jiraProjects.length}>
+        <DataList
+          items={jiraProjects.map((p) => ({
+            key: p.key,
+            title: `${p.key} · ${p.name}`,
+            meta: `${p.projectTypeKey} · ${p.style}`,
+            href: site ? `${site.url}/jira/projects/${p.key}` : undefined,
+          }))}
+        />
+      </Section>
+
+      <Section title="Confluence & Compass">
+        <div className="empty">
+          現在のスコープは <code>read:jira-work</code> / <code>write:jira-work</code> のみ。
+          Confluence・Compass を使うにはスコープを追加して再接続が必要。
+        </div>
+      </Section>
+    </div>
   );
 }

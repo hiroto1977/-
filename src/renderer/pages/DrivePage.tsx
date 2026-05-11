@@ -1,22 +1,33 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
+
+const TYPE_LABEL: Record<string, string> = {
+  'application/vnd.google-apps.document': 'Doc',
+  'application/vnd.google-apps.spreadsheet': 'Sheet',
+  'application/vnd.google-apps.presentation': 'Slides',
+  'application/vnd.google-apps.folder': 'Folder',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word',
+  'text/plain': 'Text',
+};
 
 export function DrivePage() {
+  const { files } = SNAPSHOT.drive;
+
   return (
-    <ServicePage
-      intro="Google Drive のファイル一覧と検索を行います。"
-      features={[
-        { title: 'Recent Files', description: '最近開いたファイル一覧を表示。' },
-        { title: 'Search', description: '名前・本文でファイルを検索。' },
-        { title: 'File Metadata', description: 'メタデータと共有設定を表示。' },
-        { title: 'Permissions', description: 'ファイルの共有権限を管理。' },
-        { title: 'Upload / Download', description: 'ファイルの作成・コピー・取得。' },
-        {
-          title: 'Docs',
-          description: 'Google Drive API ドキュメント。',
-          action: 'Open',
-          href: 'https://developers.google.com/drive',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar who={<>Google Drive · 最近のファイル {files.length}</>} />
+
+      <Section title="Recent Files" count={files.length}>
+        <DataList
+          items={files.map((f) => ({
+            key: f.id,
+            title: f.title,
+            meta: `${TYPE_LABEL[f.mimeType] ?? f.mimeType} · 更新 ${f.modifiedTime}`,
+            href: f.viewUrl,
+          }))}
+        />
+      </Section>
+    </div>
   );
 }

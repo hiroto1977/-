@@ -1,22 +1,46 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
+
+function formatStart(startDate: string, allDay: boolean): string {
+  if (allDay) return `${startDate}（終日）`;
+  const d = new Date(startDate);
+  return d.toLocaleString('ja-JP', {
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 export function CalendarPage() {
+  const { calendars, events } = SNAPSHOT.calendar;
+
   return (
-    <ServicePage
-      intro="Google Calendar の予定を表示・操作します。"
-      features={[
-        { title: 'Calendars', description: '所有・購読カレンダーの一覧。' },
-        { title: 'Events', description: '今日 / 今週の予定を表示。' },
-        { title: 'Create Event', description: '予定の新規作成と更新。' },
-        { title: 'Suggest Time', description: '空き時間の提案。' },
-        { title: 'RSVP', description: '招待への応答。' },
-        {
-          title: 'Docs',
-          description: 'Google Calendar API ドキュメント。',
-          action: 'Open',
-          href: 'https://developers.google.com/calendar',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar who={<>Google Calendar · {calendars.length} カレンダー · {events.length} 件の予定</>} />
+
+      <Section title="Calendars" count={calendars.length}>
+        <DataList
+          items={calendars.map((c) => ({
+            key: c.id,
+            title: c.summary,
+            meta: `${c.id} · ${c.timeZone}`,
+          }))}
+        />
+      </Section>
+
+      <Section title="Upcoming Events" count={events.length}>
+        <DataList
+          items={events.map((e) => ({
+            key: e.id,
+            title: e.summary,
+            meta: formatStart(e.startDate, e.allDay),
+            badge: e.allDay ? '終日' : '時間指定',
+          }))}
+        />
+      </Section>
+    </div>
   );
 }

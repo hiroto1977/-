@@ -1,23 +1,32 @@
-import { ServicePage } from '../components/ServicePage';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
 
 export function WordPressPage() {
+  const { sites } = SNAPSHOT.wordpress;
+
   return (
-    <ServicePage
-      intro="WordPress.com サイトと投稿、ドメインを管理します。"
-      features={[
-        { title: 'Sites', description: '所有する全サイトを表示し、サイト ID を取得。' },
-        { title: 'Posts & Pages', description: '投稿・固定ページの作成・編集（ドラフト保存）。' },
-        { title: 'Media', description: 'メディアアップロードとライブラリ参照。' },
-        { title: 'Site Editor Context', description: 'テーマプリセット・ブロック・スタイル取得。' },
-        { title: 'Patterns', description: 'ブロックパターンの一覧と適用。' },
-        { title: 'Domains', description: 'ドメイン購入・DNS・ネームサーバー設定。' },
-        {
-          title: 'Docs',
-          description: 'WordPress.com Developer Resources。',
-          action: 'Open',
-          href: 'https://developer.wordpress.com/',
-        },
-      ]}
-    />
+    <div>
+      <StatusBar who={<>WordPress.com アカウント · 所有サイト {sites.length}</>} />
+
+      <Section title="Sites" count={sites.length}>
+        <DataList
+          items={sites.map((site) => ({
+            key: String(site.blogId),
+            title: site.name,
+            meta: `${site.url} · platform: ${site.platform} · 最終更新 ${site.lastUpdated}`,
+            badge: site.paidPlan ? 'paid' : 'free',
+            href: site.url,
+          }))}
+        />
+      </Section>
+
+      <Section title="MCP Access">
+        <div className="empty">
+          すべてのサイトが free プラン（mcp_access: <code>wpcom_paid_plan_required</code>）。
+          site 単位の MCP ツール (投稿作成・サイトエディタ等) を使うには WordPress.com 有料プランへのアップグレードが必要。
+        </div>
+      </Section>
+    </div>
   );
 }

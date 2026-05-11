@@ -209,3 +209,110 @@ a:hover { text-decoration: underline; }
   color: var(--warning);
   border-color: rgba(250,204,21,0.3);
 }
+.badge.ok {
+  background: rgba(74,222,128,0.12);
+  color: var(--success);
+  border-color: rgba(74,222,128,0.3);
+}
+
+.data-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.data-list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.data-list-item:hover { border-color: rgba(110,168,255,0.4); }
+.data-list-thumb {
+  width: 56px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--bg);
+  grid-row: span 1;
+}
+.data-list-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  grid-column: 2;
+}
+.data-list-item:not(:has(.data-list-thumb)) .data-list-body { grid-column: 1 / span 2; }
+.data-list-title {
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.data-list-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.data-list-open {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.data-section {
+  margin-bottom: 20px;
+}
+.data-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.data-section-header h2 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.data-section-header .count {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.status-bar .who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+}
+.status-bar img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
