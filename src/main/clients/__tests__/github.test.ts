@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchGithubSnapshot } from '../github';
+import { fetchGithubSnapshot, ACTIONS } from '../github';
 import { FetchError } from '../types';
 
 const userResponse = {
@@ -119,5 +119,66 @@ describe('fetchGithubSnapshot', () => {
     const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
     expect(snapshot.user.name).toBe('octocat');
     expect(snapshot.user.company).toBe('');
+  });
+});
+
+describe('ACTIONS["create-issue"]', () => {
+  it('POSTs to /repos/{owner}/{repo}/issues and returns the new issue', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          number: 42,
+          html_url: 'https://github.com/o/r/issues/42',
+          title: 'Hello',
+          state: 'open',
+        }),
+        { status: 201, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const result = (await ACTIONS['create-issue']({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { owner: 'o', repo: 'r', title: 'Hello', body: 'body text' },
+    })) as { number: number; url: string; title: string };
+
+    expect(result).toEqual({ number: 42, url: 'https://github.com/o/r/issues/42', title: 'Hello' });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://api.github.com/repos/o/r/issues');
+    expect((init as RequestInit).method).toBe('POST');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer tok');
+    expect(headers['Content-Type']).toBe('application/json');
+    expect((init as RequestInit).body).toBe(
+      JSON.stringify({ title: 'Hello', body: 'body text', labels: undefined }),
+    );
+  });
+
+  it('rejects when required fields are missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-issue']({
+        token: 'tok',
+        fetch: fetchMock,
+        payload: { owner: 'o', repo: 'r' /* no title */ },
+      }),
+    ).rejects.toThrow(/title/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('url-encodes owner/repo to prevent path injection', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ number: 1, html_url: '', title: 'x', state: 'open' }), {
+        status: 201,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['create-issue']({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { owner: 'o/x', repo: 'r y', title: 't' },
+    });
+    expect(fetchMock.mock.calls[0][0]).toBe('https://api.github.com/repos/o%2Fx/r%20y/issues');
   });
 });

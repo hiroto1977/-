@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import { clearToken, getToken, listConfiguredServices, setToken } from './secrets';
-import { LIVE_FETCHERS, type ServiceId } from './clients';
+import { LIVE_ACTIONS, LIVE_FETCHERS, type ServiceId } from './clients';
 
 const isDev = !app.isPackaged;
 
@@ -78,3 +78,28 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
     return { ok: false, code: 'fetch_failed', message };
   }
 });
+
+ipcMain.handle(
+  'action:invoke',
+  async (_e, serviceId: ServiceId, action: string, payload: Record<string, unknown>) => {
+    const actions = LIVE_ACTIONS[serviceId];
+    if (!actions || !actions[action]) {
+      return {
+        ok: false,
+        code: 'action_not_found',
+        message: `${serviceId} に action "${action}" は登録されていません`,
+      };
+    }
+    const token = await getToken(serviceId);
+    if (!token) {
+      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+    }
+    try {
+      const data = await actions[action]({ token, payload: payload ?? {} });
+      return { ok: true, data };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return { ok: false, code: 'action_failed', message };
+    }
+  },
+);

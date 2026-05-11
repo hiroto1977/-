@@ -5,6 +5,17 @@ export interface FetchContext {
   fetch?: FetchFn;
 }
 
+/** Per-invocation context for a write-side action. `payload` is whatever
+ *  the caller passes through `serviceHub.invoke()`. */
+export interface ActionContext {
+  token: string;
+  fetch?: FetchFn;
+  payload: Record<string, unknown>;
+}
+
+export type ServiceAction = (ctx: ActionContext) => Promise<unknown>;
+export type ActionMap = Record<string, ServiceAction>;
+
 export class FetchError extends Error {
   constructor(
     message: string,

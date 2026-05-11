@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface GithubUser {
   login: string;
@@ -128,3 +128,41 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
     pullRequests: pulls,
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateIssuePayload {
+  owner: string;
+  repo: string;
+  title: string;
+  body?: string;
+  labels?: string[];
+}
+
+interface CreateIssueResponse {
+  number: number;
+  html_url: string;
+  title: string;
+  state: string;
+}
+
+async function createIssue(ctx: ActionContext): Promise<{ number: number; url: string; title: string }> {
+  const { owner, repo, title, body, labels } = ctx.payload as unknown as CreateIssuePayload;
+  if (!owner || !repo || !title) {
+    throw new Error('owner, repo, title are required');
+  }
+  const res = await jsonFetch<CreateIssueResponse>(
+    `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,
+    {
+      method: 'POST',
+      headers: { ...headers(ctx.token), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, body, labels }),
+    },
+    { fetch: ctx.fetch, serviceId: 'github' },
+  );
+  return { number: res.number, url: res.html_url, title: res.title };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-issue': createIssue,
+};

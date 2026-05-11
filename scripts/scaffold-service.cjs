@@ -155,7 +155,12 @@ function basicAuth(email: string, token: string): string {
 `
   : '';
 
-const fetcherTpl = `import { jsonFetch${authKind === 'json' ? ', FetchError' : ''}, type FetchContext } from './types';
+const fetcherTpl = `import {
+  jsonFetch,
+${authKind === 'json' ? "  FetchError,\n" : ''}  type ActionContext,
+  type ActionMap,
+  type FetchContext,
+} from './types';
 ${fetcherJsonHelpers}
 interface ${pascal}Item {
   id: string;
@@ -183,6 +188,20 @@ ${auth.parseStep}  const fetchCtx = { fetch: ctx.fetch, serviceId: '${id}' };
     items: (data.items ?? []).map((it) => ({ id: it.id, name: it.name })),
   };
 }
+
+// --- write-side actions ------------------------------------------------
+// Wire up via serviceHub.invoke('${id}', '<name>', payload) from the
+// renderer. Delete this block (and the ACTIONS export below) if you don't
+// need any actions for this service.
+
+async function exampleAction(_ctx: ActionContext): Promise<unknown> {
+  // TODO: implement. Read ctx.payload and POST/PUT against the real API.
+  throw new Error('${id}.example-action: not implemented');
+}
+
+export const ACTIONS: ActionMap = {
+  'example-action': exampleAction,
+};
 `;
 
 const fetcherTestTpl = `import { describe, expect, it, vi } from 'vitest';
@@ -262,12 +281,17 @@ insertBefore(
 insertBefore(
   CLIENTS_INDEX,
   '// SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE',
-  `import { fetch${pascal}Snapshot } from './${id}';\n`,
+  `import { fetch${pascal}Snapshot, ACTIONS as ${pascal.toUpperCase()}_ACTIONS } from './${id}';\n`,
 );
 insertBefore(
   CLIENTS_INDEX,
   '  // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE',
   `  ${camel}: fetch${pascal}Snapshot,\n`,
+);
+insertBefore(
+  CLIENTS_INDEX,
+  '  // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE',
+  `  ${camel}: ${pascal.toUpperCase()}_ACTIONS,\n`,
 );
 
 insertBefore(

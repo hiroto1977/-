@@ -7,6 +7,10 @@ export type FetchResult<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; code: 'not_implemented' | 'not_configured' | 'fetch_failed'; message: string };
 
+export type ActionResult<T = unknown> =
+  | { ok: true; data: T }
+  | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
+
 const api = {
   getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
@@ -19,6 +23,12 @@ const api = {
 
   fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
     ipcRenderer.invoke('fetch:snapshot', serviceId),
+
+  invoke: <T = unknown>(
+    serviceId: ServiceId,
+    action: string,
+    payload: Record<string, unknown>,
+  ): Promise<ActionResult<T>> => ipcRenderer.invoke('action:invoke', serviceId, action, payload),
 };
 
 contextBridge.exposeInMainWorld('serviceHub', api);
