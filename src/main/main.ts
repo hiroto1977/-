@@ -5,6 +5,15 @@ import { LIVE_ACTIONS, LIVE_FETCHERS, type ServiceId } from './clients';
 
 const isDev = !app.isPackaged;
 
+// In dev: build/icon.png at repo root. In production: shipped at app
+// resource root via electron-builder.files (… actually we ship through
+// asar; safer to load from the source path which is relative to __dirname).
+function iconPath(): string {
+  // dist-electron/main.js → ../build/icon.png in dev,
+  // <appdir>/resources/app.asar/build/icon.png in prod.
+  return path.join(__dirname, '..', 'build', 'icon.png');
+}
+
 function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
@@ -13,6 +22,7 @@ function createWindow(): BrowserWindow {
     minHeight: 600,
     title: 'Service Hub',
     backgroundColor: '#0f1117',
+    icon: iconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
