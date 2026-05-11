@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { ServiceId } from '../../preload/preload';
-import type { Source, Status } from '../hooks/useServiceData';
+import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 
 interface Props {
   who: ReactNode;
@@ -8,6 +8,7 @@ interface Props {
   source?: Source;
   status?: Status;
   errorMessage?: string;
+  errorKind?: ErrorKind;
   isConfigured?: boolean;
   onRefresh?: () => void;
   avatarUrl?: string;
@@ -25,6 +26,7 @@ export function StatusBar({
   source = 'snapshot',
   status = 'idle',
   errorMessage,
+  errorKind,
   isConfigured = false,
   onRefresh,
   avatarUrl,
@@ -34,8 +36,16 @@ export function StatusBar({
   const [editing, setEditing] = useState(false);
   const [token, setToken] = useState('');
 
+  // When the live fetch fails with an auth error, drop straight into
+  // the token re-entry mode — the most common recovery action.
+  useEffect(() => {
+    if (errorKind === 'auth' && tokenSetup) setEditing(true);
+  }, [errorKind, tokenSetup]);
+
   const badge =
     status === 'loading' ? { cls: 'badge', text: 'Loading…' }
+    : status === 'error' && errorKind === 'auth' ? { cls: 'badge warn', text: 'Auth error' }
+    : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'Rate limit' }
     : status === 'error' ? { cls: 'badge warn', text: 'Error' }
     : source === 'live' ? { cls: 'badge ok', text: 'Live' }
     : { cls: 'badge', text: 'Snapshot' };
@@ -54,6 +64,9 @@ export function StatusBar({
     setEditing(false);
   };
 
+  const editButtonLabel =
+    errorKind === 'auth' ? '再認証' : isConfigured ? 'トークン更新' : tokenSetup?.label ?? 'トークン設定';
+
   return (
     <div className="status-bar">
       <span className={badge.cls}>{badge.text}</span>
@@ -62,9 +75,7 @@ export function StatusBar({
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
       {tokenSetup && !editing ? (
-        <button onClick={() => setEditing(true)}>
-          {isConfigured ? 'トークン更新' : tokenSetup.label}
-        </button>
+        <button onClick={() => setEditing(true)}>{editButtonLabel}</button>
       ) : null}
       {tokenSetup && editing ? (
         <span style={{ display: 'flex', gap: 6 }}>

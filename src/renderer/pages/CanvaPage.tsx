@@ -8,7 +8,7 @@ function ts(unix: number): string {
 }
 
 export function CanvaPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'canva',
     SNAPSHOT.canva,
   );
@@ -21,6 +21,7 @@ export function CanvaPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Canva · ブランドキット {brandKits.length} · デザイン {designs.length}+</>}

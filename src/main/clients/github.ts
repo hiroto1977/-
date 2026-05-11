@@ -10,7 +10,21 @@ interface GithubUser {
   followers: number;
 }
 
-interface GithubPull {
+interface SearchItem {
+  number: number;
+  title: string;
+  state: string;
+  draft?: boolean;
+  html_url: string;
+  updated_at: string;
+  pull_request?: { url: string };
+}
+
+interface SearchResponse {
+  items: SearchItem[];
+}
+
+interface PullDetail {
   number: number;
   title: string;
   state: string;
@@ -56,12 +70,50 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
   const init: RequestInit = { headers: headers(ctx.token) };
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'github' };
 
-  const user = await jsonFetch<GithubUser>('https://api.github.com/user', init, fetchCtx);
-  const pulls = await jsonFetch<GithubPull[]>(
-    'https://api.github.com/search/issues?q=is:pr+author:@me+is:open&per_page=10&sort=updated',
-    init,
-    fetchCtx,
-  ).then((r: unknown) => (r as { items: GithubPull[] }).items ?? []);
+  const [user, search] = await Promise.all([
+    jsonFetch<GithubUser>('https://api.github.com/user', init, fetchCtx),
+    jsonFetch<SearchResponse>(
+      'https://api.github.com/search/issues?q=is:pr+author:@me+is:open&per_page=10&sort=updated',
+      init,
+      fetchCtx,
+    ),
+  ]);
+
+  // /search/issues returns Issue objects (no head/base). Follow each
+  // pull_request.url for the full PR shape. Individual failures (e.g.
+  // a private repo we lost access to) degrade gracefully to the search-
+  // only fields.
+  const items = search.items ?? [];
+  const pulls = await Promise.all(
+    items.map(async (item): Promise<GithubSnapshot['pullRequests'][number]> => {
+      const fallback = {
+        number: item.number,
+        title: item.title,
+        state: item.state,
+        draft: item.draft ?? false,
+        head: '',
+        base: '',
+        updatedAt: item.updated_at,
+        htmlUrl: item.html_url,
+      };
+      if (!item.pull_request?.url) return fallback;
+      try {
+        const pr = await jsonFetch<PullDetail>(item.pull_request.url, init, fetchCtx);
+        return {
+          number: pr.number,
+          title: pr.title,
+          state: pr.state,
+          draft: pr.draft,
+          head: pr.head?.ref ?? '',
+          base: pr.base?.ref ?? '',
+          updatedAt: pr.updated_at,
+          htmlUrl: pr.html_url,
+        };
+      } catch {
+        return fallback;
+      }
+    }),
+  );
 
   return {
     user: {
@@ -73,15 +125,6 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
       publicRepos: user.public_repos,
       followers: user.followers,
     },
-    pullRequests: pulls.map((p) => ({
-      number: p.number,
-      title: p.title,
-      state: p.state,
-      draft: p.draft,
-      head: p.head?.ref ?? '',
-      base: p.base?.ref ?? '',
-      updatedAt: p.updated_at,
-      htmlUrl: p.html_url,
-    })),
+    pullRequests: pulls,
   };
 }

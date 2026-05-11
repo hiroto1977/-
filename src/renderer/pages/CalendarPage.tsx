@@ -16,7 +16,7 @@ function formatStart(startDate: string, allDay: boolean): string {
 }
 
 export function CalendarPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'calendar',
     SNAPSHOT.calendar,
   );
@@ -29,6 +29,7 @@ export function CalendarPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Google Calendar · {calendars.length} カレンダー · {events.length} 件の予定</>}

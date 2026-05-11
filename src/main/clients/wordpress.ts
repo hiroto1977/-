@@ -1,15 +1,16 @@
 import { jsonFetch, type FetchContext } from './types';
 
+// Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
 interface WpSite {
   ID: number;
   name: string;
   description: string;
   URL: string;
   is_private: boolean;
-  options?: { is_mapped_domain?: boolean };
-  plan?: { product_slug?: string };
   jetpack: boolean;
-  meta?: { data?: { modified?: string } };
+  last_updated?: string; // "YYYY-MM-DD HH:mm:ss" UTC
+  plan?: { product_slug?: string; is_free?: boolean };
+  capabilities?: { manage_options?: boolean };
 }
 
 interface WpSitesResponse {
@@ -29,12 +30,20 @@ export interface WordPressSnapshot {
   }[];
 }
 
+function isPaidPlan(plan: WpSite['plan']): boolean {
+  if (!plan) return false;
+  if (plan.is_free === true) return false;
+  if (plan.is_free === false) return true;
+  const slug = (plan.product_slug ?? '').toLowerCase();
+  return slug !== '' && slug !== 'free_plan' && !slug.includes('free');
+}
+
 export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPressSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'wordpress' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
 
   const data = await jsonFetch<WpSitesResponse>(
-    'https://public-api.wordpress.com/rest/v1.1/me/sites',
+    'https://public-api.wordpress.com/rest/v1.1/me/sites?fields=ID,name,description,URL,is_private,jetpack,last_updated,plan',
     { headers },
     fetchCtx,
   );
@@ -47,8 +56,8 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
       url: s.URL,
       platform: s.jetpack ? 'jetpack' : 'simple',
       status: s.is_private ? 'private' : 'active',
-      lastUpdated: (s.meta?.data?.modified ?? '').slice(0, 10),
-      paidPlan: !!s.plan?.product_slug && s.plan.product_slug !== 'free_plan',
+      lastUpdated: (s.last_updated ?? '').slice(0, 10),
+      paidPlan: isPaidPlan(s.plan),
     })),
   };
 }
