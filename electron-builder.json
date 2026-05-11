@@ -1,0 +1,15 @@
+{
+  "appId": "com.servicehub.desktop",
+  "productName": "Service Hub",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    "package.json"
+  ],
+  "mac": { "target": "dmg" },
+  "win": { "target": "nsis" },
+  "linux": { "target": "AppImage" }
+}
