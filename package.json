@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
