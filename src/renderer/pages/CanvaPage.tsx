@@ -24,6 +24,10 @@ export function CanvaPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Canva · ブランドキット {brandKits.length} · デザイン {designs.length}+</>}
+        tokenSetup={{
+          label: 'OAuth アクセストークン',
+          placeholder: 'Canva Connect access token',
+        }}
       />
 
       <Section title="Recent Designs" count={designs.length}>

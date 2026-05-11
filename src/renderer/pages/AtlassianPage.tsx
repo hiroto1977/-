@@ -35,6 +35,10 @@ export function AtlassianPage() {
             <button onClick={() => window.serviceHub?.openExternal(site.url)}>サイトを開く</button>
           ) : null
         }
+        tokenSetup={{
+          label: '認証情報 (JSON)',
+          placeholder: '{"email":"you@x.com","token":"...","site":"https://x.atlassian.net"}',
+        }}
       />
 
       <Section title="Jira Projects" count={jiraProjects.length}>

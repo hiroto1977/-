@@ -20,6 +20,10 @@ export function GmailPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Gmail 受信トレイ · 直近 {threads.length} スレッド</>}
+        tokenSetup={{
+          label: 'OAuth アクセストークン',
+          placeholder: 'ya29.… (gmail.readonly scope)',
+        }}
       />
 
       <Section title="Inbox" count={threads.length}>

@@ -64,7 +64,7 @@ ipcMain.handle('secrets:list', () => listConfiguredServices());
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
   const fetcher = LIVE_FETCHERS[serviceId];
   if (!fetcher) {
-    return { ok: false, code: 'not_implemented', message: `${serviceId} はまだライブフェッチ未対応` };
+    return { ok: false, code: 'not_implemented', message: `${serviceId} はライブフェッチ未対応` };
   }
   const token = await getToken(serviceId);
   if (!token) {

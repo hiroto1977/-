@@ -32,6 +32,10 @@ export function CalendarPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Google Calendar · {calendars.length} カレンダー · {events.length} 件の予定</>}
+        tokenSetup={{
+          label: 'OAuth アクセストークン',
+          placeholder: 'ya29.… (calendar.readonly scope)',
+        }}
       />
 
       <Section title="Calendars" count={calendars.length}>

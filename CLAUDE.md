@@ -13,8 +13,11 @@ Each service page starts from a static snapshot in `src/renderer/data/snapshot.t
 manually by running MCP tools) and can swap to a live REST fetch via the main‑process clients in
 `src/main/clients/*`. The `useServiceData(serviceId, snapshot)` hook in `src/renderer/hooks/`
 manages this: it returns `data`, `source` (`'snapshot'` | `'live'`), `status`, `errorMessage`, and
-`refresh()`. GitHub is the only service with a working live fetcher today; the rest fall back to
-snapshot until their fetcher is added to `src/main/clients/index.ts`'s `LIVE_FETCHERS` map.
+`refresh()`. All nine services have live fetchers registered in `LIVE_FETCHERS`. Auth varies:
+GitHub/Notion/Slack/Drive/Calendar/Gmail/Canva/WordPress take a single Bearer token;
+Atlassian takes a JSON blob `{"email","token","site"}` (Basic auth + site URL). Real OAuth code
+flow isn't implemented — users obtain access tokens out‑of‑band (e.g. Google OAuth Playground,
+Notion integration token, Slack workspace token) and paste them into the page.
 
 Tokens are persisted in the user's Electron `userData` directory via `src/main/secrets.ts`, which
 encrypts them with `safeStorage` when the OS keychain is available (and falls back to a

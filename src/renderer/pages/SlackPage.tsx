@@ -20,6 +20,10 @@ export function SlackPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Slack · チャンネル {channels.length}</>}
+        tokenSetup={{
+          label: 'User/Bot トークン',
+          placeholder: 'xoxp-… or xoxb-…',
+        }}
       />
 
       <Section title="Channels" count={channels.length}>

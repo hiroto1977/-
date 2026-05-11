@@ -20,6 +20,10 @@ export function WordPressPage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>WordPress.com アカウント · 所有サイト {sites.length}</>}
+        tokenSetup={{
+          label: 'アクセストークンを設定',
+          placeholder: 'OAuth2 bearer token',
+        }}
       />
 
       <Section title="Sites" count={sites.length}>

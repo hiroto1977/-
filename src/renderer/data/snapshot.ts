@@ -98,6 +98,7 @@ export const SNAPSHOT = {
   notion: {
     teams: [] as { id: string; name: string }[],
     note: '参加中のチームスペースなし。Notion AI 検索でもヒットなし。',
+    pages: [] as { id: string; title: string; url: string; lastEditedTime: string; kind: string }[],
   },
 
   drive: {

@@ -1,4 +1,5 @@
 import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -7,7 +8,7 @@ export function NotionPage() {
     'notion',
     SNAPSHOT.notion,
   );
-  const { teams, note } = data;
+  const { teams, note, pages } = data;
 
   return (
     <div>
@@ -18,34 +19,39 @@ export function NotionPage() {
         errorMessage={errorMessage}
         isConfigured={isConfigured}
         onRefresh={refresh}
-        who={<>Notion · チームスペース {teams.length}</>}
+        who={<>Notion · ページ {pages.length} · チームスペース {teams.length}</>}
+        tokenSetup={{ label: 'インテグレーショントークン', placeholder: 'secret_…' }}
       />
 
-      <Section title="Teamspaces" count={teams.length}>
-        <div className="empty">
-          {note}
-          <br />
-          ページを作成すると <code>notion-search</code> やこの一覧に反映されます。
-        </div>
-      </Section>
+      {pages.length > 0 ? (
+        <Section title="Recent Pages" count={pages.length}>
+          <DataList
+            items={pages.map((p) => ({
+              key: p.id,
+              title: p.title,
+              meta: `${p.kind} · 更新 ${p.lastEditedTime.slice(0, 10)}`,
+              href: p.url,
+            }))}
+          />
+        </Section>
+      ) : (
+        <Section title="Teamspaces">
+          <div className="empty">
+            {note}
+            <br />
+            インテグレーションを Notion ページに招待し、トークンを設定すると一覧が表示されます。
+          </div>
+        </Section>
+      )}
 
       <Section title="Quick Actions">
         <div className="page-grid">
           <article className="card">
             <h3>新規ページ作成</h3>
-            <p>テンプレートまたはホワイトページから作成（<code>notion-create-pages</code>）。</p>
+            <p>テンプレートまたはホワイトページから作成。</p>
             <div className="actions">
               <button onClick={() => window.serviceHub?.openExternal('https://www.notion.so/')}>
                 Notion を開く
-              </button>
-            </div>
-          </article>
-          <article className="card">
-            <h3>ワークスペース検索</h3>
-            <p>Slack / Drive / GitHub / Jira / Linear など接続ソースを横断検索。</p>
-            <div className="actions">
-              <button disabled style={{ opacity: 0.5 }}>
-                検索 UI（未実装）
               </button>
             </div>
           </article>

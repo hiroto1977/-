@@ -29,6 +29,10 @@ export function DrivePage() {
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Google Drive · 最近のファイル {files.length}</>}
+        tokenSetup={{
+          label: 'OAuth アクセストークン',
+          placeholder: 'ya29.… (drive.readonly scope)',
+        }}
       />
 
       <Section title="Recent Files" count={files.length}>
