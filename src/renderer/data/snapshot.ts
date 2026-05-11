@@ -244,6 +244,8 @@ export const SNAPSHOT = {
     ],
   },
 
+  // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
+
   canva: {
     brandKits: [{ id: 'kAGWm36LGZk' }],
     designs: [

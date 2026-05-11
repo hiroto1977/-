@@ -7,18 +7,11 @@ import { CalendarPage } from './pages/CalendarPage';
 import { GmailPage } from './pages/GmailPage';
 import { SlackPage } from './pages/SlackPage';
 import { CanvaPage } from './pages/CanvaPage';
+// SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
+import type { ServiceId } from '../shared/serviceId';
 
-export type ServiceId =
-  | 'github'
-  | 'wordpress'
-  | 'atlassian'
-  | 'notion'
-  | 'drive'
-  | 'calendar'
-  | 'gmail'
-  | 'slack'
-  | 'canva';
+export type { ServiceId };
 
 export interface ServiceDefinition {
   id: ServiceId;
@@ -92,4 +85,5 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'デザイン・フォルダ・コメント',
     page: CanvaPage,
   },
+  // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

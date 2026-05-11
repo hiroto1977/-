@@ -1,15 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { ServiceId } from '../shared/serviceId';
 
-export type ServiceId =
-  | 'github'
-  | 'wordpress'
-  | 'atlassian'
-  | 'notion'
-  | 'drive'
-  | 'calendar'
-  | 'gmail'
-  | 'slack'
-  | 'canva';
+export type { ServiceId };
 
 export type FetchResult<T = unknown> =
   | { ok: true; data: T }

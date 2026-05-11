@@ -13,7 +13,8 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs"
+    "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
+    "scaffold": "node scripts/scaffold-service.cjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
