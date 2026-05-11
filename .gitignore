@@ -5,6 +5,7 @@ release/
 .env
 .env.local
 *.log
+*.tsbuildinfo
 .DS_Store
 .vite/
 .idea/
