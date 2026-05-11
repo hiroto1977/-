@@ -1,24 +1,32 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function GithubPage() {
-  const { user, pullRequests } = SNAPSHOT.github;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'github',
+    SNAPSHOT.github,
+  );
+  const { user, pullRequests } = data;
 
   return (
     <div>
       <StatusBar
+        serviceId="github"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
         avatarUrl={user.avatarUrl}
         who={
           <>
-            <strong>@{user.login}</strong> · {user.name}（{user.company}）· public repos {user.publicRepos}
+            <strong>@{user.login}</strong> · {user.name}
+            {user.company ? `（${user.company}）` : ''} · public repos {user.publicRepos}
           </>
         }
-        right={
-          <button onClick={() => window.serviceHub?.openExternal(user.profileUrl)}>
-            プロフィール
-          </button>
-        }
+        tokenSetup={{ label: 'PAT を設定', placeholder: 'ghp_… (repo, read:user)' }}
       />
 
       <Section title="Pull Requests" count={pullRequests.length}>

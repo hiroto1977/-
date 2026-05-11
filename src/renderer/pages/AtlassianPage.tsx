@@ -1,14 +1,25 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function AtlassianPage() {
-  const { sites, jiraProjects } = SNAPSHOT.atlassian;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'atlassian',
+    SNAPSHOT.atlassian,
+  );
+  const { sites, jiraProjects } = data;
   const site = sites[0];
 
   return (
     <div>
       <StatusBar
+        serviceId="atlassian"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
         who={
           site ? (
             <>

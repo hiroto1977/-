@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 const TYPE_LABEL: Record<string, string> = {
   'application/vnd.google-apps.document': 'Doc',
@@ -12,11 +13,23 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 export function DrivePage() {
-  const { files } = SNAPSHOT.drive;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'drive',
+    SNAPSHOT.drive,
+  );
+  const { files } = data;
 
   return (
     <div>
-      <StatusBar who={<>Google Drive · 最近のファイル {files.length}</>} />
+      <StatusBar
+        serviceId="drive"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Google Drive · 最近のファイル {files.length}</>}
+      />
 
       <Section title="Recent Files" count={files.length}>
         <DataList

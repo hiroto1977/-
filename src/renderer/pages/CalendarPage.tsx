@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 function formatStart(startDate: string, allDay: boolean): string {
   if (allDay) return `${startDate}（終日）`;
@@ -15,11 +16,23 @@ function formatStart(startDate: string, allDay: boolean): string {
 }
 
 export function CalendarPage() {
-  const { calendars, events } = SNAPSHOT.calendar;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'calendar',
+    SNAPSHOT.calendar,
+  );
+  const { calendars, events } = data;
 
   return (
     <div>
-      <StatusBar who={<>Google Calendar · {calendars.length} カレンダー · {events.length} 件の予定</>} />
+      <StatusBar
+        serviceId="calendar"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Google Calendar · {calendars.length} カレンダー · {events.length} 件の予定</>}
+      />
 
       <Section title="Calendars" count={calendars.length}>
         <DataList

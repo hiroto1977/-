@@ -1,13 +1,26 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function SlackPage() {
-  const { channels } = SNAPSHOT.slack;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'slack',
+    SNAPSHOT.slack,
+  );
+  const { channels } = data;
 
   return (
     <div>
-      <StatusBar who={<>Slack ワークスペース接続済 · チャンネル {channels.length}</>} />
+      <StatusBar
+        serviceId="slack"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Slack · チャンネル {channels.length}</>}
+      />
 
       <Section title="Channels" count={channels.length}>
         <DataList

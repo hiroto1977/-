@@ -1,14 +1,24 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function NotionPage() {
-  const { teams, note } = SNAPSHOT.notion;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'notion',
+    SNAPSHOT.notion,
+  );
+  const { teams, note } = data;
 
   return (
     <div>
       <StatusBar
-        status="connected"
-        who={<>Notion アカウント接続済 · チームスペース {teams.length}</>}
+        serviceId="notion"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Notion · チームスペース {teams.length}</>}
       />
 
       <Section title="Teamspaces" count={teams.length}>

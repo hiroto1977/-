@@ -1,17 +1,30 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 function ts(unix: number): string {
   return new Date(unix * 1000).toISOString().slice(0, 10);
 }
 
 export function CanvaPage() {
-  const { designs, brandKits } = SNAPSHOT.canva;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'canva',
+    SNAPSHOT.canva,
+  );
+  const { designs, brandKits } = data;
 
   return (
     <div>
-      <StatusBar who={<>Canva · ブランドキット {brandKits.length} · デザイン {designs.length}+</>} />
+      <StatusBar
+        serviceId="canva"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Canva · ブランドキット {brandKits.length} · デザイン {designs.length}+</>}
+      />
 
       <Section title="Recent Designs" count={designs.length}>
         <DataList

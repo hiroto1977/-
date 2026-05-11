@@ -1,13 +1,26 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function WordPressPage() {
-  const { sites } = SNAPSHOT.wordpress;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'wordpress',
+    SNAPSHOT.wordpress,
+  );
+  const { sites } = data;
 
   return (
     <div>
-      <StatusBar who={<>WordPress.com アカウント · 所有サイト {sites.length}</>} />
+      <StatusBar
+        serviceId="wordpress"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>WordPress.com アカウント · 所有サイト {sites.length}</>}
+      />
 
       <Section title="Sites" count={sites.length}>
         <DataList

@@ -9,11 +9,17 @@ services (GitHub, WordPress.com, Atlassian, Notion, Google Drive, Google Calenda
 through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
 are bundled by `vite-plugin-electron`.
 
-Each service page renders a live data snapshot fetched via MCP servers and stored in
-`src/renderer/data/snapshot.ts`. The snapshot is regenerated manually by running the MCP tools and
-overwriting that file — there is no live fetch from the renderer yet. The shared API clients in
-`src/shared/api/*` define the interface but throw `NotConfiguredError` until credentials are wired
-up; their methods are the eventual replacement for the static snapshot.
+Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` (regenerated
+manually by running MCP tools) and can swap to a live REST fetch via the main‑process clients in
+`src/main/clients/*`. The `useServiceData(serviceId, snapshot)` hook in `src/renderer/hooks/`
+manages this: it returns `data`, `source` (`'snapshot'` | `'live'`), `status`, `errorMessage`, and
+`refresh()`. GitHub is the only service with a working live fetcher today; the rest fall back to
+snapshot until their fetcher is added to `src/main/clients/index.ts`'s `LIVE_FETCHERS` map.
+
+Tokens are persisted in the user's Electron `userData` directory via `src/main/secrets.ts`, which
+encrypts them with `safeStorage` when the OS keychain is available (and falls back to a
+plain‑base64 layout otherwise, so dev on Linux without keychain still works). Renderer never sees
+the raw token — it only calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot`.
 
 ## Commands
 
@@ -24,31 +30,43 @@ npm run typecheck    # tsc -b --noEmit (uses tsconfig project references)
 npm run build:renderer  # type-check + vite build only (no packaging)
 npm run build        # full build: tsc -b, vite build, electron-builder package
 npm run lint         # eslint . (no eslint config committed yet — add one before relying on this)
+npm test             # vitest run (all *.test.ts under src/**/__tests__/)
+npm run test:watch   # vitest watch mode
 ```
 
-There is no test runner configured yet. When tests are introduced, document the single-test
-invocation here.
+Run a single test with `npx vitest run path/to/file.test.ts` or filter by name with
+`npx vitest run -t "pattern"`. Vitest config is in `vitest.config.ts` (node environment).
 
 ## Architecture
 
 Three TypeScript build contexts, kept separate via `tsconfig` project references:
 
-- `src/main/` — Electron main process. `main.ts` creates the `BrowserWindow`, loads either the Vite
-  dev server URL (`process.env.VITE_DEV_SERVER_URL`) or the built `dist/index.html`, and registers
-  IPC handlers (`app:getVersion`, `app:openExternal`).
+- `src/main/` — Electron main process. `main.ts` creates the `BrowserWindow` and registers IPC
+  handlers (`app:*`, `secrets:*`, `fetch:snapshot`). Token persistence lives in `secrets.ts`
+  (`safeStorage`‑backed). Live REST clients live under `src/main/clients/`; each exports a function
+  `(ctx: FetchContext) => Promise<NormalizedSnapshot>` and is registered in `clients/index.ts`'s
+  `LIVE_FETCHERS` map keyed by `ServiceId`.
 - `src/preload/` — Context‑isolated preload that exposes a typed `window.serviceHub` bridge via
   `contextBridge.exposeInMainWorld`. The bridge type is re‑declared globally in `src/shared/bridge.d.ts`
   so the renderer can call it without imports.
 - `src/renderer/` — React app. `App.tsx` renders a sidebar driven by `services.ts`, which is the single
   source of truth for the service list (id, label, icon, description, page component). Adding a new
-  service means: create a page in `src/renderer/pages/`, create an API client in `src/shared/api/`,
+  service means: create a page in `src/renderer/pages/`, create an API client in `src/shared/api/`
+  (stub) and/or a live fetcher in `src/main/clients/`, register the fetcher in `LIVE_FETCHERS`,
   and append an entry to `SERVICES`.
 
-Page composition: each service page reads its slice of `data/snapshot.ts` and renders it with the
-shared `components/StatusBar.tsx` + `Section` (header + count) + `components/DataList.tsx` (cards
-with optional thumbnail, meta, badge, and "open external" button). Keep service pages declarative
-— if a new visual primitive is needed by more than one page, add it under `components/` rather than
-duplicating markup.
+Page composition: each service page calls `useServiceData(id, SNAPSHOT[id])` and renders the result
+with the shared `components/StatusBar.tsx` + `Section` (header + count) + `components/DataList.tsx`
+(cards with optional thumbnail, meta, badge, and "open external" button). `StatusBar` exposes a
+unified refresh button plus an optional `tokenSetup` slot for password‑input‑style credential
+entry. Keep service pages declarative — if a new visual primitive is needed by more than one page,
+add it under `components/` rather than duplicating markup.
+
+Live fetcher contract: a fetcher takes `{ token, fetch? }` and returns a value with the same shape
+as the corresponding `SNAPSHOT[id]` slice. `fetch` is injectable so the function is unit‑testable
+under Node without a real network. See `src/main/clients/github.ts` for the reference implementation
+and `src/main/clients/__tests__/github.test.ts` for the testing pattern (mock fetch with
+`vi.fn<typeof fetch>()`).
 
 API clients (`src/shared/api/*.ts`): each exports a class implementing `ServiceClient` (`id`,
 `isConfigured()`). Methods that need credentials must guard with `if (!this.isConfigured()) throw new

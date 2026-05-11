@@ -1,13 +1,26 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
 
 export function GmailPage() {
-  const { threads } = SNAPSHOT.gmail;
+  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+    'gmail',
+    SNAPSHOT.gmail,
+  );
+  const { threads } = data;
 
   return (
     <div>
-      <StatusBar who={<>Gmail 受信トレイ · 直近 {threads.length} スレッド</>} />
+      <StatusBar
+        serviceId="gmail"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>Gmail 受信トレイ · 直近 {threads.length} スレッド</>}
+      />
 
       <Section title="Inbox" count={threads.length}>
         <DataList
