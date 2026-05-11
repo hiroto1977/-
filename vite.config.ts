@@ -1,7 +1,12 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+const electronOutDir = path.resolve(projectRoot, 'dist-electron');
 
 export default defineConfig({
   root: 'src/renderer',
@@ -9,23 +14,25 @@ export default defineConfig({
     react(),
     electron([
       {
-        entry: 'src/main/main.ts',
+        entry: path.resolve(projectRoot, 'src/main/main.ts'),
         vite: {
           build: {
-            outDir: 'dist-electron',
+            outDir: electronOutDir,
             sourcemap: true,
+            emptyOutDir: false,
           },
         },
       },
       {
-        entry: 'src/preload/preload.ts',
+        entry: path.resolve(projectRoot, 'src/preload/preload.ts'),
         onstart(options) {
           options.reload();
         },
         vite: {
           build: {
-            outDir: 'dist-electron',
+            outDir: electronOutDir,
             sourcemap: 'inline',
+            emptyOutDir: false,
           },
         },
       },
