@@ -11,6 +11,10 @@ export type ActionResult<T = unknown> =
   | { ok: true; data: T }
   | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
 
+export type OAuthResult =
+  | { ok: true; data: { scope?: string; expiresAt?: number } }
+  | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
+
 const api = {
   getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
@@ -29,6 +33,11 @@ const api = {
     action: string,
     payload: Record<string, unknown>,
   ): Promise<ActionResult<T>> => ipcRenderer.invoke('action:invoke', serviceId, action, payload),
+
+  oauthSupported: (serviceId: ServiceId): Promise<boolean> =>
+    ipcRenderer.invoke('oauth:isSupported', serviceId),
+  authorize: (serviceId: ServiceId): Promise<OAuthResult> =>
+    ipcRenderer.invoke('oauth:authorize', serviceId),
 };
 
 contextBridge.exposeInMainWorld('serviceHub', api);

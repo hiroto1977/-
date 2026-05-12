@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-05-11  
+最終更新: 2026-05-12  
 対象ブランチ: `claude/add-claude-documentation-F7HIa`
 
 このドキュメントは、現在の状態から「自分のマシンで毎日使うレベル」までに必要な
@@ -11,22 +11,23 @@
 
 ## 現状
 
-- [x] 9 サービスの UI + 実データスナップショット表示
-- [x] 全 9 サービスのライブフェッチャー（main プロセスから REST 直叩き）
-- [x] `safeStorage` によるトークン暗号化保存
-- [x] Vitest 25 件合格・typecheck・build green
+- [x] 10 サービスの UI + 実データスナップショット表示 (Skills 含む)
+- [x] 全 10 サービスのライブフェッチャー
+- [x] 全 10 サービスの write アクション (create-issue / send-message / create-page 等)
+- [x] OAuth 2.0 + PKCE code flow (Google 配線済み、他は config 追加だけ)
+- [x] `safeStorage` によるトークン暗号化保存 + 自動 refresh
+- [x] Vitest 83 件合格・typecheck・build green
+- [x] アプリアイコン (build/icon.svg → 512×512 PNG)
 - [x] Linux x86-64 AppImage を git にチャンクコミット済み
+- [x] GitHub Actions: ci.yml + release.yml (3 OS マトリックス)
 - [x] PR #2 (draft) push 済み
 
 未完了の主要タスク:
 - [ ] 自分のマシンで起動して使う（Phase 0）
 - [ ] PR レビュー → main マージ（Phase 1）
-- [ ] スナップショット最新化（Phase 2）
-- [ ] アイコン / ブランディング（Phase 3）
-- [ ] OAuth code flow（Phase 4）
-- [ ] サービスごとの機能拡張（Phase 5）
-- [ ] Mac / Windows 用インストーラ生成（Phase 6）
-- [ ] 配布署名 / 自動アップデート / CI（Phase 7）
+- [ ] スナップショット最新化（Phase 2、優先度低）
+- [ ] OAuth: 他プロバイダ (Notion/Slack/Canva/WP/Atlassian) の config 追加（Phase 4 残）
+- [ ] 配布署名 (Phase 7-1) / 自動アップデート (Phase 7-2)
 
 ---
 
@@ -158,126 +159,15 @@ gh release create v0.1.0 "release/Service Hub-0.1.0.AppImage" \
 
 ---
 
-## Phase 4: OAuth code flow を実装する（大型・2〜4 日）
+## Phase 4: OAuth code flow ✅ 基盤実装済み
 
-現状はユーザーが OAuth Playground 等で取得したアクセストークンをペーストする方式。
-本格運用には main プロセスに OAuth 2.0 code flow を組み込み、「ブラウザで認証」
-ボタンから完結させる必要があります。
+PKCE-based Authorization Code (RFC 7636 + RFC 8252) を main プロセスに実装。
+ループバックサーバ・state 検証・token refresh まで含む完全フロー。
+Google プロバイダ (Drive / Calendar / Gmail) は配線済み — 単一の OAuth client ID で
+3 サービスをカバー。詳細は `docs/OAUTH_SETUP.md`。
 
-### 4-1. サービスごとに OAuth クライアントを発行
-
-各サービスのデベロッパーコンソールで OAuth クライアントを登録し、リダイレクト
-URI を `http://127.0.0.1:<port>/oauth/callback` に設定。
-
-| サービス | コンソール | スコープ例 |
-|---|---|---|
-| Google (Drive/Calendar/Gmail) | https://console.cloud.google.com/apis/credentials | `drive.readonly`, `calendar.readonly`, `gmail.readonly` |
-| Slack | https://api.slack.com/apps | `channels:read`, `groups:read`, `chat:write`, `canvas:read` |
-| Canva | https://www.canva.dev/docs/connect/connect-api-overview/ | `design:meta:read`, `brandtemplate:meta:read` |
-| Notion | https://www.notion.so/profile/integrations | "public integration" を作る |
-| WordPress.com | https://developer.wordpress.com/apps/ | `global` |
-| Atlassian | https://developer.atlassian.com/console/myapps/ | `read:jira-work`, OAuth 2.0 (3LO) |
-
-クライアント ID / シークレットは `.env`（gitignore 済み）で持つか、ビルド時環境変数で
-バンドルに埋める（シークレットは PKCE で省略する選択肢あり）。
-
-### 4-2. main プロセスに OAuth サーバを実装
-
-新規ファイル: `src/main/oauth.ts`
-
-```ts
-import { BrowserWindow, shell } from 'electron';
-import http from 'node:http';
-import { randomBytes, createHash } from 'node:crypto';
-
-interface OAuthConfig {
-  authorizeUrl: string;
-  tokenUrl: string;
-  clientId: string;
-  scopes: string[];
-  usePkce: boolean;
-}
-
-const CONFIGS: Record<string, OAuthConfig> = {
-  drive: {
-    authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenUrl: 'https://oauth2.googleapis.com/token',
-    clientId: process.env.GOOGLE_CLIENT_ID!,
-    scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-    usePkce: true,
-  },
-  // ... 各サービス分
-};
-
-export async function authorize(serviceId: string): Promise<{ accessToken: string; refreshToken?: string; expiresAt: number }> {
-  const cfg = CONFIGS[serviceId];
-  const state = randomBytes(16).toString('hex');
-  const codeVerifier = randomBytes(64).toString('base64url');
-  const codeChallenge = createHash('sha256').update(codeVerifier).digest('base64url');
-
-  // 1. ローカルサーバを起動して redirect を待ち受け
-  const port = await listenForRedirect(state); // 9000 番台で空きポートを探す
-
-  // 2. ブラウザで認可ページを開く
-  const authUrl = `${cfg.authorizeUrl}?` + new URLSearchParams({
-    client_id: cfg.clientId,
-    redirect_uri: `http://127.0.0.1:${port}/oauth/callback`,
-    response_type: 'code',
-    scope: cfg.scopes.join(' '),
-    state,
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
-    access_type: 'offline',
-  });
-  shell.openExternal(authUrl);
-
-  // 3. redirect で受け取った code をトークン交換
-  const { code } = await port.promise; // listenForRedirect 内で resolve
-  const tokenRes = await fetch(cfg.tokenUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code,
-      client_id: cfg.clientId,
-      redirect_uri: `http://127.0.0.1:${port.value}/oauth/callback`,
-      grant_type: 'authorization_code',
-      code_verifier: codeVerifier,
-    }),
-  }).then((r) => r.json());
-
-  return {
-    accessToken: tokenRes.access_token,
-    refreshToken: tokenRes.refresh_token,
-    expiresAt: Date.now() + tokenRes.expires_in * 1000,
-  };
-}
-```
-
-### 4-3. リフレッシュトークン管理
-
-`src/main/secrets.ts` を拡張して `{ accessToken, refreshToken, expiresAt }` を JSON で保存。
-`fetch:snapshot` ハンドラの先頭で `expiresAt` を見て、期限切れなら自動で
-refresh エンドポイントを叩き、新しい access token を保存して再試行。
-
-### 4-4. レンダラ UI を「ブラウザで認証」ボタンに置換
-
-`src/renderer/components/StatusBar.tsx` の `tokenSetup` を:
-
-```tsx
-{tokenSetup ? (
-  <button onClick={() => window.serviceHub?.authorize(serviceId!)}>
-    {isConfigured ? '再認証' : `${tokenSetup.label} (ブラウザで認証)`}
-  </button>
-) : null}
-```
-
-preload に `authorize(serviceId)` を追加し、main の `oauth:authorize` IPC を呼ぶ。
-
-### 4-5. 注意点
-
-- **クライアントシークレットの扱い**: デスクトップアプリでは PKCE 必須。Google / Slack / Canva は対応。Atlassian と WordPress.com はシークレットが必要なので、obfuscate しても完全には隠せない（業界標準では受容されている）。
-- **ループバックリダイレクト**: Google は `http://127.0.0.1:<port>` を許可する。Slack も同様。一部の API（古い OAuth 1.0a など）はループバック不可なので別フロー（カスタム URI スキーム）が必要。
-- **クロスサイト Cookie**: `BrowserWindow` 内認証だと Google が SafeBrowsing 警告を出す。`shell.openExternal` でデフォルトブラウザを使うのが標準。
+残作業: 他プロバイダ (Notion / Slack / Canva / WordPress / Atlassian) の `OAUTH_CONFIGS`
+エントリ追加 — 各 1 ファイル数行 + client ID 取得作業のみ。
 
 ---
 

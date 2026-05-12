@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 
@@ -35,12 +35,42 @@ export function StatusBar({
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [token, setToken] = useState('');
+  const [oauthSupported, setOauthSupported] = useState(false);
+  const [authorizing, setAuthorizing] = useState(false);
 
   // When the live fetch fails with an auth error, drop straight into
   // the token re-entry mode — the most common recovery action.
   useEffect(() => {
     if (errorKind === 'auth' && tokenSetup) setEditing(true);
   }, [errorKind, tokenSetup]);
+
+  useEffect(() => {
+    if (!serviceId) return;
+    let cancelled = false;
+    window.serviceHub?.oauthSupported(serviceId).then((ok) => {
+      if (!cancelled) setOauthSupported(ok);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [serviceId]);
+
+  const browserAuth = useMemo(
+    () => async () => {
+      if (!serviceId || !window.serviceHub) return;
+      setAuthorizing(true);
+      const res = await window.serviceHub.authorize(serviceId);
+      setAuthorizing(false);
+      if (res.ok) {
+        setEditing(false);
+        onRefresh?.();
+      } else {
+        // Surface failure inline via the existing errorMessage slot.
+        console.error('OAuth authorize failed:', res.message);
+      }
+    },
+    [serviceId, onRefresh],
+  );
 
   const badge =
     status === 'loading' ? { cls: 'badge', text: 'Loading…' }
@@ -74,6 +104,11 @@ export function StatusBar({
         {avatarUrl ? <img src={avatarUrl} alt="" /> : null}
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
+      {tokenSetup && !editing && oauthSupported ? (
+        <button onClick={browserAuth} disabled={authorizing}>
+          {authorizing ? '認証中…' : isConfigured ? '再認証 (ブラウザ)' : 'ブラウザで認証'}
+        </button>
+      ) : null}
       {tokenSetup && !editing ? (
         <button onClick={() => setEditing(true)}>{editButtonLabel}</button>
       ) : null}

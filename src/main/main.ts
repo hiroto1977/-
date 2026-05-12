@@ -1,7 +1,14 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
-import { clearToken, getToken, listConfiguredServices, setToken } from './secrets';
+import {
+  clearToken,
+  getValidToken,
+  listConfiguredServices,
+  setOAuthTokens,
+  setToken,
+} from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
+import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 
 const isDev = !app.isPackaged;
 
@@ -80,7 +87,7 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
   // token; everyone else must have one before we hit the network.
   let token = '';
   if (!LOCAL_SERVICES.has(serviceId)) {
-    const t = await getToken(serviceId);
+    const t = await getValidToken(serviceId);
     if (!t) {
       return { ok: false, code: 'not_configured', message: 'トークン未設定' };
     }
@@ -106,7 +113,7 @@ ipcMain.handle(
         message: `${serviceId} に action "${action}" は登録されていません`,
       };
     }
-    const token = await getToken(serviceId);
+    const token = await getValidToken(serviceId);
     if (!token) {
       return { ok: false, code: 'not_configured', message: 'トークン未設定' };
     }
@@ -119,3 +126,24 @@ ipcMain.handle(
     }
   },
 );
+
+ipcMain.handle('oauth:isSupported', (_e, serviceId: ServiceId) => isOAuthSupported(serviceId));
+
+ipcMain.handle('oauth:authorize', async (_e, serviceId: ServiceId) => {
+  const config = OAUTH_CONFIGS[serviceId];
+  if (!config || !config.clientId) {
+    return {
+      ok: false,
+      code: 'not_supported',
+      message: 'このサービスは OAuth 未対応、または OAuth クライアント ID 未設定',
+    };
+  }
+  try {
+    const tokens = await authorize(config);
+    await setOAuthTokens(serviceId, tokens);
+    return { ok: true, data: { scope: tokens.scope, expiresAt: tokens.expiresAt } };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, code: 'authorize_failed', message };
+  }
+});
