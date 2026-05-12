@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchSlackSnapshot, ACTIONS } from '../slack';
+import { fetchSlackSnapshot, ACTIONS, buildChannelPermalink } from '../slack';
 import { FetchError } from '../types';
 
 function jsonResponse(body: unknown): Response {
@@ -82,5 +82,54 @@ describe('ACTIONS["send-message"]', () => {
         payload: { channel: 'bad', text: 'hi' },
       }),
     ).rejects.toBeInstanceOf(FetchError);
+  });
+});
+
+describe('buildChannelPermalink', () => {
+  it('produces the proper workspace-scoped URL when a domain is known', () => {
+    expect(buildChannelPermalink('C123', 'acme')).toBe('https://acme.slack.com/archives/C123');
+  });
+
+  it('falls back to app_redirect when the workspace domain is unknown', () => {
+    expect(buildChannelPermalink('C123', undefined)).toBe(
+      'https://slack.com/app_redirect?channel=C123',
+    );
+  });
+});
+
+describe('fetchSlackSnapshot permalink behavior', () => {
+  it('uses the workspace domain from team.info when available', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      // Promise.all order matches the order in the source: conversations.list first.
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ok: true,
+          channels: [{ id: 'C1', name: 'general', is_archived: false }],
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({ ok: true, team: { id: 'T1', name: 'Acme', domain: 'acme' } }),
+      );
+
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels[0].permalink).toBe('https://acme.slack.com/archives/C1');
+  });
+
+  it('falls back to app_redirect when team.info fails', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ok: true,
+          channels: [{ id: 'C2', name: 'general', is_archived: false }],
+        }),
+      )
+      // team.info raises (missing_scope etc.) — we should keep going
+      // with the generic permalink.
+      .mockResolvedValueOnce(new Response('no scope', { status: 403 }));
+
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels[0].permalink).toBe('https://slack.com/app_redirect?channel=C2');
   });
 });

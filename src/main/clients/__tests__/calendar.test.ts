@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchCalendarSnapshot, ACTIONS } from '../calendar';
+import { fetchCalendarSnapshot, ACTIONS, defaultTimeZone } from '../calendar';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -34,8 +34,18 @@ describe('fetchCalendarSnapshot', () => {
   });
 });
 
+describe('defaultTimeZone', () => {
+  it('returns the host IANA time zone, not a hard-coded one', () => {
+    const tz = defaultTimeZone();
+    expect(typeof tz).toBe('string');
+    expect(tz.length).toBeGreaterThan(0);
+    // Should match Intl's own resolution
+    expect(tz).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  });
+});
+
 describe('ACTIONS["create-event"]', () => {
-  it('POSTs to primary/events with start/end + default time zone', async () => {
+  it('POSTs to primary/events with start/end + host-detected time zone', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: 'e1', htmlLink: 'https://calendar.google.com/event?eid=x' }),
     );
@@ -54,10 +64,10 @@ describe('ACTIONS["create-event"]', () => {
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     const body = JSON.parse(init.body as string);
     expect(body.summary).toBe('Meeting');
-    expect(body.start).toEqual({
-      dateTime: '2026-06-01T10:00:00+09:00',
-      timeZone: 'Asia/Tokyo',
-    });
+    // No hardcoded TZ — the action now uses the host's IANA zone unless
+    // the caller overrides it.
+    expect(body.start.dateTime).toBe('2026-06-01T10:00:00+09:00');
+    expect(body.start.timeZone).toBe(defaultTimeZone());
     expect(body.end.dateTime).toBe('2026-06-01T11:00:00+09:00');
   });
 

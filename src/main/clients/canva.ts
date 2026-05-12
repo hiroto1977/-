@@ -1,4 +1,4 @@
-import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface CanvaDesign {
   id: string;
@@ -44,9 +44,21 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
       { headers },
       fetchCtx,
     ),
-    jsonFetch<CanvaBrandKitsResponse>('https://api.canva.com/rest/v1/brand-kits', { headers }, fetchCtx).catch(
-      () => ({ items: [] as CanvaBrandKit[] }),
-    ),
+    // brand-kits requires the brandkit:read scope which not all tokens
+    // grant; swallow ONLY the predictable "endpoint disabled / missing
+    // scope" responses (403/404) so the rest of the snapshot still
+    // works, but propagate auth/rate-limit failures so the user sees
+    // them.
+    jsonFetch<CanvaBrandKitsResponse>(
+      'https://api.canva.com/rest/v1/brand-kits',
+      { headers },
+      fetchCtx,
+    ).catch((err: unknown): CanvaBrandKitsResponse => {
+      if (err instanceof FetchError && (err.status === 403 || err.status === 404)) {
+        return { items: [] };
+      }
+      throw err;
+    }),
   ]);
 
   return {

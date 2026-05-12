@@ -11,7 +11,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHUNK_DIR="$ROOT/dist-chunks"
 OUT_DIR="$ROOT/release"
 OUT="$OUT_DIR/Service Hub-0.1.0.AppImage"
-EXPECTED_SHA256="b7b0dbc81b1578494afcb1eed07c0567a7d7c5905da2fc01acc9005e53c50ba1"
+EXPECTED_SHA256="4f0b4c2772e4c04f11404390e97fdbf2991a7db3e49b26de14c6d13314daeb93"
 
 if [ ! -d "$CHUNK_DIR" ]; then
   echo "error: $CHUNK_DIR not found. run from a checkout of the feature branch." >&2

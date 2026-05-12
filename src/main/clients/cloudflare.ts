@@ -79,13 +79,12 @@ export async function fetchCloudflareSnapshot(ctx: FetchContext): Promise<Cloudf
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'cloudflare' };
   const init: RequestInit = { headers: headers(ctx.token) };
 
-  const [userWrap, zonesWrap] = await Promise.all([
+  const [userWrap, zones] = await Promise.all([
     jsonFetch<CfWrap<CfUser>>(`${API_BASE}/user`, init, fetchCtx),
-    jsonFetch<CfWrap<CfZone[]>>(`${API_BASE}/zones?per_page=50`, init, fetchCtx),
+    fetchAllZones(init, fetchCtx),
   ]);
 
   const user = unwrap(userWrap);
-  const zones = unwrap(zonesWrap);
 
   return {
     user: { email: user.email, username: user.username },
@@ -100,6 +99,27 @@ export async function fetchCloudflareSnapshot(ctx: FetchContext): Promise<Cloudf
       devModeRemainingSec: z.development_mode ?? 0,
     })),
   };
+}
+
+const PER_PAGE = 50;
+const MAX_PAGES = 20; // hard cap at 1000 zones — beyond that the user wants a real filter
+
+async function fetchAllZones(
+  init: RequestInit,
+  fetchCtx: { fetch?: typeof fetch; serviceId: string },
+): Promise<CfZone[]> {
+  const all: CfZone[] = [];
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const wrap = await jsonFetch<CfWrap<CfZone[]>>(
+      `${API_BASE}/zones?per_page=${PER_PAGE}&page=${page}`,
+      init,
+      fetchCtx,
+    );
+    const batch = unwrap(wrap);
+    all.push(...batch);
+    if (batch.length < PER_PAGE) break;
+  }
+  return all;
 }
 
 // --- write-side actions --------------------------------------------------

@@ -169,8 +169,9 @@ export function AtlassianPage() {
 
       <Section title="Confluence & Compass">
         <div className="empty">
-          現在のスコープは <code>read:jira-work</code> / <code>write:jira-work</code> のみ。
-          Confluence・Compass を使うにはスコープを追加して再接続が必要。
+          現在の Basic auth + <code>read:jira-work</code> / <code>write:jira-work</code> スコープでは
+          Jira のみ操作可能（一覧表示と Issue 作成は実装済み）。Confluence・Compass を扱うには
+          OAuth 2.0 (3LO) と <code>read:confluence-content.all</code> 等の追加スコープが必要。
         </div>
       </Section>
     </div>

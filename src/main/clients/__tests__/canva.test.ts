@@ -34,7 +34,7 @@ describe('fetchCanvaSnapshot', () => {
     expect(snap.brandKits).toEqual([{ id: 'b1' }]);
   });
 
-  it('falls back to empty brandKits when the endpoint errors', async () => {
+  it('falls back to empty brandKits on 403 (missing scope)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse({ items: [] }))
@@ -42,6 +42,34 @@ describe('fetchCanvaSnapshot', () => {
 
     const snap = await fetchCanvaSnapshot({ token: 't', fetch: fetchMock });
     expect(snap.brandKits).toEqual([]);
+  });
+
+  it('falls back to empty brandKits on 404 (endpoint disabled)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ items: [] }))
+      .mockResolvedValueOnce(new Response('not found', { status: 404 }));
+
+    const snap = await fetchCanvaSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.brandKits).toEqual([]);
+  });
+
+  it('propagates 401 from brand-kits (auth error, not endpoint quirk)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ items: [] }))
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }));
+
+    await expect(fetchCanvaSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(/401/);
+  });
+
+  it('propagates 429 from brand-kits (rate limit, surface it)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ items: [] }))
+      .mockResolvedValueOnce(new Response('rate limit', { status: 429 }));
+
+    await expect(fetchCanvaSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(/429/);
   });
 });
 

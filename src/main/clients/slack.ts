@@ -24,6 +24,20 @@ export interface SlackSnapshot {
   }[];
 }
 
+interface SlackTeamInfoResponse {
+  ok: boolean;
+  error?: string;
+  team?: { id: string; name: string; domain: string };
+}
+
+/** Build a channel permalink. Prefers the real workspace URL
+ *  (https://<domain>.slack.com/archives/<id>) when we know the
+ *  domain; falls back to the generic app_redirect URL otherwise. */
+export function buildChannelPermalink(channelId: string, workspaceDomain?: string): string {
+  if (workspaceDomain) return `https://${workspaceDomain}.slack.com/archives/${channelId}`;
+  return `https://slack.com/app_redirect?channel=${channelId}`;
+}
+
 export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'slack' };
   const headers = {
@@ -31,23 +45,33 @@ export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapsh
     'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  const res = await jsonFetch<SlackConvListResponse>(
-    'https://slack.com/api/conversations.list?types=public_channel,private_channel&exclude_archived=false&limit=20',
-    { headers },
-    fetchCtx,
-  );
+  // team.info is cheap (single workspace metadata) and unlocks proper
+  // permalinks for every channel below. If the token lacks team:read,
+  // we just degrade to the app_redirect fallback rather than failing.
+  const [convoRes, teamRes] = await Promise.all([
+    jsonFetch<SlackConvListResponse>(
+      'https://slack.com/api/conversations.list?types=public_channel,private_channel&exclude_archived=false&limit=20',
+      { headers },
+      fetchCtx,
+    ),
+    jsonFetch<SlackTeamInfoResponse>('https://slack.com/api/team.info', { headers }, fetchCtx).catch(
+      () => ({ ok: false } as SlackTeamInfoResponse),
+    ),
+  ]);
 
-  if (!res.ok) {
-    throw new FetchError(`slack ${res.error ?? 'unknown_error'}`, 0, 'slack');
+  if (!convoRes.ok) {
+    throw new FetchError(`slack ${convoRes.error ?? 'unknown_error'}`, 0, 'slack');
   }
 
+  const workspaceDomain = teamRes.ok ? teamRes.team?.domain : undefined;
+
   return {
-    channels: (res.channels ?? []).map((c) => ({
+    channels: (convoRes.channels ?? []).map((c) => ({
       id: c.id,
       name: c.name,
       purpose: c.purpose?.value || c.topic?.value || '',
       isArchived: c.is_archived,
-      permalink: `https://slack.com/app_redirect?channel=${c.id}`,
+      permalink: buildChannelPermalink(c.id, workspaceDomain),
     })),
   };
 }

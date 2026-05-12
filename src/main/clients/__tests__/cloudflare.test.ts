@@ -18,6 +18,55 @@ const failWrap = (message: string) => ({
 });
 
 describe('fetchCloudflareSnapshot', () => {
+  it('paginates through /zones until a partial page is returned', async () => {
+    // 50 zones per page → we should see page=1, page=2, page=3 (where
+    // page 3 has fewer than 50 items so we stop). Page indices in URL
+    // are 1-based per CF docs.
+    const makeZone = (id: string) => ({
+      id,
+      name: `${id}.example.com`,
+      status: 'active',
+      plan: { name: 'Free' },
+      account: { id: 'a', name: 'Personal' },
+      name_servers: [],
+      development_mode: 0,
+    });
+    const page1 = Array.from({ length: 50 }, (_, i) => makeZone(`z${i + 1}`));
+    const page2 = Array.from({ length: 50 }, (_, i) => makeZone(`z${i + 51}`));
+    const page3 = Array.from({ length: 7 }, (_, i) => makeZone(`z${i + 101}`));
+
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse(okWrap({ id: 'u1', email: 'me@example.com', username: 'me' })),
+      )
+      .mockResolvedValueOnce(jsonResponse(okWrap(page1)))
+      .mockResolvedValueOnce(jsonResponse(okWrap(page2)))
+      .mockResolvedValueOnce(jsonResponse(okWrap(page3)));
+
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+
+    expect(snap.zones).toHaveLength(107);
+    const calls = fetchMock.mock.calls.map((c) => c[0] as string);
+    expect(calls).toContain('https://api.cloudflare.com/client/v4/zones?per_page=50&page=1');
+    expect(calls).toContain('https://api.cloudflare.com/client/v4/zones?per_page=50&page=2');
+    expect(calls).toContain('https://api.cloudflare.com/client/v4/zones?per_page=50&page=3');
+    expect(calls.filter((u) => u.includes('/zones?'))).toHaveLength(3);
+  });
+
+  it('stops after page 1 when fewer than 50 zones are returned', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse(okWrap({ id: 'u', email: 'a@b.com', username: 'a' })),
+      )
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.zones).toEqual([]);
+    expect(fetchMock.mock.calls).toHaveLength(2); // /user + /zones page=1, no page=2
+  });
+
   it('issues /user + /zones in parallel and normalizes the wrap envelope', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

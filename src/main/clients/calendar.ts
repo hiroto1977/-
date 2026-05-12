@@ -78,12 +78,24 @@ interface CalendarCreateEventResponse {
   summary?: string;
 }
 
+/** Best-effort guess at the user's local IANA time zone. Falls back to
+ *  UTC if Intl is unavailable for some reason. Exported for testing. */
+export function defaultTimeZone(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (typeof tz === 'string' && tz.length > 0) return tz;
+  } catch {
+    // ignore
+  }
+  return 'UTC';
+}
+
 async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: string }> {
   const { summary, start, end, description, location, timeZone } =
     ctx.payload as unknown as CreateEventPayload;
   if (!summary || !start || !end) throw new Error('summary, start, end are required');
 
-  const tz = timeZone ?? 'Asia/Tokyo';
+  const tz = timeZone ?? defaultTimeZone();
   const body = {
     summary,
     description,
