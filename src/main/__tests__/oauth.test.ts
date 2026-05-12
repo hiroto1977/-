@@ -4,6 +4,8 @@ import {
   buildRefreshBody,
   buildTokenExchangeBody,
   generatePkce,
+  isOAuthSupported,
+  OAUTH_CONFIGS,
   refresh,
   tokenResponseToSet,
   type OAuthConfig,
@@ -114,6 +116,87 @@ describe('tokenResponseToSet', () => {
   });
 });
 
+describe('OAUTH_CONFIGS shape', () => {
+  // These assertions pin the literal endpoints + scopes per service.
+  // They kill the ObjectLiteral mutation that turns each entry into {}
+  // and the ArrayDeclaration mutation that empties the scopes array.
+
+  it('drive uses Google OAuth endpoints with Drive scope + offline access', () => {
+    const cfg = OAUTH_CONFIGS.drive;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://accounts.google.com/o/oauth2/v2/auth');
+    expect(cfg?.tokenUrl).toBe('https://oauth2.googleapis.com/token');
+    expect(cfg?.scopes).toEqual(['https://www.googleapis.com/auth/drive']);
+    expect(cfg?.extraAuthParams).toMatchObject({
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+  });
+
+  it('calendar uses Google OAuth endpoints with both Calendar scopes', () => {
+    const cfg = OAUTH_CONFIGS.calendar;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://accounts.google.com/o/oauth2/v2/auth');
+    expect(cfg?.tokenUrl).toBe('https://oauth2.googleapis.com/token');
+    expect(cfg?.scopes).toEqual([
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events',
+    ]);
+    expect(cfg?.extraAuthParams).toMatchObject({
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+  });
+
+  it('gmail uses Google OAuth endpoints with modify+compose scopes', () => {
+    const cfg = OAUTH_CONFIGS.gmail;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://accounts.google.com/o/oauth2/v2/auth');
+    expect(cfg?.tokenUrl).toBe('https://oauth2.googleapis.com/token');
+    expect(cfg?.scopes).toEqual([
+      'https://www.googleapis.com/auth/gmail.modify',
+      'https://www.googleapis.com/auth/gmail.compose',
+    ]);
+    expect(cfg?.extraAuthParams).toMatchObject({
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+  });
+
+  it('does not register OAuth configs for non-Google services', () => {
+    // Kills the outer OBJECT_LITERAL mutation that would replace the
+    // whole OAUTH_CONFIGS with {} — by inversion the assertion checks
+    // we DO have the three known entries.
+    const keys = Object.keys(OAUTH_CONFIGS);
+    expect(keys).toEqual(expect.arrayContaining(['drive', 'calendar', 'gmail']));
+    expect(keys).not.toContain('github');
+    expect(keys).not.toContain('notion');
+  });
+});
+
+describe('isOAuthSupported', () => {
+  // isOAuthSupported(svc) reflects (a) entry existence and (b) clientId
+  // non-empty. With GOOGLE_OAUTH_CLIENT_ID absent (CI default), all
+  // three are unsupported at module load. We can only assert that
+  // services without an entry return false unconditionally.
+  it('returns false for services without an OAUTH_CONFIGS entry', () => {
+    expect(isOAuthSupported('github')).toBe(false);
+    expect(isOAuthSupported('notion')).toBe(false);
+    expect(isOAuthSupported('slack')).toBe(false);
+    expect(isOAuthSupported('cloudflare')).toBe(false);
+  });
+
+  it('returns false for Google services when GOOGLE_OAUTH_CLIENT_ID is empty', () => {
+    // At test time GOOGLE_OAUTH_CLIENT_ID is unset, so clientId === ''
+    // and the Boolean(cfg && cfg.clientId) check returns false.
+    if (!process.env.GOOGLE_OAUTH_CLIENT_ID) {
+      expect(isOAuthSupported('drive')).toBe(false);
+      expect(isOAuthSupported('calendar')).toBe(false);
+      expect(isOAuthSupported('gmail')).toBe(false);
+    }
+  });
+});
+
 describe('refresh', () => {
   it('POSTs to the token endpoint and merges the response', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
@@ -158,5 +241,27 @@ describe('refresh', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(refresh(CFG, { accessToken: 'a' }, fetchMock)).rejects.toThrow(/no refresh/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('truncates a long error body to 200 chars (kills `body.slice(0, 200)` → `body`)', async () => {
+    // A 500-char error body should be sliced to exactly 200 chars in
+    // the thrown message. Without the slice, the entire body would be
+    // included.
+    const longBody = 'x'.repeat(500);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(longBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await refresh(CFG, { accessToken: 'a', refreshToken: 'r' }, fetchMock);
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    // The message has a fixed prefix "Token refresh failed (500): " before
+    // the (sliced) body. The sliced body is exactly 200 chars of 'x'.
+    expect(caught!.message).toMatch(/Token refresh failed \(500\): x{200}$/);
+    // Confirm explicitly we didn't include the un-truncated rest.
+    expect(caught!.message.length).toBeLessThan(longBody.length);
   });
 });
