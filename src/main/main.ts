@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import { clearToken, getToken, listConfiguredServices, setToken } from './secrets';
-import { LIVE_ACTIONS, LIVE_FETCHERS, type ServiceId } from './clients';
+import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 
 const isDev = !app.isPackaged;
 
@@ -76,9 +76,15 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
   if (!fetcher) {
     return { ok: false, code: 'not_implemented', message: `${serviceId} はライブフェッチ未対応` };
   }
-  const token = await getToken(serviceId);
-  if (!token) {
-    return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+  // LOCAL_SERVICES (e.g. 'skills') read from disk and don't need a saved
+  // token; everyone else must have one before we hit the network.
+  let token = '';
+  if (!LOCAL_SERVICES.has(serviceId)) {
+    const t = await getToken(serviceId);
+    if (!t) {
+      return { ok: false, code: 'not_configured', message: 'トークン未設定' };
+    }
+    token = t;
   }
   try {
     const data = await fetcher({ token });

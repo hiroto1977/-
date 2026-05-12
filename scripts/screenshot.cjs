@@ -21,6 +21,7 @@ const SERVICES = [
   'gmail',
   'slack',
   'canva',
+  'skills',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

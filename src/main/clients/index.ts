@@ -7,6 +7,7 @@ import { fetchCalendarSnapshot, ACTIONS as CALENDAR_ACTIONS } from './calendar';
 import { fetchGmailSnapshot, ACTIONS as GMAIL_ACTIONS } from './gmail';
 import { fetchCanvaSnapshot } from './canva';
 import { fetchAtlassianSnapshot, ACTIONS as ATLASSIAN_ACTIONS } from './atlassian';
+import { fetchSkillsSnapshot, ACTIONS as SKILLS_ACTIONS } from './skills';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -23,8 +24,14 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   gmail: fetchGmailSnapshot,
   slack: fetchSlackSnapshot,
   canva: fetchCanvaSnapshot,
+  skills: fetchSkillsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
+
+/** Services whose snapshot fetcher reads local resources (filesystem,
+ *  process state, etc.) and does not require any saved credentials. The
+ *  IPC handler in main.ts skips the secrets lookup for these. */
+export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>(['skills']);
 
 /** Per-service write-side actions. Each service may register one or more
  *  named actions; renderer invokes them via `serviceHub.invoke()`. */
@@ -36,6 +43,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   atlassian: ATLASSIAN_ACTIONS,
   wordpress: WORDPRESS_ACTIONS,
   gmail: GMAIL_ACTIONS,
+  skills: SKILLS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

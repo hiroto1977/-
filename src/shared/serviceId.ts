@@ -16,6 +16,7 @@ export const SERVICE_IDS = [
   'gmail',
   'slack',
   'canva',
+  'skills',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

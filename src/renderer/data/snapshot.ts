@@ -244,6 +244,15 @@ export const SNAPSHOT = {
     ],
   },
 
+  skills: {
+    items: [] as {
+      name: string;
+      description: string;
+      source: 'user' | 'project' | 'plugin';
+      path: string;
+    }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   canva: {

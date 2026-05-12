@@ -7,6 +7,7 @@ import { CalendarPage } from './pages/CalendarPage';
 import { GmailPage } from './pages/GmailPage';
 import { SlackPage } from './pages/SlackPage';
 import { CanvaPage } from './pages/CanvaPage';
+import { SkillsPage } from './pages/SkillsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -84,6 +85,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'CV',
     description: 'デザイン・フォルダ・コメント',
     page: CanvaPage,
+  },
+  {
+    id: 'skills',
+    label: 'Skills',
+    icon: 'SK',
+    description: '~/.claude/skills 一覧 + Anthropic API 経由で実行',
+    page: SkillsPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
