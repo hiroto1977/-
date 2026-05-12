@@ -40,6 +40,10 @@ npm run test:watch   # vitest watch mode
 Run a single test with `npx vitest run path/to/file.test.ts` or filter by name with
 `npx vitest run -t "pattern"`. Vitest config is in `vitest.config.ts` (node environment).
 
+CI: `.github/workflows/ci.yml` runs typecheck + test + build:renderer on every push to
+main / `claude/**` and on PRs to main. `.github/workflows/release.yml` builds Mac / Win /
+Linux installers in parallel on `v*` tag pushes and attaches them to a GitHub Release.
+
 ## Architecture
 
 Three TypeScript build contexts, kept separate via `tsconfig` project references:

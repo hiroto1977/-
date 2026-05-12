@@ -368,35 +368,24 @@ app.whenReady().then(() => {
 GitHub Releases 上のメタファイル (`latest.yml`, `latest-mac.yml`, `latest-linux.yml`)
 を自動で読みに行く。Release を作るたびに electron-builder が自動で生成。
 
-### 7-3. GitHub Actions CI
+### 7-3. GitHub Actions CI ✅ 配備済み
 
-`.github/workflows/build.yml`:
+- `.github/workflows/ci.yml` — main / claude/** ブランチへの push + main 宛 PR で
+  typecheck + test + build:renderer を自動実行。同じ ref の古い run は
+  `concurrency.cancel-in-progress` で自動キャンセル。
+- `.github/workflows/release.yml` — `v*` タグ push を契機に Ubuntu / macOS /
+  Windows の 3 ランナーが並列で `npm run build` → 各 OS のインストーラを
+  GitHub Release にアップロード (`softprops/action-gh-release@v2`)。
 
-```yaml
-name: build
-on:
-  push:
-    tags: ['v*']
-jobs:
-  build:
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm ci
-      - run: npm test
-      - run: npm run typecheck
-      - run: npm run build
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: release/*
+初回タグの切り方:
+
+```bash
+git checkout main
+git pull
+git tag v0.1.0
+git push origin v0.1.0
+# → 3 OS の native installer が GitHub Release v0.1.0 に自動で並ぶ
 ```
-
-タグを push するだけで 3 OS のインストーラが GitHub Release に上がる。
 
 ### 7-4. クラッシュレポート / メトリクス（任意）
 
