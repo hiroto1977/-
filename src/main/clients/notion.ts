@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface NotionPage {
   id: string;
@@ -66,3 +66,57 @@ export async function fetchNotionSnapshot(ctx: FetchContext): Promise<NotionSnap
     pages,
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreatePagePayload {
+  parentPageId: string; // a page id the integration has access to
+  title: string;
+  body?: string; // plain text — turned into a single paragraph block
+}
+
+interface NotionCreatePageResponse {
+  id: string;
+  url: string;
+}
+
+async function createPage(ctx: ActionContext): Promise<{ id: string; url: string }> {
+  const { parentPageId, title, body } = ctx.payload as unknown as CreatePagePayload;
+  if (!parentPageId || !title) throw new Error('parentPageId and title are required');
+
+  const blocks = body
+    ? [
+        {
+          object: 'block',
+          type: 'paragraph',
+          paragraph: { rich_text: [{ type: 'text', text: { content: body } }] },
+        },
+      ]
+    : [];
+
+  const res = await jsonFetch<NotionCreatePageResponse>(
+    'https://api.notion.com/v1/pages',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        parent: { page_id: parentPageId },
+        properties: {
+          title: { title: [{ text: { content: title } }] },
+        },
+        children: blocks,
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'notion' },
+  );
+
+  return { id: res.id, url: res.url };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-page': createPage,
+};

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchCalendarSnapshot } from '../calendar';
+import { fetchCalendarSnapshot, ACTIONS } from '../calendar';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -31,5 +31,63 @@ describe('fetchCalendarSnapshot', () => {
     expect(snap.calendars[0].summary).toBe('Primary');
     expect(snap.events[0]).toMatchObject({ id: 'e1', allDay: true, startDate: '2026-05-15' });
     expect(snap.events[1]).toMatchObject({ id: 'e2', allDay: false });
+  });
+});
+
+describe('ACTIONS["create-event"]', () => {
+  it('POSTs to primary/events with start/end + default time zone', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'e1', htmlLink: 'https://calendar.google.com/event?eid=x' }),
+    );
+
+    const result = (await ACTIONS['create-event']({
+      token: 'ya29.x',
+      fetch: fetchMock,
+      payload: {
+        summary: 'Meeting',
+        start: '2026-06-01T10:00:00+09:00',
+        end: '2026-06-01T11:00:00+09:00',
+      },
+    })) as { id: string; htmlLink: string };
+
+    expect(result.id).toBe('e1');
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string);
+    expect(body.summary).toBe('Meeting');
+    expect(body.start).toEqual({
+      dateTime: '2026-06-01T10:00:00+09:00',
+      timeZone: 'Asia/Tokyo',
+    });
+    expect(body.end.dateTime).toBe('2026-06-01T11:00:00+09:00');
+  });
+
+  it('honors a custom time zone when supplied', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'e2', htmlLink: '' }),
+    );
+    await ACTIONS['create-event']({
+      token: 't',
+      fetch: fetchMock,
+      payload: {
+        summary: 'x',
+        start: '2026-06-01T10:00:00Z',
+        end: '2026-06-01T11:00:00Z',
+        timeZone: 'America/New_York',
+      },
+    });
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(JSON.parse(init.body as string).start.timeZone).toBe('America/New_York');
+  });
+
+  it('rejects when summary/start/end are missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-event']({
+        token: 't',
+        fetch: fetchMock,
+        payload: { summary: 'x', start: '2026-06-01T10:00:00Z' /* no end */ },
+      }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

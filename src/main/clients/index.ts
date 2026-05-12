@@ -1,9 +1,9 @@
 import { fetchGithubSnapshot, ACTIONS as GITHUB_ACTIONS } from './github';
-import { fetchNotionSnapshot } from './notion';
+import { fetchNotionSnapshot, ACTIONS as NOTION_ACTIONS } from './notion';
 import { fetchWordPressSnapshot } from './wordpress';
-import { fetchSlackSnapshot } from './slack';
+import { fetchSlackSnapshot, ACTIONS as SLACK_ACTIONS } from './slack';
 import { fetchDriveSnapshot } from './drive';
-import { fetchCalendarSnapshot } from './calendar';
+import { fetchCalendarSnapshot, ACTIONS as CALENDAR_ACTIONS } from './calendar';
 import { fetchGmailSnapshot } from './gmail';
 import { fetchCanvaSnapshot } from './canva';
 import { fetchAtlassianSnapshot } from './atlassian';
@@ -30,6 +30,9 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  named actions; renderer invokes them via `serviceHub.invoke()`. */
 export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   github: GITHUB_ACTIONS,
+  notion: NOTION_ACTIONS,
+  slack: SLACK_ACTIONS,
+  calendar: CALENDAR_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface CalListItem {
   id: string;
@@ -60,3 +60,54 @@ export async function fetchCalendarSnapshot(ctx: FetchContext): Promise<Calendar
     }),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateEventPayload {
+  summary: string;
+  start: string; // ISO 8601 datetime
+  end: string;   // ISO 8601 datetime
+  description?: string;
+  location?: string;
+  timeZone?: string; // defaults to Asia/Tokyo
+}
+
+interface CalendarCreateEventResponse {
+  id: string;
+  htmlLink: string;
+  summary?: string;
+}
+
+async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: string }> {
+  const { summary, start, end, description, location, timeZone } =
+    ctx.payload as unknown as CreateEventPayload;
+  if (!summary || !start || !end) throw new Error('summary, start, end are required');
+
+  const tz = timeZone ?? 'Asia/Tokyo';
+  const body = {
+    summary,
+    description,
+    location,
+    start: { dateTime: start, timeZone: tz },
+    end: { dateTime: end, timeZone: tz },
+  };
+
+  const res = await jsonFetch<CalendarCreateEventResponse>(
+    'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    },
+    { fetch: ctx.fetch, serviceId: 'calendar' },
+  );
+
+  return { id: res.id, htmlLink: res.htmlLink };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-event': createEvent,
+};

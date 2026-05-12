@@ -1,4 +1,4 @@
-import { jsonFetch, FetchError, type FetchContext } from './types';
+import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface SlackChannel {
   id: string;
@@ -51,3 +51,44 @@ export async function fetchSlackSnapshot(ctx: FetchContext): Promise<SlackSnapsh
     })),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface SendMessagePayload {
+  channel: string; // channel id (C…) or name with leading "#"
+  text: string;
+}
+
+interface SlackChatPostResponse {
+  ok: boolean;
+  error?: string;
+  ts?: string;
+  channel?: string;
+}
+
+async function sendMessage(ctx: ActionContext): Promise<{ ts: string; channel: string }> {
+  const { channel, text } = ctx.payload as unknown as SendMessagePayload;
+  if (!channel || !text) throw new Error('channel and text are required');
+
+  const res = await jsonFetch<SlackChatPostResponse>(
+    'https://slack.com/api/chat.postMessage',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({ channel, text }),
+    },
+    { fetch: ctx.fetch, serviceId: 'slack' },
+  );
+
+  if (!res.ok) {
+    throw new FetchError(`slack ${res.error ?? 'unknown_error'}`, 0, 'slack');
+  }
+  return { ts: res.ts ?? '', channel: res.channel ?? channel };
+}
+
+export const ACTIONS: ActionMap = {
+  'send-message': sendMessage,
+};
