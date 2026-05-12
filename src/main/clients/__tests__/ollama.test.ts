@@ -218,6 +218,30 @@ describe('fetchOllamaSnapshot', () => {
       quantization: '',
     });
   });
+
+  it('pushes an HTTP-status warning when /api/version returns non-ok (kills if(res.ok) → true)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('Service Unavailable', { status: 503 }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.running).toBe(false);
+    expect(snap.warnings.some((w) => /returned HTTP 503/.test(w))).toBe(true);
+    // Models list must NOT be attempted when version probe didn't set running=true.
+    expect(snap.models).toEqual([]);
+  });
+
+  it('records a "Listing models failed" warning when /api/tags returns non-ok (kills if(!tagsRes.ok) → false)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(new Response('forbidden', { status: 403 }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.running).toBe(true);
+    expect(snap.models).toEqual([]);
+    expect(snap.warnings.some((w) => /Listing models failed/.test(w) && /403/.test(w))).toBe(
+      true,
+    );
+  });
 });
 
 // --- action: chat
@@ -318,7 +342,10 @@ describe('ACTIONS["chat"]', () => {
     expect(body.messages[1]).toEqual({ role: 'user', content: 'hi' });
   });
 
-  it('propagates a non-2xx response as FetchError', async () => {
+  it('propagates a non-2xx response as FetchError with the upstream body in the message', async () => {
+    // Asserts the SPECIFIC `ollama 404: model not found` message — kills the
+    // `if (!res.ok)` ConditionalExpression false mutation, which would skip
+    // the status-aware error and fall through to `non-JSON` instead.
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response('model not found', { status: 404 }));
@@ -328,7 +355,7 @@ describe('ACTIONS["chat"]', () => {
         fetch: fetchMock,
         payload: { model: 'unknown-model', prompt: 'hi' },
       }),
-    ).rejects.toBeInstanceOf(FetchError);
+    ).rejects.toThrow(/ollama 404: model not found/);
   });
 
   it('rejects an over-MAX_RESPONSE_BYTES response (DoS / memory exhaustion guard)', async () => {

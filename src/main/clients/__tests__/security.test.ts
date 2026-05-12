@@ -84,6 +84,17 @@ describe('parseSecurityKeys', () => {
     // specifically (vt is tested elsewhere).
     expect(parseSecurityKeys('{"hibp":"","vt":"ok"}')).toEqual({ vt: 'ok' });
   });
+
+  it('ignores vt when its type is wrong (kills the vt-type-guard mutation)', () => {
+    // Symmetric to "ignores hibp when its type is wrong". Pinning the
+    // typeof check on the vt branch so a ConditionalExpression `true`
+    // mutation can't silently assign `vt = 42`.
+    expect(parseSecurityKeys('{"hibp":"ok","vt":42}')).toEqual({ hibp: 'ok' });
+  });
+
+  it('drops vt when value is an empty string (kills `if (... && parsed.vt)` → true)', () => {
+    expect(parseSecurityKeys('{"hibp":"ok","vt":""}')).toEqual({ hibp: 'ok' });
+  });
 });
 
 describe('detectNorton', () => {
@@ -116,6 +127,23 @@ describe('detectNorton', () => {
     const result = await detectNorton('aix' as NodeJS.Platform);
     expect(result.installed).toBe(false);
     expect(result.platform).toBe('aix');
+  });
+
+  it('returns a non-linux details message for darwin (kills `platform === "linux"` → true)', async () => {
+    // Pins the specific Japanese fallback message for non-linux platforms,
+    // so a ConditionalExpression `true` mutation that always selects the
+    // Linux message would be caught.
+    const result = await detectNorton('darwin');
+    expect(result.installed).toBe(false);
+    expect(result.platform).toBe('darwin');
+    expect(result.details).toMatch(/見つかりませんでした/);
+    expect(result.details).not.toMatch(/Linux 版/);
+  });
+
+  it('returns a non-linux details message for win32 too', async () => {
+    const result = await detectNorton('win32');
+    expect(result.details).toMatch(/見つかりませんでした/);
+    expect(result.details).not.toMatch(/Linux 版/);
   });
 
   // Note: the real win32/darwin paths are absolute (`C:\...` or `/Applications/...`)

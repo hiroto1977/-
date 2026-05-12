@@ -237,6 +237,42 @@ describe('ACTIONS["run-skill"]', () => {
     })) as { text: string };
     expect(result.text).toBe('');
   });
+
+  it('returns empty text when the response is missing `content` entirely (kills `res.content?` → `res.content`)', async () => {
+    // No `content` field at all. If the optional-chaining was mutated
+    // away, this would throw "Cannot read properties of undefined".
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ stop_reason: 'end_turn' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = (await ACTIONS['run-skill']({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p' },
+    })) as { text: string; stopReason: string };
+    expect(result.text).toBe('');
+    expect(result.stopReason).toBe('end_turn');
+  });
+});
+
+describe('parseFrontmatter — stripBalancedQuotes coverage', () => {
+  it('keeps fm.name as undefined when only description is present', () => {
+    // Forces the `if (s === undefined) return undefined` short-circuit
+    // in stripBalancedQuotes (kills its ConditionalExpression `false`
+    // mutation — without it, the function would try `undefined.match`
+    // and throw).
+    const fm = parseFrontmatter(`---\ndescription: only this\n---\n`);
+    expect(fm.name).toBeUndefined();
+    expect(fm.description).toBe('only this');
+  });
+
+  it('keeps fm.description as undefined when only name is present', () => {
+    const fm = parseFrontmatter(`---\nname: only-name\n---\n`);
+    expect(fm.name).toBe('only-name');
+    expect(fm.description).toBeUndefined();
+  });
 });
 
 describe('isSafeSkillName', () => {
