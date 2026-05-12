@@ -25,3 +25,15 @@ export const SERVICE_IDS = [
 ] as const;
 
 export type ServiceId = (typeof SERVICE_IDS)[number];
+
+const SERVICE_ID_SET = new Set<string>(SERVICE_IDS);
+
+/** Type-narrowing guard. Validates that an untrusted string from
+ *  IPC (or other untrusted source) is one of our known service ids.
+ *  Use this BEFORE indexing any LIVE_FETCHERS / LIVE_ACTIONS / config
+ *  map by the value — otherwise a string like "__proto__" or
+ *  "constructor" could return prototype-chain entries.
+ */
+export function isServiceId(value: unknown): value is ServiceId {
+  return typeof value === 'string' && SERVICE_ID_SET.has(value);
+}

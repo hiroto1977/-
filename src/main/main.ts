@@ -9,6 +9,15 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
+import { isServiceId } from '../shared/serviceId';
+import { redactSecrets } from './clients/types';
+
+/** All IPC handlers feed user-supplied strings as map keys. Use this
+ *  before indexing to defeat prototype-pollution lookups like
+ *  __proto__ / constructor. */
+function safeErrorMessage(err: unknown): string {
+  return redactSecrets(err instanceof Error ? err.message : String(err));
+}
 
 const isDev = !app.isPackaged;
 
@@ -105,21 +114,27 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
   await shell.openExternal(parsed.toString());
 });
 
-ipcMain.handle('secrets:set', async (_e, serviceId: ServiceId, token: string) => {
-  // Basic input hygiene — anything else gets silently dropped so a
-  // confused renderer / compromised preload can't corrupt the store.
-  if (typeof serviceId !== 'string' || typeof token !== 'string') return;
+ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {
+  if (!isServiceId(serviceId) || typeof token !== 'string') return;
   const trimmed = token.trim();
   if (trimmed.length === 0 || trimmed.length > 65536) return;
   await setToken(serviceId, trimmed);
 });
-ipcMain.handle('secrets:clear', async (_e, serviceId: ServiceId) => {
+ipcMain.handle('secrets:clear', async (_e, serviceId: unknown) => {
+  if (!isServiceId(serviceId)) return;
   await clearToken(serviceId);
 });
 ipcMain.handle('secrets:list', () => listConfiguredServices());
 
-ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
-  const fetcher = LIVE_FETCHERS[serviceId];
+ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
+  if (!isServiceId(serviceId)) {
+    return { ok: false, code: 'not_implemented', message: 'unknown service id' };
+  }
+  // Object.hasOwn() avoids prototype-chain lookups even though the
+  // serviceId guard above already covers this.
+  const fetcher = Object.hasOwn(LIVE_FETCHERS, serviceId)
+    ? LIVE_FETCHERS[serviceId as ServiceId]
+    : undefined;
   if (!fetcher) {
     return { ok: false, code: 'not_implemented', message: `${serviceId} はライブフェッチ未対応` };
   }
@@ -140,16 +155,23 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
     const data = await fetcher({ token });
     return { ok: true, data };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return { ok: false, code: 'fetch_failed', message };
+    return { ok: false, code: 'fetch_failed', message: safeErrorMessage(err) };
   }
 });
 
 ipcMain.handle(
   'action:invoke',
-  async (_e, serviceId: ServiceId, action: string, payload: Record<string, unknown>) => {
-    const actions = LIVE_ACTIONS[serviceId];
-    if (!actions || !actions[action]) {
+  async (_e, serviceId: unknown, action: unknown, payload: unknown) => {
+    if (!isServiceId(serviceId)) {
+      return { ok: false, code: 'action_not_found', message: 'unknown service id' };
+    }
+    if (typeof action !== 'string' || action.length === 0 || action.length > 64) {
+      return { ok: false, code: 'action_not_found', message: 'invalid action name' };
+    }
+    const actions = Object.hasOwn(LIVE_ACTIONS, serviceId)
+      ? LIVE_ACTIONS[serviceId as ServiceId]
+      : undefined;
+    if (!actions || !Object.hasOwn(actions, action)) {
       return {
         ok: false,
         code: 'action_not_found',
@@ -160,20 +182,31 @@ ipcMain.handle(
     if (!token) {
       return { ok: false, code: 'not_configured', message: 'トークン未設定' };
     }
+    // Validate payload is a plain object, not an array / primitive / null
+    const safePayload =
+      payload && typeof payload === 'object' && !Array.isArray(payload)
+        ? (payload as Record<string, unknown>)
+        : {};
     try {
-      const data = await actions[action]({ token, payload: payload ?? {} });
+      const data = await actions[action]({ token, payload: safePayload });
       return { ok: true, data };
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return { ok: false, code: 'action_failed', message };
+      return { ok: false, code: 'action_failed', message: safeErrorMessage(err) };
     }
   },
 );
 
-ipcMain.handle('oauth:isSupported', (_e, serviceId: ServiceId) => isOAuthSupported(serviceId));
+ipcMain.handle('oauth:isSupported', (_e, serviceId: unknown) =>
+  isServiceId(serviceId) ? isOAuthSupported(serviceId) : false,
+);
 
-ipcMain.handle('oauth:authorize', async (_e, serviceId: ServiceId) => {
-  const config = OAUTH_CONFIGS[serviceId];
+ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown) => {
+  if (!isServiceId(serviceId)) {
+    return { ok: false, code: 'not_supported', message: 'unknown service id' };
+  }
+  const config = Object.hasOwn(OAUTH_CONFIGS, serviceId)
+    ? OAUTH_CONFIGS[serviceId as ServiceId]
+    : undefined;
   if (!config || !config.clientId) {
     return {
       ok: false,
@@ -186,7 +219,6 @@ ipcMain.handle('oauth:authorize', async (_e, serviceId: ServiceId) => {
     await setOAuthTokens(serviceId, tokens);
     return { ok: true, data: { scope: tokens.scope, expiresAt: tokens.expiresAt } };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return { ok: false, code: 'authorize_failed', message };
+    return { ok: false, code: 'authorize_failed', message: safeErrorMessage(err) };
   }
 });

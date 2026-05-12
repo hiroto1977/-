@@ -5,6 +5,7 @@ import type { ServiceId } from '../shared/serviceId';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
 
 const FILE_NAME = 'service-hub-secrets.json';
+const MAX_STORE_SIZE = 1 * 1024 * 1024; // 1 MB — generous for hundreds of tokens
 
 function secretsPath(): string {
   return path.join(app.getPath('userData'), FILE_NAME);
@@ -12,8 +13,25 @@ function secretsPath(): string {
 
 async function readStore(): Promise<Record<string, string>> {
   try {
+    // Bound the size we'll JSON.parse — protects against a corrupted /
+    // attacker-grown secrets file OOMing main.
+    const stat = await fs.stat(secretsPath());
+    if (stat.size > MAX_STORE_SIZE) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `[secrets] secrets file ${secretsPath()} is ${stat.size} bytes (limit ${MAX_STORE_SIZE}); refusing to load`,
+      );
+      return {};
+    }
     const buf = await fs.readFile(secretsPath());
-    return JSON.parse(buf.toString('utf8'));
+    const parsed = JSON.parse(buf.toString('utf8'));
+    // Validate shape — keys + string values only, drop anything else.
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {};
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof v === 'string') out[k] = v;
+    }
+    return out;
   } catch (err: unknown) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return {};
     throw err;
