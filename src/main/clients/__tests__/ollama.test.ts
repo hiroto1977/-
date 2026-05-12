@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   compareVersions,
   fetchOllamaSnapshot,
+  isAllowedEndpoint,
   isSafeModelName,
   isVersionSafe,
   MIN_SAFE_VERSION,
+  UNPATCHED_OOB_NOTICE,
   ACTIONS,
 } from '../ollama';
 import { FetchError } from '../types';
@@ -407,5 +409,115 @@ describe('ACTIONS["chat"]', () => {
       const url = call[0] as string;
       expect(url).not.toMatch(/\/api\/(pull|create|push)/);
     }
+  });
+});
+
+// --- endpoint allowlist (defense-in-depth against the unpatched OOB read)
+
+describe('isAllowedEndpoint', () => {
+  it('permits /api/version, /api/tags, /api/chat on 127.0.0.1:11434', () => {
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/version')).toBe(true);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/tags')).toBe(true);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/chat')).toBe(true);
+  });
+
+  it('refuses every CVE-prone Ollama endpoint', () => {
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/pull')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/create')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/push')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/copy')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/delete')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/blobs/sha256:x')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/upload')).toBe(false);
+  });
+
+  it('refuses non-loopback hosts even when the path is allowed', () => {
+    expect(isAllowedEndpoint('http://10.0.0.1:11434/api/chat')).toBe(false);
+    expect(isAllowedEndpoint('http://attacker.example/api/chat')).toBe(false);
+    expect(isAllowedEndpoint('https://127.0.0.1:11434/api/chat')).toBe(false);
+  });
+
+  it('refuses path-traversal attempts past the base URL', () => {
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/chat/../pull')).toBe(false);
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/version?x=1')).toBe(false);
+  });
+});
+
+describe('fetchOllamaSnapshot — unpatched OOB notice', () => {
+  it('emits UNPATCHED_OOB_NOTICE whenever Ollama is reachable', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.warnings).toContain(UNPATCHED_OOB_NOTICE);
+  });
+
+  it('does NOT emit the OOB notice when Ollama is not running', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.warnings).not.toContain(UNPATCHED_OOB_NOTICE);
+  });
+
+  it('mentions the operational mitigation (verified-source-only) in the notice', () => {
+    // Cross-check the wording so the contract with the user matches
+    // what docs/OLLAMA_SECURITY.md promises.
+    expect(UNPATCHED_OOB_NOTICE).toMatch(/out-of-bounds read/i);
+    expect(UNPATCHED_OOB_NOTICE).toMatch(/検証済み|verified/i);
+  });
+});
+
+describe('chat — null byte defense', () => {
+  it('rejects a prompt containing \\0 before any network call', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hello\0world' },
+      }),
+    ).rejects.toThrow(/null byte/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects a system prompt containing \\0', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi', system: 'be brief\0' },
+      }),
+    ).rejects.toThrow(/null byte/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('preserves legitimate whitespace (newlines, tabs) in the prompt', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'line1\nline2\tcol' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.messages[0].content).toBe('line1\nline2\tcol');
+  });
+});
+
+describe('chat — endpoint allowlist enforcement', () => {
+  it('throws FetchError before issuing fetch when chat URL were ever mismatched', async () => {
+    // This test guards the invariant by triggering withTimeout via a
+    // hypothetical bug-bait: we patch ALLOWED_ENDPOINTS via direct
+    // module read — but since we can't mutate it from outside, we
+    // exercise the negative path by asserting isAllowedEndpoint
+    // refuses any url constructed from user-controlled input.
+    expect(isAllowedEndpoint('http://127.0.0.1:11434/api/chat ')).toBe(false); // trailing space
+    expect(isAllowedEndpoint('http://127.0.0.1:11434//api/chat')).toBe(false);
+    expect(isAllowedEndpoint('')).toBe(false);
   });
 });

@@ -55,6 +55,16 @@ CVE になっていない設計上の注意点:
 で `ollama pull` した既存モデルを read-only でリストするだけ。これにより本アプリ自体が
 このゼロデイの攻撃ベクトルになることはありません。
 
+**多層防御として `src/main/clients/ollama.ts` に `ALLOWED_ENDPOINTS` 集合をハードコード**し、
+`withTimeout()` ヘルパで fetch 直前に runtime 検証します。これにより、将来このファイルを
+編集する開発者が誤って `/api/pull`・`/api/create`・`/api/push`・`/api/copy`・`/api/delete`・
+`/api/blobs`・`/api/upload` を呼ぼうとしても、`FetchError("ollama endpoint not in allowlist")`
+で即座に拒否されます (回帰テストあり: `src/main/clients/__tests__/ollama.test.ts`)。
+
+さらに、Ollama が起動して接続できる毎リクエストで `UNPATCHED_OOB_NOTICE` を
+snapshot の `warnings[]` に追加し、UI のステータスバーで継続的にユーザへ注意喚起します
+(運用上 CLI 経由でモデルを取得する際に「検証済みソースのみ」を選ぶよう誘導)。
+
 ただし **Ollama 本体は別経路（curl / 別アプリ / ネットワーク）から攻撃される可能性あり**。
 本ドキュメントの「推奨される Ollama 運用設定」のネットワーク隔離手順を徹底してください。
 

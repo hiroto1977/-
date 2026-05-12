@@ -17,7 +17,6 @@
  */
 
 import {
-  jsonFetch,
   FetchError,
   type ActionContext,
   type ActionMap,
@@ -28,6 +27,34 @@ const OLLAMA_BASE = 'http://127.0.0.1:11434';
 export const MIN_SAFE_VERSION = '0.1.46';
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_RESPONSE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+/** Hard allowlist of Ollama endpoints this client is permitted to touch.
+ *  Enforced at the fetch boundary so that even an accidental future
+ *  call to /api/pull, /api/create, /api/push, /api/copy, /api/delete,
+ *  /api/blobs, or /api/upload is refused at runtime — these are the
+ *  endpoints implicated in CVE-2024-37032 (Probllama) and the
+ *  CVE-2024-39719/20/21/22 quartet, and they are also the attack
+ *  vector for the currently UNPATCHED out-of-bounds-read in Ollama's
+ *  model / engine file parser. We never need them for snapshot+chat. */
+const ALLOWED_ENDPOINTS = new Set<string>([
+  `${OLLAMA_BASE}/api/version`,
+  `${OLLAMA_BASE}/api/tags`,
+  `${OLLAMA_BASE}/api/chat`,
+]);
+
+export function isAllowedEndpoint(url: string): boolean {
+  return ALLOWED_ENDPOINTS.has(url);
+}
+
+/** Warning emitted on every snapshot until Ollama publishes a patch for
+ *  the model/engine file parser OOB read. Surfaces the operational
+ *  mitigations the user must apply outside the app. */
+export const UNPATCHED_OOB_NOTICE =
+  'Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) ' +
+  'が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない ' +
+  '設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は ' +
+  '必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は ' +
+  'docs/OLLAMA_SECURITY.md を参照。';
 
 /** Allow model identifiers like "llama3.2", "qwen2.5-coder:7b",
  *  "library/mistral:latest". Reject anything with whitespace, `..`,
@@ -118,6 +145,16 @@ async function withTimeout(
   init: RequestInit = {},
   timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
+  if (!isAllowedEndpoint(url)) {
+    // Belt-and-braces: every Ollama HTTP call goes through this helper,
+    // so the allowlist refusal here covers any future code path that
+    // forgets to use a constant.
+    throw new FetchError(
+      `ollama endpoint not in allowlist: ${url}`,
+      0,
+      'ollama',
+    );
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -153,15 +190,19 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
       `Ollama ${version} is older than the minimum safe version ${MIN_SAFE_VERSION}. Known CVEs apply. See docs/OLLAMA_SECURITY.md.`,
     );
   }
+  if (running) {
+    // Persistent until upstream ships a patch — see UNPATCHED_OOB_NOTICE.
+    warnings.push(UNPATCHED_OOB_NOTICE);
+  }
 
   const models: OllamaSnapshot['models'] = [];
   if (running) {
     try {
-      const tags = await jsonFetch<OllamaTagsResponse>(
-        `${OLLAMA_BASE}/api/tags`,
-        {},
-        { fetch: f, serviceId: 'ollama' },
-      );
+      const tagsRes = await withTimeout(f, `${OLLAMA_BASE}/api/tags`);
+      if (!tagsRes.ok) {
+        throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
+      }
+      const tags = (await tagsRes.json()) as OllamaTagsResponse;
       for (const m of tags.models ?? []) {
         models.push({
           name: m.name,
@@ -213,10 +254,19 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   if (!isSafeModelName(model)) {
     throw new FetchError(`unsafe model name: ${model.slice(0, 32)}`, 0, 'ollama');
   }
+  // Reject null bytes in user-controlled strings — classic foothold for
+  // upstream parser bugs (including the unpatched engine-file OOB read).
+  // Newlines and other whitespace are legitimate in chat input and are
+  // kept; only \0 is refused.
+  const promptStr = String(prompt);
+  const systemStr = system == null ? '' : String(system);
+  if (promptStr.includes('\0') || systemStr.includes('\0')) {
+    throw new FetchError('null byte in chat input rejected', 0, 'ollama');
+  }
 
   const messages: OllamaChatMessage[] = [];
-  if (system) messages.push({ role: 'system', content: String(system).slice(0, 8192) });
-  messages.push({ role: 'user', content: String(prompt).slice(0, 32768) });
+  if (system) messages.push({ role: 'system', content: systemStr.slice(0, 8192) });
+  messages.push({ role: 'user', content: promptStr.slice(0, 32768) });
 
   const f = ctx.fetch ?? fetch;
   const res = await withTimeout(

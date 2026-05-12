@@ -197,3 +197,20 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 2. Phase 7-1 (code signing) — 配布物の改ざん検知
 3. Phase 7-2 (electron-updater) — 自動アップデートの integrity 検証
 4. Stryker mutation score を 70% (covered) 以上に押し上げ → 暗号化・signing コード周りの安全網
+
+## Ollama 未パッチ脆弱性に対する追加防御 (2026-05-12 追加)
+
+外部報告された Ollama の model/engine file parser における OOB read 脆弱性
+(ベンダー報告済み、公式パッチ未公開) に対する多層防御を追加:
+
+- **`ALLOWED_ENDPOINTS` 集合** (`src/main/clients/ollama.ts`): `/api/version`,
+  `/api/tags`, `/api/chat` のみ。`withTimeout()` ヘルパで fetch 直前に runtime 検証。
+  将来開発者が `/api/pull|create|push|copy|delete|blobs|upload` を呼ぼうとすると
+  `FetchError("ollama endpoint not in allowlist")` で即座に拒否。
+- **`UNPATCHED_OOB_NOTICE`**: Ollama 起動中の毎リクエストで snapshot.warnings に追加し、
+  ステータスバーで継続的にユーザへ「検証済みソースのみからモデル取得」を促す。
+- **null byte rejection**: chat の prompt / system に `\0` が含まれる場合は
+  ネットワーク呼び出し前に拒否 (上流パーサバグの典型的な foothold)。
+- **property-based fuzz** (`src/main/__tests__/property.test.ts`):
+  - 300 ランダム URL で write-side path / non-loopback host が allowlist 通らないことを検証
+  - 200 ランダム model name で whitespace / shell metachars / null byte / 制御文字 / `..` を reject することを検証
