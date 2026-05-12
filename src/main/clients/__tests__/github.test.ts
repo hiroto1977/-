@@ -83,6 +83,54 @@ describe('fetchGithubSnapshot', () => {
     });
   });
 
+  it('skips the per-PR fetch entirely when pull_request.url is missing', async () => {
+    // /search/issues sometimes returns issues that look like PRs but
+    // lack pull_request.url (e.g. cross-repo bots). We must not blow up
+    // dereferencing undefined, just fall back to the search fields.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [
+            {
+              number: 9,
+              title: 'No pull_request url',
+              state: 'open',
+              draft: false,
+              html_url: 'https://github.com/o/r/issues/9',
+              updated_at: '2026-05-10T00:00:00Z',
+              // pull_request: missing
+            },
+          ],
+        }),
+      );
+
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    // Only 2 fetch calls total: /user and /search/issues. NO per-PR call.
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(snapshot.pullRequests[0]).toMatchObject({
+      number: 9,
+      title: 'No pull_request url',
+      head: '',
+      base: '',
+    });
+  });
+
+  it('coerces null head/base on the PR detail to empty strings', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(jsonResponse({ items: [searchItem] }))
+      .mockResolvedValueOnce(
+        jsonResponse({ ...prDetail, head: null, base: null }),
+      );
+
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(snapshot.pullRequests[0].head).toBe('');
+    expect(snapshot.pullRequests[0].base).toBe('');
+  });
+
   it('sends Authorization and API headers', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

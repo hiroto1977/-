@@ -97,6 +97,61 @@ describe('buildChannelPermalink', () => {
   });
 });
 
+describe('fetchSlackSnapshot edge cases', () => {
+  it('falls back to "unknown_error" when conversations.list returns ok=false without an error string', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: false /* no error field */ }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { id: 'T', name: 'X', domain: 'x' } }));
+
+    const err = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock }).catch((e) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).message).toContain('unknown_error');
+  });
+
+  it('uses empty string when both purpose and topic are missing', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          ok: true,
+          channels: [{ id: 'C9', name: 'bare', is_archived: false /* no purpose, no topic */ }],
+        }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { id: 'T', name: 'X', domain: 'acme' } }));
+
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels[0].purpose).toBe('');
+  });
+
+  it('degrades to app_redirect when team.info returns ok=true but no team object', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({ ok: true, channels: [{ id: 'C5', name: 'g', is_archived: false }] }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ ok: true /* no team */ }));
+
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels[0].permalink).toBe('https://slack.com/app_redirect?channel=C5');
+  });
+});
+
+describe('ACTIONS["send-message"] edge cases', () => {
+  it('falls back to "unknown_error" when chat.postMessage returns ok=false without an error', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: false }));
+    const err = await ACTIONS['send-message']({
+      token: 'x',
+      fetch: fetchMock,
+      payload: { channel: 'C', text: 'hi' },
+    }).catch((e) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).message).toContain('unknown_error');
+  });
+});
+
 describe('fetchSlackSnapshot permalink behavior', () => {
   it('uses the workspace domain from team.info when available', async () => {
     const fetchMock = vi

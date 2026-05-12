@@ -11,3 +11,5 @@ tmp-screenshots/
 .vite/
 .idea/
 .vscode/
+.stryker-tmp/
+reports/

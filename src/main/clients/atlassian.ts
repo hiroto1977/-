@@ -37,7 +37,9 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   if (!obj.email || !obj.token || !obj.site) {
     throw new FetchError('Atlassian token に email / token / site のいずれかが欠けています', 0, 'atlassian');
   }
-  return { email: obj.email, token: obj.token, site: obj.site.replace(/\/$/, '') };
+  // Strip *all* trailing slashes — handy for tokens whose `site`
+  // accidentally got "https://x.atlassian.net//" from a copy/paste.
+  return { email: obj.email, token: obj.token, site: obj.site.replace(/\/+$/, '') };
 }
 
 function basicAuth(email: string, token: string): string {

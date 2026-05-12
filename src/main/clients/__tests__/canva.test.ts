@@ -71,6 +71,25 @@ describe('fetchCanvaSnapshot', () => {
 
     await expect(fetchCanvaSnapshot({ token: 't', fetch: fetchMock })).rejects.toThrow(/429/);
   });
+
+  it('fills in fallbacks for a design with missing optional fields', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({ items: [{ id: 'D_bare' /* no title/updated_at/page_count/thumbnail/urls */ }] }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ items: [] }));
+
+    const snap = await fetchCanvaSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.designs[0]).toEqual({
+      id: 'D_bare',
+      title: '(無題のデザイン)',
+      updatedAt: 0,
+      pageCount: 1,
+      thumbnailUrl: '',
+      viewUrl: 'https://www.canva.com/design/D_bare',
+    });
+  });
 });
 
 describe('ACTIONS["create-folder"]', () => {

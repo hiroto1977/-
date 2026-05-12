@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_commentScope": "Limit to pure-logic modules. Including the IPC handlers / fetcher network paths would have Stryker spend most of its time on code paths whose tests would have to mock electron / network anyway — low signal, very long runtime.",
+  "mutate": [
+    "src/main/oauth.ts",
+    "src/main/clients/skills.ts",
+    "src/main/clients/security.ts",
+    "src/main/clients/atlassian.ts",
+    "src/main/clients/gmail.ts",
+    "src/main/clients/slack.ts"
+  ],
+  "testRunner": "vitest",
+  "vitest": {
+    "configFile": "vitest.config.ts"
+  },
+  "reporters": ["clear-text", "progress"],
+  "coverageAnalysis": "perTest",
+  "thresholds": { "high": 90, "low": 70, "break": null },
+  "timeoutMS": 30000,
+  "concurrency": 4,
+  "tempDirName": ".stryker-tmp"
+}

@@ -56,6 +56,22 @@ describe('fetchAtlassianSnapshot', () => {
   });
 });
 
+describe('fetchAtlassianSnapshot edge cases', () => {
+  it('returns an empty jiraProjects list when the API omits values entirely', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({} /* no values key */),
+    );
+    const token = JSON.stringify({
+      email: 'a@b.com',
+      token: 'apitoken',
+      site: 'https://x.atlassian.net',
+    });
+    const snap = await fetchAtlassianSnapshot({ token, fetch: fetchMock });
+    expect(snap.jiraProjects).toEqual([]);
+    expect(snap.sites[0].url).toBe('https://x.atlassian.net');
+  });
+});
+
 describe('ACTIONS["create-issue"]', () => {
   const token = JSON.stringify({
     email: 'a@b.com',

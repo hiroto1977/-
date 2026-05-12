@@ -30,10 +30,18 @@ export function parseFrontmatter(content: string): SkillFrontmatter {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
   const fm = match[1];
-  const name = fm.match(/^name:\s*(.+)$/m)?.[1]?.trim().replace(/^["']|["']$/g, '');
+  const name = stripBalancedQuotes(fm.match(/^name:\s*(.+)$/m)?.[1]?.trim());
   const descMatch = fm.match(/^description:\s*(.+(?:\n[ \t]+.+)*)/m);
-  const description = descMatch?.[1]?.trim().replace(/^["']|["']$/g, '');
+  const description = stripBalancedQuotes(descMatch?.[1]?.trim());
   return { name, description };
+}
+
+/** Remove a *matched pair* of surrounding quotes (e.g. "hello" → hello)
+ *  but leave a single unbalanced quote alone (e.g. `"` stays `"`). */
+function stripBalancedQuotes(s: string | undefined): string | undefined {
+  if (s === undefined) return undefined;
+  const m = s.match(/^(["'])([\s\S]*)\1$/);
+  return m ? m[2] : s;
 }
 
 /** Scan a single skills directory. Handles two shapes:

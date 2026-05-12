@@ -71,6 +71,48 @@ describe('fetchWordPressSnapshot', () => {
   });
 });
 
+describe('isPaidPlan edge cases (via fetchWordPressSnapshot)', () => {
+  it('treats a plan with an empty product_slug as free', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        sites: [
+          {
+            ID: 99,
+            name: 'Empty slug',
+            description: '',
+            URL: 'https://e.example',
+            is_private: false,
+            jetpack: false,
+            plan: { product_slug: '' }, // empty string
+          },
+        ],
+      }),
+    );
+    const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.sites[0].paidPlan).toBe(false);
+  });
+
+  it('treats a plan with "premium_free_trial" as free (slug contains "free")', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        sites: [
+          {
+            ID: 100,
+            name: 'Trial',
+            description: '',
+            URL: 'https://t.example',
+            is_private: false,
+            jetpack: false,
+            plan: { product_slug: 'premium_free_trial' },
+          },
+        ],
+      }),
+    );
+    const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.sites[0].paidPlan).toBe(false);
+  });
+});
+
 describe('ACTIONS["create-post-draft"]', () => {
   it('POSTs to /sites/{id}/posts/new with default status=draft', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(

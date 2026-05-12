@@ -56,6 +56,52 @@ describe('fetchNotionSnapshot', () => {
   });
 });
 
+describe('fetchNotionSnapshot edge cases', () => {
+  it('handles a results array that is missing entirely', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({} /* no results */));
+    const snap = await fetchNotionSnapshot({ token: 'secret_x', fetch: fetchMock });
+    expect(snap.pages).toEqual([]);
+  });
+
+  it('falls back to "(無題)" when a page has properties but no title property', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        results: [
+          {
+            id: 'p1',
+            object: 'page',
+            url: 'https://notion.so/p1',
+            last_edited_time: '2026-05-10T00:00:00Z',
+            properties: {
+              Status: { type: 'select', select: { name: 'Done' } }, // not a title
+            },
+          },
+        ],
+      }),
+    );
+    const snap = await fetchNotionSnapshot({ token: 'secret_x', fetch: fetchMock });
+    expect(snap.pages[0].title).toBe('(無題)');
+  });
+
+  it('falls back to "(無題)" when title is the right type but the array is empty', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        results: [
+          {
+            id: 'p2',
+            object: 'page',
+            url: 'https://notion.so/p2',
+            last_edited_time: '2026-05-10T00:00:00Z',
+            properties: { Name: { type: 'title', title: [] } },
+          },
+        ],
+      }),
+    );
+    const snap = await fetchNotionSnapshot({ token: 'secret_x', fetch: fetchMock });
+    expect(snap.pages[0].title).toBe('(無題)');
+  });
+});
+
 describe('ACTIONS["create-page"]', () => {
   it('POSTs to /v1/pages with parent + title + body block', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
