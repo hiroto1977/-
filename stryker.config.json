@@ -3,9 +3,11 @@
   "_commentScope": "Scoped to pure-logic modules. The IPC handlers (main.ts) + secrets.ts depend on the live Electron runtime — mocking them just to mutate would be high-noise, low-signal.",
   "mutate": [
     "src/main/oauth.ts",
+    "src/main/clients/types.ts",
     "src/main/clients/skills.ts",
     "src/main/clients/security.ts",
     "src/main/clients/atlassian.ts",
+    "src/main/clients/github.ts",
     "src/main/clients/gmail.ts",
     "src/main/clients/slack.ts"
   ],

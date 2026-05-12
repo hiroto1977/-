@@ -131,6 +131,77 @@ describe('fetchGithubSnapshot', () => {
     expect(snapshot.pullRequests[0].base).toBe('');
   });
 
+  // --- security: pin PR detail fetches to api.github.com
+  it('falls back when pull_request.url points off-host (defense against tampered search response)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [
+            { ...searchItem, pull_request: { url: 'https://evil.example.com/repos/o/r/pulls/7' } },
+          ],
+        }),
+      );
+    // No third mock — if the guard works, we never make a third call.
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(snapshot.pullRequests[0]).toMatchObject({ number: 7, head: '', base: '' });
+  });
+
+  it('falls back when pull_request.url uses http:// instead of https://', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [
+            { ...searchItem, pull_request: { url: 'http://api.github.com/repos/o/r/pulls/7' } },
+          ],
+        }),
+      );
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(snapshot.pullRequests[0].head).toBe('');
+  });
+
+  it('falls back when pull_request.url is not a parseable URL at all', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [{ ...searchItem, pull_request: { url: 'not a url' } }],
+        }),
+      );
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(snapshot.pullRequests[0].number).toBe(7);
+  });
+
+  it('coerces missing draft field on the search result to false (kills `?? false` mutation)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          items: [
+            {
+              number: 11,
+              title: 'No draft field',
+              state: 'open',
+              // draft: missing
+              html_url: 'https://github.com/o/r/pull/11',
+              updated_at: '2026-05-10T00:00:00Z',
+              pull_request: undefined,
+            },
+          ],
+        }),
+      );
+    const snap = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(snap.pullRequests[0].draft).toBe(false);
+  });
+
   it('sends Authorization and API headers', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
@@ -212,6 +283,31 @@ describe('ACTIONS["create-issue"]', () => {
         payload: { owner: 'o', repo: 'r' /* no title */ },
       }),
     ).rejects.toThrow(/title/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  // Individual missing-field tests kill the LogicalOperator `||` → `&&` mutation
+  it('rejects when only owner is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-issue']({
+        token: 'tok',
+        fetch: fetchMock,
+        payload: { repo: 'r', title: 't' },
+      }),
+    ).rejects.toThrow(/owner/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects when only repo is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-issue']({
+        token: 'tok',
+        fetch: fetchMock,
+        payload: { owner: 'o', title: 't' },
+      }),
+    ).rejects.toThrow(/repo/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

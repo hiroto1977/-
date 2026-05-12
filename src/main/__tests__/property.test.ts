@@ -26,6 +26,7 @@ import {
 } from '../oauth';
 import { buildRfc2822 } from '../clients/gmail';
 import { buildChannelPermalink } from '../clients/slack';
+import { redactSecrets } from '../clients/types';
 
 // --- 1. parseFrontmatter: never throws, always returns the expected shape
 
@@ -318,6 +319,98 @@ describe('buildChannelPermalink (property)', () => {
         },
       ),
       { numRuns: 100 },
+    );
+  });
+});
+
+// --- 7. redactSecrets: never crashes; never leaks the redacted prefix
+//        verbatim back into the output.
+
+describe('redactSecrets (property)', () => {
+  it('never throws on arbitrary string input', () => {
+    fc.assert(
+      fc.property(fc.string(), (input) => {
+        expect(typeof redactSecrets(input)).toBe('string');
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it('is idempotent — redacting twice yields the same result', () => {
+    fc.assert(
+      fc.property(fc.string(), (input) => {
+        const once = redactSecrets(input);
+        const twice = redactSecrets(once);
+        expect(twice).toBe(once);
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it('removes the secret body for known prefix patterns', () => {
+    const prefixes = ['sk-ant-', 'ghp_', 'ghs_', 'ghu_', 'gho_', 'ghr_', 'xoxp-', 'xoxb-', 'xoxa-', 'secret_'];
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...prefixes),
+        fc.string({ minLength: 8, maxLength: 40 }).filter((s) => /^[A-Za-z0-9]+$/.test(s)),
+        (prefix, body) => {
+          const out = redactSecrets(`x ${prefix}${body} y`);
+          expect(out.includes(body)).toBe(false);
+          expect(out).toContain(`${prefix}[REDACTED]`);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+
+  it('redacts the value but keeps the key in JSON token fields', () => {
+    const fields = ['access_token', 'refresh_token', 'token', 'api_key', 'apikey', 'password'];
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...fields),
+        // Alnum-only values so the assertion isn't tripped up by
+        // characters that also appear in the JSON structure (`:`, etc.)
+        fc.string({ minLength: 4, maxLength: 60 }).filter((s) => /^[A-Za-z0-9]+$/.test(s)),
+        (key, value) => {
+          const out = redactSecrets(`{"${key}":"${value}"}`);
+          expect(out).toContain(`"${key}":"[REDACTED]"`);
+          expect(out.includes(value)).toBe(false);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+
+  it('redacts Bearer tokens regardless of the token characters', () => {
+    fc.assert(
+      fc.property(
+        // Length ≥ 4 so single chars don't accidentally match
+        // "Authorization" or "[REDACTED]"; exclude whitespace.
+        fc
+          .string({ minLength: 4, maxLength: 80 })
+          .filter((s) => !/\s/.test(s) && s !== '[REDACTED]'),
+        (token) => {
+          const out = redactSecrets(`Authorization: Bearer ${token}`);
+          expect(out).toContain('Authorization: Bearer [REDACTED]');
+          // The exact `Bearer <token>` substring should no longer appear.
+          expect(out.includes(`Bearer ${token}`)).toBe(false);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+
+  it('leaves text without secrets unchanged', () => {
+    fc.assert(
+      fc.property(
+        fc
+          .string({ maxLength: 100 })
+          .filter((s) => !/Authorization:|sk-ant-|gh[psoru]_|xox[apb]-|secret_|ya29\.|"(access_token|refresh_token|token|api_key|apikey|password)"\s*:/i.test(s)),
+        (input) => {
+          expect(redactSecrets(input)).toBe(input);
+        },
+      ),
+      { numRuns: 200 },
     );
   });
 });
