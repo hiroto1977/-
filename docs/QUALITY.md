@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-05-12 08:33:37
+最終更新: 2026-05-12 09:00:41
 
 > 自動生成: `npm run quality:report`。コミット前に再生成して差分をレビューに含めるのが推奨。
 
@@ -9,7 +9,7 @@
 | 指標 | 値 |
 |---|---|
 | TypeScript 型チェック | ✅ pass |
-| ユニットテスト | 234 passing (18 files) |
+| ユニットテスト | 241 passing (18 files) |
 | Coverage — lines | 71.70% |
 | Coverage — statements | 71.70% |
 | Coverage — branches | 89.85% |

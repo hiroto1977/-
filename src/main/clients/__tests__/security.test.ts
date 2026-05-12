@@ -49,6 +49,41 @@ describe('parseSecurityKeys', () => {
   it('ignores hibp when its type is wrong (e.g. number)', () => {
     expect(parseSecurityKeys('{"hibp":42,"vt":"ok"}')).toEqual({ vt: 'ok' });
   });
+
+  // --- explicit mutation kill targets
+  it('treats truthy non-object primitives as "{}" — string', () => {
+    // JSON.parse('"abc"') = "abc", a truthy string. With the `parsed &&
+    // typeof parsed === 'object'` guard removed, the block would still
+    // produce {}. So this asserts the guard's *effective* outcome.
+    expect(parseSecurityKeys('"abc"')).toEqual({});
+  });
+
+  it('treats truthy non-object primitives as "{}" — number', () => {
+    expect(parseSecurityKeys('42')).toEqual({});
+  });
+
+  it('treats truthy non-object primitives as "{}" — boolean', () => {
+    expect(parseSecurityKeys('true')).toEqual({});
+  });
+
+  it('returns {} for JSON null — with NO leaked fields (kills `if(parsed && ...)` → true)', () => {
+    const out = parseSecurityKeys('null');
+    expect(out).toEqual({});
+    expect(Object.keys(out)).toHaveLength(0);
+  });
+
+  it('returns {} for JSON array — with NO leaked fields', () => {
+    const out = parseSecurityKeys('[1, 2, 3]');
+    expect(out).toEqual({});
+    expect(Object.keys(out)).toHaveLength(0);
+  });
+
+  it('drops hibp when value is an empty string (kills `if (... && parsed.hibp)` → true)', () => {
+    // With the `&& parsed.hibp` truthy-check removed, hibp would be set
+    // to "". This asserts the truthy-guard fires for the hibp case
+    // specifically (vt is tested elsewhere).
+    expect(parseSecurityKeys('{"hibp":"","vt":"ok"}')).toEqual({ vt: 'ok' });
+  });
 });
 
 describe('detectNorton', () => {
