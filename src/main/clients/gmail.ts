@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface GmailListResponse {
   messages?: { id: string; threadId: string }[];
@@ -54,3 +54,64 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
     }),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateDraftPayload {
+  to: string;
+  subject: string;
+  body?: string;
+}
+
+interface GmailCreateDraftResponse {
+  id: string;
+  message: { id: string; threadId: string };
+}
+
+// Encode a UTF-8 string to base64url (Gmail's raw message format).
+function base64url(input: string): string {
+  return Buffer.from(input, 'utf8')
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+/** Build an RFC 2822 message with UTF-8 encoded subject. */
+export function buildRfc2822(to: string, subject: string, body: string): string {
+  const utf8Subject = `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`;
+  return [
+    `To: ${to}`,
+    `Subject: ${utf8Subject}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'MIME-Version: 1.0',
+    '',
+    body,
+  ].join('\r\n');
+}
+
+async function createDraft(ctx: ActionContext): Promise<{ id: string; messageId: string }> {
+  const { to, subject, body } = ctx.payload as unknown as CreateDraftPayload;
+  if (!to || !subject) throw new Error('to and subject are required');
+
+  const raw = base64url(buildRfc2822(to, subject, body ?? ''));
+
+  const res = await jsonFetch<GmailCreateDraftResponse>(
+    'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: { raw } }),
+    },
+    { fetch: ctx.fetch, serviceId: 'gmail' },
+  );
+
+  return { id: res.id, messageId: res.message.id };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-draft': createDraft,
+};

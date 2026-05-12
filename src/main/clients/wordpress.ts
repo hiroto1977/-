@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
 interface WpSite {
@@ -61,3 +61,50 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
     })),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreatePostPayload {
+  siteId: string; // blog id or hostname
+  title: string;
+  content?: string;
+  status?: 'draft' | 'publish' | 'pending' | 'private';
+}
+
+interface WpCreatePostResponse {
+  ID: number;
+  URL: string;
+  short_URL?: string;
+  title: string;
+  status: string;
+}
+
+async function createPostDraft(
+  ctx: ActionContext,
+): Promise<{ id: number; url: string; title: string }> {
+  const { siteId, title, content, status } = ctx.payload as unknown as CreatePostPayload;
+  if (!siteId || !title) throw new Error('siteId and title are required');
+
+  const res = await jsonFetch<WpCreatePostResponse>(
+    `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        content: content ?? '',
+        status: status ?? 'draft',
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'wordpress' },
+  );
+
+  return { id: res.ID, url: res.URL, title: res.title };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-post-draft': createPostDraft,
+};

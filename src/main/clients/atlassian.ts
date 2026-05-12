@@ -1,4 +1,4 @@
-import { jsonFetch, FetchError, type FetchContext } from './types';
+import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface JiraProject {
   key: string;
@@ -71,3 +71,68 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
     })),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateJiraIssuePayload {
+  projectKey: string;
+  summary: string;
+  description?: string;
+  issueType?: string; // default "Task"
+}
+
+interface JiraCreateIssueResponse {
+  id: string;
+  key: string;
+  self: string;
+}
+
+async function createJiraIssue(
+  ctx: ActionContext,
+): Promise<{ key: string; url: string }> {
+  const creds = parseAtlassianToken(ctx.token);
+  const { projectKey, summary, description, issueType } =
+    ctx.payload as unknown as CreateJiraIssuePayload;
+  if (!projectKey || !summary) throw new Error('projectKey and summary are required');
+
+  // Jira Cloud REST v3 wants Atlassian Document Format for description.
+  const descBody = description
+    ? {
+        type: 'doc',
+        version: 1,
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: description }],
+          },
+        ],
+      }
+    : undefined;
+
+  const res = await jsonFetch<JiraCreateIssueResponse>(
+    `${creds.site}/rest/api/3/issue`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: basicAuth(creds.email, creds.token),
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          project: { key: projectKey },
+          summary,
+          issuetype: { name: issueType ?? 'Task' },
+          ...(descBody ? { description: descBody } : {}),
+        },
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'atlassian' },
+  );
+
+  return { key: res.key, url: `${creds.site}/browse/${res.key}` };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-issue': createJiraIssue,
+};

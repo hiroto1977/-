@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchAtlassianSnapshot, parseAtlassianToken } from '../atlassian';
+import { fetchAtlassianSnapshot, parseAtlassianToken, ACTIONS } from '../atlassian';
 import { FetchError } from '../types';
 
 function jsonResponse(body: unknown): Response {
@@ -53,5 +53,60 @@ describe('fetchAtlassianSnapshot', () => {
 
     expect(snap.sites[0]).toMatchObject({ url: 'https://x.atlassian.net' });
     expect(snap.jiraProjects[0]).toMatchObject({ key: 'KAN', name: 'AMITARIS' });
+  });
+});
+
+describe('ACTIONS["create-issue"]', () => {
+  const token = JSON.stringify({
+    email: 'a@b.com',
+    token: 'apitoken',
+    site: 'https://x.atlassian.net',
+  });
+
+  it('POSTs to {site}/rest/api/3/issue with project/summary/description', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: '10001', key: 'KAN-42', self: 'https://x/issue/10001' }),
+    );
+
+    const result = (await ACTIONS['create-issue']({
+      token,
+      fetch: fetchMock,
+      payload: { projectKey: 'KAN', summary: 'Hello', description: 'body text' },
+    })) as { key: string; url: string };
+
+    expect(result).toEqual({ key: 'KAN-42', url: 'https://x.atlassian.net/browse/KAN-42' });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://x.atlassian.net/rest/api/3/issue');
+    expect((init as RequestInit).method).toBe('POST');
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.fields.project).toEqual({ key: 'KAN' });
+    expect(body.fields.summary).toBe('Hello');
+    expect(body.fields.issuetype).toEqual({ name: 'Task' });
+    // description wrapped as Atlassian Document Format
+    expect(body.fields.description.type).toBe('doc');
+    expect(body.fields.description.content[0].content[0].text).toBe('body text');
+  });
+
+  it('honors a custom issue type', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: '1', key: 'KAN-1', self: '' }),
+    );
+    await ACTIONS['create-issue']({
+      token,
+      fetch: fetchMock,
+      payload: { projectKey: 'KAN', summary: 'x', issueType: 'Bug' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.fields.issuetype.name).toBe('Bug');
+    expect(body.fields.description).toBeUndefined();
+  });
+
+  it('rejects when projectKey/summary are missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-issue']({ token, fetch: fetchMock, payload: { projectKey: 'KAN' } }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchWordPressSnapshot } from '../wordpress';
+import { fetchWordPressSnapshot, ACTIONS } from '../wordpress';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -68,5 +68,49 @@ describe('fetchWordPressSnapshot', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({}));
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
     expect(snap.sites).toEqual([]);
+  });
+});
+
+describe('ACTIONS["create-post-draft"]', () => {
+  it('POSTs to /sites/{id}/posts/new with default status=draft', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ID: 5, URL: 'https://blog/?p=5', title: 'Hi', status: 'draft' }),
+    );
+
+    const result = (await ACTIONS['create-post-draft']({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { siteId: '123', title: 'Hi', content: 'hello' },
+    })) as { id: number; url: string; title: string };
+
+    expect(result).toEqual({ id: 5, url: 'https://blog/?p=5', title: 'Hi' });
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://public-api.wordpress.com/rest/v1.1/sites/123/posts/new');
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.status).toBe('draft');
+    expect(body.title).toBe('Hi');
+    expect(body.content).toBe('hello');
+  });
+
+  it('url-encodes site IDs containing slashes or unusual chars', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ID: 1, URL: '', title: 'x', status: 'draft' }),
+    );
+    await ACTIONS['create-post-draft']({
+      token: 't',
+      fetch: fetchMock,
+      payload: { siteId: 'foo.example/path', title: 'x' },
+    });
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      'https://public-api.wordpress.com/rest/v1.1/sites/foo.example%2Fpath/posts/new',
+    );
+  });
+
+  it('rejects when siteId/title are missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-post-draft']({ token: 't', fetch: fetchMock, payload: { siteId: '1' } }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
