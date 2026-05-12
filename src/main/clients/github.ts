@@ -97,6 +97,15 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
         htmlUrl: item.html_url,
       };
       if (!item.pull_request?.url) return fallback;
+      // The PR URL is server-supplied (echoed back from search results)
+      // so technically untrusted. Pin to api.github.com to defend against
+      // a hijacked /search/issues response that points us elsewhere.
+      try {
+        const u = new URL(item.pull_request.url);
+        if (u.protocol !== 'https:' || u.hostname !== 'api.github.com') return fallback;
+      } catch {
+        return fallback;
+      }
       try {
         const pr = await jsonFetch<PullDetail>(item.pull_request.url, init, fetchCtx);
         return {

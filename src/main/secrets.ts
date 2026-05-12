@@ -25,9 +25,21 @@ async function writeStore(store: Record<string, string>): Promise<void> {
   await fs.writeFile(secretsPath(), JSON.stringify(store), { mode: 0o600 });
 }
 
+let fallbackWarned = false;
+
 function encode(value: string): string {
   if (safeStorage.isEncryptionAvailable()) {
     return safeStorage.encryptString(value).toString('base64');
+  }
+  if (!fallbackWarned) {
+    fallbackWarned = true;
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[secrets] SECURITY WARNING: OS keychain (safeStorage) is not available. ' +
+        'Tokens will be stored with a plain base64 obfuscation only — NOT real encryption. ' +
+        'Anyone with read access to the userData directory can recover them. ' +
+        'On Linux, install gnome-keyring or kwallet to enable real encryption.',
+    );
   }
   return `plain:${Buffer.from(value, 'utf8').toString('base64')}`;
 }

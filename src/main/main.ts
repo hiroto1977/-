@@ -39,8 +39,30 @@ function createWindow(): BrowserWindow {
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    // Same http(s) allowlist as the IPC handler. Anything else (file:,
+    // javascript:, OS schemes) is silently dropped.
+    try {
+      const u = new URL(url);
+      if (u.protocol === 'http:' || u.protocol === 'https:') {
+        shell.openExternal(u.toString());
+      }
+    } catch {
+      // ignore non-URL strings
+    }
     return { action: 'deny' };
+  });
+
+  // Block all in-app navigation away from the loaded renderer; this
+  // includes the renderer trying to navigate via window.location.
+  win.webContents.on('will-navigate', (event, navigationUrl) => {
+    try {
+      const u = new URL(navigationUrl);
+      // Allow Vite HMR navigation only.
+      if (u.host === 'localhost:5173' || u.host === '127.0.0.1:5173') return;
+    } catch {
+      // fall through
+    }
+    event.preventDefault();
   });
 
   if (isDev && process.env.VITE_DEV_SERVER_URL) {
@@ -84,7 +106,12 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
 });
 
 ipcMain.handle('secrets:set', async (_e, serviceId: ServiceId, token: string) => {
-  await setToken(serviceId, token);
+  // Basic input hygiene — anything else gets silently dropped so a
+  // confused renderer / compromised preload can't corrupt the store.
+  if (typeof serviceId !== 'string' || typeof token !== 'string') return;
+  const trimmed = token.trim();
+  if (trimmed.length === 0 || trimmed.length > 65536) return;
+  await setToken(serviceId, trimmed);
 });
 ipcMain.handle('secrets:clear', async (_e, serviceId: ServiceId) => {
   await clearToken(serviceId);

@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-05-12 04:09:25
+最終更新: 2026-05-12 04:43:51
 
 > 自動生成: `npm run quality:report`。コミット前に再生成して差分をレビューに含めるのが推奨。
 
@@ -9,11 +9,11 @@
 | 指標 | 値 |
 |---|---|
 | TypeScript 型チェック | ✅ pass |
-| ユニットテスト | 163 passing (16 files) |
-| Coverage — lines | 75.33% |
-| Coverage — statements | 75.33% |
-| Coverage — branches | 90.03% |
-| Coverage — functions | 88.52% |
+| ユニットテスト | 189 passing (17 files) |
+| Coverage — lines | 69.40% |
+| Coverage — statements | 69.40% |
+| Coverage — branches | 90.23% |
+| Coverage — functions | 79.45% |
 | Mutation score (total / covered) | 61.66% / 72.04% |
 | Mutants killed | 402 |
 | Mutants survived | 156 |
@@ -21,7 +21,7 @@
 
 ## Mutation testing (Stryker)
 
-_Report age: 0.2h._
+_Report age: 0.7h._
 
 **Overall: 61.66% total / 72.04% covered** (402 killed / 156 survived / 94 no-cov)
 
