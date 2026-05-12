@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface DriveFile {
   id: string;
@@ -44,3 +44,50 @@ export async function fetchDriveSnapshot(ctx: FetchContext): Promise<DriveSnapsh
     })),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateFolderPayload {
+  name: string;
+  parentId?: string; // omitted → "My Drive" root
+}
+
+interface DriveCreateFileResponse {
+  id: string;
+  name: string;
+  webViewLink?: string;
+}
+
+async function createFolder(
+  ctx: ActionContext,
+): Promise<{ id: string; name: string; url: string }> {
+  const { name, parentId } = ctx.payload as unknown as CreateFolderPayload;
+  if (!name) throw new Error('name is required');
+
+  const res = await jsonFetch<DriveCreateFileResponse>(
+    'https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        mimeType: 'application/vnd.google-apps.folder',
+        ...(parentId ? { parents: [parentId] } : {}),
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'drive' },
+  );
+
+  return {
+    id: res.id,
+    name: res.name,
+    url: res.webViewLink ?? `https://drive.google.com/drive/folders/${res.id}`,
+  };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-folder': createFolder,
+};

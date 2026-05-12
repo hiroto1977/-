@@ -2,10 +2,10 @@ import { fetchGithubSnapshot, ACTIONS as GITHUB_ACTIONS } from './github';
 import { fetchNotionSnapshot, ACTIONS as NOTION_ACTIONS } from './notion';
 import { fetchWordPressSnapshot, ACTIONS as WORDPRESS_ACTIONS } from './wordpress';
 import { fetchSlackSnapshot, ACTIONS as SLACK_ACTIONS } from './slack';
-import { fetchDriveSnapshot } from './drive';
+import { fetchDriveSnapshot, ACTIONS as DRIVE_ACTIONS } from './drive';
 import { fetchCalendarSnapshot, ACTIONS as CALENDAR_ACTIONS } from './calendar';
 import { fetchGmailSnapshot, ACTIONS as GMAIL_ACTIONS } from './gmail';
-import { fetchCanvaSnapshot } from './canva';
+import { fetchCanvaSnapshot, ACTIONS as CANVA_ACTIONS } from './canva';
 import { fetchAtlassianSnapshot, ACTIONS as ATLASSIAN_ACTIONS } from './atlassian';
 import { fetchSkillsSnapshot, ACTIONS as SKILLS_ACTIONS } from './skills';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
@@ -44,6 +44,8 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   wordpress: WORDPRESS_ACTIONS,
   gmail: GMAIL_ACTIONS,
   skills: SKILLS_ACTIONS,
+  drive: DRIVE_ACTIONS,
+  canva: CANVA_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

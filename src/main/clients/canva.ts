@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 interface CanvaDesign {
   id: string;
@@ -61,3 +61,44 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
     })),
   };
 }
+
+// --- write-side actions --------------------------------------------------
+
+interface CreateFolderPayload {
+  name: string;
+  parentFolderId?: string; // omitted → "root"
+}
+
+interface CanvaCreateFolderResponse {
+  folder: {
+    id: string;
+    name: string;
+  };
+}
+
+async function createFolder(ctx: ActionContext): Promise<{ id: string; name: string }> {
+  const { name, parentFolderId } = ctx.payload as unknown as CreateFolderPayload;
+  if (!name) throw new Error('name is required');
+
+  const res = await jsonFetch<CanvaCreateFolderResponse>(
+    'https://api.canva.com/rest/v1/folders',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${ctx.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        parent_folder_id: parentFolderId ?? 'root',
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'canva' },
+  );
+
+  return { id: res.folder.id, name: res.folder.name };
+}
+
+export const ACTIONS: ActionMap = {
+  'create-folder': createFolder,
+};

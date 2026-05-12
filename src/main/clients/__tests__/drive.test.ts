@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchDriveSnapshot } from '../drive';
+import { fetchDriveSnapshot, ACTIONS } from '../drive';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -49,5 +49,68 @@ describe('fetchDriveSnapshot', () => {
     );
     const snap = await fetchDriveSnapshot({ token: 'x', fetch: fetchMock });
     expect(snap.files[0].viewUrl).toBe('https://drive.google.com/file/d/f2/view');
+  });
+});
+
+describe('ACTIONS["create-folder"]', () => {
+  it('POSTs files.create with folder mimeType + parents', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({
+        id: 'f1',
+        name: 'Reports',
+        webViewLink: 'https://drive.google.com/drive/folders/f1',
+      }),
+    );
+
+    const result = (await ACTIONS['create-folder']({
+      token: 'ya29.x',
+      fetch: fetchMock,
+      payload: { name: 'Reports', parentId: 'parent-id' },
+    })) as { id: string; name: string; url: string };
+
+    expect(result).toEqual({
+      id: 'f1',
+      name: 'Reports',
+      url: 'https://drive.google.com/drive/folders/f1',
+    });
+
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string);
+    expect(body.name).toBe('Reports');
+    expect(body.mimeType).toBe('application/vnd.google-apps.folder');
+    expect(body.parents).toEqual(['parent-id']);
+  });
+
+  it('omits parents when no parentId is given (defaults to My Drive root)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'f2', name: 'x' }),
+    );
+    await ACTIONS['create-folder']({
+      token: 't',
+      fetch: fetchMock,
+      payload: { name: 'x' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.parents).toBeUndefined();
+  });
+
+  it('synthesizes a folder URL when the response omits webViewLink', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'f3', name: 'NoLink' }),
+    );
+    const result = (await ACTIONS['create-folder']({
+      token: 't',
+      fetch: fetchMock,
+      payload: { name: 'NoLink' },
+    })) as { url: string };
+    expect(result.url).toBe('https://drive.google.com/drive/folders/f3');
+  });
+
+  it('rejects when name is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-folder']({ token: 't', fetch: fetchMock, payload: {} }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
