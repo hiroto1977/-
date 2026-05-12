@@ -278,6 +278,19 @@ export const SNAPSHOT = {
     }[],
   },
 
+  emotions: {
+    moods: [] as { date: string; score: number; note: string }[],
+    analyses: [] as {
+      id: string;
+      timestamp: number;
+      excerpt: string;
+      scores: { joy: number; sadness: number; anger: number; fear: number; surprise: number; disgust: number };
+      sentiment: 'positive' | 'neutral' | 'negative';
+      dominant: string;
+    }[],
+    keyConfigured: false,
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   canva: {

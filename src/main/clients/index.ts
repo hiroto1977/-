@@ -10,6 +10,7 @@ import { fetchAtlassianSnapshot, ACTIONS as ATLASSIAN_ACTIONS } from './atlassia
 import { fetchSkillsSnapshot, ACTIONS as SKILLS_ACTIONS } from './skills';
 import { fetchSecuritySnapshot, ACTIONS as SECURITY_ACTIONS } from './security';
 import { fetchCloudflareSnapshot, ACTIONS as CLOUDFLARE_ACTIONS } from './cloudflare';
+import { fetchEmotionsSnapshot, ACTIONS as EMOTIONS_ACTIONS } from './emotions';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -29,6 +30,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   skills: fetchSkillsSnapshot,
   security: fetchSecuritySnapshot,
   cloudflare: fetchCloudflareSnapshot,
+  emotions: fetchEmotionsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -37,7 +39,11 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  IPC handler in main.ts still passes through any token the user has
  *  saved (security uses it for opt-in HIBP/VT calls), but a missing
  *  token is not an error here. */
-export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>(['skills', 'security']);
+export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'skills',
+  'security',
+  'emotions',
+]);
 
 /** Per-service write-side actions. Each service may register one or more
  *  named actions; renderer invokes them via `serviceHub.invoke()`. */
@@ -54,6 +60,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   canva: CANVA_ACTIONS,
   security: SECURITY_ACTIONS,
   cloudflare: CLOUDFLARE_ACTIONS,
+  emotions: EMOTIONS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

@@ -76,6 +76,32 @@ export function GmailPage() {
       </Section>
 
       <Section
+        title="受信トーン分析"
+        action={
+          <button
+            onClick={async () => {
+              if (!window.serviceHub || threads.length < 1) return;
+              const text = threads.map((t) => `- ${t.subject} (from ${t.sender})`).join('\n');
+              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
+                text,
+                source: 'Gmail Inbox',
+              });
+              if (!res.ok) alert('感情分析失敗: ' + res.message);
+              else alert('Emotions タブに結果を保存しました');
+            }}
+            disabled={threads.length < 1}
+          >
+            Emotions で分析
+          </button>
+        }
+      >
+        <div className="empty" style={{ fontSize: 12 }}>
+          受信トレイ件名一覧を Emotions タブに送り、ストレス兆候・トーン傾向を分析します。
+          結果は Emotions タブの履歴に残ります（Anthropic API キーが必要）。
+        </div>
+      </Section>
+
+      <Section
         title="Actions"
         action={
           <button onClick={() => setShowForm((v) => !v)}>

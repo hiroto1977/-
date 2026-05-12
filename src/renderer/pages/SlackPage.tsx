@@ -72,6 +72,34 @@ export function SlackPage() {
       </Section>
 
       <Section
+        title="チャンネル雰囲気分析"
+        action={
+          <button
+            onClick={async () => {
+              if (!window.serviceHub || channels.length < 1) return;
+              const text = channels
+                .map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)
+                .join('\n');
+              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
+                text,
+                source: 'Slack channels',
+              });
+              if (!res.ok) alert('感情分析失敗: ' + res.message);
+              else alert('Emotions タブに結果を保存しました');
+            }}
+            disabled={channels.length < 1}
+          >
+            Emotions で分析
+          </button>
+        }
+      >
+        <div className="empty" style={{ fontSize: 12 }}>
+          チャンネル名と purpose の一覧を Emotions タブに送り、ワークスペース全体の
+          ムード傾向を分析します。
+        </div>
+      </Section>
+
+      <Section
         title="Actions"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
