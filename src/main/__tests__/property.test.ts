@@ -28,6 +28,8 @@ import { buildRfc2822 } from '../clients/gmail';
 import { buildChannelPermalink } from '../clients/slack';
 import { redactSecrets } from '../clients/types';
 import { isAllowedEndpoint, isSafeModelName } from '../clients/ollama';
+import { isSafeSkillName } from '../clients/skills';
+import { isSafeHeaderValue } from '../clients/gmail';
 
 // --- 1. parseFrontmatter: never throws, always returns the expected shape
 
@@ -508,6 +510,79 @@ describe('isSafeModelName (property)', () => {
         fc.string({ maxLength: 30 }).filter((s) => /^[a-z0-9._:/-]*$/i.test(s)),
         (head, tail) => {
           expect(isSafeModelName(`${head}..${tail}`)).toBe(false);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+});
+
+// --- 12. Skill name guard: no path traversal ever sneaks through
+
+describe('isSafeSkillName (property)', () => {
+  it('never accepts a name containing /, \\, NUL, or whitespace', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 30 }).filter((s) => /^[A-Za-z0-9_-]+$/.test(s)),
+        fc.constantFrom('/', '\\', '\0', ' ', '\n', '\t', ':', '|', ';', '$', '`'),
+        fc.string({ maxLength: 20 }),
+        (head, taint, tail) => {
+          expect(isSafeSkillName(head + taint + tail)).toBe(false);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+
+  it('never accepts a name beginning with `.`', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 30 }).filter((s) => /^[A-Za-z0-9._-]+$/.test(s)),
+        (rest) => {
+          expect(isSafeSkillName(`.${rest}`)).toBe(false);
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+
+  it('never accepts a name containing `..`', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ maxLength: 20 }).filter((s) => /^[A-Za-z0-9._-]*$/.test(s)),
+        fc.string({ maxLength: 20 }).filter((s) => /^[A-Za-z0-9._-]*$/.test(s)),
+        (head, tail) => {
+          expect(isSafeSkillName(`${head}..${tail}`)).toBe(false);
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+});
+
+// --- 13. Gmail header guard: CR/LF/NUL always refused
+
+describe('isSafeHeaderValue (property)', () => {
+  it('never accepts a value containing CR, LF, or NUL', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ maxLength: 60 }).filter((s) => !/[\r\n\0]/.test(s)),
+        fc.constantFrom('\r', '\n', '\r\n', '\0'),
+        fc.string({ maxLength: 60 }).filter((s) => !/[\r\n\0]/.test(s)),
+        (head, inject, tail) => {
+          expect(isSafeHeaderValue(head + inject + tail)).toBe(false);
+        },
+      ),
+      { numRuns: 200 },
+    );
+  });
+
+  it('always accepts a value with no CR/LF/NUL', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 100 }).filter((s) => !/[\r\n\0]/.test(s)),
+        (clean) => {
+          expect(isSafeHeaderValue(clean)).toBe(true);
         },
       ),
       { numRuns: 200 },

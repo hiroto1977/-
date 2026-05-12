@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parseFrontmatter, scanSkills, ACTIONS } from '../skills';
+import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName } from '../skills';
 
 describe('parseFrontmatter', () => {
   it('extracts name and description', () => {
@@ -236,5 +236,84 @@ describe('ACTIONS["run-skill"]', () => {
       payload: { name: 'echo', prompt: 'p' },
     })) as { text: string };
     expect(result.text).toBe('');
+  });
+});
+
+describe('isSafeSkillName', () => {
+  it('accepts ordinary skill names', () => {
+    expect(isSafeSkillName('echo')).toBe(true);
+    expect(isSafeSkillName('security-review')).toBe(true);
+    expect(isSafeSkillName('my_skill.v2')).toBe(true);
+    expect(isSafeSkillName('A1')).toBe(true);
+  });
+
+  it('rejects path-traversal patterns', () => {
+    expect(isSafeSkillName('..')).toBe(false);
+    expect(isSafeSkillName('../etc/passwd')).toBe(false);
+    expect(isSafeSkillName('foo/../bar')).toBe(false);
+    expect(isSafeSkillName('foo/bar')).toBe(false);
+    expect(isSafeSkillName('foo\\bar')).toBe(false);
+    expect(isSafeSkillName('/absolute')).toBe(false);
+  });
+
+  it('rejects shell-meaningful / control characters', () => {
+    expect(isSafeSkillName('foo bar')).toBe(false);
+    expect(isSafeSkillName('foo;rm')).toBe(false);
+    expect(isSafeSkillName('foo|cat')).toBe(false);
+    expect(isSafeSkillName('foo`id`')).toBe(false);
+    expect(isSafeSkillName('foo$VAR')).toBe(false);
+    expect(isSafeSkillName('foo\n')).toBe(false);
+    expect(isSafeSkillName('foo\0')).toBe(false);
+    expect(isSafeSkillName('foo:bar')).toBe(false);
+  });
+
+  it('rejects leading dot (no hidden files)', () => {
+    expect(isSafeSkillName('.hidden')).toBe(false);
+    expect(isSafeSkillName('.')).toBe(false);
+  });
+
+  it('rejects empty / oversize / non-string', () => {
+    expect(isSafeSkillName('')).toBe(false);
+    expect(isSafeSkillName('a'.repeat(129))).toBe(false);
+    expect(isSafeSkillName(null)).toBe(false);
+    expect(isSafeSkillName(42)).toBe(false);
+    expect(isSafeSkillName(undefined)).toBe(false);
+  });
+});
+
+describe('ACTIONS["run-skill"] — name validation', () => {
+  let tmpDir = '';
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-run-validate-'));
+    process.env.HOME = tmpDir;
+    vi.spyOn(os, 'homedir').mockReturnValue(tmpDir);
+  });
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('refuses a traversal name BEFORE any filesystem read', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { name: '../../etc/passwd', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/unsafe name/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses an absolute path even if such a file exists', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { name: '/etc/hostname', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/unsafe name/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -122,9 +122,19 @@ interface AnthropicMessagesResponse {
 }
 
 async function readSkillBody(name: string): Promise<string> {
+  if (!isSafeSkillName(name)) {
+    const safe = String(name as unknown).slice(0, 32);
+    throw new Error(`skill "${safe}" has an unsafe name`);
+  }
   const base = path.join(os.homedir(), '.claude', 'skills');
   const candidates = [path.join(base, name, 'SKILL.md'), path.join(base, `${name}.md`)];
+  const baseResolved = path.resolve(base) + path.sep;
   for (const c of candidates) {
+    // Belt-and-braces: even with isSafeSkillName, confirm the joined
+    // path stays inside ~/.claude/skills. Protects against future
+    // platform-specific path quirks (e.g. Windows alternate separators
+    // or 8.3 short names).
+    if (!path.resolve(c).startsWith(baseResolved)) continue;
     try {
       return await fs.readFile(c, 'utf8');
     } catch {
@@ -132,6 +142,21 @@ async function readSkillBody(name: string): Promise<string> {
     }
   }
   throw new Error(`skill "${name}" not found in ~/.claude/skills`);
+}
+
+/** A skill name is a single path segment used to locate
+ *  `~/.claude/skills/<name>/SKILL.md` or `~/.claude/skills/<name>.md`.
+ *  Reject anything that could escape that directory or introduce
+ *  filesystem foot-guns: `..`, `/`, `\`, NUL, leading dot, whitespace,
+ *  shell metachars. Mirrors the Ollama isSafeModelName approach. */
+export function isSafeSkillName(name: unknown): name is string {
+  if (typeof name !== 'string') return false;
+  if (name.length === 0 || name.length > 128) return false;
+  if (name.includes('..')) return false;
+  // Allow letters, digits, dot, underscore, hyphen. No `/`, `\`, NUL,
+  // whitespace, `:` (Windows drive letters), or other shell-meaningful
+  // characters. Leading dot is rejected (no hidden files).
+  return /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/.test(name);
 }
 
 async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason: string }> {

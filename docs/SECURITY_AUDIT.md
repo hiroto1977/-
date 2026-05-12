@@ -198,6 +198,35 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 3. Phase 7-2 (electron-updater) — 自動アップデートの integrity 検証
 4. Stryker mutation score を 70% (covered) 以上に押し上げ → 暗号化・signing コード周りの安全網
 
+## Defense-in-depth 強化 (2026-05-12 追加)
+
+セキュリティレビューで「false-positive と判定したが hardening 価値あり」として
+記録された 2 項目を実装:
+
+### Skills: ファイル名 allowlist + パスコンテインメント
+
+**実装位置**: `src/main/clients/skills.ts` `readSkillBody()` + `isSafeSkillName()`
+
+- `isSafeSkillName(name)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
+  reject + 先頭ドット reject。`/`, `\`, NUL, 空白, `:`, `;`, `|`, `` ` ``, `$` 全部禁止。
+- `path.resolve(candidate).startsWith(path.resolve(base) + path.sep)` で belt-and-braces。
+  Windows alternate separators / 短名 / シンボリックリンク等の platform quirk に対する保険。
+
+テスト: 例ベース 8 件 + property-based 3 件 (500 ランダム名で `..` / `/` / `\` / NUL /
+shell metachars が必ず reject されることを確認)。
+
+### Gmail: RFC 2822 ヘッダ injection 拒否
+
+**実装位置**: `src/main/clients/gmail.ts` `buildRfc2822()` + `isSafeHeaderValue()`
+
+- `isSafeHeaderValue(value)`: `/[\r\n\0]/` を含む場合 false。`buildRfc2822` の冒頭で
+  `to` を検証し、CRLF が含まれていれば throw。
+- `subject` は base64 encoded なので安全 (検査不要)。
+- 現状では `to` 以外の生連結ヘッダソースは存在しないが、追加された際は同じ check を通すこと。
+
+テスト: 例ベース 7 件 + property-based 2 件 (400 ランダム値で `\r` / `\n` / `\0` 注入を
+必ず拒否、それ以外は accept)。
+
 ## Ollama 未パッチ脆弱性に対する追加防御 (2026-05-12 追加)
 
 外部報告された Ollama の model/engine file parser における OOB read 脆弱性

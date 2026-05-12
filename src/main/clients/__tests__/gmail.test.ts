@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchGmailSnapshot, ACTIONS, buildRfc2822 } from '../gmail';
+import { fetchGmailSnapshot, ACTIONS, buildRfc2822, isSafeHeaderValue } from '../gmail';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -58,6 +58,59 @@ describe('buildRfc2822', () => {
     expect(msg).toMatch(/Subject: =\?UTF-8\?B\?[A-Za-z0-9+/=]+\?=\r\n/);
     expect(msg).toContain('Content-Type: text/plain; charset="UTF-8"');
     expect(msg).toMatch(/\r\n\r\nhello$/);
+  });
+
+  it('rejects a To: containing CR (RFC 2822 header injection)', () => {
+    expect(() =>
+      buildRfc2822('victim@example.com\r\nBcc: attacker@evil.com', 'hi', 'body'),
+    ).toThrow(/CR\/LF\/NUL/);
+  });
+
+  it('rejects a To: containing LF', () => {
+    expect(() => buildRfc2822('victim@example.com\nBcc: x@y', 'hi', 'body')).toThrow(
+      /CR\/LF\/NUL/,
+    );
+  });
+
+  it('rejects a To: containing NUL', () => {
+    expect(() => buildRfc2822('victim@example.com\0', 'hi', 'body')).toThrow(/CR\/LF\/NUL/);
+  });
+});
+
+describe('isSafeHeaderValue', () => {
+  it('accepts ordinary email addresses and display names', () => {
+    expect(isSafeHeaderValue('a@b.com')).toBe(true);
+    expect(isSafeHeaderValue('"Display Name" <a@b.com>')).toBe(true);
+    expect(isSafeHeaderValue('a@b.com, c@d.com')).toBe(true);
+  });
+
+  it('rejects CR, LF, NUL anywhere in the value', () => {
+    expect(isSafeHeaderValue('a@b.com\r')).toBe(false);
+    expect(isSafeHeaderValue('a@b.com\n')).toBe(false);
+    expect(isSafeHeaderValue('a@b.com\r\n')).toBe(false);
+    expect(isSafeHeaderValue('a@b.com\0')).toBe(false);
+    expect(isSafeHeaderValue('\nBcc: x')).toBe(false);
+  });
+
+  it('rejects non-string types', () => {
+    expect(isSafeHeaderValue(undefined)).toBe(false);
+    expect(isSafeHeaderValue(null)).toBe(false);
+    expect(isSafeHeaderValue(42)).toBe(false);
+    expect(isSafeHeaderValue({})).toBe(false);
+  });
+});
+
+describe('ACTIONS["create-draft"] — header injection defense', () => {
+  it('refuses to send when `to` contains CRLF (no network call)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-draft']({
+        token: 't',
+        fetch: fetchMock,
+        payload: { to: 'a@b.com\r\nBcc: attacker@evil.com', subject: 'hi', body: 'hello' },
+      }),
+    ).rejects.toThrow(/CR\/LF\/NUL/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 
