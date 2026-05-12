@@ -8,6 +8,7 @@ import { fetchGmailSnapshot, ACTIONS as GMAIL_ACTIONS } from './gmail';
 import { fetchCanvaSnapshot, ACTIONS as CANVA_ACTIONS } from './canva';
 import { fetchAtlassianSnapshot, ACTIONS as ATLASSIAN_ACTIONS } from './atlassian';
 import { fetchSkillsSnapshot, ACTIONS as SKILLS_ACTIONS } from './skills';
+import { fetchSecuritySnapshot, ACTIONS as SECURITY_ACTIONS } from './security';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -25,13 +26,16 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   slack: fetchSlackSnapshot,
   canva: fetchCanvaSnapshot,
   skills: fetchSkillsSnapshot,
+  security: fetchSecuritySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
 /** Services whose snapshot fetcher reads local resources (filesystem,
  *  process state, etc.) and does not require any saved credentials. The
- *  IPC handler in main.ts skips the secrets lookup for these. */
-export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>(['skills']);
+ *  IPC handler in main.ts still passes through any token the user has
+ *  saved (security uses it for opt-in HIBP/VT calls), but a missing
+ *  token is not an error here. */
+export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>(['skills', 'security']);
 
 /** Per-service write-side actions. Each service may register one or more
  *  named actions; renderer invokes them via `serviceHub.invoke()`. */
@@ -46,6 +50,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   skills: SKILLS_ACTIONS,
   drive: DRIVE_ACTIONS,
   canva: CANVA_ACTIONS,
+  security: SECURITY_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

@@ -83,10 +83,13 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: ServiceId) => {
   if (!fetcher) {
     return { ok: false, code: 'not_implemented', message: `${serviceId} はライブフェッチ未対応` };
   }
-  // LOCAL_SERVICES (e.g. 'skills') read from disk and don't need a saved
-  // token; everyone else must have one before we hit the network.
+  // LOCAL_SERVICES (e.g. 'skills', 'security') read primarily from disk
+  // and must work without a saved token. We still pass any saved token
+  // through — security uses it for opt-in HIBP/VT enrichment.
   let token = '';
-  if (!LOCAL_SERVICES.has(serviceId)) {
+  if (LOCAL_SERVICES.has(serviceId)) {
+    token = (await getValidToken(serviceId)) ?? '';
+  } else {
     const t = await getValidToken(serviceId);
     if (!t) {
       return { ok: false, code: 'not_configured', message: 'トークン未設定' };

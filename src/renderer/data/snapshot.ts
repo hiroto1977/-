@@ -253,6 +253,18 @@ export const SNAPSHOT = {
     }[],
   },
 
+  security: {
+    norton: {
+      installed: false,
+      installPath: '' as string,
+      platform: '' as string,
+      details: '' as string,
+    },
+    breaches: [] as { email: string; checkedAt: string; count: number }[],
+    lastUrlScan: null as { url: string; scannedAt: string; positives: number; total: number } | null,
+    keysConfigured: { hibp: false, vt: false },
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   canva: {
