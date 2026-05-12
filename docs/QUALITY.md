@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-05-12 10:05:12
+最終更新: 2026-05-12 10:14:19
 
 > 自動生成: `npm run quality:report`。コミット前に再生成して差分をレビューに含めるのが推奨。
 
@@ -9,30 +9,30 @@
 | 指標 | 値 |
 |---|---|
 | TypeScript 型チェック | ✅ pass |
-| ユニットテスト | 296 passing (19 files) |
+| ユニットテスト | 300 passing (19 files) |
 | Coverage — lines | 70.86% |
 | Coverage — statements | 70.86% |
-| Coverage — branches | 90.86% |
+| Coverage — branches | 90.88% |
 | Coverage — functions | 83.13% |
-| Mutation score (total / covered) | 71.43% / 81.10% |
-| Mutants killed | 755 |
-| Mutants survived | 176 |
+| Mutation score (total / covered) | 72.94% / 82.81% |
+| Mutants killed | 771 |
+| Mutants survived | 160 |
 
 
 ## Mutation testing (Stryker)
 
 _Report age: 0.0h._
 
-**Overall: 71.43% total / 81.10% covered** (755 killed / 176 survived / 126 no-cov)
+**Overall: 72.94% total / 82.81% covered** (771 killed / 160 survived / 126 no-cov)
 
 | file | score | covered | killed | survived | no-cov |
 |------|------:|--------:|-------:|---------:|-------:|
-| src/main/clients/atlassian.ts | 77.27 | 77.27 | 68 | 20 | 0 |
+| src/main/clients/atlassian.ts | 81.82 | 81.82 | 72 | 16 | 0 |
 | src/main/clients/github.ts | 85.92 | 87.14 | 61 | 9 | 1 |
-| src/main/clients/gmail.ts | 77.53 | 78.41 | 69 | 19 | 1 |
+| src/main/clients/gmail.ts | 87.64 | 88.64 | 78 | 10 | 1 |
 | src/main/clients/ollama.ts | 81.04 | 84.65 | 171 | 31 | 9 |
-| src/main/clients/security.ts | 67.91 | 71.65 | 91 | 36 | 7 |
-| src/main/clients/skills.ts | 77.51 | 80.37 | 131 | 32 | 6 |
+| src/main/clients/security.ts | 69.40 | 73.23 | 93 | 34 | 7 |
+| src/main/clients/skills.ts | 78.11 | 80.98 | 132 | 31 | 6 |
 | src/main/clients/slack.ts | 79.41 | 81.82 | 54 | 12 | 2 |
 | src/main/clients/types.ts | 74.36 | 76.32 | 29 | 9 | 1 |
 | src/main/oauth.ts | 43.09 | 91.01 | 81 | 8 | 99 |

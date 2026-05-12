@@ -254,6 +254,26 @@ describe('ACTIONS["check-email-breach"]', () => {
     ).rejects.toThrow(/email/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('truncates a long HIBP error body to 200 chars (kills `body.slice(0, 200)` → `body`)', async () => {
+    const longBody = 'X'.repeat(500);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(longBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['check-email-breach']({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message).toMatch(/HIBP 500: X{200}$/);
+    expect(caught!.message.length).toBeLessThan(longBody.length);
+  });
 });
 
 describe('ACTIONS["scan-url"]', () => {

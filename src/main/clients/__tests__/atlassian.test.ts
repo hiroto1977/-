@@ -108,6 +108,22 @@ describe('fetchAtlassianSnapshot', () => {
     expect(snap.sites[0]).toMatchObject({ url: 'https://x.atlassian.net' });
     expect(snap.jiraProjects[0]).toMatchObject({ key: 'KAN', name: 'AMITARIS' });
   });
+
+  it('sets sites[0].scopes to ["basic-auth"] and derives cloudId/name from the host', async () => {
+    // Kills the ArrayDeclaration mutation `[]` on the scopes array,
+    // plus the host-derivation logic that strips https:// and slices
+    // before the first dot.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ values: [] }));
+    const token = JSON.stringify({
+      email: 'a@b.com',
+      token: 't',
+      site: 'https://my-team.atlassian.net',
+    });
+    const snap = await fetchAtlassianSnapshot({ token, fetch: fetchMock });
+    expect(snap.sites[0].scopes).toEqual(['basic-auth']);
+    expect(snap.sites[0].cloudId).toBe('my-team.atlassian.net');
+    expect(snap.sites[0].name).toBe('my-team');
+  });
 });
 
 describe('fetchAtlassianSnapshot edge cases', () => {

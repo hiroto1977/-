@@ -49,6 +49,45 @@ describe('fetchGmailSnapshot', () => {
     const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
     expect(snap.threads).toEqual([]);
   });
+
+  it('passes the Authorization header on every request (kills `headers = {}` mutations)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ messages: [{ id: 'm1', threadId: 't1' }] }))
+      .mockResolvedValueOnce(
+        jsonResponse({ id: 'm1', threadId: 't1', internalDate: '0', payload: { headers: [] } }),
+      );
+    await fetchGmailSnapshot({ token: 'ya29.abc', fetch: fetchMock });
+    // Both calls must carry Authorization: Bearer ya29.abc.
+    for (const call of fetchMock.mock.calls) {
+      const init = call[1] as RequestInit;
+      const headers = init?.headers as Record<string, string> | undefined;
+      expect(headers).toBeDefined();
+      expect(headers!.Authorization).toBe('Bearer ya29.abc');
+    }
+  });
+
+  it('uses each message id in the per-message fetch URL (kills `.map((m) => m.id)` → `.map(() => undefined)`)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        jsonResponse({ messages: [{ id: 'aaa111', threadId: 't1' }, { id: 'bbb222', threadId: 't2' }] }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({ id: 'aaa111', threadId: 't1', internalDate: '0', payload: { headers: [] } }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({ id: 'bbb222', threadId: 't2', internalDate: '0', payload: { headers: [] } }),
+      );
+    await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    const perMessageUrls = fetchMock.mock.calls.slice(1).map((c) => c[0] as string);
+    expect(perMessageUrls[0]).toContain('/messages/aaa111?');
+    expect(perMessageUrls[1]).toContain('/messages/bbb222?');
+    // Negative: no `undefined` in any URL.
+    for (const u of perMessageUrls) {
+      expect(u).not.toContain('undefined');
+    }
+  });
 });
 
 describe('buildRfc2822', () => {
@@ -191,6 +230,12 @@ describe('ACTIONS["create-draft"]', () => {
     expect(result).toEqual({ id: 'd1', messageId: 'm1' });
 
     const init = fetchMock.mock.calls[0][1] as RequestInit;
+    // Authorization + Content-Type both present — kills the
+    // `headers: {}` ObjectLiteral mutation on line 116.
+    const headers = init.headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer ya29.x');
+    expect(headers['Content-Type']).toBe('application/json');
+
     const body = JSON.parse(init.body as string);
     // base64url uses '-' and '_', and strips trailing '='.
     expect(body.message.raw).toMatch(/^[A-Za-z0-9_-]+$/);
