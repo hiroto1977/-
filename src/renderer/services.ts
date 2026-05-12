@@ -9,6 +9,7 @@ import { SlackPage } from './pages/SlackPage';
 import { CanvaPage } from './pages/CanvaPage';
 import { SkillsPage } from './pages/SkillsPage';
 import { SecurityPage } from './pages/SecurityPage';
+import { CloudflarePage } from './pages/CloudflarePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -100,6 +101,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SC',
     description: 'Norton 360 検出 + HIBP 漏洩照会 + VirusTotal URL スキャン',
     page: SecurityPage,
+  },
+  {
+    id: 'cloudflare',
+    label: 'Cloudflare',
+    icon: 'CF',
+    description: 'ゾーン一覧 + DNS レコード作成 + キャッシュパージ',
+    page: CloudflarePage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

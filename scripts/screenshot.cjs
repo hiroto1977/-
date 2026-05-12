@@ -23,6 +23,7 @@ const SERVICES = [
   'canva',
   'skills',
   'security',
+  'cloudflare',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

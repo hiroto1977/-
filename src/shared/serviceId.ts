@@ -18,6 +18,7 @@ export const SERVICE_IDS = [
   'canva',
   'skills',
   'security',
+  'cloudflare',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

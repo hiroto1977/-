@@ -9,6 +9,7 @@ import { fetchCanvaSnapshot, ACTIONS as CANVA_ACTIONS } from './canva';
 import { fetchAtlassianSnapshot, ACTIONS as ATLASSIAN_ACTIONS } from './atlassian';
 import { fetchSkillsSnapshot, ACTIONS as SKILLS_ACTIONS } from './skills';
 import { fetchSecuritySnapshot, ACTIONS as SECURITY_ACTIONS } from './security';
+import { fetchCloudflareSnapshot, ACTIONS as CLOUDFLARE_ACTIONS } from './cloudflare';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -27,6 +28,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   canva: fetchCanvaSnapshot,
   skills: fetchSkillsSnapshot,
   security: fetchSecuritySnapshot,
+  cloudflare: fetchCloudflareSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -51,6 +53,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   drive: DRIVE_ACTIONS,
   canva: CANVA_ACTIONS,
   security: SECURITY_ACTIONS,
+  cloudflare: CLOUDFLARE_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

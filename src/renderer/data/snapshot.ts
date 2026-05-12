@@ -265,6 +265,19 @@ export const SNAPSHOT = {
     keysConfigured: { hibp: false, vt: false },
   },
 
+  cloudflare: {
+    user: { email: '', username: '' },
+    zones: [] as {
+      id: string;
+      name: string;
+      status: string;
+      plan: string;
+      accountName: string;
+      nameServers: string[];
+      devModeRemainingSec: number;
+    }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   canva: {
