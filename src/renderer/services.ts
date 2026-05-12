@@ -11,6 +11,7 @@ import { SkillsPage } from './pages/SkillsPage';
 import { SecurityPage } from './pages/SecurityPage';
 import { CloudflarePage } from './pages/CloudflarePage';
 import { EmotionsPage } from './pages/EmotionsPage';
+import { OllamaPage } from './pages/OllamaPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -116,6 +117,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'EM',
     description: '気分ログ + Claude API でテキスト感情分析',
     page: EmotionsPage,
+  },
+  {
+    id: 'ollama',
+    label: 'Ollama',
+    icon: 'OL',
+    description: 'ローカル LLM (127.0.0.1 固定 + CVE 検知 + 厳格 sanitize)',
+    page: OllamaPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

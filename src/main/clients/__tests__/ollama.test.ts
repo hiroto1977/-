@@ -1,0 +1,288 @@
+import { describe, expect, it, vi } from 'vitest';
+import {
+  compareVersions,
+  fetchOllamaSnapshot,
+  isSafeModelName,
+  isVersionSafe,
+  MIN_SAFE_VERSION,
+  ACTIONS,
+} from '../ollama';
+import { FetchError } from '../types';
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+// --- pure: version comparison
+
+describe('compareVersions', () => {
+  it('returns 0 for identical versions', () => {
+    expect(compareVersions('1.2.3', '1.2.3')).toBe(0);
+  });
+  it('compares major / minor / patch correctly', () => {
+    expect(compareVersions('1.0.0', '0.9.9')).toBe(1);
+    expect(compareVersions('0.1.45', '0.1.46')).toBe(-1);
+    expect(compareVersions('0.1.46', '0.1.46')).toBe(0);
+    expect(compareVersions('0.2.0', '0.1.99')).toBe(1);
+  });
+  it('treats missing trailing segments as zero', () => {
+    expect(compareVersions('1', '1.0.0')).toBe(0);
+    expect(compareVersions('1.2', '1.2.5')).toBe(-1);
+  });
+  it('ignores -rc / -beta / + build tags (compares numeric prefix only)', () => {
+    expect(compareVersions('0.1.46-rc1', '0.1.46')).toBe(0);
+    expect(compareVersions('0.1.46+sha.abc', '0.1.46')).toBe(0);
+  });
+  it('treats non-numeric segments as 0', () => {
+    expect(compareVersions('xxx', '0.0.0')).toBe(0);
+  });
+});
+
+describe('isVersionSafe', () => {
+  it('rejects empty / non-string version strings', () => {
+    expect(isVersionSafe('')).toBe(false);
+    expect(isVersionSafe(undefined as unknown as string)).toBe(false);
+  });
+  it('returns false for versions older than MIN_SAFE_VERSION', () => {
+    expect(isVersionSafe('0.1.45')).toBe(false);
+    expect(isVersionSafe('0.1.33')).toBe(false); // before Probllama fix
+    expect(isVersionSafe('0.0.1')).toBe(false);
+  });
+  it('returns true for MIN_SAFE_VERSION and newer', () => {
+    expect(isVersionSafe(MIN_SAFE_VERSION)).toBe(true);
+    expect(isVersionSafe('0.1.47')).toBe(true);
+    expect(isVersionSafe('0.5.10')).toBe(true);
+    expect(isVersionSafe('1.0.0')).toBe(true);
+  });
+});
+
+// --- pure: model name validation
+
+describe('isSafeModelName', () => {
+  it('accepts common Ollama model names', () => {
+    expect(isSafeModelName('llama3.2')).toBe(true);
+    expect(isSafeModelName('qwen2.5-coder:7b')).toBe(true);
+    expect(isSafeModelName('library/mistral:latest')).toBe(true);
+    expect(isSafeModelName('phi3')).toBe(true);
+  });
+  it('rejects path traversal attempts', () => {
+    expect(isSafeModelName('../../../etc/passwd')).toBe(false);
+    expect(isSafeModelName('foo/../bar')).toBe(false);
+    expect(isSafeModelName('..')).toBe(false);
+  });
+  it('rejects whitespace and special characters', () => {
+    expect(isSafeModelName('llama 3')).toBe(false);
+    expect(isSafeModelName('llama;rm')).toBe(false);
+    expect(isSafeModelName('llama|cat')).toBe(false);
+    expect(isSafeModelName('llama`id`')).toBe(false);
+    expect(isSafeModelName('llama$VAR')).toBe(false);
+    expect(isSafeModelName('llama\\path')).toBe(false);
+    expect(isSafeModelName('llama\n')).toBe(false);
+  });
+  it('rejects empty / too long / non-string', () => {
+    expect(isSafeModelName('')).toBe(false);
+    expect(isSafeModelName('a'.repeat(130))).toBe(false);
+    expect(isSafeModelName(null as unknown as string)).toBe(false);
+    expect(isSafeModelName(42 as unknown as string)).toBe(false);
+  });
+  it('requires alphanumeric leading char (so a name cannot start with . / : / -)', () => {
+    expect(isSafeModelName('.hidden')).toBe(false);
+    expect(isSafeModelName(':latest')).toBe(false);
+    expect(isSafeModelName('-evil')).toBe(false);
+  });
+});
+
+// --- fetcher behaviour
+
+describe('fetchOllamaSnapshot', () => {
+  it('reports not-running when /api/version is unreachable', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.running).toBe(false);
+    expect(snap.models).toEqual([]);
+    expect(snap.warnings.some((w) => /unreachable/i.test(w))).toBe(true);
+  });
+
+  it('flags an outdated version as unsafe and adds a warning', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.1.30' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.running).toBe(true);
+    expect(snap.version).toBe('0.1.30');
+    expect(snap.versionSafe).toBe(false);
+    expect(snap.warnings.some((w) => /older than/i.test(w) || /CVE/i.test(w))).toBe(true);
+  });
+
+  it('reports safe version + normalized models when everything is current', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          models: [
+            {
+              name: 'llama3.2:latest',
+              size: 2 * 1024 * 1024 * 1024,
+              modified_at: '2026-04-30T12:00:00Z',
+              digest: 'sha256:abc',
+              details: {
+                family: 'llama',
+                parameter_size: '3B',
+                quantization_level: 'Q4_K_M',
+              },
+            },
+          ],
+        }),
+      );
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.running).toBe(true);
+    expect(snap.versionSafe).toBe(true);
+    expect(snap.models).toHaveLength(1);
+    expect(snap.models[0]).toMatchObject({
+      name: 'llama3.2:latest',
+      family: 'llama',
+      parameterSize: '3B',
+      quantization: 'Q4_K_M',
+      sizeMb: 2048,
+      modifiedAt: '2026-04-30',
+    });
+  });
+
+  it('only ever hits 127.0.0.1:11434 (cannot be redirected elsewhere)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    await fetchOllamaSnapshot({ token: 'irrelevant-attempt-to-redirect', fetch: fetchMock });
+    for (const call of fetchMock.mock.calls) {
+      const url = call[0] as string;
+      expect(url.startsWith('http://127.0.0.1:11434')).toBe(true);
+    }
+  });
+});
+
+// --- action: chat
+
+describe('ACTIONS["chat"]', () => {
+  it('POSTs to /api/chat with stream=false and returns the assistant text', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          message: { role: 'assistant', content: 'hello back' },
+          total_duration: 1_234_000_000, // ns → 1234 ms
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    })) as { reply: string; durationMs: number };
+
+    expect(result.reply).toBe('hello back');
+    expect(result.durationMs).toBe(1234);
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('http://127.0.0.1:11434/api/chat');
+    expect((init as RequestInit).method).toBe('POST');
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.stream).toBe(false);
+    expect(body.model).toBe('llama3.2');
+    expect(body.messages).toEqual([{ role: 'user', content: 'hi' }]);
+  });
+
+  it('rejects an unsafe model name BEFORE any network call', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: '../../etc/passwd', prompt: 'hi' },
+      }),
+    ).rejects.toBeInstanceOf(FetchError);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects when model or prompt is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { model: 'llama3' } }),
+    ).rejects.toThrow();
+    await expect(
+      ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { prompt: 'hi' } }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('clamps oversize prompts to 32 KB', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const longPrompt = 'A'.repeat(50_000);
+    await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: longPrompt },
+    });
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string);
+    expect(body.messages[0].content.length).toBe(32768);
+  });
+
+  it('includes a system prompt when provided', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi', system: 'be brief' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.messages[0]).toEqual({ role: 'system', content: 'be brief' });
+    expect(body.messages[1]).toEqual({ role: 'user', content: 'hi' });
+  });
+
+  it('propagates a non-2xx response as FetchError', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('model not found', { status: 404 }));
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'unknown-model', prompt: 'hi' },
+      }),
+    ).rejects.toBeInstanceOf(FetchError);
+  });
+
+  it('never calls /api/pull, /api/create, /api/push (the CVE-prone endpoints)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    });
+    for (const call of fetchMock.mock.calls) {
+      const url = call[0] as string;
+      expect(url).not.toMatch(/\/api\/(pull|create|push)/);
+    }
+  });
+});

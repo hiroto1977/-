@@ -291,6 +291,22 @@ export const SNAPSHOT = {
     keyConfigured: false,
   },
 
+  ollama: {
+    running: false,
+    version: '' as string,
+    versionSafe: false,
+    versionMinRecommended: '0.1.46',
+    models: [] as {
+      name: string;
+      family: string;
+      parameterSize: string;
+      quantization: string;
+      sizeMb: number;
+      modifiedAt: string;
+    }[],
+    warnings: [] as string[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   canva: {

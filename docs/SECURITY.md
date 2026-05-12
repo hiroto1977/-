@@ -13,6 +13,7 @@ GitHub Issues / PR ベースで運用。
 | **A4 中間者 (MITM)** | ネットワーク経路 | API リクエストの傍受 / 改ざん |
 | **A5 悪意あるサービスサイト** | サイト URL を保存させる | アプリ経由で別サイトに資格情報を送らせる |
 | **A6 CVE のあるサードパーティ** | 依存ライブラリ経由 | 任意コード実行 |
+| **A7 Ollama** | ローカル LLM サーバの既知 / 未パッチ脆弱性 | メモリ漏洩 / RCE / DoS |
 
 ## 緩和策一覧
 
@@ -40,6 +41,19 @@ GitHub Issues / PR ベースで運用。
 | ノードアクセス権限剥奪 | `contextIsolation: true` + `nodeIntegration: false` + `sandbox: true` |
 | renderer から file:// 等のスキーム経由でファイル読み出し | `app:openExternal` IPC が http(s) のみ受理 |
 | 新 window 開放 | `setWindowOpenHandler` で全部 deny + `openExternal` 経由 |
+
+### A7: Ollama (ローカル LLM サーバ)
+
+| 攻撃 | 緩和 |
+|---|---|
+| Ollama 既知 CVE (Probllama / CVE-2024-37032 系統) | `MIN_SAFE_VERSION = 0.1.46` をクライアントにハードコード、起動時に `/api/version` で照合 → 古ければ警告バッジ |
+| 未パッチ OOB read 脆弱性 (モデル/エンジンファイル形状由来) | `/api/pull` / `/api/create` / `/api/push` をクライアントから呼ばない設計。悪意あるモデルロードの経路を遮断 |
+| 接続先改ざん (`OLLAMA_HOST` 設定や IPC 経由で別ホスト誘導) | URL を `http://127.0.0.1:11434` に **ハードコード**。renderer / IPC ペイロードでは変更不可 |
+| モデル名へのパストラバーサル / コマンドインジェクション | `^[a-z0-9][a-z0-9._:/-]+$` 正規表現で sanitize、`..` 含有を別途 reject |
+| 巨大レスポンスによる OOM / DoS | 30s timeout (AbortController)、10 MB レスポンス上限、stream:false 固定 |
+| Ollama 自体のネットワーク露出 | 運用文書 (`docs/OLLAMA_SECURITY.md`) で `OLLAMA_HOST=127.0.0.1:11434` 固定 + firewall を推奨 |
+
+詳細は `docs/OLLAMA_SECURITY.md`。
 
 ### A4: MITM
 

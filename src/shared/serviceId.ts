@@ -20,6 +20,7 @@ export const SERVICE_IDS = [
   'security',
   'cloudflare',
   'emotions',
+  'ollama',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
