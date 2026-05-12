@@ -117,6 +117,25 @@ form-action 'none';
 
 ---
 
+## 1.2. 自己検証スクリプト
+
+本ドキュメントの `file:line` 参照は 123 箇所あり、コードの変更に伴って rot しがち。
+`npm run verify:arch` (`scripts/verify-architecture.cjs`) が以下を自動チェックする:
+
+1. すべての `file:line` の **ファイルが存在する**
+2. **行番号がファイルサイズ範囲内**
+3. doc で名前を挙げているシンボル (例 `isServiceId`) が **参照先ファイルに実在する**
+
+CI (`.github/workflows/ci.yml`) で毎 push 走るため、コード移動で参照が壊れると即時 fail。
+
+```bash
+npm run verify:arch
+# → Verified 123 file:line references in docs/ARCHITECTURE.md
+# → ✅ all references resolve
+```
+
+---
+
 ## 2. IPC 契約 (8 チャンネル)
 
 `src/preload/preload.ts:6-16` で型定義、`src/main/main.ts:99-224` で実装。
@@ -155,6 +174,47 @@ type OAuthResult =
 `access_token` / `refresh_token` / `token` / `api_key` / `apikey` / `password` フィールド
 を `[REDACTED]` にマスクする。
 
+### 2.2. コア型 (verbatim)
+
+`src/main/clients/types.ts:3-17`:
+
+```typescript
+export interface FetchContext {
+  token: string;
+  fetch?: FetchFn;        // injectable for testing
+}
+
+export interface ActionContext {
+  token: string;
+  fetch?: FetchFn;
+  payload: Record<string, unknown>;
+}
+
+export type ServiceAction = (ctx: ActionContext) => Promise<unknown>;
+export type ActionMap     = Record<string, ServiceAction>;
+```
+
+`src/main/oauth.ts:22-44`:
+
+```typescript
+export interface OAuthConfig {
+  authorizeUrl: string;
+  tokenUrl: string;
+  clientId: string;
+  scopes: string[];
+  scopeDelimiter?: string;            // ' ' (default) or ','
+  extraAuthParams?: Record<string, string>;  // e.g. { access_type: 'offline' }
+}
+
+export interface TokenSet {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number;                 // Unix ms
+  scope?: string;
+  tokenType?: string;
+}
+```
+
 ---
 
 ## 3. サービスレジストリ (14 services × 認証スタイル)
@@ -172,16 +232,41 @@ type OAuthResult =
 | `drive` | Google Drive | OAuth PKCE / Bearer | `clients/drive.ts` | | ✅ | 1 (`create-folder`) |
 | `calendar` | Google Calendar | OAuth PKCE / Bearer | `clients/calendar.ts` | | ✅ | 1 (`create-event`) |
 | `gmail` | Gmail | OAuth PKCE / Bearer | `clients/gmail.ts` | | ✅ | 1 (`create-draft`) |
-| `slack` | Slack | Bearer (user token) | `clients/slack.ts` | | | 1 (`post-message`) |
+| `slack` | Slack | Bearer (user token) | `clients/slack.ts` | | | 1 (`send-message`) |
 | `canva` | Canva | Bearer | `clients/canva.ts` | | | 1 (`create-folder`) |
 | `skills` | Skills | Bearer (Anthropic) | `clients/skills.ts` | ✅ | | 1 (`run-skill`) |
 | `security` | Security | API keys JSON `{hibp, vt}` | `clients/security.ts` | ✅ | | 2 (`check-email-breach`, `scan-url`) |
 | `cloudflare` | Cloudflare | Bearer (API token) | `clients/cloudflare.ts` | | | (read only) |
-| `emotions` | Emotions | Bearer (Anthropic) | `clients/emotions.ts` | ✅ | | 2 (`add-entry`, `analyze`) |
+| `emotions` | Emotions | Bearer (Anthropic) | `clients/emotions.ts` | ✅ | | 2 (`log-mood`, `analyze-text`) |
 | `ollama` | Ollama (local) | none | `clients/ollama.ts` | ✅ | | 1 (`chat`) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`clients/index.ts:44-49`)。トークン未設定でも snapshot が動く。
 - **OAuth** = `OAUTH_CONFIGS` にエントリあり (`oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数が必要。
+
+### 3.1. Action payload スキーマ
+
+各 action は `payload: Record<string, unknown>` を受け、内部で interface にキャスト。
+入力検証はファイルごと:
+
+| Service | Action | Payload interface | 検証 / clamp | 出典 |
+|---|---|---|---|---|
+| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:143` |
+| wordpress | `create-post` | `{ siteId, title, content }` | siteId は `encodeURIComponent` | `wordpress.ts:67` |
+| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only | `atlassian.ts:92` |
+| notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72` |
+| drive | `create-folder` | `{ name, parentId? }` | (none, Google API側で検証) | `drive.ts:50` |
+| calendar | `create-event` | `{ summary, start, end, description? }` | (none, RFC3339 は API側で検証) | `calendar.ts:66` |
+| gmail | `create-draft` | `{ to, subject, body? }` | **`isSafeHeaderValue(to)`** で CR/LF/NUL reject | `gmail.ts:60-104` |
+| slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81` |
+| canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79` |
+| skills | `run-skill` | `{ name, prompt, model?, maxTokens? }` | **`isSafeSkillName(name)`** + path containment | `skills.ts:112-160` |
+| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:137` |
+| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:190-218` |
+| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl? }` | zoneId encodeURIComponent | `cloudflare.ts:127` |
+| cloudflare | `purge-cache` | `{ zoneId, files?: string[] }` | zoneId encodeURIComponent | `cloudflare.ts:172` |
+| emotions | `log-mood` | `{ text, mood, source? }` | text 32KB clamp | `emotions.ts:100` |
+| emotions | `analyze-text` | `{ text }` | text 32KB clamp + extractJson | `emotions.ts:134` |
+| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32KB / system 8KB clamp | `ollama.ts:233-269` |
 
 ---
 
@@ -475,6 +560,21 @@ flowchart TB
 snapshot 取得時は `/api/version` + `/api/tags` の 2 endpoints のみ、`stream: false` のみ。
 **`UNPATCHED_OOB_NOTICE`** (`clients/ollama.ts:51-57`) を `snapshot.warnings[]` に毎回
 追加し、ステータスバーで「検証済みソースのみからモデル取得」を継続的に喚起。
+
+### 9.1. CVE → 防御マッピング
+
+| CVE / Issue | 脆弱性 | Fix version | Service Hub の対応 |
+|---|---|---|---|
+| **CVE-2024-37032** (Probllama) | `/api/pull` でパストラバーサル → RCE | Ollama ≥ 0.1.34 | `/api/pull` を呼ばない設計 + `ALLOWED_ENDPOINTS` で実行時 reject |
+| **CVE-2024-39719** | `/api/create` でファイル存在情報漏洩 | Ollama ≥ 0.1.46 | `/api/create` を呼ばない + allowlist enforce |
+| **CVE-2024-39720** | 不正 GGUF → OOB read (DoS) | Ollama ≥ 0.1.46 | バージョン < 0.1.46 で警告バッジ + 攻撃面 (アップロード) を絶つ |
+| **CVE-2024-39721** | `/api/create` に `/dev/random` で DoS | Ollama ≥ 0.1.46 | `/api/create` を呼ばない |
+| **CVE-2024-39722** | `/api/push` でファイルシステム情報漏洩 | Ollama ≥ 0.1.46 | `/api/push` を呼ばない + allowlist enforce |
+| **未パッチ OOB read** (model/engine file parser) | malformed GGUF で heap OOB read → 情報漏洩 / RCE | **公式パッチ未公開** | `UNPATCHED_OOB_NOTICE` を毎 snapshot で表示 + dangerous endpoints 全 reject + `\0` reject in chat input |
+
+`MIN_SAFE_VERSION = '0.1.46'` (`clients/ollama.ts:28`) 未満は `versionSafe: false` で UI に
+警告バッジ表示。`compareVersions` (`clients/ollama.ts:63`) は `0.1.46-rc1` や `0.1.46+sha` の
+trailing tag を正しく ignore する。
 
 ---
 

@@ -32,6 +32,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Verify architecture doc references (file:line up-to-date)
+        run: npm run verify:arch
+
       - name: Test
         run: npm test
 

@@ -19,6 +19,7 @@
     "mutate:triage": "node scripts/triage-mutations.cjs",
     "quality": "npm run typecheck && npm run test && npm run test:cov",
     "quality:report": "node scripts/quality-report.cjs",
+    "verify:arch": "node scripts/verify-architecture.cjs",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "scaffold": "node scripts/scaffold-service.cjs"
   },
