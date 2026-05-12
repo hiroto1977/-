@@ -46,6 +46,11 @@ describe('isVersionSafe', () => {
     expect(isVersionSafe('')).toBe(false);
     expect(isVersionSafe(undefined as unknown as string)).toBe(false);
   });
+  it('rejects non-string types (number, null, object) — kills `!version || typeof !== string` weaken', () => {
+    expect(isVersionSafe(null as unknown as string)).toBe(false);
+    expect(isVersionSafe(42 as unknown as string)).toBe(false);
+    expect(isVersionSafe({} as unknown as string)).toBe(false);
+  });
   it('returns false for versions older than MIN_SAFE_VERSION', () => {
     expect(isVersionSafe('0.1.45')).toBe(false);
     expect(isVersionSafe('0.1.33')).toBe(false); // before Probllama fix
@@ -164,6 +169,53 @@ describe('fetchOllamaSnapshot', () => {
       expect(url.startsWith('http://127.0.0.1:11434')).toBe(true);
     }
   });
+
+  it('emits NO outdated-version warning when the running version is current', async () => {
+    // Kills the `if (running && !versionSafe)` ConditionalExpression `true`
+    // mutation: with the mutation, every run pushes the CVE warning even
+    // for fresh installs.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.warnings.some((w) => /older than|CVE/i.test(w))).toBe(false);
+  });
+
+  it('does NOT attempt to list models when not running (kills `if (running)` → true)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    // Exactly one fetch call (the /api/version probe). With the mutation
+    // we'd see a second call to /api/tags.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(snap.models).toEqual([]);
+  });
+
+  it('handles model entries without a `details` object (kills optional chaining drops)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          models: [
+            {
+              name: 'bare-model',
+              size: 1024 * 1024,
+              modified_at: '2026-05-01T00:00:00Z',
+              digest: 'sha256:x',
+              // details: missing entirely
+            },
+          ],
+        }),
+      );
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.models[0]).toMatchObject({
+      name: 'bare-model',
+      family: '',
+      parameterSize: '',
+      quantization: '',
+    });
+  });
 });
 
 // --- action: chat
@@ -209,14 +261,23 @@ describe('ACTIONS["chat"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('rejects when model or prompt is missing', async () => {
+  it('rejects with a specific "model and prompt are required" message when prompt is missing', async () => {
+    // Kills both the `if (!model || !prompt)` ConditionalExpression false
+    // mutant AND the `||` → `&&` LogicalOperator mutant. A vague
+    // `.toThrow()` would also pass with the mutations (which throw
+    // different errors downstream), so we pin the message.
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { model: 'llama3' } }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/model and prompt are required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects with the same specific message when model is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { prompt: 'hi' } }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/model and prompt are required/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -266,6 +327,68 @@ describe('ACTIONS["chat"]', () => {
         payload: { model: 'unknown-model', prompt: 'hi' },
       }),
     ).rejects.toBeInstanceOf(FetchError);
+  });
+
+  it('rejects an over-MAX_RESPONSE_BYTES response (DoS / memory exhaustion guard)', async () => {
+    // Synthesize an 11 MB JSON body to trip the size guard. We need the
+    // body to be over MAX_RESPONSE_BYTES = 10MB BEFORE JSON.parse.
+    const huge = 'x'.repeat(11 * 1024 * 1024);
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ message: { role: 'assistant', content: huge } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi' },
+      }),
+    ).rejects.toThrow(/response exceeded/);
+  });
+
+  it('returns empty reply when message.content is missing (kills `?.content` drop)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ message: { role: 'assistant' /* no content */ } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = (await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    })) as { reply: string };
+    expect(result.reply).toBe('');
+  });
+
+  it('returns empty reply when message itself is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ /* no message */ }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = (await ACTIONS['chat']({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    })) as { reply: string };
+    expect(result.reply).toBe('');
+  });
+
+  it('throws when response body is not valid JSON', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('not json at all', { status: 200 }));
+    await expect(
+      ACTIONS['chat']({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi' },
+      }),
+    ).rejects.toThrow(/non-JSON/);
   });
 
   it('never calls /api/pull, /api/create, /api/push (the CVE-prone endpoints)', async () => {

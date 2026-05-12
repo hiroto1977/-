@@ -9,7 +9,8 @@
     "src/main/clients/atlassian.ts",
     "src/main/clients/github.ts",
     "src/main/clients/gmail.ts",
-    "src/main/clients/slack.ts"
+    "src/main/clients/slack.ts",
+    "src/main/clients/ollama.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
