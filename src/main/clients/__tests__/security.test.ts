@@ -33,6 +33,22 @@ describe('parseSecurityKeys', () => {
   it('drops empty/non-string fields', () => {
     expect(parseSecurityKeys('{"hibp":"k","vt":""}')).toEqual({ hibp: 'k' });
   });
+
+  it('returns {} when the parsed value is null', () => {
+    expect(parseSecurityKeys('null')).toEqual({});
+  });
+
+  it('returns {} when the parsed value is a JSON array (not an object)', () => {
+    expect(parseSecurityKeys('["hibp","vt"]')).toEqual({});
+  });
+
+  it('returns {} when the parsed value is a JSON number', () => {
+    expect(parseSecurityKeys('42')).toEqual({});
+  });
+
+  it('ignores hibp when its type is wrong (e.g. number)', () => {
+    expect(parseSecurityKeys('{"hibp":42,"vt":"ok"}')).toEqual({ vt: 'ok' });
+  });
 });
 
 describe('detectNorton', () => {
@@ -56,6 +72,15 @@ describe('detectNorton', () => {
     const result = await detectNorton('win32');
     expect(result.installed).toBe(false);
     expect(result.platform).toBe('win32');
+  });
+
+  it('handles an unknown platform string without crashing', async () => {
+    // Kills the `?? []` mutation — without the nullish coalesce, an
+    // unknown platform key would return undefined and the for-loop
+    // would throw on a non-iterable.
+    const result = await detectNorton('aix' as NodeJS.Platform);
+    expect(result.installed).toBe(false);
+    expect(result.platform).toBe('aix');
   });
 
   // Note: the real win32/darwin paths are absolute (`C:\...` or `/Applications/...`)
@@ -170,6 +195,31 @@ describe('ACTIONS["check-email-breach"]', () => {
 
 describe('ACTIONS["scan-url"]', () => {
   const goodToken = JSON.stringify({ vt: 'vt-key' });
+
+  it('encodes the URL as application/x-www-form-urlencoded body, not query string', async () => {
+    // Kills MethodExpression mutation that drops .toString() on the
+    // URLSearchParams — would otherwise send "[object URLSearchParams]"
+    // as the body and break VT's parser.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'u',
+            attributes: { last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 } },
+          },
+        }),
+      );
+    await ACTIONS['scan-url']({
+      token: JSON.stringify({ vt: 'k' }),
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/path?q=1&r=2' },
+    });
+    const submitBody = (fetchMock.mock.calls[0][1] as RequestInit).body as string;
+    expect(typeof submitBody).toBe('string');
+    expect(submitBody).toBe('url=https%3A%2F%2Fexample.com%2Fpath%3Fq%3D1%26r%3D2');
+  });
 
   it('submits the URL then GETs the report and returns positives/total', async () => {
     const fetchMock = vi

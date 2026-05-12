@@ -95,6 +95,23 @@ describe('scanSkills', () => {
     const result = await scanSkills(tmpDir, 'user');
     expect(result).toEqual([]);
   });
+
+  it('ignores non-.md files at the top level (kills entry.name endsWith mutation)', async () => {
+    await fs.writeFile(path.join(tmpDir, 'config.json'), '{}');
+    await fs.writeFile(path.join(tmpDir, 'skill.txt'), 'plain');
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result).toEqual([]);
+  });
+
+  it('handles a description field with surrounding whitespace (trim survives strip)', async () => {
+    await fs.writeFile(
+      path.join(tmpDir, 's.md'),
+      '---\nname: trimme\ndescription:    has spaces   \n---\n',
+    );
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result[0].name).toBe('trimme');
+    expect(result[0].description).toBe('has spaces');
+  });
 });
 
 describe('ACTIONS["run-skill"]', () => {
@@ -168,5 +185,36 @@ describe('ACTIONS["run-skill"]', () => {
       ACTIONS['run-skill']({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('uses maxTokens override when provided (kills `?? 2048` mutation)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p', maxTokens: 512 },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.max_tokens).toBe(512);
+  });
+
+  it('returns empty text when the response has no text content (kills `?? \'\'` mutation)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [] /* no text block */ }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = (await ACTIONS['run-skill']({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p' },
+    })) as { text: string };
+    expect(result.text).toBe('');
   });
 });

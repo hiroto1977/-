@@ -137,6 +137,23 @@ describe('fetchSlackSnapshot edge cases', () => {
   });
 });
 
+describe('ACTIONS["send-message"] return-shape (mutation kill)', () => {
+  it('echoes the request channel when the response does not include one', async () => {
+    // Kills `res.channel ?? channel` mutation: with the mutation the
+    // result.channel becomes the response value (undefined) and we'd
+    // see empty string.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: true, ts: '123' /* no channel */ }));
+    const result = (await ACTIONS['send-message']({
+      token: 'x',
+      fetch: fetchMock,
+      payload: { channel: 'C42', text: 'hi' },
+    })) as { ts: string; channel: string };
+    expect(result.channel).toBe('C42');
+  });
+});
+
 describe('ACTIONS["send-message"] edge cases', () => {
   it('falls back to "unknown_error" when chat.postMessage returns ok=false without an error', async () => {
     const fetchMock = vi

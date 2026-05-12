@@ -13,7 +13,7 @@
   "vitest": {
     "configFile": "vitest.config.ts"
   },
-  "reporters": ["clear-text", "progress"],
+  "reporters": ["clear-text", "json"],
   "coverageAnalysis": "perTest",
   "thresholds": { "high": 90, "low": 70, "break": null },
   "timeoutMS": 30000,

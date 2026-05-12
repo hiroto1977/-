@@ -24,6 +24,27 @@ describe('parseAtlassianToken', () => {
   it('throws FetchError when fields are missing', () => {
     expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com' }))).toThrow(FetchError);
   });
+
+  it('throws specifically when email is the missing field', () => {
+    // Kills the `!obj.email || !obj.token || !obj.site` LogicalOperator
+    // mutation: with a `||` → `&&` mutation, ANY single-missing case
+    // wouldn't throw.
+    expect(() =>
+      parseAtlassianToken(JSON.stringify({ token: 't', site: 'https://x.atlassian.net' })),
+    ).toThrow(FetchError);
+  });
+
+  it('throws specifically when token is the missing field', () => {
+    expect(() =>
+      parseAtlassianToken(JSON.stringify({ email: 'a@b.com', site: 'https://x.atlassian.net' })),
+    ).toThrow(FetchError);
+  });
+
+  it('throws specifically when site is the missing field', () => {
+    expect(() =>
+      parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't' })),
+    ).toThrow(FetchError);
+  });
 });
 
 describe('fetchAtlassianSnapshot', () => {

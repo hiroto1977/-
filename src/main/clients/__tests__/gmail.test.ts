@@ -61,6 +61,68 @@ describe('buildRfc2822', () => {
   });
 });
 
+describe('ACTIONS["create-draft"] mutation-killing tests', () => {
+  it('rejects with a "subject" error when only subject is missing (not just any error)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    // Note the SPECIFIC message match. Without this, a `!to && !subject`
+    // mutation slips through because the call would still throw — just
+    // from buffer-encoding undefined later.
+    await expect(
+      ACTIONS['create-draft']({
+        token: 't',
+        fetch: fetchMock,
+        payload: { to: 'x@y.com' /* no subject */ },
+      }),
+    ).rejects.toThrow(/to and subject are required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects symmetrically when only "to" is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-draft']({
+        token: 't',
+        fetch: fetchMock,
+        payload: { subject: 'hi' /* no to */ },
+      }),
+    ).rejects.toThrow(/to and subject are required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('fetchGmailSnapshot mutation-killing tests', () => {
+  it('returns empty sender/subject when a message has no payload at all', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ messages: [{ id: 'm', threadId: 't' }] }))
+      .mockResolvedValueOnce(
+        jsonResponse({ id: 'm', threadId: 't', internalDate: '0' /* no payload */ }),
+      );
+    const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.threads[0].sender).toBe('');
+    expect(snap.threads[0].subject).toBe('(件名なし)');
+  });
+
+  it('formats internalDate as YYYY-MM-DD (not a raw number or full ISO string)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ messages: [{ id: 'm', threadId: 't' }] }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          id: 'm',
+          threadId: 't',
+          internalDate: '1746931200000', // 2025-05-11 UTC
+          payload: { headers: [] },
+        }),
+      );
+    const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    // Asserts the .slice(0, 10) actually happened — kills a mutation that
+    // drops .toISOString() or returns the raw number.
+    expect(snap.threads[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(snap.threads[0].date.length).toBe(10);
+  });
+});
+
 describe('ACTIONS["create-draft"]', () => {
   it('POSTs to /drafts with base64url-encoded raw message', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
