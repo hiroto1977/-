@@ -189,6 +189,16 @@ function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promi
   });
 
   const server = http.createServer((req, res) => {
+    // Validate the Host header — the server only ever listens on
+    // 127.0.0.1, but a stray DNS rebinding or a request that reached
+    // us via a different name could fool a naive callback handler.
+    // Accept only literal loopback hostnames.
+    const hostHeader = (req.headers.host ?? '').toLowerCase();
+    const hostOnly = hostHeader.replace(/:\d+$/, '');
+    if (hostOnly !== '127.0.0.1' && hostOnly !== 'localhost' && hostOnly !== '[::1]') {
+      res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
+      return;
+    }
     const url = new URL(req.url ?? '/', 'http://127.0.0.1');
     if (url.pathname !== '/oauth/callback') {
       res.writeHead(404).end();

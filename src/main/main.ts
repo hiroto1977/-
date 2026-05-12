@@ -67,7 +67,20 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
 ipcMain.handle('app:openExternal', async (_e, url: string) => {
-  await shell.openExternal(url);
+  // Defense-in-depth: the renderer is sandboxed and contextIsolated,
+  // but the IPC channel accepts any string. Restrict to http(s) to
+  // block javascript:, data:, file:, and custom-scheme URI handlers
+  // that could escalate (e.g. ssh:// on macOS, ms-windows-store://
+  // on Windows).
+  if (typeof url !== 'string') return;
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return;
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return;
+  await shell.openExternal(parsed.toString());
 });
 
 ipcMain.handle('secrets:set', async (_e, serviceId: ServiceId, token: string) => {

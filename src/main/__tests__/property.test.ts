@@ -140,7 +140,9 @@ describe('parseAtlassianToken (property)', () => {
   it('always trims trailing slashes from the site URL', () => {
     fc.assert(
       fc.property(
-        fc.webUrl(),
+        // parseAtlassianToken now requires https://, so constrain the
+        // generator. fc.webUrl() emits http or https with equal weight.
+        fc.webUrl().filter((u) => u.startsWith('https://')),
         fc.emailAddress(),
         fc.string({ minLength: 1, maxLength: 40 }).filter((s) => !/["\\]/.test(s)),
         (site, email, token) => {

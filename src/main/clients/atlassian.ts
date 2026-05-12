@@ -37,6 +37,19 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   if (!obj.email || !obj.token || !obj.site) {
     throw new FetchError('Atlassian token に email / token / site のいずれかが欠けています', 0, 'atlassian');
   }
+  // Hard-reject anything that isn't https://. Plain http would put the
+  // Basic auth header on the wire in cleartext; non-URL strings (e.g.
+  // `javascript:`, `file:`) would crash the URL parser later and could
+  // exfiltrate the token via a maliciously-crafted "site" field.
+  let parsedSite: URL;
+  try {
+    parsedSite = new URL(obj.site);
+  } catch {
+    throw new FetchError('Atlassian token の site は URL として解釈可能な文字列にしてください', 0, 'atlassian');
+  }
+  if (parsedSite.protocol !== 'https:') {
+    throw new FetchError('Atlassian token の site は https:// で始まる必要があります', 0, 'atlassian');
+  }
   // Strip *all* trailing slashes — handy for tokens whose `site`
   // accidentally got "https://x.atlassian.net//" from a copy/paste.
   return { email: obj.email, token: obj.token, site: obj.site.replace(/\/+$/, '') };

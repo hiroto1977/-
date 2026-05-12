@@ -45,6 +45,39 @@ describe('parseAtlassianToken', () => {
       parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't' })),
     ).toThrow(FetchError);
   });
+
+  // --- security: reject non-https sites
+  it('rejects http:// site (would put Basic auth in cleartext)', () => {
+    expect(() =>
+      parseAtlassianToken(
+        JSON.stringify({ email: 'a@b.com', token: 't', site: 'http://x.atlassian.net' }),
+      ),
+    ).toThrow(/https/);
+  });
+
+  it('rejects javascript:// site (would crash URL handling later or exfiltrate token)', () => {
+    expect(() =>
+      parseAtlassianToken(
+        JSON.stringify({ email: 'a@b.com', token: 't', site: 'javascript:alert(1)' }),
+      ),
+    ).toThrow(FetchError);
+  });
+
+  it('rejects file:// site', () => {
+    expect(() =>
+      parseAtlassianToken(
+        JSON.stringify({ email: 'a@b.com', token: 't', site: 'file:///etc/passwd' }),
+      ),
+    ).toThrow(/https/);
+  });
+
+  it('rejects an unparseable site string', () => {
+    expect(() =>
+      parseAtlassianToken(
+        JSON.stringify({ email: 'a@b.com', token: 't', site: 'not a url' }),
+      ),
+    ).toThrow(FetchError);
+  });
 });
 
 describe('fetchAtlassianSnapshot', () => {
