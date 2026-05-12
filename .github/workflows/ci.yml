@@ -9,7 +9,6 @@ on:
     branches:
       - main
 
-# Cancel an in-flight run for the same branch when a newer commit lands.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -36,8 +35,16 @@ jobs:
       - name: Test
         run: npm test
 
-      # build:renderer covers the full TS → JS pipeline for the renderer +
-      # main + preload bundles. Skipping electron-builder here — that's
-      # exercised by release.yml on tag pushes (slow + needs more setup).
+      - name: Coverage (clients only — Electron-bound modules excluded)
+        run: npm run test:cov
+
+      - name: Upload coverage summary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-summary
+          path: coverage/coverage-summary.json
+          retention-days: 30
+
       - name: Build renderer + main + preload
         run: npm run build:renderer

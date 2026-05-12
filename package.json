@@ -13,6 +13,12 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:cov": "vitest run --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",
+    "test:property": "vitest run src/main/__tests__/property.test.ts",
+    "mutate": "stryker run",
+    "mutate:triage": "node scripts/triage-mutations.cjs",
+    "quality": "npm run typecheck && npm run test && npm run test:cov",
+    "quality:report": "node scripts/quality-report.cjs",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "scaffold": "node scripts/scaffold-service.cjs"
   },

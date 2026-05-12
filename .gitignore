@@ -12,4 +12,6 @@ tmp-screenshots/
 .idea/
 .vscode/
 .stryker-tmp/
+.stryker-incremental.json
 reports/
+coverage/
