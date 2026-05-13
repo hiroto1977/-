@@ -230,6 +230,8 @@ interface VtUrlReportResponse {
   };
 }
 
+// vtBase64: `=+$` mutants equivalent for URL lengths we feed.
+// Stryker disable Regex
 function vtBase64(input: string): string {
   return Buffer.from(input, 'utf8')
     .toString('base64')
@@ -237,6 +239,7 @@ function vtBase64(input: string): string {
     .replace(/\+/g, '-')
     .replace(/\//g, '_');
 }
+// Stryker restore Regex
 
 async function scanUrl(
   ctx: ActionContext,

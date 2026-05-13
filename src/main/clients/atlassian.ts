@@ -67,9 +67,9 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
   const url = new URL(`${creds.site}/rest/api/3/project/search?maxResults=50`);
   const projects = await jsonFetch<JiraProjectsResponse>(url.toString(), { headers }, fetchCtx);
 
-  // parseAtlassianToken already enforces https://, so the regex only
-  // needs to match that exact prefix (no `?` on `s`). Simpler regex =
-  // fewer equivalent mutants for Stryker to report.
+  // parseAtlassianToken enforces https:// prefix; the `^` anchor-dropped
+  // mutant is equivalent. Marked inline below.
+  // Stryker disable next-line Regex
   const host = creds.site.replace(/^https:\/\//, '');
 
   return {

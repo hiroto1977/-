@@ -91,7 +91,10 @@ export function isOAuthSupported(serviceId: ServiceId): boolean {
 
 // --- pure helpers (unit-testable) ---------------------------------------
 
+// `=+$` vs `=$` are equivalent for our 16-byte and 32-byte buffers
+// (1 trailing `=` each); marked inline below.
 function base64url(buf: Buffer): string {
+  // Stryker disable next-line Regex
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 

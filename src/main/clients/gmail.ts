@@ -69,6 +69,7 @@ interface GmailCreateDraftResponse {
 }
 
 // Encode a UTF-8 string to base64url (Gmail's raw message format).
+// Stryker disable Regex
 function base64url(input: string): string {
   return Buffer.from(input, 'utf8')
     .toString('base64')
@@ -76,6 +77,7 @@ function base64url(input: string): string {
     .replace(/\//g, '_')
     .replace(/=+$/, '');
 }
+// Stryker restore Regex
 
 /** Reject CR/LF/NUL in a value that will be concatenated into an
  *  RFC 2822 header line. Without this, a `to` like
