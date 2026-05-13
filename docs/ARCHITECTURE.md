@@ -17,12 +17,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 14 | `src/shared/serviceId.ts:9-25` |
+| サービス数 | 15 | `src/shared/serviceId.ts:9-26` |
 | IPC ハンドラ数 | 9 | `src/main/main.ts:99-224` |
-| client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
+| client モジュール (fetcher + actions) | 15 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **415** | `npm test` |
+| ユニットテスト | **432** | `npm test` |
 | Mutation score (total) | **90.41%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **91.81%** | `docs/QUALITY.md` |
 | Stryker break threshold | **90%** (CI fails below) | `stryker.config.json` |
@@ -443,8 +443,9 @@ union を参照する。
 | `cloudflare` | Cloudflare | Bearer (API token) | | | `create-dns-record`, `purge-cache` |
 | `emotions` | Emotions | Bearer (Anthropic) | ✅ | | `log-mood`, `analyze-text` |
 | `ollama` | Ollama (local) | none | ✅ | | `chat` |
+| `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 
-- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:44-49`)。トークン未設定でも snapshot OK。
+- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:55-65`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
 
 ### 3.2 Action payload スキーマ (17 actions)

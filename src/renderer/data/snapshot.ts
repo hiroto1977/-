@@ -309,6 +309,67 @@ export const SNAPSHOT = {
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
+  kpi: {
+    units: [] as {
+      id: string;
+      label: string;
+      fundamentals: {
+        revenue: number;
+        cogs: number;
+        advertising: number;
+        sga: number;
+        depreciation: number;
+      };
+      kpi: {
+        variableCost: number;
+        fixedCost: number;
+        contribution: number;
+        contributionRatio: number;
+        variableRatio: number;
+        fixedRatio: number;
+        bep: number;
+        bepRatio: number;
+        safetyMargin: number;
+        operatingProfit: number;
+        operatingLeverage: number;
+      };
+      history: {
+        revenue: number;
+        cogs: number;
+        advertising: number;
+        sga: number;
+        depreciation: number;
+      }[];
+    }[],
+    aggregate: {
+      id: 'all',
+      label: '全社合算',
+      fundamentals: { revenue: 0, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+      kpi: {
+        variableCost: 0,
+        fixedCost: 0,
+        contribution: 0,
+        contributionRatio: 0,
+        variableRatio: 0,
+        fixedRatio: 0,
+        bep: 0,
+        bepRatio: 0,
+        safetyMargin: 0,
+        operatingProfit: 0,
+        operatingLeverage: 0,
+      },
+      history: [] as {
+        revenue: number;
+        cogs: number;
+        advertising: number;
+        sga: number;
+        depreciation: number;
+      }[],
+    },
+    fetchedAt: '',
+    isMock: true,
+  },
+
   canva: {
     brandKits: [{ id: 'kAGWm36LGZk' }],
     designs: [

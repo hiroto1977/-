@@ -12,6 +12,7 @@ import { SecurityPage } from './pages/SecurityPage';
 import { CloudflarePage } from './pages/CloudflarePage';
 import { EmotionsPage } from './pages/EmotionsPage';
 import { OllamaPage } from './pages/OllamaPage';
+import { KpiPage } from './pages/KpiPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -124,6 +125,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'OL',
     description: 'ローカル LLM (127.0.0.1 固定 + CVE 検知 + 厳格 sanitize)',
     page: OllamaPage,
+  },
+  {
+    id: 'kpi',
+    label: 'KPI / BEP',
+    icon: 'KP',
+    description: '損益分岐点 + 8 指標 × 6 事業 (模擬データ — Phase 6 で API 接続)',
+    page: KpiPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

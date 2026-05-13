@@ -12,6 +12,7 @@ import { fetchSecuritySnapshot, ACTIONS as SECURITY_ACTIONS } from './security';
 import { fetchCloudflareSnapshot, ACTIONS as CLOUDFLARE_ACTIONS } from './cloudflare';
 import { fetchEmotionsSnapshot, ACTIONS as EMOTIONS_ACTIONS } from './emotions';
 import { fetchOllamaSnapshot, ACTIONS as OLLAMA_ACTIONS } from './ollama';
+import { fetchKpiSnapshot } from './kpi';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -33,6 +34,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   cloudflare: fetchCloudflareSnapshot,
   emotions: fetchEmotionsSnapshot,
   ollama: fetchOllamaSnapshot,
+  kpi: fetchKpiSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -65,6 +67,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'security',
   'emotions',
   'ollama',
+  'kpi',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
