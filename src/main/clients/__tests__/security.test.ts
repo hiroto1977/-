@@ -597,6 +597,69 @@ describe('ACTIONS["scan-url"]', () => {
     expect((submitInit as RequestInit).headers).toMatchObject({ 'x-apikey': 'vt-key' });
   });
 
+  it('swaps `/` to `_` in the VT id (kills `.replace(/\\//g, "_")` → `""`)', async () => {
+    // Standard base64 of a URL with multiple path segments contains '/'.
+    // The mutant `replace(/\//g, "")` would drop the slashes entirely
+    // rather than replacing with '_'. Pin: result contains '_' and never
+    // contains an unencoded '/'.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'url-id',
+            attributes: {
+              last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 },
+            },
+          },
+        }),
+      );
+    await ACTIONS['scan-url']!({
+      token: goodToken,
+      fetch: fetchMock,
+      // 'https://example.com/?x=1' base64 = 'aHR0cHM6Ly9leGFtcGxlLmNvbS8/eD0x'
+      // which contains a '/' that the swap must convert to '_'.
+      payload: { url: 'https://example.com/?x=1' },
+    });
+    const reportUrl = fetchMock.mock.calls[1]![0] as string;
+    // The path portion after /urls/ must not contain '/' (that would
+    // break VT's URL parsing) and must contain '_' (base64url swap).
+    const idPart = reportUrl.split('/urls/')[1]!;
+    expect(idPart).toContain('_');
+    expect(idPart).not.toContain('/');
+  });
+
+  it('surfaces serviceId="security" on VT submit HTTP failure (kills security.ts:275)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('quota exceeded', { status: 429 }),
+    );
+    const err = await ACTIONS['scan-url']!({
+      token: goodToken,
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('security');
+    expect((err as FetchError).message).toMatch(/^security 429:/);
+  });
+
+  it('surfaces serviceId="security" on VT report-GET HTTP failure (kills security.ts:284)', async () => {
+    // First call (submit) succeeds, second call (report GET) fails.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(new Response('not found', { status: 404 }));
+    const err = await ACTIONS['scan-url']!({
+      token: goodToken,
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('security');
+    expect((err as FetchError).message).toMatch(/^security 404:/);
+  });
+
   it('swaps `+` to `-` in the VT id (kills `.replace(/\\+/g, "-")` → `""`)', async () => {
     // URL 'https://example.com/?a=😾' base64-encodes to a string
     // containing '+'. The vtBase64 function must replace `+` with `-`

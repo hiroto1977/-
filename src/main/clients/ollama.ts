@@ -181,11 +181,18 @@ async function withTimeout(
   // hanging connection, which only an integration test could supply.
   // Stryker disable next-line ArrowFunction
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  // Equivalent mutant on the finally body: emptying `{ clearTimeout }`
+  // to `{}` leaves the 5-second abort timer pending. By the time it
+  // fires the await has already resolved, so no consumer of
+  // controller.signal observes the abort. Vitest's afterEach cleanup
+  // mops up the pending timer.
+  // Stryker disable BlockStatement
   try {
     return await fetchFn(url, { ...init, signal: controller.signal });
   } finally {
     clearTimeout(timer);
   }
+  // Stryker restore BlockStatement
 }
 
 export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnapshot> {

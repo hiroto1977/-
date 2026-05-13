@@ -124,6 +124,11 @@ export function nortonNotFoundDetails(platform: NodeJS.Platform): string {
 
 export async function detectNorton(
   platform: NodeJS.Platform = process.platform,
+  // Default probe is real fs.stat. Mutating to `() => undefined` is
+  // observable only on a host where Norton IS installed AND the test
+  // omits the probe arg — combinations that none of our unit tests
+  // produce (production callers use the default; tests inject a fake).
+  // Stryker disable next-line ArrowFunction
   probe: (p: string) => Promise<{ isDirectory: () => boolean }> = (p) => fs.stat(p),
 ): Promise<NortonStatus> {
   const candidates = NORTON_PATHS_BY_PLATFORM[platform] ?? [];
