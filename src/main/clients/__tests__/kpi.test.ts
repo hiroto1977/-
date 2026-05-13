@@ -332,6 +332,23 @@ describe('fetchKpiSnapshot', () => {
     expect(snap.aggregate.history.length).toBe(30);
   });
 
+  it('aggregate history at period i = sum of unit.history[i] (kills `[u.history[i]!]` → `[]`)', async () => {
+    // The aggregate history is built period-by-period by summing each
+    // unit's slice. Mutating `[u.history[i]!]` to `[]` makes the inner
+    // aggregateFundamentals see an empty history per unit and return
+    // zero revenue across all periods, breaking the per-period invariant.
+    const snap = await fetchKpiSnapshot({ token: '', fetch: vi.fn<typeof fetch>() });
+    for (let i = 0; i < snap.aggregate.history.length; i++) {
+      const sumOfUnits = snap.units.reduce(
+        (acc, u) => acc + u.history[i]!.revenue,
+        0,
+      );
+      expect(snap.aggregate.history[i]!.revenue).toBe(sumOfUnits);
+      // Non-zero — proves the mutated [] branch can't satisfy the assertion.
+      expect(snap.aggregate.history[i]!.revenue).toBeGreaterThan(0);
+    }
+  });
+
   it('aggregate KPI computed from summed fundamentals (not averaged ratios)', async () => {
     const snap = await fetchKpiSnapshot({ token: '', fetch: vi.fn<typeof fetch>() });
     // Verify by re-running computeKpi on the summed fundamentals.

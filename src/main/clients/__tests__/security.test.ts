@@ -189,9 +189,14 @@ describe('detectNorton', () => {
     // Kills the `?? []` mutation — without the nullish coalesce, an
     // unknown platform key would return undefined and the for-loop
     // would throw on a non-iterable.
-    const result = await detectNorton('aix' as NodeJS.Platform);
+    // Also kills the ArrayDeclaration mutant on the [] fallback: with
+    // an injected `["Stryker was here"]` fallback the probe would be
+    // called once (with a synthetic path); we pin probe.callCount === 0.
+    const probe = vi.fn(async (_p: string) => ({ isDirectory: () => false }));
+    const result = await detectNorton('aix' as NodeJS.Platform, probe);
     expect(result.installed).toBe(false);
     expect(result.platform).toBe('aix');
+    expect(probe).not.toHaveBeenCalled();
   });
 
   it('darwin path list contains the documented .app paths (kills ArrayDeclaration mutants)', async () => {

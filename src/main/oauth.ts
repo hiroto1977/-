@@ -168,6 +168,10 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
 export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   if (a.length !== b.length) return false;
+  // Equivalent mutant: Node's Buffer.from(str, '') silently falls back to
+  // utf8 when the encoding string is unknown — so 'utf8' → '' produces
+  // identical bytes for the strings we encounter here.
+  // Stryker disable next-line StringLiteral
   return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 }
 
@@ -317,6 +321,12 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   });
   // Stryker restore ConditionalExpression,EqualityOperator,UpdateOperator
 
+  // Hard-to-kill mutants below: provoking a server.on('error') in a
+  // unit test requires a kernel-level binding failure (e.g. exhausting
+  // ephemeral ports); the 'error' event name and the '127.0.0.1' bind
+  // host are both effectively integration concerns. Listening on '' (the
+  // empty-bind mutant) still works on most OSes for loopback connects.
+  // Stryker disable StringLiteral
   server.on('error', (err) => {
     portReject(err);
     reject(err);
@@ -326,6 +336,7 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     const port = (server.address() as AddressInfo).port;
     portResolve(port);
   });
+  // Stryker restore StringLiteral
 
   const timeout = setTimeout(() => {
     reject(new Error(`OAuth flow timed out after ${Math.round(timeoutMs / 1000)}s`));

@@ -174,11 +174,21 @@ describe('parseAtlassianToken', () => {
   });
 
   it('rejects an unparseable site string', () => {
-    expect(() =>
-      parseAtlassianToken(
-        JSON.stringify({ email: 'a@b.com', token: 't', site: 'not a url' }),
-      ),
-    ).toThrow(FetchError);
+    const err = (() => {
+      try {
+        parseAtlassianToken(
+          JSON.stringify({ email: 'a@b.com', token: 't', site: 'not a url' }),
+        );
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    // Pin the error message + serviceId (kills StringLiteral mutants on
+    // atlassian.ts:76 → "" for both args).
+    expect((err as FetchError).message).toMatch(/URL として解釈可能/);
+    expect((err as FetchError).serviceId).toBe('atlassian');
   });
 });
 
@@ -298,11 +308,36 @@ describe('ACTIONS["create-issue"]', () => {
     expect(body.fields.description).toBeUndefined();
   });
 
-  it('rejects when projectKey/summary are missing', async () => {
+  it('rejects when projectKey/summary are missing with the literal message', async () => {
+    // Kills StringLiteral mutant on atlassian.ts:152 (error text → "").
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['create-issue']!({ token, fetch: fetchMock, payload: { projectKey: 'KAN' } }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/^projectKey and summary are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects symmetrically when only summary is missing (covers both !projectKey and !summary)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-issue']!({ token, fetch: fetchMock, payload: { summary: 'x' } }),
+    ).rejects.toThrow(/^projectKey and summary are required$/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('emits an ADF "paragraph" node type when description is provided', async () => {
+    // Kills StringLiteral mutant on atlassian.ts:161 (paragraph → "").
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: '1', key: 'KAN-1', self: '' }),
+    );
+    await ACTIONS['create-issue']!({
+      token,
+      fetch: fetchMock,
+      payload: { projectKey: 'KAN', summary: 'x', description: 'some text' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.fields.description.type).toBe('doc');
+    expect(body.fields.description.content[0].type).toBe('paragraph');
+    expect(body.fields.description.content[0].content[0].text).toBe('some text');
   });
 });
