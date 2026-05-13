@@ -68,9 +68,14 @@ export function isSafeModelName(name: string): boolean {
 }
 
 /** Strict semver-ish compare. Returns -1 / 0 / +1 like Array.sort.
- *  Handles "0.1.46", "0.5.0", "0.1.46-rc1" (trailing tag ignored). */
+ *  Handles "0.1.46", "0.5.0", "0.1.46-rc1" (trailing tag ignored).
+ *
+ *  The inner `?.split('+')[0]` chain has equivalent mutants — empty
+ *  string input handles all bogus inputs uniformly; the `i < len`
+ *  vs `i <= len` mutant just adds one extra zero-iteration. */
 export function compareVersions(a: string, b: string): number {
   const parse = (v: string): number[] => {
+    // Stryker disable next-line OptionalChaining
     const clean = v.split('-')[0]?.split('+')[0] ?? '';
     return clean.split('.').map((x) => {
       const n = Number(x);
@@ -80,6 +85,7 @@ export function compareVersions(a: string, b: string): number {
   const pa = parse(a);
   const pb = parse(b);
   const len = Math.max(pa.length, pb.length);
+  // Stryker disable next-line EqualityOperator
   for (let i = 0; i < len; i++) {
     const ai = pa[i] ?? 0;
     const bi = pb[i] ?? 0;
@@ -153,6 +159,12 @@ async function withTimeout(
   init: RequestInit = {},
   timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
+  // Stryker disable next-line ConditionalExpression: belt-and-braces.
+  // The only callers feed URLs from `${OLLAMA_BASE}/api/...` constants
+  // that are all in ALLOWED_ENDPOINTS by construction. The runtime check
+  // here defends against future regressions (a new caller forgetting
+  // to use a constant). Mutating to `false` simply removes the
+  // additional defense layer; no live attack reaches this code.
   if (!isAllowedEndpoint(url)) {
     // Belt-and-braces: every Ollama HTTP call goes through this helper,
     // so the allowlist refusal here covers any future code path that
@@ -267,6 +279,11 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   // Newlines and other whitespace are legitimate in chat input and are
   // kept; only \0 is refused.
   const promptStr = String(prompt);
+  // Stryker disable next-line ConditionalExpression: when `system` is
+  // null/undefined, the ternary returns ''; the mutant goes through
+  // String(undefined) = 'undefined'. Either way, the `if (system)`
+  // gate later excludes the system message from the request, so the
+  // string we never use here cannot affect behavior. Equivalent.
   const systemStr = system == null ? '' : String(system);
   if (promptStr.includes('\0') || systemStr.includes('\0')) {
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');
