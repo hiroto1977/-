@@ -53,6 +53,9 @@ const SEARCH_DIRS = [
   'src/shared/__tests__',
   'src/preload',
   'src/renderer',
+  'src/renderer/hooks',
+  'src/renderer/components',
+  'src/renderer/pages',
 ];
 
 function resolveRef(file) {
@@ -102,7 +105,7 @@ function extractSymbols(text) {
     const sym = m[1];
     // Skip generic words / TypeScript primitives.
     if (
-      /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err)$/i.test(
+      /^(file|line|true|false|null|void|string|number|boolean|main|src|clients|action|payload|test|tests|fetch|json|api|data|svc|env|raw|res|err|get|post|put|delete|patch|head|options)$/i.test(
         sym,
       )
     ) {
@@ -263,7 +266,7 @@ const METRICS = [
   },
   {
     name: 'verify:arch ref count',
-    docPattern: /(\d+) 箇所/,
+    docPattern: /`file:line` 参照数 \| (\d+) /,
     compute: () => {
       // Re-count refs from the doc itself.
       const arch = readFileSafe(ARCH_FILE);
