@@ -97,6 +97,34 @@ describe('scanSkills', () => {
     expect(result).toEqual([]);
   });
 
+  it('returns [] specifically for ENOENT, not for ANY error (kills `if (true) return []` mutation)', async () => {
+    const enoent = new Error('ENOENT: no such file');
+    (enoent as NodeJS.ErrnoException).code = 'ENOENT';
+    const readDir = vi.fn(async () => {
+      throw enoent;
+    });
+    const result = await scanSkills('/whatever', 'user', readDir);
+    expect(result).toEqual([]);
+  });
+
+  it('rethrows non-ENOENT errors (e.g. EACCES) — kills `if (err.code === "ENOENT")` → `true`', async () => {
+    // Injected readDir throws EACCES. Original code rethrows; mutated
+    // `if (true) return []` would return [] instead.
+    const eacces = new Error('EACCES: permission denied');
+    (eacces as NodeJS.ErrnoException).code = 'EACCES';
+    const readDir = vi.fn(async () => {
+      throw eacces;
+    });
+    await expect(scanSkills('/protected', 'user', readDir)).rejects.toThrow(/EACCES/);
+  });
+
+  it('rethrows when the error has no code field at all', async () => {
+    const readDir = vi.fn(async () => {
+      throw new Error('generic boom');
+    });
+    await expect(scanSkills('/x', 'user', readDir)).rejects.toThrow(/generic boom/);
+  });
+
   it('discovers <name>/SKILL.md and <name>.md side by side, sorted by name', async () => {
     await fs.mkdir(path.join(tmpDir, 'security-review'), { recursive: true });
     await fs.writeFile(

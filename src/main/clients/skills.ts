@@ -44,16 +44,35 @@ function stripBalancedQuotes(s: string | undefined): string | undefined {
   return m ? m[2] : s;
 }
 
+/** A minimal Dirent-shaped object for the readdir injection point.
+ *  Lets tests fake the directory contents without touching the disk. */
+export interface DirentLike {
+  name: string;
+  isDirectory: () => boolean;
+}
+
+/** Default readdir wrapper — passes through to fs.promises with the
+ *  `withFileTypes` option. Injectable so tests can simulate errors
+ *  (EACCES, EBADF, etc.) without filesystem manipulation. */
+export type ReadDirFn = (dir: string) => Promise<DirentLike[]>;
+
+const defaultReadDir: ReadDirFn = (dir) => fs.readdir(dir, { withFileTypes: true });
+
 /** Scan a single skills directory. Handles two shapes:
  *  - `<dir>/<name>/SKILL.md` (preferred, name == dir name)
- *  - `<dir>/<name>.md`       (flat file) */
+ *  - `<dir>/<name>.md`       (flat file)
+ *
+ *  Returns [] for missing directories (ENOENT). Other errors throw,
+ *  so the caller can surface them. `readDir` is injectable so the
+ *  ENOENT-vs-other-error branch can be exhaustively unit-tested. */
 export async function scanSkills(
   dir: string,
   source: SkillEntry['source'],
+  readDir: ReadDirFn = defaultReadDir,
 ): Promise<SkillEntry[]> {
-  let entries: import('node:fs').Dirent[];
+  let entries: DirentLike[];
   try {
-    entries = await fs.readdir(dir, { withFileTypes: true });
+    entries = await readDir(dir);
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return [];
     throw err;
