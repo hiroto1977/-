@@ -407,7 +407,24 @@ describe('ACTIONS["chat"]', () => {
         fetch: fetchMock,
         payload: { model: 'llama3.2', prompt: 'hi' },
       }),
-    ).rejects.toThrow(/response exceeded/);
+    ).rejects.toThrow(/^ollama response exceeded \d+ bytes$/);
+  });
+
+  it('throws the literal "ollama returned non-JSON" error when the body fails to parse', async () => {
+    // Pin the exact wording (StringLiteral mutant kill on ollama.ts:330).
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('<html>not json</html>', {
+        status: 200,
+        headers: { 'content-type': 'text/html' },
+      }),
+    );
+    await expect(
+      ACTIONS['chat']!({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi' },
+      }),
+    ).rejects.toThrow(/^ollama returned non-JSON$/);
   });
 
   it('POSTs to /api/chat with Content-Type: application/json (kills `headers = {}` mutation)', async () => {
@@ -652,6 +669,22 @@ describe('fetchOllamaSnapshot — unpatched OOB notice', () => {
     // what docs/OLLAMA_SECURITY.md promises.
     expect(UNPATCHED_OOB_NOTICE).toMatch(/out-of-bounds read/i);
     expect(UNPATCHED_OOB_NOTICE).toMatch(/検証済み|verified/i);
+  });
+
+  it('pins each fragment of the OOB notice so partial wording drifts are caught', () => {
+    // Kills the four StringLiteral mutants on ollama.ts:53–57. Each
+    // concatenation fragment carries unique technical/UX content; any
+    // one of them silently mutating to "" or "Stryker was here" would
+    // strip the security contract.
+    expect(UNPATCHED_OOB_NOTICE).toContain('未パッチの out-of-bounds read');
+    expect(UNPATCHED_OOB_NOTICE).toContain('モデル/エンジンファイルパーサ');
+    expect(UNPATCHED_OOB_NOTICE).toContain('/api/pull');
+    expect(UNPATCHED_OOB_NOTICE).toContain('/api/create');
+    expect(UNPATCHED_OOB_NOTICE).toContain('/api/push');
+    expect(UNPATCHED_OOB_NOTICE).toContain('攻撃ベクトルを遮断');
+    expect(UNPATCHED_OOB_NOTICE).toContain('Ollama 公式 library');
+    expect(UNPATCHED_OOB_NOTICE).toContain('検証済みソース');
+    expect(UNPATCHED_OOB_NOTICE).toContain('docs/OLLAMA_SECURITY.md');
   });
 });
 

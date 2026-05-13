@@ -303,11 +303,25 @@ describe('ACTIONS["run-skill"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('rejects when name/prompt are missing', async () => {
+  it('rejects when name/prompt are missing with the literal "name and prompt are required" message', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['run-skill']!({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/^name and prompt are required$/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects when the prompt is provided but name is empty (same literal message)', async () => {
+    // Kills the StringLiteral mutant on skills.ts:198 — pin the exact
+    // error text so it cannot drift silently.
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { name: '', prompt: 'hi' },
+      }),
+    ).rejects.toThrow(/^name and prompt are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

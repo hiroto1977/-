@@ -372,7 +372,11 @@ describe('listenForCallback (integration — real HTTP server)', () => {
   /** Helper: make an HTTP GET to the loopback server and discard the
    *  response body. The test reads listenForCallback's promise
    *  resolution / rejection separately. */
-  async function fireGet(port: number, path: string, hostHeader?: string): Promise<{ status: number; body: string }> {
+  async function fireGet(
+    port: number,
+    path: string,
+    hostHeader?: string,
+  ): Promise<{ status: number; body: string; contentType: string | undefined }> {
     return new Promise((resolve, reject) => {
       const headers: Record<string, string> = {};
       if (hostHeader !== undefined) headers.Host = hostHeader;
@@ -387,7 +391,13 @@ describe('listenForCallback (integration — real HTTP server)', () => {
         (res) => {
           let body = '';
           res.on('data', (chunk) => (body += chunk.toString()));
-          res.on('end', () => resolve({ status: res.statusCode ?? 0, body }));
+          res.on('end', () =>
+            resolve({
+              status: res.statusCode ?? 0,
+              body,
+              contentType: res.headers['content-type'],
+            }),
+          );
         },
       );
       req.on('error', reject);
@@ -465,6 +475,10 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     expect(res.status).toBe(400);
     expect(res.body).toContain('OAuth error');
     expect(res.body).toContain('access_denied');
+    // Pin Content-Type header so the ObjectLiteral mutant ({} for the
+    // headers object) is killed — without text/plain the browser may
+    // interpret the body differently.
+    expect(res.contentType).toMatch(/^text\/plain/);
     const result = await trapped;
     expect((result as Error).message).toMatch(/access_denied/);
   });
@@ -502,6 +516,9 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     );
     expect(res.status).toBe(400);
     expect(res.body).toBe('bad host');
+    // Pin Content-Type header so the ObjectLiteral mutant ({} for the
+    // headers object on oauth.ts:278) is killed.
+    expect(res.contentType).toMatch(/^text\/plain/);
     listener.cancel();
     await trapped;
   });
