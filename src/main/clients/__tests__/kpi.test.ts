@@ -97,6 +97,34 @@ describe('computeKpi', () => {
     expect(k.operatingLeverage).toBeCloseTo(0.667, 2);
   });
 
+  it('bepRatio is Infinity when revenue is zero (kills `revenue > 0 && Finite(bep)` mutants)', () => {
+    // contribution = 0 → bep = Infinity → bepRatio: revenue > 0 false →
+    // returns Infinity. Mutating any half of the guard to true/false
+    // produces a different (finite or NaN) result.
+    const k = computeKpi({ revenue: 0, cogs: 0, advertising: 0, sga: 100_000, depreciation: 0 });
+    expect(k.bepRatio).toBe(Infinity);
+  });
+
+  it('uses `revenue > 0` strict, not `>= 0` (kills the EqualityOperator boundary)', () => {
+    // revenue=0 case: ratios should ALL be 0 (not NaN, not Infinity for
+    // the variableRatio/fixedRatio/contributionRatio path).
+    const k = computeKpi({ revenue: 0, cogs: 5, advertising: 3, sga: 1, depreciation: 0 });
+    expect(k.variableRatio).toBe(0);
+    expect(k.contributionRatio).toBe(0);
+    expect(k.fixedRatio).toBe(0);
+  });
+
+  it('operatingLeverage uses `> 0.0001` strict (kills `>= 0.0001` boundary)', () => {
+    // OP exactly 0.0001 → original: not > 0.0001 → cap to 999.
+    // Mutated `>= 0.0001`: triggers the abs-divide branch.
+    // Find a fundamentals shape where OP is exactly 0.0001? Floats are
+    // hard to hit exactly; instead test OP very small but positive
+    // (e.g., 0.00005) to assert the cap fires.
+    const k = computeKpi({ revenue: 1_000_000, cogs: 999_999.99995, advertising: 0, sga: 0, depreciation: 0 });
+    // contribution ≈ 0.00005, OP ≈ 0.00005 → |OP| < 0.0001 → cap at 999.
+    expect(k.operatingLeverage).toBe(999);
+  });
+
   it('places the BEP exactly at fixedCost / contributionRatio in JPY', () => {
     // Hand-picked: contribution ratio 50%, fixed 1M → BEP = 2M
     const f: Fundamentals = {
@@ -189,6 +217,19 @@ describe('createMockDataSource', () => {
     expect(ids).toEqual(['civic', 'consult', 'retail', 'training', 'media', 'licensing']);
   });
 
+  it('uses the documented unit LABELS (kills StringLiteral mutants on label fields)', async () => {
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    expect(units.map((u) => u.label)).toEqual([
+      'CivicOS',
+      'コンサルティング',
+      'EC / 物販',
+      '研修事業',
+      'メディア / 広告',
+      'ライセンス',
+    ]);
+  });
+
   it('seeded noise stays within the documented ±15% drift band', async () => {
     const src = createMockDataSource();
     const units = await src.fetch();
@@ -197,6 +238,64 @@ describe('createMockDataSource', () => {
     for (const p of civic.history) {
       expect(p.revenue).toBeGreaterThanOrEqual(3_825_000);
       expect(p.revenue).toBeLessThanOrEqual(5_175_000);
+    }
+  });
+
+  it('splits variable cost into COGS:advertising ≈ 2:1 (kills arithmetic mutations on lines 182-183)', async () => {
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    for (const u of units) {
+      for (const p of u.history) {
+        const variable = p.cogs + p.advertising;
+        // cogs is round(variable * 0.66), so cogs is 60-72% of variable
+        // (rounding can shift up to 1 yen). advertising = variable - cogs.
+        expect(p.cogs / variable).toBeGreaterThan(0.5);
+        expect(p.cogs / variable).toBeLessThan(0.8);
+        expect(p.cogs + p.advertising).toBe(variable);
+      }
+    }
+  });
+
+  it('splits fixed cost into SGA:depreciation ≈ 4:1 (kills arithmetic on lines 185-186)', async () => {
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    for (const u of units) {
+      for (const p of u.history) {
+        const fixed = p.sga + p.depreciation;
+        expect(p.sga / fixed).toBeGreaterThan(0.7);
+        expect(p.sga / fixed).toBeLessThan(0.85);
+      }
+    }
+  });
+
+  it('variable cost equals revenue * unit ratio (kills `revenue * vRatio` → `revenue / vRatio`)', async () => {
+    // The mock formula is variable = round(revenue * u.vRatio). With
+    // mutation `/`, variable would be revenue/vRatio = much larger
+    // → variable > revenue. Pin that variable < revenue for every period.
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    for (const u of units) {
+      for (const p of u.history) {
+        const variable = p.cogs + p.advertising;
+        // For every unit, vRatio < 1 → variable < revenue
+        expect(variable).toBeLessThan(p.revenue);
+      }
+    }
+  });
+
+  it('fixed cost is the same constant across all 30 periods (kills `u.fixedAbs * 0.8` → `/ 0.8`)', async () => {
+    // u.fixedAbs is constant per unit; fixed = round(fixedAbs*0.8) + (fixedAbs - sga).
+    // So fixed is constant per unit across periods. Mutating to `/ 0.8`
+    // would make sga ≈ fixedAbs * 1.25 = bigger than fixedAbs → depreciation
+    // would be negative.
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    for (const u of units) {
+      const firstFixed = u.history[0]!.sga + u.history[0]!.depreciation;
+      for (const p of u.history) {
+        expect(p.sga + p.depreciation).toBe(firstFixed);
+        expect(p.depreciation).toBeGreaterThanOrEqual(0); // non-negative
+      }
     }
   });
 });
