@@ -26,6 +26,7 @@ const SERVICES = [
   'cloudflare',
   'emotions',
   'ollama',
+  'kpi',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');
