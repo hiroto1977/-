@@ -163,15 +163,18 @@ describe('scanSkills', () => {
     expect(result).toEqual([]);
   });
 
-  it('sorts results alphabetically even when fs.readdir returns reverse order (kills `results.sort()` drop)', async () => {
-    // Insertion order is reflected by readdir on Linux. Create files
-    // in reverse-alpha so the only way the test passes is if the .sort
-    // call survives. Without sort, result would be [zebra, alpha] —
-    // assert it's [alpha, zebra].
-    await fs.writeFile(path.join(tmpDir, 'zebra.md'), '---\nname: zebra\n---\n');
+  it('sorts results alphabetically even when readdir returns reverse order (kills `results.sort()` drop)', async () => {
+    // Inject a readDir stub that GUARANTEES reverse-alpha order
+    // regardless of filesystem behavior. Without `.sort()` (mutation),
+    // results would come out [zebra, mango, alpha]. With it: [alpha, mango, zebra].
     await fs.writeFile(path.join(tmpDir, 'alpha.md'), '---\nname: alpha\n---\n');
     await fs.writeFile(path.join(tmpDir, 'mango.md'), '---\nname: mango\n---\n');
-    const result = await scanSkills(tmpDir, 'user');
+    await fs.writeFile(path.join(tmpDir, 'zebra.md'), '---\nname: zebra\n---\n');
+    const reverseReadDir = async () => {
+      const real = await fs.readdir(tmpDir, { withFileTypes: true });
+      return real.sort((a, b) => b.name.localeCompare(a.name)); // z → a
+    };
+    const result = await scanSkills(tmpDir, 'user', reverseReadDir);
     expect(result.map((s) => s.name)).toEqual(['alpha', 'mango', 'zebra']);
   });
 

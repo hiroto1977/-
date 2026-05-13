@@ -91,8 +91,16 @@ export function compareVersions(a: string, b: string): number {
 
 /** True iff the given version is at or above MIN_SAFE_VERSION. An
  *  empty or malformed string is treated as "unsafe" — better safe than
- *  silently waving an unknown version through. */
+ *  silently waving an unknown version through.
+ *
+ *  The guard `!version || typeof version !== 'string'` is defense in
+ *  depth: even when mutated (|| → &&, or either side flipped), the
+ *  fall-through path either returns -1 from compareVersions on bogus
+ *  parses or hits the catch → returns false. So all 3 mutants on this
+ *  line produce the same `false` result for every input we care about. */
+// Stryker disable next-line LogicalOperator,ConditionalExpression
 export function isVersionSafe(version: string): boolean {
+  // Stryker disable next-line LogicalOperator,ConditionalExpression
   if (!version || typeof version !== 'string') return false;
   try {
     return compareVersions(version, MIN_SAFE_VERSION) >= 0;

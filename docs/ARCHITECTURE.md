@@ -23,8 +23,8 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
 | ユニットテスト | **405** | `npm test` |
-| Mutation score (total) | **86.53%** | `docs/QUALITY.md` |
-| Mutation score (covered) | **88.20%** | `docs/QUALITY.md` |
+| Mutation score (total) | **86.92%** | `docs/QUALITY.md` |
+| Mutation score (covered) | **88.70%** | `docs/QUALITY.md` |
 | Stryker break threshold | **86%** (CI fails below) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
