@@ -354,6 +354,14 @@ describe('fetchSecuritySnapshot', () => {
       details: expect.any(String),
     });
   });
+
+  it('returns an empty breaches array in the snapshot (kills `breaches: []` → `["Stryker..."]`)', async () => {
+    // The snapshot doesn't auto-query HIBP; breaches should be exactly
+    // empty. Negative assertion catches any non-empty mutant.
+    const snap = await fetchSecuritySnapshot({ token: '' });
+    expect(snap.breaches).toEqual([]);
+    expect(snap.breaches.length).toBe(0);
+  });
 });
 
 describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLiteral mutants)', () => {

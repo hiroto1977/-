@@ -116,6 +116,11 @@ export async function scanSkills(
       skillFile = entryPath;
       fallbackName = entry.name.replace(/\.md$/, '');
     }
+    // Equivalent mutant: when skillFile is null we reach this guard;
+    // mutating the condition to `false` lets execution fall through to
+    // `fs.readFile(null, 'utf8')` which throws → caught by the inner
+    // try/catch → continue. Same observable behavior.
+    // Stryker disable next-line ConditionalExpression
     if (!skillFile) continue;
 
     // Equivalent mutant on initializer: the value is either overwritten by
@@ -177,7 +182,12 @@ async function readSkillBody(name: string): Promise<string> {
     // Belt-and-braces: even with isSafeSkillName, confirm the joined
     // path stays inside ~/.claude/skills. Protects against future
     // platform-specific path quirks (e.g. Windows alternate separators
-    // or 8.3 short names).
+    // or 8.3 short names). Provoking this from a unit test would
+    // require a path that passes isSafeSkillName but escapes ~/.claude
+    // after path.join — currently impossible because isSafeSkillName
+    // rejects '/', '\', '..', etc. We keep the check anyway for forward
+    // safety, and pragma the resulting "always-true" condition mutant.
+    // Stryker disable next-line ConditionalExpression
     if (!path.resolve(c).startsWith(baseResolved)) continue;
     try {
       return await fs.readFile(c, 'utf8');

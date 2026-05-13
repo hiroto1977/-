@@ -195,6 +195,19 @@ describe('scanSkills', () => {
     expect(result[0]).toMatchObject({ name: 'bare', description: '', source: 'user' });
   });
 
+  it('only strips the FINAL .md from the filename (kills `/\\.md$/` → `/\\.md/`)', async () => {
+    // A filename like 'legacy.md.notes.md' contains '.md' twice. With
+    // the anchored regex, only the trailing one is stripped → 'legacy.md.notes'.
+    // Without the $ anchor, the first '.md' goes → 'legacy.notes.md'.
+    await fs.writeFile(
+      path.join(tmpDir, 'legacy.md.notes.md'),
+      '# no frontmatter on this one',
+    );
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result).toHaveLength(1);
+    expect(result[0]!.name).toBe('legacy.md.notes');
+  });
+
   it('ignores README.md so docs do not show up as skills', async () => {
     await fs.writeFile(path.join(tmpDir, 'README.md'), '# docs');
     const result = await scanSkills(tmpDir, 'user');

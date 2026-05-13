@@ -17,6 +17,21 @@ describe('parseAtlassianToken', () => {
     expect(creds.site).toBe('https://x.atlassian.net');
   });
 
+  it('rejects non-JSON input with serviceId="atlassian" FetchError', () => {
+    // Kills StringLiteral mutant on atlassian.ts:42 (serviceId → "").
+    const err = (() => {
+      try {
+        parseAtlassianToken('not-json-at-all{{{');
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).message).toMatch(/JSON で保存/);
+    expect((err as FetchError).serviceId).toBe('atlassian');
+  });
+
   // --- type validation kills (each typeof check) -----------------------
 
   it('rejects non-string email (number / null / object)', () => {
@@ -89,6 +104,20 @@ describe('parseAtlassianToken', () => {
 
   it('rejects CR/LF/NUL in email (kills the email branch of the `||`)', () => {
     expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com\r\n', token: 't', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+    // Pin serviceId='atlassian' on the control-char FetchError
+    // (kills StringLiteral mutant on atlassian.ts:66 → "").
+    const err = (() => {
+      try {
+        parseAtlassianToken(
+          JSON.stringify({ email: 'a@b.com\r\n', token: 't', site: 'https://x.atlassian.net' }),
+        );
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('atlassian');
   });
 
   it('rejects CR/LF/NUL in token (kills the token branch of the `||` → `&&` mutation)', () => {
@@ -102,6 +131,20 @@ describe('parseAtlassianToken', () => {
 
   it('rejects a non-atlassian.net hostname (kills the allowlist check)', () => {
     expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://attacker.example.com' }))).toThrow(/atlassian\.net/);
+    // Pin serviceId='atlassian' on the allowlist FetchError
+    // (kills StringLiteral mutant on atlassian.ts:88 → "").
+    const err = (() => {
+      try {
+        parseAtlassianToken(
+          JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://attacker.example.com' }),
+        );
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('atlassian');
   });
 
   it('accepts only *.atlassian.net (subdomain required)', () => {
@@ -338,6 +381,9 @@ describe('ACTIONS["create-issue"]', () => {
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.fields.description.type).toBe('doc');
     expect(body.fields.description.content[0].type).toBe('paragraph');
+    // Pin inner text-node type (kills StringLiteral mutant on
+    // atlassian.ts:162 'text' → "").
+    expect(body.fields.description.content[0].content[0].type).toBe('text');
     expect(body.fields.description.content[0].content[0].text).toBe('some text');
   });
 });

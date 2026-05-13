@@ -142,11 +142,20 @@ describe('ACTIONS["send-message"]', () => {
     });
   });
 
-  it('rejects with missing channel/text before any network call', async () => {
+  it('rejects with the literal "channel and text are required" when fields are missing', async () => {
+    // Kills StringLiteral mutant on slack.ts:95 (error text → "").
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C' } }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(/^channel and text are required$/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects symmetrically when only channel is missing (same literal)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { text: 'hi' } }),
+    ).rejects.toThrow(/^channel and text are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
