@@ -113,9 +113,12 @@ export function nortonNotFoundDetails(platform: NodeJS.Platform): string {
     : '既知のパスに Norton 360 のインストールは見つかりませんでした';
 }
 
-export async function detectNorton(platform: NodeJS.Platform = process.platform): Promise<NortonStatus> {
+export async function detectNorton(
+  platform: NodeJS.Platform = process.platform,
+  probe: (p: string) => Promise<{ isDirectory: () => boolean }> = (p) => fs.stat(p),
+): Promise<NortonStatus> {
   const candidates = NORTON_PATHS_BY_PLATFORM[platform] ?? [];
-  const found = await findExistingDirectory(candidates, (p) => fs.stat(p));
+  const found = await findExistingDirectory(candidates, probe);
   if (found !== null) {
     return {
       installed: true,

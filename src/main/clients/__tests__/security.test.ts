@@ -194,6 +194,73 @@ describe('detectNorton', () => {
     expect(result.platform).toBe('aix');
   });
 
+  it('returns installed=true when one of the candidate paths exists as a directory (kills `if (found !== null)` → false)', async () => {
+    // Use the darwin path '/Applications/Norton 360.app' (which the
+    // NORTON_PATHS_BY_PLATFORM map lists for darwin) and a probe that
+    // says "yes, that's a directory" for exactly that string.
+    const probe = vi.fn(async (p: string) => ({
+      isDirectory: () => p === '/Applications/Norton 360.app',
+    }));
+    const result = await detectNorton('darwin', probe);
+    expect(result.installed).toBe(true);
+    expect(result.installPath).toBe('/Applications/Norton 360.app');
+    expect(result.details).toMatch(/Norton 360\.app を検出/);
+  });
+
+  it('falls back to installed=false when the probe finds nothing', async () => {
+    const probe = vi.fn(async () => ({ isDirectory: () => false }));
+    const result = await detectNorton('darwin', probe);
+    expect(result.installed).toBe(false);
+    expect(result.installPath).toBe('');
+    expect(result.details).toMatch(/見つかりませんでした/);
+  });
+
+  it('truncates HIBP error body to 200 chars (already-killed regression test)', async () => {
+    // Pinned here for any future code shuffle that loses the slice.
+    const longBody = 'X'.repeat(500);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(longBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message.length).toBeLessThan(longBody.length);
+  });
+
+  it('uses the empty-string fallback when HIBP res.text() rejects (kills catch `() => undefined`)', async () => {
+    const erroringBody = new ReadableStream({
+      start(controller) {
+        controller.error(new Error('body read failed'));
+      },
+    });
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(erroringBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    // With () => '' fallback: message ends "HIBP 500: " (empty body).
+    // With () => undefined mutant: body.slice would throw a TypeError,
+    // bubbling a non-FetchError. Pin both.
+    expect(caught!.message).toBe('HIBP 500: ');
+  });
+
   it('returns a non-linux details message for darwin (kills `platform === "linux"` → true)', async () => {
     // Pins the specific Japanese fallback message for non-linux platforms,
     // so a ConditionalExpression `true` mutation that always selects the

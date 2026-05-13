@@ -22,7 +22,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **349** | `npm test` |
+| ユニットテスト | **356** | `npm test` |
 | Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
@@ -604,14 +604,14 @@ graph LR
   C5 --> R1 --> R2 --> R3
 ```
 
-### 5.1 テスト分布 (total 349, mutation total 78.54 / covered 85.81)
+### 5.1 テスト分布 (total 356, mutation total 79.71 / covered 86.58)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
-| `src/main/clients/__tests__/ollama.test.ts` | 49 | 82.71 | 86.76 |
-| `src/main/clients/__tests__/security.test.ts` | 41 | 74.29 | 77.04 |
+| `src/main/clients/__tests__/ollama.test.ts` | 52 | 84.11 | 87.80 |
+| `src/main/clients/__tests__/security.test.ts` | 45 | **82.14** | 82.14 |
 | `src/main/__tests__/oauth.test.ts` | 37 | 65.79 | 93.75 |
-| `src/main/clients/__tests__/skills.test.ts` | 32 | 77.78 | 81.10 |
+| `src/main/clients/__tests__/skills.test.ts` | 32 | 77.19 | 80.49 |
 | `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
 | `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
 | `src/main/clients/__tests__/gmail.test.ts` | 18 | 87.64 | 88.64 |

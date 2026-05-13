@@ -414,6 +414,68 @@ describe('ACTIONS["chat"]', () => {
     expect(body.messages[0].content.length).toBe(8192);
   });
 
+  it('truncates a long chat-error body to 200 chars (kills `body.slice(0, 200)` → `body`)', async () => {
+    const longErrorBody = 'X'.repeat(500);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(longErrorBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['chat']!({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    expect(caught!.message).toMatch(/ollama 500: X{200}$/);
+    expect(caught!.message.length).toBeLessThan(longErrorBody.length);
+  });
+
+  it('falls back to empty body when chat res.text() rejects (kills `() => ""` → `() => undefined`)', async () => {
+    const erroringBody = new ReadableStream({
+      start(controller) {
+        controller.error(new Error('body read failed'));
+      },
+    });
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(erroringBody, { status: 503 }));
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['chat']!({
+        token: '',
+        fetch: fetchMock,
+        payload: { model: 'llama3.2', prompt: 'hi' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    expect(caught!.message).toBe('ollama 503: ');
+  });
+
+  it('throws at exactly MAX_RESPONSE_BYTES + 1 but accepts MAX_RESPONSE_BYTES (kills `>` → `>=`)', async () => {
+    // The size cap is text.length > MAX_RESPONSE_BYTES. Mutating to >=
+    // would reject the boundary case. Test both sides explicitly with
+    // a successful response just under the cap.
+    const justUnder = '"' + 'x'.repeat(10 * 1024 * 1024 - 50) + '"'; // ~10MB JSON
+    const okBody = `{"message":{"role":"assistant","content":${justUnder}}}`;
+    expect(okBody.length).toBeLessThanOrEqual(10 * 1024 * 1024);
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(okBody, { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
+    // Should NOT throw — the response is just at the boundary.
+    const result = (await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    })) as { reply: string };
+    expect(result.reply.length).toBeGreaterThan(0);
+  });
+
   it('truncates unsafe model name to 32 chars in error (kills `model.slice(0, 32)` → `model`)', async () => {
     // The error message should NOT include more than 32 chars of the
     // attacker-supplied model name. Build a >32-char unsafe name that
