@@ -35,6 +35,10 @@ interface SkillFrontmatter {
 export function parseFrontmatter(content: string): SkillFrontmatter {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
+  // The regex's `([\s\S]*?)` capture group always matches a string
+  // (possibly empty), so match[1] is never undefined when match is
+  // truthy. The `?? ''` fallback is type-narrowing only.
+  // Stryker disable next-line StringLiteral
   const fm = match[1] ?? '';
   // Stryker disable next-line Regex
   // Stryker disable next-line OptionalChaining

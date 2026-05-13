@@ -339,4 +339,24 @@ describe('ACTIONS["create-draft"]', () => {
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('defaults body to empty string when omitted (kills `body ?? ""` → "Stryker was here!")', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'd3', message: { id: 'm3' } }),
+    );
+    await ACTIONS['create-draft']!({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { to: 'a@b.com', subject: 'hi' /* no body */ },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const padded = body.message.raw + '='.repeat((4 - (body.message.raw.length % 4)) % 4);
+    const decoded = Buffer.from(
+      padded.replace(/-/g, '+').replace(/_/g, '/'),
+      'base64',
+    ).toString('utf8');
+    // The RFC 2822 message must end with the empty body (\r\n\r\n).
+    expect(decoded).not.toContain('Stryker was here');
+    expect(decoded).toMatch(/\r\n\r\n$/);
+  });
 });

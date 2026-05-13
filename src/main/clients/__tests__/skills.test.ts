@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName } from '../skills';
+import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot } from '../skills';
 import { FetchError } from '../types';
 
 describe('parseFrontmatter', () => {
@@ -249,6 +249,45 @@ describe('scanSkills', () => {
     // So this confirms our trimmed empty-string is preserved as ''.
     expect(result[0]!.name).toBe('');
     expect(result[0]!.description).toBe('ok');
+  });
+});
+
+describe('fetchSkillsSnapshot', () => {
+  let tmpDir = '';
+  const originalHome = os.homedir();
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-snap-'));
+    process.env.HOME = tmpDir;
+    vi.spyOn(os, 'homedir').mockReturnValue(tmpDir);
+    await fs.mkdir(path.join(tmpDir, '.claude', 'skills'), { recursive: true });
+    await fs.writeFile(
+      path.join(tmpDir, '.claude', 'skills', 'one.md'),
+      '---\nname: one\ndescription: first\n---\n',
+    );
+  });
+
+  afterEach(async () => {
+    process.env.HOME = originalHome;
+    vi.restoreAllMocks();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('scans ~/.claude/skills with source="user" and wraps the result in { items }', async () => {
+    // Pins:
+    //   - StringLiteral on '.claude' (skills.ts:155 path component)
+    //   - StringLiteral on 'skills' (skills.ts:155 path component)
+    //   - StringLiteral on 'user' (skills.ts:156 source label)
+    //   - ObjectLiteral on `{ items }` (skills.ts:157 return shape)
+    const snap = await fetchSkillsSnapshot({ token: '' });
+    expect(snap).toHaveProperty('items');
+    expect(Array.isArray(snap.items)).toBe(true);
+    expect(snap.items).toHaveLength(1);
+    expect(snap.items[0]).toMatchObject({
+      name: 'one',
+      description: 'first',
+      source: 'user',
+    });
   });
 });
 

@@ -172,6 +172,19 @@ describe('fetchGithubSnapshot', () => {
     expect(snapshot.pullRequests[0]!.base).toBe('');
   });
 
+  it('falls back to empty pullRequests when /search/issues omits items entirely (kills `?? []`)', async () => {
+    // Pin the `search.items ?? []` fallback. With the ArrayDeclaration
+    // mutant `?? ['Stryker was here']`, the snapshot would carry a
+    // synthetic PR entry. Verify pullRequests is exactly [].
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(jsonResponse({ /* no items field */ }));
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(snapshot.pullRequests).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   // --- security: pin PR detail fetches to api.github.com
   it('falls back when pull_request.url points off-host (defense against tampered search response)', async () => {
     const fetchMock = vi

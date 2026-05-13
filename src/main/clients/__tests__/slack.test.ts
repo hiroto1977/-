@@ -65,6 +65,16 @@ describe('fetchSlackSnapshot', () => {
     ]);
   });
 
+  it('treats absent convoRes.channels as empty (kills `?? []` → `["Stryker..."]`)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: true /* no channels field */ }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { domain: 'acme' } }));
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels).toEqual([]);
+    expect(snap.channels.some((c) => /Stryker/.test(c.name ?? ''))).toBe(false);
+  });
+
   it('passes serviceId="slack" to jsonFetch (kills slack.ts:42 StringLiteral mutant)', async () => {
     // The conversations.list path bubbles HTTP errors through jsonFetch
     // which constructs the FetchError with the serviceId from fetchCtx.
@@ -184,6 +194,25 @@ describe('ACTIONS["send-message"]', () => {
         payload: { channel: 'bad', text: 'hi' },
       }),
     ).rejects.toBeInstanceOf(FetchError);
+  });
+
+  it('defaults send-message return ts/channel to fallbacks (kills slack.ts:113 `?? ""` / `?? channel`)', async () => {
+    // Slack may technically omit `ts`/`channel` from a 200 response;
+    // we coerce them to safe defaults. Pin both with toBe so the
+    // StringLiteral → 'Stryker was here!' mutant on the `''` fallback
+    // dies, and the symmetric `?? channel` fallback for `channel` is
+    // exercised.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ok: true /* no ts, no channel */ }),
+    );
+    const result = (await ACTIONS['send-message']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { channel: 'C-input', text: 'hi' },
+    })) as { ts: string; channel: string };
+    expect(result.ts).toBe('');
+    expect(result.ts).not.toContain('Stryker');
+    expect(result.channel).toBe('C-input');
   });
 
   it('passes serviceId="slack" to jsonFetch on HTTP failure (kills slack.ts:107 StringLiteral)', async () => {

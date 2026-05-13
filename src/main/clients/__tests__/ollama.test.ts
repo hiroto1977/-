@@ -113,6 +113,27 @@ describe('isSafeModelName', () => {
 // --- fetcher behaviour
 
 describe('fetchOllamaSnapshot', () => {
+  it('defaults snap.version to empty string when /api/version response omits version (kills `?? ""` → "Stryker...")', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ /* no version field */ }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.version).toBe('');
+    expect(snap.version).not.toContain('Stryker');
+  });
+
+  it('treats absent tags.models as empty (kills `?? []` → `["Stryker was here"]`)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ /* no models field */ }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.models).toEqual([]);
+    // Negative: never the Stryker marker sneaking through as a model name.
+    expect(snap.models.some((m) => /Stryker/.test(m.name ?? ''))).toBe(false);
+  });
+
   it('reports not-running when /api/version is unreachable', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
@@ -266,12 +287,39 @@ describe('fetchOllamaSnapshot', () => {
         }),
       );
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    // Negative assertion so any string-literal fallback drift (e.g.
+    // `'' → "Stryker was here!"`) surfaces explicitly.
+    expect(snap.models[0]!.quantization).not.toContain('Stryker');
+    expect(snap.models[0]!.family).not.toContain('Stryker');
+    expect(snap.models[0]!.parameterSize).not.toContain('Stryker');
     expect(snap.models[0]).toMatchObject({
       name: 'bare-model',
       family: '',
       parameterSize: '',
       quantization: '',
     });
+  });
+
+  it('defaults modifiedAt to empty string when modified_at is missing (kills `?? ""` → "Stryker...")', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          models: [
+            {
+              name: 'no-date-model',
+              size: 0,
+              digest: 'sha256:y',
+              details: { family: 'llama', parameter_size: '7B', quantization_level: 'Q4_0' },
+              // modified_at: missing
+            },
+          ],
+        }),
+      );
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.models[0]!.modifiedAt).toBe('');
+    expect(snap.models[0]!.modifiedAt).not.toContain('Stryker');
   });
 
   it('pushes an HTTP-status warning when /api/version returns non-ok (kills if(res.ok) → true)', async () => {

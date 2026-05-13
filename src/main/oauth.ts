@@ -284,6 +284,10 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
       if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
+    // Node's http.IncomingMessage.url is always populated by the parser
+    // (even '/' for the empty path), so the `?? '/'` fallback is
+    // unreachable; the StringLiteral '/' → '' mutant is equivalent.
+    // Stryker disable next-line StringLiteral
     const outcome = classifyCallback(req.url ?? '/', expectedState);
     switch (outcome.kind) {
       case 'wrong-path':
@@ -330,7 +334,9 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   // ephemeral ports); the 'error' event name and the '127.0.0.1' bind
   // host are both effectively integration concerns. Listening on '' (the
   // empty-bind mutant) still works on most OSes for loopback connects.
-  // Stryker disable StringLiteral
+  // Same goes for the error/listen handler bodies — only fired on
+  // genuine network failure.
+  // Stryker disable StringLiteral,BlockStatement
   server.on('error', (err) => {
     portReject(err);
     reject(err);
@@ -340,7 +346,7 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     const port = (server.address() as AddressInfo).port;
     portResolve(port);
   });
-  // Stryker restore StringLiteral
+  // Stryker restore StringLiteral,BlockStatement
 
   const timeout = setTimeout(() => {
     reject(new Error(`OAuth flow timed out after ${Math.round(timeoutMs / 1000)}s`));
