@@ -39,6 +39,15 @@ description: first line
     expect(fm.description).toMatch(/continuation line/);
   });
 
+  it('extracts name with NO space after the colon (kills `\\s*` → `\\s` AND `\\s` → `\\S`)', () => {
+    // Original /^name:\s*(.+)$/m matches with 0 spaces.
+    //   * → drop: /^name:\s(.+)$/m requires EXACTLY 1 space → fails → name undefined.
+    //   \s → \S: /^name:\S*(.+)$/m greedily consumes "value" as \S*, then backtracks
+    //            so .+ captures the tail char → name = 'e' instead of 'value'.
+    const fm = parseFrontmatter('---\nname:value-no-space\n---\n');
+    expect(fm.name).toBe('value-no-space');
+  });
+
   it('extracts name with multiple spaces after the colon (kills `\\s*` → `\\s` mutation)', () => {
     // Original regex /^name:\s*(.+)$/m matches zero-or-more spaces.
     // `\s` (exactly one) would fail with double-space or tab+space.

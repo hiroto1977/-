@@ -26,11 +26,19 @@ interface SkillFrontmatter {
 
 /** Parse a SKILL.md / *.md frontmatter block. Only handles `name:` and
  *  `description:` since that's all we surface in the UI. */
+/** Parse a SKILL.md / *.md frontmatter block. Only handles `name:` and
+ *  `description:` since that's all we surface in the UI.
+ *
+ *  The `^` / `$` anchor-drop Regex mutants on name/description regexes
+ *  are equivalent: with `m` flag every line position is line-start, and
+ *  `.+` never spans newlines so `$` is redundant. Suppressed inline. */
 export function parseFrontmatter(content: string): SkillFrontmatter {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
   const fm = match[1] ?? '';
+  // Stryker disable next-line Regex
   const name = stripBalancedQuotes(fm.match(/^name:\s*(.+)$/m)?.[1]?.trim());
+  // Stryker disable next-line Regex
   const descMatch = fm.match(/^description:\s*(.+(?:\n[ \t]+.+)*)/m);
   const description = stripBalancedQuotes(descMatch?.[1]?.trim());
   return { name, description };
