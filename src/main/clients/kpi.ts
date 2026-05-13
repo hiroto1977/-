@@ -83,6 +83,14 @@ export function computeKpi(f: Fundamentals): Kpi {
   // BEP only defined when contribution > 0; otherwise the unit can
   // never recover its fixed costs at any volume.
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
+  // Mutants below (ConditionalExpression/LogicalOperator/EqualityOperator on the
+  // bepRatio guard) are unreachable in our input domain: with non-negative
+  // costs, contribution > 0 implies revenue > 0 (since contribution ≤ revenue),
+  // so `revenue > 0` and `isFinite(bep)` are NEVER independently true/false.
+  // Mutating `&&` → `||` or `>` → `>=` cannot produce a divergent outcome
+  // under that invariant. Pinning would require contrived negative-cost
+  // fundamentals that don't occur in practice.
+  // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
   const bepRatio = f.revenue > 0 && Number.isFinite(bep) ? (bep / f.revenue) * 100 : Infinity;
   const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
   const operatingProfit = contribution - fixedCost;

@@ -288,6 +288,23 @@ describe('createMockDataSource', () => {
     }
   });
 
+  it('produces deterministic revenue values (kills `id.charCodeAt(0) * 1000 + i` and `baseRevenue * drift` arithmetic)', async () => {
+    // The seed = u.id.charCodeAt(0) * 1000 + i feeds xorshift32; period 0
+    // of 'civic' (charCodeAt('c')=99, seed=99000) produces a specific
+    // deterministic drift. Mutating *→/, +→-, or revenue *→/ changes the
+    // value. Pin the first 'civic' period's revenue exactly.
+    // Computed via the canonical xorshift32 + drift formula:
+    //   drift = 0.85 + noise(99000) * 0.3 = 0.9185811689...
+    //   revenue = round(4_500_000 * 0.9185811689) = 4_133_615
+    const src = createMockDataSource();
+    const units = await src.fetch();
+    const civic = units.find((u) => u.id === 'civic')!;
+    expect(civic.history[0]!.revenue).toBe(4_133_615);
+    // Period 1 differs from period 0 (kills `+ i` → `+ 0` / `- i` /
+    // identity), so seed advances. Just assert inequality.
+    expect(civic.history[1]!.revenue).not.toBe(civic.history[0]!.revenue);
+  });
+
   it('fixed cost is the same constant across all 30 periods (kills `u.fixedAbs * 0.8` → `/ 0.8`)', async () => {
     // u.fixedAbs is constant per unit; fixed = round(fixedAbs*0.8) + (fixedAbs - sga).
     // So fixed is constant per unit across periods. Mutating to `/ 0.8`

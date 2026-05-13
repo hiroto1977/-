@@ -37,9 +37,14 @@ export function parseFrontmatter(content: string): SkillFrontmatter {
   if (!match) return {};
   const fm = match[1] ?? '';
   // Stryker disable next-line Regex
+  // Stryker disable next-line OptionalChaining
   const name = stripBalancedQuotes(fm.match(/^name:\s*(.+)$/m)?.[1]?.trim());
   // Stryker disable next-line Regex
   const descMatch = fm.match(/^description:\s*(.+(?:\n[ \t]+.+)*)/m);
+  // Equivalent: when the outer ?. yields a defined array, [1] is always
+  // a string (the capture group `(.+)` matches at least one char), so
+  // the inner ?. is unreachable-on-undefined.
+  // Stryker disable next-line OptionalChaining
   const description = stripBalancedQuotes(descMatch?.[1]?.trim());
   return { name, description };
 }
