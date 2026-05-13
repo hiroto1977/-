@@ -32,6 +32,11 @@ describe('jsonFetch', () => {
     expect((err as FetchError).serviceId).toBe('demo');
     expect((err as FetchError).message).toContain('demo');
     expect((err as FetchError).message).toContain('403');
+    // Pin Error.name (kills StringLiteral mutant on types.ts:26
+    // `this.name = 'FetchError'` → `""`). Tools that serialize errors
+    // (Node's default toString, JSON.stringify reviver, log libraries)
+    // rely on this label.
+    expect((err as FetchError).name).toBe('FetchError');
   });
 
   it('truncates very long error bodies to keep messages readable', async () => {
@@ -91,8 +96,15 @@ describe('redactSecrets', () => {
     expect(redactSecrets('xoxb-12345-67890')).toContain('xoxb-[REDACTED]');
   });
 
-  it('redacts Google access tokens', () => {
-    expect(redactSecrets('access=ya29.A0AfH6SMBxxx_yyyy')).toContain('ya29.[REDACTED]');
+  it('redacts Google access tokens fully (kills `{10,}` quantifier removal)', () => {
+    // Pin that no trailing token bytes leak out. The mutant
+    // `/\bya29\.[A-Za-z0-9_-]/g` (quantifier dropped) would replace only
+    // the first char after ya29., leaving the rest of the secret intact.
+    const out = redactSecrets('access=ya29.A0AfH6SMBxxx_yyyy');
+    expect(out).toContain('ya29.[REDACTED]');
+    expect(out).toBe('access=ya29.[REDACTED]');
+    expect(out).not.toContain('A0AfH6SMBxxx_yyyy');
+    expect(out).not.toMatch(/ya29\.[A-Za-z0-9_-]+(?<!REDACTED\])/);
   });
 
   it('redacts JSON-shaped token fields', () => {

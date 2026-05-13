@@ -65,6 +65,20 @@ describe('fetchSlackSnapshot', () => {
     ]);
   });
 
+  it('passes serviceId="slack" to jsonFetch (kills slack.ts:42 StringLiteral mutant)', async () => {
+    // The conversations.list path bubbles HTTP errors through jsonFetch
+    // which constructs the FetchError with the serviceId from fetchCtx.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('Unauthorized', { status: 401 }),
+    );
+    const err = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('slack');
+    expect((err as FetchError).message).toMatch(/^slack 401:/);
+  });
+
   it('reports `slack <error>` in the FetchError serviceId (kills `slack` → `` StringLiteral)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
@@ -170,6 +184,20 @@ describe('ACTIONS["send-message"]', () => {
         payload: { channel: 'bad', text: 'hi' },
       }),
     ).rejects.toBeInstanceOf(FetchError);
+  });
+
+  it('passes serviceId="slack" to jsonFetch on HTTP failure (kills slack.ts:107 StringLiteral)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('rate limited', { status: 429 }),
+    );
+    const err = await ACTIONS['send-message']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { channel: 'C', text: 'hi' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('slack');
+    expect((err as FetchError).message).toMatch(/^slack 429:/);
   });
 });
 

@@ -167,7 +167,35 @@ describe('parseAtlassianToken', () => {
   });
 
   it('throws FetchError when fields are missing', () => {
-    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com' }))).toThrow(FetchError);
+    const err = (() => {
+      try {
+        parseAtlassianToken(JSON.stringify({ email: 'a@b.com' }));
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    // Kills StringLiteral mutant on atlassian.ts:58 (serviceId → "").
+    expect((err as FetchError).serviceId).toBe('atlassian');
+    expect((err as FetchError).message).toMatch(/形式が不正/);
+  });
+
+  it('rejects http:// (non-TLS) site with serviceId="atlassian"', () => {
+    // Kills StringLiteral mutant on atlassian.ts:79 (serviceId → "").
+    const err = (() => {
+      try {
+        parseAtlassianToken(
+          JSON.stringify({ email: 'a@b.com', token: 't', site: 'http://x.atlassian.net' }),
+        );
+        return null;
+      } catch (e) {
+        return e;
+      }
+    })();
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('atlassian');
+    expect((err as FetchError).message).toMatch(/https:\/\/ で始まる/);
   });
 
   it('throws specifically when email is the missing field', () => {
@@ -257,11 +285,30 @@ describe('fetchAtlassianSnapshot', () => {
     const [, init] = fetchMock.mock.calls[0]!;
     const headers = (init as RequestInit).headers as Record<string, string>;
     expect(headers.Authorization).toMatch(/^Basic /);
+    // Pin Accept header (kills StringLiteral mutant on atlassian.ts:103 → "").
+    expect(headers.Accept).toBe('application/json');
     const decoded = Buffer.from(headers.Authorization!.replace('Basic ', ''), 'base64').toString();
     expect(decoded).toBe('a@b.com:apitoken');
 
     expect(snap.sites[0]).toMatchObject({ url: 'https://x.atlassian.net' });
     expect(snap.jiraProjects[0]).toMatchObject({ key: 'KAN', name: 'AMITARIS' });
+  });
+
+  it('surfaces serviceId="atlassian" in snapshot HTTP failure (kills atlassian.ts:102)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('forbidden', { status: 403 }),
+    );
+    const token = JSON.stringify({
+      email: 'a@b.com',
+      token: 'bad',
+      site: 'https://x.atlassian.net',
+    });
+    const err = await fetchAtlassianSnapshot({ token, fetch: fetchMock }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('atlassian');
+    expect((err as FetchError).message).toMatch(/^atlassian 403:/);
   });
 
   it('sets sites[0].scopes to ["basic-auth"] and derives cloudId/name from the host', async () => {
@@ -349,6 +396,20 @@ describe('ACTIONS["create-issue"]', () => {
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.fields.issuetype.name).toBe('Bug');
     expect(body.fields.description).toBeUndefined();
+  });
+
+  it('surfaces serviceId="atlassian" in createJiraIssue HTTP failure (kills atlassian.ts:186)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('rate limited', { status: 429 }),
+    );
+    const err = await ACTIONS['create-issue']!({
+      token,
+      fetch: fetchMock,
+      payload: { projectKey: 'KAN', summary: 's' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('atlassian');
+    expect((err as FetchError).message).toMatch(/^atlassian 429:/);
   });
 
   it('rejects when projectKey/summary are missing with the literal message', async () => {
