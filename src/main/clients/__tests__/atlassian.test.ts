@@ -65,6 +65,20 @@ describe('parseAtlassianToken', () => {
     expect(creds.token).toBe('x'.repeat(1024));
   });
 
+  it('accepts site exactly at 256 chars (kills `>` → `>=` boundary on MAX_SITE)', () => {
+    // The site length cap is `> MAX_SITE`. Mutating to `>=` would
+    // reject the boundary case. Build a site of exactly 256 chars.
+    // 'https://' (8) + subdomain (235) + '.atlassian.net' (14) - but
+    // hostname labels max 63 chars, so use chained subdomains.
+    const pad = 256 - 'https://'.length - '.atlassian.net'.length;
+    // pad = 234. Build "a".repeat(60) + "." + ... to stay valid host.
+    const sub = 'a'.repeat(60) + '.' + 'b'.repeat(60) + '.' + 'c'.repeat(60) + '.' + 'd'.repeat(pad - 183);
+    const site = `https://${sub}.atlassian.net`;
+    expect(site.length).toBe(256);
+    const creds = parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site }));
+    expect(creds.site).toBe(site);
+  });
+
   it('rejects site > 256 chars (kills MAX_SITE boundary)', () => {
     const longSite = 'https://' + 'a'.repeat(245) + '.atlassian.net';
     expect(longSite.length).toBeGreaterThan(256);
@@ -93,6 +107,16 @@ describe('parseAtlassianToken', () => {
   it('accepts only *.atlassian.net (subdomain required)', () => {
     // Bare "atlassian.net" without subdomain: hostname.endsWith('.atlassian.net') is FALSE.
     expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://atlassian.net' }))).toThrow(/atlassian\.net/);
+  });
+
+  it('strips MULTIPLE trailing slashes from site (kills `\\/+$` → `\\/$` mutation)', () => {
+    // Mutating `\/+$` to `\/$` would only strip one trailing slash.
+    // Pin with a site that has 3 trailing slashes.
+    const creds = parseAtlassianToken(
+      JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://x.atlassian.net///' }),
+    );
+    expect(creds.site).toBe('https://x.atlassian.net');
+    expect(creds.site).not.toMatch(/\/$/);
   });
 
   it('throws FetchError for invalid JSON', () => {

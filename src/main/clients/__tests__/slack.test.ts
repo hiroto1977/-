@@ -51,6 +51,70 @@ describe('fetchSlackSnapshot', () => {
       expect(headers!['Content-Type']).toBe('application/x-www-form-urlencoded');
     }
   });
+
+  it('hits exactly the two Slack API URLs (kills URL StringLiteral mutants)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: true, channels: [] }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { domain: 'acme' } }));
+    await fetchSlackSnapshot({ token: 'xoxb-x', fetch: fetchMock });
+    const urls = fetchMock.mock.calls.map((c) => c[0]);
+    expect(urls).toEqual([
+      'https://slack.com/api/conversations.list?types=public_channel,private_channel&exclude_archived=false&limit=20',
+      'https://slack.com/api/team.info',
+    ]);
+  });
+
+  it('reports `slack <error>` in the FetchError serviceId (kills `slack` → `` StringLiteral)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: false, error: 'invalid_auth' }));
+    let caught: FetchError | undefined;
+    try {
+      await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    } catch (err) {
+      caught = err as FetchError;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.serviceId).toBe('slack');
+    expect(caught!.message).toBe('slack invalid_auth');
+  });
+});
+
+describe('slack action URL + content-type kill tests', () => {
+  it('chat.postMessage hits exactly the expected URL with application/json (kills L95 + L107 StringLiteral)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ok: true, ts: '1.0', channel: 'C1' }),
+    );
+    await ACTIONS['send-message']!({
+      token: 'xoxb-x',
+      fetch: fetchMock,
+      payload: { channel: 'C1', text: 'hi' },
+    });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://slack.com/api/chat.postMessage');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers['Content-Type']).toBe('application/json; charset=utf-8');
+  });
+
+  it('sendMessage reports `slack <error>` (kills L111 `slack` StringLiteral)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: false, error: 'channel_not_found' }));
+    let caught: FetchError | undefined;
+    try {
+      await ACTIONS['send-message']!({
+        token: 'xoxb-x',
+        fetch: fetchMock,
+        payload: { channel: 'C1', text: 'hi' },
+      });
+    } catch (err) {
+      caught = err as FetchError;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message).toBe('slack channel_not_found');
+    expect(caught!.serviceId).toBe('slack');
+  });
 });
 
 describe('ACTIONS["send-message"]', () => {
