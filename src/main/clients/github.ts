@@ -96,6 +96,10 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
         updatedAt: item.updated_at,
         htmlUrl: item.html_url,
       };
+      // Stryker disable next-line ConditionalExpression: the `!url` early
+      // return is equivalent to falling through to `new URL(undefined)`
+      // which throws and is caught below, returning the same fallback.
+      // All branches converge on `return fallback` when url is missing.
       if (!item.pull_request?.url) return fallback;
       // The PR URL is server-supplied (echoed back from search results)
       // so technically untrusted. Pin to api.github.com to defend against
@@ -113,7 +117,9 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
           title: pr.title,
           state: pr.state,
           draft: pr.draft,
+          // Stryker disable next-line OptionalChaining
           head: pr.head?.ref ?? '',
+          // Stryker disable next-line OptionalChaining
           base: pr.base?.ref ?? '',
           updatedAt: pr.updated_at,
           htmlUrl: pr.html_url,

@@ -490,23 +490,29 @@ describe('ACTIONS["chat"]', () => {
     expect(caught!.message).toBe('ollama 503: ');
   });
 
-  it('throws at exactly MAX_RESPONSE_BYTES + 1 but accepts MAX_RESPONSE_BYTES (kills `>` → `>=`)', async () => {
-    // The size cap is text.length > MAX_RESPONSE_BYTES. Mutating to >=
-    // would reject the boundary case. Test both sides explicitly with
-    // a successful response just under the cap.
-    const justUnder = '"' + 'x'.repeat(10 * 1024 * 1024 - 50) + '"'; // ~10MB JSON
-    const okBody = `{"message":{"role":"assistant","content":${justUnder}}}`;
-    expect(okBody.length).toBeLessThanOrEqual(10 * 1024 * 1024);
+  it('accepts a response of EXACTLY MAX_RESPONSE_BYTES bytes (kills `>` → `>=`)', async () => {
+    // Tightened: build a body whose text.length is EXACTLY 10*1024*1024.
+    // Original `text.length > MAX_RESPONSE_BYTES` is false → accept.
+    // Mutated `>=` is true → reject. Boundary precisely pinned.
+    const MAX = 10 * 1024 * 1024;
+    const envelope = `{"message":{"role":"assistant","content":""}}`;
+    // Insert exactly (MAX - envelope.length) "x" chars between the quotes
+    // around content so the body is exactly MAX bytes long.
+    const fillerLen = MAX - envelope.length;
+    const body =
+      `{"message":{"role":"assistant","content":"` +
+      'x'.repeat(fillerLen) +
+      `"}}`;
+    expect(body.length).toBe(MAX);
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(okBody, { status: 200, headers: { 'content-type': 'application/json' } }),
+      new Response(body, { status: 200, headers: { 'content-type': 'application/json' } }),
     );
-    // Should NOT throw — the response is just at the boundary.
     const result = (await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
     })) as { reply: string };
-    expect(result.reply.length).toBeGreaterThan(0);
+    expect(result.reply.length).toBe(fillerLen);
   });
 
   it('truncates unsafe model name to 32 chars in error (kills `model.slice(0, 32)` → `model`)', async () => {
