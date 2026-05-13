@@ -218,8 +218,11 @@ interface CallbackResult {
 
 /** Listen on 127.0.0.1:0 for the OAuth redirect. Resolves with the
  *  `code` parameter once we get it; rejects on timeout, server error,
- *  or `error=...` from the provider. */
-function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promise<CallbackResult> & {
+ *  or `error=...` from the provider.
+ *
+ *  Exported for integration testing (real HTTP server bound to 127.0.0.1
+ *  on a random port). Not part of the stable API. */
+export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promise<CallbackResult> & {
   port: () => Promise<number>;
   cancel: () => void;
 } {
@@ -283,7 +286,11 @@ function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promi
     server.close();
   }, timeoutMs);
 
-  promise.finally(() => clearTimeout(timeout));
+  // `.finally` creates a chained promise; if no consumer .catches the
+  // chain, Node reports an unhandled rejection alongside the main
+  // promise. Silence the side chain — the original `promise` is what
+  // the caller awaits.
+  promise.finally(() => clearTimeout(timeout)).catch(() => {});
 
   return Object.assign(promise, {
     port: () => portPromise,

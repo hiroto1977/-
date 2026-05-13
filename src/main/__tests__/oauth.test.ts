@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import http from 'node:http';
 import {
   buildAuthorizeUrl,
   buildRefreshBody,
@@ -7,6 +8,7 @@ import {
   generatePkce,
   isLoopbackHost,
   isOAuthSupported,
+  listenForCallback,
   OAUTH_CONFIGS,
   refresh,
   safeStateEquals,
@@ -344,6 +346,149 @@ describe('isOAuthSupported', () => {
       expect(isOAuthSupported('calendar')).toBe(false);
       expect(isOAuthSupported('gmail')).toBe(false);
     }
+  });
+});
+
+describe('listenForCallback (integration — real HTTP server)', () => {
+  /** Helper: make an HTTP GET to the loopback server and discard the
+   *  response body. The test reads listenForCallback's promise
+   *  resolution / rejection separately. */
+  async function fireGet(port: number, path: string, hostHeader?: string): Promise<{ status: number; body: string }> {
+    return new Promise((resolve, reject) => {
+      const headers: Record<string, string> = {};
+      if (hostHeader !== undefined) headers.Host = hostHeader;
+      const req = http.request(
+        {
+          hostname: '127.0.0.1',
+          port,
+          path,
+          method: 'GET',
+          headers,
+        },
+        (res) => {
+          let body = '';
+          res.on('data', (chunk) => (body += chunk.toString()));
+          res.on('end', () => resolve({ status: res.statusCode ?? 0, body }));
+        },
+      );
+      req.on('error', reject);
+      req.end();
+    });
+  }
+
+  it('resolves with {code, state} on a well-formed callback', async () => {
+    const STATE = 'integ-test-state-12345-abcdef';
+    const listener = listenForCallback(STATE);
+    const port = await listener.port();
+    const res = await fireGet(
+      port,
+      `/oauth/callback?code=actual-code&state=${STATE}`,
+    );
+    expect(res.status).toBe(200);
+    expect(res.body).toContain('認証完了');
+    const result = await listener;
+    expect(result.code).toBe('actual-code');
+    expect(result.state).toBe(STATE);
+  });
+
+  /** Wrap listenForCallback so any rejection is captured immediately
+   *  (no unhandled-rejection warnings). Returns the captured error or
+   *  the resolved value. */
+  function trap(p: ReturnType<typeof listenForCallback>): Promise<Error | { code: string; state: string }> {
+    return p.then((r) => r as { code: string; state: string }).catch((e) => e as Error);
+  }
+
+  it('rejects with CSRF error on state mismatch', async () => {
+    const STATE = 'expected-state-mismatch-test';
+    const listener = listenForCallback(STATE);
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(
+      port,
+      `/oauth/callback?code=c&state=different-state-same-length`,
+    );
+    expect(res.status).toBe(400);
+    expect(res.body).toContain('state mismatch');
+    const result = await trapped;
+    expect((result as Error).message).toMatch(/state mismatch.*CSRF/);
+  });
+
+  it('rejects when the provider returns ?error=...', async () => {
+    const listener = listenForCallback('expected-state');
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(port, '/oauth/callback?error=access_denied');
+    expect(res.status).toBe(400);
+    expect(res.body).toContain('OAuth error');
+    expect(res.body).toContain('access_denied');
+    const result = await trapped;
+    expect((result as Error).message).toMatch(/access_denied/);
+  });
+
+  it('rejects when code or state is missing', async () => {
+    const listener = listenForCallback('expected-state');
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(port, '/oauth/callback?code=only-code');
+    expect(res.status).toBe(400);
+    expect(res.body).toContain('missing code/state');
+    const result = await trapped;
+    expect((result as Error).message).toMatch(/missing code or state/);
+  });
+
+  it('returns 404 on paths other than /oauth/callback', async () => {
+    const listener = listenForCallback('s');
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(port, '/some-other-path');
+    expect(res.status).toBe(404);
+    listener.cancel();
+    await trapped; // drain
+  });
+
+  it('returns 400 + "bad host" on a non-loopback Host header (DNS rebinding defense)', async () => {
+    const listener = listenForCallback('s');
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(
+      port,
+      '/oauth/callback?code=c&state=s',
+      'attacker.example:54321',
+    );
+    expect(res.status).toBe(400);
+    expect(res.body).toBe('bad host');
+    listener.cancel();
+    await trapped;
+  });
+
+  it('accepts localhost as a Host header (verifies isLoopbackHost wiring)', async () => {
+    const STATE = 'localhost-host-test';
+    const listener = listenForCallback(STATE);
+    const port = await listener.port();
+    const res = await fireGet(
+      port,
+      `/oauth/callback?code=c&state=${STATE}`,
+      `localhost:${port}`,
+    );
+    expect(res.status).toBe(200);
+    await listener;
+  });
+
+  it('rejects with timeout error when no callback arrives within timeoutMs', async () => {
+    // 50ms timeout — fires immediately because no request comes in.
+    const listener = listenForCallback('untouched-state', 50);
+    const trapped = trap(listener);
+    const result = await trapped;
+    expect((result as Error).message).toMatch(/timed out after/);
+  });
+
+  it('cancel() rejects the listener and closes the server', async () => {
+    const listener = listenForCallback('s');
+    const trapped = trap(listener);
+    await listener.port(); // ensure server is listening
+    listener.cancel();
+    const result = await trapped;
+    expect((result as Error).message).toMatch(/cancelled/);
   });
 });
 
