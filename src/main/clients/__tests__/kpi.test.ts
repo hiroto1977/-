@@ -115,13 +115,18 @@ describe('computeKpi', () => {
   });
 
   it('operatingLeverage uses `> 0.0001` strict (kills `>= 0.0001` boundary)', () => {
-    // OP exactly 0.0001 → original: not > 0.0001 → cap to 999.
-    // Mutated `>= 0.0001`: triggers the abs-divide branch.
-    // Find a fundamentals shape where OP is exactly 0.0001? Floats are
-    // hard to hit exactly; instead test OP very small but positive
-    // (e.g., 0.00005) to assert the cap fires.
-    const k = computeKpi({ revenue: 1_000_000, cogs: 999_999.99995, advertising: 0, sga: 0, depreciation: 0 });
-    // contribution ≈ 0.00005, OP ≈ 0.00005 → |OP| < 0.0001 → cap at 999.
+    // OP exactly 0.0001 → original: NOT (> 0.0001) → cap to 999.
+    // Mutated `>= 0.0001`: triggers the abs-divide branch → contribution/OP
+    // = 0.0001/0.0001 = 1.
+    // Constructing OP = literal 0.0001: revenue=0.0001, no costs.
+    const k = computeKpi({
+      revenue: 0.0001,
+      cogs: 0,
+      advertising: 0,
+      sga: 0,
+      depreciation: 0,
+    });
+    // OP === 0.0001 exactly (the IEEE 754 double for that literal).
     expect(k.operatingLeverage).toBe(999);
   });
 

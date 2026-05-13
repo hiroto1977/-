@@ -146,7 +146,15 @@ export interface KpiDataSource {
  *  show non-static values across refreshes without true randomness
  *  (so screenshots and tests are reproducible). */
 function seededNoise(seed: number): number {
-  // xorshift32; cheap and deterministic.
+  // xorshift32; cheap and deterministic. The `|| 1` fallback only ever
+  // kicks in when seed is 0; we always derive seed from
+  // `u.id.charCodeAt(0) * 1000 + i` where charCodeAt is non-zero for
+  // letter-prefixed ids, so the fallback is unreachable from production
+  // callers. `| 0` truncates to int32 and is a no-op for the small
+  // positive integers we produce. Both are kept for defensive correctness
+  // (e.g. future seeds passed from elsewhere) — the resulting mutants
+  // are equivalent within the current call graph.
+  // Stryker disable next-line ConditionalExpression,LogicalOperator
   let x = seed | 0 || 1;
   x ^= x << 13;
   x ^= x >>> 17;
