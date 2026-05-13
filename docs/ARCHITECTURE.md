@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 152 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 167 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -23,11 +23,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
 | ユニットテスト | **387** | `npm test` |
-| Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
-| Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
+| Mutation score (total) | **87.11%** | `docs/QUALITY.md` |
+| Mutation score (covered) | **88.89%** | `docs/QUALITY.md` |
+| Stryker break threshold | **85%** (CI fails below) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 152 | 自己検証 |
+| `file:line` 参照数 | 167 | 自己検証 |
 
 ### 統合フロー図
 
@@ -60,7 +61,7 @@ flowchart LR
   subgraph EXT["External (HTTPS only, 12 hosts allowlisted)"]
     APIS[api.github.com<br/>api.notion.com<br/>api.canva.com<br/>... 9 SaaS APIs]
     GOOG[accounts.google.com<br/>oauth2.googleapis.com<br/>www.googleapis.com<br/>gmail.googleapis.com]
-    LOC[127.0.0.1:11524<br/>Ollama, hardcoded]
+    LOC[127.0.0.1:11434<br/>Ollama, hardcoded]
   end
 
   subgraph BR["Out-of-band"]
@@ -450,7 +451,7 @@ union を参照する。
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
-| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:152-176` |
+| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:143-176` |
 | wordpress | `create-post` | `{ siteId, title, content }` | siteId は `encodeURIComponent` | `wordpress.ts:67-109` |
 | atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only | `atlassian.ts:92-152` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
@@ -488,7 +489,7 @@ union を参照する。
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:192`, `emotions.ts:209` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
-| ollama | **`127.0.0.1:11524`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
+| ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
 
 **Ollama 禁止リスト**: `/api/pull`, `/api/create`, `/api/push`, `/api/copy`, `/api/delete`,
 `/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) に含まれず、
@@ -545,7 +546,7 @@ graph TB
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:37`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:27`) + `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) |
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
-| **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:152-160`) + `path.resolve().startsWith()` (`skills.ts:131-137`) |
+| **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:85-88`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`types.ts:37-44`) + 200B 切り詰め (`types.ts:56`) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
@@ -575,7 +576,7 @@ flowchart TB
   WT --> V3{url ∈ ALLOWED_ENDPOINTS?}
   V3 -->|no| FE3[throw FetchError]
   V3 -->|yes| AC[AbortController 30s]
-  AC --> FETCH["fetch(127.0.0.1:11524/api/chat,<br/>{stream: false})"]
+  AC --> FETCH["fetch(127.0.0.1:11434/api/chat,<br/>{stream: false})"]
   FETCH --> CAP{res.text size ≤ 10MB?}
   CAP -->|no| FE4[throw FetchError]
   CAP -->|yes| OK[return {reply, durationMs}]
@@ -587,6 +588,34 @@ flowchart TB
 ```
 
 ---
+
+### 4.4 コンポーネント別 error-handling matrix
+
+各 module / function でのエラー処理ポリシー。「どう失敗するか」が **renderer の UI 文言** と
+**ログ表示** の両方に影響するため、設計レベルで明文化:
+
+| Component | エラー源 | 処理 | renderer 観測 |
+|---|---|---|---|
+| IPC `secrets:set` | 無効な serviceId / token 形式 | 静かに無視 (`return`) | 副作用なし (UI 側で listConfigured で再確認) |
+| IPC `fetch:snapshot` | fetcher throw | `safeErrorMessage()` で redact → `{ok:false, code:'fetch_failed', message}` | error バナー (`errorKind` で 4 分類: auth / rate_limit / network / unknown) |
+| IPC `action:invoke` | action throw | 同上 → `{ok:false, code:'action_failed', message}` | form 上のエラー表示 |
+| IPC `oauth:authorize` | OAuth flow 失敗 (timeout / CSRF / network) | 同上 → `{ok:false, code:'authorize_failed', message}` | StatusBar の "再認証" CTA |
+| `secrets.ts:readStore` | ファイル size > 1MB | `console.error` + return `{}` | "未設定" 扱い (auto re-auth) |
+| `secrets.ts:readStore` | JSON parse fail / shape mismatch | return `{}` (silent) | 同上 |
+| `secrets.ts:getValidToken` | OAuth refresh 失敗 | stale token を返す → caller が 401 を受けて再認証フロー | StatusBar `errorKind === 'auth'` |
+| `oauth.ts:listenForCallback` | bad host / state mismatch / OAuth error | HTTP 400 + 適切な body + listener Promise reject | authorize() がエラーで reject |
+| `oauth.ts:authorize` | clientId 未設定 | `throw Error('OAuth client ID is not configured')` | `{ok:false, code:'authorize_failed'}` |
+| `ollama.ts:withTimeout` | URL not in `ALLOWED_ENDPOINTS` | `throw FetchError` | フェッチャ全体が fail |
+| `ollama.ts:chat` | unsafe model name | `throw FetchError('unsafe model name: ...')` (32-char truncated) | form 上のエラー |
+| `ollama.ts:chat` | response > 10 MB | `throw FetchError('response exceeded ...')` | 同上 |
+| `clients/types.ts:jsonFetch` | HTTP non-2xx | `throw FetchError(serviceId N: <body 200B>)` | redacted error message |
+| `clients/types.ts:jsonFetch` | body read fail (network reset 等) | `.catch(() => '')` → 空文字で FetchError | 同上 |
+| `useServiceData` hook | fetchSnapshot returns `ok:false` | `setStatus('error')` + `classifyError(message)` → 4 種類 | error UI + `errorKind` 別 CTA |
+
+**統一原則**:
+1. main から renderer に渡る **すべての error message** は `safeErrorMessage` → `redactSecrets` を必ず通す
+2. `code` フィールドは discriminated-union として **UI 分岐の唯一の正解** (`message` は人間向けのみ)
+3. `safeStorage` の plain-base64 fallback / Ollama の未パッチ OOB read 警告など、**ユーザの操作を要しない警告** は warnings[] 配列で渡し、UI が permanent banner として表示
 
 ## 5. 品質パイプライン
 
@@ -624,13 +653,81 @@ graph LR
   C5 --> R1 --> R2 --> R3
 ```
 
-### 5.1 テスト分布 (total 378, mutation total 85.47 / covered 87.20)
+### 5.0 Mutation strategy & precision lifecycle
+
+精度を **持続的に** 高めるための運用モデル。詳細は §1.0 で導入した 3-Phase テスタビリティ設計を
+**実運用フェーズ** に拡張する形で次の 4 つのメカニズムを組み合わせる:
+
+```mermaid
+flowchart LR
+  P1["Phase 1<br/>Pure helper extract"]
+  P2["Phase 2<br/>Integration test"]
+  P3["Phase 3<br/>E2E orchestration"]
+  P4["Phase 4 — 運用<br/>Ratchet + Suppression"]
+  P1 --> P2 --> P3 --> P4
+  P4 -->|drift 検出| P1
+```
+
+**Phase 4** の 4 メカニズム:
+
+| メカニズム | 仕組み | コスト | ROI |
+|---|---|---:|---|
+| **Stryker break ratchet** | `stryker.config.json` の `thresholds.break` を現状スコアの直下 (-2%) に固定。weekly mutation CI が下回ると fail | ゼロ | **無限大** (永続的 regression 防止) |
+| **Equivalent-mutant suppression** | `// Stryker disable Regex` ブロックで真に equivalent な mutant を抑止。`equivalent-mutants-registry` に登録 | 軽 (block-form コメント) | 高 (ノイズ削減) |
+| **Triage script** | `npm run mutate:triage` で top-20 高 impact survivors を抽出 (StringLiteral 除外) | ゼロ (既存) | 高 (重要度順を見える化) |
+| **scope 拡張** | Stryker の `mutate[]` に未カバーの client を追加 (notion / drive / calendar 等) | テスト追記の負担 | 中 (新ファイルが scope に入る) |
+
+### 5.1 Score history (ratchet 推移)
+
+セッション開始から現在までのスコア climb と、各時点で導入された手法:
+
+| 段階 | Total | Covered | Tests | 主な手法 |
+|---:|---:|---:|---:|---|
+| 開始 | 65.40% | 75.65% | 241 | strict TS + 既存 Vitest |
+| Per-file mutation kill | 72.94% | 82.81% | 296 | 高 impact survivors 個別 kill |
+| TS strict 拡張 | 74.91% | 84.05% | 320 | `noUncheckedIndexedAccess` + boundary tests |
+| **Phase 1 refactor** | 78.54% | 85.81% | 349 | pure helper extract (oauth/security) |
+| **Phase 2 integration** | 83.84% | 87.07% | 371 | 実 HTTP server test (oauth) |
+| **Phase 3 E2E** | 86.10% | 87.85% | 378 | authorize() 完全フロー |
+| **Phase 4 ratchet** | **87.11%** | **88.89%** | **387** | Stryker disable + threshold ratchet |
+
+ratchet 値 `break: 85` は **これ以上下げない** (上げるのみ)。各 Phase の jump は中央値 +3% で
+安定推移しており、次の jump は **Electron 実起動 integration test** (spectron / playwright) を
+要する領域。ROI が急激に低下するため、まずは現在の precision を ratchet で固定。
+
+### 5.2 Equivalent-mutants registry
+
+「真に kill 不可能 (equivalent mutant)」と判定して suppression コメント (`// Stryker disable Regex`)
+を入れている箇所のリスト。各エントリには **suppression を解除するための条件** を明記。
+
+| File | Line | Mutator | 等価判定の根拠 | 解除条件 |
+|---|---:|---|---|---|
+| `atlassian.ts` | host strip | Regex (`^https:\/\/` 中の `^` 削除) | `parseAtlassianToken` が https:// prefix を上流で強制 | parseAtlassianToken の上流バリデーションが緩んだ場合 |
+| `gmail.ts` | base64url | Regex (`=+$` vs `=$`) | Gmail RFC2822 body の length % 3 が常に 1 (= padding 0) になる構造 | base64url の input が任意長になった場合 |
+| `oauth.ts` | base64url | Regex (`=+$` vs `=$`) | 16-byte (state) と 32-byte (verifier) のみ feed、両者とも = padding 1 | base64url が新たな buffer size を受け入れた場合 |
+| `security.ts` | vtBase64 | Regex (`=+$` vs `=$`) | URL の length % 3 が実用上 0 か 1 | テスト対象の URL が % 3 = 2 のケースを含むよう拡張された場合 |
+| `oauth.ts:96` | LogicalOperator (`process.env.X ?? ''`) | env var unset テスト時のシグネチャが固定 | OAUTH_CONFIGS shape test が `clientId === ''` を assert | プロダクション ENV を test setup で stub する場合 |
+
+**運用ルール**:
+1. equivalent と判定する前に「kill するための test を 1 つ書く」ことを試す
+2. block-form コメントで suppress、レビュアーが registry に追加
+3. **解除条件が満たされたら自動で suppress 解除** (将来コードに条件チェックを足す案あり)
+
+### 5.3 テスト分布 (total 387, mutation total 87.11 / covered 88.89)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
-| `src/main/clients/__tests__/ollama.test.ts` | 52 | 84.11 | 87.80 |
-| `src/main/__tests__/oauth.test.ts` | 51 | **92.11** | 92.92 |
-| `src/main/clients/__tests__/security.test.ts` | 48 | 82.14 | 82.14 |
+| `src/main/clients/__tests__/ollama.test.ts` | 52 | 84.58 | 88.29 |
+| `src/main/__tests__/oauth.test.ts` | 51 | **92.92** | 93.75 |
+| `src/main/clients/__tests__/security.test.ts` | 48 | 88.41 | 88.41 |
+| `src/main/clients/__tests__/skills.test.ts` | 35 | 79.07 | 82.42 |
+| `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
+| `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
+| `src/main/clients/__tests__/gmail.test.ts` | 18 | 89.66 | 90.70 |
+| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 87.36 | 87.36 |
+| `src/main/clients/__tests__/github.test.ts` | 16 | 85.92 | 87.14 |
+| `src/main/clients/__tests__/types.test.ts` | 22 | **94.87** | 94.87 |
+| `src/main/clients/__tests__/slack.test.ts` | 15 | 86.76 | 89.39 |
 | `src/main/clients/__tests__/skills.test.ts` | 32 | 77.19 | 80.49 |
 | `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
 | `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
@@ -650,7 +747,7 @@ graph LR
 
 Stryker scope (`stryker.config.json:5-15`) は **9 ファイル**。
 
-### 5.2 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
+### 5.4 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
 
 | 対象 | 不変条件 | 試行数 |
 |---|---|---:|
@@ -761,7 +858,7 @@ classDiagram
   }
 
   class SkillsGuards~clients/skills.ts~ {
-    +isSafeSkillName(name) : skills.ts:152
+    +isSafeSkillName(name) : skills.ts:171
     -readSkillBody(name) : skills.ts:124 ~containment check~
   }
 
@@ -795,7 +892,7 @@ classDiagram
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL は `app:openExternal` 経由のみ — http(s) 限定 | `src/main/main.ts:100-115` |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | `github.test.ts`, `wordpress.test.ts`, ... |
-| 7 | Ollama は `127.0.0.1:11524` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11524` |
+| 7 | Ollama は `127.0.0.1:11434` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | grep audit (security-review skill) |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
@@ -811,7 +908,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 152 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 167 file:line 参照 + 5 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -847,7 +944,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 152 file:line references + 5 metrics  ✅
+# → Verified 167 file:line references + 5 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅
