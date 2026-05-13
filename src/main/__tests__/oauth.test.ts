@@ -197,24 +197,34 @@ describe('classifyCallback', () => {
     expect(classifyCallback('/favicon.ico', STATE).kind).toBe('wrong-path');
   });
 
-  it('returns oauth-error when the provider sends ?error=...', () => {
-    const result = classifyCallback('/oauth/callback?error=access_denied', STATE);
+  it('returns oauth-error when the provider sends ?error=... WITH matching state', () => {
+    // State validation now happens BEFORE the error check (CSRF defense
+    // against unauthenticated local processes spraying the loopback
+    // port with forged ?error=denied). Provider must echo state per
+    // RFC 6749 §4.1.2.1, and we require it.
+    const result = classifyCallback(`/oauth/callback?error=access_denied&state=${STATE}`, STATE);
     expect(result.kind).toBe('oauth-error');
     if (result.kind === 'oauth-error') {
       expect(result.error).toBe('access_denied');
     }
   });
 
-  it('prefers oauth-error over missing-params when both signals are present', () => {
-    // The provider explicitly reported an error; that takes precedence.
+  it('treats ?error=... WITHOUT state as state-mismatch (CSRF defense, kills local-DoS)', () => {
+    // Without state, the request can't be the legitimate provider —
+    // refuse it as state-mismatch rather than honoring the error
+    // signal (which would terminate the OAuth flow at the listener).
     const result = classifyCallback('/oauth/callback?error=denied', STATE);
-    expect(result.kind).toBe('oauth-error');
+    expect(result.kind).toBe('state-mismatch');
   });
 
-  it('returns missing-params when code or state is absent', () => {
-    expect(classifyCallback('/oauth/callback', STATE).kind).toBe('missing-params');
-    expect(classifyCallback('/oauth/callback?code=x', STATE).kind).toBe('missing-params');
-    expect(classifyCallback('/oauth/callback?state=y', STATE).kind).toBe('missing-params');
+  it('returns missing-params when code is absent (state matched)', () => {
+    expect(classifyCallback(`/oauth/callback?state=${STATE}`, STATE).kind).toBe('missing-params');
+  });
+
+  it('returns state-mismatch when state is absent entirely', () => {
+    // No state at all → can't be from provider → state-mismatch (non-terminal).
+    expect(classifyCallback('/oauth/callback', STATE).kind).toBe('state-mismatch');
+    expect(classifyCallback('/oauth/callback?code=x', STATE).kind).toBe('state-mismatch');
   });
 
   it('returns state-mismatch when the state token does not match', () => {
@@ -407,7 +417,12 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     return p.then((r) => r as { code: string; state: string }).catch((e) => e as Error);
   }
 
-  it('rejects with CSRF error on state mismatch', async () => {
+  it('responds 400 on state mismatch but does NOT terminate the flow (CSRF DoS defense)', async () => {
+    // After the hardening: a forged callback with wrong/missing state
+    // returns 400 but the listener KEEPS WAITING for the legitimate
+    // browser callback. Without this, any local process could spray
+    // the loopback port with `?state=wrong` and silently kill every
+    // OAuth flow.
     const STATE = 'expected-state-mismatch-test';
     const listener = listenForCallback(STATE);
     const trapped = trap(listener);
@@ -418,15 +433,35 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     );
     expect(res.status).toBe(400);
     expect(res.body).toContain('state mismatch');
+    // Now the legitimate callback arrives — the listener should still resolve.
+    const okRes = await fireGet(port, `/oauth/callback?code=real-code&state=${STATE}`);
+    expect(okRes.status).toBe(200);
     const result = await trapped;
-    expect((result as Error).message).toMatch(/state mismatch.*CSRF/);
+    expect((result as { code: string }).code).toBe('real-code');
   });
 
-  it('rejects when the provider returns ?error=...', async () => {
-    const listener = listenForCallback('expected-state');
+  it('responds 400 + does NOT reject when ?error=... arrives without state (DoS defense)', async () => {
+    // Same defense: unauthenticated `?error=denied` (no state) is treated
+    // as state-mismatch — non-terminal.
+    const STATE = 'expected-state-error-defense';
+    const listener = listenForCallback(STATE);
     const trapped = trap(listener);
     const port = await listener.port();
-    const res = await fireGet(port, '/oauth/callback?error=access_denied');
+    const stray = await fireGet(port, '/oauth/callback?error=access_denied');
+    expect(stray.status).toBe(400);
+    // Listener still alive — legitimate callback resolves it.
+    const okRes = await fireGet(port, `/oauth/callback?code=ok-code&state=${STATE}`);
+    expect(okRes.status).toBe(200);
+    const result = await trapped;
+    expect((result as { code: string }).code).toBe('ok-code');
+  });
+
+  it('rejects when the provider returns ?error=... WITH matching state (legitimate provider error)', async () => {
+    const STATE = 'expected-real-error-state';
+    const listener = listenForCallback(STATE);
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const res = await fireGet(port, `/oauth/callback?error=access_denied&state=${STATE}`);
     expect(res.status).toBe(400);
     expect(res.body).toContain('OAuth error');
     expect(res.body).toContain('access_denied');
@@ -434,15 +469,16 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     expect((result as Error).message).toMatch(/access_denied/);
   });
 
-  it('rejects when code or state is missing', async () => {
-    const listener = listenForCallback('expected-state');
+  it('rejects when code is missing but state matches (legitimate-but-broken provider response)', async () => {
+    const STATE = 'expected-state-no-code';
+    const listener = listenForCallback(STATE);
     const trapped = trap(listener);
     const port = await listener.port();
-    const res = await fireGet(port, '/oauth/callback?code=only-code');
+    const res = await fireGet(port, `/oauth/callback?state=${STATE}`);
     expect(res.status).toBe(400);
-    expect(res.body).toContain('missing code/state');
+    expect(res.body).toContain('missing code');
     const result = await trapped;
-    expect((result as Error).message).toMatch(/missing code or state/);
+    expect((result as Error).message).toMatch(/missing code/);
   });
 
   it('returns 404 on paths other than /oauth/callback', async () => {

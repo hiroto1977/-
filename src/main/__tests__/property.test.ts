@@ -144,15 +144,21 @@ describe('parseAtlassianToken (property)', () => {
   it('always trims trailing slashes from the site URL', () => {
     fc.assert(
       fc.property(
-        // parseAtlassianToken now requires https://, so constrain the
-        // generator. fc.webUrl() emits http or https with equal weight.
-        fc.webUrl().filter((u) => u.startsWith('https://')),
-        fc.emailAddress(),
-        fc.string({ minLength: 1, maxLength: 40 }).filter((s) => !/["\\]/.test(s)),
-        (site, email, token) => {
+        // parseAtlassianToken now requires https:// AND a
+        // *.atlassian.net hostname (hardening against tampered
+        // secrets.json redirecting credentials). Generate the
+        // subdomain portion only.
+        fc.string({ minLength: 1, maxLength: 30 }).filter((s) => /^[a-z][a-z0-9-]*$/.test(s)),
+        fc.emailAddress().filter((e) => e.length <= 254 && !/[\r\n\0]/.test(e)),
+        fc
+          .string({ minLength: 1, maxLength: 40 })
+          .filter((s) => !/["\\]/.test(s) && !/[\r\n\0]/.test(s)),
+        (sub, email, token) => {
+          const site = `https://${sub}.atlassian.net`;
           const json = JSON.stringify({ email, token, site: site + '/' });
           const creds = parseAtlassianToken(json);
           expect(creds.site.endsWith('/')).toBe(false);
+          expect(creds.site).toBe(site);
         },
       ),
       { numRuns: 100 },

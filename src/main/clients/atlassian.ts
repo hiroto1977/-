@@ -22,6 +22,15 @@ interface AtlassianCreds {
   site: string;
 }
 
+/** Per-field hard caps. Atlassian's own limits are well below these
+ *  (email ≤ 254 per RFC 5321; PAT ~192 chars; site host ≤ 253). The
+ *  caps defend against local-FS tampering that swaps secrets.json
+ *  for a payload with multi-MB strings → main process OOM on the
+ *  basicAuth Buffer allocation. */
+const MAX_EMAIL = 254;
+const MAX_TOKEN = 1024;
+const MAX_SITE = 256;
+
 export function parseAtlassianToken(raw: string): AtlassianCreds {
   let parsed: unknown;
   try {
@@ -34,8 +43,27 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
     );
   }
   const obj = parsed as Partial<AtlassianCreds>;
-  if (!obj.email || !obj.token || !obj.site) {
-    throw new FetchError('Atlassian token に email / token / site のいずれかが欠けています', 0, 'atlassian');
+  // Strict per-field validation. typeof checks reject objects /
+  // numbers / null / arrays smuggled into the JSON via local-disk
+  // tampering. Length caps prevent multi-MB strings from OOMing the
+  // basicAuth Buffer allocation.
+  if (
+    typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_EMAIL ||
+    typeof obj.token !== 'string' || obj.token.length === 0 || obj.token.length > MAX_TOKEN ||
+    typeof obj.site !== 'string' || obj.site.length === 0 || obj.site.length > MAX_SITE
+  ) {
+    throw new FetchError(
+      'Atlassian token の email / token / site が欠けているか、形式が不正です',
+      0,
+      'atlassian',
+    );
+  }
+  // Defense in depth: header-injection chars in email would land in
+  // Basic-auth base64 input (where they're safe), but if email is ever
+  // surfaced in error messages or log lines a CRLF could break log
+  // parsers / inject lines.
+  if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
+    throw new FetchError('Atlassian token に制御文字が含まれています', 0, 'atlassian');
   }
   // Hard-reject anything that isn't https://. Plain http would put the
   // Basic auth header on the wire in cleartext; non-URL strings (e.g.
@@ -49,6 +77,16 @@ export function parseAtlassianToken(raw: string): AtlassianCreds {
   }
   if (parsedSite.protocol !== 'https:') {
     throw new FetchError('Atlassian token の site は https:// で始まる必要があります', 0, 'atlassian');
+  }
+  // Hostname allowlist: Atlassian Cloud always lives on *.atlassian.net.
+  // Without this check, a tampered secrets.json could redirect the
+  // user's email+token to any HTTPS endpoint (= credential exfiltration).
+  if (!parsedSite.hostname.endsWith('.atlassian.net')) {
+    throw new FetchError(
+      'Atlassian token の site は *.atlassian.net である必要があります',
+      0,
+      'atlassian',
+    );
   }
   // Strip *all* trailing slashes — handy for tokens whose `site`
   // accidentally got "https://x.atlassian.net//" from a copy/paste.

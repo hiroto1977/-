@@ -195,16 +195,29 @@ export type CallbackOutcome =
 
 /** Decide what to do with an incoming callback request. Pure logic
  *  extracted from listenForCallback so we can unit-test every branch
- *  (success, wrong path, error param, missing params, state CSRF). */
+ *  (success, wrong path, error param, missing params, state CSRF).
+ *
+ *  CSRF / DoS defense: per RFC 6749 §4.1.2.1 the provider MUST echo
+ *  `state` even on error responses. We validate state BEFORE honoring
+ *  any error/missing-params signal, so an unauthenticated local-origin
+ *  request (the threat model: a browser tab spraying loopback ports
+ *  during the OAuth window) cannot terminate the flow with a forged
+ *  `?error=access_denied`. Such requests fall through to state-mismatch
+ *  which we treat as a *non-terminal* 400 — the legitimate callback
+ *  arriving later still resolves the flow. */
 export function classifyCallback(reqUrl: string, expectedState: string): CallbackOutcome {
   const url = new URL(reqUrl, 'http://127.0.0.1');
   if (url.pathname !== '/oauth/callback') return { kind: 'wrong-path' };
   const error = url.searchParams.get('error');
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
+  // State first. If the request lacks state OR state mismatches, it
+  // can't be the legitimate provider callback — refuse regardless of
+  // what else is in the query. Treat as state-mismatch so the listener
+  // sends a non-terminal 400.
+  if (!state || !safeStateEquals(state, expectedState)) return { kind: 'state-mismatch' };
   if (error) return { kind: 'oauth-error', error };
-  if (!code || !state) return { kind: 'missing-params' };
-  if (!safeStateEquals(state, expectedState)) return { kind: 'state-mismatch' };
+  if (!code) return { kind: 'missing-params' };
   return { kind: 'success', code, state };
 }
 
@@ -243,27 +256,46 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     portReject = rej;
   });
 
+  // Stray-request rate limit: a malicious local process can spray the
+  // loopback port during the OAuth window. Cap non-resolving requests
+  // so the listener can't be kept alive indefinitely past the 5-min
+  // timeout, and so accidental browser preflights / favicon probes
+  // don't accumulate state.
+  const STRAY_LIMIT = 50;
+  let strayCount = 0;
   const server = http.createServer((req, res) => {
     if (!isLoopbackHost(req.headers.host)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
+      strayCount++;
+      if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
     const outcome = classifyCallback(req.url ?? '/', expectedState);
     switch (outcome.kind) {
       case 'wrong-path':
         res.writeHead(404).end();
+        strayCount++;
+        if (strayCount >= STRAY_LIMIT) server.close();
+        return;
+      case 'state-mismatch':
+        // Non-terminal: a forged callback (no state / wrong state) is
+        // refused with 400, but the listener keeps waiting for the
+        // legitimate provider callback. Without this, a local attacker
+        // could DoS every OAuth flow by spraying the loopback port.
+        res.writeHead(400).end('state mismatch');
+        strayCount++;
+        if (strayCount >= STRAY_LIMIT) server.close();
         return;
       case 'oauth-error':
+        // State already validated before this branch — this IS the
+        // legitimate provider responding with an error. Terminal.
         res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`OAuth error: ${outcome.error}`);
         reject(new Error(`OAuth provider returned error: ${outcome.error}`));
         break;
       case 'missing-params':
-        res.writeHead(400).end('missing code/state');
-        reject(new Error('OAuth callback missing code or state'));
-        break;
-      case 'state-mismatch':
-        res.writeHead(400).end('state mismatch');
-        reject(new Error('OAuth state mismatch (possible CSRF)'));
+        // State validated → provider somehow omitted `code`. Terminal.
+        res.writeHead(400).end('missing code');
+        reject(new Error('OAuth callback missing code'));
         break;
       case 'success':
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(CALLBACK_HTML);

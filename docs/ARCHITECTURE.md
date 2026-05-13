@@ -22,7 +22,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **388** | `npm test` |
+| ユニットテスト | **390** | `npm test` |
 | Mutation score (total) | **87.11%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **88.89%** | `docs/QUALITY.md` |
 | Stryker break threshold | **85%** (CI fails below) | `stryker.config.json` |
@@ -453,7 +453,7 @@ union を参照する。
 |---|---|---|---|---|
 | github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:143-176` |
 | wordpress | `create-post` | `{ siteId, title, content }` | siteId は `encodeURIComponent` | `wordpress.ts:67-109` |
-| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only | `atlassian.ts:92-152` |
+| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only + *.atlassian.net allowlist | `atlassian.ts:131-193` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
 | drive | `create-folder` | `{ name, parentId? }` | (none, Google API 側で検証) | `drive.ts:50-92` |
 | calendar | `create-event` | `{ summary, start, end, description? }` | (none, RFC3339 は API 側) | `calendar.ts:66-124` |

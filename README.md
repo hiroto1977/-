@@ -25,7 +25,10 @@ bash scripts/assemble-appimage.sh         # dist-chunks/* を結合 → release/
 "./release/Service Hub-0.1.0.AppImage"    # ダブルクリックでも起動可
 ```
 
-SHA256: `35eb48a6b33f392f3c6e69208226d3d259e5e80910b049c3eca7a7048633ff40`（スクリプトが自動検証）
+SHA256 は `scripts/assemble-appimage.sh` 内の `EXPECTED_SHA256` がチャンク再構成時に自動検証します。
+独立検証する場合は `sha256sum "release/Service Hub-0.1.0.AppImage"` の出力が当該スクリプトの
+`EXPECTED_SHA256` と一致することを確認してください（README にハードコードしないのは、過去に
+リビルドのたびに drift していたため）。
 
 ## ソースから動かす（全 OS 対応）
 

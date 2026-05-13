@@ -11,6 +11,25 @@ function secretsPath(): string {
   return path.join(app.getPath('userData'), FILE_NAME);
 }
 
+// --- write serialization (Finding 1 fix) -------------------------------
+// All read-modify-write operations on secrets.json funnel through this
+// single promise chain. Without it, two concurrent IPC writes both
+// readStore() before either writeStore()s, and the second clobbers the
+// first — silently losing freshly-rotated OAuth refresh tokens.
+
+let writeChain: Promise<void> = Promise.resolve();
+
+function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
+  // Run fn after the previous write completes (success OR failure).
+  // The chain holds only completion signals, never throws.
+  const next = writeChain.then(fn, fn);
+  writeChain = next.then(
+    () => undefined,
+    () => undefined,
+  );
+  return next;
+}
+
 async function readStore(): Promise<Record<string, string>> {
   try {
     // Bound the size we'll JSON.parse — protects against a corrupted /
@@ -24,7 +43,22 @@ async function readStore(): Promise<Record<string, string>> {
       return {};
     }
     const buf = await fs.readFile(secretsPath());
-    const parsed = JSON.parse(buf.toString('utf8'));
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(buf.toString('utf8'));
+    } catch (err) {
+      // Partial / corrupted file (e.g., crash mid-write before atomic
+      // rename was added) would otherwise poison every subsequent token
+      // read. Log and treat as empty so the user can re-auth rather
+      // than the app becoming permanently unusable.
+      // eslint-disable-next-line no-console
+      console.error(
+        `[secrets] secrets file at ${secretsPath()} is not valid JSON; treating as empty. ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+      return {};
+    }
     // Validate shape — keys + string values only, drop anything else.
     if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {};
     const out: Record<string, string> = {};
@@ -40,7 +74,13 @@ async function readStore(): Promise<Record<string, string>> {
 
 async function writeStore(store: Record<string, string>): Promise<void> {
   await fs.mkdir(path.dirname(secretsPath()), { recursive: true });
-  await fs.writeFile(secretsPath(), JSON.stringify(store), { mode: 0o600 });
+  // Atomic-ish: write to a sibling then rename. fs.writeFile + rename
+  // ensures a crash mid-write leaves the previous valid file intact
+  // rather than a partial/empty json.
+  const target = secretsPath();
+  const tmp = `${target}.tmp-${process.pid}-${Date.now()}`;
+  await fs.writeFile(tmp, JSON.stringify(store), { mode: 0o600 });
+  await fs.rename(tmp, target);
 }
 
 let fallbackWarned = false;
@@ -70,10 +110,38 @@ function decode(value: string): string | null {
   return safeStorage.decryptString(Buffer.from(value, 'base64'));
 }
 
+/** Finding 5 fix: if any stored value is `plain:`-prefixed AND
+ *  safeStorage is now available, upgrade-encrypt all of them in place
+ *  so the user gets the encryption they were promised. Called on demand
+ *  from setToken/clearToken so we don't burn cycles on read-only paths. */
+async function upgradePlainValues(store: Record<string, string>): Promise<{
+  upgraded: Record<string, string>;
+  changed: boolean;
+}> {
+  if (!safeStorage.isEncryptionAvailable()) {
+    return { upgraded: store, changed: false };
+  }
+  let changed = false;
+  const upgraded: Record<string, string> = {};
+  for (const [k, v] of Object.entries(store)) {
+    if (v.startsWith('plain:')) {
+      const decoded = Buffer.from(v.slice('plain:'.length), 'base64').toString('utf8');
+      upgraded[k] = safeStorage.encryptString(decoded).toString('base64');
+      changed = true;
+    } else {
+      upgraded[k] = v;
+    }
+  }
+  return { upgraded, changed };
+}
+
 export async function setToken(serviceId: string, token: string): Promise<void> {
-  const store = await readStore();
-  store[serviceId] = encode(token);
-  await writeStore(store);
+  return withWriteLock(async () => {
+    const store = await readStore();
+    const { upgraded } = await upgradePlainValues(store);
+    upgraded[serviceId] = encode(token);
+    await writeStore(upgraded);
+  });
 }
 
 export async function getToken(serviceId: string): Promise<string | null> {
@@ -84,9 +152,12 @@ export async function getToken(serviceId: string): Promise<string | null> {
 }
 
 export async function clearToken(serviceId: string): Promise<void> {
-  const store = await readStore();
-  delete store[serviceId];
-  await writeStore(store);
+  return withWriteLock(async () => {
+    const store = await readStore();
+    const { upgraded } = await upgradePlainValues(store);
+    delete upgraded[serviceId];
+    await writeStore(upgraded);
+  });
 }
 
 export async function listConfiguredServices(): Promise<string[]> {
@@ -125,6 +196,15 @@ export async function getOAuthTokens(serviceId: ServiceId): Promise<TokenSet | n
   }
 }
 
+// --- refresh stampede dedup (Finding 2 fix) -----------------------------
+// Two concurrent getValidToken() calls for the same service (or two
+// Google services sharing one refresh token round) both observe
+// expiresSoon=true and both hit POST /token. The second sees an
+// invalidated refresh token and the catch swallows it, masking
+// credential loss until the user notices a sign-out. Dedup all
+// in-flight refreshes by serviceId.
+const inflightRefresh = new Map<ServiceId, Promise<string>>();
+
 /** Resolve the bearer token to use for a service:
  *   - If stored as an OAuth TokenSet and within the refresh window,
  *     hit the provider's token endpoint and persist the new tokens.
@@ -150,15 +230,24 @@ export async function getValidToken(serviceId: ServiceId): Promise<string | null
     typeof tokens.expiresAt === 'number' && tokens.expiresAt - Date.now() < REFRESH_WINDOW_MS;
 
   if (expiresSoon && tokens.refreshToken && config) {
-    try {
-      const fresh = await refresh(config, tokens);
-      await setOAuthTokens(serviceId, fresh);
-      return fresh.accessToken;
-    } catch {
-      // refresh failed (revoked / network) — fall through to the stale
-      // access token and let the caller see the upstream 401.
-      return tokens.accessToken;
-    }
+    const existing = inflightRefresh.get(serviceId);
+    if (existing) return existing;
+
+    const refreshPromise = (async () => {
+      try {
+        const fresh = await refresh(config, tokens);
+        await setOAuthTokens(serviceId, fresh);
+        return fresh.accessToken;
+      } catch {
+        // refresh failed (revoked / network) — fall through to the stale
+        // access token and let the caller see the upstream 401.
+        return tokens.accessToken;
+      } finally {
+        inflightRefresh.delete(serviceId);
+      }
+    })();
+    inflightRefresh.set(serviceId, refreshPromise);
+    return refreshPromise;
   }
   return tokens.accessToken;
 }

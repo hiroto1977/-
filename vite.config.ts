@@ -8,6 +8,13 @@ import renderer from 'vite-plugin-electron-renderer';
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const electronOutDir = path.resolve(projectRoot, 'dist-electron');
 
+// Sourcemaps embed full TypeScript source. Useful in dev (stack traces
+// point at .ts lines), but in a packaged build they ship the entire
+// privileged main-process source to every end user — which lowers the
+// bar for finding bugs in token storage, OAuth, IPC handlers. Gate on
+// production mode.
+const isDev = process.env.NODE_ENV !== 'production' && process.env.VITE_DEV !== '0';
+
 export default defineConfig({
   root: 'src/renderer',
   plugins: [
@@ -18,7 +25,7 @@ export default defineConfig({
         vite: {
           build: {
             outDir: electronOutDir,
-            sourcemap: true,
+            sourcemap: isDev,
             emptyOutDir: false,
           },
         },
@@ -31,7 +38,7 @@ export default defineConfig({
         vite: {
           build: {
             outDir: electronOutDir,
-            sourcemap: 'inline',
+            sourcemap: isDev ? 'inline' : false,
             emptyOutDir: false,
           },
         },

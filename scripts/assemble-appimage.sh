@@ -20,23 +20,29 @@ fi
 
 mkdir -p "$OUT_DIR"
 cat "$CHUNK_DIR"/part-* > "$OUT"
-chmod +x "$OUT"
+# NOTE: do NOT chmod +x yet — verify the SHA256 first so a tampered
+# binary never sits on disk in an executable state.
 
 if command -v sha256sum >/dev/null 2>&1; then
   actual="$(sha256sum "$OUT" | awk '{print $1}')"
 elif command -v shasum >/dev/null 2>&1; then
   actual="$(shasum -a 256 "$OUT" | awk '{print $1}')"
 else
-  echo "warning: no sha256 tool found; skipping verification" >&2
-  actual=""
+  echo "error: no sha256 tool found (sha256sum / shasum). refusing to install an unverifiable binary." >&2
+  rm -f "$OUT"
+  exit 2
 fi
 
-if [ -n "$actual" ] && [ "$actual" != "$EXPECTED_SHA256" ]; then
-  echo "error: SHA256 mismatch" >&2
+if [ "$actual" != "$EXPECTED_SHA256" ]; then
+  echo "error: SHA256 mismatch — refusing to chmod" >&2
   echo "  expected: $EXPECTED_SHA256" >&2
   echo "  actual:   $actual" >&2
+  rm -f "$OUT"
   exit 1
 fi
+
+# Only now is the file marked executable.
+chmod +x "$OUT"
 
 size="$(wc -c < "$OUT")"
 echo "ok: assembled $OUT ($size bytes)"
