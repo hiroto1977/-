@@ -67,6 +67,16 @@ description: first line
     expect(fm.description).not.toMatch(/ $/);
   });
 
+  it('does NOT parse frontmatter from the body of the doc (kills outer `^` anchor drop)', () => {
+    // Without the leading `^` anchor on the delimiter regex
+    // (`^---\r?\n...---/`), a docs-like body that contains a `---`
+    // block in the middle could be mis-parsed. Original requires
+    // the doc to START with `---`. Pin that.
+    const fm = parseFrontmatter('intro paragraph\n\n---\nname: smuggled\ndescription: hidden\n---\nbody');
+    expect(fm.name).toBeUndefined();
+    expect(fm.description).toBeUndefined();
+  });
+
   it('rejects "name:" outside frontmatter lines (kills `^` anchor drop)', () => {
     // Without ^ anchor, /name:\s*(.+)$/m could match "x name: smuggled"
     // in body text. With ^ anchor it must start at line start.

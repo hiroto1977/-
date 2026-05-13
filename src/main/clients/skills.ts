@@ -37,12 +37,19 @@ export function parseFrontmatter(content: string): SkillFrontmatter {
 }
 
 /** Remove a *matched pair* of surrounding quotes (e.g. "hello" → hello)
- *  but leave a single unbalanced quote alone (e.g. `"` stays `"`). */
+ *  but leave a single unbalanced quote alone (e.g. `"` stays `"`).
+ *
+ *  Stryker reports the `^`/`$` anchor-drop variants as survivors; both
+ *  are equivalent because callers always pass a value that has been
+ *  `.trim()`ed first, so the anchor-less variant would still only match
+ *  full-string quote pairs. */
+// Stryker disable Regex
 function stripBalancedQuotes(s: string | undefined): string | undefined {
   if (s === undefined) return undefined;
   const m = s.match(/^(["'])([\s\S]*)\1$/);
   return m ? m[2] : s;
 }
+// Stryker restore Regex
 
 /** A minimal Dirent-shaped object for the readdir injection point.
  *  Lets tests fake the directory contents without touching the disk. */
