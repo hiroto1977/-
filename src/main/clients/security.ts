@@ -87,31 +87,48 @@ const NORTON_PATHS_BY_PLATFORM: Record<string, string[]> = {
   linux: [], // Norton doesn't ship for Linux
 };
 
-export async function detectNorton(platform: NodeJS.Platform = process.platform): Promise<NortonStatus> {
-  const candidates = NORTON_PATHS_BY_PLATFORM[platform] ?? [];
+/** Stat-like probe abstracted from `fs.stat` so the search loop can be
+ *  unit-tested with an in-memory stub. Returns the candidate that maps
+ *  to a directory, or null if none of them do. */
+export async function findExistingDirectory(
+  candidates: readonly string[],
+  probe: (p: string) => Promise<{ isDirectory: () => boolean }>,
+): Promise<string | null> {
   for (const candidate of candidates) {
     try {
-      const stat = await fs.stat(candidate);
-      if (stat.isDirectory()) {
-        return {
-          installed: true,
-          installPath: candidate,
-          platform,
-          details: `${path.basename(candidate)} を検出`,
-        };
-      }
+      const stat = await probe(candidate);
+      if (stat.isDirectory()) return candidate;
     } catch {
       // try next
     }
+  }
+  return null;
+}
+
+/** Build the "no Norton found" details message — pure so each branch
+ *  is unit-testable without filesystem stubbing. */
+export function nortonNotFoundDetails(platform: NodeJS.Platform): string {
+  return platform === 'linux'
+    ? 'Norton 360 は Linux 版が無いため検出対象外です'
+    : '既知のパスに Norton 360 のインストールは見つかりませんでした';
+}
+
+export async function detectNorton(platform: NodeJS.Platform = process.platform): Promise<NortonStatus> {
+  const candidates = NORTON_PATHS_BY_PLATFORM[platform] ?? [];
+  const found = await findExistingDirectory(candidates, (p) => fs.stat(p));
+  if (found !== null) {
+    return {
+      installed: true,
+      installPath: found,
+      platform,
+      details: `${path.basename(found)} を検出`,
+    };
   }
   return {
     installed: false,
     installPath: '',
     platform,
-    details:
-      platform === 'linux'
-        ? 'Norton 360 は Linux 版が無いため検出対象外です'
-        : '既知のパスに Norton 360 のインストールは見つかりませんでした',
+    details: nortonNotFoundDetails(platform),
   };
 }
 

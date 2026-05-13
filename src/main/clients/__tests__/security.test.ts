@@ -6,6 +6,8 @@ import {
   ACTIONS,
   detectNorton,
   fetchSecuritySnapshot,
+  findExistingDirectory,
+  nortonNotFoundDetails,
   parseSecurityKeys,
 } from '../security';
 import { FetchError } from '../types';
@@ -94,6 +96,69 @@ describe('parseSecurityKeys', () => {
 
   it('drops vt when value is an empty string (kills `if (... && parsed.vt)` → true)', () => {
     expect(parseSecurityKeys('{"hibp":"ok","vt":""}')).toEqual({ hibp: 'ok' });
+  });
+});
+
+describe('findExistingDirectory', () => {
+  it('returns the first candidate whose probe says it is a directory', async () => {
+    const probe = vi.fn(async (p: string) => {
+      if (p === '/opt/match') return { isDirectory: () => true };
+      return { isDirectory: () => false };
+    });
+    const found = await findExistingDirectory(['/nope', '/opt/match', '/another'], probe);
+    expect(found).toBe('/opt/match');
+    // Stops at the first match — third candidate never probed.
+    expect(probe).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns null when no candidate is a directory', async () => {
+    const probe = vi.fn(async () => ({ isDirectory: () => false }));
+    expect(await findExistingDirectory(['/a', '/b'], probe)).toBeNull();
+  });
+
+  it('returns null when every probe throws (e.g. ENOENT)', async () => {
+    const probe = vi.fn(async () => {
+      throw new Error('ENOENT');
+    });
+    expect(await findExistingDirectory(['/a', '/b'], probe)).toBeNull();
+  });
+
+  it('returns null for an empty candidate list', async () => {
+    const probe = vi.fn();
+    expect(await findExistingDirectory([], probe)).toBeNull();
+    expect(probe).not.toHaveBeenCalled();
+  });
+
+  it('skips an erroring candidate and continues to the next', async () => {
+    const probe = vi.fn(async (p: string) => {
+      if (p === '/a') throw new Error('boom');
+      if (p === '/b') return { isDirectory: () => true };
+      return { isDirectory: () => false };
+    });
+    const found = await findExistingDirectory(['/a', '/b'], probe);
+    expect(found).toBe('/b');
+  });
+
+  it('treats a non-directory match as not-found (kills `isDirectory()` check drop)', async () => {
+    // Without the isDirectory() check, a regular file at the path
+    // would satisfy the candidate. Pin the directory requirement.
+    const probe = vi.fn(async () => ({ isDirectory: () => false }));
+    expect(await findExistingDirectory(['/regular-file'], probe)).toBeNull();
+  });
+});
+
+describe('nortonNotFoundDetails', () => {
+  it('returns the Linux-specific message for linux', () => {
+    expect(nortonNotFoundDetails('linux')).toMatch(/Linux 版が無い/);
+  });
+
+  it('returns the generic not-found message for non-Linux platforms', () => {
+    expect(nortonNotFoundDetails('darwin')).toMatch(/見つかりませんでした/);
+    expect(nortonNotFoundDetails('darwin')).not.toMatch(/Linux 版/);
+    expect(nortonNotFoundDetails('win32')).toMatch(/見つかりませんでした/);
+    expect(nortonNotFoundDetails('win32')).not.toMatch(/Linux 版/);
+    // Unknown platforms also fall to the generic branch.
+    expect(nortonNotFoundDetails('aix' as NodeJS.Platform)).toMatch(/見つかりませんでした/);
   });
 });
 

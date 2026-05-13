@@ -168,6 +168,43 @@ export function safeStateEquals(a: string, b: string): boolean {
   return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 }
 
+/** Strip the port suffix (`:1234`) from a Host header and check whether
+ *  the remainder is a loopback hostname. The OAuth callback server only
+ *  ever listens on 127.0.0.1, but a DNS rebinding attack or a request
+ *  reaching us via a different name could fool a naive callback handler.
+ *  Accept only literal loopback hostnames. */
+export function isLoopbackHost(hostHeader: string | undefined): boolean {
+  if (typeof hostHeader !== 'string') return false;
+  const lowered = hostHeader.toLowerCase();
+  const hostOnly = lowered.replace(/:\d+$/, '');
+  return hostOnly === '127.0.0.1' || hostOnly === 'localhost' || hostOnly === '[::1]';
+}
+
+/** Discriminated-union outcome of a callback request. The HTTP layer
+ *  maps each kind to a status + body; the test layer exercises the
+ *  pure decision logic directly. */
+export type CallbackOutcome =
+  | { kind: 'success'; code: string; state: string }
+  | { kind: 'wrong-path' }
+  | { kind: 'oauth-error'; error: string }
+  | { kind: 'missing-params' }
+  | { kind: 'state-mismatch' };
+
+/** Decide what to do with an incoming callback request. Pure logic
+ *  extracted from listenForCallback so we can unit-test every branch
+ *  (success, wrong path, error param, missing params, state CSRF). */
+export function classifyCallback(reqUrl: string, expectedState: string): CallbackOutcome {
+  const url = new URL(reqUrl, 'http://127.0.0.1');
+  if (url.pathname !== '/oauth/callback') return { kind: 'wrong-path' };
+  const error = url.searchParams.get('error');
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  if (error) return { kind: 'oauth-error', error };
+  if (!code || !state) return { kind: 'missing-params' };
+  if (!safeStateEquals(state, expectedState)) return { kind: 'state-mismatch' };
+  return { kind: 'success', code, state };
+}
+
 const CALLBACK_HTML = `<!doctype html><html><head><meta charset="utf-8"><title>Service Hub</title>
 <style>body{font-family:system-ui;background:#0f1117;color:#e6e8ee;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
 .box{text-align:center;padding:32px 48px;border:1px solid #232936;border-radius:12px;background:#161a22}
@@ -201,39 +238,32 @@ function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promi
   });
 
   const server = http.createServer((req, res) => {
-    // Validate the Host header — the server only ever listens on
-    // 127.0.0.1, but a stray DNS rebinding or a request that reached
-    // us via a different name could fool a naive callback handler.
-    // Accept only literal loopback hostnames.
-    const hostHeader = (req.headers.host ?? '').toLowerCase();
-    const hostOnly = hostHeader.replace(/:\d+$/, '');
-    if (hostOnly !== '127.0.0.1' && hostOnly !== 'localhost' && hostOnly !== '[::1]') {
+    if (!isLoopbackHost(req.headers.host)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
       return;
     }
-    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
-    if (url.pathname !== '/oauth/callback') {
-      res.writeHead(404).end();
-      return;
+    const outcome = classifyCallback(req.url ?? '/', expectedState);
+    switch (outcome.kind) {
+      case 'wrong-path':
+        res.writeHead(404).end();
+        return;
+      case 'oauth-error':
+        res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`OAuth error: ${outcome.error}`);
+        reject(new Error(`OAuth provider returned error: ${outcome.error}`));
+        break;
+      case 'missing-params':
+        res.writeHead(400).end('missing code/state');
+        reject(new Error('OAuth callback missing code or state'));
+        break;
+      case 'state-mismatch':
+        res.writeHead(400).end('state mismatch');
+        reject(new Error('OAuth state mismatch (possible CSRF)'));
+        break;
+      case 'success':
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(CALLBACK_HTML);
+        resolve({ code: outcome.code, state: outcome.state });
+        break;
     }
-    const error = url.searchParams.get('error');
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
-
-    if (error) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`OAuth error: ${error}`);
-      reject(new Error(`OAuth provider returned error: ${error}`));
-    } else if (!code || !state) {
-      res.writeHead(400).end('missing code/state');
-      reject(new Error('OAuth callback missing code or state'));
-    } else if (!safeStateEquals(state, expectedState)) {
-      res.writeHead(400).end('state mismatch');
-      reject(new Error('OAuth state mismatch (possible CSRF)'));
-    } else {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(CALLBACK_HTML);
-      resolve({ code, state });
-    }
-
     // Close after the response is flushed so the browser sees the page.
     setTimeout(() => server.close(), 50);
   });

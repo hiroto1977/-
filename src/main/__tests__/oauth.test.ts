@@ -3,7 +3,9 @@ import {
   buildAuthorizeUrl,
   buildRefreshBody,
   buildTokenExchangeBody,
+  classifyCallback,
   generatePkce,
+  isLoopbackHost,
   isOAuthSupported,
   OAUTH_CONFIGS,
   refresh,
@@ -114,6 +116,112 @@ describe('tokenResponseToSet', () => {
     const tokens = tokenResponseToSet({ access_token: 'at2' }, 'rt-previous');
     expect(tokens.refreshToken).toBe('rt-previous');
     expect(tokens.expiresAt).toBeUndefined();
+  });
+});
+
+describe('isLoopbackHost', () => {
+  it('accepts the three canonical loopback hostnames', () => {
+    expect(isLoopbackHost('127.0.0.1')).toBe(true);
+    expect(isLoopbackHost('localhost')).toBe(true);
+    expect(isLoopbackHost('[::1]')).toBe(true);
+  });
+
+  it('accepts loopback hostnames with a port suffix', () => {
+    expect(isLoopbackHost('127.0.0.1:54321')).toBe(true);
+    expect(isLoopbackHost('localhost:8080')).toBe(true);
+    expect(isLoopbackHost('[::1]:1')).toBe(true);
+  });
+
+  it('is case-insensitive', () => {
+    expect(isLoopbackHost('LOCALHOST')).toBe(true);
+    expect(isLoopbackHost('LocalHost:80')).toBe(true);
+  });
+
+  it('rejects non-loopback hostnames', () => {
+    expect(isLoopbackHost('attacker.example.com')).toBe(false);
+    expect(isLoopbackHost('attacker.example.com:80')).toBe(false);
+    expect(isLoopbackHost('10.0.0.1')).toBe(false);
+    expect(isLoopbackHost('192.168.1.1')).toBe(false);
+    // Public IPv6 loopback-like decoys
+    expect(isLoopbackHost('[::2]')).toBe(false);
+    expect(isLoopbackHost('[::1].evil.com')).toBe(false);
+  });
+
+  it('rejects undefined / non-string', () => {
+    expect(isLoopbackHost(undefined)).toBe(false);
+    expect(isLoopbackHost(42 as unknown as string)).toBe(false);
+    expect(isLoopbackHost(null as unknown as string)).toBe(false);
+    expect(isLoopbackHost('')).toBe(false);
+  });
+
+  it('only strips the trailing :port suffix, not in-name colons', () => {
+    // "[::1]" contains colons but isn't followed by digits at the end.
+    // Don't accidentally treat "[::1" as the host.
+    expect(isLoopbackHost('[::1]')).toBe(true);
+    // A weird input like "127.0.0.1:abc" — :abc is not :digits, so the
+    // strip leaves "127.0.0.1:abc" → not in the allowlist → false.
+    expect(isLoopbackHost('127.0.0.1:abc')).toBe(false);
+  });
+});
+
+describe('classifyCallback', () => {
+  const STATE = 'expected-state-abc-123-xyz-very-long-for-timing-safe-compare';
+
+  it('returns success for a well-formed callback with matching state', () => {
+    const result = classifyCallback(
+      `/oauth/callback?code=auth-code-xyz&state=${STATE}`,
+      STATE,
+    );
+    expect(result.kind).toBe('success');
+    if (result.kind === 'success') {
+      expect(result.code).toBe('auth-code-xyz');
+      expect(result.state).toBe(STATE);
+    }
+  });
+
+  it('returns wrong-path for any path other than /oauth/callback', () => {
+    expect(classifyCallback('/', STATE).kind).toBe('wrong-path');
+    expect(classifyCallback('/something', STATE).kind).toBe('wrong-path');
+    expect(classifyCallback('/oauth/callback/extra', STATE).kind).toBe('wrong-path');
+    expect(classifyCallback('/favicon.ico', STATE).kind).toBe('wrong-path');
+  });
+
+  it('returns oauth-error when the provider sends ?error=...', () => {
+    const result = classifyCallback('/oauth/callback?error=access_denied', STATE);
+    expect(result.kind).toBe('oauth-error');
+    if (result.kind === 'oauth-error') {
+      expect(result.error).toBe('access_denied');
+    }
+  });
+
+  it('prefers oauth-error over missing-params when both signals are present', () => {
+    // The provider explicitly reported an error; that takes precedence.
+    const result = classifyCallback('/oauth/callback?error=denied', STATE);
+    expect(result.kind).toBe('oauth-error');
+  });
+
+  it('returns missing-params when code or state is absent', () => {
+    expect(classifyCallback('/oauth/callback', STATE).kind).toBe('missing-params');
+    expect(classifyCallback('/oauth/callback?code=x', STATE).kind).toBe('missing-params');
+    expect(classifyCallback('/oauth/callback?state=y', STATE).kind).toBe('missing-params');
+  });
+
+  it('returns state-mismatch when the state token does not match', () => {
+    const result = classifyCallback(
+      '/oauth/callback?code=x&state=wrong-state-different-length',
+      STATE,
+    );
+    expect(result.kind).toBe('state-mismatch');
+  });
+
+  it('returns state-mismatch when state has the same length but different chars (CSRF)', () => {
+    // Build a state of identical length so the length pre-check passes.
+    const fakeState = 'F'.repeat(STATE.length);
+    const result = classifyCallback(
+      `/oauth/callback?code=x&state=${fakeState}`,
+      STATE,
+    );
+    expect(result.kind).toBe('state-mismatch');
   });
 });
 

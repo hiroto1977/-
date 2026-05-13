@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 143 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 149 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -22,12 +22,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **328** | `npm test` |
+| ユニットテスト | **349** | `npm test` |
 | Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 143 | 自己検証 |
+| `file:line` 参照数 | 149 | 自己検証 |
 
 ### 統合フロー図
 
@@ -60,7 +60,7 @@ flowchart LR
   subgraph EXT["External (HTTPS only, 12 hosts allowlisted)"]
     APIS[api.github.com<br/>api.notion.com<br/>api.canva.com<br/>... 9 SaaS APIs]
     GOOG[accounts.google.com<br/>oauth2.googleapis.com<br/>www.googleapis.com<br/>gmail.googleapis.com]
-    LOC[127.0.0.1:11434<br/>Ollama, hardcoded]
+    LOC[127.0.0.1:11494<br/>Ollama, hardcoded]
   end
 
   subgraph BR["Out-of-band"]
@@ -105,6 +105,25 @@ flowchart LR
 ---
 
 ## 1. 信頼境界とプロセス
+
+### 1.0 テスタビリティ設計原則
+
+mutation score を限りなく 100% に近づけるための **基本パターン**:
+**「side-effecting 関数は pure helper を thin wire-up でラップ」**。
+HTTP server / fs 操作 / network 呼び出しなど直接テストしづらいコードは、
+分岐ロジックを純粋関数として外に出し、ラッパー側を最小化する。
+
+| Module | Side-effecting wrapper | 抽出された pure helpers |
+|---|---|---|
+| `oauth.ts` | `listenForCallback` (HTTP server) | `isLoopbackHost()`, `classifyCallback()` |
+| `security.ts` | `detectNorton` (fs.stat loop) | `findExistingDirectory(candidates, probe)`, `nortonNotFoundDetails(platform)` |
+| `ollama.ts` | `chat`, `fetchOllamaSnapshot` | `isAllowedEndpoint`, `isSafeModelName`, `isVersionSafe`, `compareVersions` |
+| `skills.ts` | `runSkill`, `scanSkills` | `isSafeSkillName`, `parseFrontmatter`, `stripBalancedQuotes` |
+| `gmail.ts` | `createDraft` | `isSafeHeaderValue`, `buildRfc2822` |
+| `secrets.ts` | `readStore`/`writeStore` (safeStorage) | (pure helpers already factored — `isTokenSet`) |
+
+**効果**: oauth.ts は 46.83% → **65.79%** (+18.96)。covered 内ですでに 93.75% (ほぼ天井) なので、
+未テスト領域は「実 HTTP server 起動を要するパス」のみ — そこは integration test の対象。
 
 ### 1.1 TypeScript 設定
 
@@ -411,7 +430,7 @@ union を参照する。
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
-| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:143-176` |
+| github | `create-issue` | `{ owner, repo, title, body? }` | URL part は `encodeURIComponent` | `github.ts:149-176` |
 | wordpress | `create-post` | `{ siteId, title, content }` | siteId は `encodeURIComponent` | `wordpress.ts:67-109` |
 | atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only | `atlassian.ts:92-152` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
@@ -421,8 +440,8 @@ union を参照する。
 | slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
 | skills | `run-skill` | `{ name, prompt, model?, maxTokens? }` | **`isSafeSkillName(name)`** + path containment | `skills.ts:112-191` |
-| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:137-264` |
-| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:190-265` |
+| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:163-281` |
+| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:216-282` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl? }` | zoneId encodeURIComponent | `cloudflare.ts:127-207` |
 | cloudflare | `purge-cache` | `{ zoneId, files?: string[] }` | zoneId encodeURIComponent | `cloudflare.ts:172-208` |
 | emotions | `log-mood` | `{ text, mood, source? }` | text 32KB clamp | `emotions.ts:100-261` |
@@ -444,12 +463,12 @@ union を参照する。
 | gmail | `gmail.googleapis.com` | `GET /messages`, `GET /messages/{id}`, `POST /drafts` | Bearer | `gmail.ts:29-113` |
 | slack | `slack.com` | `GET /api/conversations.list`, `team.info`, `POST /chat.postMessage` | Bearer | `slack.ts:53-98` |
 | canva | `api.canva.com` | `GET /rest/v1/designs`, `brand-kits`, `POST /folders` | Bearer | `canva.ts:43-96` |
-| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:158` |
+| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:184` |
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:231-247` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:169`, `emotions.ts:209` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
-| ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
+| ollama | **`127.0.0.1:11494`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
 
 **Ollama 禁止リスト**: `/api/pull`, `/api/create`, `/api/push`, `/api/copy`, `/api/delete`,
 `/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) に含まれず、
@@ -536,7 +555,7 @@ flowchart TB
   WT --> V3{url ∈ ALLOWED_ENDPOINTS?}
   V3 -->|no| FE3[throw FetchError]
   V3 -->|yes| AC[AbortController 30s]
-  AC --> FETCH["fetch(127.0.0.1:11434/api/chat,<br/>{stream: false})"]
+  AC --> FETCH["fetch(127.0.0.1:11494/api/chat,<br/>{stream: false})"]
   FETCH --> CAP{res.text size ≤ 10MB?}
   CAP -->|no| FE4[throw FetchError]
   CAP -->|yes| OK[return {reply, durationMs}]
@@ -585,18 +604,18 @@ graph LR
   C5 --> R1 --> R2 --> R3
 ```
 
-### 5.1 テスト分布 (total 328, mutation total 74.91 / covered 84.89)
+### 5.1 テスト分布 (total 349, mutation total 78.54 / covered 85.81)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
 | `src/main/clients/__tests__/ollama.test.ts` | 49 | 82.71 | 86.76 |
-| `src/main/clients/__tests__/security.test.ts` | 34 | 71.64 | 75.59 |
-| `src/main/clients/__tests__/skills.test.ts` | 32 | 78.36 | 81.71 |
+| `src/main/clients/__tests__/security.test.ts` | 41 | 74.29 | 77.04 |
+| `src/main/__tests__/oauth.test.ts` | 37 | 65.79 | 93.75 |
+| `src/main/clients/__tests__/skills.test.ts` | 32 | 77.78 | 81.10 |
 | `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
-| `src/main/__tests__/oauth.test.ts` | 23 | 46.83 | 90.57 |
 | `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
 | `src/main/clients/__tests__/gmail.test.ts` | 18 | 87.64 | 88.64 |
-| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 84.27 | 84.27 |
+| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 85.39 | 85.39 |
 | `src/main/clients/__tests__/github.test.ts` | 16 | 85.92 | 87.14 |
 | `src/main/clients/__tests__/types.test.ts` | 17 | 84.62 | 84.62 |
 | `src/main/clients/__tests__/slack.test.ts` | 15 | 86.76 | 89.39 |
@@ -756,7 +775,7 @@ classDiagram
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL は `app:openExternal` 経由のみ — http(s) 限定 | `src/main/main.ts:100-115` |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | `github.test.ts`, `wordpress.test.ts`, ... |
-| 7 | Ollama は `127.0.0.1:11434` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
+| 7 | Ollama は `127.0.0.1:11494` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11494` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | grep audit (security-review skill) |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
@@ -772,7 +791,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 143 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 149 file:line 参照 + 5 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -808,7 +827,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 143 file:line references + 5 metrics  ✅
+# → Verified 149 file:line references + 5 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅
