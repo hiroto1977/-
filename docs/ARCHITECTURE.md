@@ -22,7 +22,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **371** | `npm test` |
+| ユニットテスト | **378** | `npm test` |
 | Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
@@ -128,12 +128,22 @@ mutation score を限りなく 100% に近づけるための **二段構え**:
 
 | Wrapper | Integration test pattern |
 |---|---|
-| `listenForCallback` (`oauth.ts`) | テスト内で `http.request` を実際に投げ、loopback server の挙動を黒箱で観測。8 ブランチ × 9 tests で 46 no-cov mutants を covered 化。`oauth.ts:46.83 → 83.77` (+37%)。 |
+| `listenForCallback` (`oauth.ts`) | テスト内で `http.request` を実際に投げ、loopback server の挙動を黒箱で観測。9 tests で 46 no-cov mutants を covered 化。 |
 | `detectNorton` (`security.ts`) | `probe` パラメータ注入で in-memory stub。5 no-cov → 0。 |
-| `withTimeout` (`ollama.ts`) | Real `setTimeout` + AbortController を内包しているがすでに既存 test で `fetchMock` 経由でカバー済み。 |
 
-**累積効果**: oauth.ts は 46.83% → **83.77%** (+36.94)。covered 内では **92.27%** (天井近接)。
-無リーチ領域は `setTimeout(() => server.close(), 50)` の close 後処理など、影響無視できるコードのみ。
+**Phase 3 — End-to-end orchestration tests**
+
+複数の side-effecting 部品を組み合わせた **完全フロー** (例: OAuth authorize の 5 段)
+は、Phase 1/2 では reach できない unhandled-rejection 経路や orchestration 順序の bug を
+持ち得る。E2E test では電子のような外部依存を mock しつつ、**残りの部品は実物を動かす**。
+
+| End-to-end flow | テスト構成 |
+|---|---|
+| `authorize()` (`oauth.ts`) | `electron.shell.openExternal` を `vi.mock('electron')` でモック → 実 loopback server 起動 → URL から port + state 抽出 → 実 `http.request` で callback 送信 → mock fetch で token endpoint レスポンス。4 tests で残り 19 no-cov mutants を覆う。 |
+
+**累積効果**: oauth.ts は 46.83% → **92.11%** (+45.28)。Phase 1+2+3 で no-coverage 100 → **2**。
+残る 2 mutants は `server.on('error', ...)` の listen 競合パスで、Node の port 0 (任意 port 割当)
+を使う限り発生しないため equivalent と判定。
 
 ### 1.1 TypeScript 設定
 
@@ -614,13 +624,13 @@ graph LR
   C5 --> R1 --> R2 --> R3
 ```
 
-### 5.1 テスト分布 (total 371, mutation total 83.84 / covered 87.07)
+### 5.1 テスト分布 (total 378, mutation total 85.47 / covered 87.20)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
-| `src/main/__tests__/oauth.test.ts` | 47 | **83.77** | 92.27 |
 | `src/main/clients/__tests__/ollama.test.ts` | 52 | 84.11 | 87.80 |
-| `src/main/clients/__tests__/security.test.ts` | 45 | 82.14 | 82.14 |
+| `src/main/__tests__/oauth.test.ts` | 51 | **92.11** | 92.92 |
+| `src/main/clients/__tests__/security.test.ts` | 48 | 82.14 | 82.14 |
 | `src/main/clients/__tests__/skills.test.ts` | 32 | 77.19 | 80.49 |
 | `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
 | `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |

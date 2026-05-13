@@ -1,6 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import http from 'node:http';
-import {
+
+// electron must be mocked BEFORE the oauth module is imported because
+// authorize() uses shell.openExternal at top-level import time.
+const openExternalMock = vi.fn(async () => true);
+vi.mock('electron', () => ({
+  shell: { openExternal: (url: string) => openExternalMock(url) },
+}));
+
+const {
+  authorize,
   buildAuthorizeUrl,
   buildRefreshBody,
   buildTokenExchangeBody,
@@ -13,8 +22,8 @@ import {
   refresh,
   safeStateEquals,
   tokenResponseToSet,
-  type OAuthConfig,
-} from '../oauth';
+} = await import('../oauth');
+type OAuthConfig = import('../oauth').OAuthConfig;
 
 const CFG: OAuthConfig = {
   authorizeUrl: 'https://accounts.example.com/o/oauth2/v2/auth',
@@ -489,6 +498,136 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     listener.cancel();
     const result = await trapped;
     expect((result as Error).message).toMatch(/cancelled/);
+  });
+});
+
+describe('authorize (end-to-end flow with real loopback + mocked electron + mocked fetch)', () => {
+  /** Helper: poll for the openExternal mock to be invoked, then return
+   *  the captured authorize URL. */
+  async function waitForOpenExternalCall(timeoutMs = 1000): Promise<string> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (openExternalMock.mock.calls.length > 0) {
+        return openExternalMock.mock.calls[openExternalMock.mock.calls.length - 1]![0];
+      }
+      await new Promise((r) => setTimeout(r, 5));
+    }
+    throw new Error('shell.openExternal was never called within timeout');
+  }
+
+  async function fireCallback(port: number, params: Record<string, string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const qs = new URLSearchParams(params).toString();
+      const req = http.request(
+        { hostname: '127.0.0.1', port, path: `/oauth/callback?${qs}`, method: 'GET' },
+        (res) => {
+          res.on('data', () => {});
+          res.on('end', () => resolve());
+        },
+      );
+      req.on('error', reject);
+      req.end();
+    });
+  }
+
+  const CFG: OAuthConfig = {
+    authorizeUrl: 'https://accounts.example.com/o/oauth2/v2/auth',
+    tokenUrl: 'https://oauth2.example.com/token',
+    clientId: 'integration-client-id',
+    scopes: ['scope-a', 'scope-b'],
+  };
+
+  it('rejects immediately when clientId is not configured', async () => {
+    await expect(authorize({ ...CFG, clientId: '' }, vi.fn<typeof fetch>())).rejects.toThrow(
+      /OAuth client ID is not configured/,
+    );
+  });
+
+  it('completes the full flow: opens browser → receives callback → exchanges code for token', async () => {
+    openExternalMock.mockClear();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          access_token: 'received-access-token',
+          refresh_token: 'received-refresh-token',
+          expires_in: 3600,
+          scope: 'scope-a scope-b',
+          token_type: 'Bearer',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+
+    const authorizePromise = authorize(CFG, fetchMock);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    const state = parsed.searchParams.get('state')!;
+    expect(port).toBeGreaterThan(0);
+    expect(state.length).toBeGreaterThan(0);
+
+    await fireCallback(port, { code: 'received-code', state });
+    const tokens = await authorizePromise;
+
+    expect(tokens.accessToken).toBe('received-access-token');
+    expect(tokens.refreshToken).toBe('received-refresh-token');
+    expect(tokens.scope).toBe('scope-a scope-b');
+    expect(tokens.tokenType).toBe('Bearer');
+
+    // Verify the token-exchange POST shape.
+    const [tokenUrl, init] = fetchMock.mock.calls[0]!;
+    expect(tokenUrl).toBe(CFG.tokenUrl);
+    expect((init as RequestInit).method).toBe('POST');
+    expect((init as RequestInit).headers).toMatchObject({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+    const body = new URLSearchParams((init as RequestInit).body as string);
+    expect(body.get('grant_type')).toBe('authorization_code');
+    expect(body.get('code')).toBe('received-code');
+    expect(body.get('client_id')).toBe(CFG.clientId);
+    expect(body.get('redirect_uri')).toBe(`http://127.0.0.1:${port}/oauth/callback`);
+    expect(body.get('code_verifier')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+  });
+
+  it('throws when the token endpoint returns non-2xx, including the truncated body', async () => {
+    openExternalMock.mockClear();
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('X'.repeat(500), { status: 400 }));
+
+    const authorizePromise = authorize(CFG, fetchMock).catch((e) => e);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    const state = parsed.searchParams.get('state')!;
+    await fireCallback(port, { code: 'c', state });
+
+    const result = (await authorizePromise) as Error;
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toMatch(/Token exchange failed \(400\): X{200}$/);
+    expect(result.message.length).toBeLessThan(500);
+  });
+
+  it('uses an empty-body fallback when token-endpoint res.text() rejects', async () => {
+    openExternalMock.mockClear();
+    const erroringBody = new ReadableStream({
+      start(c) {
+        c.error(new Error('text fail'));
+      },
+    });
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(erroringBody, { status: 502 }));
+
+    const authorizePromise = authorize(CFG, fetchMock).catch((e) => e);
+    const url = await waitForOpenExternalCall();
+    const parsed = new URL(url);
+    const port = Number(new URL(parsed.searchParams.get('redirect_uri')!).port);
+    const state = parsed.searchParams.get('state')!;
+    await fireCallback(port, { code: 'c', state });
+
+    const result = (await authorizePromise) as Error;
+    expect(result.message).toBe('Token exchange failed (502): ');
   });
 });
 

@@ -194,6 +194,47 @@ describe('detectNorton', () => {
     expect(result.platform).toBe('aix');
   });
 
+  it('darwin path list contains the documented .app paths (kills ArrayDeclaration mutants)', async () => {
+    // Drive detectNorton with a probe that records which candidates
+    // it was asked about. This indirectly asserts the contents of
+    // NORTON_PATHS_BY_PLATFORM.darwin without exporting it. Without
+    // these specific paths, the ArrayDeclaration mutation (replacing
+    // the array with [] or ["Stryker was here"]) would alter the
+    // probe-call sequence and fail this assertion.
+    const seen: string[] = [];
+    const probe = vi.fn(async (p: string) => {
+      seen.push(p);
+      return { isDirectory: () => false };
+    });
+    await detectNorton('darwin', probe);
+    expect(seen).toContain('/Applications/Norton 360.app');
+    expect(seen).toContain('/Applications/Norton Security.app');
+    expect(seen).toContain('/Library/Application Support/Symantec');
+  });
+
+  it('win32 path list contains the documented Norton 360 install dirs', async () => {
+    const seen: string[] = [];
+    const probe = vi.fn(async (p: string) => {
+      seen.push(p);
+      return { isDirectory: () => false };
+    });
+    await detectNorton('win32', probe);
+    expect(seen).toContain('C:\\Program Files\\Norton 360');
+    expect(seen).toContain('C:\\Program Files (x86)\\Norton 360');
+    expect(seen).toContain('C:\\ProgramData\\Norton');
+  });
+
+  it('linux path list is empty (Norton does not ship for Linux — kills the Linux ArrayDeclaration mutation)', async () => {
+    const seen: string[] = [];
+    const probe = vi.fn(async (p: string) => {
+      seen.push(p);
+      return { isDirectory: () => false };
+    });
+    await detectNorton('linux', probe);
+    expect(seen).toEqual([]);
+    expect(probe).not.toHaveBeenCalled();
+  });
+
   it('returns installed=true when one of the candidate paths exists as a directory (kills `if (found !== null)` → false)', async () => {
     // Use the darwin path '/Applications/Norton 360.app' (which the
     // NORTON_PATHS_BY_PLATFORM map lists for darwin) and a probe that
