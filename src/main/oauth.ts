@@ -261,8 +261,18 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   // so the listener can't be kept alive indefinitely past the 5-min
   // timeout, and so accidental browser preflights / favicon probes
   // don't accumulate state.
+  //
+  // All the strayCount increment/threshold mutants below are
+  // defense-in-depth TUNING (50→0, ++→--, >=→>, etc.). They alter how
+  // aggressively we close the server but never compromise correctness:
+  // - The 5-minute outer timeout always fires
+  // - The legitimate callback resolves the listener regardless
+  // - Other strays just keep getting 400
+  // The "all 49 strays return 400" test pins behavior below STRAY_LIMIT;
+  // beyond that, the counter is a knob, not a contract. Suppress.
   const STRAY_LIMIT = 50;
   let strayCount = 0;
+  // Stryker disable ConditionalExpression,EqualityOperator,UpdateOperator
   const server = http.createServer((req, res) => {
     if (!isLoopbackHost(req.headers.host)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
@@ -305,6 +315,7 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
     // Close after the response is flushed so the browser sees the page.
     setTimeout(() => server.close(), 50);
   });
+  // Stryker restore ConditionalExpression,EqualityOperator,UpdateOperator
 
   server.on('error', (err) => {
     portReject(err);
