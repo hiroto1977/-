@@ -48,7 +48,7 @@ describe('fetchDriveSnapshot', () => {
       }),
     );
     const snap = await fetchDriveSnapshot({ token: 'x', fetch: fetchMock });
-    expect(snap.files[0].viewUrl).toBe('https://drive.google.com/file/d/f2/view');
+    expect(snap.files[0]!.viewUrl).toBe('https://drive.google.com/file/d/f2/view');
   });
 });
 
@@ -62,7 +62,7 @@ describe('ACTIONS["create-folder"]', () => {
       }),
     );
 
-    const result = (await ACTIONS['create-folder']({
+    const result = (await ACTIONS['create-folder']!({
       token: 'ya29.x',
       fetch: fetchMock,
       payload: { name: 'Reports', parentId: 'parent-id' },
@@ -74,7 +74,7 @@ describe('ACTIONS["create-folder"]', () => {
       url: 'https://drive.google.com/drive/folders/f1',
     });
 
-    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
     const body = JSON.parse(init.body as string);
     expect(body.name).toBe('Reports');
     expect(body.mimeType).toBe('application/vnd.google-apps.folder');
@@ -85,12 +85,12 @@ describe('ACTIONS["create-folder"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: 'f2', name: 'x' }),
     );
-    await ACTIONS['create-folder']({
+    await ACTIONS['create-folder']!({
       token: 't',
       fetch: fetchMock,
       payload: { name: 'x' },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.parents).toBeUndefined();
   });
 
@@ -98,7 +98,7 @@ describe('ACTIONS["create-folder"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: 'f3', name: 'NoLink' }),
     );
-    const result = (await ACTIONS['create-folder']({
+    const result = (await ACTIONS['create-folder']!({
       token: 't',
       fetch: fetchMock,
       payload: { name: 'NoLink' },
@@ -109,7 +109,7 @@ describe('ACTIONS["create-folder"]', () => {
   it('rejects when name is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-folder']({ token: 't', fetch: fetchMock, payload: {} }),
+      ACTIONS['create-folder']!({ token: 't', fetch: fetchMock, payload: {} }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });

@@ -171,7 +171,8 @@ ipcMain.handle(
     const actions = Object.hasOwn(LIVE_ACTIONS, serviceId)
       ? LIVE_ACTIONS[serviceId as ServiceId]
       : undefined;
-    if (!actions || !Object.hasOwn(actions, action)) {
+    const fn = actions && Object.hasOwn(actions, action) ? actions[action] : undefined;
+    if (!fn) {
       return {
         ok: false,
         code: 'action_not_found',
@@ -188,7 +189,7 @@ ipcMain.handle(
         ? (payload as Record<string, unknown>)
         : {};
     try {
-      const data = await actions[action]({ token, payload: safePayload });
+      const data = await fn({ token, payload: safePayload });
       return { ok: true, data };
     } catch (err) {
       return { ok: false, code: 'action_failed', message: safeErrorMessage(err) };

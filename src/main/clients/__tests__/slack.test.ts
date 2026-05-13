@@ -25,7 +25,7 @@ describe('fetchSlackSnapshot', () => {
 
     expect(snap.channels[0]).toMatchObject({ id: 'C1', purpose: 'all hands', isArchived: false });
     expect(snap.channels[1]).toMatchObject({ id: 'C2', purpose: 'fallback', isArchived: true });
-    expect(snap.channels[0].permalink).toContain('C1');
+    expect(snap.channels[0]!.permalink).toContain('C1');
   });
 
   it('throws FetchError when Slack returns ok=false', async () => {
@@ -44,14 +44,14 @@ describe('ACTIONS["send-message"]', () => {
       jsonResponse({ ok: true, ts: '1700000000.000100', channel: 'C123' }),
     );
 
-    const result = (await ACTIONS['send-message']({
+    const result = (await ACTIONS['send-message']!({
       token: 'xoxb-x',
       fetch: fetchMock,
       payload: { channel: 'C123', text: 'hello' },
     })) as { ts: string; channel: string };
 
     expect(result).toEqual({ ts: '1700000000.000100', channel: 'C123' });
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://slack.com/api/chat.postMessage');
     expect((init as RequestInit).method).toBe('POST');
     const headers = (init as RequestInit).headers as Record<string, string>;
@@ -66,7 +66,7 @@ describe('ACTIONS["send-message"]', () => {
   it('rejects with missing channel/text before any network call', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['send-message']({ token: 't', fetch: fetchMock, payload: { channel: 'C' } }),
+      ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -76,7 +76,7 @@ describe('ACTIONS["send-message"]', () => {
       jsonResponse({ ok: false, error: 'channel_not_found' }),
     );
     await expect(
-      ACTIONS['send-message']({
+      ACTIONS['send-message']!({
         token: 't',
         fetch: fetchMock,
         payload: { channel: 'bad', text: 'hi' },
@@ -121,7 +121,7 @@ describe('fetchSlackSnapshot edge cases', () => {
       .mockResolvedValueOnce(jsonResponse({ ok: true, team: { id: 'T', name: 'X', domain: 'acme' } }));
 
     const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
-    expect(snap.channels[0].purpose).toBe('');
+    expect(snap.channels[0]!.purpose).toBe('');
   });
 
   it('degrades to app_redirect when team.info returns ok=true but no team object', async () => {
@@ -133,7 +133,7 @@ describe('fetchSlackSnapshot edge cases', () => {
       .mockResolvedValueOnce(jsonResponse({ ok: true /* no team */ }));
 
     const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
-    expect(snap.channels[0].permalink).toBe('https://slack.com/app_redirect?channel=C5');
+    expect(snap.channels[0]!.permalink).toBe('https://slack.com/app_redirect?channel=C5');
   });
 });
 
@@ -145,7 +145,7 @@ describe('ACTIONS["send-message"] return-shape (mutation kill)', () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse({ ok: true, ts: '123' /* no channel */ }));
-    const result = (await ACTIONS['send-message']({
+    const result = (await ACTIONS['send-message']!({
       token: 'x',
       fetch: fetchMock,
       payload: { channel: 'C42', text: 'hi' },
@@ -159,7 +159,7 @@ describe('ACTIONS["send-message"] edge cases', () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse({ ok: false }));
-    const err = await ACTIONS['send-message']({
+    const err = await ACTIONS['send-message']!({
       token: 'x',
       fetch: fetchMock,
       payload: { channel: 'C', text: 'hi' },
@@ -185,7 +185,7 @@ describe('fetchSlackSnapshot permalink behavior', () => {
       );
 
     const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
-    expect(snap.channels[0].permalink).toBe('https://acme.slack.com/archives/C1');
+    expect(snap.channels[0]!.permalink).toBe('https://acme.slack.com/archives/C1');
   });
 
   it('falls back to app_redirect when team.info fails', async () => {
@@ -202,6 +202,6 @@ describe('fetchSlackSnapshot permalink behavior', () => {
       .mockResolvedValueOnce(new Response('no scope', { status: 403 }));
 
     const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
-    expect(snap.channels[0].permalink).toBe('https://slack.com/app_redirect?channel=C2');
+    expect(snap.channels[0]!.permalink).toBe('https://slack.com/app_redirect?channel=C2');
   });
 });

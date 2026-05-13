@@ -56,7 +56,7 @@ function MoodTrend({ moods }: { moods: MoodLog[] }) {
   let path = '';
   let started = false;
   for (let i = 0; i < days.length; i++) {
-    const s = days[i].score;
+    const s = days[i]!.score;
     if (s === null) {
       started = false;
       continue;

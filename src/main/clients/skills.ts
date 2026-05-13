@@ -29,7 +29,7 @@ interface SkillFrontmatter {
 export function parseFrontmatter(content: string): SkillFrontmatter {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
-  const fm = match[1];
+  const fm = match[1] ?? '';
   const name = stripBalancedQuotes(fm.match(/^name:\s*(.+)$/m)?.[1]?.trim());
   const descMatch = fm.match(/^description:\s*(.+(?:\n[ \t]+.+)*)/m);
   const description = stripBalancedQuotes(descMatch?.[1]?.trim());

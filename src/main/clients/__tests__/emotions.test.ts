@@ -110,7 +110,7 @@ describe('ACTIONS["log-mood"]', () => {
   });
 
   it('persists a mood entry and returns the stored shape', async () => {
-    const result = (await ACTIONS['log-mood']({
+    const result = (await ACTIONS['log-mood']!({
       token: '',
       fetch: vi.fn<typeof fetch>(),
       payload: { date: '2026-05-01', score: 4, note: 'ok' },
@@ -125,7 +125,7 @@ describe('ACTIONS["log-mood"]', () => {
 
   it('rejects an out-of-range score (kills `score < 1 || score > 5` weakening)', async () => {
     await expect(
-      ACTIONS['log-mood']({
+      ACTIONS['log-mood']!({
         token: '',
         fetch: vi.fn<typeof fetch>(),
         payload: { score: 10 },
@@ -134,8 +134,8 @@ describe('ACTIONS["log-mood"]', () => {
   });
 
   it('replaces same-date entry rather than appending', async () => {
-    await ACTIONS['log-mood']({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
-    await ACTIONS['log-mood']({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });
     const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toHaveLength(1);
     expect(stored.moods[0].score).toBe(5);
@@ -168,7 +168,7 @@ describe('ACTIONS["analyze-text"]', () => {
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
-    const result = (await ACTIONS['analyze-text']({
+    const result = (await ACTIONS['analyze-text']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
       payload: { text: '今日は最高だった', source: 'journal' },
@@ -177,12 +177,12 @@ describe('ACTIONS["analyze-text"]', () => {
     expect(result.sentiment).toBe('positive');
     expect(result.dominant).toBe('joy');
     expect(result.excerpt).toContain('[journal]');
-    expect(fetchMock.mock.calls[0][0]).toBe('https://api.anthropic.com/v1/messages');
+    expect(fetchMock.mock.calls[0]![0]).toBe('https://api.anthropic.com/v1/messages');
   });
 
   it('rejects when text is missing', async () => {
     await expect(
-      ACTIONS['analyze-text']({
+      ACTIONS['analyze-text']!({
         token: 'sk-ant-x',
         fetch: vi.fn<typeof fetch>(),
         payload: { text: '' },
@@ -192,7 +192,7 @@ describe('ACTIONS["analyze-text"]', () => {
 
   it('rejects when API key (ctx.token) is empty', async () => {
     await expect(
-      ACTIONS['analyze-text']({
+      ACTIONS['analyze-text']!({
         token: '',
         fetch: vi.fn<typeof fetch>(),
         payload: { text: 'hello' },
@@ -210,8 +210,8 @@ describe('ACTIONS["clear-history"]', () => {
   });
 
   it('clears moods by default (kind undefined)', async () => {
-    await ACTIONS['log-mood']({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
-    const before = (await ACTIONS['clear-history']({
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
+    const before = (await ACTIONS['clear-history']!({
       token: '',
       fetch: vi.fn<typeof fetch>(),
       payload: {},
@@ -222,8 +222,8 @@ describe('ACTIONS["clear-history"]', () => {
   });
 
   it('clears only analyses when kind="analyses"', async () => {
-    await ACTIONS['log-mood']({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
-    await ACTIONS['clear-history']({
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
+    await ACTIONS['clear-history']!({
       token: '',
       fetch: vi.fn<typeof fetch>(),
       payload: { kind: 'analyses' },

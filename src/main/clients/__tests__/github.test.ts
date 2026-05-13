@@ -127,8 +127,8 @@ describe('fetchGithubSnapshot', () => {
       );
 
     const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
-    expect(snapshot.pullRequests[0].head).toBe('');
-    expect(snapshot.pullRequests[0].base).toBe('');
+    expect(snapshot.pullRequests[0]!.head).toBe('');
+    expect(snapshot.pullRequests[0]!.base).toBe('');
   });
 
   // --- security: pin PR detail fetches to api.github.com
@@ -162,7 +162,7 @@ describe('fetchGithubSnapshot', () => {
       );
     const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(snapshot.pullRequests[0].head).toBe('');
+    expect(snapshot.pullRequests[0]!.head).toBe('');
   });
 
   it('falls back when pull_request.url is not a parseable URL at all', async () => {
@@ -176,7 +176,7 @@ describe('fetchGithubSnapshot', () => {
       );
     const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(snapshot.pullRequests[0].number).toBe(7);
+    expect(snapshot.pullRequests[0]!.number).toBe(7);
   });
 
   it('coerces missing draft field on the search result to false (kills `?? false` mutation)', async () => {
@@ -199,7 +199,7 @@ describe('fetchGithubSnapshot', () => {
         }),
       );
     const snap = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
-    expect(snap.pullRequests[0].draft).toBe(false);
+    expect(snap.pullRequests[0]!.draft).toBe(false);
   });
 
   it('sends Authorization and API headers', async () => {
@@ -210,7 +210,7 @@ describe('fetchGithubSnapshot', () => {
 
     await fetchGithubSnapshot({ token: 'secret-token', fetch: fetchMock });
 
-    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
     const headers = init.headers as Record<string, string>;
     expect(headers.Authorization).toBe('Bearer secret-token');
     expect(headers.Accept).toBe('application/vnd.github+json');
@@ -255,7 +255,7 @@ describe('ACTIONS["create-issue"]', () => {
       ),
     );
 
-    const result = (await ACTIONS['create-issue']({
+    const result = (await ACTIONS['create-issue']!({
       token: 'tok',
       fetch: fetchMock,
       payload: { owner: 'o', repo: 'r', title: 'Hello', body: 'body text' },
@@ -263,7 +263,7 @@ describe('ACTIONS["create-issue"]', () => {
 
     expect(result).toEqual({ number: 42, url: 'https://github.com/o/r/issues/42', title: 'Hello' });
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.github.com/repos/o/r/issues');
     expect((init as RequestInit).method).toBe('POST');
     const headers = (init as RequestInit).headers as Record<string, string>;
@@ -277,7 +277,7 @@ describe('ACTIONS["create-issue"]', () => {
   it('rejects when required fields are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-issue']({
+      ACTIONS['create-issue']!({
         token: 'tok',
         fetch: fetchMock,
         payload: { owner: 'o', repo: 'r' /* no title */ },
@@ -290,7 +290,7 @@ describe('ACTIONS["create-issue"]', () => {
   it('rejects when only owner is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-issue']({
+      ACTIONS['create-issue']!({
         token: 'tok',
         fetch: fetchMock,
         payload: { repo: 'r', title: 't' },
@@ -302,7 +302,7 @@ describe('ACTIONS["create-issue"]', () => {
   it('rejects when only repo is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-issue']({
+      ACTIONS['create-issue']!({
         token: 'tok',
         fetch: fetchMock,
         payload: { owner: 'o', title: 't' },
@@ -318,11 +318,11 @@ describe('ACTIONS["create-issue"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    await ACTIONS['create-issue']({
+    await ACTIONS['create-issue']!({
       token: 'tok',
       fetch: fetchMock,
       payload: { owner: 'o/x', repo: 'r y', title: 't' },
     });
-    expect(fetchMock.mock.calls[0][0]).toBe('https://api.github.com/repos/o%2Fx/r%20y/issues');
+    expect(fetchMock.mock.calls[0]![0]).toBe('https://api.github.com/repos/o%2Fx/r%20y/issues');
   });
 });

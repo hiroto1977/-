@@ -99,10 +99,10 @@ describe('fetchAtlassianSnapshot', () => {
     });
     const snap = await fetchAtlassianSnapshot({ token, fetch: fetchMock });
 
-    const [, init] = fetchMock.mock.calls[0];
+    const [, init] = fetchMock.mock.calls[0]!;
     const headers = (init as RequestInit).headers as Record<string, string>;
     expect(headers.Authorization).toMatch(/^Basic /);
-    const decoded = Buffer.from(headers.Authorization.replace('Basic ', ''), 'base64').toString();
+    const decoded = Buffer.from(headers.Authorization!.replace('Basic ', ''), 'base64').toString();
     expect(decoded).toBe('a@b.com:apitoken');
 
     expect(snap.sites[0]).toMatchObject({ url: 'https://x.atlassian.net' });
@@ -120,9 +120,9 @@ describe('fetchAtlassianSnapshot', () => {
       site: 'https://my-team.atlassian.net',
     });
     const snap = await fetchAtlassianSnapshot({ token, fetch: fetchMock });
-    expect(snap.sites[0].scopes).toEqual(['basic-auth']);
-    expect(snap.sites[0].cloudId).toBe('my-team.atlassian.net');
-    expect(snap.sites[0].name).toBe('my-team');
+    expect(snap.sites[0]!.scopes).toEqual(['basic-auth']);
+    expect(snap.sites[0]!.cloudId).toBe('my-team.atlassian.net');
+    expect(snap.sites[0]!.name).toBe('my-team');
   });
 });
 
@@ -138,7 +138,7 @@ describe('fetchAtlassianSnapshot edge cases', () => {
     });
     const snap = await fetchAtlassianSnapshot({ token, fetch: fetchMock });
     expect(snap.jiraProjects).toEqual([]);
-    expect(snap.sites[0].url).toBe('https://x.atlassian.net');
+    expect(snap.sites[0]!.url).toBe('https://x.atlassian.net');
   });
 });
 
@@ -154,7 +154,7 @@ describe('ACTIONS["create-issue"]', () => {
       jsonResponse({ id: '10001', key: 'KAN-42', self: 'https://x/issue/10001' }),
     );
 
-    const result = (await ACTIONS['create-issue']({
+    const result = (await ACTIONS['create-issue']!({
       token,
       fetch: fetchMock,
       payload: { projectKey: 'KAN', summary: 'Hello', description: 'body text' },
@@ -162,7 +162,7 @@ describe('ACTIONS["create-issue"]', () => {
 
     expect(result).toEqual({ key: 'KAN-42', url: 'https://x.atlassian.net/browse/KAN-42' });
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://x.atlassian.net/rest/api/3/issue');
     expect((init as RequestInit).method).toBe('POST');
     const body = JSON.parse((init as RequestInit).body as string);
@@ -178,12 +178,12 @@ describe('ACTIONS["create-issue"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: '1', key: 'KAN-1', self: '' }),
     );
-    await ACTIONS['create-issue']({
+    await ACTIONS['create-issue']!({
       token,
       fetch: fetchMock,
       payload: { projectKey: 'KAN', summary: 'x', issueType: 'Bug' },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.fields.issuetype.name).toBe('Bug');
     expect(body.fields.description).toBeUndefined();
   });
@@ -191,7 +191,7 @@ describe('ACTIONS["create-issue"]', () => {
   it('rejects when projectKey/summary are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-issue']({ token, fetch: fetchMock, payload: { projectKey: 'KAN' } }),
+      ACTIONS['create-issue']!({ token, fetch: fetchMock, payload: { projectKey: 'KAN' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });

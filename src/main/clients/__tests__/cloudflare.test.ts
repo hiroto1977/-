@@ -109,7 +109,7 @@ describe('fetchCloudflareSnapshot', () => {
       accountName: 'Personal',
       devModeRemainingSec: 0,
     });
-    expect(snap.zones[1].devModeRemainingSec).toBe(7200);
+    expect(snap.zones[1]!.devModeRemainingSec).toBe(7200);
 
     // Assert Bearer auth on both calls
     for (const call of fetchMock.mock.calls) {
@@ -146,7 +146,7 @@ describe('ACTIONS["create-dns-record"]', () => {
       ),
     );
 
-    const result = (await ACTIONS['create-dns-record']({
+    const result = (await ACTIONS['create-dns-record']!({
       token: 't',
       fetch: fetchMock,
       payload: {
@@ -158,7 +158,7 @@ describe('ACTIONS["create-dns-record"]', () => {
     })) as { id: string; type: string };
 
     expect(result.type).toBe('TXT');
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.cloudflare.com/client/v4/zones/zone-id/dns_records');
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.type).toBe('TXT');
@@ -172,12 +172,12 @@ describe('ACTIONS["create-dns-record"]', () => {
       .mockResolvedValueOnce(
         jsonResponse(okWrap({ id: 'r2', name: 'api.example.com', type: 'A' })),
       );
-    await ACTIONS['create-dns-record']({
+    await ACTIONS['create-dns-record']!({
       token: 't',
       fetch: fetchMock,
       payload: { zoneId: 'z', type: 'A', name: 'api', content: '192.0.2.1', proxied: true },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.proxied).toBe(true);
   });
 
@@ -185,12 +185,12 @@ describe('ACTIONS["create-dns-record"]', () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'r3', name: 'x', type: 'A' })));
-    await ACTIONS['create-dns-record']({
+    await ACTIONS['create-dns-record']!({
       token: 't',
       fetch: fetchMock,
       payload: { zoneId: 'zo ne/id', type: 'A', name: 'x', content: '1.2.3.4' },
     });
-    expect(fetchMock.mock.calls[0][0]).toBe(
+    expect(fetchMock.mock.calls[0]![0]).toBe(
       'https://api.cloudflare.com/client/v4/zones/zo%20ne%2Fid/dns_records',
     );
   });
@@ -198,7 +198,7 @@ describe('ACTIONS["create-dns-record"]', () => {
   it('rejects when required fields are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-dns-record']({
+      ACTIONS['create-dns-record']!({
         token: 't',
         fetch: fetchMock,
         payload: { zoneId: 'z', type: 'A', name: 'x' },
@@ -212,7 +212,7 @@ describe('ACTIONS["create-dns-record"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse(failWrap('DNS record already exists')));
     await expect(
-      ACTIONS['create-dns-record']({
+      ACTIONS['create-dns-record']!({
         token: 't',
         fetch: fetchMock,
         payload: { zoneId: 'z', type: 'A', name: 'x', content: '1.2.3.4' },
@@ -227,14 +227,14 @@ describe('ACTIONS["purge-cache"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'job-1' })));
 
-    const result = (await ACTIONS['purge-cache']({
+    const result = (await ACTIONS['purge-cache']!({
       token: 't',
       fetch: fetchMock,
       payload: { zoneId: 'z', purgeEverything: true },
     })) as { id: string; purged: 'all' | number };
 
     expect(result).toEqual({ id: 'job-1', purged: 'all' });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body).toEqual({ purge_everything: true });
   });
 
@@ -243,21 +243,21 @@ describe('ACTIONS["purge-cache"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(jsonResponse(okWrap({ id: 'job-2' })));
 
-    const result = (await ACTIONS['purge-cache']({
+    const result = (await ACTIONS['purge-cache']!({
       token: 't',
       fetch: fetchMock,
       payload: { zoneId: 'z', files: ['https://example.com/a', 'https://example.com/b'] },
     })) as { purged: 'all' | number };
 
     expect(result.purged).toBe(2);
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.files).toEqual(['https://example.com/a', 'https://example.com/b']);
   });
 
   it('rejects when neither purgeEverything nor files[] is set', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['purge-cache']({ token: 't', fetch: fetchMock, payload: { zoneId: 'z' } }),
+      ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload: { zoneId: 'z' } }),
     ).rejects.toThrow(/purgeEverything|files/);
     expect(fetchMock).not.toHaveBeenCalled();
   });

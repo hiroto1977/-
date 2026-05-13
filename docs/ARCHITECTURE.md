@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 141 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 143 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -27,7 +27,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 141 | 自己検証 |
+| `file:line` 参照数 | 143 | 自己検証 |
 
 ### 統合フロー図
 
@@ -106,7 +106,22 @@ flowchart LR
 
 ## 1. 信頼境界とプロセス
 
-### 1.1 三プロセス構成
+### 1.1 TypeScript 設定
+
+両 tsconfig (`tsconfig.app.json`, `tsconfig.node.json`) で **5 つの strict 設定**を有効化:
+
+| 設定 | 効果 |
+|---|---|
+| `strict: true` | strictNullChecks, noImplicitAny, strictFunctionTypes 等を一括有効化 |
+| `noUncheckedIndexedAccess: true` | 配列/オブジェクトの index access が `T \| undefined` を返す。すべての `arr[i]` で null チェックが必要 |
+| `noImplicitOverride: true` | サブクラスの override に明示的な `override` キーワードを要求 |
+| `noUnusedLocals`, `noUnusedParameters` | (app config) 未使用変数 / 引数を error |
+| `noFallthroughCasesInSwitch` | switch case の fall-through を error |
+
+`noUncheckedIndexedAccess` の導入で本番コードに 5 件の **本物の null safety バグ** が見つかった
+(skills/atlassian/ollama/emotions/main.ts) → 即時修正済み。
+
+### 1.2 三プロセス構成
 
 | プロセス | 権限 | 主責任 | 設定箇所 |
 |---|---|---|---|
@@ -119,7 +134,7 @@ flowchart LR
 loading 中なら refresh ボタンを disable する設計)。クライアント自体は `Promise.all` で
 内部の per-message 取得を並列化 (例: gmail の各 message GET)。
 
-### 1.2 Content Security Policy (verbatim — `src/renderer/index.html:29`)
+### 1.3 Content Security Policy (verbatim — `src/renderer/index.html:29`)
 
 ```
 default-src 'self';
@@ -135,7 +150,7 @@ form-action 'none';
 
 `localhost:5173` は dev mode Vite HMR 専用。production renderer の外向き HTTP は **ゼロ**。
 
-### 1.3 IPC 契約 (9 チャンネル)
+### 1.4 IPC 契約 (9 チャンネル)
 
 `src/preload/preload.ts:6-16` で型定義、`src/main/main.ts:99-224` で実装:
 
@@ -151,7 +166,7 @@ form-action 'none';
 | `oauth:isSupported` | `serviceId` | `boolean` | `isServiceId` | — |
 | `oauth:authorize` | `serviceId` | `OAuthResult` | `isServiceId` + `config.clientId` 必須 | `not_supported \| authorize_failed` |
 
-### 1.4 Result 型 (`src/preload/preload.ts:6-16`)
+### 1.5 Result 型 (`src/preload/preload.ts:6-16`)
 
 ```typescript
 type FetchResult<T> =
@@ -757,7 +772,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 141 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 143 file:line 参照 + 5 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -793,7 +808,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 141 file:line references + 5 metrics  ✅
+# → Verified 143 file:line references + 5 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

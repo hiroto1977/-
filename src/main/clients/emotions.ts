@@ -160,7 +160,7 @@ Each score is between 0.0 and 1.0. They do not need to sum to 1.`;
 /** Strip ```json fences if the model added them. */
 export function extractJson(text: string): string {
   const fence = text.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
-  if (fence) return fence[1].trim();
+  if (fence && fence[1] != null) return fence[1].trim();
   return text.trim();
 }
 

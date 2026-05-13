@@ -257,7 +257,7 @@ describe('ACTIONS["chat"]', () => {
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
-    const result = (await ACTIONS['chat']({
+    const result = (await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
@@ -266,7 +266,7 @@ describe('ACTIONS["chat"]', () => {
     expect(result.reply).toBe('hello back');
     expect(result.durationMs).toBe(1234);
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('http://127.0.0.1:11434/api/chat');
     expect((init as RequestInit).method).toBe('POST');
     const body = JSON.parse((init as RequestInit).body as string);
@@ -278,7 +278,7 @@ describe('ACTIONS["chat"]', () => {
   it('rejects an unsafe model name BEFORE any network call', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: '../../etc/passwd', prompt: 'hi' },
@@ -294,7 +294,7 @@ describe('ACTIONS["chat"]', () => {
     // different errors downstream), so we pin the message.
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { model: 'llama3' } }),
+      ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3' } }),
     ).rejects.toThrow(/model and prompt are required/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -302,7 +302,7 @@ describe('ACTIONS["chat"]', () => {
   it('rejects with the same specific message when model is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['chat']({ token: '', fetch: fetchMock, payload: { prompt: 'hi' } }),
+      ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { prompt: 'hi' } }),
     ).rejects.toThrow(/model and prompt are required/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -315,12 +315,12 @@ describe('ACTIONS["chat"]', () => {
       ),
     );
     const longPrompt = 'A'.repeat(50_000);
-    await ACTIONS['chat']({
+    await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: longPrompt },
     });
-    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
     const body = JSON.parse(init.body as string);
     expect(body.messages[0].content.length).toBe(32768);
   });
@@ -332,12 +332,12 @@ describe('ACTIONS["chat"]', () => {
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
-    await ACTIONS['chat']({
+    await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi', system: 'be brief' },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.messages[0]).toEqual({ role: 'system', content: 'be brief' });
     expect(body.messages[1]).toEqual({ role: 'user', content: 'hi' });
   });
@@ -350,7 +350,7 @@ describe('ACTIONS["chat"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response('model not found', { status: 404 }));
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'unknown-model', prompt: 'hi' },
@@ -369,7 +369,7 @@ describe('ACTIONS["chat"]', () => {
       }),
     );
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'llama3.2', prompt: 'hi' },
@@ -384,7 +384,7 @@ describe('ACTIONS["chat"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['chat']({
+    const result = (await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
@@ -399,7 +399,7 @@ describe('ACTIONS["chat"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['chat']({
+    const result = (await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
@@ -412,7 +412,7 @@ describe('ACTIONS["chat"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response('not json at all', { status: 200 }));
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'llama3.2', prompt: 'hi' },
@@ -427,7 +427,7 @@ describe('ACTIONS["chat"]', () => {
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
-    await ACTIONS['chat']({
+    await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
@@ -498,7 +498,7 @@ describe('chat — null byte defense', () => {
   it('rejects a prompt containing \\0 before any network call', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'llama3.2', prompt: 'hello\0world' },
@@ -510,7 +510,7 @@ describe('chat — null byte defense', () => {
   it('rejects a system prompt containing \\0', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['chat']({
+      ACTIONS['chat']!({
         token: '',
         fetch: fetchMock,
         payload: { model: 'llama3.2', prompt: 'hi', system: 'be brief\0' },
@@ -526,12 +526,12 @@ describe('chat — null byte defense', () => {
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
-    await ACTIONS['chat']({
+    await ACTIONS['chat']!({
       token: '',
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'line1\nline2\tcol' },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.messages[0].content).toBe('line1\nline2\tcol');
   });
 });

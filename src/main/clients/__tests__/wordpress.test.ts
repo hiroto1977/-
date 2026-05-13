@@ -89,7 +89,7 @@ describe('isPaidPlan edge cases (via fetchWordPressSnapshot)', () => {
       }),
     );
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0].paidPlan).toBe(false);
+    expect(snap.sites[0]!.paidPlan).toBe(false);
   });
 
   it('treats a plan with "premium_free_trial" as free (slug contains "free")', async () => {
@@ -109,7 +109,7 @@ describe('isPaidPlan edge cases (via fetchWordPressSnapshot)', () => {
       }),
     );
     const snap = await fetchWordPressSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.sites[0].paidPlan).toBe(false);
+    expect(snap.sites[0]!.paidPlan).toBe(false);
   });
 });
 
@@ -119,14 +119,14 @@ describe('ACTIONS["create-post-draft"]', () => {
       jsonResponse({ ID: 5, URL: 'https://blog/?p=5', title: 'Hi', status: 'draft' }),
     );
 
-    const result = (await ACTIONS['create-post-draft']({
+    const result = (await ACTIONS['create-post-draft']!({
       token: 'tok',
       fetch: fetchMock,
       payload: { siteId: '123', title: 'Hi', content: 'hello' },
     })) as { id: number; url: string; title: string };
 
     expect(result).toEqual({ id: 5, url: 'https://blog/?p=5', title: 'Hi' });
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://public-api.wordpress.com/rest/v1.1/sites/123/posts/new');
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.status).toBe('draft');
@@ -138,12 +138,12 @@ describe('ACTIONS["create-post-draft"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ ID: 1, URL: '', title: 'x', status: 'draft' }),
     );
-    await ACTIONS['create-post-draft']({
+    await ACTIONS['create-post-draft']!({
       token: 't',
       fetch: fetchMock,
       payload: { siteId: 'foo.example/path', title: 'x' },
     });
-    expect(fetchMock.mock.calls[0][0]).toBe(
+    expect(fetchMock.mock.calls[0]![0]).toBe(
       'https://public-api.wordpress.com/rest/v1.1/sites/foo.example%2Fpath/posts/new',
     );
   });
@@ -151,7 +151,7 @@ describe('ACTIONS["create-post-draft"]', () => {
   it('rejects when siteId/title are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-post-draft']({ token: 't', fetch: fetchMock, payload: { siteId: '1' } }),
+      ACTIONS['create-post-draft']!({ token: 't', fetch: fetchMock, payload: { siteId: '1' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });

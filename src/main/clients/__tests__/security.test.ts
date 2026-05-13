@@ -186,14 +186,14 @@ describe('ACTIONS["check-email-breach"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response('', { status: 404 }));
 
-    const result = (await ACTIONS['check-email-breach']({
+    const result = (await ACTIONS['check-email-breach']!({
       token: goodToken,
       fetch: fetchMock,
       payload: { email: 'a@b.com' },
     })) as { email: string; breaches: unknown[] };
 
     expect(result).toEqual({ email: 'a@b.com', breaches: [] });
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toContain('haveibeenpwned.com/api/v3/breachedaccount/');
     expect(url).toContain(encodeURIComponent('a@b.com'));
     expect((init as RequestInit).headers).toMatchObject({ 'hibp-api-key': 'hibp-key' });
@@ -212,7 +212,7 @@ describe('ACTIONS["check-email-breach"]', () => {
       ]),
     );
 
-    const result = (await ACTIONS['check-email-breach']({
+    const result = (await ACTIONS['check-email-breach']!({
       token: goodToken,
       fetch: fetchMock,
       payload: { email: 'a@b.com' },
@@ -227,7 +227,7 @@ describe('ACTIONS["check-email-breach"]', () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response('rate limit', { status: 429 }));
     await expect(
-      ACTIONS['check-email-breach']({
+      ACTIONS['check-email-breach']!({
         token: goodToken,
         fetch: fetchMock,
         payload: { email: 'a@b.com' },
@@ -238,7 +238,7 @@ describe('ACTIONS["check-email-breach"]', () => {
   it('refuses to run without an HIBP key', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['check-email-breach']({
+      ACTIONS['check-email-breach']!({
         token: '',
         fetch: fetchMock,
         payload: { email: 'a@b.com' },
@@ -250,7 +250,7 @@ describe('ACTIONS["check-email-breach"]', () => {
   it('rejects when email is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['check-email-breach']({ token: goodToken, fetch: fetchMock, payload: {} }),
+      ACTIONS['check-email-breach']!({ token: goodToken, fetch: fetchMock, payload: {} }),
     ).rejects.toThrow(/email/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -262,7 +262,7 @@ describe('ACTIONS["check-email-breach"]', () => {
       .mockResolvedValueOnce(new Response(longBody, { status: 500 }));
     let caught: Error | undefined;
     try {
-      await ACTIONS['check-email-breach']({
+      await ACTIONS['check-email-breach']!({
         token: JSON.stringify({ hibp: 'k' }),
         fetch: fetchMock,
         payload: { email: 'a@b.com' },
@@ -294,12 +294,12 @@ describe('ACTIONS["scan-url"]', () => {
           },
         }),
       );
-    await ACTIONS['scan-url']({
+    await ACTIONS['scan-url']!({
       token: JSON.stringify({ vt: 'k' }),
       fetch: fetchMock,
       payload: { url: 'https://example.com/path?q=1&r=2' },
     });
-    const submitBody = (fetchMock.mock.calls[0][1] as RequestInit).body as string;
+    const submitBody = (fetchMock.mock.calls[0]![1] as RequestInit).body as string;
     expect(typeof submitBody).toBe('string');
     expect(submitBody).toBe('url=https%3A%2F%2Fexample.com%2Fpath%3Fq%3D1%26r%3D2');
   });
@@ -321,7 +321,7 @@ describe('ACTIONS["scan-url"]', () => {
         }),
       );
 
-    const result = (await ACTIONS['scan-url']({
+    const result = (await ACTIONS['scan-url']!({
       token: goodToken,
       fetch: fetchMock,
       payload: { url: 'https://example.com/x' },
@@ -331,7 +331,7 @@ describe('ACTIONS["scan-url"]', () => {
     expect(result.total).toBe(70);
     expect(result.reportUrl).toContain('virustotal.com/gui/url/');
 
-    const [submitUrl, submitInit] = fetchMock.mock.calls[0];
+    const [submitUrl, submitInit] = fetchMock.mock.calls[0]!;
     expect(submitUrl).toBe('https://www.virustotal.com/api/v3/urls');
     expect((submitInit as RequestInit).method).toBe('POST');
     expect((submitInit as RequestInit).headers).toMatchObject({ 'x-apikey': 'vt-key' });
@@ -340,7 +340,7 @@ describe('ACTIONS["scan-url"]', () => {
   it('refuses to run without a VT key', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['scan-url']({
+      ACTIONS['scan-url']!({
         token: JSON.stringify({ hibp: 'k' }),
         fetch: fetchMock,
         payload: { url: 'https://x' },
@@ -352,7 +352,7 @@ describe('ACTIONS["scan-url"]', () => {
   it('rejects when url is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['scan-url']({ token: goodToken, fetch: fetchMock, payload: {} }),
+      ACTIONS['scan-url']!({ token: goodToken, fetch: fetchMock, payload: {} }),
     ).rejects.toThrow(/url/);
     expect(fetchMock).not.toHaveBeenCalled();
   });

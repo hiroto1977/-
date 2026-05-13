@@ -71,7 +71,7 @@ export function isSafeModelName(name: string): boolean {
  *  Handles "0.1.46", "0.5.0", "0.1.46-rc1" (trailing tag ignored). */
 export function compareVersions(a: string, b: string): number {
   const parse = (v: string): number[] => {
-    const clean = v.split('-')[0].split('+')[0];
+    const clean = v.split('-')[0]?.split('+')[0] ?? '';
     return clean.split('.').map((x) => {
       const n = Number(x);
       return Number.isFinite(n) ? n : 0;

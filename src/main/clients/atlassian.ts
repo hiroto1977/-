@@ -73,7 +73,7 @@ export async function fetchAtlassianSnapshot(ctx: FetchContext): Promise<Atlassi
     sites: [
       {
         cloudId: host,
-        name: host.split('.')[0],
+        name: host.split('.')[0] ?? host,
         url: creds.site,
         scopes: ['basic-auth'],
       },

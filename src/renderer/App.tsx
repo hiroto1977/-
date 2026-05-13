@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { SERVICES, type ServiceId } from './services';
 
 export function App() {
-  const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0].id);
+  const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
   const [version, setVersion] = useState<string>('');
 
   useEffect(() => {

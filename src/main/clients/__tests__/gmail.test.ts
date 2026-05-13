@@ -143,7 +143,7 @@ describe('ACTIONS["create-draft"] — header injection defense', () => {
   it('refuses to send when `to` contains CRLF (no network call)', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-draft']({
+      ACTIONS['create-draft']!({
         token: 't',
         fetch: fetchMock,
         payload: { to: 'a@b.com\r\nBcc: attacker@evil.com', subject: 'hi', body: 'hello' },
@@ -160,7 +160,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
     // mutation slips through because the call would still throw — just
     // from buffer-encoding undefined later.
     await expect(
-      ACTIONS['create-draft']({
+      ACTIONS['create-draft']!({
         token: 't',
         fetch: fetchMock,
         payload: { to: 'x@y.com' /* no subject */ },
@@ -172,7 +172,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
   it('rejects symmetrically when only "to" is missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-draft']({
+      ACTIONS['create-draft']!({
         token: 't',
         fetch: fetchMock,
         payload: { subject: 'hi' /* no to */ },
@@ -191,8 +191,8 @@ describe('fetchGmailSnapshot mutation-killing tests', () => {
         jsonResponse({ id: 'm', threadId: 't', internalDate: '0' /* no payload */ }),
       );
     const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
-    expect(snap.threads[0].sender).toBe('');
-    expect(snap.threads[0].subject).toBe('(件名なし)');
+    expect(snap.threads[0]!.sender).toBe('');
+    expect(snap.threads[0]!.subject).toBe('(件名なし)');
   });
 
   it('formats internalDate as YYYY-MM-DD (not a raw number or full ISO string)', async () => {
@@ -210,8 +210,8 @@ describe('fetchGmailSnapshot mutation-killing tests', () => {
     const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
     // Asserts the .slice(0, 10) actually happened — kills a mutation that
     // drops .toISOString() or returns the raw number.
-    expect(snap.threads[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(snap.threads[0].date.length).toBe(10);
+    expect(snap.threads[0]!.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(snap.threads[0]!.date.length).toBe(10);
   });
 });
 
@@ -221,7 +221,7 @@ describe('ACTIONS["create-draft"]', () => {
       jsonResponse({ id: 'd1', message: { id: 'm1', threadId: 't1' } }),
     );
 
-    const result = (await ACTIONS['create-draft']({
+    const result = (await ACTIONS['create-draft']!({
       token: 'ya29.x',
       fetch: fetchMock,
       payload: { to: 'a@b.com', subject: 'Hello', body: 'hi' },
@@ -229,7 +229,7 @@ describe('ACTIONS["create-draft"]', () => {
 
     expect(result).toEqual({ id: 'd1', messageId: 'm1' });
 
-    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
     // Authorization + Content-Type both present — kills the
     // `headers: {}` ObjectLiteral mutation on line 116.
     const headers = init.headers as Record<string, string>;
@@ -250,7 +250,7 @@ describe('ACTIONS["create-draft"]', () => {
   it('rejects when to/subject are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['create-draft']({ token: 't', fetch: fetchMock, payload: { to: 'x@y.com' } }),
+      ACTIONS['create-draft']!({ token: 't', fetch: fetchMock, payload: { to: 'x@y.com' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });

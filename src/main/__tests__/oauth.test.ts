@@ -248,7 +248,7 @@ describe('refresh', () => {
     expect(result.refreshToken).toBe('rt');
     expect(result.expiresAt).toBeGreaterThan(Date.now() + 3500 * 1000);
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe(CFG.tokenUrl);
     expect((init as RequestInit).method).toBe('POST');
     expect((init as RequestInit).headers).toMatchObject({

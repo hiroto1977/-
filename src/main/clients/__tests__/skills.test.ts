@@ -73,7 +73,7 @@ describe('scanSkills', () => {
       source: 'user',
       description: 'Reviews diffs for security issues.',
     });
-    expect(result[1].path).toContain('security-review/SKILL.md');
+    expect(result[1]!.path).toContain('security-review/SKILL.md');
   });
 
   it('skips directories that have no SKILL.md', async () => {
@@ -109,8 +109,8 @@ describe('scanSkills', () => {
       '---\nname: trimme\ndescription:    has spaces   \n---\n',
     );
     const result = await scanSkills(tmpDir, 'user');
-    expect(result[0].name).toBe('trimme');
-    expect(result[0].description).toBe('has spaces');
+    expect(result[0]!.name).toBe('trimme');
+    expect(result[0]!.description).toBe('has spaces');
   });
 
   it('falls back to (無題) when the title rich_text array contains only empty plain_text', async () => {
@@ -129,8 +129,8 @@ describe('scanSkills', () => {
     // scanSkills falls back to fallbackName when fm.name is falsy/missing
     // (we use fm.name ?? fallbackName, but "" is not nullish).
     // So this confirms our trimmed empty-string is preserved as ''.
-    expect(result[0].name).toBe('');
-    expect(result[0].description).toBe('ok');
+    expect(result[0]!.name).toBe('');
+    expect(result[0]!.description).toBe('ok');
   });
 });
 
@@ -167,7 +167,7 @@ describe('ACTIONS["run-skill"]', () => {
       ),
     );
 
-    const result = (await ACTIONS['run-skill']({
+    const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-xxxxx',
       fetch: fetchMock,
       payload: { name: 'echo', prompt: 'ping' },
@@ -175,7 +175,7 @@ describe('ACTIONS["run-skill"]', () => {
 
     expect(result).toEqual({ text: 'pong', stopReason: 'end_turn' });
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.anthropic.com/v1/messages');
     const headers = (init as RequestInit).headers as Record<string, string>;
     expect(headers['x-api-key']).toBe('sk-ant-xxxxx');
@@ -190,7 +190,7 @@ describe('ACTIONS["run-skill"]', () => {
   it('throws when the requested skill does not exist', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['run-skill']({
+      ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
         payload: { name: 'nonexistent', prompt: 'hi' },
@@ -202,7 +202,7 @@ describe('ACTIONS["run-skill"]', () => {
   it('rejects when name/prompt are missing', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['run-skill']({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
+      ACTIONS['run-skill']!({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
     ).rejects.toThrow();
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -214,12 +214,12 @@ describe('ACTIONS["run-skill"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    await ACTIONS['run-skill']({
+    await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
       payload: { name: 'echo', prompt: 'p', maxTokens: 512 },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.max_tokens).toBe(512);
   });
 
@@ -230,7 +230,7 @@ describe('ACTIONS["run-skill"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['run-skill']({
+    const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
       payload: { name: 'echo', prompt: 'p' },
@@ -247,7 +247,7 @@ describe('ACTIONS["run-skill"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['run-skill']({
+    const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
       payload: { name: 'echo', prompt: 'p' },
@@ -332,7 +332,7 @@ describe('ACTIONS["run-skill"] — name validation', () => {
   it('refuses a traversal name BEFORE any filesystem read', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['run-skill']({
+      ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
         payload: { name: '../../etc/passwd', prompt: 'p' },
@@ -344,7 +344,7 @@ describe('ACTIONS["run-skill"] — name validation', () => {
   it('refuses an absolute path even if such a file exists', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['run-skill']({
+      ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
         payload: { name: '/etc/hostname', prompt: 'p' },
