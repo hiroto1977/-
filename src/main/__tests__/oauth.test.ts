@@ -270,6 +270,17 @@ describe('OAUTH_CONFIGS shape', () => {
       access_type: 'offline',
       prompt: 'consent',
     });
+    // clientId is a string (empty when GOOGLE_OAUTH_CLIENT_ID unset),
+    // never undefined. Kills the LogicalOperator mutation that turns
+    // `?? ''` into `&& ''` (which yields undefined for unset env).
+    expect(typeof cfg?.clientId).toBe('string');
+  });
+
+  it('every Google service exposes clientId as a string (kills `?? ""` → `&& ""` on line 61/68/78)', () => {
+    for (const svc of ['drive', 'calendar', 'gmail'] as const) {
+      const cfg = OAUTH_CONFIGS[svc];
+      expect(typeof cfg?.clientId).toBe('string');
+    }
   });
 
   it('calendar uses Google OAuth endpoints with both Calendar scopes', () => {
@@ -380,6 +391,27 @@ describe('refresh', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(refresh(CFG, { accessToken: 'a' }, fetchMock)).rejects.toThrow(/no refresh/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('uses the empty-string fallback when refresh res.text() rejects (kills `() => ""` → `() => undefined`)', async () => {
+    const erroringBody = new ReadableStream({
+      start(controller) {
+        controller.error(new Error('body read failed'));
+      },
+    });
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(erroringBody, { status: 500 }));
+    let caught: Error | undefined;
+    try {
+      await refresh(CFG, { accessToken: 'a', refreshToken: 'r' }, fetchMock);
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    // The () => '' fallback yields "Token refresh failed (500): ".
+    // The () => undefined mutant would throw TypeError (body.slice fails).
+    expect(caught!.message).toBe('Token refresh failed (500): ');
   });
 
   it('truncates a long error body to 200 chars (kills `body.slice(0, 200)` → `body`)', async () => {

@@ -53,6 +53,20 @@ description: first line
     expect(fm.name).toBe('after-tab');
   });
 
+  it('trims trailing whitespace from extracted name (kills `.trim` MethodExpression drop)', () => {
+    // Without .trim, the captured value would include trailing spaces:
+    // capture would be "name-with-trail   " instead of "name-with-trail".
+    const fm = parseFrontmatter('---\nname: name-with-trail   \ndescription: ok\n---\n');
+    expect(fm.name).toBe('name-with-trail');
+    expect(fm.name).not.toMatch(/ $/); // no trailing space leak
+  });
+
+  it('trims trailing whitespace from extracted description', () => {
+    const fm = parseFrontmatter('---\nname: x\ndescription: descr-with-trail   \n---\n');
+    expect(fm.description).toBe('descr-with-trail');
+    expect(fm.description).not.toMatch(/ $/);
+  });
+
   it('rejects "name:" outside frontmatter lines (kills `^` anchor drop)', () => {
     // Without ^ anchor, /name:\s*(.+)$/m could match "x name: smuggled"
     // in body text. With ^ anchor it must start at line start.
@@ -385,6 +399,26 @@ describe('ACTIONS["run-skill"] — name validation', () => {
         payload: { name: '../../etc/passwd', prompt: 'p' },
       }),
     ).rejects.toThrow(/unsafe name/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('truncates unsafe skill name to 32 chars in error (kills `name.slice(0, 32)` → `name`)', async () => {
+    const longUnsafe = 'a'.repeat(40) + ' bad-tail-with-secret-data';
+    const fetchMock = vi.fn<typeof fetch>();
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { name: longUnsafe, prompt: 'hi' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message).toMatch(/unsafe name/);
+    expect(caught!.message).not.toContain('bad-tail-with-secret-data');
+    expect(caught!.message).not.toContain('secret-data');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
