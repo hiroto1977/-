@@ -3,7 +3,7 @@ import http from 'node:http';
 
 // electron must be mocked BEFORE the oauth module is imported because
 // authorize() uses shell.openExternal at top-level import time.
-const openExternalMock = vi.fn(async () => true);
+const openExternalMock = vi.fn(async (_url: string) => true);
 vi.mock('electron', () => ({
   shell: { openExternal: (url: string) => openExternalMock(url) },
 }));
