@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 167 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 170 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -28,7 +28,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | Stryker break threshold | **90%** (CI fails below) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 167 | 自己検証 |
+| `file:line` 参照数 | 170 | 自己検証 |
 
 ### 統合フロー図
 
@@ -713,7 +713,67 @@ ratchet 値 `break: 85` は **これ以上下げない** (上げるのみ)。各
 2. block-form コメントで suppress、レビュアーが registry に追加
 3. **解除条件が満たされたら自動で suppress 解除** (将来コードに条件チェックを足す案あり)
 
-### 5.3 テスト分布 (total 387, mutation total 87.11 / covered 88.89)
+### 5.3 ROI maximization (Phase 5)
+
+精度が 90%+ に乗ると **kill 単価が急増** する (diminishing returns)。Phase 5 は
+**「次に何を kill すべきか」を機械が決める** ことで dev 時間 ROI を最大化:
+
+```mermaid
+flowchart TB
+  REPORT["reports/mutation/mutation.json<br/>(stryker output)"]
+  SCORE["ROI scoring<br/>(impact × 1/coverage + file-bonus) / cost"]
+  TOP["Top-N ranked targets<br/>(markdown, PR-pasteable)"]
+  PATTERN["Per-mutator pattern hint<br/>(test scaffold suggestion)"]
+  REPORT --> SCORE
+  SCORE --> TOP
+  SCORE --> PATTERN
+  TOP --> DEV["開発者: 上位から順に kill"]
+  PATTERN --> DEV
+  DEV --> REPORT
+```
+
+#### `npm run mutate:next` (`scripts/suggest-next-kill.cjs`)
+
+Stryker JSON レポートを読み、生存 mutant 全件に **ROI score** を付与:
+
+```
+ROI = (mutator-impact × 1/coveringTests + fileBonus) / killCost
+```
+
+- **mutator-impact**: ConditionalExpression/LogicalOperator (10) > MethodExpression (7) >
+  Regex (5) > ObjectLiteral (4) > ArrayDeclaration (3) > StringLiteral (2)
+  — 振る舞いを支配する mutator ほど高い
+- **1/coveringTests**: 既存 test が少ない mutant ほど焦点を絞った kill test を書きやすい
+- **fileBonus**: スコア最低 1/3 のファイルに +3、中位 +1 — floor を上げる kill を優先
+- **killCost**: behavior mutator (新規 test 必要) は 2、StringLiteral 等 (assertion 追加のみ) は 1
+
+#### Output (例)
+
+```bash
+$ npm run mutate:next -- --top=5
+| # | ROI | File:line | Mutator | Suggested pattern |
+|--:|----:|-----------|---------|-------------------|
+| 1 | 7.00 | oauth.ts:278 | ObjectLiteral → `{}` | Assert specific properties... |
+| 2 | 5.00 | ollama.ts:322 | StringLiteral → `""` | Assert exact string value with .toBe... |
+...
+```
+
+各エントリには **per-mutator test pattern hint** が付き、開発者が「どんなテストを書けばよいか」を即座に理解できる。
+
+#### ROI 評価メカニズム全体像
+
+| Phase | 仕組み | 目的 |
+|---|---|---|
+| Phase 1-3 | Pure helper extract → integration test → E2E | 構造的 testability 確保 |
+| **Phase 4** | **Stryker break ratchet (90%) + equivalent registry** | **regression-proof で precision を永続化** |
+| **Phase 5** | **`mutate:next` が ROI ranked target を提示** | **dev 時間あたりの精度向上を最大化** |
+
+**API 接続契約は別途 Phase 6 で deferred** — `suggest-next-kill.cjs` 自身は完全にローカル
+分析 (mutation.json を読むのみ)、外部 API 呼び出しなし。将来的に CI からの自動 PR 起票
+(GitHub API 経由で「kill これ」の issue 自動作成) を導入する場合の差し込み口は
+`scripts/suggest-next-kill.cjs` の出力 (markdown) を消費する形で後付けする。
+
+### 5.5 テスト分布 (total 415, mutation total 90.41 / covered 91.81)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
@@ -747,7 +807,7 @@ ratchet 値 `break: 85` は **これ以上下げない** (上げるのみ)。各
 
 Stryker scope (`stryker.config.json:5-15`) は **9 ファイル**。
 
-### 5.4 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
+### 5.6 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
 
 | 対象 | 不変条件 | 試行数 |
 |---|---|---:|
@@ -908,7 +968,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 167 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 5 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
@@ -944,7 +1004,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 167 file:line references + 5 metrics  ✅
+# → Verified 170 file:line references + 5 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

@@ -56,6 +56,7 @@ const SEARCH_DIRS = [
   'src/renderer/hooks',
   'src/renderer/components',
   'src/renderer/pages',
+  'scripts',
 ];
 
 function resolveRef(file) {
