@@ -351,6 +351,80 @@ describe('fetchSecuritySnapshot', () => {
   });
 });
 
+describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLiteral mutants)', () => {
+  it('hits exactly the HIBP URL with encoded email + truncateResponse=false', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse([{ Name: 'X', Title: 'X', BreachDate: '2024-01-01', PwnCount: 1, DataClasses: [] }]));
+    await ACTIONS['check-email-breach']!({
+      token: JSON.stringify({ hibp: 'k' }),
+      fetch: fetchMock,
+      payload: { email: 'a+b@c.example' },
+    });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe(
+      'https://haveibeenpwned.com/api/v3/breachedaccount/a%2Bb%40c.example?truncateResponse=false',
+    );
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers['hibp-api-key']).toBe('k');
+    expect(headers['User-Agent']).toBe('service-hub-desktop');
+    expect(headers.Accept).toBe('application/json');
+  });
+
+  it('throws `HIBP <status>: <body>` on non-2xx (kills the "HIBP " literal)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('rate limited', { status: 429 }));
+    let caught: FetchError | undefined;
+    try {
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (err) {
+      caught = err as FetchError;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message).toBe('HIBP 429: rate limited');
+    expect(caught!.serviceId).toBe('security');
+  });
+});
+
+describe('ACTIONS["scan-url"] — URL + header pinning (kills StringLiteral mutants)', () => {
+  it('uses exactly the VT POST + GET URLs and x-apikey header on both', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'url-id',
+            attributes: {
+              last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 },
+            },
+          },
+        }),
+      );
+    await ACTIONS['scan-url']!({
+      token: JSON.stringify({ vt: 'vt-key' }),
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/' },
+    });
+    const [submitUrl, submitInit] = fetchMock.mock.calls[0]!;
+    const [getUrl, getInit] = fetchMock.mock.calls[1]!;
+    expect(submitUrl).toBe('https://www.virustotal.com/api/v3/urls');
+    expect(getUrl).toBe(
+      'https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9leGFtcGxlLmNvbS8',
+    );
+    const sh = (submitInit as RequestInit).headers as Record<string, string>;
+    const gh = (getInit as RequestInit).headers as Record<string, string>;
+    expect(sh['x-apikey']).toBe('vt-key');
+    expect(sh['Content-Type']).toBe('application/x-www-form-urlencoded');
+    expect(gh['x-apikey']).toBe('vt-key');
+  });
+});
+
 describe('ACTIONS["check-email-breach"]', () => {
   const goodToken = JSON.stringify({ hibp: 'hibp-key' });
 
