@@ -394,6 +394,48 @@ describe('ACTIONS["run-skill"]', () => {
     expect(result.text).toBe('');
     expect(result.stopReason).toBe('end_turn');
   });
+
+  it('picks the text block when the response leads with a non-text block (kills `c.type === \'text\'` → `true`)', async () => {
+    // If the find predicate is mutated to `true`, find returns the FIRST
+    // element regardless of type, so we'd get '' (the leading
+    // tool_use block has no .text). The original predicate skips past
+    // the non-text leader.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          content: [
+            { type: 'tool_use', text: undefined },
+            { type: 'text', text: 'pong' },
+          ],
+          stop_reason: 'end_turn',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p' },
+    })) as { text: string };
+    expect(result.text).toBe('pong');
+  });
+
+  it('returns empty stopReason exactly when the response omits stop_reason (kills `?? "Stryker was here!"`)', async () => {
+    // Pins the right-hand side of `res.stop_reason ?? ''` to '' so the
+    // StringLiteral mutant on skills.ts:231 (→ "Stryker was here!") dies.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: 'hi' }] /* no stop_reason */ }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p' },
+    })) as { stopReason: string };
+    expect(result.stopReason).toBe('');
+  });
 });
 
 describe('parseFrontmatter — stripBalancedQuotes coverage', () => {

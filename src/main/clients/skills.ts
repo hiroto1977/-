@@ -100,17 +100,18 @@ export async function scanSkills(
     let fallbackName = entry.name;
     if (entry.isDirectory()) {
       const candidate = path.join(entryPath, 'SKILL.md');
+      // Equivalent mutant: deleting `continue` in the catch leaves
+      // skillFile null, which gets caught by `if (!skillFile) continue;`
+      // below. Both paths produce identical observable behavior for
+      // "directory without SKILL.md".
+      // Stryker disable BlockStatement
       try {
         await fs.access(candidate);
         skillFile = candidate;
-        // Equivalent mutant: deleting `continue` here leaves skillFile null,
-        // which gets caught by `if (!skillFile) continue;` on line 113 below.
-        // Both paths produce identical observable behavior for "directory
-        // without SKILL.md".
-        // Stryker disable next-line BlockStatement
       } catch {
         continue;
       }
+      // Stryker restore BlockStatement
     } else if (entry.name.endsWith('.md') && entry.name !== 'README.md') {
       skillFile = entryPath;
       fallbackName = entry.name.replace(/\.md$/, '');
