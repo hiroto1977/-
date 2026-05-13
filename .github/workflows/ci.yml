@@ -44,6 +44,9 @@ jobs:
       - name: Cross-doc fact consistency
         run: npm run lint:docs
 
+      - name: Lint test coverage discipline (every service + action has tests)
+        run: npm run lint:test-coverage
+
       - name: Test
         run: npm test
 

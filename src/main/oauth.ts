@@ -16,7 +16,7 @@
 import { shell } from 'electron';
 import http from 'node:http';
 import { AddressInfo } from 'node:net';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
 
 export interface OAuthConfig {
@@ -156,6 +156,18 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
 
 // --- side-effecting flows -----------------------------------------------
 
+/** Constant-time string comparison for the OAuth state token. The
+ *  practical risk from a non-constant-time `!==` is small (the state
+ *  lives for ≤ 5 minutes and we accept exactly one callback per flow),
+ *  but `timingSafeEqual` removes the theoretical CPU-time side channel
+ *  entirely. Returns false on length mismatch so the lengths themselves
+ *  don't leak via timing either. Closes P1-5 from docs/SECURITY_AUDIT.md. */
+export function safeStateEquals(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+}
+
 const CALLBACK_HTML = `<!doctype html><html><head><meta charset="utf-8"><title>Service Hub</title>
 <style>body{font-family:system-ui;background:#0f1117;color:#e6e8ee;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
 .box{text-align:center;padding:32px 48px;border:1px solid #232936;border-radius:12px;background:#161a22}
@@ -214,7 +226,7 @@ function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000): Promi
     } else if (!code || !state) {
       res.writeHead(400).end('missing code/state');
       reject(new Error('OAuth callback missing code or state'));
-    } else if (state !== expectedState) {
+    } else if (!safeStateEquals(state, expectedState)) {
       res.writeHead(400).end('state mismatch');
       reject(new Error('OAuth state mismatch (possible CSRF)'));
     } else {

@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 140 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 141 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -22,12 +22,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **300** | `npm test` |
+| ユニットテスト | **313** | `npm test` |
 | Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 140 | 自己検証 |
+| `file:line` 参照数 | 141 | 自己検証 |
 
 ### 統合フロー図
 
@@ -757,10 +757,11 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 140 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 141 file:line 参照 + 5 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
 | `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
+| `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
 
@@ -792,7 +793,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 140 file:line references + 5 metrics  ✅
+# → Verified 141 file:line references + 5 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

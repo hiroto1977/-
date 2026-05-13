@@ -36,6 +36,25 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
+// Runtime invariant: every SERVICE_ID must have a fetcher.
+// This trips at module load (= app start) if a new ID was added to
+// SERVICE_IDS but its fetcher was forgotten — surfaces the bug as a
+// loud, deterministic crash rather than an opaque "unknown service id"
+// at first user interaction.
+{
+  // Import lazily to avoid widening the circular-import surface.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { SERVICE_IDS } = require('../../shared/serviceId') as typeof import('../../shared/serviceId');
+  for (const id of SERVICE_IDS) {
+    if (!Object.hasOwn(LIVE_FETCHERS, id)) {
+      throw new Error(
+        `[clients] missing LIVE_FETCHERS entry for service "${id}". ` +
+          `Add it before shipping — SERVICE_IDS and LIVE_FETCHERS must be in sync.`,
+      );
+    }
+  }
+}
+
 /** Services whose snapshot fetcher reads local resources (filesystem,
  *  process state, etc.) and does not require any saved credentials. The
  *  IPC handler in main.ts still passes through any token the user has

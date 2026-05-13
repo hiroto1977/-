@@ -284,6 +284,28 @@ const METRICS = [
       return countOccurrences(m[1], /^\s*[a-z]+:\s*\{/gm);
     },
   },
+  {
+    name: 'unit test count',
+    docPattern: /ユニットテスト \| \*\*(\d+)\*\* /,
+    compute: () => {
+      // Count `it(` occurrences across all test files. Excludes
+      // commented-out tests (lines starting with //).
+      let total = 0;
+      const walk = (dir) => {
+        if (!fs.existsSync(dir)) return;
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+          const full = path.join(dir, e.name);
+          if (e.isDirectory()) walk(full);
+          else if (/\.test\.ts$/.test(e.name)) {
+            const text = readFileSafe(full);
+            total += [...text.matchAll(/^\s+it\(/gm)].length;
+          }
+        }
+      };
+      walk(path.join(REPO_ROOT, 'src'));
+      return total;
+    },
+  },
 ];
 
 function verifyMetrics(archText) {

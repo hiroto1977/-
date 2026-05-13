@@ -7,6 +7,7 @@ import {
   isOAuthSupported,
   OAUTH_CONFIGS,
   refresh,
+  safeStateEquals,
   tokenResponseToSet,
   type OAuthConfig,
 } from '../oauth';
@@ -113,6 +114,36 @@ describe('tokenResponseToSet', () => {
     const tokens = tokenResponseToSet({ access_token: 'at2' }, 'rt-previous');
     expect(tokens.refreshToken).toBe('rt-previous');
     expect(tokens.expiresAt).toBeUndefined();
+  });
+});
+
+describe('safeStateEquals', () => {
+  it('returns true for identical strings', () => {
+    expect(safeStateEquals('abc', 'abc')).toBe(true);
+    expect(safeStateEquals('', '')).toBe(true);
+  });
+
+  it('returns false for different strings of equal length', () => {
+    expect(safeStateEquals('abc', 'abd')).toBe(false);
+  });
+
+  it('returns false for different lengths (without leaking via timing)', () => {
+    // Returns false before calling timingSafeEqual, which would otherwise
+    // throw on length mismatch.
+    expect(safeStateEquals('abc', 'abcd')).toBe(false);
+    expect(safeStateEquals('abcd', 'abc')).toBe(false);
+  });
+
+  it('returns false for non-string inputs', () => {
+    expect(safeStateEquals(undefined as unknown as string, 'abc')).toBe(false);
+    expect(safeStateEquals('abc', null as unknown as string)).toBe(false);
+    expect(safeStateEquals(42 as unknown as string, 'abc')).toBe(false);
+  });
+
+  it('handles real 32-byte base64url state strings (43 chars)', () => {
+    const a = 'aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890ABCDEF1';
+    expect(safeStateEquals(a, a)).toBe(true);
+    expect(safeStateEquals(a, a.slice(0, -1) + 'X')).toBe(false);
   });
 });
 
