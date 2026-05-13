@@ -20,6 +20,10 @@
     "quality": "npm run typecheck && npm run test && npm run test:cov",
     "quality:report": "node scripts/quality-report.cjs",
     "verify:arch": "node scripts/verify-architecture.cjs",
+    "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
+    "lint:imports": "node scripts/check-import-boundaries.cjs",
+    "lint:docs": "node scripts/cross-doc-consistency.cjs",
+    "verify:all": "npm run verify:arch && npm run lint:forbidden && npm run lint:imports && npm run lint:docs",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "scaffold": "node scripts/scaffold-service.cjs"
   },

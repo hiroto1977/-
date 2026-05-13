@@ -32,8 +32,17 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Verify architecture doc references (file:line up-to-date)
+      - name: Verify architecture doc references + live metrics
         run: npm run verify:arch
+
+      - name: Lint forbidden patterns (no eval, dangerouslySetInnerHTML, etc.)
+        run: npm run lint:forbidden
+
+      - name: Check import boundaries (renderer/preload/main isolation)
+        run: npm run lint:imports
+
+      - name: Cross-doc fact consistency
+        run: npm run lint:docs
 
       - name: Test
         run: npm test

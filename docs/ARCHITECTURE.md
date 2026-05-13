@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 133 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 140 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -27,7 +27,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 133 | 自己検証 |
+| `file:line` 参照数 | 140 | 自己検証 |
 
 ### 統合フロー図
 
@@ -751,9 +751,18 @@ classDiagram
 | 14 | 新規 client は `LIVE_FETCHERS` / `SERVICES` 両方に登録 | scaffold script + `src/main/clients/index.ts:21-69` |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
-### 8.2 自己検証スクリプト (`scripts/verify-architecture.cjs`)
+### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)
 
-本ドキュメントの **133 個** の `file:line` 参照 + **5 個** のライブメトリクスを毎 push 自動検証:
+doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run verify:all` で一括実行。
+
+| Script | コマンド | 役割 |
+|---|---|---|
+| `scripts/verify-architecture.cjs` | `verify:arch` | 140 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
+| `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
+| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
+
+#### verify:arch (`scripts/verify-architecture.cjs`)
 
 1. **ファイル存在**: すべての ref のファイルが repo 内にある
 2. **行範囲**: 行番号がファイルサイズに収まる
@@ -761,14 +770,36 @@ classDiagram
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
 4. **ライブメトリクス**: doc の数値 (14 services, 9 IPC, ...) を **実コードから再計算** して一致確認
 
+#### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
+
+ランタイムソース 57 ファイルを **8 個の禁止パターン** で scan:
+`dangerouslySetInnerHTML` / `eval(` / `new Function` / `.innerHTML =` / `document.write` /
+`shell.openExternal` (main / oauth 以外) / `child_process exec|spawn` (scripts 以外) /
+`/api/(pull|create|push|copy|delete|blobs|upload)` (ollama.ts / renderer 以外)。
+1 件でも検出すれば fail。
+
+#### lint:imports (`scripts/check-import-boundaries.cjs`)
+
+`src/**/*.ts(x)` の 162 import 文を 3 ゾーン (renderer / preload / main) と shared / electron /
+node-builtin / npm に分類し、許可される transition のみ通す。`import type` は runtime
+coupling なしと判定して exempt。
+
+#### lint:docs (`scripts/cross-doc-consistency.cjs`)
+
+各 doc に登場する factual claim (service count / IPC handler count / OAuth count /
+service ID list) を **canonical source から計算** し、doc の記述と比較。doc 同士の
+矛盾 (片方が更新されもう片方が drift) を即時検出。
+
 ```bash
-npm run verify:arch
-# → Verified 145 file:line references in docs/ARCHITECTURE.md
-# → Verified 5 live metric(s): service=14, IPC=9, client=14, ref=145, OAuth=3
-# → ✅ all references + metrics resolve
+npm run verify:all
+# → Verified 140 file:line references + 5 metrics  ✅
+# → Scanned 57 files × 8 patterns                  ✅
+# → 162 imports across 52 files                    ✅
+# → 4 cross-doc facts                              ✅
 ```
 
-CI で typecheck 直後に走るため、コード移動で参照や数値が壊れると **即時 fail**。
+CI (`.github/workflows/ci.yml`) で typecheck → verify:arch → lint:forbidden →
+lint:imports → lint:docs → test の順で走り、いずれかが fail すれば PR がブロックされる。
 
 ---
 
