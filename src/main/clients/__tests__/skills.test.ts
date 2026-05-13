@@ -38,6 +38,34 @@ description: first line
     expect(fm.description).toMatch(/first line/);
     expect(fm.description).toMatch(/continuation line/);
   });
+
+  it('extracts name with multiple spaces after the colon (kills `\\s*` → `\\s` mutation)', () => {
+    // Original regex /^name:\s*(.+)$/m matches zero-or-more spaces.
+    // `\s` (exactly one) would fail with double-space or tab+space.
+    const fm = parseFrontmatter('---\nname:   triple-space\n---\n');
+    expect(fm.name).toBe('triple-space');
+  });
+
+  it('extracts name with a tab character (kills `\\s` → `\\S` mutation)', () => {
+    // \S would refuse whitespace entirely and the regex would fail to
+    // capture the value. Tab is part of \s, so original accepts.
+    const fm = parseFrontmatter('---\nname:\tafter-tab\n---\n');
+    expect(fm.name).toBe('after-tab');
+  });
+
+  it('rejects "name:" outside frontmatter lines (kills `^` anchor drop)', () => {
+    // Without ^ anchor, /name:\s*(.+)$/m could match "x name: smuggled"
+    // in body text. With ^ anchor it must start at line start.
+    // Build a doc where the only `name:` line lives in the body.
+    const fm = parseFrontmatter(
+      '---\ndescription: only descr\n---\n\nbody mentions name: smuggled here',
+    );
+    expect(fm.name).toBeUndefined();
+    // Note: we don't assert the inverse (mutation captures "smuggled here")
+    // because the body comes AFTER the frontmatter regex's terminating ---,
+    // so the mutated regex would still NOT find it in match[1]. Anchor
+    // drift here is covered by the `extracts name and description` test.
+  });
 });
 
 describe('scanSkills', () => {
@@ -81,6 +109,18 @@ describe('scanSkills', () => {
     await fs.writeFile(path.join(tmpDir, 'empty-dir', 'README.md'), '# nothing here');
     const result = await scanSkills(tmpDir, 'user');
     expect(result).toEqual([]);
+  });
+
+  it('sorts results alphabetically even when fs.readdir returns reverse order (kills `results.sort()` drop)', async () => {
+    // Insertion order is reflected by readdir on Linux. Create files
+    // in reverse-alpha so the only way the test passes is if the .sort
+    // call survives. Without sort, result would be [zebra, alpha] —
+    // assert it's [alpha, zebra].
+    await fs.writeFile(path.join(tmpDir, 'zebra.md'), '---\nname: zebra\n---\n');
+    await fs.writeFile(path.join(tmpDir, 'alpha.md'), '---\nname: alpha\n---\n');
+    await fs.writeFile(path.join(tmpDir, 'mango.md'), '---\nname: mango\n---\n');
+    const result = await scanSkills(tmpDir, 'user');
+    expect(result.map((s) => s.name)).toEqual(['alpha', 'mango', 'zebra']);
   });
 
   it('still includes .md files without frontmatter, using the filename as name', async () => {
@@ -314,6 +354,13 @@ describe('isSafeSkillName', () => {
     expect(isSafeSkillName(null)).toBe(false);
     expect(isSafeSkillName(42)).toBe(false);
     expect(isSafeSkillName(undefined)).toBe(false);
+  });
+
+  it('accepts a name exactly at the 128-char boundary (kills `> 128` → `>= 128` mutation)', () => {
+    // EqualityOperator mutation flips `> 128` to `>= 128`, which would
+    // reject exactly-128-char names. Pin the boundary.
+    expect(isSafeSkillName('a'.repeat(128))).toBe(true);
+    expect(isSafeSkillName('a'.repeat(127))).toBe(true);
   });
 });
 

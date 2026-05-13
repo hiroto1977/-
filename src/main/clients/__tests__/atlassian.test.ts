@@ -165,6 +165,14 @@ describe('ACTIONS["create-issue"]', () => {
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://x.atlassian.net/rest/api/3/issue');
     expect((init as RequestInit).method).toBe('POST');
+    // Pins Authorization + Accept + Content-Type headers all present
+    // (kills the `headers = {}` ObjectLiteral mutation on the createIssue
+    // request init). All three are required for Jira to accept the POST.
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers).toBeDefined();
+    expect(headers.Authorization).toMatch(/^Basic /);
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('application/json');
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.fields.project).toEqual({ key: 'KAN' });
     expect(body.fields.summary).toBe('Hello');

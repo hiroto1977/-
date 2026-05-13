@@ -377,6 +377,66 @@ describe('ACTIONS["chat"]', () => {
     ).rejects.toThrow(/response exceeded/);
   });
 
+  it('POSTs to /api/chat with Content-Type: application/json (kills `headers = {}` mutation)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    });
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
+    const headers = init.headers as Record<string, string>;
+    expect(headers).toBeDefined();
+    expect(headers['Content-Type']).toBe('application/json');
+  });
+
+  it('clamps an oversized system prompt to 8192 chars (kills `systemStr.slice(0, 8192)` → `systemStr`)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const longSystem = 'S'.repeat(20_000);
+    await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi', system: longSystem },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    // messages[0] is the system message (since `system` was provided).
+    expect(body.messages[0].role).toBe('system');
+    expect(body.messages[0].content.length).toBe(8192);
+  });
+
+  it('truncates unsafe model name to 32 chars in error (kills `model.slice(0, 32)` → `model`)', async () => {
+    // The error message should NOT include more than 32 chars of the
+    // attacker-supplied model name. Build a >32-char unsafe name that
+    // isSafeModelName actually rejects (contains a space — not in
+    // the allowed charset).
+    const longUnsafe = 'a'.repeat(40) + ' bad-tail-after-32-chars-with-secret';
+    let caught: Error | undefined;
+    try {
+      await ACTIONS['chat']!({
+        token: '',
+        fetch: vi.fn<typeof fetch>(),
+        payload: { model: longUnsafe, prompt: 'hi' },
+      });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeDefined();
+    expect(caught!.message).toMatch(/unsafe model name/);
+    // The tail past char 32 should NOT appear.
+    expect(caught!.message).not.toContain('bad-tail-after-32-chars-with-secret');
+    expect(caught!.message).not.toContain('secret');
+  });
+
   it('returns empty reply when message.content is missing (kills `?.content` drop)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(JSON.stringify({ message: { role: 'assistant' /* no content */ } }), {
