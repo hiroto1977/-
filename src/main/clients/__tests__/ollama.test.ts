@@ -113,6 +113,39 @@ describe('fetchOllamaSnapshot', () => {
     expect(snap.warnings.some((w) => /unreachable/i.test(w))).toBe(true);
   });
 
+  it('truncates the unreachable-error message to 100 chars (kills `msg.slice(0, 100)` → `msg`)', async () => {
+    const longErr = new Error('X'.repeat(500));
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(longErr);
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    const warn = snap.warnings.find((w) => /unreachable/.test(w))!;
+    // Prefix "Ollama unreachable at http://127.0.0.1:11434: " (44 chars)
+    // + 100 chars of X = 144. With mutation: 44 + 500 = 544.
+    expect(warn.length).toBeLessThan(200);
+    expect(warn).toMatch(/X{100}$/);
+    expect(warn).not.toContain('X'.repeat(101));
+  });
+
+  it('truncates the listing-models-failed message to 100 chars (kills `.message.slice(0, 100)` → `.message`)', async () => {
+    const longErr = 'Y'.repeat(500);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ version: '0.5.0' }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      )
+      // /api/tags returns 500 — the error is wrapped via the FetchError
+      // throw + outer try/catch path on line 217.
+      .mockResolvedValueOnce(new Response(longErr, { status: 500 }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    const warn = snap.warnings.find((w) => /Listing models failed/.test(w))!;
+    expect(warn.length).toBeLessThan(200);
+    // The error message from FetchError is "ollama 500: <body 200B>"
+    // (already truncated by jsonFetch), and we further slice it to 100.
+    expect(warn).toMatch(/Listing models failed:/);
+  });
+
   it('flags an outdated version as unsafe and adds a warning', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
