@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName } from '../skills';
+import { FetchError } from '../types';
 
 describe('parseFrontmatter', () => {
   it('extracts name and description', () => {
@@ -281,9 +282,13 @@ describe('ACTIONS["run-skill"]', () => {
 
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.anthropic.com/v1/messages');
+    // Pin request method + content-type so the StringLiteral mutants on
+    // skills.ts:210 (method → "") and :214 (content-type → "") die.
+    expect((init as RequestInit).method).toBe('POST');
     const headers = (init as RequestInit).headers as Record<string, string>;
     expect(headers['x-api-key']).toBe('sk-ant-xxxxx');
     expect(headers['anthropic-version']).toBe('2023-06-01');
+    expect(headers['content-type']).toBe('application/json');
 
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.system).toContain('Always reply with the same text');
@@ -323,6 +328,22 @@ describe('ACTIONS["run-skill"]', () => {
       }),
     ).rejects.toThrow(/^name and prompt are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('surfaces serviceId="skills" in the FetchError on HTTP failure', async () => {
+    // Kills StringLiteral mutant on skills.ts:223 (serviceId → "").
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('overloaded', { status: 529 }),
+    );
+    const err = await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('skills');
+    // jsonFetch builds the message as `${serviceId} ${status}: ...`.
+    expect((err as FetchError).message).toMatch(/^skills 529:/);
   });
 
   it('uses maxTokens override when provided (kills `?? 2048` mutation)', async () => {

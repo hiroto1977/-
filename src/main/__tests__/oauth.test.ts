@@ -366,6 +366,28 @@ describe('isOAuthSupported', () => {
       expect(isOAuthSupported('gmail')).toBe(false);
     }
   });
+
+  it('returns true for Google services when GOOGLE_OAUTH_CLIENT_ID is set (kills ConditionalExpression → false)', async () => {
+    // Module-level OAUTH_CONFIGS captures process.env at load time, so a
+    // fresh import with the env var set reads the truthy clientId. This
+    // exercises the TRUE branch — without it, mutating `Boolean(cfg && cfg.clientId)`
+    // to `false` would still pass every other test (they all check false).
+    const prev = process.env.GOOGLE_OAUTH_CLIENT_ID;
+    process.env.GOOGLE_OAUTH_CLIENT_ID = 'test-client-id-12345.apps.googleusercontent.com';
+    try {
+      vi.resetModules();
+      const fresh = (await import('../oauth')) as typeof import('../oauth');
+      expect(fresh.isOAuthSupported('drive')).toBe(true);
+      expect(fresh.isOAuthSupported('calendar')).toBe(true);
+      expect(fresh.isOAuthSupported('gmail')).toBe(true);
+      // Non-entry services still return false (cfg is undefined → falsy).
+      expect(fresh.isOAuthSupported('github')).toBe(false);
+    } finally {
+      if (prev === undefined) delete process.env.GOOGLE_OAUTH_CLIENT_ID;
+      else process.env.GOOGLE_OAUTH_CLIENT_ID = prev;
+      vi.resetModules();
+    }
+  });
 });
 
 describe('listenForCallback (integration — real HTTP server)', () => {
@@ -415,6 +437,10 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     );
     expect(res.status).toBe(200);
     expect(res.body).toContain('認証完了');
+    // Pin Content-Type on the success response so the ObjectLiteral
+    // (oauth.ts:311 → {}) and the inner StringLiteral mutants are killed.
+    // The exact value includes a charset so the browser doesn't sniff.
+    expect(res.contentType).toBe('text/html; charset=utf-8');
     const result = await listener;
     expect(result.code).toBe('actual-code');
     expect(result.state).toBe(STATE);

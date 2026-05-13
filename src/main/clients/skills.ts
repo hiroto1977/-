@@ -117,6 +117,10 @@ export async function scanSkills(
     }
     if (!skillFile) continue;
 
+    // Equivalent mutant on initializer: the value is either overwritten by
+    // readFile or skipped by `continue` in the catch — the initial '' is
+    // never observable.
+    // Stryker disable next-line StringLiteral
     let content = '';
     try {
       content = await fs.readFile(skillFile, 'utf8');

@@ -487,6 +487,9 @@ describe('ACTIONS["chat"]', () => {
     expect(caught).toBeInstanceOf(FetchError);
     expect(caught!.message).toMatch(/ollama 500: X{200}$/);
     expect(caught!.message.length).toBeLessThan(longErrorBody.length);
+    // Pin serviceId='ollama' on the chat-4xx FetchError
+    // (kills StringLiteral mutant on ollama.ts:318 3rd arg → "").
+    expect((caught as unknown as FetchError).serviceId).toBe('ollama');
   });
 
   it('falls back to empty body when chat res.text() rejects (kills `() => ""` → `() => undefined`)', async () => {
