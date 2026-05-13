@@ -284,11 +284,13 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   // Newlines and other whitespace are legitimate in chat input and are
   // kept; only \0 is refused.
   const promptStr = String(prompt);
-  // Stryker disable next-line ConditionalExpression: when `system` is
-  // null/undefined, the ternary returns ''; the mutant goes through
-  // String(undefined) = 'undefined'. Either way, the `if (system)`
-  // gate later excludes the system message from the request, so the
-  // string we never use here cannot affect behavior. Equivalent.
+  // Stryker disable next-line ConditionalExpression,StringLiteral: when
+  // `system` is null/undefined, the ternary returns ''; the
+  // ConditionalExpression mutant goes through String(undefined) =
+  // 'undefined', and the StringLiteral mutant on the '' branch gives
+  // "Stryker was here!" — either way, the `if (system)` gate later
+  // excludes the system message from the request, so the string we
+  // never use here cannot affect behavior. Equivalent.
   const systemStr = system == null ? '' : String(system);
   if (promptStr.includes('\0') || systemStr.includes('\0')) {
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');

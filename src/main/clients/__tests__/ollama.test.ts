@@ -41,6 +41,14 @@ describe('compareVersions', () => {
   it('treats non-numeric segments as 0', () => {
     expect(compareVersions('xxx', '0.0.0')).toBe(0);
   });
+  it('handles multi-digit majors numerically (kills `split(\'.\')` → `split(\'\')`)', () => {
+    // Without dot-splitting, '10.0.0' would be parsed char-by-char and
+    // compared incorrectly against '2.0.0' (10 > 2 numerically; '1' < '2'
+    // lexically). Pin numeric ordering.
+    expect(compareVersions('10.0.0', '2.0.0')).toBe(1);
+    expect(compareVersions('2.0.0', '10.0.0')).toBe(-1);
+    expect(compareVersions('1.10.0', '1.2.0')).toBe(1);
+  });
 });
 
 describe('isVersionSafe', () => {
@@ -111,6 +119,12 @@ describe('fetchOllamaSnapshot', () => {
     expect(snap.running).toBe(false);
     expect(snap.models).toEqual([]);
     expect(snap.warnings.some((w) => /unreachable/i.test(w))).toBe(true);
+    // Pin the initial values so ArrayDeclaration (line 189 → ["Stryker..."])
+    // and StringLiteral (line 190 → "Stryker was here!") mutants die.
+    // When the version probe fails, version stays at its initializer and
+    // warnings starts from its initializer.
+    expect(snap.version).toBe('');
+    expect(snap.warnings).not.toContain('Stryker was here');
   });
 
   it('truncates the unreachable-error message to 100 chars (kills `msg.slice(0, 100)` → `msg`)', async () => {
@@ -135,15 +149,18 @@ describe('fetchOllamaSnapshot', () => {
           headers: { 'content-type': 'application/json' },
         }),
       )
-      // /api/tags returns 500 — the error is wrapped via the FetchError
-      // throw + outer try/catch path on line 217.
-      .mockResolvedValueOnce(new Response(longErr, { status: 500 }));
+      // /api/tags rejects with a long error message — exercises the
+      // catch path on line 241 where the message gets sliced to 100.
+      // Network-level errors (here simulated by rejecting fetch) can
+      // legitimately produce long messages from runtimes like undici.
+      .mockRejectedValueOnce(new Error(longErr));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
     const warn = snap.warnings.find((w) => /Listing models failed/.test(w))!;
     expect(warn.length).toBeLessThan(200);
-    // The error message from FetchError is "ollama 500: <body 200B>"
-    // (already truncated by jsonFetch), and we further slice it to 100.
-    expect(warn).toMatch(/Listing models failed:/);
+    // The error message from the rejected fetch is 500 'Y' chars; with
+    // slice(0,100) the warning is ~122 chars, without it ~522.
+    expect(warn).toMatch(/Y{100}$/);
+    expect(warn).not.toContain('Y'.repeat(101));
   });
 
   it('flags an outdated version as unsafe and adds a warning', async () => {

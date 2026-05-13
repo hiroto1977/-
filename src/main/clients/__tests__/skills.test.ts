@@ -330,6 +330,33 @@ describe('ACTIONS["run-skill"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('resolves a flat-file skill at ~/.claude/skills/<name>.md (kills `${name}.md` template literal mutation)', async () => {
+    // Tests the SECOND candidate path in readSkillBody. The first
+    // candidate (~/.claude/skills/<name>/SKILL.md) doesn't exist for
+    // 'flat'; the fallback is exercised here. If the template literal
+    // were mutated to an empty backtick, path.join would resolve to the
+    // base skills directory (a directory, not a file) and readFile
+    // would fail — the test would throw.
+    await fs.writeFile(
+      path.join(tmpDir, '.claude', 'skills', 'flat.md'),
+      `---\nname: flat\ndescription: Flat skill.\n---\n\nflat body.`,
+    );
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: 'flat-ok' }] }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'flat', prompt: 'hi' },
+    })) as { text: string };
+    expect(result.text).toBe('flat-ok');
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.system).toContain('flat body');
+  });
+
   it('surfaces serviceId="skills" in the FetchError on HTTP failure', async () => {
     // Kills StringLiteral mutant on skills.ts:223 (serviceId → "").
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(

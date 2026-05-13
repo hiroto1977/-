@@ -62,6 +62,22 @@ describe('fetchGithubSnapshot', () => {
       base: 'main',
       htmlUrl: 'https://github.com/o/r/pull/7',
     });
+
+    // Pin the URLs the snapshot fetcher hits (kills StringLiteral mutants
+    // on github.ts:74 → "" for /user and :76 → "" for /search/issues).
+    const calls = fetchMock.mock.calls.map((c) => c[0]);
+    expect(calls[0]).toBe('https://api.github.com/user');
+    expect(calls[1]).toBe(
+      'https://api.github.com/search/issues?q=is:pr+author:@me+is:open&per_page=10&sort=updated',
+    );
+
+    // Pin the static request headers (kills StringLiteral mutants on
+    // github.ts:64 X-GitHub-Api-Version → "" and :65 User-Agent → "").
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
+    const hdrs = init.headers as Record<string, string>;
+    expect(hdrs['X-GitHub-Api-Version']).toBe('2022-11-28');
+    expect(hdrs['User-Agent']).toBe('service-hub-desktop');
+    expect(hdrs.Accept).toBe('application/vnd.github+json');
   });
 
   it('safely defaults head/base to "" when the PR detail omits them (kills `pr.head?.ref` → `pr.head.ref`)', async () => {
@@ -252,6 +268,10 @@ describe('fetchGithubSnapshot', () => {
     const err = await fetchGithubSnapshot({ token: 'bad', fetch: fetchMock }).catch((e) => e);
     expect(err).toBeInstanceOf(FetchError);
     expect((err as FetchError).status).toBe(401);
+    // Pin serviceId='github' on the snapshot path FetchError
+    // (kills StringLiteral mutant on github.ts:71 → "").
+    expect((err as FetchError).serviceId).toBe('github');
+    expect((err as FetchError).message).toMatch(/^github 401:/);
   });
 
   it('falls back gracefully when name/company are null', async () => {
