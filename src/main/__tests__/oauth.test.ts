@@ -527,6 +527,46 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     expect((result as Error).message).toMatch(/timed out after/);
   });
 
+  it('formats the timeout message as seconds (kills `/ 1000` → `* 1000` ArithmeticOperator)', async () => {
+    // Original: `Math.round(timeoutMs / 1000)`. For timeoutMs=50ms,
+    // 50/1000 = 0.05 → round → 0s. With `* 1000` mutation, 50*1000 = 50000s.
+    const listener = listenForCallback('s', 50);
+    const trapped = trap(listener);
+    const result = await trapped;
+    const msg = (result as Error).message;
+    expect(msg).toMatch(/timed out after 0s/);
+    expect(msg).not.toMatch(/50000s/);
+  });
+
+  it('returns 400 on EVERY stray request (kills strayCount increment direction and threshold)', async () => {
+    // After STRAY_LIMIT (50) strays, the server self-closes. The exact
+    // ordering of the "next request fails" assertion is racy, so test
+    // the strong invariant instead: every stray request gets the SAME
+    // 400 status (kills increment-direction and threshold equality
+    // mutations because if strayCount decremented or the threshold
+    // flipped, the counter would never reach STRAY_LIMIT and never
+    // affect behavior — but if it reached too early, some strays
+    // would be served by a closed socket and fail with ECONNREFUSED
+    // instead of 400).
+    const STATE = 'stray-counter-test';
+    const listener = listenForCallback(STATE);
+    const trapped = trap(listener);
+    const port = await listener.port();
+    const statuses: number[] = [];
+    // 49 strays — comfortably under STRAY_LIMIT=50 so all should return 400.
+    for (let i = 0; i < 49; i++) {
+      try {
+        const r = await fireGet(port, `/oauth/callback?state=wrong-${i}`);
+        statuses.push(r.status);
+      } catch {
+        statuses.push(0);
+      }
+    }
+    expect(statuses).toEqual(new Array(49).fill(400));
+    listener.cancel();
+    await trapped;
+  });
+
   it('cancel() rejects the listener and closes the server', async () => {
     const listener = listenForCallback('s');
     const trapped = trap(listener);

@@ -17,6 +17,84 @@ describe('parseAtlassianToken', () => {
     expect(creds.site).toBe('https://x.atlassian.net');
   });
 
+  // --- type validation kills (each typeof check) -----------------------
+
+  it('rejects non-string email (number / null / object)', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 123, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: null, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: { x: 1 }, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+  });
+
+  it('rejects non-string token', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 42, site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+  });
+
+  it('rejects non-string site', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: false }))).toThrow(/形式が不正/);
+  });
+
+  it('rejects empty email/token/site', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: '', token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: '', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: '' }))).toThrow(/形式が不正/);
+  });
+
+  // --- length cap kills (each MAX_X EqualityOperator) ------------------
+
+  it('accepts max-length email exactly at the 254-char boundary (kills `>` → `>=`)', () => {
+    // 254 char email: "a".repeat(243) + "@example.com" = 255 chars,
+    // tweak to exactly 254.
+    const email = 'a'.repeat(254 - '@b.com'.length) + '@b.com';
+    expect(email.length).toBe(254);
+    const creds = parseAtlassianToken(JSON.stringify({ email, token: 't', site: 'https://x.atlassian.net' }));
+    expect(creds.email).toBe(email);
+  });
+
+  it('rejects email > 254 chars', () => {
+    const email = 'a'.repeat(248) + '@b.com'; // 254
+    const longEmail = email + 'x'; // 255
+    expect(() => parseAtlassianToken(JSON.stringify({ email: longEmail, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+  });
+
+  it('rejects token > 1024 chars (kills MAX_TOKEN boundary)', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 'x'.repeat(1025), site: 'https://x.atlassian.net' }))).toThrow(/形式が不正/);
+  });
+
+  it('accepts token exactly at 1024 chars', () => {
+    const creds = parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 'x'.repeat(1024), site: 'https://x.atlassian.net' }));
+    expect(creds.token).toBe('x'.repeat(1024));
+  });
+
+  it('rejects site > 256 chars (kills MAX_SITE boundary)', () => {
+    const longSite = 'https://' + 'a'.repeat(245) + '.atlassian.net';
+    expect(longSite.length).toBeGreaterThan(256);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: longSite }))).toThrow(/形式が不正/);
+  });
+
+  // --- CR/LF/NUL refusal -----------------------------------------------
+
+  it('rejects CR/LF/NUL in email (kills the email branch of the `||`)', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com\r\n', token: 't', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+  });
+
+  it('rejects CR/LF/NUL in token (kills the token branch of the `||` → `&&` mutation)', () => {
+    // The LogicalOperator mutation flips || to &&. With &&, only BOTH
+    // having control chars triggers — token-only would slip through.
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't\n', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't\0', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+  });
+
+  // --- hostname allowlist ----------------------------------------------
+
+  it('rejects a non-atlassian.net hostname (kills the allowlist check)', () => {
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://attacker.example.com' }))).toThrow(/atlassian\.net/);
+  });
+
+  it('accepts only *.atlassian.net (subdomain required)', () => {
+    // Bare "atlassian.net" without subdomain: hostname.endsWith('.atlassian.net') is FALSE.
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b.com', token: 't', site: 'https://atlassian.net' }))).toThrow(/atlassian\.net/);
+  });
+
   it('throws FetchError for invalid JSON', () => {
     expect(() => parseAtlassianToken('not-json')).toThrow(FetchError);
   });
