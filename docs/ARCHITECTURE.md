@@ -22,10 +22,10 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 15 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **462** | `npm test` |
-| Mutation score (total) | **96.23%** | `docs/QUALITY.md` |
-| Mutation score (covered) | **97.95%** | `docs/QUALITY.md` |
-| Stryker break threshold | **95.5%** (CI fails below) | `stryker.config.json` |
+| ユニットテスト | **463** | `npm test` |
+| Mutation score (total) | **97.04%** | `docs/QUALITY.md` |
+| Mutation score (covered) | **98.79%** | `docs/QUALITY.md` |
+| Stryker break threshold | **96%** (CI fails below) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
 | `file:line` 参照数 | 170 | 自己検証 |
@@ -462,8 +462,8 @@ union を参照する。
 | slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
 | skills | `run-skill` | `{ name, prompt, model?, maxTokens? }` | **`isSafeSkillName(name)`** + path containment | `skills.ts:112-191` |
-| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:163-281` |
-| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:216-282` |
+| security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:178-299` |
+| security | `scan-url` | `{ url }` | base64url(url) → VT id | `security.ts:256-300` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl? }` | zoneId encodeURIComponent | `cloudflare.ts:127-207` |
 | cloudflare | `purge-cache` | `{ zoneId, files?: string[] }` | zoneId encodeURIComponent | `cloudflare.ts:172-208` |
 | emotions | `log-mood` | `{ text, mood, source? }` | text 32KB clamp | `emotions.ts:100-261` |

@@ -71,6 +71,10 @@ interface GmailCreateDraftResponse {
 // Encode a UTF-8 string to base64url (Gmail's raw message format).
 // Stryker disable Regex
 function base64url(input: string): string {
+  // Node 22's Buffer.from silently falls back to utf8 when the encoding
+  // string is unknown, so 'utf8' → '' is an equivalent mutant for the
+  // bytes our callers pass (always already valid UTF-8).
+  // Stryker disable next-line StringLiteral
   return Buffer.from(input, 'utf8')
     .toString('base64')
     .replace(/\+/g, '-')
@@ -94,6 +98,9 @@ export function buildRfc2822(to: string, subject: string, body: string): string 
   if (!isSafeHeaderValue(to)) {
     throw new Error('to contains a CR/LF/NUL character');
   }
+  // Same equivalent-mutant note as base64url above: Node 22 treats
+  // unknown encodings as utf8 for our inputs.
+  // Stryker disable next-line StringLiteral
   const utf8Subject = `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`;
   return [
     `To: ${to}`,

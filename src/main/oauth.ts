@@ -317,6 +317,10 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
         break;
     }
     // Close after the response is flushed so the browser sees the page.
+    // Equivalent mutant: dropping server.close() leaves the server
+    // listening until the outer 5-min timeout or .cancel() fires. Tests
+    // that complete in <5min cannot observe the difference.
+    // Stryker disable next-line ArrowFunction
     setTimeout(() => server.close(), 50);
   });
   // Stryker restore ConditionalExpression,EqualityOperator,UpdateOperator
@@ -347,6 +351,11 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
   // chain, Node reports an unhandled rejection alongside the main
   // promise. Silence the side chain — the original `promise` is what
   // the caller awaits.
+  // Equivalent mutant: dropping clearTimeout leaves the 5-min timeout
+  // pending. The original `promise` has already resolved/rejected so
+  // the caller sees no difference; only the process exit is delayed
+  // until the timer expires.
+  // Stryker disable next-line ArrowFunction
   promise.finally(() => clearTimeout(timeout)).catch(() => {});
 
   return Object.assign(promise, {

@@ -125,6 +125,11 @@ describe('fetchOllamaSnapshot', () => {
     // warnings starts from its initializer.
     expect(snap.version).toBe('');
     expect(snap.warnings).not.toContain('Stryker was here');
+    // Pin that withTimeout actually issued the fetch (kills the
+    // BlockStatement mutant on ollama.ts:182 where `try { return await
+    // fetchFn(...) }` is emptied to `{}`).
+    expect(fetchMock).toHaveBeenCalled();
+    expect(fetchMock.mock.calls[0]![0]).toContain('/api/version');
   });
 
   it('truncates the unreachable-error message to 100 chars (kills `msg.slice(0, 100)` → `msg`)', async () => {

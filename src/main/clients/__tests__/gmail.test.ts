@@ -274,34 +274,34 @@ describe('ACTIONS["create-draft"]', () => {
   });
 
   it('uses "-" for + in base64url (kills `.replace(/\\+/g, "-")` → `.replace(/\\+/g, "")`)', async () => {
-    // Construct a payload whose UTF-8 base64 representation contains a
-    // `+` so the replacement is observable. The string '\xfb' encodes to
-    // base64 "+w==" — exercising the + → - swap.
+    // 😾 (U+1F63E) in the body produces a '+' in standard base64. The
+    // mutant `.replace(/\+/g, "")` drops those + chars instead of
+    // swapping them for '-'. Result: the round-trip decode fails (or
+    // produces different bytes), and the inverse swap leaves no '-'
+    // mapped back to '+'.
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ id: 'd2', message: { id: 'm2' } }),
     );
     await ACTIONS['create-draft']!({
       token: 'tok',
       fetch: fetchMock,
-      // Subject contains characters whose base64 produces a '+'. The +
-      // appears in the encoded RFC 2822 subject, but the OUTER
-      // base64url(buildRfc2822(...)) call is what re-encodes — the +
-      // result there must become '-'.
-      payload: { to: 'a@b.com', subject: 'ûû', body: '' },
+      payload: { to: 'a@b.com', subject: 'hi', body: '😾😾😾' },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     const raw = body.message.raw as string;
-    // The standard base64 of any UTF-8 RFC 2822 message containing
-    // these bytes should produce '+' chars; base64url must NOT preserve
-    // them — they must be '-'. The negative assertion proves the swap.
+    // Original base64url replaces + with -; raw must NOT contain '+'.
     expect(raw).not.toContain('+');
-    // Decoding back via the inverse swap should round-trip cleanly.
+    // Round-trip decode: inverse swap '-' → '+', then base64-decode.
+    // For the mutant, raw is missing the would-be + positions entirely,
+    // so the byte count is short and the decoded message can't contain
+    // the emoji.
     const padded = raw + '='.repeat((4 - (raw.length % 4)) % 4);
     const decoded = Buffer.from(
       padded.replace(/-/g, '+').replace(/_/g, '/'),
       'base64',
     ).toString('utf8');
     expect(decoded).toContain('To: a@b.com');
+    expect(decoded).toContain('😾😾😾');
   });
 
   it('Buffer.from uses utf8 encoding (kills `Buffer.from(input, "utf8")` → `Buffer.from(input, "")`)', () => {

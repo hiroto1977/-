@@ -210,6 +210,11 @@ async function readSkillBody(name: string): Promise<string> {
  *  shell metachars. Mirrors the Ollama isSafeModelName approach. */
 export function isSafeSkillName(name: unknown): name is string {
   if (typeof name !== 'string') return false;
+  // Equivalent mutant on `name.length === 0`: dropping the empty-string
+  // short-circuit lets execution fall through to the regex, which itself
+  // requires at least one char (`^[A-Za-z0-9_-]`). Empty strings get
+  // rejected either way.
+  // Stryker disable next-line ConditionalExpression
   if (name.length === 0 || name.length > 128) return false;
   if (name.includes('..')) return false;
   // Allow letters, digits, dot, underscore, hyphen. No `/`, `\`, NUL,

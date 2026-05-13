@@ -242,6 +242,9 @@ interface VtUrlReportResponse {
 // vtBase64: `=+$` mutants equivalent for URL lengths we feed.
 // Stryker disable Regex
 function vtBase64(input: string): string {
+  // Node 22's Buffer.from silently uses utf8 for unknown encodings — the
+  // 'utf8' literal is unobservable for our inputs.
+  // Stryker disable next-line StringLiteral
   return Buffer.from(input, 'utf8')
     .toString('base64')
     .replace(/=+$/, '')

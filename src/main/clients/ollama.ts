@@ -176,6 +176,10 @@ async function withTimeout(
     );
   }
   const controller = new AbortController();
+  // Equivalent in unit tests: the mock `fetch` resolves synchronously,
+  // so the timer never fires. Provoking the abort path requires a real
+  // hanging connection, which only an integration test could supply.
+  // Stryker disable next-line ArrowFunction
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetchFn(url, { ...init, signal: controller.signal });

@@ -300,9 +300,12 @@ describe('createMockDataSource', () => {
     const units = await src.fetch();
     const civic = units.find((u) => u.id === 'civic')!;
     expect(civic.history[0]!.revenue).toBe(4_133_615);
-    // Period 1 differs from period 0 (kills `+ i` → `+ 0` / `- i` /
-    // identity), so seed advances. Just assert inequality.
-    expect(civic.history[1]!.revenue).not.toBe(civic.history[0]!.revenue);
+    // Period 1: seed = 99000 + 1 = 99001. Mutating `+ i` → `- i` (or any
+    // identity) shifts the seed and changes the drift. Pin the exact
+    // value so the arithmetic operator can't drift silently.
+    //   drift = 0.85 + noise(99001) * 0.3 = 0.9185634283...
+    //   revenue = round(4_500_000 * 0.9185634283) = 4_133_535
+    expect(civic.history[1]!.revenue).toBe(4_133_535);
   });
 
   it('fixed cost is the same constant across all 30 periods (kills `u.fixedAbs * 0.8` → `/ 0.8`)', async () => {

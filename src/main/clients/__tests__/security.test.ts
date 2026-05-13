@@ -597,6 +597,36 @@ describe('ACTIONS["scan-url"]', () => {
     expect((submitInit as RequestInit).headers).toMatchObject({ 'x-apikey': 'vt-key' });
   });
 
+  it('swaps `+` to `-` in the VT id (kills `.replace(/\\+/g, "-")` → `""`)', async () => {
+    // URL 'https://example.com/?a=😾' base64-encodes to a string
+    // containing '+'. The vtBase64 function must replace `+` with `-`
+    // (URL-safe). The mutant `replace(/\+/g, "")` would silently drop
+    // the +, producing a shorter id whose round-trip decode misses bytes.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'url-id',
+            attributes: {
+              last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 },
+            },
+          },
+        }),
+      );
+    await ACTIONS['scan-url']!({
+      token: goodToken,
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/?a=\u{1F63E}' },
+    });
+    const reportUrl = fetchMock.mock.calls[1]![0] as string;
+    // Standard base64 contains a '+' (verified offline); base64url must
+    // have a '-' in the same position. Negative: NEVER '+' in the path.
+    expect(reportUrl).toContain('-');
+    expect(reportUrl).not.toContain('+');
+  });
+
   it('constructs the GET URL with base64url-encoded VT id (kills vtBase64 body → undefined)', async () => {
     // The 2nd fetch call hits /api/v3/urls/<id> where <id> is
     // base64url(url). If vtBase64 returns undefined (BlockStatement
