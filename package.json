@@ -10,7 +10,7 @@
     "build:renderer": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "typecheck": "tsc -b --noEmit",
+    "typecheck": "tsc -b --noEmit --force",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",

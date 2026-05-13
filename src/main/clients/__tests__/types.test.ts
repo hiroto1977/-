@@ -141,6 +141,33 @@ describe('redactSecrets', () => {
     expect(out).not.toContain('A0AfH6SMBxxx');
   });
 
+  it('redacts Authorization with NO space after colon (kills `\\s*` → `\\s` on Bearer)', () => {
+    // Original `\s*` matches 0+ spaces; mutated `\s` requires exactly 1.
+    // The "no space" variant only redacts under the original.
+    const out = redactSecrets('Authorization:Bearer abcdef-token-secret-123');
+    expect(out).toContain('[REDACTED]');
+    expect(out).not.toContain('abcdef-token-secret-123');
+  });
+
+  it('redacts Authorization with NO space after colon for Basic too', () => {
+    const out = redactSecrets('Authorization:Basic dXNlcjpwYXNzd29yZA==');
+    expect(out).toContain('[REDACTED]');
+    expect(out).not.toContain('dXNlcjpwYXNzd29yZA');
+  });
+
+  it('redacts Basic auth with multiple spaces (kills `\\s+` → `\\s` on Basic)', () => {
+    const out = redactSecrets('Authorization: Basic   dXNlcjpwYXNzd29yZA==');
+    expect(out).toContain('[REDACTED]');
+    expect(out).not.toContain('dXNlcjpwYXNzd29yZA');
+  });
+
+  it('fully redacts a Basic credential — not just first char (kills `\\S+` → `\\S` on Basic)', () => {
+    const out = redactSecrets('Authorization: Basic abcdefghijklmnop==');
+    expect(out).toContain('Authorization: Basic [REDACTED]');
+    expect(out).not.toContain('abcdefghijklmnop');
+    expect(out).not.toContain('bcdefghijklmnop'); // tail-after-first-char
+  });
+
   it('returns an empty string from FetchError body fallback (kills the catch arrow `() => undefined`)', async () => {
     // jsonFetch's `await res.text().catch(() => '')` falls back to ''
     // (not undefined) when text() rejects. If mutated to () => undefined,
