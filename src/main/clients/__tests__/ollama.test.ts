@@ -401,13 +401,16 @@ describe('ACTIONS["chat"]', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    await expect(
-      ACTIONS['chat']!({
-        token: '',
-        fetch: fetchMock,
-        payload: { model: 'llama3.2', prompt: 'hi' },
-      }),
-    ).rejects.toThrow(/^ollama response exceeded \d+ bytes$/);
+    const err = await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/^ollama response exceeded \d+ bytes$/);
+    // Pin serviceId='ollama' so the StringLiteral mutant on ollama.ts:322
+    // (3rd FetchError arg → "") is killed.
+    expect((err as { serviceId: string }).serviceId).toBe('ollama');
   });
 
   it('throws the literal "ollama returned non-JSON" error when the body fails to parse', async () => {
@@ -418,13 +421,15 @@ describe('ACTIONS["chat"]', () => {
         headers: { 'content-type': 'text/html' },
       }),
     );
-    await expect(
-      ACTIONS['chat']!({
-        token: '',
-        fetch: fetchMock,
-        payload: { model: 'llama3.2', prompt: 'hi' },
-      }),
-    ).rejects.toThrow(/^ollama returned non-JSON$/);
+    const err = await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toBe('ollama returned non-JSON');
+    // Pin serviceId='ollama' (StringLiteral kill on ollama.ts:330 3rd arg).
+    expect((err as { serviceId: string }).serviceId).toBe('ollama');
   });
 
   it('POSTs to /api/chat with Content-Type: application/json (kills `headers = {}` mutation)', async () => {
@@ -553,6 +558,9 @@ describe('ACTIONS["chat"]', () => {
     // The tail past char 32 should NOT appear.
     expect(caught!.message).not.toContain('bad-tail-after-32-chars-with-secret');
     expect(caught!.message).not.toContain('secret');
+    // Pin serviceId='ollama' on the unsafe-model FetchError
+    // (kills StringLiteral mutant on ollama.ts:275, 3rd arg → "").
+    expect((caught as unknown as { serviceId: string }).serviceId).toBe('ollama');
   });
 
   it('returns empty reply when message.content is missing (kills `?.content` drop)', async () => {
@@ -691,13 +699,14 @@ describe('fetchOllamaSnapshot — unpatched OOB notice', () => {
 describe('chat — null byte defense', () => {
   it('rejects a prompt containing \\0 before any network call', async () => {
     const fetchMock = vi.fn<typeof fetch>();
-    await expect(
-      ACTIONS['chat']!({
-        token: '',
-        fetch: fetchMock,
-        payload: { model: 'llama3.2', prompt: 'hello\0world' },
-      }),
-    ).rejects.toThrow(/null byte/);
+    const err = await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hello\0world' },
+    }).catch((e: unknown) => e);
+    expect((err as Error).message).toMatch(/null byte/);
+    // Pin serviceId='ollama' (kills StringLiteral mutant on ollama.ts:289).
+    expect((err as { serviceId: string }).serviceId).toBe('ollama');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

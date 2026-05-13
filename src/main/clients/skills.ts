@@ -103,6 +103,11 @@ export async function scanSkills(
       try {
         await fs.access(candidate);
         skillFile = candidate;
+        // Equivalent mutant: deleting `continue` here leaves skillFile null,
+        // which gets caught by `if (!skillFile) continue;` on line 113 below.
+        // Both paths produce identical observable behavior for "directory
+        // without SKILL.md".
+        // Stryker disable next-line BlockStatement
       } catch {
         continue;
       }

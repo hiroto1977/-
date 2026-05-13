@@ -220,6 +220,11 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
     try {
       const tagsRes = await withTimeout(f, `${OLLAMA_BASE}/api/tags`);
       if (!tagsRes.ok) {
+        // Equivalent mutant on the third arg ('ollama' → ''): this
+        // FetchError is caught by the surrounding try/catch on the very
+        // next lines and only `.message` propagates into warnings, so
+        // the serviceId is never observable from outside the function.
+        // Stryker disable next-line StringLiteral
         throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
       }
       const tags = (await tagsRes.json()) as OllamaTagsResponse;

@@ -336,6 +336,23 @@ describe('ACTIONS["create-issue"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('surfaces serviceId="github" in the FetchError on HTTP failure', async () => {
+    // Kills StringLiteral mutant on github.ts:176 (serviceId arg).
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('Validation Failed', { status: 422 }),
+    );
+    const err = await ACTIONS['create-issue']!({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { owner: 'o', repo: 'r', title: 't' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('github');
+    // jsonFetch builds message as `${serviceId} ${status}: ...`; assert
+    // the prefix so an empty serviceId would shift the leading token.
+    expect((err as FetchError).message).toMatch(/^github 422:/);
+  });
+
   it('url-encodes owner/repo to prevent path injection', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(JSON.stringify({ number: 1, html_url: '', title: 'x', state: 'open' }), {
