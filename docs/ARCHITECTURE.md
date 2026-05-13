@@ -22,10 +22,10 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 15 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **450** | `npm test` |
-| Mutation score (total) | **93.33%** | `docs/QUALITY.md` |
-| Mutation score (covered) | **94.97%** | `docs/QUALITY.md` |
-| Stryker break threshold | **92.5%** (CI fails below) | `stryker.config.json` |
+| ユニットテスト | **454** | `npm test` |
+| Mutation score (total) | **93.74%** | `docs/QUALITY.md` |
+| Mutation score (covered) | **95.39%** | `docs/QUALITY.md` |
+| Stryker break threshold | **93%** (CI fails below) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
 | `file:line` 参照数 | 170 | 自己検証 |

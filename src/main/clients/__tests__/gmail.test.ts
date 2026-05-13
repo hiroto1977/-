@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchGmailSnapshot, ACTIONS, buildRfc2822, isSafeHeaderValue } from '../gmail';
+import { FetchError } from '../types';
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -42,6 +43,24 @@ describe('fetchGmailSnapshot', () => {
     expect(snap.threads).toHaveLength(2);
     expect(snap.threads[0]).toMatchObject({ id: 't1', sender: 'alice@example.com', subject: 'Hello' });
     expect(snap.threads[1]).toMatchObject({ id: 't2', sender: 'bob@example.com', subject: '(件名なし)' });
+
+    // Pin the list URL (kills StringLiteral mutant on gmail.ts:29 → "").
+    expect(fetchMock.mock.calls[0]![0]).toBe(
+      'https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox&maxResults=10',
+    );
+  });
+
+  it('surfaces serviceId="gmail" in the FetchError on list HTTP failure', async () => {
+    // Kills StringLiteral mutant on gmail.ts:25 (serviceId arg → "").
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('Unauthorized', { status: 401 }),
+    );
+    const err = await fetchGmailSnapshot({ token: 'bad', fetch: fetchMock }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('gmail');
+    expect((err as FetchError).message).toMatch(/^gmail 401:/);
   });
 
   it('returns empty threads when inbox is empty', async () => {
@@ -229,7 +248,14 @@ describe('ACTIONS["create-draft"]', () => {
 
     expect(result).toEqual({ id: 'd1', messageId: 'm1' });
 
+    // Pin the drafts URL (kills StringLiteral mutant on gmail.ts:115 → "").
+    expect(fetchMock.mock.calls[0]![0]).toBe(
+      'https://gmail.googleapis.com/gmail/v1/users/me/drafts',
+    );
+
     const init = fetchMock.mock.calls[0]![1] as RequestInit;
+    // Pin HTTP method (kills StringLiteral mutant on gmail.ts:117 → "").
+    expect(init.method).toBe('POST');
     // Authorization + Content-Type both present — kills the
     // `headers: {}` ObjectLiteral mutation on line 116.
     const headers = init.headers as Record<string, string>;
@@ -245,6 +271,65 @@ describe('ACTIONS["create-draft"]', () => {
     const decoded = Buffer.from(padded.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
     expect(decoded).toContain('To: a@b.com');
     expect(decoded).toContain('hi');
+  });
+
+  it('uses "-" for + in base64url (kills `.replace(/\\+/g, "-")` → `.replace(/\\+/g, "")`)', async () => {
+    // Construct a payload whose UTF-8 base64 representation contains a
+    // `+` so the replacement is observable. The string '\xfb' encodes to
+    // base64 "+w==" — exercising the + → - swap.
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'd2', message: { id: 'm2' } }),
+    );
+    await ACTIONS['create-draft']!({
+      token: 'tok',
+      fetch: fetchMock,
+      // Subject contains characters whose base64 produces a '+'. The +
+      // appears in the encoded RFC 2822 subject, but the OUTER
+      // base64url(buildRfc2822(...)) call is what re-encodes — the +
+      // result there must become '-'.
+      payload: { to: 'a@b.com', subject: 'ûû', body: '' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const raw = body.message.raw as string;
+    // The standard base64 of any UTF-8 RFC 2822 message containing
+    // these bytes should produce '+' chars; base64url must NOT preserve
+    // them — they must be '-'. The negative assertion proves the swap.
+    expect(raw).not.toContain('+');
+    // Decoding back via the inverse swap should round-trip cleanly.
+    const padded = raw + '='.repeat((4 - (raw.length % 4)) % 4);
+    const decoded = Buffer.from(
+      padded.replace(/-/g, '+').replace(/_/g, '/'),
+      'base64',
+    ).toString('utf8');
+    expect(decoded).toContain('To: a@b.com');
+  });
+
+  it('Buffer.from uses utf8 encoding (kills `Buffer.from(input, "utf8")` → `Buffer.from(input, "")`)', () => {
+    // Direct sanity check via buildRfc2822: a 4-byte UTF-8 character must
+    // produce the right base64 length. Under the empty-encoding mutant,
+    // Node throws TypeError "Unknown encoding: " — the test would fail.
+    const msg = buildRfc2822('a@b.com', '🚀', 'hi');
+    expect(msg).toContain('To: a@b.com');
+    // Subject is RFC 2047 base64; decoding it must yield the rocket.
+    const subjMatch = msg.match(/Subject: =\?UTF-8\?B\?([A-Za-z0-9+/=]+)\?=/);
+    expect(subjMatch).not.toBeNull();
+    const decoded = Buffer.from(subjMatch![1]!, 'base64').toString('utf8');
+    expect(decoded).toBe('🚀');
+  });
+
+  it('surfaces serviceId="gmail" in the FetchError on draft HTTP failure', async () => {
+    // Kills StringLiteral mutant on gmail.ts:124 (serviceId arg → "").
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response('quota', { status: 429 }),
+    );
+    const err = await ACTIONS['create-draft']!({
+      token: 'tok',
+      fetch: fetchMock,
+      payload: { to: 'a@b.com', subject: 'hi', body: 'b' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('gmail');
+    expect((err as FetchError).message).toMatch(/^gmail 429:/);
   });
 
   it('rejects when to/subject are missing', async () => {
