@@ -105,4 +105,67 @@ describe('redactSecrets', () => {
   it('leaves non-secret content alone', () => {
     expect(redactSecrets('normal message with no secrets')).toBe('normal message with no secrets');
   });
+
+  // ---------------------------------------------------------------------
+  // Mutation-killing tests: precise regex behaviour
+  // ---------------------------------------------------------------------
+
+  it('fully redacts the Bearer token — not just the first character (kills `\\S+` → `\\S`)', () => {
+    // With \S+ mutated to \S, only the first non-space char would be
+    // captured and replaced, leaving the rest of the token in the
+    // output. Assert the trailing chars are GONE.
+    const out = redactSecrets('Authorization: Bearer abc123def456ghi');
+    expect(out).toContain('Authorization: Bearer [REDACTED]');
+    expect(out).not.toContain('abc123def456ghi');
+    expect(out).not.toContain('bc123def456ghi'); // would be tail of \S → \S mutation
+  });
+
+  it('fully redacts the Basic credential — not just the first character', () => {
+    const out = redactSecrets('Authorization: Basic dXNlcjpwYXNzd29yZGFiYw==');
+    expect(out).toContain('Authorization: Basic [REDACTED]');
+    expect(out).not.toContain('dXNlcjpwYXNzd29yZGFiYw');
+  });
+
+  it('redacts a Bearer token with multiple spaces after the colon (kills `\\s+` → `\\s`)', () => {
+    // Original `\s+` requires 1+ whitespace; mutated to `\s` requires
+    // exactly 1. Both pass single-space input. Test with no space and
+    // with double space.
+    const noSpace = redactSecrets('Authorization: Bearer  doublespace');
+    expect(noSpace).toContain('Authorization: Bearer [REDACTED]');
+    expect(noSpace).not.toContain('doublespace');
+  });
+
+  it('fully redacts a ya29. token — not just the first character (kills `[A-Za-z0-9_-]{10,}` → `[A-Za-z0-9_-]`)', () => {
+    const out = redactSecrets('access=ya29.A0AfH6SMBxxx_yyyy_zzzzzzz');
+    expect(out).toContain('ya29.[REDACTED]');
+    expect(out).not.toContain('A0AfH6SMBxxx');
+  });
+
+  it('returns an empty string from FetchError body fallback (kills the catch arrow `() => undefined`)', async () => {
+    // jsonFetch's `await res.text().catch(() => '')` falls back to ''
+    // (not undefined) when text() rejects. If mutated to () => undefined,
+    // `undefined.slice(0, 200)` throws and the FetchError never gets
+    // built. Forge a Response whose text() rejects by passing a body
+    // stream that errors on read.
+    const erroringBody = new ReadableStream({
+      start(controller) {
+        controller.error(new Error('body read failed'));
+      },
+    });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(erroringBody, { status: 500 }),
+    );
+    let caught: Error | undefined;
+    try {
+      await jsonFetch('https://example.invalid/x', {}, { fetch: fetchMock, serviceId: 'test' });
+    } catch (err) {
+      caught = err as Error;
+    }
+    expect(caught).toBeInstanceOf(FetchError);
+    // With () => '' fallback: message ends with "test 500: " (empty body).
+    // With () => undefined mutant: body.slice(0,200) would throw,
+    // bubbling up a TypeError, NOT a FetchError. Asserting the type
+    // pins both behaviours apart.
+    expect(caught!.message).toBe('test 500: ');
+  });
 });

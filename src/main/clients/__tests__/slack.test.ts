@@ -36,6 +36,21 @@ describe('fetchSlackSnapshot', () => {
       FetchError,
     );
   });
+
+  it('sends Authorization: Bearer + form-urlencoded Content-Type on both initial calls (kills `headers = {}` mutation)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: true, channels: [] }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { domain: 'acme' } }));
+    await fetchSlackSnapshot({ token: 'xoxb-secret-abc', fetch: fetchMock });
+    for (const call of fetchMock.mock.calls) {
+      const init = call[1] as RequestInit;
+      const headers = init?.headers as Record<string, string> | undefined;
+      expect(headers).toBeDefined();
+      expect(headers!.Authorization).toBe('Bearer xoxb-secret-abc');
+      expect(headers!['Content-Type']).toBe('application/x-www-form-urlencoded');
+    }
+  });
 });
 
 describe('ACTIONS["send-message"]', () => {

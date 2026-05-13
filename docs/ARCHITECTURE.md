@@ -22,7 +22,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 14 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **313** | `npm test` |
+| ユニットテスト | **320** | `npm test` |
 | Mutation score (total) | **72.94%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **82.81%** | `docs/QUALITY.md` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
@@ -585,22 +585,22 @@ graph LR
   C5 --> R1 --> R2 --> R3
 ```
 
-### 5.1 テスト分布 (commit `7684c12`, total 300)
+### 5.1 テスト分布 (total 320, mutation total 74.17 / covered 84.05)
 
 | ファイル | tests | mutation total | mutation covered |
 |---|---:|---:|---:|
-| `src/main/clients/__tests__/ollama.test.ts` | 46 | 81.04 | 84.65 |
-| `src/main/clients/__tests__/security.test.ts` | 33 | 69.40 | 73.23 |
+| `src/main/clients/__tests__/ollama.test.ts` | 46 | 80.37 | 84.31 |
+| `src/main/clients/__tests__/security.test.ts` | 34 | 71.64 | 75.59 |
 | `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
-| `src/main/clients/__tests__/skills.test.ts` | 27 | 78.11 | 80.98 |
-| `src/main/__tests__/oauth.test.ts` | 18 | 43.09 | 91.01 |
+| `src/main/clients/__tests__/skills.test.ts` | 27 | 77.78 | 81.10 |
+| `src/main/__tests__/oauth.test.ts` | 23 | 46.83 | 90.57 |
+| `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
 | `src/main/clients/__tests__/gmail.test.ts` | 18 | 87.64 | 88.64 |
-| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 81.82 | 81.82 |
+| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 82.02 | 82.02 |
 | `src/main/clients/__tests__/github.test.ts` | 16 | 85.92 | 87.14 |
-| `src/main/clients/__tests__/slack.test.ts` | 14 | 79.41 | 81.82 |
-| `src/main/clients/__tests__/emotions.test.ts` | 13 | — | — |
+| `src/main/clients/__tests__/types.test.ts` | 17 | 84.62 | 84.62 |
+| `src/main/clients/__tests__/slack.test.ts` | 17 | 86.76 | 89.39 |
 | `src/main/clients/__tests__/cloudflare.test.ts` | 12 | — | — |
-| `src/main/clients/__tests__/types.test.ts` | 12 | 74.36 | 76.32 |
 | `src/main/clients/__tests__/canva.test.ts` | 9 | — | — |
 | `src/main/clients/__tests__/wordpress.test.ts` | 9 | — | — |
 | `src/main/clients/__tests__/notion.test.ts` | 8 | — | — |

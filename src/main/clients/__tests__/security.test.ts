@@ -337,6 +337,40 @@ describe('ACTIONS["scan-url"]', () => {
     expect((submitInit as RequestInit).headers).toMatchObject({ 'x-apikey': 'vt-key' });
   });
 
+  it('constructs the GET URL with base64url-encoded VT id (kills vtBase64 body → undefined)', async () => {
+    // The 2nd fetch call hits /api/v3/urls/<id> where <id> is
+    // base64url(url). If vtBase64 returns undefined (BlockStatement
+    // mutation), the URL becomes /api/v3/urls/undefined. Pin the
+    // exact ID.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'a', type: 'analysis' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'url-id',
+            attributes: {
+              last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 },
+            },
+          },
+        }),
+      );
+    const result = (await ACTIONS['scan-url']!({
+      token: goodToken,
+      fetch: fetchMock,
+      payload: { url: 'https://example.com/' },
+    })) as { reportUrl: string };
+
+    // base64url('https://example.com/') = 'aHR0cHM6Ly9leGFtcGxlLmNvbS8'
+    // (= padding stripped, + → -, / → _).
+    const expectedId = 'aHR0cHM6Ly9leGFtcGxlLmNvbS8';
+    const reportUrl = fetchMock.mock.calls[1]![0] as string;
+    expect(reportUrl).toBe(`https://www.virustotal.com/api/v3/urls/${expectedId}`);
+    // The user-facing reportUrl in the result also embeds the same id.
+    expect(result.reportUrl).toContain(expectedId);
+    expect(result.reportUrl).not.toContain('undefined');
+  });
+
   it('refuses to run without a VT key', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(

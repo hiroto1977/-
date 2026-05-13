@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-05-12 10:14:19
+最終更新: 2026-05-13 03:43:10
 
 > 自動生成: `npm run quality:report`。コミット前に再生成して差分をレビューに含めるのが推奨。
 
@@ -8,34 +8,34 @@
 
 | 指標 | 値 |
 |---|---|
-| TypeScript 型チェック | ✅ pass |
-| ユニットテスト | 300 passing (19 files) |
-| Coverage — lines | 70.86% |
-| Coverage — statements | 70.86% |
-| Coverage — branches | 90.88% |
-| Coverage — functions | 83.13% |
-| Mutation score (total / covered) | 72.94% / 82.81% |
-| Mutants killed | 771 |
-| Mutants survived | 160 |
+| TypeScript 型チェック | ❌ FAIL |
+| ユニットテスト | 320 passing (19 files) |
+| Coverage — lines | 75.02% |
+| Coverage — statements | 75.02% |
+| Coverage — branches | 89.24% |
+| Coverage — functions | 90.47% |
+| Mutation score (total / covered) | 74.17% / 84.05% |
+| Mutants killed | 801 |
+| Mutants survived | 152 |
 
 
 ## Mutation testing (Stryker)
 
 _Report age: 0.0h._
 
-**Overall: 72.94% total / 82.81% covered** (771 killed / 160 survived / 126 no-cov)
+**Overall: 74.17% total / 84.05% covered** (801 killed / 152 survived / 127 no-cov)
 
 | file | score | covered | killed | survived | no-cov |
 |------|------:|--------:|-------:|---------:|-------:|
-| src/main/clients/atlassian.ts | 81.82 | 81.82 | 72 | 16 | 0 |
+| src/main/clients/atlassian.ts | 82.02 | 82.02 | 73 | 16 | 0 |
 | src/main/clients/github.ts | 85.92 | 87.14 | 61 | 9 | 1 |
 | src/main/clients/gmail.ts | 87.64 | 88.64 | 78 | 10 | 1 |
-| src/main/clients/ollama.ts | 81.04 | 84.65 | 171 | 31 | 9 |
-| src/main/clients/security.ts | 69.40 | 73.23 | 93 | 34 | 7 |
-| src/main/clients/skills.ts | 78.11 | 80.98 | 132 | 31 | 6 |
-| src/main/clients/slack.ts | 79.41 | 81.82 | 54 | 12 | 2 |
-| src/main/clients/types.ts | 74.36 | 76.32 | 29 | 9 | 1 |
-| src/main/oauth.ts | 43.09 | 91.01 | 81 | 8 | 99 |
+| src/main/clients/ollama.ts | 80.37 | 84.31 | 172 | 32 | 10 |
+| src/main/clients/security.ts | 71.64 | 75.59 | 96 | 31 | 7 |
+| src/main/clients/skills.ts | 77.78 | 81.10 | 133 | 31 | 7 |
+| src/main/clients/slack.ts | 86.76 | 89.39 | 59 | 7 | 2 |
+| src/main/clients/types.ts | 84.62 | 84.62 | 33 | 6 | 0 |
+| src/main/oauth.ts | 46.83 | 90.57 | 96 | 10 | 99 |
 
 
 ## How to drill down
