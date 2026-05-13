@@ -64,6 +64,31 @@ describe('fetchGithubSnapshot', () => {
     });
   });
 
+  it('safely defaults head/base to "" when the PR detail omits them (kills `pr.head?.ref` → `pr.head.ref`)', async () => {
+    // A PR detail response missing the `head` or `base` field would
+    // make `pr.head.ref` throw under the mutation. Original code uses
+    // optional chaining + ?? '' to default safely.
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(userResponse))
+      .mockResolvedValueOnce(jsonResponse({ items: [searchItem] }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          number: 7,
+          title: 'No head/base in detail',
+          state: 'open',
+          draft: false,
+          updated_at: '2026-05-12T00:00:00Z',
+          html_url: 'https://github.com/o/r/pull/7',
+          // head: missing
+          // base: missing
+        }),
+      );
+    const snapshot = await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(snapshot.pullRequests[0]!.head).toBe('');
+    expect(snapshot.pullRequests[0]!.base).toBe('');
+  });
+
   it('falls back to search-only fields when a per-PR detail fetch fails', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
