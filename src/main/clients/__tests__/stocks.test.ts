@@ -23,9 +23,18 @@ import {
   buildTickerAnalysis,
   validateAdvisorJson,
   ADVISOR_DISCLAIMER,
+  renderDashboardHtml,
+  escapeHtml,
+  defaultDashboardPath,
+  isSafeDashboardPath,
+  exportDashboardImpl,
   type Candle,
   type Signal,
+  type StocksSnapshot,
+  type AdvisorResponse,
 } from '../stocks';
+import os from 'node:os';
+import path from 'node:path';
 
 // --- Indicators ---------------------------------------------------------
 
@@ -1850,5 +1859,429 @@ describe('advisor edge cases', () => {
       allowed,
     );
     expect(out[0]!.riskFactors[0]).toHaveLength(200);
+  });
+});
+
+// --- escapeHtml ----------------------------------------------------------
+
+describe('escapeHtml', () => {
+  it('escapes &, <, >, ", \'', () => {
+    expect(escapeHtml('<script>')).toBe('&lt;script&gt;');
+    expect(escapeHtml('a & b')).toBe('a &amp; b');
+    expect(escapeHtml('"x"')).toBe('&quot;x&quot;');
+    expect(escapeHtml("it's")).toBe('it&#39;s');
+  });
+
+  it('escapes & FIRST so &lt; cannot decode back to <', () => {
+    // If `<` was escaped before `&`, the result would be `&amp;lt;`
+    // which renders as `&lt;` literally instead of `<`.
+    expect(escapeHtml('&lt;')).toBe('&amp;lt;');
+  });
+
+  it('leaves safe text untouched', () => {
+    expect(escapeHtml('hello world')).toBe('hello world');
+    expect(escapeHtml('')).toBe('');
+  });
+
+  it('handles a XSS-style attempt (kills any drop in the escape chain)', () => {
+    const out = escapeHtml('<img src=x onerror="alert(1)">');
+    expect(out).not.toContain('<');
+    expect(out).not.toContain('>');
+    expect(out).not.toContain('"');
+    expect(out).toContain('&lt;');
+    expect(out).toContain('&gt;');
+    expect(out).toContain('&quot;');
+  });
+});
+
+// --- renderDashboardHtml -------------------------------------------------
+
+function emptySnapshot(): StocksSnapshot {
+  return {
+    watchlist: [],
+    portfolio: { cash: 1_000_000, initialCash: 1_000_000, positions: {}, history: [] },
+    fetchedAt: '2026-05-14T00:00:00.000Z',
+    isMock: true,
+  };
+}
+
+describe('renderDashboardHtml', () => {
+  it('generates a complete HTML document with doctype + lang ja', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '2026-05-14T12:00:00.000Z',
+    });
+    expect(html).toMatch(/^<!doctype html>/i);
+    expect(html).toContain('<html lang="ja">');
+    expect(html).toContain('<meta charset="utf-8">');
+    expect(html).toContain('Service Hub — Stocks ダッシュボード');
+    expect(html).toMatch(/<\/html>\s*$/);
+  });
+
+  it('embeds the safety banner with simulation-mode disclaimer', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '2026-05-14T12:00:00.000Z',
+    });
+    expect(html).toContain('シミュレーション中');
+    expect(html).toContain('実弾発注は行いません');
+    expect(html).toContain('Phase 7');
+    expect(html).toContain('教育目的');
+    expect(html).toContain('投資助言ではありません');
+    expect(html).toContain('過去パフォーマンス');
+  });
+
+  it('renders paper portfolio tiles with formatted values', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '2026-05-14T12:00:00.000Z',
+    });
+    expect(html).toContain('ペーパー口座');
+    expect(html).toContain('現在資産');
+    expect(html).toContain('現金残高');
+    expect(html).toContain('損益');
+    expect(html).toContain('初期入金');
+    expect(html).toContain('取引履歴');
+    expect(html).toContain('1,000,000');
+  });
+
+  it('shows P&L green when positive (kills color-flip mutant)', () => {
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: 'X Corp',
+          latestClose: 200,
+          previousClose: 100,
+          changePct: 100,
+          signal: { date: '01', action: 'buy', confidence: 0.7, reason: 'r', strategy: 't' },
+          candles: [
+            { date: '01', open: 100, high: 100, low: 100, close: 100, volume: 1 },
+            { date: '02', open: 200, high: 200, low: 200, close: 200, volume: 1 },
+          ],
+        },
+      ],
+      portfolio: {
+        cash: 900_000,
+        initialCash: 1_000_000,
+        positions: { X: { shares: 500, avgCost: 200 } },
+        history: [],
+      },
+    };
+    const html = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    // equity = 900_000 + 500 * 200 = 1_000_000; pnl = 0 → green branch.
+    // Force a winning state: cash 1_000_500, position 500 sh @ 200 →
+    // total 1_100_500, pnl = +100_500.
+    const win: StocksSnapshot = {
+      ...snap,
+      portfolio: { ...snap.portfolio, cash: 1_000_500 },
+    };
+    const winHtml = renderDashboardHtml({ snapshot: win, generatedAt: '01' });
+    expect(winHtml).toContain('#22c55e'); // green
+    // Negative case: cash 100, equity 100_100, pnl -899_900.
+    const loss: StocksSnapshot = {
+      ...snap,
+      portfolio: { ...snap.portfolio, cash: 100 },
+    };
+    const lossHtml = renderDashboardHtml({ snapshot: loss, generatedAt: '01' });
+    expect(lossHtml).toContain('#ef4444'); // red
+    // Just make sure they differ
+    expect(winHtml).not.toBe(lossHtml);
+  });
+
+  it('escapes attacker-controlled fields (ticker label / signal reason)', () => {
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: '<script>alert(1)</script>',
+          latestClose: 100,
+          previousClose: 100,
+          changePct: 0,
+          signal: { date: '01', action: 'hold', confidence: 0, reason: 'evil"&<>', strategy: 's' },
+          candles: [],
+        },
+      ],
+    };
+    const html = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    expect(html).not.toContain('<script>alert(1)</script>');
+    expect(html).toContain('&lt;script&gt;');
+    expect(html).toContain('&quot;&amp;&lt;&gt;');
+  });
+
+  it('embeds advisor section when advisorResult is provided', () => {
+    const advisor: AdvisorResponse = {
+      recommendations: [
+        {
+          symbol: 'AAPL',
+          rank: 1,
+          rationale: 'A reason for choosing AAPL based on indicators.',
+          riskFactors: ['市場リスク', '為替リスク'],
+        },
+      ],
+      disclaimer: ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      advisorResult: advisor,
+      generatedAt: '01',
+    });
+    expect(html).toContain('AI アドバイザー結果');
+    expect(html).toContain('AAPL');
+    expect(html).toContain('A reason for choosing AAPL');
+    expect(html).toContain('市場リスク');
+    expect(html).toContain('為替リスク');
+    expect(html).toContain(ADVISOR_DISCLAIMER);
+  });
+
+  it('skips advisor section when advisorResult is undefined', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '01',
+    });
+    expect(html).not.toContain('AI アドバイザー結果');
+  });
+
+  it('skips trade history section when history is empty', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '01',
+    });
+    expect(html).not.toContain('最近の取引');
+  });
+
+  it('embeds trade history when present', () => {
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      portfolio: {
+        cash: 1_000_000,
+        initialCash: 1_000_000,
+        positions: {},
+        history: [
+          {
+            date: '2026-01-01',
+            ticker: 'AAPL',
+            action: 'buy',
+            shares: 10,
+            price: 195,
+            cashAfter: 998_050,
+            reason: 'test buy',
+          },
+        ],
+      },
+    };
+    const html = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    expect(html).toContain('最近の取引');
+    expect(html).toContain('AAPL');
+    expect(html).toContain('test buy');
+  });
+
+  it('shows latest top-bar timestamp escaped', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '2026-05-14T12:00:00.000Z',
+    });
+    expect(html).toContain('生成日時');
+    expect(html).toContain('2026-05-14T12:00:00.000Z');
+  });
+});
+
+// --- defaultDashboardPath -----------------------------------------------
+
+describe('defaultDashboardPath', () => {
+  it('lands under home/.local/business-hub/data', () => {
+    const p = defaultDashboardPath();
+    expect(p.startsWith(os.homedir())).toBe(true);
+    expect(p).toContain('.local');
+    expect(p).toContain('business-hub');
+    expect(p).toContain('data');
+    expect(p.endsWith('dashboard.html')).toBe(true);
+  });
+});
+
+// --- isSafeDashboardPath ------------------------------------------------
+
+describe('isSafeDashboardPath', () => {
+  const home = '/home/user';
+
+  it('accepts a .html under the home dir', () => {
+    expect(isSafeDashboardPath('/home/user/dashboard.html', home)).toBe(true);
+    expect(isSafeDashboardPath('/home/user/.local/business-hub/data/dashboard.html', home)).toBe(true);
+  });
+
+  it('rejects paths outside the home dir', () => {
+    expect(isSafeDashboardPath('/etc/passwd.html', home)).toBe(false);
+    expect(isSafeDashboardPath('/tmp/dashboard.html', home)).toBe(false);
+  });
+
+  it('rejects non-html paths', () => {
+    expect(isSafeDashboardPath('/home/user/dashboard.txt', home)).toBe(false);
+    expect(isSafeDashboardPath('/home/user/dashboard', home)).toBe(false);
+    expect(isSafeDashboardPath('/home/user/.bashrc', home)).toBe(false);
+  });
+
+  it('rejects empty / oversize / control-char paths', () => {
+    expect(isSafeDashboardPath('', home)).toBe(false);
+    expect(isSafeDashboardPath('/home/user/' + 'x'.repeat(1100) + '.html', home)).toBe(false);
+    expect(isSafeDashboardPath('/home/user/dash\nboard.html', home)).toBe(false);
+    expect(isSafeDashboardPath('/home/user/dash\0board.html', home)).toBe(false);
+  });
+
+  it('rejects non-string types', () => {
+    expect(isSafeDashboardPath(null as unknown as string, home)).toBe(false);
+    expect(isSafeDashboardPath(undefined as unknown as string, home)).toBe(false);
+    expect(isSafeDashboardPath(42 as unknown as string, home)).toBe(false);
+  });
+
+  it('rejects path-traversal `..` attempts that resolve outside home', () => {
+    // `/home/user/../etc/passwd.html` resolves to `/home/etc/passwd.html`
+    expect(isSafeDashboardPath('/home/user/../etc/passwd.html', home)).toBe(false);
+  });
+});
+
+// --- exportDashboardImpl ------------------------------------------------
+
+describe('exportDashboardImpl', () => {
+  function mockSnapshot(): StocksSnapshot {
+    return emptySnapshot();
+  }
+
+  it('writes the rendered HTML to the default path and returns size + path', async () => {
+    const writes: Array<{ path: string; content: string }> = [];
+    const r = await exportDashboardImpl(
+      { token: '', payload: {} },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async (p, c) => {
+          writes.push({ path: p, content: c });
+        },
+        now: () => new Date('2026-05-14T12:00:00.000Z'),
+      },
+    );
+    expect(r.path).toBe(defaultDashboardPath());
+    expect(r.bytes).toBeGreaterThan(0);
+    expect(r.generatedAt).toBe('2026-05-14T12:00:00.000Z');
+    expect(writes).toHaveLength(1);
+    expect(writes[0]!.content).toContain('<!doctype html>');
+    expect(writes[0]!.content).toContain('2026-05-14T12:00:00.000Z');
+  });
+
+  it('honors a custom safe path', async () => {
+    const customPath = path.join(os.homedir(), 'my-dashboard.html');
+    let received = '';
+    const r = await exportDashboardImpl(
+      { token: '', payload: { path: customPath } },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async (p) => {
+          received = p;
+        },
+      },
+    );
+    expect(r.path).toBe(customPath);
+    expect(received).toBe(customPath);
+  });
+
+  it('rejects an unsafe path outside the home directory', async () => {
+    await expect(
+      exportDashboardImpl(
+        { token: '', payload: { path: '/etc/passwd.html' } },
+        { fetchSnapshot: async () => mockSnapshot(), writeFile: async () => {} },
+      ),
+    ).rejects.toThrow(/under the user home directory/);
+  });
+
+  it('rejects a non-.html path', async () => {
+    await expect(
+      exportDashboardImpl(
+        { token: '', payload: { path: path.join(os.homedir(), 'dash.txt') } },
+        { fetchSnapshot: async () => mockSnapshot(), writeFile: async () => {} },
+      ),
+    ).rejects.toThrow(/under the user home directory/);
+  });
+
+  it('embeds advisor result when payload.advisorResult is a valid AdvisorResponse', async () => {
+    const advisor: AdvisorResponse = {
+      recommendations: [
+        {
+          symbol: 'AAPL',
+          rank: 1,
+          rationale: 'A reason cited in HTML.',
+          riskFactors: ['市場リスク'],
+        },
+      ],
+      disclaimer: ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    let captured = '';
+    await exportDashboardImpl(
+      { token: '', payload: { advisorResult: advisor } },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+      },
+    );
+    expect(captured).toContain('AI アドバイザー結果');
+    expect(captured).toContain('AAPL');
+    expect(captured).toContain('A reason cited in HTML');
+  });
+
+  it('ignores malformed advisor payloads (anti-injection)', async () => {
+    const badAdvisor = {
+      recommendations: 'not-an-array',
+      disclaimer: 'x',
+      notForRealMoney: false, // wrong type
+    };
+    let captured = '';
+    await exportDashboardImpl(
+      { token: '', payload: { advisorResult: badAdvisor } },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+      },
+    );
+    // Section must NOT be present when the advisor result fails validation.
+    expect(captured).not.toContain('AI アドバイザー結果');
+  });
+
+  it('non-string custom path falls back to the default', async () => {
+    let writtenPath = '';
+    const r = await exportDashboardImpl(
+      { token: '', payload: { path: 42 as unknown as string } },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async (p) => {
+          writtenPath = p;
+        },
+      },
+    );
+    expect(r.path).toBe(defaultDashboardPath());
+    expect(writtenPath).toBe(defaultDashboardPath());
+  });
+
+  it('empty-string custom path falls back to the default', async () => {
+    const r = await exportDashboardImpl(
+      { token: '', payload: { path: '' } },
+      {
+        fetchSnapshot: async () => mockSnapshot(),
+        writeFile: async () => {},
+      },
+    );
+    expect(r.path).toBe(defaultDashboardPath());
+  });
+});
+
+// --- ACTIONS["export-dashboard"] real-fs integration --------------------
+
+describe('ACTIONS["export-dashboard"]', () => {
+  it('is registered as an action on the stocks service', () => {
+    expect(typeof ACTIONS['export-dashboard']).toBe('function');
   });
 });

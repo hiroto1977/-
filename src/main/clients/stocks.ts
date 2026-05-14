@@ -1,4 +1,7 @@
 import type { FetchContext, ActionContext, ActionMap } from './types';
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 /**
  * Stocks analytics + paper trading.
@@ -1169,8 +1172,281 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   };
 }
 
+// --- Standalone dashboard export -----------------------------------------
+
+/** Input bundle for `renderDashboardHtml`. Composes the current stocks
+ *  snapshot and (optionally) the most recent AI advisor result. */
+export interface DashboardInput {
+  readonly snapshot: StocksSnapshot;
+  readonly advisorResult?: AdvisorResponse;
+  /** Render timestamp (ISO). Pinned via test for determinism. */
+  readonly generatedAt: string;
+}
+
+/** Escape `<`, `>`, `&`, `"`, `'` for safe HTML interpolation. The
+ *  dashboard interpolates user-supplied data (advisor rationale,
+ *  watchlist labels) and any of these could carry attacker-controlled
+ *  text from a tampered snapshot — never trust the input. */
+export function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const YEN_FMT = new Intl.NumberFormat('ja-JP', {
+  style: 'currency',
+  currency: 'JPY',
+  maximumFractionDigits: 0,
+});
+const NUM_FMT = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 2 });
+
+/** Render a per-ticker sparkline as an inline SVG path. */
+function renderSparkline(candles: readonly Candle[], width = 160, height = 40): string {
+  if (candles.length < 2) return '';
+  const closes = candles.slice(-60).map((c) => c.close);
+  const min = Math.min(...closes);
+  const max = Math.max(...closes);
+  const range = max - min || 1;
+  const pts = closes
+    .map((c, i) => {
+      const x = (i / (closes.length - 1)) * width;
+      const y = height - ((c - min) / range) * height;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const color = closes[closes.length - 1]! >= closes[0]! ? '#22c55e' : '#ef4444';
+  return `<svg width="${width}" height="${height}" aria-hidden="true"><polyline fill="none" stroke="${color}" stroke-width="1.5" points="${pts}" /></svg>`;
+}
+
+/** Generate a self-contained HTML dashboard. Pure function — no I/O. */
+export function renderDashboardHtml(input: DashboardInput): string {
+  const { snapshot, advisorResult, generatedAt } = input;
+  const port = snapshot.portfolio;
+  // Mark-to-market equity over current latestClose for each held ticker.
+  let equity = port.cash;
+  for (const [ticker, pos] of Object.entries(port.positions)) {
+    const w = snapshot.watchlist.find((x) => x.symbol === ticker);
+    if (w) equity += pos.shares * w.latestClose;
+  }
+  const pnl = equity - port.initialCash;
+  const pnlPct = port.initialCash > 0 ? (pnl / port.initialCash) * 100 : 0;
+
+  const watchlistRows = snapshot.watchlist
+    .map((w) => {
+      const dir = w.changePct >= 0 ? '#22c55e' : '#ef4444';
+      const sign = w.changePct >= 0 ? '+' : '';
+      const sigColor =
+        w.signal.action === 'buy'
+          ? '#22c55e'
+          : w.signal.action === 'sell'
+            ? '#ef4444'
+            : '#94a3b8';
+      const sigLabel =
+        w.signal.action === 'buy' ? '買い' : w.signal.action === 'sell' ? '売り' : '見送り';
+      return `<tr>
+  <td><strong>${escapeHtml(w.symbol)}</strong><br/><span class="mute">${escapeHtml(w.label)}</span></td>
+  <td class="num">${NUM_FMT.format(w.latestClose)}</td>
+  <td class="num" style="color:${dir}">${sign}${w.changePct.toFixed(2)}%</td>
+  <td>${renderSparkline(w.candles)}</td>
+  <td><span class="chip" style="background:${sigColor}">${sigLabel}</span><br/><span class="mute">${escapeHtml(w.signal.reason)}</span></td>
+</tr>`;
+    })
+    .join('\n');
+
+  const historyRows = port.history
+    .slice(-20)
+    .reverse()
+    .map((t) => {
+      const color = t.action === 'buy' ? '#22c55e' : '#ef4444';
+      const label = t.action === 'buy' ? '買い' : '売り';
+      return `<tr>
+  <td class="mute">${escapeHtml(t.date)}</td>
+  <td><strong>${escapeHtml(t.ticker)}</strong></td>
+  <td style="color:${color}"><strong>${label}</strong></td>
+  <td class="num">${t.shares}</td>
+  <td class="num">${NUM_FMT.format(t.price)}</td>
+  <td class="mute">${escapeHtml(t.reason)}</td>
+</tr>`;
+    })
+    .join('\n');
+
+  const advisorSection = advisorResult
+    ? `<section>
+  <h2>AI アドバイザー結果 (${advisorResult.recommendations.length} 件)</h2>
+  ${advisorResult.recommendations
+    .map(
+      (r) => `<article class="rec">
+    <div class="rank">${r.rank}</div>
+    <div>
+      <h3>${escapeHtml(r.symbol)}</h3>
+      <p>${escapeHtml(r.rationale)}</p>
+      <ul>${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+    </div>
+  </article>`,
+    )
+    .join('\n')}
+  <p class="mute disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+</section>`
+    : '';
+
+  return `<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Service Hub — Stocks ダッシュボード</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0f1117; color: #e2e8f0; margin: 0; padding: 24px; }
+h1 { margin: 0 0 8px; }
+h2 { margin: 24px 0 8px; font-size: 16px; color: #94a3b8; }
+h3 { margin: 0 0 4px; font-size: 14px; }
+.banner { border: 1px solid #fbbf24; background: rgba(251,191,36,0.08); color: #fbbf24; padding: 10px 14px; border-radius: 8px; margin: 16px 0; font-size: 13px; line-height: 1.5; }
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+.tile { background: #1e2330; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 160px; }
+.tile .label { font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+.tile .value { font-size: 20px; font-weight: 600; }
+.tile .sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 24px; font-size: 13px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #334155; }
+th { color: #94a3b8; font-weight: 500; font-size: 11px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mute { color: #94a3b8; font-size: 11px; }
+.chip { display: inline-block; padding: 2px 8px; border-radius: 4px; color: white; font-size: 11px; font-weight: 600; }
+.rec { display: flex; gap: 12px; align-items: flex-start; padding: 12px; background: #1e2330; border: 1px solid #334155; border-radius: 8px; margin: 8px 0; }
+.rec .rank { width: 28px; height: 28px; border-radius: 14px; background: #6366f1; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+.rec ul { margin: 8px 0 0 16px; padding: 0; font-size: 11px; color: #94a3b8; }
+.disclaimer { font-style: italic; margin-top: 8px; }
+footer { margin-top: 32px; color: #64748b; font-size: 11px; }
+</style>
+</head>
+<body>
+<h1>Service Hub — Stocks ダッシュボード</h1>
+<div class="mute">生成日時: ${escapeHtml(generatedAt)}</div>
+<div class="banner"><strong>シミュレーション中:</strong> 実弾発注は行いません。Phase 7 で証券会社 API 連携時に有効化。本ダッシュボードは教育目的の参考情報であり投資助言ではありません。過去パフォーマンスは将来リターンを保証しません。</div>
+
+<section>
+  <h2>ペーパー口座</h2>
+  <div class="tiles">
+    <div class="tile"><div class="label">現在資産</div><div class="value">${escapeHtml(YEN_FMT.format(equity))}</div></div>
+    <div class="tile"><div class="label">現金残高</div><div class="value">${escapeHtml(YEN_FMT.format(port.cash))}</div></div>
+    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeHtml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
+    <div class="tile"><div class="label">初期入金</div><div class="value">${escapeHtml(YEN_FMT.format(port.initialCash))}</div></div>
+    <div class="tile"><div class="label">取引履歴</div><div class="value">${port.history.length}</div><div class="sub">paper trades</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>ウォッチリスト (${snapshot.watchlist.length} 銘柄)</h2>
+  <table>
+    <thead><tr><th>銘柄</th><th class="num">最終値</th><th class="num">変動率</th><th>30日チャート</th><th>シグナル</th></tr></thead>
+    <tbody>${watchlistRows}</tbody>
+  </table>
+</section>
+
+${
+  port.history.length > 0
+    ? `<section>
+  <h2>最近の取引 (直近 ${Math.min(20, port.history.length)} 件)</h2>
+  <table>
+    <thead><tr><th>日付</th><th>銘柄</th><th>アクション</th><th class="num">株数</th><th class="num">価格</th><th>理由</th></tr></thead>
+    <tbody>${historyRows}</tbody>
+  </table>
+</section>`
+    : ''
+}
+
+${advisorSection}
+
+<footer>
+Generated by Service Hub. © local-only · no real-money execution.
+</footer>
+</body>
+</html>`;
+}
+
+/** Default cross-platform path matching the Windows reference layout
+ *  `~/.local/business-hub/data/dashboard.html`. */
+export function defaultDashboardPath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.html');
+}
+
+interface ExportPayload {
+  /** Optional override path. Defaults to defaultDashboardPath(). */
+  path?: unknown;
+  /** Optional advisor result to embed (passed through from renderer). */
+  advisorResult?: unknown;
+}
+
+export interface ExportDashboardResult {
+  readonly path: string;
+  readonly bytes: number;
+  readonly generatedAt: string;
+}
+
+/** Optional dependency-injection seam for tests. */
+export interface ExportDeps {
+  fetchSnapshot?: (ctx: FetchContext) => Promise<StocksSnapshot>;
+  writeFile?: (filePath: string, content: string) => Promise<void>;
+  now?: () => Date;
+}
+
+/** Type guard for the AdvisorResponse payload that the renderer
+ *  forwards through `serviceHub.invoke`. */
+function isAdvisorResult(v: unknown): v is AdvisorResponse {
+  if (v === null || typeof v !== 'object') return false;
+  const r = v as Record<string, unknown>;
+  return (
+    Array.isArray(r['recommendations']) &&
+    typeof r['disclaimer'] === 'string' &&
+    r['notForRealMoney'] === true
+  );
+}
+
+/** Validate that a path is under the user's home and ends in .html.
+ *  Prevents the renderer from writing to arbitrary filesystem locations
+ *  (e.g. /etc/passwd) via a tampered payload. */
+export function isSafeDashboardPath(filePath: string, home: string): boolean {
+  if (typeof filePath !== 'string' || filePath.length === 0) return false;
+  if (filePath.length > 1024) return false;
+  if (/[\0\r\n]/.test(filePath)) return false;
+  if (!filePath.endsWith('.html')) return false;
+  const resolved = path.resolve(filePath);
+  const resolvedHome = path.resolve(home);
+  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+}
+
+export async function exportDashboardImpl(
+  ctx: ActionContext,
+  deps: ExportDeps = {},
+): Promise<ExportDashboardResult> {
+  const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
+  const home = os.homedir();
+  const filePath =
+    typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultDashboardPath();
+  if (!isSafeDashboardPath(filePath, home)) {
+    throw new Error('dashboard path must be a .html file under the user home directory');
+  }
+  const snap = await (deps.fetchSnapshot ?? fetchStocksSnapshot)({
+    token: ctx.token,
+    fetch: ctx.fetch,
+  });
+  const advisor = isAdvisorResult(advisorResult) ? advisorResult : undefined;
+  const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
+  const html = renderDashboardHtml({ snapshot: snap, advisorResult: advisor, generatedAt });
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
+}
+
+async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResult> {
+  return exportDashboardImpl(ctx);
+}
+
 export const ACTIONS: ActionMap = {
   'register-ticker': registerTicker,
   backtest: runBacktest,
   advise: askAdvisor,
+  'export-dashboard': exportDashboard,
 };

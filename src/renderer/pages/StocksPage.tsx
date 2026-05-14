@@ -169,6 +169,45 @@ export function StocksPage() {
   const [advisorError, setAdvisorError] = useState<string | null>(null);
   const [advisorResult, setAdvisorResult] = useState<AdvisorResponse | null>(null);
 
+  // --- Dashboard export state -------------------------------------------
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportPath, setExportPath] = useState<string | null>(null);
+  const [exportBytes, setExportBytes] = useState<number | null>(null);
+
+  async function exportDashboard() {
+    setExportBusy(true);
+    setExportError(null);
+    try {
+      const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
+        'stocks',
+        'export-dashboard',
+        // Forward the latest advisor result so the dashboard captures it.
+        advisorResult ? { advisorResult } : {},
+      );
+      if (r.ok) {
+        setExportPath(r.data.path);
+        setExportBytes(r.data.bytes);
+      } else {
+        setExportError(r.message);
+      }
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setExportBusy(false);
+    }
+  }
+
+  function openExportedDashboard() {
+    if (exportPath) {
+      // Convert OS path to file:// URL — serviceHub.openExternal routes
+      // it through the main process which the OS browser will render.
+      const url =
+        'file:///' + exportPath.replace(/\\/g, '/').replace(/^\//, '');
+      window.serviceHub.openExternal(url);
+    }
+  }
+
   async function runAdvisor() {
     if (!advisorQuestion.trim()) {
       setAdvisorError('質問を入力してください');
@@ -476,6 +515,73 @@ export function StocksPage() {
             >
               {advisorResult.disclaimer}
             </div>
+          </div>
+        )}
+      </Section>
+
+      <Section title="ダッシュボード書き出し" count={exportPath ? 1 : 0}>
+        <div style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.5 }}>
+          現在のスナップショット (ウォッチリスト / ペーパー口座 / 取引履歴
+          {advisorResult ? ' / AI アドバイザー結果' : ''}) を 1 つの自己完結
+          HTML ファイルとして書き出します。出力先は{' '}
+          <code style={{ background: 'var(--bg-elev)', padding: '1px 6px', borderRadius: 3 }}>
+            ~/.local/business-hub/data/dashboard.html
+          </code>
+          。ファイルにはインライン CSS のみで外部スクリプトなし、CSP 制約下でも OS
+          ブラウザで開けます。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <button
+            onClick={exportDashboard}
+            disabled={exportBusy}
+            style={{
+              padding: '8px 16px',
+              background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: exportBusy ? 'wait' : 'pointer',
+            }}
+          >
+            {exportBusy ? '書き出し中…' : 'ダッシュボードを書き出す'}
+          </button>
+          {exportPath && (
+            <button
+              onClick={openExportedDashboard}
+              style={{
+                padding: '8px 16px',
+                background: 'var(--bg-elev)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text)',
+                fontSize: 13,
+                cursor: 'pointer',
+              }}
+            >
+              外部ブラウザで開く
+            </button>
+          )}
+        </div>
+        {exportError && (
+          <div
+            style={{
+              border: '1px solid #ef4444',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#ef4444',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 8,
+            }}
+          >
+            {exportError}
+          </div>
+        )}
+        {exportPath && (
+          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+            書き出し済み: <code>{exportPath}</code>
+            {exportBytes != null && ` (${(exportBytes / 1024).toFixed(1)} KB)`}
           </div>
         )}
       </Section>
