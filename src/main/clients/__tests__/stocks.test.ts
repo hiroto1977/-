@@ -209,10 +209,26 @@ function makeCandles(closes: number[]): Candle[] {
 
 describe('SMA_CROSSOVER_STRATEGY', () => {
   it('emits "hold" with insufficient history (< 51 candles)', () => {
-    const s = SMA_CROSSOVER_STRATEGY(makeCandles([1, 2, 3]));
+    const candles = makeCandles([1, 2, 3]);
+    const s = SMA_CROSSOVER_STRATEGY(candles);
     expect(s.action).toBe('hold');
     expect(s.reason).toBe('insufficient history');
     expect(s.strategy).toBe('sma-crossover');
+    // holdSignal pulls last.date from the last candle. Pin so the
+    // `candles.length - 1` indexing arithmetic mutant dies.
+    expect(s.date).toBe(candles[candles.length - 1]!.date);
+  });
+
+  it('boundary: exactly 51 candles is NOT insufficient (kills `< 51` → `<= 51`)', () => {
+    const candles = makeCandles(Array(51).fill(100));
+    const s = SMA_CROSSOVER_STRATEGY(candles);
+    expect(s.reason).not.toBe('insufficient history');
+  });
+
+  it('boundary: exactly 50 candles IS insufficient', () => {
+    const candles = makeCandles(Array(50).fill(100));
+    const s = SMA_CROSSOVER_STRATEGY(candles);
+    expect(s.reason).toBe('insufficient history');
   });
 
   it('emits "buy" at the bar where SMA20 crosses up through SMA50 (golden cross)', () => {
@@ -262,6 +278,11 @@ describe('RSI_MEAN_REVERSION_STRATEGY', () => {
     expect(s.reason).toBe('insufficient history');
   });
 
+  it('boundary: exactly 15 candles is NOT insufficient (kills `< 15` → `<= 15`)', () => {
+    const s = RSI_MEAN_REVERSION_STRATEGY(makeCandles(Array(15).fill(100)));
+    expect(s.reason).not.toBe('insufficient history');
+  });
+
   it('emits "buy" when RSI < 30 (oversold) with confidence = (30 - RSI) / 30', () => {
     // Falling series → RSI low (= 0 with monotonic drops)
     const closes = [
@@ -303,6 +324,11 @@ describe('MACD_SIGNAL_STRATEGY', () => {
     const s = MACD_SIGNAL_STRATEGY(makeCandles([1, 2, 3]));
     expect(s.action).toBe('hold');
     expect(s.reason).toBe('insufficient history');
+  });
+
+  it('boundary: exactly 35 candles is NOT insufficient (kills `< 35` → `<= 35`)', () => {
+    const s = MACD_SIGNAL_STRATEGY(makeCandles(Array(35).fill(100)));
+    expect(s.reason).not.toBe('insufficient history');
   });
 
   it('emits "buy" when MACD crosses above signal', () => {
@@ -366,6 +392,12 @@ describe('createPaperPortfolio', () => {
 
   it('throws on negative initial cash', () => {
     expect(() => createPaperPortfolio(-1)).toThrow(/non-negative/);
+  });
+
+  it('accepts zero initial cash without throwing (kills `< 0` → `<= 0` boundary)', () => {
+    const p = createPaperPortfolio(0);
+    expect(p.cash).toBe(0);
+    expect(p.initialCash).toBe(0);
   });
 
   it('throws on non-finite initial cash', () => {
@@ -533,6 +565,59 @@ describe('backtest', () => {
     const slSell = sells.find((s) => s.reason === 'stop-loss');
     expect(slSell).toBeDefined();
     expect(slSell!.action).toBe('sell');
+  });
+
+  it('does NOT trigger stop-loss for a 2.5% drop (kills dropPct `/` → `*` arithmetic mutant)', () => {
+    // After golden-cross buy at 200, price drops only 2.5% to 195.
+    // Original: dropPct = (200-195)/200 = 0.025 < 0.05 → no stop-loss.
+    // Mutated `*`: dropPct = (200-195)*200 = 1000 → fires stop-loss.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200), // golden cross → buy near 200
+      ...Array(20).fill(195), // -2.5% — below threshold
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    const slSells = res.trades.filter((t) => t.reason === 'stop-loss');
+    expect(slSells).toHaveLength(0);
+  });
+
+  it('winRate === 1 when the only completed pair is a winning take-profit', () => {
+    // Pins: wins/completed formula, wins + losses sum.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200),
+      ...Array(20).fill(0).map((_, i) => 200 + i * 5), // rises through +15%
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    const tpSells = res.trades.filter((t) => t.reason === 'take-profit');
+    expect(tpSells.length).toBeGreaterThan(0);
+    expect(res.winRate).toBe(1);
+  });
+
+  it('winRate === 0 when the only completed pair is a stop-loss loss', () => {
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200),
+      ...Array(20).fill(150), // -25% → stop-loss losing trade
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    const slSells = res.trades.filter((t) => t.reason === 'stop-loss');
+    expect(slSells.length).toBeGreaterThan(0);
+    expect(res.winRate).toBe(0);
+  });
+
+  it('does NOT trigger take-profit for a 5% gain (kills gainPct `/` → `*` arithmetic mutant)', () => {
+    // After golden-cross buy at 200, price rises 5% to 210 — below
+    // takeProfitPct = 0.15. Original: 0.05 < 0.15 → no take-profit.
+    // Mutated `*`: (210-200)*200 = 2000 → fires take-profit.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200),
+      ...Array(20).fill(210), // +5% — below 15% threshold
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    const tpSells = res.trades.filter((t) => t.reason === 'take-profit');
+    expect(tpSells).toHaveLength(0);
   });
 
   it('stop-loss boundary uses `>= 5%` (kills `> 5%` boundary)', () => {
