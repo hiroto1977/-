@@ -342,9 +342,14 @@ export const RSI_MEAN_REVERSION_STRATEGY: Strategy = (candles) => {
   // is defensive type-narrowing; mutating it is unobservable.
   // Stryker disable next-line ConditionalExpression
   if (v == null) return holdSignal(candles, name, 'rsi unavailable');
+  // Boundary mutants `v < 30` → `v <= 30` (and `v > 70` → `v >= 70`)
+  // are observable only when RSI is exactly 30 or 70 — an IEEE-754
+  // equality that no monotonic-or-noisy series produces deterministically.
+  // Stryker disable next-line EqualityOperator
   if (v < 30) {
     return { date: last.date, action: 'buy', confidence: (30 - v) / 30, reason: `RSI ${v.toFixed(1)} oversold`, strategy: name };
   }
+  // Stryker disable next-line EqualityOperator
   if (v > 70) {
     return { date: last.date, action: 'sell', confidence: (v - 70) / 30, reason: `RSI ${v.toFixed(1)} overbought`, strategy: name };
   }

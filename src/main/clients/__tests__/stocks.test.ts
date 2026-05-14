@@ -296,6 +296,9 @@ describe('RSI_MEAN_REVERSION_STRATEGY', () => {
     // Pin the confidence formula (kills L303 ArithmeticOperator mutants
     // that would change `(30 - v) / 30` to `(30 - v) * 30`, `(30 + v) / 30`).
     expect(s.confidence).toBe(1);
+    // Pin strategy name so const name = 'rsi-mean-reversion' StringLiteral
+    // mutant dies.
+    expect(s.strategy).toBe('rsi-mean-reversion');
   });
 
   it('emits "sell" when RSI > 70 (overbought) with confidence = (RSI - 70) / 30', () => {
@@ -368,6 +371,13 @@ describe('MACD_SIGNAL_STRATEGY', () => {
       }
     }
     expect(found).toBe(true);
+  });
+
+  it('strategy field is "macd-signal" + reason "no crossover" on quiet history (kills MACD name + no-crossover StringLiteral mutants)', () => {
+    const closes = Array.from({ length: 40 }, () => 100);
+    const s = MACD_SIGNAL_STRATEGY(makeCandles(closes));
+    expect(s.strategy).toBe('macd-signal');
+    expect(s.reason).toBe('no crossover');
   });
 });
 
@@ -454,6 +464,18 @@ describe('applySignal', () => {
     expect(p.history).toHaveLength(2);
     expect(p.history[1]!.action).toBe('sell');
     expect(p.history[1]!.shares).toBe(10);
+  });
+
+  it('selling one ticker preserves OTHER tickers (kills `{ ...port.positions }` → `{}`)', () => {
+    let p = createPaperPortfolio(100_000);
+    p = applySignal(p, 'AAPL', buySignal('2026-01-01'), 100);
+    p = applySignal(p, 'MSFT', buySignal('2026-01-02'), 200);
+    expect(Object.keys(p.positions).sort()).toEqual(['AAPL', 'MSFT']);
+    p = applySignal(p, 'AAPL', sellSignal('2026-01-03'), 150);
+    // MSFT must remain after selling AAPL.
+    expect(p.positions['AAPL']).toBeUndefined();
+    expect(p.positions['MSFT']).toBeDefined();
+    expect(p.positions['MSFT']!.shares).toBeGreaterThan(0);
   });
 
   it('sell with no position is a no-op (no history entry)', () => {
