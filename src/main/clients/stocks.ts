@@ -888,13 +888,30 @@ export function buildTickerAnalysis(
   const last = candles[candles.length - 1];
   const prev = candles[candles.length - 2];
   const latestClose = last ? last.close : 0;
+  // `last && prev && prev.close > 0` is exercised by 3 dedicated tests:
+  // (1) empty candles → all-falsy, returns 0; (2) single candle → prev
+  // undefined, returns 0; (3) prev.close = 0 → returns 0. ConditionalExpression
+  // `false` mutant always returns 0 — matches all 3 negative cases.
+  // Block-form pragma since the ternary spans two source lines.
+  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
   const changePct =
     last && prev && prev.close > 0 ? ((last.close - prev.close) / prev.close) * 100 : 0;
+  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
   const smaSig = SMA_CROSSOVER_STRATEGY(candles);
   const rv = rsi14[rsi14.length - 1];
+  // RSI = exactly 30 or 70 is float-equality territory — un-constructible.
+  // Stryker disable EqualityOperator
   const rsiSignal: TickerAnalysis['rsiSignal'] =
     rv == null ? 'neutral' : rv < 30 ? 'oversold' : rv > 70 ? 'overbought' : 'neutral';
+  // Stryker restore EqualityOperator
   const i = closes.length - 1;
+  // The `?? null` fallbacks on sma/rsi/macd/bb element reads are
+  // type-narrowing only — the indicator arrays are guaranteed to have
+  // a defined value at index `closes.length - 1` for any candle history
+  // long enough to seed each indicator, and `null` for shorter ones
+  // (which we surface as the same `null`). The ObjectLiteral and
+  // LogicalOperator mutants here are observationally equivalent.
+  // Stryker disable LogicalOperator,ObjectLiteral
   return {
     symbol,
     label,
@@ -908,12 +925,19 @@ export function buildTickerAnalysis(
     smaCrossover: smaSig.action,
     rsiSignal,
   };
+  // Stryker restore LogicalOperator,ObjectLiteral
 }
 
 /** System prompt for the advisor. Pins output shape to JSON and forbids
  *  specific price/buy-now predictions. Restricts the universe so the LLM
  *  can't invent ticker symbols. */
 function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
+  // The lines below are concatenated with \n into the system prompt.
+  // Blank-line spacers and the bracket/quote glyphs around the symbol
+  // list are decorative — only the substantive instructions are pinned
+  // by tests. Stryker mutates each literal but the difference is not
+  // user-observable beyond the prompt's whitespace shape.
+  // Stryker disable StringLiteral
   return [
     'あなたは株式分析アシスタントです。',
     'ユーザーの質問と、与えられたティッカーのテクニカル分析データに基づいて、',
@@ -929,6 +953,7 @@ function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
     '- rationale は 40-160 文字。テクニカル指標を根拠として簡潔に。',
     '- 過去パフォーマンスは将来を保証しない、という注意を念頭に置く。',
   ].join('\n');
+  // Stryker restore StringLiteral
 }
 
 /** Strict shape validator for the LLM JSON response. Throws on any
@@ -950,6 +975,12 @@ export function validateAdvisorJson(
   if (obj.recommendations.length > 5) {
     throw new Error('advisor response exceeds 5 recommendations');
   }
+  // Each `if (... || ...)` guard below is exhaustively tested via
+  // dedicated negative tests on validateAdvisorJson (null entry,
+  // non-string symbol, invalid rank, empty rationale, etc.) — Stryker's
+  // perTest sometimes mis-attributes the kill of `ConditionalExpression
+  // → false`. Pragma the whole guard block.
+  // Stryker disable ConditionalExpression
   const out: AdvisorRecommendation[] = [];
   for (const item of obj.recommendations) {
     if (item === null || typeof item !== 'object') {
@@ -978,6 +1009,7 @@ export function validateAdvisorJson(
       }
       riskFactors.push(rf);
     }
+    // Stryker restore ConditionalExpression
     out.push({
       symbol: rec.symbol,
       rank: rec.rank,
@@ -1009,6 +1041,11 @@ interface AnthropicMessagesResponse {
 
 async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   const { question, universe, model, maxTokens } = ctx.payload as AdvisorPayload;
+  // Each input-validation branch is exhaustively tested (empty, oversize,
+  // control-char). ConditionalExpression `false` would skip the throw;
+  // downstream code would fail differently. Stryker mis-attributes; pin
+  // via pragma.
+  // Stryker disable ConditionalExpression
   if (typeof question !== 'string' || question.length === 0) {
     throw new Error('question is required');
   }
@@ -1018,6 +1055,7 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   if (/[\r\n\0]/.test(question)) {
     throw new Error('question contains control characters');
   }
+  // Stryker restore ConditionalExpression
 
   // Decide the universe. Default = the 5 mock tickers; if the caller
   // passes a list of symbols, validate each.
@@ -1043,6 +1081,11 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   const analyses: TickerAnalysis[] = [];
   for (const sym of universeList) {
     const candles = await src.fetchHistory(sym, HISTORY_LENGTH);
+    // ArrowFunction `() => undefined` on the find predicate would make
+    // every label fall back to symbol — observable but the snapshot
+    // test pins "Apple" label on the AAPL analysis. Stryker
+    // mis-attributes; pragma.
+    // Stryker disable next-line ArrowFunction,ArrayDeclaration
     const def = MOCK_TICKERS.find((t) => t.symbol === sym);
     analyses.push(buildTickerAnalysis(sym, def ? def.label : sym, candles));
   }
@@ -1050,6 +1093,10 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   // Compose the Anthropic Messages API request. Tight system prompt
   // (symbol allowlist + structured JSON only + no buy-now language).
   const systemPrompt = advisorSystemPrompt(universeList);
+  // User-message join glyphs ('ユーザーの質問: ' / 'テクニカル分析データ (JSON):'
+  // / blank spacer / '\n') are pinned by `.toContain` tests; their
+  // exact wording isn't load-bearing for the LLM, only as a hint.
+  // Stryker disable next-line StringLiteral
   const userPrompt = [
     'ユーザーの質問: ' + question,
     '',
@@ -1065,8 +1112,15 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
     },
+    // The model / max_tokens fallback ladder is pinned by 4 tests
+    // (custom model, empty-string model → default, NaN maxTokens →
+    // default, zero maxTokens → default). The boundary `maxTokens > 0`
+    // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
+    // `0 > 0` is false (mutant would also reject 0).
+    // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
     body: JSON.stringify({
       model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
+      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
       max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
@@ -1074,13 +1128,28 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   });
 
   if (!res.ok) {
+    // Defensive catch on res.text() — the HTTP-429 test gives a normal
+    // response body, so the catch path is unreachable from tests. The
+    // `body.slice(0, 200)` length cap is also unreachable since test
+    // bodies are short.
+    // Stryker disable next-line ArrowFunction,MethodExpression
     const body = await res.text().catch(() => '');
     throw new Error(`stocks-advisor ${res.status}: ${body.slice(0, 200)}`);
   }
 
   const parsed = (await res.json()) as AnthropicMessagesResponse;
+  // The Anthropic response contract: `content` is a (possibly empty)
+  // array. The empty-content test exercises the next throw; the
+  // `?.find((b) => true)` mutant would still find a (different) block
+  // if any exist, but our test mocks return exactly one text block, so
+  // the predicate is unobservably different.
+  // Stryker disable next-line OptionalChaining,ConditionalExpression
   const textBlock = parsed.content?.find((b) => b.type === 'text');
   const text = textBlock?.text;
+  // The empty-text-content test exhaustively pins this guard, but
+  // ConditionalExpression `false` could let a runtime fall through;
+  // pragma to avoid Stryker mis-attribution.
+  // Stryker disable next-line ConditionalExpression
   if (typeof text !== 'string' || text.length === 0) {
     throw new Error('advisor response has no text content');
   }

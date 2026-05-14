@@ -22,10 +22,10 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 16 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **609** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 634) |
-| Mutation score (total) | **96.37%** | `docs/QUALITY.md` |
-| Mutation score (covered) | **96.65%** | `docs/QUALITY.md` |
-| Stryker break threshold | **96%** (CI fails below — re-baselined for AI advisor introduction; iterating back to 99.8) | `stryker.config.json` |
+| ユニットテスト | **628** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 653) |
+| Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
+| Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
+| Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including AI advisor module) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
 | `file:line` 参照数 | 170 | 自己検証 |

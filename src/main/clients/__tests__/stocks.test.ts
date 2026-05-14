@@ -1526,3 +1526,329 @@ describe('ADVISOR_DISCLAIMER', () => {
     expect(ADVISOR_DISCLAIMER).toMatch(/ご自身の責任/);
   });
 });
+
+// --- Advisor system prompt content -------------------------------------
+
+describe('advisor system prompt content (kills StringLiteral mutants on each line)', () => {
+  // Send a happy-path advise() call and capture the system prompt that
+  // was sent to Anthropic. Then assert every required phrase exists.
+  it('embeds all safety/structure clauses in the system prompt', async () => {
+    const goodJson = JSON.stringify({
+      recommendations: [
+        {
+          symbol: 'AAPL',
+          rank: 1,
+          rationale: 'A valid rationale citing tech signals for the response.',
+          riskFactors: ['市場リスク'],
+        },
+      ],
+    });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          content: [{ type: 'text', text: goodJson }],
+          stop_reason: 'end_turn',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q?' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const sys: string = body.system;
+    // Every line of the prompt carries observable safety information.
+    expect(sys).toContain('株式分析アシスタント');
+    expect(sys).toContain('ユーザーの質問');
+    expect(sys).toContain('最大 5 件');
+    expect(sys).toContain('厳守事項');
+    expect(sys).toContain('JSON スキーマ');
+    expect(sys).toContain('"recommendations"');
+    expect(sys).toContain('"symbol"');
+    expect(sys).toContain('"rank"');
+    expect(sys).toContain('"rationale"');
+    expect(sys).toContain('"riskFactors"');
+    expect(sys).toContain('許可済みリスト');
+    expect(sys).toContain('実在しないティッカー');
+    expect(sys).toContain('今買え');
+    expect(sys).toContain('riskFactors (1-3 件)');
+    expect(sys).toContain('40-160 文字');
+    expect(sys).toContain('過去パフォーマンスは将来を保証しない');
+    expect(sys).toContain('\n'); // multi-line join('\n')
+  });
+});
+
+// --- buildTickerAnalysis edge cases ------------------------------------
+
+describe('buildTickerAnalysis edge cases', () => {
+  it('changePct === 0 when there is exactly 1 candle (prev is undefined)', () => {
+    const candles: Candle[] = [
+      { date: '2026-01-01', open: 1, high: 1, low: 1, close: 100, volume: 1 },
+    ];
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.latestClose).toBe(100);
+    expect(ta.changePct).toBe(0);
+  });
+
+  it('changePct === 0 when prev.close is 0 (avoid divide-by-zero)', () => {
+    const candles: Candle[] = [
+      { date: '2026-01-01', open: 0, high: 0, low: 0, close: 0, volume: 1 },
+      { date: '2026-01-02', open: 0, high: 0, low: 0, close: 100, volume: 1 },
+    ];
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.latestClose).toBe(100);
+    expect(ta.changePct).toBe(0);
+  });
+
+  it('rsiSignal === "neutral" when rsi value is undefined (short history)', () => {
+    const candles: Candle[] = [
+      { date: '2026-01-01', open: 1, high: 1, low: 1, close: 100, volume: 1 },
+    ];
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.rsiSignal).toBe('neutral');
+  });
+
+  it('rsiSignal === "neutral" when rsi is between 30 and 70 (mid range)', () => {
+    // Build a slowly-alternating series so RSI lands in the neutral band.
+    const closes: number[] = [];
+    for (let i = 0; i < 30; i++) closes.push(100 + (i % 2 === 0 ? 1 : -0.5));
+    const candles: Candle[] = closes.map((c, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      open: c,
+      high: c,
+      low: c,
+      close: c,
+      volume: 1,
+    }));
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.rsiSignal).toBe('neutral');
+  });
+});
+
+// --- advisor: label resolution + numeric boundaries --------------------
+
+describe('advisor edge cases', () => {
+  function jsonRes(text: string) {
+    return new Response(
+      JSON.stringify({ content: [{ type: 'text', text }], stop_reason: 'end_turn' }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  }
+  const ok = () =>
+    jsonRes(
+      JSON.stringify({
+        recommendations: [
+          {
+            symbol: 'AAPL',
+            rank: 1,
+            rationale: 'A valid rationale string.',
+            riskFactors: ['risk'],
+          },
+        ],
+      }),
+    );
+
+  it('uses MOCK_TICKERS label (not symbol) when symbol is a known mock ticker', async () => {
+    // Embeds analyses JSON into the user message; the AAPL analysis
+    // should carry label "Apple" not "AAPL".
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q?' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const userMsg = body.messages[0].content as string;
+    expect(userMsg).toContain('"label":"Apple"');
+    expect(userMsg).toContain('"label":"トヨタ自動車"');
+  });
+
+  it('uses raw symbol as label when caller-supplied universe is outside MOCK_TICKERS', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonRes(
+        JSON.stringify({
+          recommendations: [
+            { symbol: 'NVDA', rank: 1, rationale: 'rationale here', riskFactors: ['r'] },
+          ],
+        }),
+      ),
+    );
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q?', universe: ['NVDA'] },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.messages[0].content).toContain('"label":"NVDA"');
+  });
+
+  it('boundary: question exactly 1000 chars is accepted (kills `> 1000` → `>= 1000`)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    const q = 'q'.repeat(1000);
+    await expect(
+      ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: q } }),
+    ).resolves.toBeDefined();
+  });
+
+  it('boundary: universe of exactly 25 symbols accepted', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonRes(
+        JSON.stringify({
+          recommendations: [
+            { symbol: 'TIC0', rank: 1, rationale: 'rationale here', riskFactors: ['r'] },
+          ],
+        }),
+      ),
+    );
+    const universe = Array.from({ length: 25 }, (_, i) => 'TIC' + i);
+    await expect(
+      ACTIONS['advise']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { question: 'q', universe },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('non-string model arg is ignored, defaults to claude-sonnet-4-6', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q', model: 42 as unknown as string },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
+  });
+
+  it('empty-string model is ignored, defaults to claude-sonnet-4-6', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q', model: '' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
+  });
+
+  it('non-finite maxTokens is ignored, defaults to 1024', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q', maxTokens: Number.POSITIVE_INFINITY },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.max_tokens).toBe(1024);
+  });
+
+  it('non-positive maxTokens (0 or negative) is ignored, defaults to 1024', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q', maxTokens: 0 },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.max_tokens).toBe(1024);
+  });
+
+  it('content-type header is application/json (kills MethodExpression body→headers mutant)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q' },
+    });
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
+    const headers = init.headers as Record<string, string>;
+    expect(headers['content-type']).toBe('application/json');
+    // POST method pinned (kills the method assignment mutants).
+    expect(init.method).toBe('POST');
+  });
+
+  it('messages array has exactly one user-role entry', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.messages).toHaveLength(1);
+    expect(body.messages[0].role).toBe('user');
+  });
+
+  it('analyses payload starts empty (kills `analyses: TickerAnalysis[] = []` → `[Stryker...]`)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(ok());
+    await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const userMsg = body.messages[0].content as string;
+    // The serialized analyses array must NOT contain the Stryker marker.
+    expect(userMsg).not.toContain('Stryker was here');
+    // And it must contain exactly the 5 default symbols.
+    for (const t of MOCK_TICKERS) {
+      expect(userMsg).toContain('"symbol":"' + t.symbol + '"');
+    }
+  });
+
+  it('truncates a 300-char Anthropic error body to 200 chars (kills L1135 `.slice(0, 200)` → `body`)', async () => {
+    const longErr = 'E'.repeat(300);
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(longErr, { status: 500 }),
+    );
+    const err = await ACTIONS['advise']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { question: 'q' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/^stocks-advisor 500:/);
+    // 200 E chars max in the message tail; not 300.
+    expect((err as Error).message).toMatch(/E{200}$/);
+    expect((err as Error).message).not.toContain('E'.repeat(201));
+  });
+
+  it('boundary: rationale exactly 400 chars accepted', () => {
+    const allowed = new Set(['AAPL']);
+    const out = validateAdvisorJson(
+      {
+        recommendations: [
+          {
+            symbol: 'AAPL',
+            rank: 1,
+            rationale: 'x'.repeat(400),
+            riskFactors: ['r'],
+          },
+        ],
+      },
+      allowed,
+    );
+    expect(out[0]!.rationale).toHaveLength(400);
+  });
+
+  it('boundary: riskFactor exactly 200 chars accepted', () => {
+    const allowed = new Set(['AAPL']);
+    const out = validateAdvisorJson(
+      {
+        recommendations: [
+          {
+            symbol: 'AAPL',
+            rank: 1,
+            rationale: 'rationale',
+            riskFactors: ['r'.repeat(200)],
+          },
+        ],
+      },
+      allowed,
+    );
+    expect(out[0]!.riskFactors[0]).toHaveLength(200);
+  });
+});
