@@ -32,6 +32,16 @@ import {
   type Signal,
   type StocksSnapshot,
   type AdvisorResponse,
+  loadStocksState,
+  saveStocksState,
+  addWatchlistEntry,
+  removeWatchlistEntry,
+  defaultStatePath,
+  registerTickerImpl,
+  unregisterTickerImpl,
+  fetchStocksSnapshotImpl,
+  type StateDeps,
+  type StocksState,
 } from '../stocks';
 import os from 'node:os';
 import path from 'node:path';
@@ -952,8 +962,12 @@ describe('createMockStocksDataSource', () => {
 // --- Snapshot -----------------------------------------------------------
 
 describe('fetchStocksSnapshot', () => {
+  // Empty-state shortcut so snapshot tests don't depend on the real
+  // ~/.local/business-hub/state.json file.
+  const emptyStateDeps = { loadState: async () => ({ watchlist: [] as readonly string[] }) };
+
   it('produces a watchlist of the 5 mock tickers + a paper portfolio', async () => {
-    const snap = await fetchStocksSnapshot({ token: '' });
+    const snap = await fetchStocksSnapshotImpl({ token: '' }, emptyStateDeps);
     expect(snap.watchlist).toHaveLength(MOCK_TICKERS.length);
     expect(snap.watchlist).toHaveLength(5);
     expect(snap.isMock).toBe(true);
@@ -962,7 +976,7 @@ describe('fetchStocksSnapshot', () => {
   });
 
   it('every watchlist row carries label/latestClose/changePct/signal/candles', async () => {
-    const snap = await fetchStocksSnapshot({ token: '' });
+    const snap = await fetchStocksSnapshotImpl({ token: '' }, emptyStateDeps);
     for (const row of snap.watchlist) {
       expect(row.label).toBeTruthy();
       expect(row.latestClose).toBeGreaterThan(0);
@@ -974,12 +988,12 @@ describe('fetchStocksSnapshot', () => {
   });
 
   it('isMock is exactly true (kills `true` → `false` mutant)', async () => {
-    const snap = await fetchStocksSnapshot({ token: '' });
+    const snap = await fetchStocksSnapshotImpl({ token: '' }, emptyStateDeps);
     expect(snap.isMock).toBe(true);
   });
 
   it('changePct = (last - prev) / prev * 100 exactly (kills L637 arithmetic mutants)', async () => {
-    const snap = await fetchStocksSnapshot({ token: '' });
+    const snap = await fetchStocksSnapshotImpl({ token: '' }, emptyStateDeps);
     for (const row of snap.watchlist) {
       const expected = ((row.latestClose - row.previousClose) / row.previousClose) * 100;
       expect(row.changePct).toBeCloseTo(expected, 9);
@@ -1027,41 +1041,86 @@ describe('isSafeSymbol', () => {
 
 // --- Actions ------------------------------------------------------------
 
-describe('ACTIONS["register-ticker"]', () => {
-  it('returns the upper-cased symbol + the Phase-7 deferral message', async () => {
-    const r = (await ACTIONS['register-ticker']!({
-      token: '',
-      payload: { symbol: 'aapl' },
-    })) as { symbol: string; added: boolean; message: string };
+describe('registerTickerImpl', () => {
+  // Pure-state tests with injected memory store — no real file I/O.
+  function memoryDeps() {
+    let store: string | null = null;
+    return {
+      deps: {
+        statePath: () => '/tmp/test.json',
+        readFile: async () => {
+          if (store === null) throw new Error('ENOENT');
+          return store;
+        },
+        writeFile: async (_p: string, c: string) => {
+          store = c;
+        },
+        mkdir: async () => {},
+        rename: async () => {},
+      },
+      getStore: () => store,
+    };
+  }
+
+  it('persists the upper-cased symbol on first registration', async () => {
+    const { deps, getStore } = memoryDeps();
+    const r = await registerTickerImpl({ token: '', payload: { symbol: 'aapl' } }, deps);
     expect(r.symbol).toBe('AAPL');
     expect(r.added).toBe(true);
-    expect(r.message).toMatch(/Phase 7/);
-    // Pin uppercase in the message too (kills `toUpperCase()` → `toLowerCase()`).
-    expect(r.message).toContain('AAPL');
-    expect(r.message).not.toContain('aapl');
+    expect(r.watchlist).toEqual(['AAPL']);
+    expect(r.message).toContain('AAPL added to watchlist');
+    // Stored on disk too.
+    expect(getStore()).not.toBeNull();
+    expect(JSON.parse(getStore()!).watchlist).toEqual(['AAPL']);
   });
 
-  it('uppercases a mixed-case symbol (kills MethodExpression mutant directly)', async () => {
-    const r = (await ACTIONS['register-ticker']!({
-      token: '',
-      payload: { symbol: 'BrK-B' },
-    })) as { symbol: string; message: string };
+  it('is idempotent — adding a duplicate returns added:false', async () => {
+    const { deps } = memoryDeps();
+    await registerTickerImpl({ token: '', payload: { symbol: 'AAPL' } }, deps);
+    const r2 = await registerTickerImpl({ token: '', payload: { symbol: 'aapl' } }, deps);
+    expect(r2.added).toBe(false);
+    expect(r2.watchlist).toEqual(['AAPL']);
+    expect(r2.message).toContain('already in watchlist');
+  });
+
+  it('appends to an existing watchlist', async () => {
+    const { deps } = memoryDeps();
+    await registerTickerImpl({ token: '', payload: { symbol: 'AAPL' } }, deps);
+    const r = await registerTickerImpl({ token: '', payload: { symbol: 'MSFT' } }, deps);
+    expect(r.watchlist).toEqual(['AAPL', 'MSFT']);
+    expect(r.added).toBe(true);
+  });
+
+  it('uppercases a mixed-case symbol', async () => {
+    const { deps } = memoryDeps();
+    const r = await registerTickerImpl({ token: '', payload: { symbol: 'BrK-B' } }, deps);
     expect(r.symbol).toBe('BRK-B');
+    expect(r.watchlist).toEqual(['BRK-B']);
     expect(r.message).toContain('BRK-B');
     expect(r.message).not.toContain('BrK-B');
-    expect(r.message).not.toContain('brk-b');
   });
 
-  it('rejects unsafe symbols before any other work', async () => {
+  it('rejects unsafe symbols before any I/O', async () => {
+    let touched = false;
+    const deps: StateDeps = {
+      statePath: () => '/tmp/never.json',
+      readFile: async () => { touched = true; return ''; },
+      writeFile: async () => { touched = true; },
+    };
     await expect(
-      ACTIONS['register-ticker']!({ token: '', payload: { symbol: 'AAPL;rm' } }),
+      registerTickerImpl({ token: '', payload: { symbol: 'AAPL;rm' } }, deps),
     ).rejects.toThrow(/1-16 chars/);
+    expect(touched).toBe(false);
   });
 
   it('rejects missing symbol', async () => {
     await expect(
-      ACTIONS['register-ticker']!({ token: '', payload: {} }),
+      registerTickerImpl({ token: '', payload: {} }, { writeFile: async () => {} }),
     ).rejects.toThrow(/1-16 chars/);
+  });
+
+  it('is registered as the register-ticker action', () => {
+    expect(typeof ACTIONS['register-ticker']).toBe('function');
   });
 });
 
@@ -2905,5 +2964,292 @@ describe('exportDashboardMdImpl', () => {
 
   it('is registered as the export-dashboard-md action', () => {
     expect(typeof ACTIONS['export-dashboard-md']).toBe('function');
+  });
+});
+
+// --- Persistent state (loadStocksState / addWatchlistEntry / etc) ----
+
+describe('stocks state persistence', () => {
+  function memoryDeps(initial?: string) {
+    let store: string | null = initial ?? null;
+    return {
+      deps: {
+        statePath: () => '/tmp/test-state.json',
+        readFile: async () => {
+          if (store === null) throw new Error('ENOENT');
+          return store;
+        },
+        writeFile: async (_p: string, c: string) => {
+          store = c;
+        },
+        mkdir: async () => {},
+        rename: async () => {},
+      } satisfies StateDeps,
+      getStore: () => store,
+    };
+  }
+
+  describe('defaultStatePath', () => {
+    it('ends with .local/business-hub/state.json', () => {
+      expect(defaultStatePath()).toMatch(/\.local[/\\]business-hub[/\\]state\.json$/);
+    });
+  });
+
+  describe('loadStocksState', () => {
+    it('returns DEFAULT_STATE when file does not exist', async () => {
+      const { deps } = memoryDeps();
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual([]);
+    });
+
+    it('returns DEFAULT_STATE on JSON parse error', async () => {
+      const { deps } = memoryDeps('not valid json {{{');
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual([]);
+    });
+
+    it('returns DEFAULT_STATE on non-object root', async () => {
+      const { deps } = memoryDeps('"a string"');
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual([]);
+    });
+
+    it('returns DEFAULT_STATE on null root', async () => {
+      const { deps } = memoryDeps('null');
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual([]);
+    });
+
+    it('reads a well-formed watchlist', async () => {
+      const { deps } = memoryDeps(JSON.stringify({ watchlist: ['AAPL', 'MSFT'] }));
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual(['AAPL', 'MSFT']);
+    });
+
+    it('filters out non-string watchlist entries (defense vs tampering)', async () => {
+      const { deps } = memoryDeps(JSON.stringify({ watchlist: ['AAPL', 42, null, 'MSFT'] }));
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual(['AAPL', 'MSFT']);
+    });
+
+    it('filters out unsafe symbols (path-injection / shell-meta)', async () => {
+      const { deps } = memoryDeps(
+        JSON.stringify({ watchlist: ['AAPL', 'BAD;rm', 'OK.T', 'over_underscore'] }),
+      );
+      const s = await loadStocksState(deps);
+      // Only AAPL + OK.T pass isSafeSymbol.
+      expect(s.watchlist).toEqual(['AAPL', 'OK.T']);
+    });
+
+    it('treats missing watchlist field as empty', async () => {
+      const { deps } = memoryDeps(JSON.stringify({ unrelated: 'data' }));
+      const s = await loadStocksState(deps);
+      expect(s.watchlist).toEqual([]);
+    });
+
+    it('uses default statePath when not injected (smoke — does not throw)', async () => {
+      // Just verify the production path doesn't crash on a missing file.
+      // Implementation reads the real ~/.local/business-hub/state.json
+      // which may or may not exist; either way, loadStocksState swallows.
+      const s = await loadStocksState();
+      expect(Array.isArray(s.watchlist)).toBe(true);
+    });
+  });
+
+  describe('saveStocksState', () => {
+    it('writes via atomic-rename pattern (tmp file then rename)', async () => {
+      const writes: string[] = [];
+      const renames: [string, string][] = [];
+      const mkdirs: string[] = [];
+      await saveStocksState(
+        { watchlist: ['AAPL'] },
+        {
+          statePath: () => '/tmp/x.json',
+          writeFile: async (p) => {
+            writes.push(p as string);
+          },
+          rename: async (a, b) => {
+            renames.push([a, b]);
+          },
+          mkdir: async (p) => {
+            mkdirs.push(p);
+          },
+        },
+      );
+      expect(writes).toEqual(['/tmp/x.json.tmp']);
+      expect(renames).toEqual([['/tmp/x.json.tmp', '/tmp/x.json']]);
+      expect(mkdirs).toEqual(['/tmp']);
+    });
+
+    it('serialized JSON is pretty-printed (kills `null, 2` → `null, 0` if drift)', async () => {
+      let body = '';
+      await saveStocksState(
+        { watchlist: ['AAPL'] },
+        {
+          statePath: () => '/tmp/x.json',
+          writeFile: async (_p, c) => {
+            body = c as string;
+          },
+          rename: async () => {},
+          mkdir: async () => {},
+        },
+      );
+      expect(body).toContain('\n');
+      expect(body).toContain('  "watchlist"');
+    });
+  });
+
+  describe('addWatchlistEntry', () => {
+    it('persists a new symbol (uppercased)', async () => {
+      const { deps, getStore } = memoryDeps();
+      const s = await addWatchlistEntry('aapl', deps);
+      expect(s.watchlist).toEqual(['AAPL']);
+      expect(JSON.parse(getStore()!).watchlist).toEqual(['AAPL']);
+    });
+
+    it('is idempotent — no duplicate, no re-write', async () => {
+      const { deps, getStore } = memoryDeps(JSON.stringify({ watchlist: ['AAPL'] }));
+      const initial = getStore();
+      const s = await addWatchlistEntry('aapl', deps);
+      expect(s.watchlist).toEqual(['AAPL']);
+      // Store unchanged (we never wrote because the entry already existed).
+      expect(getStore()).toBe(initial);
+    });
+
+    it('rejects unsafe symbols', async () => {
+      const { deps } = memoryDeps();
+      await expect(addWatchlistEntry('BAD;rm', deps)).rejects.toThrow(/1-16 chars/);
+    });
+
+    it('appends to an existing list', async () => {
+      const { deps } = memoryDeps(JSON.stringify({ watchlist: ['AAPL'] }));
+      const s = await addWatchlistEntry('MSFT', deps);
+      expect(s.watchlist).toEqual(['AAPL', 'MSFT']);
+    });
+  });
+
+  describe('removeWatchlistEntry', () => {
+    it('removes a known symbol', async () => {
+      const { deps, getStore } = memoryDeps(JSON.stringify({ watchlist: ['AAPL', 'MSFT'] }));
+      const s = await removeWatchlistEntry('aapl', deps);
+      expect(s.watchlist).toEqual(['MSFT']);
+      expect(JSON.parse(getStore()!).watchlist).toEqual(['MSFT']);
+    });
+
+    it('is idempotent — removing absent symbol is a no-op', async () => {
+      const { deps, getStore } = memoryDeps(JSON.stringify({ watchlist: ['AAPL'] }));
+      const initial = getStore();
+      const s = await removeWatchlistEntry('MSFT', deps);
+      expect(s.watchlist).toEqual(['AAPL']);
+      expect(getStore()).toBe(initial);
+    });
+
+    it('rejects unsafe symbols', async () => {
+      const { deps } = memoryDeps();
+      await expect(removeWatchlistEntry('BAD;rm', deps)).rejects.toThrow(/1-16 chars/);
+    });
+  });
+
+  describe('unregisterTickerImpl', () => {
+    function memoryDeps2(initial?: string) {
+      let store: string | null = initial ?? null;
+      return {
+        deps: {
+          statePath: () => '/tmp/test.json',
+          readFile: async () => {
+            if (store === null) throw new Error('ENOENT');
+            return store;
+          },
+          writeFile: async (_p: string, c: string) => {
+            store = c;
+          },
+          mkdir: async () => {},
+          rename: async () => {},
+        } satisfies StateDeps,
+      };
+    }
+
+    it('removes a known symbol and returns removed:true', async () => {
+      const { deps } = memoryDeps2(JSON.stringify({ watchlist: ['AAPL', 'MSFT'] }));
+      const r = await unregisterTickerImpl({ token: '', payload: { symbol: 'aapl' } }, deps);
+      expect(r.symbol).toBe('AAPL');
+      expect(r.removed).toBe(true);
+      expect(r.watchlist).toEqual(['MSFT']);
+      expect(r.message).toContain('removed from watchlist');
+    });
+
+    it('returns removed:false for an absent symbol', async () => {
+      const { deps } = memoryDeps2(JSON.stringify({ watchlist: ['AAPL'] }));
+      const r = await unregisterTickerImpl({ token: '', payload: { symbol: 'MSFT' } }, deps);
+      expect(r.removed).toBe(false);
+      expect(r.message).toContain('not in watchlist');
+    });
+
+    it('rejects unsafe / missing symbol', async () => {
+      const { deps } = memoryDeps2();
+      await expect(
+        unregisterTickerImpl({ token: '', payload: { symbol: 'BAD;rm' } }, deps),
+      ).rejects.toThrow(/1-16 chars/);
+      await expect(
+        unregisterTickerImpl({ token: '', payload: {} }, deps),
+      ).rejects.toThrow(/1-16 chars/);
+    });
+
+    it('is registered as the unregister-ticker action', () => {
+      expect(typeof ACTIONS['unregister-ticker']).toBe('function');
+    });
+  });
+
+  describe('fetchStocksSnapshotImpl with persistent watchlist', () => {
+    it('uses persistent watchlist when non-empty (overrides MOCK_TICKERS)', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        {
+          loadState: async () => ({ watchlist: ['AAPL', 'MSFT'] }),
+        },
+      );
+      expect(snap.watchlist).toHaveLength(2);
+      expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL', 'MSFT']);
+    });
+
+    it('preserves MOCK_TICKERS labels when the symbol matches', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        {
+          loadState: async () => ({ watchlist: ['AAPL', '7203.T'] }),
+        },
+      );
+      expect(snap.watchlist[0]!.label).toBe('Apple');
+      expect(snap.watchlist[1]!.label).toBe('トヨタ自動車');
+    });
+
+    it('uses symbol as label for unknown tickers', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        {
+          loadState: async () => ({ watchlist: ['NVDA'] }),
+        },
+      );
+      expect(snap.watchlist[0]!.symbol).toBe('NVDA');
+      expect(snap.watchlist[0]!.label).toBe('NVDA');
+    });
+
+    it('falls back to MOCK_TICKERS when state.watchlist is empty', async () => {
+      const snap = await fetchStocksSnapshotImpl(
+        { token: '' },
+        {
+          loadState: async () => ({ watchlist: [] }),
+        },
+      );
+      expect(snap.watchlist).toHaveLength(MOCK_TICKERS.length);
+    });
+
+    it('uses real loadStocksState by default (smoke — does not throw)', async () => {
+      // No deps injected → uses defaultStatePath. May read a stale state
+      // file, but should at least not throw.
+      const snap = await fetchStocksSnapshotImpl({ token: '' });
+      expect(snap.isMock).toBe(true);
+      expect(Array.isArray(snap.watchlist)).toBe(true);
+    });
   });
 });

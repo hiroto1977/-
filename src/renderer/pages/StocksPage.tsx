@@ -169,6 +169,45 @@ export function StocksPage() {
   const [advisorError, setAdvisorError] = useState<string | null>(null);
   const [advisorResult, setAdvisorResult] = useState<AdvisorResponse | null>(null);
 
+  // --- Watchlist register / unregister state ----------------------------
+  interface RegisterResult {
+    symbol: string;
+    watchlist: readonly string[];
+    message: string;
+  }
+  const [registerSymbol, setRegisterSymbol] = useState('');
+  const [registerBusy, setRegisterBusy] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [registerMessage, setRegisterMessage] = useState<string | null>(null);
+
+  async function registerOrUnregister(action: 'register-ticker' | 'unregister-ticker') {
+    if (!registerSymbol.trim()) {
+      setRegisterError('銘柄コードを入力してください');
+      return;
+    }
+    setRegisterBusy(true);
+    setRegisterError(null);
+    setRegisterMessage(null);
+    try {
+      const r = await window.serviceHub.invoke<RegisterResult>(
+        'stocks',
+        action,
+        { symbol: registerSymbol.trim() },
+      );
+      if (r.ok) {
+        setRegisterMessage(r.data.message);
+        // Refresh snapshot so the watchlist reflects the new state.
+        refresh();
+      } else {
+        setRegisterError(r.message);
+      }
+    } catch (e) {
+      setRegisterError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setRegisterBusy(false);
+    }
+  }
+
   // --- Strategy comparison state ----------------------------------------
   interface StrategyComparisonRow {
     strategy: string;
@@ -324,6 +363,94 @@ export function StocksPage() {
           <Tile label="初期入金" value={yen.format(portfolio.initialCash)} />
           <Tile label="取引履歴" value={String(portfolio.history.length)} sub="paper trades" />
         </div>
+      </Section>
+
+      <Section title="銘柄登録 / 解除" count={data.watchlist.length}>
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 12 }}>
+          銘柄を登録すると <code>~/.local/business-hub/state.json</code> に永続化されます。
+          初期状態 (登録なし) では mock 5 銘柄が表示されます。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <input
+            type="text"
+            value={registerSymbol}
+            onChange={(e) => setRegisterSymbol(e.target.value)}
+            placeholder="銘柄コード (例: AAPL / 7203.T / ^N225)"
+            maxLength={16}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !registerBusy) registerOrUnregister('register-ticker');
+            }}
+          />
+          <button
+            onClick={() => registerOrUnregister('register-ticker')}
+            disabled={registerBusy}
+            style={{
+              padding: '8px 16px',
+              background: registerBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: registerBusy ? 'wait' : 'pointer',
+            }}
+          >
+            {registerBusy ? '…' : '登録'}
+          </button>
+          <button
+            onClick={() => registerOrUnregister('unregister-ticker')}
+            disabled={registerBusy}
+            style={{
+              padding: '8px 16px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: registerBusy ? 'wait' : 'pointer',
+            }}
+          >
+            解除
+          </button>
+        </div>
+        {registerError && (
+          <div
+            style={{
+              border: '1px solid #ef4444',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#ef4444',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 8,
+            }}
+          >
+            {registerError}
+          </div>
+        )}
+        {registerMessage && (
+          <div
+            style={{
+              border: '1px solid #22c55e',
+              background: 'rgba(34, 197, 94, 0.08)',
+              color: '#22c55e',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 8,
+            }}
+          >
+            {registerMessage}
+          </div>
+        )}
       </Section>
 
       <Section title="ウォッチリスト" count={data.watchlist.length}>

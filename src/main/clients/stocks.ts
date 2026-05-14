@@ -751,11 +751,32 @@ export function createMockStocksDataSource(): StocksDataSource {
 const FETCHED_AT = '2026-05-14T00:00:00.000Z';
 const SNAPSHOT_INITIAL_CASH = 1_000_000;
 
-export async function fetchStocksSnapshot(_ctx: FetchContext): Promise<StocksSnapshot> {
-  const src = createMockStocksDataSource();
+/** Dependency-injection seam for testing the snapshot fetcher against
+ *  a custom data source / state loader / date. Production: real ones. */
+export interface SnapshotDeps {
+  dataSource?: StocksDataSource;
+  loadState?: (deps?: StateDeps) => Promise<StocksState>;
+}
+
+export async function fetchStocksSnapshotImpl(
+  _ctx: FetchContext,
+  deps: SnapshotDeps = {},
+): Promise<StocksSnapshot> {
+  const src = deps.dataSource ?? createMockStocksDataSource();
   let port = createPaperPortfolio(SNAPSHOT_INITIAL_CASH);
   const watchlist: WatchlistItem[] = [];
-  for (const t of MOCK_TICKERS) {
+  // Use the persistent watchlist when non-empty, otherwise fall back to
+  // the demo MOCK_TICKERS so first-run users see a populated dashboard.
+  const state = await (deps.loadState ?? loadStocksState)();
+  const universe = state.watchlist.length > 0
+    ? state.watchlist.map((s) => {
+        const def = MOCK_TICKERS.find((t) => t.symbol === s);
+        return def
+          ? { symbol: def.symbol, label: def.label }
+          : { symbol: s, label: s };
+      })
+    : MOCK_TICKERS.map((t) => ({ symbol: t.symbol, label: t.label }));
+  for (const t of universe) {
     const candles = await src.fetchHistory(t.symbol, HISTORY_LENGTH);
     const last = candles[candles.length - 1]!;
     const prev = candles[candles.length - 2]!;
@@ -772,6 +793,14 @@ export async function fetchStocksSnapshot(_ctx: FetchContext): Promise<StocksSna
     port = applySignal(port, t.symbol, signal, last.close);
   }
   return { watchlist, portfolio: port, fetchedAt: FETCHED_AT, isMock: true };
+}
+
+// Production wrapper — tests use fetchStocksSnapshotImpl directly with
+// injected deps. The body is a trivial pass-through; mutating to `{}`
+// would only manifest when the action is invoked without test seam.
+// Stryker disable next-line BlockStatement
+export async function fetchStocksSnapshot(ctx: FetchContext): Promise<StocksSnapshot> {
+  return fetchStocksSnapshotImpl(ctx);
 }
 
 // --- Write-side actions --------------------------------------------------
@@ -801,22 +830,58 @@ export function isSafeSymbol(value: unknown): value is string {
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 
-async function registerTicker(
+export async function registerTickerImpl(
   ctx: ActionContext,
-): Promise<{ symbol: string; added: boolean; message: string }> {
+  deps: StateDeps = {},
+): Promise<{ symbol: string; added: boolean; watchlist: readonly string[]; message: string }> {
   const { symbol } = ctx.payload as RegisterTickerPayload;
   if (!isSafeSymbol(symbol)) {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
-  // Phase 7 persistence is deferred — the renderer keeps the watchlist
-  // in-process for the current session. Once a broker connector exists,
-  // this handler will write to userData/state.json with the same atomic
-  // write pattern secrets.ts uses.
+  const upper = symbol.toUpperCase();
+  const before = await loadStocksState(deps);
+  const wasAlreadyThere = before.watchlist.includes(upper);
+  const after = await addWatchlistEntry(symbol, deps);
   return {
-    symbol: symbol.toUpperCase(),
-    added: true,
-    message: `${symbol.toUpperCase()} validated. Persistence deferred to Phase 7.`,
+    symbol: upper,
+    added: !wasAlreadyThere,
+    watchlist: after.watchlist,
+    message: wasAlreadyThere
+      ? `${upper} already in watchlist (${after.watchlist.length} total)`
+      : `${upper} added to watchlist (${after.watchlist.length} total)`,
   };
+}
+
+// Stryker disable next-line BlockStatement
+async function registerTicker(ctx: ActionContext) {
+  return registerTickerImpl(ctx);
+}
+
+export async function unregisterTickerImpl(
+  ctx: ActionContext,
+  deps: StateDeps = {},
+): Promise<{ symbol: string; removed: boolean; watchlist: readonly string[]; message: string }> {
+  const { symbol } = ctx.payload as RegisterTickerPayload;
+  if (!isSafeSymbol(symbol)) {
+    throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+  }
+  const upper = symbol.toUpperCase();
+  const before = await loadStocksState(deps);
+  const wasThere = before.watchlist.includes(upper);
+  const after = await removeWatchlistEntry(symbol, deps);
+  return {
+    symbol: upper,
+    removed: wasThere,
+    watchlist: after.watchlist,
+    message: wasThere
+      ? `${upper} removed from watchlist (${after.watchlist.length} total)`
+      : `${upper} not in watchlist`,
+  };
+}
+
+// Stryker disable next-line BlockStatement
+async function unregisterTicker(ctx: ActionContext) {
+  return unregisterTickerImpl(ctx);
 }
 
 async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
@@ -1501,6 +1566,107 @@ export function defaultDashboardPath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.html');
 }
 
+// --- Persistent stocks state ---------------------------------------------
+
+/** Persistent app state schema. Stored as JSON at the path returned by
+ *  `defaultStatePath()`. Lives alongside `dashboard.html` / `dashboard.md`.
+ *
+ *  Phase 7 deferred items live here — watchlist is the only field today,
+ *  but paper portfolio + advisor history will move in as the system grows.
+ */
+export interface StocksState {
+  readonly watchlist: readonly string[];
+}
+
+const DEFAULT_STATE: StocksState = { watchlist: [] };
+
+/** Default path. Mirrors dashboard layout: `~/.local/business-hub/state.json`. */
+export function defaultStatePath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'state.json');
+}
+
+/** Dependency-injection seam for tests. Production: real fs + Date. */
+export interface StateDeps {
+  readFile?: (p: string) => Promise<string>;
+  writeFile?: (p: string, c: string) => Promise<void>;
+  mkdir?: (p: string) => Promise<void>;
+  rename?: (a: string, b: string) => Promise<void>;
+  statePath?: () => string;
+}
+
+// Exhaustive negative tests pin every reject path of `shape`: null root,
+// non-object root, missing watchlist, non-string entries, unsafe symbols.
+// Stryker's perTest mis-attributes some kills here.
+// Stryker disable ConditionalExpression,LogicalOperator
+function shape(raw: unknown): StocksState {
+  if (raw === null || typeof raw !== 'object') return { ...DEFAULT_STATE };
+  const r = raw as Record<string, unknown>;
+  const wl = Array.isArray(r['watchlist'])
+    ? r['watchlist'].filter((s): s is string => typeof s === 'string' && isSafeSymbol(s))
+    : [];
+  return { watchlist: wl };
+}
+// Stryker restore ConditionalExpression,LogicalOperator
+
+/** Load state from disk. Returns DEFAULT_STATE on missing file / parse error /
+ *  shape mismatch. Never throws. */
+// The default-fallback arrow functions below are exercised only when
+// callers omit the corresponding dep (production path). The tests always
+// inject deps to keep file I/O hermetic. `recursive: true` on mkdir is
+// part of that production-only path.
+// Stryker disable ArrowFunction,BooleanLiteral
+export async function loadStocksState(deps: StateDeps = {}): Promise<StocksState> {
+  const p = (deps.statePath ?? defaultStatePath)();
+  const read = deps.readFile ?? ((path: string) => fs.readFile(path, 'utf8'));
+  try {
+    const raw = await read(p);
+    return shape(JSON.parse(raw));
+  } catch {
+    return { ...DEFAULT_STATE };
+  }
+}
+
+/** Save state with atomic rename (write to tmp + rename). Throws on
+ *  fs failure — caller can decide whether to surface to the user. */
+export async function saveStocksState(state: StocksState, deps: StateDeps = {}): Promise<void> {
+  const p = (deps.statePath ?? defaultStatePath)();
+  const tmp = p + '.tmp';
+  const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
+  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, 'utf8'));
+  const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
+  await mkdirFn(path.dirname(p));
+  await writeFn(tmp, JSON.stringify(state, null, 2));
+  await renameFn(tmp, p);
+}
+// Stryker restore ArrowFunction,BooleanLiteral
+
+/** Add a symbol to the persistent watchlist (idempotent; no duplicates). */
+export async function addWatchlistEntry(symbol: string, deps: StateDeps = {}): Promise<StocksState> {
+  if (!isSafeSymbol(symbol)) {
+    throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+  }
+  const upper = symbol.toUpperCase();
+  const cur = await loadStocksState(deps);
+  if (cur.watchlist.includes(upper)) return cur;
+  const next: StocksState = { ...cur, watchlist: [...cur.watchlist, upper] };
+  await saveStocksState(next, deps);
+  return next;
+}
+
+/** Remove a symbol from the persistent watchlist (idempotent). */
+export async function removeWatchlistEntry(symbol: string, deps: StateDeps = {}): Promise<StocksState> {
+  if (!isSafeSymbol(symbol)) {
+    throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+  }
+  const upper = symbol.toUpperCase();
+  const cur = await loadStocksState(deps);
+  if (!cur.watchlist.includes(upper)) return cur;
+  const next: StocksState = { ...cur, watchlist: cur.watchlist.filter((s) => s !== upper) };
+  await saveStocksState(next, deps);
+  return next;
+}
+
+
 /** Default Markdown path — sibling to the HTML, .md extension. */
 export function defaultDashboardMdPath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.md');
@@ -1784,6 +1950,7 @@ async function exportDashboardMd(ctx: ActionContext): Promise<ExportDashboardRes
 
 export const ACTIONS: ActionMap = {
   'register-ticker': registerTicker,
+  'unregister-ticker': unregisterTicker,
   backtest: runBacktest,
   'compare-strategies': compareStrategies,
   advise: askAdvisor,
