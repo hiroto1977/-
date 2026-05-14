@@ -29,6 +29,7 @@ const SERVICES = [
   'kpi',
   'stocks',
   'business',
+  'teamradar',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

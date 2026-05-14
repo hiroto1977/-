@@ -15,6 +15,7 @@ import { OllamaPage } from './pages/OllamaPage';
 import { KpiPage } from './pages/KpiPage';
 import { StocksPage } from './pages/StocksPage';
 import { BusinessPage } from './pages/BusinessPage';
+import { TeamRadarPage } from './pages/TeamRadarPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -148,6 +149,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'BZ',
     description: 'EC / dropship / OEM / blog / affiliate / video / SNS — 10 事業の経営支援 (Phase 6 で実 API 接続)',
     page: BusinessPage,
+  },
+  {
+    id: 'teamradar',
+    label: 'チームレーダー',
+    icon: 'TR',
+    description: '営業チーム強み・弱みシート — 1-5 評価 × 5 軸 × N 人 + SVG 出力で Canva 連動',
+    page: TeamRadarPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

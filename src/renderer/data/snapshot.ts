@@ -1818,6 +1818,52 @@ export const SNAPSHOT = {
       },
     ],
   },
+
+  teamradar: {
+    department: '営業部',
+    evaluatedAt: '2035-04-15',
+    axes: ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'] as readonly string[],
+    members: [
+      {
+        id: 'morita-takuya',
+        name: '森田 拓也',
+        scores: [5, 3, 4, 2, 3] as number[],
+        notes: {
+          0: '新規営業の実績が高い',
+          1: '社内調整はやや苦手',
+          2: '説明は得意だが時間配分に課題',
+          3: '押しが弱く譲歩しやすい',
+          4: '訪問頻度が安定している',
+        } as Record<number, string>,
+      },
+      {
+        id: 'kasai-miho',
+        name: '葛西 美保',
+        scores: [3, 4, 5, 3, 2] as number[],
+        notes: {
+          0: '数字は平均的、伸びしろあり',
+          1: 'オンラインでのやりとりが上手い',
+          2: '提案資料の完成度が高く好評',
+          3: '交渉は標準的',
+          4: 'フォロー業務が弱め',
+        } as Record<number, string>,
+      },
+      {
+        id: 'ichimura-sara',
+        name: '市村 紗良',
+        scores: [2, 4, 2, 5, 5] as number[],
+        notes: {
+          0: '新規営業の経験はまだ少ない',
+          1: '顧客対応に強くフォローも丁寧',
+          2: '緊張しやすい',
+          3: '契約をまとめやすい交渉力あり',
+          4: '顧客フォローが丁寧で潜在度が高い',
+        } as Record<number, string>,
+      },
+    ],
+    fetchedAt: '',
+    isMock: true,
+  },
 } as const;
 
 export type Snapshot = typeof SNAPSHOT;

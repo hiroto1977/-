@@ -13,7 +13,8 @@
     "src/main/clients/ollama.ts",
     "src/main/clients/kpi.ts",
     "src/main/clients/stocks.ts",
-    "src/main/clients/business.ts"
+    "src/main/clients/business.ts",
+    "src/main/clients/teamradar.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
