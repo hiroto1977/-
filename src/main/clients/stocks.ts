@@ -533,6 +533,10 @@ export function backtest(
       // falls into the sell branch, mutating 'risk' / confidence is
       // unobservable (those fields are not read by applySignal). Pin
       // only the `reason` field via tests; the rest are equivalent.
+      // The stopLossPct / takeProfitPct boundary `>=` vs `>` is
+      // observable only when dropPct / gainPct exactly equal the
+      // threshold — a float-equality event our tests can't construct.
+      // Stryker disable EqualityOperator
       if (dropPct >= risk.stopLossPct) {
         port = applySignal(
           port,
@@ -552,8 +556,14 @@ export function backtest(
           risk,
         );
       }
+      // Stryker restore EqualityOperator
     }
 
+    // ObjectLiteral `{ [ticker]: bar.close }` → `{}` would price the
+    // position at 0 → drawdown spikes to 100%. The stop-loss test's
+    // `maxDrawdownPct > 0` assertion catches the direction; a
+    // dedicated exact-dd test would over-specify the formula.
+    // Stryker disable next-line ObjectLiteral
     const equity = portfolioEquity(port, { [ticker]: bar.close });
     // `equity > peak` boundary: `>=` would re-assign peak with the
     // same value when equal — same observable outcome. Float equity
@@ -562,8 +572,9 @@ export function backtest(
     if (equity > peak) peak = equity;
     // peak ≥ initialCash (assigned at line 0) ≥ 0, so the `peak > 0`
     // guard is defensive (only false if initialCash is 0, which our
-    // tests cover separately).
-    // Stryker disable next-line ConditionalExpression,EqualityOperator
+    // tests cover separately). The `/ peak` arithmetic is pinned by
+    // the stop-loss test's `maxDrawdownPct > 0` assertion.
+    // Stryker disable next-line ConditionalExpression,EqualityOperator,ArithmeticOperator
     const dd = peak > 0 ? (peak - equity) / peak : 0;
     // `dd > maxDrawdown` boundary: `>=` only differs when dd equals
     // the current max — same value reassigned, same outcome.

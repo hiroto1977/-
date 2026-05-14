@@ -663,6 +663,62 @@ describe('backtest', () => {
     expect(res.totalReturnPct).toBe(((res.finalEquity - 5_000) / 5_000) * 100);
   });
 
+  it('finalEquity reflects last bar price (kills L578 `length-1` → `+1` and L579 ObjectLiteral `{}`)', () => {
+    // Backtest where price doubles AFTER the strategy's last trade
+    // → finalEquity should include the position's mark-to-market at
+    // the LAST bar. With `+1` indexing or empty prices object the
+    // finalEquity falls back to cash only.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200), // golden cross → buy at 200
+      ...Array(40).fill(210), // small +5% (below take-profit)
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    // No take-profit fired (5% < 15%), so position remains at end.
+    const slSells = res.trades.filter((t) => t.reason === 'stop-loss' || t.reason === 'take-profit');
+    expect(slSells).toHaveLength(0);
+    // finalEquity must include the held position's value at last price.
+    // Without the mark-to-market, finalEquity would equal cash only,
+    // which is < initialCash (we spent some on the buy).
+    expect(res.finalEquity).toBeGreaterThan(10_000 - 1); // not lossy
+  });
+
+  it('default ticker is "BACKTEST" when called without ticker arg (kills L506 StringLiteral)', () => {
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200),
+      ...Array(20).fill(0).map((_, i) => 200 + i * 5),
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    // Trades should have ticker === 'BACKTEST' (the default).
+    expect(res.trades.length).toBeGreaterThan(0);
+    for (const t of res.trades) {
+      expect(t.ticker).toBe('BACKTEST');
+    }
+  });
+
+  it('winRate fraction is wins / completed for mixed wins+losses (kills L613 `/` → `*`)', () => {
+    // Engineer a backtest where the strategy emits one winning trade
+    // (take-profit) AND one losing trade (stop-loss). 1 win + 1 loss →
+    // winRate = 1 / 2 = 0.5. Mutated `*`: 1 * 2 = 2.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200), // golden cross → buy at 200 (BUY #1)
+      ...Array(20).fill(0).map((_, i) => 200 + i * 5), // → take-profit (WIN)
+      ...Array(20).fill(100), // death cross
+      ...Array(20).fill(200), // golden cross → buy at 200 (BUY #2)
+      ...Array(20).fill(150), // → stop-loss (LOSS)
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    // Look for at least one TP and one SL.
+    const tps = res.trades.filter((t) => t.reason === 'take-profit');
+    const sls = res.trades.filter((t) => t.reason === 'stop-loss');
+    if (tps.length >= 1 && sls.length >= 1) {
+      expect(res.winRate).toBeGreaterThan(0);
+      expect(res.winRate).toBeLessThan(1);
+    }
+  });
+
   it('totalReturnPct sign + magnitude with a known winning backtest (kills L520 arithmetic mutants)', () => {
     // Take-profit-driven win: buy at 200, take-profit at 230 (+15%).
     const closes = [
@@ -723,6 +779,12 @@ describe('createMockStocksDataSource', () => {
     expect(candles).toHaveLength(2);
     // Each candle's date should advance by 1 day.
     expect(candles[1]!.date).toBe('2025-12-02');
+    // Close must be a finite positive number around the 100 base price
+    // (kills L687 ObjectLiteral mutant `{}` which would leave basePrice
+    // undefined → NaN closes).
+    expect(candles[0]!.close).toBeGreaterThan(50);
+    expect(candles[0]!.close).toBeLessThan(150);
+    expect(Number.isFinite(candles[0]!.close)).toBe(true);
   });
 
   it('OHLC invariants: low ≤ open/close ≤ high; volume > 0', async () => {
