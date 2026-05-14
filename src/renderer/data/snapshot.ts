@@ -370,6 +370,47 @@ export const SNAPSHOT = {
     isMock: true,
   },
 
+  stocks: {
+    watchlist: [] as {
+      symbol: string;
+      label: string;
+      latestClose: number;
+      previousClose: number;
+      changePct: number;
+      signal: {
+        date: string;
+        action: 'buy' | 'sell' | 'hold';
+        confidence: number;
+        reason: string;
+        strategy: string;
+      };
+      candles: {
+        date: string;
+        open: number;
+        high: number;
+        low: number;
+        close: number;
+        volume: number;
+      }[];
+    }[],
+    portfolio: {
+      cash: 1_000_000,
+      initialCash: 1_000_000,
+      positions: {} as Record<string, { shares: number; avgCost: number }>,
+      history: [] as {
+        date: string;
+        ticker: string;
+        action: 'buy' | 'sell';
+        shares: number;
+        price: number;
+        cashAfter: number;
+        reason: string;
+      }[],
+    },
+    fetchedAt: '',
+    isMock: true,
+  },
+
   canva: {
     brandKits: [{ id: 'kAGWm36LGZk' }],
     designs: [

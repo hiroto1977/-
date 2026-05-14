@@ -22,6 +22,7 @@ export const SERVICE_IDS = [
   'emotions',
   'ollama',
   'kpi',
+  'stocks',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

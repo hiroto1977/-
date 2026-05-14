@@ -27,6 +27,7 @@ const SERVICES = [
   'emotions',
   'ollama',
   'kpi',
+  'stocks',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

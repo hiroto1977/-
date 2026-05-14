@@ -13,6 +13,7 @@ import { CloudflarePage } from './pages/CloudflarePage';
 import { EmotionsPage } from './pages/EmotionsPage';
 import { OllamaPage } from './pages/OllamaPage';
 import { KpiPage } from './pages/KpiPage';
+import { StocksPage } from './pages/StocksPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -132,6 +133,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'KP',
     description: '損益分岐点 + 8 指標 × 6 事業 (模擬データ — Phase 6 で API 接続)',
     page: KpiPage,
+  },
+  {
+    id: 'stocks',
+    label: 'Stocks',
+    icon: 'ST',
+    description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — Phase 7 で broker 接続)',
+    page: StocksPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
