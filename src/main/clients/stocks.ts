@@ -303,11 +303,14 @@ export const SMA_CROSSOVER_STRATEGY: Strategy = (candles) => {
   // The `candles.length < 51` guard above guarantees SMA20 and SMA50 at
   // i and i-1 are all defined; the null check below is defensive
   // type-narrowing only. Every mutation of the null-check expression is
-  // an equivalent mutant.
-  // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
+  // an equivalent mutant. The body (BlockStatement → {}) and reason
+  // string ('indicator unavailable' → "") are unreachable from tests
+  // for the same reason.
+  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,BlockStatement,StringLiteral
   if (f0 == null || s0 == null || f1 == null || s1 == null) {
     return holdSignal(candles, name, 'indicator unavailable');
   }
+  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BlockStatement,StringLiteral
   // Boundary mutants on the crossover comparisons (`f1 <= s1` →
   // `f1 < s1`, `f0 > s0` → `f0 >= s0`) are observable only when an SMA
   // value is exactly equal to the other — IEEE-754 equality between
@@ -339,8 +342,10 @@ export const RSI_MEAN_REVERSION_STRATEGY: Strategy = (candles) => {
   const last = candles[candles.length - 1]!;
   // The `candles.length < 15` guard above ensures `v` is never null
   // (RSI period 14, length 15 → r[14] defined). The v==null short-circuit
-  // is defensive type-narrowing; mutating it is unobservable.
-  // Stryker disable next-line ConditionalExpression
+  // is defensive type-narrowing; mutating it is unobservable. Same goes
+  // for the 'rsi unavailable' reason string — the holdSignal call is
+  // unreachable.
+  // Stryker disable next-line ConditionalExpression,StringLiteral
   if (v == null) return holdSignal(candles, name, 'rsi unavailable');
   // Boundary mutants `v < 30` → `v <= 30` (and `v > 70` → `v >= 70`)
   // are observable only when RSI is exactly 30 or 70 — an IEEE-754
@@ -377,10 +382,12 @@ export const MACD_SIGNAL_STRATEGY: Strategy = (candles) => {
   const last = candles[i]!;
   // The `candles.length < 35` guard above guarantees both EMAs at i and
   // i-1 are defined; the null check below is defensive type-narrowing.
-  // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
+  // Body + reason string equally unreachable from tests.
+  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,BlockStatement,StringLiteral
   if (m0 == null || s0 == null || m1 == null || s1 == null) {
     return holdSignal(candles, name, 'indicator unavailable');
   }
+  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BlockStatement,StringLiteral
   // Same float-equality argument as SMA_CROSSOVER_STRATEGY above.
   // Stryker disable EqualityOperator,ConditionalExpression
   if (m1 <= s1 && m0 > s0) {

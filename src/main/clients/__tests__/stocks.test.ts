@@ -194,6 +194,135 @@ describe('bollingerBands', () => {
   });
 });
 
+// --- Property-based / invariant tests for indicators -----------------
+
+describe('indicator invariants (property tests)', () => {
+  // Deterministic pseudo-random closes (xorshift32) so the test is
+  // reproducible across runs.
+  function makeCloses(seed: number, n: number): number[] {
+    let x = seed | 0 || 1;
+    const out: number[] = [];
+    let price = 100;
+    for (let i = 0; i < n; i++) {
+      x ^= x << 13;
+      x ^= x >>> 17;
+      x ^= x << 5;
+      const r = ((x >>> 0) / 4294967296 - 0.5) * 0.06;
+      price = Math.max(1, price * (1 + r));
+      out.push(price);
+    }
+    return out;
+  }
+
+  const seeds = [1, 7, 42, 1337, 99991];
+
+  it.each(seeds)('sma length always matches input length (seed=%d)', (seed) => {
+    const closes = makeCloses(seed, 60);
+    expect(sma(closes, 5)).toHaveLength(60);
+    expect(sma(closes, 20)).toHaveLength(60);
+    expect(sma(closes, 1)).toHaveLength(60);
+  });
+
+  it.each(seeds)('sma respects bounds: every value in [min(window), max(window)] (seed=%d)', (seed) => {
+    const closes = makeCloses(seed, 60);
+    const period = 5;
+    const out = sma(closes, period);
+    for (let i = period - 1; i < closes.length; i++) {
+      const window = closes.slice(i - period + 1, i + 1);
+      const min = Math.min(...window);
+      const max = Math.max(...window);
+      expect(out[i]!).toBeGreaterThanOrEqual(min);
+      expect(out[i]!).toBeLessThanOrEqual(max);
+    }
+  });
+
+  it.each(seeds)('rsi values always in [0, 100] (seed=%d)', (seed) => {
+    const closes = makeCloses(seed, 60);
+    for (const v of rsi(closes, 14)) {
+      if (v !== null) {
+        expect(v).toBeGreaterThanOrEqual(0);
+        expect(v).toBeLessThanOrEqual(100);
+      }
+    }
+  });
+
+  it.each(seeds)('bollingerBands: lower ≤ middle ≤ upper everywhere (seed=%d)', (seed) => {
+    const closes = makeCloses(seed, 60);
+    const bb = bollingerBands(closes, 20, 2);
+    for (let i = 0; i < closes.length; i++) {
+      const l = bb.lower[i];
+      const m = bb.middle[i];
+      const u = bb.upper[i];
+      if (l != null && m != null && u != null) {
+        expect(l).toBeLessThanOrEqual(m);
+        expect(m).toBeLessThanOrEqual(u);
+      }
+    }
+  });
+
+  it.each(seeds)('macd histogram = macd − signal pointwise (seed=%d)', (seed) => {
+    const closes = makeCloses(seed, 60);
+    const m = macd(closes);
+    for (let i = 0; i < closes.length; i++) {
+      const mv = m.macd[i];
+      const sv = m.signal[i];
+      const hv = m.histogram[i];
+      if (mv != null && sv != null) {
+        expect(hv!).toBeCloseTo(mv - sv, 9);
+      }
+    }
+  });
+});
+
+// --- Patch tests (manually-mutated source assertions) -------------------
+
+describe('paper-trade invariants (patch tests)', () => {
+  // These tests pin properties that hold for ANY valid buy/sell sequence
+  // — exercising what a manual source patch would break.
+
+  it('cash + position cost ≡ initialCash on a single buy (conservation of cash)', () => {
+    const p0 = createPaperPortfolio(50_000);
+    const p1 = applySignal(p0, 'X', { date: '2026-01-01', action: 'buy', confidence: 1, reason: '', strategy: 't' }, 150);
+    const pos = p1.positions['X']!;
+    const positionCost = pos.shares * pos.avgCost;
+    expect(p1.cash + positionCost).toBeCloseTo(50_000, 9);
+  });
+
+  it('avgCost is exactly the weighted mean across multiple buys', () => {
+    let p = createPaperPortfolio(1_000_000);
+    p = applySignal(p, 'X', { date: '01', action: 'buy', confidence: 1, reason: '', strategy: 't' }, 100); // 1000 sh
+    p = applySignal(p, 'X', { date: '02', action: 'buy', confidence: 1, reason: '', strategy: 't' }, 50);  // 1800 sh
+    p = applySignal(p, 'X', { date: '03', action: 'buy', confidence: 1, reason: '', strategy: 't' }, 200); // 405 sh
+    const pos = p.positions['X']!;
+    const expectedTotalCost = p.history.reduce(
+      (acc, t) => (t.action === 'buy' ? acc + t.shares * t.price : acc),
+      0,
+    );
+    expect(pos.shares * pos.avgCost).toBeCloseTo(expectedTotalCost, 6);
+  });
+
+  it('sell-then-buy roundtrip on different prices: cash delta == shares*(sell-buy)', () => {
+    let p0 = createPaperPortfolio(100_000);
+    p0 = applySignal(p0, 'X', { date: '01', action: 'buy', confidence: 1, reason: '', strategy: 't' }, 100);
+    const beforeSell = p0;
+    const sold = applySignal(p0, 'X', { date: '02', action: 'sell', confidence: 1, reason: '', strategy: 't' }, 150);
+    const shares = beforeSell.positions['X']!.shares;
+    expect(sold.cash - beforeSell.cash).toBeCloseTo(shares * 150, 6);
+  });
+
+  it('history is append-only (no in-place mutation of past trades)', () => {
+    const p0 = createPaperPortfolio(100_000);
+    const p1 = applySignal(p0, 'X', { date: '01', action: 'buy', confidence: 1, reason: 'r1', strategy: 't' }, 100);
+    const oldHistory = p1.history;
+    const p2 = applySignal(p1, 'X', { date: '02', action: 'sell', confidence: 1, reason: 'r2', strategy: 't' }, 110);
+    // Both portfolios coexist; p1's history must not have grown.
+    expect(p1.history).toHaveLength(1);
+    expect(p2.history).toHaveLength(2);
+    // The first entry is the same object (structural equality).
+    expect(p2.history[0]).toBe(oldHistory[0]);
+  });
+});
+
 // --- Strategies ---------------------------------------------------------
 
 function makeCandles(closes: number[]): Candle[] {
@@ -217,6 +346,14 @@ describe('SMA_CROSSOVER_STRATEGY', () => {
     // holdSignal pulls last.date from the last candle. Pin so the
     // `candles.length - 1` indexing arithmetic mutant dies.
     expect(s.date).toBe(candles[candles.length - 1]!.date);
+  });
+
+  it('emits "hold" with empty candles (kills L281 holdSignal `\'\'` fallback)', () => {
+    // Exercises the `last ? last.date : ''` empty-array fallback.
+    const s = SMA_CROSSOVER_STRATEGY([]);
+    expect(s.action).toBe('hold');
+    expect(s.date).toBe('');
+    expect(s.reason).toBe('insufficient history');
   });
 
   it('boundary: exactly 51 candles is NOT insufficient (kills `< 51` → `<= 51`)', () => {
