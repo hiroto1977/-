@@ -2285,3 +2285,206 @@ describe('ACTIONS["export-dashboard"]', () => {
     expect(typeof ACTIONS['export-dashboard']).toBe('function');
   });
 });
+
+// --- compareStrategiesImpl + ACTIONS["compare-strategies"] -------------
+
+import { compareStrategiesImpl, type StrategyComparisonResult } from '../stocks';
+
+describe('compareStrategiesImpl', () => {
+  it('returns one row per built-in strategy with all metrics', async () => {
+    const r = (await compareStrategiesImpl(
+      { token: '', payload: { symbol: 'AAPL', initialCash: 100_000 } },
+    )) as StrategyComparisonResult;
+    expect(r.symbol).toBe('AAPL');
+    expect(r.initialCash).toBe(100_000);
+    expect(r.rows).toHaveLength(3);
+    const names = r.rows.map((x) => x.strategy);
+    expect(names).toEqual(['sma-crossover', 'rsi-mean-reversion', 'macd-signal']);
+    for (const row of r.rows) {
+      expect(row.finalEquity).toBeGreaterThan(0);
+      expect(typeof row.totalReturnPct).toBe('number');
+      expect(typeof row.maxDrawdownPct).toBe('number');
+      expect(row.winRate).toBeGreaterThanOrEqual(0);
+      expect(row.winRate).toBeLessThanOrEqual(1);
+      expect(row.tradeCount).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('bestByReturn names a winning strategy whose return equals the max', async () => {
+    // Use an injected fetcher with a clearly winning trajectory so the
+    // SMA crossover strategy goes positive and the others don't trade
+    // (constant flat → no signals).
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200), // golden cross → buy
+      ...Array(20).fill(0).map((_, i) => 200 + i * 5), // take-profit
+    ];
+    const candles: Candle[] = closes.map((c, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      open: c,
+      high: c,
+      low: c,
+      close: c,
+      volume: 1,
+    }));
+    const r = await compareStrategiesImpl(
+      { token: '', payload: { symbol: 'X', initialCash: 10_000 } },
+      { fetchHistory: async () => candles },
+    );
+    expect(r.bestByReturn).not.toBeNull();
+    expect(['sma-crossover', 'rsi-mean-reversion', 'macd-signal']).toContain(r.bestByReturn);
+    const best = r.rows.find((x) => x.strategy === r.bestByReturn)!;
+    const maxReturn = Math.max(...r.rows.map((x) => x.totalReturnPct));
+    expect(best.totalReturnPct).toBe(maxReturn);
+    expect(best.totalReturnPct).toBeGreaterThan(0);
+  });
+
+  it('bestByReturn is null when all strategies return 0 (flat market)', async () => {
+    const closes = Array(120).fill(100);
+    const candles: Candle[] = closes.map((c, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      open: c,
+      high: c,
+      low: c,
+      close: c,
+      volume: 1,
+    }));
+    const r = await compareStrategiesImpl(
+      { token: '', payload: { symbol: 'X', initialCash: 10_000 } },
+      { fetchHistory: async () => candles },
+    );
+    expect(r.bestByReturn).toBeNull();
+  });
+
+  it('rejects unsafe symbol', async () => {
+    await expect(
+      compareStrategiesImpl({ token: '', payload: { symbol: 'BAD;rm', initialCash: 10_000 } }),
+    ).rejects.toThrow(/1-16 chars/);
+  });
+
+  it('rejects non-positive / non-finite / non-number initialCash', async () => {
+    for (const v of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, 'lots' as unknown as number]) {
+      await expect(
+        compareStrategiesImpl({
+          token: '',
+          payload: { symbol: 'AAPL', initialCash: v },
+        }),
+      ).rejects.toThrow(/positive finite/);
+    }
+  });
+
+  it('is registered as an action', () => {
+    expect(typeof ACTIONS['compare-strategies']).toBe('function');
+  });
+
+  it('uses the default mock data source when deps.fetchHistory is omitted (production path)', async () => {
+    const r = (await ACTIONS['compare-strategies']!({
+      token: '',
+      payload: { symbol: 'AAPL', initialCash: 10_000 },
+    })) as StrategyComparisonResult;
+    expect(r.rows).toHaveLength(3);
+  });
+});
+
+// --- renderDashboardHtml strategyComparison section --------------------
+
+describe('renderDashboardHtml strategyComparison', () => {
+  function comp(rows: StrategyComparisonResult['rows'], best: string | null): StrategyComparisonResult {
+    return { symbol: 'AAPL', initialCash: 100_000, rows, bestByReturn: best };
+  }
+  const sampleRows: StrategyComparisonResult['rows'] = [
+    { strategy: 'sma-crossover', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 },
+    { strategy: 'rsi-mean-reversion', finalEquity: 100_000, totalReturnPct: 0, maxDrawdownPct: 0, winRate: 0, tradeCount: 0 },
+    { strategy: 'macd-signal', finalEquity: 95_000, totalReturnPct: -5, maxDrawdownPct: 8, winRate: 0, tradeCount: 1 },
+  ];
+
+  it('renders the 戦略比較 table when strategyComparison is provided', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      strategyComparison: comp(sampleRows, 'sma-crossover'),
+      generatedAt: '01',
+    });
+    expect(html).toContain('戦略比較');
+    expect(html).toContain('AAPL');
+    expect(html).toContain('sma-crossover');
+    expect(html).toContain('rsi-mean-reversion');
+    expect(html).toContain('macd-signal');
+    expect(html).toContain('+15.00%');
+    expect(html).toContain('-5.00%');
+    expect(html).toContain('最良'); // best label
+  });
+
+  it('omits the section when strategyComparison is undefined', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '01',
+    });
+    expect(html).not.toContain('戦略比較');
+    expect(html).not.toContain('最良');
+  });
+
+  it('omits 最良 highlight when bestByReturn is null', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      strategyComparison: comp(sampleRows.map((r) => ({ ...r, totalReturnPct: 0 })), null),
+      generatedAt: '01',
+    });
+    expect(html).toContain('戦略比較');
+    expect(html).not.toContain('最良');
+  });
+
+  it('escapes the symbol in the section header (anti-XSS)', () => {
+    const html = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      strategyComparison: { ...comp(sampleRows, null), symbol: '<scr>' },
+      generatedAt: '01',
+    });
+    expect(html).not.toContain('<scr>');
+    expect(html).toContain('&lt;scr&gt;');
+  });
+});
+
+// --- exportDashboardImpl with strategyComparison passthrough -----------
+
+describe('exportDashboardImpl strategyComparison passthrough', () => {
+  it('embeds the strategy comparison when payload is well-formed', async () => {
+    let html = '';
+    await exportDashboardImpl(
+      {
+        token: '',
+        payload: {
+          strategyComparison: {
+            symbol: 'AAPL',
+            initialCash: 100_000,
+            rows: [
+              { strategy: 'sma-crossover', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 },
+            ],
+            bestByReturn: 'sma-crossover',
+          },
+        },
+      },
+      {
+        fetchSnapshot: async () => emptySnapshot(),
+        writeFile: async (_p, c) => {
+          html = c;
+        },
+      },
+    );
+    expect(html).toContain('戦略比較');
+    expect(html).toContain('sma-crossover');
+  });
+
+  it('drops a malformed strategyComparison payload silently', async () => {
+    let html = '';
+    await exportDashboardImpl(
+      { token: '', payload: { strategyComparison: { symbol: 42 } } },
+      {
+        fetchSnapshot: async () => emptySnapshot(),
+        writeFile: async (_p, c) => {
+          html = c;
+        },
+      },
+    );
+    expect(html).not.toContain('戦略比較');
+  });
+});

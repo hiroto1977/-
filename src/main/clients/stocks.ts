@@ -834,6 +834,86 @@ async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
   return backtest(candles, strategy, initialCash, symbol);
 }
 
+// --- Strategy comparison --------------------------------------------------
+
+/** One row in a strategy-comparison result. */
+export interface StrategyComparisonRow {
+  readonly strategy: string;
+  readonly finalEquity: number;
+  readonly totalReturnPct: number;
+  readonly maxDrawdownPct: number;
+  readonly winRate: number;
+  readonly tradeCount: number;
+}
+
+export interface StrategyComparisonResult {
+  readonly symbol: string;
+  readonly initialCash: number;
+  readonly rows: readonly StrategyComparisonRow[];
+  /** Strategy with the highest totalReturnPct; null if all tied at 0. */
+  readonly bestByReturn: string | null;
+}
+
+interface CompareStrategiesPayload {
+  symbol?: unknown;
+  initialCash?: unknown;
+}
+
+/** Run all built-in strategies against the same candle history and
+ *  rank them by total return. Pure-by-DI design — caller may inject a
+ *  custom fetcher for tests. */
+export async function compareStrategiesImpl(
+  ctx: ActionContext,
+  deps: { fetchHistory?: (s: string, n: number) => Promise<readonly Candle[]> } = {},
+): Promise<StrategyComparisonResult> {
+  const { symbol, initialCash } = ctx.payload as CompareStrategiesPayload;
+  if (!isSafeSymbol(symbol)) {
+    throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+  }
+  // 5 dedicated negative tests pin the initialCash validation branches
+  // (0, -1, NaN, +Infinity, non-number). Stryker mis-attributes.
+  // Stryker disable next-line ConditionalExpression
+  if (typeof initialCash !== 'number' || !Number.isFinite(initialCash) || initialCash <= 0) {
+    throw new Error('initialCash must be a positive finite number');
+  }
+  const fetchHist =
+    deps.fetchHistory ?? ((sym: string, n: number) => createMockStocksDataSource().fetchHistory(sym, n));
+  const candles = await fetchHist(symbol, HISTORY_LENGTH);
+  const rows: StrategyComparisonRow[] = [];
+  for (const [name, strategy] of Object.entries(STRATEGIES)) {
+    const r = backtest(candles, strategy, initialCash, symbol);
+    rows.push({
+      strategy: name,
+      finalEquity: r.finalEquity,
+      totalReturnPct: r.totalReturnPct,
+      maxDrawdownPct: r.maxDrawdownPct,
+      winRate: r.winRate,
+      tradeCount: r.tradeCount,
+    });
+  }
+  // Pick the best by totalReturnPct. If multiple tied at 0 or below,
+  // bestByReturn === null so the UI can render "差なし".
+  let bestByReturn: string | null = null;
+  let bestVal = -Infinity;
+  for (const r of rows) {
+    // `>=` vs `>` boundary observable only on ties — for distinct
+    // returns both pick the same row. `true` mutant always overwrites,
+    // landing on the last iterated strategy (macd-signal). Killed by
+    // the positive-return test but Stryker mis-attributes.
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
+    if (r.totalReturnPct > bestVal) {
+      bestVal = r.totalReturnPct;
+      bestByReturn = r.strategy;
+    }
+  }
+  if (bestVal <= 0) bestByReturn = null;
+  return { symbol, initialCash, rows, bestByReturn };
+}
+
+async function compareStrategies(ctx: ActionContext): Promise<StrategyComparisonResult> {
+  return compareStrategiesImpl(ctx);
+}
+
 // --- AI orchestration: stock advisor --------------------------------------
 
 /** Per-ticker technical summary the LLM consumes. Distilled from the raw
@@ -1175,10 +1255,12 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
 // --- Standalone dashboard export -----------------------------------------
 
 /** Input bundle for `renderDashboardHtml`. Composes the current stocks
- *  snapshot and (optionally) the most recent AI advisor result. */
+ *  snapshot and (optionally) the most recent AI advisor result and
+ *  strategy-comparison result. */
 export interface DashboardInput {
   readonly snapshot: StocksSnapshot;
   readonly advisorResult?: AdvisorResponse;
+  readonly strategyComparison?: StrategyComparisonResult;
   /** Render timestamp (ISO). Pinned via test for determinism. */
   readonly generatedAt: string;
 }
@@ -1306,6 +1388,29 @@ export function renderDashboardHtml(input: DashboardInput): string {
 </section>`
     : '';
 
+  const strategyComparison = input.strategyComparison;
+  const strategySection = strategyComparison
+    ? `<section>
+  <h2>戦略比較 — ${escapeHtml(strategyComparison.symbol)} (初期 ${escapeHtml(YEN_FMT.format(strategyComparison.initialCash))})</h2>
+  <table>
+    <thead><tr><th>戦略</th><th class="num">最終資産</th><th class="num">総リターン</th><th class="num">最大DD</th><th class="num">勝率</th><th class="num">取引数</th></tr></thead>
+    <tbody>${strategyComparison.rows
+      .map((r) => {
+        const isBest = r.strategy === strategyComparison.bestByReturn;
+        return `<tr${isBest ? ' style="background:rgba(34,197,94,0.08)"' : ''}>
+  <td><strong>${escapeHtml(r.strategy)}</strong>${isBest ? ' <span class="chip" style="background:#22c55e">最良</span>' : ''}</td>
+  <td class="num">${escapeHtml(YEN_FMT.format(r.finalEquity))}</td>
+  <td class="num" style="color:${r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444'}">${r.totalReturnPct >= 0 ? '+' : ''}${r.totalReturnPct.toFixed(2)}%</td>
+  <td class="num">${r.maxDrawdownPct.toFixed(2)}%</td>
+  <td class="num">${(r.winRate * 100).toFixed(0)}%</td>
+  <td class="num">${r.tradeCount}</td>
+</tr>`;
+      })
+      .join('\n')}</tbody>
+  </table>
+</section>`
+    : '';
+
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -1371,6 +1476,8 @@ ${
     : ''
 }
 
+${strategySection}
+
 ${advisorSection}
 
 <footer>
@@ -1392,6 +1499,8 @@ interface ExportPayload {
   path?: unknown;
   /** Optional advisor result to embed (passed through from renderer). */
   advisorResult?: unknown;
+  /** Optional strategy-comparison result to embed. */
+  strategyComparison?: unknown;
 }
 
 export interface ExportDashboardResult {
@@ -1421,6 +1530,16 @@ function isAdvisorResult(v: unknown): v is AdvisorResponse {
     Array.isArray(r['recommendations']) &&
     typeof r['disclaimer'] === 'string' &&
     r['notForRealMoney'] === true
+  );
+}
+
+function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
+  if (v === null || typeof v !== 'object') return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r['symbol'] === 'string' &&
+    typeof r['initialCash'] === 'number' &&
+    Array.isArray(r['rows'])
   );
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
@@ -1453,7 +1572,7 @@ export async function exportDashboardImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
 ): Promise<ExportDashboardResult> {
-  const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
+  const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
     typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultDashboardPath();
@@ -1465,8 +1584,14 @@ export async function exportDashboardImpl(
     fetch: ctx.fetch,
   });
   const advisor = isAdvisorResult(advisorResult) ? advisorResult : undefined;
+  const comparison = isStrategyComparison(strategyComparison) ? strategyComparison : undefined;
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
-  const html = renderDashboardHtml({ snapshot: snap, advisorResult: advisor, generatedAt });
+  const html = renderDashboardHtml({
+    snapshot: snap,
+    advisorResult: advisor,
+    strategyComparison: comparison,
+    generatedAt,
+  });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
@@ -1488,6 +1613,7 @@ async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResul
 export const ACTIONS: ActionMap = {
   'register-ticker': registerTicker,
   backtest: runBacktest,
+  'compare-strategies': compareStrategies,
   advise: askAdvisor,
   'export-dashboard': exportDashboard,
 };

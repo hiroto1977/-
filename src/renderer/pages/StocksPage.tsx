@@ -169,6 +169,51 @@ export function StocksPage() {
   const [advisorError, setAdvisorError] = useState<string | null>(null);
   const [advisorResult, setAdvisorResult] = useState<AdvisorResponse | null>(null);
 
+  // --- Strategy comparison state ----------------------------------------
+  interface StrategyComparisonRow {
+    strategy: string;
+    finalEquity: number;
+    totalReturnPct: number;
+    maxDrawdownPct: number;
+    winRate: number;
+    tradeCount: number;
+  }
+  interface StrategyComparisonResult {
+    symbol: string;
+    initialCash: number;
+    rows: StrategyComparisonRow[];
+    bestByReturn: string | null;
+  }
+  const [compareSymbol, setCompareSymbol] = useState('AAPL');
+  const [compareBusy, setCompareBusy] = useState(false);
+  const [compareError, setCompareError] = useState<string | null>(null);
+  const [compareResult, setCompareResult] = useState<StrategyComparisonResult | null>(null);
+
+  async function runCompare() {
+    if (!compareSymbol.trim()) {
+      setCompareError('銘柄コードを入力してください');
+      return;
+    }
+    setCompareBusy(true);
+    setCompareError(null);
+    try {
+      const r = await window.serviceHub.invoke<StrategyComparisonResult>(
+        'stocks',
+        'compare-strategies',
+        { symbol: compareSymbol.trim(), initialCash: portfolio.initialCash },
+      );
+      if (r.ok) {
+        setCompareResult(r.data);
+      } else {
+        setCompareError(r.message);
+      }
+    } catch (e) {
+      setCompareError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setCompareBusy(false);
+    }
+  }
+
   // --- Dashboard export state -------------------------------------------
   const [exportBusy, setExportBusy] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
@@ -179,11 +224,15 @@ export function StocksPage() {
     setExportBusy(true);
     setExportError(null);
     try {
+      // Forward the latest advisor result + strategy comparison so the
+      // dashboard captures them.
+      const payload: Record<string, unknown> = {};
+      if (advisorResult) payload['advisorResult'] = advisorResult;
+      if (compareResult) payload['strategyComparison'] = compareResult;
       const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
         'stocks',
         'export-dashboard',
-        // Forward the latest advisor result so the dashboard captures it.
-        advisorResult ? { advisorResult } : {},
+        payload,
       );
       if (r.ok) {
         setExportPath(r.data.path);
@@ -514,6 +563,130 @@ export function StocksPage() {
               }}
             >
               {advisorResult.disclaimer}
+            </div>
+          </div>
+        )}
+      </Section>
+
+      <Section title="戦略比較" count={compareResult?.rows.length ?? 0}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <input
+            type="text"
+            value={compareSymbol}
+            onChange={(e) => setCompareSymbol(e.target.value)}
+            placeholder="銘柄コード (例: AAPL / 7203.T)"
+            maxLength={16}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !compareBusy) runCompare();
+            }}
+          />
+          <button
+            onClick={runCompare}
+            disabled={compareBusy}
+            style={{
+              padding: '8px 16px',
+              background: compareBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: compareBusy ? 'wait' : 'pointer',
+            }}
+          >
+            {compareBusy ? '計算中…' : '3 戦略を比較'}
+          </button>
+        </div>
+        {compareError && (
+          <div
+            style={{
+              border: '1px solid #ef4444',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#ef4444',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 8,
+            }}
+          >
+            {compareError}
+          </div>
+        )}
+        {compareResult && (
+          <div>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+              {compareResult.symbol} (初期 {yen.format(compareResult.initialCash)})
+              {compareResult.bestByReturn && (
+                <>
+                  {' '}
+                  · 最良:{' '}
+                  <strong style={{ color: '#22c55e' }}>{compareResult.bestByReturn}</strong>
+                </>
+              )}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {compareResult.rows.map((r) => {
+                const isBest = r.strategy === compareResult.bestByReturn;
+                return (
+                  <div
+                    key={r.strategy}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '180px 1fr 100px 90px 80px 80px',
+                      gap: 8,
+                      padding: '8px 12px',
+                      background: isBest ? 'rgba(34,197,94,0.08)' : 'var(--bg-elev)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 6,
+                      fontSize: 12,
+                    }}
+                  >
+                    <span style={{ fontWeight: 600 }}>
+                      {r.strategy}
+                      {isBest && (
+                        <span
+                          style={{
+                            marginLeft: 6,
+                            padding: '1px 6px',
+                            borderRadius: 3,
+                            background: '#22c55e',
+                            color: '#fff',
+                            fontSize: 10,
+                          }}
+                        >
+                          最良
+                        </span>
+                      )}
+                    </span>
+                    <span style={{ color: 'var(--text-mute)' }}>
+                      最終資産 {yen.format(r.finalEquity)}
+                    </span>
+                    <span
+                      style={{ color: r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444' }}
+                    >
+                      {r.totalReturnPct >= 0 ? '+' : ''}
+                      {r.totalReturnPct.toFixed(2)}%
+                    </span>
+                    <span style={{ color: 'var(--text-mute)' }}>
+                      最大DD {r.maxDrawdownPct.toFixed(1)}%
+                    </span>
+                    <span style={{ color: 'var(--text-mute)' }}>
+                      勝率 {(r.winRate * 100).toFixed(0)}%
+                    </span>
+                    <span style={{ color: 'var(--text-mute)' }}>
+                      {r.tradeCount} 取引
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
