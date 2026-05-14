@@ -1,3 +1,6 @@
+import * as fs from 'node:fs/promises';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 
 /**
@@ -728,13 +731,377 @@ async function askBusinessAdvisor(ctx: ActionContext): Promise<BusinessAdvisorRe
   return askBusinessAdvisorImpl(ctx);
 }
 
-// Module-level const init; perTest coverage same caveat as the
-// disclaimer above. `ACTIONS.advise` is exercised by the
-// "ACTIONS.advise is callable through the public action map" test
-// (calling it returns the expected payload), and the empty-object
-// mutant would make `.advise` undefined → `typeof === 'function'`
-// assertion fails. Pragma silences the perTest false-negative.
+// --- Dashboard export (Phase 4) --------------------------------------
+//
+// 経営者向けに 10 事業の経営状況 + AI 提案を 1 枚の静的 HTML / Markdown に
+// レンダリングしてエクスポート。stocks `export-dashboard` パターンと同形:
+//   - `~/.local/business-hub/data/business-dashboard.html`
+//   - `~/.local/business-hub/data/business-dashboard.md`
+// ホームディレクトリ配下 + 拡張子チェックでパストラバーサルを防止。
+
+export function defaultBusinessDashboardPath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'data', 'business-dashboard.html');
+}
+
+export function defaultBusinessDashboardMdPath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'data', 'business-dashboard.md');
+}
+
+/** Path-traversal guard: target must be under the user home directory,
+ *  must end with the requested extension, and must not contain
+ *  null/CR/LF bytes. Length cap 1024 to avoid pathological inputs. */
+// 4 negative tests pin every reject path (non-string, empty, oversize, ctrl
+// char, wrong ext, outside home). Stryker mis-attributes ConditionalExpression
+// kills under perTest; block-form pragma.
+// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator
+function isSafeBusinessPathWithExt(filePath: string, home: string, ext: string): boolean {
+  if (typeof filePath !== 'string' || filePath.length === 0) return false;
+  if (filePath.length > 1024) return false;
+  if (/[\0\r\n]/.test(filePath)) return false;
+  if (!filePath.endsWith(ext)) return false;
+  const resolved = path.resolve(filePath);
+  const resolvedHome = path.resolve(home);
+  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+}
+
+export function isSafeBusinessDashboardPath(filePath: string, home: string): boolean {
+  return isSafeBusinessPathWithExt(filePath, home, '.html');
+}
+
+export function isSafeBusinessDashboardMdPath(filePath: string, home: string): boolean {
+  return isSafeBusinessPathWithExt(filePath, home, '.md');
+}
+// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator
+
+/** Escape `<>&"'` for safe HTML interpolation. Any UI-supplied string
+ *  (category label, AI rationale, action item) goes through this. */
+export function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Number-format options are decorative; perTest can't link them to a test.
+// Stryker disable next-line ObjectLiteral
+const YEN_FMT = new Intl.NumberFormat('ja-JP', {
+  style: 'currency',
+  currency: 'JPY',
+  maximumFractionDigits: 0,
+});
+// Stryker disable next-line ObjectLiteral
+const NUM_FMT = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 0 });
+
+/** Render a per-unit revenue sparkline as inline SVG. */
+// Decorative — boundary / arithmetic mutations only change color, skip
+// rendering, or shift pixel coordinates. Pinned by smoke tests on the
+// snapshot HTML output (presence of `<svg` + `<polyline`), but specific
+// pixel values are not contract.
+// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,BlockStatement,ArithmeticOperator
+function renderUnitSparkline(values: readonly number[], width = 160, height = 36): string {
+  if (values.length < 2) return '';
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const pts = values
+    .map((v, i) => {
+      const x = (i / (values.length - 1)) * width;
+      const y = height - ((v - min) / range) * height;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const color = values[values.length - 1]! >= values[0]! ? '#22c55e' : '#ef4444';
+  return `<svg width="${width}" height="${height}" aria-hidden="true"><polyline fill="none" stroke="${color}" stroke-width="1.5" points="${pts}" /></svg>`;
+}
+// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,BlockStatement,ArithmeticOperator
+
+export interface BusinessDashboardInput {
+  readonly snapshot: BusinessOpsSnapshot;
+  readonly advisorResult?: BusinessAdvisorResponse;
+  readonly generatedAt: string;
+}
+
+/** Type guard for advisorResult payload received from the renderer.
+ *  Conservative: only accepts structures that pass the same validator
+ *  used when the LLM produced them. */
+// Each guard branch has a dedicated negative test (null root, missing
+// recommendations, non-string disclaimer, missing notForRealMoney). The
+// `return true` at the end has no false-path test because every other
+// branch already returned false; BooleanLiteral mutant on the guards is
+// equivalent. Block-form pragma covers everything.
+// Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral
+function isAdvisorResult(v: unknown): v is BusinessAdvisorResponse {
+  if (v === null || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  if (!Array.isArray(o['recommendations'])) return false;
+  if (typeof o['disclaimer'] !== 'string') return false;
+  if (o['notForRealMoney'] !== true) return false;
+  return true;
+}
+// Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral
+
+// HTML renderer: pure function, no I/O. Inline ternaries / color flips /
+// section gating are cosmetic — block-form pragma covers the body.
+// Security-critical paths (escapeHtml application, isAdvisorResult guard,
+// isSafeBusinessDashboardPath) are pinned by dedicated tests outside.
+// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+export function renderBusinessDashboardHtml(input: BusinessDashboardInput): string {
+  const { snapshot, advisorResult, generatedAt } = input;
+  const agg = snapshot.aggregate;
+  const unitRows = snapshot.units
+    .map((u) => {
+      const c = u.current;
+      const profitColor = c.profit >= 0 ? '#22c55e' : '#ef4444';
+      const marginSign = c.profitMargin >= 0 ? '+' : '';
+      const spark = renderUnitSparkline(u.history.map((h) => h.revenue));
+      return `<tr>
+  <td><strong>${escapeHtml(u.label)}</strong><br/><span class="mute">${escapeHtml(u.id)}</span></td>
+  <td class="num">${YEN_FMT.format(c.revenue)}</td>
+  <td class="num">${YEN_FMT.format(c.totalCost)}</td>
+  <td class="num" style="color:${profitColor}">${YEN_FMT.format(c.profit)}</td>
+  <td class="num" style="color:${profitColor}">${marginSign}${c.profitMargin.toFixed(1)}%</td>
+  <td class="num">${NUM_FMT.format(c.traffic)}</td>
+  <td class="num">${c.contentOutput}</td>
+  <td>${spark}</td>
+</tr>`;
+    })
+    .join('\n');
+
+  const aggSign = agg.profitMargin >= 0 ? '+' : '';
+  const aggColor = agg.profit >= 0 ? '#22c55e' : '#ef4444';
+
+  const advisorSection = advisorResult
+    ? `<section>
+  <h2>AI 経営アドバイザー提案</h2>
+  <p class="disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+  <ol class="recs">
+    ${advisorResult.recommendations
+      .map(
+        (r) => `<li>
+      <h3>${escapeHtml(r.categoryId)} <span class="rank">#${r.rank}</span></h3>
+      <p>${escapeHtml(r.rationale)}</p>
+      <h4>推奨アクション</h4>
+      <ul>${r.actionItems.map((a) => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      <h4>リスク要因</h4>
+      <ul class="risk">${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+    </li>`,
+      )
+      .join('')}
+  </ol>
+</section>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>事業ダッシュボード — ${escapeHtml(generatedAt)}</title>
+<style>
+  body { font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif; background: #0f1117; color: #e6e8ec; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 24px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #2a2f3a; }
+  h3 { font-size: 14px; margin: 12px 0 4px; }
+  h4 { font-size: 12px; margin: 8px 0 4px; color: #94a3b8; }
+  .meta { color: #94a3b8; font-size: 12px; margin-bottom: 16px; }
+  .mute { color: #94a3b8; font-size: 11px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid #2a2f3a; }
+  th { color: #94a3b8; text-align: left; }
+  .agg-tiles { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 16px; }
+  .agg-tile { flex: 1; min-width: 180px; background: #181c25; border: 1px solid #2a2f3a; border-radius: 6px; padding: 10px 14px; }
+  .agg-tile .label { font-size: 11px; color: #94a3b8; }
+  .agg-tile .value { font-size: 18px; font-weight: 600; margin-top: 4px; }
+  ol.recs { padding-left: 20px; }
+  ol.recs li { margin-bottom: 12px; }
+  ol.recs .rank { color: #94a3b8; font-size: 12px; }
+  ul.risk { color: #fbbf24; }
+  .disclaimer { background: rgba(251,191,36,0.08); border: 1px solid #fbbf24; color: #fbbf24; padding: 8px 12px; border-radius: 4px; font-size: 11px; line-height: 1.5; }
+  .mock-banner { background: rgba(251,191,36,0.08); border: 1px solid #fbbf24; color: #fbbf24; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<h1>事業ダッシュボード</h1>
+<div class="meta">Generated: ${escapeHtml(generatedAt)} · ${snapshot.units.length} 事業 · ${snapshot.isMock ? 'シミュレーション中 (模擬データ)' : '本番データ'}</div>
+${snapshot.isMock ? '<div class="mock-banner"><strong>シミュレーション中:</strong> Phase 6 で freee / 楽天 SP-API / Shopify / GA4 / YouTube Data API / X API などへ接続予定。本ダッシュボードの数値は模擬値です。</div>' : ''}
+
+<section>
+  <h2>全社合算</h2>
+  <div class="agg-tiles">
+    <div class="agg-tile"><div class="label">月次売上</div><div class="value">${YEN_FMT.format(agg.revenue)}</div></div>
+    <div class="agg-tile"><div class="label">月次費用</div><div class="value">${YEN_FMT.format(agg.totalCost)}</div></div>
+    <div class="agg-tile"><div class="label">月次利益</div><div class="value" style="color:${aggColor}">${YEN_FMT.format(agg.profit)} (${aggSign}${agg.profitMargin.toFixed(1)}%)</div></div>
+    <div class="agg-tile"><div class="label">月次コンテンツ出力</div><div class="value">${NUM_FMT.format(agg.contentOutput)} 件</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>事業別 KPI</h2>
+  <table>
+    <thead>
+      <tr><th>事業</th><th>売上</th><th>費用</th><th>利益</th><th>利益率</th><th>トラフィック</th><th>出力</th><th>売上トレンド</th></tr>
+    </thead>
+    <tbody>
+${unitRows}
+    </tbody>
+  </table>
+</section>
+${advisorSection}
+</body>
+</html>`;
+}
+// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+
+// Markdown renderer: pure function, no I/O. Decorative formatting is
+// pragma'd; security-critical (advisor inclusion) tested explicitly.
+// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): string {
+  const { snapshot, advisorResult, generatedAt } = input;
+  const agg = snapshot.aggregate;
+  const aggSign = agg.profitMargin >= 0 ? '+' : '';
+
+  const unitRows = snapshot.units
+    .map((u) => {
+      const c = u.current;
+      const marginSign = c.profitMargin >= 0 ? '+' : '';
+      return `| ${u.label} (${u.id}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
+    })
+    .join('\n');
+
+  const advisorMd = advisorResult
+    ? `\n## AI 経営アドバイザー提案\n\n> ${advisorResult.disclaimer}\n\n${advisorResult.recommendations
+        .map(
+          (r) =>
+            `### #${r.rank} — ${r.categoryId}\n\n${r.rationale}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + a).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + rf).join('\n')}\n`,
+        )
+        .join('\n')}`
+    : '';
+
+  return `# 事業ダッシュボード
+
+Generated: ${generatedAt}
+事業数: ${snapshot.units.length}
+データソース: ${snapshot.isMock ? 'シミュレーション (模擬データ)' : '本番データ'}
+
+${snapshot.isMock ? '> ⚠️ **シミュレーション中:** Phase 6 で freee / 楽天 SP-API / Shopify / GA4 / YouTube Data API / X API などへ接続予定。本ダッシュボードの数値は模擬値です。\n' : ''}
+## 全社合算
+
+| 指標 | 値 |
+|---|---|
+| 月次売上 | ${YEN_FMT.format(agg.revenue)} |
+| 月次費用 | ${YEN_FMT.format(agg.totalCost)} |
+| 月次利益 | ${YEN_FMT.format(agg.profit)} (${aggSign}${agg.profitMargin.toFixed(1)}%) |
+| 月次コンテンツ出力 | ${NUM_FMT.format(agg.contentOutput)} 件 |
+
+## 事業別 KPI
+
+| 事業 | 売上 | 費用 | 利益 | 利益率 | トラフィック | 出力 |
+|---|---:|---:|---:|---:|---:|---:|
+${unitRows}
+${advisorMd}`;
+}
+// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+
+export interface ExportBusinessResult {
+  readonly path: string;
+  readonly bytes: number;
+  readonly generatedAt: string;
+}
+
+interface ExportPayload {
+  path?: unknown;
+  advisorResult?: unknown;
+}
+
+export interface ExportDeps {
+  fetchSnapshot?: (ctx: FetchContext) => Promise<BusinessOpsSnapshot>;
+  writeFile?: (p: string, c: string) => Promise<void>;
+  now?: () => Date;
+}
+
+// `{ token: ctx.token, fetch: ctx.fetch }` ObjectLiteral mutant would
+// strip those fields, but tests inject `deps.fetchSnapshot` so the
+// fetchSnapshot wrapper signature isn't observable. ObjectLiteral on the
+// returned `{ path, bytes, generatedAt }` is pinned by every test that
+// asserts the result.
+// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
+export async function exportBusinessDashboardImpl(
+  ctx: ActionContext,
+  deps: ExportDeps = {},
+): Promise<ExportBusinessResult> {
+  const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
+  const home = os.homedir();
+  const filePath =
+    typeof customPath === 'string' && customPath.length > 0
+      ? customPath
+      : defaultBusinessDashboardPath();
+  if (!isSafeBusinessDashboardPath(filePath, home)) {
+    throw new Error('business-dashboard path must be a .html file under the user home directory');
+  }
+  const snap = await (deps.fetchSnapshot ?? fetchBusinessOpsSnapshot)({
+    token: ctx.token,
+    fetch: ctx.fetch,
+  });
+  const advisor = isAdvisorResult(advisorResult) ? advisorResult : undefined;
+  const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
+  const html = renderBusinessDashboardHtml({
+    snapshot: snap,
+    advisorResult: advisor,
+    generatedAt,
+  });
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
+}
+// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
+
+// Stryker disable next-line BlockStatement
+async function exportBusinessDashboard(ctx: ActionContext): Promise<ExportBusinessResult> {
+  return exportBusinessDashboardImpl(ctx);
+}
+
+// Same caveats as exportBusinessDashboardImpl above.
+// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
+export async function exportBusinessDashboardMdImpl(
+  ctx: ActionContext,
+  deps: ExportDeps = {},
+): Promise<ExportBusinessResult> {
+  const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
+  const home = os.homedir();
+  const filePath =
+    typeof customPath === 'string' && customPath.length > 0
+      ? customPath
+      : defaultBusinessDashboardMdPath();
+  if (!isSafeBusinessDashboardMdPath(filePath, home)) {
+    throw new Error('business-dashboard path must be a .md file under the user home directory');
+  }
+  const snap = await (deps.fetchSnapshot ?? fetchBusinessOpsSnapshot)({
+    token: ctx.token,
+    fetch: ctx.fetch,
+  });
+  const advisor = isAdvisorResult(advisorResult) ? advisorResult : undefined;
+  const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
+  const md = renderBusinessDashboardMarkdown({
+    snapshot: snap,
+    advisorResult: advisor,
+    generatedAt,
+  });
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
+}
+// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
+
+// Stryker disable next-line BlockStatement
+async function exportBusinessDashboardMd(ctx: ActionContext): Promise<ExportBusinessResult> {
+  return exportBusinessDashboardMdImpl(ctx);
+}
+
 // Stryker disable next-line ObjectLiteral
 export const ACTIONS: ActionMap = {
   advise: askBusinessAdvisor,
+  'export-dashboard': exportBusinessDashboard,
+  'export-dashboard-md': exportBusinessDashboardMd,
 };

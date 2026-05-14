@@ -498,6 +498,8 @@ export function BusinessPage() {
 
   const [sortKey, setSortKey] = useState<'revenue' | 'profit' | 'margin'>('revenue');
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportMsg, setExportMsg] = useState<string | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
@@ -508,6 +510,32 @@ export function BusinessPage() {
     for (const u of data.units) m[u.id] = u.label;
     return m;
   }, [data.units]);
+
+  async function runExport(format: 'html' | 'md') {
+    setExportBusy(true);
+    setExportMsg(null);
+    try {
+      const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
+      const payload: { advisorResult?: BusinessAdvisorResponse } = {};
+      if (advisorResult) payload.advisorResult = advisorResult;
+      const r = await window.serviceHub.invoke<{
+        path: string;
+        bytes: number;
+        generatedAt: string;
+      }>('business', action, payload);
+      if (r.ok) {
+        setExportMsg(
+          `保存しました: ${r.data.path} (${r.data.bytes.toLocaleString()} bytes)`,
+        );
+      } else {
+        setExportMsg('エクスポート失敗: ' + r.message);
+      }
+    } catch (e) {
+      setExportMsg('エクスポート失敗: ' + (e instanceof Error ? e.message : String(e)));
+    } finally {
+      setExportBusy(false);
+    }
+  }
 
   async function runAdvisor() {
     const q = advisorQuestion.trim();
@@ -681,6 +709,62 @@ export function BusinessPage() {
             <CategoryCard key={u.id} unit={u} />
           ))}
         </div>
+      </Section>
+
+      <Section title="ダッシュボードエクスポート" count={0}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => runExport('html')}
+            disabled={exportBusy}
+            style={{
+              padding: '6px 14px',
+              background: exportBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              cursor: exportBusy ? 'wait' : 'pointer',
+              fontSize: 12,
+            }}
+          >
+            {exportBusy ? '出力中…' : 'HTML を保存'}
+          </button>
+          <button
+            type="button"
+            onClick={() => runExport('md')}
+            disabled={exportBusy}
+            style={{
+              padding: '6px 14px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              cursor: exportBusy ? 'wait' : 'pointer',
+              fontSize: 12,
+            }}
+          >
+            Markdown を保存
+          </button>
+          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            保存先: ~/.local/business-hub/data/business-dashboard.{`{html,md}`}
+          </span>
+        </div>
+        {exportMsg && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: '8px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              fontSize: 12,
+              color: 'var(--text)',
+              wordBreak: 'break-all',
+            }}
+          >
+            {exportMsg}
+          </div>
+        )}
       </Section>
 
       <Section

@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import {
   ACTIONS,
   BUSINESS_CATEGORIES,
@@ -9,14 +11,25 @@ import {
   askBusinessAdvisorImpl,
   buildCategoryAnalysis,
   createMockBusinessOpsDataSource,
+  defaultBusinessDashboardPath,
+  defaultBusinessDashboardMdPath,
+  escapeHtml,
+  exportBusinessDashboardImpl,
+  exportBusinessDashboardMdImpl,
   fetchBusinessOpsSnapshot,
   fetchBusinessOpsSnapshotImpl,
   getCategoryDef,
   isBusinessCategoryId,
+  isSafeBusinessDashboardPath,
+  isSafeBusinessDashboardMdPath,
+  renderBusinessDashboardHtml,
+  renderBusinessDashboardMarkdown,
   validateBusinessAdvisorJson,
+  type BusinessOpsSnapshot,
   type BusinessUnit,
   type BusinessCategoryId,
   type BusinessAdvisorRecommendation,
+  type BusinessAdvisorResponse,
 } from '../business';
 
 // --- Category taxonomy ------------------------------------------------
@@ -1120,5 +1133,587 @@ describe('business advisor boundary pins', () => {
       payload: { question: 'q' },
     });
     expect(result).toMatchObject({ notForRealMoney: true });
+  });
+});
+
+// --- escapeHtml -------------------------------------------------------
+
+describe('escapeHtml', () => {
+  it('escapes all 5 HTML-significant characters', () => {
+    expect(escapeHtml('<script>alert("x")</script>')).toBe(
+      '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;',
+    );
+    expect(escapeHtml("o'reilly")).toBe('o&#39;reilly');
+    expect(escapeHtml('a & b')).toBe('a &amp; b');
+  });
+
+  it('passes through plain text unchanged', () => {
+    expect(escapeHtml('hello world 日本語')).toBe('hello world 日本語');
+  });
+});
+
+// --- Dashboard path safety -------------------------------------------
+
+describe('defaultBusinessDashboardPath / Md', () => {
+  it('returns ~/.local/business-hub/data/business-dashboard.html', () => {
+    expect(defaultBusinessDashboardPath()).toBe(
+      path.join(os.homedir(), '.local', 'business-hub', 'data', 'business-dashboard.html'),
+    );
+  });
+
+  it('returns ~/.local/business-hub/data/business-dashboard.md', () => {
+    expect(defaultBusinessDashboardMdPath()).toBe(
+      path.join(os.homedir(), '.local', 'business-hub', 'data', 'business-dashboard.md'),
+    );
+  });
+});
+
+describe('isSafeBusinessDashboardPath', () => {
+  const home = '/home/user';
+
+  it('accepts a .html file inside the home directory', () => {
+    expect(isSafeBusinessDashboardPath('/home/user/.local/x.html', home)).toBe(true);
+  });
+
+  it('rejects non-string', () => {
+    expect(isSafeBusinessDashboardPath(42 as unknown as string, home)).toBe(false);
+  });
+
+  it('rejects empty path', () => {
+    expect(isSafeBusinessDashboardPath('', home)).toBe(false);
+  });
+
+  it('rejects oversized path (> 1024 chars)', () => {
+    const big = '/home/user/' + 'x'.repeat(2000) + '.html';
+    expect(isSafeBusinessDashboardPath(big, home)).toBe(false);
+  });
+
+  it('rejects null / CR / LF bytes', () => {
+    expect(isSafeBusinessDashboardPath('/home/user/x\0.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/x\n.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/x\r.html', home)).toBe(false);
+  });
+
+  it('rejects wrong extension (.txt, .md, no ext)', () => {
+    expect(isSafeBusinessDashboardPath('/home/user/x.txt', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/x.md', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/x', home)).toBe(false);
+  });
+
+  it('rejects paths outside the home directory (traversal)', () => {
+    expect(isSafeBusinessDashboardPath('/etc/passwd.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/tmp/x.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/other/x.html', home)).toBe(false);
+  });
+
+  it('rejects relative traversal that resolves outside home', () => {
+    expect(isSafeBusinessDashboardPath('/home/user/../etc/x.html', home)).toBe(false);
+  });
+});
+
+describe('isSafeBusinessDashboardMdPath', () => {
+  const home = '/home/user';
+
+  it('accepts .md inside home', () => {
+    expect(isSafeBusinessDashboardMdPath('/home/user/x.md', home)).toBe(true);
+  });
+
+  it('rejects .html (wrong extension for md variant)', () => {
+    expect(isSafeBusinessDashboardMdPath('/home/user/x.html', home)).toBe(false);
+  });
+
+  it('rejects outside-home .md', () => {
+    expect(isSafeBusinessDashboardMdPath('/tmp/x.md', home)).toBe(false);
+  });
+});
+
+// --- renderBusinessDashboardHtml --------------------------------------
+
+describe('renderBusinessDashboardHtml', () => {
+  function fakeSnap(over: Partial<BusinessOpsSnapshot> = {}): BusinessOpsSnapshot {
+    const unit: BusinessUnit = {
+      id: 'ec',
+      label: 'EC / ネットショップ',
+      description: 'desc',
+      trafficKind: 'session',
+      current: {
+        revenue: 1_000_000,
+        variableCost: 400_000,
+        fixedCost: 200_000,
+        totalCost: 600_000,
+        profit: 400_000,
+        profitMargin: 40,
+        traffic: 10_000,
+        conversion: 200,
+        conversionRatePct: 2,
+        aov: 5000,
+        roas: 5,
+        contentOutput: 10,
+      },
+      history: [
+        { revenue: 900_000, variableCost: 360_000, fixedCost: 200_000, totalCost: 560_000, profit: 340_000, profitMargin: 37.8, traffic: 9500, conversion: 190, conversionRatePct: 2, aov: 4737, roas: 4.5, contentOutput: 9 },
+        { revenue: 1_000_000, variableCost: 400_000, fixedCost: 200_000, totalCost: 600_000, profit: 400_000, profitMargin: 40, traffic: 10_000, conversion: 200, conversionRatePct: 2, aov: 5000, roas: 5, contentOutput: 10 },
+      ],
+    };
+    return {
+      units: [unit],
+      aggregate: {
+        revenue: 1_000_000,
+        totalCost: 600_000,
+        profit: 400_000,
+        profitMargin: 40,
+        contentOutput: 10,
+      },
+      fetchedAt: '2026-05-14T00:00:00.000Z',
+      isMock: true,
+      ...over,
+    };
+  }
+
+  it('emits a valid HTML doctype + opening html tag', () => {
+    const html = renderBusinessDashboardHtml({
+      snapshot: fakeSnap(),
+      generatedAt: '2026-05-14T00:00:00.000Z',
+    });
+    expect(html).toMatch(/^<!DOCTYPE html>/);
+    expect(html).toContain('<html lang="ja">');
+  });
+
+  it('includes the generated timestamp + unit count', () => {
+    const html = renderBusinessDashboardHtml({
+      snapshot: fakeSnap(),
+      generatedAt: '2026-05-14T10:00:00.000Z',
+    });
+    expect(html).toContain('2026-05-14T10:00:00.000Z');
+    expect(html).toContain('1 事業');
+  });
+
+  it('escapes HTML-significant characters in category labels', () => {
+    const snap = fakeSnap();
+    const dangerous: BusinessUnit = {
+      ...snap.units[0]!,
+      label: '<script>alert("xss")</script>',
+    };
+    const html = renderBusinessDashboardHtml({
+      snapshot: { ...snap, units: [dangerous] },
+      generatedAt: 'x',
+    });
+    expect(html).not.toContain('<script>alert');
+    expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('shows the mock-data banner when isMock=true; hides when false', () => {
+    const mock = renderBusinessDashboardHtml({
+      snapshot: fakeSnap({ isMock: true }),
+      generatedAt: 'x',
+    });
+    expect(mock).toContain('<div class="mock-banner">');
+    expect(mock).toContain('シミュレーション中');
+    // Phase 6 real-data scenario: cast through `unknown` because the
+    // current snapshot contract pins `isMock: true` literally — the
+    // renderer's `isMock ? … : …` branch is designed to also handle the
+    // future false case.
+    const real = renderBusinessDashboardHtml({
+      snapshot: { ...fakeSnap(), isMock: false as unknown as true },
+      generatedAt: 'x',
+    });
+    expect(real).not.toContain('<div class="mock-banner">');
+    expect(real).toContain('本番データ');
+  });
+
+  it('includes the advisor section when advisorResult is provided', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'rationale',
+          actionItems: ['act-1'],
+          riskFactors: ['risk-1'],
+        },
+      ],
+      disclaimer: BUSINESS_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    const html = renderBusinessDashboardHtml({
+      snapshot: fakeSnap(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(html).toContain('AI 経営アドバイザー提案');
+    expect(html).toContain('rationale');
+    expect(html).toContain('act-1');
+    expect(html).toContain('risk-1');
+  });
+
+  it('omits the advisor section when advisorResult is undefined', () => {
+    const html = renderBusinessDashboardHtml({
+      snapshot: fakeSnap(),
+      generatedAt: 'x',
+    });
+    expect(html).not.toContain('AI 経営アドバイザー提案');
+  });
+
+  it('formats aggregate revenue / profit / margin', () => {
+    const html = renderBusinessDashboardHtml({
+      snapshot: fakeSnap(),
+      generatedAt: 'x',
+    });
+    expect(html).toContain('￥1,000,000');
+    expect(html).toContain('+40.0%');
+  });
+});
+
+// --- renderBusinessDashboardMarkdown ---------------------------------
+
+describe('renderBusinessDashboardMarkdown', () => {
+  function fakeSnap(over: Partial<BusinessOpsSnapshot> = {}): BusinessOpsSnapshot {
+    const unit: BusinessUnit = {
+      id: 'ec',
+      label: 'EC',
+      description: '',
+      trafficKind: 'session',
+      current: {
+        revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+        profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+        conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+      },
+      history: [],
+    };
+    return {
+      units: [unit],
+      aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+      fetchedAt: 'x',
+      isMock: true,
+      ...over,
+    };
+  }
+
+  it('emits the H1 + Generated timestamp', () => {
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnap(),
+      generatedAt: '2026-05-14T00:00:00.000Z',
+    });
+    expect(md).toContain('# 事業ダッシュボード');
+    expect(md).toContain('Generated: 2026-05-14T00:00:00.000Z');
+  });
+
+  it('shows シミュレーション banner when isMock=true; not when false', () => {
+    const mock = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnap({ isMock: true }),
+      generatedAt: 'x',
+    });
+    expect(mock).toContain('シミュレーション中');
+    const real = renderBusinessDashboardMarkdown({
+      snapshot: { ...fakeSnap(), isMock: false as unknown as true },
+      generatedAt: 'x',
+    });
+    expect(real).not.toContain('シミュレーション中');
+  });
+
+  it('renders the unit table row with sign-prefixed margin', () => {
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnap(),
+      generatedAt: 'x',
+    });
+    expect(md).toContain('| EC (ec) |');
+    expect(md).toContain('+40.0%');
+  });
+
+  it('includes advisor section when provided', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'r',
+          actionItems: ['a-1', 'a-2'],
+          riskFactors: ['x'],
+        },
+      ],
+      disclaimer: BUSINESS_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnap(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(md).toContain('## AI 経営アドバイザー提案');
+    expect(md).toContain('### #1 — ec');
+    expect(md).toContain('- a-1');
+    expect(md).toContain('- a-2');
+  });
+
+  it('omits advisor section when undefined', () => {
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnap(),
+      generatedAt: 'x',
+    });
+    expect(md).not.toContain('AI 経営アドバイザー提案');
+  });
+});
+
+// --- exportBusinessDashboardImpl + Md --------------------------------
+
+describe('exportBusinessDashboardImpl', () => {
+  const fakeSnap: BusinessOpsSnapshot = {
+    units: [
+      {
+        id: 'ec',
+        label: 'EC',
+        description: 'd',
+        trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  };
+
+  it('writes HTML to the default path when no custom path given', async () => {
+    const writes: { path: string; content: string }[] = [];
+    const result = await exportBusinessDashboardImpl(
+      { token: '', payload: {} },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (p, c) => {
+          writes.push({ path: p, content: c });
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(result.path).toBe(defaultBusinessDashboardPath());
+    expect(result.generatedAt).toBe('2026-05-14T00:00:00.000Z');
+    expect(writes).toHaveLength(1);
+    expect(writes[0]!.content).toContain('<!DOCTYPE html>');
+    expect(result.bytes).toBe(Buffer.byteLength(writes[0]!.content, 'utf8'));
+  });
+
+  it('uses a custom path when provided and safe', async () => {
+    const safePath = path.join(os.homedir(), '.local', 'business-hub', 'custom.html');
+    let written = '';
+    const result = await exportBusinessDashboardImpl(
+      { token: '', payload: { path: safePath } },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          written = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(result.path).toBe(safePath);
+    expect(written).toContain('<!DOCTYPE html>');
+  });
+
+  it('throws when the custom path is outside the home directory', async () => {
+    await expect(
+      exportBusinessDashboardImpl(
+        { token: '', payload: { path: '/etc/passwd.html' } },
+        { fetchSnapshot: async () => fakeSnap, writeFile: async () => undefined },
+      ),
+    ).rejects.toThrow(/must be a \.html file under the user home directory/);
+  });
+
+  it('throws when the custom path has wrong extension', async () => {
+    await expect(
+      exportBusinessDashboardImpl(
+        { token: '', payload: { path: path.join(os.homedir(), 'x.txt') } },
+        { fetchSnapshot: async () => fakeSnap, writeFile: async () => undefined },
+      ),
+    ).rejects.toThrow(/must be a \.html file/);
+  });
+
+  it('embeds a valid advisorResult into the HTML', async () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'embedded',
+          actionItems: ['a'],
+          riskFactors: ['r'],
+        },
+      ],
+      disclaimer: BUSINESS_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    let written = '';
+    await exportBusinessDashboardImpl(
+      { token: '', payload: { advisorResult: advisor } },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          written = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(written).toContain('AI 経営アドバイザー提案');
+    expect(written).toContain('embedded');
+  });
+
+  it('rejects an advisor-shape payload missing notForRealMoney=true (anti-tamper)', async () => {
+    // The tampered payload is treated as "no advisor" — UI section omitted.
+    let written = '';
+    await exportBusinessDashboardImpl(
+      {
+        token: '',
+        // The tampered shape is intentionally invalid; use `unknown` cast to
+        // bypass the strict literal `notForRealMoney: true` constraint so we
+        // can exercise the runtime guard.
+        payload: {
+          advisorResult: {
+            recommendations: [],
+            disclaimer: 'x',
+            notForRealMoney: false,
+          } as unknown,
+        },
+      },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          written = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(written).not.toContain('AI 経営アドバイザー提案');
+  });
+
+  it('rejects an advisor-shape payload missing recommendations array (anti-tamper)', async () => {
+    let written = '';
+    await exportBusinessDashboardImpl(
+      {
+        token: '',
+        payload: { advisorResult: { disclaimer: 'x', notForRealMoney: true } },
+      },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          written = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(written).not.toContain('AI 経営アドバイザー提案');
+  });
+
+  it('ACTIONS.export-dashboard maps to the handler', () => {
+    expect(typeof ACTIONS['export-dashboard']).toBe('function');
+  });
+});
+
+describe('exportBusinessDashboardMdImpl', () => {
+  const fakeSnap: BusinessOpsSnapshot = {
+    units: [
+      {
+        id: 'ec',
+        label: 'EC',
+        description: 'd',
+        trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  };
+
+  it('writes Markdown to the default .md path', async () => {
+    let written = '';
+    const result = await exportBusinessDashboardMdImpl(
+      { token: '', payload: {} },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          written = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(result.path).toBe(defaultBusinessDashboardMdPath());
+    expect(written.startsWith('# 事業ダッシュボード')).toBe(true);
+    expect(result.bytes).toBe(Buffer.byteLength(written, 'utf8'));
+  });
+
+  it('throws when the custom path has wrong extension (.html for md variant)', async () => {
+    await expect(
+      exportBusinessDashboardMdImpl(
+        { token: '', payload: { path: path.join(os.homedir(), 'x.html') } },
+        { fetchSnapshot: async () => fakeSnap, writeFile: async () => undefined },
+      ),
+    ).rejects.toThrow(/must be a \.md file/);
+  });
+
+  it('throws when the custom path is outside the home directory', async () => {
+    await expect(
+      exportBusinessDashboardMdImpl(
+        { token: '', payload: { path: '/etc/x.md' } },
+        { fetchSnapshot: async () => fakeSnap, writeFile: async () => undefined },
+      ),
+    ).rejects.toThrow(/must be a \.md file under the user home directory/);
+  });
+
+  it('uses a custom safe path when provided', async () => {
+    const p = path.join(os.homedir(), '.local', 'business-hub', 'custom.md');
+    let writtenPath = '';
+    const result = await exportBusinessDashboardMdImpl(
+      { token: '', payload: { path: p } },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (out) => {
+          writtenPath = out;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(writtenPath).toBe(p);
+    expect(result.path).toBe(p);
+  });
+
+  it('ACTIONS.export-dashboard-md maps to the handler', () => {
+    expect(typeof ACTIONS['export-dashboard-md']).toBe('function');
+  });
+
+  it('embeds advisor result into the markdown when provided', async () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'md-embedded',
+          actionItems: ['mdact'],
+          riskFactors: ['mdrisk'],
+        },
+      ],
+      disclaimer: BUSINESS_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+    };
+    let md = '';
+    await exportBusinessDashboardMdImpl(
+      { token: '', payload: { advisorResult: advisor } },
+      {
+        fetchSnapshot: async () => fakeSnap,
+        writeFile: async (_p, c) => {
+          md = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    expect(md).toContain('md-embedded');
+    expect(md).toContain('mdact');
   });
 });
