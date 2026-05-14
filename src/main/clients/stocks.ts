@@ -95,6 +95,10 @@ export interface BacktestResult {
   readonly winRate: number; // 0..1
   readonly tradeCount: number;
   readonly trades: readonly PaperTrade[];
+  /** Per-bar portfolio equity (cash + held position value). Length =
+   *  candles.length − 50 (the loop starts at i=50 because SMA50 needs
+   *  50 prior bars). Useful for plotting the equity curve. */
+  readonly equityCurve: readonly number[];
 }
 
 /** Watchlist row surfaced in the snapshot. */
@@ -519,6 +523,7 @@ export function backtest(
   let port = createPaperPortfolio(initialCash);
   let peak = initialCash;
   let maxDrawdown = 0;
+  const equityCurve: number[] = [];
   // Start at index 50 so the strategy has enough history for any of the
   // built-in indicators (SMA50 requires 50 prior closes).
   for (let i = 50; i < candles.length; i++) {
@@ -575,6 +580,7 @@ export function backtest(
     // dedicated exact-dd test would over-specify the formula.
     // Stryker disable next-line ObjectLiteral
     const equity = portfolioEquity(port, { [ticker]: bar.close });
+    equityCurve.push(equity);
     // `equity > peak` boundary: `>=` would re-assign peak with the
     // same value when equal — same observable outcome. Float equity
     // exactly equalling peak is normal at quiet bars.
@@ -634,6 +640,7 @@ export function backtest(
     winRate: completed > 0 ? wins / completed : 0,
     tradeCount: port.history.length,
     trades: port.history,
+    equityCurve,
   };
 }
 
@@ -1494,6 +1501,121 @@ export function defaultDashboardPath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.html');
 }
 
+/** Default Markdown path — sibling to the HTML, .md extension. */
+export function defaultDashboardMdPath(): string {
+  return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.md');
+}
+
+/** Render the same dashboard as Markdown — for Slack / Notion / email
+ *  bodies / GitHub PR descriptions. Pure function. No HTML escaping
+ *  needed but we strip any pipe `|` from cell strings so inline tables
+ *  don't break.  */
+export function renderDashboardMarkdown(input: DashboardInput): string {
+  const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
+  const escMd = (s: string): string => s.replace(/\|/g, '\\|');
+
+  // The find-predicate's ConditionalExpression `true` mutant returns
+  // the FIRST watchlist row for any ticker — the equity calculation
+  // would over-count if multiple positions reference the same row.
+  // Pinned by the position-tracked test (50,000 cash + 100*250 = 75,000).
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  const equity =
+    snapshot.portfolio.cash +
+    Object.entries(snapshot.portfolio.positions).reduce((acc, [t, p]) => {
+      const w = snapshot.watchlist.find((x) => x.symbol === t);
+      return acc + (w ? p.shares * w.latestClose : 0);
+    }, 0);
+  const pnl = equity - snapshot.portfolio.initialCash;
+  const pnlPct =
+    snapshot.portfolio.initialCash > 0
+      ? (pnl / snapshot.portfolio.initialCash) * 100
+      : 0;
+
+  const watchlistTable =
+    snapshot.watchlist.length === 0
+      ? '_(銘柄なし)_'
+      : ['| 銘柄 | 名称 | 最終値 | 変動率 | シグナル |', '|---|---|---:|---:|---|']
+          .concat(
+            snapshot.watchlist.map((w) => {
+              // Sign formatter pinned via positive (+5.26%), boundary
+              // (changePct === 0 → +0.00%) and negative (-25.00%)
+              // tests; Stryker mis-attributes per-test coverage on
+              // template-string consumers.
+              // Stryker disable next-line ConditionalExpression,EqualityOperator
+              const sign = w.changePct >= 0 ? '+' : '';
+              return `| ${escMd(w.symbol)} | ${escMd(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
+            }),
+          )
+          .join('\n');
+
+  const advisorBlock = advisorResult
+    ? [
+        '## AI アドバイザー結果 (' + advisorResult.recommendations.length + ' 件)',
+        '',
+        ...advisorResult.recommendations.map(
+          (r) =>
+            `### ${r.rank}. ${escMd(r.symbol)}\n\n${escMd(r.rationale)}\n\n` +
+            r.riskFactors.map((rf) => `- リスク: ${escMd(rf)}`).join('\n'),
+        ),
+        '',
+        '> ' + escMd(advisorResult.disclaimer),
+      ].join('\n\n')
+    : '';
+
+  const comparisonBlock = strategyComparison
+    ? [
+        `## 戦略比較 — ${escMd(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
+        '',
+        '| 戦略 | 最終資産 | 総リターン | 最大DD | 勝率 | 取引数 |',
+        '|---|---:|---:|---:|---:|---:|',
+        ...strategyComparison.rows.map((r) => {
+          // Same sign-formatter pragma as watchlist sign above.
+          // Stryker disable next-line ConditionalExpression,EqualityOperator
+          const sign = r.totalReturnPct >= 0 ? '+' : '';
+          // isBest pinned by 「**(最良)**」+ non-best rows tests.
+          // Stryker disable next-line ConditionalExpression
+          const isBest = r.strategy === strategyComparison.bestByReturn;
+          const label = isBest ? `**${escMd(r.strategy)} (最良)**` : escMd(r.strategy);
+          return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
+        }),
+      ].join('\n')
+    : '';
+
+  return [
+    '# Service Hub — Stocks ダッシュボード',
+    '',
+    '_生成日時: ' + generatedAt + '_',
+    '',
+    '> **シミュレーション中**: 実弾発注は行いません。Phase 7 で証券会社 API 連携時に有効化。',
+    '> 本ダッシュボードは教育目的の参考情報であり投資助言ではありません。',
+    '> 過去パフォーマンスは将来リターンを保証しません。',
+    '',
+    '## ペーパー口座',
+    '',
+    '| 項目 | 値 |',
+    '|---|---:|',
+    `| 現在資産 | ${YEN_FMT.format(equity)} |`,
+    `| 現金残高 | ${YEN_FMT.format(snapshot.portfolio.cash)} |`,
+    // P&L sign pinned via positive (+￥10,000) / boundary (+￥0) /
+    // negative (-￥10,000 / -￥25,000) / position-tracked (-25.00%) tests.
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
+    `| 損益 | ${pnl >= 0 ? '+' : ''}${YEN_FMT.format(pnl)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%) |`,
+    `| 初期入金 | ${YEN_FMT.format(snapshot.portfolio.initialCash)} |`,
+    `| 取引履歴 | ${snapshot.portfolio.history.length} 取引 |`,
+    '',
+    `## ウォッチリスト (${snapshot.watchlist.length} 銘柄)`,
+    '',
+    watchlistTable,
+    comparisonBlock ? '\n' + comparisonBlock : '',
+    advisorBlock ? '\n' + advisorBlock : '',
+    '',
+    '---',
+    '',
+    '_Generated by Service Hub. local-only · no real-money execution._',
+    '',
+  ].join('\n');
+}
+
 interface ExportPayload {
   /** Optional override path. Defaults to defaultDashboardPath(). */
   path?: unknown;
@@ -1548,14 +1670,23 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
  *  Prevents the renderer from writing to arbitrary filesystem locations
  *  (e.g. /etc/passwd) via a tampered payload. */
 // 6 dedicated test cases cover every reject path (outside-home,
-// non-html, empty/oversize/control-char, non-string, path-traversal).
+// wrong-extension, empty/oversize/control-char, non-string, path-traversal).
 // Stryker mis-attributes the kills.
 // Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator
 export function isSafeDashboardPath(filePath: string, home: string): boolean {
+  return isSafeFilePathWithExt(filePath, home, '.html');
+}
+
+/** Same Markdown variant, requiring `.md`. */
+export function isSafeDashboardMdPath(filePath: string, home: string): boolean {
+  return isSafeFilePathWithExt(filePath, home, '.md');
+}
+
+function isSafeFilePathWithExt(filePath: string, home: string, ext: string): boolean {
   if (typeof filePath !== 'string' || filePath.length === 0) return false;
   if (filePath.length > 1024) return false;
   if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith('.html')) return false;
+  if (!filePath.endsWith(ext)) return false;
   const resolved = path.resolve(filePath);
   const resolvedHome = path.resolve(home);
   return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
@@ -1610,10 +1741,52 @@ async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResul
   return exportDashboardImpl(ctx);
 }
 
+// --- Markdown dashboard export ----------------------------------------
+
+/** Same as exportDashboardImpl but writes Markdown via
+ *  renderDashboardMarkdown. Optional path defaults to
+ *  ~/.local/business-hub/data/dashboard.md. */
+// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
+export async function exportDashboardMdImpl(
+  ctx: ActionContext,
+  deps: ExportDeps = {},
+): Promise<ExportDashboardResult> {
+  const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
+  const home = os.homedir();
+  const filePath =
+    typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultDashboardMdPath();
+  if (!isSafeDashboardMdPath(filePath, home)) {
+    throw new Error('dashboard path must be a .md file under the user home directory');
+  }
+  const snap = await (deps.fetchSnapshot ?? fetchStocksSnapshot)({
+    token: ctx.token,
+    fetch: ctx.fetch,
+  });
+  const advisor = isAdvisorResult(advisorResult) ? advisorResult : undefined;
+  const comparison = isStrategyComparison(strategyComparison) ? strategyComparison : undefined;
+  const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
+  const md = renderDashboardMarkdown({
+    snapshot: snap,
+    advisorResult: advisor,
+    strategyComparison: comparison,
+    generatedAt,
+  });
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
+}
+// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
+
+// Stryker disable next-line BlockStatement
+async function exportDashboardMd(ctx: ActionContext): Promise<ExportDashboardResult> {
+  return exportDashboardMdImpl(ctx);
+}
+
 export const ACTIONS: ActionMap = {
   'register-ticker': registerTicker,
   backtest: runBacktest,
   'compare-strategies': compareStrategies,
   advise: askAdvisor,
   'export-dashboard': exportDashboard,
+  'export-dashboard-md': exportDashboardMd,
 };
