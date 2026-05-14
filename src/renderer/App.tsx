@@ -21,6 +21,7 @@ export function App() {
             <button
               key={service.id}
               className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
+              data-service-id={service.id}
               onClick={() => setActiveId(service.id)}
             >
               <span className="icon">{service.icon}</span>

@@ -28,6 +28,7 @@ const SERVICES = [
   'ollama',
   'kpi',
   'stocks',
+  'business',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');
@@ -65,8 +66,7 @@ async function run() {
   for (const id of SERVICES) {
     await win.webContents.executeJavaScript(`
       (() => {
-        const items = Array.from(document.querySelectorAll('.sidebar-item'));
-        const target = items.find(b => b.textContent.trim().toLowerCase().includes(${JSON.stringify(id)}));
+        const target = document.querySelector('.sidebar-item[data-service-id=' + ${JSON.stringify(JSON.stringify(id))} + ']');
         if (target) target.click();
       })();
     `);

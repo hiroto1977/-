@@ -14,6 +14,7 @@ import { EmotionsPage } from './pages/EmotionsPage';
 import { OllamaPage } from './pages/OllamaPage';
 import { KpiPage } from './pages/KpiPage';
 import { StocksPage } from './pages/StocksPage';
+import { BusinessPage } from './pages/BusinessPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -140,6 +141,13 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'ST',
     description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — Phase 7 で broker 接続)',
     page: StocksPage,
+  },
+  {
+    id: 'business',
+    label: '事業ダッシュボード',
+    icon: 'BZ',
+    description: 'EC / dropship / OEM / blog / affiliate / video / SNS — 10 事業の経営支援 (Phase 6 で実 API 接続)',
+    page: BusinessPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

@@ -12,7 +12,8 @@
     "src/main/clients/slack.ts",
     "src/main/clients/ollama.ts",
     "src/main/clients/kpi.ts",
-    "src/main/clients/stocks.ts"
+    "src/main/clients/stocks.ts",
+    "src/main/clients/business.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

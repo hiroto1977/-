@@ -23,6 +23,7 @@ export const SERVICE_IDS = [
   'ollama',
   'kpi',
   'stocks',
+  'business',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
