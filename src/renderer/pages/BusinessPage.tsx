@@ -237,6 +237,257 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
   );
 }
 
+// --- Sideboard -------------------------------------------------------
+
+function Sideboard({
+  units,
+  selected,
+  onSelect,
+  aggregateRevenue,
+}: {
+  units: BusinessUnit[];
+  selected: string | 'all';
+  onSelect: (id: string | 'all') => void;
+  aggregateRevenue: number;
+}) {
+  return (
+    <aside
+      style={{
+        flex: '0 0 240px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        position: 'sticky',
+        top: 0,
+        alignSelf: 'flex-start',
+        maxHeight: 'calc(100vh - 48px)',
+        overflowY: 'auto',
+        paddingRight: 4,
+      }}
+    >
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', padding: '4px 8px', marginBottom: 4 }}>
+        カテゴリ絞り込み
+      </div>
+      <button
+        type="button"
+        onClick={() => onSelect('all')}
+        style={{
+          textAlign: 'left',
+          padding: '8px 10px',
+          background: selected === 'all' ? 'var(--accent)' : 'var(--bg-elev)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          color: 'var(--text)',
+          cursor: 'pointer',
+          fontSize: 12,
+          marginBottom: 4,
+        }}
+      >
+        <div style={{ fontWeight: 600 }}>全カテゴリ</div>
+        <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
+          {yen.format(aggregateRevenue)} / 月
+        </div>
+      </button>
+      {units.map((u) => {
+        const isSel = selected === u.id;
+        const profitColor = u.current.profit >= 0 ? '#22c55e' : '#ef4444';
+        return (
+          <button
+            key={u.id}
+            type="button"
+            onClick={() => onSelect(u.id)}
+            style={{
+              textAlign: 'left',
+              padding: '6px 10px',
+              background: isSel ? 'var(--accent)' : 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              cursor: 'pointer',
+              fontSize: 12,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <span style={{ fontWeight: 600 }}>{u.label}</span>
+              <span style={{ fontSize: 10, color: profitColor }}>
+                {u.current.profitMargin >= 0 ? '+' : ''}
+                {u.current.profitMargin.toFixed(1)}%
+              </span>
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+              {yen.format(u.current.revenue)}
+            </div>
+          </button>
+        );
+      })}
+    </aside>
+  );
+}
+
+// --- Detail view -----------------------------------------------------
+
+function DetailView({ unit }: { unit: BusinessUnit }) {
+  const c = unit.current;
+  return (
+    <div
+      style={{
+        border: '1px solid var(--border)',
+        background: 'var(--bg-elev)',
+        borderRadius: 10,
+        padding: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>{unit.label}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 2 }}>
+            {unit.description}
+          </div>
+        </div>
+        <div
+          style={{
+            padding: '4px 10px',
+            background: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            color: '#fff',
+            fontSize: 12,
+            fontWeight: 600,
+            borderRadius: 4,
+          }}
+        >
+          {c.profitMargin >= 0 ? '+' : ''}
+          {c.profitMargin.toFixed(2)}%
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>月次売上</div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>{yen.format(c.revenue)}</div>
+          <Sparkline values={unit.history.map((h) => h.revenue)} width={220} height={48} />
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>月次利益</div>
+          <div
+            style={{
+              fontSize: 20,
+              fontWeight: 700,
+              color: c.profit >= 0 ? '#22c55e' : '#ef4444',
+            }}
+          >
+            {yen.format(c.profit)}
+          </div>
+          <Sparkline
+            values={unit.history.map((h) => h.profit)}
+            width={220}
+            height={48}
+            positive={c.profit >= 0}
+          />
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            {TRAFFIC_KIND_LABEL[unit.trafficKind]}
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>{num.format(c.traffic)}</div>
+          <Sparkline values={unit.history.map((h) => h.traffic)} width={220} height={48} />
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: 12,
+          padding: '12px 0',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>CVR</div>
+          <div style={{ fontSize: 16, fontWeight: 600 }}>{c.conversionRatePct.toFixed(2)}%</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>AOV</div>
+          <div style={{ fontSize: 16, fontWeight: 600 }}>{c.aov > 0 ? yen.format(c.aov) : '—'}</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>ROAS</div>
+          <div style={{ fontSize: 16, fontWeight: 600 }}>
+            {c.roas > 0 ? c.roas.toFixed(2) + 'x' : '—'}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>コンテンツ出力</div>
+          <div style={{ fontSize: 16, fontWeight: 600 }}>{c.contentOutput} 件/月</div>
+        </div>
+      </div>
+
+      <div>
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>
+          過去 {unit.history.length} 期間履歴
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+            <thead>
+              <tr style={{ color: 'var(--text-mute)' }}>
+                <th style={{ textAlign: 'left', padding: '4px 8px' }}>#</th>
+                <th style={{ textAlign: 'right', padding: '4px 8px' }}>売上</th>
+                <th style={{ textAlign: 'right', padding: '4px 8px' }}>変動費</th>
+                <th style={{ textAlign: 'right', padding: '4px 8px' }}>利益</th>
+                <th style={{ textAlign: 'right', padding: '4px 8px' }}>利益率</th>
+                <th style={{ textAlign: 'right', padding: '4px 8px' }}>
+                  {TRAFFIC_KIND_LABEL[unit.trafficKind]}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {unit.history.map((h, i) => (
+                <tr
+                  key={i}
+                  style={{ borderTop: '1px solid var(--border)' }}
+                >
+                  <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>
+                    {i - unit.history.length + 1}
+                  </td>
+                  <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(h.revenue)}</td>
+                  <td style={{ padding: '4px 8px', textAlign: 'right', color: 'var(--text-mute)' }}>
+                    {yen.format(h.variableCost)}
+                  </td>
+                  <td
+                    style={{
+                      padding: '4px 8px',
+                      textAlign: 'right',
+                      color: h.profit >= 0 ? '#22c55e' : '#ef4444',
+                    }}
+                  >
+                    {yen.format(h.profit)}
+                  </td>
+                  <td
+                    style={{
+                      padding: '4px 8px',
+                      textAlign: 'right',
+                      color: h.profitMargin >= 0 ? '#22c55e' : '#ef4444',
+                    }}
+                  >
+                    {h.profitMargin.toFixed(1)}%
+                  </td>
+                  <td style={{ padding: '4px 8px', textAlign: 'right' }}>{num.format(h.traffic)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
@@ -246,6 +497,7 @@ export function BusinessPage() {
   );
 
   const [sortKey, setSortKey] = useState<'revenue' | 'profit' | 'margin'>('revenue');
+  const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
@@ -297,6 +549,19 @@ export function BusinessPage() {
     return arr;
   }, [data.units, sortKey]);
 
+  const visibleUnits = useMemo(() => {
+    if (selectedCategory === 'all') return sortedUnits;
+    return sortedUnits.filter((u) => u.id === selectedCategory);
+  }, [sortedUnits, selectedCategory]);
+
+  const focusedUnit = useMemo(
+    () =>
+      selectedCategory === 'all'
+        ? null
+        : data.units.find((u) => u.id === selectedCategory) ?? null,
+    [data.units, selectedCategory],
+  );
+
   const agg = data.aggregate;
 
   return (
@@ -329,6 +594,14 @@ export function BusinessPage() {
         </div>
       )}
 
+      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+        <Sideboard
+          units={data.units}
+          selected={selectedCategory}
+          onSelect={setSelectedCategory}
+          aggregateRevenue={agg.revenue}
+        />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
       <Section title="全社合算" count={data.units.length}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Tile label="月次売上 (8 事業合計)" value={yen.format(agg.revenue)} />
@@ -347,7 +620,16 @@ export function BusinessPage() {
         </div>
       </Section>
 
-      <Section title="事業別カード" count={data.units.length}>
+      {focusedUnit && (
+        <Section title="詳細ビュー" count={1}>
+          <DetailView unit={focusedUnit} />
+        </Section>
+      )}
+
+      <Section
+        title={selectedCategory === 'all' ? '事業別カード' : 'その他の事業'}
+        count={visibleUnits.length}
+      >
         <div style={{ display: 'flex', gap: 8, fontSize: 12, marginBottom: 12 }}>
           <span style={{ color: 'var(--text-mute)', alignSelf: 'center' }}>並び順:</span>
           {(['revenue', 'profit', 'margin'] as const).map((k) => (
@@ -367,6 +649,23 @@ export function BusinessPage() {
               {k === 'revenue' ? '売上順' : k === 'profit' ? '利益順' : '利益率順'}
             </button>
           ))}
+          {selectedCategory !== 'all' && (
+            <button
+              onClick={() => setSelectedCategory('all')}
+              style={{
+                padding: '4px 12px',
+                background: 'var(--bg-elev)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text-mute)',
+                cursor: 'pointer',
+                fontSize: 12,
+                marginLeft: 'auto',
+              }}
+            >
+              絞り込みを解除
+            </button>
+          )}
         </div>
         <div
           style={{
@@ -375,7 +674,10 @@ export function BusinessPage() {
             gap: 12,
           }}
         >
-          {sortedUnits.map((u) => (
+          {(selectedCategory === 'all'
+            ? visibleUnits
+            : sortedUnits.filter((u) => u.id !== selectedCategory)
+          ).map((u) => (
             <CategoryCard key={u.id} unit={u} />
           ))}
         </div>
@@ -534,6 +836,8 @@ export function BusinessPage() {
           </div>
         )}
       </Section>
+        </div>
+      </div>
     </div>
   );
 }
