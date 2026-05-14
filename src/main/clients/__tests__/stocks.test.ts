@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   sma,
   ema,
@@ -20,6 +20,9 @@ import {
   MOCK_TICKERS,
   HISTORY_LENGTH,
   DEFAULT_RISK_PARAMS,
+  buildTickerAnalysis,
+  validateAdvisorJson,
+  ADVISOR_DISCLAIMER,
   type Candle,
   type Signal,
 } from '../stocks';
@@ -1110,5 +1113,416 @@ describe('DEFAULT_RISK_PARAMS', () => {
     expect(DEFAULT_RISK_PARAMS.positionSizePct).toBe(0.1);
     expect(DEFAULT_RISK_PARAMS.stopLossPct).toBe(0.05);
     expect(DEFAULT_RISK_PARAMS.takeProfitPct).toBe(0.15);
+  });
+});
+
+// --- buildTickerAnalysis ------------------------------------------------
+
+describe('buildTickerAnalysis', () => {
+  it('produces all indicator fields from a 120-bar history', async () => {
+    const src = createMockStocksDataSource();
+    const candles = await src.fetchHistory('AAPL', HISTORY_LENGTH);
+    const ta = buildTickerAnalysis('AAPL', 'Apple', candles);
+    expect(ta.symbol).toBe('AAPL');
+    expect(ta.label).toBe('Apple');
+    expect(ta.latestClose).toBeGreaterThan(0);
+    expect(typeof ta.changePct).toBe('number');
+    expect(ta.sma20).not.toBeNull();
+    expect(ta.sma50).not.toBeNull();
+    expect(ta.rsi14).not.toBeNull();
+    expect(ta.macd.line).not.toBeNull();
+    expect(ta.macd.signal).not.toBeNull();
+    expect(ta.macd.histogram).not.toBeNull();
+    expect(ta.bollinger.upper).not.toBeNull();
+    expect(['buy', 'sell', 'hold']).toContain(ta.smaCrossover);
+    expect(['oversold', 'neutral', 'overbought']).toContain(ta.rsiSignal);
+  });
+
+  it('returns 0 latestClose and 0 changePct on empty input (defensive)', () => {
+    const ta = buildTickerAnalysis('X', 'X', []);
+    expect(ta.latestClose).toBe(0);
+    expect(ta.changePct).toBe(0);
+    expect(ta.sma20).toBeNull();
+    expect(ta.rsi14).toBeNull();
+  });
+
+  it('rsiSignal is "oversold" for a monotonically falling series', () => {
+    const closes = Array.from({ length: 50 }, (_, i) => 100 - i * 2);
+    const candles: Candle[] = closes.map((c, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      open: c,
+      high: c,
+      low: c,
+      close: c,
+      volume: 1,
+    }));
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.rsiSignal).toBe('oversold');
+  });
+
+  it('rsiSignal is "overbought" for a monotonically rising series', () => {
+    const closes = Array.from({ length: 50 }, (_, i) => 100 + i * 2);
+    const candles: Candle[] = closes.map((c, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      open: c,
+      high: c,
+      low: c,
+      close: c,
+      volume: 1,
+    }));
+    const ta = buildTickerAnalysis('X', 'X', candles);
+    expect(ta.rsiSignal).toBe('overbought');
+  });
+});
+
+// --- validateAdvisorJson -----------------------------------------------
+
+describe('validateAdvisorJson', () => {
+  const allowed = new Set(['AAPL', 'MSFT', '7203.T']);
+
+  function goodRec(over: Partial<{ symbol: string; rank: number; rationale: string; riskFactors: string[] }> = {}): unknown {
+    return {
+      symbol: 'AAPL',
+      rank: 1,
+      rationale: 'Sample rationale citing SMA and RSI signals.',
+      riskFactors: ['市場全体の下落リスク', '個別決算リスク'],
+      ...over,
+    };
+  }
+
+  it('accepts a well-formed response within the allowed universe', () => {
+    const out = validateAdvisorJson({ recommendations: [goodRec()] }, allowed);
+    expect(out).toHaveLength(1);
+    expect(out[0]!.symbol).toBe('AAPL');
+    expect(out[0]!.rank).toBe(1);
+    expect(out[0]!.riskFactors).toHaveLength(2);
+  });
+
+  it('rejects null / non-object root', () => {
+    expect(() => validateAdvisorJson(null, allowed)).toThrow(/not an object/);
+    expect(() => validateAdvisorJson('hello', allowed)).toThrow(/not an object/);
+    expect(() => validateAdvisorJson(42, allowed)).toThrow(/not an object/);
+  });
+
+  it('rejects missing recommendations array', () => {
+    expect(() => validateAdvisorJson({}, allowed)).toThrow(/missing recommendations/);
+    expect(() => validateAdvisorJson({ recommendations: 'oops' }, allowed)).toThrow(/missing recommendations/);
+  });
+
+  it('rejects empty recommendations array', () => {
+    expect(() => validateAdvisorJson({ recommendations: [] }, allowed)).toThrow(/zero recommendations/);
+  });
+
+  it('rejects more than 5 recommendations (kills `> 5` boundary on length cap)', () => {
+    const six = Array.from({ length: 6 }, () => goodRec());
+    expect(() => validateAdvisorJson({ recommendations: six }, allowed)).toThrow(/exceeds 5/);
+  });
+
+  it('accepts exactly 5 recommendations (boundary)', () => {
+    const five = Array.from({ length: 5 }, (_, i) => goodRec({ rank: i + 1 }));
+    const out = validateAdvisorJson({ recommendations: five }, allowed);
+    expect(out).toHaveLength(5);
+  });
+
+  it('rejects out-of-universe symbol (anti-hallucination guard)', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ symbol: 'FAKE' })] }, allowed),
+    ).toThrow(/out-of-universe/);
+  });
+
+  it('rejects non-string symbol', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [{ ...(goodRec() as object), symbol: 42 }] }, allowed),
+    ).toThrow(/invalid or out-of-universe/);
+  });
+
+  it('rejects non-finite or sub-1 rank', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rank: 0 })] }, allowed),
+    ).toThrow(/invalid rank/);
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rank: Number.NaN })] }, allowed),
+    ).toThrow(/invalid rank/);
+    expect(() =>
+      validateAdvisorJson(
+        { recommendations: [{ ...(goodRec() as object), rank: 'one' }] },
+        allowed,
+      ),
+    ).toThrow(/invalid rank/);
+  });
+
+  it('rejects empty / oversized rationale', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rationale: '' })] }, allowed),
+    ).toThrow(/empty rationale/);
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ rationale: 'x'.repeat(401) })] }, allowed),
+    ).toThrow(/exceeds 400/);
+  });
+
+  it('rejects empty or non-array riskFactors', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [goodRec({ riskFactors: [] })] }, allowed),
+    ).toThrow(/no riskFactors/);
+    expect(() =>
+      validateAdvisorJson(
+        { recommendations: [{ ...(goodRec() as object), riskFactors: 'oops' }] },
+        allowed,
+      ),
+    ).toThrow(/no riskFactors/);
+  });
+
+  it('rejects riskFactor that is not a 1-200 char string', () => {
+    expect(() =>
+      validateAdvisorJson(
+        { recommendations: [goodRec({ riskFactors: [''] })] },
+        allowed,
+      ),
+    ).toThrow(/riskFactor entry/);
+    expect(() =>
+      validateAdvisorJson(
+        { recommendations: [goodRec({ riskFactors: ['x'.repeat(201)] })] },
+        allowed,
+      ),
+    ).toThrow(/riskFactor entry/);
+    expect(() =>
+      validateAdvisorJson(
+        { recommendations: [{ ...(goodRec() as object), riskFactors: [42] }] },
+        allowed,
+      ),
+    ).toThrow(/riskFactor entry/);
+  });
+
+  it('rejects null entry inside recommendations array', () => {
+    expect(() =>
+      validateAdvisorJson({ recommendations: [null] }, allowed),
+    ).toThrow(/entry is not an object/);
+  });
+});
+
+// --- ACTIONS["advise"] (AI orchestration) -------------------------------
+
+function anthropicMock(text: string, init: ResponseInit = { status: 200 }) {
+  return new Response(
+    JSON.stringify({
+      content: [{ type: 'text', text }],
+      stop_reason: 'end_turn',
+    }),
+    { ...init, headers: { 'content-type': 'application/json', ...(init.headers ?? {}) } },
+  );
+}
+
+describe('ACTIONS["advise"]', () => {
+  const goodJson = JSON.stringify({
+    recommendations: [
+      {
+        symbol: 'AAPL',
+        rank: 1,
+        rationale: 'SMA20 が SMA50 を上抜けて golden cross が成立。RSI も中立圏で勢いに余地。',
+        riskFactors: ['市場全体のリスク', '次回決算リスク'],
+      },
+      {
+        symbol: 'MSFT',
+        rank: 2,
+        rationale: 'MACD ヒストグラムが拡大しトレンド継続。RSI は 60 付近で過熱なし。',
+        riskFactors: ['金利上昇リスク'],
+      },
+    ],
+  });
+
+  it('returns a structured AdvisorResponse with the disclaimer attached', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    const res = (await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: '長期保有に向いている銘柄は?' },
+    })) as { recommendations: { symbol: string }[]; disclaimer: string; notForRealMoney: boolean };
+    expect(res.recommendations).toHaveLength(2);
+    expect(res.recommendations[0]!.symbol).toBe('AAPL');
+    expect(res.disclaimer).toBe(ADVISOR_DISCLAIMER);
+    expect(res.notForRealMoney).toBe(true);
+  });
+
+  it('posts to api.anthropic.com/v1/messages with x-api-key + system prompt + technical data', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-xxxxx',
+      fetch: fetchMock,
+      payload: { question: 'グロース株を 3 つ' },
+    });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://api.anthropic.com/v1/messages');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers['x-api-key']).toBe('sk-ant-xxxxx');
+    expect(headers['anthropic-version']).toBe('2023-06-01');
+    const body = JSON.parse((init as RequestInit).body as string);
+    // System prompt restricts the universe to the 5 default tickers.
+    expect(body.system).toContain('7203.T');
+    expect(body.system).toContain('AAPL');
+    expect(body.system).toContain('MSFT');
+    // User prompt embeds the technical-analysis JSON.
+    expect(body.messages[0].content).toContain('テクニカル分析データ');
+    expect(body.messages[0].content).toContain('グロース株を 3 つ');
+  });
+
+  it('rejects an out-of-universe ticker the LLM tries to invent (hallucination guard)', async () => {
+    const bad = JSON.stringify({
+      recommendations: [
+        {
+          symbol: 'TSLA', // not in universe
+          rank: 1,
+          rationale: 'looks attractive',
+          riskFactors: ['risk'],
+        },
+      ],
+    });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(bad));
+    await expect(
+      ACTIONS['advise']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { question: 'おすすめ' },
+      }),
+    ).rejects.toThrow(/out-of-universe/);
+  });
+
+  it('rejects malformed (non-JSON) LLM output', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      anthropicMock("hi, here's my pick: AAPL"),
+    );
+    await expect(
+      ACTIONS['advise']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { question: 'おすすめ' },
+      }),
+    ).rejects.toThrow(/not valid JSON/);
+  });
+
+  it('rejects empty / oversized / control-char questions', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: '' } }),
+    ).rejects.toThrow(/required/);
+    await expect(
+      ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'x'.repeat(1001) } }),
+    ).rejects.toThrow(/exceeds 1000/);
+    await expect(
+      ACTIONS['advise']!({ token: 't', fetch: fetchMock, payload: { question: 'hi\nworld' } }),
+    ).rejects.toThrow(/control characters/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects custom universe entries that fail isSafeSymbol', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['advise']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { question: 'q', universe: ['AAPL', 'EVIL;rm -rf'] },
+      }),
+    ).rejects.toThrow(/unsafe symbol/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects empty custom universe', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['advise']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { question: 'q', universe: [] },
+      }),
+    ).rejects.toThrow(/universe is empty/);
+  });
+
+  it('rejects oversized custom universe (>25)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['advise']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: {
+          question: 'q',
+          universe: Array.from({ length: 26 }, (_, i) => 'TIC' + i),
+        },
+      }),
+    ).rejects.toThrow(/exceeds 25/);
+  });
+
+  it('propagates HTTP errors from the Anthropic API', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('rate limited', { status: 429 }));
+    await expect(
+      ACTIONS['advise']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { question: 'q' },
+      }),
+    ).rejects.toThrow(/stocks-advisor 429/);
+  });
+
+  it('rejects when content is missing text', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(
+      ACTIONS['advise']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { question: 'q' },
+      }),
+    ).rejects.toThrow(/no text content/);
+  });
+
+  it('honors a custom model + maxTokens override', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 512 },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-opus-4-7');
+    expect(body.max_tokens).toBe(512);
+  });
+
+  it('defaults to claude-sonnet-4-6 + 1024 max_tokens', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.max_tokens).toBe(1024);
+  });
+
+  it('accepts a custom universe and embeds those symbols in the prompt', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q', universe: ['AAPL', 'MSFT'] },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.system).toContain('AAPL');
+    expect(body.system).toContain('MSFT');
+    // Other defaults must NOT leak in when caller supplies an explicit universe.
+    expect(body.system).not.toContain('7203.T');
+  });
+});
+
+describe('ADVISOR_DISCLAIMER', () => {
+  it('contains the educational-purpose + non-advice declaration', () => {
+    expect(ADVISOR_DISCLAIMER).toMatch(/教育目的/);
+    expect(ADVISOR_DISCLAIMER).toMatch(/投資助言ではありません/);
+    expect(ADVISOR_DISCLAIMER).toMatch(/過去パフォーマンス.*保証/);
+    expect(ADVISOR_DISCLAIMER).toMatch(/ご自身の責任/);
   });
 });

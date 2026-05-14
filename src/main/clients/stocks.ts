@@ -831,7 +831,277 @@ async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
   return backtest(candles, strategy, initialCash, symbol);
 }
 
+// --- AI orchestration: stock advisor --------------------------------------
+
+/** Per-ticker technical summary the LLM consumes. Distilled from the raw
+ *  candle history into a compact form that fits the prompt budget. */
+export interface TickerAnalysis {
+  readonly symbol: string;
+  readonly label: string;
+  readonly latestClose: number;
+  readonly changePct: number;
+  readonly sma20: number | null;
+  readonly sma50: number | null;
+  readonly rsi14: number | null;
+  readonly macd: { line: number | null; signal: number | null; histogram: number | null };
+  readonly bollinger: { upper: number | null; middle: number | null; lower: number | null };
+  /** Human-readable single-strategy headline signal. */
+  readonly smaCrossover: 'buy' | 'sell' | 'hold';
+  readonly rsiSignal: 'oversold' | 'neutral' | 'overbought';
+}
+
+/** One recommendation from the LLM. The shape is enforced by JSON-schema
+ *  validation; if Anthropic returns anything else the call throws. */
+export interface AdvisorRecommendation {
+  readonly symbol: string;
+  readonly rank: number; // 1 = top
+  readonly rationale: string;
+  readonly riskFactors: readonly string[];
+}
+
+export interface AdvisorResponse {
+  readonly recommendations: readonly AdvisorRecommendation[];
+  readonly disclaimer: string;
+  /** Always true. Pinned in the type so a caller can't mistake this
+   *  output for a real-money execution authorization. */
+  readonly notForRealMoney: true;
+}
+
+/** Fixed disclaimer prepended to every advisor response. Visible in UI. */
+export const ADVISOR_DISCLAIMER =
+  '本機能は教育目的の参考情報であり、投資助言ではありません。' +
+  '過去パフォーマンスは将来のリターンを保証しません。' +
+  '実際の売買判断はご自身の責任で行ってください。';
+
+/** Build a compact technical-analysis snapshot from a candle history. Pure. */
+export function buildTickerAnalysis(
+  symbol: string,
+  label: string,
+  candles: readonly Candle[],
+): TickerAnalysis {
+  const closes = candles.map((c) => c.close);
+  const sma20 = sma(closes, 20);
+  const sma50 = sma(closes, 50);
+  const rsi14 = rsi(closes, 14);
+  const m = macd(closes);
+  const bb = bollingerBands(closes, 20, 2);
+  const last = candles[candles.length - 1];
+  const prev = candles[candles.length - 2];
+  const latestClose = last ? last.close : 0;
+  const changePct =
+    last && prev && prev.close > 0 ? ((last.close - prev.close) / prev.close) * 100 : 0;
+  const smaSig = SMA_CROSSOVER_STRATEGY(candles);
+  const rv = rsi14[rsi14.length - 1];
+  const rsiSignal: TickerAnalysis['rsiSignal'] =
+    rv == null ? 'neutral' : rv < 30 ? 'oversold' : rv > 70 ? 'overbought' : 'neutral';
+  const i = closes.length - 1;
+  return {
+    symbol,
+    label,
+    latestClose,
+    changePct,
+    sma20: sma20[i] ?? null,
+    sma50: sma50[i] ?? null,
+    rsi14: rv ?? null,
+    macd: { line: m.macd[i] ?? null, signal: m.signal[i] ?? null, histogram: m.histogram[i] ?? null },
+    bollinger: { upper: bb.upper[i] ?? null, middle: bb.middle[i] ?? null, lower: bb.lower[i] ?? null },
+    smaCrossover: smaSig.action,
+    rsiSignal,
+  };
+}
+
+/** System prompt for the advisor. Pins output shape to JSON and forbids
+ *  specific price/buy-now predictions. Restricts the universe so the LLM
+ *  can't invent ticker symbols. */
+function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
+  return [
+    'あなたは株式分析アシスタントです。',
+    'ユーザーの質問と、与えられたティッカーのテクニカル分析データに基づいて、',
+    '質問に最も適合する銘柄を最大 5 件、ランク順 (1 が最良) に提案します。',
+    '',
+    '厳守事項:',
+    '- 必ず以下の JSON スキーマで応答 (前後のテキスト・コードフェンス禁止):',
+    '  { "recommendations": [{ "symbol": "string", "rank": number, "rationale": "string", "riskFactors": ["string"] }] }',
+    '- symbol は必ず次の許可済みリストから選ぶこと: [' + allowedSymbols.map((s) => '"' + s + '"').join(', ') + ']',
+    '- 知らないティッカーや実在しないティッカーを提示してはならない。',
+    '- 具体的な売買タイミング (例: "今買え") や具体的な価格予測を含めてはならない。',
+    '- 各 recommendation には必ず riskFactors (1-3 件) を含めること。',
+    '- rationale は 40-160 文字。テクニカル指標を根拠として簡潔に。',
+    '- 過去パフォーマンスは将来を保証しない、という注意を念頭に置く。',
+  ].join('\n');
+}
+
+/** Strict shape validator for the LLM JSON response. Throws on any
+ *  deviation so a malformed reply can't smuggle bad data into the UI. */
+export function validateAdvisorJson(
+  raw: unknown,
+  allowedSymbols: ReadonlySet<string>,
+): readonly AdvisorRecommendation[] {
+  if (raw === null || typeof raw !== 'object') {
+    throw new Error('advisor response is not an object');
+  }
+  const obj = raw as { recommendations?: unknown };
+  if (!Array.isArray(obj.recommendations)) {
+    throw new Error('advisor response missing recommendations array');
+  }
+  if (obj.recommendations.length === 0) {
+    throw new Error('advisor response has zero recommendations');
+  }
+  if (obj.recommendations.length > 5) {
+    throw new Error('advisor response exceeds 5 recommendations');
+  }
+  const out: AdvisorRecommendation[] = [];
+  for (const item of obj.recommendations) {
+    if (item === null || typeof item !== 'object') {
+      throw new Error('recommendation entry is not an object');
+    }
+    const rec = item as Record<string, unknown>;
+    if (typeof rec.symbol !== 'string' || !allowedSymbols.has(rec.symbol)) {
+      throw new Error(`recommendation has invalid or out-of-universe symbol: ${String(rec.symbol)}`);
+    }
+    if (typeof rec.rank !== 'number' || !Number.isFinite(rec.rank) || rec.rank < 1) {
+      throw new Error(`recommendation has invalid rank: ${String(rec.rank)}`);
+    }
+    if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) {
+      throw new Error('recommendation has empty rationale');
+    }
+    if (rec.rationale.length > 400) {
+      throw new Error('recommendation rationale exceeds 400 chars');
+    }
+    if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
+      throw new Error('recommendation has no riskFactors');
+    }
+    const riskFactors: string[] = [];
+    for (const rf of rec.riskFactors) {
+      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 200) {
+        throw new Error('riskFactor entry is not a 1-200 char string');
+      }
+      riskFactors.push(rf);
+    }
+    out.push({
+      symbol: rec.symbol,
+      rank: rec.rank,
+      rationale: rec.rationale,
+      riskFactors,
+    });
+  }
+  return out;
+}
+
+interface AdvisorPayload {
+  question?: unknown;
+  /** Optional override; defaults to MOCK_TICKERS symbols. */
+  universe?: unknown;
+  /** Model id; defaults to claude-sonnet-4-6. */
+  model?: unknown;
+  /** Max output tokens; defaults to 1024. */
+  maxTokens?: unknown;
+}
+
+interface AnthropicContentBlock {
+  type: string;
+  text?: string;
+}
+interface AnthropicMessagesResponse {
+  content?: AnthropicContentBlock[];
+  stop_reason?: string;
+}
+
+async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
+  const { question, universe, model, maxTokens } = ctx.payload as AdvisorPayload;
+  if (typeof question !== 'string' || question.length === 0) {
+    throw new Error('question is required');
+  }
+  if (question.length > 1000) {
+    throw new Error('question exceeds 1000 chars');
+  }
+  if (/[\r\n\0]/.test(question)) {
+    throw new Error('question contains control characters');
+  }
+
+  // Decide the universe. Default = the 5 mock tickers; if the caller
+  // passes a list of symbols, validate each.
+  const universeList: string[] = Array.isArray(universe)
+    ? universe.map((s) => {
+        if (!isSafeSymbol(s)) {
+          throw new Error(`universe entry has unsafe symbol: ${String(s)}`);
+        }
+        return s;
+      })
+    : MOCK_TICKERS.map((t) => t.symbol);
+  if (universeList.length === 0) {
+    throw new Error('universe is empty');
+  }
+  if (universeList.length > 25) {
+    throw new Error('universe exceeds 25 symbols');
+  }
+  const allowedSet = new Set(universeList);
+
+  // Build per-ticker analysis snapshots from the mock data source. Phase 7
+  // will swap to a real data source via createMockStocksDataSource → real.
+  const src = createMockStocksDataSource();
+  const analyses: TickerAnalysis[] = [];
+  for (const sym of universeList) {
+    const candles = await src.fetchHistory(sym, HISTORY_LENGTH);
+    const def = MOCK_TICKERS.find((t) => t.symbol === sym);
+    analyses.push(buildTickerAnalysis(sym, def ? def.label : sym, candles));
+  }
+
+  // Compose the Anthropic Messages API request. Tight system prompt
+  // (symbol allowlist + structured JSON only + no buy-now language).
+  const systemPrompt = advisorSystemPrompt(universeList);
+  const userPrompt = [
+    'ユーザーの質問: ' + question,
+    '',
+    'テクニカル分析データ (JSON):',
+    JSON.stringify(analyses),
+  ].join('\n');
+
+  const f = ctx.fetch ?? fetch;
+  const res = await f('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': ctx.token,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
+      max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`stocks-advisor ${res.status}: ${body.slice(0, 200)}`);
+  }
+
+  const parsed = (await res.json()) as AnthropicMessagesResponse;
+  const textBlock = parsed.content?.find((b) => b.type === 'text');
+  const text = textBlock?.text;
+  if (typeof text !== 'string' || text.length === 0) {
+    throw new Error('advisor response has no text content');
+  }
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch {
+    throw new Error('advisor response is not valid JSON');
+  }
+  const recommendations = validateAdvisorJson(raw, allowedSet);
+
+  return {
+    recommendations,
+    disclaimer: ADVISOR_DISCLAIMER,
+    notForRealMoney: true,
+  };
+}
+
 export const ACTIONS: ActionMap = {
   'register-ticker': registerTicker,
   backtest: runBacktest,
+  advise: askAdvisor,
 };

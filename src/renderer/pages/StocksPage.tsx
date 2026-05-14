@@ -3,6 +3,18 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
+interface AdvisorRecommendation {
+  symbol: string;
+  rank: number;
+  rationale: string;
+  riskFactors: string[];
+}
+interface AdvisorResponse {
+  recommendations: AdvisorRecommendation[];
+  disclaimer: string;
+  notForRealMoney: boolean;
+}
+
 interface Candle {
   date: string;
   open: number;
@@ -150,6 +162,35 @@ export function StocksPage() {
   const visibleWatchlist = data.watchlist.filter(
     (w) => filterAction === 'all' || w.signal.action === filterAction,
   );
+
+  // --- AI advisor state -------------------------------------------------
+  const [advisorQuestion, setAdvisorQuestion] = useState('');
+  const [advisorBusy, setAdvisorBusy] = useState(false);
+  const [advisorError, setAdvisorError] = useState<string | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<AdvisorResponse | null>(null);
+
+  async function runAdvisor() {
+    if (!advisorQuestion.trim()) {
+      setAdvisorError('質問を入力してください');
+      return;
+    }
+    setAdvisorBusy(true);
+    setAdvisorError(null);
+    try {
+      const r = await window.serviceHub.invoke<AdvisorResponse>('stocks', 'advise', {
+        question: advisorQuestion.trim(),
+      });
+      if (r.ok) {
+        setAdvisorResult(r.data);
+      } else {
+        setAdvisorError(r.message);
+      }
+    } catch (e) {
+      setAdvisorError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setAdvisorBusy(false);
+    }
+  }
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -302,6 +343,142 @@ export function StocksPage() {
           </div>
         </Section>
       )}
+
+      <Section title="AI アドバイザー" count={advisorResult?.recommendations.length ?? 0}>
+        <div
+          style={{
+            border: '1px solid #fbbf24',
+            background: 'rgba(251, 191, 36, 0.08)',
+            color: '#fbbf24',
+            padding: '8px 12px',
+            borderRadius: 6,
+            fontSize: 12,
+            lineHeight: 1.5,
+            marginBottom: 12,
+          }}
+        >
+          <strong>免責:</strong> 本機能は教育目的の参考情報であり投資助言ではありません。
+          AI 出力は実在しないティッカーや誤った理由付けを含む可能性があります。
+          実際の売買判断はご自身の責任で行ってください。
+          回答は登録されている許可済みティッカーに限定されます。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <input
+            type="text"
+            value={advisorQuestion}
+            onChange={(e) => setAdvisorQuestion(e.target.value)}
+            placeholder="例: 長期保有に向いている銘柄を 3 つ"
+            maxLength={1000}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !advisorBusy) runAdvisor();
+            }}
+          />
+          <button
+            onClick={runAdvisor}
+            disabled={advisorBusy}
+            style={{
+              padding: '8px 16px',
+              background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: advisorBusy ? 'wait' : 'pointer',
+            }}
+          >
+            {advisorBusy ? '分析中…' : 'AI に聞く'}
+          </button>
+        </div>
+        {advisorError && (
+          <div
+            style={{
+              border: '1px solid #ef4444',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#ef4444',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 12,
+            }}
+          >
+            {advisorError}
+          </div>
+        )}
+        {advisorResult && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {advisorResult.recommendations.map((r) => (
+              <div
+                key={`${r.symbol}-${r.rank}`}
+                style={{
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-elev)',
+                  borderRadius: 8,
+                  padding: 12,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      background: 'var(--accent)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      fontSize: 13,
+                    }}
+                  >
+                    {r.rank}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 600 }}>{r.symbol}</div>
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>
+                  {r.rationale}
+                </div>
+                {r.riskFactors.length > 0 && (
+                  <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)' }}>
+                    <strong>リスク要因:</strong>
+                    <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                      {r.riskFactors.map((rf, idx) => (
+                        <li key={idx}>{rf}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-mute)',
+                fontStyle: 'italic',
+                lineHeight: 1.5,
+              }}
+            >
+              {advisorResult.disclaimer}
+            </div>
+          </div>
+        )}
+      </Section>
 
       <Section title="搭載ストラテジー" count={3}>
         <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-mute)' }}>
