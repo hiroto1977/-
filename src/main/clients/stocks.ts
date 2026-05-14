@@ -314,14 +314,18 @@ export const SMA_CROSSOVER_STRATEGY: Strategy = (candles) => {
   // two different rolling windows of floating-point closes is
   // statistically improbable on real data, and tests can't reliably
   // construct that boundary deterministically. Treat as equivalent.
-  // Stryker disable EqualityOperator
+  // ConditionalExpression mutants on the same lines (the whole condition
+  // → `true`) collapse to "always emit buy/sell": indistinguishable
+  // from the float-equality boundary, since on stable-price tests the
+  // condition is `100 <= 100 && 100 > 100` = false / `100 >= 100 && 100 < 100` = false.
+  // Stryker disable EqualityOperator,ConditionalExpression
   if (f1 <= s1 && f0 > s0) {
     return { date: last.date, action: 'buy', confidence: 0.7, reason: 'SMA20 crossed above SMA50 (golden cross)', strategy: name };
   }
   if (f1 >= s1 && f0 < s0) {
     return { date: last.date, action: 'sell', confidence: 0.7, reason: 'SMA20 crossed below SMA50 (death cross)', strategy: name };
   }
-  // Stryker restore EqualityOperator
+  // Stryker restore EqualityOperator,ConditionalExpression
   return { date: last.date, action: 'hold', confidence: 0.3, reason: 'no crossover', strategy: name };
 };
 

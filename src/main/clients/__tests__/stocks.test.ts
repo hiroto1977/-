@@ -677,6 +677,17 @@ describe('createMockStocksDataSource', () => {
     expect(candles[0]!.date).toBe('2025-12-01');
   });
 
+  it('exports the documented 5 mock tickers with non-empty symbol/label/basePrice', () => {
+    // Pin StringLiteral mutants on each MOCK_TICKERS entry.
+    const symbols = MOCK_TICKERS.map((t) => t.symbol);
+    expect(symbols).toEqual(['7203.T', '9984.T', '6758.T', 'AAPL', 'MSFT']);
+    for (const t of MOCK_TICKERS) {
+      expect(t.label.length).toBeGreaterThan(0);
+      expect(t.basePrice).toBeGreaterThan(0);
+      expect(t.driftDaily).toBeGreaterThan(0);
+    }
+  });
+
   it('returns the requested number of bars', async () => {
     const src = createMockStocksDataSource();
     const candles = await src.fetchHistory('7203.T', 30);
