@@ -30,6 +30,7 @@ const SERVICES = [
   'stocks',
   'business',
   'teamradar',
+  'templates',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

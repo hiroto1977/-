@@ -16,6 +16,7 @@ import { fetchKpiSnapshot } from './kpi';
 import { fetchStocksSnapshot, ACTIONS as STOCKS_ACTIONS } from './stocks';
 import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './business';
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
+import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -41,6 +42,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   stocks: fetchStocksSnapshot,
   business: fetchBusinessOpsSnapshot,
   teamradar: fetchTeamRadarSnapshot,
+  templates: fetchTemplatesSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -77,6 +79,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'stocks',
   'business',
   'teamradar',
+  'templates',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -99,6 +102,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   stocks: STOCKS_ACTIONS,
   business: BUSINESS_ACTIONS,
   teamradar: TEAMRADAR_ACTIONS,
+  templates: TEMPLATES_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

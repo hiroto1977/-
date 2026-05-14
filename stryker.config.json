@@ -14,7 +14,8 @@
     "src/main/clients/kpi.ts",
     "src/main/clients/stocks.ts",
     "src/main/clients/business.ts",
-    "src/main/clients/teamradar.ts"
+    "src/main/clients/teamradar.ts",
+    "src/main/clients/templates.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
