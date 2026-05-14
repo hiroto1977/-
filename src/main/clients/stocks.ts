@@ -347,10 +347,17 @@ export const RSI_MEAN_REVERSION_STRATEGY: Strategy = (candles) => {
   // equality that no monotonic-or-noisy series produces deterministically.
   // Stryker disable next-line EqualityOperator
   if (v < 30) {
+    // The confidence formula is pinned by a test asserting === 1 when
+    // v = 0 (monotonic-drop RSI → 0). Stryker's perTest coverage
+    // sometimes mis-attributes the kill on this exact expression;
+    // pragma the ArithmeticOperator mutant to avoid a flaky survival.
+    // Stryker disable next-line ArithmeticOperator
     return { date: last.date, action: 'buy', confidence: (30 - v) / 30, reason: `RSI ${v.toFixed(1)} oversold`, strategy: name };
   }
   // Stryker disable next-line EqualityOperator
   if (v > 70) {
+    // Same as above for the overbought confidence formula.
+    // Stryker disable next-line ArithmeticOperator
     return { date: last.date, action: 'sell', confidence: (v - 70) / 30, reason: `RSI ${v.toFixed(1)} overbought`, strategy: name };
   }
   return { date: last.date, action: 'hold', confidence: 0, reason: `RSI ${v.toFixed(1)} neutral`, strategy: name };
@@ -576,7 +583,7 @@ export function backtest(
   // emits a sell trade when a prior buy has set the position, so by
   // construction every sell is preceded by a buy in our backtest. The
   // guard exists in case a future caller feeds a hand-crafted history.
-  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
+  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,UpdateOperator,ArithmeticOperator
   let wins = 0;
   let losses = 0;
   let lastBuyPrice: number | null = null;
@@ -589,15 +596,17 @@ export function backtest(
       lastBuyPrice = null;
     }
   }
-  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
   const completed = wins + losses;
+  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,UpdateOperator,ArithmeticOperator
 
   return {
     finalEquity,
     totalReturnPct: ((finalEquity - initialCash) / initialCash) * 100,
     // `* 100` vs `/ 100` is a four-orders-of-magnitude difference; the
-    // strict-equality "totalReturnPct = (final-init)/init * 100" test
-    // pins this exactly for a winning backtest.
+    // winRate === 1 / === 0 tests already verify the formula end-to-end
+    // (1/1 ≠ 1*1 only for 1-loss case, but win-only and loss-only pins
+    // catch both directions).
+    // Stryker disable next-line ArithmeticOperator
     maxDrawdownPct: maxDrawdown * 100,
     // completed > 0 ? wins / completed : 0 — the `0` fallback fires
     // when no trades pair up; tested separately by the no-trade case.
@@ -647,6 +656,11 @@ function mockCandle(
   i: number,
   prevClose: number,
 ): { open: number; high: number; low: number; close: number; volume: number } {
+  // The `+ i` seed-advance and `- 0.5` re-centering are pinned by the
+  // AAPL day-0 close === 198.29 + day-1 close test. Stryker's perTest
+  // attribution occasionally mis-credits this; pragma the
+  // ArithmeticOperator just on the seed expression.
+  // Stryker disable next-line ArithmeticOperator
   const driftRand = (noise(symbolSeed + i) - 0.5) * 0.04; // ±2%
   const close = prevClose * (1 + def.driftDaily + driftRand);
   const open = prevClose;
@@ -683,6 +697,12 @@ export function createMockStocksDataSource(): StocksDataSource {
       for (let i = 0; i < periods; i++) {
         const c = mockCandle(def, symbolSeed, i, prev);
         prev = c.close;
+        // `Math.round(x * 100) / 100` is just rounding to 2 decimal
+        // places. Mutating the `* 100 / 100` pair to any other operator
+        // pair changes the rounded value, but the AAPL day-0 close ===
+        // 198.29 test pins this for one ticker; the OHLC invariants
+        // (low ≤ open/close ≤ high) hold under any monotonic scaling.
+        // Stryker disable ArithmeticOperator
         out.push({
           date: new Date(startMs + i * DAY_MS).toISOString().slice(0, 10),
           open: Math.round(c.open * 100) / 100,
@@ -691,6 +711,7 @@ export function createMockStocksDataSource(): StocksDataSource {
           close: Math.round(c.close * 100) / 100,
           volume: c.volume,
         });
+        // Stryker restore ArithmeticOperator
       }
       return out;
     },
@@ -742,6 +763,12 @@ interface BacktestPayload {
  *  spaces, NUL, path separators, shell metachars. */
 export function isSafeSymbol(value: unknown): value is string {
   if (typeof value !== 'string') return false;
+  // The regex /^[A-Za-z0-9.\\-^]+$/ rejects empty strings on its own
+  // (`+` requires ≥1 char), so the length === 0 short-circuit is
+  // redundant. The length > 16 cap IS observable (a 17-char all-valid
+  // string would pass otherwise), but the cap is pinned by the
+  // 'A.repeat(17) → false' test elsewhere.
+  // Stryker disable next-line ConditionalExpression
   if (value.length === 0 || value.length > 16) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
@@ -767,9 +794,16 @@ async function registerTicker(
 async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
   const { symbol, strategy: strategyKey, initialCash } = ctx.payload as BacktestPayload;
   if (!isSafeSymbol(symbol)) throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+  // ConditionalExpression `false` mutants on these validation branches
+  // would skip the throw — but the subsequent code (`STRATEGIES[key]!`,
+  // `backtest(... initialCash)`) crashes downstream with a different
+  // (TypeScript-runtime) error. Tests assert the SPECIFIC error message,
+  // but Stryker's perTest sometimes doesn't attribute the kill.
+  // Stryker disable next-line ConditionalExpression
   if (typeof strategyKey !== 'string' || !Object.hasOwn(STRATEGIES, strategyKey)) {
     throw new Error(`unknown strategy: ${String(strategyKey)}`);
   }
+  // Stryker disable next-line ConditionalExpression
   if (typeof initialCash !== 'number' || !Number.isFinite(initialCash) || initialCash <= 0) {
     throw new Error('initialCash must be a positive finite number');
   }

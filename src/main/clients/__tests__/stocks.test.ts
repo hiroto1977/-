@@ -825,6 +825,20 @@ describe('ACTIONS["register-ticker"]', () => {
     expect(r.symbol).toBe('AAPL');
     expect(r.added).toBe(true);
     expect(r.message).toMatch(/Phase 7/);
+    // Pin uppercase in the message too (kills `toUpperCase()` → `toLowerCase()`).
+    expect(r.message).toContain('AAPL');
+    expect(r.message).not.toContain('aapl');
+  });
+
+  it('uppercases a mixed-case symbol (kills MethodExpression mutant directly)', async () => {
+    const r = (await ACTIONS['register-ticker']!({
+      token: '',
+      payload: { symbol: 'BrK-B' },
+    })) as { symbol: string; message: string };
+    expect(r.symbol).toBe('BRK-B');
+    expect(r.message).toContain('BRK-B');
+    expect(r.message).not.toContain('BrK-B');
+    expect(r.message).not.toContain('brk-b');
   });
 
   it('rejects unsafe symbols before any other work', async () => {
