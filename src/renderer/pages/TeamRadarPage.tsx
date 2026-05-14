@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 
 interface TeamMember {
@@ -147,6 +148,7 @@ export function TeamRadarPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
 
   // Sync local state when the snapshot refreshes (live fetch).
   useEffect(() => {
@@ -225,6 +227,7 @@ export function TeamRadarPage() {
   async function exportSvg() {
     setExportBusy(true);
     setExportMsg(null);
+    setLastExport(null);
     try {
       const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
         'teamradar',
@@ -232,7 +235,7 @@ export function TeamRadarPage() {
         { title: `${department} 強み・弱みシート (${evaluatedAt})` },
       );
       if (r.ok) {
-        setExportMsg(`SVG 保存: ${r.data.path} (${r.data.bytes.toLocaleString()} bytes) — Canva に直接ドラッグ&ドロップで取り込めます`);
+        setLastExport({ path: r.data.path, bytes: r.data.bytes });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -483,6 +486,24 @@ export function TeamRadarPage() {
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{saveMsg}</span>
           )}
         </div>
+        {lastExport && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: '10px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+            }}
+          >
+            <ExportActions
+              path={lastExport.path}
+              bytes={lastExport.bytes}
+              openLabel="Canva を開く"
+              openUrl="https://www.canva.com/"
+            />
+          </div>
+        )}
         {exportMsg && (
           <div
             style={{
@@ -493,7 +514,6 @@ export function TeamRadarPage() {
               borderRadius: 6,
               fontSize: 12,
               color: 'var(--text)',
-              wordBreak: 'break-all',
             }}
           >
             {exportMsg}

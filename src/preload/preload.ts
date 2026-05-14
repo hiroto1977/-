@@ -18,6 +18,8 @@ export type OAuthResult =
 const api = {
   getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
+  revealInFolder: (filePath: string): Promise<void> =>
+    ipcRenderer.invoke('app:revealInFolder', filePath),
 
   setToken: (serviceId: ServiceId, token: string): Promise<void> =>
     ipcRenderer.invoke('secrets:set', serviceId, token),

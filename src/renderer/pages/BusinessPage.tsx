@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 
 interface BusinessAdvisorRecommendation {
@@ -500,6 +501,7 @@ export function BusinessPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
@@ -514,6 +516,7 @@ export function BusinessPage() {
   async function runExport(format: 'html' | 'md') {
     setExportBusy(true);
     setExportMsg(null);
+    setLastExport(null);
     try {
       const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
       const payload: { advisorResult?: BusinessAdvisorResponse } = {};
@@ -524,9 +527,7 @@ export function BusinessPage() {
         generatedAt: string;
       }>('business', action, payload);
       if (r.ok) {
-        setExportMsg(
-          `保存しました: ${r.data.path} (${r.data.bytes.toLocaleString()} bytes)`,
-        );
+        setLastExport({ path: r.data.path, bytes: r.data.bytes });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -749,6 +750,19 @@ export function BusinessPage() {
             保存先: ~/.local/business-hub/data/business-dashboard.{`{html,md}`}
           </span>
         </div>
+        {lastExport && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: '10px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+            }}
+          >
+            <ExportActions path={lastExport.path} bytes={lastExport.bytes} />
+          </div>
+        )}
         {exportMsg && (
           <div
             style={{
@@ -759,7 +773,6 @@ export function BusinessPage() {
               borderRadius: 6,
               fontSize: 12,
               color: 'var(--text)',
-              wordBreak: 'break-all',
             }}
           >
             {exportMsg}

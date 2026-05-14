@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 
 interface TemplateParams {
@@ -191,8 +192,22 @@ export function TemplatesPage() {
 
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
 
   const svgPreview = useMemo(() => renderPreview(selected.id, params, selected), [selected, params]);
+
+  function applyPreset(preset: 'default' | 'cool' | 'light' | 'mono') {
+    if (preset === 'default') {
+      setParams({ ...selected.defaults });
+    } else if (preset === 'cool') {
+      setParams({ ...selected.defaults, accentColor: '#5b8def', secondaryColor: '#0f1117' });
+    } else if (preset === 'light') {
+      setParams({ ...selected.defaults, accentColor: '#ec9a3d', secondaryColor: '#fdfbf7' });
+    } else {
+      setParams({ ...selected.defaults, accentColor: '#1f2937', secondaryColor: '#f8f8f8' });
+    }
+    setMsg(null);
+  }
 
   function update<K extends keyof TemplateParams>(k: K, v: TemplateParams[K]) {
     setParams((prev) => ({ ...prev, [k]: v }));
@@ -206,6 +221,7 @@ export function TemplatesPage() {
   async function exportSvg() {
     setBusy(true);
     setMsg(null);
+    setLastExport(null);
     try {
       // Lightweight client-side validation mirrors backend bounds.
       if (!HEX.test(params.accentColor) || !HEX.test(params.secondaryColor)) {
@@ -218,7 +234,7 @@ export function TemplatesPage() {
         { templateId: selected.id, params },
       );
       if (r.ok) {
-        setMsg(`SVG 保存: ${r.data.path} (${r.data.bytes.toLocaleString()} bytes) — Canva に直接ドラッグ&ドロップで取り込めます`);
+        setLastExport({ path: r.data.path, bytes: r.data.bytes });
       } else {
         setMsg('エクスポート失敗: ' + r.message);
       }
@@ -319,6 +335,38 @@ export function TemplatesPage() {
 
         <Section title="パラメータ" count={6}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 320 }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>テーマプリセット:</span>
+              {(
+                [
+                  ['default', '既定', '#5b8def'],
+                  ['cool', 'クール', '#5b8def'],
+                  ['light', '明るい', '#ec9a3d'],
+                  ['mono', 'モノクロ', '#1f2937'],
+                ] as const
+              ).map(([id, label, color]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => applyPreset(id)}
+                  style={{
+                    padding: '4px 10px',
+                    background: 'var(--bg-elev)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 4,
+                    color: 'var(--text)',
+                    cursor: 'pointer',
+                    fontSize: 11,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <span style={{ width: 10, height: 10, background: color, borderRadius: 2, display: 'inline-block' }} />
+                  {label}
+                </button>
+              ))}
+            </div>
             {([
               ['title', 'タイトル', 80, 'text'],
               ['subtitle', '副題 / リード', 120, 'text'],
@@ -429,6 +477,24 @@ export function TemplatesPage() {
             既定値に戻す
           </button>
         </div>
+        {lastExport && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: '10px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+            }}
+          >
+            <ExportActions
+              path={lastExport.path}
+              bytes={lastExport.bytes}
+              openLabel="Canva を開く"
+              openUrl="https://www.canva.com/"
+            />
+          </div>
+        )}
         {msg && (
           <div
             style={{
@@ -439,7 +505,6 @@ export function TemplatesPage() {
               borderRadius: 6,
               fontSize: 12,
               color: 'var(--text)',
-              wordBreak: 'break-all',
             }}
           >
             {msg}

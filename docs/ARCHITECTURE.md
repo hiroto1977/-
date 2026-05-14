@@ -18,7 +18,7 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | 軸 | 値 | 出典 |
 |---|---:|---|
 | サービス数 | 19 | `src/shared/serviceId.ts:9-30` |
-| IPC ハンドラ数 | 9 | `src/main/main.ts:99-224` |
+| IPC ハンドラ数 | 10 | `src/main/main.ts:99-238` |
 | client モジュール (fetcher + actions) | 19 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |

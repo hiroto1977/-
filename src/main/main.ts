@@ -114,6 +114,20 @@ ipcMain.handle('app:openExternal', async (_e, url: string) => {
   await shell.openExternal(parsed.toString());
 });
 
+ipcMain.handle('app:revealInFolder', (_e, filePath: unknown) => {
+  // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
+  // Only accept paths under the user's home directory — the renderer should
+  // only ever pass paths it just wrote via an export action, which already
+  // path-traversal-guard to ~/.local/business-hub/**, but we re-check here
+  // as defense-in-depth.
+  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
+  if (/[\0\r\n]/.test(filePath)) return;
+  const resolved = require('node:path').resolve(filePath);
+  const home = require('node:path').resolve(require('node:os').homedir());
+  if (!resolved.startsWith(home + require('node:path').sep)) return;
+  shell.showItemInFolder(resolved);
+});
+
 ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {
   if (!isServiceId(serviceId) || typeof token !== 'string') return;
   const trimmed = token.trim();
