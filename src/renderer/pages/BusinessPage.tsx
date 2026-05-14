@@ -3,6 +3,20 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
+interface BusinessAdvisorRecommendation {
+  categoryId: string;
+  rank: number;
+  rationale: string;
+  actionItems: string[];
+  riskFactors: string[];
+}
+
+interface BusinessAdvisorResponse {
+  recommendations: BusinessAdvisorRecommendation[];
+  disclaimer: string;
+  notForRealMoney: true;
+}
+
 interface CategoryKpi {
   revenue: number;
   variableCost: number;
@@ -232,6 +246,43 @@ export function BusinessPage() {
   );
 
   const [sortKey, setSortKey] = useState<'revenue' | 'profit' | 'margin'>('revenue');
+  const [advisorQuestion, setAdvisorQuestion] = useState('');
+  const [advisorBusy, setAdvisorBusy] = useState(false);
+  const [advisorError, setAdvisorError] = useState<string | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<BusinessAdvisorResponse | null>(null);
+
+  const labelById = useMemo(() => {
+    const m: Record<string, string> = {};
+    for (const u of data.units) m[u.id] = u.label;
+    return m;
+  }, [data.units]);
+
+  async function runAdvisor() {
+    const q = advisorQuestion.trim();
+    if (!q) {
+      setAdvisorError('質問を入力してください');
+      return;
+    }
+    setAdvisorBusy(true);
+    setAdvisorError(null);
+    try {
+      const r = await window.serviceHub.invoke<BusinessAdvisorResponse>(
+        'business',
+        'advise',
+        { question: q },
+      );
+      if (r.ok) {
+        setAdvisorResult(r.data);
+      } else {
+        setAdvisorError(r.message);
+      }
+    } catch (e) {
+      setAdvisorError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setAdvisorBusy(false);
+    }
+  }
+
   const sortedUnits = useMemo(() => {
     const arr = [...data.units];
     arr.sort((a, b) => {
@@ -328,6 +379,160 @@ export function BusinessPage() {
             <CategoryCard key={u.id} unit={u} />
           ))}
         </div>
+      </Section>
+
+      <Section
+        title="AI 経営アドバイザー"
+        count={advisorResult?.recommendations.length ?? 0}
+      >
+        <div
+          style={{
+            border: '1px solid #fbbf24',
+            background: 'rgba(251, 191, 36, 0.08)',
+            color: '#fbbf24',
+            padding: '8px 12px',
+            borderRadius: 6,
+            fontSize: 12,
+            lineHeight: 1.5,
+            marginBottom: 12,
+          }}
+        >
+          <strong>免責:</strong> 本機能は経営判断の補助情報であり、投資助言・財務助言ではありません。
+          数値は模擬データに基づくシミュレーションです。
+          AI 出力は誤った推論を含む可能性があるため、実際の経営判断は別途裏取りが必要です。
+          回答は登録されている 10 事業カテゴリに限定されます。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <input
+            type="text"
+            value={advisorQuestion}
+            onChange={(e) => setAdvisorQuestion(e.target.value)}
+            placeholder="例: 来期に最も注力すべき事業を 3 つ"
+            maxLength={1000}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              background: 'var(--bg-elev)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !advisorBusy) runAdvisor();
+            }}
+          />
+          <button
+            onClick={runAdvisor}
+            disabled={advisorBusy}
+            style={{
+              padding: '8px 16px',
+              background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              color: 'var(--text)',
+              fontSize: 13,
+              cursor: advisorBusy ? 'wait' : 'pointer',
+            }}
+          >
+            {advisorBusy ? '分析中…' : 'AI に聞く'}
+          </button>
+        </div>
+        {advisorError && (
+          <div
+            style={{
+              border: '1px solid #ef4444',
+              background: 'rgba(239, 68, 68, 0.08)',
+              color: '#ef4444',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 12,
+            }}
+          >
+            {advisorError}
+          </div>
+        )}
+        {advisorResult && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {advisorResult.recommendations.map((r) => (
+              <div
+                key={`${r.categoryId}-${r.rank}`}
+                style={{
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-elev)',
+                  borderRadius: 8,
+                  padding: 12,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      background: 'var(--accent)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      fontSize: 13,
+                    }}
+                  >
+                    {r.rank}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 600 }}>
+                    {labelById[r.categoryId] ?? r.categoryId}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+                    [{r.categoryId}]
+                  </div>
+                </div>
+                <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)', marginBottom: 8 }}>
+                  {r.rationale}
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>
+                  推奨アクション:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: 'var(--text)' }}>
+                  {r.actionItems.map((a, i) => (
+                    <li key={i} style={{ marginBottom: 2 }}>
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, marginBottom: 4 }}>
+                  リスク要因:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#fbbf24' }}>
+                  {r.riskFactors.map((rf, i) => (
+                    <li key={i} style={{ marginBottom: 2 }}>
+                      {rf}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-mute)',
+                fontStyle: 'italic',
+                paddingTop: 4,
+              }}
+            >
+              {advisorResult.disclaimer}
+            </div>
+          </div>
+        )}
       </Section>
     </div>
   );

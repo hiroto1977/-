@@ -14,7 +14,7 @@ import { fetchEmotionsSnapshot, ACTIONS as EMOTIONS_ACTIONS } from './emotions';
 import { fetchOllamaSnapshot, ACTIONS as OLLAMA_ACTIONS } from './ollama';
 import { fetchKpiSnapshot } from './kpi';
 import { fetchStocksSnapshot, ACTIONS as STOCKS_ACTIONS } from './stocks';
-import { fetchBusinessOpsSnapshot } from './business';
+import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './business';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -94,6 +94,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   emotions: EMOTIONS_ACTIONS,
   ollama: OLLAMA_ACTIONS,
   stocks: STOCKS_ACTIONS,
+  business: BUSINESS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 
