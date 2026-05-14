@@ -127,6 +127,20 @@ describe('macd', () => {
     expect(m.macd[5]).toBeCloseTo(1.5, 6);
   });
 
+  it('populates signal line when firstFinite === 0 (kills `firstFinite >= 0` → `> 0`)', () => {
+    // With fast = slow = 1, both EMAs equal the close at index 0 →
+    // macdLine[0] = 0 → firstFinite === 0. Original `>= 0` enters the
+    // branch and populates signalLine; mutant `> 0` would skip,
+    // leaving signal all-null.
+    const closes = [10, 12, 11, 13];
+    const m = macd(closes, 1, 1, 1);
+    // macd line should be all zeros (close - close).
+    expect(m.macd).toEqual([0, 0, 0, 0]);
+    // signal line should also be populated (not all null).
+    expect(m.signal[0]).not.toBeNull();
+    expect(m.signal.every((v) => v !== null)).toBe(true);
+  });
+
   it('histogram = macd − signal at every index where both are defined', () => {
     const closes = Array.from({ length: 50 }, (_, i) => Math.sin(i / 3) * 10 + 100);
     const m = macd(closes);
@@ -163,8 +177,13 @@ describe('bollingerBands', () => {
     expect(bb.middle).toEqual([null, null, null]);
   });
 
-  it('throws on period <= 0', () => {
-    expect(() => bollingerBands([1, 2, 3], 0, 2)).toThrow(/period must be > 0/);
+  it('throws on period <= 0 from bollingerBands itself (kills L224 `<= 0` → `< 0` boundary)', () => {
+    // Pin the bollingerBands-specific message so the validation can't
+    // silently delegate to sma's throw. Mutation `<= 0` → `< 0` would
+    // skip bollingerBands' own guard at period === 0; sma would still
+    // throw, but with a different message.
+    expect(() => bollingerBands([1, 2, 3], 0, 2)).toThrow(/^bollingerBands: period must be > 0/);
+    expect(() => bollingerBands([1, 2, 3], -1, 2)).toThrow(/^bollingerBands: period must be > 0/);
   });
 });
 
@@ -236,8 +255,8 @@ describe('RSI_MEAN_REVERSION_STRATEGY', () => {
     expect(s.reason).toBe('insufficient history');
   });
 
-  it('emits "buy" when RSI < 30 (oversold)', () => {
-    // Falling series → RSI low
+  it('emits "buy" when RSI < 30 (oversold) with confidence = (30 - RSI) / 30', () => {
+    // Falling series → RSI low (= 0 with monotonic drops)
     const closes = [
       100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ...Array(20).fill(0).map((_, i) => 100 - i * 5),
@@ -245,9 +264,13 @@ describe('RSI_MEAN_REVERSION_STRATEGY', () => {
     const s = RSI_MEAN_REVERSION_STRATEGY(makeCandles(closes));
     expect(s.action).toBe('buy');
     expect(s.reason).toMatch(/oversold/);
+    // Monotonic-drop RSI → 0; confidence = (30 - 0) / 30 = 1.
+    // Pin the confidence formula (kills L303 ArithmeticOperator mutants
+    // that would change `(30 - v) / 30` to `(30 - v) * 30`, `(30 + v) / 30`).
+    expect(s.confidence).toBe(1);
   });
 
-  it('emits "sell" when RSI > 70 (overbought)', () => {
+  it('emits "sell" when RSI > 70 (overbought) with confidence = (RSI - 70) / 30', () => {
     const closes = [
       100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
       ...Array(20).fill(0).map((_, i) => 100 + i * 5),
@@ -255,6 +278,8 @@ describe('RSI_MEAN_REVERSION_STRATEGY', () => {
     const s = RSI_MEAN_REVERSION_STRATEGY(makeCandles(closes));
     expect(s.action).toBe('sell');
     expect(s.reason).toMatch(/overbought/);
+    // Monotonic rise → RSI 100, confidence = (100 - 70) / 30 = 1.
+    expect(s.confidence).toBe(1);
   });
 
   it('emits "hold" with mixed RSI in neutral band', () => {
@@ -462,7 +487,7 @@ describe('backtest', () => {
     expect(res.trades).toEqual([]);
   });
 
-  it('records buy then forced take-profit at +15% above avg cost', () => {
+  it('records buy then forced take-profit at +15% above avg cost with reason="take-profit"', () => {
     // Build a series with a golden cross then a sharp climb (>15%) so
     // take-profit fires.
     const closes = [
@@ -477,9 +502,15 @@ describe('backtest', () => {
     expect(sells.length).toBeGreaterThan(0);
     // The forced exit pairs as a win for the first buy.
     expect(res.winRate).toBeGreaterThan(0);
+    // Pin the synthetic sell signal's fields (kills ObjectLiteral and
+    // StringLiteral mutants on the take-profit signal literal).
+    const tpSell = sells.find((s) => s.reason === 'take-profit');
+    expect(tpSell).toBeDefined();
+    expect(tpSell!.action).toBe('sell');
+    expect(tpSell!.shares).toBeGreaterThan(0);
   });
 
-  it('triggers stop-loss when price drops > 5% below avgCost', () => {
+  it('triggers stop-loss when price drops > 5% below avgCost with reason="stop-loss"', () => {
     // Crash after buy.
     const closes = [
       ...Array(55).fill(100),
@@ -491,12 +522,53 @@ describe('backtest', () => {
     expect(sells.length).toBeGreaterThan(0);
     // Maximum drawdown registered.
     expect(res.maxDrawdownPct).toBeGreaterThan(0);
+    // Pin the synthetic sell signal's reason.
+    const slSell = sells.find((s) => s.reason === 'stop-loss');
+    expect(slSell).toBeDefined();
+    expect(slSell!.action).toBe('sell');
+  });
+
+  it('stop-loss boundary uses `>= 5%` (kills `> 5%` boundary)', () => {
+    // Construct a series that drops EXACTLY 5% below buy avgCost on a
+    // single bar. With `>= stopLossPct` it fires; with `>` it does not.
+    // For SMA crossover the buy fires near 200 (after 55 bars at 100,
+    // then bars at 200). Drop to 190 = 5% below → boundary.
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(20).fill(200),
+      ...Array(5).fill(190), // exactly -5%
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    const slSell = res.trades.find((t) => t.reason === 'stop-loss');
+    expect(slSell).toBeDefined();
   });
 
   it('totalReturnPct = (finalEquity - initialCash) / initialCash * 100', () => {
     const candles = makeCandles(Array(200).fill(100));
     const res = backtest(candles, SMA_CROSSOVER_STRATEGY, 5_000);
     expect(res.totalReturnPct).toBe(((res.finalEquity - 5_000) / 5_000) * 100);
+  });
+
+  it('totalReturnPct sign + magnitude with a known winning backtest (kills L520 arithmetic mutants)', () => {
+    // Take-profit-driven win: buy at 200, take-profit at 230 (+15%).
+    const closes = [
+      ...Array(55).fill(100),
+      ...Array(40).fill(200),
+      ...Array(20).fill(0).map((_, i) => 200 + i * 5),
+    ];
+    const res = backtest(makeCandles(closes), SMA_CROSSOVER_STRATEGY, 10_000);
+    // finalEquity should be > initialCash (we won) and the formula
+    // result strictly > 0. Mutating `* 100` → `/ 100` would shrink it
+    // 10_000×, mutating `- initialCash` → `+ initialCash` would
+    // explode it positive far beyond reality. Mutating `/ initialCash`
+    // → `* initialCash` would similarly explode.
+    expect(res.finalEquity).toBeGreaterThan(10_000);
+    expect(res.totalReturnPct).toBeGreaterThan(0);
+    expect(res.totalReturnPct).toBeLessThan(100); // sanity (won't double)
+    expect(res.totalReturnPct).toBeCloseTo(
+      ((res.finalEquity - 10_000) / 10_000) * 100,
+      9,
+    );
   });
 });
 
@@ -568,6 +640,14 @@ describe('fetchStocksSnapshot', () => {
   it('isMock is exactly true (kills `true` → `false` mutant)', async () => {
     const snap = await fetchStocksSnapshot({ token: '' });
     expect(snap.isMock).toBe(true);
+  });
+
+  it('changePct = (last - prev) / prev * 100 exactly (kills L637 arithmetic mutants)', async () => {
+    const snap = await fetchStocksSnapshot({ token: '' });
+    for (const row of snap.watchlist) {
+      const expected = ((row.latestClose - row.previousClose) / row.previousClose) * 100;
+      expect(row.changePct).toBeCloseTo(expected, 9);
+    }
   });
 });
 

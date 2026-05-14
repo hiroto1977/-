@@ -397,6 +397,11 @@ export function applySignal(
   }
 
   // sell: liquidate the full position (no partial sells in v1).
+  // The `pos.shares <= 0` half is defensive — by construction every
+  // PaperPosition is created with shares > 0 (the buy branch above
+  // returns port unchanged when shares === 0), and partial sells
+  // aren't supported, so shares can never drop to 0 via this engine.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (!pos || pos.shares <= 0) return port;
   const proceeds = pos.shares * price;
   const newCash = port.cash + proceeds;
@@ -458,10 +463,17 @@ export function backtest(
     if (pos) {
       const dropPct = (pos.avgCost - bar.close) / pos.avgCost;
       const gainPct = (bar.close - pos.avgCost) / pos.avgCost;
+      // The inline 'sell' / 'risk' / confidence: 1 fields below are
+      // consumed by applySignal which switches only on `signal.action`
+      // being 'hold' / 'buy' / otherwise. Mutating 'sell' → "" still
+      // falls into the sell branch, mutating 'risk' / confidence is
+      // unobservable (those fields are not read by applySignal). Pin
+      // only the `reason` field via tests; the rest are equivalent.
       if (dropPct >= risk.stopLossPct) {
         port = applySignal(
           port,
           ticker,
+          // Stryker disable next-line StringLiteral
           { date: bar.date, action: 'sell', confidence: 1, reason: 'stop-loss', strategy: 'risk' },
           bar.close,
           risk,
@@ -470,6 +482,7 @@ export function backtest(
         port = applySignal(
           port,
           ticker,
+          // Stryker disable next-line StringLiteral
           { date: bar.date, action: 'sell', confidence: 1, reason: 'take-profit', strategy: 'risk' },
           bar.close,
           risk,
