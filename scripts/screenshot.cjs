@@ -50,8 +50,8 @@ async function run() {
   await fs.mkdir(OUT_DIR, { recursive: true });
 
   const win = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: 1440,
+    height: 1800,
     show: false,
     backgroundColor: '#0f1117',
     webPreferences: {
@@ -70,6 +70,9 @@ async function run() {
       (() => {
         const target = document.querySelector('.sidebar-item[data-service-id=' + ${JSON.stringify(JSON.stringify(id))} + ']');
         if (target) target.click();
+        // Reset scroll so each page is captured from the top.
+        const content = document.querySelector('.content');
+        if (content) content.scrollTop = 0;
       })();
     `);
     await new Promise((r) => setTimeout(r, 250));
