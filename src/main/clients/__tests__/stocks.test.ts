@@ -77,6 +77,13 @@ describe('rsi', () => {
     expect(rsi([1, 2, 3, 4, 5, 6], 2)).toEqual([null, null, 100, 100, 100, 100]);
   });
 
+  it('returns 100 (not NaN) for a perfectly flat series (kills L179 `avgLoss === 0` → false)', () => {
+    // Flat input → diff = 0 for every step → both avgGain and avgLoss
+    // stay 0. The original short-circuit returns 100. Without it the
+    // formula evaluates `100 - 100 / (1 + 0/0)` = `100 - 100/NaN` = NaN.
+    expect(rsi([5, 5, 5, 5, 5], 2)).toEqual([null, null, 100, 100, 100]);
+  });
+
   it('produces canonical values for an alternating series', () => {
     // 1,2,1,2,1,2,1,2 with period 2: at i=2 (gain,loss)=(1,1) → 50;
     // then Wilder smoothing produces 75, 37.5, 68.75, 34.375, 67.1875.

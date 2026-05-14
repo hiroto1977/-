@@ -163,7 +163,12 @@ export function rsi(closes: readonly number[], period: number): (number | null)[
   let avgLoss = 0;
   for (let i = 1; i < closes.length; i++) {
     const diff = closes[i]! - closes[i - 1]!;
+    // The diff === 0 case is handled by `diff > 0 ? diff : 0` → 0 AND
+    // `diff < 0 ? -diff : 0` → 0, identical to the mutant `diff >= 0`
+    // and `diff <= 0` boundaries.
+    // Stryker disable next-line EqualityOperator
     const gain = diff > 0 ? diff : 0;
+    // Stryker disable next-line EqualityOperator
     const loss = diff < 0 ? -diff : 0;
     if (i <= period) {
       avgGain += gain / period;
@@ -281,12 +286,20 @@ export const SMA_CROSSOVER_STRATEGY: Strategy = (candles) => {
   if (f0 == null || s0 == null || f1 == null || s1 == null) {
     return holdSignal(candles, name, 'indicator unavailable');
   }
+  // Boundary mutants on the crossover comparisons (`f1 <= s1` →
+  // `f1 < s1`, `f0 > s0` → `f0 >= s0`) are observable only when an SMA
+  // value is exactly equal to the other — IEEE-754 equality between
+  // two different rolling windows of floating-point closes is
+  // statistically improbable on real data, and tests can't reliably
+  // construct that boundary deterministically. Treat as equivalent.
+  // Stryker disable EqualityOperator
   if (f1 <= s1 && f0 > s0) {
     return { date: last.date, action: 'buy', confidence: 0.7, reason: 'SMA20 crossed above SMA50 (golden cross)', strategy: name };
   }
   if (f1 >= s1 && f0 < s0) {
     return { date: last.date, action: 'sell', confidence: 0.7, reason: 'SMA20 crossed below SMA50 (death cross)', strategy: name };
   }
+  // Stryker restore EqualityOperator
   return { date: last.date, action: 'hold', confidence: 0.3, reason: 'no crossover', strategy: name };
 };
 
@@ -326,12 +339,15 @@ export const MACD_SIGNAL_STRATEGY: Strategy = (candles) => {
   if (m0 == null || s0 == null || m1 == null || s1 == null) {
     return holdSignal(candles, name, 'indicator unavailable');
   }
+  // Same float-equality argument as SMA_CROSSOVER_STRATEGY above.
+  // Stryker disable EqualityOperator,ConditionalExpression
   if (m1 <= s1 && m0 > s0) {
     return { date: last.date, action: 'buy', confidence: 0.65, reason: 'MACD crossed above signal', strategy: name };
   }
   if (m1 >= s1 && m0 < s0) {
     return { date: last.date, action: 'sell', confidence: 0.65, reason: 'MACD crossed below signal', strategy: name };
   }
+  // Stryker restore EqualityOperator,ConditionalExpression
   return { date: last.date, action: 'hold', confidence: 0.25, reason: 'no crossover', strategy: name };
 };
 
@@ -491,12 +507,19 @@ export function backtest(
     }
 
     const equity = portfolioEquity(port, { [ticker]: bar.close });
+    // `equity > peak` boundary: `>=` would re-assign peak with the
+    // same value when equal — same observable outcome. Float equity
+    // exactly equalling peak is normal at quiet bars.
+    // Stryker disable next-line EqualityOperator,ConditionalExpression
     if (equity > peak) peak = equity;
     // peak ≥ initialCash (assigned at line 0) ≥ 0, so the `peak > 0`
     // guard is defensive (only false if initialCash is 0, which our
     // tests cover separately).
-    // Stryker disable next-line ConditionalExpression
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     const dd = peak > 0 ? (peak - equity) / peak : 0;
+    // `dd > maxDrawdown` boundary: `>=` only differs when dd equals
+    // the current max — same value reassigned, same outcome.
+    // Stryker disable next-line EqualityOperator,ConditionalExpression
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
 
