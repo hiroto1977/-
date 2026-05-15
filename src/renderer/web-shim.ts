@@ -29,8 +29,10 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
+import { getLibrary } from './library/library';
 
 const vault = getVault();
+const library = getLibrary();
 
 function downloadBlob(filename: string, content: string, mime: string): void {
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
@@ -43,6 +45,17 @@ function downloadBlob(filename: string, content: string, mime: string): void {
   document.body.removeChild(a);
   // Defer revocation so the download has time to start.
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** Save an artifact to the in-app Library. Failures are non-fatal so the
+ *  user still gets the browser download. */
+async function saveToLibrary(serviceId: string, filename: string, mime: string, content: string): Promise<void> {
+  try {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    await library.put(serviceId, filename, mime, blob);
+  } catch {
+    // ignore — library is best-effort
+  }
 }
 
 function notSupportedAlert(): Promise<void> {
@@ -118,48 +131,46 @@ const shim = {
   fetchSnapshot: <T>(): Promise<ActionResult<T>> =>
     Promise.resolve(err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。')),
 
-  invoke: <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> => {
-    // Template export: render SVG client-side and download.
+  invoke: async <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> => {
+    // Template export: render SVG client-side, save to Library, also download.
     if (serviceId === 'templates' && action === 'export-template') {
       const p = payload as ExportTemplatePayload;
       const id = p.templateId;
       const def = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === id);
-      if (!def) return Promise.resolve(err('action_failed', `unknown template id: ${String(id)}`));
+      if (!def) return err('action_failed', `unknown template id: ${String(id)}`);
       let svg: string;
       try {
         svg = renderTemplateForWeb(def, (p.params as Record<string, string> | undefined) ?? {});
       } catch (e) {
-        return Promise.resolve(err('action_failed', e instanceof Error ? e.message : String(e)));
+        return err('action_failed', e instanceof Error ? e.message : String(e));
       }
-      const filename = `${def.id}.svg`;
+      const filename = `${def.id}-${Date.now()}.svg`;
+      await saveToLibrary('templates', filename, 'image/svg+xml', svg);
       downloadBlob(filename, svg, 'image/svg+xml');
-      return Promise.resolve(
-        ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>,
-      );
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
     }
 
     // TeamRadar export: grab the inline svg already rendered on the page.
     if (serviceId === 'teamradar' && action === 'export-svg') {
       const svg = tryGrabSvgFromPage();
       if (!svg) {
-        return Promise.resolve(err('action_failed', 'チームレーダーページに切り替えてからもう一度お試しください'));
+        return err('action_failed', 'チームレーダーページに切り替えてからもう一度お試しください');
       }
       const p = payload as ExportSvgPayload;
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
-      const filename = title.replace(/[^\w.-]+/g, '-').slice(0, 64) + '.svg';
+      const filename = title.replace(/[^\w.-]+/g, '-').slice(0, 64) + '-' + Date.now() + '.svg';
+      await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
       downloadBlob(filename, svg, 'image/svg+xml');
-      return Promise.resolve(
-        ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>,
-      );
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
     }
 
     // TeamRadar save-state: persist into localStorage so reloads keep edits.
     if (serviceId === 'teamradar' && action === 'save-state') {
       try {
         localStorage.setItem('teamradar.state', JSON.stringify(payload));
-        return Promise.resolve(ok(payload) as ActionResult<T>);
+        return ok(payload) as ActionResult<T>;
       } catch {
-        return Promise.resolve(err('action_failed', 'localStorage への保存に失敗しました'));
+        return err('action_failed', 'localStorage への保存に失敗しました');
       }
     }
 
@@ -170,18 +181,15 @@ const shim = {
       const content = isMd
         ? '# 事業ダッシュボード (ブラウザ版)\n\nブラウザ版では完全な事業データのエクスポートに対応していません。\nElectron 版または `npm run dev` で完全な機能をお試しください。\n'
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
-      const filename = 'business-dashboard' + ext;
+      const filename = 'business-dashboard-' + Date.now() + ext;
+      await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
       downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return Promise.resolve(
-        ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>,
-      );
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
     }
 
-    return Promise.resolve(
-      err(
-        'action_not_found',
-        `ブラウザ版では ${serviceId}/${action} は実行できません。Electron 版でお試しください。`,
-      ),
+    return err(
+      'action_not_found',
+      `ブラウザ版では ${serviceId}/${action} は実行できません。Electron 版でお試しください。`,
     );
   },
 

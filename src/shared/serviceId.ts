@@ -27,6 +27,7 @@ export const SERVICE_IDS = [
   'business',
   'teamradar',
   'templates',
+  'library',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

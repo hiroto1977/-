@@ -18,6 +18,7 @@ import { StocksPage } from './pages/StocksPage';
 import { BusinessPage } from './pages/BusinessPage';
 import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
+import { LibraryPage } from './pages/LibraryPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -203,6 +204,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'TP',
     description: 'Canva 連動 8 種類のテンプレート — プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書 (SVG 出力)',
     page: TemplatesPage,
+    category: 'featured',
+  },
+  {
+    id: 'library',
+    label: 'ライブラリ',
+    icon: 'LB',
+    description: '作成したファイルの保管庫 (ブラウザ IndexedDB · 50 MB / 100 件)',
+    page: LibraryPage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

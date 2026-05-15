@@ -8,6 +8,11 @@ export const SNAPSHOT = {
     fetchedAt: '',
     isMock: true,
   },
+  library: {
+    note: 'ライブラリの実体はブラウザの IndexedDB に保存されます',
+    fetchedAt: '',
+    isMock: true,
+  },
 
   fetchedAt: '2026-05-11T09:30:00Z',
 

@@ -18,6 +18,7 @@ import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './busines
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 import { fetchHomeSnapshot } from './home';
+import { fetchLibrarySnapshot } from './library';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -45,6 +46,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   business: fetchBusinessOpsSnapshot,
   teamradar: fetchTeamRadarSnapshot,
   templates: fetchTemplatesSnapshot,
+  library: fetchLibrarySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -83,6 +85,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'business',
   'teamradar',
   'templates',
+  'library',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
