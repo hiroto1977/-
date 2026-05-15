@@ -40,7 +40,7 @@
   },
   "reporters": ["clear-text", "json"],
   "coverageAnalysis": "perTest",
-  "_thresholdsRationale": "🏆 100.00% TOTAL restored AGAIN, this time after dashboard export introduction (renderDashboardHtml + escapeHtml + defaultDashboardPath + isSafeDashboardPath + exportDashboardImpl). break=99.8 (buffer 0.2). Recovery arc: 95.79 → 98.88 → 99.94 → 100.00 across 3 ratchet steps. Third successful new-scope introduction + recovery (stocks → advisor → dashboard).",
+  "_thresholdsRationale": "🏆 100.00% TOTAL restored AGAIN, this time after Phase E (BIP-39 24-word recovery key: mnemonic.ts encode/decode/checksum + vault.ts dual-wrap initialize/recoverWithMnemonic/wipeAndReset + NoRecoveryBranchError). break=99.8 (buffer 0.2). Recovery arc (Phase E): 99.54 → 100.00 in 1 ratchet step. Fourth successful new-scope introduction + recovery (stocks → advisor → dashboard → BIP-39 recovery). 4 equivalent-mutation pragmas added (module-init Map + length sanity + 2 loop boundaries that fold to 0 via undefined-read + OOB-write).",
   "thresholds": { "high": 100, "low": 99.9, "break": 99.8 },
   "timeoutMS": 30000,
   "concurrency": 4,
