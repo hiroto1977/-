@@ -14,64 +14,124 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: typecheck + test + build (renderer)
+  # --- Stage 1: build the dependency cache once. -------------------
+  install:
+    name: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
-      - name: Install
-        run: npm ci
-
-      - name: Debug — env info (diagnose intermittent CI failures)
+      - run: npm ci
+      - name: Env info
         run: |
-          echo "=== Node / npm versions ==="
           node --version
           npm --version
-          echo "=== System info ==="
-          nproc || echo "no nproc"
-          free -h || echo "no free"
+          nproc || true
+          free -h || true
           uname -a
-          echo "=== Disk ==="
-          df -h .
 
-      - name: Typecheck
-        run: npm run typecheck
+  # --- Each remaining job runs independently so a failure tells us
+  # exactly WHICH step is broken via the check_runs API. ----------
+  typecheck:
+    name: typecheck
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
 
-      - name: Verify architecture doc references + live metrics
-        run: npm run verify:arch
+  verify-arch:
+    name: verify:arch
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run verify:arch
+      - run: npm run lint:forbidden
+      - run: npm run lint:imports
+      - run: npm run lint:docs
+      - run: npm run lint:test-coverage
 
-      - name: Lint forbidden patterns (no eval, dangerouslySetInnerHTML, etc.)
-        run: npm run lint:forbidden
+  test:
+    name: test
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
 
-      - name: Check import boundaries (renderer/preload/main isolation)
-        run: npm run lint:imports
-
-      - name: Cross-doc fact consistency
-        run: npm run lint:docs
-
-      - name: Lint test coverage discipline (every service + action has tests)
-        run: npm run lint:test-coverage
-
-      - name: Test
-        run: npm test
-
-      - name: Coverage (clients only — Electron-bound modules excluded)
-        run: npm run test:cov
-
-      - name: Upload coverage summary
-        uses: actions/upload-artifact@v4
+  test-cov:
+    name: test:cov
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:cov
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-summary
           path: coverage/coverage-summary.json
           retention-days: 30
 
-      - name: Build renderer + main + preload
-        run: npm run build:renderer
+  build:
+    name: build (renderer + web)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build:renderer
+      - run: npm run build:web
+      - name: Verify standalone.html size
+        run: |
+          if [ ! -f dist/standalone.html ]; then
+            echo "standalone.html not generated" >&2
+            exit 1
+          fi
+          SIZE=$(stat -c%s dist/standalone.html)
+          echo "standalone.html size: $SIZE bytes"
+          if [ $SIZE -lt 100000 ]; then
+            echo "standalone.html is suspiciously small" >&2
+            exit 1
+          fi
+
+  lint:
+    name: eslint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
