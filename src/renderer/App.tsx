@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { SERVICES, type ServiceId } from './services';
+import { isServiceId } from '../shared/serviceId';
 
 export function App() {
   const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
@@ -7,6 +8,18 @@ export function App() {
 
   useEffect(() => {
     window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);
+  }, []);
+
+  // Loosely-coupled navigation: any page can dispatch a CustomEvent to
+  // jump to another service without prop-drilling a callback. The Home
+  // page uses this for "詳しく編集する →" links.
+  useEffect(() => {
+    function onNavigate(e: Event) {
+      const target = (e as CustomEvent<unknown>).detail;
+      if (isServiceId(target)) setActiveId(target);
+    }
+    window.addEventListener('servicehub:navigate', onNavigate);
+    return () => window.removeEventListener('servicehub:navigate', onNavigate);
   }, []);
 
   const active = SERVICES.find((s) => s.id === activeId)!;

@@ -7,6 +7,7 @@
 // inserts before the SCAFFOLD marker below.
 
 export const SERVICE_IDS = [
+  'home',
   'github',
   'wordpress',
   'atlassian',

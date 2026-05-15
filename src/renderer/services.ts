@@ -1,3 +1,4 @@
+import { HomePage } from './pages/HomePage';
 import { GithubPage } from './pages/GithubPage';
 import { WordPressPage } from './pages/WordPressPage';
 import { AtlassianPage } from './pages/AtlassianPage';
@@ -32,6 +33,13 @@ export interface ServiceDefinition {
 }
 
 export const SERVICES: ServiceDefinition[] = [
+  {
+    id: 'home',
+    label: 'ホーム',
+    icon: 'HM',
+    description: 'ボタン 1 つで成果物を作る・誰でも使えるランチャー',
+    page: HomePage,
+  },
   {
     id: 'github',
     label: 'GitHub',

@@ -17,6 +17,7 @@ import { fetchStocksSnapshot, ACTIONS as STOCKS_ACTIONS } from './stocks';
 import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './business';
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
+import { fetchHomeSnapshot } from './home';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -24,6 +25,7 @@ import type { ServiceId } from '../../shared/serviceId';
 export type { ServiceId };
 
 export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unknown>> = {
+  home: fetchHomeSnapshot,
   github: fetchGithubSnapshot,
   wordpress: fetchWordPressSnapshot,
   atlassian: fetchAtlassianSnapshot,
@@ -71,6 +73,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  saved (security uses it for opt-in HIBP/VT calls), but a missing
  *  token is not an error here. */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'home',
   'skills',
   'security',
   'emotions',

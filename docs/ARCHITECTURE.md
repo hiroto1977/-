@@ -17,12 +17,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 19 | `src/shared/serviceId.ts:9-30` |
+| サービス数 | 20 | `src/shared/serviceId.ts:9-31` |
 | IPC ハンドラ数 | 10 | `src/main/main.ts:99-238` |
-| client モジュール (fetcher + actions) | 19 | `src/main/clients/index.ts:21-69` |
+| client モジュール (fetcher + actions) | 20 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **958** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 990) |
+| ユニットテスト | **962** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 994) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -421,14 +421,15 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 19 services の認証スタイル
+### 3.1 20 services の認証スタイル
 
-`src/shared/serviceId.ts:9-30` の `SERVICE_IDS` が **single source of truth**。
+`src/shared/serviceId.ts:9-31` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
 union を参照する。
 
 | ID | label | 認証 | LOCAL? | OAuth? | actions |
 |---|---|---|:---:|:---:|---|
+| `home` | ホーム (1-click ランチャー) | none | ✅ | | (read-only — templates / teamradar / business の export action を裏で呼び出す UI) |
 | `github` | GitHub | Bearer (PAT) | | | `create-issue` |
 | `wordpress` | WordPress.com | Bearer | | | `create-post` |
 | `atlassian` | Atlassian | Basic + site URL (JSON blob) | | | `create-issue` |

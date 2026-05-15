@@ -3,6 +3,12 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 export const SNAPSHOT = {
+  home: {
+    greeting: 'こんにちは。今日は何を作りましょう?',
+    fetchedAt: '',
+    isMock: true,
+  },
+
   fetchedAt: '2026-05-11T09:30:00Z',
 
   github: {
