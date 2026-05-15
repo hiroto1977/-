@@ -13,5 +13,10 @@ export default defineConfig({
     // global state and the `@vitest-environment jsdom` switch.
     isolate: true,
     pool: 'forks',
+    // Phase E recovery tests do up to 4 PBKDF2-SHA-256 600k iter derivations
+    // per test (initialize → recover → unlock). At ~1s each on CI, that's
+    // 4s minimum; raise from 5s default to give headroom.
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
   },
 });

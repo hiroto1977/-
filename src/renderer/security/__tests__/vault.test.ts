@@ -2,7 +2,8 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
-import { _resetVaultForTests, getVault } from '../vault';
+import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
+import { decodeMnemonic, looksLikeValidMnemonic } from '../mnemonic';
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
 import { webcrypto } from 'node:crypto';
@@ -192,5 +193,174 @@ describe('Vault — singleton', () => {
     const a = getVault();
     const b = getVault();
     expect(a).toBe(b);
+  });
+});
+
+// === Phase E: recovery key tests ============================================
+
+describe('Vault — initialize returns recovery mnemonic', () => {
+  it('returns a 24-word BIP-39 mnemonic on initialization', async () => {
+    const v = getVault();
+    const result = await v.initialize('correct-horse-battery-staple');
+    expect(typeof result.mnemonic).toBe('string');
+    const words = result.mnemonic.split(' ');
+    expect(words).toHaveLength(24);
+    expect(looksLikeValidMnemonic(result.mnemonic)).toBe(true);
+  });
+
+  it('produces a different mnemonic each initialization (cryptographically random)', async () => {
+    const v = getVault();
+    const a = await v.initialize('correct-horse-battery-staple');
+    _resetVaultForTests();
+    await clearIdb();
+    const v2 = getVault();
+    const b = await v2.initialize('different-password-xyz');
+    expect(a.mnemonic).not.toBe(b.mnemonic);
+  });
+
+  it('mnemonic decodes to valid 32-byte entropy', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('correct-horse-battery-staple');
+    const entropy = await decodeMnemonic(mnemonic);
+    expect(entropy).toHaveLength(32);
+  });
+});
+
+describe('Vault — recoverWithMnemonic', () => {
+  it('restores tokens after password loss using the recovery mnemonic', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.setToken('github', 'ghp_secret_xyz');
+    await v.setToken('slack', 'xoxp-abc');
+
+    // Simulate restart + password lost
+    _resetVaultForTests();
+    const v2 = getVault();
+
+    // Wrong password fails as before
+    await expect(v2.unlock('forgot-this-password')).rejects.toThrow(/パスワードが違います/);
+
+    // Recover with mnemonic + set new password
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+
+    // All tokens preserved
+    expect(await v2.getToken('github')).toBe('ghp_secret_xyz');
+    expect(await v2.getToken('slack')).toBe('xoxp-abc');
+
+    // New password works for future unlocks
+    _resetVaultForTests();
+    const v3 = getVault();
+    await v3.unlock('brand-new-password-2026');
+    expect(await v3.getToken('github')).toBe('ghp_secret_xyz');
+  });
+
+  it('rejects wrong mnemonic (different 24 valid words → checksum still passes → KCV fails)', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+
+    // Different but VALID mnemonic (BIP-39 checksum valid for entropy 0xff..ff is "zoo zoo .. vote")
+    const otherMnemonic = ('zoo '.repeat(23) + 'vote').trim();
+    await expect(v2.recoverWithMnemonic(otherMnemonic, 'new-password-1234')).rejects.toThrow(
+      /リカバリーキーが違います/,
+    );
+    expect(mnemonic).not.toBe(otherMnemonic); // sanity
+  });
+
+  it('rejects mnemonic with bad checksum (typo)', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+
+    const words = mnemonic.split(' ');
+    words[10] = words[10] === 'ability' ? 'zoo' : 'ability'; // swap
+    await expect(v2.recoverWithMnemonic(words.join(' '), 'new-password-1234')).rejects.toThrow(
+      /checksum invalid/,
+    );
+  });
+
+  it('rejects mnemonic with unknown word', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+    await expect(
+      v2.recoverWithMnemonic('notaword '.repeat(24).trim(), 'new-password-1234'),
+    ).rejects.toThrow(/unknown word/);
+  });
+
+  it('rejects too-short new password', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+    await expect(v2.recoverWithMnemonic(mnemonic, 'short')).rejects.toThrow(/8 文字以上/);
+  });
+
+  it('rejects oversize new password', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+    await expect(v2.recoverWithMnemonic(mnemonic, 'x'.repeat(257))).rejects.toThrow(/256 字以内/);
+  });
+
+  it('throws when vault is uninitialized', async () => {
+    const v = getVault();
+    await expect(v.recoverWithMnemonic('abandon '.repeat(23) + 'art', 'new-password-1234'))
+      .rejects.toThrow(/未初期化/);
+  });
+
+  it('original password STOPS working after recovery (replaced by new password)', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+    _resetVaultForTests();
+    const v3 = getVault();
+    await expect(v3.unlock('original-password-12345')).rejects.toThrow(/パスワードが違います/);
+  });
+});
+
+describe('Vault — revealRecoveryKey + rotateRecoveryKey (Phase E v1 stubs)', () => {
+  it('revealRecoveryKey throws "not implemented" in v1', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    await expect(v.revealRecoveryKey('original-password-12345')).rejects.toThrow(/未実装/);
+  });
+
+  it('rotateRecoveryKey throws "not implemented" in v1', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    await expect(v.rotateRecoveryKey()).rejects.toThrow(/未実装/);
+  });
+
+  it('NoRecoveryBranchError is exported', () => {
+    expect(typeof NoRecoveryBranchError).toBe('function');
+    const e = new NoRecoveryBranchError();
+    expect(e).toBeInstanceOf(Error);
+    expect(e.name).toBe('NoRecoveryBranchError');
+  });
+});
+
+describe('Vault — wipeAndReset', () => {
+  it('clears all state and transitions back to uninitialized', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    await v.setToken('github', 'ghp_xyz');
+    await v.wipeAndReset();
+    expect(v.isUnlocked()).toBe(false);
+    expect(await v.status()).toBe('uninitialized');
+  });
+
+  it('is idempotent (no-op on already-empty vault)', async () => {
+    const v = getVault();
+    await v.wipeAndReset();
+    expect(await v.status()).toBe('uninitialized');
+    await v.wipeAndReset();
+    expect(await v.status()).toBe('uninitialized');
   });
 });

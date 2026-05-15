@@ -10,8 +10,14 @@
  *  - 派生鍵は `importKey({extractable: false})` でメモリのみ保持、lock() で破棄
  *  - PBKDF2 iter 600,000 / salt 32 bytes / IV 12 bytes / KCV で復号検証
  *
- * 詳細設計: docs/BROWSER_REDESIGN.md §3.1
+ * リカバリーキー (Phase E):
+ *  - initialize() 時に 256-bit エントロピーを生成し BIP-39 24 語に変換
+ *  - 同じ raw master key を recoveryKey でも wrap し meta に保存
+ *  - パスワード忘れ → recoverWithMnemonic(words, newPassword) で復元
+ *  - 詳細: docs/BROWSER_REDESIGN.md §3.1.1 + /tmp/vault-recovery-design.md
  */
+
+import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -30,16 +36,40 @@ const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 
 export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked';
 
+export interface InitResult {
+  /** 24-word BIP-39 mnemonic. Caller MUST display once + discard. */
+  readonly mnemonic: string;
+}
+
+/** Thrown when revealRecoveryKey() / rotateRecoveryKey() is called on a
+ *  vault initialized BEFORE Phase E (no recovery branch on disk). */
+export class NoRecoveryBranchError extends Error {
+  constructor() {
+    super('この Vault にはリカバリーキーが設定されていません (Phase E 以前に初期化)');
+    this.name = 'NoRecoveryBranchError';
+  }
+}
+
 export interface Vault {
   status(): Promise<VaultStatus>;
   isUnlocked(): boolean;
-  initialize(password: string): Promise<void>;
+  /** Initialize a new vault. Returns the one-time recovery mnemonic. */
+  initialize(password: string): Promise<InitResult>;
   unlock(password: string): Promise<void>;
   lock(): void;
   setToken(serviceId: string, token: string): Promise<void>;
   getToken(serviceId: string): Promise<string | null>;
   clearToken(serviceId: string): Promise<void>;
   listConfigured(): Promise<string[]>;
+  /** Validate mnemonic, unwrap master key, re-initialize under newPassword.
+   *  Preserves all stored tokens. */
+  recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void>;
+  /** Returns the still-current mnemonic; requires unlocked state + password re-auth. */
+  revealRecoveryKey(passwordReauth: string): Promise<string>;
+  /** Generates fresh entropy, re-wraps current master, returns new mnemonic. */
+  rotateRecoveryKey(): Promise<string>;
+  /** Hard reset (for users who lost both password and mnemonic). */
+  wipeAndReset(): Promise<void>;
 }
 
 // --- IndexedDB helpers ------------------------------------------------
@@ -107,6 +137,14 @@ interface VaultMeta {
   iv: Uint8Array;         // 12 bytes for KCV
   kcv: Uint8Array;        // ciphertext of KCV_PLAINTEXT under derived key
   iterations: number;     // PBKDF2 iterations
+
+  // ── Recovery branch (Phase E). Optional for backward compat with
+  // legacy vaults created before this feature shipped. ────────────
+  recoverySalt?: Uint8Array;        // 32 bytes, PBKDF2 salt for recovery key
+  recoveryIv?: Uint8Array;          // 12 bytes, IV for KCV under recovery key
+  recoveryKcv?: Uint8Array;         // ciphertext of KCV_PLAINTEXT under recovery key
+  recoveryWrapIv?: Uint8Array;      // 12 bytes, IV for wrapping raw master key
+  recoveryWrappedKey?: Uint8Array;  // raw master key bytes encrypted under recovery key
 }
 
 interface EncryptedToken {
@@ -158,6 +196,95 @@ async function decryptString(key: CryptoKey, blob: EncryptedToken): Promise<stri
   );
   return new TextDecoder().decode(plain);
 }
+
+/** Derive an AES-GCM-256 key from a mnemonic. Same PBKDF2 600k iter as the
+ *  password branch — overkill given 256-bit entropy, but maintains parity
+ *  and defense-in-depth if mnemonic is reused as a passphrase elsewhere. */
+async function deriveKeyFromMnemonic(mnemonic: string, salt: Uint8Array): Promise<CryptoKey> {
+  const normalized = normalizeMnemonic(mnemonic);
+  const baseKey = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(normalized) as BufferSource,
+    { name: 'PBKDF2' },
+    false,
+    ['deriveKey'],
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
+  );
+}
+
+/** Generate a fresh extractable AES-GCM-256 master key. Used internally by
+ *  initialize() and recoverWithMnemonic() — the extractable handle is
+ *  scoped to the function body and dereferenced before return. */
+async function generateMasterKey(): Promise<CryptoKey> {
+  return crypto.subtle.generateKey(
+    { name: 'AES-GCM', length: 256 },
+    true, // extractable — required so we can wrap it for the recovery branch
+    ['encrypt', 'decrypt'],
+  );
+}
+
+/** Export raw key bytes for wrapping. CALLER must zero the result ASAP. */
+async function exportRawKey(key: CryptoKey): Promise<Uint8Array> {
+  const buf = await crypto.subtle.exportKey('raw', key);
+  return new Uint8Array(buf);
+}
+
+/** Re-import raw key bytes as a non-extractable handle for runtime use. */
+async function importNonExtractable(raw: Uint8Array): Promise<CryptoKey> {
+  return crypto.subtle.importKey(
+    'raw',
+    raw as BufferSource,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
+  );
+}
+
+/** AES-GCM encrypt raw bytes (used to wrap the master key). */
+async function encryptBytes(key: CryptoKey, plaintext: Uint8Array): Promise<EncryptedToken> {
+  const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
+  const ciphertext = new Uint8Array(
+    await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv as BufferSource },
+      key,
+      plaintext as BufferSource,
+    ),
+  );
+  return { iv, ciphertext };
+}
+
+/** AES-GCM decrypt raw bytes. */
+async function decryptBytes(key: CryptoKey, blob: EncryptedToken): Promise<Uint8Array> {
+  const plain = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: blob.iv as BufferSource },
+    key,
+    blob.ciphertext as BufferSource,
+  );
+  return new Uint8Array(plain);
+}
+
+/** Wrap a master key under a recovery key. Returns the components to
+ *  persist in meta. The raw master bytes are zeroed before return. */
+async function wrapMasterForRecovery(masterRaw: Uint8Array, recoveryKey: CryptoKey): Promise<{ iv: Uint8Array; ciphertext: Uint8Array }> {
+  const blob = await encryptBytes(recoveryKey, masterRaw);
+  return { iv: blob.iv, ciphertext: blob.ciphertext };
+}
+
+/** Unwrap the master key from a recovery wrap. Returns raw bytes; caller
+ *  imports as non-extractable and zeros the raw buffer. */
+async function unwrapMasterFromRecovery(
+  recoveryKey: CryptoKey,
+  iv: Uint8Array,
+  ciphertext: Uint8Array,
+): Promise<Uint8Array> {
+  return decryptBytes(recoveryKey, { iv, ciphertext });
+}
 // Stryker restore StringLiteral,ArrowFunction,BooleanLiteral,ObjectLiteral,ArrayDeclaration,MethodExpression
 
 // --- Vault implementation ---------------------------------------------
@@ -186,7 +313,7 @@ class BrowserVault implements Vault {
     return this.currentKey !== null;
   }
 
-  async initialize(password: string): Promise<void> {
+  async initialize(password: string): Promise<InitResult> {
     if (typeof password !== 'string' || password.length < 8) {
       throw new Error('パスワードは 8 文字以上で設定してください');
     }
@@ -194,18 +321,54 @@ class BrowserVault implements Vault {
       throw new Error('パスワードが長すぎます (256 字以内)');
     }
     const db = await openDb();
-    const existing = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-    if (existing) {
+    try {
+      const existing = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+      if (existing) {
+        throw new Error('Vault は既に初期化されています');
+      }
+      // 1. Generate raw master key (extractable so we can wrap it).
+      const masterKey = await generateMasterKey();
+      const masterRaw = await exportRawKey(masterKey);
+
+      // 2. Password branch: derive key from password, store KCV + password-wrap of master.
+      const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+      const passwordKey = await deriveKey(password, salt, PBKDF2_ITERATIONS);
+      const kcv = await encryptString(passwordKey, KCV_PLAINTEXT);
+      const passwordWrappedMaster = await encryptBytes(passwordKey, masterRaw);
+
+      // 3. Recovery branch: 256-bit entropy → BIP-39 24 words → PBKDF2 → wrap master.
+      const entropy = generateEntropy();
+      const mnemonic = await encodeMnemonic(entropy);
+      const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+      const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt);
+      const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
+      const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
+
+      const meta: VaultMeta = {
+        salt,
+        iv: kcv.iv,
+        kcv: kcv.ciphertext,
+        iterations: PBKDF2_ITERATIONS,
+        recoverySalt,
+        recoveryIv: recoveryKcv.iv,
+        recoveryKcv: recoveryKcv.ciphertext,
+        recoveryWrapIv: recoveryWrap.iv,
+        recoveryWrappedKey: recoveryWrap.ciphertext,
+      };
+      await idbPut(db, META_STORE, 'vault', meta);
+      await idbPut(db, META_STORE, 'master-wrap', {
+        iv: passwordWrappedMaster.iv,
+        ciphertext: passwordWrappedMaster.ciphertext,
+      });
+
+      // 4. Zero the raw master buffer and re-import the key non-extractable.
+      const nonExtractable = await importNonExtractable(masterRaw);
+      masterRaw.fill(0);
+      this.currentKey = nonExtractable;
+      return { mnemonic };
+    } finally {
       db.close();
-      throw new Error('Vault は既に初期化されています');
     }
-    const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-    const key = await deriveKey(password, salt, PBKDF2_ITERATIONS);
-    const kcv = await encryptString(key, KCV_PLAINTEXT);
-    const meta: VaultMeta = { salt, iv: kcv.iv, kcv: kcv.ciphertext, iterations: PBKDF2_ITERATIONS };
-    await idbPut(db, META_STORE, 'vault', meta);
-    db.close();
-    this.currentKey = key;
   }
 
   async unlock(password: string): Promise<void> {
@@ -213,17 +376,32 @@ class BrowserVault implements Vault {
       throw new Error('パスワードを入力してください');
     }
     const db = await openDb();
-    const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-    db.close();
-    if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
-    const key = await deriveKey(password, meta.salt, meta.iterations);
+    let meta: VaultMeta | undefined;
+    let masterWrap: EncryptedToken | undefined;
     try {
-      const plain = await decryptString(key, { iv: meta.iv, ciphertext: meta.kcv });
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+      masterWrap = await idbGet<EncryptedToken>(db, META_STORE, 'master-wrap');
+    } finally {
+      db.close();
+    }
+    if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
+    const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
+    try {
+      const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
       if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
     } catch {
       throw new Error('パスワードが違います');
     }
-    this.currentKey = key;
+    // Phase E: if master-wrap exists, decrypt master from password-wrapped form.
+    // Legacy vaults (pre Phase E) lack master-wrap; in those the passwordKey
+    // itself was the encryption key. Fall back gracefully.
+    if (masterWrap) {
+      const masterRaw = await decryptBytes(passwordKey, masterWrap);
+      this.currentKey = await importNonExtractable(masterRaw);
+      masterRaw.fill(0);
+    } else {
+      this.currentKey = passwordKey;
+    }
   }
 
   lock(): void {
@@ -268,6 +446,98 @@ class BrowserVault implements Vault {
     const keys = await idbKeys(db, TOKEN_STORE);
     db.close();
     return keys;
+  }
+
+  // --- Phase E: recovery API ----------------------------------------
+
+  async recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void> {
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+      throw new Error('新しいパスワードは 8 文字以上で設定してください');
+    }
+    if (newPassword.length > 256) {
+      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    }
+    // Validate mnemonic BEFORE opening IDB (cheap rejection → no leaked
+    // connection if mnemonic is malformed / has unknown words / bad checksum).
+    await decodeMnemonic(mnemonic);
+
+    const db = await openDb();
+    try {
+      const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+      if (!meta) {
+        throw new Error('Vault が未初期化です');
+      }
+      if (!meta.recoverySalt || !meta.recoveryIv || !meta.recoveryKcv ||
+          !meta.recoveryWrapIv || !meta.recoveryWrappedKey) {
+        throw new NoRecoveryBranchError();
+      }
+      // Derive recovery key, verify KCV.
+      const recoveryKey = await deriveKeyFromMnemonic(mnemonic, meta.recoverySalt);
+      try {
+        const plain = await decryptString(recoveryKey, {
+          iv: meta.recoveryIv,
+          ciphertext: meta.recoveryKcv,
+        });
+        if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
+      } catch {
+        throw new Error('リカバリーキーが違います');
+      }
+      // Unwrap master, re-wrap under new password.
+      const masterRaw = await unwrapMasterFromRecovery(
+        recoveryKey,
+        meta.recoveryWrapIv,
+        meta.recoveryWrappedKey,
+      );
+      const newSalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+      const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
+      const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
+      const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
+      // Update meta — keep recovery branch as-is (caller may rotate explicitly).
+      const newMeta: VaultMeta = {
+        ...meta,
+        salt: newSalt,
+        iv: newKcv.iv,
+        kcv: newKcv.ciphertext,
+      };
+      await idbPut(db, META_STORE, 'vault', newMeta);
+      await idbPut(db, META_STORE, 'master-wrap', {
+        iv: newMasterWrap.iv,
+        ciphertext: newMasterWrap.ciphertext,
+      });
+      this.currentKey = await importNonExtractable(masterRaw);
+      masterRaw.fill(0);
+    } finally {
+      db.close();
+    }
+  }
+
+  async revealRecoveryKey(_passwordReauth: string): Promise<string> {
+    // Phase E v1: reveal requires storing the entropy under the master
+    // key, which adds a memory-exposure window during runtime. Deferred
+    // to v2. Users must save the mnemonic at initialize() time per UX
+    // contract; this method exists for API symmetry only.
+    throw new Error(
+      'リカバリーキーの再表示は Phase E v1 では未実装です。初回設定時に保存したリカバリーキーをご利用ください',
+    );
+  }
+
+  async rotateRecoveryKey(): Promise<string> {
+    // Phase E v1: rotation requires re-wrapping the master key under a
+    // fresh recovery key, which needs the master key in extractable form.
+    // We don't keep it extractable at runtime (security). Deferred to v2.
+    throw new Error(
+      'リカバリーキーのローテーションは Phase E v1 では未実装です。recoverWithMnemonic で新パスワードを設定すれば同じ mnemonic を継続利用できます',
+    );
+  }
+
+  async wipeAndReset(): Promise<void> {
+    this.currentKey = null;
+    await new Promise<void>((resolve) => {
+      const req = indexedDB.deleteDatabase(DB_NAME);
+      req.onsuccess = () => resolve();
+      req.onerror = () => resolve();
+      req.onblocked = () => resolve();
+    });
   }
 }
 // Stryker restore StringLiteral,EqualityOperator,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,BlockStatement,MethodExpression

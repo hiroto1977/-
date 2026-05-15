@@ -429,11 +429,17 @@ proxy → client: 200 OK with envelope
 
 
 
-実装着手前に確認したい点:
+## 9. 質問・確認事項 (解決済み)
 
-1. **マスターパスワード忘れの救済** — リカバリーキー (24 字 mnemonic) を初回生成するか、それとも「忘れたら全データ消去」とするか?
-2. **Proxy デプロイの責務** — Cloudflare Worker のサンプル提供で十分か、それともホスト済みプロキシを別途用意するか?
-3. **Library の保存上限** — 50 MB / 100 件で十分か、それとも quota.usage API で動的に拡張するか?
-4. **Anthropic キーの警告強度** — 「OK」ボタン押下を毎セッション必須にするか、初回のみとするか?
-
-→ 回答次第で Phase A の細部を調整。
+1. ✅ **マスターパスワード忘れの救済** — **Phase E で実装完了**。BIP-39 24-word
+   mnemonic を `initialize()` 時に生成し一度だけ表示。詳細設計は
+   `/tmp/vault-recovery-design.md` (Option A 採択)、実装は
+   `src/renderer/security/{vault.ts, mnemonic.ts, LockScreen.tsx}`。
+   関連: ロック画面の「パスワードを忘れた場合」リンクから
+   `recoverWithMnemonic(mnemonic, newPassword)` を呼ぶフロー。
+2. **Proxy デプロイの責務** — Cloudflare Worker サンプル提供で十分。
+   `docs/PROXY_EXAMPLE.md` に 30 行リファレンスを掲載済。
+3. **Library の保存上限** — 50 MB / 100 件で固定 (現状)。
+   `navigator.storage.estimate` による動的拡張は将来課題。
+4. **Anthropic キーの警告強度** — 初回設定時のみ免責バナーを表示
+   (現実装)。毎セッション要求は UX 過剰と判断。
