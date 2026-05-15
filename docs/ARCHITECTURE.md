@@ -12,7 +12,7 @@ Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラ
 ダッシュボード。22 のサービス (Home / 事業ダッシュボード / チームレーダー /
 Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
 を 1 つのサイドバー UI で一元操作する。`npm run build:web` でビルドした
-standalone HTML (376 KB) はブラウザ単体で動作する。
+standalone HTML (403 KB) はブラウザ単体で動作する。
 
 ### TL;DR
 

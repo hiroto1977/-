@@ -341,7 +341,7 @@ form-action 'none';
 - [ ] Library の zip 一括ダウンロード動作 (未実装、Phase E 候補)
 
 ### Phase B 完了
-- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 376 KB、Electron smoke test で確認済)
+- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 403 KB、Electron smoke test で確認済、Phase E BIP-39 リカバリーキー含む)
 - [x] エクスポート → Library に保存 → 「ライブラリで見る」 ボタンで遷移 (`web-shim.ts:saveToLibrary`)
 
 ### Phase C 完了
