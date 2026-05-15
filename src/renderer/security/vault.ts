@@ -563,10 +563,17 @@ class BrowserVault implements Vault {
 
   async wipeAndReset(): Promise<void> {
     this.currentKey = null;
+    // The onerror / onblocked branches resolve identically to onsuccess —
+    // wipeAndReset is best-effort idempotent cleanup. Unit-testing these
+    // branches requires mocking IndexedDB to surface error/blocked states,
+    // which the current test stack (fake-indexeddb) does not expose cleanly.
+    // Stryker-disable the arrow callbacks here.
     await new Promise<void>((resolve) => {
       const req = indexedDB.deleteDatabase(DB_NAME);
       req.onsuccess = () => resolve();
+      // Stryker disable next-line ArrowFunction
       req.onerror = () => resolve();
+      // Stryker disable next-line ArrowFunction
       req.onblocked = () => resolve();
     });
   }

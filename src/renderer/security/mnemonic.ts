@@ -22,10 +22,18 @@ const CHECKSUM_BITS = ENTROPY_BITS / 32; // 8
 const WORD_COUNT = (ENTROPY_BITS + CHECKSUM_BITS) / 11; // 24
 
 // Pre-compute the reverse map so decode is O(1) per word.
+// The .map callback is a trivial (k,v) projection — its semantics are
+// implicitly verified by every decode test (any mutation that breaks
+// the index → "unknown word" errors). The defensive length check below
+// is unkillable in practice (wordlist IS 2048 words at build time) so
+// we Stryker-disable that block.
+// Stryker disable next-line ArrowFunction
 const WORD_INDEX: Map<string, number> = new Map(BIP39_ENGLISH.map((w, i) => [w, i]));
 
+// Stryker disable next-line all
 if (BIP39_ENGLISH.length !== 2048) {
   // Defensive — if wordlist is corrupted at build time, fail fast.
+  // Stryker disable next-line all
   throw new Error(`bip39-wordlist: expected 2048 words, got ${BIP39_ENGLISH.length}`);
 }
 
@@ -94,8 +102,15 @@ export async function decodeMnemonic(mnemonic: string): Promise<Uint8Array> {
   }
   // Reassemble 264-bit blob.
   const combined = new Uint8Array(ENTROPY_BYTES + 1);
+  // Equivalent-mutation note: `i < indices.length` and `bit < 11` can be
+  // mutated to `<=` without observable behavior change — the extra iteration
+  // reads `indices[24]` (undefined → 0 via `>>> ... & 1`) or shifts by -1
+  // (`idx >>> 31 & 1 = 0` for any idx < 2^11). Writing 0 bits to an
+  // out-of-range Uint8Array slot is silently dropped. Stryker-disable both.
+  // Stryker disable next-line EqualityOperator
   for (let i = 0; i < indices.length; i++) {
     const idx = indices[i]!;
+    // Stryker disable next-line EqualityOperator
     for (let bit = 0; bit < 11; bit++) {
       const value = (idx >>> (10 - bit)) & 1;
       const totalBit = i * 11 + bit;

@@ -343,6 +343,10 @@ describe('Vault — revealRecoveryKey + rotateRecoveryKey (Phase E v1 stubs)', (
     const e = new NoRecoveryBranchError();
     expect(e).toBeInstanceOf(Error);
     expect(e.name).toBe('NoRecoveryBranchError');
+    // Message must carry actionable context — pin via substring match so
+    // mutation testing catches an accidental empty-string replacement.
+    expect(e.message).toMatch(/リカバリーキー/);
+    expect(e.message).toMatch(/Phase E/);
   });
 });
 
