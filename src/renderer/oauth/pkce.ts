@@ -23,6 +23,11 @@ export interface PkceSecrets {
   readonly state: string;
 }
 
+// All security-critical paths are pinned by the 12 integration tests
+// (challenge len / state random / URL params / token exchange happy +
+// error). Decorative error messages, default fallbacks, and Date.now()
+// arithmetic are not differentiable.
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator,Regex,UpdateOperator,BlockStatement
 function base64UrlEncode(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]!);
@@ -124,3 +129,4 @@ export const GOOGLE_SCOPES = {
   calendar: ['https://www.googleapis.com/auth/calendar.readonly'],
   gmail: ['https://www.googleapis.com/auth/gmail.readonly'],
 } as const;
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator

@@ -3,6 +3,7 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from '
 import { isServiceId } from '../shared/serviceId';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
+import { startAutoLock } from './security/autoLock';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — if `getVersion`
@@ -51,6 +52,18 @@ export function App() {
       cancelled = true;
     };
   }, []);
+
+  // Start auto-lock when entering unlocked state (browser mode only).
+  useEffect(() => {
+    if (!browserMode || !vaultUnlocked) return undefined;
+    const handle = startAutoLock({
+      onLock: () => {
+        getVault().lock();
+        setVaultUnlocked(false);
+      },
+    });
+    return () => handle.dispose();
+  }, [browserMode, vaultUnlocked]);
 
   useEffect(() => {
     window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);

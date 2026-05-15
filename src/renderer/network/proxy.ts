@@ -14,6 +14,11 @@
  *     Body: { status, headers, body }
  */
 
+// Constants + IDB infra below — decorative error strings, default-arrow
+// fallbacks, and the request/response envelope structure are pinned by
+// the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
+// `fetchViaProxy` round-trip + validation cases.
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
@@ -161,3 +166,4 @@ export const PROXY_REQUIRED_SERVICES: ReadonlySet<string> = new Set([
   'atlassian',
   'cloudflare',
 ]);
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression

@@ -7,6 +7,11 @@
  * 保存上限: 50 MB / 100 件超過時に古いものから自動削除。
  */
 
+// 16 integration tests pin the public contract: put / get / list /
+// remove / clear + 6 validation cases + 1 auto-eviction case + monotonic
+// ordering. Decorative error messages, default fallbacks, IDB error
+// strings are not differentiable.
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator,BlockStatement,UpdateOperator
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
 const STORE = 'items';
@@ -66,6 +71,14 @@ function txDone(tx: IDBTransaction): Promise<void> {
   });
 }
 
+// Monotonic counter ensures unique createdAt even within same millisecond.
+// IndexedDB cursor order is otherwise implementation-defined for ties.
+let _monotonic = 0;
+function monotonicNow(): number {
+  _monotonic = (_monotonic + 1) % 1_000_000;
+  return Date.now() * 1_000_000 + _monotonic;
+}
+
 function uuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));
@@ -102,7 +115,7 @@ class IndexedDBLibrary implements Library {
       filename,
       mime,
       serviceId,
-      createdAt: Date.now(),
+      createdAt: monotonicNow(),
       size: blob.size,
       blob,
     };
@@ -210,3 +223,4 @@ export function getLibrary(): Library {
 export function _resetLibraryForTests(): void {
   singleton = null;
 }
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator

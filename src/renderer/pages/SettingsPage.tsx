@@ -667,8 +667,14 @@ function GoogleOAuthSection() {
     setBusy(true);
     try {
       const tok = await exchangeGoogleCode(code, verifier, cid, ruri);
-      // 単純化: 同じ access_token を 3 つの Google サービス すべてに保存
-      await getVault().setToken('google-access', tok.accessToken);
+      // 同じ access_token を 3 つの Google サービス id 全てに配布。
+      // これで DrivePage / CalendarPage / GmailPage の `listConfigured()`
+      // チェックが ✓ になり、PKCE 経由の認証が UI に反映される。
+      const v = getVault();
+      await v.setToken('drive', tok.accessToken);
+      await v.setToken('calendar', tok.accessToken);
+      await v.setToken('gmail', tok.accessToken);
+      await v.setToken('google-access', tok.accessToken); // 後方互換 / 単独参照用
       sessionStorage.removeItem('pkce.verifier');
       sessionStorage.removeItem('pkce.state');
       sessionStorage.removeItem('pkce.clientId');

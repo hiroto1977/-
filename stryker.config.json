@@ -15,7 +15,16 @@
     "src/main/clients/stocks.ts",
     "src/main/clients/business.ts",
     "src/main/clients/teamradar.ts",
-    "src/main/clients/templates.ts"
+    "src/main/clients/templates.ts",
+    "src/main/clients/home.ts",
+    "src/main/clients/library.ts",
+    "src/main/clients/settings.ts",
+    "src/renderer/security/vault.ts",
+    "src/renderer/security/autoLock.ts",
+    "src/renderer/network/proxy.ts",
+    "src/renderer/oauth/pkce.ts",
+    "src/renderer/library/library.ts",
+    "src/renderer/fs/fsa.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
