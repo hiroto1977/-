@@ -59,7 +59,7 @@ export const UNPATCHED_OOB_NOTICE =
 /** Allow model identifiers like "llama3.2", "qwen2.5-coder:7b",
  *  "library/mistral:latest". Reject anything with whitespace, `..`,
  *  backslash, scheme markers, or other shell-meaningful characters. */
-const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/\-]{0,127}$/i;
+const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
 
 export function isSafeModelName(name: string): boolean {
   if (typeof name !== 'string') return false;

@@ -59,7 +59,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
 // at first user interaction.
 {
   // Import lazily to avoid widening the circular-import surface.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   const { SERVICE_IDS } = require('../../shared/serviceId') as typeof import('../../shared/serviceId');
   for (const id of SERVICE_IDS) {
     if (!Object.hasOwn(LIVE_FETCHERS, id)) {

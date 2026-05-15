@@ -1,49 +1,139 @@
-# Service Hub (Desktop)
+# Service Hub
 
-Electron + React + TypeScript で構築されたデスクトップダッシュボードのスケルトン。
-サイドバーから 9 つのサービスを切り替えて、各サービスの機能タブを表示します。
+業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
+2 通りの実行形態。
 
-対応サービス:
+## サービス一覧 (22)
 
-- GitHub
-- WordPress.com
-- Atlassian (Jira / Confluence / Compass)
-- Notion
-- Google Drive
-- Google Calendar
-- Gmail
-- Slack
-- Canva
+| カテゴリ | サービス |
+|---|---|
+| **おすすめ** (常時表示) | ホーム / 事業ダッシュボード / チームレーダー / Canva テンプレート / ライブラリ / 設定 |
+| **分析・ツール** | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks |
+| **外部 SaaS 連携** | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva |
 
-## ビルド済み AppImage を使う（最速：Linux x86-64 のみ）
+## 2 通りの動かし方
 
-```bash
-git clone <repo URL>
-cd <repo>
-git checkout claude/add-claude-documentation-F7HIa
-bash scripts/assemble-appimage.sh         # dist-chunks/* を結合 → release/*.AppImage
-"./release/Service Hub-0.1.0.AppImage"    # ダブルクリックでも起動可
-```
+### 1. ブラウザだけで動かす (最速・インストール不要)
 
-SHA256 は `scripts/assemble-appimage.sh` 内の `EXPECTED_SHA256` がチャンク再構成時に自動検証します。
-独立検証する場合は `sha256sum "release/Service Hub-0.1.0.AppImage"` の出力が当該スクリプトの
-`EXPECTED_SHA256` と一致することを確認してください（README にハードコードしないのは、過去に
-リビルドのたびに drift していたため）。
-
-## ソースから動かす（全 OS 対応）
+`dist/standalone.html` (376 KB の単一ファイル) をブラウザでダブルクリックするだけ。
+Node.js も Electron も不要、Chrome / Edge / Safari / Firefox どこでも動きます。
 
 ```bash
 npm install
-npm run dev      # Vite + Electron を開発モードで起動（ホットリロード）
-npm run typecheck
-npm test         # vitest run
-npm run build    # tsc -b + vite build + electron-builder で各 OS のインストーラ生成
+npm run build:web      # → dist/standalone.html を生成
 ```
 
-`npm run build` は macOS では `.dmg`、Windows では `.exe`、Linux では `.AppImage` を `release/` に出します。
+初回起動: マスターパスワード設定 → 設定画面で API キー入力 → 各機能利用可。
+保存ファイルはアプリ内ライブラリ + ブラウザのダウンロードフォルダ。
 
-## ステータス
+詳細は **[docs/BROWSER_REDESIGN.md](docs/BROWSER_REDESIGN.md)** 参照。
 
-各サービスタブには MCP 経由で取得した実データのスナップショットが表示されます。
-ライブフェッチは全 9 サービスで実装済み — ステータスバーの「トークン設定」ボタンから
-PAT / OAuth アクセストークンを保存すると、`Snapshot` バッジが `Live` に切り替わります。
+### 2. ネイティブ Electron アプリとして動かす (全機能・OS 統合)
+
+```bash
+npm install
+npm run dev            # Vite + Electron をホットリロード起動
+npm run build          # tsc -b + vite build + electron-builder で
+                       # macOS .dmg / Windows .exe / Linux .AppImage 生成
+```
+
+## 開発
+
+```bash
+npm run typecheck         # tsc -b --noEmit
+npm test                  # vitest run (1086 件)
+npm run lint              # ESLint v9
+npm run lint:imports      # main/preload/renderer の境界チェック
+npm run lint:forbidden    # 禁止パターン (nodeIntegration: true など) 検出
+npm run lint:test-coverage # 全サービスに test + action がある確認
+npm run lint:docs         # cross-doc 一貫性
+npm run verify:arch       # docs/ARCHITECTURE.md の file:line 参照 + 6 ライブメトリクス
+npm run mutate            # Stryker mutation testing (15 modules, 100%)
+npm run smoke             # xvfb + Electron で 22 ページ smoke screenshot
+```
+
+CI: `.github/workflows/ci.yml` が typecheck + test + build:renderer を push/PR 毎に実行。
+
+## アーキテクチャ概要
+
+### Electron 版 (3 プロセス)
+
+```
+src/main/              ← Electron main process
+  main.ts                IPC handlers (11)
+  secrets.ts             OS Keychain / safeStorage トークン保管
+  oauth.ts               PKCE OAuth (Google)
+  clients/               22 sub-clients (各 service の REST fetcher + actions)
+src/preload/           ← contextBridge bridge
+  preload.ts             window.serviceHub を公開
+src/renderer/          ← React app
+  App.tsx                サイドバー (カテゴリ 3 段折りたたみ)
+  pages/                 22 個のサービスページ
+  components/            StatusBar / DataList / ExportActions
+  hooks/useServiceData   snapshot ↔ live fetch
+  data/snapshot.ts       全 22 サービスの bundled 静的データ
+```
+
+### ブラウザ版の追加レイヤー
+
+```
+src/renderer/
+  main.tsx               先頭で web-shim を import
+  web-shim.ts            window.serviceHub の polyfill
+                         (Vault / Library / Anthropic 直接呼び出し / Proxy)
+  web-templates.ts       テンプレート SVG renderer (browser 版)
+  security/
+    vault.ts             WebCrypto AES-GCM-256 + PBKDF2-SHA-256 600k iter
+    LockScreen.tsx       マスターパスワード入力モーダル
+    autoLock.ts          visibilitychange + idle auto-lock
+  library/
+    library.ts           IndexedDB Blob ストア (50 MB / 100 件)
+  network/
+    proxy.ts             BYO Cloudflare Worker 経由の CORS 回避
+  fs/
+    fsa.ts               File System Access API ラッパー (Chrome/Edge)
+  oauth/
+    pkce.ts              Out-of-band paste PKCE フロー (Google)
+scripts/
+  inline-html.cjs        dist/standalone.html を生成 (CSS/JS inline)
+```
+
+### セキュリティモデル
+
+- **トークン保管**: 全 API キーは Vault で AES-GCM-256 暗号化。マスター
+  パスワードから PBKDF2-SHA-256 600,000 iter で派生鍵を生成し、
+  `extractable: false` でメモリのみ保持。
+- **Auto-lock**: タブが hidden 5 分超 / 操作 idle 15 分でロック。
+- **CORS-blocked API** (Notion / Atlassian / Cloudflare): ユーザー自前の
+  Cloudflare Worker 経由。docs/PROXY_EXAMPLE.md に 30 行リファレンス実装。
+- **OAuth**: file:// 環境では out-of-band paste、hosted では popup callback。
+- **CSP**: standalone HTML は `'unsafe-inline'` (file:// 動作のため)。
+  hosted 版は `sha256` ハッシュベース推奨。
+
+## 品質ゲート
+
+すべて CI で実行:
+
+| ゲート | 状態 |
+|---|---|
+| typecheck (`tsc -b`) | 100% pass |
+| unit tests (`vitest`) | 1086 / 1086 ✅ |
+| eslint | 0 errors |
+| lint:imports | 246 imports, 全境界 OK |
+| lint:forbidden | 8 patterns scanned, 全 clean |
+| lint:test-coverage | 22 services, 全 test 存在 |
+| verify:arch | 170 file:line refs + 6 metrics 一致 |
+| mutation (Stryker) | **100.00%** (15 modules) |
+
+## ドキュメント
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 22 services 認証マトリクス
+- [docs/DESIGN_BLUEPRINT.md](docs/DESIGN_BLUEPRINT.md) — 設計図 (16 セクション)
+- [docs/BROWSER_REDESIGN.md](docs/BROWSER_REDESIGN.md) — ブラウザネイティブ再設計
+- [docs/PROXY_EXAMPLE.md](docs/PROXY_EXAMPLE.md) — Cloudflare Worker サンプル
+- [docs/QUALITY.md](docs/QUALITY.md) — テスト方針 + mutation 履歴
+- [CLAUDE.md](CLAUDE.md) — Claude Code 用プロジェクトガイダンス
+
+## ライセンス
+
+(未設定 — 利用前にリポジトリオーナーにご確認ください)

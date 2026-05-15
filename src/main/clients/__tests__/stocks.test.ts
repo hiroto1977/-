@@ -14,7 +14,6 @@ import {
   portfolioEquity,
   backtest,
   createMockStocksDataSource,
-  fetchStocksSnapshot,
   isSafeSymbol,
   ACTIONS,
   MOCK_TICKERS,
@@ -41,7 +40,6 @@ import {
   unregisterTickerImpl,
   fetchStocksSnapshotImpl,
   type StateDeps,
-  type StocksState,
 } from '../stocks';
 import os from 'node:os';
 import path from 'node:path';
@@ -2028,7 +2026,7 @@ describe('renderDashboardHtml', () => {
         history: [],
       },
     };
-    const html = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
     // equity = 900_000 + 500 * 200 = 1_000_000; pnl = 0 → green branch.
     // Force a winning state: cash 1_000_500, position 500 sh @ 200 →
     // total 1_100_500, pnl = +100_500.
@@ -2837,7 +2835,7 @@ describe('renderDashboardMarkdown', () => {
 
 describe('defaultDashboardMdPath', () => {
   it('ends with /.local/business-hub/data/dashboard.md', () => {
-    expect(defaultDashboardMdPath()).toMatch(/\.local[\/\\]business-hub[\/\\]data[\/\\]dashboard\.md$/);
+    expect(defaultDashboardMdPath()).toMatch(/\.local[/\\]business-hub[/\\]data[/\\]dashboard\.md$/);
   });
 });
 

@@ -70,7 +70,7 @@ async function saveToLibrary(serviceId: string, filename: string, mime: string, 
 }
 
 function notSupportedAlert(): Promise<void> {
-  // eslint-disable-next-line no-alert
+   
   alert(
     'ブラウザ版では使えません。\nファイルはお使いのブラウザのダウンロードフォルダに保存されています。',
   );

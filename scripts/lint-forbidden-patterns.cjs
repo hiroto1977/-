@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 /**
  * Lint the runtime source tree for patterns that are forbidden by the
  * project's security invariants (see docs/ARCHITECTURE.md §8.1):

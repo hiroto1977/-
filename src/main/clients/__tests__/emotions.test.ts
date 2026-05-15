@@ -89,7 +89,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach } from 'vitest';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let tmpDir: string;
 vi.mock('electron', () => ({
   app: {

@@ -36,7 +36,7 @@ async function readStore(): Promise<Record<string, string>> {
     // attacker-grown secrets file OOMing main.
     const stat = await fs.stat(secretsPath());
     if (stat.size > MAX_STORE_SIZE) {
-      // eslint-disable-next-line no-console
+       
       console.error(
         `[secrets] secrets file ${secretsPath()} is ${stat.size} bytes (limit ${MAX_STORE_SIZE}); refusing to load`,
       );
@@ -51,7 +51,7 @@ async function readStore(): Promise<Record<string, string>> {
       // rename was added) would otherwise poison every subsequent token
       // read. Log and treat as empty so the user can re-auth rather
       // than the app becoming permanently unusable.
-      // eslint-disable-next-line no-console
+       
       console.error(
         `[secrets] secrets file at ${secretsPath()} is not valid JSON; treating as empty. ${
           err instanceof Error ? err.message : String(err)
@@ -91,7 +91,7 @@ function encode(value: string): string {
   }
   if (!fallbackWarned) {
     fallbackWarned = true;
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[secrets] SECURITY WARNING: OS keychain (safeStorage) is not available. ' +
         'Tokens will be stored with a plain base64 obfuscation only — NOT real encryption. ' +

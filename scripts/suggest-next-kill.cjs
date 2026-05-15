@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 /**
  * suggest-next-kill — ROI-ranked recommender for the next mutation to kill.
  *

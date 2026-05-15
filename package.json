@@ -31,6 +31,7 @@
     "scaffold": "node scripts/scaffold-service.cjs"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/node": "^22.10.0",
@@ -40,10 +41,12 @@
     "@vitest/coverage-v8": "^2.1.9",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "fake-indexeddb": "^6.2.5",
     "fast-check": "^4.8.0",
     "jsdom": "^29.1.1",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.59.3",
     "vite": "^6.0.3",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",

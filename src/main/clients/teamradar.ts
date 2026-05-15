@@ -278,7 +278,6 @@ export function renderTeamRadarSvg(
   // Concentric grid (rings at each score level 1..5)
   const rings: string[] = [];
   for (let lvl = 1; lvl <= SCORE_MAX; lvl++) {
-    const r = (lvl / SCORE_MAX) * radius;
     const pts: string[] = [];
     for (let i = 0; i < axisCount; i++) {
       const p = axisPoint(cx, cy, radius, i, axisCount, lvl);
