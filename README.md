@@ -122,7 +122,7 @@ scripts/
 | lint:imports | 246 imports, 全境界 OK |
 | lint:forbidden | 8 patterns scanned, 全 clean |
 | lint:test-coverage | 22 services, 全 test 存在 |
-| verify:arch | 171 file:line refs + 6 metrics 一致 |
+| verify:arch | 170 file:line refs + 6 metrics 一致 |
 | mutation (Stryker) | **100.00%** (30 modules) |
 
 ## ドキュメント
