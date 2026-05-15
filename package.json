@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build && electron-builder",
     "build:renderer": "tsc -b && vite build",
+    "build:web": "tsc -b && vite build && node scripts/inline-html.cjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit --force",

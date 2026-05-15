@@ -15,3 +15,5 @@ tmp-screenshots/
 .stryker-incremental.json
 reports/
 coverage/
+dist/standalone.html
+business-hub.html
