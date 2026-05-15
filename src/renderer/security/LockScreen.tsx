@@ -29,6 +29,9 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   const [mnemonicAcknowledged, setMnemonicAcknowledged] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Ephemeral feedback for clipboard / download actions in the mnemonic view.
+  // Tuple of (message, kind). `kind` controls the color.
+  const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'error' } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -107,8 +110,14 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   async function copyMnemonic() {
     try {
       await navigator.clipboard.writeText(mnemonic);
+      setFeedback({ msg: '📋 コピーしました (30 秒後にクリップボードを自動消去)', kind: 'info' });
+      // Best-effort wipe of the clipboard 30 s later. Failures are silent
+      // (e.g. another app overwrote the clipboard, browser permission lost).
+      setTimeout(() => {
+        navigator.clipboard.writeText('').catch(() => {});
+      }, 30_000);
     } catch {
-      // ignore
+      setFeedback({ msg: '⚠ コピーに失敗 — 24 単語を手動で選択・コピーしてください', kind: 'error' });
     }
   }
 
@@ -117,11 +126,17 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'service-hub-recovery-key.txt';
+    // Timestamped + generic filename — avoids "recovery-key.txt" sitting in
+    // Downloads with its purpose printed on the surface.
+    a.download = `service-hub-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setFeedback({
+      msg: '💾 ダウンロードしました — Downloads から速やかにパスワード保管庫または紙へ移してください',
+      kind: 'info',
+    });
   }
 
   if (status === 'loading') {
@@ -261,7 +276,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <button type="button" onClick={copyMnemonic} style={{ ...buttonStyle, flex: 1, background: 'var(--bg-elev)' }}>
               📋 クリップボードにコピー
             </button>
@@ -269,6 +284,19 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               💾 .txt でダウンロード
             </button>
           </div>
+
+          {feedback && (
+            <div
+              style={{
+                fontSize: 11,
+                color: feedback.kind === 'error' ? '#ef4444' : '#22c55e',
+                marginBottom: 12,
+                lineHeight: 1.5,
+              }}
+            >
+              {feedback.msg}
+            </div>
+          )}
 
           <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text)', marginBottom: 16, lineHeight: 1.5 }}>
             <input

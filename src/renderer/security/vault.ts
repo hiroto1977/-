@@ -62,11 +62,23 @@ export interface Vault {
   clearToken(serviceId: string): Promise<void>;
   listConfigured(): Promise<string[]>;
   /** Validate mnemonic, unwrap master key, re-initialize under newPassword.
-   *  Preserves all stored tokens. */
+   *  Preserves all stored tokens.
+   *
+   *  NOTE (offline backup attack): this method overwrites `salt`/`iv`/`kcv`/
+   *  `master-wrap` to invalidate the old password against the live database.
+   *  It does NOT bit-level wipe earlier IndexedDB snapshots — if an attacker
+   *  obtained a copy of the browser profile BEFORE recovery, they can still
+   *  unwrap the master key with the old password on that snapshot. Treat
+   *  password rotation as a forward-only security boundary; for full
+   *  invalidation (e.g. compromised device), call wipeAndReset() instead. */
   recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void>;
-  /** Returns the still-current mnemonic; requires unlocked state + password re-auth. */
+  /** Phase E v1: ALWAYS THROWS. Reserved for v2.
+   *  Users MUST persist the mnemonic returned by initialize() — there is
+   *  no way to retrieve it later. UI code MUST NOT expose a "reveal" button. */
   revealRecoveryKey(passwordReauth: string): Promise<string>;
-  /** Generates fresh entropy, re-wraps current master, returns new mnemonic. */
+  /** Phase E v1: ALWAYS THROWS. Reserved for v2.
+   *  Recovery key rotation is not supported. The mnemonic from initialize()
+   *  is permanent unless the user calls wipeAndReset() and re-initializes. */
   rotateRecoveryKey(): Promise<string>;
   /** Hard reset (for users who lost both password and mnemonic). */
   wipeAndReset(): Promise<void>;
@@ -330,42 +342,49 @@ class BrowserVault implements Vault {
       const masterKey = await generateMasterKey();
       const masterRaw = await exportRawKey(masterKey);
 
-      // 2. Password branch: derive key from password, store KCV + password-wrap of master.
-      const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-      const passwordKey = await deriveKey(password, salt, PBKDF2_ITERATIONS);
-      const kcv = await encryptString(passwordKey, KCV_PLAINTEXT);
-      const passwordWrappedMaster = await encryptBytes(passwordKey, masterRaw);
+      // Defense-in-depth: ensure masterRaw is zeroed on every exit path
+      // (success, exception during wrap, IDB write failure). Without this
+      // wrapper, an exception between exportRawKey and the explicit fill(0)
+      // could leak the 32-byte master key to V8 heap / pagefile.
+      try {
+        // 2. Password branch: derive key from password, store KCV + password-wrap of master.
+        const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+        const passwordKey = await deriveKey(password, salt, PBKDF2_ITERATIONS);
+        const kcv = await encryptString(passwordKey, KCV_PLAINTEXT);
+        const passwordWrappedMaster = await encryptBytes(passwordKey, masterRaw);
 
-      // 3. Recovery branch: 256-bit entropy → BIP-39 24 words → PBKDF2 → wrap master.
-      const entropy = generateEntropy();
-      const mnemonic = await encodeMnemonic(entropy);
-      const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-      const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt);
-      const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
-      const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
+        // 3. Recovery branch: 256-bit entropy → BIP-39 24 words → PBKDF2 → wrap master.
+        const entropy = generateEntropy();
+        const mnemonic = await encodeMnemonic(entropy);
+        const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+        const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt);
+        const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
+        const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
 
-      const meta: VaultMeta = {
-        salt,
-        iv: kcv.iv,
-        kcv: kcv.ciphertext,
-        iterations: PBKDF2_ITERATIONS,
-        recoverySalt,
-        recoveryIv: recoveryKcv.iv,
-        recoveryKcv: recoveryKcv.ciphertext,
-        recoveryWrapIv: recoveryWrap.iv,
-        recoveryWrappedKey: recoveryWrap.ciphertext,
-      };
-      await idbPut(db, META_STORE, 'vault', meta);
-      await idbPut(db, META_STORE, 'master-wrap', {
-        iv: passwordWrappedMaster.iv,
-        ciphertext: passwordWrappedMaster.ciphertext,
-      });
+        const meta: VaultMeta = {
+          salt,
+          iv: kcv.iv,
+          kcv: kcv.ciphertext,
+          iterations: PBKDF2_ITERATIONS,
+          recoverySalt,
+          recoveryIv: recoveryKcv.iv,
+          recoveryKcv: recoveryKcv.ciphertext,
+          recoveryWrapIv: recoveryWrap.iv,
+          recoveryWrappedKey: recoveryWrap.ciphertext,
+        };
+        await idbPut(db, META_STORE, 'vault', meta);
+        await idbPut(db, META_STORE, 'master-wrap', {
+          iv: passwordWrappedMaster.iv,
+          ciphertext: passwordWrappedMaster.ciphertext,
+        });
 
-      // 4. Zero the raw master buffer and re-import the key non-extractable.
-      const nonExtractable = await importNonExtractable(masterRaw);
-      masterRaw.fill(0);
-      this.currentKey = nonExtractable;
-      return { mnemonic };
+        // 4. Re-import the key non-extractable for runtime use.
+        const nonExtractable = await importNonExtractable(masterRaw);
+        this.currentKey = nonExtractable;
+        return { mnemonic };
+      } finally {
+        masterRaw.fill(0);
+      }
     } finally {
       db.close();
     }
@@ -472,6 +491,15 @@ class BrowserVault implements Vault {
         throw new NoRecoveryBranchError();
       }
       // Derive recovery key, verify KCV.
+      //
+      // Timing side-channel note: the catch below collapses two distinct
+      // failure modes — (a) AES-GCM auth-tag rejection in decryptString,
+      // (b) plaintext != KCV_PLAINTEXT after successful decrypt — into the
+      // same surfaced error. WebCrypto throws faster on (a) than (b), so a
+      // remote attacker could in principle distinguish "wrong mnemonic" vs
+      // "right mnemonic but tampered KCV". Acceptable here because the
+      // recovery key has 256-bit entropy (~2^256 brute-force cost),
+      // dominating any timing-channel speedup.
       const recoveryKey = await deriveKeyFromMnemonic(mnemonic, meta.recoverySalt);
       try {
         const plain = await decryptString(recoveryKey, {
@@ -488,24 +516,27 @@ class BrowserVault implements Vault {
         meta.recoveryWrapIv,
         meta.recoveryWrappedKey,
       );
-      const newSalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-      const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
-      const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
-      const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
-      // Update meta — keep recovery branch as-is (caller may rotate explicitly).
-      const newMeta: VaultMeta = {
-        ...meta,
-        salt: newSalt,
-        iv: newKcv.iv,
-        kcv: newKcv.ciphertext,
-      };
-      await idbPut(db, META_STORE, 'vault', newMeta);
-      await idbPut(db, META_STORE, 'master-wrap', {
-        iv: newMasterWrap.iv,
-        ciphertext: newMasterWrap.ciphertext,
-      });
-      this.currentKey = await importNonExtractable(masterRaw);
-      masterRaw.fill(0);
+      try {
+        const newSalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+        const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
+        const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
+        const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
+        // Update meta — keep recovery branch as-is (caller may rotate explicitly).
+        const newMeta: VaultMeta = {
+          ...meta,
+          salt: newSalt,
+          iv: newKcv.iv,
+          kcv: newKcv.ciphertext,
+        };
+        await idbPut(db, META_STORE, 'vault', newMeta);
+        await idbPut(db, META_STORE, 'master-wrap', {
+          iv: newMasterWrap.iv,
+          ciphertext: newMasterWrap.ciphertext,
+        });
+        this.currentKey = await importNonExtractable(masterRaw);
+      } finally {
+        masterRaw.fill(0);
+      }
     } finally {
       db.close();
     }

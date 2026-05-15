@@ -114,9 +114,16 @@ export async function decodeMnemonic(mnemonic: string): Promise<Uint8Array> {
   return entropy;
 }
 
-/** Convenience: lowercase, collapse whitespace. */
+/** Convenience: NFKD normalize → lowercase → collapse whitespace.
+ *
+ *  NFKD folds compatibility characters (full-width "Ａ" → ASCII "a",
+ *  full-width space → ASCII space), which is necessary because Japanese
+ *  IMEs frequently produce full-width input when the user paste / type
+ *  the mnemonic. Without NFKD, "Ａｂａｎｄｏｎ" would fail "unknown word"
+ *  even though the user typed the same 7 letters. BIP-39 English
+ *  wordlist is pure ASCII so NFKD is safe. */
 export function normalizeMnemonic(s: string): string {
-  return s.trim().toLowerCase().replace(/\s+/g, ' ');
+  return s.normalize('NFKD').trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
 /** Wordlist accessor for UI auto-complete / suggestion. */

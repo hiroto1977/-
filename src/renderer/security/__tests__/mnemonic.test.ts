@@ -124,6 +124,14 @@ describe('normalizeMnemonic', () => {
   it('does not modify already-normalized input', () => {
     expect(normalizeMnemonic('a b c')).toBe('a b c');
   });
+
+  it('NFKD-folds full-width characters (Japanese IME safety)', () => {
+    // Full-width "Ａ" (U+FF21) → ASCII "a"; full-width space (U+3000) → ASCII space.
+    // Without NFKD a user pasting from an IME-enabled field would get
+    // "unknown word" errors.
+    expect(normalizeMnemonic('ＡＢＡＮＤＯＮ　abandon')).toBe('abandon abandon');
+    expect(normalizeMnemonic('ａｂａｎｄｏｎ')).toBe('abandon');
+  });
 });
 
 describe('looksLikeValidMnemonic (cheap pre-check)', () => {
