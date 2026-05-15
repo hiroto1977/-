@@ -4,14 +4,14 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/__tests__/**/*.test.ts'],
-    // Isolate each test file in its own worker. Renderer modules that
-    // touch IndexedDB (vault / library / fsa / proxy) install singletons
-    // + global state via fake-indexeddb; sharing module graphs across
-    // files causes flaky cross-file interactions. `isolate: true` is the
-    // vitest default but we set it explicitly for clarity. We stay on
-    // the default thread pool (threads) which works on CI's typically
-    // resource-constrained runners — `forks` is heavier and unnecessary
-    // here.
+    // Isolate each test file in its own forked process. Renderer
+    // modules that touch IndexedDB (vault / library / fsa / proxy)
+    // install singletons + global state via fake-indexeddb. Threads
+    // pool shares the parent V8 isolate; on CI's 2-core runners that
+    // causes cross-file race conditions in the fake IDB queue. Forks
+    // give us a separate process per file, fully isolating fake-IDB
+    // global state and the `@vitest-environment jsdom` switch.
     isolate: true,
+    pool: 'forks',
   },
 });
