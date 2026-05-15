@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { getVault } from '../security/vault';
+import { getProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import {
+  isFsaSupported,
+  pickFolder,
+  loadFolderHandle,
+  clearFolderHandle,
+  ensurePermission,
+} from '../fs/fsa';
+import {
+  buildGoogleAuthUrl,
+  exchangeGoogleCode,
+  generatePkce,
+  GOOGLE_SCOPES,
+} from '../oauth/pkce';
 
 /**
  * Settings — 22 番目のサービス。
@@ -370,9 +384,377 @@ export function SettingsPage() {
         </div>
       </Section>
 
+      <Section title="ネットワーク (Phase D)" count={2}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }}>
+          <ProxySection />
+          <FsaSection />
+        </div>
+      </Section>
+
+      <Section title="Google OAuth (Phase C)" count={1}>
+        <GoogleOAuthSection />
+      </Section>
+
       <Section title="Vault 管理" count={2}>
         <VaultControls onLocked={() => setLocked(true)} />
       </Section>
+    </div>
+  );
+}
+
+// --- Phase D1: BYO Proxy ----------------------------------------------
+
+function ProxySection() {
+  const [cfg, setCfg] = useState<ProxyConfig | null>(null);
+  const [url, setUrl] = useState('');
+  const [secret, setSecret] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function refresh() {
+    const c = await getProxyConfig();
+    setCfg(c);
+    setUrl(c?.url ?? '');
+    setSecret(c?.sharedSecret ?? '');
+  }
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  async function save() {
+    setErr(null);
+    setMsg(null);
+    try {
+      const next: ProxyConfig = secret.length > 0
+        ? { url, sharedSecret: secret }
+        : { url };
+      await setProxyConfig(next);
+      await refresh();
+      setEditing(false);
+      setMsg('プロキシ設定を保存しました');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  async function disconnect() {
+    if (!confirm('プロキシ設定を削除しますか?')) return;
+    await setProxyConfig(null);
+    await refresh();
+    setMsg('プロキシ設定を削除しました');
+  }
+
+  return (
+    <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
+        <div style={{ fontSize: 28 }}>🔀</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>BYO プロキシ</div>
+            {cfg ? (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>設定済み</span>
+            ) : (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
+            )}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            Notion / Atlassian / Cloudflare は CORS でブラウザ直接呼び出し不可。
+            自前で Cloudflare Worker 等を立てて URL を指定すると経由できます。
+            設定方法は docs/PROXY_EXAMPLE.md を参照。
+          </div>
+        </div>
+      </div>
+
+      {editing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://my-worker.example.com/proxy"
+            maxLength={1024}
+            style={pwInput}
+          />
+          <input
+            type="password"
+            value={secret}
+            onChange={(e) => setSecret(e.target.value)}
+            placeholder="共有秘密 (任意・空欄可)"
+            maxLength={256}
+            style={pwInput}
+          />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" onClick={save} style={btn('accent')}>保存</button>
+            <button type="button" onClick={() => { setEditing(false); refresh(); }} style={btn()}>キャンセル</button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {cfg && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', wordBreak: 'break-all', marginBottom: 6, width: '100%' }}>
+              URL: <code>{cfg.url}</code>
+              {cfg.sharedSecret ? ' · 共有秘密あり' : ''}
+            </div>
+          )}
+          <button type="button" onClick={() => setEditing(true)} style={btn(cfg ? undefined : 'accent')}>
+            {cfg ? '変更' : '設定する'}
+          </button>
+          {cfg && (
+            <button type="button" onClick={disconnect} style={{ ...btn(), color: '#ef4444' }}>
+              削除
+            </button>
+          )}
+        </div>
+      )}
+
+      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+    </div>
+  );
+}
+
+// --- Phase D2: File System Access -------------------------------------
+
+function FsaSection() {
+  const supported = isFsaSupported();
+  const [hasHandle, setHasHandle] = useState<boolean | null>(null);
+  const [permission, setPermission] = useState<string>('unknown');
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function refresh() {
+    if (!supported) return;
+    const loaded = await loadFolderHandle();
+    setHasHandle(loaded !== null);
+    setPermission(loaded?.permission ?? 'unknown');
+  }
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  async function pick() {
+    setErr(null);
+    setMsg(null);
+    try {
+      const handle = await pickFolder();
+      if (handle) {
+        setMsg('フォルダを設定しました');
+        await refresh();
+      } else {
+        setMsg('キャンセルされました');
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  async function regrant() {
+    const loaded = await loadFolderHandle();
+    if (!loaded) return;
+    const r = await ensurePermission(loaded.handle);
+    if (r === 'granted') setMsg('権限を再取得しました');
+    else setErr('権限が拒否されました');
+    await refresh();
+  }
+
+  async function disconnect() {
+    if (!confirm('フォルダ連携を解除しますか?')) return;
+    await clearFolderHandle();
+    setMsg('連携を解除しました');
+    await refresh();
+  }
+
+  return (
+    <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
+        <div style={{ fontSize: 28 }}>📁</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>PC のフォルダに同期</div>
+            {!supported && (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>非対応ブラウザ</span>
+            )}
+            {supported && hasHandle && permission === 'granted' && (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>有効</span>
+            )}
+            {supported && hasHandle && permission !== 'granted' && (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>権限再要求</span>
+            )}
+            {supported && !hasHandle && (
+              <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
+            )}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            設定すると、「ライブラリ」に加えて PC の指定フォルダにも自動保存します。
+            Chrome / Edge / Opera のみ対応。Safari / Firefox は非対応のため Library のみ。
+          </div>
+        </div>
+      </div>
+
+      {supported ? (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {hasHandle && permission !== 'granted' && (
+            <button type="button" onClick={regrant} style={btn('accent')}>権限を再取得</button>
+          )}
+          <button type="button" onClick={pick} style={btn(!hasHandle ? 'accent' : undefined)}>
+            {hasHandle ? 'フォルダを変更' : 'フォルダを設定する'}
+          </button>
+          {hasHandle && (
+            <button type="button" onClick={disconnect} style={{ ...btn(), color: '#ef4444' }}>
+              連携解除
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          このブラウザはフォルダ書き込みに対応していません。Library から都度ダウンロードしてご利用ください。
+        </div>
+      )}
+
+      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
+    </div>
+  );
+}
+
+// --- Phase C: PKCE OAuth (Google) -------------------------------------
+
+function GoogleOAuthSection() {
+  const [clientId, setClientId] = useState('');
+  const [redirectUri, setRedirectUri] = useState('urn:ietf:wg:oauth:2.0:oob');
+  const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function start() {
+    setErr(null);
+    setMsg(null);
+    if (clientId.length === 0) {
+      setErr('Google OAuth Client ID を入力してください');
+      return;
+    }
+    const secrets = await generatePkce();
+    // 必須: token exchange まで verifier を保持
+    sessionStorage.setItem('pkce.verifier', secrets.verifier);
+    sessionStorage.setItem('pkce.state', secrets.state);
+    sessionStorage.setItem('pkce.clientId', clientId);
+    sessionStorage.setItem('pkce.redirectUri', redirectUri);
+    const url = buildGoogleAuthUrl(
+      { clientId, scopes: [...GOOGLE_SCOPES.drive, ...GOOGLE_SCOPES.calendar, ...GOOGLE_SCOPES.gmail], redirectUri },
+      secrets,
+    );
+    setAuthUrl(url);
+    window.serviceHub.openExternal(url);
+  }
+
+  async function complete() {
+    setErr(null);
+    setMsg(null);
+    if (code.length === 0) {
+      setErr('Google から受け取った code を貼り付けてください');
+      return;
+    }
+    const verifier = sessionStorage.getItem('pkce.verifier');
+    const cid = sessionStorage.getItem('pkce.clientId');
+    const ruri = sessionStorage.getItem('pkce.redirectUri');
+    if (!verifier || !cid || !ruri) {
+      setErr('セッションが切れました。「認可ページを開く」からやり直してください');
+      return;
+    }
+    setBusy(true);
+    try {
+      const tok = await exchangeGoogleCode(code, verifier, cid, ruri);
+      // 単純化: 同じ access_token を 3 つの Google サービス すべてに保存
+      await getVault().setToken('google-access', tok.accessToken);
+      sessionStorage.removeItem('pkce.verifier');
+      sessionStorage.removeItem('pkce.state');
+      sessionStorage.removeItem('pkce.clientId');
+      sessionStorage.removeItem('pkce.redirectUri');
+      setCode('');
+      setAuthUrl(null);
+      setMsg('Google 連携を有効化しました (Drive / Calendar / Gmail)');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
+        <div style={{ fontSize: 28 }}>🔐</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Google OAuth (Drive / Calendar / Gmail)</div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            PKCE フローで Google の access token を取得します。Cloud Console で OAuth Client ID
+            (Desktop アプリ) を発行し、ID をペーストしてください。認可後に表示される code を
+            この画面に貼り付けて完了。
+          </div>
+        </div>
+      </div>
+
+      {!authUrl && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <input
+            type="text"
+            value={clientId}
+            onChange={(e) => setClientId(e.target.value)}
+            placeholder="xxx.apps.googleusercontent.com"
+            maxLength={256}
+            style={pwInput}
+          />
+          <input
+            type="text"
+            value={redirectUri}
+            onChange={(e) => setRedirectUri(e.target.value)}
+            placeholder="urn:ietf:wg:oauth:2.0:oob (Out-of-band)"
+            maxLength={256}
+            style={pwInput}
+          />
+          <button type="button" onClick={start} style={btn('accent')}>
+            認可ページを開く
+          </button>
+        </div>
+      )}
+
+      {authUrl && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+            Google で認可を完了したら、表示された code をここに貼ってください。
+          </div>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="4/0Ab... (Google から受け取った code)"
+            maxLength={2048}
+            style={pwInput}
+          />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" onClick={complete} disabled={busy} style={btn('accent', busy)}>
+              {busy ? '交換中…' : 'token を取得して保存'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthUrl(null);
+                setCode('');
+                sessionStorage.removeItem('pkce.verifier');
+              }}
+              style={btn()}
+            >
+              キャンセル
+            </button>
+          </div>
+        </div>
+      )}
+
+      {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
+      {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
     </div>
   );
 }

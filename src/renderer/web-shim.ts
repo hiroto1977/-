@@ -30,6 +30,7 @@
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
+import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
 
 const vault = getVault();
 const library = getLibrary();
@@ -47,14 +48,24 @@ function downloadBlob(filename: string, content: string, mime: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Save an artifact to the in-app Library. Failures are non-fatal so the
- *  user still gets the browser download. */
+/** Save an artifact to the in-app Library and optionally to the user's
+ *  picked OS folder (File System Access API). Failures are non-fatal so
+ *  the user still gets the browser download. */
 async function saveToLibrary(serviceId: string, filename: string, mime: string, content: string): Promise<void> {
+  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
   try {
-    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
     await library.put(serviceId, filename, mime, blob);
   } catch {
     // ignore — library is best-effort
+  }
+  // FSA mirror: only attempt if the user has granted a folder.
+  try {
+    const loaded = await loadFolderHandle();
+    if (loaded && loaded.permission === 'granted') {
+      await writeBlobToFolder(loaded.handle, filename, blob);
+    }
+  } catch {
+    // ignore — folder write is best-effort
   }
 }
 

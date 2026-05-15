@@ -372,7 +372,62 @@ form-action 'none';
 
 ---
 
-## 9. 質問・確認事項
+## 8. Phase C / D の詳細問題分析 (実装直前)
+
+### 8.1 Phase C — PKCE OAuth の現実的制約
+
+| 障壁 | 詳細 | 対策 |
+|---|---|---|
+| **file:// で redirect 不可** | OAuth provider は事前登録された redirect_uri が必要。`file:///path/to/...` は登録不可 | Out-of-band paste 方式: 認証 URL を新規タブで開く → ユーザーが手動で code/token を貼る |
+| **state / verifier の保持** | PKCE は code_verifier をブラウザに残しておく必要 | sessionStorage に「OAuth フロー中」フラグ + verifier を保管。完了で破棄 |
+| **refresh token** | Confidential client 専用。PKCE public client は新規 grant 毎に再認証 | 短時間で expire するため受け入れる。expiresAt を Vault に同梱保管 |
+| **token 受け取り後の検証** | UserInfo endpoint で sanity check | `scope` 検証 + 任意の `/userinfo` 呼び出し |
+
+**実装方針:** `src/renderer/oauth/pkce.ts` で PKCE 機能を実装。Settings ページで Google 用フォームを提供:
+1. 「Drive / Calendar / Gmail を有効化する」ボタン押下
+2. 内部で code_verifier 生成、authorize URL を新規タブで開く
+3. ユーザーが Google でログイン → リダイレクト先 (Google の OOB ページ) で表示される code をコピー
+4. アプリのテキストエリアに貼り付け → token 取得 → Vault に保存
+
+ホスト版 (HTTPS) なら popup + postMessage で完全自動化可能だが、本フェーズでは標準フローとして手動 paste を採用。
+
+### 8.2 Phase D1 — BYO Proxy の設計
+
+| 障壁 | 詳細 | 対策 |
+|---|---|---|
+| **CORS ブロック** | Notion / Atlassian / Cloudflare API は `Access-Control-Allow-Origin` を出さない | ユーザーが運営するプロキシ経由 |
+| **プロキシの認可** | URL がバレると誰でも使える | Optional HMAC ヘッダー (`X-Proxy-Auth`) または「自分専用に運営する」前提 |
+| **HTTP メソッド網羅** | GET/POST 以外も必要 | リクエストエンベロープ方式: POST body に `{url, method, headers, body}` |
+| **エラーの透過** | upstream の 4xx/5xx をそのまま返す | proxy が 200 で raw response を JSON 化 (status/headers/bodyText) して返す |
+| **streaming 不要** | 我々の API はすべて一括 JSON | 一括レスポンスで OK |
+
+**プロトコル:**
+```
+client → proxy: POST /
+  Content-Type: application/json
+  body: {"url": "https://api.notion.com/v1/...", "method": "POST",
+         "headers": {...}, "body": "..."}
+
+proxy → upstream: 透過呼び出し
+
+proxy → client: 200 OK with envelope
+  {"status": 200, "headers": {...}, "body": "..."}
+```
+
+リファレンス実装は `docs/PROXY_EXAMPLE.md` に Cloudflare Worker テンプレートを掲載。
+
+### 8.3 Phase D2 — File System Access API
+
+| 障壁 | 詳細 | 対策 |
+|---|---|---|
+| **対応ブラウザ限定** | Chrome/Edge 86+ のみ。Safari/Firefox 不可 | `'showDirectoryPicker' in window` で feature detection + 非対応時は UI 非表示 |
+| **file:// で動作しない** | Chrome は HTTPS 必須 (file:// は許可されている場合あり、要検証) | hosted 版で recommend。file:// では fallback Library のみ |
+| **permission 永続性** | handle は structured-clonable で IndexedDB 保管可。再訪時 `queryPermission` 必要 | 起動時に re-grant 用ボタン表示。`granted` なら自動同期 |
+| **atomic 書き込み** | `createWritable()` + close で OS の atomic rename が走る | デフォルトで安全 |
+
+**実装方針:** `src/renderer/fs/fsa.ts` で feature detection + handle 永続化。Library に保存する際に handle があれば並行書き込み。Settings に「PC のフォルダに同期する」ボタン。
+
+
 
 実装着手前に確認したい点:
 
