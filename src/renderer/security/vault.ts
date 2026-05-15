@@ -157,7 +157,28 @@ interface VaultMeta {
   recoveryKcv?: Uint8Array;         // ciphertext of KCV_PLAINTEXT under recovery key
   recoveryWrapIv?: Uint8Array;      // 12 bytes, IV for wrapping raw master key
   recoveryWrappedKey?: Uint8Array;  // raw master key bytes encrypted under recovery key
+
+  // Recovery-key derivation versioning.
+  //   undefined → legacy (pre-PR#2): PBKDF2 input = normalized mnemonic only
+  //   1         → PBKDF2 input = "service-hub-bip39-recovery-v1:" + normalized mnemonic
+  //
+  // Domain separation prevents a user who happens to reuse the same 24
+  // words as a passphrase elsewhere (e.g. a wallet, an SSH agent) from
+  // accidentally producing the same PBKDF2 output across systems. Old
+  // vaults with no field are unaffected — they keep the v0 derivation
+  // for backward compat.
+  //
+  // NOTE on portability (NIT #5, deferred to v2): VaultMeta currently
+  // uses Uint8Array for byte fields. IndexedDB's structured clone
+  // serializes Uint8Array correctly across all supported browsers, so
+  // there's no observable bug. If we later need to portability-export
+  // the meta blob (e.g. JSON-roundtrip via the file system), v2 should
+  // migrate to ArrayBuffer + a base64 envelope.
+  recoveryVersion?: number;
 }
+
+// Stryker disable next-line StringLiteral
+const RECOVERY_DERIVATION_PREFIX_V1 = 'service-hub-bip39-recovery-v1:';
 
 interface EncryptedToken {
   iv: Uint8Array;
@@ -211,12 +232,25 @@ async function decryptString(key: CryptoKey, blob: EncryptedToken): Promise<stri
 
 /** Derive an AES-GCM-256 key from a mnemonic. Same PBKDF2 600k iter as the
  *  password branch — overkill given 256-bit entropy, but maintains parity
- *  and defense-in-depth if mnemonic is reused as a passphrase elsewhere. */
-async function deriveKeyFromMnemonic(mnemonic: string, salt: Uint8Array): Promise<CryptoKey> {
+ *  and defense-in-depth if mnemonic is reused as a passphrase elsewhere.
+ *
+ *  `version` controls domain separation of the PBKDF2 input:
+ *    - undefined → legacy v0 (pre-PR#2): PBKDF2 input = mnemonic only
+ *    - 1         → PBKDF2 input = RECOVERY_DERIVATION_PREFIX_V1 + mnemonic
+ *
+ *  v1 is the default for new vaults; v0 exists strictly for backward
+ *  compat with vaults persisted before the prefix was introduced.
+ */
+async function deriveKeyFromMnemonic(
+  mnemonic: string,
+  salt: Uint8Array,
+  version: number | undefined,
+): Promise<CryptoKey> {
   const normalized = normalizeMnemonic(mnemonic);
+  const pbkdf2Input = version === 1 ? RECOVERY_DERIVATION_PREFIX_V1 + normalized : normalized;
   const baseKey = await crypto.subtle.importKey(
     'raw',
-    new TextEncoder().encode(normalized) as BufferSource,
+    new TextEncoder().encode(pbkdf2Input) as BufferSource,
     { name: 'PBKDF2' },
     false,
     ['deriveKey'],
@@ -354,10 +388,11 @@ class BrowserVault implements Vault {
         const passwordWrappedMaster = await encryptBytes(passwordKey, masterRaw);
 
         // 3. Recovery branch: 256-bit entropy → BIP-39 24 words → PBKDF2 → wrap master.
+        //    v1 includes a domain-separation prefix in the PBKDF2 input.
         const entropy = generateEntropy();
         const mnemonic = await encodeMnemonic(entropy);
         const recoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-        const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt);
+        const recoveryKey = await deriveKeyFromMnemonic(mnemonic, recoverySalt, 1);
         const recoveryKcv = await encryptString(recoveryKey, KCV_PLAINTEXT);
         const recoveryWrap = await wrapMasterForRecovery(masterRaw, recoveryKey);
 
@@ -371,6 +406,7 @@ class BrowserVault implements Vault {
           recoveryKcv: recoveryKcv.ciphertext,
           recoveryWrapIv: recoveryWrap.iv,
           recoveryWrappedKey: recoveryWrap.ciphertext,
+          recoveryVersion: 1,
         };
         await idbPut(db, META_STORE, 'vault', meta);
         await idbPut(db, META_STORE, 'master-wrap', {
@@ -500,7 +536,13 @@ class BrowserVault implements Vault {
       // "right mnemonic but tampered KCV". Acceptable here because the
       // recovery key has 256-bit entropy (~2^256 brute-force cost),
       // dominating any timing-channel speedup.
-      const recoveryKey = await deriveKeyFromMnemonic(mnemonic, meta.recoverySalt);
+      // Use the same version the vault was initialized under, so legacy
+      // (v0, prefix-less) and new (v1, prefixed) vaults both work.
+      const recoveryKey = await deriveKeyFromMnemonic(
+        mnemonic,
+        meta.recoverySalt,
+        meta.recoveryVersion,
+      );
       try {
         const plain = await decryptString(recoveryKey, {
           iv: meta.recoveryIv,
@@ -563,18 +605,64 @@ class BrowserVault implements Vault {
 
   async wipeAndReset(): Promise<void> {
     this.currentKey = null;
-    // The onerror / onblocked branches resolve identically to onsuccess —
-    // wipeAndReset is best-effort idempotent cleanup. Unit-testing these
-    // branches requires mocking IndexedDB to surface error/blocked states,
-    // which the current test stack (fake-indexeddb) does not expose cleanly.
-    // Stryker-disable the arrow callbacks here.
+    // wipeAndReset is best-effort idempotent cleanup.
+    //
+    // multi-tab edge case (onblocked): if another tab still holds an open
+    // connection to the same DB, IndexedDB cannot delete it and fires
+    // onblocked instead of onsuccess. We resolve the Promise either way
+    // (so the UI doesn't hang forever) but emit console.warn so the user
+    // sees that the wipe was incomplete, and schedule a 500ms post-check
+    // via indexedDB.databases() to confirm the DB really went away once
+    // the other tab releases its handle.
+    //
+    // onerror is similarly best-effort: the typical cause (storage quota
+    // exceeded mid-delete, OS file lock) is recoverable on the next call.
+    //
+    // Unit-testing these branches requires mocking IndexedDB to surface
+    // error/blocked states, which the current test stack (fake-indexeddb)
+    // does not expose cleanly — hence the Stryker-disable on the callbacks.
     await new Promise<void>((resolve) => {
       const req = indexedDB.deleteDatabase(DB_NAME);
       req.onsuccess = () => resolve();
       // Stryker disable next-line ArrowFunction
       req.onerror = () => resolve();
       // Stryker disable next-line ArrowFunction
-      req.onblocked = () => resolve();
+      req.onblocked = () => {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
+            'Close all other tabs of this app and try again.',
+        );
+        // Best-effort follow-up: check whether the DB is actually gone
+        // after a short delay (the other tab might close in the meantime).
+        // We don't await this — wipeAndReset() must return promptly so the
+        // UI can re-render even if cleanup is incomplete.
+        // The entire diagnostic block below runs ONLY on the onblocked
+        // branch, which fake-indexeddb cannot simulate cleanly (see comment
+        // above). Every mutant inside is unreachable from the test suite
+        // by construction → disable Stryker for the whole follow-up block.
+        // Stryker disable all
+        setTimeout(() => {
+          // indexedDB.databases() is a relatively new API; older browsers
+          // (Safari < 14) may not implement it. Guard accordingly.
+          if (typeof indexedDB.databases !== 'function') return;
+          indexedDB
+            .databases()
+            .then((dbs) => {
+              if (dbs.some((d) => d.name === DB_NAME)) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                  '[vault] wipeAndReset: IndexedDB still present after 500ms — ' +
+                    'manual cleanup required (close other tabs / clear site data).',
+                );
+              }
+            })
+            // Swallow — this is purely diagnostic.
+            .catch(() => {});
+        }, 500);
+        // Stryker restore all
+        resolve();
+      };
     });
   }
 }

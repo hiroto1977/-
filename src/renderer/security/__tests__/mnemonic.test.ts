@@ -70,6 +70,47 @@ describe('encodeMnemonic / decodeMnemonic — round-trip', () => {
     expect(words[23]).toBe('vote');
   });
 
+  // Official Trezor BIP-39 vectors (24-word / 32-byte entropy entries only):
+  // https://github.com/trezor/python-mnemonic/blob/master/vectors.json
+  //
+  // Each vector was independently verified against a stand-alone SHA-256 +
+  // wordlist projection (no project code reused) before being hardcoded —
+  // see /tmp/verify-vectors.mjs in the PR description. Hardcoding is
+  // intentional: these vectors serve as a TRIPWIRE that catches any
+  // accidental drift in encodeMnemonic / the wordlist / the checksum byte
+  // selection. A round-trip-only test would happily pass even if the
+  // algorithm were silently wrong.
+  it.each([
+    {
+      label: '0x7f * 32',
+      entropy: '7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f',
+      expected:
+        'legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth title',
+    },
+    {
+      label: '0x80 * 32',
+      entropy: '8080808080808080808080808080808080808080808080808080808080808080',
+      expected:
+        'letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic bless',
+    },
+    {
+      label: 'Trezor sample (68a7…ce7c)',
+      entropy: '68a79eaca2324873eacc50cb9c6eca8cc68ea5d936f98787c60c7ebc74e6ce7c',
+      expected:
+        'hamster diagram private dutch cause delay private meat slide toddler razor book happy fancy gospel tennis maple dilemma loan word shrug inflict delay length',
+    },
+  ])('Trezor vector $label → known mnemonic + clean round-trip', async ({ entropy, expected }) => {
+    const bytes = new Uint8Array(entropy.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(entropy.slice(i * 2, i * 2 + 2), 16);
+    }
+    const got = await encodeMnemonic(bytes);
+    expect(got).toBe(expected);
+    // Round-trip back to the same 32 bytes.
+    const back = await decodeMnemonic(got);
+    expect(Array.from(back)).toEqual(Array.from(bytes));
+  });
+
   it('round-trips random entropy through encode → decode', async () => {
     for (let i = 0; i < 5; i++) {
       const entropy = generateEntropy();

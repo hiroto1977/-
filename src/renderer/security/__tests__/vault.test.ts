@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
 import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
-import { decodeMnemonic, looksLikeValidMnemonic } from '../mnemonic';
+import { decodeMnemonic, encodeMnemonic, looksLikeValidMnemonic } from '../mnemonic';
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
 import { webcrypto } from 'node:crypto';
@@ -260,12 +260,20 @@ describe('Vault — recoverWithMnemonic', () => {
     _resetVaultForTests();
     const v2 = getVault();
 
-    // Different but VALID mnemonic (BIP-39 checksum valid for entropy 0xff..ff is "zoo zoo .. vote")
-    const otherMnemonic = ('zoo '.repeat(23) + 'vote').trim();
+    // Different but VALID mnemonic. Derive dynamically from a fixed
+    // entropy (0xff..ff) so this test is not pinned to a hard-coded
+    // BIP-39 wordlist row — if the underlying wordlist or checksum
+    // algorithm ever changes, the test still constructs a valid foreign
+    // mnemonic instead of silently using a now-invalid one.
+    const otherMnemonic = await encodeMnemonic(new Uint8Array(32).fill(0xff));
+    // Collision guard: an astronomically unlikely overlap between the
+    // randomly generated initialize() mnemonic and our fixed 0xff one
+    // would mask this test (recoverWithMnemonic would succeed). Assert
+    // they differ before exercising the error path.
+    expect(otherMnemonic).not.toBe(mnemonic);
     await expect(v2.recoverWithMnemonic(otherMnemonic, 'new-password-1234')).rejects.toThrow(
       /リカバリーキーが違います/,
     );
-    expect(mnemonic).not.toBe(otherMnemonic); // sanity
   });
 
   it('rejects mnemonic with bad checksum (typo)', async () => {
@@ -347,6 +355,155 @@ describe('Vault — revealRecoveryKey + rotateRecoveryKey (Phase E v1 stubs)', (
     // mutation testing catches an accidental empty-string replacement.
     expect(e.message).toMatch(/リカバリーキー/);
     expect(e.message).toMatch(/Phase E/);
+  });
+});
+
+describe('Vault — recovery key derivation versioning (v1 domain separation)', () => {
+  it('new vault stores recoveryVersion = 1 in meta', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    // Read the persisted meta directly to confirm the version flag.
+    const meta = await new Promise<Record<string, unknown> | undefined>((resolve) => {
+      const req = indexedDB.open('business-hub-vault', 1);
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readonly');
+        const getReq = tx.objectStore('meta').get('vault');
+        getReq.onsuccess = () => {
+          db.close();
+          resolve(getReq.result as Record<string, unknown> | undefined);
+        };
+      };
+    });
+    expect(meta).toBeDefined();
+    expect(meta!.recoveryVersion).toBe(1);
+  });
+
+  it('legacy vault (recoveryVersion = undefined) still recovers via v0 derivation', async () => {
+    // Initialize normally, then strip the recoveryVersion field from
+    // persisted meta + re-wrap the recovery branch under the v0 (no-prefix)
+    // derivation. This simulates a vault created before PR#2 landed.
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.setToken('github', 'ghp_legacy_secret');
+
+    const { normalizeMnemonic } = await import('../mnemonic');
+    const normalized = normalizeMnemonic(mnemonic);
+
+    // Step 1: read the current meta in a read-only transaction.
+    type LegacyMeta = {
+      recoverySalt: Uint8Array;
+      recoveryIv: Uint8Array;
+      recoveryKcv: Uint8Array;
+      recoveryWrapIv: Uint8Array;
+      recoveryWrappedKey: Uint8Array;
+      recoveryVersion?: number;
+      [k: string]: unknown;
+    };
+    const meta = await new Promise<LegacyMeta>((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault', 1);
+      req.onerror = () => reject(req.error);
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readonly');
+        const getReq = tx.objectStore('meta').get('vault');
+        getReq.onsuccess = () => {
+          db.close();
+          resolve(getReq.result as LegacyMeta);
+        };
+        getReq.onerror = () => {
+          db.close();
+          reject(getReq.error);
+        };
+      };
+    });
+
+    // Step 2: do the (async) crypto OUTSIDE any IDB transaction —
+    // fake-indexeddb (and real browsers) deactivate transactions across
+    // microtask boundaries, so we MUST complete all awaits before opening
+    // the write tx.
+    const v1BaseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode('service-hub-bip39-recovery-v1:' + normalized),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const v1Key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      v1BaseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt'],
+    );
+    const masterRaw = new Uint8Array(
+      await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: meta.recoveryWrapIv as BufferSource },
+        v1Key,
+        meta.recoveryWrappedKey as BufferSource,
+      ),
+    );
+
+    const v0BaseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(normalized),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const v0Key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      v0BaseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt'],
+    );
+
+    const newKcvIv = crypto.getRandomValues(new Uint8Array(12));
+    const newKcvCt = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: newKcvIv },
+        v0Key,
+        new TextEncoder().encode('service-hub-v1'),
+      ),
+    );
+    const newWrapIv = crypto.getRandomValues(new Uint8Array(12));
+    const newWrapCt = new Uint8Array(
+      await crypto.subtle.encrypt({ name: 'AES-GCM', iv: newWrapIv }, v0Key, masterRaw),
+    );
+    masterRaw.fill(0);
+
+    const migrated: LegacyMeta = { ...meta };
+    migrated.recoveryIv = newKcvIv;
+    migrated.recoveryKcv = newKcvCt;
+    migrated.recoveryWrapIv = newWrapIv;
+    migrated.recoveryWrappedKey = newWrapCt;
+    delete migrated.recoveryVersion;
+
+    // Step 3: write the migrated meta in a fresh transaction.
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault', 1);
+      req.onerror = () => reject(req.error);
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readwrite');
+        tx.objectStore('meta').put(migrated, 'vault');
+        tx.oncomplete = () => {
+          db.close();
+          resolve();
+        };
+        tx.onerror = () => {
+          db.close();
+          reject(tx.error);
+        };
+      };
+    });
+
+    // Now simulate fresh start + recover via the legacy (v0) derivation.
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+    expect(await v2.getToken('github')).toBe('ghp_legacy_secret');
   });
 });
 
