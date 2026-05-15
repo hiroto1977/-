@@ -221,6 +221,22 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[2001:db8::1]/')).toBe(false); // public documentation range
   });
 
+  it('rejects IPv4-mapped IPv6 in HEX form for ALL private ranges (Round 2 BLOCKING)', () => {
+    // URL normalizes "::ffff:169.254.169.254" → "::ffff:a9fe:a9fe" — earlier
+    // regex only matched ::ffff:7f (loopback). These cases verify that hex
+    // mapped form for AWS metadata, RFC1918, and link-local are blocked.
+    expect(pri('http://[::ffff:a9fe:a9fe]/')).toBe(true); // 169.254.169.254 (AWS IMDS)
+    expect(pri('http://[::ffff:c0a8:1]/')).toBe(true);    // 192.168.0.1
+    expect(pri('http://[::ffff:c0a8:101]/')).toBe(true);  // 192.168.1.1
+    expect(pri('http://[::ffff:a00:1]/')).toBe(true);     // 10.0.0.1
+    expect(pri('http://[::ffff:ac10:1]/')).toBe(true);    // 172.16.0.1
+    expect(pri('http://[::ffff:7f00:1]/')).toBe(true);    // 127.0.0.1 (loopback hex)
+    expect(pri('http://[::ffff:0:0]/')).toBe(true);       // 0.0.0.0
+    expect(pri('http://[::ffff:e000:1]/')).toBe(true);    // 224.0.0.1 (multicast)
+    // Public IPs in mapped form should pass through.
+    expect(pri('http://[::ffff:808:808]/')).toBe(false);  // 8.8.8.8 (Google DNS)
+  });
+
   it('rejects internal hostnames', () => {
     expect(pri('http://localhost/')).toBe(true);
     expect(pri('http://my-printer.local/')).toBe(true);

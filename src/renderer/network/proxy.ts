@@ -190,11 +190,31 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   if (bare.includes(':')) {
     if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
     if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
-    // IPv4-mapped IPv6 loopback. URL normalizes "::ffff:127.0.0.1" to the
-    // hex form "::ffff:7f00:1", so we match both: dotted (in case some
-    // browser preserves the original) and hex (Node / Chromium normalize).
-    if (/^::ffff:127\./i.test(bare)) return true;
-    if (/^::ffff:7f[0-9a-f]{1,2}:/i.test(bare)) return true; // ::ffff:7f00:1 etc — covers 127.0.0.0/8
+    // IPv4-mapped IPv6 — extract the embedded v4 and recurse through the
+    // v4 check. URL normalizes "::ffff:169.254.169.254" to "::ffff:a9fe:a9fe"
+    // (hex), so we must match the hex form to catch RFC1918 / 169.254 / etc
+    // in mapped form. Without this, an attacker could reach AWS/GCP/Azure
+    // metadata via [::ffff:a9fe:a9fe]/.
+    const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+    if (mapped) {
+      const hi = parseInt(mapped[1]!, 16);
+      const lo = parseInt(mapped[2]!, 16);
+      const v4 = `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+      try {
+        return isPrivateOrReservedTarget(new URL(`http://${v4}/`));
+      } catch {
+        return true; // unparseable mapped form → safe default deny
+      }
+    }
+    // Dotted-in-mapped form (rare; some serializers preserve "::ffff:127.0.0.1").
+    const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
+    if (mappedDotted) {
+      try {
+        return isPrivateOrReservedTarget(new URL(`http://${mappedDotted[1]}/`));
+      } catch {
+        return true;
+      }
+    }
     // ULA fc00::/7 → first byte 0xfc or 0xfd.
     if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
     // Link-local fe80::/10.
