@@ -71,12 +71,17 @@ function txDone(tx: IDBTransaction): Promise<void> {
   });
 }
 
-// Monotonic counter ensures unique createdAt even within same millisecond.
-// IndexedDB cursor order is otherwise implementation-defined for ties.
-let _monotonic = 0;
+// Monotonic timestamp: same-or-later than wall clock, but strictly
+// increasing within a single session. Prevents IDB cursor order
+// indeterminism when multiple puts land in the same millisecond.
+//
+// Note: we cannot multiply Date.now() by 1e6 (overflows Number.MAX_SAFE_INTEGER
+// at ~1.7e12 * 1e6 ≈ 1.7e18). Instead, advance lastTs by at least 1.
+let _lastTs = 0;
 function monotonicNow(): number {
-  _monotonic = (_monotonic + 1) % 1_000_000;
-  return Date.now() * 1_000_000 + _monotonic;
+  const now = Date.now();
+  _lastTs = Math.max(_lastTs + 1, now);
+  return _lastTs;
 }
 
 function uuid(): string {
