@@ -19,6 +19,7 @@ import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamrada
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 import { fetchHomeSnapshot } from './home';
 import { fetchLibrarySnapshot } from './library';
+import { fetchSettingsSnapshot } from './settings';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -47,6 +48,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   teamradar: fetchTeamRadarSnapshot,
   templates: fetchTemplatesSnapshot,
   library: fetchLibrarySnapshot,
+  settings: fetchSettingsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -86,6 +88,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'teamradar',
   'templates',
   'library',
+  'settings',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

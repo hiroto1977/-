@@ -17,12 +17,12 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 21 | `src/shared/serviceId.ts:9-32` |
+| サービス数 | 22 | `src/shared/serviceId.ts:9-33` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 21 | `src/main/clients/index.ts:21-69` |
+| client モジュール (fetcher + actions) | 22 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **986** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1018) |
+| ユニットテスト | **990** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1022) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -421,9 +421,9 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 21 services の認証スタイル
+### 3.1 22 services の認証スタイル
 
-`src/shared/serviceId.ts:9-32` の `SERVICE_IDS` が **single source of truth**。
+`src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
 union を参照する。
 
@@ -450,6 +450,7 @@ union を参照する。
 | `teamradar` | チームレーダー (1-5 評価 × 5 軸 × N 人) | none | ✅ | | `save-state`, `export-svg` (Canva ドラッグ&ドロップ可能な SVG 出力) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
+| `settings` | 設定 (API キー管理 + Vault) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:55-65`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。

@@ -19,6 +19,7 @@ import { BusinessPage } from './pages/BusinessPage';
 import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { SettingsPage } from './pages/SettingsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -212,6 +213,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'LB',
     description: '作成したファイルの保管庫 (ブラウザ IndexedDB · 50 MB / 100 件)',
     page: LibraryPage,
+    category: 'featured',
+  },
+  {
+    id: 'settings',
+    label: '設定',
+    icon: 'SE',
+    description: 'API キー / マスターパスワード — AES-GCM-256 で暗号化保管',
+    page: SettingsPage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

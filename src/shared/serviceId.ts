@@ -28,6 +28,7 @@ export const SERVICE_IDS = [
   'teamradar',
   'templates',
   'library',
+  'settings',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

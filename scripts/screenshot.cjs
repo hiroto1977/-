@@ -33,6 +33,7 @@ const SERVICES = [
   'teamradar',
   'templates',
   'library',
+  'settings',
 ];
 
 const OUT_DIR = path.join(__dirname, '..', 'tmp-screenshots');

@@ -13,6 +13,11 @@ export const SNAPSHOT = {
     fetchedAt: '',
     isMock: true,
   },
+  settings: {
+    note: 'API キーはマスターパスワードで暗号化されてブラウザに保管されます',
+    fetchedAt: '',
+    isMock: true,
+  },
 
   fetchedAt: '2026-05-11T09:30:00Z',
 
