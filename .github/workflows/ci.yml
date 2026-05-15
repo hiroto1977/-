@@ -2,42 +2,20 @@ name: ci
 
 on:
   push:
-    branches:
-      - main
-      - 'claude/**'
+    branches: [main, 'claude/**']
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# 3-job hybrid: granularity (per-group red checks) + compute efficiency
+# (3 npm-ci instead of 7). Re-split if a future failure pattern needs
+# finer triage. See docs/BROWSER_REDESIGN.md and PR #2 discussion.
 jobs:
-  # --- Stage 1: build the dependency cache once. -------------------
-  install:
-    name: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - name: Env info
-        run: |
-          node --version
-          npm --version
-          nproc || true
-          free -h || true
-          uname -a
-
-  # --- Each remaining job runs independently so a failure tells us
-  # exactly WHICH step is broken via the check_runs API. ----------
-  typecheck:
-    name: typecheck
-    needs: install
+  quality:
+    name: quality (typecheck + arch + lint)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,27 +25,15 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run typecheck
-
-  verify-arch:
-    name: verify:arch
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
       - run: npm run verify:arch
       - run: npm run lint:forbidden
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:test-coverage
+      - run: npm run lint            # eslint last — slowest of this group
 
   test:
-    name: test
-    needs: install
+    name: test (unit + coverage)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,18 +43,6 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
-
-  test-cov:
-    name: test:cov
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
       - run: npm run test:cov
       - uses: actions/upload-artifact@v4
         if: always()
@@ -99,7 +53,6 @@ jobs:
 
   build:
     name: build (renderer + web)
-    needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -122,16 +75,3 @@ jobs:
             echo "standalone.html is suspiciously small" >&2
             exit 1
           fi
-
-  lint:
-    name: eslint
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
