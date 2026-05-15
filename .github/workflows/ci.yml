@@ -29,6 +29,18 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Debug — env info (diagnose intermittent CI failures)
+        run: |
+          echo "=== Node / npm versions ==="
+          node --version
+          npm --version
+          echo "=== System info ==="
+          nproc || echo "no nproc"
+          free -h || echo "no free"
+          uname -a
+          echo "=== Disk ==="
+          df -h .
+
       - name: Typecheck
         run: npm run typecheck
 
