@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 170 個の `file:line` 参照 + 5 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 171 個の `file:line` 参照 + 5 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。本ドキュメントの記述は
 > commit `ff4f6ab` 時点で **100% コードと一致**。
 
@@ -8,10 +8,11 @@
 
 ## 全体像 (System at a Glance)
 
-Service Hub は **Electron + React + TypeScript** のデスクトップダッシュボード。
-14 のサードパーティ / ローカルサービス (GitHub / WordPress.com / Atlassian / Notion /
-Google Drive・Calendar・Gmail / Slack / Canva / Skills / Security / Cloudflare /
-Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
+Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラウザ単体
+ダッシュボード。22 のサービス (Home / 事業ダッシュボード / チームレーダー /
+Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
+を 1 つのサイドバー UI で一元操作する。`build:web` でビルドした
+`dist/standalone.html` (376 KB) はブラウザ単体で動作する。
 
 ### TL;DR
 
@@ -22,13 +23,13 @@ Emotions / Ollama) を 1 つのサイドバー UI で一元操作する。
 | client モジュール (fetcher + actions) | 22 | `src/main/clients/index.ts:21-69` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1054** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1086) |
+| ユニットテスト | **1067** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1113) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 170 | 自己検証 |
+| `file:line` 参照数 | 171 | 自己検証 |
 
 ### 統合フロー図
 
@@ -41,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[14 React pages<br/>+ useServiceData hook]
+      PAGES[22 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
-      IPC[ipcMain.handle × 9]
-      CLIENTS[14 clients<br/>fetcher + ActionMap]
+      IPC[ipcMain.handle × 11]
+      CLIENTS[22 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -631,12 +632,12 @@ flowchart TB
 graph LR
   subgraph "Developer"
     D1[npm run typecheck]
-    D2[npm test<br/>300 tests, 19 files]
+    D2[npm test<br/>1113 tests, 34 files]
     D3[npm run test:cov]
     D4[npm run mutate<br/>~2min, 9 files in scope]
     D5[npm run mutate:triage]
     D6[npm run quality:report<br/>→ docs/QUALITY.md]
-    D7[npm run verify:arch<br/>145 refs + 5 metrics]
+    D7[npm run verify:arch<br/>171 refs + 6 metrics]
   end
   subgraph "CI (.github/workflows/ci.yml)"
     C1[typecheck]
@@ -899,7 +900,7 @@ classDiagram
   }
 
   class ServiceIdGuard~shared/serviceId.ts~ {
-    +SERVICE_IDS : tuple of 14
+    +SERVICE_IDS : tuple of 22
     +isServiceId(v) : v is ServiceId
   }
 
@@ -976,10 +977,10 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 5 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 171 file:line 参照 + 6 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
-| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (14 services / 9 IPC / 3 OAuth / service list) で一致することを確認 |
+| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
@@ -988,7 +989,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 2. **行範囲**: 行番号がファイルサイズに収まる
 3. **シンボル局所性 (strict)**: doc が名前を挙げているシンボル (例 `isServiceId`) が
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
-4. **ライブメトリクス**: doc の数値 (14 services, 9 IPC, ...) を **実コードから再計算** して一致確認
+4. **ライブメトリクス**: doc の数値 (22 services, 11 IPC, 30 mutated modules, ...) を **実コードから再計算** して一致確認
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
@@ -1012,7 +1013,7 @@ service ID list) を **canonical source から計算** し、doc の記述と比
 
 ```bash
 npm run verify:all
-# → Verified 170 file:line references + 5 metrics  ✅
+# → Verified 171 file:line references + 6 metrics  ✅
 # → Scanned 57 files × 8 patterns                  ✅
 # → 162 imports across 52 files                    ✅
 # → 4 cross-doc facts                              ✅

@@ -63,3 +63,23 @@ jobs:
 
       - name: Build renderer + main + preload
         run: npm run build:renderer
+
+      - name: Build browser standalone (single HTML)
+        run: npm run build:web
+
+      - name: Verify standalone.html size
+        run: |
+          if [ ! -f dist/standalone.html ]; then
+            echo "standalone.html not generated" >&2
+            exit 1
+          fi
+          SIZE=$(stat -c%s dist/standalone.html)
+          echo "standalone.html size: $SIZE bytes"
+          # Fail if it's suspiciously small (< 100 KB) — means inline-html missed something
+          if [ $SIZE -lt 100000 ]; then
+            echo "standalone.html is suspiciously small" >&2
+            exit 1
+          fi
+
+      - name: ESLint
+        run: npm run lint
