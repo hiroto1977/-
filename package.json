@@ -14,7 +14,7 @@
     "typecheck": "tsc -b --noEmit --force",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:cov": "vitest run --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",
+    "test:cov": "vitest run src/main --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",
     "test:property": "vitest run src/main/__tests__/property.test.ts",
     "mutate": "stryker run",
     "mutate:triage": "node scripts/triage-mutations.cjs",
