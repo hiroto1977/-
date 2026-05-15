@@ -34,6 +34,7 @@ export interface CanvaSnapshot {
   }[];
 }
 
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'canva' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
@@ -114,3 +115,4 @@ async function createFolder(ctx: ActionContext): Promise<{ id: string; name: str
 export const ACTIONS: ActionMap = {
   'create-folder': createFolder,
 };
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

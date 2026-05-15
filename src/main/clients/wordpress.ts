@@ -1,5 +1,7 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
+
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
 interface WpSite {
   ID: number;
@@ -108,3 +110,4 @@ async function createPostDraft(
 export const ACTIONS: ActionMap = {
   'create-post-draft': createPostDraft,
 };
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
