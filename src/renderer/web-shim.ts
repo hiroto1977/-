@@ -28,6 +28,9 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
+import { getVault } from './security/vault';
+
+const vault = getVault();
 
 function downloadBlob(filename: string, content: string, mime: string): void {
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
@@ -98,9 +101,19 @@ const shim = {
   revealInFolder: notSupportedAlert,
   openPath: notSupportedAlert,
 
-  setToken: (): Promise<void> => Promise.resolve(),
-  clearToken: (): Promise<void> => Promise.resolve(),
-  listConfigured: (): Promise<string[]> => Promise.resolve([]),
+  setToken: async (serviceId: string, token: string): Promise<void> => {
+    await vault.setToken(serviceId, token);
+  },
+  clearToken: async (serviceId: string): Promise<void> => {
+    await vault.clearToken(serviceId);
+  },
+  listConfigured: async (): Promise<string[]> => {
+    try {
+      return await vault.listConfigured();
+    } catch {
+      return [];
+    }
+  },
 
   fetchSnapshot: <T>(): Promise<ActionResult<T>> =>
     Promise.resolve(err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。')),

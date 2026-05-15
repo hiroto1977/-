@@ -1,6 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
 import { isServiceId } from '../shared/serviceId';
+import { LockScreen } from './security/LockScreen';
+import { getVault } from './security/vault';
+
+// True when the renderer is loaded in a plain browser (no Electron preload).
+// The Electron preload sets serviceHub via contextBridge — if `getVersion`
+// returns the web shim's '0.1.0-web', we're in the browser.
+async function detectBrowserMode(): Promise<boolean> {
+  try {
+    const v = await window.serviceHub.getVersion();
+    return v === '0.1.0-web';
+  } catch {
+    return false;
+  }
+}
 
 const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
   'tools',
@@ -15,6 +29,28 @@ export function App() {
     tools: COLLAPSED_BY_DEFAULT.has('tools'),
     integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
   });
+
+  // Browser-mode lock state. Initially `null` (unknown) — once we detect
+  // browser mode and Vault status, switch to a concrete boolean.
+  const [vaultUnlocked, setVaultUnlocked] = useState<boolean | null>(null);
+  const [browserMode, setBrowserMode] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    detectBrowserMode().then(async (web) => {
+      if (cancelled) return;
+      setBrowserMode(web);
+      if (web) {
+        const s = await getVault().status();
+        if (!cancelled) setVaultUnlocked(s === 'unlocked');
+      } else {
+        setVaultUnlocked(true); // Electron: skip lock screen
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);
@@ -51,6 +87,14 @@ export function App() {
 
   function toggle(cat: ServiceCategory) {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  }
+
+  // Browser-mode + locked → show only the lock screen.
+  if (browserMode === null || vaultUnlocked === null) {
+    return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
+  }
+  if (browserMode && !vaultUnlocked) {
+    return <LockScreen onUnlocked={() => setVaultUnlocked(true)} />;
   }
 
   const active = SERVICES.find((s) => s.id === activeId)!;
