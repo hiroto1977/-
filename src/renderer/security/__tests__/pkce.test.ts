@@ -10,6 +10,8 @@ import {
   exchangeGoogleCode,
   generatePkce,
   GOOGLE_SCOPES,
+  parseGoogleCallback,
+  safeStateEquals,
 } from '../../oauth/pkce';
 
 describe('generatePkce', () => {
@@ -76,6 +78,15 @@ describe('exchangeGoogleCode', () => {
     } as Response;
   }
 
+  const baseArgs = {
+    code: 'the-code',
+    verifier: 'the-verifier',
+    expectedState: 'st-xyz',
+    receivedState: 'st-xyz',
+    clientId: 'cid',
+    redirectUri: 'http://x',
+  };
+
   it('returns access_token + expiresAt on success', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({
@@ -85,7 +96,7 @@ describe('exchangeGoogleCode', () => {
         scope: 'a b',
       }),
     );
-    const result = await exchangeGoogleCode('the-code', 'the-verifier', 'cid', 'http://x', fetchMock);
+    const result = await exchangeGoogleCode(baseArgs, fetchMock);
     expect(result.accessToken).toBe('ya29.access');
     expect(result.refreshToken).toBe('rt-xxx');
     expect(result.scope).toBe('a b');
@@ -97,7 +108,7 @@ describe('exchangeGoogleCode', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({ access_token: 'ya29.x', expires_in: 3600 }),
     );
-    const result = await exchangeGoogleCode('c', 'v', 'cid', 'r', fetchMock);
+    const result = await exchangeGoogleCode(baseArgs, fetchMock);
     expect(result.refreshToken).toBeUndefined();
   });
 
@@ -105,7 +116,7 @@ describe('exchangeGoogleCode', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({ access_token: 'x' }),
     );
-    const r = await exchangeGoogleCode('c', 'v', 'cid', 'r', fetchMock);
+    const r = await exchangeGoogleCode(baseArgs, fetchMock);
     expect(r.expiresAt).toBeGreaterThan(Date.now() + 3500_000);
   });
 
@@ -113,20 +124,88 @@ describe('exchangeGoogleCode', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({ error: 'invalid_grant' }, false, 400),
     );
-    await expect(exchangeGoogleCode('c', 'v', 'cid', 'r', fetchMock)).rejects.toThrow(/token exchange 400/);
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/token exchange 400/);
   });
 
   it('rejects empty / oversize code', async () => {
-    await expect(exchangeGoogleCode('', 'v', 'c', 'r')).rejects.toThrow(/code が不正/);
-    await expect(exchangeGoogleCode('x'.repeat(2049), 'v', 'c', 'r')).rejects.toThrow(/code が不正/);
+    await expect(exchangeGoogleCode({ ...baseArgs, code: '' })).rejects.toThrow(/code が不正/);
+    await expect(exchangeGoogleCode({ ...baseArgs, code: 'x'.repeat(2049) })).rejects.toThrow(/code が不正/);
   });
 
   it('rejects empty verifier', async () => {
-    await expect(exchangeGoogleCode('c', '', 'cid', 'r')).rejects.toThrow(/verifier が不正/);
+    await expect(exchangeGoogleCode({ ...baseArgs, verifier: '' })).rejects.toThrow(/verifier が不正/);
   });
 
   it('throws when response missing access_token', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse({ expires_in: 3600 }));
-    await expect(exchangeGoogleCode('c', 'v', 'cid', 'r', fetchMock)).rejects.toThrow(/missing access_token/);
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/missing access_token/);
+  });
+
+  it('rejects state mismatch (CSRF guard) BEFORE hitting token endpoint', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse({}));
+    await expect(
+      exchangeGoogleCode({ ...baseArgs, receivedState: 'attacker-state' }, fetchMock),
+    ).rejects.toThrow(/state が一致しません/);
+    expect(fetchMock).not.toHaveBeenCalled(); // critical: never POST on mismatch
+  });
+
+  it('rejects empty expectedState / receivedState', async () => {
+    await expect(exchangeGoogleCode({ ...baseArgs, expectedState: '' })).rejects.toThrow(/expectedState/);
+    await expect(exchangeGoogleCode({ ...baseArgs, receivedState: '' })).rejects.toThrow(/receivedState/);
+  });
+});
+
+describe('safeStateEquals (constant-time)', () => {
+  it('returns true for equal strings', () => {
+    expect(safeStateEquals('abc', 'abc')).toBe(true);
+    expect(safeStateEquals('', '')).toBe(true);
+  });
+
+  it('returns false for different content of same length', () => {
+    expect(safeStateEquals('abc', 'abd')).toBe(false);
+  });
+
+  it('returns false for different lengths', () => {
+    expect(safeStateEquals('abc', 'abcd')).toBe(false);
+    expect(safeStateEquals('abc', 'ab')).toBe(false);
+  });
+
+  it('returns false for non-string inputs', () => {
+    expect(safeStateEquals(null as unknown as string, 'abc')).toBe(false);
+    expect(safeStateEquals('abc', undefined as unknown as string)).toBe(false);
+  });
+});
+
+describe('parseGoogleCallback', () => {
+  it('parses a full callback URL', () => {
+    const got = parseGoogleCallback('https://localhost:12345/cb?code=4%2F0AB123&state=st-xyz&scope=a');
+    expect(got).toEqual({ code: '4/0AB123', state: 'st-xyz' });
+  });
+
+  it('parses a query-only string with leading ?', () => {
+    expect(parseGoogleCallback('?code=ab&state=xy')).toEqual({ code: 'ab', state: 'xy' });
+  });
+
+  it('parses a query string without leading ?', () => {
+    expect(parseGoogleCallback('code=ab&state=xy')).toEqual({ code: 'ab', state: 'xy' });
+  });
+
+  it('returns null when state is missing (rejects bare-code paste)', () => {
+    expect(parseGoogleCallback('?code=ab')).toBeNull();
+    expect(parseGoogleCallback('code=ab')).toBeNull();
+  });
+
+  it('returns null when code is missing', () => {
+    expect(parseGoogleCallback('?state=xy')).toBeNull();
+  });
+
+  it('returns null for empty / non-string input', () => {
+    expect(parseGoogleCallback('')).toBeNull();
+    expect(parseGoogleCallback('   ')).toBeNull();
+    expect(parseGoogleCallback(null as unknown as string)).toBeNull();
+  });
+
+  it('returns null for malformed URL', () => {
+    expect(parseGoogleCallback('http://[invalid')).toBeNull();
   });
 });

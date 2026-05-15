@@ -14,6 +14,7 @@ import {
   exchangeGoogleCode,
   generatePkce,
   GOOGLE_SCOPES,
+  parseGoogleCallback,
 } from '../oauth/pkce';
 
 /**
@@ -654,19 +655,36 @@ function GoogleOAuthSection() {
     setErr(null);
     setMsg(null);
     if (code.length === 0) {
-      setErr('Google から受け取った code を貼り付けてください');
+      setErr('Google から受け取った code (またはコールバック URL 全体) を貼り付けてください');
       return;
     }
     const verifier = sessionStorage.getItem('pkce.verifier');
     const cid = sessionStorage.getItem('pkce.clientId');
     const ruri = sessionStorage.getItem('pkce.redirectUri');
-    if (!verifier || !cid || !ruri) {
+    const expectedState = sessionStorage.getItem('pkce.state');
+    if (!verifier || !cid || !ruri || !expectedState) {
       setErr('セッションが切れました。「認可ページを開く」からやり直してください');
+      return;
+    }
+    // Accept either the raw code (legacy, requires manual state below) or
+    // a full callback URL like `https://localhost:.../?code=...&state=...`.
+    // Parsing the full URL is preferred since it carries both fields and
+    // prevents users from silently dropping the state check.
+    const parsed = parseGoogleCallback(code);
+    if (!parsed) {
+      setErr('コールバック URL の形式が不正です。URL 全体 (code= と state= を含む) を貼り付けてください');
       return;
     }
     setBusy(true);
     try {
-      const tok = await exchangeGoogleCode(code, verifier, cid, ruri);
+      const tok = await exchangeGoogleCode({
+        code: parsed.code,
+        verifier,
+        expectedState,
+        receivedState: parsed.state,
+        clientId: cid,
+        redirectUri: ruri,
+      });
       // 同じ access_token を 3 つの Google サービス id 全てに配布。
       // これで DrivePage / CalendarPage / GmailPage の `listConfigured()`
       // チェックが ✓ になり、PKCE 経由の認証が UI に反映される。

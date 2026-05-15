@@ -42,6 +42,50 @@ export async function generatePkce(): Promise<PkceSecrets> {
   return { verifier, challenge, state };
 }
 
+/** Constant-time string equality. Returns false on any mismatch in length
+ *  or content. Equivalent to `oauth.ts:safeStateEquals` (main process); we
+ *  reimplement here because main↔renderer can't share modules. */
+export function safeStateEquals(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+/** Parse a Google OAuth callback URL (or its raw query string) and extract
+ *  `code` + `state`. UI should pass whatever the user pastes (full URL,
+ *  query-string-only, or "code=...&state=..." fragment) and feed the result
+ *  into `exchangeGoogleCode`. */
+export function parseGoogleCallback(input: string): { code: string; state: string } | null {
+  if (typeof input !== 'string') return null;
+  const trimmed = input.trim();
+  if (trimmed.length === 0) return null;
+  // Three accepted forms:
+  //   1. full URL: https://localhost:12345/cb?code=...&state=...
+  //   2. query-only: ?code=...&state=...  or  code=...&state=...
+  //   3. bare "code=4/..." with no state (rejected — state-less callback)
+  let params: URLSearchParams;
+  try {
+    if (/^https?:\/\//i.test(trimmed)) {
+      params = new URL(trimmed).searchParams;
+    } else if (trimmed.includes('=')) {
+      const qs = trimmed.startsWith('?') ? trimmed.slice(1) : trimmed;
+      params = new URLSearchParams(qs);
+    } else {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+  const code = params.get('code');
+  const state = params.get('state');
+  if (!code || !state) return null;
+  return { code, state };
+}
+
 export interface GoogleAuthOptions {
   readonly clientId: string;
   /** スコープ (例: 'https://www.googleapis.com/auth/drive.readonly') */
@@ -72,19 +116,46 @@ export interface TokenResult {
   readonly scope: string;
 }
 
+export interface ExchangeGoogleCodeArgs {
+  /** Authorization code from the callback URL. */
+  readonly code: string;
+  /** PKCE verifier (the one whose SHA-256 was sent as code_challenge). */
+  readonly verifier: string;
+  /** The state we generated and stored before redirecting. */
+  readonly expectedState: string;
+  /** The state value parsed from the callback URL. */
+  readonly receivedState: string;
+  readonly clientId: string;
+  readonly redirectUri: string;
+}
+
+/** Exchange a Google authorization code for an access/refresh token pair.
+ *
+ *  CSRF defense: MUST be passed both the state we issued (`expectedState`)
+ *  and the state echoed back by Google (`receivedState`). Mismatch → throw
+ *  BEFORE the token endpoint POST. This API shape exists because an earlier
+ *  signature that didn't take `state` at all let callers forget the check —
+ *  see Security Audit R2 finding #3. */
 export async function exchangeGoogleCode(
-  code: string,
-  verifier: string,
-  clientId: string,
-  redirectUri: string,
+  args: ExchangeGoogleCodeArgs,
   /** Test seam */
   fetchImpl: typeof fetch = fetch,
 ): Promise<TokenResult> {
+  const { code, verifier, expectedState, receivedState, clientId, redirectUri } = args;
   if (typeof code !== 'string' || code.length === 0 || code.length > 2048) {
     throw new Error('code が不正です');
   }
   if (typeof verifier !== 'string' || verifier.length === 0) {
     throw new Error('verifier が不正です');
+  }
+  if (typeof expectedState !== 'string' || expectedState.length === 0) {
+    throw new Error('expectedState が不正です (CSRF 防止)');
+  }
+  if (typeof receivedState !== 'string' || receivedState.length === 0) {
+    throw new Error('receivedState が不正です (CSRF 防止)');
+  }
+  if (!safeStateEquals(expectedState, receivedState)) {
+    throw new Error('state が一致しません — CSRF 攻撃の可能性があります');
   }
   const params = new URLSearchParams({
     grant_type: 'authorization_code',

@@ -99,6 +99,112 @@ interface ProxyResponseEnvelope {
   body?: string;
 }
 
+/** Stream-read a Response body with a hard byte cap. Throws if the cap
+ *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
+async function readWithCap(res: Response, maxBytes: number): Promise<string> {
+  if (!res.body) {
+    // Some test runtimes (fake fetch mocks) don't expose body. Fall back
+    // to text() but check length post-hoc.
+    const t = await res.text();
+    if (t.length > maxBytes) {
+      throw new Error(`proxy response too large (${t.length} > ${maxBytes} bytes)`);
+    }
+    return t;
+  }
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) {
+      total += value.byteLength;
+      if (total > maxBytes) {
+        reader.cancel().catch(() => {});
+        throw new Error(`proxy response too large (>${maxBytes} bytes)`);
+      }
+      chunks.push(value);
+    }
+  }
+  // Concatenate chunks → decode as UTF-8.
+  const buf = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) {
+    buf.set(c, off);
+    off += c.byteLength;
+  }
+  return new TextDecoder('utf-8').decode(buf);
+}
+
+/** 10 MiB. Defense-in-depth cap on proxy response body to prevent OOM /
+ *  DoS when a compromised or malicious proxy returns a huge payload. */
+export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
+
+/** Block targets that would let the proxy be weaponized as a SSRF
+ *  oracle against the proxy operator's intranet / cloud metadata.
+ *  Note: the proxy itself MUST validate too — this is defense-in-depth
+ *  on the client side, primarily protecting users of a shared proxy
+ *  from a malicious tab tricking the proxy into reaching internal IPs.
+ *
+ *  Blocked patterns:
+ *   - loopback: 127.0.0.0/8, ::1, ::ffff:127.0.0.1, localhost
+ *   - link-local + cloud metadata: 169.254.0.0/16 (AWS/GCP/Azure metadata)
+ *   - RFC1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+ *   - ULA / link-local IPv6: fc00::/7, fe80::/10
+ *   - mDNS / common internal TLDs: .local, .internal, .lan, .home.arpa
+ *   - explicit metadata.* hostnames (GCE / Azure)
+ */
+export function isPrivateOrReservedTarget(parsed: URL): boolean {
+  const host = parsed.hostname.toLowerCase();
+  // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
+  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
+
+  // Loopback / common local hostnames.
+  if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
+
+  // Explicit cloud-metadata hostnames.
+  if (bare === 'metadata.google.internal') return true;
+  if (bare.endsWith('.metadata.cloud.google.com')) return true;
+
+  // mDNS + common internal TLDs.
+  if (bare.endsWith('.local') || bare.endsWith('.internal') ||
+      bare.endsWith('.lan') || bare.endsWith('.home.arpa')) return true;
+
+  // IPv4 literal check.
+  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
+  if (v4) {
+    const oct = v4.slice(1).map(Number);
+    if (oct.some((n) => n < 0 || n > 255 || !Number.isInteger(n))) return true;
+    const [a, b] = oct as [number, number, number, number];
+    if (a === 127) return true;                         // 127.0.0.0/8 loopback
+    if (a === 10) return true;                          // 10.0.0.0/8
+    if (a === 169 && b === 254) return true;            // 169.254/16 link-local + metadata
+    if (a === 172 && b >= 16 && b <= 31) return true;   // 172.16/12
+    if (a === 192 && b === 168) return true;            // 192.168/16
+    if (a === 0) return true;                           // 0.0.0.0/8
+    if (a >= 224) return true;                          // multicast + reserved
+    return false;
+  }
+
+  // IPv6 literal (without brackets here). Cover the common forms.
+  if (bare.includes(':')) {
+    if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
+    if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
+    // IPv4-mapped IPv6 loopback. URL normalizes "::ffff:127.0.0.1" to the
+    // hex form "::ffff:7f00:1", so we match both: dotted (in case some
+    // browser preserves the original) and hex (Node / Chromium normalize).
+    if (/^::ffff:127\./i.test(bare)) return true;
+    if (/^::ffff:7f[0-9a-f]{1,2}:/i.test(bare)) return true; // ::ffff:7f00:1 etc — covers 127.0.0.0/8
+    // ULA fc00::/7 → first byte 0xfc or 0xfd.
+    if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
+    // Link-local fe80::/10.
+    if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
+    return false;
+  }
+
+  return false;
+}
+
 /** プロキシ経由で target URL を呼び出し、Response 互換オブジェクトを返す。 */
 export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: ProxyConfig): Promise<Response> {
   if (typeof targetUrl !== 'string' || targetUrl.length === 0) {
@@ -113,6 +219,9 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   }
   if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
     throw new Error('target URL は http(s) のみ対応');
+  }
+  if (isPrivateOrReservedTarget(parsed)) {
+    throw new Error('target URL の宛先がプライベート / 予約アドレスです (SSRF 防止)');
   }
 
   // Convert RequestInit headers to a flat object.
@@ -152,7 +261,16 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     throw new Error(`proxy ${proxyRes.status}: ${body.slice(0, 200)}`);
   }
 
-  const env = (await proxyRes.json()) as ProxyResponseEnvelope;
+  // Defense-in-depth: cap response body before json() to prevent OOM on
+  // a compromised/malicious proxy returning a huge payload.
+  // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
+  const clHeader = proxyRes.headers?.get?.('content-length');
+  const cl = clHeader ? Number(clHeader) : 0;
+  if (Number.isFinite(cl) && cl > MAX_PROXY_RESPONSE_BYTES) {
+    throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
+  }
+  const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
+  const env = bodyText.length === 0 ? {} as ProxyResponseEnvelope : JSON.parse(bodyText) as ProxyResponseEnvelope;
   // Reconstruct a Response that callers can treat normally.
   return new Response(env.body ?? '', {
     status: typeof env.status === 'number' ? env.status : 502,
