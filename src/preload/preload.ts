@@ -20,6 +20,8 @@ const api = {
   openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
   revealInFolder: (filePath: string): Promise<void> =>
     ipcRenderer.invoke('app:revealInFolder', filePath),
+  openPath: (filePath: string): Promise<void> =>
+    ipcRenderer.invoke('app:openPath', filePath),
 
   setToken: (serviceId: ServiceId, token: string): Promise<void> =>
     ipcRenderer.invoke('secrets:set', serviceId, token),

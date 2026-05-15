@@ -128,6 +128,11 @@ function navigateTo(serviceId: ServiceId) {
   window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
+function basename(p: string): string {
+  const m = p.match(/[^/\\]+$/);
+  return m ? m[0] : p;
+}
+
 function ActionCard({ action }: { action: QuickAction }) {
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
 
@@ -136,12 +141,10 @@ function ActionCard({ action }: { action: QuickAction }) {
     try {
       const r = (await window.serviceHub.invoke(action.service, action.action, action.payload)) as ActionResult;
       if (r.ok) {
-        // Auto-reveal in folder so the user immediately sees the output.
-        try {
-          await window.serviceHub.revealInFolder(r.data.path);
-        } catch {
-          // best-effort; ignore failures (sandbox, etc.)
-        }
+        // Intentionally do NOT auto-open the OS file manager — a sudden
+        // popup is jarring for non-technical users. Instead, surface a
+        // "ファイルを開く" button in the success state so the user
+        // explicitly chooses to view the result.
         setStatus({ kind: 'done', path: r.data.path });
       } else {
         setStatus({ kind: 'error', message: r.message });
@@ -155,10 +158,10 @@ function ActionCard({ action }: { action: QuickAction }) {
     if (action.openUrl) window.serviceHub.openExternal(action.openUrl);
   }
 
-  async function copyPath() {
+  async function openFile() {
     if (status.kind !== 'done') return;
     try {
-      await navigator.clipboard.writeText(status.path);
+      await window.serviceHub.openPath(status.path);
     } catch {
       // ignore
     }
@@ -203,48 +206,49 @@ function ActionCard({ action }: { action: QuickAction }) {
           fontWeight: 600,
         }}
       >
-        {busy ? '出力中…' : status.kind === 'done' ? 'もう一度作る' : 'ボタン 1 つで作る'}
+        {busy ? '作成中…' : status.kind === 'done' ? 'もう一度作る' : '今すぐ作る'}
       </button>
 
       {status.kind === 'done' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ fontSize: 11, color: '#22c55e' }}>
-            ✓ 保存しました。フォルダを開きました。
+            ✓ 出来上がりました!
           </div>
-          <div style={{ fontSize: 10, color: 'var(--text-mute)', wordBreak: 'break-all' }}>
-            {status.path}
+          <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+            ファイル名: {basename(status.path)}
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <button
               type="button"
-              onClick={copyPath}
+              onClick={openFile}
               style={{
-                padding: '3px 8px',
-                background: 'var(--bg)',
+                padding: '4px 10px',
+                background: 'var(--accent)',
                 border: '1px solid var(--border)',
                 borderRadius: 4,
                 color: 'var(--text)',
                 cursor: 'pointer',
-                fontSize: 10,
+                fontSize: 11,
+                fontWeight: 600,
               }}
             >
-              パスをコピー
+              ファイルを開く
             </button>
             {action.openUrl && (
               <button
                 type="button"
                 onClick={openCanva}
                 style={{
-                  padding: '3px 8px',
-                  background: 'var(--accent)',
+                  padding: '4px 10px',
+                  background: 'var(--bg)',
                   border: '1px solid var(--border)',
                   borderRadius: 4,
                   color: 'var(--text)',
                   cursor: 'pointer',
-                  fontSize: 10,
+                  fontSize: 11,
                 }}
               >
-                Canva を開く
+                Canva で編集する
               </button>
             )}
             {action.detailsService && (
@@ -252,16 +256,16 @@ function ActionCard({ action }: { action: QuickAction }) {
                 type="button"
                 onClick={() => navigateTo(action.detailsService!)}
                 style={{
-                  padding: '3px 8px',
+                  padding: '4px 10px',
                   background: 'var(--bg)',
                   border: '1px solid var(--border)',
                   borderRadius: 4,
                   color: 'var(--text-mute)',
                   cursor: 'pointer',
-                  fontSize: 10,
+                  fontSize: 11,
                 }}
               >
-                詳しく編集 →
+                細かく編集する
               </button>
             )}
           </div>
@@ -292,9 +296,9 @@ export function HomePage() {
           {data.greeting}
         </div>
         <div style={{ fontSize: 13, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-          下のカードのどれか 1 つの「ボタン 1 つで作る」を押すだけで、
-          ファイルが自動で保存され、フォルダが開きます。Canva に取り込んで
-          編集したい場合は「Canva を開く」ボタンを続けて押してください。
+          作りたいものを選んで <strong style={{ color: 'var(--text)' }}>「今すぐ作る」</strong> ボタンを押すだけ。
+          数秒で完成します。出来上がったら「ファイルを開く」を押すと内容を確認でき、
+          「Canva で編集する」を押せばブラウザで Canva が開いて、文字や色を変更できます。
         </div>
       </div>
 
@@ -319,14 +323,15 @@ export function HomePage() {
           borderRadius: 8,
           fontSize: 12,
           color: 'var(--text-mute)',
-          lineHeight: 1.6,
+          lineHeight: 1.7,
         }}
       >
-        <strong style={{ color: 'var(--text)' }}>使い方:</strong>{' '}
-        ボタンを押す → 自動で SVG / HTML が生成され、~/.local/business-hub/data/ 配下に
-        保存されます → OS のファイルマネージャがそのフォルダを開きます → 「Canva を開く」を押すと
-        ブラウザで Canva が開くので、ファイルをドラッグ&ドロップで取り込めば編集できます。
-        細かくカスタマイズしたい場合は「詳しく編集 →」を押すと、各機能の専用ページへ移動します。
+        <strong style={{ color: 'var(--text)' }}>かんたん 3 ステップ:</strong>
+        <ol style={{ margin: '6px 0 0', paddingLeft: 20 }}>
+          <li>作りたいもののカードで <strong style={{ color: 'var(--text)' }}>「今すぐ作る」</strong> を押す</li>
+          <li><strong style={{ color: 'var(--text)' }}>「ファイルを開く」</strong> で出来上がりを確認する</li>
+          <li>必要なら <strong style={{ color: 'var(--text)' }}>「Canva で編集する」</strong> を押し、開いた Canva にファイルをドラッグ&ドロップする</li>
+        </ol>
       </div>
     </div>
   );

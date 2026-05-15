@@ -128,6 +128,19 @@ ipcMain.handle('app:revealInFolder', (_e, filePath: unknown) => {
   shell.showItemInFolder(resolved);
 });
 
+ipcMain.handle('app:openPath', async (_e, filePath: unknown) => {
+  // Open a file with the OS default application (SVG → image viewer,
+  // HTML → browser, MD → text editor, etc.). Same path-traversal guard
+  // as revealInFolder above. Returns empty string on success or an error
+  // string on failure (Electron's shell.openPath contract).
+  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return;
+  if (/[\0\r\n]/.test(filePath)) return;
+  const resolved = require('node:path').resolve(filePath);
+  const home = require('node:path').resolve(require('node:os').homedir());
+  if (!resolved.startsWith(home + require('node:path').sep)) return;
+  await shell.openPath(resolved);
+});
+
 ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown) => {
   if (!isServiceId(serviceId) || typeof token !== 'string') return;
   const trimmed = token.trim();

@@ -24,13 +24,25 @@ import type { ServiceId } from '../shared/serviceId';
 
 export type { ServiceId };
 
+/** Sidebar grouping. Pages in `featured` are shown prominently in an
+ *  always-expanded section; `tools` and `integrations` are collapsed by
+ *  default to reduce overwhelm for non-technical users. */
+export type ServiceCategory = 'featured' | 'tools' | 'integrations';
+
 export interface ServiceDefinition {
   id: ServiceId;
   label: string;
   icon: string;
   description: string;
   page: ComponentType;
+  category: ServiceCategory;
 }
+
+export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
+  featured: 'おすすめ',
+  tools: '分析・ツール',
+  integrations: '外部サービス連携',
+};
 
 export const SERVICES: ServiceDefinition[] = [
   {
@@ -39,6 +51,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'HM',
     description: 'ボタン 1 つで成果物を作る・誰でも使えるランチャー',
     page: HomePage,
+    category: 'featured',
   },
   {
     id: 'github',
@@ -46,6 +59,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'GH',
     description: 'リポジトリ・PR・Issue・CI を表示',
     page: GithubPage,
+    category: 'integrations',
   },
   {
     id: 'wordpress',
@@ -53,6 +67,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'WP',
     description: 'サイト一覧・投稿・ドメインを管理',
     page: WordPressPage,
+    category: 'integrations',
   },
   {
     id: 'atlassian',
@@ -60,6 +75,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'AT',
     description: 'Jira / Confluence / Compass',
     page: AtlassianPage,
+    category: 'integrations',
   },
   {
     id: 'notion',
@@ -67,6 +83,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'NO',
     description: 'ページ・データベース・検索',
     page: NotionPage,
+    category: 'integrations',
   },
   {
     id: 'drive',
@@ -74,6 +91,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'GD',
     description: '最近のファイルと検索',
     page: DrivePage,
+    category: 'integrations',
   },
   {
     id: 'calendar',
@@ -81,6 +99,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'GC',
     description: '予定の表示と作成',
     page: CalendarPage,
+    category: 'integrations',
   },
   {
     id: 'gmail',
@@ -88,6 +107,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'GM',
     description: 'スレッド・ドラフト・ラベル',
     page: GmailPage,
+    category: 'integrations',
   },
   {
     id: 'slack',
@@ -95,6 +115,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SL',
     description: 'チャンネル・メッセージ・Canvas',
     page: SlackPage,
+    category: 'integrations',
   },
   {
     id: 'canva',
@@ -102,6 +123,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'CV',
     description: 'デザイン・フォルダ・コメント',
     page: CanvaPage,
+    category: 'integrations',
   },
   {
     id: 'skills',
@@ -109,6 +131,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SK',
     description: '~/.claude/skills 一覧 + Anthropic API 経由で実行',
     page: SkillsPage,
+    category: 'tools',
   },
   {
     id: 'security',
@@ -116,6 +139,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SC',
     description: 'Norton 360 検出 + HIBP 漏洩照会 + VirusTotal URL スキャン',
     page: SecurityPage,
+    category: 'tools',
   },
   {
     id: 'cloudflare',
@@ -123,6 +147,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'CF',
     description: 'ゾーン一覧 + DNS レコード作成 + キャッシュパージ',
     page: CloudflarePage,
+    category: 'tools',
   },
   {
     id: 'emotions',
@@ -130,6 +155,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'EM',
     description: '気分ログ + Claude API でテキスト感情分析',
     page: EmotionsPage,
+    category: 'tools',
   },
   {
     id: 'ollama',
@@ -137,6 +163,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'OL',
     description: 'ローカル LLM (127.0.0.1 固定 + CVE 検知 + 厳格 sanitize)',
     page: OllamaPage,
+    category: 'tools',
   },
   {
     id: 'kpi',
@@ -144,6 +171,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'KP',
     description: '損益分岐点 + 8 指標 × 6 事業 (模擬データ — Phase 6 で API 接続)',
     page: KpiPage,
+    category: 'tools',
   },
   {
     id: 'stocks',
@@ -151,6 +179,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'ST',
     description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — Phase 7 で broker 接続)',
     page: StocksPage,
+    category: 'tools',
   },
   {
     id: 'business',
@@ -158,6 +187,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'BZ',
     description: 'EC / dropship / OEM / blog / affiliate / video / SNS — 10 事業の経営支援 (Phase 6 で実 API 接続)',
     page: BusinessPage,
+    category: 'featured',
   },
   {
     id: 'teamradar',
@@ -165,6 +195,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'TR',
     description: '営業チーム強み・弱みシート — 1-5 評価 × 5 軸 × N 人 + SVG 出力で Canva 連動',
     page: TeamRadarPage,
+    category: 'featured',
   },
   {
     id: 'templates',
@@ -172,6 +203,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'TP',
     description: 'Canva 連動 8 種類のテンプレート — プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書 (SVG 出力)',
     page: TemplatesPage,
+    category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

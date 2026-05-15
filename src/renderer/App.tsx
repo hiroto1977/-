@@ -1,10 +1,20 @@
-import { useEffect, useState } from 'react';
-import { SERVICES, type ServiceId } from './services';
+import { useEffect, useMemo, useState } from 'react';
+import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
 import { isServiceId } from '../shared/serviceId';
+
+const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
+  'tools',
+  'integrations',
+]);
 
 export function App() {
   const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
   const [version, setVersion] = useState<string>('');
+  const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
+    featured: false,
+    tools: COLLAPSED_BY_DEFAULT.has('tools'),
+    integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
+  });
 
   useEffect(() => {
     window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);
@@ -12,15 +22,36 @@ export function App() {
 
   // Loosely-coupled navigation: any page can dispatch a CustomEvent to
   // jump to another service without prop-drilling a callback. The Home
-  // page uses this for "詳しく編集する →" links.
+  // page uses this for "細かく編集する" links.
   useEffect(() => {
     function onNavigate(e: Event) {
       const target = (e as CustomEvent<unknown>).detail;
-      if (isServiceId(target)) setActiveId(target);
+      if (isServiceId(target)) {
+        setActiveId(target);
+        // Auto-expand the group containing the destination so it's visible.
+        const def = SERVICES.find((s) => s.id === target);
+        if (def) {
+          setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+        }
+      }
     }
     window.addEventListener('servicehub:navigate', onNavigate);
     return () => window.removeEventListener('servicehub:navigate', onNavigate);
   }, []);
+
+  const grouped = useMemo(() => {
+    const out: Record<ServiceCategory, typeof SERVICES> = {
+      featured: [],
+      tools: [],
+      integrations: [],
+    };
+    for (const s of SERVICES) out[s.category].push(s);
+    return out;
+  }, []);
+
+  function toggle(cat: ServiceCategory) {
+    setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  }
 
   const active = SERVICES.find((s) => s.id === activeId)!;
   const PageComponent = active.page;
@@ -30,17 +61,48 @@ export function App() {
       <aside className="sidebar">
         <div className="sidebar-header">Service Hub</div>
         <nav className="sidebar-nav">
-          {SERVICES.map((service) => (
-            <button
-              key={service.id}
-              className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
-              data-service-id={service.id}
-              onClick={() => setActiveId(service.id)}
-            >
-              <span className="icon">{service.icon}</span>
-              <span>{service.label}</span>
-            </button>
-          ))}
+          {(['featured', 'tools', 'integrations'] as const).map((cat) => {
+            const items = grouped[cat];
+            if (items.length === 0) return null;
+            const isCollapsed = collapsed[cat];
+            return (
+              <div key={cat} style={{ marginBottom: 6 }}>
+                <button
+                  type="button"
+                  onClick={() => toggle(cat)}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '4px 12px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-mute)',
+                    cursor: 'pointer',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginTop: 4,
+                  }}
+                  aria-expanded={!isCollapsed}
+                >
+                  {isCollapsed ? '▶' : '▼'} {CATEGORY_LABEL[cat]} ({items.length})
+                </button>
+                {!isCollapsed &&
+                  items.map((service) => (
+                    <button
+                      key={service.id}
+                      className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
+                      data-service-id={service.id}
+                      onClick={() => setActiveId(service.id)}
+                    >
+                      <span className="icon">{service.icon}</span>
+                      <span>{service.label}</span>
+                    </button>
+                  ))}
+              </div>
+            );
+          })}
         </nav>
         <div className="sidebar-footer">
           {version ? `v${version}` : 'v0.1.0'} · skeleton
