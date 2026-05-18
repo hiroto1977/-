@@ -1,22 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchDemaeCanSnapshot } from '../demae-can';
 
-describe('fetchDemaeCanSnapshot', () => {
-  it('normalizes the list response', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ items: [{ id: 'x1', name: 'Hello' }] }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const snap = await fetchDemaeCanSnapshot({ token: 'token-123', fetch: fetchMock });
-
-    expect(snap.items).toHaveLength(1);
-    expect(snap.items[0]).toMatchObject({ id: 'x1', name: 'Hello' });
-
-    const init = fetchMock.mock.calls[0]![1] as RequestInit;
-    const headers = init.headers as Record<string, string>;
-    expect(headers.Authorization).toBe('Bearer token-123');
+describe('fetchDemaeCanSnapshot (snapshot-only stub)', () => {
+  it('returns a typed stub without hitting the network', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    const snap = await fetchDemaeCanSnapshot({ token: 'unused', fetch: fetchMock });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(snap.orders).toEqual([]);
+    expect(snap.topAreas).toEqual([]);
+    expect(snap.monthSummary).toEqual({ orders: 0, revenue: 0, avgOrderValue: 0, cancellationRate: 0 });
   });
 });

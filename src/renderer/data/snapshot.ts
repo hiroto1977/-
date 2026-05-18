@@ -374,15 +374,18 @@ export const SNAPSHOT = {
       { id: 're-003', name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, occupied: false, yieldPct: 5.5, purchasePrice: 15_700_000 },
       { id: 're-004', name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, occupied: true, yieldPct: 8.1, purchasePrice: 62_000_000 },
     ] as { id: string; name: string; type: string; monthlyRent: number; occupied: boolean; yieldPct: number; purchasePrice: number }[],
+    // Numbers below are internally consistent: grossRent = 入居中 3 物件
+    // の実家賃 (168+235+420=823k)。空室の大阪 72k は除外して実収入で算出。
+    // netCashflow = 823k − 168k − 412k = 243k。
     monthlyCashflow: {
-      grossRent: 895_000,
+      grossRent: 823_000,
       operatingExpenses: 168_000,
       mortgagePayment: 412_000,
-      netCashflow: 315_000,
+      netCashflow: 243_000,
     },
-    portfolioYield: 6.1,
-    // 3 of 4 物件入居中 (札幌アパート 6 戸はここでは 1 物件としてカウント)。
-    // UI 表記の整合性を保つため by-property で算出。
+    // portfolioYield = 個別 yieldPct の単純平均: (4.8+6.2+5.5+8.1)/4 = 6.15。
+    portfolioYield: 6.15,
+    // by-property 入居率: 3/4 物件入居 (札幌アパート 6 戸は 1 物件としてカウント)。
     occupancyRate: 0.75,
   },
 
@@ -394,8 +397,8 @@ export const SNAPSHOT = {
       { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', units: 1_240_000, navPerUnit: 26_140, valuation: 3_241_360, ytdReturnPct: 14.2 },
       { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', units: 980_000, navPerUnit: 24_870, valuation: 2_437_260, ytdReturnPct: 11.8 },
       { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', units: 520_000, navPerUnit: 13_420, valuation: 697_840, ytdReturnPct: 3.4 },
-      { code: '64311074', name: 'ひふみプラス', userCustom: '積立中', units: 320_000, navPerUnit: 58_240, valuation: 1_863_680, ytdReturnPct: 8.7 },
-    ] as { code: string; name: string; units: number; navPerUnit: number; valuation: number; ytdReturnPct: number; userCustom?: string }[],
+      { code: '64311074', name: 'ひふみプラス', userTag: '積立中', units: 320_000, navPerUnit: 58_240, valuation: 1_863_680, ytdReturnPct: 8.7 },
+    ] as { code: string; name: string; units: number; navPerUnit: number; valuation: number; ytdReturnPct: number; userTag?: string }[],
     portfolio: {
       totalValuation: 8_240_140,
       totalCostBasis: 7_180_000,

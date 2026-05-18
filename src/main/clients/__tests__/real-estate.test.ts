@@ -1,22 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchRealEstateSnapshot } from '../real-estate';
 
-describe('fetchRealEstateSnapshot', () => {
-  it('normalizes the list response', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ items: [{ id: 'x1', name: 'Hello' }] }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const snap = await fetchRealEstateSnapshot({ token: 'token-123', fetch: fetchMock });
-
-    expect(snap.items).toHaveLength(1);
-    expect(snap.items[0]).toMatchObject({ id: 'x1', name: 'Hello' });
-
-    const init = fetchMock.mock.calls[0]![1] as RequestInit;
-    const headers = init.headers as Record<string, string>;
-    expect(headers.Authorization).toBe('Bearer token-123');
+describe('fetchRealEstateSnapshot (snapshot-only stub)', () => {
+  it('returns a typed stub without hitting the network', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    const snap = await fetchRealEstateSnapshot({ token: 'unused', fetch: fetchMock });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(snap.properties).toEqual([]);
+    expect(snap.monthlyCashflow).toEqual({ grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0 });
+    expect(snap.portfolioYield).toBe(0);
+    expect(snap.occupancyRate).toBe(0);
   });
 });

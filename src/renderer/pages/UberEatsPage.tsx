@@ -31,7 +31,7 @@ export function UberEatsPage() {
         </div>
       </Section>
 
-      <Section title="店舗別売上" count={stores.length}>
+      <Section title={`店舗別売上 (上位 ${stores.length} 店舗)`} count={stores.length}>
         <table style={tableStyle}>
           <thead>
             <tr>

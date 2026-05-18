@@ -50,9 +50,9 @@ export function MutualFundsPage() {
                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{h.code}</td>
                 <td style={tdStyle}>
                   {h.name}
-                  {h.userCustom && (
+                  {h.userTag && (
                     <span style={{ marginLeft: 6, padding: '1px 6px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', borderRadius: 3, fontSize: 10 }}>
-                      {h.userCustom}
+                      {h.userTag}
                     </span>
                   )}
                 </td>

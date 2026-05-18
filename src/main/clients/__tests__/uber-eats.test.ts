@@ -1,22 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchUberEatsSnapshot } from '../uber-eats';
 
-describe('fetchUberEatsSnapshot', () => {
-  it('normalizes the list response', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ items: [{ id: 'x1', name: 'Hello' }] }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const snap = await fetchUberEatsSnapshot({ token: 'token-123', fetch: fetchMock });
-
-    expect(snap.items).toHaveLength(1);
-    expect(snap.items[0]).toMatchObject({ id: 'x1', name: 'Hello' });
-
-    const init = fetchMock.mock.calls[0]![1] as RequestInit;
-    const headers = init.headers as Record<string, string>;
-    expect(headers.Authorization).toBe('Bearer token-123');
+describe('fetchUberEatsSnapshot (snapshot-only stub)', () => {
+  it('returns a typed stub without hitting the network', async () => {
+    // The stub does no HTTP — fetch should never be invoked even though
+    // we pass a mock. This guarantees the page never sees fetch_failed
+    // on refresh for snapshot-only services.
+    const fetchMock = vi.fn<typeof fetch>();
+    const snap = await fetchUberEatsSnapshot({ token: 'unused', fetch: fetchMock });
+    expect(fetchMock).not.toHaveBeenCalled();
+    // Shape matches the page's expectation (UberEatsPage destructures
+    // these fields). Empty stores/topItems is OK — the real data lives
+    // in SNAPSHOT.uberEats and the page falls back to it.
+    expect(snap.stores).toEqual([]);
+    expect(snap.topItems).toEqual([]);
+    expect(snap.weekRevenue).toBe(0);
+    expect(snap.weekOrders).toBe(0);
+    expect(snap.avgRating).toBe(0);
   });
 });
