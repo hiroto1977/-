@@ -265,6 +265,26 @@ describe('fetchViaProxy', () => {
     expect(res.status).toBe(200);
   });
 
+  it('handles proxy response where headers exists but lacks a .get() method', async () => {
+    // Non-standard / shimmed Response where `headers` is a plain object
+    // without `get`. The second `?.` in `proxyRes.headers?.get?.(...)`
+    // must guard this — otherwise we'd crash on `headers.get is not a
+    // function`. Kills the OptionalChaining mutation on `.get?.`.
+    const envBody = JSON.stringify({ status: 200, body: '{"ok":true}' });
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: {} as unknown as Headers, // truthy but `.get` undefined
+      body: null,
+      async text() { return envBody; },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const res = await fetchViaProxy(
+      'https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' },
+    );
+    expect(res.status).toBe(200);
+  });
+
   it('propagates proxy error response', async () => {
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
       ok: false,
