@@ -159,6 +159,28 @@ describe('fetchViaProxy', () => {
     }
   });
 
+  it('tolerates malformed negative Content-Length and still reads body (Round 2 SHOULD-FIX S-2)', async () => {
+    // A buggy / malicious proxy returns Content-Length: -1. The previous gate
+    // (`cl > MAX_PROXY_RESPONSE_BYTES`) accepted it because -1 is finite and
+    // smaller than the cap; the stream-level `readWithCap` is then the
+    // ultimate authority. Verify the call still succeeds end-to-end.
+    const envBody = JSON.stringify({ status: 200, body: '{"ok":true}' });
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers({ 'content-length': '-1' }),
+      body: null,
+      async text() { return envBody; },
+      async json() { return JSON.parse(envBody); },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const res = await fetchViaProxy(
+      'https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' },
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('{"ok":true}');
+  });
+
   it('caps proxy response size at MAX_PROXY_RESPONSE_BYTES', async () => {
     const huge = 'x'.repeat(MAX_PROXY_RESPONSE_BYTES + 1);
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
@@ -243,6 +265,29 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('https://wiki.internal/')).toBe(true);
     expect(pri('https://stuff.lan/')).toBe(true);
     expect(pri('http://metadata.google.internal/')).toBe(true);
+  });
+
+  it('rejects extended internal TLDs (Round 2 SHOULD-FIX S-1) — .corp / .intranet / .home / .private', () => {
+    // Microsoft AD defaults — historically widely deployed as internal-only.
+    expect(pri('http://dc01.corp/')).toBe(true);
+    expect(pri('https://wiki.intranet/')).toBe(true);
+    // Common home / ISP CPE zone.
+    expect(pri('http://router.home/')).toBe(true);
+    // IETF draft .private namespace.
+    expect(pri('http://app.private/')).toBe(true);
+    // RFC 8375 reserved zone (already covered, but pin the multi-label form).
+    expect(pri('http://printer.home.arpa/')).toBe(true);
+    expect(pri('http://home.arpa/')).toBe(true);
+  });
+
+  it('does NOT flag public hostnames that merely contain TLD-like substrings (Round 2 SHOULD-FIX S-1 false-positive guard)', () => {
+    // `localcom` shares the prefix "local" but is not the .local TLD — the
+    // last-label check must NOT trip on it.
+    expect(pri('https://example.localcom/')).toBe(false);
+    expect(pri('https://internal-server.example.com/')).toBe(false);
+    expect(pri('https://corporate.example.com/')).toBe(false);
+    expect(pri('https://homepage.example.com/')).toBe(false);
+    expect(pri('https://privateer.io/')).toBe(false);
   });
 });
 

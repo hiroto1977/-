@@ -142,6 +142,17 @@ export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
 
 /** Block targets that would let the proxy be weaponized as a SSRF
  *  oracle against the proxy operator's intranet / cloud metadata.
+ *
+ *  ⚠ LIMITATION — DNS rebinding:
+ *  This check operates at the *hostname* level (before any DNS lookup).
+ *  An attacker controlling `evil.example.com` can return a public IP
+ *  (e.g. 8.8.8.8) on first resolve, then re-resolve to 127.0.0.1 / a
+ *  RFC1918 address on a second lookup that happens inside the proxy.
+ *  Defeating that requires the *proxy* to re-validate the resolved IP
+ *  after `getaddrinfo()` and before its upstream `fetch()` call. The
+ *  client-side check here is therefore a *best-effort first line of
+ *  defense*; see docs/PROXY_EXAMPLE.md §3 for the proxy-side pattern.
+ *
  *  Note: the proxy itself MUST validate too — this is defense-in-depth
  *  on the client side, primarily protecting users of a shared proxy
  *  from a malicious tab tricking the proxy into reaching internal IPs.
@@ -151,9 +162,24 @@ export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
  *   - link-local + cloud metadata: 169.254.0.0/16 (AWS/GCP/Azure metadata)
  *   - RFC1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
  *   - ULA / link-local IPv6: fc00::/7, fe80::/10
- *   - mDNS / common internal TLDs: .local, .internal, .lan, .home.arpa
+ *   - mDNS / common internal TLDs (see INTERNAL_TLDS below) + .home.arpa
  *   - explicit metadata.* hostnames (GCE / Azure)
  */
+/** Single-label internal TLDs that should never be reached through the
+ *  proxy. Covers mDNS (RFC 6762), common Microsoft AD defaults, IETF
+ *  draft-private-use TLDs, and typical home-router zones. Compared
+ *  against the *last DNS label only* so that a public name like
+ *  `example.localcom.` (no dot before "local") is not flagged. */
+const INTERNAL_TLDS: ReadonlySet<string> = new Set([
+  'local',     // mDNS (RFC 6762)
+  'internal',  // common internal zone
+  'lan',       // common home / SMB
+  'corp',      // Microsoft AD default
+  'intranet',  // Microsoft AD default
+  'home',      // common ISP CPE
+  'private',   // IETF draft-private-use
+]);
+
 export function isPrivateOrReservedTarget(parsed: URL): boolean {
   const host = parsed.hostname.toLowerCase();
   // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
@@ -166,9 +192,18 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   if (bare === 'metadata.google.internal') return true;
   if (bare.endsWith('.metadata.cloud.google.com')) return true;
 
-  // mDNS + common internal TLDs.
-  if (bare.endsWith('.local') || bare.endsWith('.internal') ||
-      bare.endsWith('.lan') || bare.endsWith('.home.arpa')) return true;
+  // Internal TLDs — match only the final DNS label so that a public name
+  // like `example.localcom` (no dot separator) is correctly NOT flagged,
+  // while `printer.local` IS. We require a leading dot (i.e. at least one
+  // sub-label) to avoid blocking the bare TLD as a hostname (which
+  // wouldn't resolve via DNS anyway, but defense-in-depth).
+  const lastDot = bare.lastIndexOf('.');
+  if (lastDot > 0) {
+    const lastLabel = bare.slice(lastDot + 1);
+    if (INTERNAL_TLDS.has(lastLabel)) return true;
+  }
+  // 2-label IETF reserved zone (RFC 8375): `*.home.arpa`.
+  if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
 
   // IPv4 literal check.
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
@@ -284,12 +319,22 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   // Defense-in-depth: cap response body before json() to prevent OOM on
   // a compromised/malicious proxy returning a huge payload.
   // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
+  // We require `cl > 0` (not just `cl > cap`) because:
+  //   - a malicious / buggy proxy could return `Content-Length: -1`, which
+  //     is finite and ≤ cap and would slip past the header gate;
+  //   - real implementations never send a negative or NaN length, so
+  //     ignoring such headers and falling through to `readWithCap` (which
+  //     enforces the cap at the byte-stream level) is the safe behaviour.
   const clHeader = proxyRes.headers?.get?.('content-length');
   const cl = clHeader ? Number(clHeader) : 0;
-  if (Number.isFinite(cl) && cl > MAX_PROXY_RESPONSE_BYTES) {
+  if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
     throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
   }
   const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
+  // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
+  // proxy returns no body we substitute an empty envelope; the Response
+  // constructor below then falls back to status 502 + empty body — i.e.
+  // we surface "proxy returned nothing" as a bad-gateway, not as a crash.
   const env = bodyText.length === 0 ? {} as ProxyResponseEnvelope : JSON.parse(bodyText) as ProxyResponseEnvelope;
   // Reconstruct a Response that callers can treat normally.
   return new Response(env.body ?? '', {

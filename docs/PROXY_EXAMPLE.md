@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (約 30 行)
+## 2. Cloudflare Worker 実装 (約 50 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -42,6 +42,15 @@ X-Proxy-Auth: <optional-shared-secret>
 ```js
 // proxy-worker.js
 const SHARED_SECRET = ''; // 任意。空文字なら未認証で受け入れる
+
+// 上流ホスト allowlist。BYO の前提でも、ここを絞っておくと
+// たとえクライアントが侵害されても被害を局所化できる。
+const UPSTREAM_ALLOWLIST = new Set([
+  'api.notion.com',
+  'api.atlassian.com',
+  'api.cloudflare.com',
+  // 自分が使うホストだけを明示的に列挙する。
+]);
 
 export default {
   async fetch(request) {
@@ -86,6 +95,23 @@ export default {
       return json({ error: 'http(s) only' }, 400);
     }
 
+    // ★ DNS rebinding 対策 — hostname allowlist
+    // クライアント側 (isPrivateOrReservedTarget) は hostname 段階のチェック
+    // しかできない。攻撃者は `evil.example.com` を 1 回目 8.8.8.8 / 2 回目
+    // 127.0.0.1 と返して bypass しうる。Worker 側で allowlist を強制すれば
+    // どのみち攻撃ドメインは upstream に届かないため、これが最強の防御。
+    if (!UPSTREAM_ALLOWLIST.has(u.hostname)) {
+      return json({ error: 'upstream host not in allowlist' }, 403);
+    }
+
+    // Cloudflare Workers の `fetch` は Cloudflare の DNS リゾルバで
+    // 名前解決するため、`getaddrinfo()` を自前で呼ぶ手段は無いが、
+    // allowlist で「危ない名前は最初から弾く」方針で実質的に等価な
+    // 保護が得られる。専用 IP リゾルバを呼べる環境 (Node.js / Deno) では、
+    // `dns.lookup(env.url のホスト)` の結果 IP が
+    // 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16,
+    // 169.254.0.0/16 などに該当しないことを fetch 前に再検証すべし。
+
     const upstream = await fetch(env.url, {
       method: env.method ?? 'GET',
       headers: env.headers ?? {},
@@ -114,7 +140,13 @@ function json(obj, status) {
 
 - URL は **公開リポジトリにコミットしない** (誰でも使われる)
 - `SHARED_SECRET` を設定し、Settings 画面で同じ値を入力すると簡易認証
-- 上流ホストを allowlist する (例: notion.com / atlassian.net のみ受け入れる) のがベター
+- **上流ホストを allowlist する** (例: notion.com / atlassian.net のみ受け入れる) — 上の Worker 例ではこれを既定で組み込んでいる
+- **DNS rebinding 対策はプロキシ側の責任**: クライアントは hostname 段階の
+  best-effort チェック (`isPrivateOrReservedTarget` in `src/renderer/network/proxy.ts`) しか行えない。
+  攻撃者は同じ hostname を 1 回目=公開 IP / 2 回目=127.0.0.1 と返すことで
+  そのチェックを bypass できる。Worker 側では (a) hostname allowlist、
+  (b) 解決後 IP が RFC1918 / loopback / 169.254 / multicast でないかの
+  再検証 — のどちらか (理想は両方) を入れること
 - 月の Worker 無料枠は十分余裕あり (1 日 10 万リクエストまで)
 
 ## 4. ホスト先の選択肢
