@@ -164,6 +164,13 @@ export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
  *   - ULA / link-local IPv6: fc00::/7, fe80::/10
  *   - mDNS / common internal TLDs (see INTERNAL_TLDS below) + .home.arpa
  *   - explicit metadata.* hostnames (GCE / Azure)
+ *   - IPv6 ↔ IPv4 transition encodings (Round 3 BLOCKING coverage):
+ *       · IPv4-mapped two-group:  ::ffff:HHHH:HHHH
+ *       · IPv4-compatible (deprecated): ::HHHH:HHHH
+ *           (URL normalizes `[::169.254.169.254]` → `[::a9fe:a9fe]`)
+ *       · Single-hex-group mapped: ::ffff:HHHH (covers 0.0.0.x range)
+ *       · NAT64 well-known prefix (RFC 6052): 64:ff9b::HHHH:HHHH (best-effort)
+ *       · 6to4 (RFC 3056): 2002:HHHH:HHHH:: (best-effort)
  */
 /** Single-label internal TLDs that should never be reached through the
  *  proxy. Covers mDNS (RFC 6762), common Microsoft AD defaults, IETF
@@ -225,27 +232,30 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   if (bare.includes(':')) {
     if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
     if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
-    // IPv4-mapped IPv6 — extract the embedded v4 and recurse through the
-    // v4 check. URL normalizes "::ffff:169.254.169.254" to "::ffff:a9fe:a9fe"
-    // (hex), so we must match the hex form to catch RFC1918 / 169.254 / etc
-    // in mapped form. Without this, an attacker could reach AWS/GCP/Azure
-    // metadata via [::ffff:a9fe:a9fe]/.
-    const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
-    if (mapped) {
-      const hi = parseInt(mapped[1]!, 16);
-      const lo = parseInt(mapped[2]!, 16);
-      const v4 = `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+    // IPv4-mapped IPv6 (and IPv4-compatible / single-group variants) —
+    // extract the embedded v4 and recurse through the v4 check. See
+    // `extractMappedV4` below for the full enumeration of accepted forms
+    // and Round-3 BLOCKING rationale.
+    const embeddedV4 = extractMappedV4(bare);
+    if (embeddedV4 !== null) {
       try {
-        return isPrivateOrReservedTarget(new URL(`http://${v4}/`));
+        return isPrivateOrReservedTarget(new URL(`http://${embeddedV4}/`));
       } catch {
         return true; // unparseable mapped form → safe default deny
       }
     }
-    // Dotted-in-mapped form (rare; some serializers preserve "::ffff:127.0.0.1").
-    const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
-    if (mappedDotted) {
+    // NAT64 (RFC 6052 well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056
+    // `2002::/16`) can also encode an IPv4 address in the trailing bits.
+    // Full validation requires parsing the entire 128-bit address; we
+    // implement a best-effort extraction for the most common case where
+    // the v4 octets appear as the last two hex groups
+    // (`64:ff9b::HHHH:HHHH` / `2002:HHHH:HHHH::`). Attackers using
+    // arbitrary 6to4 encodings should still be caught by the proxy-side
+    // DNS-resolved-IP check (docs/PROXY_EXAMPLE.md §3).
+    const nat64Or6to4 = extractEmbeddedV4FromTransitionPrefix(bare);
+    if (nat64Or6to4 !== null) {
       try {
-        return isPrivateOrReservedTarget(new URL(`http://${mappedDotted[1]}/`));
+        return isPrivateOrReservedTarget(new URL(`http://${nat64Or6to4}/`));
       } catch {
         return true;
       }
@@ -258,6 +268,105 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   }
 
   return false;
+}
+
+/** Extract an IPv4 dotted-quad from an IPv6 string that encodes a v4
+ *  address in its low 32 bits. Returns null if `bare` doesn't match any
+ *  recognised mapped form.
+ *
+ *  Forms accepted (Round 3 BLOCKING fixes):
+ *   - `::ffff:HHHH:HHHH`  — canonical IPv4-mapped (RFC 4291 §2.5.5.2);
+ *                           URL normalizes `::ffff:127.0.0.1` to this form.
+ *   - `::HHHH:HHHH`       — deprecated IPv4-compatible (RFC 4291 §2.5.5.1);
+ *                           URL normalizes `[::169.254.169.254]` to
+ *                           `[::a9fe:a9fe]`, which the canonical regex above
+ *                           does NOT match, leaving an AWS-IMDS bypass.
+ *   - `::ffff:HHHH`       — single-group mapped (e.g. `::ffff:0` for 0.0.0.0,
+ *                           `::ffff:1` for 0.0.0.1). URL keeps these as-is
+ *                           rather than zero-padding, so a two-group regex
+ *                           rejects them and a "this host" (RFC 1122) /
+ *                           low-address bypass appears.
+ *
+ *  NOTE on the dotted-quad form (`::ffff:127.0.0.1`): URL.hostname ALWAYS
+ *  re-encodes the embedded v4 to hex (`::ffff:7f00:1`) on construction in
+ *  Node ≥ v18 and Chromium, so the dotted form is effectively unreachable
+ *  via `new URL(...)`. We still accept it here as a belt-and-suspenders
+ *  safeguard for callers that invoke `isPrivateOrReservedTarget` with a
+ *  URL built from a non-Web source (e.g. a custom parser); the branch is
+ *  intentionally defensive rather than load-bearing in normal flow.
+ */
+function extractMappedV4(bare: string): string | null {
+  // Order matters: a unified regex with `(?:::ffff:|::)` would mis-match
+  // `::ffff:0` as `::` + (`ffff`, `0`) = 255.255.0.0 instead of the
+  // intended single-group form 0.0.0.0. We therefore try the more
+  // specific (longer-prefix) shapes first.
+
+  // (1) Canonical IPv4-mapped two-group: ::ffff:HHHH:HHHH
+  //     URL normalizes `::ffff:127.0.0.1` to this form.
+  const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (mapped) {
+    const hi = parseInt(mapped[1]!, 16);
+    const lo = parseInt(mapped[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (2) Single hex group: ::ffff:HHHH → interpreted as 0.0.HH.HH (the
+  //     high 16 bits are implicitly zero). Covers `::ffff:0` = 0.0.0.0
+  //     and `::ffff:1` = 0.0.0.1, both of which RFC 1122 §3.2.1.3
+  //     reserves as "this host on this network".
+  const single = /^::ffff:([0-9a-f]{1,4})$/i.exec(bare);
+  if (single) {
+    const lo = parseInt(single[1]!, 16);
+    return `0.0.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (3) Deprecated IPv4-compatible two-group: ::HHHH:HHHH (no `ffff`).
+  //     This is the form URL.hostname normalizes `[::169.254.169.254]`
+  //     to (`[::a9fe:a9fe]`), so it is the critical Round-3 BLOCKING-A
+  //     gap. We intentionally exclude `::1`, `::0`, and `::HHHH` (single
+  //     group) here — those are handled either by the explicit loopback
+  //     equality check upstream or by being public single-group v6
+  //     addresses (no v4 embedding possible in only 16 bits worth of
+  //     low-order data).
+  const compat = /^::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (compat) {
+    const hi = parseInt(compat[1]!, 16);
+    const lo = parseInt(compat[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (4) Dotted-quad mapped form. See JSDoc above for why this is
+  //     defensive rather than load-bearing — Node v18+/Chromium always
+  //     re-encode this to hex on URL construction.
+  const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
+  if (mappedDotted) {
+    return mappedDotted[1]!;
+  }
+  return null;
+}
+
+/** Best-effort extraction of the embedded IPv4 from NAT64 (RFC 6052
+ *  well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056 `2002::/16`)
+ *  addresses. Returns the dotted-quad string or null if the input does
+ *  not match the supported subset. See `isPrivateOrReservedTarget`
+ *  caller for scope rationale. */
+function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
+  // NAT64: `64:ff9b::HHHH:HHHH` (v4 in low 32 bits after `::`). The
+  // canonical RFC 6052 form embeds the v4 as the final two hex groups.
+  const nat64 = /^64:ff9b::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (nat64) {
+    const hi = parseInt(nat64[1]!, 16);
+    const lo = parseInt(nat64[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // 6to4: `2002:HHHH:HHHH::...`. The v4 address sits in the 2nd-3rd
+  // hex groups (16 bits each, big-endian). We only catch the common
+  // `2002:HHHH:HHHH::` shape; longer forms with arbitrary subnet/iface
+  // suffixes need the proxy-side resolved-IP check for full coverage.
+  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})::?/i.exec(bare);
+  if (sixToFour) {
+    const hi = parseInt(sixToFour[1]!, 16);
+    const lo = parseInt(sixToFour[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  return null;
 }
 
 /** プロキシ経由で target URL を呼び出し、Response 互換オブジェクトを返す。 */

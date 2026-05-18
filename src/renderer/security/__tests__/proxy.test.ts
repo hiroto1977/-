@@ -259,6 +259,45 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[::ffff:808:808]/')).toBe(false);  // 8.8.8.8 (Google DNS)
   });
 
+  describe('IPv6 SSRF edge cases — Round 3', () => {
+    // Background: `new URL('http://[::169.254.169.254]/').hostname` is
+    // normalized to `[::a9fe:a9fe]` (verified on Node v18+/Chromium) — it
+    // sheds the `::ffff:` prefix because the input lacks the v4-mapped
+    // marker. The original Round-2 fix only matched the canonical
+    // `::ffff:HHHH:HHHH` form, leaving the deprecated IPv4-compatible
+    // (`::HHHH:HHHH`, RFC 4291 §2.5.5.1) shape unguarded.
+    it('BLOCKING-A: rejects IPv4-compatible IPv6 (::HHHH:HHHH) for AWS IMDS', () => {
+      expect(pri('http://[::a9fe:a9fe]/')).toBe(true);    // 169.254.169.254
+      expect(pri('http://[::7f00:1]/')).toBe(true);       // 127.0.0.1
+      // Public IP in IPv4-compatible form must still pass through.
+      expect(pri('http://[::808:808]/')).toBe(false);     // 8.8.8.8
+    });
+
+    // Background: `new URL('http://[::ffff:0]/').hostname === '[::ffff:0]'`
+    // (NOT normalized to `[::ffff:0:0]`). The original two-group regex
+    // required `:hex:hex` so single-group mapped form slipped past, opening
+    // a path to 0.0.0.0 (RFC 1122 §3.2.1.3 "this host on this network").
+    it('BLOCKING-B: rejects single-group ::ffff:HHHH mapped form', () => {
+      expect(pri('http://[::ffff:0]/')).toBe(true);       // 0.0.0.0
+      expect(pri('http://[::ffff:1]/')).toBe(true);       // 0.0.0.1
+    });
+
+    // SHOULD-FIX-B: NAT64 (RFC 6052) / 6to4 (RFC 3056) transition prefixes
+    // can encode an internal v4 address in the trailing bits. Best-effort
+    // extraction; full coverage requires proxy-side resolved-IP check.
+    it('SHOULD-FIX-B: rejects NAT64 (64:ff9b::) embedded internal v4', () => {
+      expect(pri('http://[64:ff9b::a9fe:a9fe]/')).toBe(true);  // → 169.254.169.254
+      expect(pri('http://[64:ff9b::7f00:1]/')).toBe(true);     // → 127.0.0.1
+      expect(pri('http://[64:ff9b::808:808]/')).toBe(false);   // → 8.8.8.8 (public)
+    });
+
+    it('SHOULD-FIX-B: rejects 6to4 (2002::) embedded internal v4', () => {
+      expect(pri('http://[2002:a9fe:a9fe::]/')).toBe(true);    // → 169.254.169.254
+      expect(pri('http://[2002:7f00:1::]/')).toBe(true);       // → 127.0.0.1
+      expect(pri('http://[2002:808:808::]/')).toBe(false);     // → 8.8.8.8 (public)
+    });
+  });
+
   it('rejects internal hostnames', () => {
     expect(pri('http://localhost/')).toBe(true);
     expect(pri('http://my-printer.local/')).toBe(true);

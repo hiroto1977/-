@@ -147,6 +147,12 @@ function json(obj, status) {
   そのチェックを bypass できる。Worker 側では (a) hostname allowlist、
   (b) 解決後 IP が RFC1918 / loopback / 169.254 / multicast でないかの
   再検証 — のどちらか (理想は両方) を入れること
+- **IPv6 transition prefix (NAT64 / 6to4) の網羅は best-effort**: クライアント
+  は `64:ff9b::HHHH:HHHH` (RFC 6052 well-known NAT64) と `2002:HHHH:HHHH::`
+  (RFC 3056 6to4) の典型形のみ抽出して内部 IPv4 にマップして検証している。
+  攻撃者が任意の subnet / iface suffix を付けたり、別の NAT64 prefix を
+  使った場合の防御はプロキシ側の resolved-IP 再検証 (上記 b) が唯一の砦と
+  なるため、プロダクション運用では必須
 - 月の Worker 無料枠は十分余裕あり (1 日 10 万リクエストまで)
 
 ## 4. ホスト先の選択肢
