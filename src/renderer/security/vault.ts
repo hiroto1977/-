@@ -624,7 +624,6 @@ class BrowserVault implements Vault {
             };
           } catch (err) {
             // Stryker disable next-line all
-            // eslint-disable-next-line no-console
             console.warn(
               '[vault] legacy v0 → v1 recovery migration failed; vault remains usable under v0. ' +
                 'Re-run recoverWithMnemonic() to retry the upgrade.',
@@ -691,7 +690,6 @@ class BrowserVault implements Vault {
       req.onerror = () => resolve();
       // Stryker disable next-line ArrowFunction
       req.onblocked = () => {
-        // eslint-disable-next-line no-console
         console.warn(
           '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
             'Close all other tabs of this app and try again.',
@@ -713,7 +711,6 @@ class BrowserVault implements Vault {
             .databases()
             .then((dbs) => {
               if (dbs.some((d) => d.name === DB_NAME)) {
-                // eslint-disable-next-line no-console
                 console.warn(
                   '[vault] wipeAndReset: IndexedDB still present after 500ms — ' +
                     'manual cleanup required (close other tabs / clear site data).',

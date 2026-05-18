@@ -186,7 +186,7 @@ describe('normalizeMnemonic', () => {
 
   it('strips BOM (U+FEFF) at start of string', () => {
     // Some text editors and Windows clipboards prepend a BOM. Without
-    // explicit stripping the first word becomes "﻿abandon" which
+    // explicit stripping the first word becomes "\uFEFFabandon" which
     // BIP-39 lookup rejects as unknown.
     const bom = '﻿';
     expect(normalizeMnemonic(`${bom}abandon abandon art`)).toBe('abandon abandon art');

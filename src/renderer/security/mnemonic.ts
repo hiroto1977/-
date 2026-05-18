@@ -142,7 +142,7 @@ export async function decodeMnemonic(mnemonic: string): Promise<Uint8Array> {
  *
  *  Applied AFTER NFKD so that any compatibility decomposition producing
  *  these formatting characters is also caught in a single pass. */
-const INVISIBLE_RE = /[​-‏‪-‮⁠-⁯﻿]/g;
+const INVISIBLE_RE = /[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g;
 
 /** Convenience: NFKD normalize → strip invisible/bidi formatting →
  *  lowercase → collapse whitespace.
