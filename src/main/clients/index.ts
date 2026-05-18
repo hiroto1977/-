@@ -20,10 +20,11 @@ import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './template
 import { fetchHomeSnapshot } from './home';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
-import { fetchUberEatsSnapshot } from './uber-eats';
-import { fetchDemaeCanSnapshot } from './demae-can';
-import { fetchRealEstateSnapshot } from './real-estate';
-import { fetchMutualFundsSnapshot } from './mutual-funds';
+import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
+import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can';
+import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
+import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
+import { fetchQualitySnapshot } from './quality';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -57,6 +58,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'demae-can': fetchDemaeCanSnapshot,
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
+  quality: fetchQualitySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -101,6 +103,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  'quality',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -124,6 +127,10 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   business: BUSINESS_ACTIONS,
   teamradar: TEAMRADAR_ACTIONS,
   templates: TEMPLATES_ACTIONS,
+  'uber-eats': UBER_EATS_ACTIONS,
+  'demae-can': DEMAE_CAN_ACTIONS,
+  'real-estate': REAL_ESTATE_ACTIONS,
+  'mutual-funds': MUTUAL_FUNDS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

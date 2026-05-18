@@ -411,6 +411,40 @@ export const SNAPSHOT = {
     ] as { code: string; amount: number; paidAt: string }[],
   },
 
+  quality: {
+    // Snapshot-only. Future iteration will pull values from
+    // `npm run quality:report` (scripts/quality-report.cjs).
+    unitTests: { staticCount: 1153, runtimeCount: 1202 },
+    mutation: { score: 100.00, mutateModules: 35, killed: 2447, threshold: 99.8 },
+    verifications: [
+      { name: 'typecheck', status: 'pass' },
+      { name: 'ESLint (0 errors / 0 warnings)', status: 'pass' },
+      { name: 'verify:arch (170 file:line refs + 6 metrics)', status: 'pass' },
+      { name: 'lint:forbidden (8 patterns scanned)', status: 'pass' },
+      { name: 'lint:imports (273 imports / 88 files)', status: 'pass' },
+      { name: 'lint:docs (4 cross-doc facts)', status: 'pass' },
+      { name: 'lint:test-coverage (27 services)', status: 'pass' },
+      { name: 'CI quality / test / build', status: 'pass' },
+    ] as { name: string; status: 'pass' | 'fail' }[],
+    reviewHistory: [
+      // PR #2 — Phase E
+      { pr: 2, round: 1, verdict: '要修正',     blocking: 0, shouldFix: 7, nit: 5 },
+      { pr: 2, round: 2, verdict: '要修正',     blocking: 3, shouldFix: 5, nit: 3 },
+      { pr: 2, round: 3, verdict: 'マージ可',   blocking: 2, shouldFix: 3, nit: 0 },
+      // PR #3 — フードデリバリー + 投資
+      { pr: 3, round: 1, verdict: '要修正',     blocking: 3, shouldFix: 5, nit: 2 },
+      { pr: 3, round: 2, verdict: 'マージ可',   blocking: 0, shouldFix: 0, nit: 3 },
+      { pr: 3, round: 3, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 0 },
+      { pr: 3, round: 4, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 3 },
+    ] as {
+      pr: number; round: number;
+      verdict: '要修正' | 'マージ可' | 'マージ推奨';
+      blocking: number; shouldFix: number; nit: number;
+    }[],
+    artifactSizes: { standaloneHtmlKb: 421, electronMainKb: 113 },
+    latestCommit: '787d5e9',
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

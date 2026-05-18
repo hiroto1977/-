@@ -24,6 +24,7 @@ import { UberEatsPage } from './pages/UberEatsPage';
 import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
+import { QualityPage } from './pages/QualityPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -258,6 +259,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'ファンド評価額 / 基準価額 / 分配金履歴',
     page: MutualFundsPage,
     category: 'tools',
+  },
+  {
+    id: 'quality',
+    label: '品質ダッシュボード',
+    icon: 'QA',
+    description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
+    page: QualityPage,
+    category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

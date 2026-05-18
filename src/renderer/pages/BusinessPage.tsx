@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -933,8 +934,52 @@ export function BusinessPage() {
           </div>
         )}
       </Section>
+
+      <CrossServiceKpis />
         </div>
       </div>
     </div>
+  );
+}
+
+/** 横断 KPI ウィジェット — フードデリバリー 2 + 投資 3 サービスの
+ *  snapshot から事業全体の総収入・総資産・月次キャッシュフローを 1
+ *  画面で把握する。事業ダッシュボードに「業務操作 全体像」セクション
+ *  として埋め込む。各サービスの詳細は個別ページで深掘り。 */
+function CrossServiceKpis() {
+  const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+  const ue = SNAPSHOT.uberEats;
+  const dc = SNAPSHOT.demaeCan;
+  const re = SNAPSHOT.realEstate;
+  const mf = SNAPSHOT.mutualFunds;
+  const st = SNAPSHOT.stocks;
+
+  // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
+  const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;
+  // 月次キャッシュフロー (不動産のみ実 CF が算出済)。
+  const monthlyCashflow = re.monthlyCashflow.netCashflow;
+  // 投資ポートフォリオ評価額 (株式 cash + 投信)。
+  // stocks は backtest 後にしか positions が埋まらないので、cash を保守的に
+  // 投資元本としてカウント。実運用では positions[].shares × 最新終値で
+  // 評価額を算出する。
+  const stocksCash = st?.portfolio?.cash ?? 0;
+  const investmentValuation = stocksCash + mf.portfolio.totalValuation;
+  // 不動産取得価格合計 = 取得原価ベースの資産。
+  const realEstateAssets = re.properties.reduce((sum, p) => sum + p.purchasePrice, 0);
+  const totalAssets = investmentValuation + realEstateAssets;
+
+  return (
+    <Section title="業務操作 横断 KPI (フードデリバリー × 投資)" count={4}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 12 }}>
+        <Stat label="月次売上 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
+        <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
+        <Stat label="投資評価額 (株式+投信)" value={jpy(investmentValuation)} />
+        <Stat label="総資産 (投資+不動産)" value={jpy(totalAssets)} />
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+        ※ 各値は snapshot データの集計。フードデリバリーは
+        Uber Eats 週次 ×4 + 出前館 月次の推計。詳細は各サービスページで確認できます。
+      </div>
+    </Section>
   );
 }
