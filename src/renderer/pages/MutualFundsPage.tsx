@@ -1,5 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { Stat } from '../components/Stat';
+import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
 const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
@@ -96,19 +98,3 @@ export function MutualFundsPage() {
   );
 }
 
-const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse', fontSize: 13 };
-const thStyle: React.CSSProperties = { textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid var(--border)', color: 'var(--text-mute)', fontWeight: 600 };
-const thNum: React.CSSProperties = { ...thStyle, textAlign: 'right' };
-const tdStyle: React.CSSProperties = { padding: '6px 8px', borderBottom: '1px solid var(--border)' };
-const tdNum: React.CSSProperties = { ...tdStyle, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
-
-function Stat({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
-  return (
-    <div style={{ padding: 12, background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8 }}>
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: positive == null ? undefined : positive ? '#22c55e' : '#ef4444' }}>
-        {value}
-      </div>
-    </div>
-  );
-}

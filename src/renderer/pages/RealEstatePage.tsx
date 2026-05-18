@@ -1,5 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
+import { Stat } from '../components/Stat';
+import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
 const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
@@ -29,7 +31,7 @@ export function RealEstatePage() {
           <Stat label="月次キャッシュフロー" value={jpy(monthlyCashflow.netCashflow)} />
           <Stat label="ポートフォリオ利回り" value={`${portfolioYield.toFixed(1)}%`} />
           <Stat label="入居率" value={`${(occupancyRate * 100).toFixed(0)}%`} />
-          <Stat label="月次総家賃" value={jpy(monthlyCashflow.grossRent)} />
+          <Stat label="月次家賃収入 (実績)" value={jpy(monthlyCashflow.grossRent)} />
         </div>
       </Section>
 
@@ -67,7 +69,7 @@ export function RealEstatePage() {
       <Section title="月次キャッシュフロー内訳" count={4}>
         <table style={tableStyle}>
           <tbody>
-            <tr><td style={tdStyle}>総家賃収入</td><td style={tdNum}>{jpy(monthlyCashflow.grossRent)}</td></tr>
+            <tr><td style={tdStyle}>家賃収入 (実績、空室除外)</td><td style={tdNum}>{jpy(monthlyCashflow.grossRent)}</td></tr>
             <tr><td style={tdStyle}>運営費用</td><td style={tdNum}>−{jpy(monthlyCashflow.operatingExpenses)}</td></tr>
             <tr><td style={tdStyle}>ローン返済</td><td style={tdNum}>−{jpy(monthlyCashflow.mortgagePayment)}</td></tr>
             <tr style={{ background: 'var(--bg-elev)' }}>
@@ -81,17 +83,3 @@ export function RealEstatePage() {
   );
 }
 
-const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse', fontSize: 13 };
-const thStyle: React.CSSProperties = { textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid var(--border)', color: 'var(--text-mute)', fontWeight: 600 };
-const thNum: React.CSSProperties = { ...thStyle, textAlign: 'right' };
-const tdStyle: React.CSSProperties = { padding: '6px 8px', borderBottom: '1px solid var(--border)' };
-const tdNum: React.CSSProperties = { ...tdStyle, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ padding: 12, background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8 }}>
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
-    </div>
-  );
-}
