@@ -379,18 +379,15 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
     expect(meta!.recoveryVersion).toBe(1);
   });
 
-  it('legacy vault (recoveryVersion = undefined) still recovers via v0 derivation', async () => {
-    // Initialize normally, then strip the recoveryVersion field from
-    // persisted meta + re-wrap the recovery branch under the v0 (no-prefix)
-    // derivation. This simulates a vault created before PR#2 landed.
-    const v = getVault();
-    const { mnemonic } = await v.initialize('original-password-12345');
-    await v.setToken('github', 'ghp_legacy_secret');
-
+  // Helper: tear down the current vault meta to the v0 (legacy) layout —
+  // strip `recoveryVersion` and re-wrap the recovery branch under the
+  // unprefixed PBKDF2 input. Used by the auto-migration tests below.
+  async function downgradeToLegacyV0(mnemonic: string): Promise<{
+    originalRecoverySalt: Uint8Array;
+  }> {
     const { normalizeMnemonic } = await import('../mnemonic');
     const normalized = normalizeMnemonic(mnemonic);
 
-    // Step 1: read the current meta in a read-only transaction.
     type LegacyMeta = {
       recoverySalt: Uint8Array;
       recoveryIv: Uint8Array;
@@ -418,10 +415,7 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
       };
     });
 
-    // Step 2: do the (async) crypto OUTSIDE any IDB transaction —
-    // fake-indexeddb (and real browsers) deactivate transactions across
-    // microtask boundaries, so we MUST complete all awaits before opening
-    // the write tx.
+    // Unwrap master with v1 (current) derivation.
     const v1BaseKey = await crypto.subtle.importKey(
       'raw',
       new TextEncoder().encode('service-hub-bip39-recovery-v1:' + normalized),
@@ -444,6 +438,7 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
       ),
     );
 
+    // Re-wrap under v0 (no prefix) derivation.
     const v0BaseKey = await crypto.subtle.importKey(
       'raw',
       new TextEncoder().encode(normalized),
@@ -480,7 +475,6 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
     migrated.recoveryWrappedKey = newWrapCt;
     delete migrated.recoveryVersion;
 
-    // Step 3: write the migrated meta in a fresh transaction.
     await new Promise<void>((resolve, reject) => {
       const req = indexedDB.open('business-hub-vault', 1);
       req.onerror = () => reject(req.error);
@@ -498,6 +492,37 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
         };
       };
     });
+    return { originalRecoverySalt: meta.recoverySalt };
+  }
+
+  // Helper: read the persisted vault meta from IndexedDB (read-only).
+  async function readPersistedMeta(): Promise<Record<string, unknown>> {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault', 1);
+      req.onerror = () => reject(req.error);
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readonly');
+        const getReq = tx.objectStore('meta').get('vault');
+        getReq.onsuccess = () => {
+          db.close();
+          resolve(getReq.result as Record<string, unknown>);
+        };
+        getReq.onerror = () => {
+          db.close();
+          reject(getReq.error);
+        };
+      };
+    });
+  }
+
+  it('legacy vault (recoveryVersion = undefined) still recovers via v0 derivation', async () => {
+    // Initialize normally, then downgrade to the v0 (legacy) layout. This
+    // simulates a vault created before PR#2 landed.
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.setToken('github', 'ghp_legacy_secret');
+    await downgradeToLegacyV0(mnemonic);
 
     // Now simulate fresh start + recover via the legacy (v0) derivation.
     _resetVaultForTests();
@@ -505,6 +530,152 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
     await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
     expect(await v2.getToken('github')).toBe('ghp_legacy_secret');
   });
+
+  it('legacy v0 vault auto-upgrades to v1 after successful recovery', async () => {
+    // S-5: vaults created before recoveryVersion shipped are silently
+    // re-wrapped under v1 derivation (fresh salt + domain-separation
+    // prefix) on the next successful recoverWithMnemonic call.
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const { originalRecoverySalt } = await downgradeToLegacyV0(mnemonic);
+
+    // Sanity: meta is currently v0 (no recoveryVersion).
+    const preMeta = await readPersistedMeta();
+    expect(preMeta.recoveryVersion).toBeUndefined();
+
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+
+    // Meta is upgraded in-place: recoveryVersion === 1 and the
+    // recoverySalt is a fresh value distinct from the v0 salt.
+    const postMeta = await readPersistedMeta();
+    expect(postMeta.recoveryVersion).toBe(1);
+    // Cross-realm note: fake-indexeddb's structured-clone implementation
+    // yields Uint8Array instances whose constructor lives in a different
+    // realm, so `instanceof Uint8Array` is false. We work with byte
+    // length + Array.from(...) directly — both behave identically across
+    // realms.
+    const newSalt = postMeta.recoverySalt as Uint8Array;
+    expect(newSalt.length).toBe(32);
+    expect(Array.from(newSalt)).not.toEqual(Array.from(originalRecoverySalt));
+
+    // The same mnemonic still works for a follow-up recovery — proves the
+    // v1 path is now operational and the rewrap is internally consistent.
+    _resetVaultForTests();
+    const v3 = getVault();
+    await v3.recoverWithMnemonic(mnemonic, 'yet-another-password-9876');
+    expect(v3.isUnlocked()).toBe(true);
+  });
+
+  it('auto-upgraded v1 mnemonic cannot recover via v0 anymore', async () => {
+    // After auto-migration, the on-disk recovery branch is wrapped under
+    // v1 derivation. A manual v0 (no-prefix) PBKDF2 must NOT unwrap it,
+    // proving the migration committed to v1 cleanly (not a dual-path).
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    await downgradeToLegacyV0(mnemonic);
+
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+
+    // Attempt to decrypt the recovery KCV under v0 derivation. Must fail.
+    const { normalizeMnemonic } = await import('../mnemonic');
+    const normalized = normalizeMnemonic(mnemonic);
+    const postMeta = await readPersistedMeta();
+    const v0BaseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(normalized),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const v0Key = await crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: postMeta.recoverySalt as BufferSource,
+        iterations: 600_000,
+        hash: 'SHA-256',
+      },
+      v0BaseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt'],
+    );
+    await expect(
+      crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: postMeta.recoveryIv as BufferSource },
+        v0Key,
+        postMeta.recoveryKcv as BufferSource,
+      ),
+    ).rejects.toThrow();
+  });
+
+  it('auto-upgrade preserves all stored tokens', async () => {
+    // The migration only rewrites the recovery branch; the password
+    // branch (and therefore the master key and all encrypted tokens)
+    // must be untouched.
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.setToken('github', 'ghp_legacy_secret');
+    await v.setToken('slack', 'xoxp-legacy-abc');
+    await v.setToken('notion', 'secret_legacy_notion');
+    await downgradeToLegacyV0(mnemonic);
+
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+
+    expect(await v2.getToken('github')).toBe('ghp_legacy_secret');
+    expect(await v2.getToken('slack')).toBe('xoxp-legacy-abc');
+    expect(await v2.getToken('notion')).toBe('secret_legacy_notion');
+
+    // Token retention also survives a full restart under the new password.
+    _resetVaultForTests();
+    const v3 = getVault();
+    await v3.unlock('brand-new-password-2026');
+    expect(await v3.getToken('github')).toBe('ghp_legacy_secret');
+    expect(await v3.getToken('slack')).toBe('xoxp-legacy-abc');
+    expect(await v3.getToken('notion')).toBe('secret_legacy_notion');
+  });
+
+  it('already-v1 vault stays v1 after recovery (no spurious migration)', async () => {
+    // Migration must trigger ONLY when recoveryVersion is undefined.
+    // A v1 vault going through recoverWithMnemonic keeps its existing
+    // recoverySalt + ciphertexts (the recovery branch is intentionally
+    // not rotated by recoverWithMnemonic — that's rotateRecoveryKey's
+    // job, deferred to v2).
+    const v = getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const preMeta = await readPersistedMeta();
+    const preSalt = preMeta.recoverySalt as Uint8Array;
+    const preWrappedKey = preMeta.recoveryWrappedKey as Uint8Array;
+
+    _resetVaultForTests();
+    const v2 = getVault();
+    await v2.recoverWithMnemonic(mnemonic, 'brand-new-password-2026');
+
+    const postMeta = await readPersistedMeta();
+    expect(postMeta.recoveryVersion).toBe(1);
+    // Recovery branch must be byte-for-byte identical — we only rewrap
+    // when migrating from v0; v1 → v1 is a no-op.
+    expect(Array.from(postMeta.recoverySalt as Uint8Array)).toEqual(Array.from(preSalt));
+    expect(Array.from(postMeta.recoveryWrappedKey as Uint8Array)).toEqual(
+      Array.from(preWrappedKey),
+    );
+  });
+
+  // NOTE on atomicity: the v0 → v1 migration computes the entire next
+  // meta in memory BEFORE the single `idbPut(META_STORE, 'vault', ...)`
+  // call, so a partial write is structurally impossible: either the new
+  // meta lands intact (v1) or the old meta remains (v0). Failure during
+  // crypto (deriveKey / encrypt) is caught and logged inside vault.ts;
+  // the recovery itself succeeds and the next call retries the upgrade.
+  // We do not unit-test the IDB-write-failure branch because
+  // fake-indexeddb does not expose a clean knob to inject mid-transaction
+  // errors; the property is enforced by the structure of the code, not
+  // by branch coverage.
 });
 
 describe('Vault — wipeAndReset', () => {

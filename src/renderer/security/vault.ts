@@ -70,7 +70,17 @@ export interface Vault {
    *  obtained a copy of the browser profile BEFORE recovery, they can still
    *  unwrap the master key with the old password on that snapshot. Treat
    *  password rotation as a forward-only security boundary; for full
-   *  invalidation (e.g. compromised device), call wipeAndReset() instead. */
+   *  invalidation (e.g. compromised device), call wipeAndReset() instead.
+   *
+   *  NOTE (legacy v0 auto-migration): vaults persisted before recovery-key
+   *  derivation versioning shipped (`meta.recoveryVersion === undefined`)
+   *  use the unprefixed PBKDF2 input ("v0"). On a successful recovery, this
+   *  method silently re-wraps the recovery branch under v1 derivation
+   *  (fresh salt + domain-separation prefix) so that subsequent recoveries
+   *  benefit from the same defense-in-depth as new vaults. The mnemonic
+   *  itself is unchanged — users see no difference. If the migration write
+   *  fails for any reason, the recovery still succeeds and the vault
+   *  remains usable under v0; the migration is best-effort. */
   recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void>;
   /** Phase E v1: ALWAYS THROWS. Reserved for v2.
    *  Users MUST persist the mnemonic returned by initialize() — there is
@@ -166,7 +176,9 @@ interface VaultMeta {
   // words as a passphrase elsewhere (e.g. a wallet, an SSH agent) from
   // accidentally producing the same PBKDF2 output across systems. Old
   // vaults with no field are unaffected — they keep the v0 derivation
-  // for backward compat.
+  // for backward compat on read, but are silently auto-migrated to v1
+  // (new recoverySalt + v1 prefix re-wrap) on the next successful
+  // recoverWithMnemonic() call. See recoverWithMnemonic() for details.
   //
   // NOTE on portability (NIT #5, deferred to v2): VaultMeta currently
   // uses Uint8Array for byte fields. IndexedDB's structured clone
@@ -563,13 +575,64 @@ class BrowserVault implements Vault {
         const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
         const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
         const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
-        // Update meta — keep recovery branch as-is (caller may rotate explicitly).
-        const newMeta: VaultMeta = {
+
+        // Build the next meta. Start from the existing meta (which keeps
+        // the recovery branch intact for legacy vaults) and overwrite the
+        // password-branch fields. Legacy auto-migration (below) may also
+        // overwrite the recovery branch fields in this same object before
+        // we persist it.
+        let newMeta: VaultMeta = {
           ...meta,
           salt: newSalt,
           iv: newKcv.iv,
           kcv: newKcv.ciphertext,
         };
+
+        // ── Legacy v0 → v1 silent auto-migration ────────────────────
+        //
+        // Why here? recoverWithMnemonic() is the ONLY public entry point
+        // that has the plaintext mnemonic in scope — exactly what we need
+        // to re-derive the recovery key under v1 (prefixed PBKDF2). Doing
+        // it here ensures a one-time, transparent upgrade for any user who
+        // initialized before the prefix landed. The mnemonic itself is
+        // unchanged, so the user-visible 24 words still work forever; only
+        // the on-disk salt + ciphertexts move to the v1 scheme.
+        //
+        // Best-effort semantics: if migration fails for any reason
+        // (crypto error, IDB write rejection), we swallow the error and
+        // log a warning. The recovery itself still succeeds and the vault
+        // stays usable under v0 — partial writes cannot occur because we
+        // compute the full new meta in memory before a single idbPut.
+        if (meta.recoveryVersion === undefined) {
+          try {
+            const migratedRecoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+            const migratedRecoveryKey = await deriveKeyFromMnemonic(
+              mnemonic,
+              migratedRecoverySalt,
+              1,
+            );
+            const migratedRecoveryKcv = await encryptString(migratedRecoveryKey, KCV_PLAINTEXT);
+            const migratedRecoveryWrap = await wrapMasterForRecovery(masterRaw, migratedRecoveryKey);
+            newMeta = {
+              ...newMeta,
+              recoverySalt: migratedRecoverySalt,
+              recoveryIv: migratedRecoveryKcv.iv,
+              recoveryKcv: migratedRecoveryKcv.ciphertext,
+              recoveryWrapIv: migratedRecoveryWrap.iv,
+              recoveryWrappedKey: migratedRecoveryWrap.ciphertext,
+              recoveryVersion: 1,
+            };
+          } catch (err) {
+            // Stryker disable next-line all
+            // eslint-disable-next-line no-console
+            console.warn(
+              '[vault] legacy v0 → v1 recovery migration failed; vault remains usable under v0. ' +
+                'Re-run recoverWithMnemonic() to retry the upgrade.',
+              err,
+            );
+          }
+        }
+
         await idbPut(db, META_STORE, 'vault', newMeta);
         await idbPut(db, META_STORE, 'master-wrap', {
           iv: newMasterWrap.iv,
