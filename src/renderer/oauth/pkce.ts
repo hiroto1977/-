@@ -42,9 +42,13 @@ export async function generatePkce(): Promise<PkceSecrets> {
   return { verifier, challenge, state };
 }
 
-/** Constant-time string equality. Returns false on any mismatch in length
- *  or content. Equivalent to `oauth.ts:safeStateEquals` (main process); we
- *  reimplement here because main↔renderer can't share modules. */
+/** Constant-time string equality. The length check is safe to early-return
+ *  because state is always fixed-length base64url (43 chars from 32 random
+ *  bytes via generatePkce). The length is therefore NOT secret. If state
+ *  ever becomes variable length (nonce + scope hash, etc.) this early-return
+ *  leaks the length and must be replaced with a padded comparison.
+ *  Equivalent to `oauth.ts:safeStateEquals` (main process); we reimplement
+ *  here because main↔renderer can't share modules. */
 export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   if (a.length !== b.length) return false;
