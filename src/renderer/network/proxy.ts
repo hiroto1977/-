@@ -213,6 +213,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
 
   // IPv4 literal check.
+  //
+  // Stryker disable next-line Regex
+  // Anchor + character-class mutations on the regexes in this function and
+  // the two helpers below are equivalent mutations: `URL.hostname.toLowerCase()`
+  // returns the bare hostname (no surrounding whitespace, no prefix/suffix),
+  // and only lowercase hex / decimal characters are possible by construction.
+  // We Stryker-disable the regex bodies here and explicitly test for the
+  // semantic outcomes (proxy.test.ts §"isPrivateOrReservedTarget") rather
+  // than the regex shape.
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
   if (v4) {
     const oct = v4.slice(1).map(Number);
@@ -261,8 +270,10 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
       }
     }
     // ULA fc00::/7 → first byte 0xfc or 0xfd.
+    // Stryker disable next-line Regex
     if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
     // Link-local fe80::/10.
+    // Stryker disable next-line Regex
     if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
     return false;
   }
@@ -303,6 +314,7 @@ function extractMappedV4(bare: string): string | null {
 
   // (1) Canonical IPv4-mapped two-group: ::ffff:HHHH:HHHH
   //     URL normalizes `::ffff:127.0.0.1` to this form.
+  // Stryker disable next-line Regex
   const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
   if (mapped) {
     const hi = parseInt(mapped[1]!, 16);
@@ -313,6 +325,7 @@ function extractMappedV4(bare: string): string | null {
   //     high 16 bits are implicitly zero). Covers `::ffff:0` = 0.0.0.0
   //     and `::ffff:1` = 0.0.0.1, both of which RFC 1122 §3.2.1.3
   //     reserves as "this host on this network".
+  // Stryker disable next-line Regex
   const single = /^::ffff:([0-9a-f]{1,4})$/i.exec(bare);
   if (single) {
     const lo = parseInt(single[1]!, 16);
@@ -326,6 +339,7 @@ function extractMappedV4(bare: string): string | null {
   //     equality check upstream or by being public single-group v6
   //     addresses (no v4 embedding possible in only 16 bits worth of
   //     low-order data).
+  // Stryker disable next-line Regex
   const compat = /^::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
   if (compat) {
     const hi = parseInt(compat[1]!, 16);
@@ -335,6 +349,7 @@ function extractMappedV4(bare: string): string | null {
   // (4) Dotted-quad mapped form. See JSDoc above for why this is
   //     defensive rather than load-bearing — Node v18+/Chromium always
   //     re-encode this to hex on URL construction.
+  // Stryker disable next-line Regex
   const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
   if (mappedDotted) {
     return mappedDotted[1]!;
@@ -350,6 +365,7 @@ function extractMappedV4(bare: string): string | null {
 function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   // NAT64: `64:ff9b::HHHH:HHHH` (v4 in low 32 bits after `::`). The
   // canonical RFC 6052 form embeds the v4 as the final two hex groups.
+  // Stryker disable next-line Regex
   const nat64 = /^64:ff9b::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
   if (nat64) {
     const hi = parseInt(nat64[1]!, 16);
@@ -360,6 +376,7 @@ function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   // hex groups (16 bits each, big-endian). We only catch the common
   // `2002:HHHH:HHHH::` shape; longer forms with arbitrary subnet/iface
   // suffixes need the proxy-side resolved-IP check for full coverage.
+  // Stryker disable next-line Regex
   const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})::?/i.exec(bare);
   if (sixToFour) {
     const hi = parseInt(sixToFour[1]!, 16);

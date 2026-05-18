@@ -197,6 +197,74 @@ describe('fetchViaProxy', () => {
     ).rejects.toThrow(/too large/);
   });
 
+  it('reads response body via streaming reader when body is available', async () => {
+    // Exercise the ReadableStream branch of readWithCap (the chunks loop
+    // + concat + UTF-8 decode). This is what real browser fetch returns;
+    // earlier tests use `body: null` to fall back to .text() — that left
+    // the stream-reading code path uncovered by mutation testing.
+    const envBody = JSON.stringify({ status: 200, body: '{"streamed":true}' });
+    const encoder = new TextEncoder();
+    const chunks = [encoder.encode(envBody.slice(0, 10)), encoder.encode(envBody.slice(10))];
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      body: new ReadableStream({
+        start(controller) {
+          for (const c of chunks) controller.enqueue(c);
+          controller.close();
+        },
+      }),
+      async text() { return envBody; },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const res = await fetchViaProxy(
+      'https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' },
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('{"streamed":true}');
+  });
+
+  it('aborts mid-stream when total byte count exceeds cap', async () => {
+    // Stream-reader cap check — emit chunks totaling > MAX bytes.
+    const half = Math.ceil(MAX_PROXY_RESPONSE_BYTES / 2) + 1;
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      body: new ReadableStream({
+        start(controller) {
+          controller.enqueue(new Uint8Array(half));
+          controller.enqueue(new Uint8Array(half));
+          controller.close();
+        },
+      }),
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    await expect(
+      fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' }),
+    ).rejects.toThrow(/too large/);
+  });
+
+  it('handles proxy response where headers object is undefined', async () => {
+    // Mock without headers at all — readWithCap should not crash on the
+    // `proxyRes.headers?.get?.('content-length')` access. This kills the
+    // OptionalChaining mutation on the headers lookup.
+    const envBody = JSON.stringify({ status: 200, body: '{"ok":true}' });
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: true,
+      status: 200,
+      // No `headers` field at all.
+      body: null,
+      async text() { return envBody; },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const res = await fetchViaProxy(
+      'https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' },
+    );
+    expect(res.status).toBe(200);
+  });
+
   it('propagates proxy error response', async () => {
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
       ok: false,
