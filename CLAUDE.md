@@ -4,9 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes nine third‑party
-services (GitHub, WordPress.com, Atlassian, Notion, Google Drive, Google Calendar, Gmail, Slack, Canva)
-through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
+Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 26 services
+across third‑party SaaS (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail,
+Slack, Canva), local tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks), business
+operations (Home, Business Dashboard, Team Radar, Templates, Library, Settings), food delivery
+(Uber Eats, 出前館 — snapshot only) and investment (Real Estate 不動産投資, Mutual Funds 投資信託 —
+snapshot only) through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
 are bundled by `vite-plugin-electron`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` (regenerated

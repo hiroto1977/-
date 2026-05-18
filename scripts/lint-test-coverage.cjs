@@ -37,7 +37,7 @@ function read(p) {
 function serviceIds() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
-  return m ? [...m[1].matchAll(/'([a-z]+)'/g)].map((x) => x[1]) : [];
+  return m ? [...m[1].matchAll(/'([a-z][a-z0-9-]*)'/g)].map((x) => x[1]) : [];
 }
 
 function actionsOf(serviceId) {

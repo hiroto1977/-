@@ -240,7 +240,7 @@ const METRICS = [
       const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
       if (!m) return null;
       const body = m[1];
-      return countOccurrences(body, /^\s*'[a-z]+'\s*,/gm);
+      return countOccurrences(body, /^\s*'[a-z][a-z0-9-]*'\s*,/gm);
     },
   },
   {
@@ -261,7 +261,7 @@ const METRICS = [
       if (!m) return null;
       return m[1]
         .split('\n')
-        .filter((l) => /^\s*[a-z]+:\s+\w/i.test(l))
+        .filter((l) => /^\s*(?:'[a-z][a-z0-9-]*'|[a-z]+):\s+\w/i.test(l))
         .filter((l) => !/SCAFFOLD/i.test(l)).length;
     },
   },

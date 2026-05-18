@@ -42,14 +42,14 @@ function read(p) {
 function canonicalServiceCount() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
-  return m ? [...m[1].matchAll(/^\s*'[a-z]+'\s*,/gm)].length : null;
+  return m ? [...m[1].matchAll(/^\s*'[a-z][a-z0-9-]*'\s*,/gm)].length : null;
 }
 
 function canonicalServiceList() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
   if (!m) return null;
-  const ids = [...m[1].matchAll(/'([a-z]+)'/g)].map((x) => x[1]);
+  const ids = [...m[1].matchAll(/'([a-z][a-z0-9-]*)'/g)].map((x) => x[1]);
   return ids;
 }
 
@@ -112,7 +112,7 @@ const FACTS = [
         parse: (m) => {
           // Pull every `<id>` from `| `<id>` |` cells until "actions" header
           const section = m[0];
-          const ids = [...section.matchAll(/^\| `([a-z]+)` \|/gm)].map((x) => x[1]);
+          const ids = [...section.matchAll(/^\| `([a-z][a-z0-9-]*)` \|/gm)].map((x) => x[1]);
           return ids.sort().join(',');
         },
       },

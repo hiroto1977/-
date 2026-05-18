@@ -323,6 +323,89 @@ export const SNAPSHOT = {
     warnings: [] as string[],
   },
 
+  uberEats: {
+    // Snapshot-only (no LIVE_FETCHERS entry yet). Eats Merchants API
+    // requires partner approval; until that's wired, the page renders
+    // synthetic-but-realistic store performance data.
+    stores: [
+      { id: 'store-shibuya', name: 'Shibuya 本店', orders: 142, revenue: 285_400, rating: 4.7, openRate: 0.98 },
+      { id: 'store-shinjuku', name: 'Shinjuku 東口店', orders: 98, revenue: 196_800, rating: 4.5, openRate: 0.95 },
+      { id: 'store-ikebukuro', name: 'Ikebukuro West', orders: 76, revenue: 152_300, rating: 4.6, openRate: 0.97 },
+    ] as { id: string; name: string; orders: number; revenue: number; rating: number; openRate: number }[],
+    topItems: [
+      { name: 'スパイシーチキンバーガー', sold: 89, revenue: 71_200 },
+      { name: 'クラシックチーズバーガー', sold: 67, revenue: 50_250 },
+      { name: 'ガーリックフライ (L)', sold: 124, revenue: 49_600 },
+    ] as { name: string; sold: number; revenue: number }[],
+    weekRevenue: 1_842_500,
+    weekOrders: 932,
+    avgRating: 4.6,
+  },
+
+  demaeCan: {
+    // Snapshot-only — 出前館 has no public REST API; data here is
+    // illustrative of the operational dashboard shape.
+    orders: [
+      { id: 'DC-20260518-001', customer: '田中様', items: 3, total: 2_450, status: '配達中', area: '渋谷区' },
+      { id: 'DC-20260518-002', customer: '佐藤様', items: 2, total: 1_780, status: '調理中', area: '新宿区' },
+      { id: 'DC-20260518-003', customer: '鈴木様', items: 5, total: 4_120, status: '配達完了', area: '世田谷区' },
+      { id: 'DC-20260518-004', customer: '高橋様', items: 1, total: 980, status: '受付済み', area: '中野区' },
+    ] as { id: string; customer: string; items: number; total: number; status: string; area: string }[],
+    monthSummary: {
+      orders: 612,
+      revenue: 1_245_300,
+      avgOrderValue: 2_035,
+      cancellationRate: 0.018,
+    },
+    topAreas: [
+      { area: '渋谷区', orders: 178, revenue: 362_400 },
+      { area: '新宿区', orders: 134, revenue: 273_600 },
+      { area: '世田谷区', orders: 89, revenue: 181_200 },
+    ] as { area: string; orders: number; revenue: number }[],
+  },
+
+  realEstate: {
+    // Snapshot-only. Real-world integration would pull from REIT data
+    // feeds (J-REIT XBRL, 楽待 API 等); for now the page surfaces a
+    // hand-curated portfolio shape so the dashboard is meaningful.
+    properties: [
+      { id: 're-001', name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, occupied: true, yieldPct: 4.8, purchasePrice: 42_000_000 },
+      { id: 're-002', name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, occupied: true, yieldPct: 6.2, purchasePrice: 45_400_000 },
+      { id: 're-003', name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, occupied: false, yieldPct: 5.5, purchasePrice: 15_700_000 },
+      { id: 're-004', name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, occupied: true, yieldPct: 8.1, purchasePrice: 62_000_000 },
+    ] as { id: string; name: string; type: string; monthlyRent: number; occupied: boolean; yieldPct: number; purchasePrice: number }[],
+    monthlyCashflow: {
+      grossRent: 895_000,
+      operatingExpenses: 168_000,
+      mortgagePayment: 412_000,
+      netCashflow: 315_000,
+    },
+    portfolioYield: 6.1,
+    occupancyRate: 0.92,
+  },
+
+  mutualFunds: {
+    // Snapshot-only. A future live integration could call SBI / 楽天証券
+    // for holdings, but for now the page renders an illustrative holdings
+    // view to validate UI flow.
+    holdings: [
+      { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', units: 1_240_000, navPerUnit: 26_140, valuation: 3_241_360, ytdReturnPct: 14.2 },
+      { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', units: 980_000, navPerUnit: 24_870, valuation: 2_437_260, ytdReturnPct: 11.8 },
+      { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', units: 520_000, navPerUnit: 13_420, valuation: 697_840, ytdReturnPct: 3.4 },
+      { code: '64311074', name: 'ひふみプラス', userCustom: '積立中', units: 320_000, navPerUnit: 58_240, valuation: 1_863_680, ytdReturnPct: 8.7 },
+    ] as { code: string; name: string; units: number; navPerUnit: number; valuation: number; ytdReturnPct: number; userCustom?: string }[],
+    portfolio: {
+      totalValuation: 8_240_140,
+      totalCostBasis: 7_180_000,
+      unrealizedGain: 1_060_140,
+      unrealizedGainPct: 14.8,
+    },
+    recentDividends: [
+      { code: '0331C152', amount: 12_400, paidAt: '2026-03-20' },
+      { code: '64311074', amount: 8_900, paidAt: '2026-02-15' },
+    ] as { code: string; amount: number; paidAt: string }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

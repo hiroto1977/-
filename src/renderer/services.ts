@@ -20,6 +20,10 @@ import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { UberEatsPage } from './pages/UberEatsPage';
+import { DemaeCanPage } from './pages/DemaeCanPage';
+import { RealEstatePage } from './pages/RealEstatePage';
+import { MutualFundsPage } from './pages/MutualFundsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -222,6 +226,38 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'API キー / マスターパスワード — AES-GCM-256 で暗号化保管',
     page: SettingsPage,
     category: 'featured',
+  },
+  {
+    id: 'uber-eats',
+    label: 'Uber Eats',
+    icon: 'UE',
+    description: 'フードデリバリー — 売上 / 注文数 / 評価を一覧',
+    page: UberEatsPage,
+    category: 'tools',
+  },
+  {
+    id: 'demae-can',
+    label: '出前館',
+    icon: 'DM',
+    description: 'フードデリバリー — 受注 / 配達ステータス / 月次集計',
+    page: DemaeCanPage,
+    category: 'tools',
+  },
+  {
+    id: 'real-estate',
+    label: '不動産投資',
+    icon: 'RE',
+    description: '物件 / 賃貸キャッシュフロー / 利回りを一括把握',
+    page: RealEstatePage,
+    category: 'tools',
+  },
+  {
+    id: 'mutual-funds',
+    label: '投資信託',
+    icon: 'MF',
+    description: 'ファンド評価額 / 基準価額 / 分配金履歴',
+    page: MutualFundsPage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
