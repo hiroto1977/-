@@ -337,8 +337,8 @@ export const SNAPSHOT = {
       { name: 'クラシックチーズバーガー', sold: 67, revenue: 50_250 },
       { name: 'ガーリックフライ (L)', sold: 124, revenue: 49_600 },
     ] as { name: string; sold: number; revenue: number }[],
-    weekRevenue: 1_842_500,
-    weekOrders: 932,
+    weekRevenue: 634_500,
+    weekOrders: 316,
     avgRating: 4.6,
   },
 
@@ -381,7 +381,9 @@ export const SNAPSHOT = {
       netCashflow: 315_000,
     },
     portfolioYield: 6.1,
-    occupancyRate: 0.92,
+    // 3 of 4 物件入居中 (札幌アパート 6 戸はここでは 1 物件としてカウント)。
+    // UI 表記の整合性を保つため by-property で算出。
+    occupancyRate: 0.75,
   },
 
   mutualFunds: {
