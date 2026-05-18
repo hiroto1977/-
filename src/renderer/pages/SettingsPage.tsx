@@ -226,6 +226,12 @@ function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () 
   );
 }
 
+/** Sentinel value the user must type into the second confirmation step of
+ *  the "wipe all data" flow. Kept top-level so it's easy to localize and
+ *  unit-testable (and so Stryker can't mutate the literal in two unrelated
+ *  spots out of sync). */
+const WIPE_CONFIRM_PHRASE = 'DELETE';
+
 function VaultControls({ onLocked }: { onLocked: () => void }) {
   const [oldPw, setOldPw] = useState('');
   const [newPw, setNewPw] = useState('');
@@ -233,6 +239,13 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Two-step ハードリセット confirmation. `wipeStage` advances
+  //   'idle'     → user has not clicked the button yet
+  //   'confirm1' → first dialog ("really?") accepted, now showing typed-confirmation
+  //   'wiping'   → wipeAndReset in flight; UI locked
+  const [wipeStage, setWipeStage] = useState<'idle' | 'confirm1' | 'wiping'>('idle');
+  const [wipeConfirmText, setWipeConfirmText] = useState('');
+  const [wipeErr, setWipeErr] = useState<string | null>(null);
 
   async function changePassword() {
     setErr(null);
@@ -288,6 +301,19 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
     onLocked();
   }
 
+  async function wipeEverything() {
+    setWipeErr(null);
+    setWipeStage('wiping');
+    try {
+      await getVault().wipeAndReset();
+      // Reload to bring up the first-run LockScreen flow from a clean slate.
+      window.location.reload();
+    } catch (e) {
+      setWipeErr(e instanceof Error ? e.message : String(e));
+      setWipeStage('confirm1');
+    }
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
@@ -331,6 +357,103 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
         <button type="button" onClick={lockNow} style={btn()}>
           🔒 ロックする
         </button>
+      </div>
+
+      <div
+        style={{
+          background: 'var(--bg-elev)',
+          border: '1px solid #ef4444',
+          borderRadius: 8,
+          padding: 14,
+        }}
+      >
+        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: '#ef4444' }}>
+          ⚠ すべてのデータを削除 (ハードリセット)
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
+          マスターパスワードもリカバリーキーも紛失した場合の最終手段です。
+          保管中の全トークン・暗号化メタデータ・現在のリカバリーキーが <strong>復旧不可</strong> な形で消去されます。
+          実行後はページが再読込みされ、最初のセットアップ画面に戻ります。
+        </div>
+        {wipeStage === 'idle' && (
+          <button
+            type="button"
+            onClick={() => {
+              setWipeErr(null);
+              setWipeConfirmText('');
+              setWipeStage('confirm1');
+            }}
+            style={{
+              ...btn(),
+              color: '#ef4444',
+              border: '1px solid #ef4444',
+            }}
+          >
+            すべてのデータを削除…
+          </button>
+        )}
+        {wipeStage === 'confirm1' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div
+              style={{
+                padding: '10px 12px',
+                background: 'rgba(239, 68, 68, 0.10)',
+                border: '1px solid #ef4444',
+                borderRadius: 6,
+                fontSize: 11,
+                color: '#ef4444',
+                lineHeight: 1.5,
+              }}
+            >
+              <strong>本当に削除しますか?</strong>
+              <br />
+              すべての保存済みトークン・現在の 24 単語リカバリーキーが無効になります。
+              この操作は取り消せません。
+              <br />
+              続行するには、下の欄に <code style={{ background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>{WIPE_CONFIRM_PHRASE}</code> と入力してください。
+            </div>
+            <input
+              type="text"
+              value={wipeConfirmText}
+              onChange={(e) => setWipeConfirmText(e.target.value)}
+              placeholder={WIPE_CONFIRM_PHRASE}
+              autoFocus
+              style={{ ...pwInput, fontFamily: 'monospace' }}
+            />
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                type="button"
+                onClick={wipeEverything}
+                disabled={wipeConfirmText !== WIPE_CONFIRM_PHRASE}
+                style={{
+                  ...btn(),
+                  background: wipeConfirmText === WIPE_CONFIRM_PHRASE ? '#ef4444' : 'var(--bg)',
+                  color: '#fff',
+                  border: '1px solid #ef4444',
+                  opacity: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 1 : 0.5,
+                  cursor: wipeConfirmText === WIPE_CONFIRM_PHRASE ? 'pointer' : 'not-allowed',
+                }}
+              >
+                確定して削除
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setWipeStage('idle');
+                  setWipeConfirmText('');
+                  setWipeErr(null);
+                }}
+                style={btn()}
+              >
+                キャンセル
+              </button>
+            </div>
+            {wipeErr && <div style={{ fontSize: 11, color: '#ef4444' }}>{wipeErr}</div>}
+          </div>
+        )}
+        {wipeStage === 'wiping' && (
+          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>削除中… ページを再読み込みします</div>
+        )}
       </div>
     </div>
   );
@@ -396,7 +519,7 @@ export function SettingsPage() {
         <GoogleOAuthSection />
       </Section>
 
-      <Section title="Vault 管理" count={2}>
+      <Section title="Vault 管理" count={3}>
         <VaultControls onLocked={() => setLocked(true)} />
       </Section>
     </div>

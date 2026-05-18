@@ -129,16 +129,40 @@ export async function decodeMnemonic(mnemonic: string): Promise<Uint8Array> {
   return entropy;
 }
 
-/** Convenience: NFKD normalize → lowercase → collapse whitespace.
+/** Invisible / formatting Unicode characters that NFKD does NOT strip but
+ *  which commonly sneak in via copy-paste from PDFs, IM apps, or
+ *  bidirectional text. If left in place they produce confusing
+ *  "unknown word" errors because BIP-39 lookup is byte-exact.
+ *
+ *  Covered ranges:
+ *    U+200B – U+200F  zero-width space / joiner / non-joiner / LRM / RLM
+ *    U+202A – U+202E  bidi embedding / override controls
+ *    U+2060 – U+206F  word joiner / invisible operators / reserved formats
+ *    U+FEFF           BOM / zero-width no-break space
+ *
+ *  Applied AFTER NFKD so that any compatibility decomposition producing
+ *  these formatting characters is also caught in a single pass. */
+const INVISIBLE_RE = /[​-‏‪-‮⁠-⁯﻿]/g;
+
+/** Convenience: NFKD normalize → strip invisible/bidi formatting →
+ *  lowercase → collapse whitespace.
  *
  *  NFKD folds compatibility characters (full-width "Ａ" → ASCII "a",
  *  full-width space → ASCII space), which is necessary because Japanese
  *  IMEs frequently produce full-width input when the user paste / type
  *  the mnemonic. Without NFKD, "Ａｂａｎｄｏｎ" would fail "unknown word"
  *  even though the user typed the same 7 letters. BIP-39 English
- *  wordlist is pure ASCII so NFKD is safe. */
+ *  wordlist is pure ASCII so NFKD is safe.
+ *
+ *  The invisible-character strip handles copy-paste hazards that NFKD
+ *  itself does not address (zero-width space, BOM, bidi controls). */
 export function normalizeMnemonic(s: string): string {
-  return s.normalize('NFKD').trim().toLowerCase().replace(/\s+/g, ' ');
+  return s
+    .normalize('NFKD')
+    .replace(INVISIBLE_RE, '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
 }
 
 /** Wordlist accessor for UI auto-complete / suggestion. */

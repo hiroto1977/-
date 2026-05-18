@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getVault, type VaultStatus } from './vault';
 import { looksLikeValidMnemonic } from './mnemonic';
 
@@ -32,6 +32,12 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   // Ephemeral feedback for clipboard / download actions in the mnemonic view.
   // Tuple of (message, kind). `kind` controls the color.
   const [feedback, setFeedback] = useState<{ msg: string; kind: 'info' | 'error' } | null>(null);
+  // Holds the pending clipboard-wipe timer. Allows us to (a) reset the
+  // 30-second countdown if the user presses "copy" again, and (b) clear
+  // the timer on unmount so we don't try to write to a navigator object
+  // that may be gone (and we don't accidentally wipe the user's *new*
+  // clipboard contents after they've moved on).
+  const clipboardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,6 +51,17 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
       });
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  // Unmount cleanup: cancel any pending clipboard wipe so it doesn't
+  // overwrite the user's clipboard after the lock screen has gone away.
+  useEffect(() => {
+    return () => {
+      if (clipboardTimerRef.current !== null) {
+        clearTimeout(clipboardTimerRef.current);
+        clipboardTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -110,11 +127,30 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
   async function copyMnemonic() {
     try {
       await navigator.clipboard.writeText(mnemonic);
-      setFeedback({ msg: '📋 コピーしました (30 秒後にクリップボードを自動消去)', kind: 'info' });
-      // Best-effort wipe of the clipboard 30 s later. Failures are silent
-      // (e.g. another app overwrote the clipboard, browser permission lost).
-      setTimeout(() => {
-        navigator.clipboard.writeText('').catch(() => {});
+      setFeedback({ msg: '📋 コピーしました (30 秒後にクリップボードを自動消去 — 貼り付けはお早めに)', kind: 'info' });
+      // Reset any in-flight wipe so a re-press restarts the 30s countdown
+      // instead of stacking up duplicate timers that fight over the clipboard.
+      if (clipboardTimerRef.current !== null) {
+        clearTimeout(clipboardTimerRef.current);
+      }
+      // Capture the mnemonic value at the moment we copied it; the wipe
+      // only runs if the clipboard *still* contains exactly that value
+      // (the user hasn't already copied something else themselves).
+      const copied = mnemonic;
+      clipboardTimerRef.current = setTimeout(() => {
+        clipboardTimerRef.current = null;
+        // Best-effort guarded wipe — failures (permission denied, no
+        // readText support, clipboard already different) are silent.
+        (async () => {
+          try {
+            const current = await navigator.clipboard.readText();
+            if (current === copied) {
+              await navigator.clipboard.writeText('');
+            }
+          } catch {
+            /* silent: permission denied / unsupported */
+          }
+        })();
       }, 30_000);
     } catch {
       setFeedback({ msg: '⚠ コピーに失敗 — 24 単語を手動で選択・コピーしてください', kind: 'error' });
@@ -126,9 +162,16 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    // Timestamped + generic filename — avoids "recovery-key.txt" sitting in
-    // Downloads with its purpose printed on the surface.
-    a.download = `service-hub-${Date.now()}.txt`;
+    // Human-readable timestamp (YYYYMMDD-HHMM) keeps the filename generic
+    // — no hint of "recovery-key" on the surface — while making the file
+    // easy to locate later by sort order in Downloads. e.g.
+    //   service-hub-20260515-1432.txt
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const stamp =
+      `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
+      `-${pad(now.getHours())}${pad(now.getMinutes())}`;
+    a.download = `service-hub-${stamp}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

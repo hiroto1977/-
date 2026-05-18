@@ -173,6 +173,39 @@ describe('normalizeMnemonic', () => {
     expect(normalizeMnemonic('ＡＢＡＮＤＯＮ　abandon')).toBe('abandon abandon');
     expect(normalizeMnemonic('ａｂａｎｄｏｎ')).toBe('abandon');
   });
+
+  it('strips zero-width space (U+200B) — design: remove, do not split', () => {
+    // U+200B can sneak in when pasting from rich-text editors (Notion, PDFs).
+    // We deliberately remove (not split on) such characters so that text
+    // boundaries match what the user *sees* — the ASCII spaces remain the
+    // only token separators, which matches BIP-39 reference tooling.
+    const zwsp = '​';
+    expect(normalizeMnemonic(`abandon${zwsp}abandon${zwsp}art`)).toBe('abandonabandonart');
+    expect(normalizeMnemonic(`abandon ${zwsp}abandon ${zwsp}art`)).toBe('abandon abandon art');
+  });
+
+  it('strips BOM (U+FEFF) at start of string', () => {
+    // Some text editors and Windows clipboards prepend a BOM. Without
+    // explicit stripping the first word becomes "﻿abandon" which
+    // BIP-39 lookup rejects as unknown.
+    const bom = '﻿';
+    expect(normalizeMnemonic(`${bom}abandon abandon art`)).toBe('abandon abandon art');
+  });
+
+  it('strips bidi formatting controls (LRM / RLM / LRE / PDF)', () => {
+    // U+200E (LRM), U+200F (RLM), U+202A (LRE), U+202C (PDF). These are
+    // invisible but pollute byte-exact lookup. Verified per-codepoint so
+    // a Stryker mutation that shrinks the regex range gets caught.
+    expect(normalizeMnemonic('aban‎don')).toBe('abandon');
+    expect(normalizeMnemonic('aban‏don')).toBe('abandon');
+    expect(normalizeMnemonic('aban‪don')).toBe('abandon');
+    expect(normalizeMnemonic('aban‬don')).toBe('abandon');
+  });
+
+  it('strips word joiner (U+2060) and related invisible operators', () => {
+    expect(normalizeMnemonic('aban⁠don')).toBe('abandon');
+    expect(normalizeMnemonic('aban⁣don')).toBe('abandon');
+  });
 });
 
 describe('looksLikeValidMnemonic (cheap pre-check)', () => {
