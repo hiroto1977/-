@@ -266,7 +266,7 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'QA',
     description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
     page: QualityPage,
-    category: 'featured',
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

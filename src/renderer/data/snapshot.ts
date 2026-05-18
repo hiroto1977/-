@@ -414,8 +414,8 @@ export const SNAPSHOT = {
   quality: {
     // Snapshot-only. Future iteration will pull values from
     // `npm run quality:report` (scripts/quality-report.cjs).
-    unitTests: { staticCount: 1153, runtimeCount: 1202 },
-    mutation: { score: 100.00, mutateModules: 35, killed: 2447, threshold: 99.8 },
+    unitTests: { staticCount: 1175, runtimeCount: 1224 },
+    mutation: { score: 100.00, mutateModules: 36, killed: 2447, threshold: 99.8 },
     verifications: [
       { name: 'typecheck', status: 'pass' },
       { name: 'ESLint (0 errors / 0 warnings)', status: 'pass' },
@@ -442,7 +442,7 @@ export const SNAPSHOT = {
       blocking: number; shouldFix: number; nit: number;
     }[],
     artifactSizes: { standaloneHtmlKb: 421, electronMainKb: 113 },
-    latestCommit: '787d5e9',
+    latestCommit: 'ff50f63',
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

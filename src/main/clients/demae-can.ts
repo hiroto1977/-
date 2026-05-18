@@ -49,14 +49,21 @@ export async function fetchDemaeCanSnapshot(ctx: FetchContext): Promise<DemaeCan
   return fetchDemaeCanSnapshotImpl(ctx);
 }
 
-// --- write-side actions (snapshot phase) ---------------------------------
+// --- write-side actions (snapshot phase) — 永続化は未配線、`persisted: false` で UI に明示。
 
 interface RecordEntryPayload {
   readonly note: string;
   readonly amount?: number;
 }
 
-async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: 'demae-can'; recordedAt: string }> {
+export interface RecordEntryResult {
+  readonly ok: true;
+  readonly serviceId: 'demae-can';
+  readonly recordedAt: string;
+  readonly persisted: false;
+}
+
+async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
     throw new Error('demae-can.record-entry: note は 1-2000 文字で指定してください');
@@ -64,22 +71,32 @@ async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: '
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('demae-can.record-entry: amount は finite な数値で指定してください');
   }
-  return { ok: true, serviceId: 'demae-can', recordedAt: new Date().toISOString() };
+  return { ok: true, serviceId: 'demae-can', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-async function advise(ctx: ActionContext): Promise<{ markdown: string; phase: 'stub' }> {
+export interface ServiceAdvisorResponse {
+  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
+  readonly disclaimer: string;
+  readonly notForRealMoney: true;
+  readonly phase: 'stub' | 'live';
+}
+
+const DEMAE_CAN_DISCLAIMER =
+  '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
+  '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
+
+async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
-  const markdown = [
-    '## 出前館 改善提案 (Phase 6 で AI 接続予定)',
-    '',
-    '- 月次キャンセル率 1.80% は業界平均 (~3%) 比で良好。継続観測。',
-    '- 客単価 ¥2,035 — 渋谷区が単価高め、世田谷区は注文数で稼ぐ二極構造。',
-    '  渋谷区メニュー (高単価セット) を世田谷区にも展開すると効果的。',
-    '- 配達中 ステータスの注文を最優先で監視し、配達遅延を未然に防ぐ運用ルール推奨。',
-    '',
-    '※ 本提案は静的 snapshot に基づくテンプレートで、実 LLM 推論は Phase 6 で接続します。',
-  ].join('\n');
-  return { markdown, phase: 'stub' };
+  return {
+    recommendations: [
+      { title: '低キャンセル率の維持', rationale: '月次キャンセル率 1.80% は業界平均 (~3%) 比で良好。継続観測する運用が望ましい。' },
+      { title: '客単価の地域格差解消', rationale: '渋谷区が単価高め・世田谷区は注文数で稼ぐ二極構造。渋谷区メニュー (高単価セット) を世田谷区にも展開すると効果的。' },
+      { title: '配達遅延の未然防止', rationale: '配達中ステータスの注文を最優先で監視し、配達遅延を未然に防ぐ運用ルールを推奨。' },
+    ],
+    disclaimer: DEMAE_CAN_DISCLAIMER,
+    notForRealMoney: true,
+    phase: 'stub',
+  };
 }
 
 export const ACTIONS: ActionMap = {

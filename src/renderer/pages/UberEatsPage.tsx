@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -57,6 +58,8 @@ export function UberEatsPage() {
           </tbody>
         </table>
       </Section>
+
+      <ServiceActionPanel serviceId="uber-eats" serviceLabel="Uber Eats" />
 
       <Section title="人気メニュー TOP3" count={topItems.length}>
         <table style={tableStyle}>

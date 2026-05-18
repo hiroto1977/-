@@ -47,14 +47,21 @@ export async function fetchRealEstateSnapshot(ctx: FetchContext): Promise<RealEs
   return fetchRealEstateSnapshotImpl(ctx);
 }
 
-// --- write-side actions (snapshot phase) ---------------------------------
+// --- write-side actions (snapshot phase) — 永続化は未配線、`persisted: false` で UI に明示。
 
 interface RecordEntryPayload {
   readonly note: string;
   readonly amount?: number;
 }
 
-async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: 'real-estate'; recordedAt: string }> {
+export interface RecordEntryResult {
+  readonly ok: true;
+  readonly serviceId: 'real-estate';
+  readonly recordedAt: string;
+  readonly persisted: false;
+}
+
+async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
     throw new Error('real-estate.record-entry: note は 1-2000 文字で指定してください');
@@ -62,22 +69,33 @@ async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: '
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('real-estate.record-entry: amount は finite な数値で指定してください');
   }
-  return { ok: true, serviceId: 'real-estate', recordedAt: new Date().toISOString() };
+  return { ok: true, serviceId: 'real-estate', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-async function advise(ctx: ActionContext): Promise<{ markdown: string; phase: 'stub' }> {
+export interface ServiceAdvisorResponse {
+  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
+  readonly disclaimer: string;
+  readonly notForRealMoney: true;
+  readonly phase: 'stub' | 'live';
+}
+
+const REAL_ESTATE_DISCLAIMER =
+  '本提案は教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +
+  'ファイナンシャルアドバイザー・税理士・宅建士の確認を経てご自身の責任で行ってください。' +
+  'Phase 6 で実 LLM 推論を接続します。';
+
+async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
-  const markdown = [
-    '## 不動産投資 改善提案 (Phase 6 で AI 接続予定)',
-    '',
-    '- 大阪市ワンルームが空室 — 賃料設定の市場比較と仲介媒介の見直しを推奨。',
-    '- 札幌アパート (利回り 8.1%) が CF の主力。修繕積立金の確保を継続。',
-    '- ポートフォリオ平均利回り 6.15% は東京23区物件偏重と札幌の組合せで良好。',
-    '  リスク分散は十分。',
-    '',
-    '※ 本提案は静的 snapshot に基づくテンプレートで、実 LLM 推論は Phase 6 で接続します。',
-  ].join('\n');
-  return { markdown, phase: 'stub' };
+  return {
+    recommendations: [
+      { title: '大阪空室の解消', rationale: '大阪市ワンルームが空室。賃料設定の市場比較と仲介媒介の見直しを推奨。' },
+      { title: '札幌アパートの CF 維持', rationale: '札幌アパート (利回り 8.1%) が CF の主力。修繕積立金の確保を継続。' },
+      { title: 'ポートフォリオ分散の維持', rationale: '平均利回り 6.15% は東京23区物件偏重と札幌の組合せで良好。地理的リスク分散は十分。' },
+    ],
+    disclaimer: REAL_ESTATE_DISCLAIMER,
+    notForRealMoney: true,
+    phase: 'stub',
+  };
 }
 
 export const ACTIONS: ActionMap = {

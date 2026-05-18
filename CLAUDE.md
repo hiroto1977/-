@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 26 services
+Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 27 services
 across third‑party SaaS (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail,
 Slack, Canva), local tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks), business
 operations (Home, Business Dashboard, Team Radar, Templates, Library, Settings), food delivery

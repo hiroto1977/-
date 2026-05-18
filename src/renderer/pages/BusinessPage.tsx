@@ -971,10 +971,10 @@ function CrossServiceKpis() {
   return (
     <Section title="業務操作 横断 KPI (フードデリバリー × 投資)" count={4}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 12 }}>
-        <Stat label="月次売上 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
+        <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
         <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
-        <Stat label="投資評価額 (株式+投信)" value={jpy(investmentValuation)} />
-        <Stat label="総資産 (投資+不動産)" value={jpy(totalAssets)} />
+        <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
+        <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは

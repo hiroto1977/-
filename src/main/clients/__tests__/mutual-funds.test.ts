@@ -15,10 +15,11 @@ describe('fetchMutualFundsSnapshot (snapshot-only stub)', () => {
 describe('mutual-funds ACTIONS', () => {
   describe('record-entry', () => {
     const action = ACTIONS['record-entry']!;
-    it('records valid input', async () => {
-      const r = await action({ token: '', payload: { note: 'eMAXIS Slim S&P500 を 1 万円積立', amount: 10_000 } }) as { ok: boolean; serviceId: string };
+    it('records valid input with persisted=false', async () => {
+      const r = await action({ token: '', payload: { note: 'eMAXIS Slim S&P500 を 1 万円積立', amount: 10_000 } }) as { ok: boolean; serviceId: string; persisted: false };
       expect(r.ok).toBe(true);
       expect(r.serviceId).toBe('mutual-funds');
+      expect(r.persisted).toBe(false);
     });
     it('rejects empty note', async () => {
       await expect(action({ token: '', payload: { note: '' } })).rejects.toThrow(/note は 1-2000/);
@@ -33,11 +34,16 @@ describe('mutual-funds ACTIONS', () => {
 
   describe('advise', () => {
     const action = ACTIONS['advise']!;
-    it('returns Markdown stub for 投資信託', async () => {
-      const r = await action({ token: '', payload: {} }) as { markdown: string; phase: string };
+    it('returns AdvisorResponse-compatible shape (with strict investment disclaimer)', async () => {
+      const r = await action({ token: '', payload: {} }) as {
+        recommendations: { title: string; rationale: string }[];
+        disclaimer: string; notForRealMoney: true; phase: 'stub' | 'live';
+      };
       expect(r.phase).toBe('stub');
-      expect(r.markdown).toMatch(/投資信託|S&P500/);
-      expect(r.markdown).toMatch(/Phase 6/);
+      expect(r.notForRealMoney).toBe(true);
+      expect(r.disclaimer).toMatch(/投資助言ではありません/);
+      expect(r.disclaimer).toMatch(/Phase 6/);
+      expect(r.recommendations.length).toBeGreaterThan(0);
     });
   });
 });

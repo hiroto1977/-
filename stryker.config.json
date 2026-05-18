@@ -30,6 +30,7 @@
     "src/main/clients/demae-can.ts",
     "src/main/clients/real-estate.ts",
     "src/main/clients/mutual-funds.ts",
+    "src/main/clients/quality.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/autoLock.ts",
     "src/renderer/security/mnemonic.ts",

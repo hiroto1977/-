@@ -51,17 +51,26 @@ export async function fetchUberEatsSnapshot(ctx: FetchContext): Promise<UberEats
 
 // --- write-side actions (snapshot phase) ---------------------------------
 // Phase 6 で Eats Merchants API が配線されるまでは、ローカル「業務メモ」
-// として動作する。renderer の `serviceHub.invoke('uber-eats', 'record-entry', {...})`
-// から呼び出され、入力は IPC レイヤで vault 永続化される (実保存は
-// secrets.ts ではなく、renderer 側の Library に書き出す想定)。
-// 現フェーズではバリデーション + 受信確認のみを返す。
+// として動作する。**永続化は未配線** — Library への保存は別 PR で。
+// 返り値 `persisted: false` で UI 側に明示する。
 
 interface RecordEntryPayload {
   readonly note: string;
   readonly amount?: number;
 }
 
-async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: 'uber-eats'; recordedAt: string }> {
+/** record-entry 戻り値。Phase 6 で Library 永続化を入れたら `persisted: true`
+ *  に切替。UI は `persisted === false` の場合「保存はされません (Phase 6 で対応)」
+ *  と表示しないと misleading になる。 */
+export interface RecordEntryResult {
+  readonly ok: true;
+  readonly serviceId: 'uber-eats';
+  readonly recordedAt: string;
+  /** Phase 6 で IndexedDB / Library 永続化に切り替えるまで false。 */
+  readonly persisted: false;
+}
+
+async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
     throw new Error('uber-eats.record-entry: note は 1-2000 文字で指定してください');
@@ -69,26 +78,36 @@ async function recordEntry(ctx: ActionContext): Promise<{ ok: true; serviceId: '
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('uber-eats.record-entry: amount は finite な数値で指定してください');
   }
-  // renderer 側で receive 後、Library に積む想定。
-  return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString() };
+  return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-async function advise(ctx: ActionContext): Promise<{ markdown: string; phase: 'stub' }> {
-  // Phase 6 で Anthropic API 接続予定。現フェーズはスナップショット解析の
-  // テンプレート出力に留め、structured advice の shape (`markdown` フィールド)
-  // だけ確定させておく。stocks.advise / business.advise と同じ呼び出し規約。
+/** advise 戻り値。stocks/business advisor の AdvisorResponse と構造的に
+ *  互換 (`disclaimer` + `notForRealMoney: true` を持つ) + stub フェーズを
+ *  明示する `phase: 'stub'` を加えた superset。Phase 6 で実 LLM 接続時に
+ *  `phase: 'live'` に切替、`recommendations` 配列も埋まる。 */
+export interface ServiceAdvisorResponse {
+  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
+  readonly disclaimer: string;
+  readonly notForRealMoney: true;
+  readonly phase: 'stub' | 'live';
+}
+
+const UBER_EATS_DISCLAIMER =
+  '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
+  '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
+
+async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
-  const markdown = [
-    '## Uber Eats 改善提案 (Phase 6 で AI 接続予定)',
-    '',
-    '- 店舗別売上の偏り (Shibuya > Shinjuku > Ikebukuro) — Top 店舗のオペレーション',
-    '  を他 2 店舗へ展開すると平均化が見込めます。',
-    '- 平均評価 ★ 4.60 を 4.70 まで引き上げる施策: 配達時間短縮 / 包装改善 / クーポン施策。',
-    '- 人気メニュー TOP3 を Shinjuku 店でも前面に出すと客単価向上が期待できます。',
-    '',
-    '※ 本提案は静的 snapshot に基づくテンプレートで、実 LLM 推論は Phase 6 で接続します。',
-  ].join('\n');
-  return { markdown, phase: 'stub' };
+  return {
+    recommendations: [
+      { title: '店舗別売上の平準化', rationale: 'Shibuya > Shinjuku > Ikebukuro のばらつきが大きい。Top 店舗のオペレーションを他 2 店舗へ展開すると平均化が見込める。' },
+      { title: '平均評価★ 4.60 → 4.70 への引き上げ', rationale: '配達時間短縮 / 包装改善 / クーポン施策の組み合わせで顧客満足度を底上げ。' },
+      { title: '人気メニュー TOP3 の店舗別展開', rationale: 'Shinjuku 店でも TOP3 を前面に出すと客単価向上が期待できる。' },
+    ],
+    disclaimer: UBER_EATS_DISCLAIMER,
+    notForRealMoney: true,
+    phase: 'stub',
+  };
 }
 
 export const ACTIONS: ActionMap = {
