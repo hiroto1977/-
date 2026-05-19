@@ -36,6 +36,13 @@ import { fetchShopifySnapshot } from './shopify';
 import { fetchStripeSnapshot } from './stripe';
 import { fetchLineSnapshot } from './line';
 import { fetchStorageSnapshot } from './storage';
+import { fetchTaxAccountantSnapshot } from './tax-accountant';
+import { fetchLaborConsultantSnapshot } from './labor-consultant';
+import { fetchLawyerSnapshot } from './lawyer';
+import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
+import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
+import { fetchSmeConsultantSnapshot } from './sme-consultant';
+import { fetchPatentAttorneySnapshot } from './patent-attorney';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -81,6 +88,13 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   stripe: fetchStripeSnapshot,
   line: fetchLineSnapshot,
   storage: fetchStorageSnapshot,
+  'tax-accountant': fetchTaxAccountantSnapshot,
+  'labor-consultant': fetchLaborConsultantSnapshot,
+  lawyer: fetchLawyerSnapshot,
+  'judicial-scrivener': fetchJudicialScrivenerSnapshot,
+  'admin-scrivener': fetchAdminScrivenerSnapshot,
+  'sme-consultant': fetchSmeConsultantSnapshot,
+  'patent-attorney': fetchPatentAttorneySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 

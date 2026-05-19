@@ -36,6 +36,13 @@ import { ShopifyPage } from './pages/ShopifyPage';
 import { StripePage } from './pages/StripePage';
 import { LinePage } from './pages/LinePage';
 import { StoragePage } from './pages/StoragePage';
+import { TaxAccountantPage } from './pages/TaxAccountantPage';
+import { LaborConsultantPage } from './pages/LaborConsultantPage';
+import { LawyerPage } from './pages/LawyerPage';
+import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
+import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
+import { SmeConsultantPage } from './pages/SmeConsultantPage';
+import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -366,6 +373,62 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'PC ストレージ分析 + クリーンアップ推奨 + パフォーマンス監視',
     page: StoragePage,
     category: 'tools',
+  },
+  {
+    id: 'tax-accountant',
+    label: '税理士',
+    icon: 'TX',
+    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談',
+    page: TaxAccountantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'labor-consultant',
+    label: '社労士',
+    icon: 'LC',
+    description: '社会保険手続 / 給与計算 / 就業規則 / 労務相談',
+    page: LaborConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'lawyer',
+    label: '弁護士',
+    icon: 'LW',
+    description: '契約書レビュー / 紛争対応 / 法務顧問',
+    page: LawyerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'judicial-scrivener',
+    label: '司法書士',
+    icon: 'JS',
+    description: '商業登記 / 不動産登記 / 相続手続',
+    page: JudicialScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'admin-scrivener',
+    label: '行政書士',
+    icon: 'AD',
+    description: '許認可申請 / 在留資格 / 補助金',
+    page: AdminScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sme-consultant',
+    label: '中小企業診断士',
+    icon: 'SM',
+    description: '経営診断 / 補助金申請 / 事業計画',
+    page: SmeConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'patent-attorney',
+    label: '弁理士',
+    icon: 'PA',
+    description: '特許 / 商標 / 意匠出願 / 知財コンサル',
+    page: PatentAttorneyPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
