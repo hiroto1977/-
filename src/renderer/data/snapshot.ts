@@ -445,6 +445,99 @@ export const SNAPSHOT = {
     latestCommit: 'ff50f63',
   },
 
+  microsoft365: {
+    items: [
+      { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
+      { id: 'onedrive-1', name: '☁ OneDrive: 12.4 GB / 1 TB (1.2%) · 最近 4 ファイル' },
+      { id: 'teams-1', name: '👥 Teams: 今日 3 会議 / 未読 8 メッセージ' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  dropbox: {
+    items: [
+      { id: 'f-1', name: '📁 Q3-report.xlsx · 2026-05-18 · 共有 3 名' },
+      { id: 'f-2', name: '📁 marketing-assets/ · 142 ファイル · 4.2 GB' },
+      { id: 'f-3', name: '📁 contracts-signed.pdf · 2026-05-15' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  salesforce: {
+    items: [
+      { id: 'opp-001', name: '🎯 商談: ACME 大型案件 (¥18M) — Stage 4/6' },
+      { id: 'opp-002', name: '🎯 商談: Beta Corp 更新 (¥6M) — Stage 5/6' },
+      { id: 'lead-001', name: '👤 リード: Gamma Industries (確度高)' },
+      { id: 'kpi', name: '📊 月次パイプライン: ¥124M / 商談 18 件' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  discord: {
+    items: [
+      { id: 'srv-1', name: '🔵 Service Hub Dev (1,242 メンバー · 8 チャンネル)' },
+      { id: 'srv-2', name: '🟢 ユーザーコミュニティ (4,521 メンバー · 12 チャンネル)' },
+      { id: 'msg', name: '💬 今日の活動: 89 メッセージ / 4 スレッド' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  asana: {
+    items: [
+      { id: 't-1', name: '✅ Phase 6: Live API 接続 — 進捗 40% (12/30 完了)' },
+      { id: 't-2', name: '🚧 Q3 OKR 設定 — 期限 7 日後 / 担当 5 名' },
+      { id: 't-3', name: '⏳ ユーザーインタビュー × 8 — 5 件実施済' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  linear: {
+    items: [
+      { id: 'ENG-142', name: '🐛 ENG-142: SSRF guard で NAT64 prefix 取りこぼし (P1)' },
+      { id: 'ENG-148', name: '✨ ENG-148: AI advisor の Anthropic 接続 (P2)' },
+      { id: 'cycle', name: '🔄 Cycle 23: 8 issues / 完了 5 / 進行中 2' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  sentry: {
+    items: [
+      { id: 'err-1', name: '🔴 [main] Uncaught TypeError in autoLock.ts (24 件 / 4h)' },
+      { id: 'err-2', name: '🟡 [renderer] Slow vault.unlock (>3s, 12 件)' },
+      { id: 'rel', name: '🚀 v1.4.2 release: 0 new issues / 142 regressions resolved' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  shopify: {
+    items: [
+      { id: 'ord-001', name: '🛒 注文 #1042: ¥18,400 · 配送準備中' },
+      { id: 'ord-002', name: '🛒 注文 #1043: ¥6,200 · 出荷済' },
+      { id: 'rev', name: '💰 今月売上: ¥2,840,500 / 注文 187 件 / 顧客 142 名' },
+      { id: 'prod', name: '📦 在庫切れ警告: 商品 3 点 (補充推奨)' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  stripe: {
+    items: [
+      { id: 'mrr', name: '💳 MRR: $48,200 (前月比 +8.4%)' },
+      { id: 'cust', name: '👥 アクティブ顧客: 412 名 / 解約率 1.8%' },
+      { id: 'inv', name: '📄 未払い請求書: 7 件 ($3,420 相当)' },
+      { id: 'today', name: '⚡ 今日の決済: 23 件 / $4,180 / 失敗 1 件' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  line: {
+    items: [
+      { id: 'fr', name: '👤 友だち: 18,420 名 (前月比 +312)' },
+      { id: 'br', name: '📢 直近配信: 「Q3 新機能のご紹介」配信数 17,890 · 開封率 24%' },
+      { id: 'msg', name: '💬 今日の応答メッセージ: 142 件 / 自動応答 89 件' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

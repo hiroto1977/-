@@ -25,6 +25,16 @@ import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
 import { fetchQualitySnapshot } from './quality';
+import { fetchMicrosoft365Snapshot } from './microsoft-365';
+import { fetchDropboxSnapshot } from './dropbox';
+import { fetchSalesforceSnapshot } from './salesforce';
+import { fetchDiscordSnapshot } from './discord';
+import { fetchAsanaSnapshot } from './asana';
+import { fetchLinearSnapshot } from './linear';
+import { fetchSentrySnapshot } from './sentry';
+import { fetchShopifySnapshot } from './shopify';
+import { fetchStripeSnapshot } from './stripe';
+import { fetchLineSnapshot } from './line';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -59,6 +69,16 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
   quality: fetchQualitySnapshot,
+  'microsoft-365': fetchMicrosoft365Snapshot,
+  dropbox: fetchDropboxSnapshot,
+  salesforce: fetchSalesforceSnapshot,
+  discord: fetchDiscordSnapshot,
+  asana: fetchAsanaSnapshot,
+  linear: fetchLinearSnapshot,
+  sentry: fetchSentrySnapshot,
+  shopify: fetchShopifySnapshot,
+  stripe: fetchStripeSnapshot,
+  line: fetchLineSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
