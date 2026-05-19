@@ -44,6 +44,7 @@ export const SERVICE_IDS = [
   'shopify',
   'stripe',
   'line',
+  'storage',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
