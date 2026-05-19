@@ -141,6 +141,14 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'mutual-funds',
   'quality',
   'storage',
+  // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
+  'tax-accountant',
+  'labor-consultant',
+  'lawyer',
+  'judicial-scrivener',
+  'admin-scrivener',
+  'sme-consultant',
+  'patent-attorney',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
