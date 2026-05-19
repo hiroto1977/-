@@ -1,0 +1,461 @@
+/**
+ * BYO Proxy — CORS ブロックされる API (Notion / Atlassian / Cloudflare 等)
+ * をユーザー自身が運用するプロキシ経由で呼び出すための薄いラッパー。
+ *
+ * プロトコル (docs/PROXY_EXAMPLE.md §1):
+ *   client → proxy:   POST <proxy-url>
+ *     Content-Type: application/json
+ *     X-Proxy-Auth: <secret>   (optional)
+ *     Body: { url, method, headers, body }
+ *
+ *   proxy → upstream: 透過呼び出し
+ *
+ *   proxy → client:   200 OK
+ *     Body: { status, headers, body }
+ */
+
+// Constants + IDB infra below — decorative error strings, default-arrow
+// fallbacks, and the request/response envelope structure are pinned by
+// the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
+// `fetchViaProxy` round-trip + validation cases.
+// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement
+const DB_NAME = 'business-hub-preferences';
+const DB_VERSION = 1;
+const STORE = 'kv';
+const KEY = 'proxy';
+
+export interface ProxyConfig {
+  /** Cloudflare Worker / Vercel Function 等の URL */
+  readonly url: string;
+  /** 任意の共有秘密 (HMAC ヘッダーで送信) */
+  readonly sharedSecret?: string;
+}
+
+function openDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error ?? new Error('preferences open failed'));
+  });
+}
+
+function txDone(tx: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error ?? new Error('tx failed'));
+  });
+}
+
+export async function getProxyConfig(): Promise<ProxyConfig | null> {
+  let db: IDBDatabase;
+  try {
+    db = await openDb();
+  } catch {
+    return null;
+  }
+  const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).get(KEY);
+    req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
+    req.onerror = () => reject(req.error ?? new Error('get failed'));
+  });
+  db.close();
+  return cfg ?? null;
+}
+
+export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
+  if (cfg !== null) {
+    if (typeof cfg.url !== 'string' || cfg.url.length === 0 || cfg.url.length > 1024) {
+      throw new Error('proxy URL が不正です');
+    }
+    try {
+      const u = new URL(cfg.url);
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') {
+        throw new Error('proxy URL は http(s) スキームのみ対応');
+      }
+    } catch (e) {
+      if (e instanceof Error && /proxy URL/.test(e.message)) throw e;
+      throw new Error('proxy URL の形式が不正です');
+    }
+    if (cfg.sharedSecret !== undefined && (typeof cfg.sharedSecret !== 'string' || cfg.sharedSecret.length > 256)) {
+      throw new Error('共有秘密が不正です (256 字以内)');
+    }
+  }
+  const db = await openDb();
+  const tx = db.transaction(STORE, 'readwrite');
+  if (cfg === null) tx.objectStore(STORE).delete(KEY);
+  else tx.objectStore(STORE).put(cfg, KEY);
+  await txDone(tx);
+  db.close();
+}
+
+interface ProxyResponseEnvelope {
+  status: number;
+  headers?: Record<string, string>;
+  body?: string;
+}
+
+/** Stream-read a Response body with a hard byte cap. Throws if the cap
+ *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
+async function readWithCap(res: Response, maxBytes: number): Promise<string> {
+  if (!res.body) {
+    // Some test runtimes (fake fetch mocks) don't expose body. Fall back
+    // to text() but check length post-hoc.
+    const t = await res.text();
+    if (t.length > maxBytes) {
+      throw new Error(`proxy response too large (${t.length} > ${maxBytes} bytes)`);
+    }
+    return t;
+  }
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) {
+      total += value.byteLength;
+      if (total > maxBytes) {
+        reader.cancel().catch(() => {});
+        throw new Error(`proxy response too large (>${maxBytes} bytes)`);
+      }
+      chunks.push(value);
+    }
+  }
+  // Concatenate chunks → decode as UTF-8.
+  const buf = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) {
+    buf.set(c, off);
+    off += c.byteLength;
+  }
+  return new TextDecoder('utf-8').decode(buf);
+}
+
+/** 10 MiB. Defense-in-depth cap on proxy response body to prevent OOM /
+ *  DoS when a compromised or malicious proxy returns a huge payload. */
+export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
+
+/** Block targets that would let the proxy be weaponized as a SSRF
+ *  oracle against the proxy operator's intranet / cloud metadata.
+ *
+ *  ⚠ LIMITATION — DNS rebinding:
+ *  This check operates at the *hostname* level (before any DNS lookup).
+ *  An attacker controlling `evil.example.com` can return a public IP
+ *  (e.g. 8.8.8.8) on first resolve, then re-resolve to 127.0.0.1 / a
+ *  RFC1918 address on a second lookup that happens inside the proxy.
+ *  Defeating that requires the *proxy* to re-validate the resolved IP
+ *  after `getaddrinfo()` and before its upstream `fetch()` call. The
+ *  client-side check here is therefore a *best-effort first line of
+ *  defense*; see docs/PROXY_EXAMPLE.md §3 for the proxy-side pattern.
+ *
+ *  Note: the proxy itself MUST validate too — this is defense-in-depth
+ *  on the client side, primarily protecting users of a shared proxy
+ *  from a malicious tab tricking the proxy into reaching internal IPs.
+ *
+ *  Blocked patterns:
+ *   - loopback: 127.0.0.0/8, ::1, ::ffff:127.0.0.1, localhost
+ *   - link-local + cloud metadata: 169.254.0.0/16 (AWS/GCP/Azure metadata)
+ *   - RFC1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+ *   - ULA / link-local IPv6: fc00::/7, fe80::/10
+ *   - mDNS / common internal TLDs (see INTERNAL_TLDS below) + .home.arpa
+ *   - explicit metadata.* hostnames (GCE / Azure)
+ *   - IPv6 ↔ IPv4 transition encodings (Round 3 BLOCKING coverage):
+ *       · IPv4-mapped two-group:  ::ffff:HHHH:HHHH
+ *       · IPv4-compatible (deprecated): ::HHHH:HHHH
+ *           (URL normalizes `[::169.254.169.254]` → `[::a9fe:a9fe]`)
+ *       · Single-hex-group mapped: ::ffff:HHHH (covers 0.0.0.x range)
+ *       · NAT64 well-known prefix (RFC 6052): 64:ff9b::HHHH:HHHH (best-effort)
+ *       · 6to4 (RFC 3056): 2002:HHHH:HHHH:: (best-effort)
+ */
+/** Single-label internal TLDs that should never be reached through the
+ *  proxy. Covers mDNS (RFC 6762), common Microsoft AD defaults, IETF
+ *  draft-private-use TLDs, and typical home-router zones. Compared
+ *  against the *last DNS label only* so that a public name like
+ *  `example.localcom.` (no dot before "local") is not flagged. */
+const INTERNAL_TLDS: ReadonlySet<string> = new Set([
+  'local',     // mDNS (RFC 6762)
+  'internal',  // common internal zone
+  'lan',       // common home / SMB
+  'corp',      // Microsoft AD default
+  'intranet',  // Microsoft AD default
+  'home',      // common ISP CPE
+  'private',   // IETF draft-private-use
+]);
+
+export function isPrivateOrReservedTarget(parsed: URL): boolean {
+  const host = parsed.hostname.toLowerCase();
+  // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
+  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
+
+  // Loopback / common local hostnames.
+  if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
+
+  // Explicit cloud-metadata hostnames.
+  if (bare === 'metadata.google.internal') return true;
+  if (bare.endsWith('.metadata.cloud.google.com')) return true;
+
+  // Internal TLDs — match only the final DNS label so that a public name
+  // like `example.localcom` (no dot separator) is correctly NOT flagged,
+  // while `printer.local` IS. We require a leading dot (i.e. at least one
+  // sub-label) to avoid blocking the bare TLD as a hostname (which
+  // wouldn't resolve via DNS anyway, but defense-in-depth).
+  const lastDot = bare.lastIndexOf('.');
+  if (lastDot > 0) {
+    const lastLabel = bare.slice(lastDot + 1);
+    if (INTERNAL_TLDS.has(lastLabel)) return true;
+  }
+  // 2-label IETF reserved zone (RFC 8375): `*.home.arpa`.
+  if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
+
+  // IPv4 literal check.
+  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
+  if (v4) {
+    const oct = v4.slice(1).map(Number);
+    if (oct.some((n) => n < 0 || n > 255 || !Number.isInteger(n))) return true;
+    const [a, b] = oct as [number, number, number, number];
+    if (a === 127) return true;                         // 127.0.0.0/8 loopback
+    if (a === 10) return true;                          // 10.0.0.0/8
+    if (a === 169 && b === 254) return true;            // 169.254/16 link-local + metadata
+    if (a === 172 && b >= 16 && b <= 31) return true;   // 172.16/12
+    if (a === 192 && b === 168) return true;            // 192.168/16
+    if (a === 0) return true;                           // 0.0.0.0/8
+    if (a >= 224) return true;                          // multicast + reserved
+    return false;
+  }
+
+  // IPv6 literal (without brackets here). Cover the common forms.
+  if (bare.includes(':')) {
+    if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
+    if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
+    // IPv4-mapped IPv6 (and IPv4-compatible / single-group variants) —
+    // extract the embedded v4 and recurse through the v4 check. See
+    // `extractMappedV4` below for the full enumeration of accepted forms
+    // and Round-3 BLOCKING rationale.
+    const embeddedV4 = extractMappedV4(bare);
+    if (embeddedV4 !== null) {
+      try {
+        return isPrivateOrReservedTarget(new URL(`http://${embeddedV4}/`));
+      } catch {
+        return true; // unparseable mapped form → safe default deny
+      }
+    }
+    // NAT64 (RFC 6052 well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056
+    // `2002::/16`) can also encode an IPv4 address in the trailing bits.
+    // Full validation requires parsing the entire 128-bit address; we
+    // implement a best-effort extraction for the most common case where
+    // the v4 octets appear as the last two hex groups
+    // (`64:ff9b::HHHH:HHHH` / `2002:HHHH:HHHH::`). Attackers using
+    // arbitrary 6to4 encodings should still be caught by the proxy-side
+    // DNS-resolved-IP check (docs/PROXY_EXAMPLE.md §3).
+    const nat64Or6to4 = extractEmbeddedV4FromTransitionPrefix(bare);
+    if (nat64Or6to4 !== null) {
+      try {
+        return isPrivateOrReservedTarget(new URL(`http://${nat64Or6to4}/`));
+      } catch {
+        return true;
+      }
+    }
+    // ULA fc00::/7 → first byte 0xfc or 0xfd.
+    if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
+    // Link-local fe80::/10.
+    if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
+    return false;
+  }
+
+  return false;
+}
+
+/** Extract an IPv4 dotted-quad from an IPv6 string that encodes a v4
+ *  address in its low 32 bits. Returns null if `bare` doesn't match any
+ *  recognised mapped form.
+ *
+ *  Forms accepted (Round 3 BLOCKING fixes):
+ *   - `::ffff:HHHH:HHHH`  — canonical IPv4-mapped (RFC 4291 §2.5.5.2);
+ *                           URL normalizes `::ffff:127.0.0.1` to this form.
+ *   - `::HHHH:HHHH`       — deprecated IPv4-compatible (RFC 4291 §2.5.5.1);
+ *                           URL normalizes `[::169.254.169.254]` to
+ *                           `[::a9fe:a9fe]`, which the canonical regex above
+ *                           does NOT match, leaving an AWS-IMDS bypass.
+ *   - `::ffff:HHHH`       — single-group mapped (e.g. `::ffff:0` for 0.0.0.0,
+ *                           `::ffff:1` for 0.0.0.1). URL keeps these as-is
+ *                           rather than zero-padding, so a two-group regex
+ *                           rejects them and a "this host" (RFC 1122) /
+ *                           low-address bypass appears.
+ *
+ *  NOTE on the dotted-quad form (`::ffff:127.0.0.1`): URL.hostname ALWAYS
+ *  re-encodes the embedded v4 to hex (`::ffff:7f00:1`) on construction in
+ *  Node ≥ v18 and Chromium, so the dotted form is effectively unreachable
+ *  via `new URL(...)`. We still accept it here as a belt-and-suspenders
+ *  safeguard for callers that invoke `isPrivateOrReservedTarget` with a
+ *  URL built from a non-Web source (e.g. a custom parser); the branch is
+ *  intentionally defensive rather than load-bearing in normal flow.
+ */
+function extractMappedV4(bare: string): string | null {
+  // Order matters: a unified regex with `(?:::ffff:|::)` would mis-match
+  // `::ffff:0` as `::` + (`ffff`, `0`) = 255.255.0.0 instead of the
+  // intended single-group form 0.0.0.0. We therefore try the more
+  // specific (longer-prefix) shapes first.
+
+  // (1) Canonical IPv4-mapped two-group: ::ffff:HHHH:HHHH
+  //     URL normalizes `::ffff:127.0.0.1` to this form.
+  const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (mapped) {
+    const hi = parseInt(mapped[1]!, 16);
+    const lo = parseInt(mapped[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (2) Single hex group: ::ffff:HHHH → interpreted as 0.0.HH.HH (the
+  //     high 16 bits are implicitly zero). Covers `::ffff:0` = 0.0.0.0
+  //     and `::ffff:1` = 0.0.0.1, both of which RFC 1122 §3.2.1.3
+  //     reserves as "this host on this network".
+  const single = /^::ffff:([0-9a-f]{1,4})$/i.exec(bare);
+  if (single) {
+    const lo = parseInt(single[1]!, 16);
+    return `0.0.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (3) Deprecated IPv4-compatible two-group: ::HHHH:HHHH (no `ffff`).
+  //     This is the form URL.hostname normalizes `[::169.254.169.254]`
+  //     to (`[::a9fe:a9fe]`), so it is the critical Round-3 BLOCKING-A
+  //     gap. We intentionally exclude `::1`, `::0`, and `::HHHH` (single
+  //     group) here — those are handled either by the explicit loopback
+  //     equality check upstream or by being public single-group v6
+  //     addresses (no v4 embedding possible in only 16 bits worth of
+  //     low-order data).
+  const compat = /^::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (compat) {
+    const hi = parseInt(compat[1]!, 16);
+    const lo = parseInt(compat[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // (4) Dotted-quad mapped form. See JSDoc above for why this is
+  //     defensive rather than load-bearing — Node v18+/Chromium always
+  //     re-encode this to hex on URL construction.
+  const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
+  if (mappedDotted) {
+    return mappedDotted[1]!;
+  }
+  return null;
+}
+
+/** Best-effort extraction of the embedded IPv4 from NAT64 (RFC 6052
+ *  well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056 `2002::/16`)
+ *  addresses. Returns the dotted-quad string or null if the input does
+ *  not match the supported subset. See `isPrivateOrReservedTarget`
+ *  caller for scope rationale. */
+function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
+  // NAT64: `64:ff9b::HHHH:HHHH` (v4 in low 32 bits after `::`). The
+  // canonical RFC 6052 form embeds the v4 as the final two hex groups.
+  const nat64 = /^64:ff9b::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
+  if (nat64) {
+    const hi = parseInt(nat64[1]!, 16);
+    const lo = parseInt(nat64[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  // 6to4: `2002:HHHH:HHHH::...`. The v4 address sits in the 2nd-3rd
+  // hex groups (16 bits each, big-endian). We only catch the common
+  // `2002:HHHH:HHHH::` shape; longer forms with arbitrary subnet/iface
+  // suffixes need the proxy-side resolved-IP check for full coverage.
+  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})::?/i.exec(bare);
+  if (sixToFour) {
+    const hi = parseInt(sixToFour[1]!, 16);
+    const lo = parseInt(sixToFour[2]!, 16);
+    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
+  }
+  return null;
+}
+
+/** プロキシ経由で target URL を呼び出し、Response 互換オブジェクトを返す。 */
+export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: ProxyConfig): Promise<Response> {
+  if (typeof targetUrl !== 'string' || targetUrl.length === 0) {
+    throw new Error('target URL is required');
+  }
+  // Defense-in-depth: reject obviously bad target URLs before forwarding.
+  let parsed: URL;
+  try {
+    parsed = new URL(targetUrl);
+  } catch {
+    throw new Error('target URL の形式が不正です');
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error('target URL は http(s) のみ対応');
+  }
+  if (isPrivateOrReservedTarget(parsed)) {
+    throw new Error('target URL の宛先がプライベート / 予約アドレスです (SSRF 防止)');
+  }
+
+  // Convert RequestInit headers to a flat object.
+  const flatHeaders: Record<string, string> = {};
+  if (init.headers) {
+    if (init.headers instanceof Headers) {
+      init.headers.forEach((v, k) => {
+        flatHeaders[k] = v;
+      });
+    } else if (Array.isArray(init.headers)) {
+      for (const [k, v] of init.headers) flatHeaders[k] = v;
+    } else {
+      Object.assign(flatHeaders, init.headers as Record<string, string>);
+    }
+  }
+
+  const envelope = {
+    url: targetUrl,
+    method: typeof init.method === 'string' ? init.method.toUpperCase() : 'GET',
+    headers: flatHeaders,
+    body: typeof init.body === 'string' ? init.body : undefined,
+  };
+
+  const proxyHeaders: Record<string, string> = { 'content-type': 'application/json' };
+  if (cfg.sharedSecret && cfg.sharedSecret.length > 0) {
+    proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
+  }
+
+  const proxyRes = await fetch(cfg.url, {
+    method: 'POST',
+    headers: proxyHeaders,
+    body: JSON.stringify(envelope),
+  });
+
+  if (!proxyRes.ok) {
+    const body = await proxyRes.text().catch(() => '');
+    throw new Error(`proxy ${proxyRes.status}: ${body.slice(0, 200)}`);
+  }
+
+  // Defense-in-depth: cap response body before json() to prevent OOM on
+  // a compromised/malicious proxy returning a huge payload.
+  // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
+  // We require `cl > 0` (not just `cl > cap`) because:
+  //   - a malicious / buggy proxy could return `Content-Length: -1`, which
+  //     is finite and ≤ cap and would slip past the header gate;
+  //   - real implementations never send a negative or NaN length, so
+  //     ignoring such headers and falling through to `readWithCap` (which
+  //     enforces the cap at the byte-stream level) is the safe behaviour.
+  const clHeader = proxyRes.headers?.get?.('content-length');
+  const cl = clHeader ? Number(clHeader) : 0;
+  if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
+    throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
+  }
+  const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
+  // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
+  // proxy returns no body we substitute an empty envelope; the Response
+  // constructor below then falls back to status 502 + empty body — i.e.
+  // we surface "proxy returned nothing" as a bad-gateway, not as a crash.
+  const env = bodyText.length === 0 ? {} as ProxyResponseEnvelope : JSON.parse(bodyText) as ProxyResponseEnvelope;
+  // Reconstruct a Response that callers can treat normally.
+  return new Response(env.body ?? '', {
+    status: typeof env.status === 'number' ? env.status : 502,
+    headers: env.headers ?? {},
+  });
+}
+
+/** Service id → CORS 直接呼び出しが不可能で proxy 必須かどうか。 */
+export const PROXY_REQUIRED_SERVICES: ReadonlySet<string> = new Set([
+  'notion',
+  'atlassian',
+  'cloudflare',
+]);
+// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression

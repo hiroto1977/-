@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Content-Security-Policy: defense-in-depth on top of contextIsolation
+      + sandbox. Tightened for our actual needs:
+        - default-src 'self'           — only our own bundle by default
+        - script-src  'self'           — no inline / no remote scripts
+        - style-src   'self' 'unsafe-inline'
+                                       — vite inlines a few styles; we
+                                         allow inline but not remote
+        - img-src     'self' data: https:
+                                       — service thumbnails come from
+                                         arbitrary https hosts (Canva,
+                                         GitHub avatars, etc.) and our
+                                         icon is a data: URL fallback
+        - connect-src 'self' http://localhost:5173 ws://localhost:5173
+                                       — needed only for `npm run dev`
+                                         HMR; production renderer makes
+                                         zero network calls (all REST
+                                         goes through main via IPC)
+        - object-src  'none'           — no plugins, no flash
+        - frame-src   'none'           — no embedded frames
+        - base-uri    'self'           — block injected <base> tags
+        - form-action 'none'           — block any form submission
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' http://localhost:5173 ws://localhost:5173; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'" />
+    <title>Service Hub</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write  # required for softprops/action-gh-release
+
+jobs:
+  build:
+    name: build ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_glob: |
+              release/*.AppImage
+          - os: macos-latest
+            artifact_glob: |
+              release/*.dmg
+              release/*.dmg.blockmap
+          - os: windows-latest
+            artifact_glob: |
+              release/*.exe
+              release/*.exe.blockmap
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck + test
+        run: |
+          npm run typecheck
+          npm test
+
+      # Per-OS electron-builder runs. On non-tag CI runs we'd want
+      # `--publish never`, but this workflow is gated on a tag so we let
+      # electron-builder pick its defaults.
+      - name: Build
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact_glob }}
+          fail_on_unmatched_files: false
+          generate_release_notes: true

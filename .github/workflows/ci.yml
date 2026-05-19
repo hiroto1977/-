@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 3-job hybrid: granularity (per-group red checks) + compute efficiency
+# (3 npm-ci instead of 7). Re-split if a future failure pattern needs
+# finer triage. See docs/BROWSER_REDESIGN.md and PR #2 discussion.
+jobs:
+  quality:
+    name: quality (typecheck + arch + lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run verify:arch
+      - run: npm run lint:forbidden
+      - run: npm run lint:imports
+      - run: npm run lint:docs
+      - run: npm run lint:test-coverage
+      - run: npm run lint            # eslint last — slowest of this group
+
+  test:
+    name: test (unit + coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:cov
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-summary
+          path: coverage/coverage-summary.json
+          retention-days: 30
+
+  build:
+    name: build (renderer + web)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build:renderer
+      - run: npm run build:web
+      - name: Verify standalone.html size
+        run: |
+          if [ ! -f dist/standalone.html ]; then
+            echo "standalone.html not generated" >&2
+            exit 1
+          fi
+          SIZE=$(stat -c%s dist/standalone.html)
+          echo "standalone.html size: $SIZE bytes"
+          if [ $SIZE -lt 100000 ]; then
+            echo "standalone.html is suspiciously small" >&2
+            exit 1
+          fi

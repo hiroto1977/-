@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: dark navy rounded square, matching the app bg. -->
+  <rect width="512" height="512" rx="96" fill="#0f1117"/>
+
+  <!-- Subtle inner ring for depth. -->
+  <rect x="24" y="24" width="464" height="464" rx="80"
+        fill="none" stroke="#1f2533" stroke-width="2"/>
+
+  <!-- 3x3 grid of service tiles. 8 outer tiles in accent blue. -->
+  <g fill="#6ea8ff">
+    <rect x="96"  y="96"  width="80" height="80" rx="16"/>
+    <rect x="216" y="96"  width="80" height="80" rx="16"/>
+    <rect x="336" y="96"  width="80" height="80" rx="16"/>
+    <rect x="96"  y="216" width="80" height="80" rx="16"/>
+    <rect x="336" y="216" width="80" height="80" rx="16"/>
+    <rect x="96"  y="336" width="80" height="80" rx="16"/>
+    <rect x="216" y="336" width="80" height="80" rx="16"/>
+    <rect x="336" y="336" width="80" height="80" rx="16"/>
+  </g>
+
+  <!-- Center hub tile in light foreground color with dark inset dot. -->
+  <rect x="216" y="216" width="80" height="80" rx="16" fill="#e6e8ee"/>
+  <circle cx="256" cy="256" r="14" fill="#0f1117"/>
+</svg>
