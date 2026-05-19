@@ -9,7 +9,7 @@
 ## 全体像 (System at a Glance)
 
 Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラウザ単体
-ダッシュボード。26 のサービス (Home / 事業ダッシュボード / チームレーダー /
+ダッシュボード。27 のサービス (Home / 事業ダッシュボード / チームレーダー /
 Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
 を 1 つのサイドバー UI で一元操作する。`npm run build:web` でビルドした
 standalone HTML (403 KB) はブラウザ単体で動作する。
@@ -18,12 +18,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 26 | `src/shared/serviceId.ts:9-33` |
+| サービス数 | 27 | `src/shared/serviceId.ts:9-33` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 26 | `src/main/clients/index.ts:33-85` |
+| client モジュール (fetcher + actions) | 27 | `src/main/clients/index.ts:33-85` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1153** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1202) |
+| ユニットテスト | **1175** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1224) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -42,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[26 React pages<br/>+ useServiceData hook]
+      PAGES[27 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
       IPC[ipcMain.handle × 11]
-      CLIENTS[26 clients<br/>fetcher + ActionMap]
+      CLIENTS[27 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -422,7 +422,7 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 26 services の認証スタイル
+### 3.1 27 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -456,6 +456,7 @@ union を参照する。
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot のみ) | Bearer (将来 REIT/楽待) | ✅ | | (read-only — 保有物件 / 月次キャッシュフロー / 利回り / 入居率) |
 | `mutual-funds` | 投資信託 (snapshot のみ) | Bearer (将来 SBI/楽天証券) | ✅ | | (read-only — 保有ファンド / 評価額 / 基準価額 / 分配金) |
+| `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:87-102`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。

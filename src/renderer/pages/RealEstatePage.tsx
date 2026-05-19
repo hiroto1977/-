@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -65,6 +66,8 @@ export function RealEstatePage() {
           </tbody>
         </table>
       </Section>
+
+      <ServiceActionPanel serviceId="real-estate" serviceLabel="不動産投資" />
 
       <Section title="月次キャッシュフロー内訳" count={4}>
         <table style={tableStyle}>

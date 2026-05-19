@@ -33,6 +33,7 @@ export const SERVICE_IDS = [
   'demae-can',
   'real-estate',
   'mutual-funds',
+  'quality',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

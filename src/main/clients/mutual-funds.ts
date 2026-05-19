@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
 
 /**
  * 投資信託 — 投資ポートフォリオ (snapshot 専用)。
@@ -49,3 +49,52 @@ export async function fetchMutualFundsSnapshotImpl(_ctx: FetchContext): Promise<
 export async function fetchMutualFundsSnapshot(ctx: FetchContext): Promise<MutualFundsSnapshot> {
   return fetchMutualFundsSnapshotImpl(ctx);
 }
+
+// --- write-side actions (snapshot phase) — 永続化は未配線、`persisted: false` で UI に明示。
+
+interface RecordEntryPayload {
+  readonly note: string;
+  readonly amount?: number;
+}
+
+export interface RecordEntryResult {
+  readonly ok: true;
+  readonly serviceId: 'mutual-funds';
+  readonly recordedAt: string;
+  readonly persisted: false;
+}
+
+async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
+  const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
+  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
+    throw new Error('mutual-funds.record-entry: note は 1-2000 文字で指定してください');
+  }
+  if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
+    throw new Error('mutual-funds.record-entry: amount は finite な数値で指定してください');
+  }
+  return { ok: true, serviceId: 'mutual-funds', recordedAt: new Date().toISOString(), persisted: false };
+}
+
+const MUTUAL_FUNDS_DISCLAIMER =
+  '本提案は教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +
+  'ファイナンシャルアドバイザーの確認を経てご自身の責任で行ってください。' +
+  'Phase 6 で実 LLM 推論を接続します。';
+
+async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
+  void ctx;
+  return {
+    recommendations: [
+      { title: 'リターン水準の確認', rationale: '評価損益率 +14.8% は良好なリターン。eMAXIS Slim S&P500 (YTD +14.2%) が牽引している点に注目。' },
+      { title: '米国ウェイトの調整', rationale: '全世界株式 (オール・カントリー) と S&P500 の重複に注意 — 米国ウェイトが過剰。先進国債券 (YTD +3.4%) のウェイトを高める検討を推奨。' },
+      { title: '積立履歴のトラッキング', rationale: 'ひふみプラスのみ「積立中」タグ。積立履歴の月次トラッキングを別途記録すると経営判断の精度が上がる。' },
+    ],
+    disclaimer: MUTUAL_FUNDS_DISCLAIMER,
+    notForRealMoney: true,
+    phase: 'stub',
+  };
+}
+
+export const ACTIONS: ActionMap = {
+  'record-entry': recordEntry,
+  advise,
+};
