@@ -48,7 +48,8 @@ function count(rel, re) {
           walk(full);
         } else if (/\.(ts|tsx)$/.test(entry.name)) {
           const text = fs.readFileSync(full, 'utf8');
-          for (const _ of text.matchAll(re)) total++;
+          const matches = text.match(re);
+          if (matches) total += matches.length;
         }
       }
     };
