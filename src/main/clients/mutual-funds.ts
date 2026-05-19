@@ -1,4 +1,4 @@
-import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
 
 /**
  * 投資信託 — 投資ポートフォリオ (snapshot 専用)。
@@ -73,13 +73,6 @@ async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
     throw new Error('mutual-funds.record-entry: amount は finite な数値で指定してください');
   }
   return { ok: true, serviceId: 'mutual-funds', recordedAt: new Date().toISOString(), persisted: false };
-}
-
-export interface ServiceAdvisorResponse {
-  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
-  readonly disclaimer: string;
-  readonly notForRealMoney: true;
-  readonly phase: 'stub' | 'live';
 }
 
 const MUTUAL_FUNDS_DISCLAIMER =

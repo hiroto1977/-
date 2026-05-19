@@ -16,6 +16,11 @@ export interface ActionContext {
 export type ServiceAction = (ctx: ActionContext) => Promise<unknown>;
 export type ActionMap = Record<string, ServiceAction>;
 
+/** Re-export from `src/shared/advisorTypes.ts` so existing
+ *  `import { ServiceAdvisorResponse } from './types'` callers continue
+ *  to work, while the renderer pulls the same type from `shared/`. */
+export type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
+
 export class FetchError extends Error {
   constructor(
     message: string,

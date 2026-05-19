@@ -1,4 +1,4 @@
-import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
 
 /**
  * Uber Eats — フードデリバリー (snapshot 専用)。
@@ -79,17 +79,6 @@ async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
     throw new Error('uber-eats.record-entry: amount は finite な数値で指定してください');
   }
   return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString(), persisted: false };
-}
-
-/** advise 戻り値。stocks/business advisor の AdvisorResponse と構造的に
- *  互換 (`disclaimer` + `notForRealMoney: true` を持つ) + stub フェーズを
- *  明示する `phase: 'stub'` を加えた superset。Phase 6 で実 LLM 接続時に
- *  `phase: 'live'` に切替、`recommendations` 配列も埋まる。 */
-export interface ServiceAdvisorResponse {
-  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
-  readonly disclaimer: string;
-  readonly notForRealMoney: true;
-  readonly phase: 'stub' | 'live';
 }
 
 const UBER_EATS_DISCLAIMER =

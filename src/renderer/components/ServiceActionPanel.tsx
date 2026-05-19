@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ServiceId } from '../services';
+import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
 import { Section } from './StatusBar';
 
 /**
@@ -21,13 +22,6 @@ export interface ServiceActionPanelProps {
   readonly serviceLabel: string;
 }
 
-interface AdviseResponse {
-  readonly recommendations: ReadonlyArray<{ readonly title: string; readonly rationale: string }>;
-  readonly disclaimer: string;
-  readonly notForRealMoney: true;
-  readonly phase: 'stub' | 'live';
-}
-
 interface RecordEntryResponse {
   readonly ok: true;
   readonly recordedAt: string;
@@ -41,7 +35,7 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
   const [advBusy, setAdvBusy] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [advice, setAdvice] = useState<AdviseResponse | null>(null);
+  const [advice, setAdvice] = useState<ServiceAdvisorResponse | null>(null);
 
   async function submitRecord() {
     setError(null);
@@ -86,7 +80,7 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
     setAdvice(null);
     setAdvBusy(true);
     try {
-      const r = await window.serviceHub.invoke<AdviseResponse>(serviceId, 'advise', {});
+      const r = await window.serviceHub.invoke<ServiceAdvisorResponse>(serviceId, 'advise', {});
       if (!r.ok) {
         setError(`AI 提案の取得に失敗: ${r.message}`);
         return;

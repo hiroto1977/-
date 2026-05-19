@@ -1,4 +1,4 @@
-import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
 
 /**
  * 出前館 — フードデリバリー (snapshot 専用)。
@@ -72,13 +72,6 @@ async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
     throw new Error('demae-can.record-entry: amount は finite な数値で指定してください');
   }
   return { ok: true, serviceId: 'demae-can', recordedAt: new Date().toISOString(), persisted: false };
-}
-
-export interface ServiceAdvisorResponse {
-  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
-  readonly disclaimer: string;
-  readonly notForRealMoney: true;
-  readonly phase: 'stub' | 'live';
 }
 
 const DEMAE_CAN_DISCLAIMER =

@@ -1,4 +1,4 @@
-import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
 
 /**
  * 不動産投資 — 投資ポートフォリオ (snapshot 専用)。
@@ -70,13 +70,6 @@ async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
     throw new Error('real-estate.record-entry: amount は finite な数値で指定してください');
   }
   return { ok: true, serviceId: 'real-estate', recordedAt: new Date().toISOString(), persisted: false };
-}
-
-export interface ServiceAdvisorResponse {
-  readonly recommendations: readonly { readonly title: string; readonly rationale: string }[];
-  readonly disclaimer: string;
-  readonly notForRealMoney: true;
-  readonly phase: 'stub' | 'live';
 }
 
 const REAL_ESTATE_DISCLAIMER =
