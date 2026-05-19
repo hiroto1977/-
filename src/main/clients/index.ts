@@ -36,6 +36,13 @@ import { fetchShopifySnapshot } from './shopify';
 import { fetchStripeSnapshot } from './stripe';
 import { fetchLineSnapshot } from './line';
 import { fetchStorageSnapshot } from './storage';
+import { fetchTaxAccountantSnapshot } from './tax-accountant';
+import { fetchLaborConsultantSnapshot } from './labor-consultant';
+import { fetchLawyerSnapshot } from './lawyer';
+import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
+import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
+import { fetchSmeConsultantSnapshot } from './sme-consultant';
+import { fetchPatentAttorneySnapshot } from './patent-attorney';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -81,6 +88,13 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   stripe: fetchStripeSnapshot,
   line: fetchLineSnapshot,
   storage: fetchStorageSnapshot,
+  'tax-accountant': fetchTaxAccountantSnapshot,
+  'labor-consultant': fetchLaborConsultantSnapshot,
+  lawyer: fetchLawyerSnapshot,
+  'judicial-scrivener': fetchJudicialScrivenerSnapshot,
+  'admin-scrivener': fetchAdminScrivenerSnapshot,
+  'sme-consultant': fetchSmeConsultantSnapshot,
+  'patent-attorney': fetchPatentAttorneySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -127,6 +141,14 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'mutual-funds',
   'quality',
   'storage',
+  // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
+  'tax-accountant',
+  'labor-consultant',
+  'lawyer',
+  'judicial-scrivener',
+  'admin-scrivener',
+  'sme-consultant',
+  'patent-attorney',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

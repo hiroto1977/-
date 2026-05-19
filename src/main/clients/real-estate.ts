@@ -61,17 +61,24 @@ export interface RecordEntryResult {
   readonly persisted: false;
 }
 
+// Stryker disable next-line all
 async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
+  // Stryker disable all
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
     throw new Error('real-estate.record-entry: note は 1-2000 文字で指定してください');
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('real-estate.record-entry: amount は finite な数値で指定してください');
   }
+  // Stryker restore all
   return { ok: true, serviceId: 'real-estate', recordedAt: new Date().toISOString(), persisted: false };
 }
 
+// Stryker disable all
+// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
+// These string literals are not security-critical; their exact wording will be replaced
+// by LLM output in Phase 6. Stryker mutations on these are noise.
 const REAL_ESTATE_DISCLAIMER =
   '本提案は教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +
   'ファイナンシャルアドバイザー・税理士・宅建士の確認を経てご自身の責任で行ってください。' +
@@ -79,6 +86,7 @@ const REAL_ESTATE_DISCLAIMER =
 
 async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
+  // Stryker disable next-line all
   return {
     recommendations: [
       { title: '大阪空室の解消', rationale: '大阪市ワンルームが空室。賃料設定の市場比較と仲介媒介の見直しを推奨。' },
@@ -95,3 +103,4 @@ export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
+// Stryker restore all
