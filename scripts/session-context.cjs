@@ -31,13 +31,29 @@ function exists(rel) {
   return fs.existsSync(path.join(ROOT, rel));
 }
 
+/** Count regex matches across files under `rel` (relative to ROOT).
+ *  Pure-Node implementation — earlier shell-based version had an
+ *  injection surface for `re` (R1-#1).  Only counts .ts/.tsx files
+ *  to mirror the original `grep -rE` behavior on src/. */
 function count(rel, re) {
   try {
-    return execSync(`grep -rE "${re}" ${rel} 2>/dev/null | wc -l`, {
-      cwd: ROOT,
-      encoding: 'utf8',
-    })
-      .trim();
+    const root = path.join(ROOT, rel);
+    if (!fs.existsSync(root)) return '?';
+    let total = 0;
+    const walk = (dir) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+          walk(full);
+        } else if (/\.(ts|tsx)$/.test(entry.name)) {
+          const text = fs.readFileSync(full, 'utf8');
+          for (const _ of text.matchAll(re)) total++;
+        }
+      }
+    };
+    walk(root);
+    return String(total);
   } catch {
     return '?';
   }
@@ -58,7 +74,7 @@ try {
   /* ignore */
 }
 
-const testCount = count('src', '^\\s*it\\(');
+const testCount = count('src', /^\s*it\(/gm);
 
 const lines = [
   '## Service Hub — セッション引継ぎ',
