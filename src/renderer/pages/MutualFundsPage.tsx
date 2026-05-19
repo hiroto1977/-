@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -69,6 +70,8 @@ export function MutualFundsPage() {
           </tbody>
         </table>
       </Section>
+
+      <ServiceActionPanel serviceId="mutual-funds" serviceLabel="投資信託" />
 
       <Section title="直近の分配金" count={recentDividends.length}>
         {recentDividends.length === 0 ? (

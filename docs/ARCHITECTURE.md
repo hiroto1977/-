@@ -9,7 +9,7 @@
 ## 全体像 (System at a Glance)
 
 Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラウザ単体
-ダッシュボード。26 のサービス (Home / 事業ダッシュボード / チームレーダー /
+ダッシュボード。45 のサービス (Home / 事業ダッシュボード / チームレーダー /
 Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
 を 1 つのサイドバー UI で一元操作する。`npm run build:web` でビルドした
 standalone HTML (403 KB) はブラウザ単体で動作する。
@@ -18,18 +18,18 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 26 | `src/shared/serviceId.ts:9-33` |
+| サービス数 | 45 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 26 | `src/main/clients/index.ts:33-85` |
+| client モジュール (fetcher + actions) | 45 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1153** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1202) |
+| ユニットテスト | **1193** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1242) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 170 | 自己検証 |
+| `file:line` 参照数 | 171 | 自己検証 |
 
 ### 統合フロー図
 
@@ -42,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[26 React pages<br/>+ useServiceData hook]
+      PAGES[45 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
       IPC[ipcMain.handle × 11]
-      CLIENTS[26 clients<br/>fetcher + ActionMap]
+      CLIENTS[45 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -422,7 +422,7 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 26 services の認証スタイル
+### 3.1 45 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -456,8 +456,27 @@ union を参照する。
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot のみ) | Bearer (将来 REIT/楽待) | ✅ | | (read-only — 保有物件 / 月次キャッシュフロー / 利回り / 入居率) |
 | `mutual-funds` | 投資信託 (snapshot のみ) | Bearer (将来 SBI/楽天証券) | ✅ | | (read-only — 保有ファンド / 評価額 / 基準価額 / 分配金) |
+| `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
+| `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
+| `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
+| `salesforce` | Salesforce CRM (snapshot) | Bearer (将来) | | | (read-only — 商談 / リード / パイプライン) |
+| `discord` | Discord (snapshot) | Bearer (将来) | | | (read-only — サーバー / チャンネル / メッセージ) |
+| `asana` | Asana PM (snapshot) | Bearer (将来) | | | (read-only — タスク / プロジェクト / 進捗) |
+| `linear` | Linear (snapshot) | Bearer (将来) | | | (read-only — issue / cycle / project) |
+| `sentry` | Sentry (snapshot) | Bearer (将来) | | | (read-only — errors / performance / releases) |
+| `shopify` | Shopify EC (snapshot) | Bearer (将来) | | | (read-only — 注文 / 売上 / 商品) |
+| `stripe` | Stripe 決済 (snapshot) | Bearer (将来) | | | (read-only — MRR / 顧客 / 請求) |
+| `line` | LINE 公式アカウント (snapshot) | Bearer (将来) | | | (read-only — 友達 / 配信 / 統計) |
+| `storage` | ストレージ最適化 (snapshot のみ) | none | ✅ | | (read-only — ディスク使用 / クリーンアップ推奨 / フラグメント率 / メモリ) |
+| `tax-accountant` | 税理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 相談履歴 / 書類 / 月次顧問料) |
+| `labor-consultant` | 社労士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 社保手続 / 給与計算 / 顧問料) |
+| `lawyer` | 弁護士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 契約書レビュー / 紛争対応) |
+| `judicial-scrivener` | 司法書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 商業登記 / 不動産登記) |
+| `admin-scrivener` | 行政書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 許認可申請 / 補助金) |
+| `sme-consultant` | 中小企業診断士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 経営診断 / 事業計画) |
+| `patent-attorney` | 弁理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 特許 / 商標 / 意匠出願) |
 
-- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:87-102`)。トークン未設定でも snapshot OK。
+- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:109-128`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
 
 ### 3.2 Action payload スキーマ (17 actions)
@@ -518,7 +537,7 @@ npm run scaffold -- <id> "<Label>" <ICON>
 
 1. `src/shared/serviceId.ts:9-25` — `SERVICE_IDS` に id 追加
 2. `src/main/clients/<id>.ts` — fetcher + ACTIONS の skeleton
-3. `src/main/clients/index.ts:33-85` — `LIVE_FETCHERS` + `LIVE_ACTIONS` 登録
+3. `src/main/clients/index.ts:44-83` — `LIVE_FETCHERS` + `LIVE_ACTIONS` 登録
 4. `src/renderer/data/snapshot.ts` — `SNAPSHOT[<id>]` 追加
 5. `src/renderer/services.ts` — サイドバーエントリ
 6. `src/renderer/pages/<Label>Page.tsx` — ページ skeleton
@@ -538,7 +557,7 @@ graph TB
     L0["contextIsolation + sandbox + nodeIntegration:false<br/>(main.ts:42-48)<br/>CSP meta (index.html:29)<br/>setWindowOpenHandler + will-navigate (main.ts:50-75)"]
   end
   subgraph "L1 — IPC 境界"
-    L1["isServiceId() guard (serviceId.ts:37)<br/>Object.hasOwn() — proto lookup 無効<br/>action 名 1≤length≤64 + own-property<br/>payload plain-object 強制"]
+    L1["isServiceId() guard (serviceId.ts:60)<br/>Object.hasOwn() — proto lookup 無効<br/>action 名 1≤length≤64 + own-property<br/>payload plain-object 強制"]
   end
   subgraph "L2 — クライアント入力検証"
     L2["Ollama: ALLOWED_ENDPOINTS + isSafeModelName + \0 reject<br/>Skills: isSafeSkillName + path containment<br/>Gmail: isSafeHeaderValue (CR/LF/NUL reject)<br/>Atlassian: site https:// 必須<br/>GitHub PR detail: api.github.com pin<br/>URL 動的部分は encodeURIComponent"]
@@ -556,7 +575,7 @@ graph TB
 
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
-| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:37`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
+| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:60`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:27`) + `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) |
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
@@ -972,7 +991,7 @@ classDiagram
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `src/main/oauth.ts:196-201` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `src/main/secrets.ts:14-39` |
-| 14 | 新規 client は `LIVE_FETCHERS` / `SERVICES` 両方に登録 | scaffold script + `src/main/clients/index.ts:33-85` |
+| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:64`) 両方に登録 | scaffold script |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)

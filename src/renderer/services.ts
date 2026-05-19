@@ -24,6 +24,25 @@ import { UberEatsPage } from './pages/UberEatsPage';
 import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
+import { QualityPage } from './pages/QualityPage';
+import { Microsoft365Page } from './pages/Microsoft365Page';
+import { DropboxPage } from './pages/DropboxPage';
+import { SalesforcePage } from './pages/SalesforcePage';
+import { DiscordPage } from './pages/DiscordPage';
+import { AsanaPage } from './pages/AsanaPage';
+import { LinearPage } from './pages/LinearPage';
+import { SentryPage } from './pages/SentryPage';
+import { ShopifyPage } from './pages/ShopifyPage';
+import { StripePage } from './pages/StripePage';
+import { LinePage } from './pages/LinePage';
+import { StoragePage } from './pages/StoragePage';
+import { TaxAccountantPage } from './pages/TaxAccountantPage';
+import { LaborConsultantPage } from './pages/LaborConsultantPage';
+import { LawyerPage } from './pages/LawyerPage';
+import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
+import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
+import { SmeConsultantPage } from './pages/SmeConsultantPage';
+import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -258,6 +277,158 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'ファンド評価額 / 基準価額 / 分配金履歴',
     page: MutualFundsPage,
     category: 'tools',
+  },
+  {
+    id: 'quality',
+    label: '品質ダッシュボード',
+    icon: 'QA',
+    description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
+    page: QualityPage,
+    category: 'tools',
+  },
+  {
+    id: 'microsoft-365',
+    label: 'Microsoft 365',
+    icon: 'M3',
+    description: 'Outlook / OneDrive / Teams — メール / ファイル / 会議',
+    page: Microsoft365Page,
+    category: 'integrations',
+  },
+  {
+    id: 'dropbox',
+    label: 'Dropbox',
+    icon: 'DB',
+    description: 'ファイル保管 — 最近のファイル / 共有リンク / 容量',
+    page: DropboxPage,
+    category: 'integrations',
+  },
+  {
+    id: 'salesforce',
+    label: 'Salesforce',
+    icon: 'SF',
+    description: 'CRM — リード / 商談 / 連絡先 / パイプライン',
+    page: SalesforcePage,
+    category: 'integrations',
+  },
+  {
+    id: 'discord',
+    label: 'Discord',
+    icon: 'DS',
+    description: 'チャット — サーバー / チャンネル / メッセージ',
+    page: DiscordPage,
+    category: 'integrations',
+  },
+  {
+    id: 'asana',
+    label: 'Asana',
+    icon: 'AS',
+    description: 'プロジェクト管理 — タスク / プロジェクト / 進捗',
+    page: AsanaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'linear',
+    label: 'Linear',
+    icon: 'LN',
+    description: 'イシュー追跡 — issue / cycle / project',
+    page: LinearPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sentry',
+    label: 'Sentry',
+    icon: 'SN',
+    description: 'エラー監視 — issues / performance / releases',
+    page: SentryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'shopify',
+    label: 'Shopify',
+    icon: 'SH',
+    description: 'EC — 注文 / 売上 / 商品 / 顧客',
+    page: ShopifyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'stripe',
+    label: 'Stripe',
+    icon: 'SP',
+    description: '決済 — MRR / 顧客 / 請求 / トランザクション',
+    page: StripePage,
+    category: 'integrations',
+  },
+  {
+    id: 'line',
+    label: 'LINE',
+    icon: 'LN2',
+    description: '公式アカウント — 友達 / 配信 / メッセージ統計',
+    page: LinePage,
+    category: 'integrations',
+  },
+  {
+    id: 'storage',
+    label: 'ストレージ最適化',
+    icon: 'SZ',
+    description: 'PC ストレージ分析 + クリーンアップ推奨 + パフォーマンス監視',
+    page: StoragePage,
+    category: 'tools',
+  },
+  {
+    id: 'tax-accountant',
+    label: '税理士',
+    icon: 'TX',
+    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談',
+    page: TaxAccountantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'labor-consultant',
+    label: '社労士',
+    icon: 'LC',
+    description: '社会保険手続 / 給与計算 / 就業規則 / 労務相談',
+    page: LaborConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'lawyer',
+    label: '弁護士',
+    icon: 'LW',
+    description: '契約書レビュー / 紛争対応 / 法務顧問',
+    page: LawyerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'judicial-scrivener',
+    label: '司法書士',
+    icon: 'JS',
+    description: '商業登記 / 不動産登記 / 相続手続',
+    page: JudicialScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'admin-scrivener',
+    label: '行政書士',
+    icon: 'AD',
+    description: '許認可申請 / 在留資格 / 補助金',
+    page: AdminScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sme-consultant',
+    label: '中小企業診断士',
+    icon: 'SM',
+    description: '経営診断 / 補助金申請 / 事業計画',
+    page: SmeConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'patent-attorney',
+    label: '弁理士',
+    icon: 'PA',
+    description: '特許 / 商標 / 意匠出願 / 知財コンサル',
+    page: PatentAttorneyPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

@@ -2,9 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **🆕 セッション引継ぎ:** 新しい Claude Code セッションを開始した場合、
+> まず [`docs/SESSION_HANDOFF.md`](docs/SESSION_HANDOFF.md) を読んでください。
+> 進行中タスク・確立されたパターン・既知の罠・残作業を簡潔にまとめています。
+> `.claude/settings.json` の SessionStart hook (`scripts/session-context.cjs`)
+> が自動でこのファイルの存在を案内します。
+
 ## Project
 
-Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 26 services
+Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 45 services
 across third‑party SaaS (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail,
 Slack, Canva), local tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks), business
 operations (Home, Business Dashboard, Team Radar, Templates, Library, Settings), food delivery

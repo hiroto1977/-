@@ -411,6 +411,344 @@ export const SNAPSHOT = {
     ] as { code: string; amount: number; paidAt: string }[],
   },
 
+  quality: {
+    // Snapshot-only. Future iteration will pull values from
+    // `npm run quality:report` (scripts/quality-report.cjs).
+    unitTests: { staticCount: 1175, runtimeCount: 1224 },
+    mutation: { score: 100.00, mutateModules: 36, killed: 2447, threshold: 99.8 },
+    verifications: [
+      { name: 'typecheck', status: 'pass' },
+      { name: 'ESLint (0 errors / 0 warnings)', status: 'pass' },
+      { name: 'verify:arch (170 file:line refs + 6 metrics)', status: 'pass' },
+      { name: 'lint:forbidden (8 patterns scanned)', status: 'pass' },
+      { name: 'lint:imports (273 imports / 88 files)', status: 'pass' },
+      { name: 'lint:docs (4 cross-doc facts)', status: 'pass' },
+      { name: 'lint:test-coverage (27 services)', status: 'pass' },
+      { name: 'CI quality / test / build', status: 'pass' },
+    ] as { name: string; status: 'pass' | 'fail' }[],
+    reviewHistory: [
+      // PR #2 — Phase E
+      { pr: 2, round: 1, verdict: '要修正',     blocking: 0, shouldFix: 7, nit: 5 },
+      { pr: 2, round: 2, verdict: '要修正',     blocking: 3, shouldFix: 5, nit: 3 },
+      { pr: 2, round: 3, verdict: 'マージ可',   blocking: 2, shouldFix: 3, nit: 0 },
+      // PR #3 — フードデリバリー + 投資
+      { pr: 3, round: 1, verdict: '要修正',     blocking: 3, shouldFix: 5, nit: 2 },
+      { pr: 3, round: 2, verdict: 'マージ可',   blocking: 0, shouldFix: 0, nit: 3 },
+      { pr: 3, round: 3, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 0 },
+      { pr: 3, round: 4, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 3 },
+    ] as {
+      pr: number; round: number;
+      verdict: '要修正' | 'マージ可' | 'マージ推奨';
+      blocking: number; shouldFix: number; nit: number;
+    }[],
+    artifactSizes: { standaloneHtmlKb: 421, electronMainKb: 113 },
+    latestCommit: 'ff50f63',
+  },
+
+  microsoft365: {
+    items: [
+      { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
+      { id: 'onedrive-1', name: '☁ OneDrive: 12.4 GB / 1 TB (1.2%) · 最近 4 ファイル' },
+      { id: 'teams-1', name: '👥 Teams: 今日 3 会議 / 未読 8 メッセージ' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  dropbox: {
+    items: [
+      { id: 'f-1', name: '📁 Q3-report.xlsx · 2026-05-18 · 共有 3 名' },
+      { id: 'f-2', name: '📁 marketing-assets/ · 142 ファイル · 4.2 GB' },
+      { id: 'f-3', name: '📁 contracts-signed.pdf · 2026-05-15' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  salesforce: {
+    items: [
+      { id: 'opp-001', name: '🎯 商談: ACME 大型案件 (¥18M) — Stage 4/6' },
+      { id: 'opp-002', name: '🎯 商談: Beta Corp 更新 (¥6M) — Stage 5/6' },
+      { id: 'lead-001', name: '👤 リード: Gamma Industries (確度高)' },
+      { id: 'kpi', name: '📊 月次パイプライン: ¥124M / 商談 18 件' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  discord: {
+    items: [
+      { id: 'srv-1', name: '🔵 Service Hub Dev (1,242 メンバー · 8 チャンネル)' },
+      { id: 'srv-2', name: '🟢 ユーザーコミュニティ (4,521 メンバー · 12 チャンネル)' },
+      { id: 'msg', name: '💬 今日の活動: 89 メッセージ / 4 スレッド' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  asana: {
+    items: [
+      { id: 't-1', name: '✅ Phase 6: Live API 接続 — 進捗 40% (12/30 完了)' },
+      { id: 't-2', name: '🚧 Q3 OKR 設定 — 期限 7 日後 / 担当 5 名' },
+      { id: 't-3', name: '⏳ ユーザーインタビュー × 8 — 5 件実施済' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  linear: {
+    items: [
+      { id: 'ENG-142', name: '🐛 ENG-142: SSRF guard で NAT64 prefix 取りこぼし (P1)' },
+      { id: 'ENG-148', name: '✨ ENG-148: AI advisor の Anthropic 接続 (P2)' },
+      { id: 'cycle', name: '🔄 Cycle 23: 8 issues / 完了 5 / 進行中 2' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  sentry: {
+    items: [
+      { id: 'err-1', name: '🔴 [main] Uncaught TypeError in autoLock.ts (24 件 / 4h)' },
+      { id: 'err-2', name: '🟡 [renderer] Slow vault.unlock (>3s, 12 件)' },
+      { id: 'rel', name: '🚀 v1.4.2 release: 0 new issues / 142 regressions resolved' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  shopify: {
+    items: [
+      { id: 'ord-001', name: '🛒 注文 #1042: ¥18,400 · 配送準備中' },
+      { id: 'ord-002', name: '🛒 注文 #1043: ¥6,200 · 出荷済' },
+      { id: 'rev', name: '💰 今月売上: ¥2,840,500 / 注文 187 件 / 顧客 142 名' },
+      { id: 'prod', name: '📦 在庫切れ警告: 商品 3 点 (補充推奨)' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  stripe: {
+    items: [
+      { id: 'mrr', name: '💳 MRR: $48,200 (前月比 +8.4%)' },
+      { id: 'cust', name: '👥 アクティブ顧客: 412 名 / 解約率 1.8%' },
+      { id: 'inv', name: '📄 未払い請求書: 7 件 ($3,420 相当)' },
+      { id: 'today', name: '⚡ 今日の決済: 23 件 / $4,180 / 失敗 1 件' },
+    ] as { id: string; name: string }[],
+    count: 4,
+  },
+
+  line: {
+    items: [
+      { id: 'fr', name: '👤 友だち: 18,420 名 (前月比 +312)' },
+      { id: 'br', name: '📢 直近配信: 「Q3 新機能のご紹介」配信数 17,890 · 開封率 24%' },
+      { id: 'msg', name: '💬 今日の応答メッセージ: 142 件 / 自動応答 89 件' },
+    ] as { id: string; name: string }[],
+    count: 3,
+  },
+
+  storage: {
+    // Snapshot-only. Phase 6 で Electron main プロセスの `os` / `fs` API
+    // を使った live 取得に切替予定。現状は NEC LAVIE FAQ の標準的な PC
+    // 状態を illustrative データとして提示。
+    disks: [
+      { mount: 'C:', label: 'Windows (SSD)', totalGb: 512, usedGb: 387, freeGb: 125, usagePct: 75.6 },
+      { mount: 'D:', label: 'Data (HDD)', totalGb: 1000, usedGb: 642, freeGb: 358, usagePct: 64.2 },
+    ] as { mount: string; label: string; totalGb: number; usedGb: number; freeGb: number; usagePct: number }[],
+    largeFolders: [
+      { path: 'C:\\Users\\<user>\\Downloads', sizeGb: 28.4, fileCount: 1_842, category: 'downloads' },
+      { path: 'C:\\Windows\\SoftwareDistribution\\Download', sizeGb: 14.2, fileCount: 312, category: 'system' },
+      { path: 'C:\\Users\\<user>\\AppData\\Local\\Temp', sizeGb: 8.7, fileCount: 4_120, category: 'cache' },
+      { path: 'C:\\Users\\<user>\\AppData\\Local\\Google\\Chrome\\User Data', sizeGb: 6.3, fileCount: 12_840, category: 'cache' },
+      { path: 'C:\\Users\\<user>\\OneDrive (sync)', sizeGb: 24.1, fileCount: 8_624, category: 'user' },
+      { path: 'C:\\Windows.old', sizeGb: 32.0, fileCount: 184_212, category: 'system' },
+    ] as { path: string; sizeGb: number; fileCount: number; category: 'system' | 'downloads' | 'cache' | 'user' | 'app' }[],
+    cleanupTasks: [
+      {
+        id: 'windows-old',
+        title: 'Windows.old フォルダの削除 (旧 OS バックアップ)',
+        potentialFreeMb: 32_000,
+        difficulty: 'safe',
+        executable: false,
+        howTo: '設定 → システム → 記憶域 → 一時ファイル → 「以前の Windows のインストール」をチェックして削除',
+      },
+      {
+        id: 'temp-files',
+        title: '一時ファイル削除 (Temp / WindowsUpdate キャッシュ)',
+        potentialFreeMb: 14_500,
+        difficulty: 'safe',
+        executable: false,
+        howTo: '設定 → システム → 記憶域 → 一時ファイル → すべての項目をチェックして削除',
+      },
+      {
+        id: 'recycle-bin',
+        title: 'ゴミ箱を空にする',
+        potentialFreeMb: 4_200,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'デスクトップ → ゴミ箱を右クリック → 「ゴミ箱を空にする」',
+      },
+      {
+        id: 'downloads-cleanup',
+        title: 'Downloads フォルダの整理 (30 日以上前のファイル)',
+        potentialFreeMb: 18_300,
+        difficulty: 'caution',
+        executable: false,
+        howTo: 'エクスプローラー → Downloads → 「更新日時」で並び替え → 古いファイルを確認して削除',
+      },
+      {
+        id: 'chrome-cache',
+        title: 'Chrome / Edge キャッシュのクリア',
+        potentialFreeMb: 3_400,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'ブラウザ → 設定 → プライバシー → 「閲覧データの削除」 → キャッシュされた画像とファイル',
+      },
+      {
+        id: 'defrag-hdd',
+        title: 'D ドライブ (HDD) のデフラグ',
+        potentialFreeMb: 0,
+        difficulty: 'caution',
+        executable: false,
+        howTo: 'エクスプローラー → D: を右クリック → プロパティ → ツール → 「最適化」(SSD は不要)',
+      },
+      {
+        id: 'startup-trim',
+        title: 'スタートアップアプリの整理',
+        potentialFreeMb: 0,
+        difficulty: 'manual',
+        executable: false,
+        howTo: 'タスクマネージャー → スタートアップ タブ → 不要なアプリを無効化 (起動時間が短縮)',
+      },
+      {
+        id: 'onedrive-files-ondemand',
+        title: 'OneDrive の「ファイル オン デマンド」を有効化',
+        potentialFreeMb: 24_100,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'タスクバー → OneDrive アイコン → 設定 → 同期とバックアップ → 「ファイル オン デマンド」をオン',
+      },
+    ] as {
+      id: string; title: string; potentialFreeMb: number;
+      difficulty: 'safe' | 'caution' | 'manual'; executable: false; howTo: string;
+    }[],
+    performance: {
+      fragmentationPct: 12.4,    // HDD (D:) のみ
+      startupSec: 38,            // 標準: 20-30 秒
+      runningProcesses: 142,
+      memoryUsedGb: 11.2,
+      memoryTotalGb: 16.0,
+    },
+    recommendations: [
+      'Cドライブの使用率 75.6% — 「Windows.old」削除 (32 GB 解放) を最優先で実施推奨',
+      'HDD (D:) のフラグメント率 12.4% — デフラグで I/O 速度向上が期待できます',
+      'スタートアップ 38 秒 — タスクマネージャーで不要アプリを無効化すれば 20 秒台に短縮可能',
+      'OneDrive ファイル オン デマンドが無効 — オンに切替で 24 GB 即時解放',
+      'メモリ使用率 70% — Chrome タブ数の整理 / 常駐アプリの見直しを推奨',
+    ] as string[],
+  },
+
+  // ── 士業連携 (snapshot 専用)。個別の専門家との連絡先 / 相談履歴 /
+  //    書類 / 顧問料を軽量 CRM として管理する。Phase 6 で IndexedDB
+  //    永続化 + 「専門家を追加」フォームに対応予定。
+
+  taxAccountant: {
+    contacts: [
+      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.jp', phone: '03-1234-5678' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'tc-1', contactId: 'ta-1', date: '2026-05-10', topic: '法人税申告書のレビュー', status: '完了' },
+      { id: 'tc-2', contactId: 'ta-1', date: '2026-05-18', topic: '消費税インボイス対応', status: '対応中' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'td-1', title: '4 月度 試算表', direction: 'received', date: '2026-05-15' },
+      { id: 'td-2', title: '源泉徴収簿', direction: 'sent', date: '2026-05-12' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 33_000 as number,
+    outstandingInvoice: 0 as number,
+  },
+
+  laborConsultant: {
+    contacts: [
+      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.jp' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'lcc-1', contactId: 'lc-1', date: '2026-05-08', topic: '新入社員の社会保険手続', status: '完了' },
+      { id: 'lcc-2', contactId: 'lc-1', date: '2026-05-20', topic: '就業規則の改定', status: '相談予約' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'lcd-1', title: '労働保険申告書', direction: 'received', date: '2026-05-14' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 22_000 as number,
+    outstandingInvoice: 22_000 as number,
+  },
+
+  lawyer: {
+    contacts: [
+      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.jp', phone: '03-3000-1100' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'lwc-1', contactId: 'lw-1', date: '2026-05-05', topic: '取引基本契約書 v3 レビュー', status: '完了' },
+      { id: 'lwc-2', contactId: 'lw-1', date: '2026-05-19', topic: '退職トラブル相談', status: '対応中' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'lwd-1', title: '基本契約書 修正版', direction: 'received', date: '2026-05-12' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 55_000 as number,
+    outstandingInvoice: 0 as number,
+  },
+
+  judicialScrivener: {
+    contacts: [
+      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.jp' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'jsc-1', contactId: 'js-1', date: '2026-04-22', topic: '本店所在地変更登記', status: '完了' },
+      { id: 'jsc-2', contactId: 'js-1', date: '2026-05-15', topic: '不動産抵当権抹消', status: '対応中' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'jsd-1', title: '登記完了証 (本店移転)', direction: 'received', date: '2026-05-02' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 0 as number,
+    outstandingInvoice: 88_000 as number,
+  },
+
+  adminScrivener: {
+    contacts: [
+      { id: 'as-1', name: '田中 三郎', firm: '田中行政書士事務所', phone: '03-5500-2200' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'asc-1', contactId: 'as-1', date: '2026-05-12', topic: 'IT 導入補助金 2026 申請', status: '対応中' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'asd-1', title: '事業計画書 (補助金申請用)', direction: 'sent', date: '2026-05-16' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 0 as number,
+    outstandingInvoice: 0 as number,
+  },
+
+  smeConsultant: {
+    contacts: [
+      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.jp' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'smc-1', contactId: 'sm-1', date: '2026-04-30', topic: '事業承継診断', status: '完了' },
+      { id: 'smc-2', contactId: 'sm-1', date: '2026-05-17', topic: '中期経営計画策定', status: '相談中' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'smd-1', title: '経営診断レポート Q1', direction: 'received', date: '2026-04-28' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 44_000 as number,
+    outstandingInvoice: 0 as number,
+  },
+
+  patentAttorney: {
+    contacts: [
+      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.jp', phone: '03-7700-3300' },
+    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    recentConsultations: [
+      { id: 'pac-1', contactId: 'pa-1', date: '2026-05-03', topic: '商標出願 (新サービス名)', status: '対応中' },
+      { id: 'pac-2', contactId: 'pa-1', date: '2026-05-18', topic: '特許出願戦略相談', status: '相談予約' },
+    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    pendingDocuments: [
+      { id: 'pad-1', title: '商標出願書 ドラフト', direction: 'received', date: '2026-05-11' },
+      { id: 'pad-2', title: '先行技術調査結果', direction: 'received', date: '2026-05-08' },
+    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
+    monthlyFee: 0 as number,
+    outstandingInvoice: 165_000 as number,
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

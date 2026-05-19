@@ -20,10 +20,29 @@ import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './template
 import { fetchHomeSnapshot } from './home';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
-import { fetchUberEatsSnapshot } from './uber-eats';
-import { fetchDemaeCanSnapshot } from './demae-can';
-import { fetchRealEstateSnapshot } from './real-estate';
-import { fetchMutualFundsSnapshot } from './mutual-funds';
+import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
+import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can';
+import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
+import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
+import { fetchQualitySnapshot } from './quality';
+import { fetchMicrosoft365Snapshot } from './microsoft-365';
+import { fetchDropboxSnapshot } from './dropbox';
+import { fetchSalesforceSnapshot } from './salesforce';
+import { fetchDiscordSnapshot } from './discord';
+import { fetchAsanaSnapshot } from './asana';
+import { fetchLinearSnapshot } from './linear';
+import { fetchSentrySnapshot } from './sentry';
+import { fetchShopifySnapshot } from './shopify';
+import { fetchStripeSnapshot } from './stripe';
+import { fetchLineSnapshot } from './line';
+import { fetchStorageSnapshot } from './storage';
+import { fetchTaxAccountantSnapshot } from './tax-accountant';
+import { fetchLaborConsultantSnapshot } from './labor-consultant';
+import { fetchLawyerSnapshot } from './lawyer';
+import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
+import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
+import { fetchSmeConsultantSnapshot } from './sme-consultant';
+import { fetchPatentAttorneySnapshot } from './patent-attorney';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -57,6 +76,25 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'demae-can': fetchDemaeCanSnapshot,
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
+  quality: fetchQualitySnapshot,
+  'microsoft-365': fetchMicrosoft365Snapshot,
+  dropbox: fetchDropboxSnapshot,
+  salesforce: fetchSalesforceSnapshot,
+  discord: fetchDiscordSnapshot,
+  asana: fetchAsanaSnapshot,
+  linear: fetchLinearSnapshot,
+  sentry: fetchSentrySnapshot,
+  shopify: fetchShopifySnapshot,
+  stripe: fetchStripeSnapshot,
+  line: fetchLineSnapshot,
+  storage: fetchStorageSnapshot,
+  'tax-accountant': fetchTaxAccountantSnapshot,
+  'labor-consultant': fetchLaborConsultantSnapshot,
+  lawyer: fetchLawyerSnapshot,
+  'judicial-scrivener': fetchJudicialScrivenerSnapshot,
+  'admin-scrivener': fetchAdminScrivenerSnapshot,
+  'sme-consultant': fetchSmeConsultantSnapshot,
+  'patent-attorney': fetchPatentAttorneySnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -101,6 +139,16 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  'quality',
+  'storage',
+  // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
+  'tax-accountant',
+  'labor-consultant',
+  'lawyer',
+  'judicial-scrivener',
+  'admin-scrivener',
+  'sme-consultant',
+  'patent-attorney',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -124,6 +172,10 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   business: BUSINESS_ACTIONS,
   teamradar: TEAMRADAR_ACTIONS,
   templates: TEMPLATES_ACTIONS,
+  'uber-eats': UBER_EATS_ACTIONS,
+  'demae-can': DEMAE_CAN_ACTIONS,
+  'real-estate': REAL_ESTATE_ACTIONS,
+  'mutual-funds': MUTUAL_FUNDS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

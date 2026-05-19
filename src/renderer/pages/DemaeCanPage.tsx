@@ -1,6 +1,7 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -69,6 +70,8 @@ export function DemaeCanPage() {
           </tbody>
         </table>
       </Section>
+
+      <ServiceActionPanel serviceId="demae-can" serviceLabel="出前館" />
 
       <Section title="人気エリア TOP3" count={topAreas.length}>
         <table style={tableStyle}>
