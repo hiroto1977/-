@@ -91,30 +91,32 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 
 ## 未解決 follow-up (優先度順)
 
+### ✅ 解決済 (PR #9 で一括反映 — `claude/followup-cleanup`)
+- ~~PR #6 R1 #1~~ — メモリ閾値 `< 80%` → `< 75%` に修正
+- ~~PR #6 R1 #2~~ — `CleanupTask.executable: false` → `boolean` に緩和
+- ~~PR #6 R1 #3~~ — `largeFolders` をサイズ降順ソート (`[...largeFolders].sort((a, b) => b.sizeGb - a.sizeGb)`)
+- ~~PR #7 R1 #2~~ — 28 重複 interface を `src/shared/shigyoTypes.ts` に集約
+- ~~PR #7 R1 #3~~ — 7 士業ページ 882 行を `components/ShigyoConsole.tsx` (178 行) に抽出 → 各ページ 5 行ラッパへ
+- ~~PR #7 R1 #4~~ — `as number` キャスト 14 箇所を削除し `satisfies ShigyoSnapshot` で literal narrowing 回避
+- ~~PR #7 R1 #5~~ — `example.jp` → `example.com` (8 箇所)、弁護士 / 弁理士に `disclaimer` prop 追加
+- ~~PR #7 NIT (13)~~ — ステータス色 tooltip 追加 (`STATUS_TOOLTIP` in `ShigyoConsole.tsx`)
+
 ### 🟡 SHOULD-FIX (次回作業の最有力候補)
-1. **PR #6 R1 #1** — Storage page のメモリ使用率閾値 (`< 80%` vs snapshot data 70%) の整合
-2. **PR #6 R1 #2** — `CleanupTask.executable: false` literal が Phase 6 切替を阻む → `boolean` か別 union
-3. **PR #6 R1 #3** — Storage `largeFolders` がサイズ降順未ソート
-4. **PR #7 R1 #2** — 7 士業の interface 28 個重複 → `src/shared/shigyoTypes.ts` 抽出
-5. **PR #7 R1 #3** — 7 士業 Page が 882 行コピペ → `components/ShigyoConsole.tsx` 抽出
-6. **PR #7 R1 #4** — `as number` cast の anti-pattern → `satisfies` 戦略統一
-7. **PR #7 R1 #5** — `example.jp` ドメイン (RFC 2606 非予約) → `example.com` に統一 + 弁護士/弁理士に法的 disclaimer 注意書き
-8. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-9. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-10. **PR #4 NIT** — `note` の XSS / control-char チェック
-11. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
+1. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
+2. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
+3. **PR #4 NIT** — `note` の XSS / control-char チェック
+4. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
 
 ### 🟢 NIT
-12. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
-13. PR #7: ステータス色 `相談中` / `対応中` の意味的区別 tooltip
+5. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
 
 ### 📐 アーキテクチャ拡張案
-14. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
-15. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
-16. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
-17. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
-18. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
-19. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
+6. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
+7. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
+8. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
+9. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
+10. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
+11. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
 
 ## クイック検証チェックリスト (新セッション開始時)
 
