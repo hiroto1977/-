@@ -25,6 +25,16 @@ import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
 import { QualityPage } from './pages/QualityPage';
+import { Microsoft365Page } from './pages/Microsoft365Page';
+import { DropboxPage } from './pages/DropboxPage';
+import { SalesforcePage } from './pages/SalesforcePage';
+import { DiscordPage } from './pages/DiscordPage';
+import { AsanaPage } from './pages/AsanaPage';
+import { LinearPage } from './pages/LinearPage';
+import { SentryPage } from './pages/SentryPage';
+import { ShopifyPage } from './pages/ShopifyPage';
+import { StripePage } from './pages/StripePage';
+import { LinePage } from './pages/LinePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -267,6 +277,86 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
     page: QualityPage,
     category: 'tools',
+  },
+  {
+    id: 'microsoft-365',
+    label: 'Microsoft 365',
+    icon: 'M3',
+    description: 'Outlook / OneDrive / Teams — メール / ファイル / 会議',
+    page: Microsoft365Page,
+    category: 'integrations',
+  },
+  {
+    id: 'dropbox',
+    label: 'Dropbox',
+    icon: 'DB',
+    description: 'ファイル保管 — 最近のファイル / 共有リンク / 容量',
+    page: DropboxPage,
+    category: 'integrations',
+  },
+  {
+    id: 'salesforce',
+    label: 'Salesforce',
+    icon: 'SF',
+    description: 'CRM — リード / 商談 / 連絡先 / パイプライン',
+    page: SalesforcePage,
+    category: 'integrations',
+  },
+  {
+    id: 'discord',
+    label: 'Discord',
+    icon: 'DS',
+    description: 'チャット — サーバー / チャンネル / メッセージ',
+    page: DiscordPage,
+    category: 'integrations',
+  },
+  {
+    id: 'asana',
+    label: 'Asana',
+    icon: 'AS',
+    description: 'プロジェクト管理 — タスク / プロジェクト / 進捗',
+    page: AsanaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'linear',
+    label: 'Linear',
+    icon: 'LN',
+    description: 'イシュー追跡 — issue / cycle / project',
+    page: LinearPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sentry',
+    label: 'Sentry',
+    icon: 'SN',
+    description: 'エラー監視 — issues / performance / releases',
+    page: SentryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'shopify',
+    label: 'Shopify',
+    icon: 'SH',
+    description: 'EC — 注文 / 売上 / 商品 / 顧客',
+    page: ShopifyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'stripe',
+    label: 'Stripe',
+    icon: 'SP',
+    description: '決済 — MRR / 顧客 / 請求 / トランザクション',
+    page: StripePage,
+    category: 'integrations',
+  },
+  {
+    id: 'line',
+    label: 'LINE',
+    icon: 'LN2',
+    description: '公式アカウント — 友達 / 配信 / メッセージ統計',
+    page: LinePage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

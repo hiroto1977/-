@@ -34,6 +34,16 @@ export const SERVICE_IDS = [
   'real-estate',
   'mutual-funds',
   'quality',
+  'microsoft-365',
+  'dropbox',
+  'salesforce',
+  'discord',
+  'asana',
+  'linear',
+  'sentry',
+  'shopify',
+  'stripe',
+  'line',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
