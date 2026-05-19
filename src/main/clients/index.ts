@@ -35,6 +35,7 @@ import { fetchSentrySnapshot } from './sentry';
 import { fetchShopifySnapshot } from './shopify';
 import { fetchStripeSnapshot } from './stripe';
 import { fetchLineSnapshot } from './line';
+import { fetchStorageSnapshot } from './storage';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -79,6 +80,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   shopify: fetchShopifySnapshot,
   stripe: fetchStripeSnapshot,
   line: fetchLineSnapshot,
+  storage: fetchStorageSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -124,6 +126,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'real-estate',
   'mutual-funds',
   'quality',
+  'storage',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

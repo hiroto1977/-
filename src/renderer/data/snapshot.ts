@@ -538,6 +538,107 @@ export const SNAPSHOT = {
     count: 3,
   },
 
+  storage: {
+    // Snapshot-only. Phase 6 で Electron main プロセスの `os` / `fs` API
+    // を使った live 取得に切替予定。現状は NEC LAVIE FAQ の標準的な PC
+    // 状態を illustrative データとして提示。
+    disks: [
+      { mount: 'C:', label: 'Windows (SSD)', totalGb: 512, usedGb: 387, freeGb: 125, usagePct: 75.6 },
+      { mount: 'D:', label: 'Data (HDD)', totalGb: 1000, usedGb: 642, freeGb: 358, usagePct: 64.2 },
+    ] as { mount: string; label: string; totalGb: number; usedGb: number; freeGb: number; usagePct: number }[],
+    largeFolders: [
+      { path: 'C:\\Users\\<user>\\Downloads', sizeGb: 28.4, fileCount: 1_842, category: 'downloads' },
+      { path: 'C:\\Windows\\SoftwareDistribution\\Download', sizeGb: 14.2, fileCount: 312, category: 'system' },
+      { path: 'C:\\Users\\<user>\\AppData\\Local\\Temp', sizeGb: 8.7, fileCount: 4_120, category: 'cache' },
+      { path: 'C:\\Users\\<user>\\AppData\\Local\\Google\\Chrome\\User Data', sizeGb: 6.3, fileCount: 12_840, category: 'cache' },
+      { path: 'C:\\Users\\<user>\\OneDrive (sync)', sizeGb: 24.1, fileCount: 8_624, category: 'user' },
+      { path: 'C:\\Windows.old', sizeGb: 32.0, fileCount: 184_212, category: 'system' },
+    ] as { path: string; sizeGb: number; fileCount: number; category: 'system' | 'downloads' | 'cache' | 'user' | 'app' }[],
+    cleanupTasks: [
+      {
+        id: 'windows-old',
+        title: 'Windows.old フォルダの削除 (旧 OS バックアップ)',
+        potentialFreeMb: 32_000,
+        difficulty: 'safe',
+        executable: false,
+        howTo: '設定 → システム → 記憶域 → 一時ファイル → 「以前の Windows のインストール」をチェックして削除',
+      },
+      {
+        id: 'temp-files',
+        title: '一時ファイル削除 (Temp / WindowsUpdate キャッシュ)',
+        potentialFreeMb: 14_500,
+        difficulty: 'safe',
+        executable: false,
+        howTo: '設定 → システム → 記憶域 → 一時ファイル → すべての項目をチェックして削除',
+      },
+      {
+        id: 'recycle-bin',
+        title: 'ゴミ箱を空にする',
+        potentialFreeMb: 4_200,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'デスクトップ → ゴミ箱を右クリック → 「ゴミ箱を空にする」',
+      },
+      {
+        id: 'downloads-cleanup',
+        title: 'Downloads フォルダの整理 (30 日以上前のファイル)',
+        potentialFreeMb: 18_300,
+        difficulty: 'caution',
+        executable: false,
+        howTo: 'エクスプローラー → Downloads → 「更新日時」で並び替え → 古いファイルを確認して削除',
+      },
+      {
+        id: 'chrome-cache',
+        title: 'Chrome / Edge キャッシュのクリア',
+        potentialFreeMb: 3_400,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'ブラウザ → 設定 → プライバシー → 「閲覧データの削除」 → キャッシュされた画像とファイル',
+      },
+      {
+        id: 'defrag-hdd',
+        title: 'D ドライブ (HDD) のデフラグ',
+        potentialFreeMb: 0,
+        difficulty: 'caution',
+        executable: false,
+        howTo: 'エクスプローラー → D: を右クリック → プロパティ → ツール → 「最適化」(SSD は不要)',
+      },
+      {
+        id: 'startup-trim',
+        title: 'スタートアップアプリの整理',
+        potentialFreeMb: 0,
+        difficulty: 'manual',
+        executable: false,
+        howTo: 'タスクマネージャー → スタートアップ タブ → 不要なアプリを無効化 (起動時間が短縮)',
+      },
+      {
+        id: 'onedrive-files-ondemand',
+        title: 'OneDrive の「ファイル オン デマンド」を有効化',
+        potentialFreeMb: 24_100,
+        difficulty: 'safe',
+        executable: false,
+        howTo: 'タスクバー → OneDrive アイコン → 設定 → 同期とバックアップ → 「ファイル オン デマンド」をオン',
+      },
+    ] as {
+      id: string; title: string; potentialFreeMb: number;
+      difficulty: 'safe' | 'caution' | 'manual'; executable: false; howTo: string;
+    }[],
+    performance: {
+      fragmentationPct: 12.4,    // HDD (D:) のみ
+      startupSec: 38,            // 標準: 20-30 秒
+      runningProcesses: 142,
+      memoryUsedGb: 11.2,
+      memoryTotalGb: 16.0,
+    },
+    recommendations: [
+      'Cドライブの使用率 75.6% — 「Windows.old」削除 (32 GB 解放) を最優先で実施推奨',
+      'HDD (D:) のフラグメント率 12.4% — デフラグで I/O 速度向上が期待できます',
+      'スタートアップ 38 秒 — タスクマネージャーで不要アプリを無効化すれば 20 秒台に短縮可能',
+      'OneDrive ファイル オン デマンドが無効 — オンに切替で 24 GB 即時解放',
+      'メモリ使用率 70% — Chrome タブ数の整理 / 常駐アプリの見直しを推奨',
+    ] as string[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

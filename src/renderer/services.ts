@@ -35,6 +35,7 @@ import { SentryPage } from './pages/SentryPage';
 import { ShopifyPage } from './pages/ShopifyPage';
 import { StripePage } from './pages/StripePage';
 import { LinePage } from './pages/LinePage';
+import { StoragePage } from './pages/StoragePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -357,6 +358,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: '公式アカウント — 友達 / 配信 / メッセージ統計',
     page: LinePage,
     category: 'integrations',
+  },
+  {
+    id: 'storage',
+    label: 'ストレージ最適化',
+    icon: 'SZ',
+    description: 'PC ストレージ分析 + クリーンアップ推奨 + パフォーマンス監視',
+    page: StoragePage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
