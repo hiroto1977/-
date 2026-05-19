@@ -20,6 +20,10 @@ import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './template
 import { fetchHomeSnapshot } from './home';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
+import { fetchUberEatsSnapshot } from './uber-eats';
+import { fetchDemaeCanSnapshot } from './demae-can';
+import { fetchRealEstateSnapshot } from './real-estate';
+import { fetchMutualFundsSnapshot } from './mutual-funds';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -49,6 +53,10 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   templates: fetchTemplatesSnapshot,
   library: fetchLibrarySnapshot,
   settings: fetchSettingsSnapshot,
+  'uber-eats': fetchUberEatsSnapshot,
+  'demae-can': fetchDemaeCanSnapshot,
+  'real-estate': fetchRealEstateSnapshot,
+  'mutual-funds': fetchMutualFundsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -89,6 +97,10 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'templates',
   'library',
   'settings',
+  'uber-eats',
+  'demae-can',
+  'real-estate',
+  'mutual-funds',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

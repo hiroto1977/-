@@ -240,7 +240,7 @@ const METRICS = [
       const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
       if (!m) return null;
       const body = m[1];
-      return countOccurrences(body, /^\s*'[a-z]+'\s*,/gm);
+      return countOccurrences(body, /^\s*'[a-z][a-z0-9-]*'\s*,/gm);
     },
   },
   {
@@ -261,7 +261,7 @@ const METRICS = [
       if (!m) return null;
       return m[1]
         .split('\n')
-        .filter((l) => /^\s*[a-z]+:\s+\w/i.test(l))
+        .filter((l) => /^\s*(?:'[a-z][a-z0-9-]*'|[a-z][a-z0-9]*):\s+\w/i.test(l))
         .filter((l) => !/SCAFFOLD/i.test(l)).length;
     },
   },
@@ -282,7 +282,7 @@ const METRICS = [
       const src = readFileSafe(path.join(REPO_ROOT, 'src/main/oauth.ts'));
       const m = src.match(/OAUTH_CONFIGS[^=]*= \{([\s\S]*?)^\};/m);
       if (!m) return null;
-      return countOccurrences(m[1], /^\s*[a-z]+:\s*\{/gm);
+      return countOccurrences(m[1], /^\s*[a-z][a-z0-9-]*:\s*\{/gm);
     },
   },
   {

@@ -29,6 +29,10 @@ export const SERVICE_IDS = [
   'templates',
   'library',
   'settings',
+  'uber-eats',
+  'demae-can',
+  'real-estate',
+  'mutual-funds',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
