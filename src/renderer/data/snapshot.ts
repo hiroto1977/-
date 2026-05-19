@@ -2,6 +2,8 @@
 // Captured on 2026-05-11. Refreshing this snapshot is a manual step
 // until each ServiceClient is wired up to call the live REST APIs.
 
+import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+
 export const SNAPSHOT = {
   home: {
     greeting: 'こんにちは。今日は何を作りましょう?',
@@ -645,109 +647,109 @@ export const SNAPSHOT = {
 
   taxAccountant: {
     contacts: [
-      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.jp', phone: '03-1234-5678' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.com', phone: '03-1234-5678' },
+    ],
     recentConsultations: [
       { id: 'tc-1', contactId: 'ta-1', date: '2026-05-10', topic: '法人税申告書のレビュー', status: '完了' },
       { id: 'tc-2', contactId: 'ta-1', date: '2026-05-18', topic: '消費税インボイス対応', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'td-1', title: '4 月度 試算表', direction: 'received', date: '2026-05-15' },
       { id: 'td-2', title: '源泉徴収簿', direction: 'sent', date: '2026-05-12' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 33_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 33_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   laborConsultant: {
     contacts: [
-      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.com' },
+    ],
     recentConsultations: [
       { id: 'lcc-1', contactId: 'lc-1', date: '2026-05-08', topic: '新入社員の社会保険手続', status: '完了' },
       { id: 'lcc-2', contactId: 'lc-1', date: '2026-05-20', topic: '就業規則の改定', status: '相談予約' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'lcd-1', title: '労働保険申告書', direction: 'received', date: '2026-05-14' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 22_000 as number,
-    outstandingInvoice: 22_000 as number,
-  },
+    ],
+    monthlyFee: 22_000,
+    outstandingInvoice: 22_000,
+  } satisfies ShigyoSnapshot,
 
   lawyer: {
     contacts: [
-      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.jp', phone: '03-3000-1100' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.com', phone: '03-3000-1100' },
+    ],
     recentConsultations: [
       { id: 'lwc-1', contactId: 'lw-1', date: '2026-05-05', topic: '取引基本契約書 v3 レビュー', status: '完了' },
       { id: 'lwc-2', contactId: 'lw-1', date: '2026-05-19', topic: '退職トラブル相談', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'lwd-1', title: '基本契約書 修正版', direction: 'received', date: '2026-05-12' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 55_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 55_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   judicialScrivener: {
     contacts: [
-      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.com' },
+    ],
     recentConsultations: [
       { id: 'jsc-1', contactId: 'js-1', date: '2026-04-22', topic: '本店所在地変更登記', status: '完了' },
       { id: 'jsc-2', contactId: 'js-1', date: '2026-05-15', topic: '不動産抵当権抹消', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'jsd-1', title: '登記完了証 (本店移転)', direction: 'received', date: '2026-05-02' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 88_000 as number,
-  },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 88_000,
+  } satisfies ShigyoSnapshot,
 
   adminScrivener: {
     contacts: [
       { id: 'as-1', name: '田中 三郎', firm: '田中行政書士事務所', phone: '03-5500-2200' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    ],
     recentConsultations: [
       { id: 'asc-1', contactId: 'as-1', date: '2026-05-12', topic: 'IT 導入補助金 2026 申請', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'asd-1', title: '事業計画書 (補助金申請用)', direction: 'sent', date: '2026-05-16' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   smeConsultant: {
     contacts: [
-      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.com' },
+    ],
     recentConsultations: [
       { id: 'smc-1', contactId: 'sm-1', date: '2026-04-30', topic: '事業承継診断', status: '完了' },
       { id: 'smc-2', contactId: 'sm-1', date: '2026-05-17', topic: '中期経営計画策定', status: '相談中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'smd-1', title: '経営診断レポート Q1', direction: 'received', date: '2026-04-28' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 44_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 44_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   patentAttorney: {
     contacts: [
-      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.jp', phone: '03-7700-3300' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.com', phone: '03-7700-3300' },
+    ],
     recentConsultations: [
       { id: 'pac-1', contactId: 'pa-1', date: '2026-05-03', topic: '商標出願 (新サービス名)', status: '対応中' },
       { id: 'pac-2', contactId: 'pa-1', date: '2026-05-18', topic: '特許出願戦略相談', status: '相談予約' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'pad-1', title: '商標出願書 ドラフト', direction: 'received', date: '2026-05-11' },
       { id: 'pad-2', title: '先行技術調査結果', direction: 'received', date: '2026-05-08' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 165_000 as number,
-  },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 165_000,
+  } satisfies ShigyoSnapshot,
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

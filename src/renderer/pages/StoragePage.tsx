@@ -94,7 +94,7 @@ export function StoragePage() {
           <Stat
             label="メモリ使用率"
             value={`${memoryUsagePct.toFixed(0)}% (${performance.memoryUsedGb.toFixed(1)} / ${performance.memoryTotalGb.toFixed(0)} GB)`}
-            positive={memoryUsagePct < 80}
+            positive={memoryUsagePct < 75}
           />
         </div>
       </Section>
@@ -141,7 +141,8 @@ export function StoragePage() {
             </tr>
           </thead>
           <tbody>
-            {largeFolders.map((f) => (
+            {/* PR #6 R1 #3: 「TOP」表記なのでサイズ降順で表示 */}
+            {[...largeFolders].sort((a, b) => b.sizeGb - a.sizeGb).map((f) => (
               <tr key={f.path}>
                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{f.path}</td>
                 <td style={tdStyle}>{CATEGORY_LABEL[f.category] ?? f.category}</td>

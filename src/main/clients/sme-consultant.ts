@@ -1,47 +1,29 @@
 import type { FetchContext } from './types';
+import type {
+  ShigyoContact,
+  ShigyoConsultation,
+  ShigyoDocument,
+  ShigyoSnapshot,
+} from '../../shared/shigyoTypes';
 
 /**
- * 中小企業診断士 連携 (snapshot 専用)。
+ * sme-consultant 連携 (snapshot 専用)。
  *
- * 個別の専門家との連携情報 (連絡先 / 相談履歴 / 書類 / 請求) を管理する
- * 軽量 CRM。公式 API はないため、ユーザーが手動で登録した記録を表示する
- * Phase 6 で IndexedDB 永続化に切替予定。現在は LIVE_FETCHERS invariant
- * を満たすための static stub。
+ * 個別の専門家との連携情報を軽量 CRM として管理する。公式 API はないため、
+ * ユーザーが手動登録した記録を表示。共通スナップショット型は
+ * `src/shared/shigyoTypes.ts` から import (PR #7 R1 #2 で DRY 違反解消)。
  */
 
-export interface SmeConsultantContact {
-  readonly id: string;
-  readonly name: string;
-  readonly firm: string;
-  readonly phone?: string;
-  readonly email?: string;
-}
-
-export interface SmeConsultantConsultation {
-  readonly id: string;
-  readonly contactId: string;
-  readonly date: string;
-  readonly topic: string;
-  readonly status: '相談予約' | '相談中' | '対応中' | '完了';
-}
-
-export interface SmeConsultantDocument {
-  readonly id: string;
-  readonly title: string;
-  readonly direction: 'sent' | 'received';
-  readonly date: string;
-}
-
-export interface SmeConsultantSnapshot {
-  readonly contacts: ReadonlyArray<SmeConsultantContact>;
-  readonly recentConsultations: ReadonlyArray<SmeConsultantConsultation>;
-  readonly pendingDocuments: ReadonlyArray<SmeConsultantDocument>;
-  readonly monthlyFee: number;
-  readonly outstandingInvoice: number;
-}
+// Re-export legacy aliases for backward compatibility with existing
+// import sites (e.g. `import { SmeConsultantSnapshot } from './sme-consultant'`).
+// New code should import from `shared/shigyoTypes` directly.
+export type SmeConsultantContact = ShigyoContact;
+export type SmeConsultantConsultation = ShigyoConsultation;
+export type SmeConsultantDocument = ShigyoDocument;
+export type SmeConsultantSnapshot = ShigyoSnapshot;
 
 // Stryker disable next-line all
-const STUB: SmeConsultantSnapshot = {
+const STUB: ShigyoSnapshot = {
   contacts: [],
   recentConsultations: [],
   pendingDocuments: [],
@@ -49,11 +31,11 @@ const STUB: SmeConsultantSnapshot = {
   outstandingInvoice: 0,
 };
 
-export async function fetchSmeConsultantSnapshotImpl(_ctx: FetchContext): Promise<SmeConsultantSnapshot> {
+export async function fetchSmeConsultantSnapshotImpl(_ctx: FetchContext): Promise<ShigyoSnapshot> {
   return STUB;
 }
 
 // Stryker disable next-line BlockStatement
-export async function fetchSmeConsultantSnapshot(ctx: FetchContext): Promise<SmeConsultantSnapshot> {
+export async function fetchSmeConsultantSnapshot(ctx: FetchContext): Promise<ShigyoSnapshot> {
   return fetchSmeConsultantSnapshotImpl(ctx);
 }

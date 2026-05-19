@@ -1,47 +1,29 @@
 import type { FetchContext } from './types';
+import type {
+  ShigyoContact,
+  ShigyoConsultation,
+  ShigyoDocument,
+  ShigyoSnapshot,
+} from '../../shared/shigyoTypes';
 
 /**
- * 弁護士 連携 (snapshot 専用)。
+ * lawyer 連携 (snapshot 専用)。
  *
- * 個別の専門家との連携情報 (連絡先 / 相談履歴 / 書類 / 請求) を管理する
- * 軽量 CRM。公式 API はないため、ユーザーが手動で登録した記録を表示する
- * Phase 6 で IndexedDB 永続化に切替予定。現在は LIVE_FETCHERS invariant
- * を満たすための static stub。
+ * 個別の専門家との連携情報を軽量 CRM として管理する。公式 API はないため、
+ * ユーザーが手動登録した記録を表示。共通スナップショット型は
+ * `src/shared/shigyoTypes.ts` から import (PR #7 R1 #2 で DRY 違反解消)。
  */
 
-export interface LawyerContact {
-  readonly id: string;
-  readonly name: string;
-  readonly firm: string;
-  readonly phone?: string;
-  readonly email?: string;
-}
-
-export interface LawyerConsultation {
-  readonly id: string;
-  readonly contactId: string;
-  readonly date: string;
-  readonly topic: string;
-  readonly status: '相談予約' | '相談中' | '対応中' | '完了';
-}
-
-export interface LawyerDocument {
-  readonly id: string;
-  readonly title: string;
-  readonly direction: 'sent' | 'received';
-  readonly date: string;
-}
-
-export interface LawyerSnapshot {
-  readonly contacts: ReadonlyArray<LawyerContact>;
-  readonly recentConsultations: ReadonlyArray<LawyerConsultation>;
-  readonly pendingDocuments: ReadonlyArray<LawyerDocument>;
-  readonly monthlyFee: number;
-  readonly outstandingInvoice: number;
-}
+// Re-export legacy aliases for backward compatibility with existing
+// import sites (e.g. `import { LawyerSnapshot } from './lawyer'`).
+// New code should import from `shared/shigyoTypes` directly.
+export type LawyerContact = ShigyoContact;
+export type LawyerConsultation = ShigyoConsultation;
+export type LawyerDocument = ShigyoDocument;
+export type LawyerSnapshot = ShigyoSnapshot;
 
 // Stryker disable next-line all
-const STUB: LawyerSnapshot = {
+const STUB: ShigyoSnapshot = {
   contacts: [],
   recentConsultations: [],
   pendingDocuments: [],
@@ -49,11 +31,11 @@ const STUB: LawyerSnapshot = {
   outstandingInvoice: 0,
 };
 
-export async function fetchLawyerSnapshotImpl(_ctx: FetchContext): Promise<LawyerSnapshot> {
+export async function fetchLawyerSnapshotImpl(_ctx: FetchContext): Promise<ShigyoSnapshot> {
   return STUB;
 }
 
 // Stryker disable next-line BlockStatement
-export async function fetchLawyerSnapshot(ctx: FetchContext): Promise<LawyerSnapshot> {
+export async function fetchLawyerSnapshot(ctx: FetchContext): Promise<ShigyoSnapshot> {
   return fetchLawyerSnapshotImpl(ctx);
 }
