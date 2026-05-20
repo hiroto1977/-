@@ -414,18 +414,19 @@ export const SNAPSHOT = {
   },
 
   quality: {
-    // Snapshot-only. Future iteration will pull values from
-    // `npm run quality:report` (scripts/quality-report.cjs).
-    unitTests: { staticCount: 1175, runtimeCount: 1224 },
-    mutation: { score: 100.00, mutateModules: 36, killed: 2447, threshold: 99.8 },
+    // Snapshot-only. `scripts/generate-quality-snapshot.cjs` で現在値を
+    // ターミナルに出力 → 本ブロックにコピペで反映するワークフロー (Phase 6
+    // で完全自動化予定)。
+    unitTests: { staticCount: 1238, runtimeCount: 1287 },
+    mutation: { score: 100.00, mutateModules: 45, killed: 2447, threshold: 99.8 },
     verifications: [
       { name: 'typecheck', status: 'pass' },
       { name: 'ESLint (0 errors / 0 warnings)', status: 'pass' },
-      { name: 'verify:arch (170 file:line refs + 6 metrics)', status: 'pass' },
+      { name: 'verify:arch (171 file:line refs + 6 metrics)', status: 'pass' },
       { name: 'lint:forbidden (8 patterns scanned)', status: 'pass' },
-      { name: 'lint:imports (273 imports / 88 files)', status: 'pass' },
+      { name: 'lint:imports (428 imports / 134 files)', status: 'pass' },
       { name: 'lint:docs (4 cross-doc facts)', status: 'pass' },
-      { name: 'lint:test-coverage (27 services)', status: 'pass' },
+      { name: 'lint:test-coverage (45 services)', status: 'pass' },
       { name: 'CI quality / test / build', status: 'pass' },
     ] as { name: string; status: 'pass' | 'fail' }[],
     reviewHistory: [
@@ -438,13 +439,22 @@ export const SNAPSHOT = {
       { pr: 3, round: 2, verdict: 'マージ可',   blocking: 0, shouldFix: 0, nit: 3 },
       { pr: 3, round: 3, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 0 },
       { pr: 3, round: 4, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 3 },
+      // PR #4-#8 — featured + 連携先 + 士業 + セッション引継ぎ
+      { pr: 4, round: 1, verdict: '要修正',     blocking: 3, shouldFix: 5, nit: 4 },
+      { pr: 4, round: 2, verdict: 'マージ可',   blocking: 0, shouldFix: 3, nit: 4 },
+      { pr: 5, round: 1, verdict: 'マージ可',   blocking: 0, shouldFix: 2, nit: 1 },
+      { pr: 6, round: 1, verdict: 'マージ可',   blocking: 0, shouldFix: 3, nit: 1 },
+      { pr: 7, round: 1, verdict: 'マージ可',   blocking: 0, shouldFix: 5, nit: 1 },
+      { pr: 8, round: 1, verdict: 'マージ可',   blocking: 0, shouldFix: 3, nit: 0 },
+      // PR #9 — フォローアップ一括反映 + /loop セッション
+      { pr: 9, round: 1, verdict: 'マージ推奨', blocking: 0, shouldFix: 0, nit: 0 },
     ] as {
       pr: number; round: number;
       verdict: '要修正' | 'マージ可' | 'マージ推奨';
       blocking: number; shouldFix: number; nit: number;
     }[],
-    artifactSizes: { standaloneHtmlKb: 421, electronMainKb: 113 },
-    latestCommit: 'ff50f63',
+    artifactSizes: { standaloneHtmlKb: 440, electronMainKb: 121 },
+    latestCommit: 'bf74776',
   },
 
   microsoft365: {

@@ -21,6 +21,7 @@
     "mutate:next": "node scripts/suggest-next-kill.cjs",
     "quality": "npm run typecheck && npm run test && npm run test:cov",
     "quality:report": "node scripts/quality-report.cjs",
+    "quality:snapshot": "node scripts/generate-quality-snapshot.cjs",
     "verify:arch": "node scripts/verify-architecture.cjs",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
     "lint:imports": "node scripts/check-import-boundaries.cjs",

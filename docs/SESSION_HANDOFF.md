@@ -115,7 +115,7 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 2. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
 3. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
 4. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
-5. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
+5. ~~quality dashboard の数値を自動生成 (現状ハードコード)~~ ⚙ 半自動化済 — `npm run quality:snapshot` で current 値を出力 (Phase 6 で完全自動化予定)
 6. ~~横断 KPI ウィジェットに士業の月次顧問料合計を追加~~ ✅ `/loop` セッションで対応 (5 stats → `BusinessPage.tsx:CrossServiceKpis`)
 
 ## クイック検証チェックリスト (新セッション開始時)
