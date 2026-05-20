@@ -101,22 +101,22 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~PR #7 R1 #5~~ — `example.jp` → `example.com` (8 箇所)、弁護士 / 弁理士に `disclaimer` prop 追加
 - ~~PR #7 NIT (13)~~ — ステータス色 tooltip 追加 (`STATUS_TOOLTIP` in `ShigyoConsole.tsx`)
 
-### 🟡 SHOULD-FIX (次回作業の最有力候補)
-1. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-2. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-3. **PR #4 NIT** — `note` の XSS / control-char チェック
-4. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
+### ✅ 解決済 (`/loop` セッションで一括反映 — `claude/followup-cleanup` 追加 commits)
+- ~~PR #4 NIT~~ — `note` の XSS / control-char チェック (`serviceActionPanelUtils.ts:sanitizeNote` + 9 tests)
+- ~~PR #4 R2-2~~ — `ServiceActionPanel` の amount に locale 対応 (`serviceActionPanelUtils.ts:normalizeAmount` + 11 tests、全角 / カンマ / 桁区切り対応)
+- ~~PR #6 NIT~~ — storage `recommendations` を `pages/storageRecommendations.ts` で動的生成 (閾値ベース + 12 tests、disks/performance/cleanupTasks から導出)
+- ~~PR #4 R2-3~~ — `ServiceActionPanel` useState 7 個 → `useReducer` state machine (`serviceActionPanelReducer.ts` + 13 tests、discriminated union で排他化)
+- ~~PR #4 R2-1~~ — `CrossServiceKpis` を `useServiceData` 経由化 (live モード時不整合解消)
 
-### 🟢 NIT
-5. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
+直近セッションの SHOULD-FIX / NIT は **すべてクローズ** — 残作業はアーキテクチャ拡張のみ。
 
 ### 📐 アーキテクチャ拡張案
-6. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
-7. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
-8. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
-9. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
-10. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
-11. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
+1. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
+2. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
+3. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
+4. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
+5. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
+6. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
 
 ## クイック検証チェックリスト (新セッション開始時)
 

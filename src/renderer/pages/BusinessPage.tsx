@@ -943,16 +943,20 @@ export function BusinessPage() {
 }
 
 /** 横断 KPI ウィジェット — フードデリバリー 2 + 投資 3 サービスの
- *  snapshot から事業全体の総収入・総資産・月次キャッシュフローを 1
+ *  実データから事業全体の総収入・総資産・月次キャッシュフローを 1
  *  画面で把握する。事業ダッシュボードに「業務操作 全体像」セクション
- *  として埋め込む。各サービスの詳細は個別ページで深掘り。 */
+ *  として埋め込む。各サービスの詳細は個別ページで深掘り。
+ *
+ *  PR #4 R2-1 対応: 各サービスを `useServiceData` 経由で取得することで、
+ *  live モード時 (token 設定済) は live snapshot を反映する。snapshot 直
+ *  参照だと live 切替後も古い値が表示される不整合があった。 */
 function CrossServiceKpis() {
   const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
-  const ue = SNAPSHOT.uberEats;
-  const dc = SNAPSHOT.demaeCan;
-  const re = SNAPSHOT.realEstate;
-  const mf = SNAPSHOT.mutualFunds;
-  const st = SNAPSHOT.stocks;
+  const { data: ue } = useServiceData('uber-eats', SNAPSHOT.uberEats);
+  const { data: dc } = useServiceData('demae-can', SNAPSHOT.demaeCan);
+  const { data: re } = useServiceData('real-estate', SNAPSHOT.realEstate);
+  const { data: mf } = useServiceData('mutual-funds', SNAPSHOT.mutualFunds);
+  const { data: st } = useServiceData('stocks', SNAPSHOT.stocks);
 
   // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
   const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;

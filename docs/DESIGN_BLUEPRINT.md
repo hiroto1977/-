@@ -589,39 +589,44 @@ action を invoke。
 
 ## 13. 推奨される「次の一手」
 
-優先度順 (PR #9 マージ後を想定):
+PR #9 で 5 個の SHOULD-FIX / NIT (`note` XSS / amount locale / storage
+recommendations 動的化 / useState→reducer / CrossServiceKpis 経由化) を
+すべて消化。残る作業は **アーキテクチャ拡張** = Phase 6+ のみ。
 
-1. **`ServiceActionPanel` の amount locale 対応** (PR #4 R2-2)
-   - 全角数字 / カンマ区切りを正規化
-   - 工数: 1-2 時間
-   - リスク: 低
+優先度順:
 
-2. **`ServiceActionPanel` の useState → state machine 化** (PR #4 R2-3)
-   - 7 個の useState を `useReducer` に整理
-   - 工数: 2-3 時間
-   - リスク: 中 (テスト要更新)
-
-3. **`note` の XSS / control-char チェック** (PR #4 NIT)
-   - control char + null byte 拒否、HTML escape
-   - 工数: 1 時間
-   - リスク: 低
-
-4. **`CrossServiceKpis` の `useServiceData` 経由化** (PR #4 R2-1)
-   - live モード時の数値不整合解消
-   - 工数: 2 時間
-   - リスク: 中
-
-5. **Storage `recommendations` を usagePct から動的生成** (PR #6 NIT)
-   - 固定文字列をルールベース動的生成に
-   - 工数: 1 時間
-   - リスク: 低
-
-6. **Phase 6 第一歩 — Library IndexedDB 永続化**
-   - 既存 SNAPSHOT を IndexedDB に moved
+1. **Phase 6 第一歩 — Library IndexedDB 永続化**
+   - 既存 SNAPSHOT を IndexedDB に move
+   - 4 業務サービス + 7 士業の `record-entry` の `persisted: false` → `true` に切替
    - 工数: 半日
    - リスク: 低
 
-実装順は 3 → 1 → 5 → 2 → 4 → 6 を推奨 (小さく低リスクから順)。
+2. **Phase 6 — quality dashboard の自動生成**
+   - 現状ハードコード数値 → `scripts/quality-report.cjs` 経由で動的化
+   - 工数: 1-2 時間
+   - リスク: 低
+
+3. **Phase 6 — 横断 KPI に士業月次顧問料合計**
+   - 7 士業 `monthlyFee` の合計を `CrossServiceKpis` に追加表示
+   - 工数: 1 時間
+   - リスク: 低
+
+4. **Phase 6 — Storage の実 OS 統計取得**
+   - Electron main プロセスで `os` / `fs` API 経由
+   - 工数: 半日
+   - リスク: 中 (OS 差分対応)
+
+5. **Phase 6 — `advise` の Anthropic API 接続**
+   - 現状の静的 stub → 実 LLM 呼び出し
+   - 工数: 1 日
+   - リスク: 中 (key 管理 + JSON validation)
+
+6. **Phase 6 — 連携先 10 SaaS の live REST 実装**
+   - Stripe / Shopify / Salesforce / Microsoft 365 / etc.
+   - 工数: 各 0.5-1 日 × 10
+   - リスク: 中 (各 API の認証差分)
+
+実装順は 1 → 3 → 2 → 4 → 5 → 6 を推奨 (低リスク × 効果大から)。
 
 ---
 
