@@ -3,6 +3,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { generateRecommendations } from './storageRecommendations';
 
 const DIFFICULTY_LABEL: Record<string, string> = {
   safe: '✅ 安全',
@@ -30,7 +31,8 @@ export function StoragePage() {
     'storage',
     SNAPSHOT.storage,
   );
-  const { disks, largeFolders, cleanupTasks, performance, recommendations } = data;
+  const { disks, largeFolders, cleanupTasks, performance } = data;
+  const recommendations = generateRecommendations(data);
 
   const totalPotentialFreeMb = cleanupTasks.reduce((sum, t) => sum + t.potentialFreeMb, 0);
   const memoryUsagePct = performance.memoryTotalGb > 0

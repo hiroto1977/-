@@ -632,13 +632,10 @@ export const SNAPSHOT = {
       memoryUsedGb: 11.2,
       memoryTotalGb: 16.0,
     },
-    recommendations: [
-      'Cドライブの使用率 75.6% — 「Windows.old」削除 (32 GB 解放) を最優先で実施推奨',
-      'HDD (D:) のフラグメント率 12.4% — デフラグで I/O 速度向上が期待できます',
-      'スタートアップ 38 秒 — タスクマネージャーで不要アプリを無効化すれば 20 秒台に短縮可能',
-      'OneDrive ファイル オン デマンドが無効 — オンに切替で 24 GB 即時解放',
-      'メモリ使用率 70% — Chrome タブ数の整理 / 常駐アプリの見直しを推奨',
-    ] as string[],
+    // PR #6 NIT 対応: ハードコード文字列は `pages/storageRecommendations.ts` の
+    // 動的生成に移行。本フィールドは将来 main プロセス側が live OS 統計を解析した
+    // 結果を直接渡せるよう構造的に残置 (現状は常に空)。
+    recommendations: [] as string[],
   },
 
   // ── 士業連携 (snapshot 専用)。個別の専門家との連絡先 / 相談履歴 /
