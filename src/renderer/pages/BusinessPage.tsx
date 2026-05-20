@@ -957,6 +957,13 @@ function CrossServiceKpis() {
   const { data: re } = useServiceData('real-estate', SNAPSHOT.realEstate);
   const { data: mf } = useServiceData('mutual-funds', SNAPSHOT.mutualFunds);
   const { data: st } = useServiceData('stocks', SNAPSHOT.stocks);
+  const { data: tax } = useServiceData('tax-accountant', SNAPSHOT.taxAccountant);
+  const { data: labor } = useServiceData('labor-consultant', SNAPSHOT.laborConsultant);
+  const { data: law } = useServiceData('lawyer', SNAPSHOT.lawyer);
+  const { data: jud } = useServiceData('judicial-scrivener', SNAPSHOT.judicialScrivener);
+  const { data: adm } = useServiceData('admin-scrivener', SNAPSHOT.adminScrivener);
+  const { data: sme } = useServiceData('sme-consultant', SNAPSHOT.smeConsultant);
+  const { data: pat } = useServiceData('patent-attorney', SNAPSHOT.patentAttorney);
 
   // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
   const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;
@@ -971,18 +978,24 @@ function CrossServiceKpis() {
   // 不動産取得価格合計 = 取得原価ベースの資産。
   const realEstateAssets = re.properties.reduce((sum, p) => sum + p.purchasePrice, 0);
   const totalAssets = investmentValuation + realEstateAssets;
+  // 士業 7 顧問料の月次合計 (Phase 6 ロードマップ #3 対応)。
+  const shigyoMonthlyFee =
+    tax.monthlyFee + labor.monthlyFee + law.monthlyFee + jud.monthlyFee +
+    adm.monthlyFee + sme.monthlyFee + pat.monthlyFee;
 
   return (
-    <Section title="業務操作 横断 KPI (フードデリバリー × 投資)" count={4}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 12 }}>
+    <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
         <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
         <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
         <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
         <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
+        <Stat label="士業 月次顧問料 (7 社合計)" value={jpy(shigyoMonthlyFee)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは
-        Uber Eats 週次 ×4 + 出前館 月次の推計。詳細は各サービスページで確認できます。
+        Uber Eats 週次 ×4 + 出前館 月次の推計。士業は 7 連携先の monthlyFee 合計。
+        詳細は各サービスページで確認できます。
       </div>
     </Section>
   );

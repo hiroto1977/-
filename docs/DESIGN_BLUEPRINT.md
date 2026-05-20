@@ -606,10 +606,8 @@ recommendations 動的化 / useState→reducer / CrossServiceKpis 経由化) を
    - 工数: 1-2 時間
    - リスク: 低
 
-3. **Phase 6 — 横断 KPI に士業月次顧問料合計**
-   - 7 士業 `monthlyFee` の合計を `CrossServiceKpis` に追加表示
-   - 工数: 1 時間
-   - リスク: 低
+3. ~~**Phase 6 — 横断 KPI に士業月次顧問料合計**~~ ✅ `/loop` セッションで対応
+   - `BusinessPage.tsx:CrossServiceKpis` に 5 個目の Stat 追加、7 士業 `monthlyFee` 合計
 
 4. **Phase 6 — Storage の実 OS 統計取得**
    - Electron main プロセスで `os` / `fs` API 経由
