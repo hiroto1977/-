@@ -580,7 +580,13 @@ action を invoke。
 | PR #7 (士業 7) | 37 | 39 | ~1100 | 100.00% | 99.8 | 士業 7 |
 | PR #8 統合 | 45 | 45+ | 1193 | 100.00% | 99.8 | featured + handoff |
 | PR #9 完了 | 45 | 45+ | 1193 / 1242 | 100.00% | 99.8 | DRY refactor (-685 行) |
-| **PR #9 + utils (現在)** | **45** | **45+** | **1238 / 1287** | **100.00%** | **99.8** | **ServiceActionPanel utils (XSS / locale)** |
+| PR #9 utils (XSS+locale) | 45 | 45+ | 1213 / 1262 | 100.00% | 99.8 | sanitizeNote + normalizeAmount |
+| PR #9 storage recs 動的 | 45 | 45+ | 1225 / 1274 | 100.00% | 99.8 | generateRecommendations |
+| PR #9 reducer 化 | 45 | 45+ | 1238 / 1287 | 100.00% | 99.8 | panelReducer state machine |
+| PR #9 cross-kpi 経由化 | 45 | 45+ | 1238 / 1287 | 100.00% | 99.8 | useServiceData × 12 |
+| PR #9 士業 KPI 集計 | 45 | 45+ | 1238 / 1287 | 100.00% | 99.8 | shigyoMonthlyFee 横断表示 |
+| PR #9 quality 半自動化 | 45 | 45+ | 1238 / 1287 | 100.00% | 99.8 | quality:snapshot script |
+| **PR #9 (/loop 完了)** | **45** | **45+** | **1238 / 1287** | **100.00%** | **99.8** | **8 iter — Stryker scope + lint mjs** |
 
 **累計**: 31 services / 26+ actions / 802 tests を追加しつつ全段で 100% mutation kill を
 維持。
