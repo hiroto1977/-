@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ServiceId } from '../services';
 import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
 import { Section } from './StatusBar';
+import { normalizeAmount, sanitizeNote } from './serviceActionPanelUtils';
 
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
@@ -40,15 +41,20 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
   async function submitRecord() {
     setError(null);
     setFeedback(null);
-    if (note.trim().length === 0) {
+    const sanitized = sanitizeNote(note);
+    if (sanitized.error !== null) {
+      setError(sanitized.error);
+      return;
+    }
+    if (sanitized.value.trim().length === 0) {
       setError('note を入力してください');
       return;
     }
-    const payload: { note: string; amount?: number } = { note };
+    const payload: { note: string; amount?: number } = { note: sanitized.value };
     if (amount.trim().length > 0) {
-      const n = Number(amount);
-      if (!Number.isFinite(n)) {
-        setError('amount は数値で入力してください');
+      const n = normalizeAmount(amount);
+      if (n === null) {
+        setError('amount は数値で入力してください (全角や 1,000 等の桁区切りも可)');
         return;
       }
       payload.amount = n;
