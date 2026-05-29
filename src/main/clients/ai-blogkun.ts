@@ -13,7 +13,13 @@ export interface AiBlogkunSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: AiBlogkunSnapshot = { items: [] };
+const STUB: AiBlogkunSnapshot = {
+  items: [
+    { id: 'ab-5001', name: '[公開] 2026年 EC トレンド 10選' },
+    { id: 'ab-5002', name: '[公開] 初心者向け SEO 内部対策ガイド' },
+    { id: 'ab-5003', name: '[下書き] ふるさと納税 おすすめ返礼品' },
+  ],
+};
 
 export async function fetchAiBlogkunSnapshotImpl(_ctx: FetchContext): Promise<AiBlogkunSnapshot> {
   return STUB;

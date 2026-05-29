@@ -16,7 +16,13 @@ export interface MoneyforwardSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: MoneyforwardSnapshot = { items: [] };
+const STUB: MoneyforwardSnapshot = {
+  items: [
+    { id: 'mf-6001', name: '5月度 売上仕訳 (自動連携)' },
+    { id: 'mf-6002', name: '経費精算 — 交通費 ¥3,200' },
+    { id: 'mf-6003', name: '請求書 #INV-0512 — ¥165,000' },
+  ],
+};
 
 export async function fetchMoneyforwardSnapshotImpl(_ctx: FetchContext): Promise<MoneyforwardSnapshot> {
   return STUB;

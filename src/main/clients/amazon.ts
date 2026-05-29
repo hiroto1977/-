@@ -15,7 +15,13 @@ export interface AmazonSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: AmazonSnapshot = { items: [] };
+const STUB: AmazonSnapshot = {
+  items: [
+    { id: 'az-7001', name: 'オリジナルTシャツ (FBA) — 在庫 42' },
+    { id: 'az-7002', name: 'ステンレスタンブラー — 在庫 18' },
+    { id: 'az-7003', name: 'スマホケース 手帳型 — 在庫 7' },
+  ],
+};
 
 export async function fetchAmazonSnapshotImpl(_ctx: FetchContext): Promise<AmazonSnapshot> {
   return STUB;

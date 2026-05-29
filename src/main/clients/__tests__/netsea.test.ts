@@ -1,11 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchNetseaSnapshot } from '../netsea';
 
-describe('fetchNetseaSnapshot (snapshot-only stub)', () => {
-  it('returns a typed stub without hitting the network', async () => {
+describe('fetchNetseaSnapshot (virtual-data stub)', () => {
+  it('returns virtual catalog data without hitting the network', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     const snap = await fetchNetseaSnapshot({ token: 'unused', fetch: fetchMock });
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(snap.items).toEqual([]);
+    expect(snap.items.length).toBeGreaterThan(0);
+    for (const it of snap.items) {
+      expect(it.id).toBeTruthy();
+      expect(it.name).toBeTruthy();
+    }
   });
 });

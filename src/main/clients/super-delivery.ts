@@ -13,7 +13,13 @@ export interface SuperDeliverySnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: SuperDeliverySnapshot = { items: [] };
+const STUB: SuperDeliverySnapshot = {
+  items: [
+    { id: 'sd-2001', name: 'アロマディフューザー 木目調' },
+    { id: 'sd-2002', name: 'コットントートバッグ 無地' },
+    { id: 'sd-2003', name: '陶器マグ 6個セット' },
+  ],
+};
 
 export async function fetchSuperDeliverySnapshotImpl(_ctx: FetchContext): Promise<SuperDeliverySnapshot> {
   return STUB;

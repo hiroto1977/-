@@ -750,39 +750,75 @@ export const SNAPSHOT = {
   },
 
   base: {
-    items: [] as { id: string; name: string; price: number; stock: number; visible: boolean }[],
+    items: [
+      { id: 'base-1', name: 'オリジナルパーカー', price: 6800, stock: 24, visible: true },
+      { id: 'base-2', name: 'キャンバストートバッグ', price: 2400, stock: 53, visible: true },
+      { id: 'base-3', name: '限定ステッカーセット', price: 800, stock: 0, visible: false },
+    ] as { id: string; name: string; price: number; stock: number; visible: boolean }[],
   },
 
   netsea: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'ns-1001', name: '無地Tシャツ 5枚セット (卸)' },
+      { id: 'ns-1002', name: 'ステンレスボトル 350ml' },
+      { id: 'ns-1003', name: 'LED デスクライト 調光式' },
+    ] as { id: string; name: string }[],
   },
 
   'super-delivery': {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'sd-2001', name: 'アロマディフューザー 木目調' },
+      { id: 'sd-2002', name: 'コットントートバッグ 無地' },
+      { id: 'sd-2003', name: '陶器マグ 6個セット' },
+    ] as { id: string; name: string }[],
   },
 
   topseller: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'ts-3001', name: 'ワイヤレスイヤホン (ドロップシッピング)' },
+      { id: 'ts-3002', name: 'スマホスタンド 折りたたみ' },
+      { id: 'ts-3003', name: 'フィットネスバンド 心拍計付き' },
+    ] as { id: string; name: string }[],
   },
 
   a8net: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'a8-4001', name: '[確定] 動画配信サービス 登録 — ¥1,200' },
+      { id: 'a8-4002', name: '[確定] クレジットカード発行 — ¥3,000' },
+      { id: 'a8-4003', name: '[保留] 格安SIM 申込 — ¥1,500' },
+    ] as { id: string; name: string }[],
   },
 
   'ai-blogkun': {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'ab-5001', name: '[公開] 2026年 EC トレンド 10選' },
+      { id: 'ab-5002', name: '[公開] 初心者向け SEO 内部対策ガイド' },
+      { id: 'ab-5003', name: '[下書き] ふるさと納税 おすすめ返礼品' },
+    ] as { id: string; name: string }[],
   },
 
   moneyforward: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'mf-6001', name: '5月度 売上仕訳 (自動連携)' },
+      { id: 'mf-6002', name: '経費精算 — 交通費 ¥3,200' },
+      { id: 'mf-6003', name: '請求書 #INV-0512 — ¥165,000' },
+    ] as { id: string; name: string }[],
   },
 
   amazon: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'az-7001', name: 'オリジナルTシャツ (FBA) — 在庫 42' },
+      { id: 'az-7002', name: 'ステンレスタンブラー — 在庫 18' },
+      { id: 'az-7003', name: 'スマホケース 手帳型 — 在庫 7' },
+    ] as { id: string; name: string }[],
   },
 
   'amazon-associates': {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'aa-8001', name: '[確定] Kindle 書籍 紹介料 — ¥420' },
+      { id: 'aa-8002', name: '[確定] 家電 紹介料 — ¥1,860' },
+      { id: 'aa-8003', name: '[保留] 日用品 紹介料 — ¥230' },
+    ] as { id: string; name: string }[],
   },
 
   sales: {
@@ -794,8 +830,12 @@ export const SNAPSHOT = {
   },
 
   youtube: {
-    channel: { id: '', title: '', subscribers: 0, views: 0, videos: 0 },
-    recentVideos: [] as { videoId: string; title: string; publishedAt: string; url: string }[],
+    channel: { id: 'UC_demo', title: 'デモチャンネル', subscribers: 12_500, views: 982_000, videos: 142 },
+    recentVideos: [
+      { videoId: 'demo1', title: '【2026年版】ネットショップの始め方', publishedAt: '2026-05-20T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo1' },
+      { videoId: 'demo2', title: '売上が伸びる商品写真の撮り方', publishedAt: '2026-05-12T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo2' },
+      { videoId: 'demo3', title: 'EC 運営の月次ルーティン公開', publishedAt: '2026-05-03T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo3' },
+    ] as { videoId: string; title: string; publishedAt: string; url: string }[],
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

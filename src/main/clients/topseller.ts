@@ -14,7 +14,13 @@ export interface TopsellerSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: TopsellerSnapshot = { items: [] };
+const STUB: TopsellerSnapshot = {
+  items: [
+    { id: 'ts-3001', name: 'ワイヤレスイヤホン (ドロップシッピング)' },
+    { id: 'ts-3002', name: 'スマホスタンド 折りたたみ' },
+    { id: 'ts-3003', name: 'フィットネスバンド 心拍計付き' },
+  ],
+};
 
 export async function fetchTopsellerSnapshotImpl(_ctx: FetchContext): Promise<TopsellerSnapshot> {
   return STUB;

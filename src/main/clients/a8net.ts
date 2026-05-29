@@ -14,7 +14,13 @@ export interface A8netSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: A8netSnapshot = { items: [] };
+const STUB: A8netSnapshot = {
+  items: [
+    { id: 'a8-4001', name: '[確定] 動画配信サービス 登録 — ¥1,200' },
+    { id: 'a8-4002', name: '[確定] クレジットカード発行 — ¥3,000' },
+    { id: 'a8-4003', name: '[保留] 格安SIM 申込 — ¥1,500' },
+  ],
+};
 
 export async function fetchA8netSnapshotImpl(_ctx: FetchContext): Promise<A8netSnapshot> {
   return STUB;

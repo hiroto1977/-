@@ -14,7 +14,13 @@ export interface NetseaSnapshot {
 }
 
 // Stryker disable next-line all
-const STUB: NetseaSnapshot = { items: [] };
+const STUB: NetseaSnapshot = {
+  items: [
+    { id: 'ns-1001', name: '無地Tシャツ 5枚セット (卸)' },
+    { id: 'ns-1002', name: 'ステンレスボトル 350ml' },
+    { id: 'ns-1003', name: 'LED デスクライト 調光式' },
+  ],
+};
 
 export async function fetchNetseaSnapshotImpl(_ctx: FetchContext): Promise<NetseaSnapshot> {
   return STUB;
