@@ -2,6 +2,14 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { useCollection } from '../data/useCollection';
+import {
+  KPI_ACTUALS_COLLECTION,
+  parseKpiActual,
+  summarizeFundamentals,
+  computeKpiMetrics,
+  type KpiActual,
+} from '../data/kpiActuals';
 
 interface Fund {
   revenue: number;
@@ -257,6 +265,112 @@ function UnitBars({ units }: { units: Unit[] }) {
   );
 }
 
+// --- Real-data actuals panel ------------------------------------------
+
+const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '' };
+
+function ActualsPanel() {
+  const { records, add, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState<string>();
+
+  const summary = useMemo(() => {
+    const rows = records.map((r) => r.data);
+    return computeKpiMetrics(summarizeFundamentals(rows));
+  }, [records]);
+
+  async function onAdd() {
+    try {
+      const parsed = parseKpiActual(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_FORM);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)',
+        border: '1px solid var(--border)',
+        borderRadius: 6,
+        color: 'var(--text)',
+        padding: '6px 8px',
+        fontSize: 13,
+        width: key === 'period' || key === 'unit' ? 110 : 100,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('period', 'YYYY-MM')}
+        {field('unit', '事業名')}
+        {field('revenue', '売上高')}
+        {field('cogs', '売上原価')}
+        {field('advertising', '広告費')}
+        {field('sga', '販管費')}
+        {field('depreciation', '減価償却費')}
+        <button type="button" onClick={onAdd}>追加</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {records.length > 0 ? (
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+            <Tile label="実績合計 売上高" value={safeYen(summarizeRevenue(records))} />
+            <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
+            <Tile label="安全余裕率" value={pct(summary.safetyMargin)} sub="高いほど安全" />
+            <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
+            <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+                <th style={{ padding: '4px 8px' }}>期間</th>
+                <th style={{ padding: '4px 8px' }}>事業</th>
+                <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上高</th>
+                <th style={{ padding: '4px 8px', textAlign: 'right' }}>営業利益</th>
+                <th style={{ padding: '4px 8px' }} />
+              </tr>
+            </thead>
+            <tbody>
+              {records.map((r) => {
+                const m = computeKpiMetrics(summarizeFundamentals([r.data]));
+                return (
+                  <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                    <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
+                    <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px' }}>
+                      <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
+      ) : (
+        <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
+          実績を入力すると、ローカルに保存され KPI が実データで再計算されます。
+        </p>
+      )}
+    </div>
+  );
+}
+
+function summarizeRevenue(records: readonly { data: KpiActual }[]): number {
+  return records.reduce((acc, r) => acc + r.data.revenue, 0);
+}
+
 // --- Page -------------------------------------------------------------
 
 export function KpiPage() {
@@ -300,8 +414,12 @@ export function KpiPage() {
         </div>
       )}
 
+      <Section title="実績入力 — ローカル保存 (実データで KPI 再計算)">
+        <ActualsPanel />
+      </Section>
+
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
-        <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>事業:</span>
+        <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>事業 (模擬データ):</span>
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
