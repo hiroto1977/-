@@ -32,7 +32,7 @@ import { fetchDiscordSnapshot } from './discord';
 import { fetchAsanaSnapshot } from './asana';
 import { fetchLinearSnapshot } from './linear';
 import { fetchSentrySnapshot } from './sentry';
-import { fetchShopifySnapshot } from './shopify';
+import { fetchShopifySnapshot, ACTIONS as SHOPIFY_ACTIONS } from './shopify';
 import { fetchStripeSnapshot } from './stripe';
 import { fetchLineSnapshot } from './line';
 import { fetchStorageSnapshot } from './storage';
@@ -176,6 +176,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'demae-can': DEMAE_CAN_ACTIONS,
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
+  shopify: SHOPIFY_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 
