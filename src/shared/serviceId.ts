@@ -59,6 +59,8 @@ export const SERVICE_IDS = [
   'a8net',
   'ai-blogkun',
   'moneyforward',
+  'amazon',
+  'amazon-associates',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

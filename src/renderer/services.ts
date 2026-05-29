@@ -50,6 +50,8 @@ import { TopsellerPage } from './pages/TopsellerPage';
 import { A8netPage } from './pages/A8netPage';
 import { AiBlogkunPage } from './pages/AiBlogkunPage';
 import { MoneyforwardPage } from './pages/MoneyforwardPage';
+import { AmazonPage } from './pages/AmazonPage';
+import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -491,6 +493,22 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'MF',
     description: 'クラウド会計・請求・確定申告 (snapshot)',
     page: MoneyforwardPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon',
+    label: 'Amazon',
+    icon: 'AZ',
+    description: 'セラー出品の注文・在庫・売上 (SP-API、snapshot)',
+    page: AmazonPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon-associates',
+    label: 'Amazon アソシエイト',
+    icon: 'AA',
+    description: 'アフィリエイト成果レポート (snapshot)',
+    page: AmazonAssociatesPage,
     category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
