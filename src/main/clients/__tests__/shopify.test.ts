@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   fetchShopifySnapshot,
   ACTIONS,
+  CONNECTORS,
+  listConnectors,
   assertOrder,
   orderHeadline,
   orderLines,
@@ -222,5 +224,35 @@ describe('ACTIONS["sync-to-stripe"]', () => {
     await expect(
       ACTIONS['sync-to-stripe']!({ token: 's', payload: { order: ORDER } }),
     ).rejects.toThrow(/Stripe/);
+  });
+});
+
+describe('connector registry', () => {
+  it('derives ACTIONS from CONNECTORS (keys match, 1:1)', () => {
+    const actionKeys = Object.keys(ACTIONS).sort();
+    const connectorActions = CONNECTORS.map((c) => c.action).sort();
+    expect(actionKeys).toEqual(connectorActions);
+    // every action resolves to the connector's run fn
+    for (const c of CONNECTORS) expect(ACTIONS[c.action]).toBe(c.run);
+  });
+
+  it('has unique ids and actions, and action = sync-to-<id>', () => {
+    expect(new Set(CONNECTORS.map((c) => c.id)).size).toBe(CONNECTORS.length);
+    expect(new Set(CONNECTORS.map((c) => c.action)).size).toBe(CONNECTORS.length);
+    for (const c of CONNECTORS) expect(c.action).toBe(`sync-to-${c.id}`);
+  });
+
+  it('covers the 7 business targets with declared required fields', () => {
+    const ids = CONNECTORS.map((c) => c.id).sort();
+    expect(ids).toEqual(['discord', 'gmail', 'line', 'notion', 'salesforce', 'slack', 'stripe']);
+    const slack = CONNECTORS.find((c) => c.id === 'slack')!;
+    expect(slack.requiredFields).toEqual(['token', 'channel']);
+  });
+
+  it('listConnectors exposes metadata without the run fn', () => {
+    const meta = listConnectors();
+    expect(meta).toHaveLength(CONNECTORS.length);
+    expect(meta[0]).not.toHaveProperty('run');
+    expect(meta.find((m) => m.id === 'notion')?.requiredFields).toEqual(['token', 'databaseId']);
   });
 });

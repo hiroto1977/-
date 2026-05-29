@@ -1,4 +1,11 @@
-import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  jsonFetch,
+  FetchError,
+  type ActionContext,
+  type ActionMap,
+  type ServiceAction,
+  type FetchContext,
+} from './types';
 
 /**
  * Shopify — 連携先 + サービス間連携アクション。
@@ -327,12 +334,50 @@ async function syncToStripe(ctx: ActionContext): Promise<{ service: 'stripe'; cu
   return { service: 'stripe', customerId: res.id };
 }
 
-export const ACTIONS: ActionMap = {
-  'sync-to-slack': syncToSlack,
-  'sync-to-discord': syncToDiscord,
-  'sync-to-line': syncToLine,
-  'sync-to-gmail': syncToGmail,
-  'sync-to-notion': syncToNotion,
-  'sync-to-salesforce': syncToSalesforce,
-  'sync-to-stripe': syncToStripe,
-};
+/** Declarative description of one Shopify→external connector. Centralizing
+ *  this (rather than a loose ACTIONS object) lets the registry self-check —
+ *  the ACTIONS map and the `lint:test-coverage` gate both derive from it, so
+ *  a connector can't be half-wired. `requiredFields` are the payload keys a
+ *  connector needs *in addition to* `order`, used for docs + UI hints. */
+export interface ShopifyConnector {
+  /** Short target id, e.g. 'slack'. */
+  readonly id: string;
+  /** Action key exposed via serviceHub.invoke('shopify', <action>). */
+  readonly action: string;
+  /** Human label for the target service. */
+  readonly label: string;
+  /** Payload fields required beyond `order`. */
+  readonly requiredFields: readonly string[];
+  readonly run: ServiceAction;
+}
+
+export const CONNECTORS: readonly ShopifyConnector[] = [
+  { id: 'slack', action: 'sync-to-slack', label: 'Slack', requiredFields: ['token', 'channel'], run: syncToSlack },
+  { id: 'discord', action: 'sync-to-discord', label: 'Discord', requiredFields: ['webhookUrl'], run: syncToDiscord },
+  { id: 'line', action: 'sync-to-line', label: 'LINE', requiredFields: ['token', 'to'], run: syncToLine },
+  { id: 'gmail', action: 'sync-to-gmail', label: 'Gmail', requiredFields: ['token'], run: syncToGmail },
+  { id: 'notion', action: 'sync-to-notion', label: 'Notion', requiredFields: ['token', 'databaseId'], run: syncToNotion },
+  { id: 'salesforce', action: 'sync-to-salesforce', label: 'Salesforce', requiredFields: ['token', 'instanceUrl'], run: syncToSalesforce },
+  { id: 'stripe', action: 'sync-to-stripe', label: 'Stripe', requiredFields: ['token'], run: syncToStripe },
+];
+
+// Runtime invariant: connector ids + action keys are unique. Trips at module
+// load if a future edit introduces a duplicate, mirroring the LIVE_FETCHERS
+// guard in clients/index.ts.
+{
+  const ids = new Set<string>();
+  const actions = new Set<string>();
+  for (const c of CONNECTORS) {
+    if (ids.has(c.id)) throw new Error(`[shopify] duplicate connector id "${c.id}"`);
+    if (actions.has(c.action)) throw new Error(`[shopify] duplicate connector action "${c.action}"`);
+    ids.add(c.id);
+    actions.add(c.action);
+  }
+}
+
+/** Connector metadata (without the run fn) for UI/discovery. */
+export function listConnectors(): { id: string; action: string; label: string; requiredFields: readonly string[] }[] {
+  return CONNECTORS.map(({ id, action, label, requiredFields }) => ({ id, action, label, requiredFields }));
+}
+
+export const ACTIONS: ActionMap = Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));
