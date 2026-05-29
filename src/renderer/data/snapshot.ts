@@ -793,6 +793,11 @@ export const SNAPSHOT = {
     items: [] as { id: string; name: string }[],
   },
 
+  youtube: {
+    channel: { id: '', title: '', subscribers: 0, views: 0, videos: 0 },
+    recentVideos: [] as { videoId: string; title: string; publishedAt: string; url: string }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

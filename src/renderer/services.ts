@@ -54,6 +54,7 @@ import { AmazonPage } from './pages/AmazonPage';
 import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
 import { SalesPage } from './pages/SalesPage';
 import { TeamPage } from './pages/TeamPage';
+import { YoutubePage } from './pages/YoutubePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -528,6 +529,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'メンバー・権限管理 (オーナー/管理者/メンバー) — プランのシート上限と連動',
     page: TeamPage,
     category: 'featured',
+  },
+  {
+    id: 'youtube',
+    label: 'YouTube',
+    icon: 'YT',
+    description: 'チャンネル統計・最近の動画 (YouTube Data API v3 実連携)',
+    page: YoutubePage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

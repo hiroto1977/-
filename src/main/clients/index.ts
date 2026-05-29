@@ -54,6 +54,7 @@ import { fetchAmazonSnapshot } from './amazon';
 import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
 import { fetchSalesSnapshot } from './sales';
 import { fetchTeamSnapshot } from './team';
+import { fetchYoutubeSnapshot } from './youtube';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -117,6 +118,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'amazon-associates': fetchAmazonAssociatesSnapshot,
   sales: fetchSalesSnapshot,
   team: fetchTeamSnapshot,
+  youtube: fetchYoutubeSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
