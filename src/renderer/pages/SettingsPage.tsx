@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
+import { BackupPanel } from '../components/BackupPanel';
 import { getVault } from '../security/vault';
 import { getProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -499,6 +500,8 @@ export function SettingsPage() {
         ここで入力した API キーはマスターパスワードで暗号化 (AES-GCM-256) されてブラウザに保管されます。
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
+
+      <BackupPanel />
 
       <Section title="API キーとトークン" count={SLOTS.length}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }} key={refreshKey}>

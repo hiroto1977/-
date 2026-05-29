@@ -12,6 +12,7 @@ import {
 } from '../data/kpiActuals';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
+import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 
 interface Fund {
   revenue: number;
@@ -295,6 +296,26 @@ function ActualsPanel() {
     setError(undefined);
   }
 
+  function onExportCsv() {
+    const blob = new Blob(['﻿' + kpiActualsToCsv(records.map((r) => r.data))], {
+      type: 'text/csv;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kpi-actuals-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function onImportCsv(file: File) {
+    const { entries, errors } = kpiActualsFromCsv(await file.text());
+    for (const e of entries) await add(e);
+    setError(
+      errors.length > 0 ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})` : undefined,
+    );
+  }
+
   async function onAdd() {
     try {
       const parsed = parseKpiActual(form);
@@ -352,6 +373,25 @@ function ActualsPanel() {
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
         <button type="button" onClick={onAdd}>追加</button>
+      </div>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
+        <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
+        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
+          CSV インポート
+          <input
+            type="file"
+            accept=".csv,text/csv"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onImportCsv(file);
+              e.target.value = '';
+            }}
+          />
+        </label>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          列: period, unit, revenue, cogs, advertising, sga, depreciation
+        </span>
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
 

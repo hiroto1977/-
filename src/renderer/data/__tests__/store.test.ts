@@ -116,3 +116,48 @@ describe('RecordStore — validation', () => {
     expect(await store.get('')).toBeNull();
   });
 });
+
+describe('RecordStore — exportAll + importAll (backup/restore)', () => {
+  it('exports every record across collections, newest-first', async () => {
+    const store = getRecordStore();
+    await store.insert('sales', { amount: 1 });
+    await store.insert('kpi-actuals', { revenue: 2 });
+    const all = await store.exportAll();
+    expect(all).toHaveLength(2);
+    // newest-first by createdAt
+    expect(all[0]!.createdAt).toBeGreaterThanOrEqual(all[1]!.createdAt);
+    expect(new Set(all.map((r) => r.collection))).toEqual(new Set(['sales', 'kpi-actuals']));
+  });
+
+  it('merges by default (upsert by id) and can replace', async () => {
+    const store = getRecordStore();
+    const a = await store.insert('sales', { amount: 1 });
+    // merge: a new record + an edit to the existing one
+    const imported = await store.importAll([
+      { id: a.id, collection: 'sales', createdAt: a.createdAt, updatedAt: 99, data: { amount: 999 } },
+      { id: 'new1', collection: 'sales', createdAt: 5, updatedAt: 5, data: { amount: 2 } },
+    ]);
+    expect(imported).toBe(2);
+    expect((await store.get<{ amount: number }>(a.id))!.data.amount).toBe(999);
+    expect(await store.count('sales')).toBe(2);
+
+    // replace: wipes everything first
+    await store.importAll([{ id: 'only', collection: 'sales', createdAt: 1, updatedAt: 1, data: { amount: 7 } }], {
+      replace: true,
+    });
+    expect(await store.count('sales')).toBe(1);
+    expect((await store.get<{ amount: number }>('only'))!.data.amount).toBe(7);
+  });
+
+  it('drops malformed records from an untrusted backup', async () => {
+    const store = getRecordStore();
+    const imported = await store.importAll([
+      { id: 'ok', collection: 'sales', createdAt: 1, updatedAt: 1, data: { amount: 1 } },
+      { id: '', collection: 'sales', createdAt: 1, updatedAt: 1, data: {} } as never, // empty id
+      { id: 'x', collection: 'Bad Name', createdAt: 1, updatedAt: 1, data: {} } as never, // bad collection
+      { id: 'y', collection: 'sales', createdAt: 1, updatedAt: 1, data: null } as never, // bad data
+    ]);
+    expect(imported).toBe(1);
+    expect(await store.count('sales')).toBe(1);
+  });
+});

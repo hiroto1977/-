@@ -47,6 +47,12 @@ export interface RecordStore {
   /** Delete every record in a collection; returns how many were removed. */
   clearCollection(collection: string): Promise<number>;
   count(collection: string): Promise<number>;
+  /** Dump every record across all collections (newest-first). For backup. */
+  exportAll(): Promise<readonly StoredRecord[]>;
+  /** Restore records from a backup. `replace` clears the store first; the
+   *  default merges (existing ids are overwritten). Returns the count
+   *  imported. */
+  importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number>;
 }
 
 // --- validation ----------------------------------------------------------
@@ -220,6 +226,47 @@ class IndexedDBRecordStore implements RecordStore {
     db.close();
     return n;
   }
+
+  async exportAll(): Promise<readonly StoredRecord[]> {
+    const db = await openDb();
+    const all = await new Promise<StoredRecord[]>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      req.onerror = () => reject(req.error ?? new Error('exportAll failed'));
+    });
+    db.close();
+    all.sort((a, b) => b.createdAt - a.createdAt);
+    return all;
+  }
+
+  async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
+    const valid = records.filter(isValidStoredRecord);
+    const db = await openDb();
+    const tx = db.transaction(STORE, 'readwrite');
+    const store = tx.objectStore(STORE);
+    if (opts?.replace) store.clear();
+    for (const rec of valid) store.put(rec); // put = upsert by id
+    await txDone(tx);
+    db.close();
+    return valid.length;
+  }
+}
+
+/** Validate a record coming from an untrusted backup file before it's
+ *  written back into IndexedDB. Drops anything malformed rather than throwing
+ *  so a partly-corrupt backup still restores its good records. */
+function isValidStoredRecord(v: unknown): v is StoredRecord {
+  if (!isPlainJsonObject(v)) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    r.id.length > 0 &&
+    isSafeCollection(r.collection) &&
+    typeof r.createdAt === 'number' &&
+    typeof r.updatedAt === 'number' &&
+    isPlainJsonObject(r.data)
+  );
 }
 
 let singleton: RecordStore | null = null;
