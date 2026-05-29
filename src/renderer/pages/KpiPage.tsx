@@ -10,6 +10,8 @@ import {
   computeKpiMetrics,
   type KpiActual,
 } from '../data/kpiActuals';
+import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 
 interface Fund {
   revenue: number;
@@ -271,13 +273,27 @@ const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '
 
 function ActualsPanel() {
   const { records, add, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
+  const [importMonth, setImportMonth] = useState('');
 
   const summary = useMemo(() => {
     const rows = records.map((r) => r.data);
     return computeKpiMetrics(summarizeFundamentals(rows));
   }, [records]);
+
+  // Months available from the sales feature, for the "売上集計から取り込む" link.
+  const salesEntries = useMemo(() => salesRecords.map((r) => r.data), [salesRecords]);
+  const monthOptions = useMemo(() => salesMonths(salesEntries), [salesEntries]);
+
+  function importFromSales(month: string) {
+    if (!month) return;
+    const revenue = revenueForMonth(salesEntries, month);
+    // Prefill period + revenue from sales; costs stay blank for the user to fill.
+    setForm((f) => ({ ...f, period: month, unit: f.unit || '全社', revenue: String(revenue) }));
+    setError(undefined);
+  }
 
   async function onAdd() {
     try {
@@ -309,6 +325,24 @@ function ActualsPanel() {
 
   return (
     <div>
+      {monthOptions.length > 0 && (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 8 }}>
+          <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>売上集計から取り込む:</span>
+          <select
+            value={importMonth}
+            onChange={(e) => setImportMonth(e.target.value)}
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
+          >
+            <option value="">月を選択</option>
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>{m}（{yen.format(revenueForMonth(salesEntries, m))}）</option>
+            ))}
+          </select>
+          <button type="button" onClick={() => importFromSales(importMonth)} disabled={!importMonth}>
+            売上を取り込む
+          </button>
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('period', 'YYYY-MM')}
         {field('unit', '事業名')}
