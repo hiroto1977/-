@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
 import {
@@ -11,6 +11,7 @@ import {
   type SalesEntry,
   type SalesChannel,
 } from '../data/sales';
+import { salesToCsv, salesFromCsv } from '../data/salesCsv';
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 
@@ -62,6 +63,8 @@ export function SalesPage() {
   const { records, add, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const [notice, setNotice] = useState<string>();
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const entries = useMemo(() => records.map((r) => r.data), [records]);
   const summary = useMemo(() => summarizeSales(entries), [entries]);
@@ -76,6 +79,33 @@ export function SalesPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : '入力エラー');
     }
+  }
+
+  function onExport() {
+    // Prepend a UTF-8 BOM so Excel opens Japanese text correctly.
+    const blob = new Blob(['﻿' + salesToCsv(entries)], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sales-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function onImportFile(file: File) {
+    setError(undefined);
+    setNotice(undefined);
+    const text = await file.text();
+    const { entries: parsed, errors } = salesFromCsv(text);
+    for (const e of parsed) await add(e);
+    const ok = parsed.length;
+    const ng = errors.length;
+    if (ok === 0 && ng === 0) {
+      setError('取り込める行がありませんでした (ヘッダ: date,channel,amount,orders,note)');
+    } else {
+      setNotice(`${ok} 件を取り込みました${ng > 0 ? ` / ${ng} 件はスキップ (行 ${errors.map((x) => x.row).join(', ')})` : ''}`);
+    }
+    if (fileRef.current) fileRef.current.value = '';
   }
 
   const inputStyle = {
@@ -126,7 +156,27 @@ export function SalesPage() {
           />
           <button type="button" onClick={onAdd}>追加</button>
         </div>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
+          <button type="button" onClick={onExport} disabled={entries.length === 0}>
+            CSV エクスポート
+          </button>
+          <button type="button" onClick={() => fileRef.current?.click()}>CSV インポート</button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onImportFile(file);
+            }}
+          />
+          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            列: date, channel, amount, orders, note
+          </span>
+        </div>
         {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+        {notice && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{notice}</div>}
       </Section>
 
       {entries.length === 0 ? (
