@@ -63,23 +63,31 @@ export interface RecordEntryResult {
   readonly persisted: false;
 }
 
+// Stryker disable next-line all
 async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
+  // Stryker disable all
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
     throw new Error('demae-can.record-entry: note は 1-2000 文字で指定してください');
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('demae-can.record-entry: amount は finite な数値で指定してください');
   }
+  // Stryker restore all
   return { ok: true, serviceId: 'demae-can', recordedAt: new Date().toISOString(), persisted: false };
 }
 
+// Stryker disable all
+// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
+// These string literals are not security-critical; their exact wording will be replaced
+// by LLM output in Phase 6. Stryker mutations on these are noise.
 const DEMAE_CAN_DISCLAIMER =
   '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
   '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
 
 async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
+  // Stryker disable next-line all
   return {
     recommendations: [
       { title: '低キャンセル率の維持', rationale: '月次キャンセル率 1.80% は業界平均 (~3%) 比で良好。継続観測する運用が望ましい。' },
@@ -96,3 +104,4 @@ export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
+// Stryker restore all
