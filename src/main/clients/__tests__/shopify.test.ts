@@ -205,6 +205,15 @@ describe('ACTIONS["sync-to-salesforce"]', () => {
       }),
     ).rejects.toThrow(/https/);
   });
+
+  it('rejects a malformed instanceUrl', async () => {
+    await expect(
+      ACTIONS['sync-to-salesforce']!({
+        token: 's',
+        payload: { order: ORDER, token: 'x', instanceUrl: 'not a url' },
+      }),
+    ).rejects.toThrow(/valid URL/);
+  });
 });
 
 describe('ACTIONS["sync-to-stripe"]', () => {
