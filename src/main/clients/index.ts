@@ -49,6 +49,7 @@ import { fetchSuperDeliverySnapshot } from './super-delivery';
 import { fetchTopsellerSnapshot } from './topseller';
 import { fetchA8netSnapshot } from './a8net';
 import { fetchAiBlogkunSnapshot } from './ai-blogkun';
+import { fetchMoneyforwardSnapshot } from './moneyforward';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -107,6 +108,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   topseller: fetchTopsellerSnapshot,
   a8net: fetchA8netSnapshot,
   'ai-blogkun': fetchAiBlogkunSnapshot,
+  moneyforward: fetchMoneyforwardSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -167,6 +169,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'topseller',
   'a8net',
   'ai-blogkun',
+  // クラウド会計 (公式 API はパートナー登録 + OAuth 必須) で snapshot-only。
+  'moneyforward',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

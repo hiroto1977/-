@@ -58,6 +58,7 @@ export const SERVICE_IDS = [
   'topseller',
   'a8net',
   'ai-blogkun',
+  'moneyforward',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

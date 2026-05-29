@@ -49,6 +49,7 @@ import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
 import { TopsellerPage } from './pages/TopsellerPage';
 import { A8netPage } from './pages/A8netPage';
 import { AiBlogkunPage } from './pages/AiBlogkunPage';
+import { MoneyforwardPage } from './pages/MoneyforwardPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -482,6 +483,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'AB',
     description: 'AI 自動ブログ生成 SaaS (snapshot)',
     page: AiBlogkunPage,
+    category: 'integrations',
+  },
+  {
+    id: 'moneyforward',
+    label: 'マネーフォワード',
+    icon: 'MF',
+    description: 'クラウド会計・請求・確定申告 (snapshot)',
+    page: MoneyforwardPage,
     category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
