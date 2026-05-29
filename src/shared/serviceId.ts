@@ -61,6 +61,7 @@ export const SERVICE_IDS = [
   'moneyforward',
   'amazon',
   'amazon-associates',
+  'sales',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

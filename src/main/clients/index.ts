@@ -52,6 +52,7 @@ import { fetchAiBlogkunSnapshot } from './ai-blogkun';
 import { fetchMoneyforwardSnapshot } from './moneyforward';
 import { fetchAmazonSnapshot } from './amazon';
 import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
+import { fetchSalesSnapshot } from './sales';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -113,6 +114,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   moneyforward: fetchMoneyforwardSnapshot,
   amazon: fetchAmazonSnapshot,
   'amazon-associates': fetchAmazonAssociatesSnapshot,
+  sales: fetchSalesSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -178,6 +180,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   // Amazon セラー (SP-API) / アソシエイト: 要パートナー承認で snapshot-only。
   'amazon',
   'amazon-associates',
+  // 売上集計: データは renderer の record store に保存、認証不要。
+  'sales',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

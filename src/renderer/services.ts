@@ -52,6 +52,7 @@ import { AiBlogkunPage } from './pages/AiBlogkunPage';
 import { MoneyforwardPage } from './pages/MoneyforwardPage';
 import { AmazonPage } from './pages/AmazonPage';
 import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
+import { SalesPage } from './pages/SalesPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -510,6 +511,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'アフィリエイト成果レポート (snapshot)',
     page: AmazonAssociatesPage,
     category: 'integrations',
+  },
+  {
+    id: 'sales',
+    label: '売上集計',
+    icon: 'SA',
+    description: 'Amazon / Shopify / BASE など EC チャネル横断の売上集計 (ローカル保存・実データ)',
+    page: SalesPage,
+    category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
