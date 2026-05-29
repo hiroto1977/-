@@ -43,6 +43,12 @@ import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
 import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
 import { fetchSmeConsultantSnapshot } from './sme-consultant';
 import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchBaseSnapshot } from './base';
+import { fetchNetseaSnapshot } from './netsea';
+import { fetchSuperDeliverySnapshot } from './super-delivery';
+import { fetchTopsellerSnapshot } from './topseller';
+import { fetchA8netSnapshot } from './a8net';
+import { fetchAiBlogkunSnapshot } from './ai-blogkun';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -95,6 +101,12 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'admin-scrivener': fetchAdminScrivenerSnapshot,
   'sme-consultant': fetchSmeConsultantSnapshot,
   'patent-attorney': fetchPatentAttorneySnapshot,
+  base: fetchBaseSnapshot,
+  netsea: fetchNetseaSnapshot,
+  'super-delivery': fetchSuperDeliverySnapshot,
+  topseller: fetchTopsellerSnapshot,
+  a8net: fetchA8netSnapshot,
+  'ai-blogkun': fetchAiBlogkunSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -149,6 +161,12 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

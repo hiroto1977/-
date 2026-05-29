@@ -749,6 +749,30 @@ export const SNAPSHOT = {
     outstandingInvoice: 165_000 as number,
   },
 
+  base: {
+    items: [] as { id: string; name: string; price: number; stock: number; visible: boolean }[],
+  },
+
+  netsea: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  'super-delivery': {
+    items: [] as { id: string; name: string }[],
+  },
+
+  topseller: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  a8net: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  'ai-blogkun': {
+    items: [] as { id: string; name: string }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

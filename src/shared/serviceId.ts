@@ -52,6 +52,12 @@ export const SERVICE_IDS = [
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  'base',
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

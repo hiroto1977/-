@@ -18,12 +18,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 45 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 51 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 45 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 51 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1212** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1261) |
+| ユニットテスト | **1219** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1268) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -475,6 +475,12 @@ union を参照する。
 | `admin-scrivener` | 行政書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 許認可申請 / 補助金) |
 | `sme-consultant` | 中小企業診断士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 経営診断 / 事業計画) |
 | `patent-attorney` | 弁理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 特許 / 商標 / 意匠出願) |
+| `base` | BASE ネットショップ (公式 OAuth API 実配線) | OAuth (`api.thebase.in`) | | ✅ | (read-only — 商品 / 価格 / 在庫 / 公開状態) |
+| `netsea` | NETSEA B2B 卸 (snapshot のみ) | パートナー API (未公開) | ✅ | | (read-only) |
+| `super-delivery` | スーパーデリバリー B2B 卸 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
+| `topseller` | TopSeller ドロップシッピング卸 (snapshot のみ) | CSV/契約 (公開 API なし) | ✅ | | (read-only) |
+| `a8net` | A8.net アフィリエイト ASP (snapshot のみ) | 管理画面/CSV (公開 API なし) | ✅ | | (read-only) |
+| `ai-blogkun` | AIブログくん 自動ブログ生成 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:109-128`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。

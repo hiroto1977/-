@@ -43,6 +43,12 @@ import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
 import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
 import { SmeConsultantPage } from './pages/SmeConsultantPage';
 import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
+import { BasePage } from './pages/BasePage';
+import { NetseaPage } from './pages/NetseaPage';
+import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
+import { TopsellerPage } from './pages/TopsellerPage';
+import { A8netPage } from './pages/A8netPage';
+import { AiBlogkunPage } from './pages/AiBlogkunPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -428,6 +434,54 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'PA',
     description: '特許 / 商標 / 意匠出願 / 知財コンサル',
     page: PatentAttorneyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'base',
+    label: 'BASE',
+    icon: 'BS',
+    description: 'ネットショップの商品・在庫・公開状態 (公式 OAuth API)',
+    page: BasePage,
+    category: 'integrations',
+  },
+  {
+    id: 'netsea',
+    label: 'NETSEA',
+    icon: 'NS',
+    description: 'B2B 卸・仕入れマーケットプレイス (snapshot)',
+    page: NetseaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'super-delivery',
+    label: 'スーパーデリバリー',
+    icon: 'SD',
+    description: 'B2B 卸売仕入れサイト (snapshot)',
+    page: SuperDeliveryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'topseller',
+    label: 'TopSeller',
+    icon: 'TS',
+    description: 'ドロップシッピング卸 (snapshot)',
+    page: TopsellerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'a8net',
+    label: 'A8.net',
+    icon: 'A8',
+    description: 'アフィリエイト ASP の成果・レポート (snapshot)',
+    page: A8netPage,
+    category: 'integrations',
+  },
+  {
+    id: 'ai-blogkun',
+    label: 'AIブログくん',
+    icon: 'AB',
+    description: 'AI 自動ブログ生成 SaaS (snapshot)',
+    page: AiBlogkunPage,
     category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

@@ -1,0 +1,26 @@
+import type { FetchContext } from './types';
+
+/**
+ * A8.net (a8.net) — アフィリエイト ASP (snapshot 専用)。
+ *
+ * A8.net の成果/レポートは管理画面・CSV ベースで一般公開 REST API がない
+ * ため、本ファイルは `LIVE_FETCHERS` invariant を満たす static stub。実際の
+ * ページは `SNAPSHOT.a8net` を直接描画する。将来レポート連携を配線する際は、
+ * この fetcher 内で同じ shape を返却する。
+ */
+
+export interface A8netSnapshot {
+  items: { id: string; name: string }[];
+}
+
+// Stryker disable next-line all
+const STUB: A8netSnapshot = { items: [] };
+
+export async function fetchA8netSnapshotImpl(_ctx: FetchContext): Promise<A8netSnapshot> {
+  return STUB;
+}
+
+// Stryker disable next-line BlockStatement
+export async function fetchA8netSnapshot(ctx: FetchContext): Promise<A8netSnapshot> {
+  return fetchA8netSnapshotImpl(ctx);
+}
