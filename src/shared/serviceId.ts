@@ -62,6 +62,7 @@ export const SERVICE_IDS = [
   'amazon',
   'amazon-associates',
   'sales',
+  'team',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

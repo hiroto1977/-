@@ -53,6 +53,7 @@ import { MoneyforwardPage } from './pages/MoneyforwardPage';
 import { AmazonPage } from './pages/AmazonPage';
 import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
 import { SalesPage } from './pages/SalesPage';
+import { TeamPage } from './pages/TeamPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -518,6 +519,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'SA',
     description: 'Amazon / Shopify / BASE など EC チャネル横断の売上集計 (ローカル保存・実データ)',
     page: SalesPage,
+    category: 'featured',
+  },
+  {
+    id: 'team',
+    label: 'チーム管理',
+    icon: 'TM',
+    description: 'メンバー・権限管理 (オーナー/管理者/メンバー) — プランのシート上限と連動',
+    page: TeamPage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
