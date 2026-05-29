@@ -55,6 +55,7 @@ import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
 import { SalesPage } from './pages/SalesPage';
 import { TeamPage } from './pages/TeamPage';
 import { YoutubePage } from './pages/YoutubePage';
+import { OverviewPage } from './pages/OverviewPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -537,6 +538,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'チャンネル統計・最近の動画 (YouTube Data API v3 実連携)',
     page: YoutubePage,
     category: 'integrations',
+  },
+  {
+    id: 'overview',
+    label: '経営サマリー',
+    icon: 'OV',
+    description: '売上・KPI・チーム・プランを横断した経営概況 (実データ集約)',
+    page: OverviewPage,
+    category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

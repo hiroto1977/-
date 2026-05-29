@@ -55,6 +55,7 @@ import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
 import { fetchSalesSnapshot } from './sales';
 import { fetchTeamSnapshot } from './team';
 import { fetchYoutubeSnapshot } from './youtube';
+import { fetchOverviewSnapshot } from './overview';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -119,6 +120,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   sales: fetchSalesSnapshot,
   team: fetchTeamSnapshot,
   youtube: fetchYoutubeSnapshot,
+  overview: fetchOverviewSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -188,6 +190,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'sales',
   // チーム管理: メンバーは renderer の record store に保存、認証不要。
   'team',
+  // 経営サマリー: 既存機能の集約のみ。認証不要。
+  'overview',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

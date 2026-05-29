@@ -838,6 +838,10 @@ export const SNAPSHOT = {
     ] as { videoId: string; title: string; publishedAt: string; url: string }[],
   },
 
+  overview: {
+    items: [] as { id: string; name: string }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {
