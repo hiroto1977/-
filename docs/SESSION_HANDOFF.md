@@ -99,9 +99,9 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 5. **PR #7 R1 #3** — 7 士業 Page が 882 行コピペ → `components/ShigyoConsole.tsx` 抽出
 6. **PR #7 R1 #4** — `as number` cast の anti-pattern → `satisfies` 戦略統一
 7. **PR #7 R1 #5** — `example.jp` ドメイン (RFC 2606 非予約) → `example.com` に統一 + 弁護士/弁理士に法的 disclaimer 注意書き
-8. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-9. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-10. **PR #4 NIT** — `note` の XSS / control-char チェック
+8. ~~**PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)~~ ✅ 対応済 (`serviceActionPanel.logic.ts` の `parseAmount` / `normalizeNumericInput`)
+9. ~~**PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化~~ ✅ 対応済 (`actionPanelReducer` + `ActionStatus` discriminated union)
+10. ~~**PR #4 NIT** — `note` の XSS / control-char チェック~~ ✅ 対応済 (`validateNote` が C0/C1/DEL/U+2028/U+2029 を拒否)
 11. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
 
 ### 🟢 NIT

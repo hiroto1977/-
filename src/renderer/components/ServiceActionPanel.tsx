@@ -1,7 +1,16 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import type { ServiceId } from '../services';
 import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
 import { Section } from './StatusBar';
+import {
+  actionPanelReducer,
+  initialActionPanelState,
+  parseAmount,
+  validateNote,
+  canSubmitRecord,
+  canSubmitAdvise,
+  NOTE_MAX_LENGTH,
+} from './serviceActionPanel.logic';
 
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
@@ -29,67 +38,62 @@ interface RecordEntryResponse {
 }
 
 export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPanelProps) {
-  const [note, setNote] = useState('');
-  const [amount, setAmount] = useState('');
-  const [recBusy, setRecBusy] = useState(false);
-  const [advBusy, setAdvBusy] = useState(false);
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [advice, setAdvice] = useState<ServiceAdvisorResponse | null>(null);
+  const [state, dispatch] = useReducer(actionPanelReducer, initialActionPanelState);
+  const { note, amount, status } = state;
+
+  const recBusy = status.kind === 'recording';
+  const advBusy = status.kind === 'advising';
+  const feedback = status.kind === 'recorded' ? status.message : null;
+  const advice = status.kind === 'advised' ? status.advice : null;
+  const error = status.kind === 'error' ? status.message : null;
 
   async function submitRecord() {
-    setError(null);
-    setFeedback(null);
-    if (note.trim().length === 0) {
-      setError('note を入力してください');
+    const noteResult = validateNote(note);
+    if (!noteResult.ok) {
+      dispatch({ type: 'fail', message: noteResult.error });
       return;
     }
-    const payload: { note: string; amount?: number } = { note };
-    if (amount.trim().length > 0) {
-      const n = Number(amount);
-      if (!Number.isFinite(n)) {
-        setError('amount は数値で入力してください');
-        return;
-      }
-      payload.amount = n;
+    const amountResult = parseAmount(amount);
+    if (!amountResult.ok) {
+      dispatch({ type: 'fail', message: amountResult.error });
+      return;
     }
-    setRecBusy(true);
+    const payload: { note: string; amount?: number } = { note: noteResult.value };
+    if (amountResult.value !== undefined) {
+      payload.amount = amountResult.value;
+    }
+    dispatch({ type: 'recordStart' });
     try {
       const r = await window.serviceHub.invoke<RecordEntryResponse>(serviceId, 'record-entry', payload);
       if (!r.ok) {
-        setError(`保存に失敗: ${r.message}`);
+        dispatch({ type: 'fail', message: `保存に失敗: ${r.message}` });
         return;
       }
       // BLOCKING-3 対応: persisted=false を構造的に表示
-      const note2 =
+      const prefix =
         r.data.persisted === false
           ? '⚠ メモを受け付けました (Phase 6 まで保存されません)'
           : '✅ 保存しました';
-      setFeedback(`${note2} · ${new Date(r.data.recordedAt).toLocaleTimeString()}`);
-      setNote('');
-      setAmount('');
+      dispatch({
+        type: 'recordSuccess',
+        message: `${prefix} · ${new Date(r.data.recordedAt).toLocaleTimeString()}`,
+      });
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setRecBusy(false);
+      dispatch({ type: 'fail', message: e instanceof Error ? e.message : String(e) });
     }
   }
 
   async function submitAdvise() {
-    setError(null);
-    setAdvice(null);
-    setAdvBusy(true);
+    dispatch({ type: 'adviseStart' });
     try {
       const r = await window.serviceHub.invoke<ServiceAdvisorResponse>(serviceId, 'advise', {});
       if (!r.ok) {
-        setError(`AI 提案の取得に失敗: ${r.message}`);
+        dispatch({ type: 'fail', message: `AI 提案の取得に失敗: ${r.message}` });
         return;
       }
-      setAdvice(r.data);
+      dispatch({ type: 'adviseSuccess', advice: r.data });
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setAdvBusy(false);
+      dispatch({ type: 'fail', message: e instanceof Error ? e.message : String(e) });
     }
   }
 
@@ -100,20 +104,20 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
         <input
           type="text"
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => dispatch({ type: 'setNote', value: e.target.value })}
           placeholder="メモ (例: 売上記録 / 修繕費発生)"
-          maxLength={2000}
+          maxLength={NOTE_MAX_LENGTH}
           style={inputStyle}
         />
         <input
           type="text"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="金額 (任意)"
+          onChange={(e) => dispatch({ type: 'setAmount', value: e.target.value })}
+          placeholder="金額 (任意・全角/カンマ可)"
           inputMode="decimal"
           style={inputStyle}
         />
-        <button type="button" onClick={submitRecord} disabled={recBusy || note.length === 0} style={buttonStyle}>
+        <button type="button" onClick={submitRecord} disabled={!canSubmitRecord(state)} style={buttonStyle}>
           {recBusy ? '送信中…' : 'メモを記録'}
         </button>
       </div>
@@ -126,7 +130,7 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
 
       {/* advise */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 8 }}>
-        <button type="button" onClick={submitAdvise} disabled={advBusy} style={buttonStyle}>
+        <button type="button" onClick={submitAdvise} disabled={!canSubmitAdvise(state)} style={buttonStyle}>
           {advBusy ? '生成中…' : '🤖 AI 改善提案'}
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
