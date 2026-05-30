@@ -923,6 +923,15 @@ export const SNAPSHOT = {
       expectedPipeline: 0,
       expectedTotal: 0,
     },
+    scenarioRunways: (() => {
+      const emptyRunway = {
+        rows: [] as { month: string; netCashflow: number; balance: number }[],
+        openingBalance: 0,
+        minBalance: 0,
+        shortfallMonth: null as string | null,
+      };
+      return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
+    })(),
     accountingLinked: false,
     stocksLinked: false,
     fetchedAt: '',

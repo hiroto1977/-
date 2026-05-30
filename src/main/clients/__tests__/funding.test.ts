@@ -15,6 +15,7 @@ import {
   monthlyPayment,
   radarScores,
   repaymentSchedule,
+  scenarioRunways,
   summarize,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
@@ -408,6 +409,48 @@ describe('expectedScenario', () => {
     const s = expectedScenario(itemsE);
     expect(s.expectedPipeline).toBe(900_000);
     expect(s.expectedTotal).toBe(900_000);
+  });
+});
+
+describe('scenarioRunways', () => {
+  const scenarioItems: FundingItem[] = [
+    { id: 'a', kind: 'subsidy', name: '確定', amount: 3_000_000, status: 'approved', month: '2026-01', repayable: false },
+    { id: 'b', kind: 'grant', name: '申請中', amount: 2_000_000, status: 'applied', month: '2026-03', repayable: false },
+    { id: 'c', kind: 'subsidy', name: '検討中', amount: 4_000_000, status: 'planned', month: '2026-05', repayable: false },
+  ];
+
+  it('maintains optimistic ≥ expected ≥ pessimistic for every month-end balance', () => {
+    const r = scenarioRunways(scenarioItems, { openingBalance: 1_000_000 });
+    expect(r.optimistic.rows.length).toBe(r.expected.rows.length);
+    expect(r.expected.rows.length).toBe(r.pessimistic.rows.length);
+    for (let i = 0; i < r.expected.rows.length; i++) {
+      expect(r.optimistic.rows[i]!.balance).toBeGreaterThanOrEqual(r.expected.rows[i]!.balance);
+      expect(r.expected.rows[i]!.balance).toBeGreaterThanOrEqual(r.pessimistic.rows[i]!.balance);
+    }
+  });
+
+  it('collapses all scenarios to the same runway when there is no pipeline', () => {
+    const securedOnly: FundingItem[] = [
+      { id: 'a', kind: 'subsidy', name: '確定', amount: 3_000_000, status: 'received', month: '2026-01', repayable: false },
+    ];
+    const r = scenarioRunways(securedOnly, { openingBalance: 500_000 });
+    const opt = r.optimistic.rows.map((x) => x.balance);
+    const exp = r.expected.rows.map((x) => x.balance);
+    const pes = r.pessimistic.rows.map((x) => x.balance);
+    expect(opt).toEqual(exp);
+    expect(exp).toEqual(pes);
+  });
+
+  it('detects shortfall earliest (or equal) in the pessimistic scenario', () => {
+    // small opening balance + low-probability pipeline → pessimistic shorts first
+    const r = scenarioRunways(scenarioItems, { openingBalance: 0 });
+    if (r.pessimistic.shortfallMonth !== null && r.expected.shortfallMonth !== null) {
+      expect(r.pessimistic.shortfallMonth <= r.expected.shortfallMonth).toBe(true);
+    }
+    // optimistic never shorts before pessimistic
+    if (r.optimistic.shortfallMonth !== null && r.pessimistic.shortfallMonth !== null) {
+      expect(r.optimistic.shortfallMonth >= r.pessimistic.shortfallMonth).toBe(true);
+    }
   });
 });
 

@@ -269,6 +269,60 @@ function RunwayChart({ data }: { data: FundingSnapshot }) {
   );
 }
 
+// --- Chart 6: 3シナリオ累計残高レンジ (楽観/期待/悲観) -----------------
+
+function ScenarioRunwayChart({ data }: { data: FundingSnapshot }) {
+  const W = 720, H = 240, P = 44;
+  const { optimistic, expected, pessimistic } = data.scenarioRunways;
+  const rows = expected.rows;
+  if (rows.length === 0) return null;
+  const allBalances = [
+    ...optimistic.rows.map((r) => r.balance),
+    ...expected.rows.map((r) => r.balance),
+    ...pessimistic.rows.map((r) => r.balance),
+  ];
+  const maxV = Math.max(1, ...allBalances);
+  const minV = Math.min(0, ...allBalances);
+  const range = maxV - minV || 1;
+  const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
+  const y = (v: number) => H - P - ((v - minV) / range) * (H - P * 2);
+  const linePath = (rs: { balance: number }[]) =>
+    rs.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r.balance)}`).join(' ');
+
+  const legend = [
+    { color: COLORS.cashflow, label: '楽観 (全採択)' },
+    { color: COLORS.funding, label: '期待 (確率加重)' },
+    { color: COLORS.repayment, label: '悲観 (確率割引)' },
+  ];
+
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.repayment} strokeDasharray="3,3" />
+      <text x={P - 4} y={y(0) + 4} fontSize="9" fill={COLORS.repayment} textAnchor="end">0</text>
+      <path d={linePath(optimistic.rows)} stroke={COLORS.cashflow} fill="none" strokeWidth="2" strokeDasharray="5,3" />
+      <path d={linePath(expected.rows)} stroke={COLORS.funding} fill="none" strokeWidth="2" />
+      <path d={linePath(pessimistic.rows)} stroke={COLORS.repayment} fill="none" strokeWidth="2" strokeDasharray="2,2" />
+      {rows.map((r, i) => (
+        <text key={r.month} x={x(i)} y={H - 6} fontSize="9" fill={COLORS.mute} textAnchor="middle">
+          {r.month.slice(2)}
+        </text>
+      ))}
+      <g fontSize="11">
+        <rect x={W - 150} y={6} width="144" height={6 + legend.length * 16} fill="var(--bg)" stroke={COLORS.axis} />
+        {legend.map((l, i) => {
+          const ly = 18 + i * 16;
+          return (
+            <g key={l.label}>
+              <line x1={W - 142} y1={ly} x2={W - 130} y2={ly} stroke={l.color} strokeWidth="2" />
+              <text x={W - 126} y={ly + 4} fill={COLORS.text}>{l.label}</text>
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
 // --- Page -------------------------------------------------------------
 
 export function FundingPage() {
@@ -297,6 +351,8 @@ export function FundingPage() {
     }),
     [live],
   );
+
+  const pessimisticShortfall = live.scenarioRunways.pessimistic.shortfallMonth;
 
   return (
     <div>
@@ -417,6 +473,31 @@ export function FundingPage() {
               </div>
             )}
             <RunwayChart data={live} />
+          </Section>
+
+          <Section title="⑥ シナリオ別 累計残高レンジ (楽観/期待/悲観)">
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.6 }}>
+              申請中・予定の案件を採択確率で加重し、楽観 (全採択)・期待 (確率加重)・悲観 (確率を割引) の
+              3 シナリオで累計残高の幅を表示します。悲観線が早くゼロを割る場合は、その時期までに確実な
+              資金手当てが必要です。
+            </div>
+            {pessimisticShortfall && (
+              <div
+                style={{
+                  border: '1px solid var(--border)',
+                  borderLeft: `3px solid ${COLORS.repayment}`,
+                  borderRadius: 6,
+                  padding: '8px 12px',
+                  marginBottom: 10,
+                  fontSize: 13,
+                  color: 'var(--text)',
+                }}
+              >
+                ⚠️ 悲観シナリオでは {pessimisticShortfall} に資金ショートの見込みです。
+                採択が想定を下回るケースに備えた資金計画をご検討ください。
+              </div>
+            )}
+            <ScenarioRunwayChart data={live} />
           </Section>
 
           <Section title="案件一覧">

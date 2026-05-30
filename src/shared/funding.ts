@@ -512,6 +512,61 @@ export function cashRunway(
   return { rows, openingBalance, minBalance, shortfallMonth };
 }
 
+/** 楽観 / 期待 / 悲観 の 3 シナリオの累計キャッシュ残高。 */
+export interface ScenarioRunways {
+  /** 楽観: パイプライン案件を全採択と仮定。 */
+  readonly optimistic: CashRunway;
+  /** 期待: パイプラインを採択確率で加重。 */
+  readonly expected: CashRunway;
+  /** 悲観: 採択確率を割引係数でさらに引き下げ。 */
+  readonly pessimistic: CashRunway;
+}
+
+/**
+ * パイプライン (申請中・予定) 案件の入金を採択確率で加重し、楽観 / 期待 /
+ * 悲観の 3 シナリオの累計キャッシュ残高を返す。
+ *
+ * パイプライン案件は金額をシナリオ係数で加重したうえで確定扱い (approved) に
+ * 昇格させ、既存の `monthlyFlow` → `cashRunway` に流す。シナリオ間の差は
+ * 入金見込みのみに現れるよう、パイプライン案件の返済条件は除外する
+ * (確定済み融資の返済は全シナリオ共通で計上される)。
+ *
+ * 係数: 楽観 = 1.0、期待 = 採択確率、悲観 = 採択確率 × `pessimisticDiscount`
+ * (既定 0.5)。確定案件は全シナリオで不変。
+ */
+export function scenarioRunways(
+  items: readonly FundingItem[],
+  options: {
+    readonly openingBalance?: number;
+    readonly effectiveTaxRate?: number;
+    readonly accountingCashflow?: ReadonlyMap<string, number>;
+    readonly portfolioByMonth?: ReadonlyMap<string, number>;
+    readonly pessimisticDiscount?: number;
+  } = {},
+): ScenarioRunways {
+  const discount = clampRate(options.pessimisticDiscount ?? 0.5);
+  const flowOpts = {
+    effectiveTaxRate: options.effectiveTaxRate,
+    accountingCashflow: options.accountingCashflow,
+    portfolioByMonth: options.portfolioByMonth,
+  };
+  const run = (weightOf: (it: FundingItem) => number): CashRunway => {
+    const synth = items.map((it) => {
+      if (isSecured(it.status)) return it;
+      // パイプライン: 金額を係数で加重し確定扱いに昇格。返済条件は外す。
+      const { repayment: _repayment, ...rest } = it;
+      void _repayment;
+      return { ...rest, status: 'approved' as const, amount: Math.round(nonNeg(it.amount) * weightOf(it)) };
+    });
+    return cashRunway(monthlyFlow(synth, flowOpts), options.openingBalance ?? 0);
+  };
+  return {
+    optimistic: run(() => 1),
+    expected: run((it) => effectiveProbability(it)),
+    pessimistic: run((it) => effectiveProbability(it) * discount),
+  };
+}
+
 /**
  * 全体サマリーを計算する。
  *
