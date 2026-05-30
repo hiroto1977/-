@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * 売上集計 — 複数 EC チャネル (Amazon / Shopify / BASE / 楽天 …) の売上を
@@ -14,11 +14,4 @@ export interface SalesSnapshot {
 // Stryker disable next-line all
 const STUB: SalesSnapshot = { items: [] };
 
-export async function fetchSalesSnapshotImpl(_ctx: FetchContext): Promise<SalesSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchSalesSnapshot(ctx: FetchContext): Promise<SalesSnapshot> {
-  return fetchSalesSnapshotImpl(ctx);
-}
+export const fetchSalesSnapshot = createSnapshotStub<SalesSnapshot>(STUB);

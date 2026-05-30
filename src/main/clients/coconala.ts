@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * ココナラ (coconala.com) — スキルマーケット (snapshot 専用)。
@@ -21,11 +21,4 @@ const STUB: CoconalaSnapshot = {
   ],
 };
 
-export async function fetchCoconalaSnapshotImpl(_ctx: FetchContext): Promise<CoconalaSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchCoconalaSnapshot(ctx: FetchContext): Promise<CoconalaSnapshot> {
-  return fetchCoconalaSnapshotImpl(ctx);
-}
+export const fetchCoconalaSnapshot = createSnapshotStub<CoconalaSnapshot>(STUB);

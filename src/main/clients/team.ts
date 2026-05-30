@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * チーム管理 — 組織メンバー (オーナー/管理者/メンバー) のローカル管理機能。
@@ -15,11 +15,4 @@ export interface TeamSnapshot {
 // Stryker disable next-line all
 const STUB: TeamSnapshot = { items: [] };
 
-export async function fetchTeamSnapshotImpl(_ctx: FetchContext): Promise<TeamSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchTeamSnapshot(ctx: FetchContext): Promise<TeamSnapshot> {
-  return fetchTeamSnapshotImpl(ctx);
-}
+export const fetchTeamSnapshot = createSnapshotStub<TeamSnapshot>(STUB);

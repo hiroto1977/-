@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * AIブログくん (ai-blogkun.com) — AI 自動ブログ生成 SaaS (snapshot 専用)。
@@ -21,11 +21,4 @@ const STUB: AiBlogkunSnapshot = {
   ],
 };
 
-export async function fetchAiBlogkunSnapshotImpl(_ctx: FetchContext): Promise<AiBlogkunSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchAiBlogkunSnapshot(ctx: FetchContext): Promise<AiBlogkunSnapshot> {
-  return fetchAiBlogkunSnapshotImpl(ctx);
-}
+export const fetchAiBlogkunSnapshot = createSnapshotStub<AiBlogkunSnapshot>(STUB);

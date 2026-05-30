@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * マネーフォワード クラウド (biz.moneyforward.com) — クラウド会計/請求/確定申告
@@ -24,11 +24,4 @@ const STUB: MoneyforwardSnapshot = {
   ],
 };
 
-export async function fetchMoneyforwardSnapshotImpl(_ctx: FetchContext): Promise<MoneyforwardSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchMoneyforwardSnapshot(ctx: FetchContext): Promise<MoneyforwardSnapshot> {
-  return fetchMoneyforwardSnapshotImpl(ctx);
-}
+export const fetchMoneyforwardSnapshot = createSnapshotStub<MoneyforwardSnapshot>(STUB);

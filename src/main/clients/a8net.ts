@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * A8.net (a8.net) — アフィリエイト ASP (snapshot 専用)。
@@ -22,11 +22,4 @@ const STUB: A8netSnapshot = {
   ],
 };
 
-export async function fetchA8netSnapshotImpl(_ctx: FetchContext): Promise<A8netSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchA8netSnapshot(ctx: FetchContext): Promise<A8netSnapshot> {
-  return fetchA8netSnapshotImpl(ctx);
-}
+export const fetchA8netSnapshot = createSnapshotStub<A8netSnapshot>(STUB);

@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Sentry — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface SentrySnapshot {
 // Stryker disable next-line all
 const STUB: SentrySnapshot = { items: [], count: 0 };
 
-export async function fetchSentrySnapshotImpl(_ctx: FetchContext): Promise<SentrySnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchSentrySnapshot(ctx: FetchContext): Promise<SentrySnapshot> {
-  return fetchSentrySnapshotImpl(ctx);
-}
+export const fetchSentrySnapshot = createSnapshotStub<SentrySnapshot>(STUB);

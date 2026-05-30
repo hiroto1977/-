@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Amazon アソシエイト — アフィリエイト成果レポート (snapshot 専用)。
@@ -23,11 +23,4 @@ const STUB: AmazonAssociatesSnapshot = {
   ],
 };
 
-export async function fetchAmazonAssociatesSnapshotImpl(_ctx: FetchContext): Promise<AmazonAssociatesSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchAmazonAssociatesSnapshot(ctx: FetchContext): Promise<AmazonAssociatesSnapshot> {
-  return fetchAmazonAssociatesSnapshotImpl(ctx);
-}
+export const fetchAmazonAssociatesSnapshot = createSnapshotStub<AmazonAssociatesSnapshot>(STUB);

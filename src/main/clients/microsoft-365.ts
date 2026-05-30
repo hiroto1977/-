@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Microsoft 365 — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface Microsoft365Snapshot {
 // Stryker disable next-line all
 const STUB: Microsoft365Snapshot = { items: [], count: 0 };
 
-export async function fetchMicrosoft365SnapshotImpl(_ctx: FetchContext): Promise<Microsoft365Snapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchMicrosoft365Snapshot(ctx: FetchContext): Promise<Microsoft365Snapshot> {
-  return fetchMicrosoft365SnapshotImpl(ctx);
-}
+export const fetchMicrosoft365Snapshot = createSnapshotStub<Microsoft365Snapshot>(STUB);

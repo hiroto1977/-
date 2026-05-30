@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Dropbox — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface DropboxSnapshot {
 // Stryker disable next-line all
 const STUB: DropboxSnapshot = { items: [], count: 0 };
 
-export async function fetchDropboxSnapshotImpl(_ctx: FetchContext): Promise<DropboxSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchDropboxSnapshot(ctx: FetchContext): Promise<DropboxSnapshot> {
-  return fetchDropboxSnapshotImpl(ctx);
-}
+export const fetchDropboxSnapshot = createSnapshotStub<DropboxSnapshot>(STUB);

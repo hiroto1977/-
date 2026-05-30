@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * TopSeller (topseller.jp) — ドロップシッピング卸 (snapshot 専用)。
@@ -22,11 +22,4 @@ const STUB: TopsellerSnapshot = {
   ],
 };
 
-export async function fetchTopsellerSnapshotImpl(_ctx: FetchContext): Promise<TopsellerSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchTopsellerSnapshot(ctx: FetchContext): Promise<TopsellerSnapshot> {
-  return fetchTopsellerSnapshotImpl(ctx);
-}
+export const fetchTopsellerSnapshot = createSnapshotStub<TopsellerSnapshot>(STUB);

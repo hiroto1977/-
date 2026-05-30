@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Amazon セラー (SP-API) — 出品者向け 注文/在庫/売上 (snapshot 専用)。
@@ -23,11 +23,4 @@ const STUB: AmazonSnapshot = {
   ],
 };
 
-export async function fetchAmazonSnapshotImpl(_ctx: FetchContext): Promise<AmazonSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchAmazonSnapshot(ctx: FetchContext): Promise<AmazonSnapshot> {
-  return fetchAmazonSnapshotImpl(ctx);
-}
+export const fetchAmazonSnapshot = createSnapshotStub<AmazonSnapshot>(STUB);

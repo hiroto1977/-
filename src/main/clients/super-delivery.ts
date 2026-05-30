@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * スーパーデリバリー (superdelivery.com) — B2B 卸売仕入れサイト (snapshot 専用)。
@@ -21,11 +21,4 @@ const STUB: SuperDeliverySnapshot = {
   ],
 };
 
-export async function fetchSuperDeliverySnapshotImpl(_ctx: FetchContext): Promise<SuperDeliverySnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchSuperDeliverySnapshot(ctx: FetchContext): Promise<SuperDeliverySnapshot> {
-  return fetchSuperDeliverySnapshotImpl(ctx);
-}
+export const fetchSuperDeliverySnapshot = createSnapshotStub<SuperDeliverySnapshot>(STUB);

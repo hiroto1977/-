@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * NETSEA (netsea.jp) — B2B 卸・仕入れマーケットプレイス (snapshot 専用)。
@@ -22,11 +22,4 @@ const STUB: NetseaSnapshot = {
   ],
 };
 
-export async function fetchNetseaSnapshotImpl(_ctx: FetchContext): Promise<NetseaSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchNetseaSnapshot(ctx: FetchContext): Promise<NetseaSnapshot> {
-  return fetchNetseaSnapshotImpl(ctx);
-}
+export const fetchNetseaSnapshot = createSnapshotStub<NetseaSnapshot>(STUB);
