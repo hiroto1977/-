@@ -16,6 +16,8 @@ const COLORS = {
   afterTax: '#9b6cf0',
   cashflow: '#3ec98a',
   portfolio: '#f5a623',
+  repayment: '#e0568a',
+  net: '#e8eaed',
   secured: '#4f9cf9',
   pipeline: '#7d8597',
 };
@@ -90,26 +92,40 @@ function LineChart({ data }: { data: FundingSnapshot }) {
   const W = 720, H = 240, P = 40;
   const rows = data.monthly;
   if (rows.length === 0) return null;
-  const maxV = Math.max(1, ...rows.flatMap((r) => [r.funding, r.fundingAfterTax, r.operatingCashflow, r.portfolioValue]));
+  // 返済 (キャッシュアウト) と純資金繰りは負値になりうるため、軸は最小値も考慮。
+  const allV = rows.flatMap((r) => [r.funding, r.fundingAfterTax, r.repayment, r.netCashflow, r.operatingCashflow, r.portfolioValue]);
+  const maxV = Math.max(1, ...allV);
+  const minV = Math.min(0, ...allV);
+  const range = maxV - minV || 1;
   const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
-  const y = (v: number) => H - P - (v / maxV) * (H - P * 2);
-  const path = (key: 'funding' | 'fundingAfterTax' | 'operatingCashflow' | 'portfolioValue') =>
+  const y = (v: number) => H - P - ((v - minV) / range) * (H - P * 2);
+  const path = (key: 'funding' | 'fundingAfterTax' | 'repayment' | 'netCashflow' | 'operatingCashflow' | 'portfolioValue') =>
     rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r[key])}`).join(' ');
 
-  // 凡例: 資金調達 + 税引後 は常時、会計/株式は連携時のみ。
+  const hasRepayment = rows.some((r) => r.repayment > 0);
+
+  // 凡例: 資金調達 + 税引後 は常時、返済/純資金繰りは返済がある時、会計/株式は連携時。
   const legend: { color: string; dash?: string; label: string }[] = [
     { color: COLORS.funding, label: '資金調達 (税引前)' },
     { color: COLORS.afterTax, dash: '4,2', label: '税引後手残り' },
+    ...(hasRepayment ? [{ color: COLORS.repayment, dash: '5,3', label: '融資返済 (支出)' }] : []),
+    ...(hasRepayment ? [{ color: COLORS.net, label: '純資金繰り' }] : []),
     ...(data.accountingLinked ? [{ color: COLORS.cashflow, dash: '3,2', label: '営業CF (会計)' }] : []),
     ...(data.stocksLinked ? [{ color: COLORS.portfolio, dash: '2,2', label: '株式評価額' }] : []),
   ];
 
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
-      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.axis} />
+      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.axis} strokeDasharray="2,3" />
       <line x1={P} y1={P / 2} x2={P} y2={H - P} stroke={COLORS.axis} />
       <path d={path('funding')} stroke={COLORS.funding} fill="none" strokeWidth="2" />
       <path d={path('fundingAfterTax')} stroke={COLORS.afterTax} fill="none" strokeWidth="2" strokeDasharray="4,2" />
+      {hasRepayment && (
+        <path d={path('repayment')} stroke={COLORS.repayment} fill="none" strokeWidth="2" strokeDasharray="5,3" />
+      )}
+      {hasRepayment && (
+        <path d={path('netCashflow')} stroke={COLORS.net} fill="none" strokeWidth="2" />
+      )}
       {data.accountingLinked && (
         <path d={path('operatingCashflow')} stroke={COLORS.cashflow} fill="none" strokeWidth="2" strokeDasharray="5,3" />
       )}
@@ -117,7 +133,7 @@ function LineChart({ data }: { data: FundingSnapshot }) {
         <path d={path('portfolioValue')} stroke={COLORS.portfolio} fill="none" strokeWidth="2" strokeDasharray="2,2" />
       )}
       {rows.map((r, i) => (
-        <text key={r.month} x={x(i)} y={H - P + 14} fontSize="9" fill={COLORS.mute} textAnchor="middle">
+        <text key={r.month} x={x(i)} y={H - 6} fontSize="9" fill={COLORS.mute} textAnchor="middle">
           {r.month.slice(2)}
         </text>
       ))}

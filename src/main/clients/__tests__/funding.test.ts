@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  addMonths,
   aggregateByKind,
   barData,
   fundingKindLabel,
   isTaxableFunding,
   monthlyFlow,
+  monthlyPayment,
   radarScores,
+  repaymentSchedule,
   summarize,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
@@ -124,6 +127,91 @@ describe('monthlyFlow', () => {
     const flow = monthlyFlow(items, { effectiveTaxRate: 0 });
     const jun = flow.find((f) => f.month === '2026-06')!;
     expect(jun.fundingAfterTax).toBe(jun.funding); // no tax
+  });
+});
+
+describe('addMonths', () => {
+  it('adds months with year rollover', () => {
+    expect(addMonths('2026-01', 0)).toBe('2026-01');
+    expect(addMonths('2026-01', 1)).toBe('2026-02');
+    expect(addMonths('2026-11', 2)).toBe('2027-01');
+    expect(addMonths('2026-12', 12)).toBe('2027-12');
+    expect(addMonths('2026-06', 7)).toBe('2027-01');
+  });
+});
+
+describe('monthlyPayment', () => {
+  it('returns principal/months for a 0% loan', () => {
+    expect(monthlyPayment(1_200_000, 0, 12)).toBe(100_000);
+  });
+
+  it('returns 0 for non-positive principal or months', () => {
+    expect(monthlyPayment(0, 0.02, 12)).toBe(0);
+    expect(monthlyPayment(1_000_000, 0.02, 0)).toBe(0);
+  });
+
+  it('computes the equal-payment (元利均等) amount for an interest-bearing loan', () => {
+    // 1,000,000 @ 2.4%/yr over 12 months. i=0.002.
+    // pay = P·i / (1 − (1+i)^-n)
+    const i = 0.024 / 12;
+    const expected = Math.round((1_000_000 * i) / (1 - Math.pow(1 + i, -12)));
+    expect(monthlyPayment(1_000_000, 0.024, 12)).toBe(expected);
+    // total repaid exceeds principal (interest paid)
+    expect(monthlyPayment(1_000_000, 0.024, 12) * 12).toBeGreaterThan(1_000_000);
+  });
+});
+
+describe('repaymentSchedule', () => {
+  const loan: FundingItem = {
+    id: 'l', kind: 'loan', name: '融資', amount: 1_200_000, status: 'received',
+    month: '2026-01', repayable: true, repayment: { annualRate: 0, months: 12, startMonth: '2026-02' },
+  };
+
+  it('spreads a 0% loan evenly across the repayment months from startMonth', () => {
+    const sched = repaymentSchedule([loan]);
+    expect(sched.size).toBe(12);
+    expect(sched.get('2026-02')).toBe(100_000);
+    expect(sched.get('2027-01')).toBe(100_000); // 12th payment
+    expect(sched.has('2026-01')).toBe(false); // before startMonth
+  });
+
+  it('ignores non-repayable items and items without repayment terms', () => {
+    const subsidy: FundingItem = { id: 's', kind: 'subsidy', name: '補助', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false };
+    const loanNoTerms: FundingItem = { id: 'l2', kind: 'loan', name: '融資2', amount: 5_000_000, status: 'received', month: '2026-01', repayable: true };
+    expect(repaymentSchedule([subsidy, loanNoTerms]).size).toBe(0);
+  });
+
+  it('ignores unsecured (applied/planned) loans', () => {
+    const planned: FundingItem = { ...loan, status: 'planned' };
+    expect(repaymentSchedule([planned]).size).toBe(0);
+  });
+
+  it('sums overlapping repayments from multiple loans in the same month', () => {
+    const loan2: FundingItem = { ...loan, id: 'l3', amount: 600_000 };
+    const sched = repaymentSchedule([loan, loan2]);
+    // both pay in 2026-02: 100,000 + 50,000
+    expect(sched.get('2026-02')).toBe(150_000);
+  });
+});
+
+describe('monthlyFlow with repayment', () => {
+  const loan: FundingItem = {
+    id: 'l', kind: 'loan', name: '融資', amount: 1_200_000, status: 'received',
+    month: '2026-01', repayable: true, repayment: { annualRate: 0, months: 12, startMonth: '2026-02' },
+  };
+
+  it('includes repayment months beyond the inflow month and computes net cashflow', () => {
+    const flow = monthlyFlow([loan]);
+    // inflow month: funding 1.2M, loan non-taxable → after-tax 1.2M, no repayment yet
+    const jan = flow.find((f) => f.month === '2026-01')!;
+    expect(jan.funding).toBe(1_200_000);
+    expect(jan.repayment).toBe(0);
+    expect(jan.netCashflow).toBe(1_200_000);
+    // a later repayment-only month: funding 0, repayment 100k → net −100k
+    const dec = flow.find((f) => f.month === '2026-12')!;
+    expect(dec.funding).toBe(0);
+    expect(dec.repayment).toBe(100_000);
+    expect(dec.netCashflow).toBe(-100_000);
   });
 });
 

@@ -116,6 +116,21 @@ export interface FundingItem {
    * 課税見込みから除外する。融資・公庫など非課税資金では無視される。
    */
   readonly compressedEntry?: boolean;
+  /**
+   * 融資・公庫の返済条件 (任意)。月次の純資金繰りに元利返済 (キャッシュ
+   * アウト) を反映するために使う。返済不要の資金 (補助金等) では無視。
+   */
+  readonly repayment?: RepaymentTerms;
+}
+
+/** 融資の返済条件。元利均等返済を前提とする。 */
+export interface RepaymentTerms {
+  /** 年利 (0..1)。例: 0.02 = 年2%。0 で無利息。 */
+  readonly annualRate: number;
+  /** 返済回数 (月数)。1 以上。 */
+  readonly months: number;
+  /** 返済開始の年月 (YYYY-MM)。据置期間がある場合は入金月より後を指定。 */
+  readonly startMonth: string;
 }
 
 // --- 集計結果 ----------------------------------------------------------
@@ -142,6 +157,13 @@ export interface FundingMonthly {
    * 適用分はそのまま。`funding − 当月課税対象額 × 実効税率`。
    */
   readonly fundingAfterTax: number;
+  /** その月の融資・公庫の元利返済額 (キャッシュアウト。返済条件がなければ 0)。 */
+  readonly repayment: number;
+  /**
+   * その月の純資金繰り (ネットキャッシュフロー)。
+   * `税引後手残り + 営業CF − 返済額`。資金ショートの早期把握に使う。
+   */
+  readonly netCashflow: number;
   /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
   readonly operatingCashflow: number;
   /** 株式ポートフォリオ評価額 (任意。未連携なら 0)。 */
@@ -231,6 +253,52 @@ function clampRate(rate: number): number {
   return rate > 0 ? Math.min(1, rate) : 0;
 }
 
+/** 年月文字列 (YYYY-MM) に nMonths を足した年月を返す。 */
+export function addMonths(month: string, n: number): string {
+  const parts = month.split('-');
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  // 0-indexed month算で繰り上げ。
+  const total = y * 12 + (m - 1) + n;
+  const ny = Math.floor(total / 12);
+  const nm = (total % 12) + 1;
+  return `${ny}-${String(nm).padStart(2, '0')}`;
+}
+
+/**
+ * 元利均等返済の毎月返済額を返す (円)。
+ *
+ * 月利 i = annualRate/12 のとき、返済額 = P × i / (1 − (1+i)^-n)。
+ * 無利息 (rate=0) は単純に P/n。元本・回数が非正なら 0。
+ */
+export function monthlyPayment(principal: number, annualRate: number, months: number): number {
+  if (principal <= 0 || months <= 0) return 0;
+  const i = annualRate / 12;
+  if (i <= 0) return Math.round(principal / months);
+  const factor = Math.pow(1 + i, -months);
+  return Math.round((principal * i) / (1 - factor));
+}
+
+/**
+ * 融資案件の月別返済額 (キャッシュアウト) を Map<YYYY-MM, number> で返す。
+ * 返済不要・返済条件なしの案件は対象外。確定 (received/approved) のみ計上。
+ */
+export function repaymentSchedule(items: readonly FundingItem[]): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const it of items) {
+    if (!it.repayable || !it.repayment) continue;
+    if (!isSecured(it.status)) continue;
+    const { annualRate, months, startMonth } = it.repayment;
+    const pay = monthlyPayment(nonNeg(it.amount), annualRate, months);
+    if (pay <= 0) continue;
+    for (let k = 0; k < months; k++) {
+      const m = addMonths(startMonth, k);
+      out.set(m, (out.get(m) ?? 0) + pay);
+    }
+  }
+  return out;
+}
+
 /**
  * 月次サマリーを生成する (折れ線・棒グラフ用)。
  *
@@ -251,10 +319,13 @@ export function monthlyFlow(
   } = {},
 ): FundingMonthly[] {
   const rate = clampRate(options.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE);
+  const repayments = repaymentSchedule(items);
   const months = new Set<string>();
   for (const it of items) months.add(it.month);
   for (const m of options.accountingCashflow?.keys() ?? []) months.add(m);
   for (const m of options.portfolioByMonth?.keys() ?? []) months.add(m);
+  // 返済が入金月より後に伸びることがあるため、返済月も対象に含める。
+  for (const m of repayments.keys()) months.add(m);
 
   return [...months]
     .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
@@ -265,11 +336,16 @@ export function monthlyFlow(
       const taxable = securedOfMonth
         .filter((it) => isTaxableFunding(it.kind) && !it.compressedEntry)
         .reduce((s, it) => s + nonNeg(it.amount), 0);
+      const fundingAfterTax = Math.round(funding - taxable * rate);
+      const repayment = repayments.get(month) ?? 0;
+      const operatingCashflow = options.accountingCashflow?.get(month) ?? 0;
       return {
         month,
         funding,
-        fundingAfterTax: Math.round(funding - taxable * rate),
-        operatingCashflow: options.accountingCashflow?.get(month) ?? 0,
+        fundingAfterTax,
+        repayment,
+        netCashflow: fundingAfterTax + operatingCashflow - repayment,
+        operatingCashflow,
         portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
       };
     });

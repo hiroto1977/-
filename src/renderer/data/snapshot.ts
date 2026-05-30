@@ -878,6 +878,7 @@ export const SNAPSHOT = {
       month: string;
       repayable: boolean;
       compressedEntry?: boolean;
+      repayment?: { annualRate: number; months: number; startMonth: string };
     }[],
     byKind: [] as {
       kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
@@ -891,6 +892,8 @@ export const SNAPSHOT = {
       month: string;
       funding: number;
       fundingAfterTax: number;
+      repayment: number;
+      netCashflow: number;
       operatingCashflow: number;
       portfolioValue: number;
     }[],
