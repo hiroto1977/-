@@ -144,7 +144,16 @@ export interface RepaymentTerms {
    * 据置は `startMonth` から始まり、元金返済はその後に開始する。
    */
   readonly gracePeriodMonths?: number;
+  /**
+   * 返済方式 (任意)。既定 `'equal-payment'` (元利均等: 毎月返済額一定)。
+   * `'equal-principal'` (元金均等: 毎月の元金返済額が一定で、利息が逓減する
+   * ため返済額は前半ほど大きい)。日本政策金融公庫等で選択できる。
+   */
+  readonly method?: RepaymentMethod;
 }
+
+/** 返済方式。元利均等 (equal-payment) / 元金均等 (equal-principal)。 */
+export type RepaymentMethod = 'equal-payment' | 'equal-principal';
 
 // --- 集計結果 ----------------------------------------------------------
 
@@ -310,14 +319,17 @@ export interface AmortizationEntry {
 }
 
 /**
- * 元利均等返済の償却スケジュール (各回の元金・利息内訳) を返す。
+ * 返済の償却スケジュール (各回の元金・利息内訳) を返す。
  *
- * 各回: 利息 = 残高 × 月利、元金 = 返済額 − 利息。最終回は端数を残高に
- * 合わせて調整し、残高がちょうど 0 になるようにする。
+ * 元利均等 (`equal-payment`): 各回の返済額が一定。利息 = 残高 × 月利、
+ * 元金 = 返済額 − 利息。最終回は端数を残高に合わせて完済する。
+ * 元金均等 (`equal-principal`): 各回の元金返済額が一定 (元本/回数)。利息は
+ * 残高に応じ逓減するため返済額は前半ほど大きい。最終回で端数を調整。
  *
  * @param gracePeriodMonths 据置期間 (月数, 任意)。据置中は元金 0・利息のみの
  *   キャッシュアウトとなり、`startMonth` から据置期間が始まる。元金返済は
  *   据置終了後に `months` 回で行う。
+ * @param method 返済方式 (既定 `'equal-payment'`)。
  */
 export function amortizationSchedule(
   principal: number,
@@ -325,11 +337,14 @@ export function amortizationSchedule(
   months: number,
   startMonth: string,
   gracePeriodMonths = 0,
+  method: RepaymentMethod = 'equal-payment',
 ): AmortizationEntry[] {
+  if (principal <= 0 || months <= 0) return [];
   const pay = monthlyPayment(principal, annualRate, months);
-  if (pay <= 0) return [];
   const i = annualRate / 12 > 0 ? annualRate / 12 : 0;
   const grace = gracePeriodMonths > 0 ? Math.floor(gracePeriodMonths) : 0;
+  // 元金均等の毎月元金 (最終回で端数調整)。
+  const levelPrincipal = Math.round(principal / months);
   const out: AmortizationEntry[] = [];
   let remaining = principal;
   // 据置期間: 元金は減らず、利息のみ支払う。
@@ -337,12 +352,15 @@ export function amortizationSchedule(
     const interest = Math.round(remaining * i);
     out.push({ month: addMonths(startMonth, g), payment: interest, principal: 0, interest, remaining });
   }
-  // 元金返済期間: 据置終了後に元利均等で完済する。
+  // 元金返済期間: 据置終了後に完済する。
   for (let k = 0; k < months; k++) {
     const interest = Math.round(remaining * i);
-    // 最終回は残高を完済しきるよう元金を残高に合わせる。
     const isLast = k === months - 1;
-    let principalPart = isLast ? remaining : pay - interest;
+    // 元金充当分: 方式で分岐。最終回は残高を完済しきる。
+    let principalPart =
+      isLast ? remaining
+      : method === 'equal-principal' ? levelPrincipal
+      : pay - interest;
     if (principalPart > remaining) principalPart = remaining;
     const payment = principalPart + interest;
     remaining = Math.max(0, remaining - principalPart);
@@ -360,8 +378,8 @@ export function repaymentSchedule(items: readonly FundingItem[]): Map<string, nu
   for (const it of items) {
     if (!it.repayable || !it.repayment) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth, gracePeriodMonths } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths)) {
+    const { annualRate, months, startMonth, gracePeriodMonths, method } = it.repayment;
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths, method)) {
       out.set(e.month, (out.get(e.month) ?? 0) + e.payment);
     }
   }
@@ -377,8 +395,8 @@ export function interestSchedule(items: readonly FundingItem[]): Map<string, num
   for (const it of items) {
     if (!it.repayable || !it.repayment) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth, gracePeriodMonths } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths)) {
+    const { annualRate, months, startMonth, gracePeriodMonths, method } = it.repayment;
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths, method)) {
       if (e.interest > 0) out.set(e.month, (out.get(e.month) ?? 0) + e.interest);
     }
   }

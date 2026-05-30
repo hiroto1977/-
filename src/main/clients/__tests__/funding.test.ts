@@ -228,6 +228,35 @@ describe('amortizationSchedule', () => {
     expect(sched[2]!.principal).toBe(100_000); // principal starts after grace
     expect(sched[13]!.remaining).toBe(0);
   });
+
+  it('equal-principal: constant principal, declining interest and payment', () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 0, 'equal-principal');
+    expect(sched).toHaveLength(12);
+    // each month principal is constant (1,200,000 / 12 = 100,000), except the last (remainder)
+    for (let k = 0; k < 11; k++) expect(sched[k]!.principal).toBe(100_000);
+    // interest declines as the balance is paid down
+    expect(sched[0]!.interest).toBeGreaterThan(sched[10]!.interest);
+    // payment (principal + interest) also declines in the early period
+    expect(sched[0]!.payment).toBeGreaterThan(sched[10]!.payment);
+    // fully amortized
+    expect(sched[11]!.remaining).toBe(0);
+    expect(sched.reduce((s, e) => s + e.principal, 0)).toBe(1_200_000);
+  });
+
+  it('equal-principal first payment exceeds the equal-payment first payment', () => {
+    const ep = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 0, 'equal-payment');
+    const epr = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 0, 'equal-principal');
+    // 元金均等は前半の返済額が大きい
+    expect(epr[0]!.payment).toBeGreaterThan(ep[0]!.payment);
+  });
+
+  it('equal-principal honors a grace period (interest-only first)', () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3, 'equal-principal');
+    expect(sched).toHaveLength(15);
+    expect(sched[0]!.principal).toBe(0); // grace
+    expect(sched[3]!.principal).toBe(100_000); // constant principal after grace
+    expect(sched[14]!.remaining).toBe(0);
+  });
 });
 
 describe('interestSchedule', () => {

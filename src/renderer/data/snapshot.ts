@@ -878,7 +878,7 @@ export const SNAPSHOT = {
       month: string;
       repayable: boolean;
       compressedEntry?: boolean;
-      repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number };
+      repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number; method?: 'equal-payment' | 'equal-principal' };
       probability?: number;
     }[],
     byKind: [] as {
