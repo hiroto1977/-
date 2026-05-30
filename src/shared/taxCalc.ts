@@ -217,3 +217,103 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
 export function schemesForEntity(entity: 'corporation' | 'sole-proprietor'): readonly TaxScheme[] {
   return taxSchemeCatalog().filter((s) => s.entity === entity || s.entity === 'both');
 }
+
+// --- 税務コンプライアンス・チェックリスト ---------------------------------
+//
+// 「否認されない」ことを保証するものではない。税務署 (国税) は事実関係を
+// 総合判断するため、誰も否認回避を保証できない。ここで提供するのは、
+// 否認リスクを下げるために **一般に必要とされると言われる確認項目** の
+// 教育的チェックリストにすぎない。判断と実行は必ず税理士へ。
+
+/** チェックリストが対象とするスキーム種別。 */
+export type ComplianceTopic =
+  | 'micro-corp' // マイクロ法人併用
+  | 'family-transaction' // 親族間の不動産売買・賃貸
+  | 'incorporation'; // 法人化 (法人成り)
+
+export interface ComplianceItem {
+  readonly id: string;
+  /** 確認項目 (やるべきこと)。 */
+  readonly requirement: string;
+  /** なぜ必要か (否認されやすい論点)。 */
+  readonly why: string;
+  /** 参考になる公式情報 (国税庁等) の URL。任意。 */
+  readonly officialUrl?: string;
+}
+
+export interface ComplianceChecklist {
+  readonly topic: ComplianceTopic;
+  readonly title: string;
+  /** スキーム全体の性質に関する注意 (最上部に出す)。 */
+  readonly caution: string;
+  readonly items: readonly ComplianceItem[];
+}
+
+/**
+ * スキーム種別ごとの「否認リスクを下げるために一般に必要とされる確認項目」。
+ *
+ * **重要: これは否認されないことの保証ではありません。** 税務上の最終判断は
+ * 個別の事実関係に依存し、税理士の関与なしに安全と断定できるものではありません。
+ * 各項目は広く知られた一般論であり、実行は必ず税理士にご相談ください。
+ */
+// Stryker disable all
+export function complianceChecklist(topic: ComplianceTopic): ComplianceChecklist {
+  switch (topic) {
+    case 'micro-corp':
+      return {
+        topic,
+        title: 'マイクロ法人併用の確認項目',
+        caution:
+          '個人事業と小規模法人の併用は、社会保険料の最適化を狙う高度スキーム。実体のないペーパーカンパニーによる利益調整とみなされると租税回避として否認され、追徴課税の恐れがある。',
+        items: [
+          { id: 'mc-substance', requirement: '法人の事業実体を作る (HP・銀行口座・契約書・請求書)', why: '実体のないペーパーカンパニーは否認の典型', officialUrl: 'https://www.nta.go.jp/' },
+          { id: 'mc-separate', requirement: '個人事業と法人で業務・顧客を明確に分ける (例: 個人=BtoC / 法人=BtoB)', why: '同一業務の付け替えは利益移転とみなされやすい' },
+          { id: 'mc-purpose', requirement: '社会保険・事業上の合理的な目的を説明できるようにする', why: '節税のみが目的だと租税回避と判断されやすい' },
+          { id: 'mc-officer-pay', requirement: '役員報酬は定期同額給与等のルールで適正に設定・記録する', why: '不適切な役員報酬は損金不算入になる', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5209.htm' },
+          { id: 'mc-social-insurance', requirement: '社会保険の適用要件 (年金事務所の手続) を正しく履行する', why: '適用判断の誤りは遡及修正・追徴のもと', officialUrl: 'https://www.nenkin.go.jp/' },
+        ],
+      };
+    case 'family-transaction':
+      return {
+        topic,
+        title: '親族間の不動産売買・賃貸の確認項目',
+        caution:
+          '親族間・同族会社間の取引は、適正な時価から乖離すると「みなし贈与」「受贈益課税」として重い税が課される。第三者間と同条件の契約・価格・記録が必須。',
+        items: [
+          { id: 'ft-fair-price', requirement: '適正な時価で取引する (不動産は鑑定・路線価・固定資産税評価額で根拠を残す)', why: '低額譲渡は差額がみなし贈与・受贈益課税の対象', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4423.htm' },
+          { id: 'ft-contract', requirement: '第三者間と同じ賃貸借契約書・売買契約書・金銭消費貸借契約書を交わす', why: '契約書がないと「実質贈与」と疑われる' },
+          { id: 'ft-bank-transfer', requirement: '支払いは必ず銀行振込で、摘要に「○月分売買代金」等を明記し履歴を残す', why: '手渡しは証拠が残らず否認されやすい' },
+          { id: 'ft-substance', requirement: '取得した不動産の事業利用の実体を残す (看板・郵便物・写真・利用記録)', why: '名義変更だけで実体がないと事業性が否認される' },
+          { id: 'ft-mukosho', requirement: '法人が個人の土地に建てる場合「土地の無償返還に関する届出書」を連名提出', why: '権利金の認定課税を合法的に回避するための届出', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5730.htm' },
+          { id: 'ft-3000', requirement: '居住用財産の3,000万円特別控除は「自己が支配する法人」への売却では使えない点を確認', why: '同族法人への売却は特例の対象外', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/3302.htm' },
+        ],
+      };
+    case 'incorporation':
+      return {
+        topic,
+        title: '法人化 (法人成り) の確認項目',
+        caution:
+          '法人化は利益規模次第で有利だが、設立・維持コストや社会保険の負担増もある。必ず事前にシミュレーションし、形式だけの法人化にならないようにする。',
+        items: [
+          { id: 'in-simulation', requirement: '法人税 vs 所得税の試算を行い、法人化メリットの分岐点を確認する', why: '利益が小さいと法人維持コストで逆に不利になる' },
+          { id: 'in-asset-transfer', requirement: '個人資産を法人へ移す場合は適正な時価で売買・記録する', why: '低廉譲渡は課税対象になる' },
+          { id: 'in-consumption-tax', requirement: '消費税の免税期間の要件 (資本金・特定期間の課税売上等) を確認', why: '要件を満たさないと免税にならない', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6531.htm' },
+          { id: 'in-officer-pay', requirement: '役員報酬は期首から3か月以内に決め、定期同額にする', why: '途中変更分は損金不算入になる', officialUrl: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5209.htm' },
+          { id: 'in-blue', requirement: '法人でも青色申告の承認申請を期限内に出す', why: '欠損金繰越等の優遇は青色が前提' },
+        ],
+      };
+    default: {
+      // 網羅性チェック (到達不能)。
+      const _exhaustive: never = topic;
+      return _exhaustive;
+    }
+  }
+}
+// Stryker restore all
+
+/** すべてのチェックリストのトピック一覧 (UI のタブ用)。 */
+export const COMPLIANCE_TOPICS: readonly ComplianceTopic[] = [
+  'micro-corp',
+  'family-transaction',
+  'incorporation',
+];

@@ -15,6 +15,9 @@ import {
   calcResidentTax,
   schemesForEntity,
   suggestTaxTips,
+  complianceChecklist,
+  COMPLIANCE_TOPICS,
+  type ComplianceTopic,
 } from '../../shared/taxCalc';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
@@ -42,8 +45,16 @@ export function TaxPage() {
   const [netStr, setNetStr] = useState('10000');
   const [reduced, setReduced] = useState(false);
   const [entity, setEntity] = useState<'corporation' | 'sole-proprietor'>('sole-proprietor');
+  const [topic, setTopic] = useState<ComplianceTopic>('micro-corp');
 
   const schemes = useMemo(() => schemesForEntity(entity), [entity]);
+  const checklist = useMemo(() => complianceChecklist(topic), [topic]);
+
+  const TOPIC_LABEL: Record<ComplianceTopic, string> = {
+    'micro-corp': 'マイクロ法人併用',
+    'family-transaction': '親族間の不動産取引',
+    incorporation: '法人化 (法人成り)',
+  };
 
   const taxableIncome = useMemo(() => {
     const p = parseAmountInput(incomeStr);
@@ -207,6 +218,107 @@ export function TaxPage() {
           ※ いずれも<strong>一般的な制度の案内</strong>であり、個別の節税提案ではありません。
           「⚠️ 必須」の制度 (親族間取引・マイクロ法人併用・役員社宅など) は適用判断・税務リスクが大きく、
           租税回避と判断されると追徴課税の恐れがあります。<strong>実行前に必ず税理士へご相談ください。</strong>
+        </div>
+      </Section>
+
+      <Section title="税務コンプライアンス・チェックリスト" count={checklist.items.length}>
+        <div
+          role="note"
+          style={{
+            margin: '0 0 12px',
+            padding: 10,
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid #ef4444',
+            borderRadius: 6,
+            fontSize: 11,
+            color: '#fca5a5',
+            lineHeight: 1.6,
+          }}
+        >
+          🚫 これは<strong>「否認されないことの保証」ではありません。</strong>
+          国税は事実関係を総合判断するため、否認回避を保証できる仕組みは存在しません。
+          以下は否認リスクを下げるために<strong>一般に必要とされると言われる確認項目</strong>の
+          教育的チェックリストです。判断と実行は<strong>必ず税理士へ</strong>。
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+          {COMPLIANCE_TOPICS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTopic(t)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 6,
+                border: '1px solid var(--border)',
+                background: topic === t ? 'var(--accent)' : 'var(--bg-elev)',
+                color: topic === t ? '#fff' : 'var(--text)',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {TOPIC_LABEL[t]}
+            </button>
+          ))}
+        </div>
+
+        <div
+          style={{
+            padding: 10,
+            background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid #fbbf24',
+            borderRadius: 6,
+            fontSize: 11,
+            color: '#fbbf24',
+            lineHeight: 1.6,
+            marginBottom: 12,
+          }}
+        >
+          ⚠️ {checklist.caution}
+        </div>
+
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={thStyle}>確認項目 (一般論)</th>
+              <th style={thStyle}>なぜ必要か (否認されやすい論点)</th>
+              <th style={thStyle}>公式情報</th>
+            </tr>
+          </thead>
+          <tbody>
+            {checklist.items.map((it) => (
+              <tr key={it.id}>
+                <td style={tdStyle}>{it.requirement}</td>
+                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>{it.why}</td>
+                <td style={tdStyle}>
+                  {it.officialUrl ? (
+                    <button
+                      type="button"
+                      onClick={() => openTool(it.officialUrl!)}
+                      style={{
+                        padding: '2px 8px',
+                        background: 'var(--bg-elev)',
+                        border: '1px solid var(--border)',
+                        borderRadius: 4,
+                        color: 'var(--text)',
+                        cursor: 'pointer',
+                        fontSize: 11,
+                      }}
+                    >
+                      🔗 開く
+                    </button>
+                  ) : (
+                    <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>—</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ チェックを満たしても否認されないとは限りません。事実関係・契約・価格の妥当性は
+          個別判断であり、<strong>税理士の関与なしに安全と断定できるものではありません。</strong>
         </div>
       </Section>
 

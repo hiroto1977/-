@@ -11,6 +11,8 @@ import {
   suggestTaxTips,
   schemesForEntity,
   taxSchemeCatalog,
+  complianceChecklist,
+  COMPLIANCE_TOPICS,
 } from '../taxCalc';
 
 describe('calcIncomeTax', () => {
@@ -151,5 +153,48 @@ describe('schemesForEntity', () => {
     expect(ids).toContain('sp-blue'); // sp-only
     expect(ids).toContain('both-ideco'); // both
     expect(ids).not.toContain('corp-bankruptcy-kyosai'); // corp only
+  });
+});
+
+describe('complianceChecklist', () => {
+  it('returns a checklist for every declared topic with non-empty items', () => {
+    for (const topic of COMPLIANCE_TOPICS) {
+      const cl = complianceChecklist(topic);
+      expect(cl.topic).toBe(topic);
+      expect(cl.title).toBeTruthy();
+      expect(cl.caution).toBeTruthy();
+      expect(cl.items.length).toBeGreaterThan(0);
+      const ids = cl.items.map((i) => i.id);
+      expect(new Set(ids).size).toBe(ids.length); // unique within topic
+      for (const it of cl.items) {
+        expect(it.id).toBeTruthy();
+        expect(it.requirement).toBeTruthy();
+        expect(it.why).toBeTruthy();
+        if (it.officialUrl !== undefined) {
+          expect(it.officialUrl.startsWith('https://')).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('micro-corp checklist covers substance and business separation', () => {
+    const ids = complianceChecklist('micro-corp').items.map((i) => i.id);
+    expect(ids).toContain('mc-substance');
+    expect(ids).toContain('mc-separate');
+  });
+
+  it('family-transaction checklist covers fair price and 無償返還届出', () => {
+    const ids = complianceChecklist('family-transaction').items.map((i) => i.id);
+    expect(ids).toContain('ft-fair-price');
+    expect(ids).toContain('ft-mukosho');
+  });
+
+  it('incorporation checklist covers a profitability simulation', () => {
+    const ids = complianceChecklist('incorporation').items.map((i) => i.id);
+    expect(ids).toContain('in-simulation');
+  });
+
+  it('exposes exactly the three known topics', () => {
+    expect([...COMPLIANCE_TOPICS]).toEqual(['micro-corp', 'family-transaction', 'incorporation']);
   });
 });
