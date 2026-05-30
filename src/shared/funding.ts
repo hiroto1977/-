@@ -764,6 +764,68 @@ export function debtServiceMetrics(
   };
 }
 
+// --- 実効調達コスト率 -------------------------------------------------
+
+/** 融資 1 件の総支払利息を返す (確定・返済条件ありの融資のみ; それ以外は 0)。 */
+export function totalInterestOf(item: FundingItem): number {
+  if (!item.repayable || !item.repayment) return 0;
+  if (!isSecured(item.status)) return 0;
+  const { annualRate, months, startMonth, gracePeriodMonths, method } = item.repayment;
+  const sched = amortizationSchedule(nonNeg(item.amount), annualRate, months, startMonth, gracePeriodMonths, method);
+  return sched.reduce((s, e) => s + e.interest, 0);
+}
+
+/**
+ * 融資 1 件の実効調達コスト率を返す = 総支払利息 ÷ 借入額。
+ * 返済不要・無利息・借入額0 は 0。返済期間全体での総コスト率 (年率ではない)。
+ */
+export function effectiveFundingCostRate(item: FundingItem): number {
+  const principal = nonNeg(item.amount);
+  if (principal <= 0) return 0;
+  return totalInterestOf(item) / principal;
+}
+
+/** 資金調達コストの集計。 */
+export interface FundingCostMetrics {
+  /** 確定融資の借入額合計。 */
+  readonly totalLoanPrincipal: number;
+  /** 確定融資の総支払利息合計。 */
+  readonly totalInterest: number;
+  /** 借入額で加重平均した実効調達コスト率 (= 総利息 ÷ 借入額合計)。 */
+  readonly weightedCostRate: number;
+  /** 自己負担比率 = 返済必要額 ÷ 確定総額 (0..1)。返済不要資金が多いほど低い。 */
+  readonly selfFundingRatio: number;
+}
+
+/**
+ * 資金調達全体のコスト指標を計算する。
+ *
+ * 確定 (received/approved) の融資のみを対象に、借入額合計・総支払利息・
+ * 加重平均コスト率を出す。自己負担比率は確定総額に対する返済必要額の割合。
+ *
+ * @param items 資金調達案件
+ * @param summary `summarize` の結果 (自己負担比率の算定に使う)
+ */
+export function fundingCostMetrics(
+  items: readonly FundingItem[],
+  summary: FundingSummary,
+): FundingCostMetrics {
+  let totalLoanPrincipal = 0;
+  let totalInterest = 0;
+  for (const it of items) {
+    if (!it.repayable || !it.repayment || !isSecured(it.status)) continue;
+    const principal = nonNeg(it.amount);
+    if (principal <= 0) continue;
+    totalLoanPrincipal += principal;
+    totalInterest += totalInterestOf(it);
+  }
+  const weightedCostRate = totalLoanPrincipal > 0 ? totalInterest / totalLoanPrincipal : 0;
+  const selfFundingRatio = summary.totalSecured > 0
+    ? clampRate(summary.repayableSecured / summary.totalSecured)
+    : 0;
+  return { totalLoanPrincipal, totalInterest, weightedCostRate, selfFundingRatio };
+}
+
 // --- 期待値シナリオ (採択確率による加重) -------------------------------
 
 /**

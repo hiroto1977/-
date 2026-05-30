@@ -20,6 +20,9 @@ import {
   summarize,
   fundingQualityScore,
   debtServiceMetrics,
+  effectiveFundingCostRate,
+  totalInterestOf,
+  fundingCostMetrics,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
@@ -777,5 +780,56 @@ describe('debtServiceMetrics (DSCR)', () => {
     // dscr 1.2 with threshold 1.5 → counts as shortfall
     const r = debtServiceMetrics([m('2026-01', 100_000, 120_000)], 1.5);
     expect(r.shortfallMonths).toBe(1);
+  });
+});
+
+describe('effectiveFundingCostRate / fundingCostMetrics', () => {
+  const interestLoan: FundingItem = {
+    id: 'li', kind: 'loan', name: '有利息融資', amount: 1_200_000, status: 'received',
+    month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-01' },
+  };
+
+  it('returns 0 for non-repayable or interest-free funding', () => {
+    const subsidy: FundingItem = { id: 's', kind: 'subsidy', name: '補助', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false };
+    expect(effectiveFundingCostRate(subsidy)).toBe(0);
+    const free: FundingItem = { ...interestLoan, id: 'f', repayment: { annualRate: 0, months: 12, startMonth: '2026-01' } };
+    expect(effectiveFundingCostRate(free)).toBe(0);
+  });
+
+  it('computes cost rate = total interest / principal', () => {
+    const interest = totalInterestOf(interestLoan);
+    expect(interest).toBeGreaterThan(0);
+    expect(effectiveFundingCostRate(interestLoan)).toBeCloseTo(interest / 1_200_000, 10);
+  });
+
+  it('ignores unsecured (applied/planned) loans', () => {
+    const planned: FundingItem = { ...interestLoan, status: 'planned' };
+    expect(totalInterestOf(planned)).toBe(0);
+    expect(effectiveFundingCostRate(planned)).toBe(0);
+  });
+
+  it('aggregates weighted cost rate and self-funding ratio', () => {
+    const mixed: FundingItem[] = [
+      interestLoan, // 1.2M loan with interest
+      { id: 'g', kind: 'subsidy', name: '補助', amount: 3_000_000, status: 'received', month: '2026-02', repayable: false },
+    ];
+    const s = summarize(mixed);
+    const m = fundingCostMetrics(mixed, s);
+    expect(m.totalLoanPrincipal).toBe(1_200_000);
+    expect(m.totalInterest).toBe(totalInterestOf(interestLoan));
+    expect(m.weightedCostRate).toBeCloseTo(m.totalInterest / 1_200_000, 10);
+    // self-funding: 1.2M repayable / 4.2M total = ~0.2857
+    expect(m.selfFundingRatio).toBeCloseTo(1_200_000 / 4_200_000, 6);
+  });
+
+  it('guards zero loans / zero total (no division by zero)', () => {
+    const onlySubsidy: FundingItem[] = [
+      { id: 'g', kind: 'subsidy', name: '補助', amount: 3_000_000, status: 'received', month: '2026-02', repayable: false },
+    ];
+    const m = fundingCostMetrics(onlySubsidy, summarize(onlySubsidy));
+    expect(m.weightedCostRate).toBe(0);
+    expect(m.selfFundingRatio).toBe(0);
+    const empty = fundingCostMetrics([], summarize([]));
+    expect(empty.selfFundingRatio).toBe(0);
   });
 });

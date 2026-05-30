@@ -946,6 +946,12 @@ export const SNAPSHOT = {
       worstMonthDscr: 0,
       shortfallMonths: 0,
     },
+    costMetrics: {
+      totalLoanPrincipal: 0,
+      totalInterest: 0,
+      weightedCostRate: 0,
+      selfFundingRatio: 0,
+    },
     accountingLinked: false,
     stocksLinked: false,
     fetchedAt: '',

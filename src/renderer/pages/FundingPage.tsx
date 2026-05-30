@@ -493,6 +493,14 @@ export function FundingPage() {
                 {!live.accountingLinked && <> ※ 営業CFは会計ソフト連携時に反映されます。</>}
               </div>
             )}
+            {live.costMetrics.totalLoanPrincipal > 0 && (
+              <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                <strong>実効調達コスト</strong>：借入額合計 {jpy(live.costMetrics.totalLoanPrincipal)} に対し総支払利息
+                {' '}{jpy(live.costMetrics.totalInterest)}（実効コスト率
+                {' '}{(live.costMetrics.weightedCostRate * 100).toFixed(2)}%）。
+                自己負担比率（返済必要 ÷ 確定総額）{(live.costMetrics.selfFundingRatio * 100).toFixed(0)}%。
+              </div>
+            )}
           </Section>
 
           <Section title="⑥ シナリオ別 累計残高レンジ (楽観/期待/悲観)">
