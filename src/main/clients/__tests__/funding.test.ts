@@ -258,6 +258,31 @@ describe('amortizationSchedule', () => {
     expect(sched[3]!.principal).toBe(100_000); // constant principal after grace
     expect(sched[14]!.remaining).toBe(0);
   });
+
+  // --- 不変条件の固定 (品質監査チームの指摘) ---
+  it('every entry satisfies payment === principal + interest (both methods)', () => {
+    for (const method of ['equal-payment', 'equal-principal'] as const) {
+      const sched = amortizationSchedule(1_234_567, 0.031, 24, '2026-01', 2, method);
+      for (const e of sched) {
+        expect(e.payment).toBe(e.principal + e.interest);
+        expect(e.principal).toBeGreaterThanOrEqual(0);
+        expect(e.interest).toBeGreaterThanOrEqual(0);
+        expect(e.remaining).toBeGreaterThanOrEqual(0);
+      }
+      // fully amortized with principal summing exactly to the loan amount
+      expect(sched[sched.length - 1]!.remaining).toBe(0);
+      expect(sched.reduce((s, e) => s + e.principal, 0)).toBe(1_234_567);
+    }
+  });
+
+  it('handles the extreme grace=1 / months=1 case', () => {
+    const sched = amortizationSchedule(1_000_000, 0.024, 1, '2026-01', 1);
+    expect(sched).toHaveLength(2); // 1 grace + 1 repayment
+    expect(sched[0]!.principal).toBe(0); // grace: interest only
+    expect(sched[1]!.principal).toBe(1_000_000); // single repayment clears the balance
+    expect(sched[1]!.remaining).toBe(0);
+    expect(sched[1]!.payment).toBe(sched[1]!.principal + sched[1]!.interest);
+  });
 });
 
 describe('interestSchedule', () => {
@@ -451,6 +476,21 @@ describe('scenarioRunways', () => {
     if (r.optimistic.shortfallMonth !== null && r.pessimistic.shortfallMonth !== null) {
       expect(r.optimistic.shortfallMonth >= r.pessimistic.shortfallMonth).toBe(true);
     }
+  });
+
+  it('excludes pipeline repayment so a pipeline loan adds no repayment outflow', () => {
+    // a pipeline (applied) loan with repayment terms: scenarios weight only the
+    // inflow and must NOT introduce repayment cash-out (design contract).
+    const pipelineLoan: FundingItem[] = [
+      { id: 'pl', kind: 'jfc', name: '申請中融資', amount: 6_000_000, status: 'applied', month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02' } },
+    ];
+    const r = scenarioRunways(pipelineLoan, { openingBalance: 0 });
+    // every month-end balance is non-decreasing (only weighted inflow, no repayment)
+    for (const row of r.expected.rows) {
+      expect(row.netCashflow).toBeGreaterThanOrEqual(0);
+    }
+    // expected balance never goes negative (no repayment outflow introduced)
+    expect(r.expected.shortfallMonth).toBeNull();
   });
 });
 
