@@ -7,15 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
-## 現状サマリ (45 services)
+## 現状サマリ (59 services)
 
 | 区分 | サービス |
 |---|---|
-| 🌟 featured (6) | home / business / teamradar / templates / library / settings |
+| 🌟 featured (9) | home / business / teamradar / templates / library / settings / sales (売上集計) / team (チーム管理) / overview (経営サマリー) |
 | 🔧 tools (13) | skills / security / cloudflare / emotions / ollama / kpi / stocks / uber-eats / demae-can / real-estate / mutual-funds / quality / storage |
-| 🔗 integrations (26) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) |
+| 🔗 integrations (37) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ |
 
-**品質メトリクス:** 1193 静的 / 1242 実行時 tests passing · Stryker mutation **100.00%** · typecheck / ESLint clean · verify:all green (45 service tests + 171 file:line refs + 6 metrics + 4 cross-doc facts) · standalone HTML 440 KB
+**品質メトリクス:** 1389 静的 / 1438 実行時 tests passing · typecheck / ESLint clean · verify:all green (59 service tests + file:line refs + metrics + cross-doc facts) · standalone HTML 525 KB
 
 ## 確立されたパターン
 
