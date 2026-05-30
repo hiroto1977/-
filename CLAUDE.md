@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **45 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **59 services** through a unified,
 category-grouped sidebar (おすすめ / 分析・ツール / 外部サービス連携). Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
@@ -22,7 +22,7 @@ professional integrations (税理士 / 社労士 / 弁護士 / 司法書士 / �
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (~376 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (~510 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -37,7 +37,7 @@ npm run build:web        # → dist/standalone.html (browser build; runs inline-
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
-npm test                 # vitest run (~1190 tests under src/**/__tests__/)
+npm test                 # vitest run (~1460 tests under src/**/__tests__/)
 npm run test:watch       # vitest watch mode
 npm run lint             # eslint . (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
