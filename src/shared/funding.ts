@@ -127,10 +127,17 @@ export interface FundingItem {
 export interface RepaymentTerms {
   /** 年利 (0..1)。例: 0.02 = 年2%。0 で無利息。 */
   readonly annualRate: number;
-  /** 返済回数 (月数)。1 以上。 */
+  /** 返済回数 (月数)。1 以上。元金均等返済の回数 (据置期間は含まない)。 */
   readonly months: number;
   /** 返済開始の年月 (YYYY-MM)。据置期間がある場合は入金月より後を指定。 */
   readonly startMonth: string;
+  /**
+   * 据置期間 (月数, 任意)。日本政策金融公庫等でよくある「据置期間中は
+   * 利息のみ支払い、その後元金を `months` 回で元利均等返済」を表す。
+   * 据置中は元金返済 0・利息のみのキャッシュアウトとなる。既定 0 (据置なし)。
+   * 据置は `startMonth` から始まり、元金返済はその後に開始する。
+   */
+  readonly gracePeriodMonths?: number;
 }
 
 // --- 集計結果 ----------------------------------------------------------
@@ -301,18 +308,30 @@ export interface AmortizationEntry {
  *
  * 各回: 利息 = 残高 × 月利、元金 = 返済額 − 利息。最終回は端数を残高に
  * 合わせて調整し、残高がちょうど 0 になるようにする。
+ *
+ * @param gracePeriodMonths 据置期間 (月数, 任意)。据置中は元金 0・利息のみの
+ *   キャッシュアウトとなり、`startMonth` から据置期間が始まる。元金返済は
+ *   据置終了後に `months` 回で行う。
  */
 export function amortizationSchedule(
   principal: number,
   annualRate: number,
   months: number,
   startMonth: string,
+  gracePeriodMonths = 0,
 ): AmortizationEntry[] {
   const pay = monthlyPayment(principal, annualRate, months);
   if (pay <= 0) return [];
   const i = annualRate / 12 > 0 ? annualRate / 12 : 0;
+  const grace = gracePeriodMonths > 0 ? Math.floor(gracePeriodMonths) : 0;
   const out: AmortizationEntry[] = [];
   let remaining = principal;
+  // 据置期間: 元金は減らず、利息のみ支払う。
+  for (let g = 0; g < grace; g++) {
+    const interest = Math.round(remaining * i);
+    out.push({ month: addMonths(startMonth, g), payment: interest, principal: 0, interest, remaining });
+  }
+  // 元金返済期間: 据置終了後に元利均等で完済する。
   for (let k = 0; k < months; k++) {
     const interest = Math.round(remaining * i);
     // 最終回は残高を完済しきるよう元金を残高に合わせる。
@@ -321,7 +340,7 @@ export function amortizationSchedule(
     if (principalPart > remaining) principalPart = remaining;
     const payment = principalPart + interest;
     remaining = Math.max(0, remaining - principalPart);
-    out.push({ month: addMonths(startMonth, k), payment, principal: principalPart, interest, remaining });
+    out.push({ month: addMonths(startMonth, grace + k), payment, principal: principalPart, interest, remaining });
   }
   return out;
 }
@@ -335,8 +354,8 @@ export function repaymentSchedule(items: readonly FundingItem[]): Map<string, nu
   for (const it of items) {
     if (!it.repayable || !it.repayment) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth)) {
+    const { annualRate, months, startMonth, gracePeriodMonths } = it.repayment;
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths)) {
       out.set(e.month, (out.get(e.month) ?? 0) + e.payment);
     }
   }
@@ -352,8 +371,8 @@ export function interestSchedule(items: readonly FundingItem[]): Map<string, num
   for (const it of items) {
     if (!it.repayable || !it.repayment) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth)) {
+    const { annualRate, months, startMonth, gracePeriodMonths } = it.repayment;
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths)) {
       if (e.interest > 0) out.set(e.month, (out.get(e.month) ?? 0) + e.interest);
     }
   }

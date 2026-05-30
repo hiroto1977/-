@@ -197,6 +197,34 @@ describe('amortizationSchedule', () => {
     const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01');
     expect(sched[0]!.interest).toBeGreaterThan(sched[11]!.interest);
   });
+
+  it('adds interest-only entries during the grace period (元金据置)', () => {
+    // 3-month grace + 12-month amortization
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3);
+    expect(sched).toHaveLength(15); // 3 grace + 12 repayment
+    // grace months: principal 0, interest only on full balance
+    for (let g = 0; g < 3; g++) {
+      expect(sched[g]!.principal).toBe(0);
+      expect(sched[g]!.interest).toBe(Math.round(1_200_000 * (0.024 / 12)));
+      expect(sched[g]!.remaining).toBe(1_200_000); // balance unchanged
+    }
+    // principal repayment starts after the grace period
+    expect(sched[3]!.month).toBe('2026-04');
+    expect(sched[3]!.principal).toBeGreaterThan(0);
+    // still fully amortized at the end
+    expect(sched[14]!.remaining).toBe(0);
+    const totalPrincipal = sched.reduce((s, e) => s + e.principal, 0);
+    expect(totalPrincipal).toBe(1_200_000);
+  });
+
+  it('grace period for a 0% loan is interest-free and defers principal', () => {
+    const sched = amortizationSchedule(1_200_000, 0, 12, '2026-01', 2);
+    expect(sched).toHaveLength(14);
+    expect(sched[0]!.interest).toBe(0);
+    expect(sched[0]!.payment).toBe(0); // no interest, no principal during grace
+    expect(sched[2]!.principal).toBe(100_000); // principal starts after grace
+    expect(sched[13]!.remaining).toBe(0);
+  });
 });
 
 describe('interestSchedule', () => {
@@ -244,6 +272,19 @@ describe('repaymentSchedule', () => {
     const sched = repaymentSchedule([loan, loan2]);
     // both pay in 2026-02: 100,000 + 50,000
     expect(sched.get('2026-02')).toBe(150_000);
+  });
+
+  it('reflects a grace period: interest-only payments before principal repayment', () => {
+    const graceLoan: FundingItem = {
+      id: 'lg', kind: 'jfc', name: '公庫 据置', amount: 1_200_000, status: 'received',
+      month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02', gracePeriodMonths: 3 },
+    };
+    const sched = repaymentSchedule([graceLoan]);
+    // 3 grace + 12 repayment = 15 months
+    expect(sched.size).toBe(15);
+    // grace months pay interest only (2,400), principal months pay more
+    expect(sched.get('2026-02')).toBe(2_400); // grace: interest only
+    expect(sched.get('2026-05')!).toBeGreaterThan(2_400); // principal repayment begins
   });
 });
 

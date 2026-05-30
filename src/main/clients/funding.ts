@@ -34,7 +34,7 @@ const MOCK_ITEMS: FundingItem[] = [
   { id: 'f-career', kind: 'grant', name: 'キャリアアップ助成金', amount: 1_140_000, status: 'received', month: '2026-04', repayable: false },
   { id: 'f-koyou', kind: 'grant', name: '雇用調整助成金', amount: 800_000, status: 'planned', month: '2026-09', repayable: false },
   { id: 'f-bank', kind: 'loan', name: '民間金融機関 運転資金融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true, repayment: { annualRate: 0.022, months: 60, startMonth: '2026-03' } },
-  { id: 'f-jfc-startup', kind: 'jfc', name: '公庫 新規開業資金', amount: 6_000_000, status: 'approved', month: '2026-05', repayable: true, repayment: { annualRate: 0.012, months: 84, startMonth: '2026-11' } },
+  { id: 'f-jfc-startup', kind: 'jfc', name: '公庫 新規開業資金 (据置6か月)', amount: 6_000_000, status: 'approved', month: '2026-05', repayable: true, repayment: { annualRate: 0.012, months: 84, startMonth: '2026-06', gracePeriodMonths: 6 } },
   { id: 'f-jfc-safety', kind: 'jfc', name: '公庫 セーフティネット貸付', amount: 3_000_000, status: 'applied', month: '2026-07', repayable: true },
   { id: 'f-benefit', kind: 'benefit', name: '事業復活支援金', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false },
   { id: 'f-cf1', kind: 'crowdfunding', name: '購入型クラウドファンディング', amount: 2_400_000, status: 'received', month: '2026-03', repayable: false },
