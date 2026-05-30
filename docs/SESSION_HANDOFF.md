@@ -148,11 +148,29 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 ✅ c913321: **退職所得** (分離課税) を taxRetirement.ts に実装 (退職所得控除/1/2課税/
    2022年改正の短期退職手当等/障害退職、TaxPage セクション④)。
 
+✅ 3023347: **一時所得** (総合課税) を taxCasual.ts に実装 (収入−経費−特別控除50万 ×1/2、
+   TaxPage セクション⑤)。算入額のみ算出し他の所得と合算する設計。
+
 残り (要設計判断・スコープ大):
-- **一時所得・譲渡所得 (申告分離)** (給与+配当+退職に特化中。一時所得は1/2総合課税、
-  譲渡は分離15-20%で別計算。着手前に方針確認を推奨)。
+- **譲渡所得 (申告分離)** (短期/長期で15-20%、3,000万特別控除。一時所得は実装済)。
 - 社会保険料の **標準報酬月額テーブル** 化 (概算セクション② のみ。③は実額入力で回避済で優先度低)。
-- 住民税の自治体差 (均等割の超過課税・調整控除の地域差等)。実用上は標準額で十分。
+- 住民税の自治体差・**森林環境税1,000円 (2024年〜)** の均等割上乗せ。
+- ふるさと納税の **ワンストップ特例** 判定 (5自治体まで等)。
+
+### 🟢 資金調達レーダー (funding) — 精度向上の積み上げ
+新サービス `funding` (62件目)。集計は src/shared/funding.ts の純粋関数に集約。実装済の精度向上:
+1. 課税区分 (補助金/助成金/給付金/購入型CF=課税、融資/公庫=非課税) + 税引後手残り
+2. 圧縮記帳の課税繰延 (compressedEntry)
+3. 月次の税引後CF (fundingAfterTax)
+4. 元利均等返済スケジュール・純資金繰り (repaymentSchedule, netCashflow)
+5. 累計キャッシュ残高・ランウェイ警告 (cashRunway, shortfallMonth)
+6. 元金・利息内訳と利息の節税効果 (amortizationSchedule, interestTaxShield)
+7. 据置期間・利息のみ返済 (gracePeriodMonths)
+8. 採択確率による期待値シナリオ (defaultProbability, expectedScenario)
+9. 元金均等返済 (RepaymentMethod 'equal-principal')
+10. 3シナリオ累計残高レンジ (scenarioRunways: 楽観/期待/悲観)
+不変条件テスト済: amortizationの元金合計=元本/remaining=0/payment=principal+interest、
+optimistic≥expected≥pessimistic。残り候補: 消費税・特定収入、据置中の複利計上選択、譲渡所得連携。
 
 ### ⛔ 試行して撤退した案 (再挑戦は慎重に)
 - **business.ts の責務分割** — kpi/advisor/export の 3 モジュール + バレル化を実装し
