@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { serializeBackup, parseBackup, sha256Hex, BACKUP_VERSION } from '../backup';
+import {
+  serializeBackup,
+  parseBackup,
+  sha256Hex,
+  BACKUP_VERSION,
+  serializeEncryptedBackup,
+  isEncryptedBackup,
+} from '../backup';
 import type { StoredRecord } from '../store';
 
 const RECORDS: StoredRecord[] = [
@@ -66,5 +73,29 @@ describe('parseBackup', () => {
   it('accepts a legacy backup without a checksum', async () => {
     const legacy = JSON.stringify({ app: 'service-hub', version: 1, records: RECORDS });
     expect(await parseBackup(legacy)).toEqual(RECORDS);
+  });
+});
+
+describe('encrypted backup', () => {
+  it('round-trips serialize(encrypted) → parse with the passphrase', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    expect(isEncryptedBackup(enc)).toBe(true);
+    // ciphertext must not leak plaintext record content
+    expect(enc).not.toContain('sales');
+    expect(await parseBackup(enc, 'pw-123')).toEqual(RECORDS);
+  });
+
+  it('requires a password to restore an encrypted backup', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    await expect(parseBackup(enc)).rejects.toThrow(/パスワードが必要/);
+  });
+
+  it('rejects a wrong passphrase', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    await expect(parseBackup(enc, 'nope')).rejects.toThrow(/復号に失敗/);
+  });
+
+  it('isEncryptedBackup is false for a plaintext backup', async () => {
+    expect(isEncryptedBackup(await serializeBackup(RECORDS))).toBe(false);
   });
 });

@@ -37,6 +37,10 @@
 3. **Shopify コネクタのエラー時トークン秘匿** — `clients/shopify.ts` の `postExpectOk` に `redactSecrets`
    を適用。連携先(Discord webhook 等)が応答にトークンを反射してもエラー経由で漏れない(漏洩対策)。
 4. **`redactSecrets` の Atlassian トークン対応** — `ATATT…` 形式を秘匿対象に追加。
+5. **暗号化バックアップ (AES-GCM-256)** — `security/dataCrypto.ts` + `data/backup.ts`。
+   パスフレーズ指定でバックアップ全体を PBKDF2-SHA256(21万回)→ AES-GCM で封緘
+   (漏洩対策: バックアップファイルは最も持ち出されやすい流出経路)。誤パスワード・
+   改ざんは GCM 認証で復号失敗となる。SHA-256 完全性と二層で保護。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 

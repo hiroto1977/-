@@ -1,16 +1,18 @@
 import { useRef, useState } from 'react';
 import { getRecordStore } from '../data/store';
-import { serializeBackup, parseBackup } from '../data/backup';
+import { serializeBackup, serializeEncryptedBackup, parseBackup, isEncryptedBackup } from '../data/backup';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
  * members, …) as a single JSON file. For device migration / disaster
- * recovery. Lives in Settings.
+ * recovery. Optionally passphrase-encrypted (AES-GCM) for confidentiality;
+ * always SHA-256 integrity-checked. Lives in Settings.
  */
 export function BackupPanel() {
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
   const [replace, setReplace] = useState(false);
+  const [passphrase, setPassphrase] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function onBackup() {
@@ -18,14 +20,19 @@ export function BackupPanel() {
     setMsg(undefined);
     try {
       const records = await getRecordStore().exportAll();
-      const blob = new Blob([await serializeBackup(records)], { type: 'application/json' });
+      const encrypted = passphrase.length > 0;
+      const text = encrypted
+        ? await serializeEncryptedBackup(records, passphrase)
+        : await serializeBackup(records);
+      const blob = new Blob([text], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `service-hub-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      const suffix = encrypted ? '-encrypted' : '';
+      a.download = `service-hub-backup-${new Date().toISOString().slice(0, 10)}${suffix}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setMsg(`${records.length} 件のレコードをバックアップしました`);
+      setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : ''}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'バックアップに失敗しました');
     }
@@ -40,7 +47,18 @@ export function BackupPanel() {
       return;
     }
     try {
-      const records = await parseBackup(await file.text());
+      const text = await file.text();
+      let pw: string | undefined;
+      if (isEncryptedBackup(text)) {
+        // 暗号化バックアップ: パスフレーズ欄、無ければプロンプトで取得。
+        pw = passphrase || window.prompt('暗号化バックアップのパスワードを入力してください') || '';
+        if (!pw) {
+          setErr('パスワードが入力されませんでした');
+          if (fileRef.current) fileRef.current.value = '';
+          return;
+        }
+      }
+      const records = await parseBackup(text, pw);
       const n = await getRecordStore().importAll(records, { replace });
       setMsg(`${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。再読み込みで反映されます。`);
     } catch (e) {
@@ -55,7 +73,28 @@ export function BackupPanel() {
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8, lineHeight: 1.6 }}>
         売上・KPI 実績・チームメンバーなど、この端末に保存された業務データ全体を JSON
         ファイルとして書き出し / 取り込みます。端末移行や災害復旧にご利用ください。
-        （暗号化された API キーは含まれません）
+        SHA-256 で改ざん検知、パスワード指定で AES-GCM 暗号化します。
+        （API キーは Vault 管理のため含まれません）
+      </div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
+        <input
+          type="password"
+          value={passphrase}
+          placeholder="暗号化パスワード（任意）"
+          onChange={(e) => setPassphrase(e.target.value)}
+          style={{
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: 6,
+            color: 'var(--text)',
+            padding: '6px 8px',
+            fontSize: 13,
+            width: 220,
+          }}
+        />
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          入力すると書き出し時に暗号化 / 復元時に使用
+        </span>
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <button type="button" onClick={onBackup}>バックアップを書き出す</button>
