@@ -14,6 +14,17 @@ function yen(n: number): number {
   return Math.round(n);
 }
 
+/**
+ * 課税される所得金額の 1,000 円未満を切り捨てる (国税庁の所得税額計算の前処理)。
+ * 速算表は「1,000 円未満切捨て後の課税所得」に税率を適用する前提のため、
+ * `calcBaseIncomeTax` でこの端数処理を行う。負値・端数なしはそのまま 0 / 据置。
+ * 例: 1,999,999 → 1,999,000 / 2,000,000 → 2,000,000。
+ */
+export function floorTaxableThousand(taxableIncome: number): number {
+  if (taxableIncome <= 0) return 0;
+  return Math.floor(taxableIncome / 1_000) * 1_000;
+}
+
 // --- 所得税 (速算表ベース、2024 年度) -----------------------------------
 
 /** 所得税の速算表ブラケット (課税所得の上限・税率・控除額)。 */
@@ -51,14 +62,19 @@ export function calcIncomeTax(taxableIncome: number): number {
  * 税額控除 (住宅ローン控除・配当控除等) は復興特別所得税の計算より **前** に
  * この基準所得税額から差し引く (確定申告書 B の (41)〜(44) の流れ)。その後に
  * 残額へ 2.1% を乗じるのが正しい順序。`calcFinalIncomeTax` を参照。
+ *
+ * 課税される所得金額は速算表の適用前に **1,000 円未満を切り捨てる**
+ * (`floorTaxableThousand`)。国税庁の所得税額の計算手順に準拠。
  */
 export function calcBaseIncomeTax(taxableIncome: number): number {
   // Stryker disable next-line ConditionalExpression
   if (taxableIncome <= 0) return 0;
+  // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
+  const floored = floorTaxableThousand(taxableIncome);
   // Stryker disable next-line ConditionalExpression,EqualityOperator
-  const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
+  const bracket = INCOME_TAX_BRACKETS.find((b) => floored <= b.upTo);
   // Infinity 上限ブラケットが必ず最後に存在するため bracket は常に定義される。
-  return Math.max(0, taxableIncome * bracket!.rate - bracket!.deduction);
+  return Math.max(0, floored * bracket!.rate - bracket!.deduction);
 }
 
 /**

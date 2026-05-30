@@ -13,6 +13,7 @@ import {
   calcFurusatoResidentCredit,
   calcBaseIncomeTax,
   calcFinalIncomeTax,
+  floorTaxableThousand,
   calcResidentAdjustmentCredit,
   residentTaxExemption,
   marginalIncomeTaxRate,
