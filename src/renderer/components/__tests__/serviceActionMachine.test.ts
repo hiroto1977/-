@@ -104,4 +104,13 @@ describe('actionReducer', () => {
     expect(feedbackText(s)).toBeNull();
     expect(adviceResult(s)).toEqual(advice);
   });
+
+  it('phase selectors are false outside their matching phase', () => {
+    expect(isRecording(INITIAL_ACTION_STATE)).toBe(false);
+    expect(isAdvising(INITIAL_ACTION_STATE)).toBe(false);
+    const advising = actionReducer(INITIAL_ACTION_STATE, { type: 'advise/start' });
+    expect(isRecording(advising)).toBe(false);
+    const recording = actionReducer(INITIAL_ACTION_STATE, { type: 'record/start' });
+    expect(isAdvising(recording)).toBe(false);
+  });
 });

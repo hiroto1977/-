@@ -66,6 +66,17 @@ describe('parseAmountInput', () => {
     expect(parseAmountInput('1..2')).toEqual({ ok: false });
     expect(parseAmountInput('.5')).toEqual({ ok: false });
   });
+
+  it('accepts a valid decimal but rejects a trailing dot (decimal group anchors)', () => {
+    expect(parseAmountInput('12.50')).toEqual({ ok: true, value: 12.5 });
+    expect(parseAmountInput('12.')).toEqual({ ok: false });
+    expect(parseAmountInput('12.5x')).toEqual({ ok: false });
+  });
+
+  it('rejects an over-large integer that overflows Number to Infinity', () => {
+    // 数字だけなので regex は通るが Number() が Infinity になる → finite ガードで弾く。
+    expect(parseAmountInput('9'.repeat(400))).toEqual({ ok: false });
+  });
 });
 
 describe('sanitizeNote', () => {
@@ -86,7 +97,9 @@ describe('sanitizeNote', () => {
 
   it('treats the control-char boundary precisely', () => {
     expect(sanitizeNote(String.fromCharCode(0x08))).toBe(''); // BS removed
-    expect(sanitizeNote(`a\tb`)).toBe('a\tb'); // TAB kept mid-string
+    expect(sanitizeNote(`a\tb`)).toBe('a\tb'); // TAB (0x09) kept mid-string
+    expect(sanitizeNote(`a\nb`)).toBe('a\nb'); // LF (0x0a) kept mid-string
+    expect(sanitizeNote(`a\rb`)).toBe('a\rb'); // CR (0x0d) kept mid-string
     expect(sanitizeNote(`x${String.fromCharCode(0x1f)}y`)).toBe('xy'); // US (last C0) removed
     expect(sanitizeNote('x y')).toBe('x y'); // 0x20 space kept
     expect(sanitizeNote('a~b')).toBe('a~b'); // 0x7e kept

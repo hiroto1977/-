@@ -53,8 +53,9 @@ export function actionReducer(_state: ActionState, event: ActionEvent): ActionSt
       return { phase: 'idle', result: { kind: 'advice', advice: event.advice } };
     case 'error':
       return { phase: 'idle', result: { kind: 'error', text: event.text } };
+    // Stryker disable next-line all: 網羅性チェック用の到達不能 default (型で全
+    // イベントを処理済み)。新イベント追加時に never 代入で型エラーになる安全網。
     default: {
-      // 網羅性チェック: 新イベント追加時に型エラーで気付く。
       const _exhaustive: never = event;
       return _exhaustive;
     }
