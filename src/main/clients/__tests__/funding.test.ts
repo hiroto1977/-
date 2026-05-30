@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   addMonths,
   aggregateByKind,
+  amortizationSchedule,
   barData,
   cashRunway,
   fundingKindLabel,
+  interestSchedule,
   isTaxableFunding,
   monthlyFlow,
   monthlyPayment,
@@ -163,6 +165,55 @@ describe('monthlyPayment', () => {
   });
 });
 
+describe('amortizationSchedule', () => {
+  it('splits each payment into principal + interest and fully amortizes', () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01');
+    expect(sched).toHaveLength(12);
+    // first month interest = 1,200,000 × (0.024/12) = 2,400
+    expect(sched[0]!.interest).toBe(2_400);
+    expect(sched[0]!.principal).toBe(sched[0]!.payment - sched[0]!.interest);
+    // each payment = principal + interest
+    for (const e of sched) expect(e.payment).toBe(e.principal + e.interest);
+    // final remaining is exactly 0 (fully amortized)
+    expect(sched[11]!.remaining).toBe(0);
+    // principal repaid sums to the original principal
+    const totalPrincipal = sched.reduce((s, e) => s + e.principal, 0);
+    expect(totalPrincipal).toBe(1_200_000);
+  });
+
+  it('has zero interest for a 0% loan and equal principal each month', () => {
+    const sched = amortizationSchedule(1_200_000, 0, 12, '2026-01');
+    expect(sched.every((e) => e.interest === 0)).toBe(true);
+    expect(sched[0]!.principal).toBe(100_000);
+    expect(sched[11]!.remaining).toBe(0);
+  });
+
+  it('returns empty for non-positive principal or months', () => {
+    expect(amortizationSchedule(0, 0.02, 12, '2026-01')).toEqual([]);
+    expect(amortizationSchedule(1_000_000, 0.02, 0, '2026-01')).toEqual([]);
+  });
+
+  it('interest decreases as principal is paid down', () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01');
+    expect(sched[0]!.interest).toBeGreaterThan(sched[11]!.interest);
+  });
+});
+
+describe('interestSchedule', () => {
+  it('aggregates monthly interest across secured loans only', () => {
+    const loan: FundingItem = {
+      id: 'l', kind: 'loan', name: '融資', amount: 1_200_000, status: 'received',
+      month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-01' },
+    };
+    const sched = interestSchedule([loan]);
+    // first month interest = 2,400 (from amortization)
+    expect(sched.get('2026-01')).toBe(2_400);
+    // a 0% loan contributes no interest entries
+    const free: FundingItem = { ...loan, id: 'l0', repayment: { annualRate: 0, months: 12, startMonth: '2026-01' } };
+    expect(interestSchedule([free]).size).toBe(0);
+  });
+});
+
 describe('repaymentSchedule', () => {
   const loan: FundingItem = {
     id: 'l', kind: 'loan', name: '融資', amount: 1_200_000, status: 'received',
@@ -215,11 +266,25 @@ describe('monthlyFlow with repayment', () => {
     expect(dec.repayment).toBe(100_000);
     expect(dec.netCashflow).toBe(-100_000);
   });
+
+  it('adds the interest tax shield to net cashflow for interest-bearing loans', () => {
+    const interestLoan: FundingItem = {
+      id: 'li', kind: 'loan', name: '有利息融資', amount: 1_200_000, status: 'received',
+      month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-01' },
+    };
+    const flow = monthlyFlow([interestLoan]); // default rate 0.3
+    const jan = flow.find((f) => f.month === '2026-01')!;
+    // first-month interest 2,400 → shield = round(2,400 × 0.3) = 720
+    expect(jan.interest).toBe(2_400);
+    expect(jan.interestTaxShield).toBe(720);
+    // inflow month: funding 1.2M (non-taxable) + shield 720 − repayment
+    expect(jan.netCashflow).toBe(1_200_000 - jan.repayment + 720);
+  });
 });
 
 describe('cashRunway', () => {
   function row(month: string, net: number): FundingMonthly {
-    return { month, funding: 0, fundingAfterTax: 0, repayment: 0, netCashflow: net, operatingCashflow: 0, portfolioValue: 0 };
+    return { month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0, netCashflow: net, operatingCashflow: 0, portfolioValue: 0 };
   }
 
   it('accumulates net cashflow from the opening balance', () => {

@@ -893,6 +893,8 @@ export const SNAPSHOT = {
       funding: number;
       fundingAfterTax: number;
       repayment: number;
+      interest: number;
+      interestTaxShield: number;
       netCashflow: number;
       operatingCashflow: number;
       portfolioValue: number;

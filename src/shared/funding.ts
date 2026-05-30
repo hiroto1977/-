@@ -159,9 +159,14 @@ export interface FundingMonthly {
   readonly fundingAfterTax: number;
   /** その月の融資・公庫の元利返済額 (キャッシュアウト。返済条件がなければ 0)。 */
   readonly repayment: number;
+  /** その月の支払利息 (返済額の内訳。損金算入される)。 */
+  readonly interest: number;
+  /** その月の利息による節税効果 (支払利息 × 実効税率)。 */
+  readonly interestTaxShield: number;
   /**
    * その月の純資金繰り (ネットキャッシュフロー)。
-   * `税引後手残り + 営業CF − 返済額`。資金ショートの早期把握に使う。
+   * `税引後手残り + 営業CF − 返済額 + 利息の節税効果`。資金ショートの
+   * 早期把握に使う。
    */
   readonly netCashflow: number;
   /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
@@ -279,6 +284,48 @@ export function monthlyPayment(principal: number, annualRate: number, months: nu
   return Math.round((principal * i) / (1 - factor));
 }
 
+/** 元利均等返済の 1 回分 (元金・利息の内訳)。 */
+export interface AmortizationEntry {
+  readonly month: string;
+  readonly payment: number;
+  /** 元金充当分。 */
+  readonly principal: number;
+  /** 利息分 (損金算入され節税効果を生む)。 */
+  readonly interest: number;
+  /** その回返済後の残高。 */
+  readonly remaining: number;
+}
+
+/**
+ * 元利均等返済の償却スケジュール (各回の元金・利息内訳) を返す。
+ *
+ * 各回: 利息 = 残高 × 月利、元金 = 返済額 − 利息。最終回は端数を残高に
+ * 合わせて調整し、残高がちょうど 0 になるようにする。
+ */
+export function amortizationSchedule(
+  principal: number,
+  annualRate: number,
+  months: number,
+  startMonth: string,
+): AmortizationEntry[] {
+  const pay = monthlyPayment(principal, annualRate, months);
+  if (pay <= 0) return [];
+  const i = annualRate / 12 > 0 ? annualRate / 12 : 0;
+  const out: AmortizationEntry[] = [];
+  let remaining = principal;
+  for (let k = 0; k < months; k++) {
+    const interest = Math.round(remaining * i);
+    // 最終回は残高を完済しきるよう元金を残高に合わせる。
+    const isLast = k === months - 1;
+    let principalPart = isLast ? remaining : pay - interest;
+    if (principalPart > remaining) principalPart = remaining;
+    const payment = principalPart + interest;
+    remaining = Math.max(0, remaining - principalPart);
+    out.push({ month: addMonths(startMonth, k), payment, principal: principalPart, interest, remaining });
+  }
+  return out;
+}
+
 /**
  * 融資案件の月別返済額 (キャッシュアウト) を Map<YYYY-MM, number> で返す。
  * 返済不要・返済条件なしの案件は対象外。確定 (received/approved) のみ計上。
@@ -289,11 +336,25 @@ export function repaymentSchedule(items: readonly FundingItem[]): Map<string, nu
     if (!it.repayable || !it.repayment) continue;
     if (!isSecured(it.status)) continue;
     const { annualRate, months, startMonth } = it.repayment;
-    const pay = monthlyPayment(nonNeg(it.amount), annualRate, months);
-    if (pay <= 0) continue;
-    for (let k = 0; k < months; k++) {
-      const m = addMonths(startMonth, k);
-      out.set(m, (out.get(m) ?? 0) + pay);
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth)) {
+      out.set(e.month, (out.get(e.month) ?? 0) + e.payment);
+    }
+  }
+  return out;
+}
+
+/**
+ * 融資案件の月別の支払利息を Map<YYYY-MM, number> で返す。
+ * 支払利息は損金算入されるため、月次の節税効果 (利息 × 実効税率) の算定に使う。
+ */
+export function interestSchedule(items: readonly FundingItem[]): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const it of items) {
+    if (!it.repayable || !it.repayment) continue;
+    if (!isSecured(it.status)) continue;
+    const { annualRate, months, startMonth } = it.repayment;
+    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth)) {
+      if (e.interest > 0) out.set(e.month, (out.get(e.month) ?? 0) + e.interest);
     }
   }
   return out;
@@ -320,6 +381,7 @@ export function monthlyFlow(
 ): FundingMonthly[] {
   const rate = clampRate(options.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE);
   const repayments = repaymentSchedule(items);
+  const interests = interestSchedule(items);
   const months = new Set<string>();
   for (const it of items) months.add(it.month);
   for (const m of options.accountingCashflow?.keys() ?? []) months.add(m);
@@ -338,13 +400,18 @@ export function monthlyFlow(
         .reduce((s, it) => s + nonNeg(it.amount), 0);
       const fundingAfterTax = Math.round(funding - taxable * rate);
       const repayment = repayments.get(month) ?? 0;
+      const interest = interests.get(month) ?? 0;
+      // 支払利息は損金算入され税負担を減らす (実効税率分の節税効果)。
+      const interestTaxShield = Math.round(interest * rate);
       const operatingCashflow = options.accountingCashflow?.get(month) ?? 0;
       return {
         month,
         funding,
         fundingAfterTax,
         repayment,
-        netCashflow: fundingAfterTax + operatingCashflow - repayment,
+        interest,
+        interestTaxShield,
+        netCashflow: fundingAfterTax + operatingCashflow - repayment + interestTaxShield,
         operatingCashflow,
         portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
       };

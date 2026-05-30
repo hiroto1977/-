@@ -290,6 +290,14 @@ export function FundingPage() {
     [live],
   );
 
+  const interestTotals = useMemo(
+    () => ({
+      interest: live.monthly.reduce((s, m) => s + m.interest, 0),
+      shield: live.monthly.reduce((s, m) => s + m.interestTaxShield, 0),
+    }),
+    [live],
+  );
+
   return (
     <div>
       <StatusBar
@@ -346,6 +354,12 @@ export function FundingPage() {
 
           <Section title="② 折れ線グラフ — 月次の資金フロー (税引前/税引後・会計・株式連携)">
             <LineChart data={live} />
+            {interestTotals.interest > 0 && (
+              <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                融資の支払利息 合計 {jpy(interestTotals.interest)}（損金算入）→ 概算の節税効果 約
+                {jpy(interestTotals.shield)}。純資金繰りにはこの利息の節税効果を加算しています。
+              </div>
+            )}
           </Section>
 
           <Section title="③ 円グラフ — 確定資金の種別構成比">
