@@ -18,7 +18,7 @@ export function BackupPanel() {
     setMsg(undefined);
     try {
       const records = await getRecordStore().exportAll();
-      const blob = new Blob([serializeBackup(records)], { type: 'application/json' });
+      const blob = new Blob([await serializeBackup(records)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -34,8 +34,13 @@ export function BackupPanel() {
   async function onRestore(file: File) {
     setErr(undefined);
     setMsg(undefined);
+    // 置換復元は既存データを全消去するため、誤操作によるデータ消失を防ぐ確認を挟む。
+    if (replace && !window.confirm('既存の業務データを全て削除してから復元します。よろしいですか？')) {
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
     try {
-      const records = parseBackup(await file.text());
+      const records = await parseBackup(await file.text());
       const n = await getRecordStore().importAll(records, { replace });
       setMsg(`${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。再読み込みで反映されます。`);
     } catch (e) {

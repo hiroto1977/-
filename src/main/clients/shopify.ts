@@ -1,6 +1,7 @@
 import {
   jsonFetch,
   FetchError,
+  redactSecrets,
   type ActionContext,
   type ActionMap,
   type ServiceAction,
@@ -124,7 +125,12 @@ async function postExpectOk(
   const res = await f(url, init);
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new FetchError(`${ctx.serviceId} ${res.status}: ${body.slice(0, 200)}`, res.status, ctx.serviceId);
+    // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
+    throw new FetchError(
+      `${ctx.serviceId} ${res.status}: ${redactSecrets(body.slice(0, 200))}`,
+      res.status,
+      ctx.serviceId,
+    );
   }
 }
 

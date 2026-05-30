@@ -119,6 +119,19 @@ describe('ACTIONS["sync-to-discord"]', () => {
       ACTIONS['sync-to-discord']!({ token: 's', payload: { order: ORDER, webhookUrl: 'not-a-url' } }),
     ).rejects.toThrow(/valid URL/);
   });
+
+  it('redacts secrets reflected in an error response body', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response('error: token xoxb-2222-secret rejected', { status: 401 }),
+    );
+    const err = await ACTIONS['sync-to-discord']!({
+      token: 's',
+      fetch: fetchMock,
+      payload: { order: ORDER, webhookUrl: 'https://discord.com/api/webhooks/1/abc' },
+    }).catch((e: unknown) => (e instanceof Error ? e.message : String(e)));
+    expect(err).not.toContain('xoxb-2222-secret');
+    expect(err).toContain('[REDACTED]');
+  });
 });
 
 describe('ACTIONS["sync-to-line"]', () => {

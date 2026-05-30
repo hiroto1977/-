@@ -45,6 +45,8 @@ export function redactSecrets(input: string): string {
     .replace(/Authorization:\s*Basic\s+\S+/gi, 'Authorization: Basic [REDACTED]')
     .replace(/\b(sk-ant-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]')
     .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
+    // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
+    .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
     // The value sub-pattern `(?:[^"\\]|\\.)*` correctly skips over
     // JSON-escaped characters (`\\"`, `\\\\`, etc.) so a token rendered
     // inside a nested JSON-in-JSON error response can't smuggle a
