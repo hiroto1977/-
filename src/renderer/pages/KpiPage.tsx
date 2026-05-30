@@ -273,7 +273,7 @@ function UnitBars({ units }: { units: Unit[] }) {
 const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '' };
 
 function ActualsPanel() {
-  const { records, add, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const { records, add, addMany, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
@@ -310,7 +310,8 @@ function ActualsPanel() {
 
   async function onImportCsv(file: File) {
     const { entries, errors } = kpiActualsFromCsv(await file.text());
-    for (const e of entries) await add(e);
+    // Atomic: all valid rows commit together or none (no partial import).
+    if (entries.length > 0) await addMany(entries);
     setError(
       errors.length > 0 ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})` : undefined,
     );

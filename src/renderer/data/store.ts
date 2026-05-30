@@ -36,6 +36,13 @@ export interface StoredRecord<T = Record<string, unknown>> {
 export interface RecordStore {
   /** Insert a new record into `collection`; returns the stored record. */
   insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>>;
+  /** Insert many records into `collection` in a **single transaction** —
+   *  all rows commit together or none do (atomic bulk import; no partial
+   *  writes on failure). Validates every row up front. */
+  insertMany<T extends Record<string, unknown>>(
+    collection: string,
+    rows: readonly T[],
+  ): Promise<readonly StoredRecord<T>[]>;
   /** Shallow-merge `patch` into an existing record's `data`. Returns the
    *  updated record, or null if `id` doesn't exist. */
   update<T extends Record<string, unknown>>(
@@ -144,6 +151,41 @@ class IndexedDBRecordStore implements RecordStore {
     await txDone(tx);
     db.close();
     return { id, collection, createdAt: ts, updatedAt: ts, data };
+  }
+
+  async insertMany<T extends Record<string, unknown>>(
+    collection: string,
+    rows: readonly T[],
+  ): Promise<readonly StoredRecord<T>[]> {
+    if (!isSafeCollection(collection)) throw new Error('collection が不正です');
+    // Validate ALL rows before touching the DB — reject the whole batch on a
+    // single bad row rather than importing a partial set.
+    for (const r of rows) {
+      if (!isPlainJsonObject(r)) throw new Error('data はプレーンなオブジェクトである必要があります');
+    }
+    if (rows.length === 0) return [];
+
+    // Build + encrypt every record before opening the transaction (IndexedDB
+    // transactions auto-close across awaits, so all async work happens first).
+    const built = await Promise.all(
+      rows.map(async (data) => {
+        const ts = monotonicNow();
+        const id = uuid();
+        const stored = { id, collection, createdAt: ts, updatedAt: ts, data: await this.cipher.encrypt(data) };
+        const plain: StoredRecord<T> = { id, collection, createdAt: ts, updatedAt: ts, data };
+        return { stored, plain };
+      }),
+    );
+
+    const db = await openDb();
+    const tx = db.transaction(STORE, 'readwrite');
+    const objStore = tx.objectStore(STORE);
+    for (const b of built) objStore.add(b.stored);
+    // One transaction: if any add fails the tx aborts and txDone rejects —
+    // nothing is committed (all-or-nothing).
+    await txDone(tx);
+    db.close();
+    return built.map((b) => b.plain);
   }
 
   async update<T extends Record<string, unknown>>(

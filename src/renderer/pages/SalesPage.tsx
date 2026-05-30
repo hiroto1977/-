@@ -60,7 +60,7 @@ function ChannelBar({ parts }: { parts: readonly { channel: SalesChannel; share:
 }
 
 export function SalesPage() {
-  const { records, add, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
+  const { records, add, addMany, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
   const [notice, setNotice] = useState<string>();
@@ -97,7 +97,8 @@ export function SalesPage() {
     setNotice(undefined);
     const text = await file.text();
     const { entries: parsed, errors } = salesFromCsv(text);
-    for (const e of parsed) await add(e);
+    // Atomic: all valid rows commit together or none (no partial import).
+    if (parsed.length > 0) await addMany(parsed);
     const ok = parsed.length;
     const ng = errors.length;
     if (ok === 0 && ng === 0) {

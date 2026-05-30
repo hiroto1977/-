@@ -58,6 +58,37 @@ describe('RecordStore — insert + get + list', () => {
   });
 });
 
+describe('RecordStore — insertMany (atomic bulk import)', () => {
+  it('inserts every row in one batch and returns them', async () => {
+    const store = getRecordStore();
+    const out = await store.insertMany('sales', [{ amount: 1 }, { amount: 2 }, { amount: 3 }]);
+    expect(out).toHaveLength(3);
+    expect(await store.count('sales')).toBe(3);
+    // each got a distinct id
+    expect(new Set(out.map((r) => r.id)).size).toBe(3);
+  });
+
+  it('returns [] for an empty batch without writing', async () => {
+    const store = getRecordStore();
+    expect(await store.insertMany('sales', [])).toEqual([]);
+    expect(await store.count('sales')).toBe(0);
+  });
+
+  it('rejects the WHOLE batch (no partial import) when any row is invalid', async () => {
+    const store = getRecordStore();
+    await expect(
+      store.insertMany('sales', [{ amount: 1 }, [] as unknown as Record<string, unknown>, { amount: 3 }]),
+    ).rejects.toThrow(/プレーン/);
+    // nothing committed
+    expect(await store.count('sales')).toBe(0);
+  });
+
+  it('rejects an unsafe collection without writing', async () => {
+    const store = getRecordStore();
+    await expect(store.insertMany('Bad Name', [{ a: 1 }])).rejects.toThrow(/collection/);
+  });
+});
+
 describe('RecordStore — update', () => {
   it('shallow-merges a patch and bumps updatedAt', async () => {
     const store = getRecordStore();

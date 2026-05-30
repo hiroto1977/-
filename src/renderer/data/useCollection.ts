@@ -11,6 +11,8 @@ export interface UseCollection<T extends Record<string, unknown>> {
   records: readonly StoredRecord<T>[];
   loading: boolean;
   add: (data: T) => Promise<void>;
+  /** Atomic bulk insert (all rows commit together or none). For CSV import. */
+  addMany: (rows: readonly T[]) => Promise<void>;
   edit: (id: string, patch: Partial<T>) => Promise<void>;
   remove: (id: string) => Promise<void>;
   reload: () => Promise<void>;
@@ -49,6 +51,14 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     [collection, reload],
   );
 
+  const addMany = useCallback(
+    async (rows: readonly T[]) => {
+      await getRecordStore().insertMany<T>(collection, rows);
+      await reload();
+    },
+    [collection, reload],
+  );
+
   const edit = useCallback(
     async (id: string, patch: Partial<T>) => {
       await getRecordStore().update<T>(id, patch);
@@ -65,5 +75,5 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     [reload],
   );
 
-  return { records, loading, add, edit, remove, reload };
+  return { records, loading, add, addMany, edit, remove, reload };
 }
