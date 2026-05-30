@@ -170,6 +170,8 @@ function useServiceData<T>(serviceId: ServiceId, snapshot: T): {
 | ② 額面→手取り | 額面年収・控除・扶養 | 給与所得控除→課税所得→手取り |
 | ③ 全控除込み精密試算 | 各種控除入力 | 内訳 + 最終税額 + 手取り |
 | ④ 退職所得 | 退職金・勤続年数・区分 | 控除 / 課税対象 / 税額 / 手取り |
+| ⑤ 一時所得 | 総収入・経費 | 一時所得 / 課税算入額 (×1/2) |
+| ⑥ 譲渡所得 | 収入・取得費・譲渡費用・区分 | 譲渡益 / 課税譲渡所得 / 所得税・住民税 |
 | 消費税 | 税抜金額・税率 | 税額 |
 | 節税カタログ / チェックリスト | 区分選択 | 制度一覧・確認項目 |
 | 公式ツール導線 | — | 国税庁/e-Tax/会計ソフトへ `openExternal` |
@@ -188,4 +190,4 @@ function useServiceData<T>(serviceId: ServiceId, snapshot: T): {
 | 不変条件 | `LIVE_FETCHERS` total record の起動時 assert |
 | ミューテーション | Stryker。閾値 99.8% (対象モジュール) |
 
-現状: 静的 `it()` 1649 / 実行時 1698。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。
+現状: 静的 `it()` 1658 / 実行時 1707。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。

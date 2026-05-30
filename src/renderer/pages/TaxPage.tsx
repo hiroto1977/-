@@ -36,6 +36,7 @@ import {
 } from '../../shared/taxCredits';
 import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
+import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -206,6 +207,16 @@ export function TaxPage() {
   const casual = useMemo(() => {
     return calcCasualIncome(num(casualGrossStr), num(casualExpStr));
   }, [casualGrossStr, casualExpStr]);
+
+  // --- ⑥ 譲渡所得の試算 (申告分離課税) ---
+  const [cgProceedsStr, setCgProceedsStr] = useState('50000000');
+  const [cgCostStr, setCgCostStr] = useState('30000000');
+  const [cgFeeStr, setCgFeeStr] = useState('2000000');
+  const [cgKind, setCgKind] = useState<CapitalAssetKind>('real-estate-long');
+
+  const capitalGains = useMemo(() => {
+    return calcCapitalGainsTax(num(cgProceedsStr), num(cgCostStr), num(cgFeeStr), cgKind);
+  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -455,6 +466,48 @@ export function TaxPage() {
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           特別控除 {jpy(casual.specialDeduction)} (最高50万円)。算入額を ① の課税所得に足して総合課税で試算してください。
+        </div>
+      </Section>
+
+      <Section title="⑥ 譲渡所得の試算 (申告分離課税)" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          土地・建物・株式などの売却益は、給与等と分離して課税されます。
+          <strong>譲渡益 = 収入 − 取得費 − 譲渡費用</strong>。所有期間 (5年) で短期/長期の税率が変わり、
+          居住用財産は3,000万円特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
+          ※ 概算取得費・買換特例・損益通算・繰越控除は未対応です。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            譲渡収入 (円)
+            <input type="text" inputMode="decimal" value={cgProceedsStr} onChange={(e) => setCgProceedsStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            取得費 (円)
+            <input type="text" inputMode="decimal" value={cgCostStr} onChange={(e) => setCgCostStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            譲渡費用 (円)
+            <input type="text" inputMode="decimal" value={cgFeeStr} onChange={(e) => setCgFeeStr(e.target.value)} style={{ ...inputStyle, width: 130 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            資産区分
+            <select value={cgKind} onChange={(e) => setCgKind(e.target.value as CapitalAssetKind)} style={{ ...inputStyle, width: 220 }}>
+              <option value="real-estate-long">土地建物・長期 (5年超 15%+5%)</option>
+              <option value="real-estate-short">土地建物・短期 (5年以下 30%+9%)</option>
+              <option value="residential">居住用財産 (3,000万控除+軽減税率)</option>
+              <option value="listed-stock">上場株式等 (20.315%)</option>
+            </select>
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="所得税 (譲渡所得)" value={jpy(capitalGains.incomeTax)} />
+          <Stat label="住民税 (譲渡所得)" value={jpy(capitalGains.residentTax)} />
+          <Stat label="税額合計" value={jpy(capitalGains.totalTax)} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          譲渡益 {jpy(capitalGains.gain)}
+          {capitalGains.specialDeduction > 0 && <> / 特別控除 {jpy(capitalGains.specialDeduction)}</>}
+          {' '}/ 課税譲渡所得 {jpy(capitalGains.taxableGain)} / 売却代金からの手取り {jpy(capitalGains.takeHome)}。
         </div>
       </Section>
 
