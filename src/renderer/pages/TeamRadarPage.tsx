@@ -11,13 +11,22 @@ interface TeamMember {
   notes?: Record<number, string>;
 }
 
+/** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
+ *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
+interface ReadonlyTeamMember {
+  readonly id: string;
+  readonly name: string;
+  readonly scores: readonly number[];
+  readonly notes?: Readonly<Record<number, string>>;
+}
+
 interface TeamRadarSnapshot {
-  department: string;
-  evaluatedAt: string;
-  axes: readonly string[];
-  members: TeamMember[];
-  fetchedAt: string;
-  isMock: boolean;
+  readonly department: string;
+  readonly evaluatedAt: string;
+  readonly axes: readonly string[];
+  readonly members: readonly ReadonlyTeamMember[];
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -138,7 +147,7 @@ function uniqueId(name: string, existing: string[]): string {
 export function TeamRadarPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
-    SNAPSHOT.teamradar as unknown as TeamRadarSnapshot,
+    SNAPSHOT.teamradar,
   );
 
   const [department, setDepartment] = useState(data.department);

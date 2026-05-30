@@ -22,40 +22,40 @@ interface BusinessAdvisorResponse {
 }
 
 interface CategoryKpi {
-  revenue: number;
-  variableCost: number;
-  fixedCost: number;
-  totalCost: number;
-  profit: number;
-  profitMargin: number;
-  traffic: number;
-  conversion: number;
-  conversionRatePct: number;
-  aov: number;
-  roas: number;
-  contentOutput: number;
+  readonly revenue: number;
+  readonly variableCost: number;
+  readonly fixedCost: number;
+  readonly totalCost: number;
+  readonly profit: number;
+  readonly profitMargin: number;
+  readonly traffic: number;
+  readonly conversion: number;
+  readonly conversionRatePct: number;
+  readonly aov: number;
+  readonly roas: number;
+  readonly contentOutput: number;
 }
 
 interface BusinessUnit {
-  id: string;
-  label: string;
-  description: string;
-  trafficKind: 'session' | 'view' | 'impression' | 'order' | 'project';
-  current: CategoryKpi;
-  history: CategoryKpi[];
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+  readonly trafficKind: 'session' | 'view' | 'impression' | 'order' | 'project';
+  readonly current: CategoryKpi;
+  readonly history: readonly CategoryKpi[];
 }
 
 interface BusinessSnapshot {
-  units: BusinessUnit[];
-  aggregate: {
-    revenue: number;
-    totalCost: number;
-    profit: number;
-    profitMargin: number;
-    contentOutput: number;
+  readonly units: readonly BusinessUnit[];
+  readonly aggregate: {
+    readonly revenue: number;
+    readonly totalCost: number;
+    readonly profit: number;
+    readonly profitMargin: number;
+    readonly contentOutput: number;
   };
-  fetchedAt: string;
-  isMock: boolean;
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const yen = new Intl.NumberFormat('ja-JP', {
@@ -249,7 +249,7 @@ function Sideboard({
   onSelect,
   aggregateRevenue,
 }: {
-  units: BusinessUnit[];
+  units: readonly BusinessUnit[];
   selected: string | 'all';
   onSelect: (id: string | 'all') => void;
   aggregateRevenue: number;
@@ -497,7 +497,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
 export function BusinessPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<BusinessSnapshot>(
     'business',
-    SNAPSHOT.business as unknown as BusinessSnapshot,
+    SNAPSHOT.business,
   );
 
   const [sortKey, setSortKey] = useState<'revenue' | 'profit' | 'margin'>('revenue');

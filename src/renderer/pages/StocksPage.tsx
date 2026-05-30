@@ -142,7 +142,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 export function StocksPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<StocksSnapshot>(
     'stocks',
-    SNAPSHOT.stocks as unknown as StocksSnapshot,
+    SNAPSHOT.stocks,
   );
 
   const portfolio = data.portfolio;

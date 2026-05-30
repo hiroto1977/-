@@ -280,7 +280,7 @@ function ActionCard({ action }: { action: QuickAction }) {
 }
 
 export function HomePage() {
-  const { data } = useServiceData<HomeSnapshot>('home', SNAPSHOT.home as unknown as HomeSnapshot);
+  const { data } = useServiceData<HomeSnapshot>('home', SNAPSHOT.home);
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
