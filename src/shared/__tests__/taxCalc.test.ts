@@ -20,6 +20,9 @@ import {
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
+  RESIDENT_PER_CAPITA_BASE,
+  FOREST_ENVIRONMENT_TAX,
+  residentPerCapitaBreakdown,
   suggestTaxTips,
   schemesForEntity,
   taxSchemeCatalog,
@@ -72,6 +75,41 @@ describe('calcResidentTax', () => {
     expect(calcResidentTax(3_000_999)).toBe(calcResidentTax(3_000_000));
     // 1,234,567 → 1,234,000 × 10% = 123,400 + 均等割。
     expect(calcResidentTax(1_234_567)).toBe(123_400 + RESIDENT_TAX_PER_CAPITA);
+  });
+});
+
+describe('residentPerCapitaBreakdown (均等割 + 森林環境税の年度別内訳)', () => {
+  it('2024年度以降: 基礎4,000 + 森林環境税1,000 = 5,000 (復興特別なし)', () => {
+    const b = residentPerCapitaBreakdown(2024);
+    expect(b.base).toBe(4_000);
+    expect(b.reconstruction).toBe(0);
+    expect(b.forestTax).toBe(1_000);
+    expect(b.total).toBe(5_000);
+  });
+
+  it('2014-2023年度: 基礎4,000 + 復興特別1,000 = 5,000 (森林環境税なし)', () => {
+    const b = residentPerCapitaBreakdown(2023);
+    expect(b.reconstruction).toBe(1_000);
+    expect(b.forestTax).toBe(0);
+    expect(b.total).toBe(5_000);
+    expect(residentPerCapitaBreakdown(2014).reconstruction).toBe(1_000);
+  });
+
+  it('keeps the total at 5,000 across the 2023→2024 swap (no double counting)', () => {
+    expect(residentPerCapitaBreakdown(2023).total).toBe(residentPerCapitaBreakdown(2024).total);
+    expect(residentPerCapitaBreakdown(2024).total).toBe(RESIDENT_TAX_PER_CAPITA);
+  });
+
+  it('before 2014: only the base 4,000 (neither surcharge)', () => {
+    const b = residentPerCapitaBreakdown(2013);
+    expect(b.reconstruction).toBe(0);
+    expect(b.forestTax).toBe(0);
+    expect(b.total).toBe(4_000);
+  });
+
+  it('exposes the base and forest-tax constants', () => {
+    expect(RESIDENT_PER_CAPITA_BASE).toBe(4_000);
+    expect(FOREST_ENVIRONMENT_TAX).toBe(1_000);
   });
 });
 

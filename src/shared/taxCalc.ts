@@ -91,8 +91,48 @@ export function calcFinalIncomeTax(baseIncomeTax: number, incomeTaxCredits: numb
 
 /** 住民税の所得割率 (市町村 6% + 都道府県 4% の標準)。 */
 export const RESIDENT_TAX_RATE = 0.1;
-/** 住民税の均等割 (標準額の概算、円/年)。 */
+/** 住民税の均等割 (標準額の概算、円/年)。
+ *  基礎分 4,000 円 + 上乗せ 1,000 円 (2014-2023は復興特別、2024〜は森林環境税)。
+ *  どちらの年度でも総額 5,000 円で変わらない (`residentPerCapitaBreakdown` 参照)。 */
 export const RESIDENT_TAX_PER_CAPITA = 5_000;
+
+/** 住民税均等割の基礎分 (道府県民税1,000 + 市町村民税3,000、円/年)。 */
+export const RESIDENT_PER_CAPITA_BASE = 4_000;
+/** 森林環境税 (国税。2024年度〜、均等割と併せて徴収、円/年)。 */
+export const FOREST_ENVIRONMENT_TAX = 1_000;
+
+export interface ResidentPerCapitaBreakdown {
+  /** 均等割の基礎分 (4,000 円)。 */
+  readonly base: number;
+  /** 復興特別の均等割上乗せ (2014-2023 のみ 1,000 円、以外 0)。 */
+  readonly reconstruction: number;
+  /** 森林環境税 (2024年度〜 1,000 円、以前 0)。 */
+  readonly forestTax: number;
+  /** 納税者が負担する総額 (= base + reconstruction + forestTax)。 */
+  readonly total: number;
+}
+
+/**
+ * 住民税均等割 (+森林環境税) の内訳を年度別に分解する。
+ *
+ * 2014-2023年度: 基礎4,000 + 復興特別1,000 = 5,000円。
+ * 2024年度以降: 基礎4,000 + 森林環境税1,000 = 5,000円。
+ * 復興特別の上乗せが終了し、入れ替わりに森林環境税が始まったため、**総額は
+ * いずれも5,000円で変わらない** (国税庁/総務省)。単純な加算は二重計上になる。
+ *
+ * @param taxYear 課税年度 (例: 2024)
+ */
+export function residentPerCapitaBreakdown(taxYear: number): ResidentPerCapitaBreakdown {
+  const forestTax = taxYear >= 2024 ? FOREST_ENVIRONMENT_TAX : 0;
+  // 復興特別の均等割上乗せは 2014-2023 年度に限る。
+  const reconstruction = taxYear >= 2014 && taxYear <= 2023 ? 1_000 : 0;
+  return {
+    base: RESIDENT_PER_CAPITA_BASE,
+    reconstruction,
+    forestTax,
+    total: RESIDENT_PER_CAPITA_BASE + reconstruction + forestTax,
+  };
+}
 
 /** 課税所得から住民税額を概算する (所得割 + 均等割)。
  *  ※ 調整控除は含まない (calcResidentAdjustmentCredit を別途適用)。
