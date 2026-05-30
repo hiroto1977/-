@@ -852,6 +852,10 @@ export const SNAPSHOT = {
     items: [] as { id: string; name: string }[],
   },
 
+  tiktok: {
+    items: [] as { id: string; name: string }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   kpi: {

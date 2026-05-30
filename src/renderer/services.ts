@@ -57,6 +57,7 @@ import { TeamPage } from './pages/TeamPage';
 import { YoutubePage } from './pages/YoutubePage';
 import { OverviewPage } from './pages/OverviewPage';
 import { CoconalaPage } from './pages/CoconalaPage';
+import { TiktokPage } from './pages/TiktokPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -555,6 +556,13 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'スキルマーケットの出品・受注・評価 (snapshot)',
     page: CoconalaPage,
     category: 'integrations',
+  },
+  {
+    id: 'tiktok',
+    label: 'TikTok',
+    icon: 'TT',
+    description: 'TODO: fill in a one-line description',
+    page: TiktokPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
