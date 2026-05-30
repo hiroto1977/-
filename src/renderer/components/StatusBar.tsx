@@ -73,12 +73,12 @@ export function StatusBar({
   );
 
   const badge =
-    status === 'loading' ? { cls: 'badge', text: 'Loading…' }
-    : status === 'error' && errorKind === 'auth' ? { cls: 'badge warn', text: 'Auth error' }
-    : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'Rate limit' }
-    : status === 'error' ? { cls: 'badge warn', text: 'Error' }
-    : source === 'live' ? { cls: 'badge ok', text: 'Live' }
-    : { cls: 'badge', text: 'Snapshot' };
+    status === 'loading' ? { cls: 'badge', text: '読込中…' }
+    : status === 'error' && errorKind === 'auth' ? { cls: 'badge warn', text: '認証エラー' }
+    : status === 'error' && errorKind === 'rate_limit' ? { cls: 'badge warn', text: 'レート制限' }
+    : status === 'error' ? { cls: 'badge warn', text: 'エラー' }
+    : source === 'live' ? { cls: 'badge ok', text: 'ライブ' }
+    : { cls: 'badge', text: 'スナップショット' };
 
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
@@ -116,7 +116,7 @@ export function StatusBar({
         <span style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
-            placeholder={tokenSetup.placeholder ?? 'token'}
+            placeholder={tokenSetup.placeholder ?? 'トークン'}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             style={{

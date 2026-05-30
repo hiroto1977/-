@@ -135,7 +135,7 @@ export function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="sidebar-header">Service Hub</div>
+        <div className="sidebar-header">サービスハブ</div>
         <nav className="sidebar-nav">
           {(['featured', 'tools', 'integrations'] as const).map((cat) => {
             const items = grouped[cat];
@@ -210,7 +210,7 @@ export function App() {
               ))}
             </select>
           </label>
-          {version ? `v${version}` : 'v0.1.0'} · skeleton
+          {version ? `v${version}` : 'v0.1.0'} · 開発版
         </div>
       </aside>
       <main className="main">
