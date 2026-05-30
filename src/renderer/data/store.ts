@@ -67,9 +67,12 @@ export interface RecordStore {
    *  identity cipher (plaintext). After switching to an encrypting cipher,
    *  call `reencryptAll()` to convert existing plaintext records. */
   configureCipher(cipher: RecordCipher): void;
-  /** Re-write every record through the current cipher (plaintext → encrypted,
-   *  or vice-versa). Returns the count migrated. */
-  reencryptAll(): Promise<number>;
+  /** Re-write every record so its payload is sealed under the **current**
+   *  cipher. `from` is the cipher used to read existing payloads (defaults to
+   *  the current cipher); pass the old cipher when switching keys or turning
+   *  encryption off (decrypt with `from`, re-store under the current cipher).
+   *  Returns the count migrated. */
+  reencryptAll(from?: RecordCipher): Promise<number>;
 }
 
 // --- validation ----------------------------------------------------------
@@ -311,9 +314,12 @@ class IndexedDBRecordStore implements RecordStore {
     return valid.length;
   }
 
-  async reencryptAll(): Promise<number> {
-    // Read every record through the current cipher (plaintext passthrough or
-    // decrypt), then re-write so its payload is encrypted under the cipher.
+  async reencryptAll(from?: RecordCipher): Promise<number> {
+    // Read every record through `from` (defaults to the current cipher), then
+    // re-write its payload sealed under the current cipher. A distinct `from`
+    // lets callers switch keys or turn encryption off (decrypt with the old
+    // cipher, store under the new one).
+    const reader = from ?? this.cipher;
     const db = await openDb();
     const raw = await new Promise<StoredRecord[]>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
@@ -325,7 +331,7 @@ class IndexedDBRecordStore implements RecordStore {
 
     let migrated = 0;
     for (const rec of raw) {
-      const plain = await this.cipher.decrypt(rec.data);
+      const plain = await reader.decrypt(rec.data);
       const sealed = await this.cipher.encrypt(plain);
       const db2 = await openDb();
       const tx = db2.transaction(STORE, 'readwrite');
