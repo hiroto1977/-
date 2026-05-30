@@ -128,11 +128,20 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
   生存ミュータントを全 kill (commit e4f15a3)
 
+### ⛔ 試行して撤退した案 (再挑戦は慎重に)
+- **business.ts の責務分割** — kpi/advisor/export の 3 モジュール + バレル化を実装し
+  typecheck/全テスト(112)/lint/verify/build まで green になったが、**フル mutation
+  (`npm run mutate`) で 100% → 93.63% に低下**して撤退 (commit せず revert)。
+  render テンプレート (HTML/CSS/SVG) の StringLiteral が、モノリスでは perTest
+  coverage で kill されるのに、別ファイルに移すと Stryker の coverage 帰属が外れて
+  NoCoverage/Survived 化する。回避には装飾 render に StringLiteral disable を被せる
+  必要があり、それは「実シグナルを隠す」副作用がある。**分割の利得 (行数削減) より
+  mutation 精度の劣化が勝る**と判断。stocks.ts も同じ render-template 構造なので
+  同様のリスク大。分割するなら mutation 設計の合意が前提。
+
 ### 🟢 NIT (残・低優先)
 - PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため
   低優先 — 実 OS 統計は Phase 6 で動的化されるので、それまで据え置き)
-- Refactor 監査の中期案 (規模大・要レビュー — 独断保留中): business.ts(1107行)/stocks.ts(1959行)
-  の責務分割。テスト/Stryker 100% の再検証が必要なため、着手前に方針確認を推奨。
 - Docs 監査の追加案: lint:docs / verify:arch に HTML size の drift 検知も追加
 
 ### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
