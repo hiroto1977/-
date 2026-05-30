@@ -125,6 +125,7 @@ export function TaxPage() {
   const [dLifeOldStr, setDLifeOldStr] = useState('0');
   const [dQuakeStr, setDQuakeStr] = useState('0');
   const [dMedicalStr, setDMedicalStr] = useState('0');
+  const [dSelfMedStr, setDSelfMedStr] = useState('0');
   const [dDonationStr, setDDonationStr] = useState('0');
   const [hasSpouse, setHasSpouse] = useState(false);
   const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
@@ -164,6 +165,7 @@ export function TaxPage() {
       },
       earthquakeInsurance: num(dQuakeStr),
       medical: { paid: num(dMedicalStr), reimbursed: 0 },
+      selfMedicationPaid: num(dSelfMedStr),
       donation,
       singleParent,
     };
@@ -203,7 +205,7 @@ export function TaxPage() {
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
 
   // --- ④ 退職所得の試算 ---
   const [severanceStr, setSeveranceStr] = useState('20000000');
@@ -391,6 +393,7 @@ export function TaxPage() {
             ['一般生命保険料・旧制度 (年)', dLifeOldStr, setDLifeOldStr],
             ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
             ['医療費 (年・自己負担)', dMedicalStr, setDMedicalStr],
+            ['セルフメディケーション (年・スイッチOTC)', dSelfMedStr, setDSelfMedStr],
             ['ふるさと納税 (年)', dDonationStr, setDDonationStr],
             ['一般扶養 (人)', generalDeps, setGeneralDeps],
             ['特定扶養 19-22歳 (人)', specificDeps, setSpecificDeps],
@@ -470,7 +473,7 @@ export function TaxPage() {
           （内訳: 基礎 {jpy(precise.ded.basic.incomeTax)} / 社保 {jpy(precise.ded.socialInsurance.incomeTax)} /
           共済+iDeCo {jpy(precise.ded.smallBizMutualAid.incomeTax)} / 配偶者 {jpy(precise.ded.spouse.incomeTax)} /
           扶養 {jpy(precise.ded.dependents.incomeTax)} / 生命保険 {jpy(precise.ded.lifeInsurance.incomeTax)} /
-          地震保険 {jpy(precise.ded.earthquakeInsurance.incomeTax)} / 医療費 {jpy(precise.ded.medical.incomeTax)} /
+          地震保険 {jpy(precise.ded.earthquakeInsurance.incomeTax)} / 医療費・セルフメディケーション {jpy(precise.ded.medical.incomeTax)} (有利な方を自動採用) /
           寄附金 {jpy(precise.ded.donation.incomeTax)} / ひとり親 {jpy(precise.ded.singleParentOrWidow.incomeTax)}）<br />
           所得控除適用後の税額: 所得税 {jpy(precise.result.incomeTax)} / 住民税 {jpy(precise.result.residentTax)}
           (住民税の調整控除 {jpy(precise.result.adjustmentCredit)} / ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)} 適用済)<br />

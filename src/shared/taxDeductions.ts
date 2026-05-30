@@ -257,6 +257,40 @@ export function calcMedicalDeduction(
   return { incomeTax: deduction, residentTax: deduction };
 }
 
+/** セルフメディケーション税制の足切り (円)。 */
+export const SELF_MEDICATION_THRESHOLD = 12_000;
+/** セルフメディケーション税制の控除上限 (円)。 */
+export const SELF_MEDICATION_CAP = 88_000;
+
+/**
+ * セルフメディケーション税制 (特定一般用医薬品等購入費の特例) を計算する。
+ *
+ * スイッチOTC医薬品等の年間購入額から 12,000 円を引いた額 (上限 88,000 円) が
+ * 控除される (国税庁 No.1129)。通常の医療費控除とは選択制 (どちらか一方のみ)。
+ * 適格医薬品の判定は利用者が行う前提で、本関数は購入額のみを受け取る。
+ *
+ * @param switchOtcPaid スイッチOTC等の年間購入額 (円)
+ */
+export function calcSelfMedicationDeduction(switchOtcPaid: number): DeductionPair {
+  const paid = Math.max(0, switchOtcPaid);
+  const deduction = Math.min(SELF_MEDICATION_CAP, Math.max(0, paid - SELF_MEDICATION_THRESHOLD));
+  return { incomeTax: deduction, residentTax: deduction };
+}
+
+/**
+ * 通常の医療費控除とセルフメディケーション税制の有利な方を選ぶ (選択制)。
+ * 両者は所得税・住民税で同額のため単純な最大値比較で足りる。
+ */
+export function chooseMedicalDeductionScheme(
+  standard: DeductionPair,
+  selfMedication: DeductionPair,
+): DeductionPair {
+  return {
+    incomeTax: Math.max(standard.incomeTax, selfMedication.incomeTax),
+    residentTax: Math.max(standard.residentTax, selfMedication.residentTax),
+  };
+}
+
 // --- 寄附金控除 (ふるさと納税ベースの所得税分) ---------------------------
 //
 // 国税庁 No.1150。所得税は (寄附額 - 2,000) を所得控除 (上限 合計所得×40%)。
@@ -321,6 +355,9 @@ export interface DeductionInput {
   readonly earthquakeInsurance?: number;
   /** 医療費 (支払 / 補填)。 */
   readonly medical?: { readonly paid: number; readonly reimbursed: number };
+  /** セルフメディケーション税制のスイッチOTC等購入額 (年)。医療費控除と選択制で、
+   *  指定すると有利な方が自動採用される。 */
+  readonly selfMedicationPaid?: number;
   /** ふるさと納税等の寄附額 (年)。 */
   readonly donation?: number;
   /** 障害者控除 (本人/家族の種別配列)。 */
@@ -383,9 +420,14 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   const dependents = input.dependents ? calcDependentDeduction(input.dependents) : ZERO;
   const lifeIns = input.lifeInsurance ? calcLifeInsuranceDeduction(input.lifeInsurance) : ZERO;
   const quake = input.earthquakeInsurance ? calcEarthquakeInsuranceDeduction(input.earthquakeInsurance) : ZERO;
-  const medical = input.medical
+  const standardMedical = input.medical
     ? calcMedicalDeduction(input.medical.paid, input.medical.reimbursed, input.totalIncome)
     : ZERO;
+  const selfMedication = input.selfMedicationPaid
+    ? calcSelfMedicationDeduction(input.selfMedicationPaid)
+    : ZERO;
+  // 通常の医療費控除とセルフメディケーション税制は選択制。有利な方を採用する。
+  const medical = chooseMedicalDeductionScheme(standardMedical, selfMedication);
   const donation = input.donation ? calcDonationDeduction(input.donation, input.totalIncome) : ZERO;
   const disability = input.disabilities
     ? input.disabilities.reduce<DeductionPair>((acc, d) => addPair(acc, disabilityDeduction(d)), ZERO)

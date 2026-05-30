@@ -6,6 +6,10 @@ import {
   calcEarthquakeInsuranceDeduction,
   calcLifeInsuranceDeduction,
   calcMedicalDeduction,
+  calcSelfMedicationDeduction,
+  chooseMedicalDeductionScheme,
+  SELF_MEDICATION_THRESHOLD,
+  SELF_MEDICATION_CAP,
   calcSpouseDeduction,
   dependentDeduction,
   disabilityDeduction,
@@ -154,6 +158,41 @@ describe('calcMedicalDeduction', () => {
   it('subtracts reimbursements and caps at 200万', () => {
     expect(calcMedicalDeduction(100_000, 80_000, 5_000_000)).toEqual({ incomeTax: 0, residentTax: 0 });
     expect(calcMedicalDeduction(2_500_000, 0, 50_000_000)).toEqual({ incomeTax: 2_000_000, residentTax: 2_000_000 });
+  });
+});
+
+describe('calcSelfMedicationDeduction (セルフメディケーション税制)', () => {
+  it('returns 0 at or below the 12,000 threshold', () => {
+    expect(calcSelfMedicationDeduction(12_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(calcSelfMedicationDeduction(11_999)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(SELF_MEDICATION_THRESHOLD).toBe(12_000);
+  });
+
+  it('deducts (paid − 12,000) up to the 88,000 cap', () => {
+    expect(calcSelfMedicationDeduction(40_000)).toEqual({ incomeTax: 28_000, residentTax: 28_000 });
+    // exactly at the cap: 100,000 − 12,000 = 88,000
+    expect(calcSelfMedicationDeduction(100_000)).toEqual({ incomeTax: 88_000, residentTax: 88_000 });
+    // beyond the cap stays capped
+    expect(calcSelfMedicationDeduction(100_001)).toEqual({ incomeTax: 88_000, residentTax: 88_000 });
+    expect(SELF_MEDICATION_CAP).toBe(88_000);
+  });
+
+  it('clamps negative input to zero', () => {
+    expect(calcSelfMedicationDeduction(-1)).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+});
+
+describe('chooseMedicalDeductionScheme (選択制の有利判定)', () => {
+  it('selects the standard medical deduction when larger', () => {
+    const standard = { incomeTax: 150_000, residentTax: 150_000 };
+    const selfMed = { incomeTax: 50_000, residentTax: 50_000 };
+    expect(chooseMedicalDeductionScheme(standard, selfMed)).toEqual(standard);
+  });
+
+  it('selects self-medication when larger', () => {
+    const standard = { incomeTax: 30_000, residentTax: 30_000 };
+    const selfMed = { incomeTax: 88_000, residentTax: 88_000 };
+    expect(chooseMedicalDeductionScheme(standard, selfMed)).toEqual(selfMed);
   });
 });
 
