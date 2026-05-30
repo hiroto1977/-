@@ -141,7 +141,9 @@ export function StoragePage() {
             </tr>
           </thead>
           <tbody>
-            {largeFolders.map((f) => (
+            {[...largeFolders]
+              .sort((a, b) => b.sizeGb - a.sizeGb)
+              .map((f) => (
               <tr key={f.path}>
                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{f.path}</td>
                 <td style={tdStyle}>{CATEGORY_LABEL[f.category] ?? f.category}</td>

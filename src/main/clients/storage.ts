@@ -20,8 +20,10 @@ export interface CleanupTask {
   readonly potentialFreeMb: number;
   /** 難易度 */
   readonly difficulty: 'safe' | 'caution' | 'manual';
-  /** Phase 6 で auto 実行に切替予定 */
-  readonly executable: false;
+  /** Phase 6 で auto 実行に切替予定。現状の snapshot は全て `false`
+   *  (手動手順のみ) だが、live 実装が自動実行を提供したら `true` を
+   *  返せるよう型は `boolean` に開いてある。 */
+  readonly executable: boolean;
   /** ユーザーが行う具体的な手順 */
   readonly howTo: string;
 }

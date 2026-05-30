@@ -621,7 +621,7 @@ export const SNAPSHOT = {
       },
     ] as {
       id: string; title: string; potentialFreeMb: number;
-      difficulty: 'safe' | 'caution' | 'manual'; executable: false; howTo: string;
+      difficulty: 'safe' | 'caution' | 'manual'; executable: boolean; howTo: string;
     }[],
     performance: {
       fragmentationPct: 12.4,    // HDD (D:) のみ
@@ -645,7 +645,7 @@ export const SNAPSHOT = {
 
   taxAccountant: {
     contacts: [
-      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.jp', phone: '03-1234-5678' },
+      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.com', phone: '03-1234-5678' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'tc-1', contactId: 'ta-1', date: '2026-05-10', topic: '法人税申告書のレビュー', status: '完了' },
@@ -661,7 +661,7 @@ export const SNAPSHOT = {
 
   laborConsultant: {
     contacts: [
-      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.jp' },
+      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.com' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'lcc-1', contactId: 'lc-1', date: '2026-05-08', topic: '新入社員の社会保険手続', status: '完了' },
@@ -676,7 +676,7 @@ export const SNAPSHOT = {
 
   lawyer: {
     contacts: [
-      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.jp', phone: '03-3000-1100' },
+      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.com', phone: '03-3000-1100' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'lwc-1', contactId: 'lw-1', date: '2026-05-05', topic: '取引基本契約書 v3 レビュー', status: '完了' },
@@ -691,7 +691,7 @@ export const SNAPSHOT = {
 
   judicialScrivener: {
     contacts: [
-      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.jp' },
+      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.com' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'jsc-1', contactId: 'js-1', date: '2026-04-22', topic: '本店所在地変更登記', status: '完了' },
@@ -720,7 +720,7 @@ export const SNAPSHOT = {
 
   smeConsultant: {
     contacts: [
-      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.jp' },
+      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.com' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'smc-1', contactId: 'sm-1', date: '2026-04-30', topic: '事業承継診断', status: '完了' },
@@ -735,7 +735,7 @@ export const SNAPSHOT = {
 
   patentAttorney: {
     contacts: [
-      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.jp', phone: '03-7700-3300' },
+      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.com', phone: '03-7700-3300' },
     ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
     recentConsultations: [
       { id: 'pac-1', contactId: 'pa-1', date: '2026-05-03', topic: '商標出願 (新サービス名)', status: '対応中' },
