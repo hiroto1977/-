@@ -40,6 +40,7 @@ import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
+import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -256,6 +257,19 @@ export function TaxPage() {
       marginal,
     };
   }, [fsDonationStr, fsMunicipalitiesStr, fsFilesReturn, precise.result.residentIncomeLevy, precise.result.taxableIncomeForIncomeTax]);
+
+  // --- ⑧ 上場株式配当の課税方式 有利判定 ---
+  const [divIncomeStr, setDivIncomeStr] = useState('1000000');
+  const dividendComparison = useMemo(() => {
+    // 配当以外の課税所得はセクション③の精密試算 (配当を含まない) を使う。
+    return compareDividendMethods(num(divIncomeStr), precise.result.taxableIncomeForIncomeTax, 'stock');
+  }, [divIncomeStr, precise.result.taxableIncomeForIncomeTax]);
+
+  const dividendMethodLabel: Record<DividendMethod, string> = {
+    withholding: '申告不要 (源泉徴収)',
+    separate: '申告分離課税',
+    aggregate: '総合課税',
+  };
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -631,6 +645,57 @@ export function TaxPage() {
             <>⚠️ 特例分が住民税所得割額の20%上限で頭打ちです。超過分は自己負担になります。<br /></>
           )}
           どちらの方式でも控除総額はほぼ同じです (端数処理の差のみ)。ワンストップは申告不要が利点、確定申告は他の控除と併せて行えます。
+        </div>
+      </Section>
+
+      <Section title="⑧ 上場株式の配当 課税方式の有利判定" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          上場株式等の配当は、<strong>申告不要 (源泉徴収20.315%)・申告分離課税・総合課税</strong>から選べます (国税庁 No.1330)。
+          総合課税は累進税率ですが<strong>配当控除</strong>が使え、課税所得が低いほど有利になりやすいです。
+          ※ 配当以外の課税所得はセクション③の精密試算の値を使用。社会保険料への影響・損益通算は反映しません。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            上場株式の配当所得 (年・円)
+            <input type="text" inputMode="decimal" value={divIncomeStr} onChange={(e) => setDivIncomeStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+          </label>
+        </div>
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: '3px solid var(--success, #3ec98a)',
+            borderRadius: 6,
+            padding: '8px 12px',
+            marginBottom: 12,
+            fontSize: 13,
+            color: 'var(--text)',
+          }}
+        >
+          ✅ 最有利: <strong>{dividendMethodLabel[dividendComparison.best]}</strong>
+          （税負担 {jpy(dividendComparison[dividendComparison.best].totalTax)}）
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          {([dividendComparison.withholding, dividendComparison.separate, dividendComparison.aggregate]).map((m) => (
+            <div
+              key={m.method}
+              style={{
+                border: m.method === dividendComparison.best ? '2px solid var(--success, #3ec98a)' : '1px solid var(--border)',
+                borderRadius: 8,
+                padding: 12,
+              }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>{m.label}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+                所得税 {jpy(m.incomeTax)}<br />
+                住民税 {jpy(m.residentTax)}<br />
+                <strong>税負担 {jpy(m.totalTax)}</strong>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 申告分離は申告不要と同じ税率ですが、上場株式等の譲渡損との損益通算・繰越控除ができる点が異なります。
+          令和6年度以降、所得税と住民税で異なる課税方式は選べません。
         </div>
       </Section>
 
