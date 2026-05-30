@@ -38,7 +38,7 @@ import {
 import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
-import { calcSocialInsurance } from '../../shared/taxSocialInsurance';
+import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
@@ -97,10 +97,19 @@ export function TaxPage() {
   const residentTax = useMemo(() => calcResidentTax(taxableIncome), [taxableIncome]);
   const netSalary = useMemo(() => calcNetSalary(grossAnnual), [grossAnnual]);
   const [careInsurance, setCareInsurance] = useState(false);
-  const socialInsurancePrecise = useMemo(
-    () => calcSocialInsurance(grossAnnual, careInsurance),
-    [grossAnnual, careInsurance],
-  );
+  const [bonusPerStr, setBonusPerStr] = useState('0');
+  const [bonusCountStr, setBonusCountStr] = useState('2');
+  const socialInsurancePrecise = useMemo(() => {
+    const bonusPer = num(bonusPerStr);
+    const bonusCount = num(bonusCountStr);
+    if (bonusPer > 0 && bonusCount > 0) {
+      // 賞与あり: 年収から賞与総額を引いた残りを月額報酬とみなす。
+      const annualBonus = bonusPer * bonusCount;
+      const monthly = Math.max(0, (grossAnnual - annualBonus) / 12);
+      return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance);
+    }
+    return calcSocialInsurance(grossAnnual, careInsurance);
+  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr]);
   const consumptionTax = useMemo(
     () => calcConsumptionTax(netAmount, reduced ? CONSUMPTION_TAX_REDUCED : CONSUMPTION_TAX_STANDARD),
     [netAmount, reduced],
@@ -322,6 +331,14 @@ export function TaxPage() {
             <input type="checkbox" checked={careInsurance} onChange={(e) => setCareInsurance(e.target.checked)} />
             40〜64歳 (介護保険料を上乗せ)
           </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            賞与 (1回・円)
+            <input type="text" inputMode="decimal" value={bonusPerStr} onChange={(e) => setBonusPerStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            賞与 年間回数
+            <input type="text" inputMode="decimal" value={bonusCountStr} onChange={(e) => setBonusCountStr(e.target.value)} style={{ ...inputStyle, width: 90 }} />
+          </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="所得税" value={jpy(netSalary.incomeTax)} />
@@ -340,6 +357,9 @@ export function TaxPage() {
           健康保険{careInsurance ? '+介護' : ''} {jpy(socialInsurancePrecise.health)} /
           雇用保険 {jpy(socialInsurancePrecise.employment)}）。
           厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例(15%)より低くなります (令和6年度・協会けんぽ全国平均ベース)。
+          {num(bonusPerStr) > 0 && num(bonusCountStr) > 0 && (
+            <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回150万円 / 健康保険 年573万円) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
+          )}
         </div>
       </Section>
 

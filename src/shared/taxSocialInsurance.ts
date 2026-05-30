@@ -23,6 +23,13 @@ export const PENSION_MONTHLY_CAP = 650_000;
 /** 健康保険の標準報酬月額の上限 (第50級, 円/月)。 */
 export const HEALTH_MONTHLY_CAP = 1_390_000;
 
+// --- 標準賞与額の上限 (賞与にかかる保険料計算に使う) --------------------
+
+/** 厚生年金の標準賞与額の上限 (1回 (1か月) あたり, 円)。 */
+export const PENSION_BONUS_CAP_PER_PAYMENT = 1_500_000;
+/** 健康保険の標準賞与額の上限 (年度累計, 円)。 */
+export const HEALTH_BONUS_CAP_ANNUAL = 5_730_000;
+
 // --- 本人負担の料率 (令和6年度・協会けんぽ全国平均ベースの概算) ----------
 
 /** 厚生年金保険料率の本人負担 (18.3% の半分)。 */
@@ -49,8 +56,8 @@ export interface SocialInsuranceBreakdown {
  * 額面年収から社会保険料 (本人負担, 年額) を標準報酬月額の上限を考慮して概算する。
  *
  * 月額報酬 = 年収 / 12 とみなし、厚生年金・健康保険それぞれの上限で頭打ちにする。
- * 雇用保険は上限なしで賃金総額 (年収) に料率を乗じる。賞与の標準賞与額の上限
- * (健康保険年573万・厚生年金月150万) は簡略化のため未反映。
+ * 雇用保険は上限なしで賃金総額 (年収) に料率を乗じる。賞与の標準賞与額の上限を
+ * 反映したい場合は `calcSocialInsuranceWithBonus` を使う。
  *
  * @param grossAnnual 額面年収 (円)
  * @param withCare 40歳以上65歳未満 (介護保険料を健康保険に上乗せ) か
@@ -69,4 +76,53 @@ export function calcSocialInsurance(grossAnnual: number, withCare = false): Soci
   // 雇用保険は賃金総額 (上限なし)。
   const employment = yen(grossAnnual * EMPLOYMENT_INSURANCE_RATE);
   return { pension, health, employment, total: pension + health + employment };
+}
+
+/**
+ * 月額報酬と賞与を分けて社会保険料 (本人負担, 年額) を概算する。
+ *
+ * 賞与は月額報酬とは別の上限が適用される:
+ * - 厚生年金: 標準賞与額は 1 回あたり 150万円が上限 (`PENSION_BONUS_CAP_PER_PAYMENT`)。
+ * - 健康保険: 標準賞与額は年度累計 573万円が上限 (`HEALTH_BONUS_CAP_ANNUAL`)。
+ * 雇用保険は賃金総額 (月額報酬 + 賞与) に料率を乗じる (上限なし)。
+ *
+ * 月額報酬部分は `calcSocialInsurance` と同じく標準報酬月額の上限で頭打ちにする。
+ *
+ * @param monthlyRemuneration 月額報酬 (円/月)
+ * @param bonusPerPayment 1 回あたりの賞与額 (円)
+ * @param bonusPaymentsPerYear 年間の賞与支給回数
+ * @param withCare 40歳以上65歳未満 (介護保険料を健康保険に上乗せ) か
+ */
+export function calcSocialInsuranceWithBonus(
+  monthlyRemuneration: number,
+  bonusPerPayment: number,
+  bonusPaymentsPerYear: number,
+  withCare = false,
+): SocialInsuranceBreakdown {
+  const monthly = Math.max(0, monthlyRemuneration);
+  const bonus = Math.max(0, bonusPerPayment);
+  const bonusCount = Math.max(0, Math.floor(bonusPaymentsPerYear));
+  const healthRate = HEALTH_RATE + (withCare ? CARE_RATE : 0);
+
+  // --- 月額報酬部分 (標準報酬月額の上限) ---
+  const pensionMonthlyBase = Math.min(monthly, PENSION_MONTHLY_CAP);
+  const healthMonthlyBase = Math.min(monthly, HEALTH_MONTHLY_CAP);
+  let pension = pensionMonthlyBase * PENSION_RATE * 12;
+  let health = healthMonthlyBase * healthRate * 12;
+
+  // --- 賞与部分 (標準賞与額の上限) ---
+  // 厚生年金: 1回ごとに150万円で頭打ち。
+  const pensionBonusBasePer = Math.min(bonus, PENSION_BONUS_CAP_PER_PAYMENT);
+  pension += pensionBonusBasePer * PENSION_RATE * bonusCount;
+  // 健康保険: 年度累計573万円で頭打ち。
+  const healthBonusBaseAnnual = Math.min(bonus * bonusCount, HEALTH_BONUS_CAP_ANNUAL);
+  health += healthBonusBaseAnnual * healthRate;
+
+  // 雇用保険は賃金総額 (月額×12 + 賞与×回数, 上限なし)。
+  const totalWage = monthly * 12 + bonus * bonusCount;
+  const employment = yen(totalWage * EMPLOYMENT_INSURANCE_RATE);
+
+  const p = yen(pension);
+  const h = yen(health);
+  return { pension: p, health: h, employment, total: p + h + employment };
 }

@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   calcSocialInsurance,
+  calcSocialInsuranceWithBonus,
   PENSION_MONTHLY_CAP,
   HEALTH_MONTHLY_CAP,
+  PENSION_BONUS_CAP_PER_PAYMENT,
+  HEALTH_BONUS_CAP_ANNUAL,
   PENSION_RATE,
   HEALTH_RATE,
   CARE_RATE,
@@ -62,5 +65,56 @@ describe('calcSocialInsurance (標準報酬月額の上限を考慮)', () => {
     expect(PENSION_MONTHLY_CAP).toBe(650_000);
     expect(HEALTH_MONTHLY_CAP).toBe(1_390_000);
     expect(PENSION_RATE).toBeCloseTo(0.0915, 4);
+  });
+});
+
+describe('calcSocialInsuranceWithBonus (標準賞与額の上限を考慮)', () => {
+  it('matches the monthly-only function when there is no bonus', () => {
+    const withBonus = calcSocialInsuranceWithBonus(500_000, 0, 0);
+    const monthlyOnly = calcSocialInsurance(6_000_000); // 月50万×12
+    expect(withBonus.pension).toBe(monthlyOnly.pension);
+    expect(withBonus.health).toBe(monthlyOnly.health);
+    expect(withBonus.employment).toBe(monthlyOnly.employment);
+  });
+
+  it('adds pension/health/employment on the bonus below the caps', () => {
+    // 月40万 + 賞与60万×2回 (両上限未満)
+    const r = calcSocialInsuranceWithBonus(400_000, 600_000, 2);
+    const expectedPension = Math.round(400_000 * PENSION_RATE * 12 + 600_000 * PENSION_RATE * 2);
+    expect(r.pension).toBe(expectedPension);
+    const expectedHealth = Math.round(400_000 * HEALTH_RATE * 12 + 1_200_000 * HEALTH_RATE);
+    expect(r.health).toBe(expectedHealth);
+    // 雇用保険は賃金総額 (月40万×12 + 賞与120万)
+    expect(r.employment).toBe(Math.round((4_800_000 + 1_200_000) * EMPLOYMENT_INSURANCE_RATE));
+  });
+
+  it('caps the pension bonus at 150万 per payment', () => {
+    // 賞与200万 (>150万上限) × 1回 → 年金は150万ベース
+    const r = calcSocialInsuranceWithBonus(0, 2_000_000, 1);
+    const pensionBonus = Math.round(PENSION_BONUS_CAP_PER_PAYMENT * PENSION_RATE * 1);
+    expect(r.pension).toBe(pensionBonus);
+    expect(PENSION_BONUS_CAP_PER_PAYMENT).toBe(1_500_000);
+  });
+
+  it('caps the health bonus at the 573万 annual cumulative ceiling', () => {
+    // 賞与300万×3回 = 900万 (>573万上限) → 健康保険は573万ベース
+    const r = calcSocialInsuranceWithBonus(0, 3_000_000, 3, false);
+    const healthBonus = Math.round(HEALTH_BONUS_CAP_ANNUAL * HEALTH_RATE);
+    expect(r.health).toBe(healthBonus);
+    expect(HEALTH_BONUS_CAP_ANNUAL).toBe(5_730_000);
+  });
+
+  it('applies the care surcharge to the bonus health portion for ages 40-64', () => {
+    const without = calcSocialInsuranceWithBonus(0, 1_000_000, 2, false);
+    const withCare = calcSocialInsuranceWithBonus(0, 1_000_000, 2, true);
+    expect(withCare.health).toBe(Math.round(2_000_000 * (HEALTH_RATE + CARE_RATE)));
+    expect(withCare.health).toBeGreaterThan(without.health);
+  });
+
+  it('clamps negative inputs and floors the payment count', () => {
+    expect(calcSocialInsuranceWithBonus(-1, -1, -1).total).toBe(0);
+    // fractional payment count is floored
+    const r = calcSocialInsuranceWithBonus(0, 1_000_000, 2.9);
+    expect(r.pension).toBe(Math.round(1_000_000 * PENSION_RATE * 2));
   });
 });
