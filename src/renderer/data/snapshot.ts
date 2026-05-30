@@ -879,6 +879,7 @@ export const SNAPSHOT = {
       repayable: boolean;
       compressedEntry?: boolean;
       repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number };
+      probability?: number;
     }[],
     byKind: [] as {
       kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
@@ -915,6 +916,12 @@ export const SNAPSHOT = {
       openingBalance: 0,
       minBalance: 0,
       shortfallMonth: null as string | null,
+    },
+    scenario: {
+      securedTotal: 0,
+      pipelineTotal: 0,
+      expectedPipeline: 0,
+      expectedTotal: 0,
     },
     accountingLinked: false,
     stocksLinked: false,

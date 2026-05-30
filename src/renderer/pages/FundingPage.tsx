@@ -370,6 +370,27 @@ export function FundingPage() {
             <BarChart data={live} />
           </Section>
 
+          <Section title="期待値シナリオ — 採択確率で加重した現実的な調達見込み">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+              <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>確定済み</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.securedTotal)}</div>
+              </div>
+              <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>楽観値 (確定+全採択)</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.securedTotal + live.scenario.pipelineTotal)}</div>
+              </div>
+              <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>期待値 (確率加重)</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{jpy(live.scenario.expectedTotal)}</div>
+              </div>
+            </div>
+            <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+              ※ 申請中・予定の案件を採択確率 (案件の指定値、なければステータス×種別の概算) で加重した期待調達額です。
+              楽観値 (全採択前提) と期待値の差が計画の不確実性を表します。採択率は公募回・事業内容で大きく変動します。
+            </div>
+          </Section>
+
           <Section title="⑤ 累計キャッシュ残高 (ランウェイ)">
             <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
               期首残高 {jpy(live.runway.openingBalance)} に各月の純資金繰りを積み上げた月末残高の推移です。

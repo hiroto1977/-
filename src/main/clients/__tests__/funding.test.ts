@@ -5,6 +5,9 @@ import {
   amortizationSchedule,
   barData,
   cashRunway,
+  defaultProbability,
+  effectiveProbability,
+  expectedScenario,
   fundingKindLabel,
   interestSchedule,
   isTaxableFunding,
@@ -323,6 +326,62 @@ describe('monthlyFlow with repayment', () => {
   });
 });
 
+describe('defaultProbability / effectiveProbability', () => {
+  function mk(status: FundingItem['status'], kind: FundingItem['kind'] = 'subsidy', probability?: number): FundingItem {
+    return { id: 'x', kind, name: 'n', amount: 1_000_000, status, month: '2026-01', repayable: false, probability };
+  }
+
+  it('treats secured (received/approved) as probability 1.0', () => {
+    expect(defaultProbability(mk('received'))).toBe(1);
+    expect(defaultProbability(mk('approved'))).toBe(1);
+  });
+
+  it('uses kind-based base rates for applied items', () => {
+    expect(defaultProbability(mk('applied', 'subsidy'))).toBe(0.5);
+    expect(defaultProbability(mk('applied', 'grant'))).toBe(0.8);
+    expect(defaultProbability(mk('applied', 'benefit'))).toBe(0.9);
+    expect(defaultProbability(mk('applied', 'jfc'))).toBe(0.75);
+  });
+
+  it('discounts planned items to half the applied base rate', () => {
+    expect(defaultProbability(mk('planned', 'grant'))).toBe(0.4); // 0.8 × 0.5
+    expect(defaultProbability(mk('planned', 'subsidy'))).toBe(0.25); // 0.5 × 0.5
+  });
+
+  it('effectiveProbability prefers an explicit probability, clamped to [0,1]', () => {
+    expect(effectiveProbability(mk('applied', 'subsidy', 0.3))).toBe(0.3);
+    expect(effectiveProbability(mk('applied', 'subsidy', 2))).toBe(1);
+    expect(effectiveProbability(mk('applied', 'subsidy', -1))).toBe(0);
+    // falls back to default when undefined
+    expect(effectiveProbability(mk('applied', 'subsidy'))).toBe(0.5);
+  });
+});
+
+describe('expectedScenario', () => {
+  it('weights pipeline by probability and keeps secured at full value', () => {
+    const itemsE: FundingItem[] = [
+      { id: 'a', kind: 'subsidy', name: '確定', amount: 5_000_000, status: 'approved', month: '2026-06', repayable: false },
+      { id: 'b', kind: 'grant', name: '申請中', amount: 1_000_000, status: 'applied', month: '2026-08', repayable: false }, // 0.8
+      { id: 'c', kind: 'subsidy', name: '検討中', amount: 2_000_000, status: 'planned', month: '2026-09', repayable: false }, // 0.25
+    ];
+    const s = expectedScenario(itemsE);
+    expect(s.securedTotal).toBe(5_000_000);
+    expect(s.pipelineTotal).toBe(3_000_000); // 1M + 2M
+    // expected pipeline = 1M×0.8 + 2M×0.25 = 800,000 + 500,000 = 1,300,000
+    expect(s.expectedPipeline).toBe(1_300_000);
+    expect(s.expectedTotal).toBe(6_300_000);
+  });
+
+  it('honors an explicit per-item probability', () => {
+    const itemsE: FundingItem[] = [
+      { id: 'b', kind: 'subsidy', name: '申請中', amount: 1_000_000, status: 'applied', month: '2026-08', repayable: false, probability: 0.9 },
+    ];
+    const s = expectedScenario(itemsE);
+    expect(s.expectedPipeline).toBe(900_000);
+    expect(s.expectedTotal).toBe(900_000);
+  });
+});
+
 describe('cashRunway', () => {
   function row(month: string, net: number): FundingMonthly {
     return { month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0, netCashflow: net, operatingCashflow: 0, portfolioValue: 0 };
@@ -368,6 +427,15 @@ describe('buildFundingSnapshot runway', () => {
     // last balance = opening + sum of all monthly net cashflows
     const expectedLast = 1_000_000 + snap.monthly.reduce((s, m) => s + m.netCashflow, 0);
     expect(snap.runway.rows[snap.runway.rows.length - 1]!.balance).toBe(expectedLast);
+  });
+
+  it('includes an expected-value scenario consistent with summarize totals', () => {
+    const snap = buildFundingSnapshot(items);
+    expect(snap.scenario.securedTotal).toBe(snap.summary.totalSecured);
+    expect(snap.scenario.securedTotal + snap.scenario.pipelineTotal).toBe(snap.summary.totalPipeline);
+    // expected total is between secured-only and the full optimistic total
+    expect(snap.scenario.expectedTotal).toBeGreaterThanOrEqual(snap.scenario.securedTotal);
+    expect(snap.scenario.expectedTotal).toBeLessThanOrEqual(snap.summary.totalPipeline);
   });
 });
 

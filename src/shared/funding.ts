@@ -121,6 +121,12 @@ export interface FundingItem {
    * アウト) を反映するために使う。返済不要の資金 (補助金等) では無視。
    */
   readonly repayment?: RepaymentTerms;
+  /**
+   * 採択・実行の確率 (0..1, 任意)。期待値シナリオ (`expectedScenario`) で
+   * パイプライン案件を加重するために使う。未指定なら `defaultProbability`
+   * (ステータスから推定) を用いる。確定 (received/approved) は実質 1.0。
+   */
+  readonly probability?: number;
 }
 
 /** 融資の返済条件。元利均等返済を前提とする。 */
@@ -530,6 +536,94 @@ export function summarize(
     deferredSecured,
     afterTaxSecured: Math.round(totalSecured - taxableSecured * rate),
     count: items.length,
+  };
+}
+
+// --- 期待値シナリオ (採択確率による加重) -------------------------------
+
+/**
+ * 案件のステータス・種別から採択/実行確率の既定値を推定する (0..1)。
+ *
+ * - received / approved: 確定済みなので 1.0。
+ * - applied (申請中): 種別ごとの一般的な採択率の目安。
+ *   補助金は競争的で低め、助成金は要件充足型で高め、融資/公庫は審査次第、
+ *   給付金は要件型で高め、CF は達成率の目安。
+ * - planned (検討中): 申請中の半分程度に割り引く。
+ *
+ * これは概算の目安であり、実際の採択率は公募回・事業内容で大きく変動する。
+ */
+export function defaultProbability(item: FundingItem): number {
+  if (isSecured(item.status)) return 1;
+  const base = appliedBaseRate(item.kind);
+  // 検討中は申請中より不確実なので割り引く。
+  return item.status === 'planned' ? Math.round(base * 0.5 * 100) / 100 : base;
+}
+
+/** 申請中ステータスの種別別の一般的な採択率の目安。 */
+function appliedBaseRate(kind: FundingKind): number {
+  switch (kind) {
+    case 'subsidy':
+      return 0.5; // 競争的補助金 (採択率は公募で変動)
+    case 'grant':
+      return 0.8; // 要件充足型の助成金
+    case 'benefit':
+      return 0.9; // 要件型の給付金
+    case 'loan':
+      return 0.7; // 民間融資の審査
+    case 'jfc':
+      return 0.75; // 公庫の審査
+    case 'crowdfunding':
+      return 0.5; // CF の達成率の目安
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+/** 案件の有効確率 (明示指定があればそれを [0,1] にクランプ、なければ既定値)。 */
+export function effectiveProbability(item: FundingItem): number {
+  if (item.probability === undefined) return defaultProbability(item);
+  return clampRate(item.probability);
+}
+
+/** 期待値シナリオの結果。 */
+export interface ExpectedScenario {
+  /** 確定済みの調達額 (確率 1.0)。 */
+  readonly securedTotal: number;
+  /** パイプライン (申請中・予定) の単純合計 (確率 1.0 と仮定した楽観値)。 */
+  readonly pipelineTotal: number;
+  /** パイプラインを採択確率で加重した期待額。 */
+  readonly expectedPipeline: number;
+  /** 確定額 + 期待パイプライン (現実的な調達見込み)。 */
+  readonly expectedTotal: number;
+}
+
+/**
+ * パイプライン案件を採択確率で加重した期待調達額を算出する。
+ *
+ * 確定 (received/approved) は確率 1.0、申請中・予定は `effectiveProbability`
+ * (明示指定 or ステータス×種別の既定値) で加重する。楽観値 (全採択) と
+ * 期待値の差で、計画の不確実性を把握できる。
+ */
+export function expectedScenario(items: readonly FundingItem[]): ExpectedScenario {
+  let securedTotal = 0;
+  let pipelineTotal = 0;
+  let expectedPipeline = 0;
+  for (const it of items) {
+    const amt = nonNeg(it.amount);
+    if (isSecured(it.status)) {
+      securedTotal += amt;
+    } else {
+      pipelineTotal += amt;
+      expectedPipeline += Math.round(amt * effectiveProbability(it));
+    }
+  }
+  return {
+    securedTotal,
+    pipelineTotal,
+    expectedPipeline,
+    expectedTotal: securedTotal + expectedPipeline,
   };
 }
 
