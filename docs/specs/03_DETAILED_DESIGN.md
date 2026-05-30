@@ -174,6 +174,7 @@ function useServiceData<T>(serviceId: ServiceId, snapshot: T): {
 | ⑥ 譲渡所得 | 収入・取得費・譲渡費用・区分 | 譲渡益 / 課税譲渡所得 / 所得税・住民税 |
 | ⑦ ふるさと納税 ワンストップ | 寄附額・自治体数・申告有無 | 適用可否 / 確定申告 vs ワンストップの控除内訳 |
 | ⑧ 配当課税方式 | 配当所得 | 申告不要 vs 申告分離 vs 総合課税の有利判定 |
+| ⑨ 公的年金等 | 年金収入・年齢 | 公的年金等控除 / 雑所得 |
 | 消費税 | 税抜金額・税率 | 税額 |
 | 節税カタログ / チェックリスト | 区分選択 | 制度一覧・確認項目 |
 | 公式ツール導線 | — | 国税庁/e-Tax/会計ソフトへ `openExternal` |
@@ -192,4 +193,4 @@ function useServiceData<T>(serviceId: ServiceId, snapshot: T): {
 | 不変条件 | `LIVE_FETCHERS` total record の起動時 assert |
 | ミューテーション | Stryker。閾値 99.8% (対象モジュール) |
 
-現状: 静的 `it()` 1769 / 実行時 1818。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。
+現状: 静的 `it()` 1777 / 実行時 1826。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。

@@ -40,6 +40,7 @@ import {
 import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
+import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
@@ -283,6 +284,14 @@ export function TaxPage() {
     separate: '申告分離課税',
     aggregate: '総合課税',
   };
+
+  // --- ⑨ 公的年金等の雑所得 ---
+  const [pensionIncomeStr, setPensionIncomeStr] = useState('3000000');
+  const [pensionOver65, setPensionOver65] = useState(true);
+  const pension = useMemo(
+    () => calcPublicPensionIncome(num(pensionIncomeStr), pensionOver65),
+    [pensionIncomeStr, pensionOver65],
+  );
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -722,6 +731,33 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 申告分離は申告不要と同じ税率ですが、上場株式等の譲渡損との損益通算・繰越控除ができる点が異なります。
           令和6年度以降、所得税と住民税で異なる課税方式は選べません。
+        </div>
+      </Section>
+
+      <Section title="⑨ 公的年金等の雑所得 (年金受給者)" count={2}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          国民年金・厚生年金・企業年金・iDeCo の年金受取などは「公的年金等」として、
+          <strong>公的年金等控除</strong>を差し引いた額が雑所得になります (国税庁 No.1600)。
+          控除額は65歳以上で手厚くなります (最低110万円、65歳未満は最低60万円)。
+          ※ 算入額は他の所得と合算して総合課税します。本欄は雑所得のみを計算します。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            公的年金等の収入 (年・円)
+            <input type="text" inputMode="decimal" value={pensionIncomeStr} onChange={(e) => setPensionIncomeStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={pensionOver65} onChange={(e) => setPensionOver65(e.target.checked)} />
+            65歳以上 (12/31時点)
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat label="公的年金等控除" value={jpy(pension.deduction)} />
+          <Stat label="雑所得 (課税対象)" value={jpy(pension.taxableIncome)} positive />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          雑所得 {jpy(pension.taxableIncome)} を ① の課税所得に足して総合課税で試算してください。
+          ※ 公的年金等以外の合計所得1,000万円超での控除引下げ等は未反映です。
         </div>
       </Section>
 
