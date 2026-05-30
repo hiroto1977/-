@@ -68,7 +68,15 @@ export interface MortgageCreditInput {
   readonly incomeTaxBeforeCredit: number;
   /** 課税総所得金額等 (住民税からの控除上限の算定に使う)。 */
   readonly taxableIncomeForResident: number;
+  /**
+   * 合計所得金額 (円, 任意)。指定すると、2,000 万円を超える年は住宅ローン控除を
+   * 適用しない (国税庁 No.1211 の所得要件)。未指定なら所得制限を判定しない。
+   */
+  readonly totalIncome?: number;
 }
+
+/** 住宅ローン控除の所得制限 (合計所得金額の上限, 円)。 */
+export const MORTGAGE_INCOME_LIMIT = 20_000_000;
 
 /** 住宅ローン控除の結果 (所得税分・住民税分・控除しきれなかった額)。 */
 export interface MortgageCreditResult {
@@ -92,6 +100,10 @@ export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
  * - まず所得税から控除、引ききれない分を住民税から (課税所得×5%・最大97,500円) 控除
  */
 export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditResult {
+  // 合計所得金額が 2,000 万円を超える年は住宅ローン控除の適用なし (国税庁 No.1211)。
+  if (input.totalIncome !== undefined && input.totalIncome > MORTGAGE_INCOME_LIMIT) {
+    return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
+  }
   const rate = input.rate ?? 0.007;
   const cap = input.balanceCap ?? 30_000_000;
   const balance = Math.max(0, input.yearEndBalance);

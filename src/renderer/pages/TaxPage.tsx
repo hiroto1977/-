@@ -190,6 +190,8 @@ export function TaxPage() {
             balanceCap: mortgageParams.balanceCap,
             incomeTaxBeforeCredit: result.baseIncomeTax,
             taxableIncomeForResident: result.taxableIncomeForResidentTax,
+            // 合計所得金額の近似 (給与所得)。2,000万超で住宅ローン控除は不適用。
+            totalIncome: result.employmentIncome,
           }
         : undefined,
       dividend: dividendIncome > 0

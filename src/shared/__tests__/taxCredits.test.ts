@@ -7,6 +7,7 @@ import {
   calcDividendCredit,
   calcMortgageCredit,
   MORTGAGE_RESIDENT_CAP_MAX,
+  MORTGAGE_INCOME_LIMIT,
 } from '../taxCredits';
 
 describe('calcMortgageCredit', () => {
@@ -62,6 +63,39 @@ describe('calcMortgageCredit', () => {
       taxableIncomeForResident: 1_000_000, // cap min(97,500, 50,000)=50,000
     });
     expect(r.fromResidentTax).toBe(50_000);
+  });
+
+  it('denies the credit when total income exceeds 2,000万 (国税庁 No.1211)', () => {
+    const r = calcMortgageCredit({
+      yearEndBalance: 30_000_000,
+      incomeTaxBeforeCredit: 500_000,
+      taxableIncomeForResident: 25_000_000,
+      totalIncome: 20_000_001, // just over the limit
+    });
+    expect(r.creditable).toBe(0);
+    expect(r.fromIncomeTax).toBe(0);
+    expect(r.fromResidentTax).toBe(0);
+    expect(MORTGAGE_INCOME_LIMIT).toBe(20_000_000);
+  });
+
+  it('allows the credit at exactly 2,000万 total income (inclusive boundary)', () => {
+    const r = calcMortgageCredit({
+      yearEndBalance: 30_000_000,
+      incomeTaxBeforeCredit: 500_000,
+      taxableIncomeForResident: 5_000_000,
+      totalIncome: 20_000_000, // exactly at the limit → still eligible
+    });
+    expect(r.creditable).toBe(210_000);
+    expect(r.fromIncomeTax).toBe(210_000);
+  });
+
+  it('ignores the income limit when totalIncome is unspecified (backward compatible)', () => {
+    const r = calcMortgageCredit({
+      yearEndBalance: 30_000_000,
+      incomeTaxBeforeCredit: 500_000,
+      taxableIncomeForResident: 5_000_000,
+    });
+    expect(r.creditable).toBe(210_000);
   });
 });
 
