@@ -116,12 +116,17 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - 重複 jpy フォーマッタを `src/shared/formatters.ts` に集約 (6 箇所 → 1)
 - CrossServiceKpis に Math.max(0,…) 防御ガード (Security Finding 3)
 
+### 🤖 オーケストレーション監査 後続対応 (2nd wave)
+- ~~汎用 stub ファクトリ統一~~ → `src/main/clients/snapshotStub.ts` (createSnapshotStub) に
+  21 client を集約 (commit 5d685d2、−99 行)。士業は別途 createShigyoFetcher。
+- ~~lint:docs を CLAUDE/README/USER_GUIDE にも拡張~~ → service count の drift を CI 自動検知
+  (commit c370376)
+
 ### 🟢 NIT (残・低優先)
 - PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため低優先)
-- Refactor 監査の中期案: business.ts(1107行)/stocks.ts(1959行) の責務分割、
-  汎用 createStaticSnapshotFetcher への stub 統一、SNAPSHOT 型厳格化で `as unknown` 排除
-- Docs 監査の提案: lint:docs を ARCHITECTURE.md 以外 (CLAUDE/USER_GUIDE/README) にも拡張し
-  service count / HTML size の drift を CI で自動検知
+- Refactor 監査の中期案 (規模大・要レビュー): business.ts(1107行)/stocks.ts(1959行) の責務分割、
+  SNAPSHOT 型厳格化で `as unknown` 排除
+- Docs 監査の追加案: lint:docs / verify:arch に HTML size の drift 検知も追加
 
 ### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
 - Phase 6: 4 業務サービス + 7 士業の `record-entry` を IndexedDB 永続化 → `persisted: true`
