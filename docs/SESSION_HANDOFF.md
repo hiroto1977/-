@@ -122,10 +122,17 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~lint:docs を CLAUDE/README/USER_GUIDE にも拡張~~ → service count の drift を CI 自動検知
   (commit c370376)
 
+### 🤖 オーケストレーション監査 後続対応 (3rd wave)
+- ~~SNAPSHOT 型厳格化で `as unknown` 排除~~ → page-level の `as unknown as XSnapshot`
+  5 箇所を全廃 (Home/Stocks/Templates/TeamRadar/Business、interface を readonly 化、commit ed528c1)
+- ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
+  生存ミュータントを全 kill (commit e4f15a3)
+
 ### 🟢 NIT (残・低優先)
-- PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため低優先)
-- Refactor 監査の中期案 (規模大・要レビュー): business.ts(1107行)/stocks.ts(1959行) の責務分割、
-  SNAPSHOT 型厳格化で `as unknown` 排除
+- PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため
+  低優先 — 実 OS 統計は Phase 6 で動的化されるので、それまで据え置き)
+- Refactor 監査の中期案 (規模大・要レビュー — 独断保留中): business.ts(1107行)/stocks.ts(1959行)
+  の責務分割。テスト/Stryker 100% の再検証が必要なため、着手前に方針確認を推奨。
 - Docs 監査の追加案: lint:docs / verify:arch に HTML size の drift 検知も追加
 
 ### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
