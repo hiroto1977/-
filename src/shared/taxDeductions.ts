@@ -143,14 +143,17 @@ export function calcDependentDeduction(kinds: readonly DependentKind[]): Deducti
   );
 }
 
-// --- 生命保険料控除 (新制度) --------------------------------------------
+// --- 生命保険料控除 (新制度 / 旧制度) -----------------------------------
 //
-// 国税庁 No.1140。一般 / 介護医療 / 個人年金 の各区分について、新制度の
-// 控除額を計算 (所得税 上限4万、住民税 上限2.8万、3区分合計の上限は
-// 所得税12万・住民税7万)。
+// 国税庁 No.1140。
+//   新制度 (平成24年1月1日以降の契約): 一般 / 介護医療 / 個人年金 の3区分。
+//     各区分 所得税上限4万・住民税上限2.8万、3区分合計の上限は所得税12万・住民税7万。
+//   旧制度 (平成23年12月31日以前の契約): 一般 / 個人年金 の2区分 (介護医療なし)。
+//     各区分 所得税上限5万・住民税上限3.5万、合計上限は所得税10万・住民税7万。
+//   新旧の両方がある区分は、(新のみ / 旧のみ / 新+旧で4万・2.8万上限) の最大を採る。
 
 /** 新制度・生命保険料控除 1 区分の控除額を計算する。 */
-function lifeInsuranceOnePremium(premium: number): DeductionPair {
+function lifeInsuranceNew(premium: number): DeductionPair {
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   // 所得税 (新制度): 〜2万=全額, 〜4万=÷2+1万, 〜8万=÷4+2万, 8万超=4万。
   let it: number;
@@ -167,20 +170,57 @@ function lifeInsuranceOnePremium(premium: number): DeductionPair {
   return { incomeTax: it, residentTax: rt };
 }
 
-export interface LifeInsurancePremiums {
-  /** 一般生命保険料 (年額)。 */
-  readonly general: number;
-  /** 介護医療保険料 (年額)。 */
-  readonly medical: number;
-  /** 個人年金保険料 (年額)。 */
-  readonly pension: number;
+/** 旧制度・生命保険料控除 1 区分の控除額を計算する。 */
+function lifeInsuranceOld(premium: number): DeductionPair {
+  if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
+  // 所得税 (旧制度): 〜2.5万=全額, 〜5万=÷2+1.25万, 〜10万=÷4+2.5万, 10万超=5万。
+  let it: number;
+  if (premium <= 25_000) it = premium;
+  else if (premium <= 50_000) it = yen(premium / 2 + 12_500);
+  else if (premium <= 100_000) it = yen(premium / 4 + 25_000);
+  else it = 50_000;
+  // 住民税 (旧制度): 〜1.5万=全額, 〜4万=÷2+0.75万, 〜7万=÷4+1.75万, 超=3.5万。
+  let rt: number;
+  if (premium <= 15_000) rt = premium;
+  else if (premium <= 40_000) rt = yen(premium / 2 + 7_500);
+  else if (premium <= 70_000) rt = yen(premium / 4 + 17_500);
+  else rt = 35_000;
+  return { incomeTax: it, residentTax: rt };
 }
 
-/** 3 区分の生命保険料から合計控除額 (上限適用) を計算する。 */
+/** 1 区分について、新・旧の保険料から最も有利な控除額を選ぶ。
+ *  新+旧の併用は所得税4万・住民税2.8万を上限とする (新制度上限)。 */
+function lifeInsuranceCategory(newPremium: number, oldPremium: number): DeductionPair {
+  const onlyNew = lifeInsuranceNew(newPremium);
+  const onlyOld = lifeInsuranceOld(oldPremium);
+  const combined: DeductionPair = {
+    incomeTax: Math.min(40_000, onlyNew.incomeTax + onlyOld.incomeTax),
+    residentTax: Math.min(28_000, onlyNew.residentTax + onlyOld.residentTax),
+  };
+  return {
+    incomeTax: Math.max(onlyNew.incomeTax, onlyOld.incomeTax, combined.incomeTax),
+    residentTax: Math.max(onlyNew.residentTax, onlyOld.residentTax, combined.residentTax),
+  };
+}
+
+export interface LifeInsurancePremiums {
+  /** 一般生命保険料 (新制度・年額)。 */
+  readonly general: number;
+  /** 介護医療保険料 (新制度のみ・年額)。 */
+  readonly medical: number;
+  /** 個人年金保険料 (新制度・年額)。 */
+  readonly pension: number;
+  /** 一般生命保険料 (旧制度・年額)。任意。 */
+  readonly generalOld?: number;
+  /** 個人年金保険料 (旧制度・年額)。任意。 */
+  readonly pensionOld?: number;
+}
+
+/** 3 区分の生命保険料から合計控除額 (上限適用) を計算する。新旧併用に対応。 */
 export function calcLifeInsuranceDeduction(p: LifeInsurancePremiums): DeductionPair {
-  const g = lifeInsuranceOnePremium(p.general);
-  const m = lifeInsuranceOnePremium(p.medical);
-  const n = lifeInsuranceOnePremium(p.pension);
+  const g = lifeInsuranceCategory(p.general, p.generalOld ?? 0);
+  const m = lifeInsuranceCategory(p.medical, 0); // 介護医療は新制度のみ
+  const n = lifeInsuranceCategory(p.pension, p.pensionOld ?? 0);
   const incomeTax = Math.min(120_000, g.incomeTax + m.incomeTax + n.incomeTax);
   const residentTax = Math.min(70_000, g.residentTax + m.residentTax + n.residentTax);
   return { incomeTax, residentTax };

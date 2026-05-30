@@ -14,6 +14,7 @@ import {
   calcBaseIncomeTax,
   calcFinalIncomeTax,
   calcResidentAdjustmentCredit,
+  residentTaxExemption,
   marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
@@ -447,5 +448,38 @@ describe('calcResidentAdjustmentCredit (住民税の調整控除)', () => {
 
   it('returns 0 above 2,500万 income', () => {
     expect(calcResidentAdjustmentCredit(25_000_001, 50_000)).toBe(0);
+  });
+});
+
+describe('residentTaxExemption (住民税の非課税限度額)', () => {
+  it('single person: exempt at or below 45万 total income', () => {
+    expect(residentTaxExemption(450_000, 0)).toEqual({ perCapitaExempt: true, incomeLevyExempt: true });
+    expect(residentTaxExemption(450_001, 0)).toEqual({ perCapitaExempt: false, incomeLevyExempt: false });
+  });
+
+  it('with dependents uses 35万×人数 + 31万 (均等割) / +42万 (所得割)', () => {
+    // 1 dependent → persons 2. 均等割限度 = 35万×2+31万 = 101万; 所得割限度 = 35万×2+42万 = 112万
+    expect(residentTaxExemption(1_010_000, 1)).toEqual({ perCapitaExempt: true, incomeLevyExempt: true });
+    expect(residentTaxExemption(1_010_001, 1)).toEqual({ perCapitaExempt: false, incomeLevyExempt: true });
+    expect(residentTaxExemption(1_120_000, 1)).toEqual({ perCapitaExempt: false, incomeLevyExempt: true });
+    expect(residentTaxExemption(1_120_001, 1)).toEqual({ perCapitaExempt: false, incomeLevyExempt: false });
+  });
+
+  it('high income is fully taxable', () => {
+    expect(residentTaxExemption(5_000_000, 0)).toEqual({ perCapitaExempt: false, incomeLevyExempt: false });
+  });
+});
+
+describe('calcSalaryWithDeductions resident-tax exemption integration', () => {
+  it('drops resident tax to 0 for a low-income single person', () => {
+    // gross 900,000 → employment 350,000 < 450,000 → 非課税
+    const r = calcSalaryWithDeductions(900_000, 480_000, 430_000, 0, 50_000, 0);
+    expect(r.residentTax).toBe(0);
+    expect(r.residentIncomeLevy).toBe(0);
+  });
+
+  it('keeps resident tax for a normal income', () => {
+    const r = calcSalaryWithDeductions(6_000_000, 1_300_000, 1_250_000, 0, 50_000, 0);
+    expect(r.residentTax).toBeGreaterThan(0);
   });
 });

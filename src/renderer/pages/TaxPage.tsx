@@ -101,6 +101,7 @@ export function TaxPage() {
   const [dSocialStr, setDSocialStr] = useState('900000');
   const [dIdecoStr, setDIdecoStr] = useState('0');
   const [dLifeStr, setDLifeStr] = useState('0');
+  const [dLifeOldStr, setDLifeOldStr] = useState('0');
   const [dQuakeStr, setDQuakeStr] = useState('0');
   const [dMedicalStr, setDMedicalStr] = useState('0');
   const [dDonationStr, setDDonationStr] = useState('0');
@@ -134,16 +135,23 @@ export function TaxPage() {
       smallBizMutualAid: num(dIdecoStr),
       spouseIncome: hasSpouse ? num(spouseIncomeStr) : undefined,
       dependents,
-      lifeInsurance: { general: num(dLifeStr), medical: 0, pension: 0 },
+      lifeInsurance: {
+        general: num(dLifeStr),
+        medical: 0,
+        pension: 0,
+        generalOld: num(dLifeOldStr),
+      },
       earthquakeInsurance: num(dQuakeStr),
       medical: { paid: num(dMedicalStr), reimbursed: 0 },
       donation,
       singleParent,
     };
     const ded = calcAllDeductions(input);
-    // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除も内部適用済み)。
+    // 住民税の非課税限度額判定に使う扶養人数 (配偶者 + 扶養親族)。
+    const dependentCount = (hasSpouse ? 1 : 0) + dependents.length;
+    // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除・非課税限度額も内部適用済み)。
     const result = calcSalaryWithDeductions(
-      dGross, ded.total.incomeTax, ded.total.residentTax, donation, ded.humanDeductionDiff,
+      dGross, ded.total.incomeTax, ded.total.residentTax, donation, ded.humanDeductionDiff, dependentCount,
     );
 
     // ② 税額控除 (住宅ローン・配当) を、復興特別所得税の前の「基準所得税額」に
@@ -174,7 +182,7 @@ export function TaxPage() {
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -268,7 +276,8 @@ export function TaxPage() {
             ['額面年収 (円)', dGrossStr, setDGrossStr],
             ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
             ['小規模企業共済+iDeCo (年)', dIdecoStr, setDIdecoStr],
-            ['一般生命保険料 (年)', dLifeStr, setDLifeStr],
+            ['一般生命保険料・新制度 (年)', dLifeStr, setDLifeStr],
+            ['一般生命保険料・旧制度 (年)', dLifeOldStr, setDLifeOldStr],
             ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
             ['医療費 (年・自己負担)', dMedicalStr, setDMedicalStr],
             ['ふるさと納税 (年)', dDonationStr, setDDonationStr],

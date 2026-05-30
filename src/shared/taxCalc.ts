@@ -114,6 +114,34 @@ export function calcResidentAdjustmentCredit(
   return yen(Math.max(2_500, adjusted * 0.05));
 }
 
+/**
+ * 住民税の非課税限度額判定 (標準的な「1級地」基準)。
+ *
+ * - 均等割の非課税: 合計所得 ≤ 35万 ×(本人+扶養人数) + 31万 (扶養がある場合)
+ *   ※ 単身 (扶養なし) は 45万 (35万+10万) 以下で均等割非課税。
+ * - 所得割の非課税: 合計所得 ≤ 35万 ×(本人+扶養人数) + 42万 (扶養がある場合)
+ *   ※ 単身は 45万 以下で所得割非課税。
+ *
+ * @param totalIncome 合計所得金額
+ * @param dependentCount 扶養親族の数 (16歳未満含む。配偶者控除対象も1人とする)
+ * @returns 均等割・所得割それぞれの非課税フラグ
+ */
+export function residentTaxExemption(
+  totalIncome: number,
+  dependentCount: number,
+): { readonly perCapitaExempt: boolean; readonly incomeLevyExempt: boolean } {
+  const persons = 1 + Math.max(0, dependentCount);
+  const hasDependents = dependentCount > 0;
+  // 均等割の非課税限度額。
+  const perCapitaLimit = hasDependents ? 350_000 * persons + 310_000 : 450_000;
+  // 所得割の非課税限度額。
+  const incomeLevyLimit = hasDependents ? 350_000 * persons + 420_000 : 450_000;
+  return {
+    perCapitaExempt: totalIncome <= perCapitaLimit,
+    incomeLevyExempt: totalIncome <= incomeLevyLimit,
+  };
+}
+
 // --- 消費税 --------------------------------------------------------------
 
 /** 標準税率 / 軽減税率。 */
@@ -293,6 +321,7 @@ export function calcSalaryWithDeductions(
   deductionResidentTax: number,
   donation = 0,
   humanDeductionDiff = 0,
+  dependentCount = 0,
 ): FullSalaryResult {
   if (grossAnnual <= 0) {
     return {
@@ -309,16 +338,23 @@ export function calcSalaryWithDeductions(
   const taxableIncomeForResidentTax = Math.max(0, employmentIncome - deductionResidentTax);
   const baseIncomeTax = calcBaseIncomeTax(taxableIncomeForIncomeTax);
   const incomeTax = yen(baseIncomeTax * (1 + RECONSTRUCTION_SURTAX_RATE));
-  const residentIncomeTaxPortion = yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
+  // 住民税の非課税限度額を判定 (合計所得 = 給与所得 employmentIncome で近似)。
+  const exemption = residentTaxExemption(employmentIncome, dependentCount);
+  const residentIncomeTaxPortion = exemption.incomeLevyExempt
+    ? 0
+    : yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
   // 住民税の調整控除を所得割から差し引く。
   const adjustmentCredit = calcResidentAdjustmentCredit(taxableIncomeForResidentTax, humanDeductionDiff);
-  const residentBeforeCredit = Math.max(0, residentIncomeTaxPortion - adjustmentCredit) + RESIDENT_TAX_PER_CAPITA;
+  const perCapita = exemption.perCapitaExempt ? 0 : RESIDENT_TAX_PER_CAPITA;
+  const residentBeforeCredit = Math.max(0, residentIncomeTaxPortion - adjustmentCredit) + perCapita;
   const furusatoResidentCredit = calcFurusatoResidentCredit(
     donation,
     Math.max(0, residentIncomeTaxPortion - adjustmentCredit),
     marginalIncomeTaxRate(taxableIncomeForIncomeTax),
   );
-  const residentTax = Math.max(RESIDENT_TAX_PER_CAPITA, residentBeforeCredit - furusatoResidentCredit);
+  // 非課税の場合は均等割の下限を適用しない (0 まで下がる)。
+  const residentFloor = exemption.perCapitaExempt ? 0 : RESIDENT_TAX_PER_CAPITA;
+  const residentTax = Math.max(residentFloor, residentBeforeCredit - furusatoResidentCredit);
   const takeHome = grossAnnual - incomeTax - residentTax;
   return {
     gross: grossAnnual,

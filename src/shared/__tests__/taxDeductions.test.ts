@@ -90,6 +90,40 @@ describe('calcLifeInsuranceDeduction (新制度)', () => {
   });
 });
 
+describe('calcLifeInsuranceDeduction (旧制度 / 新旧併用)', () => {
+  it('old scheme caps a single category at 5万/3.5万', () => {
+    const d = calcLifeInsuranceDeduction({ general: 0, medical: 0, pension: 0, generalOld: 200_000 });
+    expect(d.incomeTax).toBe(50_000); // 旧制度上限
+    expect(d.residentTax).toBe(35_000);
+  });
+
+  it('old scheme bracket formula (40,000 premium)', () => {
+    // 旧 general 40,000: 所得税 40000/2+12500=32500, 住民 40000/2+7500=27500
+    const d = calcLifeInsuranceDeduction({ general: 0, medical: 0, pension: 0, generalOld: 40_000 });
+    expect(d.incomeTax).toBe(32_500);
+    expect(d.residentTax).toBe(27_500);
+  });
+
+  it('combined new+old: combined is capped at 4万/2.8万, but old-only may win if larger', () => {
+    // 新 80,000 (→4万) + 旧 100,000 (→5万): 併用cap=4万 だが 旧のみ=5万 が最大 → 5万/3.5万
+    const d = calcLifeInsuranceDeduction({ general: 80_000, medical: 0, pension: 0, generalOld: 100_000 });
+    expect(d.incomeTax).toBe(50_000);
+    expect(d.residentTax).toBe(35_000);
+  });
+
+  it('combined wins when both are small (new 20,000 + old 20,000 → 4万 cap)', () => {
+    // 新 20,000 (→2万) + 旧 20,000 (→2万) = 併用4万; 旧のみ=2万, 新のみ=2万 → 併用4万が最大
+    const d = calcLifeInsuranceDeduction({ general: 20_000, medical: 0, pension: 0, generalOld: 20_000 });
+    expect(d.incomeTax).toBe(40_000);
+  });
+
+  it('picks old-only when it is larger than new-only', () => {
+    // 旧 general 100,000 → 5万 (新は 0) なので旧が選ばれる
+    const d = calcLifeInsuranceDeduction({ general: 0, medical: 0, pension: 0, generalOld: 100_000 });
+    expect(d.incomeTax).toBe(50_000);
+  });
+});
+
 describe('calcEarthquakeInsuranceDeduction', () => {
   it('returns 0 for no premium', () => {
     expect(calcEarthquakeInsuranceDeduction(0)).toEqual({ incomeTax: 0, residentTax: 0 });
