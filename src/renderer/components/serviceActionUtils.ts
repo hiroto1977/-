@@ -28,11 +28,12 @@ export function parseAmountInput(raw: string): AmountParse {
   const trimmed = raw.trim();
   if (trimmed.length === 0) return { ok: true };
 
-  const normalized = toHalfWidth(trimmed)
-    .replace(/[,\s]/g, '') // 桁区切り・空白を除去
-    .replace(/^\+/, ''); // 先頭の + は許容して除去
+  const normalized = toHalfWidth(trimmed).replace(/[,\s]/g, ''); // 桁区切り・空白を除去
 
-  if (normalized.length === 0) return { ok: false };
+  // 厳格な 10 進数のみ許容 (任意の先頭 +/- + 整数 + 任意の小数部)。
+  // これにより "++500" / "+-500" / "1e3" / "0x10" / "Infinity" / "NaN" /
+  // "1..2" などを弾く。Number() の寛容な解釈には委ねない。
+  if (!/^[+-]?\d+(\.\d+)?$/.test(normalized)) return { ok: false };
 
   const n = Number(normalized);
   if (!Number.isFinite(n)) return { ok: false };

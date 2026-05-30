@@ -46,6 +46,7 @@
     "src/renderer/components/serviceActionUtils.ts",
     "src/renderer/components/serviceActionMachine.ts",
     "src/shared/shigyoTypes.ts",
+    "src/shared/formatters.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/autoLock.ts",
     "src/renderer/security/mnemonic.ts",

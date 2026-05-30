@@ -5,6 +5,7 @@ import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
+import { jpy } from '../../shared/formatters';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -952,7 +953,6 @@ export function BusinessPage() {
  *  live 更新した内容にも追従する (PR #4 R2-1。SNAPSHOT 直読みだと live
  *  モードで古い値が残る問題を解消)。 */
 function CrossServiceKpis() {
-  const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
   const { data: ue } = useServiceData('uber-eats', SNAPSHOT.uberEats);
   const { data: dc } = useServiceData('demae-can', SNAPSHOT.demaeCan);
   const { data: re } = useServiceData('real-estate', SNAPSHOT.realEstate);
@@ -972,17 +972,20 @@ function CrossServiceKpis() {
   const shigyoMonthlyFeeTotal = sumShigyoMonthlyFees(shigyoSnapshots);
 
   // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
-  const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;
-  // 月次キャッシュフロー (不動産のみ実 CF が算出済)。
+  // 売上は非負のはず。異常データ (負の revenue) でも KPI が負に振れないよう
+  // 0 でクランプする (防御的; live データ不整合への耐性)。
+  const monthlyFoodDelivery = Math.max(0, ue.weekRevenue * 4 + dc.monthSummary.revenue);
+  // 月次キャッシュフロー (不動産のみ実 CF が算出済)。赤字 CF を表現するため
+  // ここは負値を許容する。
   const monthlyCashflow = re.monthlyCashflow.netCashflow;
   // 投資ポートフォリオ評価額 (株式 cash + 投信)。
   // stocks は backtest 後にしか positions が埋まらないので、cash を保守的に
   // 投資元本としてカウント。実運用では positions[].shares × 最新終値で
   // 評価額を算出する。
   const stocksCash = st?.portfolio?.cash ?? 0;
-  const investmentValuation = stocksCash + mf.portfolio.totalValuation;
-  // 不動産取得価格合計 = 取得原価ベースの資産。
-  const realEstateAssets = re.properties.reduce((sum, p) => sum + p.purchasePrice, 0);
+  const investmentValuation = Math.max(0, stocksCash + mf.portfolio.totalValuation);
+  // 不動産取得価格合計 = 取得原価ベースの資産 (非負)。
+  const realEstateAssets = re.properties.reduce((sum, p) => sum + Math.max(0, p.purchasePrice), 0);
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (

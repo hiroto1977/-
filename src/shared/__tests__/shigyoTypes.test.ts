@@ -18,14 +18,26 @@ describe('sumShigyoMonthlyFees', () => {
     expect(sumShigyoMonthlyFees([])).toBe(0);
   });
 
+  it('returns the fee for a single-element list (reduce seed = 0)', () => {
+    expect(sumShigyoMonthlyFees([make(33_000, 0)])).toBe(33_000);
+  });
+
   it('sums the monthly fees across snapshots', () => {
     expect(sumShigyoMonthlyFees([make(33_000, 0), make(22_000, 5), make(0, 9)])).toBe(55_000);
+  });
+
+  it('honors negative fees (corrections / credits)', () => {
+    expect(sumShigyoMonthlyFees([make(-10_000, 0), make(20_000, 0)])).toBe(10_000);
   });
 });
 
 describe('sumShigyoOutstanding', () => {
   it('returns 0 for an empty list', () => {
     expect(sumShigyoOutstanding([])).toBe(0);
+  });
+
+  it('returns the invoice for a single-element list', () => {
+    expect(sumShigyoOutstanding([make(0, 88_000)])).toBe(88_000);
   });
 
   it('sums the outstanding invoices across snapshots', () => {

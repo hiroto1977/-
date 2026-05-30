@@ -5,8 +5,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
-
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+import { jpy } from '../../shared/formatters';
 
 const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
   相談予約: '#94a3b8',

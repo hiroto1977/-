@@ -4,8 +4,8 @@ import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { jpy } from '../../shared/formatters';
 
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
 export function RealEstatePage() {

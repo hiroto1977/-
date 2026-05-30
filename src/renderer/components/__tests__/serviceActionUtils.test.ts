@@ -29,10 +29,42 @@ describe('parseAmountInput', () => {
     expect(parseAmountInput('+800')).toEqual({ ok: true, value: 800 });
   });
 
+  it('strips tab / newline / NBSP as whitespace', () => {
+    expect(parseAmountInput('1\t200')).toEqual({ ok: true, value: 1200 });
+    expect(parseAmountInput('1\n200')).toEqual({ ok: true, value: 1200 });
+    expect(parseAmountInput('1 200')).toEqual({ ok: true, value: 1200 });
+  });
+
+  it('handles full/half-width mixed input', () => {
+    expect(parseAmountInput('１,２00')).toEqual({ ok: true, value: 1200 });
+  });
+
   it('rejects non-numeric input', () => {
     expect(parseAmountInput('abc')).toEqual({ ok: false });
     expect(parseAmountInput('1.2.3')).toEqual({ ok: false });
     expect(parseAmountInput(',,,')).toEqual({ ok: false });
+  });
+
+  it('rejects Infinity / NaN literals (no loose Number() coercion)', () => {
+    expect(parseAmountInput('Infinity')).toEqual({ ok: false });
+    expect(parseAmountInput('-Infinity')).toEqual({ ok: false });
+    expect(parseAmountInput('NaN')).toEqual({ ok: false });
+  });
+
+  it('rejects exponential / hex / multi-sign forms', () => {
+    expect(parseAmountInput('1e3')).toEqual({ ok: false });
+    expect(parseAmountInput('0x10')).toEqual({ ok: false });
+    expect(parseAmountInput('++500')).toEqual({ ok: false });
+    expect(parseAmountInput('--500')).toEqual({ ok: false });
+    expect(parseAmountInput('+-500')).toEqual({ ok: false });
+  });
+
+  it('rejects bare signs / dots', () => {
+    expect(parseAmountInput('+')).toEqual({ ok: false });
+    expect(parseAmountInput('-')).toEqual({ ok: false });
+    expect(parseAmountInput('.')).toEqual({ ok: false });
+    expect(parseAmountInput('1..2')).toEqual({ ok: false });
+    expect(parseAmountInput('.5')).toEqual({ ok: false });
   });
 });
 
@@ -52,8 +84,21 @@ describe('sanitizeNote', () => {
     expect(sanitizeNote('keep\tthese\nlines')).toBe('keep\tthese\nlines');
   });
 
+  it('treats the control-char boundary precisely', () => {
+    expect(sanitizeNote(String.fromCharCode(0x08))).toBe(''); // BS removed
+    expect(sanitizeNote(`a\tb`)).toBe('a\tb'); // TAB kept mid-string
+    expect(sanitizeNote(`x${String.fromCharCode(0x1f)}y`)).toBe('xy'); // US (last C0) removed
+    expect(sanitizeNote('x y')).toBe('x y'); // 0x20 space kept
+    expect(sanitizeNote('a~b')).toBe('a~b'); // 0x7e kept
+    expect(sanitizeNote(`a${String.fromCharCode(0x7f)}b`)).toBe('ab'); // DEL removed
+    expect(sanitizeNote(`a${String.fromCharCode(0x9f)}b`)).toBe('ab'); // C1 max removed
+    expect(sanitizeNote(`a${String.fromCharCode(0xa0)}b`)).toBe(`a${String.fromCharCode(0xa0)}b`); // NBSP kept
+  });
+
   it('truncates to the max length', () => {
     expect(sanitizeNote('a'.repeat(5000))).toHaveLength(2000);
     expect(sanitizeNote('abcdef', 3)).toBe('abc');
+    expect(sanitizeNote('abc', 3)).toBe('abc');
+    expect(sanitizeNote('abc', 0)).toBe('');
   });
 });

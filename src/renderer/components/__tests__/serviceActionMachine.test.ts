@@ -76,4 +76,32 @@ describe('actionReducer', () => {
     expect(feedbackText(s)).toBeNull();
     expect(errorText(s)).toBe('later error');
   });
+
+  it('record/start while advising switches phase and clears advice', () => {
+    const prev: ActionState = { phase: 'advising', result: { kind: 'advice', advice } };
+    const next = actionReducer(prev, { type: 'record/start' });
+    expect(next.phase).toBe('recording');
+    expect(adviceResult(next)).toBeNull();
+  });
+
+  it('advise/start clears prior feedback', () => {
+    const prev: ActionState = { phase: 'idle', result: { kind: 'feedback', text: 'saved' } };
+    const next = actionReducer(prev, { type: 'advise/start' });
+    expect(feedbackText(next)).toBeNull();
+    expect(isAdvising(next)).toBe(true);
+  });
+
+  it('a later error replaces an earlier error text', () => {
+    let s: ActionState = { phase: 'idle', result: { kind: 'error', text: 'err1' } };
+    s = actionReducer(s, { type: 'error', text: 'err2' });
+    expect(errorText(s)).toBe('err2');
+  });
+
+  it('advice replaces a prior feedback result', () => {
+    let s = INITIAL_ACTION_STATE;
+    s = actionReducer(s, { type: 'record/success', text: 'saved' });
+    s = actionReducer(s, { type: 'advise/success', advice });
+    expect(feedbackText(s)).toBeNull();
+    expect(adviceResult(s)).toEqual(advice);
+  });
 });
