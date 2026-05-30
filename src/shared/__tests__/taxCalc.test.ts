@@ -11,6 +11,8 @@ import {
   calcSalaryIncomeDeduction,
   calcSalaryWithDeductions,
   calcFurusatoResidentCredit,
+  calcBaseIncomeTax,
+  calcFinalIncomeTax,
   marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
@@ -326,5 +328,98 @@ describe('calcSalaryWithDeductions', () => {
   it('never drops resident tax below the per-capita levy', () => {
     const r = calcSalaryWithDeductions(3_000_000, 5_000_000, 5_000_000, 1_000_000);
     expect(r.residentTax).toBeGreaterThanOrEqual(5_000);
+  });
+});
+
+describe('calcBaseIncomeTax / calcFinalIncomeTax (復興特別所得税の順序)', () => {
+  it('base income tax excludes the surtax', () => {
+    // 5,000,000 × 20% − 427,500 = 572,500 (基準税額)
+    expect(calcBaseIncomeTax(5_000_000)).toBe(572_500);
+    expect(calcBaseIncomeTax(0)).toBe(0);
+    expect(calcBaseIncomeTax(-1)).toBe(0);
+  });
+
+  it('calcIncomeTax = base × 1.021 (consistency)', () => {
+    for (const ti of [1_000_000, 5_000_000, 20_000_000]) {
+      expect(calcIncomeTax(ti)).toBe(Math.round(calcBaseIncomeTax(ti) * (1 + RECONSTRUCTION_SURTAX_RATE)));
+    }
+  });
+
+  it('applies credits BEFORE the surtax (correct order)', () => {
+    // base 1,000,000, credit 500,000 → (1,000,000-500,000)×1.021 = 510,500
+    expect(calcFinalIncomeTax(1_000_000, 500_000)).toBe(Math.round(500_000 * 1.021));
+    // credit ≥ base → 0
+    expect(calcFinalIncomeTax(300_000, 500_000)).toBe(0);
+    // no credit → base × 1.021
+    expect(calcFinalIncomeTax(1_000_000, 0)).toBe(Math.round(1_000_000 * 1.021));
+  });
+
+  it('differs from the wrong order (surtax then credit) by the surtax on the credit', () => {
+    const base = 1_000_000;
+    const credit = 500_000;
+    const correct = calcFinalIncomeTax(base, credit); // (500,000)×1.021 = 510,500
+    const wrong = Math.max(0, Math.round(base * 1.021) - credit); // 1,021,000-500,000 = 521,000
+    expect(correct).toBeLessThan(wrong);
+    expect(wrong - correct).toBe(Math.round(credit * RECONSTRUCTION_SURTAX_RATE));
+  });
+});
+
+describe('boundary coverage — salary income deduction brackets', () => {
+  it('switches continuously at each official boundary', () => {
+    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_625_001)).toBe(Math.round(1_625_001 * 0.4 - 100_000));
+    expect(calcSalaryIncomeDeduction(1_800_001)).toBe(Math.round(1_800_001 * 0.3 + 80_000));
+    expect(calcSalaryIncomeDeduction(3_600_001)).toBe(Math.round(3_600_001 * 0.2 + 440_000));
+    expect(calcSalaryIncomeDeduction(6_600_001)).toBe(Math.round(6_600_001 * 0.1 + 1_100_000));
+    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
+    expect(calcSalaryIncomeDeduction(8_500_001)).toBe(1_950_000);
+  });
+});
+
+describe('boundary coverage — basic deduction tapering', () => {
+  it('holds full amount just below 24M then steps down', () => {
+    expect(calcBasicDeduction(23_999_999)).toBe(480_000);
+    expect(calcBasicDeduction(24_000_001)).toBe(320_000);
+    expect(calcBasicDeduction(24_499_999)).toBe(320_000);
+    expect(calcBasicDeduction(24_500_001)).toBe(160_000);
+    expect(calcBasicDeduction(24_999_999)).toBe(160_000);
+    expect(calcBasicDeduction(25_000_001)).toBe(0);
+    expect(calcResidentBasicDeduction(23_999_999)).toBe(RESIDENT_BASIC_DEDUCTION);
+    expect(calcResidentBasicDeduction(24_000_001)).toBe(290_000);
+    expect(calcResidentBasicDeduction(24_500_001)).toBe(150_000);
+    expect(calcResidentBasicDeduction(25_000_001)).toBe(0);
+    expect(BASIC_DEDUCTION).toBe(480_000);
+  });
+});
+
+describe('boundary coverage — marginal income tax rate (all brackets)', () => {
+  it('returns the bracket rate at each boundary and just above', () => {
+    expect(marginalIncomeTaxRate(1_950_000)).toBe(0.05);
+    expect(marginalIncomeTaxRate(1_950_001)).toBe(0.1);
+    expect(marginalIncomeTaxRate(3_300_000)).toBe(0.1);
+    expect(marginalIncomeTaxRate(3_300_001)).toBe(0.2);
+    expect(marginalIncomeTaxRate(6_950_000)).toBe(0.2);
+    expect(marginalIncomeTaxRate(6_950_001)).toBe(0.23);
+    expect(marginalIncomeTaxRate(9_000_000)).toBe(0.23);
+    expect(marginalIncomeTaxRate(9_000_001)).toBe(0.33);
+    expect(marginalIncomeTaxRate(18_000_000)).toBe(0.33);
+    expect(marginalIncomeTaxRate(18_000_001)).toBe(0.4);
+    expect(marginalIncomeTaxRate(40_000_000)).toBe(0.4);
+    expect(marginalIncomeTaxRate(40_000_001)).toBe(0.45);
+  });
+});
+
+describe('boundary coverage — furusato resident credit special cap', () => {
+  it('keeps the special portion when below the 20% cap', () => {
+    // donation 10,000, levy 100,000, marginal 0.05
+    // base = 8,000×0.1 = 800; special = 8,000×(0.9-0.05×1.021) ≈ 6,791; cap = 20,000 → no clip
+    const expected = Math.round(800 + 8_000 * (0.9 - 0.05 * (1 + RECONSTRUCTION_SURTAX_RATE)));
+    expect(calcFurusatoResidentCredit(10_000, 100_000, 0.05)).toBe(expected);
+  });
+
+  it('clips the special portion to 0 at very high marginal rates', () => {
+    // marginal 0.9 → 0.9 - 0.9×1.021 < 0 → special floored to 0; only base remains
+    const credit = calcFurusatoResidentCredit(100_000, 100_000, 0.9);
+    expect(credit).toBe(Math.round((100_000 - 2_000) * 0.1));
   });
 });

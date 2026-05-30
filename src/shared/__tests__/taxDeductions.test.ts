@@ -189,3 +189,62 @@ describe('calcAllDeductions', () => {
     expect(d.socialInsurance).toEqual({ incomeTax: 0, residentTax: 0 });
   });
 });
+
+describe('boundary coverage — spouse deduction self-income tiers', () => {
+  const one = (i: number) => calcSpouseDeduction(i, 0); // spouse income 0 → full 38万/33万 base
+  it('switches at 900万 / 950万 / 1000万 boundaries', () => {
+    expect(one(9_000_000)).toEqual({ incomeTax: 380_000, residentTax: 330_000 }); // tier 1
+    expect(one(9_000_001)).toEqual({
+      incomeTax: Math.round(380_000 * (2 / 3)),
+      residentTax: Math.round(330_000 * (2 / 3)),
+    }); // tier 2
+    expect(one(9_500_000)).toEqual({
+      incomeTax: Math.round(380_000 * (2 / 3)),
+      residentTax: Math.round(330_000 * (2 / 3)),
+    }); // tier 2 max
+    expect(one(9_500_001)).toEqual({
+      incomeTax: Math.round(380_000 * (1 / 3)),
+      residentTax: Math.round(330_000 * (1 / 3)),
+    }); // tier 3
+    expect(one(10_000_000)).toEqual({
+      incomeTax: Math.round(380_000 * (1 / 3)),
+      residentTax: Math.round(330_000 * (1 / 3)),
+    }); // tier 3 max
+    expect(one(10_000_001)).toEqual({ incomeTax: 0, residentTax: 0 }); // tier 0
+  });
+});
+
+describe('boundary coverage — life insurance bracket edges (新制度, single category)', () => {
+  const it1 = (premium: number) => calcLifeInsuranceDeduction({ general: premium, medical: 0, pension: 0 });
+  it('hits each income-tax bracket boundary', () => {
+    expect(it1(20_000).incomeTax).toBe(20_000); // full
+    expect(it1(40_000).incomeTax).toBe(Math.round(40_000 / 2 + 10_000)); // 30,000
+    expect(it1(80_000).incomeTax).toBe(Math.round(80_000 / 4 + 20_000)); // 40,000
+    expect(it1(80_001).incomeTax).toBe(40_000); // cap
+  });
+  it('hits each resident-tax bracket boundary', () => {
+    expect(it1(12_000).residentTax).toBe(12_000); // full
+    expect(it1(32_000).residentTax).toBe(Math.round(32_000 / 2 + 6_000)); // 22,000
+    expect(it1(56_000).residentTax).toBe(Math.round(56_000 / 4 + 14_000)); // 28,000
+    expect(it1(56_001).residentTax).toBe(28_000); // cap
+  });
+});
+
+describe('boundary coverage — medical deduction threshold switch', () => {
+  it('uses income×5% vs 100,000 at the 2,000,000 income boundary', () => {
+    // income 2,000,000 → threshold min(100,000, 100,000)=100,000; net 100,000 → 0
+    expect(calcMedicalDeduction(100_000, 0, 2_000_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+    // income 2,000,000, net 100,001 → 1
+    expect(calcMedicalDeduction(100_001, 0, 2_000_000)).toEqual({ incomeTax: 1, residentTax: 1 });
+    // caps at 200万
+    expect(calcMedicalDeduction(2_100_000, 0, 2_000_000)).toEqual({ incomeTax: 2_000_000, residentTax: 2_000_000 });
+  });
+});
+
+describe('boundary coverage — dependent income requirement (UI responsibility)', () => {
+  // 注: 扶養親族の所得48万以下要件はUIで担保 (calcDependentDeduction は区分のみ受け取る)。
+  // ここでは区分ごとの金額が安定していることを固定する。
+  it('keeps under-16 at zero regardless of count', () => {
+    expect(calcDependentDeduction(['under16', 'under16', 'under16'])).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+});

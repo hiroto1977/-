@@ -9,6 +9,7 @@ import { parseAmountInput } from '../components/serviceActionUtils';
 import {
   CONSUMPTION_TAX_REDUCED,
   CONSUMPTION_TAX_STANDARD,
+  RECONSTRUCTION_SURTAX_RATE,
   calcConsumptionTax,
   calcIncomeTax,
   calcNetSalary,
@@ -26,7 +27,7 @@ import {
   type DependentKind,
   type DeductionInput,
 } from '../../shared/taxDeductions';
-import { calcAllTaxCredits, applyTaxCredits } from '../../shared/taxCredits';
+import { calcAllTaxCredits, applyTaxCreditsWithSurtax } from '../../shared/taxCredits';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -134,14 +135,15 @@ export function TaxPage() {
     // ① 所得控除込みの税額 (ふるさと納税の住民税控除も内部適用済み)。
     const result = calcSalaryWithDeductions(dGross, ded.total.incomeTax, ded.total.residentTax, donation);
 
-    // ② 税額控除 (住宅ローン・配当) を算出税額に適用。
+    // ② 税額控除 (住宅ローン・配当) を、復興特別所得税の前の「基準所得税額」に
+    //    対して適用する (正しい順序)。住宅ローン控除の所得税枠も基準税額ベース。
     const mortgageBalance = num(mortgageBalanceStr);
     const dividendIncome = num(dividendStr);
     const credits = calcAllTaxCredits({
       mortgage: mortgageBalance > 0
         ? {
             yearEndBalance: mortgageBalance,
-            incomeTaxBeforeCredit: result.incomeTax,
+            incomeTaxBeforeCredit: result.baseIncomeTax,
             taxableIncomeForResident: result.taxableIncomeForResidentTax,
           }
         : undefined,
@@ -149,7 +151,12 @@ export function TaxPage() {
         ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax }
         : undefined,
     });
-    const afterCredits = applyTaxCredits(result.incomeTax, result.residentTax, credits);
+    const afterCredits = applyTaxCreditsWithSurtax(
+      result.baseIncomeTax,
+      result.residentTax,
+      credits,
+      RECONSTRUCTION_SURTAX_RATE,
+    );
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
@@ -310,6 +317,8 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
           ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した国内株式配当を想定 (申告分離・上場株式の特例は別計算)。
           住宅ローン控除は居住年・住宅性能区分により控除率/上限が異なります (既定 0.7%・残高上限 3,000 万円)。
+          扶養親族はそれぞれ<strong>合計所得 48 万円以下</strong>が要件です (要件を満たす人数のみ入力してください)。
+          税額控除は復興特別所得税より前の基準所得税額から差し引いて計算しています。住民税の調整控除は未反映です。
         </div>
       </Section>
 

@@ -42,18 +42,33 @@ export const RECONSTRUCTION_SURTAX_RATE = 0.021;
  * 負の課税所得は 0 とみなす。
  */
 export function calcIncomeTax(taxableIncome: number): number {
-  // 早期 return と find 述語の `<=` は等価ミュータントを生む: 速算表は
-  // ブラケット境界で連続 (例 ¥1,950,000 は 5% でも 10% でも ¥97,500)、かつ
-  // 下の `Math.max(0, …)` が負・0 を 0 に丸めるため、ガード有無で結果が
-  // 一致する。テストで区別不能なため pragma で抑制する (business.ts 同様)。
+  return yen(calcBaseIncomeTax(taxableIncome) * (1 + RECONSTRUCTION_SURTAX_RATE));
+}
+
+/**
+ * 課税所得から「基準所得税額」(復興特別所得税を乗じる前の算出税額) を計算する。
+ *
+ * 税額控除 (住宅ローン控除・配当控除等) は復興特別所得税の計算より **前** に
+ * この基準所得税額から差し引く (確定申告書 B の (41)〜(44) の流れ)。その後に
+ * 残額へ 2.1% を乗じるのが正しい順序。`calcFinalIncomeTax` を参照。
+ */
+export function calcBaseIncomeTax(taxableIncome: number): number {
   // Stryker disable next-line ConditionalExpression
   if (taxableIncome <= 0) return 0;
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
   // Infinity 上限ブラケットが必ず最後に存在するため bracket は常に定義される。
-  const base = taxableIncome * bracket!.rate - bracket!.deduction;
-  const baseTax = Math.max(0, base);
-  return yen(baseTax * (1 + RECONSTRUCTION_SURTAX_RATE));
+  return Math.max(0, taxableIncome * bracket!.rate - bracket!.deduction);
+}
+
+/**
+ * 基準所得税額から所得税の税額控除を差し引き、復興特別所得税を乗じた
+ * 最終所得税額を計算する。
+ * 最終 = max(0, 基準所得税額 - 税額控除) × 1.021。
+ */
+export function calcFinalIncomeTax(baseIncomeTax: number, incomeTaxCredits: number): number {
+  const afterCredits = Math.max(0, baseIncomeTax - incomeTaxCredits);
+  return yen(afterCredits * (1 + RECONSTRUCTION_SURTAX_RATE));
 }
 
 // --- 住民税 (概算: 所得割 10% + 均等割) -----------------------------------
@@ -224,7 +239,12 @@ export interface FullSalaryResult {
   readonly totalDeductionResidentTax: number;
   readonly taxableIncomeForIncomeTax: number;
   readonly taxableIncomeForResidentTax: number;
+  /** 基準所得税額 (復興特別所得税を乗じる前。税額控除はここから引く)。 */
+  readonly baseIncomeTax: number;
+  /** 復興特別所得税込みの所得税額 (税額控除適用前)。 */
   readonly incomeTax: number;
+  /** 住民税の所得割額 (均等割・税額控除前)。住宅ローン控除の上限算定等に使う。 */
+  readonly residentIncomeLevy: number;
   /** ふるさと納税の住民税税額控除 (適用後に住民税から差し引く)。 */
   readonly furusatoResidentCredit: number;
   readonly residentTax: number;
@@ -249,14 +269,16 @@ export function calcSalaryWithDeductions(
       gross: 0, salaryDeduction: 0, employmentIncome: 0,
       totalDeductionIncomeTax: deductionIncomeTax, totalDeductionResidentTax: deductionResidentTax,
       taxableIncomeForIncomeTax: 0, taxableIncomeForResidentTax: 0,
-      incomeTax: 0, furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
+      baseIncomeTax: 0, incomeTax: 0, residentIncomeLevy: 0,
+      furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
     };
   }
   const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
   const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
   const taxableIncomeForIncomeTax = Math.max(0, employmentIncome - deductionIncomeTax);
   const taxableIncomeForResidentTax = Math.max(0, employmentIncome - deductionResidentTax);
-  const incomeTax = calcIncomeTax(taxableIncomeForIncomeTax);
+  const baseIncomeTax = calcBaseIncomeTax(taxableIncomeForIncomeTax);
+  const incomeTax = yen(baseIncomeTax * (1 + RECONSTRUCTION_SURTAX_RATE));
   const residentIncomeTaxPortion = yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
   const residentBeforeCredit = residentIncomeTaxPortion + RESIDENT_TAX_PER_CAPITA;
   const furusatoResidentCredit = calcFurusatoResidentCredit(
@@ -274,7 +296,9 @@ export function calcSalaryWithDeductions(
     totalDeductionResidentTax: deductionResidentTax,
     taxableIncomeForIncomeTax,
     taxableIncomeForResidentTax,
+    baseIncomeTax,
     incomeTax,
+    residentIncomeLevy: residentIncomeTaxPortion,
     furusatoResidentCredit,
     residentTax,
     takeHome,

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyTaxCredits,
+  applyTaxCreditsWithSurtax,
   calcAllTaxCredits,
   calcDividendCredit,
   calcMortgageCredit,
@@ -127,5 +128,60 @@ describe('applyTaxCredits', () => {
     const r = applyTaxCredits(300_000, 400_000, c);
     expect(r.incomeTax).toBe(200_000);
     expect(r.residentTax).toBe(350_000);
+  });
+});
+
+describe('applyTaxCreditsWithSurtax (復興税の順序)', () => {
+  it('applies income-tax credit to the base, then the surtax', () => {
+    const c = calcAllTaxCredits({ otherIncomeTaxCredit: 100_000 });
+    // base 500,000 - 100,000 = 400,000 → × 1.021 = 408,400
+    const r = applyTaxCreditsWithSurtax(500_000, 300_000, c, 0.021);
+    expect(r.incomeTax).toBe(Math.round(400_000 * 1.021));
+  });
+
+  it('floors income tax at zero when credit exceeds base', () => {
+    const c = calcAllTaxCredits({ otherIncomeTaxCredit: 600_000 });
+    const r = applyTaxCreditsWithSurtax(500_000, 300_000, c, 0.021);
+    expect(r.incomeTax).toBe(0);
+  });
+
+  it('never drops resident tax below per-capita', () => {
+    const c = calcAllTaxCredits({ furusatoResidentCredit: 1_000_000 });
+    const r = applyTaxCreditsWithSurtax(500_000, 300_000, c, 0.021);
+    expect(r.residentTax).toBe(5_000);
+  });
+
+  it('matches the documented order benefit vs the naive (surtax-first) approach', () => {
+    const c = calcAllTaxCredits({ otherIncomeTaxCredit: 100_000 });
+    const correct = applyTaxCreditsWithSurtax(500_000, 300_000, c, 0.021).incomeTax;
+    const naive = applyTaxCredits(Math.round(500_000 * 1.021), 300_000, c).incomeTax;
+    expect(correct).toBeLessThan(naive);
+  });
+});
+
+describe('boundary coverage — mortgage / dividend edges', () => {
+  it('zero balance yields no credit', () => {
+    const r = calcMortgageCredit({ yearEndBalance: 0, incomeTaxBeforeCredit: 300_000, taxableIncomeForResident: 4_000_000 });
+    expect(r.creditable).toBe(0);
+    expect(r.fromIncomeTax).toBe(0);
+    expect(r.fromResidentTax).toBe(0);
+  });
+
+  it('all credit spills to resident tax when income tax is zero (up to cap)', () => {
+    const r = calcMortgageCredit({ yearEndBalance: 20_000_000, incomeTaxBeforeCredit: 0, taxableIncomeForResident: 5_000_000 });
+    expect(r.fromIncomeTax).toBe(0);
+    expect(r.fromResidentTax).toBe(MORTGAGE_RESIDENT_CAP_MAX); // 140,000 > 97,500 cap
+    expect(r.unused).toBe(140_000 - MORTGAGE_RESIDENT_CAP_MAX);
+  });
+
+  it('dividend exactly at 10M uses the high rate fully', () => {
+    const r = calcDividendCredit({ dividendIncome: 1_000_000, taxableTotalIncome: 10_000_000 });
+    expect(r.incomeTax).toBe(100_000); // all high rate
+  });
+
+  it('dividend exceeding taxable income still applies (no negative low portion)', () => {
+    const r = calcDividendCredit({ dividendIncome: 5_000_000, taxableTotalIncome: 3_000_000 });
+    // over = max(0, 3M-10M)=0 → all high rate
+    expect(r.incomeTax).toBe(Math.round(5_000_000 * 0.1));
   });
 });

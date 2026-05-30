@@ -164,7 +164,8 @@ export function calcAllTaxCredits(input: TaxCreditInput): TaxCreditBreakdown {
   };
 }
 
-/** 算出税額に税額控除を適用する (0 未満にはならない)。 */
+/** 算出税額に税額控除を適用する (0 未満にはならない)。
+ *  ※ 復興特別所得税の順序を考慮しない簡易版 (所得税に直接適用)。 */
 export function applyTaxCredits(
   incomeTaxBeforeCredit: number,
   residentTaxBeforeCredit: number,
@@ -173,6 +174,33 @@ export function applyTaxCredits(
 ): { readonly incomeTax: number; readonly residentTax: number } {
   const incomeTax = Math.max(0, incomeTaxBeforeCredit - credits.totalIncomeTax);
   // 住民税は均等割 (per-capita) を下回らない。
+  const residentTax = Math.max(
+    residentPerCapita,
+    residentTaxBeforeCredit - credits.totalResidentTax,
+  );
+  return { incomeTax, residentTax };
+}
+
+/**
+ * 復興特別所得税の順序を正しく扱った税額控除の適用。
+ *
+ * 住宅ローン控除・配当控除等の所得税の税額控除は、**復興特別所得税を乗じる前**
+ * の「基準所得税額」から差し引き、その残額に 2.1% を乗じて最終所得税額とする
+ * (確定申告書 B の流れ)。住民税は所得割の算出税額から税額控除を引く。
+ *
+ * @param baseIncomeTax 基準所得税額 (復興税前)
+ * @param residentTaxBeforeCredit 住民税 (均等割込み・税額控除前)
+ * @param surtaxRate 復興特別所得税率 (通常 0.021)
+ */
+export function applyTaxCreditsWithSurtax(
+  baseIncomeTax: number,
+  residentTaxBeforeCredit: number,
+  credits: TaxCreditBreakdown,
+  surtaxRate: number,
+  residentPerCapita = 5_000,
+): { readonly incomeTax: number; readonly residentTax: number } {
+  const baseAfterCredit = Math.max(0, baseIncomeTax - credits.totalIncomeTax);
+  const incomeTax = Math.round(baseAfterCredit * (1 + surtaxRate));
   const residentTax = Math.max(
     residentPerCapita,
     residentTaxBeforeCredit - credits.totalResidentTax,
