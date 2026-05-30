@@ -890,6 +890,7 @@ export const SNAPSHOT = {
     monthly: [] as {
       month: string;
       funding: number;
+      fundingAfterTax: number;
       operatingCashflow: number;
       portfolioValue: number;
     }[],

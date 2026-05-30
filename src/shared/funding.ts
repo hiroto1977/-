@@ -134,8 +134,14 @@ export interface FundingByKind {
 /** 月次の資金フロー (折れ線・棒グラフ用)。 */
 export interface FundingMonthly {
   readonly month: string;
-  /** その月に入金が見込まれる資金調達額 (確定ベース)。 */
+  /** その月に入金が見込まれる資金調達額 (確定ベース・税引前)。 */
   readonly funding: number;
+  /**
+   * その月の資金調達額の税引後の手残り目安。課税対象資金 (補助金・助成金・
+   * 給付金・購入型CF) には実効税率を課し、非課税 (融資・公庫) と圧縮記帳
+   * 適用分はそのまま。`funding − 当月課税対象額 × 実効税率`。
+   */
+  readonly fundingAfterTax: number;
   /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
   readonly operatingCashflow: number;
   /** 株式ポートフォリオ評価額 (任意。未連携なら 0)。 */
@@ -217,20 +223,34 @@ export function radarScores(
   return byKind.map((b) => Math.round((b.secured / peak) * max * 100) / 100);
 }
 
+/** 補助金等の課税を見込んだ概算の実効税率の既定値 (法人実効税率の目安 約30%)。 */
+export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
+
+/** 実効税率を [0,1] にクランプする (負値は 0、1 超は 1)。 */
+function clampRate(rate: number): number {
+  return rate > 0 ? Math.min(1, rate) : 0;
+}
+
 /**
  * 月次サマリーを生成する (折れ線・棒グラフ用)。
  *
- * 資金調達は確定案件の月別入金見込み、operatingCashflow は会計ソフト連携の
- * 月次営業 CF、portfolioValue は株式連携の評価額。後者 2 つは任意連携なので
- * 引数の Map が無ければ 0 とする。返り値は月の昇順。
+ * 資金調達は確定案件の月別入金見込み (税引前) と税引後手残り、
+ * operatingCashflow は会計ソフト連携の月次営業 CF、portfolioValue は株式連携の
+ * 評価額。後者 2 つは任意連携なので引数の Map が無ければ 0 とする。
+ * 返り値は月の昇順。
+ *
+ * @param options.effectiveTaxRate 税引後手残りの計算に使う実効税率 (0..1)。
+ *   既定 `DEFAULT_EFFECTIVE_TAX_RATE`。
  */
 export function monthlyFlow(
   items: readonly FundingItem[],
   options: {
     readonly accountingCashflow?: ReadonlyMap<string, number>;
     readonly portfolioByMonth?: ReadonlyMap<string, number>;
+    readonly effectiveTaxRate?: number;
   } = {},
 ): FundingMonthly[] {
+  const rate = clampRate(options.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE);
   const months = new Set<string>();
   for (const it of items) months.add(it.month);
   for (const m of options.accountingCashflow?.keys() ?? []) months.add(m);
@@ -239,20 +259,21 @@ export function monthlyFlow(
   return [...months]
     .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
     .map((month) => {
-      const funding = items
-        .filter((it) => it.month === month && isSecured(it.status))
+      const securedOfMonth = items.filter((it) => it.month === month && isSecured(it.status));
+      const funding = securedOfMonth.reduce((s, it) => s + nonNeg(it.amount), 0);
+      // 当月の課税対象額 (圧縮記帳適用分は当年度課税が繰延されるため除外)。
+      const taxable = securedOfMonth
+        .filter((it) => isTaxableFunding(it.kind) && !it.compressedEntry)
         .reduce((s, it) => s + nonNeg(it.amount), 0);
       return {
         month,
         funding,
+        fundingAfterTax: Math.round(funding - taxable * rate),
         operatingCashflow: options.accountingCashflow?.get(month) ?? 0,
         portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
       };
     });
 }
-
-/** 補助金等の課税を見込んだ概算の実効税率の既定値 (法人実効税率の目安 約30%)。 */
-export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
 
 /**
  * 全体サマリーを計算する。
@@ -267,7 +288,7 @@ export function summarize(
   items: readonly FundingItem[],
   effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
 ): FundingSummary {
-  const rate = effectiveTaxRate > 0 ? Math.min(1, effectiveTaxRate) : 0;
+  const rate = clampRate(effectiveTaxRate);
   let nonRepayableSecured = 0;
   let repayableSecured = 0;
   let totalPipeline = 0;

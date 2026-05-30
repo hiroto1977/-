@@ -96,6 +96,35 @@ describe('monthlyFlow', () => {
     expect(jul.operatingCashflow).toBe(300_000);
     expect(jul.portfolioValue).toBe(0);
   });
+
+  it('computes monthly after-tax funding (taxable taxed, non-taxable kept)', () => {
+    const flow = monthlyFlow(items);
+    // 2026-02: loan 10M (non-taxable) + benefit 1M (taxable) = 11M pre-tax
+    // after-tax = 11M − 1M×0.3 = 10.7M
+    const feb = flow.find((f) => f.month === '2026-02')!;
+    expect(feb.funding).toBe(11_000_000);
+    expect(feb.fundingAfterTax).toBe(10_700_000);
+    // 2026-06: subsidy 5M (taxable) → after-tax = 5M − 5M×0.3 = 3.5M
+    const jun = flow.find((f) => f.month === '2026-06')!;
+    expect(jun.fundingAfterTax).toBe(3_500_000);
+  });
+
+  it('keeps compressed-entry funding untaxed in the monthly after-tax line', () => {
+    const withCompression: FundingItem[] = [
+      { id: 'z', kind: 'subsidy', name: '設備補助・圧縮', amount: 4_000_000, status: 'approved', month: '2026-06', repayable: false, compressedEntry: true },
+    ];
+    const flow = monthlyFlow(withCompression);
+    const jun = flow.find((f) => f.month === '2026-06')!;
+    // compressed-entry → not taxed this year → after-tax equals pre-tax
+    expect(jun.funding).toBe(4_000_000);
+    expect(jun.fundingAfterTax).toBe(4_000_000);
+  });
+
+  it('honors a custom effective tax rate for the monthly after-tax line', () => {
+    const flow = monthlyFlow(items, { effectiveTaxRate: 0 });
+    const jun = flow.find((f) => f.month === '2026-06')!;
+    expect(jun.fundingAfterTax).toBe(jun.funding); // no tax
+  });
 });
 
 describe('isTaxableFunding', () => {

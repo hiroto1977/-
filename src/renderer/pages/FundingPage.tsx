@@ -13,6 +13,7 @@ const COLORS = {
   text: 'var(--text)',
   mute: 'var(--text-mute)',
   funding: '#4f9cf9',
+  afterTax: '#9b6cf0',
   cashflow: '#3ec98a',
   portfolio: '#f5a623',
   secured: '#4f9cf9',
@@ -89,17 +90,26 @@ function LineChart({ data }: { data: FundingSnapshot }) {
   const W = 720, H = 240, P = 40;
   const rows = data.monthly;
   if (rows.length === 0) return null;
-  const maxV = Math.max(1, ...rows.flatMap((r) => [r.funding, r.operatingCashflow, r.portfolioValue]));
+  const maxV = Math.max(1, ...rows.flatMap((r) => [r.funding, r.fundingAfterTax, r.operatingCashflow, r.portfolioValue]));
   const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
   const y = (v: number) => H - P - (v / maxV) * (H - P * 2);
-  const path = (key: 'funding' | 'operatingCashflow' | 'portfolioValue') =>
+  const path = (key: 'funding' | 'fundingAfterTax' | 'operatingCashflow' | 'portfolioValue') =>
     rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r[key])}`).join(' ');
+
+  // 凡例: 資金調達 + 税引後 は常時、会計/株式は連携時のみ。
+  const legend: { color: string; dash?: string; label: string }[] = [
+    { color: COLORS.funding, label: '資金調達 (税引前)' },
+    { color: COLORS.afterTax, dash: '4,2', label: '税引後手残り' },
+    ...(data.accountingLinked ? [{ color: COLORS.cashflow, dash: '3,2', label: '営業CF (会計)' }] : []),
+    ...(data.stocksLinked ? [{ color: COLORS.portfolio, dash: '2,2', label: '株式評価額' }] : []),
+  ];
 
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
       <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.axis} />
       <line x1={P} y1={P / 2} x2={P} y2={H - P} stroke={COLORS.axis} />
       <path d={path('funding')} stroke={COLORS.funding} fill="none" strokeWidth="2" />
+      <path d={path('fundingAfterTax')} stroke={COLORS.afterTax} fill="none" strokeWidth="2" strokeDasharray="4,2" />
       {data.accountingLinked && (
         <path d={path('operatingCashflow')} stroke={COLORS.cashflow} fill="none" strokeWidth="2" strokeDasharray="5,3" />
       )}
@@ -112,21 +122,16 @@ function LineChart({ data }: { data: FundingSnapshot }) {
         </text>
       ))}
       <g fontSize="11">
-        <rect x={W - 168} y={6} width="162" height={18 + (data.accountingLinked ? 16 : 0) + (data.stocksLinked ? 16 : 0)} fill="var(--bg)" stroke={COLORS.axis} />
-        <line x1={W - 160} y1={18} x2={W - 148} y2={18} stroke={COLORS.funding} strokeWidth="2" />
-        <text x={W - 144} y={22} fill={COLORS.text}>資金調達</text>
-        {data.accountingLinked && (
-          <>
-            <line x1={W - 160} y1={34} x2={W - 148} y2={34} stroke={COLORS.cashflow} strokeWidth="2" strokeDasharray="3,2" />
-            <text x={W - 144} y={38} fill={COLORS.text}>営業CF (会計)</text>
-          </>
-        )}
-        {data.stocksLinked && (
-          <>
-            <line x1={W - 160} y1={data.accountingLinked ? 50 : 34} x2={W - 148} y2={data.accountingLinked ? 50 : 34} stroke={COLORS.portfolio} strokeWidth="2" strokeDasharray="2,2" />
-            <text x={W - 144} y={data.accountingLinked ? 54 : 38} fill={COLORS.text}>株式評価額</text>
-          </>
-        )}
+        <rect x={W - 168} y={6} width="162" height={6 + legend.length * 16} fill="var(--bg)" stroke={COLORS.axis} />
+        {legend.map((l, i) => {
+          const ly = 18 + i * 16;
+          return (
+            <g key={l.label}>
+              <line x1={W - 160} y1={ly} x2={W - 148} y2={ly} stroke={l.color} strokeWidth="2" strokeDasharray={l.dash} />
+              <text x={W - 144} y={ly + 4} fill={COLORS.text}>{l.label}</text>
+            </g>
+          );
+        })}
       </g>
     </svg>
   );
@@ -291,7 +296,7 @@ export function FundingPage() {
             <RadarChart data={live} />
           </Section>
 
-          <Section title="② 折れ線グラフ — 月次の資金フロー (会計・株式連携)">
+          <Section title="② 折れ線グラフ — 月次の資金フロー (税引前/税引後・会計・株式連携)">
             <LineChart data={live} />
           </Section>
 
