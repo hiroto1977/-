@@ -116,6 +116,58 @@ export function computeKpi(f: Fundamentals): Kpi {
   };
 }
 
+/**
+ * 目標営業利益を達成するために必要な売上高を計算する。
+ *   必要売上高 = (固定費 + 目標営業利益) ÷ 限界利益率
+ * 限界利益率が 0 以下 (= 変動費が売上以上) のときは達成不能なので Infinity。
+ *
+ * @param f 現状の fundamentals
+ * @param targetOperatingProfit 目標営業利益 (円)
+ */
+export function requiredRevenueForTargetProfit(f: Fundamentals, targetOperatingProfit: number): number {
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  const contribution = f.revenue - variableCost;
+  if (f.revenue <= 0 || contribution <= 0) return Infinity;
+  const contributionRatio = contribution / f.revenue;
+  return Math.max(0, (fixedCost + targetOperatingProfit) / contributionRatio);
+}
+
+/** 損益分岐点販売数量の分析結果。 */
+export interface BreakEvenQuantity {
+  /** 単位あたり限界利益 (単価 − 単位変動費)。 */
+  readonly unitContribution: number;
+  /** 損益分岐点販売数量 (個)。限界利益が 0 以下なら Infinity。 */
+  readonly breakEvenQuantity: number;
+  /** 推定現在販売数量 (= 売上 ÷ 平均単価)。 */
+  readonly currentQuantity: number;
+  /** 安全販売数量 (現在 − 損益分岐点)。 */
+  readonly safeQuantity: number;
+}
+
+/**
+ * 平均単価から損益分岐点販売数量を計算する。
+ *   単位限界利益 = 単価 − (変動費 ÷ 推定数量)
+ *   損益分岐点数量 = 固定費 ÷ 単位限界利益 (切り上げ)
+ *
+ * @param f 現状の fundamentals
+ * @param avgUnitPrice 平均販売単価 (円)。0 以下なら全 0。
+ */
+export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
+  const price = Math.max(0, avgUnitPrice);
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  if (price <= 0) {
+    return { unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 };
+  }
+  const currentQuantity = Math.round(Math.max(0, f.revenue) / price);
+  const unitVariable = currentQuantity > 0 ? variableCost / currentQuantity : 0;
+  const unitContribution = Math.max(0, price - unitVariable);
+  const beq = unitContribution > 0 ? Math.ceil(fixedCost / unitContribution) : Infinity;
+  const safeQuantity = Number.isFinite(beq) ? Math.max(0, currentQuantity - beq) : 0;
+  return { unitContribution, breakEvenQuantity: beq, currentQuantity, safeQuantity };
+}
+
 /** Roll-up: sum fundamentals across all units, then compute KPI on the
  *  aggregate. Note: averaging KPI ratios across units gives the wrong
  *  answer; the only correct rollup is sum-then-compute. */

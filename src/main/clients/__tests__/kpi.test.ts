@@ -4,6 +4,8 @@ import {
   computeKpi,
   createMockDataSource,
   fetchKpiSnapshot,
+  requiredRevenueForTargetProfit,
+  breakEvenQuantity,
   type Fundamentals,
 } from '../kpi';
 
@@ -379,5 +381,53 @@ describe('fetchKpiSnapshot', () => {
     // Verify by re-running computeKpi on the summed fundamentals.
     const expected = computeKpi(snap.aggregate.fundamentals);
     expect(snap.aggregate.kpi).toEqual(expected);
+  });
+});
+
+describe('requiredRevenueForTargetProfit', () => {
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+  // contribution = 7M, ratio 0.7, fixed = 3M
+
+  it('returns BEP revenue when the target profit is 0', () => {
+    // (3M + 0) / 0.7 = 4,285,714.28…
+    expect(requiredRevenueForTargetProfit(base, 0)).toBeCloseTo(3_000_000 / 0.7, 2);
+  });
+
+  it('adds the target profit on top of fixed costs', () => {
+    // (3M + 2M) / 0.7
+    expect(requiredRevenueForTargetProfit(base, 2_000_000)).toBeCloseTo(5_000_000 / 0.7, 2);
+  });
+
+  it('returns Infinity when the contribution is non-positive', () => {
+    const loss: Fundamentals = { revenue: 1_000_000, cogs: 900_000, advertising: 200_000, sga: 100_000, depreciation: 0 };
+    expect(requiredRevenueForTargetProfit(loss, 100_000)).toBe(Infinity);
+    expect(requiredRevenueForTargetProfit({ ...base, revenue: 0 }, 0)).toBe(Infinity);
+  });
+});
+
+describe('breakEvenQuantity', () => {
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+
+  it('computes the break-even quantity from the unit contribution', () => {
+    // avg price 10,000 → current qty 1,000; unit variable = 3M/1000 = 3,000;
+    // unit contribution = 7,000; fixed 3M / 7,000 = 428.57 → ceil 429
+    const r = breakEvenQuantity(base, 10_000);
+    expect(r.currentQuantity).toBe(1_000);
+    expect(r.unitContribution).toBe(7_000);
+    expect(r.breakEvenQuantity).toBe(429);
+    expect(r.safeQuantity).toBe(1_000 - 429);
+  });
+
+  it('returns all zeros for a non-positive unit price', () => {
+    expect(breakEvenQuantity(base, 0)).toEqual({ unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 });
+  });
+
+  it('returns Infinity break-even when the unit contribution is non-positive', () => {
+    // variable cost ≥ revenue → unit variable ≥ price → contribution 0
+    const lossUnit: Fundamentals = { revenue: 1_000_000, cogs: 800_000, advertising: 400_000, sga: 100_000, depreciation: 0 };
+    const r = breakEvenQuantity(lossUnit, 1_000); // qty 1000, unit variable 1.2M/1000=1200 > 1000
+    expect(r.unitContribution).toBe(0);
+    expect(r.breakEvenQuantity).toBe(Infinity);
+    expect(r.safeQuantity).toBe(0);
   });
 });
