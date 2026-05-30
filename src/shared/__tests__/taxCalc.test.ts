@@ -9,6 +9,9 @@ import {
   calcResidentBasicDeduction,
   calcResidentTax,
   calcSalaryIncomeDeduction,
+  calcSalaryWithDeductions,
+  calcFurusatoResidentCredit,
+  marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
@@ -252,5 +255,76 @@ describe('complianceChecklist', () => {
 
   it('exposes exactly the three known topics', () => {
     expect([...COMPLIANCE_TOPICS]).toEqual(['micro-corp', 'family-transaction', 'incorporation']);
+  });
+});
+
+describe('marginalIncomeTaxRate', () => {
+  it('returns 0 for non-positive income', () => {
+    expect(marginalIncomeTaxRate(0)).toBe(0);
+    expect(marginalIncomeTaxRate(-1)).toBe(0);
+  });
+
+  it('returns the bracket rate', () => {
+    expect(marginalIncomeTaxRate(1_000_000)).toBe(0.05);
+    expect(marginalIncomeTaxRate(5_000_000)).toBe(0.2);
+    expect(marginalIncomeTaxRate(50_000_000)).toBe(0.45);
+  });
+});
+
+describe('calcFurusatoResidentCredit', () => {
+  it('returns 0 at or below the 2,000 floor', () => {
+    expect(calcFurusatoResidentCredit(2_000, 300_000, 0.2)).toBe(0);
+  });
+
+  it('includes base 10% plus the special portion (capped at 20% of resident income levy)', () => {
+    // donation 52,000, resident levy 300,000, marginal 0.2
+    // base = 50,000×0.1 = 5,000
+    // special = 50,000×(0.9 - 0.2×1.021) = 50,000×0.6958 = 34,790
+    // specialCap = 300,000×0.2 = 60,000 → special kept
+    expect(calcFurusatoResidentCredit(52_000, 300_000, 0.2)).toBe(Math.round(5_000 + 34_790));
+  });
+
+  it('caps the special portion at 20% of the resident income levy', () => {
+    const credit = calcFurusatoResidentCredit(1_000_000, 100_000, 0.2);
+    // special capped at 100,000×0.2=20,000; base=(1,000,000-2,000)×0.1=99,800
+    expect(credit).toBe(Math.round(99_800 + 20_000));
+  });
+});
+
+describe('calcSalaryWithDeductions', () => {
+  it('returns per-capita resident tax and zero else for zero income', () => {
+    const r = calcSalaryWithDeductions(0, 480_000, 430_000);
+    expect(r.takeHome).toBe(0);
+    expect(r.incomeTax).toBe(0);
+    expect(r.residentTax).toBe(5_000);
+  });
+
+  it('computes take-home as gross minus income tax minus resident tax', () => {
+    const r = calcSalaryWithDeductions(6_000_000, 1_300_000, 1_250_000);
+    expect(r.gross).toBe(6_000_000);
+    // 給与所得控除 6,000,000×20%+440,000 = 1,640,000
+    expect(r.salaryDeduction).toBe(1_640_000);
+    expect(r.employmentIncome).toBe(6_000_000 - 1_640_000);
+    expect(r.takeHome).toBe(r.gross - r.incomeTax - r.residentTax);
+    expect(r.takeHome).toBeLessThan(r.gross);
+  });
+
+  it('larger deductions reduce the tax (monotonic)', () => {
+    const low = calcSalaryWithDeductions(6_000_000, 500_000, 500_000);
+    const high = calcSalaryWithDeductions(6_000_000, 1_500_000, 1_500_000);
+    expect(high.incomeTax).toBeLessThanOrEqual(low.incomeTax);
+    expect(high.takeHome).toBeGreaterThanOrEqual(low.takeHome);
+  });
+
+  it('applies furusato resident credit to lower the resident tax', () => {
+    const without = calcSalaryWithDeductions(6_000_000, 1_300_000, 1_250_000, 0);
+    const withDonation = calcSalaryWithDeductions(6_000_000, 1_300_000, 1_250_000, 50_000);
+    expect(withDonation.furusatoResidentCredit).toBeGreaterThan(0);
+    expect(withDonation.residentTax).toBeLessThan(without.residentTax);
+  });
+
+  it('never drops resident tax below the per-capita levy', () => {
+    const r = calcSalaryWithDeductions(3_000_000, 5_000_000, 5_000_000, 1_000_000);
+    expect(r.residentTax).toBeGreaterThanOrEqual(5_000);
   });
 });

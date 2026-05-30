@@ -190,6 +190,97 @@ export function calcNetSalary(grossAnnual: number): NetSalary {
   return { gross: grossAnnual, socialInsurance, employmentIncome, taxableIncome, incomeTax, residentTax, takeHome };
 }
 
+// --- 全控除込みの給与税額試算 --------------------------------------------
+
+/** ふるさと納税の住民税「税額控除」(基本分 + 特例分) を概算する。
+ *  基本分 = (寄附額-2,000)×10%、特例分 = (寄附額-2,000)×(90%-所得税限界税率×1.021)。
+ *  特例分は住民税所得割の20%が上限。 */
+export function calcFurusatoResidentCredit(
+  donation: number,
+  residentIncomeTaxPortion: number, // 住民税所得割額
+  marginalIncomeTaxRate: number, // 所得税の限界税率 (0..0.45)
+): number {
+  if (donation <= 2_000) return 0;
+  const base = (donation - 2_000) * 0.1;
+  const special = (donation - 2_000) * (0.9 - marginalIncomeTaxRate * (1 + RECONSTRUCTION_SURTAX_RATE));
+  const specialCap = residentIncomeTaxPortion * 0.2;
+  return yen(base + Math.min(Math.max(0, special), Math.max(0, specialCap)));
+}
+
+/** 所得税の限界税率 (速算表の該当ブラケットの率) を返す。 */
+export function marginalIncomeTaxRate(taxableIncome: number): number {
+  if (taxableIncome <= 0) return 0;
+  const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
+  return bracket!.rate;
+}
+
+export interface FullSalaryResult {
+  readonly gross: number;
+  readonly salaryDeduction: number;
+  readonly employmentIncome: number;
+  /** 所得控除合計 (所得税)。 */
+  readonly totalDeductionIncomeTax: number;
+  /** 所得控除合計 (住民税)。 */
+  readonly totalDeductionResidentTax: number;
+  readonly taxableIncomeForIncomeTax: number;
+  readonly taxableIncomeForResidentTax: number;
+  readonly incomeTax: number;
+  /** ふるさと納税の住民税税額控除 (適用後に住民税から差し引く)。 */
+  readonly furusatoResidentCredit: number;
+  readonly residentTax: number;
+  readonly takeHome: number;
+}
+
+/**
+ * 額面年収と所得控除内訳から、全控除込みの所得税・住民税・手取りを試算する。
+ *
+ * 給与所得控除は正式テーブル。所得控除は呼び出し側で `calcAllDeductions` から
+ * 渡す (社会保険料は実額)。ふるさと納税は所得控除 (所得税) と税額控除 (住民税)
+ * の両建てで反映。社会保険料を概算で使う `calcNetSalary` とは別系統。
+ */
+export function calcSalaryWithDeductions(
+  grossAnnual: number,
+  deductionIncomeTax: number,
+  deductionResidentTax: number,
+  donation = 0,
+): FullSalaryResult {
+  if (grossAnnual <= 0) {
+    return {
+      gross: 0, salaryDeduction: 0, employmentIncome: 0,
+      totalDeductionIncomeTax: deductionIncomeTax, totalDeductionResidentTax: deductionResidentTax,
+      taxableIncomeForIncomeTax: 0, taxableIncomeForResidentTax: 0,
+      incomeTax: 0, furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
+    };
+  }
+  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
+  const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
+  const taxableIncomeForIncomeTax = Math.max(0, employmentIncome - deductionIncomeTax);
+  const taxableIncomeForResidentTax = Math.max(0, employmentIncome - deductionResidentTax);
+  const incomeTax = calcIncomeTax(taxableIncomeForIncomeTax);
+  const residentIncomeTaxPortion = yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
+  const residentBeforeCredit = residentIncomeTaxPortion + RESIDENT_TAX_PER_CAPITA;
+  const furusatoResidentCredit = calcFurusatoResidentCredit(
+    donation,
+    residentIncomeTaxPortion,
+    marginalIncomeTaxRate(taxableIncomeForIncomeTax),
+  );
+  const residentTax = Math.max(RESIDENT_TAX_PER_CAPITA, residentBeforeCredit - furusatoResidentCredit);
+  const takeHome = grossAnnual - incomeTax - residentTax;
+  return {
+    gross: grossAnnual,
+    salaryDeduction,
+    employmentIncome,
+    totalDeductionIncomeTax: deductionIncomeTax,
+    totalDeductionResidentTax: deductionResidentTax,
+    taxableIncomeForIncomeTax,
+    taxableIncomeForResidentTax,
+    incomeTax,
+    furusatoResidentCredit,
+    residentTax,
+    takeHome,
+  };
+}
+
 // --- 節税ヒント (一般的な制度の案内のみ。助言ではない) ---------------------
 
 export interface TaxTip {

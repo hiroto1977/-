@@ -13,12 +13,19 @@ import {
   calcIncomeTax,
   calcNetSalary,
   calcResidentTax,
+  calcSalaryIncomeDeduction,
+  calcSalaryWithDeductions,
   schemesForEntity,
   suggestTaxTips,
   complianceChecklist,
   COMPLIANCE_TOPICS,
   type ComplianceTopic,
 } from '../../shared/taxCalc';
+import {
+  calcAllDeductions,
+  type DependentKind,
+  type DeductionInput,
+} from '../../shared/taxDeductions';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -80,6 +87,50 @@ export function TaxPage() {
     [netAmount, reduced],
   );
   const tips = useMemo(() => suggestTaxTips(taxableIncome), [taxableIncome]);
+
+  // --- ③ 全控除込みの精密試算 ---
+  const [dGrossStr, setDGrossStr] = useState('6000000');
+  const [dSocialStr, setDSocialStr] = useState('900000');
+  const [dIdecoStr, setDIdecoStr] = useState('0');
+  const [dLifeStr, setDLifeStr] = useState('0');
+  const [dQuakeStr, setDQuakeStr] = useState('0');
+  const [dMedicalStr, setDMedicalStr] = useState('0');
+  const [dDonationStr, setDDonationStr] = useState('0');
+  const [hasSpouse, setHasSpouse] = useState(false);
+  const [spouseIncomeStr, setSpouseIncomeStr] = useState('0');
+  const [generalDeps, setGeneralDeps] = useState('0');
+  const [specificDeps, setSpecificDeps] = useState('0');
+  const [singleParent, setSingleParent] = useState(false);
+
+  const num = (s: string): number => {
+    const p = parseAmountInput(s);
+    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
+  };
+
+  const precise = useMemo(() => {
+    const dGross = num(dGrossStr);
+    const employmentIncome = Math.max(0, dGross - calcSalaryIncomeDeduction(dGross));
+    const dependents: DependentKind[] = [
+      ...Array<DependentKind>(Math.min(20, Math.floor(num(generalDeps)))).fill('general'),
+      ...Array<DependentKind>(Math.min(20, Math.floor(num(specificDeps)))).fill('specific'),
+    ];
+    const donation = num(dDonationStr);
+    const input: DeductionInput = {
+      totalIncome: employmentIncome,
+      socialInsurancePaid: num(dSocialStr),
+      smallBizMutualAid: num(dIdecoStr),
+      spouseIncome: hasSpouse ? num(spouseIncomeStr) : undefined,
+      dependents,
+      lifeInsurance: { general: num(dLifeStr), medical: 0, pension: 0 },
+      earthquakeInsurance: num(dQuakeStr),
+      medical: { paid: num(dMedicalStr), reimbursed: 0 },
+      donation,
+      singleParent,
+    };
+    const ded = calcAllDeductions(input);
+    const result = calcSalaryWithDeductions(dGross, ded.total.incomeTax, ded.total.residentTax, donation);
+    return { ded, result };
+  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -160,6 +211,77 @@ export function TaxPage() {
           配偶者・扶養・生命保険料等の控除は含まないため、扶養がある場合は実際より高めに出ます。<br />
           内訳: 給与所得 {jpy(netSalary.employmentIncome)} / 社保 {jpy(netSalary.socialInsurance)} /
           課税所得 {jpy(netSalary.taxableIncome)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
+        </div>
+      </Section>
+
+      <Section title="③ 全控除込みの精密試算" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          主要な所得控除 (基礎・社会保険料・小規模企業共済/iDeCo・配偶者・扶養・生命保険料・地震保険料・医療費・寄附金/ふるさと納税・ひとり親) を反映した精密試算です。
+          給与所得控除・各控除・税率は<strong>正式テーブル</strong>。確定申告は必ず公式ツール / 税理士でご確認ください。
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10, marginBottom: 12 }}>
+          {([
+            ['額面年収 (円)', dGrossStr, setDGrossStr],
+            ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
+            ['小規模企業共済+iDeCo (年)', dIdecoStr, setDIdecoStr],
+            ['一般生命保険料 (年)', dLifeStr, setDLifeStr],
+            ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
+            ['医療費 (年・自己負担)', dMedicalStr, setDMedicalStr],
+            ['ふるさと納税 (年)', dDonationStr, setDDonationStr],
+            ['一般扶養 (人)', generalDeps, setGeneralDeps],
+            ['特定扶養 19-22歳 (人)', specificDeps, setSpecificDeps],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input
+                type="text"
+                inputMode="decimal"
+                value={val}
+                onChange={(e) => setter(e.target.value)}
+                style={{ ...inputStyle, width: '100%' }}
+              />
+            </label>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 12 }}>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={hasSpouse} onChange={(e) => setHasSpouse(e.target.checked)} />
+            配偶者あり
+          </label>
+          {hasSpouse && (
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              配偶者の合計所得 (円)
+              <input
+                type="text"
+                inputMode="decimal"
+                value={spouseIncomeStr}
+                onChange={(e) => setSpouseIncomeStr(e.target.value)}
+                style={{ ...inputStyle, width: 120 }}
+              />
+            </label>
+          )}
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={singleParent} onChange={(e) => setSingleParent(e.target.checked)} />
+            ひとり親
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="所得税 (全控除込)" value={jpy(precise.result.incomeTax)} />
+          <Stat label="住民税 (ふるさと控除後)" value={jpy(precise.result.residentTax)} />
+          <Stat label="手取り (年)" value={jpy(precise.result.takeHome)} positive />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.7 }}>
+          給与所得控除 {jpy(precise.result.salaryDeduction)} / 給与所得 {jpy(precise.result.employmentIncome)}<br />
+          所得控除合計: 所得税ベース {jpy(precise.ded.total.incomeTax)} / 住民税ベース {jpy(precise.ded.total.residentTax)}<br />
+          （内訳: 基礎 {jpy(precise.ded.basic.incomeTax)} / 社保 {jpy(precise.ded.socialInsurance.incomeTax)} /
+          共済+iDeCo {jpy(precise.ded.smallBizMutualAid.incomeTax)} / 配偶者 {jpy(precise.ded.spouse.incomeTax)} /
+          扶養 {jpy(precise.ded.dependents.incomeTax)} / 生命保険 {jpy(precise.ded.lifeInsurance.incomeTax)} /
+          地震保険 {jpy(precise.ded.earthquakeInsurance.incomeTax)} / 医療費 {jpy(precise.ded.medical.incomeTax)} /
+          寄附金 {jpy(precise.ded.donation.incomeTax)} / ひとり親 {jpy(precise.ded.singleParentOrWidow.incomeTax)}）<br />
+          ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)}。
+        </div>
+        <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
+          ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。住宅ローン控除・配当控除等の税額控除は未対応です。
         </div>
       </Section>
 
