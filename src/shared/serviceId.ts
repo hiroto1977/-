@@ -68,6 +68,7 @@ export const SERVICE_IDS = [
   'coconala',
   'tiktok',
   'tax',
+  'funding',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

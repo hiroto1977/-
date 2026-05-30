@@ -868,6 +868,44 @@ export const SNAPSHOT = {
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
+  funding: {
+    items: [] as {
+      id: string;
+      kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
+      name: string;
+      amount: number;
+      status: 'received' | 'approved' | 'applied' | 'planned';
+      month: string;
+      repayable: boolean;
+    }[],
+    byKind: [] as {
+      kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
+      label: string;
+      secured: number;
+      pipeline: number;
+      count: number;
+    }[],
+    radar: [] as number[],
+    monthly: [] as {
+      month: string;
+      funding: number;
+      operatingCashflow: number;
+      portfolioValue: number;
+    }[],
+    bars: [] as { label: string; secured: number; pipeline: number }[],
+    summary: {
+      nonRepayableSecured: 0,
+      repayableSecured: 0,
+      totalSecured: 0,
+      totalPipeline: 0,
+      count: 0,
+    },
+    accountingLinked: false,
+    stocksLinked: false,
+    fetchedAt: '',
+    isMock: true,
+  },
+
   kpi: {
     units: [] as {
       id: string;

@@ -59,6 +59,7 @@ import { fetchOverviewSnapshot } from './overview';
 import { fetchCoconalaSnapshot } from './coconala';
 import { fetchTiktokSnapshot } from './tiktok';
 import { fetchTaxSnapshot } from './tax';
+import { fetchFundingSnapshot } from './funding';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -127,6 +128,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   coconala: fetchCoconalaSnapshot,
   tiktok: fetchTiktokSnapshot,
   tax: fetchTaxSnapshot,
+  funding: fetchFundingSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -163,6 +165,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'kpi',
   'stocks',
   'business',
+  'funding',
   'teamradar',
   'templates',
   'library',

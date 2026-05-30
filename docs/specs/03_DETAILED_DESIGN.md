@@ -16,7 +16,7 @@
 ### 1.1 型と定数
 ```ts
 // src/shared/serviceId.ts
-export const SERVICE_IDS = [ /* 61 個の文字列リテラル */ ] as const;
+export const SERVICE_IDS = [ /* 62 個の文字列リテラル */ ] as const;
 export type ServiceId = (typeof SERVICE_IDS)[number];
 ```
 
@@ -188,4 +188,4 @@ function useServiceData<T>(serviceId: ServiceId, snapshot: T): {
 | 不変条件 | `LIVE_FETCHERS` total record の起動時 assert |
 | ミューテーション | Stryker。閾値 99.8% (対象モジュール) |
 
-現状: 静的 `it()` 1582 / 実行時 1631。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。
+現状: 静的 `it()` 1595 / 実行時 1644。新規税務ロジックは mutation 100% を達成 (taxCalc/taxDeductions/taxCredits/taxRetirement は equivalent-mutant の都合で stryker mutate 配列に未追加 — `SESSION_HANDOFF.md` 参照)。

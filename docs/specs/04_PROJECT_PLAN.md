@@ -15,7 +15,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| 目的 | 61 サービスを統合する業務ダッシュボードを 2 ターゲット (Electron / ブラウザ単体) で提供 |
+| 目的 | 62 サービスを統合する業務ダッシュボードを 2 ターゲット (Electron / ブラウザ単体) で提供 |
 | 成果物 | デスクトップアプリ / `dist/standalone.html` (約 550 KB) / 設計文書群 |
 | 開発手法 | トランクベース + 短命フィーチャーブランチ。CI ゲート green を merge 条件とする |
 | 技術 | TypeScript / React 18 / Electron 33 / Vite / Vitest / Stryker / Node 22 |
@@ -27,7 +27,7 @@
 | Phase | 内容 | 状態 |
 |---|---|---|
 | 0 基盤 | 3 プロセスモデル / SoT / preload bridge / CI 3 ジョブ | ✅ 完了 |
-| 1 サービス拡充 | scaffold で 61 サービス、snapshot/live、stub 集約 | ✅ 完了 |
+| 1 サービス拡充 | scaffold で 62 サービス、snapshot/live、stub 集約 | ✅ 完了 |
 | 2 セキュリティ | safeStorage / WebCrypto Vault / OAuth PKCE / 自動ロック | ✅ 完了 |
 | 3 業務支援 | KPI / 経営サマリー / テンプレート / チームレーダー | ✅ 完了 |
 | 4 品質強化 | verify:all / lint 群 / Stryker mutation / property test | ✅ 完了 |
@@ -65,7 +65,7 @@
 
 | MS | 内容 | 判定基準 |
 |---|---|---|
-| M1 | 基盤確立 | CI 3 ジョブ green / 61 サービス表示 |
+| M1 | 基盤確立 | CI 3 ジョブ green / 62 サービス表示 |
 | M2 | セキュリティ完成 | Vault/OAuth テスト pass、`lint:forbidden` green |
 | M3 | 税務エンジン完成 | 速算表・控除の境界値テスト pass、mutation 100% |
 | M4 | 文書整備 | 要件/基本/詳細/計画 4 文書、`lint:docs`/`verify:arch` green |

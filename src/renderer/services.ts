@@ -59,6 +59,7 @@ import { OverviewPage } from './pages/OverviewPage';
 import { CoconalaPage } from './pages/CoconalaPage';
 import { TiktokPage } from './pages/TiktokPage';
 import { TaxPage } from './pages/TaxPage';
+import { FundingPage } from './pages/FundingPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -572,6 +573,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'TX',
     description: '所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 (納付は手動)',
     page: TaxPage,
+    category: 'tools',
+  },
+  {
+    id: 'funding',
+    label: '資金調達レーダー',
+    icon: 'FR',
+    description: '補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒)',
+    page: FundingPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
