@@ -41,6 +41,7 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
+import { compareConsumptionTaxMethods, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
@@ -292,6 +293,20 @@ export function TaxPage() {
     () => calcPublicPensionIncome(num(pensionIncomeStr), pensionOver65),
     [pensionIncomeStr, pensionOver65],
   );
+
+  // --- ⑩ 消費税の納付方式の比較 (本則/簡易/2割特例) ---
+  const [ctSalesStr, setCtSalesStr] = useState('8000000');
+  const [ctPurchaseStr, setCtPurchaseStr] = useState('3000000');
+  const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
+  const consumptionMethods = useMemo(
+    () => compareConsumptionTaxMethods(num(ctSalesStr), { standard: num(ctPurchaseStr), reduced: 0 }, ctBizType),
+    [ctSalesStr, ctPurchaseStr, ctBizType],
+  );
+  const ctMethodLabel: Record<ConsumptionTaxMethod, string> = {
+    standard: '本則課税',
+    simplified: '簡易課税',
+    'twenty-percent': '2割特例',
+  };
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -780,6 +795,54 @@ export function TaxPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           <Stat label={`消費税 (${reduced ? '8%' : '10%'})`} value={jpy(consumptionTax)} />
           <Stat label="税込合計" value={jpy(netAmount + consumptionTax)} />
+        </div>
+      </Section>
+
+      <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例)" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          消費税の課税事業者は<strong>本則課税・簡易課税・2割特例</strong>から納付方式を選べます。
+          簡易課税は基準期間の課税売上5,000万円以下、2割特例はインボイス登録した免税事業者向けの経過措置 (令和8年分まで) です。
+          ※ 概算試算であり、適用要件・端数処理の細部は反映しません。確定申告は税理士・国税庁でご確認ください。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            課税売上 (税抜・年)
+            <input type="text" inputMode="decimal" value={ctSalesStr} onChange={(e) => setCtSalesStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            課税仕入 (税抜・本則用)
+            <input type="text" inputMode="decimal" value={ctPurchaseStr} onChange={(e) => setCtPurchaseStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            事業区分 (簡易課税)
+            <select value={ctBizType} onChange={(e) => setCtBizType(e.target.value as SimplifiedBusinessType)} style={{ ...inputStyle, width: 200 }}>
+              <option value="wholesale">第1種 卸売業 (90%)</option>
+              <option value="retail">第2種 小売業 (80%)</option>
+              <option value="manufacturing">第3種 製造業・建設業 (70%)</option>
+              <option value="other">第4種 その他・飲食店 (60%)</option>
+              <option value="service">第5種 サービス業 (50%)</option>
+              <option value="real-estate">第6種 不動産業 (40%)</option>
+            </select>
+          </label>
+        </div>
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: '3px solid var(--success, #3ec98a)',
+            borderRadius: 6,
+            padding: '8px 12px',
+            marginBottom: 12,
+            fontSize: 13,
+            color: 'var(--text)',
+          }}
+        >
+          ✅ 最も納付が少ない方式: <strong>{ctMethodLabel[consumptionMethods.best]}</strong>
+          （納付 {jpy(consumptionMethods[consumptionMethods.best === 'twenty-percent' ? 'twentyPercent' : consumptionMethods.best])}）
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
+          <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
+          <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
         </div>
       </Section>
 
