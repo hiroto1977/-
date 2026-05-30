@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   calcCapitalGainsTax,
+  estimatedAcquisitionCost,
+  resolveAcquisitionCost,
+  ESTIMATED_ACQUISITION_COST_RATE,
   RESIDENTIAL_SPECIAL_DEDUCTION,
   RESIDENTIAL_REDUCED_RATE_CAP,
 } from '../taxCapitalGains';
@@ -104,5 +107,36 @@ describe('calcCapitalGainsTax (譲渡所得・申告分離課税)', () => {
     expect(r.specialDeduction).toBe(30_000_000);
     expect(r.taxableGain).toBe(0);
     expect(r.totalTax).toBe(0);
+  });
+});
+
+describe('estimatedAcquisitionCost / resolveAcquisitionCost (概算取得費5%特例)', () => {
+  it('computes 5% of the proceeds', () => {
+    expect(estimatedAcquisitionCost(50_000_000)).toBe(2_500_000);
+    expect(estimatedAcquisitionCost(0)).toBe(0);
+    expect(estimatedAcquisitionCost(-100)).toBe(0);
+    expect(ESTIMATED_ACQUISITION_COST_RATE).toBe(0.05);
+  });
+
+  it('uses the larger of actual cost and the 5% estimate', () => {
+    // actual 1M < estimate 2.5M → use 2.5M
+    expect(resolveAcquisitionCost(50_000_000, 1_000_000)).toBe(2_500_000);
+    // actual 10M > estimate 2.5M → use 10M
+    expect(resolveAcquisitionCost(50_000_000, 10_000_000)).toBe(10_000_000);
+    // unknown cost (0) → estimate
+    expect(resolveAcquisitionCost(50_000_000, 0)).toBe(2_500_000);
+  });
+
+  it('can disable the estimate (use actual only)', () => {
+    expect(resolveAcquisitionCost(50_000_000, 1_000_000, false)).toBe(1_000_000);
+    expect(resolveAcquisitionCost(50_000_000, 0, false)).toBe(0);
+  });
+
+  it('integrates with calcCapitalGainsTax via resolveAcquisitionCost', () => {
+    // unknown cost → 5% estimate (2.5M); proceeds 50M, fee 2M → gain 45.5M
+    const cost = resolveAcquisitionCost(50_000_000, 0);
+    const r = calcCapitalGainsTax(50_000_000, cost, 2_000_000, 'real-estate-long');
+    expect(cost).toBe(2_500_000);
+    expect(r.gain).toBe(45_500_000);
   });
 });

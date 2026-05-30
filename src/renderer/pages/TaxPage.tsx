@@ -39,7 +39,7 @@ import {
 } from '../../shared/taxCredits';
 import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
-import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
+import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
 import { compareConsumptionTaxMethods, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
@@ -246,10 +246,13 @@ export function TaxPage() {
   const [cgCostStr, setCgCostStr] = useState('30000000');
   const [cgFeeStr, setCgFeeStr] = useState('2000000');
   const [cgKind, setCgKind] = useState<CapitalAssetKind>('real-estate-long');
+  const [cgUseEstimate, setCgUseEstimate] = useState(false);
 
   const capitalGains = useMemo(() => {
-    return calcCapitalGainsTax(num(cgProceedsStr), num(cgCostStr), num(cgFeeStr), cgKind);
-  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind]);
+    // 概算取得費5%特例: 取得費不明 or 概算の方が大きい場合は概算取得費を使う。
+    const cost = resolveAcquisitionCost(num(cgProceedsStr), num(cgCostStr), cgUseEstimate);
+    return calcCapitalGainsTax(num(cgProceedsStr), cost, num(cgFeeStr), cgKind);
+  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind, cgUseEstimate]);
 
   // --- ⑦ ふるさと納税ワンストップ特例の内訳 ---
   const [fsDonationStr, setFsDonationStr] = useState('52000');
@@ -601,7 +604,8 @@ export function TaxPage() {
           土地・建物・株式などの売却益は、給与等と分離して課税されます。
           <strong>譲渡益 = 収入 − 取得費 − 譲渡費用</strong>。所有期間 (5年) で短期/長期の税率が変わり、
           居住用財産は3,000万円特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
-          ※ 概算取得費・買換特例・損益通算・繰越控除は未対応です。
+          取得費が不明な場合は「取得費不明 (概算取得費5%)」にチェックすると、譲渡収入の5%を取得費として計算します (国税庁 No.3258)。
+          ※ 買換特例・損益通算・繰越控除は未対応です。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -624,6 +628,10 @@ export function TaxPage() {
               <option value="residential">居住用財産 (3,000万控除+軽減税率)</option>
               <option value="listed-stock">上場株式等 (20.315%)</option>
             </select>
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={cgUseEstimate} onChange={(e) => setCgUseEstimate(e.target.checked)} />
+            取得費不明 (概算取得費5%)
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>

@@ -87,6 +87,37 @@ export interface CapitalGainsResult {
  * @param transferCost 譲渡費用 (仲介手数料等)
  * @param kind 資産区分
  */
+/** 概算取得費の割合 (取得費不明時、譲渡収入の5%を取得費とできる)。 */
+export const ESTIMATED_ACQUISITION_COST_RATE = 0.05;
+
+/**
+ * 概算取得費を計算する = 譲渡収入 × 5% (国税庁 No.3258)。
+ * 取得費が不明・実額が概算取得費を下回る場合に取得費として使える。
+ *
+ * @param proceeds 譲渡収入金額 (円)
+ */
+export function estimatedAcquisitionCost(proceeds: number): number {
+  return Math.round(Math.max(0, proceeds) * ESTIMATED_ACQUISITION_COST_RATE);
+}
+
+/**
+ * 取得費を決定する = max(実額の取得費, 概算取得費5%)。
+ * 概算取得費の方が大きい場合は概算取得費を使う方が有利 (実務頻出)。
+ *
+ * @param proceeds 譲渡収入金額 (円)
+ * @param actualAcquisitionCost 実額の取得費 (不明なら0を渡す)
+ * @param useEstimate 概算取得費を考慮するか (既定 true)
+ */
+export function resolveAcquisitionCost(
+  proceeds: number,
+  actualAcquisitionCost: number,
+  useEstimate = true,
+): number {
+  const actual = Math.max(0, actualAcquisitionCost);
+  if (!useEstimate) return actual;
+  return Math.max(actual, estimatedAcquisitionCost(proceeds));
+}
+
 export function calcCapitalGainsTax(
   proceeds: number,
   acquisitionCost: number,
