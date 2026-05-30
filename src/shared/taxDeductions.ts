@@ -143,6 +143,36 @@ export function calcDependentDeduction(kinds: readonly DependentKind[]): Deducti
   );
 }
 
+/** 扶養親族の合計所得金額の上限 (これを超えると扶養控除の対象外)。 */
+export const DEPENDENT_INCOME_LIMIT = 480_000;
+
+/** 種別と所得を持つ扶養親族。 */
+export interface DependentWithIncome {
+  readonly kind: DependentKind;
+  /** 扶養親族本人の合計所得金額 (円)。48万円超で控除対象外。 */
+  readonly income: number;
+}
+
+/**
+ * 扶養親族の合計所得金額を考慮して扶養控除を計算する。
+ *
+ * 扶養親族は「合計所得金額が 48 万円以下」が要件 (国税庁 No.1180)。所得が
+ * 48 万円を超える親族は扶養控除の対象外として控除しない。
+ */
+export function calcDependentDeductionWithIncome(
+  dependents: readonly DependentWithIncome[],
+): DeductionPair {
+  return dependents.reduce<DeductionPair>(
+    (acc, dep) => {
+      // 所得が上限超なら扶養控除の対象外。
+      if (dep.income > DEPENDENT_INCOME_LIMIT) return acc;
+      const d = dependentDeduction(dep.kind);
+      return { incomeTax: acc.incomeTax + d.incomeTax, residentTax: acc.residentTax + d.residentTax };
+    },
+    { incomeTax: 0, residentTax: 0 },
+  );
+}
+
 // --- 生命保険料控除 (新制度 / 旧制度) -----------------------------------
 //
 // 国税庁 No.1140。
@@ -383,8 +413,10 @@ export interface DeductionInput {
   readonly spouseIncome?: number;
   /** 配偶者が70歳以上か。 */
   readonly spouseElderly?: boolean;
-  /** 扶養親族の年齢区分の配列。 */
+  /** 扶養親族の年齢区分の配列 (所得チェックなし)。 */
   readonly dependents?: readonly DependentKind[];
+  /** 種別と所得を持つ扶養親族 (合計所得48万円超を除外)。指定時は `dependents` より優先。 */
+  readonly dependentsWithIncome?: readonly DependentWithIncome[];
   /** 生命保険料 (3区分)。 */
   readonly lifeInsurance?: LifeInsurancePremiums;
   /** 地震保険料 (年)。 */
@@ -460,7 +492,12 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   const spouse = input.spouseIncome !== undefined
     ? calcSpouseDeduction(input.totalIncome, input.spouseIncome, input.spouseElderly ?? false)
     : ZERO;
-  const dependents = input.dependents ? calcDependentDeduction(input.dependents) : ZERO;
+  // 所得付きの扶養親族が指定されていれば所得チェック付きで計算 (48万円超を除外)。
+  const dependents = input.dependentsWithIncome
+    ? calcDependentDeductionWithIncome(input.dependentsWithIncome)
+    : input.dependents
+      ? calcDependentDeduction(input.dependents)
+      : ZERO;
   const lifeIns = input.lifeInsurance ? calcLifeInsuranceDeduction(input.lifeInsurance) : ZERO;
   const quake = input.earthquakeInsurance ? calcEarthquakeInsuranceDeduction(input.earthquakeInsurance) : ZERO;
   const standardMedical = input.medical

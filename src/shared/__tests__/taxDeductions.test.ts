@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   calcAllDeductions,
   calcDependentDeduction,
+  calcDependentDeductionWithIncome,
+  DEPENDENT_INCOME_LIMIT,
   calcDonationDeduction,
   calcEarthquakeInsuranceDeduction,
   calcLifeInsuranceDeduction,
@@ -70,6 +72,31 @@ describe('dependentDeduction / calcDependentDeduction', () => {
   it('sums multiple dependents', () => {
     const d = calcDependentDeduction(['general', 'specific', 'under16']);
     expect(d).toEqual({ incomeTax: 380_000 + 630_000, residentTax: 330_000 + 450_000 });
+  });
+});
+
+describe('calcDependentDeductionWithIncome (合計所得48万円の判定)', () => {
+  it('counts dependents with income at or below 48万', () => {
+    const d = calcDependentDeductionWithIncome([
+      { kind: 'general', income: 480_000 }, // exactly at the limit → eligible
+      { kind: 'specific', income: 0 },
+    ]);
+    expect(d).toEqual({ incomeTax: 380_000 + 630_000, residentTax: 330_000 + 450_000 });
+    expect(DEPENDENT_INCOME_LIMIT).toBe(480_000);
+  });
+
+  it('excludes a dependent whose income exceeds 48万', () => {
+    const d = calcDependentDeductionWithIncome([
+      { kind: 'general', income: 480_001 }, // over the limit → excluded
+      { kind: 'elderly', income: 0 },
+    ]);
+    // only the elderly dependent counts
+    expect(d).toEqual({ incomeTax: 480_000, residentTax: 380_000 });
+  });
+
+  it('returns zero when all dependents are over the income limit', () => {
+    const d = calcDependentDeductionWithIncome([{ kind: 'specific', income: 1_000_000 }]);
+    expect(d).toEqual({ incomeTax: 0, residentTax: 0 });
   });
 });
 
