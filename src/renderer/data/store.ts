@@ -16,6 +16,8 @@
  * the two persistence modules stay consistent.
  */
 
+import { IDENTITY_CIPHER, type RecordCipher } from './recordCipher';
+
 // Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,Regex,ArithmeticOperator,AssignmentOperator,BlockStatement,UpdateOperator
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -47,12 +49,20 @@ export interface RecordStore {
   /** Delete every record in a collection; returns how many were removed. */
   clearCollection(collection: string): Promise<number>;
   count(collection: string): Promise<number>;
-  /** Dump every record across all collections (newest-first). For backup. */
+  /** Dump every record across all collections (newest-first). For backup.
+   *  Returns records **as stored** (encrypted payloads stay encrypted). */
   exportAll(): Promise<readonly StoredRecord[]>;
   /** Restore records from a backup. `replace` clears the store first; the
    *  default merges (existing ids are overwritten). Returns the count
    *  imported. */
   importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number>;
+  /** Install a save-time encryption layer for record `data`. Default is the
+   *  identity cipher (plaintext). After switching to an encrypting cipher,
+   *  call `reencryptAll()` to convert existing plaintext records. */
+  configureCipher(cipher: RecordCipher): void;
+  /** Re-write every record through the current cipher (plaintext → encrypted,
+   *  or vice-versa). Returns the count migrated. */
+  reencryptAll(): Promise<number>;
 }
 
 // --- validation ----------------------------------------------------------
@@ -113,24 +123,27 @@ function uuid(): string {
 }
 
 class IndexedDBRecordStore implements RecordStore {
+  /** Save-time encryption layer. Default = plaintext (identity). */
+  private cipher: RecordCipher = IDENTITY_CIPHER;
+
+  configureCipher(cipher: RecordCipher): void {
+    this.cipher = cipher;
+  }
+
   async insert<T extends Record<string, unknown>>(collection: string, data: T): Promise<StoredRecord<T>> {
     if (!isSafeCollection(collection)) throw new Error('collection が不正です');
     if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
 
     const ts = monotonicNow();
-    const record: StoredRecord<T> = {
-      id: uuid(),
-      collection,
-      createdAt: ts,
-      updatedAt: ts,
-      data,
-    };
+    const id = uuid();
+    // Store the (possibly encrypted) payload; return the plaintext to the caller.
+    const storedData = await this.cipher.encrypt(data);
     const db = await openDb();
     const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).add(record);
+    tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
     await txDone(tx);
     db.close();
-    return record;
+    return { id, collection, createdAt: ts, updatedAt: ts, data };
   }
 
   async update<T extends Record<string, unknown>>(
@@ -140,20 +153,18 @@ class IndexedDBRecordStore implements RecordStore {
     if (typeof id !== 'string' || id.length === 0) return null;
     if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
 
-    const existing = await this.get<T>(id);
+    const existing = await this.get<T>(id); // get() decrypts
     if (!existing) return null;
 
-    const next: StoredRecord<T> = {
-      ...existing,
-      updatedAt: monotonicNow(),
-      data: { ...existing.data, ...patch },
-    };
+    const mergedData = { ...existing.data, ...patch };
+    const updatedAt = monotonicNow();
+    const storedData = await this.cipher.encrypt(mergedData);
     const db = await openDb();
     const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).put(next);
+    tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
     await txDone(tx);
     db.close();
-    return next;
+    return { ...existing, updatedAt, data: mergedData };
   }
 
   async get<T extends Record<string, unknown>>(id: string): Promise<StoredRecord<T> | null> {
@@ -166,7 +177,9 @@ class IndexedDBRecordStore implements RecordStore {
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
     db.close();
-    return rec ?? null;
+    if (!rec) return null;
+    const data = (await this.cipher.decrypt(rec.data)) as T;
+    return { ...rec, data };
   }
 
   async list<T extends Record<string, unknown>>(collection: string): Promise<readonly StoredRecord<T>[]> {
@@ -191,6 +204,10 @@ class IndexedDBRecordStore implements RecordStore {
     db.close();
     // Newest-first. The collection index isn't ordered by time, so sort here.
     out.sort((a, b) => b.createdAt - a.createdAt);
+    // Decrypt each payload through the active cipher.
+    for (const rec of out) {
+      (rec as { data: unknown }).data = await this.cipher.decrypt(rec.data);
+    }
     return out;
   }
 
@@ -250,6 +267,32 @@ class IndexedDBRecordStore implements RecordStore {
     await txDone(tx);
     db.close();
     return valid.length;
+  }
+
+  async reencryptAll(): Promise<number> {
+    // Read every record through the current cipher (plaintext passthrough or
+    // decrypt), then re-write so its payload is encrypted under the cipher.
+    const db = await openDb();
+    const raw = await new Promise<StoredRecord[]>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
+      req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
+    });
+    db.close();
+
+    let migrated = 0;
+    for (const rec of raw) {
+      const plain = await this.cipher.decrypt(rec.data);
+      const sealed = await this.cipher.encrypt(plain);
+      const db2 = await openDb();
+      const tx = db2.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put({ ...rec, data: sealed });
+      await txDone(tx);
+      db2.close();
+      migrated++;
+    }
+    return migrated;
   }
 }
 

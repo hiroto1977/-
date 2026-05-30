@@ -101,3 +101,59 @@ export async function decryptString(bundle: EncryptedBundle, password: string): 
   }
   return new TextDecoder().decode(plain);
 }
+
+// --- low-level key reuse (for per-record encryption) ---------------------
+// `encryptString`/`decryptString` re-run PBKDF2 per call, which is far too
+// slow to apply per record. These let a caller derive the key ONCE (one
+// PBKDF2) and then seal/open many records with cheap per-record AES-GCM.
+
+/** A sealed value: iv + ciphertext (base64). No salt/iterations — the key is
+ *  held in memory; the salt lives once at the store level. */
+export interface Sealed {
+  /** base64 */
+  readonly iv: string;
+  /** base64 */
+  readonly ct: string;
+}
+
+export function isSealed(v: unknown): v is Sealed {
+  if (typeof v !== 'object' || v === null) return false;
+  const s = v as Record<string, unknown>;
+  return typeof s.iv === 'string' && typeof s.ct === 'string';
+}
+
+/** Random PBKDF2 salt, base64. Persist this to re-derive the same key later. */
+export function randomSaltB64(): string {
+  return toBase64(crypto.getRandomValues(new Uint8Array(SALT_BYTES)));
+}
+
+/** Derive a reusable AES-GCM key from a passphrase + (persisted) salt. */
+export async function deriveAesKey(password: string, saltB64: string, iterations = ITERATIONS): Promise<CryptoKey> {
+  if (password.length === 0) throw new Error('パスワードを入力してください');
+  return deriveKey(password, fromBase64(saltB64), iterations);
+}
+
+export async function sealWithKey(key: CryptoKey, plaintext: string): Promise<Sealed> {
+  const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
+  const ct = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: iv as BufferSource },
+    key,
+    new TextEncoder().encode(plaintext),
+  );
+  return { iv: toBase64(iv), ct: toBase64(new Uint8Array(ct)) };
+}
+
+export async function openWithKey(key: CryptoKey, sealed: Sealed): Promise<string> {
+  if (!isSealed(sealed)) throw new Error('封緘データの形式が不正です');
+  let plain: ArrayBuffer;
+  try {
+    plain = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: fromBase64(sealed.iv) as BufferSource },
+      key,
+      fromBase64(sealed.ct) as BufferSource,
+    );
+  } catch {
+    throw new Error('復号に失敗しました（鍵不一致またはデータ破損）');
+  }
+  return new TextDecoder().decode(plain);
+}

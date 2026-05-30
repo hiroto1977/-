@@ -46,7 +46,7 @@
 
 | 優先 | 対策 | 主に効く脅威 | 備考 |
 |---|---|---|---|
-| 1 | 業務レコード(store.ts)を Vault 鍵で AES-GCM 暗号化 | 漏洩 | ロック時に全データ閲覧不可へ |
+| 1 | ~~業務レコードを AES-GCM 暗号化~~ → **暗号エンジン + ストア配線は実装済み** (`recordCipher.ts` + `store.configureCipher`/`reencryptAll`)。残りは常時有効化の UI/ロック解除フロー配線のみ | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
 | 2 | Electron `secrets` の keychain 非依存パスフレーズ暗号化 + 未初期化警告 UI | 漏洩 | `plain:base64` フォールバック解消 |
 | 3 | `secrets.json` の atomic write (temp→rename + `.prev`) | 消失 | 強制終了時の破損防止 |
 | 4 | CSV / 復元の一括取込をトランザクション化（部分取込のロールバック） | 損壊 | `importAll` への集約 |
@@ -57,7 +57,8 @@
 - Spoofing: OAuth PKCE / Bearer / Basic。
 - Tampering: HTTPS・IPC 入力検証・**バックアップ SHA-256（本リリース）**。
 - Repudiation: `audit-log` 機能フラグ（Business+）。完全な監査ログは将来。
-- Information Disclosure: **最大の脅威**。Vault は強いが業務レコードは平文 → 優先対策 1。
+- Information Disclosure: 業務レコードの保存時 AES-GCM 暗号化エンジン (`recordCipher`) を
+  実装し、`field-level` で `data` を封緘可能に (既定は後方互換の平文; 常時有効化 UI は次段)。
 - DoS: timeout / サイズ上限 / レート制御。
 - Elevation of Privilege: RBAC の昇格防止・最後のオーナー保護で対処済み。
 

@@ -2,6 +2,8 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
+import { IDENTITY_CIPHER, createPassphraseRecordCipher, isSealedData } from '../recordCipher';
+import { randomSaltB64 } from '../../security/dataCrypto';
 
 function clearIdb(): Promise<void> {
   return new Promise((resolve) => {
@@ -159,5 +161,62 @@ describe('RecordStore — exportAll + importAll (backup/restore)', () => {
     ]);
     expect(imported).toBe(1);
     expect(await store.count('sales')).toBe(1);
+  });
+});
+
+describe('RecordStore — save-time encryption (RecordCipher)', () => {
+  it('encrypts data at rest but returns plaintext through the API', async () => {
+    const store = getRecordStore();
+    store.configureCipher(await createPassphraseRecordCipher('pw', randomSaltB64()));
+
+    const rec = await store.insert('sales', { amount: 50000, memo: '機密' });
+    expect(rec.data).toEqual({ amount: 50000, memo: '機密' }); // caller sees plaintext
+
+    // raw at-rest payload is sealed (no plaintext leaks into IndexedDB)
+    const raw = await store.exportAll();
+    expect(isSealedData(raw[0]!.data)).toBe(true);
+    expect(JSON.stringify(raw)).not.toContain('機密');
+
+    // reads decrypt transparently
+    expect((await store.get<{ amount: number }>(rec.id))!.data).toEqual({ amount: 50000, memo: '機密' });
+    expect((await store.list('sales'))[0]!.data).toEqual({ amount: 50000, memo: '機密' });
+  });
+
+  it('update round-trips through encryption', async () => {
+    const store = getRecordStore();
+    store.configureCipher(await createPassphraseRecordCipher('pw', randomSaltB64()));
+    const rec = await store.insert('customers', { name: 'A', tier: 'free' });
+    const up = await store.update<{ name: string; tier: string }>(rec.id, { tier: 'pro' });
+    expect(up!.data).toEqual({ name: 'A', tier: 'pro' });
+    const raw = await store.exportAll();
+    expect(isSealedData(raw[0]!.data)).toBe(true);
+  });
+
+  it('reencryptAll migrates existing plaintext records', async () => {
+    const store = getRecordStore();
+    // write plaintext first (identity cipher)
+    const rec = await store.insert('sales', { amount: 1 });
+    let raw = await store.exportAll();
+    expect(isSealedData(raw[0]!.data)).toBe(false);
+
+    // enable encryption + migrate
+    store.configureCipher(await createPassphraseRecordCipher('pw', randomSaltB64()));
+    const migrated = await store.reencryptAll();
+    expect(migrated).toBe(1);
+    raw = await store.exportAll();
+    expect(isSealedData(raw[0]!.data)).toBe(true);
+    // still readable
+    expect((await store.get<{ amount: number }>(rec.id))!.data).toEqual({ amount: 1 });
+  });
+
+  it('identity cipher refuses to read records sealed by a passphrase cipher', async () => {
+    const store = getRecordStore();
+    const salt = randomSaltB64();
+    store.configureCipher(await createPassphraseRecordCipher('pw', salt));
+    const rec = await store.insert('sales', { amount: 1 });
+
+    // simulate a fresh session without the key
+    store.configureCipher(IDENTITY_CIPHER);
+    await expect(store.get(rec.id)).rejects.toThrow(/暗号化/);
   });
 });
