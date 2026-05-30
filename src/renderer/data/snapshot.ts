@@ -898,6 +898,8 @@ export const SNAPSHOT = {
       repayableSecured: 0,
       totalSecured: 0,
       totalPipeline: 0,
+      taxableSecured: 0,
+      afterTaxSecured: 0,
       count: 0,
     },
     accountingLinked: false,

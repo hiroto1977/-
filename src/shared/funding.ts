@@ -35,6 +35,35 @@ export const FUNDING_KINDS: readonly FundingKind[] = [
   'crowdfunding',
 ];
 
+/**
+ * その資金が課税対象 (益金 / 事業収入に算入) かを返す。
+ *
+ * - 補助金・助成金・給付金: 原則「益金 (事業所得の収入)」として**課税対象**。
+ *   ※ 国庫補助金等には圧縮記帳の特例 (課税繰延) があるが、ここでは概算のため
+ *   特例なしの保守的見積りとする。
+ * - 購入型クラウドファンディング: 実質は前受 (売上) なので**課税対象**。
+ * - 融資・日本政策金融公庫: 借入金 (負債) であり**非課税**。
+ *
+ * 本判定は概算であり、実際の課税関係 (圧縮記帳・寄附型/株式型CFの別・消費税)
+ * は税理士・国税庁の公式情報で確認すること。
+ */
+export function isTaxableFunding(kind: FundingKind): boolean {
+  switch (kind) {
+    case 'subsidy':
+    case 'grant':
+    case 'benefit':
+    case 'crowdfunding':
+      return true;
+    case 'loan':
+    case 'jfc':
+      return false;
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
 /** 種別の日本語ラベル。 */
 export function fundingKindLabel(kind: FundingKind): string {
   switch (kind) {
@@ -115,6 +144,13 @@ export interface FundingSummary {
   readonly totalSecured: number;
   /** パイプライン総額 (申請中・予定込み)。 */
   readonly totalPipeline: number;
+  /** 課税対象の確定額 (補助金・助成金・給付金・CF)。 */
+  readonly taxableSecured: number;
+  /**
+   * 概算の手残り額 (税引後)。課税対象資金には実効税率を課し、非課税資金
+   * (融資・公庫) はそのまま。`totalSecured − taxableSecured × 実効税率`。
+   */
+  readonly afterTaxSecured: number;
   /** 案件数。 */
   readonly count: number;
 }
@@ -197,24 +233,43 @@ export function monthlyFlow(
     });
 }
 
-/** 全体サマリーを計算する。 */
-export function summarize(items: readonly FundingItem[]): FundingSummary {
+/** 補助金等の課税を見込んだ概算の実効税率の既定値 (法人実効税率の目安 約30%)。 */
+export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
+
+/**
+ * 全体サマリーを計算する。
+ *
+ * @param items 資金調達案件
+ * @param effectiveTaxRate 課税対象資金に課す実効税率 (0..1)。既定 0.3。
+ *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
+ *   借入金で非課税。手残り = 確定総額 − 課税対象確定額 × 実効税率。
+ */
+export function summarize(
+  items: readonly FundingItem[],
+  effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
+): FundingSummary {
+  const rate = effectiveTaxRate > 0 ? Math.min(1, effectiveTaxRate) : 0;
   let nonRepayableSecured = 0;
   let repayableSecured = 0;
   let totalPipeline = 0;
+  let taxableSecured = 0;
   for (const it of items) {
     const amt = nonNeg(it.amount);
     totalPipeline += amt;
     if (isSecured(it.status)) {
       if (it.repayable) repayableSecured += amt;
       else nonRepayableSecured += amt;
+      if (isTaxableFunding(it.kind)) taxableSecured += amt;
     }
   }
+  const totalSecured = nonRepayableSecured + repayableSecured;
   return {
     nonRepayableSecured,
     repayableSecured,
-    totalSecured: nonRepayableSecured + repayableSecured,
+    totalSecured,
     totalPipeline,
+    taxableSecured,
+    afterTaxSecured: Math.round(totalSecured - taxableSecured * rate),
     count: items.length,
   };
 }

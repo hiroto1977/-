@@ -3,9 +3,11 @@ import {
   aggregateByKind,
   barData,
   fundingKindLabel,
+  isTaxableFunding,
   monthlyFlow,
   radarScores,
   summarize,
+  DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
 } from '../../../shared/funding';
@@ -96,6 +98,17 @@ describe('monthlyFlow', () => {
   });
 });
 
+describe('isTaxableFunding', () => {
+  it('marks subsidy/grant/benefit/crowdfunding taxable and loan/jfc non-taxable', () => {
+    expect(isTaxableFunding('subsidy')).toBe(true);
+    expect(isTaxableFunding('grant')).toBe(true);
+    expect(isTaxableFunding('benefit')).toBe(true);
+    expect(isTaxableFunding('crowdfunding')).toBe(true);
+    expect(isTaxableFunding('loan')).toBe(false);
+    expect(isTaxableFunding('jfc')).toBe(false);
+  });
+});
+
 describe('summarize', () => {
   it('computes repayable/non-repayable/total/pipeline', () => {
     const s = summarize(items);
@@ -107,6 +120,25 @@ describe('summarize', () => {
     // pipeline: 5M + 1M + 10M + 1M = 17M
     expect(s.totalPipeline).toBe(17_000_000);
     expect(s.count).toBe(4);
+  });
+
+  it('computes taxable secured and after-tax residual at the default rate', () => {
+    const s = summarize(items);
+    // taxable secured: subsidy approved 5M + benefit received 1M = 6M (loan is non-taxable)
+    expect(s.taxableSecured).toBe(6_000_000);
+    expect(DEFAULT_EFFECTIVE_TAX_RATE).toBe(0.3);
+    // after-tax = 16M − 6M×0.3 = 16M − 1.8M = 14.2M
+    expect(s.afterTaxSecured).toBe(14_200_000);
+  });
+
+  it('honors a custom effective tax rate and clamps to [0,1]', () => {
+    expect(summarize(items, 0).afterTaxSecured).toBe(16_000_000); // no tax
+    // rate 0.5 → 16M − 6M×0.5 = 13M
+    expect(summarize(items, 0.5).afterTaxSecured).toBe(13_000_000);
+    // rate > 1 clamps to 1 → 16M − 6M = 10M
+    expect(summarize(items, 2).afterTaxSecured).toBe(10_000_000);
+    // negative rate treated as 0
+    expect(summarize(items, -1).afterTaxSecured).toBe(16_000_000);
   });
 });
 

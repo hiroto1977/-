@@ -230,6 +230,8 @@ export function FundingPage() {
       { label: '返済不要 (補助金等)', value: jpy(live.summary.nonRepayableSecured) },
       { label: '返済必要 (融資/公庫)', value: jpy(live.summary.repayableSecured) },
       { label: 'パイプライン総額', value: jpy(live.summary.totalPipeline) },
+      { label: '課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
+      { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
     ],
     [live],
   );
@@ -264,6 +266,11 @@ export function FundingPage() {
         <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-mute)' }}>
           会計ソフト連携: {live.accountingLinked ? '✅ 連携中' : '— 未連携'} ／
           株式投資連携: {live.stocksLinked ? '✅ 連携中' : '— 未連携 (任意)'}
+        </div>
+        <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+          ※ 補助金・助成金・給付金・購入型クラウドファンディングは原則「益金 (事業収入)」として課税対象、
+          融資・公庫は借入金で非課税です。「概算手残り」は課税対象額に実効税率 (既定 約30%) を課した
+          目安であり、圧縮記帳の特例・消費税・個別の課税関係は反映していません。正確な金額は税理士へご確認ください。
         </div>
       </Section>
 
