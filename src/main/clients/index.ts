@@ -58,6 +58,7 @@ import { fetchYoutubeSnapshot } from './youtube';
 import { fetchOverviewSnapshot } from './overview';
 import { fetchCoconalaSnapshot } from './coconala';
 import { fetchTiktokSnapshot } from './tiktok';
+import { fetchTaxSnapshot } from './tax';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -125,6 +126,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   overview: fetchOverviewSnapshot,
   coconala: fetchCoconalaSnapshot,
   tiktok: fetchTiktokSnapshot,
+  tax: fetchTaxSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -200,6 +202,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'coconala',
   // TikTok: 公式 API はパートナー審査 + OAuth 前提で snapshot-only。
   'tiktok',
+  // 税務試算: 計算のみ・公式ツールへ導線。納付は手動。snapshot-only。
+  'tax',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

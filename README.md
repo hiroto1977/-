@@ -3,12 +3,12 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (60)
+## サービス一覧 (61)
 
 | カテゴリ | サービス |
 |---|---|
 | **おすすめ** (常時表示, 9) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー |
-| **分析・ツール** (13) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / Uber Eats / 出前館 / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 |
+| **分析・ツール** (14) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / Uber Eats / 出前館 / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 |
 | **外部サービス連携** (38) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / 税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok |
 
 ## 2 通りの動かし方
@@ -49,7 +49,7 @@ npm run lint:test-coverage # 全サービスに test + action がある確認
 npm run lint:docs         # cross-doc 一貫性
 npm run verify:arch       # docs/ARCHITECTURE.md の file:line 参照 + 6 ライブメトリクス
 npm run mutate            # Stryker mutation testing (30 modules, 100%)
-npm run smoke             # xvfb + Electron で 60 ページ smoke screenshot
+npm run smoke             # xvfb + Electron で 61 ページ smoke screenshot
 ```
 
 CI: `.github/workflows/ci.yml` が typecheck + test + build:renderer を push/PR 毎に実行。
@@ -63,15 +63,15 @@ src/main/              ← Electron main process
   main.ts                IPC handlers (11)
   secrets.ts             OS Keychain / safeStorage トークン保管
   oauth.ts               PKCE OAuth (Google)
-  clients/               60 sub-clients (各 service の REST fetcher + actions)
+  clients/               61 sub-clients (各 service の REST fetcher + actions)
 src/preload/           ← contextBridge bridge
   preload.ts             window.serviceHub を公開
 src/renderer/          ← React app
   App.tsx                サイドバー (カテゴリ 3 段折りたたみ)
-  pages/                 60 個のサービスページ
+  pages/                 61 個のサービスページ
   components/            StatusBar / DataList / ExportActions
   hooks/useServiceData   snapshot ↔ live fetch
-  data/snapshot.ts       全 60 サービスの bundled 静的データ
+  data/snapshot.ts       全 61 サービスの bundled 静的データ
 ```
 
 ### ブラウザ版の追加レイヤー
@@ -121,7 +121,7 @@ scripts/
 | eslint | 0 errors |
 | lint:imports | 246 imports, 全境界 OK |
 | lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 60 services, 全 test 存在 |
+| lint:test-coverage | 61 services, 全 test 存在 |
 | verify:arch | 170 file:line refs + 6 metrics 一致 |
 | mutation (Stryker) | **100.00%** (30 modules) |
 

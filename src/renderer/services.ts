@@ -58,6 +58,7 @@ import { YoutubePage } from './pages/YoutubePage';
 import { OverviewPage } from './pages/OverviewPage';
 import { CoconalaPage } from './pages/CoconalaPage';
 import { TiktokPage } from './pages/TiktokPage';
+import { TaxPage } from './pages/TaxPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -564,6 +565,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: '投稿・広告・フォロワーの運用サマリー (snapshot)',
     page: TiktokPage,
     category: 'integrations',
+  },
+  {
+    id: 'tax',
+    label: '税務試算',
+    icon: 'TX',
+    description: '所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 (納付は手動)',
+    page: TaxPage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
