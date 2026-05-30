@@ -16,6 +16,7 @@ import {
   calcResidentTax,
   calcSalaryIncomeDeduction,
   calcSalaryWithDeductions,
+  marginalIncomeTaxRate,
   schemesForEntity,
   suggestTaxTips,
   complianceChecklist,
@@ -38,6 +39,7 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcSocialInsurance } from '../../shared/taxSocialInsurance';
+import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -223,6 +225,28 @@ export function TaxPage() {
   const capitalGains = useMemo(() => {
     return calcCapitalGainsTax(num(cgProceedsStr), num(cgCostStr), num(cgFeeStr), cgKind);
   }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind]);
+
+  // --- ⑦ ふるさと納税ワンストップ特例の内訳 ---
+  const [fsDonationStr, setFsDonationStr] = useState('52000');
+  const [fsMunicipalitiesStr, setFsMunicipalitiesStr] = useState('3');
+  const [fsFilesReturn, setFsFilesReturn] = useState(false);
+
+  const furusato = useMemo(() => {
+    // セクション③の精密試算から住民税所得割額・限界税率を引いて使う。
+    const levy = precise.result.residentIncomeLevy;
+    const marginal = marginalIncomeTaxRate(precise.result.taxableIncomeForIncomeTax);
+    const eligibility = furusatoOneStopEligibility(num(fsMunicipalitiesStr), fsFilesReturn);
+    // ワンストップが使える かつ 申告しない場合のみ one-stop 計算。
+    const useOneStop = eligibility.eligible;
+    return {
+      eligibility,
+      filing: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, false),
+      oneStop: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, true),
+      useOneStop,
+      levy,
+      marginal,
+    };
+  }, [fsDonationStr, fsMunicipalitiesStr, fsFilesReturn, precise.result.residentIncomeLevy, precise.result.taxableIncomeForIncomeTax]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -527,6 +551,66 @@ export function TaxPage() {
           譲渡益 {jpy(capitalGains.gain)}
           {capitalGains.specialDeduction > 0 && <> / 特別控除 {jpy(capitalGains.specialDeduction)}</>}
           {' '}/ 課税譲渡所得 {jpy(capitalGains.taxableGain)} / 売却代金からの手取り {jpy(capitalGains.takeHome)}。
+        </div>
+      </Section>
+
+      <Section title="⑦ ふるさと納税 ワンストップ特例の内訳" count={2}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          ふるさと納税は自己負担2,000円を除いた寄附額が所得税・住民税から控除されます。
+          <strong>ワンストップ特例</strong> (給与所得者・確定申告不要・寄附先5自治体以内) では所得税からの控除を行わず、
+          その相当額を住民税に上乗せします。<strong>控除の総額は確定申告と変わりません</strong> (国税庁 No.1155)。
+          ※ 住民税所得割額・限界税率はセクション③の精密試算の値を使用します。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            寄附額 (年・円)
+            <input type="text" inputMode="decimal" value={fsDonationStr} onChange={(e) => setFsDonationStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            寄附先 自治体数
+            <input type="text" inputMode="decimal" value={fsMunicipalitiesStr} onChange={(e) => setFsMunicipalitiesStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={fsFilesReturn} onChange={(e) => setFsFilesReturn(e.target.checked)} />
+            確定申告を行う
+          </label>
+        </div>
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderLeft: `3px solid ${furusato.eligibility.eligible ? 'var(--success, #3ec98a)' : 'var(--text-mute)'}`,
+            borderRadius: 6,
+            padding: '8px 12px',
+            marginBottom: 12,
+            fontSize: 12,
+            color: 'var(--text)',
+          }}
+        >
+          {furusato.eligibility.eligible ? '✅' : 'ℹ️'} {furusato.eligibility.reason}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>確定申告</div>
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+              所得税控除 {jpy(furusato.filing.incomeTaxDeduction)}<br />
+              住民税控除 {jpy(furusato.filing.totalResidentCredit)} (基本 {jpy(furusato.filing.residentBasic)} / 特例 {jpy(furusato.filing.residentSpecial)})<br />
+              <strong>控除総額 {jpy(furusato.filing.totalBenefit)}</strong>
+            </div>
+          </div>
+          <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>ワンストップ特例</div>
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
+              所得税控除 {jpy(furusato.oneStop.incomeTaxDeduction)} (住民税へ振替)<br />
+              住民税控除 {jpy(furusato.oneStop.totalResidentCredit)} (基本+特例+申告特例 {jpy(furusato.oneStop.residentOneStopAddon)})<br />
+              <strong>控除総額 {jpy(furusato.oneStop.totalBenefit)}</strong>
+            </div>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {furusato.filing.cappedBySpecialLimit && (
+            <>⚠️ 特例分が住民税所得割額の20%上限で頭打ちです。超過分は自己負担になります。<br /></>
+          )}
+          どちらの方式でも控除総額はほぼ同じです (端数処理の差のみ)。ワンストップは申告不要が利点、確定申告は他の控除と併せて行えます。
         </div>
       </Section>
 
