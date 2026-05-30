@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ServiceId } from '../services';
 import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
 import { Section } from './StatusBar';
+import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
 
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
@@ -40,18 +41,19 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
   async function submitRecord() {
     setError(null);
     setFeedback(null);
-    if (note.trim().length === 0) {
+    const cleanNote = sanitizeNote(note);
+    if (cleanNote.length === 0) {
       setError('note を入力してください');
       return;
     }
-    const payload: { note: string; amount?: number } = { note };
-    if (amount.trim().length > 0) {
-      const n = Number(amount);
-      if (!Number.isFinite(n)) {
-        setError('amount は数値で入力してください');
-        return;
-      }
-      payload.amount = n;
+    const payload: { note: string; amount?: number } = { note: cleanNote };
+    const parsed = parseAmountInput(amount);
+    if (!parsed.ok) {
+      setError('amount は数値で入力してください (全角・カンマ区切り可)');
+      return;
+    }
+    if (parsed.value !== undefined) {
+      payload.amount = parsed.value;
     }
     setRecBusy(true);
     try {

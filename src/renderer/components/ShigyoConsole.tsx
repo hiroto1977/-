@@ -15,6 +15,14 @@ const STATUS_COLOR: Record<ShigyoConsultationStatus, string> = {
   完了: '#22c55e',
 };
 
+/** ステータスの意味を補足するツールチップ (NIT: 相談中 / 対応中 の区別)。 */
+const STATUS_HINT: Record<ShigyoConsultationStatus, string> = {
+  相談予約: 'これから相談予定 (日程確定済み・未着手)',
+  相談中: '相談・ヒアリングを実施中 (方針検討段階)',
+  対応中: '方針が決まり実務 (書類作成・手続) を進行中',
+  完了: '対応が完了済み',
+};
+
 export interface ShigyoConsoleProps {
   /** ルーティング用の ServiceId。 */
   readonly serviceId: ServiceId;
@@ -128,7 +136,10 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   <td style={tdStyle}>{c.date}</td>
                   <td style={tdStyle}>{c.topic}</td>
                   <td style={tdStyle}>
-                    <span style={{ color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600 }}>
+                    <span
+                      title={STATUS_HINT[c.status]}
+                      style={{ color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600, cursor: 'help' }}
+                    >
                       ● {c.status}
                     </span>
                   </td>

@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -943,16 +944,32 @@ export function BusinessPage() {
 }
 
 /** 横断 KPI ウィジェット — フードデリバリー 2 + 投資 3 サービスの
- *  snapshot から事業全体の総収入・総資産・月次キャッシュフローを 1
- *  画面で把握する。事業ダッシュボードに「業務操作 全体像」セクション
- *  として埋め込む。各サービスの詳細は個別ページで深掘り。 */
+ *  データから事業全体の総収入・総資産・月次キャッシュフローを 1 画面で
+ *  把握する。事業ダッシュボードに「業務操作 全体像」セクションとして
+ *  埋め込む。各サービスの詳細は個別ページで深掘り。
+ *
+ *  各値は `useServiceData` 経由で取得するため、ユーザーが個別ページで
+ *  live 更新した内容にも追従する (PR #4 R2-1。SNAPSHOT 直読みだと live
+ *  モードで古い値が残る問題を解消)。 */
 function CrossServiceKpis() {
   const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
-  const ue = SNAPSHOT.uberEats;
-  const dc = SNAPSHOT.demaeCan;
-  const re = SNAPSHOT.realEstate;
-  const mf = SNAPSHOT.mutualFunds;
-  const st = SNAPSHOT.stocks;
+  const { data: ue } = useServiceData('uber-eats', SNAPSHOT.uberEats);
+  const { data: dc } = useServiceData('demae-can', SNAPSHOT.demaeCan);
+  const { data: re } = useServiceData('real-estate', SNAPSHOT.realEstate);
+  const { data: mf } = useServiceData('mutual-funds', SNAPSHOT.mutualFunds);
+  const { data: st } = useServiceData('stocks', SNAPSHOT.stocks);
+
+  // 士業 7 種の月次顧問料合計 (横断 KPI に固定費として表示)。
+  const shigyoSnapshots = [
+    SNAPSHOT.taxAccountant,
+    SNAPSHOT.laborConsultant,
+    SNAPSHOT.lawyer,
+    SNAPSHOT.judicialScrivener,
+    SNAPSHOT.adminScrivener,
+    SNAPSHOT.smeConsultant,
+    SNAPSHOT.patentAttorney,
+  ];
+  const shigyoMonthlyFeeTotal = sumShigyoMonthlyFees(shigyoSnapshots);
 
   // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
   const monthlyFoodDelivery = ue.weekRevenue * 4 + dc.monthSummary.revenue;
@@ -969,16 +986,19 @@ function CrossServiceKpis() {
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (
-    <Section title="業務操作 横断 KPI (フードデリバリー × 投資)" count={4}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 12 }}>
+    <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
         <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
         <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
         <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
         <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
+        <Stat label="士業 月次顧問料 (7 種合計)" value={jpy(shigyoMonthlyFeeTotal)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは
-        Uber Eats 週次 ×4 + 出前館 月次の推計。詳細は各サービスページで確認できます。
+        Uber Eats 週次 ×4 + 出前館 月次の推計。士業顧問料は税理士・社労士・弁護士・
+        司法書士・行政書士・中小企業診断士・弁理士の月額固定費の合計。
+        詳細は各サービスページで確認できます。
       </div>
     </Section>
   );

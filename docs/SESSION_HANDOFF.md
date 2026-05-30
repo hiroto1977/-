@@ -99,24 +99,25 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~**PR #7 R1 #4** — `as number` cast~~ → 士業 snapshot を `satisfies ShigyoSnapshot` に統一
 - ~~**PR #7 R1 #5** — `example.jp` ドメイン + 弁護士/弁理士 disclaimer~~ → `example.com` 統一 + `ShigyoConsole` の `disclaimer` prop で法的注意書きバナー追加
 
-### 🟡 SHOULD-FIX (次回作業の最有力候補)
-1. **PR #6 R1 #1** — Storage page のメモリ使用率閾値 (`< 80%` vs snapshot data 70%) の整合
-2. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-3. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-4. **PR #4 NIT** — `note` の XSS / control-char チェック
-5. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
+- ~~**PR #6 R1 #1** — Storage メモリ使用率閾値の整合~~ → `MEMORY_WARN_PCT=80` 定数化 + 推奨文言を閾値と整合
+- ~~**PR #4 R2-2** — `ServiceActionPanel` amount の locale 対応~~ → `parseAmountInput` (全角・カンマ区切り対応) + テスト
+- ~~**PR #4 NIT** — `note` の制御文字チェック~~ → `sanitizeNote` (C0/C1 除去・trim・上限長) + テスト
+- ~~**PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化~~ → 5 サービスを hook 経由に
+- ~~**PR #7 NIT** — ステータス色 `相談中`/`対応中` の tooltip~~ → `ShigyoConsole` に `STATUS_HINT` title
+- ~~**横断 KPI に士業月次顧問料合計~~** → `sumShigyoMonthlyFees` + CrossServiceKpis に Stat 追加
 
-### 🟢 NIT
-12. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
-13. PR #7: ステータス色 `相談中` / `対応中` の意味的区別 tooltip
+### 🟡 SHOULD-FIX (残)
+1. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化 (リファクタ; 機能影響なし)
 
-### 📐 アーキテクチャ拡張案
-14. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
-15. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
-16. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
-17. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
-18. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
-19. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
+### 🟢 NIT (残)
+2. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため低優先)
+
+### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
+- Phase 6: 4 業務サービス + 7 士業の `record-entry` を IndexedDB 永続化 → `persisted: true`
+- Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
+- 連携先 SaaS の live REST 接続実装
+- Storage: Electron main で `os` / `fs` 経由の実 OS 統計取得
+- quality dashboard の数値を `scripts/quality-report.cjs` から自動生成
 
 ## クイック検証チェックリスト (新セッション開始時)
 

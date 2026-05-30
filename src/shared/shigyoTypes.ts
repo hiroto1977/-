@@ -46,3 +46,13 @@ export interface ShigyoSnapshot {
   readonly monthlyFee: number;
   readonly outstandingInvoice: number;
 }
+
+/** 複数の士業 snapshot の月次顧問料を合算する (横断 KPI 用)。 */
+export function sumShigyoMonthlyFees(snapshots: readonly ShigyoSnapshot[]): number {
+  return snapshots.reduce((sum, s) => sum + s.monthlyFee, 0);
+}
+
+/** 複数の士業 snapshot の未払い請求額を合算する (横断 KPI 用)。 */
+export function sumShigyoOutstanding(snapshots: readonly ShigyoSnapshot[]): number {
+  return snapshots.reduce((sum, s) => sum + s.outstandingInvoice, 0);
+}
