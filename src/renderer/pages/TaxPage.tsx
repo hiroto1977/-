@@ -42,6 +42,7 @@ export function TaxPage() {
   const { source, status, errorMessage, refresh, isConfigured } = useServiceData('tax', SNAPSHOT.tax);
 
   const [incomeStr, setIncomeStr] = useState('5000000');
+  const [grossStr, setGrossStr] = useState('6000000');
   const [netStr, setNetStr] = useState('10000');
   const [reduced, setReduced] = useState(false);
   const [entity, setEntity] = useState<'corporation' | 'sole-proprietor'>('sole-proprietor');
@@ -66,9 +67,14 @@ export function TaxPage() {
     return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
   }, [netStr]);
 
+  const grossAnnual = useMemo(() => {
+    const p = parseAmountInput(grossStr);
+    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
+  }, [grossStr]);
+
   const incomeTax = useMemo(() => calcIncomeTax(taxableIncome), [taxableIncome]);
   const residentTax = useMemo(() => calcResidentTax(taxableIncome), [taxableIncome]);
-  const netSalary = useMemo(() => calcNetSalary(taxableIncome), [taxableIncome]);
+  const netSalary = useMemo(() => calcNetSalary(grossAnnual), [grossAnnual]);
   const consumptionTax = useMemo(
     () => calcConsumptionTax(netAmount, reduced ? CONSUMPTION_TAX_REDUCED : CONSUMPTION_TAX_STANDARD),
     [netAmount, reduced],
@@ -110,7 +116,7 @@ export function TaxPage() {
         <strong>本アプリが自動で納付・申告を行うことはありません。</strong>
       </div>
 
-      <Section title="課税所得から試算 (所得税・住民税・手取り)" count={3}>
+      <Section title="① 課税所得から所得税・住民税を試算" count={2}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
           <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>課税所得 (年, 円)</label>
           <input
@@ -122,14 +128,38 @@ export function TaxPage() {
             style={inputStyle}
           />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          <Stat label="所得税 (復興税込)" value={jpy(incomeTax)} />
-          <Stat label="住民税 (概算)" value={jpy(residentTax)} />
-          <Stat label="給与手取り (概算)" value={jpy(netSalary.takeHome)} positive />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat label="所得税 (速算表 + 復興税2.1%)" value={jpy(incomeTax)} />
+          <Stat label="住民税 (所得割10% + 均等割)" value={jpy(residentTax)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 手取りは「課税所得 = 額面」と仮定した概算 (社会保険料 約15% / 給与所得控除 / 基礎控除 48 万を概算控除)。
-          内訳: 社保 {jpy(netSalary.socialInsurance)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
+          ※ 所得税は国税庁の速算表 (7段階・累進)、住民税は所得割10%+均等割で計算。ここでの「課税所得」は
+          各種所得控除をすべて差し引いた後の金額を入力してください。
+        </div>
+      </Section>
+
+      <Section title="② 額面年収から手取りを試算" count={3}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+          <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>額面年収 (円)</label>
+          <input
+            type="text"
+            inputMode="decimal"
+            value={grossStr}
+            onChange={(e) => setGrossStr(e.target.value)}
+            placeholder="例: 6,000,000"
+            style={inputStyle}
+          />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="所得税" value={jpy(netSalary.incomeTax)} />
+          <Stat label="住民税" value={jpy(netSalary.residentTax)} />
+          <Stat label="手取り (年)" value={jpy(netSalary.takeHome)} positive />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。社会保険料のみ額面比例の概算 (約15%)。
+          配偶者・扶養・生命保険料等の控除は含まないため、扶養がある場合は実際より高めに出ます。<br />
+          内訳: 給与所得 {jpy(netSalary.employmentIncome)} / 社保 {jpy(netSalary.socialInsurance)} /
+          課税所得 {jpy(netSalary.taxableIncome)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
         </div>
       </Section>
 

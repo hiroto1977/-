@@ -86,47 +86,108 @@ export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION
   return yen(netAmount * rate);
 }
 
+// --- 給与所得控除 (正式テーブル, 令和2年分以降) -------------------------
+//
+// 国税庁 No.1410「給与所得控除」の速算表。給与等の収入金額 (額面) に対する
+// 控除額。下限 55 万・上限 195 万。
+// https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm
+
+/**
+ * 給与等の収入金額 (額面年収) から給与所得控除額を正式テーブルで計算する。
+ * 令和2年分以降。
+ */
+export function calcSalaryIncomeDeduction(grossAnnual: number): number {
+  if (grossAnnual <= 0) return 0;
+  if (grossAnnual <= 1_625_000) return 550_000;
+  if (grossAnnual <= 1_800_000) return yen(grossAnnual * 0.4 - 100_000);
+  if (grossAnnual <= 3_600_000) return yen(grossAnnual * 0.3 + 80_000);
+  if (grossAnnual <= 6_600_000) return yen(grossAnnual * 0.2 + 440_000);
+  if (grossAnnual <= 8_500_000) return yen(grossAnnual * 0.1 + 1_100_000);
+  return 1_950_000; // 上限
+}
+
+// --- 基礎控除 (合計所得金額により逓減, 令和2年分以降) --------------------
+//
+// 国税庁 No.1199「基礎控除」。合計所得金額 2,400 万以下=48万、以降逓減し
+// 2,500 万超で 0。住民税の基礎控除は別 (43 万、所得 2,400 万以下)。
+// https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm
+
+/** 所得税の基礎控除上限 (合計所得 2,400 万以下)。 */
+export const BASIC_DEDUCTION = 480_000;
+/** 住民税の基礎控除上限 (合計所得 2,400 万以下)。 */
+export const RESIDENT_BASIC_DEDUCTION = 430_000;
+
+/** 合計所得金額から所得税の基礎控除額を計算する (逓減あり)。 */
+export function calcBasicDeduction(totalIncome: number): number {
+  if (totalIncome <= 24_000_000) return 480_000;
+  if (totalIncome <= 24_500_000) return 320_000;
+  if (totalIncome <= 25_000_000) return 160_000;
+  return 0;
+}
+
+/** 合計所得金額から住民税の基礎控除額を計算する (逓減あり)。 */
+export function calcResidentBasicDeduction(totalIncome: number): number {
+  if (totalIncome <= 24_000_000) return 430_000;
+  if (totalIncome <= 24_500_000) return 290_000;
+  if (totalIncome <= 25_000_000) return 150_000;
+  return 0;
+}
+
 // --- 給与手取り (概算) ----------------------------------------------------
 
-/** 社会保険料の概算率 (健康保険 + 厚生年金 + 雇用保険の本人負担合計の目安)。 */
+/** 社会保険料の概算率 (健康保険 + 厚生年金 + 雇用保険の本人負担合計の目安)。
+ *  ※ 社会保険料は本来、標準報酬月額の等級表で決まるが、ここでは額面比例の
+ *  概算とする (この一点のみ概算で、控除・税額は正式テーブル)。 */
 export const SOCIAL_INSURANCE_RATE = 0.15;
-/** 給与所得控除の概算: 額面の 30% (下限 55 万・上限 195 万でクランプ)。 */
-const SALARY_DEDUCTION_RATE = 0.3;
-const SALARY_DEDUCTION_MIN = 550_000;
-const SALARY_DEDUCTION_MAX = 1_950_000;
-/** 基礎控除 (所得税)。 */
-export const BASIC_DEDUCTION = 480_000;
 
 export interface NetSalary {
   readonly gross: number;
   readonly socialInsurance: number;
+  /** 給与所得控除後の給与所得 (= 合計所得金額の近似)。 */
+  readonly employmentIncome: number;
+  /** 課税所得 (所得税ベース)。 */
+  readonly taxableIncome: number;
   readonly incomeTax: number;
   readonly residentTax: number;
   readonly takeHome: number;
 }
 
-/** 額面年収から手取り (概算) を試算する。控除はすべて概算。 */
+/**
+ * 額面年収から手取りを試算する。
+ *
+ * 社会保険料のみ額面比例の概算 (約15%)。給与所得控除・基礎控除・所得税速算表・
+ * 住民税は正式テーブルに基づく。所得控除は基礎控除のみを考慮 (配偶者・扶養・
+ * 生命保険料控除等は含まない簡略モデル) のため、扶養がある場合は実際の税額より
+ * 高めに出る点に注意。
+ */
 export function calcNetSalary(grossAnnual: number): NetSalary {
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (grossAnnual <= 0) {
-    return { gross: 0, socialInsurance: 0, incomeTax: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0 };
+    return {
+      gross: 0,
+      socialInsurance: 0,
+      employmentIncome: 0,
+      taxableIncome: 0,
+      incomeTax: 0,
+      residentTax: RESIDENT_TAX_PER_CAPITA,
+      takeHome: 0,
+    };
   }
   const socialInsurance = yen(grossAnnual * SOCIAL_INSURANCE_RATE);
-  // 給与所得控除は概算 (額面 30% を 55 万〜195 万でクランプ)。30%・上下限・
-  // クランプの向きは現実の控除表を単純化した近似で、具体値は契約ではない
-  // (手取りが「額面 - 社保 - 所得税 - 住民税」である構造はテストで pin)。
-  // Stryker disable next-line MethodExpression,ArithmeticOperator
-  const salaryDeduction = Math.min(
-    SALARY_DEDUCTION_MAX,
-    Math.max(SALARY_DEDUCTION_MIN, yen(grossAnnual * SALARY_DEDUCTION_RATE)),
-  );
-  const taxableIncome = Math.max(0, grossAnnual - socialInsurance - salaryDeduction - BASIC_DEDUCTION);
+  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
+  // 給与所得 (= 合計所得金額の近似)。社会保険料控除は所得控除なので、課税所得は
+  // 給与所得から社保・基礎控除を引いて求める。
+  const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
+  const basicDeduction = calcBasicDeduction(employmentIncome);
+  const residentBasicDeduction = calcResidentBasicDeduction(employmentIncome);
+  const taxableIncome = Math.max(0, employmentIncome - socialInsurance - basicDeduction);
+  const residentTaxableIncome = Math.max(0, employmentIncome - socialInsurance - residentBasicDeduction);
   const incomeTax = calcIncomeTax(taxableIncome);
-  const residentTax = calcResidentTax(taxableIncome);
+  const residentTax = calcResidentTax(residentTaxableIncome);
   const takeHome = grossAnnual - socialInsurance - incomeTax - residentTax;
-  return { gross: grossAnnual, socialInsurance, incomeTax, residentTax, takeHome };
+  return { gross: grossAnnual, socialInsurance, employmentIncome, taxableIncome, incomeTax, residentTax, takeHome };
 }
 
 // --- 節税ヒント (一般的な制度の案内のみ。助言ではない) ---------------------

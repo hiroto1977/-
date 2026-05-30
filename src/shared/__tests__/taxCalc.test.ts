@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   BASIC_DEDUCTION,
+  RESIDENT_BASIC_DEDUCTION,
+  calcBasicDeduction,
   calcConsumptionTax,
   calcIncomeTax,
   calcNetSalary,
+  calcResidentBasicDeduction,
   calcResidentTax,
+  calcSalaryIncomeDeduction,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
@@ -95,6 +99,58 @@ describe('calcNetSalary', () => {
     const r = calcNetSalary(1_000_000);
     expect(r.incomeTax).toBe(0);
     expect(BASIC_DEDUCTION).toBe(480_000);
+  });
+
+  it('exposes employment income and taxable income consistently', () => {
+    const r = calcNetSalary(5_000_000);
+    // 給与所得控除 = 5,000,000×20%+440,000 = 1,440,000
+    expect(r.employmentIncome).toBe(5_000_000 - 1_440_000);
+    // 課税所得 = 給与所得 - 社保(750,000) - 基礎控除(480,000)
+    expect(r.taxableIncome).toBe(r.employmentIncome - r.socialInsurance - 480_000);
+  });
+});
+
+describe('calcSalaryIncomeDeduction (令和2年分以降の正式テーブル)', () => {
+  it('returns the 550,000 floor up to 1,625,000', () => {
+    expect(calcSalaryIncomeDeduction(0)).toBe(0);
+    expect(calcSalaryIncomeDeduction(1_000_000)).toBe(550_000);
+    expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
+  });
+
+  it('applies each official bracket formula', () => {
+    expect(calcSalaryIncomeDeduction(1_800_000)).toBe(Math.round(1_800_000 * 0.4 - 100_000));
+    expect(calcSalaryIncomeDeduction(3_600_000)).toBe(Math.round(3_600_000 * 0.3 + 80_000));
+    expect(calcSalaryIncomeDeduction(6_600_000)).toBe(Math.round(6_600_000 * 0.2 + 440_000));
+    expect(calcSalaryIncomeDeduction(8_500_000)).toBe(Math.round(8_500_000 * 0.1 + 1_100_000));
+  });
+
+  it('caps at 1,950,000 above 8,500,000', () => {
+    expect(calcSalaryIncomeDeduction(8_500_001)).toBe(1_950_000);
+    expect(calcSalaryIncomeDeduction(20_000_000)).toBe(1_950_000);
+  });
+});
+
+describe('calcBasicDeduction (逓減)', () => {
+  it('is 480,000 up to 24,000,000', () => {
+    expect(calcBasicDeduction(0)).toBe(480_000);
+    expect(calcBasicDeduction(24_000_000)).toBe(480_000);
+  });
+
+  it('steps down 320,000 / 160,000 / 0', () => {
+    expect(calcBasicDeduction(24_000_001)).toBe(320_000);
+    expect(calcBasicDeduction(24_500_000)).toBe(320_000);
+    expect(calcBasicDeduction(24_500_001)).toBe(160_000);
+    expect(calcBasicDeduction(25_000_000)).toBe(160_000);
+    expect(calcBasicDeduction(25_000_001)).toBe(0);
+  });
+});
+
+describe('calcResidentBasicDeduction (逓減)', () => {
+  it('is 430,000 up to 24,000,000 then steps down', () => {
+    expect(calcResidentBasicDeduction(24_000_000)).toBe(RESIDENT_BASIC_DEDUCTION);
+    expect(calcResidentBasicDeduction(24_500_000)).toBe(290_000);
+    expect(calcResidentBasicDeduction(25_000_000)).toBe(150_000);
+    expect(calcResidentBasicDeduction(25_000_001)).toBe(0);
   });
 });
 
