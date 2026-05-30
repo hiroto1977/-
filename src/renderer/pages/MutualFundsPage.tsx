@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -5,6 +6,17 @@ import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
+import { calcCompoundingFutureValue } from '../../shared/mutualFundsMetrics';
+
+const simInputStyle: React.CSSProperties = {
+  background: 'var(--bg)',
+  border: '1px solid var(--border)',
+  borderRadius: 6,
+  color: 'var(--text)',
+  padding: '6px 8px',
+  fontSize: 13,
+  width: 110,
+};
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -12,6 +24,14 @@ export function MutualFundsPage() {
     SNAPSHOT.mutualFunds,
   );
   const { holdings, portfolio, recentDividends } = data;
+
+  const [simMonthly, setSimMonthly] = useState('30000');
+  const [simRate, setSimRate] = useState('5');
+  const [simYears, setSimYears] = useState('20');
+  const sim = useMemo(
+    () => calcCompoundingFutureValue(Number(simMonthly) || 0, Number(simRate) || 0, Number(simYears) || 0),
+    [simMonthly, simRate, simYears],
+  );
 
   return (
     <div>
@@ -95,6 +115,31 @@ export function MutualFundsPage() {
             </tbody>
           </table>
         )}
+      </Section>
+
+      <Section title="積立シミュレーション (複利・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            月額積立 (円)
+            <input type="text" inputMode="decimal" value={simMonthly} onChange={(e) => setSimMonthly(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定年率 (%)
+            <input type="text" inputMode="decimal" value={simRate} onChange={(e) => setSimRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            積立年数
+            <input type="text" inputMode="decimal" value={simYears} onChange={(e) => setSimYears(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
+          <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
+          <Stat label={`運用益 (${sim.gainPct.toFixed(1)}%)`} value={jpy(sim.totalGain)} positive={sim.totalGain >= 0} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
+        </div>
       </Section>
     </div>
   );
