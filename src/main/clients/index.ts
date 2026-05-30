@@ -56,6 +56,7 @@ import { fetchSalesSnapshot } from './sales';
 import { fetchTeamSnapshot } from './team';
 import { fetchYoutubeSnapshot } from './youtube';
 import { fetchOverviewSnapshot } from './overview';
+import { fetchCoconalaSnapshot } from './coconala';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -121,6 +122,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   team: fetchTeamSnapshot,
   youtube: fetchYoutubeSnapshot,
   overview: fetchOverviewSnapshot,
+  coconala: fetchCoconalaSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -192,6 +194,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'team',
   // 経営サマリー: 既存機能の集約のみ。認証不要。
   'overview',
+  // ココナラ: 公開 API なしで snapshot-only。
+  'coconala',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

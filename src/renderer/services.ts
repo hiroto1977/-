@@ -56,6 +56,7 @@ import { SalesPage } from './pages/SalesPage';
 import { TeamPage } from './pages/TeamPage';
 import { YoutubePage } from './pages/YoutubePage';
 import { OverviewPage } from './pages/OverviewPage';
+import { CoconalaPage } from './pages/CoconalaPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -546,6 +547,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: '売上・KPI・チーム・プランを横断した経営概況 (実データ集約)',
     page: OverviewPage,
     category: 'featured',
+  },
+  {
+    id: 'coconala',
+    label: 'ココナラ',
+    icon: 'CO',
+    description: 'スキルマーケットの出品・受注・評価 (snapshot)',
+    page: CoconalaPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
