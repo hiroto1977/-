@@ -85,6 +85,13 @@ describe('calcDividendCredit', () => {
     expect(r.incomeTax).toBe(Math.round(500_000 * 0.1 + 500_000 * 0.05));
     expect(r.residentTax).toBe(Math.round(500_000 * 0.028 + 500_000 * 0.014));
   });
+
+  it('uses the full high rate when total income is exactly 10,000,000 (boundary)', () => {
+    // total exactly at the threshold → no portion over → all high rate
+    const r = calcDividendCredit({ dividendIncome: 1_000_000, taxableTotalIncome: 10_000_000 });
+    expect(r.incomeTax).toBe(100_000); // 1,000,000 × 10%
+    expect(r.residentTax).toBe(28_000); // 1,000,000 × 2.8%
+  });
 });
 
 describe('calcAllTaxCredits', () => {

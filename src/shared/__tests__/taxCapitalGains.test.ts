@@ -81,4 +81,28 @@ describe('calcCapitalGainsTax (譲渡所得・申告分離課税)', () => {
     expect(RESIDENTIAL_SPECIAL_DEDUCTION).toBe(30_000_000);
     expect(RESIDENTIAL_REDUCED_RATE_CAP).toBe(60_000_000);
   });
+
+  // --- 境界ぴったりのテスト (品質監査チームの提案) ---
+  it('residential: a 1-yen taxable gain just over the 3,000万 deduction uses the reduced rate', () => {
+    // 譲渡益 30,000,001 − 3,000万控除 = 課税 1 → 軽減税率 (10%/4%)
+    const r = calcCapitalGainsTax(30_000_001, 0, 0, 'residential');
+    expect(r.taxableGain).toBe(1);
+    expect(r.incomeTax).toBe(Math.round(1 * 0.1 * SURTAX));
+    expect(r.residentTax).toBe(Math.round(1 * 0.04));
+  });
+
+  it('residential: a taxable gain of exactly 6,000万 stays fully in the reduced-rate band', () => {
+    // 譲渡益 9,000万 − 3,000万控除 = 課税 6,000万 (上限ちょうど) → 全額 10%/4%
+    const r = calcCapitalGainsTax(90_000_000, 0, 0, 'residential');
+    expect(r.taxableGain).toBe(60_000_000);
+    expect(r.incomeTax).toBe(Math.round(60_000_000 * 0.1 * SURTAX));
+    expect(r.residentTax).toBe(60_000_000 * 0.04);
+  });
+
+  it('residential: a gain exactly equal to the 3,000万 deduction yields zero tax', () => {
+    const r = calcCapitalGainsTax(30_000_000, 0, 0, 'residential');
+    expect(r.specialDeduction).toBe(30_000_000);
+    expect(r.taxableGain).toBe(0);
+    expect(r.totalTax).toBe(0);
+  });
 });
