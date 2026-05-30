@@ -127,7 +127,8 @@ scripts/
 
 ## ドキュメント
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 22 services 認証マトリクス
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 認証マトリクス + ライブメトリクス
+- [docs/BUSINESS_PLATFORM.md](docs/BUSINESS_PLATFORM.md) — 事業プラットフォーム層 (プラン/売上/KPI/チーム/経営サマリー)
 - [docs/DESIGN_BLUEPRINT.md](docs/DESIGN_BLUEPRINT.md) — 設計図 (16 セクション)
 - [docs/BROWSER_REDESIGN.md](docs/BROWSER_REDESIGN.md) — ブラウザネイティブ再設計
 - [docs/PROXY_EXAMPLE.md](docs/PROXY_EXAMPLE.md) — Cloudflare Worker サンプル
