@@ -37,6 +37,7 @@ import {
 import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, type CapitalAssetKind } from '../../shared/taxCapitalGains';
+import { calcSocialInsurance } from '../../shared/taxSocialInsurance';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -93,6 +94,11 @@ export function TaxPage() {
   const incomeTax = useMemo(() => calcIncomeTax(taxableIncome), [taxableIncome]);
   const residentTax = useMemo(() => calcResidentTax(taxableIncome), [taxableIncome]);
   const netSalary = useMemo(() => calcNetSalary(grossAnnual), [grossAnnual]);
+  const [careInsurance, setCareInsurance] = useState(false);
+  const socialInsurancePrecise = useMemo(
+    () => calcSocialInsurance(grossAnnual, careInsurance),
+    [grossAnnual, careInsurance],
+  );
   const consumptionTax = useMemo(
     () => calcConsumptionTax(netAmount, reduced ? CONSUMPTION_TAX_REDUCED : CONSUMPTION_TAX_STANDARD),
     [netAmount, reduced],
@@ -278,7 +284,7 @@ export function TaxPage() {
       </Section>
 
       <Section title="② 額面年収から手取りを試算" count={3}>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
           <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>額面年収 (円)</label>
           <input
             type="text"
@@ -288,6 +294,10 @@ export function TaxPage() {
             placeholder="例: 6,000,000"
             style={inputStyle}
           />
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={careInsurance} onChange={(e) => setCareInsurance(e.target.checked)} />
+            40〜64歳 (介護保険料を上乗せ)
+          </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="所得税" value={jpy(netSalary.incomeTax)} />
@@ -295,10 +305,17 @@ export function TaxPage() {
           <Stat label="手取り (年)" value={jpy(netSalary.takeHome)} positive />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。社会保険料のみ額面比例の概算 (約15%)。
+          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。手取りの社会保険料は額面比例の概算 (約15%)。
           配偶者・扶養・生命保険料等の控除は含まないため、扶養がある場合は実際より高めに出ます。<br />
           内訳: 給与所得 {jpy(netSalary.employmentIncome)} / 社保 {jpy(netSalary.socialInsurance)} /
           課税所得 {jpy(netSalary.taxableIncome)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+          <strong>社会保険料の精密概算 (標準報酬月額の上限を反映)</strong>：
+          合計 {jpy(socialInsurancePrecise.total)}（厚生年金 {jpy(socialInsurancePrecise.pension)} /
+          健康保険{careInsurance ? '+介護' : ''} {jpy(socialInsurancePrecise.health)} /
+          雇用保険 {jpy(socialInsurancePrecise.employment)}）。
+          厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例(15%)より低くなります (令和6年度・協会けんぽ全国平均ベース)。
         </div>
       </Section>
 
