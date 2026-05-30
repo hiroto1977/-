@@ -367,6 +367,34 @@ describe('calcBaseIncomeTax / calcFinalIncomeTax (復興特別所得税の順序
   });
 });
 
+describe('課税所得の1,000円未満切り捨て (floorTaxableThousand / calcBaseIncomeTax)', () => {
+  it('floors taxable income down to the nearest 1,000 yen', () => {
+    expect(floorTaxableThousand(1_999_999)).toBe(1_999_000);
+    expect(floorTaxableThousand(2_000_000)).toBe(2_000_000);
+    expect(floorTaxableThousand(2_000_001)).toBe(2_000_000);
+    expect(floorTaxableThousand(999)).toBe(0);
+  });
+
+  it('returns 0 for zero or negative income', () => {
+    expect(floorTaxableThousand(0)).toBe(0);
+    expect(floorTaxableThousand(-1)).toBe(0);
+    expect(floorTaxableThousand(-50_000)).toBe(0);
+  });
+
+  it('calcBaseIncomeTax floors the 1,000-yen remainder before the speed table', () => {
+    // 3,000,500 は課税所得 3,000,000 として計算される (端数 500 切り捨て)。
+    expect(calcBaseIncomeTax(3_000_500)).toBe(calcBaseIncomeTax(3_000_000));
+    // 5% ブラケット: 1,234,999 → 1,234,000 × 5% = 61,700。
+    expect(calcBaseIncomeTax(1_234_999)).toBe(Math.round(1_234_000 * 0.05));
+  });
+
+  it('the floored remainder lowers the tax versus the unfloored amount', () => {
+    // 端数を含む場合、切り捨て後の税額は素朴な (端数込み×税率) より小さい。
+    const naive = Math.round(1_234_999 * 0.05);
+    expect(calcBaseIncomeTax(1_234_999)).toBeLessThan(naive);
+  });
+});
+
 describe('boundary coverage — salary income deduction brackets', () => {
   it('switches continuously at each official boundary', () => {
     expect(calcSalaryIncomeDeduction(1_625_000)).toBe(550_000);
