@@ -938,6 +938,12 @@ export const SNAPSHOT = {
     isMock: true,
   },
 
+  freee: {
+    companyName: '',
+    monthly: [] as { month: string; income: number; expense: number; net: number }[],
+    fetchedAt: '',
+  },
+
   kpi: {
     units: [] as {
       id: string;

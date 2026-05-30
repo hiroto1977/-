@@ -60,6 +60,7 @@ import { CoconalaPage } from './pages/CoconalaPage';
 import { TiktokPage } from './pages/TiktokPage';
 import { TaxPage } from './pages/TaxPage';
 import { FundingPage } from './pages/FundingPage';
+import { FreeePage } from './pages/FreeePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -582,6 +583,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: '補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒)',
     page: FundingPage,
     category: 'tools',
+  },
+  {
+    id: 'freee',
+    label: 'freee 会計',
+    icon: 'FE',
+    description: 'freee の取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携・実 API)',
+    page: FreeePage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

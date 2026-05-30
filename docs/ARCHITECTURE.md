@@ -18,12 +18,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 62 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 63 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 62 | `src/main/clients/index.ts:44-83` |
-| OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
+| client モジュール (fetcher + actions) | 63 | `src/main/clients/index.ts:44-83` |
+| OAuth 対応サービス | 4 (drive / calendar / gmail / freee) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1670** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1719) |
+| ユニットテスト | **1679** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1728) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -42,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[62 React pages<br/>+ useServiceData hook]
+      PAGES[63 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
       IPC[ipcMain.handle × 11]
-      CLIENTS[62 clients<br/>fetcher + ActionMap]
+      CLIENTS[63 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -422,7 +422,7 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 62 services の認証スタイル
+### 3.1 63 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -449,6 +449,7 @@ union を参照する。
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
+| `freee` | freee 会計 — 取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携) | OAuth (read scope) | ✅ | | (read-only — deals を月次CFに正規化。書き込みなし) |
 | `teamradar` | チームレーダー (1-5 評価 × 5 軸 × N 人) | none | ✅ | | `save-state`, `export-svg` (Canva ドラッグ&ドロップ可能な SVG 出力) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |

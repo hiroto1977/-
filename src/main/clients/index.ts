@@ -60,6 +60,7 @@ import { fetchCoconalaSnapshot } from './coconala';
 import { fetchTiktokSnapshot } from './tiktok';
 import { fetchTaxSnapshot } from './tax';
 import { fetchFundingSnapshot } from './funding';
+import { fetchFreeeSnapshot } from './freee';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -129,6 +130,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   tiktok: fetchTiktokSnapshot,
   tax: fetchTaxSnapshot,
   funding: fetchFundingSnapshot,
+  freee: fetchFreeeSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 

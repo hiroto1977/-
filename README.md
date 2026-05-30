@@ -3,7 +3,7 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (62)
+## サービス一覧 (63)
 
 | カテゴリ | サービス |
 |---|---|
@@ -63,15 +63,15 @@ src/main/              ← Electron main process
   main.ts                IPC handlers (11)
   secrets.ts             OS Keychain / safeStorage トークン保管
   oauth.ts               PKCE OAuth (Google)
-  clients/               62 sub-clients (各 service の REST fetcher + actions)
+  clients/               63 sub-clients (各 service の REST fetcher + actions)
 src/preload/           ← contextBridge bridge
   preload.ts             window.serviceHub を公開
 src/renderer/          ← React app
   App.tsx                サイドバー (カテゴリ 3 段折りたたみ)
-  pages/                 62 個のサービスページ
+  pages/                 63 個のサービスページ
   components/            StatusBar / DataList / ExportActions
   hooks/useServiceData   snapshot ↔ live fetch
-  data/snapshot.ts       全 62 サービスの bundled 静的データ
+  data/snapshot.ts       全 63 サービスの bundled 静的データ
 ```
 
 ### ブラウザ版の追加レイヤー
@@ -121,7 +121,7 @@ scripts/
 | eslint | 0 errors |
 | lint:imports | 246 imports, 全境界 OK |
 | lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 62 services, 全 test 存在 |
+| lint:test-coverage | 63 services, 全 test 存在 |
 | verify:arch | 170 file:line refs + 6 metrics 一致 |
 | mutation (Stryker) | **100.00%** (30 modules) |
 

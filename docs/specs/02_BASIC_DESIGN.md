@@ -61,7 +61,7 @@
 
 | サブシステム | 責務 | 入出力 |
 |---|---|---|
-| サービスレジストリ | 62 サービスの ID/ラベル/カテゴリ/ページの管理 | SoT → サイドバー/fetcher/snapshot |
+| サービスレジストリ | 63 サービスの ID/ラベル/カテゴリ/ページの管理 | SoT → サイドバー/fetcher/snapshot |
 | データ取得層 (`useServiceData`) | snapshot ↔ live の切替、status/error 管理 | (serviceId, snapshot) → {data, source, status, refresh} |
 | 秘密情報管理 | トークンの暗号化保管・取得・削除 | setToken/clearToken/listConfigured |
 | アクション層 (`invoke`) | 各サービスの書き込み操作 | (serviceId, action, payload) → Result |
