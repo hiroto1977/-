@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 58 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1366** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1415) |
+| ユニットテスト | **1375** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1424) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -369,7 +369,7 @@ sequenceDiagram
   M->>M: setOAuthTokens(svc, ts)
 ```
 
-### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:134-164`)
+### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:177-262`)
 
 ```mermaid
 stateDiagram-v2
@@ -416,7 +416,7 @@ flowchart LR
 ```
 
 OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bearer 文字列。
-`getValidToken()` (`src/main/secrets.ts:134-164`) が `JSON.parse` → `isTokenSet` で振り分け。
+`getValidToken()` (`src/main/secrets.ts:177-262`) が `JSON.parse` → `isTokenSet` で振り分け。
 
 ---
 
@@ -919,7 +919,7 @@ classDiagram
     +listConfiguredServices() : secrets.ts:92
     +setOAuthTokens(id, ts) : secrets.ts:113
     +getOAuthTokens(id) : secrets.ts:117
-    +getValidToken(id) : secrets.ts:134 ~auto-refresh~
+    +getValidToken(id) : secrets.ts:223 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {

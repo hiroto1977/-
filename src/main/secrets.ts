@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ServiceId } from '../shared/serviceId';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
+import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 
 const FILE_NAME = 'service-hub-secrets.json';
 const MAX_STORE_SIZE = 1 * 1024 * 1024; // 1 MB — generous for hundreds of tokens
@@ -30,57 +31,65 @@ function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
-async function readStore(): Promise<Record<string, string>> {
+/** Parse a stored-secrets JSON blob into a validated string map, or null if
+ *  it isn't usable (so the caller can try a backup). */
+function parseStore(text: string): Record<string, string> | null {
+  let parsed: unknown;
   try {
-    // Bound the size we'll JSON.parse — protects against a corrupted /
-    // attacker-grown secrets file OOMing main.
+    parsed = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null;
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
+    if (typeof v === 'string') out[k] = v;
+  }
+  return out;
+}
+
+async function readStore(): Promise<Record<string, string>> {
+  // Bound the size we'll read/JSON.parse — protects against a corrupted /
+  // attacker-grown secrets file OOMing main.
+  try {
     const stat = await fs.stat(secretsPath());
     if (stat.size > MAX_STORE_SIZE) {
-       
+
       console.error(
         `[secrets] secrets file ${secretsPath()} is ${stat.size} bytes (limit ${MAX_STORE_SIZE}); refusing to load`,
       );
       return {};
     }
-    const buf = await fs.readFile(secretsPath());
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(buf.toString('utf8'));
-    } catch (err) {
-      // Partial / corrupted file (e.g., crash mid-write before atomic
-      // rename was added) would otherwise poison every subsequent token
-      // read. Log and treat as empty so the user can re-auth rather
-      // than the app becoming permanently unusable.
-       
-      console.error(
-        `[secrets] secrets file at ${secretsPath()} is not valid JSON; treating as empty. ${
-          err instanceof Error ? err.message : String(err)
-        }`,
-      );
-      return {};
-    }
-    // Validate shape — keys + string values only, drop anything else.
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {};
-    const out: Record<string, string> = {};
-    for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
-      if (typeof v === 'string') out[k] = v;
-    }
-    return out;
-  } catch (err: unknown) {
-    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return {};
-    throw err;
+  } catch (err) {
+    // stat ENOENT → no primary file; readFileWithBackup may still find `.prev`.
+    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
   }
+
+  // Primary file, falling back to the `.prev` backup on a crash that left the
+  // primary missing or truncated. Lets a mid-write SIGKILL degrade to the
+  // previous good token set instead of losing every credential.
+  const text = await readFileWithBackup(secretsPath());
+  if (text == null) return {};
+  const store = parseStore(text);
+  if (store) return store;
+
+  // Primary unparseable → try the backup explicitly before giving up.
+  const prev = await readFileWithBackup(`${secretsPath()}.prev`); // reads `<path>.prev`
+  const recovered = prev != null ? parseStore(prev) : null;
+  if (recovered) {
+
+    console.error(`[secrets] primary secrets file at ${secretsPath()} was corrupt; recovered from .prev backup`);
+    return recovered;
+  }
+
+  console.error(`[secrets] secrets file at ${secretsPath()} is not valid JSON and no usable backup exists; treating as empty`);
+  return {};
 }
 
 async function writeStore(store: Record<string, string>): Promise<void> {
-  await fs.mkdir(path.dirname(secretsPath()), { recursive: true });
-  // Atomic-ish: write to a sibling then rename. fs.writeFile + rename
-  // ensures a crash mid-write leaves the previous valid file intact
-  // rather than a partial/empty json.
-  const target = secretsPath();
-  const tmp = `${target}.tmp-${process.pid}-${Date.now()}`;
-  await fs.writeFile(tmp, JSON.stringify(store), { mode: 0o600 });
-  await fs.rename(tmp, target);
+  // Durable atomic write: temp + fsync + rename + dir fsync, keeping a `.prev`
+  // backup so a corrupt/clobbered write is recoverable on next read.
+  await atomicWriteFile(secretsPath(), JSON.stringify(store), { mode: 0o600, keepBackup: true });
 }
 
 let fallbackWarned = false;

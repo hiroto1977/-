@@ -48,7 +48,7 @@
 |---|---|---|---|
 | 1 | ~~業務レコードを AES-GCM 暗号化~~ → **暗号エンジン + ストア配線は実装済み** (`recordCipher.ts` + `store.configureCipher`/`reencryptAll`)。残りは常時有効化の UI/ロック解除フロー配線のみ | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
 | 2 | Electron `secrets` の keychain 非依存パスフレーズ暗号化 + 未初期化警告 UI | 漏洩 | `plain:base64` フォールバック解消 |
-| 3 | `secrets.json` の atomic write (temp→rename + `.prev`) | 消失 | 強制終了時の破損防止 |
+| 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` バックアップ + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
 | 4 | CSV / 復元の一括取込をトランザクション化（部分取込のロールバック） | 損壊 | `importAll` への集約 |
 | 5 | プロキシ封筒の Authorization マスク / IPC payload からの宛先トークン排除 | 漏洩 | 第三者 Worker ログ対策 |
 
