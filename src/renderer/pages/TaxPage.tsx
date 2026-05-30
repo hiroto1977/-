@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
@@ -12,6 +13,7 @@ import {
   calcIncomeTax,
   calcNetSalary,
   calcResidentTax,
+  schemesForEntity,
   suggestTaxTips,
 } from '../../shared/taxCalc';
 
@@ -39,6 +41,9 @@ export function TaxPage() {
   const [incomeStr, setIncomeStr] = useState('5000000');
   const [netStr, setNetStr] = useState('10000');
   const [reduced, setReduced] = useState(false);
+  const [entity, setEntity] = useState<'corporation' | 'sole-proprietor'>('sole-proprietor');
+
+  const schemes = useMemo(() => schemesForEntity(entity), [entity]);
 
   const taxableIncome = useMemo(() => {
     const p = parseAmountInput(incomeStr);
@@ -149,6 +154,59 @@ export function TaxPage() {
         </ul>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
           ※ 一般的な制度の案内であり、適用可否・効果は個人の状況により異なります。具体的な節税は税理士にご相談ください。
+        </div>
+      </Section>
+
+      <Section title="節税制度カタログ (事業形態別・一般情報)" count={schemes.length}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          {(['sole-proprietor', 'corporation'] as const).map((e) => (
+            <button
+              key={e}
+              type="button"
+              onClick={() => setEntity(e)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 6,
+                border: '1px solid var(--border)',
+                background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
+                color: entity === e ? '#fff' : 'var(--text)',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {e === 'corporation' ? '法人' : '個人事業主'}
+            </button>
+          ))}
+        </div>
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={thStyle}>制度</th>
+              <th style={thStyle}>概要</th>
+              <th style={thStyle}>専門家相談</th>
+            </tr>
+          </thead>
+          <tbody>
+            {schemes.map((s) => (
+              <tr key={s.id}>
+                <td style={tdStyle}>{s.name}</td>
+                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>{s.summary}</td>
+                <td style={tdStyle}>
+                  {s.needsAdvisor ? (
+                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>⚠️ 必須</span>
+                  ) : (
+                    <span style={{ color: 'var(--text-mute)' }}>推奨</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ いずれも<strong>一般的な制度の案内</strong>であり、個別の節税提案ではありません。
+          「⚠️ 必須」の制度 (親族間取引・マイクロ法人併用・役員社宅など) は適用判断・税務リスクが大きく、
+          租税回避と判断されると追徴課税の恐れがあります。<strong>実行前に必ず税理士へご相談ください。</strong>
         </div>
       </Section>
 

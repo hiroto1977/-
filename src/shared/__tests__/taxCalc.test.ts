@@ -9,6 +9,8 @@ import {
   RECONSTRUCTION_SURTAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
   suggestTaxTips,
+  schemesForEntity,
+  taxSchemeCatalog,
 } from '../taxCalc';
 
 describe('calcIncomeTax', () => {
@@ -110,5 +112,44 @@ describe('suggestTaxTips', () => {
   it('adds incorporation hint above 9M', () => {
     expect(suggestTaxTips(9_000_000).map((t) => t.id)).toContain('corp');
     expect(suggestTaxTips(8_000_000).map((t) => t.id)).not.toContain('corp');
+  });
+});
+
+describe('taxSchemeCatalog', () => {
+  it('returns entries with unique ids and required fields', () => {
+    const cat = taxSchemeCatalog();
+    expect(cat.length).toBeGreaterThan(0);
+    const ids = cat.map((s) => s.id);
+    expect(new Set(ids).size).toBe(ids.length); // unique
+    for (const s of cat) {
+      expect(s.id).toBeTruthy();
+      expect(s.name).toBeTruthy();
+      expect(s.summary).toBeTruthy();
+      expect(['corporation', 'sole-proprietor', 'both']).toContain(s.entity);
+      expect(typeof s.needsAdvisor).toBe('boolean');
+    }
+  });
+
+  it('flags high-risk schemes (micro-corp, family salary) as needsAdvisor', () => {
+    const byId = new Map(taxSchemeCatalog().map((s) => [s.id, s]));
+    expect(byId.get('both-micro-corp')?.needsAdvisor).toBe(true);
+    expect(byId.get('sp-family-salary')?.needsAdvisor).toBe(true);
+    expect(byId.get('sp-blue')?.needsAdvisor).toBe(false);
+  });
+});
+
+describe('schemesForEntity', () => {
+  it('includes both-entity schemes for corporations', () => {
+    const ids = schemesForEntity('corporation').map((s) => s.id);
+    expect(ids).toContain('corp-bankruptcy-kyosai'); // corp-only
+    expect(ids).toContain('both-ideco'); // both
+    expect(ids).not.toContain('sp-blue'); // sole-proprietor only
+  });
+
+  it('includes both-entity schemes for sole proprietors', () => {
+    const ids = schemesForEntity('sole-proprietor').map((s) => s.id);
+    expect(ids).toContain('sp-blue'); // sp-only
+    expect(ids).toContain('both-ideco'); // both
+    expect(ids).not.toContain('corp-bankruptcy-kyosai'); // corp only
   });
 });

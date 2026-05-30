@@ -162,3 +162,58 @@ export function suggestTaxTips(taxableIncome: number): readonly TaxTip[] {
   return tips;
 }
 // Stryker restore all
+
+// --- 節税制度カタログ (一般情報の案内のみ) -------------------------------
+
+/** 制度が想定する事業形態。 */
+export type TaxEntity = 'corporation' | 'sole-proprietor' | 'both';
+
+export interface TaxScheme {
+  readonly id: string;
+  readonly name: string;
+  readonly entity: TaxEntity;
+  readonly summary: string;
+  /**
+   * 親族間取引・マイクロ法人併用など、適用判断や税務リスクが大きく
+   * **税理士への個別相談が特に必須** の高度スキームか。
+   */
+  readonly needsAdvisor: boolean;
+}
+
+/**
+ * 一般的に知られた節税制度の「案内」カタログ。
+ *
+ * **これは一般情報であり、個別の節税助言・スキーム提案ではありません。**
+ * 適用可否・効果・要件は事業形態 / 所得 / 年度の税制改正により異なります。
+ * 実行は必ず税理士に相談し、国税庁 / 中小機構等の公式情報で確認してください。
+ * とくに `needsAdvisor: true` の制度 (親族間取引・マイクロ法人併用など) は
+ * 租税回避と判断されると追徴課税のリスクがあるため、自己判断で実行しないこと。
+ */
+// Stryker disable all
+export function taxSchemeCatalog(): readonly TaxScheme[] {
+  return [
+    // --- 法人 ---
+    { id: 'corp-bankruptcy-kyosai', name: '経営セーフティ共済 (倒産防止共済)', entity: 'corporation', summary: '掛金 (月最大20万・年240万) を全額損金算入。40か月以上で解約時 100% 返戻。', needsAdvisor: false },
+    { id: 'corp-officer-salary', name: '役員報酬の最適化', entity: 'corporation', summary: '定期同額給与等のルール内で個人/法人の税負担バランスを調整。', needsAdvisor: false },
+    { id: 'corp-company-housing', name: '役員社宅制度', entity: 'corporation', summary: '会社契約の住居を役員へ社宅貸与。一定計算の家賃差額を法人経費化。', needsAdvisor: true },
+    { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false },
+    { id: 'corp-bonus', name: '決算賞与', entity: 'corporation', summary: '決算日までに支給通知し1か月以内に支払えば当期損金に計上可。', needsAdvisor: false },
+    // --- 個人事業主 ---
+    { id: 'sp-blue', name: '青色申告 (65万円特別控除)', entity: 'sole-proprietor', summary: '複式簿記+e-Tax 等で最大65万円の所得控除。基本かつ最大の節税。', needsAdvisor: false },
+    { id: 'sp-family-salary', name: '青色事業専従者給与', entity: 'sole-proprietor', summary: '事前届出で生計同一親族への給与を全額経費化 (所得分散)。', needsAdvisor: true },
+    { id: 'sp-small-depreciation', name: '少額減価償却資産の特例', entity: 'sole-proprietor', summary: '取得価額が基準未満の資産を取得年に一括経費化 (青色限定・年間上限あり)。', needsAdvisor: false },
+    { id: 'sp-loss-carryover', name: '純損失の繰越し・繰戻し', entity: 'sole-proprietor', summary: '青色なら赤字を翌3年繰越、または前年へ繰戻し還付。', needsAdvisor: false },
+    // --- 両方 ---
+    { id: 'both-small-biz-kyosai', name: '小規模企業共済', entity: 'both', summary: '掛金 (月最大7万) が全額所得控除。退職金/廃業資金の準備。', needsAdvisor: false },
+    { id: 'both-ideco', name: 'iDeCo (個人型確定拠出年金)', entity: 'both', summary: '掛金全額が所得控除。老後資金と節税を両立。', needsAdvisor: false },
+    { id: 'both-furusato', name: 'ふるさと納税', entity: 'both', summary: '上限内の寄附で実質2,000円負担。控除上限は所得で変動。', needsAdvisor: false },
+    { id: 'both-incorporation', name: '法人化 (法人成り)', entity: 'sole-proprietor', summary: '利益が大きい場合に法人税率・所得分散・消費税免税期間で有利になり得る。要試算。', needsAdvisor: true },
+    { id: 'both-micro-corp', name: 'マイクロ法人の併用', entity: 'both', summary: '個人事業と小規模法人を併用し社会保険料を抑える高度スキーム。実体と税務判断が必須。', needsAdvisor: true },
+  ];
+}
+// Stryker restore all
+
+/** カタログから指定の事業形態向け制度を抽出する ('both' は常に含む)。 */
+export function schemesForEntity(entity: 'corporation' | 'sole-proprietor'): readonly TaxScheme[] {
+  return taxSchemeCatalog().filter((s) => s.entity === entity || s.entity === 'both');
+}
