@@ -27,6 +27,7 @@ import {
   calcAllDeductions,
   type DependentKind,
   type DeductionInput,
+  type IdecoOccupation,
 } from '../../shared/taxDeductions';
 import {
   calcAllTaxCredits,
@@ -121,6 +122,8 @@ export function TaxPage() {
   const [dGrossStr, setDGrossStr] = useState('6000000');
   const [dSocialStr, setDSocialStr] = useState('900000');
   const [dIdecoStr, setDIdecoStr] = useState('0');
+  const [idecoOccupation, setIdecoOccupation] = useState<IdecoOccupation | ''>('');
+  const [dSmallBizStr, setDSmallBizStr] = useState('0');
   const [dLifeStr, setDLifeStr] = useState('0');
   const [dLifeOldStr, setDLifeOldStr] = useState('0');
   const [dQuakeStr, setDQuakeStr] = useState('0');
@@ -154,7 +157,9 @@ export function TaxPage() {
     const input: DeductionInput = {
       totalIncome: employmentIncome,
       socialInsurancePaid: num(dSocialStr),
-      smallBizMutualAid: num(dIdecoStr),
+      idecoContribution: num(dIdecoStr),
+      idecoOccupation: idecoOccupation || undefined,
+      smallBizMutualAid: num(dSmallBizStr),
       spouseIncome: hasSpouse ? num(spouseIncomeStr) : undefined,
       dependents,
       lifeInsurance: {
@@ -207,7 +212,7 @@ export function TaxPage() {
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
 
   // --- ④ 退職所得の試算 ---
   const [severanceStr, setSeveranceStr] = useState('20000000');
@@ -390,7 +395,8 @@ export function TaxPage() {
           {([
             ['額面年収 (円)', dGrossStr, setDGrossStr],
             ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
-            ['小規模企業共済+iDeCo (年)', dIdecoStr, setDIdecoStr],
+            ['iDeCo 拠出 (年)', dIdecoStr, setDIdecoStr],
+            ['小規模企業共済 (年・上限84万)', dSmallBizStr, setDSmallBizStr],
             ['一般生命保険料・新制度 (年)', dLifeStr, setDLifeStr],
             ['一般生命保険料・旧制度 (年)', dLifeOldStr, setDLifeOldStr],
             ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
@@ -413,6 +419,17 @@ export function TaxPage() {
               />
             </label>
           ))}
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            iDeCo 職業区分 (拠出上限)
+            <select value={idecoOccupation} onChange={(e) => setIdecoOccupation(e.target.value as IdecoOccupation | '')} style={{ ...inputStyle, width: '100%' }}>
+              <option value="">未指定 (上限なし)</option>
+              <option value="self-employed">自営業 (月6.8万)</option>
+              <option value="employee-no-pension">会社員・企業年金なし (月2.3万)</option>
+              <option value="employee-with-dc">会社員・企業型DC (月2.0万)</option>
+              <option value="civil-servant">公務員 (月1.2万)</option>
+              <option value="dependent-spouse">第3号被保険者 (月2.3万)</option>
+            </select>
+          </label>
         </div>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 12 }}>
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>

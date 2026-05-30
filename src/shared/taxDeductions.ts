@@ -291,6 +291,38 @@ export function chooseMedicalDeductionScheme(
   };
 }
 
+// --- 小規模企業共済等掛金控除 (iDeCo・小規模企業共済) ---------------------
+
+/** iDeCo の職業区分。拠出限度額が異なる。 */
+export type IdecoOccupation =
+  | 'self-employed' // 自営業 (第1号被保険者)
+  | 'employee-no-pension' // 会社員 (企業年金なし)
+  | 'employee-with-dc' // 会社員 (企業型DC加入)
+  | 'civil-servant' // 公務員
+  | 'dependent-spouse'; // 第3号被保険者
+
+/** iDeCo の職業区分別の年間拠出限度額 (円)。 */
+export const IDECO_ANNUAL_CAPS: Record<IdecoOccupation, number> = {
+  'self-employed': 816_000, // 月6.8万
+  'employee-no-pension': 276_000, // 月2.3万
+  'employee-with-dc': 240_000, // 月2.0万
+  'civil-servant': 144_000, // 月1.2万
+  'dependent-spouse': 276_000, // 月2.3万
+};
+
+/** 小規模企業共済の年間拠出限度額 (月7万 × 12, 円)。 */
+export const SMALL_BIZ_MUTUAL_ANNUAL_CAP = 840_000;
+
+/** iDeCo 拠出額を職業区分別の年間上限でクランプする (負値は0)。 */
+export function clampIdecoContribution(amount: number, occupation: IdecoOccupation): number {
+  return Math.min(Math.max(0, amount), IDECO_ANNUAL_CAPS[occupation]);
+}
+
+/** 小規模企業共済掛金を年間上限 (84万) でクランプする (負値は0)。 */
+export function clampSmallBizMutualAid(amount: number): number {
+  return Math.min(Math.max(0, amount), SMALL_BIZ_MUTUAL_ANNUAL_CAP);
+}
+
 // --- 寄附金控除 (ふるさと納税ベースの所得税分) ---------------------------
 //
 // 国税庁 No.1150。所得税は (寄附額 - 2,000) を所得控除 (上限 合計所得×40%)。
@@ -341,8 +373,12 @@ export interface DeductionInput {
   readonly totalIncome: number;
   /** 支払った社会保険料の実額 (年)。未指定なら 0。 */
   readonly socialInsurancePaid?: number;
-  /** 小規模企業共済等掛金 (iDeCo 含む、年)。全額控除。 */
+  /** 小規模企業共済掛金 (年)。年84万を上限にクランプ。 */
   readonly smallBizMutualAid?: number;
+  /** iDeCo の拠出額 (年)。`idecoOccupation` 指定時は職業区分別上限でクランプ。 */
+  readonly idecoContribution?: number;
+  /** iDeCo の職業区分。指定すると拠出上限を判定する。 */
+  readonly idecoOccupation?: IdecoOccupation;
   /** 配偶者の合計所得金額 (配偶者控除/特別控除の判定用)。配偶者なしは undefined。 */
   readonly spouseIncome?: number;
   /** 配偶者が70歳以上か。 */
@@ -411,8 +447,15 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   const social = input.socialInsurancePaid && input.socialInsurancePaid > 0
     ? { incomeTax: yen(input.socialInsurancePaid), residentTax: yen(input.socialInsurancePaid) }
     : ZERO;
-  const smallBiz = input.smallBizMutualAid && input.smallBizMutualAid > 0
-    ? { incomeTax: yen(input.smallBizMutualAid), residentTax: yen(input.smallBizMutualAid) }
+  // 小規模企業共済 (年84万上限) + iDeCo (職業区分別上限) の合算。
+  const smallBizCapped = clampSmallBizMutualAid(input.smallBizMutualAid ?? 0);
+  const idecoRaw = input.idecoContribution ?? 0;
+  const idecoCapped = input.idecoOccupation
+    ? clampIdecoContribution(idecoRaw, input.idecoOccupation)
+    : Math.max(0, idecoRaw);
+  const smallBizTotal = smallBizCapped + idecoCapped;
+  const smallBiz = smallBizTotal > 0
+    ? { incomeTax: yen(smallBizTotal), residentTax: yen(smallBizTotal) }
     : ZERO;
   const spouse = input.spouseIncome !== undefined
     ? calcSpouseDeduction(input.totalIncome, input.spouseIncome, input.spouseElderly ?? false)

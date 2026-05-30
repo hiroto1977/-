@@ -8,6 +8,10 @@ import {
   calcMedicalDeduction,
   calcSelfMedicationDeduction,
   chooseMedicalDeductionScheme,
+  clampIdecoContribution,
+  clampSmallBizMutualAid,
+  IDECO_ANNUAL_CAPS,
+  SMALL_BIZ_MUTUAL_ANNUAL_CAP,
   SELF_MEDICATION_THRESHOLD,
   SELF_MEDICATION_CAP,
   calcSpouseDeduction,
@@ -220,6 +224,57 @@ describe('disabilityDeduction + singleParent/widow constants', () => {
   it('single-parent and widow constants are correct', () => {
     expect(SINGLE_PARENT_DEDUCTION).toEqual({ incomeTax: 350_000, residentTax: 300_000 });
     expect(WIDOW_DEDUCTION).toEqual({ incomeTax: 270_000, residentTax: 260_000 });
+  });
+});
+
+describe('clampIdecoContribution (職業区分別の拠出上限)', () => {
+  it('caps self-employed at 81.6万', () => {
+    expect(clampIdecoContribution(1_000_000, 'self-employed')).toBe(816_000);
+    expect(clampIdecoContribution(816_000, 'self-employed')).toBe(816_000);
+    expect(clampIdecoContribution(500_000, 'self-employed')).toBe(500_000);
+  });
+
+  it('caps each occupation at its annual limit', () => {
+    expect(clampIdecoContribution(1_000_000, 'employee-no-pension')).toBe(276_000);
+    expect(clampIdecoContribution(1_000_000, 'employee-with-dc')).toBe(240_000);
+    expect(clampIdecoContribution(1_000_000, 'civil-servant')).toBe(144_000);
+    expect(clampIdecoContribution(1_000_000, 'dependent-spouse')).toBe(276_000);
+    expect(IDECO_ANNUAL_CAPS['self-employed']).toBe(816_000);
+  });
+
+  it('clamps negative to zero', () => {
+    expect(clampIdecoContribution(-1, 'self-employed')).toBe(0);
+  });
+});
+
+describe('clampSmallBizMutualAid (小規模企業共済の上限)', () => {
+  it('caps at 84万 per year', () => {
+    expect(clampSmallBizMutualAid(900_000)).toBe(840_000);
+    expect(clampSmallBizMutualAid(840_000)).toBe(840_000);
+    expect(clampSmallBizMutualAid(500_000)).toBe(500_000);
+    expect(SMALL_BIZ_MUTUAL_ANNUAL_CAP).toBe(840_000);
+  });
+
+  it('clamps negative to zero', () => {
+    expect(clampSmallBizMutualAid(-1)).toBe(0);
+  });
+});
+
+describe('calcAllDeductions — iDeCo / 小規模企業共済の上限統合', () => {
+  it('caps iDeCo by occupation and adds the small-biz mutual aid', () => {
+    // 自営業 iDeCo 100万 (→81.6万) + 小規模共済 100万 (→84万) = 165.6万
+    const d = calcAllDeductions({
+      totalIncome: 5_000_000,
+      idecoContribution: 1_000_000,
+      idecoOccupation: 'self-employed',
+      smallBizMutualAid: 1_000_000,
+    });
+    expect(d.smallBizMutualAid.incomeTax).toBe(816_000 + 840_000);
+  });
+
+  it('does not cap iDeCo when the occupation is unspecified (backward compatible)', () => {
+    const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 300_000 });
+    expect(d.smallBizMutualAid.incomeTax).toBe(300_000);
   });
 });
 
