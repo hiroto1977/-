@@ -106,11 +106,22 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~**PR #7 NIT** — ステータス色 `相談中`/`対応中` の tooltip~~ → `ShigyoConsole` に `STATUS_HINT` title
 - ~~**横断 KPI に士業月次顧問料合計~~** → `sumShigyoMonthlyFees` + CrossServiceKpis に Stat 追加
 
-### 🟡 SHOULD-FIX (残)
-1. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化 (リファクタ; 機能影響なし)
+- ~~**PR #4 R2-3** — `ServiceActionPanel` の useState を state machine 化~~ → serviceActionMachine.ts (reducer + 14 tests)
+- ~~ドキュメント横断の古い数字 (45/22 services, 1190/1113 tests, 376/403KB)~~ → CLAUDE/USER_GUIDE/README/ARCHITECTURE/BROWSER_REDESIGN を 59 services 等に統一
 
-### 🟢 NIT (残)
-2. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため低優先)
+### 🤖 オーケストレーション監査 (4 チーム並列) で対応した項目
+- parseAmountInput を厳格 10 進 regex 化 ('++500'/'1e3'/'0x10'/'Infinity' 等を排除)
+- 境界値テスト大量追加 (全角半角混在/制御文字境界/maxLen 端/逆遷移/負値)
+- 新規 `shigyo.test.ts` (createShigyoFetcher 直接検証)
+- 重複 jpy フォーマッタを `src/shared/formatters.ts` に集約 (6 箇所 → 1)
+- CrossServiceKpis に Math.max(0,…) 防御ガード (Security Finding 3)
+
+### 🟢 NIT (残・低優先)
+- PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため低優先)
+- Refactor 監査の中期案: business.ts(1107行)/stocks.ts(1959行) の責務分割、
+  汎用 createStaticSnapshotFetcher への stub 統一、SNAPSHOT 型厳格化で `as unknown` 排除
+- Docs 監査の提案: lint:docs を ARCHITECTURE.md 以外 (CLAUDE/USER_GUIDE/README) にも拡張し
+  service count / HTML size の drift を CI で自動検知
 
 ### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
 - Phase 6: 4 業務サービス + 7 士業の `record-entry` を IndexedDB 永続化 → `persisted: true`
