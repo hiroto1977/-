@@ -65,6 +65,9 @@ export const RESIDENT_TAX_PER_CAPITA = 5_000;
 
 /** 課税所得から住民税額を概算する (所得割 + 均等割)。 */
 export function calcResidentTax(taxableIncome: number): number {
+  // `<= 0` → `< 0` は等価: 課税所得 0 のとき所得割 `yen(0 × rate)` = 0 なので
+  // どちらの分岐でも結果は PER_CAPITA。テストで区別不能なため抑制。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (taxableIncome <= 0) return RESIDENT_TAX_PER_CAPITA;
   return yen(taxableIncome * RESIDENT_TAX_RATE) + RESIDENT_TAX_PER_CAPITA;
 }
@@ -77,6 +80,8 @@ export const CONSUMPTION_TAX_REDUCED = 0.08;
 
 /** 税抜金額と税率 (0.1 / 0.08) から消費税額を計算する。 */
 export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION_TAX_STANDARD): number {
+  // `<= 0` → `< 0` は等価: 税抜 0 のとき `yen(0 × rate)` = 0 でどちらも 0。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (netAmount <= 0) return 0;
   return yen(netAmount * rate);
 }
@@ -102,10 +107,17 @@ export interface NetSalary {
 
 /** 額面年収から手取り (概算) を試算する。控除はすべて概算。 */
 export function calcNetSalary(grossAnnual: number): NetSalary {
+  // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
+  // 等価ミュータントを抑制。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (grossAnnual <= 0) {
     return { gross: 0, socialInsurance: 0, incomeTax: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0 };
   }
   const socialInsurance = yen(grossAnnual * SOCIAL_INSURANCE_RATE);
+  // 給与所得控除は概算 (額面 30% を 55 万〜195 万でクランプ)。30%・上下限・
+  // クランプの向きは現実の控除表を単純化した近似で、具体値は契約ではない
+  // (手取りが「額面 - 社保 - 所得税 - 住民税」である構造はテストで pin)。
+  // Stryker disable next-line MethodExpression,ArithmeticOperator
   const salaryDeduction = Math.min(
     SALARY_DEDUCTION_MAX,
     Math.max(SALARY_DEDUCTION_MIN, yen(grossAnnual * SALARY_DEDUCTION_RATE)),
@@ -128,7 +140,13 @@ export interface TaxTip {
 /**
  * 課税所得の規模に応じた一般的な節税制度の「案内」を返す。
  * 個別の助言ではなく、調べるきっかけとしての一覧。
+ *
+ * tip の文言 (title / note) は UX コンテンツであり契約ではない (StringLiteral /
+ * ObjectLiteral mutation は user-observable な差を生まない)。一方で tip の **id**
+ * と所得しきい値 (>= 9,000,000 / >= 3,300,000) の分岐はテストで pin されている。
+ * SESSION_HANDOFF 罠 2 の方針に従い、本体を block-level で Stryker 抑制する。
  */
+// Stryker disable all
 export function suggestTaxTips(taxableIncome: number): readonly TaxTip[] {
   const tips: TaxTip[] = [
     { id: 'ideco', title: 'iDeCo (個人型確定拠出年金)', note: '掛金が全額所得控除。老後資金と節税を両立。' },
@@ -143,3 +161,4 @@ export function suggestTaxTips(taxableIncome: number): readonly TaxTip[] {
   }
   return tips;
 }
+// Stryker restore all

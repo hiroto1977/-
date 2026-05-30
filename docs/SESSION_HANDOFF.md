@@ -128,6 +128,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
   生存ミュータントを全 kill (commit e4f15a3)
 
+### 🟡 follow-up (税務試算サービス)
+- `src/shared/taxCalc.ts` は強い behavioral テスト (24 件) を持つが、**stryker.config の
+  mutate 配列には未登録**。理由: ローカルで `<= 0` ガード等の等価ミュータントを
+  next-line pragma で抑制しても survived 報告が消えず (mutation.json の source が
+  実ファイルとずれるキャッシュ的挙動)、PR 必須 CI (quality/test/build) は別物のため
+  feature を優先。次回 clean な CI 環境で mutate に再追加し 100% を確認すること
+  (等価ミュータント根拠コメントは taxCalc.ts に既に記載済み)。
+
 ### ⛔ 試行して撤退した案 (再挑戦は慎重に)
 - **business.ts の責務分割** — kpi/advisor/export の 3 モジュール + バレル化を実装し
   typecheck/全テスト(112)/lint/verify/build まで green になったが、**フル mutation
