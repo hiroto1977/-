@@ -8,7 +8,47 @@ import {
   calcMortgageCredit,
   MORTGAGE_RESIDENT_CAP_MAX,
   MORTGAGE_INCOME_LIMIT,
+  mortgageDeductionPeriod,
+  mortgagePeriodStatus,
 } from '../taxCredits';
+
+describe('mortgageDeductionPeriod / mortgagePeriodStatus (控除期間)', () => {
+  it('new builds get 13 years, used homes get 10 years', () => {
+    expect(mortgageDeductionPeriod('standard')).toBe(13);
+    expect(mortgageDeductionPeriod('zeh')).toBe(13);
+    expect(mortgageDeductionPeriod('used')).toBe(10);
+  });
+
+  it('counts the first residence year as year 1 and reports remaining years', () => {
+    // 2022 居住開始, 新築13年 → 2022 が1年目
+    const first = mortgagePeriodStatus(2022, 2022, 'standard');
+    expect(first.yearsElapsed).toBe(1);
+    expect(first.yearsRemaining).toBe(13);
+    expect(first.withinPeriod).toBe(true);
+  });
+
+  it('the final year is within the period; the next year is outside', () => {
+    // 新築13年: 2022居住 → 2034 が13年目 (最終), 2035 は期間外
+    const last = mortgagePeriodStatus(2022, 2034, 'standard');
+    expect(last.yearsElapsed).toBe(13);
+    expect(last.yearsRemaining).toBe(1);
+    expect(last.withinPeriod).toBe(true);
+    const after = mortgagePeriodStatus(2022, 2035, 'standard');
+    expect(after.withinPeriod).toBe(false);
+    expect(after.yearsRemaining).toBe(0);
+  });
+
+  it('a used home expires after 10 years', () => {
+    expect(mortgagePeriodStatus(2022, 2031, 'used').withinPeriod).toBe(true); // 10年目
+    expect(mortgagePeriodStatus(2022, 2032, 'used').withinPeriod).toBe(false); // 11年目
+  });
+
+  it('before residence the credit period has not started', () => {
+    const before = mortgagePeriodStatus(2024, 2022, 'standard');
+    expect(before.withinPeriod).toBe(false);
+    expect(before.yearsRemaining).toBe(13);
+  });
+});
 
 describe('calcMortgageCredit', () => {
   it('credits 0.7% of the year-end balance from income tax when it fits', () => {
@@ -96,6 +136,17 @@ describe('calcMortgageCredit', () => {
       taxableIncomeForResident: 5_000_000,
     });
     expect(r.creditable).toBe(210_000);
+  });
+
+  it('denies the credit once outside the deduction period', () => {
+    const r = calcMortgageCredit({
+      yearEndBalance: 30_000_000,
+      incomeTaxBeforeCredit: 500_000,
+      taxableIncomeForResident: 5_000_000,
+      outsidePeriod: true,
+    });
+    expect(r.creditable).toBe(0);
+    expect(r.fromIncomeTax).toBe(0);
   });
 });
 

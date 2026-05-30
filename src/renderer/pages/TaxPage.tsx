@@ -33,6 +33,7 @@ import {
   calcAllTaxCredits,
   applyTaxCreditsWithSurtax,
   resolveMortgageParams,
+  mortgagePeriodStatus,
   type HousingPerformance,
   type DividendKind,
 } from '../../shared/taxCredits';
@@ -187,6 +188,8 @@ export function TaxPage() {
     const mortgageBalance = num(mortgageBalanceStr);
     const dividendIncome = num(dividendStr);
     const mortgageParams = resolveMortgageParams(mortgageYear, mortgagePerf);
+    // 控除期間 (新築13年/中古10年) の判定。現在年は試算基準年とする。
+    const mortgagePeriod = mortgagePeriodStatus(mortgageYear, new Date().getFullYear(), mortgagePerf);
     const credits = calcAllTaxCredits({
       mortgage: mortgageBalance > 0
         ? {
@@ -197,6 +200,7 @@ export function TaxPage() {
             taxableIncomeForResident: result.taxableIncomeForResidentTax,
             // 合計所得金額の近似 (給与所得)。2,000万超で住宅ローン控除は不適用。
             totalIncome: result.employmentIncome,
+            outsidePeriod: !mortgagePeriod.withinPeriod,
           }
         : undefined,
       dividend: dividendIncome > 0

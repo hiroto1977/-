@@ -56,6 +56,49 @@ export function resolveMortgageParams(
   return { rate: 0.007, balanceCap: cap[performance] };
 }
 
+/** 住宅ローン控除の控除期間 (年)。新築・買取再販は13年、中古 (既存住宅) は10年。 */
+export function mortgageDeductionPeriod(performance: HousingPerformance): number {
+  return performance === 'used' ? 10 : 13;
+}
+
+/** 控除期間の判定結果。 */
+export interface MortgagePeriodStatus {
+  /** 控除期間の年数 (新築13年 / 中古10年)。 */
+  readonly maxYears: number;
+  /** 居住開始から現在までの経過年 (居住初年を1年目とする)。 */
+  readonly yearsElapsed: number;
+  /** 残りの控除年数 (0 以上)。 */
+  readonly yearsRemaining: number;
+  /** 現在年が控除期間内か。 */
+  readonly withinPeriod: boolean;
+}
+
+/**
+ * 居住開始年・現在年・性能区分から控除期間の状態を判定する。
+ *
+ * 居住初年を 1 年目と数える (例: 2022年居住開始・2034年は13年目=最終年)。
+ * 控除期間を過ぎた年は控除を受けられない (国税庁 No.1211/1212)。
+ *
+ * @param residenceYear 居住開始年 (西暦)
+ * @param currentYear 判定対象の年 (西暦)
+ * @param performance 住宅の性能区分 (中古かどうかで期間が変わる)
+ */
+export function mortgagePeriodStatus(
+  residenceYear: number,
+  currentYear: number,
+  performance: HousingPerformance,
+): MortgagePeriodStatus {
+  const maxYears = mortgageDeductionPeriod(performance);
+  const yearsElapsed = currentYear - residenceYear + 1;
+  const withinPeriod = yearsElapsed >= 1 && yearsElapsed <= maxYears;
+  // 残り控除年数 (当年含む)。居住前は全期間、控除期間後は 0。
+  let yearsRemaining: number;
+  if (yearsElapsed < 1) yearsRemaining = maxYears; // まだ居住前: 全期間が残る
+  else if (yearsElapsed > maxYears) yearsRemaining = 0; // 控除期間終了
+  else yearsRemaining = maxYears - yearsElapsed + 1; // 期間中: 当年を含む残年数
+  return { maxYears, yearsElapsed, yearsRemaining, withinPeriod };
+}
+
 /** 住宅ローン控除の入力。 */
 export interface MortgageCreditInput {
   /** 年末借入残高 (円)。 */
@@ -73,6 +116,11 @@ export interface MortgageCreditInput {
    * 適用しない (国税庁 No.1211 の所得要件)。未指定なら所得制限を判定しない。
    */
   readonly totalIncome?: number;
+  /**
+   * 控除期間外フラグ (任意)。`true` のとき控除期間 (新築13年/中古10年) を
+   * 過ぎているため控除しない。`mortgagePeriodStatus().withinPeriod` の否定を渡す。
+   */
+  readonly outsidePeriod?: boolean;
 }
 
 /** 住宅ローン控除の所得制限 (合計所得金額の上限, 円)。 */
@@ -102,6 +150,10 @@ export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
 export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditResult {
   // 合計所得金額が 2,000 万円を超える年は住宅ローン控除の適用なし (国税庁 No.1211)。
   if (input.totalIncome !== undefined && input.totalIncome > MORTGAGE_INCOME_LIMIT) {
+    return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
+  }
+  // 控除期間 (新築13年/中古10年) を過ぎた年は控除なし。
+  if (input.outsidePeriod) {
     return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
   }
   const rate = input.rate ?? 0.007;
