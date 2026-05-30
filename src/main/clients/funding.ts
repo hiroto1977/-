@@ -4,12 +4,14 @@ import {
   barData,
   cashRunway,
   expectedScenario,
+  fundingQualityScore,
   monthlyFlow,
   radarScores,
   scenarioRunways,
   summarize,
   type CashRunway,
   type ExpectedScenario,
+  type FundingQualityScore,
   type ScenarioRunways,
   type FundingBar,
   type FundingByKind,
@@ -80,6 +82,8 @@ export interface FundingSnapshot {
   readonly scenario: ExpectedScenario;
   /** 楽観/期待/悲観の 3 シナリオ累計キャッシュ残高。 */
   readonly scenarioRunways: ScenarioRunways;
+  /** 資金調達の質スコア。 */
+  readonly qualityScore: FundingQualityScore;
   /** 会計ソフト連携の有無 (任意連携)。 */
   readonly accountingLinked: boolean;
   /** 株式投資連携の有無 (任意連携)。 */
@@ -107,13 +111,14 @@ export function buildFundingSnapshot(
     accountingCashflow: options.accounting,
     portfolioByMonth: options.portfolio,
   });
+  const summaryValue = summarize(items);
   return {
     items,
     byKind,
     radar: radarScores(byKind),
     monthly,
     bars: barData(byKind),
-    summary: summarize(items),
+    summary: summaryValue,
     runway: cashRunway(monthly, options.openingBalance ?? 0),
     scenario: expectedScenario(items),
     scenarioRunways: scenarioRunways(items, {
@@ -121,6 +126,7 @@ export function buildFundingSnapshot(
       accountingCashflow: options.accounting,
       portfolioByMonth: options.portfolio,
     }),
+    qualityScore: fundingQualityScore(summaryValue),
     accountingLinked: (options.accounting?.size ?? 0) > 0,
     stocksLinked: (options.portfolio?.size ?? 0) > 0,
     fetchedAt: options.fetchedAt ?? new Date().toISOString(),

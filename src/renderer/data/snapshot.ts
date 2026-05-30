@@ -938,6 +938,7 @@ export const SNAPSHOT = {
       };
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
+    qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
     accountingLinked: false,
     stocksLinked: false,
     fetchedAt: '',

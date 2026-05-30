@@ -18,6 +18,7 @@ import {
   repaymentSchedule,
   scenarioRunways,
   summarize,
+  fundingQualityScore,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
@@ -695,5 +696,44 @@ describe('fetchFundingSnapshot', () => {
     expect(snap.summary.totalSecured).toBeGreaterThan(0);
     // radar peak should be exactly 5 (some secured amount exists)
     expect(Math.max(...snap.radar)).toBe(5);
+  });
+});
+
+describe('fundingQualityScore', () => {
+  it('scores 100 for all non-repayable, non-taxable funding', () => {
+    // benefit (non-repayable, received) → nonRepayable 1.0; afterTax = total (benefit is taxable though)
+    const items: FundingItem[] = [
+      { id: 'a', kind: 'benefit', name: '給付', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false },
+    ];
+    const s = summarize(items);
+    const q = fundingQualityScore(s);
+    expect(q.nonRepayableRatio).toBe(1); // fully non-repayable
+    expect(q.compositeScore).toBeLessThanOrEqual(100);
+    expect(q.compositeScore).toBeGreaterThan(0);
+  });
+
+  it('scores low when funding is all repayable loans', () => {
+    const items: FundingItem[] = [
+      { id: 'l', kind: 'loan', name: '融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true },
+    ];
+    const q = fundingQualityScore(summarize(items));
+    expect(q.nonRepayableRatio).toBe(0);
+  });
+
+  it('guards against zero total secured (neutral 1.0 ratios)', () => {
+    const q = fundingQualityScore(summarize([]));
+    expect(q.nonRepayableRatio).toBe(1);
+    expect(q.afterTaxRatio).toBe(1);
+    expect(q.compositeScore).toBe(100);
+  });
+
+  it('honors custom weights', () => {
+    const items: FundingItem[] = [
+      { id: 'l', kind: 'loan', name: '融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true },
+    ];
+    const s = summarize(items);
+    // weight all on non-repayable (0) → composite 0; all on after-tax (loan is non-taxable → afterTax=total) → 100
+    expect(fundingQualityScore(s, [1, 0]).compositeScore).toBe(0);
+    expect(fundingQualityScore(s, [0, 1]).compositeScore).toBe(100);
   });
 });

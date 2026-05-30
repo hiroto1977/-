@@ -340,6 +340,7 @@ export function FundingPage() {
       { label: '当年度課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
       { label: '課税繰延 (圧縮記帳)', value: jpy(live.summary.deferredSecured) },
       { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
+      { label: '資金調達 質スコア', value: `${live.qualityScore.compositeScore} / 100` },
     ],
     [live],
   );

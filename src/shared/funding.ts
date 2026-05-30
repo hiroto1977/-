@@ -668,6 +668,45 @@ export function summarize(
   };
 }
 
+// --- 資金調達の質スコア -----------------------------------------------
+
+/** 資金調達の質スコア。 */
+export interface FundingQualityScore {
+  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。 */
+  readonly nonRepayableRatio: number;
+  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。 */
+  readonly afterTaxRatio: number;
+  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。 */
+  readonly compositeScore: number;
+}
+
+/**
+ * 資金調達の「質」を 0..100 のスコアで評価する。
+ *
+ * 返済不要資金 (補助金等) の比率と、税負担を考慮した実質調達額の比率を
+ * 加重平均する。確定総額が 0 のときは比率を 1.0 (中立) として返す。
+ *
+ * @param summary `summarize` の結果
+ * @param weights [返済不要比率の重み, 税引後比率の重み] (既定 [0.4, 0.6])
+ */
+export function fundingQualityScore(
+  summary: FundingSummary,
+  weights: readonly [number, number] = [0.4, 0.6],
+): FundingQualityScore {
+  const total = summary.totalSecured;
+  // ゼロ除算ガード: 確定額が無いときは中立の 1.0。
+  const nonRepayableRatio = total > 0 ? clampRate(summary.nonRepayableSecured / total) : 1;
+  const afterTaxRatio = total > 0 ? clampRate(summary.afterTaxSecured / total) : 1;
+  const [wNon, wTax] = weights;
+  const wSum = wNon + wTax;
+  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : 0;
+  return {
+    nonRepayableRatio,
+    afterTaxRatio,
+    compositeScore: Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+  };
+}
+
 // --- 期待値シナリオ (採択確率による加重) -------------------------------
 
 /**
