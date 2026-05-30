@@ -91,18 +91,20 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 
 ## 未解決 follow-up (優先度順)
 
+### ✅ 解決済み (claude/claude-md-docs-qqUAT で対応)
+- ~~**PR #6 R1 #2** — `CleanupTask.executable: false` literal~~ → `boolean` に開放 (commit 7dc3059)
+- ~~**PR #6 R1 #3** — Storage `largeFolders` サイズ降順未ソート~~ → page で降順ソート (commit 7dc3059)
+- ~~**PR #7 R1 #2** — 7 士業の interface 重複~~ → `src/shared/shigyoTypes.ts` + `src/main/clients/shigyo.ts` (createShigyoFetcher) に抽出
+- ~~**PR #7 R1 #3** — 7 士業 Page のコピペ~~ → `components/ShigyoConsole.tsx` に抽出 (各 Page は数行の wrapper に。−1159 行)
+- ~~**PR #7 R1 #4** — `as number` cast~~ → 士業 snapshot を `satisfies ShigyoSnapshot` に統一
+- ~~**PR #7 R1 #5** — `example.jp` ドメイン + 弁護士/弁理士 disclaimer~~ → `example.com` 統一 + `ShigyoConsole` の `disclaimer` prop で法的注意書きバナー追加
+
 ### 🟡 SHOULD-FIX (次回作業の最有力候補)
 1. **PR #6 R1 #1** — Storage page のメモリ使用率閾値 (`< 80%` vs snapshot data 70%) の整合
-2. **PR #6 R1 #2** — `CleanupTask.executable: false` literal が Phase 6 切替を阻む → `boolean` か別 union
-3. **PR #6 R1 #3** — Storage `largeFolders` がサイズ降順未ソート
-4. **PR #7 R1 #2** — 7 士業の interface 28 個重複 → `src/shared/shigyoTypes.ts` 抽出
-5. **PR #7 R1 #3** — 7 士業 Page が 882 行コピペ → `components/ShigyoConsole.tsx` 抽出
-6. **PR #7 R1 #4** — `as number` cast の anti-pattern → `satisfies` 戦略統一
-7. **PR #7 R1 #5** — `example.jp` ドメイン (RFC 2606 非予約) → `example.com` に統一 + 弁護士/弁理士に法的 disclaimer 注意書き
-8. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-9. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-10. **PR #4 NIT** — `note` の XSS / control-char チェック
-11. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
+2. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
+3. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
+4. **PR #4 NIT** — `note` の XSS / control-char チェック
+5. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
 
 ### 🟢 NIT
 12. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
