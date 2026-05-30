@@ -448,6 +448,9 @@ export const SNAPSHOT = {
   },
 
   microsoft365: {
+    userName: '',
+    messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
+    events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
       { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
       { id: 'onedrive-1', name: '☁ OneDrive: 12.4 GB / 1 TB (1.2%) · 最近 4 ファイル' },

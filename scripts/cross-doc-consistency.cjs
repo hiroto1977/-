@@ -62,7 +62,7 @@ function canonicalOAuthCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/oauth.ts'));
   const m = src.match(/OAUTH_CONFIGS[^{]*\{([\s\S]*?)\n\};/);
   if (!m) return null;
-  return [...m[1].matchAll(/^\s*[a-z][a-z0-9-]*:\s*\{/gm)].length;
+  return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
 }
 
 const FACTS = [
