@@ -561,8 +561,9 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'tiktok',
     label: 'TikTok',
     icon: 'TT',
-    description: 'TODO: fill in a one-line description',
+    description: '投稿・広告・フォロワーの運用サマリー (snapshot)',
     page: TiktokPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
