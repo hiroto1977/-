@@ -1,0 +1,181 @@
+/**
+ * 税額控除エンジン (所得控除の後、算出税額から直接差し引く控除)。
+ *
+ * **重要 — これは概算試算であり、正確な税額計算・税務助言ではありません。**
+ * 住宅ローン控除・配当控除・寄附金税額控除 (ふるさと納税の住民税分) など
+ * 主要な税額控除を国税庁の一般的なルールで概算します。適用要件・居住年・
+ * 借入区分・年度改正・自治体差は完全には反映しません。確定申告は税理士 /
+ * 国税庁の公式ツールで確定してください。
+ *
+ * 税額控除は「所得控除」(課税所得を減らす) とは異なり、算出された税額そのもの
+ * から差し引く点に注意 (節税インパクトが大きい)。
+ */
+
+/** 円未満を四捨五入。 */
+function yen(n: number): number {
+  return Math.round(n);
+}
+
+// --- 住宅ローン控除 (住宅借入金等特別控除) -------------------------------
+//
+// 国税庁 No.1211-1 ほか。年末借入残高 × 控除率を所得税から控除し、控除しきれ
+// ない分は住民税から一定上限まで控除する。控除率・上限・期間は居住年と住宅の
+// 環境性能区分で異なるため、ここでは「控除率」と「年末残高上限」を引数化した
+// 汎用モデルとする (令和4年以降の標準的な 0.7% を既定)。
+
+/** 住宅ローン控除の入力。 */
+export interface MortgageCreditInput {
+  /** 年末借入残高 (円)。 */
+  readonly yearEndBalance: number;
+  /** 控除率 (既定 0.7% = 0.007)。 */
+  readonly rate?: number;
+  /** 借入残高の上限 (住宅区分による。既定 3,000 万円)。 */
+  readonly balanceCap?: number;
+  /** 所得税の算出税額 (この範囲までしか所得税からは引けない)。 */
+  readonly incomeTaxBeforeCredit: number;
+  /** 課税総所得金額等 (住民税からの控除上限の算定に使う)。 */
+  readonly taxableIncomeForResident: number;
+}
+
+/** 住宅ローン控除の結果 (所得税分・住民税分・控除しきれなかった額)。 */
+export interface MortgageCreditResult {
+  /** 控除可能額の総額 (残高×率)。 */
+  readonly creditable: number;
+  /** 所得税から控除される額。 */
+  readonly fromIncomeTax: number;
+  /** 住民税から控除される額 (上限あり)。 */
+  readonly fromResidentTax: number;
+  /** どちらからも控除しきれず切り捨てられた額。 */
+  readonly unused: number;
+}
+
+/** 住民税からの住宅ローン控除上限 (令和の標準: 課税総所得×5%、最大 97,500 円)。 */
+export const MORTGAGE_RESIDENT_CAP_RATE = 0.05;
+export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
+
+/**
+ * 住宅ローン控除を計算する。
+ * - 控除可能額 = min(年末残高, 残高上限) × 控除率
+ * - まず所得税から控除、引ききれない分を住民税から (課税所得×5%・最大97,500円) 控除
+ */
+export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditResult {
+  const rate = input.rate ?? 0.007;
+  const cap = input.balanceCap ?? 30_000_000;
+  const balance = Math.max(0, input.yearEndBalance);
+  const creditable = yen(Math.min(balance, cap) * rate);
+
+  const fromIncomeTax = Math.min(creditable, Math.max(0, input.incomeTaxBeforeCredit));
+  const remaining = creditable - fromIncomeTax;
+
+  const residentCap = Math.min(
+    MORTGAGE_RESIDENT_CAP_MAX,
+    yen(Math.max(0, input.taxableIncomeForResident) * MORTGAGE_RESIDENT_CAP_RATE),
+  );
+  const fromResidentTax = Math.min(remaining, residentCap);
+  const unused = remaining - fromResidentTax;
+
+  return { creditable, fromIncomeTax, fromResidentTax, unused };
+}
+
+// --- 配当控除 -------------------------------------------------------------
+//
+// 国税庁 No.1250。総合課税を選択した国内株式の配当について、課税総所得金額が
+// 1,000 万円以下の部分は所得税10%・住民税2.8%、超える部分は所得税5%・住民税1.4%
+// を配当所得に乗じて税額控除する (証券投資信託等は率が異なるが、ここでは
+// 株式配当の標準率を用いる)。
+
+export interface DividendCreditInput {
+  /** 配当所得 (総合課税を選択した国内株式配当の金額)。 */
+  readonly dividendIncome: number;
+  /** 課税総所得金額 (配当を含む)。1,000 万円の判定に使う。 */
+  readonly taxableTotalIncome: number;
+}
+
+export interface DividendCreditResult {
+  readonly incomeTax: number;
+  readonly residentTax: number;
+}
+
+/** 配当控除を計算する (株式配当の標準率)。 */
+export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
+  const dividend = Math.max(0, input.dividendIncome);
+  if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
+  const total = Math.max(0, input.taxableTotalIncome);
+  const THRESHOLD = 10_000_000;
+
+  // 課税総所得のうち 1,000 万円を超える部分に対応する配当を低率、以下を高率で。
+  // 配当は課税所得の「最上部」に積まれていると考え、超過部分から低率を適用。
+  const over = Math.max(0, total - THRESHOLD);
+  const dividendAtLowRate = Math.min(dividend, over);
+  const dividendAtHighRate = dividend - dividendAtLowRate;
+
+  const incomeTax = yen(dividendAtHighRate * 0.1 + dividendAtLowRate * 0.05);
+  const residentTax = yen(dividendAtHighRate * 0.028 + dividendAtLowRate * 0.014);
+  return { incomeTax, residentTax };
+}
+
+// --- 税額控除の集計 -------------------------------------------------------
+
+/** 税額控除の入力 (該当しなければ未指定)。 */
+export interface TaxCreditInput {
+  readonly mortgage?: MortgageCreditInput;
+  readonly dividend?: DividendCreditInput;
+  /** ふるさと納税等の住民税税額控除 (calcFurusatoResidentCredit の結果)。 */
+  readonly furusatoResidentCredit?: number;
+  /** その他の所得税の税額控除 (政党等寄附金特別控除など、直接指定)。 */
+  readonly otherIncomeTaxCredit?: number;
+}
+
+/** 税額控除の内訳と合計。 */
+export interface TaxCreditBreakdown {
+  readonly mortgageIncomeTax: number;
+  readonly mortgageResidentTax: number;
+  readonly dividendIncomeTax: number;
+  readonly dividendResidentTax: number;
+  readonly furusatoResidentTax: number;
+  readonly otherIncomeTax: number;
+  /** 所得税から控除する合計。 */
+  readonly totalIncomeTax: number;
+  /** 住民税から控除する合計。 */
+  readonly totalResidentTax: number;
+}
+
+/** すべての税額控除を集計する。 */
+export function calcAllTaxCredits(input: TaxCreditInput): TaxCreditBreakdown {
+  const mortgage = input.mortgage ? calcMortgageCredit(input.mortgage) : null;
+  const dividend = input.dividend ? calcDividendCredit(input.dividend) : null;
+
+  const mortgageIncomeTax = mortgage ? mortgage.fromIncomeTax : 0;
+  const mortgageResidentTax = mortgage ? mortgage.fromResidentTax : 0;
+  const dividendIncomeTax = dividend ? dividend.incomeTax : 0;
+  const dividendResidentTax = dividend ? dividend.residentTax : 0;
+  const furusatoResidentTax = Math.max(0, input.furusatoResidentCredit ?? 0);
+  const otherIncomeTax = Math.max(0, input.otherIncomeTaxCredit ?? 0);
+
+  return {
+    mortgageIncomeTax,
+    mortgageResidentTax,
+    dividendIncomeTax,
+    dividendResidentTax,
+    furusatoResidentTax,
+    otherIncomeTax,
+    totalIncomeTax: mortgageIncomeTax + dividendIncomeTax + otherIncomeTax,
+    totalResidentTax: mortgageResidentTax + dividendResidentTax + furusatoResidentTax,
+  };
+}
+
+/** 算出税額に税額控除を適用する (0 未満にはならない)。 */
+export function applyTaxCredits(
+  incomeTaxBeforeCredit: number,
+  residentTaxBeforeCredit: number,
+  credits: TaxCreditBreakdown,
+  residentPerCapita = 5_000,
+): { readonly incomeTax: number; readonly residentTax: number } {
+  const incomeTax = Math.max(0, incomeTaxBeforeCredit - credits.totalIncomeTax);
+  // 住民税は均等割 (per-capita) を下回らない。
+  const residentTax = Math.max(
+    residentPerCapita,
+    residentTaxBeforeCredit - credits.totalResidentTax,
+  );
+  return { incomeTax, residentTax };
+}

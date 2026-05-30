@@ -26,6 +26,7 @@ import {
   type DependentKind,
   type DeductionInput,
 } from '../../shared/taxDeductions';
+import { calcAllTaxCredits, applyTaxCredits } from '../../shared/taxCredits';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -101,6 +102,8 @@ export function TaxPage() {
   const [generalDeps, setGeneralDeps] = useState('0');
   const [specificDeps, setSpecificDeps] = useState('0');
   const [singleParent, setSingleParent] = useState(false);
+  const [mortgageBalanceStr, setMortgageBalanceStr] = useState('0');
+  const [dividendStr, setDividendStr] = useState('0');
 
   const num = (s: string): number => {
     const p = parseAmountInput(s);
@@ -128,9 +131,29 @@ export function TaxPage() {
       singleParent,
     };
     const ded = calcAllDeductions(input);
+    // ① 所得控除込みの税額 (ふるさと納税の住民税控除も内部適用済み)。
     const result = calcSalaryWithDeductions(dGross, ded.total.incomeTax, ded.total.residentTax, donation);
-    return { ded, result };
-  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent]);
+
+    // ② 税額控除 (住宅ローン・配当) を算出税額に適用。
+    const mortgageBalance = num(mortgageBalanceStr);
+    const dividendIncome = num(dividendStr);
+    const credits = calcAllTaxCredits({
+      mortgage: mortgageBalance > 0
+        ? {
+            yearEndBalance: mortgageBalance,
+            incomeTaxBeforeCredit: result.incomeTax,
+            taxableIncomeForResident: result.taxableIncomeForResidentTax,
+          }
+        : undefined,
+      dividend: dividendIncome > 0
+        ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax }
+        : undefined,
+    });
+    const afterCredits = applyTaxCredits(result.incomeTax, result.residentTax, credits);
+    const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
+
+    return { ded, result, credits, afterCredits, finalTakeHome };
+  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, dividendStr]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -230,6 +253,8 @@ export function TaxPage() {
             ['ふるさと納税 (年)', dDonationStr, setDDonationStr],
             ['一般扶養 (人)', generalDeps, setGeneralDeps],
             ['特定扶養 19-22歳 (人)', specificDeps, setSpecificDeps],
+            ['住宅ローン年末残高 (円)', mortgageBalanceStr, setMortgageBalanceStr],
+            ['配当所得・総合課税 (年)', dividendStr, setDividendStr],
           ] as const).map(([label, val, setter]) => (
             <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
               {label}
@@ -266,9 +291,9 @@ export function TaxPage() {
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          <Stat label="所得税 (全控除込)" value={jpy(precise.result.incomeTax)} />
-          <Stat label="住民税 (ふるさと控除後)" value={jpy(precise.result.residentTax)} />
-          <Stat label="手取り (年)" value={jpy(precise.result.takeHome)} positive />
+          <Stat label="所得税 (税額控除後)" value={jpy(precise.afterCredits.incomeTax)} />
+          <Stat label="住民税 (税額控除後)" value={jpy(precise.afterCredits.residentTax)} />
+          <Stat label="手取り (年)" value={jpy(precise.finalTakeHome)} positive />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.7 }}>
           給与所得控除 {jpy(precise.result.salaryDeduction)} / 給与所得 {jpy(precise.result.employmentIncome)}<br />
@@ -278,10 +303,13 @@ export function TaxPage() {
           扶養 {jpy(precise.ded.dependents.incomeTax)} / 生命保険 {jpy(precise.ded.lifeInsurance.incomeTax)} /
           地震保険 {jpy(precise.ded.earthquakeInsurance.incomeTax)} / 医療費 {jpy(precise.ded.medical.incomeTax)} /
           寄附金 {jpy(precise.ded.donation.incomeTax)} / ひとり親 {jpy(precise.ded.singleParentOrWidow.incomeTax)}）<br />
-          ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)}。
+          所得控除適用後の税額: 所得税 {jpy(precise.result.incomeTax)} / 住民税 {jpy(precise.result.residentTax)} (ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)} 適用済)<br />
+          <strong>税額控除</strong>: 住宅ローン (所得税 {jpy(precise.credits.mortgageIncomeTax)} / 住民税 {jpy(precise.credits.mortgageResidentTax)}) /
+          配当控除 (所得税 {jpy(precise.credits.dividendIncomeTax)} / 住民税 {jpy(precise.credits.dividendResidentTax)})。
         </div>
         <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
-          ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。住宅ローン控除・配当控除等の税額控除は未対応です。
+          ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した国内株式配当を想定 (申告分離・上場株式の特例は別計算)。
+          住宅ローン控除は居住年・住宅性能区分により控除率/上限が異なります (既定 0.7%・残高上限 3,000 万円)。
         </div>
       </Section>
 
