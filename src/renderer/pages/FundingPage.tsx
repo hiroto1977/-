@@ -389,9 +389,16 @@ export function FundingPage() {
           ※ 補助金・助成金・給付金・購入型クラウドファンディングは原則「益金 (事業収入)」として課税対象、
           融資・公庫は借入金で非課税です。国庫補助金等で固定資産を取得し圧縮記帳の特例を適用した分は
           当年度課税が繰り延べられ「課税繰延」として集計します (将来、減価償却を通じて課税)。
-          「概算手残り」は当年度課税対象額に実効税率 (既定 約30%) を課した目安であり、消費税・個別の
-          課税関係は反映していません。正確な金額は税理士へご確認ください。
+          「概算手残り」は当年度課税対象額に実効税率 (既定 約30%) を課した目安です。正確な金額は税理士へご確認ください。
         </div>
+        {live.summary.consumptionTaxableSecured > 0 && (
+          <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            💡 消費税: 補助金・助成金・給付金は<strong>不課税</strong> (消費税は課されません) ですが、
+            購入型クラウドファンディング {jpy(live.summary.consumptionTaxableSecured)} は対価性のある<strong>課税売上</strong>です
+            (消費税相当 約{jpy(live.summary.consumptionTaxEstimate)} の申告納付義務が生じえます)。
+            補助金で課税仕入れを行う場合は「特定収入に係る仕入税額控除の調整」が必要な場合があります。
+          </div>
+        )}
       </Section>
 
       {!hasData && (

@@ -912,6 +912,9 @@ export const SNAPSHOT = {
       taxableSecured: 0,
       deferredSecured: 0,
       afterTaxSecured: 0,
+      consumptionTaxExemptSecured: 0,
+      consumptionTaxableSecured: 0,
+      consumptionTaxEstimate: 0,
       count: 0,
     },
     runway: {

@@ -11,6 +11,7 @@ import {
   fundingKindLabel,
   interestSchedule,
   isTaxableFunding,
+  consumptionTaxTreatment,
   monthlyFlow,
   monthlyPayment,
   radarScores,
@@ -562,6 +563,23 @@ describe('isTaxableFunding', () => {
   });
 });
 
+describe('consumptionTaxTreatment', () => {
+  it('classifies subsidy/grant/benefit as tax-exempt (不課税)', () => {
+    expect(consumptionTaxTreatment('subsidy')).toBe('tax-exempt');
+    expect(consumptionTaxTreatment('grant')).toBe('tax-exempt');
+    expect(consumptionTaxTreatment('benefit')).toBe('tax-exempt');
+  });
+
+  it('classifies purchase-type crowdfunding as a taxable sale (課税売上)', () => {
+    expect(consumptionTaxTreatment('crowdfunding')).toBe('taxable');
+  });
+
+  it('classifies loan/jfc as non-taxable (課税対象外)', () => {
+    expect(consumptionTaxTreatment('loan')).toBe('non-taxable');
+    expect(consumptionTaxTreatment('jfc')).toBe('non-taxable');
+  });
+});
+
 describe('summarize', () => {
   it('computes repayable/non-repayable/total/pipeline', () => {
     const s = summarize(items);
@@ -608,6 +626,27 @@ describe('summarize', () => {
     expect(summarize(items, 2).afterTaxSecured).toBe(10_000_000);
     // negative rate treated as 0
     expect(summarize(items, -1).afterTaxSecured).toBe(16_000_000);
+  });
+
+  it('separates consumption-tax-exempt funding from taxable crowdfunding', () => {
+    const mixed: FundingItem[] = [
+      { id: 'a', kind: 'subsidy', name: '補助', amount: 5_000_000, status: 'received', month: '2026-06', repayable: false },
+      { id: 'b', kind: 'crowdfunding', name: '購入型CF', amount: 1_100_000, status: 'received', month: '2026-06', repayable: false },
+      { id: 'c', kind: 'loan', name: '融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true },
+    ];
+    const s = summarize(mixed);
+    expect(s.consumptionTaxExemptSecured).toBe(5_000_000); // subsidy only
+    expect(s.consumptionTaxableSecured).toBe(1_100_000); // crowdfunding only (loan is non-taxable)
+    // 内税ベース: 1,100,000 × 0.1 / 1.1 = 100,000
+    expect(s.consumptionTaxEstimate).toBe(100_000);
+  });
+
+  it('honors a custom consumption tax rate', () => {
+    const cf: FundingItem[] = [
+      { id: 'b', kind: 'crowdfunding', name: 'CF', amount: 1_080_000, status: 'received', month: '2026-06', repayable: false },
+    ];
+    // rate 0.08 (軽減税率) → 1,080,000 × 0.08 / 1.08 = 80,000
+    expect(summarize(cf, 0.3, 0.08).consumptionTaxEstimate).toBe(80_000);
   });
 });
 

@@ -64,6 +64,42 @@ export function isTaxableFunding(kind: FundingKind): boolean {
   }
 }
 
+/** 消費税の区分。 */
+export type ConsumptionTaxTreatment =
+  | 'taxable' // 課税売上 (対価性あり。購入型クラウドファンディング)
+  | 'tax-exempt' // 不課税 (対価性なし。補助金・助成金・給付金)
+  | 'non-taxable'; // 課税対象外 (融資・公庫の借入金)
+
+/**
+ * 資金の消費税の区分を返す。
+ *
+ * - 補助金・助成金・給付金: 対価性がなく**不課税** (消費税は課されない)。
+ * - 購入型クラウドファンディング: リターン (商品・サービス) の対価なので
+ *   **課税売上** (消費税の申告納付義務が生じうる)。
+ * - 融資・公庫: 借入金で課税対象外。
+ *
+ * ※ 補助金は不課税だが、その資金で課税仕入れを行うと「特定収入に係る仕入税額
+ * 控除の調整」が必要になる場合がある (概算では未反映)。寄附型/株式型CFは課税
+ * 関係が異なるため、確定申告は税理士・国税庁で確認すること。
+ */
+export function consumptionTaxTreatment(kind: FundingKind): ConsumptionTaxTreatment {
+  switch (kind) {
+    case 'subsidy':
+    case 'grant':
+    case 'benefit':
+      return 'tax-exempt';
+    case 'crowdfunding':
+      return 'taxable';
+    case 'loan':
+    case 'jfc':
+      return 'non-taxable';
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
 /** 種別の日本語ラベル。 */
 export function fundingKindLabel(kind: FundingKind): string {
   switch (kind) {
@@ -224,6 +260,12 @@ export interface FundingSummary {
    * `totalSecured − taxableSecured × 実効税率`。
    */
   readonly afterTaxSecured: number;
+  /** 消費税が不課税の確定額 (補助金・助成金・給付金)。 */
+  readonly consumptionTaxExemptSecured: number;
+  /** 消費税が課税売上の確定額 (購入型クラウドファンディング)。 */
+  readonly consumptionTaxableSecured: number;
+  /** 課税売上に対する消費税相当額の概算 (`課税売上 × 消費税率 / (1+税率)` の内税ベース)。 */
+  readonly consumptionTaxEstimate: number;
   /** 案件数。 */
   readonly count: number;
 }
@@ -575,17 +617,23 @@ export function scenarioRunways(
  *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
  *   借入金で非課税。圧縮記帳 (`compressedEntry`) 適用分は当年度課税を繰延。
  *   手残り = 確定総額 − 当年度課税対象確定額 × 実効税率。
+ * @param consumptionTaxRate 消費税率 (0..1)。既定 0.1。購入型CF は課税売上の
+ *   ため、内税ベースの消費税相当額を概算する。
  */
 export function summarize(
   items: readonly FundingItem[],
   effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
+  consumptionTaxRate = 0.1,
 ): FundingSummary {
   const rate = clampRate(effectiveTaxRate);
+  const consRate = clampRate(consumptionTaxRate);
   let nonRepayableSecured = 0;
   let repayableSecured = 0;
   let totalPipeline = 0;
   let taxableSecured = 0;
   let deferredSecured = 0;
+  let consumptionTaxExemptSecured = 0;
+  let consumptionTaxableSecured = 0;
   for (const it of items) {
     const amt = nonNeg(it.amount);
     totalPipeline += amt;
@@ -597,9 +645,14 @@ export function summarize(
         if (it.compressedEntry) deferredSecured += amt;
         else taxableSecured += amt;
       }
+      const treatment = consumptionTaxTreatment(it.kind);
+      if (treatment === 'tax-exempt') consumptionTaxExemptSecured += amt;
+      else if (treatment === 'taxable') consumptionTaxableSecured += amt;
     }
   }
   const totalSecured = nonRepayableSecured + repayableSecured;
+  // 課税売上は内税とみなし、消費税相当 = 額 × 率 / (1 + 率)。
+  const consumptionTaxEstimate = Math.round((consumptionTaxableSecured * consRate) / (1 + consRate));
   return {
     nonRepayableSecured,
     repayableSecured,
@@ -608,6 +661,9 @@ export function summarize(
     taxableSecured,
     deferredSecured,
     afterTaxSecured: Math.round(totalSecured - taxableSecured * rate),
+    consumptionTaxExemptSecured,
+    consumptionTaxableSecured,
+    consumptionTaxEstimate,
     count: items.length,
   };
 }
