@@ -42,7 +42,13 @@ export const RECONSTRUCTION_SURTAX_RATE = 0.021;
  * 負の課税所得は 0 とみなす。
  */
 export function calcIncomeTax(taxableIncome: number): number {
+  // 早期 return と find 述語の `<=` は等価ミュータントを生む: 速算表は
+  // ブラケット境界で連続 (例 ¥1,950,000 は 5% でも 10% でも ¥97,500)、かつ
+  // 下の `Math.max(0, …)` が負・0 を 0 に丸めるため、ガード有無で結果が
+  // 一致する。テストで区別不能なため pragma で抑制する (business.ts 同様)。
+  // Stryker disable next-line ConditionalExpression
   if (taxableIncome <= 0) return 0;
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   const bracket = INCOME_TAX_BRACKETS.find((b) => taxableIncome <= b.upTo);
   // Infinity 上限ブラケットが必ず最後に存在するため bracket は常に定義される。
   const base = taxableIncome * bracket!.rate - bracket!.deduction;

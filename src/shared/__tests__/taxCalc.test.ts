@@ -42,6 +42,9 @@ describe('calcResidentTax', () => {
   it('returns only the per-capita levy for zero/negative income', () => {
     expect(calcResidentTax(0)).toBe(RESIDENT_TAX_PER_CAPITA);
     expect(calcResidentTax(-5_000)).toBe(RESIDENT_TAX_PER_CAPITA);
+    // 大きめの負値: ガードを外すと所得割が負に振れて per-capita とずれるため、
+    // 早期 return ガードが必須であることを固定する。
+    expect(calcResidentTax(-1_000_000)).toBe(RESIDENT_TAX_PER_CAPITA);
   });
 
   it('adds 10% income levy plus per-capita', () => {
@@ -53,6 +56,8 @@ describe('calcConsumptionTax', () => {
   it('returns 0 for zero/negative net amount', () => {
     expect(calcConsumptionTax(0)).toBe(0);
     expect(calcConsumptionTax(-1)).toBe(0);
+    // 大きめの負値: ガードを外すと負の税額が出るため、早期 return を固定する。
+    expect(calcConsumptionTax(-1_000_000)).toBe(0);
   });
 
   it('computes 10% standard tax', () => {
