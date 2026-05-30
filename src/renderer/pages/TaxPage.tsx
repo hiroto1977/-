@@ -35,6 +35,7 @@ import {
   type DividendKind,
 } from '../../shared/taxCredits';
 import { calcRetirementTax } from '../../shared/taxRetirement';
+import { calcCasualIncome } from '../../shared/taxCasual';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -197,6 +198,14 @@ export function TaxPage() {
       disability: retDisability,
     });
   }, [severanceStr, yearsStr, shortTerm, retDisability]);
+
+  // --- ⑤ 一時所得の試算 (総合課税) ---
+  const [casualGrossStr, setCasualGrossStr] = useState('3000000');
+  const [casualExpStr, setCasualExpStr] = useState('2000000');
+
+  const casual = useMemo(() => {
+    return calcCasualIncome(num(casualGrossStr), num(casualExpStr));
+  }, [casualGrossStr, casualExpStr]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -421,6 +430,31 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           退職所得控除 {jpy(retirement.deduction)} / 課税退職所得金額 {jpy(retirement.taxableIncome)}。
           {shortTerm && <> 短期退職手当等は控除後300万円を超える部分の1/2課税が適用されません。</>}
+        </div>
+      </Section>
+
+      <Section title="⑤ 一時所得の試算 (総合課税)" count={2}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          生命保険の満期返戻金・解約返戻金 (一時金)、懸賞・福引の賞金、競馬の払戻金、法人からの贈与などが一時所得です。
+          <strong>(収入 − 経費 − 特別控除50万円) × 1/2</strong> が総合課税の課税所得に算入されます (国税庁 No.1490)。
+          ※ 算入額は他の所得と合算して課税されます。本欄は算入額のみを計算します。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            総収入金額 (円)
+            <input type="text" inputMode="decimal" value={casualGrossStr} onChange={(e) => setCasualGrossStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            収入を得るための支出 (円)
+            <input type="text" inputMode="decimal" value={casualExpStr} onChange={(e) => setCasualExpStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat label="一時所得の金額 (1/2前)" value={jpy(casual.casualIncome)} />
+          <Stat label="課税所得への算入額 (×1/2)" value={jpy(casual.taxableAmount)} positive />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          特別控除 {jpy(casual.specialDeduction)} (最高50万円)。算入額を ① の課税所得に足して総合課税で試算してください。
         </div>
       </Section>
 
