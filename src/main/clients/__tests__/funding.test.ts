@@ -3,6 +3,7 @@ import {
   addMonths,
   aggregateByKind,
   barData,
+  cashRunway,
   fundingKindLabel,
   isTaxableFunding,
   monthlyFlow,
@@ -13,6 +14,7 @@ import {
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
+  type FundingMonthly,
 } from '../../../shared/funding';
 import { buildFundingSnapshot, fetchFundingSnapshot } from '../funding';
 
@@ -212,6 +214,54 @@ describe('monthlyFlow with repayment', () => {
     expect(dec.funding).toBe(0);
     expect(dec.repayment).toBe(100_000);
     expect(dec.netCashflow).toBe(-100_000);
+  });
+});
+
+describe('cashRunway', () => {
+  function row(month: string, net: number): FundingMonthly {
+    return { month, funding: 0, fundingAfterTax: 0, repayment: 0, netCashflow: net, operatingCashflow: 0, portfolioValue: 0 };
+  }
+
+  it('accumulates net cashflow from the opening balance', () => {
+    const r = cashRunway([row('2026-01', 100_000), row('2026-02', -30_000), row('2026-03', 50_000)], 200_000);
+    expect(r.openingBalance).toBe(200_000);
+    expect(r.rows.map((x) => x.balance)).toEqual([300_000, 270_000, 320_000]);
+    expect(r.minBalance).toBe(270_000);
+    expect(r.shortfallMonth).toBeNull();
+  });
+
+  it('flags the first month the balance goes negative', () => {
+    const r = cashRunway([row('2026-01', -400_000), row('2026-02', -400_000), row('2026-03', 100_000)], 500_000);
+    // balances: 100,000 → -300,000 → -200,000
+    expect(r.rows.map((x) => x.balance)).toEqual([100_000, -300_000, -200_000]);
+    expect(r.shortfallMonth).toBe('2026-02');
+    expect(r.minBalance).toBe(-300_000);
+  });
+
+  it('defaults the opening balance to 0 and handles an empty series', () => {
+    const r = cashRunway([]);
+    expect(r.openingBalance).toBe(0);
+    expect(r.rows).toEqual([]);
+    expect(r.minBalance).toBe(0);
+    expect(r.shortfallMonth).toBeNull();
+  });
+
+  it('keeps the earliest shortfall month even if the balance later recovers', () => {
+    const r = cashRunway([row('2026-01', -100_000), row('2026-02', 500_000)], 0);
+    // balances: -100,000 → 400,000; shortfall recorded at first month only
+    expect(r.shortfallMonth).toBe('2026-01');
+    expect(r.minBalance).toBe(-100_000);
+  });
+});
+
+describe('buildFundingSnapshot runway', () => {
+  it('builds a runway from the opening balance and monthly net cashflow', () => {
+    const snap = buildFundingSnapshot(items, { openingBalance: 1_000_000 });
+    expect(snap.runway.openingBalance).toBe(1_000_000);
+    expect(snap.runway.rows.length).toBe(snap.monthly.length);
+    // last balance = opening + sum of all monthly net cashflows
+    const expectedLast = 1_000_000 + snap.monthly.reduce((s, m) => s + m.netCashflow, 0);
+    expect(snap.runway.rows[snap.runway.rows.length - 1]!.balance).toBe(expectedLast);
   });
 });
 

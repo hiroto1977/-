@@ -2,9 +2,11 @@ import type { FetchContext } from './types';
 import {
   aggregateByKind,
   barData,
+  cashRunway,
   monthlyFlow,
   radarScores,
   summarize,
+  type CashRunway,
   type FundingBar,
   type FundingByKind,
   type FundingItem,
@@ -68,6 +70,8 @@ export interface FundingSnapshot {
   readonly monthly: readonly FundingMonthly[];
   readonly bars: readonly FundingBar[];
   readonly summary: FundingSummary;
+  /** 累計キャッシュ残高 (ランウェイ) 分析。 */
+  readonly runway: CashRunway;
   /** 会計ソフト連携の有無 (任意連携)。 */
   readonly accountingLinked: boolean;
   /** 株式投資連携の有無 (任意連携)。 */
@@ -85,21 +89,24 @@ export function buildFundingSnapshot(
   options: {
     readonly accounting?: ReadonlyMap<string, number>;
     readonly portfolio?: ReadonlyMap<string, number>;
+    readonly openingBalance?: number;
     readonly isMock?: boolean;
     readonly fetchedAt?: string;
   } = {},
 ): FundingSnapshot {
   const byKind = aggregateByKind(items);
+  const monthly = monthlyFlow(items, {
+    accountingCashflow: options.accounting,
+    portfolioByMonth: options.portfolio,
+  });
   return {
     items,
     byKind,
     radar: radarScores(byKind),
-    monthly: monthlyFlow(items, {
-      accountingCashflow: options.accounting,
-      portfolioByMonth: options.portfolio,
-    }),
+    monthly,
     bars: barData(byKind),
     summary: summarize(items),
+    runway: cashRunway(monthly, options.openingBalance ?? 0),
     accountingLinked: (options.accounting?.size ?? 0) > 0,
     stocksLinked: (options.portfolio?.size ?? 0) > 0,
     fetchedAt: options.fetchedAt ?? new Date().toISOString(),
@@ -113,6 +120,7 @@ export async function fetchFundingSnapshot(_ctx: FetchContext): Promise<FundingS
   return buildFundingSnapshot(MOCK_ITEMS, {
     accounting: new Map(MOCK_ACCOUNTING),
     portfolio: new Map(MOCK_PORTFOLIO),
+    openingBalance: 3_000_000, // 期首キャッシュ残高 (モック)
     isMock: true,
   });
 }

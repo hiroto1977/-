@@ -351,6 +351,57 @@ export function monthlyFlow(
     });
 }
 
+/** 累計キャッシュ残高 (ランウェイ) の 1 行。 */
+export interface CashRunwayRow {
+  readonly month: string;
+  /** その月の純資金繰り (monthlyFlow の netCashflow)。 */
+  readonly netCashflow: number;
+  /** その月末の累計キャッシュ残高 (期首残高 + 各月の純資金繰りの累積)。 */
+  readonly balance: number;
+}
+
+/** ランウェイ分析の結果。 */
+export interface CashRunway {
+  readonly rows: readonly CashRunwayRow[];
+  /** 期首 (最初の月の前) のキャッシュ残高。 */
+  readonly openingBalance: number;
+  /** 期間中の最低残高。 */
+  readonly minBalance: number;
+  /**
+   * 残高が初めてマイナスになる月 (資金ショート月)。発生しなければ null。
+   * 「この月までに追加調達か支出抑制が必要」という警告に使う。
+   */
+  readonly shortfallMonth: string | null;
+}
+
+/**
+ * 月次の純資金繰りを期首残高から積み上げ、累計キャッシュ残高とランウェイ
+ * (資金が尽きる月) を算出する。
+ *
+ * @param monthly `monthlyFlow` の結果 (月の昇順)
+ * @param openingBalance 期首のキャッシュ残高 (円)。既定 0。
+ */
+export function cashRunway(
+  monthly: readonly FundingMonthly[],
+  openingBalance = 0,
+): CashRunway {
+  let balance = openingBalance;
+  // 最低残高は月末残高 (rows) の最小値。月が無ければ期首残高とする。
+  let minBalance = openingBalance;
+  let seenRow = false;
+  let shortfallMonth: string | null = null;
+  const rows: CashRunwayRow[] = monthly.map((m) => {
+    balance += m.netCashflow;
+    if (!seenRow || balance < minBalance) {
+      minBalance = balance;
+      seenRow = true;
+    }
+    if (shortfallMonth === null && balance < 0) shortfallMonth = m.month;
+    return { month: m.month, netCashflow: m.netCashflow, balance };
+  });
+  return { rows, openingBalance, minBalance, shortfallMonth };
+}
+
 /**
  * 全体サマリーを計算する。
  *

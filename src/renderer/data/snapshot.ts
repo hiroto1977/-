@@ -908,6 +908,12 @@ export const SNAPSHOT = {
       afterTaxSecured: 0,
       count: 0,
     },
+    runway: {
+      rows: [] as { month: string; netCashflow: number; balance: number }[],
+      openingBalance: 0,
+      minBalance: 0,
+      shortfallMonth: null as string | null,
+    },
     accountingLinked: false,
     stocksLinked: false,
     fetchedAt: '',

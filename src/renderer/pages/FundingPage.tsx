@@ -237,6 +237,38 @@ function BarChart({ data }: { data: FundingSnapshot }) {
   );
 }
 
+// --- Chart 5: 累計キャッシュ残高 (ランウェイ) --------------------------
+
+function RunwayChart({ data }: { data: FundingSnapshot }) {
+  const W = 720, H = 240, P = 44;
+  const rows = data.runway.rows;
+  if (rows.length === 0) return null;
+  const balances = rows.map((r) => r.balance);
+  const maxV = Math.max(data.runway.openingBalance, ...balances, 1);
+  const minV = Math.min(0, data.runway.openingBalance, ...balances);
+  const range = maxV - minV || 1;
+  const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
+  const y = (v: number) => H - P - ((v - minV) / range) * (H - P * 2);
+  const balancePath = rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r.balance)}`).join(' ');
+
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      {/* ゼロ基準線 (資金ショートのしきい) */}
+      <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.repayment} strokeDasharray="3,3" />
+      <text x={P - 4} y={y(0) + 4} fontSize="9" fill={COLORS.repayment} textAnchor="end">0</text>
+      <path d={balancePath} stroke={COLORS.funding} fill="none" strokeWidth="2" />
+      {rows.map((r, i) => (
+        <g key={r.month}>
+          <circle cx={x(i)} cy={y(r.balance)} r={2.5} fill={r.balance < 0 ? COLORS.repayment : COLORS.funding} />
+          <text x={x(i)} y={H - 6} fontSize="9" fill={COLORS.mute} textAnchor="middle">
+            {r.month.slice(2)}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 // --- Page -------------------------------------------------------------
 
 export function FundingPage() {
@@ -322,6 +354,34 @@ export function FundingPage() {
 
           <Section title="④ 棒グラフ — 種別別 確定額 vs パイプライン">
             <BarChart data={live} />
+          </Section>
+
+          <Section title="⑤ 累計キャッシュ残高 (ランウェイ)">
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+              期首残高 {jpy(live.runway.openingBalance)} に各月の純資金繰りを積み上げた月末残高の推移です。
+              ゼロを下回る月は資金ショートの目安です。
+            </div>
+            {live.runway.shortfallMonth ? (
+              <div
+                style={{
+                  border: '1px solid var(--border)',
+                  borderLeft: `3px solid ${COLORS.repayment}`,
+                  borderRadius: 6,
+                  padding: '8px 12px',
+                  marginBottom: 10,
+                  fontSize: 13,
+                  color: 'var(--text)',
+                }}
+              >
+                ⚠️ {live.runway.shortfallMonth} に残高がマイナス ({jpy(live.runway.minBalance)} まで低下) になる見込みです。
+                追加調達・支出抑制・返済条件の見直しを早めにご検討ください。
+              </div>
+            ) : (
+              <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 10 }}>
+                ✅ 期間中は資金ショートしません (最低残高 {jpy(live.runway.minBalance)})。
+              </div>
+            )}
+            <RunwayChart data={live} />
           </Section>
 
           <Section title="案件一覧">
