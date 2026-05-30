@@ -95,13 +95,14 @@ export const RESIDENT_TAX_RATE = 0.1;
 export const RESIDENT_TAX_PER_CAPITA = 5_000;
 
 /** 課税所得から住民税額を概算する (所得割 + 均等割)。
- *  ※ 調整控除は含まない (calcResidentAdjustmentCredit を別途適用)。 */
+ *  ※ 調整控除は含まない (calcResidentAdjustmentCredit を別途適用)。
+ *  ※ 住民税の課税所得も所得割の算出前に 1,000 円未満を切り捨てる (地方税法)。 */
 export function calcResidentTax(taxableIncome: number): number {
   // `<= 0` → `< 0` は等価: 課税所得 0 のとき所得割 `yen(0 × rate)` = 0 なので
   // どちらの分岐でも結果は PER_CAPITA。テストで区別不能なため抑制。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (taxableIncome <= 0) return RESIDENT_TAX_PER_CAPITA;
-  return yen(taxableIncome * RESIDENT_TAX_RATE) + RESIDENT_TAX_PER_CAPITA;
+  return yen(floorTaxableThousand(taxableIncome) * RESIDENT_TAX_RATE) + RESIDENT_TAX_PER_CAPITA;
 }
 
 /**
@@ -358,7 +359,7 @@ export function calcSalaryWithDeductions(
   const exemption = residentTaxExemption(employmentIncome, dependentCount);
   const residentIncomeTaxPortion = exemption.incomeLevyExempt
     ? 0
-    : yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
+    : yen(floorTaxableThousand(taxableIncomeForResidentTax) * RESIDENT_TAX_RATE);
   // 住民税の調整控除を所得割から差し引く。
   const adjustmentCredit = calcResidentAdjustmentCredit(taxableIncomeForResidentTax, humanDeductionDiff);
   const perCapita = exemption.perCapitaExempt ? 0 : RESIDENT_TAX_PER_CAPITA;

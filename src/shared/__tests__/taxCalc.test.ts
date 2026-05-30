@@ -66,6 +66,13 @@ describe('calcResidentTax', () => {
   it('adds 10% income levy plus per-capita', () => {
     expect(calcResidentTax(3_000_000)).toBe(300_000 + RESIDENT_TAX_PER_CAPITA);
   });
+
+  it('floors the taxable income to ¥1,000 before the 10% income levy', () => {
+    // 3,000,999 は 3,000,000 として所得割を計算する (端数 999 切り捨て)。
+    expect(calcResidentTax(3_000_999)).toBe(calcResidentTax(3_000_000));
+    // 1,234,567 → 1,234,000 × 10% = 123,400 + 均等割。
+    expect(calcResidentTax(1_234_567)).toBe(123_400 + RESIDENT_TAX_PER_CAPITA);
+  });
 });
 
 describe('calcConsumptionTax', () => {
