@@ -126,9 +126,25 @@ describe('summarize', () => {
     const s = summarize(items);
     // taxable secured: subsidy approved 5M + benefit received 1M = 6M (loan is non-taxable)
     expect(s.taxableSecured).toBe(6_000_000);
+    expect(s.deferredSecured).toBe(0); // no compressed-entry items
     expect(DEFAULT_EFFECTIVE_TAX_RATE).toBe(0.3);
     // after-tax = 16M − 6M×0.3 = 16M − 1.8M = 14.2M
     expect(s.afterTaxSecured).toBe(14_200_000);
+  });
+
+  it('defers current-year tax for compressed-entry (圧縮記帳) subsidies', () => {
+    const withCompression: FundingItem[] = [
+      ...items,
+      { id: 'e', kind: 'subsidy', name: '設備補助・圧縮記帳', amount: 4_000_000, status: 'approved', month: '2026-09', repayable: false, compressedEntry: true },
+    ];
+    const s = summarize(withCompression);
+    // deferred: the 4M compressed-entry subsidy
+    expect(s.deferredSecured).toBe(4_000_000);
+    // taxable stays 6M (compressed-entry excluded from current-year taxable)
+    expect(s.taxableSecured).toBe(6_000_000);
+    // totalSecured rises by 4M to 20M; after-tax = 20M − 6M×0.3 = 18.2M
+    expect(s.totalSecured).toBe(20_000_000);
+    expect(s.afterTaxSecured).toBe(18_200_000);
   });
 
   it('honors a custom effective tax rate and clamps to [0,1]', () => {

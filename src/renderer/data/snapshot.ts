@@ -877,6 +877,7 @@ export const SNAPSHOT = {
       status: 'received' | 'approved' | 'applied' | 'planned';
       month: string;
       repayable: boolean;
+      compressedEntry?: boolean;
     }[],
     byKind: [] as {
       kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
@@ -899,6 +900,7 @@ export const SNAPSHOT = {
       totalSecured: 0,
       totalPipeline: 0,
       taxableSecured: 0,
+      deferredSecured: 0,
       afterTaxSecured: 0,
       count: 0,
     },

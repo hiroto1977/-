@@ -108,6 +108,14 @@ export interface FundingItem {
   readonly month: string;
   /** 返済が必要か (融資・公庫は true、補助金・助成金・給付金・CFは原則 false)。 */
   readonly repayable: boolean;
+  /**
+   * 国庫補助金等で固定資産を取得し**圧縮記帳の特例**を適用するか (任意)。
+   * 適用すると、その年度は補助金収入 (益金) と同額の圧縮損が相殺され、
+   * 当年度は実質非課税となる (課税は減価償却を通じて将来へ繰延)。
+   * 課税対象 (subsidy/grant 等) かつ本フラグが true のとき、当年度の
+   * 課税見込みから除外する。融資・公庫など非課税資金では無視される。
+   */
+  readonly compressedEntry?: boolean;
 }
 
 // --- 集計結果 ----------------------------------------------------------
@@ -144,11 +152,21 @@ export interface FundingSummary {
   readonly totalSecured: number;
   /** パイプライン総額 (申請中・予定込み)。 */
   readonly totalPipeline: number;
-  /** 課税対象の確定額 (補助金・助成金・給付金・CF)。 */
+  /**
+   * 当年度の課税対象の確定額 (補助金・助成金・給付金・CF)。
+   * 圧縮記帳を適用する案件 (`compressedEntry`) は当年度課税が繰延されるため
+   * **除外**する。
+   */
   readonly taxableSecured: number;
   /**
+   * 圧縮記帳により当年度課税を繰り延べた確定額。将来 (減価償却を通じて)
+   * 課税される見込みの金額の目安。
+   */
+  readonly deferredSecured: number;
+  /**
    * 概算の手残り額 (税引後)。課税対象資金には実効税率を課し、非課税資金
-   * (融資・公庫) はそのまま。`totalSecured − taxableSecured × 実効税率`。
+   * (融資・公庫) と圧縮記帳適用分はそのまま。
+   * `totalSecured − taxableSecured × 実効税率`。
    */
   readonly afterTaxSecured: number;
   /** 案件数。 */
@@ -242,7 +260,8 @@ export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
  * @param items 資金調達案件
  * @param effectiveTaxRate 課税対象資金に課す実効税率 (0..1)。既定 0.3。
  *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
- *   借入金で非課税。手残り = 確定総額 − 課税対象確定額 × 実効税率。
+ *   借入金で非課税。圧縮記帳 (`compressedEntry`) 適用分は当年度課税を繰延。
+ *   手残り = 確定総額 − 当年度課税対象確定額 × 実効税率。
  */
 export function summarize(
   items: readonly FundingItem[],
@@ -253,13 +272,18 @@ export function summarize(
   let repayableSecured = 0;
   let totalPipeline = 0;
   let taxableSecured = 0;
+  let deferredSecured = 0;
   for (const it of items) {
     const amt = nonNeg(it.amount);
     totalPipeline += amt;
     if (isSecured(it.status)) {
       if (it.repayable) repayableSecured += amt;
       else nonRepayableSecured += amt;
-      if (isTaxableFunding(it.kind)) taxableSecured += amt;
+      if (isTaxableFunding(it.kind)) {
+        // 圧縮記帳を適用する案件は当年度課税が繰延される。
+        if (it.compressedEntry) deferredSecured += amt;
+        else taxableSecured += amt;
+      }
     }
   }
   const totalSecured = nonRepayableSecured + repayableSecured;
@@ -269,6 +293,7 @@ export function summarize(
     totalSecured,
     totalPipeline,
     taxableSecured,
+    deferredSecured,
     afterTaxSecured: Math.round(totalSecured - taxableSecured * rate),
     count: items.length,
   };

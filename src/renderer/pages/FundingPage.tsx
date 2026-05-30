@@ -230,7 +230,8 @@ export function FundingPage() {
       { label: '返済不要 (補助金等)', value: jpy(live.summary.nonRepayableSecured) },
       { label: '返済必要 (融資/公庫)', value: jpy(live.summary.repayableSecured) },
       { label: 'パイプライン総額', value: jpy(live.summary.totalPipeline) },
-      { label: '課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
+      { label: '当年度課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
+      { label: '課税繰延 (圧縮記帳)', value: jpy(live.summary.deferredSecured) },
       { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
     ],
     [live],
@@ -269,8 +270,10 @@ export function FundingPage() {
         </div>
         <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
           ※ 補助金・助成金・給付金・購入型クラウドファンディングは原則「益金 (事業収入)」として課税対象、
-          融資・公庫は借入金で非課税です。「概算手残り」は課税対象額に実効税率 (既定 約30%) を課した
-          目安であり、圧縮記帳の特例・消費税・個別の課税関係は反映していません。正確な金額は税理士へご確認ください。
+          融資・公庫は借入金で非課税です。国庫補助金等で固定資産を取得し圧縮記帳の特例を適用した分は
+          当年度課税が繰り延べられ「課税繰延」として集計します (将来、減価償却を通じて課税)。
+          「概算手残り」は当年度課税対象額に実効税率 (既定 約30%) を課した目安であり、消費税・個別の
+          課税関係は反映していません。正確な金額は税理士へご確認ください。
         </div>
       </Section>
 

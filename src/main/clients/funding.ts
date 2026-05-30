@@ -26,7 +26,7 @@ import {
 // --- モック案件 -------------------------------------------------------
 
 const MOCK_ITEMS: FundingItem[] = [
-  { id: 'f-monozukuri', kind: 'subsidy', name: 'ものづくり補助金', amount: 7_500_000, status: 'approved', month: '2026-06', repayable: false },
+  { id: 'f-monozukuri', kind: 'subsidy', name: 'ものづくり補助金 (設備取得・圧縮記帳)', amount: 7_500_000, status: 'approved', month: '2026-06', repayable: false, compressedEntry: true },
   { id: 'f-jizokuka', kind: 'subsidy', name: '小規模事業者持続化補助金', amount: 2_000_000, status: 'received', month: '2026-03', repayable: false },
   { id: 'f-it', kind: 'subsidy', name: 'IT導入補助金', amount: 1_500_000, status: 'applied', month: '2026-08', repayable: false },
   { id: 'f-career', kind: 'grant', name: 'キャリアアップ助成金', amount: 1_140_000, status: 'received', month: '2026-04', repayable: false },
