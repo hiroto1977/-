@@ -3,6 +3,7 @@ import {
   aggregateByKind,
   barData,
   cashRunway,
+  debtServiceMetrics,
   expectedScenario,
   fundingQualityScore,
   monthlyFlow,
@@ -10,6 +11,7 @@ import {
   scenarioRunways,
   summarize,
   type CashRunway,
+  type DebtServiceMetrics,
   type ExpectedScenario,
   type FundingQualityScore,
   type ScenarioRunways,
@@ -84,6 +86,8 @@ export interface FundingSnapshot {
   readonly scenarioRunways: ScenarioRunways;
   /** 資金調達の質スコア。 */
   readonly qualityScore: FundingQualityScore;
+  /** 返済余力指標 (DSCR)。 */
+  readonly debtService: DebtServiceMetrics;
   /** 会計ソフト連携の有無 (任意連携)。 */
   readonly accountingLinked: boolean;
   /** 株式投資連携の有無 (任意連携)。 */
@@ -127,6 +131,7 @@ export function buildFundingSnapshot(
       portfolioByMonth: options.portfolio,
     }),
     qualityScore: fundingQualityScore(summaryValue),
+    debtService: debtServiceMetrics(monthly),
     accountingLinked: (options.accounting?.size ?? 0) > 0,
     stocksLinked: (options.portfolio?.size ?? 0) > 0,
     fetchedAt: options.fetchedAt ?? new Date().toISOString(),

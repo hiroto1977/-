@@ -19,6 +19,7 @@ import {
   scenarioRunways,
   summarize,
   fundingQualityScore,
+  debtServiceMetrics,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
@@ -735,5 +736,46 @@ describe('fundingQualityScore', () => {
     // weight all on non-repayable (0) → composite 0; all on after-tax (loan is non-taxable → afterTax=total) → 100
     expect(fundingQualityScore(s, [1, 0]).compositeScore).toBe(0);
     expect(fundingQualityScore(s, [0, 1]).compositeScore).toBe(100);
+  });
+});
+
+describe('debtServiceMetrics (DSCR)', () => {
+  function m(month: string, repayment: number, operatingCashflow: number): FundingMonthly {
+    return { month, funding: 0, fundingAfterTax: 0, repayment, interest: 0, interestTaxShield: 0, netCashflow: 0, operatingCashflow, portfolioValue: 0 };
+  }
+
+  it('computes overall DSCR = operating CF total / repayment total', () => {
+    const r = debtServiceMetrics([m('2026-01', 100_000, 150_000), m('2026-02', 100_000, 50_000)]);
+    // CF 200,000 / repayment 200,000 = 1.0
+    expect(r.overallDscr).toBe(1);
+    expect(r.totalRepayment).toBe(200_000);
+    expect(r.totalOperatingCashflow).toBe(200_000);
+  });
+
+  it('finds the worst month and counts shortfall months below 1.0', () => {
+    const r = debtServiceMetrics([m('2026-01', 100_000, 150_000), m('2026-02', 100_000, 40_000)]);
+    // month1 dscr 1.5, month2 dscr 0.4 → worst 0.4, shortfall 1
+    expect(r.worstMonthDscr).toBeCloseTo(0.4, 5);
+    expect(r.shortfallMonths).toBe(1);
+  });
+
+  it('ignores months with no repayment (not in the DSCR denominator)', () => {
+    const r = debtServiceMetrics([m('2026-01', 0, 500_000), m('2026-02', 100_000, 200_000)]);
+    expect(r.overallDscr).toBe(7); // (500k+200k) / 100k
+    expect(r.worstMonthDscr).toBe(2); // only the repayment month counts
+    expect(r.shortfallMonths).toBe(0);
+  });
+
+  it('returns zeros when there is no repayment at all', () => {
+    const r = debtServiceMetrics([m('2026-01', 0, 500_000)]);
+    expect(r.overallDscr).toBe(0);
+    expect(r.worstMonthDscr).toBe(0);
+    expect(r.shortfallMonths).toBe(0);
+  });
+
+  it('honors a custom shortfall threshold', () => {
+    // dscr 1.2 with threshold 1.5 → counts as shortfall
+    const r = debtServiceMetrics([m('2026-01', 100_000, 120_000)], 1.5);
+    expect(r.shortfallMonths).toBe(1);
   });
 });

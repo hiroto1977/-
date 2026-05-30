@@ -707,6 +707,63 @@ export function fundingQualityScore(
   };
 }
 
+// --- 返済余力指標 (DSCR) -----------------------------------------------
+
+/** 返済余力指標 (Debt Service Coverage Ratio 系)。 */
+export interface DebtServiceMetrics {
+  /** 期間中の返済額合計 (元利)。 */
+  readonly totalRepayment: number;
+  /** 期間中の営業キャッシュフロー合計。 */
+  readonly totalOperatingCashflow: number;
+  /**
+   * 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
+   * 返済が無いときは 0 (指標として意味を持たない)。
+   */
+  readonly overallDscr: number;
+  /** 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。 */
+  readonly worstMonthDscr: number;
+  /** カバー率がしきい値 (既定 1.0) を下回った月数。 */
+  readonly shortfallMonths: number;
+}
+
+/**
+ * 月次フローから返済余力指標 (DSCR) を計算する。
+ *
+ * 営業キャッシュフローが返済額をどれだけカバーできるかを、全体・最悪月・
+ * 不足月数で評価する。返済が 0 の月は分母にできないため DSCR の対象外。
+ *
+ * @param monthly `monthlyFlow` の結果
+ * @param threshold 不足と判定するカバー率のしきい値 (既定 1.0)
+ */
+export function debtServiceMetrics(
+  monthly: readonly FundingMonthly[],
+  threshold = 1,
+): DebtServiceMetrics {
+  let totalRepayment = 0;
+  let totalOperatingCashflow = 0;
+  let worstMonthDscr = Infinity;
+  let shortfallMonths = 0;
+  let sawRepayment = false;
+  for (const m of monthly) {
+    totalRepayment += m.repayment;
+    totalOperatingCashflow += m.operatingCashflow;
+    if (m.repayment > 0) {
+      sawRepayment = true;
+      const dscr = m.operatingCashflow / m.repayment;
+      if (dscr < worstMonthDscr) worstMonthDscr = dscr;
+      if (dscr < threshold) shortfallMonths += 1;
+    }
+  }
+  const overallDscr = totalRepayment > 0 ? totalOperatingCashflow / totalRepayment : 0;
+  return {
+    totalRepayment,
+    totalOperatingCashflow,
+    overallDscr,
+    worstMonthDscr: sawRepayment ? worstMonthDscr : 0,
+    shortfallMonths,
+  };
+}
+
 // --- 期待値シナリオ (採択確率による加重) -------------------------------
 
 /**

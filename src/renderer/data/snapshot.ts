@@ -939,6 +939,13 @@ export const SNAPSHOT = {
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
     qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    debtService: {
+      totalRepayment: 0,
+      totalOperatingCashflow: 0,
+      overallDscr: 0,
+      worstMonthDscr: 0,
+      shortfallMonths: 0,
+    },
     accountingLinked: false,
     stocksLinked: false,
     fetchedAt: '',

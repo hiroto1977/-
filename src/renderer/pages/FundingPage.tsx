@@ -481,6 +481,18 @@ export function FundingPage() {
               </div>
             )}
             <RunwayChart data={live} />
+            {live.debtService.totalRepayment > 0 && (
+              <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                <strong>返済余力 (DSCR)</strong>：営業CF合計 {jpy(live.debtService.totalOperatingCashflow)} ÷ 返済額合計
+                {' '}{jpy(live.debtService.totalRepayment)} = <strong>{live.debtService.overallDscr.toFixed(2)}</strong>
+                （1.0 以上で返済余力あり）。最悪月のカバー率 {live.debtService.worstMonthDscr.toFixed(2)}、
+                カバー率1.0未満の月 {live.debtService.shortfallMonths} か月。
+                {live.debtService.overallDscr < 1 && live.accountingLinked && (
+                  <> ⚠️ 営業CFが返済を下回っています。返済条件の見直しや追加調達をご検討ください。</>
+                )}
+                {!live.accountingLinked && <> ※ 営業CFは会計ソフト連携時に反映されます。</>}
+              </div>
+            )}
           </Section>
 
           <Section title="⑥ シナリオ別 累計残高レンジ (楽観/期待/悲観)">
