@@ -297,6 +297,20 @@ describe('fetchViaProxy', () => {
       fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' }),
     ).rejects.toThrow(/proxy 502/);
   });
+
+  it('redacts tokens reflected in a proxy error body', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: false,
+      status: 500,
+      async text() { return 'forwarded Authorization: Bearer secret_abcdefghij failed'; },
+      async json() { return {}; },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const err = await fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' })
+      .catch((e: unknown) => (e instanceof Error ? e.message : String(e)));
+    expect(err).not.toContain('secret_abcdefghij');
+    expect(err).toContain('[REDACTED]');
+  });
 });
 
 describe('isPrivateOrReservedTarget', () => {
