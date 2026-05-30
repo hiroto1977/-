@@ -5,6 +5,7 @@ import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
+import { calcRealEstateYield } from '../../shared/realEstateMetrics';
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
@@ -44,25 +45,30 @@ export function RealEstatePage() {
               <th style={thStyle}>種別</th>
               <th style={thNum}>家賃 (月)</th>
               <th style={thNum}>取得価格</th>
-              <th style={thNum}>利回り</th>
+              <th style={thNum}>表面利回り</th>
+              <th style={thNum}>実質利回り (入居反映)</th>
               <th style={thStyle}>入居</th>
             </tr>
           </thead>
           <tbody>
-            {properties.map((p) => (
+            {properties.map((p) => {
+              const y = calcRealEstateYield(p.monthlyRent, p.purchasePrice, p.occupied ? 1 : 0);
+              return (
               <tr key={p.id}>
                 <td style={tdStyle}>{p.name}</td>
                 <td style={tdStyle}>{p.type}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
-                <td style={tdNum}>{p.yieldPct.toFixed(1)}%</td>
+                <td style={tdNum}>{y.grossYieldPct.toFixed(1)}%</td>
+                <td style={tdNum}>{y.netYieldPct.toFixed(1)}%</td>
                 <td style={tdStyle}>
                   <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
                   </span>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </Section>
