@@ -78,13 +78,40 @@ export const RESIDENT_TAX_RATE = 0.1;
 /** 住民税の均等割 (標準額の概算、円/年)。 */
 export const RESIDENT_TAX_PER_CAPITA = 5_000;
 
-/** 課税所得から住民税額を概算する (所得割 + 均等割)。 */
+/** 課税所得から住民税額を概算する (所得割 + 均等割)。
+ *  ※ 調整控除は含まない (calcResidentAdjustmentCredit を別途適用)。 */
 export function calcResidentTax(taxableIncome: number): number {
   // `<= 0` → `< 0` は等価: 課税所得 0 のとき所得割 `yen(0 × rate)` = 0 なので
   // どちらの分岐でも結果は PER_CAPITA。テストで区別不能なため抑制。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (taxableIncome <= 0) return RESIDENT_TAX_PER_CAPITA;
   return yen(taxableIncome * RESIDENT_TAX_RATE) + RESIDENT_TAX_PER_CAPITA;
+}
+
+/**
+ * 住民税の調整控除を計算する (所得割から差し引く税額控除)。
+ *
+ * 所得税と住民税の人的控除額の差 (基礎控除 5万・配偶者控除 5万・一般扶養 5万 等)
+ * によって生じる負担増を調整するための控除。地方税法に基づく:
+ * - 合計課税所得 ≤ 200万: min(人的控除差の合計, 合計課税所得) × 5%
+ * - 合計課税所得 > 200万: { 人的控除差の合計 − (合計課税所得 − 200万) } × 5% (最低 2,500 円)
+ *
+ * ※ 合計課税所得が 2,500 万円超の場合は調整控除なし (令和3年分以降)。
+ *
+ * @param residentTaxableIncome 住民税の課税総所得金額
+ * @param humanDeductionDiff 人的控除額の差の合計 (所得税ベース − 住民税ベース)
+ */
+export function calcResidentAdjustmentCredit(
+  residentTaxableIncome: number,
+  humanDeductionDiff: number,
+): number {
+  if (residentTaxableIncome <= 0 || humanDeductionDiff <= 0) return 0;
+  if (residentTaxableIncome > 25_000_000) return 0;
+  if (residentTaxableIncome <= 2_000_000) {
+    return yen(Math.min(humanDeductionDiff, residentTaxableIncome) * 0.05);
+  }
+  const adjusted = humanDeductionDiff - (residentTaxableIncome - 2_000_000);
+  return yen(Math.max(2_500, adjusted * 0.05));
 }
 
 // --- 消費税 --------------------------------------------------------------
@@ -245,6 +272,8 @@ export interface FullSalaryResult {
   readonly incomeTax: number;
   /** 住民税の所得割額 (均等割・税額控除前)。住宅ローン控除の上限算定等に使う。 */
   readonly residentIncomeLevy: number;
+  /** 住民税の調整控除 (所得割から差し引く)。 */
+  readonly adjustmentCredit: number;
   /** ふるさと納税の住民税税額控除 (適用後に住民税から差し引く)。 */
   readonly furusatoResidentCredit: number;
   readonly residentTax: number;
@@ -263,6 +292,7 @@ export function calcSalaryWithDeductions(
   deductionIncomeTax: number,
   deductionResidentTax: number,
   donation = 0,
+  humanDeductionDiff = 0,
 ): FullSalaryResult {
   if (grossAnnual <= 0) {
     return {
@@ -270,7 +300,7 @@ export function calcSalaryWithDeductions(
       totalDeductionIncomeTax: deductionIncomeTax, totalDeductionResidentTax: deductionResidentTax,
       taxableIncomeForIncomeTax: 0, taxableIncomeForResidentTax: 0,
       baseIncomeTax: 0, incomeTax: 0, residentIncomeLevy: 0,
-      furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
+      adjustmentCredit: 0, furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
     };
   }
   const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
@@ -280,10 +310,12 @@ export function calcSalaryWithDeductions(
   const baseIncomeTax = calcBaseIncomeTax(taxableIncomeForIncomeTax);
   const incomeTax = yen(baseIncomeTax * (1 + RECONSTRUCTION_SURTAX_RATE));
   const residentIncomeTaxPortion = yen(taxableIncomeForResidentTax * RESIDENT_TAX_RATE);
-  const residentBeforeCredit = residentIncomeTaxPortion + RESIDENT_TAX_PER_CAPITA;
+  // 住民税の調整控除を所得割から差し引く。
+  const adjustmentCredit = calcResidentAdjustmentCredit(taxableIncomeForResidentTax, humanDeductionDiff);
+  const residentBeforeCredit = Math.max(0, residentIncomeTaxPortion - adjustmentCredit) + RESIDENT_TAX_PER_CAPITA;
   const furusatoResidentCredit = calcFurusatoResidentCredit(
     donation,
-    residentIncomeTaxPortion,
+    Math.max(0, residentIncomeTaxPortion - adjustmentCredit),
     marginalIncomeTaxRate(taxableIncomeForIncomeTax),
   );
   const residentTax = Math.max(RESIDENT_TAX_PER_CAPITA, residentBeforeCredit - furusatoResidentCredit);
@@ -299,6 +331,7 @@ export function calcSalaryWithDeductions(
     baseIncomeTax,
     incomeTax,
     residentIncomeLevy: residentIncomeTaxPortion,
+    adjustmentCredit,
     furusatoResidentCredit,
     residentTax,
     takeHome,

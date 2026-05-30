@@ -13,6 +13,7 @@ import {
   calcFurusatoResidentCredit,
   calcBaseIncomeTax,
   calcFinalIncomeTax,
+  calcResidentAdjustmentCredit,
   marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
@@ -421,5 +422,30 @@ describe('boundary coverage — furusato resident credit special cap', () => {
     // marginal 0.9 → 0.9 - 0.9×1.021 < 0 → special floored to 0; only base remains
     const credit = calcFurusatoResidentCredit(100_000, 100_000, 0.9);
     expect(credit).toBe(Math.round((100_000 - 2_000) * 0.1));
+  });
+});
+
+describe('calcResidentAdjustmentCredit (住民税の調整控除)', () => {
+  it('returns 0 for non-positive income or diff', () => {
+    expect(calcResidentAdjustmentCredit(0, 50_000)).toBe(0);
+    expect(calcResidentAdjustmentCredit(3_000_000, 0)).toBe(0);
+  });
+
+  it('income ≤ 200万: min(diff, income) × 5%', () => {
+    // diff 50,000, income 1,000,000 → min(50,000, 1,000,000)=50,000 ×5% = 2,500
+    expect(calcResidentAdjustmentCredit(1_000_000, 50_000)).toBe(2_500);
+    // diff 50,000, income 30,000 → min=30,000 ×5% = 1,500
+    expect(calcResidentAdjustmentCredit(30_000, 50_000)).toBe(1_500);
+  });
+
+  it('income > 200万: {diff − (income − 200万)} × 5%, floored at 2,500', () => {
+    // diff 50,000, income 2,200,000 → 50,000 - 200,000 = -150,000 → ×5% negative → floor 2,500
+    expect(calcResidentAdjustmentCredit(2_200_000, 50_000)).toBe(2_500);
+    // diff 250,000, income 2,100,000 → 250,000 - 100,000 = 150,000 ×5% = 7,500
+    expect(calcResidentAdjustmentCredit(2_100_000, 250_000)).toBe(7_500);
+  });
+
+  it('returns 0 above 2,500万 income', () => {
+    expect(calcResidentAdjustmentCredit(25_000_001, 50_000)).toBe(0);
   });
 });

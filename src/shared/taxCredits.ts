@@ -23,6 +23,39 @@ function yen(n: number): number {
 // 環境性能区分で異なるため、ここでは「控除率」と「年末残高上限」を引数化した
 // 汎用モデルとする (令和4年以降の標準的な 0.7% を既定)。
 
+/** 住宅の環境性能区分 (令和4年以降の新築・買取再販の借入限度額に影響)。 */
+export type HousingPerformance =
+  | 'zeh' // ZEH 水準省エネ住宅
+  | 'standard' // 省エネ基準適合住宅
+  | 'long-life' // 認定長期優良・低炭素住宅
+  | 'non-standard' // その他 (一般・非適合)
+  | 'used'; // 中古 (既存住宅)
+
+/** 居住年と性能区分から住宅ローン控除の「控除率」「年末残高上限」を解決する。
+ *
+ * 国税庁 No.1211 系。令和4-7年居住の新築は性能区分で借入限度額が異なる。
+ * 令和2-3年は控除率1.0%、それ以前はさらに別 (本表は概算・代表値)。
+ * @param residenceYear 西暦の居住開始年 (2020〜2025 を想定)
+ */
+export function resolveMortgageParams(
+  residenceYear: number,
+  performance: HousingPerformance,
+): { readonly rate: number; readonly balanceCap: number } {
+  // 令和2-3年 (2020-2021) は控除率 1.0%。
+  if (residenceYear <= 2021) {
+    return { rate: 0.01, balanceCap: performance === 'used' ? 20_000_000 : 40_000_000 };
+  }
+  // 令和4年以降 (2022-) は控除率 0.7%。借入限度額は性能区分で変動。
+  const cap: Record<HousingPerformance, number> = {
+    'long-life': 50_000_000,
+    zeh: 45_000_000,
+    standard: 40_000_000,
+    'non-standard': residenceYear >= 2024 ? 0 : 30_000_000, // 2024- は省エネ非適合の新築は対象外
+    used: 30_000_000,
+  };
+  return { rate: 0.007, balanceCap: cap[performance] };
+}
+
 /** 住宅ローン控除の入力。 */
 export interface MortgageCreditInput {
   /** 年末借入残高 (円)。 */
@@ -84,11 +117,19 @@ export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditRe
 // を配当所得に乗じて税額控除する (証券投資信託等は率が異なるが、ここでは
 // 株式配当の標準率を用いる)。
 
+/** 配当の種類 (配当控除率が異なる)。
+ *  - stock: 国内株式の配当 (標準率)。
+ *  - mutual-fund: 証券投資信託の収益分配金 (外貨建等以外、株式の半分の率)。
+ *  - foreign-mutual-fund: 外貨建等証券投資信託 (さらに半分)。 */
+export type DividendKind = 'stock' | 'mutual-fund' | 'foreign-mutual-fund';
+
 export interface DividendCreditInput {
-  /** 配当所得 (総合課税を選択した国内株式配当の金額)。 */
+  /** 配当所得 (総合課税を選択した配当の金額)。 */
   readonly dividendIncome: number;
   /** 課税総所得金額 (配当を含む)。1,000 万円の判定に使う。 */
   readonly taxableTotalIncome: number;
+  /** 配当の種類 (既定 'stock')。 */
+  readonly kind?: DividendKind;
 }
 
 export interface DividendCreditResult {
@@ -96,12 +137,23 @@ export interface DividendCreditResult {
   readonly residentTax: number;
 }
 
-/** 配当控除を計算する (株式配当の標準率)。 */
+/** 配当種類ごとの控除率 (高率: 課税所得1000万以下部分 / 低率: 超過部分)。
+ *  国税庁 No.1250 の率体系: 投信は株式の1/2、外貨建等はさらに1/2。 */
+const DIVIDEND_RATES: Record<DividendKind, {
+  highIncome: number; lowIncome: number; highResident: number; lowResident: number;
+}> = {
+  stock: { highIncome: 0.1, lowIncome: 0.05, highResident: 0.028, lowResident: 0.014 },
+  'mutual-fund': { highIncome: 0.05, lowIncome: 0.025, highResident: 0.014, lowResident: 0.007 },
+  'foreign-mutual-fund': { highIncome: 0.025, lowIncome: 0.0125, highResident: 0.007, lowResident: 0.0035 },
+};
+
+/** 配当控除を計算する (種類別の率)。 */
 export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
   const dividend = Math.max(0, input.dividendIncome);
   if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
   const total = Math.max(0, input.taxableTotalIncome);
   const THRESHOLD = 10_000_000;
+  const r = DIVIDEND_RATES[input.kind ?? 'stock'];
 
   // 課税総所得のうち 1,000 万円を超える部分に対応する配当を低率、以下を高率で。
   // 配当は課税所得の「最上部」に積まれていると考え、超過部分から低率を適用。
@@ -109,8 +161,8 @@ export function calcDividendCredit(input: DividendCreditInput): DividendCreditRe
   const dividendAtLowRate = Math.min(dividend, over);
   const dividendAtHighRate = dividend - dividendAtLowRate;
 
-  const incomeTax = yen(dividendAtHighRate * 0.1 + dividendAtLowRate * 0.05);
-  const residentTax = yen(dividendAtHighRate * 0.028 + dividendAtLowRate * 0.014);
+  const incomeTax = yen(dividendAtHighRate * r.highIncome + dividendAtLowRate * r.lowIncome);
+  const residentTax = yen(dividendAtHighRate * r.highResident + dividendAtLowRate * r.lowResident);
   return { incomeTax, residentTax };
 }
 

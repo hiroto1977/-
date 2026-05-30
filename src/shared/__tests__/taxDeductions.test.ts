@@ -188,6 +188,24 @@ describe('calcAllDeductions', () => {
     const d = calcAllDeductions({ totalIncome: 5_000_000 });
     expect(d.socialInsurance).toEqual({ incomeTax: 0, residentTax: 0 });
   });
+
+  it('computes humanDeductionDiff from human deductions only (basic 5万 alone here)', () => {
+    // basic only: incomeTax 480,000 - residentTax 430,000 = 50,000
+    const d = calcAllDeductions({ totalIncome: 5_000_000 });
+    expect(d.humanDeductionDiff).toBe(50_000);
+  });
+
+  it('adds spouse and dependent diffs to humanDeductionDiff, excludes 物的控除', () => {
+    const d = calcAllDeductions({
+      totalIncome: 5_000_000,
+      spouseIncome: 0, // 38万 - 33万 = 5万
+      dependents: ['general'], // 38万 - 33万 = 5万
+      socialInsurancePaid: 700_000, // 物的控除 (差なし→0)
+      lifeInsurance: { general: 200_000, medical: 0, pension: 0 }, // 物的控除
+    });
+    // basic 5万 + spouse 5万 + dependent 5万 = 15万 (物的控除は含まない)
+    expect(d.humanDeductionDiff).toBe(150_000);
+  });
 });
 
 describe('boundary coverage — spouse deduction self-income tiers', () => {

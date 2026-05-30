@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyTaxCredits,
   applyTaxCreditsWithSurtax,
+  resolveMortgageParams,
   calcAllTaxCredits,
   calcDividendCredit,
   calcMortgageCredit,
@@ -183,5 +184,44 @@ describe('boundary coverage — mortgage / dividend edges', () => {
     const r = calcDividendCredit({ dividendIncome: 5_000_000, taxableTotalIncome: 3_000_000 });
     // over = max(0, 3M-10M)=0 → all high rate
     expect(r.incomeTax).toBe(Math.round(5_000_000 * 0.1));
+  });
+});
+
+describe('resolveMortgageParams (居住年 × 性能区分)', () => {
+  it('returns 1.0% for 令和2-3年 (2020-2021)', () => {
+    expect(resolveMortgageParams(2020, 'standard')).toEqual({ rate: 0.01, balanceCap: 40_000_000 });
+    expect(resolveMortgageParams(2021, 'used')).toEqual({ rate: 0.01, balanceCap: 20_000_000 });
+  });
+
+  it('returns 0.7% with performance-based caps for 令和4年以降', () => {
+    expect(resolveMortgageParams(2022, 'long-life')).toEqual({ rate: 0.007, balanceCap: 50_000_000 });
+    expect(resolveMortgageParams(2022, 'zeh')).toEqual({ rate: 0.007, balanceCap: 45_000_000 });
+    expect(resolveMortgageParams(2022, 'standard')).toEqual({ rate: 0.007, balanceCap: 40_000_000 });
+    expect(resolveMortgageParams(2022, 'used')).toEqual({ rate: 0.007, balanceCap: 30_000_000 });
+  });
+
+  it('non-standard new builds lose eligibility from 2024 (cap 0)', () => {
+    expect(resolveMortgageParams(2023, 'non-standard')).toEqual({ rate: 0.007, balanceCap: 30_000_000 });
+    expect(resolveMortgageParams(2024, 'non-standard')).toEqual({ rate: 0.007, balanceCap: 0 });
+  });
+});
+
+describe('calcDividendCredit kinds (投信区分)', () => {
+  it('mutual-fund uses half the stock rate', () => {
+    const r = calcDividendCredit({ dividendIncome: 1_000_000, taxableTotalIncome: 5_000_000, kind: 'mutual-fund' });
+    expect(r.incomeTax).toBe(50_000); // 5%
+    expect(r.residentTax).toBe(14_000); // 1.4%
+  });
+
+  it('foreign-mutual-fund uses a quarter of the stock rate', () => {
+    const r = calcDividendCredit({ dividendIncome: 1_000_000, taxableTotalIncome: 5_000_000, kind: 'foreign-mutual-fund' });
+    expect(r.incomeTax).toBe(25_000); // 2.5%
+    expect(r.residentTax).toBe(7_000); // 0.7%
+  });
+
+  it('defaults to stock when kind omitted', () => {
+    const a = calcDividendCredit({ dividendIncome: 500_000, taxableTotalIncome: 5_000_000 });
+    const b = calcDividendCredit({ dividendIncome: 500_000, taxableTotalIncome: 5_000_000, kind: 'stock' });
+    expect(a).toEqual(b);
   });
 });

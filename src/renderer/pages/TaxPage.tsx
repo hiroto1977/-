@@ -27,7 +27,13 @@ import {
   type DependentKind,
   type DeductionInput,
 } from '../../shared/taxDeductions';
-import { calcAllTaxCredits, applyTaxCreditsWithSurtax } from '../../shared/taxCredits';
+import {
+  calcAllTaxCredits,
+  applyTaxCreditsWithSurtax,
+  resolveMortgageParams,
+  type HousingPerformance,
+  type DividendKind,
+} from '../../shared/taxCredits';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -104,7 +110,10 @@ export function TaxPage() {
   const [specificDeps, setSpecificDeps] = useState('0');
   const [singleParent, setSingleParent] = useState(false);
   const [mortgageBalanceStr, setMortgageBalanceStr] = useState('0');
+  const [mortgageYear, setMortgageYear] = useState(2024);
+  const [mortgagePerf, setMortgagePerf] = useState<HousingPerformance>('standard');
   const [dividendStr, setDividendStr] = useState('0');
+  const [dividendKind, setDividendKind] = useState<DividendKind>('stock');
 
   const num = (s: string): number => {
     const p = parseAmountInput(s);
@@ -132,23 +141,28 @@ export function TaxPage() {
       singleParent,
     };
     const ded = calcAllDeductions(input);
-    // ① 所得控除込みの税額 (ふるさと納税の住民税控除も内部適用済み)。
-    const result = calcSalaryWithDeductions(dGross, ded.total.incomeTax, ded.total.residentTax, donation);
+    // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除も内部適用済み)。
+    const result = calcSalaryWithDeductions(
+      dGross, ded.total.incomeTax, ded.total.residentTax, donation, ded.humanDeductionDiff,
+    );
 
     // ② 税額控除 (住宅ローン・配当) を、復興特別所得税の前の「基準所得税額」に
     //    対して適用する (正しい順序)。住宅ローン控除の所得税枠も基準税額ベース。
     const mortgageBalance = num(mortgageBalanceStr);
     const dividendIncome = num(dividendStr);
+    const mortgageParams = resolveMortgageParams(mortgageYear, mortgagePerf);
     const credits = calcAllTaxCredits({
       mortgage: mortgageBalance > 0
         ? {
             yearEndBalance: mortgageBalance,
+            rate: mortgageParams.rate,
+            balanceCap: mortgageParams.balanceCap,
             incomeTaxBeforeCredit: result.baseIncomeTax,
             taxableIncomeForResident: result.taxableIncomeForResidentTax,
           }
         : undefined,
       dividend: dividendIncome > 0
-        ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax }
+        ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax, kind: dividendKind }
         : undefined,
     });
     const afterCredits = applyTaxCreditsWithSurtax(
@@ -160,7 +174,7 @@ export function TaxPage() {
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, dividendStr]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -297,6 +311,34 @@ export function TaxPage() {
             ひとり親
           </label>
         </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            住宅ローン: 居住開始年
+            <select value={mortgageYear} onChange={(e) => setMortgageYear(Number(e.target.value))} style={{ ...inputStyle, width: 120 }}>
+              {[2020, 2021, 2022, 2023, 2024, 2025].map((y) => (
+                <option key={y} value={y}>{y}年（{y <= 2021 ? '控除率1.0%' : '0.7%'}）</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            住宅性能区分
+            <select value={mortgagePerf} onChange={(e) => setMortgagePerf(e.target.value as HousingPerformance)} style={{ ...inputStyle, width: 200 }}>
+              <option value="long-life">認定長期優良・低炭素 (5,000万)</option>
+              <option value="zeh">ZEH水準省エネ (4,500万)</option>
+              <option value="standard">省エネ基準適合 (4,000万)</option>
+              <option value="non-standard">その他/非適合 (〜3,000万)</option>
+              <option value="used">中古住宅 (3,000万)</option>
+            </select>
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            配当の種類
+            <select value={dividendKind} onChange={(e) => setDividendKind(e.target.value as DividendKind)} style={{ ...inputStyle, width: 200 }}>
+              <option value="stock">国内株式 (10%/5%)</option>
+              <option value="mutual-fund">証券投資信託 (5%/2.5%)</option>
+              <option value="foreign-mutual-fund">外貨建等投信 (2.5%/1.25%)</option>
+            </select>
+          </label>
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="所得税 (税額控除後)" value={jpy(precise.afterCredits.incomeTax)} />
           <Stat label="住民税 (税額控除後)" value={jpy(precise.afterCredits.residentTax)} />
@@ -310,15 +352,17 @@ export function TaxPage() {
           扶養 {jpy(precise.ded.dependents.incomeTax)} / 生命保険 {jpy(precise.ded.lifeInsurance.incomeTax)} /
           地震保険 {jpy(precise.ded.earthquakeInsurance.incomeTax)} / 医療費 {jpy(precise.ded.medical.incomeTax)} /
           寄附金 {jpy(precise.ded.donation.incomeTax)} / ひとり親 {jpy(precise.ded.singleParentOrWidow.incomeTax)}）<br />
-          所得控除適用後の税額: 所得税 {jpy(precise.result.incomeTax)} / 住民税 {jpy(precise.result.residentTax)} (ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)} 適用済)<br />
+          所得控除適用後の税額: 所得税 {jpy(precise.result.incomeTax)} / 住民税 {jpy(precise.result.residentTax)}
+          (住民税の調整控除 {jpy(precise.result.adjustmentCredit)} / ふるさと納税の住民税控除 {jpy(precise.result.furusatoResidentCredit)} 適用済)<br />
           <strong>税額控除</strong>: 住宅ローン (所得税 {jpy(precise.credits.mortgageIncomeTax)} / 住民税 {jpy(precise.credits.mortgageResidentTax)}) /
           配当控除 (所得税 {jpy(precise.credits.dividendIncomeTax)} / 住民税 {jpy(precise.credits.dividendResidentTax)})。
         </div>
         <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
-          ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した国内株式配当を想定 (申告分離・上場株式の特例は別計算)。
-          住宅ローン控除は居住年・住宅性能区分により控除率/上限が異なります (既定 0.7%・残高上限 3,000 万円)。
+          ⚠️ 社会保険料は「実額」を入力してください (額面比例の概算ではありません)。配当は総合課税を選択した配当を想定 (申告分離・上場株式の特例は別計算)。
+          住宅ローン控除は居住年・住宅性能区分で控除率/上限が変わります (上のセレクタで選択)。
           扶養親族はそれぞれ<strong>合計所得 48 万円以下</strong>が要件です (要件を満たす人数のみ入力してください)。
-          税額控除は復興特別所得税より前の基準所得税額から差し引いて計算しています。住民税の調整控除は未反映です。
+          税額控除は復興特別所得税より前の基準所得税額から差し引き、住民税の調整控除も反映しています。
+          (人的控除差は基礎・配偶者・扶養・障害者・寡婦/ひとり親・勤労学生の所得税/住民税差から算定。社会保険の非課税限度額は未反映。)
         </div>
       </Section>
 

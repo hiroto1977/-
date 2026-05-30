@@ -309,6 +309,9 @@ export interface DeductionBreakdown {
   readonly workingStudent: DeductionPair;
   /** 合計。 */
   readonly total: DeductionPair;
+  /** 人的控除額の差の合計 (所得税ベース − 住民税ベース)。住民税の調整控除に使う。
+   *  人的控除 = 基礎・配偶者・扶養・障害者・寡婦/ひとり親・勤労学生 (物的控除は除く)。 */
+  readonly humanDeductionDiff: number;
 }
 
 function addPair(a: DeductionPair, b: DeductionPair): DeductionPair {
@@ -361,6 +364,11 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   ];
   const total = parts.reduce(addPair, ZERO);
 
+  // 人的控除のみの (所得税 − 住民税) 差を合計 (調整控除の算定基礎)。
+  // 物的控除 (社保・生命保険・地震保険・医療費・寄附金) は対象外。
+  const humanParts = [basic, spouse, dependents, disability, singleParentOrWidow, workingStudent];
+  const humanDeductionDiff = humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
+
   return {
     basic,
     socialInsurance: social,
@@ -375,5 +383,6 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
     singleParentOrWidow,
     workingStudent,
     total,
+    humanDeductionDiff,
   };
 }
