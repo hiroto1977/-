@@ -853,7 +853,12 @@ export const SNAPSHOT = {
   },
 
   tiktok: {
-    items: [] as { id: string; name: string }[],
+    items: [
+      { id: 'tt-1', name: '[投稿] 新商品紹介リール — 12.4万 再生 / いいね 8,200' },
+      { id: 'tt-2', name: '[投稿] 使い方ハウツー — 3.1万 再生 / 保存 1,450' },
+      { id: 'tt-3', name: '[広告] 認知キャンペーン — CPM ¥420 / CTR 1.8%' },
+      { id: 'tt-4', name: 'フォロワー 2.7万人（前月比 +6.3%）' },
+    ] as { id: string; name: string }[],
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
