@@ -34,6 +34,7 @@ import {
   type HousingPerformance,
   type DividendKind,
 } from '../../shared/taxCredits';
+import { calcRetirementTax } from '../../shared/taxRetirement';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -183,6 +184,19 @@ export function TaxPage() {
 
     return { ded, result, credits, afterCredits, finalTakeHome };
   }, [dGrossStr, dSocialStr, dIdecoStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+
+  // --- ④ 退職所得の試算 ---
+  const [severanceStr, setSeveranceStr] = useState('20000000');
+  const [yearsStr, setYearsStr] = useState('30');
+  const [shortTerm, setShortTerm] = useState(false);
+  const [retDisability, setRetDisability] = useState(false);
+
+  const retirement = useMemo(() => {
+    return calcRetirementTax(num(severanceStr), num(yearsStr), {
+      shortTerm,
+      disability: retDisability,
+    });
+  }, [severanceStr, yearsStr, shortTerm, retDisability]);
 
   const openTool = (url: string) => {
     void window.serviceHub.openExternal(url);
@@ -372,6 +386,41 @@ export function TaxPage() {
           扶養親族はそれぞれ<strong>合計所得 48 万円以下</strong>が要件です (要件を満たす人数のみ入力してください)。
           税額控除は復興特別所得税より前の基準所得税額から差し引き、住民税の調整控除も反映しています。
           (人的控除差は基礎・配偶者・扶養・障害者・寡婦/ひとり親・勤労学生の所得税/住民税差から算定。社会保険の非課税限度額は未反映。)
+        </div>
+      </Section>
+
+      <Section title="④ 退職所得の試算 (分離課税)" count={3}>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+          退職金は給与所得と分離して課税されます。退職所得控除を引いた残額の <strong>1/2</strong> に対し、
+          所得税 (速算表+復興税) と住民税 (10%) がかかります (正式ルール)。
+          ※ 同一年に複数の退職金がある場合や前年以前の退職との通算は未対応です。
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            退職金 (円)
+            <input type="text" inputMode="decimal" value={severanceStr} onChange={(e) => setSeveranceStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            勤続年数 (1年未満切上)
+            <input type="text" inputMode="decimal" value={yearsStr} onChange={(e) => setYearsStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={shortTerm} onChange={(e) => setShortTerm(e.target.checked)} />
+            短期退職手当等 (勤続5年以下)
+          </label>
+          <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="checkbox" checked={retDisability} onChange={(e) => setRetDisability(e.target.checked)} />
+            障害退職 (控除+100万)
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="所得税 (退職所得)" value={jpy(retirement.incomeTax)} />
+          <Stat label="住民税 (退職所得)" value={jpy(retirement.residentTax)} />
+          <Stat label="手取り" value={jpy(retirement.takeHome)} positive />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          退職所得控除 {jpy(retirement.deduction)} / 課税退職所得金額 {jpy(retirement.taxableIncome)}。
+          {shortTerm && <> 短期退職手当等は控除後300万円を超える部分の1/2課税が適用されません。</>}
         </div>
       </Section>
 
