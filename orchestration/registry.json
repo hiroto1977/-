@@ -29,7 +29,11 @@
     { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true },
     { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true },
     { "id": "security", "domain": "セキュリティ", "focus": "パスワード強度/エントロピー/突破時間", "active": true },
-    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit" }
+    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit" },
+    { "id": "savings-planning", "domain": "家計/貯蓄計画", "focus": "目標達成積立/72の法則/緊急予備資金", "active": true },
+    { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true },
+    { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true },
+    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -37,12 +41,17 @@
     { "round": 3, "teamCount": 3, "teams": ["funding-cashflow", "tax-credits", "funding-scenario"], "shipped": ["元金均等返済", "3シナリオ残高", "一時所得"] },
     { "round": 4, "teamCount": 5, "teams": ["tax-deductions", "quality-audit", "funding-cost", "tax-credits", "tax-separate"], "shipped": ["セルフメディケーション", "境界値ハードニング", "消費税区分", "住宅ローン所得制限", "譲渡所得"] },
     { "round": 5, "teamCount": 6, "teams": ["kpi-analysis", "quality-audit", "real-estate", "tax-consumption", "tax-separate", "funding-scenario"], "shipped": ["公的年金等控除", "KPI目標利益/販売数量"] },
-    { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] }
+    { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] },
+    { "round": 7, "teamCount": 8, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation"], "shipped": ["不動産CCR・イールドギャップ"] }
   ],
   "backlog": [
-    { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "designed" },
+    { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "designed" },
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "designed" },
-    { "id": "funding-diversification", "team": "funding-scenario", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "designed" }
+    { "id": "funding-diversification", "team": "funding-scenario", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "designed" },
+    { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "designed" },
+    { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "designed" },
+    { "id": "bonus-withholding", "team": "payroll", "title": "賞与の源泉徴収税額・通勤手当の非課税限度", "priority": 7, "status": "designed" },
+    { "id": "depreciation-methods", "team": "depreciation", "title": "減価償却(定額法/定率法)・少額減価償却特例", "priority": 8, "status": "designed" }
   ]
 }

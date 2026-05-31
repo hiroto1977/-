@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -5,7 +6,21 @@ import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
-import { calcRealEstateYield } from '../../shared/realEstateMetrics';
+import { calcRealEstateYield, calcRealEstateLeverage } from '../../shared/realEstateMetrics';
+
+const reInputStyle: React.CSSProperties = {
+  background: 'var(--bg)',
+  border: '1px solid var(--border)',
+  borderRadius: 6,
+  color: 'var(--text)',
+  padding: '6px 8px',
+  fontSize: 13,
+  width: 140,
+};
+const reNum = (s: string): number => {
+  const n = Number(s.replace(/[^\d.-]/g, ''));
+  return Number.isFinite(n) ? n : 0;
+};
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
@@ -15,6 +30,19 @@ export function RealEstatePage() {
     SNAPSHOT.realEstate,
   );
   const { properties, monthlyCashflow, portfolioYield, occupancyRate } = data;
+
+  // レバレッジ試算 (CCR・イールドギャップ) — 入力はローカル。
+  const [reRentStr, setReRentStr] = useState('168000');
+  const [rePriceStr, setRePriceStr] = useState('42000000');
+  const [reExpenseStr, setReExpenseStr] = useState('600000');
+  const [reEquityStr, setReEquityStr] = useState('10000000');
+  const [reDebtStr, setReDebtStr] = useState('1500000');
+  const [reLoanRateStr, setReLoanRateStr] = useState('2.0');
+  const leverage = useMemo(() => {
+    const y = calcRealEstateYield(reNum(reRentStr), reNum(rePriceStr), 1, reNum(reExpenseStr));
+    const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
+    return { y, lev };
+  }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
 
   return (
     <div>
@@ -87,6 +115,35 @@ export function RealEstatePage() {
             </tr>
           </tbody>
         </table>
+      </Section>
+
+      <Section title="レバレッジ試算 (CCR・イールドギャップ)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          自己資金回収率 (CCR) と イールドギャップ (実質利回り − ローン金利) の目安です。
+          イールドギャップがプラスなら借入が収益にプラスに働きます (正レバレッジ)。
+          <strong>※ 概算であり投資助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          {([
+            ['月額賃料', reRentStr, setReRentStr],
+            ['物件価格', rePriceStr, setRePriceStr],
+            ['年間経費', reExpenseStr, setReExpenseStr],
+            ['自己資金', reEquityStr, setReEquityStr],
+            ['年間返済額', reDebtStr, setReDebtStr],
+            ['ローン金利(%)', reLoanRateStr, setReLoanRateStr],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={reInputStyle} />
+            </label>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <Stat label="実質利回り" value={`${leverage.y.netYieldPct}%`} />
+          <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
+          <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
+          <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+        </div>
       </Section>
     </div>
   );

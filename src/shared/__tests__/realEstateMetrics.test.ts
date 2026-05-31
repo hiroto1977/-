@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calcRealEstateYield } from '../realEstateMetrics';
+import { calcRealEstateYield, calcRealEstateLeverage } from '../realEstateMetrics';
 
 describe('calcRealEstateYield', () => {
   it('computes the gross yield (annual rent / price)', () => {
@@ -42,5 +42,41 @@ describe('calcRealEstateYield', () => {
     // 120万 − 200万 = −80万
     expect(r.annualNetIncome).toBe(-800_000);
     expect(r.netYieldPct).toBeLessThan(0);
+  });
+});
+
+describe('calcRealEstateLeverage (CCR・イールドギャップ)', () => {
+  it('computes cash-on-cash return = post-debt cashflow / own equity', () => {
+    // 純収入200万 − 返済120万 = 手残り80万; 自己資金1,000万 → CCR 8%
+    const r = calcRealEstateLeverage(2_000_000, 10_000_000, 1_200_000, 5.0, 2.0);
+    expect(r.annualCashflow).toBe(800_000);
+    expect(r.cashOnCashReturnPct).toBe(8);
+  });
+
+  it('computes the yield gap = net yield − loan rate', () => {
+    const r = calcRealEstateLeverage(2_000_000, 10_000_000, 1_200_000, 5.0, 2.0);
+    expect(r.yieldGapPct).toBe(3); // 5.0 − 2.0
+  });
+
+  it('flags negative leverage when the loan rate exceeds the net yield', () => {
+    const r = calcRealEstateLeverage(1_000_000, 5_000_000, 800_000, 1.5, 3.0);
+    expect(r.yieldGapPct).toBe(-1.5);
+  });
+
+  it('guards zero own equity (CCR 0, no division by zero)', () => {
+    const r = calcRealEstateLeverage(2_000_000, 0, 1_200_000, 5.0, 2.0);
+    expect(r.cashOnCashReturnPct).toBe(0);
+  });
+
+  it('clamps negative debt service to zero', () => {
+    const r = calcRealEstateLeverage(2_000_000, 10_000_000, -100, 5.0, 2.0);
+    expect(r.annualDebtService).toBe(0);
+    expect(r.annualCashflow).toBe(2_000_000);
+  });
+
+  it('produces negative cashflow when debt service exceeds net income', () => {
+    const r = calcRealEstateLeverage(1_000_000, 5_000_000, 1_500_000, 3.0, 2.0);
+    expect(r.annualCashflow).toBe(-500_000);
+    expect(r.cashOnCashReturnPct).toBe(-10); // -500k / 5M
   });
 });

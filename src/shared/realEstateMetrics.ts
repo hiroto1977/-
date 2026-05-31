@@ -56,3 +56,43 @@ export function calcRealEstateYield(
   const netYieldPct = pct2((annualNetIncome / (price + acqCost)) * 100);
   return { grossYieldPct, netYieldPct, annualNetIncome, annualGrossRent };
 }
+
+/** レバレッジ指標 (CCR・イールドギャップ) の結果。 */
+export interface RealEstateLeverage {
+  /** 年間のローン返済額 (元利)。 */
+  readonly annualDebtService: number;
+  /** ローン返済後の年間キャッシュフロー (実質純収入 − 返済額)。 */
+  readonly annualCashflow: number;
+  /** 自己資金回収率 CCR (%) = 返済後CF ÷ 自己資金。自己資金0なら0。 */
+  readonly cashOnCashReturnPct: number;
+  /** イールドギャップ (%) = 実質利回り − ローン金利。プラスなら正レバレッジ。 */
+  readonly yieldGapPct: number;
+}
+
+/**
+ * 不動産投資のレバレッジ指標 (CCR・イールドギャップ) を計算する。
+ *
+ * CCR (Cash on Cash Return) は投下した自己資金に対する手残りキャッシュフローの
+ * 割合で、レバレッジ効率の目安。イールドギャップは実質利回りとローン金利の差で、
+ * プラスなら借入が収益にプラスに働く (正レバレッジ)。
+ *
+ * @param annualNetIncome 実質の年間純収入 (calcRealEstateYield の annualNetIncome)
+ * @param ownEquity 自己資金 (頭金 + 取得費の自己負担分, 円)。0 以下なら CCR 0。
+ * @param annualDebtService 年間のローン返済額 (元利, 円)。既定 0。
+ * @param netYieldPct 実質利回り (%, calcRealEstateYield の netYieldPct)
+ * @param loanRatePct ローンの年利 (%)。
+ */
+export function calcRealEstateLeverage(
+  annualNetIncome: number,
+  ownEquity: number,
+  annualDebtService: number,
+  netYieldPct: number,
+  loanRatePct: number,
+): RealEstateLeverage {
+  const debtService = Math.max(0, annualDebtService);
+  const equity = Math.max(0, ownEquity);
+  const annualCashflow = Math.round(annualNetIncome - debtService);
+  const cashOnCashReturnPct = equity > 0 ? pct2((annualCashflow / equity) * 100) : 0;
+  const yieldGapPct = pct2(netYieldPct - loanRatePct);
+  return { annualDebtService: debtService, annualCashflow, cashOnCashReturnPct, yieldGapPct };
+}
