@@ -27,19 +27,21 @@
   },
   "org": {
     "ceo": { "id": "ceo", "title": "CEO (オーナー・最高経営責任者)", "staffedByAI": false, "human": true, "note": "事業オーナー(あなた)。経営方針・優先順位の決定と最終承認を担う人間の最高責任者。AIには配置しない。" },
-    "coo": { "id": "coo", "title": "COO (最高執行責任者・オーケストレーター)", "reportsTo": "ceo", "staffedByAI": false, "owns": ["cfo", "cio", "cqo", "mgr-management"], "note": "Claude本体(あなたのCOO)。CEOの方針を受けてAI組織全体の実行を統括し、実装・全ゲート検証・コミットを担う。経営分析部を直轄。" },
+    "coo": { "id": "coo", "title": "COO (最高執行責任者・オーケストレーター)", "reportsTo": "ceo", "staffedByAI": false, "owns": ["cfo", "chro", "cso", "cio", "cqo"], "note": "Claude本体(あなたのCOO)。CEOの方針を受けてAI組織全体の実行を統括し、実装・全ゲート検証・コミットを担う。部門は直轄せず、配下の5役員を通じて運営する(監督と実務の分離)。" },
     "executives": [
-      { "id": "cfo", "title": "財務・税務担当役員 (CFO)", "reportsTo": "coo", "owns": ["mgr-tax", "mgr-funding", "mgr-payroll"] },
-      { "id": "cio", "title": "投資・資産担当役員 (CIO)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"] },
-      { "id": "cqo", "title": "品質・セキュリティ担当役員 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"] }
+      { "id": "cfo", "title": "最高財務責任者 (CFO)", "reportsTo": "coo", "owns": ["mgr-tax", "mgr-funding"], "domain": "財務・税務・資金調達" },
+      { "id": "chro", "title": "最高人事責任者 (CHRO)", "reportsTo": "coo", "owns": ["mgr-payroll"], "domain": "人事・給与・労務" },
+      { "id": "cso", "title": "最高戦略責任者 (CSO)", "reportsTo": "coo", "owns": ["mgr-management"], "domain": "経営戦略・分析・成長・予測" },
+      { "id": "cio", "title": "最高投資責任者 (CIO / Chief Investment Officer)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"], "domain": "投資・資産運用・為替" },
+      { "id": "cqo", "title": "最高品質責任者 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"], "domain": "品質保証・セキュリティ" }
     ],
     "managers": [
       { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },
       { "id": "mgr-funding", "title": "資金調達部長", "reportsTo": "cfo", "teams": ["funding-cashflow", "funding-cost", "funding-scenario"] },
-      { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "cfo", "teams": ["payroll"] },
+      { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "chro", "teams": ["payroll"] },
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
-      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "coo", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis", "revenue-forecast"] },
+      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis", "revenue-forecast"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
