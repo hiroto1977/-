@@ -4,7 +4,7 @@
  * 合成するだけで、IO は持たない (呼び出し側が record store から渡す)。
  */
 import { summarizeSales, type SalesEntry } from './sales';
-import { summarizeFundamentals, computeKpiMetrics, type KpiActual } from './kpiActuals';
+import { summarizeFundamentals, computeKpiMetrics, computeRevenueGrowthPct, type KpiActual } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
 
@@ -31,6 +31,10 @@ export interface BusinessOverview {
     operatingProfit: number;
     bep: number;
     safetyMargin: number;
+    /** 限界利益率 (%)。 */
+    contributionRatio: number;
+    /** 売上高成長率 (%, 直近期 vs 前期)。期が 2 つ未満なら null。 */
+    revenueGrowthPct: number | null;
   };
   readonly team: {
     members: number;
@@ -74,6 +78,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,
       safetyMargin: kpi.safetyMargin,
+      contributionRatio: kpi.contributionRatio,
+      revenueGrowthPct: computeRevenueGrowthPct(input.kpiActuals),
     },
     team: {
       members: input.members.length,

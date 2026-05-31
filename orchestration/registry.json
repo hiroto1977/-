@@ -38,7 +38,7 @@
       { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "cfo", "teams": ["payroll"] },
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
-      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "coo", "teams": ["kpi-analysis", "management-integration", "depreciation"] },
+      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "coo", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
@@ -61,7 +61,8 @@
     { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true, "manager": "mgr-household" },
     { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true, "manager": "mgr-payroll" },
     { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true, "manager": "mgr-management" },
-    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" }
+    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" },
+    { "id": "growth-analysis", "domain": "経営(成長性)", "focus": "売上前期比成長率/CAGR/トレンド・スコアカード成長性連携", "active": true, "manager": "mgr-management" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -73,10 +74,13 @@
     { "round": 7, "teamCount": 8, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation"], "shipped": ["不動産CCR・イールドギャップ"] },
     { "round": 8, "teamCount": 9, "teams": ["tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "quality-audit"], "shipped": ["住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"] },
     { "round": 9, "teamCount": 10, "teams": ["kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["KPI価格変更シミュレーション"] },
-    { "round": 10, "teamCount": 11, "teams": ["management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"] }
+    { "round": 10, "teamCount": 11, "teams": ["management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"] },
+    { "round": 11, "teamCount": 12, "teams": ["growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["スコアカード成長性の自動連携(前期比売上成長率)"] }
   ],
   "backlog": [
-    { "id": "scorecard-liquidity-growth", "team": "management-integration", "title": "スコアカードに資金繰り(DSCR/ランウェイ)・成長性の自動連携", "priority": 1, "status": "designed" },
+    { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
+    { "id": "scorecard-liquidity", "team": "management-integration", "title": "スコアカード資金繰り(DSCR/ランウェイ)の会計連携データ自動連携", "priority": 2, "status": "designed" },
+    { "id": "growth-cagr", "team": "growth-analysis", "title": "売上CAGR・移動平均トレンド・季節調整成長率", "priority": 3, "status": "designed" },
     { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },

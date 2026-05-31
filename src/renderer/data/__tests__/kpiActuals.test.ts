@@ -4,8 +4,19 @@ import {
   parseKpiActual,
   summarizeFundamentals,
   computeKpiMetrics,
+  computeRevenueGrowthPct,
   type KpiActual,
 } from '../kpiActuals';
+
+const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
+  period,
+  unit,
+  revenue,
+  cogs: 0,
+  advertising: 0,
+  sga: 0,
+  depreciation: 0,
+});
 
 const BASE = {
   period: '2026-05',
@@ -113,5 +124,50 @@ describe('computeKpiMetrics', () => {
     expect(m.contributionRatio).toBe(0);
     expect(m.bep).toBe(Infinity);
     expect(m.operatingProfit).toBe(-100);
+  });
+});
+
+describe('computeRevenueGrowthPct', () => {
+  it('returns null for an empty set', () => {
+    expect(computeRevenueGrowthPct([])).toBeNull();
+  });
+
+  it('returns null when only one period is present', () => {
+    expect(computeRevenueGrowthPct([actual('2026-05', 1_000_000)])).toBeNull();
+  });
+
+  it('returns null when the prior period has zero revenue (avoids division by zero)', () => {
+    expect(computeRevenueGrowthPct([actual('2026-04', 0), actual('2026-05', 1_000_000)])).toBeNull();
+  });
+
+  it('computes month-over-month growth as a rounded percentage', () => {
+    // 1,000,000 → 1,200,000 = +20%
+    expect(computeRevenueGrowthPct([actual('2026-04', 1_000_000), actual('2026-05', 1_200_000)])).toBe(20);
+  });
+
+  it('reports negative growth when revenue falls', () => {
+    // 1,000,000 → 900,000 = -10%
+    expect(computeRevenueGrowthPct([actual('2026-04', 1_000_000), actual('2026-05', 900_000)])).toBe(-10);
+  });
+
+  it('groups multiple units within a period and compares the two latest periods', () => {
+    const actuals = [
+      actual('2026-03', 500_000, 'EC'),
+      actual('2026-04', 600_000, 'EC'),
+      actual('2026-04', 400_000, '店舗'), // 2026-04 total = 1,000,000
+      actual('2026-05', 750_000, 'EC'),
+      actual('2026-05', 750_000, '店舗'), // 2026-05 total = 1,500,000 → +50%
+    ];
+    expect(computeRevenueGrowthPct(actuals)).toBe(50);
+  });
+
+  it('orders by period label regardless of input order', () => {
+    const actuals = [actual('2026-05', 1_100_000), actual('2026-04', 1_000_000)];
+    expect(computeRevenueGrowthPct(actuals)).toBe(10);
+  });
+
+  it('rounds to one decimal place', () => {
+    // 300,000 → 310,000 = +3.333...% → 3.3
+    expect(computeRevenueGrowthPct([actual('2026-04', 300_000), actual('2026-05', 310_000)])).toBe(3.3);
   });
 });

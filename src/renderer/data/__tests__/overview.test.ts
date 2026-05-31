@@ -67,4 +67,20 @@ describe('buildBusinessOverview', () => {
     expect(o.kpi.operatingProfit).toBeLessThan(0);
     expect(o.flags.profitable).toBe(false);
   });
+
+  it('exposes contribution ratio and a null growth rate for a single period', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    // contribution = revenue - (cogs + advertising) = 100000 - 50000 = 50000 → 50%
+    expect(o.kpi.contributionRatio).toBeCloseTo(50);
+    expect(o.kpi.revenueGrowthPct).toBeNull();
+  });
+
+  it('computes revenue growth when two periods are present', () => {
+    const twoPeriods: KpiActual[] = [
+      { period: '2026-04', unit: '全社', revenue: 100000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+      { period: '2026-05', unit: '全社', revenue: 120000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: twoPeriods, members: [] });
+    expect(o.kpi.revenueGrowthPct).toBe(20);
+  });
 });

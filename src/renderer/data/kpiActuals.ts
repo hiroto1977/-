@@ -99,6 +99,27 @@ export function summarizeFundamentals(actuals: readonly KpiActual[]): KpiFundame
   );
 }
 
+/**
+ * 直近期と前期の売上から売上高成長率 (%) を計算する。
+ *
+ * 期 (`period` = YYYY-MM) でグルーピングして合計売上を出し、最新月を前月と
+ * 比較する。期が 2 つ未満なら null (成長率を算定できない)。前期売上が 0 の
+ * ときも null (ゼロ除算回避)。
+ */
+export function computeRevenueGrowthPct(actuals: readonly KpiActual[]): number | null {
+  if (actuals.length === 0) return null;
+  const byPeriod = new Map<string, number>();
+  for (const a of actuals) {
+    byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
+  }
+  const periods = [...byPeriod.keys()].sort((x, y) => (x < y ? -1 : x > y ? 1 : 0));
+  if (periods.length < 2) return null;
+  const latest = byPeriod.get(periods[periods.length - 1]!)!;
+  const prior = byPeriod.get(periods[periods.length - 2]!)!;
+  if (prior <= 0) return null;
+  return Math.round(((latest - prior) / prior) * 1000) / 10;
+}
+
 /** Pure break-even / KPI computation. Mirrors `computeKpi` in
  *  src/main/clients/kpi.ts (see module header). */
 export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {

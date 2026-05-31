@@ -50,14 +50,18 @@ export function OverviewPage() {
     [plan, salesRecords, kpiRecords, memberRecords],
   );
 
-  // 経営スコアカード — KPI実績から収益性・安全性を集約 (データがある時のみ意味を持つ)。
+  // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
   const scorecard = useMemo(() => {
-    const opMargin = overview.kpi.hasData && overview.kpi.revenue > 0
+    if (!overview.kpi.hasData) return buildManagementScorecard({});
+    const opMargin = overview.kpi.revenue > 0
       ? (overview.kpi.operatingProfit / overview.kpi.revenue) * 100
       : undefined;
     return buildManagementScorecard({
       operatingMarginPct: opMargin,
-      safetyMarginPct: overview.kpi.hasData ? overview.kpi.safetyMargin : undefined,
+      contributionRatioPct: overview.kpi.revenue > 0 ? overview.kpi.contributionRatio : undefined,
+      safetyMarginPct: overview.kpi.safetyMargin,
+      // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
+      revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
     });
   }, [overview]);
 
@@ -138,7 +142,8 @@ export function OverviewPage() {
             </ul>
           )}
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
-            資金繰り (DSCR・ランウェイ) や成長性は、会計連携・期間データが揃うと自動で加点されます。
+            成長性は KPI 実績の期 (YYYY-MM) が 2 つ以上揃うと前期比で自動加点されます。
+            資金繰り (DSCR・ランウェイ) は会計連携データが揃うと加点されます。
           </p>
         </Section>
       )}
