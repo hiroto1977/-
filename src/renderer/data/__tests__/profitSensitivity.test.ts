@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { profitSensitivity, breakEvenDeltaPct } from '../profitSensitivity';
+import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget } from '../profitSensitivity';
 import type { KpiFundamentals } from '../kpiActuals';
 
 // revenue 1000, variable (cogs+adv) 500 → rate 0.5, fixed (sga+dep) 250 → OP 250
@@ -56,5 +56,34 @@ describe('breakEvenDeltaPct', () => {
     expect(breakEvenDeltaPct({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 })).toBeNull();
     // variable cost >= revenue → contribution rate <= 0
     expect(breakEvenDeltaPct({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 })).toBeNull();
+  });
+});
+
+describe('requiredRevenueForTarget', () => {
+  // base: revenue 1000, variable rate 0.5, fixed 250 → contributionRate 0.5
+  it('computes the revenue needed to reach a target operating profit', () => {
+    // required = (fixed + target) / contributionRate = (250 + 500) / 0.5 = 1500
+    const r = requiredRevenueForTarget(base, 500);
+    expect(r.targetOperatingProfit).toBe(500);
+    expect(r.requiredRevenue).toBe(1500);
+    expect(r.upliftPct).toBe(50); // (1500-1000)/1000
+  });
+
+  it('returns the current operating profit target as roughly the current revenue', () => {
+    // target = current OP 250 → required = (250+250)/0.5 = 1000 → uplift 0%
+    const r = requiredRevenueForTarget(base, 250);
+    expect(r.requiredRevenue).toBe(1000);
+    expect(r.upliftPct).toBe(0);
+  });
+
+  it('yields a negative uplift for a target below the current profit', () => {
+    const r = requiredRevenueForTarget(base, 0); // break-even: (250+0)/0.5 = 500 → -50%
+    expect(r.requiredRevenue).toBe(500);
+    expect(r.upliftPct).toBe(-50);
+  });
+
+  it('returns null uplift when revenue is zero or contribution is non-positive', () => {
+    expect(requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, 100).upliftPct).toBeNull();
+    expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
   });
 });

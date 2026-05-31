@@ -66,3 +66,36 @@ export function breakEvenDeltaPct(f: KpiFundamentals): number | null {
   const breakEvenRevenue = fixedCost / contributionRate;
   return Math.round(((breakEvenRevenue - f.revenue) / f.revenue) * 1000) / 10;
 }
+
+/** 目標営業利益を達成するために必要な売上の逆算結果。 */
+export interface TargetRevenue {
+  /** 目標営業利益。 */
+  readonly targetOperatingProfit: number;
+  /** 必要売上 = (固定費 + 目標利益) ÷ 限界利益率。 */
+  readonly requiredRevenue: number;
+  /** 現状売上からの必要変動率 (%)。基準 0 や算定不能なら null。 */
+  readonly upliftPct: number | null;
+}
+
+/**
+ * 目標営業利益から必要売上を逆算する。
+ * 必要売上 = (固定費 + 目標利益) ÷ 限界利益率。変動費率は基準売上から求める。
+ * 限界利益率が非正、または基準売上が 0 のときは算定不能 (requiredRevenue=0/uplift=null)。
+ */
+export function requiredRevenueForTarget(
+  f: KpiFundamentals,
+  targetOperatingProfit: number,
+): TargetRevenue {
+  if (f.revenue <= 0) {
+    return { targetOperatingProfit, requiredRevenue: 0, upliftPct: null };
+  }
+  const variableRate = (f.cogs + f.advertising) / f.revenue;
+  const contributionRate = 1 - variableRate;
+  const fixedCost = f.sga + f.depreciation;
+  if (contributionRate <= 0) {
+    return { targetOperatingProfit, requiredRevenue: 0, upliftPct: null };
+  }
+  const requiredRevenue = Math.round((fixedCost + targetOperatingProfit) / contributionRate);
+  const upliftPct = Math.round(((requiredRevenue - f.revenue) / f.revenue) * 1000) / 10;
+  return { targetOperatingProfit, requiredRevenue, upliftPct };
+}

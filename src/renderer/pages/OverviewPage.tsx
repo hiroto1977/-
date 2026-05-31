@@ -10,7 +10,7 @@ import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
-import { profitSensitivity, breakEvenDeltaPct } from '../data/profitSensitivity';
+import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
@@ -221,11 +221,18 @@ export function OverviewPage() {
   );
 
   const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
-    const f = summarizeFundamentals(kpiRecords.map((r) => r.data));
-    return { rows: profitSensitivity(f), breakEvenDelta: breakEvenDeltaPct(f) };
-  }, [overview.kpi.hasData, kpiRecords]);
+    return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals) };
+  }, [overview.kpi.hasData, fundamentals]);
+
+  const [targetProfit, setTargetProfit] = useState('');
+  const targetRevenue = useMemo(() => {
+    const t = Number(targetProfit);
+    if (!overview.kpi.hasData || !Number.isFinite(t) || targetProfit.trim() === '') return null;
+    return requiredRevenueForTarget(fundamentals, t);
+  }, [overview.kpi.hasData, fundamentals, targetProfit]);
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
@@ -344,6 +351,29 @@ export function OverviewPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>目標利益から必要売上を逆算</div>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={targetProfit}
+                placeholder="目標営業利益 (円)"
+                onChange={(e) => setTargetProfit(e.target.value)}
+                style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
+              />
+              {targetRevenue && (
+                targetRevenue.upliftPct === null ? (
+                  <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>限界利益が非正のため算定できません。</span>
+                ) : (
+                  <span style={{ fontSize: 13 }}>
+                    必要売上 <strong>{yen.format(targetRevenue.requiredRevenue)}</strong>
+                    （現状から <strong style={{ color: targetRevenue.upliftPct >= 0 ? '#f59e0b' : '#22c55e' }}>{targetRevenue.upliftPct > 0 ? '+' : ''}{targetRevenue.upliftPct}%</strong>）
+                  </span>
+                )
+              )}
+            </div>
           </div>
         </Section>
       )}

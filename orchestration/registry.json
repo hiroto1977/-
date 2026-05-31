@@ -287,7 +287,8 @@
           "industry-presets",
           "monthly-trend",
           "trend-chart",
-          "sensitivity-analysis"
+          "sensitivity-analysis",
+          "target-profit"
         ]
       },
       {
@@ -621,6 +622,13 @@
       "id": "sensitivity-analysis",
       "domain": "経営(感度分析)",
       "focus": "売上変動に対する営業利益のWhat-if/損益分岐までの売上余地",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "target-profit",
+      "domain": "経営(目標利益逆算)",
+      "focus": "目標営業利益から必要売上・必要変動率を逆算",
       "active": true,
       "manager": "mgr-management"
     }
@@ -1858,9 +1866,67 @@
       "shipped": [
         "損益感度分析(売上変動±%に対する営業利益のWhat-if・損益分岐までの売上余地)"
       ]
+    },
+    {
+      "round": 41,
+      "teamCount": 42,
+      "teams": [
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "目標利益から必要売上の逆算(必要変動率)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "target-profit-revenue",
+      "team": "target-profit",
+      "title": "目標営業利益から必要売上の逆算",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "profit-sensitivity",
       "team": "sensitivity-analysis",
