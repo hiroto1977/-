@@ -33,7 +33,8 @@
     { "id": "savings-planning", "domain": "家計/貯蓄計画", "focus": "目標達成積立/72の法則/緊急予備資金", "active": true },
     { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true },
     { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true },
-    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true }
+    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true },
+    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -44,9 +45,11 @@
     { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] },
     { "round": 7, "teamCount": 8, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation"], "shipped": ["不動産CCR・イールドギャップ"] },
     { "round": 8, "teamCount": 9, "teams": ["tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "quality-audit"], "shipped": ["住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"] },
-    { "round": 9, "teamCount": 10, "teams": ["kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["KPI価格変更シミュレーション"] }
+    { "round": 9, "teamCount": 10, "teams": ["kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["KPI価格変更シミュレーション"] },
+    { "round": 10, "teamCount": 11, "teams": ["management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"] }
   ],
   "backlog": [
+    { "id": "scorecard-liquidity-growth", "team": "management-integration", "title": "スコアカードに資金繰り(DSCR/ランウェイ)・成長性の自動連携", "priority": 1, "status": "designed" },
     { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },

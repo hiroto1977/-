@@ -6,6 +6,11 @@ import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
+import { buildManagementScorecard } from '../../shared/managementScorecard';
+
+const SCORE_COLOR = (s: number | null): string =>
+  s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
+const VERDICT_LABEL: Record<string, string> = { poor: '要改善', caution: '注意', good: '良好', excellent: '優良' };
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
@@ -44,6 +49,17 @@ export function OverviewPage() {
       }),
     [plan, salesRecords, kpiRecords, memberRecords],
   );
+
+  // 経営スコアカード — KPI実績から収益性・安全性を集約 (データがある時のみ意味を持つ)。
+  const scorecard = useMemo(() => {
+    const opMargin = overview.kpi.hasData && overview.kpi.revenue > 0
+      ? (overview.kpi.operatingProfit / overview.kpi.revenue) * 100
+      : undefined;
+    return buildManagementScorecard({
+      operatingMarginPct: opMargin,
+      safetyMarginPct: overview.kpi.hasData ? overview.kpi.safetyMargin : undefined,
+    });
+  }, [overview]);
 
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
@@ -93,6 +109,39 @@ export function OverviewPage() {
           />
         </div>
       </Section>
+
+      {overview.kpi.hasData && (
+        <Section title={`経営スコアカード — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            収益性・安全性・資金繰り・成長性の経営指標を 0〜100 で集約した健全性スコアです。
+            <strong>※ 概算の経営診断であり財務助言ではありません。</strong>業種・規模で適正値は異なります。
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+            {scorecard.categories.map((c) => (
+              <div key={c.category} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{c.label}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: SCORE_COLOR(c.score) }}>
+                  {c.score === null ? '—' : `${c.score}`}
+                  {c.score !== null && <span style={{ fontSize: 12, color: 'var(--text-mute)' }}> /100</span>}
+                </div>
+                {c.components.length > 0 && (
+                  <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4 }}>
+                    {c.components.map((x) => x.label).join(' / ')}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          {scorecard.alerts.length > 0 && (
+            <ul style={{ margin: '12px 0 0', paddingLeft: 18, fontSize: 12, color: '#f59e0b', lineHeight: 1.7 }}>
+              {scorecard.alerts.map((a) => <li key={a}>{a}</li>)}
+            </ul>
+          )}
+          <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
+            資金繰り (DSCR・ランウェイ) や成長性は、会計連携・期間データが揃うと自動で加点されます。
+          </p>
+        </Section>
+      )}
     </div>
   );
 }
