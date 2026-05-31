@@ -34,6 +34,7 @@ import {
   applyTaxCreditsWithSurtax,
   resolveMortgageParams,
   mortgagePeriodStatus,
+  calcDividendLevyCredit,
   type HousingPerformance,
   type DividendKind,
 } from '../../shared/taxCredits';
@@ -288,6 +289,8 @@ export function TaxPage() {
     separate: '申告分離課税',
     aggregate: '総合課税',
   };
+  // 配当を申告した場合に所得割から差し引ける配当割控除 (住民税5%)。
+  const dividendLevyCredit = useMemo(() => calcDividendLevyCredit(num(divIncomeStr)), [divIncomeStr]);
 
   // --- ⑨ 公的年金等の雑所得 ---
   const [pensionIncomeStr, setPensionIncomeStr] = useState('3000000');
@@ -754,6 +757,9 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 申告分離は申告不要と同じ税率ですが、上場株式等の譲渡損との損益通算・繰越控除ができる点が異なります。
           令和6年度以降、所得税と住民税で異なる課税方式は選べません。
+          {dividendLevyCredit > 0 && (
+            <> なお総合課税・申告分離で申告すると、源泉徴収済みの<strong>配当割控除 約{jpy(dividendLevyCredit)}</strong> (配当×5%) を住民税の所得割から差し引けます。</>
+          )}
         </div>
       </Section>
 

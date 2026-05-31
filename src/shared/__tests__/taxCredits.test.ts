@@ -10,6 +10,11 @@ import {
   MORTGAGE_INCOME_LIMIT,
   mortgageDeductionPeriod,
   mortgagePeriodStatus,
+  calcDividendLevyCredit,
+  calcCapitalGainsLevyCredit,
+  calcGeneralDonationCredit,
+  RESIDENT_LEVY_WITHHOLDING_RATE,
+  GENERAL_DONATION_THRESHOLD,
 } from '../taxCredits';
 
 describe('mortgageDeductionPeriod / mortgagePeriodStatus (控除期間)', () => {
@@ -315,5 +320,46 @@ describe('calcDividendCredit kinds (投信区分)', () => {
     const a = calcDividendCredit({ dividendIncome: 500_000, taxableTotalIncome: 5_000_000 });
     const b = calcDividendCredit({ dividendIncome: 500_000, taxableTotalIncome: 5_000_000, kind: 'stock' });
     expect(a).toEqual(b);
+  });
+});
+
+describe('calcDividendLevyCredit / calcCapitalGainsLevyCredit (住民税の源泉控除)', () => {
+  it('credits 5% of declared dividend income', () => {
+    expect(calcDividendLevyCredit(1_000_000)).toBe(50_000);
+    expect(RESIDENT_LEVY_WITHHOLDING_RATE).toBe(0.05);
+  });
+
+  it('credits 5% of capital gains', () => {
+    expect(calcCapitalGainsLevyCredit(2_000_000)).toBe(100_000);
+  });
+
+  it('clamps negative income/gain to zero', () => {
+    expect(calcDividendLevyCredit(-100)).toBe(0);
+    expect(calcCapitalGainsLevyCredit(-100)).toBe(0);
+  });
+
+  it('honors a custom withholding rate', () => {
+    expect(calcDividendLevyCredit(1_000_000, 0.03)).toBe(30_000);
+  });
+});
+
+describe('calcGeneralDonationCredit (一般寄附金税額控除・住民税)', () => {
+  it('returns 0 at or below the 2,000 self-pay floor', () => {
+    expect(calcGeneralDonationCredit(2_000)).toBe(0);
+    expect(calcGeneralDonationCredit(1_999)).toBe(0);
+    expect(GENERAL_DONATION_THRESHOLD).toBe(2_000);
+  });
+
+  it('applies the rate by donation target (both 10% / municipal 6% / prefectural 4%)', () => {
+    // (12,000 − 2,000) = 10,000 base
+    expect(calcGeneralDonationCredit(12_000, 'both')).toBe(1_000); // 10%
+    expect(calcGeneralDonationCredit(12_000, 'municipal')).toBe(600); // 6%
+    expect(calcGeneralDonationCredit(12_000, 'prefectural')).toBe(400); // 4%
+    // default is 'both'
+    expect(calcGeneralDonationCredit(12_000)).toBe(1_000);
+  });
+
+  it('clamps negative donation to zero', () => {
+    expect(calcGeneralDonationCredit(-500)).toBe(0);
   });
 });

@@ -323,3 +323,66 @@ export function applyTaxCreditsWithSurtax(
   );
   return { incomeTax, residentTax };
 }
+
+// --- 住民税の配当割・株式等譲渡所得割控除 -------------------------------
+//
+// 上場株式の配当・譲渡益を住民税で総合課税 or 申告分離申告した場合、源泉徴収
+// 済みの住民税 (配当割・株式等譲渡所得割、いずれも5%) を所得割から控除する。
+// これは住民税のみの控除で、所得税には影響しない (地方税法)。
+
+/** 住民税の配当割・株式等譲渡所得割の源泉徴収率 (5%)。 */
+export const RESIDENT_LEVY_WITHHOLDING_RATE = 0.05;
+
+/**
+ * 配当割控除を計算する (住民税のみ)。
+ * 上場株式配当を申告した場合、源泉徴収済みの住民税5%を所得割から控除する。
+ *
+ * @param declaredDividend 申告した配当所得 (円)
+ * @param withheldRate 源泉徴収率 (既定 5%)
+ */
+export function calcDividendLevyCredit(
+  declaredDividend: number,
+  withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
+): number {
+  return yen(Math.max(0, declaredDividend) * withheldRate);
+}
+
+/**
+ * 株式等譲渡所得割控除を計算する (住民税のみ)。
+ * 上場株式等の譲渡益で源泉徴収済みの住民税5%を所得割から控除する。
+ *
+ * @param capitalGain 株式等譲渡所得 (円)。損失 (負) は0。
+ * @param withheldRate 源泉徴収率 (既定 5%)
+ */
+export function calcCapitalGainsLevyCredit(
+  capitalGain: number,
+  withheldRate: number = RESIDENT_LEVY_WITHHOLDING_RATE,
+): number {
+  return yen(Math.max(0, capitalGain) * withheldRate);
+}
+
+// --- 一般寄附金税額控除 (住民税・ふるさと納税以外) ----------------------
+
+/** 一般寄附金の寄附先区分。 */
+export type GeneralDonationKind = 'prefectural' | 'municipal' | 'both';
+
+/** 一般寄附金税額控除の自己負担額 (円)。 */
+export const GENERAL_DONATION_THRESHOLD = 2_000;
+
+/**
+ * 一般寄附金税額控除を計算する (住民税のみ・ふるさと納税以外)。
+ * 都道府県指定 = 4%、市区町村指定 = 6%、両方指定 = 10% を
+ * (寄附額 − 2,000円) に乗じて所得割から控除する (地方税法)。
+ *
+ * @param donation 寄附額 (円)
+ * @param kind 寄附先区分 (既定 'both')
+ */
+export function calcGeneralDonationCredit(
+  donation: number,
+  kind: GeneralDonationKind = 'both',
+): number {
+  const amount = Math.max(0, donation);
+  if (amount <= GENERAL_DONATION_THRESHOLD) return 0;
+  const rate = kind === 'both' ? 0.1 : kind === 'municipal' ? 0.06 : 0.04;
+  return yen((amount - GENERAL_DONATION_THRESHOLD) * rate);
+}
