@@ -1,8 +1,8 @@
 {
   "$schema": "./registry.schema.json",
-  "version": 1,
+  "version": 2,
   "policy": {
-    "description": "AIオーケストレーションの進化ルール。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
+    "description": "AIオーケストレーションの進化ルール。CEO配下に役員層→管理職層→一般職層の3階層を置き、作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
     "minTeamsForRound": [
       { "round": 1, "minTeams": 2 },
       { "round": 2, "minTeams": 2 },
@@ -13,28 +13,55 @@
     ],
     "growthRule": "各 round の teamCount は前 round 以上であること (単調増加)。新領域の追加で細分化する。",
     "roleSeparation": "並列=調査/設計 (read-only Agent)、直列=実装+全ゲート検証 (オーケストレーター)。共有ファイルへの同時書込みを避ける。",
-    "qualityGate": "各実装コミット前に typecheck / lint / test / verify:all / build:web の全 green を必須とする。"
+    "qualityGate": "各実装コミット前に typecheck / lint / test / verify:all / build:web の全 green を必須とする。",
+    "hierarchy": {
+      "description": "AIは CEO 以外の3階層に配置する。指揮系統: CEO → 役員層(executives) → 管理職層(managers) → 一般職層(teams)。",
+      "layers": [
+        { "layer": "ceo", "title": "最高経営責任者", "staffedByAI": false, "responsibility": "全体方針の決定・最終承認・全ゲート検証 (オーケストレーター本体が担う。AIエージェントには配置しない)" },
+        { "layer": "executive", "title": "役員層", "staffedByAI": true, "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。配下の管理職を束ねる" },
+        { "layer": "manager", "title": "管理職層", "staffedByAI": true, "responsibility": "部の論点設計・調査チームの編成と割当・品質確認の一次窓口。配下の一般職を束ねる" },
+        { "layer": "staff", "title": "一般職層", "staffedByAI": true, "responsibility": "担当ドメインの調査・設計 (read-only Agent)。実装の素案を提供" }
+      ]
+    }
+  },
+  "org": {
+    "ceo": { "id": "ceo", "title": "CEO (オーケストレーター)", "staffedByAI": false, "note": "AIには配置しない最上位。実装・全ゲート検証・コミットを担う本体。" },
+    "executives": [
+      { "id": "cfo", "title": "財務・税務担当役員 (CFO)", "reportsTo": "ceo", "owns": ["mgr-tax", "mgr-funding", "mgr-payroll"] },
+      { "id": "cio", "title": "投資・資産担当役員 (CIO)", "reportsTo": "ceo", "owns": ["mgr-investment", "mgr-household"] },
+      { "id": "coo", "title": "経営・分析担当役員 (COO)", "reportsTo": "ceo", "owns": ["mgr-management"] },
+      { "id": "cqo", "title": "品質・セキュリティ担当役員 (CQO)", "reportsTo": "ceo", "owns": ["mgr-quality"] }
+    ],
+    "managers": [
+      { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },
+      { "id": "mgr-funding", "title": "資金調達部長", "reportsTo": "cfo", "teams": ["funding-cashflow", "funding-cost", "funding-scenario"] },
+      { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "cfo", "teams": ["payroll"] },
+      { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
+      { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
+      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "coo", "teams": ["kpi-analysis", "management-integration", "depreciation"] },
+      { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
+    ]
   },
   "teams": [
-    { "id": "tax-income", "domain": "税務(所得税)", "focus": "所得税・速算表・復興特別所得税", "active": true },
-    { "id": "tax-resident", "domain": "税務(住民税)", "focus": "住民税・所得割・均等割・調整控除・税額控除", "active": true },
-    { "id": "tax-deductions", "domain": "税務(所得控除)", "focus": "配偶者/扶養/社保/生命保険/医療費/iDeCo等", "active": true },
-    { "id": "tax-credits", "domain": "税務(税額控除)", "focus": "住宅ローン/配当/ふるさと納税", "active": true },
-    { "id": "tax-separate", "domain": "税務(分離課税)", "focus": "退職所得/譲渡所得/一時所得/公的年金", "active": true },
-    { "id": "tax-consumption", "domain": "税務(消費税)", "focus": "本則/簡易/2割特例/インボイス", "active": true },
-    { "id": "funding-cashflow", "domain": "資金調達(資金繰り)", "focus": "月次CF/ランウェイ/DSCR/返済", "active": true },
-    { "id": "funding-cost", "domain": "資金調達(コスト)", "focus": "実効調達コスト率/自己負担比率/質スコア", "active": true },
-    { "id": "funding-scenario", "domain": "資金調達(シナリオ)", "focus": "採択確率/期待値/3シナリオ残高", "active": true },
-    { "id": "kpi-analysis", "domain": "経営(KPI/BEP)", "focus": "損益分岐点/目標利益/販売数量/価格", "active": true },
-    { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true },
-    { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true },
-    { "id": "security", "domain": "セキュリティ", "focus": "パスワード強度/エントロピー/突破時間", "active": true },
-    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit" },
-    { "id": "savings-planning", "domain": "家計/貯蓄計画", "focus": "目標達成積立/72の法則/緊急予備資金", "active": true },
-    { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true },
-    { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true },
-    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true },
-    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true }
+    { "id": "tax-income", "domain": "税務(所得税)", "focus": "所得税・速算表・復興特別所得税", "active": true, "manager": "mgr-tax" },
+    { "id": "tax-resident", "domain": "税務(住民税)", "focus": "住民税・所得割・均等割・調整控除・税額控除", "active": true, "manager": "mgr-tax" },
+    { "id": "tax-deductions", "domain": "税務(所得控除)", "focus": "配偶者/扶養/社保/生命保険/医療費/iDeCo等", "active": true, "manager": "mgr-tax" },
+    { "id": "tax-credits", "domain": "税務(税額控除)", "focus": "住宅ローン/配当/ふるさと納税", "active": true, "manager": "mgr-tax" },
+    { "id": "tax-separate", "domain": "税務(分離課税)", "focus": "退職所得/譲渡所得/一時所得/公的年金", "active": true, "manager": "mgr-tax" },
+    { "id": "tax-consumption", "domain": "税務(消費税)", "focus": "本則/簡易/2割特例/インボイス", "active": true, "manager": "mgr-tax" },
+    { "id": "funding-cashflow", "domain": "資金調達(資金繰り)", "focus": "月次CF/ランウェイ/DSCR/返済", "active": true, "manager": "mgr-funding" },
+    { "id": "funding-cost", "domain": "資金調達(コスト)", "focus": "実効調達コスト率/自己負担比率/質スコア", "active": true, "manager": "mgr-funding" },
+    { "id": "funding-scenario", "domain": "資金調達(シナリオ)", "focus": "採択確率/期待値/3シナリオ残高", "active": true, "manager": "mgr-funding" },
+    { "id": "kpi-analysis", "domain": "経営(KPI/BEP)", "focus": "損益分岐点/目標利益/販売数量/価格", "active": true, "manager": "mgr-management" },
+    { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true, "manager": "mgr-investment" },
+    { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true, "manager": "mgr-investment" },
+    { "id": "security", "domain": "セキュリティ", "focus": "パスワード強度/エントロピー/突破時間", "active": true, "manager": "mgr-quality" },
+    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit", "manager": "mgr-quality" },
+    { "id": "savings-planning", "domain": "家計/貯蓄計画", "focus": "目標達成積立/72の法則/緊急予備資金", "active": true, "manager": "mgr-household" },
+    { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true, "manager": "mgr-household" },
+    { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true, "manager": "mgr-payroll" },
+    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true, "manager": "mgr-management" },
+    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },

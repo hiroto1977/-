@@ -25,7 +25,52 @@
         },
         "growthRule": { "type": "string" },
         "roleSeparation": { "type": "string" },
-        "qualityGate": { "type": "string" }
+        "qualityGate": { "type": "string" },
+        "hierarchy": { "type": "object" }
+      }
+    },
+    "org": {
+      "type": "object",
+      "required": ["ceo", "executives", "managers"],
+      "properties": {
+        "ceo": {
+          "type": "object",
+          "required": ["id", "title", "staffedByAI"],
+          "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "staffedByAI": { "type": "boolean" },
+            "note": { "type": "string" }
+          }
+        },
+        "executives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "reportsTo", "owns"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "reportsTo": { "type": "string" },
+              "owns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "managers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "reportsTo", "teams"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "reportsTo": { "type": "string" },
+              "teams": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
       }
     },
     "teams": {
@@ -39,7 +84,8 @@
           "domain": { "type": "string" },
           "focus": { "type": "string" },
           "active": { "type": "boolean" },
-          "role": { "type": "string", "enum": ["research", "audit"] }
+          "role": { "type": "string", "enum": ["research", "audit"] },
+          "manager": { "type": "string" }
         }
       }
     },

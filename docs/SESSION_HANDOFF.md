@@ -69,12 +69,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - IPC handler 追加 / `LIVE_FETCHERS` 行範囲変更時の line ref 追従
 
 ### F. AIオーケストレーションの進化基盤 (`orchestration/`)
-精度向上サイクルは `orchestration/registry.json` (チーム / ラウンド履歴 / バックログ / 進化ルール) を
+精度向上サイクルは `orchestration/registry.json` (組織 / チーム / ラウンド履歴 / バックログ / 進化ルール) を
 単一の真実源として回す。`npm run verify:orchestration` (= `verify:all` の一部 + CI) が
-**チーム数の単調増加・最低チーム数・参照整合・teamCount一致** を機械検証する。
-- サイクル開始時に `npm run orchestration:plan` で「次ラウンドの推奨チーム数 + 優先度順の着手候補」を取得。
-- 実装後は registry.json を更新 (teams[] に新領域 / rounds[] に追記 / backlog の status 更新)。teamCount は前ラウンド以上。
-- 詳細は `orchestration/README.md`。チームを増やし続けても整合性が CI で保たれる設計。
+**チーム数の単調増加・最低チーム数・参照整合・teamCount一致** に加え、**組織階層の整合**を機械検証する。
+- 組織は `org` に **CEO 1 / 役員 4 / 管理職 7 / 一般職(teams) 19** の3階層 (CEO は AI 非配置=オーケストレーター本体)。
+  各 active team は `manager` で実在の管理職に1つだけ属し、管理職→役員→CEO の指揮系統が一意であることを検証。
+- サイクル開始時に `npm run orchestration:plan` で「組織図 + 次ラウンドの推奨チーム数 + 優先度順の着手候補」を取得。
+- 実装後は registry.json を更新 (teams[] に新領域+manager / rounds[] に追記 / backlog の status 更新)。teamCount は前ラウンド以上。
+- 詳細は `orchestration/README.md`。チーム・階層を増やし続けても整合性が CI で保たれる設計。
 
 ## 既知の罠
 

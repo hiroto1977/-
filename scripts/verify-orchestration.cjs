@@ -60,6 +60,53 @@ function main() {
     teamIds.add(t.id);
   }
 
+  // --- 組織階層 (org) の検証: CEO → 役員層 → 管理職層 → 一般職層 ---
+  // 7. CEO は AI に配置しない。8. 役員は CEO 直属。9. 各管理職は実在の役員に
+  //    属し、管理職が束ねる teams は実在。10. 全 active team は実在の管理職に
+  //    1 つだけ属する (指揮系統が一意)。
+  if (reg.org) {
+    const org = reg.org;
+    if (org.ceo && org.ceo.staffedByAI === true) {
+      problems.push('org.ceo.staffedByAI は false であること (CEO は AI に配置しない)');
+    }
+    const execIds = new Set((org.executives || []).map((e) => e.id));
+    const mgrIds = new Set((org.managers || []).map((m) => m.id));
+    for (const e of org.executives || []) {
+      if (e.reportsTo !== (org.ceo && org.ceo.id)) {
+        problems.push(`役員 ${e.id} の reportsTo は CEO であること (現在: ${e.reportsTo})`);
+      }
+      for (const m of e.owns || []) {
+        if (!mgrIds.has(m)) problems.push(`役員 ${e.id} が未知の管理職 "${m}" を保有`);
+      }
+    }
+    // 各管理職が属する役員の owns に含まれているか (双方向整合)。
+    const mgrToExec = new Map();
+    for (const e of org.executives || []) for (const m of e.owns || []) mgrToExec.set(m, e.id);
+    for (const m of org.managers || []) {
+      if (!execIds.has(m.reportsTo)) problems.push(`管理職 ${m.id} の reportsTo が未知の役員 "${m.reportsTo}"`);
+      else if (mgrToExec.get(m.id) !== m.reportsTo) {
+        problems.push(`管理職 ${m.id} の reportsTo(${m.reportsTo}) と役員の owns が不一致`);
+      }
+      for (const t of m.teams || []) {
+        if (!teamIds.has(t)) problems.push(`管理職 ${m.id} が未知の team "${t}" を保有`);
+      }
+    }
+    // 全 active team が実在の管理職に 1 つだけ属する。
+    const teamToMgr = new Map();
+    for (const m of org.managers || []) for (const t of m.teams || []) {
+      if (teamToMgr.has(t)) problems.push(`team ${t} が複数の管理職に属する (${teamToMgr.get(t)} / ${m.id})`);
+      teamToMgr.set(t, m.id);
+    }
+    for (const t of reg.teams) {
+      if (!t.active) continue;
+      if (!t.manager || !mgrIds.has(t.manager)) {
+        problems.push(`team ${t.id} の manager が未設定 or 未知 (${t.manager})`);
+      } else if (teamToMgr.get(t.id) !== t.manager) {
+        problems.push(`team ${t.id} の manager(${t.manager}) と管理職の teams が不一致`);
+      }
+    }
+  }
+
   // minTeamsForRound のマップ。
   const minTeams = new Map();
   for (const e of reg.policy.minTeamsForRound || []) minTeams.set(e.round, e.minTeams);
@@ -102,11 +149,26 @@ function main() {
 
   const lastRound = reg.rounds.reduce((m, r) => Math.max(m, r.round), 0);
   const lastCount = reg.rounds.find((r) => r.round === lastRound)?.teamCount ?? 0;
+  const execCount = reg.org ? (reg.org.executives || []).length : 0;
+  const mgrCount = reg.org ? (reg.org.managers || []).length : 0;
   console.log(
-    `✅ orchestration registry OK — teams: ${reg.teams.length} / rounds: ${reg.rounds.length} / ` +
-    `直近 round ${lastRound} は ${lastCount} チーム / backlog 未着手: ` +
+    `✅ orchestration registry OK — 組織: CEO 1 / 役員 ${execCount} / 管理職 ${mgrCount} / 一般職(teams) ${reg.teams.length} / ` +
+    `rounds: ${reg.rounds.length} / 直近 round ${lastRound} は ${lastCount} チーム / backlog 未着手: ` +
     `${reg.backlog.filter((b) => b.status === 'designed').length} 件`,
   );
+
+  if (wantPlan && reg.org) {
+    console.log('\n🏢 組織図 (CEO → 役員層 → 管理職層 → 一般職層):');
+    console.log(`  CEO: ${reg.org.ceo.title}`);
+    for (const e of reg.org.executives || []) {
+      console.log(`   └ ${e.title} [${e.id}]`);
+      for (const mid of e.owns || []) {
+        const m = (reg.org.managers || []).find((x) => x.id === mid);
+        if (!m) continue;
+        console.log(`       └ ${m.title} [${m.id}] — ${m.teams.length} チーム`);
+      }
+    }
+  }
 
   if (wantPlan) {
     const nextRound = lastRound + 1;

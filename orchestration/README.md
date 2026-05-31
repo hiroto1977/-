@@ -11,6 +11,29 @@
 | `registry.schema.json` | registry.json の構造 (JSON Schema) |
 | `../scripts/verify-orchestration.cjs` | 整合検証 + 次ラウンド計画の自動算出 |
 
+## 組織構造 (registry.json の `org`) — 3階層 + CEO
+
+AIは **CEO 以外**の3階層に配置する。指揮系統は機械検証される (`verify-orchestration`)。
+
+```
+CEO (オーケストレーター — AIには配置しない。実装・全ゲート検証・コミットを担う本体)
+ ├ 役員層 (executive)  … 領域群の戦略・優先順位・リスク監督。配下の管理職を束ねる
+ │   └ 管理職層 (manager) … 部の論点設計・調査チームの編成と割当・品質一次確認
+ │        └ 一般職層 (staff = teams) … ドメインの調査/設計 (read-only Agent)
+```
+
+現編成: **CEO 1 / 役員 4 (CFO・CIO・COO・CQO) / 管理職 7 / 一般職 19 チーム**。
+
+| 役員 | 配下の部 (管理職) |
+|---|---|
+| CFO (財務・税務) | 税務部 / 資金調達部 / 給与・人件費部 |
+| CIO (投資・資産) | 投資部 / 家計・為替部 |
+| COO (経営・分析) | 経営分析部 |
+| CQO (品質・セキュリティ) | 品質保証部 |
+
+検証される不変条件: CEO は AI 非配置 / 役員は CEO 直属 / 管理職は実在の役員に属し双方向整合 /
+全 active チームは実在の管理職に**1つだけ**属する (指揮系統が一意)。
+
 ## 進化ルール (registry.json の `policy`)
 
 1. **単調増加**: 各 round の `teamCount` は前 round 以上。作業のたびにチームは減らさない。
