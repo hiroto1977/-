@@ -308,7 +308,8 @@
           "cash-forecast",
           "report-export",
           "report-trend",
-          "cashflow-chart"
+          "cashflow-chart",
+          "report-sensitivity"
         ]
       },
       {
@@ -631,6 +632,13 @@
       "focus": "目標営業利益から必要売上・必要変動率を逆算",
       "active": true,
       "manager": "mgr-management"
+    },
+    {
+      "id": "report-sensitivity",
+      "domain": "経営(レポート感度)",
+      "focus": "経営レポートに損益分岐点までの売上余地を組込み",
+      "active": true,
+      "manager": "mgr-fpa"
     }
   ],
   "rounds": [
@@ -1917,9 +1925,68 @@
       "shipped": [
         "目標利益から必要売上の逆算(必要変動率)"
       ]
+    },
+    {
+      "round": 42,
+      "teamCount": 43,
+      "teams": [
+        "report-sensitivity",
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "経営レポートに損益分岐点までの売上余地を組込み"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "report-breakeven-room",
+      "team": "report-sensitivity",
+      "title": "経営レポートへの損益分岐点余地の組込み",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "target-profit-revenue",
       "team": "target-profit",

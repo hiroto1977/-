@@ -38,6 +38,8 @@ export function buildManagementReport(
   highlights: readonly Highlight[],
   asOf: string,
   monthlyTrend: readonly MonthlyTrendRow[] = [],
+  /** 損益分岐点までの売上変動余地 (%)。null / 未指定なら出力しない。 */
+  breakEvenDeltaPct: number | null = null,
 ): string {
   const k = overview.kpi;
   const lines: string[] = [];

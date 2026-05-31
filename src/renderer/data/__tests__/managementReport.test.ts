@@ -90,4 +90,18 @@ describe('buildManagementReport', () => {
     expect(md).toContain('| 2026-04 |');
     expect(md).toContain('+20%'); // 2026-05 growth
   });
+
+  it('includes the break-even room line when a delta is supplied', () => {
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
+    const sc = buildManagementScorecard({});
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', [], -50);
+    expect(md).toContain('損益分岐点までの売上余地: -50%');
+  });
+
+  it('omits the break-even room line when null', () => {
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
+    const sc = buildManagementScorecard({});
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', [], null);
+    expect(md).not.toContain('損益分岐点までの売上余地');
+  });
 });

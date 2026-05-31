@@ -236,8 +236,8 @@ export function OverviewPage() {
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
-    () => buildManagementReport(overview, scorecard, highlights, new Date().toISOString().slice(0, 10), monthlyTrend),
-    [overview, scorecard, highlights, monthlyTrend],
+    () => buildManagementReport(overview, scorecard, highlights, new Date().toISOString().slice(0, 10), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
+    [overview, scorecard, highlights, monthlyTrend, sensitivity],
   );
 
   async function copyReport() {
