@@ -168,4 +168,21 @@ describe('buildBusinessOverview', () => {
     expect(o.productivity.revenuePerCapita).toBe(0);
     expect(o.productivity.operatingProfitPerCapita).toBe(0);
   });
+
+  it('leaves the budget variance null when no budget is supplied', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.budget).toBeNull();
+  });
+
+  it('computes the budget variance when budgets are supplied', () => {
+    // budget revenue 80000 vs actual 100000 → 125%
+    const budget: KpiActual[] = [
+      { period: '2026-05', unit: '全社', revenue: 80000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, kpiBudgets: budget, members: [] });
+    expect(o.budget).not.toBeNull();
+    expect(o.budget!.revenue.budget).toBe(80000);
+    expect(o.budget!.revenue.actual).toBe(100000);
+    expect(o.budget!.revenue.achievementPct).toBe(125);
+  });
 });

@@ -3,6 +3,7 @@ import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
+import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
@@ -39,6 +40,7 @@ export function OverviewPage() {
   const { plan } = usePlan();
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const { records: kpiRecords } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
 
   const overview = useMemo(
@@ -47,9 +49,10 @@ export function OverviewPage() {
         plan,
         sales: salesRecords.map((r) => r.data),
         kpiActuals: kpiRecords.map((r) => r.data),
+        kpiBudgets: budgetRecords.map((r) => r.data),
         members: memberRecords.map((r) => ({ role: r.data.role })),
       }),
-    [plan, salesRecords, kpiRecords, memberRecords],
+    [plan, salesRecords, kpiRecords, budgetRecords, memberRecords],
   );
 
   // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
@@ -210,6 +213,29 @@ export function OverviewPage() {
             成長性は KPI 実績の期 (YYYY-MM) が 2 つ以上揃うと前期比で自動加点されます。CAGR・トレンドは
             期が増えるほど精度が上がります。資金繰り (DSCR・ランウェイ) は会計連携データが揃うと加点されます。
           </p>
+        </Section>
+      )}
+
+      {overview.budget && (
+        <Section title="予算実績差異 (BVA)">
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            予算 (計画) と実績の差異・達成率です。<strong>※ 予算と実績は同じ期間粒度で入力してください</strong>
+            （年間 vs 年間、または月次 vs 月次）。予算は KPI ページで入力できます。
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {([
+              { label: '売上高', v: overview.budget.revenue },
+              { label: '営業利益', v: overview.budget.operatingProfit },
+            ] as const).map(({ label, v }) => (
+              <Tile
+                key={label}
+                label={`${label} 達成率`}
+                value={v.achievementPct === null ? '—' : `${v.achievementPct}%`}
+                accent={v.achievementPct === null ? undefined : v.achievementPct >= 100 ? '#22c55e' : v.achievementPct >= 90 ? '#f59e0b' : '#ef4444'}
+                sub={`予算 ${yen.format(v.budget)} / 実績 ${yen.format(v.actual)} (差異 ${v.variance >= 0 ? '+' : ''}${yen.format(v.variance)})`}
+              />
+            ))}
+          </div>
         </Section>
       )}
     </div>

@@ -13,6 +13,7 @@ import {
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
+import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 
 interface Fund {
   revenue: number;
@@ -446,6 +447,99 @@ function summarizeRevenue(records: readonly { data: KpiActual }[]): number {
   return records.reduce((acc, r) => acc + r.data.revenue, 0);
 }
 
+// --- Budget (予算) panel — drives 予算実績差異 (BVA) ----------------------
+
+function BudgetPanel() {
+  const { records: budgets, add, remove } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
+  const { records: actuals } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState<string>();
+
+  const variance = useMemo(
+    () => computeBudgetVariance(budgets.map((r) => r.data), actuals.map((r) => r.data)),
+    [budgets, actuals],
+  );
+
+  async function onAdd() {
+    try {
+      const parsed = parseKpiActual(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_FORM);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
+        width: key === 'period' || key === 'unit' ? 110 : 100,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+        予算 (計画) を実績と<strong>同じ期間粒度</strong>で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が表示されます。
+      </p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('period', 'YYYY-MM')}
+        {field('unit', '事業名')}
+        {field('revenue', '売上高(予算)')}
+        {field('cogs', '売上原価')}
+        {field('advertising', '広告費')}
+        {field('sga', '販管費')}
+        {field('depreciation', '減価償却費')}
+        <button type="button" onClick={onAdd}>予算を追加</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {variance && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+          <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
+          <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
+        </div>
+      )}
+
+      {budgets.length > 0 ? (
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+              <th style={{ padding: '4px 8px' }}>期間</th>
+              <th style={{ padding: '4px 8px' }}>事業</th>
+              <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上高(予算)</th>
+              <th style={{ padding: '4px 8px' }} />
+            </tr>
+          </thead>
+          <tbody>
+            {budgets.map((r) => (
+              <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
+                <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                <td style={{ padding: '4px 8px' }}>
+                  <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
+          予算を入力すると、実績との差異 (BVA) が算出されます。
+        </p>
+      )}
+    </div>
+  );
+}
+
 // --- Page -------------------------------------------------------------
 
 export function KpiPage() {
@@ -491,6 +585,10 @@ export function KpiPage() {
 
       <Section title="実績入力 — ローカル保存 (実データで KPI 再計算)">
         <ActualsPanel />
+      </Section>
+
+      <Section title="予算入力 — 予算実績差異 (BVA)">
+        <BudgetPanel />
       </Section>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>

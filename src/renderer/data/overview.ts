@@ -17,11 +17,14 @@ import {
 } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
+import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
   readonly sales: readonly SalesEntry[];
   readonly kpiActuals: readonly KpiActual[];
+  /** 予算 (計画)。実績と同じ KpiActual 形。未入力なら BVA は出さない。 */
+  readonly kpiBudgets?: readonly KpiActual[];
   /** Team members (only the count + roles matter here). */
   readonly members: readonly { readonly role: Role }[];
 }
@@ -81,6 +84,8 @@ export interface BusinessOverview {
     /** 一人当たり営業利益。 */
     operatingProfitPerCapita: number;
   };
+  /** 予算実績差異 (BVA)。予算が未入力なら null。 */
+  readonly budget: BudgetVariance | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -151,6 +156,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       revenuePerCapita: perCapita(fundamentals.revenue),
       operatingProfitPerCapita: perCapita(kpi.operatingProfit),
     },
+    budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,
