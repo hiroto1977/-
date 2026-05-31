@@ -7,6 +7,7 @@ import {
   type HighlightSettings,
 } from '../data/highlightSettings';
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
+import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
@@ -78,11 +79,30 @@ function HighlightSettingsPanel({
     </label>
   );
 
+  function applyPreset(t: { declineWarnStreak: number; declineCriticalStreak: number; laborShareWarnPct: number; singleChannelWarnPct: number }) {
+    setForm({
+      declineWarnStreak: String(t.declineWarnStreak),
+      declineCriticalStreak: String(t.declineCriticalStreak),
+      laborShareWarnPct: String(t.laborShareWarnPct),
+      singleChannelWarnPct: String(t.singleChannelWarnPct),
+    });
+    setSaved(false);
+    setError(undefined);
+  }
+
   return (
     <div>
       <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
-        経営ハイライトの警告条件を業種・方針に合わせて調整できます。保存すると以後の判定に反映されます。
+        経営ハイライトの警告条件を業種・方針に合わせて調整できます。業種プリセットで初期値を入れてから微調整し、保存すると以後の判定に反映されます。
       </p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>業種プリセット:</span>
+        {INDUSTRY_PRESETS.map((p) => (
+          <button key={p.id} type="button" title={p.note} onClick={() => applyPreset(p.thresholds)} style={{ fontSize: 12 }}>
+            {p.label}
+          </button>
+        ))}
+      </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         {field('declineWarnStreak', '連続下落 警告(期)')}
         {field('declineCriticalStreak', '連続下落 危険(期)')}

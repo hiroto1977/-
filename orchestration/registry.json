@@ -283,7 +283,8 @@
           "revenue-concentration",
           "trend-monitor",
           "alert-policy",
-          "settings-persistence"
+          "settings-persistence",
+          "industry-presets"
         ]
       },
       {
@@ -565,6 +566,13 @@
       "id": "settings-persistence",
       "domain": "経営(設定永続化)",
       "focus": "ハイライトしきい値のUI編集・保存・検証/業種別プリセット",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "industry-presets",
+      "domain": "経営(業種プリセット)",
+      "focus": "業種別ハイライトしきい値プリセット(小売/製造/SaaS/サービス)/ワンクリック適用",
       "active": true,
       "manager": "mgr-management"
     }
@@ -1473,9 +1481,60 @@
       "shipped": [
         "ハイライトしきい値のUI編集・保存(永続化レイヤ + 経営サマリーに設定パネル)"
       ]
+    },
+    {
+      "round": 34,
+      "teamCount": 35,
+      "teams": [
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "業種別ハイライトしきい値プリセット(小売/製造/SaaS/サービス)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "industry-threshold-presets",
+      "team": "industry-presets",
+      "title": "業種別しきい値プリセット(ワンクリック適用)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "highlight-settings-ui",
       "team": "settings-persistence",
