@@ -18,5 +18,12 @@ export default defineConfig({
     // 4s minimum; raise from 5s default to give headroom.
     testTimeout: 30_000,
     hookTimeout: 30_000,
+    // CI's 2-core runners occasionally lose a fake-IndexedDB race even with
+    // forks (the global IDB queue / structured-clone timing under load), which
+    // surfaces as a single flaky file failure — observed as one of two
+    // identical `test` jobs failing for the same commit. A bounded retry
+    // self-heals these transient races WITHOUT masking real regressions: a
+    // genuine bug fails deterministically and still fails all attempts.
+    retry: process.env.CI ? 2 : 0,
   },
 });
