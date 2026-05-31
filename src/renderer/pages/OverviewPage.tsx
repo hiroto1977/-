@@ -9,7 +9,8 @@ import {
 import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
-import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, type KpiActual } from '../data/kpiActuals';
+import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
+import { profitSensitivity, breakEvenDeltaPct } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
@@ -220,6 +221,11 @@ export function OverviewPage() {
   );
 
   const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
+  const sensitivity = useMemo(() => {
+    if (!overview.kpi.hasData) return null;
+    const f = summarizeFundamentals(kpiRecords.map((r) => r.data));
+    return { rows: profitSensitivity(f), breakEvenDelta: breakEvenDeltaPct(f) };
+  }, [overview.kpi.hasData, kpiRecords]);
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
@@ -300,6 +306,40 @@ export function OverviewPage() {
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.revenueGrowthPct === null ? 'var(--text-mute)' : r.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444' }}>
                       {r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`}
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+      )}
+
+      {sensitivity && (
+        <Section title="損益感度分析 (売上が変動したら)">
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            売上が増減したときの営業利益の試算です (変動費は売上比例・固定費は一定と仮定)。
+            {sensitivity.breakEvenDelta !== null && (
+              <> 損益分岐点まで売上 <strong>{sensitivity.breakEvenDelta > 0 ? '+' : ''}{sensitivity.breakEvenDelta}%</strong> の余地があります。</>
+            )}
+            <strong>※ 概算試算であり財務助言ではありません。</strong>
+          </p>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+                  <th style={{ padding: '4px 8px' }}>売上変動</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上高</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>営業利益</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'right' }}>営業利益率</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sensitivity.rows.map((r) => (
+                  <tr key={r.deltaPct} style={{ borderTop: '1px solid var(--border)', fontWeight: r.deltaPct === 0 ? 600 : 400 }}>
+                    <td style={{ padding: '4px 8px' }}>{r.deltaPct > 0 ? '+' : ''}{r.deltaPct}%{r.deltaPct === 0 ? ' (現状)' : ''}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? '#22c55e' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.operatingMarginPct.toFixed(1)}%</td>
                   </tr>
                 ))}
               </tbody>

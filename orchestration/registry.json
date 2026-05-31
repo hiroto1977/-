@@ -286,7 +286,8 @@
           "settings-persistence",
           "industry-presets",
           "monthly-trend",
-          "trend-chart"
+          "trend-chart",
+          "sensitivity-analysis"
         ]
       },
       {
@@ -615,6 +616,13 @@
       "focus": "予測残高推移のスパークライン可視化/資金ショートの視覚化",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "sensitivity-analysis",
+      "domain": "経営(感度分析)",
+      "focus": "売上変動に対する営業利益のWhat-if/損益分岐までの売上余地",
+      "active": true,
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
@@ -1800,9 +1808,66 @@
       "shipped": [
         "資金予測残高推移のスパークライン可視化"
       ]
+    },
+    {
+      "round": 40,
+      "teamCount": 41,
+      "teams": [
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "損益感度分析(売上変動±%に対する営業利益のWhat-if・損益分岐までの売上余地)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "profit-sensitivity",
+      "team": "sensitivity-analysis",
+      "title": "損益感度分析(売上What-if・BEPまでの余地)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "cashflow-forecast-chart",
       "team": "cashflow-chart",
