@@ -251,6 +251,17 @@ describe('buildBusinessOverview', () => {
     expect(o.productivity.labor.laborSharePct).toBeNull();
   });
 
+  it('exposes trend alerts and detects a consecutive revenue decline', () => {
+    const decline: KpiActual[] = [
+      { period: '2026-03', unit: '全社', revenue: 200000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+      { period: '2026-04', unit: '全社', revenue: 150000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+      { period: '2026-05', unit: '全社', revenue: 100000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: decline, members: [] });
+    expect(o.trendAlerts.revenue.streak).toBe(2);
+    expect(o.trendAlerts.operatingProfit.streak).toBe(2);
+  });
+
   it('summarizes accounting cashflow and leaves runway null without cash on the BS', () => {
     const o = buildBusinessOverview({
       plan: 'pro', sales: [], kpiActuals: KPI, members: [],

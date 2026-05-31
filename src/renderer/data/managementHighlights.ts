@@ -47,6 +47,25 @@ export function buildManagementHighlights(
     } else if (k.revenueGrowthPct !== null && k.revenueGrowthPct >= 10) {
       out.push({ severity: 'good', category: '成長性', message: `前期比 +${k.revenueGrowthPct}% と伸びています。` });
     }
+
+    // 月次トレンド (連続下落): 3期以上=critical, 2期=warning。
+    const revStreak = overview.trendAlerts.revenue;
+    if (revStreak.streak >= 2) {
+      const drop = revStreak.dropFromPeakPct !== null ? ` (ピーク比 −${revStreak.dropFromPeakPct}%)` : '';
+      out.push({
+        severity: revStreak.streak >= 3 ? 'critical' : 'warning',
+        category: '売上トレンド',
+        message: `売上が ${revStreak.streak} 期連続で減少しています${drop}。`,
+      });
+    }
+    const opStreak = overview.trendAlerts.operatingProfit;
+    if (opStreak.streak >= 2) {
+      out.push({
+        severity: opStreak.streak >= 3 ? 'critical' : 'warning',
+        category: '利益トレンド',
+        message: `営業利益が ${opStreak.streak} 期連続で減少しています。`,
+      });
+    }
   }
 
   // 生産性 (労働分配率)

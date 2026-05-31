@@ -130,6 +130,34 @@ export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodReven
     .map(([period, revenue]) => ({ period, revenue }));
 }
 
+/** 1 期 (`period` = YYYY-MM) の営業利益。期の昇順。 */
+export interface PeriodOperatingProfit {
+  readonly period: string;
+  readonly operatingProfit: number;
+}
+
+/**
+ * 実績を期でグルーピングし、各期の営業利益を期の昇順で返す。
+ * 期ごとに Fundamentals を合算してから `computeKpiMetrics` で営業利益を出す
+ * (期内の複数事業を合算した上での営業利益)。
+ */
+export function groupOperatingProfitByPeriod(
+  actuals: readonly KpiActual[],
+): PeriodOperatingProfit[] {
+  const byPeriod = new Map<string, KpiActual[]>();
+  for (const a of actuals) {
+    const list = byPeriod.get(a.period) ?? [];
+    list.push(a);
+    byPeriod.set(a.period, list);
+  }
+  return [...byPeriod.entries()]
+    .sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+    .map(([period, rows]) => ({
+      period,
+      operatingProfit: computeKpiMetrics(summarizeFundamentals(rows)).operatingProfit,
+    }));
+}
+
 /** 人件費の合計 (未入力の期は 0 として扱う)。 */
 export function summarizeLaborCost(actuals: readonly KpiActual[]): number {
   return actuals.reduce((acc, a) => acc + (a.laborCost ?? 0), 0);

@@ -103,4 +103,21 @@ describe('buildManagementHighlights', () => {
     expect(conc?.severity).toBe('warning');
     expect(conc?.message).toContain('集中');
   });
+
+  it('escalates a 3+ period revenue decline to critical', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [
+        kpi({ period: '2026-02', revenue: 2_000_000 }),
+        kpi({ period: '2026-03', revenue: 1_500_000 }),
+        kpi({ period: '2026-04', revenue: 1_200_000 }),
+        kpi({ period: '2026-05', revenue: 1_000_000 }),
+      ],
+      members: [],
+    });
+    const trend = buildManagementHighlights(o).find((h) => h.category === '売上トレンド');
+    expect(trend?.severity).toBe('critical');
+    expect(trend?.message).toContain('連続');
+  });
 });

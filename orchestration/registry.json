@@ -280,7 +280,8 @@
           "management-integration",
           "depreciation",
           "growth-analysis",
-          "revenue-concentration"
+          "revenue-concentration",
+          "trend-monitor"
         ]
       },
       {
@@ -541,6 +542,13 @@
       "id": "revenue-concentration",
       "domain": "経営(売上集中度)",
       "focus": "販売チャネルHHI/売上分散スコア/単一チャネル依存リスク",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "trend-monitor",
+      "domain": "経営(トレンド監視)",
+      "focus": "売上・営業利益の連続下落検知/早期アラート/ピーク比下落率",
       "active": true,
       "manager": "mgr-management"
     }
@@ -1323,9 +1331,57 @@
       "shipped": [
         "売上集中度(チャネルHHI・売上分散スコア・単一チャネル依存リスク)"
       ]
+    },
+    {
+      "round": 31,
+      "teamCount": 32,
+      "teams": [
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "月次トレンドアラート(売上・営業利益の連続下落検知)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "trend-decline-alerts",
+      "team": "trend-monitor",
+      "title": "月次トレンドアラート(連続下落検知・ピーク比下落率)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "revenue-concentration-hhi",
       "team": "revenue-concentration",

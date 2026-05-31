@@ -24,6 +24,7 @@ import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
 import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
+import { computeTrendAlerts, type TrendAlerts } from './trendAlerts';
 import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
 
 export interface OverviewInput {
@@ -111,6 +112,8 @@ export interface BusinessOverview {
   readonly runwayMonths: number | null;
   /** 月次キャッシュ予測 (現預金を起点に会計CFを外挿)。会計連携+現預金が揃うと算定。 */
   readonly cashForecast: CashForecast | null;
+  /** 月次トレンドのアラート (売上・営業利益の連続下落検知)。 */
+  readonly trendAlerts: TrendAlerts;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -202,6 +205,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     cashForecast: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
       ? forecastCashBalance(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet, 12)
       : null,
+    trendAlerts: computeTrendAlerts(input.kpiActuals),
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,
