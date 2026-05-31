@@ -8,6 +8,8 @@ import {
   computeRevenueCagrPct,
   computeRevenueTrend,
   computeRevenueLandingForecast,
+  computeLaborMetrics,
+  summarizeLaborCost,
   groupRevenueByPeriod,
   type KpiActual,
 } from '../kpiActuals';
@@ -320,5 +322,57 @@ describe('computeRevenueLandingForecast', () => {
   it('rounds the annualised figure to the nearest yen', () => {
     // 1 か月 100円 → 1,200円ちょうど。端数が出るケース: 7円/1か月 → 84円
     expect(computeRevenueLandingForecast([actual('2026-01', 7)])?.runRateForecast).toBe(84);
+  });
+});
+
+describe('parseKpiActual — laborCost (optional)', () => {
+  it('omits laborCost when not provided (keeps the legacy shape)', () => {
+    const a = parseKpiActual(BASE);
+    expect('laborCost' in a).toBe(false);
+  });
+
+  it('includes laborCost when provided', () => {
+    const a = parseKpiActual({ ...BASE, laborCost: '120000' });
+    expect(a.laborCost).toBe(120_000);
+  });
+
+  it('rejects labor cost greater than SG&A', () => {
+    expect(() => parseKpiActual({ ...BASE, sga: '100000', laborCost: '200000' })).toThrow(/人件費/);
+  });
+});
+
+describe('summarizeLaborCost / computeLaborMetrics', () => {
+  const withLabor = (revenue: number, cogs: number, sga: number, laborCost: number): KpiActual => ({
+    period: '2026-05', unit: '全社', revenue, cogs, advertising: 0, sga, depreciation: 0, laborCost,
+  });
+
+  it('sums labor cost treating missing entries as zero', () => {
+    expect(summarizeLaborCost([actual('2026-04', 100), withLabor(100, 0, 50, 30)])).toBe(30);
+  });
+
+  it('returns all-null metrics when no labor cost is recorded', () => {
+    const m = computeLaborMetrics([actual('2026-05', 1000)], 3);
+    expect(m).toEqual({ laborCost: 0, laborSharePct: null, laborToRevenuePct: null, laborPerCapita: null });
+  });
+
+  it('computes labor share (of gross profit), labor-to-revenue and per-capita', () => {
+    // revenue 1000, cogs 400 → gross 600; labor 300 → share 50%, labor/revenue 30%
+    const m = computeLaborMetrics([withLabor(1000, 400, 400, 300)], 2);
+    expect(m.laborCost).toBe(300);
+    expect(m.laborSharePct).toBe(50);
+    expect(m.laborToRevenuePct).toBe(30);
+    expect(m.laborPerCapita).toBe(150); // 300 / 2
+  });
+
+  it('nulls per-capita when there are no members', () => {
+    const m = computeLaborMetrics([withLabor(1000, 400, 400, 300)], 0);
+    expect(m.laborPerCapita).toBeNull();
+    expect(m.laborSharePct).toBe(50);
+  });
+
+  it('nulls labor share when gross profit is zero or negative', () => {
+    const m = computeLaborMetrics([withLabor(400, 400, 300, 200)], 1);
+    expect(m.laborSharePct).toBeNull(); // gross profit 0
+    expect(m.laborToRevenuePct).toBe(50); // 200/400
   });
 });

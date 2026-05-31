@@ -229,4 +229,20 @@ describe('buildBusinessOverview', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
     expect(o.workingCapital).toBeNull();
   });
+
+  it('surfaces labor metrics in the productivity block when labor cost is recorded', () => {
+    const withLabor: KpiActual[] = [
+      { period: '2026-05', unit: '全社', revenue: 100000, cogs: 40000, advertising: 10000, sga: 20000, depreciation: 5000, laborCost: 30000 },
+    ];
+    const o = buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: withLabor, members: [{ role: 'owner' }, { role: 'member' }] });
+    // gross profit 60000, labor 30000 → 50%; labor/revenue 30%; per-capita 15000
+    expect(o.productivity.labor.laborSharePct).toBe(50);
+    expect(o.productivity.labor.laborToRevenuePct).toBe(30);
+    expect(o.productivity.labor.laborPerCapita).toBe(15000);
+  });
+
+  it('leaves labor metrics null when no labor cost is recorded', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.productivity.labor.laborSharePct).toBeNull();
+  });
 });

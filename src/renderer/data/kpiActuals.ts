@@ -23,6 +23,8 @@ export interface KpiActual extends Record<string, unknown> {
   readonly advertising: number;
   readonly sga: number;
   readonly depreciation: number;
+  /** 人件費 (販管費の内数。労働分配率・人件費率に使う)。任意。 */
+  readonly laborCost?: number;
 }
 
 export interface KpiFundamentals {
@@ -63,6 +65,7 @@ export function parseKpiActual(input: {
   advertising?: unknown;
   sga?: unknown;
   depreciation?: unknown;
+  laborCost?: unknown;
 }): KpiActual {
   if (!isValidPeriod(input.period)) throw new Error('期間は YYYY-MM 形式で入力してください');
   const unit = typeof input.unit === 'string' ? input.unit.trim() : '';
@@ -74,15 +77,23 @@ export function parseKpiActual(input: {
     return n;
   };
 
-  return {
+  const sga = num(input.sga, '販管費');
+  const base: KpiActual = {
     period: input.period,
     unit,
     revenue: num(input.revenue, '売上高'),
     cogs: num(input.cogs, '売上原価'),
     advertising: num(input.advertising, '広告費'),
-    sga: num(input.sga, '販管費'),
+    sga,
     depreciation: num(input.depreciation, '減価償却費'),
   };
+  // 人件費は任意。未入力 ('' / null) のときはフィールド自体を持たせない。
+  if (input.laborCost != null && input.laborCost !== '') {
+    const laborCost = num(input.laborCost, '人件費');
+    if (laborCost > sga) throw new Error('人件費は販管費以下で入力してください');
+    return { ...base, laborCost };
+  }
+  return base;
 }
 
 /** Sum a set of actuals into a single Fundamentals roll-up. */
@@ -117,6 +128,48 @@ export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodReven
   return [...byPeriod.entries()]
     .sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
     .map(([period, revenue]) => ({ period, revenue }));
+}
+
+/** 人件費の合計 (未入力の期は 0 として扱う)。 */
+export function summarizeLaborCost(actuals: readonly KpiActual[]): number {
+  return actuals.reduce((acc, a) => acc + (a.laborCost ?? 0), 0);
+}
+
+/** 労働生産性・人件費の効率指標。人件費が無ければ各値は null。 */
+export interface LaborMetrics {
+  /** 人件費合計。 */
+  readonly laborCost: number;
+  /** 労働分配率 (%) = 人件費 ÷ 粗利益 (付加価値の近似)。粗利が 0 以下なら null。 */
+  readonly laborSharePct: number | null;
+  /** 人件費率 (%) = 人件費 ÷ 売上。売上が 0 なら null。 */
+  readonly laborToRevenuePct: number | null;
+  /** 一人当たり人件費。メンバーが 0 なら null。 */
+  readonly laborPerCapita: number | null;
+}
+
+/**
+ * 人件費の効率指標 (労働分配率・人件費率・一人当たり人件費) を計算する。
+ * 労働分配率は人件費 ÷ 粗利益 (= 売上 − 売上原価) を付加価値の簡便代理とする。
+ * 人件費が 0 (未入力) のときは「データ無し」として全て null を返す。
+ */
+export function computeLaborMetrics(
+  actuals: readonly KpiActual[],
+  members: number,
+): LaborMetrics {
+  const laborCost = summarizeLaborCost(actuals);
+  if (laborCost <= 0) {
+    return { laborCost: 0, laborSharePct: null, laborToRevenuePct: null, laborPerCapita: null };
+  }
+  const f = summarizeFundamentals(actuals);
+  const grossProfit = f.revenue - f.cogs;
+  const pct = (numer: number, denom: number): number | null =>
+    denom > 0 ? Math.round((numer / denom) * 1000) / 10 : null;
+  return {
+    laborCost,
+    laborSharePct: pct(laborCost, grossProfit),
+    laborToRevenuePct: pct(laborCost, f.revenue),
+    laborPerCapita: members > 0 ? Math.round(laborCost / members) : null,
+  };
 }
 
 /**

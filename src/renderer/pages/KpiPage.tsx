@@ -277,7 +277,7 @@ function UnitBars({ units }: { units: Unit[] }) {
 
 // --- Real-data actuals panel ------------------------------------------
 
-const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '' };
+const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '', laborCost: '' };
 
 function ActualsPanel() {
   const { records, add, addMany, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
@@ -380,6 +380,7 @@ function ActualsPanel() {
         {field('advertising', '広告費')}
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
+        {field('laborCost', '人件費(任意)')}
         <button type="button" onClick={onAdd}>追加</button>
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>

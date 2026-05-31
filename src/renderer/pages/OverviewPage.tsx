@@ -146,6 +146,15 @@ export function OverviewPage() {
                 value={yen.format(overview.productivity.operatingProfitPerCapita)}
                 accent={overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'}
               />
+              {overview.productivity.labor.laborCost > 0 && (
+                <>
+                  <Tile label="労働分配率" value={pctOrDash(overview.productivity.labor.laborSharePct)} sub="人件費÷粗利 (目安50%前後)" />
+                  <Tile label="人件費率" value={pctOrDash(overview.productivity.labor.laborToRevenuePct)} sub="人件費÷売上" />
+                  {overview.productivity.labor.laborPerCapita !== null && (
+                    <Tile label="一人当たり人件費" value={yen.format(overview.productivity.labor.laborPerCapita)} />
+                  )}
+                </>
+              )}
             </div>
           </>
         )}

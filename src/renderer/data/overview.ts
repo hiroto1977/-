@@ -11,9 +11,11 @@ import {
   computeRevenueCagrPct,
   computeRevenueTrend,
   computeRevenueLandingForecast,
+  computeLaborMetrics,
   type KpiActual,
   type RevenueTrend,
   type RevenueLandingForecast,
+  type LaborMetrics,
 } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
@@ -87,6 +89,8 @@ export interface BusinessOverview {
     revenuePerCapita: number;
     /** 一人当たり営業利益。 */
     operatingProfitPerCapita: number;
+    /** 人件費の効率指標 (労働分配率・人件費率・一人当たり人件費)。 */
+    labor: LaborMetrics;
   };
   /** 予算実績差異 (BVA)。予算が未入力なら null。 */
   readonly budget: BudgetVariance | null;
@@ -163,6 +167,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       members: memberCount,
       revenuePerCapita: perCapita(fundamentals.revenue),
       operatingProfitPerCapita: perCapita(kpi.operatingProfit),
+      labor: computeLaborMetrics(input.kpiActuals, memberCount),
     },
     budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
