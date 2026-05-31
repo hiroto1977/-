@@ -103,16 +103,19 @@ function main() {
       }
     }
 
-    // 9b. 秘書室: 各役員に 1 室 (4 体の AI チーム) を常設し継続サポートする。
-    //     各秘書室は実在の役員を支援 / メンバーは 4 体 / id 一意 / 全役員に過不足なく
-    //     1 室 (役員と秘書室は 1 対 1)。
+    // 9b. 秘書室: 各 "AI役員" に 1 室 (4 体の AI チーム) を常設し継続サポートする。
+    //     支援先 (supports) は AI役員 のみ (人間のCEO・オーケストレーターのCOOは対象外) /
+    //     メンバーは 4 体 / id 一意 / 全役員に過不足なく 1 室 (役員と秘書室は 1 対 1)。
     const secIds = new Set();
     const supportedExecs = new Map();
+    const nonExecIds = new Set([ceoId, cooId].filter(Boolean));
     for (const s of org.secretaries || []) {
       if (secIds.has(s.id)) problems.push(`秘書室 id が重複: ${s.id}`);
       secIds.add(s.id);
-      if (!execIds.has(s.supports)) {
-        problems.push(`秘書室 ${s.id} の supports が未知の役員 "${s.supports}"`);
+      if (nonExecIds.has(s.supports)) {
+        problems.push(`秘書室 ${s.id} の supports は AI役員 であること (CEO/COO は支援先にできない: "${s.supports}")`);
+      } else if (!execIds.has(s.supports)) {
+        problems.push(`秘書室 ${s.id} の supports が未知の AI役員 "${s.supports}"`);
       } else if (supportedExecs.has(s.supports)) {
         problems.push(`役員 ${s.supports} に秘書室が重複 (${supportedExecs.get(s.supports)} / ${s.id})`);
       } else {
