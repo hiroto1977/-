@@ -1,6 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
+import {
+  HIGHLIGHT_SETTINGS_COLLECTION,
+  parseHighlightSettings,
+  type HighlightSettings,
+} from '../data/highlightSettings';
+import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
@@ -24,6 +30,71 @@ const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY',
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
 const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
+
+const settingsInput: React.CSSProperties = {
+  background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+  color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 90,
+};
+
+/** 経営ハイライトのしきい値を編集・保存するパネル。 */
+function HighlightSettingsPanel({
+  current,
+  onSave,
+}: {
+  current: HighlightSettings | typeof DEFAULT_HIGHLIGHT_THRESHOLDS;
+  onSave: (s: HighlightSettings) => Promise<void> | void;
+}) {
+  const [form, setForm] = useState({
+    declineWarnStreak: String(current.declineWarnStreak),
+    declineCriticalStreak: String(current.declineCriticalStreak),
+    laborShareWarnPct: String(current.laborShareWarnPct),
+    singleChannelWarnPct: String(current.singleChannelWarnPct),
+  });
+  const [error, setError] = useState<string>();
+  const [saved, setSaved] = useState(false);
+
+  async function save() {
+    try {
+      const parsed = parseHighlightSettings(form);
+      setError(undefined);
+      await onSave(parsed);
+      setSaved(true);
+    } catch (e) {
+      setSaved(false);
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof form, label: string) => (
+    <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {label}
+      <input
+        type="text"
+        inputMode="numeric"
+        value={form[key]}
+        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
+        style={settingsInput}
+      />
+    </label>
+  );
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
+        経営ハイライトの警告条件を業種・方針に合わせて調整できます。保存すると以後の判定に反映されます。
+      </p>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        {field('declineWarnStreak', '連続下落 警告(期)')}
+        {field('declineCriticalStreak', '連続下落 危険(期)')}
+        {field('laborShareWarnPct', '労働分配率 警告(%)')}
+        {field('singleChannelWarnPct', '単一チャネル依存(%)')}
+        <button type="button" onClick={save}>保存</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {saved && !error && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
+    </div>
+  );
+}
 
 function Tile({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
@@ -49,6 +120,9 @@ export function OverviewPage() {
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
   const { records: bsRecords } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
+  const { records: settingsRecords, add: addSettings } = useCollection<HighlightSettings>(HIGHLIGHT_SETTINGS_COLLECTION);
+  // しきい値設定は最新の1レコードを採用 (未設定なら既定値)。
+  const thresholds = settingsRecords.length > 0 ? settingsRecords[settingsRecords.length - 1]!.data : DEFAULT_HIGHLIGHT_THRESHOLDS;
   // 会計連携 (freee): 連携済みなら月次CFが入る。未連携は空 (snapshot)。
   const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
   const accountingMonthly = freeeData.monthly;
@@ -102,7 +176,10 @@ export function OverviewPage() {
     });
   }, [overview, debtService]);
 
-  const highlights = useMemo(() => buildManagementHighlights(overview, debtService?.overallDscr), [overview, debtService]);
+  const highlights = useMemo(
+    () => buildManagementHighlights(overview, { overallDscr: debtService?.overallDscr, thresholds }),
+    [overview, debtService, thresholds],
+  );
 
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
@@ -123,6 +200,12 @@ export function OverviewPage() {
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
             ※ 入力済みデータからの概算の経営診断です。財務・税務助言ではありません。
           </p>
+        </Section>
+      )}
+
+      {hasData && (
+        <Section title="ハイライトのしきい値設定">
+          <HighlightSettingsPanel current={thresholds} onSave={(s) => addSettings(s)} />
         </Section>
       )}
 

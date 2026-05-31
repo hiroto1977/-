@@ -282,7 +282,8 @@
           "growth-analysis",
           "revenue-concentration",
           "trend-monitor",
-          "alert-policy"
+          "alert-policy",
+          "settings-persistence"
         ]
       },
       {
@@ -557,6 +558,13 @@
       "id": "alert-policy",
       "domain": "経営(アラート方針)",
       "focus": "ハイライト判定しきい値のカスタム化/連続下落・労働分配率・集中度の閾値",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "settings-persistence",
+      "domain": "経営(設定永続化)",
+      "focus": "ハイライトしきい値のUI編集・保存・検証/業種別プリセット",
       "active": true,
       "manager": "mgr-management"
     }
@@ -1422,9 +1430,59 @@
       "shipped": [
         "経営ハイライトのしきい値カスタム化(連続下落/労働分配率/単一チャネル依存)"
       ]
+    },
+    {
+      "round": 33,
+      "teamCount": 34,
+      "teams": [
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "ハイライトしきい値のUI編集・保存(永続化レイヤ + 経営サマリーに設定パネル)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "highlight-settings-ui",
+      "team": "settings-persistence",
+      "title": "ハイライトしきい値のUI編集・永続化(検証付き)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "highlight-thresholds",
       "team": "alert-policy",

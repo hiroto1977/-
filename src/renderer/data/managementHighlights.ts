@@ -168,9 +168,9 @@ export function buildManagementHighlights(
     }
   }
 
-  // 売上集中度 (チャネル依存)
+  // 売上集中度 (チャネル依存): しきい値 (既定 60%) を超える依存を警告。
   const conc = overview.sales.concentration;
-  if (conc && conc.singleChannelRisk) {
+  if (conc && conc.topSharePct > th.singleChannelWarnPct) {
     out.push({ severity: 'warning', category: '売上集中', message: `売上が ${conc.topChannel} に ${conc.topSharePct}% 集中しています。チャネル分散を検討してください。` });
   }
 
