@@ -10,7 +10,7 @@ import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
-import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget } from '../data/profitSensitivity';
+import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
@@ -224,7 +224,7 @@ export function OverviewPage() {
   const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
-    return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals) };
+    return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals), fixedCuts: fixedCostReductionImpact(fundamentals) };
   }, [overview.kpi.hasData, fundamentals]);
 
   const [targetProfit, setTargetProfit] = useState('');
@@ -373,6 +373,20 @@ export function OverviewPage() {
                   </span>
                 )
               )}
+            </div>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 6 }}>固定費を削減したら (営業利益の改善)</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {sensitivity.fixedCuts.map((c) => (
+                <Tile
+                  key={c.reductionPct}
+                  label={`固定費 −${c.reductionPct}%`}
+                  value={yen.format(c.newOperatingProfit)}
+                  accent={c.newOperatingProfit >= 0 ? '#22c55e' : '#ef4444'}
+                  sub={`改善 +${yen.format(c.profitImprovement)}`}
+                />
+              ))}
             </div>
           </div>
         </Section>

@@ -99,3 +99,42 @@ export function requiredRevenueForTarget(
   const upliftPct = Math.round(((requiredRevenue - f.revenue) / f.revenue) * 1000) / 10;
   return { targetOperatingProfit, requiredRevenue, upliftPct };
 }
+
+/** 固定費を削減したときのインパクト試算結果。 */
+export interface FixedCostReduction {
+  /** 削減率 (%)。 */
+  readonly reductionPct: number;
+  /** 削減後の固定費。 */
+  readonly newFixedCost: number;
+  /** 削減後の営業利益。 */
+  readonly newOperatingProfit: number;
+  /** 営業利益の改善額 (削減前比)。 */
+  readonly profitImprovement: number;
+}
+
+/**
+ * 固定費 (販管費 + 減価償却費) を各削減率だけ削ったときの営業利益を試算する。
+ * 売上・変動費は不変。営業利益 = 限界利益 − 削減後固定費。削減額がそのまま
+ * 営業利益の改善になる (固定費削減の直接効果)。
+ *
+ * @param f 基準の Fundamentals
+ * @param reductions 固定費削減率 (%) の配列。既定 [5, 10, 20]
+ */
+export function fixedCostReductionImpact(
+  f: KpiFundamentals,
+  reductions: readonly number[] = [5, 10, 20],
+): FixedCostReduction[] {
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  const contribution = f.revenue - variableCost;
+  return reductions.map((reductionPct) => {
+    const newFixedCost = Math.round(fixedCost * (1 - reductionPct / 100));
+    const newOperatingProfit = Math.round(contribution - newFixedCost);
+    return {
+      reductionPct,
+      newFixedCost,
+      newOperatingProfit,
+      profitImprovement: Math.round(fixedCost - newFixedCost),
+    };
+  });
+}

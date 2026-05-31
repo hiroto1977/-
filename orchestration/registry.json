@@ -288,7 +288,8 @@
           "monthly-trend",
           "trend-chart",
           "sensitivity-analysis",
-          "target-profit"
+          "target-profit",
+          "cost-sensitivity"
         ]
       },
       {
@@ -639,6 +640,13 @@
       "focus": "経営レポートに損益分岐点までの売上余地を組込み",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "cost-sensitivity",
+      "domain": "経営(固定費感度)",
+      "focus": "固定費削減のインパクト試算/営業利益改善",
+      "active": true,
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
@@ -1977,9 +1985,69 @@
       "shipped": [
         "経営レポートに損益分岐点までの売上余地を組込み"
       ]
+    },
+    {
+      "round": 43,
+      "teamCount": 44,
+      "teams": [
+        "cost-sensitivity",
+        "report-sensitivity",
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "固定費削減のインパクト試算(営業利益の改善)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "fixed-cost-reduction",
+      "team": "cost-sensitivity",
+      "title": "固定費削減のインパクト試算",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "report-breakeven-room",
       "team": "report-sensitivity",
