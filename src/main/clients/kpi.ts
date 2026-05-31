@@ -168,6 +168,71 @@ export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakE
   return { unitContribution, breakEvenQuantity: beq, currentQuantity, safeQuantity };
 }
 
+/** 価格変更シミュレーションの結果。 */
+export interface PriceSimulation {
+  /** 価格変更率 (-0.2 = 20%値下げ, 0.1 = 10%値上げ)。 */
+  readonly priceChangeRatio: number;
+  /** 変更後の売上高 (販売量一定の前提)。 */
+  readonly simulatedRevenue: number;
+  /** 変更後の限界利益。 */
+  readonly simulatedContribution: number;
+  /** 変更後の限界利益率 (%)。 */
+  readonly simulatedContributionRatio: number;
+  /** 変更後の損益分岐点売上高。 */
+  readonly simulatedBep: number;
+  /** 変更後の営業利益。 */
+  readonly simulatedOperatingProfit: number;
+  /** 営業利益の増減 (変更後 − 現在)。 */
+  readonly operatingProfitDelta: number;
+}
+
+/**
+ * 価格を X% 変更したときの限界利益・損益分岐点・営業利益への影響を試算する。
+ *
+ * 前提: 価格変更で販売量・変動費の総額は変わらない (弾力性は別モデル)。
+ * 値上げは限界利益率を上げて BEP を下げ、値下げは逆に働く。
+ *
+ * @param f 現状の fundamentals
+ * @param priceChangeRatio 価格変更率 (例: -0.1 = 10%値下げ)。-1 未満は -1 にクランプ。
+ */
+export function simulatePriceChange(f: Fundamentals, priceChangeRatio: number): PriceSimulation {
+  const ratio = Math.max(-1, priceChangeRatio);
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  const currentOp = Math.max(0, f.revenue) - variableCost - fixedCost;
+
+  if (f.revenue <= 0) {
+    return {
+      priceChangeRatio: ratio,
+      simulatedRevenue: 0,
+      simulatedContribution: 0,
+      simulatedContributionRatio: 0,
+      simulatedBep: Infinity,
+      simulatedOperatingProfit: -fixedCost,
+      operatingProfitDelta: -fixedCost - currentOp,
+    };
+  }
+
+  const simulatedRevenue = Math.round(f.revenue * (1 + ratio));
+  const simulatedContribution = simulatedRevenue - variableCost;
+  const simulatedContributionRatio = simulatedRevenue > 0
+    ? Math.round((simulatedContribution / simulatedRevenue) * 1000) / 10
+    : 0;
+  const simulatedBep = simulatedContribution > 0
+    ? Math.round((fixedCost / simulatedContribution) * simulatedRevenue)
+    : Infinity;
+  const simulatedOperatingProfit = simulatedContribution - fixedCost;
+  return {
+    priceChangeRatio: ratio,
+    simulatedRevenue,
+    simulatedContribution,
+    simulatedContributionRatio,
+    simulatedBep,
+    simulatedOperatingProfit,
+    operatingProfitDelta: simulatedOperatingProfit - currentOp,
+  };
+}
+
 /** Roll-up: sum fundamentals across all units, then compute KPI on the
  *  aggregate. Note: averaging KPI ratios across units gives the wrong
  *  answer; the only correct rollup is sum-then-compute. */

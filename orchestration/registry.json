@@ -43,12 +43,13 @@
     { "round": 5, "teamCount": 6, "teams": ["kpi-analysis", "quality-audit", "real-estate", "tax-consumption", "tax-separate", "funding-scenario"], "shipped": ["公的年金等控除", "KPI目標利益/販売数量"] },
     { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] },
     { "round": 7, "teamCount": 8, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation"], "shipped": ["不動産CCR・イールドギャップ"] },
-    { "round": 8, "teamCount": 9, "teams": ["tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "quality-audit"], "shipped": ["住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"] }
+    { "round": 8, "teamCount": 9, "teams": ["tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "quality-audit"], "shipped": ["住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"] },
+    { "round": 9, "teamCount": 10, "teams": ["kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["KPI価格変更シミュレーション"] }
   ],
   "backlog": [
     { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
-    { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "designed" },
+    { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },
     { "id": "funding-diversification", "team": "funding-scenario", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "designed" },
     { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "designed" },
     { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "designed" },

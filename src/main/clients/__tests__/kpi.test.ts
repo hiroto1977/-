@@ -6,6 +6,7 @@ import {
   fetchKpiSnapshot,
   requiredRevenueForTargetProfit,
   breakEvenQuantity,
+  simulatePriceChange,
   type Fundamentals,
 } from '../kpi';
 
@@ -429,5 +430,52 @@ describe('breakEvenQuantity', () => {
     expect(r.unitContribution).toBe(0);
     expect(r.breakEvenQuantity).toBe(Infinity);
     expect(r.safeQuantity).toBe(0);
+  });
+});
+
+describe('simulatePriceChange (価格変更シミュレーション)', () => {
+  // revenue 10M, variable 3M, fixed 3M → contribution 7M, OP 4M, BEP ~4.285M
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+
+  it('a 0% change reproduces the current figures', () => {
+    const r = simulatePriceChange(base, 0);
+    expect(r.simulatedRevenue).toBe(10_000_000);
+    expect(r.simulatedContribution).toBe(7_000_000);
+    expect(r.operatingProfitDelta).toBe(0);
+  });
+
+  it('a price increase raises contribution and operating profit, lowers BEP', () => {
+    const up = simulatePriceChange(base, 0.1); // +10%
+    expect(up.simulatedRevenue).toBe(11_000_000);
+    expect(up.simulatedContribution).toBe(8_000_000); // 11M − 3M variable
+    expect(up.operatingProfitDelta).toBe(1_000_000); // +1M flows straight to OP
+    expect(up.simulatedBep).toBeLessThan(4_285_715); // BEP improves
+  });
+
+  it('a price cut lowers contribution and operating profit, raises BEP', () => {
+    const down = simulatePriceChange(base, -0.1); // −10%
+    expect(down.simulatedRevenue).toBe(9_000_000);
+    expect(down.simulatedContribution).toBe(6_000_000);
+    expect(down.operatingProfitDelta).toBe(-1_000_000);
+    expect(down.simulatedBep).toBeGreaterThan(4_285_715);
+  });
+
+  it('drives BEP to Infinity when a deep cut makes contribution non-positive', () => {
+    // −70% → revenue 3M < variable 3M → contribution 0
+    const deep = simulatePriceChange(base, -0.7);
+    expect(deep.simulatedContribution).toBe(0);
+    expect(deep.simulatedBep).toBe(Infinity);
+  });
+
+  it('clamps a change ratio below -1 to -1 (revenue floored at 0)', () => {
+    const r = simulatePriceChange(base, -2);
+    expect(r.priceChangeRatio).toBe(-1);
+    expect(r.simulatedRevenue).toBe(0);
+  });
+
+  it('handles zero-revenue input without NaN/Infinity in deltas', () => {
+    const r = simulatePriceChange({ revenue: 0, cogs: 0, advertising: 0, sga: 100_000, depreciation: 0 }, 0.1);
+    expect(r.simulatedBep).toBe(Infinity);
+    expect(r.simulatedOperatingProfit).toBe(-100_000);
   });
 });
