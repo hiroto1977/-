@@ -273,6 +273,10 @@ describe('buildBusinessOverview', () => {
     });
     // 2,000,000 cash / 200,000 monthly burn = 10 months
     expect(o.runwayMonths).toBe(10);
+    // 12-month forecast: shortfall in month 11 (balance crosses below 0 after runway)
+    expect(o.cashForecast).not.toBeNull();
+    expect(o.cashForecast!.shortfallMonthIndex).toBe(11);
+    expect(o.cashForecast!.rows).toHaveLength(12);
   });
 
   it('leaves accounting null when not connected (no monthly data)', () => {

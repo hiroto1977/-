@@ -295,7 +295,8 @@
           "cash-conversion",
           "executive-dashboard",
           "accounting-link",
-          "treasury-dscr"
+          "treasury-dscr",
+          "cash-forecast"
         ]
       },
       {
@@ -525,6 +526,13 @@
       "id": "treasury-dscr",
       "domain": "経営(返済余力)",
       "focus": "会計CF×資金調達の月次突合/DSCR/最悪月カバー率",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "cash-forecast",
+      "domain": "経営(資金予測)",
+      "focus": "月次キャッシュ予測/資金残高フォーキャスト/資金ショート先読み",
       "active": true,
       "manager": "mgr-fpa"
     }
@@ -1228,9 +1236,55 @@
         "会計CF×資金調達の同時連携(月次突合DSCR)",
         "DSCRをスコアカード資金繰り・経営ハイライトへ連携"
       ]
+    },
+    {
+      "round": 29,
+      "teamCount": 30,
+      "teams": [
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "月次キャッシュ予測(資金残高フォーキャスト・資金ショート先読み)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "cash-forecast-projection",
+      "team": "cash-forecast",
+      "title": "月次キャッシュ予測・資金残高フォーキャスト・資金ショート先読み",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "executive-dashboard-highlights",
       "team": "executive-dashboard",

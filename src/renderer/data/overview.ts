@@ -22,6 +22,7 @@ import { getPlan, type PlanTier } from '../../shared/plan';
 import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
 import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
+import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
 
 export interface OverviewInput {
@@ -105,6 +106,8 @@ export interface BusinessOverview {
   readonly accounting: AccountingSummary | null;
   /** 資金ランウェイ (月数)。会計連携CF と現預金が揃い、かつ資金流出時のみ。 */
   readonly runwayMonths: number | null;
+  /** 月次キャッシュ予測 (現預金を起点に会計CFを外挿)。会計連携+現預金が揃うと算定。 */
+  readonly cashForecast: CashForecast | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -191,6 +194,9 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     accounting: accountingSummary,
     runwayMonths: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
       ? computeRunwayMonths(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet)
+      : null,
+    cashForecast: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
+      ? forecastCashBalance(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet, 12)
       : null,
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,

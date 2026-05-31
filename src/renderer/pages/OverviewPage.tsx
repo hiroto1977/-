@@ -320,6 +320,22 @@ export function OverviewPage() {
               sub="現預金 ÷ 月次純流出"
             />
           </div>
+          {overview.cashForecast && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+              <Tile
+                label="12か月後の予測残高"
+                value={yen.format(overview.cashForecast.rows[overview.cashForecast.rows.length - 1]?.balance ?? overview.cashForecast.openingBalance)}
+                accent={(overview.cashForecast.rows[overview.cashForecast.rows.length - 1]?.balance ?? 0) >= 0 ? '#22c55e' : '#ef4444'}
+                sub="現預金＋月次CFの外挿"
+              />
+              <Tile
+                label="資金ショート予測"
+                value={overview.cashForecast.shortfallMonthIndex === null ? '12か月内なし' : `${overview.cashForecast.shortfallMonthIndex} か月後`}
+                accent={overview.cashForecast.shortfallMonthIndex === null ? '#22c55e' : '#ef4444'}
+                sub={`期間中の最低残高 ${yen.format(overview.cashForecast.minBalance)}`}
+              />
+            </div>
+          )}
         </Section>
       )}
 
