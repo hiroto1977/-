@@ -3,7 +3,7 @@ import { buildManagementReport } from '../managementReport';
 import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { buildManagementHighlights } from '../managementHighlights';
-import type { KpiActual } from '../kpiActuals';
+import { monthlyTrendSeries, type KpiActual } from '../kpiActuals';
 
 const kpi: KpiActual = { period: '2026-05', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000 };
 
@@ -68,5 +68,26 @@ describe('buildManagementReport', () => {
     // a healthy single-period business yields a "good" highlight, so assert presence instead
     const md = report();
     expect(md).toContain('## 経営ハイライト');
+  });
+
+  it('omits the monthly-trend table when fewer than two periods are supplied', () => {
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
+    const sc = buildManagementScorecard({});
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', monthlyTrendSeries([kpi]));
+    expect(md).not.toContain('## 月次推移');
+  });
+
+  it('renders a Markdown monthly-trend table when two or more periods are supplied', () => {
+    const periods: KpiActual[] = [
+      { ...kpi, period: '2026-04', revenue: 1_000_000 },
+      { ...kpi, period: '2026-05', revenue: 1_200_000 },
+    ];
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: periods, members: [] });
+    const sc = buildManagementScorecard({});
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', monthlyTrendSeries(periods));
+    expect(md).toContain('## 月次推移');
+    expect(md).toContain('| 期間 | 売上高 | 営業利益 | 営業利益率 | 前期比 |');
+    expect(md).toContain('| 2026-04 |');
+    expect(md).toContain('+20%'); // 2026-05 growth
   });
 });

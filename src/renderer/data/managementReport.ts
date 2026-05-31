@@ -10,6 +10,7 @@
 import type { BusinessOverview } from './overview';
 import type { ManagementScorecard } from '../../shared/managementScorecard';
 import type { Highlight } from './managementHighlights';
+import type { MonthlyTrendRow } from './kpiActuals';
 
 const VERDICT_LABEL: Record<ManagementScorecard['verdict'], string> = {
   poor: '要改善', caution: '注意', good: '良好', excellent: '優良',
@@ -29,12 +30,14 @@ const pctOrDash = (n: number | null): string => (n === null ? '—' : `${n}%`);
  * @param scorecard 経営スコアカード
  * @param highlights 経営ハイライト (優先度順)
  * @param asOf 生成日 (YYYY-MM-DD 等の表示用文字列)
+ * @param monthlyTrend 月次推移 (任意)。2 期以上あれば推移テーブルを出力する。
  */
 export function buildManagementReport(
   overview: BusinessOverview,
   scorecard: ManagementScorecard,
   highlights: readonly Highlight[],
   asOf: string,
+  monthlyTrend: readonly MonthlyTrendRow[] = [],
 ): string {
   const k = overview.kpi;
   const lines: string[] = [];
@@ -108,6 +111,19 @@ export function buildManagementReport(
     lines.push('');
     lines.push(`- 売上 達成率: ${pctOrDash(b.revenue.achievementPct)} (予算 ${yen(b.revenue.budget)} / 実績 ${yen(b.revenue.actual)})`);
     lines.push(`- 営業利益 達成率: ${pctOrDash(b.operatingProfit.achievementPct)}`);
+    lines.push('');
+  }
+
+  // 月次推移
+  if (monthlyTrend.length >= 2) {
+    lines.push('## 月次推移');
+    lines.push('');
+    lines.push('| 期間 | 売上高 | 営業利益 | 営業利益率 | 前期比 |');
+    lines.push('| --- | ---: | ---: | ---: | ---: |');
+    for (const r of monthlyTrend) {
+      const growth = r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`;
+      lines.push(`| ${r.period} | ${yen(r.revenue)} | ${yen(r.operatingProfit)} | ${r.operatingMarginPct.toFixed(1)}% | ${growth} |`);
+    }
     lines.push('');
   }
 
