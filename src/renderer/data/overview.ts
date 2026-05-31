@@ -23,6 +23,7 @@ import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
 import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
 import { forecastCashBalance, type CashForecast } from './cashForecast';
+import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
 import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
 
 export interface OverviewInput {
@@ -47,6 +48,8 @@ export interface BusinessOverview {
     aov: number;
     channelCount: number;
     topChannel: string | null;
+    /** 売上集中度 (チャネル依存リスク)。売上が無ければ null。 */
+    concentration: RevenueConcentration | null;
   };
   readonly kpi: {
     hasData: boolean;
@@ -148,6 +151,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       aov: salesSummary.aov,
       channelCount: salesSummary.byChannel.length,
       topChannel,
+      concentration: computeRevenueConcentration(salesSummary.byChannel),
     },
     kpi: {
       hasData: hasKpi,

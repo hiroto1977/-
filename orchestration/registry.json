@@ -279,7 +279,8 @@
           "kpi-analysis",
           "management-integration",
           "depreciation",
-          "growth-analysis"
+          "growth-analysis",
+          "revenue-concentration"
         ]
       },
       {
@@ -535,6 +536,13 @@
       "focus": "月次キャッシュ予測/資金残高フォーキャスト/資金ショート先読み",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "revenue-concentration",
+      "domain": "経営(売上集中度)",
+      "focus": "販売チャネルHHI/売上分散スコア/単一チャネル依存リスク",
+      "active": true,
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
@@ -1275,9 +1283,56 @@
       "shipped": [
         "月次キャッシュ予測(資金残高フォーキャスト・資金ショート先読み)"
       ]
+    },
+    {
+      "round": 30,
+      "teamCount": 31,
+      "teams": [
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "売上集中度(チャネルHHI・売上分散スコア・単一チャネル依存リスク)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "revenue-concentration-hhi",
+      "team": "revenue-concentration",
+      "title": "売上集中度(チャネルHHI・分散スコア・単一チャネル依存)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "cash-forecast-projection",
       "team": "cash-forecast",

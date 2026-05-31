@@ -114,6 +114,12 @@ export function buildManagementHighlights(
     }
   }
 
+  // 売上集中度 (チャネル依存)
+  const conc = overview.sales.concentration;
+  if (conc && conc.singleChannelRisk) {
+    out.push({ severity: 'warning', category: '売上集中', message: `売上が ${conc.topChannel} に ${conc.topSharePct}% 集中しています。チャネル分散を検討してください。` });
+  }
+
   // 組織 (シート)
   if (overview.flags.seatsFull) {
     out.push({ severity: 'warning', category: '組織', message: 'プランのシート上限に達しています。増員にはアップグレードが必要です。' });

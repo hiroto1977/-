@@ -27,6 +27,11 @@ describe('buildBusinessOverview', () => {
     expect(o.sales.aov).toBeCloseTo(5000);
     expect(o.sales.channelCount).toBe(2);
     expect(o.sales.topChannel).toBe('Amazon');
+    // Amazon 60,000 / Shopify 40,000 → HHI 0.52 → diversity 48, top 60%
+    expect(o.sales.concentration).not.toBeNull();
+    expect(o.sales.concentration!.diversityScore).toBe(48);
+    expect(o.sales.concentration!.topSharePct).toBe(60);
+    expect(o.sales.concentration!.singleChannelRisk).toBe(false);
 
     expect(o.kpi.hasData).toBe(true);
     expect(o.kpi.revenue).toBe(100000);

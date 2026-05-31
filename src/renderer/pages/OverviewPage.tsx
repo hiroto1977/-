@@ -139,6 +139,14 @@ export function OverviewPage() {
           <Tile label="総注文件数" value={num.format(overview.sales.totalOrders)} />
           <Tile label="平均注文単価" value={safeYen(overview.sales.aov)} />
           <Tile label="販売チャネル数" value={`${overview.sales.channelCount}`} />
+          {overview.sales.concentration && (
+            <Tile
+              label="売上分散スコア"
+              value={`${overview.sales.concentration.diversityScore} / 100`}
+              accent={overview.sales.concentration.singleChannelRisk ? '#f59e0b' : undefined}
+              sub={`実効 ${overview.sales.concentration.effectiveChannels} ch・最大 ${overview.sales.concentration.topChannel ?? '—'} ${overview.sales.concentration.topSharePct}%`}
+            />
+          )}
         </div>
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>収益性 (KPI)</div>

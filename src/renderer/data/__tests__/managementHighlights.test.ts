@@ -89,4 +89,18 @@ describe('buildManagementHighlights', () => {
     expect(bva?.severity).toBe('warning');
     expect(bva?.message).toContain('予算未達');
   });
+
+  it('warns about single-channel revenue concentration', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [
+        { date: '2026-05-01', channel: 'amazon', amount: 900_000, orders: 90 },
+        { date: '2026-05-02', channel: 'shopify', amount: 100_000, orders: 10 },
+      ],
+      kpiActuals: [kpi()], members: [],
+    });
+    const conc = buildManagementHighlights(o).find((h) => h.category === '売上集中');
+    expect(conc?.severity).toBe('warning');
+    expect(conc?.message).toContain('集中');
+  });
 });
