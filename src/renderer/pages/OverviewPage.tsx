@@ -55,12 +55,11 @@ export function OverviewPage() {
   // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
   const scorecard = useMemo(() => {
     if (!overview.kpi.hasData) return buildManagementScorecard({});
-    const opMargin = overview.kpi.revenue > 0
-      ? (overview.kpi.operatingProfit / overview.kpi.revenue) * 100
-      : undefined;
+    const hasRevenue = overview.kpi.revenue > 0;
     return buildManagementScorecard({
-      operatingMarginPct: opMargin,
-      contributionRatioPct: overview.kpi.revenue > 0 ? overview.kpi.contributionRatio : undefined,
+      operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
+      grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
+      contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
       safetyMarginPct: overview.kpi.safetyMargin,
       // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
       revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
@@ -95,8 +94,14 @@ export function OverviewPage() {
                 label="営業利益"
                 value={yen.format(overview.kpi.operatingProfit)}
                 accent={overview.flags.profitable ? '#22c55e' : '#ef4444'}
-                sub={overview.flags.profitable ? '黒字' : '赤字'}
+                sub={`営業利益率 ${overview.kpi.operatingMarginPct.toFixed(1)}%`}
               />
+              <Tile
+                label="売上総利益 (粗利)"
+                value={yen.format(overview.kpi.grossProfit)}
+                sub={`粗利率 ${overview.kpi.grossMarginPct.toFixed(1)}%`}
+              />
+              <Tile label="限界利益率" value={`${overview.kpi.contributionRatio.toFixed(1)}%`} sub="高いほど固定費を回収しやすい" />
               <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
               <Tile label="安全余裕率" value={`${overview.kpi.safetyMargin.toFixed(1)}%`} sub="高いほど安全" />
             </>
@@ -104,6 +109,20 @@ export function OverviewPage() {
             <Tile label="KPI" value="未入力" sub="KPI 実績を入力すると表示" />
           )}
         </div>
+
+        {overview.kpi.hasData && overview.productivity.members > 0 && (
+          <>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>生産性 (一人当たり)</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+              <Tile label="一人当たり売上" value={yen.format(overview.productivity.revenuePerCapita)} sub={`${overview.productivity.members} 名`} />
+              <Tile
+                label="一人当たり営業利益"
+                value={yen.format(overview.productivity.operatingProfitPerCapita)}
+                accent={overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'}
+              />
+            </div>
+          </>
+        )}
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>組織</div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

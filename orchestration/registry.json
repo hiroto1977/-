@@ -49,7 +49,7 @@
       { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "chro", "teams": ["payroll"] },
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
-      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis", "revenue-forecast", "budget-planning"] },
+      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis", "revenue-forecast", "budget-planning", "productivity"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
@@ -76,7 +76,8 @@
     { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" },
     { "id": "growth-analysis", "domain": "経営(成長性)", "focus": "売上前期比成長率/CAGR/トレンド・スコアカード成長性連携", "active": true, "manager": "mgr-management" },
     { "id": "revenue-forecast", "domain": "経営(予測)", "focus": "着地見込み(ランレート年換算)/トレンド外挿", "active": true, "manager": "mgr-management" },
-    { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-management" }
+    { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-management" },
+    { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-management" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -92,7 +93,8 @@
     { "round": 11, "teamCount": 12, "teams": ["growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["スコアカード成長性の自動連携(前期比売上成長率)"] },
     { "round": 12, "teamCount": 13, "teams": ["growth-analysis", "revenue-forecast", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上成長性の深掘り(CAGR・移動平均トレンド)"] },
     { "round": 13, "teamCount": 14, "teams": ["revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上着地見込み(ランレート年換算)"] },
-    { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] }
+    { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] },
+    { "round": 15, "teamCount": 16, "teams": ["productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"] }
   ],
   "backlog": [
     { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
@@ -105,6 +107,8 @@
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },
     { "id": "funding-diversification", "team": "funding-mix", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "shipped" },
     { "id": "funding-mix-term", "team": "funding-mix", "title": "調達の期間・通貨構成の分散(短期/長期・固定/変動)", "priority": 6, "status": "designed" },
+    { "id": "productivity-margins", "team": "productivity", "title": "粗利率・一人当たり売上/営業利益の集約(スコアカード収益性連携)", "priority": 4, "status": "shipped" },
+    { "id": "productivity-labor", "team": "productivity", "title": "労働分配率・人件費率(人件費の入力源が前提)", "priority": 7, "status": "designed", "note": "人件費(給与総額)の入力源が前提。sga に内包されており現状は分離不可。" },
     { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "designed" },
     { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "designed" },
     { "id": "bonus-withholding", "team": "payroll", "title": "賞与の源泉徴収税額・通勤手当の非課税限度", "priority": 7, "status": "designed" },

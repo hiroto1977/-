@@ -41,6 +41,12 @@ export interface BusinessOverview {
     operatingProfit: number;
     bep: number;
     safetyMargin: number;
+    /** 売上総利益 (粗利) = 売上 − 売上原価。 */
+    grossProfit: number;
+    /** 売上総利益率 (粗利率, %)。 */
+    grossMarginPct: number;
+    /** 営業利益率 (%)。 */
+    operatingMarginPct: number;
     /** 限界利益率 (%)。 */
     contributionRatio: number;
     /** 売上高成長率 (%, 直近期 vs 前期)。期が 2 つ未満なら null。 */
@@ -56,6 +62,14 @@ export interface BusinessOverview {
     members: number;
     seatLimit: number;
     seatsRemaining: number;
+  };
+  /** 生産性 (一人当たり) 指標。メンバーが 0 人なら per-capita は 0。 */
+  readonly productivity: {
+    members: number;
+    /** 一人当たり売上。 */
+    revenuePerCapita: number;
+    /** 一人当たり営業利益。 */
+    operatingProfitPerCapita: number;
   };
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
@@ -79,6 +93,12 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const seatLimit = planDef.maxSeats;
   const remaining = seatsRemaining({ used: input.members.length, limit: seatLimit });
 
+  const grossProfit = fundamentals.revenue - fundamentals.cogs;
+  const grossMarginPct = fundamentals.revenue > 0 ? (grossProfit / fundamentals.revenue) * 100 : 0;
+  const operatingMarginPct = fundamentals.revenue > 0 ? (kpi.operatingProfit / fundamentals.revenue) * 100 : 0;
+  const memberCount = input.members.length;
+  const perCapita = (n: number): number => (memberCount > 0 ? Math.round(n / memberCount) : 0);
+
   return {
     plan: { tier: planDef.id, label: planDef.label, audience: planDef.audience },
     sales: {
@@ -94,6 +114,9 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,
       safetyMargin: kpi.safetyMargin,
+      grossProfit,
+      grossMarginPct,
+      operatingMarginPct,
       contributionRatio: kpi.contributionRatio,
       revenueGrowthPct: computeRevenueGrowthPct(input.kpiActuals),
       revenueCagrPct: computeRevenueCagrPct(input.kpiActuals),
@@ -101,9 +124,14 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       revenueLanding: computeRevenueLandingForecast(input.kpiActuals),
     },
     team: {
-      members: input.members.length,
+      members: memberCount,
       seatLimit,
       seatsRemaining: remaining,
+    },
+    productivity: {
+      members: memberCount,
+      revenuePerCapita: perCapita(fundamentals.revenue),
+      operatingProfitPerCapita: perCapita(kpi.operatingProfit),
     },
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,

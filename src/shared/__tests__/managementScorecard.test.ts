@@ -60,4 +60,13 @@ describe('buildManagementScorecard', () => {
     expect(liq.components.map((c) => c.label)).toEqual(['DSCR', 'ランウェイ']);
     expect(liq.components.every((c) => c.score >= 0 && c.score <= 100)).toBe(true);
   });
+
+  it('folds gross margin into the profitability category', () => {
+    // 粗利率 20% → band(20,0,40)=50 のみ。営業利益率 0 → 0、粗利率 50 → 平均 25
+    const r = buildManagementScorecard({ operatingMarginPct: 0, grossMarginPct: 20 });
+    const prof = r.categories.find((c) => c.category === 'profitability')!;
+    expect(prof.components.map((c) => c.label)).toEqual(['営業利益率', '粗利率']);
+    expect(prof.components.find((c) => c.label === '粗利率')!.score).toBe(50);
+    expect(prof.score).toBe(25); // (0 + 50) / 2
+  });
 });

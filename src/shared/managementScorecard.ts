@@ -12,6 +12,8 @@
 export interface ManagementMetricsInput {
   /** 営業利益率 (%) = 営業利益 ÷ 売上 × 100。 */
   readonly operatingMarginPct?: number;
+  /** 売上総利益率 (粗利率, %) = 売上総利益 ÷ 売上 × 100。 */
+  readonly grossMarginPct?: number;
   /** 限界利益率 (%)。 */
   readonly contributionRatioPct?: number;
   /** 安全余裕率 (%) = 100 − 損益分岐点比率。 */
@@ -64,7 +66,7 @@ function avg(components: ReadonlyArray<{ label: string; score: number }>): numbe
  * 経営指標を集約して健全性スコアカードを作る。
  *
  * カテゴリと採点の目安 (中小企業の一般的水準):
- * - 収益性: 営業利益率 0%→10% を 0→100、限界利益率 0%→60% を 0→100
+ * - 収益性: 営業利益率 0%→10%、粗利率 0%→40%、限界利益率 0%→60% を各 0→100
  * - 安全性: 安全余裕率 0%→40% を 0→100、自己資本比率 0%→50% を 0→100
  * - 資金繰り: DSCR 0→2.0 を 0→100、ランウェイ 0→12か月 を 0→100
  * - 成長: 売上成長率 −10%→+20% を 0→100
@@ -72,6 +74,7 @@ function avg(components: ReadonlyArray<{ label: string; score: number }>): numbe
 export function buildManagementScorecard(m: ManagementMetricsInput): ManagementScorecard {
   const profitability: { label: string; score: number }[] = [];
   if (m.operatingMarginPct !== undefined) profitability.push({ label: '営業利益率', score: band(m.operatingMarginPct, 0, 10) });
+  if (m.grossMarginPct !== undefined) profitability.push({ label: '粗利率', score: band(m.grossMarginPct, 0, 40) });
   if (m.contributionRatioPct !== undefined) profitability.push({ label: '限界利益率', score: band(m.contributionRatioPct, 0, 60) });
 
   const safety: { label: string; score: number }[] = [];

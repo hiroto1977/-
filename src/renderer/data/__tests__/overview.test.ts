@@ -119,4 +119,31 @@ describe('buildBusinessOverview', () => {
     const o = buildBusinessOverview({ plan: 'free', sales: [], kpiActuals: [], members: [] });
     expect(o.kpi.revenueLanding).toBeNull();
   });
+
+  it('consolidates gross margin and operating margin from KPI fundamentals', () => {
+    // revenue 100000, cogs 40000 → gross 60000 / 60%; operating 25000 → 25%
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.kpi.grossProfit).toBe(60000);
+    expect(o.kpi.grossMarginPct).toBeCloseTo(60);
+    expect(o.kpi.operatingMarginPct).toBeCloseTo(25);
+  });
+
+  it('computes per-capita productivity from the member count', () => {
+    const o = buildBusinessOverview({
+      plan: 'business',
+      sales: [],
+      kpiActuals: KPI, // revenue 100000, operating 25000
+      members: [{ role: 'owner' }, { role: 'admin' }, { role: 'member' }, { role: 'member' }],
+    });
+    expect(o.productivity.members).toBe(4);
+    expect(o.productivity.revenuePerCapita).toBe(25000); // 100000 / 4
+    expect(o.productivity.operatingProfitPerCapita).toBe(6250); // 25000 / 4
+  });
+
+  it('reports zero per-capita figures when there are no members (no division by zero)', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.productivity.members).toBe(0);
+    expect(o.productivity.revenuePerCapita).toBe(0);
+    expect(o.productivity.operatingProfitPerCapita).toBe(0);
+  });
 });
