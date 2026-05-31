@@ -45,7 +45,7 @@
     ],
     "managers": [
       { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },
-      { "id": "mgr-funding", "title": "資金調達部長", "reportsTo": "cfo", "teams": ["funding-cashflow", "funding-cost", "funding-scenario"] },
+      { "id": "mgr-funding", "title": "資金調達部長", "reportsTo": "cfo", "teams": ["funding-cashflow", "funding-cost", "funding-scenario", "funding-mix"] },
       { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "chro", "teams": ["payroll"] },
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
@@ -63,6 +63,7 @@
     { "id": "funding-cashflow", "domain": "資金調達(資金繰り)", "focus": "月次CF/ランウェイ/DSCR/返済", "active": true, "manager": "mgr-funding" },
     { "id": "funding-cost", "domain": "資金調達(コスト)", "focus": "実効調達コスト率/自己負担比率/質スコア", "active": true, "manager": "mgr-funding" },
     { "id": "funding-scenario", "domain": "資金調達(シナリオ)", "focus": "採択確率/期待値/3シナリオ残高", "active": true, "manager": "mgr-funding" },
+    { "id": "funding-mix", "domain": "資金調達(構成)", "focus": "多様化スコア/種別集中度(HHI)/実効調達元数", "active": true, "manager": "mgr-funding" },
     { "id": "kpi-analysis", "domain": "経営(KPI/BEP)", "focus": "損益分岐点/目標利益/販売数量/価格", "active": true, "manager": "mgr-management" },
     { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true, "manager": "mgr-investment" },
     { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true, "manager": "mgr-investment" },
@@ -90,7 +91,8 @@
     { "round": 10, "teamCount": 11, "teams": ["management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"] },
     { "round": 11, "teamCount": 12, "teams": ["growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["スコアカード成長性の自動連携(前期比売上成長率)"] },
     { "round": 12, "teamCount": 13, "teams": ["growth-analysis", "revenue-forecast", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上成長性の深掘り(CAGR・移動平均トレンド)"] },
-    { "round": 13, "teamCount": 14, "teams": ["revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上着地見込み(ランレート年換算)"] }
+    { "round": 13, "teamCount": 14, "teams": ["revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上着地見込み(ランレート年換算)"] },
+    { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] }
   ],
   "backlog": [
     { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
@@ -101,7 +103,8 @@
     { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },
-    { "id": "funding-diversification", "team": "funding-scenario", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "designed" },
+    { "id": "funding-diversification", "team": "funding-mix", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "shipped" },
+    { "id": "funding-mix-term", "team": "funding-mix", "title": "調達の期間・通貨構成の分散(短期/長期・固定/変動)", "priority": 6, "status": "designed" },
     { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "designed" },
     { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "designed" },
     { "id": "bonus-withholding", "team": "payroll", "title": "賞与の源泉徴収税額・通勤手当の非課税限度", "priority": 7, "status": "designed" },

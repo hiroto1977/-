@@ -341,6 +341,13 @@ export function FundingPage() {
       { label: '課税繰延 (圧縮記帳)', value: jpy(live.summary.deferredSecured) },
       { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
       { label: '資金調達 質スコア', value: `${live.qualityScore.compositeScore} / 100` },
+      ...(live.diversification
+        ? [{
+            label: '多様化スコア (種別分散)',
+            value: `${live.diversification.score} / 100`,
+            sub: `${live.diversification.kindsPresent}種・実効 ${live.diversification.effectiveSources} 元`,
+          }]
+        : []),
     ],
     [live],
   );
@@ -379,6 +386,9 @@ export function FundingPage() {
             <div key={t.label} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
               <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{t.label}</div>
               <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{t.value}</div>
+              {'sub' in t && t.sub && (
+                <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>{t.sub}</div>
+              )}
             </div>
           ))}
         </div>

@@ -939,6 +939,14 @@ export const SNAPSHOT = {
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
     qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    diversification: null as {
+      kindsPresent: number;
+      hhi: number;
+      effectiveSources: number;
+      topKind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding' | null;
+      topSharePct: number;
+      score: number;
+    } | null,
     debtService: {
       totalRepayment: 0,
       totalOperatingCashflow: 0,

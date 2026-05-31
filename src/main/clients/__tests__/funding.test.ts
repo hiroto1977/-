@@ -19,6 +19,7 @@ import {
   scenarioRunways,
   summarize,
   fundingQualityScore,
+  fundingDiversification,
   debtServiceMetrics,
   effectiveFundingCostRate,
   totalInterestOf,
@@ -739,6 +740,56 @@ describe('fundingQualityScore', () => {
     // weight all on non-repayable (0) → composite 0; all on after-tax (loan is non-taxable → afterTax=total) → 100
     expect(fundingQualityScore(s, [1, 0]).compositeScore).toBe(0);
     expect(fundingQualityScore(s, [0, 1]).compositeScore).toBe(100);
+  });
+});
+
+describe('fundingDiversification (HHI)', () => {
+  it('returns null when there is no secured funding', () => {
+    expect(fundingDiversification(aggregateByKind([]))).toBeNull();
+    // applied-only (not secured) → no secured total
+    const applied = aggregateByKind([
+      { id: 'a', kind: 'subsidy', name: '申請中', amount: 1_000_000, status: 'applied', month: '2026-06', repayable: false },
+    ]);
+    expect(fundingDiversification(applied)).toBeNull();
+  });
+
+  it('scores 0 (fully concentrated) when all secured funding is one kind', () => {
+    const agg = aggregateByKind([
+      { id: 'l', kind: 'loan', name: '融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true },
+    ]);
+    const d = fundingDiversification(agg)!;
+    expect(d.kindsPresent).toBe(1);
+    expect(d.hhi).toBe(1);
+    expect(d.effectiveSources).toBe(1);
+    expect(d.topKind).toBe('loan');
+    expect(d.topSharePct).toBe(100);
+    expect(d.score).toBe(0);
+  });
+
+  it('scores 50 for an even two-kind split (HHI 0.5)', () => {
+    const agg = aggregateByKind([
+      { id: 'a', kind: 'subsidy', name: '補助', amount: 5_000_000, status: 'received', month: '2026-06', repayable: false },
+      { id: 'l', kind: 'loan', name: '融資', amount: 5_000_000, status: 'received', month: '2026-02', repayable: true },
+    ]);
+    const d = fundingDiversification(agg)!;
+    expect(d.kindsPresent).toBe(2);
+    expect(d.hhi).toBe(0.5);
+    expect(d.effectiveSources).toBe(2);
+    expect(d.topSharePct).toBe(50);
+    expect(d.score).toBe(50);
+  });
+
+  it('identifies the dominant kind on an uneven split', () => {
+    const agg = aggregateByKind([
+      { id: 'a', kind: 'subsidy', name: '補助', amount: 8_000_000, status: 'received', month: '2026-06', repayable: false },
+      { id: 'l', kind: 'loan', name: '融資', amount: 2_000_000, status: 'received', month: '2026-02', repayable: true },
+    ]);
+    const d = fundingDiversification(agg)!;
+    // shares 0.8/0.2 → HHI 0.64+0.04 = 0.68 → score 32
+    expect(d.hhi).toBe(0.68);
+    expect(d.topKind).toBe('subsidy');
+    expect(d.topSharePct).toBe(80);
+    expect(d.score).toBe(32);
   });
 });
 

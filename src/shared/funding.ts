@@ -301,6 +301,56 @@ export function aggregateByKind(items: readonly FundingItem[]): FundingByKind[] 
   });
 }
 
+/** 資金調達の多様化 (種別集中度) 指標。 */
+export interface FundingDiversification {
+  /** 確定額が 0 超の種別数。 */
+  readonly kindsPresent: number;
+  /** ハーフィンダール・ハーシュマン指数 (Σ シェア², 0..1; 1 = 1 種に集中)。 */
+  readonly hhi: number;
+  /** 実効的な調達元数 = 1 ÷ HHI (分散の目安)。 */
+  readonly effectiveSources: number;
+  /** 最大シェアの種別 (確定額ベース)。種別が無ければ null。 */
+  readonly topKind: FundingKind | null;
+  /** 最大シェアの種別の比率 (%)。 */
+  readonly topSharePct: number;
+  /** 多様化スコア (0..100, 高いほど分散) = (1 − HHI) × 100。 */
+  readonly score: number;
+}
+
+/**
+ * 確定額 (secured) の種別構成から多様化スコアを計算する。
+ *
+ * 1 種類に偏るほど集中 (HHI→1, スコア→0)、種別が均等に分散するほど多様
+ * (HHI→0, スコア→100)。確定額の合計が 0 のときは算定不能 (null)。資金調達が
+ * 特定の種別に依存していないか (補助金頼み・融資頼み等) の構造リスクを見る。
+ */
+export function fundingDiversification(
+  byKind: readonly FundingByKind[],
+): FundingDiversification | null {
+  const present = byKind.filter((k) => k.secured > 0);
+  const total = present.reduce((s, k) => s + k.secured, 0);
+  if (total <= 0) return null;
+  let hhi = 0;
+  let topKind: FundingKind | null = null;
+  let topShare = 0;
+  for (const k of present) {
+    const share = k.secured / total;
+    hhi += share * share;
+    if (share > topShare) {
+      topShare = share;
+      topKind = k.kind;
+    }
+  }
+  return {
+    kindsPresent: present.length,
+    hhi: Math.round(hhi * 1000) / 1000,
+    effectiveSources: Math.round((1 / hhi) * 10) / 10,
+    topKind,
+    topSharePct: Math.round(topShare * 1000) / 10,
+    score: Math.round((1 - hhi) * 100),
+  };
+}
+
 /**
  * レーダーチャートのスコア (0..max) を返す。各軸 = 種別の確定額を、
  * 全種別中の最大確定額で正規化した相対値 (0..max)。最大が 0 のときは全 0。
