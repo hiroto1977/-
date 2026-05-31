@@ -1,0 +1,17 @@
+name: ci-smoke
+
+# 診断用の最小ワークフロー。checkout / setup-node / npm を一切使わず echo のみ。
+# 目的: 3秒で全ジョブが落ちる障害が「ランナー起動/課金レベル」か
+# 「setup系ステップ」かを切り分ける。
+#   - この echo ジョブも即失敗 → アカウント/課金/Actions無効 等 (コードでは直せない)
+#   - この echo ジョブは成功 → checkout/setup-node/npm のいずれかが原因
+on:
+  push:
+    branches: [main, 'claude/**']
+
+jobs:
+  smoke:
+    name: smoke (echo only — no checkout/node/npm)
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "smoke ok — runner started and executed a step"
