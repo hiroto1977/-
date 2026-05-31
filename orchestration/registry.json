@@ -289,7 +289,8 @@
           "trend-chart",
           "sensitivity-analysis",
           "target-profit",
-          "cost-sensitivity"
+          "cost-sensitivity",
+          "operating-leverage"
         ]
       },
       {
@@ -645,6 +646,13 @@
       "id": "cost-sensitivity",
       "domain": "経営(固定費感度)",
       "focus": "固定費削減のインパクト試算/営業利益改善",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "operating-leverage",
+      "domain": "経営(営業レバレッジ)",
+      "focus": "DOL=限界利益÷営業利益/売上変動の利益増幅率",
       "active": true,
       "manager": "mgr-management"
     }
@@ -2038,9 +2046,70 @@
       "shipped": [
         "固定費削減のインパクト試算(営業利益の改善)"
       ]
+    },
+    {
+      "round": 44,
+      "teamCount": 45,
+      "teams": [
+        "operating-leverage",
+        "cost-sensitivity",
+        "report-sensitivity",
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "営業レバレッジ(DOL)の算定"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "operating-leverage-dol",
+      "team": "operating-leverage",
+      "title": "営業レバレッジ(DOL)の算定・表示",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "fixed-cost-reduction",
       "team": "cost-sensitivity",

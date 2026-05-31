@@ -10,7 +10,7 @@ import { DEFAULT_HIGHLIGHT_THRESHOLDS } from '../data/managementHighlights';
 import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
-import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact } from '../data/profitSensitivity';
+import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
@@ -224,7 +224,7 @@ export function OverviewPage() {
   const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
-    return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals), fixedCuts: fixedCostReductionImpact(fundamentals) };
+    return { rows: profitSensitivity(fundamentals), breakEvenDelta: breakEvenDeltaPct(fundamentals), fixedCuts: fixedCostReductionImpact(fundamentals), dol: operatingLeverage(fundamentals) };
   }, [overview.kpi.hasData, fundamentals]);
 
   const [targetProfit, setTargetProfit] = useState('');
@@ -327,6 +327,9 @@ export function OverviewPage() {
             売上が増減したときの営業利益の試算です (変動費は売上比例・固定費は一定と仮定)。
             {sensitivity.breakEvenDelta !== null && (
               <> 損益分岐点まで売上 <strong>{sensitivity.breakEvenDelta > 0 ? '+' : ''}{sensitivity.breakEvenDelta}%</strong> の余地があります。</>
+            )}
+            {sensitivity.dol !== null && (
+              <> 営業レバレッジ <strong>{sensitivity.dol}倍</strong>（売上+1%で営業利益+{sensitivity.dol}%）。</>
             )}
             <strong>※ 概算試算であり財務助言ではありません。</strong>
           </p>

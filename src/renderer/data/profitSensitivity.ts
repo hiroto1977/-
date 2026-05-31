@@ -138,3 +138,21 @@ export function fixedCostReductionImpact(
     };
   });
 }
+
+/**
+ * 営業レバレッジ (DOL: Degree of Operating Leverage) を計算する。
+ *
+ * DOL = 限界利益 ÷ 営業利益。「売上が 1% 増えると営業利益が DOL % 増える」という
+ * 増幅率で、固定費比率が高い (＝レバレッジが高い) ほど売上変動の影響が大きい。
+ * 営業利益が 0 以下のときは定義できないため null (赤字・分岐点では発散)。
+ * 0.01 単位に丸める。
+ *
+ * @param f 基準の Fundamentals
+ */
+export function operatingLeverage(f: KpiFundamentals): number | null {
+  const contribution = f.revenue - (f.cogs + f.advertising);
+  const fixedCost = f.sga + f.depreciation;
+  const operatingProfit = contribution - fixedCost;
+  if (operatingProfit <= 0) return null;
+  return Math.round((contribution / operatingProfit) * 100) / 100;
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget } from '../profitSensitivity';
+import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, operatingLeverage } from '../profitSensitivity';
 import type { KpiFundamentals } from '../kpiActuals';
 
 // revenue 1000, variable (cogs+adv) 500 → rate 0.5, fixed (sga+dep) 250 → OP 250
@@ -85,5 +85,31 @@ describe('requiredRevenueForTarget', () => {
   it('returns null uplift when revenue is zero or contribution is non-positive', () => {
     expect(requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, 100).upliftPct).toBeNull();
     expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
+  });
+});
+
+describe('operatingLeverage (DOL)', () => {
+  it('computes contribution / operating profit', () => {
+    // base: contribution 500, OP 250 → DOL 2.0
+    expect(operatingLeverage(base)).toBe(2);
+  });
+
+  it('is higher when fixed costs dominate (more leverage)', () => {
+    // contribution 500, fixed 450 → OP 50 → DOL 10
+    const highFixed: KpiFundamentals = { revenue: 1000, cogs: 400, advertising: 100, sga: 450, depreciation: 0 };
+    expect(operatingLeverage(highFixed)).toBe(10);
+  });
+
+  it('returns null when operating profit is zero or negative', () => {
+    // contribution 500, fixed 500 → OP 0
+    expect(operatingLeverage({ revenue: 1000, cogs: 400, advertising: 100, sga: 500, depreciation: 0 })).toBeNull();
+    // loss
+    expect(operatingLeverage({ revenue: 400, cogs: 150, advertising: 50, sga: 200, depreciation: 50 })).toBeNull();
+  });
+
+  it('rounds to two decimals', () => {
+    // contribution 700, OP 300 → 2.333... → 2.33
+    const f: KpiFundamentals = { revenue: 1000, cogs: 250, advertising: 50, sga: 400, depreciation: 0 };
+    expect(operatingLeverage(f)).toBe(2.33);
   });
 });
