@@ -1,7 +1,25 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import {
+  evaluatePasswordStrength,
+  estimateCrackSeconds,
+  humanizeCrackTime,
+} from '../../shared/passwordStrength';
+
+const VERDICT_COLOR: Record<string, string> = {
+  weak: '#ef4444',
+  fair: '#f59e0b',
+  good: '#3ec98a',
+  strong: '#22c55e',
+};
+const VERDICT_LABEL: Record<string, string> = {
+  weak: '弱い',
+  fair: 'やや弱い',
+  good: '良好',
+  strong: '強固',
+};
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -57,6 +75,14 @@ export function SecurityPage() {
   const [urlInput, setUrlInput] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+
+  // パスワード強度チェッカー (ローカル評価・送信しない)。
+  const [pwInput, setPwInput] = useState('');
+  const pwStrength = useMemo(() => evaluatePasswordStrength(pwInput), [pwInput]);
+  const pwCrackTime = useMemo(
+    () => humanizeCrackTime(estimateCrackSeconds(pwStrength.entropyBits)),
+    [pwStrength.entropyBits],
+  );
   const [scanError, setScanError] = useState<string>();
 
   const scanUrl = async () => {
@@ -235,6 +261,47 @@ export function SecurityPage() {
             ) : null}
           </div>
         ) : null}
+      </Section>
+
+      <Section title="パスワード強度チェッカー (ローカル評価・送信しません)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          入力したパスワードは<strong>この端末内だけで評価</strong>し、外部に送信しません。
+          長さ・文字種・推定エントロピーからの<strong>目安</strong>であり、暗号学的な安全性の保証ではありません。
+        </div>
+        <input
+          type="password"
+          placeholder="パスワードを入力して強度を確認"
+          value={pwInput}
+          onChange={(e) => setPwInput(e.target.value)}
+          style={{
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: 6,
+            color: 'var(--text)',
+            padding: '8px 10px',
+            fontSize: 13,
+            width: '100%',
+            maxWidth: 360,
+            marginBottom: 10,
+          }}
+        />
+        {pwInput.length > 0 && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <div style={{ flex: 1, maxWidth: 360, height: 8, background: 'var(--border)', borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ width: `${pwStrength.score}%`, height: '100%', background: VERDICT_COLOR[pwStrength.verdict] }} />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: VERDICT_COLOR[pwStrength.verdict] }}>
+                {VERDICT_LABEL[pwStrength.verdict]} ({pwStrength.score}/100)
+              </span>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+              文字数 {pwStrength.length} / 推定エントロピー {pwStrength.entropyBits} ビット /
+              推定突破時間 (高速攻撃の目安) 約 {pwCrackTime}。
+              {pwStrength.score < 60 && <> より長く (16文字以上)、英大小・数字・記号を混ぜると強くなります。</>}
+            </div>
+          </div>
+        )}
       </Section>
     </div>
   );
