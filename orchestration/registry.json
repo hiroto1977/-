@@ -20,6 +20,7 @@
         { "layer": "ceo", "title": "最高経営責任者 (オーナー=あなた)", "staffedByAI": false, "human": true, "responsibility": "経営方針・優先順位の決定と最終承認。人間の最高責任者" },
         { "layer": "coo", "title": "最高執行責任者 (オーケストレーター=Claude)", "staffedByAI": false, "responsibility": "CEOの方針を実行に落とし込み、AI組織全体を統括。実装・全ゲート検証・コミットを担う本体" },
         { "layer": "executive", "title": "役員層", "staffedByAI": true, "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。COO配下で管理職を束ねる" },
+        { "layer": "secretariat", "title": "秘書室", "staffedByAI": true, "responsibility": "各役員に1室(4体のAIチーム)を常設し、日程・資料・連絡・記録で役員を継続サポート。指揮系統(ライン)ではなく支援(スタッフ)機能" },
         { "layer": "manager", "title": "管理職層", "staffedByAI": true, "responsibility": "部の論点設計・調査チームの編成と割当・品質確認の一次窓口。配下の一般職を束ねる" },
         { "layer": "staff", "title": "一般職層", "staffedByAI": true, "responsibility": "担当ドメインの調査・設計 (read-only Agent)。実装の素案を提供" }
       ]
@@ -34,6 +35,13 @@
       { "id": "cso", "title": "最高戦略責任者 (CSO)", "reportsTo": "coo", "owns": ["mgr-management"], "domain": "経営戦略・分析・成長・予測" },
       { "id": "cio", "title": "最高投資責任者 (CIO / Chief Investment Officer)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"], "domain": "投資・資産運用・為替" },
       { "id": "cqo", "title": "最高品質責任者 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"], "domain": "品質保証・セキュリティ" }
+    ],
+    "secretaries": [
+      { "id": "sec-cfo", "title": "CFO秘書室", "supports": "cfo", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
+      { "id": "sec-chro", "title": "CHRO秘書室", "supports": "chro", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
+      { "id": "sec-cso", "title": "CSO秘書室", "supports": "cso", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
+      { "id": "sec-cio", "title": "CIO秘書室", "supports": "cio", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
+      { "id": "sec-cqo", "title": "CQO秘書室", "supports": "cqo", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] }
     ],
     "managers": [
       { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },

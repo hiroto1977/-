@@ -103,6 +103,31 @@ function main() {
       }
     }
 
+    // 9b. 秘書室: 各役員に 1 室 (4 体の AI チーム) を常設し継続サポートする。
+    //     各秘書室は実在の役員を支援 / メンバーは 4 体 / id 一意 / 全役員に過不足なく
+    //     1 室 (役員と秘書室は 1 対 1)。
+    const secIds = new Set();
+    const supportedExecs = new Map();
+    for (const s of org.secretaries || []) {
+      if (secIds.has(s.id)) problems.push(`秘書室 id が重複: ${s.id}`);
+      secIds.add(s.id);
+      if (!execIds.has(s.supports)) {
+        problems.push(`秘書室 ${s.id} の supports が未知の役員 "${s.supports}"`);
+      } else if (supportedExecs.has(s.supports)) {
+        problems.push(`役員 ${s.supports} に秘書室が重複 (${supportedExecs.get(s.supports)} / ${s.id})`);
+      } else {
+        supportedExecs.set(s.supports, s.id);
+      }
+      if (s.members !== 4) problems.push(`秘書室 ${s.id} は 4 体であること (現在: ${s.members})`);
+      if (s.staffedByAI === false) problems.push(`秘書室 ${s.id} は AI 配置であること (staffedByAI=true)`);
+    }
+    // 秘書室を導入する場合、全役員がちょうど 1 室を持つ (常設サポート)。
+    if ((org.secretaries || []).length > 0) {
+      for (const e of org.executives || []) {
+        if (!supportedExecs.has(e.id)) problems.push(`役員 ${e.id} に秘書室が未配置 (各役員に1室を常設)`);
+      }
+    }
+
     // 10. 各管理職が属する上位 (役員 or COO直轄) の owns に含まれるか (双方向整合)。
     const mgrToOwner = new Map();
     for (const e of org.executives || []) for (const m of e.owns || []) mgrToOwner.set(m, e.id);
@@ -179,8 +204,11 @@ function main() {
   const execCount = reg.org ? (reg.org.executives || []).length : 0;
   const mgrCount = reg.org ? (reg.org.managers || []).length : 0;
   const cooCount = reg.org && reg.org.coo ? 1 : 0;
+  const secList = reg.org ? reg.org.secretaries || [] : [];
+  const secMembers = secList.reduce((s, x) => s + (x.members || 0), 0);
+  const secLabel = secList.length > 0 ? `秘書室 ${secList.length}室(計${secMembers}体) / ` : '';
   console.log(
-    `✅ orchestration registry OK — 組織: CEO 1 / COO ${cooCount} / 役員 ${execCount} / 管理職 ${mgrCount} / 一般職(teams) ${reg.teams.length} / ` +
+    `✅ orchestration registry OK — 組織: CEO 1 / COO ${cooCount} / 役員 ${execCount} / ${secLabel}管理職 ${mgrCount} / 一般職(teams) ${reg.teams.length} / ` +
     `rounds: ${reg.rounds.length} / 直近 round ${lastRound} は ${lastCount} チーム / backlog 未着手: ` +
     `${reg.backlog.filter((b) => b.status === 'designed').length} 件`,
   );
@@ -192,7 +220,8 @@ function main() {
       const m = mgrById(mid);
       if (m) console.log(`${indent}└ ${m.title} [${m.id}] — ${m.teams.length} チーム`);
     };
-    console.log('\n🏢 組織図 (CEO → COO → 役員層 → 管理職層 → 一般職層):');
+    const secOf = (execId) => (reg.org.secretaries || []).find((s) => s.supports === execId);
+    console.log('\n🏢 組織図 (CEO → COO → 役員層(+秘書室) → 管理職層 → 一般職層):');
     console.log(`  CEO: ${reg.org.ceo.title}`);
     const coo = reg.org.coo;
     if (coo) {
@@ -201,9 +230,11 @@ function main() {
       for (const oid of coo.owns || []) {
         if (mgrById(oid)) printManager(oid, '       ');
       }
-      // COO 配下の役員 → その配下の管理職。
+      // COO 配下の役員 → 秘書室 + その配下の管理職。
       for (const e of reg.org.executives || []) {
         console.log(`       └ ${e.title} [${e.id}]`);
+        const sec = secOf(e.id);
+        if (sec) console.log(`           └ 🗂 ${sec.title} [${sec.id}] — ${sec.members}体 (常設サポート)`);
         for (const mid of e.owns || []) printManager(mid, '           ');
       }
     }
