@@ -104,4 +104,20 @@ describe('buildManagementReport', () => {
     const md = buildManagementReport(overview, sc, [], '2026-05-31', [], null);
     expect(md).not.toContain('損益分岐点までの売上余地');
   });
+
+  it('includes a YoY line when the prior-year same month is present', () => {
+    const periods: KpiActual[] = [
+      { ...kpi, period: '2025-05', revenue: 1_000_000 },
+      { ...kpi, period: '2026-05', revenue: 1_200_000 },
+    ];
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: periods, members: [] });
+    const sc = buildManagementScorecard({});
+    const md = buildManagementReport(overview, sc, [], '2026-05-31');
+    expect(md).toContain('前年同月比 (YoY): +20% (2026-05 vs 2025-05)');
+  });
+
+  it('omits the YoY line when no prior-year month is available', () => {
+    const md = report(); // single 2026-05 period only
+    expect(md).not.toContain('前年同月比 (YoY)');
+  });
 });

@@ -80,6 +80,9 @@ export function buildManagementReport(
     lines.push(`- EBITDA: ${yen(k.ebitda)} (マージン ${pct(k.ebitdaMarginPct)})`);
     lines.push(`- 損益分岐点: ${Number.isFinite(k.bep) ? yen(k.bep) : '—'} / 安全余裕率 ${pct(k.safetyMargin)}`);
     if (k.revenueGrowthPct !== null) lines.push(`- 前期比成長率: ${k.revenueGrowthPct}%`);
+    if (k.yoy !== null && k.yoy.revenueYoYPct !== null) {
+      lines.push(`- 前年同月比 (YoY): ${k.yoy.revenueYoYPct > 0 ? '+' : ''}${k.yoy.revenueYoYPct}% (${k.yoy.period} vs ${k.yoy.priorPeriod})`);
+    }
     if (breakEvenDeltaPct !== null) {
       lines.push(`- 損益分岐点までの売上余地: ${breakEvenDeltaPct > 0 ? '+' : ''}${breakEvenDeltaPct}%`);
     }

@@ -312,7 +312,8 @@
           "report-export",
           "report-trend",
           "cashflow-chart",
-          "report-sensitivity"
+          "report-sensitivity",
+          "report-yoy"
         ]
       },
       {
@@ -663,6 +664,13 @@
       "focus": "YoY=前年同月比/季節性を排した実質成長",
       "active": true,
       "manager": "mgr-management"
+    },
+    {
+      "id": "report-yoy",
+      "domain": "経営(レポートYoY)",
+      "focus": "経営レポートに前年同月比(YoY)を組込み",
+      "active": true,
+      "manager": "mgr-fpa"
     }
   ],
   "rounds": [
@@ -2163,9 +2171,72 @@
       "shipped": [
         "前年同月比(YoY)の算定・表示"
       ]
+    },
+    {
+      "round": 46,
+      "teamCount": 47,
+      "teams": [
+        "report-yoy",
+        "yoy-analysis",
+        "operating-leverage",
+        "cost-sensitivity",
+        "report-sensitivity",
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "経営レポートに前年同月比(YoY)を組込み"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "report-yoy-line",
+      "team": "report-yoy",
+      "title": "経営レポートへの前年同月比(YoY)組込み",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "yoy-growth",
       "team": "yoy-analysis",
