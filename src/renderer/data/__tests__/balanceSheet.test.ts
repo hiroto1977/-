@@ -17,17 +17,26 @@ describe('parseBalanceSheet', () => {
     expect(bs.netIncome).toBe(-500);
   });
 
+  const REQUIRED = { currentAssets: 100, fixedAssets: 0, currentLiabilities: 0, fixedLiabilities: 0, netIncome: 0 };
+
   it('rejects negative asset/liability figures', () => {
-    expect(() => parseBalanceSheet({ currentAssets: -1, netIncome: 0 })).toThrow(/流動資産/);
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: -1 })).toThrow(/流動資産/);
   });
 
   it('rejects inventory larger than current assets', () => {
-    expect(() => parseBalanceSheet({ currentAssets: 100, inventory: 200, netIncome: 0 })).toThrow(/棚卸資産/);
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 100, inventory: 200 })).toThrow(/棚卸資産/);
   });
 
-  it('treats a blank net income as zero', () => {
-    const bs = parseBalanceSheet({ currentAssets: 100, fixedAssets: 0, currentLiabilities: 0, fixedLiabilities: 0, netIncome: '' });
+  it('rejects accounts payable larger than current liabilities', () => {
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentLiabilities: 100, accountsPayable: 200 })).toThrow(/仕入債務/);
+  });
+
+  it('treats a blank net income and blank optional items as zero', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, netIncome: '' });
     expect(bs.netIncome).toBe(0);
+    expect(bs.inventory).toBe(0);
+    expect(bs.accountsReceivable).toBe(0);
+    expect(bs.accountsPayable).toBe(0);
   });
 });
 
@@ -36,8 +45,10 @@ describe('computeBalanceSheetMetrics', () => {
     asOf: '2026-03-31',
     currentAssets: 6000,
     inventory: 2000,
+    accountsReceivable: 1500,
     fixedAssets: 4000,
     currentLiabilities: 3000,
+    accountsPayable: 1000,
     fixedLiabilities: 2000,
     netIncome: 1000,
   };
@@ -71,8 +82,8 @@ describe('computeBalanceSheetMetrics', () => {
 
   it('nulls ratios whose denominator is zero', () => {
     const m = computeBalanceSheetMetrics({
-      asOf: '', currentAssets: 0, inventory: 0, fixedAssets: 0,
-      currentLiabilities: 0, fixedLiabilities: 0, netIncome: 0,
+      asOf: '', currentAssets: 0, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
     });
     expect(m.equityRatioPct).toBeNull(); // total assets 0
     expect(m.currentRatioPct).toBeNull(); // current liabilities 0

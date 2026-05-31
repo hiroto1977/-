@@ -198,13 +198,35 @@ describe('buildBusinessOverview', () => {
       kpiActuals: KPI,
       members: [],
       balanceSheet: {
-        asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, fixedAssets: 4000,
-        currentLiabilities: 3000, fixedLiabilities: 2000, netIncome: 1000,
+        asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, accountsReceivable: 1500, fixedAssets: 4000,
+        currentLiabilities: 3000, accountsPayable: 1000, fixedLiabilities: 2000, netIncome: 1000,
       },
     });
     expect(o.financialPosition).not.toBeNull();
     expect(o.financialPosition!.equityRatioPct).toBe(50);
     expect(o.financialPosition!.currentRatioPct).toBe(200);
     expect(o.financialPosition!.roaPct).toBe(10);
+  });
+
+  it('computes the cash conversion cycle from the balance sheet + KPI flows', () => {
+    // KPI: revenue 100000, cogs 40000. BS: AR 1500, inventory 2000, AP 1000.
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: KPI,
+      members: [],
+      balanceSheet: {
+        asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, accountsReceivable: 1500, fixedAssets: 4000,
+        currentLiabilities: 3000, accountsPayable: 1000, fixedLiabilities: 2000, netIncome: 1000,
+      },
+    });
+    expect(o.workingCapital).not.toBeNull();
+    expect(o.workingCapital!.workingCapital).toBe(2500); // 1500 + 2000 - 1000
+    expect(o.workingCapital!.ccc).not.toBeNull();
+  });
+
+  it('leaves working capital null when no balance sheet is supplied', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.workingCapital).toBeNull();
   });
 });

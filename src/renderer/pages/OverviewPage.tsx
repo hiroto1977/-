@@ -262,6 +262,23 @@ export function OverviewPage() {
             <Tile label="ROE (自己資本利益率)" value={pctOrDash(overview.financialPosition.roePct)} />
             <Tile label="固定比率" value={pctOrDash(overview.financialPosition.fixedRatioPct)} sub="目安100%以下" />
           </div>
+          {overview.workingCapital && (
+            <>
+              <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (CCC)</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <Tile
+                  label="CCC (現金回収日数)"
+                  value={overview.workingCapital.ccc === null ? '—' : `${overview.workingCapital.ccc} 日`}
+                  accent={overview.workingCapital.ccc === null ? undefined : overview.workingCapital.ccc <= 0 ? '#22c55e' : overview.workingCapital.ccc <= 60 ? '#3ec98a' : '#f59e0b'}
+                  sub="短い(マイナス)ほど資金繰りが楽"
+                />
+                <Tile label="売上債権回転 (DSO)" value={overview.workingCapital.dso === null ? '—' : `${overview.workingCapital.dso} 日`} />
+                <Tile label="棚卸回転 (DIO)" value={overview.workingCapital.dio === null ? '—' : `${overview.workingCapital.dio} 日`} />
+                <Tile label="仕入債務回転 (DPO)" value={overview.workingCapital.dpo === null ? '—' : `${overview.workingCapital.dpo} 日`} />
+                <Tile label="運転資本" value={yen.format(overview.workingCapital.workingCapital)} sub="売上債権+棚卸−仕入債務" />
+              </div>
+            </>
+          )}
         </Section>
       )}
     </div>

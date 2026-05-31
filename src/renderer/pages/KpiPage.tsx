@@ -548,7 +548,7 @@ function BudgetPanel() {
 
 // --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
 
-const EMPTY_BS = { asOf: '', currentAssets: '', inventory: '', fixedAssets: '', currentLiabilities: '', fixedLiabilities: '', netIncome: '' };
+const EMPTY_BS = { asOf: '', currentAssets: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
 
 function BalanceSheetPanel() {
   const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
@@ -593,8 +593,10 @@ function BalanceSheetPanel() {
         {field('asOf', '基準日')}
         {field('currentAssets', '流動資産')}
         {field('inventory', '棚卸資産')}
+        {field('accountsReceivable', '売上債権')}
         {field('fixedAssets', '固定資産')}
         {field('currentLiabilities', '流動負債')}
+        {field('accountsPayable', '仕入債務')}
         {field('fixedLiabilities', '固定負債')}
         {field('netIncome', '当期純利益')}
         <button type="button" onClick={onAdd}>BS を保存</button>

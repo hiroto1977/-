@@ -17,10 +17,14 @@ export interface BalanceSheet extends Record<string, unknown> {
   /** 基準日ラベル (任意, 例 "2026-03-31")。 */
   readonly asOf: string;
   readonly currentAssets: number;
-  /** 棚卸資産 (流動資産の内数。当座比率に使う)。 */
+  /** 棚卸資産 (流動資産の内数。当座比率・CCC に使う)。 */
   readonly inventory: number;
+  /** 売上債権 (流動資産の内数。CCC の DSO に使う)。任意。 */
+  readonly accountsReceivable: number;
   readonly fixedAssets: number;
   readonly currentLiabilities: number;
+  /** 仕入債務 (流動負債の内数。CCC の DPO に使う)。任意。 */
+  readonly accountsPayable: number;
   readonly fixedLiabilities: number;
   /** 当期純利益 (損失はマイナス可)。ROA・ROE に使う。 */
   readonly netIncome: number;
@@ -53,8 +57,10 @@ export function parseBalanceSheet(input: {
   asOf?: unknown;
   currentAssets?: unknown;
   inventory?: unknown;
+  accountsReceivable?: unknown;
   fixedAssets?: unknown;
   currentLiabilities?: unknown;
+  accountsPayable?: unknown;
   fixedLiabilities?: unknown;
   netIncome?: unknown;
 }): BalanceSheet {
@@ -69,16 +75,24 @@ export function parseBalanceSheet(input: {
     return n;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
+  // 任意項目は未入力 ('' / null) を 0 として扱う。
+  const opt = (v: unknown): unknown => (v == null || v === '' ? 0 : v);
   const currentAssets = nonNeg(input.currentAssets, '流動資産');
-  // 棚卸資産は任意 (未入力は 0)。
-  const inventory = nonNeg(input.inventory == null || input.inventory === '' ? 0 : input.inventory, '棚卸資産');
+  const inventory = nonNeg(opt(input.inventory), '棚卸資産');
+  const accountsReceivable = nonNeg(opt(input.accountsReceivable), '売上債権');
+  const currentLiabilities = nonNeg(input.currentLiabilities, '流動負債');
+  const accountsPayable = nonNeg(opt(input.accountsPayable), '仕入債務');
   if (inventory > currentAssets) throw new Error('棚卸資産は流動資産以下で入力してください');
+  if (accountsReceivable > currentAssets) throw new Error('売上債権は流動資産以下で入力してください');
+  if (accountsPayable > currentLiabilities) throw new Error('仕入債務は流動負債以下で入力してください');
   return {
     asOf,
     currentAssets,
     inventory,
+    accountsReceivable,
     fixedAssets: nonNeg(input.fixedAssets, '固定資産'),
-    currentLiabilities: nonNeg(input.currentLiabilities, '流動負債'),
+    currentLiabilities,
+    accountsPayable,
     fixedLiabilities: nonNeg(input.fixedLiabilities, '固定負債'),
     netIncome: finite(input.netIncome, '当期純利益'),
   };

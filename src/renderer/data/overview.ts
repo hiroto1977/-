@@ -19,6 +19,7 @@ import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
 import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
 import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
+import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -91,6 +92,8 @@ export interface BusinessOverview {
   readonly budget: BudgetVariance | null;
   /** 財政状態指標 (ROA/ROE/自己資本比率/流動比率)。BS 未入力なら null。 */
   readonly financialPosition: BalanceSheetMetrics | null;
+  /** 運転資金 (CCC)。BS 未入力 or 売上が無いなら null。 */
+  readonly workingCapital: CashConversionCycle | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -163,6 +166,15 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     },
     budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
+    workingCapital: input.balanceSheet && hasKpi
+      ? computeCashConversionCycle({
+          accountsReceivable: input.balanceSheet.accountsReceivable,
+          inventory: input.balanceSheet.inventory,
+          accountsPayable: input.balanceSheet.accountsPayable,
+          revenue: fundamentals.revenue,
+          cogs: fundamentals.cogs,
+        })
+      : null,
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,
