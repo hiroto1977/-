@@ -120,4 +120,34 @@ describe('buildManagementHighlights', () => {
     expect(trend?.severity).toBe('critical');
     expect(trend?.message).toContain('連続');
   });
+
+  it('respects a custom decline-streak threshold (suppresses below it)', () => {
+    // 2-period revenue decline; default would warn, but raise warn threshold to 3 → suppressed
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [
+        kpi({ period: '2026-03', revenue: 2_000_000 }),
+        kpi({ period: '2026-04', revenue: 1_500_000 }),
+        kpi({ period: '2026-05', revenue: 1_000_000 }),
+      ],
+      members: [],
+    });
+    const def = buildManagementHighlights(o).find((h) => h.category === '売上トレンド');
+    expect(def?.severity).toBe('warning'); // 2-period decline at default threshold 2
+    const tuned = buildManagementHighlights(o, { thresholds: { declineWarnStreak: 3, declineCriticalStreak: 4 } });
+    expect(tuned.find((h) => h.category === '売上トレンド')).toBeUndefined();
+  });
+
+  it('still accepts the legacy numeric DSCR argument (back-compat)', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    const hs = buildManagementHighlights(o, 0.8);
+    expect(hs.find((h) => h.category === '返済余力')?.severity).toBe('critical');
+  });
+
+  it('accepts DSCR via the options object form', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    const hs = buildManagementHighlights(o, { overallDscr: 0.8 });
+    expect(hs.find((h) => h.category === '返済余力')?.severity).toBe('critical');
+  });
 });

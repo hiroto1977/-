@@ -18,15 +18,50 @@ export interface Highlight {
 
 const SEVERITY_ORDER: Record<HighlightSeverity, number> = { critical: 0, warning: 1, good: 2 };
 
+/** ハイライト判定のしきい値 (業種・方針で調整可能)。 */
+export interface HighlightThresholds {
+  /** 連続下落を warning とする期数 (既定 2)。 */
+  readonly declineWarnStreak: number;
+  /** 連続下落を critical とする期数 (既定 3)。 */
+  readonly declineCriticalStreak: number;
+  /** 労働分配率の警告しきい値 % (既定 60)。 */
+  readonly laborShareWarnPct: number;
+  /** 単一チャネル依存の警告しきい値 % (既定 60)。computeRevenueConcentration と整合。 */
+  readonly singleChannelWarnPct: number;
+}
+
+export const DEFAULT_HIGHLIGHT_THRESHOLDS: HighlightThresholds = {
+  declineWarnStreak: 2,
+  declineCriticalStreak: 3,
+  laborShareWarnPct: 60,
+  singleChannelWarnPct: 60,
+};
+
+/** buildManagementHighlights の任意オプション。 */
+export interface HighlightOptions {
+  /** 会計CF×返済の全体DSCR (任意)。1.0 未満なら所見を出す。 */
+  readonly overallDscr?: number | null;
+  /** 判定しきい値 (部分指定可、未指定は既定値)。 */
+  readonly thresholds?: Partial<HighlightThresholds>;
+}
+
 /**
  * 経営概況から重要な所見を抽出し、深刻度順 (critical → warning → good) に返す。
  * データが無い領域は所見を出さない (沈黙)。
+ *
+ * @param overview 経営概況
+ * @param options DSCR・しきい値。後方互換のため `number|null` (= overallDscr) も受ける。
  */
 export function buildManagementHighlights(
   overview: BusinessOverview,
-  /** 会計CF×返済の全体DSCR (任意)。1.0 未満なら所見を出す。 */
-  overallDscr?: number | null,
+  options?: HighlightOptions | number | null,
 ): Highlight[] {
+  const opts: HighlightOptions =
+    typeof options === 'number' || options === null || options === undefined
+      ? { overallDscr: options ?? undefined }
+      : options;
+  const overallDscr = opts.overallDscr;
+  const th: HighlightThresholds = { ...DEFAULT_HIGHLIGHT_THRESHOLDS, ...opts.thresholds };
   const out: Highlight[] = [];
   const k = overview.kpi;
 
@@ -48,20 +83,20 @@ export function buildManagementHighlights(
       out.push({ severity: 'good', category: '成長性', message: `前期比 +${k.revenueGrowthPct}% と伸びています。` });
     }
 
-    // 月次トレンド (連続下落): 3期以上=critical, 2期=warning。
+    // 月次トレンド (連続下落): しきい値で warning / critical を判定。
     const revStreak = overview.trendAlerts.revenue;
-    if (revStreak.streak >= 2) {
+    if (revStreak.streak >= th.declineWarnStreak) {
       const drop = revStreak.dropFromPeakPct !== null ? ` (ピーク比 −${revStreak.dropFromPeakPct}%)` : '';
       out.push({
-        severity: revStreak.streak >= 3 ? 'critical' : 'warning',
+        severity: revStreak.streak >= th.declineCriticalStreak ? 'critical' : 'warning',
         category: '売上トレンド',
         message: `売上が ${revStreak.streak} 期連続で減少しています${drop}。`,
       });
     }
     const opStreak = overview.trendAlerts.operatingProfit;
-    if (opStreak.streak >= 2) {
+    if (opStreak.streak >= th.declineWarnStreak) {
       out.push({
-        severity: opStreak.streak >= 3 ? 'critical' : 'warning',
+        severity: opStreak.streak >= th.declineCriticalStreak ? 'critical' : 'warning',
         category: '利益トレンド',
         message: `営業利益が ${opStreak.streak} 期連続で減少しています。`,
       });
@@ -70,7 +105,7 @@ export function buildManagementHighlights(
 
   // 生産性 (労働分配率)
   const labor = overview.productivity.labor;
-  if (labor.laborSharePct !== null && labor.laborSharePct > 60) {
+  if (labor.laborSharePct !== null && labor.laborSharePct > th.laborShareWarnPct) {
     out.push({ severity: 'warning', category: '生産性', message: `労働分配率が ${labor.laborSharePct}% と高めです (人件費が粗利を圧迫)。` });
   }
 

@@ -281,7 +281,8 @@
           "depreciation",
           "growth-analysis",
           "revenue-concentration",
-          "trend-monitor"
+          "trend-monitor",
+          "alert-policy"
         ]
       },
       {
@@ -549,6 +550,13 @@
       "id": "trend-monitor",
       "domain": "経営(トレンド監視)",
       "focus": "売上・営業利益の連続下落検知/早期アラート/ピーク比下落率",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "alert-policy",
+      "domain": "経営(アラート方針)",
+      "focus": "ハイライト判定しきい値のカスタム化/連続下落・労働分配率・集中度の閾値",
       "active": true,
       "manager": "mgr-management"
     }
@@ -1372,9 +1380,58 @@
       "shipped": [
         "月次トレンドアラート(売上・営業利益の連続下落検知)"
       ]
+    },
+    {
+      "round": 32,
+      "teamCount": 33,
+      "teams": [
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "経営ハイライトのしきい値カスタム化(連続下落/労働分配率/単一チャネル依存)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "highlight-thresholds",
+      "team": "alert-policy",
+      "title": "経営ハイライトのしきい値カスタム化(業種・方針別の調整)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "trend-decline-alerts",
       "team": "trend-monitor",
