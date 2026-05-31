@@ -7,6 +7,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { calcRealEstateYield, calcRealEstateLeverage } from '../../shared/realEstateMetrics';
+import { straightLineAnnual, straightLineSchedule } from '../../shared/depreciation';
 
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -43,6 +44,15 @@ export function RealEstatePage() {
     const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
     return { y, lev };
   }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
+
+  // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
+  const [bldgCostStr, setBldgCostStr] = useState('25000000');
+  const [bldgLifeStr, setBldgLifeStr] = useState('47');
+  const depreciation = useMemo(() => {
+    const cost = reNum(bldgCostStr);
+    const life = Math.round(reNum(bldgLifeStr));
+    return { annual: straightLineAnnual(cost, life), schedule: straightLineSchedule(cost, life) };
+  }, [bldgCostStr, bldgLifeStr]);
 
   return (
     <div>
@@ -143,6 +153,27 @@ export function RealEstatePage() {
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
           <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
           <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+        </div>
+      </Section>
+
+      <Section title="建物の減価償却 (定額法・概算)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          建物 (1998年4月以降取得) は定額法。法定耐用年数は構造で異なります (RC造 47年 / 重量鉄骨 34年 / 木造 22年)。
+          減価償却費は会計上の費用で節税に寄与しますが、<strong>※ 概算であり税務助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            建物取得価額
+            <input type="text" inputMode="decimal" value={bldgCostStr} onChange={(e) => setBldgCostStr(e.target.value)} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            耐用年数
+            <input type="text" inputMode="decimal" value={bldgLifeStr} onChange={(e) => setBldgLifeStr(e.target.value)} style={reInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
+          <Stat label="償却年数" value={`${depreciation.schedule.length} 年`} />
         </div>
       </Section>
     </div>
