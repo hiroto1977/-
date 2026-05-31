@@ -128,6 +128,28 @@ describe('buildBusinessOverview', () => {
     expect(o.kpi.operatingMarginPct).toBeCloseTo(25);
   });
 
+  it('consolidates EBITDA and cost-structure ratios from KPI fundamentals', () => {
+    // KPI: revenue 100000, cogs 40000, advertising 10000, sga 20000, depreciation 5000
+    // operating = 100000 - (40000+10000) - (20000+5000) = 25000; EBITDA = 25000+5000 = 30000
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.kpi.ebitda).toBe(30000);
+    expect(o.kpi.ebitdaMarginPct).toBeCloseTo(30);
+    expect(o.kpi.cogsRatioPct).toBeCloseTo(40);
+    expect(o.kpi.advertisingRatioPct).toBeCloseTo(10);
+    expect(o.kpi.sgaRatioPct).toBeCloseTo(20);
+  });
+
+  it('zeroes EBITDA margin and cost ratios when revenue is zero', () => {
+    const noRev: KpiActual[] = [
+      { period: '2026-05', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1000, depreciation: 500 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: noRev, members: [] });
+    expect(o.kpi.ebitdaMarginPct).toBe(0);
+    expect(o.kpi.cogsRatioPct).toBe(0);
+    // EBITDA itself is still operating + depreciation = -1500 + 500 = -1000 (a figure, not a ratio)
+    expect(o.kpi.ebitda).toBe(-1000);
+  });
+
   it('computes per-capita productivity from the member count', () => {
     const o = buildBusinessOverview({
       plan: 'business',

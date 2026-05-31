@@ -101,6 +101,11 @@ export function OverviewPage() {
                 value={yen.format(overview.kpi.grossProfit)}
                 sub={`粗利率 ${overview.kpi.grossMarginPct.toFixed(1)}%`}
               />
+              <Tile
+                label="EBITDA"
+                value={yen.format(overview.kpi.ebitda)}
+                sub={`償却前営業利益・マージン ${overview.kpi.ebitdaMarginPct.toFixed(1)}%`}
+              />
               <Tile label="限界利益率" value={`${overview.kpi.contributionRatio.toFixed(1)}%`} sub="高いほど固定費を回収しやすい" />
               <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
               <Tile label="安全余裕率" value={`${overview.kpi.safetyMargin.toFixed(1)}%`} sub="高いほど安全" />
@@ -109,6 +114,17 @@ export function OverviewPage() {
             <Tile label="KPI" value="未入力" sub="KPI 実績を入力すると表示" />
           )}
         </div>
+
+        {overview.kpi.hasData && overview.kpi.revenue > 0 && (
+          <>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>コスト構造 (対売上)</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+              <Tile label="原価率" value={`${overview.kpi.cogsRatioPct.toFixed(1)}%`} />
+              <Tile label="広告費比率" value={`${overview.kpi.advertisingRatioPct.toFixed(1)}%`} />
+              <Tile label="販管費率" value={`${overview.kpi.sgaRatioPct.toFixed(1)}%`} />
+            </div>
+          </>
+        )}
 
         {overview.kpi.hasData && overview.productivity.members > 0 && (
           <>

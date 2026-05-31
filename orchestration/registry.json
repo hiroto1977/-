@@ -32,7 +32,7 @@
     "executives": [
       { "id": "cfo", "title": "最高財務責任者 (CFO)", "reportsTo": "coo", "owns": ["mgr-tax", "mgr-funding"], "domain": "財務・税務・資金調達" },
       { "id": "chro", "title": "最高人事責任者 (CHRO)", "reportsTo": "coo", "owns": ["mgr-payroll"], "domain": "人事・給与・労務" },
-      { "id": "cso", "title": "最高戦略責任者 (CSO)", "reportsTo": "coo", "owns": ["mgr-management"], "domain": "経営戦略・分析・成長・予測" },
+      { "id": "cso", "title": "最高戦略責任者 (CSO)", "reportsTo": "coo", "owns": ["mgr-management", "mgr-fpa"], "domain": "経営戦略・分析・成長・予測・予実管理" },
       { "id": "cio", "title": "最高投資責任者 (CIO / Chief Investment Officer)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"], "domain": "投資・資産運用・為替" },
       { "id": "cqo", "title": "最高品質責任者 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"], "domain": "品質保証・セキュリティ" }
     ],
@@ -49,7 +49,8 @@
       { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "chro", "teams": ["payroll"] },
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
-      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis", "revenue-forecast", "budget-planning", "productivity"] },
+      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis"] },
+      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
@@ -75,9 +76,10 @@
     { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true, "manager": "mgr-management" },
     { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" },
     { "id": "growth-analysis", "domain": "経営(成長性)", "focus": "売上前期比成長率/CAGR/トレンド・スコアカード成長性連携", "active": true, "manager": "mgr-management" },
-    { "id": "revenue-forecast", "domain": "経営(予測)", "focus": "着地見込み(ランレート年換算)/トレンド外挿", "active": true, "manager": "mgr-management" },
-    { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-management" },
-    { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-management" }
+    { "id": "revenue-forecast", "domain": "経営(予測)", "focus": "着地見込み(ランレート年換算)/トレンド外挿", "active": true, "manager": "mgr-fpa" },
+    { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-fpa" },
+    { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-fpa" },
+    { "id": "cost-structure", "domain": "経営(コスト構造)", "focus": "EBITDA/原価率・広告費率・販管費率/対売上構成", "active": true, "manager": "mgr-fpa" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -94,7 +96,8 @@
     { "round": 12, "teamCount": 13, "teams": ["growth-analysis", "revenue-forecast", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上成長性の深掘り(CAGR・移動平均トレンド)"] },
     { "round": 13, "teamCount": 14, "teams": ["revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上着地見込み(ランレート年換算)"] },
     { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] },
-    { "round": 15, "teamCount": 16, "teams": ["productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"] }
+    { "round": 15, "teamCount": 16, "teams": ["productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"] },
+    { "round": 16, "teamCount": 17, "teams": ["cost-structure", "productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約", "経営管理部(FP&A)を分割し統制範囲を最適化"] }
   ],
   "backlog": [
     { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
@@ -108,6 +111,7 @@
     { "id": "funding-diversification", "team": "funding-mix", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "shipped" },
     { "id": "funding-mix-term", "team": "funding-mix", "title": "調達の期間・通貨構成の分散(短期/長期・固定/変動)", "priority": 6, "status": "designed" },
     { "id": "productivity-margins", "team": "productivity", "title": "粗利率・一人当たり売上/営業利益の集約(スコアカード収益性連携)", "priority": 4, "status": "shipped" },
+    { "id": "cost-structure-ebitda", "team": "cost-structure", "title": "EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約", "priority": 4, "status": "shipped" },
     { "id": "productivity-labor", "team": "productivity", "title": "労働分配率・人件費率(人件費の入力源が前提)", "priority": 7, "status": "designed", "note": "人件費(給与総額)の入力源が前提。sga に内包されており現状は分離不可。" },
     { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "designed" },
     { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "designed" },

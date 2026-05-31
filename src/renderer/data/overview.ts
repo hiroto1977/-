@@ -47,6 +47,16 @@ export interface BusinessOverview {
     grossMarginPct: number;
     /** 営業利益率 (%)。 */
     operatingMarginPct: number;
+    /** EBITDA = 営業利益 + 減価償却費 (償却前営業利益)。 */
+    ebitda: number;
+    /** EBITDA マージン (%)。 */
+    ebitdaMarginPct: number;
+    /** 原価率 (%) = 売上原価 ÷ 売上。 */
+    cogsRatioPct: number;
+    /** 広告費比率 (%)。 */
+    advertisingRatioPct: number;
+    /** 販管費率 (%)。 */
+    sgaRatioPct: number;
     /** 限界利益率 (%)。 */
     contributionRatio: number;
     /** 売上高成長率 (%, 直近期 vs 前期)。期が 2 つ未満なら null。 */
@@ -94,8 +104,11 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const remaining = seatsRemaining({ used: input.members.length, limit: seatLimit });
 
   const grossProfit = fundamentals.revenue - fundamentals.cogs;
-  const grossMarginPct = fundamentals.revenue > 0 ? (grossProfit / fundamentals.revenue) * 100 : 0;
-  const operatingMarginPct = fundamentals.revenue > 0 ? (kpi.operatingProfit / fundamentals.revenue) * 100 : 0;
+  const pctOfRevenue = (n: number): number => (fundamentals.revenue > 0 ? (n / fundamentals.revenue) * 100 : 0);
+  const grossMarginPct = pctOfRevenue(grossProfit);
+  const operatingMarginPct = pctOfRevenue(kpi.operatingProfit);
+  const ebitda = kpi.operatingProfit + fundamentals.depreciation;
+  const ebitdaMarginPct = pctOfRevenue(ebitda);
   const memberCount = input.members.length;
   const perCapita = (n: number): number => (memberCount > 0 ? Math.round(n / memberCount) : 0);
 
@@ -117,6 +130,11 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       grossProfit,
       grossMarginPct,
       operatingMarginPct,
+      ebitda,
+      ebitdaMarginPct,
+      cogsRatioPct: pctOfRevenue(fundamentals.cogs),
+      advertisingRatioPct: pctOfRevenue(fundamentals.advertising),
+      sgaRatioPct: pctOfRevenue(fundamentals.sga),
       contributionRatio: kpi.contributionRatio,
       revenueGrowthPct: computeRevenueGrowthPct(input.kpiActuals),
       revenueCagrPct: computeRevenueCagrPct(input.kpiActuals),
