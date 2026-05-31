@@ -17,6 +17,7 @@ import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights } from '../data/managementHighlights';
+import { buildManagementReport } from '../data/managementReport';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
 import { SNAPSHOT } from '../data/snapshot';
@@ -201,6 +202,31 @@ export function OverviewPage() {
     [overview, debtService, thresholds],
   );
 
+  const [reportCopied, setReportCopied] = useState(false);
+  const report = useMemo(
+    () => buildManagementReport(overview, scorecard, highlights, new Date().toISOString().slice(0, 10)),
+    [overview, scorecard, highlights],
+  );
+
+  async function copyReport() {
+    try {
+      await navigator.clipboard.writeText(report);
+      setReportCopied(true);
+    } catch {
+      setReportCopied(false);
+    }
+  }
+
+  function downloadReport() {
+    const blob = new Blob([report], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `management-report-${new Date().toISOString().slice(0, 10)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
 
@@ -217,8 +243,13 @@ export function OverviewPage() {
               </li>
             ))}
           </ul>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 12 }}>
+            <button type="button" onClick={copyReport}>経営レポートをコピー (Markdown)</button>
+            <button type="button" onClick={downloadReport}>レポートをダウンロード</button>
+            {reportCopied && <span style={{ color: '#22c55e', fontSize: 12 }}>コピーしました。</span>}
+          </div>
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
-            ※ 入力済みデータからの概算の経営診断です。財務・税務助言ではありません。
+            ※ 入力済みデータからの概算の経営診断です。財務・税務助言ではありません。役員会・銀行・税理士への共有にご利用ください。
           </p>
         </Section>
       )}

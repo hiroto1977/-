@@ -301,7 +301,8 @@
           "executive-dashboard",
           "accounting-link",
           "treasury-dscr",
-          "cash-forecast"
+          "cash-forecast",
+          "report-export"
         ]
       },
       {
@@ -575,6 +576,13 @@
       "focus": "業種別ハイライトしきい値プリセット(小売/製造/SaaS/サービス)/ワンクリック適用",
       "active": true,
       "manager": "mgr-management"
+    },
+    {
+      "id": "report-export",
+      "domain": "経営(レポート出力)",
+      "focus": "経営コックピットのMarkdownレポート出力/役員会・銀行・税理士向け共有",
+      "active": true,
+      "manager": "mgr-fpa"
     }
   ],
   "rounds": [
@@ -1525,9 +1533,61 @@
       "shipped": [
         "業種別ハイライトしきい値プリセット(小売/製造/SaaS/サービス)"
       ]
+    },
+    {
+      "round": 35,
+      "teamCount": 36,
+      "teams": [
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "経営レポート出力(Markdownエクスポート・コピー/ダウンロード)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "management-report-export",
+      "team": "report-export",
+      "title": "経営レポートのMarkdown出力(役員会・銀行・税理士向け共有)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "industry-threshold-presets",
       "team": "industry-presets",
