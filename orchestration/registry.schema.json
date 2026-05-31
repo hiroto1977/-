@@ -40,6 +40,19 @@
             "id": { "type": "string" },
             "title": { "type": "string" },
             "staffedByAI": { "type": "boolean" },
+            "human": { "type": "boolean" },
+            "note": { "type": "string" }
+          }
+        },
+        "coo": {
+          "type": "object",
+          "required": ["id", "title", "reportsTo", "owns"],
+          "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "reportsTo": { "type": "string" },
+            "staffedByAI": { "type": "boolean" },
+            "owns": { "type": "array", "items": { "type": "string" } },
             "note": { "type": "string" }
           }
         },

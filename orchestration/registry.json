@@ -2,7 +2,7 @@
   "$schema": "./registry.schema.json",
   "version": 2,
   "policy": {
-    "description": "AIオーケストレーションの進化ルール。CEO配下に役員層→管理職層→一般職層の3階層を置き、作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
+    "description": "AIオーケストレーションの進化ルール。人間のCEO(オーナー)の直下にCOO(オーケストレーター=Claude本体)を置き、その配下に役員層→管理職層→一般職層を展開する。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
     "minTeamsForRound": [
       { "round": 1, "minTeams": 2 },
       { "round": 2, "minTeams": 2 },
@@ -15,22 +15,23 @@
     "roleSeparation": "並列=調査/設計 (read-only Agent)、直列=実装+全ゲート検証 (オーケストレーター)。共有ファイルへの同時書込みを避ける。",
     "qualityGate": "各実装コミット前に typecheck / lint / test / verify:all / build:web の全 green を必須とする。",
     "hierarchy": {
-      "description": "AIは CEO 以外の3階層に配置する。指揮系統: CEO → 役員層(executives) → 管理職層(managers) → 一般職層(teams)。",
+      "description": "指揮系統: CEO(人間=オーナー) → COO(オーケストレーター=Claude本体) → 役員層(executives) → 管理職層(managers) → 一般職層(teams)。CEOとCOOは研究Agentには配置しない (CEO=あなた, COO=実装本体)。",
       "layers": [
-        { "layer": "ceo", "title": "最高経営責任者", "staffedByAI": false, "responsibility": "全体方針の決定・最終承認・全ゲート検証 (オーケストレーター本体が担う。AIエージェントには配置しない)" },
-        { "layer": "executive", "title": "役員層", "staffedByAI": true, "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。配下の管理職を束ねる" },
+        { "layer": "ceo", "title": "最高経営責任者 (オーナー=あなた)", "staffedByAI": false, "human": true, "responsibility": "経営方針・優先順位の決定と最終承認。人間の最高責任者" },
+        { "layer": "coo", "title": "最高執行責任者 (オーケストレーター=Claude)", "staffedByAI": false, "responsibility": "CEOの方針を実行に落とし込み、AI組織全体を統括。実装・全ゲート検証・コミットを担う本体" },
+        { "layer": "executive", "title": "役員層", "staffedByAI": true, "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。COO配下で管理職を束ねる" },
         { "layer": "manager", "title": "管理職層", "staffedByAI": true, "responsibility": "部の論点設計・調査チームの編成と割当・品質確認の一次窓口。配下の一般職を束ねる" },
         { "layer": "staff", "title": "一般職層", "staffedByAI": true, "responsibility": "担当ドメインの調査・設計 (read-only Agent)。実装の素案を提供" }
       ]
     }
   },
   "org": {
-    "ceo": { "id": "ceo", "title": "CEO (オーケストレーター)", "staffedByAI": false, "note": "AIには配置しない最上位。実装・全ゲート検証・コミットを担う本体。" },
+    "ceo": { "id": "ceo", "title": "CEO (オーナー・最高経営責任者)", "staffedByAI": false, "human": true, "note": "事業オーナー(あなた)。経営方針・優先順位の決定と最終承認を担う人間の最高責任者。AIには配置しない。" },
+    "coo": { "id": "coo", "title": "COO (最高執行責任者・オーケストレーター)", "reportsTo": "ceo", "staffedByAI": false, "owns": ["cfo", "cio", "cqo", "mgr-management"], "note": "Claude本体(あなたのCOO)。CEOの方針を受けてAI組織全体の実行を統括し、実装・全ゲート検証・コミットを担う。経営分析部を直轄。" },
     "executives": [
-      { "id": "cfo", "title": "財務・税務担当役員 (CFO)", "reportsTo": "ceo", "owns": ["mgr-tax", "mgr-funding", "mgr-payroll"] },
-      { "id": "cio", "title": "投資・資産担当役員 (CIO)", "reportsTo": "ceo", "owns": ["mgr-investment", "mgr-household"] },
-      { "id": "coo", "title": "経営・分析担当役員 (COO)", "reportsTo": "ceo", "owns": ["mgr-management"] },
-      { "id": "cqo", "title": "品質・セキュリティ担当役員 (CQO)", "reportsTo": "ceo", "owns": ["mgr-quality"] }
+      { "id": "cfo", "title": "財務・税務担当役員 (CFO)", "reportsTo": "coo", "owns": ["mgr-tax", "mgr-funding", "mgr-payroll"] },
+      { "id": "cio", "title": "投資・資産担当役員 (CIO)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"] },
+      { "id": "cqo", "title": "品質・セキュリティ担当役員 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"] }
     ],
     "managers": [
       { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },
