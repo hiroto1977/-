@@ -4,7 +4,15 @@
  * 合成するだけで、IO は持たない (呼び出し側が record store から渡す)。
  */
 import { summarizeSales, type SalesEntry } from './sales';
-import { summarizeFundamentals, computeKpiMetrics, computeRevenueGrowthPct, type KpiActual } from './kpiActuals';
+import {
+  summarizeFundamentals,
+  computeKpiMetrics,
+  computeRevenueGrowthPct,
+  computeRevenueCagrPct,
+  computeRevenueTrend,
+  type KpiActual,
+  type RevenueTrend,
+} from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
 
@@ -35,6 +43,10 @@ export interface BusinessOverview {
     contributionRatio: number;
     /** 売上高成長率 (%, 直近期 vs 前期)。期が 2 つ未満なら null。 */
     revenueGrowthPct: number | null;
+    /** 期間平均成長率 (CAGR 相当, 1 期あたり %)。期が 2 つ未満なら null。 */
+    revenueCagrPct: number | null;
+    /** 直近の売上トレンド (移動平均)。期が足りなければ null。 */
+    revenueTrend: RevenueTrend;
   };
   readonly team: {
     members: number;
@@ -80,6 +92,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       safetyMargin: kpi.safetyMargin,
       contributionRatio: kpi.contributionRatio,
       revenueGrowthPct: computeRevenueGrowthPct(input.kpiActuals),
+      revenueCagrPct: computeRevenueCagrPct(input.kpiActuals),
+      revenueTrend: computeRevenueTrend(input.kpiActuals),
     },
     team: {
       members: input.members.length,

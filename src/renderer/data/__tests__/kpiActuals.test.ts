@@ -5,6 +5,9 @@ import {
   summarizeFundamentals,
   computeKpiMetrics,
   computeRevenueGrowthPct,
+  computeRevenueCagrPct,
+  computeRevenueTrend,
+  groupRevenueByPeriod,
   type KpiActual,
 } from '../kpiActuals';
 
@@ -169,5 +172,99 @@ describe('computeRevenueGrowthPct', () => {
   it('rounds to one decimal place', () => {
     // 300,000 → 310,000 = +3.333...% → 3.3
     expect(computeRevenueGrowthPct([actual('2026-04', 300_000), actual('2026-05', 310_000)])).toBe(3.3);
+  });
+});
+
+describe('groupRevenueByPeriod', () => {
+  it('sums revenue per period and sorts ascending by period label', () => {
+    const series = groupRevenueByPeriod([
+      actual('2026-05', 300, 'EC'),
+      actual('2026-04', 100, 'EC'),
+      actual('2026-05', 200, '店舗'),
+    ]);
+    expect(series).toEqual([
+      { period: '2026-04', revenue: 100 },
+      { period: '2026-05', revenue: 500 },
+    ]);
+  });
+
+  it('returns an empty array for no actuals', () => {
+    expect(groupRevenueByPeriod([])).toEqual([]);
+  });
+});
+
+describe('computeRevenueCagrPct', () => {
+  it('returns null with fewer than two periods', () => {
+    expect(computeRevenueCagrPct([])).toBeNull();
+    expect(computeRevenueCagrPct([actual('2026-05', 1_000)])).toBeNull();
+  });
+
+  it('returns null when the first period revenue is zero (invalid base)', () => {
+    expect(computeRevenueCagrPct([actual('2026-04', 0), actual('2026-05', 1_000)])).toBeNull();
+  });
+
+  it('computes per-period compound growth over the span', () => {
+    // 1,000,000 → 1,210,000 over 2 steps = (1.21)^(1/2) − 1 = +10%
+    const out = computeRevenueCagrPct([
+      actual('2026-03', 1_000_000),
+      actual('2026-04', 1_100_000),
+      actual('2026-05', 1_210_000),
+    ]);
+    expect(out).toBe(10);
+  });
+
+  it('reports negative compound growth when revenue contracts', () => {
+    // 1,000,000 → 810,000 over 2 steps = (0.81)^(1/2) − 1 = −10%
+    expect(computeRevenueCagrPct([
+      actual('2026-03', 1_000_000),
+      actual('2026-04', 900_000),
+      actual('2026-05', 810_000),
+    ])).toBe(-10);
+  });
+});
+
+describe('computeRevenueTrend', () => {
+  it('returns null when there are not enough periods for the window', () => {
+    expect(computeRevenueTrend([actual('2026-04', 100), actual('2026-05', 110)])).toBeNull();
+  });
+
+  it('detects an upward trend via moving average', () => {
+    const out = computeRevenueTrend([
+      actual('2026-01', 100),
+      actual('2026-02', 110),
+      actual('2026-03', 120),
+      actual('2026-04', 200),
+    ]);
+    expect(out).toBe('up');
+  });
+
+  it('detects a downward trend', () => {
+    const out = computeRevenueTrend([
+      actual('2026-01', 200),
+      actual('2026-02', 190),
+      actual('2026-03', 180),
+      actual('2026-04', 100),
+    ]);
+    expect(out).toBe('down');
+  });
+
+  it('reports flat when the moving average barely moves (±1%)', () => {
+    const out = computeRevenueTrend([
+      actual('2026-01', 1_000),
+      actual('2026-02', 1_000),
+      actual('2026-03', 1_000),
+      actual('2026-04', 1_005),
+    ]);
+    expect(out).toBe('flat');
+  });
+
+  it('honours a custom window size', () => {
+    // window=2 needs 3 periods; latest avg(110,120)=115 vs prior avg(100,110)=105 → up
+    const out = computeRevenueTrend([
+      actual('2026-03', 100),
+      actual('2026-04', 110),
+      actual('2026-05', 120),
+    ], 2);
+    expect(out).toBe('up');
   });
 });

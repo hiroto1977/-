@@ -11,6 +11,8 @@ import { buildManagementScorecard } from '../../shared/managementScorecard';
 const SCORE_COLOR = (s: number | null): string =>
   s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
 const VERDICT_LABEL: Record<string, string> = { poor: '要改善', caution: '注意', good: '良好', excellent: '優良' };
+const TREND_LABEL: Record<string, string> = { up: '↗ 上昇', down: '↘ 下降', flat: '→ 横ばい', none: '—' };
+const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '#ef4444', flat: undefined, none: undefined };
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
@@ -141,9 +143,30 @@ export function OverviewPage() {
               {scorecard.alerts.map((a) => <li key={a}>{a}</li>)}
             </ul>
           )}
+          {(overview.kpi.revenueGrowthPct !== null || overview.kpi.revenueCagrPct !== null) && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+              <Tile
+                label="前期比成長率"
+                value={overview.kpi.revenueGrowthPct === null ? '—' : `${overview.kpi.revenueGrowthPct > 0 ? '+' : ''}${overview.kpi.revenueGrowthPct}%`}
+                accent={overview.kpi.revenueGrowthPct === null ? undefined : overview.kpi.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444'}
+                sub="直近期 vs 前期"
+              />
+              <Tile
+                label="平均成長率 (CAGR)"
+                value={overview.kpi.revenueCagrPct === null ? '—' : `${overview.kpi.revenueCagrPct > 0 ? '+' : ''}${overview.kpi.revenueCagrPct}%`}
+                sub="1 期あたり複利"
+              />
+              <Tile
+                label="トレンド"
+                value={TREND_LABEL[overview.kpi.revenueTrend ?? 'none'] ?? '—'}
+                accent={TREND_COLOR[overview.kpi.revenueTrend ?? 'none']}
+                sub="移動平均の方向"
+              />
+            </div>
+          )}
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
-            成長性は KPI 実績の期 (YYYY-MM) が 2 つ以上揃うと前期比で自動加点されます。
-            資金繰り (DSCR・ランウェイ) は会計連携データが揃うと加点されます。
+            成長性は KPI 実績の期 (YYYY-MM) が 2 つ以上揃うと前期比で自動加点されます。CAGR・トレンドは
+            期が増えるほど精度が上がります。資金繰り (DSCR・ランウェイ) は会計連携データが揃うと加点されます。
           </p>
         </Section>
       )}

@@ -83,4 +83,24 @@ describe('buildBusinessOverview', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: twoPeriods, members: [] });
     expect(o.kpi.revenueGrowthPct).toBe(20);
   });
+
+  it('exposes CAGR and a moving-average trend across multiple periods', () => {
+    const rev = (period: string, revenue: number): KpiActual =>
+      ({ period, unit: '全社', revenue, cogs: 0, advertising: 0, sga: 0, depreciation: 0 });
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: [rev('2026-01', 100), rev('2026-02', 110), rev('2026-03', 120), rev('2026-04', 200)],
+      members: [],
+    });
+    expect(o.kpi.revenueCagrPct).not.toBeNull();
+    expect(o.kpi.revenueCagrPct!).toBeGreaterThan(0);
+    expect(o.kpi.revenueTrend).toBe('up');
+  });
+
+  it('leaves CAGR and trend null for a single period', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.kpi.revenueCagrPct).toBeNull();
+    expect(o.kpi.revenueTrend).toBeNull();
+  });
 });

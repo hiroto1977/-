@@ -112,7 +112,8 @@
           "team": { "type": "string" },
           "title": { "type": "string" },
           "priority": { "type": "integer", "minimum": 1 },
-          "status": { "type": "string", "enum": ["designed", "in-progress", "shipped", "dropped"] }
+          "status": { "type": "string", "enum": ["designed", "in-progress", "shipped", "dropped", "blocked"] },
+          "note": { "type": "string" }
         }
       }
     }

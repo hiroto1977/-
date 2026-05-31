@@ -99,6 +99,26 @@ export function summarizeFundamentals(actuals: readonly KpiActual[]): KpiFundame
   );
 }
 
+/** 1 期 (`period` = YYYY-MM) の合計売上。期の昇順。 */
+export interface PeriodRevenue {
+  readonly period: string;
+  readonly revenue: number;
+}
+
+/**
+ * 実績を期 (`period` = YYYY-MM) でグルーピングし、合計売上を期の昇順で返す。
+ * 成長性系の指標 (前期比 / CAGR / トレンド) が共通で使う土台。
+ */
+export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodRevenue[] {
+  const byPeriod = new Map<string, number>();
+  for (const a of actuals) {
+    byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
+  }
+  return [...byPeriod.entries()]
+    .sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+    .map(([period, revenue]) => ({ period, revenue }));
+}
+
 /**
  * 直近期と前期の売上から売上高成長率 (%) を計算する。
  *
@@ -107,17 +127,60 @@ export function summarizeFundamentals(actuals: readonly KpiActual[]): KpiFundame
  * ときも null (ゼロ除算回避)。
  */
 export function computeRevenueGrowthPct(actuals: readonly KpiActual[]): number | null {
-  if (actuals.length === 0) return null;
-  const byPeriod = new Map<string, number>();
-  for (const a of actuals) {
-    byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
-  }
-  const periods = [...byPeriod.keys()].sort((x, y) => (x < y ? -1 : x > y ? 1 : 0));
-  if (periods.length < 2) return null;
-  const latest = byPeriod.get(periods[periods.length - 1]!)!;
-  const prior = byPeriod.get(periods[periods.length - 2]!)!;
+  const series = groupRevenueByPeriod(actuals);
+  if (series.length < 2) return null;
+  const latest = series[series.length - 1]!.revenue;
+  const prior = series[series.length - 2]!.revenue;
   if (prior <= 0) return null;
   return Math.round(((latest - prior) / prior) * 1000) / 10;
+}
+
+/**
+ * 期間全体の平均成長率 (CAGR 相当, 1 期あたり %) を計算する。
+ *
+ * 最初の期から最後の期までの複利成長率 = (最終売上 / 最初売上)^(1/(期数−1)) − 1。
+ * 月次データなら「1 か月あたりの平均成長率」になる。期が 2 つ未満、または
+ * 最初の期の売上が 0 以下なら null (算定不能 / 累乗の底が不正)。
+ * 結果は 0.1% 単位に丸める。
+ */
+export function computeRevenueCagrPct(actuals: readonly KpiActual[]): number | null {
+  const series = groupRevenueByPeriod(actuals);
+  if (series.length < 2) return null;
+  const first = series[0]!.revenue;
+  const last = series[series.length - 1]!.revenue;
+  if (first <= 0 || last < 0) return null;
+  const periods = series.length - 1;
+  const rate = Math.pow(last / first, 1 / periods) - 1;
+  if (!Number.isFinite(rate)) return null;
+  return Math.round(rate * 1000) / 10;
+}
+
+/** 売上トレンドの方向。期が足りない場合は null。 */
+export type RevenueTrend = 'up' | 'down' | 'flat' | null;
+
+/**
+ * 直近の売上トレンドを移動平均で判定する。
+ *
+ * 末尾 `window` 期の移動平均と、その 1 期前を末尾とする移動平均を比べ、
+ * 上昇 / 下降 / 横ばい (±1% 未満) を返す。比較に必要な `window + 1` 期に満たな
+ * ければ null。`window` は 1 以上 (既定 3)。
+ */
+export function computeRevenueTrend(actuals: readonly KpiActual[], window = 3): RevenueTrend {
+  const w = Math.max(1, Math.floor(window));
+  const series = groupRevenueByPeriod(actuals);
+  if (series.length < w + 1) return null;
+  const mean = (from: number): number => {
+    let sum = 0;
+    for (let i = from; i < from + w; i += 1) sum += series[i]!.revenue;
+    return sum / w;
+  };
+  const recent = mean(series.length - w);
+  const prior = mean(series.length - w - 1);
+  if (prior <= 0) return recent > 0 ? 'up' : 'flat';
+  const change = (recent - prior) / prior;
+  if (change > 0.01) return 'up';
+  if (change < -0.01) return 'down';
+  return 'flat';
 }
 
 /** Pure break-even / KPI computation. Mirrors `computeKpi` in
