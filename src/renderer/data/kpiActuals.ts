@@ -183,6 +183,39 @@ export function computeRevenueTrend(actuals: readonly KpiActual[], window = 3): 
   return 'flat';
 }
 
+/** 当年度の売上着地見込み (年換算)。 */
+export interface RevenueLandingForecast {
+  /** 対象年 (最新の期の YYYY)。 */
+  readonly year: string;
+  /** その年のうちデータがある月数 (経過月)。 */
+  readonly monthsElapsed: number;
+  /** 経過月までの実績売上合計。 */
+  readonly actualToDate: number;
+  /** 着地見込み = 実績 ÷ 経過月 × 12 (ランレート年換算, 円単位に丸め)。 */
+  readonly runRateForecast: number;
+}
+
+/**
+ * 直近年の月次実績から、当年度の売上着地見込み (ランレート年換算) を計算する。
+ *
+ * 最新の期 (`period` = YYYY-MM) の年 (YYYY) を対象年とし、その年のデータがある
+ * 月の実績を合計して「実績 ÷ 経過月 × 12」で 12 か月分に年換算する。対象年に
+ * データが無ければ null。経営の着地予測の最も素朴な指標 (季節性は考慮しない)。
+ */
+export function computeRevenueLandingForecast(
+  actuals: readonly KpiActual[],
+): RevenueLandingForecast | null {
+  const series = groupRevenueByPeriod(actuals);
+  if (series.length === 0) return null;
+  const year = series[series.length - 1]!.period.slice(0, 4);
+  const inYear = series.filter((s) => s.period.slice(0, 4) === year);
+  const monthsElapsed = inYear.length;
+  if (monthsElapsed === 0) return null;
+  const actualToDate = inYear.reduce((sum, s) => sum + s.revenue, 0);
+  const runRateForecast = Math.round((actualToDate / monthsElapsed) * 12);
+  return { year, monthsElapsed, actualToDate, runRateForecast };
+}
+
 /** Pure break-even / KPI computation. Mirrors `computeKpi` in
  *  src/main/clients/kpi.ts (see module header). */
 export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {

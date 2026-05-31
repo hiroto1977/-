@@ -162,6 +162,13 @@ export function OverviewPage() {
                 accent={TREND_COLOR[overview.kpi.revenueTrend ?? 'none']}
                 sub="移動平均の方向"
               />
+              {overview.kpi.revenueLanding && (
+                <Tile
+                  label="売上 着地見込み"
+                  value={yen.format(overview.kpi.revenueLanding.runRateForecast)}
+                  sub={`${overview.kpi.revenueLanding.year}年・${overview.kpi.revenueLanding.monthsElapsed}か月実績から年換算`}
+                />
+              )}
             </div>
           )}
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>

@@ -103,4 +103,20 @@ describe('buildBusinessOverview', () => {
     expect(o.kpi.revenueCagrPct).toBeNull();
     expect(o.kpi.revenueTrend).toBeNull();
   });
+
+  it('exposes a run-rate landing forecast from elapsed months', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    // KPI は 2026-05 の 1 か月 100,000 → 年換算 1,200,000
+    expect(o.kpi.revenueLanding).toEqual({
+      year: '2026',
+      monthsElapsed: 1,
+      actualToDate: 100000,
+      runRateForecast: 1200000,
+    });
+  });
+
+  it('leaves the landing forecast null when no KPI data is present', () => {
+    const o = buildBusinessOverview({ plan: 'free', sales: [], kpiActuals: [], members: [] });
+    expect(o.kpi.revenueLanding).toBeNull();
+  });
 });

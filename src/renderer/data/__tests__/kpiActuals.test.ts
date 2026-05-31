@@ -7,6 +7,7 @@ import {
   computeRevenueGrowthPct,
   computeRevenueCagrPct,
   computeRevenueTrend,
+  computeRevenueLandingForecast,
   groupRevenueByPeriod,
   type KpiActual,
 } from '../kpiActuals';
@@ -266,5 +267,58 @@ describe('computeRevenueTrend', () => {
       actual('2026-05', 120),
     ], 2);
     expect(out).toBe('up');
+  });
+});
+
+describe('computeRevenueLandingForecast', () => {
+  it('returns null with no actuals', () => {
+    expect(computeRevenueLandingForecast([])).toBeNull();
+  });
+
+  it('annualises the run-rate from elapsed months of the latest year', () => {
+    // 3 か月で 300万 → ランレート年換算 1,200万
+    const out = computeRevenueLandingForecast([
+      actual('2026-01', 1_000_000),
+      actual('2026-02', 1_000_000),
+      actual('2026-03', 1_000_000),
+    ]);
+    expect(out).toEqual({
+      year: '2026',
+      monthsElapsed: 3,
+      actualToDate: 3_000_000,
+      runRateForecast: 12_000_000,
+    });
+  });
+
+  it('uses only the latest calendar year when multiple years are present', () => {
+    const out = computeRevenueLandingForecast([
+      actual('2025-11', 9_999_999),
+      actual('2025-12', 9_999_999),
+      actual('2026-01', 2_000_000),
+      actual('2026-02', 2_000_000),
+    ]);
+    // 対象年は 2026、2 か月で 400万 → 年換算 2,400万 (2025 は無視)
+    expect(out).toEqual({
+      year: '2026',
+      monthsElapsed: 2,
+      actualToDate: 4_000_000,
+      runRateForecast: 24_000_000,
+    });
+  });
+
+  it('sums multiple units within the same month before annualising', () => {
+    const out = computeRevenueLandingForecast([
+      actual('2026-01', 600_000, 'EC'),
+      actual('2026-01', 400_000, '店舗'),
+    ]);
+    // 1 か月で 100万 → 年換算 1,200万
+    expect(out?.monthsElapsed).toBe(1);
+    expect(out?.actualToDate).toBe(1_000_000);
+    expect(out?.runRateForecast).toBe(12_000_000);
+  });
+
+  it('rounds the annualised figure to the nearest yen', () => {
+    // 1 か月 100円 → 1,200円ちょうど。端数が出るケース: 7円/1か月 → 84円
+    expect(computeRevenueLandingForecast([actual('2026-01', 7)])?.runRateForecast).toBe(84);
   });
 });
