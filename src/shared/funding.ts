@@ -351,6 +351,42 @@ export function fundingDiversification(
   };
 }
 
+/** 借入の期間構成 (短期/長期)。 */
+export interface FundingTermStructure {
+  /** 短期借入 (返済 12 か月以内) の確定額。 */
+  readonly shortTermSecured: number;
+  /** 長期借入 (返済 12 か月超) の確定額。 */
+  readonly longTermSecured: number;
+  /** 確定済みの借入 (返済条件あり) 合計。 */
+  readonly totalDebt: number;
+  /** 長期借入比率 (%) = 長期 ÷ 総借入。借入が無ければ null。高いほど返済が安定的。 */
+  readonly longTermRatioPct: number | null;
+}
+
+/**
+ * 確定済みの借入 (返済条件あり) を返済月数で短期 (≤12か月) / 長期 (>12か月) に
+ * 分け、長期比率を出す。長期比率が高いほど短期の借換リスクが小さく安定的。
+ * 返済条件の無い案件 (補助金等) は対象外。
+ */
+export function fundingTermStructure(items: readonly FundingItem[]): FundingTermStructure {
+  let shortTerm = 0;
+  let longTerm = 0;
+  for (const it of items) {
+    if (!it.repayable || !it.repayment) continue;
+    if (!isSecured(it.status)) continue;
+    const amt = nonNeg(it.amount);
+    if (it.repayment.months <= 12) shortTerm += amt;
+    else longTerm += amt;
+  }
+  const totalDebt = shortTerm + longTerm;
+  return {
+    shortTermSecured: shortTerm,
+    longTermSecured: longTerm,
+    totalDebt,
+    longTermRatioPct: totalDebt > 0 ? Math.round((longTerm / totalDebt) * 1000) / 10 : null,
+  };
+}
+
 /**
  * レーダーチャートのスコア (0..max) を返す。各軸 = 種別の確定額を、
  * 全種別中の最大確定額で正規化した相対値 (0..max)。最大が 0 のときは全 0。

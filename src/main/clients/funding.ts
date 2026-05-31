@@ -7,6 +7,7 @@ import {
   expectedScenario,
   fundingCostMetrics,
   fundingDiversification,
+  fundingTermStructure,
   fundingQualityScore,
   monthlyFlow,
   radarScores,
@@ -17,6 +18,7 @@ import {
   type ExpectedScenario,
   type FundingCostMetrics,
   type FundingDiversification,
+  type FundingTermStructure,
   type FundingQualityScore,
   type ScenarioRunways,
   type FundingBar,
@@ -92,6 +94,8 @@ export interface FundingSnapshot {
   readonly qualityScore: FundingQualityScore;
   /** 資金調達の多様化 (種別集中度 HHI) 指標。種別の確定額が無ければ null。 */
   readonly diversification: FundingDiversification | null;
+  /** 借入の期間構成 (短期/長期・長期比率)。 */
+  readonly termStructure: FundingTermStructure;
   /** 返済余力指標 (DSCR)。 */
   readonly debtService: DebtServiceMetrics;
   /** 資金調達コスト指標 (実効コスト率・自己負担比率)。 */
@@ -140,6 +144,7 @@ export function buildFundingSnapshot(
     }),
     qualityScore: fundingQualityScore(summaryValue),
     diversification: fundingDiversification(byKind),
+    termStructure: fundingTermStructure(items),
     debtService: debtServiceMetrics(monthly),
     costMetrics: fundingCostMetrics(items, summaryValue),
     accountingLinked: (options.accounting?.size ?? 0) > 0,

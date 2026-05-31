@@ -947,6 +947,12 @@ export const SNAPSHOT = {
       topSharePct: number;
       score: number;
     } | null,
+    termStructure: {
+      shortTermSecured: 0,
+      longTermSecured: 0,
+      totalDebt: 0,
+      longTermRatioPct: null as number | null,
+    },
     debtService: {
       totalRepayment: 0,
       totalOperatingCashflow: 0,

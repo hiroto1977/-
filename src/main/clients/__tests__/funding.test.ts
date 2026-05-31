@@ -20,6 +20,7 @@ import {
   summarize,
   fundingQualityScore,
   fundingDiversification,
+  fundingTermStructure,
   debtServiceMetrics,
   effectiveFundingCostRate,
   totalInterestOf,
@@ -790,6 +791,40 @@ describe('fundingDiversification (HHI)', () => {
     expect(d.topKind).toBe('subsidy');
     expect(d.topSharePct).toBe(80);
     expect(d.score).toBe(32);
+  });
+});
+
+describe('fundingTermStructure', () => {
+  const term = (id: string, amount: number, months: number): FundingItem => ({
+    id, kind: 'loan', name: id, amount, status: 'received', month: '2026-02', repayable: true,
+    repayment: { annualRate: 0.02, months, startMonth: '2026-03' },
+  });
+
+  it('classifies secured loans into short (<=12m) and long (>12m) and computes the long ratio', () => {
+    const t = fundingTermStructure([
+      term('a', 2_000_000, 12), // short
+      term('b', 8_000_000, 60), // long
+    ]);
+    expect(t.shortTermSecured).toBe(2_000_000);
+    expect(t.longTermSecured).toBe(8_000_000);
+    expect(t.totalDebt).toBe(10_000_000);
+    expect(t.longTermRatioPct).toBe(80);
+  });
+
+  it('ignores non-repayable funding and unsecured (applied) loans', () => {
+    const t = fundingTermStructure([
+      { id: 's', kind: 'subsidy', name: '補助', amount: 5_000_000, status: 'received', month: '2026-06', repayable: false },
+      { id: 'p', kind: 'loan', name: '申請中融資', amount: 9_000_000, status: 'applied', month: '2026-02', repayable: true, repayment: { annualRate: 0.02, months: 60, startMonth: '2026-03' } },
+      term('c', 1_000_000, 24),
+    ]);
+    expect(t.totalDebt).toBe(1_000_000);
+    expect(t.longTermSecured).toBe(1_000_000);
+  });
+
+  it('returns a null long ratio when there is no debt', () => {
+    const t = fundingTermStructure([]);
+    expect(t.totalDebt).toBe(0);
+    expect(t.longTermRatioPct).toBeNull();
   });
 });
 

@@ -348,6 +348,13 @@ export function FundingPage() {
             sub: `${live.diversification.kindsPresent}種・実効 ${live.diversification.effectiveSources} 元`,
           }]
         : []),
+      ...(live.termStructure.totalDebt > 0
+        ? [{
+            label: '長期借入比率',
+            value: `${live.termStructure.longTermRatioPct ?? 0}%`,
+            sub: `長期 ${jpy(live.termStructure.longTermSecured)} / 短期 ${jpy(live.termStructure.shortTermSecured)}`,
+          }]
+        : []),
     ],
     [live],
   );
