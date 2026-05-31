@@ -284,7 +284,8 @@
           "trend-monitor",
           "alert-policy",
           "settings-persistence",
-          "industry-presets"
+          "industry-presets",
+          "monthly-trend"
         ]
       },
       {
@@ -583,6 +584,13 @@
       "focus": "経営コックピットのMarkdownレポート出力/役員会・銀行・税理士向け共有",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "monthly-trend",
+      "domain": "経営(月次推移)",
+      "focus": "期別の売上・営業利益・利益率・前期比の月次推移テーブル",
+      "active": true,
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
@@ -1578,9 +1586,62 @@
       "shipped": [
         "経営レポート出力(Markdownエクスポート・コピー/ダウンロード)"
       ]
+    },
+    {
+      "round": 36,
+      "teamCount": 37,
+      "teams": [
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "月次推移サマリー(売上・営業利益・利益率・前期比の期別テーブル)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "monthly-trend-table",
+      "team": "monthly-trend",
+      "title": "月次推移テーブル(売上/営業利益/利益率/前期比)",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "management-report-export",
       "team": "report-export",

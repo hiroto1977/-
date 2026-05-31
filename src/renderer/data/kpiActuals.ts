@@ -158,6 +158,49 @@ export function groupOperatingProfitByPeriod(
     }));
 }
 
+/** 月次推移サマリーの 1 期分 (期昇順)。 */
+export interface MonthlyTrendRow {
+  readonly period: string;
+  readonly revenue: number;
+  readonly operatingProfit: number;
+  /** 営業利益率 (%)。売上 0 なら 0。 */
+  readonly operatingMarginPct: number;
+  /** 前期比の売上成長率 (%)。先頭期や前期売上 0 なら null。 */
+  readonly revenueGrowthPct: number | null;
+}
+
+/**
+ * 期 (YYYY-MM) ごとに売上・営業利益・利益率・前期比成長率をまとめた月次推移を返す。
+ * 期内の複数事業は合算。経営サマリーの「月次推移」テーブルやレポートに使う。
+ */
+export function monthlyTrendSeries(actuals: readonly KpiActual[]): MonthlyTrendRow[] {
+  const byPeriod = new Map<string, KpiActual[]>();
+  for (const a of actuals) {
+    const list = byPeriod.get(a.period) ?? [];
+    list.push(a);
+    byPeriod.set(a.period, list);
+  }
+  const periods = [...byPeriod.keys()].sort((x, y) => (x < y ? -1 : x > y ? 1 : 0));
+  const rows: MonthlyTrendRow[] = [];
+  let prevRevenue: number | null = null;
+  for (const period of periods) {
+    const f = summarizeFundamentals(byPeriod.get(period)!);
+    const m = computeKpiMetrics(f);
+    const revenueGrowthPct = prevRevenue !== null && prevRevenue > 0
+      ? Math.round(((f.revenue - prevRevenue) / prevRevenue) * 1000) / 10
+      : null;
+    rows.push({
+      period,
+      revenue: f.revenue,
+      operatingProfit: m.operatingProfit,
+      operatingMarginPct: f.revenue > 0 ? Math.round((m.operatingProfit / f.revenue) * 1000) / 10 : 0,
+      revenueGrowthPct,
+    });
+    prevRevenue = f.revenue;
+  }
+  return rows;
+}
+
 /** 人件費の合計 (未入力の期は 0 として扱う)。 */
 export function summarizeLaborCost(actuals: readonly KpiActual[]): number {
   return actuals.reduce((acc, a) => acc + (a.laborCost ?? 0), 0);
