@@ -1,0 +1,48 @@
+{
+  "$schema": "./registry.schema.json",
+  "version": 1,
+  "policy": {
+    "description": "AIオーケストレーションの進化ルール。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
+    "minTeamsForRound": [
+      { "round": 1, "minTeams": 2 },
+      { "round": 2, "minTeams": 2 },
+      { "round": 3, "minTeams": 3 },
+      { "round": 4, "minTeams": 5 },
+      { "round": 5, "minTeams": 6 },
+      { "round": 6, "minTeams": 7 }
+    ],
+    "growthRule": "各 round の teamCount は前 round 以上であること (単調増加)。新領域の追加で細分化する。",
+    "roleSeparation": "並列=調査/設計 (read-only Agent)、直列=実装+全ゲート検証 (オーケストレーター)。共有ファイルへの同時書込みを避ける。",
+    "qualityGate": "各実装コミット前に typecheck / lint / test / verify:all / build:web の全 green を必須とする。"
+  },
+  "teams": [
+    { "id": "tax-income", "domain": "税務(所得税)", "focus": "所得税・速算表・復興特別所得税", "active": true },
+    { "id": "tax-resident", "domain": "税務(住民税)", "focus": "住民税・所得割・均等割・調整控除・税額控除", "active": true },
+    { "id": "tax-deductions", "domain": "税務(所得控除)", "focus": "配偶者/扶養/社保/生命保険/医療費/iDeCo等", "active": true },
+    { "id": "tax-credits", "domain": "税務(税額控除)", "focus": "住宅ローン/配当/ふるさと納税", "active": true },
+    { "id": "tax-separate", "domain": "税務(分離課税)", "focus": "退職所得/譲渡所得/一時所得/公的年金", "active": true },
+    { "id": "tax-consumption", "domain": "税務(消費税)", "focus": "本則/簡易/2割特例/インボイス", "active": true },
+    { "id": "funding-cashflow", "domain": "資金調達(資金繰り)", "focus": "月次CF/ランウェイ/DSCR/返済", "active": true },
+    { "id": "funding-cost", "domain": "資金調達(コスト)", "focus": "実効調達コスト率/自己負担比率/質スコア", "active": true },
+    { "id": "funding-scenario", "domain": "資金調達(シナリオ)", "focus": "採択確率/期待値/3シナリオ残高", "active": true },
+    { "id": "kpi-analysis", "domain": "経営(KPI/BEP)", "focus": "損益分岐点/目標利益/販売数量/価格", "active": true },
+    { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true },
+    { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true },
+    { "id": "security", "domain": "セキュリティ", "focus": "パスワード強度/エントロピー/突破時間", "active": true },
+    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit" }
+  ],
+  "rounds": [
+    { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
+    { "round": 2, "teamCount": 2, "teams": ["funding-cashflow", "funding-cost"], "shipped": ["資金調達レーダー", "課税区分/税引後手残り"] },
+    { "round": 3, "teamCount": 3, "teams": ["funding-cashflow", "tax-credits", "funding-scenario"], "shipped": ["元金均等返済", "3シナリオ残高", "一時所得"] },
+    { "round": 4, "teamCount": 5, "teams": ["tax-deductions", "quality-audit", "funding-cost", "tax-credits", "tax-separate"], "shipped": ["セルフメディケーション", "境界値ハードニング", "消費税区分", "住宅ローン所得制限", "譲渡所得"] },
+    { "round": 5, "teamCount": 6, "teams": ["kpi-analysis", "quality-audit", "real-estate", "tax-consumption", "tax-separate", "funding-scenario"], "shipped": ["公的年金等控除", "KPI目標利益/販売数量"] },
+    { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] }
+  ],
+  "backlog": [
+    { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "designed" },
+    { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "designed" },
+    { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "designed" },
+    { "id": "funding-diversification", "team": "funding-scenario", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "designed" }
+  ]
+}

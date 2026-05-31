@@ -30,6 +30,7 @@ jobs:
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:test-coverage
+      - run: npm run verify:orchestration
       - run: npm run lint            # eslint last — slowest of this group
 
   test:

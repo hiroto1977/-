@@ -68,6 +68,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - サービス数を増やしたら ARCHITECTURE.md の数字 + §3.1 表に行追加 + CLAUDE.md / USER_GUIDE.md の "N services" も全部
 - IPC handler 追加 / `LIVE_FETCHERS` 行範囲変更時の line ref 追従
 
+### F. AIオーケストレーションの進化基盤 (`orchestration/`)
+精度向上サイクルは `orchestration/registry.json` (チーム / ラウンド履歴 / バックログ / 進化ルール) を
+単一の真実源として回す。`npm run verify:orchestration` (= `verify:all` の一部 + CI) が
+**チーム数の単調増加・最低チーム数・参照整合・teamCount一致** を機械検証する。
+- サイクル開始時に `npm run orchestration:plan` で「次ラウンドの推奨チーム数 + 優先度順の着手候補」を取得。
+- 実装後は registry.json を更新 (teams[] に新領域 / rounds[] に追記 / backlog の status 更新)。teamCount は前ラウンド以上。
+- 詳細は `orchestration/README.md`。チームを増やし続けても整合性が CI で保たれる設計。
+
 ## 既知の罠
 
 ### 罠 1: scaffold ハイフン + 数字 ID で camelCase collapse (修正済)
