@@ -10,6 +10,7 @@ import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights } from '../data/managementHighlights';
+import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
 import { SNAPSHOT } from '../data/snapshot';
 
@@ -51,6 +52,16 @@ export function OverviewPage() {
   // 会計連携 (freee): 連携済みなら月次CFが入る。未連携は空 (snapshot)。
   const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
   const accountingMonthly = freeeData.monthly;
+  // 資金調達レーダー: 月次返済スケジュールを会計CFと突合して DSCR を算定。
+  const { data: fundingData } = useServiceData('funding', SNAPSHOT.funding);
+  const repayments = useMemo(
+    () => fundingData.monthly.map((m) => ({ month: m.month, repayment: m.repayment })),
+    [fundingData],
+  );
+  const debtService = useMemo(
+    () => combineCashflowDebtService(accountingMonthly, repayments),
+    [accountingMonthly, repayments],
+  );
 
   const overview = useMemo(
     () =>
@@ -76,8 +87,9 @@ export function OverviewPage() {
       grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
       contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
       safetyMarginPct: overview.kpi.safetyMargin,
-      // 資金繰り: 会計連携CF + 現預金からランウェイを算定して加点。
+      // 資金繰り: 会計連携CF + 現預金からランウェイを、会計CF×返済から DSCR を加点。
       runwayMonths: overview.runwayMonths ?? undefined,
+      dscr: debtService?.overallDscr ?? undefined,
       // 安全性: 貸借対照表を入力すると自己資本比率が加点される。
       equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
       // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
@@ -88,9 +100,9 @@ export function OverviewPage() {
         ? Math.round((overview.kpi.revenue / overview.financialPosition.totalAssets) * 100) / 100
         : undefined,
     });
-  }, [overview]);
+  }, [overview, debtService]);
 
-  const highlights = useMemo(() => buildManagementHighlights(overview), [overview]);
+  const highlights = useMemo(() => buildManagementHighlights(overview, debtService?.overallDscr), [overview, debtService]);
 
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
@@ -307,6 +319,29 @@ export function OverviewPage() {
               accent={overview.runwayMonths === null ? undefined : overview.runwayMonths >= 12 ? '#22c55e' : overview.runwayMonths >= 6 ? '#f59e0b' : '#ef4444'}
               sub="現預金 ÷ 月次純流出"
             />
+          </div>
+        </Section>
+      )}
+
+      {debtService && (
+        <Section title="返済余力 (DSCR) — 会計CF × 資金調達の同時連携">
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            会計連携 (freee) の月次営業CF と、資金調達レーダーの月次返済額を突合した返済余力です。
+            DSCR が 1.0 以上なら営業CF で返済を賄えています。<strong>※ 概算であり財務助言ではありません。</strong>
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile
+              label="全体カバー率 (DSCR)"
+              value={debtService.overallDscr === null ? '—' : `${debtService.overallDscr}`}
+              accent={debtService.overallDscr === null ? undefined : debtService.overallDscr >= 1 ? '#22c55e' : '#ef4444'}
+              sub="営業CF合計 ÷ 返済額合計"
+            />
+            <Tile
+              label="最悪月カバー率"
+              value={debtService.worstMonthDscr === null ? '—' : `${debtService.worstMonthDscr}`}
+              accent={debtService.worstMonthDscr === null ? undefined : debtService.worstMonthDscr >= 1 ? '#22c55e' : '#ef4444'}
+            />
+            <Tile label="カバー率1.0未満の月" value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`} accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined} />
           </div>
         </Section>
       )}

@@ -4,12 +4,30 @@
   "policy": {
     "description": "AIオーケストレーションの進化ルール。人間のCEO(オーナー)の直下にCOO(オーケストレーター=Claude本体)を置き、その配下に役員層→管理職層→一般職層を展開する。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
     "minTeamsForRound": [
-      { "round": 1, "minTeams": 2 },
-      { "round": 2, "minTeams": 2 },
-      { "round": 3, "minTeams": 3 },
-      { "round": 4, "minTeams": 5 },
-      { "round": 5, "minTeams": 6 },
-      { "round": 6, "minTeams": 7 }
+      {
+        "round": 1,
+        "minTeams": 2
+      },
+      {
+        "round": 2,
+        "minTeams": 2
+      },
+      {
+        "round": 3,
+        "minTeams": 3
+      },
+      {
+        "round": 4,
+        "minTeams": 5
+      },
+      {
+        "round": 5,
+        "minTeams": 6
+      },
+      {
+        "round": 6,
+        "minTeams": 7
+      }
     ],
     "growthRule": "各 round の teamCount は前 round 以上であること (単調増加)。新領域の追加で細分化する。",
     "roleSeparation": "並列=調査/設計 (read-only Agent)、直列=実装+全ゲート検証 (オーケストレーター)。共有ファイルへの同時書込みを避ける。",
@@ -17,126 +35,1356 @@
     "hierarchy": {
       "description": "指揮系統: CEO(人間=オーナー) → COO(オーケストレーター=Claude本体) → 役員層(executives) → 管理職層(managers) → 一般職層(teams)。CEOとCOOは研究Agentには配置しない (CEO=あなた, COO=実装本体)。",
       "layers": [
-        { "layer": "ceo", "title": "最高経営責任者 (オーナー=あなた)", "staffedByAI": false, "human": true, "responsibility": "経営方針・優先順位の決定と最終承認。人間の最高責任者" },
-        { "layer": "coo", "title": "最高執行責任者 (オーケストレーター=Claude)", "staffedByAI": false, "responsibility": "CEOの方針を実行に落とし込み、AI組織全体を統括。実装・全ゲート検証・コミットを担う本体" },
-        { "layer": "executive", "title": "役員層", "staffedByAI": true, "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。COO配下で管理職を束ねる" },
-        { "layer": "secretariat", "title": "秘書室", "staffedByAI": true, "responsibility": "各役員に1室(4体のAIチーム)を常設し、日程・資料・連絡・記録で役員を継続サポート。指揮系統(ライン)ではなく支援(スタッフ)機能" },
-        { "layer": "manager", "title": "管理職層", "staffedByAI": true, "responsibility": "部の論点設計・調査チームの編成と割当・品質確認の一次窓口。配下の一般職を束ねる" },
-        { "layer": "staff", "title": "一般職層", "staffedByAI": true, "responsibility": "担当ドメインの調査・設計 (read-only Agent)。実装の素案を提供" }
+        {
+          "layer": "ceo",
+          "title": "最高経営責任者 (オーナー=あなた)",
+          "staffedByAI": false,
+          "human": true,
+          "responsibility": "経営方針・優先順位の決定と最終承認。人間の最高責任者"
+        },
+        {
+          "layer": "coo",
+          "title": "最高執行責任者 (オーケストレーター=Claude)",
+          "staffedByAI": false,
+          "responsibility": "CEOの方針を実行に落とし込み、AI組織全体を統括。実装・全ゲート検証・コミットを担う本体"
+        },
+        {
+          "layer": "executive",
+          "title": "役員層",
+          "staffedByAI": true,
+          "responsibility": "担当領域群の戦略・優先順位付け・リスク監督。COO配下で管理職を束ねる"
+        },
+        {
+          "layer": "secretariat",
+          "title": "秘書室",
+          "staffedByAI": true,
+          "responsibility": "各役員に1室(4体のAIチーム)を常設し、日程・資料・連絡・記録で役員を継続サポート。指揮系統(ライン)ではなく支援(スタッフ)機能"
+        },
+        {
+          "layer": "manager",
+          "title": "管理職層",
+          "staffedByAI": true,
+          "responsibility": "部の論点設計・調査チームの編成と割当・品質確認の一次窓口。配下の一般職を束ねる"
+        },
+        {
+          "layer": "staff",
+          "title": "一般職層",
+          "staffedByAI": true,
+          "responsibility": "担当ドメインの調査・設計 (read-only Agent)。実装の素案を提供"
+        }
       ]
     }
   },
   "org": {
-    "ceo": { "id": "ceo", "title": "CEO (オーナー・最高経営責任者)", "staffedByAI": false, "human": true, "note": "事業オーナー(あなた)。経営方針・優先順位の決定と最終承認を担う人間の最高責任者。AIには配置しない。" },
-    "coo": { "id": "coo", "title": "COO (最高執行責任者・オーケストレーター)", "reportsTo": "ceo", "staffedByAI": false, "owns": ["cfo", "chro", "cso", "cio", "cqo"], "note": "Claude本体(あなたのCOO)。CEOの方針を受けてAI組織全体の実行を統括し、実装・全ゲート検証・コミットを担う。部門は直轄せず、配下の5役員を通じて運営する(監督と実務の分離)。" },
+    "ceo": {
+      "id": "ceo",
+      "title": "CEO (オーナー・最高経営責任者)",
+      "staffedByAI": false,
+      "human": true,
+      "note": "事業オーナー(あなた)。経営方針・優先順位の決定と最終承認を担う人間の最高責任者。AIには配置しない。"
+    },
+    "coo": {
+      "id": "coo",
+      "title": "COO (最高執行責任者・オーケストレーター)",
+      "reportsTo": "ceo",
+      "staffedByAI": false,
+      "owns": [
+        "cfo",
+        "chro",
+        "cso",
+        "cio",
+        "cqo"
+      ],
+      "note": "Claude本体(あなたのCOO)。CEOの方針を受けてAI組織全体の実行を統括し、実装・全ゲート検証・コミットを担う。部門は直轄せず、配下の5役員を通じて運営する(監督と実務の分離)。"
+    },
     "executives": [
-      { "id": "cfo", "title": "最高財務責任者 (CFO)", "reportsTo": "coo", "owns": ["mgr-tax", "mgr-funding"], "domain": "財務・税務・資金調達" },
-      { "id": "chro", "title": "最高人事責任者 (CHRO)", "reportsTo": "coo", "owns": ["mgr-payroll"], "domain": "人事・給与・労務" },
-      { "id": "cso", "title": "最高戦略責任者 (CSO)", "reportsTo": "coo", "owns": ["mgr-management", "mgr-fpa"], "domain": "経営戦略・分析・成長・予測・予実管理" },
-      { "id": "cio", "title": "最高投資責任者 (CIO / Chief Investment Officer)", "reportsTo": "coo", "owns": ["mgr-investment", "mgr-household"], "domain": "投資・資産運用・為替" },
-      { "id": "cqo", "title": "最高品質責任者 (CQO)", "reportsTo": "coo", "owns": ["mgr-quality"], "domain": "品質保証・セキュリティ" }
+      {
+        "id": "cfo",
+        "title": "最高財務責任者 (CFO)",
+        "reportsTo": "coo",
+        "owns": [
+          "mgr-tax",
+          "mgr-funding"
+        ],
+        "domain": "財務・税務・資金調達"
+      },
+      {
+        "id": "chro",
+        "title": "最高人事責任者 (CHRO)",
+        "reportsTo": "coo",
+        "owns": [
+          "mgr-payroll"
+        ],
+        "domain": "人事・給与・労務"
+      },
+      {
+        "id": "cso",
+        "title": "最高戦略責任者 (CSO)",
+        "reportsTo": "coo",
+        "owns": [
+          "mgr-management",
+          "mgr-fpa"
+        ],
+        "domain": "経営戦略・分析・成長・予測・予実管理"
+      },
+      {
+        "id": "cio",
+        "title": "最高投資責任者 (CIO / Chief Investment Officer)",
+        "reportsTo": "coo",
+        "owns": [
+          "mgr-investment",
+          "mgr-household"
+        ],
+        "domain": "投資・資産運用・為替"
+      },
+      {
+        "id": "cqo",
+        "title": "最高品質責任者 (CQO)",
+        "reportsTo": "coo",
+        "owns": [
+          "mgr-quality"
+        ],
+        "domain": "品質保証・セキュリティ"
+      }
     ],
     "secretaries": [
-      { "id": "sec-cfo", "title": "CFO秘書室", "supports": "cfo", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
-      { "id": "sec-chro", "title": "CHRO秘書室", "supports": "chro", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
-      { "id": "sec-cso", "title": "CSO秘書室", "supports": "cso", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
-      { "id": "sec-cio", "title": "CIO秘書室", "supports": "cio", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] },
-      { "id": "sec-cqo", "title": "CQO秘書室", "supports": "cqo", "staffedByAI": true, "members": 4, "role": "secretariat", "duties": ["日程・段取り(論点整理/アジェンダ)", "資料・ブリーフィング準備", "調査チーム/他役員との連絡・渉外", "記録・進捗・品質の一次トラッキング"] }
+      {
+        "id": "sec-cfo",
+        "title": "CFO秘書室",
+        "supports": "cfo",
+        "staffedByAI": true,
+        "members": 4,
+        "role": "secretariat",
+        "duties": [
+          "日程・段取り(論点整理/アジェンダ)",
+          "資料・ブリーフィング準備",
+          "調査チーム/他役員との連絡・渉外",
+          "記録・進捗・品質の一次トラッキング"
+        ]
+      },
+      {
+        "id": "sec-chro",
+        "title": "CHRO秘書室",
+        "supports": "chro",
+        "staffedByAI": true,
+        "members": 4,
+        "role": "secretariat",
+        "duties": [
+          "日程・段取り(論点整理/アジェンダ)",
+          "資料・ブリーフィング準備",
+          "調査チーム/他役員との連絡・渉外",
+          "記録・進捗・品質の一次トラッキング"
+        ]
+      },
+      {
+        "id": "sec-cso",
+        "title": "CSO秘書室",
+        "supports": "cso",
+        "staffedByAI": true,
+        "members": 4,
+        "role": "secretariat",
+        "duties": [
+          "日程・段取り(論点整理/アジェンダ)",
+          "資料・ブリーフィング準備",
+          "調査チーム/他役員との連絡・渉外",
+          "記録・進捗・品質の一次トラッキング"
+        ]
+      },
+      {
+        "id": "sec-cio",
+        "title": "CIO秘書室",
+        "supports": "cio",
+        "staffedByAI": true,
+        "members": 4,
+        "role": "secretariat",
+        "duties": [
+          "日程・段取り(論点整理/アジェンダ)",
+          "資料・ブリーフィング準備",
+          "調査チーム/他役員との連絡・渉外",
+          "記録・進捗・品質の一次トラッキング"
+        ]
+      },
+      {
+        "id": "sec-cqo",
+        "title": "CQO秘書室",
+        "supports": "cqo",
+        "staffedByAI": true,
+        "members": 4,
+        "role": "secretariat",
+        "duties": [
+          "日程・段取り(論点整理/アジェンダ)",
+          "資料・ブリーフィング準備",
+          "調査チーム/他役員との連絡・渉外",
+          "記録・進捗・品質の一次トラッキング"
+        ]
+      }
     ],
     "managers": [
-      { "id": "mgr-tax", "title": "税務部長", "reportsTo": "cfo", "teams": ["tax-income", "tax-resident", "tax-deductions", "tax-credits", "tax-separate", "tax-consumption"] },
-      { "id": "mgr-funding", "title": "資金調達部長", "reportsTo": "cfo", "teams": ["funding-cashflow", "funding-cost", "funding-scenario", "funding-mix"] },
-      { "id": "mgr-payroll", "title": "給与・人件費部長", "reportsTo": "chro", "teams": ["payroll", "labor-cost"] },
-      { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
-      { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
-      { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis"] },
-      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure", "financial-position", "cash-conversion", "executive-dashboard", "accounting-link"] },
-      { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
+      {
+        "id": "mgr-tax",
+        "title": "税務部長",
+        "reportsTo": "cfo",
+        "teams": [
+          "tax-income",
+          "tax-resident",
+          "tax-deductions",
+          "tax-credits",
+          "tax-separate",
+          "tax-consumption"
+        ]
+      },
+      {
+        "id": "mgr-funding",
+        "title": "資金調達部長",
+        "reportsTo": "cfo",
+        "teams": [
+          "funding-cashflow",
+          "funding-cost",
+          "funding-scenario",
+          "funding-mix"
+        ]
+      },
+      {
+        "id": "mgr-payroll",
+        "title": "給与・人件費部長",
+        "reportsTo": "chro",
+        "teams": [
+          "payroll",
+          "labor-cost"
+        ]
+      },
+      {
+        "id": "mgr-investment",
+        "title": "投資部長",
+        "reportsTo": "cio",
+        "teams": [
+          "real-estate",
+          "mutual-funds"
+        ]
+      },
+      {
+        "id": "mgr-household",
+        "title": "家計・為替部長",
+        "reportsTo": "cio",
+        "teams": [
+          "savings-planning",
+          "fx-currency"
+        ]
+      },
+      {
+        "id": "mgr-management",
+        "title": "経営分析部長",
+        "reportsTo": "cso",
+        "teams": [
+          "kpi-analysis",
+          "management-integration",
+          "depreciation",
+          "growth-analysis"
+        ]
+      },
+      {
+        "id": "mgr-fpa",
+        "title": "経営管理部長 (FP&A)",
+        "reportsTo": "cso",
+        "teams": [
+          "revenue-forecast",
+          "budget-planning",
+          "productivity",
+          "cost-structure",
+          "financial-position",
+          "cash-conversion",
+          "executive-dashboard",
+          "accounting-link",
+          "treasury-dscr"
+        ]
+      },
+      {
+        "id": "mgr-quality",
+        "title": "品質保証部長",
+        "reportsTo": "cqo",
+        "teams": [
+          "quality-audit",
+          "security"
+        ]
+      }
     ]
   },
   "teams": [
-    { "id": "tax-income", "domain": "税務(所得税)", "focus": "所得税・速算表・復興特別所得税", "active": true, "manager": "mgr-tax" },
-    { "id": "tax-resident", "domain": "税務(住民税)", "focus": "住民税・所得割・均等割・調整控除・税額控除", "active": true, "manager": "mgr-tax" },
-    { "id": "tax-deductions", "domain": "税務(所得控除)", "focus": "配偶者/扶養/社保/生命保険/医療費/iDeCo等", "active": true, "manager": "mgr-tax" },
-    { "id": "tax-credits", "domain": "税務(税額控除)", "focus": "住宅ローン/配当/ふるさと納税", "active": true, "manager": "mgr-tax" },
-    { "id": "tax-separate", "domain": "税務(分離課税)", "focus": "退職所得/譲渡所得/一時所得/公的年金", "active": true, "manager": "mgr-tax" },
-    { "id": "tax-consumption", "domain": "税務(消費税)", "focus": "本則/簡易/2割特例/インボイス", "active": true, "manager": "mgr-tax" },
-    { "id": "funding-cashflow", "domain": "資金調達(資金繰り)", "focus": "月次CF/ランウェイ/DSCR/返済", "active": true, "manager": "mgr-funding" },
-    { "id": "funding-cost", "domain": "資金調達(コスト)", "focus": "実効調達コスト率/自己負担比率/質スコア", "active": true, "manager": "mgr-funding" },
-    { "id": "funding-scenario", "domain": "資金調達(シナリオ)", "focus": "採択確率/期待値/3シナリオ残高", "active": true, "manager": "mgr-funding" },
-    { "id": "funding-mix", "domain": "資金調達(構成)", "focus": "多様化スコア/種別集中度(HHI)/実効調達元数", "active": true, "manager": "mgr-funding" },
-    { "id": "kpi-analysis", "domain": "経営(KPI/BEP)", "focus": "損益分岐点/目標利益/販売数量/価格", "active": true, "manager": "mgr-management" },
-    { "id": "real-estate", "domain": "投資(不動産)", "focus": "利回り/CCR/イールドギャップ", "active": true, "manager": "mgr-investment" },
-    { "id": "mutual-funds", "domain": "投資(投信)", "focus": "複利/シャープレシオ/積立", "active": true, "manager": "mgr-investment" },
-    { "id": "security", "domain": "セキュリティ", "focus": "パスワード強度/エントロピー/突破時間", "active": true, "manager": "mgr-quality" },
-    { "id": "quality-audit", "domain": "品質監査", "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査", "active": true, "role": "audit", "manager": "mgr-quality" },
-    { "id": "savings-planning", "domain": "家計/貯蓄計画", "focus": "目標達成積立/72の法則/緊急予備資金", "active": true, "manager": "mgr-household" },
-    { "id": "fx-currency", "domain": "為替/外貨", "focus": "外貨換算/為替損益/実効レート", "active": true, "manager": "mgr-household" },
-    { "id": "payroll", "domain": "給与/賞与", "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度", "active": true, "manager": "mgr-payroll" },
-    { "id": "labor-cost", "domain": "人件費(生産性)", "focus": "労働分配率/人件費率/一人当たり人件費", "active": true, "manager": "mgr-payroll" },
-    { "id": "depreciation", "domain": "減価償却", "focus": "定額法/定率法/耐用年数/少額減価償却", "active": true, "manager": "mgr-management" },
-    { "id": "management-integration", "domain": "経営統合", "focus": "経営指標の集約・スコアカード・健全性診断", "active": true, "manager": "mgr-management" },
-    { "id": "growth-analysis", "domain": "経営(成長性)", "focus": "売上前期比成長率/CAGR/トレンド・スコアカード成長性連携", "active": true, "manager": "mgr-management" },
-    { "id": "revenue-forecast", "domain": "経営(予測)", "focus": "着地見込み(ランレート年換算)/トレンド外挿", "active": true, "manager": "mgr-fpa" },
-    { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-fpa" },
-    { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-fpa" },
-    { "id": "cost-structure", "domain": "経営(コスト構造)", "focus": "EBITDA/原価率・広告費率・販管費率/対売上構成", "active": true, "manager": "mgr-fpa" },
-    { "id": "financial-position", "domain": "経営(財政状態)", "focus": "BS指標/ROA・ROE・自己資本比率・流動比率", "active": true, "manager": "mgr-fpa" },
-    { "id": "cash-conversion", "domain": "経営(運転資金)", "focus": "CCC/売上債権・棚卸・仕入債務回転日数/運転資本", "active": true, "manager": "mgr-fpa" },
-    { "id": "executive-dashboard", "domain": "経営(統合ダッシュボード)", "focus": "経営ハイライト/全指標の横断・優先所見/効率性スコア", "active": true, "manager": "mgr-fpa" },
-    { "id": "accounting-link", "domain": "経営(会計連携)", "focus": "freee月次CFの集約/営業CF/資金ランウェイ/スコアカード資金繰り連携", "active": true, "manager": "mgr-fpa" }
+    {
+      "id": "tax-income",
+      "domain": "税務(所得税)",
+      "focus": "所得税・速算表・復興特別所得税",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "tax-resident",
+      "domain": "税務(住民税)",
+      "focus": "住民税・所得割・均等割・調整控除・税額控除",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "tax-deductions",
+      "domain": "税務(所得控除)",
+      "focus": "配偶者/扶養/社保/生命保険/医療費/iDeCo等",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "tax-credits",
+      "domain": "税務(税額控除)",
+      "focus": "住宅ローン/配当/ふるさと納税",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "tax-separate",
+      "domain": "税務(分離課税)",
+      "focus": "退職所得/譲渡所得/一時所得/公的年金",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "tax-consumption",
+      "domain": "税務(消費税)",
+      "focus": "本則/簡易/2割特例/インボイス",
+      "active": true,
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "funding-cashflow",
+      "domain": "資金調達(資金繰り)",
+      "focus": "月次CF/ランウェイ/DSCR/返済",
+      "active": true,
+      "manager": "mgr-funding"
+    },
+    {
+      "id": "funding-cost",
+      "domain": "資金調達(コスト)",
+      "focus": "実効調達コスト率/自己負担比率/質スコア",
+      "active": true,
+      "manager": "mgr-funding"
+    },
+    {
+      "id": "funding-scenario",
+      "domain": "資金調達(シナリオ)",
+      "focus": "採択確率/期待値/3シナリオ残高",
+      "active": true,
+      "manager": "mgr-funding"
+    },
+    {
+      "id": "funding-mix",
+      "domain": "資金調達(構成)",
+      "focus": "多様化スコア/種別集中度(HHI)/実効調達元数",
+      "active": true,
+      "manager": "mgr-funding"
+    },
+    {
+      "id": "kpi-analysis",
+      "domain": "経営(KPI/BEP)",
+      "focus": "損益分岐点/目標利益/販売数量/価格",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "real-estate",
+      "domain": "投資(不動産)",
+      "focus": "利回り/CCR/イールドギャップ",
+      "active": true,
+      "manager": "mgr-investment"
+    },
+    {
+      "id": "mutual-funds",
+      "domain": "投資(投信)",
+      "focus": "複利/シャープレシオ/積立",
+      "active": true,
+      "manager": "mgr-investment"
+    },
+    {
+      "id": "security",
+      "domain": "セキュリティ",
+      "focus": "パスワード強度/エントロピー/突破時間",
+      "active": true,
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "quality-audit",
+      "domain": "品質監査",
+      "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "savings-planning",
+      "domain": "家計/貯蓄計画",
+      "focus": "目標達成積立/72の法則/緊急予備資金",
+      "active": true,
+      "manager": "mgr-household"
+    },
+    {
+      "id": "fx-currency",
+      "domain": "為替/外貨",
+      "focus": "外貨換算/為替損益/実効レート",
+      "active": true,
+      "manager": "mgr-household"
+    },
+    {
+      "id": "payroll",
+      "domain": "給与/賞与",
+      "focus": "賞与の源泉徴収/月次手取り/通勤手当非課税限度",
+      "active": true,
+      "manager": "mgr-payroll"
+    },
+    {
+      "id": "labor-cost",
+      "domain": "人件費(生産性)",
+      "focus": "労働分配率/人件費率/一人当たり人件費",
+      "active": true,
+      "manager": "mgr-payroll"
+    },
+    {
+      "id": "depreciation",
+      "domain": "減価償却",
+      "focus": "定額法/定率法/耐用年数/少額減価償却",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "management-integration",
+      "domain": "経営統合",
+      "focus": "経営指標の集約・スコアカード・健全性診断",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "growth-analysis",
+      "domain": "経営(成長性)",
+      "focus": "売上前期比成長率/CAGR/トレンド・スコアカード成長性連携",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "revenue-forecast",
+      "domain": "経営(予測)",
+      "focus": "着地見込み(ランレート年換算)/トレンド外挿",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "budget-planning",
+      "domain": "経営(予算)",
+      "focus": "予算策定/予算実績差異(BVA)/達成率",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "productivity",
+      "domain": "経営(生産性)",
+      "focus": "粗利率/一人当たり売上・営業利益/労働分配率",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "cost-structure",
+      "domain": "経営(コスト構造)",
+      "focus": "EBITDA/原価率・広告費率・販管費率/対売上構成",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "financial-position",
+      "domain": "経営(財政状態)",
+      "focus": "BS指標/ROA・ROE・自己資本比率・流動比率",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "cash-conversion",
+      "domain": "経営(運転資金)",
+      "focus": "CCC/売上債権・棚卸・仕入債務回転日数/運転資本",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "executive-dashboard",
+      "domain": "経営(統合ダッシュボード)",
+      "focus": "経営ハイライト/全指標の横断・優先所見/効率性スコア",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "accounting-link",
+      "domain": "経営(会計連携)",
+      "focus": "freee月次CFの集約/営業CF/資金ランウェイ/スコアカード資金繰り連携",
+      "active": true,
+      "manager": "mgr-fpa"
+    },
+    {
+      "id": "treasury-dscr",
+      "domain": "経営(返済余力)",
+      "focus": "会計CF×資金調達の月次突合/DSCR/最悪月カバー率",
+      "active": true,
+      "manager": "mgr-fpa"
+    }
   ],
   "rounds": [
-    { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
-    { "round": 2, "teamCount": 2, "teams": ["funding-cashflow", "funding-cost"], "shipped": ["資金調達レーダー", "課税区分/税引後手残り"] },
-    { "round": 3, "teamCount": 3, "teams": ["funding-cashflow", "tax-credits", "funding-scenario"], "shipped": ["元金均等返済", "3シナリオ残高", "一時所得"] },
-    { "round": 4, "teamCount": 5, "teams": ["tax-deductions", "quality-audit", "funding-cost", "tax-credits", "tax-separate"], "shipped": ["セルフメディケーション", "境界値ハードニング", "消費税区分", "住宅ローン所得制限", "譲渡所得"] },
-    { "round": 5, "teamCount": 6, "teams": ["kpi-analysis", "quality-audit", "real-estate", "tax-consumption", "tax-separate", "funding-scenario"], "shipped": ["公的年金等控除", "KPI目標利益/販売数量"] },
-    { "round": 6, "teamCount": 7, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "tax-separate", "security", "quality-audit"], "shipped": ["概算取得費5%特例", "パスワード強度評価"] },
-    { "round": 7, "teamCount": 8, "teams": ["real-estate", "tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation"], "shipped": ["不動産CCR・イールドギャップ"] },
-    { "round": 8, "teamCount": 9, "teams": ["tax-resident", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "quality-audit"], "shipped": ["住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"] },
-    { "round": 9, "teamCount": 10, "teams": ["kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["KPI価格変更シミュレーション"] },
-    { "round": 10, "teamCount": 11, "teams": ["management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"] },
-    { "round": 11, "teamCount": 12, "teams": ["growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["スコアカード成長性の自動連携(前期比売上成長率)"] },
-    { "round": 12, "teamCount": 13, "teams": ["growth-analysis", "revenue-forecast", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上成長性の深掘り(CAGR・移動平均トレンド)"] },
-    { "round": 13, "teamCount": 14, "teams": ["revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["売上着地見込み(ランレート年換算)"] },
-    { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] },
-    { "round": 15, "teamCount": 16, "teams": ["productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"] },
-    { "round": 16, "teamCount": 17, "teams": ["cost-structure", "productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約", "経営管理部(FP&A)を分割し統制範囲を最適化"] },
-    { "round": 17, "teamCount": 18, "teams": ["budget-planning", "financial-position", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["予算実績差異(BVA)・達成率(簡易予算入力を新設)"] },
-    { "round": 18, "teamCount": 19, "teams": ["financial-position", "cash-conversion", "budget-planning", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力", "スコアカード安全性へ自己資本比率を連携"] },
-    { "round": 19, "teamCount": 20, "teams": ["cash-conversion", "financial-position", "budget-planning", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "mutual-funds", "security", "quality-audit"], "shipped": ["運転資金CCC(売上債権/棚卸/仕入債務 回転日数)・運転資本"] },
-    { "round": 20, "teamCount": 21, "teams": ["labor-cost", "payroll", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "depreciation", "tax-separate", "real-estate", "mutual-funds", "security", "quality-audit"], "shipped": ["労働分配率・人件費率・一人当たり人件費(KpiActualに任意の人件費入力を新設)"] },
-    { "round": 21, "teamCount": 22, "teams": ["savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit", "tax-consumption"], "shipped": ["貯蓄計画(目標達成積立額・72の法則・緊急予備資金)"] },
-    { "round": 22, "teamCount": 23, "teams": ["fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit", "tax-consumption", "tax-resident"], "shipped": ["外貨換算・為替損益・実効レート"] },
-    { "round": 23, "teamCount": 24, "teams": ["depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "payroll", "tax-separate", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["減価償却(定額法/定率法スケジュール・少額減価償却の判定)"] },
-    { "round": 24, "teamCount": 25, "teams": ["funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "payroll", "tax-separate", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["借入の期間構成(短期/長期・長期借入比率)"] },
-    { "round": 25, "teamCount": 26, "teams": ["payroll", "labor-cost", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["通勤手当の非課税限度(公共交通/マイカー距離別)・賞与の源泉徴収(扶養0人概算)"] },
-    { "round": 26, "teamCount": 27, "teams": ["executive-dashboard", "management-integration", "cash-conversion", "financial-position", "cost-structure", "productivity", "budget-planning", "revenue-forecast", "growth-analysis", "kpi-analysis", "labor-cost", "payroll", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["経営ハイライト(全指標横断の優先所見)", "スコアカードに効率性カテゴリ(CCC・総資産回転率)を統合"] },
-    { "round": 27, "teamCount": 28, "teams": ["accounting-link", "executive-dashboard", "management-integration", "financial-position", "cash-conversion", "cost-structure", "productivity", "budget-planning", "revenue-forecast", "growth-analysis", "kpi-analysis", "labor-cost", "payroll", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["会計連携(freee)の月次キャッシュフローを経営コックピットに統合", "現預金×営業CFで資金ランウェイを算定しスコアカード資金繰りへ連携"] }
+    {
+      "round": 1,
+      "teamCount": 2,
+      "teams": [
+        "tax-deductions",
+        "tax-credits"
+      ],
+      "shipped": [
+        "所得税1000円切捨て",
+        "住民税1000円切捨て"
+      ]
+    },
+    {
+      "round": 2,
+      "teamCount": 2,
+      "teams": [
+        "funding-cashflow",
+        "funding-cost"
+      ],
+      "shipped": [
+        "資金調達レーダー",
+        "課税区分/税引後手残り"
+      ]
+    },
+    {
+      "round": 3,
+      "teamCount": 3,
+      "teams": [
+        "funding-cashflow",
+        "tax-credits",
+        "funding-scenario"
+      ],
+      "shipped": [
+        "元金均等返済",
+        "3シナリオ残高",
+        "一時所得"
+      ]
+    },
+    {
+      "round": 4,
+      "teamCount": 5,
+      "teams": [
+        "tax-deductions",
+        "quality-audit",
+        "funding-cost",
+        "tax-credits",
+        "tax-separate"
+      ],
+      "shipped": [
+        "セルフメディケーション",
+        "境界値ハードニング",
+        "消費税区分",
+        "住宅ローン所得制限",
+        "譲渡所得"
+      ]
+    },
+    {
+      "round": 5,
+      "teamCount": 6,
+      "teams": [
+        "kpi-analysis",
+        "quality-audit",
+        "real-estate",
+        "tax-consumption",
+        "tax-separate",
+        "funding-scenario"
+      ],
+      "shipped": [
+        "公的年金等控除",
+        "KPI目標利益/販売数量"
+      ]
+    },
+    {
+      "round": 6,
+      "teamCount": 7,
+      "teams": [
+        "real-estate",
+        "tax-resident",
+        "kpi-analysis",
+        "funding-scenario",
+        "tax-separate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "概算取得費5%特例",
+        "パスワード強度評価"
+      ]
+    },
+    {
+      "round": 7,
+      "teamCount": 8,
+      "teams": [
+        "real-estate",
+        "tax-resident",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation"
+      ],
+      "shipped": [
+        "不動産CCR・イールドギャップ"
+      ]
+    },
+    {
+      "round": 8,
+      "teamCount": 9,
+      "teams": [
+        "tax-resident",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "quality-audit"
+      ],
+      "shipped": [
+        "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除"
+      ]
+    },
+    {
+      "round": 9,
+      "teamCount": 10,
+      "teams": [
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "KPI価格変更シミュレーション"
+      ]
+    },
+    {
+      "round": 10,
+      "teamCount": 11,
+      "teams": [
+        "management-integration",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "経営スコアカード(収益性/安全性/資金繰り/成長性の集約)"
+      ]
+    },
+    {
+      "round": 11,
+      "teamCount": 12,
+      "teams": [
+        "growth-analysis",
+        "management-integration",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "スコアカード成長性の自動連携(前期比売上成長率)"
+      ]
+    },
+    {
+      "round": 12,
+      "teamCount": 13,
+      "teams": [
+        "growth-analysis",
+        "revenue-forecast",
+        "management-integration",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "売上成長性の深掘り(CAGR・移動平均トレンド)"
+      ]
+    },
+    {
+      "round": 13,
+      "teamCount": 14,
+      "teams": [
+        "revenue-forecast",
+        "budget-planning",
+        "growth-analysis",
+        "management-integration",
+        "kpi-analysis",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "売上着地見込み(ランレート年換算)"
+      ]
+    },
+    {
+      "round": 14,
+      "teamCount": 15,
+      "teams": [
+        "funding-mix",
+        "funding-scenario",
+        "funding-cost",
+        "revenue-forecast",
+        "budget-planning",
+        "growth-analysis",
+        "management-integration",
+        "kpi-analysis",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "quality-audit"
+      ],
+      "shipped": [
+        "資金調達の多様化スコア(種別集中度HHI)"
+      ]
+    },
+    {
+      "round": 15,
+      "teamCount": 16,
+      "teams": [
+        "productivity",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"
+      ]
+    },
+    {
+      "round": 16,
+      "teamCount": 17,
+      "teams": [
+        "cost-structure",
+        "productivity",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約",
+        "経営管理部(FP&A)を分割し統制範囲を最適化"
+      ]
+    },
+    {
+      "round": 17,
+      "teamCount": 18,
+      "teams": [
+        "budget-planning",
+        "financial-position",
+        "cost-structure",
+        "productivity",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "予算実績差異(BVA)・達成率(簡易予算入力を新設)"
+      ]
+    },
+    {
+      "round": 18,
+      "teamCount": 19,
+      "teams": [
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "cost-structure",
+        "productivity",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力",
+        "スコアカード安全性へ自己資本比率を連携"
+      ]
+    },
+    {
+      "round": 19,
+      "teamCount": 20,
+      "teams": [
+        "cash-conversion",
+        "financial-position",
+        "budget-planning",
+        "cost-structure",
+        "productivity",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "運転資金CCC(売上債権/棚卸/仕入債務 回転日数)・運転資本"
+      ]
+    },
+    {
+      "round": 20,
+      "teamCount": 21,
+      "teams": [
+        "labor-cost",
+        "payroll",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "savings-planning",
+        "fx-currency",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit"
+      ],
+      "shipped": [
+        "労働分配率・人件費率・一人当たり人件費(KpiActualに任意の人件費入力を新設)"
+      ]
+    },
+    {
+      "round": 21,
+      "teamCount": 22,
+      "teams": [
+        "savings-planning",
+        "mutual-funds",
+        "labor-cost",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "fx-currency",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit",
+        "tax-consumption"
+      ],
+      "shipped": [
+        "貯蓄計画(目標達成積立額・72の法則・緊急予備資金)"
+      ]
+    },
+    {
+      "round": 22,
+      "teamCount": 23,
+      "teams": [
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "labor-cost",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "payroll",
+        "depreciation",
+        "tax-separate",
+        "real-estate",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident"
+      ],
+      "shipped": [
+        "外貨換算・為替損益・実効レート"
+      ]
+    },
+    {
+      "round": 23,
+      "teamCount": 24,
+      "teams": [
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "labor-cost",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "funding-mix",
+        "funding-scenario",
+        "payroll",
+        "tax-separate",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "減価償却(定額法/定率法スケジュール・少額減価償却の判定)"
+      ]
+    },
+    {
+      "round": 24,
+      "teamCount": 25,
+      "teams": [
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "labor-cost",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "payroll",
+        "tax-separate",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "借入の期間構成(短期/長期・長期借入比率)"
+      ]
+    },
+    {
+      "round": 25,
+      "teamCount": 26,
+      "teams": [
+        "payroll",
+        "labor-cost",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "budget-planning",
+        "revenue-forecast",
+        "management-integration",
+        "growth-analysis",
+        "kpi-analysis",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "通勤手当の非課税限度(公共交通/マイカー距離別)・賞与の源泉徴収(扶養0人概算)"
+      ]
+    },
+    {
+      "round": 26,
+      "teamCount": 27,
+      "teams": [
+        "executive-dashboard",
+        "management-integration",
+        "cash-conversion",
+        "financial-position",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "経営ハイライト(全指標横断の優先所見)",
+        "スコアカードに効率性カテゴリ(CCC・総資産回転率)を統合"
+      ]
+    },
+    {
+      "round": 27,
+      "teamCount": 28,
+      "teams": [
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "会計連携(freee)の月次キャッシュフローを経営コックピットに統合",
+        "現預金×営業CFで資金ランウェイを算定しスコアカード資金繰りへ連携"
+      ]
+    },
+    {
+      "round": 28,
+      "teamCount": 29,
+      "teams": [
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "会計CF×資金調達の同時連携(月次突合DSCR)",
+        "DSCRをスコアカード資金繰り・経営ハイライトへ連携"
+      ]
+    }
   ],
   "backlog": [
-    { "id": "executive-dashboard-highlights", "team": "executive-dashboard", "title": "経営ハイライト(全指標横断の優先所見)・効率性スコア統合", "priority": 1, "status": "shipped" },
-    { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
-    { "id": "scorecard-liquidity", "team": "accounting-link", "title": "スコアカード資金繰り(ランウェイ)の会計連携(freee)自動連携", "priority": 2, "status": "shipped" },
-    { "id": "scorecard-liquidity-dscr", "team": "accounting-link", "title": "DSCR(営業CF÷返済額)のスコアカード連携", "priority": 3, "status": "blocked", "note": "返済額(funding)と営業CF(freee)の突合が前提。期間粒度の整合とデータ源の確定後に着手。" },
-    { "id": "growth-cagr", "team": "growth-analysis", "title": "売上CAGR・移動平均トレンド・季節調整成長率", "priority": 3, "status": "shipped" },
-    { "id": "revenue-landing", "team": "revenue-forecast", "title": "売上着地見込み(ランレート年換算)", "priority": 4, "status": "shipped" },
-    { "id": "budget-variance", "team": "budget-planning", "title": "予算策定・予算実績差異(BVA)・達成率(簡易予算入力を新設)", "priority": 5, "status": "shipped" },
-    { "id": "financial-position-bs", "team": "financial-position", "title": "貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力", "priority": 5, "status": "shipped" },
-    { "id": "cash-conversion-cycle", "team": "cash-conversion", "title": "CCC・運転資本(売上債権/棚卸/仕入債務 回転日数)", "priority": 5, "status": "shipped" },
-    { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
-    { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
-    { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },
-    { "id": "funding-diversification", "team": "funding-mix", "title": "資金調達の多様化スコア(種別集中度・HHI)", "priority": 4, "status": "shipped" },
-    { "id": "funding-mix-term", "team": "funding-mix", "title": "借入の期間構成(短期/長期・長期借入比率)", "priority": 6, "status": "shipped" },
-    { "id": "productivity-margins", "team": "productivity", "title": "粗利率・一人当たり売上/営業利益の集約(スコアカード収益性連携)", "priority": 4, "status": "shipped" },
-    { "id": "cost-structure-ebitda", "team": "cost-structure", "title": "EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約", "priority": 4, "status": "shipped" },
-    { "id": "labor-distribution", "team": "labor-cost", "title": "労働分配率・人件費率・一人当たり人件費(人件費の入力源を新設)", "priority": 5, "status": "shipped" },
-    { "id": "savings-goal", "team": "savings-planning", "title": "目標達成積立額・72の法則・緊急予備資金", "priority": 5, "status": "shipped" },
-    { "id": "fx-conversion", "team": "fx-currency", "title": "外貨換算・為替損益・実効レート", "priority": 6, "status": "shipped" },
-    { "id": "bonus-withholding", "team": "payroll", "title": "賞与の源泉徴収税額(扶養0人概算)・通勤手当の非課税限度", "priority": 7, "status": "shipped" },
-    { "id": "bonus-withholding-dependents", "team": "payroll", "title": "賞与源泉徴収の扶養人数対応(算出率表の全列)", "priority": 8, "status": "blocked", "note": "扶養親族等の数で率が変わる。国税庁の算出率表(全列)が前提で、暗記実装は誤りのリスクが高いため公式表の取込みまで保留。" },
-    { "id": "depreciation-methods", "team": "depreciation", "title": "減価償却(定額法/定率法)・少額減価償却特例", "priority": 8, "status": "shipped" }
+    {
+      "id": "executive-dashboard-highlights",
+      "team": "executive-dashboard",
+      "title": "経営ハイライト(全指標横断の優先所見)・効率性スコア統合",
+      "priority": 1,
+      "status": "shipped"
+    },
+    {
+      "id": "scorecard-growth",
+      "team": "growth-analysis",
+      "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)",
+      "priority": 1,
+      "status": "shipped"
+    },
+    {
+      "id": "scorecard-liquidity",
+      "team": "accounting-link",
+      "title": "スコアカード資金繰り(ランウェイ)の会計連携(freee)自動連携",
+      "priority": 2,
+      "status": "shipped"
+    },
+    {
+      "id": "scorecard-liquidity-dscr",
+      "team": "treasury-dscr",
+      "title": "DSCR(会計CF×資金調達の月次突合)のスコアカード・ハイライト連携",
+      "priority": 3,
+      "status": "shipped"
+    },
+    {
+      "id": "growth-cagr",
+      "team": "growth-analysis",
+      "title": "売上CAGR・移動平均トレンド・季節調整成長率",
+      "priority": 3,
+      "status": "shipped"
+    },
+    {
+      "id": "revenue-landing",
+      "team": "revenue-forecast",
+      "title": "売上着地見込み(ランレート年換算)",
+      "priority": 4,
+      "status": "shipped"
+    },
+    {
+      "id": "budget-variance",
+      "team": "budget-planning",
+      "title": "予算策定・予算実績差異(BVA)・達成率(簡易予算入力を新設)",
+      "priority": 5,
+      "status": "shipped"
+    },
+    {
+      "id": "financial-position-bs",
+      "team": "financial-position",
+      "title": "貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力",
+      "priority": 5,
+      "status": "shipped"
+    },
+    {
+      "id": "cash-conversion-cycle",
+      "team": "cash-conversion",
+      "title": "CCC・運転資本(売上債権/棚卸/仕入債務 回転日数)",
+      "priority": 5,
+      "status": "shipped"
+    },
+    {
+      "id": "real-estate-ccr",
+      "team": "real-estate",
+      "title": "自己資金回収率(CCR)・イールドギャップ",
+      "priority": 1,
+      "status": "shipped"
+    },
+    {
+      "id": "resident-dividend-levy",
+      "team": "tax-resident",
+      "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除",
+      "priority": 2,
+      "status": "shipped"
+    },
+    {
+      "id": "kpi-price-sim",
+      "team": "kpi-analysis",
+      "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)",
+      "priority": 3,
+      "status": "shipped"
+    },
+    {
+      "id": "funding-diversification",
+      "team": "funding-mix",
+      "title": "資金調達の多様化スコア(種別集中度・HHI)",
+      "priority": 4,
+      "status": "shipped"
+    },
+    {
+      "id": "funding-mix-term",
+      "team": "funding-mix",
+      "title": "借入の期間構成(短期/長期・長期借入比率)",
+      "priority": 6,
+      "status": "shipped"
+    },
+    {
+      "id": "productivity-margins",
+      "team": "productivity",
+      "title": "粗利率・一人当たり売上/営業利益の集約(スコアカード収益性連携)",
+      "priority": 4,
+      "status": "shipped"
+    },
+    {
+      "id": "cost-structure-ebitda",
+      "team": "cost-structure",
+      "title": "EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約",
+      "priority": 4,
+      "status": "shipped"
+    },
+    {
+      "id": "labor-distribution",
+      "team": "labor-cost",
+      "title": "労働分配率・人件費率・一人当たり人件費(人件費の入力源を新設)",
+      "priority": 5,
+      "status": "shipped"
+    },
+    {
+      "id": "savings-goal",
+      "team": "savings-planning",
+      "title": "目標達成積立額・72の法則・緊急予備資金",
+      "priority": 5,
+      "status": "shipped"
+    },
+    {
+      "id": "fx-conversion",
+      "team": "fx-currency",
+      "title": "外貨換算・為替損益・実効レート",
+      "priority": 6,
+      "status": "shipped"
+    },
+    {
+      "id": "bonus-withholding",
+      "team": "payroll",
+      "title": "賞与の源泉徴収税額(扶養0人概算)・通勤手当の非課税限度",
+      "priority": 7,
+      "status": "shipped"
+    },
+    {
+      "id": "bonus-withholding-dependents",
+      "team": "payroll",
+      "title": "賞与源泉徴収の扶養人数対応(算出率表の全列)",
+      "priority": 8,
+      "status": "blocked",
+      "note": "扶養親族等の数で率が変わる。国税庁の算出率表(全列)が前提で、暗記実装は誤りのリスクが高いため公式表の取込みまで保留。"
+    },
+    {
+      "id": "depreciation-methods",
+      "team": "depreciation",
+      "title": "減価償却(定額法/定率法)・少額減価償却特例",
+      "priority": 8,
+      "status": "shipped"
+    }
   ]
 }

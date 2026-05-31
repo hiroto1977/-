@@ -22,7 +22,11 @@ const SEVERITY_ORDER: Record<HighlightSeverity, number> = { critical: 0, warning
  * 経営概況から重要な所見を抽出し、深刻度順 (critical → warning → good) に返す。
  * データが無い領域は所見を出さない (沈黙)。
  */
-export function buildManagementHighlights(overview: BusinessOverview): Highlight[] {
+export function buildManagementHighlights(
+  overview: BusinessOverview,
+  /** 会計CF×返済の全体DSCR (任意)。1.0 未満なら所見を出す。 */
+  overallDscr?: number | null,
+): Highlight[] {
   const out: Highlight[] = [];
   const k = overview.kpi;
 
@@ -98,6 +102,15 @@ export function buildManagementHighlights(overview: BusinessOverview): Highlight
       out.push({ severity: 'critical', category: '資金繰り', message: `資金ランウェイが ${overview.runwayMonths} か月と短く、追加調達か支出抑制が急務です。` });
     } else if (overview.runwayMonths < 12) {
       out.push({ severity: 'warning', category: '資金繰り', message: `資金ランウェイが ${overview.runwayMonths} か月です。資金計画の見直しを検討してください。` });
+    }
+  }
+
+  // 返済余力 (会計CF × 資金調達の DSCR)
+  if (overallDscr !== undefined && overallDscr !== null) {
+    if (overallDscr < 1) {
+      out.push({ severity: 'critical', category: '返済余力', message: `DSCR が ${overallDscr} と1.0未満で、営業CFが借入返済を賄えていません。` });
+    } else if (overallDscr >= 1.5) {
+      out.push({ severity: 'good', category: '返済余力', message: `DSCR ${overallDscr} と返済余力は十分です。` });
     }
   }
 

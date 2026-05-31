@@ -69,6 +69,19 @@ describe('buildManagementHighlights', () => {
     expect(cashflow.some((h) => h.severity === 'warning' && h.message.includes('資金流出'))).toBe(true);
   });
 
+  it('flags a sub-1.0 DSCR (passed explicitly) as critical', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    const hs = buildManagementHighlights(o, 0.8);
+    const d = hs.find((h) => h.category === '返済余力');
+    expect(d?.severity).toBe('critical');
+    expect(d?.message).toContain('DSCR');
+  });
+
+  it('does not emit a DSCR finding when none is supplied', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    expect(buildManagementHighlights(o).some((h) => h.category === '返済余力')).toBe(false);
+  });
+
   it('surfaces a budget shortfall as a warning', () => {
     const budget: KpiActual[] = [kpi({ revenue: 2_000_000 })]; // actual 1,000,000 → 50%
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], kpiBudgets: budget, members: [] });
