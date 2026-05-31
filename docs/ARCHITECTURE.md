@@ -685,7 +685,7 @@ graph LR
     C2[verify:arch]
     C3[test]
     C4[coverage]
-    C5[build:renderer]
+    C5[build:web]
   end
   subgraph "Weekly (mutation.yml)"
     M1[stryker run]

@@ -10,12 +10,15 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# 3-job hybrid: granularity (per-group red checks) + compute efficiency
-# (3 npm-ci instead of 7). Re-split if a future failure pattern needs
-# finer triage. See docs/BROWSER_REDESIGN.md and PR #2 discussion.
+# Single-job CI to minimize GitHub Actions minutes: one runner startup +
+# one checkout + one setup-node + one `npm ci`, instead of paying that
+# fixed overhead 3x across separate jobs. Gates run sequentially and fail
+# fast. Per-group granularity was traded for minute efficiency (free-tier
+# friendly); re-split into parallel jobs if richer triage is needed and
+# minutes are no longer constrained. See docs/BROWSER_REDESIGN.md.
 jobs:
-  quality:
-    name: quality (typecheck + arch + lint)
+  ci:
+    name: ci (typecheck + verify + lint + test + build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +27,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
+
+      # quality: typecheck + arch/verify + lint
       - run: npm run typecheck
       - run: npm run verify:arch
       - run: npm run lint:forbidden
@@ -31,38 +36,14 @@ jobs:
       - run: npm run lint:docs
       - run: npm run lint:test-coverage
       - run: npm run verify:orchestration
-      - run: npm run lint            # eslint last — slowest of this group
+      - run: npm run lint
 
-  test:
-    name: test (unit + coverage)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
+      # test: full suite + main-process coverage
       - run: npm test
       - run: npm run test:cov
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-summary
-          path: coverage/coverage-summary.json
-          retention-days: 30
 
-  build:
-    name: build (renderer + web)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build:renderer
+      # build: web build already runs `tsc -b && vite build` then inlines,
+      # so it is a superset of build:renderer — no need to build twice.
       - run: npm run build:web
       - name: Verify standalone.html size
         run: |
@@ -72,7 +53,7 @@ jobs:
           fi
           SIZE=$(stat -c%s dist/standalone.html)
           echo "standalone.html size: $SIZE bytes"
-          if [ $SIZE -lt 100000 ]; then
+          if [ "$SIZE" -lt 100000 ]; then
             echo "standalone.html is suspiciously small" >&2
             exit 1
           fi

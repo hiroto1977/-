@@ -61,9 +61,10 @@ npm run mutate             # Stryker mutation testing (target: 100%); mutate:tri
 
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
-`docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs three jobs on push to `main` / `claude/**`
-and PRs to `main`: **quality** (typecheck + all verify/lint), **test** (vitest + coverage),
-**build** (build:renderer + build:web, asserting `dist/standalone.html` is generated and non-trivial).
+`docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
+`main` and PRs to `main` (one `npm ci`, then typecheck + all verify/lint, vitest + coverage, and
+`build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed from 3 jobs
+to 1 to minimize GitHub Actions minutes on the free tier.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
 `mutation.yml` runs Stryker.
 
