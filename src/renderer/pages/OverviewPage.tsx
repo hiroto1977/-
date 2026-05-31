@@ -9,6 +9,7 @@ import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
+import { buildManagementHighlights } from '../data/managementHighlights';
 
 const SCORE_COLOR = (s: number | null): string =>
   s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
@@ -73,14 +74,38 @@ export function OverviewPage() {
       equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
       // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
       revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
+      // 効率性: CCC と総資産回転率 (BS + 運転資金が揃うと加点)。
+      cashConversionDays: overview.workingCapital?.ccc ?? undefined,
+      assetTurnover: overview.financialPosition && overview.financialPosition.totalAssets > 0 && overview.kpi.revenue > 0
+        ? Math.round((overview.kpi.revenue / overview.financialPosition.totalAssets) * 100) / 100
+        : undefined,
     });
   }, [overview]);
+
+  const highlights = useMemo(() => buildManagementHighlights(overview), [overview]);
 
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
 
   return (
     <div>
+      {hasData && highlights.length > 0 && (
+        <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+          <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {highlights.map((h, i) => (
+              <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 13 }}>
+                <span style={{ fontSize: 14 }}>{h.severity === 'critical' ? '🔴' : h.severity === 'warning' ? '🟡' : '🟢'}</span>
+                <span style={{ color: 'var(--text-mute)', minWidth: 64 }}>{h.category}</span>
+                <span style={{ color: 'var(--text)' }}>{h.message}</span>
+              </li>
+            ))}
+          </ul>
+          <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>
+            ※ 入力済みデータからの概算の経営診断です。財務・税務助言ではありません。
+          </p>
+        </Section>
+      )}
+
       <Section title={`経営サマリー — ${overview.plan.label} プラン（${overview.plan.audience}）`}>
         {!hasData && (
           <p style={{ color: 'var(--text-mute)', fontSize: 13, marginBottom: 12 }}>

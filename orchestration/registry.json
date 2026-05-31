@@ -50,7 +50,7 @@
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
       { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis"] },
-      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure", "financial-position", "cash-conversion"] },
+      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure", "financial-position", "cash-conversion", "executive-dashboard"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
@@ -82,7 +82,8 @@
     { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-fpa" },
     { "id": "cost-structure", "domain": "経営(コスト構造)", "focus": "EBITDA/原価率・広告費率・販管費率/対売上構成", "active": true, "manager": "mgr-fpa" },
     { "id": "financial-position", "domain": "経営(財政状態)", "focus": "BS指標/ROA・ROE・自己資本比率・流動比率", "active": true, "manager": "mgr-fpa" },
-    { "id": "cash-conversion", "domain": "経営(運転資金)", "focus": "CCC/売上債権・棚卸・仕入債務回転日数/運転資本", "active": true, "manager": "mgr-fpa" }
+    { "id": "cash-conversion", "domain": "経営(運転資金)", "focus": "CCC/売上債権・棚卸・仕入債務回転日数/運転資本", "active": true, "manager": "mgr-fpa" },
+    { "id": "executive-dashboard", "domain": "経営(統合ダッシュボード)", "focus": "経営ハイライト/全指標の横断・優先所見/効率性スコア", "active": true, "manager": "mgr-fpa" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -109,9 +110,11 @@
     { "round": 22, "teamCount": 23, "teams": ["fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit", "tax-consumption", "tax-resident"], "shipped": ["外貨換算・為替損益・実効レート"] },
     { "round": 23, "teamCount": 24, "teams": ["depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "payroll", "tax-separate", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["減価償却(定額法/定率法スケジュール・少額減価償却の判定)"] },
     { "round": 24, "teamCount": 25, "teams": ["funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "labor-cost", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "payroll", "tax-separate", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["借入の期間構成(短期/長期・長期借入比率)"] },
-    { "round": 25, "teamCount": 26, "teams": ["payroll", "labor-cost", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["通勤手当の非課税限度(公共交通/マイカー距離別)・賞与の源泉徴収(扶養0人概算)"] }
+    { "round": 25, "teamCount": 26, "teams": ["payroll", "labor-cost", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "productivity", "cost-structure", "financial-position", "cash-conversion", "budget-planning", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["通勤手当の非課税限度(公共交通/マイカー距離別)・賞与の源泉徴収(扶養0人概算)"] },
+    { "round": 26, "teamCount": 27, "teams": ["executive-dashboard", "management-integration", "cash-conversion", "financial-position", "cost-structure", "productivity", "budget-planning", "revenue-forecast", "growth-analysis", "kpi-analysis", "labor-cost", "payroll", "funding-mix", "funding-scenario", "funding-cashflow", "depreciation", "real-estate", "fx-currency", "savings-planning", "mutual-funds", "tax-separate", "tax-deductions", "security", "quality-audit", "tax-consumption", "tax-resident", "tax-income"], "shipped": ["経営ハイライト(全指標横断の優先所見)", "スコアカードに効率性カテゴリ(CCC・総資産回転率)を統合"] }
   ],
   "backlog": [
+    { "id": "executive-dashboard-highlights", "team": "executive-dashboard", "title": "経営ハイライト(全指標横断の優先所見)・効率性スコア統合", "priority": 1, "status": "shipped" },
     { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
     { "id": "scorecard-liquidity", "team": "management-integration", "title": "スコアカード資金繰り(DSCR/ランウェイ)の会計連携データ自動連携", "priority": 2, "status": "blocked", "note": "永続化された資金調達データ源 (会計連携/freee) が前提。snapshot のデモ値を健全性スコアに流すと実態を誤表示するため、データ源の整備まで保留。" },
     { "id": "growth-cagr", "team": "growth-analysis", "title": "売上CAGR・移動平均トレンド・季節調整成長率", "priority": 3, "status": "shipped" },

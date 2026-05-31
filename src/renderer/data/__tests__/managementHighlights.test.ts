@@ -1,0 +1,61 @@
+import { describe, expect, it } from 'vitest';
+import { buildManagementHighlights } from '../managementHighlights';
+import { buildBusinessOverview } from '../overview';
+import type { KpiActual } from '../kpiActuals';
+
+const kpi = (over: Partial<KpiActual> = {}): KpiActual => ({
+  period: '2026-05', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000, ...over,
+});
+
+describe('buildManagementHighlights', () => {
+  it('returns no highlights when there is no data', () => {
+    const o = buildBusinessOverview({ plan: 'free', sales: [], kpiActuals: [], members: [] });
+    expect(buildManagementHighlights(o)).toEqual([]);
+  });
+
+  it('flags an operating loss as critical', () => {
+    const loss = kpi({ revenue: 100_000, cogs: 90_000, advertising: 40_000, sga: 30_000, depreciation: 0 });
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [loss], members: [] });
+    const hs = buildManagementHighlights(o);
+    const op = hs.find((h) => h.category === '収益性');
+    expect(op?.severity).toBe('critical');
+    expect(op?.message).toContain('営業赤字');
+  });
+
+  it('flags insolvency (negative net assets) as critical', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
+      balanceSheet: {
+        asOf: '2026-03-31', currentAssets: 1000, inventory: 0, accountsReceivable: 0, fixedAssets: 1000,
+        currentLiabilities: 2000, accountsPayable: 0, fixedLiabilities: 1000, netIncome: -500,
+      },
+    });
+    const fp = buildManagementHighlights(o).find((h) => h.category === '財政状態');
+    expect(fp?.severity).toBe('critical');
+    expect(fp?.message).toContain('債務超過');
+  });
+
+  it('sorts critical findings ahead of warnings and good news', () => {
+    const loss = kpi({ revenue: 100_000, cogs: 90_000, advertising: 40_000, sga: 30_000, depreciation: 0 });
+    const o = buildBusinessOverview({
+      plan: 'free', // 1 seat → seatsFull warning
+      sales: [], kpiActuals: [loss], members: [{ role: 'owner' }],
+    });
+    const hs = buildManagementHighlights(o);
+    expect(hs.length).toBeGreaterThan(1);
+    expect(hs[0]!.severity).toBe('critical');
+    // severities are non-decreasing in priority order
+    const order = { critical: 0, warning: 1, good: 2 } as const;
+    for (let i = 1; i < hs.length; i += 1) {
+      expect(order[hs[i]!.severity]).toBeGreaterThanOrEqual(order[hs[i - 1]!.severity]);
+    }
+  });
+
+  it('surfaces a budget shortfall as a warning', () => {
+    const budget: KpiActual[] = [kpi({ revenue: 2_000_000 })]; // actual 1,000,000 → 50%
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], kpiBudgets: budget, members: [] });
+    const bva = buildManagementHighlights(o).find((h) => h.category === '予実');
+    expect(bva?.severity).toBe('warning');
+    expect(bva?.message).toContain('予算未達');
+  });
+});

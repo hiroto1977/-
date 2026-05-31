@@ -69,6 +69,25 @@ describe('buildManagementScorecard', () => {
     expect(safety.score).toBe(75);
   });
 
+  it('scores an efficiency category from CCC (shorter is better) and asset turnover', () => {
+    // CCC 0日 → band(90,0,90)=100; 回転率 1.5 → band(1.5,0,1.5)=100 → 平均 100
+    const r = buildManagementScorecard({ cashConversionDays: 0, assetTurnover: 1.5 });
+    const eff = r.categories.find((c) => c.category === 'efficiency')!;
+    expect(eff.components.map((c) => c.label)).toEqual(['CCC', '総資産回転率']);
+    expect(eff.score).toBe(100);
+  });
+
+  it('penalises a long CCC in the efficiency category', () => {
+    // CCC 90日 → band(0,0,90)=0
+    const r = buildManagementScorecard({ cashConversionDays: 90 });
+    expect(r.categories.find((c) => c.category === 'efficiency')!.score).toBe(0);
+  });
+
+  it('rewards a negative CCC (clamped to 100)', () => {
+    const r = buildManagementScorecard({ cashConversionDays: -30 });
+    expect(r.categories.find((c) => c.category === 'efficiency')!.score).toBe(100);
+  });
+
   it('folds gross margin into the profitability category', () => {
     // 粗利率 20% → band(20,0,40)=50 のみ。営業利益率 0 → 0、粗利率 50 → 平均 25
     const r = buildManagementScorecard({ operatingMarginPct: 0, grossMarginPct: 20 });

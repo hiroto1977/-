@@ -26,11 +26,15 @@ export interface ManagementMetricsInput {
   readonly runwayMonths?: number;
   /** 売上高成長率 (%, 前年比)。 */
   readonly revenueGrowthPct?: number;
+  /** キャッシュ・コンバージョン・サイクル (日)。短いほど良い。 */
+  readonly cashConversionDays?: number;
+  /** 総資産回転率 (回/年) = 売上 ÷ 総資産。 */
+  readonly assetTurnover?: number;
 }
 
 /** カテゴリ別スコア。 */
 export interface CategoryScore {
-  readonly category: 'profitability' | 'safety' | 'liquidity' | 'growth';
+  readonly category: 'profitability' | 'safety' | 'liquidity' | 'growth' | 'efficiency';
   readonly label: string;
   /** 0..100。指標が無い場合は null。 */
   readonly score: number | null;
@@ -88,10 +92,16 @@ export function buildManagementScorecard(m: ManagementMetricsInput): ManagementS
   const growth: { label: string; score: number }[] = [];
   if (m.revenueGrowthPct !== undefined) growth.push({ label: '売上成長率', score: band(m.revenueGrowthPct, -10, 20) });
 
+  const efficiency: { label: string; score: number }[] = [];
+  // CCC は短いほど良い (反転): 0日→100, 90日→0。マイナス(調達超過)は 100 にクランプ。
+  if (m.cashConversionDays !== undefined) efficiency.push({ label: 'CCC', score: band(90 - m.cashConversionDays, 0, 90) });
+  if (m.assetTurnover !== undefined) efficiency.push({ label: '総資産回転率', score: band(m.assetTurnover, 0, 1.5) });
+
   const categories: CategoryScore[] = [
     { category: 'profitability', label: '収益性', score: avg(profitability), components: profitability },
     { category: 'safety', label: '安全性', score: avg(safety), components: safety },
     { category: 'liquidity', label: '資金繰り', score: avg(liquidity), components: liquidity },
+    { category: 'efficiency', label: '効率性', score: avg(efficiency), components: efficiency },
     { category: 'growth', label: '成長性', score: avg(growth), components: growth },
   ];
 
