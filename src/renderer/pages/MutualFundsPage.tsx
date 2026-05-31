@@ -7,6 +7,7 @@ import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableS
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { calcCompoundingFutureValue } from '../../shared/mutualFundsMetrics';
+import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../../shared/savingsPlanning';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -32,6 +33,18 @@ export function MutualFundsPage() {
     () => calcCompoundingFutureValue(Number(simMonthly) || 0, Number(simRate) || 0, Number(simYears) || 0),
     [simMonthly, simRate, simYears],
   );
+
+  // 貯蓄計画: 目標達成積立額・72の法則・緊急予備資金。
+  const [goalTarget, setGoalTarget] = useState('10000000');
+  const [goalRate, setGoalRate] = useState('3');
+  const [goalYears, setGoalYears] = useState('10');
+  const [monthlyExpense, setMonthlyExpense] = useState('300000');
+  const requiredMonthly = useMemo(
+    () => requiredMonthlyContribution(Number(goalTarget) || 0, Number(goalRate) || 0, Number(goalYears) || 0),
+    [goalTarget, goalRate, goalYears],
+  );
+  const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
+  const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
 
   return (
     <div>
@@ -139,6 +152,35 @@ export function MutualFundsPage() {
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="貯蓄計画 (目標達成・緊急予備資金・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            目標額 (円)
+            <input type="text" inputMode="decimal" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定年率 (%)
+            <input type="text" inputMode="decimal" value={goalRate} onChange={(e) => setGoalRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            達成年数
+            <input type="text" inputMode="decimal" value={goalYears} onChange={(e) => setGoalYears(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            毎月の生活費 (円)
+            <input type="text" inputMode="decimal" value={monthlyExpense} onChange={(e) => setMonthlyExpense(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
+          <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
+          <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 毎月末積立・年率一定を仮定した概算です。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
         </div>
       </Section>
     </div>
