@@ -12,8 +12,65 @@ import {
   type Role,
 } from '../../shared/team';
 import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
+import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
+import { jpy } from '../../shared/formatters';
 
 const EMPTY = { name: '', email: '', role: 'member' as Role };
+
+const pInput: React.CSSProperties = {
+  background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+  color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 120,
+};
+
+function PayrollPanel() {
+  const [commute, setCommute] = useState('160000');
+  const [km, setKm] = useState('12');
+  const [bonus, setBonus] = useState('500000');
+  const [si, setSi] = useState('75000');
+  const [prevSalary, setPrevSalary] = useState('300000');
+  const pt = useMemo(() => publicTransportCommute(Number(commute) || 0), [commute]);
+  const carLimit = useMemo(() => carCommuteNonTaxableLimit(Number(km) || 0), [km]);
+  const bw = useMemo(
+    () => bonusWithholdingTax({ bonus: Number(bonus) || 0, socialInsurance: Number(si) || 0, prevMonthSalaryAfterSI: Number(prevSalary) || 0 }),
+    [bonus, si, prevSalary],
+  );
+  const label = { fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column' as const, gap: 2 };
+  const stat = (l: string, v: string) => (
+    <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12, minWidth: 150 }}>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{l}</div>
+      <div style={{ fontSize: 18, fontWeight: 600 }}>{v}</div>
+    </div>
+  );
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
+        通勤手当の非課税限度と賞与の源泉徴収税額の概算です。
+        <strong>※ 概算であり税務助言ではありません。賞与は甲欄・扶養0人の概算で、扶養人数により率が変わります。</strong>
+      </p>
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>通勤手当 (公共交通機関 / マイカー距離別)</div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <label style={label}>公共交通機関の月額<input type="text" inputMode="decimal" value={commute} onChange={(e) => setCommute(e.target.value)} style={pInput} /></label>
+        <label style={label}>マイカー片道(km)<input type="text" inputMode="decimal" value={km} onChange={(e) => setKm(e.target.value)} style={pInput} /></label>
+      </div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+        {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
+        {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
+        {stat('マイカー: 非課税限度/月', jpy(carLimit))}
+      </div>
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>賞与の源泉徴収 (甲欄・扶養0人 概算)</div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <label style={label}>賞与額<input type="text" inputMode="decimal" value={bonus} onChange={(e) => setBonus(e.target.value)} style={pInput} /></label>
+        <label style={label}>社会保険料<input type="text" inputMode="decimal" value={si} onChange={(e) => setSi(e.target.value)} style={pInput} /></label>
+        <label style={label}>前月給与(社保控除後)<input type="text" inputMode="decimal" value={prevSalary} onChange={(e) => setPrevSalary(e.target.value)} style={pInput} /></label>
+      </div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
+        {stat('源泉徴収税率', `${bw.ratePct}%`)}
+        {stat('源泉徴収税額', jpy(bw.tax))}
+      </div>
+    </div>
+  );
+}
 
 export function TeamPage() {
   const { plan } = usePlan();
@@ -164,6 +221,10 @@ export function TeamPage() {
             </tbody>
           </table>
         )}
+      </Section>
+
+      <Section title="給与・賞与の概算 (通勤手当の非課税限度・賞与の源泉徴収)">
+        <PayrollPanel />
       </Section>
     </div>
   );
