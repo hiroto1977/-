@@ -285,7 +285,8 @@
           "alert-policy",
           "settings-persistence",
           "industry-presets",
-          "monthly-trend"
+          "monthly-trend",
+          "trend-chart"
         ]
       },
       {
@@ -599,6 +600,13 @@
       "focus": "経営レポートへの月次推移テーブル組込み/期別の傾き共有",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "trend-chart",
+      "domain": "経営(推移グラフ)",
+      "focus": "月次推移のスパークライン可視化/SVG座標計算",
+      "active": true,
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
@@ -1687,9 +1695,64 @@
       "shipped": [
         "経営レポートに月次推移テーブルを組込み(Markdown)"
       ]
+    },
+    {
+      "round": 38,
+      "teamCount": 39,
+      "teams": [
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "月次推移の簡易グラフ(SVGスパークライン)"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "trend-sparkline",
+      "team": "trend-chart",
+      "title": "月次推移のスパークライン可視化",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "report-monthly-trend",
       "team": "report-trend",

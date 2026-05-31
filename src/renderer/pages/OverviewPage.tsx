@@ -18,6 +18,7 @@ import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
+import { sparklinePoints } from '../data/sparkline';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
 import { SNAPSHOT } from '../data/snapshot';
@@ -113,6 +114,21 @@ function HighlightSettingsPanel({
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
       {saved && !error && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
+    </div>
+  );
+}
+
+function Sparkline({ label, values, color }: { label: string; values: number[]; color: string }) {
+  const W = 160, H = 40;
+  const g = sparklinePoints(values, W, H, 3);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{label}</span>
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }} role="img" aria-label={`${label} の推移`}>
+        {g.zeroY !== null && <line x1={0} y1={g.zeroY} x2={W} y2={g.zeroY} stroke="var(--border)" strokeDasharray="2 2" />}
+        <polyline points={g.polyline} fill="none" stroke={color} strokeWidth={1.5} />
+        {g.points.length > 0 && <circle cx={g.points[g.points.length - 1]!.x} cy={g.points[g.points.length - 1]!.y} r={2.5} fill={color} />}
+      </svg>
     </div>
   );
 }
@@ -258,6 +274,10 @@ export function OverviewPage() {
 
       {monthlyTrend.length >= 2 && (
         <Section title="月次推移">
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 12 }}>
+            <Sparkline label="売上高" values={monthlyTrend.map((r) => r.revenue)} color="#3ec98a" />
+            <Sparkline label="営業利益" values={monthlyTrend.map((r) => r.operatingProfit)} color="#4f9cf9" />
+          </div>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
