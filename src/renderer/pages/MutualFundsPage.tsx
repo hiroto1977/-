@@ -8,6 +8,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { calcCompoundingFutureValue } from '../../shared/mutualFundsMetrics';
 import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../../shared/savingsPlanning';
+import { convertToJpy, fxGainLoss } from '../../shared/fxCurrency';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -45,6 +46,16 @@ export function MutualFundsPage() {
   );
   const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
   const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
+
+  // 外貨換算・為替損益。
+  const [fxAmount, setFxAmount] = useState('10000');
+  const [fxAcqRate, setFxAcqRate] = useState('130');
+  const [fxCurRate, setFxCurRate] = useState('150');
+  const fxJpy = useMemo(() => convertToJpy(Number(fxAmount) || 0, Number(fxCurRate) || 0), [fxAmount, fxCurRate]);
+  const fxPnl = useMemo(
+    () => fxGainLoss({ amountForeign: Number(fxAmount) || 0, acquisitionRate: Number(fxAcqRate) || 0, currentRate: Number(fxCurRate) || 0 }),
+    [fxAmount, fxAcqRate, fxCurRate],
+  );
 
   return (
     <div>
@@ -181,6 +192,31 @@ export function MutualFundsPage() {
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 毎月末積立・年率一定を仮定した概算です。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="外貨換算・為替損益 (概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            外貨額
+            <input type="text" inputMode="decimal" value={fxAmount} onChange={(e) => setFxAmount(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            取得時レート
+            <input type="text" inputMode="decimal" value={fxAcqRate} onChange={(e) => setFxAcqRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            現在レート
+            <input type="text" inputMode="decimal" value={fxCurRate} onChange={(e) => setFxCurRate(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="現在の円換算額" value={jpy(fxJpy)} />
+          <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
+          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={(fxPnl.gainPct ?? 0) >= 0} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。
         </div>
       </Section>
     </div>
