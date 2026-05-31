@@ -551,6 +551,14 @@ export function OverviewPage() {
                   sub={`${overview.kpi.revenueLanding.year}年・${overview.kpi.revenueLanding.monthsElapsed}か月実績から年換算`}
                 />
               )}
+              {overview.kpi.yoy && overview.kpi.yoy.revenueYoYPct !== null && (
+                <Tile
+                  label="前年同月比 (YoY)"
+                  value={`${overview.kpi.yoy.revenueYoYPct > 0 ? '+' : ''}${overview.kpi.yoy.revenueYoYPct}%`}
+                  accent={overview.kpi.yoy.revenueYoYPct >= 0 ? '#22c55e' : '#ef4444'}
+                  sub={`${overview.kpi.yoy.period} vs ${overview.kpi.yoy.priorPeriod}`}
+                />
+              )}
             </div>
           )}
           <p style={{ color: 'var(--text-mute)', fontSize: 11, marginTop: 10, lineHeight: 1.6 }}>

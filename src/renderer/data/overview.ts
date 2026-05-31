@@ -11,11 +11,13 @@ import {
   computeRevenueCagrPct,
   computeRevenueTrend,
   computeRevenueLandingForecast,
+  computeYoYGrowth,
   computeLaborMetrics,
   type KpiActual,
   type RevenueTrend,
   type RevenueLandingForecast,
   type LaborMetrics,
+  type YoYComparison,
 } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
@@ -84,6 +86,8 @@ export interface BusinessOverview {
     revenueTrend: RevenueTrend;
     /** 当年度の売上着地見込み (ランレート年換算)。データが無ければ null。 */
     revenueLanding: RevenueLandingForecast | null;
+    /** 前年同月比 (YoY)。前年同月のデータが無ければ null。 */
+    yoy: YoYComparison | null;
   };
   readonly team: {
     members: number;
@@ -175,6 +179,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       revenueCagrPct: computeRevenueCagrPct(input.kpiActuals),
       revenueTrend: computeRevenueTrend(input.kpiActuals),
       revenueLanding: computeRevenueLandingForecast(input.kpiActuals),
+      yoy: computeYoYGrowth(input.kpiActuals),
     },
     team: {
       members: memberCount,

@@ -290,7 +290,8 @@
           "sensitivity-analysis",
           "target-profit",
           "cost-sensitivity",
-          "operating-leverage"
+          "operating-leverage",
+          "yoy-analysis"
         ]
       },
       {
@@ -653,6 +654,13 @@
       "id": "operating-leverage",
       "domain": "経営(営業レバレッジ)",
       "focus": "DOL=限界利益÷営業利益/売上変動の利益増幅率",
+      "active": true,
+      "manager": "mgr-management"
+    },
+    {
+      "id": "yoy-analysis",
+      "domain": "経営(前年同月比)",
+      "focus": "YoY=前年同月比/季節性を排した実質成長",
       "active": true,
       "manager": "mgr-management"
     }
@@ -2100,9 +2108,71 @@
       "shipped": [
         "営業レバレッジ(DOL)の算定"
       ]
+    },
+    {
+      "round": 45,
+      "teamCount": 46,
+      "teams": [
+        "yoy-analysis",
+        "operating-leverage",
+        "cost-sensitivity",
+        "report-sensitivity",
+        "target-profit",
+        "sensitivity-analysis",
+        "cashflow-chart",
+        "trend-chart",
+        "report-trend",
+        "monthly-trend",
+        "report-export",
+        "industry-presets",
+        "settings-persistence",
+        "alert-policy",
+        "trend-monitor",
+        "revenue-concentration",
+        "cash-forecast",
+        "treasury-dscr",
+        "accounting-link",
+        "executive-dashboard",
+        "management-integration",
+        "financial-position",
+        "cash-conversion",
+        "cost-structure",
+        "productivity",
+        "budget-planning",
+        "revenue-forecast",
+        "growth-analysis",
+        "kpi-analysis",
+        "labor-cost",
+        "payroll",
+        "funding-mix",
+        "funding-scenario",
+        "funding-cashflow",
+        "depreciation",
+        "real-estate",
+        "fx-currency",
+        "savings-planning",
+        "mutual-funds",
+        "tax-separate",
+        "tax-deductions",
+        "security",
+        "quality-audit",
+        "tax-consumption",
+        "tax-resident",
+        "tax-income"
+      ],
+      "shipped": [
+        "前年同月比(YoY)の算定・表示"
+      ]
     }
   ],
   "backlog": [
+    {
+      "id": "yoy-growth",
+      "team": "yoy-analysis",
+      "title": "前年同月比(YoY)・季節性を排した実質成長",
+      "priority": 1,
+      "status": "shipped"
+    },
     {
       "id": "operating-leverage-dol",
       "team": "operating-leverage",

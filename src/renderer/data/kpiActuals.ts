@@ -201,6 +201,55 @@ export function monthlyTrendSeries(actuals: readonly KpiActual[]): MonthlyTrendR
   return rows;
 }
 
+/** 前年同月比 (YoY) の結果。 */
+export interface YoYComparison {
+  /** 比較対象の期 (最新期, YYYY-MM)。 */
+  readonly period: string;
+  /** 前年同月の期 (YYYY-MM)。 */
+  readonly priorPeriod: string;
+  /** 最新期の売上。 */
+  readonly revenue: number;
+  /** 前年同月の売上。 */
+  readonly priorRevenue: number;
+  /** 前年同月比の売上成長率 (%)。前年売上が 0 以下なら null。 */
+  readonly revenueYoYPct: number | null;
+}
+
+/** 期ラベル YYYY-MM の 12 か月前を返す。 */
+function yearEarlier(period: string): string | null {
+  const m = /^(\d{4})-(\d{2})$/.exec(period);
+  if (!m) return null;
+  const year = Number(m[1]) - 1;
+  return `${year}-${m[2]}`;
+}
+
+/**
+ * 最新期と「その前年同月」の売上を比較し前年同月比 (YoY) を返す。
+ *
+ * 期 (YYYY-MM) でグルーピングした合計売上を用い、最新期の 12 か月前の期が
+ * データに存在するときのみ算定する。前年同月が無い、または前年売上が 0 以下なら
+ * null (比較対象なし)。季節性を排した実質的な成長を見るのに使う。
+ */
+export function computeYoYGrowth(actuals: readonly KpiActual[]): YoYComparison | null {
+  const series = groupRevenueByPeriod(actuals);
+  if (series.length === 0) return null;
+  const latest = series[series.length - 1]!;
+  const priorPeriod = yearEarlier(latest.period);
+  if (priorPeriod === null) return null;
+  const prior = series.find((s) => s.period === priorPeriod);
+  if (!prior) return null;
+  const revenueYoYPct = prior.revenue > 0
+    ? Math.round(((latest.revenue - prior.revenue) / prior.revenue) * 1000) / 10
+    : null;
+  return {
+    period: latest.period,
+    priorPeriod,
+    revenue: latest.revenue,
+    priorRevenue: prior.revenue,
+    revenueYoYPct,
+  };
+}
+
 /** 人件費の合計 (未入力の期は 0 として扱う)。 */
 export function summarizeLaborCost(actuals: readonly KpiActual[]): number {
   return actuals.reduce((acc, a) => acc + (a.laborCost ?? 0), 0);
