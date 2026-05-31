@@ -51,6 +51,24 @@ describe('buildManagementHighlights', () => {
     }
   });
 
+  it('flags a short cash runway as critical and cash burn as a warning', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
+      accounting: [
+        { month: '2026-04', income: 1_000_000, expense: 1_300_000, net: -300_000 },
+        { month: '2026-05', income: 1_000_000, expense: 1_300_000, net: -300_000 },
+      ],
+      balanceSheet: {
+        asOf: '2026-05-31', currentAssets: 900_000, cash: 900_000, inventory: 0, accountsReceivable: 0,
+        fixedAssets: 0, currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
+      },
+    });
+    // 900,000 / 300,000 = 3 months → critical
+    const cashflow = buildManagementHighlights(o).filter((h) => h.category === '資金繰り');
+    expect(cashflow.some((h) => h.severity === 'critical' && h.message.includes('ランウェイ'))).toBe(true);
+    expect(cashflow.some((h) => h.severity === 'warning' && h.message.includes('資金流出'))).toBe(true);
+  });
+
   it('surfaces a budget shortfall as a warning', () => {
     const budget: KpiActual[] = [kpi({ revenue: 2_000_000 })]; // actual 1,000,000 → 50%
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], kpiBudgets: budget, members: [] });

@@ -549,7 +549,7 @@ function BudgetPanel() {
 
 // --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
 
-const EMPTY_BS = { asOf: '', currentAssets: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
+const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
 
 function BalanceSheetPanel() {
   const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
@@ -593,6 +593,7 @@ function BalanceSheetPanel() {
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('asOf', '基準日')}
         {field('currentAssets', '流動資産')}
+        {field('cash', '現預金')}
         {field('inventory', '棚卸資産')}
         {field('accountsReceivable', '売上債権')}
         {field('fixedAssets', '固定資産')}

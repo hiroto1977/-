@@ -10,6 +10,8 @@ import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights } from '../data/managementHighlights';
+import { useServiceData } from '../hooks/useServiceData';
+import { SNAPSHOT } from '../data/snapshot';
 
 const SCORE_COLOR = (s: number | null): string =>
   s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
@@ -46,6 +48,9 @@ export function OverviewPage() {
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
   const { records: bsRecords } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
+  // 会計連携 (freee): 連携済みなら月次CFが入る。未連携は空 (snapshot)。
+  const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
+  const accountingMonthly = freeeData.monthly;
 
   const overview = useMemo(
     () =>
@@ -56,9 +61,10 @@ export function OverviewPage() {
         kpiBudgets: budgetRecords.map((r) => r.data),
         // BS は最新の 1 レコードを採用。
         balanceSheet: bsRecords.length > 0 ? bsRecords[bsRecords.length - 1]!.data : null,
+        accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, memberRecords],
+    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords],
   );
 
   // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
@@ -70,6 +76,8 @@ export function OverviewPage() {
       grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
       contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
       safetyMarginPct: overview.kpi.safetyMargin,
+      // 資金繰り: 会計連携CF + 現預金からランウェイを算定して加点。
+      runwayMonths: overview.runwayMonths ?? undefined,
       // 安全性: 貸借対照表を入力すると自己資本比率が加点される。
       equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
       // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
@@ -276,6 +284,29 @@ export function OverviewPage() {
                 sub={`予算 ${yen.format(v.budget)} / 実績 ${yen.format(v.actual)} (差異 ${v.variance >= 0 ? '+' : ''}${yen.format(v.variance)})`}
               />
             ))}
+          </div>
+        </Section>
+      )}
+
+      {overview.accounting && (
+        <Section title="会計連携 — 営業キャッシュフロー (freee)">
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            freee 会計の取引から取得した月次の営業キャッシュフローです。
+            {overview.runwayMonths !== null
+              ? '現預金 (貸借対照表) と合わせて資金ランウェイを算定し、スコアカードの資金繰りに反映します。'
+              : '貸借対照表に現預金を入力すると資金ランウェイも算定されます。'}
+            <strong>※ 概算であり財務助言ではありません。</strong>
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="営業CF 合計" value={yen.format(overview.accounting.totalNet)} accent={overview.accounting.cashflowPositive ? '#22c55e' : '#ef4444'} sub={`${overview.accounting.months} か月`} />
+            <Tile label="月次平均 営業CF" value={yen.format(overview.accounting.avgMonthlyNet)} accent={overview.accounting.avgMonthlyNet >= 0 ? '#22c55e' : '#ef4444'} />
+            <Tile label={`直近月 (${overview.accounting.latestMonth})`} value={yen.format(overview.accounting.latestNet)} accent={overview.accounting.latestNet >= 0 ? '#22c55e' : '#ef4444'} />
+            <Tile
+              label="資金ランウェイ"
+              value={overview.runwayMonths === null ? (overview.accounting.avgMonthlyNet >= 0 ? '資金流出なし' : '—') : `${overview.runwayMonths} か月`}
+              accent={overview.runwayMonths === null ? undefined : overview.runwayMonths >= 12 ? '#22c55e' : overview.runwayMonths >= 6 ? '#f59e0b' : '#ef4444'}
+              sub="現預金 ÷ 月次純流出"
+            />
           </div>
         </Section>
       )}

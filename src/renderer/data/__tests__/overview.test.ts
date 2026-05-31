@@ -245,4 +245,39 @@ describe('buildBusinessOverview', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
     expect(o.productivity.labor.laborSharePct).toBeNull();
   });
+
+  it('summarizes accounting cashflow and leaves runway null without cash on the BS', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: KPI, members: [],
+      accounting: [
+        { month: '2026-04', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+        { month: '2026-05', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+      ],
+    });
+    expect(o.accounting).not.toBeNull();
+    expect(o.accounting!.avgMonthlyNet).toBe(-200_000);
+    expect(o.runwayMonths).toBeNull(); // no cash supplied
+  });
+
+  it('computes runway from accounting burn + BS cash', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: KPI, members: [],
+      accounting: [
+        { month: '2026-04', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+        { month: '2026-05', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+      ],
+      balanceSheet: {
+        asOf: '2026-05-31', currentAssets: 3_000_000, cash: 2_000_000, inventory: 0, accountsReceivable: 0,
+        fixedAssets: 0, currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
+      },
+    });
+    // 2,000,000 cash / 200,000 monthly burn = 10 months
+    expect(o.runwayMonths).toBe(10);
+  });
+
+  it('leaves accounting null when not connected (no monthly data)', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [], accounting: [] });
+    expect(o.accounting).toBeNull();
+    expect(o.runwayMonths).toBeNull();
+  });
 });

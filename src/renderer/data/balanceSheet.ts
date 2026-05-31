@@ -17,6 +17,8 @@ export interface BalanceSheet extends Record<string, unknown> {
   /** 基準日ラベル (任意, 例 "2026-03-31")。 */
   readonly asOf: string;
   readonly currentAssets: number;
+  /** 現預金 (流動資産の内数。資金ランウェイに使う)。任意。 */
+  readonly cash?: number;
   /** 棚卸資産 (流動資産の内数。当座比率・CCC に使う)。 */
   readonly inventory: number;
   /** 売上債権 (流動資産の内数。CCC の DSO に使う)。任意。 */
@@ -56,6 +58,7 @@ export interface BalanceSheetMetrics {
 export function parseBalanceSheet(input: {
   asOf?: unknown;
   currentAssets?: unknown;
+  cash?: unknown;
   inventory?: unknown;
   accountsReceivable?: unknown;
   fixedAssets?: unknown;
@@ -78,16 +81,19 @@ export function parseBalanceSheet(input: {
   // 任意項目は未入力 ('' / null) を 0 として扱う。
   const opt = (v: unknown): unknown => (v == null || v === '' ? 0 : v);
   const currentAssets = nonNeg(input.currentAssets, '流動資産');
+  const cash = nonNeg(opt(input.cash), '現預金');
   const inventory = nonNeg(opt(input.inventory), '棚卸資産');
   const accountsReceivable = nonNeg(opt(input.accountsReceivable), '売上債権');
   const currentLiabilities = nonNeg(input.currentLiabilities, '流動負債');
   const accountsPayable = nonNeg(opt(input.accountsPayable), '仕入債務');
+  if (cash > currentAssets) throw new Error('現預金は流動資産以下で入力してください');
   if (inventory > currentAssets) throw new Error('棚卸資産は流動資産以下で入力してください');
   if (accountsReceivable > currentAssets) throw new Error('売上債権は流動資産以下で入力してください');
   if (accountsPayable > currentLiabilities) throw new Error('仕入債務は流動負債以下で入力してください');
   return {
     asOf,
     currentAssets,
+    cash,
     inventory,
     accountsReceivable,
     fixedAssets: nonNeg(input.fixedAssets, '固定資産'),

@@ -84,6 +84,23 @@ export function buildManagementHighlights(overview: BusinessOverview): Highlight
     }
   }
 
+  // 会計連携 (営業CF・ランウェイ)
+  const acc = overview.accounting;
+  if (acc) {
+    if (acc.avgMonthlyNet < 0) {
+      out.push({ severity: 'warning', category: '資金繰り', message: `月次平均の営業CFがマイナスです (${acc.avgMonthlyNet.toLocaleString()}円/月の資金流出)。` });
+    } else {
+      out.push({ severity: 'good', category: '資金繰り', message: '営業キャッシュフローは黒字基調です。' });
+    }
+  }
+  if (overview.runwayMonths !== null) {
+    if (overview.runwayMonths < 6) {
+      out.push({ severity: 'critical', category: '資金繰り', message: `資金ランウェイが ${overview.runwayMonths} か月と短く、追加調達か支出抑制が急務です。` });
+    } else if (overview.runwayMonths < 12) {
+      out.push({ severity: 'warning', category: '資金繰り', message: `資金ランウェイが ${overview.runwayMonths} か月です。資金計画の見直しを検討してください。` });
+    }
+  }
+
   // 組織 (シート)
   if (overview.flags.seatsFull) {
     out.push({ severity: 'warning', category: '組織', message: 'プランのシート上限に達しています。増員にはアップグレードが必要です。' });

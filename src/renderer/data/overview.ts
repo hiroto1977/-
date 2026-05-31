@@ -22,6 +22,7 @@ import { getPlan, type PlanTier } from '../../shared/plan';
 import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
 import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
+import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -31,6 +32,8 @@ export interface OverviewInput {
   readonly kpiBudgets?: readonly KpiActual[];
   /** 貸借対照表 (最新の1時点)。未入力なら財政状態指標は出さない。 */
   readonly balanceSheet?: BalanceSheet | null;
+  /** 会計連携 (freee 等) の月次キャッシュフロー。未連携なら空。 */
+  readonly accounting?: readonly AccountingMonthly[];
   /** Team members (only the count + roles matter here). */
   readonly members: readonly { readonly role: Role }[];
 }
@@ -98,6 +101,10 @@ export interface BusinessOverview {
   readonly financialPosition: BalanceSheetMetrics | null;
   /** 運転資金 (CCC)。BS 未入力 or 売上が無いなら null。 */
   readonly workingCapital: CashConversionCycle | null;
+  /** 会計連携の月次キャッシュフロー要約。未連携なら null。 */
+  readonly accounting: AccountingSummary | null;
+  /** 資金ランウェイ (月数)。会計連携CF と現預金が揃い、かつ資金流出時のみ。 */
+  readonly runwayMonths: number | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -128,6 +135,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const ebitdaMarginPct = pctOfRevenue(ebitda);
   const memberCount = input.members.length;
   const perCapita = (n: number): number => (memberCount > 0 ? Math.round(n / memberCount) : 0);
+  const accountingSummary = summarizeAccounting(input.accounting ?? []);
 
   return {
     plan: { tier: planDef.id, label: planDef.label, audience: planDef.audience },
@@ -179,6 +187,10 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
           revenue: fundamentals.revenue,
           cogs: fundamentals.cogs,
         })
+      : null,
+    accounting: accountingSummary,
+    runwayMonths: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
+      ? computeRunwayMonths(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet)
       : null,
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
