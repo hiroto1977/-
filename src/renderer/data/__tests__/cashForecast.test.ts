@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { forecastCashBalance } from '../cashForecast';
+import { forecastCashBalance, cashForecastTrajectory } from '../cashForecast';
 
 describe('forecastCashBalance', () => {
   it('projects a growing balance when monthly CF is positive', () => {
@@ -33,5 +33,24 @@ describe('forecastCashBalance', () => {
     expect(f.openingBalance).toBe(800_000);
     expect(f.monthlyNet).toBe(-50_000);
     expect(f.rows[0]).toEqual({ monthIndex: 1, netCashflow: -50_000, balance: 750_000 });
+  });
+});
+
+describe('cashForecastTrajectory', () => {
+  it('prepends the opening balance to each month-end balance', () => {
+    const f = forecastCashBalance(1_000_000, 100_000, 3);
+    expect(cashForecastTrajectory(f)).toEqual([1_000_000, 1_100_000, 1_200_000, 1_300_000]);
+  });
+
+  it('returns just the opening balance when the horizon is zero', () => {
+    const f = forecastCashBalance(500_000, -100_000, 0);
+    expect(cashForecastTrajectory(f)).toEqual([500_000]);
+  });
+
+  it('crosses below zero in the trajectory when funds run out', () => {
+    const traj = cashForecastTrajectory(forecastCashBalance(250_000, -100_000, 4));
+    // 250k → 150k → 50k → -50k → -150k
+    expect(traj).toEqual([250_000, 150_000, 50_000, -50_000, -150_000]);
+    expect(traj.some((v) => v < 0)).toBe(true);
   });
 });

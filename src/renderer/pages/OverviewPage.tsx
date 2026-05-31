@@ -19,6 +19,7 @@ import { buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
+import { cashForecastTrajectory } from '../data/cashForecast';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
 import { SNAPSHOT } from '../data/snapshot';
@@ -528,6 +529,11 @@ export function OverviewPage() {
                 value={overview.cashForecast.shortfallMonthIndex === null ? '12か月内なし' : `${overview.cashForecast.shortfallMonthIndex} か月後`}
                 accent={overview.cashForecast.shortfallMonthIndex === null ? '#22c55e' : '#ef4444'}
                 sub={`期間中の最低残高 ${yen.format(overview.cashForecast.minBalance)}`}
+              />
+              <Sparkline
+                label="予測残高の推移"
+                values={cashForecastTrajectory(overview.cashForecast)}
+                color={overview.cashForecast.shortfallMonthIndex === null ? '#3ec98a' : '#ef4444'}
               />
             </div>
           )}

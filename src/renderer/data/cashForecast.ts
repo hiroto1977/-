@@ -56,3 +56,11 @@ export function forecastCashBalance(
   }
   return { openingBalance, monthlyNet, rows, minBalance, shortfallMonthIndex };
 }
+
+/**
+ * 予測の残高推移を「期首残高 → 各月末残高」の数値列で返す (グラフ描画用)。
+ * 先頭は必ず期首残高。予測が空 (horizon 0) でも期首残高 1 点を返す。
+ */
+export function cashForecastTrajectory(forecast: CashForecast): number[] {
+  return [forecast.openingBalance, ...forecast.rows.map((r) => r.balance)];
+}
