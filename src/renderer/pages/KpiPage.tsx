@@ -14,6 +14,12 @@ import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
+import {
+  BALANCE_SHEET_COLLECTION,
+  parseBalanceSheet,
+  computeBalanceSheetMetrics,
+  type BalanceSheet,
+} from '../data/balanceSheet';
 
 interface Fund {
   revenue: number;
@@ -540,6 +546,79 @@ function BudgetPanel() {
   );
 }
 
+// --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
+
+const EMPTY_BS = { asOf: '', currentAssets: '', inventory: '', fixedAssets: '', currentLiabilities: '', fixedLiabilities: '', netIncome: '' };
+
+function BalanceSheetPanel() {
+  const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
+  const [form, setForm] = useState(EMPTY_BS);
+  const [error, setError] = useState<string>();
+
+  // 最新の 1 レコードを採用 (BS は時点情報)。
+  const latest = records.length > 0 ? records[records.length - 1] : undefined;
+  const metrics = useMemo(() => (latest ? computeBalanceSheetMetrics(latest.data) : undefined), [latest]);
+
+  async function onAdd() {
+    try {
+      const parsed = parseBalanceSheet(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_BS);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_BS, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
+        width: key === 'asOf' ? 120 : 110,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+        貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・ROA・ROE などが経営サマリーに表示され、
+        スコアカードの安全性に自己資本比率が加点されます。
+      </p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('asOf', '基準日')}
+        {field('currentAssets', '流動資産')}
+        {field('inventory', '棚卸資産')}
+        {field('fixedAssets', '固定資産')}
+        {field('currentLiabilities', '流動負債')}
+        {field('fixedLiabilities', '固定負債')}
+        {field('netIncome', '当期純利益')}
+        <button type="button" onClick={onAdd}>BS を保存</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {metrics && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+          <Tile label="自己資本比率" value={metrics.equityRatioPct === null ? '—' : `${metrics.equityRatioPct}%`} sub={`純資産 ${safeYen(metrics.netAssets)}`} />
+          <Tile label="流動比率" value={metrics.currentRatioPct === null ? '—' : `${metrics.currentRatioPct}%`} />
+          <Tile label="ROA" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
+          <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
+          {latest && (
+            <button type="button" onClick={() => remove(latest.id)} style={{ alignSelf: 'center' }}>最新BSを削除</button>
+          )}
+        </div>
+      )}
+      {metrics?.insolvent && (
+        <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+      )}
+    </div>
+  );
+}
+
 // --- Page -------------------------------------------------------------
 
 export function KpiPage() {
@@ -589,6 +668,10 @@ export function KpiPage() {
 
       <Section title="予算入力 — 予算実績差異 (BVA)">
         <BudgetPanel />
+      </Section>
+
+      <Section title="財政状態入力 — 貸借対照表 (ROA/ROE/自己資本比率/流動比率)">
+        <BalanceSheetPanel />
       </Section>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>

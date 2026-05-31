@@ -18,6 +18,7 @@ import {
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
 import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
+import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -25,6 +26,8 @@ export interface OverviewInput {
   readonly kpiActuals: readonly KpiActual[];
   /** 予算 (計画)。実績と同じ KpiActual 形。未入力なら BVA は出さない。 */
   readonly kpiBudgets?: readonly KpiActual[];
+  /** 貸借対照表 (最新の1時点)。未入力なら財政状態指標は出さない。 */
+  readonly balanceSheet?: BalanceSheet | null;
   /** Team members (only the count + roles matter here). */
   readonly members: readonly { readonly role: Role }[];
 }
@@ -86,6 +89,8 @@ export interface BusinessOverview {
   };
   /** 予算実績差異 (BVA)。予算が未入力なら null。 */
   readonly budget: BudgetVariance | null;
+  /** 財政状態指標 (ROA/ROE/自己資本比率/流動比率)。BS 未入力なら null。 */
+  readonly financialPosition: BalanceSheetMetrics | null;
   /** Coarse health flags surfaced to the user. */
   readonly flags: {
     /** Operating profit is positive (KPI data present and profitable). */
@@ -157,6 +162,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       operatingProfitPerCapita: perCapita(kpi.operatingProfit),
     },
     budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
+    financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
     flags: {
       profitable: hasKpi && kpi.operatingProfit > 0,
       seatsFull: remaining === 0,

@@ -61,6 +61,14 @@ describe('buildManagementScorecard', () => {
     expect(liq.components.every((c) => c.score >= 0 && c.score <= 100)).toBe(true);
   });
 
+  it('folds the equity ratio into the safety category (from a balance sheet)', () => {
+    // 自己資本比率 50% → band(50,0,50)=100。安全余裕率 20% → band(20,0,40)=50。平均 75
+    const r = buildManagementScorecard({ safetyMarginPct: 20, equityRatioPct: 50 });
+    const safety = r.categories.find((c) => c.category === 'safety')!;
+    expect(safety.components.map((c) => c.label)).toEqual(['安全余裕率', '自己資本比率']);
+    expect(safety.score).toBe(75);
+  });
+
   it('folds gross margin into the profitability category', () => {
     // 粗利率 20% → band(20,0,40)=50 のみ。営業利益率 0 → 0、粗利率 50 → 平均 25
     const r = buildManagementScorecard({ operatingMarginPct: 0, grossMarginPct: 20 });

@@ -185,4 +185,26 @@ describe('buildBusinessOverview', () => {
     expect(o.budget!.revenue.actual).toBe(100000);
     expect(o.budget!.revenue.achievementPct).toBe(125);
   });
+
+  it('leaves the financial position null when no balance sheet is supplied', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.financialPosition).toBeNull();
+  });
+
+  it('computes financial-position metrics from a supplied balance sheet', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro',
+      sales: [],
+      kpiActuals: KPI,
+      members: [],
+      balanceSheet: {
+        asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, fixedAssets: 4000,
+        currentLiabilities: 3000, fixedLiabilities: 2000, netIncome: 1000,
+      },
+    });
+    expect(o.financialPosition).not.toBeNull();
+    expect(o.financialPosition!.equityRatioPct).toBe(50);
+    expect(o.financialPosition!.currentRatioPct).toBe(200);
+    expect(o.financialPosition!.roaPct).toBe(10);
+  });
 });

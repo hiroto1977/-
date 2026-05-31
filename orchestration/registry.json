@@ -50,7 +50,7 @@
       { "id": "mgr-investment", "title": "投資部長", "reportsTo": "cio", "teams": ["real-estate", "mutual-funds"] },
       { "id": "mgr-household", "title": "家計・為替部長", "reportsTo": "cio", "teams": ["savings-planning", "fx-currency"] },
       { "id": "mgr-management", "title": "経営分析部長", "reportsTo": "cso", "teams": ["kpi-analysis", "management-integration", "depreciation", "growth-analysis"] },
-      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure", "financial-position"] },
+      { "id": "mgr-fpa", "title": "経営管理部長 (FP&A)", "reportsTo": "cso", "teams": ["revenue-forecast", "budget-planning", "productivity", "cost-structure", "financial-position", "cash-conversion"] },
       { "id": "mgr-quality", "title": "品質保証部長", "reportsTo": "cqo", "teams": ["quality-audit", "security"] }
     ]
   },
@@ -80,7 +80,8 @@
     { "id": "budget-planning", "domain": "経営(予算)", "focus": "予算策定/予算実績差異(BVA)/達成率", "active": true, "manager": "mgr-fpa" },
     { "id": "productivity", "domain": "経営(生産性)", "focus": "粗利率/一人当たり売上・営業利益/労働分配率", "active": true, "manager": "mgr-fpa" },
     { "id": "cost-structure", "domain": "経営(コスト構造)", "focus": "EBITDA/原価率・広告費率・販管費率/対売上構成", "active": true, "manager": "mgr-fpa" },
-    { "id": "financial-position", "domain": "経営(財政状態)", "focus": "BS指標/ROA・ROE・自己資本比率・流動比率", "active": true, "manager": "mgr-fpa" }
+    { "id": "financial-position", "domain": "経営(財政状態)", "focus": "BS指標/ROA・ROE・自己資本比率・流動比率", "active": true, "manager": "mgr-fpa" },
+    { "id": "cash-conversion", "domain": "経営(運転資金)", "focus": "CCC/売上債権・棚卸・仕入債務回転日数/運転資本", "active": true, "manager": "mgr-fpa" }
   ],
   "rounds": [
     { "round": 1, "teamCount": 2, "teams": ["tax-deductions", "tax-credits"], "shipped": ["所得税1000円切捨て", "住民税1000円切捨て"] },
@@ -99,7 +100,8 @@
     { "round": 14, "teamCount": 15, "teams": ["funding-mix", "funding-scenario", "funding-cost", "revenue-forecast", "budget-planning", "growth-analysis", "management-integration", "kpi-analysis", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "quality-audit"], "shipped": ["資金調達の多様化スコア(種別集中度HHI)"] },
     { "round": 15, "teamCount": 16, "teams": ["productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["粗利率・一人当たり生産性の集約(スコアカード収益性へ粗利率連携)"] },
     { "round": 16, "teamCount": 17, "teams": ["cost-structure", "productivity", "management-integration", "growth-analysis", "revenue-forecast", "budget-planning", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["EBITDA・コスト構造比率(原価率/広告費率/販管費率)の集約", "経営管理部(FP&A)を分割し統制範囲を最適化"] },
-    { "round": 17, "teamCount": 18, "teams": ["budget-planning", "financial-position", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["予算実績差異(BVA)・達成率(簡易予算入力を新設)"] }
+    { "round": 17, "teamCount": 18, "teams": ["budget-planning", "financial-position", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["予算実績差異(BVA)・達成率(簡易予算入力を新設)"] },
+    { "round": 18, "teamCount": 19, "teams": ["financial-position", "cash-conversion", "budget-planning", "cost-structure", "productivity", "revenue-forecast", "management-integration", "growth-analysis", "kpi-analysis", "funding-mix", "funding-scenario", "savings-planning", "fx-currency", "payroll", "depreciation", "tax-separate", "real-estate", "security", "quality-audit"], "shipped": ["貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力", "スコアカード安全性へ自己資本比率を連携"] }
   ],
   "backlog": [
     { "id": "scorecard-growth", "team": "growth-analysis", "title": "スコアカード成長性の自動連携(KPI実績の前期比売上成長率)", "priority": 1, "status": "shipped" },
@@ -107,7 +109,8 @@
     { "id": "growth-cagr", "team": "growth-analysis", "title": "売上CAGR・移動平均トレンド・季節調整成長率", "priority": 3, "status": "shipped" },
     { "id": "revenue-landing", "team": "revenue-forecast", "title": "売上着地見込み(ランレート年換算)", "priority": 4, "status": "shipped" },
     { "id": "budget-variance", "team": "budget-planning", "title": "予算策定・予算実績差異(BVA)・達成率(簡易予算入力を新設)", "priority": 5, "status": "shipped" },
-    { "id": "financial-position-bs", "team": "financial-position", "title": "貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)", "priority": 5, "status": "designed", "note": "資産・負債・純資産の簡易入力を新設して算定する (次ラウンド)。" },
+    { "id": "financial-position-bs", "team": "financial-position", "title": "貸借対照表ベース指標(ROA/ROE/自己資本比率/流動比率)・簡易BS入力", "priority": 5, "status": "shipped" },
+    { "id": "cash-conversion-cycle", "team": "cash-conversion", "title": "CCC・運転資本(売上債権/棚卸/仕入債務 回転日数)", "priority": 5, "status": "designed", "note": "売上債権・仕入債務の入力源が前提。BS の棚卸資産は流用可。" },
     { "id": "real-estate-ccr", "team": "real-estate", "title": "自己資金回収率(CCR)・イールドギャップ", "priority": 1, "status": "shipped" },
     { "id": "resident-dividend-levy", "team": "tax-resident", "title": "住民税の配当割控除・株式譲渡所得割控除・一般寄附金税額控除", "priority": 2, "status": "shipped" },
     { "id": "kpi-price-sim", "team": "kpi-analysis", "title": "価格変更シミュレーション(値上げ/値下げのBEP影響)", "priority": 3, "status": "shipped" },

@@ -4,6 +4,7 @@ import { useCollection } from '../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
+import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
@@ -18,6 +19,7 @@ const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
+const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
 
 function Tile({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
@@ -41,6 +43,7 @@ export function OverviewPage() {
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const { records: kpiRecords } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
+  const { records: bsRecords } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
 
   const overview = useMemo(
@@ -50,9 +53,11 @@ export function OverviewPage() {
         sales: salesRecords.map((r) => r.data),
         kpiActuals: kpiRecords.map((r) => r.data),
         kpiBudgets: budgetRecords.map((r) => r.data),
+        // BS は最新の 1 レコードを採用。
+        balanceSheet: bsRecords.length > 0 ? bsRecords[bsRecords.length - 1]!.data : null,
         members: memberRecords.map((r) => ({ role: r.data.role })),
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, memberRecords],
+    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, memberRecords],
   );
 
   // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
@@ -64,6 +69,8 @@ export function OverviewPage() {
       grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
       contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
       safetyMarginPct: overview.kpi.safetyMargin,
+      // 安全性: 貸借対照表を入力すると自己資本比率が加点される。
+      equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
       // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
       revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
     });
@@ -235,6 +242,25 @@ export function OverviewPage() {
                 sub={`予算 ${yen.format(v.budget)} / 実績 ${yen.format(v.actual)} (差異 ${v.variance >= 0 ? '+' : ''}${yen.format(v.variance)})`}
               />
             ))}
+          </div>
+        </Section>
+      )}
+
+      {overview.financialPosition && (
+        <Section title="財政状態 (貸借対照表ベース)">
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+            貸借対照表から算出した安全性・収益性の指標です。<strong>※ 概算の財務分析であり財務助言ではありません。</strong>
+            業種・規模で適正値は異なります。{overview.financialPosition.insolvent && (
+              <strong style={{ color: '#ef4444' }}> ⚠ 純資産がマイナス（債務超過）です。</strong>
+            )}
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="自己資本比率" value={pctOrDash(overview.financialPosition.equityRatioPct)} sub="高いほど安全 (目安40%以上)" />
+            <Tile label="流動比率" value={pctOrDash(overview.financialPosition.currentRatioPct)} sub="目安200%以上" />
+            <Tile label="当座比率" value={pctOrDash(overview.financialPosition.quickRatioPct)} sub="目安100%以上" />
+            <Tile label="ROA (総資産利益率)" value={pctOrDash(overview.financialPosition.roaPct)} />
+            <Tile label="ROE (自己資本利益率)" value={pctOrDash(overview.financialPosition.roePct)} />
+            <Tile label="固定比率" value={pctOrDash(overview.financialPosition.fixedRatioPct)} sub="目安100%以下" />
           </div>
         </Section>
       )}
