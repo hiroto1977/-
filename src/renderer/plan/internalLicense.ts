@@ -16,6 +16,14 @@
 
 const LS_KEY = 'servicehub.internalLicense';
 
+/**
+ * 自社商品フラグ — true の間、本ビルドは「全員・全機能無償」で配布される。
+ * オーナー・自社社員・招待者向けの社内配布ビルドなので、招待コード入力すら
+ * 不要にして、起動時から `internal` プラン (全機能) を既定で有効にする。
+ * 一般向け有償配布に切り替えるときだけ false にする。
+ */
+export const SELF_PRODUCT_ALL_ACCESS = true;
+
 /** 自社の招待シークレット (合言葉)。招待コードの検証鍵。 */
 export const INTERNAL_INVITE_SECRET = 'service-hub-jisha-2026';
 
@@ -78,8 +86,10 @@ export function readInternalLicense(): InternalLicense | null {
   }
 }
 
-/** ライセンスが有効か (＝全機能無償が使えるか)。 */
+/** ライセンスが有効か (＝全機能無償が使えるか)。
+ *  自社商品ビルド (SELF_PRODUCT_ALL_ACCESS) では招待コード無しでも常に有効。 */
 export function hasInternalLicense(): boolean {
+  if (SELF_PRODUCT_ALL_ACCESS) return true;
   return readInternalLicense() !== null;
 }
 

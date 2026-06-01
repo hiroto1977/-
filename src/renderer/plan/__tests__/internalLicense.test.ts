@@ -44,14 +44,14 @@ describe('issueInviteCode / verifyInviteCode', () => {
 
 describe('activate / read / deactivate internal license', () => {
   it('starts with no license', () => {
-    expect(hasInternalLicense()).toBe(false);
+    // hasInternalLicense() は自社商品ビルドでは常に true なので、ストレージ層
+    // (readInternalLicense) で「コード未保存」を検証する。
     expect(readInternalLicense()).toBeNull();
   });
 
   it('activates with a valid generic code and persists', () => {
     const code = issueInviteCode('');
     expect(activateInternalLicense(code)).toBe(true);
-    expect(hasInternalLicense()).toBe(true);
     const lic = readInternalLicense();
     expect(lic?.code).toBe(code);
     expect(typeof lic?.activatedAt).toBe('string');
@@ -60,26 +60,29 @@ describe('activate / read / deactivate internal license', () => {
   it('activates with a label-specific code when the holder matches', () => {
     const code = issueInviteCode('yamada');
     expect(activateInternalLicense(code, 'yamada')).toBe(true);
-    expect(hasInternalLicense()).toBe(true);
+    expect(readInternalLicense()?.code).toBe(code);
   });
 
-  it('rejects an invalid code (no activation)', () => {
+  it('rejects an invalid code (no activation persisted)', () => {
     expect(activateInternalLicense('SVCHUB-DEADBEEF')).toBe(false);
-    expect(hasInternalLicense()).toBe(false);
+    expect(readInternalLicense()).toBeNull();
   });
 
-  it('deactivates and returns to no-license', () => {
+  it('deactivates and clears the stored license', () => {
     activateInternalLicense(issueInviteCode(''));
-    expect(hasInternalLicense()).toBe(true);
+    expect(readInternalLicense()).not.toBeNull();
     deactivateInternalLicense();
-    expect(hasInternalLicense()).toBe(false);
     expect(readInternalLicense()).toBeNull();
   });
 
   it('ignores a tampered stored license (forged code) on read', () => {
     localStorage.setItem('servicehub.internalLicense', JSON.stringify({ code: 'SVCHUB-FORGED01', holder: '', activatedAt: new Date().toISOString() }));
     expect(readInternalLicense()).toBeNull();
-    expect(hasInternalLicense()).toBe(false);
+  });
+
+  it('self-product build grants all-access (hasInternalLicense always true)', () => {
+    // SELF_PRODUCT_ALL_ACCESS = true のため、コード未保存でも全機能が有効。
+    expect(hasInternalLicense()).toBe(true);
   });
 
   it('survives malformed JSON in storage', () => {
