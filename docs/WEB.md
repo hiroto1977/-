@@ -5,3 +5,5 @@
 このページは `dist/standalone.html` を GitHub Pages へ自動公開したものです。
 `.github/workflows/pages.yml` が main への push 時にビルドして配信します。
 ダウンロードやインストールは不要で、URL を開くだけでアプリが起動します。
+
+配信方式: GitHub Actions（pages.yml）。
