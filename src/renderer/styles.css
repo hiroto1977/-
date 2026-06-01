@@ -52,6 +52,12 @@ a:hover { text-decoration: underline; }
      ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
      スクロールに切り替わる。 */
   grid-template-columns: 240px minmax(0, 1fr);
+  /* 行も 100vh に収める。これがないと暗黙の行が中身の高さ(auto)で広がり、
+     height:100vh + overflow:hidden の組み合わせで下側が画面外に切れ、しかも
+     スクロールできなくなる (背の高いページでチャートの下が見られない原因)。
+     minmax(0, 1fr) で行をビューポート高に収め、はみ出しは .content 側の
+     overflow-y:auto で縦スクロールに切り替える。 */
+  grid-template-rows: minmax(0, 1fr);
   height: 100vh;
   overflow: hidden;
 }

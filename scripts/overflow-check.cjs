@@ -62,7 +62,8 @@ async function run() {
   let checks = 0;
 
   for (const width of WIDTHS) {
-    win.setContentSize(width, 1000);
+    // 高さは低め (700px) にして、背の高いページの縦クリップを検出する。
+    win.setContentSize(width, 700);
     await new Promise((r) => setTimeout(r, 120));
     for (const id of ids) {
       await win.webContents.executeJavaScript(`
@@ -74,29 +75,35 @@ async function run() {
       await new Promise((r) => setTimeout(r, 90));
       const m = await win.webContents.executeJavaScript(`
         (() => {
-          const de = document.documentElement;
           const content = document.querySelector('.content');
           return {
-            pageScrollW: de.scrollWidth,
-            innerW: window.innerWidth,
+            innerH: window.innerHeight,
             contentScrollW: content ? content.scrollWidth : 0,
             contentClientW: content ? content.clientWidth : 0,
+            contentScrollH: content ? content.scrollHeight : 0,
+            contentClientH: content ? content.clientHeight : 0,
           };
         })();
       `);
       checks++;
-      // .content の中身が表示領域より広い = はみ出し。
-      // .app は overflow:hidden なので、はみ出した分は (横スクロールが
-      // 効かなければ) そのまま画面外に切れて見えなくなる = 「見切れ」。
-      // セクション内スクロールで吸収できていれば content 幅は一致する。
-      // 2px の許容差はサブピクセル丸め用。
+      // (横) .content の中身が表示領域より広い = はみ出し。
+      // .app は overflow:hidden なので、横スクロールが効かなければ画面外に切れる。
       if (m.contentScrollW > m.contentClientW + 2) {
         failures.push({
-          id,
-          width,
-          contentScrollW: m.contentScrollW,
-          contentClientW: m.contentClientW,
+          id, width, axis: '横',
+          over: m.contentScrollW, box: m.contentClientW,
           overBy: m.contentScrollW - m.contentClientW,
+        });
+      }
+      // (縦) .content の表示領域がウィンドウ高を超える = 高さが制約されておらず
+      // 中身の高さまで広がっている → .app の overflow:hidden で下端が切れ、
+      // スクロールもできない (「下が見れない」状態)。正常時は content は
+      // ウィンドウ内に収まり、はみ出しは overflow-y:auto でスクロールされる。
+      if (m.contentClientH > m.innerH + 2) {
+        failures.push({
+          id, width, axis: '縦',
+          over: m.contentClientH, box: m.innerH,
+          overBy: m.contentClientH - m.innerH,
         });
       }
     }
@@ -109,7 +116,7 @@ async function run() {
   } else {
     process.stdout.write(`❌ ${failures.length} 件で横はみ出しを検出:\n`);
     for (const f of failures) {
-      process.stdout.write(`  - ${f.id} @${f.width}px: content=${f.contentScrollW} > 表示=${f.contentClientW} (超過 ${f.overBy}px)\n`);
+      process.stdout.write(`  - ${f.id} @${f.width}px [${f.axis}]: ${f.over} > 表示 ${f.box} (超過 ${f.overBy}px)\n`);
     }
     app.exit(1);
   }
