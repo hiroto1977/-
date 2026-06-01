@@ -31,7 +31,8 @@
     "verify:all": "npm run verify:arch && npm run lint:forbidden && npm run lint:imports && npm run lint:docs && npm run lint:test-coverage && npm run verify:orchestration",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "scaffold": "node scripts/scaffold-service.cjs",
-    "exp:runtime": "xvfb-run -a electron --no-sandbox scripts/runtime-security-exp.cjs"
+    "exp:runtime": "xvfb-run -a electron --no-sandbox scripts/runtime-security-exp.cjs",
+    "exp:soak": "xvfb-run -a electron --no-sandbox scripts/soak-test.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
