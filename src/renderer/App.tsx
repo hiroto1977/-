@@ -40,7 +40,7 @@ const SERVICE_ORDER: ReadonlyMap<ServiceId, number> = new Map(
 export function App() {
   const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
   const [version, setVersion] = useState<string>('');
-  const { plan, setPlan } = usePlan();
+  const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
     tools: COLLAPSED_BY_DEFAULT.has('tools'),
@@ -213,7 +213,27 @@ export function App() {
               ))}
             </select>
           </label>
-          {version ? `v${version}` : 'v0.1.0'} · 開発版
+          {internalUnlocked && (
+            <div
+              style={{
+                marginTop: 6,
+                padding: '4px 8px',
+                borderRadius: 6,
+                background: 'rgba(34,197,94,0.15)',
+                border: '1px solid #22c55e',
+                color: '#22c55e',
+                fontSize: 11,
+                fontWeight: 600,
+                textAlign: 'center',
+              }}
+              title="社内ライセンス: 全サービス・全機能が無償で利用できます"
+            >
+              ✅ 全機能 開放中（無償）
+            </div>
+          )}
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-mute)' }}>
+            {version ? `v${version}` : 'v0.1.0'} · build: ALL-ACCESS
+          </div>
         </div>
       </aside>
       <main className="main">
