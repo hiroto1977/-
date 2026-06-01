@@ -710,12 +710,12 @@ export function KpiPage() {
       </Section>
 
       <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: 320 }}>
+        <div style={{ flex: 2, minWidth: 'min(320px, 100%)' }}>
           <Section title="損益分岐点グラフ">
             <BepDiagram unit={selected} />
           </Section>
         </div>
-        <div style={{ flex: 1, minWidth: 240 }}>
+        <div style={{ flex: 1, minWidth: 'min(240px, 100%)' }}>
           <Section title="費用構成">
             <DonutChart unit={selected} />
           </Section>

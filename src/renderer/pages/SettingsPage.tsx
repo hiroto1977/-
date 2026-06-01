@@ -580,7 +580,7 @@ export function SettingsPage() {
       <BackupPanel />
 
       <Section title="API キーとトークン" count={SLOTS.length}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }} key={refreshKey}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>
           {SLOTS.map((s) => (
             <CredentialRow key={s.vaultKey} slot={s} onChange={() => setRefreshKey((k) => k + 1)} />
           ))}
@@ -588,7 +588,7 @@ export function SettingsPage() {
       </Section>
 
       <Section title="ネットワーク (Phase D)" count={2}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }}>
           <ProxySection />
           <FsaSection />
         </div>

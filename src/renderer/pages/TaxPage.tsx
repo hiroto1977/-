@@ -425,7 +425,7 @@ export function TaxPage() {
           主要な所得控除 (基礎・社会保険料・小規模企業共済/iDeCo・配偶者・扶養・生命保険料・地震保険料・医療費・寄附金/ふるさと納税・ひとり親) を反映した精密試算です。
           給与所得控除・各控除・税率は<strong>正式テーブル</strong>。確定申告は必ず公式ツール / 税理士でご確認ください。
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10, marginBottom: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))', gap: 10, marginBottom: 12 }}>
           {([
             ['額面年収 (円)', dGrossStr, setDGrossStr],
             ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
