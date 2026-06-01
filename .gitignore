@@ -1,6 +1,7 @@
 node_modules/
 dist/*
 !dist/standalone.html
+!dist/ServiceHubを開く.bat
 dist-electron/
 release/
 tmp-screenshots/
