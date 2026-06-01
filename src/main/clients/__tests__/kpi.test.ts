@@ -4,6 +4,9 @@ import {
   computeKpi,
   createMockDataSource,
   fetchKpiSnapshot,
+  requiredRevenueForTargetProfit,
+  breakEvenQuantity,
+  simulatePriceChange,
   type Fundamentals,
 } from '../kpi';
 
@@ -379,5 +382,100 @@ describe('fetchKpiSnapshot', () => {
     // Verify by re-running computeKpi on the summed fundamentals.
     const expected = computeKpi(snap.aggregate.fundamentals);
     expect(snap.aggregate.kpi).toEqual(expected);
+  });
+});
+
+describe('requiredRevenueForTargetProfit', () => {
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+  // contribution = 7M, ratio 0.7, fixed = 3M
+
+  it('returns BEP revenue when the target profit is 0', () => {
+    // (3M + 0) / 0.7 = 4,285,714.28…
+    expect(requiredRevenueForTargetProfit(base, 0)).toBeCloseTo(3_000_000 / 0.7, 2);
+  });
+
+  it('adds the target profit on top of fixed costs', () => {
+    // (3M + 2M) / 0.7
+    expect(requiredRevenueForTargetProfit(base, 2_000_000)).toBeCloseTo(5_000_000 / 0.7, 2);
+  });
+
+  it('returns Infinity when the contribution is non-positive', () => {
+    const loss: Fundamentals = { revenue: 1_000_000, cogs: 900_000, advertising: 200_000, sga: 100_000, depreciation: 0 };
+    expect(requiredRevenueForTargetProfit(loss, 100_000)).toBe(Infinity);
+    expect(requiredRevenueForTargetProfit({ ...base, revenue: 0 }, 0)).toBe(Infinity);
+  });
+});
+
+describe('breakEvenQuantity', () => {
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+
+  it('computes the break-even quantity from the unit contribution', () => {
+    // avg price 10,000 → current qty 1,000; unit variable = 3M/1000 = 3,000;
+    // unit contribution = 7,000; fixed 3M / 7,000 = 428.57 → ceil 429
+    const r = breakEvenQuantity(base, 10_000);
+    expect(r.currentQuantity).toBe(1_000);
+    expect(r.unitContribution).toBe(7_000);
+    expect(r.breakEvenQuantity).toBe(429);
+    expect(r.safeQuantity).toBe(1_000 - 429);
+  });
+
+  it('returns all zeros for a non-positive unit price', () => {
+    expect(breakEvenQuantity(base, 0)).toEqual({ unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 });
+  });
+
+  it('returns Infinity break-even when the unit contribution is non-positive', () => {
+    // variable cost ≥ revenue → unit variable ≥ price → contribution 0
+    const lossUnit: Fundamentals = { revenue: 1_000_000, cogs: 800_000, advertising: 400_000, sga: 100_000, depreciation: 0 };
+    const r = breakEvenQuantity(lossUnit, 1_000); // qty 1000, unit variable 1.2M/1000=1200 > 1000
+    expect(r.unitContribution).toBe(0);
+    expect(r.breakEvenQuantity).toBe(Infinity);
+    expect(r.safeQuantity).toBe(0);
+  });
+});
+
+describe('simulatePriceChange (価格変更シミュレーション)', () => {
+  // revenue 10M, variable 3M, fixed 3M → contribution 7M, OP 4M, BEP ~4.285M
+  const base: Fundamentals = { revenue: 10_000_000, cogs: 2_000_000, advertising: 1_000_000, sga: 2_400_000, depreciation: 600_000 };
+
+  it('a 0% change reproduces the current figures', () => {
+    const r = simulatePriceChange(base, 0);
+    expect(r.simulatedRevenue).toBe(10_000_000);
+    expect(r.simulatedContribution).toBe(7_000_000);
+    expect(r.operatingProfitDelta).toBe(0);
+  });
+
+  it('a price increase raises contribution and operating profit, lowers BEP', () => {
+    const up = simulatePriceChange(base, 0.1); // +10%
+    expect(up.simulatedRevenue).toBe(11_000_000);
+    expect(up.simulatedContribution).toBe(8_000_000); // 11M − 3M variable
+    expect(up.operatingProfitDelta).toBe(1_000_000); // +1M flows straight to OP
+    expect(up.simulatedBep).toBeLessThan(4_285_715); // BEP improves
+  });
+
+  it('a price cut lowers contribution and operating profit, raises BEP', () => {
+    const down = simulatePriceChange(base, -0.1); // −10%
+    expect(down.simulatedRevenue).toBe(9_000_000);
+    expect(down.simulatedContribution).toBe(6_000_000);
+    expect(down.operatingProfitDelta).toBe(-1_000_000);
+    expect(down.simulatedBep).toBeGreaterThan(4_285_715);
+  });
+
+  it('drives BEP to Infinity when a deep cut makes contribution non-positive', () => {
+    // −70% → revenue 3M < variable 3M → contribution 0
+    const deep = simulatePriceChange(base, -0.7);
+    expect(deep.simulatedContribution).toBe(0);
+    expect(deep.simulatedBep).toBe(Infinity);
+  });
+
+  it('clamps a change ratio below -1 to -1 (revenue floored at 0)', () => {
+    const r = simulatePriceChange(base, -2);
+    expect(r.priceChangeRatio).toBe(-1);
+    expect(r.simulatedRevenue).toBe(0);
+  });
+
+  it('handles zero-revenue input without NaN/Infinity in deltas', () => {
+    const r = simulatePriceChange({ revenue: 0, cogs: 0, advertising: 0, sga: 100_000, depreciation: 0 }, 0.1);
+    expect(r.simulatedBep).toBe(Infinity);
+    expect(r.simulatedOperatingProfit).toBe(-100_000);
   });
 });

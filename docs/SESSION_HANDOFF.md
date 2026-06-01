@@ -7,15 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
-## 現状サマリ (45 services)
+## 現状サマリ (63 services)
 
 | 区分 | サービス |
 |---|---|
-| 🌟 featured (6) | home / business / teamradar / templates / library / settings |
-| 🔧 tools (13) | skills / security / cloudflare / emotions / ollama / kpi / stocks / uber-eats / demae-can / real-estate / mutual-funds / quality / storage |
-| 🔗 integrations (26) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) |
+| 🌟 featured (9) | home / business / teamradar / templates / library / settings / sales (売上集計) / team (チーム管理) / overview (経営サマリー) |
+| 🔧 tools (14) | skills / security / cloudflare / emotions / ollama / kpi / stocks / uber-eats / demae-can / real-estate / mutual-funds / quality / storage / tax (税務試算) |
+| 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 1193 静的 / 1242 実行時 tests passing · Stryker mutation **100.00%** · typecheck / ESLint clean · verify:all green (45 service tests + 171 file:line refs + 6 metrics + 4 cross-doc facts) · standalone HTML 440 KB
+**品質メトリクス:** 1389 静的 / 1438 実行時 tests passing · typecheck / ESLint clean · verify:all green (60 service tests + file:line refs + metrics + cross-doc facts) · standalone HTML 525 KB
 
 ## 確立されたパターン
 
@@ -68,6 +68,16 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - サービス数を増やしたら ARCHITECTURE.md の数字 + §3.1 表に行追加 + CLAUDE.md / USER_GUIDE.md の "N services" も全部
 - IPC handler 追加 / `LIVE_FETCHERS` 行範囲変更時の line ref 追従
 
+### F. AIオーケストレーションの進化基盤 (`orchestration/`)
+精度向上サイクルは `orchestration/registry.json` (組織 / チーム / ラウンド履歴 / バックログ / 進化ルール) を
+単一の真実源として回す。`npm run verify:orchestration` (= `verify:all` の一部 + CI) が
+**チーム数の単調増加・最低チーム数・参照整合・teamCount一致** に加え、**組織階層の整合**を機械検証する。
+- 組織は `org` に **CEO 1 / 役員 4 / 管理職 7 / 一般職(teams) 19** の3階層 (CEO は AI 非配置=オーケストレーター本体)。
+  各 active team は `manager` で実在の管理職に1つだけ属し、管理職→役員→CEO の指揮系統が一意であることを検証。
+- サイクル開始時に `npm run orchestration:plan` で「組織図 + 次ラウンドの推奨チーム数 + 優先度順の着手候補」を取得。
+- 実装後は registry.json を更新 (teams[] に新領域+manager / rounds[] に追記 / backlog の status 更新)。teamCount は前ラウンド以上。
+- 詳細は `orchestration/README.md`。チーム・階層を増やし続けても整合性が CI で保たれる設計。
+
 ## 既知の罠
 
 ### 罠 1: scaffold ハイフン + 数字 ID で camelCase collapse (修正済)
@@ -91,30 +101,109 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 
 ## 未解決 follow-up (優先度順)
 
-### 🟡 SHOULD-FIX (次回作業の最有力候補)
-1. **PR #6 R1 #1** — Storage page のメモリ使用率閾値 (`< 80%` vs snapshot data 70%) の整合
-2. **PR #6 R1 #2** — `CleanupTask.executable: false` literal が Phase 6 切替を阻む → `boolean` か別 union
-3. **PR #6 R1 #3** — Storage `largeFolders` がサイズ降順未ソート
-4. **PR #7 R1 #2** — 7 士業の interface 28 個重複 → `src/shared/shigyoTypes.ts` 抽出
-5. **PR #7 R1 #3** — 7 士業 Page が 882 行コピペ → `components/ShigyoConsole.tsx` 抽出
-6. **PR #7 R1 #4** — `as number` cast の anti-pattern → `satisfies` 戦略統一
-7. **PR #7 R1 #5** — `example.jp` ドメイン (RFC 2606 非予約) → `example.com` に統一 + 弁護士/弁理士に法的 disclaimer 注意書き
-8. **PR #4 R2-2** — `ServiceActionPanel` の amount 入力に locale 対応 (全角・カンマ区切り)
-9. **PR #4 R2-3** — `ServiceActionPanel` の useState 7 個を state machine 化
-10. **PR #4 NIT** — `note` の XSS / control-char チェック
-11. **PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化 (live モード時不整合解消)
+### ✅ 解決済み (claude/claude-md-docs-qqUAT で対応)
+- ~~**PR #6 R1 #2** — `CleanupTask.executable: false` literal~~ → `boolean` に開放 (commit 7dc3059)
+- ~~**PR #6 R1 #3** — Storage `largeFolders` サイズ降順未ソート~~ → page で降順ソート (commit 7dc3059)
+- ~~**PR #7 R1 #2** — 7 士業の interface 重複~~ → `src/shared/shigyoTypes.ts` + `src/main/clients/shigyo.ts` (createShigyoFetcher) に抽出
+- ~~**PR #7 R1 #3** — 7 士業 Page のコピペ~~ → `components/ShigyoConsole.tsx` に抽出 (各 Page は数行の wrapper に。−1159 行)
+- ~~**PR #7 R1 #4** — `as number` cast~~ → 士業 snapshot を `satisfies ShigyoSnapshot` に統一
+- ~~**PR #7 R1 #5** — `example.jp` ドメイン + 弁護士/弁理士 disclaimer~~ → `example.com` 統一 + `ShigyoConsole` の `disclaimer` prop で法的注意書きバナー追加
 
-### 🟢 NIT
-12. PR #6: storage `recommendations` 固定文字列の usagePct ハードコード
-13. PR #7: ステータス色 `相談中` / `対応中` の意味的区別 tooltip
+- ~~**PR #6 R1 #1** — Storage メモリ使用率閾値の整合~~ → `MEMORY_WARN_PCT=80` 定数化 + 推奨文言を閾値と整合
+- ~~**PR #4 R2-2** — `ServiceActionPanel` amount の locale 対応~~ → `parseAmountInput` (全角・カンマ区切り対応) + テスト
+- ~~**PR #4 NIT** — `note` の制御文字チェック~~ → `sanitizeNote` (C0/C1 除去・trim・上限長) + テスト
+- ~~**PR #4 R2-1** — `CrossServiceKpis` の `useServiceData` 経由化~~ → 5 サービスを hook 経由に
+- ~~**PR #7 NIT** — ステータス色 `相談中`/`対応中` の tooltip~~ → `ShigyoConsole` に `STATUS_HINT` title
+- ~~**横断 KPI に士業月次顧問料合計~~** → `sumShigyoMonthlyFees` + CrossServiceKpis に Stat 追加
 
-### 📐 アーキテクチャ拡張案
-14. Phase 6: 4 業務サービス (uber-eats / demae-can / real-estate / mutual-funds) と 7 士業の `record-entry` を IndexedDB 永続化に切替 → `persisted: true` に更新
-15. Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
-16. 連携先 10 SaaS (Stripe / Shopify / etc.) の live REST 接続実装
-17. Storage: Electron main プロセスで `os` / `fs` 経由の実 OS 統計取得
-18. quality dashboard の数値を `scripts/quality-report.cjs` から自動生成 (現状ハードコード)
-19. 横断 KPI ウィジェットに士業の月次顧問料合計を追加
+- ~~**PR #4 R2-3** — `ServiceActionPanel` の useState を state machine 化~~ → serviceActionMachine.ts (reducer + 14 tests)
+- ~~ドキュメント横断の古い数字 (45/22 services, 1190/1113 tests, 376/403KB)~~ → CLAUDE/USER_GUIDE/README/ARCHITECTURE/BROWSER_REDESIGN を 60 services 等に統一
+
+### 🤖 オーケストレーション監査 (4 チーム並列) で対応した項目
+- parseAmountInput を厳格 10 進 regex 化 ('++500'/'1e3'/'0x10'/'Infinity' 等を排除)
+- 境界値テスト大量追加 (全角半角混在/制御文字境界/maxLen 端/逆遷移/負値)
+- 新規 `shigyo.test.ts` (createShigyoFetcher 直接検証)
+- 重複 jpy フォーマッタを `src/shared/formatters.ts` に集約 (6 箇所 → 1)
+- CrossServiceKpis に Math.max(0,…) 防御ガード (Security Finding 3)
+
+### 🤖 オーケストレーション監査 後続対応 (2nd wave)
+- ~~汎用 stub ファクトリ統一~~ → `src/main/clients/snapshotStub.ts` (createSnapshotStub) に
+  21 client を集約 (commit 5d685d2、−99 行)。士業は別途 createShigyoFetcher。
+- ~~lint:docs を CLAUDE/README/USER_GUIDE にも拡張~~ → service count の drift を CI 自動検知
+  (commit c370376)
+
+### 🤖 オーケストレーション監査 後続対応 (3rd wave)
+- ~~SNAPSHOT 型厳格化で `as unknown` 排除~~ → page-level の `as unknown as XSnapshot`
+  5 箇所を全廃 (Home/Stocks/Templates/TeamRadar/Business、interface を readonly 化、commit ed528c1)
+- ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
+  生存ミュータントを全 kill (commit e4f15a3)
+
+### 🟡 follow-up (税務試算サービス)
+- `src/shared/taxCalc.ts` ほか税務 3 モジュール (taxCalc / taxDeductions / taxCredits) は
+  強い behavioral + 境界値テスト (合計 150+ 件) を持つが、**stryker.config の mutate 配列には
+  未登録**。等価ミュータント (`<= 0` ガード等) の pragma 抑制がキャッシュ的にぶれるため。
+  clean CI 環境で再追加し 100% 確認すること。
+
+### 🟢 税額計算の残論点 (並列監査で整理)
+✅ 実装済 (89913c9):
+- 住宅ローン控除の **居住年×住宅性能区分** (resolveMortgageParams: 令和2-3年1.0%/令和4年以降
+  0.7%、限度額を長期優良5,000万〜中古3,000万・2024年以降の非適合新築は0)。
+- **住民税の調整控除** (calcResidentAdjustmentCredit + humanDeductionDiff)。
+- **配当控除の投信区分** (DividendKind: 株式/投信/外貨建等で率を1/2・1/4)。
+✅ d179dfe: 復興特別所得税の適用順序バグ修正。配偶者特別控除の本人所得段階は factor で実装済。
+
+✅ c785055: 住民税の **非課税限度額** (residentTaxExemption)・生命保険料控除の **旧制度**
+   (lifeInsuranceOld + 新旧併用) を実装。社保はセクション③が実額入力のため概算不要。
+
+✅ c913321: **退職所得** (分離課税) を taxRetirement.ts に実装 (退職所得控除/1/2課税/
+   2022年改正の短期退職手当等/障害退職、TaxPage セクション④)。
+
+✅ 3023347: **一時所得** (総合課税) を taxCasual.ts に実装 (収入−経費−特別控除50万 ×1/2、
+   TaxPage セクション⑤)。算入額のみ算出し他の所得と合算する設計。
+
+残り (要設計判断・スコープ大):
+- **譲渡所得 (申告分離)** (短期/長期で15-20%、3,000万特別控除。一時所得は実装済)。
+- 社会保険料の **標準報酬月額テーブル** 化 (概算セクション② のみ。③は実額入力で回避済で優先度低)。
+- 住民税の自治体差・**森林環境税1,000円 (2024年〜)** の均等割上乗せ。
+- ふるさと納税の **ワンストップ特例** 判定 (5自治体まで等)。
+
+### 🟢 資金調達レーダー (funding) — 精度向上の積み上げ
+新サービス `funding` (62件目)。集計は src/shared/funding.ts の純粋関数に集約。実装済の精度向上:
+1. 課税区分 (補助金/助成金/給付金/購入型CF=課税、融資/公庫=非課税) + 税引後手残り
+2. 圧縮記帳の課税繰延 (compressedEntry)
+3. 月次の税引後CF (fundingAfterTax)
+4. 元利均等返済スケジュール・純資金繰り (repaymentSchedule, netCashflow)
+5. 累計キャッシュ残高・ランウェイ警告 (cashRunway, shortfallMonth)
+6. 元金・利息内訳と利息の節税効果 (amortizationSchedule, interestTaxShield)
+7. 据置期間・利息のみ返済 (gracePeriodMonths)
+8. 採択確率による期待値シナリオ (defaultProbability, expectedScenario)
+9. 元金均等返済 (RepaymentMethod 'equal-principal')
+10. 3シナリオ累計残高レンジ (scenarioRunways: 楽観/期待/悲観)
+不変条件テスト済: amortizationの元金合計=元本/remaining=0/payment=principal+interest、
+optimistic≥expected≥pessimistic。残り候補: 消費税・特定収入、据置中の複利計上選択、譲渡所得連携。
+
+### ⛔ 試行して撤退した案 (再挑戦は慎重に)
+- **business.ts の責務分割** — kpi/advisor/export の 3 モジュール + バレル化を実装し
+  typecheck/全テスト(112)/lint/verify/build まで green になったが、**フル mutation
+  (`npm run mutate`) で 100% → 93.63% に低下**して撤退 (commit せず revert)。
+  render テンプレート (HTML/CSS/SVG) の StringLiteral が、モノリスでは perTest
+  coverage で kill されるのに、別ファイルに移すと Stryker の coverage 帰属が外れて
+  NoCoverage/Survived 化する。回避には装飾 render に StringLiteral disable を被せる
+  必要があり、それは「実シグナルを隠す」副作用がある。**分割の利得 (行数削減) より
+  mutation 精度の劣化が勝る**と判断。stocks.ts も同じ render-template 構造なので
+  同様のリスク大。分割するなら mutation 設計の合意が前提。
+
+### 🟢 NIT (残・低優先)
+- PR #6: storage `recommendations` 固定文字列の usagePct ハードコード (静的 snapshot text のため
+  低優先 — 実 OS 統計は Phase 6 で動的化されるので、それまで据え置き)
+- Docs 監査の追加案: lint:docs / verify:arch に HTML size の drift 検知も追加
+
+### 📐 アーキテクチャ拡張案 (Phase 6 — 実 API/永続化が要るため独立タスク)
+- Phase 6: 4 業務サービス + 7 士業の `record-entry` を IndexedDB 永続化 → `persisted: true`
+- Phase 6: `advise` の Anthropic API 接続 (現状は静的 stub)
+- 連携先 SaaS の live REST 接続実装
+- Storage: Electron main で `os` / `fs` 経由の実 OS 統計取得
+- quality dashboard の数値を `scripts/quality-report.cjs` から自動生成
 
 ## クイック検証チェックリスト (新セッション開始時)
 

@@ -1,11 +1,24 @@
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { jpy } from '../../shared/formatters';
+import { calcCompoundingFutureValue } from '../../shared/mutualFundsMetrics';
+import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../../shared/savingsPlanning';
+import { convertToJpy, fxGainLoss } from '../../shared/fxCurrency';
 
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+const simInputStyle: React.CSSProperties = {
+  background: 'var(--bg)',
+  border: '1px solid var(--border)',
+  borderRadius: 6,
+  color: 'var(--text)',
+  padding: '6px 8px',
+  fontSize: 13,
+  width: 110,
+};
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -13,6 +26,36 @@ export function MutualFundsPage() {
     SNAPSHOT.mutualFunds,
   );
   const { holdings, portfolio, recentDividends } = data;
+
+  const [simMonthly, setSimMonthly] = useState('30000');
+  const [simRate, setSimRate] = useState('5');
+  const [simYears, setSimYears] = useState('20');
+  const sim = useMemo(
+    () => calcCompoundingFutureValue(Number(simMonthly) || 0, Number(simRate) || 0, Number(simYears) || 0),
+    [simMonthly, simRate, simYears],
+  );
+
+  // 貯蓄計画: 目標達成積立額・72の法則・緊急予備資金。
+  const [goalTarget, setGoalTarget] = useState('10000000');
+  const [goalRate, setGoalRate] = useState('3');
+  const [goalYears, setGoalYears] = useState('10');
+  const [monthlyExpense, setMonthlyExpense] = useState('300000');
+  const requiredMonthly = useMemo(
+    () => requiredMonthlyContribution(Number(goalTarget) || 0, Number(goalRate) || 0, Number(goalYears) || 0),
+    [goalTarget, goalRate, goalYears],
+  );
+  const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
+  const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
+
+  // 外貨換算・為替損益。
+  const [fxAmount, setFxAmount] = useState('10000');
+  const [fxAcqRate, setFxAcqRate] = useState('130');
+  const [fxCurRate, setFxCurRate] = useState('150');
+  const fxJpy = useMemo(() => convertToJpy(Number(fxAmount) || 0, Number(fxCurRate) || 0), [fxAmount, fxCurRate]);
+  const fxPnl = useMemo(
+    () => fxGainLoss({ amountForeign: Number(fxAmount) || 0, acquisitionRate: Number(fxAcqRate) || 0, currentRate: Number(fxCurRate) || 0 }),
+    [fxAmount, fxAcqRate, fxCurRate],
+  );
 
   return (
     <div>
@@ -96,6 +139,85 @@ export function MutualFundsPage() {
             </tbody>
           </table>
         )}
+      </Section>
+
+      <Section title="積立シミュレーション (複利・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            月額積立 (円)
+            <input type="text" inputMode="decimal" value={simMonthly} onChange={(e) => setSimMonthly(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定年率 (%)
+            <input type="text" inputMode="decimal" value={simRate} onChange={(e) => setSimRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            積立年数
+            <input type="text" inputMode="decimal" value={simYears} onChange={(e) => setSimYears(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
+          <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
+          <Stat label={`運用益 (${sim.gainPct.toFixed(1)}%)`} value={jpy(sim.totalGain)} positive={sim.totalGain >= 0} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="貯蓄計画 (目標達成・緊急予備資金・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            目標額 (円)
+            <input type="text" inputMode="decimal" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定年率 (%)
+            <input type="text" inputMode="decimal" value={goalRate} onChange={(e) => setGoalRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            達成年数
+            <input type="text" inputMode="decimal" value={goalYears} onChange={(e) => setGoalYears(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            毎月の生活費 (円)
+            <input type="text" inputMode="decimal" value={monthlyExpense} onChange={(e) => setMonthlyExpense(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
+          <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
+          <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 毎月末積立・年率一定を仮定した概算です。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="外貨換算・為替損益 (概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            外貨額
+            <input type="text" inputMode="decimal" value={fxAmount} onChange={(e) => setFxAmount(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            取得時レート
+            <input type="text" inputMode="decimal" value={fxAcqRate} onChange={(e) => setFxAcqRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            現在レート
+            <input type="text" inputMode="decimal" value={fxCurRate} onChange={(e) => setFxCurRate(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="現在の円換算額" value={jpy(fxJpy)} />
+          <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
+          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={(fxPnl.gainPct ?? 0) >= 0} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。
+        </div>
       </Section>
     </div>
   );

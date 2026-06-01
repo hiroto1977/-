@@ -43,6 +43,24 @@ import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
 import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
 import { SmeConsultantPage } from './pages/SmeConsultantPage';
 import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
+import { BasePage } from './pages/BasePage';
+import { NetseaPage } from './pages/NetseaPage';
+import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
+import { TopsellerPage } from './pages/TopsellerPage';
+import { A8netPage } from './pages/A8netPage';
+import { AiBlogkunPage } from './pages/AiBlogkunPage';
+import { MoneyforwardPage } from './pages/MoneyforwardPage';
+import { AmazonPage } from './pages/AmazonPage';
+import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
+import { SalesPage } from './pages/SalesPage';
+import { TeamPage } from './pages/TeamPage';
+import { YoutubePage } from './pages/YoutubePage';
+import { OverviewPage } from './pages/OverviewPage';
+import { CoconalaPage } from './pages/CoconalaPage';
+import { TiktokPage } from './pages/TiktokPage';
+import { TaxPage } from './pages/TaxPage';
+import { FundingPage } from './pages/FundingPage';
+import { FreeePage } from './pages/FreeePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -428,6 +446,150 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'PA',
     description: '特許 / 商標 / 意匠出願 / 知財コンサル',
     page: PatentAttorneyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'base',
+    label: 'BASE',
+    icon: 'BS',
+    description: 'ネットショップの商品・在庫・公開状態 (公式 OAuth API)',
+    page: BasePage,
+    category: 'integrations',
+  },
+  {
+    id: 'netsea',
+    label: 'NETSEA',
+    icon: 'NS',
+    description: 'B2B 卸・仕入れマーケットプレイス (snapshot)',
+    page: NetseaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'super-delivery',
+    label: 'スーパーデリバリー',
+    icon: 'SD',
+    description: 'B2B 卸売仕入れサイト (snapshot)',
+    page: SuperDeliveryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'topseller',
+    label: 'TopSeller',
+    icon: 'TS',
+    description: 'ドロップシッピング卸 (snapshot)',
+    page: TopsellerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'a8net',
+    label: 'A8.net',
+    icon: 'A8',
+    description: 'アフィリエイト ASP の成果・レポート (snapshot)',
+    page: A8netPage,
+    category: 'integrations',
+  },
+  {
+    id: 'ai-blogkun',
+    label: 'AIブログくん',
+    icon: 'AB',
+    description: 'AI 自動ブログ生成 SaaS (snapshot)',
+    page: AiBlogkunPage,
+    category: 'integrations',
+  },
+  {
+    id: 'moneyforward',
+    label: 'マネーフォワード',
+    icon: 'MF',
+    description: 'クラウド会計・請求・確定申告 (snapshot)',
+    page: MoneyforwardPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon',
+    label: 'Amazon',
+    icon: 'AZ',
+    description: 'セラー出品の注文・在庫・売上 (SP-API、snapshot)',
+    page: AmazonPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon-associates',
+    label: 'Amazon アソシエイト',
+    icon: 'AA',
+    description: 'アフィリエイト成果レポート (snapshot)',
+    page: AmazonAssociatesPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sales',
+    label: '売上集計',
+    icon: 'SA',
+    description: 'Amazon / Shopify / BASE など EC チャネル横断の売上集計 (ローカル保存・実データ)',
+    page: SalesPage,
+    category: 'featured',
+  },
+  {
+    id: 'team',
+    label: 'チーム管理',
+    icon: 'TM',
+    description: 'メンバー・権限管理 (オーナー/管理者/メンバー) — プランのシート上限と連動',
+    page: TeamPage,
+    category: 'featured',
+  },
+  {
+    id: 'youtube',
+    label: 'YouTube',
+    icon: 'YT',
+    description: 'チャンネル統計・最近の動画 (YouTube Data API v3 実連携)',
+    page: YoutubePage,
+    category: 'integrations',
+  },
+  {
+    id: 'overview',
+    label: '経営サマリー',
+    icon: 'OV',
+    description: '売上・KPI・チーム・プランを横断した経営概況 (実データ集約)',
+    page: OverviewPage,
+    category: 'featured',
+  },
+  {
+    id: 'coconala',
+    label: 'ココナラ',
+    icon: 'CO',
+    description: 'スキルマーケットの出品・受注・評価 (snapshot)',
+    page: CoconalaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tiktok',
+    label: 'TikTok',
+    icon: 'TT',
+    description: '投稿・広告・フォロワーの運用サマリー (snapshot)',
+    page: TiktokPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tax',
+    label: '税務試算',
+    icon: 'TX',
+    description: '所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 (納付は手動)',
+    page: TaxPage,
+    category: 'tools',
+  },
+  {
+    id: 'funding',
+    label: '資金調達レーダー',
+    icon: 'FR',
+    description: '補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒)',
+    page: FundingPage,
+    category: 'tools',
+  },
+  {
+    id: 'freee',
+    label: 'freee 会計',
+    icon: 'FE',
+    description: 'freee の取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携・実 API)',
+    page: FreeePage,
     category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

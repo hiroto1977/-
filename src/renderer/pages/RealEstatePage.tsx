@@ -1,11 +1,28 @@
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { jpy } from '../../shared/formatters';
+import { calcRealEstateYield, calcRealEstateLeverage } from '../../shared/realEstateMetrics';
+import { straightLineAnnual, straightLineSchedule } from '../../shared/depreciation';
 
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+const reInputStyle: React.CSSProperties = {
+  background: 'var(--bg)',
+  border: '1px solid var(--border)',
+  borderRadius: 6,
+  color: 'var(--text)',
+  padding: '6px 8px',
+  fontSize: 13,
+  width: 140,
+};
+const reNum = (s: string): number => {
+  const n = Number(s.replace(/[^\d.-]/g, ''));
+  return Number.isFinite(n) ? n : 0;
+};
+
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 
 export function RealEstatePage() {
@@ -14,6 +31,28 @@ export function RealEstatePage() {
     SNAPSHOT.realEstate,
   );
   const { properties, monthlyCashflow, portfolioYield, occupancyRate } = data;
+
+  // レバレッジ試算 (CCR・イールドギャップ) — 入力はローカル。
+  const [reRentStr, setReRentStr] = useState('168000');
+  const [rePriceStr, setRePriceStr] = useState('42000000');
+  const [reExpenseStr, setReExpenseStr] = useState('600000');
+  const [reEquityStr, setReEquityStr] = useState('10000000');
+  const [reDebtStr, setReDebtStr] = useState('1500000');
+  const [reLoanRateStr, setReLoanRateStr] = useState('2.0');
+  const leverage = useMemo(() => {
+    const y = calcRealEstateYield(reNum(reRentStr), reNum(rePriceStr), 1, reNum(reExpenseStr));
+    const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
+    return { y, lev };
+  }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
+
+  // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
+  const [bldgCostStr, setBldgCostStr] = useState('25000000');
+  const [bldgLifeStr, setBldgLifeStr] = useState('47');
+  const depreciation = useMemo(() => {
+    const cost = reNum(bldgCostStr);
+    const life = Math.round(reNum(bldgLifeStr));
+    return { annual: straightLineAnnual(cost, life), schedule: straightLineSchedule(cost, life) };
+  }, [bldgCostStr, bldgLifeStr]);
 
   return (
     <div>
@@ -44,25 +83,30 @@ export function RealEstatePage() {
               <th style={thStyle}>種別</th>
               <th style={thNum}>家賃 (月)</th>
               <th style={thNum}>取得価格</th>
-              <th style={thNum}>利回り</th>
+              <th style={thNum}>表面利回り</th>
+              <th style={thNum}>実質利回り (入居反映)</th>
               <th style={thStyle}>入居</th>
             </tr>
           </thead>
           <tbody>
-            {properties.map((p) => (
+            {properties.map((p) => {
+              const y = calcRealEstateYield(p.monthlyRent, p.purchasePrice, p.occupied ? 1 : 0);
+              return (
               <tr key={p.id}>
                 <td style={tdStyle}>{p.name}</td>
                 <td style={tdStyle}>{p.type}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
-                <td style={tdNum}>{p.yieldPct.toFixed(1)}%</td>
+                <td style={tdNum}>{y.grossYieldPct.toFixed(1)}%</td>
+                <td style={tdNum}>{y.netYieldPct.toFixed(1)}%</td>
                 <td style={tdStyle}>
                   <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
                   </span>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </Section>
@@ -81,6 +125,56 @@ export function RealEstatePage() {
             </tr>
           </tbody>
         </table>
+      </Section>
+
+      <Section title="レバレッジ試算 (CCR・イールドギャップ)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          自己資金回収率 (CCR) と イールドギャップ (実質利回り − ローン金利) の目安です。
+          イールドギャップがプラスなら借入が収益にプラスに働きます (正レバレッジ)。
+          <strong>※ 概算であり投資助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          {([
+            ['月額賃料', reRentStr, setReRentStr],
+            ['物件価格', rePriceStr, setRePriceStr],
+            ['年間経費', reExpenseStr, setReExpenseStr],
+            ['自己資金', reEquityStr, setReEquityStr],
+            ['年間返済額', reDebtStr, setReDebtStr],
+            ['ローン金利(%)', reLoanRateStr, setReLoanRateStr],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={reInputStyle} />
+            </label>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <Stat label="実質利回り" value={`${leverage.y.netYieldPct}%`} />
+          <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
+          <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
+          <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+        </div>
+      </Section>
+
+      <Section title="建物の減価償却 (定額法・概算)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          建物 (1998年4月以降取得) は定額法。法定耐用年数は構造で異なります (RC造 47年 / 重量鉄骨 34年 / 木造 22年)。
+          減価償却費は会計上の費用で節税に寄与しますが、<strong>※ 概算であり税務助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            建物取得価額
+            <input type="text" inputMode="decimal" value={bldgCostStr} onChange={(e) => setBldgCostStr(e.target.value)} style={reInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            耐用年数
+            <input type="text" inputMode="decimal" value={bldgLifeStr} onChange={(e) => setBldgLifeStr(e.target.value)} style={reInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
+          <Stat label="償却年数" value={`${depreciation.schedule.length} 年`} />
+        </div>
       </Section>
     </div>
   );

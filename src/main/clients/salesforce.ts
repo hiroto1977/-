@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Salesforce — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface SalesforceSnapshot {
 // Stryker disable next-line all
 const STUB: SalesforceSnapshot = { items: [], count: 0 };
 
-export async function fetchSalesforceSnapshotImpl(_ctx: FetchContext): Promise<SalesforceSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchSalesforceSnapshot(ctx: FetchContext): Promise<SalesforceSnapshot> {
-  return fetchSalesforceSnapshotImpl(ctx);
-}
+export const fetchSalesforceSnapshot = createSnapshotStub<SalesforceSnapshot>(STUB);

@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Asana — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface AsanaSnapshot {
 // Stryker disable next-line all
 const STUB: AsanaSnapshot = { items: [], count: 0 };
 
-export async function fetchAsanaSnapshotImpl(_ctx: FetchContext): Promise<AsanaSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchAsanaSnapshot(ctx: FetchContext): Promise<AsanaSnapshot> {
-  return fetchAsanaSnapshotImpl(ctx);
-}
+export const fetchAsanaSnapshot = createSnapshotStub<AsanaSnapshot>(STUB);

@@ -4,6 +4,15 @@ import { isServiceId } from '../shared/serviceId';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
+import { usePlan } from './plan/usePlan';
+import {
+  PLAN_ORDER,
+  PLANS,
+  getPlan,
+  isServiceUnlocked,
+  requiredPlanForServiceIndex,
+  type PlanTier,
+} from '../shared/plan';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — if `getVersion`
@@ -22,9 +31,16 @@ const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCatego
   'integrations',
 ]);
 
+// Sidebar-order index per service id. The plan cap (`maxServices`) gates
+// services by this position, so the rule has a single, stable ordering.
+const SERVICE_ORDER: ReadonlyMap<ServiceId, number> = new Map(
+  SERVICES.map((s, i) => [s.id, i]),
+);
+
 export function App() {
   const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
   const [version, setVersion] = useState<string>('');
+  const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
     tools: COLLAPSED_BY_DEFAULT.has('tools'),
@@ -112,11 +128,17 @@ export function App() {
 
   const active = SERVICES.find((s) => s.id === activeId)!;
   const PageComponent = active.page;
+  const activeOrder = SERVICE_ORDER.get(active.id) ?? 0;
+  // 設定・ホームは常に開放: 設定は招待コードでの全機能無償化やマスターパスワード等の
+  // 基盤機能を含むため、プランでロックしない (ロックすると無償化に辿り着けない)。
+  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home']);
+  const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
+  const requiredPlan = requiredPlanForServiceIndex(activeOrder);
 
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="sidebar-header">Service Hub</div>
+        <div className="sidebar-header">サービスハブ</div>
         <nav className="sidebar-nav">
           {(['featured', 'tools', 'integrations'] as const).map((cat) => {
             const items = grouped[cat];
@@ -146,23 +168,72 @@ export function App() {
                   {isCollapsed ? '▶' : '▼'} {CATEGORY_LABEL[cat]} ({items.length})
                 </button>
                 {!isCollapsed &&
-                  items.map((service) => (
-                    <button
-                      key={service.id}
-                      className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
-                      data-service-id={service.id}
-                      onClick={() => setActiveId(service.id)}
-                    >
-                      <span className="icon">{service.icon}</span>
-                      <span>{service.label}</span>
-                    </button>
-                  ))}
+                  items.map((service) => {
+                    const order = SERVICE_ORDER.get(service.id) ?? 0;
+                    const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
+                    return (
+                      <button
+                        key={service.id}
+                        className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
+                        data-service-id={service.id}
+                        data-locked={unlocked ? undefined : 'true'}
+                        onClick={() => setActiveId(service.id)}
+                        title={unlocked ? undefined : 'プランのアップグレードで利用可能'}
+                        style={unlocked ? undefined : { opacity: 0.5 }}
+                      >
+                        <span className="icon">{service.icon}</span>
+                        <span>{service.label}</span>
+                        {!unlocked && (
+                          <span style={{ marginLeft: 'auto', fontSize: 11 }} aria-label="locked">
+                            🔒
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
               </div>
             );
           })}
         </nav>
         <div className="sidebar-footer">
-          {version ? `v${version}` : 'v0.1.0'} · skeleton
+          <label style={{ display: 'block', marginBottom: 4 }}>
+            <span style={{ display: 'block', fontSize: 10, color: 'var(--text-mute)' }}>
+              プラン
+            </span>
+            <select
+              value={plan}
+              onChange={(e) => setPlan(e.target.value as PlanTier)}
+              aria-label="プラン選択"
+              style={{ width: '100%' }}
+            >
+              {PLAN_ORDER.map((tier) => (
+                <option key={tier} value={tier}>
+                  {PLANS[tier].label} · {PLANS[tier].audience}
+                </option>
+              ))}
+            </select>
+          </label>
+          {internalUnlocked && (
+            <div
+              style={{
+                marginTop: 6,
+                padding: '4px 8px',
+                borderRadius: 6,
+                background: 'rgba(34,197,94,0.15)',
+                border: '1px solid #22c55e',
+                color: '#22c55e',
+                fontSize: 11,
+                fontWeight: 600,
+                textAlign: 'center',
+              }}
+              title="社内ライセンス: 全サービス・全機能が無償で利用できます"
+            >
+              ✅ 全機能 開放中（無償）
+            </div>
+          )}
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-mute)' }}>
+            {version ? `v${version}` : 'v0.1.0'} · build: ALL-ACCESS
+          </div>
         </div>
       </aside>
       <main className="main">
@@ -171,9 +242,42 @@ export function App() {
           <span className="description">{active.description}</span>
         </header>
         <section className="content">
-          <PageComponent />
+          {activeUnlocked ? (
+            <PageComponent />
+          ) : (
+            <UpgradeNotice
+              requiredPlan={requiredPlan}
+              onUpgrade={(tier) => setPlan(tier)}
+            />
+          )}
         </section>
       </main>
+    </div>
+  );
+}
+
+function UpgradeNotice({
+  requiredPlan,
+  onUpgrade,
+}: {
+  requiredPlan: PlanTier | null;
+  onUpgrade: (tier: PlanTier) => void;
+}) {
+  // `requiredPlan` is null only when Free already covers the service, in
+  // which case this notice wouldn't render — default to enterprise defensively.
+  const target = requiredPlan ?? 'enterprise';
+  const def = getPlan(target);
+  return (
+    <div style={{ maxWidth: 420, padding: 24 }}>
+      <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
+      <h2 style={{ margin: '0 0 8px' }}>このサービスは {def.label} プラン以上で利用できます</h2>
+      <p style={{ color: 'var(--text-mute)', marginTop: 0 }}>
+        対象: {def.audience} ／ 月額 {def.priceMonthlyJpy.toLocaleString('ja-JP')} 円
+        ／ 同時利用サービス数 {def.maxServices === Infinity ? '無制限' : `${def.maxServices} 個まで`}
+      </p>
+      <button type="button" onClick={() => onUpgrade(target)}>
+        {def.label} にアップグレード
+      </button>
     </div>
   );
 }

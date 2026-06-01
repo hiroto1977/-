@@ -10,100 +10,163 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 45 services
-across third‑party SaaS (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail,
-Slack, Canva), local tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks), business
-operations (Home, Business Dashboard, Team Radar, Templates, Library, Settings), food delivery
-(Uber Eats, 出前館 — snapshot only) and investment (Real Estate 不動産投資, Mutual Funds 投資信託 —
-snapshot only) through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
-are bundled by `vite-plugin-electron`.
+Service Hub — a Japanese-facing business dashboard exposing **63 services** through a unified,
+category-grouped sidebar (おすすめ / 分析・ツール / 外部サービス連携). Services span third-party SaaS
+(GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
+Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
+tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
+(Home, Business Dashboard, Team Radar, Templates, Library, Settings, Quality), food delivery
+(Uber Eats, 出前館), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and seven 士業
+professional integrations (税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士).
 
-Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` (regenerated
-manually by running MCP tools) and can swap to a live REST fetch via the main‑process clients in
-`src/main/clients/*`. The `useServiceData(serviceId, snapshot)` hook in `src/renderer/hooks/`
-manages this: it returns `data`, `source` (`'snapshot'` | `'live'`), `status`, `errorMessage`, and
-`refresh()`. All nine services have live fetchers registered in `LIVE_FETCHERS`. Auth varies:
-GitHub/Notion/Slack/Drive/Calendar/Gmail/Canva/WordPress take a single Bearer token;
-Atlassian takes a JSON blob `{"email","token","site"}` (Basic auth + site URL). Real OAuth code
-flow isn't implemented — users obtain access tokens out‑of‑band (e.g. Google OAuth Playground,
-Notion integration token, Slack workspace token) and paste them into the page.
+**Two runtime targets ship from the same codebase:**
+1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
+2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
+   file (~510 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
-Tokens are persisted in the user's Electron `userData` directory via `src/main/secrets.ts`, which
-encrypts them with `safeStorage` when the OS keychain is available (and falls back to a
-plain‑base64 layout otherwise, so dev on Linux without keychain still works). Renderer never sees
-the raw token — it only calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot`.
+Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
+live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
+(`'snapshot'` | `'live'`), `status`, `errorMessage`, and `refresh()`.
 
 ## Commands
 
 ```bash
-npm install          # install deps
-npm run dev          # launch Vite + Electron in development (hot reload)
-npm run typecheck    # tsc -b --noEmit (uses tsconfig project references)
-npm run build:renderer  # type-check + vite build only (no packaging)
-npm run build        # full build: tsc -b, vite build, electron-builder package
-npm run lint         # eslint . (no eslint config committed yet — add one before relying on this)
-npm test             # vitest run (all *.test.ts under src/**/__tests__/)
-npm run test:watch   # vitest watch mode
+npm install              # install deps
+npm run dev              # Vite + Electron, hot reload (desktop dev)
+npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
+npm run build:renderer   # tsc -b + vite build only (no packaging)
+npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
+npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
+npm test                 # vitest run (~1460 tests under src/**/__tests__/)
+npm run test:watch       # vitest watch mode
+npm run lint             # eslint . (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
+npm run smoke            # xvfb + Electron screenshot smoke test of every page
+npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
 
-Run a single test with `npx vitest run path/to/file.test.ts` or filter by name with
-`npx vitest run -t "pattern"`. Vitest config is in `vitest.config.ts` (node environment).
+Run a single test: `npx vitest run path/to/file.test.ts`, or filter by name: `npx vitest run -t "pattern"`.
+Vitest config is in `vitest.config.ts` (node environment).
 
-CI: `.github/workflows/ci.yml` runs typecheck + test + build:renderer on every push to
-main / `claude/**` and on PRs to main. `.github/workflows/release.yml` builds Mac / Win /
-Linux installers in parallel on `v*` tag pushes and attaches them to a GitHub Release.
+### Custom quality gates (all run in CI — keep them green)
+
+```bash
+npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
+npm run lint:imports       # main / preload / renderer import-boundary enforcement
+npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
+npm run lint:docs          # cross-document consistency
+npm run lint:test-coverage # every service must have a test + an action registered
+npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage)
+npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
+```
+
+These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
+comments and source. `verify:arch` will fail if you change architecture without updating
+`docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
+`main` and PRs to `main` (one `npm ci`, then typecheck + all verify/lint, vitest + coverage, and
+`build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed from 3 jobs
+to 1 to minimize GitHub Actions minutes on the free tier.
+`.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
+`mutation.yml` runs Stryker.
 
 ## Architecture
 
 Three TypeScript build contexts, kept separate via `tsconfig` project references:
 
-- `src/main/` — Electron main process. `main.ts` creates the `BrowserWindow` and registers IPC
-  handlers (`app:*`, `secrets:*`, `fetch:snapshot`). Token persistence lives in `secrets.ts`
-  (`safeStorage`‑backed). Live REST clients live under `src/main/clients/`; each exports a function
-  `(ctx: FetchContext) => Promise<NormalizedSnapshot>` and is registered in `clients/index.ts`'s
-  `LIVE_FETCHERS` map keyed by `ServiceId`.
-- `src/preload/` — Context‑isolated preload that exposes a typed `window.serviceHub` bridge via
-  `contextBridge.exposeInMainWorld`. The bridge type is re‑declared globally in `src/shared/bridge.d.ts`
-  so the renderer can call it without imports.
-- `src/renderer/` — React app. `App.tsx` renders a sidebar driven by `services.ts`, which is the single
-  source of truth for the service list (id, label, icon, description, page component). Adding a new
-  service means: create a page in `src/renderer/pages/`, create an API client in `src/shared/api/`
-  (stub) and/or a live fetcher in `src/main/clients/`, register the fetcher in `LIVE_FETCHERS`,
-  and append an entry to `SERVICES`.
+- **`src/main/`** — Electron main process. `main.ts` creates the `BrowserWindow` and registers IPC
+  handlers (`app:*`, `secrets:*`, `fetch:snapshot`, action invoke). `secrets.ts` persists tokens in
+  the Electron `userData` dir, encrypted with `safeStorage` when the OS keychain is available
+  (base64 fallback so Linux dev without a keychain still works). `oauth.ts` implements a real OAuth
+  2.0 Authorization-Code + PKCE flow via a loopback `127.0.0.1` HTTP server (RFC 7636 / 8252); pure
+  helpers (PKCE gen, URL building, token-request body) are exported for unit tests. Live REST clients
+  live under `src/main/clients/`.
+- **`src/preload/`** — Context-isolated preload exposing a typed `window.serviceHub` bridge via
+  `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
+  `src/shared/bridge.d.ts` so the renderer calls it without imports.
+- **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
+  (`services.ts`). The renderer never sees raw tokens — it only calls
+  `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
 
-Page composition: each service page calls `useServiceData(id, SNAPSHOT[id])` and renders the result
-with the shared `components/StatusBar.tsx` + `Section` (header + count) + `components/DataList.tsx`
-(cards with optional thumbnail, meta, badge, and "open external" button). `StatusBar` exposes a
-unified refresh button plus an optional `tokenSetup` slot for password‑input‑style credential
-entry. Keep service pages declarative — if a new visual primitive is needed by more than one page,
-add it under `components/` rather than duplicating markup.
+### The single source of truth for services
 
-Live fetcher contract: a fetcher takes `{ token, fetch? }` and returns a value with the same shape
-as the corresponding `SNAPSHOT[id]` slice. `fetch` is injectable so the function is unit‑testable
-under Node without a real network. See `src/main/clients/github.ts` for the reference implementation
-and `src/main/clients/__tests__/github.test.ts` for the testing pattern (mock fetch with
-`vi.fn<typeof fetch>()`).
+`src/shared/serviceId.ts` exports the `SERVICE_IDS` array and `ServiceId` union — **this is the one
+true list**, imported by `services.ts` (sidebar), `clients/index.ts` (fetchers), and the preload
+bridge. Three parallel maps in `src/main/clients/index.ts` are keyed by `ServiceId`:
 
-API clients (`src/shared/api/*.ts`): each exports a class implementing `ServiceClient` (`id`,
-`isConfigured()`). Methods that need credentials must guard with `if (!this.isConfigured()) throw new
-NotConfiguredError(this.id);` before any network call. The clients are framework‑agnostic so they can
-later be invoked from either the renderer (direct fetch) or the main process (via IPC) — pick the
-location based on whether the API requires secret tokens that must not reach the renderer.
+- `LIVE_FETCHERS` — a **total** `Record<ServiceId, fetcher>`. A runtime invariant at module load
+  throws if any `ServiceId` is missing an entry, so a forgotten service crashes loudly at app start
+  rather than on first click. Note: many entries are static stubs (investment, 士業, food delivery)
+  that just satisfy the invariant and return `SNAPSHOT[id]` directly — only the SaaS clients do real
+  network I/O.
+- `LOCAL_SERVICES` — services whose fetcher reads local resources and needs no saved credentials
+  (a missing token is not an error for these).
+- `LIVE_ACTIONS` — `Partial<Record<ServiceId, ActionMap>>` of write-side actions, invoked from the
+  renderer via `serviceHub.invoke()`.
 
-Vite config (`vite.config.ts`) has `root: 'src/renderer'` and `build.outDir: '../../dist'`, so the
-renderer build lands at repo‑root `dist/`. The Electron bundles land at `dist-electron/`. Keep these
-directories in `.gitignore`.
+### Adding a service
+
+**Use the scaffolder** — don't wire services by hand:
+
+```bash
+npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]
+```
+
+It creates the client + test + page and patches `serviceId.ts`, `clients/index.ts`, `services.ts`,
+and `snapshot.ts` by inserting at `// SCAFFOLD:ADD_*` marker comments. `auth-kind`: `bearer` (PAT/API
+token → `Authorization: Bearer`), `oauth` (OAuth access token, same wire as bearer), `json`
+(`{email,token,site}` Basic auth, e.g. Atlassian). Then fill the TODOs in the generated client, run
+`npm run typecheck && npm test`, and `git checkout` the patched files to undo. Full guide:
+`docs/ADDING_A_SERVICE.md`.
+
+### Page composition
+
+Each service page calls `useServiceData(id, SNAPSHOT[id])` and renders with the shared
+`components/StatusBar.tsx` (unified refresh button + optional `tokenSetup` credential slot) +
+`Section` + `components/DataList.tsx` (cards with thumbnail / meta / badge / open-external). Keep
+pages declarative — if a visual primitive is needed by more than one page, add it under `components/`.
+
+### Live fetcher contract
+
+A fetcher takes `{ token, fetch? }` and returns a value with the same shape as `SNAPSHOT[id]`.
+`fetch` is injectable so fetchers are unit-testable under Node without a network. See
+`src/main/clients/github.ts` and its `__tests__/github.test.ts` (mock with `vi.fn<typeof fetch>()`).
+
+### API clients (`src/shared/api/*.ts`)
+
+Framework-agnostic classes implementing `ServiceClient` (`id`, `isConfigured()`). Credentialed
+methods must guard with `if (!this.isConfigured()) throw new NotConfiguredError(this.id);` before any
+network call, so they can run from either the renderer or main depending on whether the token must
+stay out of the renderer.
+
+### Browser standalone layer (`build:web`)
+
+The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported first in `main.tsx`),
+`web-templates.ts`, and a client-side security/storage stack under `src/renderer/`:
+
+- `security/vault.ts` — WebCrypto AES-GCM-256 with a PBKDF2-SHA-256 (600k iter) key derived from the
+  master password; key is `extractable: false`, memory-only. `LockScreen.tsx` + `autoLock.ts` lock on
+  tab-hidden / idle.
+- `library/library.ts` — IndexedDB blob store. `fs/fsa.ts` — File System Access API wrapper.
+- `network/proxy.ts` — routes CORS-blocked APIs (Notion / Atlassian / Cloudflare) through a
+  user-supplied Cloudflare Worker (`docs/PROXY_EXAMPLE.md`). `oauth/pkce.ts` — out-of-band paste PKCE
+  for `file://`.
+
+`scripts/inline-html.cjs` inlines CSS/JS into `dist/standalone.html`. Vite (`vite.config.ts`) has
+`root: 'src/renderer'`, renderer build → repo-root `dist/`, Electron bundles → `dist-electron/`
+(both gitignored).
 
 ## Conventions
 
-- The `serviceHub` global in the renderer is the only sanctioned way to call into the main process.
-  Do not add `nodeIntegration: true` or remove `contextIsolation` — extend the preload bridge instead.
-- External links must go through `window.serviceHub.openExternal(url)` (which calls
-  `shell.openExternal`) rather than `window.open`, so the OS browser handles them.
-- Service identity is the `ServiceId` union in `src/renderer/services.ts`. Update that union when
-  adding a service so the type system flags every dependent switch / lookup.
+- `window.serviceHub` is the **only** sanctioned way to call into the main process. Do not add
+  `nodeIntegration: true` or remove `contextIsolation` — extend the preload bridge instead
+  (`lint:forbidden` enforces this).
+- External links must go through `window.serviceHub.openExternal(url)` (→ `shell.openExternal`), never
+  `window.open`, so the OS browser handles them.
+- Add new service IDs to `SERVICE_IDS` in `src/shared/serviceId.ts` (not `services.ts`) — the type
+  system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
+- When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
+  `file:line` references and metrics against the real tree.
 
 ## Branching
 
 Active development for Claude Code sessions happens on the branch designated in the task prompt
-(e.g. `claude/add-claude-documentation-F7HIa`). The default branch is `main`.
+(e.g. `claude/claude-md-docs-qqUAT`). The default branch is `main`.

@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI Orchestration Registry",
+  "description": "進化し続けるAIオーケストレーションの単一の真実源。チーム・ラウンド・バックログを機械可読に保持する。",
+  "type": "object",
+  "required": ["version", "policy", "teams", "rounds", "backlog"],
+  "additionalProperties": true,
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "policy": {
+      "type": "object",
+      "required": ["growthRule", "roleSeparation", "qualityGate"],
+      "properties": {
+        "description": { "type": "string" },
+        "minTeamsForRound": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["round", "minTeams"],
+            "properties": {
+              "round": { "type": "integer", "minimum": 1 },
+              "minTeams": { "type": "integer", "minimum": 1 }
+            }
+          }
+        },
+        "growthRule": { "type": "string" },
+        "roleSeparation": { "type": "string" },
+        "qualityGate": { "type": "string" },
+        "hierarchy": { "type": "object" }
+      }
+    },
+    "org": {
+      "type": "object",
+      "required": ["ceo", "executives", "managers"],
+      "properties": {
+        "ceo": {
+          "type": "object",
+          "required": ["id", "title", "staffedByAI"],
+          "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "staffedByAI": { "type": "boolean" },
+            "human": { "type": "boolean" },
+            "note": { "type": "string" }
+          }
+        },
+        "coo": {
+          "type": "object",
+          "required": ["id", "title", "reportsTo", "owns"],
+          "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "reportsTo": { "type": "string" },
+            "staffedByAI": { "type": "boolean" },
+            "owns": { "type": "array", "items": { "type": "string" } },
+            "note": { "type": "string" }
+          }
+        },
+        "executives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "reportsTo", "owns"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "reportsTo": { "type": "string" },
+              "owns": { "type": "array", "items": { "type": "string" } },
+              "domain": { "type": "string" }
+            }
+          }
+        },
+        "secretaries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "supports", "members"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "supports": { "type": "string" },
+              "staffedByAI": { "type": "boolean" },
+              "members": { "type": "integer", "minimum": 1 },
+              "role": { "type": "string" },
+              "duties": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "managers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "reportsTo", "teams"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "title": { "type": "string" },
+              "reportsTo": { "type": "string" },
+              "teams": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "teams": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "focus", "active"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "domain": { "type": "string" },
+          "focus": { "type": "string" },
+          "active": { "type": "boolean" },
+          "role": { "type": "string", "enum": ["research", "audit"] },
+          "manager": { "type": "string" }
+        }
+      }
+    },
+    "rounds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["round", "teamCount", "teams"],
+        "properties": {
+          "round": { "type": "integer", "minimum": 1 },
+          "teamCount": { "type": "integer", "minimum": 1 },
+          "teams": { "type": "array", "items": { "type": "string" } },
+          "shipped": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "backlog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "team", "title", "priority", "status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "team": { "type": "string" },
+          "title": { "type": "string" },
+          "priority": { "type": "integer", "minimum": 1 },
+          "status": { "type": "string", "enum": ["designed", "in-progress", "shipped", "dropped", "blocked"] },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

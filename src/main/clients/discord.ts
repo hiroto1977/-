@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Discord — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface DiscordSnapshot {
 // Stryker disable next-line all
 const STUB: DiscordSnapshot = { items: [], count: 0 };
 
-export async function fetchDiscordSnapshotImpl(_ctx: FetchContext): Promise<DiscordSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchDiscordSnapshot(ctx: FetchContext): Promise<DiscordSnapshot> {
-  return fetchDiscordSnapshotImpl(ctx);
-}
+export const fetchDiscordSnapshot = createSnapshotStub<DiscordSnapshot>(STUB);

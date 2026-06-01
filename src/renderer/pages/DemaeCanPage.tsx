@@ -4,8 +4,7 @@ import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
-
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+import { jpy } from '../../shared/formatters';
 
 const STATUS_COLOR: Record<string, string> = {
   受付済み: '#94a3b8',

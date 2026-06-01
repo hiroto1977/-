@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Linear — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface LinearSnapshot {
 // Stryker disable next-line all
 const STUB: LinearSnapshot = { items: [], count: 0 };
 
-export async function fetchLinearSnapshotImpl(_ctx: FetchContext): Promise<LinearSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchLinearSnapshot(ctx: FetchContext): Promise<LinearSnapshot> {
-  return fetchLinearSnapshotImpl(ctx);
-}
+export const fetchLinearSnapshot = createSnapshotStub<LinearSnapshot>(STUB);

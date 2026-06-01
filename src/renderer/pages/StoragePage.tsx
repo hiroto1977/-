@@ -25,6 +25,10 @@ const CATEGORY_LABEL: Record<string, string> = {
 const mb = (n: number) => n >= 1024 ? `${(n / 1024).toFixed(1)} GB` : `${n} MB`;
 const gb = (n: number) => `${n.toFixed(1)} GB`;
 
+/** メモリ使用率の警告閾値 (%)。この値未満は良好 (緑) 表示。
+ *  snapshot の推奨文言もこの閾値と整合させること (PR #6 R1 #1)。 */
+const MEMORY_WARN_PCT = 80;
+
 export function StoragePage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
     'storage',
@@ -94,7 +98,7 @@ export function StoragePage() {
           <Stat
             label="メモリ使用率"
             value={`${memoryUsagePct.toFixed(0)}% (${performance.memoryUsedGb.toFixed(1)} / ${performance.memoryTotalGb.toFixed(0)} GB)`}
-            positive={memoryUsagePct < 80}
+            positive={memoryUsagePct < MEMORY_WARN_PCT}
           />
         </div>
       </Section>
@@ -141,7 +145,9 @@ export function StoragePage() {
             </tr>
           </thead>
           <tbody>
-            {largeFolders.map((f) => (
+            {[...largeFolders]
+              .sort((a, b) => b.sizeGb - a.sizeGb)
+              .map((f) => (
               <tr key={f.path}>
                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{f.path}</td>
                 <td style={tdStyle}>{CATEGORY_LABEL[f.category] ?? f.category}</td>

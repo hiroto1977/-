@@ -96,6 +96,12 @@ describe('redactSecrets', () => {
     expect(redactSecrets('xoxb-12345-67890')).toContain('xoxb-[REDACTED]');
   });
 
+  it('redacts Atlassian API tokens (ATATT…)', () => {
+    const out = redactSecrets('token=ATATT3xFfGF0abcdef_GHIJ-1234.567');
+    expect(out).toBe('token=ATATT[REDACTED]');
+    expect(out).not.toContain('3xFfGF0');
+  });
+
   it('redacts Google access tokens fully (kills `{10,}` quantifier removal)', () => {
     // Pin that no trailing token bytes leak out. The mutant
     // `/\bya29\.[A-Za-z0-9_-]/g` (quantifier dropped) would replace only

@@ -1,4 +1,4 @@
-import type { FetchContext } from './types';
+import { createSnapshotStub } from './snapshotStub';
 
 /**
  * Stripe — 連携先 (snapshot 専用)。
@@ -16,11 +16,4 @@ export interface StripeSnapshot {
 // Stryker disable next-line all
 const STUB: StripeSnapshot = { items: [], count: 0 };
 
-export async function fetchStripeSnapshotImpl(_ctx: FetchContext): Promise<StripeSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchStripeSnapshot(ctx: FetchContext): Promise<StripeSnapshot> {
-  return fetchStripeSnapshotImpl(ctx);
-}
+export const fetchStripeSnapshot = createSnapshotStub<StripeSnapshot>(STUB);

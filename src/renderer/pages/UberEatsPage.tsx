@@ -4,8 +4,7 @@ import { Stat } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
-
-const jpy = (n: number) => `¥${n.toLocaleString('ja-JP')}`;
+import { jpy } from '../../shared/formatters';
 
 export function UberEatsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(

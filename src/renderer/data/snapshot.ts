@@ -2,6 +2,8 @@
 // Captured on 2026-05-11. Refreshing this snapshot is a manual step
 // until each ServiceClient is wired up to call the live REST APIs.
 
+import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+
 export const SNAPSHOT = {
   home: {
     greeting: 'こんにちは。今日は何を作りましょう?',
@@ -446,6 +448,9 @@ export const SNAPSHOT = {
   },
 
   microsoft365: {
+    userName: '',
+    messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
+    events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
       { id: 'outlook-1', name: '📧 Outlook: 未読 23 件 / 今日の送信 7 件' },
       { id: 'onedrive-1', name: '☁ OneDrive: 12.4 GB / 1 TB (1.2%) · 最近 4 ファイル' },
@@ -621,7 +626,7 @@ export const SNAPSHOT = {
       },
     ] as {
       id: string; title: string; potentialFreeMb: number;
-      difficulty: 'safe' | 'caution' | 'manual'; executable: false; howTo: string;
+      difficulty: 'safe' | 'caution' | 'manual'; executable: boolean; howTo: string;
     }[],
     performance: {
       fragmentationPct: 12.4,    // HDD (D:) のみ
@@ -635,7 +640,7 @@ export const SNAPSHOT = {
       'HDD (D:) のフラグメント率 12.4% — デフラグで I/O 速度向上が期待できます',
       'スタートアップ 38 秒 — タスクマネージャーで不要アプリを無効化すれば 20 秒台に短縮可能',
       'OneDrive ファイル オン デマンドが無効 — オンに切替で 24 GB 即時解放',
-      'メモリ使用率 70% — Chrome タブ数の整理 / 常駐アプリの見直しを推奨',
+      'メモリ使用率 70% — 警告閾値 80% 未満で良好。80% を超えるようなら Chrome タブ数の整理 / 常駐アプリの見直しを推奨',
     ] as string[],
   },
 
@@ -643,113 +648,335 @@ export const SNAPSHOT = {
   //    書類 / 顧問料を軽量 CRM として管理する。Phase 6 で IndexedDB
   //    永続化 + 「専門家を追加」フォームに対応予定。
 
+  // 士業 7 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
+  // ShigyoSnapshot` で検証することで、従来の per-field `as {...}[]` /
+  // `as number` キャストを排した (HANDOFF 罠 5 / PR #7 R1 #4)。月次料金は
+  // ShigyoSnapshot.monthlyFee が `number` 型なのでリテラル narrow されない。
   taxAccountant: {
     contacts: [
-      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.jp', phone: '03-1234-5678' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.com', phone: '03-1234-5678' },
+    ],
     recentConsultations: [
       { id: 'tc-1', contactId: 'ta-1', date: '2026-05-10', topic: '法人税申告書のレビュー', status: '完了' },
       { id: 'tc-2', contactId: 'ta-1', date: '2026-05-18', topic: '消費税インボイス対応', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'td-1', title: '4 月度 試算表', direction: 'received', date: '2026-05-15' },
       { id: 'td-2', title: '源泉徴収簿', direction: 'sent', date: '2026-05-12' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 33_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 33_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   laborConsultant: {
     contacts: [
-      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.com' },
+    ],
     recentConsultations: [
       { id: 'lcc-1', contactId: 'lc-1', date: '2026-05-08', topic: '新入社員の社会保険手続', status: '完了' },
       { id: 'lcc-2', contactId: 'lc-1', date: '2026-05-20', topic: '就業規則の改定', status: '相談予約' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'lcd-1', title: '労働保険申告書', direction: 'received', date: '2026-05-14' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 22_000 as number,
-    outstandingInvoice: 22_000 as number,
-  },
+    ],
+    monthlyFee: 22_000,
+    outstandingInvoice: 22_000,
+  } satisfies ShigyoSnapshot,
 
   lawyer: {
     contacts: [
-      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.jp', phone: '03-3000-1100' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.com', phone: '03-3000-1100' },
+    ],
     recentConsultations: [
       { id: 'lwc-1', contactId: 'lw-1', date: '2026-05-05', topic: '取引基本契約書 v3 レビュー', status: '完了' },
       { id: 'lwc-2', contactId: 'lw-1', date: '2026-05-19', topic: '退職トラブル相談', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'lwd-1', title: '基本契約書 修正版', direction: 'received', date: '2026-05-12' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 55_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 55_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   judicialScrivener: {
     contacts: [
-      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.com' },
+    ],
     recentConsultations: [
       { id: 'jsc-1', contactId: 'js-1', date: '2026-04-22', topic: '本店所在地変更登記', status: '完了' },
       { id: 'jsc-2', contactId: 'js-1', date: '2026-05-15', topic: '不動産抵当権抹消', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'jsd-1', title: '登記完了証 (本店移転)', direction: 'received', date: '2026-05-02' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 88_000 as number,
-  },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 88_000,
+  } satisfies ShigyoSnapshot,
 
   adminScrivener: {
     contacts: [
       { id: 'as-1', name: '田中 三郎', firm: '田中行政書士事務所', phone: '03-5500-2200' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+    ],
     recentConsultations: [
       { id: 'asc-1', contactId: 'as-1', date: '2026-05-12', topic: 'IT 導入補助金 2026 申請', status: '対応中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'asd-1', title: '事業計画書 (補助金申請用)', direction: 'sent', date: '2026-05-16' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   smeConsultant: {
     contacts: [
-      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.jp' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.com' },
+    ],
     recentConsultations: [
       { id: 'smc-1', contactId: 'sm-1', date: '2026-04-30', topic: '事業承継診断', status: '完了' },
       { id: 'smc-2', contactId: 'sm-1', date: '2026-05-17', topic: '中期経営計画策定', status: '相談中' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'smd-1', title: '経営診断レポート Q1', direction: 'received', date: '2026-04-28' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 44_000 as number,
-    outstandingInvoice: 0 as number,
-  },
+    ],
+    monthlyFee: 44_000,
+    outstandingInvoice: 0,
+  } satisfies ShigyoSnapshot,
 
   patentAttorney: {
     contacts: [
-      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.jp', phone: '03-7700-3300' },
-    ] as { id: string; name: string; firm: string; email?: string; phone?: string }[],
+      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.com', phone: '03-7700-3300' },
+    ],
     recentConsultations: [
       { id: 'pac-1', contactId: 'pa-1', date: '2026-05-03', topic: '商標出願 (新サービス名)', status: '対応中' },
       { id: 'pac-2', contactId: 'pa-1', date: '2026-05-18', topic: '特許出願戦略相談', status: '相談予約' },
-    ] as { id: string; contactId: string; date: string; topic: string; status: '相談予約' | '相談中' | '対応中' | '完了' }[],
+    ],
     pendingDocuments: [
       { id: 'pad-1', title: '商標出願書 ドラフト', direction: 'received', date: '2026-05-11' },
       { id: 'pad-2', title: '先行技術調査結果', direction: 'received', date: '2026-05-08' },
-    ] as { id: string; title: string; direction: 'sent' | 'received'; date: string }[],
-    monthlyFee: 0 as number,
-    outstandingInvoice: 165_000 as number,
+    ],
+    monthlyFee: 0,
+    outstandingInvoice: 165_000,
+  } satisfies ShigyoSnapshot,
+
+  base: {
+    items: [
+      { id: 'base-1', name: 'オリジナルパーカー', price: 6800, stock: 24, visible: true },
+      { id: 'base-2', name: 'キャンバストートバッグ', price: 2400, stock: 53, visible: true },
+      { id: 'base-3', name: '限定ステッカーセット', price: 800, stock: 0, visible: false },
+    ] as { id: string; name: string; price: number; stock: number; visible: boolean }[],
+  },
+
+  netsea: {
+    items: [
+      { id: 'ns-1001', name: '無地Tシャツ 5枚セット (卸)' },
+      { id: 'ns-1002', name: 'ステンレスボトル 350ml' },
+      { id: 'ns-1003', name: 'LED デスクライト 調光式' },
+    ] as { id: string; name: string }[],
+  },
+
+  'super-delivery': {
+    items: [
+      { id: 'sd-2001', name: 'アロマディフューザー 木目調' },
+      { id: 'sd-2002', name: 'コットントートバッグ 無地' },
+      { id: 'sd-2003', name: '陶器マグ 6個セット' },
+    ] as { id: string; name: string }[],
+  },
+
+  topseller: {
+    items: [
+      { id: 'ts-3001', name: 'ワイヤレスイヤホン (ドロップシッピング)' },
+      { id: 'ts-3002', name: 'スマホスタンド 折りたたみ' },
+      { id: 'ts-3003', name: 'フィットネスバンド 心拍計付き' },
+    ] as { id: string; name: string }[],
+  },
+
+  a8net: {
+    items: [
+      { id: 'a8-4001', name: '[確定] 動画配信サービス 登録 — ¥1,200' },
+      { id: 'a8-4002', name: '[確定] クレジットカード発行 — ¥3,000' },
+      { id: 'a8-4003', name: '[保留] 格安SIM 申込 — ¥1,500' },
+    ] as { id: string; name: string }[],
+  },
+
+  'ai-blogkun': {
+    items: [
+      { id: 'ab-5001', name: '[公開] 2026年 EC トレンド 10選' },
+      { id: 'ab-5002', name: '[公開] 初心者向け SEO 内部対策ガイド' },
+      { id: 'ab-5003', name: '[下書き] ふるさと納税 おすすめ返礼品' },
+    ] as { id: string; name: string }[],
+  },
+
+  moneyforward: {
+    items: [
+      { id: 'mf-6001', name: '5月度 売上仕訳 (自動連携)' },
+      { id: 'mf-6002', name: '経費精算 — 交通費 ¥3,200' },
+      { id: 'mf-6003', name: '請求書 #INV-0512 — ¥165,000' },
+    ] as { id: string; name: string }[],
+  },
+
+  amazon: {
+    items: [
+      { id: 'az-7001', name: 'オリジナルTシャツ (FBA) — 在庫 42' },
+      { id: 'az-7002', name: 'ステンレスタンブラー — 在庫 18' },
+      { id: 'az-7003', name: 'スマホケース 手帳型 — 在庫 7' },
+    ] as { id: string; name: string }[],
+  },
+
+  'amazon-associates': {
+    items: [
+      { id: 'aa-8001', name: '[確定] Kindle 書籍 紹介料 — ¥420' },
+      { id: 'aa-8002', name: '[確定] 家電 紹介料 — ¥1,860' },
+      { id: 'aa-8003', name: '[保留] 日用品 紹介料 — ¥230' },
+    ] as { id: string; name: string }[],
+  },
+
+  sales: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  team: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  youtube: {
+    channel: { id: 'UC_demo', title: 'デモチャンネル', subscribers: 12_500, views: 982_000, videos: 142 },
+    recentVideos: [
+      { videoId: 'demo1', title: '【2026年版】ネットショップの始め方', publishedAt: '2026-05-20T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo1' },
+      { videoId: 'demo2', title: '売上が伸びる商品写真の撮り方', publishedAt: '2026-05-12T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo2' },
+      { videoId: 'demo3', title: 'EC 運営の月次ルーティン公開', publishedAt: '2026-05-03T09:00:00Z', url: 'https://www.youtube.com/watch?v=demo3' },
+    ] as { videoId: string; title: string; publishedAt: string; url: string }[],
+  },
+
+  overview: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  coconala: {
+    items: [] as { id: string; name: string }[],
+  },
+
+  tiktok: {
+    items: [
+      { id: 'tt-1', name: '[投稿] 新商品紹介リール — 12.4万 再生 / いいね 8,200' },
+      { id: 'tt-2', name: '[投稿] 使い方ハウツー — 3.1万 再生 / 保存 1,450' },
+      { id: 'tt-3', name: '[広告] 認知キャンペーン — CPM ¥420 / CTR 1.8%' },
+      { id: 'tt-4', name: 'フォロワー 2.7万人（前月比 +6.3%）' },
+      { id: 'tt-5', name: '[TikTok Lite] 報酬プログラム経由の流入 1,820 セッション（軽量版アプリ）' },
+    ] as { id: string; name: string }[],
+  },
+
+  tax: {
+    items: [] as { id: string; name: string }[],
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
+
+  funding: {
+    items: [] as {
+      id: string;
+      kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
+      name: string;
+      amount: number;
+      status: 'received' | 'approved' | 'applied' | 'planned';
+      month: string;
+      repayable: boolean;
+      compressedEntry?: boolean;
+      repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number; method?: 'equal-payment' | 'equal-principal' };
+      probability?: number;
+    }[],
+    byKind: [] as {
+      kind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding';
+      label: string;
+      secured: number;
+      pipeline: number;
+      count: number;
+    }[],
+    radar: [] as number[],
+    monthly: [] as {
+      month: string;
+      funding: number;
+      fundingAfterTax: number;
+      repayment: number;
+      interest: number;
+      interestTaxShield: number;
+      netCashflow: number;
+      operatingCashflow: number;
+      portfolioValue: number;
+    }[],
+    bars: [] as { label: string; secured: number; pipeline: number }[],
+    summary: {
+      nonRepayableSecured: 0,
+      repayableSecured: 0,
+      totalSecured: 0,
+      totalPipeline: 0,
+      taxableSecured: 0,
+      deferredSecured: 0,
+      afterTaxSecured: 0,
+      consumptionTaxExemptSecured: 0,
+      consumptionTaxableSecured: 0,
+      consumptionTaxEstimate: 0,
+      count: 0,
+    },
+    runway: {
+      rows: [] as { month: string; netCashflow: number; balance: number }[],
+      openingBalance: 0,
+      minBalance: 0,
+      shortfallMonth: null as string | null,
+    },
+    scenario: {
+      securedTotal: 0,
+      pipelineTotal: 0,
+      expectedPipeline: 0,
+      expectedTotal: 0,
+    },
+    scenarioRunways: (() => {
+      const emptyRunway = {
+        rows: [] as { month: string; netCashflow: number; balance: number }[],
+        openingBalance: 0,
+        minBalance: 0,
+        shortfallMonth: null as string | null,
+      };
+      return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
+    })(),
+    qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    diversification: null as {
+      kindsPresent: number;
+      hhi: number;
+      effectiveSources: number;
+      topKind: 'subsidy' | 'grant' | 'loan' | 'jfc' | 'benefit' | 'crowdfunding' | null;
+      topSharePct: number;
+      score: number;
+    } | null,
+    termStructure: {
+      shortTermSecured: 0,
+      longTermSecured: 0,
+      totalDebt: 0,
+      longTermRatioPct: null as number | null,
+    },
+    debtService: {
+      totalRepayment: 0,
+      totalOperatingCashflow: 0,
+      overallDscr: 0,
+      worstMonthDscr: 0,
+      shortfallMonths: 0,
+    },
+    costMetrics: {
+      totalLoanPrincipal: 0,
+      totalInterest: 0,
+      weightedCostRate: 0,
+      selfFundingRatio: 0,
+    },
+    accountingLinked: false,
+    stocksLinked: false,
+    fetchedAt: '',
+    isMock: true,
+  },
+
+  freee: {
+    companyName: '',
+    monthly: [] as { month: string; income: number; expense: number; net: number }[],
+    fetchedAt: '',
+  },
 
   kpi: {
     units: [] as {

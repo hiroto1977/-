@@ -32,7 +32,7 @@ import { fetchDiscordSnapshot } from './discord';
 import { fetchAsanaSnapshot } from './asana';
 import { fetchLinearSnapshot } from './linear';
 import { fetchSentrySnapshot } from './sentry';
-import { fetchShopifySnapshot } from './shopify';
+import { fetchShopifySnapshot, ACTIONS as SHOPIFY_ACTIONS } from './shopify';
 import { fetchStripeSnapshot } from './stripe';
 import { fetchLineSnapshot } from './line';
 import { fetchStorageSnapshot } from './storage';
@@ -43,6 +43,24 @@ import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
 import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
 import { fetchSmeConsultantSnapshot } from './sme-consultant';
 import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchBaseSnapshot } from './base';
+import { fetchNetseaSnapshot } from './netsea';
+import { fetchSuperDeliverySnapshot } from './super-delivery';
+import { fetchTopsellerSnapshot } from './topseller';
+import { fetchA8netSnapshot } from './a8net';
+import { fetchAiBlogkunSnapshot } from './ai-blogkun';
+import { fetchMoneyforwardSnapshot } from './moneyforward';
+import { fetchAmazonSnapshot } from './amazon';
+import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
+import { fetchSalesSnapshot } from './sales';
+import { fetchTeamSnapshot } from './team';
+import { fetchYoutubeSnapshot } from './youtube';
+import { fetchOverviewSnapshot } from './overview';
+import { fetchCoconalaSnapshot } from './coconala';
+import { fetchTiktokSnapshot } from './tiktok';
+import { fetchTaxSnapshot } from './tax';
+import { fetchFundingSnapshot } from './funding';
+import { fetchFreeeSnapshot } from './freee';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -95,6 +113,24 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'admin-scrivener': fetchAdminScrivenerSnapshot,
   'sme-consultant': fetchSmeConsultantSnapshot,
   'patent-attorney': fetchPatentAttorneySnapshot,
+  base: fetchBaseSnapshot,
+  netsea: fetchNetseaSnapshot,
+  'super-delivery': fetchSuperDeliverySnapshot,
+  topseller: fetchTopsellerSnapshot,
+  a8net: fetchA8netSnapshot,
+  'ai-blogkun': fetchAiBlogkunSnapshot,
+  moneyforward: fetchMoneyforwardSnapshot,
+  amazon: fetchAmazonSnapshot,
+  'amazon-associates': fetchAmazonAssociatesSnapshot,
+  sales: fetchSalesSnapshot,
+  team: fetchTeamSnapshot,
+  youtube: fetchYoutubeSnapshot,
+  overview: fetchOverviewSnapshot,
+  coconala: fetchCoconalaSnapshot,
+  tiktok: fetchTiktokSnapshot,
+  tax: fetchTaxSnapshot,
+  funding: fetchFundingSnapshot,
+  freee: fetchFreeeSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -131,6 +167,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'kpi',
   'stocks',
   'business',
+  'funding',
   'teamradar',
   'templates',
   'library',
@@ -149,6 +186,29 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
+  // クラウド会計 (公式 API はパートナー登録 + OAuth 必須) で snapshot-only。
+  'moneyforward',
+  // Amazon セラー (SP-API) / アソシエイト: 要パートナー承認で snapshot-only。
+  'amazon',
+  'amazon-associates',
+  // 売上集計: データは renderer の record store に保存、認証不要。
+  'sales',
+  // チーム管理: メンバーは renderer の record store に保存、認証不要。
+  'team',
+  // 経営サマリー: 既存機能の集約のみ。認証不要。
+  'overview',
+  // ココナラ: 公開 API なしで snapshot-only。
+  'coconala',
+  // TikTok: 公式 API はパートナー審査 + OAuth 前提で snapshot-only。
+  'tiktok',
+  // 税務試算: 計算のみ・公式ツールへ導線。納付は手動。snapshot-only。
+  'tax',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -176,6 +236,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'demae-can': DEMAE_CAN_ACTIONS,
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
+  shopify: SHOPIFY_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 
