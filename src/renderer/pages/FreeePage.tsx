@@ -89,7 +89,7 @@ export function FreeePage() {
       </div>
 
       <Section title="サマリー">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 12 }}>
           <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
             <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>対象月数</div>
             <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>{live.monthly.length}</div>

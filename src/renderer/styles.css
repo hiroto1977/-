@@ -46,7 +46,12 @@ a:hover { text-decoration: underline; }
 
 .app {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  /* minmax(0, 1fr): コンテンツ列が「中身の最小幅」で広がるのを防ぐ。
+     これがないと幅の広い表やチャートが列を押し広げ、.app の overflow:hidden で
+     画面外に見切れてしまう (スクロールもできない)。0 を下限にすると列は
+     ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
+     スクロールに切り替わる。 */
+  grid-template-columns: 240px minmax(0, 1fr);
   height: 100vh;
   overflow: hidden;
 }
@@ -118,6 +123,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* グリッド子要素が中身で広がらないようにする (見切れ防止の要) */
 }
 
 .topbar {
@@ -128,27 +134,87 @@ a:hover { text-decoration: underline; }
   padding: 0 24px;
   gap: 16px;
   background: var(--bg-elevated);
+  min-width: 0;
+  overflow: hidden;
 }
 .topbar h1 {
   font-size: 16px;
   margin: 0;
   font-weight: 600;
+  white-space: nowrap;
 }
 .topbar .description {
   color: var(--text-muted);
   font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto; /* 万一の横はみ出しはページ全体ではなくここでスクロール */
   padding: 24px;
+  min-width: 0;
+}
+
+/* --- レスポンシブ・ガードレール: どのページでも画面内に収める ---
+   個別ページに手を入れなくても、共通の崩れ要因をここで吸収する。 */
+
+/* メディアはコンテナ幅を上限に。viewBox 付き SVG はアスペクト比を保ったまま縮む。 */
+.content img,
+.content svg,
+.content canvas,
+.content video {
+  max-width: 100%;
+}
+
+/* コードブロックは内部で横スクロール (ページを押し広げない) */
+.content pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 幅の広い表やセクション内容は、ページ全体ではなくカード内で横スクロールさせる。
+   これで見出しは固定のまま、はみ出した中身だけをスクロールして確認できる。 */
+.data-section {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.data-section table {
+  max-width: 100%;
+}
+
+/* 狭い画面ではサイドバーと余白を詰めて表示領域を確保する。 */
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .content {
+    padding: 16px;
+  }
+  .sidebar-item {
+    padding: 10px 14px;
+  }
+}
+@media (max-width: 560px) {
+  .app {
+    grid-template-columns: 168px minmax(0, 1fr);
+  }
+  .content {
+    padding: 12px;
+  }
+  .topbar {
+    padding: 0 12px;
+  }
 }
 
 .page-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }
 
 .card {

@@ -504,7 +504,7 @@ export function OverviewPage() {
             収益性・安全性・資金繰り・成長性の経営指標を 0〜100 で集約した健全性スコアです。
             <strong>※ 概算の経営診断であり財務助言ではありません。</strong>業種・規模で適正値は異なります。
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))', gap: 12 }}>
             {scorecard.categories.map((c) => (
               <div key={c.category} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
                 <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{c.label}</div>
