@@ -50,23 +50,36 @@ export function usePlan(): UsePlan {
 
   const redeemInvite = useCallback((code: string, holder = ''): boolean => {
     const ok = activateInternalLicense(code, holder);
-    if (ok) setInternalUnlocked(true);
+    if (ok) {
+      setInternalUnlocked(true);
+      // 他の usePlan インスタンス (App など) にも即時反映させる。
+      window.dispatchEvent(new Event('servicehub:license-changed'));
+    }
     return ok;
   }, []);
 
   const revokeInvite = useCallback(() => {
     deactivateInternalLicense();
     setInternalUnlocked(false);
+    window.dispatchEvent(new Event('servicehub:license-changed'));
   }, []);
 
-  // Cross-tab sync: adopt changes made in another tab.
+  // Cross-tab sync (storage event) + same-tab sync (custom event) so every
+  // usePlan instance reflects a license change immediately.
   useEffect(() => {
     function onStorage(e: StorageEvent) {
       if (e.key === STORAGE_KEY && isPlanTier(e.newValue)) setStoredState(e.newValue);
       if (e.key === 'servicehub.internalLicense') setInternalUnlocked(hasInternalLicense());
     }
+    function onLicenseChanged() {
+      setInternalUnlocked(hasInternalLicense());
+    }
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener('servicehub:license-changed', onLicenseChanged);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('servicehub:license-changed', onLicenseChanged);
+    };
   }, []);
 
   // 社内ライセンスが有効なら全機能無償 = internal を実効プランとする。

@@ -129,7 +129,10 @@ export function App() {
   const active = SERVICES.find((s) => s.id === activeId)!;
   const PageComponent = active.page;
   const activeOrder = SERVICE_ORDER.get(active.id) ?? 0;
-  const activeUnlocked = isServiceUnlocked(plan, activeOrder);
+  // 設定・ホームは常に開放: 設定は招待コードでの全機能無償化やマスターパスワード等の
+  // 基盤機能を含むため、プランでロックしない (ロックすると無償化に辿り着けない)。
+  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home']);
+  const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
   const requiredPlan = requiredPlanForServiceIndex(activeOrder);
 
   return (
@@ -167,7 +170,7 @@ export function App() {
                 {!isCollapsed &&
                   items.map((service) => {
                     const order = SERVICE_ORDER.get(service.id) ?? 0;
-                    const unlocked = isServiceUnlocked(plan, order);
+                    const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
                     return (
                       <button
                         key={service.id}
