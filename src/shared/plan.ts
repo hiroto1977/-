@@ -7,7 +7,7 @@
 // and pages read these to lock/unlock capability. Billing is out of scope —
 // the plan is chosen locally and persisted (see renderer/plan/usePlan.ts).
 
-export type PlanTier = 'free' | 'pro' | 'business' | 'enterprise';
+export type PlanTier = 'free' | 'pro' | 'business' | 'enterprise' | 'internal';
 
 /** Capability flags a plan can grant. Kept coarse on purpose. */
 export type PlanFeature =
@@ -34,7 +34,7 @@ export interface PlanDefinition {
 }
 
 /** Lowest → highest. Also defines rank for `atLeastPlan`. */
-export const PLAN_ORDER: readonly PlanTier[] = ['free', 'pro', 'business', 'enterprise'];
+export const PLAN_ORDER: readonly PlanTier[] = ['free', 'pro', 'business', 'enterprise', 'internal'];
 
 export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
   free: {
@@ -78,6 +78,26 @@ export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
     maxServices: Infinity,
     maxSeats: Infinity,
     priceMonthlyJpy: 98_000,
+    features: new Set<PlanFeature>([
+      'live-fetch',
+      'write-actions',
+      'cross-service-sync',
+      'ai-advisor',
+      'team-seats',
+      'audit-log',
+      'sso',
+    ]),
+  },
+  // 社内ライセンス — 自社商品として、招待コードを持つオーナー・社員・招待者は
+  // 全機能を無償 (¥0) で利用できる。Enterprise と同等の上限なし・全機能に加え、
+  // 価格 0。招待コードでの有効化は `internalLicense.ts` が担う。
+  internal: {
+    id: 'internal',
+    label: '社内ライセンス',
+    audience: '自社・招待者 (全機能無償)',
+    maxServices: Infinity,
+    maxSeats: Infinity,
+    priceMonthlyJpy: 0,
     features: new Set<PlanFeature>([
       'live-fetch',
       'write-actions',

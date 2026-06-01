@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { BackupPanel } from '../components/BackupPanel';
+import { usePlan } from '../plan/usePlan';
+import { getPlan } from '../../shared/plan';
+import { issueInviteCode } from '../plan/internalLicense';
 import { getVault } from '../security/vault';
 import { getProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -460,6 +463,75 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
   );
 }
 
+/** 社内ライセンス (招待コードで全機能無償) のパネル。 */
+function LicenseSection() {
+  const { plan, internalUnlocked, redeemInvite, revokeInvite } = usePlan();
+  const [code, setCode] = useState('');
+  const [holder, setHolder] = useState('');
+  const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  // オーナーが配布できる汎用招待コード (合言葉から導出・固定)。
+  const ownerCode = issueInviteCode('');
+
+  function redeem() {
+    const ok = redeemInvite(code.trim(), holder.trim());
+    setMsg(ok
+      ? { text: '✅ 全機能を有効化しました（社内ライセンス・無償）。', ok: true }
+      : { text: '⚠ 招待コードが正しくありません。', ok: false });
+    if (ok) setCode('');
+  }
+
+  const inputStyle: React.CSSProperties = {
+    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+    color: 'var(--text)', padding: '8px 10px', fontSize: 13, width: 220,
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, margin: 0 }}>
+        自社商品のため、<strong>オーナー・自社社員・招待された方</strong>は招待コードを入力すると
+        全機能を<strong>無償</strong>で利用できます（{getPlan('internal').label}・{getPlan('internal').audience}）。
+      </p>
+
+      {internalUnlocked ? (
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, color: '#22c55e' }}>
+            ✅ 社内ライセンス有効 — 全機能が無償で利用できます（現在のプラン: {getPlan(plan).label}）。
+          </span>
+          <button type="button" onClick={() => { revokeInvite(); setMsg(null); }}>解除</button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            招待コード
+            <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="SVCHUB-XXXXXXXX" style={inputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            お名前 / メール（任意）
+            <input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder="例: 山田太郎" style={inputStyle} />
+          </label>
+          <button type="button" onClick={redeem} disabled={code.trim().length === 0}>有効化</button>
+        </div>
+      )}
+
+      {msg && <div style={{ fontSize: 12, color: msg.ok ? '#22c55e' : '#f87171' }}>{msg.text}</div>}
+
+      <details style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+        <summary style={{ cursor: 'pointer' }}>オーナー向け — 招待コードを発行・配布する</summary>
+        <div style={{ marginTop: 8, lineHeight: 1.7 }}>
+          下記の<strong>汎用招待コード</strong>を社員・招待者に共有してください。受け取った人は
+          このページで入力するだけで全機能が無償で開放されます。
+          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 14, color: 'var(--text)', userSelect: 'all' }}>
+            {ownerCode}
+          </div>
+          <div style={{ marginTop: 6 }}>
+            ※ このコードを知っている範囲が配布範囲になります。社外に広く出さないでください。
+          </div>
+        </div>
+      </details>
+    </div>
+  );
+}
+
 export function SettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -500,6 +572,10 @@ export function SettingsPage() {
         ここで入力した API キーはマスターパスワードで暗号化 (AES-GCM-256) されてブラウザに保管されます。
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
+
+      <Section title="ライセンス · 招待コード (全機能を無償開放)" count={1}>
+        <LicenseSection />
+      </Section>
 
       <BackupPanel />
 

@@ -14,17 +14,25 @@ import {
 } from '../plan';
 
 describe('plan model', () => {
-  it('orders tiers free → enterprise and ranks them monotonically', () => {
-    expect(PLAN_ORDER).toEqual(['free', 'pro', 'business', 'enterprise']);
+  it('orders the paid tiers free → enterprise monotonically, with internal as a $0 all-access tier', () => {
+    expect(PLAN_ORDER).toEqual(['free', 'pro', 'business', 'enterprise', 'internal']);
     expect(planRank('free')).toBe(0);
     expect(planRank('enterprise')).toBe(3);
-    for (let i = 1; i < PLAN_ORDER.length; i++) {
-      const prev = PLANS[PLAN_ORDER[i - 1]!];
-      const cur = PLANS[PLAN_ORDER[i]!];
+    expect(planRank('internal')).toBe(4);
+    // 課金階段 (free→enterprise) は上限・価格が単調増加。
+    const paid = ['free', 'pro', 'business', 'enterprise'] as const;
+    for (let i = 1; i < paid.length; i++) {
+      const prev = PLANS[paid[i - 1]!];
+      const cur = PLANS[paid[i]!];
       expect(cur.maxServices).toBeGreaterThanOrEqual(prev.maxServices);
       expect(cur.maxSeats).toBeGreaterThanOrEqual(prev.maxSeats);
       expect(cur.priceMonthlyJpy).toBeGreaterThanOrEqual(prev.priceMonthlyJpy);
     }
+    // 社内ライセンス: 無償 (¥0) かつ Enterprise と同等の全機能・上限なし。
+    expect(PLANS.internal.priceMonthlyJpy).toBe(0);
+    expect(PLANS.internal.maxServices).toBe(PLANS.enterprise.maxServices);
+    expect(PLANS.internal.maxSeats).toBe(PLANS.enterprise.maxSeats);
+    expect(PLANS.internal.features).toEqual(PLANS.enterprise.features);
   });
 
   it('isPlanTier guards untrusted input', () => {
