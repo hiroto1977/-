@@ -1,5 +1,5 @@
 @echo off
-chcp 65001 >/dev/null
+chcp 65001 >nul
 rem ============================================================
 rem  Service Hub 起動ボタン (Windows)
 rem  このファイルをダブルクリックすると standalone.html を自動で探して
