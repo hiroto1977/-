@@ -16,6 +16,7 @@ import {
   isSafeHeaderValue,
   scanUrlVirusTotal,
   parseSecurityKeys,
+  checkEmailBreach,
 } from '../saasWriteWeb';
 
 function jsonResponse(status: number, body: unknown): Response {
@@ -265,6 +266,32 @@ describe('scanUrlVirusTotal', () => {
   it('requires a url', async () => {
     const transport = vi.fn();
     await expect(scanUrlVirusTotal({}, 'k', transport)).rejects.toThrow(/必須/);
+    expect(transport).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('checkEmailBreach', () => {
+  it('treats upstream 404 as no breaches', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(404, {}));
+    const res = await checkEmailBreach({ email: 'a@b.com' }, 'hibpkey', transport);
+    expect(res).toEqual({ email: 'a@b.com', breaches: [] });
+    expect((transport.mock.calls[0]![1].headers as Record<string, string>)['hibp-api-key']).toBe('hibpkey');
+  });
+  it('maps breach rows on 200', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, [
+      { Name: 'Acme', Title: 'Acme Co', BreachDate: '2020-01-01', PwnCount: 100, DataClasses: ['Emails'] },
+    ]));
+    const res = await checkEmailBreach({ email: 'a@b.com' }, 'k', transport);
+    expect(res.breaches).toEqual([{ name: 'Acme', title: 'Acme Co', date: '2020-01-01', pwnCount: 100, dataClasses: ['Emails'] }]);
+  });
+  it('throws on other HTTP errors', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(401, { message: 'bad key' }));
+    await expect(checkEmailBreach({ email: 'a@b.com' }, 'k', transport)).rejects.toThrow(/HIBP API 401/);
+  });
+  it('requires an email', async () => {
+    const transport = vi.fn();
+    await expect(checkEmailBreach({}, 'k', transport)).rejects.toThrow(/必須/);
     expect(transport).not.toHaveBeenCalled();
   });
 });

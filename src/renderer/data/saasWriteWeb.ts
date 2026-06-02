@@ -581,3 +581,60 @@ export async function scanUrlVirusTotal(
   const total = s.harmless + s.malicious + s.suspicious + s.undetected;
   return { url, positives, total, reportUrl: `https://www.virustotal.com/gui/url/${id}` };
 }
+
+// --- セキュリティ: HIBP メール漏洩チェック (CORS → プロキシ) --------------
+// fetchViaProxy は worker エンベロープの上流ステータスを保持するため、
+// HIBP の「漏洩なし = 404」を Response.status で正しく判定できる。
+
+export interface CheckEmailBreachInput {
+  email?: unknown;
+}
+
+export interface BreachRow {
+  name: string;
+  title: string;
+  date: string;
+  pwnCount: number;
+  dataClasses: string[];
+}
+
+export async function checkEmailBreach(
+  input: CheckEmailBreachInput,
+  hibpKey: string,
+  transport: Transport,
+): Promise<{ email: string; breaches: BreachRow[] }> {
+  const email = typeof input.email === 'string' ? input.email.trim() : '';
+  if (!email) throw new Error('email は必須です');
+  const res = await transport(
+    'https://haveibeenpwned.com/api/v3/breachedaccount/' + encodeURIComponent(email) + '?truncateResponse=false',
+    {
+      method: 'GET',
+      headers: {
+        'hibp-api-key': hibpKey,
+        // User-Agent はプロキシ(worker)側で送られる。HIBP は UA 必須。
+        'User-Agent': 'service-hub',
+        Accept: 'application/json',
+      },
+    },
+  );
+  // 404 = この email はどの漏洩にも含まれない (正常)。
+  if (res.status === 404) return { email, breaches: [] };
+  await ensureOk(res, 'HIBP API');
+  const data = (await res.json()) as {
+    Name: string;
+    Title: string;
+    BreachDate: string;
+    PwnCount: number;
+    DataClasses: string[];
+  }[];
+  return {
+    email,
+    breaches: data.map((b) => ({
+      name: b.Name,
+      title: b.Title,
+      date: b.BreachDate,
+      pwnCount: b.PwnCount,
+      dataClasses: b.DataClasses,
+    })),
+  };
+}
