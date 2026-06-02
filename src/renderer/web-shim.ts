@@ -21,6 +21,10 @@
  *                              → same, but expects the page to provide
  *                                the SVG (we extract from the live <svg>
  *                                element on the page)
+ *   - invoke('stocks', 'register-ticker' / 'unregister-ticker', …)
+ *                              → persist the watchlist in localStorage;
+ *                                fetchSnapshot('stocks') then synthesizes a
+ *                                (mock-priced) snapshot from it
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -31,6 +35,11 @@ import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates'
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import {
+  registerSymbol,
+  unregisterSymbol,
+  buildStocksSnapshot,
+} from './data/stocksWatchlistWeb';
 
 const vault = getVault();
 const library = getLibrary();
@@ -364,8 +373,17 @@ const shim = {
     }
   },
 
-  fetchSnapshot: <T>(): Promise<ActionResult<T>> =>
-    Promise.resolve(err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。')),
+  fetchSnapshot: <T>(serviceId?: string): Promise<ActionResult<T>> => {
+    // stocks はブラウザ版でもウォッチリスト登録に対応する。登録銘柄は
+    // localStorage に保存され、ここでモック価格つきのスナップショットを合成する。
+    // (Electron 版の state.json 由来フェッチと同じ操作感: 「更新」/登録で反映)
+    if (serviceId === 'stocks') {
+      return Promise.resolve(ok(buildStocksSnapshot()) as ActionResult<T>);
+    }
+    return Promise.resolve(
+      err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。'),
+    );
+  },
 
   invoke: async <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> => {
     // Template export: render SVG client-side, save to Library, also download.
@@ -407,6 +425,20 @@ const shim = {
         return ok(payload) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
+      }
+    }
+
+    // Stocks ウォッチリスト登録 / 解除: localStorage に永続化する。
+    // ページは成功後に refresh() するので、fetchSnapshot('stocks') が
+    // 反映済みのウォッチリストを返す。
+    if (serviceId === 'stocks' && (action === 'register-ticker' || action === 'unregister-ticker')) {
+      try {
+        const symbol = (payload as { symbol?: unknown }).symbol;
+        const result =
+          action === 'register-ticker' ? registerSymbol(symbol) : unregisterSymbol(symbol);
+        return ok(result) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
       }
     }
 
