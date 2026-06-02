@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -497,7 +497,12 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
 
 function FoodDeliverySection() {
   const fd = summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan);
+  const ue = SNAPSHOT.uberEats;
+  const dc = SNAPSHOT.demaeCan;
   const pct = (v: number) => (v * 100).toFixed(1) + '%';
+  const cell: CSSProperties = { padding: '4px 8px', borderBottom: '1px solid var(--border)', fontSize: 12 };
+  const cellNum: CSSProperties = { ...cell, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
+  const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent)', marginTop: 10 };
   return (
     <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -551,6 +556,76 @@ function FoodDeliverySection() {
           </div>
         </div>
       </div>
+      <details>
+        <summary style={summaryStyle}>🍔 Uber Eats 明細（店舗別 / 人気商品）</summary>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 12, marginTop: 8 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>店舗</th><th style={cellNum}>注文</th><th style={cellNum}>売上</th><th style={cellNum}>評価</th><th style={cellNum}>稼働率</th></tr>
+            </thead>
+            <tbody>
+              {ue.stores.map((s) => (
+                <tr key={s.id}>
+                  <td style={cell}>{s.name}</td>
+                  <td style={cellNum}>{s.orders}</td>
+                  <td style={cellNum}>{yen.format(s.revenue)}</td>
+                  <td style={cellNum}>★{s.rating.toFixed(1)}</td>
+                  <td style={cellNum}>{pct(s.openRate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>人気商品</th><th style={cellNum}>販売数</th><th style={cellNum}>売上</th></tr>
+            </thead>
+            <tbody>
+              {ue.topItems.map((t) => (
+                <tr key={t.name}>
+                  <td style={cell}>{t.name}</td>
+                  <td style={cellNum}>{t.sold}</td>
+                  <td style={cellNum}>{yen.format(t.revenue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details>
+        <summary style={summaryStyle}>🛵 出前館 明細（エリア別 / 直近の受注）</summary>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 12, marginTop: 8 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>エリア</th><th style={cellNum}>注文</th><th style={cellNum}>売上</th></tr>
+            </thead>
+            <tbody>
+              {dc.topAreas.map((a) => (
+                <tr key={a.area}>
+                  <td style={cell}>{a.area}</td>
+                  <td style={cellNum}>{a.orders}</td>
+                  <td style={cellNum}>{yen.format(a.revenue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr><th style={cell}>受注</th><th style={cell}>状態</th><th style={cellNum}>金額</th></tr>
+            </thead>
+            <tbody>
+              {dc.orders.map((o) => (
+                <tr key={o.id}>
+                  <td style={cell}>{o.customer}（{o.area}）</td>
+                  <td style={cell}>{o.status}</td>
+                  <td style={cellNum}>{yen.format(o.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
         ※ 模擬データ。Uber Eats は週次・出前館は月次の集計のため、合算は「今月換算」の概算です（財務助言ではありません）。
       </div>
