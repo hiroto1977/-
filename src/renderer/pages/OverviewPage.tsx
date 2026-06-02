@@ -23,6 +23,7 @@ import { sparklinePoints } from '../data/sparkline';
 import { cashForecastTrajectory } from '../data/cashForecast';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
+import { FinancialAnalysis } from '../components/FinancialAnalysis';
 import { SNAPSHOT } from '../data/snapshot';
 
 const SCORE_COLOR = (s: number | null): string =>
@@ -693,6 +694,23 @@ export function OverviewPage() {
           )}
         </Section>
       )}
+
+      <Section title="事業別 財務指標分析 (15指標 × レーダー/折れ線/円/棒)">
+        <FinancialAnalysis
+          units={SNAPSHOT.business.units.map((u) => ({
+            id: u.id,
+            label: u.label,
+            current: {
+              revenue: u.current.revenue,
+              variableCost: u.current.variableCost,
+              fixedCost: u.current.fixedCost,
+              profit: u.current.profit,
+              profitMargin: u.current.profitMargin,
+            },
+            history: u.history.map((h) => ({ revenue: h.revenue, profit: h.profit })),
+          }))}
+        />
+      </Section>
     </div>
   );
 }
