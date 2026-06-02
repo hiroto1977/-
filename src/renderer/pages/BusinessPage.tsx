@@ -6,6 +6,7 @@ import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
+import { summarizeFoodDelivery } from '../data/foodDelivery';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -492,6 +493,71 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
   );
 }
 
+// --- フードデリバリー統合セクション (旧 Uber Eats / 出前館 ページを統合) -----
+
+function FoodDeliverySection() {
+  const fd = summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan);
+  const pct = (v: number) => (v * 100).toFixed(1) + '%';
+  return (
+    <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+        <Tile
+          label="今月換算 売上 (概算合算)"
+          value={yen.format(fd.combinedMonthlyEstimate.revenue)}
+          sub="Uber Eats 週次×52/12 + 出前館 月次"
+        />
+        <Tile
+          label="今月換算 注文数 (概算)"
+          value={num.format(fd.combinedMonthlyEstimate.orders) + ' 件'}
+        />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 12 }}>
+        <div
+          style={{
+            background: 'var(--bg-elev)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🍔 Uber Eats（今週）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="売上 (週)" value={yen.format(fd.uberEats.weekRevenue)} />
+            <Tile label="注文数 (週)" value={num.format(fd.uberEats.weekOrders) + ' 件'} />
+            <Tile label="平均評価" value={`★ ${fd.uberEats.avgRating.toFixed(2)}`} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            店舗数 {fd.uberEats.storeCount}
+            {fd.uberEats.topStore ? ` ／ 売上トップ: ${fd.uberEats.topStore.name} (${yen.format(fd.uberEats.topStore.revenue)})` : ''}
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'var(--bg-elev)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🛵 出前館（今月）</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="売上 (月)" value={yen.format(fd.demaeCan.monthRevenue)} />
+            <Tile label="注文数 (月)" value={num.format(fd.demaeCan.monthOrders) + ' 件'} />
+            <Tile label="平均単価" value={yen.format(fd.demaeCan.avgOrderValue)} />
+            <Tile label="キャンセル率" value={pct(fd.demaeCan.cancellationRate)} />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 8 }}>
+            {fd.demaeCan.topArea ? `売上トップエリア: ${fd.demaeCan.topArea.area} (${yen.format(fd.demaeCan.topArea.revenue)})` : ''}
+          </div>
+        </div>
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
+        ※ 模擬データ。Uber Eats は週次・出前館は月次の集計のため、合算は「今月換算」の概算です（財務助言ではありません）。
+      </div>
+    </Section>
+  );
+}
+
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
@@ -651,6 +717,8 @@ export function BusinessPage() {
           />
         </div>
       </Section>
+
+      <FoodDeliverySection />
 
       {focusedUnit && (
         <Section title="詳細ビュー" count={1}>
