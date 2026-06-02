@@ -39,10 +39,11 @@
  *   - invoke('github', 'create-issue', …)
  *                              → POST api.github.com directly (CORS-enabled)
  *                                with the Vault 'github' PAT (Part ②, 外部連携)
- *   - invoke('notion', 'create-page') / invoke('slack', 'send-message')
- *     / invoke('atlassian', 'create-issue')
+ *   - invoke(notion/slack/atlassian/calendar/gmail/drive/wordpress/canva/
+ *            cloudflare, create-page/send-message/create-event/…)
  *                              → CORS-blocked: routed through the user's
  *                                proxy (network/proxy.ts) with the Vault token
+ *                                (OAuth services unwrap the TokenSet bearer)
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -80,7 +81,20 @@ import {
   buildEmotionsSnapshot,
   ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
 } from './data/emotionsWeb';
-import { createGithubIssue, createNotionPage, sendSlackMessage, createAtlassianIssue, type Transport } from './data/saasWriteWeb';
+import {
+  createGithubIssue,
+  createNotionPage,
+  sendSlackMessage,
+  createAtlassianIssue,
+  createCalendarEvent,
+  createGmailDraft,
+  createDriveFolder,
+  createWordPressPostDraft,
+  createCanvaFolder,
+  createCloudflareDnsRecord,
+  purgeCloudflareCache,
+  type Transport,
+} from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
@@ -89,6 +103,21 @@ const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
  *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+/** Vault のトークンから Bearer 文字列を取り出す。OAuth サービスは
+ *  TokenSet ({accessToken,...}) の JSON で保存されることがあるので、その場合は
+ *  accessToken を使う。そうでなければ生のトークン文字列をそのまま使う。 */
+function bearerFromVaultToken(raw: string): string {
+  try {
+    const parsed = JSON.parse(raw) as { accessToken?: unknown };
+    if (parsed && typeof parsed === 'object' && typeof parsed.accessToken === 'string') {
+      return parsed.accessToken;
+    }
+  } catch {
+    /* not JSON — raw token */
+  }
+  return raw;
+}
+
 async function getProxyTransport(): Promise<Transport> {
   const cfg = await getProxyConfig();
   if (!cfg) {
@@ -97,6 +126,34 @@ async function getProxyTransport(): Promise<Transport> {
     );
   }
   return (url, init) => fetchViaProxy(url, init, cfg);
+}
+
+/** Bearer トークン + プロキシが必要な create 系アクションの共通処理。
+ *  Vault のトークン取得・Bearer 抽出・プロキシ取得・実行を一手に行う。 */
+async function runProxyBearer<R>(
+  serviceId: string,
+  fn: (transport: Transport, bearer: string) => Promise<R>,
+): Promise<ActionResult<R>> {
+  let token: string | null = null;
+  try {
+    token = await vault.getToken(serviceId);
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!token) {
+    return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
+  }
+  let transport: Transport;
+  try {
+    transport = await getProxyTransport();
+  } catch (e) {
+    return err('not_configured', e instanceof Error ? e.message : String(e));
+  }
+  try {
+    return ok(await fn(transport, bearerFromVaultToken(token)));
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
 }
 
 const vault = getVault();
@@ -785,6 +842,29 @@ const shim = {
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
+    }
+
+    // Bearer + プロキシ経由の create 系 (Google / WordPress / Canva / Cloudflare)。
+    if (serviceId === 'calendar' && action === 'create-event') {
+      return (await runProxyBearer('calendar', (t, tok) => createCalendarEvent(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'gmail' && action === 'create-draft') {
+      return (await runProxyBearer('gmail', (t, tok) => createGmailDraft(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'drive' && action === 'create-folder') {
+      return (await runProxyBearer('drive', (t, tok) => createDriveFolder(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'wordpress' && action === 'create-post-draft') {
+      return (await runProxyBearer('wordpress', (t, tok) => createWordPressPostDraft(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'canva' && action === 'create-folder') {
+      return (await runProxyBearer('canva', (t, tok) => createCanvaFolder(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'cloudflare' && action === 'create-dns-record') {
+      return (await runProxyBearer('cloudflare', (t, tok) => createCloudflareDnsRecord(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'cloudflare' && action === 'purge-cache') {
+      return (await runProxyBearer('cloudflare', (t, tok) => purgeCloudflareCache(payload, tok, t))) as ActionResult<T>;
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。

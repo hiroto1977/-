@@ -5,6 +5,15 @@ import {
   sendSlackMessage,
   createAtlassianIssue,
   parseAtlassianToken,
+  createCalendarEvent,
+  createGmailDraft,
+  createDriveFolder,
+  createWordPressPostDraft,
+  createCanvaFolder,
+  createCloudflareDnsRecord,
+  purgeCloudflareCache,
+  buildRfc2822,
+  isSafeHeaderValue,
 } from '../saasWriteWeb';
 
 function jsonResponse(status: number, body: unknown): Response {
@@ -140,5 +149,87 @@ describe('createAtlassianIssue', () => {
   it('surfaces API errors', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(400, { error: 'bad' }));
     await expect(createAtlassianIssue({ projectKey: 'A', summary: 'S' }, TOK, transport)).rejects.toThrow(/Atlassian API 400/);
+  });
+});
+
+
+describe('createCalendarEvent', () => {
+  it('POSTs an event with start/end and returns id/htmlLink', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'e1', htmlLink: 'https://cal/e1' }));
+    const res = await createCalendarEvent({ summary: 'M', start: '2026-01-31T10:00:00', end: '2026-01-31T11:00:00', timeZone: 'Asia/Tokyo' }, 'tok', transport);
+    expect(res).toEqual({ id: 'e1', htmlLink: 'https://cal/e1' });
+    const sent = JSON.parse(transport.mock.calls[0]![1].body as string);
+    expect(sent.start).toEqual({ dateTime: '2026-01-31T10:00:00', timeZone: 'Asia/Tokyo' });
+  });
+  it('requires summary/start/end', async () => {
+    const transport = vi.fn();
+    await expect(createCalendarEvent({ summary: 'M' }, 'tok', transport)).rejects.toThrow(/必須/);
+  });
+});
+
+describe('gmail helpers + createGmailDraft', () => {
+  it('isSafeHeaderValue rejects CRLF/NUL', () => {
+    expect(isSafeHeaderValue('a@b.com')).toBe(true);
+    expect(isSafeHeaderValue('a@b\r\nBcc: x')).toBe(false);
+  });
+  it('buildRfc2822 encodes subject and guards header injection', () => {
+    expect(buildRfc2822('a@b.com', 'やあ', 'hi')).toContain('To: a@b.com');
+    expect(() => buildRfc2822('a@b\r\nBcc: x', 's', 'b')).toThrow(/CR\/LF/);
+  });
+  it('createGmailDraft POSTs a base64url raw message', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'd1', message: { id: 'm1' } }));
+    const res = await createGmailDraft({ to: 'a@b.com', subject: 'S', body: 'B' }, 'tok', transport);
+    expect(res).toEqual({ id: 'd1', messageId: 'm1' });
+    const raw = JSON.parse(transport.mock.calls[0]![1].body as string).message.raw as string;
+    expect(raw).not.toMatch(/[+/=]/); // base64url
+  });
+});
+
+describe('createDriveFolder', () => {
+  it('POSTs a folder mimeType and falls back to a folder URL', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'f1', name: 'Docs' }));
+    const res = await createDriveFolder({ name: 'Docs' }, 'tok', transport);
+    expect(res).toEqual({ id: 'f1', name: 'Docs', url: 'https://drive.google.com/drive/folders/f1' });
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).mimeType).toBe('application/vnd.google-apps.folder');
+  });
+});
+
+describe('createWordPressPostDraft', () => {
+  it('defaults to draft status and returns id/url/title', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 9, URL: 'u', title: 'T' }));
+    const res = await createWordPressPostDraft({ siteId: 'blog.example.com', title: 'T' }, 'tok', transport);
+    expect(res).toEqual({ id: 9, url: 'u', title: 'T' });
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).status).toBe('draft');
+  });
+});
+
+describe('createCanvaFolder', () => {
+  it('defaults parent to root', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { folder: { id: 'c1', name: 'N' } }));
+    const res = await createCanvaFolder({ name: 'N' }, 'tok', transport);
+    expect(res).toEqual({ id: 'c1', name: 'N' });
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).parent_folder_id).toBe('root');
+  });
+});
+
+describe('cloudflare', () => {
+  it('createCloudflareDnsRecord unwraps the CF envelope', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'r1', name: 'a.x', type: 'A' } }));
+    const res = await createCloudflareDnsRecord({ zoneId: 'z', type: 'A', name: 'a.x', content: '1.2.3.4' }, 'tok', transport);
+    expect(res).toEqual({ id: 'r1', name: 'a.x', type: 'A' });
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).proxied).toBe(false);
+  });
+  it('throws on CF success:false', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: false, errors: [{ message: 'bad zone' }], result: null }));
+    await expect(createCloudflareDnsRecord({ zoneId: 'z', type: 'A', name: 'n', content: 'c' }, 'tok', transport)).rejects.toThrow(/bad zone/);
+  });
+  it('purgeCloudflareCache requires files or purgeEverything', async () => {
+    const transport = vi.fn();
+    await expect(purgeCloudflareCache({ zoneId: 'z' }, 'tok', transport)).rejects.toThrow(/purgeEverything/);
+  });
+  it('purgeCloudflareCache purge_everything path', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'p1' } }));
+    const res = await purgeCloudflareCache({ zoneId: 'z', purgeEverything: true }, 'tok', transport);
+    expect(res).toEqual({ id: 'p1', purged: 'all' });
   });
 });

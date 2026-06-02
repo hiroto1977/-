@@ -247,3 +247,271 @@ export async function createAtlassianIssue(
   const data = (await res.json()) as { key: string };
   return { key: data.key, url: `${creds.site}/browse/${data.key}` };
 }
+
+// --- UTF-8 安全な base64 / base64url (ブラウザの btoa は Latin1 のみ) -------
+
+function utf8ToBase64(s: string): string {
+  const bytes = new TextEncoder().encode(s);
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+
+function utf8ToBase64Url(s: string): string {
+  return utf8ToBase64(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// --- Google Calendar: create-event (OAuth, CORS → プロキシ) ---------------
+
+export interface CreateCalendarEventInput {
+  summary?: unknown;
+  start?: unknown;
+  end?: unknown;
+  description?: unknown;
+  location?: unknown;
+  timeZone?: unknown;
+}
+
+function defaultTimeZone(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (typeof tz === 'string' && tz.length > 0) return tz;
+  } catch {
+    /* ignore */
+  }
+  return 'UTC';
+}
+
+export async function createCalendarEvent(
+  input: CreateCalendarEventInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; htmlLink: string }> {
+  const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
+  const start = typeof input.start === 'string' ? input.start : '';
+  const end = typeof input.end === 'string' ? input.end : '';
+  if (!summary || !start || !end) throw new Error('summary, start, end は必須です');
+  const tz = typeof input.timeZone === 'string' && input.timeZone.length > 0 ? input.timeZone : defaultTimeZone();
+  const body = {
+    summary,
+    description: typeof input.description === 'string' ? input.description : undefined,
+    location: typeof input.location === 'string' ? input.location : undefined,
+    start: { dateTime: start, timeZone: tz },
+    end: { dateTime: end, timeZone: tz },
+  };
+  const res = await transport('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  await ensureOk(res, 'Calendar API');
+  const data = (await res.json()) as { id: string; htmlLink: string };
+  return { id: data.id, htmlLink: data.htmlLink };
+}
+
+// --- Gmail: create-draft (OAuth, CORS → プロキシ) -------------------------
+
+export function isSafeHeaderValue(value: unknown): value is string {
+  return typeof value === 'string' && !/[\r\n\0]/.test(value);
+}
+
+export function buildRfc2822(to: string, subject: string, body: string): string {
+  if (!isSafeHeaderValue(to)) throw new Error('to に CR/LF/NUL は使用できません');
+  const utf8Subject = `=?UTF-8?B?${utf8ToBase64(subject)}?=`;
+  return [
+    `To: ${to}`,
+    `Subject: ${utf8Subject}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    'MIME-Version: 1.0',
+    '',
+    body,
+  ].join('\r\n');
+}
+
+export interface CreateGmailDraftInput {
+  to?: unknown;
+  subject?: unknown;
+  body?: unknown;
+}
+
+export async function createGmailDraft(
+  input: CreateGmailDraftInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; messageId: string }> {
+  const to = typeof input.to === 'string' ? input.to.trim() : '';
+  const subject = typeof input.subject === 'string' ? input.subject : '';
+  if (!to || !subject) throw new Error('to と subject は必須です');
+  const raw = utf8ToBase64Url(buildRfc2822(to, subject, typeof input.body === 'string' ? input.body : ''));
+  const res = await transport('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: { raw } }),
+  });
+  await ensureOk(res, 'Gmail API');
+  const data = (await res.json()) as { id: string; message: { id: string } };
+  return { id: data.id, messageId: data.message.id };
+}
+
+// --- Google Drive: create-folder (OAuth, CORS → プロキシ) -----------------
+
+export interface CreateDriveFolderInput {
+  name?: unknown;
+  parentId?: unknown;
+}
+
+export async function createDriveFolder(
+  input: CreateDriveFolderInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; name: string; url: string }> {
+  const name = typeof input.name === 'string' ? input.name.trim() : '';
+  if (!name) throw new Error('name は必須です');
+  const parentId = typeof input.parentId === 'string' ? input.parentId : undefined;
+  const res = await transport('https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name,
+      mimeType: 'application/vnd.google-apps.folder',
+      ...(parentId ? { parents: [parentId] } : {}),
+    }),
+  });
+  await ensureOk(res, 'Drive API');
+  const data = (await res.json()) as { id: string; name: string; webViewLink?: string };
+  return { id: data.id, name: data.name, url: data.webViewLink ?? `https://drive.google.com/drive/folders/${data.id}` };
+}
+
+// --- WordPress.com: create-post-draft (Bearer, CORS → プロキシ) -----------
+
+export interface CreateWordPressPostInput {
+  siteId?: unknown;
+  title?: unknown;
+  content?: unknown;
+  status?: unknown;
+}
+
+export async function createWordPressPostDraft(
+  input: CreateWordPressPostInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: number; url: string; title: string }> {
+  const siteId = typeof input.siteId === 'string' ? input.siteId.trim() : '';
+  const title = typeof input.title === 'string' ? input.title.trim() : '';
+  if (!siteId || !title) throw new Error('siteId と title は必須です');
+  const allowed = new Set(['draft', 'publish', 'pending', 'private']);
+  const status = typeof input.status === 'string' && allowed.has(input.status) ? input.status : 'draft';
+  const res = await transport(
+    `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content: typeof input.content === 'string' ? input.content : '', status }),
+    },
+  );
+  await ensureOk(res, 'WordPress API');
+  const data = (await res.json()) as { ID: number; URL: string; title: string };
+  return { id: data.ID, url: data.URL, title: data.title };
+}
+
+// --- Canva: create-folder (Bearer, CORS → プロキシ) -----------------------
+
+export interface CreateCanvaFolderInput {
+  name?: unknown;
+  parentFolderId?: unknown;
+}
+
+export async function createCanvaFolder(
+  input: CreateCanvaFolderInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; name: string }> {
+  const name = typeof input.name === 'string' ? input.name.trim() : '';
+  if (!name) throw new Error('name は必須です');
+  const parentFolderId = typeof input.parentFolderId === 'string' && input.parentFolderId.length > 0 ? input.parentFolderId : 'root';
+  const res = await transport('https://api.canva.com/rest/v1/folders', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, parent_folder_id: parentFolderId }),
+  });
+  await ensureOk(res, 'Canva API');
+  const data = (await res.json()) as { folder: { id: string; name: string } };
+  return { id: data.folder.id, name: data.folder.name };
+}
+
+// --- Cloudflare: create-dns-record / purge-cache (Bearer, CORS → プロキシ) -
+
+const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
+
+interface CfWrap<T> {
+  success: boolean;
+  errors?: { message: string }[];
+  result: T;
+}
+
+function cfUnwrap<T>(payload: CfWrap<T>): T {
+  if (!payload.success) {
+    throw new Error(`Cloudflare: ${payload.errors?.[0]?.message ?? 'unknown error'}`);
+  }
+  return payload.result;
+}
+
+export interface CreateCfDnsRecordInput {
+  zoneId?: unknown;
+  type?: unknown;
+  name?: unknown;
+  content?: unknown;
+  ttl?: unknown;
+  proxied?: unknown;
+}
+
+export async function createCloudflareDnsRecord(
+  input: CreateCfDnsRecordInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; name: string; type: string }> {
+  const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
+  const type = typeof input.type === 'string' ? input.type : '';
+  const name = typeof input.name === 'string' ? input.name.trim() : '';
+  const content = typeof input.content === 'string' ? input.content.trim() : '';
+  if (!zoneId || !type || !name || !content) throw new Error('zoneId, type, name, content は必須です');
+  const body: Record<string, unknown> = { type, name, content, ttl: typeof input.ttl === 'number' ? input.ttl : 1 };
+  if (type === 'A' || type === 'AAAA' || type === 'CNAME') body.proxied = input.proxied === true;
+  const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/dns_records`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  await ensureOk(res, 'Cloudflare API');
+  const record = cfUnwrap((await res.json()) as CfWrap<{ id: string; name: string; type: string }>);
+  return { id: record.id, name: record.name, type: record.type };
+}
+
+export interface PurgeCfCacheInput {
+  zoneId?: unknown;
+  files?: unknown;
+  purgeEverything?: unknown;
+}
+
+export async function purgeCloudflareCache(
+  input: PurgeCfCacheInput,
+  token: string,
+  transport: Transport,
+): Promise<{ id: string; purged: 'all' | number }> {
+  const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
+  if (!zoneId) throw new Error('zoneId は必須です');
+  const purgeEverything = input.purgeEverything === true;
+  const files = Array.isArray(input.files) ? input.files.filter((f): f is string => typeof f === 'string') : [];
+  if (!purgeEverything && files.length === 0) {
+    throw new Error('purgeEverything=true か、空でない files[] のいずれかが必要です');
+  }
+  const body = purgeEverything ? { purge_everything: true } : { files };
+  const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/purge_cache`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  await ensureOk(res, 'Cloudflare API');
+  const result = cfUnwrap((await res.json()) as CfWrap<{ id: string }>);
+  return { id: result.id, purged: purgeEverything ? 'all' : files.length };
+}
