@@ -29,6 +29,9 @@ describe('isSafeSymbol', () => {
     expect(isSafeSymbol(123)).toBe(false);
     expect(isSafeSymbol(null)).toBe(false);
   });
+  it('accepts exactly 16 chars (upper length boundary)', () => {
+    expect(isSafeSymbol('A'.repeat(16))).toBe(true);
+  });
 });
 
 describe('registerSymbol', () => {
@@ -60,6 +63,12 @@ describe('registerSymbol', () => {
     expect(() => registerSymbol('bad symbol')).toThrow(/symbol must be/);
     expect(loadWatchlistSymbols()).toEqual([]);
   });
+
+  it('reports the added vs already-present message with the running count', () => {
+    expect(registerSymbol('AAPL').message).toBe('AAPL をウォッチリストに追加しました (計 1 件)');
+    expect(registerSymbol('AAPL').message).toBe('AAPL は既にウォッチリストにあります (計 1 件)');
+    expect(registerSymbol('MSFT').message).toBe('MSFT をウォッチリストに追加しました (計 2 件)');
+  });
 });
 
 describe('unregisterSymbol', () => {
@@ -81,6 +90,13 @@ describe('unregisterSymbol', () => {
 
   it('throws on an invalid symbol', () => {
     expect(() => unregisterSymbol('x'.repeat(20))).toThrow(/symbol must be/);
+  });
+
+  it('reports the removed vs absent message with the running count', () => {
+    registerSymbol('AAPL');
+    registerSymbol('MSFT');
+    expect(unregisterSymbol('AAPL').message).toBe('AAPL をウォッチリストから削除しました (計 1 件)');
+    expect(unregisterSymbol('AAPL').message).toBe('AAPL はウォッチリストにありません');
   });
 });
 
@@ -117,6 +133,20 @@ describe('mockCandles', () => {
     }
     expect(candles[candles.length - 1]!.date).toBe('2026-01-31');
   });
+  it('matches a golden 3-candle series (pins seed, PRNG, OHLCV formulas)', () => {
+    expect(mockCandles('AAPL', NOW, 3)).toEqual([
+      { date: '2026-01-29', open: 920, high: 923.85, low: 911.62, close: 922.46, volume: 515433 },
+      { date: '2026-01-30', open: 922.46, high: 930.1, low: 909.59, close: 912.15, volume: 205335 },
+      { date: '2026-01-31', open: 912.15, high: 912.51, low: 895.44, close: 904.03, volume: 269705 },
+    ]);
+  });
+  it('spans the date range and clamps periods to a positive integer', () => {
+    const c30 = mockCandles('AAPL', NOW, 30);
+    expect(c30[0]!.date).toBe('2026-01-02'); // now − 29 日
+    expect(c30[29]!.date).toBe('2026-01-31');
+    expect(mockCandles('AAPL', NOW, 0)).toHaveLength(1); // Math.max(1, …)
+    expect(mockCandles('AAPL', NOW, 2.9)).toHaveLength(2); // Math.floor
+  });
 });
 
 describe('buildWatchlistItem', () => {
@@ -131,6 +161,17 @@ describe('buildWatchlistItem', () => {
     expect(['buy', 'sell', 'hold']).toContain(item.signal.action);
     expect(item.signal.strategy).toBe('browser-mock');
     expect(item.candles).toHaveLength(30);
+  });
+  it('maps changePct to buy/sell/hold at the ±1% thresholds', () => {
+    // 決定論的なモックの changePct: AAPL=-1.75(sell) / INTC=+1.45(buy) / META=-1.0(境界=hold)
+    const sell = buildWatchlistItem('AAPL', NOW);
+    expect([sell.changePct, sell.signal.action]).toEqual([-1.75, 'sell']);
+    const buy = buildWatchlistItem('INTC', NOW);
+    expect([buy.changePct, buy.signal.action]).toEqual([1.45, 'buy']);
+    const hold = buildWatchlistItem('META', NOW);
+    expect([hold.changePct, hold.signal.action]).toEqual([-1, 'hold']); // -1 は < -1 でないため hold
+    expect(sell.signal.confidence).toBe(0.5);
+    expect(sell.signal.reason).toMatch(/モックデータ/);
   });
 });
 
