@@ -249,12 +249,16 @@ function Sideboard({
   selected,
   onSelect,
   aggregateRevenue,
+  foodDeliveryRevenue,
 }: {
   units: readonly BusinessUnit[];
   selected: string | 'all';
   onSelect: (id: string | 'all') => void;
   aggregateRevenue: number;
+  /** フードデリバリーの月次推計売上 (カテゴリ一覧 + 全カテゴリ合計に算入)。 */
+  foodDeliveryRevenue: number;
 }) {
+  const grandTotal = aggregateRevenue + foodDeliveryRevenue;
   return (
     <aside
       style={{
@@ -290,7 +294,10 @@ function Sideboard({
       >
         <div style={{ fontWeight: 600 }}>全カテゴリ</div>
         <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2 }}>
-          {yen.format(aggregateRevenue)} / 月
+          {yen.format(grandTotal)} / 月
+        </div>
+        <div style={{ fontSize: 9, color: 'var(--text-mute)', marginTop: 1 }}>
+          事業 {yen.format(aggregateRevenue)} + デリバリー {yen.format(foodDeliveryRevenue)}
         </div>
       </button>
       {units.map((u) => {
@@ -328,6 +335,32 @@ function Sideboard({
           </button>
         );
       })}
+      {/* フードデリバリーは事業ダッシュボードに統合したカテゴリ。詳細は下部の
+          フードデリバリーセクション参照のため、ここは情報表示 (フィルタ対象外)。 */}
+      <div
+        style={{
+          textAlign: 'left',
+          padding: '6px 10px',
+          background: 'var(--bg-elev)',
+          border: '1px dashed var(--border)',
+          borderRadius: 6,
+          color: 'var(--text)',
+          fontSize: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          marginTop: 4,
+        }}
+        title="Uber Eats / 出前館 を統合したカテゴリ (詳細は下部のフードデリバリーセクション)"
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <span style={{ fontWeight: 600 }}>🍔 フードデリバリー</span>
+          <span style={{ fontSize: 9, color: 'var(--text-mute)' }}>統合</span>
+        </div>
+        <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
+          {yen.format(foodDeliveryRevenue)} / 月（推計）
+        </div>
+      </div>
     </aside>
   );
 }
@@ -736,6 +769,13 @@ export function BusinessPage() {
   );
 
   const agg = data.aggregate;
+  // フードデリバリー (Uber Eats / 出前館) の月次推計売上。事業カテゴリ一覧と
+  // 全社合算に算入する。CrossServiceKpis と同一の summarizeFoodDelivery を使い
+  // 算定方法 (週次×52/12 + 月次) を統一する。
+  const foodRevenue = useMemo(
+    () => summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan).combinedMonthlyEstimate.revenue,
+    [],
+  );
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -773,11 +813,22 @@ export function BusinessPage() {
           selected={selectedCategory}
           onSelect={setSelectedCategory}
           aggregateRevenue={agg.revenue}
+          foodDeliveryRevenue={foodRevenue}
         />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
       <Section title="全社合算" count={data.units.length}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Tile label="月次売上 (8 事業合計)" value={yen.format(agg.revenue)} />
+          <Tile label="月次売上 (事業合計)" value={yen.format(agg.revenue)} />
+          <Tile
+            label="＋ フードデリバリー (月次推計)"
+            value={yen.format(foodRevenue)}
+            sub="Uber Eats 週次×52/12 + 出前館"
+          />
+          <Tile
+            label="総売上 (事業 + デリバリー)"
+            value={yen.format(agg.revenue + foodRevenue)}
+            accent="var(--accent)"
+          />
           <Tile label="月次費用" value={yen.format(agg.totalCost)} />
           <Tile
             label="月次利益"
@@ -1114,10 +1165,10 @@ function CrossServiceKpis() {
   ];
   const shigyoMonthlyFeeTotal = sumShigyoMonthlyFees(shigyoSnapshots);
 
-  // フードデリバリー: Uber Eats 週次 × 4 + 出前館 月次 ≈ 月次売上の推計。
+  // フードデリバリー: summarizeFoodDelivery と算定方法を統一 (週次×52/12 + 月次)。
   // 売上は非負のはず。異常データ (負の revenue) でも KPI が負に振れないよう
   // 0 でクランプする (防御的; live データ不整合への耐性)。
-  const monthlyFoodDelivery = Math.max(0, ue.weekRevenue * 4 + dc.monthSummary.revenue);
+  const monthlyFoodDelivery = Math.max(0, summarizeFoodDelivery(ue, dc).combinedMonthlyEstimate.revenue);
   // 月次キャッシュフロー (不動産のみ実 CF が算出済)。赤字 CF を表現するため
   // ここは負値を許容する。
   const monthlyCashflow = re.monthlyCashflow.netCashflow;
