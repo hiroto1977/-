@@ -11,7 +11,8 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
-import { ratiosToCsv } from '../data/financialCsv';
+import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
+import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
@@ -195,11 +196,31 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
 const GRADE_COLOR: Record<HealthGrade, string> = { S: '#43c3b8', A: '#5cb85c', B: '#5b8def', C: '#ec9a3d', D: '#e36b6b' };
 const LEVEL_COLOR: Record<HealthLevel, string> = { good: '#5cb85c', warn: '#ec9a3d', bad: '#e36b6b' };
 
-function DiagnosisCard({ diagnosis, label }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string }) {
+const TREND_META: Record<MarginTrend['direction'], { icon: string; text: string; color: string }> = {
+  up: { icon: '▲', text: '改善傾向', color: '#5cb85c' },
+  flat: { icon: '▶', text: '横ばい', color: '#94a3b8' },
+  down: { icon: '▼', text: '悪化傾向', color: '#e36b6b' },
+};
+
+function TrendBadge({ trend }: { trend: MarginTrend }) {
+  const m = TREND_META[trend.direction];
+  const delta = trend.deltaPct == null ? '—' : `${trend.deltaPct > 0 ? '+' : ''}${trend.deltaPct}pt`;
+  return (
+    <span style={{ fontSize: 12, color: m.color, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+      {m.icon} 営業利益率 {m.text}
+      <span style={{ color: 'var(--text-mute)', fontWeight: 400 }}>（履歴 {delta}）</span>
+    </span>
+  );
+}
+
+function DiagnosisCard({ diagnosis, label, trend }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend }) {
   const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
   return (
     <div style={cardStyle}>
-      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🩺 {label} の財務健全度 総合診断</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+        <div style={{ fontSize: 13, fontWeight: 700 }}>🩺 {label} の財務健全度 総合診断</div>
+        <TrendBadge trend={trend} />
+      </div>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <span style={{ fontSize: 40, fontWeight: 800, color: GRADE_COLOR[grade], lineHeight: 1 }}>{grade}</span>
@@ -278,6 +299,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const stmtLabel = consolidated ? '連結（全事業合算）' : `${selected.unit.label}・単体`;
   const axes = radarAxes(selected.ratios);
   const diagnosis = diagnoseFinancials(axes);
+  const trend = analyzeMarginTrend(selected.unit.history);
   const marginHistory = selected.unit.history.map((h) => (h.revenue > 0 ? Math.round((h.profit / h.revenue) * 1000) / 10 : 0));
   const otherCost = Math.max(0, fin.revenue - fin.cogs - fin.laborCost - fin.operatingProfit);
   const pieSlices = [
@@ -289,15 +311,36 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const barOpt = BAR_OPTIONS.find((b) => b.key === barKey)!;
   const barRows = perUnit.map((p) => ({ label: p.unit.label, value: p.ratios[barKey] as number | null }));
 
-  function onExportCsv() {
-    const csv = ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios })));
+  function downloadCsv(csv: string, name: string) {
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = name;
     a.click();
     URL.revokeObjectURL(url);
+  }
+  function onExportCsv() {
+    downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+  // 現在表示中の諸表タブのライン項目 (BS は資産+負債純資産を連結) を返す。
+  function currentStatementLines(): StatementLine[] {
+    switch (stmtTab) {
+      case 'pl': return buildIncomeStatement(stmtFin);
+      case 'bs': { const bs = buildBalanceSheet(stmtFin); return [...bs.assets, ...bs.liabilitiesEquity]; }
+      case 'cf': return buildCashflowStatement(stmtFin);
+      case 'var': return buildVariableCostingStatement(stmtFin);
+      case 'ci': return buildComprehensiveIncome(stmtFin);
+      case 'soce': return buildEquityChangeStatement(stmtFin);
+      case 'quarter': return buildQuarterlyStatement(stmtHistory);
+      case 'notes': return buildNotesStatement(stmtFin);
+      case 'suppl': return buildSupplementarySchedule(stmtFin);
+      case 'breakdown': return buildAccountBreakdown(stmtFin);
+    }
+  }
+  function onExportStatement() {
+    const scope = consolidated ? 'consolidated' : selected!.unit.id;
+    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${scope}-${new Date().toISOString().slice(0, 10)}.csv`);
   }
 
   return (
@@ -310,7 +353,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
       </div>
 
-      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} />
+      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         <div style={cardStyle}>
@@ -371,6 +414,9 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
             <input type="checkbox" checked={consolidated} onChange={(e) => setConsolidated(e.target.checked)} />
             連結（全事業合算）で表示
           </label>
+          <button onClick={onExportStatement} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+            ⬇ この諸表をCSV
+          </button>
         </div>
         {stmtTab === 'pl' && <StatementTable lines={buildIncomeStatement(stmtFin)} />}
         {stmtTab === 'bs' && (
