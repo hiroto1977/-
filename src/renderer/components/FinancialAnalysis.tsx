@@ -10,6 +10,7 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
+import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
@@ -189,6 +190,54 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
   );
 }
 
+// --- 総合診断 -----------------------------------------------------------
+const GRADE_COLOR: Record<HealthGrade, string> = { S: '#43c3b8', A: '#5cb85c', B: '#5b8def', C: '#ec9a3d', D: '#e36b6b' };
+const LEVEL_COLOR: Record<HealthLevel, string> = { good: '#5cb85c', warn: '#ec9a3d', bad: '#e36b6b' };
+
+function DiagnosisCard({ diagnosis, label }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string }) {
+  const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
+  return (
+    <div style={cardStyle}>
+      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🩺 {label} の財務健全度 総合診断</div>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <span style={{ fontSize: 40, fontWeight: 800, color: GRADE_COLOR[grade], lineHeight: 1 }}>{grade}</span>
+          <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>総合 {overallScore}<span style={{ fontSize: 11 }}>/100</span></span>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          {categories.map((c) => (
+            <div key={c.category} style={{ minWidth: 96 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>{c.category} {c.score}</div>
+              <div style={{ background: 'var(--bg)', borderRadius: 3, height: 8 }}>
+                <div style={{ width: `${c.score}%`, height: '100%', background: c.score >= 70 ? LEVEL_COLOR.good : c.score >= 45 ? LEVEL_COLOR.warn : LEVEL_COLOR.bad, borderRadius: 3 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 16, marginTop: 12 }}>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4, color: LEVEL_COLOR.good }}>👍 強み</div>
+          {strengths.length === 0 ? <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>—</div> : strengths.map((s) => (
+            <div key={s.key} style={{ fontSize: 12, padding: '2px 0' }}>{s.label}（{s.score}）</div>
+          ))}
+        </div>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4, color: LEVEL_COLOR.bad }}>⚠️ 要改善（一般情報）</div>
+          {weaknesses.length === 0 ? <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>特に大きな弱みはありません。</div> : weaknesses.map((w) => (
+            <div key={w.key} style={{ fontSize: 12, padding: '2px 0' }}>
+              <span style={{ color: LEVEL_COLOR[w.level], fontWeight: 700 }}>● </span>{w.comment}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
+        ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均。コメントは一般情報であり財務助言ではありません。
+      </div>
+    </div>
+  );
+}
+
 export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
@@ -227,6 +276,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const stmtHistory = consolidated ? consolidatedHistory : selected.unit.history;
   const stmtLabel = consolidated ? '連結（全事業合算）' : `${selected.unit.label}・単体`;
   const axes = radarAxes(selected.ratios);
+  const diagnosis = diagnoseFinancials(axes);
   const marginHistory = selected.unit.history.map((h) => (h.revenue > 0 ? Math.round((h.profit / h.revenue) * 1000) / 10 : 0));
   const otherCost = Math.max(0, fin.revenue - fin.cogs - fin.laborCost - fin.operatingProfit);
   const pieSlices = [
@@ -247,6 +297,8 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
         </select>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
       </div>
+
+      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         <div style={cardStyle}>
