@@ -25,6 +25,11 @@
  *                              → persist the watchlist in localStorage;
  *                                fetchSnapshot('stocks') then synthesizes a
  *                                (mock-priced) snapshot from it
+ *   - invoke('stocks', 'compare-strategies' | 'advise' | 'export-dashboard'
+ *            | 'export-dashboard-md', …)
+ *                              → run technical analysis / backtest on mock
+ *                                candles client-side; advise calls Anthropic
+ *                                directly with the Vault-stored key
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -39,7 +44,20 @@ import {
   registerSymbol,
   unregisterSymbol,
   buildStocksSnapshot,
+  loadWatchlistSymbols,
 } from './data/stocksWatchlistWeb';
+import {
+  compareStrategies,
+  buildAnalysesForUniverse,
+  advisorSystemPrompt as stockAdvisorSystemPrompt,
+  validateAdvisorJson as validateStockAdvisorJson,
+  renderDashboardHtml as renderStockDashboardHtml,
+  renderDashboardMarkdown as renderStockDashboardMarkdown,
+  ADVISOR_DISCLAIMER as STOCK_ADVISOR_DISCLAIMER,
+  DEFAULT_ADVISOR_UNIVERSE,
+  type StrategyComparisonResult,
+  type AdvisorResponse,
+} from './data/stocksAnalysisWeb';
 
 const vault = getVault();
 const library = getLibrary();
@@ -271,6 +289,84 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   });
 }
 
+// --- Anthropic Stocks advisor (browser-direct) ------------------------
+// stocks/advise: ウォッチリスト(空なら既定ユニバース)のティッカーをモック
+// 指標で分析し、Anthropic に投げてランク提案を得る。投資助言ではない旨を
+// system prompt で制約し、固定の免責を必ず付ける。
+async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const question = payload['question'];
+  if (typeof question !== 'string' || question.length === 0) return err('action_failed', '質問を入力してください');
+  if (question.length > 1000) return err('action_failed', '質問が長すぎます (1000 字以内)');
+  if (/[\r\n\0]/.test(question)) return err('action_failed', '質問に改行・制御文字を含めることはできません');
+
+  let apiKey: string | null = null;
+  try {
+    apiKey = await vault.getToken('anthropic');
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+
+  // ユニバース = 登録ウォッチリスト。空なら既定の主要銘柄。
+  const watch = loadWatchlistSymbols();
+  const universe = watch.length > 0 ? watch.slice(0, 25) : [...DEFAULT_ADVISOR_UNIVERSE];
+  const allowed = new Set<string>(universe);
+  const analyses = buildAnalysesForUniverse(universe);
+
+  const systemPrompt = stockAdvisorSystemPrompt(universe);
+  const userPrompt = [
+    'ユーザーの質問: ' + question,
+    '',
+    'テクニカル分析データ (JSON):',
+    JSON.stringify(analyses),
+  ].join('\n');
+
+  let res: Response;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+  } catch (e) {
+    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+  }
+  let parsed: { content?: { type: string; text?: string }[] };
+  try {
+    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+  } catch {
+    return err('action_failed', 'API 応答が JSON ではありません');
+  }
+  const text = parsed.content?.find((b) => b.type === 'text')?.text;
+  if (typeof text !== 'string' || text.length === 0) return err('action_failed', 'API 応答にテキストブロックがありません');
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    return err('action_failed', 'API 応答の中身が JSON 形式ではありません');
+  }
+  try {
+    const recommendations = validateStockAdvisorJson(json, allowed);
+    return ok({ recommendations, disclaimer: STOCK_ADVISOR_DISCLAIMER, notForRealMoney: true });
+  } catch (e) {
+    return err('action_failed', '検証エラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+}
+
 interface SnapshotBusinessUnit {
   id: string;
   label: string;
@@ -440,6 +536,57 @@ const shim = {
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
+    }
+
+    // Stocks 戦略比較: モック履歴で全戦略をバックテストして比較する。
+    if (serviceId === 'stocks' && action === 'compare-strategies') {
+      try {
+        const p = payload as { symbol?: unknown; initialCash?: unknown };
+        const symbol = typeof p.symbol === 'string' ? p.symbol.trim() : '';
+        if (!/^[A-Za-z0-9.\-^]{1,16}$/.test(symbol)) {
+          return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+        }
+        const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
+        if (!Number.isFinite(initialCash) || initialCash <= 0) {
+          return err('action_failed', 'initialCash must be a positive finite number');
+        }
+        return ok(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Stocks アドバイザー (Anthropic) — ブラウザから直接呼び出す。
+    if (serviceId === 'stocks' && action === 'advise') {
+      return (await callStocksAdvisor(payload)) as ActionResult<T>;
+    }
+
+    // Stocks ダッシュボード書き出し: ウォッチリスト + (任意で) 比較/助言結果を
+    // HTML / Markdown にして Library 保存 + ダウンロード。
+    if (serviceId === 'stocks' && (action === 'export-dashboard' || action === 'export-dashboard-md')) {
+      const isMd = action === 'export-dashboard-md';
+      const snap = buildStocksSnapshot();
+      const p = payload as {
+        advisorResult?: unknown;
+        strategyComparison?: unknown;
+      };
+      const input = {
+        watchlist: snap.watchlist.map((w) => ({
+          symbol: w.symbol,
+          label: w.label,
+          latestClose: w.latestClose,
+          changePct: w.changePct,
+        })),
+        strategyComparison: (p.strategyComparison as StrategyComparisonResult | undefined) ?? null,
+        advisor: (p.advisorResult as AdvisorResponse | undefined) ?? null,
+        generatedAt: new Date().toISOString(),
+      };
+      const content = isMd ? renderStockDashboardMarkdown(input) : renderStockDashboardHtml(input);
+      const ext = isMd ? '.md' : '.html';
+      const filename = 'stocks-dashboard-' + Date.now() + ext;
+      await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
+      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt }) as ActionResult<T>;
     }
 
     // Business advisor (Anthropic) — direct browser call with Vault-stored key.

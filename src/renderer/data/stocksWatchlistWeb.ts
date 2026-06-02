@@ -188,12 +188,19 @@ function isoDaysAgo(daysAgo: number, now: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** シンボルに対する決定論的なモック・ローソク足 (ランダムウォーク)。 */
-export function mockCandles(symbol: string, now: number = Date.now()): WebCandle[] {
+/** シンボルに対する決定論的なモック・ローソク足 (ランダムウォーク)。
+ *  `periods` 本生成する (既定 30: ウォッチリストのスパークライン用)。
+ *  バックテスト等はより長い履歴 (例 120) を要求する。 */
+export function mockCandles(
+  symbol: string,
+  now: number = Date.now(),
+  periods: number = MOCK_DAYS,
+): WebCandle[] {
+  const n = Math.max(1, Math.floor(periods));
   const rng = mulberry32(seedFromSymbol(symbol));
   let price = 80 + Math.floor(rng() * 920); // 80–999 の初期値
   const candles: WebCandle[] = [];
-  for (let i = 0; i < MOCK_DAYS; i++) {
+  for (let i = 0; i < n; i++) {
     const open = price;
     const drift = (rng() - 0.48) * 0.04; // おおむね ±2%
     const close = Math.max(1, round2(open * (1 + drift)));
@@ -201,7 +208,7 @@ export function mockCandles(symbol: string, now: number = Date.now()): WebCandle
     const low = round2(Math.min(open, close) * (1 - rng() * 0.01));
     const volume = 100_000 + Math.floor(rng() * 900_000);
     candles.push({
-      date: isoDaysAgo(MOCK_DAYS - 1 - i, now),
+      date: isoDaysAgo(n - 1 - i, now),
       open: round2(open),
       high,
       low,
