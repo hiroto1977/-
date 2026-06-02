@@ -16,7 +16,27 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2194 静的 / 2243 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~718 KB
+**品質メトリクス:** 2252 静的 / 2308 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~755 KB
+
+## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
+
+事業別の概算財務を起点に、15指標 → 4チャート → 12財務諸表 → 総合診断 → エクスポート まで
+**同一の `FinancialInputs` に連動**する一気通貫システム。すべて純粋ロジック + ユニットテスト付き。
+**全て「概算であり財務助言ではありません」を明記** (士業法の制約: 試算+一般情報のみ)。
+
+- `data/businessFinancials.ts` — `deriveBusinessFinancials(月次KPI)` が年次 `FinancialInputs` を概算生成
+  (PL×12 / BS は売上スケール + 自己資本比率を収益性で15–65%変動 / CF簡易間接法)。事業別BSデータが
+  無いための案A (概算導出)。
+- `data/financialRatios.ts` — `computeFinancialRatios` (15指標, 分母0→null) + `radarAxes` (0-100正規化, 健全度ベンチマーク)。
+- `data/financialStatements.ts` — 12諸表ビルダー (PL/BS/CF/変動損益/包括利益/株主資本変動/四半期/個別注記/附属明細/勘定科目内訳) + `sumFinancialInputs` (連結=単純合算)。
+- `data/financialDiagnosis.ts` — `diagnoseFinancials(axes)` 格付けS–D + 安全性/収益性/効率性 + 強み/弱み。
+- `data/financialTrend.ts` — `analyzeMarginTrend(history)` 改善/横ばい/悪化 (履歴8期のためYoY不可→先頭→末尾pt差)。
+- `data/financialCsv.ts` — `ratiosToCsv` (全事業×17指標) / `statementToCsv` (諸表)。`data/csv.ts` の `toCsv` 再利用。
+- `data/financialReport.ts` — `buildFinancialReportMarkdown` 診断+指標+トレンドを1枚のMarkdownレポートに。
+- `components/FinancialAnalysis.tsx` — 上記を束ねるUI (対象事業セレクタ / 連結トグル / 各種CSV・レポートDLボタン)。
+  `OverviewPage` が `SNAPSHOT.business.units` を `FinancialUnit[]` にマップして渡す。
+- 罠: 諸表/診断は同一データ連動のため、指標式を変えると諸表・診断・テスト期待値も連動して更新が要る。
+  CSV DL は KpiPage と同じ BOM付き Blob+anchor。`financePages.render.test.ts` が描画クラッシュを回帰検出。
 
 ## ブラウザ版 (standalone.html) の機能カバレッジ
 
