@@ -160,3 +160,90 @@ export async function sendSlackMessage(
   if (!data.ok) throw new Error(`Slack: ${data.error ?? 'unknown_error'}`);
   return { ts: data.ts ?? '', channel: data.channel ?? channel };
 }
+
+// --- Atlassian (Jira): create-issue (CORS ブロック → プロキシ経由) ---------
+// トークンは {email, token, site} の JSON。ブラウザでは btoa で Basic 認証。
+
+const MAX_ATLASSIAN_EMAIL = 254;
+
+interface AtlassianCreds {
+  email: string;
+  token: string;
+  site: string;
+}
+
+/** Vault に保存された Atlassian トークン JSON を検証して取り出す。 */
+export function parseAtlassianToken(raw: string): AtlassianCreds {
+  let obj: { email?: unknown; token?: unknown; site?: unknown };
+  try {
+    obj = JSON.parse(raw) as typeof obj;
+  } catch {
+    throw new Error('Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください');
+  }
+  if (
+    typeof obj.email !== 'string' || obj.email.length === 0 || obj.email.length > MAX_ATLASSIAN_EMAIL ||
+    typeof obj.token !== 'string' || obj.token.length === 0 ||
+    typeof obj.site !== 'string' || obj.site.length === 0
+  ) {
+    throw new Error('Atlassian トークンの email / token / site が欠けているか不正です');
+  }
+  if (/[\r\n\0]/.test(obj.email) || /[\r\n\0]/.test(obj.token)) {
+    throw new Error('Atlassian の email / token に制御文字を含めることはできません');
+  }
+  let site: URL;
+  try {
+    site = new URL(obj.site);
+  } catch {
+    throw new Error('Atlassian の site は https URL で指定してください');
+  }
+  if (site.protocol !== 'https:') throw new Error('Atlassian の site は https のみ対応');
+  return { email: obj.email, token: obj.token, site: obj.site.replace(/\/+$/, '') };
+}
+
+export interface CreateAtlassianIssueInput {
+  projectKey?: unknown;
+  summary?: unknown;
+  description?: unknown;
+  issueType?: unknown;
+}
+
+export interface CreateAtlassianIssueResult {
+  key: string;
+  url: string;
+}
+
+export async function createAtlassianIssue(
+  input: CreateAtlassianIssueInput,
+  tokenJson: string,
+  transport: Transport,
+): Promise<CreateAtlassianIssueResult> {
+  const creds = parseAtlassianToken(tokenJson);
+  const projectKey = typeof input.projectKey === 'string' ? input.projectKey.trim() : '';
+  const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
+  if (!projectKey || !summary) throw new Error('projectKey と summary は必須です');
+  const description = typeof input.description === 'string' ? input.description : undefined;
+  const issueType = typeof input.issueType === 'string' && input.issueType.length > 0 ? input.issueType : 'Task';
+  const descBody = description
+    ? { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: description }] }] }
+    : undefined;
+
+  const res = await transport(`${creds.site}/rest/api/3/issue`, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic ' + btoa(`${creds.email}:${creds.token}`),
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fields: {
+        project: { key: projectKey },
+        summary,
+        issuetype: { name: issueType },
+        ...(descBody ? { description: descBody } : {}),
+      },
+    }),
+  });
+  await ensureOk(res, 'Atlassian API');
+  const data = (await res.json()) as { key: string };
+  return { key: data.key, url: `${creds.site}/browse/${data.key}` };
+}

@@ -40,6 +40,7 @@
  *                              → POST api.github.com directly (CORS-enabled)
  *                                with the Vault 'github' PAT (Part ②, 外部連携)
  *   - invoke('notion', 'create-page') / invoke('slack', 'send-message')
+ *     / invoke('atlassian', 'create-issue')
  *                              → CORS-blocked: routed through the user's
  *                                proxy (network/proxy.ts) with the Vault token
  *   - other invoke calls       → return action_not_found with message
@@ -79,7 +80,7 @@ import {
   buildEmotionsSnapshot,
   ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
 } from './data/emotionsWeb';
-import { createGithubIssue, createNotionPage, sendSlackMessage, type Transport } from './data/saasWriteWeb';
+import { createGithubIssue, createNotionPage, sendSlackMessage, createAtlassianIssue, type Transport } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
@@ -757,6 +758,30 @@ const shim = {
             ? await createNotionPage(payload, token, transport)
             : await sendSlackMessage(payload, token, transport);
         return ok(data) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Atlassian create-issue: CORS ブロック → プロキシ経由。トークンは JSON。
+    if (serviceId === 'atlassian' && action === 'create-issue') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('atlassian');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) {
+        return err('not_configured', 'Atlassian のトークン (email/token/site の JSON) が未設定です');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await createAtlassianIssue(payload, token, transport)) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
