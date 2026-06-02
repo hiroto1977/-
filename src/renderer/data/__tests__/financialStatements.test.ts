@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildIncomeStatement, buildBalanceSheet, buildCashflowStatement,
   buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, sumFinancialInputs,
+  buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown,
 } from '../financialStatements';
 import { deriveBusinessFinancials } from '../businessFinancials';
 import type { FinancialInputs } from '../financialRatios';
@@ -93,6 +94,53 @@ describe('buildEquityChangeStatement', () => {
     expect(end).toBe(4_000);
     expect(beg + 800 + div).toBe(end);
     expect(div).toBe(-200); // 800 * 0.25
+  });
+});
+
+describe('buildQuarterlyStatement', () => {
+  it('aggregates monthly history into quarters and a full-year total', () => {
+    const history = Array.from({ length: 12 }, () => ({ revenue: 100, profit: 10 }));
+    const q = buildQuarterlyStatement(history);
+    // 4 四半期 → 各四半期 売上 300 / 利益 30
+    expect(amt(q, '第1四半期 (3ヶ月)')).toBe(null);
+    expect(q.filter((l) => l.label === '売上高').every((l) => l.amount === 300)).toBe(true);
+    expect(amt(q, '通期 売上高')).toBe(1_200);
+    expect(amt(q, '通期 利益')).toBe(120);
+    expect(q.find((l) => l.label === '通期 利益率')?.display).toBe('10.0%');
+  });
+  it('handles empty history', () => {
+    expect(buildQuarterlyStatement([])[0]?.label).toBe('履歴データがありません');
+  });
+});
+
+describe('buildNotesStatement', () => {
+  it('exposes accounting policy notes and balance-sheet figures', () => {
+    const n = buildNotesStatement(F);
+    expect(n.find((l) => l.label === '固定資産の減価償却の方法')?.display).toBe('定額法（概算）');
+    expect(amt(n, '有利子負債の額')).toBe(4_000);
+    expect(amt(n, '販管費に含まれる人件費')).toBe(3_000);
+  });
+});
+
+describe('buildSupplementarySchedule', () => {
+  it('breaks debt into short/long term summing to interest-bearing debt', () => {
+    const s = buildSupplementarySchedule(F);
+    const short = amt(s, '短期借入金')!; // 2500 * 0.3 = 750
+    const long = amt(s, '長期借入金')!; // 4000 - 750 = 3250
+    expect(short).toBe(750);
+    expect(long).toBe(3_250);
+    expect(amt(s, '有利子負債 合計')).toBe(4_000);
+    expect(amt(s, '有形固定資産（期末残高）')).toBe(5_000);
+  });
+});
+
+describe('buildAccountBreakdown', () => {
+  it('lists major account balances', () => {
+    const b = buildAccountBreakdown(F);
+    expect(amt(b, '現預金（概算）')).toBe(2_000); // 5000 - 2000 - 1000
+    expect(amt(b, '売掛金 期末残高')).toBe(2_000);
+    expect(amt(b, '買掛金 期末残高')).toBe(1_500);
+    expect(amt(b, '短期借入金')).toBe(750);
   });
 });
 
