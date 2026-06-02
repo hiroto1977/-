@@ -56,6 +56,22 @@ describe('createGithubIssue', () => {
     expect(fetchFn).not.toHaveBeenCalled();
   });
 
+  it('requires every one of owner / repo / title (each alone is insufficient)', async () => {
+    const fetchFn = vi.fn<typeof fetch>();
+    // それぞれ1項目だけ欠けても必ず弾く (|| を && に変えると素通りするケースを検出)。
+    await expect(createGithubIssue({ owner: 'o', title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/); // repo 欠落
+    await expect(createGithubIssue({ repo: 'r', title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/); // owner 欠落
+    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: '   ' }, 'tok', fetchFn)).rejects.toThrow(/必須/); // 空白のみ title
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
+  it('rejects non-string required fields (typeof guard)', async () => {
+    const fetchFn = vi.fn<typeof fetch>();
+    await expect(createGithubIssue({ owner: 123, repo: 'r', title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/);
+    await expect(createGithubIssue({ owner: 'o', repo: {}, title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/);
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
   it('surfaces API errors with status and body excerpt', async () => {
     const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(422, { message: 'Validation Failed' }));
     await expect(

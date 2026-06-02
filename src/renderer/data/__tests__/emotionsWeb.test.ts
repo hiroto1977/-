@@ -39,10 +39,28 @@ describe('logMood', () => {
     const r = logMood({ score: 3 }, NOW);
     expect(r.date).toBe('2026-01-31');
   });
+  it('falls back to today for a malformed date string', () => {
+    expect(logMood({ score: 3, date: '2026-1-1' }, NOW).date).toBe('2026-01-31');
+    expect(logMood({ score: 3, date: 'not-a-date' }, NOW).date).toBe('2026-01-31');
+    expect(logMood({ score: 3, date: 12345 }, NOW).date).toBe('2026-01-31');
+  });
+  it('keeps a well-formed explicit date verbatim', () => {
+    expect(logMood({ score: 3, date: '2025-12-25' }, NOW).date).toBe('2025-12-25');
+  });
   it('keeps moods sorted by date', () => {
     logMood({ score: 3, date: '2026-02-02' });
     logMood({ score: 3, date: '2026-01-01' });
     expect(loadStore().moods.map((m) => m.date)).toEqual(['2026-01-01', '2026-02-02']);
+  });
+  it('caps stored moods at the maximum, dropping the oldest', () => {
+    // 370 distinct days → 上限 365 に切り詰められ、最古が落ちる。
+    for (let i = 0; i < 370; i++) {
+      const d = new Date(Date.UTC(2025, 0, 1) + i * 86_400_000).toISOString().slice(0, 10);
+      logMood({ score: 3, date: d });
+    }
+    const moods = loadStore().moods;
+    expect(moods).toHaveLength(365);
+    expect(moods[0]!.date).toBe('2025-01-06'); // 最初の5日が落ちる
   });
 });
 
@@ -62,6 +80,22 @@ describe('clearHistory', () => {
     clearHistory('all');
     const s = loadStore();
     expect(s.moods).toEqual([]);
+    expect(s.analyses).toEqual([]);
+  });
+  it('clears only moods when kind=moods (analyses kept)', () => {
+    logMood({ score: 3, date: '2026-01-31' });
+    recordAnalysis('hi', undefined, normalizeAnalysis({}), NOW);
+    clearHistory('moods');
+    const s = loadStore();
+    expect(s.moods).toEqual([]);
+    expect(s.analyses).toHaveLength(1);
+  });
+  it('clears only analyses when kind=analyses (moods kept)', () => {
+    logMood({ score: 3, date: '2026-01-31' });
+    recordAnalysis('hi', undefined, normalizeAnalysis({}), NOW);
+    clearHistory('analyses');
+    const s = loadStore();
+    expect(s.moods).toHaveLength(1);
     expect(s.analyses).toEqual([]);
   });
 });
@@ -90,6 +124,23 @@ describe('normalizeAnalysis', () => {
   it('returns dominant=mixed when all scores are zero', () => {
     expect(normalizeAnalysis({}).dominant).toBe('mixed');
   });
+  it('keeps an explicit negative sentiment', () => {
+    expect(normalizeAnalysis({ sentiment: 'negative' }).sentiment).toBe('negative');
+  });
+  it('coerces an unknown sentiment to neutral', () => {
+    expect(normalizeAnalysis({ sentiment: 'angry' }).sentiment).toBe('neutral');
+  });
+  it('honors an explicit valid dominant (incl. mixed) over derivation', () => {
+    // scores だけなら joy が選ばれるが、明示の有効値が優先される。
+    expect(normalizeAnalysis({ scores: { joy: 0.9 }, dominant: 'sadness' }).dominant).toBe('sadness');
+    expect(normalizeAnalysis({ scores: { joy: 0.9 }, dominant: 'mixed' }).dominant).toBe('mixed');
+  });
+  it('ignores an invalid dominant and derives from scores', () => {
+    expect(normalizeAnalysis({ scores: { fear: 0.7 }, dominant: 'love' }).dominant).toBe('fear');
+  });
+  it('breaks dominant ties by emotion order (strict >)', () => {
+    expect(normalizeAnalysis({ scores: { joy: 0.5, sadness: 0.5 } }).dominant).toBe('joy');
+  });
 });
 
 describe('recordAnalysis + buildEmotionsSnapshot', () => {
@@ -110,5 +161,11 @@ describe('recordAnalysis + buildEmotionsSnapshot', () => {
   it('ignores corrupt storage', () => {
     localStorage.setItem(EMOTIONS_STORE_KEY, '{bad');
     expect(loadStore()).toEqual({ moods: [], analyses: [] });
+  });
+  it('caps stored analyses at the maximum, keeping the newest', () => {
+    for (let i = 0; i < 55; i++) recordAnalysis(`t${i}`, undefined, normalizeAnalysis({}), NOW + i);
+    const analyses = loadStore().analyses;
+    expect(analyses).toHaveLength(50);
+    expect(analyses[0]!.excerpt).toBe('t54'); // 最新が先頭
   });
 });
