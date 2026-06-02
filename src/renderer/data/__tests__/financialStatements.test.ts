@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement } from '../financialStatements';
+import {
+  buildIncomeStatement, buildBalanceSheet, buildCashflowStatement,
+  buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, sumFinancialInputs,
+} from '../financialStatements';
 import { deriveBusinessFinancials } from '../businessFinancials';
 import type { FinancialInputs } from '../financialRatios';
 
@@ -57,6 +60,51 @@ describe('integration with deriveBusinessFinancials', () => {
   it('BS built from a derived business balances', () => {
     const f = deriveBusinessFinancials({ revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 });
     const { assets, liabilitiesEquity } = buildBalanceSheet(f);
+    expect(amt(assets, '資産合計')).toBe(amt(liabilitiesEquity, '負債・純資産合計'));
+  });
+});
+
+
+describe('buildVariableCostingStatement', () => {
+  it('computes contribution, fixed cost and BEP', () => {
+    const v = buildVariableCostingStatement(F);
+    expect(amt(v, '限界利益')).toBe(6_000); // 12000-6000
+    expect(amt(v, '固定費')).toBe(4_800); // 6000-1200
+    // BEP = fixedCost / contributionRatio = 4800 / 0.5 = 9600
+    expect(amt(v, '損益分岐点売上高')).toBe(9_600);
+    expect(v.find((l) => l.label === '限界利益率')?.display).toBe('50.0%');
+  });
+});
+
+describe('buildComprehensiveIncome', () => {
+  it('comprehensive income = net profit when OCI is 0', () => {
+    const ci = buildComprehensiveIncome(F);
+    expect(amt(ci, '当期純利益')).toBe(800);
+    expect(amt(ci, '包括利益')).toBe(800);
+  });
+});
+
+describe('buildEquityChangeStatement', () => {
+  it('rolls equity: beginning + netProfit − dividend = ending', () => {
+    const s = buildEquityChangeStatement(F, 0.25);
+    const beg = amt(s, '当期首 純資産残高')!;
+    const end = amt(s, '当期末 純資産残高')!;
+    const div = amt(s, '剰余金の配当')!; // negative
+    expect(end).toBe(4_000);
+    expect(beg + 800 + div).toBe(end);
+    expect(div).toBe(-200); // 800 * 0.25
+  });
+});
+
+describe('sumFinancialInputs (連結)', () => {
+  it('sums every field across entities', () => {
+    const a = deriveBusinessFinancials({ revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 });
+    const b = deriveBusinessFinancials({ revenue: 500_000, variableCost: 250_000, fixedCost: 150_000, profit: 50_000, profitMargin: 10 });
+    const sum = sumFinancialInputs([a, b]);
+    expect(sum.revenue).toBe(a.revenue + b.revenue);
+    expect(sum.totalAssets).toBe(a.totalAssets + b.totalAssets);
+    // 連結 BS も均衡する (各社が均衡しているため)。
+    const { assets, liabilitiesEquity } = buildBalanceSheet(sum);
     expect(amt(assets, '資産合計')).toBe(amt(liabilitiesEquity, '負債・純資産合計'));
   });
 });

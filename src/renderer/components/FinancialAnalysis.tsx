@@ -10,7 +10,7 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
-import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, type StatementLine } from '../data/financialStatements';
+import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
   readonly id: string;
@@ -180,7 +180,7 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
           <tr key={`${l.label}-${i}`} style={l.emphasis ? { fontWeight: 700, background: 'rgba(255,255,255,0.03)' } : undefined}>
             <td style={{ padding: '3px 8px', paddingLeft: 8 + (l.indent ?? 0) * 16, borderBottom: '1px solid var(--border)', color: l.indent ? 'var(--text-mute)' : 'var(--text)' }}>{l.label}</td>
             <td style={{ padding: '3px 8px', borderBottom: '1px solid var(--border)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
-              {l.amount == null ? '' : yen.format(l.amount)}
+              {l.display ?? (l.amount == null ? '' : yen.format(l.amount))}
             </td>
           </tr>
         ))}
@@ -192,16 +192,24 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
 export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
-  const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf'>('pl');
+  const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce'>('pl');
+  const [consolidated, setConsolidated] = useState(false);
 
   const perUnit = useMemo(
-    () => units.map((u) => ({ unit: u, ratios: computeFinancialRatios(deriveBusinessFinancials(u.current)) })),
+    () => units.map((u) => {
+      const finInputs = deriveBusinessFinancials(u.current);
+      return { unit: u, fin: finInputs, ratios: computeFinancialRatios(finInputs) };
+    }),
     [units],
   );
+  const consolidatedFin = useMemo(() => sumFinancialInputs(perUnit.map((p) => p.fin)), [perUnit]);
   const selected = perUnit.find((p) => p.unit.id === selectedId) ?? perUnit[0];
 
   if (!selected) return null;
-  const fin = deriveBusinessFinancials(selected.unit.current);
+  const fin = selected.fin;
+  // 三表ビューは連結トグルで全事業合算に切替。
+  const stmtFin = consolidated ? consolidatedFin : fin;
+  const stmtLabel = consolidated ? '連結（全事業合算）' : `${selected.unit.label}・単体`;
   const axes = radarAxes(selected.ratios);
   const marginHistory = selected.unit.history.map((h) => (h.revenue > 0 ? Math.round((h.profit / h.revenue) * 1000) / 10 : 0));
   const otherCost = Math.max(0, fin.revenue - fin.cogs - fin.laborCost - fin.operatingProfit);
@@ -264,8 +272,8 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
 
       <div style={cardStyle}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, marginRight: 6 }}>📑 財務三表（{selected.unit.label}・年次概算）</div>
-          {([['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書']] as const).map(([k, label]) => (
+          <div style={{ fontSize: 13, fontWeight: 700, marginRight: 6 }}>📑 財務諸表（{stmtLabel}・年次概算）</div>
+          {([['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書'], ['var', '変動損益計算書'], ['ci', '包括利益計算書'], ['soce', '株主資本等変動計算書']] as const).map(([k, label]) => (
             <button
               key={k}
               onClick={() => setStmtTab(k)}
@@ -274,23 +282,30 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
               {label}
             </button>
           ))}
+          <label style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+            <input type="checkbox" checked={consolidated} onChange={(e) => setConsolidated(e.target.checked)} />
+            連結（全事業合算）で表示
+          </label>
         </div>
-        {stmtTab === 'pl' && <StatementTable lines={buildIncomeStatement(fin)} />}
+        {stmtTab === 'pl' && <StatementTable lines={buildIncomeStatement(stmtFin)} />}
         {stmtTab === 'bs' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 16 }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>資産の部</div>
-              <StatementTable lines={buildBalanceSheet(fin).assets} />
+              <StatementTable lines={buildBalanceSheet(stmtFin).assets} />
             </div>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>負債・純資産の部</div>
-              <StatementTable lines={buildBalanceSheet(fin).liabilitiesEquity} />
+              <StatementTable lines={buildBalanceSheet(stmtFin).liabilitiesEquity} />
             </div>
           </div>
         )}
-        {stmtTab === 'cf' && <StatementTable lines={buildCashflowStatement(fin)} />}
+        {stmtTab === 'cf' && <StatementTable lines={buildCashflowStatement(stmtFin)} />}
+        {stmtTab === 'var' && <StatementTable lines={buildVariableCostingStatement(stmtFin)} />}
+        {stmtTab === 'ci' && <StatementTable lines={buildComprehensiveIncome(stmtFin)} />}
+        {stmtTab === 'soce' && <StatementTable lines={buildEquityChangeStatement(stmtFin)} />}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-          ※ 三表・指標・チャートは同じ概算財務データに連動しています。CF は簡易間接法（営業=純利益+減価償却）で、投資/財務CFは未モデル。
+          ※ 諸表・指標・チャートは同じ概算財務データに連動。CFは簡易間接法（営業=純利益+減価償却・投資/財務は概算）。包括利益のOCI・株主資本変動の配当はデータ無しのため0/概算。連結は内部取引消去なしの単純合算。
         </div>
       </div>
 

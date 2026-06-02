@@ -12,8 +12,10 @@ import type { FinancialInputs } from './financialRatios';
 
 export interface StatementLine {
   readonly label: string;
-  /** 金額 (円)。見出し行で金額を出さない場合は null。 */
+  /** 金額 (円)。見出し行や非金額行で金額を出さない場合は null。 */
   readonly amount: number | null;
+  /** 金額セルに金額ではなくこの文字列を表示する (% や注記用)。 */
+  readonly display?: string;
   /** インデント段数 (内訳行)。 */
   readonly indent?: number;
   /** 小計・合計などの強調行。 */
@@ -96,4 +98,81 @@ export function buildCashflowStatement(f: FinancialInputs): StatementLine[] {
     { label: '（借入増減データ無し → 概算0）', amount: null, indent: 1 },
     { label: 'フリーキャッシュフロー（営業+投資）', amount: r0(operatingCf + investingCf), emphasis: true },
   ];
+}
+
+// --- 変動損益計算書 (限界利益方式) --------------------------------------
+export function buildVariableCostingStatement(f: FinancialInputs): StatementLine[] {
+  const variableCost = f.cogs; // 変動費 ≈ 売上原価
+  const contribution = f.revenue - variableCost; // 限界利益
+  const contributionRatio = f.revenue === 0 ? null : contribution / f.revenue;
+  const fixedCost = contribution - f.operatingProfit; // 固定費 = 限界利益 − 営業利益
+  const bep = contributionRatio == null || contributionRatio <= 0 ? null : r0(fixedCost / contributionRatio);
+  return [
+    { label: '売上高', amount: f.revenue, emphasis: true },
+    { label: '変動費', amount: variableCost },
+    { label: '限界利益', amount: contribution, emphasis: true },
+    { label: '限界利益率', amount: null, display: contributionRatio == null ? '—' : `${(contributionRatio * 100).toFixed(1)}%` },
+    { label: '固定費', amount: fixedCost },
+    { label: '営業利益', amount: f.operatingProfit, emphasis: true },
+    { label: '損益分岐点売上高', amount: bep, emphasis: true },
+  ];
+}
+
+// --- 包括利益計算書 ------------------------------------------------------
+export function buildComprehensiveIncome(f: FinancialInputs): StatementLine[] {
+  // その他の包括利益(OCI: 有価証券評価差額金等)のデータが無いため 0 と仮定。
+  const oci = 0;
+  return [
+    { label: '当期純利益', amount: f.netProfit, emphasis: true },
+    { label: 'その他の包括利益', amount: oci },
+    { label: '（データ無しのため 0 と仮定）', amount: null, indent: 1 },
+    { label: '包括利益', amount: f.netProfit + oci, emphasis: true },
+  ];
+}
+
+// --- 株主資本等変動計算書 -----------------------------------------------
+export function buildEquityChangeStatement(f: FinancialInputs, dividendRate = 0): StatementLine[] {
+  const dividend = r0(Math.max(0, f.netProfit) * dividendRate);
+  const ending = f.equity; // 期末純資産
+  const beginning = ending - f.netProfit + dividend; // 期首純資産 (逆算)
+  return [
+    { label: '当期首 純資産残高', amount: beginning, emphasis: true },
+    { label: '当期純利益', amount: f.netProfit, indent: 1 },
+    { label: '剰余金の配当', amount: dividend === 0 ? 0 : -dividend, indent: 1 },
+    { label: '当期末 純資産残高', amount: ending, emphasis: true },
+  ];
+}
+
+// --- 連結 (全事業合算) FinancialInputs ----------------------------------
+/** 複数事業の FinancialInputs を合算する (連結・内部取引消去は無し=単純合算)。 */
+export function sumFinancialInputs(list: readonly FinancialInputs[]): FinancialInputs {
+  const z: FinancialInputs = {
+    revenue: 0, cogs: 0, operatingProfit: 0, ordinaryProfit: 0, netProfit: 0,
+    depreciation: 0, laborCost: 0, interestExpense: 0, totalAssets: 0, equity: 0,
+    currentAssets: 0, currentLiabilities: 0, fixedAssets: 0, fixedLiabilities: 0,
+    accountsReceivable: 0, inventory: 0, accountsPayable: 0, interestBearingDebt: 0,
+  };
+  return list.reduce<FinancialInputs>(
+    (a, f) => ({
+      revenue: a.revenue + f.revenue,
+      cogs: a.cogs + f.cogs,
+      operatingProfit: a.operatingProfit + f.operatingProfit,
+      ordinaryProfit: a.ordinaryProfit + f.ordinaryProfit,
+      netProfit: a.netProfit + f.netProfit,
+      depreciation: a.depreciation + f.depreciation,
+      laborCost: a.laborCost + f.laborCost,
+      interestExpense: (a.interestExpense ?? 0) + (f.interestExpense ?? 0),
+      totalAssets: a.totalAssets + f.totalAssets,
+      equity: a.equity + f.equity,
+      currentAssets: a.currentAssets + f.currentAssets,
+      currentLiabilities: a.currentLiabilities + f.currentLiabilities,
+      fixedAssets: a.fixedAssets + f.fixedAssets,
+      fixedLiabilities: a.fixedLiabilities + f.fixedLiabilities,
+      accountsReceivable: a.accountsReceivable + f.accountsReceivable,
+      inventory: a.inventory + f.inventory,
+      accountsPayable: a.accountsPayable + f.accountsPayable,
+      interestBearingDebt: a.interestBearingDebt + f.interestBearingDebt,
+    }),
+    z,
+  );
 }
