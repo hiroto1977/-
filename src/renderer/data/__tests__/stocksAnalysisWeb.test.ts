@@ -188,6 +188,49 @@ describe('backtest (paper trading)', () => {
     expect(r.winRate).toBeGreaterThanOrEqual(0);
     expect(r.winRate).toBeLessThanOrEqual(1);
   });
+
+  // i=50 でちょうど1回だけ買う戦略 (window 長 51 のときだけ buy)。
+  const buyOnceAtStart: Strategy = (c) =>
+    c.length === 51
+      ? { date: c[c.length - 1]!.date, action: 'buy', confidence: 1, reason: 'b', strategy: 't' }
+      : { date: c[c.length - 1]?.date ?? '', action: 'hold', confidence: 0, reason: 'h', strategy: 't' };
+
+  it('take-profit: buy @100 then +20% triggers a winning exit (exact P&L)', () => {
+    // 既定リスク: positionSizePct 0.1, takeProfit 0.15。10000*0.1/100=10株, cost1000, cash9000。
+    // i=51 で 120 → gain20% ≥15% → 利確売り 10@120 → cash 10200。
+    const candles = mkCandles([...Array(51).fill(100), 120, 120]);
+    const r = backtest(candles, buyOnceAtStart, 10_000);
+    expect(r.finalEquity).toBe(10_200);
+    expect(r.totalReturnPct).toBe(2);
+    expect(r.tradeCount).toBe(2); // buy + take-profit sell
+    expect(r.winRate).toBe(1);
+    expect(r.maxDrawdownPct).toBe(0);
+  });
+
+  it('stop-loss: buy @100 then −10% triggers a losing exit (exact P&L)', () => {
+    // i=51 で 90 → drop10% ≥5% → 損切り売り 10@90 → cash 9900。
+    const candles = mkCandles([...Array(51).fill(100), 90, 90]);
+    const r = backtest(candles, buyOnceAtStart, 10_000);
+    expect(r.finalEquity).toBe(9_900);
+    expect(r.totalReturnPct).toBe(-1);
+    expect(r.tradeCount).toBe(2); // buy + stop-loss sell
+    expect(r.winRate).toBe(0);
+    expect(r.maxDrawdownPct).toBe(1); // (10000-9900)/10000
+  });
+
+  it('skips a buy when the position budget rounds to zero shares', () => {
+    const candles = mkCandles([...Array(51).fill(100), 100, 100]);
+    const r = backtest(candles, buyOnceAtStart, 5); // 5*0.1/100 < 1 株 → 取引なし
+    expect(r.tradeCount).toBe(0);
+    expect(r.finalEquity).toBe(5);
+  });
+
+  it('ignores a sell with no open position', () => {
+    const SELL: Strategy = (c) => ({ date: c[c.length - 1]?.date ?? '', action: 'sell', confidence: 1, reason: 's', strategy: 't' });
+    const r = backtest(flat, SELL, 10_000);
+    expect(r.tradeCount).toBe(0);
+    expect(r.finalEquity).toBe(10_000);
+  });
 });
 
 describe('compareStrategies', () => {
