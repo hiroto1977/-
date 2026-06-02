@@ -14,6 +14,8 @@ import {
   purgeCloudflareCache,
   buildRfc2822,
   isSafeHeaderValue,
+  scanUrlVirusTotal,
+  parseSecurityKeys,
 } from '../saasWriteWeb';
 
 function jsonResponse(status: number, body: unknown): Response {
@@ -231,5 +233,38 @@ describe('cloudflare', () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'p1' } }));
     const res = await purgeCloudflareCache({ zoneId: 'z', purgeEverything: true }, 'tok', transport);
     expect(res).toEqual({ id: 'p1', purged: 'all' });
+  });
+});
+
+
+describe('parseSecurityKeys', () => {
+  it('parses {hibp,vt} JSON', () => {
+    expect(parseSecurityKeys(JSON.stringify({ hibp: 'h', vt: 'v' }))).toEqual({ hibp: 'h', vt: 'v' });
+  });
+  it('treats a raw string as the HIBP key', () => {
+    expect(parseSecurityKeys('rawkey')).toEqual({ hibp: 'rawkey' });
+  });
+  it('returns {} for empty', () => {
+    expect(parseSecurityKeys('')).toEqual({});
+  });
+});
+
+describe('scanUrlVirusTotal', () => {
+  it('submits then reads the report and computes positives/total', async () => {
+    const transport = vi.fn()
+      .mockResolvedValueOnce(jsonResponse(200, { data: { id: 'x', type: 'analysis' } }))
+      .mockResolvedValueOnce(jsonResponse(200, { data: { attributes: { last_analysis_stats: { harmless: 60, malicious: 2, suspicious: 1, undetected: 7 } } } }));
+    const res = await scanUrlVirusTotal({ url: 'https://evil.test/' }, 'vtkey', transport);
+    expect(res.positives).toBe(3);
+    expect(res.total).toBe(70);
+    expect(res.reportUrl).toContain('https://www.virustotal.com/gui/url/');
+    // first call POSTs urlencoded body
+    expect(transport.mock.calls[0]![1].method).toBe('POST');
+    expect((transport.mock.calls[0]![1].headers as Record<string, string>)['x-apikey']).toBe('vtkey');
+  });
+  it('requires a url', async () => {
+    const transport = vi.fn();
+    await expect(scanUrlVirusTotal({}, 'k', transport)).rejects.toThrow(/必須/);
+    expect(transport).not.toHaveBeenCalled();
   });
 });

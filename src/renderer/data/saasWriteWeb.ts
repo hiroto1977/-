@@ -515,3 +515,69 @@ export async function purgeCloudflareCache(
   const result = cfUnwrap((await res.json()) as CfWrap<{ id: string }>);
   return { id: result.id, purged: purgeEverything ? 'all' : files.length };
 }
+
+// --- セキュリティ: VirusTotal scan-url (CORS → プロキシ) -------------------
+// HIBP の check-email-breach は「404 = 漏洩なし」を fetchViaProxy が
+// エラーとして扱い区別できないため未対応 (HIBP 対応プロキシが必要)。
+
+interface SecurityKeys {
+  hibp?: string;
+  vt?: string;
+}
+
+/** Vault のセキュリティトークン(JSON {hibp,vt} か、生文字列なら HIBP キー)を解析。 */
+export function parseSecurityKeys(raw: string): SecurityKeys {
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw) as { hibp?: unknown; vt?: unknown } | null;
+    if (parsed && typeof parsed === 'object') {
+      const out: SecurityKeys = {};
+      if (typeof parsed.hibp === 'string' && parsed.hibp) out.hibp = parsed.hibp;
+      if (typeof parsed.vt === 'string' && parsed.vt) out.vt = parsed.vt;
+      return out;
+    }
+  } catch {
+    return { hibp: raw };
+  }
+  return {};
+}
+
+/** VirusTotal の URL 識別子 = base64url(url) (パディング無し)。 */
+function vtBase64(url: string): string {
+  return utf8ToBase64(url).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+export interface ScanUrlInput {
+  url?: unknown;
+}
+
+export async function scanUrlVirusTotal(
+  input: ScanUrlInput,
+  vtKey: string,
+  transport: Transport,
+): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
+  const url = typeof input.url === 'string' ? input.url.trim() : '';
+  if (!url) throw new Error('url は必須です');
+
+  // 解析を投入 (レポートを最新化)。
+  const submit = await transport('https://www.virustotal.com/api/v3/urls', {
+    method: 'POST',
+    headers: { 'x-apikey': vtKey, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ url }).toString(),
+  });
+  await ensureOk(submit, 'VirusTotal API');
+
+  const id = vtBase64(url);
+  const report = await transport(`https://www.virustotal.com/api/v3/urls/${id}`, {
+    method: 'GET',
+    headers: { 'x-apikey': vtKey },
+  });
+  await ensureOk(report, 'VirusTotal API');
+  const data = (await report.json()) as {
+    data: { attributes: { last_analysis_stats: { harmless: number; malicious: number; suspicious: number; undetected: number } } };
+  };
+  const s = data.data.attributes.last_analysis_stats;
+  const positives = s.malicious + s.suspicious;
+  const total = s.harmless + s.malicious + s.suspicious + s.undetected;
+  return { url, positives, total, reportUrl: `https://www.virustotal.com/gui/url/${id}` };
+}

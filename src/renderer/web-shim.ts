@@ -93,6 +93,8 @@ import {
   createCanvaFolder,
   createCloudflareDnsRecord,
   purgeCloudflareCache,
+  scanUrlVirusTotal,
+  parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
@@ -865,6 +867,39 @@ const shim = {
     }
     if (serviceId === 'cloudflare' && action === 'purge-cache') {
       return (await runProxyBearer('cloudflare', (t, tok) => purgeCloudflareCache(payload, tok, t))) as ActionResult<T>;
+    }
+
+    // セキュリティ: VirusTotal URL スキャン (CORS → プロキシ)。
+    if (serviceId === 'security' && action === 'scan-url') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('security');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      const keys = parseSecurityKeys(token ?? '');
+      if (!keys.vt) {
+        return err('not_configured', 'VirusTotal API キーが未設定です (設定に {"vt":"...","hibp":"..."} の JSON で保存)');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await scanUrlVirusTotal(payload, keys.vt, transport)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+    // HIBP メール漏洩チェック: 「404 = 漏洩なし」を汎用プロキシが区別できないため未対応。
+    if (serviceId === 'security' && action === 'check-email-breach') {
+      return err(
+        'not_supported',
+        'メール漏洩チェック(HIBP)はブラウザ版では未対応です。HIBP は「漏洩なし」を 404 で返しますが、' +
+          '汎用プロキシがこれをエラー扱いするため区別できません。URLスキャン(VirusTotal)はご利用いただけます。',
+      );
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
