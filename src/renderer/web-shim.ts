@@ -94,6 +94,7 @@ import {
   createCloudflareDnsRecord,
   purgeCloudflareCache,
   scanUrlVirusTotal,
+  checkEmailBreach,
   parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
@@ -893,13 +894,30 @@ const shim = {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
     }
-    // HIBP メール漏洩チェック: 「404 = 漏洩なし」を汎用プロキシが区別できないため未対応。
+    // HIBP メール漏洩チェック: プロキシ経由。fetchViaProxy が上流ステータスを
+    // 保持するため「404 = 漏洩なし」を正しく判定できる。
     if (serviceId === 'security' && action === 'check-email-breach') {
-      return err(
-        'not_supported',
-        'メール漏洩チェック(HIBP)はブラウザ版では未対応です。HIBP は「漏洩なし」を 404 で返しますが、' +
-          '汎用プロキシがこれをエラー扱いするため区別できません。URLスキャン(VirusTotal)はご利用いただけます。',
-      );
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('security');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      const keys = parseSecurityKeys(token ?? '');
+      if (!keys.hibp) {
+        return err('not_configured', 'HIBP API キーが未設定です (設定に {"hibp":"...","vt":"..."} の JSON で保存)');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await checkEmailBreach(payload, keys.hibp, transport)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
