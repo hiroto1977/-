@@ -32,6 +32,16 @@ describe('buildIncomeStatement', () => {
   });
 });
 
+describe('buildIncomeStatement breakdown lines', () => {
+  const pl = buildIncomeStatement(F);
+  it('splits SG&A into labor / depreciation / other and shows non-operating interest', () => {
+    expect(amt(pl, '（うち 人件費）')).toBe(3_000);
+    expect(amt(pl, '（うち 減価償却費）')).toBe(300);
+    expect(amt(pl, '（うち その他）')).toBe(1_500); // sga 4800 − 人件費3000 − 減価償却300
+    expect(amt(pl, '営業外費用（支払利息）')).toBe(100);
+  });
+});
+
 describe('buildBalanceSheet', () => {
   const { assets, liabilitiesEquity } = buildBalanceSheet(F);
   it('asset side totals to totalAssets', () => {
@@ -41,6 +51,13 @@ describe('buildBalanceSheet', () => {
   it('liabilities + equity balances to total assets', () => {
     expect(amt(liabilitiesEquity, '負債・純資産合計')).toBe(10_000);
     expect(amt(liabilitiesEquity, '純資産（自己資本）')).toBe(4_000);
+  });
+  it('splits debt into short/long term and other liabilities (exact)', () => {
+    expect(amt(liabilitiesEquity, '短期借入金')).toBe(750); // 流動負債2500 × 0.3
+    expect(amt(liabilitiesEquity, '（その他流動負債）')).toBe(250); // 2500 − 仕入1500 − 750
+    expect(amt(liabilitiesEquity, '長期借入金')).toBe(3_250); // 有利子4000 − 短期750
+    expect(amt(liabilitiesEquity, '（その他固定負債）')).toBe(250); // 固定3500 − 長期3250
+    expect(amt(liabilitiesEquity, '負債合計')).toBe(6_000); // 2500 + 3500
   });
 });
 

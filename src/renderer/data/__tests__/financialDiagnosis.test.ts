@@ -53,4 +53,31 @@ describe('diagnoseFinancials', () => {
     expect(d.overallScore).toBeLessThanOrEqual(100);
     expect(['S', 'A', 'B', 'C', 'D']).toContain(d.grade);
   });
+
+  it('maps the overall score to a grade at the exact thresholds', () => {
+    const g = (s: number) => diagnoseFinancials([axis('k', 'l', s)]).grade;
+    // 境界: 80=S, 65=A, 50=B, 35=C, 未満=D
+    expect([g(80), g(79), g(65), g(64), g(50), g(49), g(35), g(34)]).toEqual(
+      ['S', 'A', 'A', 'B', 'B', 'C', 'C', 'D'],
+    );
+  });
+
+  it('classifies axis level as good≥70 / warn≥45 / bad otherwise', () => {
+    const lvl = (s: number) => {
+      const d = diagnoseFinancials([axis('equityRatio', '自己資本比率', s)]);
+      return (d.strengths[0] ?? d.weaknesses[0])!.level;
+    };
+    expect([lvl(70), lvl(69), lvl(45), lvl(44)]).toEqual(['good', 'warn', 'warn', 'bad']);
+  });
+
+  it('uses the per-axis improvement hint for weaknesses and a good note for strengths', () => {
+    const weak = diagnoseFinancials([axis('currentRatio', '流動比率', 20)]);
+    expect(weak.weaknesses[0]!.comment).toMatch(/流動比率/);
+    expect(weak.strengths).toHaveLength(0);
+    const strong = diagnoseFinancials([axis('currentRatio', '流動比率', 90)]);
+    expect(strong.strengths[0]!.comment).toMatch(/良好/);
+    // 未知キーの弱みはフォールバック文 (ラベル + 注意)
+    const unknown = diagnoseFinancials([axis('zzz', '謎指標', 10)]);
+    expect(unknown.weaknesses[0]!.comment).toMatch(/謎指標/);
+  });
 });
