@@ -39,6 +39,9 @@
  *   - invoke('github', 'create-issue', …)
  *                              → POST api.github.com directly (CORS-enabled)
  *                                with the Vault 'github' PAT (Part ②, 外部連携)
+ *   - invoke('notion', 'create-page') / invoke('slack', 'send-message')
+ *                              → CORS-blocked: routed through the user's
+ *                                proxy (network/proxy.ts) with the Vault token
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -76,11 +79,24 @@ import {
   buildEmotionsSnapshot,
   ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
 } from './data/emotionsWeb';
-import { createGithubIssue } from './data/saasWriteWeb';
+import { createGithubIssue, createNotionPage, sendSlackMessage, type Transport } from './data/saasWriteWeb';
+import { getProxyConfig, fetchViaProxy } from './network/proxy';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
+
+/** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+async function getProxyTransport(): Promise<Transport> {
+  const cfg = await getProxyConfig();
+  if (!cfg) {
+    throw new Error(
+      'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
+    );
+  }
+  return (url, init) => fetchViaProxy(url, init, cfg);
+}
 
 const vault = getVault();
 const library = getLibrary();
@@ -710,6 +726,37 @@ const shim = {
       if (!token) return err('not_configured', 'GitHub の PAT が未設定です。「PAT を設定」から登録してください');
       try {
         return ok(await createGithubIssue(payload, token)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Notion create-page / Slack send-message: CORS ブロックのためプロキシ経由。
+    if (
+      (serviceId === 'notion' && action === 'create-page') ||
+      (serviceId === 'slack' && action === 'send-message')
+    ) {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken(serviceId);
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) {
+        return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        const data =
+          serviceId === 'notion'
+            ? await createNotionPage(payload, token, transport)
+            : await sendSlackMessage(payload, token, transport);
+        return ok(data) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
