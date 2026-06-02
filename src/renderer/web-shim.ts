@@ -104,8 +104,6 @@ import { getProxyConfig, fetchViaProxy } from './network/proxy';
 // Electron 版も検証して結果を返すだけで永続化しない)。
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
-/** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
- *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
 /** Vault のトークンから Bearer 文字列を取り出す。OAuth サービスは
  *  TokenSet ({accessToken,...}) の JSON で保存されることがあるので、その場合は
  *  accessToken を使う。そうでなければ生のトークン文字列をそのまま使う。 */
@@ -121,6 +119,8 @@ function bearerFromVaultToken(raw: string): string {
   return raw;
 }
 
+/** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
 async function getProxyTransport(): Promise<Transport> {
   const cfg = await getProxyConfig();
   if (!cfg) {
