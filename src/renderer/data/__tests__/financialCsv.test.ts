@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { ratiosToCsv } from '../financialCsv';
+import { ratiosToCsv, statementToCsv } from '../financialCsv';
 import { computeFinancialRatios } from '../financialRatios';
+import { buildIncomeStatement, type StatementLine } from '../financialStatements';
 import { deriveBusinessFinancials } from '../businessFinancials';
 
 describe('ratiosToCsv', () => {
@@ -32,5 +33,26 @@ describe('ratiosToCsv', () => {
   it('quotes a label containing a comma (RFC 4180)', () => {
     const csv = ratiosToCsv([{ label: 'A,B', ratios: a }]);
     expect(csv.split('\r\n')[1]!.startsWith('"A,B",')).toBe(true);
+  });
+});
+
+describe('statementToCsv', () => {
+  it('emits 項目,金額 with one row per line', () => {
+    const f = deriveBusinessFinancials({ revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 });
+    const csv = statementToCsv(buildIncomeStatement(f));
+    const lines = csv.split('\r\n');
+    expect(lines[0]).toBe('項目,金額');
+    expect(lines).toHaveLength(buildIncomeStatement(f).length + 1);
+    expect(lines[1]!.startsWith('売上高,')).toBe(true);
+  });
+
+  it('preserves indent with full-width spaces and uses display for non-amount rows', () => {
+    const sample: StatementLine[] = [
+      { label: '限界利益率', amount: null, display: '50.0%' },
+      { label: '内訳', amount: 100, indent: 1 },
+    ];
+    const lines = statementToCsv(sample).split('\r\n');
+    expect(lines[1]).toBe('限界利益率,50.0%');
+    expect(lines[2]).toBe('　内訳,100');
   });
 });

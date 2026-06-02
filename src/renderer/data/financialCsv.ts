@@ -7,6 +7,7 @@
  */
 
 import type { FinancialRatios } from './financialRatios';
+import type { StatementLine } from './financialStatements';
 import { toCsv } from './csv';
 
 /** 出力列 (FinancialRatios の全 17 フィールド)。 */
@@ -40,5 +41,19 @@ export function ratiosToCsv(units: readonly { readonly label: string; readonly r
       return v == null ? '' : String(v);
     }),
   ]);
+  return toCsv([header, ...body]);
+}
+
+/**
+ * 財務諸表のライン項目を「項目, 金額」2列 CSV に整形する。
+ * インデント段は全角スペースで保持し、金額が無い行は display を出力する。
+ */
+export function statementToCsv(lines: readonly StatementLine[]): string {
+  const header = ['項目', '金額'];
+  const body = lines.map((l) => {
+    const indent = '　'.repeat(l.indent ?? 0);
+    const value = l.amount != null ? String(l.amount) : (l.display ?? '');
+    return [indent + l.label, value];
+  });
   return toCsv([header, ...body]);
 }
