@@ -311,3 +311,159 @@ describe('checkEmailBreach', () => {
     expect(transport).not.toHaveBeenCalled();
   });
 });
+
+// --- 精度強化: 分岐・既定値・エッジ・厳密なリクエスト形 -------------------
+describe('ensureOk error formatting', () => {
+  it('includes the status and truncates the body excerpt to 200 chars', async () => {
+    const long = 'x'.repeat(300);
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: false, status: 500, json: async () => ({}), text: async () => long,
+    } as unknown as Response);
+    let msg = '';
+    try {
+      await createGithubIssue({ owner: 'o', repo: 'r', title: 't' }, 'tok', fetchFn);
+    } catch (e) {
+      msg = (e as Error).message;
+    }
+    expect(msg).toContain('GitHub API 500');
+    expect(msg).toContain('x'.repeat(200));
+    expect(msg).not.toContain('x'.repeat(201)); // slice(0,200)
+  });
+});
+
+describe('createGithubIssue request shape', () => {
+  it('sends auth header + title/body and filtered labels to the exact URL', async () => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(201, { number: 1, html_url: 'u', title: 'T' }));
+    await createGithubIssue({ owner: 'o', repo: 'r', title: 'T', body: 'B', labels: ['a', 2, 'b'] }, 'tok', fetchFn);
+    expect(fetchFn.mock.calls[0]![0]).toBe('https://api.github.com/repos/o/r/issues');
+    expect((fetchFn.mock.calls[0]![1]!.headers as Record<string, string>).Authorization).toBe('Bearer tok');
+    const sent = JSON.parse(fetchFn.mock.calls[0]![1]!.body as string);
+    expect(sent).toMatchObject({ title: 'T', body: 'B', labels: ['a', 'b'] });
+  });
+});
+
+describe('createNotionPage children branch', () => {
+  it('wraps body text in a paragraph child, else empty children', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'p', url: 'u' }));
+    await createNotionPage({ parentPageId: 'par', title: 'T', body: 'hello' }, 'tok', transport);
+    const withBody = JSON.parse(transport.mock.calls[0]![1].body as string);
+    expect(withBody.children).toHaveLength(1);
+    expect(withBody.children[0].paragraph.rich_text[0].text.content).toBe('hello');
+    expect(transport.mock.calls[0]![0]).toBe('https://api.notion.com/v1/pages');
+    await createNotionPage({ parentPageId: 'par', title: 'T' }, 'tok', transport);
+    expect(JSON.parse(transport.mock.calls[1]![1].body as string).children).toEqual([]);
+  });
+});
+
+describe('sendSlackMessage success defaults', () => {
+  it('returns ts and falls back channel to the input when absent', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ok: true, ts: '1.2' }));
+    const r = await sendSlackMessage({ channel: 'C', text: 'hi' }, 'tok', transport);
+    expect(r).toEqual({ ts: '1.2', channel: 'C' });
+  });
+});
+
+describe('parseAtlassianToken edges', () => {
+  it('rejects an over-long email, control chars, non-https; strips trailing slashes', () => {
+    const longEmail = 'a'.repeat(255) + '@b.com';
+    expect(() => parseAtlassianToken(JSON.stringify({ email: longEmail, token: 't', site: 'https://x.atlassian.net' }))).toThrow(/欠けている|不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b\n', token: 't', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't\r', site: 'https://x.atlassian.net' }))).toThrow(/制御文字/);
+    const c = parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't', site: 'https://x.atlassian.net///' }));
+    expect(c.site).toBe('https://x.atlassian.net');
+  });
+});
+
+describe('createAtlassianIssue defaults + body', () => {
+  const tok = JSON.stringify({ email: 'a@b', token: 't', site: 'https://x.atlassian.net' });
+  it('defaults issueType to Task, embeds description doc, builds browse URL', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { key: 'PROJ-1' }));
+    const r = await createAtlassianIssue({ projectKey: 'PROJ', summary: 'S', description: 'D' }, tok, transport);
+    expect(r).toEqual({ key: 'PROJ-1', url: 'https://x.atlassian.net/browse/PROJ-1' });
+    const sent = JSON.parse(transport.mock.calls[0]![1].body as string);
+    expect(sent.fields.issuetype.name).toBe('Task');
+    expect(sent.fields.description.content[0].content[0].text).toBe('D');
+  });
+  it('honors an explicit issueType and omits description when absent', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { key: 'P-2' }));
+    await createAtlassianIssue({ projectKey: 'P', summary: 'S', issueType: 'Bug' }, tok, transport);
+    const sent = JSON.parse(transport.mock.calls[0]![1].body as string);
+    expect(sent.fields.issuetype.name).toBe('Bug');
+    expect('description' in sent.fields).toBe(false);
+  });
+});
+
+describe('createCalendarEvent optionals', () => {
+  it('passes description/location/timeZone through', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'e', htmlLink: 'h' }));
+    await createCalendarEvent(
+      { summary: 'M', start: '2026-01-01T10:00:00', end: '2026-01-01T11:00:00', description: 'D', location: 'L', timeZone: 'Asia/Tokyo' },
+      'tok',
+      transport,
+    );
+    const sent = JSON.parse(transport.mock.calls[0]![1].body as string);
+    expect(sent.description).toBe('D');
+    expect(sent.location).toBe('L');
+    expect(sent.start.timeZone).toBe('Asia/Tokyo');
+    expect(sent.end.dateTime).toBe('2026-01-01T11:00:00');
+  });
+});
+
+describe('createWordPressPostDraft status allowlist', () => {
+  it('keeps an allowed status and coerces an unknown one to draft', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 1, URL: 'u', title: 'T' }));
+    await createWordPressPostDraft({ siteId: 's', title: 'T', status: 'publish' }, 'tok', transport);
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).status).toBe('publish');
+    await createWordPressPostDraft({ siteId: 's', title: 'T', status: 'bogus' }, 'tok', transport);
+    expect(JSON.parse(transport.mock.calls[1]![1].body as string).status).toBe('draft');
+  });
+});
+
+describe('createCanvaFolder explicit parent', () => {
+  it('uses a provided parentFolderId instead of root', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { folder: { id: 'c', name: 'N' } }));
+    await createCanvaFolder({ name: 'N', parentFolderId: 'FID' }, 'tok', transport);
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).parent_folder_id).toBe('FID');
+  });
+});
+
+describe('createDriveFolder parents branch', () => {
+  it('includes parents and uses webViewLink when present', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'f', name: 'N', webViewLink: 'L' }));
+    const r = await createDriveFolder({ name: 'N', parentId: 'P' }, 'tok', transport);
+    expect(r.url).toBe('L');
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).parents).toEqual(['P']);
+  });
+});
+
+describe('cloudflare proxied + purge files', () => {
+  it('sets proxied for A and respects proxied=true; omits it for TXT', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'r', name: 'n', type: 'A' } }));
+    await createCloudflareDnsRecord({ zoneId: 'z', type: 'A', name: 'n', content: '1.1.1.1', proxied: true }, 'tok', transport);
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).proxied).toBe(true);
+    await createCloudflareDnsRecord({ zoneId: 'z', type: 'TXT', name: 'n', content: 'v' }, 'tok', transport);
+    expect('proxied' in JSON.parse(transport.mock.calls[1]![1].body as string)).toBe(false);
+  });
+  it('purges specific files and reports their count', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'p' } }));
+    const r = await purgeCloudflareCache({ zoneId: 'z', files: ['https://a/x', 'https://a/y', 5] }, 'tok', transport);
+    expect(r).toEqual({ id: 'p', purged: 2 });
+    expect(JSON.parse(transport.mock.calls[0]![1].body as string).files).toEqual(['https://a/x', 'https://a/y']);
+  });
+});
+
+describe('VirusTotal report addressing + parseSecurityKeys', () => {
+  it('addresses the report by a padding-free base64url id', async () => {
+    const transport = vi.fn()
+      .mockResolvedValueOnce(jsonResponse(200, {}))
+      .mockResolvedValueOnce(jsonResponse(200, { data: { attributes: { last_analysis_stats: { harmless: 1, malicious: 0, suspicious: 0, undetected: 0 } } } }));
+    await scanUrlVirusTotal({ url: 'https://x/' }, 'k', transport);
+    const reportUrl = transport.mock.calls[1]![0] as string;
+    expect(reportUrl).toMatch(/^https:\/\/www\.virustotal\.com\/api\/v3\/urls\/[A-Za-z0-9_-]+$/);
+  });
+  it('keeps only string keys and ignores non-object JSON', () => {
+    expect(parseSecurityKeys(JSON.stringify({ hibp: 'h' }))).toEqual({ hibp: 'h' });
+    expect(parseSecurityKeys(JSON.stringify({ vt: 123 }))).toEqual({});
+    expect(parseSecurityKeys('123')).toEqual({}); // JSON 数値 → 非オブジェクト → {}
+  });
+});
