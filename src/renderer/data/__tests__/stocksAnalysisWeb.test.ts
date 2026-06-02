@@ -256,6 +256,18 @@ describe('compareStrategies', () => {
       expect(Object.keys(STRATEGIES)).toContain(res.bestByReturn);
     }
   });
+  it('golden: AAPL rows + null bestByReturn when no strategy beats 0', () => {
+    const cmp = compareStrategies('AAPL', 1_000_000, NOW);
+    expect(cmp.bestByReturn).toBeNull(); // 全戦略 ≤0% → null
+    const sma = cmp.rows.find((r) => r.strategy === 'sma-crossover')!;
+    expect(sma.tradeCount).toBe(0); // クロス無 → 取引なし
+    const macd = cmp.rows.find((r) => r.strategy === 'macd-signal')!;
+    expect(macd.tradeCount).toBe(6);
+    expect(macd.winRate).toBeCloseTo(1 / 3, 4);
+    expect(macd.finalEquity).toBeCloseTo(999_161.65, 1);
+    expect(macd.totalReturnPct).toBeCloseTo(-0.0838, 3);
+    expect(macd.maxDrawdownPct).toBeCloseTo(0.5917, 3);
+  });
 });
 
 describe('buildTickerAnalysis', () => {
@@ -269,6 +281,22 @@ describe('buildTickerAnalysis', () => {
   it('buildAnalysesForUniverse maps every symbol', () => {
     const out = buildAnalysesForUniverse(['AAPL', 'MSFT'], NOW);
     expect(out.map((a) => a.symbol)).toEqual(['AAPL', 'MSFT']);
+  });
+  it('golden: pins all indicator outputs for AAPL/120 (sma/ema/rsi/macd/bollinger)', () => {
+    const ta = buildTickerAnalysis('AAPL', 'AAPL', mockCandles('AAPL', NOW, 120));
+    expect(ta.latestClose).toBe(951.81);
+    expect(ta.changePct).toBeCloseTo(0.2496, 4);
+    expect(ta.sma20).toBeCloseTo(983.6495, 3);
+    expect(ta.sma50).toBeCloseTo(974.423, 3);
+    expect(ta.rsi14).toBeCloseTo(41.0662, 3);
+    expect(ta.macd.line).toBeCloseTo(-5.1468, 3);
+    expect(ta.macd.signal).toBeCloseTo(0.2563, 3);
+    expect(ta.macd.histogram).toBeCloseTo(-5.4031, 3);
+    expect(ta.bollinger.upper).toBeCloseTo(1020.9771, 3);
+    expect(ta.bollinger.middle).toBeCloseTo(983.6495, 3);
+    expect(ta.bollinger.lower).toBeCloseTo(946.3219, 3);
+    expect(ta.smaCrossover).toBe('hold');
+    expect(ta.rsiSignal).toBe('neutral');
   });
   it('computes changePct exactly and nulls indicators for short input', () => {
     const a = buildTickerAnalysis('X', 'Lbl', mkCandles([100, 110]));
