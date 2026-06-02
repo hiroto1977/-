@@ -20,8 +20,6 @@ import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { UberEatsPage } from './pages/UberEatsPage';
-import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
 import { QualityPage } from './pages/QualityPage';
@@ -264,22 +262,9 @@ export const SERVICES: ServiceDefinition[] = [
     page: SettingsPage,
     category: 'featured',
   },
-  {
-    id: 'uber-eats',
-    label: 'Uber Eats',
-    icon: 'UE',
-    description: 'フードデリバリー — 売上 / 注文数 / 評価を一覧',
-    page: UberEatsPage,
-    category: 'tools',
-  },
-  {
-    id: 'demae-can',
-    label: '出前館',
-    icon: 'DM',
-    description: 'フードデリバリー — 受注 / 配達ステータス / 月次集計',
-    page: DemaeCanPage,
-    category: 'tools',
-  },
+  // Uber Eats / 出前館 はサイドバーから「事業ダッシュボード」へ統合した
+  // (BusinessPage の FoodDeliverySection)。SERVICE_IDS / クライアント /
+  // snapshot / テストはデータ源として温存している (不変条件維持)。
   {
     id: 'real-estate',
     label: '不動産投資',
