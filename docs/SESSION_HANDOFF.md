@@ -15,7 +15,27 @@
 | 🔧 tools (14) | skills / security / cloudflare / emotions / ollama / kpi / stocks / uber-eats / demae-can / real-estate / mutual-funds / quality / storage / tax (税務試算) |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 1389 静的 / 1438 実行時 tests passing · typecheck / ESLint clean · verify:all green (60 service tests + file:line refs + metrics + cross-doc facts) · standalone HTML 525 KB
+**品質メトリクス:** 2194 静的 / 2243 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~718 KB
+
+## ブラウザ版 (standalone.html) の機能カバレッジ
+
+Web 配信 (GitHub Pages: https://hiroto1977.github.io/-/) と単一 HTML の両方で動作。
+`src/renderer/web-shim.ts` が `window.serviceHub` を polyfill し、各アクションを実装:
+
+- **ローカル系 (プロキシ不要)**: stocks (register/unregister/advise/compare-strategies/
+  export-dashboard(-md)) · emotions (log-mood/analyze-text/clear-history) ·
+  record-entry (uber-eats/demae-can/real-estate/mutual-funds) · templates/teamradar 書き出し ·
+  business advise/export。AI 系 (advise/analyze-text) は Anthropic 直接呼び出し (Vault キー)。
+  純粋ロジックは `src/renderer/data/{stocksWatchlistWeb,stocksAnalysisWeb,emotionsWeb}.ts`。
+- **外部 SaaS 書き込み (`src/renderer/data/saasWriteWeb.ts`)**: github(create-issue, CORS OK で直接) ·
+  notion/slack/atlassian/calendar/gmail/drive/wordpress/canva/cloudflare/security(HIBP·VT) は
+  **CORS のためプロキシ経由** (`network/proxy.ts` の `fetchViaProxy`、ユーザー提供 Cloudflare Worker)。
+  - `fetchViaProxy` は worker エンベロープの**上流ステータスを Response.status に保持**する
+    (プロキシ自身のエラー時のみ throw)。HIBP の「漏洩なし=404」判定はこれに依存。
+  - 設定 UI: SettingsPage に プロキシ URL 入力 (ProxySection) + 全サービスのトークンスロット。
+  - Atlassian / security のトークンは JSON 形式 (`{email,token,site}` / `{hibp,vt}`)。
+- **不可**: skills 実行 (ローカルコマンド実行が必要でブラウザ単体では原理的に不可)。
+- セットアップ手順: `docs/WEB_SETUP_GUIDE.md` (機能別早見表 + プロキシ + トークン取得)。
 
 ## 確立されたパターン
 
