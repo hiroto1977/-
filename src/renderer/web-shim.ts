@@ -36,6 +36,9 @@
  *                              → Anthropic directly (Vault 'emotions' key)
  *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
  *                              → stateless validation (matches Electron)
+ *   - invoke('github', 'create-issue', …)
+ *                              → POST api.github.com directly (CORS-enabled)
+ *                                with the Vault 'github' PAT (Part ②, 外部連携)
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -73,6 +76,7 @@ import {
   buildEmotionsSnapshot,
   ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
 } from './data/emotionsWeb';
+import { createGithubIssue } from './data/saasWriteWeb';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
@@ -692,6 +696,23 @@ const shim = {
     // Emotions テキスト分析: Anthropic 直接呼び出し (Vault の emotions キー使用)。
     if (serviceId === 'emotions' && action === 'analyze-text') {
       return (await callEmotionsAnalyze(payload)) as ActionResult<T>;
+    }
+
+    // GitHub create-issue: api.github.com は CORS 許可済みなのでブラウザから
+    // 直接呼べる (プロキシ不要)。PAT は Vault の 'github' から取得。
+    if (serviceId === 'github' && action === 'create-issue') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('github');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) return err('not_configured', 'GitHub の PAT が未設定です。「PAT を設定」から登録してください');
+      try {
+        return ok(await createGithubIssue(payload, token)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
