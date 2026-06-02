@@ -30,6 +30,12 @@
  *                              → run technical analysis / backtest on mock
  *                                candles client-side; advise calls Anthropic
  *                                directly with the Vault-stored key
+ *   - invoke('emotions', 'log-mood' | 'clear-history')
+ *                              → persist mood log in localStorage
+ *   - invoke('emotions', 'analyze-text', …)
+ *                              → Anthropic directly (Vault 'emotions' key)
+ *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
+ *                              → stateless validation (matches Electron)
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -58,6 +64,19 @@ import {
   type StrategyComparisonResult,
   type AdvisorResponse,
 } from './data/stocksAnalysisWeb';
+import {
+  logMood as emotionsLogMood,
+  clearHistory as emotionsClearHistory,
+  recordAnalysis as emotionsRecordAnalysis,
+  normalizeAnalysis as emotionsNormalize,
+  extractJson as emotionsExtractJson,
+  buildEmotionsSnapshot,
+  ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
+} from './data/emotionsWeb';
+
+// ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
+// Electron 版も検証して結果を返すだけで永続化しない)。
+const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
 const vault = getVault();
 const library = getLibrary();
@@ -367,6 +386,64 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
 }
 
+// --- Anthropic Emotions text analyzer (browser-direct) ----------------
+// emotions/analyze-text: Vault の emotions キーで Anthropic を直接呼び、
+// 感情スコアを正規化して localStorage の分析履歴に保存する。
+async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const text = payload['text'];
+  const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
+  if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
+  if (text.length > 5000) return err('action_failed', 'text が長すぎます (5000 字以内)');
+
+  let apiKey: string | null = null;
+  try {
+    apiKey = await vault.getToken('emotions');
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+
+  let res: Response;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 512,
+        system: EMOTIONS_ANALYZE_SYSTEM,
+        messages: [{ role: 'user', content: text }],
+      }),
+    });
+  } catch (e) {
+    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+  }
+  let parsed: { content?: { type: string; text?: string }[] };
+  try {
+    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+  } catch {
+    return err('action_failed', 'API 応答が JSON ではありません');
+  }
+  const body = parsed.content?.find((c) => c.type === 'text')?.text ?? '';
+  let json: unknown;
+  try {
+    json = JSON.parse(emotionsExtractJson(body));
+  } catch {
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + body.slice(0, 80));
+  }
+  const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
+  return ok(entry);
+}
+
 interface SnapshotBusinessUnit {
   id: string;
   label: string;
@@ -469,16 +546,27 @@ const shim = {
     }
   },
 
-  fetchSnapshot: <T>(serviceId?: string): Promise<ActionResult<T>> => {
+  fetchSnapshot: async <T>(serviceId?: string): Promise<ActionResult<T>> => {
     // stocks はブラウザ版でもウォッチリスト登録に対応する。登録銘柄は
     // localStorage に保存され、ここでモック価格つきのスナップショットを合成する。
     // (Electron 版の state.json 由来フェッチと同じ操作感: 「更新」/登録で反映)
     if (serviceId === 'stocks') {
-      return Promise.resolve(ok(buildStocksSnapshot()) as ActionResult<T>);
+      return ok(buildStocksSnapshot()) as ActionResult<T>;
     }
-    return Promise.resolve(
-      err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。'),
-    );
+    // emotions は localStorage に気分ログ / 分析履歴を保存する。
+    if (serviceId === 'emotions') {
+      let keyConfigured = false;
+      try {
+        keyConfigured = Boolean(await vault.getToken('emotions'));
+      } catch {
+        keyConfigured = false;
+      }
+      return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
+    }
+    return err(
+      'not_implemented',
+      'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。',
+    ) as ActionResult<T>;
   },
 
   invoke: async <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> => {
@@ -587,6 +675,35 @@ const shim = {
       await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
       downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
       return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt }) as ActionResult<T>;
+    }
+
+    // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
+    if (serviceId === 'emotions' && action === 'log-mood') {
+      try {
+        return ok(emotionsLogMood(payload)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+    if (serviceId === 'emotions' && action === 'clear-history') {
+      const kind = (payload as { kind?: 'moods' | 'analyses' | 'all' }).kind;
+      return ok(emotionsClearHistory(kind)) as ActionResult<T>;
+    }
+    // Emotions テキスト分析: Anthropic 直接呼び出し (Vault の emotions キー使用)。
+    if (serviceId === 'emotions' && action === 'analyze-text') {
+      return (await callEmotionsAnalyze(payload)) as ActionResult<T>;
+    }
+
+    // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
+    if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
+      const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
+      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
+        return err('action_failed', `${serviceId}.record-entry: note は 1-2000 文字で指定してください`);
+      }
+      if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
+        return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
+      }
+      return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
     }
 
     // Business advisor (Anthropic) — direct browser call with Vault-stored key.
