@@ -36,6 +36,19 @@ describe('summarizeFoodDelivery', () => {
     expect(s.combinedMonthlyEstimate.revenue).toBe(Math.round(634_500 * wpm) + 1_245_300);
   });
 
+  it('computes net revenue after platform commission (≈30%)', () => {
+    const s = summarizeFoodDelivery(UE, DC);
+    expect(s.commission.uberEats).toBeCloseTo(0.3, 5);
+    expect(s.uberEats.weekNetRevenue).toBe(Math.round(634_500 * 0.7));
+    expect(s.demaeCan.monthNetRevenue).toBe(Math.round(1_245_300 * 0.7));
+    // 純売上は GMV より小さい (手数料控除後)。
+    expect(s.combinedMonthlyEstimate.netRevenue).toBeLessThan(s.combinedMonthlyEstimate.revenue);
+    const wpm = 52 / 12;
+    expect(s.combinedMonthlyEstimate.netRevenue).toBe(
+      Math.round(Math.round(634_500 * 0.7) * wpm) + Math.round(1_245_300 * 0.7),
+    );
+  });
+
   it('returns null top entries for empty inputs', () => {
     const s = summarizeFoodDelivery(
       { weekOrders: 0, weekRevenue: 0, avgRating: 0, stores: [] },
@@ -43,7 +56,7 @@ describe('summarizeFoodDelivery', () => {
     );
     expect(s.uberEats.topStore).toBeNull();
     expect(s.demaeCan.topArea).toBeNull();
-    expect(s.combinedMonthlyEstimate).toEqual({ orders: 0, revenue: 0 });
+    expect(s.combinedMonthlyEstimate).toEqual({ orders: 0, revenue: 0, netRevenue: 0 });
   });
 
   it('works with the real snapshot shapes', async () => {

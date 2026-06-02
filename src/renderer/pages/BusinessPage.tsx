@@ -540,9 +540,15 @@ function FoodDeliverySection() {
     <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
         <Tile
-          label="今月換算 売上 (概算合算)"
+          label="今月換算 GMV (総注文額)"
           value={yen.format(fd.combinedMonthlyEstimate.revenue)}
           sub="Uber Eats 週次×52/12 + 出前館 月次"
+        />
+        <Tile
+          label="今月換算 純売上 (手数料控除後)"
+          value={yen.format(fd.combinedMonthlyEstimate.netRevenue)}
+          sub={`手数料 Uber Eats ${(fd.commission.uberEats * 100).toFixed(0)}% / 出前館 ${(fd.commission.demaeCan * 100).toFixed(0)}% を控除`}
+          accent="var(--accent)"
         />
         <Tile
           label="今月換算 注文数 (概算)"
@@ -560,7 +566,8 @@ function FoodDeliverySection() {
         >
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🍔 Uber Eats（今週）</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <Tile label="売上 (週)" value={yen.format(fd.uberEats.weekRevenue)} />
+            <Tile label="GMV (週)" value={yen.format(fd.uberEats.weekRevenue)} />
+            <Tile label="純売上 (週・控除後)" value={yen.format(fd.uberEats.weekNetRevenue)} />
             <Tile label="注文数 (週)" value={num.format(fd.uberEats.weekOrders) + ' 件'} />
             <Tile label="平均評価" value={`★ ${fd.uberEats.avgRating.toFixed(2)}`} />
           </div>
@@ -579,7 +586,8 @@ function FoodDeliverySection() {
         >
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🛵 出前館（今月）</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <Tile label="売上 (月)" value={yen.format(fd.demaeCan.monthRevenue)} />
+            <Tile label="GMV (月)" value={yen.format(fd.demaeCan.monthRevenue)} />
+            <Tile label="純売上 (月・控除後)" value={yen.format(fd.demaeCan.monthNetRevenue)} />
             <Tile label="注文数 (月)" value={num.format(fd.demaeCan.monthOrders) + ' 件'} />
             <Tile label="平均単価" value={yen.format(fd.demaeCan.avgOrderValue)} />
             <Tile label="キャンセル率" value={pct(fd.demaeCan.cancellationRate)} />
@@ -660,7 +668,9 @@ function FoodDeliverySection() {
       </details>
 
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
-        ※ 模擬データ。Uber Eats は週次・出前館は月次の集計のため、合算は「今月換算」の概算です（財務助言ではありません）。
+        ※ 模擬データ。Uber Eats は週次・出前館は月次の集計のため、合算は「今月換算」の概算です。
+        純売上は GMV からプラットフォーム手数料（概算 約30%）を控除した手取り推計で、
+        食材原価・人件費等は含みません（財務助言ではありません）。
       </div>
     </Section>
   );
@@ -772,10 +782,12 @@ export function BusinessPage() {
   // フードデリバリー (Uber Eats / 出前館) の月次推計売上。事業カテゴリ一覧と
   // 全社合算に算入する。CrossServiceKpis と同一の summarizeFoodDelivery を使い
   // 算定方法 (週次×52/12 + 月次) を統一する。
-  const foodRevenue = useMemo(
-    () => summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan).combinedMonthlyEstimate.revenue,
+  const foodEstimate = useMemo(
+    () => summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan).combinedMonthlyEstimate,
     [],
   );
+  const foodRevenue = foodEstimate.revenue; // GMV (月次換算)
+  const foodNet = foodEstimate.netRevenue; // 手数料控除後の純売上 (手取り)
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -820,13 +832,14 @@ export function BusinessPage() {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Tile label="月次売上 (事業合計)" value={yen.format(agg.revenue)} />
           <Tile
-            label="＋ フードデリバリー (月次推計)"
+            label="＋ フードデリバリー GMV (月次推計)"
             value={yen.format(foodRevenue)}
-            sub="Uber Eats 週次×52/12 + 出前館"
+            sub={`手数料控除後の純額 ${yen.format(foodNet)}`}
           />
           <Tile
-            label="総売上 (事業 + デリバリー)"
+            label="総売上 (事業 + デリバリーGMV)"
             value={yen.format(agg.revenue + foodRevenue)}
+            sub={`純額ベース ${yen.format(agg.revenue + foodNet)}`}
             accent="var(--accent)"
           />
           <Tile label="月次費用" value={yen.format(agg.totalCost)} />
