@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createGithubIssue, createNotionPage, sendSlackMessage } from '../saasWriteWeb';
+import {
+  createGithubIssue,
+  createNotionPage,
+  sendSlackMessage,
+  createAtlassianIssue,
+  parseAtlassianToken,
+} from '../saasWriteWeb';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
@@ -97,5 +103,42 @@ describe('sendSlackMessage', () => {
     const transport = vi.fn();
     await expect(sendSlackMessage({ channel: 'C' }, 'tok', transport)).rejects.toThrow(/必須/);
     expect(transport).not.toHaveBeenCalled();
+  });
+});
+
+const TOK = JSON.stringify({ email: 'me@x.com', token: 'apitok', site: 'https://acme.atlassian.net/' });
+
+describe('parseAtlassianToken', () => {
+  it('parses and trims the site trailing slash', () => {
+    expect(parseAtlassianToken(TOK)).toEqual({ email: 'me@x.com', token: 'apitok', site: 'https://acme.atlassian.net' });
+  });
+  it('rejects non-JSON / missing fields / non-https', () => {
+    expect(() => parseAtlassianToken('nope')).toThrow(/JSON/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a' }))).toThrow(/欠けている|不正/);
+    expect(() => parseAtlassianToken(JSON.stringify({ email: 'a@b', token: 't', site: 'http://x' }))).toThrow(/https/);
+  });
+});
+
+describe('createAtlassianIssue', () => {
+  it('POSTs to the issue endpoint with Basic auth and returns key/url', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(201, { id: '1', key: 'ACME-1', self: 's' }));
+    const res = await createAtlassianIssue({ projectKey: 'ACME', summary: 'S', description: 'd' }, TOK, transport);
+    expect(res).toEqual({ key: 'ACME-1', url: 'https://acme.atlassian.net/browse/ACME-1' });
+    const [url, init] = transport.mock.calls[0]!;
+    expect(url).toBe('https://acme.atlassian.net/rest/api/3/issue');
+    expect((init.headers as Record<string, string>).Authorization).toBe('Basic ' + btoa('me@x.com:apitok'));
+    const sent = JSON.parse(init.body as string);
+    expect(sent.fields.project).toEqual({ key: 'ACME' });
+    expect(sent.fields.issuetype).toEqual({ name: 'Task' });
+    expect(sent.fields.description.type).toBe('doc');
+  });
+  it('requires projectKey and summary', async () => {
+    const transport = vi.fn();
+    await expect(createAtlassianIssue({ summary: 'S' }, TOK, transport)).rejects.toThrow(/必須/);
+    expect(transport).not.toHaveBeenCalled();
+  });
+  it('surfaces API errors', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(400, { error: 'bad' }));
+    await expect(createAtlassianIssue({ projectKey: 'A', summary: 'S' }, TOK, transport)).rejects.toThrow(/Atlassian API 400/);
   });
 });
