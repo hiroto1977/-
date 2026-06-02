@@ -11,6 +11,7 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
+import { ratiosToCsv } from '../data/financialCsv';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
@@ -288,6 +289,17 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const barOpt = BAR_OPTIONS.find((b) => b.key === barKey)!;
   const barRows = perUnit.map((p) => ({ label: p.unit.label, value: p.ratios[barKey] as number | null }));
 
+  function onExportCsv() {
+    const csv = ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios })));
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -324,7 +336,12 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
       </div>
 
       <div style={cardStyle}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>🧮 {selected.unit.label} の財務指標一覧（15指標）</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ fontSize: 13, fontWeight: 700 }}>🧮 {selected.unit.label} の財務指標一覧（15指標）</div>
+          <button onClick={onExportCsv} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+            ⬇ 全事業の指標をCSVで書き出し
+          </button>
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: '4px 16px' }}>
           {RATIO_ROWS.map((row) => {
             const v = selected.ratios[row.key] as number | null;
