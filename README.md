@@ -41,7 +41,7 @@ npm run build          # tsc -b + vite build + electron-builder で
 
 ```bash
 npm run typecheck         # tsc -b --noEmit
-npm test                  # vitest run (1458 件)
+npm test                  # vitest run (2243 件)
 npm run lint              # ESLint v9
 npm run lint:imports      # main/preload/renderer の境界チェック
 npm run lint:forbidden    # 禁止パターン (nodeIntegration: true など) 検出
@@ -117,12 +117,12 @@ scripts/
 | ゲート | 状態 |
 |---|---|
 | typecheck (`tsc -b`) | 100% pass |
-| unit tests (`vitest`) | 1458 / 1458 ✅ |
+| unit tests (`vitest`) | 2243 / 2243 ✅ |
 | eslint | 0 errors |
-| lint:imports | 246 imports, 全境界 OK |
+| lint:imports | 693 imports, 全境界 OK |
 | lint:forbidden | 8 patterns scanned, 全 clean |
 | lint:test-coverage | 63 services, 全 test 存在 |
-| verify:arch | 170 file:line refs + 6 metrics 一致 |
+| verify:arch | 173 file:line refs + 6 metrics 一致 |
 | mutation (Stryker) | **100.00%** (30 modules) |
 
 ## ドキュメント
