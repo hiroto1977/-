@@ -13,6 +13,7 @@ import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
 import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
 import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
+import { buildFinancialReportMarkdown } from '../data/financialReport';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
@@ -213,13 +214,18 @@ function TrendBadge({ trend }: { trend: MarginTrend }) {
   );
 }
 
-function DiagnosisCard({ diagnosis, label, trend }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend }) {
+function DiagnosisCard({ diagnosis, label, trend, onExportReport }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void }) {
   const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
         <div style={{ fontSize: 13, fontWeight: 700 }}>🩺 {label} の財務健全度 総合診断</div>
-        <TrendBadge trend={trend} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <TrendBadge trend={trend} />
+          <button onClick={onExportReport} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
+            ⬇ 診断レポート(Markdown)
+          </button>
+        </div>
       </div>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
@@ -311,8 +317,8 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const barOpt = BAR_OPTIONS.find((b) => b.key === barKey)!;
   const barRows = perUnit.map((p) => ({ label: p.unit.label, value: p.ratios[barKey] as number | null }));
 
-  function downloadCsv(csv: string, name: string) {
-    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  function downloadBlob(content: string, mime: string, name: string) {
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -320,8 +326,13 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
     a.click();
     URL.revokeObjectURL(url);
   }
+  const downloadCsv = (csv: string, name: string) => downloadBlob('﻿' + csv, 'text/csv;charset=utf-8', name);
   function onExportCsv() {
     downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+  function onExportReport() {
+    const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend });
+    downloadBlob(md, 'text/markdown;charset=utf-8', `financial-report-${selected!.unit.id}-${new Date().toISOString().slice(0, 10)}.md`);
   }
   // 現在表示中の諸表タブのライン項目 (BS は資産+負債純資産を連結) を返す。
   function currentStatementLines(): StatementLine[] {
@@ -353,7 +364,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
       </div>
 
-      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} />
+      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} onExportReport={onExportReport} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         <div style={cardStyle}>
