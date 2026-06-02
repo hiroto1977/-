@@ -10,6 +10,7 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
+import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, type StatementLine } from '../data/financialStatements';
 
 export interface FinancialUnit {
   readonly id: string;
@@ -170,9 +171,28 @@ const cardStyle: CSSProperties = {
   background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 14, minWidth: 0,
 };
 
+// --- 財務三表 (PL/BS/CF) ------------------------------------------------
+function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+      <tbody>
+        {lines.map((l, i) => (
+          <tr key={`${l.label}-${i}`} style={l.emphasis ? { fontWeight: 700, background: 'rgba(255,255,255,0.03)' } : undefined}>
+            <td style={{ padding: '3px 8px', paddingLeft: 8 + (l.indent ?? 0) * 16, borderBottom: '1px solid var(--border)', color: l.indent ? 'var(--text-mute)' : 'var(--text)' }}>{l.label}</td>
+            <td style={{ padding: '3px 8px', borderBottom: '1px solid var(--border)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+              {l.amount == null ? '' : yen.format(l.amount)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
+  const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf'>('pl');
 
   const perUnit = useMemo(
     () => units.map((u) => ({ unit: u, ratios: computeFinancialRatios(deriveBusinessFinancials(u.current)) })),
@@ -239,6 +259,38 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
               </div>
             );
           })}
+        </div>
+      </div>
+
+      <div style={cardStyle}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginRight: 6 }}>📑 財務三表（{selected.unit.label}・年次概算）</div>
+          {([['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書']] as const).map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setStmtTab(k)}
+              style={{ padding: '4px 10px', background: stmtTab === k ? 'var(--accent)' : 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {stmtTab === 'pl' && <StatementTable lines={buildIncomeStatement(fin)} />}
+        {stmtTab === 'bs' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>資産の部</div>
+              <StatementTable lines={buildBalanceSheet(fin).assets} />
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>負債・純資産の部</div>
+              <StatementTable lines={buildBalanceSheet(fin).liabilitiesEquity} />
+            </div>
+          </div>
+        )}
+        {stmtTab === 'cf' && <StatementTable lines={buildCashflowStatement(fin)} />}
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
+          ※ 三表・指標・チャートは同じ概算財務データに連動しています。CF は簡易間接法（営業=純利益+減価償却）で、投資/財務CFは未モデル。
         </div>
       </div>
 
