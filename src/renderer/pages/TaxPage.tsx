@@ -105,6 +105,12 @@ export function TaxPage() {
   const [careInsurance, setCareInsurance] = useState(false);
   const [bonusPerStr, setBonusPerStr] = useState('0');
   const [bonusCountStr, setBonusCountStr] = useState('2');
+  // 文字列入力を数値に変換する純粋ヘルパ。下の useMemo 群がレンダー時に
+  // 即時実行されるため、それより前に宣言しておく必要がある (TDZ 回避)。
+  const num = (s: string): number => {
+    const p = parseAmountInput(s);
+    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
+  };
   const socialInsurancePrecise = useMemo(() => {
     const bonusPer = num(bonusPerStr);
     const bonusCount = num(bonusCountStr);
@@ -144,11 +150,6 @@ export function TaxPage() {
   const [mortgagePerf, setMortgagePerf] = useState<HousingPerformance>('standard');
   const [dividendStr, setDividendStr] = useState('0');
   const [dividendKind, setDividendKind] = useState<DividendKind>('stock');
-
-  const num = (s: string): number => {
-    const p = parseAmountInput(s);
-    return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
-  };
 
   const precise = useMemo(() => {
     const dGross = num(dGrossStr);

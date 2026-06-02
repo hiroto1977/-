@@ -137,9 +137,10 @@ function BepDiagram({ unit }: { unit: Unit }) {
   const variable = f.cogs + f.advertising;
   const fixed = f.sga + f.depreciation;
   const vRatio = f.revenue > 0 ? variable / f.revenue : 0;
-  // Volume axis: 0 → 200% of current revenue
-  const xMax = f.revenue * 2;
-  const yMax = Math.max(f.revenue, fixed + variable * 2) * 1.05;
+  // Volume axis: 0 → 200% of current revenue。売上 0 の事業で 0 除算 → NaN
+  // 座標になるのを防ぐため下限 1 を設ける (退化したチャートになるが描画は崩れない)。
+  const xMax = Math.max(1, f.revenue * 2);
+  const yMax = Math.max(1, Math.max(f.revenue, fixed + variable * 2) * 1.05);
   const X = (v: number) => P + (v / xMax) * (W - P * 2);
   const Y = (v: number) => H - P - (v / yMax) * (H - P * 2);
   // Revenue line: y = x
