@@ -80,6 +80,40 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'WordPress.com サービスで使用。',
     placeholder: 'Bearer token',
   },
+  {
+    vaultKey: 'atlassian',
+    emoji: '🟦',
+    label: 'Atlassian (Jira) トークン',
+    description:
+      'Atlassian (Jira) 課題作成で使用。JSON 形式で保存: {"email":"you@example.com","token":"<APIトークン>","site":"https://your-team.atlassian.net"}。id.atlassian.com で API トークンを発行。',
+    placeholder: '{"email":"...","token":"...","site":"https://...atlassian.net"}',
+    helpUrl: 'https://id.atlassian.com/manage-profile/security/api-tokens',
+  },
+  {
+    vaultKey: 'canva',
+    emoji: '🎨',
+    label: 'Canva Connect トークン',
+    description: 'Canva フォルダ作成で使用。Canva Developers で Connect API のアクセストークンを発行。',
+    placeholder: 'Bearer token',
+    helpUrl: 'https://www.canva.com/developers/',
+  },
+  {
+    vaultKey: 'cloudflare',
+    emoji: '☁️',
+    label: 'Cloudflare API トークン',
+    description: 'Cloudflare DNS / キャッシュ操作で使用。dash.cloudflare.com の My Profile → API Tokens で Zone 編集権限のトークンを発行。',
+    placeholder: 'Cloudflare API token',
+    helpUrl: 'https://dash.cloudflare.com/profile/api-tokens',
+  },
+  {
+    vaultKey: 'security',
+    emoji: '🛡️',
+    label: 'セキュリティ (HIBP / VirusTotal)',
+    description:
+      'メール漏洩チェック (HIBP) と URL スキャン (VirusTotal) で使用。JSON 形式で保存: {"hibp":"<HIBPキー>","vt":"<VirusTotalキー>"}。どちらか一方だけでも可。',
+    placeholder: '{"hibp":"...","vt":"..."}',
+    helpUrl: 'https://haveibeenpwned.com/API/Key',
+  },
 ];
 
 function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () => void }) {
