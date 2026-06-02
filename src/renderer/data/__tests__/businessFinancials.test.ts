@@ -36,6 +36,26 @@ describe('deriveBusinessFinancials', () => {
     expect(loss.equity / loss.totalAssets).toBeGreaterThanOrEqual(0.15);
   });
 
+  it('golden: pins every derived BS/PL constant for the worked KPI', () => {
+    expect(deriveBusinessFinancials(KPI)).toEqual({
+      revenue: 12_000_000, cogs: 4_800_000, operatingProfit: 2_400_000,
+      ordinaryProfit: 2_355_840, netProfit: 1_649_088,
+      depreciation: 360_000, // 売上3%
+      laborCost: 1_800_000, // 固定費×12×0.5
+      interestExpense: 44_160, // 有利子負債×2%
+      totalAssets: 9_600_000, // 売上×0.8
+      equity: 4_800_000, // 自己資本比率 0.5 (0.3 + 20/100)
+      currentAssets: 5_280_000, // 0.55
+      currentLiabilities: 2_880_000, // 0.3
+      fixedAssets: 4_320_000, // 残り
+      fixedLiabilities: 1_920_000, // 残り
+      accountsReceivable: 1_500_000, // 1.5ヶ月
+      inventory: 400_000, // 1ヶ月 (原価)
+      accountsPayable: 480_000, // 1.2ヶ月 (原価)
+      interestBearingDebt: 2_208_000, // 固定負債0.7 + 流動負債0.3
+    });
+  });
+
   it('feeds computeFinancialRatios to produce finite ratios', () => {
     const r = computeFinancialRatios(deriveBusinessFinancials(KPI));
     expect(r.equityRatioPct).not.toBeNull();

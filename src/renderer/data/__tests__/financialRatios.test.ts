@@ -98,6 +98,15 @@ describe('radarAxes', () => {
     expect(eq.raw).toBe(40);
     expect(eq.score).toBe(80); // linScore(40, bad=0, good=50) = 80
   });
+  it('golden: scores every axis against its health benchmark', () => {
+    const byKey = Object.fromEntries(axes.map((a) => [a.key, a.score]));
+    expect(byKey).toEqual({
+      equityRatio: 80, currentRatio: 100, fixedLongTermFit: 100, debtToMonthlySales: 40,
+      debtRepaymentYears: 100, operatingMargin: 60, ordinaryMargin: 57, netMargin: 59,
+      laborShare: 33, ebitdaMargin: 50, receivablesTurnover: 10, inventoryTurnover: 10,
+      ccc: 66, roa: 80, roe: 100,
+    });
+  });
   it('treats null raw as score 0', () => {
     const zeroAxes = radarAxes(
       computeFinancialRatios({ ...SAMPLE, totalAssets: 0, equity: 0 }),
