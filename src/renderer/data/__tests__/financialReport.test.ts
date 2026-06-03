@@ -92,6 +92,24 @@ describe('buildFinancialReportMarkdown', () => {
     expect(md).toBe(expected);
   });
 
+  it('null の指標は値欄を — で描画する (fmtValue の null ガード)', () => {
+    // 売上0 → 多くの比率が null。CCC 行が「| CCC | — |」になることを確認。
+    // `if (v == null) return '—'` の条件を false 固定 / '—' を空に変える mutant を殺す。
+    const zeroRatios = computeFinancialRatios(deriveBusinessFinancials({ revenue: 0, variableCost: 0, fixedCost: 0, profit: 0, profitMargin: 0 }));
+    const mdNull = buildFinancialReportMarkdown({ label: 'Z', ratios: zeroRatios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    expect(mdNull).toContain('| CCC | — |');
+  });
+
+  it('deltaPct=0 は +0pt ではなく 0pt (> 0 と >= 0 を区別)', () => {
+    // 利益率が完全横ばい → deltaPct=0。`deltaPct > 0 ? '+' : ''` を `>= 0` にする
+    // mutant は「+0pt」になるため、0pt 表記の検証で殺せる。
+    const flat0 = analyzeMarginTrend([{ revenue: 100, profit: 10 }, { revenue: 100, profit: 10 }]);
+    expect(flat0.deltaPct).toBe(0);
+    const md0 = buildFinancialReportMarkdown({ label: 'Z', ratios, diagnosis, trend: flat0, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    expect(md0).toContain('（履歴 0pt）');
+    expect(md0).not.toContain('+0pt');
+  });
+
   it('defaults generatedAt to now when omitted', () => {
     const today = new Date().toISOString().slice(0, 10);
     const md2 = buildFinancialReportMarkdown({ label: 'X', ratios, diagnosis, trend });
