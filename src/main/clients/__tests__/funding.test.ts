@@ -29,6 +29,7 @@ import {
   FUNDING_KINDS,
   type FundingItem,
   type FundingMonthly,
+  type FundingSummary,
 } from '../../../shared/funding';
 import { buildFundingSnapshot, fetchFundingSnapshot } from '../funding';
 
