@@ -53,6 +53,19 @@ describe('calcRetirementTaxableIncome', () => {
     // 勤続6年なら shortTerm でも通常の1/2。控除 240万。退職金 1,000万 → after 760万 ×1/2 = 380万
     expect(calcRetirementTaxableIncome(10_000_000, 6, { shortTerm: true })).toBe(3_800_000);
   });
+
+  it('short-term applies at exactly 5 years (boundary)', () => {
+    // 勤続5年 → 控除 max(80万, 40万×5)=200万。退職金 600万 → after 400万 (>300万)。
+    // 短期: 150万 + (400万−300万) = 250万。通常なら 200万 になる差で境界を固定。
+    expect(calcRetirementTaxableIncome(6_000_000, 5, { shortTerm: true })).toBe(2_500_000);
+  });
+
+  it('disability raises the deduction (+100万) and lowers taxable income', () => {
+    // 退職金 500万・勤続10年: 通常控除 400万 → after 100万 → 50万。
+    // 障害退職は控除 500万 → after 0 → 0。
+    expect(calcRetirementTaxableIncome(5_000_000, 10, { disability: true })).toBe(0);
+    expect(calcRetirementTaxableIncome(5_000_000, 10)).toBe(500_000);
+  });
 });
 
 describe('calcRetirementTax', () => {
@@ -63,6 +76,15 @@ describe('calcRetirementTax', () => {
     expect(r.residentTax).toBe(0);
     expect(r.takeHome).toBe(0);
     expect(r.deduction).toBe(4_000_000);
+  });
+
+  it('honors the disability flag for the deduction on both zero and positive severance', () => {
+    // ゼロ退職金でも控除は障害退職で +100万 (4M → 5M)。
+    expect(calcRetirementTax(0, 10, { disability: true }).deduction).toBe(5_000_000);
+    // 退職金あり: 控除 500万 → after 500万 → 課税退職所得 250万。
+    const r = calcRetirementTax(10_000_000, 10, { disability: true });
+    expect(r.deduction).toBe(5_000_000);
+    expect(r.taxableIncome).toBe(2_500_000);
   });
 
   it('computes tax via base income tax × surtax and 10% resident', () => {
