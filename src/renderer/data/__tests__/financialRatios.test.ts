@@ -113,4 +113,18 @@ describe('radarAxes', () => {
     );
     expect(zeroAxes.find((a) => a.key === 'roe')!.score).toBe(0);
   });
+
+  it('golden: exact 15-axis structure (key/label/unit/raw/score)', () => {
+    expect(JSON.stringify(axes)).toBe('[{"key":"equityRatio","label":"自己資本比率","unit":"%","raw":40,"score":80},{"key":"currentRatio","label":"流動比率","unit":"%","raw":200,"score":100},{"key":"fixedLongTermFit","label":"固定長期適合率","unit":"%","raw":71.4,"score":100},{"key":"debtToMonthlySales","label":"借入金月商倍率","unit":"ヶ月","raw":4,"score":40},{"key":"debtRepaymentYears","label":"債務償還年数","unit":"年","raw":2.67,"score":100},{"key":"operatingMargin","label":"営業利益率","unit":"%","raw":10,"score":60},{"key":"ordinaryMargin","label":"経常利益率","unit":"%","raw":9.2,"score":57},{"key":"netMargin","label":"当期純利益率","unit":"%","raw":6.7,"score":59},{"key":"laborShare","label":"労働分配率","unit":"%","raw":66.7,"score":33},{"key":"ebitdaMargin","label":"EBITDAマージン","unit":"%","raw":12.5,"score":50},{"key":"receivablesTurnover","label":"売上債権回転率","unit":"倍","raw":6,"score":10},{"key":"inventoryTurnover","label":"棚卸資産回転率","unit":"倍","raw":6,"score":10},{"key":"ccc","label":"CCC","unit":"日","raw":30.4,"score":66},{"key":"roa","label":"ROA","unit":"%","raw":8,"score":80},{"key":"roe","label":"ROE","unit":"%","raw":20,"score":100}]');
+  });
+});
+
+describe('computeFinancialRatios — CCC partial-null guards', () => {
+  it('returns null CCC when any component is undefined (revenue=0 or cogs=0)', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, cogs: 0 }).cccDays).toBeNull(); // 棚卸/仕入回転日数が算定不能
+    expect(computeFinancialRatios({ ...SAMPLE, revenue: 0 }).cccDays).toBeNull(); // 売上債権回転日数が算定不能
+  });
+  it('computes CCC when receivables are 0 (arDays=0, still defined)', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, accountsReceivable: 0 }).cccDays).toBe(-30.4); // 0 + 60.83 − 91.25
+  });
 });
