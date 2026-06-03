@@ -696,3 +696,27 @@ describe('Vault — wipeAndReset', () => {
     expect(await v.status()).toBe('uninitialized');
   });
 });
+
+describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
+  it('idbGet が throw しても reject せず uninitialized を返す (ログイン画面に到達)', async () => {
+    const v = getVault();
+    // 先に初期化して meta を書き込んでおく (本来は locked が返る状態)。
+    await v.initialize('robustness-pw-123456');
+    _resetVaultForTests(); // currentKey を捨てて再起動相当 (= locked のはず)
+    const v2 = getVault();
+
+    // idbGet 内の db.transaction を一時的に throw させ、読取失敗を再現する。
+    const proto = (globalThis as unknown as { IDBDatabase: { prototype: { transaction: unknown } } }).IDBDatabase
+      .prototype;
+    const orig = proto.transaction;
+    proto.transaction = () => {
+      throw new Error('synthetic idb failure');
+    };
+    try {
+      // reject せず uninitialized に縮退すること (App はこれでロック画面を表示)。
+      await expect(v2.status()).resolves.toBe('uninitialized');
+    } finally {
+      proto.transaction = orig;
+    }
+  });
+});

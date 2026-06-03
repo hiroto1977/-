@@ -54,16 +54,33 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    detectBrowserMode().then(async (web) => {
-      if (cancelled) return;
-      setBrowserMode(web);
-      if (web) {
-        const s = await getVault().status();
-        if (!cancelled) setVaultUnlocked(s === 'unlocked');
-      } else {
-        setVaultUnlocked(true); // Electron: skip lock screen
-      }
-    });
+    detectBrowserMode()
+      .then(async (web) => {
+        if (cancelled) return;
+        setBrowserMode(web);
+        if (web) {
+          // status() が IndexedDB / WebCrypto エラーで reject しても、
+          // vaultUnlocked を null のままにすると「読み込み中…」で固まり
+          // ログイン画面が出なくなる。失敗時は locked 扱いで必ずロック画面を表示。
+          let unlocked = false;
+          try {
+            unlocked = (await getVault().status()) === 'unlocked';
+          } catch {
+            unlocked = false;
+          }
+          if (!cancelled) setVaultUnlocked(unlocked);
+        } else {
+          setVaultUnlocked(true); // Electron: skip lock screen
+        }
+      })
+      .catch(() => {
+        // detectBrowserMode 自体の想定外失敗でもハングさせない:
+        // ブラウザ扱い + locked でロック画面を表示する。
+        if (!cancelled) {
+          setBrowserMode(true);
+          setVaultUnlocked(false);
+        }
+      });
     return () => {
       cancelled = true;
     };

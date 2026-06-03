@@ -361,8 +361,17 @@ class BrowserVault implements Vault {
     } catch {
       return 'uninitialized';
     }
-    const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-    db.close();
+    // idbGet が reject すると status() が reject し、呼び出し側 (App) が
+    // ハングしてログイン画面が出なくなる。読み取り失敗は uninitialized 扱いで
+    // 必ずロック画面に到達させる。
+    let meta: VaultMeta | undefined;
+    try {
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+    } catch {
+      return 'uninitialized';
+    } finally {
+      db.close();
+    }
     if (!meta) return 'uninitialized';
     return this.currentKey ? 'unlocked' : 'locked';
   }
