@@ -980,3 +980,36 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
     expect(fundingCostMetrics([], sumZero)).toEqual({ totalLoanPrincipal: 0, totalInterest: 0, weightedCostRate: 0, selfFundingRatio: 0 });
   });
 });
+
+describe('golden: cashRunway dip/shortfall + scenarioRunways ordering', () => {
+  const mk = (month: string, net: number): FundingMonthly => ({
+    month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0,
+    netCashflow: net, operatingCashflow: 0, portfolioValue: 0,
+  });
+  it('tracks the minimum balance (dip) and stays above zero', () => {
+    expect(cashRunway([mk('2026-01', -50), mk('2026-02', 100)], 100)).toEqual({
+      rows: [
+        { month: '2026-01', netCashflow: -50, balance: 50 },
+        { month: '2026-02', netCashflow: 100, balance: 150 },
+      ],
+      openingBalance: 100, minBalance: 50, shortfallMonth: null,
+    });
+  });
+  it('flags the first shortfall month when the balance goes negative', () => {
+    expect(cashRunway([mk('2026-01', -80), mk('2026-02', 200)], 50)).toEqual({
+      rows: [
+        { month: '2026-01', netCashflow: -80, balance: -30 },
+        { month: '2026-02', netCashflow: 200, balance: 170 },
+      ],
+      openingBalance: 50, minBalance: -30, shortfallMonth: '2026-01',
+    });
+  });
+  it('orders the 3 scenarios optimistic ≥ expected ≥ pessimistic', () => {
+    const it = (id: string, kind: FundingItem['kind'], amount: number, status: FundingItem['status']): FundingItem =>
+      ({ id, kind, name: id, amount, status, month: '2026-03', repayable: false });
+    const sr = scenarioRunways([it('a', 'subsidy', 5_000_000, 'approved'), it('b', 'grant', 1_000_000, 'applied')], { openingBalance: 0 });
+    expect(sr.optimistic.rows.at(-1)!.balance).toBe(4_200_000); // 確定3.5M + 申請0.7M×1.0
+    expect(sr.expected.rows.at(-1)!.balance).toBe(4_060_000); // + ×0.8
+    expect(sr.pessimistic.rows.at(-1)!.balance).toBe(3_780_000); // + ×0.8×0.5
+  });
+});
