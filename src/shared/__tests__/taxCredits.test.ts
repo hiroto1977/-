@@ -158,6 +158,12 @@ describe('calcMortgageCredit', () => {
     expect(r.creditable).toBe(210_000);
   });
 
+  it('the income-limit gate: over→0 vs eligible→credit (both directions in one test)', () => {
+    const base = { yearEndBalance: 30_000_000, incomeTaxBeforeCredit: 500_000, taxableIncomeForResident: 5_000_000 };
+    expect(calcMortgageCredit({ ...base, totalIncome: 25_000_000 }).creditable).toBe(0); // 上限超
+    expect(calcMortgageCredit({ ...base, totalIncome: 10_000_000 }).creditable).toBe(210_000); // 範囲内
+  });
+
   it('denies the credit once outside the deduction period', () => {
     const r = calcMortgageCredit({
       yearEndBalance: 30_000_000,
