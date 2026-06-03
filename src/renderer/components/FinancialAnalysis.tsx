@@ -44,8 +44,11 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
     return { x: cx + Math.cos(theta) * rr, y: cy + Math.sin(theta) * rr };
   };
   const poly = axes.map((a, i) => point(i, a.score)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  // 軸ラベルは半径の 118% 位置に置くため、左右の長いラベル (固定長期適合率 等) が
+  // 端で見切れないよう viewBox に水平パディングを取り、その分 maxWidth も広げる。
+  const PAD = 64;
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: size, height: 'auto', display: 'block', margin: '0 auto' }} role="img" aria-label="財務指標レーダー">
+    <svg viewBox={`${-PAD} -6 ${size + PAD * 2} ${size + 12}`} width="100%" style={{ maxWidth: size + PAD * 2, height: 'auto', display: 'block', margin: '0 auto' }} role="img" aria-label="財務指標レーダー">
       {[20, 40, 60, 80, 100].map((lvl) => (
         <polygon key={lvl} points={axes.map((_, i) => point(i, lvl)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} fill="none" stroke="#2a2f3a" strokeDasharray="2,3" />
       ))}
@@ -128,8 +131,8 @@ function BarChart({ rows, unit }: { rows: { label: string; value: number | null 
         const v = r.value ?? 0;
         const w = (Math.abs(v) / max) * 100;
         return (
-          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: '90px 1fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
-            <span style={{ color: 'var(--text-mute)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.label}</span>
+          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
+            <span title={r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
             <div style={{ background: 'var(--bg)', borderRadius: 3, height: 14, position: 'relative' }}>
               <div style={{ width: `${w}%`, height: '100%', background: PALETTE[i % PALETTE.length], borderRadius: 3 }} />
             </div>
