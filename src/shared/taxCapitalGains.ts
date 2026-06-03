@@ -45,16 +45,21 @@ function baseRate(kind: CapitalAssetKind): CapitalRate {
       // 短期譲渡: 所得税30% + 住民税9%。
       return { incomeTaxRate: 0.3, residentTaxRate: 0.09 };
     case 'real-estate-long':
+    // residential は calcCapitalGainsTax 側で軽減税率処理され baseRate には到達しないが、
+    // 型の網羅性のため case は残す (到達不能 = 変異不能)。
+    // Stryker disable next-line all
     case 'residential':
       // 長期譲渡: 所得税15% + 住民税5%。
       return { incomeTaxRate: 0.15, residentTaxRate: 0.05 };
     case 'listed-stock':
       // 上場株式等: 所得税15% + 住民税5%。
       return { incomeTaxRate: 0.15, residentTaxRate: 0.05 };
+    // Stryker disable all — exhaustive switch の防御コード (到達不能)。
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
     }
+    // Stryker restore all
   }
 }
 

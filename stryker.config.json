@@ -45,7 +45,9 @@
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/pkce.ts",
     "src/renderer/library/library.ts",
-    "src/renderer/fs/fsa.ts"
+    "src/renderer/fs/fsa.ts",
+    "src/shared/taxCasual.ts",
+    "src/shared/taxCapitalGains.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

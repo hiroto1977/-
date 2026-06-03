@@ -179,13 +179,15 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
   生存ミュータントを全 kill (commit e4f15a3)
 
-### 🟡 follow-up (税務試算サービス)
-- 税務 6 モジュール (taxCalc / taxDeductions / taxCredits / taxRetirement / taxCasual /
-  taxCapitalGains) は強い behavioral + 境界値テスト (合計 206 件) を持つが、**stryker.config の
-  mutate 配列には未登録**。clean 変異実測 (2026-06): taxCasual **100%** / taxCredits 96.6% /
-  taxCalc 90.0% / taxCapitalGains 90.2% / taxRetirement 82.0% / **taxDeductions 76.0%**、
-  全体 85.3% (生存 103 + 未カバー 21)。break=99.8 のため、scope 追加の前に各モジュールの
-  生存変異を kill する必要がある (特に taxDeductions)。等価ミュータントは pragma 抑制が必要。
+### 🟡 follow-up (税務試算サービス) — Stryker scope 登録を進行中
+税務 6 モジュールは強い behavioral + 境界値テスト (合計 220+ 件) を持つ。2026-06 の精度キャンペーンで
+各モジュールの生存変異を順次 kill し、`stryker.config.json` の `mutate` 配列へ段階登録中:
+- ✅ **taxCasual** 100% → scope 登録済み
+- ✅ **taxCapitalGains** 100% (到達不能な default/未到達 residential 節に Stryker pragma) → scope 登録済み
+- 残り: taxCredits 97.3% / taxCalc 90.8% / taxRetirement 88.5% / taxDeductions 86.2%
+  → 残存は **(1) 連続段階関数の境界=数学的に等価** と **(2) catalog/checklist の大量 StringLiteral**。
+  100% 化には pragma (`// Stryker disable [next-line] all` / block) の付与が必要。順次対応して scope へ追加する。
+  ※ break=99.8 のため、各モジュールを 100% にしてから scope に足すこと (在スコープ全体は 100% 維持)。
 
 ### 🟢 税額計算の残論点 (並列監査で整理)
 ✅ 実装済 (89913c9):
