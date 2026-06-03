@@ -47,8 +47,12 @@
     "src/renderer/library/library.ts",
     "src/renderer/fs/fsa.ts",
     "src/shared/taxCasual.ts",
+<<<<<<< HEAD
     "src/shared/taxCapitalGains.ts",
     "src/shared/taxCredits.ts"
+=======
+    "src/shared/taxCapitalGains.ts"
+>>>>>>> origin/claude/claude-md-docs-qqUAT
   ],
   "testRunner": "vitest",
   "vitest": {
