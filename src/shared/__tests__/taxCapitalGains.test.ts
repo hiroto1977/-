@@ -139,4 +139,15 @@ describe('estimatedAcquisitionCost / resolveAcquisitionCost (概算取得費5%�
     expect(cost).toBe(2_500_000);
     expect(r.gain).toBe(45_500_000);
   });
+
+  it('totalTax is the sum of income+resident tax and takeHome subtracts it from proceeds', () => {
+    // 短期譲渡 2,000万: 所得税 6,126,000 / 住民税 1,800,000 (両方>0で +/- 変異を区別)
+    const r = calcCapitalGainsTax(20_000_000, 0, 0, 'real-estate-short');
+    expect(r.incomeTax).toBe(6_126_000);
+    expect(r.residentTax).toBe(1_800_000);
+    expect(r.totalTax).toBe(r.incomeTax + r.residentTax); // = 7,926,000 (合算であり差ではない)
+    expect(r.totalTax).toBe(7_926_000);
+    expect(r.takeHome).toBe(20_000_000 - r.totalTax); // = 12,074,000 (収入から控除)
+    expect(r.takeHome).toBe(12_074_000);
+  });
 });
