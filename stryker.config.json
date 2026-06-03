@@ -48,7 +48,8 @@
     "src/renderer/fs/fsa.ts",
     "src/shared/taxCasual.ts",
     "src/shared/taxCapitalGains.ts",
-    "src/shared/taxCredits.ts"
+    "src/shared/taxCredits.ts",
+    "src/shared/taxRetirement.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
