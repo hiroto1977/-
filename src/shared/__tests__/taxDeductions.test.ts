@@ -70,6 +70,12 @@ describe('calcSpouseDeduction', () => {
     }
   });
 
+  it('applies the 2/3 and 1/3 factors to the 配偶者特別控除 (spouseIncome>48万)', () => {
+    // 配偶者所得 90万 (特別控除・満額 38万/33万) に本人所得 tier の factor を乗じる。
+    expect(calcSpouseDeduction(9_400_000, 900_000)).toEqual({ incomeTax: 253_333, residentTax: 220_000 }); // tier2 ×2/3
+    expect(calcSpouseDeduction(9_900_000, 900_000)).toEqual({ incomeTax: 126_667, residentTax: 110_000 }); // tier3 ×1/3
+  });
+
   it('pins the 本人所得 tier boundaries with the 2/3 and 1/3 factors', () => {
     // 配偶者控除 (満額 38万/33万) に対し tier2=2/3, tier3=1/3。
     expect(calcSpouseDeduction(9_000_000, 0)).toEqual({ incomeTax: 380_000, residentTax: 330_000 }); // tier1

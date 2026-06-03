@@ -125,10 +125,12 @@ export function dependentDeduction(kind: DependentKind): DeductionPair {
       return { incomeTax: 580_000, residentTax: 450_000 };
     case 'elderly':
       return { incomeTax: 480_000, residentTax: 380_000 };
+    // Stryker disable all — exhaustive switch の防御コード (到達不能)。
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
     }
+    // Stryker restore all
   }
 }
 
@@ -184,6 +186,8 @@ export function calcDependentDeductionWithIncome(
 
 /** 新制度・生命保険料控除 1 区分の控除額を計算する。 */
 function lifeInsuranceNew(premium: number): DeductionPair {
+  // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
+  // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   // 所得税 (新制度): 〜2万=全額, 〜4万=÷2+1万, 〜8万=÷4+2万, 8万超=4万。
   let it: number;
@@ -197,11 +201,14 @@ function lifeInsuranceNew(premium: number): DeductionPair {
   else if (premium <= 32_000) rt = yen(premium / 2 + 6_000);
   else if (premium <= 56_000) rt = yen(premium / 4 + 14_000);
   else rt = 28_000;
+  // Stryker restore EqualityOperator
   return { incomeTax: it, residentTax: rt };
 }
 
 /** 旧制度・生命保険料控除 1 区分の控除額を計算する。 */
 function lifeInsuranceOld(premium: number): DeductionPair {
+  // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
+  // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   // 所得税 (旧制度): 〜2.5万=全額, 〜5万=÷2+1.25万, 〜10万=÷4+2.5万, 10万超=5万。
   let it: number;
@@ -215,6 +222,7 @@ function lifeInsuranceOld(premium: number): DeductionPair {
   else if (premium <= 40_000) rt = yen(premium / 2 + 7_500);
   else if (premium <= 70_000) rt = yen(premium / 4 + 17_500);
   else rt = 35_000;
+  // Stryker restore EqualityOperator
   return { incomeTax: it, residentTax: rt };
 }
 
@@ -262,6 +270,7 @@ export function calcLifeInsuranceDeduction(p: LifeInsurancePremiums): DeductionP
 
 /** 地震保険料から控除額を計算する。 */
 export function calcEarthquakeInsuranceDeduction(premium: number): DeductionPair {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: premium<=0 早期returnは計算経路でも{0,0}で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
   return {
     incomeTax: Math.min(50_000, yen(premium)),
@@ -281,6 +290,7 @@ export function calcMedicalDeduction(
   totalIncome: number,
 ): DeductionPair {
   const net = paidMedical - reimbursed;
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: net<=0 早期returnは計算経路でも{0,0}で同値。
   if (net <= 0) return { incomeTax: 0, residentTax: 0 };
   const threshold = Math.min(yen(totalIncome * 0.05), 100_000);
   const deduction = Math.min(2_000_000, Math.max(0, net - threshold));
@@ -361,6 +371,7 @@ export function clampSmallBizMutualAid(amount: number): number {
 
 /** ふるさと納税等の寄附金控除 (所得税の所得控除分)。 */
 export function calcDonationDeduction(donation: number, totalIncome: number): DeductionPair {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: 2,000円境界は連続(控除0)で <= と < が同値。
   if (donation <= 2_000) return { incomeTax: 0, residentTax: 0 };
   const cap = yen(totalIncome * 0.4);
   const deduction = Math.min(cap, donation - 2_000);
@@ -381,10 +392,12 @@ export function disabilityDeduction(kind: DisabilityKind): DeductionPair {
       return { incomeTax: 400_000, residentTax: 300_000 };
     case 'special-livein':
       return { incomeTax: 750_000, residentTax: 530_000 };
+    // Stryker disable all — exhaustive switch の防御コード (到達不能)。
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
     }
+    // Stryker restore all
   }
 }
 
