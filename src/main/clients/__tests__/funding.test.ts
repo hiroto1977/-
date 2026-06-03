@@ -938,3 +938,44 @@ describe('effectiveFundingCostRate / fundingCostMetrics', () => {
     expect(empty.selfFundingRatio).toBe(0);
   });
 });
+
+describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () => {
+  const sum: FundingSummary = {
+    nonRepayableSecured: 6_000_000, repayableSecured: 4_000_000, totalSecured: 10_000_000,
+    totalPipeline: 10_000_000, taxableSecured: 6_000_000, deferredSecured: 0, afterTaxSecured: 8_200_000,
+    consumptionTaxExemptSecured: 6_000_000, consumptionTaxableSecured: 0, consumptionTaxEstimate: 0, count: 3,
+  };
+  const sumZero: FundingSummary = {
+    nonRepayableSecured: 0, repayableSecured: 0, totalSecured: 0, totalPipeline: 0, taxableSecured: 0,
+    deferredSecured: 0, afterTaxSecured: 0, consumptionTaxExemptSecured: 0, consumptionTaxableSecured: 0,
+    consumptionTaxEstimate: 0, count: 0,
+  };
+  const mk = (repayment: number, ocf: number): FundingMonthly => ({
+    month: '2026-01', funding: 0, fundingAfterTax: 0, repayment, interest: 0, interestTaxShield: 0,
+    netCashflow: 0, operatingCashflow: ocf, portfolioValue: 0,
+  });
+
+  it('fundingQualityScore: computed, zero-total fallback (1.0), zero-weight fallback (0)', () => {
+    expect(fundingQualityScore(sum)).toEqual({ nonRepayableRatio: 0.6, afterTaxRatio: 0.82, compositeScore: 73 });
+    expect(fundingQualityScore(sumZero)).toEqual({ nonRepayableRatio: 1, afterTaxRatio: 1, compositeScore: 100 });
+    expect(fundingQualityScore(sum, [0, 0]).compositeScore).toBe(0); // wSum=0 → weighted 0
+  });
+
+  it('debtServiceMetrics: tracks worst-month DSCR + shortfall, and zero-repayment fallback', () => {
+    expect(debtServiceMetrics([mk(100, 150), mk(100, 80), mk(0, 200)])).toEqual({
+      totalRepayment: 200, totalOperatingCashflow: 430, overallDscr: 2.15, worstMonthDscr: 0.8, shortfallMonths: 1,
+    });
+    expect(debtServiceMetrics([mk(0, 200), mk(0, 100)])).toEqual({
+      totalRepayment: 0, totalOperatingCashflow: 300, overallDscr: 0, worstMonthDscr: 0, shortfallMonths: 0,
+    });
+  });
+
+  it('fundingCostMetrics: weights only secured repayable loans; zero fallback', () => {
+    const items: FundingItem[] = [
+      { id: 'l1', kind: 'loan', name: '確定融資', amount: 1_000_000, status: 'received', month: '2026-01', repayable: true, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02' } },
+      { id: 'l2', kind: 'loan', name: '申請中', amount: 500_000, status: 'applied', month: '2026-01', repayable: true, repayment: { annualRate: 0.02, months: 6, startMonth: '2026-02' } },
+    ];
+    expect(fundingCostMetrics(items, sum)).toEqual({ totalLoanPrincipal: 1_000_000, totalInterest: 13_046, weightedCostRate: 0.013046, selfFundingRatio: 0.4 });
+    expect(fundingCostMetrics([], sumZero)).toEqual({ totalLoanPrincipal: 0, totalInterest: 0, weightedCostRate: 0, selfFundingRatio: 0 });
+  });
+});
