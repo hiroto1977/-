@@ -82,4 +82,12 @@ describe('statementToCsv', () => {
     expect(lines[1]).toBe('限界利益率,50.0%');
     expect(lines[2]).toBe('　内訳,100');
   });
+
+  it('amount も display も無い行は空フィールドになる (?? "" フォールバック)', () => {
+    // value = amount!=null ? String(amount) : (display ?? '') の '' 側を通す。
+    // '' を別文字に変える mutant は "空行," 以外を出力するため殺せる。
+    const sample: StatementLine[] = [{ label: '空行', amount: null }];
+    const lines = statementToCsv(sample).split('\r\n');
+    expect(lines[1]).toBe('空行,');
+  });
 });

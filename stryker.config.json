@@ -51,7 +51,10 @@
     "src/shared/taxCredits.ts",
     "src/shared/taxRetirement.ts",
     "src/shared/taxDeductions.ts",
-    "src/shared/taxCalc.ts"
+    "src/shared/taxCalc.ts",
+    "src/renderer/data/financialTrend.ts",
+    "src/renderer/data/financialCsv.ts",
+    "src/renderer/data/financialDiagnosis.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
