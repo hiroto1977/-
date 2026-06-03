@@ -165,6 +165,12 @@ describe('monthlyPayment', () => {
     expect(monthlyPayment(1_200_000, 0, 12)).toBe(100_000);
   });
 
+  it('computes the exact annuity payment for an interest-bearing loan and guards', () => {
+    expect(monthlyPayment(1_200_000, 0.024, 12)).toBe(101_305); // 元利均等
+    expect(monthlyPayment(0, 0.02, 12)).toBe(0); // principal<=0
+    expect(monthlyPayment(1_000, 0.02, 0)).toBe(0); // months<=0
+  });
+
   it('returns 0 for non-positive principal or months', () => {
     expect(monthlyPayment(0, 0.02, 12)).toBe(0);
     expect(monthlyPayment(1_000_000, 0.02, 0)).toBe(0);
@@ -182,6 +188,13 @@ describe('monthlyPayment', () => {
 });
 
 describe('amortizationSchedule', () => {
+  it('golden: equal-payment / equal-principal / grace schedules (exact)', () => {
+    expect(JSON.stringify(amortizationSchedule(1_200_000, 0.024, 3, '2026-01'))).toBe('[{"month":"2026-01","payment":401601,"principal":399201,"interest":2400,"remaining":800799},{"month":"2026-02","payment":401601,"principal":399999,"interest":1602,"remaining":400800},{"month":"2026-03","payment":401602,"principal":400800,"interest":802,"remaining":0}]');
+    expect(JSON.stringify(amortizationSchedule(1_200_000, 0.024, 3, '2026-01', 0, 'equal-principal'))).toBe('[{"month":"2026-01","payment":402400,"principal":400000,"interest":2400,"remaining":800000},{"month":"2026-02","payment":401600,"principal":400000,"interest":1600,"remaining":400000},{"month":"2026-03","payment":400800,"principal":400000,"interest":800,"remaining":0}]');
+    // 据置2ヶ月: 元金0・利息のみ → その後2回で完済
+    expect(JSON.stringify(amortizationSchedule(1_200_000, 0.024, 2, '2026-01', 2))).toBe('[{"month":"2026-01","payment":2400,"principal":0,"interest":2400,"remaining":1200000},{"month":"2026-02","payment":2400,"principal":0,"interest":2400,"remaining":1200000},{"month":"2026-03","payment":601801,"principal":599401,"interest":2400,"remaining":600599},{"month":"2026-04","payment":601800,"principal":600599,"interest":1201,"remaining":0}]');
+  });
+
   it('splits each payment into principal + interest and fully amortizes', () => {
     const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01');
     expect(sched).toHaveLength(12);
@@ -407,7 +420,9 @@ describe('defaultProbability / effectiveProbability', () => {
     expect(defaultProbability(mk('applied', 'subsidy'))).toBe(0.5);
     expect(defaultProbability(mk('applied', 'grant'))).toBe(0.8);
     expect(defaultProbability(mk('applied', 'benefit'))).toBe(0.9);
+    expect(defaultProbability(mk('applied', 'loan'))).toBe(0.7);
     expect(defaultProbability(mk('applied', 'jfc'))).toBe(0.75);
+    expect(defaultProbability(mk('applied', 'crowdfunding'))).toBe(0.5);
   });
 
   it('discounts planned items to half the applied base rate', () => {
