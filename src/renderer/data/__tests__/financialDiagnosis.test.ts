@@ -111,4 +111,23 @@ describe('diagnoseFinancials', () => {
       expect(d.weaknesses[0]!.comment).toBe(hint);
     }
   });
+
+  it('空の軸配列でも overallScore は 0 (NaN にならない)', () => {
+    // mean() の `xs.length === 0 ? 0 : …` の 0 側を通す。条件を false に固定する
+    // mutant は Math.round(0/0)=NaN になるため、この assertion で殺せる。
+    const d = diagnoseFinancials([]);
+    expect(d.overallScore).toBe(0);
+    expect(Number.isNaN(d.overallScore)).toBe(false);
+  });
+
+  it('弱点が多くても weaknesses は最大 3 件に丸める (.slice(0,3))', () => {
+    // 非 good 軸を 5 つ与える (score<70=warn/bad)。slice(0,3) を外す mutant は
+    // 5 件返すため、length===3 で殺せる。
+    const axes = [
+      axis('a', 'A', 10), axis('b', 'B', 12), axis('c', 'C', 14),
+      axis('d', 'D', 16), axis('e', 'E', 18),
+    ];
+    const d = diagnoseFinancials(axes);
+    expect(d.weaknesses).toHaveLength(3);
+  });
 });

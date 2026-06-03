@@ -37,6 +37,14 @@ describe('analyzeMarginTrend', () => {
     expect(analyzeMarginTrend([{ revenue: 100, profit: 10 }]).lastMarginPct).toBe(10);
   });
 
+  it('empty history yields null margins (not NaN) — 0期は単一値分岐に入らない', () => {
+    // margins.length===0 → 三項条件 false 側 (null) を通ること。条件を true に
+    // 固定する mutant は round1(undefined)=NaN になるため、この assertion で殺せる。
+    const t = analyzeMarginTrend([]);
+    expect(t.firstMarginPct).toBe(null);
+    expect(t.lastMarginPct).toBe(null);
+  });
+
   it('ignores zero-revenue periods', () => {
     const t = analyzeMarginTrend([{ revenue: 0, profit: 0 }, { revenue: 100, profit: 5 }, { revenue: 100, profit: 15 }]);
     expect(t.firstMarginPct).toBe(5); // 0売上は除外され、最初の有効点は5%
