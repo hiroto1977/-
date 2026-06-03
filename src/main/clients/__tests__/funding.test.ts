@@ -40,11 +40,15 @@ const items: FundingItem[] = [
 ];
 
 describe('fundingKindLabel', () => {
-  it('returns a Japanese label for every kind', () => {
+  it('returns the exact Japanese label for every kind', () => {
     for (const k of FUNDING_KINDS) {
       expect(fundingKindLabel(k).length).toBeGreaterThan(0);
     }
+    expect(fundingKindLabel('subsidy')).toBe('補助金');
+    expect(fundingKindLabel('grant')).toBe('助成金');
+    expect(fundingKindLabel('loan')).toBe('融資');
     expect(fundingKindLabel('jfc')).toBe('日本政策金融公庫');
+    expect(fundingKindLabel('benefit')).toBe('給付金');
     expect(fundingKindLabel('crowdfunding')).toBe('クラウドファンディング');
   });
 });
