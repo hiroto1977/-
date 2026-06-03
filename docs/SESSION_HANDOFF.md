@@ -190,6 +190,20 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
   EqualityOperator を block disable (ArithmeticOperator の kill 実績は維持)。
 - 知見3: **perTest カバレッジの取りこぼし** (フルスイートは kill するのに survive) は理由明記で pragma。
 - 知見4: マージ後は **stryker.config.json の JSON 妥当性を必ず検証** (競合マーカー混入を防ぐ)。
+- 知見5: **表示文字列の大量 StringLiteral は出力全文の golden 照合** (`toBe`/`JSON.stringify`) で
+  1テスト=多数 kill。pragma 不要で低リスク (財務 render 系で実証)。
+- 知見6: `npm run typecheck | tail -1` はパイプで終了コードが隠れる。**型チェックは単独で実行**して
+  失敗を確実に捕捉する。
+
+### ✅ 解決済み: 純粋ロジックの mutation 精度キャンペーン (2026-06、本番コード無変更)
+税務に加え、財務分析 + funding + ブラウザ純ロジックの変異スコアを底上げ。kill 可能はテスト追加、
+等価/到達不能は理由付き pragma、表示文字列は golden 全文照合で対応。到達点:
+- **財務分析7**: financialDiagnosis 98.3 / financialCsv 98.7 / financialRatios 96.2 / financialTrend 97.4 /
+  financialStatements 95.3 / financialReport 94.9 / businessFinancials 92.3 %
+- **funding**: 87.6 → **91.5%** (残は zero-guard 境界・sort 比較子・到達不能 default の長尾 = 等価寄り)
+- **ブラウザ純ロジック**: emotionsWeb / saasWriteWeb / stocksWatchlistWeb (93.6%) / stocksAnalysisWeb (66%) 改善済
+- これらは **Stryker scope 外** (公式 100% gate は税務含む scope 内モジュールのみ)。残りは等価変異中心で
+  追加テストの効果は逓減 — 過剰な golden 固定は保守性を下げるため一区切り。
 
 ### 🟢 税額計算の残論点 (並列監査で整理)
 ✅ 実装済 (89913c9):
