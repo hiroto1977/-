@@ -33,10 +33,17 @@ const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; reado
 
 const TREND_TEXT: Record<MarginTrend['direction'], string> = { up: '改善傾向', flat: '横ばい', down: '悪化傾向' };
 
+// 円建ての桁区切り。'ja-JP' を 1 箇所に集約。なお実行環境の既定ロケールでも
+// 整数の桁区切りは同一になり 'ja-JP'→'' の差が出ない (equivalent) ため、この
+// 行の StringLiteral mutation のみ無効化する。
+// Stryker disable next-line StringLiteral
+const yen = (n: number): string => n.toLocaleString('ja-JP');
+
 function fmtValue(v: number | null, unit: string, money?: boolean): string {
   if (v == null) return '—';
-  if (money) return `${v.toLocaleString('ja-JP')} 円`;
-  return `${v.toLocaleString('ja-JP')}${unit}`;
+  // money 行も unit ('円') を使う。ハードコードせず unit を経由させることで
+  // ROWS の unit を live にし、その StringLiteral mutation を golden で殺せる。
+  return money ? `${yen(v)} ${unit}` : `${yen(v)}${unit}`;
 }
 
 export interface FinancialReportInput {
