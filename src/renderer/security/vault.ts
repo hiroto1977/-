@@ -362,13 +362,13 @@ class BrowserVault implements Vault {
       return 'uninitialized';
     }
     // idbGet が reject すると status() が reject し、呼び出し側 (App) が
-    // ハングしてログイン画面が出なくなる。読み取り失敗は uninitialized 扱いで
-    // 必ずロック画面に到達させる。
+    // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
+    // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
     let meta: VaultMeta | undefined;
     try {
       meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
     } catch {
-      return 'uninitialized';
+      // 読取失敗 → meta は undefined のまま (下で uninitialized を返す)
     } finally {
       db.close();
     }
