@@ -55,6 +55,37 @@ describe('calcSpouseDeduction', () => {
   it('is zero when spouse income exceeds 133万', () => {
     expect(calcSpouseDeduction(5_000_000, 1_330_001)).toEqual({ incomeTax: 0, residentTax: 0 });
   });
+
+  it('pins every spouse-income tier boundary of the 配偶者特別控除 table (本人 tier1)', () => {
+    // [配偶者の合計所得, 満額の所得税控除] — 各 <= 閾値とその+1 を網羅。
+    const table: ReadonlyArray<readonly [number, number]> = [
+      [480_001, 380_000], [950_000, 380_000], [950_001, 360_000], [1_000_000, 360_000],
+      [1_000_001, 310_000], [1_050_000, 310_000], [1_050_001, 260_000], [1_100_000, 260_000],
+      [1_100_001, 210_000], [1_150_000, 210_000], [1_150_001, 160_000], [1_200_000, 160_000],
+      [1_200_001, 110_000], [1_250_000, 110_000], [1_250_001, 60_000], [1_300_000, 60_000],
+      [1_300_001, 30_000], [1_330_000, 30_000], [1_330_001, 0],
+    ];
+    for (const [spouseIncome, expected] of table) {
+      expect(calcSpouseDeduction(5_000_000, spouseIncome).incomeTax).toBe(expected);
+    }
+  });
+
+  it('pins the 本人所得 tier boundaries with the 2/3 and 1/3 factors', () => {
+    // 配偶者控除 (満額 38万/33万) に対し tier2=2/3, tier3=1/3。
+    expect(calcSpouseDeduction(9_000_000, 0)).toEqual({ incomeTax: 380_000, residentTax: 330_000 }); // tier1
+    expect(calcSpouseDeduction(9_000_001, 0)).toEqual({ incomeTax: 253_333, residentTax: 220_000 }); // tier2
+    expect(calcSpouseDeduction(9_500_000, 0)).toEqual({ incomeTax: 253_333, residentTax: 220_000 }); // tier2 端
+    expect(calcSpouseDeduction(9_500_001, 0)).toEqual({ incomeTax: 126_667, residentTax: 110_000 }); // tier3
+    expect(calcSpouseDeduction(10_000_000, 0)).toEqual({ incomeTax: 126_667, residentTax: 110_000 }); // tier3 端
+    expect(calcSpouseDeduction(10_000_001, 0)).toEqual({ incomeTax: 0, residentTax: 0 }); // tier0
+  });
+
+  it('applies the elderly spouse amounts at the 48万 boundary', () => {
+    expect(calcSpouseDeduction(5_000_000, 480_000, true)).toEqual({ incomeTax: 480_000, residentTax: 380_000 });
+    expect(calcSpouseDeduction(5_000_000, 480_000, false)).toEqual({ incomeTax: 380_000, residentTax: 330_000 });
+    // 48万超は配偶者特別控除に切替 (老人区分は無関係に満額表)。
+    expect(calcSpouseDeduction(5_000_000, 480_001, true).incomeTax).toBe(380_000);
+  });
 });
 
 describe('dependentDeduction / calcDependentDeduction', () => {
@@ -123,6 +154,19 @@ describe('calcLifeInsuranceDeduction (新制度)', () => {
     expect(d.incomeTax).toBe(120_000); // 3×4万=12万
     expect(d.residentTax).toBe(70_000); // 3×2.8万=8.4万 → cap 7万
   });
+
+  it('pins every new-scheme bracket boundary (所得税 2/4/8万・住民税 1.2/3.2/5.6万)', () => {
+    // [保険料, 所得税控除, 住民税控除]
+    const table: ReadonlyArray<readonly [number, number, number]> = [
+      [12_000, 12_000, 12_000], [12_001, 12_001, 12_001], [20_000, 20_000, 16_000], [20_001, 20_001, 16_001],
+      [32_000, 26_000, 22_000], [32_001, 26_001, 22_000], [40_000, 30_000, 24_000], [40_001, 30_000, 24_000],
+      [56_000, 34_000, 28_000], [56_001, 34_000, 28_000], [80_000, 40_000, 28_000], [80_001, 40_000, 28_000],
+    ];
+    for (const [premium, it, rt] of table) {
+      const d = calcLifeInsuranceDeduction({ general: premium, medical: 0, pension: 0 });
+      expect([d.incomeTax, d.residentTax]).toEqual([it, rt]);
+    }
+  });
 });
 
 describe('calcLifeInsuranceDeduction (旧制度 / 新旧併用)', () => {
@@ -137,6 +181,18 @@ describe('calcLifeInsuranceDeduction (旧制度 / 新旧併用)', () => {
     const d = calcLifeInsuranceDeduction({ general: 0, medical: 0, pension: 0, generalOld: 40_000 });
     expect(d.incomeTax).toBe(32_500);
     expect(d.residentTax).toBe(27_500);
+  });
+
+  it('pins every old-scheme bracket boundary (所得税 2.5/5/10万・住民税 1.5/4/7万)', () => {
+    const table: ReadonlyArray<readonly [number, number, number]> = [
+      [15_000, 15_000, 15_000], [15_001, 15_001, 15_001], [25_000, 25_000, 20_000], [25_001, 25_001, 20_001],
+      [40_000, 32_500, 27_500], [40_001, 32_501, 27_500], [50_000, 37_500, 30_000], [50_001, 37_500, 30_000],
+      [70_000, 42_500, 35_000], [70_001, 42_500, 35_000], [100_000, 50_000, 35_000], [100_001, 50_000, 35_000],
+    ];
+    for (const [premium, it, rt] of table) {
+      const d = calcLifeInsuranceDeduction({ general: 0, medical: 0, pension: 0, generalOld: premium });
+      expect([d.incomeTax, d.residentTax]).toEqual([it, rt]);
+    }
   });
 
   it('combined new+old: combined is capped at 4万/2.8万, but old-only may win if larger', () => {
