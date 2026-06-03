@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2334 静的 / 2390 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2339 静的 / 2395 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
@@ -208,10 +208,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
    3,000万特別控除・10年超軽減税率、概算取得費5%、CapitalAssetKind 区分、TaxPage セクション⑥、
    16 テスト)。※ 旧版の「残り」記述は古かったため訂正。
 
+✅ **森林環境税 (2024年〜の均等割¥1,000上乗せ)** は taxCalc.ts に実装済み
+   (`FOREST_ENVIRONMENT_TAX` + `residentPerCapitaBreakdown(taxYear)` で年度別内訳)。
+   **ふるさと納税** も `calcFurusatoResidentCredit` (基本分+特例分・特例cap) で対応済み。
+   ※ 旧版の「残り」記述は古かったため訂正。
+
 残り (要設計判断・スコープ大):
 - 社会保険料の **標準報酬月額テーブル** 化 (概算セクション② のみ。③は実額入力で回避済で優先度低)。
-- 住民税の自治体差・**森林環境税1,000円 (2024年〜)** の均等割上乗せ。
-- ふるさと納税の **ワンストップ特例** 判定 (5自治体まで等)。
+- 住民税の自治体差の精緻化 / ふるさと納税の **ワンストップ特例** 判定 (5自治体まで等)。
 
 ### 🟢 資金調達レーダー (funding) — 精度向上の積み上げ
 新サービス `funding` (62件目)。集計は src/shared/funding.ts の純粋関数に集約。実装済の精度向上:

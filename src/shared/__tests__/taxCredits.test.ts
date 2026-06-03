@@ -48,6 +48,21 @@ describe('mortgageDeductionPeriod / mortgagePeriodStatus (控除期間)', () => 
     expect(mortgagePeriodStatus(2022, 2032, 'used').withinPeriod).toBe(false); // 11年目
   });
 
+  it('clamps remaining years to 0 well past the period (no negative)', () => {
+    // 2022居住・新築13年 → 2036 は15年目。残年数は負にならず 0。
+    const farPast = mortgagePeriodStatus(2022, 2036, 'standard');
+    expect(farPast.yearsElapsed).toBe(15);
+    expect(farPast.yearsRemaining).toBe(0);
+    expect(farPast.withinPeriod).toBe(false);
+  });
+
+  it('before the residence year reports the full period as remaining', () => {
+    const before = mortgagePeriodStatus(2025, 2024, 'standard');
+    expect(before.yearsElapsed).toBe(0);
+    expect(before.yearsRemaining).toBe(13); // 全期間が残る
+    expect(before.withinPeriod).toBe(false);
+  });
+
   it('before residence the credit period has not started', () => {
     const before = mortgagePeriodStatus(2024, 2022, 'standard');
     expect(before.withinPeriod).toBe(false);

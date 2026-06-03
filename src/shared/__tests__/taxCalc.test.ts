@@ -163,6 +163,30 @@ describe('calcNetSalary', () => {
   });
 });
 
+describe('精度境界: 調整控除 / 限界税率 / ふるさと納税控除', () => {
+  it('resident adjustment credit: 2,000万 tier boundary and the 2,500万 cutoff', () => {
+    // 課税所得 25,000,000 (>200万) → max(2500, (50000-2300万)×5%) = 2500
+    expect(calcResidentAdjustmentCredit(25_000_000, 50_000)).toBe(2_500);
+    // ちょうど 200万 (≤200万) → min(40000, 200万)×5% = 2000 (下限2500を適用しない側)
+    expect(calcResidentAdjustmentCredit(2_000_000, 40_000)).toBe(2_000);
+    // 200万+1 (>200万) → 下限 2500 が効く
+    expect(calcResidentAdjustmentCredit(2_000_001, 40_000)).toBe(2_500);
+    // 2,500万超 → 0
+    expect(calcResidentAdjustmentCredit(25_000_001, 50_000)).toBe(0);
+  });
+
+  it('marginal income tax rate: 0 income → 0%, then bracket rates', () => {
+    expect([0, 1_000_000, 1_950_000, 1_950_001, 4_000_000].map((t) => marginalIncomeTaxRate(t)))
+      .toEqual([0, 0.05, 0.05, 0.1, 0.2]);
+  });
+
+  it('furusato resident credit: base + capped special, and ≤2,000円は0', () => {
+    // base=(50000-2000)×0.1=4800, special=48000×(0.9-0.2×1.021)=33398.4, cap=300000×0.2=60000
+    expect(calcFurusatoResidentCredit(50_000, 300_000, 0.2)).toBe(38_198);
+    expect(calcFurusatoResidentCredit(2_000, 300_000, 0.2)).toBe(0);
+  });
+});
+
 describe('calcSalaryIncomeDeduction (令和2年分以降の正式テーブル)', () => {
   it('returns the 550,000 floor up to 1,625,000', () => {
     expect(calcSalaryIncomeDeduction(0)).toBe(0);
