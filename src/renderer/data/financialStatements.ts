@@ -106,7 +106,10 @@ export function buildVariableCostingStatement(f: FinancialInputs): StatementLine
   const contribution = f.revenue - variableCost; // 限界利益
   const contributionRatio = f.revenue === 0 ? null : contribution / f.revenue;
   const fixedCost = contribution - f.operatingProfit; // 固定費 = 限界利益 − 営業利益
-  const bep = contributionRatio == null || contributionRatio <= 0 ? null : r0(fixedCost / contributionRatio);
+  // BEP = 固定費 / 限界利益率 = 固定費 × 売上 / 限界利益。限界利益 (contribution) が
+  // 正のときだけ定義する。contributionRatio の null チェックを介さないことで、
+  // 「null は <= 0 でも捕捉される」冗長 (equivalent) な分岐を排除している。
+  const bep = contribution > 0 ? r0((fixedCost * f.revenue) / contribution) : null;
   return [
     { label: '売上高', amount: f.revenue, emphasis: true },
     { label: '変動費', amount: variableCost },
@@ -126,6 +129,8 @@ export function buildComprehensiveIncome(f: FinancialInputs): StatementLine[] {
     { label: '当期純利益', amount: f.netProfit, emphasis: true },
     { label: 'その他の包括利益', amount: oci },
     { label: '（データ無しのため 0 と仮定）', amount: null, indent: 1 },
+    // oci は常に 0 のため + / − が同値 (equivalent)。ArithmeticOperator を無効化。
+    // Stryker disable next-line ArithmeticOperator
     { label: '包括利益', amount: f.netProfit + oci, emphasis: true },
   ];
 }

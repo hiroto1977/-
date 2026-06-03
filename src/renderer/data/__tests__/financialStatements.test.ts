@@ -43,16 +43,18 @@ describe('buildIncomeStatement breakdown lines', () => {
 });
 
 describe('buildBalanceSheet', () => {
-  const { assets, liabilitiesEquity } = buildBalanceSheet(F);
   it('asset side totals to totalAssets', () => {
+    const { assets } = buildBalanceSheet(F);
     expect(amt(assets, '資産合計')).toBe(10_000);
     expect(amt(assets, '現預金')).toBe(2_000); // 5000 - 2000 - 1000
   });
   it('liabilities + equity balances to total assets', () => {
+    const { liabilitiesEquity } = buildBalanceSheet(F);
     expect(amt(liabilitiesEquity, '負債・純資産合計')).toBe(10_000);
     expect(amt(liabilitiesEquity, '純資産（自己資本）')).toBe(4_000);
   });
   it('splits debt into short/long term and other liabilities (exact)', () => {
+    const { liabilitiesEquity } = buildBalanceSheet(F);
     expect(amt(liabilitiesEquity, '短期借入金')).toBe(750); // 流動負債2500 × 0.3
     expect(amt(liabilitiesEquity, '（その他流動負債）')).toBe(250); // 2500 − 仕入1500 − 750
     expect(amt(liabilitiesEquity, '長期借入金')).toBe(3_250); // 有利子4000 − 短期750
@@ -215,5 +217,55 @@ describe('golden: PL structure + sumFinancialInputs all-fields', () => {
     const a = deriveBusinessFinancials({ revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 });
     const b = deriveBusinessFinancials({ revenue: 500_000, variableCost: 250_000, fixedCost: 150_000, profit: 50_000, profitMargin: 10 });
     expect(JSON.stringify(sumFinancialInputs([a, b]))).toBe('{"revenue":18000000,"cogs":7800000,"operatingProfit":3000000,"ordinaryProfit":2927040,"netProfit":2048928,"depreciation":540000,"laborCost":2700000,"interestExpense":72960,"totalAssets":14400000,"equity":6720000,"currentAssets":7920000,"currentLiabilities":4320000,"fixedAssets":6480000,"fixedLiabilities":3360000,"accountsReceivable":2250000,"inventory":650000,"accountsPayable":780000,"interestBearingDebt":3648000}');
+  });
+});
+
+describe('financialStatements — mutation edge cases', () => {
+  it('変動損益: 売上0なら限界利益率は — / BEP は null (revenue===0 ガード)', () => {
+    const v = buildVariableCostingStatement({ ...F, revenue: 0 });
+    expect(v.find((l) => l.label === '限界利益率')?.display).toBe('—');
+    expect(amt(v, '損益分岐点売上高')).toBe(null);
+  });
+
+  it('変動損益: 限界利益=0 (売上=変動費) でも BEP は null (> 0 と >= 0 を区別)', () => {
+    const v = buildVariableCostingStatement({ ...F, cogs: 12_000 }); // contribution = 12000 − 12000 = 0
+    expect(amt(v, '限界利益')).toBe(0);
+    expect(amt(v, '損益分岐点売上高')).toBe(null);
+  });
+
+  it('株主資本変動: 配当0は +0 で −0 ではない (dividend===0 分岐)', () => {
+    const s = buildEquityChangeStatement(F); // 既定 dividendRate=0 → dividend=0
+    const div = s.find((l) => l.label === '剰余金の配当')!.amount;
+    // toBe は Object.is 判定なので、mutant の −0 はここで弾かれる。
+    expect(div).toBe(0);
+  });
+
+  it('四半期: 13ヶ月以上でも直近12ヶ月のみ集計する (slice(-12))', () => {
+    // 先頭に大きな月を1つ足して 13ヶ月に。slice を外す mutant は通期売上が変わる。
+    const history = [
+      { revenue: 9_999, profit: 9_999 },
+      ...Array.from({ length: 12 }, () => ({ revenue: 100, profit: 10 })),
+    ];
+    const q = buildQuarterlyStatement(history);
+    expect(amt(q, '通期 売上高')).toBe(1_200); // 直近12ヶ月のみ (先頭 9999 は除外)
+    expect(amt(q, '通期 利益')).toBe(120);
+  });
+
+  it('四半期: 売上0の四半期は利益率が — (rev===0 / margin==null)', () => {
+    const q = buildQuarterlyStatement([
+      { revenue: 0, profit: 0 }, { revenue: 0, profit: 0 }, { revenue: 0, profit: 0 },
+    ]);
+    expect(q.filter((l) => l.label === '利益率').every((l) => l.display === '—')).toBe(true);
+  });
+
+  it('四半期: 通期売上0なら通期利益率も — (totRev===0 / totMargin==null)', () => {
+    const q = buildQuarterlyStatement([{ revenue: 0, profit: 0 }, { revenue: 0, profit: 0 }]);
+    expect(q.find((l) => l.label === '通期 利益率')?.display).toBe('—');
+  });
+
+  it('BS: assets/liabilitiesEquity を返す (空ボディ mutant を殺す)', () => {
+    const bs = buildBalanceSheet(F);
+    expect(bs.assets).toHaveLength(6);
+    expect(bs.liabilitiesEquity).toHaveLength(10);
   });
 });
