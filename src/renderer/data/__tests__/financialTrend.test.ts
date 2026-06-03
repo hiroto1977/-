@@ -22,6 +22,15 @@ describe('analyzeMarginTrend', () => {
     expect(t.deltaPct).toBe(0.1);
   });
 
+  it('treats exactly ±0.2pt as flat (strict > / < thresholds)', () => {
+    // delta = +0.2 ちょうど → flat (>0.2 ではない)
+    const up = analyzeMarginTrend([{ revenue: 1000, profit: 100 }, { revenue: 1000, profit: 102 }]);
+    expect([up.deltaPct, up.direction]).toEqual([0.2, 'flat']);
+    // delta = −0.2 ちょうど → flat (<−0.2 ではない)
+    const down = analyzeMarginTrend([{ revenue: 1000, profit: 102 }, { revenue: 1000, profit: 100 }]);
+    expect([down.deltaPct, down.direction]).toEqual([-0.2, 'flat']);
+  });
+
   it('returns flat with null delta for <2 valid points', () => {
     expect(analyzeMarginTrend([]).deltaPct).toBe(null);
     expect(analyzeMarginTrend([{ revenue: 100, profit: 10 }]).deltaPct).toBe(null);
