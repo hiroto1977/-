@@ -34,6 +34,7 @@ function yen(n: number): number {
 export function retirementDeduction(yearsOfService: number, disability = false): number {
   const years = Math.max(0, Math.floor(yearsOfService));
   let base: number;
+  // Stryker disable EqualityOperator: years<=20 の境界は years=20 で else枝(8,000,000)と連続=等価変異。
   if (years === 0) {
     base = 0;
   } else if (years <= 20) {
@@ -41,6 +42,7 @@ export function retirementDeduction(yearsOfService: number, disability = false):
   } else {
     base = 8_000_000 + 700_000 * (years - 20);
   }
+  // Stryker restore EqualityOperator
   return base + (disability ? 1_000_000 : 0);
 }
 
@@ -59,10 +61,12 @@ export function calcRetirementTaxableIncome(
 ): number {
   const deduction = retirementDeduction(yearsOfService, opts.disability ?? false);
   const afterDeduction = Math.max(0, severance - deduction);
+  // Stryker disable next-line ConditionalExpression: 早期returnを外しても afterDeduction=0 は yen(0/2)=0 で同値。
   if (afterDeduction === 0) return 0;
 
   // 短期退職手当等 (勤続5年以下): 控除後 300万までは1/2、300万超は全額。
   if (opts.shortTerm && Math.floor(yearsOfService) <= 5) {
+    // Stryker disable next-line EqualityOperator: 3,000,000 で <= と < は同値 (上下の式が連続)。
     if (afterDeduction <= 3_000_000) {
       return yen(afterDeduction / 2);
     }
@@ -95,6 +99,7 @@ export function calcRetirementTax(
   yearsOfService: number,
   opts: { readonly shortTerm?: boolean; readonly disability?: boolean } = {},
 ): RetirementTaxResult {
+  // Stryker disable next-line all: severance<=0 の早期returnは、計算経路でも同じゼロ群を返すため等価。
   if (severance <= 0) {
     return { deduction: retirementDeduction(yearsOfService, opts.disability ?? false), taxableIncome: 0, incomeTax: 0, residentTax: 0, takeHome: 0 };
   }

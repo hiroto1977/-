@@ -87,6 +87,11 @@ describe('calcRetirementTax', () => {
     expect(r.taxableIncome).toBe(2_500_000);
   });
 
+  it('uses the base deduction (no +100万) on the positive-severance path without disability', () => {
+    // 本道経路 (severance>0)・非障害 → 控除は基本額のみ。勤続30年 → 8,000,000 + 700,000×10 = 15,000,000。
+    expect(calcRetirementTax(30_000_000, 30).deduction).toBe(15_000_000);
+  });
+
   it('computes tax via base income tax × surtax and 10% resident', () => {
     // 勤続30年, 退職金 3,000万 → 課税退職所得 750万
     const r = calcRetirementTax(30_000_000, 30);
