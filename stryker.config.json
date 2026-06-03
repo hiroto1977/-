@@ -55,7 +55,8 @@
     "src/renderer/data/financialTrend.ts",
     "src/renderer/data/financialCsv.ts",
     "src/renderer/data/financialDiagnosis.ts",
-    "src/renderer/data/financialRatios.ts"
+    "src/renderer/data/financialRatios.ts",
+    "src/renderer/data/businessFinancials.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

@@ -56,6 +56,16 @@ describe('deriveBusinessFinancials', () => {
     });
   });
 
+  it('損失時は課税せず netProfit = ordinaryProfit (税引きは黒字のみ)', () => {
+    // 営業赤字の事業。ordinaryProfit < 0 → 三項の false 側を通り、×0.7 されない。
+    // 条件を true 固定する mutant は ordinaryProfit×0.7 になるため、これで殺せる。
+    const f = deriveBusinessFinancials({
+      revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: -100_000, profitMargin: -10,
+    });
+    expect(f.ordinaryProfit).toBeLessThan(0);
+    expect(f.netProfit).toBe(f.ordinaryProfit);
+  });
+
   it('feeds computeFinancialRatios to produce finite ratios', () => {
     const r = computeFinancialRatios(deriveBusinessFinancials(KPI));
     expect(r.equityRatioPct).not.toBeNull();
