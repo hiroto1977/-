@@ -51,6 +51,9 @@ export function App() {
   // browser mode and Vault status, switch to a concrete boolean.
   const [vaultUnlocked, setVaultUnlocked] = useState<boolean | null>(null);
   const [browserMode, setBrowserMode] = useState<boolean | null>(null);
+  // 「閲覧のみ」スキップ。Vault を初期化せずダッシュボードを見るための状態。
+  // トークン保存など秘密情報が必要な操作は、その時点で別途 Vault 設定を促す。
+  const [lockSkipped, setLockSkipped] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -122,8 +125,13 @@ export function App() {
   if (browserMode === null || vaultUnlocked === null) {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
   }
-  if (browserMode && !vaultUnlocked) {
-    return <LockScreen onUnlocked={() => setVaultUnlocked(true)} />;
+  if (browserMode && !vaultUnlocked && !lockSkipped) {
+    return (
+      <LockScreen
+        onUnlocked={() => setVaultUnlocked(true)}
+        onSkip={() => setLockSkipped(true)}
+      />
+    );
   }
 
   const active = SERVICES.find((s) => s.id === activeId)!;

@@ -17,7 +17,7 @@ import { looksLikeValidMnemonic } from './mnemonic';
  */
 type View = 'password' | 'mnemonic' | 'recovery';
 
-export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
+export function LockScreen({ onUnlocked, onSkip }: { onUnlocked: () => void; onSkip?: () => void }) {
   const [status, setStatus] = useState<VaultStatus | 'loading'>('loading');
   const [view, setView] = useState<View>('password');
   const [password, setPassword] = useState('');
@@ -433,6 +433,28 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
         >
           {busy ? '処理中…' : initial ? 'パスワードを設定して開始' : 'ロック解除'}
         </button>
+
+        {onSkip && (
+          <div style={{ marginTop: 12, textAlign: 'center' }}>
+            <button
+              type="button"
+              onClick={onSkip}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-mute)',
+                cursor: 'pointer',
+                fontSize: 11,
+                textDecoration: 'underline',
+              }}
+            >
+              パスワードなしで開く（閲覧のみ）
+            </button>
+            <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+              ダッシュボードの閲覧のみ。トークン保存など秘密情報を使う操作では、改めてパスワード設定が必要です。
+            </div>
+          </div>
+        )}
 
         {!initial && (
           <div style={{ marginTop: 12, textAlign: 'center' }}>
