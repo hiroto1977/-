@@ -131,6 +131,15 @@ describe('calcConsumptionTax', () => {
 });
 
 describe('calcNetSalary', () => {
+  it('golden: exact employment income / taxable income / residentTax for 5,000,000', () => {
+    const r = calcNetSalary(5_000_000);
+    expect(r.employmentIncome).toBe(3_560_000); // 5,000,000 − 給与所得控除 1,440,000
+    expect(r.taxableIncome).toBe(2_330_000); // 3,560,000 − 社保 750,000 − 基礎 480,000
+    expect(r.incomeTax).toBe(138_346);
+    expect(r.residentTax).toBe(243_000);
+    expect(r.takeHome).toBe(3_868_654);
+  });
+
   it('returns a per-capita-only resident tax for zero income', () => {
     const r = calcNetSalary(0);
     expect(r.takeHome).toBe(0);
@@ -366,6 +375,24 @@ describe('calcFurusatoResidentCredit', () => {
 });
 
 describe('calcSalaryWithDeductions', () => {
+  it('golden: full breakdown incl. adjustment & furusato credit', () => {
+    const r = calcSalaryWithDeductions(6_000_000, 1_100_000, 1_030_000, 30_000, 50_000, 0);
+    expect(r.taxableIncomeForResidentTax).toBe(3_330_000);
+    expect(r.baseIncomeTax).toBe(228_500);
+    expect(r.incomeTax).toBe(233_298);
+    expect(r.residentIncomeLevy).toBe(333_000);
+    expect(r.adjustmentCredit).toBe(2_500);
+    expect(r.furusatoResidentCredit).toBe(25_141);
+    expect(r.residentTax).toBe(310_359);
+    expect(r.takeHome).toBe(5_456_343);
+  });
+
+  it('caps the furusato special portion at (住民税所得割 − 調整控除)×20%', () => {
+    // 大口寄附で特例分が上限拘束。base 19,800 + cap (333,000−2,500)×20%=66,100 = 85,900。
+    const r = calcSalaryWithDeductions(6_000_000, 1_100_000, 1_030_000, 200_000, 50_000, 0);
+    expect(r.furusatoResidentCredit).toBe(85_900);
+  });
+
   it('returns per-capita resident tax and zero else for zero income', () => {
     const r = calcSalaryWithDeductions(0, 480_000, 430_000);
     expect(r.takeHome).toBe(0);
