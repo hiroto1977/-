@@ -21,6 +21,7 @@ function yen(n: number): number {
  * 例: 1,999,999 → 1,999,000 / 2,000,000 → 2,000,000。
  */
 export function floorTaxableThousand(taxableIncome: number): number {
+  // Stryker disable next-line EqualityOperator: 0 で <= と < は同値 (floor(0)=0)。
   if (taxableIncome <= 0) return 0;
   return Math.floor(taxableIncome / 1_000) * 1_000;
 }
@@ -67,7 +68,7 @@ export function calcIncomeTax(taxableIncome: number): number {
  * (`floorTaxableThousand`)。国税庁の所得税額の計算手順に準拠。
  */
 export function calcBaseIncomeTax(taxableIncome: number): number {
-  // Stryker disable next-line ConditionalExpression
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 0 で速算表は 0 を返すため早期returnと同値。
   if (taxableIncome <= 0) return 0;
   // 課税される所得金額の 1,000 円未満を切り捨ててから速算表を適用する。
   const floored = floorTaxableThousand(taxableIncome);
@@ -162,6 +163,7 @@ export function calcResidentAdjustmentCredit(
   residentTaxableIncome: number,
   humanDeductionDiff: number,
 ): number {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: <=0 のガードは計算経路でも 0 を返し同値。
   if (residentTaxableIncome <= 0 || humanDeductionDiff <= 0) return 0;
   if (residentTaxableIncome > 25_000_000) return 0;
   if (residentTaxableIncome <= 2_000_000) {
@@ -225,11 +227,13 @@ export function calcConsumptionTax(netAmount: number, rate: number = CONSUMPTION
  */
 export function calcSalaryIncomeDeduction(grossAnnual: number): number {
   if (grossAnnual <= 0) return 0;
+  // Stryker disable EqualityOperator: 給与所得控除の各ブラケット境界は連続で <= と < が同値 (等価変異)。
   if (grossAnnual <= 1_625_000) return 550_000;
   if (grossAnnual <= 1_800_000) return yen(grossAnnual * 0.4 - 100_000);
   if (grossAnnual <= 3_600_000) return yen(grossAnnual * 0.3 + 80_000);
   if (grossAnnual <= 6_600_000) return yen(grossAnnual * 0.2 + 440_000);
   if (grossAnnual <= 8_500_000) return yen(grossAnnual * 0.1 + 1_100_000);
+  // Stryker restore EqualityOperator
   return 1_950_000; // 上限
 }
 
@@ -327,6 +331,7 @@ export function calcFurusatoResidentCredit(
   residentIncomeTaxPortion: number, // 住民税所得割額
   marginalIncomeTaxRate: number, // 所得税の限界税率 (0..0.45)
 ): number {
+  // Stryker disable next-line EqualityOperator: 2,000円境界は連続(控除0)で <= と < が同値。
   if (donation <= 2_000) return 0;
   const base = (donation - 2_000) * 0.1;
   const special = (donation - 2_000) * (0.9 - marginalIncomeTaxRate * (1 + RECONSTRUCTION_SURTAX_RATE));

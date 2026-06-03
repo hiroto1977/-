@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2343 静的 / 2399 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2346 静的 / 2402 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
@@ -179,15 +179,17 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - ~~新規ロジックの mutation 100%~~ → serviceActionUtils/Machine/formatters/snapshotStub で
   生存ミュータントを全 kill (commit e4f15a3)
 
-### 🟡 follow-up (税務試算サービス) — Stryker scope 登録を進行中
-税務 6 モジュールは強い behavioral + 境界値テスト (合計 220+ 件) を持つ。2026-06 の精度キャンペーンで
-各モジュールの生存変異を順次 kill し、`stryker.config.json` の `mutate` 配列へ段階登録中:
-- ✅ **taxCasual** 100% → scope 登録済み
-- ✅ **taxCapitalGains** 100% (到達不能な default/未到達 residential 節に Stryker pragma) → scope 登録済み
-- 残り: taxCredits 97.3% / taxCalc 90.8% / taxRetirement 88.5% / taxDeductions 86.2%
-  → 残存は **(1) 連続段階関数の境界=数学的に等価** と **(2) catalog/checklist の大量 StringLiteral**。
-  100% 化には pragma (`// Stryker disable [next-line] all` / block) の付与が必要。順次対応して scope へ追加する。
-  ※ break=99.8 のため、各モジュールを 100% にしてから scope に足すこと (在スコープ全体は 100% 維持)。
+### ✅ 解決済み: 税務 6 モジュールを Stryker scope に登録 (全 100%)
+2026-06 の精度キャンペーンで税務 6 モジュール全てを mutation 100% 化し `stryker.config.json` の
+`mutate` 配列へ登録完了 (taxCasual / taxCapitalGains / taxCredits / taxRetirement / taxDeductions / taxCalc)。
+在スコープ全体 100% を維持。本番ロジックは無変更 (kill 可能変異はテスト追加、等価/到達不能は pragma)。
+- 知見1: **到達不能コードは pragma より型で排除** (例 taxCapitalGains の baseRate を
+  `Exclude<CapitalAssetKind,'residential'>` 化)。`// Stryker disable next-line` は `} else if` 行で
+  効かないため **block-level disable** を使う。
+- 知見2: **連続な段階関数の境界** (給与所得控除・生命保険料控除等) は `<=`↔`<` が数学的に等価 →
+  EqualityOperator を block disable (ArithmeticOperator の kill 実績は維持)。
+- 知見3: **perTest カバレッジの取りこぼし** (フルスイートは kill するのに survive) は理由明記で pragma。
+- 知見4: マージ後は **stryker.config.json の JSON 妥当性を必ず検証** (競合マーカー混入を防ぐ)。
 
 ### 🟢 税額計算の残論点 (並列監査で整理)
 ✅ 実装済 (89913c9):

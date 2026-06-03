@@ -50,7 +50,8 @@
     "src/shared/taxCapitalGains.ts",
     "src/shared/taxCredits.ts",
     "src/shared/taxRetirement.ts",
-    "src/shared/taxDeductions.ts"
+    "src/shared/taxDeductions.ts",
+    "src/shared/taxCalc.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
