@@ -44,19 +44,23 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
     return { x: cx + Math.cos(theta) * rr, y: cy + Math.sin(theta) * rr };
   };
   const poly = axes.map((a, i) => point(i, a.score)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  // 軸ラベルは半径の 113% 位置に置き、左右上下に十分な余白 (PAD) を取った viewBox に
+  // 収めることで、長いラベル (固定長期適合率 / 売上債権回転率 等) が端で見切れないようにする。
+  const PAD_X = 96;
+  const PAD_Y = 22;
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: size, height: 'auto', display: 'block', margin: '0 auto' }} role="img" aria-label="財務指標レーダー">
+    <svg viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`} width="100%" style={{ maxWidth: size + PAD_X * 2, height: 'auto', display: 'block', margin: '0 auto' }} role="img" aria-label="財務指標レーダー">
       {[20, 40, 60, 80, 100].map((lvl) => (
         <polygon key={lvl} points={axes.map((_, i) => point(i, lvl)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} fill="none" stroke="#2a2f3a" strokeDasharray="2,3" />
       ))}
       {axes.map((a, i) => {
         const outer = point(i, 100);
-        const lp = point(i, 118);
+        const lp = point(i, 113);
         const anchor = Math.abs(lp.x - cx) < 8 ? 'middle' : lp.x > cx ? 'start' : 'end';
         return (
           <g key={a.key}>
             <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#2a2f3a" />
-            <text x={lp.x} y={lp.y} fontSize={8.5} fill="#94a3b8" textAnchor={anchor} dominantBaseline="middle">{a.label}</text>
+            <text x={lp.x} y={lp.y} fontSize={9} fill="#94a3b8" textAnchor={anchor} dominantBaseline="middle">{a.label}</text>
           </g>
         );
       })}
@@ -128,8 +132,8 @@ function BarChart({ rows, unit }: { rows: { label: string; value: number | null 
         const v = r.value ?? 0;
         const w = (Math.abs(v) / max) * 100;
         return (
-          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: '90px 1fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
-            <span style={{ color: 'var(--text-mute)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.label}</span>
+          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
+            <span title={r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
             <div style={{ background: 'var(--bg)', borderRadius: 3, height: 14, position: 'relative' }}>
               <div style={{ width: `${w}%`, height: '100%', background: PALETTE[i % PALETTE.length], borderRadius: 3 }} />
             </div>
