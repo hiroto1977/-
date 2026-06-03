@@ -46,7 +46,7 @@ export function deriveBusinessFinancials(m: MonthlyBusinessKpi): FinancialInputs
   const fixedLiabilities = Math.max(0, totalAssets - equity - currentLiabilities);
   // 運転資本（年商/原価ベース）。
   const accountsReceivable = r0((revenue / 12) * 1.5); // 約1.5ヶ月分
-  const inventory = r0((cogs / 12) * 1.0); // 約1ヶ月分
+  const inventory = r0(cogs / 12); // 約1ヶ月分 (原価)
   const accountsPayable = r0((cogs / 12) * 1.2); // 約1.2ヶ月分
   // 有利子負債は固定負債の7割 + 流動負債の3割（短期借入相当）。
   const interestBearingDebt = r0(fixedLiabilities * 0.7 + currentLiabilities * 0.3);
@@ -54,6 +54,9 @@ export function deriveBusinessFinancials(m: MonthlyBusinessKpi): FinancialInputs
   // --- 利息・経常・純利益 ---
   const interestExpense = r0(interestBearingDebt * 0.02); // 借入利率 約2%
   const ordinaryProfit = operatingProfit - interestExpense;
+  // ordinaryProfit === 0 では `> 0` / `>= 0` どちらでも結果が 0 で一致するため、
+  // EqualityOperator mutation (>0 ⇄ >=0) は equivalent。次行で無効化する。
+  // Stryker disable next-line EqualityOperator
   const netProfit = r0(ordinaryProfit > 0 ? ordinaryProfit * 0.7 : ordinaryProfit); // 実効税率約30%
 
   return {
