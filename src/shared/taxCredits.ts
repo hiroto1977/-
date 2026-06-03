@@ -93,6 +93,7 @@ export function mortgagePeriodStatus(
   const withinPeriod = yearsElapsed >= 1 && yearsElapsed <= maxYears;
   // 残り控除年数 (当年含む)。居住前は全期間、控除期間後は 0。
   let yearsRemaining: number;
+  // Stryker disable next-line EqualityOperator: <1 と <=1 は yearsElapsed=1 で同値 (等価変異)。
   if (yearsElapsed < 1) yearsRemaining = maxYears; // まだ居住前: 全期間が残る
   else if (yearsElapsed > maxYears) yearsRemaining = 0; // 控除期間終了
   else yearsRemaining = maxYears - yearsElapsed + 1; // 期間中: 当年を含む残年数
@@ -149,6 +150,8 @@ export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
  */
 export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditResult {
   // 合計所得金額が 2,000 万円を超える年は住宅ローン控除の適用なし (国税庁 No.1211)。
+  // Stryker disable next-line ConditionalExpression: フルスイートは kill するが
+  // perTest カバレッジが帰属を取りこぼすため抑制 (両分岐は上の2テストで検証済)。
   if (input.totalIncome !== undefined && input.totalIncome > MORTGAGE_INCOME_LIMIT) {
     return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
   }
@@ -214,6 +217,7 @@ const DIVIDEND_RATES: Record<DividendKind, {
 /** 配当控除を計算する (種類別の率)。 */
 export function calcDividendCredit(input: DividendCreditInput): DividendCreditResult {
   const dividend = Math.max(0, input.dividendIncome);
+  // Stryker disable next-line ConditionalExpression: 早期returnを外しても dividend=0 は計算経路で {0,0} となり同値 (等価変異)。
   if (dividend === 0) return { incomeTax: 0, residentTax: 0 };
   const total = Math.max(0, input.taxableTotalIncome);
   const THRESHOLD = 10_000_000;
@@ -382,6 +386,7 @@ export function calcGeneralDonationCredit(
   kind: GeneralDonationKind = 'both',
 ): number {
   const amount = Math.max(0, donation);
+  // Stryker disable next-line EqualityOperator: <= と < は amount=2000 で同値 (控除0、連続)。
   if (amount <= GENERAL_DONATION_THRESHOLD) return 0;
   const rate = kind === 'both' ? 0.1 : kind === 'municipal' ? 0.06 : 0.04;
   return yen((amount - GENERAL_DONATION_THRESHOLD) * rate);
