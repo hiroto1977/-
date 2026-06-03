@@ -74,6 +74,16 @@ describe('computeFinancialRatios — null guards (zero denominators)', () => {
     expect(r.roePct).toBeNull();
     expect(r.laborSharePct).toBeNull();
   });
+
+  // CCC のガード `revenue === 0 || cogs === 0` を片側ずつ突いて mutation を殺す。
+  // 両方 0 の SAMPLE では || / && / 各 === の差が出ないため、片側のみ 0 の入力が要る。
+  it('cccDays は revenue=0 (cogs>0) でも null', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, revenue: 0 }).cccDays).toBeNull();
+  });
+
+  it('cccDays は cogs=0 (revenue>0) でも null', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, cogs: 0 }).cccDays).toBeNull();
+  });
 });
 
 describe('computeFinancialRatios — operatingCashflow override', () => {
@@ -112,6 +122,15 @@ describe('radarAxes', () => {
       computeFinancialRatios({ ...SAMPLE, totalAssets: 0, equity: 0 }),
     );
     expect(zeroAxes.find((a) => a.key === 'roe')!.score).toBe(0);
+  });
+
+  it('null raw は反転軸 (bad>good) でも score 0 — linScore の null ガード', () => {
+    // roe は bad=0 のため null→ガード除去でも (0-0)/15=0 で区別できない。
+    // debtToMonthlySales は bad=6>good=1 で、null ガードを外す mutant は
+    // (0-6)/(1-6)=1.2 → クランプ後 100 になる。score===0 でこれを殺す。
+    const axes0 = radarAxes(computeFinancialRatios({ ...SAMPLE, revenue: 0 }));
+    expect(axes0.find((a) => a.key === 'debtToMonthlySales')!.raw).toBeNull();
+    expect(axes0.find((a) => a.key === 'debtToMonthlySales')!.score).toBe(0);
   });
 
   it('golden: exact 15-axis structure (key/label/unit/raw/score)', () => {

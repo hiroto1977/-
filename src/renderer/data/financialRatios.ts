@@ -75,10 +75,15 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
   const monthlySales = f.revenue / 12;
 
   // CCC = 売上債権回転日数 + 棚卸資産回転日数 − 仕入債務回転日数。
-  const arDays = f.revenue === 0 ? null : (f.accountsReceivable / f.revenue) * 365;
-  const invDays = f.cogs === 0 ? null : (f.inventory / f.cogs) * 365;
-  const apDays = f.cogs === 0 ? null : (f.accountsPayable / f.cogs) * 365;
-  const ccc = arDays == null || invDays == null || apDays == null ? null : arDays + invDays - apDays;
+  // revenue / cogs のいずれかが 0 なら算定不能 (null)。回転日数を個別に null 化
+  // していた頃は invDays/apDays が同じ cogs===0 ガードで相互にマスクし合い、
+  // mutation で equivalent (殺せない) になっていたため、単一ガードに集約する。
+  const ccc =
+    f.revenue === 0 || f.cogs === 0
+      ? null
+      : (f.accountsReceivable / f.revenue) * 365 +
+        (f.inventory / f.cogs) * 365 -
+        (f.accountsPayable / f.cogs) * 365;
 
   return {
     equityRatioPct: roundNullable(pct(f.equity, f.totalAssets), round1),
