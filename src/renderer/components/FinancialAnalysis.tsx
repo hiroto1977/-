@@ -49,7 +49,7 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
   const PAD_X = 96;
   const PAD_Y = 22;
   return (
-    <svg viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`} width="100%" style={{ maxWidth: size + PAD_X * 2, height: 'auto', display: 'block', margin: '0 auto' }} role="img" aria-label="財務指標レーダー">
+    <svg viewBox={`${-PAD_X} ${-PAD_Y} ${size + PAD_X * 2} ${size + PAD_Y * 2}`} width="100%" style={{ maxWidth: size + PAD_X * 2, height: 'auto', display: 'block', margin: '0 auto', overflow: 'visible' }} role="img" aria-label="財務指標レーダー">
       {[20, 40, 60, 80, 100].map((lvl) => (
         <polygon key={lvl} points={axes.map((_, i) => point(i, lvl)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} fill="none" stroke="#2a2f3a" strokeDasharray="2,3" />
       ))}
