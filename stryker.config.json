@@ -88,7 +88,8 @@
     "src/renderer/data/industryPresets.ts",
     "src/renderer/data/members.ts",
     "src/renderer/data/highlightSettings.ts",
-    "src/renderer/data/recordCipher.ts"
+    "src/renderer/data/recordCipher.ts",
+    "src/renderer/data/sales.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
