@@ -95,6 +95,9 @@ export function calcFurusatoBreakdown(
     totalBenefit: 0,
     cappedBySpecialLimit: false,
   };
+  // donation===FURUSATO_SELF_PAY では eligibleAmount=0 となり計算経路でも全額0に
+  // 畳まれるため、<= を < にする EqualityOperator mutation は equivalent。無効化する。
+  // Stryker disable next-line EqualityOperator
   if (donation <= FURUSATO_SELF_PAY) return empty;
 
   const eligibleAmount = donation - FURUSATO_SELF_PAY;
@@ -112,6 +115,10 @@ export function calcFurusatoBreakdown(
     // 申告特例控除額 = 特例分 × { 所得税率×1.021 / (90% − 所得税率×1.021) }。
     // (上限で頭打ちになった特例分に比例して縮小する)
     const denom = 0.9 - surtaxRate;
+    // marginalRate ∈ [0,0.45] では surtaxRate ≤ 0.4595 で denom ≥ 0.44 > 0 が常に成立。
+    // ゼロ除算回避の防御分岐で、有効入力では false 側に到達せず denom>0 / >=0 の差も
+    // 出ない (equivalent)。ConditionalExpression / EqualityOperator を無効化する。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     residentOneStopAddon = denom > 0 ? residentSpecial * (surtaxRate / denom) : 0;
   } else {
     // 確定申告: 所得税の寄附金控除による軽減 (寄附額−2,000)×実効率。
