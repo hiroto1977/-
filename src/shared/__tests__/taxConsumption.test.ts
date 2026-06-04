@@ -74,4 +74,34 @@ describe('compareConsumptionTaxMethods', () => {
     expect(c.standard).toBe(50_000);
     expect(c.best).toBe('standard');
   });
+
+  it('picks 簡易 when it is the strict minimum (wholesale, no purchases)', () => {
+    // wholesale 第1種 (90%): simplified = 100万×10% = 10万 ← cheapest
+    // 2割特例 = 20万 / 本則 (仕入0) = 100万
+    const c = compareConsumptionTaxMethods(10_000_000, { standard: 0, reduced: 0 }, 'wholesale');
+    expect(c.simplified).toBe(100_000);
+    expect(c.twentyPercent).toBe(200_000);
+    expect(c.standard).toBe(1_000_000);
+    expect(c.best).toBe('simplified'); // < min 分岐 / 代入ブロック / 'simplified' 文字列を kill
+  });
+
+  it('keeps 本則 on a standard==simplified tie (< は厳密、<= ではない)', () => {
+    // 本則 = 100万 − 90万 = 10万、simplified(wholesale 90%) = 10万 → 同値。
+    // 2割特例 = 20万 (> 10万) なので、この同値が best を決める。
+    // `simplified < min` を `<=` にする mutant は best を 'simplified' に変える。
+    const c = compareConsumptionTaxMethods(10_000_000, { standard: 9_000_000, reduced: 0 }, 'wholesale');
+    expect(c.standard).toBe(100_000);
+    expect(c.simplified).toBe(100_000);
+    expect(c.best).toBe('standard');
+  });
+
+  it('keeps 本則 on a standard==twentyPercent tie (< は厳密、<= ではない)', () => {
+    // 本則 = 100万 − 80万 = 20万、2割特例 = 20万 → 同値。simplified(other 60%)=40万。
+    // `twentyPercent < min` を `<=` にする mutant は best を 'twenty-percent' に変える。
+    const c = compareConsumptionTaxMethods(10_000_000, { standard: 8_000_000, reduced: 0 }, 'other');
+    expect(c.standard).toBe(200_000);
+    expect(c.twentyPercent).toBe(200_000);
+    expect(c.simplified).toBe(400_000);
+    expect(c.best).toBe('standard');
+  });
 });

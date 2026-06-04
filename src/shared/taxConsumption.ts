@@ -50,7 +50,6 @@ export function calcSimplifiedConsumptionTax(
   rate: number = CONSUMPTION_TAX_STANDARD,
 ): number {
   const sales = Math.max(0, taxableSales);
-  if (sales <= 0) return 0;
   const salesTax = sales * rate;
   const deemed = DEEMED_PURCHASE_RATES[businessType];
   return yen(salesTax * (1 - deemed));
@@ -103,7 +102,6 @@ export function calcTwentyPercentSpecial(
   rate: number = CONSUMPTION_TAX_STANDARD,
 ): number {
   const sales = Math.max(0, taxableSales);
-  if (sales <= 0) return 0;
   return yen(sales * rate * TWENTY_PERCENT_RATE);
 }
 
