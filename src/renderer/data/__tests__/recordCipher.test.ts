@@ -32,6 +32,16 @@ describe('passphrase RecordCipher', () => {
     expect(await cipher.decrypt(sealed)).toEqual(data);
   });
 
+  it('isSealedData rejects null, plain objects and primitives', () => {
+    // null は typeof 'object' なので v!==null ガードが必要 (外すと .__enc で TypeError)。
+    // 封緘印の無いオブジェクトは false (&& を || にする mutant を kill)。
+    expect(isSealedData(null)).toBe(false);
+    expect(isSealedData(undefined)).toBe(false); // typeof→true 固定で undefined.__enc が TypeError
+    expect(isSealedData({})).toBe(false);
+    expect(isSealedData({ foo: 1 })).toBe(false);
+    expect(isSealedData('x')).toBe(false);
+  });
+
   it('passes plaintext (pre-encryption) records through on decrypt', async () => {
     const cipher = await createPassphraseRecordCipher('pw', randomSaltB64());
     const legacy = { amount: 1 };
