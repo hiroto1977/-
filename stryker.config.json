@@ -69,7 +69,11 @@
     "src/shared/mutualFundsMetrics.ts",
     "src/shared/payroll.ts",
     "src/shared/savingsPlanning.ts",
-    "src/shared/depreciation.ts"
+    "src/shared/depreciation.ts",
+    "src/renderer/data/budgetVariance.ts",
+    "src/renderer/data/cashForecast.ts",
+    "src/renderer/data/salesKpiBridge.ts",
+    "src/renderer/data/revenueConcentration.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

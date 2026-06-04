@@ -45,4 +45,22 @@ describe('computeRevenueConcentration', () => {
     expect(c.topSharePct).toBe(60);
     expect(c.singleChannelRisk).toBe(false);
   });
+
+  it('excludes non-positive channels via the filter (negative amount ignored)', () => {
+    // 負のチャネルを除外。filter を外す / 条件を true 固定する mutant は負値を合算へ
+    // 含めて HHI/シェアを変えるため、フィルタ有りの結果と一致しないことで殺せる。
+    const withNeg = computeRevenueConcentration([ch('A', 800_000), ch('B', 200_000), ch('Bad', -500_000)])!;
+    const clean = computeRevenueConcentration([ch('A', 800_000), ch('B', 200_000)])!;
+    expect(withNeg.channelsPresent).toBe(2);
+    expect(withNeg.hhi).toBe(clean.hhi);
+    expect(withNeg.topSharePct).toBe(80);
+  });
+
+  it('keeps the first channel as top on an exact share tie (strictly greater)', () => {
+    // A と B が同額 → share 同値。`share > topShare` を `>=` にする mutant は後勝ちで
+    // topChannel=B になるため、先勝ち (A) を検証して殺す。
+    const c = computeRevenueConcentration([ch('A', 500_000), ch('B', 500_000)])!;
+    expect(c.topChannel).toBe('A');
+    expect(c.topSharePct).toBe(50);
+  });
 });

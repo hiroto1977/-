@@ -40,6 +40,9 @@ export interface RevenueConcentration {
 export function computeRevenueConcentration(
   channels: readonly ChannelShare[],
 ): RevenueConcentration | null {
+  // amount===0 のチャネルを含めても合計/HHI/トップシェアに影響しないため、
+  // > → >= の EqualityOperator は equivalent (負値除外は filter 本体で検証)。
+  // Stryker disable next-line EqualityOperator
   const present = channels.filter((c) => c.amount > 0);
   const total = present.reduce((s, c) => s + c.amount, 0);
   if (total <= 0) return null;

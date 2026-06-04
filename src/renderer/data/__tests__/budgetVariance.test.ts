@@ -2,8 +2,15 @@ import { describe, expect, it } from 'vitest';
 import {
   computeBudgetVariance,
   computeBudgetVarianceFromFundamentals,
+  KPI_BUDGETS_COLLECTION,
 } from '../budgetVariance';
 import type { KpiActual } from '../kpiActuals';
+
+describe('KPI_BUDGETS_COLLECTION', () => {
+  it('is the kpi-budgets collection key (paired with kpi-actuals)', () => {
+    expect(KPI_BUDGETS_COLLECTION).toBe('kpi-budgets');
+  });
+});
 
 const row = (revenue: number, cogs = 0, advertising = 0, sga = 0, depreciation = 0): KpiActual => ({
   period: '2026-05',
