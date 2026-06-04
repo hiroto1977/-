@@ -45,4 +45,33 @@ describe('combineCashflowDebtService', () => {
     expect(r.coveredMonths).toBe(1);
     expect(r.overallDscr).toBe(2);
   });
+
+  it('tracks the worst (minimum) DSCR even when it is not the last month', () => {
+    // 04 が最小 0.5、05 が 2.0。worst を「常に更新」する mutant は末尾 2.0 を取るため kill。
+    const r = combineCashflowDebtService(
+      [cf('2026-04', 100_000), cf('2026-05', 400_000)],
+      [{ month: '2026-04', repayment: 200_000 }, { month: '2026-05', repayment: 200_000 }],
+    )!;
+    expect(r.months.map((m) => m.dscr)).toEqual([0.5, 2]);
+    expect(r.worstMonthDscr).toBe(0.5);
+  });
+
+  it('does not count a DSCR exactly at the threshold as a shortfall (< strict)', () => {
+    // 04: dscr 1.0 (=threshold) → 数えない。05: dscr 0.5 → 数える。<= にする mutant を kill。
+    const r = combineCashflowDebtService(
+      [cf('2026-04', 200_000), cf('2026-05', 100_000)],
+      [{ month: '2026-04', repayment: 200_000 }, { month: '2026-05', repayment: 200_000 }],
+    )!;
+    expect(r.months.map((m) => m.dscr)).toEqual([1, 0.5]);
+    expect(r.shortfallMonths).toBe(1); // 0.5 の月のみ
+  });
+
+  it('sorts repayment months chronologically regardless of input order', () => {
+    // 入力 (Map 挿入順) は 05, 04。既定ソートで 04, 05 になる。sort を外す mutant を kill。
+    const r = combineCashflowDebtService(
+      [cf('2026-04', 100_000), cf('2026-05', 100_000)],
+      [{ month: '2026-05', repayment: 100_000 }, { month: '2026-04', repayment: 100_000 }],
+    )!;
+    expect(r.months.map((m) => m.month)).toEqual(['2026-04', '2026-05']);
+  });
 });

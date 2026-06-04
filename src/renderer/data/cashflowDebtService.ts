@@ -54,16 +54,19 @@ export function combineCashflowDebtService(
   repayments: readonly RepaymentMonthly[],
   threshold = 1,
 ): CashflowDebtService | null {
-  if (accounting.length === 0 || repayments.length === 0) return null;
+  // repayments が空 (または全て返済0) の場合は下の repayMonths.length===0 で null に
+  // なるため、ここでは accounting のみ判定する (repayments の判定は冗長)。
+  if (accounting.length === 0) return null;
   const cfByMonth = new Map<string, number>();
   for (const a of accounting) cfByMonth.set(a.month, (cfByMonth.get(a.month) ?? 0) + a.net);
   const repayByMonth = new Map<string, number>();
   for (const r of repayments) repayByMonth.set(r.month, (repayByMonth.get(r.month) ?? 0) + r.repayment);
 
   // 返済のある月だけが DSCR の対象。
+  // 'YYYY-MM' 文字列は既定の辞書順ソートで時系列順になるため比較子は不要。
   const repayMonths = [...repayByMonth.keys()]
     .filter((m) => (repayByMonth.get(m) ?? 0) > 0)
-    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    .sort();
   if (repayMonths.length === 0) return null;
 
   let totalCf = 0;
@@ -76,6 +79,8 @@ export function combineCashflowDebtService(
     const dscr = round2(operatingCashflow / repayment);
     totalCf += operatingCashflow;
     totalRepay += repayment;
+    // dscr===worst のとき再代入しても同値のため < → <= は equivalent。
+    // Stryker disable next-line EqualityOperator
     if (dscr < worst) worst = dscr;
     if (dscr < threshold) shortfall += 1;
     return { month, operatingCashflow, repayment, dscr };
@@ -83,6 +88,8 @@ export function combineCashflowDebtService(
 
   return {
     months,
+    // repayMonths は返済>0 の月のみ → totalRepay は必ず正。null 側は到達不能な防御。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null,
     worstMonthDscr: Number.isFinite(worst) ? worst : null,
     shortfallMonths: shortfall,
