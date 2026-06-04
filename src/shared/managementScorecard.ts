@@ -55,6 +55,8 @@ export interface ManagementScorecard {
 
 /** 値を [lo, hi] で 0..100 に線形マップし、範囲外はクランプ。 */
 function band(value: number, lo: number, hi: number): number {
+  // 呼び出しは全て hi>lo (例 0..10 / -10..20)。hi<=lo はゼロ除算回避の防御で到達不能。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (hi <= lo) return 0;
   const t = (value - lo) / (hi - lo);
   return Math.round(Math.min(1, Math.max(0, t)) * 100);
