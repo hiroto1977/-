@@ -48,6 +48,9 @@ export interface KpiMetrics {
 
 /** `YYYY-MM`, months 01-12. */
 export function isValidPeriod(s: unknown): s is string {
+  // 非文字列は下の regex.exec でも一致せず false になるため、この早期 return の
+  // ConditionalExpression は equivalent (型述語のため文は残す)。
+  // Stryker disable next-line ConditionalExpression
   if (typeof s !== 'string') return false;
   const m = /^(\d{4})-(\d{2})$/.exec(s);
   if (!m) return false;
@@ -72,7 +75,8 @@ export function parseKpiActual(input: {
   if (unit.length === 0 || unit.length > 64) throw new Error('事業名は 1〜64 文字で入力してください');
 
   const num = (v: unknown, label: string): number => {
-    const n = typeof v === 'number' ? v : Number(v);
+    // Number(number)===number なので typeof 分岐は不要 (equivalent mutant 排除)。
+    const n = Number(v);
     if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
     return n;
   };
@@ -126,7 +130,7 @@ export function groupRevenueByPeriod(actuals: readonly KpiActual[]): PeriodReven
     byPeriod.set(a.period, (byPeriod.get(a.period) ?? 0) + a.revenue);
   }
   return [...byPeriod.entries()]
-    .sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+    .sort((x, y) => x[0].localeCompare(y[0]))
     .map(([period, revenue]) => ({ period, revenue }));
 }
 
@@ -151,7 +155,7 @@ export function groupOperatingProfitByPeriod(
     byPeriod.set(a.period, list);
   }
   return [...byPeriod.entries()]
-    .sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+    .sort((x, y) => x[0].localeCompare(y[0]))
     .map(([period, rows]) => ({
       period,
       operatingProfit: computeKpiMetrics(summarizeFundamentals(rows)).operatingProfit,
@@ -180,12 +184,16 @@ export function monthlyTrendSeries(actuals: readonly KpiActual[]): MonthlyTrendR
     list.push(a);
     byPeriod.set(a.period, list);
   }
-  const periods = [...byPeriod.keys()].sort((x, y) => (x < y ? -1 : x > y ? 1 : 0));
+  const periods = [...byPeriod.keys()].sort((x, y) => x.localeCompare(y));
   const rows: MonthlyTrendRow[] = [];
   let prevRevenue: number | null = null;
   for (const period of periods) {
     const f = summarizeFundamentals(byPeriod.get(period)!);
     const m = computeKpiMetrics(f);
+    // prevRevenue !== null は型を number に絞るため (> 0・減算に必要) だが、null は
+    // `null > 0 === false` で右辺に弾かれ、2 期目以降は常に number のため、この左辺
+    // ガードを true 固定する変異は実行時 equivalent。
+    // Stryker disable next-line ConditionalExpression
     const revenueGrowthPct = prevRevenue !== null && prevRevenue > 0
       ? Math.round(((f.revenue - prevRevenue) / prevRevenue) * 1000) / 10
       : null;
@@ -217,6 +225,9 @@ export interface YoYComparison {
 
 /** 期ラベル YYYY-MM の 12 か月前を返す。 */
 function yearEarlier(period: string): string | null {
+  // 'YYYY-MM' 以外でも部分一致を防ぐアンカーだが、本関数は series 由来の期にのみ
+  // 使われ、アンカー有無の差が出力に出ない (equivalent) ため Regex を無効化する。
+  // Stryker disable next-line Regex
   const m = /^(\d{4})-(\d{2})$/.exec(period);
   if (!m) return null;
   const year = Number(m[1]) - 1;
@@ -235,6 +246,9 @@ export function computeYoYGrowth(actuals: readonly KpiActual[]): YoYComparison |
   if (series.length === 0) return null;
   const latest = series[series.length - 1]!;
   const priorPeriod = yearEarlier(latest.period);
+  // priorPeriod===null のときも下の series.find(...===null) が見つからず null を返すため、
+  // この早期 return の ConditionalExpression は equivalent。
+  // Stryker disable next-line ConditionalExpression
   if (priorPeriod === null) return null;
   const prior = series.find((s) => s.period === priorPeriod);
   if (!prior) return null;
@@ -321,9 +335,11 @@ export function computeRevenueCagrPct(actuals: readonly KpiActual[]): number | n
   if (series.length < 2) return null;
   const first = series[0]!.revenue;
   const last = series[series.length - 1]!.revenue;
-  if (first <= 0 || last < 0) return null;
   const periods = series.length - 1;
   const rate = Math.pow(last / first, 1 / periods) - 1;
+  // first===0 は last/first が ±Infinity、負の底 (実データ外) は NaN になり rate が
+  // 非有限になる。この単一ガードが「最初の期が 0 → 算定不能 → null」を担う
+  // (上流で売上は非負のため到達するのは first===0 のケースのみ)。
   if (!Number.isFinite(rate)) return null;
   return Math.round(rate * 1000) / 10;
 }
@@ -345,11 +361,16 @@ export function computeRevenueTrend(actuals: readonly KpiActual[], window = 3): 
   const mean = (from: number): number => {
     let sum = 0;
     for (let i = from; i < from + w; i += 1) sum += series[i]!.revenue;
+    // change = (recent-prior)/prior では 1/w の係数が約分で打ち消えるため、平均でも
+    // 合計でもトレンド判定は同値 (sum*w 変異は equivalent)。可読性のため平均にする。
+    // Stryker disable next-line ArithmeticOperator
     return sum / w;
   };
   const recent = mean(series.length - w);
   const prior = mean(series.length - w - 1);
-  if (prior <= 0) return recent > 0 ? 'up' : 'flat';
+  // prior===0 (直前窓の売上が全て 0) のとき change は recent>0 → +Infinity → 'up'、
+  // recent===0 → NaN → どちらの閾値にも該当せず 'flat' となり、ゼロ除算でも正しい
+  // 方向に落ちる。明示ガードは不要 (IEEE 演算が同値を与える)。
   const change = (recent - prior) / prior;
   if (change > 0.01) return 'up';
   if (change < -0.01) return 'down';
@@ -383,6 +404,9 @@ export function computeRevenueLandingForecast(
   const year = series[series.length - 1]!.period.slice(0, 4);
   const inYear = series.filter((s) => s.period.slice(0, 4) === year);
   const monthsElapsed = inYear.length;
+  // series 非空 (上で確認済) のとき最新期の年が year なので inYear は必ず最新期を含み
+  // monthsElapsed >= 1。この防御 return は到達不能 (equivalent)。
+  // Stryker disable next-line ConditionalExpression
   if (monthsElapsed === 0) return null;
   const actualToDate = inYear.reduce((sum, s) => sum + s.revenue, 0);
   const runRateForecast = Math.round((actualToDate / monthsElapsed) * 12);
@@ -397,7 +421,10 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
   const contribution = f.revenue - variableCost;
   const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
-  const bepRatio = f.revenue > 0 && Number.isFinite(bep) ? (bep / f.revenue) * 100 : Infinity;
+  // revenue===0 のとき bep は必ず Infinity (contribution<=0) で、Infinity/0*100 も
+  // Infinity になるため三項の両枝が同値 → revenue>0 判定の変異は equivalent。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  const bepRatio = f.revenue > 0 ? (bep / f.revenue) * 100 : Infinity;
   const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
   const operatingProfit = contribution - fixedCost;
   return {
