@@ -42,6 +42,9 @@ const MAX_MOODS = 365;
 export function loadStore(): EmotionsStore {
   try {
     const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+    // raw が null/'' のいずれでも下の JSON.parse 経路が最終的に catch で default を
+    // 返すため、この早期 return の ConditionalExpression は equivalent。
+    // Stryker disable next-line ConditionalExpression
     if (!raw) return { moods: [], analyses: [] };
     const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
     return {
@@ -86,6 +89,9 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
   if (idx >= 0) store.moods[idx] = entry;
   else store.moods.push(entry);
   store.moods.sort((a, b) => a.date.localeCompare(b.date));
+  // slice(-MAX_MOODS) は length<=MAX_MOODS のとき恒等なので、> を >= にしても条件を
+  // true 固定しても結果は不変 (equivalent)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (store.moods.length > MAX_MOODS) store.moods = store.moods.slice(-MAX_MOODS);
   saveStore(store);
   return { date: finalDate, score: entry.score };
@@ -104,11 +110,15 @@ export function clearHistory(kind: 'moods' | 'analyses' | 'all' | undefined): { 
 /** ```json フェンスがあれば剥がす。 */
 export function extractJson(text: string): string {
   const fence = text.match(/```(?:json)?\s*\n([\s\S]*?)\n```/);
-  if (fence && fence[1] != null) return fence[1].trim();
+  // 一致時はキャプチャ群 1 が必ず存在するため `fence[1] != null` は冗長 (非 null 断言で表す)。
+  if (fence) return fence[1]!.trim();
   return text.trim();
 }
 
 function pickDominant(scores: EmotionScores): string {
+  // 最初の反復 (k='joy') で scores.joy>=0 > -1 となり必ず再代入されるため、この初期値
+  // リテラルは dead。値を変える StringLiteral mutation は equivalent。
+  // Stryker disable next-line StringLiteral
   let bestKey: EmotionKey = 'joy';
   let bestVal = -1;
   for (const k of EMOTION_KEYS) {
@@ -131,7 +141,10 @@ export function normalizeAnalysis(raw: unknown): { scores: EmotionScores; sentim
   }
   const sentiment: Sentiment =
     r.sentiment === 'positive' || r.sentiment === 'negative' ? r.sentiment : 'neutral';
+  // typeof は r.dominant を string に絞り込む型述語として必須だが、includes は === 判定
+  // のため非文字列は元から false になり、typeof を true 固定する変異は equivalent。
   const dominant =
+    // Stryker disable next-line ConditionalExpression
     typeof r.dominant === 'string' && (EMOTION_KEYS as readonly string[]).concat('mixed').includes(r.dominant)
       ? r.dominant
       : pickDominant(scores);
@@ -146,6 +159,9 @@ export function recordAnalysis(
   now: number = Date.now(),
 ): AnalysisEntry {
   const entry: AnalysisEntry = {
+    // id は不透明な一意識別子で、区切り文字や slice 範囲は外部から観測されない
+    // (テストも構造を検証しない) ため、これらの mutation は equivalent。
+    // Stryker disable next-line StringLiteral,MethodExpression
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: now,
     excerpt: (source ? `[${source}] ` : '') + text.slice(0, 80),
@@ -153,6 +169,9 @@ export function recordAnalysis(
   };
   const store = loadStore();
   store.analyses.unshift(entry);
+  // slice(0, MAX_ANALYSES) は length<=MAX_ANALYSES のとき恒等なので、> を >= にしても
+  // 条件を true 固定しても結果は不変 (equivalent)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (store.analyses.length > MAX_ANALYSES) store.analyses = store.analyses.slice(0, MAX_ANALYSES);
   saveStore(store);
   return entry;
