@@ -32,6 +32,8 @@ describe('profitSensitivity', () => {
     const rows = profitSensitivity({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 });
     expect(rows.every((r) => r.revenue === 0)).toBe(true);
     expect(rows.every((r) => r.operatingProfit === -100)).toBe(true); // 0 - 0 - 100
+    // revenue===0 では operatingMarginPct=0 (revenue>0 ガード)。NaN/Inf にしない mutant を kill。
+    expect(rows.every((r) => r.operatingMarginPct === 0)).toBe(true);
   });
 
   it('computes the operating margin per scenario', () => {
@@ -56,6 +58,8 @@ describe('breakEvenDeltaPct', () => {
     expect(breakEvenDeltaPct({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 })).toBeNull();
     // variable cost >= revenue → contribution rate <= 0
     expect(breakEvenDeltaPct({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 })).toBeNull();
+    // contributionRate === 0 ちょうど (変動費=売上)。<= を < にする mutant はゼロ除算へ進む。
+    expect(breakEvenDeltaPct({ revenue: 100, cogs: 100, advertising: 0, sga: 10, depreciation: 0 })).toBeNull();
   });
 });
 
@@ -85,6 +89,8 @@ describe('requiredRevenueForTarget', () => {
   it('returns null uplift when revenue is zero or contribution is non-positive', () => {
     expect(requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, 100).upliftPct).toBeNull();
     expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
+    // contributionRate === 0 ちょうど。<= を < にする mutant はゼロ除算へ進む。
+    expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 0, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
   });
 });
 
