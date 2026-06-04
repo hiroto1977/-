@@ -82,7 +82,10 @@
     "src/renderer/data/workingCapital.ts",
     "src/renderer/data/cashflowDebtService.ts",
     "src/renderer/data/balanceSheet.ts",
-    "src/renderer/data/overview.ts"
+    "src/renderer/data/overview.ts",
+    "src/renderer/data/kpiActualsCsv.ts",
+    "src/renderer/data/salesCsv.ts",
+    "src/renderer/data/industryPresets.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

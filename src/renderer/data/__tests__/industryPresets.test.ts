@@ -11,6 +11,8 @@ describe('INDUSTRY_PRESETS', () => {
 
   it('has unique ids and non-empty labels/notes', () => {
     const ids = INDUSTRY_PRESETS.map((p) => p.id);
+    // 全 id を固定 (各 id の StringLiteral mutation を kill)。
+    expect(ids).toEqual(['default', 'retail', 'manufacturing', 'saas', 'service']);
     expect(new Set(ids).size).toBe(ids.length);
     for (const p of INDUSTRY_PRESETS) {
       expect(p.label.length).toBeGreaterThan(0);
