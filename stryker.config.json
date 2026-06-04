@@ -85,7 +85,9 @@
     "src/renderer/data/overview.ts",
     "src/renderer/data/kpiActualsCsv.ts",
     "src/renderer/data/salesCsv.ts",
-    "src/renderer/data/industryPresets.ts"
+    "src/renderer/data/industryPresets.ts",
+    "src/renderer/data/members.ts",
+    "src/renderer/data/highlightSettings.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
