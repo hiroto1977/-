@@ -23,6 +23,9 @@ export function parseMember(input: { name?: unknown; email?: unknown; role?: unk
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || name.length > 64) throw new Error('氏名は 1〜64 文字で入力してください');
 
+  // 非文字列時のフォールバックは何であれ isEmail で false になり同じエラーになるため、
+  // '' の StringLiteral mutation は equivalent。
+  // Stryker disable next-line StringLiteral
   const email = typeof input.email === 'string' ? input.email.trim() : '';
   if (!isEmail(email)) throw new Error('メールアドレスの形式が正しくありません');
 
