@@ -50,6 +50,8 @@ export function forecastCashBalance(
   let shortfallMonthIndex: number | null = null;
   for (let i = 1; i <= horizon; i += 1) {
     balance += monthlyNet;
+    // balance===minBalance のとき再代入しても同値のため < → <= は equivalent。
+    // Stryker disable next-line EqualityOperator
     if (balance < minBalance) minBalance = balance;
     if (shortfallMonthIndex === null && balance < 0) shortfallMonthIndex = i;
     rows.push({ monthIndex: i, netCashflow: monthlyNet, balance });

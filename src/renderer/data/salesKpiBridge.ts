@@ -23,6 +23,8 @@ export function revenueForMonth(entries: readonly SalesEntry[], month: string): 
 export function salesMonths(entries: readonly SalesEntry[]): readonly string[] {
   const set = new Set<string>();
   for (const e of entries) set.add(monthOf(e.date));
+  // Set 由来で a===b は起きないため、< → <= の EqualityOperator は equivalent。
+  // Stryker disable next-line EqualityOperator
   return [...set].sort((a, b) => (a < b ? 1 : -1));
 }
 
