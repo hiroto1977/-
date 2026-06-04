@@ -95,7 +95,8 @@
     "src/renderer/data/shopifyImport.ts",
     "src/renderer/data/csv.ts",
     "src/renderer/data/foodDelivery.ts",
-    "src/renderer/data/backup.ts"
+    "src/renderer/data/backup.ts",
+    "src/renderer/data/emotionsWeb.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
