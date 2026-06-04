@@ -295,6 +295,34 @@ describe('buildBusinessOverview', () => {
     expect(o.cashForecast!.rows).toHaveLength(12);
   });
 
+  it('leaves runway / forecast null when BS cash is zero despite a burn (> strict)', () => {
+    // cash===0 → `(cash ?? 0) > 0` ガードで除外。条件を true 固定 / >= 0 にする mutant は
+    // runway 0 / forecast を算出してしまうため、null 期待で殺す。
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: KPI, members: [],
+      accounting: [
+        { month: '2026-04', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+        { month: '2026-05', income: 1_000_000, expense: 1_200_000, net: -200_000 },
+      ],
+      balanceSheet: {
+        asOf: '', currentAssets: 0, cash: 0, inventory: 0, accountsReceivable: 0,
+        fixedAssets: 0, currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
+      },
+    });
+    expect(o.accounting).not.toBeNull();
+    expect(o.runwayMonths).toBeNull();
+    expect(o.cashForecast).toBeNull();
+  });
+
+  it('does not mark a break-even business (operatingProfit 0) as profitable (> strict)', () => {
+    const breakEven: KpiActual[] = [
+      { period: '2026-05', unit: '全社', revenue: 100, cogs: 50, advertising: 0, sga: 50, depreciation: 0 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: breakEven, members: [] });
+    expect(o.kpi.operatingProfit).toBe(0);
+    expect(o.flags.profitable).toBe(false);
+  });
+
   it('leaves accounting null when not connected (no monthly data)', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [], accounting: [] });
     expect(o.accounting).toBeNull();
