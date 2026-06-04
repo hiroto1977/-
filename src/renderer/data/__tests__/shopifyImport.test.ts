@@ -13,6 +13,11 @@ describe('parseAmount', () => {
     expect(parseAmount(Infinity)).toBe(0);
     expect(parseAmount('無料')).toBe(0);
   });
+  it('floors a malformed numeric string (non-finite) to 0', () => {
+    // '1.2.3' → Number('1.2.3')=NaN → isFinite ガードで 0。isFinite を true 固定する
+    // mutant は Math.max(0, NaN)=NaN を返すため kill。
+    expect(parseAmount('1.2.3')).toBe(0);
+  });
 });
 
 describe('orderToSalesEntry', () => {
@@ -41,5 +46,11 @@ describe('orderToSalesEntry', () => {
   it('defaults the date to today (YYYY-MM-DD)', () => {
     const entry = orderToSalesEntry({ total: 100 });
     expect(entry?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('uses a bare "Shopify" note when the order has no name', () => {
+    // name 無しの else 枝 'Shopify' を '' にする StringLiteral mutant を kill。
+    const entry = orderToSalesEntry({ total: 100 }, { date: '2026-05-01' });
+    expect(entry?.note).toBe('Shopify');
   });
 });
