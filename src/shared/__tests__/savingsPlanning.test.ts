@@ -6,6 +6,8 @@ describe('requiredMonthlyContribution', () => {
   it('returns 0 for a non-positive target or zero years', () => {
     expect(requiredMonthlyContribution(0, 5, 10)).toBe(0);
     expect(requiredMonthlyContribution(1_000_000, 5, 0)).toBe(0);
+    // 負の目標額は計算経路だと負値を返すため、早期 return (target<=0) で 0 にする。
+    expect(requiredMonthlyContribution(-1_000_000, 5, 10)).toBe(0);
   });
 
   it('splits the target evenly when the rate is zero', () => {
