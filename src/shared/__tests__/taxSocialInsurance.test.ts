@@ -86,6 +86,8 @@ describe('calcSocialInsuranceWithBonus (標準賞与額の上限を考慮)', () 
     expect(r.health).toBe(expectedHealth);
     // 雇用保険は賃金総額 (月40万×12 + 賞与120万)
     expect(r.employment).toBe(Math.round((4_800_000 + 1_200_000) * EMPLOYMENT_INSURANCE_RATE));
+    // total = pension + health + employment (3要素とも非ゼロ → ± mutation を殺す)
+    expect(r.total).toBe(r.pension + r.health + r.employment);
   });
 
   it('caps the pension bonus at 150万 per payment', () => {

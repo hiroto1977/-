@@ -34,6 +34,10 @@ export function calcPublicPensionDeduction(pensionIncome: number, isOver65: bool
   const income = Math.max(0, pensionIncome);
   if (income <= 0) return 0;
 
+  // 公的年金等控除は連続関数: 各境界で隣接ブラケットの値が一致する
+  // (例 income=1,300,000 → 600,000 = 1.3M×0.25+275,000)。そのため境界の
+  // `<=` を `<` にする EqualityOperator mutation は equivalent。ブロックで無効化。
+  // Stryker disable EqualityOperator
   if (isOver65) {
     if (income <= 3_300_000) return PENSION_DEDUCTION_MIN_OVER65;
   } else {
@@ -43,6 +47,7 @@ export function calcPublicPensionDeduction(pensionIncome: number, isOver65: bool
   if (income <= 4_100_000) return yen(income * 0.25 + 275_000);
   if (income <= 7_700_000) return yen(income * 0.15 + 685_000);
   if (income <= 10_000_000) return yen(income * 0.05 + 1_455_000);
+  // Stryker restore EqualityOperator
   return 1_955_000;
 }
 
