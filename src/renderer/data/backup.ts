@@ -71,6 +71,9 @@ export async function serializeEncryptedBackup(
 export function isEncryptedBackup(text: string): boolean {
   try {
     const parsed = JSON.parse(text) as Record<string, unknown>;
+    // parsed が null (JSON.parse('null')) のとき `?.` を外すと parsed.encrypted で
+    // 例外になるが、その場合も下の catch で false を返すため、`?.`↔`.` は equivalent。
+    // Stryker disable next-line OptionalChaining
     return parsed?.encrypted === true && isEncryptedBundle(parsed.payload);
   } catch {
     return false;
