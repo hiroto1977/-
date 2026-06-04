@@ -16,6 +16,13 @@ describe('recordsToCsv', () => {
     const rows = [{ x: 1, y: 'a' }, { x: 2, y: undefined as unknown as string }];
     expect(recordsToCsv(rows, ['x', 'y'])).toBe('x,y\r\n1,a\r\n2,');
   });
+
+  it('blanks an explicit null value (distinct from the string "null")', () => {
+    // `v === null` を false 固定する mutant は null を String(null)="null" にするため、
+    // 空欄を確認して kill。
+    const rows = [{ x: 1, y: null as unknown as string }];
+    expect(recordsToCsv(rows, ['x', 'y'])).toBe('x,y\r\n1,');
+  });
 });
 
 describe('parseCsv', () => {
@@ -34,6 +41,18 @@ describe('parseCsv', () => {
 
   it('accepts plain \\n line endings', () => {
     expect(parseCsv('a,b\n1,2')).toEqual([['a', 'b'], ['1', '2']]);
+  });
+
+  it('treats a lone \\r (not followed by \\n) as a row terminator', () => {
+    // \r ブロックを空にする / 条件を false 固定する mutant は 'a','b' を 'ab' に
+    // 連結してしまうため、行分割を確認して kill。
+    expect(parseCsv('a\rb')).toEqual([['a'], ['b']]);
+  });
+
+  it('parses a lone opening quote as a single empty field', () => {
+    // started フラグを false 固定する mutant は最終フラッシュを抑止し [] を返すため、
+    // started のみが真になるこの入力で kill。
+    expect(parseCsv('"')).toEqual([['']]);
   });
 
   it('returns [] for empty input', () => {
