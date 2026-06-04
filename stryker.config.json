@@ -92,7 +92,8 @@
     "src/renderer/data/sales.ts",
     "src/renderer/data/recordEncryption.ts",
     "src/renderer/data/kpiActuals.ts",
-    "src/renderer/data/shopifyImport.ts"
+    "src/renderer/data/shopifyImport.ts",
+    "src/renderer/data/csv.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

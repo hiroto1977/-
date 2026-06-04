@@ -31,14 +31,14 @@ export function recordsToCsv<T extends Record<string, unknown>>(
   rows: readonly T[],
   columns: readonly (keyof T & string)[],
 ): string {
-  const header = columns.slice();
   const body = rows.map((r) =>
     columns.map((c) => {
       const v = r[c];
       return v === undefined || v === null ? '' : String(v);
     }),
   );
-  return toCsv([header, ...body]);
+  // columns は toCsv で読み取られるのみで変更されないため、防御コピー (.slice()) は不要。
+  return toCsv([columns, ...body]);
 }
 
 /** Parse a CSV string into rows of string fields. Tolerates a trailing
@@ -92,7 +92,10 @@ export function parseCsv(text: string): string[][] {
     }
   }
   // Flush the final field/row unless the input ended exactly on a row break.
-  if (started || field.length > 0 || row.length > 0) {
+  // field/row に内容があるのは必ず started=true のとき (どちらも文字処理中＝started
+  // を立てた後にしか伸びない) なので、started だけで「現在行に未確定の内容がある」を
+  // 正確に表す。
+  if (started) {
     pushField();
     rows.push(row);
   }
@@ -106,6 +109,9 @@ export function parseCsv(text: string): string[][] {
  */
 export function parseCsvRecords(text: string): Record<string, string>[] {
   const rows = parseCsv(text);
+  // rows.length<2 では rows.slice(1) が空で map も空配列を返すため、このガードを
+  // 外しても [] になる。早期 return は最適化目的で、外す変異は equivalent。
+  // Stryker disable next-line ConditionalExpression
   if (rows.length < 2) return [];
   const header = rows[0]!;
   return rows.slice(1).map((row) => {
