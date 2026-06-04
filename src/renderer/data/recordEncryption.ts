@@ -17,8 +17,12 @@ import { getRecordStore } from './store';
 import { IDENTITY_CIPHER, createPassphraseRecordCipher } from './recordCipher';
 import { deriveAesKey, sealWithKey, openWithKey, randomSaltB64, isSealed, type Sealed } from '../security/dataCrypto';
 
+// 内部キー/既知平文。save↔load・seal↔compare で同じ定数を使い round-trip するため、
+// 値そのものを変える StringLiteral mutation は外部から観測できず equivalent。
+// Stryker disable next-line StringLiteral
 const LS_KEY = 'servicehub.recordEncryption';
 /** 既知平文 — KCV はこれを封緘したもの。パスフレーズ検証にのみ使う。 */
+// Stryker disable next-line StringLiteral
 const KCV_PLAINTEXT = 'service-hub-record-encryption-v1';
 
 interface EncryptionMeta {
@@ -30,9 +34,15 @@ interface EncryptionMeta {
 function loadMeta(): EncryptionMeta | null {
   try {
     const raw = localStorage.getItem(LS_KEY);
+    // raw が null/'' のいずれでも下の JSON.parse 経路が最終的に null を返すため、この
+    // 早期 return の ConditionalExpression は equivalent。
+    // Stryker disable next-line ConditionalExpression
     if (!raw) return null;
     const m = JSON.parse(raw) as Partial<EncryptionMeta>;
     if (m.enabled === true && typeof m.salt === 'string' && isSealed(m.kcv)) {
+      // 返り値の enabled は常に true (検証済み)。消費側 (unlock/disable) は salt/kcv のみ
+      // 参照し enabled を読まないため、この BooleanLiteral mutation は equivalent。
+      // Stryker disable next-line BooleanLiteral
       return { enabled: true, salt: m.salt, kcv: m.kcv };
     }
     return null;

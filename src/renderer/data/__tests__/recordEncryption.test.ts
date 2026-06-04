@@ -3,12 +3,15 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
 import { IDENTITY_CIPHER, isSealedData } from '../recordCipher';
+import { deriveAesKey, sealWithKey } from '../../security/dataCrypto';
 import {
   isEncryptionEnabled,
   enableEncryption,
   unlockEncryption,
   disableEncryption,
 } from '../recordEncryption';
+
+const LS_KEY = 'servicehub.recordEncryption';
 
 function clearIdb(): Promise<void> {
   return new Promise((resolve) => {
@@ -102,5 +105,44 @@ describe('recordEncryption lifecycle', () => {
     expect(isEncryptionEnabled()).toBe(true);
     const raw = await store.exportAll();
     expect(isSealedData(raw[0]!.data)).toBe(true);
+  });
+
+  it('rejects enabling with an empty passphrase', async () => {
+    await expect(enableEncryption('')).rejects.toThrow('パスフレーズを入力してください');
+  });
+
+  it('disable is a no-op (true) when encryption is not enabled', async () => {
+    // meta が無い → 早期 return true。`!meta` を false 固定する mutant は null.salt で例外。
+    expect(await disableEncryption('anything')).toBe(true);
+  });
+
+  it('treats tampered meta (bad enabled / salt / kcv) as disabled', async () => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
+    // enabled !== true
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, enabled: false }));
+    expect(isEncryptionEnabled()).toBe(false);
+    // salt が文字列でない
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: 123 }));
+    expect(isEncryptionEnabled()).toBe(false);
+    // kcv が封緘形でない
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, kcv: { nope: 1 } }));
+    expect(isEncryptionEnabled()).toBe(false);
+    // 壊れた JSON → catch 経路で null (catch を空にする mutant は undefined を返し true 化)。
+    localStorage.setItem(LS_KEY, 'not-json{');
+    expect(isEncryptionEnabled()).toBe(false);
+  });
+
+  it('rejects a passphrase whose KCV decrypts to the wrong plaintext (content check)', async () => {
+    await enableEncryption('pw');
+    const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
+    // 同じ鍵で別平文を封緘し kcv を差し替える → 復号は成功するが内容が KCV と不一致。
+    const key = await deriveAesKey('pw', valid.salt);
+    const wrongKcv = await sealWithKey(key, 'NOT-THE-KCV');
+    localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, kcv: wrongKcv }));
+    _resetRecordStoreForTests();
+    // unlock / disable とも内容不一致を検知して false (catch ではなく `!== KCV` 経路)。
+    expect(await unlockEncryption('pw')).toBe(false);
+    expect(await disableEncryption('pw')).toBe(false);
   });
 });
