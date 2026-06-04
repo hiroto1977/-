@@ -12,8 +12,8 @@ const yen = (n: number): number => Math.round(n);
 
 /** 外貨額 × レート = 円換算額。負の入力は 0 とみなす。 */
 export function convertToJpy(amountForeign: number, rate: number): number {
-  const a = amountForeign > 0 ? amountForeign : 0;
-  const r = rate > 0 ? rate : 0;
+  const a = Math.max(0, amountForeign);
+  const r = Math.max(0, rate);
   return yen(a * r);
 }
 
@@ -39,7 +39,7 @@ export function fxGainLoss(input: {
   acquisitionRate: number;
   currentRate: number;
 }): FxGainLoss {
-  const amount = input.amountForeign > 0 ? input.amountForeign : 0;
+  const amount = Math.max(0, input.amountForeign);
   const acquisitionJpy = yen(amount * Math.max(0, input.acquisitionRate));
   const currentJpy = yen(amount * Math.max(0, input.currentRate));
   const gain = currentJpy - acquisitionJpy;
@@ -64,8 +64,8 @@ export function effectiveRate(lots: readonly FxLot[]): number | null {
   let totalForeign = 0;
   let totalJpy = 0;
   for (const lot of lots) {
-    const a = lot.amountForeign > 0 ? lot.amountForeign : 0;
-    const r = lot.rate > 0 ? lot.rate : 0;
+    const a = Math.max(0, lot.amountForeign);
+    const r = Math.max(0, lot.rate);
     totalForeign += a;
     totalJpy += a * r;
   }

@@ -63,7 +63,9 @@
     "src/shared/taxSocialInsurance.ts",
     "src/shared/taxConsumption.ts",
     "src/shared/taxDividend.ts",
-    "src/shared/taxFurusato.ts"
+    "src/shared/taxFurusato.ts",
+    "src/shared/fxCurrency.ts",
+    "src/shared/realEstateMetrics.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
