@@ -42,6 +42,13 @@ describe('parseBackup', () => {
     await expect(parseBackup('not json')).rejects.toThrow(/JSON/);
   });
 
+  it('rejects a non-object top-level value (number / null)', async () => {
+    // `typeof parsed !== 'object' || parsed === null` ガードを外す / && にする mutant は
+    // 後続の app チェックや null 参照で別経路に逸れるため、'形式が不正' 文言で kill。
+    await expect(parseBackup('123')).rejects.toThrow(/形式が不正/);
+    await expect(parseBackup('null')).rejects.toThrow(/形式が不正/);
+  });
+
   it('rejects a foreign app envelope', async () => {
     await expect(parseBackup(JSON.stringify({ app: 'other', version: 1, records: [] }))).rejects.toThrow(/アプリ/);
   });
@@ -49,6 +56,14 @@ describe('parseBackup', () => {
   it('rejects a newer version', async () => {
     await expect(
       parseBackup(JSON.stringify({ app: 'service-hub', version: BACKUP_VERSION + 1, records: [] })),
+    ).rejects.toThrow(/版数/);
+  });
+
+  it('rejects a non-numeric version', async () => {
+    // `typeof file.version !== 'number' || file.version > BACKUP_VERSION` を false 固定
+    // する mutant は版数チェックを丸ごと飛ばすため、文字列版数で /版数/ を確認して kill。
+    await expect(
+      parseBackup(JSON.stringify({ app: 'service-hub', version: 'one', records: RECORDS })),
     ).rejects.toThrow(/版数/);
   });
 
@@ -80,9 +95,34 @@ describe('encrypted backup', () => {
   it('round-trips serialize(encrypted) → parse with the passphrase', async () => {
     const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
     expect(isEncryptedBackup(enc)).toBe(true);
+    // 暗号化エンベロープも app で識別できる ('service-hub' を '' にする mutant を kill)。
+    expect(JSON.parse(enc).app).toBe('service-hub');
     // ciphertext must not leak plaintext record content
     expect(enc).not.toContain('sales');
     expect(await parseBackup(enc, 'pw-123')).toEqual(RECORDS);
+  });
+
+  it('isEncryptedBackup distinguishes the encrypted flag from a valid payload', async () => {
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    const payload = JSON.parse(enc).payload;
+    // 有効な payload でも encrypted!==true なら false (左辺を true 固定する mutant を kill)。
+    expect(isEncryptedBackup(JSON.stringify({ encrypted: false, payload }))).toBe(false);
+    // encrypted===true でも payload が封緘形でなければ false (&& を || にする mutant を kill)。
+    expect(isEncryptedBackup(JSON.stringify({ encrypted: true, payload: 'garbage' }))).toBe(false);
+  });
+
+  it('isEncryptedBackup returns false for non-JSON (catch path)', () => {
+    // catch ブロックを空にする / true を返す mutant を、明示的に false 期待で kill。
+    expect(isEncryptedBackup('not json{')).toBe(false);
+  });
+
+  it('rejects an encrypted envelope whose payload is malformed', async () => {
+    // password はあるが payload が封緘形でない → isEncryptedBundle ガードで弾く。
+    // decryptString も同種ガードを持つが文言が「データ」なので、parseBackup 固有の
+    // 「バックアップの形式が不正」で照合し、`if(!isEncryptedBundle)` を外す mutant を kill。
+    await expect(
+      parseBackup(JSON.stringify({ encrypted: true, payload: 'garbage' }), 'pw'),
+    ).rejects.toThrow(/バックアップの形式が不正/);
   });
 
   it('requires a password to restore an encrypted backup', async () => {
