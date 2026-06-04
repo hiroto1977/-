@@ -68,7 +68,8 @@
     "src/shared/realEstateMetrics.ts",
     "src/shared/mutualFundsMetrics.ts",
     "src/shared/payroll.ts",
-    "src/shared/savingsPlanning.ts"
+    "src/shared/savingsPlanning.ts",
+    "src/shared/depreciation.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
