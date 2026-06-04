@@ -20,10 +20,12 @@ export interface ShopifyOrderInput {
 /** 表示用の金額文字列から数値を取り出す。"¥12,000" → 12000 / "1,234円" → 1234。
  *  数値ならそのまま。負・非有限は 0 に丸める。 */
 export function parseAmount(total: string | number): number {
-  if (typeof total === 'number') return Number.isFinite(total) && total > 0 ? total : 0;
+  // Math.max(0, x) は `x > 0 ? x : 0` と同値で、x===0 で値が一致する `>`↔`>=` の
+  // equivalent mutant を構造的に排除する (負・0 は 0 に丸める)。
+  if (typeof total === 'number') return Number.isFinite(total) ? Math.max(0, total) : 0;
   const digits = total.replace(/[^0-9.]/g, '');
   const n = Number(digits);
-  return Number.isFinite(n) && n > 0 ? n : 0;
+  return Number.isFinite(n) ? Math.max(0, n) : 0;
 }
 
 /**
