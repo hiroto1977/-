@@ -79,7 +79,8 @@
     "src/renderer/data/trendAlerts.ts",
     "src/renderer/data/accounting.ts",
     "src/renderer/data/profitSensitivity.ts",
-    "src/renderer/data/workingCapital.ts"
+    "src/renderer/data/workingCapital.ts",
+    "src/renderer/data/cashflowDebtService.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
