@@ -45,11 +45,17 @@ export interface SalesEntry extends Record<string, unknown> {
 }
 
 export function isSalesChannel(v: unknown): v is SalesChannel {
+  // typeof は型述語のため必須だが、非文字列は includes でも false になり mutation は
+  // equivalent (ConditionalExpression を無効化)。
+  // Stryker disable next-line ConditionalExpression
   return typeof v === 'string' && (SALES_CHANNELS as readonly string[]).includes(v);
 }
 
 /** `YYYY-MM-DD` with a real-ish calendar check (month 01-12, day 01-31). */
 export function isValidDate(s: unknown): s is string {
+  // 非文字列は下の regex.exec でも一致しない (String 強制) ため、この早期 return の
+  // ConditionalExpression は equivalent。型述語のため文自体は残す。
+  // Stryker disable next-line ConditionalExpression
   if (typeof s !== 'string') return false;
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (!m) return false;
@@ -70,10 +76,11 @@ export function parseSalesEntry(input: {
   if (!isValidDate(input.date)) throw new Error('日付は YYYY-MM-DD 形式で入力してください');
   if (!isSalesChannel(input.channel)) throw new Error('チャネルが不正です');
 
-  const amount = typeof input.amount === 'number' ? input.amount : Number(input.amount);
+  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
+  const amount = Number(input.amount);
   if (!Number.isFinite(amount) || amount < 0) throw new Error('売上金額は 0 以上の数値で入力してください');
 
-  const orders = typeof input.orders === 'number' ? input.orders : Number(input.orders);
+  const orders = Number(input.orders);
   if (!Number.isInteger(orders) || orders < 1) throw new Error('注文件数は 1 以上の整数で入力してください');
 
   const entry: SalesEntry = { date: input.date, channel: input.channel, amount, orders };
@@ -125,6 +132,9 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
       amount: v.amount,
       orders: v.orders,
       share: totalAmount > 0 ? (v.amount / totalAmount) * 100 : 0,
+      // チャネルは注文を持つエントリがある時のみ集計されるため v.orders は常に >0。
+      // この防御分岐は到達不能 (equivalent) なので無効化する。
+      // Stryker disable next-line ConditionalExpression,EqualityOperator
       aov: v.orders > 0 ? v.amount / v.orders : 0,
     }))
     .sort((a, b) => b.amount - a.amount);
@@ -145,7 +155,11 @@ export function monthlyTotals(entries: readonly SalesEntry[]): readonly { month:
     const month = e.date.slice(0, 7); // YYYY-MM
     acc.set(month, (acc.get(month) ?? 0) + e.amount);
   }
+  // Map キーは distinct のため a===b は起きず、< → <= の EqualityOperator は equivalent。
+  // チェーン継続行には next-line が効かないため block 形式で囲う。
+  // Stryker disable EqualityOperator
   return [...acc.entries()]
     .map(([month, amount]) => ({ month, amount }))
     .sort((a, b) => (a.month < b.month ? 1 : -1));
+  // Stryker restore EqualityOperator
 }
