@@ -63,6 +63,9 @@ export interface SocialInsuranceBreakdown {
  * @param withCare 40歳以上65歳未満 (介護保険料を健康保険に上乗せ) か
  */
 export function calcSocialInsurance(grossAnnual: number, withCare = false): SocialInsuranceBreakdown {
+  // grossAnnual===0 では計算経路 (monthly=0) でも全保険料が 0 になるため、
+  // `<= 0` を `< 0` にする EqualityOperator mutation は equivalent。無効化する。
+  // Stryker disable next-line EqualityOperator
   if (grossAnnual <= 0) {
     return { pension: 0, health: 0, employment: 0, total: 0 };
   }

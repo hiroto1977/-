@@ -58,7 +58,9 @@
     "src/renderer/data/financialRatios.ts",
     "src/renderer/data/businessFinancials.ts",
     "src/renderer/data/financialReport.ts",
-    "src/renderer/data/financialStatements.ts"
+    "src/renderer/data/financialStatements.ts",
+    "src/shared/taxPublicPension.ts",
+    "src/shared/taxSocialInsurance.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
