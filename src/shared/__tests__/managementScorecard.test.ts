@@ -96,4 +96,49 @@ describe('buildManagementScorecard', () => {
     expect(prof.components.find((c) => c.label === '粗利率')!.score).toBe(50);
     expect(prof.score).toBe(25); // (0 + 50) / 2
   });
+
+  it('exposes every category label in order (StringLiteral golden)', () => {
+    const r = buildManagementScorecard({});
+    expect(r.categories.map((c) => [c.category, c.label])).toEqual([
+      ['profitability', '収益性'],
+      ['safety', '安全性'],
+      ['liquidity', '資金繰り'],
+      ['efficiency', '効率性'],
+      ['growth', '成長性'],
+    ]);
+  });
+
+  it('includes 限界利益率 / 売上成長率 component labels when provided', () => {
+    const r = buildManagementScorecard({ contributionRatioPct: 30, revenueGrowthPct: 5 });
+    const prof = r.categories.find((c) => c.category === 'profitability')!;
+    expect(prof.components.map((c) => c.label)).toContain('限界利益率');
+    const growth = r.categories.find((c) => c.category === 'growth')!;
+    expect(growth.components.map((c) => c.label)).toEqual(['売上成長率']);
+  });
+
+  it('maps revenue growth on the [-10, +20] band (negative lo matters)', () => {
+    // band(5, -10, 20) = (5−(−10))/(20−(−10)) = 15/30 = 0.5 → 50。
+    // hi−lo を hi+lo にする / lo の −10 を +10 にする mutant はこの 50 で殺せる。
+    const r = buildManagementScorecard({ revenueGrowthPct: 5 });
+    expect(r.categories.find((c) => c.category === 'growth')!.score).toBe(50);
+  });
+
+  it('maps overallScore to verdict at the 80/60/40 boundaries (>= strict)', () => {
+    // 単一カテゴリ (営業利益率) で overallScore = band(v,0,10) を直接制御。
+    const verdictAt = (opMargin: number) => buildManagementScorecard({ operatingMarginPct: opMargin }).verdict;
+    expect(buildManagementScorecard({ operatingMarginPct: 8 }).overallScore).toBe(80);
+    expect(verdictAt(8)).toBe('excellent'); // 80 → >=80
+    expect(verdictAt(6)).toBe('good'); // 60 → >=60
+    expect(verdictAt(4)).toBe('caution'); // 40 → >=40
+    expect(verdictAt(2)).toBe('poor'); // 20
+  });
+
+  it('alerts only below 40 (score===40 is not an alert) with the exact message', () => {
+    // score 40 ちょうどは < 40 が false → アラート無し。<= にする mutant を殺す。
+    expect(buildManagementScorecard({ operatingMarginPct: 4 }).alerts).toEqual([]);
+    // score 20 はアラート対象。メッセージのリテラルを固定。
+    expect(buildManagementScorecard({ operatingMarginPct: 2 }).alerts).toEqual([
+      '収益性が低水準 (20/100) — 改善を検討',
+    ]);
+  });
 });
