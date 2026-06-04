@@ -44,6 +44,8 @@ export function kpiActualsFromCsv(text: string): KpiImportResult {
         }),
       );
     } catch (e) {
+      // parse は常に Error を throw するため else 側 '不正な行' は到達不能 (防御)。
+      // Stryker disable next-line StringLiteral
       errors.push({ row: i + 1, message: e instanceof Error ? e.message : '不正な行' });
     }
   });
