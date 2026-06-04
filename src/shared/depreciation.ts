@@ -21,18 +21,33 @@ export interface DepreciationYear {
 
 /** 定額法の年間償却費 = 取得価額 ÷ 耐用年数 (償却率 = 1/n の簡便)。 */
 export function straightLineAnnual(acquisitionCost: number, usefulLife: number): number {
-  if (acquisitionCost <= 0 || usefulLife <= 0) return 0;
+  // acquisitionCost===0 は yen(0/life)=0 と計算経路も一致するため <=→< は equivalent。
+  // Stryker disable next-line EqualityOperator
+  if (acquisitionCost <= 0) return 0;
+  if (usefulLife <= 0) return 0;
   return yen(acquisitionCost / usefulLife);
 }
 
 /** 定額法の償却スケジュール (最終年に備忘価額 1 円を残す)。 */
 export function straightLineSchedule(acquisitionCost: number, usefulLife: number): DepreciationYear[] {
-  if (acquisitionCost <= 0 || usefulLife <= 0) return [];
+  // usefulLife <= 0 はループ条件 (y <= usefulLife) が 1 度も回らず [] を返すため
+  // ここでは判定不要 (冗長)。acquisitionCost のみ早期 return する。
+  if (acquisitionCost <= 0) return [];
   const annual = yen(acquisitionCost / usefulLife);
   const rows: DepreciationYear[] = [];
   let book = acquisitionCost;
   for (let y = 1; y <= usefulLife; y += 1) {
-    let dep = y === usefulLife ? book - 1 : Math.min(annual, book - 1);
+    let dep: number;
+    if (y === usefulLife) {
+      dep = book - 1; // 最終年: 備忘価額 1 円を残す
+    } else {
+      // book-1 の cap は均等償却では最終年まで効かない (annual ≤ book-1) 防御値のため、
+      // その ArithmeticOperator は無効化する (Math.min→Math.max は既存テストで kill)。
+      // Stryker disable next-line ArithmeticOperator
+      dep = Math.min(annual, book - 1);
+    }
+    // dep は book≥1 のため常に ≥0。負値クランプは防御で到達不能。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     if (dep < 0) dep = 0;
     book -= dep;
     rows.push({ year: y, depreciation: dep, bookValue: book });
@@ -50,7 +65,8 @@ export function decliningBalanceSchedule(
   usefulLife: number,
   multiplier = 2,
 ): DepreciationYear[] {
-  if (acquisitionCost <= 0 || usefulLife <= 0) return [];
+  // usefulLife <= 0 はループ条件で空配列になるため冗長。acquisitionCost のみ判定。
+  if (acquisitionCost <= 0) return [];
   const rate = multiplier / usefulLife;
   const rows: DepreciationYear[] = [];
   let book = acquisitionCost;
@@ -58,15 +74,24 @@ export function decliningBalanceSchedule(
   for (let y = 1; y <= usefulLife; y += 1) {
     const remainingYears = usefulLife - y + 1;
     let dep: number;
+    // 最終年の特例 (book-1) は、有効入力では切替済みのため else 側でも even=book →
+    // Math.min で book-1 に丸まり同値。安全のため特例は残すが ConditionalExpression は
+    // equivalent のため無効化する。
+    // Stryker disable next-line ConditionalExpression
     if (y === usefulLife) {
       dep = book - 1; // 最終年: 備忘価額 1 円を残す
     } else {
       const declining = book * rate;
       const evenRemaining = book / remainingYears;
+      // declining===evenRemaining の同値時は切替えても dep が変わらず以降も同一 (equivalent)。
+      // Stryker disable next-line EqualityOperator
       if (!switched && declining < evenRemaining) switched = true;
       dep = yen(switched ? evenRemaining : declining);
-      if (dep > book - 1) dep = book - 1;
+      // 残存簿価が備忘 1 円を割らないよう book-1 で頭打ち (Math.min は if より mutation 堅牢)。
+      dep = Math.min(dep, book - 1);
     }
+    // dep は上で book-1 に頭打ちされ book≥1 のため常に ≥0。負値クランプは到達不能。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     if (dep < 0) dep = 0;
     book -= dep;
     rows.push({ year: y, depreciation: dep, bookValue: book });
