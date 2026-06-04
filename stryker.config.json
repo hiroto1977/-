@@ -76,7 +76,10 @@
     "src/renderer/data/revenueConcentration.ts",
     "src/shared/managementScorecard.ts",
     "src/renderer/data/sparkline.ts",
-    "src/renderer/data/trendAlerts.ts"
+    "src/renderer/data/trendAlerts.ts",
+    "src/renderer/data/accounting.ts",
+    "src/renderer/data/profitSensitivity.ts",
+    "src/renderer/data/workingCapital.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

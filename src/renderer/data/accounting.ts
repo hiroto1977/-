@@ -64,6 +64,8 @@ export function summarizeAccounting(monthly: readonly AccountingMonthly[]): Acco
  */
 export function computeRunwayMonths(cash: number, avgMonthlyNet: number): number | null {
   if (avgMonthlyNet >= 0) return null;
+  // cash===0 では計算経路でも 0/(-avgMonthlyNet)=0 になり <= → < は equivalent。
+  // Stryker disable next-line EqualityOperator
   if (cash <= 0) return 0;
   return Math.round((cash / -avgMonthlyNet) * 10) / 10;
 }

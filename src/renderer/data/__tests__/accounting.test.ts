@@ -51,5 +51,14 @@ describe('computeRunwayMonths', () => {
 
   it('returns 0 when there is no cash while burning', () => {
     expect(computeRunwayMonths(0, -100_000)).toBe(0);
+    // 現金が負でも 0 (早期 return)。計算経路だと負値になるため ConditionalExpression を kill。
+    expect(computeRunwayMonths(-500_000, -100_000)).toBe(0);
+  });
+
+  it('treats a break-even cumulative net (0) as cashflow-positive (>= 0)', () => {
+    // totalNet===0 → cashflowPositive=true。>= を > にする mutant を kill。
+    const s = summarizeAccounting([m('2026-04', 200, 200)])!;
+    expect(s.totalNet).toBe(0);
+    expect(s.cashflowPositive).toBe(true);
   });
 });

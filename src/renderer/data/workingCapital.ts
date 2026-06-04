@@ -50,8 +50,13 @@ export function computeCashConversionCycle(input: WorkingCapitalInput): CashConv
   const dso = day(input.accountsReceivable, input.revenue, days);
   const dio = day(input.inventory, input.cogs, days);
   const dpo = day(input.accountsPayable, input.cogs, days);
-  const ccc = dso !== null && dio !== null && dpo !== null
-    ? Math.round((dso + dio - dpo) * 10) / 10
+  // dio と dpo は同じ cogs を分母に持ち常に同時に null/非null になる。一方の判定は
+  // 他方でマスクされ、&& と || も同結果になる (equivalent) ため、cogs 由来の有無判定の
+  // ConditionalExpression / LogicalOperator をまとめて無効化する。
+  // Stryker disable next-line ConditionalExpression,LogicalOperator
+  const cogsDaysOk = dio !== null && dpo !== null;
+  const ccc = dso !== null && cogsDaysOk
+    ? Math.round((dso + dio! - dpo!) * 10) / 10
     : null;
   return {
     dso,
