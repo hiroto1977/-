@@ -62,7 +62,8 @@
     "src/shared/taxPublicPension.ts",
     "src/shared/taxSocialInsurance.ts",
     "src/shared/taxConsumption.ts",
-    "src/shared/taxDividend.ts"
+    "src/shared/taxDividend.ts",
+    "src/shared/taxFurusato.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
