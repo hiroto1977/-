@@ -12,7 +12,7 @@ export const COMMUTE_PUBLIC_TRANSPORT_CAP = 150_000;
 
 /** 公共交通機関の通勤手当: 非課税分と課税分 (上限超過) に分ける。 */
 export function publicTransportCommute(monthly: number): { nonTaxable: number; taxable: number } {
-  const amt = monthly > 0 ? monthly : 0;
+  const amt = Math.max(0, monthly);
   const nonTaxable = Math.min(amt, COMMUTE_PUBLIC_TRANSPORT_CAP);
   return { nonTaxable, taxable: amt - nonTaxable };
 }
@@ -63,7 +63,7 @@ const BONUS_RATE_TABLE_DEP0: ReadonlyArray<{ readonly min: number; readonly rate
 
 /** 賞与の源泉徴収税率 (%, 扶養 0 人)。前月給与 (社保控除後) の階層で決まる。 */
 export function bonusWithholdingRatePctDep0(prevMonthSalaryAfterSI: number): number {
-  const v = prevMonthSalaryAfterSI > 0 ? prevMonthSalaryAfterSI : 0;
+  const v = Math.max(0, prevMonthSalaryAfterSI);
   let rate = 0;
   for (const row of BONUS_RATE_TABLE_DEP0) {
     if (v >= row.min) rate = row.rate;
@@ -91,8 +91,8 @@ export function bonusWithholdingTax(input: {
   socialInsurance: number;
   prevMonthSalaryAfterSI: number;
 }): BonusWithholding {
-  const bonus = input.bonus > 0 ? input.bonus : 0;
-  const si = input.socialInsurance > 0 ? input.socialInsurance : 0;
+  const bonus = Math.max(0, input.bonus);
+  const si = Math.max(0, input.socialInsurance);
   const taxableBonus = Math.max(0, bonus - si);
   const ratePct = bonusWithholdingRatePctDep0(input.prevMonthSalaryAfterSI);
   const tax = Math.floor((taxableBonus * ratePct) / 100);

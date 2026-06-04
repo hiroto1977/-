@@ -36,6 +36,11 @@ describe('carCommuteNonTaxableLimit', () => {
   it('uses inclusive lower / exclusive upper band boundaries', () => {
     expect(carCommuteNonTaxableLimit(2)).toBe(4_200);
     expect(carCommuteNonTaxableLimit(10)).toBe(7_100);
+    // 各境界 km は上側バンド (`<` は排他的)。`<` を `<=` にする mutant を殺す。
+    expect(carCommuteNonTaxableLimit(15)).toBe(12_900);
+    expect(carCommuteNonTaxableLimit(25)).toBe(18_700);
+    expect(carCommuteNonTaxableLimit(35)).toBe(24_400);
+    expect(carCommuteNonTaxableLimit(45)).toBe(28_000);
     expect(carCommuteNonTaxableLimit(55)).toBe(31_600);
   });
 });
