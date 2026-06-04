@@ -59,6 +59,38 @@ describe('summarizeFoodDelivery', () => {
     expect(s.combinedMonthlyEstimate).toEqual({ orders: 0, revenue: 0, netRevenue: 0 });
   });
 
+  it('picks a later store when it has the highest revenue (not just the first)', () => {
+    // 先頭以外が最大のとき比較が実際に切り替わる。`>` を false 固定する mutant は
+    // 先頭 (low) を返すため kill。
+    const s = summarizeFoodDelivery(
+      {
+        weekOrders: 0, weekRevenue: 0, avgRating: 0,
+        stores: [
+          { name: 'low', orders: 1, revenue: 100, rating: 4 },
+          { name: 'high', orders: 1, revenue: 200, rating: 4 },
+        ],
+      },
+      DC,
+    );
+    expect(s.uberEats.topStore).toEqual({ name: 'high', revenue: 200 });
+  });
+
+  it('keeps the earlier store on a revenue tie (> strict, not >=)', () => {
+    // 同額のとき `>` は先頭を保持。`>=` にする mutant は後続に切り替わるため、
+    // name で kill。
+    const s = summarizeFoodDelivery(
+      {
+        weekOrders: 0, weekRevenue: 0, avgRating: 0,
+        stores: [
+          { name: 'first', orders: 1, revenue: 200, rating: 4 },
+          { name: 'second', orders: 1, revenue: 200, rating: 4 },
+        ],
+      },
+      DC,
+    );
+    expect(s.uberEats.topStore?.name).toBe('first');
+  });
+
   it('works with the real snapshot shapes', async () => {
     const { SNAPSHOT } = await import('../snapshot');
     const s = summarizeFoodDelivery(SNAPSHOT.uberEats, SNAPSHOT.demaeCan);
