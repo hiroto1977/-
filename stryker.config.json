@@ -61,7 +61,8 @@
     "src/renderer/data/financialStatements.ts",
     "src/shared/taxPublicPension.ts",
     "src/shared/taxSocialInsurance.ts",
-    "src/shared/taxConsumption.ts"
+    "src/shared/taxConsumption.ts",
+    "src/shared/taxDividend.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
