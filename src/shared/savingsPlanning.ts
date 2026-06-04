@@ -30,12 +30,21 @@ export function requiredMonthlyContribution(
   annualRatePct: number,
   years: number,
 ): number {
-  if (targetFutureValue <= 0 || years <= 0) return 0;
+  // years <= 0 は下の n <= 0 (= round(years*12)) で捕捉されるため、ここでは
+  // targetFutureValue のみ判定する。targetFutureValue===0 は計算経路でも 0 に
+  // なり <= → < は equivalent のため EqualityOperator を無効化。
+  // Stryker disable next-line EqualityOperator
+  if (targetFutureValue <= 0) return 0;
   const n = Math.round(years * 12);
   if (n <= 0) return 0;
   const r = monthlyRate(annualRatePct);
+  // r がほぼ 0 のとき元本均等割。1e-9 ちょうどは浮動小数で到達不能 → < / <= は equivalent。
+  // Stryker disable next-line EqualityOperator
   if (Math.abs(r) < 1e-9) return yen(targetFutureValue / n);
   const factor = (Math.pow(1 + r, n) - 1) / r;
+  // 防御分岐: 有効な年率では r≠0 のとき factor>0 が常に成立し、この分岐には到達しない
+  // (異常な負率に対する除算保護)。到達不能のため各 mutator を無効化する。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator,ArithmeticOperator
   if (factor <= 0) return yen(targetFutureValue / n);
   return yen(targetFutureValue / factor);
 }
@@ -54,7 +63,7 @@ export function yearsToDouble(annualRatePct: number): number | null {
  * 月数の既定は 6 (一般的な目安: 会社員 3〜6 / 自営 6〜12 か月)。
  */
 export function emergencyFund(monthlyExpense: number, months = 6): number {
-  const e = monthlyExpense > 0 ? monthlyExpense : 0;
-  const m = months > 0 ? months : 0;
+  const e = Math.max(0, monthlyExpense);
+  const m = Math.max(0, months);
   return yen(e * m);
 }
