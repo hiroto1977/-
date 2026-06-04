@@ -15,6 +15,12 @@ beforeEach(() => {
   localStorage.clear();
 });
 
+describe('STOCKS_WATCHLIST_KEY', () => {
+  it('is the stable localStorage key', () => {
+    expect(STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
+  });
+});
+
 describe('isSafeSymbol', () => {
   it('accepts JP / US / index symbols', () => {
     expect(isSafeSymbol('AAPL')).toBe(true);
@@ -112,6 +118,17 @@ describe('loadWatchlistSymbols', () => {
     localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(['aapl', 'AAPL', 'bad sym', 42]));
     expect(loadWatchlistSymbols()).toEqual(['AAPL']);
   });
+  it('returns [] when the stored value is valid JSON but not an array (number)', () => {
+    // `if (!Array.isArray(parsed)) return []` の [] を ["Stryker..."] にする mutant を kill。
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(42));
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
+  it('returns [] for a stored JSON string (iterable but not an array)', () => {
+    // 文字列は for...of で 1 文字ずつ反復できてしまうため、Array.isArray ガードを外す
+    // mutant は 'AAPL' を ['A','P','L'] に展開する → ガードが効くことを確認して kill。
+    localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify('AAPL'));
+    expect(loadWatchlistSymbols()).toEqual([]);
+  });
 });
 
 describe('mockCandles', () => {
@@ -173,6 +190,17 @@ describe('buildWatchlistItem', () => {
     expect(sell.signal.confidence).toBe(0.5);
     expect(sell.signal.reason).toMatch(/モックデータ/);
   });
+  it('holds at exactly changePct === ±1 (both thresholds are strict, not >=/<=)', () => {
+    // 決定論的モックで AOF の changePct はちょうど +1、META はちょうど -1。
+    // `changePct > 1` を `>= 1` にする mutant は AOF を 'buy' に、`< -1` を `<= -1` に
+    // する mutant は META を 'sell' にしてしまうため、両境界が 'hold' であることで kill。
+    const buyEdge = buildWatchlistItem('AOF', NOW);
+    expect(buyEdge.changePct).toBe(1);
+    expect(buyEdge.signal.action).toBe('hold');
+    const sellEdge = buildWatchlistItem('META', NOW);
+    expect(sellEdge.changePct).toBe(-1);
+    expect(sellEdge.signal.action).toBe('hold');
+  });
 });
 
 describe('buildStocksSnapshot', () => {
@@ -189,5 +217,9 @@ describe('buildStocksSnapshot', () => {
     const snap = buildStocksSnapshot(NOW);
     expect(snap.watchlist.map((w) => w.symbol)).toEqual(['AAPL', '7203.T']);
     expect(snap.watchlist[0]!.candles).toHaveLength(30);
+  });
+  it('seeds the portfolio with an empty history array', () => {
+    // history: [] を ["Stryker was here"] にする ArrayDeclaration mutant を kill。
+    expect(buildStocksSnapshot(NOW).portfolio.history).toEqual([]);
   });
 });

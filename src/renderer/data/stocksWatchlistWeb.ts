@@ -21,7 +21,9 @@ export const STOCKS_WATCHLIST_KEY = 'stocks.watchlist';
  *  JP の TSE コード (`7203.T`)、US ティッカー (`AAPL`)、指数 (`^N225`) を許可。 */
 export function isSafeSymbol(value: unknown): value is string {
   if (typeof value !== 'string') return false;
-  if (value.length === 0 || value.length > 16) return false;
+  // 空文字は下の regex (`+` で 1 文字以上を要求) が弾くため、length===0 の明示判定は
+  // 冗長 (equivalent mutant 排除のため上限のみ残す)。
+  if (value.length > 16) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 
@@ -72,6 +74,9 @@ export interface WebStocksSnapshot {
 export function loadWatchlistSymbols(): string[] {
   try {
     const raw = localStorage.getItem(STOCKS_WATCHLIST_KEY);
+    // raw が null/'' のいずれでも下の JSON.parse → Array.isArray / catch 経路が [] を
+    // 返すため、この早期 return の ConditionalExpression は equivalent。
+    // Stryker disable next-line ConditionalExpression
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -122,6 +127,9 @@ export function registerSymbol(symbol: unknown): RegisterResult {
   const current = loadWatchlistSymbols();
   const wasAlreadyThere = current.includes(upper);
   const next = wasAlreadyThere ? current : [...current, upper];
+  // 既存登録時は next===current で保存しても localStorage 内容は不変のため、この
+  // 条件を true 固定する変異 (常に保存) は equivalent。
+  // Stryker disable next-line ConditionalExpression
   if (!wasAlreadyThere) saveWatchlistSymbols(next);
   return {
     symbol: upper,
@@ -142,6 +150,9 @@ export function unregisterSymbol(symbol: unknown): UnregisterResult {
   const current = loadWatchlistSymbols();
   const wasThere = current.includes(upper);
   const next = current.filter((s) => s !== upper);
+  // 未登録時は next===current で保存しても localStorage 内容は不変のため、この
+  // 条件を true 固定する変異 (常に保存) は equivalent。
+  // Stryker disable next-line ConditionalExpression
   if (wasThere) saveWatchlistSymbols(next);
   return {
     symbol: upper,
@@ -225,6 +236,9 @@ export function buildWatchlistItem(symbol: string, now: number = Date.now()): We
   const candles = mockCandles(symbol, now);
   const last = candles[candles.length - 1]!;
   const prev = candles[candles.length - 2] ?? last;
+  // mockCandles の close は Math.max(1, …) で常に >=1 のため prev.close===0 は到達不能。
+  // この除算ガードを false 固定する変異は equivalent (常に計算され結果不変)。
+  // Stryker disable next-line ConditionalExpression
   const changePct = prev.close === 0 ? 0 : round2(((last.close - prev.close) / prev.close) * 100);
   const action: WebSignal['action'] = changePct > 1 ? 'buy' : changePct < -1 ? 'sell' : 'hold';
   return {
