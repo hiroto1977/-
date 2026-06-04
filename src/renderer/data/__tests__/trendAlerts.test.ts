@@ -15,6 +15,26 @@ describe('computeTrendAlerts — revenue decline streak', () => {
     expect(t.revenue.hasSeries).toBe(false);
     expect(t.revenue.streak).toBe(0);
     expect(t.revenue.dropFromPeakPct).toBeNull();
+    // 単一期は series[length-1] を latest に。length-1→length+1 / ?? の mutant を kill。
+    expect(t.revenue.latest).toBe(100);
+  });
+
+  it('marks hasSeries=true and does not count a flat month as a decline', () => {
+    // 100 → 100 (横ばい)。< を <= にする mutant は横ばいを下落に数えるため streak=0 で殺す。
+    const t = computeTrendAlerts([rev('2026-04', 100), rev('2026-05', 100)]);
+    expect(t.revenue.hasSeries).toBe(true);
+    expect(t.revenue.streak).toBe(0);
+  });
+
+  it('returns null dropFromPeakPct when the peak is non-positive', () => {
+    // peak<=0 では割合算定不能。peak>0 を true 固定 / >=0 にする mutant を kill。
+    const negPeak = computeTrendAlerts([rev('2026-04', -10), rev('2026-05', -20)]);
+    expect(negPeak.revenue.streak).toBe(1);
+    expect(negPeak.revenue.peak).toBe(-10);
+    expect(negPeak.revenue.dropFromPeakPct).toBeNull();
+    const zeroPeak = computeTrendAlerts([rev('2026-04', 0), rev('2026-05', -10)]);
+    expect(zeroPeak.revenue.peak).toBe(0);
+    expect(zeroPeak.revenue.dropFromPeakPct).toBeNull();
   });
 
   it('counts consecutive months below the prior month', () => {

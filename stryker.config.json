@@ -74,7 +74,9 @@
     "src/renderer/data/cashForecast.ts",
     "src/renderer/data/salesKpiBridge.ts",
     "src/renderer/data/revenueConcentration.ts",
-    "src/shared/managementScorecard.ts"
+    "src/shared/managementScorecard.ts",
+    "src/renderer/data/sparkline.ts",
+    "src/renderer/data/trendAlerts.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

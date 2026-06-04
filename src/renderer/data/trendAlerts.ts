@@ -35,6 +35,9 @@ function declineStreakOf(series: readonly number[]): DeclineStreak {
     return { streak: 0, hasSeries: false, latest, peak: latest, dropFromPeakPct: null };
   }
   let streak = 0;
+  // i>0 を i>=0 にしても、i=0 では series[-1]=undefined との比較が false で即 break する
+  // ため streak は不変 (equivalent)。EqualityOperator を無効化する。
+  // Stryker disable next-line EqualityOperator
   for (let i = series.length - 1; i > 0; i -= 1) {
     if (series[i]! < series[i - 1]!) streak += 1;
     else break;

@@ -7,6 +7,15 @@ describe('sparklinePoints', () => {
     expect(g.points).toEqual([]);
     expect(g.polyline).toBe('');
     expect(g.zeroY).toBeNull();
+    expect(g.min).toBe(0); // 空ガードを外す mutant は Math.min(...[])=Infinity になる
+    expect(g.max).toBe(0);
+  });
+
+  it('positions y using innerH = height − pad×2 (pad / span / v−min matter)', () => {
+    // min=10,max=20,span=10,innerH=32−4=28 → yOf(10)=2+28=30, yOf(20)=2。
+    // height−pad*2 / pad*2 / v−min の各 ArithmeticOperator をこの座標で殺す。
+    const g = sparklinePoints([10, 20], 100, 32, 2);
+    expect(g.points).toEqual([{ x: 0, y: 30 }, { x: 100, y: 2 }]);
   });
 
   it('centers a single point horizontally and vertically', () => {
@@ -37,9 +46,13 @@ describe('sparklinePoints', () => {
 
   it('exposes a zero baseline y only when 0 is within range', () => {
     const withZero = sparklinePoints([-100, 100], 100, 40, 0);
-    expect(withZero.zeroY).not.toBeNull();
+    expect(withZero.zeroY).toBe(20); // yOf(0)=20 — *10 / round の ArithmeticOperator を kill
     const allPositive = sparklinePoints([10, 20, 30], 100, 40, 0);
     expect(allPositive.zeroY).toBeNull();
+    // min===0 / max===0 の境界 (<= / >= の厳密性) と max<0 (>= を true 固定) を kill。
+    expect(sparklinePoints([0, 10], 100, 40, 0).zeroY).toBe(40); // min=0 → 含む
+    expect(sparklinePoints([-10, 0], 100, 40, 0).zeroY).toBe(0); // max=0 → 含む
+    expect(sparklinePoints([-20, -10], 100, 40, 0).zeroY).toBeNull(); // max<0 → 範囲外
   });
 
   it('builds a polyline string matching the points', () => {
