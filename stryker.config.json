@@ -65,7 +65,8 @@
     "src/shared/taxDividend.ts",
     "src/shared/taxFurusato.ts",
     "src/shared/fxCurrency.ts",
-    "src/shared/realEstateMetrics.ts"
+    "src/shared/realEstateMetrics.ts",
+    "src/shared/mutualFundsMetrics.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

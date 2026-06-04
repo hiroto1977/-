@@ -40,12 +40,14 @@ export function calcCompoundingFutureValue(
   const pmt = Math.max(0, monthlyContribution);
   const yrs = Math.max(0, years);
   const n = Math.round(yrs * 12);
-  if (n <= 0 || pmt <= 0) {
-    return { futureValue: 0, totalContributed: 0, totalGain: 0, gainPct: 0 };
-  }
+  // n=0 または pmt=0 のときは totalContributed=0・fvRaw=0・gainPct=0 と計算経路でも
+  // すべて 0 に畳まれるため、早期 return ガードは冗長 (equivalent) として置かない。
   const totalContributed = pmt * n;
   // 月利 (年率を複利で月換算)。
   const r = Math.pow(1 + annualReturnPct / 100, 1 / 12) - 1;
+  // r がほぼ 0 (年率0%等) のときは 0/0 を避けて元本そのまま。1e-12 ちょうどは
+  // 浮動小数で到達不能のため < を <= にする EqualityOperator は equivalent。
+  // Stryker disable next-line EqualityOperator
   const fvRaw = Math.abs(r) < 1e-12 ? pmt * n : pmt * ((Math.pow(1 + r, n) - 1) / r);
   const futureValue = yen(fvRaw);
   const totalGain = futureValue - totalContributed;
