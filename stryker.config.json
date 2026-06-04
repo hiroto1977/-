@@ -90,7 +90,8 @@
     "src/renderer/data/highlightSettings.ts",
     "src/renderer/data/recordCipher.ts",
     "src/renderer/data/sales.ts",
-    "src/renderer/data/recordEncryption.ts"
+    "src/renderer/data/recordEncryption.ts",
+    "src/renderer/data/kpiActuals.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

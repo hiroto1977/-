@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  KPI_ACTUALS_COLLECTION,
   isValidPeriod,
   parseKpiActual,
   summarizeFundamentals,
@@ -11,6 +12,8 @@ import {
   computeLaborMetrics,
   summarizeLaborCost,
   groupRevenueByPeriod,
+  monthlyTrendSeries,
+  computeYoYGrowth,
   type KpiActual,
 } from '../kpiActuals';
 
@@ -34,6 +37,12 @@ const BASE = {
   depreciation: '50000',
 };
 
+describe('KPI_ACTUALS_COLLECTION', () => {
+  it('is the stable record-store collection key', () => {
+    expect(KPI_ACTUALS_COLLECTION).toBe('kpi-actuals');
+  });
+});
+
 describe('isValidPeriod', () => {
   it('accepts YYYY-MM with a valid month', () => {
     expect(isValidPeriod('2026-01')).toBe(true);
@@ -45,6 +54,11 @@ describe('isValidPeriod', () => {
     expect(isValidPeriod('2026/05')).toBe(false);
     expect(isValidPeriod('26-05')).toBe(false);
     expect(isValidPeriod(202605)).toBe(false);
+  });
+  it('rejects junk anchored before/after a valid period (^ and $ anchors)', () => {
+    // アンカーを外す Regex mutant は部分一致で true 化するため、前後ゴミ付きを kill。
+    expect(isValidPeriod('x2026-05')).toBe(false); // ^ アンカー
+    expect(isValidPeriod('2026-05x')).toBe(false); // $ アンカー
   });
 });
 
@@ -75,6 +89,28 @@ describe('parseKpiActual', () => {
     expect(() => parseKpiActual({ ...BASE, revenue: -1 })).toThrow(/売上高/);
     expect(() => parseKpiActual({ ...BASE, cogs: 'abc' })).toThrow(/売上原価/);
     expect(() => parseKpiActual({ ...BASE, sga: Infinity })).toThrow(/販管費/);
+  });
+
+  it('names the offending field in the error (advertising / depreciation labels)', () => {
+    // num() のラベルを '' にする StringLiteral mutant を、各フィールド固有の文言で kill。
+    expect(() => parseKpiActual({ ...BASE, advertising: -1 })).toThrow(/広告費/);
+    expect(() => parseKpiActual({ ...BASE, depreciation: 'x' })).toThrow(/減価償却費/);
+  });
+
+  it('rejects a non-string unit rather than coercing it', () => {
+    // unit 三項を true 固定 (123.trim() で TypeError) / '' を別文字列にする mutant を kill。
+    expect(() => parseKpiActual({ ...BASE, unit: 123 })).toThrow(/事業名/);
+  });
+
+  it('accepts a 64-char unit at the upper boundary (> strict)', () => {
+    // length>64 を >=64 にする mutant を、ちょうど 64 文字許容で kill。
+    const a = parseKpiActual({ ...BASE, unit: 'x'.repeat(64) });
+    expect(a.unit).toBe('x'.repeat(64));
+  });
+
+  it('accepts a zero figure at the lower boundary (< strict)', () => {
+    // n<0 を n<=0 にする mutant を、revenue===0 許容で kill。
+    expect(parseKpiActual({ ...BASE, revenue: 0 }).revenue).toBe(0);
   });
 });
 
@@ -203,7 +239,15 @@ describe('computeRevenueCagrPct', () => {
   });
 
   it('returns null when the first period revenue is zero (invalid base)', () => {
+    // first===0 → last/first=Infinity → rate 非有限 → !isFinite ガードで null。
+    // このガードを if(false) にする mutant は Infinity を返すため kill される。
     expect(computeRevenueCagrPct([actual('2026-04', 0), actual('2026-05', 1_000)])).toBeNull();
+  });
+
+  it('computes over exactly two periods (single step)', () => {
+    // series.length<2 を <=2 にする mutant は 2 期で null を返すため、2 期 +21% で kill。
+    // 1,000,000 → 1,210,000 over 1 step = 21%
+    expect(computeRevenueCagrPct([actual('2026-04', 1_000_000), actual('2026-05', 1_210_000)])).toBe(21);
   });
 
   it('computes per-period compound growth over the span', () => {
@@ -270,6 +314,26 @@ describe('computeRevenueTrend', () => {
     ], 2);
     expect(out).toBe('up');
   });
+
+  it('treats an exactly +1% change as flat (> 0.01 strict, not >=)', () => {
+    // change===0.01 ちょうど → 'flat'。> を >= にする mutant は 'up' を返すため kill。
+    expect(computeRevenueTrend([actual('2026-04', 100), actual('2026-05', 101)], 1)).toBe('flat');
+  });
+
+  it('treats an exactly -1% change as flat (< -0.01 strict, not <=)', () => {
+    // change===-0.01 ちょうど → 'flat'。< を <= にする mutant は 'down' を返すため kill。
+    expect(computeRevenueTrend([actual('2026-04', 100), actual('2026-05', 99)], 1)).toBe('flat');
+  });
+
+  it('reports up when the prior window is zero but recent grows (zero-division → +Inf)', () => {
+    // prior 窓平均 0、recent>0 → change=+Infinity → 'up'。閾値・文字列 mutant を kill。
+    expect(computeRevenueTrend([actual('2026-04', 0), actual('2026-05', 300)], 1)).toBe('up');
+  });
+
+  it('reports flat when both windows are zero (zero-division → NaN)', () => {
+    // prior 窓平均 0、recent 0 → change=NaN → どの閾値にも該当せず 'flat'。
+    expect(computeRevenueTrend([actual('2026-04', 0), actual('2026-05', 0)], 1)).toBe('flat');
+  });
 });
 
 describe('computeRevenueLandingForecast', () => {
@@ -325,6 +389,63 @@ describe('computeRevenueLandingForecast', () => {
   });
 });
 
+describe('monthlyTrendSeries', () => {
+  it('returns rows in ascending period order with margin and growth', () => {
+    const rows = monthlyTrendSeries([
+      { period: '2026-05', unit: 'EC', revenue: 1_200_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000 },
+      { period: '2026-04', unit: 'EC', revenue: 1_000_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000 },
+    ]);
+    expect(rows.map((r) => r.period)).toEqual(['2026-04', '2026-05']);
+    // 先頭期は前期が無いため成長率 null (条件を true 固定する mutant は +Infinity を出す)。
+    expect(rows[0]!.revenueGrowthPct).toBeNull();
+    // 2 期目: 1,000,000 → 1,200,000 = +20%
+    expect(rows[1]!.revenueGrowthPct).toBe(20);
+    expect(rows[1]!.revenue).toBe(1_200_000);
+  });
+
+  it('nulls the growth rate when the prior period revenue is zero', () => {
+    const rows = monthlyTrendSeries([actual('2026-04', 0), actual('2026-05', 500_000)]);
+    expect(rows[1]!.revenueGrowthPct).toBeNull();
+  });
+
+  it('reports a zero operating margin for a zero-revenue period', () => {
+    const rows = monthlyTrendSeries([actual('2026-04', 0)]);
+    expect(rows[0]!.operatingMarginPct).toBe(0);
+  });
+});
+
+describe('computeYoYGrowth', () => {
+  it('returns null for an empty set', () => {
+    expect(computeYoYGrowth([])).toBeNull();
+  });
+
+  it('compares the latest period against the same month a year earlier', () => {
+    const yoy = computeYoYGrowth([actual('2025-05', 1_000_000), actual('2026-05', 1_200_000)]);
+    expect(yoy).toEqual({
+      period: '2026-05',
+      priorPeriod: '2025-05',
+      revenue: 1_200_000,
+      priorRevenue: 1_000_000,
+      revenueYoYPct: 20,
+    });
+  });
+
+  it('returns null when the prior-year month is absent', () => {
+    expect(computeYoYGrowth([actual('2026-05', 1_000_000)])).toBeNull();
+  });
+
+  it('nulls the YoY percentage when the prior-year revenue is zero', () => {
+    const yoy = computeYoYGrowth([actual('2025-05', 0), actual('2026-05', 1_000_000)]);
+    expect(yoy?.revenueYoYPct).toBeNull();
+  });
+
+  it('returns null when the latest period label is malformed (yearEarlier guard)', () => {
+    // yearEarlier の `if (!m) return null` を if(false) にする mutant は m=null を
+    // そのまま参照して例外になる → 不正期で null を期待することで kill。
+    expect(computeYoYGrowth([actual('not-a-period', 1_000)])).toBeNull();
+  });
+});
+
 describe('parseKpiActual — laborCost (optional)', () => {
   it('omits laborCost when not provided (keeps the legacy shape)', () => {
     const a = parseKpiActual(BASE);
@@ -338,6 +459,23 @@ describe('parseKpiActual — laborCost (optional)', () => {
 
   it('rejects labor cost greater than SG&A', () => {
     expect(() => parseKpiActual({ ...BASE, sga: '100000', laborCost: '200000' })).toThrow(/人件費/);
+  });
+
+  it('omits laborCost for an empty-string input (treated as "not provided")', () => {
+    // `!== ''` の '' を別文字列にする StringLiteral mutant は '' を有効値 0 として
+    // 取り込んでしまう → laborCost 不在を確認して kill。
+    expect('laborCost' in parseKpiActual({ ...BASE, laborCost: '' })).toBe(false);
+  });
+
+  it('names 人件費 when the labor figure itself is invalid (num label)', () => {
+    // num() の '人件費' ラベルを '' にする mutant を、負の人件費の文言で kill。
+    expect(() => parseKpiActual({ ...BASE, laborCost: -5 })).toThrow(/人件費/);
+  });
+
+  it('accepts labor cost exactly equal to SG&A (> strict boundary)', () => {
+    // laborCost>sga を >=sga にする mutant を、人件費===販管費 許容で kill。
+    const a = parseKpiActual({ ...BASE, sga: '100000', laborCost: '100000' });
+    expect(a.laborCost).toBe(100_000);
   });
 });
 
