@@ -80,7 +80,8 @@
     "src/renderer/data/accounting.ts",
     "src/renderer/data/profitSensitivity.ts",
     "src/renderer/data/workingCapital.ts",
-    "src/renderer/data/cashflowDebtService.ts"
+    "src/renderer/data/cashflowDebtService.ts",
+    "src/renderer/data/balanceSheet.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

@@ -67,19 +67,22 @@ export function parseBalanceSheet(input: {
   fixedLiabilities?: unknown;
   netIncome?: unknown;
 }): BalanceSheet {
+  // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
   const nonNeg = (v: unknown, label: string): number => {
-    const n = typeof v === 'number' ? v : Number(v);
+    const n = Number(v);
     if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
     return n;
   };
+  // Number('')===0 なので '' の特別扱いは不要。null/undefined のみ 0 に寄せる。
   const finite = (v: unknown, label: string): number => {
-    const n = typeof v === 'number' ? v : Number(v === '' || v == null ? 0 : v);
+    const n = Number(v == null ? 0 : v);
     if (!Number.isFinite(n)) throw new Error(`${label}は数値で入力してください`);
     return n;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
-  // 任意項目は未入力 ('' / null) を 0 として扱う。
-  const opt = (v: unknown): unknown => (v == null || v === '' ? 0 : v);
+  // 任意項目は未入力 (null/undefined) を 0 に。'' は nonNeg の Number('')=0 で吸収される
+  // ため、ここでの '' 判定は不要 (冗長排除)。
+  const opt = (v: unknown): unknown => (v == null ? 0 : v);
   const currentAssets = nonNeg(input.currentAssets, '流動資産');
   const cash = nonNeg(opt(input.cash), '現預金');
   const inventory = nonNeg(opt(input.inventory), '棚卸資産');
@@ -120,8 +123,10 @@ export function computeBalanceSheetMetrics(bs: BalanceSheet): BalanceSheetMetric
     currentRatioPct: pct(bs.currentAssets, bs.currentLiabilities),
     quickRatioPct: pct(bs.currentAssets - bs.inventory, bs.currentLiabilities),
     roaPct: pct(bs.netIncome, totalAssets),
-    roePct: netAssets > 0 ? pct(bs.netIncome, netAssets) : null,
-    fixedRatioPct: netAssets > 0 ? pct(bs.fixedAssets, netAssets) : null,
+    // pct は denom>0 のときだけ値を返し、それ以外は null。netAssets<=0 は pct 側で
+    // null になるため外側の `netAssets > 0 ?` ガードは冗長 (削除して equivalent mutant を排除)。
+    roePct: pct(bs.netIncome, netAssets),
+    fixedRatioPct: pct(bs.fixedAssets, netAssets),
     insolvent: netAssets < 0,
   };
 }

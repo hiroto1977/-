@@ -1,5 +1,55 @@
 import { describe, expect, it } from 'vitest';
-import { parseBalanceSheet, computeBalanceSheetMetrics } from '../balanceSheet';
+import { parseBalanceSheet, computeBalanceSheetMetrics, BALANCE_SHEET_COLLECTION } from '../balanceSheet';
+
+const VALID = { currentAssets: 100, currentLiabilities: 100, fixedAssets: 0, fixedLiabilities: 0, netIncome: 0 };
+
+describe('parseBalanceSheet — validation messages & boundaries', () => {
+  it('exposes the balance-sheet collection key', () => {
+    expect(BALANCE_SHEET_COLLECTION).toBe('balance-sheet');
+  });
+
+  it('defaults asOf to "" when not a string', () => {
+    expect(parseBalanceSheet({ ...VALID, asOf: 123 }).asOf).toBe('');
+  });
+
+  it('rejects each negative figure with the exact field label', () => {
+    const cases: Array<[Record<string, unknown>, string]> = [
+      [{ currentAssets: -1 }, '流動資産は 0 以上の数値で入力してください'],
+      [{ cash: -1 }, '現預金は 0 以上の数値で入力してください'],
+      [{ inventory: -1 }, '棚卸資産は 0 以上の数値で入力してください'],
+      [{ accountsReceivable: -1 }, '売上債権は 0 以上の数値で入力してください'],
+      [{ currentLiabilities: -1 }, '流動負債は 0 以上の数値で入力してください'],
+      [{ accountsPayable: -1 }, '仕入債務は 0 以上の数値で入力してください'],
+      [{ fixedAssets: -1 }, '固定資産は 0 以上の数値で入力してください'],
+      [{ fixedLiabilities: -1 }, '固定負債は 0 以上の数値で入力してください'],
+    ];
+    for (const [patch, msg] of cases) {
+      expect(() => parseBalanceSheet({ ...VALID, ...patch })).toThrow(msg);
+    }
+  });
+
+  it('rejects a non-numeric required figure (NaN) and a non-numeric net income', () => {
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 'abc' })).toThrow('流動資産は 0 以上の数値で入力してください');
+    expect(() => parseBalanceSheet({ ...VALID, netIncome: 'abc' })).toThrow('当期純利益は数値で入力してください');
+  });
+
+  it('treats an omitted net income (undefined) as 0', () => {
+    const { netIncome: _omit, ...noNet } = VALID;
+    expect(parseBalanceSheet(noNet).netIncome).toBe(0);
+  });
+
+  it('allows a component equal to its cap but rejects exceeding it (strict >)', () => {
+    // 上限ちょうどは許容 (> は厳密)。超過は専用メッセージで reject。
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, cash: 100 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, inventory: 100 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, accountsReceivable: 100 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...VALID, currentLiabilities: 100, accountsPayable: 100 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, cash: 101 })).toThrow('現預金は流動資産以下で入力してください');
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, inventory: 101 })).toThrow('棚卸資産は流動資産以下で入力してください');
+    expect(() => parseBalanceSheet({ ...VALID, currentAssets: 100, accountsReceivable: 101 })).toThrow('売上債権は流動資産以下で入力してください');
+    expect(() => parseBalanceSheet({ ...VALID, currentLiabilities: 100, accountsPayable: 101 })).toThrow('仕入債務は流動負債以下で入力してください');
+  });
+});
 
 describe('parseBalanceSheet', () => {
   it('coerces string inputs and allows a negative net income (loss)', () => {
@@ -88,5 +138,18 @@ describe('computeBalanceSheetMetrics', () => {
     expect(m.equityRatioPct).toBeNull(); // total assets 0
     expect(m.currentRatioPct).toBeNull(); // current liabilities 0
     expect(m.roaPct).toBeNull();
+  });
+
+  it('treats exactly zero net assets as not insolvent and nulls ROE / fixed ratio (> strict)', () => {
+    // totalAssets===totalLiabilities → netAssets 0。> 0 を >=0 / 常に true にする mutant
+    // (roePct/fixedRatioPct が非nullになる) と < 0 を <= 0 にする mutant (insolvent) を kill。
+    const m = computeBalanceSheetMetrics({
+      asOf: '', currentAssets: 100, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 100, accountsPayable: 0, fixedLiabilities: 0, netIncome: 50,
+    });
+    expect(m.netAssets).toBe(0);
+    expect(m.insolvent).toBe(false);
+    expect(m.roePct).toBeNull();
+    expect(m.fixedRatioPct).toBeNull();
   });
 });
