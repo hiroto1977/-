@@ -9,7 +9,7 @@
  */
 import type { BusinessOverview } from './overview';
 import type { ManagementScorecard } from '../../shared/managementScorecard';
-import type { Highlight } from './managementHighlights';
+import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
 import type { MonthlyTrendRow } from './kpiActuals';
 
 const VERDICT_LABEL: Record<ManagementScorecard['verdict'], string> = {
@@ -66,6 +66,9 @@ export function buildManagementReport(
   // ハイライト
   if (highlights.length > 0) {
     lines.push('## 経営ハイライト');
+    lines.push('');
+    const s = summarizeHighlights(highlights);
+    lines.push(`総合リスク: **${RISK_BAND_LABEL[s.riskBand]}** — 🔴 ${s.critical} / 🟡 ${s.warning} / 🟢 ${s.good} (計 ${s.total} 件)`);
     lines.push('');
     for (const h of highlights) {
       lines.push(`- ${SEVERITY_MARK[h.severity]} [${h.category}] ${h.message}`);

@@ -18,6 +18,48 @@ export interface Highlight {
 
 const SEVERITY_ORDER: Record<HighlightSeverity, number> = { critical: 0, warning: 1, good: 2 };
 
+/** 所見全体の総合リスク帯。最も深刻な所見の種別で決まる。 */
+export type RiskBand = 'high' | 'medium' | 'low' | 'none';
+
+/** リスク帯の日本語ラベル (UI / レポート共通)。 */
+export const RISK_BAND_LABEL: Record<RiskBand, string> = {
+  high: '要対応',
+  medium: '注意',
+  low: '良好',
+  none: '所見なし',
+};
+
+/** summarizeHighlights の戻り値 — 種別ごとの件数と総合リスク帯。 */
+export interface HighlightSummary {
+  readonly critical: number;
+  readonly warning: number;
+  readonly good: number;
+  /** 所見の総数 (= critical + warning + good)。 */
+  readonly total: number;
+  readonly riskBand: RiskBand;
+}
+
+/**
+ * 経営ハイライトを横断して種別ごとの件数を数え、総合リスク帯を判定する純粋関数。
+ * 一覧の「結論の結論」— 何件・どれだけ深刻かを一目で掴むためのサマリ。
+ *
+ * リスク帯は最深の所見で決まる: critical があれば high、無ければ warning で medium、
+ * good のみなら low、所見ゼロなら none。
+ */
+export function summarizeHighlights(highlights: readonly Highlight[]): HighlightSummary {
+  let critical = 0;
+  let warning = 0;
+  let good = 0;
+  for (const h of highlights) {
+    if (h.severity === 'critical') critical += 1;
+    else if (h.severity === 'warning') warning += 1;
+    else good += 1;
+  }
+  const riskBand: RiskBand =
+    critical > 0 ? 'high' : warning > 0 ? 'medium' : good > 0 ? 'low' : 'none';
+  return { critical, warning, good, total: highlights.length, riskBand };
+}
+
 /** ハイライト判定のしきい値 (業種・方針で調整可能)。 */
 export interface HighlightThresholds {
   /** 連続下落を warning とする期数 (既定 2)。 */

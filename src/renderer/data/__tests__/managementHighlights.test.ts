@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildManagementHighlights, DEFAULT_HIGHLIGHT_THRESHOLDS, type Highlight } from '../managementHighlights';
+import {
+  buildManagementHighlights,
+  summarizeHighlights,
+  RISK_BAND_LABEL,
+  DEFAULT_HIGHLIGHT_THRESHOLDS,
+  type Highlight,
+} from '../managementHighlights';
 import { buildBusinessOverview, type BusinessOverview } from '../overview';
 import type { KpiActual } from '../kpiActuals';
 
@@ -362,5 +368,38 @@ describe('buildManagementHighlights — 売上集中 / 組織', () => {
   it('warns when the plan seats are full', () => {
     const o = buildBusinessOverview({ plan: 'free', sales: [], kpiActuals: [kpi()], members: [{ role: 'owner' }] });
     expect(cat(buildManagementHighlights(o), '組織')).toMatchObject({ severity: 'warning', message: expect.stringContaining('シート上限') });
+  });
+});
+
+describe('summarizeHighlights — 件数 + 総合リスク帯', () => {
+  const h = (severity: Highlight['severity']): Highlight => ({ severity, category: 'x', message: 'x' });
+
+  it('empty list → all zero and band "none"', () => {
+    expect(summarizeHighlights([])).toEqual({ critical: 0, warning: 0, good: 0, total: 0, riskBand: 'none' });
+  });
+
+  it('only good → band "low"', () => {
+    expect(summarizeHighlights([h('good')])).toEqual({ critical: 0, warning: 0, good: 1, total: 1, riskBand: 'low' });
+  });
+
+  it('warning present (no critical) → band "medium", good does not override', () => {
+    expect(summarizeHighlights([h('warning'), h('good'), h('good')])).toEqual({
+      critical: 0, warning: 1, good: 2, total: 3, riskBand: 'medium',
+    });
+  });
+
+  it('critical present → band "high" regardless of warnings/good', () => {
+    expect(summarizeHighlights([h('good'), h('warning'), h('critical')])).toEqual({
+      critical: 1, warning: 1, good: 1, total: 3, riskBand: 'high',
+    });
+  });
+
+  it('counts each severity exactly and total is the sum', () => {
+    const list = [h('critical'), h('critical'), h('warning'), h('good'), h('good'), h('good')];
+    expect(summarizeHighlights(list)).toEqual({ critical: 2, warning: 1, good: 3, total: 6, riskBand: 'high' });
+  });
+
+  it('exposes a Japanese label for every risk band', () => {
+    expect(RISK_BAND_LABEL).toEqual({ high: '要対応', medium: '注意', low: '良好', none: '所見なし' });
   });
 });

@@ -17,7 +17,7 @@ import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import { buildManagementScorecard } from '../../shared/managementScorecard';
-import { buildManagementHighlights } from '../data/managementHighlights';
+import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
 import { cashForecastTrajectory } from '../data/cashForecast';
@@ -31,6 +31,7 @@ const SCORE_COLOR = (s: number | null): string =>
 const VERDICT_LABEL: Record<string, string> = { poor: '要改善', caution: '注意', good: '良好', excellent: '優良' };
 const TREND_LABEL: Record<string, string> = { up: '↗ 上昇', down: '↘ 下降', flat: '→ 横ばい', none: '—' };
 const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '#ef4444', flat: undefined, none: undefined };
+const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', none: 'var(--text-mute)' };
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
@@ -220,6 +221,7 @@ export function OverviewPage() {
     () => buildManagementHighlights(overview, { overallDscr: debtService?.overallDscr, thresholds }),
     [overview, debtService, thresholds],
   );
+  const highlightSummary = useMemo(() => summarizeHighlights(highlights), [highlights]);
 
   const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
@@ -267,6 +269,20 @@ export function OverviewPage() {
     <div>
       {hasData && highlights.length > 0 && (
         <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12, fontSize: 13 }}>
+            <span
+              style={{
+                fontWeight: 700, fontSize: 12, padding: '2px 10px', borderRadius: 999,
+                color: '#fff', background: RISK_BAND_COLOR[highlightSummary.riskBand],
+              }}
+            >
+              総合リスク: {RISK_BAND_LABEL[highlightSummary.riskBand]}
+            </span>
+            <span style={{ color: 'var(--text-mute)' }}>🔴 要対応 {highlightSummary.critical}</span>
+            <span style={{ color: 'var(--text-mute)' }}>🟡 注意 {highlightSummary.warning}</span>
+            <span style={{ color: 'var(--text-mute)' }}>🟢 良好 {highlightSummary.good}</span>
+            <span style={{ color: 'var(--text-mute)' }}>／ 計 {highlightSummary.total} 件</span>
+          </div>
           <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
             {highlights.map((h, i) => (
               <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 13 }}>
