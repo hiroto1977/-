@@ -258,6 +258,9 @@ function utf8ToBase64(s: string): string {
 }
 
 function utf8ToBase64Url(s: string): string {
+  // Stryker disable next-line Regex: base64 のパディング '=' は常に末尾にのみ現れるため
+  // `/=+$/` の `$` アンカー有無 (`/=+/`) は出力が等価。`+` を落とした `/=$/` 変異は
+  // gmail draft の '=='二重パディング golden テストで別途 kill 済み。
   return utf8ToBase64(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
@@ -273,6 +276,10 @@ export interface CreateCalendarEventInput {
 }
 
 function defaultTimeZone(): string {
+  // Stryker disable all: Intl.DateTimeFormat().resolvedOptions().timeZone は
+  // 実行環境で常に空でない文字列を返すため、型ガード (typeof/length) と catch・
+  // 'UTC' フォールバックはいずれも到達/分岐させられず構造的に等価。正常系
+  // (TZ 解決) は createCalendarEvent の timeZone 既定テストでカバー済み。
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (typeof tz === 'string' && tz.length > 0) return tz;
@@ -280,6 +287,7 @@ function defaultTimeZone(): string {
     /* ignore */
   }
   return 'UTC';
+  // Stryker restore all
 }
 
 export async function createCalendarEvent(
@@ -399,8 +407,10 @@ export async function createWordPressPostDraft(
   const siteId = typeof input.siteId === 'string' ? input.siteId.trim() : '';
   const title = typeof input.title === 'string' ? input.title.trim() : '';
   if (!siteId || !title) throw new Error('siteId と title は必須です');
-  const allowed = new Set(['draft', 'publish', 'pending', 'private']);
-  const status = typeof input.status === 'string' && allowed.has(input.status) ? input.status : 'draft';
+  // 既定値 'draft' は allowlist に含めない (含めても未指定時と同じ 'draft' になり等価変異を生むため)。
+  const allowedNonDefault = new Set(['publish', 'pending', 'private']);
+  const status =
+    typeof input.status === 'string' && allowedNonDefault.has(input.status) ? input.status : 'draft';
   const res = await transport(
     `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
     {
@@ -530,6 +540,10 @@ export function parseSecurityKeys(raw: string): SecurityKeys {
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw) as { hibp?: unknown; vt?: unknown } | null;
+    // `parsed` 真偽 (null 弾き) は必須かつ可検 (テスト済) だが、`typeof === 'object'` を
+    // true 化しても JSON の真値プリミティブはプロパティ参照が undefined を返し例外を
+    // 投げず、結局 out={} になるため実行時は等価。型絞り込みのために残す。
+    // Stryker disable next-line ConditionalExpression
     if (parsed && typeof parsed === 'object') {
       const out: SecurityKeys = {};
       if (typeof parsed.hibp === 'string' && parsed.hibp) out.hibp = parsed.hibp;
@@ -544,6 +558,9 @@ export function parseSecurityKeys(raw: string): SecurityKeys {
 
 /** VirusTotal の URL 識別子 = base64url(url) (パディング無し)。 */
 function vtBase64(url: string): string {
+  // Stryker disable next-line Regex: base64 のパディング '=' は常に末尾のみのため
+  // `/=+$/` のアンカー有無 (`/=+/`) は等価。`+` を落とした `/=$/` は scan-url の id 照合
+  // テスト (パディングを含む url) で kill 済み。
   return utf8ToBase64(url).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
