@@ -122,7 +122,8 @@
     "src/shared/api/notion.ts",
     "src/shared/api/google.ts",
     "src/shared/api/slack.ts",
-    "src/shared/api/canva.ts"
+    "src/shared/api/canva.ts",
+    "src/main/clients/funding.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

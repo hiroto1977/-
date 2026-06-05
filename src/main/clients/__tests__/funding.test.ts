@@ -710,6 +710,33 @@ describe('buildFundingSnapshot', () => {
     expect(snap.accountingLinked).toBe(false);
     expect(snap.stocksLinked).toBe(false);
   });
+
+  it('threads accounting / portfolio into the monthly flow (kills the {} options drop)', () => {
+    // options を {} に潰す変異だと会計CF・ポートフォリオ評価額が monthly に反映されない。
+    const snap = buildFundingSnapshot(items, {
+      accounting: new Map([['2026-02', 500_000]]),
+      portfolio: new Map([['2026-02', 900_000]]),
+    });
+    const feb = snap.monthly.find((m) => m.month === '2026-02')!;
+    expect(feb.operatingCashflow).toBe(500_000);
+    expect(feb.portfolioValue).toBe(900_000);
+  });
+
+  it('threads the opening balance into the scenario runways (kills {} drop and ?? 0 → && 0)', () => {
+    // openingBalance を渡すと各シナリオの期首残高に反映される。options を {} に潰す変異も
+    // `?? 0` を `&& 0` に変える変異も期首を 0 にしてしまうため、この検証で両方を撃墜する。
+    const snap = buildFundingSnapshot(items, {
+      openingBalance: 1_000_000,
+      accounting: new Map([['2026-02', 500_000]]),
+    });
+    expect(snap.scenarioRunways.optimistic.openingBalance).toBe(1_000_000);
+    expect(snap.scenarioRunways.pessimistic.openingBalance).toBe(1_000_000);
+  });
+
+  it('defaults isMock to true when omitted (kills ?? true → && true and the boolean default)', () => {
+    expect(buildFundingSnapshot(items).isMock).toBe(true);
+    expect(buildFundingSnapshot(items, { isMock: false }).isMock).toBe(false);
+  });
 });
 
 describe('fetchFundingSnapshot', () => {
