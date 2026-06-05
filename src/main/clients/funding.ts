@@ -40,7 +40,10 @@ import {
  */
 
 // --- モック案件 -------------------------------------------------------
-
+// 以下のモックデータは Phase 6 の実 API 差込みまでの再現用プレースホルダ。文字列・数値
+// リテラルの変異はロジックを検証しないため mutation 対象から除外する (overview.ts 等の
+// snapshot stub と同方針)。組み立てロジック (buildFundingSnapshot) はテストで 100% 担保。
+/* Stryker disable all */
 const MOCK_ITEMS: FundingItem[] = [
   { id: 'f-monozukuri', kind: 'subsidy', name: 'ものづくり補助金 (設備取得・圧縮記帳)', amount: 7_500_000, status: 'approved', month: '2026-06', repayable: false, compressedEntry: true },
   { id: 'f-jizokuka', kind: 'subsidy', name: '小規模事業者持続化補助金', amount: 2_000_000, status: 'received', month: '2026-03', repayable: false },
@@ -74,6 +77,7 @@ const MOCK_PORTFOLIO: ReadonlyArray<readonly [string, number]> = [
   ['2026-05', 1_092_000],
   ['2026-06', 1_140_000],
 ];
+/* Stryker restore all */
 
 // --- スナップショット -------------------------------------------------
 
