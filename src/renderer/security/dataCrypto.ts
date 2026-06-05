@@ -37,6 +37,9 @@ function toBase64(bytes: Uint8Array): string {
 function fromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
+  // `<=` にする変異は i=bin.length で out[bin.length] への OOB 書込み (Uint8Array では無視) +
+  // charCodeAt(len)=NaN を生むだけで out の中身は不変 → 観測不能な equivalent。
+  // Stryker disable next-line EqualityOperator
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
 }
