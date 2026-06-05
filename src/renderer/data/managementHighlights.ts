@@ -76,12 +76,16 @@ export function buildManagementHighlights(
     if (k.revenue > 0 && k.safetyMargin < 10) {
       out.push({ severity: 'warning', category: '安全性', message: `安全余裕率が ${k.safetyMargin.toFixed(1)}% と低く、売上減少に弱い状態です。` });
     }
-    // 成長性
+    // 成長性 — revenueGrowthPct が null のとき下流比較 (<0 / >=10) は 0 換算でいずれも false と
+    // なり所見は出ない。よって `!== null` を true 固定する ConditionalExpression は観測差が無く
+    // equivalent（null を渡しても判定結果は不変）。boundary は <0 / >=10 の EqualityOperator が担保。
+    /* Stryker disable ConditionalExpression */
     if (k.revenueGrowthPct !== null && k.revenueGrowthPct < 0) {
       out.push({ severity: 'warning', category: '成長性', message: `前期比で減収です (${k.revenueGrowthPct}%)。` });
     } else if (k.revenueGrowthPct !== null && k.revenueGrowthPct >= 10) {
       out.push({ severity: 'good', category: '成長性', message: `前期比 +${k.revenueGrowthPct}% と伸びています。` });
     }
+    /* Stryker restore ConditionalExpression */
 
     // 月次トレンド (連続下落): しきい値で warning / critical を判定。
     const revStreak = overview.trendAlerts.revenue;
@@ -103,8 +107,10 @@ export function buildManagementHighlights(
     }
   }
 
-  // 生産性 (労働分配率)
+  // 生産性 (労働分配率) — null のとき null>しきい値 は 0 換算で false となり所見は出ないため、
+  // `!== null` を true 固定する ConditionalExpression は equivalent。boundary は > の EqualityOperator が担保。
   const labor = overview.productivity.labor;
+  // Stryker disable next-line ConditionalExpression
   if (labor.laborSharePct !== null && labor.laborSharePct > th.laborShareWarnPct) {
     out.push({ severity: 'warning', category: '生産性', message: `労働分配率が ${labor.laborSharePct}% と高めです (人件費が粗利を圧迫)。` });
   }
@@ -112,10 +118,14 @@ export function buildManagementHighlights(
   // 予実
   if (overview.budget) {
     const a = overview.budget.revenue.achievementPct;
-    if (a !== null && a < 90) {
-      out.push({ severity: 'warning', category: '予実', message: `売上が予算未達です (達成率 ${a}%)。` });
-    } else if (a !== null && a >= 100) {
-      out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。` });
+    // null ガードを巻き上げて単一化。a が null のとき内側 `a < 90` が 0<90=true となり
+    // 達成率0%扱いで未達警告が出てしまうため、外側 `!== null` を true 固定する変異は撃墜可能。
+    if (a !== null) {
+      if (a < 90) {
+        out.push({ severity: 'warning', category: '予実', message: `売上が予算未達です (達成率 ${a}%)。` });
+      } else if (a >= 100) {
+        out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。` });
+      }
     }
   }
 
@@ -159,8 +169,8 @@ export function buildManagementHighlights(
     }
   }
 
-  // 返済余力 (会計CF × 資金調達の DSCR)
-  if (overallDscr !== undefined && overallDscr !== null) {
+  // 返済余力 (会計CF × 資金調達の DSCR)。number 型のときだけ判定 (null/undefined は沈黙)。
+  if (typeof overallDscr === 'number') {
     if (overallDscr < 1) {
       out.push({ severity: 'critical', category: '返済余力', message: `DSCR が ${overallDscr} と1.0未満で、営業CFが借入返済を賄えていません。` });
     } else if (overallDscr >= 1.5) {
