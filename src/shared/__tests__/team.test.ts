@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ROLE_ORDER,
+  ROLE_LABEL,
   isRole,
   roleRank,
   can,
@@ -22,6 +23,11 @@ describe('roles', () => {
     expect(isRole('superuser')).toBe(false);
     expect(isRole(null)).toBe(false);
   });
+
+  it('maps each role to its Japanese label', () => {
+    // ROLE_LABEL の各ラベルを固定 (ObjectLiteral {} / 各 StringLiteral "" の変異を kill)。
+    expect(ROLE_LABEL).toEqual({ owner: 'オーナー', admin: '管理者', member: 'メンバー' });
+  });
 });
 
 describe('can', () => {
@@ -33,6 +39,9 @@ describe('can', () => {
   });
 
   it('admin can manage members + integrations but not billing/delete', () => {
+    // view / edit-data も明示確認 (admin の Set 内 'view'/'edit-data' StringLiteral を kill)。
+    expect(can('admin', 'view')).toBe(true);
+    expect(can('admin', 'edit-data')).toBe(true);
     expect(can('admin', 'manage-members')).toBe(true);
     expect(can('admin', 'manage-integrations')).toBe(true);
     expect(can('admin', 'manage-billing')).toBe(false);
@@ -40,6 +49,11 @@ describe('can', () => {
   });
 
   it('owner can do everything', () => {
+    // owner の Set 内 'view'/'edit-data'/'manage-integrations' StringLiteral も kill。
+    expect(can('owner', 'view')).toBe(true);
+    expect(can('owner', 'edit-data')).toBe(true);
+    expect(can('owner', 'manage-integrations')).toBe(true);
+    expect(can('owner', 'manage-members')).toBe(true);
     expect(can('owner', 'manage-billing')).toBe(true);
     expect(can('owner', 'delete-org')).toBe(true);
   });

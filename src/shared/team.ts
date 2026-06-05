@@ -37,6 +37,9 @@ const ROLE_CAPABILITIES: Readonly<Record<Role, ReadonlySet<Capability>>> = {
 };
 
 export function isRole(v: unknown): v is Role {
+  // typeof は v を string に絞る型述語として必須だが、includes は === 判定のため非文字列は
+  // 元から弾かれ、typeof を true 固定する変異は runtime-equivalent。
+  // Stryker disable next-line ConditionalExpression
   return typeof v === 'string' && (ROLE_ORDER as readonly string[]).includes(v);
 }
 
@@ -56,6 +59,10 @@ export function can(role: Role, capability: Capability): boolean {
  * privilege escalation through the member-management UI.
  */
 export function canAssignRole(actor: Role, targetRole: Role): boolean {
+  // manage-members を持たない唯一の役割は member (rank 0)。その場合 roleRank(target) < 0 は
+  // 常に false で下の rank 比較と同値になるため、この能力ガードを外す変異は runtime-equivalent
+  // (権限の明示ガードとして残す)。
+  // Stryker disable next-line ConditionalExpression
   if (!can(actor, 'manage-members')) return false;
   return roleRank(targetRole) < roleRank(actor);
 }
@@ -68,7 +75,9 @@ export interface SeatUsage {
 }
 
 export function seatsRemaining(usage: SeatUsage): number {
-  return usage.limit === Infinity ? Infinity : Math.max(0, usage.limit - usage.used);
+  // limit===Infinity でも Math.max(0, Infinity - used) = Infinity になるため、Infinity の
+  // 特例分岐は冗長 (簡約して equivalent mutant を排除)。
+  return Math.max(0, usage.limit - usage.used);
 }
 
 export function canAddMember(usage: SeatUsage): boolean {
