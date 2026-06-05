@@ -101,7 +101,8 @@
     "src/renderer/data/stocksAnalysisWeb.ts",
     "src/renderer/data/saasWriteWeb.ts",
     "src/renderer/data/store.ts",
-    "src/shared/passwordStrength.ts"
+    "src/shared/passwordStrength.ts",
+    "src/shared/redact.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
