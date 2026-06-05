@@ -114,7 +114,15 @@
     "src/main/clients/base.ts",
     "src/shared/funding.ts",
     "src/renderer/data/managementHighlights.ts",
-    "src/renderer/data/managementReport.ts"
+    "src/renderer/data/managementReport.ts",
+    "src/shared/api/types.ts",
+    "src/shared/api/github.ts",
+    "src/shared/api/wordpress.ts",
+    "src/shared/api/atlassian.ts",
+    "src/shared/api/notion.ts",
+    "src/shared/api/google.ts",
+    "src/shared/api/slack.ts",
+    "src/shared/api/canva.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
