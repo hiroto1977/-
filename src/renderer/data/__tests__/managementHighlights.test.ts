@@ -1,7 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { buildManagementHighlights, DEFAULT_HIGHLIGHT_THRESHOLDS, type Highlight } from '../managementHighlights';
-import { buildBusinessOverview } from '../overview';
+import { buildBusinessOverview, type BusinessOverview } from '../overview';
 import type { KpiActual } from '../kpiActuals';
+
+/**
+ * Direct BusinessOverview builder exposing only the fields buildManagementHighlights reads,
+ * defaulted so that NO highlight fires; each test overrides to trigger exactly one branch at
+ * its boundary. Cast through unknown since the unrelated overview fields are irrelevant here.
+ */
+const mkOv = (p: any = {}): BusinessOverview => ({
+  plan: { tier: 'pro', label: 'Pro', audience: '' },
+  kpi: { hasData: true, operatingProfit: 100, operatingMarginPct: 5, revenue: 1000, safetyMargin: 50, revenueGrowthPct: null, ...p.kpi },
+  trendAlerts: {
+    revenue: { streak: 0, dropFromPeakPct: null, ...p.revStreak },
+    operatingProfit: { streak: 0, dropFromPeakPct: null, ...p.opStreak },
+  },
+  productivity: { labor: { laborSharePct: null, ...p.labor } },
+  budget: 'budget' in p ? p.budget : null,
+  financialPosition: 'fp' in p ? p.fp : null,
+  workingCapital: 'wc' in p ? p.wc : null,
+  accounting: 'accounting' in p ? p.accounting : null,
+  runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
+  sales: { concentration: 'concentration' in p ? p.concentration : null },
+  flags: { seatsFull: p.seatsFull ?? false },
+} as any as BusinessOverview);
 
 const kpi = (over: Partial<KpiActual> = {}): KpiActual => ({
   period: '2026-05', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000, ...over,
@@ -194,7 +216,7 @@ describe('buildManagementHighlights — 利益トレンド / 生産性 / 運転�
       plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
       balanceSheet: { asOf: '2026-05-31', currentAssets: 900_000, inventory: 0, accountsReceivable: 0, fixedAssets: 0, currentLiabilities: 800_000, accountsPayable: 800_000, fixedLiabilities: 0, netIncome: 0 },
     });
-    expect(cat(buildManagementHighlights(neg), '運転資金')).toMatchObject({ severity: 'good' });
+    expect(cat(buildManagementHighlights(neg), '運転資金')).toMatchObject({ severity: 'good', message: expect.stringContaining('CCC') });
   });
 
   it('flags a short cash runway as critical (< 6mo) and a medium one as warning (< 12mo)', () => {
@@ -223,6 +245,106 @@ describe('buildManagementHighlights — threshold boundaries (strict comparisons
     // contribution 350k, fixed 250k → opProfit 100k / rev 1M = 10%
     const k = kpi({ revenue: 1_000_000, cogs: 500_000, advertising: 150_000, sga: 200_000, depreciation: 50_000 });
     expect(cat(buildManagementHighlights(buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [k], members: [] })), '収益性')).toMatchObject({ severity: 'good' });
+  });
+});
+
+describe('buildManagementHighlights — exact boundaries & null guards (direct overview)', () => {
+  const c = (hs: Highlight[], cat: string) => hs.find((h) => h.category === cat);
+
+  it('no kpi block when hasData is false (guard load-bearing)', () => {
+    // hasData=false なのに損失 → 元は沈黙。hasData を true 固定する mutant は収益性を出す。
+    expect(buildManagementHighlights(mkOv({ kpi: { hasData: false, operatingProfit: -500 } }))).toEqual([]);
+  });
+  it('operating profit exactly 0 → no profitability finding (< 0 strict)', () => {
+    expect(c(buildManagementHighlights(mkOv({ kpi: { operatingProfit: 0, operatingMarginPct: 0 } })), '収益性')).toBeUndefined();
+  });
+  it('safety margin: revenue=0 suppresses, exactly 10 is not low (&&, >=10 strict)', () => {
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: 5 } })), '安全性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 10 } })), '安全性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 9.9 } })), '安全性')).toMatchObject({ severity: 'warning' });
+  });
+  it('growth boundaries: 0 is neither, exactly 10 is good (< 0 / >= 10 strict)', () => {
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: 0 } })), '成長性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: 10 } })), '成長性')).toMatchObject({ severity: 'good' });
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: -0.1 } })), '成長性')).toMatchObject({ severity: 'warning' });
+  });
+  it('revenue trend: peak-drop suffix present/absent, streak 2=warning 3=critical', () => {
+    const withDrop = c(buildManagementHighlights(mkOv({ revStreak: { streak: 2, dropFromPeakPct: 15 } })), '売上トレンド');
+    expect(withDrop!.message).toContain('ピーク比 −15%');
+    const noDrop = c(buildManagementHighlights(mkOv({ revStreak: { streak: 2, dropFromPeakPct: null } })), '売上トレンド');
+    // dropFromPeakPct=null の suffix は空文字。完全一致で `: ''` を別文字列化する StringLiteral を撃墜。
+    expect(noDrop!.message).toBe('売上が 2 期連続で減少しています。');
+    expect(noDrop!.severity).toBe('warning');
+    expect(c(buildManagementHighlights(mkOv({ revStreak: { streak: 3, dropFromPeakPct: null } })), '売上トレンド')!.severity).toBe('critical');
+    expect(c(buildManagementHighlights(mkOv({ revStreak: { streak: 1 } })), '売上トレンド')).toBeUndefined();
+  });
+  it('operating-profit trend: streak 2=warning, 3=critical, 1=silent', () => {
+    expect(c(buildManagementHighlights(mkOv({ opStreak: { streak: 2 } })), '利益トレンド')!.severity).toBe('warning');
+    expect(c(buildManagementHighlights(mkOv({ opStreak: { streak: 3 } })), '利益トレンド')!.severity).toBe('critical');
+    expect(c(buildManagementHighlights(mkOv({ opStreak: { streak: 1 } })), '利益トレンド')).toBeUndefined();
+  });
+  it('labor share: exactly 60 is not high (> strict), null is silent', () => {
+    expect(c(buildManagementHighlights(mkOv({ labor: { laborSharePct: 60 } })), '生産性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ labor: { laborSharePct: 60.1 } })), '生産性')).toMatchObject({ severity: 'warning' });
+    expect(c(buildManagementHighlights(mkOv({ labor: { laborSharePct: null } })), '生産性')).toBeUndefined();
+  });
+  it('budget: 90 is not under, 100 is achieved, null is silent (no spurious push)', () => {
+    expect(c(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: 90 } } })), '予実')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: 89.9 } } })), '予実')).toMatchObject({ severity: 'warning' });
+    expect(c(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: 100 } } })), '予実')).toMatchObject({ severity: 'good' });
+    expect(c(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: 99 } } })), '予実')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ budget: { revenue: { achievementPct: null } } })), '予実')).toBeUndefined();
+  });
+  it('financial position: insolvent critical, equity=20 / current=100 boundaries, nulls silent', () => {
+    expect(c(buildManagementHighlights(mkOv({ fp: { insolvent: true, equityRatioPct: -5, currentRatioPct: 200 } })), '財政状態')!.severity).toBe('critical');
+    // equity exactly 20 → not low; null → silent
+    expect(buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: 20, currentRatioPct: 200 } })).some((h) => h.message.includes('自己資本比率'))).toBe(false);
+    // 19% → warning。severity も検証して `severity: 'warning'` の StringLiteral を撃墜。
+    const lowEquity = buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: 19, currentRatioPct: 200 } })).find((h) => h.message.includes('自己資本比率'));
+    expect(lowEquity).toMatchObject({ severity: 'warning', category: '財政状態' });
+    expect(buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: null, currentRatioPct: 200 } })).some((h) => h.message.includes('自己資本比率'))).toBe(false);
+    // current exactly 100 → not low; null → silent
+    expect(buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: 50, currentRatioPct: 100 } })).some((h) => h.message.includes('流動比率'))).toBe(false);
+    // 99% → warning。severity も検証して `severity: 'warning'` の StringLiteral を撃墜。
+    const lowCurrent = buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: 50, currentRatioPct: 99 } })).find((h) => h.message.includes('流動比率'));
+    expect(lowCurrent).toMatchObject({ severity: 'warning', category: '財政状態' });
+    expect(buildManagementHighlights(mkOv({ fp: { insolvent: false, equityRatioPct: 50, currentRatioPct: null } })).some((h) => h.message.includes('流動比率'))).toBe(false);
+  });
+  it('working capital: ccc=60 not long, ccc=0 good, ccc>0&<=60 silent, ccc=null silent', () => {
+    expect(c(buildManagementHighlights(mkOv({ wc: { ccc: 60 } })), '運転資金')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ wc: { ccc: 61 } })), '運転資金')).toMatchObject({ severity: 'warning' });
+    expect(c(buildManagementHighlights(mkOv({ wc: { ccc: 0 } })), '運転資金')).toMatchObject({ severity: 'good' });
+    expect(c(buildManagementHighlights(mkOv({ wc: { ccc: 30 } })), '運転資金')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ wc: { ccc: null } })), '運転資金')).toBeUndefined();
+  });
+  it('cash: avgMonthlyNet exactly 0 → good (< 0 strict)', () => {
+    expect(c(buildManagementHighlights(mkOv({ accounting: { avgMonthlyNet: 0 } })), '資金繰り')).toMatchObject({ severity: 'good' });
+    expect(c(buildManagementHighlights(mkOv({ accounting: { avgMonthlyNet: -1 } })), '資金繰り')).toMatchObject({ severity: 'warning' });
+  });
+  it('runway: 6 is warning (not critical), 12 is silent, null silent', () => {
+    expect(c(buildManagementHighlights(mkOv({ runwayMonths: 6 })), '資金繰り')!.severity).toBe('warning');
+    expect(c(buildManagementHighlights(mkOv({ runwayMonths: 5 })), '資金繰り')!.severity).toBe('critical');
+    expect(c(buildManagementHighlights(mkOv({ runwayMonths: 12 })), '資金繰り')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ runwayMonths: 11 })), '資金繰り')!.severity).toBe('warning');
+    expect(c(buildManagementHighlights(mkOv({ runwayMonths: null })), '資金繰り')).toBeUndefined();
+  });
+  it('DSCR: 1 is neither, 1.5 is good, null/undefined silent', () => {
+    expect(c(buildManagementHighlights(mkOv({}), 1), '返済余力')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({}), 0.99), '返済余力')!.severity).toBe('critical');
+    // good は severity と message 双方を検証して good 文言の StringLiteral を撃墜。
+    expect(c(buildManagementHighlights(mkOv({}), 1.5), '返済余力')).toMatchObject({ severity: 'good', message: expect.stringContaining('DSCR') });
+    expect(c(buildManagementHighlights(mkOv({}), 1.49), '返済余力')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({}), null), '返済余力')).toBeUndefined();
+    // overallDscr を明示 null で渡すと typeof === 'number' ガードが false。これを true 固定する
+    // 変異は 0<1 で critical を誤出力するため撃墜できる (number 路だと null→undefined 正規化で届かない)。
+    expect(c(buildManagementHighlights(mkOv({}), { overallDscr: null }), '返済余力')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({}), { overallDscr: undefined }), '返済余力')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({})), '返済余力')).toBeUndefined();
+  });
+  it('concentration: exactly 60 not concentrated, null silent (no crash)', () => {
+    expect(c(buildManagementHighlights(mkOv({ concentration: { topChannel: 'amazon', topSharePct: 60 } })), '売上集中')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ concentration: { topChannel: 'amazon', topSharePct: 60.1 } })), '売上集中')).toMatchObject({ severity: 'warning' });
+    expect(c(buildManagementHighlights(mkOv({ concentration: null })), '売上集中')).toBeUndefined();
   });
 });
 
