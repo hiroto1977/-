@@ -88,6 +88,9 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
       {},
       fetchCtx,
     ).catch(() => ({ items: [] }) as PlaylistItemsResponse);
+    // pl.items 欠落時の [] フォールバック。別配列要素を入れても下流の map+filter
+    // (videoId.length>0) が除外し空配列になるため、ArrayDeclaration 変異は equivalent。
+    // Stryker disable next-line ArrayDeclaration
     recentVideos = (pl.items ?? [])
       .map((it) => {
         const videoId = it.snippet?.resourceId?.videoId ?? '';
@@ -95,6 +98,9 @@ export async function fetchYoutubeSnapshot(ctx: FetchContext): Promise<YoutubeSn
           videoId,
           title: it.snippet?.title ?? '(無題)',
           publishedAt: it.snippet?.publishedAt ?? '',
+          // videoId が空のとき url は '' だが、その行は下の filter (videoId.length>0) で除外され
+          // 出力に出ないため、この '' の StringLiteral 変異は equivalent。
+          // Stryker disable next-line StringLiteral
           url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : '',
         };
       })
