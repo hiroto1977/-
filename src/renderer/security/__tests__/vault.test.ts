@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
 import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
@@ -718,5 +718,24 @@ describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
     } finally {
       proto.transaction = orig;
     }
+  });
+});
+
+describe('Vault — IndexedDB connection cleanup on error (no leak)', () => {
+  it('closes the db even when a token operation throws mid-flight', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    const closeSpy = vi.spyOn(IDBDatabase.prototype, 'close');
+    const txSpy = vi.spyOn(IDBDatabase.prototype, 'transaction').mockImplementation(() => {
+      throw new Error('tx boom');
+    });
+    // 4 つの操作はすべて openDb → (失敗) → finally で close される。
+    await expect(vault.setToken('github', 'tok')).rejects.toThrow('tx boom');
+    await expect(vault.getToken('github')).rejects.toThrow('tx boom');
+    await expect(vault.clearToken('github')).rejects.toThrow('tx boom');
+    await expect(vault.listConfigured()).rejects.toThrow('tx boom');
+    expect(closeSpy).toHaveBeenCalledTimes(4);
+    txSpy.mockRestore();
+    closeSpy.mockRestore();
   });
 });

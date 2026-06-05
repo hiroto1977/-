@@ -65,14 +65,17 @@ export async function getProxyConfig(): Promise<ProxyConfig | null> {
   } catch {
     return null;
   }
-  const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
-    const tx = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).get(KEY);
-    req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
-    req.onerror = () => reject(req.error ?? new Error('get failed'));
-  });
-  db.close();
-  return cfg ?? null;
+  try {
+    const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(KEY);
+      req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
+      req.onerror = () => reject(req.error ?? new Error('get failed'));
+    });
+    return cfg ?? null;
+  } finally {
+    db.close();
+  }
 }
 
 export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
@@ -94,11 +97,14 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
     }
   }
   const db = await openDb();
-  const tx = db.transaction(STORE, 'readwrite');
-  if (cfg === null) tx.objectStore(STORE).delete(KEY);
-  else tx.objectStore(STORE).put(cfg, KEY);
-  await txDone(tx);
-  db.close();
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    if (cfg === null) tx.objectStore(STORE).delete(KEY);
+    else tx.objectStore(STORE).put(cfg, KEY);
+    await txDone(tx);
+  } finally {
+    db.close();
+  }
 }
 
 interface ProxyResponseEnvelope {
