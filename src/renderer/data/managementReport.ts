@@ -37,6 +37,9 @@ export function buildManagementReport(
   scorecard: ManagementScorecard,
   highlights: readonly Highlight[],
   asOf: string,
+  // 既定 `[]` は `length >= 2` ゲートにより要素数1の配列と出力上区別できない (どちらもテーブル
+  // 非出力) ため、ArrayDeclaration 変異は equivalent。
+  // Stryker disable next-line ArrayDeclaration
   monthlyTrend: readonly MonthlyTrendRow[] = [],
   /** 損益分岐点までの売上変動余地 (%)。null / 未指定なら出力しない。 */
   breakEvenDeltaPct: number | null = null,

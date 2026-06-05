@@ -113,7 +113,8 @@
     "src/renderer/security/dataCrypto.ts",
     "src/main/clients/base.ts",
     "src/shared/funding.ts",
-    "src/renderer/data/managementHighlights.ts"
+    "src/renderer/data/managementHighlights.ts",
+    "src/renderer/data/managementReport.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
