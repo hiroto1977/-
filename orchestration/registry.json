@@ -322,7 +322,10 @@
         "reportsTo": "cqo",
         "teams": [
           "quality-audit",
-          "security"
+          "security",
+          "mutation-hardening",
+          "equivalent-mutant-judgment",
+          "golden-value-testing"
         ]
       }
     ]
@@ -430,6 +433,30 @@
       "id": "quality-audit",
       "domain": "品質監査",
       "focus": "端数処理/ゼロ除算/境界値/復興税順序の監査",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "mutation-hardening",
+      "domain": "品質保証(変異テスト)",
+      "focus": "データ層モデルの Stryker mutation 100% 化・等価変異の排除・stryker.config への scope 登録 (#99–#108 の10モジュール)",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "equivalent-mutant-judgment",
+      "domain": "品質保証(等価変異判定)",
+      "focus": "到達不能な防御分岐/型述語ガード/丸め恒等(slice・Math.max)など等価変異の体系判定と rationale 付き pragma 運用",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "golden-value-testing",
+      "domain": "品質保証(golden値検証)",
+      "focus": "URL/全ヘッダ/body・base64 の実値 golden 照合による回帰防止 (SaaS書込み・暗号化・決定論モック)",
       "active": true,
       "role": "audit",
       "manager": "mgr-quality"
@@ -2227,6 +2254,67 @@
       "shipped": [
         "経営レポートに前年同月比(YoY)を組込み"
       ]
+    },
+    {
+      "round": 47,
+      "teamCount": 52,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy"
+      ],
+      "shipped": [
+        "品質ラウンド: ブラウザ/データ層の Stryker mutation テストを10モジュール(#99–#108)で100%化し stryker.config に scope 登録"
+      ]
     }
   ],
   "backlog": [
@@ -2509,6 +2597,27 @@
       "team": "depreciation",
       "title": "減価償却(定額法/定率法)・少額減価償却特例",
       "priority": 8,
+      "status": "shipped"
+    },
+    {
+      "id": "mutation-data-layer-100",
+      "team": "mutation-hardening",
+      "title": "データ層モデル(kpiActuals/csv/foodDelivery/shopifyImport/store)の mutation 100% 化と scope 登録",
+      "priority": 1,
+      "status": "shipped"
+    },
+    {
+      "id": "equivalent-mutant-pragma",
+      "team": "equivalent-mutant-judgment",
+      "title": "等価変異(到達不能ガード・型述語・slice/Math.max 恒等)の体系判定と rationale 付き無効化",
+      "priority": 1,
+      "status": "shipped"
+    },
+    {
+      "id": "saas-write-golden",
+      "team": "golden-value-testing",
+      "title": "SaaS書込み12種・暗号化・決定論モックの golden 値照合 mutation 100% 化",
+      "priority": 1,
       "status": "shipped"
     }
   ]
