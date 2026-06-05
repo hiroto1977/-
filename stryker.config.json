@@ -109,7 +109,8 @@
     "src/main/atomicWrite.ts",
     "src/main/clients/freee.ts",
     "src/main/clients/youtube.ts",
-    "src/main/clients/microsoft-365.ts"
+    "src/main/clients/microsoft-365.ts",
+    "src/renderer/security/dataCrypto.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
