@@ -111,7 +111,8 @@
     "src/main/clients/youtube.ts",
     "src/main/clients/microsoft-365.ts",
     "src/renderer/security/dataCrypto.ts",
-    "src/main/clients/base.ts"
+    "src/main/clients/base.ts",
+    "src/shared/funding.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
