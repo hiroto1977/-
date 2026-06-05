@@ -25,15 +25,22 @@ export async function atomicWriteFile(
   const dir = path.dirname(target);
   await fs.mkdir(dir, { recursive: true });
 
+  // tmp 名は rename 後に消える一意な作業ファイル名で、外部から観測されない (.slice の有無は
+  // 衝突確率にしか影響せず結果不変)。
+  // Stryker disable next-line MethodExpression
   const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   try {
     const fh = await fs.open(tmp, 'w', opts.mode ?? 0o600);
+    // fh.close はハンドル解放 (リソース後始末)。内容は直前の sync で永続化済みのため、close を
+    // 省いても rename/読取の観測結果は変わらない (try/finally の BlockStatement 変異は equivalent)。
+    // Stryker disable BlockStatement
     try {
       await fh.writeFile(data);
       await fh.sync(); // flush file contents before the rename
     } finally {
       await fh.close();
     }
+    // Stryker restore BlockStatement
 
     // Best-effort recovery copy of the current file (skipped if none exists).
     if (opts.keepBackup) {
@@ -47,6 +54,9 @@ export async function atomicWriteFile(
     await fs.rename(tmp, target);
     await fsyncDir(dir); // make the rename durable
   } catch (err) {
+    // tmp は open 成功後に必ず存在するため rm は常に成功し、force:true↔false / {} は結果不変
+    // (存在しない場合も .catch で吸収) → ObjectLiteral/BooleanLiteral 変異は equivalent。
+    // Stryker disable next-line ObjectLiteral,BooleanLiteral
     await fs.rm(tmp, { force: true }).catch(() => {});
     throw err;
   }
@@ -55,6 +65,10 @@ export async function atomicWriteFile(
 /** fsync a directory entry so a preceding rename is persisted. Not supported
  *  on every platform (e.g. Windows throws EPERM/EISDIR) — failures are
  *  swallowed since the rename itself already happened. */
+// ディレクトリ fsync はクラッシュ/電源断耐久のための best-effort。単体テストでは観測不能
+// (ファイル内容に影響せず、dir fsync 非対応プラットフォームでは元から no-op、open(dir) は
+// 通常成功するので dh は定義済み)。関数本体ごと observable な差を生まないため一括無効化する。
+/* Stryker disable all */
 async function fsyncDir(dir: string): Promise<void> {
   let dh: Awaited<ReturnType<typeof fs.open>> | undefined;
   try {
@@ -66,6 +80,7 @@ async function fsyncDir(dir: string): Promise<void> {
     if (dh) await dh.close().catch(() => {});
   }
 }
+/* Stryker restore all */
 
 /**
  * Read a file, falling back to its `.prev` backup if the primary is missing

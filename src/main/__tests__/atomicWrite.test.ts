@@ -55,6 +55,35 @@ describe('atomicWriteFile', () => {
     const st = await fs.stat(target);
     expect(st.mode & 0o777).toBe(0o600);
   });
+
+  it('defaults the file mode to 0o600 when none is given (POSIX)', async () => {
+    if (process.platform === 'win32') return;
+    // `opts.mode ?? 0o600` の既定値。?? を && にする mutant は undefined を渡し既定 umask
+    // モード (≠0o600) になるため、既定 0o600 を確認して撃墜。
+    const target = path.join(dir, 'd.json');
+    await atomicWriteFile(target, 'x');
+    expect((await fs.stat(target)).mode & 0o777).toBe(0o600);
+  });
+
+  it('does not create a .prev backup when keepBackup is not set', async () => {
+    // `if (opts.keepBackup)` を true 固定する mutant は常に .prev を作るため、未指定時に
+    // .prev が無いことを確認して撃墜。
+    const target = path.join(dir, 'nb.json');
+    await atomicWriteFile(target, 'v1');
+    await atomicWriteFile(target, 'v2'); // 既存ありで上書き (keepBackup 無し)
+    await expect(fs.access(`${target}.prev`)).rejects.toBeTruthy();
+  });
+
+  it('rejects and cleans up the temp file when the rename fails', async () => {
+    // target が既存ディレクトリだと rename(tmp, dir) が失敗 → catch で tmp 削除 + 再 throw。
+    // catch ブロックを空にする mutant は throw を消して resolve してしまうため、reject を
+    // 確認して撃墜。後始末で .tmp- が残らないことも確認。
+    const target = path.join(dir, 'collide');
+    await fs.mkdir(target); // target を既存ディレクトリにする
+    await expect(atomicWriteFile(target, 'x')).rejects.toBeTruthy();
+    const leftovers = (await fs.readdir(dir)).filter((e) => e.includes('.tmp-'));
+    expect(leftovers).toEqual([]);
+  });
 });
 
 describe('readFileWithBackup', () => {

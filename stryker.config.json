@@ -105,7 +105,8 @@
     "src/shared/redact.ts",
     "src/shared/team.ts",
     "src/shared/plan.ts",
-    "src/renderer/plan/internalLicense.ts"
+    "src/renderer/plan/internalLicense.ts",
+    "src/main/atomicWrite.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
