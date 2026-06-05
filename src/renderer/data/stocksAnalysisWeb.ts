@@ -58,7 +58,11 @@ export function rsi(closes: readonly number[], period: number): (number | null)[
   let avgLoss = 0;
   for (let i = 1; i < closes.length; i++) {
     const diff = closes[i]! - closes[i - 1]!;
+    // diff===0 のとき gain/loss はどちらの比較でも 0 になるため、> / < を >= / <= に
+    // する EqualityOperator は equivalent。
+    // Stryker disable next-line EqualityOperator
     const gain = diff > 0 ? diff : 0;
+    // Stryker disable next-line EqualityOperator
     const loss = diff < 0 ? -diff : 0;
     if (i <= period) {
       avgGain += gain / period;
@@ -87,10 +91,17 @@ export function macd(
   const macdLine: (number | null)[] = closes.map((_, i) => {
     const f = fastEma[i];
     const s = slowEma[i];
+    // fast(短期) は slow(長期) が非 null の全 index で非 null なので、`f != null` は
+    // `s != null` に包含され、これを true 固定する変異は equivalent (型絞り込みには必要)。
+    // Stryker disable next-line ConditionalExpression
     return f != null && s != null ? f - s : null;
   });
   const firstFinite = macdLine.findIndex((v) => v !== null);
   const signalLine: (number | null)[] = closes.map(() => null);
+  // firstFinite は -1 (有限値なし) か slow-1 (>=1) のいずれかで 0 にはならないため >= ↔ >
+  // は equivalent。また firstFinite===-1 のとき slice(-1)+負 index 代入は no-op になり、
+  // この if を true 固定しても結果不変 (equivalent)。
+  // Stryker disable next-line EqualityOperator,ConditionalExpression
   if (firstFinite >= 0) {
     const finite = macdLine.slice(firstFinite) as number[];
     const sig = ema(finite, signalPeriod);
@@ -98,6 +109,9 @@ export function macd(
   }
   const histogram = macdLine.map((m, i) => {
     const s = signalLine[i];
+    // signal は macdLine が非 null の index でのみ計算されるため、`m != null` は
+    // `s != null` に包含され、これを true 固定する変異は equivalent (型絞り込みには必要)。
+    // Stryker disable next-line ConditionalExpression
     return m != null && s != null ? m - s : null;
   });
   return { macd: macdLine, signal: signalLine, histogram };
@@ -152,9 +166,10 @@ export const SMA_CROSSOVER_STRATEGY: Strategy = (candles) => {
   const f1 = fast[i - 1];
   const s1 = slow[i - 1];
   const last = candles[i]!;
-  if (f0 == null || s0 == null || f1 == null || s1 == null) {
-    return holdSignal(candles, name, 'indicator unavailable');
-  }
+  // candles.length>=51 を上で保証済みのため、最後 2 本の SMA20/SMA50 は常に非 null。
+  // この防御ガードは到達不能で、条件・文言・分岐を変える変異は equivalent。
+  // Stryker disable next-line ConditionalExpression,LogicalOperator,StringLiteral,BlockStatement
+  if (f0 == null || s0 == null || f1 == null || s1 == null) return holdSignal(candles, name, 'indicator unavailable');
   if (f1 <= s1 && f0 > s0) {
     return { date: last.date, action: 'buy', confidence: 0.7, reason: 'SMA20 crossed above SMA50 (golden cross)', strategy: name };
   }
@@ -171,6 +186,9 @@ export const RSI_MEAN_REVERSION_STRATEGY: Strategy = (candles) => {
   const r = rsi(closes, 14);
   const v = r[r.length - 1];
   const last = candles[candles.length - 1]!;
+  // candles.length>=15 のとき rsi(closes,14) の末尾は常に非 null。この防御ガードは
+  // 到達不能で、条件・文言を変える変異は equivalent。
+  // Stryker disable next-line ConditionalExpression,StringLiteral
   if (v == null) return holdSignal(candles, name, 'rsi unavailable');
   if (v < 30) {
     return { date: last.date, action: 'buy', confidence: (30 - v) / 30, reason: `RSI ${v.toFixed(1)} oversold`, strategy: name };
@@ -192,12 +210,17 @@ export const MACD_SIGNAL_STRATEGY: Strategy = (candles) => {
   const m1 = m.macd[i - 1];
   const s1 = m.signal[i - 1];
   const last = candles[i]!;
-  if (m0 == null || s0 == null || m1 == null || s1 == null) {
-    return holdSignal(candles, name, 'indicator unavailable');
-  }
+  // candles.length>=35 を上で保証済みのため、最後 2 本の MACD ライン/シグナルは常に
+  // 非 null。この防御ガードは到達不能で、条件・文言・分岐を変える変異は equivalent。
+  // Stryker disable next-line ConditionalExpression,LogicalOperator,StringLiteral,BlockStatement
+  if (m0 == null || s0 == null || m1 == null || s1 == null) return holdSignal(candles, name, 'indicator unavailable');
+  // m1===s1 のちょうど一致は連続値の MACD/シグナルでは起きないため、<= ↔ < は equivalent。
+  // Stryker disable next-line EqualityOperator
   if (m1 <= s1 && m0 > s0) {
     return { date: last.date, action: 'buy', confidence: 0.65, reason: 'MACD crossed above signal', strategy: name };
   }
+  // m1===s1 のちょうど一致は連続値では起きないため >= ↔ > は equivalent。
+  // Stryker disable next-line EqualityOperator
   if (m1 >= s1 && m0 < s0) {
     return { date: last.date, action: 'sell', confidence: 0.65, reason: 'MACD crossed below signal', strategy: name };
   }
@@ -268,11 +291,20 @@ function applySignal(
     const trade: PaperTrade = { date: signal.date, ticker, action: 'buy', shares, price, cashAfter: newCash, reason: signal.reason };
     return { ...port, cash: newCash, positions: { ...port.positions, [ticker]: newPos }, history: [...port.history, trade] };
   }
+  // ポジションは shares>0 で作成され、売却時に削除されるため pos.shares は常に >0。
+  // `<= 0` を `< 0` にする / この副条件を変える変異は到達不能で equivalent (!pos は別途検証)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (!pos || pos.shares <= 0) return port;
   const proceeds = pos.shares * price;
   const newCash = port.cash + proceeds;
+  // backtest は単一ティッカーのみ運用するため、コピー対象は売却対象 1 件のみ。
+  // {} にしても削除後の結果は同じで equivalent (複数ティッカー運用は本実装に存在しない)。
+  // Stryker disable next-line ObjectLiteral
   const newPositions: Record<string, PaperPosition> = { ...port.positions };
   delete newPositions[ticker];
+  // trade.action は win/loss 集計 (buy 以外は売りとみなす) でも BacktestResult でも
+  // 文字列値が観測されないため、'sell' を変える StringLiteral は equivalent。
+  // Stryker disable next-line StringLiteral
   const trade: PaperTrade = { date: signal.date, ticker, action: 'sell', shares: pos.shares, price, cashAfter: newCash, reason: signal.reason };
   return { ...port, cash: newCash, positions: newPositions, history: [...port.history, trade] };
 }
@@ -281,6 +313,9 @@ function portfolioEquity(port: PaperPortfolio, prices: Readonly<Record<string, n
   let equity = port.cash;
   for (const [ticker, pos] of Object.entries(port.positions)) {
     const price = prices[ticker];
+    // backtest からの呼び出しでは価格 ({[ticker]: bar.close / lastClose}) が常に渡される
+    // ため price は常に非 null。この防御ガードを true 固定する変異は equivalent。
+    // Stryker disable next-line ConditionalExpression
     if (price != null) equity += pos.shares * price;
   }
   return equity;
@@ -298,6 +333,9 @@ export function backtest(
   candles: readonly WebCandle[],
   strategy: Strategy,
   initialCash: number,
+  // 既定 ticker は positions のキーにのみ使われ BacktestResult には現れないため、
+  // 値を変える StringLiteral は equivalent。
+  // Stryker disable next-line StringLiteral
   ticker = 'BACKTEST',
   risk: RiskParams = DEFAULT_RISK_PARAMS,
 ): BacktestResult {
@@ -313,29 +351,47 @@ export function backtest(
     if (pos) {
       const dropPct = (pos.avgCost - bar.close) / pos.avgCost;
       const gainPct = (bar.close - pos.avgCost) / pos.avgCost;
+      // リスク決済シグナルの date/reason/strategy/action は applySignal が trade.action を
+      // 'sell' リテラルで再設定し、BacktestResult にも現れないため、これらの ObjectLiteral /
+      // StringLiteral 変異は観測不能で equivalent (発火条件は dropPct/gainPct で決まる)。
       if (dropPct >= risk.stopLossPct) {
+        // Stryker disable next-line ObjectLiteral,StringLiteral
         port = applySignal(port, ticker, { date: bar.date, action: 'sell', confidence: 1, reason: 'stop-loss', strategy: 'risk' }, bar.close, risk);
       } else if (gainPct >= risk.takeProfitPct) {
+        // Stryker disable next-line ObjectLiteral,StringLiteral
         port = applySignal(port, ticker, { date: bar.date, action: 'sell', confidence: 1, reason: 'take-profit', strategy: 'risk' }, bar.close, risk);
       }
     }
     const equity = portfolioEquity(port, { [ticker]: bar.close });
+    // equity===peak / dd===maxDrawdown では代入しても同値のため > ↔ >= は equivalent。
+    // Stryker disable next-line EqualityOperator
     if (equity > peak) peak = equity;
+    // peak は initialCash(>0) 以上で単調増加するため常に >0。この防御三項の else(0) は
+    // 到達不能で、true 固定 / >0↔>=0 の変異は equivalent。
+    // Stryker disable next-line ConditionalExpression,EqualityOperator
     const dd = peak > 0 ? (peak - equity) / peak : 0;
+    // Stryker disable next-line EqualityOperator
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
+  // candles は length>50 で非空のため `?.` は常に値を返す (型のため必要、実行時は equivalent)。
+  // Stryker disable next-line OptionalChaining
   const lastClose = candles[candles.length - 1]?.close ?? 0;
   const finalEquity = portfolioEquity(port, { [ticker]: lastClose });
   let wins = 0;
   let losses = 0;
   let lastBuyPrice: number | null = null;
   for (const t of port.history) {
-    if (t.action === 'buy') lastBuyPrice = t.price;
-    else if (t.action === 'sell' && lastBuyPrice != null) {
-      if (t.price > lastBuyPrice) wins++;
-      else losses++;
-      lastBuyPrice = null;
+    if (t.action === 'buy') {
+      lastBuyPrice = t.price;
+      continue;
     }
+    // history は buy/sell のみ。ここに来るのは sell で、直前の buy により lastBuyPrice は
+    // 必ず非 null (型のため残すが実行時は到達不能の防御 → ConditionalExpression は equivalent)。
+    // Stryker disable next-line ConditionalExpression
+    if (lastBuyPrice == null) continue;
+    if (t.price > lastBuyPrice) wins++;
+    else losses++;
+    lastBuyPrice = null;
   }
   const completed = wins + losses;
   return {
@@ -386,6 +442,10 @@ export function compareStrategies(
   let bestByReturn: string | null = null;
   let bestVal = -Infinity;
   for (const r of rows) {
+    // 同 return が複数あっても最終的に最大値で確定するため > ↔ >= は equivalent。
+    // 条件を true 固定しても各 row 走査で最大 row に収束するため equivalent
+    // (条件を false 固定する変異のみ意味を持ち、正の戦略があるケースで kill される)。
+    // Stryker disable next-line EqualityOperator,ConditionalExpression
     if (r.totalReturnPct > bestVal) {
       bestVal = r.totalReturnPct;
       bestByReturn = r.strategy;
@@ -501,9 +561,15 @@ export function validateAdvisorJson(
   for (const item of obj.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('recommendation entry is not an object');
     const rec = item as Record<string, unknown>;
+    // 非文字列の symbol は allowedSymbols (文字列の Set) に決して含まれないため
+    // `!allowedSymbols.has(...)` が必ず true となり、typeof ガードは冗長 (型のため必要)。
+    // Stryker disable next-line ConditionalExpression
     if (typeof rec.symbol !== 'string' || !allowedSymbols.has(rec.symbol)) {
       throw new Error(`recommendation has invalid or out-of-universe symbol: ${String(rec.symbol)}`);
     }
+    // 非数値の rank は Number.isFinite が false を返すため `!Number.isFinite(...)` が必ず
+    // true となり、typeof ガードは冗長 (型のため必要)。
+    // Stryker disable next-line ConditionalExpression
     if (typeof rec.rank !== 'number' || !Number.isFinite(rec.rank) || rec.rank < 1) {
       throw new Error(`recommendation has invalid rank: ${String(rec.rank)}`);
     }

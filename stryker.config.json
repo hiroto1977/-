@@ -97,7 +97,8 @@
     "src/renderer/data/foodDelivery.ts",
     "src/renderer/data/backup.ts",
     "src/renderer/data/emotionsWeb.ts",
-    "src/renderer/data/stocksWatchlistWeb.ts"
+    "src/renderer/data/stocksWatchlistWeb.ts",
+    "src/renderer/data/stocksAnalysisWeb.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
