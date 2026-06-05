@@ -108,7 +108,8 @@
     "src/renderer/plan/internalLicense.ts",
     "src/main/atomicWrite.ts",
     "src/main/clients/freee.ts",
-    "src/main/clients/youtube.ts"
+    "src/main/clients/youtube.ts",
+    "src/main/clients/microsoft-365.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
