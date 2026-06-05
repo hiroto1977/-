@@ -35,6 +35,20 @@ describe('plan model', () => {
     expect(PLANS.internal.features).toEqual(PLANS.enterprise.features);
   });
 
+  it('exposes the exact metadata and feature set per tier', () => {
+    // 各プランの id/label/audience/上限/価格 と features を固定し、PLANS 定義内の
+    // StringLiteral / Set 要素の変異を撃墜する。
+    expect(PLANS.free).toMatchObject({ id: 'free', label: 'Free', audience: '個人事業主・お試し', maxServices: 5, maxSeats: 1, priceMonthlyJpy: 0 });
+    expect(PLANS.free.features).toEqual(new Set(['live-fetch']));
+    expect(PLANS.pro).toMatchObject({ id: 'pro', label: 'Pro', audience: '個人〜小規模事業者', maxServices: 15, maxSeats: 3, priceMonthlyJpy: 2_980 });
+    expect(PLANS.pro.features).toEqual(new Set(['live-fetch', 'write-actions', 'ai-advisor']));
+    expect(PLANS.business).toMatchObject({ id: 'business', label: 'Business', audience: '中小企業・チーム', maxServices: 40, maxSeats: 25, priceMonthlyJpy: 19_800 });
+    expect(PLANS.business.features).toEqual(new Set(['live-fetch', 'write-actions', 'cross-service-sync', 'ai-advisor', 'team-seats', 'audit-log']));
+    expect(PLANS.enterprise).toMatchObject({ id: 'enterprise', label: 'Enterprise', audience: '大企業・全機能', maxServices: Infinity, maxSeats: Infinity, priceMonthlyJpy: 98_000 });
+    expect(PLANS.enterprise.features).toEqual(new Set(['live-fetch', 'write-actions', 'cross-service-sync', 'ai-advisor', 'team-seats', 'audit-log', 'sso']));
+    expect(PLANS.internal).toMatchObject({ id: 'internal', label: '社内ライセンス', audience: '自社・招待者 (全機能無償)', maxServices: Infinity, maxSeats: Infinity, priceMonthlyJpy: 0 });
+  });
+
   it('isPlanTier guards untrusted input', () => {
     expect(isPlanTier('pro')).toBe(true);
     expect(isPlanTier('platinum')).toBe(false);

@@ -114,6 +114,9 @@ export const DEFAULT_PLAN: PlanTier = 'free';
 
 /** Type guard for untrusted input (e.g. a value read from localStorage). */
 export function isPlanTier(value: unknown): value is PlanTier {
+  // typeof は value を string に絞る型述語として必須だが、includes は === 判定のため非文字列は
+  // 元から弾かれ、typeof を true 固定する変異は runtime-equivalent。
+  // Stryker disable next-line ConditionalExpression
   return typeof value === 'string' && (PLAN_ORDER as readonly string[]).includes(value);
 }
 
@@ -153,6 +156,9 @@ export function requiredPlanForServiceIndex(index: number): PlanTier | null {
   for (const tier of PLAN_ORDER) {
     if (isServiceUnlocked(tier, index)) return tier === DEFAULT_PLAN ? null : tier;
   }
+  // enterprise/internal の maxServices=Infinity でループは任意の有限 index で必ず return
+  // するため、この最終 return は到達不能 (TS の網羅性のために残す)。
+  // Stryker disable next-line StringLiteral
   return 'enterprise';
 }
 
