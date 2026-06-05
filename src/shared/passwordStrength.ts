@@ -53,8 +53,10 @@ export function detectCharset(password: string): CharsetFlags {
 /** 推定エントロピー (ビット) = 文字数 × log2(文字種サイズ)。 */
 export function estimateEntropyBits(password: string): number {
   if (password.length === 0) return 0;
+  // 非空パスワードは 4 つの文字種正規表現が網羅的 (任意の 1 文字は小英字/大英字/数字/
+  // それ以外=記号 のいずれか) のため charsetSize は必ず >=10。size<=0 ガードは到達不能
+  // なので置かない (空は上で 0 を返す)。
   const size = charsetSize(detectCharset(password));
-  if (size <= 0) return 0;
   return Math.round(password.length * Math.log2(size) * 100) / 100;
 }
 
@@ -69,9 +71,8 @@ export function evaluatePasswordStrength(password: string): PasswordStrength {
   const charset = detectCharset(password);
   const entropyBits = estimateEntropyBits(password);
 
-  if (length === 0) {
-    return { score: 0, verdict: 'weak', entropyBits: 0, charset, length: 0 };
-  }
+  // 空文字は以降の計算がそのまま score 0 / verdict 'weak' / entropyBits 0 を返すため、
+  // 専用の早期 return は冗長 (フォールスルーと同一結果)。
 
   // 長さスコア (16文字以上で満点40)。
   const lengthScore = Math.min(40, Math.round((length / 16) * 40));
