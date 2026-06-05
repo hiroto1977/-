@@ -77,7 +77,9 @@ export function aggregateDealsByMonth(deals: readonly FreeeDeal[]): FreeeMonthly
     map.set(month, cur);
   }
   return [...map.entries()]
-    .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+    // 月キーは Map 由来で distinct。3 項比較子の代わりに localeCompare で昇順にして
+    // (a<b?-1:a>b?1:0) の等価変異 (タイ=0 が起きない) を構造的に排除する。
+    .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([month, v]) => ({ month, income: v.income, expense: v.expense, net: v.income - v.expense }));
 }
 
@@ -109,6 +111,9 @@ export async function fetchFreeeSnapshot(ctx: FetchContext): Promise<FreeeSnapsh
 
   return {
     companyName: company.display_name ?? company.name ?? '',
+    // deals 欠落時の [] フォールバック。別配列要素を入れても aggregateDealsByMonth が
+    // issue_date 検証で除外し monthly=[] になるため、ArrayDeclaration 変異は equivalent。
+    // Stryker disable next-line ArrayDeclaration
     monthly: aggregateDealsByMonth(deals.deals ?? []),
     fetchedAt: new Date().toISOString(),
   };
