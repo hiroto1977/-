@@ -98,7 +98,8 @@
     "src/renderer/data/backup.ts",
     "src/renderer/data/emotionsWeb.ts",
     "src/renderer/data/stocksWatchlistWeb.ts",
-    "src/renderer/data/stocksAnalysisWeb.ts"
+    "src/renderer/data/stocksAnalysisWeb.ts",
+    "src/renderer/data/saasWriteWeb.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
