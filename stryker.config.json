@@ -107,7 +107,8 @@
     "src/shared/plan.ts",
     "src/renderer/plan/internalLicense.ts",
     "src/main/atomicWrite.ts",
-    "src/main/clients/freee.ts"
+    "src/main/clients/freee.ts",
+    "src/main/clients/youtube.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
