@@ -124,7 +124,8 @@
     "src/shared/api/slack.ts",
     "src/shared/api/canva.ts",
     "src/main/clients/funding.ts",
-    "src/shared/serviceId.ts"
+    "src/shared/serviceId.ts",
+    "src/renderer/data/useCollection.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

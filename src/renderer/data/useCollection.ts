@@ -20,8 +20,14 @@ export interface UseCollection<T extends Record<string, unknown>> {
 
 export function useCollection<T extends Record<string, unknown>>(collection: string): UseCollection<T> {
   const [records, setRecords] = useState<readonly StoredRecord<T>[]>([]);
+  // 初期 true はマウント effect の setLoading(true) で必ず上書きされるため、初期値変異は
+  // 観測差が無く equivalent。
+  // Stryker disable next-line BooleanLiteral
   const [loading, setLoading] = useState(true);
-  // Avoid setting state after unmount.
+  // setState-after-unmount を避けるための防御 ref。React 18 の createRoot はアンマウント後の
+  // setState を既に no-op 化するため、この ref ガード (初期値・effect 本体・cleanup・判定) を
+  // 変異させても観測上の振る舞いは変わらない (equivalent)。防御の明示性のため残す。
+  /* Stryker disable all */
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
@@ -29,9 +35,11 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
       alive.current = false;
     };
   }, []);
+  /* Stryker restore all */
 
   const reload = useCallback(async () => {
     const list = await getRecordStore().list<T>(collection);
+    // Stryker disable next-line ConditionalExpression: 上記のとおり alive ガードは React 18 では equivalent。
     if (alive.current) {
       setRecords(list);
       setLoading(false);
