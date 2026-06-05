@@ -294,6 +294,7 @@ class IndexedDBRecordStore implements RecordStore {
     const all = await new Promise<StoredRecord[]>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).getAll();
+      // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
       req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
       req.onerror = () => reject(req.error ?? new Error('exportAll failed'));
     });
@@ -324,6 +325,7 @@ class IndexedDBRecordStore implements RecordStore {
     const raw = await new Promise<StoredRecord[]>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).getAll();
+      // Stryker disable next-line ArrayDeclaration: getAll() の result は仕様上必ず配列を返すため `?? []` は到達不能な防御フォールバック。`["..."]` への変異は観測できない（等価変異）。
       req.onsuccess = () => resolve((req.result as StoredRecord[]) ?? []);
       req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
     });
