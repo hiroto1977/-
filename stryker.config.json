@@ -106,7 +106,8 @@
     "src/shared/team.ts",
     "src/shared/plan.ts",
     "src/renderer/plan/internalLicense.ts",
-    "src/main/atomicWrite.ts"
+    "src/main/atomicWrite.ts",
+    "src/main/clients/freee.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
