@@ -100,16 +100,24 @@
     "src/renderer/data/stocksWatchlistWeb.ts",
     "src/renderer/data/stocksAnalysisWeb.ts",
     "src/renderer/data/saasWriteWeb.ts",
-    "src/renderer/data/store.ts"
+    "src/renderer/data/store.ts",
+    "src/shared/passwordStrength.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
     "configFile": "vitest.config.ts"
   },
-  "reporters": ["clear-text", "json"],
+  "reporters": [
+    "clear-text",
+    "json"
+  ],
   "coverageAnalysis": "perTest",
   "_thresholdsRationale": "🏆 100.00% TOTAL maintained through Phase E NIT cleanup (PR#2 review): recoveryVersion domain-separation (v0 legacy path + v1 prefixed path, both branches exercised by the migration test), Trezor BIP-39 official vectors as tripwire, wipeAndReset onblocked diagnostic (block-Stryker-disabled because fake-indexeddb cannot simulate onblocked). break=99.8 (buffer 0.2). 5 equivalent-mutation pragmas total (module-init Map + length sanity + 2 loop boundaries that fold to 0 via undefined-read + OOB-write + the entire onblocked diagnostic block).",
-  "thresholds": { "high": 100, "low": 99.9, "break": 99.8 },
+  "thresholds": {
+    "high": 100,
+    "low": 99.9,
+    "break": 99.8
+  },
   "timeoutMS": 30000,
   "concurrency": 4,
   "tempDirName": ".stryker-tmp",
