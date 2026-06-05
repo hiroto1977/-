@@ -104,7 +104,8 @@
     "src/shared/passwordStrength.ts",
     "src/shared/redact.ts",
     "src/shared/team.ts",
-    "src/shared/plan.ts"
+    "src/shared/plan.ts",
+    "src/renderer/plan/internalLicense.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
