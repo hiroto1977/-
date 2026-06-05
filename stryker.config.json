@@ -126,7 +126,8 @@
     "src/main/clients/funding.ts",
     "src/shared/serviceId.ts",
     "src/renderer/data/useCollection.ts",
-    "src/renderer/hooks/useServiceData.ts"
+    "src/renderer/hooks/useServiceData.ts",
+    "src/renderer/web-templates.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
