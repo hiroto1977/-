@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fetchBaseSnapshot } from '../base';
+import { FetchError } from '../types';
 
 describe('fetchBaseSnapshot', () => {
   it('normalizes the BASE items response and sends a Bearer token', async () => {
@@ -33,5 +34,15 @@ describe('fetchBaseSnapshot', () => {
     );
     const snap = await fetchBaseSnapshot({ token: 't', fetch: fetchMock });
     expect(snap.items).toEqual([]);
+  });
+
+  it('throws a FetchError tagged with the base serviceId on a non-200 response', async () => {
+    // serviceId: 'base' を '' にする StringLiteral を撃墜。
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'content-type': 'application/json' } }),
+    );
+    const err = await fetchBaseSnapshot({ token: 'bad', fetch: fetchMock }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('base');
   });
 });
