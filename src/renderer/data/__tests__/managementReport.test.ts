@@ -183,6 +183,17 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     expect(md).toContain('- 🟢 [C] c');
   });
 
+  it('prepends a risk-summary line to the highlights section', () => {
+    const marks: Hl = [
+      { severity: 'critical', category: 'A', message: 'a' },
+      { severity: 'warning', category: 'B', message: 'b' },
+      { severity: 'good', category: 'C', message: 'c' },
+      { severity: 'good', category: 'D', message: 'd' },
+    ];
+    const md = buildManagementReport(ov({ kpi: { hasData: false } }), sc, marks, '2026-05-31');
+    expect(md).toContain('総合リスク: **要対応** — 🔴 1 / 🟡 1 / 🟢 2 (計 4 件)');
+  });
+
   it('renders the complete report exactly (golden — kills every literal/label)', () => {
     const full = ov({
       fp: { equityRatioPct: 50, currentRatioPct: 200, roaPct: 10, roePct: 20, insolvent: false },
@@ -209,6 +220,8 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '- 収益性: 75 / 100',
         '',
         '## 経営ハイライト',
+        '',
+        '総合リスク: **要対応** — 🔴 1 / 🟡 0 / 🟢 1 (計 2 件)',
         '',
         '- 🔴 [収益性] 営業赤字です。',
         '- 🟢 [安全性] 安全です。',
