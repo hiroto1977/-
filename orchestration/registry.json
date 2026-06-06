@@ -323,7 +323,8 @@
         "reportsTo": "cio",
         "teams": [
           "real-estate",
-          "mutual-funds"
+          "mutual-funds",
+          "realestate-investment-metrics"
         ]
       },
       {
@@ -880,6 +881,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-tax"
+    },
+    {
+      "id": "realestate-investment-metrics",
+      "domain": "投資(不動産投資指標)",
+      "focus": "NOI利回り(実質)/DSCR(危険水域判定)/損益分岐入居率BER/NPV/IRR(二分法・収束保証)を加算。分母0・非有限ガード、既存利回り/CCRは不変、投資助言ではない注記",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-investment"
     }
   ],
   "rounds": [
@@ -3403,6 +3412,83 @@
         "精度向上ラウンド(法定実効税率): 事業税(+特別法人事業税)の損金算入を織り込んだ法定実効税率を標準式 {法人税率×(1+地方法人税率+住民税法人税割率)+事業税率+特別法人事業税率}/(1+事業税率+特別法人事業税率) で statutoryEffectiveRate として追加。所得帯の限界税率を選択(中小≤800万15%/超23.2%、事業税3.5/5.3/7.0%×1.37)。既存 effectiveRate(単純合算)・各税額は不変。taxCorporate/financialReport mutation 100%維持、+20 it (#157)。静的3016→3036/実行時3093→3113。法人税精度を網羅完成。"
       ],
       "note": "『精度を高め』の総仕上げ(法人税)。加算的で既存値不変。teams 65→66。"
+    },
+    {
+      "round": 61,
+      "teamCount": 67,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs",
+        "aftertax-report",
+        "corporate-statutory-rate",
+        "realestate-investment-metrics"
+      ],
+      "shipped": [
+        "投資ラウンド(不動産投資指標の精緻化): realEstateMetrics に NOI利回り(実質)・DSCR(1.0未満danger/1.2未満caution)・損益分岐入居率BER・NPV・IRR(二分法, 反復上限200+許容1e-7で収束保証)を加算。分母0/負/非有限ガード、既存の表面/実質利回り・CCRは不変、投資助言ではない注記。mutation 100%(156killed)、+40 it (#159)。静的3036→3076/実行時3113→3153。精度向上を税務→投資へ展開。"
+      ],
+      "note": "『精度を高め』を投資ドメインへ。加算的で既存不変。teams 66→67。"
     }
   ],
   "backlog": [
