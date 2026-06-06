@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2927 静的 / 3004 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2942 静的 / 3019 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
@@ -28,6 +28,10 @@
 で返す。欠損 (所得0/負) は均等割のみ。年度定数は令和6年度ベースでコメント根拠明記。税率テーブルは
 block-level `Stryker disable all`、計算ロジックは実テストで撃墜、income=0 早期returnの等価変異のみ
 next-line 限定 disable → **mutation 100.00%** (`npx stryker run --mutate src/shared/taxCorporate.ts`)。
+**round 55 で UI 統合**: `FinancialAnalysis.tsx` に `CorporateTaxCard` を追加し、
+`fin.ordinaryProfit` (経常利益概算) を `calcCorporateTax` に接続。法人税等合計 / 実効税率 /
+税引後利益の 4 タイル + 欠損時の均等割のみメッセージ + 内訳ラベルを財務諸表直前に表示。
+taxCorporate.ts 自体は変更せず mutation 100% 維持。新テスト 15 件追加 (黒字/欠損 2 分岐)。
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
