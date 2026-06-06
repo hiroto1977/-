@@ -291,7 +291,8 @@
           "corporate-tax",
           "corporate-percapita-table",
           "corporate-loss-carryforward",
-          "corporate-statutory-rate"
+          "corporate-statutory-rate",
+          "depreciation-precision"
         ]
       },
       {
@@ -925,6 +926,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-payroll"
+    },
+    {
+      "id": "depreciation-precision",
+      "domain": "税務(減価償却)",
+      "focus": "200%定率法の正規ロジック(償却保証額で改定償却率へ切替)・中古資産簡便法・月割・一括償却資産(3年)・少額特例(30万/年300万)・定額定率比較を加算。耐用年数0/分母0ガード、既存不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-tax"
     }
   ],
   "rounds": [
@@ -3843,6 +3852,88 @@
         "人事ラウンド(給与計算の精緻化): payroll に 月次手取り(額面→社保/源泉所得税控除→手取り)・源泉徴収税額概算・賞与手取り(標準賞与額)・人件費の会社負担総額(労使折半の会社分) を加算。taxSocialInsurance(等級表)/taxCalc(所得税)と整合、分母0/上限/区分境界ガード、既存関数は不変、概算注記維持。payroll.ts mutation 100%(156killed)、+テスト (#167)。静的3162→3190/実行時3239→3267。"
       ],
       "note": "『精度を高め』給与ドメイン。再起動中断をCOOがcherry-pick統合・docs補完。teams 70→71。"
+    },
+    {
+      "round": 66,
+      "teamCount": 72,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs",
+        "aftertax-report",
+        "corporate-statutory-rate",
+        "realestate-investment-metrics",
+        "mutualfunds-investment-metrics",
+        "savings-planning-precision",
+        "fx-currency-precision",
+        "payroll-precision",
+        "depreciation-precision"
+      ],
+      "shipped": [
+        "税務ラウンド(減価償却の精緻化): depreciation に 200%定率法の正規ロジック(調整前償却額<償却保証額で改定取得価額×改定償却率へ切替・備忘1円)・償却率概算・中古資産簡便法((法定-経過)+経過×0.2,最低2年)・月割償却・一括償却資産(20万未満3年均等)・少額特例(30万未満即時/年300万上限)・定額定率比較 を加算。分母0/負/非有限/耐用年数0ガード、既存4関数は不変。depreciation.ts mutation 100%(236killed)、+45 it (#169)。静的3190→3235/実行時3267→3312。"
+      ],
+      "note": "『精度を高め』減価償却ドメイン。加算的で既存不変。teams 71→72。"
     }
   ],
   "backlog": [
