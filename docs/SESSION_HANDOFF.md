@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2877 静的 / 2954 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2896 静的 / 2973 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
@@ -239,8 +239,12 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
    (1,000円未満切捨て) + 上限 (健保 年累計573万/厚年 1回150万)。mutation 100% 維持 (等級表は罠#2 に
    従い block-level disable、境界解決ロジックは実テストで撃墜)。既存テスト期待値を新モデルへ更新。
 
-残り (要設計判断・スコープ大):
-- 住民税の自治体差の精緻化。
+✅ 住民税の自治体差の精緻化 (round 53, `src/shared/taxCalc.ts`):
+   `calcResidentTax` に任意の `MunicipalityOverride` 引数を追加。所得割率 (`incomeRate`) と
+   均等割額 (`perCapita`) を自治体別に上書き可能。未指定は標準定数にフォールバック (既存挙動不変)。
+   負値・NaN・Infinity は入力ガードで標準値へ。mutation 100% 維持 (19 テスト追加)。
+
+残り (要設計判断・スコープ大): なし (全主要項目実装済み)。
 
 ✅ **ふるさと納税ワンストップ特例**は実装済み (`src/shared/taxFurusato.ts`: `furusatoOneStopEligibility` 5自治体/確定申告併用不可の判定 + `calcFurusatoBreakdown` の所得税分→住民税申告特例控除への振替、mutation 100%、TaxPage セクション⑦)。※旧版の「残り」記述は古かったため訂正。
 

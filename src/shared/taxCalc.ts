@@ -135,15 +135,72 @@ export function residentPerCapitaBreakdown(taxYear: number): ResidentPerCapitaBr
   };
 }
 
+/**
+ * 住民税の自治体オーバーライド引数。
+ *
+ * 日本の住民税は標準税率（所得割 10%・均等割 5,000 円）を原則とするが、
+ * 自治体の条例により所得割率・均等割額が標準と異なる場合がある。
+ * 本インターフェイスで任意の上書きを渡せる。**未指定フィールドは標準定数を使う**。
+ *
+ * **注意: 自治体差は概算です。正確な税率・均等割額は各自治体（市区町村・都道府県）
+ * の最新情報で確認してください。** 負値・非有限値 (NaN / Infinity) は標準値で
+ * 代替するため、不正入力は無視されます（税務助言ではありません）。
+ */
+export interface MunicipalityOverride {
+  /**
+   * 所得割率の合算 (都道府県分 + 市町村分)。
+   * 例: 標準は 0.1 (=道府県4%+市町村6%)。負値・非有限は標準 `RESIDENT_TAX_RATE` にフォールバック。
+   */
+  readonly incomeRate?: number;
+  /**
+   * 均等割額 (円/年)。森林環境税を含む総額で渡すこと。
+   * 例: 標準は 5,000 円。負値・非有限は標準 `RESIDENT_TAX_PER_CAPITA` にフォールバック。
+   */
+  readonly perCapita?: number;
+}
+
+/**
+ * 自治体オーバーライドから有効な所得割率を解決する。
+ * 負値・非有限値は標準値を返す (入力ガード)。
+ */
+function resolveIncomeRate(override?: MunicipalityOverride): number {
+  const v = override?.incomeRate;
+  // `v === undefined` は `!isFinite(undefined)` で等価 (isFinite(undefined)=false)。
+  // ConditionalExpression: `v===undefined` → false は `!isFinite(v)` で等価にカバーされる。
+  // EqualityOperator: `v < 0` の境界、0 で false → 0 を通過 (0%自治体=所得割なし)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  if (v === undefined || !isFinite(v) || v < 0) return RESIDENT_TAX_RATE;
+  return v;
+}
+
+/**
+ * 自治体オーバーライドから有効な均等割額を解決する。
+ * 負値・非有限値は標準値を返す (入力ガード)。
+ */
+function resolvePerCapita(override?: MunicipalityOverride): number {
+  const v = override?.perCapita;
+  // `v === undefined` は `!isFinite(undefined)` で等価 (isFinite(undefined)=false)。
+  // ConditionalExpression: `v===undefined` → false は `!isFinite(v)` で等価にカバーされる。
+  // EqualityOperator: `v < 0` の境界、0 で false → 0 を通過 (期待通り、0円均等割も有効)。
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  if (v === undefined || !isFinite(v) || v < 0) return RESIDENT_TAX_PER_CAPITA;
+  return v;
+}
+
 /** 課税所得から住民税額を概算する (所得割 + 均等割)。
  *  ※ 調整控除は含まない (calcResidentAdjustmentCredit を別途適用)。
- *  ※ 住民税の課税所得も所得割の算出前に 1,000 円未満を切り捨てる (地方税法)。 */
-export function calcResidentTax(taxableIncome: number): number {
+ *  ※ 住民税の課税所得も所得割の算出前に 1,000 円未満を切り捨てる (地方税法)。
+ *  ※ 自治体の所得割率・均等割が標準と異なる場合は `override` を渡す。
+ *     未指定時は標準定数 (RESIDENT_TAX_RATE / RESIDENT_TAX_PER_CAPITA) を使うため
+ *     **既存の呼び出しは一切影響を受けない**。 */
+export function calcResidentTax(taxableIncome: number, override?: MunicipalityOverride): number {
+  const rate = resolveIncomeRate(override);
+  const perCapita = resolvePerCapita(override);
   // `<= 0` → `< 0` は等価: 課税所得 0 のとき所得割 `yen(0 × rate)` = 0 なので
-  // どちらの分岐でも結果は PER_CAPITA。テストで区別不能なため抑制。
+  // どちらの分岐でも結果は perCapita。テストで区別不能なため抑制。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
-  if (taxableIncome <= 0) return RESIDENT_TAX_PER_CAPITA;
-  return yen(floorTaxableThousand(taxableIncome) * RESIDENT_TAX_RATE) + RESIDENT_TAX_PER_CAPITA;
+  if (taxableIncome <= 0) return perCapita;
+  return yen(floorTaxableThousand(taxableIncome) * rate) + perCapita;
 }
 
 /**
