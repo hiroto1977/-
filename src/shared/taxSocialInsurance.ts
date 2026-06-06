@@ -180,16 +180,19 @@ export function resolveStandardMonthly(
   const r = Math.max(0, remuneration);
   // 上位等級から走査し、最初に「下限以上」を満たした等級を採用する。
   // これにより上限等級での頭打ちと境界 (以上〜未満) を同時に満たす。
+  // 最下位等級 (index 0, lowerBound===0) は r>=0 で必ず一致するため、ループは
+  // index 0 まで走る必要がある (`i >= 0`)。下のフォールバックは index 0 と同じ
+  // 値を返す重複ではなく throw にすることで、`i >= 0`→`i > 0` の境界変異が
+  // 最下位等級の報酬で throw → テストで撃墜できる (等価変異を回避)。
   for (let i = grades.length - 1; i >= 0; i--) {
     const grade = grades[i]!;
     if (r >= grade.lowerBound) {
       return grade.standardMonthly;
     }
   }
-  // r >= 0 かつ grades[0].lowerBound === 0 なので必ず上で return する。
-  // ここは到達不能だが型安全のため最下位等級を返す。
-  // Stryker disable next-line all : 到達不能 (grades[0].lowerBound===0 で必ず先に return)。
-  return grades[0]!.standardMonthly;
+  // r >= 0 かつ grades[0].lowerBound === 0 なので有効な等級表では到達不能。
+  // Stryker disable next-line all : 到達不能 (空テーブル等の不正入力に対する防御)。
+  throw new Error('resolveStandardMonthly: empty or invalid grade table');
 }
 
 /** 報酬月額から厚生年金の標準報酬月額を求める。 */
