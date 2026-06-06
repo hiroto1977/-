@@ -6,7 +6,7 @@
  * graceful な非対応フォールバックを検証する。判断ロジックは持たないため
  * クラッシュ無し + コールバック配線が正しいことを担保する。
  */
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   resolveSpeechRecognitionCtor,
   isSpeechRecognitionSupported,
@@ -35,6 +35,11 @@ class MockRecognition {
   started = false;
   stopped = false;
   aborted = false;
+  /** 直近に生成されたインスタンス (this 別名を避けてテストから参照する)。 */
+  static last: MockRecognition | null = null;
+  constructor() {
+    MockRecognition.last = this;
+  }
   start() {
     this.started = true;
   }
@@ -123,21 +128,21 @@ describe('extractTranscript', () => {
 // ---- startSpeechRecognition -------------------------------------------------
 
 describe('startSpeechRecognition', () => {
+  const SPEECH = { SpeechRecognition: MockRecognition } as never;
+
+  beforeEach(() => {
+    MockRecognition.last = null;
+  });
+
   it('非対応環境では null を返す (graceful)', () => {
     const handle = startSpeechRecognition({ onTranscript: vi.fn() }, {} as never);
     expect(handle).toBeNull();
   });
 
   it('対応環境では認識を ja-JP / interim 有効で開始する', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
-    const handle = startSpeechRecognition({ onTranscript: vi.fn() }, { SpeechRecognition: Capturing } as never);
+    const handle = startSpeechRecognition({ onTranscript: vi.fn() }, SPEECH);
     expect(handle).not.toBeNull();
+    const instance = MockRecognition.last;
     expect(instance).not.toBeNull();
     expect(instance!.lang).toBe('ja-JP');
     expect(instance!.interimResults).toBe(true);
@@ -145,110 +150,55 @@ describe('startSpeechRecognition', () => {
   });
 
   it('onresult → onTranscript を発火 (テキスト + isFinal)', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onTranscript = vi.fn();
-    startSpeechRecognition({ onTranscript }, { SpeechRecognition: Capturing } as never);
-    instance!.onresult!(makeEvent([{ transcript: 'すらっく', isFinal: true }]));
+    startSpeechRecognition({ onTranscript }, SPEECH);
+    MockRecognition.last!.onresult!(makeEvent([{ transcript: 'すらっく', isFinal: true }]));
     expect(onTranscript).toHaveBeenCalledWith('すらっく', true);
   });
 
   it('中間結果は isFinal=false で渡る', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onTranscript = vi.fn();
-    startSpeechRecognition({ onTranscript }, { SpeechRecognition: Capturing } as never);
-    instance!.onresult!(makeEvent([{ transcript: 'とちゅう', isFinal: false }]));
+    startSpeechRecognition({ onTranscript }, SPEECH);
+    MockRecognition.last!.onresult!(makeEvent([{ transcript: 'とちゅう', isFinal: false }]));
     expect(onTranscript).toHaveBeenCalledWith('とちゅう', false);
   });
 
   it('空テキストの result では onTranscript を呼ばない', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onTranscript = vi.fn();
-    startSpeechRecognition({ onTranscript }, { SpeechRecognition: Capturing } as never);
-    instance!.onresult!(makeEvent([{ transcript: '   ', isFinal: true }]));
+    startSpeechRecognition({ onTranscript }, SPEECH);
+    MockRecognition.last!.onresult!(makeEvent([{ transcript: '   ', isFinal: true }]));
     expect(onTranscript).not.toHaveBeenCalled();
   });
 
   it('onerror → onError を message 優先で発火', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onError = vi.fn();
-    startSpeechRecognition({ onTranscript: vi.fn(), onError }, { SpeechRecognition: Capturing } as never);
-    instance!.onerror!({ error: 'no-speech', message: '発話なし' });
+    startSpeechRecognition({ onTranscript: vi.fn(), onError }, SPEECH);
+    MockRecognition.last!.onerror!({ error: 'no-speech', message: '発話なし' });
     expect(onError).toHaveBeenCalledWith('発話なし');
   });
 
   it('onerror で message が空なら error code を使う', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onError = vi.fn();
-    startSpeechRecognition({ onTranscript: vi.fn(), onError }, { SpeechRecognition: Capturing } as never);
-    instance!.onerror!({ error: 'not-allowed', message: '' });
+    startSpeechRecognition({ onTranscript: vi.fn(), onError }, SPEECH);
+    MockRecognition.last!.onerror!({ error: 'not-allowed', message: '' });
     expect(onError).toHaveBeenCalledWith('not-allowed');
   });
 
   it('onError 未指定でも onerror でクラッシュしない', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
-    startSpeechRecognition({ onTranscript: vi.fn() }, { SpeechRecognition: Capturing } as never);
-    expect(() => instance!.onerror!({ error: 'network' })).not.toThrow();
+    startSpeechRecognition({ onTranscript: vi.fn() }, SPEECH);
+    expect(() => MockRecognition.last!.onerror!({ error: 'network' })).not.toThrow();
   });
 
   it('onend → onEnd を発火', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
     const onEnd = vi.fn();
-    startSpeechRecognition({ onTranscript: vi.fn(), onEnd }, { SpeechRecognition: Capturing } as never);
-    instance!.onend!();
+    startSpeechRecognition({ onTranscript: vi.fn(), onEnd }, SPEECH);
+    MockRecognition.last!.onend!();
     expect(onEnd).toHaveBeenCalledOnce();
   });
 
   it('handle.stop / handle.abort が認識へ委譲する', () => {
-    let instance: MockRecognition | null = null;
-    class Capturing extends MockRecognition {
-      constructor() {
-        super();
-        instance = this;
-      }
-    }
-    const handle = startSpeechRecognition({ onTranscript: vi.fn() }, { SpeechRecognition: Capturing } as never);
+    const handle = startSpeechRecognition({ onTranscript: vi.fn() }, SPEECH);
+    const instance = MockRecognition.last;
     handle!.stop();
     expect(instance!.stopped).toBe(true);
     handle!.abort();
