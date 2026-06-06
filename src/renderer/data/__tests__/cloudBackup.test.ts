@@ -34,6 +34,14 @@ function file(over: Partial<FileInput> = {}): FileInput {
   return { path: 'a.txt', size: 10, sha256: 'aaa', mtime: 100, ...over };
 }
 
+/** Build a manifest with EXACTLY the given entries, bypassing buildManifest's
+ *  sort — so we can feed deliberately-unsorted entries to exercise the sort
+ *  inside diffManifests / verifyManifest. treeHash is computed over the entries
+ *  as given (consistent so verifyManifest's structural check passes). */
+function rawManifest(entries: BackupEntry[]): BackupManifest {
+  return { version: 1, entries, treeHash: treeHashInput(entries) };
+}
+
 describe('cloudBackup constants', () => {
   it('pins AES-GCM cipher algo', () => {
     expect(BACKUP_CIPHER_ALGO).toBe('AES-GCM');
@@ -249,36 +257,46 @@ describe('buildManifest', () => {
   });
 
   describe('versioning against a prior manifest', () => {
-    const prior: BackupManifest = buildManifest([
-      file({ path: 'keep', sha256: 'same' }),
-      file({ path: 'edit', sha256: 'old', mtime: 1 }),
-    ]);
+    // NOTE: build fixtures lazily INSIDE each test (not at describe-body level).
+    // A guard mutant that flips a buildManifest validation makes every call
+    // throw; if that happened during collection it would abort the whole file
+    // ("no tests") and Stryker would mark the mutant Survived (0 tests run).
+    const makePrior = (): BackupManifest =>
+      buildManifest([
+        file({ path: 'keep', sha256: 'same' }),
+        file({ path: 'edit', sha256: 'old', mtime: 1 }),
+      ]);
 
     it('keeps version when sha256 unchanged (no wasteful bump)', () => {
-      const m = buildManifest([file({ path: 'keep', sha256: 'same' })], prior);
+      const m = buildManifest([file({ path: 'keep', sha256: 'same' })], makePrior());
       expect(m.entries[0]!.version).toBe(1);
     });
 
     it('bumps version when sha256 changed', () => {
-      const m = buildManifest([file({ path: 'edit', sha256: 'new', mtime: 2 })], prior);
+      const m = buildManifest([file({ path: 'edit', sha256: 'new', mtime: 2 })], makePrior());
       expect(m.entries[0]!.version).toBe(2);
     });
 
     it('starts new paths at version 1', () => {
-      const m = buildManifest([file({ path: 'fresh', sha256: 'f' })], prior);
+      const m = buildManifest([file({ path: 'fresh', sha256: 'f' })], makePrior());
       expect(m.entries[0]!.version).toBe(1);
     });
 
     it('bumps from a higher prior version monotonically', () => {
-      const p2 = buildManifest([file({ path: 'edit', sha256: 'new', mtime: 2 })], prior); // v2
+      const p2 = buildManifest([file({ path: 'edit', sha256: 'new', mtime: 2 })], makePrior()); // v2
       const m = buildManifest([file({ path: 'edit', sha256: 'newer', mtime: 3 })], p2);
       expect(m.entries[0]!.version).toBe(3);
     });
   });
 
   describe('guards', () => {
-    it('throws on empty path', () => {
-      expect(() => buildManifest([file({ path: '' })])).toThrow(/path/);
+    it('throws on empty path (length===0 boundary)', () => {
+      expect(() => buildManifest([file({ path: '' })])).toThrow(/path が空/);
+    });
+
+    it('accepts a single-char path (length===1 boundary, no throw)', () => {
+      // Kills `length === 0` → `length !== 0`: a len-1 path must NOT throw.
+      expect(buildManifest([file({ path: 'x' })]).entries[0]!.path).toBe('x');
     });
 
     it('throws on duplicate path', () => {
@@ -296,8 +314,22 @@ describe('buildManifest', () => {
       expect(() => buildManifest([file({ size: Number.POSITIVE_INFINITY })])).toThrow(/size/);
     });
 
-    it('throws on empty sha256', () => {
-      expect(() => buildManifest([file({ sha256: '' })])).toThrow(/sha256/);
+    it('throws on empty sha256 (length===0 boundary)', () => {
+      expect(() => buildManifest([file({ sha256: '' })])).toThrow(/sha256 が空/);
+    });
+
+    it('accepts a single-char sha256 (length===1 boundary, no throw)', () => {
+      // Kills `length === 0` → `length !== 0` on the sha256 guard.
+      expect(buildManifest([file({ sha256: 'h' })]).entries[0]!.sha256).toBe('h');
+    });
+
+    it('throws on size === -0.5 boundary just below zero', () => {
+      expect(() => buildManifest([file({ size: -0.5 })])).toThrow(/size/);
+    });
+
+    it('throws on mtime just below zero (negative boundary)', () => {
+      // Kills `f.mtime < 0` boundary; size already covered above.
+      expect(() => buildManifest([file({ mtime: -0.5 })])).toThrow(/mtime/);
     });
 
     it('throws on negative mtime', () => {
@@ -317,11 +349,13 @@ describe('buildManifest', () => {
 });
 
 describe('diffManifests', () => {
-  const remote = buildManifest([
-    file({ path: 'same', sha256: 'h-same' }),
-    file({ path: 'edit', sha256: 'h-old' }),
-    file({ path: 'gone-remote', sha256: 'h-gr' }),
-  ]);
+  // Lazy fixture (see versioning note): keep buildManifest calls inside tests.
+  const makeRemote = (): BackupManifest =>
+    buildManifest([
+      file({ path: 'same', sha256: 'h-same' }),
+      file({ path: 'edit', sha256: 'h-old' }),
+      file({ path: 'gone-remote', sha256: 'h-gr' }),
+    ]);
 
   it('classifies added / changed / unchanged / removedLocally', () => {
     const local = buildManifest([
@@ -329,16 +363,21 @@ describe('diffManifests', () => {
       file({ path: 'edit', sha256: 'h-new' }), // changed
       file({ path: 'brand-new', sha256: 'h-bn' }), // added
     ]);
-    const d = diffManifests(local, remote);
+    const d = diffManifests(local, makeRemote());
     expect(d.added.map((x) => x.path)).toEqual(['brand-new']);
     expect(d.changed.map((x) => x.path)).toEqual(['edit']);
     expect(d.unchanged.map((x) => x.path)).toEqual(['same']);
     expect(d.removedLocally.map((x) => x.path)).toEqual(['gone-remote']);
+    // Pin the `kind` discriminant on each bucket (kills StringLiteral '' mutants).
+    expect(d.added.map((x) => x.kind)).toEqual(['added']);
+    expect(d.changed.map((x) => x.kind)).toEqual(['changed']);
+    expect(d.unchanged.map((x) => x.kind)).toEqual(['unchanged']);
+    expect(d.removedLocally.map((x) => x.kind)).toEqual(['removedLocally']);
   });
 
   it('marks removedLocally as deletionCandidate=true (no auto-delete)', () => {
     const local = buildManifest([file({ path: 'same', sha256: 'h-same' })]);
-    const d = diffManifests(local, remote);
+    const d = diffManifests(local, makeRemote());
     for (const r of d.removedLocally) {
       expect(r.deletionCandidate).toBe(true);
       expect(r.kind).toBe('removedLocally');
@@ -351,7 +390,7 @@ describe('diffManifests', () => {
       file({ path: 'edit', sha256: 'h-new' }),
       file({ path: 'brand-new', sha256: 'h-bn' }),
     ]);
-    const d = diffManifests(local, remote);
+    const d = diffManifests(local, makeRemote());
     for (const x of [...d.added, ...d.changed, ...d.unchanged]) {
       expect(x.deletionCandidate).toBe(false);
     }
@@ -364,11 +403,12 @@ describe('diffManifests', () => {
       file({ path: 'zeta', sha256: 'z' }),
       file({ path: 'alpha', sha256: 'a' }),
     ]);
-    const d = diffManifests(local, remote);
+    const d = diffManifests(local, makeRemote());
     expect(d.toUpload).toEqual(['alpha', 'edit', 'zeta']);
   });
 
   it('identical manifests → all unchanged, nothing to upload, nothing removed', () => {
+    const remote = makeRemote();
     const d = diffManifests(remote, remote);
     expect(d.added).toEqual([]);
     expect(d.changed).toEqual([]);
@@ -385,7 +425,7 @@ describe('diffManifests', () => {
   });
 
   it('empty local → every remote entry is a removal candidate (not deleted)', () => {
-    const d = diffManifests(buildManifest([]), remote);
+    const d = diffManifests(buildManifest([]), makeRemote());
     expect(d.removedLocally.map((x) => x.path)).toEqual(['edit', 'gone-remote', 'same']);
     expect(d.removedLocally.every((x) => x.deletionCandidate)).toBe(true);
     expect(d.toUpload).toEqual([]);
@@ -430,13 +470,12 @@ describe('verifyIntegrity', () => {
 });
 
 describe('verifyManifest', () => {
-  const good = buildManifest([
-    file({ path: 'a', sha256: 'ha' }),
-    file({ path: 'b', sha256: 'hb' }),
-  ]);
+  // Lazy fixture (see versioning note): keep buildManifest calls inside tests.
+  const makeGood = (): BackupManifest =>
+    buildManifest([file({ path: 'a', sha256: 'ha' }), file({ path: 'b', sha256: 'hb' })]);
 
   it('ok for a well-formed manifest with no per-file shas given', () => {
-    expect(verifyManifest(good)).toEqual({ ok: true, reason: '' });
+    expect(verifyManifest(makeGood())).toEqual({ ok: true, reason: '' });
   });
 
   it('ok for empty manifest (nothing to back up)', () => {
@@ -444,7 +483,7 @@ describe('verifyManifest', () => {
   });
 
   it('fails when treeHash does not match entries (structural tamper)', () => {
-    const tampered: BackupManifest = { ...good, treeHash: 'WRONG' };
+    const tampered: BackupManifest = { ...makeGood(), treeHash: 'WRONG' };
     const r = verifyManifest(tampered);
     expect(r.ok).toBe(false);
     expect(r.reason).toContain('treeHash');
@@ -460,22 +499,116 @@ describe('verifyManifest', () => {
       ['a', 'ha'],
       ['b', 'hb'],
     ]);
-    expect(verifyManifest(good, shas).ok).toBe(true);
+    expect(verifyManifest(makeGood(), shas).ok).toBe(true);
   });
 
   it('fails when a provided per-file sha mismatches', () => {
     const shas = new Map([['a', 'WRONG']]);
-    const r = verifyManifest(good, shas);
+    const r = verifyManifest(makeGood(), shas);
     expect(r.ok).toBe(false);
     expect(r.reason).toContain('a');
   });
 
   it('skips per-file check for paths not present in actualShas map', () => {
     const shas = new Map([['b', 'hb']]); // 'a' omitted → skipped, not failed
-    expect(verifyManifest(good, shas).ok).toBe(true);
+    expect(verifyManifest(makeGood(), shas).ok).toBe(true);
   });
 
   it('empty actualShas map performs structural check only (no per-file failures)', () => {
-    expect(verifyManifest(good, new Map()).ok).toBe(true);
+    expect(verifyManifest(makeGood(), new Map()).ok).toBe(true);
+  });
+
+  it('fails the FIRST mismatching entry and returns early (per-file short-circuit)', () => {
+    // Entry 'a' mismatches, 'b' matches → must surface a's failure.
+    const shas = new Map([
+      ['a', 'WRONG'],
+      ['b', 'hb'],
+    ]);
+    const r = verifyManifest(makeGood(), shas);
+    expect(r.ok).toBe(false);
+    expect(r.reason).toContain('a');
+  });
+
+  it('detects a LATER mismatch after an OK entry (loop does not return on ok)', () => {
+    // 'a' OK, 'b' WRONG. Kills `if (!r.ok) return r` → `if (true) return r`,
+    // which would wrongly return early on the OK 'a' result and miss 'b'.
+    const shas = new Map([
+      ['a', 'ha'],
+      ['b', 'WRONG'],
+    ]);
+    const r = verifyManifest(makeGood(), shas);
+    expect(r.ok).toBe(false);
+    expect(r.reason).toContain('b');
+  });
+});
+
+// Dedicated suite for the deterministic ordering guarantees: feed entries in
+// REVERSE order via rawManifest so that removing the internal `.sort()` calls
+// would change the observable output (kills MethodExpression "drop sort"
+// mutants). buildManifest pre-sorts, so these must use raw manifests.
+describe('ordering guarantees (sort kill-suite)', () => {
+  it('buildManifest output is sorted even when input is reverse-ordered', () => {
+    const m = buildManifest([
+      file({ path: 'c', sha256: '1' }),
+      file({ path: 'b', sha256: '2' }),
+      file({ path: 'a', sha256: '3' }),
+    ]);
+    expect(m.entries.map((e) => e.path)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('diffManifests.added is sorted from reverse-ordered local entries', () => {
+    const local = rawManifest([
+      entry({ path: 'c', sha256: '1' }),
+      entry({ path: 'b', sha256: '2' }),
+      entry({ path: 'a', sha256: '3' }),
+    ]);
+    const d = diffManifests(local, rawManifest([]));
+    expect(d.added.map((x) => x.path)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('diffManifests.changed is sorted from reverse-ordered local entries', () => {
+    const remote = rawManifest([
+      entry({ path: 'a', sha256: 'old-a' }),
+      entry({ path: 'b', sha256: 'old-b' }),
+      entry({ path: 'c', sha256: 'old-c' }),
+    ]);
+    const local = rawManifest([
+      entry({ path: 'c', sha256: 'new-c' }),
+      entry({ path: 'b', sha256: 'new-b' }),
+      entry({ path: 'a', sha256: 'new-a' }),
+    ]);
+    const d = diffManifests(local, remote);
+    expect(d.changed.map((x) => x.path)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('diffManifests.unchanged is sorted from reverse-ordered entries', () => {
+    const entries = [
+      entry({ path: 'c', sha256: 'x' }),
+      entry({ path: 'b', sha256: 'y' }),
+      entry({ path: 'a', sha256: 'z' }),
+    ];
+    const d = diffManifests(rawManifest(entries), rawManifest(entries.map((e) => ({ ...e }))));
+    expect(d.unchanged.map((x) => x.path)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('diffManifests.removedLocally is sorted from reverse-ordered remote entries', () => {
+    const remote = rawManifest([
+      entry({ path: 'c', sha256: '1' }),
+      entry({ path: 'b', sha256: '2' }),
+      entry({ path: 'a', sha256: '3' }),
+    ]);
+    const d = diffManifests(rawManifest([]), remote);
+    expect(d.removedLocally.map((x) => x.path)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('diffManifests.toUpload is sorted across mixed added+changed', () => {
+    const remote = rawManifest([entry({ path: 'm', sha256: 'old-m' })]);
+    const local = rawManifest([
+      entry({ path: 'm', sha256: 'new-m' }), // changed
+      entry({ path: 'z', sha256: 'z' }), // added
+      entry({ path: 'a', sha256: 'a' }), // added
+    ]);
+    const d = diffManifests(local, remote);
+    expect(d.toUpload).toEqual(['a', 'm', 'z']);
   });
 });
