@@ -487,7 +487,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
     downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`);
   }
   function onExportReport() {
-    const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend });
+    const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit });
     downloadBlob(md, 'text/markdown;charset=utf-8', `financial-report-${selected!.unit.id}-${new Date().toISOString().slice(0, 10)}.md`);
   }
   // 現在表示中の諸表タブのライン項目 (BS は資産+負債純資産を連結) を返す。

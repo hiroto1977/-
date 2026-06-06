@@ -4,6 +4,7 @@ import { computeFinancialRatios, radarAxes } from '../financialRatios';
 import { diagnoseFinancials } from '../financialDiagnosis';
 import { analyzeMarginTrend } from '../financialTrend';
 import { deriveBusinessFinancials } from '../businessFinancials';
+import { calcCorporateTax } from '../../../shared/taxCorporate';
 
 function fixture() {
   const fin = deriveBusinessFinancials({ revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 });
@@ -15,15 +16,21 @@ function fixture() {
 
 describe('buildFinancialReportMarkdown', () => {
   const { ratios, diagnosis, trend } = fixture();
-  const md = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+  // ビルドは各テスト内で行う (getter)。これにより `if (ordinaryProfit !== undefined)`
+  // ガードの ConditionalExpression/EqualityOperator 変異で undefined 経路が throw
+  // した場合でも、suite 収集時 (describe 本体) ではなく当該 it 内で fail させ、
+  // 確実に mutant を撃墜できる (collection-throw だと survived 扱いになりうるため)。
+  const buildBase = () => buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
 
   it('includes the title, date and overall grade', () => {
+    const md = buildBase();
     expect(md).toContain('# 財務分析レポート — EC事業');
     expect(md).toContain('作成日: 2026-06-02');
     expect(md).toContain(`## 総合評価: ${diagnosis.grade}`);
   });
 
   it('renders category scores and all 17 indicator rows', () => {
+    const md = buildBase();
     expect(md).toContain('| 安全性 |');
     expect(md).toContain('| 収益性 |');
     expect(md).toContain('| 効率性 |');
@@ -34,6 +41,7 @@ describe('buildFinancialReportMarkdown', () => {
   });
 
   it('reflects the margin trend and keeps the disclaimer', () => {
+    const md = buildBase();
     expect(md).toContain('営業利益率トレンド:** 改善傾向');
     expect(md).toContain('財務助言ではありません');
   });
@@ -89,7 +97,7 @@ describe('buildFinancialReportMarkdown', () => {
       '---',
       '※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。',
     ].join('\n');
-    expect(md).toBe(expected);
+    expect(buildBase()).toBe(expected);
   });
 
   it('null の指標は値欄を — で描画する (fmtValue の null ガード)', () => {
@@ -114,6 +122,89 @@ describe('buildFinancialReportMarkdown', () => {
     const today = new Date().toISOString().slice(0, 10);
     const md2 = buildFinancialReportMarkdown({ label: 'X', ratios, diagnosis, trend });
     expect(md2).toContain(`作成日: ${today}`);
+  });
+
+  it('ordinaryProfit 未指定なら法人税等セクションを出力しない (既存出力と不変)', () => {
+    // ローカルに組み立て、`if (ordinaryProfit !== undefined)` ガードの
+    // ConditionalExpression / EqualityOperator 変異 (true 固定 / === 反転) を撃墜する。
+    const mdNoTax = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    expect(mdNoTax).not.toContain('## 法人税等(概算)');
+    expect(mdNoTax).not.toContain('税引後利益');
+    // 強い不変条件: 未指定なら golden (既存の税抜きレポート) と完全一致。
+    // `if(true)` 変異だと undefined 経路で throw / 別文字列となり、この it 内で fail する。
+    expect(mdNoTax.endsWith('※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。')).toBe(true);
+  });
+
+  it('golden: ordinaryProfit ありで法人税等セクションを末尾 (disclaimer 直前) に正確に出力する', () => {
+    const mdTax = buildFinancialReportMarkdown({
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+    });
+    const section = [
+      '## 法人税等(概算)',
+      '',
+      '| 項目 | 金額 |',
+      '| --- | ---: |',
+      '| 税引前利益(経常利益) | 5,000,000 円 |',
+      '| 法人税 | 750,000 円 |',
+      '| 地方法人税 | 77,250 円 |',
+      '| 法人住民税 | 122,500 円 |',
+      '| 法人事業税 | 193,000 円 |',
+      '| 特別法人事業税 | 71,410 円 |',
+      '| 法人税等合計 | 1,214,160 円 |',
+      '| 実効税率 | 24.3% |',
+      '| 税引後利益 | 3,785,840 円 |',
+      '',
+      '> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。',
+      '',
+      '※ 法人税等は概算試算であり、正確な税額計算・税務助言ではありません。申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。',
+      '',
+      '---',
+      '※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。',
+    ].join('\n');
+    // 既存の指標セクションはそのまま残り、その末尾に新セクションが続く。
+    expect(mdTax.endsWith(section)).toBe(true);
+    // 既存出力 (md) の指標表までは不変: 新セクションを除けば従来レポートと一致。
+    expect(mdTax.startsWith('# 財務分析レポート — EC事業')).toBe(true);
+    expect(mdTax).toContain('| ROE | 34.4% |');
+  });
+
+  it('黒字 (ordinaryProfit>0) は中小法人の区分注記を出す (欠損分岐の > / <= 境界も撃墜)', () => {
+    const mdSmall = buildFinancialReportMarkdown({
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+    });
+    expect(mdSmall).toContain('> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。');
+    // 黒字なので欠損注記は出ない (分岐が排他)。
+    expect(mdSmall).not.toContain('欠損(税引前利益が0以下)');
+  });
+
+  it('欠損 (ordinaryProfit<=0) は均等割のみ・税引後=税引前−均等割 の注記を出す', () => {
+    const b = calcCorporateTax(-200_000);
+    const mdLoss = buildFinancialReportMarkdown({
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: -200_000,
+    });
+    expect(mdLoss).toContain('| 税引前利益(経常利益) | -200,000 円 |');
+    expect(mdLoss).toContain('| 法人税 | 0 円 |');
+    expect(mdLoss).toContain('| 法人税等合計 | 70,000 円 |');
+    expect(mdLoss).toContain('| 実効税率 | 0.0% |');
+    expect(mdLoss).toContain('| 税引後利益 | -270,000 円 |');
+    expect(mdLoss).toContain(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${b.residentTax.toLocaleString('ja-JP')} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
+    // 黒字側の区分注記は出ない (分岐が排他であること)。
+    expect(mdLoss).not.toContain('区分:');
+  });
+
+  it('ordinaryProfit=0 も欠損扱い (<=0 の境界: > ではなく >=)', () => {
+    const md0 = buildFinancialReportMarkdown({
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 0,
+    });
+    expect(md0).toContain('欠損(税引前利益が0以下)のため');
+    expect(md0).not.toContain('区分:');
+  });
+
+  it('法人税等は概算・税務助言ではない旨の注記を含む', () => {
+    const mdTax = buildFinancialReportMarkdown({
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+    });
+    expect(mdTax).toContain('法人税等は概算試算であり、正確な税額計算・税務助言ではありません');
   });
 
   it('covers down/flat trends, null delta, and empty strengths/weaknesses', () => {
