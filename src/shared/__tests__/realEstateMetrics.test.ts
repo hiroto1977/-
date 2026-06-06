@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { calcRealEstateYield, calcRealEstateLeverage } from '../realEstateMetrics';
+import {
+  calcRealEstateYield,
+  calcRealEstateLeverage,
+  calcNoiYield,
+  calcDscr,
+  calcBreakEvenOccupancyPct,
+  calcNpv,
+  calcIrr,
+  DSCR_DANGER_THRESHOLD,
+  DSCR_CAUTION_THRESHOLD,
+  IRR_TOLERANCE,
+} from '../realEstateMetrics';
 
 describe('calcRealEstateYield', () => {
   it('computes the gross yield (annual rent / price)', () => {
@@ -78,5 +89,212 @@ describe('calcRealEstateLeverage (CCR・イールドギャップ)', () => {
     const r = calcRealEstateLeverage(1_000_000, 5_000_000, 1_500_000, 3.0, 2.0);
     expect(r.annualCashflow).toBe(-500_000);
     expect(r.cashOnCashReturnPct).toBe(-10); // -500k / 5M
+  });
+});
+
+describe('calcNoiYield (NOI 実質利回り)', () => {
+  it('computes NOI = gross − vacancy − opex and the NOI yield', () => {
+    // 満室家賃240万、入居率90% → 空室損24万、運営費60万 → NOI = 240 − 24 − 60 = 156万
+    // 総取得費 = 4,000万 + 200万 = 4,200万 → NOI 利回り = 156万 / 4,200万 = 3.71%
+    const r = calcNoiYield(2_400_000, 0.9, 600_000, 40_000_000, 2_000_000);
+    expect(r.vacancyLoss).toBe(240_000);
+    expect(r.noi).toBe(1_560_000);
+    expect(r.totalAcquisition).toBe(42_000_000);
+    expect(r.noiYieldPct).toBe(3.71);
+  });
+
+  it('treats full occupancy as zero vacancy loss', () => {
+    const r = calcNoiYield(2_400_000, 1, 600_000, 40_000_000);
+    expect(r.vacancyLoss).toBe(0);
+    expect(r.noi).toBe(1_800_000); // 240 − 0 − 60
+    expect(r.totalAcquisition).toBe(40_000_000); // purchaseCost defaults to 0
+    expect(r.noiYieldPct).toBe(4.5);
+  });
+
+  it('returns null NOI yield when total acquisition is zero (no division by zero)', () => {
+    const r = calcNoiYield(2_400_000, 1, 600_000, 0, 0);
+    expect(r.totalAcquisition).toBe(0);
+    expect(r.noiYieldPct).toBeNull();
+    // NOI itself is still computed.
+    expect(r.noi).toBe(1_800_000);
+  });
+
+  it('clamps occupancy above 1 to full and below 0 to vacant', () => {
+    expect(calcNoiYield(2_400_000, 2, 0, 40_000_000).vacancyLoss).toBe(0); // occ clamped to 1
+    expect(calcNoiYield(2_400_000, -1, 0, 40_000_000).vacancyLoss).toBe(2_400_000); // occ clamped to 0
+  });
+
+  it('clamps negative gross rent, opex, price and cost to zero', () => {
+    const r = calcNoiYield(-100, 1, -50, -10, -20);
+    expect(r.noi).toBe(0);
+    expect(r.totalAcquisition).toBe(0);
+    expect(r.noiYieldPct).toBeNull();
+  });
+
+  it('allows a negative NOI (and negative yield) when opex exceeds rent', () => {
+    const r = calcNoiYield(1_000_000, 1, 1_500_000, 40_000_000);
+    expect(r.noi).toBe(-500_000);
+    expect(r.noiYieldPct).toBeLessThan(0);
+  });
+});
+
+describe('calcDscr (返済余裕率)', () => {
+  it('computes DSCR = NOI / annual debt service', () => {
+    const r = calcDscr(1_800_000, 1_500_000);
+    expect(r.dscr).toBe(1.2);
+    expect(r.band).toBe('healthy');
+  });
+
+  it('flags the danger band when DSCR is below 1.0', () => {
+    const r = calcDscr(1_400_000, 1_500_000); // ≈0.93
+    expect(r.dscr).toBe(0.93);
+    expect(r.band).toBe('danger');
+  });
+
+  it('treats exactly the danger threshold (1.0) as caution, not danger', () => {
+    const r = calcDscr(1_500_000, 1_500_000); // exactly 1.0
+    expect(r.dscr).toBe(DSCR_DANGER_THRESHOLD);
+    expect(r.band).toBe('caution');
+  });
+
+  it('treats exactly the caution threshold (1.2) as healthy, not caution', () => {
+    const r = calcDscr(1_800_000, 1_500_000); // exactly 1.2
+    expect(r.dscr).toBe(DSCR_CAUTION_THRESHOLD);
+    expect(r.band).toBe('healthy');
+  });
+
+  it('just below the caution threshold stays caution', () => {
+    const r = calcDscr(1_790_000, 1_500_000); // ≈1.19
+    expect(r.dscr).toBe(1.19);
+    expect(r.band).toBe('caution');
+  });
+
+  it('returns null when annual debt service is zero (no division by zero)', () => {
+    const r = calcDscr(1_800_000, 0);
+    expect(r.dscr).toBeNull();
+    expect(r.band).toBeNull();
+  });
+
+  it('returns null when annual debt service is negative', () => {
+    const r = calcDscr(1_800_000, -100);
+    expect(r.dscr).toBeNull();
+    expect(r.band).toBeNull();
+  });
+
+  it('flags danger for a negative NOI', () => {
+    const r = calcDscr(-500_000, 1_500_000);
+    expect(r.dscr).toBeLessThan(0);
+    expect(r.band).toBe('danger');
+  });
+});
+
+describe('calcBreakEvenOccupancyPct (損益分岐入居率 BER)', () => {
+  it('computes BER = (opex + debt) / gross rent', () => {
+    // (60万 + 150万) / 300万 = 70%
+    expect(calcBreakEvenOccupancyPct(600_000, 1_500_000, 3_000_000)).toBe(70);
+  });
+
+  it('can exceed 100% when costs alone exceed full rent', () => {
+    expect(calcBreakEvenOccupancyPct(2_000_000, 1_500_000, 3_000_000)).toBeGreaterThan(100);
+  });
+
+  it('returns null when gross rent is zero (no division by zero)', () => {
+    expect(calcBreakEvenOccupancyPct(600_000, 1_500_000, 0)).toBeNull();
+  });
+
+  it('returns null when gross rent is negative', () => {
+    expect(calcBreakEvenOccupancyPct(600_000, 1_500_000, -1)).toBeNull();
+  });
+
+  it('clamps negative opex and debt to zero (BER 0 when both non-positive)', () => {
+    expect(calcBreakEvenOccupancyPct(-100, -200, 3_000_000)).toBe(0);
+  });
+});
+
+describe('calcNpv', () => {
+  it('discounts each future cashflow by (1+r)^t', () => {
+    // CF: [-1000, 600, 600] at 10% → -1000 + 545.45 + 495.87 = 41.32 → 41 (rounded)
+    expect(calcNpv([-1000, 600, 600], 0.1)).toBe(41);
+  });
+
+  it('equals the simple sum when the discount rate is zero', () => {
+    expect(calcNpv([-1000, 600, 600], 0)).toBe(200);
+  });
+
+  it('returns a negative NPV when discounted inflows fall short of the outlay', () => {
+    expect(calcNpv([-1000, 300, 300], 0.1)).toBeLessThan(0);
+  });
+
+  it('returns null for an empty cashflow array', () => {
+    expect(calcNpv([], 0.1)).toBeNull();
+  });
+
+  it('returns null when the discount rate is -1 (denominator collapses)', () => {
+    expect(calcNpv([-1000, 600], -1)).toBeNull();
+  });
+
+  it('returns null when the discount rate is below -1', () => {
+    expect(calcNpv([-1000, 600], -1.5)).toBeNull();
+  });
+
+  it('returns null when the discount rate is not finite', () => {
+    expect(calcNpv([-1000, 600], Number.NaN)).toBeNull();
+    expect(calcNpv([-1000, 600], Number.POSITIVE_INFINITY)).toBeNull();
+  });
+
+  it('returns null when a cashflow value is not finite', () => {
+    expect(calcNpv([-1000, Number.NaN, 600], 0.1)).toBeNull();
+  });
+});
+
+describe('calcIrr (二分法)', () => {
+  it('finds the rate where NPV is zero for a known cashflow', () => {
+    // [-1000, 1100] → IRR = 10%.
+    const irr = calcIrr([-1000, 1100]);
+    expect(irr).not.toBeNull();
+    expect(irr).toBeCloseTo(0.1, 6);
+  });
+
+  it('solves a multi-period investment converging to the true IRR', () => {
+    // [-10000, 3000, 4200, 6800] has IRR ≈ 16.34% (independently verified).
+    const irr = calcIrr([-10000, 3000, 4200, 6800]);
+    expect(irr).not.toBeNull();
+    // Verify the solution: NPV at the returned rate must be ~0.
+    expect(Math.abs(calcNpv([-10000, 3000, 4200, 6800], irr as number) as number)).toBeLessThan(1);
+    expect(irr).toBeCloseTo(0.1634, 3);
+  });
+
+  it('returns null when all cashflows are positive (no sign change)', () => {
+    expect(calcIrr([1000, 600, 600])).toBeNull();
+  });
+
+  it('returns null when all cashflows are negative (no sign change)', () => {
+    expect(calcIrr([-1000, -600, -600])).toBeNull();
+  });
+
+  it('returns null for fewer than two cashflows', () => {
+    expect(calcIrr([])).toBeNull();
+    expect(calcIrr([-1000])).toBeNull();
+  });
+
+  it('returns null when a cashflow is not finite (NPV uncomputable)', () => {
+    expect(calcIrr([-1000, Number.NaN])).toBeNull();
+  });
+
+  it('handles a negative IRR when total inflows are below the outlay', () => {
+    // [-1000, 500, 400] → returns are below the principal → IRR negative.
+    const irr = calcIrr([-1000, 500, 400]);
+    expect(irr).not.toBeNull();
+    expect(irr as number).toBeLessThan(0);
+    expect(Math.abs(calcNpv([-1000, 500, 400], irr as number) as number)).toBeLessThan(1);
+  });
+
+  it('converges within the tolerance (NPV at the IRR is near zero)', () => {
+    const cf = [-5000, 1500, 1500, 1500, 1500];
+    const irr = calcIrr(cf) as number;
+    const npvAtIrr = calcNpv(cf, irr) as number;
+    // bisection refines to integer-rounded NPV; assert well within ¥1.
+    expect(Math.abs(npvAtIrr)).toBeLessThanOrEqual(1);
+    expect(IRR_TOLERANCE).toBeLessThan(1e-6);
   });
 });
