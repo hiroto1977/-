@@ -154,3 +154,161 @@ export function calcCapitalGainsTax(
     takeHome: Math.max(0, proceeds) - totalTax,
   };
 }
+
+// ===========================================================================
+// 加算的な精緻化 (round 80)
+//
+// 以下はいずれも概算試算の純粋関数であり、正確な税額計算・税務助言ではない。
+// 適用には各特例固有の要件 (居住要件・買換要件・親族間の制限・他特例との
+// 重複適用不可など) があり、本モジュールは金額計算の骨子のみを提供する。
+// 実際の申告は税理士 / 国税庁の公式ツールで確認すること。
+// ===========================================================================
+
+/** 土地建物等の譲渡が「長期」(所有期間5年超) となる所有期間のしきい値 (年)。 */
+export const LONG_TERM_OWNERSHIP_YEARS = 5;
+
+/** 居住用財産の軽減税率 (10年超所有) が適用される所有期間のしきい値 (年)。 */
+export const REDUCED_RATE_OWNERSHIP_YEARS = 10;
+
+/**
+ * 所有期間 (年) から土地建物等の譲渡区分が「長期」(所有期間5年超) か判定する。
+ * 取得日の翌日から譲渡した年の1月1日までで判定するのが正確だが、本ヘルパーは
+ * 入力された「所有年数」がしきい値を超えるかのみを見る (国税庁 No.3208)。
+ * 5年ちょうどは短期 (false)。0・負・非有限は短期 (false) として安全側に倒す。
+ *
+ * @param years 所有期間 (年)
+ */
+export function isLongTermOwnership(years: number): boolean {
+  if (!Number.isFinite(years)) return false;
+  return years > LONG_TERM_OWNERSHIP_YEARS;
+}
+
+/**
+ * 居住用財産の軽減税率の特例 (10年超所有) の対象かを判定する。
+ * 所有期間が10年を「超える」ことが要件 (ちょうど10年は対象外、国税庁 No.3305)。
+ * 0・負・非有限は false。
+ *
+ * @param years 所有期間 (年)
+ */
+export function qualifiesForReducedRate(years: number): boolean {
+  if (!Number.isFinite(years)) return false;
+  return years > REDUCED_RATE_OWNERSHIP_YEARS;
+}
+
+/**
+ * 所有期間から土地建物等の譲渡区分を返すヘルパー。
+ * 5年以下 → 短期、5年超 → 長期 (国税庁 No.3208 / No.3211)。
+ *
+ * @param years 所有期間 (年)
+ */
+export function classifyRealEstateKind(
+  years: number,
+): Extract<CapitalAssetKind, 'real-estate-short' | 'real-estate-long'> {
+  return isLongTermOwnership(years) ? 'real-estate-long' : 'real-estate-short';
+}
+
+/** 相続財産の取得費加算特例の期限 (相続開始から3年10ヶ月 = 46ヶ月)。 */
+export const INHERITANCE_ADDITION_DEADLINE_MONTHS = 46;
+
+/**
+ * 相続財産を譲渡した場合の取得費加算特例 (国税庁 No.3267)。
+ *
+ * 相続開始の翌日から相続税の申告期限の翌日以後3年を経過する日 (= 相続開始から
+ * おおむね3年10ヶ月) までに相続財産を譲渡した場合、その者が納付した相続税額の
+ * うち譲渡資産に対応する部分を取得費に加算できる。
+ *
+ *   加算額 = 相続税額 × (譲渡資産の相続税評価額 / その者が取得した相続財産の
+ *            課税価格 (債務控除前))
+ *
+ * ただし加算額は「譲渡益 (= 収入 − (取得費 + 譲渡費用))」を上限とする
+ * (取得費加算により譲渡損を作り出すことはできない)。
+ *
+ * 期限超過・分母0・非有限・負入力は加算なし (0) を返す。
+ *
+ * @param inheritanceTaxPaid その者が納付した相続税額 (円)
+ * @param soldAssetInheritanceValue 譲渡資産の相続税評価額 (円)
+ * @param totalInheritedTaxableValue その者が取得した相続財産の課税価格 (円)
+ * @param gainBeforeAddition 取得費加算前の譲渡益 (円、上限に使用)
+ * @param monthsSinceInheritance 相続開始からの経過月数 (期限判定用)
+ */
+export function inheritanceAcquisitionCostAddition(
+  inheritanceTaxPaid: number,
+  soldAssetInheritanceValue: number,
+  totalInheritedTaxableValue: number,
+  gainBeforeAddition: number,
+  monthsSinceInheritance: number,
+): number {
+  if (
+    !Number.isFinite(inheritanceTaxPaid) ||
+    !Number.isFinite(soldAssetInheritanceValue) ||
+    !Number.isFinite(totalInheritedTaxableValue) ||
+    !Number.isFinite(gainBeforeAddition) ||
+    !Number.isFinite(monthsSinceInheritance)
+  ) {
+    return 0;
+  }
+  // 期限超過 (3年10ヶ月超) は適用不可。
+  if (monthsSinceInheritance > INHERITANCE_ADDITION_DEADLINE_MONTHS) return 0;
+  const tax = Math.max(0, inheritanceTaxPaid);
+  const soldValue = Math.max(0, soldAssetInheritanceValue);
+  const total = Math.max(0, totalInheritedTaxableValue);
+  const cap = Math.max(0, gainBeforeAddition);
+  // 分母0 は加算0 (ゼロ除算防止)。
+  if (total <= 0) return 0;
+  const raw = (tax * soldValue) / total;
+  // 譲渡益を上限とする。
+  return Math.round(Math.min(raw, cap));
+}
+
+/** 特定居住用財産の買換え特例の課税繰延を表す結果。 */
+export interface ReplacementDeferralResult {
+  /** 譲渡益 (= 収入 − (取得費 + 譲渡費用)、負なら0)。 */
+  readonly gain: number;
+  /** 今回課税される譲渡益 (買換資産でカバーされない部分)。 */
+  readonly taxableGain: number;
+  /** 課税が繰り延べられた譲渡益 (買換資産の取得費に引き継がれる)。 */
+  readonly deferredGain: number;
+}
+
+/**
+ * 特定居住用財産の買換え特例 (国税庁 No.3355) の課税部分・繰延部分を算定する。
+ *
+ * 譲渡資産の収入金額が買換資産の取得価額以下なら譲渡益の全額が繰延 (課税0)。
+ * 譲渡収入が買換資産の取得価額を超える場合、その超過額を「収入」とみなして
+ * 譲渡益を按分し、超過部分に対応する譲渡益のみ今回課税する。
+ *
+ *   収入超過額 = max(0, 譲渡収入 − 買換資産取得価額)
+ *   課税譲渡益 = 譲渡益 × (収入超過額 / 譲渡収入)
+ *   繰延譲渡益 = 譲渡益 − 課税譲渡益
+ *
+ * 譲渡益が無い (損 or 0) 場合・分母0 (収入0) 場合は課税0・繰延0。
+ *
+ * @param proceeds 譲渡収入金額 (売却代金)
+ * @param acquisitionCost 譲渡資産の取得費
+ * @param transferCost 譲渡費用
+ * @param replacementCost 買換資産の取得価額
+ */
+export function replacementPropertyDeferral(
+  proceeds: number,
+  acquisitionCost: number,
+  transferCost: number,
+  replacementCost: number,
+): ReplacementDeferralResult {
+  const p = Math.max(0, proceeds);
+  const cost = Math.max(0, acquisitionCost) + Math.max(0, transferCost);
+  const replacement = Math.max(0, replacementCost);
+  const gain = Math.max(0, p - cost);
+  if (gain <= 0 || p <= 0) {
+    return { gain, taxableGain: 0, deferredGain: 0 };
+  }
+  const excess = Math.max(0, p - replacement);
+  if (excess <= 0) {
+    // 全額買換 → 全額繰延。
+    return { gain, taxableGain: 0, deferredGain: gain };
+  }
+  // 収入の按分比率 (0..1)。excess<=p なので比率は1以下。
+  const ratio = Math.min(1, excess / p);
+  const taxableGain = Math.round(gain * ratio);
+  const deferredGain = gain - taxableGain;
+  return { gain, taxableGain, deferredGain };
+}
