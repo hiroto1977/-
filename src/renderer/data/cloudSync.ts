@@ -125,14 +125,19 @@ export function planSync(
     totalBytes += size;
   }
 
-  // path 昇順で安定化 (added/changed の連結順に依存しない決定論的出力)。
+  // path 昇順で安定化 (added/changed を連結したため、連結順に依存しない
+  // 決定論的出力にするには明示ソートが必須)。
   uploads.sort(comparePathAsc);
 
-  const skipped = diff.unchanged.map((d) => d.path).sort(compareStr);
+  // skipped / deletions は diffManifests が既に path 昇順で返す単一バケット
+  // (unchanged / removedLocally) をそのまま写すだけなので、ここでの再ソートは
+  // 不要 (冗長ソートを置くと等価変異になる)。順序保証は diffManifests に委ねる。
+  const skipped = diff.unchanged.map((d) => d.path);
 
-  const deletions: DeletionCandidate[] = diff.removedLocally
-    .map((d) => ({ path: d.path, deletionCandidate: true as const }))
-    .sort(comparePathAsc);
+  const deletions: DeletionCandidate[] = diff.removedLocally.map((d) => ({
+    path: d.path,
+    deletionCandidate: true as const,
+  }));
 
   return {
     uploads,
@@ -153,14 +158,6 @@ function comparePathAsc(a: { path: string }, b: { path: string }): number {
   // 第 2 三項はまるごと等価 (どの順序でも同じ全順序)。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   return a.path > b.path ? 1 : 0;
-}
-
-/** 文字列の path 昇順比較 (skipped 用)。comparePathAsc と同型の等価事情。 */
-function compareStr(a: string, b: string): number {
-  // Stryker disable next-line EqualityOperator
-  if (a < b) return -1;
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
-  return a > b ? 1 : 0;
 }
 
 /**
@@ -236,7 +233,13 @@ export function computeProgress(completed: number, failed: number, total: number
   if (!Number.isFinite(total) || total <= 0) return 0;
   const handled = completed + failed;
   const ratio = handled / total;
+  // 下限/上限クランプ。境界 (ratio===0 / ratio===1) では早期 return 値が
+  // ratio 自身と一致するため `<`→`<=` / `>`→`>=` の EqualityOperator は
+  // 観測上等価 (返り値が変わらない)。負/超過の本来の振る舞いは下の専用テスト
+  // (handled 負で 0 / handled 超過で 1) で撃墜済みなので境界等価のみ disable。
+  // Stryker disable next-line EqualityOperator
   if (ratio < 0) return 0;
+  // Stryker disable next-line EqualityOperator
   if (ratio > 1) return 1;
   return ratio;
 }
