@@ -13,7 +13,15 @@ import {
   calcStdDev,
   calcDcaSimulation,
 } from '../../shared/mutualFundsMetrics';
-import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../../shared/savingsPlanning';
+import {
+  requiredMonthlyContribution,
+  yearsToDouble,
+  emergencyFund,
+  inflationAdjustedValue,
+  realRateOfReturn,
+  emergencyFundCoverage,
+  goalProjection,
+} from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss } from '../../shared/fxCurrency';
 
 const simInputStyle: React.CSSProperties = {
@@ -52,6 +60,27 @@ export function MutualFundsPage() {
   );
   const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
   const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
+
+  // 追加: 現行積立での目標達成見込み・インフレ調整後の実質価値・実質利回り・予備資金充足率。
+  const [currentMonthly, setCurrentMonthly] = useState('30000');
+  const [inflationRate, setInflationRate] = useState('2');
+  const [cashOnHand, setCashOnHand] = useState('900000');
+  const projection = useMemo(
+    () => goalProjection(Number(currentMonthly) || 0, Number(goalTarget) || 0, Number(goalRate) || 0, Number(goalYears) || 0),
+    [currentMonthly, goalTarget, goalRate, goalYears],
+  );
+  const realTarget = useMemo(
+    () => inflationAdjustedValue(Number(goalTarget) || 0, Number(inflationRate) || 0, Number(goalYears) || 0),
+    [goalTarget, inflationRate, goalYears],
+  );
+  const realRate = useMemo(
+    () => realRateOfReturn(Number(goalRate) || 0, Number(inflationRate) || 0),
+    [goalRate, inflationRate],
+  );
+  const efCoverage = useMemo(
+    () => emergencyFundCoverage(Number(cashOnHand) || 0, Number(monthlyExpense) || 0, 6),
+    [cashOnHand, monthlyExpense],
+  );
 
   // トータルリターン (分配金再投資ベース) と保有銘柄リターンのリスク (標準偏差)。
   const [holdYears, setHoldYears] = useState('5');
@@ -292,14 +321,40 @@ export function MutualFundsPage() {
             毎月の生活費 (円)
             <input type="text" inputMode="decimal" value={monthlyExpense} onChange={(e) => setMonthlyExpense(e.target.value)} style={simInputStyle} />
           </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            現行の毎月積立 (円)
+            <input type="text" inputMode="decimal" value={currentMonthly} onChange={(e) => setCurrentMonthly(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定インフレ率 (%)
+            <input type="text" inputMode="decimal" value={inflationRate} onChange={(e) => setInflationRate(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            現預金 (円)
+            <input type="text" inputMode="decimal" value={cashOnHand} onChange={(e) => setCashOnHand(e.target.value)} style={simInputStyle} />
+          </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
           <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
         </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 12 }}>
+          <Stat
+            label="現行積立での到達見込み"
+            value={`${jpy(projection.projected)}${projection.onTrack ? ' (達成)' : ` (不足 ${jpy(projection.shortfall)})`}`}
+          />
+          <Stat label="必要な追加積立 (毎月)" value={jpy(projection.additionalMonthly)} />
+          <Stat label="目標額のインフレ調整後 実質価値" value={jpy(realTarget)} />
+          <Stat label="実質利回り (インフレ調整後)" value={realRate === null ? '—' : `${realRate}%`} />
+          <Stat label="予備資金 充足率" value={`${efCoverage.coveragePct}%`} />
+          <Stat
+            label="現預金でまかなえる月数"
+            value={efCoverage.monthsCovered === null ? '—' : `約 ${efCoverage.monthsCovered} か月`}
+          />
+        </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 毎月末積立・年率一定を仮定した概算です。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
+          ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
         </div>
       </Section>
 
