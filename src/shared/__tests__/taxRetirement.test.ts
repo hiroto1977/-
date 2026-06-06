@@ -3,6 +3,7 @@ import {
   calcRetirementTax,
   calcRetirementTaxableIncome,
   retirementDeduction,
+  roundUpYearsOfService,
 } from '../taxRetirement';
 import { calcBaseIncomeTax, RECONSTRUCTION_SURTAX_RATE } from '../taxCalc';
 
@@ -113,5 +114,76 @@ describe('calcRetirementTax', () => {
     const r = calcRetirementTax(50_000_000, 20);
     expect(r.takeHome).toBeLessThan(50_000_000);
     expect(r.takeHome).toBeGreaterThan(0);
+  });
+});
+
+describe('roundUpYearsOfService', () => {
+  it('rounds any fraction of a year up (1年未満切り上げ)', () => {
+    expect(roundUpYearsOfService(10 + 1 / 12)).toBe(11); // 10年1か月 → 11年
+    expect(roundUpYearsOfService(20 + 11 / 12)).toBe(21); // 20年11か月 → 21年
+    expect(roundUpYearsOfService(0.01)).toBe(1); // ごく僅かでも1年
+  });
+
+  it('keeps exact whole years unchanged', () => {
+    expect(roundUpYearsOfService(20)).toBe(20);
+    expect(roundUpYearsOfService(1)).toBe(1);
+  });
+
+  it('guards 0 / negative / NaN to 0', () => {
+    expect(roundUpYearsOfService(0)).toBe(0);
+    expect(roundUpYearsOfService(-3.5)).toBe(0);
+    expect(roundUpYearsOfService(Number.NaN)).toBe(0);
+  });
+
+  it('flows into the deduction: 5年1か月 → 6年 → 控除 240万', () => {
+    expect(retirementDeduction(roundUpYearsOfService(5 + 1 / 12))).toBe(2_400_000);
+  });
+});
+
+describe('特定役員退職手当等 (specifiedOfficer)', () => {
+  it('taxes the full post-deduction amount with no 1/2 (≤5y)', () => {
+    // 勤続3年 → 控除 120万。退職金 600万 → after 480万。役員は全額課税 = 480万。
+    expect(
+      calcRetirementTaxableIncome(6_000_000, 3, { specifiedOfficer: true }),
+    ).toBe(4_800_000);
+  });
+
+  it('ignores the 300万 boundary that short-term uses', () => {
+    // 勤続3年・after 280万 (≤300万)。短期なら1/2=140万、特定役員は全額=280万。
+    expect(
+      calcRetirementTaxableIncome(4_000_000, 3, { specifiedOfficer: true }),
+    ).toBe(2_800_000);
+    expect(
+      calcRetirementTaxableIncome(4_000_000, 3, { shortTerm: true }),
+    ).toBe(1_400_000);
+  });
+
+  it('applies at exactly 5 years but not at 6 (boundary)', () => {
+    // 勤続5年 → 控除 200万。退職金 600万 → after 400万 → 全額課税 400万。
+    expect(
+      calcRetirementTaxableIncome(6_000_000, 5, { specifiedOfficer: true }),
+    ).toBe(4_000_000);
+    // 勤続6年 → specifiedOfficer 無効 → 通常1/2。控除 240万 → after 360万 → 180万。
+    expect(
+      calcRetirementTaxableIncome(6_000_000, 6, { specifiedOfficer: true }),
+    ).toBe(1_800_000);
+  });
+
+  it('takes precedence over shortTerm when both are set', () => {
+    // 勤続3年・after 480万。両方 true なら特定役員 (全額480万)、短期(330万) ではない。
+    expect(
+      calcRetirementTaxableIncome(6_000_000, 3, {
+        specifiedOfficer: true,
+        shortTerm: true,
+      }),
+    ).toBe(4_800_000);
+  });
+
+  it('flows through calcRetirementTax', () => {
+    const officer = calcRetirementTax(6_000_000, 3, { specifiedOfficer: true });
+    expect(officer.taxableIncome).toBe(4_800_000);
+    const normal = calcRetirementTax(6_000_000, 3, { shortTerm: true });
+    expect(normal.taxableIncome).toBe(3_300_000);
+    expect(officer.incomeTax).toBeGreaterThan(normal.incomeTax);
   });
 });
