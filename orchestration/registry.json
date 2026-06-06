@@ -287,7 +287,8 @@
           "tax-credits",
           "tax-separate",
           "tax-consumption",
-          "resident-municipality"
+          "resident-municipality",
+          "corporate-tax"
         ]
       },
       {
@@ -814,6 +815,14 @@
       "id": "resident-municipality",
       "domain": "住民税(自治体差)",
       "focus": "calcResidentTaxにMunicipalityOverride(所得割率/均等割額)を追加し自治体差を概算。未指定は標準定数フォールバックで既存挙動不変、不正値ガード",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-tax"
+    },
+    {
+      "id": "corporate-tax",
+      "domain": "税務(法人税等)",
+      "focus": "法人税(中小軽減15%/23.2%)+地方法人税+法人住民税(均等割+法人税割)+法人事業税+特別法人事業税の概算と実効税率・税引後利益。営業利益→税引後の事業ダッシュボード接続(taxCorporate)",
       "active": true,
       "role": "research",
       "manager": "mgr-tax"
@@ -2829,6 +2838,76 @@
         "税務ラウンド(住民税自治体差): calcResidentTax に任意の MunicipalityOverride(所得割率 incomeRate / 均等割額 perCapita)引数を加算的に追加。未指定は標準定数(10%/5,000円)にフォールバックし既存呼び出しは完全不変、負値/NaN/Infinity は入力ガードで標準値へ。taxCalc.ts mutation 100%維持(226killed)、+19 it (#143)。静的2877→2896/実行時2954→2973。"
       ],
       "note": "v3機構の自律ラウンド。文書化済 税務backlog の最終項目を消化。teams 58→59。"
+    },
+    {
+      "round": 54,
+      "teamCount": 60,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax"
+      ],
+      "shipped": [
+        "税務ラウンド(法人税): 事業ダッシュボードの『営業利益→税引後利益』ギャップを埋める法人税等の概算を新規実装(taxCorporate.ts)。法人税(中小800万以下15%/超23.2%・大法人23.2%)+地方法人税10.3%+法人住民税(法人税割7.0%+均等割)+法人事業税(所得割3.5/5.3/7.0%段階)+特別法人事業税37%、実効税率・税引後利益を算出。区分既定は中小・最小均等割、欠損は均等割のみ。mutation 100%(68killed)、+31 it (#145)。静的2896→2927/実行時2973→3004。"
+      ],
+      "note": "v3機構の自律ラウンド(完全自動化代行)。文書化backlog消化後の新ドメイン。teams 59→60。"
     }
   ],
   "backlog": [
