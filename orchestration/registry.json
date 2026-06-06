@@ -334,7 +334,8 @@
         "reportsTo": "cio",
         "teams": [
           "savings-planning",
-          "fx-currency"
+          "fx-currency",
+          "savings-planning-precision"
         ]
       },
       {
@@ -898,6 +899,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-investment"
+    },
+    {
+      "id": "savings-planning-precision",
+      "domain": "家計(貯蓄プランニング)",
+      "focus": "複利頻度別FV/インフレ調整後実質価値/フィッシャー実質利回り/緊急予備資金充足率/目標達成見込み・不足額を加算。期間0・利回り0・非有限ガード、既存関数不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-household"
     }
   ],
   "rounds": [
@@ -3576,6 +3585,85 @@
         "投資ラウンド(投資信託指標の精緻化): mutualFundsMetrics に トータルリターン(分配金再投資)+CAGR・実質コスト(信託報酬+隠れコストの複利蝕み)・標準偏差(母/標本)・ドルコスト平均法シミュを加算。空配列/n=1/リスク0/非有限/0除算ガード、既存(複利FV・シャープ)は不変、投資助言ではない注記。mutation 100%(142killed)、テスト追加 (#161)。静的→3107/実行時→3184。投資ドメイン精度向上(不動産→投信)。"
       ],
       "note": "『精度を高め』投資ドメイン継続。加算的で既存不変。teams 67→68。"
+    },
+    {
+      "round": 63,
+      "teamCount": 69,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs",
+        "aftertax-report",
+        "corporate-statutory-rate",
+        "realestate-investment-metrics",
+        "mutualfunds-investment-metrics",
+        "savings-planning-precision"
+      ],
+      "shipped": [
+        "家計ラウンド(貯蓄プランニングの精緻化): savingsPlanning に 複利頻度別将来価値(月/年複利)・インフレ調整後実質価値・フィッシャー実質利回り・緊急予備資金充足率・目標達成見込み/不足額/必要追加積立 を加算。期間0/利回り0/負/非有限ガード、既存3関数は不変、概算注記維持。mutation 100%(148killed)、+26 it (#163)。静的→3136/実行時→3213。精度向上を投資→家計へ展開。"
+      ],
+      "note": "『精度を高め』家計ドメイン。加算的で既存不変。teams 68→69。"
     }
   ],
   "backlog": [
