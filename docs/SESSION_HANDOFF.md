@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2959 静的 / 3036 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
+**品質メトリクス:** 2978 静的 / 3055 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
@@ -39,6 +39,14 @@ taxCorporate.ts 自体は変更せず mutation 100% 維持。新テスト 15 件
 に `employees?` 追加。**既存の引数なし/perCapitaLevy指定の呼び出しは挙動不変**。テーブルは罠#2 に
 従い block-level `Stryker disable all`、解決ロジックは下限走査+throwフォールバックの境界トリックで
 実テスト撃墜 → mutation 100.00% 維持。新テスト 22 件追加。
+**round 57 で繰越欠損金の控除を追加**: 青色申告で繰り越した過去最大10年分の欠損金を当期の課税所得から
+控除する概算を加算。純粋ヘルパ `applyLossCarryforward(income, loss, small)` が控除後所得・実際の控除額・
+繰越残額 (`LossCarryforwardResult`) を返す。中小法人は控除前所得の全額、大法人 (資本金1億円超) は
+控除前所得の50% (`LARGE_CORP_LOSS_DEDUCTION_RATIO`) が上限。`CorporateProfile` に `carryforwardLoss?`
+を追加し、`calcCorporateTax` は控除後所得に法人税等を課す (実効税率も控除後所得が分母)。
+`CorporateTaxBreakdown` に `deductedLoss` / `incomeAfterLoss` / `remainingLoss` を加算。**carryforwardLoss
+未指定/0/負は控除額0で従来挙動と完全に一致**。境界 (中小=全額/大法人=50%ちょうど・loss>income・
+income≤0で控除0+全額繰越) を実テスト撃墜 → mutation 100.00% 維持。新テスト 19 件追加。
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 

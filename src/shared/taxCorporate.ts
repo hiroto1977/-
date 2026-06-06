@@ -68,6 +68,9 @@ export const SPECIAL_BUSINESS_TAX_RATE = 0.37;
 /** 資本金による「大法人」判定の境界 (1億円超で大法人)。 */
 export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
 
+/** 大法人の繰越欠損金 控除限度割合 (控除前所得の50%)。 */
+export const LARGE_CORP_LOSS_DEDUCTION_RATIO = 0.5;
+
 // Stryker restore all
 
 // --- 法人住民税 均等割の区分テーブル (令和6年度・標準税率) ----------------
@@ -136,12 +139,18 @@ const PER_CAPITA_TIERS: readonly PerCapitaTier[] = [
  * @property perCapitaLevy 法人住民税 均等割の年額 (円)。明示すると区分テーブル
  *                        より優先。未指定なら capital(+employees) から区分解決、
  *                        capital も無ければ最小区分 (7万円)。
+ * @property carryforwardLoss 繰越欠損金の残高 (円, 0以上)。青色申告で過去最大10年分
+ *                        繰り越した欠損金を当期の課税所得から控除する (精度向上 round 57)。
+ *                        中小法人は控除前所得の全額まで、大法人 (資本金1億円超) は
+ *                        控除前所得の50%まで控除できる。未指定/0/負 は控除なし
+ *                        (= round 56 までの従来挙動と完全に同一)。
  */
 export interface CorporateProfile {
   readonly capital?: number;
   readonly employees?: number;
   readonly smallBusiness?: boolean;
   readonly perCapitaLevy?: number;
+  readonly carryforwardLoss?: number;
 }
 
 /**
@@ -197,6 +206,51 @@ export function isSmallBusiness(profile: CorporateProfile = {}): boolean {
   if (profile.smallBusiness !== undefined) return profile.smallBusiness;
   if (profile.capital !== undefined) return profile.capital <= LARGE_CORP_CAPITAL_THRESHOLD;
   return true;
+}
+
+// --- 繰越欠損金の控除 ---------------------------------------------------
+
+/** 繰越欠損金 控除の結果 (控除後所得・実際の控除額・控除しきれず繰り越す残額)。 */
+export interface LossCarryforwardResult {
+  /** 控除後の課税所得 (円, 0以上)。これに法人税等を課す。 */
+  readonly taxableIncome: number;
+  /** 当期に実際に控除した繰越欠損金の額 (円, 0以上)。 */
+  readonly deductedLoss: number;
+  /** 控除しきれず翌期以降へ繰り越す欠損金の残額 (円, 0以上)。 */
+  readonly remainingLoss: number;
+}
+
+/**
+ * 控除前所得から繰越欠損金を控除し、控除後所得・控除額・繰越残額を返す純粋関数。
+ *
+ * 控除限度:
+ *   - 中小法人 (small=true): 控除前所得の全額まで控除可。
+ *   - 大法人   (small=false): 控除前所得の50% (`LARGE_CORP_LOSS_DEDUCTION_RATIO`) が上限。
+ * 実際の控除額は「繰越欠損金残高」と「控除限度額」の小さい方。
+ *
+ * 境界・既定挙動:
+ *   - loss が未指定/0/負: 控除なし (taxableIncome=income, deductedLoss=0)。従来挙動を保持。
+ *   - income が 0以下 (欠損): 控除限度0なので控除なし。所得は0に底打ち、loss 全額が繰越残。
+ *   - 中小で loss ≥ income: income 全額を控除し所得0、繰越残は loss−income。
+ *
+ * @param income 控除前の課税所得 (円)。負は0とみなす。
+ * @param loss   繰越欠損金の残高 (円)。負/未指定は0とみなす。
+ * @param small  中小法人か (true=全額控除 / false=50%上限)。
+ */
+export function applyLossCarryforward(
+  income: number,
+  loss: number,
+  small: boolean,
+): LossCarryforwardResult {
+  const baseIncome = Math.max(0, income);
+  const availableLoss = Math.max(0, loss);
+  const limit = small ? baseIncome : baseIncome * LARGE_CORP_LOSS_DEDUCTION_RATIO;
+  const deductedLoss = Math.min(availableLoss, limit);
+  return {
+    taxableIncome: baseIncome - deductedLoss,
+    deductedLoss,
+    remainingLoss: availableLoss - deductedLoss,
+  };
 }
 
 // --- 個別税額 -----------------------------------------------------------
@@ -290,6 +344,15 @@ export function calcSpecialBusinessTax(businessTaxIncomePortion: number): number
 export interface CorporateTaxBreakdown {
   /** 課税所得 (入力をそのまま反映。負はそのまま)。 */
   readonly taxableIncome: number;
+  /** 繰越欠損金として当期に控除した額 (円, 0以上)。控除なしなら0 (精度向上 round 57)。 */
+  readonly deductedLoss: number;
+  /**
+   * 繰越欠損金 控除後の課税所得 (円, 0以上)。法人税等はこの額に課税される。
+   * 控除がない場合は max(0, taxableIncome) と一致 (従来挙動)。
+   */
+  readonly incomeAfterLoss: number;
+  /** 控除しきれず翌期以降へ繰り越す欠損金の残額 (円, 0以上)。 */
+  readonly remainingLoss: number;
   /** 法人税。 */
   readonly corporateIncomeTax: number;
   /** 地方法人税。 */
@@ -321,6 +384,12 @@ export interface CorporateTaxBreakdown {
  *   2. なければ capital から区分テーブルで解決 (employees があれば 50人区分も反映)。
  *   3. capital も無ければ従来どおり最小区分 (7万円)。
  *
+ * 繰越欠損金の控除 (精度向上 round 57):
+ *   control 前所得から `carryforwardLoss` を控除した「控除後所得」に法人税等を課す。
+ *   中小法人は控除前所得の全額、大法人は50%が控除上限 (`applyLossCarryforward`)。
+ *   carryforwardLoss が未指定/0/負なら控除額0で控除後所得=従来の課税所得となり、
+ *   round 56 までの挙動と完全に一致する。実効税率は控除後所得を分母とする。
+ *
  * @param taxableIncome 課税所得 (円, 年額)。負は欠損。
  * @param profile       会社区分 (未指定は中小・最小均等割の保守的既定)。
  */
@@ -332,10 +401,13 @@ export function calcCorporateTax(
   const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile));
 
   const income = Math.max(0, taxableIncome);
-  const corporateIncomeTax = calcCorporateIncomeTax(income, small);
+  const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small);
+  const incomeAfterLoss = loss.taxableIncome;
+
+  const corporateIncomeTax = calcCorporateIncomeTax(incomeAfterLoss, small);
   const localCorporateTax = calcLocalCorporateTax(corporateIncomeTax);
   const residentTax = calcResidentCorporateTax(corporateIncomeTax, perCapitaLevy);
-  const businessTax = calcBusinessTaxIncomePortion(income);
+  const businessTax = calcBusinessTaxIncomePortion(incomeAfterLoss);
   const specialBusinessTax = calcSpecialBusinessTax(businessTax);
 
   const totalTax =
@@ -345,11 +417,14 @@ export function calcCorporateTax(
     businessTax +
     specialBusinessTax;
 
-  const effectiveRate = income > 0 ? totalTax / income : 0;
+  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
   const afterTaxProfit = taxableIncome - totalTax;
 
   return {
     taxableIncome,
+    deductedLoss: loss.deductedLoss,
+    incomeAfterLoss,
+    remainingLoss: loss.remainingLoss,
     corporateIncomeTax,
     localCorporateTax,
     residentTax,
