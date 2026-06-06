@@ -240,28 +240,26 @@ export function calcBreakEvenOccupancyPct(
  * @returns NPV (円)。非有限値が混入したら null。
  */
 export function calcNpv(cashflows: readonly number[], discountRate: number): number | null {
-  const raw = npvRaw(cashflows, discountRate);
-  return raw === null ? null : Math.round(raw);
-}
-
-/**
- * 丸めなしの NPV (内部用)。IRR の二分法は丸め前の精密な NPV を必要とするため、
- * 公開 {@link calcNpv} (整数丸め) と別に保持する。ガード条件は同一。
- */
-function npvRaw(cashflows: readonly number[], discountRate: number): number | null {
   if (cashflows.length === 0 || !Number.isFinite(discountRate) || discountRate <= -1) {
     return null;
   }
-  let npv = 0;
-  for (let t = 0; t < cashflows.length; t += 1) {
-    const cf = cashflows[t];
-    if (cf === undefined || !Number.isFinite(cf)) {
-      return null;
-    }
-    npv += cf / Math.pow(1 + discountRate, t);
-  }
+  // npvSum は非有限 CF / オーバーフローで NaN/Infinity を返すので、ここで一括ガード。
+  const npv = npvSum(cashflows, discountRate);
   if (!Number.isFinite(npv)) {
     return null;
+  }
+  return Math.round(npv);
+}
+
+/**
+ * 丸めなしの NPV 総和。discountRate > −1 である前提 (呼び出し側でガード済み)。
+ * 非有限な CF が混入すれば結果は NaN になり、呼び出し側が弾く。IRR の二分法は
+ * 丸め前の精密値を要するため使う。
+ */
+function npvSum(cashflows: readonly number[], discountRate: number): number {
+  let npv = 0;
+  for (let t = 0; t < cashflows.length; t += 1) {
+    npv += (cashflows[t] as number) / Math.pow(1 + discountRate, t);
   }
   return npv;
 }
@@ -288,45 +286,43 @@ export const IRR_RATE_HIGH = 10;
  * @returns IRR (小数。例 0.08 = 8%)。符号変化なし・NPV 計算不能なら null。
  */
 export function calcIrr(cashflows: readonly number[]): number | null {
-  if (cashflows.length < 2) {
+  // 探索区間端の NPV。要素 0/1 個や同符号端は下の符号判定が null を返す。
+  const npvLow = npvSum(cashflows, IRR_RATE_LOW);
+  const npvHigh = npvSum(cashflows, IRR_RATE_HIGH);
+  // npvLow は各項の分母 (1−0.9999)^t = 0.0001^t が最小 = 各項の絶対値が最大の
+  // 端点。よって npvHigh の項は常に |npvLow の項| 以下で、npvLow が有限なら
+  // npvHigh も必ず有限。非有限 (非有限 CF・オーバーフロー) は npvLow で弾ける。
+  if (!Number.isFinite(npvLow)) {
     return null;
   }
-  const npvLow = npvRaw(cashflows, IRR_RATE_LOW);
-  const npvHigh = npvRaw(cashflows, IRR_RATE_HIGH);
-  if (npvLow === null || npvHigh === null) {
-    return null;
-  }
-  // 端点がちょうど解 (NPV = 0) の場合は即返す。
-  if (npvLow === 0) {
-    return Math.round(IRR_RATE_LOW * 1e6) / 1e6;
-  }
-  if (npvHigh === 0) {
-    return Math.round(IRR_RATE_HIGH * 1e6) / 1e6;
-  }
-  // 符号変化がなければ範囲内に解は無い (二分法不可)。
-  if (npvLow > 0 === npvHigh > 0) {
+  // 符号変化がなければ範囲内に解は無い (二分法不可)。0 は非正 (false) 扱い。
+  const lowPositive = npvLow > 0;
+  if (lowPositive === npvHigh > 0) {
     return null;
   }
 
+  // 区間 [lo, hi] で「lo 側の NPV 符号」は不変 (= lowPositive)。中点の符号が
+  // lo 側と一致すれば lo を、そうでなければ hi を中点へ寄せる。区間幅は毎反復で
+  // 半減し、IRR_MAX_ITERATIONS (=200) 回で 10.9999/2^200 ≈ 1e-59 まで縮むため、
+  // 許容誤差 IRR_TOLERANCE (1e-7) までの収束が反復上限内で必ず保証される
+  // (固定回反復 = 早期 break 不要で収束ガードを一点に集約)。
   let lo = IRR_RATE_LOW;
   let hi = IRR_RATE_HIGH;
-  let loPositive = npvLow > 0;
-  let mid = (lo + hi) / 2;
+  // Stryker disable next-line EqualityOperator: 反復回数は上限まで固定で回す。
+  // 200 回で幅は許容誤差を遥かに下回り、201 回目以降は丸め後の結果を変えないため
+  // i<MAX と i<=MAX / i!=MAX は同値 (等価変異)。i>MAX 等は ConditionalExpression
+  // 変異 (true=無限ループ→timeout, false=未実行→誤答) として別途撃墜される。
   for (let i = 0; i < IRR_MAX_ITERATIONS; i += 1) {
-    mid = (lo + hi) / 2;
-    const npvMid = npvRaw(cashflows, mid);
-    if (npvMid === null) {
-      return null;
-    }
-    if (Math.abs(npvMid) < IRR_TOLERANCE || (hi - lo) / 2 < IRR_TOLERANCE) {
-      break;
-    }
-    if (npvMid > 0 === loPositive) {
+    const mid = (lo + hi) / 2;
+    const npvMid = npvSum(cashflows, mid);
+    // Stryker disable next-line EqualityOperator: 中点 NPV がちょうど 0 になるのは
+    // 二項中点 (dyadic) が根に一致する場合のみで、そのとき根は mid なので > と >= は
+    // 同一の収束先を与える (等価変異)。
+    if (npvMid > 0 === lowPositive) {
       lo = mid;
-      loPositive = npvMid > 0;
     } else {
       hi = mid;
     }
   }
-  return Math.round(mid * 1e6) / 1e6;
+  return Math.round(((lo + hi) / 2) * 1e6) / 1e6;
 }

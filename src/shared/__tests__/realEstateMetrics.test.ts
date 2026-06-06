@@ -233,6 +233,12 @@ describe('calcNpv', () => {
     expect(calcNpv([-1000, 600], -1)).toBeNull();
   });
 
+  it('returns null at rate -1 even for a single period-0 cashflow (guards <= vs <)', () => {
+    // (1 + -1)^0 = 1 would yield a finite 500 if the guard were `< -1`;
+    // the `<= -1` guard must reject -1 outright.
+    expect(calcNpv([500], -1)).toBeNull();
+  });
+
   it('returns null when the discount rate is below -1', () => {
     expect(calcNpv([-1000, 600], -1.5)).toBeNull();
   });
@@ -244,6 +250,11 @@ describe('calcNpv', () => {
 
   it('returns null when a cashflow value is not finite', () => {
     expect(calcNpv([-1000, Number.NaN, 600], 0.1)).toBeNull();
+  });
+
+  it('returns null when the discounted sum overflows to a non-finite value', () => {
+    // Two MAX_VALUE-scale inflows at rate 0 overflow the float sum to Infinity.
+    expect(calcNpv([Number.MAX_VALUE, Number.MAX_VALUE], 0)).toBeNull();
   });
 });
 
@@ -279,6 +290,28 @@ describe('calcIrr (二分法)', () => {
 
   it('returns null when a cashflow is not finite (NPV uncomputable)', () => {
     expect(calcIrr([-1000, Number.NaN])).toBeNull();
+  });
+
+  it('returns null when an endpoint NPV overflows to non-finite', () => {
+    // At IRR_RATE_LOW = -0.9999 the t=1 term divides by 1e-4, so a MAX_VALUE
+    // late cashflow overflows the low-end NPV to Infinity → cannot bracket.
+    expect(calcIrr([-1, Number.MAX_VALUE])).toBeNull();
+  });
+
+  it('returns null when the low-end NPV is -Infinity but the high-end is finite (sign-change would otherwise bisect)', () => {
+    // [MAX, -MAX]: NPV(-0.9999) = -Infinity, NPV(10) = +finite. The signs differ,
+    // so without the finiteness guard the bisection would run on an infinite
+    // bracket and return a bogus rate. The guard must reject it as null.
+    expect(calcIrr([Number.MAX_VALUE, -Number.MAX_VALUE])).toBeNull();
+  });
+
+  it('finds a root sitting exactly at the high end of the search range', () => {
+    // [-11, 121] has NPV(10) = -11 + 121/11 = 0 → IRR = 10 (1000%), the bracket
+    // high end. The high-end sign must be treated as non-positive (zero) so the
+    // sign change is detected and the root at r=10 is returned, not rejected.
+    const irr = calcIrr([-11, 121]);
+    expect(irr).not.toBeNull();
+    expect(irr).toBeCloseTo(10, 3);
   });
 
   it('handles a negative IRR when total inflows are below the outlay', () => {
