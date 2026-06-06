@@ -13,6 +13,7 @@ import {
   BUSINESS_TAX_TIER2_LIMIT,
   SPECIAL_BUSINESS_TAX_RATE,
   LARGE_CORP_CAPITAL_THRESHOLD,
+  LARGE_CORP_LOSS_DEDUCTION_RATIO,
   PER_CAPITA_EMPLOYEE_THRESHOLD,
   isSmallBusiness,
   calcCorporateIncomeTax,
@@ -22,6 +23,7 @@ import {
   calcSpecialBusinessTax,
   resolveCorporatePerCapita,
   resolvePerCapitaLevy,
+  applyLossCarryforward,
   calcCorporateTax,
 } from '../taxCorporate';
 
@@ -369,6 +371,221 @@ describe('calcCorporateTax 均等割 integration (round 56)', () => {
   });
 });
 
+describe('applyLossCarryforward (繰越欠損金の控除)', () => {
+  it('deducts nothing when loss is 0 / negative (既定挙動不変)', () => {
+    expect(applyLossCarryforward(10_000_000, 0, true)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+    expect(applyLossCarryforward(10_000_000, -5_000_000, true)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+    expect(applyLossCarryforward(10_000_000, -5_000_000, false)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business deducts the full loss up to income', () => {
+    // loss < income → deduct full loss
+    expect(applyLossCarryforward(10_000_000, 3_000_000, true)).toEqual({
+      taxableIncome: 7_000_000,
+      deductedLoss: 3_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business: loss exactly equal to income zeroes the income (境界)', () => {
+    expect(applyLossCarryforward(10_000_000, 10_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 10_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business: loss exceeding income deducts only up to income, rest carries over', () => {
+    expect(applyLossCarryforward(10_000_000, 15_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 10_000_000,
+      remainingLoss: 5_000_000,
+    });
+  });
+
+  it('large corp caps the deduction at 50% of pre-loss income (境界ちょうど)', () => {
+    // limit = 10,000,000 × 0.5 = 5,000,000; loss = 5,000,000 exactly → fully deducted, income halved
+    expect(applyLossCarryforward(10_000_000, 5_000_000, false)).toEqual({
+      taxableIncome: 5_000_000,
+      deductedLoss: 5_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('large corp: loss above the 50% cap deducts only the cap, rest carries over', () => {
+    // limit = 5,000,000; loss = 8,000,000 → deduct 5,000,000, carry 3,000,000
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false)).toEqual({
+      taxableIncome: 5_000_000,
+      deductedLoss: 5_000_000,
+      remainingLoss: 3_000_000,
+    });
+  });
+
+  it('large corp: loss below the 50% cap is deducted in full', () => {
+    // limit = 5,000,000; loss = 2,000,000 → deduct 2,000,000
+    expect(applyLossCarryforward(10_000_000, 2_000_000, false)).toEqual({
+      taxableIncome: 8_000_000,
+      deductedLoss: 2_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small deducts more than large at the same loss above the large cap', () => {
+    const small = applyLossCarryforward(10_000_000, 8_000_000, true);
+    const large = applyLossCarryforward(10_000_000, 8_000_000, false);
+    expect(small.deductedLoss).toBe(8_000_000);
+    expect(large.deductedLoss).toBe(5_000_000);
+    expect(small.deductedLoss).toBeGreaterThan(large.deductedLoss);
+    expect(small.taxableIncome).toBeLessThan(large.taxableIncome);
+  });
+
+  it('treats income 0 / negative as no deduction (limit 0), whole loss carries over', () => {
+    expect(applyLossCarryforward(0, 5_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+    expect(applyLossCarryforward(-3_000_000, 5_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+    // large corp at income 0: 50% of 0 is still 0 → no deduction
+    expect(applyLossCarryforward(0, 5_000_000, false)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+  });
+
+  it('conserves the loss: deductedLoss + remainingLoss === available loss', () => {
+    for (const small of [true, false]) {
+      for (const income of [0, 4_000_000, 10_000_000, 50_000_000]) {
+        for (const loss of [0, 1_000_000, 6_000_000, 100_000_000]) {
+          const r = applyLossCarryforward(income, loss, small);
+          expect(r.deductedLoss + r.remainingLoss).toBe(loss);
+          // taxed income never goes negative and never exceeds pre-loss income
+          expect(r.taxableIncome).toBeGreaterThanOrEqual(0);
+          expect(r.taxableIncome).toBeLessThanOrEqual(Math.max(0, income));
+        }
+      }
+    }
+  });
+
+  it('large cap is exactly half of income for a deductible loss (uses the ratio constant)', () => {
+    const income = 12_345_678;
+    const big = applyLossCarryforward(income, income, false); // loss ≥ income → hit the cap
+    expect(big.deductedLoss).toBe(income * LARGE_CORP_LOSS_DEDUCTION_RATIO);
+    expect(big.taxableIncome).toBe(income - income * LARGE_CORP_LOSS_DEDUCTION_RATIO);
+  });
+});
+
+describe('calcCorporateTax 繰越欠損金 integration (round 57)', () => {
+  it('is unchanged when carryforwardLoss is omitted / 0 / negative (既定挙動不変)', () => {
+    const base = calcCorporateTax(10_000_000);
+    expect(calcCorporateTax(10_000_000, {})).toEqual(base);
+    expect(calcCorporateTax(10_000_000, { carryforwardLoss: 0 })).toEqual(base);
+    expect(calcCorporateTax(10_000_000, { carryforwardLoss: -5_000_000 })).toEqual(base);
+    // and the new breakdown fields reflect "no deduction"
+    expect(base.deductedLoss).toBe(0);
+    expect(base.incomeAfterLoss).toBe(10_000_000);
+    expect(base.remainingLoss).toBe(0);
+  });
+
+  it('small business deducts the full loss, then taxes the reduced income', () => {
+    // 10,000,000 income, 3,000,000 loss → taxed on 7,000,000 (small)
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 3_000_000, smallBusiness: true });
+    const ref = calcCorporateTax(7_000_000, { smallBusiness: true });
+    expect(r.deductedLoss).toBe(3_000_000);
+    expect(r.incomeAfterLoss).toBe(7_000_000);
+    expect(r.remainingLoss).toBe(0);
+    expect(r.corporateIncomeTax).toBe(ref.corporateIncomeTax);
+    expect(r.businessTax).toBe(ref.businessTax);
+    expect(r.totalTax).toBe(ref.totalTax);
+    // taxableIncome keeps the original (pre-loss) income for reporting
+    expect(r.taxableIncome).toBe(10_000_000);
+    // afterTaxProfit is based on the original income minus tax
+    expect(r.afterTaxProfit).toBe(10_000_000 - r.totalTax);
+  });
+
+  it('large corp caps the deduction at 50% of income', () => {
+    // 10,000,000 income, 8,000,000 loss, large → cap 5,000,000, taxed on 5,000,000
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 8_000_000, smallBusiness: false });
+    const ref = calcCorporateTax(5_000_000, { smallBusiness: false });
+    expect(r.deductedLoss).toBe(5_000_000);
+    expect(r.incomeAfterLoss).toBe(5_000_000);
+    expect(r.remainingLoss).toBe(3_000_000);
+    expect(r.corporateIncomeTax).toBe(ref.corporateIncomeTax);
+    expect(r.totalTax).toBe(ref.totalTax);
+  });
+
+  it('large/small classification by capital drives the deduction cap', () => {
+    // capital over 1億 → large → 50% cap even without smallBusiness flag
+    const large = calcCorporateTax(10_000_000, {
+      carryforwardLoss: 8_000_000,
+      capital: 200_000_000,
+    });
+    expect(large.smallBusiness).toBe(false);
+    expect(large.deductedLoss).toBe(5_000_000);
+    expect(large.incomeAfterLoss).toBe(5_000_000);
+    // capital at/under 1億 → small → full deduction
+    const small = calcCorporateTax(10_000_000, {
+      carryforwardLoss: 8_000_000,
+      capital: 100_000_000,
+    });
+    expect(small.smallBusiness).toBe(true);
+    expect(small.deductedLoss).toBe(8_000_000);
+    expect(small.incomeAfterLoss).toBe(2_000_000);
+  });
+
+  it('a loss fully offsetting income leaves only the 均等割 (controlled-after-loss = 0)', () => {
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 10_000_000 });
+    expect(r.incomeAfterLoss).toBe(0);
+    expect(r.deductedLoss).toBe(10_000_000);
+    expect(r.corporateIncomeTax).toBe(0);
+    expect(r.localCorporateTax).toBe(0);
+    expect(r.businessTax).toBe(0);
+    expect(r.specialBusinessTax).toBe(0);
+    expect(r.residentTax).toBe(70_000); // 均等割のみ
+    expect(r.totalTax).toBe(70_000);
+    expect(r.effectiveRate).toBe(0); // after-loss income not > 0
+    expect(r.afterTaxProfit).toBe(10_000_000 - 70_000);
+  });
+
+  it('keeps effectiveRate based on the after-loss income', () => {
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 3_000_000, smallBusiness: true });
+    expect(r.effectiveRate).toBeCloseTo(r.totalTax / r.incomeAfterLoss, 12);
+  });
+
+  it('a loss reduces total tax versus no loss (精度向上の効果)', () => {
+    const withLoss = calcCorporateTax(10_000_000, { carryforwardLoss: 4_000_000 });
+    const noLoss = calcCorporateTax(10_000_000);
+    expect(withLoss.totalTax).toBeLessThan(noLoss.totalTax);
+    expect(withLoss.afterTaxProfit).toBeGreaterThan(noLoss.afterTaxProfit);
+  });
+
+  it('carries the unused loss forward when income is a deficit', () => {
+    const r = calcCorporateTax(-5_000_000, { carryforwardLoss: 3_000_000 });
+    expect(r.incomeAfterLoss).toBe(0);
+    expect(r.deductedLoss).toBe(0); // nothing to offset (income ≤ 0)
+    expect(r.remainingLoss).toBe(3_000_000); // whole loss still carried
+    expect(r.totalTax).toBe(70_000); // 均等割のみ
+    expect(r.taxableIncome).toBe(-5_000_000);
+  });
+});
+
 describe('year constants (令和6年度)', () => {
   it('exposes the documented rate table', () => {
     expect(CORP_TAX_REDUCED_RATE).toBe(0.15);
@@ -384,6 +601,7 @@ describe('year constants (令和6年度)', () => {
     expect(BUSINESS_TAX_TIER2_LIMIT).toBe(8_000_000);
     expect(SPECIAL_BUSINESS_TAX_RATE).toBe(0.37);
     expect(LARGE_CORP_CAPITAL_THRESHOLD).toBe(100_000_000);
+    expect(LARGE_CORP_LOSS_DEDUCTION_RATIO).toBe(0.5);
     expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
   });
 });
