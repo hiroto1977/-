@@ -95,20 +95,24 @@ export function futureValueWithFrequency(
   monthlyContribution: number,
   annualRatePct: number,
   years: number,
+  // 既定は月複利。分岐は frequency==='annual' のみを判定するため、'monthly' を
+  // 他の文字列に変えても monthly 経路に落ち結果は不変 (equivalent) → StringLiteral 無効化。
+  // Stryker disable next-line StringLiteral
   frequency: CompoundingFrequency = 'monthly',
 ): number {
   if (!Number.isFinite(monthlyContribution) || !Number.isFinite(annualRatePct) || !Number.isFinite(years)) {
     return 0;
   }
+  // 負の積立額・年数は 0 にクランプ。これ以降 pmt>=0・yrs>=0 が保証され、
+  // 年数 0 (= periods/n が 0) のときは各計算経路がそのまま 0 を返すため、
+  // 追加の <=0 早期 return ガードは冗長 (equivalent) として置かない。
   const pmt = Math.max(0, monthlyContribution);
   const yrs = Math.max(0, years);
-  if (pmt <= 0 || yrs <= 0) return 0;
 
   if (frequency === 'annual') {
     const annual = annualRatePct / 100;
     const yearlyContribution = pmt * 12;
     const periods = Math.round(yrs);
-    if (periods <= 0) return 0;
     let balance = 0;
     for (let i = 0; i < periods; i += 1) {
       // 既存残高にのみ利息を付与し、当年積立を年末に無利息で加える。
@@ -118,7 +122,6 @@ export function futureValueWithFrequency(
   }
 
   const n = Math.round(yrs * 12);
-  if (n <= 0) return 0;
   const r = monthlyRate(annualRatePct);
   // r がほぼ 0 のとき元本そのまま。1e-9 ちょうどは浮動小数で到達不能 → < / <= は equivalent。
   // Stryker disable next-line EqualityOperator
@@ -147,6 +150,9 @@ export function inflationAdjustedValue(
   if (!Number.isFinite(nominalAmount) || !Number.isFinite(annualInflationPct) || !Number.isFinite(years)) {
     return 0;
   }
+  // years<0 は割引でなく増価になってしまうため早期 return が必要。years===0 ちょうどは
+  // 下の式でも pow(1+i,0)=1 → nominal と一致するため <= → < は equivalent。
+  // Stryker disable next-line EqualityOperator
   if (years <= 0) return yen(nominalAmount);
   const i = annualInflationPct / 100;
   // 1 + i <= 0 は割引係数が 0 以下/負になり実質値を定義できない。
@@ -247,6 +253,9 @@ export function goalProjection(
   years: number,
 ): GoalProjection {
   const current = Number.isFinite(currentMonthly) ? Math.max(0, currentMonthly) : 0;
+  // requiredMonthlyContribution が月複利前提のため、見込み額も 'monthly' で整合させる。
+  // 'annual' 以外の文字列は monthly 経路に落ち結果不変 (equivalent) → StringLiteral 無効化。
+  // Stryker disable next-line StringLiteral
   const projected = futureValueWithFrequency(current, annualRatePct, years, 'monthly');
   const requiredMonthly = requiredMonthlyContribution(targetFutureValue, annualRatePct, years);
   const target = Number.isFinite(targetFutureValue) ? Math.max(0, targetFutureValue) : 0;
