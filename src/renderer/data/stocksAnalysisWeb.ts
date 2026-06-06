@@ -649,3 +649,196 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
   lines.push('', `---`, '', ADVISOR_DISCLAIMER);
   return lines.join('\n');
 }
+
+// ===========================================================================
+// 精緻化されたテクニカル / リスク指標 (round 75 追加, 加算的)
+//
+// すべて純粋関数・概算であり、入力はモック価格 (実市場データではない)。
+// これらは「投資助言ではありません」— 教育目的の参考統計に過ぎず、特定の
+// 売買タイミング・価格予測・金額指示を意図しない (RISK_METRICS_DISCLAIMER)。
+//
+// 数値的注意点:
+// - RSI/EMA は系列が短い (period 未満) と必ず null。EMA は SMA シードを使うため
+//   最初の有効値は index = period-1。
+// - ヒストリカル・ボラティリティは日次対数リターン (ln(p_t/p_{t-1})) の標本標準偏差
+//   (n-1 で割る) を年率化 (×√tradingDays)。リターンが 1 本未満 (価格 < 3 本) では
+//   標本分散が定義できず null。0 変動 (全て同値) なら 0。
+// - 最大ドローダウンはピーク比の最大下落率 (0..1)。単調増加なら 0。
+// ===========================================================================
+
+export const RISK_METRICS_DISCLAIMER =
+  '本指標は教育目的の概算統計であり、投資助言ではありません。' +
+  '過去の値動き (ここではモックデータ) は将来を保証しません。';
+
+/** 年率換算に使う既定取引日数 (米株のおおよその年間立会日数)。 */
+export const TRADING_DAYS_PER_YEAR = 252;
+
+/** 直近 2 本の SMA(fast)/SMA(slow) からゴールデン/デッドクロスを判定する純粋関数。
+ *  戦略 (SMA_CROSSOVER_STRATEGY) とは独立した再利用可能な検出器。
+ *  - golden: fast が slow を下から上抜け
+ *  - dead:   fast が slow を上から下抜け
+ *  履歴不足 (fast/slow が直近 2 本で算出できない) や fast>=slow の不正指定では null。 */
+export function detectCross(
+  closes: readonly number[],
+  fastPeriod: number,
+  slowPeriod: number,
+): 'golden' | 'dead' | 'none' | null {
+  if (fastPeriod <= 0 || slowPeriod <= 0) throw new Error('detectCross: periods must be > 0');
+  // fast は slow より短くなければクロスの意味を成さない。
+  if (fastPeriod >= slowPeriod) return null;
+  const fast = sma(closes, fastPeriod);
+  const slow = sma(closes, slowPeriod);
+  const i = closes.length - 1;
+  // 直近 2 本が必要。slow(長期) の方が遅れて有効化するため、i-1 の slow が非 null なら
+  // すべて非 null になるが、型のため 4 値を個別にガードする。
+  if (i < 1) return null;
+  const f0 = fast[i];
+  const s0 = slow[i];
+  const f1 = fast[i - 1];
+  const s1 = slow[i - 1];
+  if (f0 == null || s0 == null || f1 == null || s1 == null) return null;
+  if (f1 <= s1 && f0 > s0) return 'golden';
+  if (f1 >= s1 && f0 < s0) return 'dead';
+  return 'none';
+}
+
+/** 日次対数リターン列を返す (要素数は closes.length-1)。
+ *  非正の価格 (<= 0) や非有限値を含む場合、その区間の比は不正になるため null を返す。 */
+export function logReturns(closes: readonly number[]): number[] | null {
+  if (closes.length < 2) return null;
+  const out: number[] = [];
+  for (let i = 1; i < closes.length; i++) {
+    const prev = closes[i - 1]!;
+    const cur = closes[i]!;
+    // 対数は正の価格でのみ定義。0/負/非有限はガード。
+    if (!Number.isFinite(prev) || !Number.isFinite(cur) || prev <= 0 || cur <= 0) return null;
+    out.push(Math.log(cur / prev));
+  }
+  return out;
+}
+
+/** ヒストリカル・ボラティリティ (年率)。
+ *  日次対数リターンの標本標準偏差 (n-1) を √tradingDays で年率化する。
+ *  価格が 3 本未満 (リターンが 2 本未満で標本分散が定義不能) なら null。
+ *  リターンが全て同一 (0 変動) なら 0。tradingDays<=0 は不正で throw。 */
+export function historicalVolatility(
+  closes: readonly number[],
+  tradingDays: number = TRADING_DAYS_PER_YEAR,
+): number | null {
+  if (tradingDays <= 0) throw new Error('historicalVolatility: tradingDays must be > 0');
+  const rets = logReturns(closes);
+  // logReturns が null (価格 <2 本/非正値) か、リターンが 2 本未満なら標本分散が定義不能。
+  if (rets == null || rets.length < 2) return null;
+  const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
+  let sumSq = 0;
+  for (const r of rets) {
+    const d = r - mean;
+    sumSq += d * d;
+  }
+  // 標本分散 (n-1)。rets.length>=2 を上で保証済みなので分母 >0。
+  const variance = sumSq / (rets.length - 1);
+  return Math.sqrt(variance) * Math.sqrt(tradingDays);
+}
+
+/** 価格系列のピーク比・最大ドローダウン (0..1)。
+ *  各時点までの最高値からの最大下落率。単調増加なら 0。
+ *  価格が空/1 本のみ/非有限を含むなら null (ドローダウンが定義不能)。 */
+export function maxDrawdown(closes: readonly number[]): number | null {
+  if (closes.length < 2) return null;
+  let peak = closes[0]!;
+  if (!Number.isFinite(peak)) return null;
+  let maxDd = 0;
+  for (let i = 1; i < closes.length; i++) {
+    const p = closes[i]!;
+    if (!Number.isFinite(p)) return null;
+    if (p > peak) peak = p;
+    // peak は最初の有限価格以上。peak<=0 (全価格が <=0) ではドローダウン率が無意味なので
+    // その時点はスキップ (0 のまま)。
+    if (peak > 0) {
+      const dd = (peak - p) / peak;
+      if (dd > maxDd) maxDd = dd;
+    }
+  }
+  return maxDd;
+}
+
+/** リターン列に対するシャープ的なリスク調整リターン (概算)。
+ *  (平均リターン - リスクフリー率) / リターンの標本標準偏差。
+ *  riskFreePerPeriod は同一周期 (日次なら日次) のリスクフリー率 (既定 0)。
+ *  リターンが 2 本未満なら null。標準偏差が 0 (変動なし) なら null
+ *  (0 除算を避け、リスク調整リターンが定義不能であることを明示)。 */
+export function sharpeRatio(
+  returns: readonly number[],
+  riskFreePerPeriod: number = 0,
+): number | null {
+  if (returns.length < 2) return null;
+  const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+  let sumSq = 0;
+  for (const r of returns) {
+    const d = r - mean;
+    sumSq += d * d;
+  }
+  const stddev = Math.sqrt(sumSq / (returns.length - 1));
+  // 変動ゼロでは分母が 0。リスク調整リターンは定義不能なので null。
+  if (stddev === 0) return null;
+  return (mean - riskFreePerPeriod) / stddev;
+}
+
+/** ボリンジャーバンドにおける %b (バンド内位置)。
+ *  %b = (price - lower) / (upper - lower)。0 で下バンド, 1 で上バンド, 0.5 で中央。
+ *  バンド幅が 0 (upper===lower, σ=0) または非 null 算出不可なら null。 */
+export function percentB(
+  closes: readonly number[],
+  period: number,
+  k: number,
+): (number | null)[] {
+  if (period <= 0) throw new Error('percentB: period must be > 0');
+  const { upper, lower } = bollingerBands(closes, period, k);
+  return closes.map((price, i) => {
+    const u = upper[i];
+    const l = lower[i];
+    if (u == null || l == null) return null;
+    const width = u - l;
+    // σ=0 (全値同一) ではバンド幅 0 で位置が定義不能。
+    if (width === 0) return null;
+    return (price - l) / width;
+  });
+}
+
+export interface RiskMetrics {
+  symbol: string;
+  latestClose: number;
+  annualizedVolatilityPct: number | null;
+  maxDrawdownPct: number | null;
+  sharpeRatio: number | null;
+  cross: 'golden' | 'dead' | 'none' | null;
+  percentB: number | null;
+  disclaimer: string;
+}
+
+/** 1 シンボルのモック履歴に対する精緻なリスク指標スナップショットを組み立てる。
+ *  すべて概算・モックベースで、投資助言ではない (disclaimer 同梱)。 */
+export function buildRiskMetrics(
+  symbol: string,
+  now: number = Date.now(),
+  periods: number = HISTORY_LENGTH,
+): RiskMetrics {
+  const candles = mockCandles(symbol, now, periods);
+  const closes = candles.map((c) => c.close);
+  const last = candles[candles.length - 1];
+  const vol = historicalVolatility(closes);
+  const dd = maxDrawdown(closes);
+  const rets = logReturns(closes);
+  const sharpe = rets == null ? null : sharpeRatio(rets);
+  const pb = percentB(closes, 20, 2);
+  return {
+    symbol,
+    latestClose: last ? last.close : 0,
+    annualizedVolatilityPct: vol == null ? null : vol * 100,
+    maxDrawdownPct: dd == null ? null : dd * 100,
+    sharpeRatio: sharpe,
+    cross: detectCross(closes, 20, 50),
+    percentB: pb[pb.length - 1] ?? null,
+    disclaimer: RISK_METRICS_DISCLAIMER,
+  };
+}

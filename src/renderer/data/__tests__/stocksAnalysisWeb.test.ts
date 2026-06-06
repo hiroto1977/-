@@ -19,6 +19,15 @@ import {
   renderDashboardMarkdown,
   ADVISOR_DISCLAIMER,
   DEFAULT_ADVISOR_UNIVERSE,
+  detectCross,
+  logReturns,
+  historicalVolatility,
+  maxDrawdown,
+  sharpeRatio,
+  percentB,
+  buildRiskMetrics,
+  RISK_METRICS_DISCLAIMER,
+  TRADING_DAYS_PER_YEAR,
   type AdvisorResponse,
   type Strategy,
 } from '../stocksAnalysisWeb';
@@ -734,5 +743,232 @@ describe('dashboard html — 複数 advisor 推奨 (join 区切りの golden)', 
       },
     });
     expect(html).toBe("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>Stocks ダッシュボード</title></head><body style=\"font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec\"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: now</p><h2>ウォッチリスト</h2><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr><tr><td colspan=\"4\">(登録銘柄なし)</td></tr></table><h2>アドバイザー</h2><ol><li><b>AAPL</b> — r1 <i>(リスク: x)</i></li><li><b>MSFT</b> — r2 <i>(リスク: y)</i></li></ol><p style=\"color:#fbbf24\">D</p><p style=\"margin-top:24px;color:#8a93a6;font-size:12px\">本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。</p></body></html>");
+  });
+});
+
+// ===================== round 75 — 精緻化リスク指標 (加算的) =====================
+
+describe('RISK_METRICS_DISCLAIMER / TRADING_DAYS_PER_YEAR', () => {
+  it('disclaimer に「投資助言ではありません」を含む', () => {
+    expect(RISK_METRICS_DISCLAIMER).toContain('投資助言ではありません');
+  });
+  it('disclaimer に「将来を保証しません」を含む', () => {
+    expect(RISK_METRICS_DISCLAIMER).toContain('将来を保証しません');
+  });
+  it('TRADING_DAYS_PER_YEAR は 252', () => {
+    expect(TRADING_DAYS_PER_YEAR).toBe(252);
+  });
+});
+
+describe('detectCross', () => {
+  it('period<=0 で throw (fast)', () => {
+    expect(() => detectCross([1, 2, 3], 0, 2)).toThrow(/periods must be > 0/);
+  });
+  it('period<=0 で throw (slow)', () => {
+    expect(() => detectCross([1, 2, 3], 1, 0)).toThrow(/periods must be > 0/);
+  });
+  it('fast>=slow は null (不正指定)', () => {
+    expect(detectCross([1, 2, 3, 4, 5], 3, 3)).toBeNull();
+    expect(detectCross([1, 2, 3, 4, 5], 4, 2)).toBeNull();
+  });
+  it('履歴が 1 本のみ (i<1) は null', () => {
+    expect(detectCross([5], 1, 2)).toBeNull();
+  });
+  it('SMA が直近 2 本で算出できない (履歴不足) は null', () => {
+    // slow=3 を満たすには 3 本必要。直近 2 本そろえるには 4 本必要。3 本では i-1 の slow が null。
+    expect(detectCross([1, 2, 3], 1, 3)).toBeNull();
+  });
+  it('ゴールデンクロスを検出 (fast が下から上抜け)', () => {
+    // fast=1 (= 価格そのもの), slow=2。末尾 2 本: prev で fast<=slow, last で fast>slow。
+    // closes: ...,10,9,  6→ slow(末-1)= (9+6)/2=7.5, fast=6 (<=7.5); 末: 12 → slow=(6+12)/2=9, fast=12 (>9) → golden
+    expect(detectCross([10, 9, 6, 12], 1, 2)).toBe('golden');
+  });
+  it('デッドクロスを検出 (fast が上から下抜け)', () => {
+    // 末-1: fast>=slow ; 末: fast<slow
+    // closes: 1,2,10,3 → 末-1: fast=10, slow=(2+10)/2=6 (10>=6); 末: fast=3, slow=(10+3)/2=6.5 (3<6.5) → dead
+    expect(detectCross([1, 2, 10, 3], 1, 2)).toBe('dead');
+  });
+  it('クロス無しは none', () => {
+    // 単調増加で fast は常に slow を上回り続ける → none
+    expect(detectCross([1, 2, 3, 4, 5, 6], 1, 2)).toBe('none');
+  });
+});
+
+describe('logReturns', () => {
+  it('価格 2 本未満は null', () => {
+    expect(logReturns([])).toBeNull();
+    expect(logReturns([100])).toBeNull();
+  });
+  it('正の価格列で ln(p_t/p_{t-1}) を返す (要素数 n-1)', () => {
+    const r = logReturns([100, 110, 121]);
+    expect(r).not.toBeNull();
+    expect(r!).toHaveLength(2);
+    expect(r![0]!).toBeCloseTo(Math.log(110 / 100), 10);
+    expect(r![1]!).toBeCloseTo(Math.log(121 / 110), 10);
+  });
+  it('途中に非正の価格があれば null (prev<=0)', () => {
+    expect(logReturns([100, 0, 50])).toBeNull();
+    expect(logReturns([-5, 100])).toBeNull();
+  });
+  it('非有限値を含めば null', () => {
+    expect(logReturns([100, Number.NaN])).toBeNull();
+    expect(logReturns([Number.POSITIVE_INFINITY, 100])).toBeNull();
+  });
+  it('0 変動 (同値) は 0 のリターン列', () => {
+    const r = logReturns([50, 50, 50]);
+    expect(r).toEqual([0, 0]);
+  });
+});
+
+describe('historicalVolatility', () => {
+  it('tradingDays<=0 で throw', () => {
+    expect(() => historicalVolatility([1, 2, 3], 0)).toThrow(/tradingDays must be > 0/);
+  });
+  it('価格 3 本未満 (リターン<2) は null', () => {
+    expect(historicalVolatility([100])).toBeNull();
+    expect(historicalVolatility([100, 110])).toBeNull();
+  });
+  it('非正価格を含む (logReturns=null) は null', () => {
+    expect(historicalVolatility([100, 0, 50])).toBeNull();
+  });
+  it('0 変動 (全て同値) は 0', () => {
+    expect(historicalVolatility([50, 50, 50, 50])).toBe(0);
+  });
+  it('既知の標本標準偏差を年率化して返す', () => {
+    // closes=[100,110,100,110] → rets = [ln1.1, ln(100/110), ln1.1]
+    const closes = [100, 110, 100, 110];
+    const rets = [Math.log(1.1), Math.log(100 / 110), Math.log(1.1)];
+    const mean = (rets[0]! + rets[1]! + rets[2]!) / 3;
+    const sumSq = rets.reduce((a, r) => a + (r - mean) * (r - mean), 0);
+    const expected = Math.sqrt(sumSq / 2) * Math.sqrt(252);
+    expect(historicalVolatility(closes)!).toBeCloseTo(expected, 10);
+  });
+  it('tradingDays を変えると √ 比でスケールする', () => {
+    const closes = [100, 110, 105, 120];
+    const v252 = historicalVolatility(closes, 252)!;
+    const v63 = historicalVolatility(closes, 63)!;
+    // 252 = 4×63 → 比は √4 = 2
+    expect(v252 / v63).toBeCloseTo(2, 10);
+  });
+});
+
+describe('maxDrawdown', () => {
+  it('価格 2 本未満は null', () => {
+    expect(maxDrawdown([])).toBeNull();
+    expect(maxDrawdown([100])).toBeNull();
+  });
+  it('先頭が非有限なら null', () => {
+    expect(maxDrawdown([Number.NaN, 100])).toBeNull();
+  });
+  it('途中が非有限なら null', () => {
+    expect(maxDrawdown([100, Number.NaN, 90])).toBeNull();
+  });
+  it('単調増加は 0', () => {
+    expect(maxDrawdown([100, 110, 120, 130])).toBe(0);
+  });
+  it('ピークからの最大下落率を返す', () => {
+    // 100→120 (peak=120) →90 → dd=(120-90)/120=0.25。その後 110 で 0.083... → 最大は 0.25
+    expect(maxDrawdown([100, 120, 90, 110])).toBeCloseTo(0.25, 10);
+  });
+  it('複数の谷で最大の下落を採用', () => {
+    // peak=100, →50 (dd=0.5), →80, peak 維持, →60 (dd=0.4) → 最大 0.5
+    expect(maxDrawdown([100, 50, 80, 60])).toBeCloseTo(0.5, 10);
+  });
+});
+
+describe('sharpeRatio', () => {
+  it('リターン 2 本未満は null', () => {
+    expect(sharpeRatio([])).toBeNull();
+    expect(sharpeRatio([0.01])).toBeNull();
+  });
+  it('変動ゼロ (stddev=0) は null', () => {
+    expect(sharpeRatio([0.02, 0.02, 0.02])).toBeNull();
+  });
+  it('既知のシャープ比を返す (riskFree=0)', () => {
+    const rets = [0.01, -0.01, 0.02, 0.0];
+    const mean = (0.01 - 0.01 + 0.02 + 0.0) / 4;
+    const sumSq = rets.reduce((a, r) => a + (r - mean) * (r - mean), 0);
+    const sd = Math.sqrt(sumSq / 3);
+    expect(sharpeRatio(rets)!).toBeCloseTo(mean / sd, 10);
+  });
+  it('riskFreePerPeriod が分子から引かれる', () => {
+    const rets = [0.03, 0.01, 0.05, 0.01];
+    const s0 = sharpeRatio(rets, 0)!;
+    const s1 = sharpeRatio(rets, 0.01)!;
+    // riskFree>0 でシャープ比は下がる
+    expect(s1).toBeLessThan(s0);
+    // 差は riskFree / stddev に等しい
+    const mean = (0.03 + 0.01 + 0.05 + 0.01) / 4;
+    const sumSq = rets.reduce((a, r) => a + (r - mean) * (r - mean), 0);
+    const sd = Math.sqrt(sumSq / 3);
+    expect(s0 - s1).toBeCloseTo(0.01 / sd, 10);
+  });
+});
+
+describe('percentB', () => {
+  it('period<=0 で throw', () => {
+    expect(() => percentB([1, 2, 3], 0, 2)).toThrow(/period must be > 0/);
+  });
+  it('バンドが算出できない区間 (period 未満) は null', () => {
+    const pb = percentB([10, 11, 12], 5, 2);
+    expect(pb.every((v) => v === null)).toBe(true);
+  });
+  it('σ=0 (全値同一) ではバンド幅 0 で null', () => {
+    const pb = percentB([50, 50, 50, 50], 2, 2);
+    expect(pb[pb.length - 1]).toBeNull();
+  });
+  it('既知の %b を返す (中央=0.5)', () => {
+    // period=2, closes 末尾 2 本が [98,102]→ sma=100, σ=√(((98-100)^2+(102-100)^2)/2)=2
+    // upper=100+2*2=104, lower=100-2*2=96, width=8。price=102 → (102-96)/8=0.75
+    const pb = percentB([100, 98, 102], 2, 2);
+    expect(pb[pb.length - 1]!).toBeCloseTo(0.75, 10);
+  });
+  it('価格が下バンド付近で %b<0.5、上バンド付近で >0.5', () => {
+    const pb = percentB([100, 90, 110], 2, 1);
+    // 末尾: sma=(90+110)/2=100, σ=10, upper=110, lower=90, price=110 → %b=1
+    expect(pb[pb.length - 1]!).toBeCloseTo(1, 10);
+  });
+});
+
+describe('buildRiskMetrics', () => {
+  const SYM = 'AAPL';
+  it('全フィールドを埋め disclaimer を同梱する', () => {
+    const m = buildRiskMetrics(SYM, NOW);
+    expect(m.symbol).toBe(SYM);
+    expect(m.latestClose).toBeGreaterThan(0);
+    expect(m.disclaimer).toBe(RISK_METRICS_DISCLAIMER);
+    expect(m.annualizedVolatilityPct).not.toBeNull();
+    expect(m.maxDrawdownPct).not.toBeNull();
+    expect(['golden', 'dead', 'none']).toContain(m.cross);
+  });
+  it('決定論的 (同じ symbol/now で同じ結果)', () => {
+    expect(buildRiskMetrics(SYM, NOW)).toEqual(buildRiskMetrics(SYM, NOW));
+  });
+  it('volatility/maxDrawdown はパーセント換算 (×100)', () => {
+    const m = buildRiskMetrics(SYM, NOW, 120);
+    const candles = mockCandles(SYM, NOW, 120);
+    const closes = candles.map((c) => c.close);
+    const vol = historicalVolatility(closes)!;
+    const dd = maxDrawdown(closes)!;
+    expect(m.annualizedVolatilityPct!).toBeCloseTo(vol * 100, 10);
+    expect(m.maxDrawdownPct!).toBeCloseTo(dd * 100, 10);
+  });
+  it('periods が極小 (リターン不足) でも null を明快に返す', () => {
+    const m = buildRiskMetrics(SYM, NOW, 1);
+    expect(m.annualizedVolatilityPct).toBeNull();
+    expect(m.maxDrawdownPct).toBeNull();
+    expect(m.sharpeRatio).toBeNull();
+    expect(m.latestClose).toBeGreaterThan(0);
+  });
+  it('cross は detectCross(20,50) と一致', () => {
+    const m = buildRiskMetrics(SYM, NOW, 120);
+    const closes = mockCandles(SYM, NOW, 120).map((c) => c.close);
+    expect(m.cross).toBe(detectCross(closes, 20, 50));
+  });
+  it('percentB は末尾の percentB(20,2) と一致', () => {
+    const m = buildRiskMetrics(SYM, NOW, 120);
+    const closes = mockCandles(SYM, NOW, 120).map((c) => c.close);
+    const pb = percentB(closes, 20, 2);
+    expect(m.percentB).toBe(pb[pb.length - 1] ?? null);
   });
 });
