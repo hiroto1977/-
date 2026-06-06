@@ -16,7 +16,18 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2896 静的 / 2973 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2927 静的 / 3004 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+
+**税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
+所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
+譲渡 `taxCapitalGains` / 公的年金 `taxPublicPension` / 雑 `taxCasual`)・消費税 (`taxConsumption`,
+本則/簡易/2割特例)・社会保険 (`taxSocialInsurance`)・ふるさと納税 (`taxFurusato`) に加え、
+**round 54 で法人税等 `taxCorporate.ts` を追加**: 課税所得→法人税 (中小 800万以下15%軽減+超過23.2% /
+大法人一律23.2%)・地方法人税10.3%・法人住民税 (法人税割7.0%標準+均等割 既定7万)・法人事業税
+(段階別所得割 3.5/5.3/7.0%)+特別法人事業税37% を合算し、実効税率・税引後利益を `CorporateTaxBreakdown`
+で返す。欠損 (所得0/負) は均等割のみ。年度定数は令和6年度ベースでコメント根拠明記。税率テーブルは
+block-level `Stryker disable all`、計算ロジックは実テストで撃墜、income=0 早期returnの等価変異のみ
+next-line 限定 disable → **mutation 100.00%** (`npx stryker run --mutate src/shared/taxCorporate.ts`)。
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
