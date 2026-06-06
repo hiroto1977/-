@@ -364,7 +364,8 @@
           "operating-leverage",
           "yoy-analysis",
           "financial-ratios-precision",
-          "kpi-sales-analytics"
+          "kpi-sales-analytics",
+          "revenue-concentration-analysis"
         ]
       },
       {
@@ -979,6 +980,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "revenue-concentration-analysis",
+      "domain": "経営分析(売上集中度)",
+      "focus": "HHI(0-10000・低<1500/中/高>2500判定)・上位N依存度CRn・パレート分析(累積80%の主要顧客数)・実効取引先数(10000/HHI)・集中リスク(最大依存先喪失影響)を加算。空/合計0/負ガード、既存computeRevenueConcentration不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-management"
     }
   ],
   "rounds": [
