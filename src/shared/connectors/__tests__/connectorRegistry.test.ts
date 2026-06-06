@@ -105,8 +105,20 @@ describe('validateConnectors', () => {
     expect(errors).toHaveLength(1);
     expect(errors[0]!.code).toBe('unknown-source');
     expect(errors[0]!.connectorId).toBe('bad');
-    expect(errors[0]!.message).toContain('"bad"');
-    expect(errors[0]!.message).toContain('"nope"');
+    expect(errors[0]!.message).toBe('connector "bad" has unknown sourceService "nope"');
+  });
+
+  it('uses the #index label in non-empty-id error messages when id is empty', () => {
+    // An empty-id connector that ALSO has an unknown source: the source error's
+    // label must fall back to "#<index>", proving the `label` ternary picks the
+    // index branch (and that index is the real array position, here #1).
+    const errors = validateConnectors([
+      makeConnector(),
+      makeConnector({ id: '', sourceService: 'nope' as Connector['sourceService'] }),
+    ]);
+    const sourceErr = errors.find((e) => e.code === 'unknown-source');
+    expect(sourceErr?.connectorId).toBe('#1');
+    expect(sourceErr?.message).toBe('connector "#1" has unknown sourceService "nope"');
   });
 
   it('flags an unknown sourceService', () => {
@@ -114,6 +126,9 @@ describe('validateConnectors', () => {
       makeConnector({ sourceService: 'not-real' as Connector['sourceService'] }),
     ]);
     expect(errors.map((e) => e.code)).toEqual(['unknown-source']);
+    expect(errors[0]!.message).toBe(
+      'connector "shopify-to-slack" has unknown sourceService "not-real"',
+    );
   });
 
   it('flags an unknown targetService', () => {
@@ -121,6 +136,9 @@ describe('validateConnectors', () => {
       makeConnector({ targetService: 'not-real' as Connector['targetService'] }),
     ]);
     expect(errors.map((e) => e.code)).toEqual(['unknown-target']);
+    expect(errors[0]!.message).toBe(
+      'connector "shopify-to-slack" has unknown targetService "not-real"',
+    );
   });
 
   it('flags an unknown capability', () => {
@@ -128,6 +146,9 @@ describe('validateConnectors', () => {
       makeConnector({ capability: 'beam' as Connector['capability'] }),
     ]);
     expect(errors.map((e) => e.code)).toEqual(['unknown-capability']);
+    expect(errors[0]!.message).toBe(
+      'connector "shopify-to-slack" has unknown capability "beam"',
+    );
   });
 
   it('flags a duplicate id only on the second occurrence', () => {
@@ -237,31 +258,43 @@ describe('buildConnectorRegistry', () => {
 // --- resolveConnectors ---------------------------------------------------
 
 describe('resolveConnectors', () => {
-  const slackNotify = makeConnector({ id: 'shop-slack', sourceService: 'shopify', targetService: 'slack', capability: 'notify' });
-  const notionRecord = makeConnector({ id: 'shop-notion', sourceService: 'shopify', targetService: 'notion', capability: 'record' });
-  const githubSync = makeConnector({ id: 'gh-linear', sourceService: 'github', targetService: 'linear', capability: 'sync' });
-  const registry = buildConnectorRegistry([slackNotify, notionRecord, githubSync]);
+  // NOTE: factories (not describe-scope consts) so that buildConnectorRegistry
+  // is invoked *inside* each test — a describe-scope call runs during test-file
+  // collection, which makes Stryker classify the function-under-test's mutants
+  // as `static` (testsCompleted=0) and they can never be killed per-test.
+  const fixtures = () => {
+    const slackNotify = makeConnector({ id: 'shop-slack', sourceService: 'shopify', targetService: 'slack', capability: 'notify' });
+    const notionRecord = makeConnector({ id: 'shop-notion', sourceService: 'shopify', targetService: 'notion', capability: 'record' });
+    const githubSync = makeConnector({ id: 'gh-linear', sourceService: 'github', targetService: 'linear', capability: 'sync' });
+    const registry = buildConnectorRegistry([slackNotify, notionRecord, githubSync]);
+    return { slackNotify, notionRecord, githubSync, registry };
+  };
 
   it('returns all connectors for an empty query', () => {
+    const { slackNotify, notionRecord, githubSync, registry } = fixtures();
     expect(resolveConnectors(registry, {})).toEqual([slackNotify, notionRecord, githubSync]);
   });
 
   it('filters by sourceService', () => {
+    const { slackNotify, notionRecord, githubSync, registry } = fixtures();
     expect(resolveConnectors(registry, { sourceService: 'shopify' })).toEqual([slackNotify, notionRecord]);
     expect(resolveConnectors(registry, { sourceService: 'github' })).toEqual([githubSync]);
   });
 
   it('filters by capability', () => {
+    const { slackNotify, notionRecord, registry } = fixtures();
     expect(resolveConnectors(registry, { capability: 'notify' })).toEqual([slackNotify]);
     expect(resolveConnectors(registry, { capability: 'record' })).toEqual([notionRecord]);
   });
 
   it('filters by targetService', () => {
+    const { slackNotify, githubSync, registry } = fixtures();
     expect(resolveConnectors(registry, { targetService: 'slack' })).toEqual([slackNotify]);
     expect(resolveConnectors(registry, { targetService: 'linear' })).toEqual([githubSync]);
   });
 
   it('ANDs all three conditions together', () => {
+    const { slackNotify, registry } = fixtures();
     expect(
       resolveConnectors(registry, { sourceService: 'shopify', capability: 'notify', targetService: 'slack' }),
     ).toEqual([slackNotify]);
@@ -276,10 +309,12 @@ describe('resolveConnectors', () => {
   });
 
   it('returns [] when nothing matches', () => {
+    const { registry } = fixtures();
     expect(resolveConnectors(registry, { sourceService: 'stripe' })).toEqual([]);
   });
 
   it('preserves registry order in the result', () => {
+    const { registry } = fixtures();
     const result = resolveConnectors(registry, {});
     expect(result.map((c) => c.id)).toEqual(['shop-slack', 'shop-notion', 'gh-linear']);
   });
@@ -397,6 +432,19 @@ describe('isValidSemver', () => {
     expect(isValidSemver('1.0.0-alpha.1')).toBe(true);
     expect(isValidSemver('1.0.0-0.3.7')).toBe(true);
     expect(isValidSemver('1.0.0-rc.1')).toBe(true);
+  });
+
+  it('accepts numeric / mixed prerelease identifiers (regex-mutation tripwires)', () => {
+    // Each input distinguishes one specific Regex mutant of the prerelease
+    // grammar `(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.<same>)*` — they
+    // are all valid semver, so any `\d*→\d` / `\d→\D` / dropped-`*` mutation
+    // narrows the language and rejects one of them.
+    expect(isValidSemver('1.0.0-1')).toBe(true); // single-digit first segment
+    expect(isValidSemver('1.0.0-12')).toBe(true); // multi-digit first segment
+    expect(isValidSemver('1.0.0-1a')).toBe(true); // digits-then-letter identifier
+    expect(isValidSemver('1.0.0-a.12')).toBe(true); // multi-digit continuation segment
+    expect(isValidSemver('1.0.0-1a.2b')).toBe(true); // mixed segments in a chain
+    expect(isValidSemver('1.0.0-alpha.beta')).toBe(true); // multi-char alnum continuation
   });
 
   it('accepts build metadata', () => {

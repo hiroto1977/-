@@ -34,8 +34,10 @@ const CAPABILITY_SET = new Set<string>(CONNECTOR_CAPABILITIES);
 
 /** capability 文字列がホワイトリストのいずれかかを判定する型ガード。 */
 export function isConnectorCapability(value: unknown): value is ConnectorCapability {
-  // typeof ガードは membership に包含される (CAPABILITY_SET は文字列のみ) ため
-  // 非文字列に対する `.has` は常に false。serviceId.ts の isServiceId と同じパターン。
+  // `typeof value === 'string'` を true 固定する変異は equivalent: CAPABILITY_SET は
+  // 文字列のみを持つため、非文字列に対する `.has(value)` は常に false となり判定結果は
+  // 変わらない (typeof ガードが membership チェックに包含される)。serviceId.ts の
+  // isServiceId と同じ既知パターン。`.has(value)` 側の変異は実テストで撃墜する。
   // Stryker disable next-line ConditionalExpression
   return typeof value === 'string' && CAPABILITY_SET.has(value);
 }
