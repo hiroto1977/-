@@ -6,7 +6,15 @@ import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
-import { calcRealEstateYield, calcRealEstateLeverage } from '../../shared/realEstateMetrics';
+import {
+  calcRealEstateYield,
+  calcRealEstateLeverage,
+  calcNoiYield,
+  calcDscr,
+  calcBreakEvenOccupancyPct,
+  calcNpv,
+  calcIrr,
+} from '../../shared/realEstateMetrics';
 import { straightLineAnnual, straightLineSchedule } from '../../shared/depreciation';
 
 const reInputStyle: React.CSSProperties = {
@@ -44,6 +52,37 @@ export function RealEstatePage() {
     const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
     return { y, lev };
   }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
+
+  // 精緻化指標 (NOI 利回り・DSCR・損益分岐入居率) — レバレッジ試算の入力を再利用。
+  const [reOccStr, setReOccStr] = useState('95'); // 想定入居率 (%)
+  const refined = useMemo(() => {
+    const annualGrossRent = reNum(reRentStr) * 12;
+    const occ = Math.min(1, Math.max(0, reNum(reOccStr) / 100));
+    const opex = reNum(reExpenseStr);
+    const debt = reNum(reDebtStr);
+    const noiY = calcNoiYield(annualGrossRent, occ, opex, reNum(rePriceStr));
+    const dscr = calcDscr(noiY.noi, debt);
+    const ber = calcBreakEvenOccupancyPct(opex, debt, annualGrossRent);
+    return { noiY, dscr, ber };
+  }, [reRentStr, reOccStr, reExpenseStr, reDebtStr, rePriceStr]);
+
+  // NPV / IRR — 自己資金を初期投資 (マイナス) とし、各年の税引前CF、最終年に売却ネット手取りを加算。
+  const [npvDiscountStr, setNpvDiscountStr] = useState('4.0'); // 割引率 (%)
+  const [npvYearsStr, setNpvYearsStr] = useState('10'); // 保有年数
+  const [npvSaleStr, setNpvSaleStr] = useState('35000000'); // 売却ネット手取り
+  const dcf = useMemo(() => {
+    const years = Math.max(1, Math.min(50, Math.round(reNum(npvYearsStr))));
+    const annualCf = leverage.lev.annualCashflow; // 返済後の年間CF (概算)
+    const sale = reNum(npvSaleStr);
+    const equity = reNum(reEquityStr);
+    const flows: number[] = [-equity];
+    for (let t = 1; t <= years; t += 1) {
+      flows.push(t === years ? annualCf + sale : annualCf);
+    }
+    const npv = calcNpv(flows, reNum(npvDiscountStr) / 100);
+    const irr = calcIrr(flows);
+    return { years, npv, irr };
+  }, [npvYearsStr, npvSaleStr, reEquityStr, npvDiscountStr, leverage.lev.annualCashflow]);
 
   // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
   const [bldgCostStr, setBldgCostStr] = useState('25000000');
@@ -153,6 +192,57 @@ export function RealEstatePage() {
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
           <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
           <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+        </div>
+      </Section>
+
+      <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          上の試算入力に想定入居率を加え、空室損を控除した NOI ベースで評価します。
+          DSCR は NOI ÷ 年間返済額で、<strong>1.0 未満は危険水域</strong>、1.2 以上が目安。
+          損益分岐入居率を実際の入居率が下回ると赤字に転じます。
+          <strong>※ 概算であり投資助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定入居率(%)
+            <input type="text" inputMode="decimal" value={reOccStr} onChange={(e) => setReOccStr(e.target.value)} style={reInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <Stat label="NOI (年)" value={jpy(refined.noiY.noi)} positive={refined.noiY.noi >= 0} />
+          <Stat label="NOI 利回り" value={refined.noiY.noiYieldPct === null ? '—' : `${refined.noiY.noiYieldPct}%`} />
+          <Stat
+            label="DSCR"
+            value={refined.dscr.dscr === null ? '—' : refined.dscr.dscr.toFixed(2)}
+            positive={refined.dscr.band === 'healthy'}
+          />
+          <Stat label="損益分岐入居率" value={refined.ber === null ? '—' : `${refined.ber}%`} />
+        </div>
+      </Section>
+
+      <Section title="NPV / IRR (割引キャッシュフロー試算)">
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
+          自己資金を初期投資 (マイナス)、各年の返済後CF、最終年に売却ネット手取りを加えた
+          キャッシュフロー列から NPV (割引率指定) と IRR (二分法で概算) を求めます。
+          IRR は NPV がゼロになる割引率の目安です。
+          <strong>※ 概算であり投資助言ではありません。</strong>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+          {([
+            ['割引率(%)', npvDiscountStr, setNpvDiscountStr],
+            ['保有年数', npvYearsStr, setNpvYearsStr],
+            ['売却ネット手取り', npvSaleStr, setNpvSaleStr],
+          ] as const).map(([label, val, setter]) => (
+            <label key={label} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {label}
+              <input type="text" inputMode="decimal" value={val} onChange={(e) => setter(e.target.value)} style={reInputStyle} />
+            </label>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={(dcf.npv ?? 0) >= 0} />
+          <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={(dcf.irr ?? 0) >= 0} />
+          <Stat label="返済後CF (年・前提)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
         </div>
       </Section>
 
