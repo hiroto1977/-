@@ -91,6 +91,7 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): voi
   lines.push(`| 特別法人事業税 | ${yen(b.specialBusinessTax)} 円 |`);
   lines.push(`| 法人税等合計 | ${yen(b.totalTax)} 円 |`);
   lines.push(`| 実効税率 | ${fmtRate(b.effectiveRate)} |`);
+  lines.push(`| 法定実効税率(参考) | ${fmtRate(b.statutoryEffectiveRate)} |`);
   lines.push(`| 税引後利益 | ${yen(b.afterTaxProfit)} 円 |`);
   lines.push('');
   if (ordinaryProfit <= 0) {
@@ -100,6 +101,8 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): voi
     // 区分は常に中小法人 (保守的既定)。資本金等の細目は CorporateTaxCard (UI) で扱う。
     lines.push('> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。');
   }
+  lines.push('');
+  lines.push('> 実効税率は法人税等合計÷課税所得の単純合算ベース。法定実効税率(参考)は事業税(+特別法人事業税)の損金算入を織り込んだ標準指標(限界税率)で、両者は目的の異なる別の参考値です。');
   lines.push('');
   lines.push('※ 法人税等は概算試算であり、正確な税額計算・税務助言ではありません。申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。');
   lines.push('');

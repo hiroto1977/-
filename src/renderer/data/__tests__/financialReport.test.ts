@@ -152,9 +152,12 @@ describe('buildFinancialReportMarkdown', () => {
       '| 特別法人事業税 | 71,410 円 |',
       '| 法人税等合計 | 1,214,160 円 |',
       '| 実効税率 | 24.3% |',
+      '| 法定実効税率(参考) | 23.2% |',
       '| 税引後利益 | 3,785,840 円 |',
       '',
       '> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。',
+      '',
+      '> 実効税率は法人税等合計÷課税所得の単純合算ベース。法定実効税率(参考)は事業税(+特別法人事業税)の損金算入を織り込んだ標準指標(限界税率)で、両者は目的の異なる別の参考値です。',
       '',
       '※ 法人税等は概算試算であり、正確な税額計算・税務助言ではありません。申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。',
       '',
@@ -205,6 +208,25 @@ describe('buildFinancialReportMarkdown', () => {
       label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
     });
     expect(mdTax).toContain('法人税等は概算試算であり、正確な税額計算・税務助言ではありません');
+  });
+
+  it('法定実効税率(参考) の行と、実効税率との違いの注記を出す (round 60)', () => {
+    const b = calcCorporateTax(5_000_000);
+    const mdTax = buildFinancialReportMarkdown({
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+    });
+    // 行は statutoryEffectiveRate を小数1桁% で出す (5M中小→23.2%)。
+    const expectedRow = `| 法定実効税率(参考) | ${(b.statutoryEffectiveRate * 100).toFixed(1)}% |`;
+    expect(expectedRow).toBe('| 法定実効税率(参考) | 23.2% |');
+    expect(mdTax).toContain(expectedRow);
+    // 単純合算 vs 損金算入の違いを説明する注記が出る。
+    expect(mdTax).toContain('法定実効税率(参考)は事業税(+特別法人事業税)の損金算入を織り込んだ標準指標');
+    // 法定実効税率の行は 実効税率 の直後・税引後利益 の直前に並ぶ。
+    const idxEff = mdTax.indexOf('| 実効税率 |');
+    const idxStatutory = mdTax.indexOf('| 法定実効税率(参考) |');
+    const idxAfter = mdTax.indexOf('| 税引後利益 |');
+    expect(idxEff).toBeLessThan(idxStatutory);
+    expect(idxStatutory).toBeLessThan(idxAfter);
   });
 
   it('covers down/flat trends, null delta, and empty strengths/weaknesses', () => {
