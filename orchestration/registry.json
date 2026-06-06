@@ -314,7 +314,8 @@
         "teams": [
           "payroll",
           "labor-cost",
-          "social-insurance-grades"
+          "social-insurance-grades",
+          "payroll-precision"
         ]
       },
       {
@@ -916,6 +917,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-household"
+    },
+    {
+      "id": "payroll-precision",
+      "domain": "人事(給与計算)",
+      "focus": "月次手取り(額面→社保/源泉控除)・源泉徴収税額概算・賞与手取り(標準賞与額)・人件費の会社負担総額を加算。社保等級表/所得税モジュールと整合、分母0/上限/区分境界ガード、既存不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-payroll"
     }
   ],
   "rounds": [
@@ -3753,6 +3762,87 @@
         "為替ラウンド(fxCurrency精緻化): TTM/TTS/TTBスプレッド(片道手数料からTTS=TTM+/TTB=TTM-)・往復両替コスト(円→外貨→円のスプレッド損)・クロスレート(対円2通貨の合成)・手数料込み実効適用レートを加算。手数料0/0レート/逆方向/非有限ガード、既存3関数(convertToJpy/fxGainLoss/effectiveRate)は不変、投資助言ではない注記。mutation 100%(104killed)、+24 it (#165)。静的→3162/実行時→3239。"
       ],
       "note": "『精度を高め』為替ドメイン。加算的で既存不変。teams 69→70。"
+    },
+    {
+      "round": 65,
+      "teamCount": 71,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs",
+        "aftertax-report",
+        "corporate-statutory-rate",
+        "realestate-investment-metrics",
+        "mutualfunds-investment-metrics",
+        "savings-planning-precision",
+        "fx-currency-precision",
+        "payroll-precision"
+      ],
+      "shipped": [
+        "人事ラウンド(給与計算の精緻化): payroll に 月次手取り(額面→社保/源泉所得税控除→手取り)・源泉徴収税額概算・賞与手取り(標準賞与額)・人件費の会社負担総額(労使折半の会社分) を加算。taxSocialInsurance(等級表)/taxCalc(所得税)と整合、分母0/上限/区分境界ガード、既存関数は不変、概算注記維持。payroll.ts mutation 100%(156killed)、+テスト (#167)。静的3162→3190/実行時3239→3267。"
+      ],
+      "note": "『精度を高め』給与ドメイン。再起動中断をCOOがcherry-pick統合・docs補完。teams 70→71。"
     }
   ],
   "backlog": [
