@@ -136,8 +136,9 @@ export function calcPublicPensionDeductionWithOtherIncome(
   isOver65: boolean,
   otherIncome: number,
 ): number {
+  // base は常に ≥ 0 (calcPublicPensionDeduction は 0 か正値)。最終 Math.max が
+  // 下限 0 を保証するので、base=0 でも reduction を引いて 0 になり整合する。
   const base = calcPublicPensionDeduction(pensionIncome, isOver65);
-  if (base <= 0) return 0;
   const reduction = OTHER_INCOME_REDUCTION[classifyOtherIncome(otherIncome)];
   return Math.max(0, base - reduction);
 }
