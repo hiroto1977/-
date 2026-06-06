@@ -228,6 +228,13 @@ describe('calcStdDev', () => {
     expect(calcStdDev([], true)).toBeNull();
   });
 
+  it('sample std dev is defined at exactly two elements (n−1 boundary)', () => {
+    // [4, 8] mean 6 ; sumSq = 4 + 4 = 8 ; sample var = 8/1 = 8 ; s = 2.828 → 2.83
+    expect(calcStdDev([4, 8], true)).toBe(2.83);
+    // population: 8/2 = 4 ; σ = 2.
+    expect(calcStdDev([4, 8], false)).toBe(2);
+  });
+
   it('returns null when the series contains a non-finite value', () => {
     expect(calcStdDev([1, 2, NaN])).toBeNull();
     expect(calcStdDev([1, Infinity, 3])).toBeNull();

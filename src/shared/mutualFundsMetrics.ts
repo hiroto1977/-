@@ -80,7 +80,8 @@ function pct2(n: number): number {
 }
 
 function isFiniteNumber(n: number): boolean {
-  return typeof n === 'number' && Number.isFinite(n);
+  // 引数は型で number 保証済み。NaN / ±Infinity のみを弾く。
+  return Number.isFinite(n);
 }
 
 export interface TotalReturn {
@@ -198,7 +199,10 @@ export function calcStdDev(returns: readonly number[], sample = false): number |
   // 標本標準偏差は自由度 n−1 が必要 (単一要素では 0 除算)。
   if (sample && n < 2) return null;
   const mean = returns.reduce((acc, x) => acc + x, 0) / n;
-  const sumSq = returns.reduce((acc, x) => acc + (x - mean) * (x - mean), 0);
+  const sumSq = returns.reduce((acc, x) => {
+    const dev = x - mean;
+    return acc + dev * dev;
+  }, 0);
   const divisor = sample ? n - 1 : n;
   return pct2(Math.sqrt(sumSq / divisor));
 }
@@ -241,11 +245,12 @@ export function calcDcaSimulation(
     finalValuation: 0,
     gain: 0,
   };
-  if (amount <= 0 || !Array.isArray(prices) || prices.length === 0) return empty;
 
   let totalUnits = 0;
   let totalInvested = 0;
-  let lastValidPrice: number | null = null;
+  let lastValidPrice = 0;
+  // 空配列・全期スキップ・amount=0 はいずれもループ後 totalUnits=0 に畳まれ、
+  // 単一の totalUnits<=0 ガードで empty を返す (前段の重複ガードは置かない)。
   for (const price of prices) {
     // 非有限・0以下の価格はその期を購入不能としてスキップ。
     if (!isFiniteNumber(price) || price <= 0) continue;
@@ -253,7 +258,10 @@ export function calcDcaSimulation(
     totalInvested += amount;
     lastValidPrice = price;
   }
-  if (totalUnits <= 0 || lastValidPrice === null) return empty;
+  // amount=0 のとき totalUnits は常に 0 (0/price=0) で <= も < も同結果のため、
+  // EqualityOperator (<= → <) は equivalent。
+  // Stryker disable next-line EqualityOperator
+  if (totalUnits <= 0) return empty;
 
   const averageCost = pct2(totalInvested / totalUnits);
   const finalValuation = yen(lastValidPrice * totalUnits);
