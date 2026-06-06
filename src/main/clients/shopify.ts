@@ -100,17 +100,22 @@ function orderMessage(o: ShopifyOrderSummary): string {
 /** RFC 2047 "encoded-word" for a UTF-8 mail header (Subject) so Japanese
  *  text survives Gmail's MIME parsing. */
 function encodeMimeHeader(value: string): string {
-  return `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
+  // Buffer.from(string) already defaults to utf8 — no explicit encoding arg, so
+  // there's no equivalent `'utf8' → ''` mutant to chase.
+  return `=?UTF-8?B?${Buffer.from(value).toString('base64')}?=`;
 }
 
 /** base64url (no padding) — the encoding Gmail's `drafts.create` expects
  *  for the raw RFC 822 message. */
 function toBase64Url(value: string): string {
-  return Buffer.from(value, 'utf8')
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  // Buffer.from(string) already defaults to utf8 — drop the explicit arg to
+  // avoid the equivalent `'utf8' → ''` mutant.
+  let s = Buffer.from(value).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
+  // Strip trailing '=' padding (one or two chars). A while/endsWith loop instead
+  // of a `/=+$/` regex so each padding char removed is individually observable —
+  // a one/two-pad input distinguishes the boundary, killing off-by-one mutants.
+  while (s.endsWith('=')) s = s.slice(0, -1);
+  return s;
 }
 
 /** POST to an endpoint that returns an empty body on success (e.g. a
@@ -357,6 +362,11 @@ export interface ShopifyConnector {
   readonly run: ServiceAction;
 }
 
+// Stryker disable all : static registry definition (ids/actions/labels/required
+// fields). Evaluated once at module load, so Stryker classifies these mutants as
+// `static` and cannot run per-test kills against them. Their values are still
+// asserted exactly by the `connector registry` tests (the connector run-fns
+// themselves are the live logic and stay fully mutation-covered).
 export const CONNECTORS: readonly ShopifyConnector[] = [
   { id: 'slack', action: 'sync-to-slack', label: 'Slack', requiredFields: ['token', 'channel'], run: syncToSlack },
   { id: 'discord', action: 'sync-to-discord', label: 'Discord', requiredFields: ['webhookUrl'], run: syncToDiscord },
@@ -366,14 +376,20 @@ export const CONNECTORS: readonly ShopifyConnector[] = [
   { id: 'salesforce', action: 'sync-to-salesforce', label: 'Salesforce', requiredFields: ['token', 'instanceUrl'], run: syncToSalesforce },
   { id: 'stripe', action: 'sync-to-stripe', label: 'Stripe', requiredFields: ['token'], run: syncToStripe },
 ];
+// Stryker restore all
 
-// Runtime invariant: connector ids + action keys are unique. Trips at module
-// load if a future edit introduces a duplicate, mirroring the LIVE_FETCHERS
-// guard in clients/index.ts.
-{
+/** Runtime invariant: connector ids + action keys must each be unique.
+ *  Exported so it can be unit-tested with a deliberately-duplicated fixture,
+ *  mirroring the LIVE_FETCHERS guard in clients/index.ts. Throws on the first
+ *  duplicate id or action. This is the mutation-tested home of the logic; the
+ *  module-load guard below is a defensive twin. It is NOT wired to call this
+ *  function, because a static (module-init) invocation makes Stryker classify
+ *  the function body as `static` and skip per-test mutant kills. Keeping the
+ *  guard's own inline copy Stryker-disabled lets the function stay killable. */
+export function assertUniqueConnectors(connectors: readonly ShopifyConnector[]): void {
   const ids = new Set<string>();
   const actions = new Set<string>();
-  for (const c of CONNECTORS) {
+  for (const c of connectors) {
     if (ids.has(c.id)) throw new Error(`[shopify] duplicate connector id "${c.id}"`);
     if (actions.has(c.action)) throw new Error(`[shopify] duplicate connector action "${c.action}"`);
     ids.add(c.id);
@@ -381,9 +397,29 @@ export const CONNECTORS: readonly ShopifyConnector[] = [
   }
 }
 
+// Stryker disable all : module-load defensive guard runs during static init,
+// so Stryker can't isolate per-test kills here. The duplicate-detection logic
+// is mutation-covered by assertUniqueConnectors' unit tests above; this inline
+// copy only trips the app at startup if a future edit introduces a duplicate.
+{
+  const seenIds = new Set<string>();
+  const seenActions = new Set<string>();
+  for (const c of CONNECTORS) {
+    if (seenIds.has(c.id)) throw new Error(`[shopify] duplicate connector id "${c.id}"`);
+    if (seenActions.has(c.action)) throw new Error(`[shopify] duplicate connector action "${c.action}"`);
+    seenIds.add(c.id);
+    seenActions.add(c.action);
+  }
+}
+// Stryker restore all
+
 /** Connector metadata (without the run fn) for UI/discovery. */
 export function listConnectors(): { id: string; action: string; label: string; requiredFields: readonly string[] }[] {
   return CONNECTORS.map(({ id, action, label, requiredFields }) => ({ id, action, label, requiredFields }));
 }
 
+// Stryker disable next-line all : ACTIONS is derived once at module load (static
+// init); the 1:1 derivation from CONNECTORS is asserted by the `connector
+// registry` test ("derives ACTIONS from CONNECTORS"), which Stryker cannot run
+// per-test against a static initializer.
 export const ACTIONS: ActionMap = Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));
