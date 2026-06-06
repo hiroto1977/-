@@ -288,7 +288,8 @@
           "tax-separate",
           "tax-consumption",
           "resident-municipality",
-          "corporate-tax"
+          "corporate-tax",
+          "corporate-percapita-table"
         ]
       },
       {
@@ -835,6 +836,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "corporate-percapita-table",
+      "domain": "税務(法人住民税均等割)",
+      "focus": "法人住民税均等割を資本金等5区分×従業者数(50人超/以下)の9区分テーブルで精緻化(resolveCorporatePerCapita)。perCapitaLevy明示>capital区分>最小7万の決定順、既定挙動不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-tax"
     }
   ],
   "rounds": [
@@ -2988,6 +2997,78 @@
         "経営管理ラウンド(税引後利益の可視化): round54の法人税概算(calcCorporateTax)を事業ダッシュボードに統合。FinancialAnalysis に CorporateTaxCard を追加し、deriveBusinessFinancials の経常利益を課税所得代理値として税引前/法人税等合計/実効税率/税引後利益を表示、欠損時は均等割のみ分岐。taxCorporate.ts は不変(mutation 100%維持)、+15 renderテスト (#147)。静的2927→2942/実行時3004→3019。"
       ],
       "note": "加算的UI統合(既存財務計算は不変)。teams 60→61。"
+    },
+    {
+      "round": 56,
+      "teamCount": 62,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table"
+      ],
+      "shipped": [
+        "精度向上ラウンド(法人住民税均等割): フラット7万円固定だった均等割を、資本金等の額5区分×従業者数(50人超/以下)の9区分テーブル(令和6年度標準税率)で精緻化。resolveCorporatePerCapita で境界解決、決定順は perCapitaLevy明示>capital(+employees)区分>最小7万。CorporateProfile に employees 追加、既定/明示指定は挙動不変。taxCorporate.ts mutation 100%維持(93killed)、+22 it (#149)。静的2942→2959/実行時3019→3036。"
+      ],
+      "note": "ユーザー指示『精度を高め』の反映ラウンド。加算的で既存挙動不変。teams 61→62。"
     }
   ],
   "backlog": [
