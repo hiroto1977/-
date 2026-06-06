@@ -377,7 +377,8 @@
           "cashflow-chart",
           "report-sensitivity",
           "report-yoy",
-          "aftertax-ui"
+          "aftertax-ui",
+          "corporate-tax-inputs"
         ]
       },
       {
@@ -853,6 +854,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-tax"
+    },
+    {
+      "id": "corporate-tax-inputs",
+      "domain": "経営管理(法人税 精度入力)",
+      "focus": "CorporateTaxCard に資本金/従業者数/繰越欠損金の任意入力を追加し calcCorporateTax へ渡してライブ再計算。全欄空は既定で表示不変。rounds54-57の精度を実利用可能に",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-fpa"
     }
   ],
   "rounds": [
@@ -3151,6 +3160,80 @@
         "精度向上ラウンド(繰越欠損金): 法人税概算に繰越欠損金控除を追加(applyLossCarryforward)。中小法人=控除前所得の全額/大法人(資本金1億円超)=50%上限、控除後所得に課税し実効税率の分母も控除後、翌期繰越残も内訳化。carryforwardLoss 未指定/0/負は控除なしで挙動不変。taxCorporate.ts mutation 100%維持(102killed)、+19 it (#151)。静的2959→2978/実行時3036→3055。"
       ],
       "note": "『精度を高め』継続(均等割テーブル→繰越欠損金)。加算的で既存挙動不変。teams 62→63。"
+    },
+    {
+      "round": 58,
+      "teamCount": 64,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs"
+      ],
+      "shipped": [
+        "経営管理ラウンド(法人税精度の実利用): CorporateTaxCard に資本金/従業者数/繰越欠損金の任意入力欄を追加し、calcCorporateTax へ渡して実効税率・税引後利益・均等割区分・繰越控除をライブ再計算。全欄空は profile 未指定で従来表示と完全一致(加算的)。taxCorporate.ts 不変、+32 it (#153)。静的2978→3010/実行時3055→3087。法人税の精度向上アーク(概算→均等割テーブル→繰越欠損金→UI入力)完成。"
+      ],
+      "note": "『精度を高め』の実利用化。加算的で既存挙動不変。teams 63→64。"
     }
   ],
   "backlog": [
