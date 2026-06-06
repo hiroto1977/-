@@ -273,6 +273,26 @@ describe('decliningBalanceScheduleStrict (200% with guarantee + revised rate)', 
     expect(s[4]!.depreciation).toBe(107_999); // 216,000×0.5=108,000 を book−1 で頭打ち
   });
 
+  it('matches the official 6-year table: post-switch year uses 改定取得価額 × 改定償却率 uncapped', () => {
+    // 国税庁 耐用年数6年: 償却率0.333, 改定償却率0.334, 保証率0.09911。
+    // y4 で切替 (改定取得価額=296,741)。y5 = 296,741×0.334 = 99,111 は book−1 で頭打ち
+    // されない「素の改定額」なので、revisedBase × revisedRate の乗算 mutant を撃墜する。
+    const s = decliningBalanceScheduleStrict(1_000_000, 6, {
+      rate: 0.333,
+      revisedRate: 0.334,
+      guaranteeRate: 0.09911,
+    });
+    expect(s.map((r) => [r.depreciation, r.bookValue])).toEqual([
+      [333_000, 667_000],
+      [222_111, 444_889],
+      [148_148, 296_741],
+      [99_111, 197_630], // y4: 切替, 改定取得価額296,741×0.334
+      [99_111, 98_519], // y5: 改定取得価額×改定償却率 (頭打ちなし) ← 乗算 mutant kill
+      [98_518, 1], // y6: 備忘1円で頭打ち
+    ]);
+    expect(s.reduce((sum, r) => sum + r.depreciation, 0)).toBe(999_999);
+  });
+
   it('with no guarantee rate stays on pure declining (never reaches the 1-yen memo)', () => {
     // guaranteeRate 省略 (=0) → 保証額0、調整前償却額は常に ≥ 0 で切替えない。
     // 純粋な定率のみだと耐用年数内では備忘1円まで償却しきれない (保証率が完了を担保する)。

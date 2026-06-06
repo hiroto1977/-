@@ -178,7 +178,11 @@ export function usedAssetUsefulLife(
  * monthsInService は 12 を上限にクランプ。年間額が非有限 / 非正、月数が非有限 / 非正なら 0。
  */
 export function proratedDepreciation(annualDepreciation: number, monthsInService: number): number {
+  // annualDepreciation===0 は <=→< でも yen(0*months/12)=0 と計算経路が一致するため equivalent。
+  // Stryker disable next-line EqualityOperator
   if (!Number.isFinite(annualDepreciation) || annualDepreciation <= 0) return 0;
+  // monthsInService===0 も <=→< で Math.min(12,0)=0 → yen(annual*0/12)=0 と一致するため equivalent。
+  // Stryker disable next-line EqualityOperator
   if (!Number.isFinite(monthsInService) || monthsInService <= 0) return 0;
   const months = Math.min(12, monthsInService);
   return yen((annualDepreciation * months) / 12);
@@ -345,6 +349,8 @@ export function smeImmediateDeduction(
   acquisitionCost: number,
   cumulativeBefore = 0,
 ): SmeImmediateResult {
+  // cumulativeBefore===0 は >0→>=0 でも prior=0 で同値 (三項の両枝とも 0)。equivalent。
+  // Stryker disable next-line EqualityOperator
   const prior = Number.isFinite(cumulativeBefore) && cumulativeBefore > 0 ? cumulativeBefore : 0;
   if (!isPositiveFinite(acquisitionCost) || acquisitionCost >= SME_UNIT_LIMIT) {
     return { eligible: false, deductible: 0, cumulativeAfter: prior, excludedOverCap: 0 };
