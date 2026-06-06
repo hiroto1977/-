@@ -61,7 +61,9 @@ export function detrend(
   const ma = movingAverage(values, window);
   return values.map((v, i) => {
     const base = ma[i];
-    return base === null ? null : v - base;
+    // ma は values と同長なので base は実行時 null のみ。== で null/undefined を一括
+    // 判定し number に絞る (undefined 経路は到達不能)。
+    return base == null ? null : v - base;
   });
 }
 
@@ -92,10 +94,16 @@ export function seasonalIndices(
   const p = Math.floor(period);
   if (p < 2) return null;
   const overall = mean(finiteValues(values));
+  // overall===null は `null <= 0 === true` で右辺 (overall<=0) に必ず吸収されるため、
+  // null 短絡を消す変異は equivalent (型を number に絞るための分岐)。
+  // Stryker disable next-line ConditionalExpression
   if (overall === null || overall <= 0) return null;
   const off = ((Math.floor(phaseOffset) % p) + p) % p;
   const sums = new Array<number>(p).fill(0);
   const counts = new Array<number>(p).fill(0);
+  // i<=length では values[length] が undefined → Number.isFinite で continue するため
+  // 余分な反復は無作用。<→<= の EqualityOperator は equivalent。
+  // Stryker disable next-line EqualityOperator
   for (let i = 0; i < values.length; i += 1) {
     const v = values[i]!;
     if (!Number.isFinite(v)) continue;
@@ -124,8 +132,13 @@ export function seasonallyAdjusted(
   const p = seasonal.period;
   const off = ((Math.floor(phaseOffset) % p) + p) % p;
   return values.map((v, i) => {
+    // (i+off)%p は 0..p-1 で indices(長さ p)の範囲内のため idx は実行時 null のみ。
+    // == null で null/undefined を一括判定 (undefined 経路は到達不能)。
     const idx = seasonal.indices[(i + off) % p];
-    if (idx === null || idx <= 0) return v;
+    // idx==null は `null <= 0 === true` で右辺に吸収されるため null 短絡を消す変異は
+    // equivalent (型を number に絞るための分岐)。
+    // Stryker disable next-line ConditionalExpression
+    if (idx == null || idx <= 0) return v;
     return v / idx;
   });
 }
@@ -156,6 +169,9 @@ export interface LinearTrend {
  */
 export function linearTrend(values: readonly number[]): LinearTrend | null {
   const pts: { x: number; y: number }[] = [];
+  // i<=length では values[length] が undefined → Number.isFinite が false で push されず、
+  // 余分な反復は無作用。<→<= の EqualityOperator は equivalent。
+  // Stryker disable next-line EqualityOperator
   for (let i = 0; i < values.length; i += 1) {
     if (Number.isFinite(values[i]!)) pts.push({ x: i, y: values[i]! });
   }
@@ -200,8 +216,8 @@ export interface PeriodChange {
 }
 
 /** 0.1% 単位に丸めた変化率を返す純粋ヘルパ。base が 0 以下 / 非有限なら null。 */
-function changePct(value: number, base: number | null): number | null {
-  if (base === null || !Number.isFinite(base) || base <= 0) return null;
+function changePct(value: number, base: number): number | null {
+  if (!Number.isFinite(base) || base <= 0) return null;
   return Math.round(((value - base) / base) * 1000) / 10;
 }
 
@@ -242,9 +258,15 @@ export interface Variability {
 export function variability(values: readonly number[]): Variability {
   const fin = finiteValues(values);
   const m = mean(fin);
+  // m===null は fin が空のときのみ。その場合は次の length<2 分岐も {mean:m(=null),…} を
+  // 返すため、この早期 return を消す変異は出力が同値 (equivalent)。
+  // Stryker disable next-line ConditionalExpression
   if (m === null) return { mean: null, stdDev: null, cv: null };
   if (fin.length < 2) return { mean: m, stdDev: null, cv: null };
   let ss = 0;
+  // Σ(v−m)² と Σ(v+m)(v−m)=Σ(v²−m²) は Σv²−n·m² で恒等的に一致する (Σv=n·m)。
+  // よって (v−m) を (v+m) に置換する ArithmeticOperator 変異は数学的に equivalent。
+  // Stryker disable next-line ArithmeticOperator
   for (const v of fin) ss += (v - m) * (v - m);
   const stdDev = Math.sqrt(ss / (fin.length - 1));
   const cv = m > 0 ? stdDev / m : null;
@@ -275,6 +297,9 @@ export function maxDrawdown(values: readonly number[]): Drawdown {
   let worstPeak = peak;
   let worstTrough = peak;
   for (const v of fin) {
+    // v===peak のとき peak=v は同値代入 (no-op) なので > → >= の EqualityOperator は
+    // equivalent。
+    // Stryker disable next-line EqualityOperator
     if (v > peak) peak = v;
     if (peak > 0) {
       const dd = (peak - v) / peak;
