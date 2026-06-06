@@ -156,6 +156,14 @@ describe('computeCustomerConcentration', () => {
     expect(c.level).toBe('high');
   });
 
+  it('excludes zero-amount customers from the present count (strictly > 0)', () => {
+    // amount===0 を含めても合計/HHI には効かないが customersPresent には数えない。
+    // `> 0` を `>= 0` にする mutant は 0 のチャネルを 1 件数えてしまうため殺せる。
+    const c = computeCustomerConcentration([ch('A', 500), ch('B', 500), ch('Zero', 0)])!;
+    expect(c.customersPresent).toBe(2);
+    expect(c.hhi).toBe(5000);
+  });
+
   it('excludes negative amounts and keeps the first customer as top on a tie', () => {
     const c = computeCustomerConcentration([ch('A', 500), ch('B', 500), ch('Bad', -300)])!;
     expect(c.customersPresent).toBe(2);
@@ -217,6 +225,15 @@ describe('computePareto', () => {
   it('returns null when there is no revenue', () => {
     expect(computePareto([])).toBeNull();
     expect(computePareto([ch('A', 0)])).toBeNull();
+  });
+
+  it('accepts a threshold of exactly 100% (boundary, > not >=)', () => {
+    // threshold 100 は有効。`> 100` を `>= 100` にする mutant は 100 を弾いて null を
+    // 返すため、非 null かつ全件カバーで殺せる。
+    const p = computePareto([ch('A', 70), ch('B', 30)], 100)!;
+    expect(p.thresholdPct).toBe(100);
+    expect(p.vitalFewCount).toBe(2);
+    expect(p.coveredSharePct).toBe(100);
   });
 
   it('counts the vital few that reach the 80% cumulative threshold', () => {
