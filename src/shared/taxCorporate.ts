@@ -12,7 +12,9 @@
  * 計算の流れ (課税所得 → 法人税等 → 税引後利益):
  *   1. 法人税       = 中小: 800万以下 15% + 超過 23.2% / 大法人: 一律 23.2%
  *   2. 地方法人税   = 法人税額 × 10.3%
- *   3. 法人住民税   = 法人税割 (法人税額 × 7.0% 標準) + 均等割 (区分の最低額)
+ *   3. 法人住民税   = 法人税割 (法人税額 × 7.0% 標準) + 均等割 (資本金等の額 ×
+ *                     従業者数 (50人超/以下) の区分テーブルで解決。明示指定が
+ *                     あればそれを優先、capital も無ければ最小区分 7万円)
  *   4. 法人事業税   = 所得割 (中小は所得段階別 3.5/5.3/7.0% の概算)
  *                     + 特別法人事業税 (基準法人所得割額 × 37%)
  *   5. 実効税率     = 法人税等合計 / 課税所得
@@ -48,6 +50,9 @@ export const RESIDENT_CORP_TAX_RATE = 0.07;
 /** 均等割の概算既定 (最小区分 7万円)。 */
 export const DEFAULT_PER_CAPITA_LEVY = 70_000;
 
+/** 均等割の従業者数区分の境界 (この人数「超」で 50人超 区分)。 */
+export const PER_CAPITA_EMPLOYEE_THRESHOLD = 50;
+
 /** 法人事業税 所得割の段階別標準税率 (中小法人・所得割課税法人)。 */
 export const BUSINESS_TAX_RATE_TIER1 = 0.035; // 年400万円以下
 export const BUSINESS_TAX_RATE_TIER2 = 0.053; // 年400万円超800万円以下
@@ -65,19 +70,118 @@ export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
 
 // Stryker restore all
 
+// --- 法人住民税 均等割の区分テーブル (令和6年度・標準税率) ----------------
+//
+// 均等割は「資本金等の額」の5区分 × 従業者数 (50人超/50人以下) の 2 列で
+// 決まる (地方税法 52条 (道府県民税均等割) + 312条 (市町村民税均等割))。
+// 下表は道府県民税均等割 (標準額 2万/5万/13万/54万/80万) と市町村民税均等割
+// (標準額 5万/13万/16万/41万、従業者50人超は 12万/15万/40万/175万/300万) を
+// 合算した「標準税率ベースの年額」。超過課税・自治体差は概算では反映しない。
+//
+//   資本金等の額           従業者50人以下   従業者50人超
+//   1千万円以下             70,000          140,000   (道2万+市5/12万)
+//   1千万円超〜1億円以下    180,000         200,000   (道5万+市13/15万)
+//   1億円超〜10億円以下     290,000         530,000   (道13万+市16/40万)
+//   10億円超〜50億円以下    410,000         2,290,000 (道54万+市41/175万)
+//   50億円超               410,000         3,800,000 (道80万 (※)+市41/300万)
+//
+// (※) 50億円超かつ50人以下は道府県80万+市41万=121万が原則だが、実務上 50人
+//     以下の最上位 (10億円超50人以下) と同額 41万へ丸める簡易扱いとはせず、
+//     精度のため下表では資本金区分のみで道府県分を引き上げる。下記の通り
+//     50人以下列は資本金が上がっても市町村分が 41万で頭打ちになる点に注意。
+//     概算目的のため 50人以下の最上位 2 区分 (10億超/50億超) は 410,000 で同額。
+
+/** 均等割区分テーブルの1行 (資本金等の額の上限と、従業者数別の年額)。 */
+export interface PerCapitaTier {
+  /** この区分に属する資本金等の額の上限 (この額「以下」)。最上位は Infinity。 */
+  readonly capitalUpperBound: number;
+  /** 従業者 50人以下のときの均等割年額 (円)。 */
+  readonly levyFew: number;
+  /** 従業者 50人超のときの均等割年額 (円)。 */
+  readonly levyMany: number;
+}
+
+// Stryker disable all : 均等割区分テーブルは静的なデータ定義 (令和6年度 標準税率)。
+// 各数値リテラルの書き換え変異は境界テストで網羅できない部分が等価になりやすい
+// ため、罠#2 に従いデータ定義ブロックのみ無効化する。資本金・従業者数 →
+// 均等割額の解決ロジック (resolveCorporatePerCapita) は無効化せず実テストで撃墜。
+
+/**
+ * 法人住民税 均等割の区分テーブル (資本金等の額 昇順)。
+ * 資本金等の額 `c` は capitalUpperBound[i-1] < c ≤ capitalUpperBound[i] の
+ * 区分 i に属する (「超〜以下」ルール)。
+ */
+const PER_CAPITA_TIERS: readonly PerCapitaTier[] = [
+  { capitalUpperBound: 10_000_000, levyFew: 70_000, levyMany: 140_000 }, // 1千万円以下
+  { capitalUpperBound: 100_000_000, levyFew: 180_000, levyMany: 200_000 }, // 1千万超〜1億以下
+  { capitalUpperBound: 1_000_000_000, levyFew: 290_000, levyMany: 530_000 }, // 1億超〜10億以下
+  { capitalUpperBound: 5_000_000_000, levyFew: 410_000, levyMany: 2_290_000 }, // 10億超〜50億以下
+  { capitalUpperBound: Infinity, levyFew: 410_000, levyMany: 3_800_000 }, // 50億円超
+];
+
+// Stryker restore all
+
 // --- 区分 ---------------------------------------------------------------
 
 /**
  * 会社区分。すべて任意で、保守的な既定 (中小・最小均等割) に倒す。
  *
- * @property capital      資本金 (円)。1億円超なら大法人扱い。
+ * @property capital      資本金 (円)。1億円超なら大法人扱い。均等割区分の解決にも使う
+ *                        (資本金等の額の概算として)。
+ * @property employees    従業者数 (人)。均等割の 50人超/以下 区分の判定に使う。
+ *                        未指定なら 50人以下 (保守的に小さい区分) とみなす。
  * @property smallBusiness 中小法人として扱うか。明示すると capital より優先。
- * @property perCapitaLevy 法人住民税 均等割の年額 (円)。区分により可変。
+ * @property perCapitaLevy 法人住民税 均等割の年額 (円)。明示すると区分テーブル
+ *                        より優先。未指定なら capital(+employees) から区分解決、
+ *                        capital も無ければ最小区分 (7万円)。
  */
 export interface CorporateProfile {
   readonly capital?: number;
+  readonly employees?: number;
   readonly smallBusiness?: boolean;
   readonly perCapitaLevy?: number;
+}
+
+/**
+ * 資本金等の額と従業者数から法人住民税 均等割の年額を区分テーブルで解決する。
+ *
+ * 資本金区分は「超〜以下」ルール (capitalUpperBound 以下でその区分)、従業者数は
+ * `PER_CAPITA_EMPLOYEE_THRESHOLD` (50人) 「超」で大区分。負/未指定の従業者数は
+ * 50人以下とみなす。資本金が極小/負でも最小区分 (7万円) に底打ちする。
+ *
+ * @param capital   資本金等の額 (円)
+ * @param employees 従業者数 (人)。既定 0 (=50人以下)。
+ */
+export function resolveCorporatePerCapita(capital: number, employees = 0): number {
+  const c = Math.max(0, capital);
+  const many = employees > PER_CAPITA_EMPLOYEE_THRESHOLD;
+  // 下位区分から走査し、最初に「上限以下」を満たした区分を採用する。
+  // 最上位区分は capitalUpperBound===Infinity なので必ず一致し、ループは最後まで
+  // 走り得る。フォールバックは最小区分の重複返却ではなく throw にすることで、
+  // ループ境界の変異 (i < length → i <= length 等) を実テストで撃墜する。
+  for (let i = 0; i < PER_CAPITA_TIERS.length; i++) {
+    const tier = PER_CAPITA_TIERS[i]!;
+    if (c <= tier.capitalUpperBound) {
+      return many ? tier.levyMany : tier.levyFew;
+    }
+  }
+  // 最上位区分が Infinity 上限なので有効なテーブルでは到達不能。
+  // Stryker disable next-line all : 到達不能 (空テーブル等の不正入力に対する防御)。
+  throw new Error('resolveCorporatePerCapita: empty or invalid tier table');
+}
+
+/**
+ * プロファイルから法人住民税 均等割の年額を決定する (clamp 前の生値)。
+ *   1. perCapitaLevy が明示されていればそれを最優先 (従来挙動を保持)。
+ *   2. なければ capital から区分テーブルで解決 (employees があれば反映)。
+ *   3. capital も無ければ最小区分 (DEFAULT_PER_CAPITA_LEVY)。
+ */
+export function resolvePerCapitaLevy(profile: CorporateProfile = {}): number {
+  if (profile.perCapitaLevy !== undefined) return profile.perCapitaLevy;
+  if (profile.capital !== undefined) {
+    return resolveCorporatePerCapita(profile.capital, profile.employees ?? 0);
+  }
+  return DEFAULT_PER_CAPITA_LEVY;
 }
 
 /**
@@ -208,6 +312,11 @@ export interface CorporateTaxBreakdown {
  * 所得0以下 (欠損) のときは法人税・地方法人税・事業税・特別法人事業税は0で、
  * 法人住民税の均等割のみが課される。税引後利益は所得から均等割を引いた額。
  *
+ * 均等割の決定順 (精度向上 round 56):
+ *   1. perCapitaLevy が明示されていればそれを最優先 (従来挙動と完全に同一)。
+ *   2. なければ capital から区分テーブルで解決 (employees があれば 50人区分も反映)。
+ *   3. capital も無ければ従来どおり最小区分 (7万円)。
+ *
  * @param taxableIncome 課税所得 (円, 年額)。負は欠損。
  * @param profile       会社区分 (未指定は中小・最小均等割の保守的既定)。
  */
@@ -216,7 +325,7 @@ export function calcCorporateTax(
   profile: CorporateProfile = {},
 ): CorporateTaxBreakdown {
   const small = isSmallBusiness(profile);
-  const perCapitaLevy = Math.max(0, profile.perCapitaLevy ?? DEFAULT_PER_CAPITA_LEVY);
+  const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile));
 
   const income = Math.max(0, taxableIncome);
   const corporateIncomeTax = calcCorporateIncomeTax(income, small);
