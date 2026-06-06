@@ -96,7 +96,9 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): voi
   if (ordinaryProfit <= 0) {
     lines.push(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${yen(b.residentTax)} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
   } else {
-    lines.push(`> 区分: ${b.smallBusiness ? '中小法人' : '大法人'}（経常利益を課税所得の概算として使用）。`);
+    // レポートは `calcCorporateTax(ordinaryProfit)` を profile 未指定で呼ぶため
+    // 区分は常に中小法人 (保守的既定)。資本金等の細目は CorporateTaxCard (UI) で扱う。
+    lines.push('> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。');
   }
   lines.push('');
   lines.push('※ 法人税等は概算試算であり、正確な税額計算・税務助言ではありません。申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。');
