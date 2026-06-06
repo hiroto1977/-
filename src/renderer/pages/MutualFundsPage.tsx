@@ -6,7 +6,13 @@ import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
-import { calcCompoundingFutureValue } from '../../shared/mutualFundsMetrics';
+import {
+  calcCompoundingFutureValue,
+  calcTotalReturn,
+  calcRealCost,
+  calcStdDev,
+  calcDcaSimulation,
+} from '../../shared/mutualFundsMetrics';
 import { requiredMonthlyContribution, yearsToDouble, emergencyFund } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss } from '../../shared/fxCurrency';
 
@@ -47,6 +53,35 @@ export function MutualFundsPage() {
   const doubleYears = useMemo(() => yearsToDouble(Number(goalRate) || 0), [goalRate]);
   const emergency = useMemo(() => emergencyFund(Number(monthlyExpense) || 0, 6), [monthlyExpense]);
 
+  // トータルリターン (分配金再投資ベース) と保有銘柄リターンのリスク (標準偏差)。
+  const [holdYears, setHoldYears] = useState('5');
+  const totalDividends = useMemo(
+    () => recentDividends.reduce((acc, d) => acc + d.amount, 0),
+    [recentDividends],
+  );
+  const totalReturn = useMemo(
+    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, Number(holdYears) || 0),
+    [portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, holdYears],
+  );
+  const risk = useMemo(() => calcStdDev(holdings.map((h) => h.ytdReturnPct)), [holdings]);
+
+  // 実質コスト (信託報酬 + 隠れコスト) と複利での蝕み効果。
+  const [costExpense, setCostExpense] = useState('1.0');
+  const [costHidden, setCostHidden] = useState('0.2');
+  const [costGross, setCostGross] = useState('5');
+  const realCost = useMemo(
+    () => calcRealCost(portfolio.totalValuation, Number(costExpense) || 0, Number(costHidden) || 0, Number(costGross) || 0, Number(holdYears) || 0),
+    [portfolio.totalValuation, costExpense, costHidden, costGross, holdYears],
+  );
+
+  // ドルコスト平均法シミュレーション (価格系列はカンマ区切り入力)。
+  const [dcaMonthly, setDcaMonthly] = useState('30000');
+  const [dcaPrices, setDcaPrices] = useState('10000, 9500, 11000, 10500, 12000');
+  const dca = useMemo(() => {
+    const prices = dcaPrices.split(',').map((p) => Number(p.trim())).filter((p) => Number.isFinite(p));
+    return calcDcaSimulation(Number(dcaMonthly) || 0, prices);
+  }, [dcaMonthly, dcaPrices]);
+
   // 外貨換算・為替損益。
   const [fxAmount, setFxAmount] = useState('10000');
   const [fxAcqRate, setFxAcqRate] = useState('130');
@@ -75,6 +110,79 @@ export function MutualFundsPage() {
           <Stat label="取得原価" value={jpy(portfolio.totalCostBasis)} />
           <Stat label="評価損益" value={jpy(portfolio.unrealizedGain)} positive={portfolio.unrealizedGain >= 0} />
           <Stat label="評価損益率" value={`${portfolio.unrealizedGainPct.toFixed(1)}%`} positive={portfolio.unrealizedGainPct >= 0} />
+        </div>
+      </Section>
+
+      <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            保有年数
+            <input type="text" inputMode="decimal" value={holdYears} onChange={(e) => setHoldYears(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <Stat
+            label="トータルリターン"
+            value={totalReturn.totalReturnPct === null ? '—' : `${totalReturn.totalReturnPct}%`}
+            positive={(totalReturn.totalReturnPct ?? 0) >= 0}
+          />
+          <Stat
+            label="年率換算 (CAGR)"
+            value={totalReturn.cagrPct === null ? '—' : `${totalReturn.cagrPct}%`}
+            positive={(totalReturn.cagrPct ?? 0) >= 0}
+          />
+          <Stat label="累計分配金" value={jpy(totalDividends)} />
+          <Stat label="リスク (銘柄YTDの標準偏差)" value={risk === null ? '—' : `${risk}%`} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは保有銘柄のYTDリターンの母標準偏差です。概算であり投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="実質コスト (信託報酬 + 隠れコスト・概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            信託報酬 (年率%)
+            <input type="text" inputMode="decimal" value={costExpense} onChange={(e) => setCostExpense(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            隠れコスト (年率%)
+            <input type="text" inputMode="decimal" value={costHidden} onChange={(e) => setCostHidden(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            想定年率 (%)
+            <input type="text" inputMode="decimal" value={costGross} onChange={(e) => setCostGross(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="実質コスト率 (年率)" value={`${realCost.annualCostPct}%`} />
+          <Stat label="年間コスト概算" value={jpy(realCost.annualCostYen)} />
+          <Stat label={`${holdYears}年累計の蝕み効果`} value={jpy(realCost.cumulativeCostYen)} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 評価額 {jpy(portfolio.totalValuation)} を元本としコストがリターンを複利で蝕む効果を概算。隠れコストは売買委託手数料等の目安です。概算であり投資助言ではありません。
+        </div>
+      </Section>
+
+      <Section title="ドルコスト平均法シミュレーション (概算)">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 12 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            毎月の積立額 (円)
+            <input type="text" inputMode="decimal" value={dcaMonthly} onChange={(e) => setDcaMonthly(e.target.value)} style={simInputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 240 }}>
+            各期の基準価額 (カンマ区切り)
+            <input type="text" value={dcaPrices} onChange={(e) => setDcaPrices(e.target.value)} style={{ ...simInputStyle, width: '100%' }} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <Stat label="取得口数" value={dca.totalUnits.toLocaleString()} />
+          <Stat label="平均取得単価" value={dca.averageCost === null ? '—' : jpy(dca.averageCost)} />
+          <Stat label="評価額" value={jpy(dca.finalValuation)} />
+          <Stat label="評価損益" value={jpy(dca.gain)} positive={dca.gain >= 0} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 各期に一定額を投じ、価格が下がった期ほど多くの口数を取得する効果を概算。手数料・税は含みません。概算であり投資助言ではありません。
         </div>
       </Section>
 
