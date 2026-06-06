@@ -17,8 +17,9 @@
  *                     あればそれを優先、capital も無ければ最小区分 7万円)
  *   4. 法人事業税   = 所得割 (中小は所得段階別 3.5/5.3/7.0% の概算)
  *                     + 特別法人事業税 (基準法人所得割額 × 37%)
- *   5. 実効税率     = 法人税等合計 / 課税所得
- *   6. 税引後利益   = 課税所得 − 法人税等合計
+ *   5. 実効税率     = 法人税等合計 / 課税所得 (単純合算ベース)
+ *   6. 法定実効税率 = 事業税の損金算入を織り込んだ標準指標 (参考値・限界税率)
+ *   7. 税引後利益   = 課税所得 − 法人税等合計
  */
 
 function yen(n: number): number {
@@ -64,6 +65,20 @@ export const BUSINESS_TAX_TIER2_LIMIT = 8_000_000;
 
 /** 特別法人事業税の税率 (基準法人所得割額に対して)。 */
 export const SPECIAL_BUSINESS_TAX_RATE = 0.37;
+
+// 法定実効税率 (round 60) で使う代表「事業税+特別法人事業税」の所得割率。
+// 特別法人事業税は基準法人所得割額 (= 事業税所得割) に 37% を乗じるので、
+// 課税所得 1 円あたりに均すと「事業税所得割率 × (1 + 37%)」が事業税系の限界率。
+// 所得帯ごとに事業税所得割率が 3.5/5.3/7.0% と変わるため帯別に 3 つ持つ。
+/** 事業税系 (事業税所得割+特別法人事業税) の限界率: 年400万円以下の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER1 =
+  BUSINESS_TAX_RATE_TIER1 * (1 + SPECIAL_BUSINESS_TAX_RATE);
+/** 事業税系の限界率: 年400万円超800万円以下の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER2 =
+  BUSINESS_TAX_RATE_TIER2 * (1 + SPECIAL_BUSINESS_TAX_RATE);
+/** 事業税系の限界率: 年800万円超の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER3 =
+  BUSINESS_TAX_RATE_TIER3 * (1 + SPECIAL_BUSINESS_TAX_RATE);
 
 /** 資本金による「大法人」判定の境界 (1億円超で大法人)。 */
 export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
@@ -338,6 +353,103 @@ export function calcSpecialBusinessTax(businessTaxIncomePortion: number): number
   return yen(Math.max(0, businessTaxIncomePortion) * SPECIAL_BUSINESS_TAX_RATE);
 }
 
+// --- 法定実効税率 (round 60) --------------------------------------------
+//
+// `effectiveRate` (法人税等合計 / 課税所得) は「実際に納める税額の所得に対する
+// 単純合算割合」であり、均等割 (定額) や所得段階別税率の影響をそのまま含む。
+// 一方、ここで算出する **法定実効税率 (statutoryEffectiveRate)** は実務で広く
+// 使われる標準指標で、**法人事業税 (+特別法人事業税) が翌期に損金算入される**
+// 効果を織り込んだ「限界的な実効負担率」を表す。両者は目的が異なる別の参考値で、
+// effectiveRate は一切変更しない (round 60 は純粋追加)。
+//
+// 式 (損金算入を織り込んだ標準形):
+//   法定実効税率 =
+//     { 法人税率 × (1 + 地方法人税率 + 住民税法人税割率) + 事業税所得割率 + 特別法人事業税率 }
+//     / (1 + 事業税所得割率 + 特別法人事業税率)
+//
+//   - 分子前段 法人税率 × (1 + 地方法人税率 + 住民税法人税割率):
+//       法人税に地方法人税 (法人税額×10.3%) と住民税法人税割 (法人税額×7.0%) が
+//       上乗せされるので、法人税率にこれらを乗じた合計が法人税系の負担。
+//   - 分子後段 事業税所得割率 + 特別法人事業税率:
+//       特別法人事業税は事業税所得割額×37% なので、課税所得あたりでは
+//       事業税所得割率 × (1 + 37%) = `STATUTORY_BUSINESS_RATE_*` にまとまる。
+//   - 分母 (1 + 事業税所得割率 + 特別法人事業税率):
+//       事業税系は翌期の損金になり、その分だけ将来の課税ベースが縮むので
+//       割り戻す (損金算入効果)。これにより実効負担は単純合算より下がる。
+//
+// 率の選び方 (前提):
+//   - 法人税率は「限界税率」を採る。中小法人かつ課税所得が 800万円以下なら
+//     軽減税率 15% (`CORP_TAX_REDUCED_RATE`)、800万円超または大法人なら本則
+//     23.2% (`CORP_TAX_STANDARD_RATE`)。指標は限界的な追加 1 円の負担を表すため。
+//   - 事業税系の率も所得帯の限界率を採る (400万以下 3.5% / 400万超800万以下
+//     5.3% / 800万超 7.0% ベース)。所得帯で率が変わるため課税所得から帯を選ぶ。
+//   - 地方法人税率・住民税法人税割率・特別法人事業税率は所得帯に依らない定数。
+//
+// **概算であり税務助言ではありません** (ファイル冒頭の注記に同じ)。外形標準課税・
+// 超過税率・自治体差・税額控除等は反映しない簡易な参考値です。
+
+/** 法定実効税率を構成する代表率 (限界税率)。`calcStatutoryEffectiveRate` の内訳。 */
+export interface StatutoryRateInputs {
+  /** 法人税の限界税率 (中小800万以下=15% / それ以外=23.2%)。 */
+  readonly corporateRate: number;
+  /** 事業税系 (事業税所得割+特別法人事業税) の限界率。 */
+  readonly businessRate: number;
+}
+
+/**
+ * 課税所得と区分から法定実効税率に用いる代表率 (限界税率) を選ぶ純粋ヘルパ。
+ *
+ * 法人税率: 中小法人かつ所得が `CORP_TAX_REDUCED_THRESHOLD` (800万円) 以下なら
+ *   軽減 15%、それ以外 (800万円超 or 大法人) は本則 23.2%。
+ * 事業税系率: 所得帯の限界率 (`STATUTORY_BUSINESS_RATE_TIER1/2/3`)。
+ *   400万円以下=tier1、400万円超800万円以下=tier2、800万円超=tier3。
+ *
+ * 所得は限界帯の判定にのみ使う (負/0 は最小帯 tier1・軽減税率帯とみなす)。
+ *
+ * @param taxableIncome 課税所得 (円)。帯の判定に使う。負/0 は最小帯。
+ * @param small         中小法人か。
+ */
+export function selectStatutoryRates(taxableIncome: number, small: boolean): StatutoryRateInputs {
+  const income = Math.max(0, taxableIncome);
+  const corporateRate =
+    small && income <= CORP_TAX_REDUCED_THRESHOLD
+      ? CORP_TAX_REDUCED_RATE
+      : CORP_TAX_STANDARD_RATE;
+  let businessRate: number;
+  if (income <= BUSINESS_TAX_TIER1_LIMIT) {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER1;
+  } else if (income <= BUSINESS_TAX_TIER2_LIMIT) {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER2;
+  } else {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER3;
+  }
+  return { corporateRate, businessRate };
+}
+
+/**
+ * 法定実効税率 (statutory effective tax rate) を算出する純粋関数。
+ *
+ * 事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標 (上のブロックコメントの
+ * 式)。`effectiveRate` (単純合算ベース) とは別の参考値。
+ *
+ * 法人税率・事業税系率は課税所得と区分から限界税率を `selectStatutoryRates` で選ぶ。
+ * 地方法人税率・住民税法人税割率は定数 (`LOCAL_CORP_TAX_RATE` / `RESIDENT_CORP_TAX_RATE`)。
+ *
+ * @param taxableIncome 課税所得 (円)。率の限界帯の選択に使う。既定 0 (最小帯)。
+ * @param profile       会社区分 (未指定は中小・保守的既定)。中小/大法人の判定に使う。
+ */
+export function calcStatutoryEffectiveRate(
+  taxableIncome = 0,
+  profile: CorporateProfile = {},
+): number {
+  const small = isSmallBusiness(profile);
+  const { corporateRate, businessRate } = selectStatutoryRates(taxableIncome, small);
+  const numerator =
+    corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+  const denominator = 1 + businessRate;
+  return numerator / denominator;
+}
+
 // --- 合算 ---------------------------------------------------------------
 
 /** 法人税等の内訳と税引後利益。 */
@@ -365,8 +477,15 @@ export interface CorporateTaxBreakdown {
   readonly specialBusinessTax: number;
   /** 法人税等の合計。 */
   readonly totalTax: number;
-  /** 実効税率 (法人税等合計 / 課税所得)。所得0以下は0。 */
+  /** 実効税率 (法人税等合計 / 課税所得)。所得0以下は0。単純合算ベース。 */
   readonly effectiveRate: number;
+  /**
+   * 法定実効税率 (参考)。事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標
+   * (`calcStatutoryEffectiveRate`)。`effectiveRate` (単純合算ベース) とは目的の
+   * 異なる別の参考値で、均等割や所得段階の影響は含まず限界税率で算出する。
+   * 所得0以下でも率自体は定義されるため0にはしない (限界帯の最小帯で評価)。
+   */
+  readonly statutoryEffectiveRate: number;
   /** 税引後利益 (課税所得 − 法人税等合計)。 */
   readonly afterTaxProfit: number;
   /** 中小法人として計算したか。 */
@@ -418,6 +537,8 @@ export function calcCorporateTax(
     specialBusinessTax;
 
   const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
+  // 法定実効税率 (参考) は控除後所得の限界帯で評価する (損金算入を織り込んだ標準指標)。
+  const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile);
   const afterTaxProfit = taxableIncome - totalTax;
 
   return {
@@ -432,6 +553,7 @@ export function calcCorporateTax(
     specialBusinessTax,
     totalTax,
     effectiveRate,
+    statutoryEffectiveRate,
     afterTaxProfit,
     smallBusiness: small,
   };

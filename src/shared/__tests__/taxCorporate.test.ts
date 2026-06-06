@@ -25,7 +25,19 @@ import {
   resolvePerCapitaLevy,
   applyLossCarryforward,
   calcCorporateTax,
+  STATUTORY_BUSINESS_RATE_TIER1,
+  STATUTORY_BUSINESS_RATE_TIER2,
+  STATUTORY_BUSINESS_RATE_TIER3,
+  selectStatutoryRates,
+  calcStatutoryEffectiveRate,
 } from '../taxCorporate';
+
+/** 参照実装: 法定実効税率を率から直接組み立てる (テスト用の独立計算)。 */
+function expectedStatutory(corporateRate: number, businessRate: number): number {
+  const numerator =
+    corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+  return numerator / (1 + businessRate);
+}
 
 describe('isSmallBusiness', () => {
   it('defaults to small (conservative) when nothing is given', () => {
@@ -583,6 +595,206 @@ describe('calcCorporateTax 繰越欠損金 integration (round 57)', () => {
     expect(r.remainingLoss).toBe(3_000_000); // whole loss still carried
     expect(r.totalTax).toBe(70_000); // 均等割のみ
     expect(r.taxableIncome).toBe(-5_000_000);
+  });
+});
+
+describe('STATUTORY_BUSINESS_RATE_* (事業税系の限界率)', () => {
+  it('is the 事業税所得割率 grossed up by the 特別法人事業税 (×1.37)', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER1).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER1 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER2 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER3 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+  });
+
+  it('has the exact 令和6年度 values (3.5/5.3/7.0% × 1.37)', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER1).toBeCloseTo(0.035 * 1.37, 12); // 0.04795
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeCloseTo(0.053 * 1.37, 12); // 0.07261
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeCloseTo(0.07 * 1.37, 12); // 0.0959
+  });
+
+  it('is strictly increasing across the tiers', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeGreaterThan(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeGreaterThan(STATUTORY_BUSINESS_RATE_TIER2);
+  });
+});
+
+describe('selectStatutoryRates (法定実効税率の代表率の選択)', () => {
+  it('small business at ≤800万 uses the reduced 15% corporate rate', () => {
+    expect(selectStatutoryRates(8_000_000, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+    expect(selectStatutoryRates(4_000_000, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+    expect(selectStatutoryRates(0, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+  });
+
+  it('small business just over 800万 switches to the standard 23.2% corporate rate (境界)', () => {
+    // at the 800万 boundary → still reduced (≤)
+    expect(selectStatutoryRates(CORP_TAX_REDUCED_THRESHOLD, true).corporateRate).toBe(
+      CORP_TAX_REDUCED_RATE,
+    );
+    // just over → standard
+    expect(selectStatutoryRates(CORP_TAX_REDUCED_THRESHOLD + 1, true).corporateRate).toBe(
+      CORP_TAX_STANDARD_RATE,
+    );
+  });
+
+  it('large corporation always uses the standard 23.2% corporate rate (even ≤800万)', () => {
+    expect(selectStatutoryRates(4_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+    expect(selectStatutoryRates(8_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+    expect(selectStatutoryRates(20_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+  });
+
+  it('selects the business rate tier by the income band (400万 / 800万 境界)', () => {
+    // tier1: ≤400万
+    expect(selectStatutoryRates(4_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(selectStatutoryRates(0, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    // tier2: 400万超〜800万
+    expect(selectStatutoryRates(4_000_001, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER2);
+    expect(selectStatutoryRates(8_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER2);
+    // tier3: 800万超
+    expect(selectStatutoryRates(8_000_001, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+    expect(selectStatutoryRates(50_000_000, false).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+  });
+
+  it('treats negative / zero income as the minimum band (tier1, reduced rate for small)', () => {
+    expect(selectStatutoryRates(-1_000_000, true)).toEqual({
+      corporateRate: CORP_TAX_REDUCED_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+    expect(selectStatutoryRates(0, true)).toEqual({
+      corporateRate: CORP_TAX_REDUCED_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+    // large at negative → standard corporate rate, tier1 business
+    expect(selectStatutoryRates(-5, false)).toEqual({
+      corporateRate: CORP_TAX_STANDARD_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+  });
+});
+
+describe('calcStatutoryEffectiveRate (法定実効税率)', () => {
+  it('matches the documented formula for a small business above 800万 (tier3, 23.2%)', () => {
+    // corporateRate 23.2% (income>800万), businessRate tier3
+    const r = calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER3),
+      12,
+    );
+    // sanity: numeric value ≈ 33.58%
+    expect(r).toBeCloseTo(0.3358, 3);
+  });
+
+  it('uses the reduced 15% rate + tier1 for a small business at low income', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('uses the standard rate for a large corporation even at low income', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { smallBusiness: false });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+    // differs from the small-business reduced-rate result at the same income
+    expect(r).not.toBeCloseTo(
+      calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true }),
+      6,
+    );
+  });
+
+  it('classifies large by capital over the 1億円 threshold', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { capital: 200_000_000 });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('defaults to a small business (reduced band) when no profile is given', () => {
+    expect(calcStatutoryEffectiveRate(3_000_000)).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+    // default income is 0 → minimum band as well
+    expect(calcStatutoryEffectiveRate()).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('is lower than the naive sum {法人税率(1+地方+住民)+事業税系率} (損金算入で割り戻す効果)', () => {
+    // The statutory rate divides by (1 + businessRate), so it must be strictly below
+    // the un-discounted numerator whenever businessRate > 0.
+    const corporateRate = CORP_TAX_STANDARD_RATE;
+    const businessRate = STATUTORY_BUSINESS_RATE_TIER3;
+    const naive = corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+    const statutory = calcStatutoryEffectiveRate(10_000_000, { smallBusiness: false });
+    expect(statutory).toBeLessThan(naive);
+  });
+
+  it('is a plausible 25-37% for typical income bands', () => {
+    for (const income of [3_000_000, 6_000_000, 10_000_000, 50_000_000]) {
+      for (const small of [true, false]) {
+        const r = calcStatutoryEffectiveRate(income, { smallBusiness: small });
+        expect(r).toBeGreaterThan(0.2);
+        expect(r).toBeLessThan(0.37);
+      }
+    }
+  });
+});
+
+describe('calcCorporateTax statutoryEffectiveRate (集計への純粋追加)', () => {
+  it('exposes statutoryEffectiveRate computed on the after-loss income', () => {
+    const r = calcCorporateTax(10_000_000, { smallBusiness: true });
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true }),
+      12,
+    );
+  });
+
+  it('uses the income AFTER loss carryforward for the band selection', () => {
+    // 10,000,000 income − 7,000,000 loss → after-loss 3,000,000 → reduced band (tier1, 15%)
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 7_000_000, smallBusiness: true });
+    expect(r.incomeAfterLoss).toBe(3_000_000);
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true }),
+      12,
+    );
+    // and that differs from the pre-loss (10,000,000 → standard band) statutory rate
+    expect(r.statutoryEffectiveRate).not.toBeCloseTo(
+      calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true }),
+      6,
+    );
+  });
+
+  it('stays defined (non-zero) even at a loss, unlike effectiveRate (0)', () => {
+    const r = calcCorporateTax(0);
+    expect(r.effectiveRate).toBe(0); // simple sum is 0 at a loss
+    expect(r.statutoryEffectiveRate).toBeGreaterThan(0); // marginal statutory rate still defined
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(0, {}),
+      12,
+    );
+  });
+
+  it('does NOT change any existing field (純粋追加の確認)', () => {
+    const r = calcCorporateTax(10_000_000);
+    // existing values from the round-54/56/57 tests remain identical
+    expect(r.corporateIncomeTax).toBe(1_664_000);
+    expect(r.businessTax).toBe(492_000);
+    expect(r.residentTax).toBe(Math.round(1_664_000 * 0.07) + 70_000);
+    expect(r.effectiveRate).toBeCloseTo(r.totalTax / 10_000_000, 12);
+    expect(r.afterTaxProfit).toBe(10_000_000 - r.totalTax);
   });
 });
 
