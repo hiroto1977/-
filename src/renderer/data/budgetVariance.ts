@@ -145,6 +145,9 @@ export function classifyFavorability(
   kind: 'revenue' | 'cost',
 ): VarianceFavorability {
   if (!Number.isFinite(variance) || variance === 0) return 'neutral';
+  // variance === 0 は上で neutral 済なので、ここでは variance は厳密に非ゼロ。
+  // よって > 0 と >= 0、< 0 と <= 0 は同値 (境界 0 は到達不能) → equivalent。
+  // Stryker disable next-line EqualityOperator
   const good = kind === 'revenue' ? variance > 0 : variance < 0;
   return good ? 'favorable' : 'unfavorable';
 }
@@ -174,6 +177,10 @@ export function assessVariance(
   const variancePct =
     denom > 0 && Number.isFinite(variance) ? Math.round((variance / denom) * 1000) / 10 : null;
   const threshold = Number.isFinite(thresholdPct) && thresholdPct >= 0 ? thresholdPct : 10;
+  // variancePct===null のとき Math.abs(null)===0、かつ threshold は常に >= 0 に正規化
+  // 済なので 0 > threshold は false → null ガードを外しても material は false で不変
+  // (= ConditionalExpression は equivalent)。ガードは意図明示のため残す。
+  // Stryker disable next-line ConditionalExpression
   const material = variancePct !== null && Math.abs(variancePct) > threshold;
   return {
     variance,
