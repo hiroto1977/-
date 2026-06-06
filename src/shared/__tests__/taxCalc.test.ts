@@ -19,6 +19,7 @@ import {
   marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
+  RESIDENT_TAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
   RESIDENT_PER_CAPITA_BASE,
   FOREST_ENVIRONMENT_TAX,
@@ -28,6 +29,7 @@ import {
   taxSchemeCatalog,
   complianceChecklist,
   COMPLIANCE_TOPICS,
+  type MunicipalityOverride,
 } from '../taxCalc';
 
 describe('calcIncomeTax', () => {
@@ -606,5 +608,150 @@ describe('calcSalaryWithDeductions resident-tax exemption integration', () => {
   it('keeps resident tax for a normal income', () => {
     const r = calcSalaryWithDeductions(6_000_000, 1_300_000, 1_250_000, 0, 50_000, 0);
     expect(r.residentTax).toBeGreaterThan(0);
+  });
+});
+
+// ============================================================
+// 住民税の自治体オーバーライド (MunicipalityOverride) テスト
+// ============================================================
+
+describe('calcResidentTax — MunicipalityOverride (自治体オーバーライド)', () => {
+  // --- 既定挙動: オーバーライド未指定は標準定数と完全一致 ---
+
+  it('既存呼び出しと同じ結果: override なし = 標準定数', () => {
+    const income = 3_000_000;
+    // 既存の呼び出しと同じ結果を返すこと (既定挙動の不変性を確認)。
+    expect(calcResidentTax(income)).toBe(calcResidentTax(income, undefined));
+    expect(calcResidentTax(0)).toBe(calcResidentTax(0, undefined));
+    expect(calcResidentTax(-1_000)).toBe(calcResidentTax(-1_000, undefined));
+  });
+
+  it('空の override オブジェクトは標準定数にフォールバック', () => {
+    const override: MunicipalityOverride = {};
+    const income = 5_000_000;
+    expect(calcResidentTax(income, override)).toBe(calcResidentTax(income));
+  });
+
+  // --- incomeRate オーバーライド ---
+
+  it('incomeRate=0.08 (例: 低率自治体) で所得割が変わる', () => {
+    const income = 3_000_000;
+    // 3,000,000 × 8% = 240,000 + 5,000 = 245,000
+    expect(calcResidentTax(income, { incomeRate: 0.08 })).toBe(240_000 + RESIDENT_TAX_PER_CAPITA);
+    // 標準 (10%) より低い
+    expect(calcResidentTax(income, { incomeRate: 0.08 })).toBeLessThan(calcResidentTax(income));
+  });
+
+  it('incomeRate=0.12 (例: 高率自治体) で所得割が変わる', () => {
+    const income = 3_000_000;
+    // 3,000,000 × 12% = 360,000 + 5,000 = 365,000
+    expect(calcResidentTax(income, { incomeRate: 0.12 })).toBe(360_000 + RESIDENT_TAX_PER_CAPITA);
+    // 標準 (10%) より高い
+    expect(calcResidentTax(income, { incomeRate: 0.12 })).toBeGreaterThan(calcResidentTax(income));
+  });
+
+  it('incomeRate=0 は所得割なし (均等割のみ)', () => {
+    const income = 5_000_000;
+    // 所得割 0 + 均等割 5,000 = 5,000
+    expect(calcResidentTax(income, { incomeRate: 0 })).toBe(RESIDENT_TAX_PER_CAPITA);
+  });
+
+  it('incomeRate は 1,000 円未満を切り捨てた課税所得に適用される', () => {
+    const income = 3_000_999;
+    // 3,000,999 → 3,000,000 × 8% = 240,000 + 5,000 = 245,000
+    expect(calcResidentTax(income, { incomeRate: 0.08 })).toBe(240_000 + RESIDENT_TAX_PER_CAPITA);
+    // 端数 999 を含む場合も 3,000,000 に切り捨てた結果と一致
+    expect(calcResidentTax(income, { incomeRate: 0.08 })).toBe(
+      calcResidentTax(3_000_000, { incomeRate: 0.08 }),
+    );
+  });
+
+  // --- perCapita オーバーライド ---
+
+  it('perCapita=6_000 (例: 上乗せ自治体) で均等割が変わる', () => {
+    const income = 3_000_000;
+    // 3,000,000 × 10% = 300,000 + 6,000 = 306,000
+    expect(calcResidentTax(income, { perCapita: 6_000 })).toBe(300_000 + 6_000);
+    // 標準 (5,000) より高い
+    expect(calcResidentTax(income, { perCapita: 6_000 })).toBeGreaterThan(calcResidentTax(income));
+  });
+
+  it('perCapita=4_000 (例: 森林環境税なしの旧基礎のみ相当) で均等割が変わる', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { perCapita: 4_000 })).toBe(300_000 + 4_000);
+  });
+
+  it('perCapita=0 は均等割なし (所得割のみ)', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { perCapita: 0 })).toBe(300_000);
+  });
+
+  // --- 両方オーバーライド ---
+
+  it('incomeRate と perCapita を同時にオーバーライドできる', () => {
+    const income = 2_000_000;
+    // 2,000,000 × 9% = 180,000 + 4_500 = 184,500
+    expect(calcResidentTax(income, { incomeRate: 0.09, perCapita: 4_500 })).toBe(180_000 + 4_500);
+    // 標準計算とは異なる
+    expect(calcResidentTax(income, { incomeRate: 0.09, perCapita: 4_500 })).not.toBe(
+      calcResidentTax(income),
+    );
+  });
+
+  // --- 非課税所得へのオーバーライド ---
+
+  it('taxableIncome <= 0 のときは perCapita オーバーライドが返る', () => {
+    // 課税所得 0 以下は均等割のみ。オーバーライドの perCapita が適用される。
+    expect(calcResidentTax(0, { perCapita: 6_000 })).toBe(6_000);
+    expect(calcResidentTax(-1_000, { perCapita: 3_000 })).toBe(3_000);
+    // incomeRate はこの経路では使われない (所得割 0)。
+    expect(calcResidentTax(0, { incomeRate: 0.12, perCapita: 5_500 })).toBe(5_500);
+  });
+
+  // --- 入力ガード: 不正値は標準にフォールバック ---
+
+  it('負の incomeRate は標準 RESIDENT_TAX_RATE にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { incomeRate: -0.05 })).toBe(calcResidentTax(income));
+  });
+
+  it('NaN の incomeRate は標準 RESIDENT_TAX_RATE にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { incomeRate: NaN })).toBe(calcResidentTax(income));
+  });
+
+  it('Infinity の incomeRate は標準 RESIDENT_TAX_RATE にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { incomeRate: Infinity })).toBe(calcResidentTax(income));
+    expect(calcResidentTax(income, { incomeRate: -Infinity })).toBe(calcResidentTax(income));
+  });
+
+  it('負の perCapita は標準 RESIDENT_TAX_PER_CAPITA にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { perCapita: -1_000 })).toBe(calcResidentTax(income));
+  });
+
+  it('NaN の perCapita は標準 RESIDENT_TAX_PER_CAPITA にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { perCapita: NaN })).toBe(calcResidentTax(income));
+  });
+
+  it('Infinity の perCapita は標準 RESIDENT_TAX_PER_CAPITA にフォールバック', () => {
+    const income = 3_000_000;
+    expect(calcResidentTax(income, { perCapita: Infinity })).toBe(calcResidentTax(income));
+  });
+
+  // --- 定数の参照整合性 ---
+
+  it('RESIDENT_TAX_RATE を incomeRate に渡すと override なしと同じ結果', () => {
+    const income = 4_000_000;
+    expect(calcResidentTax(income, { incomeRate: RESIDENT_TAX_RATE })).toBe(calcResidentTax(income));
+  });
+
+  it('RESIDENT_TAX_PER_CAPITA を perCapita に渡すと override なしと同じ結果', () => {
+    const income = 4_000_000;
+    expect(calcResidentTax(income, { perCapita: RESIDENT_TAX_PER_CAPITA })).toBe(
+      calcResidentTax(income),
+    );
   });
 });
