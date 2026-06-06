@@ -13,12 +13,15 @@ import {
   BUSINESS_TAX_TIER2_LIMIT,
   SPECIAL_BUSINESS_TAX_RATE,
   LARGE_CORP_CAPITAL_THRESHOLD,
+  PER_CAPITA_EMPLOYEE_THRESHOLD,
   isSmallBusiness,
   calcCorporateIncomeTax,
   calcLocalCorporateTax,
   calcResidentCorporateTax,
   calcBusinessTaxIncomePortion,
   calcSpecialBusinessTax,
+  resolveCorporatePerCapita,
+  resolvePerCapitaLevy,
   calcCorporateTax,
 } from '../taxCorporate';
 
@@ -247,6 +250,125 @@ describe('calcCorporateTax (aggregate)', () => {
   });
 });
 
+describe('resolveCorporatePerCapita (均等割 区分テーブル)', () => {
+  it('returns the minimum tier (7万 / 14万) for capital ≤ 1千万', () => {
+    expect(resolveCorporatePerCapita(0)).toBe(70_000);
+    expect(resolveCorporatePerCapita(5_000_000)).toBe(70_000);
+    expect(resolveCorporatePerCapita(10_000_000)).toBe(70_000); // exactly 1千万 → still min
+    expect(resolveCorporatePerCapita(10_000_000, 100)).toBe(140_000); // 50人超
+  });
+
+  it('handles the 1千万 capital boundary (≤ stays min, just over moves up)', () => {
+    expect(resolveCorporatePerCapita(10_000_000)).toBe(70_000);
+    expect(resolveCorporatePerCapita(10_000_001)).toBe(180_000); // just over → next tier
+    expect(resolveCorporatePerCapita(10_000_001, 60)).toBe(200_000);
+  });
+
+  it('handles the 1億 capital boundary', () => {
+    expect(resolveCorporatePerCapita(100_000_000)).toBe(180_000); // exactly 1億 → 2nd tier
+    expect(resolveCorporatePerCapita(100_000_001)).toBe(290_000); // just over → 3rd tier
+    expect(resolveCorporatePerCapita(100_000_001, 51)).toBe(530_000);
+  });
+
+  it('handles the 10億 capital boundary', () => {
+    expect(resolveCorporatePerCapita(1_000_000_000)).toBe(290_000); // exactly 10億 → 3rd tier
+    expect(resolveCorporatePerCapita(1_000_000_001)).toBe(410_000); // just over → 4th tier
+    expect(resolveCorporatePerCapita(1_000_000_001, 100)).toBe(2_290_000);
+  });
+
+  it('handles the 50億 capital boundary and the top tier', () => {
+    expect(resolveCorporatePerCapita(5_000_000_000)).toBe(410_000); // exactly 50億 → 4th tier
+    expect(resolveCorporatePerCapita(5_000_000_000, 100)).toBe(2_290_000);
+    expect(resolveCorporatePerCapita(5_000_000_001)).toBe(410_000); // just over → top tier, 50人以下
+    expect(resolveCorporatePerCapita(5_000_000_001, 100)).toBe(3_800_000); // top tier, 50人超
+    expect(resolveCorporatePerCapita(99_000_000_000, 9999)).toBe(3_800_000); // very large
+  });
+
+  it('treats the 従業者 50人 boundary as 以下/超 (50ちょうどは小区分)', () => {
+    expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
+    expect(resolveCorporatePerCapita(50_000_000, 50)).toBe(180_000); // 50ちょうど → 50人以下
+    expect(resolveCorporatePerCapita(50_000_000, 51)).toBe(200_000); // 51 → 50人超
+    expect(resolveCorporatePerCapita(50_000_000, 49)).toBe(180_000);
+  });
+
+  it('defaults employees to 50人以下 when omitted', () => {
+    expect(resolveCorporatePerCapita(50_000_000)).toBe(180_000);
+    expect(resolveCorporatePerCapita(50_000_000, 0)).toBe(180_000);
+  });
+
+  it('clamps negative capital and negative employees to the min tier / 少区分', () => {
+    expect(resolveCorporatePerCapita(-100)).toBe(70_000);
+    expect(resolveCorporatePerCapita(50_000_000, -5)).toBe(180_000); // 負の従業者は50人以下
+  });
+
+  it('is monotonic non-decreasing in capital for each employee column', () => {
+    const caps = [0, 10_000_000, 100_000_000, 1_000_000_000, 5_000_000_000, 1e12];
+    for (const many of [0, 100]) {
+      for (let i = 1; i < caps.length; i++) {
+        expect(resolveCorporatePerCapita(caps[i]!, many)).toBeGreaterThanOrEqual(
+          resolveCorporatePerCapita(caps[i - 1]!, many),
+        );
+      }
+    }
+  });
+
+  it('the 50人超 column is always ≥ the 50人以下 column', () => {
+    for (const cap of [0, 50_000_000, 500_000_000, 3_000_000_000, 1e12]) {
+      expect(resolveCorporatePerCapita(cap, 100)).toBeGreaterThanOrEqual(
+        resolveCorporatePerCapita(cap, 0),
+      );
+    }
+  });
+});
+
+describe('resolvePerCapitaLevy (均等割の決定順)', () => {
+  it('prefers an explicit perCapitaLevy over the table', () => {
+    expect(resolvePerCapitaLevy({ perCapitaLevy: 290_000, capital: 1_000_000_000 })).toBe(290_000);
+    expect(resolvePerCapitaLevy({ perCapitaLevy: 0 })).toBe(0); // explicit 0 honored (not default)
+  });
+
+  it('resolves from capital (+employees) when no explicit levy', () => {
+    expect(resolvePerCapitaLevy({ capital: 100_000_001 })).toBe(290_000);
+    expect(resolvePerCapitaLevy({ capital: 100_000_001, employees: 60 })).toBe(530_000);
+  });
+
+  it('falls back to the minimum tier when neither levy nor capital is given', () => {
+    expect(resolvePerCapitaLevy()).toBe(DEFAULT_PER_CAPITA_LEVY);
+    expect(resolvePerCapitaLevy({})).toBe(70_000);
+    expect(resolvePerCapitaLevy({ employees: 100 })).toBe(70_000); // employees alone → default
+  });
+});
+
+describe('calcCorporateTax 均等割 integration (round 56)', () => {
+  it('is unchanged for the no-profile / explicit-levy callers (既定挙動不変)', () => {
+    // no profile → 最小区分 7万 (従来どおり)
+    expect(calcCorporateTax(0).residentTax).toBe(70_000);
+    // explicit perCapitaLevy still wins
+    expect(calcCorporateTax(0, { perCapitaLevy: 290_000 }).residentTax).toBe(290_000);
+    // explicit levy wins even with a large capital that would resolve higher/lower
+    expect(
+      calcCorporateTax(0, { perCapitaLevy: 70_000, capital: 5_000_000_001, employees: 100 })
+        .residentTax,
+    ).toBe(70_000);
+  });
+
+  it('resolves 均等割 from capital alone when no explicit levy', () => {
+    const r = calcCorporateTax(0, { capital: 1_000_000_001 });
+    expect(r.residentTax).toBe(410_000); // 10億超・50人以下
+  });
+
+  it('resolves 均等割 from capital + employees', () => {
+    const r = calcCorporateTax(0, { capital: 1_000_000_001, employees: 100 });
+    expect(r.residentTax).toBe(2_290_000); // 10億超・50人超
+  });
+
+  it('adds the 法人税割 on top of the resolved 均等割', () => {
+    const r = calcCorporateTax(10_000_000, { capital: 50_000_000 });
+    // 均等割 = 1千万超〜1億以下・50人以下 = 180,000; 法人税割 = 1,664,000×7%
+    expect(r.residentTax).toBe(Math.round(1_664_000 * 0.07) + 180_000);
+  });
+});
+
 describe('year constants (令和6年度)', () => {
   it('exposes the documented rate table', () => {
     expect(CORP_TAX_REDUCED_RATE).toBe(0.15);
@@ -262,5 +384,6 @@ describe('year constants (令和6年度)', () => {
     expect(BUSINESS_TAX_TIER2_LIMIT).toBe(8_000_000);
     expect(SPECIAL_BUSINESS_TAX_RATE).toBe(0.37);
     expect(LARGE_CORP_CAPITAL_THRESHOLD).toBe(100_000_000);
+    expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
   });
 });

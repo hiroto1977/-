@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2942 静的 / 3019 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
+**品質メトリクス:** 2959 静的 / 3036 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
@@ -32,6 +32,13 @@ next-line 限定 disable → **mutation 100.00%** (`npx stryker run --mutate src
 `fin.ordinaryProfit` (経常利益概算) を `calcCorporateTax` に接続。法人税等合計 / 実効税率 /
 税引後利益の 4 タイル + 欠損時の均等割のみメッセージ + 内訳ラベルを財務諸表直前に表示。
 taxCorporate.ts 自体は変更せず mutation 100% 維持。新テスト 15 件追加 (黒字/欠損 2 分岐)。
+**round 56 で均等割を精緻化**: 法人住民税 均等割を固定7万 (or 任意指定) から、資本金等の額の
+5区分 × 従業者数 (50人超/以下) の標準税率テーブル (令和6年度) に区分化。`resolveCorporatePerCapita
+(capital, employees)` で「以上/未満」境界 (各区分下限+1円表現) で解決し、`resolvePerCapitaLevy`
+が決定順を制御: perCapitaLevy 明示 → capital(+employees) 区分解決 → 最小7万。`CorporateProfile`
+に `employees?` 追加。**既存の引数なし/perCapitaLevy指定の呼び出しは挙動不変**。テーブルは罠#2 に
+従い block-level `Stryker disable all`、解決ロジックは下限走査+throwフォールバックの境界トリックで
+実テスト撃墜 → mutation 100.00% 維持。新テスト 22 件追加。
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
