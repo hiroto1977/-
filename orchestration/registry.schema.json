@@ -26,6 +26,25 @@
         "growthRule": { "type": "string" },
         "roleSeparation": { "type": "string" },
         "qualityGate": { "type": "string" },
+        "executionModel": { "type": "string" },
+        "cycles": {
+          "type": "object",
+          "description": "PDCA/OODA など、1ラウンドを回す改善サイクルのステージ定義。",
+          "properties": { "description": { "type": "string" } },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["stage", "owner", "desc"],
+              "properties": {
+                "stage": { "type": "string" },
+                "owner": { "type": "string" },
+                "parallel": { "type": "boolean" },
+                "desc": { "type": "string" }
+              }
+            }
+          }
+        },
         "hierarchy": { "type": "object" }
       }
     },

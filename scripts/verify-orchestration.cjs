@@ -200,6 +200,29 @@ function main() {
     if (!teamIds.has(b.team)) problems.push(`backlog "${b.id}": 未知の team "${b.team}"`);
   }
 
+  // 12. サイクル定義 (v3): policy.cycles があれば、各サイクルは非空のステージ配列で、
+  //     各ステージは stage / owner / desc(文字列) を持つ (parallel は任意 boolean)。
+  //     実行ランタイム (orchestrate.cjs) が依存するため構造を強制する。
+  if (reg.policy && reg.policy.cycles) {
+    for (const [name, stages] of Object.entries(reg.policy.cycles)) {
+      if (name === 'description') continue;
+      if (!Array.isArray(stages) || stages.length === 0) {
+        problems.push(`policy.cycles.${name} は非空の配列であること`);
+        continue;
+      }
+      stages.forEach((s, i) => {
+        for (const key of ['stage', 'owner', 'desc']) {
+          if (typeof s[key] !== 'string' || s[key] === '') {
+            problems.push(`policy.cycles.${name}[${i}] の "${key}" が文字列でない`);
+          }
+        }
+        if ('parallel' in s && typeof s.parallel !== 'boolean') {
+          problems.push(`policy.cycles.${name}[${i}] の "parallel" は boolean であること`);
+        }
+      });
+    }
+  }
+
   if (problems.length) fail(problems);
 
   const lastRound = reg.rounds.reduce((m, r) => Math.max(m, r.round), 0);
