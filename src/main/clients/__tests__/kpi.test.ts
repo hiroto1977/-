@@ -404,6 +404,27 @@ describe('requiredRevenueForTargetProfit', () => {
     expect(requiredRevenueForTargetProfit(loss, 100_000)).toBe(Infinity);
     expect(requiredRevenueForTargetProfit({ ...base, revenue: 0 }, 0)).toBe(Infinity);
   });
+
+  it('returns Infinity for revenue exactly 0 (kills `<= 0` → `< 0` EqualityOperator)', () => {
+    // revenue=0 satisfies `<= 0` but NOT `< 0`. With the mutant the guard
+    // would be false for revenue=0, proceeding to division by zero (NaN/Inf).
+    const f: Fundamentals = { revenue: 0, cogs: 0, advertising: 0, sga: 50_000, depreciation: 0 };
+    expect(requiredRevenueForTargetProfit(f, 0)).toBe(Infinity);
+  });
+
+  it('returns Infinity when contribution is exactly 0 (kills `contribution <= 0` → `< 0`)', () => {
+    // revenue strictly positive, but variableCost == revenue → contribution exactly 0.
+    // `<= 0` fires; the mutated `< 0` would NOT fire → division by zero.
+    const f: Fundamentals = { revenue: 1_000_000, cogs: 600_000, advertising: 400_000, sga: 50_000, depreciation: 0 };
+    expect(requiredRevenueForTargetProfit(f, 0)).toBe(Infinity);
+  });
+
+  it('returns positive finite revenue for a narrow-margin business (kills ConditionalExpression → false)', () => {
+    // revenue 1M, variable 500k (50%), contribution 500k, ratio 0.5, fixed 200k
+    // required = (200k + 0) / 0.5 = 400k
+    const f: Fundamentals = { revenue: 1_000_000, cogs: 300_000, advertising: 200_000, sga: 160_000, depreciation: 40_000 };
+    expect(requiredRevenueForTargetProfit(f, 0)).toBeCloseTo(400_000, 0);
+  });
 });
 
 describe('breakEvenQuantity', () => {
@@ -427,6 +448,35 @@ describe('breakEvenQuantity', () => {
     // variable cost ≥ revenue → unit variable ≥ price → contribution 0
     const lossUnit: Fundamentals = { revenue: 1_000_000, cogs: 800_000, advertising: 400_000, sga: 100_000, depreciation: 0 };
     const r = breakEvenQuantity(lossUnit, 1_000); // qty 1000, unit variable 1.2M/1000=1200 > 1000
+    expect(r.unitContribution).toBe(0);
+    expect(r.breakEvenQuantity).toBe(Infinity);
+    expect(r.safeQuantity).toBe(0);
+  });
+
+  it('zero currentQuantity uses unitVariable=0 and prices = unitContribution (kills `> 0` → `>= 0` on line 164)', () => {
+    // revenue=0 with a positive price → currentQuantity = round(0/price) = 0.
+    // `currentQuantity > 0` is false → unitVariable=0 (not divide-by-zero).
+    // With `>= 0` mutant: 0 >= 0 is true → variableCost/0 = Infinity.
+    const f: Fundamentals = { revenue: 0, cogs: 1_000, advertising: 0, sga: 500, depreciation: 0 };
+    const r = breakEvenQuantity(f, 1_000);
+    // currentQuantity = 0, unitVariable = 0, unitContribution = max(0, 1000-0) = 1000
+    expect(r.currentQuantity).toBe(0);
+    expect(r.unitContribution).toBe(1_000);
+    // beq = ceil(fixedCost / 1000) = ceil(500/1000) = 1
+    expect(r.breakEvenQuantity).toBe(1);
+    // safeQuantity = max(0, 0 - 1) = 0
+    expect(r.safeQuantity).toBe(0);
+  });
+
+  it('unitContribution exactly 0 yields Infinity beq (kills `> 0` → `>= 0` on line 166)', () => {
+    // price == unitVariable exactly → unitContribution = max(0, 0) = 0.
+    // `> 0` is false → Infinity. With `>= 0` mutant: 0 >= 0 true → ceil(fixed/0) = Infinity too,
+    // but then safeQuantity branch differs. Pin the full shape.
+    // revenue = 1000, price = 1000 → qty = 1, variableCost = 1000 → unitVariable = 1000
+    // unitContribution = max(0, 1000 - 1000) = 0
+    const f: Fundamentals = { revenue: 1_000, cogs: 700, advertising: 300, sga: 200, depreciation: 0 };
+    const r = breakEvenQuantity(f, 1_000);
+    expect(r.currentQuantity).toBe(1);
     expect(r.unitContribution).toBe(0);
     expect(r.breakEvenQuantity).toBe(Infinity);
     expect(r.safeQuantity).toBe(0);
@@ -477,5 +527,65 @@ describe('simulatePriceChange (価格変更シミュレーション)', () => {
     const r = simulatePriceChange({ revenue: 0, cogs: 0, advertising: 0, sga: 100_000, depreciation: 0 }, 0.1);
     expect(r.simulatedBep).toBe(Infinity);
     expect(r.simulatedOperatingProfit).toBe(-100_000);
+  });
+
+  it('zero-revenue early-return pins operatingProfitDelta (kills `<= 0` → `< 0` and BlockStatement)', () => {
+    // revenue exactly 0 → takes the early-return branch (line 204).
+    // Mutant `< 0`: guard false for 0 → falls through, computing delta differently.
+    // Mutant BlockStatement: guard body becomes {} → falls through entirely.
+    // currentOp = max(0, 0) - 0 - fixedCost = -fixedCost; delta = -fixedCost - (-fixedCost) = 0.
+    // BUT in the early-return the returned operatingProfitDelta = -fixedCost - currentOp.
+    // With variable=0, fixed=100k: currentOp = 0 - 0 - 100k = -100k.
+    // delta = -100k - (-100k) = 0.
+    const f: Fundamentals = { revenue: 0, cogs: 0, advertising: 0, sga: 80_000, depreciation: 20_000 };
+    const r = simulatePriceChange(f, 0.5);
+    expect(r.simulatedRevenue).toBe(0);
+    expect(r.simulatedContributionRatio).toBe(0);
+    expect(r.simulatedBep).toBe(Infinity);
+    expect(r.simulatedOperatingProfit).toBe(-100_000); // -fixedCost
+    expect(r.operatingProfitDelta).toBe(0); // -100k − (−100k)
+    expect(r.priceChangeRatio).toBe(0.5);
+  });
+
+  it('zero-revenue delta with variable costs (kills arithmetic on operatingProfitDelta line 212)', () => {
+    // revenue=0, variable=5k, fixed=10k → currentOp = max(0,0) - 5k - 10k = -15k
+    // Early-return: simulatedOp = -fixedCost = -10k; delta = -10k - (-15k) = +5k.
+    // Arithmetic mutant `-fixedCost + currentOp` → -10k + (-15k) = -25k ≠ +5k.
+    // Unary mutant `+fixedCost` → +10k; delta = +10k - (-15k) = +25k ≠ +5k.
+    const f: Fundamentals = { revenue: 0, cogs: 3_000, advertising: 2_000, sga: 8_000, depreciation: 2_000 };
+    const r = simulatePriceChange(f, 0.2);
+    expect(r.simulatedOperatingProfit).toBe(-10_000); // -fixedCost
+    expect(r.operatingProfitDelta).toBe(5_000); // -10k - (-15k) = +5k
+  });
+
+  it('pins simulatedContributionRatio formula exactly (kills arithmetic mutations on lines 218-219)', () => {
+    // revenue 10M + 10% = 11M, variable stays at 3M, contribution 8M.
+    // ratio = round((8M / 11M) * 1000) / 10 = round(727.27…) / 10 = 727/10 = 72.7
+    const up = simulatePriceChange(base, 0.1);
+    expect(up.simulatedContributionRatio).toBeCloseTo(72.7, 1);
+    // Arithmetic mutants: / 1000 → * 1000 gives 72727.27; / 10 → * 10 gives 7270.
+    // Pin the exact decimal to kill all three arithmetic operator variants.
+    expect(up.simulatedContributionRatio).toBeGreaterThan(72);
+    expect(up.simulatedContributionRatio).toBeLessThan(74);
+  });
+
+  it('simulatedRevenue exactly 0 gives zero contributionRatio not NaN (kills `> 0` → `true/false/≥`)', () => {
+    // −100% → simulatedRevenue = round(10M * 0) = 0.
+    // `simulatedRevenue > 0` is false → contributionRatio = 0. No NaN.
+    // Mutant `true`: ratio = round((simContr/0)*1000)/10 = NaN.
+    // Mutant `false`: ratio always 0 even with positive simRevenue (kills other tests).
+    // Mutant `>= 0`: 0 >= 0 → tries to divide by zero → NaN.
+    const r = simulatePriceChange(base, -1);
+    expect(r.simulatedRevenue).toBe(0);
+    expect(r.simulatedContributionRatio).toBe(0);
+    expect(Number.isFinite(r.simulatedContributionRatio)).toBe(true);
+  });
+
+  it('simulatedContribution exactly 0 gives simulatedBep Infinity (kills `> 0` → `>= 0` on line 221)', () => {
+    // simulatedRevenue = 3M (−70% of base 10M → contribution = 3M - 3M = 0).
+    // `> 0` is false → Infinity. With `>= 0`: 0 >= 0 → tries Math.round(fixed/0*0) = NaN/0.
+    const r = simulatePriceChange(base, -0.7);
+    expect(r.simulatedContribution).toBe(0);
+    expect(r.simulatedBep).toBe(Infinity);
   });
 });
