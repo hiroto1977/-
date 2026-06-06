@@ -91,10 +91,10 @@ export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
 //     50人以下列は資本金が上がっても市町村分が 41万で頭打ちになる点に注意。
 //     概算目的のため 50人以下の最上位 2 区分 (10億超/50億超) は 410,000 で同額。
 
-/** 均等割区分テーブルの1行 (資本金等の額の上限と、従業者数別の年額)。 */
+/** 均等割区分テーブルの1行 (資本金等の額の下限と、従業者数別の年額)。 */
 export interface PerCapitaTier {
-  /** この区分に属する資本金等の額の上限 (この額「以下」)。最上位は Infinity。 */
-  readonly capitalUpperBound: number;
+  /** この区分に属する資本金等の額の下限 (この額「超」。最下位は 0)。 */
+  readonly capitalLowerBound: number;
   /** 従業者 50人以下のときの均等割年額 (円)。 */
   readonly levyFew: number;
   /** 従業者 50人超のときの均等割年額 (円)。 */
@@ -108,15 +108,17 @@ export interface PerCapitaTier {
 
 /**
  * 法人住民税 均等割の区分テーブル (資本金等の額 昇順)。
- * 資本金等の額 `c` は capitalUpperBound[i-1] < c ≤ capitalUpperBound[i] の
- * 区分 i に属する (「超〜以下」ルール)。
+ * 各区分の `capitalLowerBound` は「この額以上でこの区分」。資本金等の額 `c` は
+ * capitalLowerBound[i] ≤ c < capitalLowerBound[i+1] の区分 i に属する。
+ * 税法上の「○○超」は最小通貨単位 (1円) を足した「以上」で表現する
+ * (例: 1千万円「超」= 10,000,001 円「以上」)。最下位区分は下限0で底打ち。
  */
 const PER_CAPITA_TIERS: readonly PerCapitaTier[] = [
-  { capitalUpperBound: 10_000_000, levyFew: 70_000, levyMany: 140_000 }, // 1千万円以下
-  { capitalUpperBound: 100_000_000, levyFew: 180_000, levyMany: 200_000 }, // 1千万超〜1億以下
-  { capitalUpperBound: 1_000_000_000, levyFew: 290_000, levyMany: 530_000 }, // 1億超〜10億以下
-  { capitalUpperBound: 5_000_000_000, levyFew: 410_000, levyMany: 2_290_000 }, // 10億超〜50億以下
-  { capitalUpperBound: Infinity, levyFew: 410_000, levyMany: 3_800_000 }, // 50億円超
+  { capitalLowerBound: 0, levyFew: 70_000, levyMany: 140_000 }, // 1千万円以下
+  { capitalLowerBound: 10_000_001, levyFew: 180_000, levyMany: 200_000 }, // 1千万超〜1億以下
+  { capitalLowerBound: 100_000_001, levyFew: 290_000, levyMany: 530_000 }, // 1億超〜10億以下
+  { capitalLowerBound: 1_000_000_001, levyFew: 410_000, levyMany: 2_290_000 }, // 10億超〜50億以下
+  { capitalLowerBound: 5_000_000_001, levyFew: 410_000, levyMany: 3_800_000 }, // 50億円超
 ];
 
 // Stryker restore all
@@ -155,17 +157,19 @@ export interface CorporateProfile {
 export function resolveCorporatePerCapita(capital: number, employees = 0): number {
   const c = Math.max(0, capital);
   const many = employees > PER_CAPITA_EMPLOYEE_THRESHOLD;
-  // 下位区分から走査し、最初に「上限以下」を満たした区分を採用する。
-  // 最上位区分は capitalUpperBound===Infinity なので必ず一致し、ループは最後まで
-  // 走り得る。フォールバックは最小区分の重複返却ではなく throw にすることで、
-  // ループ境界の変異 (i < length → i <= length 等) を実テストで撃墜する。
-  for (let i = 0; i < PER_CAPITA_TIERS.length; i++) {
+  // 上位区分から走査し、最初に「下限以上」(c >= 下限) を満たした区分を採用する。
+  // これにより資本金区分の境界と最上位区分の頭打ちを同時に満たす。最下位区分
+  // (index 0, capitalLowerBound===0) は c>=0 で必ず一致するため、ループは index 0
+  // まで走る (`i >= 0`)。下のフォールバックは index 0 と同じ値を返す重複ではなく
+  // throw にすることで、`i >= 0`→`i > 0` の境界変異が c===0 (最下位区分) で throw
+  // となり実テストで撃墜できる (等価変異を回避)。
+  for (let i = PER_CAPITA_TIERS.length - 1; i >= 0; i--) {
     const tier = PER_CAPITA_TIERS[i]!;
-    if (c <= tier.capitalUpperBound) {
+    if (c >= tier.capitalLowerBound) {
       return many ? tier.levyMany : tier.levyFew;
     }
   }
-  // 最上位区分が Infinity 上限なので有効なテーブルでは到達不能。
+  // c >= 0 かつ PER_CAPITA_TIERS[0].capitalLowerBound === 0 なので到達不能。
   // Stryker disable next-line all : 到達不能 (空テーブル等の不正入力に対する防御)。
   throw new Error('resolveCorporatePerCapita: empty or invalid tier table');
 }
