@@ -374,7 +374,8 @@
           "report-trend",
           "cashflow-chart",
           "report-sensitivity",
-          "report-yoy"
+          "report-yoy",
+          "aftertax-ui"
         ]
       },
       {
@@ -826,6 +827,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-tax"
+    },
+    {
+      "id": "aftertax-ui",
+      "domain": "経営管理(税引後利益の可視化)",
+      "focus": "deriveBusinessFinancials の経常利益→calcCorporateTax を繋ぎ、FinancialAnalysis に税引前/法人税等/実効税率/税引後利益を表示。欠損分岐対応(加算的・既存計算不変)",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-fpa"
     }
   ],
   "rounds": [
@@ -2908,6 +2917,77 @@
         "税務ラウンド(法人税): 事業ダッシュボードの『営業利益→税引後利益』ギャップを埋める法人税等の概算を新規実装(taxCorporate.ts)。法人税(中小800万以下15%/超23.2%・大法人23.2%)+地方法人税10.3%+法人住民税(法人税割7.0%+均等割)+法人事業税(所得割3.5/5.3/7.0%段階)+特別法人事業税37%、実効税率・税引後利益を算出。区分既定は中小・最小均等割、欠損は均等割のみ。mutation 100%(68killed)、+31 it (#145)。静的2896→2927/実行時2973→3004。"
       ],
       "note": "v3機構の自律ラウンド(完全自動化代行)。文書化backlog消化後の新ドメイン。teams 59→60。"
+    },
+    {
+      "round": 55,
+      "teamCount": 61,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui"
+      ],
+      "shipped": [
+        "経営管理ラウンド(税引後利益の可視化): round54の法人税概算(calcCorporateTax)を事業ダッシュボードに統合。FinancialAnalysis に CorporateTaxCard を追加し、deriveBusinessFinancials の経常利益を課税所得代理値として税引前/法人税等合計/実効税率/税引後利益を表示、欠損時は均等割のみ分岐。taxCorporate.ts は不変(mutation 100%維持)、+15 renderテスト (#147)。静的2927→2942/実行時3004→3019。"
+      ],
+      "note": "加算的UI統合(既存財務計算は不変)。teams 60→61。"
     }
   ],
   "backlog": [
