@@ -203,18 +203,108 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
  * 経常利益 (ordinaryProfit) を課税所得の概算として `calcCorporateTax` を呼び出し、
  * 法人税等・実効税率・税引後利益を表示するカード。
  *
+ * round 58: 任意の精度パラメータ入力欄 (資本金・従業者数・繰越欠損金) を追加。
+ * 全欄空のとき → profile 未指定 (従来どおり中小・最小均等割・控除なし)。
+ * いずれか入力があるとき → 入力値を profile に乗せて再計算し、
+ * 実効税率・税引後利益・法人税等内訳がライブ更新される。
+ *
  * 注意:
  * - 会計上の利益と税法上の課税所得の差異 (損金不算入等) は概算では無視する。
- * - 繰越欠損金・各種税額控除・中間納付・外形標準課税等は考慮しない。
+ * - 各種税額控除・中間納付・外形標準課税等は考慮しない。
  * - これは概算試算であり、正確な税額計算・税務助言ではありません。
  */
 function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
-  const breakdown = calcCorporateTax(ordinaryProfit);
+  const [capitalStr, setCapitalStr] = useState('');
+  const [employeesStr, setEmployeesStr] = useState('');
+  const [carryforwardLossStr, setCarryforwardLossStr] = useState('');
+
+  // 入力値のパース: 空文字/不正値 → undefined (既定に倒す)
+  const capitalParsed = capitalStr.trim() !== '' ? parseFloat(capitalStr.replace(/,/g, '')) : undefined;
+  const employeesParsed = employeesStr.trim() !== '' ? parseFloat(employeesStr.replace(/,/g, '')) : undefined;
+  const carryforwardLossParsed = carryforwardLossStr.trim() !== '' ? parseFloat(carryforwardLossStr.replace(/,/g, '')) : undefined;
+
+  // 全欄空なら profile 未指定 → 従来の呼び出しと完全同一
+  const hasAnyInput = capitalParsed !== undefined || employeesParsed !== undefined || carryforwardLossParsed !== undefined;
+  const profile = hasAnyInput
+    ? {
+        ...(capitalParsed !== undefined && isFinite(capitalParsed) ? { capital: Math.max(0, Math.round(capitalParsed)) } : {}),
+        ...(employeesParsed !== undefined && isFinite(employeesParsed) ? { employees: Math.max(0, Math.round(employeesParsed)) } : {}),
+        ...(carryforwardLossParsed !== undefined && isFinite(carryforwardLossParsed) ? { carryforwardLoss: Math.max(0, Math.round(carryforwardLossParsed)) } : {}),
+      }
+    : undefined;
+
+  const breakdown = profile !== undefined ? calcCorporateTax(ordinaryProfit, profile) : calcCorporateTax(ordinaryProfit);
   const isLoss = ordinaryProfit <= 0;
   const afterTaxColor = breakdown.afterTaxProfit >= 0 ? '#5cb85c' : '#e36b6b';
+
+  const inputStyle: CSSProperties = {
+    background: 'var(--bg-elev)',
+    border: '1px solid var(--border)',
+    borderRadius: 6,
+    color: 'var(--text)',
+    padding: '4px 8px',
+    fontSize: 12,
+    width: '100%',
+    boxSizing: 'border-box',
+  };
+  const labelStyle: CSSProperties = { fontSize: 11, color: 'var(--text-mute)', marginBottom: 2, display: 'block' };
+
   return (
     <div style={cardStyle}>
       <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🏢 法人税等の概算（税引後利益の可視化）</div>
+
+      {/* 精度パラメータ入力欄 (round 58) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 8, marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
+        <div>
+          <label style={labelStyle} htmlFor="ctax-capital">資本金（円、任意）</label>
+          <input
+            id="ctax-capital"
+            type="number"
+            min={0}
+            step={1}
+            value={capitalStr}
+            onChange={(e) => setCapitalStr(e.target.value)}
+            placeholder="例: 10000000"
+            aria-label="資本金"
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <label style={labelStyle} htmlFor="ctax-employees">従業者数（人、任意）</label>
+          <input
+            id="ctax-employees"
+            type="number"
+            min={0}
+            step={1}
+            value={employeesStr}
+            onChange={(e) => setEmployeesStr(e.target.value)}
+            placeholder="例: 30"
+            aria-label="従業者数"
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <label style={labelStyle} htmlFor="ctax-carryforward">繰越欠損金（円、任意）</label>
+          <input
+            id="ctax-carryforward"
+            type="number"
+            min={0}
+            step={1}
+            value={carryforwardLossStr}
+            onChange={(e) => setCarryforwardLossStr(e.target.value)}
+            placeholder="例: 5000000"
+            aria-label="繰越欠損金"
+            style={inputStyle}
+          />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+            空欄 = 既定（中小・均等割最小・控除なし）。<br />
+            入力すると税額・実効税率をライブ更新。
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))', gap: 10, marginBottom: 10 }}>
         <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>税引前利益（経常利益概算）</div>
@@ -247,10 +337,12 @@ function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
         <span>法人事業税: {yen.format(breakdown.businessTax)}</span>
         <span>特別法人事業税: {yen.format(breakdown.specialBusinessTax)}</span>
         <span>区分: {breakdown.smallBusiness ? '中小法人' : '大法人'}</span>
+        {breakdown.deductedLoss > 0 && <span>繰越欠損金控除: {yen.format(breakdown.deductedLoss)}</span>}
+        {breakdown.remainingLoss > 0 && <span>繰越残額: {yen.format(breakdown.remainingLoss)}</span>}
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 経常利益を課税所得の概算として使用（会計上の利益と税法上の課税所得の差異は無視）。
-        繰越欠損金・各種税額控除・外形標準課税・自治体別超過税率等は非考慮。令和6年度ベース。
+        各種税額控除・外形標準課税・自治体別超過税率等は非考慮。令和6年度ベース。
         <strong>税務助言ではありません。申告・納税は税理士・e-Taxで確定してください。</strong>
       </div>
     </div>
