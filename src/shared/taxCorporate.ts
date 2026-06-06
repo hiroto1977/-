@@ -104,6 +104,7 @@ export function isSmallBusiness(profile: CorporateProfile = {}): boolean {
  */
 export function calcCorporateIncomeTax(taxableIncome: number, small: boolean): number {
   const income = Math.max(0, taxableIncome);
+  // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各項が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   if (!small) {
     return yen(income * CORP_TAX_STANDARD_RATE);
@@ -151,6 +152,7 @@ export function calcResidentCorporateTax(
  */
 export function calcBusinessTaxIncomePortion(taxableIncome: number): number {
   const income = Math.max(0, taxableIncome);
+  // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   const tier1 = Math.min(income, BUSINESS_TAX_TIER1_LIMIT);
   const tier2 = Math.min(
