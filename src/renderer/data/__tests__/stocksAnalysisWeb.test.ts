@@ -771,10 +771,13 @@ describe('detectCross', () => {
     expect(detectCross([1, 2, 3, 4, 5], 3, 3)).toBeNull();
     expect(detectCross([1, 2, 3, 4, 5], 4, 2)).toBeNull();
   });
-  it('履歴が 1 本のみ (i<1) は null', () => {
+  it('履歴が 1 本のみ (slow[i-1] が undefined) は null', () => {
     expect(detectCross([5], 1, 2)).toBeNull();
   });
-  it('SMA が直近 2 本で算出できない (履歴不足) は null', () => {
+  it('履歴ゼロは null', () => {
+    expect(detectCross([], 1, 2)).toBeNull();
+  });
+  it('SMA が直近 2 本で算出できない (履歴不足, s1 が null) は null', () => {
     // slow=3 を満たすには 3 本必要。直近 2 本そろえるには 4 本必要。3 本では i-1 の slow が null。
     expect(detectCross([1, 2, 3], 1, 3)).toBeNull();
   });
@@ -783,10 +786,31 @@ describe('detectCross', () => {
     // closes: ...,10,9,  6→ slow(末-1)= (9+6)/2=7.5, fast=6 (<=7.5); 末: 12 → slow=(6+12)/2=9, fast=12 (>9) → golden
     expect(detectCross([10, 9, 6, 12], 1, 2)).toBe('golden');
   });
+  it('ゴールデン境界: f1===s1 ちょうどでも golden (`<=`→`<` 変異を kill)', () => {
+    // [1,5,5,8]: f1=5, s1=(5+5)/2=5 (等号), f0=8, s0=(5+8)/2=6.5 (f0>s0) → golden
+    expect(detectCross([1, 5, 5, 8], 1, 2)).toBe('golden');
+  });
+  it('ゴールデン非成立境界: f0===s0 では golden にならない (`>`→`>=` 変異を kill)', () => {
+    // [1,8,5,5]: f1=5, s1=6.5 (f1<=s1), f0=5, s0=(5+5)/2=5 (f0>s0 偽) → none
+    expect(detectCross([1, 8, 5, 5], 1, 2)).toBe('none');
+  });
   it('デッドクロスを検出 (fast が上から下抜け)', () => {
     // 末-1: fast>=slow ; 末: fast<slow
     // closes: 1,2,10,3 → 末-1: fast=10, slow=(2+10)/2=6 (10>=6); 末: fast=3, slow=(10+3)/2=6.5 (3<6.5) → dead
     expect(detectCross([1, 2, 10, 3], 1, 2)).toBe('dead');
+  });
+  it('デッド境界: f1===s1 ちょうどでも dead (`>=`→`>` 変異を kill)', () => {
+    // [1,5,5,2]: f1=5, s1=5 (等号), f0=2, s0=(5+2)/2=3.5 (f0<s0) → dead
+    expect(detectCross([1, 5, 5, 2], 1, 2)).toBe('dead');
+  });
+  it('デッド非成立境界: f0===s0 では dead にならない (`<`→`<=` 変異を kill)', () => {
+    // [1,2,5,5]: f1=5, s1=(2+5)/2=3.5 (f1>=s1), f0=5, s0=5 (f0<s0 偽) → none
+    expect(detectCross([1, 2, 5, 5], 1, 2)).toBe('none');
+  });
+  it('単調下降の末尾 (fast が slow を下回り続ける) は none (`f1>=s1`→true 変異を kill)', () => {
+    // [1,10,8,5]: f1=8, s1=(10+8)/2=9 (f1<s1 → dead の左条件は偽), f0=5, s0=(8+5)/2=6.5
+    // (f0<s0 真)。real: golden 不成立 & f1>=s1 偽 → none。`f1>=s1`→true 変異は dead と誤判定。
+    expect(detectCross([1, 10, 8, 5], 1, 2)).toBe('none');
   });
   it('クロス無しは none', () => {
     // 単調増加で fast は常に slow を上回り続ける → none
@@ -799,6 +823,12 @@ describe('logReturns', () => {
     expect(logReturns([])).toBeNull();
     expect(logReturns([100])).toBeNull();
   });
+  it('ちょうど 2 本では 1 要素を返す (`<2`→`<=2` 変異を kill)', () => {
+    const r = logReturns([100, 110]);
+    expect(r).not.toBeNull();
+    expect(r!).toHaveLength(1);
+    expect(r![0]!).toBeCloseTo(Math.log(110 / 100), 10);
+  });
   it('正の価格列で ln(p_t/p_{t-1}) を返す (要素数 n-1)', () => {
     const r = logReturns([100, 110, 121]);
     expect(r).not.toBeNull();
@@ -809,6 +839,12 @@ describe('logReturns', () => {
   it('途中に非正の価格があれば null (prev<=0)', () => {
     expect(logReturns([100, 0, 50])).toBeNull();
     expect(logReturns([-5, 100])).toBeNull();
+  });
+  it('prev===0 ちょうどでも null (`prev<=0`→`prev<0` 変異を kill)', () => {
+    expect(logReturns([0, 100])).toBeNull();
+  });
+  it('cur===0 ちょうどでも null (`cur<=0`→`cur<0` 変異を kill)', () => {
+    expect(logReturns([100, 0])).toBeNull();
   });
   it('非有限値を含めば null', () => {
     expect(logReturns([100, Number.NaN])).toBeNull();
@@ -827,6 +863,9 @@ describe('historicalVolatility', () => {
   it('価格 3 本未満 (リターン<2) は null', () => {
     expect(historicalVolatility([100])).toBeNull();
     expect(historicalVolatility([100, 110])).toBeNull();
+  });
+  it('ちょうど 3 本 (リターン 2 本) は非 null (`<2`→`<=2` 変異を kill)', () => {
+    expect(historicalVolatility([100, 110, 105])).not.toBeNull();
   });
   it('非正価格を含む (logReturns=null) は null', () => {
     expect(historicalVolatility([100, 0, 50])).toBeNull();
@@ -866,6 +905,10 @@ describe('maxDrawdown', () => {
   it('単調増加は 0', () => {
     expect(maxDrawdown([100, 110, 120, 130])).toBe(0);
   });
+  it('ちょうど 2 本でも下落率を返す (`<2`→`<=2` 変異を kill)', () => {
+    // [100,90]: peak=100, dd=(100-90)/100=0.1 → 非 null
+    expect(maxDrawdown([100, 90])).toBeCloseTo(0.1, 10);
+  });
   it('ピークからの最大下落率を返す', () => {
     // 100→120 (peak=120) →90 → dd=(120-90)/120=0.25。その後 110 で 0.083... → 最大は 0.25
     expect(maxDrawdown([100, 120, 90, 110])).toBeCloseTo(0.25, 10);
@@ -880,6 +923,9 @@ describe('sharpeRatio', () => {
   it('リターン 2 本未満は null', () => {
     expect(sharpeRatio([])).toBeNull();
     expect(sharpeRatio([0.01])).toBeNull();
+  });
+  it('ちょうど 2 本は非 null (`<2`→`<=2` 変異を kill)', () => {
+    expect(sharpeRatio([0.02, -0.01])).not.toBeNull();
   });
   it('変動ゼロ (stddev=0) は null', () => {
     expect(sharpeRatio([0.02, 0.02, 0.02])).toBeNull();
@@ -906,8 +952,11 @@ describe('sharpeRatio', () => {
 });
 
 describe('percentB', () => {
-  it('period<=0 で throw', () => {
-    expect(() => percentB([1, 2, 3], 0, 2)).toThrow(/period must be > 0/);
+  it('period<=0 で percentB 自身の error を throw (`<=`→`<` 変異を kill)', () => {
+    // period=0 では bollingerBands も同文言を投げるため、percentB プレフィクスで区別して
+    // `period <= 0`→`period < 0` 変異 (0 を素通りさせる) を kill する。
+    expect(() => percentB([1, 2, 3], 0, 2)).toThrow(/^percentB: period must be > 0/);
+    expect(() => percentB([1, 2, 3], -1, 2)).toThrow(/^percentB: period must be > 0/);
   });
   it('バンドが算出できない区間 (period 未満) は null', () => {
     const pb = percentB([10, 11, 12], 5, 2);
@@ -952,6 +1001,13 @@ describe('buildRiskMetrics', () => {
     const dd = maxDrawdown(closes)!;
     expect(m.annualizedVolatilityPct!).toBeCloseTo(vol * 100, 10);
     expect(m.maxDrawdownPct!).toBeCloseTo(dd * 100, 10);
+  });
+  it('sharpeRatio は logReturns→sharpeRatio と一致し非 null (832 の `rets==null?null` 三項を kill)', () => {
+    const closes = mockCandles(SYM, NOW, 120).map((c) => c.close);
+    const expected = sharpeRatio(logReturns(closes)!);
+    const m = buildRiskMetrics(SYM, NOW, 120);
+    expect(m.sharpeRatio).not.toBeNull();
+    expect(m.sharpeRatio).toBe(expected);
   });
   it('periods が極小 (リターン不足) でも null を明快に返す', () => {
     const m = buildRiskMetrics(SYM, NOW, 1);
