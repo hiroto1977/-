@@ -130,7 +130,8 @@
     "src/shared/serviceId.ts",
     "src/renderer/data/useCollection.ts",
     "src/renderer/hooks/useServiceData.ts",
-    "src/renderer/web-templates.ts"
+    "src/renderer/web-templates.ts",
+    "src/renderer/data/voiceCommand.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
