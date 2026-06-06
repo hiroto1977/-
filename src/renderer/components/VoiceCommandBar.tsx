@@ -119,6 +119,14 @@ export function VoiceCommandBar() {
     };
   }, [state.phase, state.intent, dispatch]);
 
+  // 非破壊コマンドは parsed (確認不要) で待機する。確認 UI は不要なので自動承認。
+  // 破壊的コマンドは awaiting-confirmation に入り、ユーザーの明示承認を待つ。
+  useEffect(() => {
+    if (state.phase === 'parsed') {
+      dispatch({ type: 'confirm' });
+    }
+  }, [state.phase, dispatch]);
+
   function stopSession() {
     sessionRef.current?.abort();
     sessionRef.current = null;
@@ -132,7 +140,7 @@ export function VoiceCommandBar() {
     sessionRef.current = startSpeechRecognition({
       onTranscript: (text, isFinal) => {
         dispatch({ type: 'transcript', text });
-        if (isFinal) dispatch({ type: 'parse' });
+        if (isFinal) dispatch({ type: 'parsed' });
       },
       onError: (message) => dispatch({ type: 'error', message }),
       onEnd: () => {

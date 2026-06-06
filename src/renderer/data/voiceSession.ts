@@ -8,19 +8,18 @@
  *
  * 状態遷移図 (概略):
  *
- *   idle ──start──▶ listening ──transcript──▶ listening ──parse──▶ parsed/…
- *                                                                  │
- *           破壊的(確認必須) ─────────────────────────────────────┤
- *           非破壊的 ─────────────────────────────────────────────┼──▶ executing ──executed──▶ idle
- *                                                                  ▼
- *                                                          awaiting-confirmation
- *                                                            │ confirm ──▶ executing
- *                                                            │ cancel  ──▶ idle
- *                                                            └ timeout ──▶ idle
+ *   idle ──start──▶ listening ──transcript──▶ listening ──parsed──▶ …
+ *                                                                   │
+ *           非破壊的 ───────────────────────────────────────────── parsed ──confirm──▶ executing
+ *           破壊的(確認必須) ───────────────────── awaiting-confirmation ──confirm──▶ executing
+ *                                                            │ cancel/timeout ──▶ idle
+ *                                                            │
+ *                                                executing ──executed──▶ idle
  *
  * **不変条件 (最重要):** 破壊的 / 外部送信 / 課金系コマンド (requiresConfirmation
  * が true) は **必ず awaiting-confirmation を経由** してからでないと executing に
- * 入れない。parse から executing への直行は「確認不要」な intent に限る。
+ * 入れない。parsed イベントで破壊的 intent が直接 parsed / executing へ落ちることは
+ * 無い。非破壊的 intent は parsed (確認不要の待機状態) を経て confirm で executing へ。
  */
 
 import {
@@ -63,9 +62,9 @@ export type VoiceSessionEvent =
   | { readonly type: 'start' }
   /** 認識結果テキストが届いた。 */
   | { readonly type: 'transcript'; readonly text: string }
-  /** 解析を実行する (transcript を parse/route)。 */
-  | { readonly type: 'parse' }
-  /** 確認待ちの破壊的コマンドをユーザーが承認した。 */
+  /** 認識テキストを解析する (parse/route → parsed / awaiting-confirmation / error)。 */
+  | { readonly type: 'parsed' }
+  /** 実行を承認する (parsed の自動承認 / awaiting-confirmation のユーザー承認)。 */
   | { readonly type: 'confirm' }
   /** ユーザーが取り消した (どの段階からでも idle へ)。 */
   | { readonly type: 'cancel' }
@@ -98,11 +97,11 @@ function toError(message: string): VoiceSessionState {
 /**
  * transcript を parse + route し、解析後状態を組み立てる純粋関数。
  * - 空 / 空白のみ / unknown 意図 → error (操作なし、ユーザーへ言い直しを促す)
- * - 破壊的 (確認必須) → needsConfirmation=true で parsed
- * - それ以外 → needsConfirmation=false で parsed
+ * - 破壊的 (確認必須) → awaiting-confirmation (確認 UI を必ず経由)
+ * - それ以外 → parsed (確認不要の待機状態; confirm で executing へ)
  *
- * ここでは状態を parsed までしか進めない。executing への遷移は reducer 側で
- * (確認必須の不変条件を一点に集約するため) 行う。
+ * **不変条件:** 破壊的 intent は parsed を飛ばして直接 awaiting-confirmation へ。
+ * executing へ落ちる経路はここには無い (confirm 経由でのみ executing になる)。
  */
 function analyze(
   transcript: string | undefined,
@@ -119,7 +118,7 @@ function analyze(
   }
   const needs = requiresConfirmation(routed);
   return {
-    phase: 'parsed',
+    phase: needs ? 'awaiting-confirmation' : 'parsed',
     transcript: text,
     intent: routed,
     needsConfirmation: needs,
@@ -169,28 +168,21 @@ export function reduceVoiceSession(
       }
       return { phase: 'listening', transcript: event.text, needsConfirmation: false };
 
-    // parse: listening 中に保持した transcript を解析する。
-    case 'parse': {
+    // parsed: listening 中に保持した transcript を解析する。
+    // 結果は error / parsed (確認不要) / awaiting-confirmation (確認必須) の
+    // いずれか。executing へはここでは決して落とさない (不変条件)。
+    case 'parsed':
       if (state.phase !== 'listening') {
         return state;
       }
-      const analyzed = analyze(state.transcript, capabilities);
-      // 解析エラーはそのまま error 状態へ。
-      if (analyzed.phase === 'error') {
-        return analyzed;
-      }
-      // 確認必須なら awaiting-confirmation へ。executing への直行は禁止。
-      if (analyzed.needsConfirmation) {
-        return { ...analyzed, phase: 'awaiting-confirmation' };
-      }
-      // 非破壊的なら直接 executing へ。
-      return { ...analyzed, phase: 'executing' };
-    }
+      return analyze(state.transcript, capabilities);
 
-    // confirm: 確認待ちの破壊的コマンドを承認 → executing。
-    // awaiting-confirmation 以外からの confirm は無効 (副作用直行を防ぐ)。
+    // confirm: 実行を承認 → executing。
+    // - awaiting-confirmation (破壊的): ユーザーの明示承認
+    // - parsed (非破壊的): UI が自動承認
+    // それ以外 (idle/listening/executing/error) からの confirm は副作用を防ぐため無視。
     case 'confirm':
-      if (state.phase !== 'awaiting-confirmation') {
+      if (state.phase !== 'awaiting-confirmation' && state.phase !== 'parsed') {
         return state;
       }
       return { ...state, phase: 'executing' };
@@ -202,10 +194,14 @@ export function reduceVoiceSession(
       }
       return INITIAL_VOICE_SESSION;
 
-    // timeout: listening / awaiting-confirmation の無応答を idle へ畳む。
-    // 既に確定し実行中の操作 (executing) は中断しない。
+    // timeout: 承認待ち (listening / parsed / awaiting-confirmation) の無応答を
+    // idle へ畳む。既に確定し実行中の操作 (executing) は中断しない。
     case 'timeout':
-      if (state.phase === 'listening' || state.phase === 'awaiting-confirmation') {
+      if (
+        state.phase === 'listening' ||
+        state.phase === 'parsed' ||
+        state.phase === 'awaiting-confirmation'
+      ) {
         return INITIAL_VOICE_SESSION;
       }
       return state;
