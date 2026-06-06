@@ -378,6 +378,171 @@ export function calcDonationDeduction(donation: number, totalIncome: number): De
   return { incomeTax: Math.max(0, deduction), residentTax: 0 };
 }
 
+// --- 一般寄附金控除 (所得控除) -------------------------------------------
+//
+// 国税庁 No.1150。一般の特定寄附金 (ふるさと納税以外の認定NPO・公益法人・政党等) も
+// 所得控除の算式は同じ: (寄附額 − 2,000) を所得控除、上限は「合計所得金額の40%」。
+// ふるさと納税と本質的に同じ算式だが、用途を明示するための別名。住民税側は税額控除
+// (自治体により対象が異なる) のためここでは 0 とする。
+
+/** 寄附金控除 (所得控除) の足切り (円)。 */
+export const DONATION_DEDUCTION_FLOOR = 2_000;
+/** 寄附金控除 (所得控除) の上限 = 合計所得金額に対する割合。 */
+export const DONATION_INCOME_CAP_RATE = 0.4;
+
+/**
+ * 一般寄附金 (ふるさと納税以外の特定寄附金) の所得控除を計算する。
+ * 算式はふるさと納税と同じ (寄附額 − 2,000, 上限 合計所得×40%)。
+ * 非有限・負の総所得は上限0として安全側に倒す。
+ */
+export function calcGeneralDonationDeduction(donation: number, totalIncome: number): DeductionPair {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: 2,000円境界は連続(控除0)で <= と < が同値。
+  if (donation <= DONATION_DEDUCTION_FLOOR) return { incomeTax: 0, residentTax: 0 };
+  // 非有限/負の所得は上限0扱い (Math.max でガード)。
+  const safeIncome = Number.isFinite(totalIncome) ? Math.max(0, totalIncome) : 0;
+  const cap = yen(safeIncome * DONATION_INCOME_CAP_RATE);
+  const deduction = Math.min(cap, donation - DONATION_DEDUCTION_FLOOR);
+  return { incomeTax: Math.max(0, deduction), residentTax: 0 };
+}
+
+// --- 寄附金特別控除 (税額控除) と所得控除の有利選択 -----------------------
+//
+// 国税庁 No.1260 (政党等) / No.1263 (認定NPO法人等) / No.1266 (公益社団法人等)。
+// 政党・認定NPO・一定の公益法人等への寄附は「所得控除」と「税額控除 (寄附金特別控除)」
+// のいずれか有利な方を選択できる。税額控除は (寄附額 − 2,000) × 40%。
+// 税額控除の対象寄附額は「合計所得金額の40%」が上限 (所得控除と共通)。
+// その年の所得税額の25%等の上限は呼び出し側で `incomeTaxCap` として渡す前提。
+
+/** 寄附金特別控除 (税額控除) の率 (政党/認定NPO/公益社団いずれも40%)。 */
+export const DONATION_TAX_CREDIT_RATE = 0.4;
+
+/**
+ * 寄附金特別控除 (税額控除) の額を計算する。
+ *
+ * (対象寄附額 − 2,000) × 40%。対象寄附額は合計所得金額の40%が上限。
+ * `incomeTaxCap` を渡すと「その年の所得税額の25%」等の上限も適用する。
+ *
+ * @param donation 政党等/認定NPO等への寄附額 (円)
+ * @param totalIncome 合計所得金額 (円)
+ * @param incomeTaxCap 税額控除の絶対上限 (所得税額×25% 等)。未指定なら無制限。
+ */
+export function calcDonationTaxCredit(
+  donation: number,
+  totalIncome: number,
+  incomeTaxCap?: number,
+): number {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: 2,000円境界は連続(控除0)で <= と < が同値。
+  if (donation <= DONATION_DEDUCTION_FLOOR) return 0;
+  const safeIncome = Number.isFinite(totalIncome) ? Math.max(0, totalIncome) : 0;
+  const eligible = Math.min(donation, safeIncome * DONATION_INCOME_CAP_RATE);
+  const base = Math.max(0, eligible - DONATION_DEDUCTION_FLOOR);
+  let credit = yen(base * DONATION_TAX_CREDIT_RATE);
+  if (incomeTaxCap !== undefined && Number.isFinite(incomeTaxCap)) {
+    credit = Math.min(credit, Math.max(0, yen(incomeTaxCap)));
+  }
+  return credit;
+}
+
+/** 寄附金: 所得控除 と 税額控除 のどちらが有利かの比較結果。 */
+export interface DonationChoice {
+  /** 有利な方式 ('deduction' = 所得控除 / 'credit' = 税額控除)。 */
+  readonly method: 'deduction' | 'credit';
+  /** 所得控除を選んだ場合の所得控除額 (所得税の課税所得から差し引く額)。 */
+  readonly deduction: number;
+  /** 税額控除を選んだ場合の税額控除額 (所得税額から直接差し引く額)。 */
+  readonly credit: number;
+  /** 有利方式の「実際の所得税の減少額」概算 (比較に用いた値)。 */
+  readonly taxSaving: number;
+}
+
+/**
+ * 寄附金特別控除 (税額控除) と寄附金控除 (所得控除) の有利な方を選ぶ。
+ *
+ * 所得控除の節税効果は (控除額 × 限界税率)、税額控除はそのまま税額から引かれる。
+ * 限界税率 `marginalRate` (0〜1) を用いて両者の所得税減少額を比較し、大きい方を選ぶ。
+ * 同額なら税額控除を優先 (一般に高所得でない限り税額控除が有利なため)。
+ *
+ * @param donation 寄附額 (円)
+ * @param totalIncome 合計所得金額 (円)
+ * @param marginalRate 所得税の限界税率 (0〜1)。所得控除の節税効果換算に使う。
+ * @param incomeTaxCap 税額控除の絶対上限 (所得税額×25% 等)。未指定なら無制限。
+ */
+export function chooseDonationCreditOrDeduction(
+  donation: number,
+  totalIncome: number,
+  marginalRate: number,
+  incomeTaxCap?: number,
+): DonationChoice {
+  const deduction = calcGeneralDonationDeduction(donation, totalIncome).incomeTax;
+  const credit = calcDonationTaxCredit(donation, totalIncome, incomeTaxCap);
+  // 限界税率は 0〜1 にクランプ (非有限は0)。
+  const rate = Number.isFinite(marginalRate) ? Math.min(1, Math.max(0, marginalRate)) : 0;
+  const deductionSaving = yen(deduction * rate);
+  // 税額控除が所得控除の節税効果以上なら税額控除を選ぶ (同額時も税額控除優先)。
+  if (credit >= deductionSaving) {
+    return { method: 'credit', deduction, credit, taxSaving: credit };
+  }
+  return { method: 'deduction', deduction, credit, taxSaving: deductionSaving };
+}
+
+// --- 雑損控除 -------------------------------------------------------------
+//
+// 国税庁 No.1110。災害・盗難・横領による損失。次の2つの大きい方:
+//   (1) (差引損失額) − 総所得金額等 × 10%
+//   (2) (差引損失額のうち災害関連支出の金額) − 5万円
+// 差引損失額 = 損害金額 + 災害関連支出 − 保険金等で補填される額。
+// 所得税・住民税で同額。3年間の繰越も可能だが本関数は単年分のみ。
+
+/** 雑損控除の災害関連支出の足切り (円)。 */
+export const CASUALTY_DISASTER_FLOOR = 50_000;
+/** 雑損控除の総所得に対する足切り率。 */
+export const CASUALTY_INCOME_RATE = 0.1;
+
+/** 雑損控除の入力。 */
+export interface CasualtyLossInput {
+  /** 損害金額 (時価ベース, 円)。 */
+  readonly lossAmount: number;
+  /** 災害関連支出 (取り壊し・原状回復等, 円)。任意。 */
+  readonly disasterRelatedSpending?: number;
+  /** 保険金・損害賠償金等で補填される額 (円)。任意。 */
+  readonly reimbursed?: number;
+  /** 総所得金額等 (円)。10%足切りの算定基礎。 */
+  readonly totalIncome: number;
+}
+
+/**
+ * 雑損控除を計算する (国税庁 No.1110)。
+ *
+ * 差引損失額 = max(0, 損害金額 + 災害関連支出 − 補填額) とし、
+ *   方式(1) = 差引損失額 − 総所得×10%
+ *   方式(2) = (差引損失額のうち災害関連支出) − 5万円
+ * の大きい方 (いずれも下限0) を控除額とする。所得税・住民税で同額。
+ * 非有限・負の入力はガードして安全側に倒す。
+ */
+export function calcCasualtyLossDeduction(input: CasualtyLossInput): DeductionPair {
+  const loss = Number.isFinite(input.lossAmount) ? Math.max(0, input.lossAmount) : 0;
+  const disaster = Number.isFinite(input.disasterRelatedSpending ?? 0)
+    ? Math.max(0, input.disasterRelatedSpending ?? 0)
+    : 0;
+  const reimbursed = Number.isFinite(input.reimbursed ?? 0) ? Math.max(0, input.reimbursed ?? 0) : 0;
+  const income = Number.isFinite(input.totalIncome) ? Math.max(0, input.totalIncome) : 0;
+
+  // 差引損失額 (補填額控除後, 下限0)。
+  const netLoss = Math.max(0, loss + disaster - reimbursed);
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: netLoss<=0 早期returnは計算経路でも{0,0}で同値。
+  if (netLoss <= 0) return { incomeTax: 0, residentTax: 0 };
+
+  // 方式(1): 差引損失額 − 総所得×10%。
+  const byIncome = netLoss - yen(income * CASUALTY_INCOME_RATE);
+  // 方式(2): 差引損失額のうち災害関連支出 − 5万円。
+  //   補填後に災害関連支出が残る上限として min(災害関連支出, 差引損失額) を採る。
+  const disasterPortion = Math.min(disaster, netLoss);
+  const byDisaster = disasterPortion - CASUALTY_DISASTER_FLOOR;
+
+  const deduction = Math.max(0, byIncome, byDisaster);
+  return { incomeTax: deduction, residentTax: deduction };
+}
+
 // --- 障害者控除 / 寡婦・ひとり親 / 勤労学生 ------------------------------
 
 /** 障害者控除 (本人/配偶者/扶養 1 人分)。種別で額が異なる。 */
@@ -441,6 +606,8 @@ export interface DeductionInput {
   readonly selfMedicationPaid?: number;
   /** ふるさと納税等の寄附額 (年)。 */
   readonly donation?: number;
+  /** 雑損控除の入力 (災害・盗難・横領による損失)。指定時のみ計上。 */
+  readonly casualtyLoss?: Omit<CasualtyLossInput, 'totalIncome'>;
   /** 障害者控除 (本人/家族の種別配列)。 */
   readonly disabilities?: readonly DisabilityKind[];
   /** ひとり親控除に該当するか。 */
@@ -462,6 +629,7 @@ export interface DeductionBreakdown {
   readonly earthquakeInsurance: DeductionPair;
   readonly medical: DeductionPair;
   readonly donation: DeductionPair;
+  readonly casualtyLoss: DeductionPair;
   readonly disability: DeductionPair;
   readonly singleParentOrWidow: DeductionPair;
   readonly workingStudent: DeductionPair;
@@ -522,6 +690,9 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   // 通常の医療費控除とセルフメディケーション税制は選択制。有利な方を採用する。
   const medical = chooseMedicalDeductionScheme(standardMedical, selfMedication);
   const donation = input.donation ? calcDonationDeduction(input.donation, input.totalIncome) : ZERO;
+  const casualtyLoss = input.casualtyLoss
+    ? calcCasualtyLossDeduction({ ...input.casualtyLoss, totalIncome: input.totalIncome })
+    : ZERO;
   const disability = input.disabilities
     ? input.disabilities.reduce<DeductionPair>((acc, d) => addPair(acc, disabilityDeduction(d)), ZERO)
     : ZERO;
@@ -535,7 +706,7 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
 
   const parts = [
     basic, social, smallBiz, spouse, dependents, lifeIns, quake, medical, donation,
-    disability, singleParentOrWidow, workingStudent,
+    casualtyLoss, disability, singleParentOrWidow, workingStudent,
   ];
   const total = parts.reduce(addPair, ZERO);
 
@@ -554,6 +725,7 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
     earthquakeInsurance: quake,
     medical,
     donation,
+    casualtyLoss,
     disability,
     singleParentOrWidow,
     workingStudent,
