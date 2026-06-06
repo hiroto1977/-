@@ -308,7 +308,8 @@
         "reportsTo": "chro",
         "teams": [
           "payroll",
-          "labor-cost"
+          "labor-cost",
+          "social-insurance-grades"
         ]
       },
       {
@@ -799,6 +800,14 @@
       "active": true,
       "role": "audit",
       "manager": "mgr-quality"
+    },
+    {
+      "id": "social-insurance-grades",
+      "domain": "社会保険(標準報酬月額等級)",
+      "focus": "健保50等級・厚年32等級の標準報酬月額テーブルで社会保険料概算を線形近似から離散等級ベースへ精緻化(taxSocialInsurance)",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-payroll"
     }
   ],
   "rounds": [
@@ -2674,6 +2683,74 @@
         "品質保証ラウンド(深い検証→退行修復): クリーンfull mutationで『scope済=mutation100%』不変条件の破れを発見。scope入り後の機能拡張でテストが追随せず退行していた shopify.ts(53%→100%, survivor134+nocov13)・kpi.ts(89%→100%)・oauth.ts(92%→100%, clientId空文字fallbackのStringLiteralを実値検証で撃墜)を真100%へ復旧 (#138/#139)。静的2820→2860/実行時2890→2937。"
       ],
       "note": "OODA: observe(クリーンfull run)→orient(cache隠蔽でなく実退行と特定)→decide(対象3ファイルに最適化)→act(per-file並列ハードニング+統合)。teams 56→57。"
+    },
+    {
+      "round": 52,
+      "teamCount": 58,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades"
+      ],
+      "shipped": [
+        "人事・社保ラウンド: 社会保険料の概算を標準報酬月額の等級表(健保50等級/厚年32等級, 令和6年度協会けんぽ基準)で精緻化。線形近似(年収/12を上限頭打ち)から離散等級ベースへ。calcSocialInsurance/WithBonus を等級解決+賞与上限(健保573万/厚年150万)で再実装、taxSocialInsurance.ts mutation 100%維持(71killed)、+12 it (#141)。静的2860→2877/実行時2937→2954。"
+      ],
+      "note": "v3機構の自律ラウンド(完全自動化代行)。WIP逐次pushで再起動耐性を確保しつつ並列worktreeで実装。teams 57→58。"
     }
   ],
   "backlog": [
