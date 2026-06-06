@@ -105,15 +105,19 @@ describe('isQuestion', () => {
     expect(isQuestion('株価は？')).toBe(true);
   });
 
-  it('ignores trailing whitespace / punctuation before the mark check', () => {
+  it('detects a question mark even with trailing whitespace', () => {
     expect(isQuestion('株価は?  ')).toBe(true);
   });
 
-  it('returns false for a plain statement', () => {
+  it('returns false for a plain statement (no mark)', () => {
     expect(isQuestion('株価を見せて')).toBe(false);
   });
 
-  it('returns false when the only content is trailing punctuation', () => {
+  it('returns false when only non-question punctuation present', () => {
+    expect(isQuestion('株価は。')).toBe(false);
+  });
+
+  it('returns true for a lone question mark', () => {
     expect(isQuestion('?')).toBe(true);
   });
 });
@@ -156,11 +160,20 @@ describe('matchServices', () => {
     expect(r).toContain('stocks');
   });
 
-  it('every service id has at least one alias (dictionary completeness)', () => {
-    for (const id of SERVICE_IDS) {
-      // 各 id の代表別名が matchServices で自身に解決することを軽く確認。
-      expect(SERVICE_IDS).toContain(id);
-    }
+  it('takes the LONGEST matching alias within a service for cross-service ordering', () => {
+    // overview は 経営サマリー(6) と 利益(2) と 経営(2) を含む発話。最長=6 を採るべき。
+    // team は チーム(3)。最長一致が壊れて overview=2 になると team(3) が先頭へ来てしまう。
+    // よって overview が先頭であることが「最長一致ロジック」を保証する。
+    const r = matchServices('経営サマリー利益経営チーム');
+    expect(r[0]).toBe('overview');
+    expect(r).toContain('team');
+  });
+
+  it('orders by best alias length: longer service alias wins the lead', () => {
+    // mutual-funds の最長別名 投資信託(4) > team の チーム(3)。
+    const r = matchServices('投資信託チーム');
+    expect(r[0]).toBe('mutual-funds');
+    expect(r[1]).toBe('team');
   });
 });
 
@@ -183,6 +196,15 @@ describe('parseVoiceCommand — navigate', () => {
     const i = parseVoiceCommand('スラック');
     expect(i.kind).toBe('navigate');
     expect(i.serviceId).toBe('slack');
+  });
+
+  it('ambiguous navigate (two services, no action/query) lowers confidence and attaches candidates', () => {
+    // 「メールとチームを見せて」→ gmail + team, navigate 動詞「見せ」→ 曖昧 navigate。
+    const i = parseVoiceCommand('メールとチームを見せて');
+    expect(i.kind).toBe('navigate');
+    expect(i.confidence).toBe(0.5);
+    expect(i.candidates).toContain('gmail');
+    expect(i.candidates).toContain('team');
   });
 });
 
@@ -337,6 +359,37 @@ describe('routeCommand', () => {
     expect(routeCommand(intent, AVAILABLE).kind).toBe('unknown');
   });
 
+  it('returns unknown for a serviceless NON-action intent even if it carries an action field', () => {
+    // kind が action でない限り、action フィールドが付いていても素通しせず UNKNOWN。
+    const intent: VoiceIntent = { kind: 'navigate', action: 'create-issue', confidence: 0.7 };
+    expect(routeCommand(intent, AVAILABLE).kind).toBe('unknown');
+  });
+
+  it('returns the action intent unchanged when serviceless action has an action name', () => {
+    const intent: VoiceIntent = { kind: 'action', action: 'backup', confidence: 0.6 };
+    expect(routeCommand(intent, AVAILABLE).action).toBe('backup');
+  });
+
+  it('keeps a navigate intent that carries a stray UNregistered action field (resolveResolved no-op)', () => {
+    // navigate (kind!=='action') は action フィールドがあっても降格処理されず原型保持。
+    // action はあえて未登録名にして、kind ゲートが効かないと 0.6 へ降格してしまう状況を作る。
+    const intent: VoiceIntent = { kind: 'navigate', serviceId: 'github', action: 'unregistered-xyz', confidence: 0.7 };
+    const r = routeCommand(intent, AVAILABLE);
+    expect(r.kind).toBe('navigate');
+    expect(r.serviceId).toBe('github');
+    // kind ゲートが効いていれば原型の 0.7 を保つ。降格処理に入ると 0.6 になり失敗する。
+    expect(r.confidence).toBe(0.7);
+  });
+
+  it('keeps an action intent whose action name is undefined (resolveResolved early return)', () => {
+    // kind==='action' だが action 名が無い → resolveResolved 早期 return で原型保持 (降格しない)。
+    const intent: VoiceIntent = { kind: 'action', serviceId: 'github', confidence: 0.5 };
+    const r = routeCommand(intent, AVAILABLE);
+    expect(r.kind).toBe('action');
+    expect(r.serviceId).toBe('github');
+    expect(r.confidence).toBe(0.5);
+  });
+
   it('returns unknown for a serviceless action with no action name', () => {
     const intent: VoiceIntent = { kind: 'action', confidence: 0.5 };
     expect(routeCommand(intent, AVAILABLE).kind).toBe('unknown');
@@ -406,6 +459,64 @@ describe('routeCommand', () => {
     const r = routeCommand(intent, { serviceIds: ['slack'], actions: {} });
     expect(r.kind).toBe('unknown');
   });
+
+  it('returns unknown when serviceId is known but every candidate is unavailable', () => {
+    // serviceId github は known だが candidates は両方 unavailable → filtered 空 → unknown。
+    const intent: VoiceIntent = {
+      kind: 'navigate',
+      serviceId: 'github',
+      candidates: ['team', 'slack'],
+      confidence: 0.5,
+    };
+    const r = routeCommand(intent, { serviceIds: ['github'], actions: {} });
+    expect(r.kind).toBe('unknown');
+  });
+
+  it('treats a single-element candidates list as non-ambiguous (length boundary)', () => {
+    // candidates.length === 1 は >1 でないので絞り込み分岐へ入らず resolveResolved 直行。
+    const intent: VoiceIntent = {
+      kind: 'navigate',
+      serviceId: 'github',
+      candidates: ['github'],
+      confidence: 0.5,
+    };
+    const r = routeCommand(intent, AVAILABLE);
+    expect(r.kind).toBe('navigate');
+    expect(r.serviceId).toBe('github');
+    // 絞り込み分岐に入らないので candidates / confidence はそのまま保持される。
+    expect(r.candidates).toEqual(['github']);
+    expect(r.confidence).toBe(0.5);
+  });
+
+  it('keeps action when the resolved single candidate registers that action', () => {
+    // 絞り込みで 1 件に確定し、その action が available に存在するケース。
+    const intent: VoiceIntent = {
+      kind: 'action',
+      serviceId: 'github',
+      action: 'create-issue',
+      candidates: ['github', 'sales'],
+      confidence: 0.5,
+    };
+    const r = routeCommand(intent, { serviceIds: ['github'], actions: { github: ['create-issue'] } });
+    expect(r.kind).toBe('action');
+    expect(r.action).toBe('create-issue');
+    expect(r.serviceId).toBe('github');
+  });
+
+  it('demotes resolved single candidate action to navigate when action absent', () => {
+    const intent: VoiceIntent = {
+      kind: 'action',
+      serviceId: 'github',
+      action: 'create-issue',
+      candidates: ['github', 'sales'],
+      confidence: 0.5,
+    };
+    // github は known だが actions に create-issue が無い → navigate へ降格。
+    const r = routeCommand(intent, { serviceIds: ['github'], actions: { github: ['something-else'] } });
+    expect(r.kind).toBe('navigate');
+    expect(r.serviceId).toBe('github');
+    expect(r.confidence).toBe(0.6);
+  });
 });
 
 describe('requiresConfirmation', () => {
@@ -427,6 +538,11 @@ describe('requiresConfirmation', () => {
 
   it('action with empty action name → false', () => {
     expect(requiresConfirmation({ kind: 'action', action: '', confidence: 0.5 })).toBe(false);
+  });
+
+  it('navigate that carries a dangerous-looking action field → still false (kind gate)', () => {
+    // kind!=='action' のゲートが先に効くため、action='delete' でも確認不要。
+    expect(requiresConfirmation({ kind: 'navigate', action: 'delete', confidence: 0.7 })).toBe(false);
   });
 
   it('send-message requires confirmation (external send)', () => {
@@ -503,6 +619,27 @@ describe('disambiguate', () => {
     expect(r.resolved).toBe('mutual-funds');
   });
 
+  it('sorts matches by length so the longer alias wins even when listed first', () => {
+    // 株(stocks len1) と 投資信託(mutual-funds len4) が両方ヒット。
+    // 候補配列で stocks が先でも、長さ降順ソート後 mutual-funds(4) が先頭となり確定する。
+    // ソートが壊れると matched[0]=stocks(1) となり 1>4 が false → 確定しなくなる。
+    const r = disambiguate('株と投資信託', ['stocks', 'mutual-funds']);
+    expect(r.resolved).toBe('mutual-funds');
+  });
+
+  it('resolves the longer alias regardless of candidate order (reversed input)', () => {
+    const r = disambiguate('株と投資信託', ['mutual-funds', 'stocks']);
+    expect(r.resolved).toBe('mutual-funds');
+  });
+
+  it('uses the LONGEST alias within a candidate so it beats a competitor (within-service max)', () => {
+    // 発話に mutual-funds の 投資信託(4) と 信託(2) の両方が出現し、team の チーム(3) も出現。
+    // 最長一致が壊れて mutual-funds=信託(2) になると team(3) が勝ってしまう。
+    // 正しくは mutual-funds(4) が team(3) を上回り resolved=mutual-funds。
+    const r = disambiguate('投資信託信託チーム', ['mutual-funds', 'team']);
+    expect(r.resolved).toBe('mutual-funds');
+  });
+
   it('returns narrowed candidates when matches tie on length', () => {
     // 「ちーむ」(team len3) と 「のーしょん」… 同点を作るのは難しいので、
     // 別名長が同じ 2 サービスをマッチさせる: gmail「めーる」(len3) と team「ちーむ」(len3)
@@ -522,11 +659,17 @@ describe('disambiguate', () => {
     expect(r.resolved).toBe('team');
   });
 
-  it('ordinal out of range falls through to candidates', () => {
+  it('ordinal out of range falls through to candidates (no resolved key)', () => {
     // 「さんばんめ」だが候補は 2 つ → index 2 は範囲外 → 確定せず candidates 返却。
+    // 範囲外を undefined として resolved に入れないこと (resolved キー自体が無い) を保証。
     const r = disambiguate('三番目', ['gmail', 'team']);
-    expect(r.resolved).toBeUndefined();
+    expect('resolved' in r).toBe(false);
     expect(r.candidates).toEqual(['gmail', 'team']);
+  });
+
+  it('ordinal in range resolves to that candidate (third of three)', () => {
+    const r = disambiguate('三番目', ['gmail', 'team', 'slack']);
+    expect(r.resolved).toBe('slack');
   });
 
   it('no alias match and no ordinal → returns candidates unchanged', () => {

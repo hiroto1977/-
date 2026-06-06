@@ -242,13 +242,18 @@ const QUERY_MARKERS: readonly string[] = [
  * 複数サービスが一致する場合は全て返す (曖昧)。最長別名一致のサービスを先頭に置く。
  */
 export function matchServices(normalized: string): readonly ServiceId[] {
-  if (normalized.length === 0) return [];
+  // 空文字は下のループで何もマッチせず hits 空 → [] が返るため早期 return 不要。
   const hits: { id: ServiceId; aliasLen: number }[] = [];
   for (const id of SERVICE_IDS) {
     const aliases = SERVICE_ALIASES[id];
     let best = 0;
     for (const alias of aliases) {
-      if (alias.length > 0 && normalized.includes(alias) && alias.length > best) {
+      // alias は辞書由来で常に非空 (空文字ガードは不要)。
+      // `alias.length > best` で同一サービス内の最長一致 (= 最大長) を採る。
+      // EqualityOperator (`>` → `>=`) は等価変異: best は最大値計算であり、同長 alias の
+      // 再代入は値を変えないため最終 best は不変。
+      // Stryker disable next-line EqualityOperator
+      if (normalized.includes(alias) && alias.length > best) {
         best = alias.length;
       }
     }
@@ -256,8 +261,7 @@ export function matchServices(normalized: string): readonly ServiceId[] {
       hits.push({ id, aliasLen: best });
     }
   }
-  if (hits.length === 0) return [];
-  // 最長別名一致のサービスを最有力に (長さ降順で安定ソート)。
+  // 最長別名一致のサービスを最有力に (長さ降順で安定ソート)。空配列でも安全。
   hits.sort((a, b) => b.aliasLen - a.aliasLen);
   return hits.map((h) => h.id);
 }
@@ -266,7 +270,8 @@ export function matchServices(normalized: string): readonly ServiceId[] {
 function matchAction(normalized: string): string | null {
   for (const rule of ACTION_RULES) {
     for (const verb of rule.verbs) {
-      if (verb.length > 0 && normalized.includes(verb)) {
+      // verb は辞書由来で常に非空。
+      if (normalized.includes(verb)) {
         return rule.action;
       }
     }
@@ -276,22 +281,19 @@ function matchAction(normalized: string): string | null {
 
 function containsAny(normalized: string, markers: readonly string[]): boolean {
   for (const m of markers) {
-    if (m.length > 0 && normalized.includes(m)) return true;
+    // m は辞書由来で常に非空。
+    if (normalized.includes(m)) return true;
   }
   return false;
 }
 
 /**
  * 生発話が疑問文か。正規化で記号が落ちる前に判定する必要があるため raw を受ける。
- * 末尾の疑問符 (? / ？) または末尾の「は」(「〜は?」省略形) を疑問とみなす。
+ * 疑問符 (半角 ? / 全角 ？) を含めば疑問とみなす (音声認識は文中疑問符を稀にしか出さない)。
  */
 export function isQuestion(rawText: string): boolean {
   if (typeof rawText !== 'string') return false;
-  // 末尾の空白を除いた最後の意味文字で判定。
-  const trimmed = rawText.replace(/[\s。、．，]+$/u, '');
-  if (trimmed.length === 0) return false;
-  const last = trimmed[trimmed.length - 1]!;
-  return last === '?' || last === '？';
+  return rawText.includes('?') || rawText.includes('？');
 }
 
 // ---------------------------------------------------------------------------
@@ -312,9 +314,9 @@ const UNKNOWN: VoiceIntent = { kind: 'unknown', confidence: 0 };
  *   6. いずれも無ければ unknown
  */
 export function parseVoiceCommand(text: string): VoiceIntent {
+  // 空文字は matchServices=[] / matchAction=null となり下の primary===undefined 分岐で
+  // UNKNOWN を返すため、専用の早期 return は不要。
   const normalized = normalizeUtterance(text);
-  if (normalized.length === 0) return UNKNOWN;
-
   const services = matchServices(normalized);
   const action = matchAction(normalized);
   const primary = services[0];
@@ -383,9 +385,8 @@ export function routeCommand(
   intent: VoiceIntent,
   available: AvailableCapabilities,
 ): VoiceIntent {
-  if (intent.kind === 'unknown') return UNKNOWN;
-
   // service 非依存 action (backup) はそのまま通す。
+  // unknown / serviceId 無しの非 action はここで UNKNOWN へ落ちる。
   if (intent.serviceId === undefined) {
     if (intent.kind === 'action' && intent.action !== undefined) {
       return intent;
@@ -403,9 +404,9 @@ export function routeCommand(
     const filtered = intent.candidates.filter((c) => known.has(c));
     if (filtered.length === 0) return UNKNOWN;
     if (filtered.length === 1) {
-      const only = filtered[0]!;
       return resolveResolved(
-        { ...intent, serviceId: only, candidates: undefined, confidence: bumpConfidence(intent) },
+        { ...intent, serviceId: filtered[0]!, candidates: undefined, confidence: bumpConfidence(intent) },
+        filtered[0]!,
         available,
       );
     }
@@ -417,7 +418,7 @@ export function routeCommand(
     };
   }
 
-  return resolveResolved(intent, available);
+  return resolveResolved(intent, intent.serviceId, available);
 }
 
 /** 曖昧解消後に confidence を確定値へ引き上げる。 */
@@ -425,19 +426,27 @@ function bumpConfidence(intent: VoiceIntent): number {
   return intent.kind === 'action' ? 0.9 : 0.7;
 }
 
-/** service が単一に確定した intent を action 有無で最終解決する。 */
-function resolveResolved(intent: VoiceIntent, available: AvailableCapabilities): VoiceIntent {
-  if (intent.kind !== 'action' || intent.action === undefined || intent.serviceId === undefined) {
+/**
+ * service が単一に確定した intent を action 有無で最終解決する。
+ * serviceId は呼び出し側で確定済みのものを渡す (intent.serviceId と同値)。
+ */
+function resolveResolved(
+  intent: VoiceIntent,
+  serviceId: ServiceId,
+  available: AvailableCapabilities,
+): VoiceIntent {
+  // action でない / action 名が無い intent はそのまま返す (副作用なし)。
+  if (intent.kind !== 'action' || intent.action === undefined) {
     return intent;
   }
-  const actions = available.actions[intent.serviceId] ?? [];
-  if (actions.includes(intent.action)) {
+  const actions = available.actions[serviceId];
+  if (actions !== undefined && actions.includes(intent.action)) {
     return intent;
   }
-  // action が実在しなければ navigate へ降格。
+  // action が未登録 (またはサービスに action 無し) なら navigate へ降格。
   return {
     kind: 'navigate',
-    serviceId: intent.serviceId,
+    serviceId,
     confidence: 0.6,
   };
 }
@@ -486,7 +495,8 @@ const DANGEROUS_STEMS: readonly string[] = [
 export function requiresConfirmation(intent: VoiceIntent): boolean {
   if (intent.kind !== 'action') return false;
   const action = intent.action;
-  if (action === undefined || action.length === 0) return false;
+  // 空文字は CONFIRM_ACTIONS にもどの語幹にもマッチしないため undefined のみガードすれば足りる。
+  if (action === undefined) return false;
   if (CONFIRM_ACTIONS.has(action)) return true;
   // ヒューリスティック: 破壊的/外部送信を示す語幹を含むなら安全側で確認。
   const lowered = action.toLowerCase();
@@ -518,8 +528,10 @@ const ORDINAL_MARKERS: readonly { readonly tokens: readonly string[]; readonly i
 function pickByOrdinal(normalized: string, candidates: readonly ServiceId[]): ServiceId | null {
   for (const rule of ORDINAL_MARKERS) {
     for (const token of rule.tokens) {
-      if (token.length > 0 && normalized.includes(token) && rule.index < candidates.length) {
-        return candidates[rule.index]!;
+      // token は辞書由来で常に非空。
+      if (normalized.includes(token)) {
+        // 候補数を超える序数 (例: 候補2件で「三番目」) は undefined → null へ畳んで弾く。
+        return candidates[rule.index] ?? null;
       }
     }
   }
@@ -538,18 +550,21 @@ export function disambiguate(
   candidates: readonly ServiceId[],
 ): DisambiguationResult {
   const valid = candidates.filter((c) => isServiceId(c));
-  if (valid.length === 0) return { candidates: [] };
+  // valid.length===1 のみ早期確定。0 件 / 空文字 / 無一致は下のフォールスルーで
+  // {candidates: valid} (valid が空なら []) を返すため専用ガードは不要。
   if (valid.length === 1) return { resolved: valid[0]!, candidates: valid };
 
   const normalized = normalizeUtterance(text);
-  if (normalized.length === 0) return { candidates: valid };
 
   // 候補のうち、発話にマッチするものを抽出 (最長別名一致を優先)。
   const matched: { id: ServiceId; len: number }[] = [];
   for (const id of valid) {
     let best = 0;
     for (const alias of SERVICE_ALIASES[id]) {
-      if (alias.length > 0 && normalized.includes(alias) && alias.length > best) {
+      // alias は辞書由来で常に非空。最長一致 (= 最大長) を採る。
+      // EqualityOperator (`>` → `>=`) は等価変異 (最大値計算のため最終 best は不変)。
+      // Stryker disable next-line EqualityOperator
+      if (normalized.includes(alias) && alias.length > best) {
         best = alias.length;
       }
     }
