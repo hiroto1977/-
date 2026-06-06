@@ -12,7 +12,10 @@
  *   退職所得      = (退職金 - 退職所得控除) × 1/2
  *     ※ 2022年改正: 勤続5年以下で「短期退職手当等」(役員等以外含む) は
  *       300万円を超える部分の 1/2 課税が適用されない。
+ *     ※「特定役員退職手当等」(役員等の勤続5年以下) は控除後の全額が課税対象
+ *       (1/2 なし・300万円の境界なし)。
  *     ※ 障害者になったことに基因する退職は控除額に +100万 (任意フラグ)。
+ *     ※ 勤続年数は 1年未満切り上げ。roundUpYearsOfService() で暦の年数を換算できる。
  *   所得税        = 退職所得 × 速算表 × (1 + 復興特別所得税 2.1%)
  *   住民税        = 退職所得 × 10% (分離課税・調整控除なし)
  */
@@ -21,6 +24,37 @@ import { calcBaseIncomeTax, RECONSTRUCTION_SURTAX_RATE, RESIDENT_TAX_RATE } from
 
 function yen(n: number): number {
   return Math.round(n);
+}
+
+/**
+ * 暦の勤続期間 (年数) を、退職所得控除の計算に用いる「勤続年数」へ換算する。
+ * 国税庁 No.1420: 1年未満の端数は切り上げ (例: 10年1か月 → 11年、20年ちょうど → 20年)。
+ * 端数が無い整数年はそのまま。0年以下・NaN は 0 にガードする。
+ *
+ * @param rawYears 暦上の勤続年数 (小数可。例: 5.0833 = 5年1か月)
+ * @returns 控除計算に用いる整数年 (1年未満切り上げ、最低0)
+ */
+export function roundUpYearsOfService(rawYears: number): number {
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: !(>0) で 0・負値・NaN を一括ガード。
+  if (!(rawYears > 0)) return 0;
+  return Math.ceil(rawYears);
+}
+
+/** 課税退職所得計算のオプション。 */
+export interface RetirementIncomeOptions {
+  /**
+   * 勤続5年以下の「短期退職手当等」(役員等以外を含む) か。
+   * 2022年改正: 控除後 300万円を超える部分は 1/2 課税の対象外。
+   */
+  readonly shortTerm?: boolean;
+  /**
+   * 「特定役員退職手当等」(役員等としての勤続5年以下) か。
+   * 控除後の全額が課税対象 (1/2 なし・300万円の境界なし)。
+   * shortTerm より優先される。
+   */
+  readonly specifiedOfficer?: boolean;
+  /** 障害者になったことに基因する退職か (控除 +100万)。 */
+  readonly disability?: boolean;
 }
 
 /**
@@ -52,17 +86,23 @@ export function retirementDeduction(yearsOfService: number, disability = false):
  * @param severance 退職金 (税引前の支給総額)
  * @param yearsOfService 勤続年数 (1年未満切り上げの整数)
  * @param opts.shortTerm 勤続5年以下の「短期退職手当等」か (300万超の1/2不適用)
+ * @param opts.specifiedOfficer 勤続5年以下の「特定役員退職手当等」か (全額課税・1/2なし)
  * @param opts.disability 障害退職か (控除+100万)
  */
 export function calcRetirementTaxableIncome(
   severance: number,
   yearsOfService: number,
-  opts: { readonly shortTerm?: boolean; readonly disability?: boolean } = {},
+  opts: RetirementIncomeOptions = {},
 ): number {
   const deduction = retirementDeduction(yearsOfService, opts.disability ?? false);
   const afterDeduction = Math.max(0, severance - deduction);
   // Stryker disable next-line ConditionalExpression: 早期returnを外しても afterDeduction=0 は yen(0/2)=0 で同値。
   if (afterDeduction === 0) return 0;
+
+  // 特定役員退職手当等 (役員等の勤続5年以下): 控除後の全額が課税対象 (1/2 なし)。
+  if (opts.specifiedOfficer && Math.floor(yearsOfService) <= 5) {
+    return yen(afterDeduction);
+  }
 
   // 短期退職手当等 (勤続5年以下): 控除後 300万までは1/2、300万超は全額。
   if (opts.shortTerm && Math.floor(yearsOfService) <= 5) {
@@ -97,7 +137,7 @@ export interface RetirementTaxResult {
 export function calcRetirementTax(
   severance: number,
   yearsOfService: number,
-  opts: { readonly shortTerm?: boolean; readonly disability?: boolean } = {},
+  opts: RetirementIncomeOptions = {},
 ): RetirementTaxResult {
   // Stryker disable next-line all: severance<=0 の早期returnは、計算経路でも同じゼロ群を返すため等価。
   if (severance <= 0) {
