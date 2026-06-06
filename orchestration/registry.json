@@ -286,7 +286,8 @@
           "tax-deductions",
           "tax-credits",
           "tax-separate",
-          "tax-consumption"
+          "tax-consumption",
+          "resident-municipality"
         ]
       },
       {
@@ -808,6 +809,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-payroll"
+    },
+    {
+      "id": "resident-municipality",
+      "domain": "住民税(自治体差)",
+      "focus": "calcResidentTaxにMunicipalityOverride(所得割率/均等割額)を追加し自治体差を概算。未指定は標準定数フォールバックで既存挙動不変、不正値ガード",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-tax"
     }
   ],
   "rounds": [
@@ -2751,6 +2760,75 @@
         "人事・社保ラウンド: 社会保険料の概算を標準報酬月額の等級表(健保50等級/厚年32等級, 令和6年度協会けんぽ基準)で精緻化。線形近似(年収/12を上限頭打ち)から離散等級ベースへ。calcSocialInsurance/WithBonus を等級解決+賞与上限(健保573万/厚年150万)で再実装、taxSocialInsurance.ts mutation 100%維持(71killed)、+12 it (#141)。静的2860→2877/実行時2937→2954。"
       ],
       "note": "v3機構の自律ラウンド(完全自動化代行)。WIP逐次pushで再起動耐性を確保しつつ並列worktreeで実装。teams 57→58。"
+    },
+    {
+      "round": 53,
+      "teamCount": 59,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality"
+      ],
+      "shipped": [
+        "税務ラウンド(住民税自治体差): calcResidentTax に任意の MunicipalityOverride(所得割率 incomeRate / 均等割額 perCapita)引数を加算的に追加。未指定は標準定数(10%/5,000円)にフォールバックし既存呼び出しは完全不変、負値/NaN/Infinity は入力ガードで標準値へ。taxCalc.ts mutation 100%維持(226killed)、+19 it (#143)。静的2877→2896/実行時2954→2973。"
+      ],
+      "note": "v3機構の自律ラウンド。文書化済 税務backlog の最終項目を消化。teams 58→59。"
     }
   ],
   "backlog": [
