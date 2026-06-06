@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { BackupPanel } from '../components/BackupPanel';
+import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
@@ -612,6 +613,8 @@ export function SettingsPage() {
       </Section>
 
       <BackupPanel />
+
+      <CloudSyncPanel />
 
       <Section title="API キーとトークン" count={SLOTS.length}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>
