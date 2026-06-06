@@ -385,7 +385,8 @@
           "equivalent-mutant-judgment",
           "golden-value-testing",
           "orchestration-runtime",
-          "ui-render-testing"
+          "ui-render-testing",
+          "mutation-regression-audit"
         ]
       }
     ]
@@ -790,6 +791,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-funding"
+    },
+    {
+      "id": "mutation-regression-audit",
+      "domain": "品質保証(変異退行監査)",
+      "focus": "cacheを使わないクリーンfull mutationでscope済ファイルの隠れた退行(拡張時テスト未追随)を検知し真100%へ復旧。shopify/kpi/oauthの退行を発見・修復",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
     }
   ],
   "rounds": [
@@ -2598,6 +2607,73 @@
         "資金調達ラウンド: funding に消費税・特定収入の控除対象外仕入税額調整(isSpecifiedIncome/specifiedIncomeAdjustment, 特定収入割合>5%)と、据置期間中の利息の複利計上選択(graceInterestHandling: simple|compound)を純粋関数で実装。src/shared/funding.ts と main/clients/funding.ts を mutation 100% 維持、+19 it (#134)。teams 54→56 (funding-consumption-tax / funding-grace-compound を CFO/資金調達部 配下に追加)。"
       ],
       "note": "v3 実行ランタイムによる初の実走ラウンド記録 (PDCA act 段階)。設計=並列worktreeエージェント(opus) / 実装+全ゲート検証=COO直列。"
+    },
+    {
+      "round": 51,
+      "teamCount": 57,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit"
+      ],
+      "shipped": [
+        "品質保証ラウンド(深い検証→退行修復): クリーンfull mutationで『scope済=mutation100%』不変条件の破れを発見。scope入り後の機能拡張でテストが追随せず退行していた shopify.ts(53%→100%, survivor134+nocov13)・kpi.ts(89%→100%)・oauth.ts(92%→100%, clientId空文字fallbackのStringLiteralを実値検証で撃墜)を真100%へ復旧 (#138/#139)。静的2820→2860/実行時2890→2937。"
+      ],
+      "note": "OODA: observe(クリーンfull run)→orient(cache隠蔽でなく実退行と特定)→decide(対象3ファイルに最適化)→act(per-file並列ハードニング+統合)。teams 56→57。"
     }
   ],
   "backlog": [
