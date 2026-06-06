@@ -75,8 +75,8 @@ export function cashForecastTrajectory(forecast: CashForecast): number[] {
 // 反映しない。
 // ───────────────────────────────────────────────────────────────────────────
 
-const isFiniteNumber = (n: unknown): n is number =>
-  typeof n === 'number' && Number.isFinite(n);
+// Number.isFinite は非数値を強制変換せず常に false を返すため、typeof チェックは不要。
+const isFiniteNumber = (n: unknown): n is number => Number.isFinite(n);
 
 /** 1 シナリオの予測結果。 */
 export interface CashScenario {
@@ -157,6 +157,9 @@ export function seasonalIndices(
   period = 12,
 ): number[] | null {
   const p = Math.floor(period);
+  // history.length===0 を外しても、空配列は下の clean.length===0 でも null になり同値
+  // (等価変異)。早期 return は可読性のための冗長ガード。
+  // Stryker disable next-line ConditionalExpression
   if (!Array.isArray(history) || history.length === 0 || p < 1) return null;
   const clean = history.filter(isFiniteNumber);
   if (clean.length === 0) return null;
@@ -171,6 +174,8 @@ export function seasonalIndices(
   }
   return sums.map((sum, slot) => {
     const c = counts[slot]!;
+    // c===0 ⇒ sum も 0 なので else 枝でも 0/0=NaN→1 となり結果は同値 (等価変異)。
+    // Stryker disable next-line ConditionalExpression
     if (c === 0) return 1;
     const idx = sum / c / overallMean;
     return isFiniteNumber(idx) ? idx : 1;
@@ -207,6 +212,8 @@ export function seasonalForecast(
     const net = monthlyNet * factor;
     netSum += net;
     balance += net;
+    // balance===minBalance のとき再代入しても同値のため < → <= は等価変異。
+    // Stryker disable next-line EqualityOperator
     if (balance < minBalance) minBalance = balance;
     if (shortfallMonthIndex === null && balance < 0) shortfallMonthIndex = i;
     rows.push({ monthIndex: i, netCashflow: net, balance });
@@ -247,6 +254,8 @@ export function fundingNeed(
   for (const row of forecast.rows) {
     const deficit = targetBalance - row.balance;
     if (deficit > 0 && fundingMonthIndex === null) fundingMonthIndex = row.monthIndex;
+    // worstDeficit===deficit のとき再代入しても同値のため > → >= は等価変異。
+    // Stryker disable next-line EqualityOperator
     if (deficit > worstDeficit) worstDeficit = deficit;
   }
   return {
@@ -297,7 +306,11 @@ export function cashflowSensitivity(
 ): SensitivityAnalysis | null {
   if (!isFiniteNumber(openingBalance) || !isFiniteNumber(monthlyNet)) return null;
   const horizon = Math.min(60, Math.max(0, Math.floor(horizonMonths)));
+  // 直後の .filter(isFiniteNumber) が非数値要素を除去するため、フォールバック配列に
+  // 何を入れても結果は空となる (Stryker の文字列要素挿入は等価変異)。
+  // Stryker disable next-line ArrayDeclaration
   const deltas = (Array.isArray(revenueDeltas) ? revenueDeltas : []).filter(isFiniteNumber);
+  // Stryker disable next-line ArrayDeclaration
   const lags = (Array.isArray(collectionLagMonths) ? collectionLagMonths : []).filter(
     (n): n is number => isFiniteNumber(n) && n >= 0,
   );
@@ -310,6 +323,8 @@ export function cashflowSensitivity(
     for (let i = 1; i <= horizon; i += 1) {
       const applied = i <= lag ? 0 : net;
       balance += applied;
+      // balance===minBalance のとき再代入しても同値のため < → <= は等価変異。
+      // Stryker disable next-line EqualityOperator
       if (balance < minBalance) minBalance = balance;
       if (shortfallMonthIndex === null && balance < 0) shortfallMonthIndex = i;
     }

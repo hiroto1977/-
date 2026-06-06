@@ -167,6 +167,27 @@ describe('seasonalIndices', () => {
     const idx = seasonalIndices([100, 200, 300, 400], 2.9)!;
     expect(idx).toHaveLength(2);
   });
+
+  it('returns null for a non-array history', () => {
+    // exercises the !Array.isArray guard
+    expect(seasonalIndices(undefined as unknown as number[], 12)).toBeNull();
+    expect(seasonalIndices(42 as unknown as number[], 12)).toBeNull();
+  });
+
+  it('treats non-number history elements as non-finite and drops them', () => {
+    // exercises isFiniteNumber's typeof guard: 'x' is dropped, leaving [300, 100].
+    // If kept, the mean becomes NaN and every index collapses to 1 — so asserting the
+    // distinct 1.5 / 0.5 indices kills the "isFiniteNumber → true" mutant.
+    const idx = seasonalIndices([300, 'x' as unknown as number, 100], 2)!;
+    expect(idx[0]).toBeCloseTo(1.5); // 300 / mean(200)
+    expect(idx[1]).toBeCloseTo(0.5); // 100 / mean(200)
+  });
+
+  it('returns a single index of 1 when period is exactly 1', () => {
+    // boundary p === 1 (kills p < 1 → p <= 1)
+    const idx = seasonalIndices([100, 300], 1)!;
+    expect(idx).toEqual([1]); // all months collapse to one slot = overall mean
+  });
 });
 
 describe('seasonalForecast', () => {
@@ -224,6 +245,38 @@ describe('seasonalForecast', () => {
     expect(seasonalForecast(Number.NaN, 1, [1], 3)).toBeNull();
     expect(seasonalForecast(0, Infinity, [1], 3)).toBeNull();
   });
+
+  it('assigns indices cyclically by (i-1) mod len, not (i+1)', () => {
+    // len 3 distinguishes (i-1)%3 from (i+1)%3
+    // months 1..3 → slots 0,1,2 → factors 1,2,3
+    const f = seasonalForecast(0, 100_000, [1, 2, 3], 3)!;
+    expect(f.rows.map((r) => r.netCashflow)).toEqual([100_000, 200_000, 300_000]);
+  });
+
+  it('keeps minBalance at the opening balance while growing seasonally', () => {
+    // all-positive seasonal nets → minBalance must stay at opening (kills "if (true)")
+    const f = seasonalForecast(500_000, 100_000, [1, 2, 3], 3)!;
+    expect(f.minBalance).toBe(500_000);
+  });
+
+  it('does not flag a shortfall when every balance stays positive', () => {
+    // kills "balance < 0 → true"
+    const f = seasonalForecast(1_000_000, 50_000, [1, 2], 4)!;
+    expect(f.shortfallMonthIndex).toBeNull();
+  });
+
+  it('does not flag a shortfall when a balance lands exactly on zero', () => {
+    // kills "balance < 0 → balance <= 0": month1 ends exactly 0
+    const f = seasonalForecast(100_000, -100_000, [1, 0.5], 1)!;
+    expect(f.rows[0]!.balance).toBe(0);
+    expect(f.shortfallMonthIndex).toBeNull();
+  });
+
+  it('reports an uneven seasonal average that differs from the base net', () => {
+    // indices [2,1] avg 1.5 → monthlyNet = base*1.5 (kills horizon>0 → false)
+    const f = seasonalForecast(0, 100_000, [2, 1], 2)!;
+    expect(f.monthlyNet).toBe(150_000);
+  });
 });
 
 describe('fundingNeed', () => {
@@ -265,6 +318,16 @@ describe('fundingNeed', () => {
     expect(fundingNeed(f, Number.NaN)).toBeNull();
   });
 
+  it('does not flag a funding month when balance only touches the target exactly', () => {
+    // balances 200k,100k vs target 100k → deficits 0(neg),0 → never strictly > 0
+    // (kills deficit > 0 → deficit >= 0)
+    const f = forecastCashBalance(300_000, -100_000, 2); // 200k, 100k
+    const need = fundingNeed(f, 100_000)!;
+    expect(need.fundingMonthIndex).toBeNull();
+    expect(need.shortfallAmount).toBe(0);
+    expect(need.sufficient).toBe(true);
+  });
+
   it('marks the first dip month even if a later month recovers', () => {
     // opening 100k, custom: dip then recover is impossible with flat net, so use seasonal
     const f = seasonalForecast(100_000, -50_000, [2, -1], 4)!;
@@ -278,6 +341,19 @@ describe('fundingNeed', () => {
 });
 
 describe('cashflowSensitivity', () => {
+  it('keeps minBalance at the opening balance when the case is cash-positive', () => {
+    // growing case: minBalance must stay opening (kills "if (true)" on minBalance)
+    const s = cashflowSensitivity(1_000_000, 100_000, 6, [0], [0])!;
+    expect(s.baseline.minBalance).toBe(1_000_000);
+    expect(s.cases[0]!.minBalance).toBe(1_000_000);
+  });
+
+  it('does not flag a shortfall when a case balance lands exactly on zero', () => {
+    // 100k opening, -100k, horizon 1 → ends exactly 0 (kills balance < 0 → <= 0)
+    const s = cashflowSensitivity(100_000, -100_000, 1, [0], [0])!;
+    expect(s.baseline.shortfallMonthIndex).toBeNull();
+  });
+
   it('always includes a zero/zero baseline matching the flat forecast', () => {
     const s = cashflowSensitivity(250_000, -100_000, 6)!;
     expect(s.baseline.revenueDelta).toBe(0);
@@ -325,6 +401,21 @@ describe('cashflowSensitivity', () => {
     expect(s.cases[0]!.collectionLagMonths).toBe(0);
   });
 
+  it('treats non-array delta/lag inputs as empty (then defaults to a single 0/0 case)', () => {
+    // exercises the Array.isArray(...) ? ... : [] fallbacks. Must pass non-array,
+    // non-undefined values (null/0) so the default params do NOT kick in.
+    const s = cashflowSensitivity(
+      250_000,
+      -100_000,
+      6,
+      null as unknown as number[],
+      0 as unknown as number[],
+    )!;
+    expect(s.cases).toHaveLength(1);
+    expect(s.cases[0]!.revenueDelta).toBe(0);
+    expect(s.cases[0]!.collectionLagMonths).toBe(0);
+  });
+
   it('floors a fractional lag', () => {
     const s = cashflowSensitivity(250_000, -100_000, 8, [0], [2.9])!;
     expect(s.cases[0]!.collectionLagMonths).toBe(2);
@@ -341,6 +432,16 @@ describe('cashflowSensitivity', () => {
   it('returns null on non-finite opening or net', () => {
     expect(cashflowSensitivity(Number.NaN, -100_000, 6)).toBeNull();
     expect(cashflowSensitivity(250_000, Infinity, 6)).toBeNull();
+  });
+
+  it('uses default deltas [-0.1, 0, 0.1] and lags [0, 1, 2] when omitted', () => {
+    const s = cashflowSensitivity(250_000, -100_000, 6)!;
+    // 3 default deltas × 3 default lags = 9 cases (kills default array + unary mutants)
+    expect(s.cases).toHaveLength(9);
+    const deltas = [...new Set(s.cases.map((c) => c.revenueDelta))].sort((a, b) => a - b);
+    expect(deltas).toEqual([-0.1, 0, 0.1]);
+    const lags = [...new Set(s.cases.map((c) => c.collectionLagMonths))].sort((a, b) => a - b);
+    expect(lags).toEqual([0, 1, 2]);
   });
 
   it('treats a lag at or beyond the horizon as never receiving inflows', () => {
