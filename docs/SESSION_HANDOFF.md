@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2860 静的 / 2937 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2877 静的 / 2954 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
@@ -231,8 +231,15 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
    **ふるさと納税** も `calcFurusatoResidentCredit` (基本分+特例分・特例cap) で対応済み。
    ※ 旧版の「残り」記述は古かったため訂正。
 
+✅ 社会保険料の **標準報酬月額テーブル** 化 (round 52, `src/shared/taxSocialInsurance.ts`):
+   厚生年金 第1〜32級 (88,000〜650,000) / 健康保険 第1〜50級 (58,000〜1,390,000) の
+   令和6年度・協会けんぽ等級表を実装し、報酬月額→標準報酬月額の解決関数 (resolveStandardMonthly /
+   resolvePensionStandardMonthly / resolveHealthStandardMonthly / resolveStandardBonus) で
+   calcSocialInsurance / calcSocialInsuranceWithBonus を線形近似から等級表ベースへ。賞与は標準賞与額
+   (1,000円未満切捨て) + 上限 (健保 年累計573万/厚年 1回150万)。mutation 100% 維持 (等級表は罠#2 に
+   従い block-level disable、境界解決ロジックは実テストで撃墜)。既存テスト期待値を新モデルへ更新。
+
 残り (要設計判断・スコープ大):
-- 社会保険料の **標準報酬月額テーブル** 化 (概算セクション② のみ。③は実額入力で回避済で優先度低)。
 - 住民税の自治体差の精緻化。
 
 ✅ **ふるさと納税ワンストップ特例**は実装済み (`src/shared/taxFurusato.ts`: `furusatoOneStopEligibility` 5自治体/確定申告併用不可の判定 + `calcFurusatoBreakdown` の所得税分→住民税申告特例控除への振替、mutation 100%、TaxPage セクション⑦)。※旧版の「残り」記述は古かったため訂正。
