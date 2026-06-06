@@ -297,7 +297,9 @@
           "funding-cashflow",
           "funding-cost",
           "funding-scenario",
-          "funding-mix"
+          "funding-mix",
+          "funding-consumption-tax",
+          "funding-grace-compound"
         ]
       },
       {
@@ -772,6 +774,22 @@
       "active": true,
       "role": "audit",
       "manager": "mgr-quality"
+    },
+    {
+      "id": "funding-consumption-tax",
+      "domain": "資金調達(消費税・特定収入)",
+      "focus": "補助金等の消費税法上の特定収入判定(isSpecifiedIncome)と、本則課税・特定収入割合>5%での控除対象外仕入税額の概算調整(specifiedIncomeAdjustment)。簡易課税/割合≤5%は調整0",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-funding"
+    },
+    {
+      "id": "funding-grace-compound",
+      "domain": "資金調達(据置中の複利計上)",
+      "focus": "据置期間中の利息を都度払い(simple)か元本資本化(compound)で選択(graceInterestHandling)。複利選択時は据置後の元本・返済額・amortizationScheduleに反映、per-entry payment=principal+interest 不変条件を維持",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-funding"
     }
   ],
   "rounds": [
@@ -2514,6 +2532,72 @@
         "AIオーケストレーション機構を v3 へ再構築: 静的レジストリに実行ランタイム(scripts/orchestrate.cjs)を追加し、org+backlog を指揮系統(CEO→COO→役員→管理職→一般職)へ解決して PDCA/OODA を並列worktreeエージェントへディスパッチする仕組みを実装。policy.cycles(PDCA/OODA)を機械可読化し verify:orchestration で構造検証。並列ループ運用で UIレンダーテスト網(+71 it, #133 merged)を投入。teams 52→54。"
       ],
       "note": "実行モデル: 設計=並列Agent / 実装+全ゲート検証=COO直列。dispatch は read-only、record のみ追記。"
+    },
+    {
+      "round": 50,
+      "teamCount": 56,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound"
+      ],
+      "shipped": [
+        "資金調達ラウンド: funding に消費税・特定収入の控除対象外仕入税額調整(isSpecifiedIncome/specifiedIncomeAdjustment, 特定収入割合>5%)と、据置期間中の利息の複利計上選択(graceInterestHandling: simple|compound)を純粋関数で実装。src/shared/funding.ts と main/clients/funding.ts を mutation 100% 維持、+19 it (#134)。teams 54→56 (funding-consumption-tax / funding-grace-compound を CFO/資金調達部 配下に追加)。"
+      ],
+      "note": "v3 実行ランタイムによる初の実走ラウンド記録 (PDCA act 段階)。設計=並列worktreeエージェント(opus) / 実装+全ゲート検証=COO直列。"
     }
   ],
   "backlog": [
