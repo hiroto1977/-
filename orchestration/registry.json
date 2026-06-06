@@ -290,7 +290,8 @@
           "resident-municipality",
           "corporate-tax",
           "corporate-percapita-table",
-          "corporate-loss-carryforward"
+          "corporate-loss-carryforward",
+          "corporate-statutory-rate"
         ]
       },
       {
@@ -871,6 +872,14 @@
       "active": true,
       "role": "research",
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "corporate-statutory-rate",
+      "domain": "税務(法定実効税率)",
+      "focus": "事業税の損金算入を織り込んだ法定実効税率(statutoryEffectiveRate)を標準式で追加。所得帯の限界税率を選択、effectiveRate(単純合算)と並存・既存値不変",
+      "active": true,
+      "role": "research",
+      "manager": "mgr-tax"
     }
   ],
   "rounds": [
@@ -3318,6 +3327,82 @@
         "経営管理ラウンド(税引後利益のレポート反映): buildFinancialReportMarkdown に『法人税等(概算)』セクションを加算的に追加。ordinaryProfit指定時のみ法人税/地方法人税/法人住民税/法人事業税/特別法人事業税/合計/実効税率/税引後利益をMarkdown表で出力、欠損分岐。未指定は既存golden出力と完全一致。financialReport.ts mutation 100%維持(165killed)、+6 it、dist再生成 (#155)。静的3010→3016/実行時3087→3093。法人税精度の一気通貫(概算→均等割→繰越欠損金→UI入力→レポート)完成。"
       ],
       "note": "『精度を高め』の出力統合。加算的で既存出力不変。teams 64→65。"
+    },
+    {
+      "round": 60,
+      "teamCount": 66,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing",
+        "funding-consumption-tax",
+        "funding-grace-compound",
+        "mutation-regression-audit",
+        "social-insurance-grades",
+        "resident-municipality",
+        "corporate-tax",
+        "aftertax-ui",
+        "corporate-percapita-table",
+        "corporate-loss-carryforward",
+        "corporate-tax-inputs",
+        "aftertax-report",
+        "corporate-statutory-rate"
+      ],
+      "shipped": [
+        "精度向上ラウンド(法定実効税率): 事業税(+特別法人事業税)の損金算入を織り込んだ法定実効税率を標準式 {法人税率×(1+地方法人税率+住民税法人税割率)+事業税率+特別法人事業税率}/(1+事業税率+特別法人事業税率) で statutoryEffectiveRate として追加。所得帯の限界税率を選択(中小≤800万15%/超23.2%、事業税3.5/5.3/7.0%×1.37)。既存 effectiveRate(単純合算)・各税額は不変。taxCorporate/financialReport mutation 100%維持、+20 it (#157)。静的3016→3036/実行時3093→3113。法人税精度を網羅完成。"
+      ],
+      "note": "『精度を高め』の総仕上げ(法人税)。加算的で既存値不変。teams 65→66。"
     }
   ],
   "backlog": [
