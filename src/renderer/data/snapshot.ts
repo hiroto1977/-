@@ -881,7 +881,7 @@ export const SNAPSHOT = {
       month: string;
       repayable: boolean;
       compressedEntry?: boolean;
-      repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number; method?: 'equal-payment' | 'equal-principal' };
+      repayment?: { annualRate: number; months: number; startMonth: string; gracePeriodMonths?: number; method?: 'equal-payment' | 'equal-principal'; graceInterestHandling?: 'simple' | 'compound' };
       probability?: number;
     }[],
     byKind: [] as {
@@ -965,6 +965,14 @@ export const SNAPSHOT = {
       totalInterest: 0,
       weightedCostRate: 0,
       selfFundingRatio: 0,
+    },
+    specifiedIncome: {
+      specifiedIncome: 0,
+      totalIncome: 0,
+      specifiedIncomeRatio: 0,
+      adjustmentRequired: false,
+      nonDeductibleInputTax: 0,
+      simplified: false,
     },
     accountingLinked: false,
     stocksLinked: false,

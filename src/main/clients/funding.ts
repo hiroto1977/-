@@ -12,6 +12,7 @@ import {
   monthlyFlow,
   radarScores,
   scenarioRunways,
+  specifiedIncomeAdjustment,
   summarize,
   type CashRunway,
   type DebtServiceMetrics,
@@ -21,6 +22,7 @@ import {
   type FundingTermStructure,
   type FundingQualityScore,
   type ScenarioRunways,
+  type SpecifiedIncomeAdjustment,
   type FundingBar,
   type FundingByKind,
   type FundingItem,
@@ -51,7 +53,7 @@ const MOCK_ITEMS: FundingItem[] = [
   { id: 'f-career', kind: 'grant', name: 'キャリアアップ助成金', amount: 1_140_000, status: 'received', month: '2026-04', repayable: false },
   { id: 'f-koyou', kind: 'grant', name: '雇用調整助成金', amount: 800_000, status: 'planned', month: '2026-09', repayable: false },
   { id: 'f-bank', kind: 'loan', name: '民間金融機関 運転資金融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true, repayment: { annualRate: 0.022, months: 60, startMonth: '2026-03' } },
-  { id: 'f-jfc-startup', kind: 'jfc', name: '公庫 新規開業資金 (据置6か月)', amount: 6_000_000, status: 'approved', month: '2026-05', repayable: true, repayment: { annualRate: 0.012, months: 84, startMonth: '2026-06', gracePeriodMonths: 6 } },
+  { id: 'f-jfc-startup', kind: 'jfc', name: '公庫 新規開業資金 (据置6か月・据置利息を元本組入)', amount: 6_000_000, status: 'approved', month: '2026-05', repayable: true, repayment: { annualRate: 0.012, months: 84, startMonth: '2026-06', gracePeriodMonths: 6, graceInterestHandling: 'compound' } },
   { id: 'f-jfc-safety', kind: 'jfc', name: '公庫 セーフティネット貸付', amount: 3_000_000, status: 'applied', month: '2026-07', repayable: true },
   { id: 'f-benefit', kind: 'benefit', name: '事業復活支援金', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false },
   { id: 'f-cf1', kind: 'crowdfunding', name: '購入型クラウドファンディング', amount: 2_400_000, status: 'received', month: '2026-03', repayable: false },
@@ -104,6 +106,8 @@ export interface FundingSnapshot {
   readonly debtService: DebtServiceMetrics;
   /** 資金調達コスト指標 (実効コスト率・自己負担比率)。 */
   readonly costMetrics: FundingCostMetrics;
+  /** 消費税: 特定収入に係る仕入税額控除の調整 (概算)。 */
+  readonly specifiedIncome: SpecifiedIncomeAdjustment;
   /** 会計ソフト連携の有無 (任意連携)。 */
   readonly accountingLinked: boolean;
   /** 株式投資連携の有無 (任意連携)。 */
@@ -122,6 +126,12 @@ export function buildFundingSnapshot(
     readonly accounting?: ReadonlyMap<string, number>;
     readonly portfolio?: ReadonlyMap<string, number>;
     readonly openingBalance?: number;
+    /** 補助金等以外の総収入 (特定収入割合の分母)。既定 0。 */
+    readonly otherIncome?: number;
+    /** 当期の課税仕入れに係る消費税額 (仕入控除税額) の概算。既定 0。 */
+    readonly taxableInputTax?: number;
+    /** 簡易課税かどうか (true なら特定収入の調整は不要)。既定 false。 */
+    readonly simplified?: boolean;
     readonly isMock?: boolean;
     readonly fetchedAt?: string;
   } = {},
@@ -151,6 +161,11 @@ export function buildFundingSnapshot(
     termStructure: fundingTermStructure(items),
     debtService: debtServiceMetrics(monthly),
     costMetrics: fundingCostMetrics(items, summaryValue),
+    specifiedIncome: specifiedIncomeAdjustment(items, {
+      otherIncome: options.otherIncome,
+      taxableInputTax: options.taxableInputTax,
+      simplified: options.simplified,
+    }),
     accountingLinked: (options.accounting?.size ?? 0) > 0,
     stocksLinked: (options.portfolio?.size ?? 0) > 0,
     fetchedAt: options.fetchedAt ?? new Date().toISOString(),
@@ -161,10 +176,19 @@ export function buildFundingSnapshot(
 /** Fetcher — `LIVE_FETCHERS` の `(ctx) => Promise<unknown>` 形に一致。 */
 export async function fetchFundingSnapshot(_ctx: FetchContext): Promise<FundingSnapshot> {
   void _ctx; // 未使用 — Phase 6 で ctx.token / ctx.fetch を読む
-  return buildFundingSnapshot(MOCK_ITEMS, {
+  // Phase 6 の実 API 差込みまでのモック入力値。補助金等以外の総収入 (特定収入割合の分母) と
+  // 課税仕入れに係る消費税額を会計連携の営業CF合計から概算する (プレースホルダ)。算術リテラルの
+  // 変異はロジック (buildFundingSnapshot 側でテスト済) を検証しないため mutation 対象から除外する。
+  /* Stryker disable all */
+  const accountingTotal = MOCK_ACCOUNTING.reduce((s, [, v]) => s + v, 0);
+  const fetcherOptions = {
     accounting: new Map(MOCK_ACCOUNTING),
     portfolio: new Map(MOCK_PORTFOLIO),
     openingBalance: 3_000_000, // 期首キャッシュ残高 (モック)
+    otherIncome: accountingTotal, // 課税売上等の概算 (営業CF合計を代用)
+    taxableInputTax: Math.round((accountingTotal * 0.6 * 0.1) / 1.1), // 課税仕入れ60%想定の仕入控除税額
     isMock: true,
-  });
+  };
+  /* Stryker restore all */
+  return buildFundingSnapshot(MOCK_ITEMS, fetcherOptions);
 }

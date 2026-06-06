@@ -25,6 +25,9 @@ import {
   effectiveFundingCostRate,
   totalInterestOf,
   fundingCostMetrics,
+  isSpecifiedIncome,
+  specifiedIncomeAdjustment,
+  SPECIFIED_INCOME_THRESHOLD,
   DEFAULT_EFFECTIVE_TAX_RATE,
   FUNDING_KINDS,
   type FundingItem,
@@ -311,6 +314,100 @@ describe('amortizationSchedule', () => {
   });
 });
 
+describe('amortizationSchedule — 据置中の複利計上 (graceInterestHandling)', () => {
+  it("golden: 'compound' capitalizes grace interest into principal (exact)", () => {
+    // 据置中は支払 0・利息 0 表示で残高が複利で増える → 据置後は膨らんだ元本を返済。
+    expect(JSON.stringify(amortizationSchedule(1_200_000, 0.024, 2, '2026-01', 2, 'equal-payment', 'compound'))).toBe(
+      '[{"month":"2026-01","payment":0,"principal":0,"interest":0,"remaining":1202400},{"month":"2026-02","payment":0,"principal":0,"interest":0,"remaining":1204805},{"month":"2026-03","payment":604210,"principal":601800,"interest":2410,"remaining":603005},{"month":"2026-04","payment":604211,"principal":603005,"interest":1206,"remaining":0}]',
+    );
+  });
+
+  it("'compound' grace pays no cash and grows the balance each grace month", () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3, 'equal-payment', 'compound');
+    expect(sched).toHaveLength(15); // 3 grace + 12 repayment
+    // grace months: no cash payment, no deductible interest line, balance grows
+    for (let g = 0; g < 3; g++) {
+      expect(sched[g]!.payment).toBe(0);
+      expect(sched[g]!.principal).toBe(0);
+      expect(sched[g]!.interest).toBe(0); // capitalized, not paid → no interest-deduction line
+    }
+    // balance strictly increases across the grace period (compounding)
+    expect(sched[1]!.remaining).toBeGreaterThan(sched[0]!.remaining);
+    expect(sched[2]!.remaining).toBeGreaterThan(sched[1]!.remaining);
+    // the grown balance exceeds the original principal
+    expect(sched[2]!.remaining).toBeGreaterThan(1_200_000);
+    // still fully amortizes to 0
+    expect(sched[14]!.remaining).toBe(0);
+  });
+
+  it("'compound' repays the grown balance: principal sum > original, fully amortized", () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3, 'equal-payment', 'compound');
+    const repayEntries = sched.slice(3);
+    const grownBalance = sched[2]!.remaining;
+    // principal repaid sums to the grown (capitalized) balance, not the original
+    expect(repayEntries.reduce((s, e) => s + e.principal, 0)).toBe(grownBalance);
+    expect(grownBalance).toBeGreaterThan(1_200_000);
+  });
+
+  it("'simple' is the default and equals the existing interest-only grace behavior", () => {
+    const def = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3);
+    const explicitSimple = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3, 'equal-payment', 'simple');
+    expect(JSON.stringify(def)).toBe(JSON.stringify(explicitSimple));
+    // simple grace: principal sum stays the original amount
+    expect(def.reduce((s, e) => s + e.principal, 0)).toBe(1_200_000);
+  });
+
+  it("'compound' results in a higher total cash repaid than 'simple' (interest on interest)", () => {
+    const simple = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 6, 'equal-payment', 'simple');
+    const compound = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 6, 'equal-payment', 'compound');
+    const cash = (s: { payment: number }[]) => s.reduce((sum, e) => sum + e.payment, 0);
+    expect(cash(compound)).toBeGreaterThan(cash(simple));
+  });
+
+  it("has no effect when there is no grace period (grace=0)", () => {
+    const simple = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 0, 'equal-payment', 'simple');
+    const compound = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 0, 'equal-payment', 'compound');
+    expect(JSON.stringify(compound)).toBe(JSON.stringify(simple));
+  });
+
+  it("supports 'compound' with equal-principal: per-entry invariant holds and fully amortizes", () => {
+    const sched = amortizationSchedule(1_200_000, 0.024, 12, '2026-01', 3, 'equal-principal', 'compound');
+    expect(sched).toHaveLength(15);
+    const grownBalance = sched[2]!.remaining;
+    expect(grownBalance).toBeGreaterThan(1_200_000);
+    for (const e of sched) {
+      expect(e.payment).toBe(e.principal + e.interest);
+      expect(e.principal).toBeGreaterThanOrEqual(0);
+      expect(e.remaining).toBeGreaterThanOrEqual(0);
+    }
+    expect(sched[14]!.remaining).toBe(0);
+    expect(sched.slice(3).reduce((s, e) => s + e.principal, 0)).toBe(grownBalance);
+  });
+
+  it("threads graceInterestHandling through repaymentSchedule / interestSchedule / totalInterestOf", () => {
+    const compoundLoan: FundingItem = {
+      id: 'cg', kind: 'jfc', name: '公庫 据置複利', amount: 1_200_000, status: 'received',
+      month: '2026-01', repayable: true,
+      repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02', gracePeriodMonths: 3, graceInterestHandling: 'compound' },
+    };
+    const simpleLoan: FundingItem = {
+      ...compoundLoan, id: 'sg',
+      repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02', gracePeriodMonths: 3, graceInterestHandling: 'simple' },
+    };
+    // repaymentSchedule: compound has no cash-out during grace (interest capitalized)
+    const repC = repaymentSchedule([compoundLoan]);
+    expect(repC.get('2026-02')).toBe(0); // grace month: no payment under compound
+    const repS = repaymentSchedule([simpleLoan]);
+    expect(repS.get('2026-02')).toBeGreaterThan(0); // grace month: interest paid under simple
+    // interestSchedule: compound has no interest line during grace (not deducted; capitalized)
+    expect(interestSchedule([compoundLoan]).get('2026-02')).toBeUndefined();
+    expect(interestSchedule([simpleLoan]).get('2026-02')).toBeGreaterThan(0);
+    // totalInterestOf: compound's paid interest reflects amortization of the grown balance
+    expect(totalInterestOf(compoundLoan)).toBeGreaterThan(0);
+    expect(totalInterestOf(simpleLoan)).toBeGreaterThan(0);
+  });
+});
+
 describe('interestSchedule', () => {
   it('aggregates monthly interest across secured loans only', () => {
     const loan: FundingItem = {
@@ -344,6 +441,17 @@ describe('repaymentSchedule', () => {
     const subsidy: FundingItem = { id: 's', kind: 'subsidy', name: '補助', amount: 1_000_000, status: 'received', month: '2026-01', repayable: false };
     const loanNoTerms: FundingItem = { id: 'l2', kind: 'loan', name: '融資2', amount: 5_000_000, status: 'received', month: '2026-01', repayable: true };
     expect(repaymentSchedule([subsidy, loanNoTerms]).size).toBe(0);
+  });
+
+  it('ignores a non-repayable item even when it carries repayment terms (!repayable guard)', () => {
+    // repayable=false だが repayment が付いているケース。`!it.repayable` ガードを `false` に
+    // 潰す変異だと scheduleForItem が返済スケジュールを組んでしまうため、size>0 で撃墜する。
+    const nonRepayWithTerms: FundingItem = {
+      id: 'nr', kind: 'subsidy', name: '補助 (誤って返済条件付き)', amount: 1_200_000, status: 'received',
+      month: '2026-01', repayable: false, repayment: { annualRate: 0.024, months: 12, startMonth: '2026-02' },
+    };
+    expect(repaymentSchedule([nonRepayWithTerms]).size).toBe(0);
+    expect(interestSchedule([nonRepayWithTerms]).size).toBe(0);
   });
 
   it('ignores unsecured (applied/planned) loans', () => {
@@ -607,6 +715,87 @@ describe('consumptionTaxTreatment', () => {
   });
 });
 
+describe('isSpecifiedIncome', () => {
+  it('marks only the tax-exempt (対価性なし) kinds as specified income', () => {
+    // 補助金・助成金・給付金 = 特定収入。CF (課税売上) / 融資・公庫 (借入金) は特定収入ではない。
+    expect(isSpecifiedIncome('subsidy')).toBe(true);
+    expect(isSpecifiedIncome('grant')).toBe(true);
+    expect(isSpecifiedIncome('benefit')).toBe(true);
+    expect(isSpecifiedIncome('crowdfunding')).toBe(false);
+    expect(isSpecifiedIncome('loan')).toBe(false);
+    expect(isSpecifiedIncome('jfc')).toBe(false);
+  });
+});
+
+describe('specifiedIncomeAdjustment (特定収入に係る仕入税額控除の調整)', () => {
+  const subsidy = (amount: number, status: FundingItem['status'] = 'received'): FundingItem => ({
+    id: 's', kind: 'subsidy', name: '補助', amount, status, month: '2026-06', repayable: false,
+  });
+
+  it('exposes the 5% threshold constant', () => {
+    expect(SPECIFIED_INCOME_THRESHOLD).toBe(0.05);
+  });
+
+  it('sums only secured subsidy/grant/benefit as specified income (excludes CF / loans / unsecured)', () => {
+    const r = specifiedIncomeAdjustment([
+      subsidy(1_000_000), // 特定収入
+      { id: 'g', kind: 'grant', name: '助成', amount: 500_000, status: 'received', month: '2026-04', repayable: false }, // 特定収入
+      { id: 'cf', kind: 'crowdfunding', name: 'CF', amount: 2_000_000, status: 'received', month: '2026-03', repayable: false }, // 課税売上 → 除外
+      { id: 'l', kind: 'loan', name: '融資', amount: 9_000_000, status: 'received', month: '2026-02', repayable: true }, // 借入金 → 除外
+      subsidy(800_000, 'applied'), // 未確定 → 除外
+    ]);
+    expect(r.specifiedIncome).toBe(1_500_000);
+  });
+
+  it('computes the specified-income ratio over total income and rounds to 4 dp', () => {
+    // 特定収入 1,000,000 / (1,000,000 + 3,000,000) = 0.25
+    const r = specifiedIncomeAdjustment([subsidy(1_000_000)], { otherIncome: 3_000_000 });
+    expect(r.totalIncome).toBe(4_000_000);
+    expect(r.specifiedIncomeRatio).toBe(0.25);
+  });
+
+  it('requires an adjustment only when the ratio strictly exceeds 5% (本則課税)', () => {
+    // ちょうど 5%: 100,000 / 2,000,000 = 0.05 → 調整不要 (> strict)
+    const exactlyFive = specifiedIncomeAdjustment([subsidy(100_000)], { otherIncome: 1_900_000, taxableInputTax: 500_000 });
+    expect(exactlyFive.specifiedIncomeRatio).toBe(0.05);
+    expect(exactlyFive.adjustmentRequired).toBe(false);
+    expect(exactlyFive.nonDeductibleInputTax).toBe(0);
+    // 5% 超: 200,000 / 2,000,000 = 0.1 → 調整必要
+    const overFive = specifiedIncomeAdjustment([subsidy(200_000)], { otherIncome: 1_800_000, taxableInputTax: 500_000 });
+    expect(overFive.specifiedIncomeRatio).toBe(0.1);
+    expect(overFive.adjustmentRequired).toBe(true);
+    // 控除対象外 = 仕入税額 500,000 × 0.1 = 50,000
+    expect(overFive.nonDeductibleInputTax).toBe(50_000);
+  });
+
+  it('never adjusts under 簡易課税 even when the ratio exceeds 5%', () => {
+    const r = specifiedIncomeAdjustment([subsidy(2_000_000)], { otherIncome: 1_000_000, taxableInputTax: 500_000, simplified: true });
+    expect(r.simplified).toBe(true);
+    expect(r.specifiedIncomeRatio).toBeGreaterThan(SPECIFIED_INCOME_THRESHOLD);
+    expect(r.adjustmentRequired).toBe(false);
+    expect(r.nonDeductibleInputTax).toBe(0);
+  });
+
+  it('returns a zero ratio (no division by zero) when there is no income at all', () => {
+    const r = specifiedIncomeAdjustment([]);
+    expect(r.specifiedIncome).toBe(0);
+    expect(r.totalIncome).toBe(0);
+    expect(r.specifiedIncomeRatio).toBe(0);
+    expect(r.adjustmentRequired).toBe(false);
+    expect(r.nonDeductibleInputTax).toBe(0);
+  });
+
+  it('treats negative amounts / inputs as zero', () => {
+    const r = specifiedIncomeAdjustment(
+      [{ id: 'n', kind: 'subsidy', name: 'neg', amount: -100, status: 'received', month: '2026-01', repayable: false }],
+      { otherIncome: -1_000, taxableInputTax: -1_000 },
+    );
+    expect(r.specifiedIncome).toBe(0);
+    expect(r.totalIncome).toBe(0);
+    expect(r.nonDeductibleInputTax).toBe(0);
+  });
+});
+
 describe('summarize', () => {
   it('computes repayable/non-repayable/total/pipeline', () => {
     const s = summarize(items);
@@ -737,6 +926,21 @@ describe('buildFundingSnapshot', () => {
     expect(buildFundingSnapshot(items).isMock).toBe(true);
     expect(buildFundingSnapshot(items, { isMock: false }).isMock).toBe(false);
   });
+
+  it('threads otherIncome / taxableInputTax / simplified into the specified-income adjustment', () => {
+    // items contains subsidy 5M (approved) + benefit 1M (received) = 6M specified income.
+    // 6M / (6M + 0) = 100% → adjustment required at default (本則課税).
+    const snap = buildFundingSnapshot(items, { taxableInputTax: 500_000 });
+    expect(snap.specifiedIncome.specifiedIncome).toBe(6_000_000);
+    expect(snap.specifiedIncome.adjustmentRequired).toBe(true);
+    expect(snap.specifiedIncome.nonDeductibleInputTax).toBe(500_000); // 500k × 1.0
+    // otherIncome dilutes the ratio; simplified disables the adjustment entirely.
+    const diluted = buildFundingSnapshot(items, { otherIncome: 200_000_000, taxableInputTax: 500_000 });
+    expect(diluted.specifiedIncome.adjustmentRequired).toBe(false); // ratio < 5%
+    const simplified = buildFundingSnapshot(items, { taxableInputTax: 500_000, simplified: true });
+    expect(simplified.specifiedIncome.simplified).toBe(true);
+    expect(simplified.specifiedIncome.nonDeductibleInputTax).toBe(0);
+  });
 });
 
 describe('fetchFundingSnapshot', () => {
@@ -749,6 +953,9 @@ describe('fetchFundingSnapshot', () => {
     expect(snap.summary.totalSecured).toBeGreaterThan(0);
     // radar peak should be exactly 5 (some secured amount exists)
     expect(Math.max(...snap.radar)).toBe(5);
+    // the mock surfaces a compound-grace loan and a non-zero specified-income figure
+    expect(snap.items.some((it) => it.repayment?.graceInterestHandling === 'compound')).toBe(true);
+    expect(snap.specifiedIncome.specifiedIncome).toBeGreaterThan(0);
   });
 });
 
@@ -927,6 +1134,14 @@ describe('effectiveFundingCostRate / fundingCostMetrics', () => {
     expect(effectiveFundingCostRate(subsidy)).toBe(0);
     const free: FundingItem = { ...interestLoan, id: 'f', repayment: { annualRate: 0, months: 12, startMonth: '2026-01' } };
     expect(effectiveFundingCostRate(free)).toBe(0);
+  });
+
+  it('returns 0 interest for a repayable loan that has no repayment terms (scheduleForItem guard)', () => {
+    // repayable=true・received だが repayment 未設定 → scheduleForItem が空配列を返し利息 0。
+    // この経路は scheduleForItem の `!item.repayment` ガードを load-bearing にする。
+    const noTerms: FundingItem = { id: 'nt', kind: 'loan', name: '条件未設定融資', amount: 5_000_000, status: 'received', month: '2026-01', repayable: true };
+    expect(totalInterestOf(noTerms)).toBe(0);
+    expect(effectiveFundingCostRate(noTerms)).toBe(0);
   });
 
   it('computes cost rate = total interest / principal', () => {

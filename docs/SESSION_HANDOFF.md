@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2801 静的 / 2871 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
+**品質メトリクス:** 2820 静的 / 2890 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~757 KB
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
@@ -247,8 +247,15 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 8. 採択確率による期待値シナリオ (defaultProbability, expectedScenario)
 9. 元金均等返済 (RepaymentMethod 'equal-principal')
 10. 3シナリオ累計残高レンジ (scenarioRunways: 楽観/期待/悲観)
-不変条件テスト済: amortizationの元金合計=元本/remaining=0/payment=principal+interest、
-optimistic≥expected≥pessimistic。残り候補: 消費税・特定収入、据置中の複利計上選択、譲渡所得連携。
+11. 消費税・特定収入の調整 (isSpecifiedIncome / specifiedIncomeAdjustment): 補助金等を
+    特定収入と判定し、本則課税で特定収入割合>5%のとき仕入税額控除の控除対象外額を概算
+    (簡易課税・割合≤5%は調整不要)。snapshot.specifiedIncome + FundingPage に概算表示。
+12. 据置中の複利計上選択 (GraceInterestHandling 'simple'|'compound'): 据置中の利息を都度
+    支払う(simple)か元本に資本化する(compound)かを選択。compound は据置中の支払0・残高が
+    複利で増え、据置後は膨らんだ元本を返済 (返済額・総支払利息・amortizationSchedule に反映)。
+不変条件テスト済: amortizationの元金合計=元本(simple)/=資本化後残高(compound)/remaining=0/
+payment=principal+interest、optimistic≥expected≥pessimistic。
+残り候補: 譲渡所得連携・ふるさと納税は実装済 (税務側)。funding 固有の残候補は概ね消化済み。
 
 ### ⛔ 試行して撤退した案 (再挑戦は慎重に)
 - **business.ts の責務分割** — kpi/advisor/export の 3 モジュール + バレル化を実装し

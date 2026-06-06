@@ -104,6 +104,112 @@ export function consumptionTaxTreatment(kind: FundingKind): ConsumptionTaxTreatm
   }
 }
 
+// --- 消費税: 特定収入に係る仕入税額控除の調整 ------------------------------
+
+/**
+ * その資金が消費税法上の**特定収入**に該当するかを返す。
+ *
+ * 特定収入とは「対価性のない収入」のうち、補助金・助成金・給付金・寄附金等で
+ * 課税仕入れ等に充てられるもの。本則課税 (簡易課税でない) の事業者で、
+ * 特定収入割合が 5% を超えると仕入税額控除の調整が必要になる
+ * (消費税法 §60④, 消令 §75)。
+ *
+ * - 補助金・助成金・給付金: 不課税かつ対価性なし → **特定収入**。
+ * - 購入型クラウドファンディング: 対価性のある課税売上 → 特定収入ではない。
+ * - 融資・公庫: 借入金 (元本) で、そもそも収入 (益金) ではない → 特定収入ではない
+ *   (法令上も借入金は特定収入から除外されている)。
+ *
+ * ※ 補助金等でも、人件費など課税仕入れに充てられない使途が明らかなものは
+ * 特定収入から除かれる場合がある (概算では区分しない保守的判定)。
+ */
+export function isSpecifiedIncome(kind: FundingKind): boolean {
+  return consumptionTaxTreatment(kind) === 'tax-exempt';
+}
+
+/**
+ * 特定収入割合の調整が不要となる基準値 (5%)。特定収入割合がこの値**以下**
+ * なら調整なし。超える場合に仕入税額控除の調整が生じる (消令 §75④)。
+ */
+export const SPECIFIED_INCOME_THRESHOLD = 0.05;
+
+/** 特定収入に係る仕入税額控除の調整 (概算) の結果。 */
+export interface SpecifiedIncomeAdjustment {
+  /** 確定済みの特定収入 (補助金・助成金・給付金) の合計額。 */
+  readonly specifiedIncome: number;
+  /** 分母となる総収入 (課税売上 + 免税・非課税売上 + 特定収入) の概算。 */
+  readonly totalIncome: number;
+  /** 特定収入割合 = 特定収入 ÷ 総収入 (0..1)。総収入 0 なら 0。 */
+  readonly specifiedIncomeRatio: number;
+  /** 特定収入割合が 5% を超え、仕入税額控除の調整が必要か。 */
+  readonly adjustmentRequired: boolean;
+  /**
+   * 控除できなくなる仕入税額の概算 (円)。本則課税・課税売上割合95%以上・
+   * 使途不特定を前提に `課税仕入れに係る消費税額 × 調整割合` で算出する。
+   * 調整割合は特定収入のうち課税仕入れに充てた分の割合 (概算では特定収入割合)。
+   * 調整不要 (割合 ≤ 5% / 簡易課税) のときは 0。
+   */
+  readonly nonDeductibleInputTax: number;
+  /** 簡易課税かどうか (簡易課税では本調整は不要)。 */
+  readonly simplified: boolean;
+}
+
+/**
+ * 補助金等 (特定収入) を受け取った本則課税事業者の「特定収入に係る仕入税額
+ * 控除の調整」を概算する純粋関数。
+ *
+ * 本則課税の事業者は、特定収入 (補助金・助成金・給付金等) を財源に課税仕入れを
+ * 行うと、その分の仕入税額控除が制限される。特定収入割合が 5% を超える場合に、
+ * 課税仕入れに係る消費税額のうち特定収入で賄った割合を控除対象から除外する。
+ *
+ * モデル (概算): 簡易課税でなく、特定収入割合 > 5% のとき
+ *   調整割合 = 特定収入割合 (使途が課税仕入れに充てられたと仮定する保守的近似)
+ *   控除対象外仕入税額 = 課税仕入れに係る消費税額 × 調整割合
+ * 簡易課税、または特定収入割合 ≤ 5% のときは調整なし (0)。
+ *
+ * **重要 — 本算出は概算であり税務助言ではありません。** 実際の調整は使途特定/
+ * 不特定の区分、課税売上割合 95% 未満の按分、調整割合の按分計算等で大きく
+ * 変わります。確定申告は税理士・国税庁で確認してください。
+ *
+ * @param items 資金調達案件 (確定分の特定収入を集計する)
+ * @param options.otherIncome 補助金等以外の総収入 (課税売上＋免税・非課税売上)
+ *   の概算。割合の分母に加える。既定 0。
+ * @param options.taxableInputTax 当期の課税仕入れに係る消費税額 (仕入控除税額)
+ *   の概算。控除対象外額の算定に使う。既定 0。
+ * @param options.simplified 簡易課税かどうか (true なら調整は常に不要)。既定 false。
+ */
+export function specifiedIncomeAdjustment(
+  items: readonly FundingItem[],
+  options: {
+    readonly otherIncome?: number;
+    readonly taxableInputTax?: number;
+    readonly simplified?: boolean;
+  } = {},
+): SpecifiedIncomeAdjustment {
+  const otherIncome = nonNeg(options.otherIncome ?? 0);
+  const taxableInputTax = nonNeg(options.taxableInputTax ?? 0);
+  const simplified = options.simplified ?? false;
+  let specifiedIncome = 0;
+  for (const it of items) {
+    if (!isSecured(it.status)) continue;
+    if (isSpecifiedIncome(it.kind)) specifiedIncome += nonNeg(it.amount);
+  }
+  const totalIncome = specifiedIncome + otherIncome;
+  const specifiedIncomeRatio = totalIncome > 0 ? specifiedIncome / totalIncome : 0;
+  // 簡易課税では本調整は不要。本則課税かつ割合が 5% 超のときだけ調整する。
+  const adjustmentRequired = !simplified && specifiedIncomeRatio > SPECIFIED_INCOME_THRESHOLD;
+  const nonDeductibleInputTax = adjustmentRequired
+    ? Math.round(taxableInputTax * specifiedIncomeRatio)
+    : 0;
+  return {
+    specifiedIncome,
+    totalIncome,
+    specifiedIncomeRatio: Math.round(specifiedIncomeRatio * 10000) / 10000,
+    adjustmentRequired,
+    nonDeductibleInputTax,
+    simplified,
+  };
+}
+
 /** 種別の日本語ラベル。 */
 export function fundingKindLabel(kind: FundingKind): string {
   switch (kind) {
@@ -191,10 +297,29 @@ export interface RepaymentTerms {
    * ため返済額は前半ほど大きい)。日本政策金融公庫等で選択できる。
    */
   readonly method?: RepaymentMethod;
+  /**
+   * 据置期間中の利息の計上方法 (任意)。既定 `'simple'`。
+   * - `'simple'`: 据置中の利息を**都度支払う** (元金は据置開始時の元本のまま、
+   *   据置中の各月に利息のみのキャッシュアウトが発生する)。
+   * - `'compound'`: 据置中の利息を**元本に組み入れる (資本化 / 複利)**。据置中の
+   *   キャッシュアウト (支払) は 0 になり、未払利息が毎月元本へ加算されて複利で
+   *   増える。据置終了後は「膨らんだ元本」を `months` 回で返済するため、返済額・
+   *   総支払利息・amortizationSchedule が `'simple'` より大きくなる。
+   *
+   * 据置期間 (`gracePeriodMonths`) が 0 のときは効果がない。
+   */
+  readonly graceInterestHandling?: GraceInterestHandling;
 }
 
 /** 返済方式。元利均等 (equal-payment) / 元金均等 (equal-principal)。 */
 export type RepaymentMethod = 'equal-payment' | 'equal-principal';
+
+/**
+ * 据置期間中の利息の計上方法。
+ * `'simple'` = 都度支払い (利息のみキャッシュアウト)、
+ * `'compound'` = 元本へ資本化 (複利)。
+ */
+export type GraceInterestHandling = 'simple' | 'compound';
 
 // --- 集計結果 ----------------------------------------------------------
 
@@ -467,10 +592,13 @@ export interface AmortizationEntry {
  * 元金均等 (`equal-principal`): 各回の元金返済額が一定 (元本/回数)。利息は
  * 残高に応じ逓減するため返済額は前半ほど大きい。最終回で端数を調整。
  *
- * @param gracePeriodMonths 据置期間 (月数, 任意)。据置中は元金 0・利息のみの
- *   キャッシュアウトとなり、`startMonth` から据置期間が始まる。元金返済は
- *   据置終了後に `months` 回で行う。
+ * @param gracePeriodMonths 据置期間 (月数, 任意)。`startMonth` から据置期間が
+ *   始まり、元金返済はその後に `months` 回で行う。
  * @param method 返済方式 (既定 `'equal-payment'`)。
+ * @param graceInterestHandling 据置中の利息の計上方法 (既定 `'simple'`)。
+ *   - `'simple'`: 据置中は元金 0・利息のみのキャッシュアウト (利息を都度支払う)。
+ *   - `'compound'`: 据置中の利息を元本に組み入れる (複利)。据置中の支払は 0、
+ *     未払利息を毎月元本に加算し、据置終了後は膨らんだ元本を `months` 回で返済する。
  */
 export function amortizationSchedule(
   principal: number,
@@ -482,26 +610,40 @@ export function amortizationSchedule(
   // equal-payment 挙動で同一のため equivalent。
   // Stryker disable next-line StringLiteral
   method: RepaymentMethod = 'equal-payment',
+  // 既定値を別文字列にしても `handling === 'compound'` 判定では非 compound = simple 挙動で
+  // 同一のため equivalent。
+  // Stryker disable next-line StringLiteral
+  graceInterestHandling: GraceInterestHandling = 'simple',
 ): AmortizationEntry[] {
   // months<=0→<0 は months=0 が空ループで [] を返すため等価。ConditionalExpression(false) は
   // principal=0 で零詰めスケジュールを生み amort(0,…) テストで撃墜可 (手動確認済) だが、内部
   // 呼出しが多く Stryker perTest が直接テストを帰属できない盲点。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (principal <= 0 || months <= 0) return [];
-  const pay = monthlyPayment(principal, annualRate, months);
   // Math.max(0, …) は `x > 0 ? x : 0` と同値 (x===0 一致) で `>`↔`>=`・三項の等価変異を排除。
   const i = Math.max(0, annualRate / 12);
   const grace = Math.max(0, Math.floor(gracePeriodMonths));
-  // 元金均等の毎月元金 (最終回で端数調整)。
-  const levelPrincipal = Math.round(principal / months);
+  const compound = graceInterestHandling === 'compound';
   const out: AmortizationEntry[] = [];
   let remaining = principal;
-  // 据置期間: 元金は減らず、利息のみ支払う。
+  // 据置期間。
   for (let g = 0; g < grace; g++) {
-    const interest = Math.round(remaining * i);
-    out.push({ month: addMonths(startMonth, g), payment: interest, principal: 0, interest, remaining });
+    const accrued = Math.round(remaining * i);
+    if (compound) {
+      // 複利: 利息を支払わず元本に資本化する。当月のキャッシュアウト・損金算入利息は 0。
+      // 膨らんだ元本は据置終了後の返済期間で大きな利息として顕在化する。
+      remaining = remaining + accrued;
+      out.push({ month: addMonths(startMonth, g), payment: 0, principal: 0, interest: 0, remaining });
+    } else {
+      // 単利 (都度支払い): 元金は減らず、利息のみ支払う。
+      out.push({ month: addMonths(startMonth, g), payment: accrued, principal: 0, interest: accrued, remaining });
+    }
   }
-  // 元金返済期間: 据置終了後に完済する。
+  // 元金返済期間: 据置終了後 (資本化後) の残高を完済する。
+  // 元利均等の返済額・元金均等の毎月元金は、据置で膨らんだ後の残高を基準に算出する。
+  const amortPrincipal = remaining;
+  const pay = monthlyPayment(amortPrincipal, annualRate, months);
+  const levelPrincipal = Math.round(amortPrincipal / months);
   for (let k = 0; k < months; k++) {
     const interest = Math.round(remaining * i);
     const isLast = k === months - 1;
@@ -522,16 +664,36 @@ export function amortizationSchedule(
 }
 
 /**
+ * `FundingItem` の返済条件 (`RepaymentTerms`) から償却スケジュールを構築する。
+ * 据置期間・返済方式・据置中の利息計上方法をすべて `amortizationSchedule` に
+ * 透過する単一窓口 (3 つの集計関数が同じ条件展開を共有するため)。
+ * 返済条件が無い場合は空配列。
+ */
+function scheduleForItem(item: FundingItem): AmortizationEntry[] {
+  if (!item.repayment) return [];
+  const { annualRate, months, startMonth, gracePeriodMonths, method, graceInterestHandling } = item.repayment;
+  return amortizationSchedule(
+    nonNeg(item.amount),
+    annualRate,
+    months,
+    startMonth,
+    gracePeriodMonths,
+    method,
+    graceInterestHandling,
+  );
+}
+
+/**
  * 融資案件の月別返済額 (キャッシュアウト) を Map<YYYY-MM, number> で返す。
  * 返済不要・返済条件なしの案件は対象外。確定 (received/approved) のみ計上。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
  */
 export function repaymentSchedule(items: readonly FundingItem[]): Map<string, number> {
   const out = new Map<string, number>();
   for (const it of items) {
-    if (!it.repayable || !it.repayment) continue;
+    if (!it.repayable) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth, gracePeriodMonths, method } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths, method)) {
+    for (const e of scheduleForItem(it)) {
       out.set(e.month, (out.get(e.month) ?? 0) + e.payment);
     }
   }
@@ -541,14 +703,14 @@ export function repaymentSchedule(items: readonly FundingItem[]): Map<string, nu
 /**
  * 融資案件の月別の支払利息を Map<YYYY-MM, number> で返す。
  * 支払利息は損金算入されるため、月次の節税効果 (利息 × 実効税率) の算定に使う。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
  */
 export function interestSchedule(items: readonly FundingItem[]): Map<string, number> {
   const out = new Map<string, number>();
   for (const it of items) {
-    if (!it.repayable || !it.repayment) continue;
+    if (!it.repayable) continue;
     if (!isSecured(it.status)) continue;
-    const { annualRate, months, startMonth, gracePeriodMonths, method } = it.repayment;
-    for (const e of amortizationSchedule(nonNeg(it.amount), annualRate, months, startMonth, gracePeriodMonths, method)) {
+    for (const e of scheduleForItem(it)) {
       if (e.interest > 0) out.set(e.month, (out.get(e.month) ?? 0) + e.interest);
     }
   }
@@ -881,13 +1043,14 @@ export function debtServiceMetrics(
 
 // --- 実効調達コスト率 -------------------------------------------------
 
-/** 融資 1 件の総支払利息を返す (確定・返済条件ありの融資のみ; それ以外は 0)。 */
+/**
+ * 融資 1 件の総支払利息を返す (確定・返済条件ありの融資のみ; それ以外は 0)。
+ * 返済条件 (`repayment`) の有無は `scheduleForItem` が空配列で吸収する。
+ */
 export function totalInterestOf(item: FundingItem): number {
-  if (!item.repayable || !item.repayment) return 0;
+  if (!item.repayable) return 0;
   if (!isSecured(item.status)) return 0;
-  const { annualRate, months, startMonth, gracePeriodMonths, method } = item.repayment;
-  const sched = amortizationSchedule(nonNeg(item.amount), annualRate, months, startMonth, gracePeriodMonths, method);
-  return sched.reduce((s, e) => s + e.interest, 0);
+  return scheduleForItem(item).reduce((s, e) => s + e.interest, 0);
 }
 
 /**
