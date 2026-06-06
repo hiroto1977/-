@@ -63,6 +63,7 @@
     "src/shared/taxPublicPension.ts",
     "src/shared/taxSocialInsurance.ts",
     "src/shared/taxConsumption.ts",
+    "src/shared/taxConsumptionBusiness.ts",
     "src/shared/taxDividend.ts",
     "src/shared/taxFurusato.ts",
     "src/shared/fxCurrency.ts",
