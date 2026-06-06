@@ -8,6 +8,7 @@
  * **概算であり財務助言ではありません。**
  */
 import { useMemo, useState, type CSSProperties } from 'react';
+import { calcCorporateTax } from '../../shared/taxCorporate';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
 import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
@@ -194,6 +195,65 @@ function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
         ))}
       </tbody>
     </table>
+  );
+}
+
+// --- 法人税等 (概算) ブロック ------------------------------------------
+/**
+ * 経常利益 (ordinaryProfit) を課税所得の概算として `calcCorporateTax` を呼び出し、
+ * 法人税等・実効税率・税引後利益を表示するカード。
+ *
+ * 注意:
+ * - 会計上の利益と税法上の課税所得の差異 (損金不算入等) は概算では無視する。
+ * - 繰越欠損金・各種税額控除・中間納付・外形標準課税等は考慮しない。
+ * - これは概算試算であり、正確な税額計算・税務助言ではありません。
+ */
+function CorporateTaxCard({ ordinaryProfit }: { ordinaryProfit: number }) {
+  const breakdown = calcCorporateTax(ordinaryProfit);
+  const isLoss = ordinaryProfit <= 0;
+  const afterTaxColor = breakdown.afterTaxProfit >= 0 ? '#5cb85c' : '#e36b6b';
+  return (
+    <div style={cardStyle}>
+      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🏢 法人税等の概算（税引後利益の可視化）</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))', gap: 10, marginBottom: 10 }}>
+        <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>税引前利益（経常利益概算）</div>
+          <div style={{ fontSize: 17, fontWeight: 700 }}>{yen.format(breakdown.taxableIncome)}</div>
+        </div>
+        <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>法人税等（合計）</div>
+          <div style={{ fontSize: 17, fontWeight: 700 }}>{yen.format(breakdown.totalTax)}</div>
+        </div>
+        <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>実効税率（概算）</div>
+          <div style={{ fontSize: 17, fontWeight: 700 }}>
+            {isLoss ? '—' : `${(breakdown.effectiveRate * 100).toFixed(1)}%`}
+          </div>
+        </div>
+        <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>税引後利益</div>
+          <div style={{ fontSize: 17, fontWeight: 700, color: afterTaxColor }}>{yen.format(breakdown.afterTaxProfit)}</div>
+        </div>
+      </div>
+      {isLoss && (
+        <div style={{ fontSize: 12, color: '#e36b6b', marginBottom: 8 }}>
+          欠損（税引前利益が0以下）のため、法人住民税の均等割（{yen.format(breakdown.residentTax)}）のみが課されます。
+        </div>
+      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 24px', fontSize: 11, color: 'var(--text-mute)', marginBottom: 6 }}>
+        <span>法人税: {yen.format(breakdown.corporateIncomeTax)}</span>
+        <span>地方法人税: {yen.format(breakdown.localCorporateTax)}</span>
+        <span>法人住民税: {yen.format(breakdown.residentTax)}</span>
+        <span>法人事業税: {yen.format(breakdown.businessTax)}</span>
+        <span>特別法人事業税: {yen.format(breakdown.specialBusinessTax)}</span>
+        <span>区分: {breakdown.smallBusiness ? '中小法人' : '大法人'}</span>
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+        ※ 経常利益を課税所得の概算として使用（会計上の利益と税法上の課税所得の差異は無視）。
+        繰越欠損金・各種税額控除・外形標準課税・自治体別超過税率等は非考慮。令和6年度ベース。
+        <strong>税務助言ではありません。申告・納税は税理士・e-Taxで確定してください。</strong>
+      </div>
+    </div>
   );
 }
 
@@ -412,6 +472,8 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
           })}
         </div>
       </div>
+
+      <CorporateTaxCard ordinaryProfit={fin.ordinaryProfit} />
 
       <div style={cardStyle}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
