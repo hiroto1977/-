@@ -5,6 +5,15 @@ import {
   calcDependentDeductionWithIncome,
   DEPENDENT_INCOME_LIMIT,
   calcDonationDeduction,
+  calcGeneralDonationDeduction,
+  calcDonationTaxCredit,
+  chooseDonationCreditOrDeduction,
+  calcCasualtyLossDeduction,
+  DONATION_DEDUCTION_FLOOR,
+  DONATION_INCOME_CAP_RATE,
+  DONATION_TAX_CREDIT_RATE,
+  CASUALTY_DISASTER_FLOOR,
+  CASUALTY_INCOME_RATE,
   calcEarthquakeInsuranceDeduction,
   calcLifeInsuranceDeduction,
   calcMedicalDeduction,
@@ -481,5 +490,225 @@ describe('boundary coverage — dependent income requirement (UI responsibility)
   // ここでは区分ごとの金額が安定していることを固定する。
   it('keeps under-16 at zero regardless of count', () => {
     expect(calcDependentDeduction(['under16', 'under16', 'under16'])).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+});
+
+describe('calcGeneralDonationDeduction (一般寄附金の所得控除)', () => {
+  it('returns 0 at or below the 2,000 floor', () => {
+    expect(calcGeneralDonationDeduction(2_000, 5_000_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(calcGeneralDonationDeduction(1_999, 5_000_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(DONATION_DEDUCTION_FLOOR).toBe(2_000);
+  });
+
+  it('deducts (donation - 2,000) for income tax only', () => {
+    expect(calcGeneralDonationDeduction(50_000, 5_000_000)).toEqual({ incomeTax: 48_000, residentTax: 0 });
+    // just above floor
+    expect(calcGeneralDonationDeduction(2_001, 5_000_000)).toEqual({ incomeTax: 1, residentTax: 0 });
+  });
+
+  it('caps at 40% of total income', () => {
+    // income 1,000,000 × 40% = 400,000 cap; donation 5,000,000 → 400,000
+    expect(calcGeneralDonationDeduction(5_000_000, 1_000_000)).toEqual({ incomeTax: 400_000, residentTax: 0 });
+    expect(DONATION_INCOME_CAP_RATE).toBe(0.4);
+  });
+
+  it('pins the cap boundary (just under vs over the 40% cap)', () => {
+    // income 100,000 → cap 40,000. donation 42,000 → 40,000 (donation-2,000=40,000 == cap)
+    expect(calcGeneralDonationDeduction(42_000, 100_000).incomeTax).toBe(40_000);
+    // donation 42,001 → donation-2,000=40,001 > cap 40,000 → capped at 40,000
+    expect(calcGeneralDonationDeduction(42_001, 100_000).incomeTax).toBe(40_000);
+    // donation 41,999 → 39,999 < cap → not capped
+    expect(calcGeneralDonationDeduction(41_999, 100_000).incomeTax).toBe(39_999);
+  });
+
+  it('treats non-finite or negative income as a zero cap', () => {
+    expect(calcGeneralDonationDeduction(50_000, Number.NaN)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(calcGeneralDonationDeduction(50_000, Number.POSITIVE_INFINITY)).toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(calcGeneralDonationDeduction(50_000, -1_000_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+});
+
+describe('calcDonationTaxCredit (寄附金特別控除 / 税額控除)', () => {
+  it('returns 0 at or below the 2,000 floor', () => {
+    expect(calcDonationTaxCredit(2_000, 5_000_000)).toBe(0);
+    expect(calcDonationTaxCredit(1_999, 5_000_000)).toBe(0);
+  });
+
+  it('is (eligible - 2,000) × 40%', () => {
+    // donation 52,000 (≤ cap), base 50,000 × 40% = 20,000
+    expect(calcDonationTaxCredit(52_000, 5_000_000)).toBe(20_000);
+    expect(DONATION_TAX_CREDIT_RATE).toBe(0.4);
+  });
+
+  it('caps eligible donation at 40% of total income', () => {
+    // income 100,000 → eligible cap 40,000; donation 1,000,000 → (40,000-2,000)×40% = 15,200
+    expect(calcDonationTaxCredit(1_000_000, 100_000)).toBe(15_200);
+  });
+
+  it('applies the absolute incomeTaxCap when smaller', () => {
+    // base credit would be (50,000-2,000)? no: donation 52,000 → 20,000; cap 10,000 → 10,000
+    expect(calcDonationTaxCredit(52_000, 5_000_000, 10_000)).toBe(10_000);
+    // cap larger than credit → credit unchanged
+    expect(calcDonationTaxCredit(52_000, 5_000_000, 30_000)).toBe(20_000);
+    // negative cap clamps to 0
+    expect(calcDonationTaxCredit(52_000, 5_000_000, -5)).toBe(0);
+    // non-finite cap is ignored
+    expect(calcDonationTaxCredit(52_000, 5_000_000, Number.NaN)).toBe(20_000);
+  });
+
+  it('treats non-finite or negative income as a zero eligible base', () => {
+    expect(calcDonationTaxCredit(52_000, Number.NaN)).toBe(0);
+    expect(calcDonationTaxCredit(52_000, -1)).toBe(0);
+  });
+});
+
+describe('chooseDonationCreditOrDeduction (税額控除 vs 所得控除の有利選択)', () => {
+  it('prefers the tax credit for a low marginal rate (typical case)', () => {
+    // donation 102,000: deduction 100,000; credit (100,000)×40%=40,000.
+    // marginal 20% → deductionSaving 20,000 < credit 40,000 → credit
+    const r = chooseDonationCreditOrDeduction(102_000, 5_000_000, 0.2);
+    expect(r.method).toBe('credit');
+    expect(r.deduction).toBe(100_000);
+    expect(r.credit).toBe(40_000);
+    expect(r.taxSaving).toBe(40_000);
+  });
+
+  it('prefers the income deduction at a high marginal rate', () => {
+    // marginal 45% → deductionSaving 100,000×0.45=45,000 > credit 40,000 → deduction
+    const r = chooseDonationCreditOrDeduction(102_000, 5_000_000, 0.45);
+    expect(r.method).toBe('deduction');
+    expect(r.taxSaving).toBe(45_000);
+  });
+
+  it('ties go to the tax credit (credit >= deductionSaving)', () => {
+    // marginal 40% → deductionSaving 40,000 == credit 40,000 → credit (tie)
+    const r = chooseDonationCreditOrDeduction(102_000, 5_000_000, 0.4);
+    expect(r.method).toBe('credit');
+  });
+
+  it('clamps the marginal rate to [0,1] and treats non-finite as 0', () => {
+    // rate > 1 clamps to 1: deductionSaving 100,000 > credit 40,000 → deduction
+    expect(chooseDonationCreditOrDeduction(102_000, 5_000_000, 5).method).toBe('deduction');
+    // negative rate clamps to 0: deductionSaving 0 < credit → credit
+    expect(chooseDonationCreditOrDeduction(102_000, 5_000_000, -1).method).toBe('credit');
+    // NaN → 0 → credit
+    expect(chooseDonationCreditOrDeduction(102_000, 5_000_000, Number.NaN).method).toBe('credit');
+  });
+
+  it('passes through the incomeTaxCap to the credit branch', () => {
+    // cap the credit to 5,000; marginal 0.1 → deductionSaving 10,000 > credit 5,000 → deduction
+    const r = chooseDonationCreditOrDeduction(102_000, 5_000_000, 0.1, 5_000);
+    expect(r.credit).toBe(5_000);
+    expect(r.method).toBe('deduction');
+    expect(r.taxSaving).toBe(10_000);
+  });
+});
+
+describe('calcCasualtyLossDeduction (雑損控除)', () => {
+  it('exposes the constants', () => {
+    expect(CASUALTY_DISASTER_FLOOR).toBe(50_000);
+    expect(CASUALTY_INCOME_RATE).toBe(0.1);
+  });
+
+  it('returns 0 when net loss is zero (reimbursed fully covers)', () => {
+    expect(calcCasualtyLossDeduction({ lossAmount: 100_000, reimbursed: 100_000, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('uses method (1): netLoss - income×10% when no disaster spending', () => {
+    // loss 1,000,000, income 3,000,000×10%=300,000 → 700,000
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 700_000, residentTax: 700_000 });
+  });
+
+  it('subtracts reimbursements from the net loss before the 10% floor', () => {
+    // (1,000,000 - 200,000) - 300,000 = 500,000
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: 200_000, totalIncome: 3_000_000 }).incomeTax)
+      .toBe(500_000);
+  });
+
+  it('uses method (2): disasterPortion - 50,000 when it is larger', () => {
+    // loss 0, disaster 200,000, income 10,000,000 → method1 = 200,000 - 1,000,000 = negative;
+    // method2 = min(200,000, 200,000) - 50,000 = 150,000 → 150,000
+    expect(calcCasualtyLossDeduction({ lossAmount: 0, disasterRelatedSpending: 200_000, totalIncome: 10_000_000 }))
+      .toEqual({ incomeTax: 150_000, residentTax: 150_000 });
+  });
+
+  it('picks the larger of method (1) and method (2)', () => {
+    // loss 500,000 + disaster 300,000 = netLoss 800,000, income 1,000,000×10%=100,000
+    // method1 = 800,000 - 100,000 = 700,000; method2 = min(300,000,800,000) - 50,000 = 250,000
+    // → 700,000
+    expect(calcCasualtyLossDeduction({
+      lossAmount: 500_000, disasterRelatedSpending: 300_000, totalIncome: 1_000_000,
+    }).incomeTax).toBe(700_000);
+  });
+
+  it('caps the disaster portion at the net loss (after reimbursement)', () => {
+    // loss 0, disaster 500,000, reimbursed 300,000 → netLoss 200,000.
+    // disasterPortion = min(500,000, 200,000) = 200,000; method2 = 200,000-50,000=150,000
+    // method1 = 200,000 - (10,000,000×10%=1,000,000) = negative → 150,000
+    expect(calcCasualtyLossDeduction({
+      lossAmount: 0, disasterRelatedSpending: 500_000, reimbursed: 300_000, totalIncome: 10_000_000,
+    }).incomeTax).toBe(150_000);
+  });
+
+  it('floors the result at 0 when both methods are negative', () => {
+    // small loss, huge income: method1 negative, no disaster → method2 = 0-50,000 negative → 0
+    expect(calcCasualtyLossDeduction({ lossAmount: 50_000, totalIncome: 10_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('pins the 50,000 disaster floor boundary', () => {
+    // disaster exactly 50,000, income huge so method1 loses → method2 = 50,000-50,000 = 0
+    expect(calcCasualtyLossDeduction({ lossAmount: 0, disasterRelatedSpending: 50_000, totalIncome: 100_000_000 }).incomeTax)
+      .toBe(0);
+    // disaster 50,001 → 1
+    expect(calcCasualtyLossDeduction({ lossAmount: 0, disasterRelatedSpending: 50_001, totalIncome: 100_000_000 }).incomeTax)
+      .toBe(1);
+  });
+
+  it('guards non-finite and negative inputs', () => {
+    expect(calcCasualtyLossDeduction({ lossAmount: Number.NaN, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    expect(calcCasualtyLossDeduction({ lossAmount: -100, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    // non-finite totalIncome → income treated as 0 → method1 = netLoss
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: Number.NaN }).incomeTax)
+      .toBe(1_000_000);
+    // negative reimbursed clamps to 0
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: -500_000, totalIncome: 0 }).incomeTax)
+      .toBe(1_000_000);
+    // non-finite disaster clamps to 0
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, disasterRelatedSpending: Number.NaN, totalIncome: 0 }).incomeTax)
+      .toBe(1_000_000);
+    // non-finite reimbursed clamps to 0
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: Number.NaN, totalIncome: 0 }).incomeTax)
+      .toBe(1_000_000);
+  });
+});
+
+describe('calcAllDeductions — 雑損控除の統合 (加算的)', () => {
+  it('adds casualty loss to the total and breakdown', () => {
+    const base = calcAllDeductions({ totalIncome: 3_000_000 });
+    const withLoss = calcAllDeductions({
+      totalIncome: 3_000_000,
+      casualtyLoss: { lossAmount: 1_000_000 },
+    });
+    // method1 = 1,000,000 - 300,000 = 700,000
+    expect(withLoss.casualtyLoss).toEqual({ incomeTax: 700_000, residentTax: 700_000 });
+    expect(withLoss.total.incomeTax).toBe(base.total.incomeTax + 700_000);
+    expect(withLoss.total.residentTax).toBe(base.total.residentTax + 700_000);
+  });
+
+  it('is zero casualty loss (and unchanged total) when not provided', () => {
+    const d = calcAllDeductions({ totalIncome: 3_000_000 });
+    expect(d.casualtyLoss).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('excludes 雑損控除 from humanDeductionDiff (物的控除扱い)', () => {
+    // casualty loss has equal incomeTax/residentTax so diff is unaffected regardless,
+    // but confirm humanDeductionDiff stays at basic-only 50,000.
+    const d = calcAllDeductions({ totalIncome: 5_000_000, casualtyLoss: { lossAmount: 1_000_000 } });
+    expect(d.humanDeductionDiff).toBe(50_000);
   });
 });
