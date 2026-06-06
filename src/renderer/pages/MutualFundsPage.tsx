@@ -22,7 +22,7 @@ import {
   emergencyFundCoverage,
   goalProjection,
 } from '../../shared/savingsPlanning';
-import { convertToJpy, fxGainLoss } from '../../shared/fxCurrency';
+import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -119,6 +119,17 @@ export function MutualFundsPage() {
   const fxPnl = useMemo(
     () => fxGainLoss({ amountForeign: Number(fxAmount) || 0, acquisitionRate: Number(fxAcqRate) || 0, currentRate: Number(fxCurRate) || 0 }),
     [fxAmount, fxAcqRate, fxCurRate],
+  );
+
+  // TT スプレッド・往復両替コスト (現在レートを TTM=仲値とみなす)。
+  const [fxFee, setFxFee] = useState('0.5');
+  const fxTt = useMemo(
+    () => ttRates(Number(fxCurRate) || 0, Number(fxFee) || 0),
+    [fxCurRate, fxFee],
+  );
+  const fxRoundTrip = useMemo(
+    () => (fxTt ? roundTripCost(convertToJpy(Number(fxAmount) || 0, fxTt.ttm), fxTt.tts, fxTt.ttb) : null),
+    [fxTt, fxAmount],
   );
 
   return (
@@ -380,6 +391,24 @@ export function MutualFundsPage() {
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', margin: '16px 0 12px' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            片道手数料 (円/通貨)
+            <input type="text" inputMode="decimal" value={fxFee} onChange={(e) => setFxFee(e.target.value)} style={simInputStyle} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Stat label="TTM (仲値)" value={fxTt ? `${fxTt.ttm}` : '—'} />
+          <Stat label="TTS (売・顧客が買う)" value={fxTt ? `${fxTt.tts}` : '—'} />
+          <Stat label="TTB (買・顧客が売る)" value={fxTt ? `${fxTt.ttb}` : '—'} />
+          <Stat label="往復両替コスト" value={fxRoundTrip ? jpy(fxRoundTrip.costJpy) : '—'} positive={false} />
+          <Stat label="往復コスト率" value={fxRoundTrip && fxRoundTrip.costPct !== null ? `${fxRoundTrip.costPct}%` : '—'} positive={false} />
+          <Stat label="売り戻し後の円" value={fxRoundTrip ? jpy(fxRoundTrip.endJpy) : '—'} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          ※ 現在レートを TTM(仲値) とみなし、TTS=TTM+手数料 / TTB=TTM−手数料 で算出。往復コストは円→外貨→円の即時往復で失うスプレッド損の概算です。投資助言ではありません。
         </div>
       </Section>
     </div>
