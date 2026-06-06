@@ -16,7 +16,7 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 2978 静的 / 3055 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
+**品質メトリクス:** 3010 静的 / 3087 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~764 KB
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
@@ -47,6 +47,12 @@ taxCorporate.ts 自体は変更せず mutation 100% 維持。新テスト 15 件
 `CorporateTaxBreakdown` に `deductedLoss` / `incomeAfterLoss` / `remainingLoss` を加算。**carryforwardLoss
 未指定/0/負は控除額0で従来挙動と完全に一致**。境界 (中小=全額/大法人=50%ちょうど・loss>income・
 income≤0で控除0+全額繰越) を実テスト撃墜 → mutation 100.00% 維持。新テスト 19 件追加。
+**round 58 で精度パラメータ入力 UI を追加**: `CorporateTaxCard` に任意入力欄3つ (資本金[円] /
+従業者数[人] / 繰越欠損金[円]) を追加。`useState` で保持し、全欄空なら `profile` 未指定 (従来の
+中小・最小均等割・控除なし と完全同一)、いずれか入力があれば `calcCorporateTax(ordinaryProfit, profile)`
+に渡してライブ再計算 — 実効税率・税引後利益・均等割区分・繰越欠損金控除額・繰越残額の全内訳が即時更新。
+`taxCorporate.ts` 自体は変更なし (mutation 100% 維持)。新テスト 32 件追加 (SSR 初期状態確認・
+インタラクション大/小法人切り替え・繰越欠損金表示・純粋ロジック組み合わせ確認)。
 
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
