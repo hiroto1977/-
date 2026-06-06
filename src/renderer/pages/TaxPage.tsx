@@ -42,7 +42,8 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
-import { compareConsumptionTaxMethods, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import { type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import { compareBusinessTaxMethods, isTaxExempt } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
@@ -303,11 +304,20 @@ export function TaxPage() {
 
   // --- ⑩ 消費税の納付方式の比較 (本則/簡易/2割特例) ---
   const [ctSalesStr, setCtSalesStr] = useState('8000000');
+  const [ctReducedSalesStr, setCtReducedSalesStr] = useState('0');
   const [ctPurchaseStr, setCtPurchaseStr] = useState('3000000');
   const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
   const consumptionMethods = useMemo(
-    () => compareConsumptionTaxMethods(num(ctSalesStr), { standard: num(ctPurchaseStr), reduced: 0 }, ctBizType),
-    [ctSalesStr, ctPurchaseStr, ctBizType],
+    () =>
+      compareBusinessTaxMethods(
+        [{ type: ctBizType, sales: { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } }],
+        { standard: num(ctPurchaseStr), reduced: 0 },
+      ),
+    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType],
+  );
+  const ctExempt = useMemo(
+    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
+    [ctSalesStr, ctReducedSalesStr],
   );
   const ctMethodLabel: Record<ConsumptionTaxMethod, string> = {
     standard: '本則課税',
@@ -821,8 +831,12 @@ export function TaxPage() {
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            課税売上 (税抜・年)
+            課税売上 標準10% (税抜・年)
             <input type="text" inputMode="decimal" value={ctSalesStr} onChange={(e) => setCtSalesStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            課税売上 軽減8% (税抜・年)
+            <input type="text" inputMode="decimal" value={ctReducedSalesStr} onChange={(e) => setCtReducedSalesStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             課税仕入 (税抜・本則用)
@@ -852,7 +866,12 @@ export function TaxPage() {
           }}
         >
           ✅ 最も納付が少ない方式: <strong>{ctMethodLabel[consumptionMethods.best]}</strong>
-          （納付 {jpy(consumptionMethods[consumptionMethods.best === 'twenty-percent' ? 'twentyPercent' : consumptionMethods.best])}）
+          （納付 {jpy(consumptionMethods.bestAmount)}）
+          {ctExempt && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+              ※ 課税売上が1,000万円以下です。基準期間で同水準なら原則<strong>免税事業者</strong>（インボイス登録時を除く）。
+            </div>
+          )}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
