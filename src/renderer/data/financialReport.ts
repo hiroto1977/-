@@ -9,6 +9,7 @@
 import type { FinancialRatios } from './financialRatios';
 import type { FinancialDiagnosis } from './financialDiagnosis';
 import type { MarginTrend } from './financialTrend';
+import { calcCorporateTax } from '../../shared/taxCorporate';
 
 /** レポートに載せる指標の表示定義 (15指標 + 金額系2)。 */
 const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; readonly unit: string; readonly money?: boolean }[] = [
@@ -53,6 +54,53 @@ export interface FinancialReportInput {
   readonly trend: MarginTrend;
   /** 既定は実行時の現在日時。テストでは固定値を渡す。 */
   readonly generatedAt?: Date;
+  /**
+   * 税引前利益 (経常利益) を課税所得の概算として渡すと「## 法人税等(概算)」
+   * セクションを出力する。`calcCorporateTax` (中小・最小均等割の保守的既定) で
+   * 法人税等合計・実効税率・税引後利益を概算する。会計上の利益と税法上の課税所得の
+   * 差異 (損金不算入等) は概算では無視する。未指定 (undefined) なら従来どおり
+   * セクションを出力しない (既存出力と完全に一致)。
+   */
+  readonly ordinaryProfit?: number;
+}
+
+/** パーセント (実効税率) を小数1桁で整形。0.2549 → '25.5%'。 */
+function fmtRate(rate: number): string {
+  return `${(rate * 100).toFixed(1)}%`;
+}
+
+/**
+ * 「## 法人税等(概算)」セクションを `lines` に追記する。
+ *
+ * 税引前利益 (経常利益) を課税所得の概算として `calcCorporateTax` に渡し、
+ * 法人税等の内訳・合計・実効税率・税引後利益を Markdown の表で出力する。
+ * 税引前利益が 0 以下 (欠損) のときは法人住民税の均等割のみが課され、
+ * 税引後利益 = 税引前利益 − 均等割 となる旨を注記する。
+ */
+function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): void {
+  const b = calcCorporateTax(ordinaryProfit);
+  lines.push('## 法人税等(概算)');
+  lines.push('');
+  lines.push('| 項目 | 金額 |');
+  lines.push('| --- | ---: |');
+  lines.push(`| 税引前利益(経常利益) | ${yen(ordinaryProfit)} 円 |`);
+  lines.push(`| 法人税 | ${yen(b.corporateIncomeTax)} 円 |`);
+  lines.push(`| 地方法人税 | ${yen(b.localCorporateTax)} 円 |`);
+  lines.push(`| 法人住民税 | ${yen(b.residentTax)} 円 |`);
+  lines.push(`| 法人事業税 | ${yen(b.businessTax)} 円 |`);
+  lines.push(`| 特別法人事業税 | ${yen(b.specialBusinessTax)} 円 |`);
+  lines.push(`| 法人税等合計 | ${yen(b.totalTax)} 円 |`);
+  lines.push(`| 実効税率 | ${fmtRate(b.effectiveRate)} |`);
+  lines.push(`| 税引後利益 | ${yen(b.afterTaxProfit)} 円 |`);
+  lines.push('');
+  if (ordinaryProfit <= 0) {
+    lines.push(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${yen(b.residentTax)} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
+  } else {
+    lines.push(`> 区分: ${b.smallBusiness ? '中小法人' : '大法人'}（経常利益を課税所得の概算として使用）。`);
+  }
+  lines.push('');
+  lines.push('※ 法人税等は概算試算であり、正確な税額計算・税務助言ではありません。申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。');
+  lines.push('');
 }
 
 /** 財務分析レポートを Markdown 文字列で組み立てる。純粋。 */
@@ -87,6 +135,7 @@ export function buildFinancialReportMarkdown(input: FinancialReportInput): strin
   lines.push('| --- | ---: |');
   for (const r of ROWS) lines.push(`| ${r.label} | ${fmtValue(ratios[r.key] as number | null, r.unit, r.money)} |`);
   lines.push('');
+  if (input.ordinaryProfit !== undefined) appendCorporateTaxSection(lines, input.ordinaryProfit);
   lines.push('---');
   lines.push('※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。');
   return lines.join('\n');
