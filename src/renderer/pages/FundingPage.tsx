@@ -414,7 +414,21 @@ export function FundingPage() {
             💡 消費税: 補助金・助成金・給付金は<strong>不課税</strong> (消費税は課されません) ですが、
             購入型クラウドファンディング {jpy(live.summary.consumptionTaxableSecured)} は対価性のある<strong>課税売上</strong>です
             (消費税相当 約{jpy(live.summary.consumptionTaxEstimate)} の申告納付義務が生じえます)。
-            補助金で課税仕入れを行う場合は「特定収入に係る仕入税額控除の調整」が必要な場合があります。
+          </div>
+        )}
+        {live.specifiedIncome.specifiedIncome > 0 && (
+          <div style={{ marginTop: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            💡 特定収入: 補助金・助成金・給付金 計 {jpy(live.specifiedIncome.specifiedIncome)} は消費税法上の
+            <strong>特定収入</strong>です。特定収入割合 {(live.specifiedIncome.specifiedIncomeRatio * 100).toFixed(1)}%
+            {live.specifiedIncome.simplified ? (
+              <>（簡易課税のため仕入税額控除の調整は不要です）。</>
+            ) : live.specifiedIncome.adjustmentRequired ? (
+              <>が 5% を超えるため、本則課税では「特定収入に係る仕入税額控除の調整」が必要です
+                （控除できない仕入税額の概算 約{jpy(live.specifiedIncome.nonDeductibleInputTax)}）。</>
+            ) : (
+              <>は 5% 以下のため、本則課税でも仕入税額控除の調整は不要の見込みです。</>
+            )}
+            ※ 概算であり、使途特定/不特定の区分・課税売上割合等で変わります。正確な金額は税理士へご確認ください。
           </div>
         )}
       </Section>
@@ -563,6 +577,11 @@ export function FundingPage() {
                   <span style={{ color: 'var(--text)' }}>{it.name}</span>
                   <span style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>{it.month}</span>
+                    {it.repayment?.graceInterestHandling === 'compound' && (
+                      <span style={{ color: 'var(--text-mute)', fontSize: 11 }} title="据置期間中の利息を元本に組み入れる (複利)">
+                        据置利息 元本組入
+                      </span>
+                    )}
                     <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>
                       {it.repayable ? '要返済' : '返済不要'}
                     </span>
