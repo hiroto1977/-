@@ -54,6 +54,113 @@ describe('computeFinancialRatios — worked example', () => {
   });
 });
 
+// === round 68: 精緻化指標 (加算的) ==========================================
+
+describe('computeFinancialRatios — round 68 精緻化指標 (worked example)', () => {
+  const r = computeFinancialRatios(SAMPLE);
+
+  it('NOPAT / ROIC (既定実効税率 30%)', () => {
+    expect(r.nopat).toBe(840); // 1200 × (1 − 0.30)
+    expect(r.roicPct).toBe(10.5); // 840 / (4000 + 4000) × 100
+  });
+
+  it('当座比率 / 現金比率', () => {
+    expect(r.quickRatioPct).toBe(160); // (5000 − 1000) / 2500 × 100
+    expect(r.cashRatioPct).toBe(80); // cash = max(0, 5000−2000−1000)=2000 → 2000/2500
+  });
+
+  it('フリーキャッシュフロー (営業CF − 設備投資)', () => {
+    expect(r.freeCashflow).toBe(1200); // simpleCf=1200+300=1500, capex≈減価償却=300 → 1500−300
+  });
+
+  it('デュポン 3 分解 (積が ROE に一致)', () => {
+    expect(r.dupontNetMarginPct).toBe(6.7); // 800/12000
+    expect(r.dupontAssetTurnover).toBe(1.2); // 12000/10000
+    expect(r.dupontEquityMultiplier).toBe(2.5); // 10000/4000
+    // 丸め前: (800/12000) × (12000/10000) × (10000/4000) = 0.20 = ROE 20%
+    const exact = (SAMPLE.netProfit / SAMPLE.revenue) * (SAMPLE.revenue / SAMPLE.totalAssets) * (SAMPLE.totalAssets / SAMPLE.equity);
+    expect(Math.round(exact * 1000) / 1000).toBe(0.2);
+  });
+
+  it('インタレストカバレッジは支払利息が無ければ null', () => {
+    expect(r.interestCoverage).toBeNull(); // SAMPLE に interestExpense なし
+  });
+
+  it('インタレストカバレッジ = 営業利益 / 支払利息', () => {
+    const withInterest = computeFinancialRatios({ ...SAMPLE, interestExpense: 200 });
+    expect(withInterest.interestCoverage).toBe(6); // 1200 / 200
+  });
+
+  it('明示 capex / 実効税率を尊重する', () => {
+    const r2 = computeFinancialRatios({
+      ...SAMPLE,
+      operatingCashflow: 2000,
+      capitalExpenditure: 500,
+      effectiveTaxRate: 0.4,
+    });
+    expect(r2.freeCashflow).toBe(1500); // 2000 − 500
+    expect(r2.nopat).toBe(720); // 1200 × (1 − 0.40)
+    expect(r2.roicPct).toBe(9); // 720 / 8000 × 100
+  });
+});
+
+describe('computeFinancialRatios — round 68 境界ガード (分母 0 / 負 / null)', () => {
+  const zero: FinancialInputs = {
+    revenue: 0, cogs: 0, operatingProfit: 0, ordinaryProfit: 0, netProfit: 0,
+    depreciation: 0, laborCost: 0, totalAssets: 0, equity: 0, currentAssets: 0,
+    currentLiabilities: 0, fixedAssets: 0, fixedLiabilities: 0,
+    accountsReceivable: 0, inventory: 0, accountsPayable: 0, interestBearingDebt: 0,
+  };
+  const r = computeFinancialRatios(zero);
+
+  it('全 0 入力で比率系は null、金額系は 0', () => {
+    expect(r.roicPct).toBeNull(); // 投下資本 0
+    expect(r.quickRatioPct).toBeNull(); // 流動負債 0
+    expect(r.cashRatioPct).toBeNull(); // 流動負債 0
+    expect(r.interestCoverage).toBeNull(); // 支払利息 未指定
+    expect(r.dupontNetMarginPct).toBeNull(); // 売上 0
+    expect(r.dupontAssetTurnover).toBeNull(); // 総資産 0
+    expect(r.dupontEquityMultiplier).toBeNull(); // 自己資本 0
+    expect(r.nopat).toBe(0);
+    expect(r.freeCashflow).toBe(0);
+  });
+
+  it('ROIC: 投下資本が負 (有利子負債 + 自己資本 < 0) なら null', () => {
+    // equity を大きな負にして investedCapital を負へ。<=0 ガードを片側で撃墜。
+    const neg = computeFinancialRatios({ ...SAMPLE, equity: -5000, interestBearingDebt: 4000 });
+    expect(neg.roicPct).toBeNull(); // 4000 + (−5000) = −1000 ≤ 0
+  });
+
+  it('ROIC: 投下資本がちょうど 0 でも null (境界)', () => {
+    const z = computeFinancialRatios({ ...SAMPLE, equity: -4000, interestBearingDebt: 4000 });
+    expect(z.roicPct).toBeNull(); // 4000 + (−4000) = 0
+  });
+
+  it('ROIC: 投下資本が正なら算定する (境界の反対側)', () => {
+    const pos = computeFinancialRatios({ ...SAMPLE, equity: -3999, interestBearingDebt: 4000 });
+    expect(pos.roicPct).not.toBeNull(); // 4000 + (−3999) = 1 > 0
+  });
+
+  it('実効税率は 0-1 にクランプ (1 超 → 1, 負 → 0)', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, effectiveTaxRate: 2 }).nopat).toBe(0); // 1200 × (1 − 1)
+    expect(computeFinancialRatios({ ...SAMPLE, effectiveTaxRate: -1 }).nopat).toBe(1200); // 1200 × (1 − 0)
+  });
+
+  it('インタレストカバレッジ: 支払利息 0 は null (ゼロ割回避)', () => {
+    expect(computeFinancialRatios({ ...SAMPLE, interestExpense: 0 }).interestCoverage).toBeNull();
+  });
+
+  it('現金比率: 現預金は負へクランプしない (流動資産 < 債権+棚卸 → 0)', () => {
+    const r2 = computeFinancialRatios({ ...SAMPLE, currentAssets: 1000 }); // 1000 − 2000 − 1000 < 0
+    expect(r2.cashRatioPct).toBe(0); // cash=max(0, ...)=0 → 0/2500
+  });
+
+  it('当座比率: 棚卸が流動資産を超えても算定 (負値もありうる)', () => {
+    const r2 = computeFinancialRatios({ ...SAMPLE, inventory: 6000 }); // (5000 − 6000)/2500
+    expect(r2.quickRatioPct).toBe(-40);
+  });
+});
+
 describe('computeFinancialRatios — null guards (zero denominators)', () => {
   const zero: FinancialInputs = {
     revenue: 0, cogs: 0, operatingProfit: 0, ordinaryProfit: 0, netProfit: 0,
