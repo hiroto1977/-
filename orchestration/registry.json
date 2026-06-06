@@ -1,8 +1,8 @@
 {
   "$schema": "./registry.schema.json",
-  "version": 2,
+  "version": 3,
   "policy": {
-    "description": "AIオーケストレーションの進化ルール。人間のCEO(オーナー)の直下にCOO(オーケストレーター=Claude本体)を置き、その配下に役員層→管理職層→一般職層を展開する。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。",
+    "description": "AIオーケストレーションの進化ルール。人間のCEO(オーナー)の直下にCOO(オーケストレーター=Claude本体)を置き、その配下に役員層→管理職層→一般職層を展開する。作業サイクル(round)ごとにチーム数を単調増加させ、領域を細分化しながら精度を保つ。v3 で静的レジストリに『実行ランタイム』(scripts/orchestrate.cjs) を追加し、register された組織を実際に並列worktreeエージェントへディスパッチして PDCA/OODA を回す機構を備える。",
     "minTeamsForRound": [
       {
         "round": 1,
@@ -32,6 +32,62 @@
     "growthRule": "各 round の teamCount は前 round 以上であること (単調増加)。新領域の追加で細分化する。",
     "roleSeparation": "並列=調査/設計 (read-only Agent)、直列=実装+全ゲート検証 (オーケストレーター)。共有ファイルへの同時書込みを避ける。",
     "qualityGate": "各実装コミット前に typecheck / lint / test / verify:all / build:web の全 green を必須とする。",
+    "executionModel": "実行ランタイム (scripts/orchestrate.cjs) が registry の org+backlog を読み、作業項目を team→manager→executive→COO の指揮系統へ解決し、PDCA/OODA サイクルの各ステージへ割当てて『並列worktreeエージェント』のディスパッチ計画を生成する。COO(Claude本体)が計画に沿って Agent を並列起動(設計)→直列実装→全ゲート検証→round 記録、までを担う。設計=並列 / 実装+検証=直列 の原則を機構として強制する。",
+    "cycles": {
+      "description": "1ラウンドを回す改善サイクル。pdca=計画駆動の定常改善 / ooda=異常検知時の即応。各ステージに主体(owner)と並列可否(parallel)を持つ。",
+      "pdca": [
+        {
+          "stage": "plan",
+          "owner": "coo+executive",
+          "parallel": false,
+          "desc": "CEO方針を受け orchestration:plan で推奨チーム数と着手候補を算出。担当役員へ割当て論点を確定"
+        },
+        {
+          "stage": "do",
+          "owner": "staff",
+          "parallel": true,
+          "desc": "役員→管理職→一般職の調査チーム(read-only Agent)を並列起動し、各論点を設計(式/境界値/テスト方針/不変条件)"
+        },
+        {
+          "stage": "check",
+          "owner": "cqo+coo",
+          "parallel": false,
+          "desc": "COOが素案を1論点ずつ直列実装し、CQO配下が端数/ゼロ除算/境界/等価変異を監査。typecheck/lint/test/verify:all/build:web と対象mutation100%を全green化"
+        },
+        {
+          "stage": "act",
+          "owner": "coo",
+          "parallel": false,
+          "desc": "shippedをregistryに記録(teams[]追加/round追記/backlog更新)、コミット・PR。次サイクルの細分化方針を確定"
+        }
+      ],
+      "ooda": [
+        {
+          "stage": "observe",
+          "owner": "cqo",
+          "parallel": true,
+          "desc": "CI/mutation/lint/verify の異常やレビュー指摘・障害を観測(webhook/監視)"
+        },
+        {
+          "stage": "orient",
+          "owner": "coo+executive",
+          "parallel": false,
+          "desc": "観測を指揮系統で解釈し、影響範囲・既知の罠(render StringLiteral帰属等)と照合して原因を方向付け"
+        },
+        {
+          "stage": "decide",
+          "owner": "coo",
+          "parallel": false,
+          "desc": "修正/エスカレーション/様子見を即決。曖昧or大規模はCEOへ確認"
+        },
+        {
+          "stage": "act",
+          "owner": "coo",
+          "parallel": false,
+          "desc": "最小修正を直列適用→再検証→push。学びをregistry/READMEへ反映"
+        }
+      ]
+    },
     "hierarchy": {
       "description": "指揮系統: CEO(人間=オーナー) → COO(オーケストレーター=Claude本体) → 役員層(executives) → 管理職層(managers) → 一般職層(teams)。CEOとCOOは研究Agentには配置しない (CEO=あなた, COO=実装本体)。",
       "layers": [
@@ -325,7 +381,9 @@
           "security",
           "mutation-hardening",
           "equivalent-mutant-judgment",
-          "golden-value-testing"
+          "golden-value-testing",
+          "orchestration-runtime",
+          "ui-render-testing"
         ]
       }
     ]
@@ -698,6 +756,22 @@
       "focus": "経営レポートに前年同月比(YoY)を組込み",
       "active": true,
       "manager": "mgr-fpa"
+    },
+    {
+      "id": "orchestration-runtime",
+      "domain": "AIオーケストレーション(実行ランタイム)",
+      "focus": "registry の org+backlog を指揮系統(CEO→COO→役員→管理職→一般職)へ解決し、PDCA/OODA を並列worktreeエージェントへディスパッチする実行機構(orchestrate.cjs v3)。cycles 定義の整合検証も含む",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
+    },
+    {
+      "id": "ui-render-testing",
+      "domain": "品質保証(UI render/相互作用テスト)",
+      "focus": "smoke頼みだったReactページ/コンポーネント/フックに jsdom render・props分岐・相互作用の単体テストを追加し回帰網を厚くする(DataList/StatusBar/ExportActions/Stat/usePlan 等)",
+      "active": true,
+      "role": "audit",
+      "manager": "mgr-quality"
     }
   ],
   "rounds": [
@@ -2376,6 +2450,70 @@
       "shipped": [
         "品質ラウンド継続: 経営ナラティブ層 (managementHighlights / managementReport) を base / funding と併せて Stryker mutation 100% 化し stryker.config に scope 登録 (#120–#124)。等価変異は null→0 換算・>=2 ゲートなど根拠付きで disable、StringLiteral は完全一致 golden で撃墜。"
       ]
+    },
+    {
+      "round": 49,
+      "teamCount": 54,
+      "teams": [
+        "tax-income",
+        "tax-resident",
+        "tax-deductions",
+        "tax-credits",
+        "tax-separate",
+        "tax-consumption",
+        "funding-cashflow",
+        "funding-cost",
+        "funding-scenario",
+        "funding-mix",
+        "kpi-analysis",
+        "real-estate",
+        "mutual-funds",
+        "security",
+        "quality-audit",
+        "mutation-hardening",
+        "equivalent-mutant-judgment",
+        "golden-value-testing",
+        "savings-planning",
+        "fx-currency",
+        "payroll",
+        "labor-cost",
+        "depreciation",
+        "management-integration",
+        "growth-analysis",
+        "revenue-forecast",
+        "budget-planning",
+        "productivity",
+        "cost-structure",
+        "financial-position",
+        "cash-conversion",
+        "executive-dashboard",
+        "accounting-link",
+        "treasury-dscr",
+        "cash-forecast",
+        "revenue-concentration",
+        "trend-monitor",
+        "alert-policy",
+        "settings-persistence",
+        "industry-presets",
+        "report-export",
+        "monthly-trend",
+        "report-trend",
+        "trend-chart",
+        "cashflow-chart",
+        "sensitivity-analysis",
+        "target-profit",
+        "report-sensitivity",
+        "cost-sensitivity",
+        "operating-leverage",
+        "yoy-analysis",
+        "report-yoy",
+        "orchestration-runtime",
+        "ui-render-testing"
+      ],
+      "shipped": [
+        "AIオーケストレーション機構を v3 へ再構築: 静的レジストリに実行ランタイム(scripts/orchestrate.cjs)を追加し、org+backlog を指揮系統(CEO→COO→役員→管理職→一般職)へ解決して PDCA/OODA を並列worktreeエージェントへディスパッチする仕組みを実装。policy.cycles(PDCA/OODA)を機械可読化し verify:orchestration で構造検証。並列ループ運用で UIレンダーテスト網(+71 it, #133 merged)を投入。teams 52→54。"
+      ],
+      "note": "実行モデル: 設計=並列Agent / 実装+全ゲート検証=COO直列。dispatch は read-only、record のみ追記。"
     }
   ],
   "backlog": [
