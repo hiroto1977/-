@@ -48,6 +48,9 @@ function yen(n: number): number {
 
 /** 非有限・負の金額を 0 に丸める。 */
 function nonNegativeFinite(n: number): number {
+  // Stryker disable next-line EqualityOperator: `> 0` ⇔ `>= 0` は等価変異。
+  // n === 0 のとき両分岐とも 0 を返す (then 分岐は n=0、else 分岐は定数 0)。
+  // 後段は常に金額 × 税率 or 加算で使われ、0 の寄与は皆無のため観測不能。
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 

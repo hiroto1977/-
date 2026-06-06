@@ -237,6 +237,24 @@ describe('compareBusinessTaxMethods (有利判定)', () => {
     expect(c.bestAmount).toBe(100_000);
   });
 
+  it('sums the reduced-rate sales across segments (+ ではなく − の mutant を kill)', () => {
+    // 2 区分とも軽減税率売上のみ。reduced を加算 (+) でなく減算 (−) すると
+    // 合計が 0 → 本則/2割特例が 0 になり best が変わる。
+    // 各区分 軽減1,000万×8% = 80万。合計売上税額 = 160万。
+    // 本則(仕入0)=160万、2割特例=32万、simplified: 加重率 (80万×0.5+80万×0.6)/160万=0.55 → 160万×0.45=72万
+    const c = compareBusinessTaxMethods(
+      [
+        { type: 'service', sales: { standard: 0, reduced: 10_000_000 } },
+        { type: 'other', sales: { standard: 0, reduced: 10_000_000 } },
+      ],
+      { standard: 0, reduced: 0 },
+    );
+    expect(c.standard).toBe(1_600_000);
+    expect(c.twentyPercent).toBe(320_000);
+    expect(c.simplified).toBe(720_000);
+    expect(c.best).toBe('twenty-percent');
+  });
+
   it('aggregates multi-segment sales for 本則 and 2割特例', () => {
     // 卸売 標準1,000万 + 小売 標準1,000万 = 標準2,000万 → 売上税額200万
     // 本則 (仕入0) = 200万、2割特例 = 40万
