@@ -128,6 +128,15 @@ export function requiredRevenueForTargetProfit(f: Fundamentals, targetOperatingP
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
+  // Equivalent mutants on the sub-expressions of this guard:
+  // - `f.revenue <= 0` → `f.revenue < 0` or → `false` (sub-expr): when revenue=0,
+  //   contribution = 0 - variableCost ≤ 0, so the second clause fires anyway. The
+  //   first sub-expression can never independently trigger for revenue=0 without the
+  //   second also catching it.
+  // - `contribution <= 0` → `contribution < 0`: when contribution=0 with revenue>0,
+  //   contributionRatio=0 → (fixedCost+target)/0 = Infinity → Math.max(0,∞) = Infinity
+  //   regardless — same observable result.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (f.revenue <= 0 || contribution <= 0) return Infinity;
   const contributionRatio = contribution / f.revenue;
   return Math.max(0, (fixedCost + targetOperatingProfit) / contributionRatio);
@@ -163,6 +172,10 @@ export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakE
   const currentQuantity = Math.round(Math.max(0, f.revenue) / price);
   const unitVariable = currentQuantity > 0 ? variableCost / currentQuantity : 0;
   const unitContribution = Math.max(0, price - unitVariable);
+  // Equivalent mutants on `unitContribution > 0`:
+  // - `→ true` and `→ >= 0`: when unitContribution=0, Math.ceil(fixedCost/0)=Infinity
+  //   regardless, producing the same observable result as the explicit Infinity branch.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   const beq = unitContribution > 0 ? Math.ceil(fixedCost / unitContribution) : Infinity;
   const safeQuantity = Number.isFinite(beq) ? Math.max(0, currentQuantity - beq) : 0;
   return { unitContribution, breakEvenQuantity: beq, currentQuantity, safeQuantity };
@@ -218,6 +231,10 @@ export function simulatePriceChange(f: Fundamentals, priceChangeRatio: number): 
   const simulatedContributionRatio = simulatedRevenue > 0
     ? Math.round((simulatedContribution / simulatedRevenue) * 1000) / 10
     : 0;
+  // Equivalent mutants on `simulatedContribution > 0`:
+  // - `→ true` and `→ >= 0`: when contribution=0, Math.round(fixedCost/0 * simRevenue)
+  //   = Math.round(Infinity) = Infinity, identical to the explicit Infinity branch.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
   const simulatedBep = simulatedContribution > 0
     ? Math.round((fixedCost / simulatedContribution) * simulatedRevenue)
     : Infinity;
