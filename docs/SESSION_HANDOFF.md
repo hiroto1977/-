@@ -233,7 +233,9 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 
 残り (要設計判断・スコープ大):
 - 社会保険料の **標準報酬月額テーブル** 化 (概算セクション② のみ。③は実額入力で回避済で優先度低)。
-- 住民税の自治体差の精緻化 / ふるさと納税の **ワンストップ特例** 判定 (5自治体まで等)。
+- 住民税の自治体差の精緻化。
+
+✅ **ふるさと納税ワンストップ特例**は実装済み (`src/shared/taxFurusato.ts`: `furusatoOneStopEligibility` 5自治体/確定申告併用不可の判定 + `calcFurusatoBreakdown` の所得税分→住民税申告特例控除への振替、mutation 100%、TaxPage セクション⑦)。※旧版の「残り」記述は古かったため訂正。
 
 ### 🟢 資金調達レーダー (funding) — 精度向上の積み上げ
 新サービス `funding` (62件目)。集計は src/shared/funding.ts の純粋関数に集約。実装済の精度向上:
