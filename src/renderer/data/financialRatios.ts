@@ -1,7 +1,11 @@
 /**
  * 財務分析エンジン — 損益計算書(PL)/貸借対照表(BS)/キャッシュフロー(CF) から
- * 主要な財務指標 15 種を算出する純粋ロジック。レーダー/折れ線/円/棒グラフ、
- * および各種財務諸表ビューの共通の計算中核。
+ * 主要な財務指標 (基本 15 種 + round 68 精緻化指標) を算出する純粋ロジック。
+ * レーダー/折れ線/円/棒グラフ、および各種財務諸表ビューの共通の計算中核。
+ *
+ * round 68 で経営分析向けに以下を加算 (既存式・既存テスト期待値は不変):
+ * ROIC (投下資本利益率)、デュポン分解 (純利益率 × 総資産回転率 × 財務レバレッジ)、
+ * FCF (フリーキャッシュフロー)、インタレストカバレッジ、当座比率、現金比率。
  *
  * 各指標は分母 0 などで算定不能なときは null を返す (UI は「—」表示)。
  * 金額は円、比率は % またはその指標固有の単位 (倍 / 日 / 年)。
@@ -34,7 +38,13 @@ export interface FinancialInputs {
   readonly inventory: number; // 棚卸資産
   readonly accountsPayable: number; // 仕入債務
   readonly interestBearingDebt: number; // 有利子負債 (借入金)
+  // --- 任意 (round 68: 精緻化指標; 無ければ概算デフォルトで代替) ---
+  readonly capitalExpenditure?: number; // 設備投資額 (CF 投資; 無ければ減価償却費で代替)
+  readonly effectiveTaxRate?: number; // 実効税率 (0-1; NOPAT 算定用; 無ければ DEFAULT_EFFECTIVE_TAX_RATE)
 }
+
+/** NOPAT / ROIC / FCF 算定で参照する既定値 (概算)。法人実効税率は約 30% を仮置き。 */
+export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
 
 /** 算出された 15 指標。比率は %、回転率は 倍、CCC は 日、月商倍率は ヶ月、償還年数は 年。 */
 export interface FinancialRatios {
@@ -55,10 +65,22 @@ export interface FinancialRatios {
   readonly cccDays: number | null; // キャッシュコンバージョンサイクル (日)
   readonly roaPct: number | null; // ROA
   readonly roePct: number | null; // ROE
+  // --- round 68: 精緻化指標 (加算的) -------------------------------------
+  readonly nopat: number; // NOPAT = 営業利益 × (1 − 実効税率) (金額)
+  readonly roicPct: number | null; // ROIC = NOPAT / 投下資本 (有利子負債 + 自己資本)
+  readonly quickRatioPct: number | null; // 当座比率 = (流動資産 − 棚卸資産) / 流動負債
+  readonly cashRatioPct: number | null; // 現金比率 = 現預金(概算) / 流動負債
+  readonly freeCashflow: number; // FCF = 営業CF − 設備投資 (金額)
+  readonly interestCoverage: number | null; // インタレストカバレッジ = 営業利益 / 支払利息 (倍)
+  // デュポン 3 分解: ROE = 純利益率 × 総資産回転率 × 財務レバレッジ
+  readonly dupontNetMarginPct: number | null; // 売上高純利益率 (%)
+  readonly dupontAssetTurnover: number | null; // 総資産回転率 (倍)
+  readonly dupontEquityMultiplier: number | null; // 財務レバレッジ = 総資産 / 自己資本 (倍)
 }
 
 const pct = (num: number, den: number): number | null => (den === 0 ? null : (num / den) * 100);
 const ratio = (num: number, den: number): number | null => (den === 0 ? null : num / den);
+const round0 = (n: number) => Math.round(n);
 const round1 = (n: number) => Math.round(n * 10) / 10;
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -85,6 +107,20 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
         (f.inventory / f.cogs) * 365 -
         (f.accountsPayable / f.cogs) * 365;
 
+  // --- round 68: 精緻化指標 --------------------------------------------
+  // 実効税率は 0-1 にクランプ (NOPAT が負税率/100%超で歪まないように)。
+  const taxRate = Math.min(1, Math.max(0, f.effectiveTaxRate ?? DEFAULT_EFFECTIVE_TAX_RATE));
+  // NOPAT = 営業利益 × (1 − 実効税率)。営業利益が負ならそのまま負の NOPAT。
+  const nopat = f.operatingProfit * (1 - taxRate);
+  // 投下資本 = 有利子負債 + 自己資本。0 以下は算定不能 (null)。
+  const investedCapital = f.interestBearingDebt + f.equity;
+  // 現預金(概算) = 流動資産 − 売上債権 − 棚卸資産 (財務諸表ビューと同一定義、負はクランプ)。
+  const cash = Math.max(0, f.currentAssets - f.accountsReceivable - f.inventory);
+  // 設備投資: 明示が無ければ維持投資 ≈ 減価償却費 と仮定 (財務諸表 CF と整合)。
+  const capex = f.capitalExpenditure ?? f.depreciation;
+  // FCF = 営業CF − 設備投資。営業CF は既存 simpleCf (営業CF override or 営業利益+減価償却)。
+  const freeCashflow = simpleCf - capex;
+
   return {
     equityRatioPct: roundNullable(pct(f.equity, f.totalAssets), round1),
     currentRatioPct: roundNullable(pct(f.currentAssets, f.currentLiabilities), round1),
@@ -103,6 +139,23 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
     cccDays: roundNullable(ccc, round1),
     roaPct: roundNullable(pct(f.netProfit, f.totalAssets), round1),
     roePct: roundNullable(pct(f.netProfit, f.equity), round1),
+    // --- round 68: 精緻化指標 (加算的) ---
+    nopat: round0(nopat),
+    // ROIC: 投下資本が 0 以下なら算定不能。pct は 0 のみガードするため <=0 を明示。
+    roicPct: roundNullable(investedCapital <= 0 ? null : (nopat / investedCapital) * 100, round1),
+    quickRatioPct: roundNullable(pct(f.currentAssets - f.inventory, f.currentLiabilities), round1),
+    cashRatioPct: roundNullable(pct(cash, f.currentLiabilities), round1),
+    freeCashflow: round0(freeCashflow),
+    // インタレストカバレッジ: 支払利息 (任意) が未指定/0 なら算定不能。
+    interestCoverage: roundNullable(
+      f.interestExpense == null || f.interestExpense === 0
+        ? null
+        : f.operatingProfit / f.interestExpense,
+      round2,
+    ),
+    dupontNetMarginPct: roundNullable(pct(f.netProfit, f.revenue), round1),
+    dupontAssetTurnover: roundNullable(ratio(f.revenue, f.totalAssets), round2),
+    dupontEquityMultiplier: roundNullable(ratio(f.totalAssets, f.equity), round2),
   } as FinancialRatios;
 }
 
