@@ -123,6 +123,11 @@ describe('componentPremium — 1 区分の保険料', () => {
     expect(componentPremium({ base: 7_000_000, members: 1, rate: flatRate, cap: 650_000 })).toBe(650_000);
   });
 
+  it('賦課限度額 0 では常に 0 を返す (cap=0 は throw でなく頭打ち)', () => {
+    const rate: NhiComponentRate = { incomeRate: 0.1, perCapita: 5_000, perHousehold: 100 };
+    expect(componentPremium({ base: 1_000_000, members: 1, rate, cap: 0 })).toBe(0);
+  });
+
   it('賦課基準額 0 で均等割・平等割のみ', () => {
     const rate: NhiComponentRate = { incomeRate: 0.5, perCapita: 7_000, perHousehold: 3_000 };
     // base 0 -> 所得割 0, 均等割 7,000, 平等割 3,000 = 10,000

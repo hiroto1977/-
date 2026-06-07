@@ -200,11 +200,9 @@ export function nationalHealthInsurance(
   input: NationalHealthInsuranceInput,
 ): NationalHealthInsuranceBreakdown {
   const { totalIncome, members, age40to64 = false, rates = DEFAULT_NHI_RATES } = input;
-  // assessmentBase が totalIncome の負/非有限を throw する。
+  // assessmentBase が totalIncome の負/非有限を throw する。members の検証
+  // (整数・1 以上) は最初に呼ぶ componentPremium が行う (重複ガードを置かない)。
   const base = assessmentBase(totalIncome);
-  if (!Number.isInteger(members) || members < 1) {
-    throw new Error(`nationalHealthInsurance: members must be an integer >= 1, got ${members}`);
-  }
   const medical = componentPremium({ base, members, rate: rates.medical, cap: MEDICAL_CAP });
   const support = componentPremium({ base, members, rate: rates.support, cap: SUPPORT_CAP });
   const care = age40to64
