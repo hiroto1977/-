@@ -134,7 +134,8 @@
     "src/renderer/web-templates.ts",
     "src/renderer/data/voiceCommand.ts",
     "src/renderer/data/voiceSession.ts",
-    "src/renderer/data/cloudSync.ts"
+    "src/renderer/data/cloudSync.ts",
+    "src/shared/taxSimplifiedConsumption.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
