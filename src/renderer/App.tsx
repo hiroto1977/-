@@ -5,6 +5,7 @@ import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { usePlan } from './plan/usePlan';
+import { VoiceCommandBar } from './components/VoiceCommandBar';
 import {
   PLAN_ORDER,
   PLANS,
@@ -257,6 +258,9 @@ export function App() {
         <header className="topbar">
           <h1>{active.label}</h1>
           <span className="description">{active.description}</span>
+          <span style={{ marginLeft: 'auto' }}>
+            <VoiceCommandBar />
+          </span>
         </header>
         <section className="content">
           {activeUnlocked ? (
