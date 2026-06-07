@@ -205,6 +205,11 @@ function assertLegalShares(legalShares: readonly number[]): void {
     sum += share;
   }
   // 合計は 1.0 (許容誤差 1e-9)。浮動小数の和 (例 1/2+1/4+1/4) の誤差を吸収する。
+  // `>` → `>=` (EqualityOperator) は等価変異: 両者が分岐するのは `Math.abs(sum-1)` が
+  // **ちょうど 1e-9** のときだけだが、IEEE754 では 1±1e-9 を厳密に表現できず
+  // (`Math.abs((1+1e-9)-1) === 1e-9` は false)、`Math.abs(sum-1)` が正確に 1e-9 に
+  // なる float の和は存在しない。よって両演算子は全入力で同値であり実テストで撃墜不能。
+  // Stryker disable next-line EqualityOperator: 許容誤差 1e-9 ちょうどは float で到達不能 (上記)。
   if (Math.abs(sum - 1) > 1e-9) {
     throw new Error(`legalShares must sum to 1.0 (got ${sum})`);
   }

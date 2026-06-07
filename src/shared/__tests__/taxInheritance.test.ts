@@ -155,16 +155,22 @@ describe('inheritanceTaxOnShare (速算表の1人分)', () => {
     expect(inheritanceTaxOnShare(700_000_000)).toBe(313_000_000);
   });
 
-  it('負の取得金額は throw', () => {
-    expect(() => inheritanceTaxOnShare(-1)).toThrow(/finite number >= 0/);
+  it('負の取得金額は throw (ラベル taxableShare を含む)', () => {
+    expect(() => inheritanceTaxOnShare(-1)).toThrow(
+      /taxableShare must be a finite number >= 0/,
+    );
   });
 
-  it('NaN は throw', () => {
-    expect(() => inheritanceTaxOnShare(NaN)).toThrow(/finite number >= 0/);
+  it('NaN は throw (ラベル taxableShare を含む)', () => {
+    expect(() => inheritanceTaxOnShare(NaN)).toThrow(
+      /taxableShare must be a finite number >= 0/,
+    );
   });
 
-  it('Infinity は throw', () => {
-    expect(() => inheritanceTaxOnShare(Infinity)).toThrow(/finite number >= 0/);
+  it('Infinity は throw (ラベル taxableShare を含む)', () => {
+    expect(() => inheritanceTaxOnShare(Infinity)).toThrow(
+      /taxableShare must be a finite number >= 0/,
+    );
   });
 });
 
@@ -311,16 +317,23 @@ describe('totalInheritanceTax (相続税の総額・法定相続分課税方式)
     ).toThrow(/sum to 1.0/);
   });
 
-  it('legalShares 要素が負は throw', () => {
+  it('legalShares 要素が負は legalShares element で throw (要素ガード)', () => {
     expect(() =>
       totalInheritanceTax({ taxableEstate: 50_000_000, legalShares: [-0.5, 1.5] }),
-    ).toThrow(/finite number >= 0/);
+    ).toThrow(/legalShares element must be a finite number >= 0/);
   });
 
-  it('legalShares 要素が非有限は throw', () => {
+  it('legalShares 要素が非有限は legalShares element で throw (要素ガード)', () => {
     expect(() =>
       totalInheritanceTax({ taxableEstate: 50_000_000, legalShares: [NaN, 1] }),
-    ).toThrow(/finite number >= 0/);
+    ).toThrow(/legalShares element must be a finite number >= 0/);
+  });
+
+  it('legalShares 要素0は許容 (取得なしの相続人。throw しない)', () => {
+    // [0, 1] は合計1.0・要素は非負。要素ガードの `< 0` 境界 (0 は有効) を pin。
+    expect(
+      totalInheritanceTax({ taxableEstate: 50_000_000, legalShares: [0, 1] }),
+    ).toBe(8_000_000); // 0円分=0 + 5,000万→800万
   });
 
   it('浮動小数の和の誤差は許容 (1/2+1/4+1/4 を分数で渡しても throw しない)', () => {
@@ -399,7 +412,7 @@ describe('estimateInheritanceTax (統合)', () => {
         grossEstate: 100_000_000,
         legalShares: [-0.5, 1.5],
       }),
-    ).toThrow(/finite number >= 0/);
+    ).toThrow(/legalShares element must be a finite number >= 0/);
   });
 
   it('grossEstate 負値は throw', () => {
