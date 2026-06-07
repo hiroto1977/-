@@ -227,6 +227,18 @@ describe('straightLineDepreciation — invariants', () => {
     expect(straightLineDepreciation({ acquisitionCost: 1, usefulLifeYears: 5 })).toEqual([]);
     expect(straightLineDepreciation({ acquisitionCost: 0, usefulLifeYears: 5 })).toEqual([]);
   });
+
+  it('writes off a tiny asset whose annual amount rounds to zero in one year', () => {
+    // 2 × 0.2 = 0.4 → annual rounds to 0; the schedule still depreciates to the 1-yen memo.
+    const s = straightLineDepreciation({ acquisitionCost: 2, usefulLifeYears: 5 });
+    expect(rows(s)).toEqual([[1, 2, 1, 1, 1]]);
+  });
+
+  it('writes off a small asset to the memo value when the annual rounds to zero', () => {
+    // 10 × 0.02 = 0.2 → annual rounds to 0; year 1 writes off 9 to leave the 1-yen memo.
+    const s = straightLineDepreciation({ acquisitionCost: 10, usefulLifeYears: 50 });
+    expect(rows(s)).toEqual([[1, 10, 9, 1, 9]]);
+  });
 });
 
 describe('straightLineDepreciation — input validation', () => {
@@ -327,9 +339,9 @@ describe('decliningBalanceDepreciation — 200% method', () => {
       [5, 409_600, 68_267, 341_333, 658_667],
       [6, 341_333, 68_267, 273_066, 726_934],
       [7, 273_066, 68_267, 204_799, 795_201],
-      [8, 204_799, 68_266, 136_533, 863_467],
-      [9, 136_533, 68_267, 68_266, 931_734],
-      [10, 68_266, 68_265, 1, 999_999],
+      [8, 204_799, 68_267, 136_532, 863_468],
+      [9, 136_532, 68_267, 68_265, 931_735],
+      [10, 68_265, 68_264, 1, 999_999],
     ]);
   });
 
@@ -340,6 +352,23 @@ describe('decliningBalanceDepreciation — 200% method', () => {
       method: '200%',
     });
     expect(rows(s)).toEqual([[1, 1_000_000, 999_999, 1, 999_999]]);
+  });
+
+  it('does NOT switch when the declining amount exactly equals the guarantee (strict <)', () => {
+    // Life 4, cost 1,000,000: at year 2 book=500,000, declining = 500,000 × 0.5 = 250,000
+    // which exactly equals the guarantee 1,000,000 / 4 = 250,000. With strict `<` the year
+    // stays on the declining base (250,000); a `<=` would switch early to 166,667.
+    const s = decliningBalanceDepreciation({
+      acquisitionCost: 1_000_000,
+      usefulLifeYears: 4,
+      method: '200%',
+    });
+    expect(rows(s)).toEqual([
+      [1, 1_000_000, 500_000, 500_000, 500_000],
+      [2, 500_000, 250_000, 250_000, 750_000],
+      [3, 250_000, 125_000, 125_000, 875_000],
+      [4, 125_000, 124_999, 1, 999_999],
+    ]);
   });
 });
 
@@ -354,8 +383,8 @@ describe('decliningBalanceDepreciation — 250% method', () => {
       [1, 1_000_000, 500_000, 500_000, 500_000],
       [2, 500_000, 250_000, 250_000, 750_000],
       [3, 250_000, 83_333, 166_667, 833_333],
-      [4, 166_667, 83_334, 83_333, 916_667],
-      [5, 83_333, 83_332, 1, 999_999],
+      [4, 166_667, 83_333, 83_334, 916_666],
+      [5, 83_334, 83_333, 1, 999_999],
     ]);
   });
 
@@ -457,6 +486,29 @@ describe('decliningBalanceDepreciation — invariants', () => {
     expect(
       decliningBalanceDepreciation({ acquisitionCost: 0, usefulLifeYears: 5, method: '200%' }),
     ).toEqual([]);
+  });
+
+  it('writes off a tiny asset to the 1-yen memo in a single year', () => {
+    // 2 × 0.2 = 0.4 → rounds to 0; the dep<=0 guard writes off the remainder to the memo.
+    const s = decliningBalanceDepreciation({
+      acquisitionCost: 2,
+      usefulLifeYears: 10,
+      method: '200%',
+    });
+    expect(rows(s)).toEqual([[1, 2, 1, 1, 1]]);
+  });
+
+  it('writes off the remainder when the declining amount later rounds to zero', () => {
+    // Year 1: 5 × 0.1 = 0.5 → 1. Year 2: 4 × 0.1 = 0.4 → rounds to 0 → write off 3 to the memo.
+    const s = decliningBalanceDepreciation({
+      acquisitionCost: 5,
+      usefulLifeYears: 20,
+      method: '200%',
+    });
+    expect(rows(s)).toEqual([
+      [1, 5, 1, 4, 1],
+      [2, 4, 3, 1, 4],
+    ]);
   });
 });
 

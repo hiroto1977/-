@@ -129,9 +129,6 @@ export function straightLineDepreciation(input: StraightLineInput): Depreciation
   assertMonth(acquisitionMonth, '取得月');
   assertMonth(fiscalYearEndMonth, '期末月');
 
-  // 取得価額 1 円以下は償却対象なし (備忘価額に満たない)。空配列を返す。
-  if (acquisitionCost <= 1) return [];
-
   const rate = depreciationRate(usefulLifeYears);
   const annual = yen(acquisitionCost * rate);
   const firstYearMonths =
@@ -144,14 +141,17 @@ export function straightLineDepreciation(input: StraightLineInput): Depreciation
   let book = acquisitionCost;
   let accumulated = 0;
   let year = 0;
-  // 残存簿価が 1 円 (備忘価額) に達するまで償却。annual >= 1 (assertCommon で
-  // usefulLifeYears>=1 かつ acquisitionCost>1 を保証) のため必ず終了する。
+  // 残存簿価が 1 円 (備忘価額) に達するまで償却。取得価額が 1 円以下なら 1 度も回らず
+  // [] を返す (備忘価額に満たない)。年額が 0 円に丸まる小額資産でも下の dep<=0 ガードで
+  // 残額を一括償却するため必ず終了する。
   while (book > 1) {
     year += 1;
     const opening = book;
     // 初年度は月割、以降は年額。ただし残額が 1 円を割らないよう opening-1 で頭打ち。
     const baseDep = year === 1 ? firstYearAnnual : annual;
-    const dep = Math.min(baseDep, opening - 1);
+    let dep = Math.min(baseDep, opening - 1);
+    // 年額が 0 円に丸まる場合 (取得価額が極小) は残額を備忘価額まで一括償却して終了させる。
+    if (dep <= 0) dep = opening - 1;
     book = opening - dep;
     accumulated += dep;
     rows.push({ year, opening, depreciation: dep, closing: book, accumulated });
@@ -207,8 +207,6 @@ export function decliningBalanceDepreciation(input: DecliningBalanceInput): Depr
   assertMonth(acquisitionMonth, '取得月');
   assertMonth(fiscalYearEndMonth, '期末月');
 
-  if (acquisitionCost <= 1) return [];
-
   const rate = methodMultiplier(method) / usefulLifeYears;
   // 償却保証額の近似 (取得価額 ÷ 耐用年数)。調整前償却額がこれを下回ったら均等償却へ。
   const guaranteedAmount = acquisitionCost / usefulLifeYears;
@@ -222,9 +220,8 @@ export function decliningBalanceDepreciation(input: DecliningBalanceInput): Depr
   let accumulated = 0;
   let year = 0;
   let switched = false;
-  // 切替後に均等償却する残存年数 (切替年度の期首で確定) と切替後の経過年数。
-  let remainingYearsAtSwitch = 0;
-  let yearsSinceSwitch = 0;
+  // 切替後に毎期償却する均等額 (改定取得価額 × 改定償却率の近似)。切替年度の期首に確定。
+  let revisedAnnual = 0;
 
   while (book > 1) {
     year += 1;
@@ -233,24 +230,25 @@ export function decliningBalanceDepreciation(input: DecliningBalanceInput): Depr
     if (!switched) {
       const beforeAdjust = opening * rate;
       if (beforeAdjust < guaranteedAmount) {
-        // 改定償却率へ切替: 残存年数で均等償却する。残存年数 = 耐用年数 − 経過年数 + 1
-        // (当年度を含む)。月割で年数が伸びている場合に備え最低 1 年とする。
+        // 改定償却率へ切替: 切替年度の期首簿価を改定取得価額とし、残存年数で均等償却する。
+        // 残存年数 = 耐用年数 − 経過年数 + 1 (当年度を含む)。月割で年数が伸びている場合に
+        // 備え最低 1 年とする。以後の年度はこの均等額 revisedAnnual を据え置く。
         switched = true;
-        remainingYearsAtSwitch = Math.max(1, usefulLifeYears - year + 1);
-        yearsSinceSwitch = 0;
-        dep = yen(opening / remainingYearsAtSwitch);
+        const remainingYears = Math.max(1, usefulLifeYears - year + 1);
+        revisedAnnual = yen(opening / remainingYears);
+        dep = revisedAnnual;
       } else {
         dep = yen(beforeAdjust);
       }
     } else {
-      const remaining = remainingYearsAtSwitch - yearsSinceSwitch;
-      dep = remaining > 0 ? yen(opening / remaining) : opening - 1;
+      dep = revisedAnnual;
     }
-    if (switched) yearsSinceSwitch += 1;
     // 初年度は月割。
     if (year === 1) dep = yen((dep * firstYearMonths) / 12);
     // 残存簿価が備忘 1 円を割らないよう opening-1 で頭打ち。
     dep = Math.min(dep, opening - 1);
+    // 償却額が 0 に丸まる場合は残額を備忘価額まで一括償却して終了させる。
+    if (dep <= 0) dep = opening - 1;
     book = opening - dep;
     accumulated += dep;
     rows.push({ year, opening, depreciation: dep, closing: book, accumulated });
