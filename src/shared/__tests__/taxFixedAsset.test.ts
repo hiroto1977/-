@@ -79,31 +79,44 @@ describe('fixedAssetTax', () => {
   });
 
   it('throws for a negative base', () => {
-    expect(() => fixedAssetTax({ taxableBase: -1 })).toThrow();
+    // Asserting the message kills both the label literal and the assert template mutants.
+    expect(() => fixedAssetTax({ taxableBase: -1 })).toThrow(
+      /taxableBase must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite base (NaN)', () => {
-    expect(() => fixedAssetTax({ taxableBase: NaN })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: NaN })).toThrow(/taxableBase must be a finite number/);
   });
 
   it('throws for a non-finite base (Infinity)', () => {
-    expect(() => fixedAssetTax({ taxableBase: Infinity })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: Infinity })).toThrow(
+      /taxableBase must be a finite number/,
+    );
   });
 
   it('throws for a negative rate', () => {
-    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: -0.01 })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: -0.01 })).toThrow(
+      /rate must be a finite number in \[0, 1\]/,
+    );
   });
 
   it('throws for a rate above 1', () => {
-    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: 1.01 })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: 1.01 })).toThrow(
+      /rate must be a finite number in \[0, 1\]/,
+    );
   });
 
   it('throws for a non-finite rate (NaN)', () => {
-    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: NaN })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: NaN })).toThrow(
+      /rate must be a finite number in \[0, 1\]/,
+    );
   });
 
   it('throws for a non-finite rate (Infinity)', () => {
-    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: Infinity })).toThrow();
+    expect(() => fixedAssetTax({ taxableBase: 1_000_000, rate: Infinity })).toThrow(
+      /rate must be a finite number in \[0, 1\]/,
+    );
   });
 });
 
@@ -149,27 +162,39 @@ describe('cityPlanningTax', () => {
   });
 
   it('throws for a negative base', () => {
-    expect(() => cityPlanningTax({ taxableBase: -1 })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: -1 })).toThrow(
+      /taxableBase must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite base (NaN)', () => {
-    expect(() => cityPlanningTax({ taxableBase: NaN })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: NaN })).toThrow(
+      /taxableBase must be a finite number/,
+    );
   });
 
   it('throws for a non-finite base (Infinity)', () => {
-    expect(() => cityPlanningTax({ taxableBase: Infinity })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: Infinity })).toThrow(
+      /taxableBase must be a finite number/,
+    );
   });
 
   it('throws for a negative rate', () => {
-    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: -0.001 })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: -0.001 })).toThrow(
+      /rate must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite rate (NaN)', () => {
-    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: NaN })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: NaN })).toThrow(
+      /rate must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite rate (Infinity)', () => {
-    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: Infinity })).toThrow();
+    expect(() => cityPlanningTax({ taxableBase: 1_000_000, rate: Infinity })).toThrow(
+      /rate must be a finite number >= 0/,
+    );
   });
 });
 
@@ -239,47 +264,57 @@ describe('residentialLandTaxableBase', () => {
   });
 
   it('throws for a negative assessed value', () => {
-    expect(() => residentialLandTaxableBase({ assessedValue: -1, areaSqm: 100 })).toThrow();
+    expect(() => residentialLandTaxableBase({ assessedValue: -1, areaSqm: 100 })).toThrow(
+      /assessedValue must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite assessed value (NaN)', () => {
-    expect(() => residentialLandTaxableBase({ assessedValue: NaN, areaSqm: 100 })).toThrow();
+    expect(() => residentialLandTaxableBase({ assessedValue: NaN, areaSqm: 100 })).toThrow(
+      /assessedValue must be a finite number/,
+    );
   });
 
   it('throws for a non-finite assessed value (Infinity)', () => {
-    expect(() => residentialLandTaxableBase({ assessedValue: Infinity, areaSqm: 100 })).toThrow();
+    expect(() => residentialLandTaxableBase({ assessedValue: Infinity, areaSqm: 100 })).toThrow(
+      /assessedValue must be a finite number/,
+    );
   });
 
   it('throws for a negative area', () => {
-    expect(() => residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: -1 })).toThrow();
+    expect(() => residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: -1 })).toThrow(
+      /areaSqm must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite area (NaN)', () => {
-    expect(() => residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: NaN })).toThrow();
+    expect(() => residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: NaN })).toThrow(
+      /areaSqm must be a finite number/,
+    );
   });
 
   it('throws for a non-finite area (Infinity)', () => {
     expect(() =>
       residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: Infinity }),
-    ).toThrow();
+    ).toThrow(/areaSqm must be a finite number/);
   });
 
   it('throws for dwellings below 1', () => {
     expect(() =>
       residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: 100, dwellings: 0 }),
-    ).toThrow();
+    ).toThrow(/dwellings must be an integer >= 1/);
   });
 
   it('throws for a non-integer dwelling count', () => {
     expect(() =>
       residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: 100, dwellings: 1.5 }),
-    ).toThrow();
+    ).toThrow(/dwellings must be an integer >= 1/);
   });
 
   it('throws for a non-finite dwelling count (NaN)', () => {
     expect(() =>
       residentialLandTaxableBase({ assessedValue: 10_000_000, areaSqm: 100, dwellings: NaN }),
-    ).toThrow();
+    ).toThrow(/dwellings must be an integer >= 1/);
   });
 });
 
@@ -321,15 +356,21 @@ describe('isBelowTaxThreshold', () => {
   });
 
   it('throws for a negative base', () => {
-    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: -1 })).toThrow();
+    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: -1 })).toThrow(
+      /taxableBase must be a finite number >= 0/,
+    );
   });
 
   it('throws for a non-finite base (NaN)', () => {
-    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: NaN })).toThrow();
+    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: NaN })).toThrow(
+      /taxableBase must be a finite number/,
+    );
   });
 
   it('throws for a non-finite base (Infinity)', () => {
-    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: Infinity })).toThrow();
+    expect(() => isBelowTaxThreshold({ assetType: 'land', taxableBase: Infinity })).toThrow(
+      /taxableBase must be a finite number/,
+    );
   });
 
   it('throws for an unknown asset type', () => {
