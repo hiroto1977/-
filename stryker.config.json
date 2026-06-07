@@ -142,7 +142,8 @@
     "src/shared/connectors/pluginRuntime.ts",
     "src/shared/taxRegistrationLicense.ts",
     "src/shared/taxAutomobile.ts",
-    "src/shared/taxRealEstateAcquisition.ts"
+    "src/shared/taxRealEstateAcquisition.ts",
+    "src/shared/taxBusinessOffice.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
