@@ -47,6 +47,21 @@ import { compareBusinessTaxMethods, isTaxExempt } from '../../shared/taxConsumpt
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
+import {
+  calcFixedAssetTaxTotal,
+  fixedAssetTax,
+  cityPlanningTax,
+} from '../../shared/taxFixedAsset';
+import {
+  realEstateAcquisitionTax,
+  type PropertyType,
+} from '../../shared/taxRealEstateAcquisition';
+import {
+  realEstateRegistrationTax,
+  type RegistrationType,
+} from '../../shared/taxRegistrationLicense';
+import { stampDutyAmount, type DocumentType } from '../../shared/taxStampDuty';
+import { estimateRealEstatePurchaseTaxCost } from '../../shared/taxRealEstateTransactionCost';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -323,6 +338,103 @@ export function TaxPage() {
     standard: '本則課税',
     simplified: '簡易課税',
     'twenty-percent': '2割特例',
+  };
+
+  // --- ⑪ 不動産・資産にかかる税 (概算) ---
+  // すべて純粋関数のライブ呼び出し。入力は文字列で保持し、num() で正の数値化。
+  // 不正/空入力でも throw しないよう、num() は 0 を返し、各純粋関数は 0 入力で
+  // 安全に動く (固定資産税0・取得税は免税点未満で exempt) ため try/catch は不要。
+
+  // (a) 固定資産税・都市計画税
+  const [faAssessedStr, setFaAssessedStr] = useState('30000000');
+  const [faAreaStr, setFaAreaStr] = useState('200');
+  const [faDwellingsStr, setFaDwellingsStr] = useState('1');
+  const [faResidential, setFaResidential] = useState(true);
+  const fixedAsset = useMemo(() => {
+    const assessedValue = num(faAssessedStr);
+    const areaSqm = num(faAreaStr);
+    // 戸数は 1 以上の整数 (residentialLandTaxableBase の要件)。0/不正は 1 に。
+    const dwellings = Math.max(1, Math.floor(num(faDwellingsStr)) || 1);
+    if (faResidential) {
+      // 住宅用地特例あり: 課税標準を 1/6・1/3 等に按分して合算する。
+      return calcFixedAssetTaxTotal({ assessedValue, areaSqm, dwellings });
+    }
+    // 特例なし: 評価額をそのまま課税標準として課税。
+    const fixed = fixedAssetTax({ taxableBase: assessedValue });
+    const city = cityPlanningTax({ taxableBase: assessedValue });
+    return { fixedAssetTax: fixed, cityPlanningTax: city, total: fixed + city, exempt: false };
+  }, [faAssessedStr, faAreaStr, faDwellingsStr, faResidential]);
+
+  // (b) 不動産取得税
+  const [acqAssessedStr, setAcqAssessedStr] = useState('20000000');
+  const [acqPropertyType, setAcqPropertyType] = useState<PropertyType>('residentialBuilding');
+  const [acqUrbanLand, setAcqUrbanLand] = useState(true);
+  const [acqNewBuilding, setAcqNewBuilding] = useState(true);
+  const [acqReduction, setAcqReduction] = useState(true);
+  const acquisition = useMemo(
+    () =>
+      realEstateAcquisitionTax({
+        assessedValue: num(acqAssessedStr),
+        propertyType: acqPropertyType,
+        applyReduction: acqReduction,
+        isUrbanLand: acqUrbanLand,
+        isNewBuilding: acqNewBuilding,
+      }),
+    [acqAssessedStr, acqPropertyType, acqUrbanLand, acqNewBuilding, acqReduction],
+  );
+
+  // (c) 登録免許税
+  const [regTaxableStr, setRegTaxableStr] = useState('20000000');
+  const [regType, setRegType] = useState<RegistrationType>('transferSale');
+  const registration = useMemo(
+    () => realEstateRegistrationTax({ taxableValue: num(regTaxableStr), registrationType: regType }),
+    [regTaxableStr, regType],
+  );
+
+  // (d) 印紙税
+  const [stampDocType, setStampDocType] = useState<DocumentType>('realEstateTransfer');
+  const [stampAmountStr, setStampAmountStr] = useState('30000000');
+  const stamp = useMemo(() => {
+    // 第7号 (継続的取引基本契約) は記載金額によらず一律のため金額は無視される。
+    const amount = num(stampAmountStr);
+    return stampDutyAmount({
+      documentType: stampDocType,
+      contractAmount: amount > 0 ? amount : undefined,
+    });
+  }, [stampDocType, stampAmountStr]);
+
+  // (e) 不動産取得コスト総額 (取得税 + 登録免許税 + 印紙税)
+  const [costAssessedStr, setCostAssessedStr] = useState('20000000');
+  const [costContractStr, setCostContractStr] = useState('30000000');
+  const [costPropertyType, setCostPropertyType] = useState<PropertyType>('residentialBuilding');
+  const [costRegType, setCostRegType] = useState<RegistrationType>('transferSale');
+  const purchaseCost = useMemo(() => {
+    const contract = num(costContractStr);
+    return estimateRealEstatePurchaseTaxCost({
+      assessedValue: num(costAssessedStr),
+      contractAmount: contract > 0 ? contract : undefined,
+      propertyType: costPropertyType,
+      registrationType: costRegType,
+    });
+  }, [costAssessedStr, costContractStr, costPropertyType, costRegType]);
+
+  const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
+    land: '土地',
+    residentialBuilding: '住宅家屋',
+    nonResidentialBuilding: '非住宅家屋 (店舗・事務所)',
+  };
+  const REGISTRATION_TYPE_LABEL: Record<RegistrationType, string> = {
+    transferSale: '所有権移転 (売買 2.0%)',
+    preservation: '所有権保存 (新築 0.4%)',
+    transferInheritance: '所有権移転 (相続 0.4%)',
+    transferGift: '所有権移転 (贈与 2.0%)',
+    mortgage: '抵当権設定 (債権額 0.4%)',
+  };
+  const DOCUMENT_TYPE_LABEL: Record<DocumentType, string> = {
+    realEstateTransfer: '第1号 不動産譲渡契約書',
+    construction: '第2号 請負契約書 (建設工事等)',
+    receipt: '第17号 売上代金の受取書 (領収書)',
+    continuousBasicContract: '第7号 継続的取引の基本契約書 (一律4,000円)',
   };
 
   const openTool = (url: string) => {
@@ -877,6 +989,219 @@ export function TaxPage() {
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
+        </div>
+      </Section>
+
+      <Section title="⑪ 不動産・資産にかかる税 (概算)" count={5}>
+        <div
+          role="note"
+          style={{
+            margin: '0 0 12px',
+            padding: 10,
+            background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid #fbbf24',
+            borderRadius: 6,
+            fontSize: 11,
+            color: '#fbbf24',
+            lineHeight: 1.6,
+          }}
+        >
+          ⚠️ 以下はいずれも<strong>概算であり税務助言ではありません。</strong>
+          各税の特例・軽減措置 (新築住宅の課税標準控除・住宅用家屋の登録免許税軽減・契約書の印紙税軽減など)・
+          自治体差・年度改正は反映しません。実際の課税標準・税額は<strong>都道府県税事務所 / 法務局 / 司法書士 / 税理士</strong>に
+          ご確認ください。
+        </div>
+
+        {/* (a) 固定資産税・都市計画税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (a) 固定資産税・都市計画税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            毎年1月1日時点の所有者に課されます。固定資産税は標準税率1.4%、都市計画税は制限税率0.3%。
+            住宅用地特例 (小規模住宅用地は固定資産税1/6・都市計画税1/3) を反映します。
+            ※ 新築住宅の減額措置・負担調整措置・自治体ごとの税率差は未反映の概算です (市区町村に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              土地の固定資産税評価額 (円)
+              <input type="text" inputMode="decimal" value={faAssessedStr} onChange={(e) => setFaAssessedStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              土地面積 (㎡)
+              <input type="text" inputMode="decimal" value={faAreaStr} onChange={(e) => setFaAreaStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              住宅の戸数
+              <input type="text" inputMode="decimal" value={faDwellingsStr} onChange={(e) => setFaDwellingsStr(e.target.value)} style={{ ...inputStyle, width: 90 }} />
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={faResidential} onChange={(e) => setFaResidential(e.target.checked)} />
+              住宅用地特例を適用
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <Stat label="固定資産税 (1.4%)" value={jpy(fixedAsset.fixedAssetTax)} />
+            <Stat label="都市計画税 (0.3%)" value={jpy(fixedAsset.cityPlanningTax)} />
+            <Stat label="合計 (年)" value={jpy(fixedAsset.total)} />
+          </div>
+          {fixedAsset.exempt && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
+              ※ 特例適用後の課税標準が免税点 (土地30万円) 未満のため非課税です。
+            </div>
+          )}
+        </div>
+
+        {/* (b) 不動産取得税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (b) 不動産取得税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            不動産を取得したときに一度だけ課されます。本則4%、土地・住宅は軽減3%。宅地は課税標準1/2特例があります。
+            ※ <strong>住宅の課税標準の特別控除 (新築1,200万円控除等) は未対応</strong>のため、実際より高めに出る概算です (都道府県税事務所に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              固定資産税評価額 (円)
+              <input type="text" inputMode="decimal" value={acqAssessedStr} onChange={(e) => setAcqAssessedStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              物件種別
+              <select value={acqPropertyType} onChange={(e) => setAcqPropertyType(e.target.value as PropertyType)} style={{ ...inputStyle, width: 220 }}>
+                <option value="land">{PROPERTY_TYPE_LABEL.land}</option>
+                <option value="residentialBuilding">{PROPERTY_TYPE_LABEL.residentialBuilding}</option>
+                <option value="nonResidentialBuilding">{PROPERTY_TYPE_LABEL.nonResidentialBuilding}</option>
+              </select>
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={acqReduction} onChange={(e) => setAcqReduction(e.target.checked)} />
+              軽減税率 (3%)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={acqUrbanLand} onChange={(e) => setAcqUrbanLand(e.target.checked)} />
+              宅地評価 (土地1/2特例)
+            </label>
+            <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={acqNewBuilding} onChange={(e) => setAcqNewBuilding(e.target.checked)} />
+              新築家屋
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <Stat label="適用税率" value={`${(acquisition.rate * 100).toFixed(1)}%`} />
+            <Stat label="課税標準" value={jpy(acquisition.taxableBase)} />
+            <Stat label="不動産取得税" value={jpy(acquisition.tax)} />
+          </div>
+          {acquisition.exempt && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
+              ※ 課税標準が免税点未満のため非課税です。
+            </div>
+          )}
+        </div>
+
+        {/* (c) 登録免許税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (c) 登録免許税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            登記をするときに課されます。課税標準は所有権の登記が固定資産税評価額、抵当権設定は債権額。
+            ※ <strong>本則税率のみ対応</strong>で、住宅用家屋の軽減税率・土地売買の軽減 (1.5%) は未対応の概算です (法務局/司法書士に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              課税標準 (評価額/債権額・円)
+              <input type="text" inputMode="decimal" value={regTaxableStr} onChange={(e) => setRegTaxableStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              登記種別
+              <select value={regType} onChange={(e) => setRegType(e.target.value as RegistrationType)} style={{ ...inputStyle, width: 240 }}>
+                <option value="transferSale">{REGISTRATION_TYPE_LABEL.transferSale}</option>
+                <option value="preservation">{REGISTRATION_TYPE_LABEL.preservation}</option>
+                <option value="transferInheritance">{REGISTRATION_TYPE_LABEL.transferInheritance}</option>
+                <option value="transferGift">{REGISTRATION_TYPE_LABEL.transferGift}</option>
+                <option value="mortgage">{REGISTRATION_TYPE_LABEL.mortgage}</option>
+              </select>
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+            <Stat label="適用税率 (本則)" value={`${(registration.rate * 100).toFixed(1)}%`} />
+            <Stat label="登録免許税" value={jpy(registration.tax)} />
+          </div>
+        </div>
+
+        {/* (d) 印紙税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (d) 印紙税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            契約書・領収書などの課税文書に課されます。記載金額の階段表で税額が決まります。
+            ※ <strong>本則税額のみ対応</strong>で、不動産譲渡契約書・建設工事請負契約書の軽減措置は未対応の概算です (税務署/税理士に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              文書種別
+              <select value={stampDocType} onChange={(e) => setStampDocType(e.target.value as DocumentType)} style={{ ...inputStyle, width: 260 }}>
+                <option value="realEstateTransfer">{DOCUMENT_TYPE_LABEL.realEstateTransfer}</option>
+                <option value="construction">{DOCUMENT_TYPE_LABEL.construction}</option>
+                <option value="receipt">{DOCUMENT_TYPE_LABEL.receipt}</option>
+                <option value="continuousBasicContract">{DOCUMENT_TYPE_LABEL.continuousBasicContract}</option>
+              </select>
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              記載金額 (円・0で記載なし扱い)
+              <input type="text" inputMode="decimal" value={stampAmountStr} onChange={(e) => setStampAmountStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: 12 }}>
+            <Stat label="印紙税額" value={jpy(stamp)} />
+          </div>
+        </div>
+
+        {/* (e) 不動産取得コスト総額 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (e) 不動産取得コスト総額 (取得税 + 登録免許税 + 印紙税)
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            不動産購入時にかかる主要3税を合算した概算です。
+            ※ 各税の特例・軽減措置は未反映、固定資産税の日割清算・仲介手数料・消費税等は含みません (税理士/司法書士に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              固定資産税評価額 (円)
+              <input type="text" inputMode="decimal" value={costAssessedStr} onChange={(e) => setCostAssessedStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              契約金額 (印紙税・円)
+              <input type="text" inputMode="decimal" value={costContractStr} onChange={(e) => setCostContractStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              物件種別
+              <select value={costPropertyType} onChange={(e) => setCostPropertyType(e.target.value as PropertyType)} style={{ ...inputStyle, width: 220 }}>
+                <option value="land">{PROPERTY_TYPE_LABEL.land}</option>
+                <option value="residentialBuilding">{PROPERTY_TYPE_LABEL.residentialBuilding}</option>
+                <option value="nonResidentialBuilding">{PROPERTY_TYPE_LABEL.nonResidentialBuilding}</option>
+              </select>
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              登記種別
+              <select value={costRegType} onChange={(e) => setCostRegType(e.target.value as RegistrationType)} style={{ ...inputStyle, width: 240 }}>
+                <option value="transferSale">{REGISTRATION_TYPE_LABEL.transferSale}</option>
+                <option value="preservation">{REGISTRATION_TYPE_LABEL.preservation}</option>
+                <option value="transferInheritance">{REGISTRATION_TYPE_LABEL.transferInheritance}</option>
+                <option value="transferGift">{REGISTRATION_TYPE_LABEL.transferGift}</option>
+                <option value="mortgage">{REGISTRATION_TYPE_LABEL.mortgage}</option>
+              </select>
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            <Stat label="不動産取得税" value={jpy(purchaseCost.acquisitionTax)} />
+            <Stat label="登録免許税" value={jpy(purchaseCost.registrationTax)} />
+            <Stat label="印紙税" value={jpy(purchaseCost.stampDuty)} />
+            <Stat label="取得コスト合計" value={jpy(purchaseCost.total)} positive />
+          </div>
         </div>
       </Section>
 
