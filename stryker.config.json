@@ -144,7 +144,8 @@
     "src/shared/taxAutomobile.ts",
     "src/shared/taxRealEstateAcquisition.ts",
     "src/shared/connectors/connectorHealth.ts",
-    "src/shared/taxBusinessOffice.ts"
+    "src/shared/taxBusinessOffice.ts",
+    "src/shared/taxInheritance.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
