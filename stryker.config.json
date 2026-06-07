@@ -141,6 +141,7 @@
     "src/shared/taxFixedAsset.ts",
     "src/shared/connectors/pluginRuntime.ts",
     "src/shared/taxRegistrationLicense.ts",
+    "src/shared/taxAutomobile.ts",
     "src/shared/taxRealEstateAcquisition.ts"
   ],
   "testRunner": "vitest",
