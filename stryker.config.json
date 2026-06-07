@@ -149,7 +149,8 @@
     "src/shared/taxInheritance.ts",
     "src/shared/taxGift.ts",
     "src/shared/taxNationalHealthInsurance.ts",
-    "src/shared/taxIndividualBusiness.ts"
+    "src/shared/taxIndividualBusiness.ts",
+    "src/shared/taxNationalPension.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
