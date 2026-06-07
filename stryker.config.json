@@ -147,7 +147,8 @@
     "src/shared/taxBusinessOffice.ts",
     "src/shared/taxRealEstateTransactionCost.ts",
     "src/shared/taxInheritance.ts",
-    "src/shared/taxGift.ts"
+    "src/shared/taxGift.ts",
+    "src/shared/taxNationalHealthInsurance.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
