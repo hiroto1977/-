@@ -201,6 +201,36 @@ describe('estimateRealEstatePurchaseTaxCost', () => {
     ).toThrow('registrationType is required');
   });
 
+  it('assessedValue が null のとき明示的に throw する', () => {
+    expect(() =>
+      estimateRealEstatePurchaseTaxCost({
+        assessedValue: null,
+        propertyType: 'land',
+        registrationType: 'transferSale',
+      } as unknown as RealEstatePurchaseInput),
+    ).toThrow('assessedValue is required');
+  });
+
+  it('propertyType が null のとき明示的に throw する', () => {
+    expect(() =>
+      estimateRealEstatePurchaseTaxCost({
+        assessedValue: 10_000_000,
+        propertyType: null,
+        registrationType: 'transferSale',
+      } as unknown as RealEstatePurchaseInput),
+    ).toThrow('propertyType is required');
+  });
+
+  it('registrationType が null のとき明示的に throw する', () => {
+    expect(() =>
+      estimateRealEstatePurchaseTaxCost({
+        assessedValue: 10_000_000,
+        propertyType: 'land',
+        registrationType: null,
+      } as unknown as RealEstatePurchaseInput),
+    ).toThrow('registrationType is required');
+  });
+
   // --- サブ関数の throw が伝播することの確認 ------------------------------
   it('負の assessedValue はサブ関数 (取得税) の検証で throw が伝播する', () => {
     expect(() =>
