@@ -140,7 +140,8 @@
     "src/shared/taxStampDuty.ts",
     "src/shared/taxFixedAsset.ts",
     "src/shared/connectors/pluginRuntime.ts",
-    "src/shared/taxRegistrationLicense.ts"
+    "src/shared/taxRegistrationLicense.ts",
+    "src/shared/taxAutomobile.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
