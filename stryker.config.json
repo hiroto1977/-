@@ -138,7 +138,8 @@
     "src/shared/connectors/connectorRegistry.ts",
     "src/shared/connectors/connectorCatalog.ts",
     "src/shared/taxStampDuty.ts",
-    "src/shared/taxFixedAsset.ts"
+    "src/shared/taxFixedAsset.ts",
+    "src/shared/connectors/pluginRuntime.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
