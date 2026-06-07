@@ -148,7 +148,8 @@
     "src/shared/taxRealEstateTransactionCost.ts",
     "src/shared/taxInheritance.ts",
     "src/shared/taxGift.ts",
-    "src/shared/taxNationalHealthInsurance.ts"
+    "src/shared/taxNationalHealthInsurance.ts",
+    "src/shared/taxIndividualBusiness.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
