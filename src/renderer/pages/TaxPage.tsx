@@ -62,6 +62,18 @@ import {
 } from '../../shared/taxRegistrationLicense';
 import { stampDutyAmount, type DocumentType } from '../../shared/taxStampDuty';
 import { estimateRealEstatePurchaseTaxCost } from '../../shared/taxRealEstateTransactionCost';
+import { estimateInheritanceTax } from '../../shared/taxInheritance';
+import {
+  annualGiftTax,
+  settlementGiftTax,
+  type GiftType,
+} from '../../shared/taxGift';
+import {
+  automobileTaxByDisplacement,
+  environmentalPerformanceLevy,
+  type EnvironmentalPerformanceCategory,
+} from '../../shared/taxAutomobile';
+import { businessOfficeTax } from '../../shared/taxBusinessOffice';
 
 /** 公式ツール (試算・申告・納付)。申告・納付はここで手動実行する。 */
 const OFFICIAL_TOOLS: { label: string; url: string; note: string }[] = [
@@ -338,6 +350,121 @@ export function TaxPage() {
     standard: '本則課税',
     simplified: '簡易課税',
     'twenty-percent': '2割特例',
+  };
+
+  // --- ⑫ 相続・贈与・その他の税 (概算) ---
+  // すべて純粋関数のライブ呼び出し。入力は文字列で保持し、num() で正の数値化。
+  // 純粋関数は 0/不正入力で throw する場合があるため、各 useMemo は try/catch で
+  // ガードし、描画クラッシュを防ぐ (バッチ1と同じく「throw させず描画継続」)。
+
+  // (a) 相続税: 法定相続分は「均等按分」の簡易UI。法定相続人数 n を入力し、
+  //     legalShares を [1/n, ...] で生成する (配偶者の 1/2 等の実際の按分は簡略化)。
+  const [inhEstateStr, setInhEstateStr] = useState('100000000');
+  const [inhDebtsStr, setInhDebtsStr] = useState('0');
+  const [inhFuneralStr, setInhFuneralStr] = useState('0');
+  const [inhHeirsStr, setInhHeirsStr] = useState('2');
+  const inheritance = useMemo(() => {
+    try {
+      // 法定相続人数は 1 以上の整数。0/不正は 1 に丸める。
+      const heirs = Math.max(1, Math.floor(num(inhHeirsStr)) || 1);
+      // 均等按分の簡易モデル: 各相続人 1/n。合計はちょうど 1.0 にするため
+      // 端数を先頭に寄せる (1/3 等の浮動小数和の誤差を吸収)。
+      const each = 1 / heirs;
+      const legalShares = Array<number>(heirs).fill(each);
+      legalShares[0] = 1 - each * (heirs - 1);
+      return estimateInheritanceTax({
+        grossEstate: num(inhEstateStr),
+        debts: num(inhDebtsStr),
+        funeralExpenses: num(inhFuneralStr),
+        legalShares,
+      });
+    } catch {
+      return { basicDeduction: 0, taxableEstate: 0, totalTax: 0 };
+    }
+  }, [inhEstateStr, inhDebtsStr, inhFuneralStr, inhHeirsStr]);
+
+  // (b) 贈与税: 暦年課税 / 相続時精算課税 を選択。暦年は一般/特例の速算表選択。
+  const [giftAmountStr, setGiftAmountStr] = useState('5000000');
+  const [giftMethod, setGiftMethod] = useState<'annual' | 'settlement'>('annual');
+  const [giftType, setGiftType] = useState<GiftType>('special');
+  const [giftPriorStr, setGiftPriorStr] = useState('0');
+  const gift = useMemo(() => {
+    try {
+      if (giftMethod === 'settlement') {
+        const r = settlementGiftTax({
+          giftAmount: num(giftAmountStr),
+          cumulativePriorGifts: num(giftPriorStr),
+        });
+        return { taxableAmount: r.taxableAmount, tax: r.tax };
+      }
+      const r = annualGiftTax({ giftAmount: num(giftAmountStr), giftType });
+      return { taxableAmount: r.taxableAmount, tax: r.tax };
+    } catch {
+      return { taxableAmount: 0, tax: 0 };
+    }
+  }, [giftAmountStr, giftMethod, giftType, giftPriorStr]);
+
+  // (c) 自動車税: 排気量 → 種別割年額。取得価額 + 環境性能区分 → 環境性能割。
+  const [autoCcStr, setAutoCcStr] = useState('2000');
+  const [autoPriceStr, setAutoPriceStr] = useState('3000000');
+  const [autoEnvCategory, setAutoEnvCategory] = useState<EnvironmentalPerformanceCategory>('gas2030_60');
+  const automobile = useMemo(() => {
+    let typeTax = 0;
+    try {
+      const cc = num(autoCcStr);
+      // 排気量 0 以下は throw するため、正値のときだけ計算する。
+      typeTax = cc > 0 ? automobileTaxByDisplacement(cc) : 0;
+    } catch {
+      typeTax = 0;
+    }
+    let envRate = 0;
+    let envLevy = 0;
+    try {
+      const r = environmentalPerformanceLevy({
+        acquisitionPrice: num(autoPriceStr),
+        category: autoEnvCategory,
+      });
+      envRate = r.rate;
+      envLevy = r.levy;
+    } catch {
+      envRate = 0;
+      envLevy = 0;
+    }
+    return { typeTax, envRate, envLevy };
+  }, [autoCcStr, autoPriceStr, autoEnvCategory]);
+
+  // (d) 事業所税: 事業所床面積・従業者数・給与総額 → 資産割 + 従業者割 + 合計。
+  const [boAreaStr, setBoAreaStr] = useState('2000');
+  const [boEmployeesStr, setBoEmployeesStr] = useState('150');
+  const [boSalaryStr, setBoSalaryStr] = useState('600000000');
+  const businessOffice = useMemo(() => {
+    try {
+      return businessOfficeTax({
+        floorAreaSqm: num(boAreaStr),
+        employeeCount: num(boEmployeesStr),
+        totalSalary: num(boSalaryStr),
+      });
+    } catch {
+      return {
+        assetTax: 0,
+        employeeTax: 0,
+        total: 0,
+        assetExempt: true,
+        employeeExempt: true,
+      };
+    }
+  }, [boAreaStr, boEmployeesStr, boSalaryStr]);
+
+  const GIFT_TYPE_LABEL: Record<GiftType, string> = {
+    general: '一般贈与財産 (兄弟間・夫婦間・親→未成年の子等)',
+    special: '特例贈与財産 (直系尊属→18歳以上の子・孫)',
+  };
+  const ENV_CATEGORY_LABEL: Record<EnvironmentalPerformanceCategory, string> = {
+    electric: '電気自動車等 (非課税 0%)',
+    gas2030_85: '2030年度燃費基準85%達成 (非課税 0%)',
+    gas2030_75: '2030年度燃費基準75%達成 (1%)',
+    gas2030_60: '2030年度燃費基準60%達成 (2%)',
+    other: 'それ以外 (3%)',
   };
 
   // --- ⑪ 不動産・資産にかかる税 (概算) ---
@@ -1202,6 +1329,189 @@ export function TaxPage() {
             <Stat label="印紙税" value={jpy(purchaseCost.stampDuty)} />
             <Stat label="取得コスト合計" value={jpy(purchaseCost.total)} positive />
           </div>
+        </div>
+      </Section>
+
+      <Section title="⑫ 相続・贈与・その他の税 (概算)" count={4}>
+        <div
+          role="note"
+          style={{
+            margin: '0 0 12px',
+            padding: 10,
+            background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid #fbbf24',
+            borderRadius: 6,
+            fontSize: 11,
+            color: '#fbbf24',
+            lineHeight: 1.6,
+          }}
+        >
+          ⚠️ 以下はいずれも<strong>概算であり税務助言ではありません。</strong>
+          相続税の配偶者の税額軽減・小規模宅地等の特例・2割加算、贈与税の各種非課税特例
+          (住宅取得等資金・教育資金・配偶者控除など)、自動車税のグリーン化特例・自治体差、
+          事業所税の課税対象自治体 (指定都市等) の判定・課税標準の特例は反映しません。
+          実際の課税要否・税額は<strong>税理士 / 都道府県税事務所 / 市区町村</strong>に
+          ご確認ください。
+        </div>
+
+        {/* (a) 相続税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (a) 相続税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            基礎控除 (3,000万円 + 600万円 × 法定相続人数) を超えた課税遺産総額に、法定相続分課税方式の
+            速算表を適用した<strong>相続税の総額</strong>までを概算します。
+            ※ <strong>法定相続分は簡易に「均等按分 (各 1/n)」</strong>とする簡略UIです (配偶者1/2等の実際の按分・
+            配偶者の税額軽減・小規模宅地等の特例・2割加算・各人への按分後の納付額は未対応のため、実際とは異なります)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              遺産総額 (課税価格・円)
+              <input type="text" inputMode="decimal" value={inhEstateStr} onChange={(e) => setInhEstateStr(e.target.value)} style={{ ...inputStyle, width: 170 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              債務 (借入金等・円)
+              <input type="text" inputMode="decimal" value={inhDebtsStr} onChange={(e) => setInhDebtsStr(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              葬式費用 (円)
+              <input type="text" inputMode="decimal" value={inhFuneralStr} onChange={(e) => setInhFuneralStr(e.target.value)} style={{ ...inputStyle, width: 130 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              法定相続人数 (均等按分)
+              <input type="text" inputMode="decimal" value={inhHeirsStr} onChange={(e) => setInhHeirsStr(e.target.value)} style={{ ...inputStyle, width: 110 }} />
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <Stat label="基礎控除" value={jpy(inheritance.basicDeduction)} />
+            <Stat label="課税遺産総額 (基礎控除後)" value={jpy(inheritance.taxableEstate)} />
+            <Stat label="相続税の総額" value={jpy(inheritance.totalTax)} />
+          </div>
+          {inheritance.taxableEstate === 0 && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
+              ※ 課税価格が基礎控除以下のため、相続税はかかりません (申告も原則不要)。
+            </div>
+          )}
+        </div>
+
+        {/* (b) 贈与税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (b) 贈与税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            その年に贈与を受けた財産に課されます。<strong>暦年課税</strong> (基礎控除110万円 + 速算表) と
+            <strong>相続時精算課税</strong> (年110万円基礎控除 + 累計2,500万円の特別控除超過分に一律20%) を選べます。
+            ※ 各種非課税特例 (住宅取得等資金・教育資金一括贈与・配偶者控除等) は未対応の概算です。
+            相続時精算課税は選択要件 (贈与者60歳以上・受贈者18歳以上の推定相続人/孫・届出) を満たす前提の簡略モデルです。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              贈与額 (年・円)
+              <input type="text" inputMode="decimal" value={giftAmountStr} onChange={(e) => setGiftAmountStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              課税方式
+              <select value={giftMethod} onChange={(e) => setGiftMethod(e.target.value as 'annual' | 'settlement')} style={{ ...inputStyle, width: 200 }}>
+                <option value="annual">暦年課税</option>
+                <option value="settlement">相続時精算課税</option>
+              </select>
+            </label>
+            {giftMethod === 'annual' ? (
+              <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                贈与財産の種別
+                <select value={giftType} onChange={(e) => setGiftType(e.target.value as GiftType)} style={{ ...inputStyle, width: 320 }}>
+                  <option value="general">{GIFT_TYPE_LABEL.general}</option>
+                  <option value="special">{GIFT_TYPE_LABEL.special}</option>
+                </select>
+              </label>
+            ) : (
+              <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                過去の累計 (基礎控除後・円)
+                <input type="text" inputMode="decimal" value={giftPriorStr} onChange={(e) => setGiftPriorStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+              </label>
+            )}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+            <Stat label="基礎控除後の課税価格" value={jpy(gift.taxableAmount)} />
+            <Stat label="贈与税額" value={jpy(gift.tax)} />
+          </div>
+        </div>
+
+        {/* (c) 自動車税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (c) 自動車税 (自家用乗用車)
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            総排気量に応じた<strong>種別割</strong>の年税額 (令和元年10月以降の新規登録の本則税率表) と、
+            取得価額 × 燃費達成度区分の税率による<strong>環境性能割</strong>を概算します。
+            ※ グリーン化特例 (経年重課・新車の軽課)・自治体差・年度途中登録の月割は未反映の概算です (都道府県税事務所に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              総排気量 (cc)
+              <input type="text" inputMode="decimal" value={autoCcStr} onChange={(e) => setAutoCcStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              取得価額 (環境性能割・円)
+              <input type="text" inputMode="decimal" value={autoPriceStr} onChange={(e) => setAutoPriceStr(e.target.value)} style={{ ...inputStyle, width: 170 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              燃費達成度区分 (環境性能割)
+              <select value={autoEnvCategory} onChange={(e) => setAutoEnvCategory(e.target.value as EnvironmentalPerformanceCategory)} style={{ ...inputStyle, width: 280 }}>
+                <option value="electric">{ENV_CATEGORY_LABEL.electric}</option>
+                <option value="gas2030_85">{ENV_CATEGORY_LABEL.gas2030_85}</option>
+                <option value="gas2030_75">{ENV_CATEGORY_LABEL.gas2030_75}</option>
+                <option value="gas2030_60">{ENV_CATEGORY_LABEL.gas2030_60}</option>
+                <option value="other">{ENV_CATEGORY_LABEL.other}</option>
+              </select>
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <Stat label="種別割 (年額)" value={jpy(automobile.typeTax)} />
+            <Stat label="環境性能割 税率" value={`${(automobile.envRate * 100).toFixed(1)}%`} />
+            <Stat label="環境性能割 税額" value={jpy(automobile.envLevy)} />
+          </div>
+        </div>
+
+        {/* (d) 事業所税 */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>
+            (d) 事業所税
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
+            政令指定都市・東京都23区など<strong>課税対象の自治体 (指定都市等) でのみ</strong>課されます。
+            <strong>資産割</strong> (事業所床面積 × 600円/㎡) と<strong>従業者割</strong> (従業者給与総額 × 0.25%) を概算します。
+            免税点 (資産割: 床面積1,000㎡以下 / 従業者割: 従業者数100人以下) <strong>以下なら非課税</strong>です。
+            ※ 課税対象自治体か否かの判定・課税標準の特例 (共用部分の按分・非課税用途部分の控除等) は未反映の概算です (市区町村に確認してください)。
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              事業所床面積 (㎡)
+              <input type="text" inputMode="decimal" value={boAreaStr} onChange={(e) => setBoAreaStr(e.target.value)} style={{ ...inputStyle, width: 140 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              従業者数 (人)
+              <input type="text" inputMode="decimal" value={boEmployeesStr} onChange={(e) => setBoEmployeesStr(e.target.value)} style={{ ...inputStyle, width: 120 }} />
+            </label>
+            <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              従業者給与総額 (年・円)
+              <input type="text" inputMode="decimal" value={boSalaryStr} onChange={(e) => setBoSalaryStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
+            </label>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <Stat label="資産割 (600円/㎡)" value={jpy(businessOffice.assetTax)} />
+            <Stat label="従業者割 (0.25%)" value={jpy(businessOffice.employeeTax)} />
+            <Stat label="事業所税 合計" value={jpy(businessOffice.total)} positive />
+          </div>
+          {(businessOffice.assetExempt || businessOffice.employeeExempt) && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+              ※ {businessOffice.assetExempt && '資産割は床面積1,000㎡以下のため免税点未満で非課税。'}
+              {businessOffice.employeeExempt && '従業者割は従業者数100人以下のため免税点未満で非課税。'}
+            </div>
+          )}
         </div>
       </Section>
 
