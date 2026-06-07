@@ -133,7 +133,8 @@
     "src/renderer/hooks/useServiceData.ts",
     "src/renderer/web-templates.ts",
     "src/renderer/data/voiceCommand.ts",
-    "src/renderer/data/voiceSession.ts"
+    "src/renderer/data/voiceSession.ts",
+    "src/renderer/data/cloudSync.ts"
   ],
   "testRunner": "vitest",
   "vitest": {
