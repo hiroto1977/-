@@ -381,6 +381,17 @@ describe('settlementGiftTax (相続時精算課税)', () => {
     expect(r.tax).toBe(2_000_000);
   });
 
+  it('累計: 過去既に特別控除超過 (累計3,000万) + 本年1,110万 → 本年負担分は課税価格1,000万のみ → 200万', () => {
+    // 過去 priorOver = 3,000万 − 2,500万 = 500万、合算 totalOver = (3,000万+1,000万)−2,500万 = 1,500万。
+    // 本年負担 = 1,500万 − 500万 = 1,000万 → 200万。本年分だけが課税される (過去分の二重課税なし)。
+    const r = settlementGiftTax({
+      giftAmount: 11_100_000,
+      cumulativePriorGifts: 30_000_000,
+    });
+    expect(r.taxableAmount).toBe(10_000_000);
+    expect(r.tax).toBe(2_000_000);
+  });
+
   it('累計: 過去2,000万 + 本年1,110万 (課税価格1,000万) → 超過500万×20% = 100万', () => {
     const r = settlementGiftTax({
       giftAmount: 11_100_000,
