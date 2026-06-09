@@ -36,12 +36,17 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build:web
-      # Pages はディレクトリ直下の index.html を配信するので複製する。
+      # 軽量ランディング (services.ts から自動生成・自己検証付き) を生成
+      - run: npm run build:landing
+      # ルート = 軽量ランディング、フル版 = /app.html、OGP = /og.png
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp dist/standalone.html _site/index.html
+          cp dist/landing.html _site/index.html
+          cp dist/standalone.html _site/app.html
           cp dist/standalone.html _site/standalone.html
+          cp assets/og.png _site/og.png
+          touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

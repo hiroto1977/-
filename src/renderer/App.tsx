@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
 import { isServiceId } from '../shared/serviceId';
+import { filterServices } from './sidebarFilter';
+import { serviceIdFromHash, hashForService } from './hashRoute';
+import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
@@ -38,9 +41,47 @@ const SERVICE_ORDER: ReadonlyMap<ServiceId, number> = new Map(
   SERVICES.map((s, i) => [s.id, i]),
 );
 
+const RECENTS_KEY = 'servicehub.recents';
+const FAVORITES_KEY = 'servicehub.favorites';
+const KNOWN_IDS: ReadonlySet<ServiceId> = new Set(SERVICES.map((s) => s.id));
+
+/** localStorage から ServiceId 配列を安全に読む (壊れた値・private mode は []). */
+function loadIds(key: string): ServiceId[] {
+  try {
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter(isServiceId) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveIds(key: string, ids: readonly ServiceId[]): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(ids));
+  } catch {
+    /* private mode / quota — 永続化は best-effort */
+  }
+}
+
+/** 初期表示サービス: URL ハッシュ優先、無ければ先頭。 */
+function initialActiveId(): ServiceId {
+  try {
+    const fromHash = serviceIdFromHash(typeof location !== 'undefined' ? location.hash : '');
+    if (fromHash) return fromHash;
+  } catch {
+    /* location 不在環境 */
+  }
+  return SERVICES[0]!.id;
+}
+
 export function App() {
-  const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
+  const [activeId, setActiveId] = useState<ServiceId>(initialActiveId);
   const [version, setVersion] = useState<string>('');
+  const [query, setQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [recents, setRecents] = useState<ServiceId[]>(() => loadIds(RECENTS_KEY));
+  const [favorites, setFavorites] = useState<ServiceId[]>(() => loadIds(FAVORITES_KEY));
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
@@ -122,6 +163,44 @@ export function App() {
     return () => window.removeEventListener('servicehub:navigate', onNavigate);
   }, []);
 
+  // Cmd/Ctrl-K でサイドバー検索にフォーカス (どの画面からでも)。
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        searchRef.current?.select();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // activeId → URL ハッシュ同期 + 「最近使った」へ記録。
+  useEffect(() => {
+    try {
+      const h = hashForService(activeId);
+      if (location.hash !== h) location.hash = h;
+    } catch {
+      /* location 不在環境 */
+    }
+    setRecents((prev) => pushRecent(prev, activeId));
+  }, [activeId]);
+
+  // URL ハッシュ → activeId (ブラウザ戻る/進む・直リンク・共有)。
+  useEffect(() => {
+    function onHash() {
+      const id = serviceIdFromHash(location.hash);
+      if (id) setActiveId(id);
+    }
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  // recents / favorites を localStorage へ永続化。
+  useEffect(() => saveIds(RECENTS_KEY, recents), [recents]);
+  useEffect(() => saveIds(FAVORITES_KEY, favorites), [favorites]);
+
   const grouped = useMemo(() => {
     const out: Record<ServiceCategory, typeof SERVICES> = {
       featured: [],
@@ -132,9 +211,39 @@ export function App() {
     return out;
   }, []);
 
+  // 検索クエリでの絞り込み結果。null = 非検索 (カテゴリ別表示)。
+  const filtered = useMemo(() => filterServices(SERVICES, query), [query]);
+
   function toggle(cat: ServiceCategory) {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }
+
+  /** サービスを選択し、属するカテゴリを展開する。 */
+  function selectService(id: ServiceId) {
+    setActiveId(id);
+    const def = SERVICES.find((s) => s.id === id);
+    if (def) setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+  }
+
+  /** 検索ボックスのキー操作: Enter=先頭ヒット選択、Escape=クリア。 */
+  function onSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' && filtered && filtered.length > 0) {
+      selectService(filtered[0]!.id);
+    } else if (e.key === 'Escape') {
+      setQuery('');
+    }
+  }
+
+  /** お気に入りのトグル。 */
+  function toggleFav(id: ServiceId) {
+    setFavorites((prev) => toggleFavorite(prev, id));
+  }
+
+  // 保存済み id を現存サービスに解決 (stale id を除外し定義を引く)。
+  const byId = (id: ServiceId) => SERVICES.find((s) => s.id === id)!;
+  const favoriteServices = keepKnown(favorites, KNOWN_IDS).map(byId);
+  const recentServices = keepKnown(recents, KNOWN_IDS).slice(0, RECENTS_MAX).map(byId);
+  const favoriteSet = new Set(favorites);
 
   // Browser-mode + locked → show only the lock screen.
   if (browserMode === null || vaultUnlocked === null) {
@@ -153,65 +262,126 @@ export function App() {
   const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
   const requiredPlan = requiredPlanForServiceIndex(activeOrder);
 
+  // サイドバー項目の共通描画 (カテゴリ別表示と検索結果の両方で使う)。
+  // プランによるロック表示 (🔒) も保持する。
+  const renderItem = (service: (typeof SERVICES)[number]) => {
+    const order = SERVICE_ORDER.get(service.id) ?? 0;
+    const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
+    const fav = favoriteSet.has(service.id);
+    return (
+      <button
+        key={service.id}
+        className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
+        data-service-id={service.id}
+        data-locked={unlocked ? undefined : 'true'}
+        onClick={() => selectService(service.id)}
+        title={unlocked ? undefined : 'プランのアップグレードで利用可能'}
+        style={unlocked ? undefined : { opacity: 0.5 }}
+      >
+        <span className="icon">{service.icon}</span>
+        <span>{service.label}</span>
+        <span className="sidebar-item-controls">
+          {!unlocked && (
+            <span style={{ fontSize: 11 }} aria-label="locked">
+              🔒
+            </span>
+          )}
+          <span
+            role="button"
+            tabIndex={0}
+            className={`fav-toggle ${fav ? 'on' : ''}`}
+            aria-label={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            aria-pressed={fav}
+            title={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFav(service.id);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleFav(service.id);
+              }
+            }}
+          >
+            {fav ? '★' : '☆'}
+          </span>
+        </span>
+      </button>
+    );
+  };
+
   return (
     <div className="app">
       <aside className="sidebar">
         <div className="sidebar-header">サービスハブ</div>
-        <nav className="sidebar-nav">
-          {(['featured', 'tools', 'integrations'] as const).map((cat) => {
-            const items = grouped[cat];
-            if (items.length === 0) return null;
-            const isCollapsed = collapsed[cat];
-            return (
-              <div key={cat} style={{ marginBottom: 6 }}>
-                <button
-                  type="button"
-                  onClick={() => toggle(cat)}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '4px 12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-mute)',
-                    cursor: 'pointer',
-                    fontSize: 10,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: 1,
-                    marginTop: 4,
-                  }}
-                  aria-expanded={!isCollapsed}
-                >
-                  {isCollapsed ? '▶' : '▼'} {CATEGORY_LABEL[cat]} ({items.length})
-                </button>
-                {!isCollapsed &&
-                  items.map((service) => {
-                    const order = SERVICE_ORDER.get(service.id) ?? 0;
-                    const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
-                    return (
-                      <button
-                        key={service.id}
-                        className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
-                        data-service-id={service.id}
-                        data-locked={unlocked ? undefined : 'true'}
-                        onClick={() => setActiveId(service.id)}
-                        title={unlocked ? undefined : 'プランのアップグレードで利用可能'}
-                        style={unlocked ? undefined : { opacity: 0.5 }}
-                      >
-                        <span className="icon">{service.icon}</span>
-                        <span>{service.label}</span>
-                        {!unlocked && (
-                          <span style={{ marginLeft: 'auto', fontSize: 11 }} aria-label="locked">
-                            🔒
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-              </div>
-            );
-          })}
+        <div className="sidebar-search">
+          <input
+            ref={searchRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={onSearchKeyDown}
+            placeholder="サービスを検索 (⌘/Ctrl-K)"
+            aria-label="サービスを検索"
+            className="sidebar-search-input"
+          />
+        </div>
+        <nav className="sidebar-nav" aria-label="サービス一覧">
+          {filtered !== null ? (
+            filtered.length === 0 ? (
+              <div className="sidebar-empty">「{query.trim()}」に一致するサービスはありません</div>
+            ) : (
+              filtered.map(renderItem)
+            )
+          ) : (
+            <>
+              {favoriteServices.length > 0 && (
+                <div style={{ marginBottom: 6 }}>
+                  <div className="sidebar-section-label">★ お気に入り</div>
+                  {favoriteServices.map(renderItem)}
+                </div>
+              )}
+              {recentServices.length > 0 && (
+                <div style={{ marginBottom: 6 }}>
+                  <div className="sidebar-section-label">最近使った</div>
+                  {recentServices.map(renderItem)}
+                </div>
+              )}
+              {(['featured', 'tools', 'integrations'] as const).map((cat) => {
+                const items = grouped[cat];
+                if (items.length === 0) return null;
+                const isCollapsed = collapsed[cat];
+                return (
+                <div key={cat} style={{ marginBottom: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => toggle(cat)}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '4px 12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-mute)',
+                      cursor: 'pointer',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: 1,
+                      marginTop: 4,
+                    }}
+                    aria-expanded={!isCollapsed}
+                  >
+                    {isCollapsed ? '▶' : '▼'} {CATEGORY_LABEL[cat]} ({items.length})
+                  </button>
+                  {!isCollapsed && items.map(renderItem)}
+                </div>
+                );
+              })}
+            </>
+          )}
         </nav>
         <div className="sidebar-footer">
           <label style={{ display: 'block', marginBottom: 4 }}>

@@ -39,6 +39,14 @@ npm run scaffold -- linear "Linear" LN bearer
   patch  src/renderer/data/snapshot.ts       # SNAPSHOT.linear = { items: [] }
 ```
 
+> **連携スタブの集約:** `{ items, count }` だけを描画する純 snapshot 連携先は、
+> scaffold 後に bespoke page/fetcher を消し、`createConnectorStubPage`
+> (`src/renderer/pages/ConnectorStubPage.tsx`) と `makeConnectorStubFetcher`
+> (`src/main/clients/connectorStub.ts`) に寄せられる。`services.ts` の
+> `page:` を factory 呼び出しにし、`<id>.ts` は型 alias + re-export の薄い
+> ラッパにすると、`lint:test-coverage` / `client module count` の不変条件を
+> 保ったまま重複を除去できる (Microsoft365/Dropbox 等 10 連携先が実例)。
+
 ## scaffold 後にやること
 
 1. `src/main/clients/linear.ts` の TODO:
