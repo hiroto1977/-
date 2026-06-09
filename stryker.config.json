@@ -50,6 +50,7 @@
     "src/main/clients/admin-scrivener.ts",
     "src/main/clients/sme-consultant.ts",
     "src/main/clients/patent-attorney.ts",
+    "src/renderer/sidebarFilter.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/autoLock.ts",
     "src/renderer/security/mnemonic.ts",

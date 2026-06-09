@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 45 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1193** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1242) |
+| ユニットテスト | **1204** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1242) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
@@ -655,7 +655,7 @@ flowchart TB
 graph LR
   subgraph "Developer"
     D1[npm run typecheck]
-    D2[npm test<br/>1242 tests, 58 files]
+    D2[npm test<br/>1253 tests, 59 files]
     D3[npm run test:cov]
     D4[npm run mutate<br/>~10min, 55 files in scope]
     D5[npm run mutate:triage]

@@ -1,6 +1,6 @@
 # Browser-native Redesign — Service Hub Web Edition
 
-> Status: **実装完了 (Phase A-D)** — Vault / Library / Settings / Proxy / FSA / PKCE 全て実装・テスト済 (1242 tests, mutation 100%)
+> Status: **実装完了 (Phase A-D)** — Vault / Library / Settings / Proxy / FSA / PKCE 全て実装・テスト済 (1253 tests, mutation 100%)
 > Target: 既存 Electron 版と同等機能をブラウザ単体 (no install, no server) で実現
 > Scope: Phase A-D の 4 段階マイグレーション。
 
