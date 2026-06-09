@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+# 単一ファイルのブラウザ版 (dist/standalone.html) を GitHub Pages に公開する。
+# main への push で自動デプロイ。手動実行 (workflow_dispatch) も可。
+#
+# 公開先: https://hiroto1977.github.io/-/
+#
+# 初回のみリポジトリ設定が必要:
+#   Settings → Pages → Build and deployment → Source = "GitHub Actions"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GITHUB_TOKEN に Pages デプロイ権限を付与
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時実行は 1 本に絞る (進行中の公開を中断して最新を優先)
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # 単一ファイル standalone.html を生成 (tsc -b + vite build + inline-html.cjs)
+      - run: npm run build:web
+      - name: Assemble Pages site
+        run: |
+          mkdir -p _site
+          # standalone.html をルートの index.html として配信
+          cp dist/standalone.html _site/index.html
+          # Jekyll 処理を無効化 (リポジトリ名 "-" / 単一 HTML のため)
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
