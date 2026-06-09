@@ -95,9 +95,10 @@ function buildHtml(services, tests) {
     applicationCategory: 'BusinessApplication', operatingSystem: 'Web, Windows, macOS, Linux',
     description, url: SITE_URL, offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
   });
+  // 各カードはフル版の該当サービスへのディープリンク (#<id>)。タップで直接開く。
   const card = (s) => `
-        <article class="card"><span class="chip" aria-hidden="true">${esc(s.icon)}</span>
-          <div class="card-body"><h3>${esc(s.label)}</h3><p>${esc(s.description)}</p></div></article>`;
+        <a class="card" href="./app.html#${esc(s.id)}"><span class="chip" aria-hidden="true">${esc(s.icon)}</span>
+          <div class="card-body"><h3>${esc(s.label)}</h3><p>${esc(s.description)}</p></div></a>`;
   const section = (c) => `
       <section class="cat" aria-labelledby="cat-${c}">
         <h2 id="cat-${c}">${esc(CATEGORY_LABEL[c])} <span class="count">${counts[c]}</span></h2>
@@ -148,7 +149,7 @@ function buildHtml(services, tests) {
   .cat h2{font-size:20px;margin:0 0 16px;display:flex;align-items:center;gap:10px}
   .cat h2 .count{font-size:12px;font-weight:700;color:var(--mute);background:var(--elev2);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-  .card{display:flex;gap:12px;background:var(--elev);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:border-color .15s,transform .15s}
+  .card{display:flex;gap:12px;background:var(--elev);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:border-color .15s,transform .15s;color:var(--text);text-decoration:none}
   .card:hover{border-color:var(--accent);transform:translateY(-2px)}
   .chip{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;background:var(--elev2);border:1px solid var(--border);border-radius:10px;font-weight:800;font-size:13px;color:var(--accent);letter-spacing:.5px}
   .card-body h3{margin:0 0 3px;font-size:15px}.card-body p{margin:0;font-size:12.5px;color:var(--mute)}
