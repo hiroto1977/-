@@ -4,6 +4,7 @@
   "mutate": [
     "src/main/oauth.ts",
     "src/main/clients/types.ts",
+    "src/main/clients/connectorStub.ts",
     "src/main/clients/skills.ts",
     "src/main/clients/security.ts",
     "src/main/clients/atlassian.ts",

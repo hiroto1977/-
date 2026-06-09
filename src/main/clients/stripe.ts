@@ -1,26 +1,10 @@
-import type { FetchContext } from './types';
+import { makeConnectorStubFetcher, type ConnectorStubSnapshot } from './connectorStub';
 
 /**
- * Stripe — 連携先 (snapshot 専用)。
- *
- * 公式 API 配線は Phase 6+ 予定。本ファイルは LIVE_FETCHERS invariant
- * (clients/index.ts) を満たすための static stub。実際の業務 KPI は
- * SNAPSHOT.stripe を直接描画する。
+ * Stripe — 連携先 (snapshot 専用)。公式 API 配線は Phase 6+ 予定。
+ * 共通形状・実装は ./connectorStub に集約 (型名以外同一だった 10 連携先)。
  */
+export type StripeSnapshot = ConnectorStubSnapshot;
 
-export interface StripeSnapshot {
-  readonly items: ReadonlyArray<{ readonly id: string; readonly name: string }>;
-  readonly count: number;
-}
-
-// Stryker disable next-line all
-const STUB: StripeSnapshot = { items: [], count: 0 };
-
-export async function fetchStripeSnapshotImpl(_ctx: FetchContext): Promise<StripeSnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
-export async function fetchStripeSnapshot(ctx: FetchContext): Promise<StripeSnapshot> {
-  return fetchStripeSnapshotImpl(ctx);
-}
+export const { impl: fetchStripeSnapshotImpl, fetcher: fetchStripeSnapshot } =
+  makeConnectorStubFetcher();
