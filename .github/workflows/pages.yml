@@ -34,6 +34,12 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Pages を programmatically 有効化 (初回の手動 Settings 操作を不要にする)。
+      # 権限が足りない場合のみ Settings → Pages → Source = "GitHub Actions" が必要。
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       # 単一ファイル standalone.html を生成 (tsc -b + vite build + inline-html.cjs)
       - run: npm run build:web
       # 軽量ランディング (16KB) を生成 (services.ts から自動生成)

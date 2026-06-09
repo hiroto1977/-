@@ -10,6 +10,7 @@
     "build:renderer": "tsc -b && vite build",
     "build:web": "tsc -b && vite build && node scripts/inline-html.cjs",
     "build:landing": "node scripts/build-landing.cjs",
+    "sync:readme": "node scripts/sync-readme.cjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit --force",

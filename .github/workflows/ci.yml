@@ -30,6 +30,7 @@ jobs:
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:test-coverage
+      - run: npm run sync:readme -- --check   # README のサービス表が services.ts と同期しているか
       - run: npm run lint            # eslint last — slowest of this group
 
   test:
