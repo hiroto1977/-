@@ -1,5 +1,7 @@
 node_modules/
-dist/
+dist/*
+!dist/standalone.html
+!dist/ServiceHubを開く.bat
 dist-electron/
 release/
 tmp-screenshots/
@@ -15,5 +17,4 @@ tmp-screenshots/
 .stryker-incremental.json
 reports/
 coverage/
-dist/standalone.html
 business-hub.html

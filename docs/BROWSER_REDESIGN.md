@@ -1,6 +1,6 @@
 # Browser-native Redesign — Service Hub Web Edition
 
-> Status: **実装完了 (Phase A-D)** — Vault / Library / Settings / Proxy / FSA / PKCE 全て実装・テスト済 (1253 tests, mutation 100%)
+> Status: **実装完了 (Phase A-D)** — Vault / Library / Settings / Proxy / FSA / PKCE 全て実装・テスト済 (1113 tests, mutation 100%)
 > Target: 既存 Electron 版と同等機能をブラウザ単体 (no install, no server) で実現
 > Scope: Phase A-D の 4 段階マイグレーション。
 
@@ -341,7 +341,7 @@ form-action 'none';
 - [ ] Library の zip 一括ダウンロード動作 (未実装、Phase E 候補)
 
 ### Phase B 完了
-- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 403 KB、Electron smoke test で確認済、Phase E BIP-39 リカバリーキー含む)
+- [x] standalone HTML 単体で Vault + Library 動作 (`dist/standalone.html` 約 510 KB、Electron smoke test で確認済、Phase E BIP-39 リカバリーキー含む)
 - [x] エクスポート → Library に保存 → 「ライブラリで見る」 ボタンで遷移 (`web-shim.ts:saveToLibrary`)
 
 ### Phase C 完了

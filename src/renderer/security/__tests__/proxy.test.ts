@@ -40,6 +40,20 @@ describe('ProxyConfig persistence', () => {
     expect(await getProxyConfig()).toBeNull();
   });
 
+  it('closes the IndexedDB connection even when a read/write fails (no leak)', async () => {
+    await setProxyConfig({ url: 'https://example.com/p' }); // ストア作成
+    const closeSpy = vi.spyOn(IDBDatabase.prototype, 'close');
+    const txSpy = vi.spyOn(IDBDatabase.prototype, 'transaction').mockImplementation(() => {
+      throw new Error('tx boom');
+    });
+    await expect(getProxyConfig()).rejects.toThrow('tx boom');
+    await expect(setProxyConfig({ url: 'https://example.com/q' })).rejects.toThrow('tx boom');
+    // finally で各操作とも db.close() される (リーク無し)。
+    expect(closeSpy).toHaveBeenCalledTimes(2);
+    txSpy.mockRestore();
+    closeSpy.mockRestore();
+  });
+
   it('rejects non-http(s) URLs', async () => {
     await expect(setProxyConfig({ url: 'ftp://x.com' })).rejects.toThrow(/http\(s\)/);
     await expect(setProxyConfig({ url: 'javascript:alert(1)' } as { url: string })).rejects.toThrow();
@@ -296,6 +310,20 @@ describe('fetchViaProxy', () => {
     await expect(
       fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' }),
     ).rejects.toThrow(/proxy 502/);
+  });
+
+  it('redacts tokens reflected in a proxy error body', async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue({
+      ok: false,
+      status: 500,
+      async text() { return 'forwarded Authorization: Bearer secret_abcdefghij failed'; },
+      async json() { return {}; },
+    } as unknown as Response);
+    globalThis.fetch = mockFetch;
+    const err = await fetchViaProxy('https://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://x.com' })
+      .catch((e: unknown) => (e instanceof Error ? e.message : String(e)));
+    expect(err).not.toContain('secret_abcdefghij');
+    expect(err).toContain('[REDACTED]');
   });
 });
 

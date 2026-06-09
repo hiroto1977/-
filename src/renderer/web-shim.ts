@@ -21,6 +21,29 @@
  *                              → same, but expects the page to provide
  *                                the SVG (we extract from the live <svg>
  *                                element on the page)
+ *   - invoke('stocks', 'register-ticker' / 'unregister-ticker', …)
+ *                              → persist the watchlist in localStorage;
+ *                                fetchSnapshot('stocks') then synthesizes a
+ *                                (mock-priced) snapshot from it
+ *   - invoke('stocks', 'compare-strategies' | 'advise' | 'export-dashboard'
+ *            | 'export-dashboard-md', …)
+ *                              → run technical analysis / backtest on mock
+ *                                candles client-side; advise calls Anthropic
+ *                                directly with the Vault-stored key
+ *   - invoke('emotions', 'log-mood' | 'clear-history')
+ *                              → persist mood log in localStorage
+ *   - invoke('emotions', 'analyze-text', …)
+ *                              → Anthropic directly (Vault 'emotions' key)
+ *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
+ *                              → stateless validation (matches Electron)
+ *   - invoke('github', 'create-issue', …)
+ *                              → POST api.github.com directly (CORS-enabled)
+ *                                with the Vault 'github' PAT (Part ②, 外部連携)
+ *   - invoke(notion/slack/atlassian/calendar/gmail/drive/wordpress/canva/
+ *            cloudflare, create-page/send-message/create-event/…)
+ *                              → CORS-blocked: routed through the user's
+ *                                proxy (network/proxy.ts) with the Vault token
+ *                                (OAuth services unwrap the TokenSet bearer)
  *   - other invoke calls       → return action_not_found with message
  *
  * This file is only imported in the web build entry; in Electron, preload
@@ -31,6 +54,110 @@ import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates'
 import { getVault } from './security/vault';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import {
+  registerSymbol,
+  unregisterSymbol,
+  buildStocksSnapshot,
+  loadWatchlistSymbols,
+} from './data/stocksWatchlistWeb';
+import {
+  compareStrategies,
+  buildAnalysesForUniverse,
+  advisorSystemPrompt as stockAdvisorSystemPrompt,
+  validateAdvisorJson as validateStockAdvisorJson,
+  renderDashboardHtml as renderStockDashboardHtml,
+  renderDashboardMarkdown as renderStockDashboardMarkdown,
+  ADVISOR_DISCLAIMER as STOCK_ADVISOR_DISCLAIMER,
+  DEFAULT_ADVISOR_UNIVERSE,
+  type StrategyComparisonResult,
+  type AdvisorResponse,
+} from './data/stocksAnalysisWeb';
+import {
+  logMood as emotionsLogMood,
+  clearHistory as emotionsClearHistory,
+  recordAnalysis as emotionsRecordAnalysis,
+  normalizeAnalysis as emotionsNormalize,
+  extractJson as emotionsExtractJson,
+  buildEmotionsSnapshot,
+  ANALYZE_SYSTEM as EMOTIONS_ANALYZE_SYSTEM,
+} from './data/emotionsWeb';
+import {
+  createGithubIssue,
+  createNotionPage,
+  sendSlackMessage,
+  createAtlassianIssue,
+  createCalendarEvent,
+  createGmailDraft,
+  createDriveFolder,
+  createWordPressPostDraft,
+  createCanvaFolder,
+  createCloudflareDnsRecord,
+  purgeCloudflareCache,
+  scanUrlVirusTotal,
+  checkEmailBreach,
+  parseSecurityKeys,
+  type Transport,
+} from './data/saasWriteWeb';
+import { getProxyConfig, fetchViaProxy } from './network/proxy';
+
+// ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
+// Electron 版も検証して結果を返すだけで永続化しない)。
+const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
+
+/** Vault のトークンから Bearer 文字列を取り出す。OAuth サービスは
+ *  TokenSet ({accessToken,...}) の JSON で保存されることがあるので、その場合は
+ *  accessToken を使う。そうでなければ生のトークン文字列をそのまま使う。 */
+function bearerFromVaultToken(raw: string): string {
+  try {
+    const parsed = JSON.parse(raw) as { accessToken?: unknown };
+    if (parsed && typeof parsed === 'object' && typeof parsed.accessToken === 'string') {
+      return parsed.accessToken;
+    }
+  } catch {
+    /* not JSON — raw token */
+  }
+  return raw;
+}
+
+/** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+async function getProxyTransport(): Promise<Transport> {
+  const cfg = await getProxyConfig();
+  if (!cfg) {
+    throw new Error(
+      'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
+    );
+  }
+  return (url, init) => fetchViaProxy(url, init, cfg);
+}
+
+/** Bearer トークン + プロキシが必要な create 系アクションの共通処理。
+ *  Vault のトークン取得・Bearer 抽出・プロキシ取得・実行を一手に行う。 */
+async function runProxyBearer<R>(
+  serviceId: string,
+  fn: (transport: Transport, bearer: string) => Promise<R>,
+): Promise<ActionResult<R>> {
+  let token: string | null = null;
+  try {
+    token = await vault.getToken(serviceId);
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!token) {
+    return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
+  }
+  let transport: Transport;
+  try {
+    transport = await getProxyTransport();
+  } catch (e) {
+    return err('not_configured', e instanceof Error ? e.message : String(e));
+  }
+  try {
+    return ok(await fn(transport, bearerFromVaultToken(token)));
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
+}
 
 const vault = getVault();
 const library = getLibrary();
@@ -262,6 +389,142 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   });
 }
 
+// --- Anthropic Stocks advisor (browser-direct) ------------------------
+// stocks/advise: ウォッチリスト(空なら既定ユニバース)のティッカーをモック
+// 指標で分析し、Anthropic に投げてランク提案を得る。投資助言ではない旨を
+// system prompt で制約し、固定の免責を必ず付ける。
+async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const question = payload['question'];
+  if (typeof question !== 'string' || question.length === 0) return err('action_failed', '質問を入力してください');
+  if (question.length > 1000) return err('action_failed', '質問が長すぎます (1000 字以内)');
+  if (/[\r\n\0]/.test(question)) return err('action_failed', '質問に改行・制御文字を含めることはできません');
+
+  let apiKey: string | null = null;
+  try {
+    apiKey = await vault.getToken('anthropic');
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+
+  // ユニバース = 登録ウォッチリスト。空なら既定の主要銘柄。
+  const watch = loadWatchlistSymbols();
+  const universe = watch.length > 0 ? watch.slice(0, 25) : [...DEFAULT_ADVISOR_UNIVERSE];
+  const allowed = new Set<string>(universe);
+  const analyses = buildAnalysesForUniverse(universe);
+
+  const systemPrompt = stockAdvisorSystemPrompt(universe);
+  const userPrompt = [
+    'ユーザーの質問: ' + question,
+    '',
+    'テクニカル分析データ (JSON):',
+    JSON.stringify(analyses),
+  ].join('\n');
+
+  let res: Response;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+  } catch (e) {
+    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+  }
+  let parsed: { content?: { type: string; text?: string }[] };
+  try {
+    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+  } catch {
+    return err('action_failed', 'API 応答が JSON ではありません');
+  }
+  const text = parsed.content?.find((b) => b.type === 'text')?.text;
+  if (typeof text !== 'string' || text.length === 0) return err('action_failed', 'API 応答にテキストブロックがありません');
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    return err('action_failed', 'API 応答の中身が JSON 形式ではありません');
+  }
+  try {
+    const recommendations = validateStockAdvisorJson(json, allowed);
+    return ok({ recommendations, disclaimer: STOCK_ADVISOR_DISCLAIMER, notForRealMoney: true });
+  } catch (e) {
+    return err('action_failed', '検証エラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+}
+
+// --- Anthropic Emotions text analyzer (browser-direct) ----------------
+// emotions/analyze-text: Vault の emotions キーで Anthropic を直接呼び、
+// 感情スコアを正規化して localStorage の分析履歴に保存する。
+async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const text = payload['text'];
+  const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
+  if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
+  if (text.length > 5000) return err('action_failed', 'text が長すぎます (5000 字以内)');
+
+  let apiKey: string | null = null;
+  try {
+    apiKey = await vault.getToken('emotions');
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+
+  let res: Response;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 512,
+        system: EMOTIONS_ANALYZE_SYSTEM,
+        messages: [{ role: 'user', content: text }],
+      }),
+    });
+  } catch (e) {
+    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+  }
+  let parsed: { content?: { type: string; text?: string }[] };
+  try {
+    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+  } catch {
+    return err('action_failed', 'API 応答が JSON ではありません');
+  }
+  const body = parsed.content?.find((c) => c.type === 'text')?.text ?? '';
+  let json: unknown;
+  try {
+    json = JSON.parse(emotionsExtractJson(body));
+  } catch {
+    return err('action_failed', 'Anthropic が JSON 以外を返しました: ' + body.slice(0, 80));
+  }
+  const entry = emotionsRecordAnalysis(text, source, emotionsNormalize(json));
+  return ok(entry);
+}
+
 interface SnapshotBusinessUnit {
   id: string;
   label: string;
@@ -364,8 +627,28 @@ const shim = {
     }
   },
 
-  fetchSnapshot: <T>(): Promise<ActionResult<T>> =>
-    Promise.resolve(err('not_implemented', 'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。')),
+  fetchSnapshot: async <T>(serviceId?: string): Promise<ActionResult<T>> => {
+    // stocks はブラウザ版でもウォッチリスト登録に対応する。登録銘柄は
+    // localStorage に保存され、ここでモック価格つきのスナップショットを合成する。
+    // (Electron 版の state.json 由来フェッチと同じ操作感: 「更新」/登録で反映)
+    if (serviceId === 'stocks') {
+      return ok(buildStocksSnapshot()) as ActionResult<T>;
+    }
+    // emotions は localStorage に気分ログ / 分析履歴を保存する。
+    if (serviceId === 'emotions') {
+      let keyConfigured = false;
+      try {
+        keyConfigured = Boolean(await vault.getToken('emotions'));
+      } catch {
+        keyConfigured = false;
+      }
+      return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
+    }
+    return err(
+      'not_implemented',
+      'ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。',
+    ) as ActionResult<T>;
+  },
 
   invoke: async <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> => {
     // Template export: render SVG client-side, save to Library, also download.
@@ -408,6 +691,245 @@ const shim = {
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }
+    }
+
+    // Stocks ウォッチリスト登録 / 解除: localStorage に永続化する。
+    // ページは成功後に refresh() するので、fetchSnapshot('stocks') が
+    // 反映済みのウォッチリストを返す。
+    if (serviceId === 'stocks' && (action === 'register-ticker' || action === 'unregister-ticker')) {
+      try {
+        const symbol = (payload as { symbol?: unknown }).symbol;
+        const result =
+          action === 'register-ticker' ? registerSymbol(symbol) : unregisterSymbol(symbol);
+        return ok(result) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Stocks 戦略比較: モック履歴で全戦略をバックテストして比較する。
+    if (serviceId === 'stocks' && action === 'compare-strategies') {
+      try {
+        const p = payload as { symbol?: unknown; initialCash?: unknown };
+        const symbol = typeof p.symbol === 'string' ? p.symbol.trim() : '';
+        if (!/^[A-Za-z0-9.\-^]{1,16}$/.test(symbol)) {
+          return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
+        }
+        const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
+        if (!Number.isFinite(initialCash) || initialCash <= 0) {
+          return err('action_failed', 'initialCash must be a positive finite number');
+        }
+        return ok(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Stocks アドバイザー (Anthropic) — ブラウザから直接呼び出す。
+    if (serviceId === 'stocks' && action === 'advise') {
+      return (await callStocksAdvisor(payload)) as ActionResult<T>;
+    }
+
+    // Stocks ダッシュボード書き出し: ウォッチリスト + (任意で) 比較/助言結果を
+    // HTML / Markdown にして Library 保存 + ダウンロード。
+    if (serviceId === 'stocks' && (action === 'export-dashboard' || action === 'export-dashboard-md')) {
+      const isMd = action === 'export-dashboard-md';
+      const snap = buildStocksSnapshot();
+      const p = payload as {
+        advisorResult?: unknown;
+        strategyComparison?: unknown;
+      };
+      const input = {
+        watchlist: snap.watchlist.map((w) => ({
+          symbol: w.symbol,
+          label: w.label,
+          latestClose: w.latestClose,
+          changePct: w.changePct,
+        })),
+        strategyComparison: (p.strategyComparison as StrategyComparisonResult | undefined) ?? null,
+        advisor: (p.advisorResult as AdvisorResponse | undefined) ?? null,
+        generatedAt: new Date().toISOString(),
+      };
+      const content = isMd ? renderStockDashboardMarkdown(input) : renderStockDashboardHtml(input);
+      const ext = isMd ? '.md' : '.html';
+      const filename = 'stocks-dashboard-' + Date.now() + ext;
+      await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
+      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt }) as ActionResult<T>;
+    }
+
+    // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
+    if (serviceId === 'emotions' && action === 'log-mood') {
+      try {
+        return ok(emotionsLogMood(payload)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+    if (serviceId === 'emotions' && action === 'clear-history') {
+      const kind = (payload as { kind?: 'moods' | 'analyses' | 'all' }).kind;
+      return ok(emotionsClearHistory(kind)) as ActionResult<T>;
+    }
+    // Emotions テキスト分析: Anthropic 直接呼び出し (Vault の emotions キー使用)。
+    if (serviceId === 'emotions' && action === 'analyze-text') {
+      return (await callEmotionsAnalyze(payload)) as ActionResult<T>;
+    }
+
+    // GitHub create-issue: api.github.com は CORS 許可済みなのでブラウザから
+    // 直接呼べる (プロキシ不要)。PAT は Vault の 'github' から取得。
+    if (serviceId === 'github' && action === 'create-issue') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('github');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) return err('not_configured', 'GitHub の PAT が未設定です。「PAT を設定」から登録してください');
+      try {
+        return ok(await createGithubIssue(payload, token)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Notion create-page / Slack send-message: CORS ブロックのためプロキシ経由。
+    if (
+      (serviceId === 'notion' && action === 'create-page') ||
+      (serviceId === 'slack' && action === 'send-message')
+    ) {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken(serviceId);
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) {
+        return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        const data =
+          serviceId === 'notion'
+            ? await createNotionPage(payload, token, transport)
+            : await sendSlackMessage(payload, token, transport);
+        return ok(data) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Atlassian create-issue: CORS ブロック → プロキシ経由。トークンは JSON。
+    if (serviceId === 'atlassian' && action === 'create-issue') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('atlassian');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      if (!token) {
+        return err('not_configured', 'Atlassian のトークン (email/token/site の JSON) が未設定です');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await createAtlassianIssue(payload, token, transport)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // Bearer + プロキシ経由の create 系 (Google / WordPress / Canva / Cloudflare)。
+    if (serviceId === 'calendar' && action === 'create-event') {
+      return (await runProxyBearer('calendar', (t, tok) => createCalendarEvent(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'gmail' && action === 'create-draft') {
+      return (await runProxyBearer('gmail', (t, tok) => createGmailDraft(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'drive' && action === 'create-folder') {
+      return (await runProxyBearer('drive', (t, tok) => createDriveFolder(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'wordpress' && action === 'create-post-draft') {
+      return (await runProxyBearer('wordpress', (t, tok) => createWordPressPostDraft(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'canva' && action === 'create-folder') {
+      return (await runProxyBearer('canva', (t, tok) => createCanvaFolder(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'cloudflare' && action === 'create-dns-record') {
+      return (await runProxyBearer('cloudflare', (t, tok) => createCloudflareDnsRecord(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'cloudflare' && action === 'purge-cache') {
+      return (await runProxyBearer('cloudflare', (t, tok) => purgeCloudflareCache(payload, tok, t))) as ActionResult<T>;
+    }
+
+    // セキュリティ: VirusTotal URL スキャン (CORS → プロキシ)。
+    if (serviceId === 'security' && action === 'scan-url') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('security');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      const keys = parseSecurityKeys(token ?? '');
+      if (!keys.vt) {
+        return err('not_configured', 'VirusTotal API キーが未設定です (設定に {"vt":"...","hibp":"..."} の JSON で保存)');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await scanUrlVirusTotal(payload, keys.vt, transport)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+    // HIBP メール漏洩チェック: プロキシ経由。fetchViaProxy が上流ステータスを
+    // 保持するため「404 = 漏洩なし」を正しく判定できる。
+    if (serviceId === 'security' && action === 'check-email-breach') {
+      let token: string | null = null;
+      try {
+        token = await vault.getToken('security');
+      } catch {
+        return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+      }
+      const keys = parseSecurityKeys(token ?? '');
+      if (!keys.hibp) {
+        return err('not_configured', 'HIBP API キーが未設定です (設定に {"hibp":"...","vt":"..."} の JSON で保存)');
+      }
+      let transport: Transport;
+      try {
+        transport = await getProxyTransport();
+      } catch (e) {
+        return err('not_configured', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        return ok(await checkEmailBreach(payload, keys.hibp, transport)) as ActionResult<T>;
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
+    if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
+      const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
+      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
+        return err('action_failed', `${serviceId}.record-entry: note は 1-2000 文字で指定してください`);
+      }
+      if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
+        return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
+      }
+      return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
     }
 
     // Business advisor (Anthropic) — direct browser call with Vault-stored key.

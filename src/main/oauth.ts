@@ -82,6 +82,23 @@ export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
     ],
     extraAuthParams: { access_type: 'offline', prompt: 'consent' },
   },
+  // freee 会計 — OAuth 2.0 (Authorization Code + PKCE)。freee アプリストアで
+  // アプリを登録し FREEE_OAUTH_CLIENT_ID を env に設定すると有効になる。
+  freee: {
+    authorizeUrl: 'https://accounts.secure.freee.co.jp/public_api/authorize',
+    tokenUrl: 'https://accounts.secure.freee.co.jp/public_api/token',
+    clientId: process.env.FREEE_OAUTH_CLIENT_ID ?? '',
+    scopes: ['read'],
+  },
+  // Microsoft 365 (Microsoft Graph) — Azure AD (Entra ID) の OAuth 2.0 +
+  // PKCE。Azure ポータルでアプリ登録し MS365_OAUTH_CLIENT_ID を env に設定。
+  // 個人/組織どちらも許可する common テナントを使用。
+  'microsoft-365': {
+    authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+    tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+    clientId: process.env.MS365_OAUTH_CLIENT_ID ?? '',
+    scopes: ['User.Read', 'Mail.Read', 'Calendars.Read', 'offline_access'],
+  },
 };
 
 export function isOAuthSupported(serviceId: ServiceId): boolean {

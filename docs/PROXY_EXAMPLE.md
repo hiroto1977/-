@@ -46,9 +46,18 @@ const SHARED_SECRET = ''; // 任意。空文字なら未認証で受け入れる
 // 上流ホスト allowlist。BYO の前提でも、ここを絞っておくと
 // たとえクライアントが侵害されても被害を局所化できる。
 const UPSTREAM_ALLOWLIST = new Set([
-  'api.notion.com',
-  'api.atlassian.com',
-  'api.cloudflare.com',
+  'api.notion.com',          // Notion ページ作成
+  'slack.com',               // Slack メッセージ送信
+  'api.atlassian.com',       // Atlassian (一部)
+  // Atlassian (Jira) は自分のサイト host も必要: 例 'your-team.atlassian.net'
+  'www.googleapis.com',      // Google カレンダー / Drive
+  'gmail.googleapis.com',    // Gmail 下書き
+  'public-api.wordpress.com',// WordPress.com 下書き
+  'api.canva.com',           // Canva フォルダ
+  'api.cloudflare.com',      // Cloudflare DNS / キャッシュ
+  'haveibeenpwned.com',      // メール漏洩チェック (HIBP)
+  'www.virustotal.com',      // URL スキャン (VirusTotal)
+  // GitHub (api.github.com) は CORS 許可済みのためプロキシ不要。
   // 自分が使うホストだけを明示的に列挙する。
 ]);
 

@@ -282,7 +282,7 @@ const METRICS = [
       const src = readFileSafe(path.join(REPO_ROOT, 'src/main/oauth.ts'));
       const m = src.match(/OAUTH_CONFIGS[^=]*= \{([\s\S]*?)^\};/m);
       if (!m) return null;
-      return countOccurrences(m[1], /^\s*[a-z][a-z0-9-]*:\s*\{/gm);
+      return countOccurrences(m[1], /^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm);
     },
   },
   {

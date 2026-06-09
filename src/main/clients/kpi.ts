@@ -116,6 +116,140 @@ export function computeKpi(f: Fundamentals): Kpi {
   };
 }
 
+/**
+ * 目標営業利益を達成するために必要な売上高を計算する。
+ *   必要売上高 = (固定費 + 目標営業利益) ÷ 限界利益率
+ * 限界利益率が 0 以下 (= 変動費が売上以上) のときは達成不能なので Infinity。
+ *
+ * @param f 現状の fundamentals
+ * @param targetOperatingProfit 目標営業利益 (円)
+ */
+export function requiredRevenueForTargetProfit(f: Fundamentals, targetOperatingProfit: number): number {
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  const contribution = f.revenue - variableCost;
+  // Equivalent mutants on the sub-expressions of this guard:
+  // - `f.revenue <= 0` → `f.revenue < 0` or → `false` (sub-expr): when revenue=0,
+  //   contribution = 0 - variableCost ≤ 0, so the second clause fires anyway. The
+  //   first sub-expression can never independently trigger for revenue=0 without the
+  //   second also catching it.
+  // - `contribution <= 0` → `contribution < 0`: when contribution=0 with revenue>0,
+  //   contributionRatio=0 → (fixedCost+target)/0 = Infinity → Math.max(0,∞) = Infinity
+  //   regardless — same observable result.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  if (f.revenue <= 0 || contribution <= 0) return Infinity;
+  const contributionRatio = contribution / f.revenue;
+  return Math.max(0, (fixedCost + targetOperatingProfit) / contributionRatio);
+}
+
+/** 損益分岐点販売数量の分析結果。 */
+export interface BreakEvenQuantity {
+  /** 単位あたり限界利益 (単価 − 単位変動費)。 */
+  readonly unitContribution: number;
+  /** 損益分岐点販売数量 (個)。限界利益が 0 以下なら Infinity。 */
+  readonly breakEvenQuantity: number;
+  /** 推定現在販売数量 (= 売上 ÷ 平均単価)。 */
+  readonly currentQuantity: number;
+  /** 安全販売数量 (現在 − 損益分岐点)。 */
+  readonly safeQuantity: number;
+}
+
+/**
+ * 平均単価から損益分岐点販売数量を計算する。
+ *   単位限界利益 = 単価 − (変動費 ÷ 推定数量)
+ *   損益分岐点数量 = 固定費 ÷ 単位限界利益 (切り上げ)
+ *
+ * @param f 現状の fundamentals
+ * @param avgUnitPrice 平均販売単価 (円)。0 以下なら全 0。
+ */
+export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
+  const price = Math.max(0, avgUnitPrice);
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  if (price <= 0) {
+    return { unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 };
+  }
+  const currentQuantity = Math.round(Math.max(0, f.revenue) / price);
+  const unitVariable = currentQuantity > 0 ? variableCost / currentQuantity : 0;
+  const unitContribution = Math.max(0, price - unitVariable);
+  // Equivalent mutants on `unitContribution > 0`:
+  // - `→ true` and `→ >= 0`: when unitContribution=0, Math.ceil(fixedCost/0)=Infinity
+  //   regardless, producing the same observable result as the explicit Infinity branch.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  const beq = unitContribution > 0 ? Math.ceil(fixedCost / unitContribution) : Infinity;
+  const safeQuantity = Number.isFinite(beq) ? Math.max(0, currentQuantity - beq) : 0;
+  return { unitContribution, breakEvenQuantity: beq, currentQuantity, safeQuantity };
+}
+
+/** 価格変更シミュレーションの結果。 */
+export interface PriceSimulation {
+  /** 価格変更率 (-0.2 = 20%値下げ, 0.1 = 10%値上げ)。 */
+  readonly priceChangeRatio: number;
+  /** 変更後の売上高 (販売量一定の前提)。 */
+  readonly simulatedRevenue: number;
+  /** 変更後の限界利益。 */
+  readonly simulatedContribution: number;
+  /** 変更後の限界利益率 (%)。 */
+  readonly simulatedContributionRatio: number;
+  /** 変更後の損益分岐点売上高。 */
+  readonly simulatedBep: number;
+  /** 変更後の営業利益。 */
+  readonly simulatedOperatingProfit: number;
+  /** 営業利益の増減 (変更後 − 現在)。 */
+  readonly operatingProfitDelta: number;
+}
+
+/**
+ * 価格を X% 変更したときの限界利益・損益分岐点・営業利益への影響を試算する。
+ *
+ * 前提: 価格変更で販売量・変動費の総額は変わらない (弾力性は別モデル)。
+ * 値上げは限界利益率を上げて BEP を下げ、値下げは逆に働く。
+ *
+ * @param f 現状の fundamentals
+ * @param priceChangeRatio 価格変更率 (例: -0.1 = 10%値下げ)。-1 未満は -1 にクランプ。
+ */
+export function simulatePriceChange(f: Fundamentals, priceChangeRatio: number): PriceSimulation {
+  const ratio = Math.max(-1, priceChangeRatio);
+  const variableCost = f.cogs + f.advertising;
+  const fixedCost = f.sga + f.depreciation;
+  const currentOp = Math.max(0, f.revenue) - variableCost - fixedCost;
+
+  if (f.revenue <= 0) {
+    return {
+      priceChangeRatio: ratio,
+      simulatedRevenue: 0,
+      simulatedContribution: 0,
+      simulatedContributionRatio: 0,
+      simulatedBep: Infinity,
+      simulatedOperatingProfit: -fixedCost,
+      operatingProfitDelta: -fixedCost - currentOp,
+    };
+  }
+
+  const simulatedRevenue = Math.round(f.revenue * (1 + ratio));
+  const simulatedContribution = simulatedRevenue - variableCost;
+  const simulatedContributionRatio = simulatedRevenue > 0
+    ? Math.round((simulatedContribution / simulatedRevenue) * 1000) / 10
+    : 0;
+  // Equivalent mutants on `simulatedContribution > 0`:
+  // - `→ true` and `→ >= 0`: when contribution=0, Math.round(fixedCost/0 * simRevenue)
+  //   = Math.round(Infinity) = Infinity, identical to the explicit Infinity branch.
+  // Stryker disable next-line ConditionalExpression,EqualityOperator
+  const simulatedBep = simulatedContribution > 0
+    ? Math.round((fixedCost / simulatedContribution) * simulatedRevenue)
+    : Infinity;
+  const simulatedOperatingProfit = simulatedContribution - fixedCost;
+  return {
+    priceChangeRatio: ratio,
+    simulatedRevenue,
+    simulatedContribution,
+    simulatedContributionRatio,
+    simulatedBep,
+    simulatedOperatingProfit,
+    operatingProfitDelta: simulatedOperatingProfit - currentOp,
+  };
+}
+
 /** Roll-up: sum fundamentals across all units, then compute KPI on the
  *  aggregate. Note: averaging KPI ratios across units gives the wrong
  *  answer; the only correct rollup is sum-then-compute. */

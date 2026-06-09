@@ -9,7 +9,7 @@
 ## 全体像 (System at a Glance)
 
 Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラウザ単体
-ダッシュボード。45 のサービス (Home / 事業ダッシュボード / チームレーダー /
+ダッシュボード。62 のサービス (Home / 事業ダッシュボード / チームレーダー /
 Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
 を 1 つのサイドバー UI で一元操作する。`npm run build:web` でビルドした
 standalone HTML (403 KB) はブラウザ単体で動作する。
@@ -18,18 +18,18 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 45 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 63 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 45 | `src/main/clients/index.ts:44-83` |
-| OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
+| client モジュール (fetcher + actions) | 63 | `src/main/clients/index.ts:44-83` |
+| OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1204** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1242) |
+| ユニットテスト | **4926** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5008) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 171 | 自己検証 |
+| `file:line` 参照数 | 173 | 自己検証 |
 
 ### 統合フロー図
 
@@ -42,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[45 React pages<br/>+ useServiceData hook]
+      PAGES[63 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
       IPC[ipcMain.handle × 11]
-      CLIENTS[45 clients<br/>fetcher + ActionMap]
+      CLIENTS[63 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -369,7 +369,7 @@ sequenceDiagram
   M->>M: setOAuthTokens(svc, ts)
 ```
 
-### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:134-164`)
+### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:177-262`)
 
 ```mermaid
 stateDiagram-v2
@@ -416,13 +416,13 @@ flowchart LR
 ```
 
 OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bearer 文字列。
-`getValidToken()` (`src/main/secrets.ts:134-164`) が `JSON.parse` → `isTokenSet` で振り分け。
+`getValidToken()` (`src/main/secrets.ts:177-262`) が `JSON.parse` → `isTokenSet` で振り分け。
 
 ---
 
 ## 3. サービスレジストリ
 
-### 3.1 45 services の認証スタイル
+### 3.1 63 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -448,6 +448,8 @@ union を参照する。
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
+| `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
+| `freee` | freee 会計 — 取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携) | OAuth (read scope) | ✅ | | (read-only — deals を月次CFに正規化。書き込みなし) |
 | `teamradar` | チームレーダー (1-5 評価 × 5 軸 × N 人) | none | ✅ | | `save-state`, `export-svg` (Canva ドラッグ&ドロップ可能な SVG 出力) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
@@ -475,8 +477,24 @@ union を参照する。
 | `admin-scrivener` | 行政書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 許認可申請 / 補助金) |
 | `sme-consultant` | 中小企業診断士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 経営診断 / 事業計画) |
 | `patent-attorney` | 弁理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 特許 / 商標 / 意匠出願) |
+| `base` | BASE ネットショップ (公式 OAuth API 実配線) | OAuth (`api.thebase.in`) | | ✅ | (read-only — 商品 / 価格 / 在庫 / 公開状態) |
+| `netsea` | NETSEA B2B 卸 (snapshot のみ) | パートナー API (未公開) | ✅ | | (read-only) |
+| `super-delivery` | スーパーデリバリー B2B 卸 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
+| `topseller` | TopSeller ドロップシッピング卸 (snapshot のみ) | CSV/契約 (公開 API なし) | ✅ | | (read-only) |
+| `a8net` | A8.net アフィリエイト ASP (snapshot のみ) | 管理画面/CSV (公開 API なし) | ✅ | | (read-only) |
+| `ai-blogkun` | AIブログくん 自動ブログ生成 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
+| `moneyforward` | マネーフォワード クラウド会計 (snapshot のみ) | OAuth (パートナー登録必須) | ✅ | | (read-only) |
+| `amazon` | Amazon セラー SP-API (snapshot のみ) | LWA+IAM (要出品者登録) | ✅ | | (read-only — 注文/在庫/売上) |
+| `amazon-associates` | Amazon アソシエイト (snapshot のみ) | PA-API (要承認) | ✅ | | (read-only — 成果レポート) |
+| `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
+| `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`) |
+| `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約) |
+| `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
+| `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
+| `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動) |
 
-- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:109-128`)。トークン未設定でも snapshot OK。
+- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:145-183`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
 
 ### 3.2 Action payload スキーマ (17 actions)
@@ -575,7 +593,7 @@ graph TB
 
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
-| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:60`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
+| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:77`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:27`) + `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) |
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
@@ -655,9 +673,9 @@ flowchart TB
 graph LR
   subgraph "Developer"
     D1[npm run typecheck]
-    D2[npm test<br/>1253 tests, 59 files]
+    D2[npm test<br/>1113 tests, 34 files]
     D3[npm run test:cov]
-    D4[npm run mutate<br/>~10min, 55 files in scope]
+    D4[npm run mutate<br/>~2min, 9 files in scope]
     D5[npm run mutate:triage]
     D6[npm run quality:report<br/>→ docs/QUALITY.md]
     D7[npm run verify:arch<br/>170 refs + 6 metrics]
@@ -667,7 +685,7 @@ graph LR
     C2[verify:arch]
     C3[test]
     C4[coverage]
-    C5[build:renderer]
+    C5[build:web]
   end
   subgraph "Weekly (mutation.yml)"
     M1[stryker run]
@@ -906,7 +924,7 @@ classDiagram
     +listConfiguredServices() : secrets.ts:92
     +setOAuthTokens(id, ts) : secrets.ts:113
     +getOAuthTokens(id) : secrets.ts:117
-    +getValidToken(id) : secrets.ts:134 ~auto-refresh~
+    +getValidToken(id) : secrets.ts:223 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
@@ -991,7 +1009,7 @@ classDiagram
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `src/main/oauth.ts:196-201` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `src/main/secrets.ts:14-39` |
-| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:64`) 両方に登録 | scaffold script |
+| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:81`) 両方に登録 | scaffold script |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)
@@ -1000,10 +1018,10 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 171 file:line 参照 + 6 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
-| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (45 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
+| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
@@ -1012,7 +1030,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 2. **行範囲**: 行番号がファイルサイズに収まる
 3. **シンボル局所性 (strict)**: doc が名前を挙げているシンボル (例 `isServiceId`) が
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
-4. **ライブメトリクス**: doc の数値 (45 services, 11 IPC, 55 mutated modules, ...) を **実コードから再計算** して一致確認
+4. **ライブメトリクス**: doc の数値 (22 services, 11 IPC, 30 mutated modules, ...) を **実コードから再計算** して一致確認
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

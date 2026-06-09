@@ -62,7 +62,7 @@ function canonicalOAuthCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/oauth.ts'));
   const m = src.match(/OAUTH_CONFIGS[^{]*\{([\s\S]*?)\n\};/);
   if (!m) return null;
-  return [...m[1].matchAll(/^\s*[a-z][a-z0-9-]*:\s*\{/gm)].length;
+  return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
 }
 
 const FACTS = [
@@ -74,6 +74,24 @@ const FACTS = [
       {
         file: 'docs/ARCHITECTURE.md',
         pattern: /サービス数 \| (\d+) /,
+        parse: (m) => Number(m[1]),
+      },
+      {
+        // CLAUDE.md TL;DR prose — "exposing **NN services**".
+        file: 'CLAUDE.md',
+        pattern: /exposing \*\*(\d+) services\*\*/,
+        parse: (m) => Number(m[1]),
+      },
+      {
+        // README.md section heading — "## サービス一覧 (NN)".
+        file: 'README.md',
+        pattern: /## サービス一覧 \((\d+)\)/,
+        parse: (m) => Number(m[1]),
+      },
+      {
+        // USER_GUIDE.md intro — "**NN 種類のサービス**".
+        file: 'docs/USER_GUIDE.md',
+        pattern: /\*\*(\d+) 種類のサービス\*\*/,
         parse: (m) => Number(m[1]),
       },
     ],

@@ -1,69 +1,49 @@
-name: Deploy to GitHub Pages
+name: pages
 
-# 単一ファイルのブラウザ版 (dist/standalone.html) を GitHub Pages に公開する。
-# main への push で自動デプロイ。手動実行 (workflow_dispatch) も可。
+# GitHub Pages へ standalone ビルドを公開する。
+# 公開後は https://<owner>.github.io/<repo>/ をクリックするだけで
+# アプリがブラウザで開く (ダウンロード・ファイル操作は一切不要)。
 #
-# 公開先: https://hiroto1977.github.io/-/
-#
-# 初回のみリポジトリ設定が必要:
-#   Settings → Pages → Build and deployment → Source = "GitHub Actions"
+# 有効化 (オーナーが一度だけ): リポジトリ Settings → Pages →
+#   "Build and deployment" の Source を "GitHub Actions" に設定。
+# 以後 main への push で自動公開される。
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+  workflow_dispatch: # 手動実行も可
 
-# GITHUB_TOKEN に Pages デプロイ権限を付与
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 同時実行は 1 本に絞る (進行中の公開を中断して最新を優先)
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      # Pages を programmatically 有効化 (初回の手動 Settings 操作を不要にする)。
-      # 権限が足りない場合のみ Settings → Pages → Source = "GitHub Actions" が必要。
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      # 単一ファイル standalone.html を生成 (tsc -b + vite build + inline-html.cjs)
-      - run: npm run build:web
-      # 軽量ランディング (16KB) を生成 (services.ts から自動生成)
-      - run: npm run build:landing
-      - name: Assemble Pages site
-        run: |
-          mkdir -p _site
-          # ルート = 高速な軽量ランディング、フル版 = ./app.html
-          cp dist/landing.html _site/index.html
-          cp dist/standalone.html _site/app.html
-          # OGP / ソーシャル共有用カード画像
-          cp assets/og.png _site/og.png
-          # Jekyll 処理を無効化 (リポジトリ名 "-" / 単一 HTML のため)
-          touch _site/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-  deploy:
-    needs: build
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build:web
+      # Pages はディレクトリ直下の index.html を配信するので複製する。
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          cp dist/standalone.html _site/index.html
+          cp dist/standalone.html _site/standalone.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -134,3 +134,80 @@ describe('renderTemplateForWeb — structural invariants', () => {
     }
   });
 });
+
+/**
+ * Golden 完全一致テスト。SVG は決定論的に生成されるため、座標・色・フォント・opacity
+ * などのリテラルと W/2・H-80 等の算術、`i === 0 ? 0 : dy` の条件、`typeof === 'string'`
+ * の param ガードを一括で撃墜する。esc(特殊文字) と wrap(長い多段落) を必ず通す入力にする。
+ */
+describe('renderTemplateForWeb — golden output (exact SVG)', () => {
+  // 特殊文字 (esc) + 長いタイトル/本文 (wrap: 24/14/11/36 折返し境界と空行) を含む。
+  const CUSTOM: Record<string, string> = {
+    title: '限定<&>"\'セール2035 — 全社員むけ特別企画 ABCDEFGHIJKLMNOP',
+    subtitle: 'Q2 <レビュー> & "まとめ"',
+    body: '一行目 <a&b>\n\n三行目 "quoted" \'apos\' これは長めの本文で flyer の36文字折返しを十分に超える内容です ABCDEFGHIJK',
+    accentColor: '#123abc',
+    secondaryColor: '#fedcba',
+    brandText: 'Brand<&>',
+  };
+
+  for (const def of TEMPLATE_CATALOG_FOR_WEB) {
+    it(`matches the golden SVG for ${def.id} (custom params)`, () => {
+      expect(renderTemplateForWeb(def, CUSTOM)).toMatchSnapshot();
+    });
+    it(`matches the golden SVG for ${def.id} (defaults)`, () => {
+      // 空 params → 各 typeof ガードが false 側 (def.defaults) を採る。
+      expect(renderTemplateForWeb(def, {})).toMatchSnapshot();
+    });
+  }
+
+  it('matches the golden placeholder SVG for an unknown template id', () => {
+    const fakeDef: TemplateDef = {
+      id: 'no-such-template',
+      width: 320,
+      height: 240,
+      defaults: { title: 'x', subtitle: 'x', body: 'x', accentColor: '#000000', secondaryColor: '#ffffff', brandText: 'x' },
+    };
+    expect(renderTemplateForWeb(fakeDef, CUSTOM)).toMatchSnapshot();
+  });
+});
+
+describe('renderTemplateForWeb — esc / wrap edge behaviour', () => {
+  const pres = TEMPLATE_CATALOG_FOR_WEB[0]!; // presentation-cover, wrap(title, 24)
+
+  it('escapes all five HTML-significant characters in order', () => {
+    const svg = renderTemplateForWeb(pres, { title: `&<>"'` });
+    // & は最初に置換されるので二重エスケープしない。
+    expect(svg).toContain('&amp;&lt;&gt;&quot;&#39;');
+  });
+
+  it('wraps a title exactly at the 24-char boundary (>= strict)', () => {
+    // 24 文字ちょうど → 1 行。25 文字目で 2 行目へ割れる (buf.length >= maxChars)。
+    const at24 = 'あ'.repeat(24);
+    const svg24 = renderTemplateForWeb(pres, { title: at24 });
+    expect((svg24.match(/<tspan/g) ?? []).length).toBe(1);
+    const at25 = 'あ'.repeat(25);
+    const svg25 = renderTemplateForWeb(pres, { title: at25 });
+    expect((svg25.match(/<tspan/g) ?? []).length).toBe(2);
+    // 2 行目は dy=100 (i !== 0)、1 行目は dy=0。
+    expect(svg25).toContain('dy="0"');
+    expect(svg25).toContain('dy="100"');
+  });
+
+  it('certificate with a single-line body leaves the 2nd line blank ([1] ?? "" fallback)', () => {
+    const cert = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === 'certificate')!;
+    // 1 行のみ → split[1] が undefined → `?? ''` で空文字。"Stryker" 化変異を撃墜。
+    const svg = renderTemplateForWeb(cert, { body: 'ONLY-ONE-LINE' });
+    expect(svg).toContain('ONLY-ONE-LINE');
+    expect(svg).not.toContain('Stryker');
+    // 2 番目の body text 要素は空 (中身なし)。
+    expect(svg).toContain('font-size="34" fill="#374151" text-anchor="middle"></text>');
+  });
+
+  it('preserves blank paragraphs from newlines (empty-para branch)', () => {
+    const flyer = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === 'flyer-a4')!;
+    // a\n\nb → 3 行 (空行を含む)。空行は空 tspan になる。
+    const svg = renderTemplateForWeb(flyer, { body: 'a\n\nb' });
+    expect((svg.match(/<tspan/g) ?? []).length).toBe(3);
+  });
+});

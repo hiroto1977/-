@@ -2,6 +2,24 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { useCollection } from '../data/useCollection';
+import {
+  KPI_ACTUALS_COLLECTION,
+  parseKpiActual,
+  summarizeFundamentals,
+  computeKpiMetrics,
+  type KpiActual,
+} from '../data/kpiActuals';
+import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
+import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
+import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
+import {
+  BALANCE_SHEET_COLLECTION,
+  parseBalanceSheet,
+  computeBalanceSheetMetrics,
+  type BalanceSheet,
+} from '../data/balanceSheet';
 
 interface Fund {
   revenue: number;
@@ -119,9 +137,10 @@ function BepDiagram({ unit }: { unit: Unit }) {
   const variable = f.cogs + f.advertising;
   const fixed = f.sga + f.depreciation;
   const vRatio = f.revenue > 0 ? variable / f.revenue : 0;
-  // Volume axis: 0 → 200% of current revenue
-  const xMax = f.revenue * 2;
-  const yMax = Math.max(f.revenue, fixed + variable * 2) * 1.05;
+  // Volume axis: 0 → 200% of current revenue。売上 0 の事業で 0 除算 → NaN
+  // 座標になるのを防ぐため下限 1 を設ける (退化したチャートになるが描画は崩れない)。
+  const xMax = Math.max(1, f.revenue * 2);
+  const yMax = Math.max(1, Math.max(f.revenue, fixed + variable * 2) * 1.05);
   const X = (v: number) => P + (v / xMax) * (W - P * 2);
   const Y = (v: number) => H - P - (v / yMax) * (H - P * 2);
   // Revenue line: y = x
@@ -257,6 +276,354 @@ function UnitBars({ units }: { units: Unit[] }) {
   );
 }
 
+// --- Real-data actuals panel ------------------------------------------
+
+const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '', laborCost: '' };
+
+function ActualsPanel() {
+  const { records, add, addMany, remove } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState<string>();
+  const [importMonth, setImportMonth] = useState('');
+
+  const summary = useMemo(() => {
+    const rows = records.map((r) => r.data);
+    return computeKpiMetrics(summarizeFundamentals(rows));
+  }, [records]);
+
+  // Months available from the sales feature, for the "売上集計から取り込む" link.
+  const salesEntries = useMemo(() => salesRecords.map((r) => r.data), [salesRecords]);
+  const monthOptions = useMemo(() => salesMonths(salesEntries), [salesEntries]);
+
+  function importFromSales(month: string) {
+    if (!month) return;
+    const revenue = revenueForMonth(salesEntries, month);
+    // Prefill period + revenue from sales; costs stay blank for the user to fill.
+    setForm((f) => ({ ...f, period: month, unit: f.unit || '全社', revenue: String(revenue) }));
+    setError(undefined);
+  }
+
+  function onExportCsv() {
+    const blob = new Blob(['﻿' + kpiActualsToCsv(records.map((r) => r.data))], {
+      type: 'text/csv;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kpi-actuals-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function onImportCsv(file: File) {
+    const { entries, errors } = kpiActualsFromCsv(await file.text());
+    // Atomic: all valid rows commit together or none (no partial import).
+    if (entries.length > 0) await addMany(entries);
+    setError(
+      errors.length > 0 ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})` : undefined,
+    );
+  }
+
+  async function onAdd() {
+    try {
+      const parsed = parseKpiActual(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_FORM);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)',
+        border: '1px solid var(--border)',
+        borderRadius: 6,
+        color: 'var(--text)',
+        padding: '6px 8px',
+        fontSize: 13,
+        width: key === 'period' || key === 'unit' ? 110 : 100,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      {monthOptions.length > 0 && (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 8 }}>
+          <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>売上集計から取り込む:</span>
+          <select
+            value={importMonth}
+            onChange={(e) => setImportMonth(e.target.value)}
+            style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13 }}
+          >
+            <option value="">月を選択</option>
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>{m}（{yen.format(revenueForMonth(salesEntries, m))}）</option>
+            ))}
+          </select>
+          <button type="button" onClick={() => importFromSales(importMonth)} disabled={!importMonth}>
+            売上を取り込む
+          </button>
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('period', 'YYYY-MM')}
+        {field('unit', '事業名')}
+        {field('revenue', '売上高')}
+        {field('cogs', '売上原価')}
+        {field('advertising', '広告費')}
+        {field('sga', '販管費')}
+        {field('depreciation', '減価償却費')}
+        {field('laborCost', '人件費(任意)')}
+        <button type="button" onClick={onAdd}>追加</button>
+      </div>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
+        <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
+        <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
+          CSV インポート
+          <input
+            type="file"
+            accept=".csv,text/csv"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onImportCsv(file);
+              e.target.value = '';
+            }}
+          />
+        </label>
+        <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          列: period, unit, revenue, cogs, advertising, sga, depreciation
+        </span>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {records.length > 0 ? (
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+            <Tile label="実績合計 売上高" value={safeYen(summarizeRevenue(records))} />
+            <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
+            <Tile label="安全余裕率" value={pct(summary.safetyMargin)} sub="高いほど安全" />
+            <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
+            <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+                <th style={{ padding: '4px 8px' }}>期間</th>
+                <th style={{ padding: '4px 8px' }}>事業</th>
+                <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上高</th>
+                <th style={{ padding: '4px 8px', textAlign: 'right' }}>営業利益</th>
+                <th style={{ padding: '4px 8px' }} />
+              </tr>
+            </thead>
+            <tbody>
+              {records.map((r) => {
+                const m = computeKpiMetrics(summarizeFundamentals([r.data]));
+                return (
+                  <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                    <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
+                    <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
+                    <td style={{ padding: '4px 8px' }}>
+                      <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
+      ) : (
+        <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
+          実績を入力すると、ローカルに保存され KPI が実データで再計算されます。
+        </p>
+      )}
+    </div>
+  );
+}
+
+function summarizeRevenue(records: readonly { data: KpiActual }[]): number {
+  return records.reduce((acc, r) => acc + r.data.revenue, 0);
+}
+
+// --- Budget (予算) panel — drives 予算実績差異 (BVA) ----------------------
+
+function BudgetPanel() {
+  const { records: budgets, add, remove } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
+  const { records: actuals } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState<string>();
+
+  const variance = useMemo(
+    () => computeBudgetVariance(budgets.map((r) => r.data), actuals.map((r) => r.data)),
+    [budgets, actuals],
+  );
+
+  async function onAdd() {
+    try {
+      const parsed = parseKpiActual(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_FORM);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
+        width: key === 'period' || key === 'unit' ? 110 : 100,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+        予算 (計画) を実績と<strong>同じ期間粒度</strong>で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が表示されます。
+      </p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('period', 'YYYY-MM')}
+        {field('unit', '事業名')}
+        {field('revenue', '売上高(予算)')}
+        {field('cogs', '売上原価')}
+        {field('advertising', '広告費')}
+        {field('sga', '販管費')}
+        {field('depreciation', '減価償却費')}
+        <button type="button" onClick={onAdd}>予算を追加</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {variance && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+          <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
+          <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
+        </div>
+      )}
+
+      {budgets.length > 0 ? (
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+              <th style={{ padding: '4px 8px' }}>期間</th>
+              <th style={{ padding: '4px 8px' }}>事業</th>
+              <th style={{ padding: '4px 8px', textAlign: 'right' }}>売上高(予算)</th>
+              <th style={{ padding: '4px 8px' }} />
+            </tr>
+          </thead>
+          <tbody>
+            {budgets.map((r) => (
+              <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                <td style={{ padding: '4px 8px' }}>{r.data.period}</td>
+                <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
+                <td style={{ padding: '4px 8px' }}>
+                  <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
+          予算を入力すると、実績との差異 (BVA) が算出されます。
+        </p>
+      )}
+    </div>
+  );
+}
+
+// --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
+
+const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
+
+function BalanceSheetPanel() {
+  const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
+  const [form, setForm] = useState(EMPTY_BS);
+  const [error, setError] = useState<string>();
+
+  // 最新の 1 レコードを採用 (BS は時点情報)。
+  const latest = records.length > 0 ? records[records.length - 1] : undefined;
+  const metrics = useMemo(() => (latest ? computeBalanceSheetMetrics(latest.data) : undefined), [latest]);
+
+  async function onAdd() {
+    try {
+      const parsed = parseBalanceSheet(form);
+      setError(undefined);
+      await add(parsed);
+      setForm(EMPTY_BS);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  const field = (key: keyof typeof EMPTY_BS, placeholder: string) => (
+    <input
+      value={form[key]}
+      placeholder={placeholder}
+      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+      style={{
+        background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
+        width: key === 'asOf' ? 120 : 110,
+      }}
+    />
+  );
+
+  return (
+    <div>
+      <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+        貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・ROA・ROE などが経営サマリーに表示され、
+        スコアカードの安全性に自己資本比率が加点されます。
+      </p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {field('asOf', '基準日')}
+        {field('currentAssets', '流動資産')}
+        {field('cash', '現預金')}
+        {field('inventory', '棚卸資産')}
+        {field('accountsReceivable', '売上債権')}
+        {field('fixedAssets', '固定資産')}
+        {field('currentLiabilities', '流動負債')}
+        {field('accountsPayable', '仕入債務')}
+        {field('fixedLiabilities', '固定負債')}
+        {field('netIncome', '当期純利益')}
+        <button type="button" onClick={onAdd}>BS を保存</button>
+      </div>
+      {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
+
+      {metrics && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+          <Tile label="自己資本比率" value={metrics.equityRatioPct === null ? '—' : `${metrics.equityRatioPct}%`} sub={`純資産 ${safeYen(metrics.netAssets)}`} />
+          <Tile label="流動比率" value={metrics.currentRatioPct === null ? '—' : `${metrics.currentRatioPct}%`} />
+          <Tile label="ROA" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
+          <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
+          {latest && (
+            <button type="button" onClick={() => remove(latest.id)} style={{ alignSelf: 'center' }}>最新BSを削除</button>
+          )}
+        </div>
+      )}
+      {metrics?.insolvent && (
+        <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+      )}
+    </div>
+  );
+}
+
 // --- Page -------------------------------------------------------------
 
 export function KpiPage() {
@@ -300,8 +667,20 @@ export function KpiPage() {
         </div>
       )}
 
+      <Section title="実績入力 — ローカル保存 (実データで KPI 再計算)">
+        <ActualsPanel />
+      </Section>
+
+      <Section title="予算入力 — 予算実績差異 (BVA)">
+        <BudgetPanel />
+      </Section>
+
+      <Section title="財政状態入力 — 貸借対照表 (ROA/ROE/自己資本比率/流動比率)">
+        <BalanceSheetPanel />
+      </Section>
+
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
-        <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>事業:</span>
+        <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>事業 (模擬データ):</span>
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
@@ -332,12 +711,12 @@ export function KpiPage() {
       </Section>
 
       <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: 320 }}>
+        <div style={{ flex: 2, minWidth: 'min(320px, 100%)' }}>
           <Section title="損益分岐点グラフ">
             <BepDiagram unit={selected} />
           </Section>
         </div>
-        <div style={{ flex: 1, minWidth: 240 }}>
+        <div style={{ flex: 1, minWidth: 'min(240px, 100%)' }}>
           <Section title="費用構成">
             <DonutChart unit={selected} />
           </Section>

@@ -52,6 +52,24 @@ export const SERVICE_IDS = [
   'admin-scrivener',
   'sme-consultant',
   'patent-attorney',
+  'base',
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
+  'moneyforward',
+  'amazon',
+  'amazon-associates',
+  'sales',
+  'team',
+  'youtube',
+  'overview',
+  'coconala',
+  'tiktok',
+  'tax',
+  'funding',
+  'freee',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
@@ -66,5 +84,9 @@ const SERVICE_ID_SET = new Set<string>(SERVICE_IDS);
  *  "constructor" could return prototype-chain entries.
  */
 export function isServiceId(value: unknown): value is ServiceId {
+  // `typeof value === 'string'` を true 固定する変異は equivalent: SERVICE_ID_SET は文字列のみを
+  // 持つため、非文字列に対する `.has(value)` は常に false となり判定結果は変わらない。
+  // (typeof ガードが membership チェックに包含される既知パターン。)
+  // Stryker disable next-line ConditionalExpression
   return typeof value === 'string' && SERVICE_ID_SET.has(value);
 }

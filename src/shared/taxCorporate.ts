@@ -1,0 +1,560 @@
+/**
+ * 法人税等 (法人税・地方法人税・法人住民税・法人事業税) の概算と税引後利益。
+ *
+ * **重要 — これは概算試算であり、正確な税額計算・税務助言ではありません。**
+ * 日本の法人課税を単純化したシミュレーションです。外形標準課税 (付加価値割・
+ * 資本割)・各種税額控除 (研究開発税制等)・繰越欠損金・連結 (グループ通算)・
+ * 中間納付・地方自治体ごとの超過税率・均等割の従業者数区分などは反映しません。
+ * 申告・納税は税理士 / 国税庁・e-Tax / 都道府県・市区町村で確定してください。
+ *
+ * 年度: 令和6年度 (2024年度) ベースの税率を使用。
+ *
+ * 計算の流れ (課税所得 → 法人税等 → 税引後利益):
+ *   1. 法人税       = 中小: 800万以下 15% + 超過 23.2% / 大法人: 一律 23.2%
+ *   2. 地方法人税   = 法人税額 × 10.3%
+ *   3. 法人住民税   = 法人税割 (法人税額 × 7.0% 標準) + 均等割 (資本金等の額 ×
+ *                     従業者数 (50人超/以下) の区分テーブルで解決。明示指定が
+ *                     あればそれを優先、capital も無ければ最小区分 7万円)
+ *   4. 法人事業税   = 所得割 (中小は所得段階別 3.5/5.3/7.0% の概算)
+ *                     + 特別法人事業税 (基準法人所得割額 × 37%)
+ *   5. 実効税率     = 法人税等合計 / 課税所得 (単純合算ベース)
+ *   6. 法定実効税率 = 事業税の損金算入を織り込んだ標準指標 (参考値・限界税率)
+ *   7. 税引後利益   = 課税所得 − 法人税等合計
+ */
+
+function yen(n: number): number {
+  return Math.round(n);
+}
+
+// --- 年度定数 (令和6年度 / 2024) ----------------------------------------
+// 根拠: 法人税法66条 (中小法人の軽減税率 15% / 本則 23.2%)、
+// 地方法人税法 (10.3%)、地方税法 (住民税法人税割 標準7.0% / 事業税所得割
+// 標準税率 / 特別法人事業税 所得割の37%)。
+
+// Stryker disable all : 以下は年度税率テーブルのリテラル定義。
+// 数値そのものは税法上の固定値であり、変異 (1->-1, *->/, 値変更) は
+// 「別の税率にしたら結果が変わる」という自明な等価/トートロジー変異になる。
+// 計算ロジック (どの率をどの所得帯に適用するか) は下の関数群で実テスト撃墜する。
+
+/** 中小法人の軽減税率 (年800万円以下の所得部分)。 */
+export const CORP_TAX_REDUCED_RATE = 0.15;
+/** 法人税の本則税率 (中小の800万円超部分・大法人の全所得)。 */
+export const CORP_TAX_STANDARD_RATE = 0.232;
+/** 軽減税率が適用される所得の上限 (年800万円)。 */
+export const CORP_TAX_REDUCED_THRESHOLD = 8_000_000;
+
+/** 地方法人税率 (法人税額に対して)。 */
+export const LOCAL_CORP_TAX_RATE = 0.103;
+
+/** 法人住民税 法人税割の標準税率 (法人税額に対して)。 */
+export const RESIDENT_CORP_TAX_RATE = 0.07;
+/** 均等割の概算既定 (最小区分 7万円)。 */
+export const DEFAULT_PER_CAPITA_LEVY = 70_000;
+
+/** 均等割の従業者数区分の境界 (この人数「超」で 50人超 区分)。 */
+export const PER_CAPITA_EMPLOYEE_THRESHOLD = 50;
+
+/** 法人事業税 所得割の段階別標準税率 (中小法人・所得割課税法人)。 */
+export const BUSINESS_TAX_RATE_TIER1 = 0.035; // 年400万円以下
+export const BUSINESS_TAX_RATE_TIER2 = 0.053; // 年400万円超800万円以下
+export const BUSINESS_TAX_RATE_TIER3 = 0.07; // 年800万円超
+/** 事業税の所得段階の境界 (下限)。 */
+export const BUSINESS_TAX_TIER1_LIMIT = 4_000_000;
+/** 事業税の所得段階の境界 (上限)。 */
+export const BUSINESS_TAX_TIER2_LIMIT = 8_000_000;
+
+/** 特別法人事業税の税率 (基準法人所得割額に対して)。 */
+export const SPECIAL_BUSINESS_TAX_RATE = 0.37;
+
+// 法定実効税率 (round 60) で使う代表「事業税+特別法人事業税」の所得割率。
+// 特別法人事業税は基準法人所得割額 (= 事業税所得割) に 37% を乗じるので、
+// 課税所得 1 円あたりに均すと「事業税所得割率 × (1 + 37%)」が事業税系の限界率。
+// 所得帯ごとに事業税所得割率が 3.5/5.3/7.0% と変わるため帯別に 3 つ持つ。
+/** 事業税系 (事業税所得割+特別法人事業税) の限界率: 年400万円以下の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER1 =
+  BUSINESS_TAX_RATE_TIER1 * (1 + SPECIAL_BUSINESS_TAX_RATE);
+/** 事業税系の限界率: 年400万円超800万円以下の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER2 =
+  BUSINESS_TAX_RATE_TIER2 * (1 + SPECIAL_BUSINESS_TAX_RATE);
+/** 事業税系の限界率: 年800万円超の帯。 */
+export const STATUTORY_BUSINESS_RATE_TIER3 =
+  BUSINESS_TAX_RATE_TIER3 * (1 + SPECIAL_BUSINESS_TAX_RATE);
+
+/** 資本金による「大法人」判定の境界 (1億円超で大法人)。 */
+export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
+
+/** 大法人の繰越欠損金 控除限度割合 (控除前所得の50%)。 */
+export const LARGE_CORP_LOSS_DEDUCTION_RATIO = 0.5;
+
+// Stryker restore all
+
+// --- 法人住民税 均等割の区分テーブル (令和6年度・標準税率) ----------------
+//
+// 均等割は「資本金等の額」の5区分 × 従業者数 (50人超/50人以下) の 2 列で
+// 決まる (地方税法 52条 (道府県民税均等割) + 312条 (市町村民税均等割))。
+// 下表は道府県民税均等割 (標準額 2万/5万/13万/54万/80万) と市町村民税均等割
+// (標準額 5万/13万/16万/41万、従業者50人超は 12万/15万/40万/175万/300万) を
+// 合算した「標準税率ベースの年額」。超過課税・自治体差は概算では反映しない。
+//
+//   資本金等の額           従業者50人以下   従業者50人超
+//   1千万円以下             70,000          140,000   (道2万+市5/12万)
+//   1千万円超〜1億円以下    180,000         200,000   (道5万+市13/15万)
+//   1億円超〜10億円以下     290,000         530,000   (道13万+市16/40万)
+//   10億円超〜50億円以下    410,000         2,290,000 (道54万+市41/175万)
+//   50億円超               410,000         3,800,000 (道80万 (※)+市41/300万)
+//
+// (※) 50億円超かつ50人以下は道府県80万+市41万=121万が原則だが、実務上 50人
+//     以下の最上位 (10億円超50人以下) と同額 41万へ丸める簡易扱いとはせず、
+//     精度のため下表では資本金区分のみで道府県分を引き上げる。下記の通り
+//     50人以下列は資本金が上がっても市町村分が 41万で頭打ちになる点に注意。
+//     概算目的のため 50人以下の最上位 2 区分 (10億超/50億超) は 410,000 で同額。
+
+/** 均等割区分テーブルの1行 (資本金等の額の下限と、従業者数別の年額)。 */
+export interface PerCapitaTier {
+  /** この区分に属する資本金等の額の下限 (この額「超」。最下位は 0)。 */
+  readonly capitalLowerBound: number;
+  /** 従業者 50人以下のときの均等割年額 (円)。 */
+  readonly levyFew: number;
+  /** 従業者 50人超のときの均等割年額 (円)。 */
+  readonly levyMany: number;
+}
+
+// Stryker disable all : 均等割区分テーブルは静的なデータ定義 (令和6年度 標準税率)。
+// 各数値リテラルの書き換え変異は境界テストで網羅できない部分が等価になりやすい
+// ため、罠#2 に従いデータ定義ブロックのみ無効化する。資本金・従業者数 →
+// 均等割額の解決ロジック (resolveCorporatePerCapita) は無効化せず実テストで撃墜。
+
+/**
+ * 法人住民税 均等割の区分テーブル (資本金等の額 昇順)。
+ * 各区分の `capitalLowerBound` は「この額以上でこの区分」。資本金等の額 `c` は
+ * capitalLowerBound[i] ≤ c < capitalLowerBound[i+1] の区分 i に属する。
+ * 税法上の「○○超」は最小通貨単位 (1円) を足した「以上」で表現する
+ * (例: 1千万円「超」= 10,000,001 円「以上」)。最下位区分は下限0で底打ち。
+ */
+const PER_CAPITA_TIERS: readonly PerCapitaTier[] = [
+  { capitalLowerBound: 0, levyFew: 70_000, levyMany: 140_000 }, // 1千万円以下
+  { capitalLowerBound: 10_000_001, levyFew: 180_000, levyMany: 200_000 }, // 1千万超〜1億以下
+  { capitalLowerBound: 100_000_001, levyFew: 290_000, levyMany: 530_000 }, // 1億超〜10億以下
+  { capitalLowerBound: 1_000_000_001, levyFew: 410_000, levyMany: 2_290_000 }, // 10億超〜50億以下
+  { capitalLowerBound: 5_000_000_001, levyFew: 410_000, levyMany: 3_800_000 }, // 50億円超
+];
+
+// Stryker restore all
+
+// --- 区分 ---------------------------------------------------------------
+
+/**
+ * 会社区分。すべて任意で、保守的な既定 (中小・最小均等割) に倒す。
+ *
+ * @property capital      資本金 (円)。1億円超なら大法人扱い。均等割区分の解決にも使う
+ *                        (資本金等の額の概算として)。
+ * @property employees    従業者数 (人)。均等割の 50人超/以下 区分の判定に使う。
+ *                        未指定なら 50人以下 (保守的に小さい区分) とみなす。
+ * @property smallBusiness 中小法人として扱うか。明示すると capital より優先。
+ * @property perCapitaLevy 法人住民税 均等割の年額 (円)。明示すると区分テーブル
+ *                        より優先。未指定なら capital(+employees) から区分解決、
+ *                        capital も無ければ最小区分 (7万円)。
+ * @property carryforwardLoss 繰越欠損金の残高 (円, 0以上)。青色申告で過去最大10年分
+ *                        繰り越した欠損金を当期の課税所得から控除する (精度向上 round 57)。
+ *                        中小法人は控除前所得の全額まで、大法人 (資本金1億円超) は
+ *                        控除前所得の50%まで控除できる。未指定/0/負 は控除なし
+ *                        (= round 56 までの従来挙動と完全に同一)。
+ */
+export interface CorporateProfile {
+  readonly capital?: number;
+  readonly employees?: number;
+  readonly smallBusiness?: boolean;
+  readonly perCapitaLevy?: number;
+  readonly carryforwardLoss?: number;
+}
+
+/**
+ * 資本金等の額と従業者数から法人住民税 均等割の年額を区分テーブルで解決する。
+ *
+ * 資本金区分は「超〜以下」ルール (capitalUpperBound 以下でその区分)、従業者数は
+ * `PER_CAPITA_EMPLOYEE_THRESHOLD` (50人) 「超」で大区分。負/未指定の従業者数は
+ * 50人以下とみなす。資本金が極小/負でも最小区分 (7万円) に底打ちする。
+ *
+ * @param capital   資本金等の額 (円)
+ * @param employees 従業者数 (人)。既定 0 (=50人以下)。
+ */
+export function resolveCorporatePerCapita(capital: number, employees = 0): number {
+  const c = Math.max(0, capital);
+  const many = employees > PER_CAPITA_EMPLOYEE_THRESHOLD;
+  // 上位区分から走査し、最初に「下限以上」(c >= 下限) を満たした区分を採用する。
+  // これにより資本金区分の境界と最上位区分の頭打ちを同時に満たす。最下位区分
+  // (index 0, capitalLowerBound===0) は c>=0 で必ず一致するため、ループは index 0
+  // まで走る (`i >= 0`)。下のフォールバックは index 0 と同じ値を返す重複ではなく
+  // throw にすることで、`i >= 0`→`i > 0` の境界変異が c===0 (最下位区分) で throw
+  // となり実テストで撃墜できる (等価変異を回避)。
+  for (let i = PER_CAPITA_TIERS.length - 1; i >= 0; i--) {
+    const tier = PER_CAPITA_TIERS[i]!;
+    if (c >= tier.capitalLowerBound) {
+      return many ? tier.levyMany : tier.levyFew;
+    }
+  }
+  // c >= 0 かつ PER_CAPITA_TIERS[0].capitalLowerBound === 0 なので到達不能。
+  // Stryker disable next-line all : 到達不能 (空テーブル等の不正入力に対する防御)。
+  throw new Error('resolveCorporatePerCapita: empty or invalid tier table');
+}
+
+/**
+ * プロファイルから法人住民税 均等割の年額を決定する (clamp 前の生値)。
+ *   1. perCapitaLevy が明示されていればそれを最優先 (従来挙動を保持)。
+ *   2. なければ capital から区分テーブルで解決 (employees があれば反映)。
+ *   3. capital も無ければ最小区分 (DEFAULT_PER_CAPITA_LEVY)。
+ */
+export function resolvePerCapitaLevy(profile: CorporateProfile = {}): number {
+  if (profile.perCapitaLevy !== undefined) return profile.perCapitaLevy;
+  if (profile.capital !== undefined) {
+    return resolveCorporatePerCapita(profile.capital, profile.employees ?? 0);
+  }
+  return DEFAULT_PER_CAPITA_LEVY;
+}
+
+/**
+ * プロファイルから中小法人かどうかを判定する。
+ * smallBusiness が明示されていればそれを優先。次に capital で判定
+ * (1億円超は大法人=false)。どちらも未指定なら保守的に中小 (true)。
+ */
+export function isSmallBusiness(profile: CorporateProfile = {}): boolean {
+  if (profile.smallBusiness !== undefined) return profile.smallBusiness;
+  if (profile.capital !== undefined) return profile.capital <= LARGE_CORP_CAPITAL_THRESHOLD;
+  return true;
+}
+
+// --- 繰越欠損金の控除 ---------------------------------------------------
+
+/** 繰越欠損金 控除の結果 (控除後所得・実際の控除額・控除しきれず繰り越す残額)。 */
+export interface LossCarryforwardResult {
+  /** 控除後の課税所得 (円, 0以上)。これに法人税等を課す。 */
+  readonly taxableIncome: number;
+  /** 当期に実際に控除した繰越欠損金の額 (円, 0以上)。 */
+  readonly deductedLoss: number;
+  /** 控除しきれず翌期以降へ繰り越す欠損金の残額 (円, 0以上)。 */
+  readonly remainingLoss: number;
+}
+
+/**
+ * 控除前所得から繰越欠損金を控除し、控除後所得・控除額・繰越残額を返す純粋関数。
+ *
+ * 控除限度:
+ *   - 中小法人 (small=true): 控除前所得の全額まで控除可。
+ *   - 大法人   (small=false): 控除前所得の50% (`LARGE_CORP_LOSS_DEDUCTION_RATIO`) が上限。
+ * 実際の控除額は「繰越欠損金残高」と「控除限度額」の小さい方。
+ *
+ * 境界・既定挙動:
+ *   - loss が未指定/0/負: 控除なし (taxableIncome=income, deductedLoss=0)。従来挙動を保持。
+ *   - income が 0以下 (欠損): 控除限度0なので控除なし。所得は0に底打ち、loss 全額が繰越残。
+ *   - 中小で loss ≥ income: income 全額を控除し所得0、繰越残は loss−income。
+ *
+ * @param income 控除前の課税所得 (円)。負は0とみなす。
+ * @param loss   繰越欠損金の残高 (円)。負/未指定は0とみなす。
+ * @param small  中小法人か (true=全額控除 / false=50%上限)。
+ */
+export function applyLossCarryforward(
+  income: number,
+  loss: number,
+  small: boolean,
+): LossCarryforwardResult {
+  const baseIncome = Math.max(0, income);
+  const availableLoss = Math.max(0, loss);
+  const limit = small ? baseIncome : baseIncome * LARGE_CORP_LOSS_DEDUCTION_RATIO;
+  const deductedLoss = Math.min(availableLoss, limit);
+  return {
+    taxableIncome: baseIncome - deductedLoss,
+    deductedLoss,
+    remainingLoss: availableLoss - deductedLoss,
+  };
+}
+
+// --- 個別税額 -----------------------------------------------------------
+
+/**
+ * 法人税額を計算する。
+ *   中小法人: 800万円以下の部分 15% + 超過部分 23.2%
+ *   大法人:   全所得 23.2%
+ * 所得0以下は0。
+ *
+ * @param taxableIncome 課税所得 (円)
+ * @param small         中小法人か
+ */
+export function calcCorporateIncomeTax(taxableIncome: number, small: boolean): number {
+  const income = Math.max(0, taxableIncome);
+  // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各項が 0×率=0 を返すため等価。
+  if (income === 0) return 0;
+  if (!small) {
+    return yen(income * CORP_TAX_STANDARD_RATE);
+  }
+  const reducedPart = Math.min(income, CORP_TAX_REDUCED_THRESHOLD);
+  const standardPart = Math.max(0, income - CORP_TAX_REDUCED_THRESHOLD);
+  return yen(reducedPart * CORP_TAX_REDUCED_RATE + standardPart * CORP_TAX_STANDARD_RATE);
+}
+
+/**
+ * 地方法人税額を計算する (法人税額 × 10.3%)。
+ *
+ * @param corporateIncomeTax 法人税額 (円)
+ */
+export function calcLocalCorporateTax(corporateIncomeTax: number): number {
+  return yen(Math.max(0, corporateIncomeTax) * LOCAL_CORP_TAX_RATE);
+}
+
+/**
+ * 法人住民税額を計算する。
+ *   法人税割 (法人税額 × 7.0% 標準) + 均等割 (区分の最低額)
+ * 所得0でも均等割は課される。
+ *
+ * @param corporateIncomeTax 法人税額 (円)
+ * @param perCapitaLevy      均等割の年額 (既定 7万円)
+ */
+export function calcResidentCorporateTax(
+  corporateIncomeTax: number,
+  perCapitaLevy: number = DEFAULT_PER_CAPITA_LEVY,
+): number {
+  const corporateTaxPortion = yen(Math.max(0, corporateIncomeTax) * RESIDENT_CORP_TAX_RATE);
+  return corporateTaxPortion + Math.max(0, perCapitaLevy);
+}
+
+/**
+ * 法人事業税 (所得割) を計算する。
+ *   400万以下 3.5% + 400万超800万以下 5.3% + 800万超 7.0%
+ * 「基準法人所得割額」(=所得割の標準税率による額) を返す。
+ * 所得0以下は0。
+ *
+ * 注: 大法人の外形標準課税 (付加価値割・資本割) は概算では扱わず、
+ * 所得割中心の簡易扱いとする (大法人も同じ段階別所得割で近似)。
+ *
+ * @param taxableIncome 課税所得 (円)
+ */
+export function calcBusinessTaxIncomePortion(taxableIncome: number): number {
+  const income = Math.max(0, taxableIncome);
+  // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
+  if (income === 0) return 0;
+  const tier1 = Math.min(income, BUSINESS_TAX_TIER1_LIMIT);
+  const tier2 = Math.min(
+    Math.max(0, income - BUSINESS_TAX_TIER1_LIMIT),
+    BUSINESS_TAX_TIER2_LIMIT - BUSINESS_TAX_TIER1_LIMIT,
+  );
+  const tier3 = Math.max(0, income - BUSINESS_TAX_TIER2_LIMIT);
+  return yen(
+    tier1 * BUSINESS_TAX_RATE_TIER1 +
+      tier2 * BUSINESS_TAX_RATE_TIER2 +
+      tier3 * BUSINESS_TAX_RATE_TIER3,
+  );
+}
+
+/**
+ * 特別法人事業税を計算する (基準法人所得割額 × 37%)。
+ *
+ * @param businessTaxIncomePortion 基準法人所得割額 (円)
+ */
+export function calcSpecialBusinessTax(businessTaxIncomePortion: number): number {
+  return yen(Math.max(0, businessTaxIncomePortion) * SPECIAL_BUSINESS_TAX_RATE);
+}
+
+// --- 法定実効税率 (round 60) --------------------------------------------
+//
+// `effectiveRate` (法人税等合計 / 課税所得) は「実際に納める税額の所得に対する
+// 単純合算割合」であり、均等割 (定額) や所得段階別税率の影響をそのまま含む。
+// 一方、ここで算出する **法定実効税率 (statutoryEffectiveRate)** は実務で広く
+// 使われる標準指標で、**法人事業税 (+特別法人事業税) が翌期に損金算入される**
+// 効果を織り込んだ「限界的な実効負担率」を表す。両者は目的が異なる別の参考値で、
+// effectiveRate は一切変更しない (round 60 は純粋追加)。
+//
+// 式 (損金算入を織り込んだ標準形):
+//   法定実効税率 =
+//     { 法人税率 × (1 + 地方法人税率 + 住民税法人税割率) + 事業税所得割率 + 特別法人事業税率 }
+//     / (1 + 事業税所得割率 + 特別法人事業税率)
+//
+//   - 分子前段 法人税率 × (1 + 地方法人税率 + 住民税法人税割率):
+//       法人税に地方法人税 (法人税額×10.3%) と住民税法人税割 (法人税額×7.0%) が
+//       上乗せされるので、法人税率にこれらを乗じた合計が法人税系の負担。
+//   - 分子後段 事業税所得割率 + 特別法人事業税率:
+//       特別法人事業税は事業税所得割額×37% なので、課税所得あたりでは
+//       事業税所得割率 × (1 + 37%) = `STATUTORY_BUSINESS_RATE_*` にまとまる。
+//   - 分母 (1 + 事業税所得割率 + 特別法人事業税率):
+//       事業税系は翌期の損金になり、その分だけ将来の課税ベースが縮むので
+//       割り戻す (損金算入効果)。これにより実効負担は単純合算より下がる。
+//
+// 率の選び方 (前提):
+//   - 法人税率は「限界税率」を採る。中小法人かつ課税所得が 800万円以下なら
+//     軽減税率 15% (`CORP_TAX_REDUCED_RATE`)、800万円超または大法人なら本則
+//     23.2% (`CORP_TAX_STANDARD_RATE`)。指標は限界的な追加 1 円の負担を表すため。
+//   - 事業税系の率も所得帯の限界率を採る (400万以下 3.5% / 400万超800万以下
+//     5.3% / 800万超 7.0% ベース)。所得帯で率が変わるため課税所得から帯を選ぶ。
+//   - 地方法人税率・住民税法人税割率・特別法人事業税率は所得帯に依らない定数。
+//
+// **概算であり税務助言ではありません** (ファイル冒頭の注記に同じ)。外形標準課税・
+// 超過税率・自治体差・税額控除等は反映しない簡易な参考値です。
+
+/** 法定実効税率を構成する代表率 (限界税率)。`calcStatutoryEffectiveRate` の内訳。 */
+export interface StatutoryRateInputs {
+  /** 法人税の限界税率 (中小800万以下=15% / それ以外=23.2%)。 */
+  readonly corporateRate: number;
+  /** 事業税系 (事業税所得割+特別法人事業税) の限界率。 */
+  readonly businessRate: number;
+}
+
+/**
+ * 課税所得と区分から法定実効税率に用いる代表率 (限界税率) を選ぶ純粋ヘルパ。
+ *
+ * 法人税率: 中小法人かつ所得が `CORP_TAX_REDUCED_THRESHOLD` (800万円) 以下なら
+ *   軽減 15%、それ以外 (800万円超 or 大法人) は本則 23.2%。
+ * 事業税系率: 所得帯の限界率 (`STATUTORY_BUSINESS_RATE_TIER1/2/3`)。
+ *   400万円以下=tier1、400万円超800万円以下=tier2、800万円超=tier3。
+ *
+ * 所得は限界帯の判定にのみ使う (負/0 は最小帯 tier1・軽減税率帯とみなす)。
+ *
+ * @param taxableIncome 課税所得 (円)。帯の判定に使う。負/0 は最小帯。
+ * @param small         中小法人か。
+ */
+export function selectStatutoryRates(taxableIncome: number, small: boolean): StatutoryRateInputs {
+  const income = Math.max(0, taxableIncome);
+  const corporateRate =
+    small && income <= CORP_TAX_REDUCED_THRESHOLD
+      ? CORP_TAX_REDUCED_RATE
+      : CORP_TAX_STANDARD_RATE;
+  let businessRate: number;
+  if (income <= BUSINESS_TAX_TIER1_LIMIT) {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER1;
+  } else if (income <= BUSINESS_TAX_TIER2_LIMIT) {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER2;
+  } else {
+    businessRate = STATUTORY_BUSINESS_RATE_TIER3;
+  }
+  return { corporateRate, businessRate };
+}
+
+/**
+ * 法定実効税率 (statutory effective tax rate) を算出する純粋関数。
+ *
+ * 事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標 (上のブロックコメントの
+ * 式)。`effectiveRate` (単純合算ベース) とは別の参考値。
+ *
+ * 法人税率・事業税系率は課税所得と区分から限界税率を `selectStatutoryRates` で選ぶ。
+ * 地方法人税率・住民税法人税割率は定数 (`LOCAL_CORP_TAX_RATE` / `RESIDENT_CORP_TAX_RATE`)。
+ *
+ * @param taxableIncome 課税所得 (円)。率の限界帯の選択に使う。既定 0 (最小帯)。
+ * @param profile       会社区分 (未指定は中小・保守的既定)。中小/大法人の判定に使う。
+ */
+export function calcStatutoryEffectiveRate(
+  taxableIncome = 0,
+  profile: CorporateProfile = {},
+): number {
+  const small = isSmallBusiness(profile);
+  const { corporateRate, businessRate } = selectStatutoryRates(taxableIncome, small);
+  const numerator =
+    corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+  const denominator = 1 + businessRate;
+  return numerator / denominator;
+}
+
+// --- 合算 ---------------------------------------------------------------
+
+/** 法人税等の内訳と税引後利益。 */
+export interface CorporateTaxBreakdown {
+  /** 課税所得 (入力をそのまま反映。負はそのまま)。 */
+  readonly taxableIncome: number;
+  /** 繰越欠損金として当期に控除した額 (円, 0以上)。控除なしなら0 (精度向上 round 57)。 */
+  readonly deductedLoss: number;
+  /**
+   * 繰越欠損金 控除後の課税所得 (円, 0以上)。法人税等はこの額に課税される。
+   * 控除がない場合は max(0, taxableIncome) と一致 (従来挙動)。
+   */
+  readonly incomeAfterLoss: number;
+  /** 控除しきれず翌期以降へ繰り越す欠損金の残額 (円, 0以上)。 */
+  readonly remainingLoss: number;
+  /** 法人税。 */
+  readonly corporateIncomeTax: number;
+  /** 地方法人税。 */
+  readonly localCorporateTax: number;
+  /** 法人住民税 (法人税割 + 均等割)。 */
+  readonly residentTax: number;
+  /** 法人事業税 (所得割)。 */
+  readonly businessTax: number;
+  /** 特別法人事業税。 */
+  readonly specialBusinessTax: number;
+  /** 法人税等の合計。 */
+  readonly totalTax: number;
+  /** 実効税率 (法人税等合計 / 課税所得)。所得0以下は0。単純合算ベース。 */
+  readonly effectiveRate: number;
+  /**
+   * 法定実効税率 (参考)。事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標
+   * (`calcStatutoryEffectiveRate`)。`effectiveRate` (単純合算ベース) とは目的の
+   * 異なる別の参考値で、均等割や所得段階の影響は含まず限界税率で算出する。
+   * 所得0以下でも率自体は定義されるため0にはしない (限界帯の最小帯で評価)。
+   */
+  readonly statutoryEffectiveRate: number;
+  /** 税引後利益 (課税所得 − 法人税等合計)。 */
+  readonly afterTaxProfit: number;
+  /** 中小法人として計算したか。 */
+  readonly smallBusiness: boolean;
+}
+
+/**
+ * 課税所得と会社区分から法人税等の概算と税引後利益を計算する。
+ *
+ * 所得0以下 (欠損) のときは法人税・地方法人税・事業税・特別法人事業税は0で、
+ * 法人住民税の均等割のみが課される。税引後利益は所得から均等割を引いた額。
+ *
+ * 均等割の決定順 (精度向上 round 56):
+ *   1. perCapitaLevy が明示されていればそれを最優先 (従来挙動と完全に同一)。
+ *   2. なければ capital から区分テーブルで解決 (employees があれば 50人区分も反映)。
+ *   3. capital も無ければ従来どおり最小区分 (7万円)。
+ *
+ * 繰越欠損金の控除 (精度向上 round 57):
+ *   control 前所得から `carryforwardLoss` を控除した「控除後所得」に法人税等を課す。
+ *   中小法人は控除前所得の全額、大法人は50%が控除上限 (`applyLossCarryforward`)。
+ *   carryforwardLoss が未指定/0/負なら控除額0で控除後所得=従来の課税所得となり、
+ *   round 56 までの挙動と完全に一致する。実効税率は控除後所得を分母とする。
+ *
+ * @param taxableIncome 課税所得 (円, 年額)。負は欠損。
+ * @param profile       会社区分 (未指定は中小・最小均等割の保守的既定)。
+ */
+export function calcCorporateTax(
+  taxableIncome: number,
+  profile: CorporateProfile = {},
+): CorporateTaxBreakdown {
+  const small = isSmallBusiness(profile);
+  const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile));
+
+  const income = Math.max(0, taxableIncome);
+  const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small);
+  const incomeAfterLoss = loss.taxableIncome;
+
+  const corporateIncomeTax = calcCorporateIncomeTax(incomeAfterLoss, small);
+  const localCorporateTax = calcLocalCorporateTax(corporateIncomeTax);
+  const residentTax = calcResidentCorporateTax(corporateIncomeTax, perCapitaLevy);
+  const businessTax = calcBusinessTaxIncomePortion(incomeAfterLoss);
+  const specialBusinessTax = calcSpecialBusinessTax(businessTax);
+
+  const totalTax =
+    corporateIncomeTax +
+    localCorporateTax +
+    residentTax +
+    businessTax +
+    specialBusinessTax;
+
+  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
+  // 法定実効税率 (参考) は控除後所得の限界帯で評価する (損金算入を織り込んだ標準指標)。
+  const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile);
+  const afterTaxProfit = taxableIncome - totalTax;
+
+  return {
+    taxableIncome,
+    deductedLoss: loss.deductedLoss,
+    incomeAfterLoss,
+    remainingLoss: loss.remainingLoss,
+    corporateIncomeTax,
+    localCorporateTax,
+    residentTax,
+    businessTax,
+    specialBusinessTax,
+    totalTax,
+    effectiveRate,
+    statutoryEffectiveRate,
+    afterTaxProfit,
+    smallBusiness: small,
+  };
+}

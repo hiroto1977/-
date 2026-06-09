@@ -11,13 +11,22 @@ interface TeamMember {
   notes?: Record<number, string>;
 }
 
+/** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
+ *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
+interface ReadonlyTeamMember {
+  readonly id: string;
+  readonly name: string;
+  readonly scores: readonly number[];
+  readonly notes?: Readonly<Record<number, string>>;
+}
+
 interface TeamRadarSnapshot {
-  department: string;
-  evaluatedAt: string;
-  axes: readonly string[];
-  members: TeamMember[];
-  fetchedAt: string;
-  isMock: boolean;
+  readonly department: string;
+  readonly evaluatedAt: string;
+  readonly axes: readonly string[];
+  readonly members: readonly ReadonlyTeamMember[];
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -59,14 +68,22 @@ function RadarChart({
   const cy = size / 2 + 8;
   const radius = size * 0.36;
   const rings: number[] = [1, 2, 3, 4, 5];
+  // viewBox + width:100% で「コンテナ幅に合わせて縮む」レスポンシブ SVG にする。
+  // 固定 width/height だと狭い画面で見切れるため、最大幅だけ size に制限する。
   return (
     <svg
-      width={size}
-      height={size}
       viewBox={`0 0 ${size} ${size}`}
       role="img"
       aria-label="チームレーダーチャート"
-      style={{ background: 'transparent' }}
+      preserveAspectRatio="xMidYMid meet"
+      style={{
+        background: 'transparent',
+        display: 'block',
+        width: '100%',
+        maxWidth: size,
+        height: 'auto',
+        margin: '0 auto',
+      }}
     >
       {rings.map((lvl) => {
         const pts: string[] = [];
@@ -138,7 +155,7 @@ function uniqueId(name: string, existing: string[]): string {
 export function TeamRadarPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
-    SNAPSHOT.teamradar as unknown as TeamRadarSnapshot,
+    SNAPSHOT.teamradar,
   );
 
   const [department, setDepartment] = useState(data.department);
@@ -317,8 +334,11 @@ export function TeamRadarPage() {
       </Section>
 
       <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        {/* flex:1 1 <basis> + minWidth:0 で、狭い画面では縦積み・広い画面では横並びに。
+            minWidth:0 がないと中身(SVG 520px等)が縮まず画面外に見切れる。 */}
+        <div style={{ flex: '1 1 340px', minWidth: 0 }}>
         <Section title="レーダーチャート プレビュー" count={members.length}>
-          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
             <RadarChart axes={axes} members={members} size={520} />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {members.map((m, idx) => {
@@ -333,9 +353,11 @@ export function TeamRadarPage() {
             </div>
           </div>
         </Section>
+        </div>
 
+        <div style={{ flex: '1 1 380px', minWidth: 0 }}>
         <Section title="メンバー編集" count={members.length}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 380 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {members.map((m, idx) => {
               const c = PALETTE[idx % PALETTE.length]!;
               return (
@@ -448,6 +470,7 @@ export function TeamRadarPage() {
             </button>
           </div>
         </Section>
+        </div>
       </div>
 
       <Section title="保存 / エクスポート" count={0}>
