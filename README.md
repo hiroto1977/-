@@ -3,8 +3,10 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-**🌐 ライブデモ: <https://hiroto1977.github.io/-/>** — インストール不要。`main` への
-push で `.github/workflows/pages.yml` が `standalone.html` を自動デプロイします。
+**🌐 ライブデモ: <https://hiroto1977.github.io/-/>** — インストール不要。ルートは
+軽量ランディング (16 KB・`services.ts` から自動生成)、`/app.html` がフル版
+(全 45 サービス・単一 HTML)。`main` への push で `.github/workflows/pages.yml` が
+両方を自動デプロイします。
 
 ## サービス一覧 (22)
 

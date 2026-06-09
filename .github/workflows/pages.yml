@@ -36,11 +36,14 @@ jobs:
       - run: npm ci
       # 単一ファイル standalone.html を生成 (tsc -b + vite build + inline-html.cjs)
       - run: npm run build:web
+      # 軽量ランディング (16KB) を生成 (services.ts から自動生成)
+      - run: npm run build:landing
       - name: Assemble Pages site
         run: |
           mkdir -p _site
-          # standalone.html をルートの index.html として配信
-          cp dist/standalone.html _site/index.html
+          # ルート = 高速な軽量ランディング、フル版 = ./app.html
+          cp dist/landing.html _site/index.html
+          cp dist/standalone.html _site/app.html
           # Jekyll 処理を無効化 (リポジトリ名 "-" / 単一 HTML のため)
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
