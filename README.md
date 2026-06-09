@@ -4,23 +4,23 @@
 2 通りの実行形態。
 
 **🌐 ライブデモ: <https://hiroto1977.github.io/-/>** — インストール不要。ルートは
-軽量ランディング (16 KB・`services.ts` から自動生成)、`/app.html` がフル版
+軽量ランディング (約 20 KB・`services.ts` から自動生成)、`/app.html` がフル版
 (全 45 サービス・単一 HTML)。`main` への push で `.github/workflows/pages.yml` が
 両方を自動デプロイします。
 
-## サービス一覧 (22)
+## サービス一覧 (45)
 
 | カテゴリ | サービス |
 |---|---|
-| **おすすめ** (常時表示) | ホーム / 事業ダッシュボード / チームレーダー / Canva テンプレート / ライブラリ / 設定 |
-| **分析・ツール** | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks |
-| **外部 SaaS 連携** | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva |
+| **おすすめ** (6) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 |
+| **分析・ツール** (13) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / Uber Eats / 出前館 / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 |
+| **外部サービス連携** (26) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / 税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 |
 
 ## 2 通りの動かし方
 
 ### 1. ブラウザだけで動かす (最速・インストール不要)
 
-`dist/standalone.html` (376 KB の単一ファイル) をブラウザでダブルクリックするだけ。
+`dist/standalone.html` (約 470 KB の単一ファイル) をブラウザでダブルクリックするだけ。
 Node.js も Electron も不要、Chrome / Edge / Safari / Firefox どこでも動きます。
 
 ```bash

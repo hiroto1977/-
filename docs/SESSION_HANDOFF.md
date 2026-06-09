@@ -15,7 +15,13 @@
 | 🔧 tools (13) | skills / security / cloudflare / emotions / ollama / kpi / stocks / uber-eats / demae-can / real-estate / mutual-funds / quality / storage |
 | 🔗 integrations (26) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) |
 
-**品質メトリクス:** 1193 静的 / 1242 実行時 tests passing · Stryker mutation **100.00%** · typecheck / ESLint clean · verify:all green (45 service tests + 171 file:line refs + 6 metrics + 4 cross-doc facts) · standalone HTML 440 KB
+**品質メトリクス:** 1193 静的 / 1242 実行時 tests passing · Stryker mutation **100.00%** · typecheck / ESLint clean · verify:all green (45 service tests + 171 file:line refs + 6 metrics + 4 cross-doc facts) · standalone HTML 約 470 KB
+
+**公開 (GitHub Pages):** `.github/workflows/pages.yml` が `main` push で公開。
+ルート `/` = 軽量ランディング (約 20 KB, `scripts/build-landing.cjs` が `services.ts`
+から生成)、`/app.html` = フル版 standalone、`/og.png` = OGP カード。初回のみ
+**Settings → Pages → Source = "GitHub Actions"** の有効化が必要。`build:landing` は
+parse 件数を `SERVICE_IDS` と照合し不一致ならビルド失敗 (ci.yml で検証)。
 
 ## 確立されたパターン
 
@@ -67,6 +73,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 `docs/ARCHITECTURE.md` には 170+ の `file:line` 参照 + 6 live metrics (service count / test count / IPC / OAuth / verify:arch ref count / client モジュール数) があり、`npm run verify:arch` で自動チェック。**新サービス / テスト / コード移動の度に同期更新が必要**。失敗パターン:
 - サービス数を増やしたら ARCHITECTURE.md の数字 + §3.1 表に行追加 + CLAUDE.md / USER_GUIDE.md の "N services" も全部
 - IPC handler 追加 / `LIVE_FETCHERS` 行範囲変更時の line ref 追従
+
+### F. 連携スタブの集約 (重複除去・契約不変)
+`{ items, count }` だけを描画する純 snapshot 連携先 (PR #5 の 10 連携先など) は、
+bespoke page/fetcher を作らず共通 factory に寄せる:
+- **page**: `createConnectorStubPage(id, label, snapshot)` (`pages/ConnectorStubPage.tsx`)。`services.ts` の `page:` を factory 呼び出しにする。
+- **fetcher**: `makeConnectorStubFetcher()` (`clients/connectorStub.ts`)。`<id>.ts` は `export type XSnapshot = ConnectorStubSnapshot` + フェッチャ re-export の薄いラッパに。
+- **不変条件は維持**: `<id>.ts` ファイルを残すので `lint:test-coverage` / `client module count = 45` / 既存テストは無変更。factory は Stryker mutate scope に追加。
+- ハイフン ID (`microsoft-365`) は SNAPSHOT キーが camelCase (`microsoft365`) で ID と一致しないため、snapshot 値は registry から **明示的に渡す** (`SNAPSHOT[id]` を引かない)。
 
 ## 既知の罠
 
