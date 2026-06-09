@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
 import { isServiceId } from '../shared/serviceId';
 import { filterServices } from './sidebarFilter';
+import { serviceIdFromHash, hashForService } from './hashRoute';
+import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
@@ -39,11 +41,47 @@ const SERVICE_ORDER: ReadonlyMap<ServiceId, number> = new Map(
   SERVICES.map((s, i) => [s.id, i]),
 );
 
+const RECENTS_KEY = 'servicehub.recents';
+const FAVORITES_KEY = 'servicehub.favorites';
+const KNOWN_IDS: ReadonlySet<ServiceId> = new Set(SERVICES.map((s) => s.id));
+
+/** localStorage から ServiceId 配列を安全に読む (壊れた値・private mode は []). */
+function loadIds(key: string): ServiceId[] {
+  try {
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter(isServiceId) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveIds(key: string, ids: readonly ServiceId[]): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(ids));
+  } catch {
+    /* private mode / quota — 永続化は best-effort */
+  }
+}
+
+/** 初期表示サービス: URL ハッシュ優先、無ければ先頭。 */
+function initialActiveId(): ServiceId {
+  try {
+    const fromHash = serviceIdFromHash(typeof location !== 'undefined' ? location.hash : '');
+    if (fromHash) return fromHash;
+  } catch {
+    /* location 不在環境 */
+  }
+  return SERVICES[0]!.id;
+}
+
 export function App() {
-  const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
+  const [activeId, setActiveId] = useState<ServiceId>(initialActiveId);
   const [version, setVersion] = useState<string>('');
   const [query, setQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
+  const [recents, setRecents] = useState<ServiceId[]>(() => loadIds(RECENTS_KEY));
+  const [favorites, setFavorites] = useState<ServiceId[]>(() => loadIds(FAVORITES_KEY));
   const { plan, setPlan, internalUnlocked } = usePlan();
   const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
     featured: false,
@@ -138,6 +176,31 @@ export function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // activeId → URL ハッシュ同期 + 「最近使った」へ記録。
+  useEffect(() => {
+    try {
+      const h = hashForService(activeId);
+      if (location.hash !== h) location.hash = h;
+    } catch {
+      /* location 不在環境 */
+    }
+    setRecents((prev) => pushRecent(prev, activeId));
+  }, [activeId]);
+
+  // URL ハッシュ → activeId (ブラウザ戻る/進む・直リンク・共有)。
+  useEffect(() => {
+    function onHash() {
+      const id = serviceIdFromHash(location.hash);
+      if (id) setActiveId(id);
+    }
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  // recents / favorites を localStorage へ永続化。
+  useEffect(() => saveIds(RECENTS_KEY, recents), [recents]);
+  useEffect(() => saveIds(FAVORITES_KEY, favorites), [favorites]);
+
   const grouped = useMemo(() => {
     const out: Record<ServiceCategory, typeof SERVICES> = {
       featured: [],
@@ -171,6 +234,17 @@ export function App() {
     }
   }
 
+  /** お気に入りのトグル。 */
+  function toggleFav(id: ServiceId) {
+    setFavorites((prev) => toggleFavorite(prev, id));
+  }
+
+  // 保存済み id を現存サービスに解決 (stale id を除外し定義を引く)。
+  const byId = (id: ServiceId) => SERVICES.find((s) => s.id === id)!;
+  const favoriteServices = keepKnown(favorites, KNOWN_IDS).map(byId);
+  const recentServices = keepKnown(recents, KNOWN_IDS).slice(0, RECENTS_MAX).map(byId);
+  const favoriteSet = new Set(favorites);
+
   // Browser-mode + locked → show only the lock screen.
   if (browserMode === null || vaultUnlocked === null) {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
@@ -193,6 +267,7 @@ export function App() {
   const renderItem = (service: (typeof SERVICES)[number]) => {
     const order = SERVICE_ORDER.get(service.id) ?? 0;
     const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
+    const fav = favoriteSet.has(service.id);
     return (
       <button
         key={service.id}
@@ -205,11 +280,34 @@ export function App() {
       >
         <span className="icon">{service.icon}</span>
         <span>{service.label}</span>
-        {!unlocked && (
-          <span style={{ marginLeft: 'auto', fontSize: 11 }} aria-label="locked">
-            🔒
+        <span className="sidebar-item-controls">
+          {!unlocked && (
+            <span style={{ fontSize: 11 }} aria-label="locked">
+              🔒
+            </span>
+          )}
+          <span
+            role="button"
+            tabIndex={0}
+            className={`fav-toggle ${fav ? 'on' : ''}`}
+            aria-label={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            aria-pressed={fav}
+            title={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFav(service.id);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleFav(service.id);
+              }
+            }}
+          >
+            {fav ? '★' : '☆'}
           </span>
-        )}
+        </span>
       </button>
     );
   };
@@ -238,11 +336,24 @@ export function App() {
               filtered.map(renderItem)
             )
           ) : (
-            (['featured', 'tools', 'integrations'] as const).map((cat) => {
-              const items = grouped[cat];
-              if (items.length === 0) return null;
-              const isCollapsed = collapsed[cat];
-              return (
+            <>
+              {favoriteServices.length > 0 && (
+                <div style={{ marginBottom: 6 }}>
+                  <div className="sidebar-section-label">★ お気に入り</div>
+                  {favoriteServices.map(renderItem)}
+                </div>
+              )}
+              {recentServices.length > 0 && (
+                <div style={{ marginBottom: 6 }}>
+                  <div className="sidebar-section-label">最近使った</div>
+                  {recentServices.map(renderItem)}
+                </div>
+              )}
+              {(['featured', 'tools', 'integrations'] as const).map((cat) => {
+                const items = grouped[cat];
+                if (items.length === 0) return null;
+                const isCollapsed = collapsed[cat];
+                return (
                 <div key={cat} style={{ marginBottom: 6 }}>
                   <button
                     type="button"
@@ -267,8 +378,9 @@ export function App() {
                   </button>
                   {!isCollapsed && items.map(renderItem)}
                 </div>
-              );
-            })
+                );
+              })}
+            </>
           )}
         </nav>
         <div className="sidebar-footer">

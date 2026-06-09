@@ -103,6 +103,32 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
   line-height: 1.5;
 }
+.sidebar-section-label {
+  padding: 4px 12px;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.sidebar-item-controls {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.fav-toggle {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  opacity: 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.sidebar-item:hover .fav-toggle { opacity: 0.5; }
+.fav-toggle.on { opacity: 1; color: var(--warning); }
+.fav-toggle:hover { opacity: 1 !important; color: var(--warning); }
 
 .sidebar-nav {
   flex: 1;
