@@ -18,8 +18,8 @@ const ROOT = path.join(__dirname, '..');
 const SERVICES_TS = path.join(ROOT, 'src/renderer/services.ts');
 const OUT = path.join(ROOT, 'dist/landing.html');
 
-const SITE_URL = 'https://hiroto1977.github.io/service-hub/';
-const REPO_URL = 'https://github.com/hiroto1977/service-hub';
+const SITE_URL = 'https://hiroto1977.github.io/-/';
+const REPO_URL = 'https://github.com/hiroto1977/-';
 const OG_IMAGE = SITE_URL + 'og.png';
 const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
@@ -81,7 +81,7 @@ function buildOgSvg(count) {
   <text x="148" y="128" font-size="34" font-family="sans-serif" font-weight="700" fill="#99a0ad">SERVICE HUB</text>
   <text x="64" y="300" font-size="84" font-family="sans-serif" font-weight="800" fill="#e6e8ee">業務を、ひとつの画面に。</text>
   <text x="64" y="380" font-size="34" font-family="sans-serif" fill="#99a0ad">${count} サービス · Electron + ブラウザ単体 HTML</text>
-  <text x="64" y="540" font-size="28" font-family="sans-serif" fill="#4f7cff">hiroto1977.github.io/service-hub</text>
+  <text x="64" y="540" font-size="28" font-family="sans-serif" fill="#4f7cff">hiroto1977.github.io/-</text>
 </svg>`;
 }
 

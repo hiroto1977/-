@@ -1,6 +1,6 @@
 # Web版 セットアップガイド（外部サービス連携を使う）
 
-このガイドは、ブラウザ版（https://hiroto1977.github.io/service-hub/ や `standalone.html`）で
+このガイドは、ブラウザ版（https://hiroto1977.github.io/-/ や `standalone.html`）で
 **GitHub / Notion / Slack などの外部サービス連携を実際に動かす**ための手順です。
 
 外部連携には次の2つが必要です。
