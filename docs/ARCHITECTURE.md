@@ -655,9 +655,9 @@ flowchart TB
 graph LR
   subgraph "Developer"
     D1[npm run typecheck]
-    D2[npm test<br/>1113 tests, 34 files]
+    D2[npm test<br/>1242 tests, 58 files]
     D3[npm run test:cov]
-    D4[npm run mutate<br/>~2min, 9 files in scope]
+    D4[npm run mutate<br/>~10min, 55 files in scope]
     D5[npm run mutate:triage]
     D6[npm run quality:report<br/>→ docs/QUALITY.md]
     D7[npm run verify:arch<br/>170 refs + 6 metrics]
@@ -1000,10 +1000,10 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 
 | Script | コマンド | 役割 |
 |---|---|---|
-| `scripts/verify-architecture.cjs` | `verify:arch` | 170 file:line 参照 + 6 ライブメトリクス検証 |
+| `scripts/verify-architecture.cjs` | `verify:arch` | 171 file:line 参照 + 6 ライブメトリクス検証 |
 | `scripts/lint-forbidden-patterns.cjs` | `lint:forbidden` | invariants #5, #7-#9 を grep-codify (eval / dangerouslySetInnerHTML / shell.openExternal misuse / Ollama write-side endpoints) |
 | `scripts/check-import-boundaries.cjs` | `lint:imports` | invariants #1, #14 を import graph で codify (renderer↛main, renderer↛node-builtin, type-only は exempt) |
-| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (22 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
+| `scripts/cross-doc-consistency.cjs` | `lint:docs` | 複数 doc が同じ事実 (45 services / 11 IPC / 3 OAuth / service list) で一致することを確認 |
 | `scripts/lint-test-coverage.cjs` | `lint:test-coverage` | SERVICE_IDS 全件に `<id>.test.ts` が存在、ACTIONS 全 action 名がテストで quoted-string として登場 |
 
 #### verify:arch (`scripts/verify-architecture.cjs`)
@@ -1012,7 +1012,7 @@ doc 上の主張をすべて **mechanical CI gate** に格上げ。`npm run veri
 2. **行範囲**: 行番号がファイルサイズに収まる
 3. **シンボル局所性 (strict)**: doc が名前を挙げているシンボル (例 `isServiceId`) が
    **cited line から ±15 行以内に存在する**。drift した場合は実際の行番号を出力。
-4. **ライブメトリクス**: doc の数値 (22 services, 11 IPC, 30 mutated modules, ...) を **実コードから再計算** して一致確認
+4. **ライブメトリクス**: doc の数値 (45 services, 11 IPC, 55 mutated modules, ...) を **実コードから再計算** して一致確認
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
