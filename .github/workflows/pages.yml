@@ -44,6 +44,8 @@ jobs:
           # ルート = 高速な軽量ランディング、フル版 = ./app.html
           cp dist/landing.html _site/index.html
           cp dist/standalone.html _site/app.html
+          # OGP / ソーシャル共有用カード画像
+          cp assets/og.png _site/og.png
           # Jekyll 処理を無効化 (リポジトリ名 "-" / 単一 HTML のため)
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3

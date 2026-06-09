@@ -63,6 +63,9 @@ jobs:
       - run: npm ci
       - run: npm run build:renderer
       - run: npm run build:web
+      # ランディング生成 + 自己検証 (サービス数の正典照合 / カード数 / 自己完結性)
+      # 回帰 (parse 漏れ等) があれば build:landing が非 0 終了し CI を止める。
+      - run: npm run build:landing
       - name: Verify standalone.html size
         run: |
           if [ ! -f dist/standalone.html ]; then

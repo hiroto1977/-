@@ -6,16 +6,26 @@
 // 持つ高速な単一 HTML を置く。フル版は ./app.html に同梱する。
 //
 // データは src/renderer/services.ts (サービスの単一の真実) から抽出するため、
-// サービスを増減してもランディングが自動追従しドリフトしない。
+// サービスを増減してもランディングが自動追従しドリフトしない。さらに
+// src/shared/serviceId.ts の正典カウントと照合し、parse 漏れ (page: の値が
+// factory 呼び出しになった等) を **ビルド失敗** で検知する (回帰防止)。
 //
 // 出力: dist/landing.html  (Pages workflow が _site/index.html へコピー)
+//       dist/og.svg        (OGP 画像のフォールバック)
 
 const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 const SERVICES_TS = path.join(ROOT, 'src/renderer/services.ts');
+const SERVICEID_TS = path.join(ROOT, 'src/shared/serviceId.ts');
 const OUT = path.join(ROOT, 'dist/landing.html');
+
+const SITE_URL = 'https://hiroto1977.github.io/-/';
+const REPO_URL = 'https://github.com/hiroto1977/-';
+const OG_IMAGE = SITE_URL + 'og.png';
+const DESCRIPTION_BASE =
+  'サービスを 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
 const CATEGORY_LABEL = {
   featured: 'おすすめ',
@@ -41,6 +51,14 @@ function parseServices() {
   return out;
 }
 
+/** serviceId.ts の SERVICE_IDS 件数 (正典)。parse 漏れ検知の基準。 */
+function countCanonicalServices() {
+  const text = fs.readFileSync(SERVICEID_TS, 'utf8');
+  const m = text.match(/SERVICE_IDS\s*=\s*\[([\s\S]*?)\]/);
+  if (!m) throw new Error('SERVICE_IDS not found in serviceId.ts');
+  return (m[1].match(/'[a-z][a-z0-9-]*'/g) || []).length;
+}
+
 /** src 配下の *.test.ts の静的 it( 件数を数える (品質メトリクス用)。 */
 function countTests() {
   let total = 0;
@@ -61,13 +79,50 @@ function countTests() {
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/** インライン SVG favicon (data URI)。外部ファイル不要。 */
+function faviconDataUri() {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
+    `<rect width="32" height="32" rx="7" fill="#4f7cff"/>` +
+    `<text x="16" y="22" font-size="18" font-family="sans-serif" font-weight="bold" fill="#fff" text-anchor="middle">S</text>` +
+    `</svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+/** OGP 用の 1200x630 ブランドカード (SVG)。PNG が無い環境のフォールバック。 */
+function buildOgSvg(services) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0f1117"/><stop offset="1" stop-color="#1a2238"/>
+  </linearGradient></defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect x="64" y="80" width="64" height="64" rx="14" fill="#4f7cff"/>
+  <text x="96" y="126" font-size="36" font-family="sans-serif" font-weight="bold" fill="#fff" text-anchor="middle">S</text>
+  <text x="148" y="128" font-size="34" font-family="sans-serif" font-weight="700" fill="#99a0ad">SERVICE HUB</text>
+  <text x="64" y="300" font-size="84" font-family="sans-serif" font-weight="800" fill="#e6e8ee">業務を、ひとつの画面に。</text>
+  <text x="64" y="380" font-size="34" font-family="sans-serif" fill="#99a0ad">${services.length} サービス · Electron + ブラウザ単体 HTML</text>
+  <text x="64" y="540" font-size="28" font-family="sans-serif" fill="#4f7cff">hiroto1977.github.io/-</text>
+</svg>`;
+}
+
 function buildHtml(services, tests) {
   const byCat = (cat) => services.filter((s) => s.category === cat);
   const counts = Object.fromEntries(CATEGORY_ORDER.map((c) => [c, byCat(c).length]));
+  const description = `${services.length} ${DESCRIPTION_BASE}`;
+  const jsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Service Hub',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web, Windows, macOS, Linux',
+    description,
+    url: SITE_URL,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY' },
+  });
 
   const card = (s) => `
         <article class="card">
-          <span class="chip">${esc(s.icon)}</span>
+          <span class="chip" aria-hidden="true">${esc(s.icon)}</span>
           <div class="card-body">
             <h3>${esc(s.label)}</h3>
             <p>${esc(s.description)}</p>
@@ -75,8 +130,8 @@ function buildHtml(services, tests) {
         </article>`;
 
   const section = (cat) => `
-      <section class="cat">
-        <h2>${esc(CATEGORY_LABEL[cat])} <span class="count">${counts[cat]}</span></h2>
+      <section class="cat" aria-labelledby="cat-${cat}">
+        <h2 id="cat-${cat}">${esc(CATEGORY_LABEL[cat])} <span class="count">${counts[cat]}</span></h2>
         <div class="grid">${byCat(cat).map(card).join('')}</div>
       </section>`;
 
@@ -88,7 +143,23 @@ function buildHtml(services, tests) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Service Hub — 業務支援ダッシュボード</title>
-<meta name="description" content="${esc(services.length)} サービスを 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ + ブラウザ単体 HTML の 2 形態。">
+<meta name="description" content="${esc(description)}">
+<meta name="robots" content="index,follow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0f1117">
+<link rel="canonical" href="${SITE_URL}">
+<link rel="icon" href="${faviconDataUri()}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Service Hub">
+<meta property="og:title" content="Service Hub — 業務支援ダッシュボード">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${SITE_URL}">
+<meta property="og:image" content="${OG_IMAGE}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Service Hub — 業務支援ダッシュボード">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${OG_IMAGE}">
+<script type="application/ld+json">${jsonLd}</script>
 <style>
   :root {
     --bg: #0f1117; --elev: #171a22; --elev2: #1e222c; --border: #2a2f3a;
@@ -104,6 +175,14 @@ function buildHtml(services, tests) {
   }
   a { color: var(--accent); text-decoration: none; }
   .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  /* a11y: キーボードで本文へ飛べるスキップリンク */
+  .skip-link {
+    position: absolute; left: 8px; top: -48px; background: var(--accent); color: #fff;
+    padding: 10px 16px; border-radius: 8px; font-weight: 700; z-index: 100; transition: top .15s;
+  }
+  .skip-link:focus { top: 8px; }
 
   /* hero */
   header.hero {
@@ -163,18 +242,26 @@ function buildHtml(services, tests) {
   .note { font-size: 11.5px; opacity: .8; margin-top: 12px; }
 
   @media (max-width: 640px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+
+  /* a11y: モーション低減設定を尊重 */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .card:hover { transform: none; }
+  }
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
   <header class="hero">
     <div class="wrap">
       <div class="logo">Service Hub</div>
       <h1>業務を、ひとつの画面に。</h1>
       <p class="tagline">${esc(services.length)} のサービス（SaaS 連携・分析ツール・士業・業務操作）を統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。</p>
-      <div class="cta">
+      <nav class="cta" aria-label="主要アクション">
         <a class="btn btn-primary" href="./app.html">▶ フル版をブラウザで開く</a>
-        <a class="btn btn-ghost" href="https://github.com/hiroto1977/-" target="_blank" rel="noopener">GitHub で見る</a>
-      </div>
+        <a class="btn btn-ghost" href="${REPO_URL}" target="_blank" rel="noopener">GitHub で見る</a>
+      </nav>
     </div>
   </header>
 
@@ -187,7 +274,7 @@ function buildHtml(services, tests) {
     </div>
   </div>
 
-  <main class="wrap">
+  <main class="wrap" id="main">
 ${CATEGORY_ORDER.map(section).join('')}
   </main>
 
@@ -207,11 +294,11 @@ ${CATEGORY_ORDER.map(section).join('')}
 
   <footer>
     <div class="wrap">
-      <div>
+      <nav aria-label="フッターリンク">
         <a href="./app.html">フル版を開く</a> ·
-        <a href="https://github.com/hiroto1977/-" target="_blank" rel="noopener">GitHub</a> ·
-        <a href="https://github.com/hiroto1977/-/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">アーキテクチャ</a>
-      </div>
+        <a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="${REPO_URL}/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">アーキテクチャ</a>
+      </nav>
       <p class="note">※ 各サービスの数値は説明用のスナップショットです。実データはフル版でトークンを設定すると取得できます（一部は Phase 6 以降で実 API 接続）。</p>
       <p class="note">© ${year} Service Hub</p>
     </div>
@@ -221,14 +308,40 @@ ${CATEGORY_ORDER.map(section).join('')}
 `;
 }
 
+/** 生成 HTML の自己検証 — 回帰を即ビルド失敗にする。 */
+function selfCheck(html, services, canonicalCount) {
+  // 1. parse 件数が正典 (SERVICE_IDS) と一致するか
+  if (services.length !== canonicalCount) {
+    throw new Error(
+      `service parse mismatch: services.ts から ${services.length} 件 parse したが ` +
+        `serviceId.ts の SERVICE_IDS は ${canonicalCount} 件。正規表現の取りこぼしの可能性。`,
+    );
+  }
+  // 2. カードが全サービス分描画されたか
+  const cards = (html.match(/class="card"/g) || []).length;
+  if (cards !== services.length) {
+    throw new Error(`card count ${cards} != services ${services.length}`);
+  }
+  // 3. レンダリングが外部リソースに依存していないか (script/stylesheet)
+  const external = (html.match(/src=["']https?:|<link[^>]+rel=["']stylesheet/gi) || []).length;
+  if (external > 0) {
+    throw new Error(`landing must be self-contained but has ${external} external script/stylesheet ref(s)`);
+  }
+}
+
 function main() {
   const services = parseServices();
+  const canonicalCount = countCanonicalServices();
   const tests = countTests();
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
+
   const html = buildHtml(services, tests);
+  selfCheck(html, services, canonicalCount);
   fs.writeFileSync(OUT, html);
+  fs.writeFileSync(path.join(ROOT, 'dist/og.svg'), buildOgSvg(services));
+
   console.log(
-    `Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — ${services.length} services, ${tests} tests`,
+    `Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — ${services.length}/${canonicalCount} services, ${tests} tests`,
   );
 }
 
