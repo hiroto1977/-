@@ -27,8 +27,11 @@ const CATEGORY_ORDER = ['featured', 'tools', 'integrations'];
 /** services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。 */
 function parseServices() {
   const text = fs.readFileSync(SERVICES_TS, 'utf8');
+  // page: の値は単純な識別子 (SomePage) と factory 呼び出し
+  // (createConnectorStubPage('id', 'Label', SNAPSHOT.x)) の両方を取り得るので、
+  // page: 〜 category: の間は非貪欲にスキップする (カンマ・括弧を含んでも可)。
   const entry =
-    /id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*icon:\s*'([^']+)',\s*description:\s*'([^']*)',\s*page:\s*\w+,\s*category:\s*'([^']+)'/g;
+    /id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*icon:\s*'([^']+)',\s*description:\s*'([^']*)',\s*page:[\s\S]*?category:\s*'([^']+)'/g;
   const out = [];
   let m;
   while ((m = entry.exec(text)) !== null) {

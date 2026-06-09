@@ -25,16 +25,8 @@ import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
 import { QualityPage } from './pages/QualityPage';
-import { Microsoft365Page } from './pages/Microsoft365Page';
-import { DropboxPage } from './pages/DropboxPage';
-import { SalesforcePage } from './pages/SalesforcePage';
-import { DiscordPage } from './pages/DiscordPage';
-import { AsanaPage } from './pages/AsanaPage';
-import { LinearPage } from './pages/LinearPage';
-import { SentryPage } from './pages/SentryPage';
-import { ShopifyPage } from './pages/ShopifyPage';
-import { StripePage } from './pages/StripePage';
-import { LinePage } from './pages/LinePage';
+import { createConnectorStubPage } from './pages/ConnectorStubPage';
+import { SNAPSHOT } from './data/snapshot';
 import { StoragePage } from './pages/StoragePage';
 import { TaxAccountantPage } from './pages/TaxAccountantPage';
 import { LaborConsultantPage } from './pages/LaborConsultantPage';
@@ -291,7 +283,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Microsoft 365',
     icon: 'M3',
     description: 'Outlook / OneDrive / Teams — メール / ファイル / 会議',
-    page: Microsoft365Page,
+    page: createConnectorStubPage('microsoft-365', 'Microsoft 365', SNAPSHOT.microsoft365),
     category: 'integrations',
   },
   {
@@ -299,7 +291,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Dropbox',
     icon: 'DB',
     description: 'ファイル保管 — 最近のファイル / 共有リンク / 容量',
-    page: DropboxPage,
+    page: createConnectorStubPage('dropbox', 'Dropbox', SNAPSHOT.dropbox),
     category: 'integrations',
   },
   {
@@ -307,7 +299,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Salesforce',
     icon: 'SF',
     description: 'CRM — リード / 商談 / 連絡先 / パイプライン',
-    page: SalesforcePage,
+    page: createConnectorStubPage('salesforce', 'Salesforce', SNAPSHOT.salesforce),
     category: 'integrations',
   },
   {
@@ -315,7 +307,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Discord',
     icon: 'DS',
     description: 'チャット — サーバー / チャンネル / メッセージ',
-    page: DiscordPage,
+    page: createConnectorStubPage('discord', 'Discord', SNAPSHOT.discord),
     category: 'integrations',
   },
   {
@@ -323,7 +315,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Asana',
     icon: 'AS',
     description: 'プロジェクト管理 — タスク / プロジェクト / 進捗',
-    page: AsanaPage,
+    page: createConnectorStubPage('asana', 'Asana', SNAPSHOT.asana),
     category: 'integrations',
   },
   {
@@ -331,7 +323,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Linear',
     icon: 'LN',
     description: 'イシュー追跡 — issue / cycle / project',
-    page: LinearPage,
+    page: createConnectorStubPage('linear', 'Linear', SNAPSHOT.linear),
     category: 'integrations',
   },
   {
@@ -339,7 +331,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Sentry',
     icon: 'SN',
     description: 'エラー監視 — issues / performance / releases',
-    page: SentryPage,
+    page: createConnectorStubPage('sentry', 'Sentry', SNAPSHOT.sentry),
     category: 'integrations',
   },
   {
@@ -347,7 +339,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Shopify',
     icon: 'SH',
     description: 'EC — 注文 / 売上 / 商品 / 顧客',
-    page: ShopifyPage,
+    page: createConnectorStubPage('shopify', 'Shopify', SNAPSHOT.shopify),
     category: 'integrations',
   },
   {
@@ -355,7 +347,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'Stripe',
     icon: 'SP',
     description: '決済 — MRR / 顧客 / 請求 / トランザクション',
-    page: StripePage,
+    page: createConnectorStubPage('stripe', 'Stripe', SNAPSHOT.stripe),
     category: 'integrations',
   },
   {
@@ -363,7 +355,7 @@ export const SERVICES: ServiceDefinition[] = [
     label: 'LINE',
     icon: 'LN2',
     description: '公式アカウント — 友達 / 配信 / メッセージ統計',
-    page: LinePage,
+    page: createConnectorStubPage('line', 'LINE', SNAPSHOT.line),
     category: 'integrations',
   },
   {
