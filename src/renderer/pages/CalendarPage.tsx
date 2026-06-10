@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 
 const inputStyle: React.CSSProperties = {
@@ -86,6 +87,8 @@ export function CalendarPage() {
           placeholder: 'ya29.… (calendar.readonly + calendar.events scope)',
         }}
       />
+
+      <GoogleConnectCard serviceId="calendar" onConnected={refresh} />
 
       <Section title="Calendars" count={calendars.length}>
         <DataList
