@@ -27,6 +27,7 @@
     "orchestrate": "node scripts/orchestrate.cjs",
     "orchestrate:status": "node scripts/orchestrate.cjs status",
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",
+    "orchestrate:import-requests": "node scripts/orchestrate.cjs import-requests",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
     "lint:imports": "node scripts/check-import-boundaries.cjs",
     "lint:docs": "node scripts/cross-doc-consistency.cjs",

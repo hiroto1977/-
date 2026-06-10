@@ -22,11 +22,19 @@
 ```bash
 npm run orchestrate:status        # 組織サマリ + 直近round + backlog + サイクル
 npm run orchestrate:dispatch      # 次roundの実行ディスパッチ計画 (並列Agent割当)
+npm run orchestrate:import-requests  # チャットボット要望 (chatbot-requests.md) を backlog へ取込み
 node scripts/orchestrate.cjs cycle pdca       # PDCA ステージ定義
 node scripts/orchestrate.cjs cycle ooda       # OODA ステージ定義
 node scripts/orchestrate.cjs dispatch --teams a,b --cycle pdca [--json]
 node scripts/orchestrate.cjs record --round N --teams a,b,... --shipped "..." [--note "..."] [--dry-run]
+node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priority N] [--dry-run]
 ```
+
+- **import-requests** は AI コンシェルジュ (ChatbotWidget) の「📥 要望」ボタンで書き出した
+  Markdown (`- [ ] <要望> _(受付: YYYY-MM-DD)_`) を読み、各行を **designed (着手可能)** の
+  backlog 候補として取込む。team は domain/focus の語一致で自動解決 (解決不能は `--team` 必須)、
+  同名 title はスキップ (重複防止)。これで「**ユーザー要望 → backlog → dispatch → 実装 →
+  record**」のループが機構として閉じる。
 
 - **dispatch** は read-only。各 team を指揮系統 (manager→executive→秘書室→COO→CEO) へ解決し、
   サイクルの **do(設計)** ステージにだけ並列 read-only Agent を割当てた計画を出力する。

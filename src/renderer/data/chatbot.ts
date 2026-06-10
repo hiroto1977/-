@@ -27,6 +27,7 @@ import {
   type VoiceIntent,
 } from './voiceCommand';
 import { routeTopic, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
+import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
 
 /** チャットボットが知っているサービス 1 件 (SERVICES から注入)。 */
 export interface ChatService {
@@ -48,6 +49,7 @@ export type ChatReplyKind =
   | 'request' // 機能要望の受付 (バックログ候補として記録)
   | 'help' // 何ができるか
   | 'action' // 書き込み操作 (UI が確認のうえ invoke)
+  | 'calc' // 手取り計算 (純ロジックで即答)
   | 'navigate' // 画面案内
   | 'service-info' // サービスについての質問
   | 'fallback'; // 解釈不能 (LLM フォールバック余地)
@@ -200,6 +202,21 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
     // Stryker restore all
   }
 
+  // 手取り計算 (純ロジック・即答)。「手取り30万欲しい」のような要望マーカー併発時も
+  // 金額付きなら計算を優先する (金額なしの「手取り機能が欲しい」は要望のまま)。
+  const calcQuery = parseCalcQuery(text);
+  if (calcQuery !== null) {
+    const answer = runCalcQuery(calcQuery);
+    // Stryker disable all — 文面・候補は表現 (kind/routedThrough/数値は計算側テストで固定)。
+    return {
+      kind: 'calc',
+      text: formatCalcAnswer(answer),
+      routedThrough: routeLabel(routeTopic(ctx.org, '給与')),
+      suggestions: ['税務試算を開いて', '手取り30万に必要な額面は？', '何ができる？'],
+    };
+    // Stryker restore all
+  }
+
   const special = detectSpecialIntent(haystack);
 
   if (special === 'request') {
@@ -243,6 +260,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `💁 私は AI オーケストレーション組織のコンシェルジュです。できること:\n` +
         `・${count} のサービス (${sample} など) への案内 —「◯◯を開いて」\n` +
         `・操作の実行 —「GitHub で issue 作って」「カレンダーに予定を入れて」(破壊的操作は確認します)\n` +
+        `・手取り計算 —「額面40万の手取りは？」「手取り30万に必要な額面は？」(その場で概算)\n` +
         `・サービスの説明 —「◯◯って何？」\n` +
         `・組織の状態 —「体制を教えて」\n` +
         `・機能要望の受付 —「◯◯が欲しい」(オーケストレーションのバックログ候補に記録)`,

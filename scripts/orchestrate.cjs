@@ -24,9 +24,19 @@
  *   node scripts/orchestrate.cjs record --round N --teams a,b --shipped "..."  round を追記
  *       --note "..."    任意の補足
  *       --dry-run       書き込まず差分のみ表示
+ *   node scripts/orchestrate.cjs import-requests [--file chatbot-requests.md]
+ *       チャットボット (AI コンシェルジュ) が受け付けた機能要望の Markdown
+ *       (`- [ ] <要望> _(受付: YYYY-MM-DD)_` 形式) を読み、backlog へ designed
+ *       (着手可能) として取込む。team はドメイン語の一致で自動解決し、
+ *       解決できない行は --team <id> の既定が無い限りエラーで列挙する。
+ *       --team a        自動解決できない要望の割当先 team
+ *       --priority N    取込む要望の priority (既定 2)
+ *       --dry-run       書き込まず取込み内容のみ表示
  *
  * 設計: registry は単一の真実源。dispatch は read-only (registry を変更しない)。
- * record のみ registry.json に追記し、書き込み後に整合検証 (verify-orchestration) を促す。
+ * record / import-requests のみ registry.json に追記し、書き込み後に整合検証
+ * (verify-orchestration) を促す。これで「ユーザー要望 (チャット) → backlog →
+ * dispatch → 実装 → record」のループが機構として閉じる。
  */
 
 const fs = require('node:fs');
@@ -284,6 +294,111 @@ function cmdRecord(reg, args) {
 }
 
 // ---------------------------------------------------------------------------
+// import-requests — チャットボット要望の backlog 取込み
+// ---------------------------------------------------------------------------
+
+/** 要望テキストへ最も合う team を、domain/focus の語 (2文字以上) 一致で解決する。 */
+function matchTeamForRequest(reg, text) {
+  for (const team of reg.teams) {
+    const tokens = `${team.domain}・${team.focus}`
+      .split(/[・/()（）\s]+/)
+      .filter((w) => w.length >= 2);
+    if (tokens.some((w) => text.includes(w))) return team.id;
+  }
+  return null;
+}
+
+/** `- [ ] <要望> _(受付: YYYY-MM-DD)_` 形式の行を解析する (チェック済み行は無視)。 */
+function parseRequestLines(markdown) {
+  const out = [];
+  for (const line of markdown.split('\n')) {
+    const m = /^- \[ \] (.+?)(?:\s*_\(受付: (\d{4}-\d{2}-\d{2})\)_)?\s*$/.exec(line);
+    if (m) out.push({ text: m[1].trim(), at: m[2] || null });
+  }
+  return out;
+}
+
+function cmdImportRequests(reg, args) {
+  const file = typeof args.file === 'string' ? args.file : 'chatbot-requests.md';
+  const filePath = path.isAbsolute(file) ? file : path.join(REPO_ROOT, file);
+  let markdown;
+  try {
+    markdown = fs.readFileSync(filePath, 'utf8');
+  } catch {
+    die(`要望ファイルを読めません: ${filePath} (チャットボットの 📥 要望 ボタンで書き出したファイルを置いてください)`);
+  }
+  const requests = parseRequestLines(markdown);
+  if (requests.length === 0) die(`取込み対象の要望がありません (- [ ] 形式の未処理行が 0 件): ${filePath}`);
+
+  const priority = args.priority ? Number(args.priority) : 2;
+  if (!Number.isInteger(priority) || priority < 1) die(`--priority は 1 以上の整数で指定してください`);
+  const fallbackTeam = typeof args.team === 'string' ? args.team : null;
+  if (fallbackTeam && !reg.teams.find((t) => t.id === fallbackTeam)) {
+    die(`--team "${fallbackTeam}" は teams[] に存在しません`);
+  }
+
+  const existingIds = new Set(reg.backlog.map((b) => b.id));
+  const existingTitles = new Set(reg.backlog.map((b) => b.title));
+  const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const entries = [];
+  const unresolved = [];
+  let seq = 1;
+
+  for (const req of requests) {
+    if (existingTitles.has(req.text)) continue; // 同名の取込み済み要望はスキップ (重複防止)。
+    const team = matchTeamForRequest(reg, req.text) || fallbackTeam;
+    if (!team) {
+      unresolved.push(req.text);
+      continue;
+    }
+    let id = `chatreq-${stamp}-${seq}`;
+    while (existingIds.has(id)) {
+      seq += 1;
+      id = `chatreq-${stamp}-${seq}`;
+    }
+    existingIds.add(id);
+    seq += 1;
+    const entry = {
+      id,
+      team,
+      title: req.text,
+      priority,
+      status: 'designed',
+      note: `チャットボット (AI コンシェルジュ) 経由のユーザー要望${req.at ? ` (受付: ${req.at})` : ''}`,
+    };
+    entries.push(entry);
+  }
+
+  if (unresolved.length) {
+    die(
+      `team を自動解決できない要望が ${unresolved.length} 件あります — --team <id> で割当先を指定してください:\n` +
+        unresolved.map((t) => `   • ${t}`).join('\n'),
+    );
+  }
+  if (entries.length === 0) {
+    console.log('ℹ️ 新規の取込み対象なし (すべて取込み済み)。');
+    return;
+  }
+
+  if (args['dry-run']) {
+    console.log(`🔎 dry-run — backlog へ取込まれる ${entries.length} 件:`);
+    for (const e of entries) {
+      const chain = resolveChain(reg, e.team);
+      const mgr = chain && chain.manager ? chain.manager.title : '(管理職なし)';
+      console.log(`   • [${e.id}] ${e.title}`);
+      console.log(`       → team ${e.team} (${mgr}) / P${e.priority} / ${e.status}`);
+    }
+    return;
+  }
+
+  reg.backlog.push(...entries);
+  fs.writeFileSync(REGISTRY, `${JSON.stringify(reg, null, 2)}\n`);
+  console.log(`✅ ${entries.length} 件の要望を backlog (designed) へ取込みました。`);
+  console.log('   → `npm run verify:orchestration` で整合を確認してください。');
+  console.log('   → `npm run orchestrate:dispatch` で次ラウンドの実行計画に載ります。');
+}
+
+// ---------------------------------------------------------------------------
 function main() {
   const argv = process.argv.slice(2);
   const cmd = (argv[0] && !argv[0].startsWith('--') ? argv.shift() : 'status').toLowerCase();
@@ -294,7 +409,8 @@ function main() {
     case 'cycle': return cmdCycle(reg, args);
     case 'dispatch': return cmdDispatch(reg, args);
     case 'record': return cmdRecord(reg, args);
-    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record)`);
+    case 'import-requests': return cmdImportRequests(reg, args);
+    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record | import-requests)`);
   }
 }
 
