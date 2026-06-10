@@ -97,7 +97,14 @@ export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
     authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     clientId: process.env.MS365_OAUTH_CLIENT_ID ?? '',
-    scopes: ['User.Read', 'Mail.Read', 'Calendars.Read', 'offline_access'],
+    scopes: [
+      'User.Read',
+      'Mail.Read',
+      'Mail.Send',
+      'Calendars.Read',
+      'Calendars.ReadWrite',
+      'offline_access',
+    ],
   },
 };
 

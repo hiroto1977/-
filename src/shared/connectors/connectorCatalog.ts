@@ -155,6 +155,19 @@ export const CONNECTOR_CATALOG: readonly Connector[] = [
     requiresAuth: false,
     description: 'KPI のスナップショットをローカルストレージへエクスポートする (認証不要)',
   },
+  {
+    id: 'microsoft-365-to-storage-export',
+    sourceService: 'microsoft-365',
+    targetService: 'storage',
+    capability: 'export',
+    fieldMap: [
+      { from: 'subject', to: 'key' },
+      { from: 'from', to: 'value', fallback: '(unknown)' },
+      { from: 'received', to: 'label', skipIfMissing: true },
+    ],
+    requiresAuth: true,
+    description: 'Outlook の直近メール (件名/差出人) をローカルストレージへ書き出す',
+  },
 ];
 // Stryker restore all
 

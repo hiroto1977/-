@@ -67,7 +67,7 @@ const syncConnector: Connector = {
 describe('capabilityCoverage (CATALOG_REGISTRY)', () => {
   it('groups every catalog connector id by capability in input order', () => {
     expect(capabilityCoverage(CATALOG_REGISTRY)).toEqual({
-      export: ['stripe-to-drive-export', 'kpi-to-storage-export'],
+      export: ['stripe-to-drive-export', 'kpi-to-storage-export', 'microsoft-365-to-storage-export'],
       sync: ['asana-to-calendar-sync'],
       notify: ['github-to-slack-notify', 'salesforce-to-gmail-notify', 'linear-to-discord-notify'],
       record: ['sentry-to-linear-record', 'shopify-to-notion-record'],
@@ -481,10 +481,10 @@ describe('connectorHealthReport (CATALOG_REGISTRY)', () => {
     expect(
       connectorHealthReport(CATALOG_REGISTRY, runtime, ['github', 'slack', 'home']),
     ).toEqual({
-      totalConnectors: 8,
+      totalConnectors: 9,
       totalPlugins: 0,
       capabilityCoverage: {
-        export: ['stripe-to-drive-export', 'kpi-to-storage-export'],
+        export: ['stripe-to-drive-export', 'kpi-to-storage-export', 'microsoft-365-to-storage-export'],
         sync: ['asana-to-calendar-sync'],
         notify: ['github-to-slack-notify', 'salesforce-to-gmail-notify', 'linear-to-discord-notify'],
         record: ['sentry-to-linear-record', 'shopify-to-notion-record'],

@@ -22,7 +22,7 @@ describe('CONNECTOR_CATALOG', () => {
     expect(CONNECTOR_CATALOG.length).toBeLessThanOrEqual(10);
   });
 
-  it('declares exactly 8 connectors in the documented input order', () => {
+  it('declares exactly 9 connectors in the documented input order', () => {
     expect(CONNECTOR_CATALOG.map((c) => c.id)).toEqual([
       'github-to-slack-notify',
       'stripe-to-drive-export',
@@ -32,6 +32,7 @@ describe('CONNECTOR_CATALOG', () => {
       'asana-to-calendar-sync',
       'linear-to-discord-notify',
       'kpi-to-storage-export',
+      'microsoft-365-to-storage-export',
     ]);
   });
 
@@ -311,6 +312,31 @@ describe('planConnectorRun', () => {
     });
   });
 
+  it('plans microsoft-365-to-storage-export with the from fallback and skips a missing received', () => {
+    const plan = planConnectorRun(CATALOG_REGISTRY, 'microsoft-365-to-storage-export', {
+      subject: '請求書の件',
+      // from missing → fallback '(unknown)'
+      // received missing → skipIfMissing → absent
+    });
+    expect(plan).toEqual({
+      connectorId: 'microsoft-365-to-storage-export',
+      sourceService: 'microsoft-365',
+      targetService: 'storage',
+      capability: 'export',
+      requiresAuth: true,
+      payload: { key: '請求書の件', value: '(unknown)' },
+    });
+  });
+
+  it('plans microsoft-365-to-storage-export keeping a present from and received', () => {
+    const plan = planConnectorRun(CATALOG_REGISTRY, 'microsoft-365-to-storage-export', {
+      subject: '会議メモ',
+      from: '佐藤',
+      received: '2026-06-10',
+    });
+    expect(plan.payload).toEqual({ key: '会議メモ', value: '佐藤', label: '2026-06-10' });
+  });
+
   it('writes undefined (not skip) when a non-skip, non-fallback field is missing', () => {
     // shopify-to-notion-record: orderNumber/total/Customer の Title 規則は
     // fallback/skip 無しなので、欠損時は undefined を書き込む (キーは存在する)。
@@ -383,6 +409,7 @@ describe('listConnectorsByCapability', () => {
     expect(listConnectorsByCapability(CATALOG_REGISTRY, 'export').map((c) => c.id)).toEqual([
       'stripe-to-drive-export',
       'kpi-to-storage-export',
+      'microsoft-365-to-storage-export',
     ]);
   });
 
@@ -413,6 +440,7 @@ describe('catalogConnectorIds', () => {
       'asana-to-calendar-sync',
       'linear-to-discord-notify',
       'kpi-to-storage-export',
+      'microsoft-365-to-storage-export',
     ]);
   });
 

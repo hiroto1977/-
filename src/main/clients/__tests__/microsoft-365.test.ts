@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   fetchMicrosoft365Snapshot,
   buildMicrosoft365Snapshot,
+  ACTIONS,
 } from '../microsoft-365';
 import { FetchError } from '../types';
 
@@ -120,5 +121,150 @@ describe('fetchMicrosoft365Snapshot', () => {
     const err = await fetchMicrosoft365Snapshot({ token: 'bad', fetch: fetchMock }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(FetchError);
     expect((err as FetchError).serviceId).toBe('microsoft-365'); // serviceId StringLiteral を撃墜
+  });
+});
+
+describe('ACTIONS["send-mail"]', () => {
+  it('POSTs to /me/sendMail with the Graph message envelope and returns ok', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response(null, { status: 202 }));
+
+    const result = (await ACTIONS['send-mail']!({
+      token: 'ms-tok',
+      fetch: fetchMock,
+      payload: { to: 'a@b.com', subject: '請求書送付', body: '添付をご確認ください' },
+    })) as { ok: true; to: string; subject: string };
+
+    expect(result).toEqual({ ok: true, to: 'a@b.com', subject: '請求書送付' });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://graph.microsoft.com/v1.0/me/sendMail');
+    expect((init as RequestInit).method).toBe('POST');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer ms-tok');
+    expect(headers['Content-Type']).toBe('application/json');
+    expect((init as RequestInit).body).toBe(
+      JSON.stringify({
+        message: {
+          subject: '請求書送付',
+          body: { contentType: 'Text', content: '添付をご確認ください' },
+          toRecipients: [{ emailAddress: { address: 'a@b.com' } }],
+        },
+        saveToSentItems: true,
+      }),
+    );
+  });
+
+  it('defaults an empty body when none is provided', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response(null, { status: 202 }));
+    await ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { to: 'a@b.com', subject: 'S' } });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.message.body.content).toBe('');
+  });
+
+  it('throws a FetchError with the microsoft-365 serviceId on a non-2xx response', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('forbidden', { status: 403 }));
+    const err = await ACTIONS['send-mail']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { to: 'a@b.com', subject: 'S' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).status).toBe(403);
+    expect((err as FetchError).serviceId).toBe('microsoft-365');
+    expect((err as FetchError).message).toContain('microsoft-365 sendMail failed (403)');
+  });
+
+  it('rejects without sending when to is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { subject: 'S' } }),
+    ).rejects.toThrow(/to, subject are required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects without sending when subject is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { to: 'a@b.com' } }),
+    ).rejects.toThrow(/required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('ACTIONS["create-event"]', () => {
+  it('POSTs to /me/events with start/end in Tokyo time and returns the created event', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ id: 'evt1', subject: '商談', webLink: 'https://outlook.office.com/evt1' }, 201),
+    );
+
+    const result = (await ACTIONS['create-event']!({
+      token: 'ms-tok',
+      fetch: fetchMock,
+      payload: { subject: '商談', start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00', location: '本社' },
+    })) as { id: string; subject: string; webLink: string };
+
+    expect(result).toEqual({ id: 'evt1', subject: '商談', webLink: 'https://outlook.office.com/evt1' });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://graph.microsoft.com/v1.0/me/events');
+    expect((init as RequestInit).method).toBe('POST');
+    const headers = (init as RequestInit).headers as Record<string, string>;
+    expect(headers.Authorization).toBe('Bearer ms-tok');
+    expect(headers['Content-Type']).toBe('application/json');
+    expect((init as RequestInit).body).toBe(
+      JSON.stringify({
+        subject: '商談',
+        start: { dateTime: '2026-07-01T10:00:00', timeZone: 'Tokyo Standard Time' },
+        end: { dateTime: '2026-07-01T11:00:00', timeZone: 'Tokyo Standard Time' },
+        location: { displayName: '本社' },
+      }),
+    );
+  });
+
+  it('defaults an empty location and falls back subject/webLink from the response', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ id: 'evt2' }, 201));
+    const result = (await ACTIONS['create-event']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { subject: '面談', start: '2026-07-02T09:00:00', end: '2026-07-02T09:30:00' },
+    })) as { id: string; subject: string; webLink: string };
+    // response に subject/webLink が無ければ payload.subject / '' にフォールバック。
+    expect(result).toEqual({ id: 'evt2', subject: '面談', webLink: '' });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.location.displayName).toBe('');
+  });
+
+  it('throws a FetchError tagged with the microsoft-365 serviceId on a non-2xx response', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ error: 'forbidden' }, 403));
+    const err = await ACTIONS['create-event']!({
+      token: 't',
+      fetch: fetchMock,
+      payload: { subject: 'S', start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).status).toBe(403);
+    expect((err as FetchError).serviceId).toBe('microsoft-365'); // L206 serviceId StringLiteral を撃墜
+  });
+
+  it('rejects without sending when end is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-event']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { subject: 'S', start: '2026-07-01T10:00:00' },
+      }),
+    ).rejects.toThrow(/subject, start, end are required/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects without sending when subject is missing', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-event']!({
+        token: 't',
+        fetch: fetchMock,
+        payload: { start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
+      }),
+    ).rejects.toThrow(/required/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

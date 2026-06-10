@@ -25,7 +25,7 @@ import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
 import { fetchQualitySnapshot } from './quality';
-import { fetchMicrosoft365Snapshot } from './microsoft-365';
+import { fetchMicrosoft365Snapshot, ACTIONS as MICROSOFT365_ACTIONS } from './microsoft-365';
 import { fetchDropboxSnapshot } from './dropbox';
 import { fetchSalesforceSnapshot } from './salesforce';
 import { fetchDiscordSnapshot } from './discord';
@@ -241,6 +241,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
   shopify: SHOPIFY_ACTIONS,
+  'microsoft-365': MICROSOFT365_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

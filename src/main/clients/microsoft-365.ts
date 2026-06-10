@@ -1,4 +1,4 @@
-import { jsonFetch, type FetchContext } from './types';
+import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 /**
  * Microsoft 365 (Microsoft Graph API) 連携クライアント (実 API)。
@@ -126,3 +126,88 @@ export async function fetchMicrosoft365Snapshot(ctx: FetchContext): Promise<Micr
 
   return buildMicrosoft365Snapshot(user, messages.value ?? [], events.value ?? []);
 }
+
+// --- write-side actions (Microsoft Graph) -------------------------------
+//
+// 書き込みには追加スコープが必要 (oauth.ts の microsoft-365 設定):
+//   send-mail    → Mail.Send
+//   create-event → Calendars.ReadWrite
+// renderer からは serviceHub.invoke('microsoft-365', '<name>', payload) で呼ぶ。
+
+const TIME_ZONE = 'Tokyo Standard Time';
+
+interface SendMailPayload {
+  to: string;
+  subject: string;
+  body?: string;
+}
+
+/** Outlook でメールを送信する (POST /me/sendMail)。202 Accepted・本文なし。 */
+async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; subject: string }> {
+  const { to, subject, body } = ctx.payload as unknown as SendMailPayload;
+  if (!to || !subject) {
+    throw new Error('to, subject are required');
+  }
+  const f = ctx.fetch ?? fetch;
+  const res = await f(`${GRAPH_BASE}/me/sendMail`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: {
+        subject,
+        body: { contentType: 'Text', content: body ?? '' },
+        toRecipients: [{ emailAddress: { address: to } }],
+      },
+      saveToSentItems: true,
+    }),
+  });
+  if (!res.ok) {
+    throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
+  }
+  return { ok: true, to, subject };
+}
+
+interface CreateEventPayload {
+  subject: string;
+  /** ISO 日時 (例 2026-07-01T10:00:00)。 */
+  start: string;
+  /** ISO 日時。 */
+  end: string;
+  location?: string;
+}
+
+interface GraphCreatedEvent {
+  id: string;
+  subject?: string;
+  webLink?: string;
+}
+
+/** カレンダー予定を作成する (POST /me/events)。201 Created・作成された予定を返す。 */
+async function createEvent(
+  ctx: ActionContext,
+): Promise<{ id: string; subject: string; webLink: string }> {
+  const { subject, start, end, location } = ctx.payload as unknown as CreateEventPayload;
+  if (!subject || !start || !end) {
+    throw new Error('subject, start, end are required');
+  }
+  const res = await jsonFetch<GraphCreatedEvent>(
+    `${GRAPH_BASE}/me/events`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject,
+        start: { dateTime: start, timeZone: TIME_ZONE },
+        end: { dateTime: end, timeZone: TIME_ZONE },
+        location: { displayName: location ?? '' },
+      }),
+    },
+    { fetch: ctx.fetch, serviceId: 'microsoft-365' },
+  );
+  return { id: res.id, subject: res.subject ?? subject, webLink: res.webLink ?? '' };
+}
+
+export const ACTIONS: ActionMap = {
+  'send-mail': sendMail,
+  'create-event': createEvent,
+};
