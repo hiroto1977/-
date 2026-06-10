@@ -5,6 +5,22 @@ import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpy } from '../../shared/formatters';
 import { designWelfareScheme, type WelfareSchemeInput } from '../../shared/welfareScheme';
+import {
+  employeeExplanationMarkdown,
+  consentFormMarkdown,
+  welfareRegulationMarkdown,
+} from '../../shared/welfareDocs';
+
+/** Markdown をファイルとしてダウンロードする (blob + anchor)。 */
+function downloadMarkdown(content: string, name: string) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 /**
  * 給与デザイン / 福利厚生スキーム試算カード。
@@ -161,6 +177,42 @@ export function WelfareSchemeCard() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* 実務ドキュメント生成 (試算値と連動) */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+        <button
+          type="button"
+          onClick={() => downloadMarkdown(employeeExplanationMarkdown(result), 'employee-explanation.md')}
+        >
+          📄 従業員向け説明資料 (.md)
+        </button>
+        <button
+          type="button"
+          onClick={() => downloadMarkdown(consentFormMarkdown(result), 'salary-change-consent.md')}
+        >
+          ✍ 給与変更 同意書 (.md)
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            downloadMarkdown(
+              welfareRegulationMarkdown({
+                targetFreeCash: num(targetStr, 0),
+                rentTotal: num(rentStr, 0),
+                rentCompanyShare: num(rentCoStr, 0),
+                mealTotal: num(mealStr, 0),
+                mealCompanyShare: num(mealCoStr, 0),
+                childcare: num(childcareStr, 0),
+                ecPoints: num(ecStr, 0),
+                withCare,
+              }),
+              'welfare-regulation.md',
+            )
+          }
+        >
+          📐 福利厚生規程ひな形 (.md)
+        </button>
       </div>
 
       <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.6 }}>
