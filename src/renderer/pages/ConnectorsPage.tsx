@@ -15,6 +15,8 @@ import {
   requiredPermissionFor,
   type HookDispatchStep,
 } from '../../shared/connectors/pluginRuntime';
+import { executeFreeConnector, type ExecutionResult } from '../data/connectorExecution';
+import { realConnectorSinks } from '../data/connectorSinks';
 
 /**
  * コネクター / 自動化ページ。
@@ -65,6 +67,34 @@ export function ConnectorsPage() {
   );
 
   const [selectedId, setSelectedId] = useState(FREE_CONNECTORS[0]?.id ?? '');
+  // 実実行: 連携ごとの実行中フラグと直近結果。
+  const [runningId, setRunningId] = useState<string | null>(null);
+  const [runResults, setRunResults] = useState<Record<string, ExecutionResult>>({});
+
+  const runConnector = async (id: string) => {
+    setRunningId(id);
+    try {
+      const result = await executeFreeConnector(
+        FREE_CONNECTOR_REGISTRY,
+        id,
+        SAMPLES[id] ?? {},
+        realConnectorSinks,
+      );
+      setRunResults((prev) => ({ ...prev, [id]: result }));
+    } catch (err) {
+      setRunResults((prev) => ({
+        ...prev,
+        [id]: {
+          ok: false,
+          connectorId: id,
+          target: '',
+          message: err instanceof Error ? err.message : '実行に失敗しました。',
+        },
+      }));
+    } finally {
+      setRunningId(null);
+    }
+  };
 
   const plan = useMemo(() => {
     const sample = SAMPLES[selectedId] ?? {};
@@ -153,7 +183,11 @@ export function ConnectorsPage() {
       </Section>
 
       {/* コネクター・カタログ */}
-      <Section title="無料コネクター一覧" count={FREE_CONNECTORS.length}>
+      <Section title="無料コネクター一覧 (実実行できます)" count={FREE_CONNECTORS.length}>
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          各行の <strong>▶ 実行</strong> で、サンプル入力を実際にローカルへ書き込みます
+          （storage → レコードストア / library → ライブラリ。Electron・ブラウザ版とも動作）。
+        </p>
         <div style={{ overflowX: 'auto' }}>
           <table style={tableStyle}>
             <thead>
@@ -161,20 +195,37 @@ export function ConnectorsPage() {
                 <th style={thStyle}>ID</th>
                 <th style={thStyle}>連携</th>
                 <th style={thStyle}>能力</th>
-                <th style={thStyle}>認証</th>
                 <th style={thStyle}>説明</th>
+                <th style={{ ...thStyle, textAlign: 'center' }}>実行</th>
               </tr>
             </thead>
             <tbody>
-              {FREE_CONNECTORS.map((c) => (
-                <tr key={c.id}>
-                  <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{c.id}</td>
-                  <td style={tdStyle}>{c.sourceService} → {c.targetService}</td>
-                  <td style={tdStyle}>{CAPABILITY_LABEL[c.capability] ?? c.capability}</td>
-                  <td style={{ ...tdStyle, color: 'var(--success)' }}>不要</td>
-                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-mute)' }}>{c.description}</td>
-                </tr>
-              ))}
+              {FREE_CONNECTORS.map((c) => {
+                const res = runResults[c.id];
+                return (
+                  <tr key={c.id}>
+                    <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{c.id}</td>
+                    <td style={tdStyle}>{c.sourceService} → {c.targetService}</td>
+                    <td style={tdStyle}>{CAPABILITY_LABEL[c.capability] ?? c.capability}</td>
+                    <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-mute)' }}>{c.description}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', whiteSpace: 'nowrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => void runConnector(c.id)}
+                        disabled={runningId === c.id}
+                        aria-label={`${c.id} を実行`}
+                      >
+                        {runningId === c.id ? '実行中…' : '▶ 実行'}
+                      </button>
+                      {res ? (
+                        <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger, #ef4444)' }}>
+                          {res.ok ? '✅' : '⛔'} {res.message}
+                        </div>
+                      ) : null}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
