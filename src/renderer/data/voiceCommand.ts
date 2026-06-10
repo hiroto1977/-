@@ -193,6 +193,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   tax: ['税務試算', '税務', 'ぜいむ', '税金', 'ぜいきん', 'tax', '納税', 'のうぜい'],
   funding: ['資金調達レーダー', '資金調達', 'しきんちょうたつ', 'funding', '融資', 'ゆうし'],
   freee: ['freee', 'ふりー', 'freee会計', '会計', 'かいけい'],
+  connectors: ['こねくたー', 'connectors', '自動化', 'じどうか', '連携', 'れんけい', 'ぷらぐいん', 'plugin'],
 };
 // Stryker restore all
 
