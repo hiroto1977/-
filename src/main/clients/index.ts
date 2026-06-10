@@ -61,6 +61,7 @@ import { fetchTiktokSnapshot } from './tiktok';
 import { fetchTaxSnapshot } from './tax';
 import { fetchFundingSnapshot } from './funding';
 import { fetchFreeeSnapshot } from './freee';
+import { fetchConnectorsSnapshot } from './connectors';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -131,6 +132,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   tax: fetchTaxSnapshot,
   funding: fetchFundingSnapshot,
   freee: fetchFreeeSnapshot,
+  connectors: fetchConnectorsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -209,6 +211,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'tiktok',
   // 税務試算: 計算のみ・公式ツールへ導線。納付は手動。snapshot-only。
   'tax',
+  // コネクター/自動化: 無料(認証不要)カタログの可視化のみ。snapshot-only。
+  'connectors',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

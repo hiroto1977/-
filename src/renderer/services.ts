@@ -59,6 +59,7 @@ import { TiktokPage } from './pages/TiktokPage';
 import { TaxPage } from './pages/TaxPage';
 import { FundingPage } from './pages/FundingPage';
 import { FreeePage } from './pages/FreeePage';
+import { ConnectorsPage } from './pages/ConnectorsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -576,6 +577,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'freee の取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携・実 API)',
     page: FreeePage,
     category: 'integrations',
+  },
+  {
+    id: 'connectors',
+    label: 'コネクター / 自動化',
+    icon: 'CN',
+    description: '無料(認証不要)のローカル連携カタログとプラグインを一覧・ドライラン',
+    page: ConnectorsPage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
