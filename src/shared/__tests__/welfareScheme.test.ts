@@ -124,16 +124,16 @@ describe('designWelfareScheme', () => {
       gross: 400_000,
       employeeSocialInsurance: 60_415,
       incomeTax: 10_380,
-      residentTax: 18_708,
-      takeHome: 310_497,
+      residentTax: 19_125,
+      takeHome: 310_080,
       employerSocialInsurance: 63_015,
     });
     expect(monthlyCompensation(500_000, true)).toEqual({
       gross: 500_000,
       employeeSocialInsurance: 77_750,
       incomeTax: 16_778,
-      residentTax: 24_975,
-      takeHome: 380_497,
+      residentTax: 25_391,
+      takeHome: 380_081,
       employerSocialInsurance: 81_000,
     });
   });
@@ -141,33 +141,33 @@ describe('designWelfareScheme', () => {
   it('designWelfareScheme の厳密値 (各内訳を実値で固定)', () => {
     const r = designWelfareScheme(input);
     expect(r.normal).toEqual({
-      gross: 584_551,
-      employeeSocialInsurance: 86_992,
-      tax: 57_559,
+      gross: 585_123,
+      employeeSocialInsurance: 86_995,
+      tax: 58_128,
       payrollDeduction: 0,
       netPaid: 440_000,
       freeCash: 265_000,
       inKindValue: 0,
       employeeRealValue: 265_000,
-      companyTotalCost: 675_342,
+      companyTotalCost: 675_921,
     });
     expect(r.scheme).toEqual({
-      gross: 359_894,
-      employeeSocialInsurance: 53_099,
-      tax: 24_295,
+      gross: 360_376,
+      employeeSocialInsurance: 53_102,
+      tax: 24_774,
       payrollDeduction: 17_500,
       netPaid: 265_000,
       freeCash: 265_000,
       inKindValue: 157_500,
       employeeRealValue: 422_500,
-      companyTotalCost: 572_831,
+      companyTotalCost: 573_320,
     });
     expect(r.diff).toEqual({
-      gross: -224_657,
+      gross: -224_747,
       employeeSocialInsurance: -33_893,
-      tax: -33_264,
+      tax: -33_354,
       employeeRealValue: 157_500,
-      companyTotalCost: -102_511,
+      companyTotalCost: -102_601,
     });
   });
 

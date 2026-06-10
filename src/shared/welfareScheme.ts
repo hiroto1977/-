@@ -1,6 +1,7 @@
 import {
   calcSalaryIncomeDeduction,
   calcBasicDeduction,
+  calcResidentBasicDeduction,
   calcIncomeTax,
   calcResidentTax,
 } from './taxCalc';
@@ -68,9 +69,12 @@ export function monthlyCompensation(grossMonthly: number, withCare = false): Mon
   const annualSI = si.total * 12;
   const employmentIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross));
   const basic = calcBasicDeduction(employmentIncome);
+  const residentBasic = calcResidentBasicDeduction(employmentIncome);
   const taxable = Math.max(0, employmentIncome - annualSI - basic);
+  // 住民税の課税所得は基礎控除が所得税と異なる (43万 / 所得税は48万) ため別計算。
+  const residentTaxable = Math.max(0, employmentIncome - annualSI - residentBasic);
   const incomeTax = floorYen(calcIncomeTax(taxable) / 12);
-  const residentTax = floorYen(calcResidentTax(taxable) / 12);
+  const residentTax = floorYen(calcResidentTax(residentTaxable) / 12);
   const takeHome = gross - si.total - incomeTax - residentTax;
   // 会社負担社保: 厚年・健保 (介護含む) は労使折半で本人と同額、雇用保険は事業主料率、
   // 労災は事業主全額。
