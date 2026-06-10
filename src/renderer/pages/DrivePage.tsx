@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 
 const TYPE_LABEL: Record<string, string> = {
@@ -70,6 +71,8 @@ export function DrivePage() {
           placeholder: 'ya29.… (drive scope)',
         }}
       />
+
+      <GoogleConnectCard serviceId="drive" onConnected={refresh} />
 
       <Section title="Recent Files" count={files.length}>
         <DataList
