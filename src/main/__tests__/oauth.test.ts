@@ -352,7 +352,7 @@ describe('OAUTH_CONFIGS shape', () => {
     expect(cfg?.extraAuthParams).toBeUndefined();
   });
 
-  it('microsoft-365 uses Microsoft identity platform endpoints with all four scopes and a string clientId', () => {
+  it('microsoft-365 uses Microsoft identity platform endpoints with read+write scopes and a string clientId', () => {
     // Pins the ObjectLiteral (entry → {}), each StringLiteral in the scopes array,
     // ArrayDeclaration (scopes → []), and LogicalOperator (`?? ''` → `&& ''`) mutants.
     const cfg = OAUTH_CONFIGS['microsoft-365'];
@@ -361,10 +361,14 @@ describe('OAUTH_CONFIGS shape', () => {
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     );
     expect(cfg?.tokenUrl).toBe('https://login.microsoftonline.com/common/oauth2/v2.0/token');
+    // 読み取り (User.Read / Mail.Read / Calendars.Read) に加え、書き込みアクション
+    // (send-mail / create-event) 用の Mail.Send / Calendars.ReadWrite を含む。
     expect(cfg?.scopes).toEqual([
       'User.Read',
       'Mail.Read',
+      'Mail.Send',
       'Calendars.Read',
+      'Calendars.ReadWrite',
       'offline_access',
     ]);
     // clientId is always a string (empty string when MS365_OAUTH_CLIENT_ID is unset).

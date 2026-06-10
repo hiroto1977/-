@@ -8,7 +8,7 @@ import {
   FREE_CONNECTORS,
   FREE_CONNECTOR_REGISTRY,
 } from '../../shared/connectors/freeConnectors';
-import { planConnectorRun } from '../../shared/connectors/connectorCatalog';
+import { planConnectorRun, CONNECTOR_CATALOG } from '../../shared/connectors/connectorCatalog';
 import { PLUGIN_CATALOG } from '../../shared/connectors/pluginCatalog';
 import {
   resolveHookPlan,
@@ -178,6 +178,40 @@ export function ConnectorsPage() {
             </tbody>
           </table>
         </div>
+      </Section>
+
+      {/* 要認証コネクター (外部サービス連携・Microsoft 365 等) */}
+      <Section title="要認証コネクター (外部サービス連携)" count={CONNECTOR_CATALOG.length}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>ID</th>
+                <th style={thStyle}>連携</th>
+                <th style={thStyle}>能力</th>
+                <th style={thStyle}>認証</th>
+                <th style={thStyle}>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CONNECTOR_CATALOG.map((c) => (
+                <tr key={c.id}>
+                  <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{c.id}</td>
+                  <td style={tdStyle}>{c.sourceService} → {c.targetService}</td>
+                  <td style={tdStyle}>{CAPABILITY_LABEL[c.capability] ?? c.capability}</td>
+                  <td style={{ ...tdStyle, color: c.requiresAuth ? 'var(--text-mute)' : 'var(--success)' }}>
+                    {c.requiresAuth ? '要' : '不要'}
+                  </td>
+                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-mute)' }}>{c.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+          ※ これらは各サービスのトークン/OAuth 連携が前提です（例: Microsoft 365 は
+          <code>docs/MICROSOFT365_SETUP.md</code> 参照）。実送信はアダプタ層が担います。
+        </p>
       </Section>
 
       {/* プラグイン・カタログ */}
