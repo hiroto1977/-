@@ -38,7 +38,8 @@ const VOICE_ACTIONS: AvailableCapabilities['actions'] = {
   'mutual-funds': ['record-entry'],
 };
 
-const CAPABILITIES: AvailableCapabilities = {
+/** 音声/チャット共通の能力テーブル (ChatbotWidget も同じ表を参照する)。 */
+export const CAPABILITIES: AvailableCapabilities = {
   serviceIds: SERVICE_IDS,
   actions: VOICE_ACTIONS,
 };

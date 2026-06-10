@@ -9,6 +9,7 @@ import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
+import { ChatbotWidget } from './components/ChatbotWidget';
 import {
   PLAN_ORDER,
   PLANS,
@@ -443,6 +444,7 @@ export function App() {
           )}
         </section>
       </main>
+      <ChatbotWidget />
     </div>
   );
 }
