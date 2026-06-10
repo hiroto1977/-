@@ -228,12 +228,25 @@ ipcMain.handle('oauth:isSupported', (_e, serviceId: unknown) =>
   isServiceId(serviceId) ? isOAuthSupported(serviceId) : false,
 );
 
-ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown) => {
+// ランタイム クライアント ID の妥当性 (英数・ドット・ハイフン・アンダースコア、8〜200 文字)。
+// Entra の GUID / Google の *.apps.googleusercontent.com の双方を許容しつつ、
+// 制御文字・空白などの混入を IPC 境界で拒否する。
+const CLIENT_ID_RE = /^[A-Za-z0-9._-]{8,200}$/;
+
+ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverride?: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_supported', message: 'unknown service id' };
   }
-  const config = Object.hasOwn(OAUTH_CONFIGS, serviceId)
+  const baseConfig = Object.hasOwn(OAUTH_CONFIGS, serviceId)
     ? OAUTH_CONFIGS[serviceId as ServiceId]
+    : undefined;
+  // 環境変数未設定でも、UI から渡されたクライアント ID で実行できる (アプリ内かんたん接続)。
+  const override =
+    typeof clientIdOverride === 'string' && CLIENT_ID_RE.test(clientIdOverride.trim())
+      ? clientIdOverride.trim()
+      : '';
+  const config = baseConfig
+    ? { ...baseConfig, clientId: override || baseConfig.clientId }
     : undefined;
   if (!config || !config.clientId) {
     return {

@@ -18,10 +18,9 @@ Service Hub の **Microsoft 365** サービス（`microsoft-365`）は、Microso
 1. [Microsoft Entra 管理センター](https://entra.microsoft.com) → **ID > アプリの登録 > 新規登録**。
 2. 名前（例: `Service Hub`）を入力。
 3. **サポートされているアカウントの種類**: 個人利用なら「任意の組織ディレクトリ + 個人 Microsoft アカウント」。
-4. **リダイレクト URI**: プラットフォーム「パブリック クライアント/ネイティブ」で、デスクトップ版が
-   使うループバックを登録します。
-   - デスクトップ（Electron）: `http://127.0.0.1:<port>/callback`（`oauth.ts` のループバック実装に合わせる）
-   - ブラウザ版（`file://` PKCE 貼り付け）: アウトオブバンド方式（`docs/PROXY_EXAMPLE.md` / `oauth/pkce.ts` 参照）
+4. **リダイレクト URI**: プラットフォーム「モバイル アプリケーションとデスクトップ アプリケーション」
+   （パブリック クライアント）で `http://127.0.0.1/oauth/callback` を登録します
+   （実行時はランダムポート `http://127.0.0.1:<port>/oauth/callback` を使用 — ループバックはポート無視で照合されます。RFC 8252）。
 5. 登録後の **アプリケーション (クライアント) ID** を控えます。
 
 ### 2. API アクセス許可を付与する
@@ -39,22 +38,29 @@ Service Hub の **Microsoft 365** サービス（`microsoft-365`）は、Microso
 
 職場・学校アカウントで管理者の同意が必要な場合は **「管理者の同意を与える」** を実行してください。
 
-### 3. クライアント ID をアプリに渡す
-取得したクライアント ID を環境変数 `MS365_OAUTH_CLIENT_ID` に設定します。
+### 3. クライアント ID をアプリに渡す（2 通り）
 
+**A. アプリ内で貼り付け（推奨・かんたん）**
+サイドバー **Microsoft 365** ページの「かんたん接続」にクライアント ID を貼り付けて
+**サインイン** を押すだけです。環境変数の設定は不要です（ID は localStorage に保存され、
+`oauth:authorize` IPC のランタイム上書きとして渡ります。クライアント ID は公開識別子であり
+秘密情報ではありません）。
+
+**B. 環境変数（従来どおり・CI や常設環境向け）**
 ```bash
-# 例: 起動前にエクスポート（クラウド実行環境では環境設定の env に登録）
 export MS365_OAUTH_CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ```
 
-未設定の場合、`isOAuthConfigured('microsoft-365')` が `false` を返し、サインインボタンは
-無効になります（`oauth.ts:isOAuthConfigured`）。
-
 ### 4. アプリ内でサインインする（あなたの操作）
 1. サイドバーから **Microsoft 365** を開く。
-2. 認証情報スロットの **サインイン**（OAuth）を実行 → ブラウザで Microsoft にサインインし同意。
+2. 「かんたん接続」の **サインイン** を実行 → ブラウザで Microsoft にサインインし同意。
 3. 取得したアクセストークンは OS キーチェーン（`safeStorage`）に暗号化保存され、レンダラーには
    渡りません（`secrets.ts`）。
+
+### （アプリ登録なしで今すぐ試す）Graph Explorer トークン
+[Graph Explorer](https://developer.microsoft.com/graph/graph-explorer) にサインイン →
+「Access token」タブをコピー → Microsoft 365 ページの「トークン設定」に貼り付け。
+アプリ登録不要・約 1 時間有効（恒久利用には方法 A/B を推奨）。
 
 ## できること（サインイン後）
 - **読み取り**: プロフィール表示名、直近の Outlook メール（未読件数つき）、直近のカレンダー予定。
