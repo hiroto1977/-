@@ -46,7 +46,14 @@ jobs:
           cp dist/standalone.html _site/app.html
           cp dist/standalone.html _site/standalone.html
           cp assets/og.png _site/og.png
+          # PWA (ホーム画面に追加): manifest / icon / service worker を配置
+          cp assets/manifest.webmanifest _site/manifest.webmanifest
+          cp assets/icon.svg _site/icon.svg
+          cp assets/sw.js _site/sw.js
           touch _site/.nojekyll
+      # PWA タグ注入 (公開 HTML のみ。standalone.html 配布物は単一ファイルのまま不変)
+      - name: Inject PWA tags
+        run: node scripts/inject-pwa.cjs _site/index.html _site/app.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
