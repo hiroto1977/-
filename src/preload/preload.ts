@@ -40,8 +40,9 @@ const api = {
 
   oauthSupported: (serviceId: ServiceId): Promise<boolean> =>
     ipcRenderer.invoke('oauth:isSupported', serviceId),
-  authorize: (serviceId: ServiceId): Promise<OAuthResult> =>
-    ipcRenderer.invoke('oauth:authorize', serviceId),
+  // clientId はアプリ内かんたん接続用の任意指定 (環境変数未設定でも OAuth を実行できる)。
+  authorize: (serviceId: ServiceId, clientId?: string): Promise<OAuthResult> =>
+    ipcRenderer.invoke('oauth:authorize', serviceId, clientId),
 };
 
 contextBridge.exposeInMainWorld('serviceHub', api);

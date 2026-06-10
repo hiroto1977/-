@@ -20,12 +20,47 @@ function localToIso(local: string): string {
   return `${local}:00`;
 }
 
+/** Entra クライアント ID の保存キー (公開識別子であり秘密情報ではないため localStorage)。 */
+const CLIENT_ID_STORAGE_KEY = 'ms365-client-id';
+
 export function Microsoft365Page() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'microsoft-365',
     SNAPSHOT.microsoft365,
   );
   const { userName, messages, events, items } = data;
+
+  // --- かんたん接続 (アプリ内サインイン) ---
+  const [clientId, setClientId] = useState(() => {
+    try {
+      return localStorage.getItem(CLIENT_ID_STORAGE_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  });
+  const [signingIn, setSigningIn] = useState(false);
+  const [signInResult, setSignInResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+
+  const signIn = async () => {
+    if (!window.serviceHub) return;
+    setSigningIn(true);
+    setSignInResult(undefined);
+    try {
+      localStorage.setItem(CLIENT_ID_STORAGE_KEY, clientId.trim());
+    } catch {
+      // localStorage 不可でもサインイン自体は続行できる。
+    }
+    const res = await window.serviceHub.authorize('microsoft-365', clientId.trim() || undefined);
+    setSigningIn(false);
+    if (res.ok) {
+      setSignInResult({ kind: 'ok', message: 'サインインしました。「更新」でデータを取得できます。' });
+      refresh();
+    } else {
+      setSignInResult({ kind: 'error', message: res.message });
+    }
+  };
+
+  const openExternal = (url: string) => window.serviceHub?.openExternal(url);
 
   // --- 書き込みアクション (send-mail / create-event) ---
   const [openForm, setOpenForm] = useState<'none' | 'mail' | 'event'>('none');
@@ -108,9 +143,58 @@ export function Microsoft365Page() {
 
       <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 16 }}>
         Microsoft Graph からプロフィール・Outlook メール・カレンダー予定を取得し、メール送信・予定作成も
-        行えます。OAuth 連携には Entra でのアプリ登録と環境変数 <code>MS365_OAUTH_CLIENT_ID</code> の設定が
-        必要です（手順は <code>docs/MICROSOFT365_SETUP.md</code>）。
+        行えます。下の「かんたん接続」からアプリ内だけで接続できます（環境変数の設定は不要になりました。
+        詳細手順は <code>docs/MICROSOFT365_SETUP.md</code>）。
       </div>
+
+      <Section title="かんたん接続">
+        <div className="card" style={{ gap: 10 }}>
+          <div style={{ fontSize: 13, lineHeight: 1.7 }}>
+            <strong>方法 A（推奨・恒久）: Entra アプリ登録 + サインイン</strong>
+            <ol style={{ margin: '6px 0 0', paddingLeft: 20, fontSize: 12, color: 'var(--text-mute)' }}>
+              <li>
+                <a href="#" onClick={(e) => { e.preventDefault(); openExternal('https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade'); }}>
+                  Entra「アプリの登録」を開く
+                </a>{' '}
+                → 新規登録（種類: パブリック クライアント、リダイレクト URI: <code>http://127.0.0.1/oauth/callback</code>）
+              </li>
+              <li>API アクセス許可で User.Read / Mail.Read / Mail.Send / Calendars.Read / Calendars.ReadWrite / offline_access を追加</li>
+              <li>「アプリケーション (クライアント) ID」を下に貼り付けてサインイン</li>
+            </ol>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <input
+              placeholder="クライアント ID (例: 00000000-0000-0000-0000-000000000000)"
+              value={clientId}
+              onChange={(e) => setClientId(e.target.value)}
+              style={{ ...inputStyle, flex: 1, minWidth: 240 }}
+              aria-label="Entra クライアント ID"
+            />
+            <button className="primary" onClick={signIn} disabled={signingIn || !clientId.trim()}>
+              {signingIn ? 'サインイン中…' : '🔐 サインイン'}
+            </button>
+          </div>
+          {signInResult ? (
+            <span style={{ color: signInResult.kind === 'ok' ? 'var(--success)' : 'var(--danger)', fontSize: 13 }}>
+              {signInResult.message}
+            </span>
+          ) : null}
+          <div style={{ fontSize: 13, lineHeight: 1.7, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+            <strong>方法 B（即時・お試し）: Graph Explorer のトークンを貼る</strong>
+            <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>
+              <a href="#" onClick={(e) => { e.preventDefault(); openExternal('https://developer.microsoft.com/graph/graph-explorer'); }}>
+                Graph Explorer を開く
+              </a>{' '}
+              → Microsoft アカウントでサインイン → 「Access token」タブをコピー → 上部の「トークン設定」に貼り付け。
+              アプリ登録不要で約 1 時間有効（試用向け）。
+            </div>
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+            ※ ライブ接続（実データ取得・送信）はデスクトップ版の機能です。ブラウザ版は同梱スナップショットを表示します。
+            サインインはあなたの Microsoft アカウントでのブラウザ認証で、トークンは OS キーチェーンに暗号化保存されます。
+          </div>
+        </div>
+      </Section>
 
       <Section title="サマリー" count={items.length}>
         <DataList items={items.map((it) => ({ key: it.id, title: it.name }))} empty="データなし" />
