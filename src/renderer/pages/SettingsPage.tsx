@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
+import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
+import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { usePlan } from '../plan/usePlan';
@@ -567,6 +569,97 @@ function LicenseSection() {
   );
 }
 
+/** 接続状況ハブ — 全サービスの資格情報設定状況を一覧し、未接続はページへ誘導する。 */
+function ConnectionHub({ refreshKey }: { refreshKey: number }) {
+  const [configured, setConfigured] = useState<ReadonlySet<string> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getVault()
+      .listConfigured()
+      .then((ids) => {
+        if (!cancelled) setConfigured(new Set(ids));
+      })
+      .catch(() => {
+        if (!cancelled) setConfigured(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshKey]);
+
+  const summary = summarizeConnections(
+    SERVICES.map((s) => ({ id: s.id, label: s.label, category: s.category })),
+    configured ?? new Set(),
+  );
+
+  const open = (id: string) => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: id }));
+
+  if (configured === null) {
+    return <div style={{ fontSize: 13, color: 'var(--text-mute)' }}>読み込み中…</div>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ fontSize: 13 }}>
+        <strong>{summary.connectedCount}</strong> / {summary.total} サービスが接続済み
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {summary.byCategory.map((c) => (
+          <span
+            key={c.category}
+            style={{
+              fontSize: 12,
+              border: '1px solid var(--border)',
+              borderRadius: 999,
+              padding: '2px 10px',
+              color: 'var(--text-mute)',
+            }}
+          >
+            {CATEGORY_LABEL[c.category as ServiceCategory] ?? c.category}: {c.connected}/{c.total}
+          </span>
+        ))}
+      </div>
+
+      {summary.connected.length > 0 ? (
+        <div>
+          <div style={{ fontSize: 12, color: 'var(--success)', marginBottom: 4 }}>✅ 接続済み</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {summary.connected.map((s) => (
+              <button key={s.id} type="button" onClick={() => open(s.id)} style={{ fontSize: 12 }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div>
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 4 }}>
+          ⚪ 未接続 ({summary.notConnected.length}) — クリックで開いて接続
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 180, overflowY: 'auto' }}>
+          {summary.notConnected.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => open(s.id)}
+              style={{ fontSize: 12, opacity: 0.85 }}
+              title={`${s.label} を開いて接続する`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p style={{ fontSize: 11, color: 'var(--text-mute)', margin: 0, lineHeight: 1.6 }}>
+        ※ Microsoft 365 / Google (Drive・Calendar・Gmail) は各ページの「かんたん接続」から、
+        ローカルツール (税務試算・コネクター 等) は認証不要で利用できます。
+      </p>
+    </div>
+  );
+}
+
 export function SettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -607,6 +700,10 @@ export function SettingsPage() {
         ここで入力した API キーはマスターパスワードで暗号化 (AES-GCM-256) されてブラウザに保管されます。
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
+
+      <Section title="接続状況ハブ" count={SERVICES.length}>
+        <ConnectionHub refreshKey={refreshKey} />
+      </Section>
 
       <Section title="ライセンス · 招待コード (全機能を無償開放)" count={1}>
         <LicenseSection />
