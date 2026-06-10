@@ -6,6 +6,7 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
+import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
   CONSUMPTION_TAX_REDUCED,
   CONSUMPTION_TAX_STANDARD,
@@ -1204,6 +1205,8 @@ export function TaxPage() {
           </div>
         </div>
       </Section>
+
+      <WelfareSchemeCard />
 
       <Section title="節税制度の案内 (一般情報)" count={tips.length}>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.9 }}>
