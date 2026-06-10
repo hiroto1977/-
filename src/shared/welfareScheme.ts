@@ -10,6 +10,7 @@ import {
   EMPLOYMENT_INSURANCE_RATE_EMPLOYER,
   WORKERS_ACCIDENT_RATE,
 } from './payroll';
+import { calcDependentDeduction, type DependentKind, type DeductionPair } from './taxDeductions';
 
 /**
  * 給与デザイン / 福利厚生スキーム試算 (純ロジック・IO なし・概算)。
@@ -33,6 +34,9 @@ import {
 
 const floorYen = (n: number) => Math.floor(n);
 
+/** 追加の所得控除 (扶養控除・青色申告特別控除 等) のゼロ値。 */
+const ZERO_DEDUCTION: DeductionPair = { incomeTax: 0, residentTax: 0 };
+
 export interface MonthlyCompensation {
   /** 額面月給 (円/月)。 */
   readonly gross: number;
@@ -49,10 +53,18 @@ export interface MonthlyCompensation {
 }
 
 /**
- * 額面月給から本人手取りと会社負担社保を概算する (扶養なし・基礎控除のみ)。
+ * 額面月給から本人手取りと会社負担社保を概算する (基礎控除 + 任意の追加所得控除)。
  * 0 / 負の額面は全 0。
+ *
+ * `extraDeductions` には扶養控除・青色申告特別控除など、基礎控除・社会保険料控除
+ * 以外の所得控除を所得税分 / 住民税分に分けて渡す (省略時は 0)。所得税と住民税で
+ * 控除額が異なる扶養控除に対応するため `DeductionPair` で受ける。
  */
-export function monthlyCompensation(grossMonthly: number, withCare = false): MonthlyCompensation {
+export function monthlyCompensation(
+  grossMonthly: number,
+  withCare = false,
+  extraDeductions: DeductionPair = ZERO_DEDUCTION,
+): MonthlyCompensation {
   const gross = Math.max(0, grossMonthly);
   if (gross === 0) {
     return {
@@ -70,9 +82,12 @@ export function monthlyCompensation(grossMonthly: number, withCare = false): Mon
   const employmentIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross));
   const basic = calcBasicDeduction(employmentIncome);
   const residentBasic = calcResidentBasicDeduction(employmentIncome);
-  const taxable = Math.max(0, employmentIncome - annualSI - basic);
+  const taxable = Math.max(0, employmentIncome - annualSI - basic - extraDeductions.incomeTax);
   // 住民税の課税所得は基礎控除が所得税と異なる (43万 / 所得税は48万) ため別計算。
-  const residentTaxable = Math.max(0, employmentIncome - annualSI - residentBasic);
+  const residentTaxable = Math.max(
+    0,
+    employmentIncome - annualSI - residentBasic - extraDeductions.residentTax,
+  );
   const incomeTax = floorYen(calcIncomeTax(taxable) / 12);
   const residentTax = floorYen(calcResidentTax(residentTaxable) / 12);
   const takeHome = gross - si.total - incomeTax - residentTax;
@@ -97,7 +112,11 @@ export function monthlyCompensation(grossMonthly: number, withCare = false): Mon
  * 目標手取りに一致する額面月給を二分探索で求める (手取りは額面に対し単調増加)。
  * 1 円単位。到達不能な高額もカンスト上限で打ち切る。
  */
-export function solveGrossForTakeHome(targetTakeHome: number, withCare = false): number {
+export function solveGrossForTakeHome(
+  targetTakeHome: number,
+  withCare = false,
+  extraDeductions: DeductionPair = ZERO_DEDUCTION,
+): number {
   if (targetTakeHome <= 0) return 0;
   let lo = 0;
   let hi = 3_000_000; // 月額面の上限ガード
@@ -108,7 +127,7 @@ export function solveGrossForTakeHome(targetTakeHome: number, withCare = false):
     const mid = (lo + hi) / 2;
     // 厳密一致 (< → <=) は連続値では測度0で到達せず結果不変の等価変異。
     // Stryker disable next-line EqualityOperator
-    if (monthlyCompensation(mid, withCare).takeHome < targetTakeHome) lo = mid;
+    if (monthlyCompensation(mid, withCare, extraDeductions).takeHome < targetTakeHome) lo = mid;
     else hi = mid;
   }
   return Math.round(hi);
@@ -131,6 +150,17 @@ export interface WelfareSchemeInput {
   readonly ecPoints: number;
   /** 40歳以上65歳未満 (介護保険料を上乗せ) か。 */
   readonly withCare?: boolean;
+  /** 扶養親族の年齢区分の配列 (扶養控除。16歳未満は控除0)。両シナリオ共通に適用。 */
+  readonly dependents?: readonly DependentKind[];
+  /**
+   * 青色申告特別控除額 (円/年。0 / 100,000 / 550,000 / 650,000)。
+   *
+   * **注意:** 青色申告特別控除は本来「事業所得・不動産所得」に対する控除であり、
+   * 給与所得には適用できない。本試算では「給与のほかに青色申告する事業所得があり、
+   * その控除を世帯全体の課税所得から差し引ける」場合の概算として、給与の課税所得から
+   * 控除する簡略モデルで扱う。給与のみの人には適用されない点に留意 (UI で明示)。
+   */
+  readonly blueDeduction?: number;
 }
 
 export interface WelfareScenario {
@@ -165,6 +195,15 @@ export interface WelfareSchemeResult {
     readonly employeeRealValue: number;
     readonly companyTotalCost: number;
   };
+  /** 両シナリオに適用した追加所得控除の内訳 (扶養控除・青色申告特別控除)。 */
+  readonly deductions: {
+    /** 扶養控除 (所得税分 / 住民税分)。 */
+    readonly dependent: DeductionPair;
+    /** 青色申告特別控除 (所得税・住民税とも同額)。 */
+    readonly blue: number;
+    /** 課税所得から差し引いた合計の追加所得控除 (所得税分 / 住民税分)。 */
+    readonly total: DeductionPair;
+  };
 }
 
 /**
@@ -178,11 +217,24 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
   const rentSelf = Math.max(0, input.rentTotal - input.rentCompanyShare);
   const mealSelf = Math.max(0, input.mealTotal - input.mealCompanyShare);
 
+  // 追加の所得控除 (両シナリオ共通): 扶養控除 (所得税/住民税で異額) + 青色申告特別控除。
+  // 青色申告特別控除は所得税・住民税とも同額を課税所得から差し引く (簡略モデル)。
+  const dependentDeduction = calcDependentDeduction(input.dependents ?? []);
+  const blueDeduction = Math.max(0, input.blueDeduction ?? 0);
+  const extraDeductions: DeductionPair = {
+    incomeTax: dependentDeduction.incomeTax + blueDeduction,
+    residentTax: dependentDeduction.residentTax + blueDeduction,
+  };
+
   // ① 通常: 従業員が家賃・育児・食事・EC を手取りから全額支払う。
   //    手元残り = 手取り − (家賃 + 育児 + 食事 + EC) → 目標達成に必要な手取りを逆算。
   const normalLivingCost = input.rentTotal + input.childcare + input.mealTotal + input.ecPoints;
-  const normalGross = solveGrossForTakeHome(input.targetFreeCash + normalLivingCost, withCare);
-  const normalComp = monthlyCompensation(normalGross, withCare);
+  const normalGross = solveGrossForTakeHome(
+    input.targetFreeCash + normalLivingCost,
+    withCare,
+    extraDeductions,
+  );
+  const normalComp = monthlyCompensation(normalGross, withCare, extraDeductions);
   const normal: WelfareScenario = {
     gross: normalComp.gross,
     employeeSocialInsurance: normalComp.employeeSocialInsurance,
@@ -198,8 +250,12 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
   // ② スキーム: 会社が家賃(社宅)・食事・育児・EC を非課税で現物支給し基本給を下げる。
   //    本人天引き = 社宅自己負担 + 食事自己負担。手元残り = 手取り − 天引き。
   const schemeDeduction = rentSelf + mealSelf;
-  const schemeGross = solveGrossForTakeHome(input.targetFreeCash + schemeDeduction, withCare);
-  const schemeComp = monthlyCompensation(schemeGross, withCare);
+  const schemeGross = solveGrossForTakeHome(
+    input.targetFreeCash + schemeDeduction,
+    withCare,
+    extraDeductions,
+  );
+  const schemeComp = monthlyCompensation(schemeGross, withCare, extraDeductions);
   const inKindValue =
     input.rentCompanyShare + input.mealCompanyShare + input.childcare + input.ecPoints;
   const schemeFreeCash = schemeComp.takeHome - schemeDeduction;
@@ -224,6 +280,11 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
       tax: scheme.tax - normal.tax,
       employeeRealValue: scheme.employeeRealValue - normal.employeeRealValue,
       companyTotalCost: scheme.companyTotalCost - normal.companyTotalCost,
+    },
+    deductions: {
+      dependent: dependentDeduction,
+      blue: blueDeduction,
+      total: extraDeductions,
     },
   };
 }

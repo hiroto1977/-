@@ -5,6 +5,7 @@ import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpy } from '../../shared/formatters';
 import { designWelfareScheme, type WelfareSchemeInput } from '../../shared/welfareScheme';
+import type { DependentKind } from '../../shared/taxDeductions';
 import {
   employeeExplanationMarkdown,
   consentFormMarkdown,
@@ -61,6 +62,22 @@ export function WelfareSchemeCard() {
   const [childcareStr, setChildcareStr] = useState('50000');
   const [ecStr, setEcStr] = useState('30000');
   const [withCare, setWithCare] = useState(false);
+  // 扶養親族の人数 (区分別) と青色申告特別控除額。
+  const [generalStr, setGeneralStr] = useState('0');
+  const [specificStr, setSpecificStr] = useState('0');
+  const [elderlyStr, setElderlyStr] = useState('0');
+  const [blueStr, setBlueStr] = useState('0');
+
+  const dependents = useMemo<DependentKind[]>(() => {
+    const g = Math.floor(num(generalStr, 0));
+    const s = Math.floor(num(specificStr, 0));
+    const e = Math.floor(num(elderlyStr, 0));
+    return [
+      ...Array<DependentKind>(g).fill('general'),
+      ...Array<DependentKind>(s).fill('specific'),
+      ...Array<DependentKind>(e).fill('elderly'),
+    ];
+  }, [generalStr, specificStr, elderlyStr]);
 
   const result = useMemo(() => {
     const input: WelfareSchemeInput = {
@@ -72,12 +89,15 @@ export function WelfareSchemeCard() {
       childcare: num(childcareStr, 0),
       ecPoints: num(ecStr, 0),
       withCare,
+      dependents,
+      blueDeduction: num(blueStr, 0),
     };
     return designWelfareScheme(input);
-  }, [targetStr, rentStr, rentCoStr, mealStr, mealCoStr, childcareStr, ecStr, withCare]);
+  }, [targetStr, rentStr, rentCoStr, mealStr, mealCoStr, childcareStr, ecStr, withCare, dependents, blueStr]);
 
-  const { normal, scheme, diff } = result;
+  const { normal, scheme, diff, deductions } = result;
   const yen = (n: number) => jpy(Math.round(n));
+  const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
 
   const rows: { label: string; a: number; b: number; hi?: boolean }[] = [
     { label: '額面基本給', a: normal.gross, b: scheme.gross },
@@ -140,7 +160,75 @@ export function WelfareSchemeCard() {
           />
           <span>40歳以上65歳未満 (介護保険料)</span>
         </label>
+        <label style={fieldRow}>
+          <span>一般扶養親族 (人)</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={generalStr}
+            onChange={(e) => setGeneralStr(e.target.value)}
+            style={inputStyle}
+            aria-label="一般扶養親族の人数"
+          />
+        </label>
+        <label style={fieldRow}>
+          <span>特定扶養親族 19-22歳 (人)</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={specificStr}
+            onChange={(e) => setSpecificStr(e.target.value)}
+            style={inputStyle}
+            aria-label="特定扶養親族の人数"
+          />
+        </label>
+        <label style={fieldRow}>
+          <span>老人扶養親族 70歳- (人)</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={elderlyStr}
+            onChange={(e) => setElderlyStr(e.target.value)}
+            style={inputStyle}
+            aria-label="老人扶養親族の人数"
+          />
+        </label>
+        <label style={fieldRow}>
+          <span>青色申告特別控除</span>
+          <select
+            value={blueStr}
+            onChange={(e) => setBlueStr(e.target.value)}
+            style={{ ...inputStyle, textAlign: 'left' }}
+            aria-label="青色申告特別控除額"
+          >
+            <option value="0">なし (給与のみ)</option>
+            <option value="100000">10万円</option>
+            <option value="550000">55万円</option>
+            <option value="650000">65万円 (e-Tax)</option>
+          </select>
+        </label>
       </div>
+
+      {hasExtraDeduction && (
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
+          適用した追加所得控除（両シナリオ共通・年額）: 扶養控除 所得税{' '}
+          <strong>{yen(deductions.dependent.incomeTax)}</strong> / 住民税{' '}
+          <strong>{yen(deductions.dependent.residentTax)}</strong>
+          {deductions.blue > 0 && (
+            <>
+              {' '}＋ 青色申告特別控除 <strong>{yen(deductions.blue)}</strong>
+            </>
+          )}
+          。額面が下がっても扶養控除・青色申告特別控除の分だけ課税所得が圧縮され、税額がさらに減ります。
+        </p>
+      )}
+      {deductions.blue > 0 && (
+        <p style={{ fontSize: 11, color: 'var(--warning, #d97706)', margin: '0 0 12px', lineHeight: 1.6 }}>
+          ⚠ 青色申告特別控除は本来「事業所得・不動産所得」に対する控除で、給与所得には適用できません。
+          給与のほかに青色申告する事業所得（副業・個人事業）があり、その所得から控除できる場合の概算として
+          課税所得から差し引いています。給与のみの方は「なし」を選んでください。
+        </p>
+      )}
 
       {/* 結果ハイライト */}
       <div
@@ -206,6 +294,8 @@ export function WelfareSchemeCard() {
                 childcare: num(childcareStr, 0),
                 ecPoints: num(ecStr, 0),
                 withCare,
+                dependents,
+                blueDeduction: num(blueStr, 0),
               }),
               'welfare-regulation.md',
             )
@@ -219,7 +309,8 @@ export function WelfareSchemeCard() {
         ※ 概算であり税務助言ではありません。標準報酬月額の等級・自治体料率・各非課税要件
         （食事補助は本人が半額以上負担かつ会社負担が月3,500円以下、社宅は賃料相当額の徴収、
         EC ポイントは全社員一律のカフェテリア枠 等）の充足は税理士・社労士にご確認ください。
-        扶養なし・基礎控除のみの簡略モデルです。
+        基礎控除・社会保険料控除に加え、扶養控除・青色申告特別控除（事業所得がある場合）を
+        反映できますが、配偶者控除・生命保険料控除等は未反映の簡略モデルです。
       </p>
     </Section>
   );
