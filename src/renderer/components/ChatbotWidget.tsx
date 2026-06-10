@@ -168,7 +168,7 @@ export function ChatbotWidget() {
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const suggestions = useMemo(
-    () => ['何ができる？', '組織の体制を教えて', '税務試算を開いて'],
+    () => ['何ができる？', '額面40万の手取りは？', '組織の体制を教えて'],
     [],
   );
 

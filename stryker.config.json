@@ -141,6 +141,7 @@
     "src/renderer/data/voiceSession.ts",
     "src/renderer/data/chatbot.ts",
     "src/renderer/data/chatOrg.ts",
+    "src/renderer/data/chatCalc.ts",
     "src/renderer/data/cloudSync.ts",
     "src/shared/connectors/connectorRegistry.ts",
     "src/shared/connectors/connectorCatalog.ts",

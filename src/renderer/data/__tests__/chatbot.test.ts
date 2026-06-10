@@ -152,6 +152,28 @@ describe('replyTo', () => {
     expect(r.intent).toBeUndefined();
   });
 
+  it('answers a take-home calc inline (額面→手取り)', () => {
+    const r = replyTo('額面40万の手取りは？', CTX);
+    expect(r.kind).toBe('calc');
+    expect(r.text).toContain('¥310,080');
+    expect(r.navigateTo).toBeUndefined();
+    // 給与の話題は税務部長 (フィクスチャでは 給与 を含む語幹なし) → COO 直轄ではなく
+    // routeTopic に委譲した結果をそのまま使う。フィクスチャでは未解決 = COO 直轄。
+    expect(r.routedThrough).toBe('COO 直轄');
+  });
+
+  it('answers a required-gross calc and beats the request marker when an amount is present', () => {
+    // 「欲しい」(要望マーカー) を含むが金額付きなので計算を優先する。
+    const r = replyTo('手取りで26.5万欲しい', CTX);
+    expect(r.kind).toBe('calc');
+    expect(r.text).toContain('に必要な額面');
+  });
+
+  it('keeps amount-less 手取り wishes as feature requests', () => {
+    const r = replyTo('手取りグラフ機能が欲しい', CTX);
+    expect(r.kind).toBe('request');
+  });
+
   it('falls back for unintelligible smalltalk', () => {
     const r = replyTo('こんにちは', CTX);
     expect(r.kind).toBe('fallback');
