@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { analyzeProfile } from '../data/emotionInsights';
 import { counsel } from '../data/counseling';
+import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -408,6 +409,52 @@ export function EmotionsPage() {
           ))}
         </Section>
       ) : null}
+
+      <Section title="セルフケア・ライブラリ (科学的根拠つき)" count={SELF_CARE_LIBRARY.length}>
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          厚生労働省・WHO 等の<strong>複数の独立した出典で確証できた技法のみ</strong>を掲載しています
+          （独立2出典以上・うち公的1件以上 — 確証できない情報は載せません）。一般的な健康情報であり、
+          診断・治療ではありません。
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {SELF_CARE_LIBRARY.map((c) => (
+            <details
+              key={c.value.id}
+              style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px' }}
+            >
+              <summary style={{ cursor: 'pointer', fontSize: 14 }}>
+                <strong>{c.value.title}</strong>
+                <span style={{ fontSize: 11, color: 'var(--text-mute)', marginLeft: 8 }}>
+                  [{c.value.category}]
+                </span>
+              </summary>
+              <p style={{ fontSize: 13, lineHeight: 1.7, margin: '8px 0 4px' }}>
+                🔬 {c.value.evidence}
+              </p>
+              <p style={{ fontSize: 13, lineHeight: 1.7, margin: '4px 0', color: 'var(--success)' }}>
+                ✅ 実践: {c.value.practice}
+              </p>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
+                出典:{' '}
+                {c.sources.map((s, i) => (
+                  <span key={s.url}>
+                    {i > 0 ? ' / ' : ''}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.serviceHub?.openExternal(s.url);
+                      }}
+                    >
+                      {s.label}
+                    </a>
+                  </span>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }
