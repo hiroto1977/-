@@ -29,6 +29,7 @@
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",
     "orchestrate:import-requests": "node scripts/orchestrate.cjs import-requests",
     "build:demo": "node scripts/build-counseling-demo.cjs",
+    "build:deliberation-demo": "node scripts/build-deliberation-demo.cjs",
     "lint:forbidden": "node scripts/lint-forbidden-patterns.cjs",
     "lint:imports": "node scripts/check-import-boundaries.cjs",
     "lint:docs": "node scripts/cross-doc-consistency.cjs",

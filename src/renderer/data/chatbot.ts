@@ -28,7 +28,7 @@ import {
 } from './voiceCommand';
 import { routeTopic, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
 import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
-import { counsel, detectCrisis } from './counseling';
+import { counsel, detectCrisis, detectHarmToOthers, detectDestructiveUrge } from './counseling';
 
 /** チャットボットが知っているサービス 1 件 (SERVICES から注入)。 */
 export interface ChatService {
@@ -237,9 +237,9 @@ export function buildCounselReply(text: string, ctx: ChatContext): ChatReply {
  * - 感情マーカーは navigate より優先 (サービス名を含む愚痴でも寄り添いを先に)。
  */
 export function replyTo(text: string, ctx: ChatContext): ChatReply {
-  // 危機検知は何よりも先 (操作・計算より優先 — counseling.ts の安全思想)。
-  // 専門窓口はカウンセリングエンジンの応答に含めて本文へ展開する。
-  if (detectCrisis(text)) {
+  // 危機検知 (自傷) と他害衝動は何よりも先 (操作・計算より優先 — counseling.ts の
+  // 安全思想)。専門窓口はカウンセリングエンジンの応答に含めて本文へ展開する。
+  if (detectCrisis(text) || detectHarmToOthers(text)) {
     return buildCounselReply(text, ctx);
   }
 
@@ -283,9 +283,9 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
     // Stryker restore all
   }
 
-  // 感情の吐露 (つらい/不安/嬉しい 等) はカウンセリングエンジンへ橋渡しする。
+  // 感情の吐露 (つらい/不安/嬉しい 等) と破壊衝動 (壊したい 等) はカウンセリングへ橋渡し。
   // 要望マーカー (欲しい 等) と重なる場合も、感情の言葉が含まれていれば寄り添いを優先。
-  if (containsAny(haystack, EMOTION_MARKERS)) {
+  if (containsAny(haystack, EMOTION_MARKERS) || detectDestructiveUrge(text)) {
     return buildCounselReply(text, ctx);
   }
 
