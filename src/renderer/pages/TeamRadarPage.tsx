@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 
 interface TeamMember {
   id: string;
@@ -166,6 +167,22 @@ export function TeamRadarPage() {
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
+  const [moods, setMoods] = useState<Record<string, number>>({});
+
+  const emotionRadar = useMemo(() => {
+    const memberEmotions: MemberEmotion[] = members.map((m) => ({
+      id: m.id,
+      name: m.name,
+      moods: [{ score: moods[m.id] ?? 3, note: '' }],
+      analyses: [],
+    }));
+    return buildTeamEmotionRadar(memberEmotions);
+  }, [members, moods]);
+  const emotionRadarMembers = useMemo(
+    () => emotionRadar.members.map((m) => ({ id: m.id, name: m.name, scores: [...m.scores] })),
+    [emotionRadar],
+  );
 
   // Sync local state when the snapshot refreshes (live fetch).
   useEffect(() => {
@@ -351,6 +368,59 @@ export function TeamRadarPage() {
                 );
               })}
             </div>
+          </div>
+        </Section>
+
+        <Section title="感情ウェルビーイング・レーダー" count={members.length}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
+              スキルのレーダーに加え、各メンバーの「今日の気分」から<strong>感情ウェルビーイング</strong>
+              （活力・前向き・安定・余裕・回復力）を同じレーダーで可視化します。判定は感情解析エンジン
+              （<code>emotionInsights</code>）由来で、声かけが必要そうなメンバーを抽出します。
+            </p>
+            <RadarChart axes={emotionRadar.axes} members={emotionRadarMembers} size={520} />
+            <p style={{ fontSize: 13, marginTop: 10 }}>{teamEmotionSummary(emotionRadar)}</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {members.map((m) => (
+                <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                  <span style={{ minWidth: 90 }}>{m.name}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>気分</span>
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setMoods((prev) => ({ ...prev, [m.id]: s }))}
+                      aria-label={`${m.name} の気分 ${s}`}
+                      style={{
+                        minWidth: 30,
+                        background: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'transparent',
+                        color: (moods[m.id] ?? 3) === s ? '#fff' : 'var(--text)',
+                        borderColor: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'var(--border)',
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {emotionRadar.needsSupport.length > 0 ? (
+              <div style={{ marginTop: 12, border: '1px solid var(--warning, #d97706)', borderRadius: 8, padding: 10 }}>
+                <strong style={{ fontSize: 13 }}>🫂 声かけをおすすめするメンバー</strong>
+                <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
+                  {emotionRadar.needsSupport.map((s) => (
+                    <li key={s.id}>
+                      <strong>{s.name}</strong>: {s.reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
+              ※ セルフケア・チームケア支援であり、診断や評価ではありません。
+            </p>
           </div>
         </Section>
         </div>
