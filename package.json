@@ -40,7 +40,8 @@
     "exp:runtime": "xvfb-run -a electron --no-sandbox scripts/runtime-security-exp.cjs",
     "exp:soak": "xvfb-run -a electron --no-sandbox scripts/soak-test.cjs",
     "exp:overflow": "xvfb-run -a electron --no-sandbox scripts/overflow-check.cjs",
-    "build:landing": "node scripts/build-landing.cjs"
+    "build:landing": "node scripts/build-landing.cjs",
+    "build:research-demo": "node scripts/build-research-demo.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -203,7 +203,7 @@ describe('replyTo', () => {
     const r = replyTo('githubの設定がわからなくて疲れた', CTX);
     expect(r.kind).toBe('counsel');
     expect(r.navigateTo).toBeUndefined();
-    expect(r.text).toContain('話してくれてありがとうございます'); // gentle トーンの共感
+    expect(r.text).toContain('つらい気持ちを抱えているのですね'); // 「疲れた」→ comfort (研究ループの改善後)
     expect(r.text).toContain('💡 ');
     expect(r.text).not.toContain('いのちの電話'); // 危機ではないので窓口なし
     expect(r.suggestions).toContain('Emotionsを開いて');
