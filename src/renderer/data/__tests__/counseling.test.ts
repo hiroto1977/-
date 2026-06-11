@@ -33,8 +33,21 @@ describe('detectCrisis', () => {
     expect(detectCrisis('少し不安です')).toBe(false);
     expect(detectCrisis('')).toBe(false);
   });
+  it('does NOT fire on generic frustration / venting (precision: fewer false positives)', () => {
+    // 「もう限界」「(タスクを)終わりにしたい」は日常のストレス文脈で多発するため危機語から除外。
+    expect(detectCrisis('このバグ、もう限界')).toBe(false);
+    expect(detectCrisis('残業を終わりにしたい')).toBe(false);
+    expect(detectCrisis('この会議を終わりにしたい')).toBe(false);
+  });
+  it('DOES fire on explicit self-harm / suicidal phrasings (recall: fewer false negatives)', () => {
+    expect(detectCrisis('もう死んでしまいたい')).toBe(true);
+    expect(detectCrisis('この世から消えてしまいたい')).toBe(true);
+    expect(detectCrisis('自分を傷つけたくなる')).toBe(true);
+    expect(detectCrisis('過量服薬しようか考えた')).toBe(true);
+    expect(detectCrisis('人生を終わりにしたい')).toBe(true); // 対象が明示された句は危機
+  });
   it('matches full-width / spaced variants via NFKC', () => {
-    expect(detectCrisis('ＳＮＳで疲れた、もう限界')).toBe(true);
+    expect(detectCrisis('ＳＮＳで疲れた、もう消えたい')).toBe(true);
   });
 });
 
