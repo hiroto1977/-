@@ -172,3 +172,21 @@ export function runnableActions(plan: OrderFanoutPlan): string[] {
 export function skippedDecisions(plan: OrderFanoutPlan): FanoutDecision[] {
   return plan.decisions.filter((d) => !d.runnable);
 }
+
+/**
+ * 全コネクタの requiredFields を初出順で重複なく返す (UI のフィールド入力欄の
+ * 組み立て用)。空フィールド名は除外する。
+ */
+export function uniqueRequiredFields(connectors: readonly ConnectorMeta[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const c of connectors) {
+    for (const f of c.requiredFields) {
+      if (f && !seen.has(f)) {
+        seen.add(f);
+        out.push(f);
+      }
+    }
+  }
+  return out;
+}

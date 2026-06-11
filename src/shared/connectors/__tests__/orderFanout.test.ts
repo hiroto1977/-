@@ -4,10 +4,12 @@ import {
   planOrderFanout,
   runnableActions,
   skippedDecisions,
+  uniqueRequiredFields,
   validateFanoutConnectors,
   type ConnectorMeta,
   type FanoutError,
 } from '../orderFanout';
+import { SHOPIFY_CONNECTOR_META } from '../shopifyConnectorMeta';
 
 /** shopify.ts の listConnectors() 返却形と互換のフィクスチャ (main は import しない)。 */
 const SEVEN: readonly ConnectorMeta[] = [
@@ -280,5 +282,41 @@ describe('runnableActions / skippedDecisions', () => {
   it('extracts only non-runnable decisions preserving order', () => {
     const plan = planOrderFanout(SEVEN, { token: 't' });
     expect(skippedDecisions(plan).map((d) => d.id)).toEqual(['slack', 'discord', 'line', 'notion', 'salesforce']);
+  });
+});
+
+describe('uniqueRequiredFields', () => {
+  it('returns deduplicated fields in first-appearance order for the seven connectors', () => {
+    expect(uniqueRequiredFields(SEVEN)).toEqual([
+      'token',
+      'channel',
+      'webhookUrl',
+      'to',
+      'databaseId',
+      'instanceUrl',
+    ]);
+  });
+
+  it('returns an empty array for an empty connector list', () => {
+    expect(uniqueRequiredFields([])).toEqual([]);
+  });
+
+  it('excludes empty field names', () => {
+    expect(uniqueRequiredFields([{ id: 'a', action: 'x', label: 'A', requiredFields: ['', 'token'] }])).toEqual([
+      'token',
+    ]);
+  });
+});
+
+describe('SHOPIFY_CONNECTOR_META (shared 単一の真実源)', () => {
+  it('matches the local seven-connector fixture exactly', () => {
+    // フィクスチャと shared メタの両方が main 側 listConnectors() と契約テストで
+    // 結ばれる (shopify.test.ts)。ここでは shared 内の整合を固定する。
+    expect(SHOPIFY_CONNECTOR_META).toEqual(SEVEN);
+  });
+
+  it('passes validation and plans without throwing', () => {
+    expect(validateFanoutConnectors(SHOPIFY_CONNECTOR_META)).toEqual([]);
+    expect(planOrderFanout(SHOPIFY_CONNECTOR_META, {}).decisions).toHaveLength(7);
   });
 });
