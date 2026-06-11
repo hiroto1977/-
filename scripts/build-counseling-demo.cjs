@@ -73,6 +73,13 @@ const SCRIPT = [
 
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// 再生速度: select#speed の倍率を都度読む (再生中に変えても即反映)。0 = 一気。
+function speedFactor() {
+  const el2 = document.getElementById('speed');
+  const f = el2 ? Number(el2.value) : 1;
+  return Number.isFinite(f) && f >= 0 ? f : 1;
+}
+const delay = (ms) => sleep(ms * speedFactor());
 
 // DOM は createElement/textContent のみで構築する (innerHTML 不使用 — XSS シンク回避)。
 function el(tag, className, text) {
@@ -94,6 +101,8 @@ function caption(text) {
 function toneLabel(tone) {
   const map = {
     crisis: '🚨 危機対応 (最優先)',
+    'harm-other': '🛑 衝動の鎮静 (他害)',
+    destructive: '🧯 安全な発散 (破壊衝動)',
     comfort: '🫂 寄り添い',
     'soothe-anxiety': '🌬 不安をやわらげる',
     'validate-anger': '🔥 怒りの受容',
@@ -107,7 +116,7 @@ function renderResponseInto(container, r) {
   container.appendChild(el('div', 'tone', toneLabel(r.tone)));
   container.appendChild(el('p', '', r.message));
   container.appendChild(el('p', 'sugg', '💡 ' + r.suggestion));
-  if (r.isCrisis) {
+  if (r.resources.length > 0) {
     const box = el('div', 'resources');
     box.appendChild(el('strong', '', '📞 相談できる窓口（日本）'));
     const ul = el('ul');
@@ -124,7 +133,7 @@ function renderResponseInto(container, r) {
 }
 async function typeInto(container, r) {
   container.replaceChildren(el('span', 'dots', '●●●'));
-  await sleep(700);
+  await delay(700);
   renderResponseInto(container, r);
   $('chat').scrollTop = $('chat').scrollHeight;
 }
@@ -138,14 +147,14 @@ async function play() {
   caption('📈 縦断解析 (サンプル10日分): 傾向 ' + trendJa + ' / 平均 ' + PROFILE.averageScore.toFixed(1) +
     ' / 連続低調 ' + PROFILE.lowStreak + ' 日 / よく出る言葉: ' + PROFILE.topTriggers.slice(0, 4).join('・'));
   for (const scene of SCRIPT) {
-    await sleep(600);
+    await delay(600);
     caption(scene.caption);
-    await sleep(400);
+    await delay(400);
     bubble('user', scene.user);
     const r = counsel(scene.input);
     const elBot = bubble('bot', undefined, r.isCrisis);
     await typeInto(elBot, r);
-    await sleep(1200);
+    await delay(1200);
   }
   caption('— デモ終了。下の入力欄で自由に話しかけてみてください（実エンジンが応答します）—');
   playing = false;
@@ -174,6 +183,7 @@ const CSS = `
   header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   header h1 { font-size:15px; margin:0; }
   header .sub { font-size:11px; color:var(--mute); flex-basis:100%; }
+  header select { background:var(--panel); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:6px 8px; font-size:12px; }
   #chat { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
   .caption { align-self:center; font-size:11px; color:var(--mute); background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:4px 14px; max-width:92%; text-align:center; }
   .msg { max-width:82%; border-radius:14px; padding:10px 14px; font-size:13.5px; line-height:1.75; white-space:pre-wrap; }
@@ -209,6 +219,12 @@ function htmlShell(js) {
 <header>
   <h1>🫂 寄り添いカウンセリング — 会話デモ</h1>
   <button id="replay" class="ghost">▶ 最初から再生</button>
+  <select id="speed" title="再生速度">
+    <option value="2">🐢 ゆっくり</option>
+    <option value="1" selected>▶ 標準</option>
+    <option value="0.4">⏩ 速い</option>
+    <option value="0">⚡ 一気</option>
+  </select>
   <span class="sub">Service Hub の実エンジンがそのまま動いています。データは端末内のみ・送信なし。本デモはセルフケア支援であり医療・診断ではありません。</span>
 </header>
 <div id="chat"></div>

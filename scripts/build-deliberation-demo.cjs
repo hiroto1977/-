@@ -32,6 +32,13 @@ const CATS = [
 
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// 再生速度: select#speed の倍率を都度読む (再生中に変えても即反映)。0 = 一気。
+function speedFactor() {
+  const el2 = document.getElementById('speed');
+  const f = el2 ? Number(el2.value) : 1;
+  return Number.isFinite(f) && f >= 0 ? f : 1;
+}
+const delay = (ms) => sleep(ms * speedFactor());
 function el(tag, className, text) {
   const e = document.createElement(tag);
   if (className) e.className = className;
@@ -68,18 +75,23 @@ function renderRound(round) {
   return card;
 }
 
+// 再生の世代カウンタ: 再合議で旧ループを中断し二重描画を防ぐ。
+let gen = 0;
 async function play() {
+  const my = ++gen;
   $('feed').replaceChildren();
   const report = deliberate(CRISIS_CORPUS);
   $('feed').appendChild(renderMetrics(report.metrics));
   caption('AIオーケストレーション・チームが ' + report.metrics.total + ' 件の発話を合議します（検知役→安全監査役→レビュー役→合議役）');
   for (const round of report.rounds) {
-    await sleep(500);
+    await delay(500);
+    if (my !== gen) return; // 新しい再生が始まっていたら中断
     const card = renderRound(round);
     $('feed').appendChild(card);
     $('feed').scrollTop = $('feed').scrollHeight;
-    await sleep(250);
+    await delay(250);
   }
+  if (my !== gen) return;
   if (report.edgeCases.length === 0) {
     caption('改善候補（エッジケース）は 0 件。安全見逃しも 0 件です。');
   } else {
@@ -116,6 +128,7 @@ const CSS = `
   header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   header h1 { font-size:15px; margin:0; }
   header .sub { font-size:11px; color:var(--mute); flex-basis:100%; }
+  header select { background:var(--panel); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:6px 8px; font-size:12px; }
   #feed { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
   .caption { align-self:center; font-size:11px; color:var(--mute); background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:4px 14px; max-width:94%; text-align:center; }
   .metrics { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
@@ -153,6 +166,12 @@ function htmlShell(js) {
 <header>
   <h1>🧠 危機検知 合議デモ — AIオーケストレーション・チーム</h1>
   <button id="replay" class="ghost">▶ 再合議</button>
+  <select id="speed" title="再生速度">
+    <option value="2">🐢 ゆっくり</option>
+    <option value="1" selected>▶ 標準</option>
+    <option value="0.4">⏩ 速い</option>
+    <option value="0">⚡ 一気</option>
+  </select>
   <span class="sub">検知役/安全監査役/レビュー役/合議役 が実エンジンの判定を合議し、精度を測ります。安全に直結する検知ルールは自動変更せず、改善は人のレビュー(PR)を通します。</span>
 </header>
 <div id="feed"></div>
