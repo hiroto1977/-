@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { analyzeProfile } from '../data/emotionInsights';
+import { counsel } from '../data/counseling';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -115,6 +117,88 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
         {(score * 100).toFixed(0)}%
       </span>
     </div>
+  );
+}
+
+/** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
+function CounselingCard({ moods, analyses, draftNote, draftScore }: {
+  moods: readonly MoodLog[];
+  analyses: readonly Analysis[];
+  draftNote: string;
+  draftScore: number;
+}) {
+  const profile = useMemo(() => analyzeProfile(moods, analyses), [moods, analyses]);
+  // 応答の対象: 入力中のメモがあればそれ、なければ最新の気分メモ。
+  const latestMood = moods[moods.length - 1];
+  const note = draftNote.trim() || latestMood?.note || '';
+  const score = draftNote.trim() ? draftScore : latestMood?.score;
+  // 最新のテキスト分析から dominant / sentiment を補助情報として使う。
+  const latestAnalysis = analyses.reduce<Analysis | undefined>(
+    (acc, a) => (acc === undefined || a.timestamp > acc.timestamp ? a : acc),
+    undefined,
+  );
+  const response = useMemo(
+    () =>
+      counsel({
+        note,
+        score,
+        dominant: latestAnalysis?.dominant,
+        sentiment: latestAnalysis?.sentiment,
+        profile,
+      }),
+    [note, score, latestAnalysis, profile],
+  );
+
+  const trendLabel: Record<string, string> = { improving: '上向き ↗', declining: '下向き ↘', stable: '横ばい →' };
+
+  return (
+    <Section title="寄り添いカウンセリング (セルフケア支援)">
+      <div
+        className="card"
+        style={{
+          gap: 10,
+          borderColor: response.isCrisis ? 'var(--danger, #ef4444)' : 'var(--border)',
+          background: response.isCrisis ? 'rgba(239,68,68,0.06)' : undefined,
+        }}
+      >
+        <p style={{ fontSize: 14, lineHeight: 1.8, margin: 0, whiteSpace: 'pre-wrap' }}>{response.message}</p>
+        <p style={{ fontSize: 13, lineHeight: 1.7, margin: 0, color: 'var(--text-mute)' }}>
+          💡 {response.suggestion}
+        </p>
+
+        {response.isCrisis ? (
+          <div style={{ border: '1px solid var(--danger, #ef4444)', borderRadius: 8, padding: 12 }}>
+            <strong style={{ color: 'var(--danger, #ef4444)' }}>相談できる窓口（日本）</strong>
+            <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13, lineHeight: 1.8 }}>
+              {response.resources.map((r) => (
+                <li key={r.label}>
+                  <strong>{r.label}</strong>: {r.detail}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              style={{ marginTop: 8, fontSize: 12 }}
+              onClick={() => window.serviceHub?.openExternal('https://www.mhlw.go.jp/mamorouyokokoro/')}
+            >
+              厚労省「まもろうよこころ」を開く
+            </button>
+          </div>
+        ) : null}
+
+        {profile.count > 0 ? (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', borderTop: '1px solid var(--border)', paddingTop: 8, lineHeight: 1.7 }}>
+            📈 縦断的な見立て（あなた自身の記録 {profile.count} 件より）:
+            傾向 {trendLabel[profile.trend]} ／ 平均 {profile.averageScore.toFixed(1)}
+            {profile.lowStreak >= 2 ? ` ／ 連続して低調 ${profile.lowStreak} 日` : ''}
+            {profile.dominantEmotion ? ` ／ 優勢な感情: ${profile.dominantEmotion}` : ''}
+            {profile.topTriggers.length > 0 ? ` ／ よく出る言葉: ${profile.topTriggers.slice(0, 5).join('・')}` : ''}
+          </div>
+        ) : null}
+
+        <p style={{ fontSize: 11, color: 'var(--text-mute)', margin: 0 }}>{response.disclaimer}</p>
+      </div>
+    </Section>
   );
 }
 
@@ -241,6 +325,8 @@ export function EmotionsPage() {
           </div>
         </div>
       </Section>
+
+      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} />
 
       {moods.length > 0 ? (
         <Section title="過去 30 日のトレンド">
