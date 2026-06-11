@@ -437,7 +437,8 @@
           "connector-plugin-framework",
           "connector-catalog-runtime",
           "plugin-runtime-dispatch",
-          "connector-health-audit"
+          "connector-health-audit",
+          "shopify-order-orchestration"
         ]
       }
     ]
@@ -1258,6 +1259,12 @@
       "active": true,
       "role": "research",
       "manager": "mgr-tax"
+    },
+    {
+      "id": "shopify-order-orchestration",
+      "domain": "EC受注オーケストレーション(Shopify)",
+      "focus": "Shopify受注の複数コネクタ(slack/discord/line/gmail/notion/salesforce/stripe)への決定論的ファンアウト計画。requiredFields充足判定でrunnable/skipped(欠落フィールド列挙)を分離し、カタログ順保持・重複action防御を純粋核(IO非保持)として提供。実行は既存ServiceActionの責務",
+      "manager": "mgr-quality"
     }
   ],
   "rounds": [
@@ -8180,6 +8187,13 @@
       "title": "SaaS書込み12種・暗号化・決定論モックの golden 値照合 mutation 100% 化",
       "priority": 1,
       "status": "shipped"
+    },
+    {
+      "id": "shopify-order-fanout",
+      "team": "shopify-order-orchestration",
+      "title": "Shopify受注ファンアウト・オーケストレーション (純粋計画器 planOrderFanout)",
+      "priority": 1,
+      "status": "designed"
     }
   ]
 }
