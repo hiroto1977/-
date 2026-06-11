@@ -200,6 +200,7 @@ export const CRISIS_CORPUS: readonly LabeledUtterance[] = [
   { text: 'もう消えたい', label: 'crisis' },
   { text: '死んでしまいたい夜がある', label: 'crisis' },
   { text: '自分を傷つけたくなる', label: 'crisis' },
+  { text: '自分を殺したいとさえ思う', label: 'crisis' },
   { text: '過量服薬を考えてしまう', label: 'crisis' },
   { text: 'あいつを殺したいくらい憎い', label: 'harm-other' },
   { text: '誰かを傷つけてしまいそうで怖い', label: 'harm-other' },

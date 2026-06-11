@@ -49,6 +49,8 @@ describe('detectCrisis', () => {
     expect(detectCrisis('自分を傷つけたくなる')).toBe(true);
     expect(detectCrisis('過量服薬しようか考えた')).toBe(true);
     expect(detectCrisis('人生を終わりにしたい')).toBe(true); // 対象が明示された句は危機
+    // 自分に向いた「殺したい」は他害ではなく危機 (crisis が harm-other より先に判定)。
+    expect(detectCrisis('いっそ自分を殺したい')).toBe(true);
   });
   it('matches full-width / spaced variants via NFKC', () => {
     expect(detectCrisis('ＳＮＳで疲れた、もう消えたい')).toBe(true);
@@ -135,6 +137,12 @@ describe('counsel — crisis safety (highest priority)', () => {
     // 「消えたい」(自傷) と「壊したい」(破壊) が同居 → crisis が勝つ。
     const r = counsel({ note: 'もう消えたいし、全部壊したい' });
     expect(r.tone).toBe('crisis');
+  });
+
+  it('self-directed 殺したい routes to crisis, not harm-other (framing safety)', () => {
+    const r = counsel({ note: '自分を殺したいくらいつらい' });
+    expect(r.tone).toBe('crisis');
+    expect(r.isCrisis).toBe(true);
   });
 });
 

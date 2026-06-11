@@ -92,6 +92,7 @@ export const CRISIS_MARKERS: readonly string[] = [
   '自殺',
   '自傷',
   '自分を傷つけ',
+  '自分を殺',
   'リストカット',
   'リスカ',
   '首を吊',
