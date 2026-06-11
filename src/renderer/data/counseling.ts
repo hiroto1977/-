@@ -113,6 +113,62 @@ export const HARM_OTHER_MARKERS: readonly string[] = [
   '危害を加え',
 ];
 
+// --- 自由文からの感情手がかり (メタデータが無いときの classifyTone 用) ---------
+//
+// AI同士のカウンセリング研究 (counselingResearch) で「自由文だけだと gentle に
+// 落ちすぎる」(適合率63%) ことが判明したため追加。優先は 怒り > 不安 > 悲しみ。
+
+/** 怒りの手がかり語。 */
+export const NOTE_ANGER_MARKERS: readonly string[] = [
+  '腹が立',
+  'むかつ',
+  'ムカつ',
+  'イライラ',
+  'いらいら',
+  '許せない',
+  '怒り',
+];
+
+/** 不安の手がかり語。 */
+export const NOTE_ANXIETY_MARKERS: readonly string[] = [
+  '不安',
+  '心配',
+  '眠れない',
+  '怖い',
+  '緊張',
+];
+
+/** 悲しみ・疲弊の手がかり語。 */
+export const NOTE_SADNESS_MARKERS: readonly string[] = [
+  'つらい',
+  '辛い',
+  'しんどい',
+  '疲れ',
+  '涙',
+  '落ち込',
+  '悲しい',
+  '寂しい',
+  '憂鬱',
+  '気分が重い',
+  'もう限界',
+];
+
+/** 前向きの手がかり語。 */
+export const NOTE_POSITIVE_MARKERS: readonly string[] = [
+  '嬉しい',
+  'うれしい',
+  '楽しい',
+  'たのしい',
+  '良くなった',
+  'よくなった',
+  'できた',
+  'スッキリ',
+  'すっきり',
+  '気分が良い',
+  '前向き',
+  '落ち着きました',
+];
+
 /** 破壊衝動を示す語 (物を壊したい/暴れたい)。他害ではないが安全な発散へ導く。 */
 export const DESTRUCTIVE_MARKERS: readonly string[] = [
   '壊したい',
@@ -187,7 +243,13 @@ export function classifyTone(
   // `undefined <= 2` / `undefined >= 4` がいずれも false のため → true への変異は等価。
   // Stryker disable next-line ConditionalExpression
   if (input.score !== undefined && input.score <= 2) return 'comfort';
+  // メタデータが無い自由文は、発話の手がかり語からトーンを推定する
+  // (研究ループの発見: 無いと gentle に落ちすぎる)。優先: 怒り > 不安 > 悲しみ。
+  if (matchesAny(input.note, NOTE_ANGER_MARKERS)) return 'validate-anger';
+  if (matchesAny(input.note, NOTE_ANXIETY_MARKERS)) return 'soothe-anxiety';
+  if (matchesAny(input.note, NOTE_SADNESS_MARKERS)) return 'comfort';
   if (input.sentiment === 'positive') return 'celebrate';
+  if (matchesAny(input.note, NOTE_POSITIVE_MARKERS)) return 'celebrate';
   // Stryker disable next-line ConditionalExpression
   if (input.score !== undefined && input.score >= 4) return 'celebrate';
   return 'gentle';

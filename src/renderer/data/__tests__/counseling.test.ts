@@ -103,6 +103,18 @@ describe('classifyTone', () => {
     expect(classifyTone({ note: '', score: 4 })).toBe('celebrate');
     expect(classifyTone({ note: '', score: 5 })).toBe('celebrate');
   });
+  it('infers tone from free-text note cues when metadata is absent (research-loop fix)', () => {
+    expect(classifyTone({ note: '上司に腹が立って仕方ない' })).toBe('validate-anger');
+    expect(classifyTone({ note: '将来が心配で眠れない' })).toBe('soothe-anxiety');
+    expect(classifyTone({ note: '毎日しんどくて涙が出る' })).toBe('comfort');
+    expect(classifyTone({ note: '散歩できてスッキリした' })).toBe('celebrate');
+  });
+  it('prioritizes note cues: anger > anxiety > sadness; metadata still wins over cues', () => {
+    expect(classifyTone({ note: '不安だしイライラもする' })).toBe('validate-anger'); // 怒り優先
+    expect(classifyTone({ note: '疲れたし怖い' })).toBe('soothe-anxiety'); // 不安 > 悲しみ
+    expect(classifyTone({ note: '腹が立つ', sentiment: 'negative' })).toBe('comfort'); // メタデータ優先
+    expect(classifyTone({ note: '嬉しい', score: 2 })).toBe('comfort'); // 低スコアは手がかりより先
+  });
   it('falls back to gentle for neutral mid-score input', () => {
     expect(classifyTone({ note: '', score: 3 })).toBe('gentle');
     expect(classifyTone({ note: '' })).toBe('gentle');

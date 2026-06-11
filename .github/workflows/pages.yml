@@ -42,6 +42,8 @@ jobs:
       - run: npm run build:demo
       # 合議デモ (実エンジン同梱・自己検証付き) を生成
       - run: npm run build:deliberation-demo
+      # 研究デモ (AI同士の役割演技・自己検証付き) を生成
+      - run: npm run build:research-demo
       # ルート = 軽量ランディング、フル版 = /app.html、OGP = /og.png
       - name: Prepare site
         run: |
@@ -51,6 +53,7 @@ jobs:
           cp dist/standalone.html _site/standalone.html
           cp dist/counseling-demo.html _site/counseling-demo.html
           cp dist/deliberation-demo.html _site/deliberation-demo.html
+          cp dist/research-demo.html _site/research-demo.html
           cp assets/og.png _site/og.png
           # PWA (ホーム画面に追加): manifest / icon / service worker を配置
           cp assets/manifest.webmanifest _site/manifest.webmanifest
