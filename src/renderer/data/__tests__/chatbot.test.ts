@@ -174,6 +174,39 @@ describe('replyTo', () => {
     expect(r.kind).toBe('request');
   });
 
+  it('routes a crisis message to counseling BEFORE any action/service interpretation', () => {
+    // 'issueを作って' (action 動詞) + 'github' (サービス) を含んでいても危機が勝つ。
+    const r = replyTo('もう消えたい。githubでissueを作ってる場合じゃない', CTX);
+    expect(r.kind).toBe('counsel');
+    expect(r.intent).toBeUndefined();
+    expect(r.navigateTo).toBeUndefined();
+    expect(r.text).toContain('打ち明けてくれて'); // 共感メッセージ (先頭行)
+    expect(r.text).toContain('💡 '); // セルフケア提案行
+    expect(r.text).toContain('📞 いのちの電話'); // 専門窓口が本文に展開される
+    expect(r.text).toContain('専門的な医療・心理的ケアの代わりにはなれません');
+  });
+
+  it('routes emotional venting to counseling (beats navigation to a mentioned service)', () => {
+    const r = replyTo('githubの設定がわからなくて疲れた', CTX);
+    expect(r.kind).toBe('counsel');
+    expect(r.navigateTo).toBeUndefined();
+    expect(r.text).toContain('話してくれてありがとうございます'); // gentle トーンの共感
+    expect(r.text).toContain('💡 ');
+    expect(r.text).not.toContain('いのちの電話'); // 危機ではないので窓口なし
+    expect(r.suggestions).toContain('Emotionsを開いて');
+  });
+
+  it('lets an explicit action win over a non-crisis emotion-free message (order intact)', () => {
+    const r = replyTo('githubでissueを作って', CTX);
+    expect(r.kind).toBe('action'); // 感情語なし → 既存どおり action
+  });
+
+  it('keeps the calc branch ahead of counseling (手取り計算は感情語より先)', () => {
+    // 「疲れた」を含むが金額+手取りがあるため計算が先。
+    const r = replyTo('疲れたけど額面40万の手取りは？', CTX);
+    expect(r.kind).toBe('calc');
+  });
+
   it('falls back for unintelligible smalltalk', () => {
     const r = replyTo('こんにちは', CTX);
     expect(r.kind).toBe('fallback');
