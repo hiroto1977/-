@@ -21,7 +21,9 @@ import type { Sentiment } from './emotionsWeb';
 
 /** 応答トーン。 */
 export type CounselTone =
-  | 'crisis' // 危機 (専門窓口へ)
+  | 'crisis' // 自傷・希死念慮 (専門窓口へ・最優先)
+  | 'harm-other' // 他害衝動 (落ち着く・離れる・相談。切迫時は緊急通報)
+  | 'destructive' // 破壊衝動 (物を壊したい/暴れたい — 安全に発散・鎮静)
   | 'comfort' // 悲しみ・落ち込みに寄り添う
   | 'soothe-anxiety' // 不安をやわらげる
   | 'validate-anger' // 怒りを受け止める
@@ -90,6 +92,7 @@ export const CRISIS_MARKERS: readonly string[] = [
   '自殺',
   '自傷',
   '自分を傷つけ',
+  '自分を殺',
   'リストカット',
   'リスカ',
   '首を吊',
@@ -98,6 +101,28 @@ export const CRISIS_MARKERS: readonly string[] = [
   '人生を終わりに',
   '殺してほしい',
   'いっそ死',
+];
+
+/** 他害衝動を示す語 (誰か/他者を傷つけたい)。安全側で検知し鎮静・相談へ導く。 */
+export const HARM_OTHER_MARKERS: readonly string[] = [
+  '殺したい',
+  '誰かを傷つけ',
+  '人を傷つけ',
+  '刺したい',
+  '殴り殺',
+  '危害を加え',
+];
+
+/** 破壊衝動を示す語 (物を壊したい/暴れたい)。他害ではないが安全な発散へ導く。 */
+export const DESTRUCTIVE_MARKERS: readonly string[] = [
+  '壊したい',
+  '物を壊',
+  'ぶっ壊し',
+  '暴れたい',
+  '殴りたい',
+  '物に当たり',
+  '八つ当たり',
+  'めちゃくちゃにしたい',
 ];
 
 /** 日本の相談窓口 (crisis 応答で提示)。 */
@@ -117,12 +142,27 @@ const CARE_DISCLAIMER =
   '※ これはセルフケアのサポートであり、診断や治療ではありません。つらさが続くときは専門家にご相談ください。';
 
 /** 文字列に危機マーカーが含まれるか (正規化後の部分一致)。 */
-export function detectCrisis(text: string): boolean {
+/** 正規化後の text にマーカー群のいずれかが含まれるか。 */
+function matchesAny(text: string, markers: readonly string[]): boolean {
   const s = text.normalize('NFKC');
-  for (const marker of CRISIS_MARKERS) {
+  for (const marker of markers) {
     if (s.includes(marker)) return true;
   }
   return false;
+}
+
+export function detectCrisis(text: string): boolean {
+  return matchesAny(text, CRISIS_MARKERS);
+}
+
+/** 他害衝動 (誰かを傷つけたい等) を検知する。 */
+export function detectHarmToOthers(text: string): boolean {
+  return matchesAny(text, HARM_OTHER_MARKERS);
+}
+
+/** 破壊衝動 (物を壊したい/暴れたい等) を検知する。 */
+export function detectDestructiveUrge(text: string): boolean {
+  return matchesAny(text, DESTRUCTIVE_MARKERS);
 }
 
 /**
@@ -130,7 +170,9 @@ export function detectCrisis(text: string): boolean {
  * 優先: sentiment=negative の中で dominant により細分、positive は celebrate、
  * それ以外は gentle。score が低い (<=2) ときは comfort に寄せる。
  */
-export function classifyTone(input: CounselInput): Exclude<CounselTone, 'crisis'> {
+export function classifyTone(
+  input: CounselInput,
+): Exclude<CounselTone, 'crisis' | 'harm-other' | 'destructive'> {
   // `?? ''` の既定値は、後続の比較がいずれも空文字に一致しないため観測不能 (等価)。
   // Stryker disable next-line StringLiteral
   const dominant = (input.dominant ?? '').toLowerCase();
@@ -154,7 +196,7 @@ export function classifyTone(input: CounselInput): Exclude<CounselTone, 'crisis'
 // 共感メッセージ・提案の文面はトーン別の固定文 (表現)。trigger/streak の差し込み
 // ロジックは下の counsel で行い、テストで分岐を担保する。
 // Stryker disable all
-const TONE_MESSAGE: Record<Exclude<CounselTone, 'crisis'>, string> = {
+const TONE_MESSAGE: Record<Exclude<CounselTone, 'crisis' | 'harm-other' | 'destructive'>, string> = {
   comfort:
     'いま、つらい気持ちを抱えているのですね。そう感じるのは自然なことで、あなたが弱いからではありません。ここで少し、肩の力を抜いてみましょう。',
   'soothe-anxiety':
@@ -167,7 +209,7 @@ const TONE_MESSAGE: Record<Exclude<CounselTone, 'crisis'>, string> = {
     '話してくれてありがとうございます。どんな気持ちも、そのまま受け止めます。いまの感じを、もう少し聞かせてください。',
 };
 
-const TONE_SUGGESTION: Record<Exclude<CounselTone, 'crisis'>, string> = {
+const TONE_SUGGESTION: Record<Exclude<CounselTone, 'crisis' | 'harm-other' | 'destructive'>, string> = {
   comfort:
     '今日できたことを1つだけ、どんなに小さくても書き出してみませんか。温かい飲み物を飲む、深呼吸を3回する——それで十分です。',
   'soothe-anxiety':
@@ -198,6 +240,37 @@ export function counsel(input: CounselInput): CounselResponse {
         'まずは下記のいずれかに連絡してみてください。声を出すのがつらければ、SNS相談 (厚労省「まもろうよこころ」) も使えます。',
       resources: SUPPORT_RESOURCES,
       disclaimer: CRISIS_DISCLAIMER,
+    };
+    // Stryker restore all
+  }
+
+  if (detectHarmToOthers(input.note)) {
+    // Stryker disable all — 文面は表現。構造はテストで固定。
+    return {
+      tone: 'harm-other',
+      isCrisis: false,
+      message:
+        '強い衝動がこみ上げているのですね。そう感じてしまうほど、つらい状況なのだと思います。' +
+        '行動に移す前に、まずいったんその場を離れて、深呼吸できる場所へ移りましょう。',
+      suggestion:
+        '6秒待つ・冷たい水を飲む・信頼できる人に電話する、のどれかを。誰かに危害が及びそうなほど切迫しているときは、ためらわず 110 / 119 や下記の窓口に連絡してください。',
+      resources: SUPPORT_RESOURCES,
+      disclaimer: CARE_DISCLAIMER,
+    };
+    // Stryker restore all
+  }
+
+  if (detectDestructiveUrge(input.note)) {
+    // Stryker disable all — 文面は表現。構造はテストで固定。
+    return {
+      tone: 'destructive',
+      isCrisis: false,
+      message:
+        '何かを壊したくなるほど、強い怒りやストレスを抱えているのですね。その衝動は「もう限界だ」という心のサインで、あなたが悪いわけではありません。',
+      suggestion:
+        'まずは安全に発散を。クッションを叩く・タオルを思い切り絞る・外を早歩きする・紙を破る——物や人を傷つけない形でエネルギーを逃がしましょう。落ち着いたら、何にそんなに怒っているのかを一行書いてみて。',
+      resources: [],
+      disclaimer: CARE_DISCLAIMER,
     };
     // Stryker restore all
   }

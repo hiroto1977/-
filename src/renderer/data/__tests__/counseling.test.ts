@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   detectCrisis,
+  detectHarmToOthers,
+  detectDestructiveUrge,
   classifyTone,
   counsel,
   CRISIS_MARKERS,
+  HARM_OTHER_MARKERS,
+  DESTRUCTIVE_MARKERS,
   SUPPORT_RESOURCES,
 } from '../counseling';
 import type { EmotionProfile } from '../emotionInsights';
@@ -45,9 +49,36 @@ describe('detectCrisis', () => {
     expect(detectCrisis('自分を傷つけたくなる')).toBe(true);
     expect(detectCrisis('過量服薬しようか考えた')).toBe(true);
     expect(detectCrisis('人生を終わりにしたい')).toBe(true); // 対象が明示された句は危機
+    // 自分に向いた「殺したい」は他害ではなく危機 (crisis が harm-other より先に判定)。
+    expect(detectCrisis('いっそ自分を殺したい')).toBe(true);
   });
   it('matches full-width / spaced variants via NFKC', () => {
     expect(detectCrisis('ＳＮＳで疲れた、もう消えたい')).toBe(true);
+  });
+});
+
+describe('detectHarmToOthers', () => {
+  it('detects each harm-to-others marker', () => {
+    for (const m of HARM_OTHER_MARKERS) {
+      expect(detectHarmToOthers(`${m}という気持ち`)).toBe(true);
+    }
+  });
+  it('does not fire on self-harm or ordinary anger', () => {
+    expect(detectHarmToOthers('消えたい')).toBe(false); // self-harm は別カテゴリ
+    expect(detectHarmToOthers('腹が立つ')).toBe(false);
+    expect(detectHarmToOthers('')).toBe(false);
+  });
+});
+
+describe('detectDestructiveUrge', () => {
+  it('detects each destructive marker', () => {
+    for (const m of DESTRUCTIVE_MARKERS) {
+      expect(detectDestructiveUrge(`なんだか${m}`)).toBe(true);
+    }
+  });
+  it('does not fire on ordinary frustration without a destructive verb', () => {
+    expect(detectDestructiveUrge('イライラする')).toBe(false);
+    expect(detectDestructiveUrge('')).toBe(false);
   });
 });
 
@@ -100,6 +131,50 @@ describe('counsel — crisis safety (highest priority)', () => {
     expect(r.disclaimer).toContain('あなたは一人ではありません'); // 後半の文も固定
     expect(r.message).toContain('打ち明けてくれて');
     expect(r.suggestion).toContain('まもろうよこころ');
+  });
+
+  it('self-harm crisis is checked BEFORE harm-to-others / destructive', () => {
+    // 「消えたい」(自傷) と「壊したい」(破壊) が同居 → crisis が勝つ。
+    const r = counsel({ note: 'もう消えたいし、全部壊したい' });
+    expect(r.tone).toBe('crisis');
+  });
+
+  it('self-directed 殺したい routes to crisis, not harm-other (framing safety)', () => {
+    const r = counsel({ note: '自分を殺したいくらいつらい' });
+    expect(r.tone).toBe('crisis');
+    expect(r.isCrisis).toBe(true);
+  });
+});
+
+describe('counsel — harm-to-others / destructive impulses', () => {
+  it('returns a harm-other response that urges pausing + resources (not isCrisis)', () => {
+    const r = counsel({ note: 'あいつを殺したいくらい腹が立つ' });
+    expect(r.tone).toBe('harm-other');
+    expect(r.isCrisis).toBe(false);
+    expect(r.resources).toBe(SUPPORT_RESOURCES); // 切迫時の窓口を提示
+    expect(r.suggestion).toContain('110');
+    expect(r.message).toContain('その場を離れて');
+  });
+
+  it('harm-to-others is checked before destructive', () => {
+    // 「殺したい」(他害) と「壊したい」(破壊) 同居 → harm-other が勝つ。
+    const r = counsel({ note: '殺したいし物も壊したい' });
+    expect(r.tone).toBe('harm-other');
+  });
+
+  it('returns a destructive response with safe-discharge guidance and no resources', () => {
+    const r = counsel({ note: '何もかもめちゃくちゃにしたい、物を壊したい' });
+    expect(r.tone).toBe('destructive');
+    expect(r.isCrisis).toBe(false);
+    expect(r.resources).toEqual([]);
+    expect(r.suggestion).toContain('クッション');
+    expect(r.disclaimer).toContain('診断や治療ではありません');
+  });
+
+  it('destructive impulse is prioritized over ordinary anger tone', () => {
+    // 怒り dominant でも「壊したい」があれば destructive (発散ガイド) を優先。
+    const r = counsel({ note: '壊したい', dominant: '怒り', sentiment: 'negative' });
+    expect(r.tone).toBe('destructive');
   });
 });
 

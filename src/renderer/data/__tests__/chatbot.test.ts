@@ -186,6 +186,19 @@ describe('replyTo', () => {
     expect(r.text).toContain('専門的な医療・心理的ケアの代わりにはなれません');
   });
 
+  it('routes harm-to-others to counseling before any action (safety guard)', () => {
+    const r = replyTo('あいつを殺したい。githubでissue作ってる場合じゃない', CTX);
+    expect(r.kind).toBe('counsel');
+    expect(r.navigateTo).toBeUndefined();
+    expect(r.text).toContain('その場を離れて');
+  });
+
+  it('routes a destructive urge to counseling', () => {
+    const r = replyTo('全部壊したい', CTX);
+    expect(r.kind).toBe('counsel');
+    expect(r.text).toContain('クッション');
+  });
+
   it('routes emotional venting to counseling (beats navigation to a mentioned service)', () => {
     const r = replyTo('githubの設定がわからなくて疲れた', CTX);
     expect(r.kind).toBe('counsel');
