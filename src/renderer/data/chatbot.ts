@@ -28,6 +28,7 @@ import {
 } from './voiceCommand';
 import { routeTopic, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
 import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
+import { counsel, detectCrisis } from './counseling';
 
 /** チャットボットが知っているサービス 1 件 (SERVICES から注入)。 */
 export interface ChatService {
@@ -50,6 +51,7 @@ export type ChatReplyKind =
   | 'help' // 何ができるか
   | 'action' // 書き込み操作 (UI が確認のうえ invoke)
   | 'calc' // 手取り計算 (純ロジックで即答)
+  | 'counsel' // 感情への寄り添い (カウンセリングエンジン。危機は最優先)
   | 'navigate' // 画面案内
   | 'service-info' // サービスについての質問
   | 'fallback'; // 解釈不能 (LLM フォールバック余地)
@@ -126,6 +128,38 @@ const DEFAULT_SUGGESTIONS: readonly string[] = [
   '組織の体制を教えて',
   '税務試算を開いて',
 ];
+
+/** 感情の吐露を示すマーカー (カウンセリングエンジンへ橋渡しする)。 */
+export const EMOTION_MARKERS: readonly string[] = [
+  'つらい',
+  '辛い',
+  'しんどい',
+  '疲れた',
+  'つかれた',
+  '悲しい',
+  'かなしい',
+  '不安',
+  'ふあん',
+  '眠れない',
+  'ねむれない',
+  '落ち込',
+  'おちこ',
+  'イライラ',
+  'いらいら',
+  '腹が立',
+  'むかつく',
+  '寂しい',
+  'さみしい',
+  'さびしい',
+  '嬉しい',
+  'うれしい',
+  '楽しい',
+  'たのしい',
+  '気分が重い',
+  'やる気が出ない',
+  'ストレス',
+  'すとれす',
+];
 // Stryker restore all
 
 /** 文字列中にマーカー群のいずれかが含まれるか。 */
@@ -166,17 +200,49 @@ export function routeForService(org: OrgIndex, service: ChatService | undefined)
 }
 
 /**
+ * カウンセリングエンジンの応答をチャット返信へ整形する。
+ * 危機時は専門窓口を本文に展開する。画面遷移はしない (気持ちの途中で
+ * ページを切り替えない) — 代わりに Emotions ページをクイック返信で提案する。
+ */
+export function buildCounselReply(text: string, ctx: ChatContext): ChatReply {
+  const response = counsel({ note: text });
+  const lines: string[] = [response.message, `💡 ${response.suggestion}`];
+  // resources は危機時のみ非空 (counseling の契約) なので無条件で展開してよい。
+  for (const r of response.resources) {
+    lines.push(`📞 ${r.label}: ${r.detail}`);
+  }
+  lines.push(response.disclaimer);
+  // Stryker disable all — 文面・候補は表現 (kind/isCrisis 系の構造は counseling 側で担保)。
+  return {
+    kind: 'counsel',
+    text: lines.join('\n'),
+    routedThrough: routeLabel(routeTopic(ctx.org, '感情')),
+    suggestions: response.isCrisis
+      ? ['よりそいホットラインとは？', 'Emotionsを開いて']
+      : ['Emotionsを開いて', '気分を記録したい', '何ができる？'],
+  };
+  // Stryker restore all
+}
+
+/**
  * ユーザーの 1 メッセージに対する返答を組み立てる (純粋・決定論的)。
  *
- * 判定順: 具体的な書き込み操作 (action) → 要望 → 組織 → ヘルプ →
+ * 判定順: **危機 (最優先・無条件)** → 具体的な書き込み操作 (action) → 計算 →
+ * 感情の吐露 (カウンセリング) → 要望 → 組織 → ヘルプ →
  * 案内/説明 (navigate / query) → fallback。
  *
- * action を要望より先に判定するのは「issue を作って」のような操作動詞
- * (作って 等) が要望マーカーと重なるため — 実在サービスへの具体的操作が
- * 解決できるならそれを優先し、解決できない「◯◯機能を作って」は要望として
- * 受け付ける。
+ * - 危機マーカーは何があっても最初に判定する (counseling.ts の安全思想)。
+ * - action を要望より先に判定するのは「issue を作って」のような操作動詞
+ *   (作って 等) が要望マーカーと重なるため。
+ * - 感情マーカーは navigate より優先 (サービス名を含む愚痴でも寄り添いを先に)。
  */
 export function replyTo(text: string, ctx: ChatContext): ChatReply {
+  // 危機検知は何よりも先 (操作・計算より優先 — counseling.ts の安全思想)。
+  // 専門窓口はカウンセリングエンジンの応答に含めて本文へ展開する。
+  if (detectCrisis(text)) {
+    return buildCounselReply(text, ctx);
+  }
+
   // 正規化形 + 生テキストの両方をマーカー照合の対象にする (語尾除去対策)。
   const haystack = `${normalizeUtterance(text)}\n${text}`;
   const routed = routeCommand(parseVoiceCommand(text), ctx.capabilities);
@@ -215,6 +281,12 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
       suggestions: ['税務試算を開いて', '手取り30万に必要な額面は？', '何ができる？'],
     };
     // Stryker restore all
+  }
+
+  // 感情の吐露 (つらい/不安/嬉しい 等) はカウンセリングエンジンへ橋渡しする。
+  // 要望マーカー (欲しい 等) と重なる場合も、感情の言葉が含まれていれば寄り添いを優先。
+  if (containsAny(haystack, EMOTION_MARKERS)) {
+    return buildCounselReply(text, ctx);
   }
 
   const special = detectSpecialIntent(haystack);
@@ -261,6 +333,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `・${count} のサービス (${sample} など) への案内 —「◯◯を開いて」\n` +
         `・操作の実行 —「GitHub で issue 作って」「カレンダーに予定を入れて」(破壊的操作は確認します)\n` +
         `・手取り計算 —「額面40万の手取りは？」「手取り30万に必要な額面は？」(その場で概算)\n` +
+        `・気持ちの相談 —「疲れた」「不安で眠れない」(寄り添いカウンセリング。つらいときは窓口もご案内)\n` +
         `・サービスの説明 —「◯◯って何？」\n` +
         `・組織の状態 —「体制を教えて」\n` +
         `・機能要望の受付 —「◯◯が欲しい」(オーケストレーションのバックログ候補に記録)`,
