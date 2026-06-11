@@ -8313,6 +8313,20 @@
       "title": "Shopify受注ファンアウト・オーケストレーション (純粋計画器 planOrderFanout)",
       "priority": 1,
       "status": "shipped"
+    },
+    {
+      "id": "shopify-fanout-ui",
+      "team": "shopify-order-orchestration",
+      "title": "ShopifyPage にファンアウト計画表示 (runnable/skipped + 欠落フィールドのヒント)",
+      "priority": 1,
+      "status": "designed"
+    },
+    {
+      "id": "shopify-fanout-contract",
+      "team": "shopify-order-orchestration",
+      "title": "listConnectors() ↔ planOrderFanout の契約整合テスト (main側 shopify.test.ts に統合 it)",
+      "priority": 2,
+      "status": "designed"
     }
   ]
 }
