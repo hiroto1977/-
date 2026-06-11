@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
+import { buildTeamCare, type CarePriority } from '../data/memberCare';
 
 interface TeamMember {
   id: string;
@@ -192,6 +193,22 @@ export function TeamRadarPage() {
   }, [data]);
 
   const axes = useMemo(() => (data.axes && data.axes.length > 0 ? data.axes : AXES_FALLBACK), [data.axes]);
+
+  // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
+  const teamCare = useMemo(
+    () =>
+      buildTeamCare(
+        members.map((m) => ({
+          id: m.id,
+          name: m.name,
+          scores: m.scores,
+          moods: [{ score: moods[m.id] ?? 3, note: '' }],
+          analyses: [],
+        })),
+        axes,
+      ),
+    [members, moods, axes],
+  );
 
   function updateScore(memberIdx: number, axisIdx: number, value: number) {
     setMembers((prev) => {
@@ -420,6 +437,51 @@ export function TeamRadarPage() {
             ) : null}
             <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
               ※ セルフケア・チームケア支援であり、診断や評価ではありません。
+            </p>
+          </div>
+        </Section>
+
+        <Section title="メンバーケア / 評価支援 (1on1)" count={members.length}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
+            <p style={{ fontSize: 13, margin: '0 0 12px' }}>{teamCare.summary}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {teamCare.reports.map((r) => {
+                const badge: Record<CarePriority, { label: string; color: string }> = {
+                  high: { label: 'ケア優先', color: '#ef4444' },
+                  medium: { label: '見守り', color: '#d97706' },
+                  none: { label: '安定', color: '#22c55e' },
+                };
+                const b = badge[r.priority];
+                return (
+                  <div
+                    key={r.id}
+                    style={{
+                      border: '1px solid var(--border)',
+                      borderLeft: `3px solid ${b.color}`,
+                      borderRadius: 8,
+                      padding: '10px 12px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <strong style={{ fontSize: 14 }}>{r.name}</strong>
+                      <span style={{ fontSize: 11, color: '#fff', background: b.color, borderRadius: 999, padding: '1px 8px' }}>
+                        {b.label}
+                      </span>
+                      <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+                        スキル {r.skill.average}/5 ({r.skill.level}) · {r.emotionNote}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>
+                      強み: {r.skill.strength.axis} ({r.skill.strength.score}) ／ 伸びしろ: {r.skill.growth.axis} ({r.skill.growth.score})
+                    </div>
+                    <div style={{ fontSize: 13, marginTop: 6 }}>🗣 {r.oneOnOneFocus}</div>
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
+              ※ これは人による 1on1 支援の補助であり、自動的な人事評価・選別ではありません。
+              心理的に不調なメンバーは、評価より先に気持ちを聞くことを優先してください。
             </p>
           </div>
         </Section>

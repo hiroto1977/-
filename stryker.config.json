@@ -147,6 +147,7 @@
     "src/renderer/data/emotionInsights.ts",
     "src/renderer/data/counseling.ts",
     "src/renderer/data/teamEmotionRadar.ts",
+    "src/renderer/data/memberCare.ts",
     "src/renderer/data/cloudSync.ts",
     "src/shared/connectors/connectorRegistry.ts",
     "src/shared/connectors/connectorCatalog.ts",
