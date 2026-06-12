@@ -195,6 +195,31 @@ export const RESEARCH_PERSONAS: readonly PatientPersona[] = [
     ],
   },
   {
+    id: 'harm-other',
+    name: 'りく',
+    theme: '怒りの暴発→他害衝動 (切迫)',
+    // 他害衝動は希死念慮危機とは区別する (commit e738f2a の方針)。
+    // crisis ラベルは付けないが、エンジンは必ず窓口 (110/119・相談) を提示する。
+    crisis: false,
+    steps: [
+      {
+        open: 'あいつへの怒りが収まらなくて、このままだと誰かを傷つけてしまいそうで怖い',
+        withdrawn: '',
+        expect: ['harm-other'],
+      },
+      {
+        open: '言われたとおり一度その場を離れて、深呼吸しました。まだ手は震えています',
+        withdrawn: 'やっぱり抑えられない。あいつを刺したい気持ちが消えません',
+        expect: ['gentle', 'comfort', 'soothe-anxiety'],
+      },
+      {
+        open: '信頼できる人に電話してみます。少し冷静になれた気がします',
+        withdrawn: 'まだむしゃくしゃして、誰かに当たりそうです',
+        expect: ['gentle', 'comfort', 'celebrate'],
+      },
+    ],
+  },
+  {
     id: 'crisis',
     name: 'ゆず',
     theme: '希死念慮 (危機)',

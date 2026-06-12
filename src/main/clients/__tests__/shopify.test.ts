@@ -11,6 +11,8 @@ import {
   type ShopifyConnector,
   type ShopifyOrderSummary,
 } from '../shopify';
+import { SHOPIFY_CONNECTOR_META } from '../../../shared/connectors/shopifyConnectorMeta';
+import { planOrderFanout } from '../../../shared/connectors/orderFanout';
 
 const ORDER: ShopifyOrderSummary = {
   id: 'gid://shopify/Order/1',
@@ -622,6 +624,17 @@ describe('ACTIONS["sync-to-stripe"]', () => {
 });
 
 describe('connector registry', () => {
+  it('keeps listConnectors() in lock-step with the shared SHOPIFY_CONNECTOR_META (契約)', () => {
+    // shared メタが drift すると renderer のファンアウト計画が実体と乖離する。
+    // メタを変えるときは shopifyConnectorMeta.ts と CONNECTORS を同時に更新する。
+    expect(listConnectors()).toEqual(SHOPIFY_CONNECTOR_META);
+  });
+
+  it('feeds listConnectors() output into planOrderFanout without throwing (構造互換)', () => {
+    const plan = planOrderFanout(listConnectors(), { token: 't' });
+    expect(plan.decisions).toHaveLength(CONNECTORS.length);
+  });
+
   it('declares the exact 7 connectors with ids, actions, labels and required fields', () => {
     expect(
       CONNECTORS.map((c) => ({

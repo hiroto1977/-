@@ -43,6 +43,18 @@ describe('simulateSession (AI同士の役割演技)', () => {
     expect(s.crisisReferred).toBe(true);
   });
 
+  it('detects a harm-other persona, refers to resources, and de-escalates safely', () => {
+    const s = simulateSession(RESEARCH_PERSONAS.find((p) => p.id === 'harm-other')!);
+    // 初手は他害衝動として検知し、窓口 (110/119・相談) を必ず提示する。
+    expect(s.turns[0]!.counselorTone).toBe('harm-other');
+    expect(s.turns[0]!.referred).toBe(true);
+    // 受け止められた患者は open 経路で鎮静へ向かう (全ターン適合)。
+    expect(s.turns.map((t) => t.matched)).toEqual([true, true, true]);
+    expect(s.toneMatchRate).toBe(1);
+    // 他害衝動は希死念慮危機 (crisis) とは区別され、危機指標には数えない。
+    expect(s.crisisReferred).toBeNull();
+  });
+
   it('marks crisisReferred=false for a crisis persona that never reaches a referral', () => {
     // 危機ラベルだが発話が危機語を含まない合成ペルソナ → 照会未達を false として観測。
     const silent: PatientPersona = {
@@ -72,11 +84,11 @@ describe('runResearch (研究の繰り返し)', () => {
   it('aggregates turns, match rate, crisis referrals and findings deterministically', () => {
     const report = runResearch(RESEARCH_PERSONAS);
     expect(report.sessions).toHaveLength(RESEARCH_PERSONAS.length);
-    expect(report.totalTurns).toBe(11);
+    expect(report.totalTurns).toBe(14);
     // 研究ループの成果: 自由文ヒューリスティック導入後は全ターン適合。
     expect(report.overallMatchRate).toBe(1);
     expect(report.findings).toEqual([]);
-    expect(report.crisisSessions).toBe(1); // 危機ペルソナは ゆず のみ
+    expect(report.crisisSessions).toBe(1); // 危機ペルソナは ゆず のみ (他害の りく は crisis ではない)
     expect(report.crisisReferrals).toBe(1);
   });
 

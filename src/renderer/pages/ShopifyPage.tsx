@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -6,6 +6,8 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { orderToSalesEntry } from '../data/shopifyImport';
+import { planOrderFanout, uniqueRequiredFields } from '../../shared/connectors/orderFanout';
+import { SHOPIFY_CONNECTOR_META } from '../../shared/connectors/shopifyConnectorMeta';
 
 const inputStyle = {
   background: 'var(--bg)',
@@ -58,6 +60,62 @@ function OrderToSalesForm() {
   );
 }
 
+/** Pre-flight check for order fan-out: tick the fields you have configured and
+ *  see which connectors become runnable (and which fields the rest still
+ *  need). Pure planning via planOrderFanout — no tokens are entered or sent. */
+function FanoutPlanPanel() {
+  const fields = useMemo(() => uniqueRequiredFields(SHOPIFY_CONNECTOR_META), []);
+  const [have, setHave] = useState<ReadonlySet<string>>(new Set());
+
+  const plan = useMemo(() => {
+    const payload: Record<string, unknown> = {};
+    for (const f of have) payload[f] = '✓';
+    return planOrderFanout(SHOPIFY_CONNECTOR_META, payload);
+  }, [have]);
+
+  function toggle(field: string) {
+    setHave((prev) => {
+      const next = new Set(prev);
+      if (next.has(field)) next.delete(field);
+      else next.add(field);
+      return next;
+    });
+  }
+
+  return (
+    <div>
+      <div style={{ fontSize: 12, color: 'var(--muted, #94a3b8)', marginBottom: 8 }}>
+        設定済みのフィールドにチェックを入れると、注文を同報できる連携先 (runnable) と不足項目が分かります
+        (計画のみ — トークンの入力・送信はしません)。
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
+        {fields.map((f) => (
+          <label key={f} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
+            <input type="checkbox" checked={have.has(f)} onChange={() => toggle(f)} />
+            {f}
+          </label>
+        ))}
+      </div>
+      <div style={{ fontSize: 12, marginBottom: 6 }}>
+        実行可能 {plan.runnableCount} / {plan.decisions.length} 件
+      </div>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 4 }}>
+        {plan.decisions.map((d) => (
+          <li key={d.id} style={{ fontSize: 13 }}>
+            {d.runnable ? (
+              <span style={{ color: '#22c55e' }}>✅ {d.label} — 同報できます ({d.action})</span>
+            ) : (
+              <span style={{ color: 'var(--muted, #94a3b8)' }}>
+                ⏸ {d.label} — 不足: {d.missingFields.join(', ')}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function ShopifyPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
     'shopify',
@@ -80,6 +138,10 @@ export function ShopifyPage() {
 
       <Section title="注文を売上集計に記録 (→ KPI に反映)">
         <OrderToSalesForm />
+      </Section>
+
+      <Section title="受注ファンアウト計画 (連携先の準備状況)" count={SHOPIFY_CONNECTOR_META.length}>
+        <FanoutPlanPanel />
       </Section>
 
       <Section title="最近のアイテム" count={items.length}>
