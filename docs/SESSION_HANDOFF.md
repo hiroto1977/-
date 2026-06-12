@@ -115,6 +115,26 @@ Web 配信 (GitHub Pages: https://hiroto1977.github.io/-/) と単一 HTML の両
 - **不可**: skills 実行 (ローカルコマンド実行が必要でブラウザ単体では原理的に不可)。
 - セットアップ手順: `docs/WEB_SETUP_GUIDE.md` (機能別早見表 + プロキシ + トークン取得)。
 
+## Linux 移行ツールキット (scripts/*.sh, PR #273〜#276)
+
+開発マシンを Linux に移行するための自動化一式。手順書は `docs/LINUX_MIGRATION.md`
+(6 フェーズ + USB レス移行パス)。物理操作 (USB 挿入・再起動) 以外は全てスクリプト化済み。
+
+| スクリプト | 役割 |
+|---|---|
+| `migrate.sh backup [--encrypt] / restore` | SSH鍵・git設定の移送 + 全リポジトリ push 漏れ検知。`--encrypt` = AES-256-CBC+PBKDF2 60万回 (クラウド経由移送用、restore は .enc 自動判別) |
+| `setup-linux.sh [--verify\|--doctor]` | 開発環境ワンコマンド構築 (apt/nvm/npm ci/Mozc) + 環境診断。ネットワーク操作は 2s/4s バックオフ 3 回再試行 |
+| `make-live-usb.sh` | ISO 自動取得+SHA256 検証+USB 書き込み。誤爆防止 3 重ガード (リムーバブル判定/マウント中拒否/デバイス名再入力) + --dry-run |
+| `make-autoinstall.sh` | Ubuntu 無人インストール (NoCloud autoinstall) 設定生成。パスワードは SHA-512 ハッシュのみ |
+
+- **品質ゲート `npm run lint:shell`** (scripts/lint-shell.cjs): scripts/*.sh の
+  bash -n 構文 + `set -euo pipefail` + shebang を強制。verify:all と ci.yml に組込済み。
+- シェルスクリプトの罠 (実検証で踏んだもの):
+  1. `apt-get update` は無関係 PPA の失敗で全体を殺さない (`|| warn` で続行)
+  2. `trap ... EXIT` が参照する変数を `local` にしない (trap 実行時に消えて set -u で死ぬ)
+  3. bash の `IFS` はマルチバイト文字 (、等) を扱えない — 連結は printf で
+  4. サービストークンは safeStorage のマシン固有鍵のため移行不能 → 再登録が唯一の道
+
 ## 確立されたパターン
 
 ### A. 新規サービス追加 (3 系統で使い分け)
