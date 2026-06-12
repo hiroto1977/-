@@ -1,4 +1,5 @@
 import type { FetchContext } from './types';
+import { readDevEnv, type DevEnvSnapshot } from './devEnv';
 import os from 'node:os';
 
 /**
@@ -14,8 +15,8 @@ import os from 'node:os';
  * バックする (web-shim)。
  */
 
-/** 整形済みのシステムモニター・スナップショット。 */
-export interface LinuxSnapshot {
+/** システムモニター部分 (buildLinuxSnapshot の純粋な戻り値)。 */
+export interface SystemSnapshot {
   readonly system: {
     readonly hostname: string;
     readonly platform: string;
@@ -46,6 +47,11 @@ export interface LinuxSnapshot {
   };
   /** 状況に応じた助言 (高負荷・高メモリ・非 Linux など)。 */
   readonly notes: readonly string[];
+}
+
+/** Linux サービスの完全なスナップショット (システムモニター + 開発環境連携)。 */
+export interface LinuxSnapshot extends SystemSnapshot {
+  readonly devEnv: DevEnvSnapshot;
 }
 
 /** `os` から読み取った生の値 (整形前)。テスト時はこれを直接組み立てる。 */
@@ -98,8 +104,8 @@ export function formatUptime(totalSec: number): string {
   return parts.join(' ');
 }
 
-/** 生の読み取り値から表示用スナップショットを組み立てる (純粋・決定論的)。 */
-export function buildLinuxSnapshot(r: RawSystemReadings): LinuxSnapshot {
+/** 生の読み取り値から表示用システムスナップショットを組み立てる (純粋・決定論的)。 */
+export function buildLinuxSnapshot(r: RawSystemReadings): SystemSnapshot {
   const isLinux = r.platform === 'linux';
   const cores = r.cpus.length;
   const totalMb = bytesToMb(r.totalMemBytes);
@@ -167,5 +173,5 @@ export function readSystem(): RawSystemReadings {
 // Stryker restore all
 
 export async function fetchLinuxSnapshot(_ctx: FetchContext): Promise<LinuxSnapshot> {
-  return buildLinuxSnapshot(readSystem());
+  return { ...buildLinuxSnapshot(readSystem()), devEnv: readDevEnv() };
 }

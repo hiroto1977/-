@@ -14,7 +14,7 @@ export function LinuxPage() {
     'linux',
     SNAPSHOT.linux,
   );
-  const { system, uptimeLabel, cpu, load, memory, notes } = data;
+  const { system, uptimeLabel, cpu, load, memory, notes, devEnv } = data;
 
   return (
     <div>
@@ -68,6 +68,81 @@ export function LinuxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
           ※ ロードアベレージは実行待ち/実行中のプロセス数の平均。「コアあたり」が 100% を
           超えると、CPU が処理を捌ききれていない目安です。
+        </div>
+      </Section>
+
+      <Section title="開発環境の連携" count={devEnv.toolchain.length}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
+          <Stat label="Node ランタイム" value={`v${devEnv.nodeVersion}`} />
+          <Stat label="プラットフォーム" value={`${devEnv.platform} / ${devEnv.arch}`} />
+          <Stat
+            label="Git ブランチ"
+            value={devEnv.git ? devEnv.git.branch : '—'}
+          />
+          <Stat
+            label="準備状況"
+            value={`${devEnv.readiness.filter((c) => c.ok).length} / ${devEnv.readiness.length} OK`}
+            positive={devEnv.readiness.every((c) => c.ok)}
+          />
+        </div>
+
+        {devEnv.project && (
+          <table style={tableStyle}>
+            <tbody>
+              <tr><td style={tdStyle}>プロジェクト</td><td style={{ ...tdStyle, fontFamily: 'monospace' }}>{devEnv.project.name} @ {devEnv.project.version}</td></tr>
+              <tr><td style={tdStyle}>依存パッケージ</td><td style={tdStyle}>{devEnv.project.dependencyCount} (本番) / {devEnv.project.devDependencyCount} (開発)</td></tr>
+              <tr><td style={tdStyle}>npm スクリプト</td><td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{devEnv.project.scripts.join(' · ') || '—'}</td></tr>
+              {devEnv.git && (
+                <tr><td style={tdStyle}>HEAD</td><td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>{devEnv.git.branch} @ {devEnv.git.sha.slice(0, 7) || '—'}</td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+
+        {devEnv.toolchain.length > 0 && (
+          <table style={{ ...tableStyle, marginTop: 8 }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>ツール</th>
+                <th style={thStyle}>宣言バージョン</th>
+                <th style={thStyle}>ソース</th>
+              </tr>
+            </thead>
+            <tbody>
+              {devEnv.toolchain.map((t, i) => (
+                <tr key={`${t.tool}-${t.source}-${i}`}>
+                  <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{t.tool}</td>
+                  <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{t.version}</td>
+                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--text-mute)' }}>{t.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+          {devEnv.readiness.map((c) => (
+            <span
+              key={c.label}
+              title={c.detail}
+              style={{
+                fontSize: 12,
+                padding: '4px 10px',
+                borderRadius: 999,
+                border: '1px solid var(--border)',
+                color: c.ok ? '#22c55e' : '#fbbf24',
+              }}
+            >
+              {c.ok ? '✅' : '⚠'} {c.label}
+            </span>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.5 }}>
+          ※ 開発環境は <code>fs</code> / <code>process</code> から読み取った値です。宣言バージョンは
+          <code>.nvmrc</code> / <code>package.json</code> engines / <code>go.mod</code> /
+          <code>.python-version</code> / <code>.tool-versions</code> 由来。
+          安全のためサブプロセス（コマンド実行）は行いません。
         </div>
       </Section>
 
