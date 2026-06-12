@@ -7,6 +7,13 @@ import {
   estimateCrackSeconds,
   humanizeCrackTime,
 } from '../../shared/passwordStrength';
+import {
+  runSecurityRange,
+  categoryLabel,
+  evasionLabel,
+  DEFAULT_RANGE_CORPUS,
+  DEFAULT_EVASIONS,
+} from '../../shared/securityRange';
 
 const VERDICT_COLOR: Record<string, string> = {
   weak: '#ef4444',
@@ -49,6 +56,9 @@ export function SecurityPage() {
     SNAPSHOT.security,
   );
   const { norton, keysConfigured } = data;
+
+  // レッド×ブルー演習場 (純ロジック・決定論的・実行を伴わない) を毎回算出。
+  const range = useMemo(() => runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS), []);
 
   // --- breach check form
   const [showBreach, setShowBreach] = useState(false);
@@ -303,6 +313,89 @@ export function SecurityPage() {
           </div>
         )}
       </Section>
+
+      <Section title="レッドチーム×ブルーチーム演習場 (実行を伴わない検知精度ハーネス)">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 10 }}>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>総合検知率</div>
+            <div style={{ ...statValueStyle, color: range.overallDetectionRate >= 0.95 ? '#22c55e' : '#f59e0b' }}>
+              {(range.overallDetectionRate * 100).toFixed(1)}%
+            </div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>誤検知 (無害を脅威と判定)</div>
+            <div style={{ ...statValueStyle, color: range.falsePositives === 0 ? '#22c55e' : '#ef4444' }}>
+              {range.falsePositives} 件
+            </div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>適合率 (precision)</div>
+            <div style={statValueStyle}>{(range.precision * 100).toFixed(1)}%</div>
+          </div>
+        </div>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr>
+              <th style={thLeft}>回避ラウンド (攻撃側のエスカレーション)</th>
+              <th style={thRight}>検知</th>
+              <th style={thRight}>検知率</th>
+              <th style={thRight}>誤検知</th>
+            </tr>
+          </thead>
+          <tbody>
+            {range.rounds.map((r) => (
+              <tr key={r.evasion}>
+                <td style={tdLeft}>{evasionLabel(r.evasion)}</td>
+                <td style={tdRight}>{r.detected} / {r.attacks}</td>
+                <td style={{ ...tdRight, color: r.detectionRate >= 1 ? '#22c55e' : '#f59e0b', fontWeight: 600 }}>
+                  {(r.detectionRate * 100).toFixed(0)}%
+                </td>
+                <td style={{ ...tdRight, color: r.falsePositives === 0 ? 'var(--text-mute)' : '#ef4444' }}>
+                  {r.falsePositives}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+            改善候補 (取りこぼし) — {range.findings.length} 件
+          </div>
+          {range.findings.length === 0 ? (
+            <div style={{ fontSize: 13, color: '#22c55e' }}>✅ 全ラウンドで取りこぼしなし。</div>
+          ) : (
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
+              {range.findings.map((f, i) => (
+                <li key={`${f.id}-${f.evasion}-${i}`} style={{ color: '#f59e0b' }}>
+                  <code>{f.payload}</code> が「{evasionLabel(f.evasion)}」で回避（{categoryLabel(f.category)}）
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div style={{ marginTop: 12, padding: 10, background: 'rgba(91, 141, 239, 0.08)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+          🛡 攻撃側 (レッド) が回避テクニックを 1 層ずつ重ね、防衛側 (ブルー) の検知器が応答する隔離演習です。
+          <strong>実際の攻撃コードは一切実行せず</strong>、メモリ内の文字列照合だけで完結します（サンドボックスの中の隔離評価）。
+          取りこぼし（改善候補）はコーパス/検知ルールを PR で育てて塞ぐほど精度が上がります。
+          検知ルールの変更は人のレビューを通します。
+        </div>
+      </Section>
     </div>
   );
 }
+
+const statCardStyle: React.CSSProperties = {
+  padding: 10,
+  background: 'var(--bg-elev)',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+};
+const statLabelStyle: React.CSSProperties = { fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 };
+const statValueStyle: React.CSSProperties = { fontSize: 20, fontWeight: 700, fontVariantNumeric: 'tabular-nums' };
+const thLeft: React.CSSProperties = { textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid var(--border)', color: 'var(--text-mute)', fontWeight: 600 };
+const thRight: React.CSSProperties = { ...thLeft, textAlign: 'right' };
+const tdLeft: React.CSSProperties = { padding: '6px 8px', borderBottom: '1px solid var(--border)' };
+const tdRight: React.CSSProperties = { ...tdLeft, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
