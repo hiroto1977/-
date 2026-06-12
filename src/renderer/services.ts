@@ -60,6 +60,7 @@ import { TaxPage } from './pages/TaxPage';
 import { FundingPage } from './pages/FundingPage';
 import { FreeePage } from './pages/FreeePage';
 import { ConnectorsPage } from './pages/ConnectorsPage';
+import { LinuxPage } from './pages/LinuxPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -584,6 +585,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'CN',
     description: '無料(認証不要)のローカル連携カタログとプラグインを一覧・ドライラン',
     page: ConnectorsPage,
+    category: 'tools',
+  },
+  {
+    id: 'linux',
+    label: 'Linux',
+    icon: '🐧',
+    description: 'システムモニター — OS/カーネル/CPU/メモリ/ロード/稼働時間 (os から実値・読み取り専用)',
+    page: LinuxPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
