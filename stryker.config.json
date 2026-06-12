@@ -154,6 +154,7 @@
     "src/renderer/data/crisisDeliberation.ts",
     "src/renderer/data/counselingResearch.ts",
     "src/renderer/data/sourceVerification.ts",
+    "src/renderer/data/complianceResearch.ts",
     "src/renderer/data/selfCareLibrary.ts",
     "src/renderer/data/cloudSync.ts",
     "src/shared/connectors/connectorRegistry.ts",
