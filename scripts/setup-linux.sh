@@ -6,6 +6,7 @@
 #   - OS パッケージ (git / curl / build-essential / Electron 実行ライブラリ / xvfb)
 #   - Node.js LTS (nvm 経由。既に Node >= 20 があればスキップ)
 #   - npm 依存 (npm ci / npm install)
+#   - 日本語入力 ibus-mozc (GNOME デスクトップ検出時のみ。入力ソース登録込み)
 #   - 最後に環境診断 (doctor) を自動実行し、残課題を ✅/⚠/❌ で報告
 #
 # Usage:
@@ -120,6 +121,15 @@ doctor() {
     d_ok "gnome-keyring 検出 — トークンは safeStorage で OS 暗号化される"
   else
     d_warn "キーリング未検出 — トークンは base64 フォールバック保存 (src/main/secrets.ts)。GNOME 環境なら通常は自動で有効"
+  fi
+
+  # 日本語入力 (デスクトップ環境がある場合のみ)
+  if dpkg -s gnome-shell >/dev/null 2>&1; then
+    if dpkg -s ibus-mozc >/dev/null 2>&1; then
+      d_ok "日本語入力 ibus-mozc 導入済み"
+    else
+      d_warn "ibus-mozc 未導入 — bash scripts/setup-linux.sh で自動導入 (フェーズ3)"
+    fi
   fi
 
   # git ユーザー設定 (コミットに必須)
@@ -239,7 +249,37 @@ fi
 ok "npm 依存 導入完了"
 
 # ---------------------------------------------------------------------------
-# 4. (任意) 品質ゲート
+# 4. 日本語入力 (Mozc) — GNOME デスクトップ検出時のみ (フェーズ3 の自動化)
+# ---------------------------------------------------------------------------
+if dpkg -s gnome-shell >/dev/null 2>&1; then
+  if ! dpkg -s ibus-mozc >/dev/null 2>&1; then
+    info "GNOME を検出 — 日本語入力 (ibus-mozc) を導入..."
+    retry $SUDO apt-get install -y -qq ibus-mozc
+  fi
+  # 入力ソースへの登録は GUI セッション内 (DBus あり) でのみ可能
+  if command -v gsettings >/dev/null 2>&1 && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] \
+     && command -v python3 >/dev/null 2>&1; then
+    current="$(gsettings get org.gnome.desktop.input-sources sources 2>/dev/null || echo '')"
+    if [ -n "$current" ] && ! echo "$current" | grep -q "mozc-jp"; then
+      # gsettings の GVariant リストは bash で安全に編集できないため python で追記
+      new_sources="$(python3 -c "import ast,sys; s=ast.literal_eval(sys.argv[1]); s.append(('ibus','mozc-jp')); print(s)" "$current")"
+      if gsettings set org.gnome.desktop.input-sources sources "$new_sources"; then
+        ok "入力ソースに 日本語 (Mozc) を追加 (Super+Space で切替)"
+      else
+        warn "入力ソース登録に失敗 — 設定 → キーボードから手動で追加してください"
+      fi
+    else
+      ok "日本語入力 (Mozc) は設定済み"
+    fi
+  else
+    info "GUI セッション外のため入力ソース登録はスキップ (初回ログイン後に再実行すれば登録される)"
+  fi
+else
+  info "デスクトップ (GNOME) 未検出 — 日本語入力セットアップをスキップ"
+fi
+
+# ---------------------------------------------------------------------------
+# 5. (任意) 品質ゲート
 # ---------------------------------------------------------------------------
 if [ "$RUN_VERIFY" = "1" ]; then
   info "品質ゲートを実行中 (typecheck → test → verify:all)..."
@@ -250,7 +290,7 @@ if [ "$RUN_VERIFY" = "1" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 5. 最終診断 + 次の一歩
+# 6. 最終診断 + 次の一歩
 # ---------------------------------------------------------------------------
 doctor || warn "未解消の項目があります (上記 ❌ を参照)"
 
