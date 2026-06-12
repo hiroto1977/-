@@ -121,3 +121,8 @@ GitHub Issues / PR ベースで運用。
 - [ ] `Authorization` ヘッダを log 出力していない
 - [ ] エラーメッセージで API キーを echo していない (`message.slice(0, 200)` のみ)
 - [ ] OAuth フローは PKCE + state 検証 を満たす
+
+## 関連
+
+法令を踏まえたトラブル防止ルール（個人情報保護法／不正アクセス禁止法／各士業法／景表法 等
+への対応と担保状況）は [docs/COMPLIANCE_RULES.md](./COMPLIANCE_RULES.md) を参照。
