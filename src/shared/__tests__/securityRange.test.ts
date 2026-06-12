@@ -38,6 +38,12 @@ describe('normalizeForDetection', () => {
     expect(normalizeForDetection('< script')).toBe('<script');
     expect(normalizeForDetection('<   script')).toBe('<script');
   });
+  it('decodes JS \\u003c escape to < (defeats unicode evasion)', () => {
+    expect(normalizeForDetection('\\u003cscript')).toBe('<script');
+  });
+  it('decodes JS \\x3c escape to <', () => {
+    expect(normalizeForDetection('\\x3cscript')).toBe('<script');
+  });
 });
 
 describe('detectThreat', () => {
@@ -107,8 +113,9 @@ describe('detector defeats case / whitespace / comment / entity evasions', () =>
     expect(detectThreat(applyEvasion('<iframe src=x>', 'split'))).toBe('xss');
     expect(detectThreat(applyEvasion('<script>x</script>', 'split'))).toBe('xss');
   });
-  it('the unicode-escape evasion slips past a marker-only XSS payload (current frontier)', () => {
-    expect(detectThreat(applyEvasion('<iframe src=x>', 'unicode'))).toBe('benign');
+  it('now catches the unicode-escape evasion too (\\u003c decoded)', () => {
+    expect(detectThreat(applyEvasion('<iframe src=x>', 'unicode'))).toBe('xss');
+    expect(detectThreat(applyEvasion('<script>x</script>', 'unicode'))).toBe('xss');
   });
 });
 
@@ -121,20 +128,31 @@ describe('runSecurityRange (red vs blue)', () => {
     expect(report.falsePositives).toBe(0);
   });
 
-  it('records unicode-escape misses as findings (current frontier)', () => {
+  it('defeats every modeled evasion in the default corpus (no findings)', () => {
     const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
-    // split は防御済み。< でタグ名を隠す unicode 回避で 2 件が取りこぼされる。
-    expect(report.findings).toHaveLength(2);
-    expect(report.findings.every((f) => f.evasion === 'unicode')).toBe(true);
-    expect(report.findings.map((f) => f.id).sort()).toEqual(['xss-1', 'xss-4']);
+    // 第3周: split・unicode を防御済み。現行コーパスの全回避を打ち消す回帰ガード。
+    expect(report.findings).toEqual([]);
+    expect(report.rounds.every((r) => r.detectionRate === 1)).toBe(true);
   });
 
   it('computes overall detection rate and precision', () => {
     const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
-    // 15 攻撃 × 7 ラウンド = 105、取りこぼし 2 → 103/105。
-    expect(report.overallDetectionRate).toBe(0.981);
+    // 15 攻撃 × 7 ラウンド = 105、全件検知 → 105/105。
+    expect(report.overallDetectionRate).toBe(1);
     expect(report.precision).toBe(1); // 誤検知 0 のため
     expect(report.rounds).toHaveLength(DEFAULT_EVASIONS.length);
+  });
+
+  it('records a finding when an attack case evades detection', () => {
+    const corpus: RangeCase[] = [
+      { id: 'miss', payload: 'just plain words', category: 'xss', note: '検知不能なダミー攻撃' },
+    ];
+    const report = runSecurityRange(corpus, ['none']);
+    expect(report.rounds[0]!.detected).toBe(0);
+    expect(report.rounds[0]!.detectionRate).toBe(0);
+    expect(report.findings).toEqual([
+      { id: 'miss', evasion: 'none', category: 'xss', payload: 'just plain words' },
+    ]);
   });
 
   it('counts false positives when a benign case trips the detector', () => {
