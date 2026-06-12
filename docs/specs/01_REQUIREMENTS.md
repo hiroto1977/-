@@ -5,7 +5,7 @@
 | ドキュメント | 要件定義書 (Requirements Specification) |
 | 対象システム | Service Hub — 個人事業主〜中小企業向け 統合業務ダッシュボード |
 | バージョン | 1.0 (現行ブランチ `claude/claude-md-docs-qqUAT` 時点) |
-| 関連文書 | [基本設計書](./02_BASIC_DESIGN.md) / [詳細設計書](./03_DETAILED_DESIGN.md) / [プロジェクト計画書](./04_PROJECT_PLAN.md) / [docs/ARCHITECTURE.md](../ARCHITECTURE.md) |
+| 関連文書 | [基本設計書](./02_BASIC_DESIGN.md) / [詳細設計書](./03_DETAILED_DESIGN.md) / [プロジェクト計画書](./04_PROJECT_PLAN.md) / [AIカウンセラー設計図&仕様書](./05_AI_COUNSELOR.md) / [docs/ARCHITECTURE.md](../ARCHITECTURE.md) |
 
 > 本書は現行実装の実態を踏まえて遡及的に整理した要件定義である。**確定済みの要件**と
 > **未充足/将来要件 (Phase 6+)** を区別して記述する。
