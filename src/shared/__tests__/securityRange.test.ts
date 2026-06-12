@@ -34,6 +34,10 @@ describe('normalizeForDetection', () => {
   it('decodes &#x3c; hex entity to <', () => {
     expect(normalizeForDetection('&#x3c;script')).toBe('<script');
   });
+  it('rejoins a tag name split from its < (defeats split evasion)', () => {
+    expect(normalizeForDetection('< script')).toBe('<script');
+    expect(normalizeForDetection('<   script')).toBe('<script');
+  });
 });
 
 describe('detectThreat', () => {
@@ -84,6 +88,9 @@ describe('applyEvasion', () => {
   it('split inserts a space after <', () => {
     expect(applyEvasion('<x', 'split')).toBe('< x');
   });
+  it('unicode escapes < as \\u003c', () => {
+    expect(applyEvasion('<x', 'unicode')).toBe('\\u003cx');
+  });
 });
 
 describe('detector defeats case / whitespace / comment / entity evasions', () => {
@@ -96,8 +103,12 @@ describe('detector defeats case / whitespace / comment / entity evasions', () =>
   it('catches an entity-encoded <script> (entity evasion defeated)', () => {
     expect(detectThreat(applyEvasion('<script>x</script>', 'entity'))).toBe('xss');
   });
-  it('the split evasion slips past a marker-only XSS payload (known gap)', () => {
-    expect(detectThreat(applyEvasion('<iframe src=x>', 'split'))).toBe('benign');
+  it('now catches the split evasion too (< script rejoined)', () => {
+    expect(detectThreat(applyEvasion('<iframe src=x>', 'split'))).toBe('xss');
+    expect(detectThreat(applyEvasion('<script>x</script>', 'split'))).toBe('xss');
+  });
+  it('the unicode-escape evasion slips past a marker-only XSS payload (current frontier)', () => {
+    expect(detectThreat(applyEvasion('<iframe src=x>', 'unicode'))).toBe('benign');
   });
 });
 
@@ -110,18 +121,18 @@ describe('runSecurityRange (red vs blue)', () => {
     expect(report.falsePositives).toBe(0);
   });
 
-  it('records split-evasion misses as findings (improvement candidates)', () => {
+  it('records unicode-escape misses as findings (current frontier)', () => {
     const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
-    // < script / < iframe を分断する split で 2 件が取りこぼされる。
+    // split は防御済み。< でタグ名を隠す unicode 回避で 2 件が取りこぼされる。
     expect(report.findings).toHaveLength(2);
-    expect(report.findings.every((f) => f.evasion === 'split')).toBe(true);
+    expect(report.findings.every((f) => f.evasion === 'unicode')).toBe(true);
     expect(report.findings.map((f) => f.id).sort()).toEqual(['xss-1', 'xss-4']);
   });
 
   it('computes overall detection rate and precision', () => {
     const report = runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS);
-    // 15 攻撃 × 6 ラウンド = 90、取りこぼし 2 → 88/90。
-    expect(report.overallDetectionRate).toBe(0.978);
+    // 15 攻撃 × 7 ラウンド = 105、取りこぼし 2 → 103/105。
+    expect(report.overallDetectionRate).toBe(0.981);
     expect(report.precision).toBe(1); // 誤検知 0 のため
     expect(report.rounds).toHaveLength(DEFAULT_EVASIONS.length);
   });

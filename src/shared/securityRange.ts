@@ -25,7 +25,7 @@ export type ThreatCategory =
   | 'benign';
 
 /** 回避テクニック (レッドチームのエスカレーション層)。 */
-export type Evasion = 'none' | 'case' | 'whitespace' | 'comment' | 'entity' | 'split';
+export type Evasion = 'none' | 'case' | 'whitespace' | 'comment' | 'entity' | 'split' | 'unicode';
 
 /** ラベル付きの攻撃/無害ケース (コーパスの1件)。 */
 export interface RangeCase {
@@ -66,6 +66,7 @@ const EVASION_JA: Readonly<Record<Evasion, string>> = {
   comment: 'コメント挿入 (/**/)',
   entity: 'HTML エンティティ符号化',
   split: 'マーカー分断 (< script)',
+  unicode: 'Unicode エスケープ (\\u003c)',
 };
 // Stryker restore all
 
@@ -91,12 +92,14 @@ function matchesAny(text: string, markers: readonly string[]): boolean {
  *  - 小文字化 (case 撹乱)
  *  - C スタイルのコメント (slash-star … star-slash) を空白に置換 (comment 挿入)
  *  - `<` の HTML エンティティを復号 (entity 符号化)
+ *  - タグ名直前の空白を除去 (split 分断: `< script` → `<script`)
  *  - 連続空白を 1 つに圧縮 (whitespace パディング)
  */
 export function normalizeForDetection(input: string): string {
   let s = input.toLowerCase();
   s = s.replace(/\/\*[\s\S]*?\*\//g, ' ');
   s = s.replace(/&lt;/g, '<').replace(/&#60;/g, '<').replace(/&#x3c;/g, '<');
+  s = s.replace(/<\s+/g, '<');
   s = s.replace(/\s+/g, ' ');
   return s.trim();
 }
@@ -126,6 +129,8 @@ export function applyEvasion(payload: string, evasion: Evasion): string {
       return payload.replace(/</g, '&lt;');
     case 'split':
       return payload.replace(/</g, '< ');
+    case 'unicode':
+      return payload.replace(/</g, '\\u003c');
   }
 }
 
@@ -213,9 +218,9 @@ export function runSecurityRange(
   };
 }
 
-/** 標準のエスカレーション順 (素 → 撹乱 → 空白 → コメント → エンティティ → 分断)。 */
+/** 標準のエスカレーション順 (素 → 撹乱 → 空白 → コメント → エンティティ → 分断 → Unicode)。 */
 export const DEFAULT_EVASIONS: readonly Evasion[] = [
-  'none', 'case', 'whitespace', 'comment', 'entity', 'split',
+  'none', 'case', 'whitespace', 'comment', 'entity', 'split', 'unicode',
 ];
 
 // 演習コーパス (人がレビューして育てる・PR で拡張)。台本データ (文字列は表現)。
