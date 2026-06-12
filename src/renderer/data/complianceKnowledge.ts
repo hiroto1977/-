@@ -109,5 +109,40 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.ppc.go.jp/personalinfo/legal/leakAction/', type: 'government', label: '個人情報保護委員会 漏えい等の対応' },
     ],
   },
+  {
+    value: {
+      id: 'tax-filing-deadline',
+      domain: 'tax',
+      title: '確定申告の期限（所得税・個人事業者の消費税）',
+      statement:
+        '所得税の確定申告は原則として翌年2月16日〜3月15日（期限が土日祝の場合は翌平日）。' +
+        '個人事業者の消費税及び地方消費税は翌年3月31日が申告・納付期限。',
+      authority: '所管: 国税庁（所得税法・消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/06_1.htm', type: 'government', label: '国税庁 申告と納税' },
+      { url: 'https://www.nta.go.jp/taxes/nozei/nofu/24200042/noufu_kigen.htm', type: 'government', label: '国税庁 主な国税の納期限' },
+      { url: 'https://www.freee.co.jp/kb/kb-kakuteishinkoku/deadline/', type: 'media', label: 'freee 確定申告の期限' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-stealth-marketing',
+      domain: 'legal',
+      title: 'ステルスマーケティング規制（景品表示法）',
+      statement:
+        '2023年10月1日施行。「一般消費者が事業者の表示であることを判別することが困難である表示」' +
+        '（令和5年内閣府告示第19号）が景品表示法5条3号の不当表示に指定。規制対象は広告主（事業者）で、' +
+        '違反は排除措置命令等の対象（課徴金の対象外）。広告である旨の明瞭な表示が必要。',
+      authority: '所管: 消費者庁（景品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing', type: 'government', label: '消費者庁 ステルスマーケティング規制' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/assets/representation_cms216_200901_01.pdf', type: 'government', label: '消費者庁 景品表示法とステルスマーケティング' },
+      { url: 'https://jmatsuda-law.com/legal-note/2023-3-1/', type: 'media', label: '松田綜合法律事務所 解説' },
+    ],
+  },
 ];
 // Stryker restore all
