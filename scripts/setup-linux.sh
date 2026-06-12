@@ -229,10 +229,14 @@ else
   if [ ! -s "$NVM_DIR/nvm.sh" ]; then
     retry bash -c 'curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
   fi
+  # nvm.sh は nounset (set -u) 非対応 (PROVIDED_VERSION 等が未定義参照) のため、
+  # ロード〜使用の間だけ -u を外す。実機 WSL で line 3885 unbound を確認済み。
+  set +u
   # shellcheck disable=SC1091
   . "$NVM_DIR/nvm.sh"
   retry nvm install --lts
   nvm use --lts
+  set -u
   ok "Node.js $(node --version) を導入"
 fi
 
