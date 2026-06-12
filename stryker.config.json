@@ -34,6 +34,7 @@
     "src/main/clients/shopify.ts",
     "src/main/clients/storage.ts",
     "src/main/clients/linux.ts",
+    "src/main/clients/devEnv.ts",
     "src/main/clients/shigyo.ts",
     "src/main/clients/snapshotStub.ts",
     "src/renderer/recents.ts",

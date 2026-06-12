@@ -890,6 +890,36 @@ export const SNAPSHOT = {
     load: { avg1: 0.42, avg5: 0.55, avg15: 0.61, perCorePct: 5 },
     memory: { totalMb: 16384, freeMb: 7168, usedMb: 9216, usagePct: 56.3 },
     notes: [] as string[],
+    devEnv: {
+      nodeVersion: '22.10.0',
+      platform: 'linux',
+      arch: 'x64',
+      project: {
+        name: 'service-hub-desktop',
+        version: '0.1.0',
+        scripts: ['dev', 'build', 'test', 'typecheck', 'lint'] as string[],
+        dependencyCount: 2,
+        devDependencyCount: 22,
+      } as {
+        name: string;
+        version: string;
+        scripts: string[];
+        dependencyCount: number;
+        devDependencyCount: number;
+      } | null,
+      toolchain: [
+        { tool: 'node', version: '22', source: '.nvmrc' },
+      ] as { tool: string; version: string; source: string }[],
+      git: { branch: 'main', sha: '0000000' } as {
+        branch: string;
+        sha: string;
+      } | null,
+      readiness: [
+        { label: 'Node モジュール', ok: true, detail: 'node_modules があります' },
+        { label: 'ロックファイル', ok: true, detail: 'lockfile があります' },
+        { label: 'Git リポジトリ', ok: true, detail: '.git があります' },
+      ] as { label: string; ok: boolean; detail: string }[],
+    },
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
