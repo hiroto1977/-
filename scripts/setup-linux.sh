@@ -56,7 +56,9 @@ pick_pkg() {
 }
 
 info "OS パッケージを確認中..."
-$SUDO apt-get update -qq
+# 無関係な PPA が死んでいても主要リポジトリの index があれば
+# install は成功するため、update の部分失敗では中断しない。
+$SUDO apt-get update -qq || warn "一部リポジトリの index 更新に失敗 (続行します)"
 
 PKGS=(git curl ca-certificates build-essential xvfb)
 for spec in \
