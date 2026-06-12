@@ -7,12 +7,12 @@ OS インストールそのもの（物理作業）だけ。
 
 | フェーズ | 内容 | 自動化 |
 |---|---|---|
-| 0 | バックアップ | 手動（チェックリスト参照） |
+| 0 | バックアップ | **`migrate.sh backup` で自動**（個人データのみ手動） |
 | 1 | ライブ USB でハードウェア確認 | 手動 |
 | 2 | Ubuntu インストール | 手動 |
 | 3 | 日本語入力 (Mozc) | 手動（数クリック） |
-| 4 | 開発環境の再構築 | **`setup-linux.sh` で全自動** |
-| 5 | サービストークンの再登録 | 手動（設定ページ） |
+| 4 | 開発環境の再構築 | **`migrate.sh restore` + `setup-linux.sh` で全自動** |
+| 5 | サービストークンの再登録 | 手動（設定ページ）。`--doctor` が暗号化方式を診断 |
 
 推奨ディストリビューション: **Ubuntu 24.04 LTS**。
 情報量が多く、CI (GitHub Actions) も Ubuntu で動いているため
@@ -23,11 +23,25 @@ OS インストールそのもの（物理作業）だけ。
 
 ## フェーズ 0: バックアップ（旧マシンで）
 
+開発関連は **1 コマンドで自動化**されている（Windows の場合は Git Bash / WSL から実行）:
+
+```bash
+bash scripts/migrate.sh backup            # 既定: ~/ 配下を走査
+bash scripts/migrate.sh backup --scan ~/projects --out /media/usb/migration.tar.gz
+```
+
+これが行うこと:
+
+- `~/.ssh`・`~/.gitconfig`・`~/.config/git` を権限保持のまま tar.gz 化（秘密鍵を含むため
+  アーカイブは `chmod 600`、SHA256 を表示 — 移送後に照合する）
+- 配下の **全 git リポジトリを走査**し、未コミット変更 / stash / 未 push コミット /
+  upstream 無しブランチを `MIGRATION_MANIFEST.txt` に列挙（push 漏れの機械検知）
+
+残りの手動チェックリスト:
+
 - [ ] ドキュメント・写真など個人データを外部ドライブ / クラウドへ
-- [ ] `~/.ssh` 一式（秘密鍵。`chmod 600` を新マシンでも維持）
-- [ ] `~/.gitconfig`（または `git config --global --list` の出力を控える）
 - [ ] ブラウザのプロファイル（同期アカウントでのログインが最も簡単）
-- [ ] push 漏れがないか全リポジトリで `git status` / `git stash list` を確認
+- [ ] manifest に列挙されたリポジトリを push（または意図的に放置と判断）
 - [ ] Windows の場合: BitLocker 回復キーを控え、「高速スタートアップ」を無効化
 
 > **トークンはコピーしない**: Service Hub のサービストークンは
@@ -64,25 +78,37 @@ OS インストールそのもの（物理作業）だけ。
 ## フェーズ 4: 開発環境の再構築（ここから自動）
 
 ```bash
-# SSH 鍵を戻す (バックアップから)
-mkdir -p ~/.ssh && cp /path/to/backup/id_* ~/.ssh/ && chmod 600 ~/.ssh/id_*
-
-# git 設定を戻す
-git config --global user.name  "<名前>"
-git config --global user.email "<メール>"
-
-# リポジトリを clone してワンコマンドセットアップ
+# リポジトリを clone
 git clone <このリポジトリの URL> service-hub && cd service-hub
+
+# フェーズ0 のアーカイブから SSH 鍵・git 設定を復元 (権限も自動正規化)
+bash scripts/migrate.sh restore /path/to/service-hub-migration-*.tar.gz
+
+# ワンコマンドセットアップ + 品質ゲート
 bash scripts/setup-linux.sh --verify
 ```
 
-`setup-linux.sh` が行うこと（冪等・再実行安全）:
+`migrate.sh restore` は既存ファイルを上書きしない（`--force` で上書き）。
+`~/.ssh` は 700 / 鍵 600 / 公開鍵 644 に自動正規化され、旧マシンの
+push 漏れ manifest も再表示される。
+
+`setup-linux.sh` が行うこと（冪等・再実行安全。ネットワーク操作は
+2s/4s バックオフで最大 3 回再試行）:
 
 1. **OS パッケージ**: git / curl / build-essential / Electron 実行ライブラリ
    (libnss3, libgtk-3, libasound2 など。Ubuntu 24.04 の `t64` リネームにも対応) / xvfb
 2. **Node.js LTS**: 既に v20 以上があればスキップ、無ければ nvm 経由で導入
 3. **npm 依存**: `npm ci`
 4. **`--verify` 指定時**: `typecheck` → `npm test` → `verify:all` で全 green を確認
+5. **環境診断 (doctor)**: 最後に自動実行。`--doctor` 単体なら診断のみ（副作用ゼロ）
+
+```bash
+bash scripts/setup-linux.sh --doctor
+```
+
+診断項目: OS / WSL 検出 / Node バージョン / npm 依存 / Electron 共有ライブラリ
+(ldconfig) / Xvfb / キーリング (safeStorage の OS 暗号化が効くか) /
+git user 設定 / ディスク空き容量。❌（開発不能）が 1 つでもあれば exit 1。
 
 完了したら `npm run dev` で Electron 版が起動すれば移行成功。
 
@@ -98,9 +124,13 @@ base64 フォールバックで動作する（`src/main/secrets.ts` 参照）。
 
 ## トラブルシューティング
 
+まず `bash scripts/setup-linux.sh --doctor` を実行すると、大半の問題は
+✅/⚠/❌ で原因まで特定できる。
+
 | 症状 | 対処 |
 |---|---|
-| Electron が起動せず `libnss3.so` 等のエラー | `bash scripts/setup-linux.sh` を再実行（必要ライブラリを再導入） |
+| Electron が起動せず `libnss3.so` 等のエラー | `--doctor` で不足ライブラリを特定 → `bash scripts/setup-linux.sh` を再実行 |
+| SSH 接続が `Permissions are too open` で拒否 | `migrate.sh restore` が自動正規化する。手動なら `chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_*` |
 | `npm run smoke` が DISPLAY エラー | xvfb 導入済みか確認（スクリプトが導入する）。CI と同じくヘッドレスで動く |
 | NVIDIA で画面が乱れる / 黒画面 | 「追加のドライバー」からプロプライエタリドライバを選択 |
 | 日本語入力が効かない | 入力ソースに Mozc があるか確認 → ログアウト / ログイン |

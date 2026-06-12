@@ -55,7 +55,8 @@ npm run lint:imports       # main / preload / renderer import-boundary enforceme
 npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
 npm run lint:docs          # cross-document consistency
 npm run lint:test-coverage # every service must have a test + an action registered
-npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage)
+npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
+npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage/shell)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 ```
 
