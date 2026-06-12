@@ -92,6 +92,7 @@ function matchesAny(text: string, markers: readonly string[]): boolean {
  *  - 小文字化 (case 撹乱)
  *  - C スタイルのコメント (slash-star … star-slash) を空白に置換 (comment 挿入)
  *  - `<` の HTML エンティティを復号 (entity 符号化)
+ *  - `<` の JS エスケープ (< / \x3c) を復号 (unicode 符号化)
  *  - タグ名直前の空白を除去 (split 分断: `< script` → `<script`)
  *  - 連続空白を 1 つに圧縮 (whitespace パディング)
  */
@@ -99,6 +100,7 @@ export function normalizeForDetection(input: string): string {
   let s = input.toLowerCase();
   s = s.replace(/\/\*[\s\S]*?\*\//g, ' ');
   s = s.replace(/&lt;/g, '<').replace(/&#60;/g, '<').replace(/&#x3c;/g, '<');
+  s = s.replace(/\\u003c/g, '<').replace(/\\x3c/g, '<');
   s = s.replace(/<\s+/g, '<');
   s = s.replace(/\s+/g, ' ');
   return s.trim();
