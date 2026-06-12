@@ -4,14 +4,18 @@
 # docs/LINUX_MIGRATION.md フェーズ0 (旧マシン) とフェーズ4 (新マシン) の
 # 手作業だった部分を自動化する:
 #
-#   旧マシン:  bash scripts/migrate.sh backup [--out FILE] [--scan DIR]
+#   旧マシン:  bash scripts/migrate.sh backup [--out FILE] [--scan DIR] [--encrypt]
 #     - ~/.ssh / ~/.gitconfig / ~/.config/git を tar.gz に収集 (権限保持)
 #     - --scan DIR (既定 $HOME, 深さ4) 配下の git リポジトリを走査し、
 #       未コミット変更・stash・未 push コミットを manifest に列挙
 #       → 「push 漏れがないか全リポジトリで確認」を機械化
 #     - アーカイブは秘密鍵を含むため chmod 600 + SHA256 を表示
+#     - --encrypt: AES-256-CBC + PBKDF2 (60万回) でパスフレーズ暗号化した
+#       .tar.gz.enc を生成 → Google Drive 等のクラウドストレージ経由で
+#       USB なしに移送できる (パスフレーズは非保存・忘れると復元不能)
 #
 #   新マシン:  bash scripts/migrate.sh restore ARCHIVE [--force]
+#     - .enc 拡張子なら自動でパスフレーズを尋ねて復号
 #     - $HOME に展開 (既存ファイルは --force 無しでは上書きしない)
 #     - ~/.ssh は 700、鍵は 600 に正規化
 #     - manifest (push 漏れ警告) を再表示
@@ -28,7 +32,7 @@ warn() { printf '\033[1;33m[ warn ]\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31m[ fail ]\033[0m %s\n' "$*" >&2; exit 1; }
 
 usage() {
-  sed -n '2,22p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,26p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
   exit 1
 }
 
@@ -39,15 +43,20 @@ shift || true
 # backup
 # ---------------------------------------------------------------------------
 do_backup() {
-  local out="" scan="$HOME"
+  local out="" scan="$HOME" encrypt=0
   while [ $# -gt 0 ]; do
     case "$1" in
       --out)  out="${2:?--out requires FILE}"; shift 2 ;;
       --scan) scan="${2:?--scan requires DIR}"; shift 2 ;;
+      --encrypt) encrypt=1; shift ;;
       *) die "unknown option: $1" ;;
     esac
   done
   [ -n "$out" ] || out="$HOME/service-hub-migration-$(date +%Y%m%d-%H%M%S).tar.gz"
+  if [ "$encrypt" = "1" ]; then
+    command -v openssl >/dev/null 2>&1 || die "--encrypt には openssl が必要です"
+    case "$out" in *.enc) ;; *) out="${out}.enc" ;; esac
+  fi
 
   # trap は関数 return 後 (スクリプト終了時) に走るため local にしない
   stage="$(mktemp -d)"
@@ -109,7 +118,28 @@ do_backup() {
   fi
 
   # --- 3. アーカイブ生成 (秘密鍵入りのため 600) ----------------------------
-  tar -czf "$out" -C "$stage/payload" .
+  if [ "$encrypt" = "1" ]; then
+    # クラウドストレージ経由の移送用: AES-256-CBC + PBKDF2 (60万回) で暗号化。
+    # パスフレーズはどこにも保存されない — 忘れると復元不能。
+    local pp1 pp2
+    printf '暗号化パスフレーズ: '
+    read -rs pp1; echo
+    printf 'もう一度: '
+    read -rs pp2; echo
+    [ "$pp1" = "$pp2" ] || die "パスフレーズが一致しません"
+    [ "${#pp1}" -ge 8 ] || die "パスフレーズは 8 文字以上にしてください"
+    # env 経由で渡し、ps の引数からパスフレーズが見えないようにする
+    export MIGRATE_PASSPHRASE="$pp1"
+    if ! tar -cz -C "$stage/payload" . \
+        | openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt \
+            -pass env:MIGRATE_PASSPHRASE -out "$out"; then
+      unset MIGRATE_PASSPHRASE
+      die "暗号化に失敗しました"
+    fi
+    unset MIGRATE_PASSPHRASE pp1 pp2
+  else
+    tar -czf "$out" -C "$stage/payload" .
+  fi
   chmod 600 "$out"
   local sha
   if command -v sha256sum >/dev/null 2>&1; then
@@ -119,13 +149,25 @@ do_backup() {
   fi
   ok "作成: $out"
   ok "SHA256: $sha"
-  cat <<EOS
+  if [ "$encrypt" = "1" ]; then
+    cat <<EOS
+
+次の一歩:
+  1. $out を Google Drive / Dropbox 等のクラウドストレージにアップロード
+  2. 新マシンでダウンロードし SHA256 が上と一致することを確認
+  3. bash scripts/migrate.sh restore $(basename "$out")  (パスフレーズを入力)
+⚠ パスフレーズはどこにも保存されない — 忘れると復元不能。
+EOS
+  else
+    cat <<EOS
 
 次の一歩 (新マシンで):
   bash scripts/migrate.sh restore $(basename "$out")
   → SHA256 が上と一致することを確認してから展開すること。
-⚠ このアーカイブは SSH 秘密鍵を含む。クラウドに置くなら暗号化ストレージ推奨。
+⚠ このアーカイブは SSH 秘密鍵を含む (平文)。クラウドに置く場合は
+  --encrypt で暗号化バックアップを作り直すこと。
 EOS
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -146,7 +188,25 @@ do_restore() {
   # trap は関数 return 後 (スクリプト終了時) に走るため local にしない
   stage="$(mktemp -d)"
   trap 'rm -rf "$stage"' EXIT
-  tar -xzf "$archive" -C "$stage"
+  case "$archive" in
+    *.enc)
+      command -v openssl >/dev/null 2>&1 || die "暗号化アーカイブの復号には openssl が必要です"
+      local pp
+      printf '暗号化パスフレーズ: '
+      read -rs pp; echo
+      export MIGRATE_PASSPHRASE="$pp"
+      if ! openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
+          -pass env:MIGRATE_PASSPHRASE -in "$archive" \
+          | tar -xz -C "$stage"; then
+        unset MIGRATE_PASSPHRASE
+        die "復号に失敗しました (パスフレーズ誤り、またはファイル破損)"
+      fi
+      unset MIGRATE_PASSPHRASE pp
+      ;;
+    *)
+      tar -xzf "$archive" -C "$stage"
+      ;;
+  esac
 
   # 既存ファイルを壊さない: --force 無しでは存在しないものだけ配置
   local restored=0 skipped=0 f rel dest
