@@ -62,6 +62,7 @@ import { fetchTaxSnapshot } from './tax';
 import { fetchFundingSnapshot } from './funding';
 import { fetchFreeeSnapshot } from './freee';
 import { fetchConnectorsSnapshot } from './connectors';
+import { fetchLinuxSnapshot } from './linux';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -133,6 +134,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   funding: fetchFundingSnapshot,
   freee: fetchFreeeSnapshot,
   connectors: fetchConnectorsSnapshot,
+  linux: fetchLinuxSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -213,6 +215,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'tax',
   // コネクター/自動化: 無料(認証不要)カタログの可視化のみ。snapshot-only。
   'connectors',
+  // Linux システムモニター: Electron main の `os` から実値を読む。認証不要。
+  'linux',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

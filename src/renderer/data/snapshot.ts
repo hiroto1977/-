@@ -873,6 +873,25 @@ export const SNAPSHOT = {
     items: [] as { id: string; name: string }[],
   },
 
+  // Linux システムモニター: live は Electron main の `os` から実値を取得する。
+  // snapshot は代表的なサンプル (ブラウザ単体ビルド / 未取得時のフォールバック)。
+  linux: {
+    system: {
+      hostname: 'service-hub',
+      platform: 'linux',
+      platformLabel: 'Linux',
+      kernel: '6.18.5',
+      arch: 'x64',
+      isLinux: true,
+    },
+    uptimeSec: 277_320,
+    uptimeLabel: '3日 5時間 2分',
+    cpu: { model: 'Intel Core i7', cores: 8, speedMhz: 2600 },
+    load: { avg1: 0.42, avg5: 0.55, avg15: 0.61, perCorePct: 5 },
+    memory: { totalMb: 16384, freeMb: 7168, usedMb: 9216, usagePct: 56.3 },
+    notes: [] as string[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   funding: {

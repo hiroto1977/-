@@ -71,6 +71,7 @@ export const SERVICE_IDS = [
   'funding',
   'freee',
   'connectors',
+  'linux',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
