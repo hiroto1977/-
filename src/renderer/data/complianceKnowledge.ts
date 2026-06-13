@@ -5072,5 +5072,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/283', type: 'media', label: 'オプトアウトによる第三者提供 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-customs-duty',
+      domain: 'tax',
+      title: '関税（輸入品に課される国税）',
+      statement:
+        '関税は、外国から輸入される貨物に対して課される国税であり、原則として貨物を輸入する者（輸入申告者）が納税義務者となる。' +
+        '輸入貨物を税関長に申告し、関税・消費税等を納付して許可を受けることで輸入でき（申告納税方式）、関税率は品目ごとに関税定率法・' +
+        '関税暫定措置法や経済連携協定（EPA）等により定められる。',
+      authority: '所管: 財務省（関税法・関税定率法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mof.go.jp/policy/customs_tariff/summary/index.html', type: 'government', label: '財務省 わが国の関税制度の概要' },
+      { url: 'https://www.customs.go.jp/tetsuzuki/c-answer/imtsukan/1103_jr.htm', type: 'government', label: '税関 関税の納税義務者' },
+      { url: 'https://www.mipro.or.jp/Import/qanda/trade/q04.html', type: 'media', label: 'MIPRO 関税率の種類' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-liquor-tax',
+      domain: 'tax',
+      title: '酒税の概要',
+      statement:
+        '酒税は、アルコール分1度以上の飲料である「酒類」に対して課される国税であり、原則として酒類の製造者が製造場から酒類を移出した時' +
+        '（輸入の場合は保税地域からの引取り時）に納税義務が生じ、製造者・引取者が納税義務者となる（税負担は流通を通じて消費者へ転嫁される）。' +
+        '酒類の製造・販売には酒税法に基づく免許が必要で、酒類は発泡性酒類・醸造酒類・蒸留酒類・混成酒類の4種類に分類され税率が定められている。',
+      authority: '所管: 国税庁（酒税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/sake/qa/01/04.htm', type: 'government', label: '国税庁 お酒のQ&A 酒税の納税義務者' },
+      { url: 'https://www.nta.go.jp/taxes/sake/qa/01/01.htm', type: 'government', label: '国税庁 お酒のQ&A 酒類の定義・分類' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/d08.htm', type: 'government', label: '財務省 酒税に関する資料' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-ideco',
+      domain: 'labor',
+      title: 'iDeCo（個人型確定拠出年金）の制度概要',
+      statement:
+        'iDeCo（個人型確定拠出年金）は、確定拠出年金法に基づき国民年金基金連合会が実施する私的年金制度で、加入者が自ら掛金を拠出して' +
+        '自ら選んだ運用商品で運用し、原則60歳以降に老齢給付金（年金または一時金）を受け取る。掛金は被保険者種別等に応じた拠出限度額の範囲内で' +
+        '全額が小規模企業共済等掛金控除として所得控除の対象となる（限度額の具体的数値は法改正で変動）。',
+      authority: '所管: 厚生労働省（確定拠出年金法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/nenkin/kyoshutsu/ideco.html', type: 'government', label: '厚生労働省 iDeCoの概要' },
+      { url: 'https://www.ideco-koushiki.jp/guide/structure.html', type: 'operator', label: 'iDeCo公式（国民年金基金連合会）制度の仕組み' },
+      { url: 'https://www.ideco-koushiki.jp/guide/good.html', type: 'operator', label: 'iDeCo公式 掛金が全額所得控除' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-elderly-continued-benefit',
+      domain: 'labor',
+      title: '高年齢雇用継続給付（雇用保険）',
+      statement:
+        '高年齢雇用継続給付は、雇用保険の被保険者であった期間が5年以上ある60歳以上65歳未満の被保険者について、60歳到達時等と比べて賃金が' +
+        '75%未満に低下した状態で雇用を継続している場合に支給される給付（高年齢雇用継続基本給付金・高年齢再就職給付金）である。' +
+        '令和7年（2025年）4月1日以降に60歳に達する者は給付率の上限が引き下げられ（最大15%→10%）、本給付は段階的に縮小・将来的に廃止が予定されている。',
+      authority: '所管: 厚生労働省（雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000160564_00043.html', type: 'government', label: '厚生労働省 高年齢雇用継続給付の支給率変更（2025/4）' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_continue.html', type: 'government', label: 'ハローワーク 雇用継続給付' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158464.html', type: 'government', label: '厚生労働省 高年齢雇用継続給付 Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-joint-use-data',
+      domain: 'legal',
+      title: '個人データの共同利用（個人情報保護法27条5項3号）',
+      statement:
+        '個人情報保護法では、特定の者との間で個人データを共同して利用する場合に、共同して利用される個人データの項目・共同して利用する者の' +
+        '範囲・利用目的・当該個人データの管理について責任を有する者の氏名又は名称等の所定事項を、あらかじめ本人に通知し又は本人が容易に' +
+        '知り得る状態に置いているときは、その共同利用者は「第三者」に該当せず、本人の同意を得ずに当該個人データを共同利用できる（27条5項3号）。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q342/', type: 'government', label: '個人情報保護委員会 共同利用 FAQ（27条5項3号）' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q7-51/', type: 'government', label: '個人情報保護委員会 個人データの共同利用 FAQ' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 ガイドライン（通則編）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-set-off',
+      domain: 'legal',
+      title: '相殺（民法505条等）',
+      statement:
+        '二人が互いに同種の目的を有する債務を負担し、双方の債務が弁済期にあるとき（相殺適状）、各債務者は対当額について相殺により債務を' +
+        '免れることができる（民法505条1項）。相殺は相手方への意思表示によって行い（506条）、その効力は相殺適状時にさかのぼって生じるが、' +
+        '当事者の相殺禁止・制限の意思表示や、悪意による不法行為・生命身体侵害に基づく損害賠償債務を受働債権とする相殺は制限される（505条2項・509条）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（505条・506条・509条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0505-00/', type: 'media', label: '民法505条 相殺の要件 解説' },
+    ],
+  },
 ];
 // Stryker restore all
