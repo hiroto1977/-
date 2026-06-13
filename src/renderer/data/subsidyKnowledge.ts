@@ -1408,6 +1408,116 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://expact.jp/hamamatsu_fund_support/', type: 'media', label: '浜松市ファンドサポート事業 解説' },
     ],
   },
+  {
+    id: 'subsidy-high-cost-care',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '高額介護（予防）サービス費',
+    authority: '厚生労働省・市区町村',
+    statement:
+      '介護保険のサービス利用者が同一世帯で1か月に支払った利用者負担（1〜3割の自己負担）の合計が、所得区分ごとに定められた負担上限額（月額）を' +
+      '超えた場合に、その超過分が高額介護（予防）サービス費として後から払い戻される制度。上限額は所得区分により異なり改定もあるため最新で要確認。' +
+      '福祉用具購入費・住宅改修費・施設の居住費や食費は対象外である。',
+    application:
+      'お住まいの市区町村（介護保険担当窓口）へ支給申請する。対象者には市区町村から申請書（勧奨通知）が送付されることが多く、初回に申請して振込口座を登録すれば、以後は該当月分が原則として申請不要で同一口座に自動的に振り込まれる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000334526.pdf', type: 'government', label: '厚生労働省 高額介護サービス費の負担限度額' },
+      { url: 'https://www.mhlw.go.jp/content/001499328.pdf', type: 'government', label: '厚生労働省 介護保険最新情報（負担限度額の見直し）' },
+      { url: 'https://www.city.koto.lg.jp/212105/fukushi/kaigohoken/kyufu/6539.html', type: 'municipality', label: '江東区 高額介護サービス費の支給' },
+    ],
+  },
+  {
+    id: 'subsidy-ibaraki',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'いばらき業務改善奨励金（茨城県）',
+    authority: '茨城県（産業戦略部 労働政策課）',
+    statement:
+      '事業場内最低賃金を一定額引き上げ、生産性向上のための設備投資等を行った県内中小企業・小規模事業者を対象に、国の「業務改善助成金」の自己負担分の一部を' +
+      '上乗せ助成する茨城県の代表的な賃上げ・生産性向上支援制度（都道府県レベルの代表例）。補助率・上限額・要件・募集期間は年度ごとに変動するため、最新の募集要項及び県公式で要確認。',
+    application:
+      '国の業務改善助成金の交付決定・支給を受けたうえで、賃上げ・設備投資の実績を添えて茨城県（産業戦略部 労働政策課）へ申請する上乗せ助成方式。申請様式・受付期間は年度の募集要項に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ibaraki.jp/shokorodo/rosei/rodo/gyoumukaizen.html', type: 'municipality', label: '茨城県 いばらき業務改善奨励金' },
+      { url: 'https://www.city.ibaraki-koga.lg.jp/soshiki/syoko/3/20609.html', type: 'municipality', label: '古河市 いばらき業務改善奨励金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/58756', type: 'media', label: 'いばらき業務改善奨励金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-miyagi',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'ものづくり中小企業生産性向上設備導入補助金（宮城県）',
+    authority: '宮城県（経済商工観光部）／関連支援機関: 公益財団法人みやぎ産業振興機構',
+    statement:
+      '宮城県が県内のものづくり中小企業を対象に実施する、生産性向上のための設備の新設・更新を支援する代表的な設備投資系補助金（都道府県レベルの代表例）。' +
+      '補助率・上限額・対象要件・募集期間は年度ごとに変動するため、必ず最新の募集要項及び宮城県公式で要確認。県には創業支援・経営革新・デジタル化支援など他の制度も併存する。',
+    application:
+      '宮城県公式サイトの募集ページから交付要綱・様式を入手し、電子申請フォーム等で申請書類を提出する（先着順の年度あり）。詳細は交付要綱で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.miyagi.jp/soshiki/shinsan/seisansei-hojo.html', type: 'municipality', label: '宮城県 ものづくり中小企業生産性向上設備導入補助金' },
+      { url: 'https://www.pref.miyagi.jp/soshiki/chukisi/', type: 'municipality', label: '宮城県 中小企業支援室' },
+      { url: 'https://www.joho-miyagi.or.jp/', type: 'operator', label: 'みやぎ産業振興機構' },
+    ],
+  },
+  {
+    id: 'subsidy-sagamihara',
+    level: 'municipality',
+    domain: 'business',
+    name: '相模原市ベンチャー・スタートアップ企業進出補助金',
+    authority: '相模原市（経済部）／関連窓口: 公益財団法人相模原市産業振興財団',
+    statement:
+      '相模原市が実施する、市外から市内へ事業所を新設するベンチャー・スタートアップ企業向けの代表的な補助制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '法人登記又は開業届を行って一定年数以内の中小企業等を対象に、市内事業所の設置に係る賃料や外注加工費等の一部を補助する。補助額・対象要件・募集期間は年度ごとに変動するため、最新の募集要項及び相模原市公式で要確認。',
+    application:
+      '相模原市公式サイトの事業主向け助成制度ページから募集要項・申請様式を確認し、所定の申請期間内に市（経済部）の担当窓口へ申請する。創業全般の相談・併用支援は相模原市産業振興財団の窓口で対応。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sagamihara.kanagawa.jp/sangyo/sangyo/1026664/1003291/josei/1029250.html', type: 'municipality', label: '相模原市 ベンチャー・スタートアップ企業進出補助金' },
+      { url: 'https://www.city.sagamihara.kanagawa.jp/sangyo/sangyo/1026664/1003291/josei/index.html', type: 'municipality', label: '相模原市 事業主向け助成制度' },
+      { url: 'https://ssz.or.jp/foundation/sogyoshien', type: 'operator', label: '相模原市産業振興財団 創業・起業総合支援' },
+    ],
+  },
+  {
+    id: 'subsidy-niigata-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '創業サポート事業補助金（新潟市）',
+    authority: '新潟市（経済部 産業政策・イノベーション推進課）',
+    statement:
+      '新潟市が市内で新たに事業を始める個人・グループ・中小ベンチャー企業を対象に、事業所（オフィス／店舗）の賃借料の一部を補助する制度（政令指定都市＝' +
+      '市区町村レベルの創業支援の代表例）。近年は新規募集を終了し継続交付者のみが対象となるなど運用は年度で変動する。金額・要件・募集の有無は年度ごとに変わるため、最新の募集要項及び新潟市公式で要確認。',
+    application:
+      '新潟市公式サイト（商工支援・創業支援ページ）又は経済部 産業政策・イノベーション推進課を通じて、募集回ごとの募集要項に従い申請。創業計画・賃貸借契約等の書類を提出し、市の審査・交付決定を経て賃料補助を受ける。募集の有無・スケジュールは申請前に公式窓口で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.niigata.lg.jp/business/shoko/shokoshien/sogyoshien/sougyousapotoofisu/seidonitsuite.html', type: 'municipality', label: '新潟市 創業サポート事業（オフィス）補助金' },
+      { url: 'https://www.city.niigata.lg.jp/shisei/gyoseiunei/hojyokin/hojyokin7.files/R07hozyokin.pdf', type: 'municipality', label: '新潟市 令和7年度 補助金一覧表' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/44683', type: 'government', label: 'J-Net21 新潟市 創業サポート事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-shizuoka-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '静岡市中小企業等デジタル活用事業補助金（及び特定創業支援等事業）',
+    authority: '静岡市（経済局）／中小企業支援センター B-nest',
+    statement:
+      '静岡市（政令指定都市）が市内中小企業者・個人事業主向けに実施する代表的な市レベルの補助制度の一例として、中小企業等デジタル活用事業補助金がある' +
+      '（PC・タブレット・キャッシュレス決済端末等の導入支援）。あわせて静岡市は特定創業支援等事業（B-nest等での支援）を認定しており、証明書発行により会社設立時の' +
+      '登録免許税軽減等の創業者向け優遇が受けられる。補助率・上限額・対象・募集期間は年度ごとに変動するため、最新の市公式・募集要項で要確認。',
+    application:
+      'デジタル活用補助金は市が定める公募期間内に交付申請。創業者はB-nest等の特定創業支援を受けたうえで市へ証明書発行を申請し各種優遇を利用する。詳細・最新の募集状況は静岡市経済局又はB-nestで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.shizuoka.lg.jp/000_004012_00011.html', type: 'municipality', label: '静岡市 中小企業等デジタル活用事業補助金' },
+      { url: 'https://www.city.shizuoka.lg.jp/s2859/s003858.html', type: 'municipality', label: '静岡市 特定創業支援等事業' },
+      { url: 'https://www.b-nest.jp/want_to/hojokin.html', type: 'operator', label: 'B-nest 静岡市中小企業支援センター 補助金' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
