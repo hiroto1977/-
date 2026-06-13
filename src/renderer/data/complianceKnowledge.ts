@@ -4641,5 +4641,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.moj.go.jp/content/001267498.pdf', type: 'government', label: '法務省 コンピュータ・ウイルスに関する罪について' },
     ],
   },
+  {
+    value: {
+      id: 'tax-cfc-rules',
+      domain: 'tax',
+      title: '外国子会社合算税制（タックスヘイブン対策税制）',
+      statement:
+        '外国子会社合算税制（タックスヘイブン対策税制／CFC税制）は、内国法人等が税負担の著しく低い国・地域に設立した外国関係会社を' +
+        '通じて所得を留保することによる租税回避を防止するため、一定の要件のもとで、その外国関係会社の所得に相当する金額を株主である' +
+        '内国法人等の所得とみなして合算し課税する制度である。経済活動基準を満たす実体を伴う事業所得は、原則として合算対象から除かれる。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mof.go.jp/tax_policy/summary/international/175.htm', type: 'government', label: '財務省 外国子会社合算税制の概要' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180111/index.htm', type: 'government', label: '国税庁 外国子会社合算税制に関するQ&A' },
+      { url: 'https://www.ma-cp.com/about-ma/cfc-taxation/', type: 'media', label: '外国子会社合算税制（CFC税制）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-platform-taxation',
+      domain: 'tax',
+      title: '消費税のプラットフォーム課税（特定プラットフォーム事業者制度）',
+      statement:
+        '令和6年度税制改正により、2025年（令和7年）4月1日から、国外事業者が日本国内の消費者向けに行うデジタルサービス（電気通信利用役務の提供）の' +
+        'うち、デジタルプラットフォームを介して行われ対価を当該プラットフォーム経由で収受するものについて、国税庁長官の指定を受けた' +
+        '「特定プラットフォーム事業者」が当該役務の提供を行ったものとみなして消費税の申告・納税義務を負う制度が導入された（指定対象は対象取引対価が年50億円超の事業者）。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6568.htm', type: 'government', label: '国税庁 No.6568 プラットフォーム課税' },
+      { url: 'https://www.nta.go.jp/publication/pamph/shohi/kazei/index.htm', type: 'government', label: '国税庁 消費税のプラットフォーム課税について' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/82447/', type: 'media', label: 'プラットフォーム課税 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-work-interval',
+      domain: 'labor',
+      title: '勤務間インターバル制度',
+      statement:
+        '勤務間インターバル制度は、1日の勤務終了後から翌日の出社までの間に一定時間以上の休息時間（インターバル）を設け、労働者の生活時間や' +
+        '睡眠時間を確保する制度である。2019年4月施行の改正労働時間等設定改善法により、事業主にこの制度を導入する努力義務が定められた（罰則を伴う義務ではなく努力義務）。',
+      authority: '所管: 厚生労働省（労働時間等設定改善法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://work-holiday.mhlw.go.jp/interval/', type: 'government', label: '厚生労働省 勤務間インターバル制度ポータル' },
+      { url: 'https://www.mhlw.go.jp/content/11201250/000462015.pdf', type: 'government', label: '厚生労働省 勤務間インターバル制度関連資料' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/70320/', type: 'media', label: '勤務間インターバル制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-postbirth-support-benefit',
+      domain: 'labor',
+      title: '出生後休業支援給付金（2025年4月新設）',
+      statement:
+        '2025年（令和7年）4月1日施行の雇用保険法改正により「出生後休業支援給付金」が新設された。子の出生後一定期間に被保険者とその配偶者が' +
+        'ともに育児休業（産後パパ育休等）を取得した場合等に、一定要件のもと最大28日分について休業開始時賃金日額の13%相当を、通常の育児休業給付' +
+        '（67%）に上乗せして支給するもので、社会保険料免除等と併せて休業前の手取り実質10割相当を目指す制度である（配偶者が無業・自営等の場合は配偶者の育休取得を要しない例外あり）。',
+      authority: '所管: 厚生労働省（雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000135090_00001.html', type: 'government', label: '厚生労働省 育児休業等給付について' },
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002098800.pdf', type: 'government', label: '神奈川労働局 出生後休業支援給付金リーフレット' },
+      { url: 'https://www.st-works.com/column/labor-law/houkaisei_33', type: 'media', label: '出生後休業支援給付金の創設 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-prescription-renewal',
+      domain: 'legal',
+      title: '消滅時効の完成猶予・更新（改正民法）',
+      statement:
+        '2020年4月1日施行の改正民法により、従来の「時効の中断・停止」に代わり「時効の完成猶予・更新」の枠組みが導入された。裁判上の請求や' +
+        '強制執行等の事由がある間はその終了まで時効の完成が猶予され、確定判決等で権利が確定すると時効が更新されて新たに進行する（民法147条等）。' +
+        'ほかに協議を行う旨の合意による完成猶予（151条）、催告による6か月の完成猶予（150条）等が定められている。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/content/001259612.pdf', type: 'government', label: '法務省 民法（債権法）改正 消滅時効の見直し' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089/20200401_429AC0000000044/', type: 'government', label: 'e-Gov法令検索 民法（147条〜152条）' },
+      { url: 'https://www.businesslawyers.jp/practices/226', type: 'media', label: '消滅時効の民法改正の概要 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-land-lease-right',
+      domain: 'legal',
+      title: '借地借家法における借地権',
+      statement:
+        '借地権とは、建物の所有を目的とする地上権又は土地の賃借権をいう（借地借家法2条）。普通借地権の存続期間は原則30年（契約でより長い期間を' +
+        '定めることは可能）で、更新後の期間は最初の更新が20年、その後は10年とされ、賃貸人が更新を拒絶するには正当の事由が必要である。' +
+        'これらに対し、更新がなく期間満了で確定的に終了する定期借地権（一般定期借地権・事業用定期借地権等）の類型もある。',
+      authority: '所管: 法務省（借地借家法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00304.html', type: 'government', label: '法務省 借地借家法（定期借地権等）について' },
+      { url: 'https://laws.e-gov.go.jp/law/403AC0000000090', type: 'government', label: 'e-Gov法令検索 借地借家法（2条・3条・4条・6条）' },
+      { url: 'https://www.mlit.go.jp/totikensangyo/totikensangyo_tk5_000106.html', type: 'government', label: '国土交通省 定期借地権の解説' },
+    ],
+  },
 ];
 // Stryker restore all
