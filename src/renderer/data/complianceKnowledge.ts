@@ -3359,5 +3359,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.cric.or.jp/qa/hajime/hajime2.html', type: 'media', label: '著作権情報センター 著作者の権利' },
     ],
   },
+  {
+    value: {
+      id: 'tax-withholding-payment-special',
+      domain: 'tax',
+      title: '源泉所得税の納期の特例',
+      statement:
+        '源泉徴収した所得税及び復興特別所得税は原則として徴収した月の翌月10日までに納付するが、給与の支給人員が常時10人未満の' +
+        '源泉徴収義務者は、税務署長に申請書を提出して承認を受けることで、給与等・退職手当・税理士等の報酬に係る源泉所得税を' +
+        '年2回（1月〜6月分は7月10日、7月〜12月分は翌年1月20日）にまとめて納付できる（納期の特例）。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 源泉所得税の納付期限と納期の特例' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2110.htm', type: 'government', label: '国税庁 No.2110 事業主がする源泉徴収' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/gensen/annai/1648_14.htm', type: 'government', label: '国税庁 A2-8 納期の特例の承認申請' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-consumption-interim',
+      domain: 'tax',
+      title: '消費税の中間申告・中間納付',
+      statement:
+        '消費税の課税事業者は、直前の課税期間の確定消費税額（地方消費税を含まない国税分の年税額）が48万円を超える場合、中間申告・' +
+        '中間納付を行う必要がある。回数は年税額に応じて区分され、48万円超400万円以下は年1回、400万円超4,800万円以下は年3回、4,800万円超は年11回となる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6609.htm', type: 'government', label: '国税庁 No.6609 中間申告の方法' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/zeirishi/annai/pdf/002.pdf', type: 'government', label: '国税庁 消費税の中間申告制度' },
+      { url: 'https://www.yayoi-kk.co.jp/kaikei/oyakudachi/chukanshinkoku/', type: 'media', label: '消費税の中間申告 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-sickness-allowance',
+      domain: 'labor',
+      title: '健康保険の傷病手当金',
+      statement:
+        '健康保険の被保険者が業務外の病気やケガの療養のため働けず、連続する3日間（待期）を含み4日以上仕事に就けなかった場合、' +
+        '4日目以降の働けなかった日について傷病手当金が支給される。1日あたりの額は原則として支給開始日以前の直近12か月の標準報酬月額を' +
+        '平均した額を30で割った額の3分の2相当で、支給期間は支給開始日から通算して1年6か月である。',
+      authority: '所管: 厚生労働省・全国健康保険協会（健康保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.kyoukaikenpo.or.jp/g6/cat620/r307/', type: 'operator', label: '協会けんぽ 病気やケガで会社を休んだとき（傷病手当金）' },
+      { url: 'https://www.kyoukaikenpo.or.jp/benefit/injury_and_sickness_allowance/index.html', type: 'operator', label: '協会けんぽ 傷病手当金' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_22308.html', type: 'government', label: '厚生労働省 傷病手当金の支給期間の通算化' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-maternity-allowance',
+      domain: 'labor',
+      title: '健康保険の出産手当金',
+      statement:
+        '健康保険の被保険者が出産のため会社を休み、その間給与の支払を受けなかった場合、出産の日（予定日後の出産は出産予定日）以前42日' +
+        '（多胎妊娠は98日）から出産の翌日以後56日までの範囲内で会社を休んだ期間について出産手当金が支給される。支給額は1日あたり、' +
+        '原則として支給開始日以前12か月の標準報酬月額を平均した額の30分の1の3分の2相当である（出産育児一時金とは別の給付）。',
+      authority: '所管: 厚生労働省・全国健康保険協会（健康保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.kyoukaikenpo.or.jp/benefit/childbirth/001/index.html', type: 'operator', label: '協会けんぽ 出産手当金' },
+      { url: 'https://laws.e-gov.go.jp/law/211AC0000000070', type: 'government', label: 'e-Gov法令検索 健康保険法（102条 出産手当金）' },
+      { url: 'https://www.bosei-navi.mhlw.go.jp/glossary/provide02.html', type: 'government', label: '厚生労働省 母性健康管理 用語集（出産手当金）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-consumer-collective-litigation',
+      domain: 'legal',
+      title: '消費者団体訴訟制度（差止請求・被害回復）',
+      statement:
+        '消費者団体訴訟制度では、内閣総理大臣が認定した「適格消費者団体」が、事業者の不当な勧誘・不当な契約条項・不当な表示等に対して' +
+        '差止請求を行うことができる（消費者契約法・景品表示法・特定商取引法・食品表示法に基づく）。さらに、適格消費者団体のうち認定を受けた' +
+        '「特定適格消費者団体」は、消費者裁判手続特例法に基づき、消費者に代わって被害の集団的な回復を求める被害回復裁判手続を行うことができる。',
+      authority: '所管: 消費者庁（消費者契約法・消費者裁判手続特例法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/collective_litigation_system/about_qualified_consumer_organization', type: 'government', label: '消費者庁 適格消費者団体・特定適格消費者団体とは' },
+      { url: 'https://www.gov-online.go.jp/useful/article/201401/3.html', type: 'government', label: '政府広報オンライン 消費者団体訴訟制度' },
+      { url: 'https://www.kokusen.go.jp/danso/', type: 'media', label: '国民生活センター 消費者団体訴訟制度の紹介' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-trade-name',
+      domain: 'legal',
+      title: '商号に関する規制（商号選定自由と誤認防止）',
+      statement:
+        '会社・商人は原則として自由に商号を定めることができる（商号選定自由の原則。商法11条・会社法6条）が、会社でない者は名称・商号中に' +
+        '会社であると誤認されるおそれのある文字を用いてはならない（会社法7条）。さらに、何人も不正の目的をもって他の会社・商人であると' +
+        '誤認されるおそれのある名称・商号を使用してはならず、これにより営業上の利益を侵害され又は侵害されるおそれのある者は使用の差止め等を請求できる（会社法8条・商法12条）。',
+      authority: '所管: 法務省（会社法・商法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（6条・7条・8条）' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/16220050726086.htm', type: 'government', label: '衆議院 会社法（平成17年法律第86号）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_00076.html', type: 'government', label: '法務省 商号調査について' },
+    ],
+  },
 ];
 // Stryker restore all
