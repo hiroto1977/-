@@ -6036,5 +6036,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://shiodome.co.jp/js/blog/7478', type: 'media', label: '組織再編の会社形態一覧 解説' },
     ],
   },
+  {
+    value: {
+      id: 'labor-work-injury-recognition',
+      domain: 'labor',
+      title: '労災保険における業務災害の認定（業務遂行性・業務起因性）',
+      statement:
+        '労災保険給付の対象となる「業務災害」と認められるには、労働者が労働契約に基づき事業主の支配下にある状態で災害が発生したこと（業務遂行性）と、' +
+        '業務に内在する危険が現実化したものと認められること（業務起因性）の両方が必要である。負傷のほか、業務に起因する疾病（業務上疾病）も対象で、' +
+        '過重労働による脳・心臓疾患や強い心理的負荷による精神障害についても、厚生労働省の認定基準に基づき業務上外が判断される。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/rousai_hoken/ro-gyoum.html', type: 'government', label: '東京労働局 業務災害について（業務遂行性・業務起因性）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/090316_00006.html', type: 'government', label: '厚生労働省 脳・心臓疾患の労災補償（認定基準）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/090316_00002.html', type: 'government', label: '厚生労働省 過労死等の労災補償状況（精神障害の認定）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-workers-comp-rate',
+      domain: 'labor',
+      title: '労災保険率（業種別・全額事業主負担）',
+      statement:
+        '労災保険率は、労働保険徴収法に基づき事業の種類ごとに過去の災害率等を考慮して労災保険率表で定められ、労災保険の保険料は原則として全額事業主が' +
+        '負担する。一定規模以上の継続事業等には、過去の労災給付の実績に応じて保険率（又は保険料額）を増減させるメリット制が適用される。具体的な料率は' +
+        '業種により異なり定期的に改定されるため、最新の料率は厚生労働省の労災保険率表で要確認。',
+      authority: '所管: 厚生労働省（労働保険徴収法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/rousaihoken06/rousai_hokenritsu_kaitei.html', type: 'government', label: '厚生労働省 労災保険率について' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudouhokenpoint/dl/rousaimerit.pdf', type: 'government', label: '厚生労働省 労災保険のメリット制について' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/hoken/2024707.html', type: 'government', label: '厚生労働省 労災保険料は全額事業主負担' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-dividends-received',
+      domain: 'tax',
+      title: '受取配当等の益金不算入',
+      statement:
+        '法人税では、法人が他の内国法人から受ける配当等の額は、法人間の二重課税を排除する趣旨から、株式等の保有割合に応じた区分ごとに定められた割合で' +
+        '益金に算入しない（益金不算入）。完全子法人株式等（保有割合100%）は全額、関連法人株式等（保有割合3分の1超）は全額（負債利子控除あり）、' +
+        'その他の株式等は50%、非支配目的株式等（保有割合5%以下）は20%が不算入となる。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/03/03_01_01.htm', type: 'government', label: '国税庁 法人税基本通達 受取配当等の益金不算入' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2015_5/pdf/04.pdf', type: 'government', label: '国税庁 受取配当等の益金不算入（株式区分と不算入割合）' },
+      { url: 'https://www.pwc.com/jp/ja/knowledge/news/tax-jtu/20230130-2.html', type: 'media', label: '受取配当等の益金不算入制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-deferred-asset',
+      domain: 'tax',
+      title: '繰延資産の償却（法人税・所得税）',
+      statement:
+        '繰延資産とは、法人・個人が支出する費用のうちその支出の効果が支出の日以後1年以上に及ぶもの（会計上の繰延資産である創立費・開業費・開発費等のほか、' +
+        '税法固有の繰延資産として公共的施設等の負担金、資産を賃借するための権利金、ノウハウの頭金等を含む）をいい、その支出の効果の及ぶ期間にわたって償却し' +
+        '損金（必要経費）に算入する。ただし支出額が20万円未満の少額のものは、支出した事業年度（年分）に全額を損金（必要経費）算入できる。',
+      authority: '所管: 国税庁（法人税法・所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/08/08_01.htm', type: 'government', label: '国税庁 法人税基本通達 繰延資産の意義及び範囲' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/shotoku/08/14.htm', type: 'government', label: '国税庁 所得税基本通達 繰延資産の償却費' },
+      { url: 'https://www.zeiken.co.jp/hourei/HHHOU000010/134.html', type: 'media', label: '法人税法施行令134条 少額繰延資産の損金算入' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-share-types',
+      domain: 'legal',
+      title: '会社法における種類株式',
+      statement:
+        '株式会社は、剰余金の配当・残余財産の分配・株主総会の議決権その他について内容の異なる2以上の種類の株式（種類株式）を発行することができ（会社法108条1項）、' +
+        'その発行には当該種類株式の内容と発行可能種類株式総数を定款で定めることが必要である（同条2項）。種類株式には優先株式・劣後株式、議決権制限株式、譲渡制限株式、' +
+        '取得請求権付株式、取得条項付株式、全部取得条項付種類株式、拒否権付株式（黄金株）、役員選任権付株式がある。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（108条）' },
+      { url: 'https://www.japaneselawtranslation.go.jp/en/laws/view/3206/ja', type: 'government', label: '日本法令外国語訳DB 会社法（108条 種類株式）' },
+      { url: 'https://ja.wikibooks.org/wiki/会社法第108条', type: 'media', label: '会社法108条 種類株式 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-defective-intent',
+      domain: 'legal',
+      title: '意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）',
+      statement:
+        '2020年4月1日施行の改正民法により、錯誤による意思表示は、その錯誤が法律行為の目的及び取引上の社会通念に照らして重要なものであるときは取り消すことができる' +
+        '（民法95条。旧法の「無効」から「取消し」に変更）。また、詐欺又は強迫による意思表示も取り消すことができ（96条）、詐欺による取消しは善意無過失の第三者に' +
+        '対抗できないが、強迫による取消しは第三者にも対抗できる。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（95条・96条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://www.agaroot.jp/shiho/column/fraud-duress/', type: 'media', label: '民法96条 詐欺・強迫 解説' },
+    ],
+  },
 ];
 // Stryker restore all
