@@ -1662,5 +1662,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-5-symbolic-interactionism-george-herbert-mead-herbert-blumer/', type: 'academic', label: 'Montgomery College — Symbolic Interactionism: Mead & Blumer（3前提）' },
     ],
   },
+  {
+    id: 'econ-fisher-equation',
+    discipline: 'economics',
+    title: 'フィッシャー方程式（フィッシャー効果）',
+    statement:
+      '名目金利・実質金利・期待インフレ率の関係を表す式。アメリカの経済学者アーヴィング・フィッシャーにちなむ。近似的に「名目金利 ≒ 実質金利 ＋ 期待インフレ率」で表され、厳密には (1+名目)=(1+実質)(1+期待インフレ) の関係をもつ。実質金利は名目金利から期待インフレ率を差し引いたものとして事前的（ex ante）に定義される。' +
+      'フィッシャーは実質金利が貨幣的要因から独立であると考え、ここから期待インフレ率が上昇すると名目金利がほぼ同幅で上昇し実質金利は長期的にほぼ一定に保たれるという「フィッシャー効果」が導かれる。実務では物価連動債（TIPS）と通常国債の利回り差（ブレークイーブン・インフレ率）から期待インフレを推計する応用がある（ただし当該差にはリスク・流動性プレミアムも含まれうる）。短期や名目硬直性のもとでは完全には成立しないとの議論もある。',
+    keyFigures: 'アーヴィング・フィッシャー／名目金利≒実質金利+期待インフレ率（厳密には(1+i)=(1+r)(1+π^e)）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Irving-Fisher', type: 'reference', label: 'Britannica Money — Irving Fisher' },
+      { url: 'https://en.wikipedia.org/wiki/Fisher_equation', type: 'reference', label: 'Wikipedia — Fisher equation' },
+      { url: 'https://en.wikipedia.org/wiki/Fisher_effect', type: 'reference', label: 'Wikipedia — Fisher effect（フィッシャー仮説・名目金利の調整）' },
+    ],
+  },
+  {
+    id: 'econ-business-cycles',
+    discipline: 'economics',
+    title: '景気循環とその諸波動',
+    statement:
+      '経済活動（生産・雇用・所得など）が、拡張（好況）→後退→収縮（不況）→回復という局面を周期的に繰り返す変動を景気循環という。各局面は「景気の山」と「谷」によって画される。' +
+      '要因や周期の長さにより複数の波動が区別される。在庫変動に起因する約40か月周期のキチン循環（短期波動）、設備投資に起因する約10年周期のジュグラー循環（主循環）、建設投資・人口移動に起因する約20年周期のクズネッツ循環、技術革新に起因する約50年周期のコンドラチェフ循環（長期波動）である。シュンペーターはキチン・ジュグラー・コンドラチェフの三循環を統合する図式を提示し、技術革新（イノベーション）を景気循環の原動力とみなした。日本では内閣府（経済社会総合研究所）が景気動向指数に基づき景気基準日付（山・谷）を事後的に認定している。',
+    keyFigures: 'キチン(約40か月)・ジュグラー(約10年・主循環)・クズネッツ(約20年)・コンドラチェフ(約50年)／統合: シュンペーターの三循環図式',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/business-cycle', type: 'reference', label: 'Britannica Money — Business cycle（四循環の定義・周期）' },
+      { url: 'https://www.esri.cao.go.jp/jp/stat/di/hiduke.html', type: 'government', label: '内閣府 経済社会総合研究所 — 景気基準日付（山・谷の事後認定）' },
+      { url: 'https://www.jshet.net/old/annals/het47-50/4901/legrandandhagemann4901.pdf', type: 'academic', label: 'Le Grand & Hagemann — Business Cycles in Juglar and Schumpeter（経済学史学会）' },
+    ],
+  },
+  {
+    id: 'mgmt-experience-curve',
+    discipline: 'management',
+    title: '経験曲線効果・学習曲線（experience/learning curve）',
+    statement:
+      '製品の累積生産量が倍増するごとに、単位あたりの実質コストが一定の割合（典型的には10〜30%程度）で低下していくという経験則。源流は1936年にT.P.ライト（Curtiss-Wrightの技術者）が航空機製造で見出した「学習曲線」で、累積生産量が倍増するたびに1機あたりの必要労働時間が約20%低下することを示した。' +
+      'ボストン・コンサルティング・グループ（BCG）は1960年代後半（半導体のコスト分析を契機）に、これを製造だけでなく管理・流通・マーケティング等を含む企業全体の付加価値コストへ拡張し「経験曲線」として一般化した。コスト低下の要因は習熟・作業改善・標準化・規模の経済・技術革新等とされる。創業者B.ヘンダーソンは「先発して累積生産量（市場シェア）を増やせば自己強化的なコスト優位を築ける」と論じ、これがBCGのプロダクト・ポートフォリオ・マネジメント（PPM）の理論的根拠となった。ただし全産業に一律に当てはまるわけではない。',
+    keyFigures: 'T.P.ライト（1936 学習曲線・航空機で約20%低下）／BCG・B.ヘンダーソン（1960年代後半に経験曲線として一般化・1968公表、20〜30%）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bcg.com/publications/1968/business-unit-strategy-growth-experience-curve', type: 'reference', label: 'BCG — The Experience Curve（1968 オリジナル/Perspectives, 一次出典）' },
+      { url: 'https://en.wikipedia.org/wiki/Experience_curve_effects', type: 'reference', label: 'Wikipedia — Experience curve effects（Wright 1936 / BCG 1960s）' },
+      { url: 'https://en.wikipedia.org/wiki/Theodore_Paul_Wright', type: 'reference', label: 'Wikipedia — Theodore Paul Wright（1936論文・Curtiss-Wright）' },
+    ],
+  },
+  {
+    id: 'human-fundamental-attribution-error',
+    discipline: 'human-science',
+    title: '基本的帰属の誤り（対応バイアス, fundamental attribution error）',
+    statement:
+      '他者の行動の原因を説明する際に、状況的要因（外的要因）の影響を過小評価し、その人の性格・能力・態度といった内的・気質的要因を過大評価する傾向。たとえば遅刻した人を見て「渋滞」（状況）より「だらしない性格」（気質）のせいだと考えやすい。' +
+      '社会心理学者リー・ロスが1977年にこの語を提唱した。ジョーンズとハリス（1967）の実験——被験者に、書き手が強制的に書かされたと知らされた意見文でも書き手の本心（態度）だと推測する傾向＝対応バイアス——が古典的根拠とされる。自分の行動は状況のせい、他者の行動は性格のせいと考える「行為者-観察者バイアス」とも関連する。なお西洋（個人主義）文化で強く、東アジア（集団主義）文化では弱いという文化差の指摘もある。',
+    keyFigures: 'リー・ロス（1977 命名）／エドワード・ジョーンズ & ヴィクター・ハリス（1967 対応バイアス実験）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/fundamental-attribution-error', type: 'reference', label: 'Encyclopaedia Britannica — Fundamental attribution error' },
+      { url: 'https://en.wikipedia.org/wiki/Fundamental_attribution_error', type: 'reference', label: 'Wikipedia — Fundamental attribution error（ロス1977・ジョーンズ&ハリス1967・文化差）' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/socialpsychology/chpt/fundamental-attribution-error.pdf', type: 'academic', label: 'SAGE Encyclopedia of Social Psychology — Fundamental Attribution Error' },
+    ],
+  },
+  {
+    id: 'bizlaw-limited-liability',
+    discipline: 'business-law',
+    title: '株主有限責任の原則',
+    statement:
+      '株式会社の株主は、その有する株式の引受価額（出資額）を限度として会社に対して責任を負うのみで、会社の債務について会社債権者に対し直接には責任を負わない、という会社法の基本原則である（会社法104条「株主の責任は、その有する株式の引受価額を限度とする」）。' +
+      '株主は出資額を超えて私財で会社の借金を弁済する義務がなく、これによって出資者のリスクを限定し、広く資本を集めて大規模な事業を可能にする近代株式会社制度の中核的特徴をなす。前提として、会社は株主から独立した法人格を持つ（法人格・所有と経営の分離）。株主の責任は会社を介した「間接有限責任」であり、会社財産で弁済できない場合に直接の弁済を迫られる持分会社（合名会社等）の無限責任社員とは対照的である。例外として、法人格が形骸化・濫用されている場合に株主の責任を問う「法人格否認の法理」がある。',
+    keyFigures: '株主有限責任＝会社法104条／前提: 法人格・所有と経営の分離／間接有限責任／例外: 法人格否認の法理',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 — 会社法 第104条（株主の責任）' },
+      { url: 'https://kotobank.jp/word/%E6%A0%AA%E4%B8%BB%E6%9C%89%E9%99%90%E8%B2%AC%E4%BB%BB%E3%81%AE%E5%8E%9F%E5%89%87-167490', type: 'reference', label: 'コトバンク — 株主有限責任の原則（間接有限責任の定義）' },
+      { url: 'https://ja.wikibooks.org/wiki/%E4%BC%9A%E7%A4%BE%E6%B3%95%E7%AC%AC104%E6%9D%A1', type: 'reference', label: 'Wikibooks — 会社法第104条（条文・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-lippmann-pseudo-environment',
+    discipline: 'information-sociology',
+    title: '擬似環境とステレオタイプ（リップマン『世論』）',
+    statement:
+      'ジャーナリストのウォルター・リップマンが1922年の著書『世論（Public Opinion）』で示した概念。現実の環境はあまりに複雑で広大なため人が直接知ることはできず、人々はメディアの報道などを通じて頭の中に作り上げた「擬似環境（pseudo-environment）」に対して反応・行動する。' +
+      'その際、人は世界を単純化して把握するために紋切り型の固定観念＝「ステレオタイプ（stereotype）」を用いる（この語を印刷用語から借り、現代的な社会的意味で普及させたのもリップマンとされる）。同書冒頭「外界と頭の中の像（The World Outside and the Pictures in Our Heads）」が示すように、外界と「我々の頭の中の像」とのズレが世論形成の鍵となる。メディアが現実認識を媒介するというこの視点は、後の議題設定理論（マコームズ&ショー）や培養理論（ガーブナー）などメディア効果研究の源流の一つとされる。',
+    keyFigures: 'ウォルター・リップマン（1922『世論（Public Opinion）』）／擬似環境・ステレオタイプ・頭の中の像',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Walter-Lippmann', type: 'reference', label: 'Encyclopaedia Britannica — Walter Lippmann（Public Opinion）' },
+      { url: 'https://en.wikipedia.org/wiki/Public_Opinion_(book)', type: 'reference', label: 'Wikipedia — Public Opinion (book, 1922)（擬似環境・頭の中の像）' },
+      { url: 'https://www.gutenberg.org/ebooks/6456', type: 'academic', label: 'Project Gutenberg — Walter Lippmann, Public Opinion (1922) 全文（原典）' },
+    ],
+  },
 ];
 // Stryker restore all
