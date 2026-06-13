@@ -1457,5 +1457,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.smbc.co.jp/hojin/businessjoho/keiei/fund-transfer.html', type: 'media', label: '資金移動業 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-gift-tax-annual',
+      domain: 'tax',
+      title: '贈与税の暦年課税（基礎控除110万円）',
+      statement:
+        '暦年課税の贈与税では、1月1日から12月31日までの1年間に同一の受贈者が取得した財産の合計額から基礎控除額110万円を' +
+        '差し引いて課税価格を計算する。1年間の合計が110万円以下であれば贈与税はかからず、申告も不要である。',
+      authority: '所管: 国税庁（相続税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4402.htm', type: 'government', label: '国税庁 No.4402 贈与税がかかる場合' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm', type: 'government', label: '国税庁 No.4408 贈与税の計算と税率（暦年課税）' },
+      { url: 'https://chester-tax.com/encyclopedia/9307.html', type: 'media', label: '暦年贈与の非課税枠 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-small-amount-depreciation',
+      domain: 'tax',
+      title: '中小企業者等の少額減価償却資産の特例',
+      statement:
+        '青色申告書を提出する一定の中小企業者等は、取得価額が基準額未満の減価償却資産を取得・事業供用した場合、' +
+        'その取得価額の全額を取得事業年度に損金算入できる（租税特別措置法上の時限措置）。基準額は1単位30万円未満であったが、' +
+        '令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げられ、1事業年度の合計上限は300万円。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5408.htm', type: 'government', label: '国税庁 No.5408 中小企業者等の少額減価償却資産の特例' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/syougaku_shisan.html', type: 'government', label: '中小企業庁 少額減価償却資産の特例' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2026/08taikou_03.htm', type: 'government', label: '財務省 令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-fixed-term-conversion',
+      domain: 'labor',
+      title: '無期転換ルール（有期から無期への転換）',
+      statement:
+        '同一の使用者との有期労働契約が反復更新され通算契約期間が5年を超えた場合、労働者が現在の契約期間満了日までに' +
+        '無期労働契約への転換を申し込むと、使用者は承諾したものとみなされ期間の定めのない労働契約が成立する（労働契約法18条）。' +
+        '通算期間のカウントは2013年4月1日以後に開始した有期労働契約が対象。',
+      authority: '所管: 厚生労働省（労働契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_21917.html', type: 'government', label: '厚生労働省 無期転換ルールについて' },
+      { url: 'https://muki.mhlw.go.jp/', type: 'government', label: '厚生労働省 無期転換ポータルサイト' },
+      { url: 'https://www.jtuc-rengo.or.jp/', type: 'media', label: '連合 無期転換ルール 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-equal-pay',
+      domain: 'labor',
+      title: '同一労働同一賃金（パート・有期雇用労働法）',
+      statement:
+        '事業主は、同一企業内の正社員と短時間・有期雇用労働者との間で、基本給・賞与・各種手当等の待遇について、' +
+        '職務の内容等に照らして不合理な待遇差を設けることを禁止される。また労働者から求めがあった場合、' +
+        '事業主は正社員との待遇差の内容と理由を説明する義務を負う。',
+      authority: '所管: 厚生労働省（パートタイム・有期雇用労働法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html', type: 'government', label: '厚生労働省 同一労働同一賃金特集ページ' },
+      { url: 'https://part-tanjikan.mhlw.go.jp/reform/', type: 'government', label: '厚生労働省 パート・有期雇用労働法ポータル' },
+      { url: 'https://www.gov-online.go.jp/useful/article/202004/2.html', type: 'government', label: '政府広報オンライン 不合理な待遇差をなくしましょう' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-consumer-contract-act',
+      domain: 'legal',
+      title: '消費者契約法',
+      statement:
+        '事業者の不実告知・断定的判断の提供・不利益事実の不告知等の不当な勧誘により消費者が誤認して締結した契約は、' +
+        '消費者が取り消すことができる（4条）。また事業者の損害賠償責任を全部免除する条項等、消費者の利益を' +
+        '不当に害する不当条項は無効となる（8条〜10条）。',
+      authority: '所管: 消費者庁（消費者契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/', type: 'government', label: '消費者庁 消費者契約法' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/annotations/', type: 'government', label: '消費者庁 消費者契約法 逐条解説' },
+      { url: 'https://www.businesslawyers.jp/practices/262', type: 'media', label: '損害賠償責任の免除条項 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-installment-sales',
+      domain: 'legal',
+      title: '割賦販売法（クレジットカード／包括信用購入あっせん）',
+      statement:
+        'クレジットカードによる包括信用購入あっせんを業として行う者は登録等の義務を負い、クレジットカード番号等取扱業者は' +
+        '番号等の漏えい・滅失・毀損の防止その他適切な管理のため必要な措置を講じる義務（35条の16）を負う。' +
+        'また加盟店等は番号等の不正利用を防止する措置（IC対応端末の設置等。35条の17の15）を講じなければならない。',
+      authority: '所管: 経済産業省（割賦販売法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/kappuhanbaihoatobaraibunyanogaiyofaq.html', type: 'government', label: '経済産業省 割賦販売法（後払分野）の概要・FAQ' },
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/2509atobaraikantokunokihonhousin.pdf', type: 'government', label: '経済産業省 割賦販売法 監督の基本方針' },
+      { url: 'https://www.j-credit.or.jp/security/understanding/member-store.html', type: 'operator', label: '日本クレジット協会 加盟店の義務' },
+    ],
+  },
 ];
 // Stryker restore all
