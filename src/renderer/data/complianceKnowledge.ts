@@ -4964,5 +4964,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/1175', type: 'media', label: '契約解除と帰責事由の関係 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-sme-investment-credit',
+      domain: 'tax',
+      title: '中小企業投資促進税制',
+      statement:
+        '中小企業投資促進税制は、青色申告書を提出する中小企業者等が一定の機械・装置等を取得等して指定事業の用に供した場合に、その取得価額' +
+        'について特別償却（取得価額の30%）又は税額控除（取得価額の7%）の選択適用を認める租税特別措置法上の制度である。税額控除を選択できるのは' +
+        '資本金3,000万円以下の法人等に限られ、具体的な償却率・控除率や対象設備・適用期限は税制改正により変動する。',
+      authority: '所管: 経済産業省・国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5433.htm', type: 'government', label: '国税庁 No.5433 中小企業投資促進税制' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tyuusyoukigyoutousisokusinzeisei.html', type: 'government', label: '中小企業庁 中小企業投資促進税制' },
+      { url: 'https://www.freee.co.jp/kb/kb-erp/sme_investment_promotion_tax_system/', type: 'media', label: '中小企業投資促進税制 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-special-depreciation',
+      domain: 'tax',
+      title: '特別償却（租税特別措置法）',
+      statement:
+        '特別償却は、租税特別措置法に基づき、特定の設備等を取得して事業の用に供した場合に、通常の減価償却費（普通償却）に加えて、取得価額に' +
+        '一定割合を乗じた額を初年度等に追加して損金算入できる制度である。これにより課税の繰延べ（早期の損金算入による初年度の税負担軽減）の' +
+        '効果が得られ、普通償却限度額に一定割合を乗じる「割増償却」の類型もある。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5433.htm', type: 'government', label: '国税庁 No.5433 中小企業投資促進税制（特別償却又は税額控除）' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tyuusyoukigyoutousisokusinzeisei.html', type: 'government', label: '中小企業庁 中小企業投資促進税制' },
+      { url: 'https://j-net21.smrj.go.jp/accounts/tax_benefits/20140330_23.html', type: 'media', label: '中小機構 J-Net21 特別償却または税額控除' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-employment-adjustment-subsidy',
+      domain: 'labor',
+      title: '雇用調整助成金',
+      statement:
+        '雇用調整助成金は、景気の変動・産業構造の変化その他の経済上の理由により事業活動の縮小を余儀なくされた事業主が、労働者を解雇せず' +
+        '一時的に休業・教育訓練・出向を実施して雇用を維持した場合に、その休業手当等の費用の一部を助成する、雇用保険二事業（雇用安定事業）に' +
+        '基づく制度である。助成率や1人1日あたりの上限額は改定により変動する。',
+      authority: '所管: 厚生労働省（雇用保険法／雇用保険二事業）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/pageL07.html', type: 'government', label: '厚生労働省 雇用調整助成金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index_00057.html', type: 'government', label: '厚生労働省 雇用関係助成金一覧' },
+      { url: 'https://ja.wikipedia.org/wiki/雇用調整助成金', type: 'media', label: '雇用調整助成金（雇用安定事業）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-trial-period',
+      domain: 'labor',
+      title: '試用期間の労働法上の取扱い',
+      statement:
+        '試用期間は本採用前に労働者の適性等を評価するために設ける期間で、判例上、解約権が留保された労働契約（解約権留保付労働契約）と' +
+        '解されており、試用期間中も労働契約は成立しているため本採用拒否（試用期間中・満了時の解雇）は解雇に当たり、客観的に合理的な理由と' +
+        '社会通念上の相当性が必要とされる。また、試用期間中の労働者でも雇入れから14日を超えて引き続き使用される場合は解雇予告（労基法20条）の適用がある。',
+      authority: '所管: 厚生労働省（労働基準法・労働契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/churoi/assen/dl/jirei10.pdf', type: 'government', label: '中央労働委員会 試用期間終了後の本採用拒否 あっせん事例' },
+      { url: 'https://www.mhlw.go.jp/churoi/assen/dl/jirei09.pdf', type: 'government', label: '中央労働委員会 試用期間中の解雇 あっせん事例' },
+      { url: 'https://www.komon-lawyer.jp/qa/qa4_6/', type: 'media', label: '試用期間の解雇・本採用拒否 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-limited-provision-data',
+      domain: 'legal',
+      title: '不正競争防止法における「限定提供データ」の保護',
+      statement:
+        '2018年改正不正競争防止法（2019年7月1日施行）により、「限定提供データ」（業として特定の者に提供する情報として電磁的方法により相当量' +
+        '蓄積され、かつ電磁的方法により管理されている技術上又は営業上の情報。秘密として管理される営業秘密を除く）の不正な取得・使用・開示等が' +
+        '不正競争として規制対象に追加され、ビッグデータ等の事業者間で共有・取引されるデータの保護を目的とする。これらに対しては差止請求・損害賠償請求が認められる。',
+      authority: '所管: 経済産業省（不正競争防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/data.html', type: 'government', label: '経済産業省 限定提供データと利活用' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/h31pd.pdf', type: 'government', label: '経済産業省 限定提供データに関する指針' },
+      { url: 'https://xtrend.nikkei.com/atcl/contents/skillup/00009/00041/', type: 'media', label: '限定提供データ 改正不正競争防止法 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-optout-provision',
+      domain: 'legal',
+      title: 'オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）',
+      statement:
+        '個人情報取扱事業者は、第三者への提供を利用目的とすること・提供される個人データの項目・提供の方法・本人の求めに応じて提供を停止すること等の' +
+        '所定事項を、あらかじめ本人に通知し又は本人が容易に知り得る状態に置くとともに個人情報保護委員会に届け出れば、本人の同意を得ずに個人データを' +
+        '第三者提供できる（オプトアウトによる第三者提供。法27条2項）。ただし要配慮個人情報や不正取得された個人データ等はオプトアウトによる提供の対象外である。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/optout/', type: 'government', label: '個人情報保護委員会 オプトアウト規定による第三者提供の届出' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_thirdparty/', type: 'government', label: '個人情報保護委員会 ガイドライン（第三者提供時の確認・記録義務編）' },
+      { url: 'https://www.businesslawyers.jp/practices/283', type: 'media', label: 'オプトアウトによる第三者提供 解説' },
+    ],
+  },
 ];
 // Stryker restore all
