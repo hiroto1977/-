@@ -641,5 +641,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.pref.shiga.lg.jp/shohi/105947.html', type: 'municipality', label: '滋賀県 クーリング・オフ' },
     ],
   },
+  {
+    value: {
+      id: 'tax-withholding',
+      domain: 'tax',
+      title: '源泉徴収義務と納付期限',
+      statement:
+        '給与や報酬等の支払者は所得税・復興特別所得税を源泉徴収し、原則として徴収月の翌月10日までに納付する義務がある。' +
+        '給与の支給人員が常時10人未満の場合は納期の特例により年2回にまとめて納付できる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2505.htm', type: 'government', label: '国税庁 No.2505 納付期限と納期の特例' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2502.htm', type: 'government', label: '国税庁 No.2502 源泉徴収義務者' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 源泉徴収の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-depreciation-method',
+      domain: 'tax',
+      title: '減価償却の方法と法定償却方法',
+      statement:
+        '減価償却には定額法・定率法等があり、選定の届出をしないと法定償却方法（法人は原則定率法、個人は原則定額法）が適用される。' +
+        '建物・建物附属設備・構築物は定額法に限定される。',
+      authority: '所管: 国税庁（所得税法・法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm', type: 'government', label: '国税庁 No.2100 減価償却のあらまし' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5409.htm', type: 'government', label: '国税庁 No.5409 償却方法の選定手続き' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/65288/', type: 'media', label: 'マネーフォワード 減価償却の方法' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-work-rules',
+      domain: 'labor',
+      title: '就業規則の作成・届出義務',
+      statement:
+        '常時10人以上の労働者を使用する使用者は就業規則を作成し所轄労働基準監督署へ届け出る義務があり、' +
+        '作成・変更時は労働者代表の意見を聴取し、労働者へ周知しなければならない。',
+      authority: '所管: 厚生労働省（労働基準法第89条・90条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/model/index.html', type: 'government', label: '厚生労働省 モデル就業規則' },
+      { url: 'https://www.chukidan.jp/navi/column/work-rules/11286/', type: 'media', label: '就業規則の作成義務と届出 解説' },
+      { url: 'https://www.authense.jp/authense-sr/column/syugyokisoku/17/', type: 'media', label: '就業規則の届出義務 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-power-harassment',
+      domain: 'labor',
+      title: 'パワハラ防止措置の事業主義務',
+      statement:
+        '労働施策総合推進法により、職場のパワーハラスメント防止のための雇用管理上の措置（方針の明確化・周知、相談体制の整備、' +
+        '事後の迅速適切な対応等）が事業主に義務付けられた。大企業は2020年6月、中小を含む全事業主は2022年4月から義務化。',
+      authority: '所管: 厚生労働省（労働施策総合推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-harassment.mhlw.go.jp/law-measure', type: 'government', label: '厚生労働省 あかるい職場応援団 法律と措置' },
+      { url: 'https://jsite.mhlw.go.jp/aomori-roudoukyoku/newpage_00306.html', type: 'government', label: '青森労働局 パワハラ対策義務化' },
+      { url: 'https://sogyotecho.jp/power-harassment-low/', type: 'media', label: 'パワハラ防止法 義務化 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-whistleblower',
+      domain: 'legal',
+      title: '公益通報者保護法（2022年改正）',
+      statement:
+        '2022年6月施行の改正公益通報者保護法は、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備を義務付け、' +
+        '公益通報者への解雇等の不利益取扱いを禁止し、通報対応従事者に守秘義務（違反時は刑事罰）を課す。',
+      authority: '所管: 消費者庁（公益通報者保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview', type: 'government', label: '消費者庁 公益通報者保護法と制度の概要' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview/assets/overview_211013_0001.pdf', type: 'government', label: '消費者庁 指針の解説' },
+      { url: 'https://www.businesslawyers.jp/articles/908', type: 'media', label: '改正公益通報者保護法の要点' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-edoc-stamp-exempt',
+      domain: 'legal',
+      title: '電子契約・電子文書には印紙税が課されない',
+      statement:
+        '印紙税は課税物件表に掲げる「文書（紙）」の作成に課税され、電磁的記録（電子データ）による契約締結は課税文書の作成に' +
+        '当たらないため印紙税は課されない。国税庁の取扱いおよび国会答弁書でこの政府見解が示されている。',
+      authority: '所管: 国税庁・財務省（印紙税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 電磁的記録の印紙税の取扱い' },
+      { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 印紙税に関する答弁書' },
+      { url: 'https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/', type: 'media', label: 'クラウドサイン 電子契約と収入印紙' },
+    ],
+  },
 ];
 // Stryker restore all
