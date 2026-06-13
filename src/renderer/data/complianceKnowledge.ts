@@ -3677,5 +3677,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/kaisei/haccp.html', type: 'municipality', label: '東京都 HACCPに沿った衛生管理の制度化' },
     ],
   },
+  {
+    value: {
+      id: 'tax-registration-license-tax',
+      domain: 'tax',
+      title: '登録免許税の概要',
+      statement:
+        '登録免許税は、不動産・会社・人の資格等についての登記・登録・特許・免許・許可・認可・指定等を受ける際に課される国税であり、' +
+        '納税義務者は登記等を受ける者である。課税標準と税率は登記等の種類に応じて登録免許税法（別表第一）で定められている' +
+        '（例: 不動産の所有権移転登記は原則として不動産の価額に一定の税率を乗じて計算）。',
+      authority: '所管: 国税庁（登録免許税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7191.htm', type: 'government', label: '国税庁 No.7191 登録免許税の税額表' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=342AC0000000035_20240401_506AC0000000008', type: 'government', label: 'e-Gov法令検索 登録免許税法' },
+      { url: 'https://houmukyoku.moj.go.jp/homu/content/001325693.pdf', type: 'government', label: '法務局 登録免許税の計算' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-business-succession',
+      domain: 'tax',
+      title: '法人版事業承継税制（特例措置）',
+      statement:
+        '法人版事業承継税制は、後継者が経営承継円滑化法の認定を受けた非上場会社の株式等を贈与・相続により取得した場合に、一定の要件の' +
+        'もとでその株式等に係る贈与税・相続税の納税が猶予され、後継者の死亡等により最終的に免除される制度である。特例措置の適用には、' +
+        '一定の期間内に特例承継計画を都道府県知事へ提出すること等が要件とされており、提出期限等は税制改正により変動し得る。',
+      authority: '所管: 国税庁・中小企業庁（経営承継円滑化法／租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4439.htm', type: 'government', label: '国税庁 No.4439 非上場株式等の贈与税の納税猶予（事業承継税制）' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/shoukei/shoukei_enkatsu_zouyo_souzoku.html', type: 'government', label: '中小企業庁 法人版事業承継税制（特例措置）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4148.htm', type: 'government', label: '国税庁 No.4148 非上場株式等の相続税の納税猶予' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-collective-bargaining',
+      domain: 'labor',
+      title: '団体交渉拒否の禁止（労働組合法7条）',
+      statement:
+        '労働組合法では、労働者が労働組合を結成し団体交渉を行う権利が保障されており、使用者が雇用する労働者の代表者（労働組合）と' +
+        '団体交渉をすることを正当な理由がなくて拒むことは、不当労働行為として禁止されている（労働組合法7条2号）。' +
+        '正当な理由のない団体交渉拒否や不誠実団交を受けた労働組合・労働者は、労働委員会に救済を申し立てることができる。',
+      authority: '所管: 厚生労働省（労働組合法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/churoi/shinsa/futou/futou01.html', type: 'government', label: '厚生労働省 中央労働委員会 不当労働行為救済制度' },
+      { url: 'https://www.mhlw.go.jp/churoi/hourei/kumiaihou.html', type: 'government', label: '厚生労働省 中央労働委員会 労働組合法' },
+      { url: 'https://www.pref.kyoto.jp/kyoroi/1316155874200.html', type: 'municipality', label: '京都府労働委員会 不当労働行為とは（団交拒否）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-unfair-labor-practice',
+      domain: 'labor',
+      title: '不当労働行為の禁止（労働組合法7条）',
+      statement:
+        '労働組合法7条は、使用者による次の3類型の行為を不当労働行為として禁止している。すなわち、組合員であること等を理由とする解雇' +
+        'その他の不利益取扱い（黄犬契約を含む）、正当な理由のない団体交渉の拒否、労働組合の運営に対する支配介入・経費援助である。' +
+        'これらに対し、労働者または労働組合は労働委員会に救済を申し立てることができる。',
+      authority: '所管: 厚生労働省（労働組合法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/churoi/shinsa/futou/futou01.html', type: 'government', label: '厚生労働省 中央労働委員会 不当労働行為救済制度' },
+      { url: 'https://www.pref.saitama.lg.jp/e2001/roui-gaiyou/hutourou.html', type: 'municipality', label: '埼玉県労働委員会 不当労働行為の審査' },
+      { url: 'https://www.pref.shiga.lg.jp/roudo/kumiai/unfair_example.html', type: 'municipality', label: '滋賀県 不当労働行為の具体例' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-insider-trading',
+      domain: 'legal',
+      title: 'インサイダー取引規制（金融商品取引法）',
+      statement:
+        '金融商品取引法は、上場会社等の役員・従業員・取引先等の会社関係者が、その職務等に関して知った当該会社の未公表の重要事実' +
+        '（投資判断に影響を及ぼす情報）を、公表される前に当該会社の株式等を売買すること（インサイダー取引）を禁止している。' +
+        '違反者には刑事罰（5年以下の拘禁刑もしくは500万円以下の罰金等、法人は5億円以下の罰金）および課徴金が科される。',
+      authority: '所管: 金融庁（金融商品取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/common/law/insider_qa_.pdf', type: 'government', label: '金融庁 インサイダー取引規制に関するQ&A' },
+      { url: 'https://www.jpx.co.jp/regulation/preventing/insider/index.html', type: 'media', label: '日本取引所グループ インサイダー取引規制' },
+      { url: 'https://www.fsa.go.jp/sesc/actions/kokuhatu/02/shiryou.pdf', type: 'government', label: '証券取引等監視委員会 インサイダー取引とは' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-securities-disclosure',
+      domain: 'legal',
+      title: '有価証券報告書等の継続開示（金融商品取引法）',
+      statement:
+        '金融商品取引法では、上場会社等の有価証券発行者は、事業年度ごとに財政状態・経営成績等を記載した「有価証券報告書」を、原則として' +
+        '事業年度経過後3か月以内に内閣総理大臣（金融庁）に提出しなければならない（継続開示義務）。提出書類は金融庁のEDINETで公衆縦覧に供され、半期報告書・臨時報告書等の開示制度もある。',
+      authority: '所管: 金融庁（金融商品取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/search/20130917.html', type: 'government', label: '金融庁 EDINETについて' },
+      { url: 'https://lfb.mof.go.jp/kantou/disclo/gaiyou.htm', type: 'government', label: '関東財務局 企業内容等開示制度の概要' },
+      { url: 'https://www.jpx.co.jp/glossary/ya/446.html', type: 'media', label: '日本取引所グループ 用語集 有価証券報告書' },
+    ],
+  },
 ];
 // Stryker restore all
