@@ -403,5 +403,39 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/articles/1442', type: 'media', label: '2025年改正ポイント 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-hotei-chosho-etax',
+      domain: 'tax',
+      title: '法定調書の e-Tax 等による提出義務',
+      statement:
+        '前々年（基準年）に提出すべきであった同一種類の法定調書が100枚以上（令和9年=2027年1月1日以後は30枚以上）の' +
+        '場合、その種類の法定調書は e-Tax・認定クラウド・光ディスク等による提出が必要。主な法定調書の提出期限は翌年1月31日。',
+      authority: '所管: 国税庁（所得税法・相続税法 等）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.e-tax.nta.go.jp/hoteichosho/hoteichosho_gimuka.htm', type: 'government', label: '国税庁 e-Tax 法定調書の提出義務化' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hotei/7400.htm', type: 'government', label: '国税庁 No.7400 法定調書の提出義務者' },
+      { url: 'https://www.obc.co.jp/360/list/post139', type: 'media', label: '法定調書 電子申告義務化 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disability-employment-rate',
+      domain: 'labor',
+      title: '障害者の法定雇用率',
+      statement:
+        '2024年4月から民間企業の法定雇用率は2.5%（対象は常用労働者40人以上の事業主）。2026年7月に2.7%' +
+        '（対象37.5人以上）へ引き上げ予定。対象事業主は法定雇用率以上の障害者雇用義務を負う。',
+      authority: '所管: 厚生労働省（障害者雇用促進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page10.html', type: 'government', label: '厚生労働省 障害者雇用 事業主の方へ' },
+      { url: 'https://www.mhlw.go.jp/content/001064502.pdf', type: 'government', label: '厚生労働省 法定雇用率の引き上げ' },
+      { url: 'https://www.tokai-sr.jp/column/employment-disabilities/', type: 'media', label: '法定雇用率の引き上げ 社労士解説' },
+    ],
+  },
 ];
 // Stryker restore all
