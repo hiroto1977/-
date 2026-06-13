@@ -4426,5 +4426,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁 著作権テキスト（職務著作）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-small-business-mutual-aid',
+      domain: 'tax',
+      title: '小規模企業共済制度',
+      statement:
+        '小規模企業共済制度は、小規模企業共済法に基づき独立行政法人中小企業基盤整備機構（中小機構）が運営する、小規模企業の' +
+        '個人事業主や会社等の役員が廃業・退職等に備えて積み立てる退職金準備のための共済制度である。常時使用する従業員が一定数以下' +
+        '（業種により20人または5人以下）の個人事業主・会社役員等が加入でき、掛金は月額1,000円〜70,000円の範囲で選べ、納付した掛金は全額が所得控除の対象となる。',
+      authority: '所管: 中小企業庁（小規模企業共済法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq15_shokibokyosai.html', type: 'government', label: '中小企業庁 小規模企業共済制度 FAQ' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1135.htm', type: 'government', label: '国税庁 No.1135 小規模企業共済等掛金控除' },
+      { url: 'https://www.smrj.go.jp/kyosai/skyosai/', type: 'operator', label: '中小機構 小規模企業共済とは' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-safety-net-mutual-aid',
+      domain: 'tax',
+      title: '経営セーフティ共済（中小企業倒産防止共済制度）',
+      statement:
+        '経営セーフティ共済（中小企業倒産防止共済制度）は、中小企業倒産防止共済法に基づき中小機構が運営する、取引先事業者の倒産による' +
+        '中小企業の連鎖倒産・経営難を防ぐための制度。掛金を積み立てることで取引先倒産時に無担保・無保証人で掛金総額の10倍（上限8,000万円）' +
+        'まで借入れができ、掛金は月額5,000円〜20万円（積立総額800万円まで）の範囲で選べて損金（個人は必要経費）に算入できる。',
+      authority: '所管: 中小企業庁（中小企業倒産防止共済法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq16_tosankyosai.html', type: 'government', label: '中小企業庁 中小企業倒産防止共済制度 FAQ' },
+      { url: 'https://www.smrj.go.jp/kyosai/tkyosai/features/', type: 'operator', label: '中小機構 経営セーフティ共済 制度の概要' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/45216/', type: 'media', label: '経営セーフティ共済とは 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dispatch-license',
+      domain: 'labor',
+      title: '労働者派遣事業の許可制',
+      statement:
+        '労働者派遣事業を行うには、厚生労働大臣の許可を受ける必要がある（労働者派遣法5条）。2015年（平成27年）の法改正により、従来の' +
+        '特定労働者派遣事業（届出制）と一般労働者派遣事業（許可制）の区分が廃止され、すべての労働者派遣事業が許可制に一本化された。' +
+        '無許可で労働者派遣事業を行うことは禁止され、罰則の対象となる。',
+      authority: '所管: 厚生労働省（労働者派遣法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/haken-shoukai/hakenyouryou_00003.html', type: 'government', label: '厚生労働省 労働者派遣事業関係業務取扱要領' },
+      { url: 'https://jsite.mhlw.go.jp/hyogo-roudoukyoku/library/tokuteihakenkirikaepanfu.pdf', type: 'government', label: '兵庫労働局 許可制への切替案内' },
+      { url: 'https://www.rodo.co.jp/laws/117589/', type: 'media', label: '労働者派遣法 5条 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disguised-contract',
+      domain: 'labor',
+      title: '偽装請負（労働者派遣と請負の区分）',
+      statement:
+        '偽装請負とは、契約形式上は請負（又は業務委託）でありながら、実態としては注文者が請負労働者に直接指揮命令を行うなど労働者派遣に' +
+        '該当する働かせ方をしているものをいい、労働者派遣法・職業安定法に違反する。請負と労働者派遣の区分は、厚生労働省告示（昭和61年労働省告示第37号）に' +
+        '基づき、請負事業主が自己の労働者に対し業務遂行や労務管理上の指揮命令を自ら行っているか等で判断される。',
+      authority: '所管: 厚生労働省（労働者派遣法・職業安定法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/seizouukeoiyuryotekisei.html', type: 'government', label: '厚生労働省 請負を適正に行うために（37号告示）' },
+      { url: 'https://www.mhlw.go.jp/content/000834503.pdf', type: 'government', label: '厚生労働省 37号告示 疑義応答集' },
+      { url: 'https://www.soumu.go.jp/main_content/000543074.pdf', type: 'government', label: '総務省 労働者派遣と請負の区分基準（37号告示）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-document-electronic',
+      domain: 'legal',
+      title: '特定商取引法の契約書面等の電子化（2023年6月施行）',
+      statement:
+        '2021年改正特定商取引法（令和5年6月1日施行）により、訪問販売・電話勧誘販売・連鎖販売取引・特定継続的役務提供・業務提供誘引販売取引について、' +
+        '事業者が交付すべき概要書面・契約書面を、紙での交付を原則としつつ消費者の承諾を得た場合に限り電磁的方法（電子メール等）で提供できるようになった。' +
+        '承諾の取得手続や事前説明等は消費者保護のため改正政省令およびガイドラインで厳格に定められている。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/notice/entry/033077/', type: 'government', label: '消費者庁 契約書面等の電磁的提供ガイドライン' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/', type: 'government', label: '消費者庁 令和3年特定商取引法の改正' },
+      { url: 'https://www.kokusen.go.jp/wko/pdf/wko-202401_03.pdf', type: 'media', label: '国民生活センター 書面交付電子化の論点' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-agency',
+      domain: 'legal',
+      title: '民法の代理（代理権・無権代理・表見代理）',
+      statement:
+        '代理人がその権限内において本人のためにすることを示して（顕名）した意思表示は、直接本人に対して効力を生じる（民法99条）。' +
+        '代理権を有しない者が本人の代理人としてした契約（無権代理）は、本人が追認しなければ本人に対して効力を生じない（113条）が、' +
+        '代理権授与の表示があった場合・権限を越えた場合・代理権消滅後の場合等で相手方に代理権を信ずべき正当な理由があるとき等は、本人が責任を負う表見代理（109条・110条・112条）が成立しうる。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（99条・109条・110条・112条・113条）' },
+      { url: 'https://www.moj.go.jp/content/000118124.pdf', type: 'government', label: '法務省 民法（債権関係）改正資料（表見代理等）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第113条', type: 'media', label: '民法113条（無権代理）条文' },
+    ],
+  },
 ];
 // Stryker restore all
