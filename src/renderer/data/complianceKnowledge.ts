@@ -4748,5 +4748,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mlit.go.jp/totikensangyo/totikensangyo_tk5_000106.html', type: 'government', label: '国土交通省 定期借地権の解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-tax-free-shop',
+      domain: 'tax',
+      title: '輸出物品販売場制度（消費税免税店制度）',
+      statement:
+        '輸出物品販売場（免税店）制度とは、税務署長の許可を受けた輸出物品販売場を経営する事業者が、外国人旅行者等の非居住者に対し、' +
+        '通常生活の用に供する物品を一定の手続（最低購入金額の充足、購入記録情報の電子的提供等）により販売する場合に、その販売に係る消費税が免除される制度である。' +
+        '購入者は購入物品を国外へ持ち出すことが前提で、原則として出国時まで国内で消費しないことが求められる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/shohi/menzei/201805/0523.htm', type: 'government', label: '国税庁 輸出物品販売場における輸出免税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6559.htm', type: 'government', label: '国税庁 No.6559 外国人旅行者等の免税購入対象者' },
+      { url: 'https://www.mlit.go.jp/kankocho/content/001284307.pdf', type: 'government', label: '観光庁 輸出物品販売場（免税店）制度の手続' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-group-taxation',
+      domain: 'tax',
+      title: '法人税のグループ通算制度',
+      statement:
+        'グループ通算制度は、令和4年（2022年）4月1日以後開始する事業年度から従来の連結納税制度に代わって適用される法人税の制度で、' +
+        '完全支配関係にある内国法人からなる企業グループ内の各法人を納税単位として個別に申告・納税しつつ、グループ内各法人の所得金額と' +
+        '欠損金額を一定の方法で通算（損益通算等）できる。適用には国税庁長官の承認が必要で、親法人と完全支配関係にある内国法人が対象となる。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5900.htm', type: 'government', label: '国税庁 No.5900 グループ通算制度の概要' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/renketsu/annai/10.htm', type: 'government', label: '国税庁 C3-1 グループ通算制度の承認の申請' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/hojin/group_tsusan/pdf/0020011-117.pdf', type: 'government', label: '国税庁 連結納税からグループ通算制度への移行' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-corporate-dc-pension',
+      domain: 'labor',
+      title: '企業型確定拠出年金（企業型DC）',
+      statement:
+        '企業型確定拠出年金（企業型DC）は、確定拠出年金法に基づき、事業主が掛金を拠出し（規約に定めれば加入者本人も上乗せして拠出する' +
+        'マッチング拠出が可能）、加入者である従業員自身が運用商品を選択して運用し、その運用結果に基づく給付を原則60歳以降に受け取る企業年金制度である。' +
+        '事業主が拠出する掛金は損金算入され、給付は年金なら公的年金等控除、一時金なら退職所得控除の対象となる税制優遇がある。',
+      authority: '所管: 厚生労働省（確定拠出年金法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/nenkin/nenkin/kyoshutsu/gaiyou.html', type: 'government', label: '厚生労働省 確定拠出年金制度の概要' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5231.htm', type: 'government', label: '国税庁 No.5231 確定給付企業年金等に係る課税関係' },
+      { url: 'https://www.pfa.or.jp/yogoshu/ma/ma08.html', type: 'operator', label: '企業年金連合会 マッチング拠出' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-flexible-work-measures',
+      domain: 'labor',
+      title: '育児・介護休業法「柔軟な働き方を実現するための措置」（2025年10月施行）',
+      statement:
+        '2024年改正育児・介護休業法により、令和7年（2025年）10月1日から、事業主は3歳から小学校就学前の子を養育する労働者に関して、' +
+        '「柔軟な働き方を実現するための措置」として、(1)始業時刻等の変更、(2)テレワーク等（月10日以上）、(3)保育施設の設置運営等、' +
+        '(4)養育両立支援休暇の付与（年10日以上）、(5)短時間勤務制度のうちから2以上を選択して講じる義務を負い、労働者はそのうち1つを選んで利用できる。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/flexiblework/', type: 'government', label: '厚生労働省 柔軟な働き方を実現するための措置' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001567572.pdf', type: 'government', label: '厚生労働省 令和6年改正育児・介護休業法 Q&A' },
+      { url: 'https://kidsline.me/information/ikuji_kaisei2025', type: 'media', label: '2025年10月施行 育児介護休業法改正 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-contract-types',
+      domain: 'legal',
+      title: '請負契約と委任契約（準委任）の区別',
+      statement:
+        '民法上、請負（632条）は請負人が「仕事の完成」を約し注文者がその結果に対して報酬を支払う契約で、原則として仕事を完成しなければ' +
+        '報酬を請求できない。これに対し委任（643条、法律行為でない事務の委託は準委任＝656条）は「事務の処理」を委託する契約で、受任者は' +
+        '善管注意義務（644条）を負うが仕事の完成自体は目的とされず、いわゆる業務委託契約はこのいずれか又は両者の混合として理解される。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（632条・643条・644条・656条）' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/12/09.htm', type: 'government', label: '国税庁 質疑応答事例 請負の意義' },
+      { url: 'https://www.cloudsign.jp/media/quasi-delegation-contract-contract/', type: 'media', label: '準委任契約と請負契約の違い 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-shareholders-meeting',
+      domain: 'legal',
+      title: '株式会社の株主総会（会社法）',
+      statement:
+        '株主総会は株式会社の最高意思決定機関であり、取締役会設置会社では会社法に規定する事項及び定款で定めた事項に限り決議できるが、' +
+        '取締役会非設置会社では会社の組織・運営・管理その他一切の事項を決議できる（会社法295条）。定時株主総会は毎事業年度の終了後一定の' +
+        '時期に招集しなければならず（296条1項）、決議は普通決議（出席株主の議決権の過半数）と、定款変更・合併等の重要事項についての特別決議（出席株主の議決権の3分の2以上）等に区分される（309条）。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（295条・296条・309条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00021.html', type: 'government', label: '法務省 定時株主総会の開催について' },
+      { url: 'https://www.businesslawyers.jp/practices/19', type: 'media', label: '株主総会の決議方法（普通決議・特別決議）解説' },
+    ],
+  },
 ];
 // Stryker restore all
