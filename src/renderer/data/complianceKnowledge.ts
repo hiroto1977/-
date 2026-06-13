@@ -1771,5 +1771,108 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権更新手続 FAQ' },
     ],
   },
+  {
+    value: {
+      id: 'tax-corporate-tax-rate',
+      domain: 'tax',
+      title: '法人税の税率（普通法人・中小法人の軽減税率）',
+      statement:
+        '普通法人の法人税率は原則23.2%。資本金1億円以下の中小法人等については、所得のうち年800万円以下の部分に' +
+        '軽減税率が適用され、本則19%のところ特例により15%に軽減されている（この特例は令和9年3月末までに開始する事業年度まで延長）。',
+      authority: '所管: 国税庁（法人税法・租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5759.htm', type: 'government', label: '国税庁 No.5759 法人税の税率' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/houjin_keigen.html', type: 'government', label: '中小企業庁 法人税率の軽減' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2025/07taikou_03.htm', type: 'government', label: '財務省 令和7年度税制改正の大綱（軽減税率特例の延長）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-housing-loan-deduction',
+      domain: 'tax',
+      title: '住宅借入金等特別控除（住宅ローン控除）',
+      statement:
+        '個人が住宅ローン等を利用して住宅の新築・取得・増改築等をし、一定の要件を満たして自己の居住の用に供した場合、' +
+        '年末のローン残高の一定割合（現行0.7%）を一定期間、所得税額（控除しきれない分は一部住民税）から控除できる。適用初年度は確定申告が必要。' +
+        '借入限度額・控除期間は入居年や住宅の省エネ性能等により異なり、令和6年以降の新築は原則として省エネ基準適合が要件化された。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1211-1.htm', type: 'government', label: '国税庁 No.1211-1 住宅借入金等特別控除（新築等）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1211-3.htm', type: 'government', label: '国税庁 No.1211-3 住宅借入金等特別控除（中古住宅）' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk2_000017.html', type: 'government', label: '国土交通省 住宅ローン減税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-break-time',
+      domain: 'labor',
+      title: '休憩時間（労働基準法34条）',
+      statement:
+        '使用者は、労働時間が6時間を超える場合は少なくとも45分、8時間を超える場合は少なくとも1時間の休憩を、労働時間の途中に' +
+        '与えなければならない。休憩は原則として一斉に付与し（労使協定があれば例外可）、労働者に自由に利用させなければならない。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_13.html', type: 'government', label: '厚生労働省 労働基準法FAQ 休憩時間' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article34.html', type: 'government', label: '栃木労働局 休憩（労基法34条）' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/87993/', type: 'media', label: '労働基準法34条 休憩の3原則 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-flextime',
+      domain: 'labor',
+      title: 'フレックスタイム制（労働基準法32条の3）',
+      statement:
+        'フレックスタイム制は、一定期間（清算期間）の総労働時間をあらかじめ定め、労働者がその範囲内で日々の始業・終業時刻を' +
+        '自ら決定できる制度である。導入には就業規則等への定めと労使協定の締結が必要で、清算期間の上限は3か月（1か月超の場合は労使協定の届出が必要）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_tayou_flex.html', type: 'government', label: '厚生労働省 確かめよう労働条件 フレックスタイム制' },
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（32条の3）' },
+      { url: 'https://www.mhlw.go.jp/content/001140964.pdf', type: 'government', label: '厚生労働省 フレックスタイム制 導入の手引き' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-door-to-door-sales',
+      domain: 'legal',
+      title: '訪問販売とクーリング・オフ（特定商取引法）',
+      statement:
+        '訪問販売（事業者が消費者の自宅等を訪問して契約を勧誘する取引等）では、事業者に氏名等の明示義務（特商法3条）および' +
+        '契約書面等の交付義務があり、消費者は法定の契約書面を受け取った日から8日間は無条件でクーリング・オフ（契約解除）ができる。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 訪問販売' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ' },
+      { url: 'https://www.kansai.meti.go.jp/4syokei/soudan/co.html', type: 'government', label: '近畿経済産業局 クーリング・オフとは' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-electronic-consumer-contract',
+      domain: 'legal',
+      title: '電子消費者契約法における操作ミス（錯誤）の特例',
+      statement:
+        'インターネット通販等の電子消費者契約で、消費者が申込み等の操作を誤って錯誤に陥った場合、事業者が申込み内容を確認するための' +
+        '措置（確認画面等）を講じていない限り、民法95条3項（重大な過失があるときは取消しできない旨）は適用されず、消費者は錯誤による取消しを主張できる。',
+      authority: '所管: 消費者庁・経済産業省（電子消費者契約に関する民法の特例に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/it_policy/ec/e11225bj.pdf', type: 'government', label: '経済産業省 電子消費者契約法 逐条解説' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15120010629095.htm', type: 'government', label: '衆議院 電子消費者契約法 条文' },
+      { url: 'https://www.city.osaka.lg.jp/lnet/page/0000002409.html', type: 'municipality', label: '大阪市消費者センター 電子消費者契約法' },
+    ],
+  },
 ];
 // Stryker restore all
