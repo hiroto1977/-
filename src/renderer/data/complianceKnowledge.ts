@@ -4318,5 +4318,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.hkd.meti.go.jp/hokih/20220615/index.htm', type: 'government', label: '北海道経済産業局 電磁的記録によるクーリング・オフ' },
     ],
   },
+  {
+    value: {
+      id: 'tax-stock-option',
+      domain: 'tax',
+      title: '税制適格ストックオプションの課税繰延べ',
+      statement:
+        'ストックオプション（新株予約権）は原則として権利行使時の経済的利益（行使時株価と権利行使価額の差額）が給与所得等として課税されるが、' +
+        '租税特別措置法29条の2が定める一定の要件（権利行使価額・行使期間・年間行使限度額・付与対象者・株式の保管委託等）をすべて満たす' +
+        '「税制適格ストックオプション」は、権利行使時には課税されず、取得株式を譲渡した時にその譲渡益が譲渡所得として課税される（課税の繰延べ）。',
+      authority: '所管: 国税庁・経済産業省（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1540.htm', type: 'government', label: '国税庁 No.1540 ストックオプション税制' },
+      { url: 'https://www.meti.go.jp/policy/newbusiness/stock-option.html', type: 'government', label: '経済産業省 ストックオプション税制' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1543.htm', type: 'government', label: '国税庁 No.1543 税制非適格ストックオプションの課税' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-angel-tax',
+      domain: 'tax',
+      title: 'エンジェル税制（ベンチャー企業投資促進税制）',
+      statement:
+        'エンジェル税制は、個人投資家が一定の要件を満たすベンチャー企業（スタートアップ）に投資した場合に、投資した年に所得税の優遇措置' +
+        '（投資額の一定額を総所得金額等から控除する等の複数の類型）を受けられる制度であり、株式売却により生じた損失を他の株式譲渡益と通算し、' +
+        '控除しきれない額を翌年以降一定期間繰り越せる等の優遇も設けられている（控除上限や対象企業の要件は税制改正で変動）。',
+      authority: '所管: 経済産業省・中小企業庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/newbusiness/angeltax/index.html', type: 'government', label: '経済産業省 エンジェル税制' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/chiiki/angel/structure/index.html', type: 'government', label: '中小企業庁 エンジェル税制の仕組み' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1533.htm', type: 'government', label: '国税庁 No.1533 特定投資株式の譲渡損失の繰越（エンジェル税制）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disability-pension',
+      domain: 'labor',
+      title: '障害年金（障害基礎年金・障害厚生年金）',
+      statement:
+        '障害年金は、病気やけがによって生活や仕事などが制限されるようになった場合に支給される公的年金で、国民年金加入者等には障害等級1級・2級を' +
+        '対象とする「障害基礎年金」が、厚生年金保険加入中に初診日がある場合には1級〜3級（及び障害手当金）を対象とする「障害厚生年金」が支給される。' +
+        '受給には、初診日要件・保険料納付要件・障害認定日（原則として初診日から1年6か月後）における障害状態の要件を満たす必要がある。',
+      authority: '所管: 日本年金機構・厚生労働省（国民年金法・厚生年金保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/shougainenkin/jukyu-yoken/20150401-01.html', type: 'government', label: '日本年金機構 障害年金（受給要件）' },
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/shougainenkin/jukyu-yoken/20150401-02.html', type: 'government', label: '日本年金機構 障害厚生年金' },
+      { url: 'https://www.gov-online.go.jp/article/201201/entry-7663.html', type: 'media', label: '政府広報オンライン 障害年金の制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-survivor-pension',
+      domain: 'labor',
+      title: '遺族年金（遺族基礎年金・遺族厚生年金）',
+      statement:
+        '遺族年金は、国民年金または厚生年金保険の被保険者等が死亡したときに、その者によって生計を維持されていた遺族に支給される公的年金である。' +
+        '遺族基礎年金は死亡者に生計を維持されていた「子のある配偶者」または「子」に支給され、遺族厚生年金は厚生年金保険の被保険者等の死亡について、' +
+        '生計を維持されていた一定範囲の遺族（配偶者・子・父母・孫・祖父母の優先順位）のうち最優先順位の者に支給される。受給には保険料納付要件等がある。',
+      authority: '所管: 日本年金機構・厚生労働省（国民年金法・厚生年金保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/izokunenkin/jukyu-yoken/20150424.html', type: 'government', label: '日本年金機構 遺族厚生年金' },
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/izokunenkin/jukyu-yoken/20150401-04.html', type: 'government', label: '日本年金機構 遺族基礎年金' },
+      { url: 'https://www.mhlw.go.jp/stf/nenkin_shikumi_013.html', type: 'government', label: '厚生労働省 遺族年金' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-tort-liability',
+      domain: 'legal',
+      title: '不法行為による損害賠償責任（民法709条等）',
+      statement:
+        '民法では、故意又は過失によって他人の権利又は法律上保護される利益を侵害した者は、これによって生じた損害を賠償する責任を負う' +
+        '（不法行為。民法709条）。事業者については、被用者が事業の執行について第三者に損害を与えた場合に使用者が負う使用者責任（715条）もある。' +
+        '不法行為による損害賠償請求権は、損害及び加害者を知った時から3年（生命・身体を害する不法行為は5年）、不法行為の時から20年で時効消滅する（724条・724条の2）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/content/001399955.pdf', type: 'government', label: '法務省 損害賠償請求権に関するルールの変更（消滅時効）' },
+      { url: 'https://www.daylight-law.jp/songaibaisho/qa/qa7/', type: 'media', label: '不法行為（民法709条）の要件・時効 解説' },
+      { url: 'https://corporate.vbest.jp/columns/2238/', type: 'media', label: '使用者責任（民法715条）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-work-for-hire',
+      domain: 'legal',
+      title: '職務著作（法人著作・著作権法15条）',
+      statement:
+        '法人その他使用者の発意に基づき、その法人等の業務に従事する者が職務上作成する著作物で、その法人等が自己の著作の名義のもとに公表するものは、' +
+        '作成時の契約・勤務規則等に別段の定めがない限り、原則としてその法人等が著作者となり（著作権法15条）、著作権のみならず著作者人格権も法人等に帰属する。' +
+        'プログラムの著作物については公表名義の要件は不要である（同条2項）。',
+      authority: '所管: 文化庁（著作権法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 著作権法（15条）' },
+      { url: 'https://www.mext.go.jp/b_menu/shingi/gijyutu/gijyutu8/toushin/attach/1366561.htm', type: 'government', label: '文部科学省 著作権法（抄）職務著作' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁 著作権テキスト（職務著作）' },
+    ],
+  },
 ];
 // Stryker restore all
