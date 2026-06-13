@@ -1151,5 +1151,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://privtech.co.jp/blog/law/revised-telecommunications-business-law-cookie.html', type: 'media', label: '外部送信規律 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-donation-deduction',
+      domain: 'tax',
+      title: '法人の寄附金の損金算入限度',
+      statement:
+        '国・地方公共団体への寄附金および指定寄附金は全額損金算入され、特定公益増進法人等への寄附金は一般の寄附金とは' +
+        '別枠の特別損金算入限度額まで、一般の寄附金は資本金等の額と所得金額を基礎に計算した限度額までが損金算入される。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5281.htm', type: 'government', label: '国税庁 No.5281 寄附金の損金不算入' },
+      { url: 'https://www.mext.go.jp/donation_portal-site/corporate-preferential.html', type: 'government', label: '文部科学省 法人寄附の税制優遇' },
+      { url: 'https://www.ht-tax.or.jp/topics/kifukin-keihi/', type: 'media', label: '寄附金の損金算入 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-invoice-input-credit',
+      domain: 'tax',
+      title: 'インボイス制度と仕入税額控除の要件',
+      statement:
+        '2023年10月のインボイス制度開始以後、原則として適格請求書（インボイス）と一定事項を記載した帳簿の保存が' +
+        '仕入税額控除の要件。免税事業者等からの課税仕入れには経過措置（2023/10〜2026/9は80%、2026/10〜2029/9は50%控除）がある。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6498.htm', type: 'government', label: '国税庁 No.6498 インボイス制度' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://ayusawa-partners.jp/column/invoice-keika-sochi-80-50', type: 'media', label: 'インボイスの経過措置 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-wage-deduction',
+      domain: 'labor',
+      title: '賃金からの控除と労使協定（24協定）',
+      statement:
+        '賃金は全額払いが原則だが、所得税・社会保険料等の法令で定めるもの以外を賃金から控除するには、' +
+        '過半数代表との書面による労使協定（賃金控除協定）が必要である。',
+      authority: '所管: 厚生労働省（労働基準法第24条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002230320.pdf', type: 'government', label: '厚生労働省 神奈川労働局 賃金控除協定' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei05.html', type: 'government', label: '厚生労働省 賃金の支払方法 FAQ' },
+      { url: 'https://www.nakagrps.co.jp/blog/11189/', type: 'media', label: '24協定 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-safety-obligation',
+      domain: 'labor',
+      title: '安全配慮義務（労働契約法第5条）',
+      statement:
+        '使用者は労働契約に伴い、労働者がその生命・身体等の安全を確保しつつ労働できるよう必要な配慮をする義務を負う。' +
+        '違反は債務不履行等として損害賠償責任を生じうる。',
+      authority: '所管: 厚生労働省（労働契約法第5条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov 労働契約法' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/13.pdf', type: 'government', label: '厚生労働省 労働契約法第5条 解説' },
+      { url: 'https://www.manpowergroup.jp/client/manpowerclip/hrconsulting/labor_contracts_act_ch1alt5.html', type: 'media', label: '安全配慮義務 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-mailorder-return',
+      domain: 'legal',
+      title: '通信販売の返品ルール（特定商取引法）',
+      statement:
+        '通信販売にクーリング・オフ制度はないが、広告に返品特約の表示がない場合、購入者は商品到着日から起算して8日以内であれば' +
+        '送料自己負担で返品（契約解除）できる。返品特約が表示されていればその内容に従う。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特商法ガイド 通信販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/case/mailorder/case01.html', type: 'government', label: '消費者庁 通信販売の事例' },
+      { url: 'https://kigyobengo.com/blog/1678', type: 'media', label: '通信販売の返品 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-secondhand-dealer',
+      domain: 'legal',
+      title: '古物営業法と古物商許可',
+      statement:
+        '中古品（古物）を売買・交換する古物商を営むには、営業所所在地の都道府県公安委員会の許可が必要。盗品の流通防止を' +
+        '目的に、取引相手の本人確認と取引記録（帳簿）の備付けが義務付けられている。',
+      authority: '所管: 警察庁・都道府県公安委員会（古物営業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.npa.go.jp/bureau/safetylife/kobutsu/index.html', type: 'government', label: '警察庁 古物営業について' },
+      { url: 'https://elaws.e-gov.go.jp/search/elawsSearch/elaws_search/lsg0500/detail?lawId=407M50400000010', type: 'government', label: 'e-Gov 古物営業法施行規則' },
+      { url: 'https://hayward-law.com/kobutsusho/archives/5383', type: 'media', label: '古物商の本人確認義務 解説' },
+    ],
+  },
 ];
 // Stryker restore all
