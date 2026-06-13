@@ -6144,5 +6144,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.agaroot.jp/shiho/column/fraud-duress/', type: 'media', label: '民法96条 詐欺・強迫 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-filing-necessity',
+      domain: 'tax',
+      title: '所得税の確定申告が必要な人・不要な人',
+      statement:
+        '給与所得者は通常、年末調整で課税関係が完結するため確定申告は不要だが、給与収入が2,000万円を超える人、1か所からの給与で給与・退職所得以外の所得が' +
+        '20万円を超える人、2か所以上から給与を受け一定要件に該当する人、同族会社の役員等で貸付金利子・賃貸料等を受ける人などは確定申告が必要。事業所得・不動産所得等が' +
+        'ある人や、医療費控除・寄附金控除等で還付を受ける人も申告する。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm', type: 'government', label: '国税庁 No.1900 給与所得者で確定申告が必要な人' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2020.htm', type: 'government', label: '国税庁 No.2020 確定申告' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1901.htm', type: 'government', label: '国税庁 No.1901 同族会社役員で確定申告が必要な人' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-donation-deduction-individual',
+      domain: 'tax',
+      title: '所得税の寄附金控除（個人）',
+      statement:
+        '個人が国・地方公共団体・特定公益増進法人・認定NPO法人・政治団体等への「特定寄附金」を支出した場合、その年中の特定寄附金の額の合計額と総所得金額等の' +
+        '40%相当額のいずれか低い方から2,000円を差し引いた額を所得控除（寄附金控除）として受けられる。一定の認定NPO法人・公益社団法人等への寄附や政党等への寄附は' +
+        '所得控除に代えて税額控除を選択でき、ふるさと納税（自治体への寄附）もこの寄附金控除の対象である。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1150.htm', type: 'government', label: '国税庁 No.1150 寄附金控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1155.htm', type: 'government', label: '国税庁 No.1155 ふるさと納税（寄附金控除）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1260.htm', type: 'government', label: '国税庁 No.1260 政党等寄附金特別控除（税額控除）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dispatch-prohibited',
+      domain: 'labor',
+      title: '労働者派遣の適用除外業務（派遣禁止業務）',
+      statement:
+        '労働者派遣法は一定の業務について労働者派遣を禁止しており（適用除外業務）、具体的には港湾運送業務・建設業務・警備業務・病院等における医療関係業務' +
+        '（紹介予定派遣やへき地等での医師の業務などの例外を除く）の4業務が派遣禁止とされている。また、いわゆる日雇い派遣（日々又は30日以内の期間を定めて雇用する' +
+        '労働者の派遣）も、雇用管理に支障を及ぼすおそれがないと認められる業務や特定の労働者を派遣する場合などの例外を除き、原則禁止されている。',
+      authority: '所管: 厚生労働省（労働者派遣法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/haken-shoukai/hakenhourei.html', type: 'government', label: '厚生労働省 労働者派遣事業に係る法令' },
+      { url: 'https://www.mhlw.go.jp/general/seido/anteikyoku/jukyu/haken/youryou_2020/index.html', type: 'government', label: '厚生労働省 労働者派遣事業関係業務取扱要領' },
+      { url: 'https://www.rodo.co.jp/laws/117588/', type: 'media', label: '労働者派遣法 4条 適用除外業務 条文' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dismissal-notice-exception',
+      domain: 'labor',
+      title: '解雇予告の適用除外と除外認定（労基法20条・21条）',
+      statement:
+        '使用者が労働者を解雇する場合は原則として少なくとも30日前の予告又は30日分以上の平均賃金（解雇予告手当）の支払が必要だが（労基法20条1項）、天災事変その他' +
+        'やむを得ない事由のため事業の継続が不可能となった場合、又は労働者の責に帰すべき事由に基づいて解雇する場合は、所轄労働基準監督署長の認定（解雇予告除外認定）を' +
+        '受ければ予告・予告手当なしに即時解雇できる。また日々雇い入れられる者、2か月以内の期間を定めて使用される者、試の使用期間中で14日以内の者等には解雇予告の規定が適用されない（労基法21条）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/kaiko/q2.html', type: 'government', label: '厚生労働省 即時解雇・解雇予告除外認定 Q&A' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000&dataType=0', type: 'government', label: '厚生労働省 法令データ 労働基準法（20条・21条）' },
+      { url: 'https://shinsei.e-gov.go.jp/recept/procedure/lists/procedureInformation?gtaTetCd=4950013309636', type: 'government', label: 'e-Gov電子申請 解雇予告除外認定申請' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-consumer-contract-amendment',
+      domain: 'legal',
+      title: '消費者契約法の令和4年改正（2023年6月施行）',
+      statement:
+        '消費者契約法は累次の改正により消費者保護を強化しており、令和4年改正（2023年6月1日施行）では、契約の取消権を行使しうる不当な勧誘行為の類型（勧誘を告げずに' +
+        '退去困難な場所へ同行する行為、威迫する言動を交えて相談の連絡を妨害する行為、契約締結前に債務の内容を実施し原状回復を著しく困難にする行為等）が追加された。' +
+        'あわせて、消費者の求めに応じて解約料（損害賠償額の予定・違約金）の算定根拠の概要を説明することなどが事業者の努力義務として追加された。',
+      authority: '所管: 消費者庁（消費者契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/amendment/2022', type: 'government', label: '消費者庁 消費者契約法 令和4年改正' },
+      { url: 'https://www.kokusen.go.jp/wko/pdf/wko-202304_03.pdf', type: 'media', label: '国民生活センター 令和4年改正消費者契約法 解説' },
+      { url: 'https://www.businesslawyers.jp/articles/1189', type: 'media', label: '令和4年消費者契約法改正の実務対応 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-corporate-governance',
+      domain: 'legal',
+      title: '会社法における株式会社の機関設計',
+      statement:
+        '会社法上、株式会社は株主総会と取締役を必ず置かなければならず（会社法326条1項）、定款の定めや会社の規模・公開会社か否か等に応じて取締役会・監査役・監査役会・' +
+        '会計参与・会計監査人・監査等委員会・指名委員会等を設置する（同条2項）。公開会社（発行する全部の株式に譲渡制限のない会社）は取締役会を置かなければならず（327条1項）、' +
+        '取締役会設置会社は原則として監査役（又は監査等委員会・指名委員会等）を置く必要があり（327条2項）、大会社（資本金5億円以上又は負債200億円以上）は会計監査人を置かなければならない（328条）。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（326条〜328条）' },
+      { url: 'https://houmukyoku.moj.go.jp/homu/content/001252678.pdf', type: 'government', label: '法務局 株式会社の機関設計' },
+      { url: 'https://www.ey.com/ja_jp/technical/corporate-accounting/commentary/companies-act/commentary-companies-act-2016-06-03-02', type: 'media', label: '会社法 大会社の会計監査人設置義務 解説' },
+    ],
+  },
 ];
 // Stryker restore all
