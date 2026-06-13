@@ -1212,5 +1212,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-2958.1993.tb00313.x', type: 'academic', label: 'Potter (1993) Cultivation Theory and Research, Human Communication Research（査読・批判）' },
     ],
   },
+  {
+    id: 'econ-efficient-market-hypothesis',
+    discipline: 'economics',
+    title: '効率的市場仮説（efficient market hypothesis, EMH）',
+    statement:
+      '資産価格は利用可能な情報をすべて速やかに織り込むため、市場平均を継続的に上回る超過収益を恒常的に得ることはできない、とする金融経済学の仮説。価格に反映される情報集合の範囲により3形態に区別される。' +
+      'ウィーク型は情報集合を過去の価格・取引履歴とし、過去データに基づくテクニカル分析では超過収益を得られないとする。セミストロング型は公開情報すべてを対象とし、ファンダメンタル分析も無効とする。ストロング型は私的（未公開）情報まで含む。ユージン・ファーマが1970年の論文で体系化し、2013年にノーベル経済学賞を受賞した。価格変化は新情報の出現が予測不能ゆえランダムとなるランダムウォーク理論と密接に関連する。1990年代以降、行動経済学（シラー等）や、小型株効果・1月効果といった持続的アノマリーの存在から批判があり、市場参加者の合理性や完全情報の前提が現実的かが争点となっている。',
+    keyFigures: 'ユージン・ファーマ（1970体系化・2013ノーベル経済学賞）／批判: ロバート・シラー（行動ファイナンス、2013共同受賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/what-is-the-efficient-market-hypothesis', type: 'reference', label: 'Encyclopædia Britannica Money — Efficient-Market Hypothesis（3形態・批判）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2013/fama/facts/', type: 'government', label: 'NobelPrize.org — Eugene F. Fama 2013（資産価格の実証分析）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2013/advanced-information/', type: 'government', label: 'NobelPrize.org — 2013年経済学賞 Advanced information' },
+    ],
+  },
+  {
+    id: 'econ-gini-coefficient',
+    discipline: 'economics',
+    title: 'ジニ係数とローレンツ曲線',
+    statement:
+      'ジニ係数は所得や資産などの分配の不平等度を測る代表的な指標である。基礎となるローレンツ曲線は、世帯や個人を所得の低い順に並べたときの累積人口割合（横軸）と累積所得割合（縦軸）の関係を描いた曲線で、完全平等なら45度線（均等分布線）に一致し、不平等なほど右下方にたわむ。' +
+      'ジニ係数は、均等分布線とローレンツ曲線で囲まれた面積を、均等分布線の下の三角形の面積で割った値で、0（完全平等＝全員が同じ所得）から1（完全不平等＝1人が全所得を独占）の範囲をとる。ローレンツ曲線は1905年に米国の経済学者M.O.ローレンツが、ジニ係数は1912年にイタリアの統計学者コッラド・ジーニが論文「変動性と可変性（Variabilità e mutabilità）」で考案した。各国・時系列の格差比較に広く用いられ、当初所得（市場所得）と再分配所得（税・社会保障給付後の可処分所得）の比較により税・社会保障の所得再分配効果も測定できる。',
+    keyFigures: 'コッラド・ジーニ（1912、ジニ係数）／マックス・O・ローレンツ（1905、ローレンツ曲線）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Gini-Coefficient', type: 'reference', label: 'Encyclopaedia Britannica — Gini coefficient（定義・式・ローレンツ曲線）' },
+      { url: 'https://databank.worldbank.org/metadataglossary/world-development-indicators/series/SI.POV.GINI', type: 'government', label: 'World Bank DataBank Glossary — Gini index' },
+      { url: 'https://ourworldindata.org/what-is-the-gini-coefficient', type: 'academic', label: 'Our World in Data（Oxford関連）— What is the Gini coefficient?' },
+    ],
+  },
+  {
+    id: 'mgmt-swot-analysis',
+    discipline: 'management',
+    title: 'SWOT分析',
+    statement:
+      '組織の戦略策定にあたり、内部環境の強み（Strengths）・弱み（Weaknesses）と、外部環境の機会（Opportunities）・脅威（Threats）の4要素を整理・分析するフレームワーク。S/Wは組織内部の要因、O/Tは外部環境の要因であり、S・Oがプラス要因、W・Tがマイナス要因に対応する。' +
+      'これら4象限で現状を把握したうえで、強みを機会に活かす・弱みを補い脅威を回避するといったクロスSWOT（TOWS）分析により具体的な戦略を導く。1960〜70年代に経営計画の手法として広まった。起源はスタンフォード研究所のアルバート・ハンフリーらの研究や、ハーバード経営大学院のLCAG（Learned/Christensen/Andrews/Guth）の経営政策論に帰されることが多いが、諸説あり単一の発明者は明確でない。簡便で広く使われる一方、要因を列挙するにとどまり、優先順位づけや動態・因果関係を示さない等の限界も指摘される。',
+    keyFigures: '起源には諸説あり単一の発明者は不確定（A.ハンフリー/スタンフォード研究所、ハーバードLCAGの経営政策論等）／1960-70年代に普及',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/swot-analysis-for-investing', type: 'reference', label: 'Encyclopaedia Britannica Money — SWOT Analysis（4要素の定義）' },
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/swot/', type: 'academic', label: 'University of Cambridge, Institute for Manufacturing — SWOT' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0024630123000110', type: 'academic', label: 'Long Range Planning (ScienceDirect) — The origins of SWOT analysis（起源の学術的検証）' },
+    ],
+  },
+  {
+    id: 'human-framing-effect',
+    discipline: 'human-science',
+    title: 'フレーミング効果（framing effect）',
+    statement:
+      '論理的に等価な情報であっても、その提示の仕方（枠組み＝フレーム）が異なると人々の判断や選択が変わる認知バイアス。とりわけ、結果を「利得（gain）」として提示する利得フレームでは確実な選択肢を好みリスク回避的になり、「損失（loss）」として提示する損失フレームではリスク追求的になる傾向がある（プロスペクト理論の価値関数と整合）。' +
+      'エイモス・トベルスキーとダニエル・カーネマンが1981年の論文「The Framing of Decisions and the Psychology of Choice」(Science 211:453-458)で実証した。代表例の「アジア病問題」では、600人の死が予想される疾病対策について、同一の救命確率を「200人が助かる」と提示すると多数が確実な案を選び、「400人が死ぬ」と提示すると多数がリスクを伴う案を選ぶというように、多数派の選択が逆転した。医療意思決定・広告・政策コミュニケーションに広く影響する。',
+    keyFigures: 'エイモス・トベルスキー & ダニエル・カーネマン（1981, Science 211:453-458）／プロスペクト理論と関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.7455683', type: 'academic', label: 'Tversky & Kahneman (1981) The Framing of Decisions and the Psychology of Choice, Science 211:453-458（原典）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/7455683/', type: 'academic', label: 'PubMed（米国立医学図書館）— PMID 7455683 書誌' },
+      { url: 'https://en.wikipedia.org/wiki/Framing_effect_(psychology)', type: 'reference', label: 'Wikipedia — Framing effect (psychology)（利得/損失フレーム・選好逆転）' },
+    ],
+  },
+  {
+    id: 'bizlaw-patent-system',
+    discipline: 'business-law',
+    title: '特許制度（特許法）',
+    statement:
+      '発明を保護・奨励することで産業の発達に寄与することを目的とする知的財産制度（特許法第1条）。特許法は「発明」を「自然法則を利用した技術的思想の創作のうち高度のもの」と定義し（2条1項）、特許を受けるには産業上の利用可能性・新規性・進歩性等の要件を満たす必要がある（29条）。' +
+      '日本は先願主義を採り、同一の発明について異なる日に複数の出願があったときは最先の出願人のみが特許を受けられる（39条）。権利の存続期間は出願日から原則20年で（67条）、医薬品等では期間補償・期間延長の制度がある。手続は、出願→方式審査→出願公開（原則出願から1年6か月後）→審査請求（出願から3年以内）→実体審査→設定登録の流れをとる。所管は特許庁。特許権者は業として特許発明を独占的に実施する権利を専有し（68条）、侵害には差止請求や損害賠償請求ができる。発明の公開と一定期間の独占の付与を引き換えにすることで技術の累積的発展を促す制度設計である。',
+    keyFigures: '特許法（昭和34年法律第121号）／発明の定義(2条)・先願主義(39条)・存続期間 出願から原則20年(67条)／特許庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/patent/gaiyo/seidogaiyo/chizai04.html', type: 'government', label: '特許庁 — 特許・実用新案とは（発明の定義・制度概要）' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=334AC0000000121_20250616_504AC0000000068', type: 'government', label: 'e-Gov法令検索 — 特許法（昭和34年法律第121号）' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000195.html', type: 'government', label: 'INPIT（工業所有権情報・研修館）— 特許権の存続期間' },
+    ],
+  },
+  {
+    id: 'infosoc-two-step-flow',
+    discipline: 'information-sociology',
+    title: 'コミュニケーションの二段階の流れ仮説（two-step flow）',
+    statement:
+      'マスメディアの情報は大衆へ直接かつ一様に作用するのではなく、まずメディアをよく利用し情報感度の高い「オピニオンリーダー」に届き、次に彼らとの対人コミュニケーションを介して、メディア接触の少ない一般の人々へと流れるとする二段階の伝播モデル。' +
+      'メディアの直接的・強力な効果を想定した皮下注射モデルを修正し、対人的影響とオピニオンリーダーの媒介的役割を重視する「限定効果論」に位置づけられる。ポール・ラザースフェルドらが1940年の米大統領選における投票行動を調査した『ピープルズ・チョイス（The People’s Choice）』(1944)で、投票決定にラジオや新聞より対人接触が強く影響していた事実から着想し、エリフ・カッツとラザースフェルドが『パーソナル・インフルエンス（Personal Influence）』(1955)で理論として体系化した。後にメディア環境の変化に伴い、多段階の流れ（multi-step flow）等への再検討も行われている。',
+    keyFigures: 'ポール・F・ラザースフェルド & エリフ・カッツ（『The People’s Choice』1944・『Personal Influence』1955）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/two-step-flow-model-of-communication', type: 'reference', label: 'Encyclopædia Britannica — Two-step flow model of communication' },
+      { url: 'https://en.wikipedia.org/wiki/Two-step_flow_of_communication', type: 'reference', label: 'Wikipedia — Two-step flow of communication' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/communicationtheory/chpt/twostep-multistep-flow.pdf', type: 'academic', label: 'SAGE Encyclopedia of Communication Theory — Two-Step and Multi-Step Flow' },
+    ],
+  },
 ];
 // Stryker restore all
