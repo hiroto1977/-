@@ -402,5 +402,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.econlib.org/library/Enc/PhillipsCurve.html', type: 'reference', label: 'Econlib — Phillips Curve（自然失業率・長期垂直）' },
     ],
   },
+  {
+    id: 'econ-economies-of-scale-scope',
+    discipline: 'economics',
+    title: '規模の経済と範囲の経済',
+    statement:
+      '規模の経済とは、生産量の増加に伴って製品1単位あたりの平均費用が低下する現象で、固定費・設備を多数の生産単位に分散できること、大量購買による単価低減、専門化（分業）等が要因となる。範囲の経済とは、複数の異なる製品・サービスを別々の企業がそれぞれ生産するよりも、1企業が生産設備・調達・技術・ブランド・流通網等の共通資源を共有して共同生産する方が総費用が低くなる現象をいう。' +
+      '両者の核心的違いは、規模の経済が「同一製品をより多く作る」ことによる単位費用低減であるのに対し、範囲の経済は「異なる複数製品を一緒に作る」ことによる費用優位である点。なお規模の経済は無制限ではなく、組織が過大化すると調整・管理コストが増し平均費用が上昇する「規模の不経済」が生じうる。',
+    keyFigures: '範囲の経済の定式化: パンザー＆ウィリッグ（1981）／対比: 規模の不経済',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/economy-of-scale', type: 'reference', label: 'Encyclopaedia Britannica Money — Economy of scale' },
+      { url: 'https://courses.lumenlearning.com/wm-microeconomics/chapter/economies-of-scale/', type: 'academic', label: 'Lumen Learning Microeconomics — Economies of Scale' },
+      { url: 'https://en.wikipedia.org/wiki/Economies_of_scope', type: 'reference', label: 'Wikipedia — Economies of scope' },
+    ],
+  },
+  {
+    id: 'mgmt-balanced-scorecard',
+    discipline: 'management',
+    title: 'バランスト・スコアカード（BSC）',
+    statement:
+      'バランスト・スコアカード（BSC）は、ロバート・キャプランとデビッド・ノートンが1992年のHarvard Business Review論文で提唱した業績評価・戦略マネジメントの枠組みである。財務指標に偏った従来の評価では知識・イノベーション時代の企業実態を捉えきれないという問題意識から、(1)財務、(2)顧客、(3)業務プロセス（内部ビジネスプロセス）、(4)学習と成長の4つの視点から、' +
+      '戦略目標・KPI・ターゲット・施策をバランスよく管理する。各視点に財務・非財務の指標を結びつけ、短期的成果と長期的な能力構築を同時に可視化・統制できる点に特徴がある。1996年以降は4視点の戦略目標を因果連鎖（学習と成長→内部プロセス→顧客→財務）として図示する「戦略マップ」を導入し、測定ツールから戦略実行のマネジメント・システムへ拡張した。',
+    keyFigures: 'ロバート・キャプラン／デビッド・ノートン（1992 HBR）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'academic', label: 'Kaplan & Norton, The Balanced Scorecard, Harvard Business Review (1992)' },
+      { url: 'https://online.hbs.edu/blog/post/balanced-scorecard', type: 'academic', label: 'Harvard Business School Online — What Is a Balanced Scorecard?' },
+      { url: 'https://www.mdpi.com/2673-8392/5/1/39', type: 'academic', label: 'Encyclopedia (MDPI) — Balanced Scorecard: History, Implementation, and Impact' },
+    ],
+  },
+  {
+    id: 'human-social-loafing',
+    discipline: 'human-science',
+    title: '社会的手抜き（リンゲルマン効果）',
+    statement:
+      '社会的手抜き（social loafing）とは、集団で共同作業を行うとき、一人当たりの努力量が単独で作業する場合より低下する現象をいう。起源は農業技術者マクシミリアン・リンゲルマンの綱引き実験で、参加人数が増えるほど一人当たりの引く力が減少すること（リンゲルマン効果）が示された。後にラタネ・ウィリアムズ・ハーキンスが1979年の論文で拍手・発声課題を用いて実証し「social loafing」と命名した。' +
+      '原因として、努力の埋没（自分の貢献が個別に評価されにくい）や責任の分散が挙げられ、逆に各個人の貢献を可視化・識別して評価可能にすると手抜きは軽減される。',
+    keyFigures: 'M.リンゲルマン（綱引き実験）／ラタネ・ウィリアムズ・ハーキンス（1979）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=888065', type: 'academic', label: 'Latané, Williams & Harkins (1979) Many Hands Make Light the Work, JPSP 37:822–832' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/social-loafing', type: 'academic', label: 'EBSCO Research Starters — Social loafing' },
+      { url: 'https://www.simplypsychology.org/social-loafing.html', type: 'reference', label: 'Simply Psychology — Social Loafing' },
+    ],
+  },
+  {
+    id: 'bizlaw-copyright-basics',
+    discipline: 'business-law',
+    title: '著作権法の基礎（無方式主義・二元的権利構成・保護期間）',
+    statement:
+      '著作権法は、思想又は感情を創作的に表現したもの（著作物）を保護し、権利は創作した時点で自動的に発生し登録等の方式を一切要しない（無方式主義、著作権法17条2項）。著作者の権利は、人格的利益を守る著作者人格権（公表権・氏名表示権・同一性保持権。一身専属で譲渡・相続できない）と、財産的利益を守る著作権' +
+      '（複製権・公衆送信権・翻案権等の支分権の束で、譲渡・相続が可能）に分かれる。保護期間は原則として著作者の死後70年で、2018年のTPP関連法改正により50年から70年へ延長された（法人著作・映画の著作物は公表後70年）。保護されるのは表現であってアイデアそのものではない（アイデア・表現二分論）。所管は文化庁。',
+    keyFigures: '著作権法（無方式主義17条2項・死後70年〔2018改正〕）／文化庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁 著作権テキスト' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/kantaiheiyo_chosakuken/1411890.html', type: 'government', label: '文化庁 著作物等の保護期間の延長に関するQ&A' },
+      { url: 'https://www.cric.or.jp/qa/hajime/hajime2.html', type: 'media', label: '著作権情報センター（CRIC）著作権Q&A 著作者の権利' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-divide',
+    discipline: 'information-sociology',
+    title: 'デジタルデバイド（情報格差）',
+    statement:
+      'デジタルデバイド（情報格差）とは、情報通信技術（ICT・インターネット）へのアクセスや利用能力の有無によって生じる、個人・集団・地域・国家間の格差を指す概念である。OECDは「ICTへのアクセス機会及びインターネットの多様な利用に関して、異なる社会経済水準にある個人・世帯・企業・地域間に存在する格差」と定義する。' +
+      '研究上は、機器・回線を持てるかという「アクセス格差（第一のデバイド）」、使いこなすスキル・リテラシーの差である「利用・スキル格差（第二のデバイド）」、利用を経済的・社会的成果へ変換できるかという「活用・成果の格差（第三のデバイド）」に区分して論じられる。格差は地域間・世代間・所得間・国際間に現れ、総務省・OECD・ITU等が解消（デジタル・インクルージョン）を図っている。',
+    keyFigures: '総務省／OECD／ITU／J.ファンダイク（3段階デバイド）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/en/topics/digital-divides.html', type: 'government', label: 'OECD — Digital divides' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h23/html/nc222310.html', type: 'government', label: '総務省 情報通信白書 — デジタル・ディバイド' },
+      { url: 'https://www.itu.int/itu-d/reports/statistics/facts-figures-2025/', type: 'government', label: 'ITU — Measuring digital development: Facts and Figures 2025' },
+    ],
+  },
+  {
+    id: 'econ-inflation-deflation',
+    discipline: 'economics',
+    title: 'インフレーションとデフレーション（物価変動と金融政策）',
+    statement:
+      'インフレーションとは物価水準が持続的に上昇し貨幣の購買力が低下する現象であり、デフレーションはその逆で物価水準が持続的に下落する現象である。要因としては、総需要が供給能力を超えて生じる「ディマンドプル（需要牽引）」と、原油高や供給制約など生産コスト上昇に起因する「コストプッシュ（費用押上げ）」が区別され、貨幣数量説的な見方では中長期の物価はマネー供給と結びつくとされる。' +
+      'デフレは、債務の実質負担を増やし、値下がり期待による消費・投資の先送りを促し、需要減→賃金・物価下落→さらなる需要減という「デフレスパイラル」を招きうる。こうした不安定を避けるため、日本銀行・FRBをはじめ多くの中央銀行は概ね年2%程度の物価安定目標を掲げている。',
+    keyFigures: '日本銀行・FRB等の物価安定目標（概ね2%）／ディマンドプル・コストプッシュ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/en/publications/fandd/issues/series/back-to-basics/inflation', type: 'government', label: 'IMF Finance & Development — Inflation: Prices on the Rise' },
+      { url: 'https://www.boj.or.jp/mopo/outline/target.htm', type: 'government', label: '日本銀行 2％の「物価安定の目標」' },
+      { url: 'https://www.federalreserve.gov/faqs/economy_14400.htm', type: 'government', label: 'Federal Reserve — Why 2 percent inflation?' },
+    ],
+  },
 ];
 // Stryker restore all
