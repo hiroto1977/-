@@ -437,5 +437,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.tokai-sr.jp/column/employment-disabilities/', type: 'media', label: '法定雇用率の引き上げ 社労士解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-officer-remuneration',
+      domain: 'tax',
+      title: '役員給与の損金算入（3類型）',
+      statement:
+        '法人が役員に支給する給与は、定期同額給与・事前確定届出給与・業績連動給与のいずれかに該当しなければ' +
+        '原則として損金に算入されない。業績連動給与は同族会社に該当しない法人等の業務執行役員への支給に限られる。',
+      authority: '所管: 国税庁（法人税法第34条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5211.htm', type: 'government', label: '国税庁 No.5211 役員に対する給与' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/11/03.htm', type: 'government', label: '国税庁 質疑応答事例 定期同額給与' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/73615/', type: 'media', label: 'マネーフォワード 事前確定届出給与' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-stamp-duty-doc',
+      domain: 'tax',
+      title: '印紙税の課税文書と過怠税',
+      statement:
+        '印紙税法上の課税文書（契約書・領収書等）を作成した者は所定額の収入印紙を貼付・消印する義務を負う。' +
+        '納付すべき印紙税を納めなかった場合は原則として本来の税額の3倍の過怠税（自主申出時は1.1倍）が課される。',
+      authority: '所管: 国税庁・財務省（印紙税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7131.htm', type: 'government', label: '国税庁 No.7131 印紙税を納めなかったとき' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/inshi/annai/23120080.htm', type: 'government', label: '国税庁 印紙税不納付事実申出手続' },
+      { url: 'https://www.gmosign.com/media/electronic-contract/inshizei-kataizei/', type: 'media', label: 'GMOサイン 印紙税の過怠税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-employment-insurance',
+      domain: 'labor',
+      title: '雇用保険の被保険者加入要件',
+      statement:
+        '雇用保険は、1週間の所定労働時間が20時間以上で、かつ31日以上の雇用見込みがある労働者が、雇用形態を' +
+        '問わず原則として被保険者となる。要件を満たせば事業主はハローワークへ資格取得届を提出する。',
+      authority: '所管: 厚生労働省（雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/hoken/kakikata/dl/koyou-06.pdf', type: 'government', label: '厚生労働省 雇用保険の被保険者について' },
+      { url: 'https://www.mhlw.go.jp/content/11600000/000637955.pdf', type: 'government', label: '厚生労働省 雇用保険業務取扱要領' },
+      { url: 'https://hataluck.jp/column/store-management/conditions/', type: 'media', label: '雇用保険の加入条件 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-health-checkup',
+      domain: 'labor',
+      title: '定期健康診断の実施義務',
+      statement:
+        '労働安全衛生法により、事業者は常時使用する労働者に対し1年以内ごとに1回の定期健康診断を、雇入れ時には' +
+        '雇入れ時健康診断を実施する義務があり、その費用は事業者が負担する。',
+      authority: '所管: 厚生労働省（労働安全衛生法・労働安全衛生規則）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000103900.pdf', type: 'government', label: '厚生労働省 健康診断を実施しましょう' },
+      { url: 'https://www.mhlw.go.jp/file/05-Shingikai-11201000-Roudoukijunkyoku-Soumuka/0000136750.pdf', type: 'government', label: '厚生労働省 定期健康診断' },
+      { url: 'https://mediment.jp/blog/regular-health-checkup', type: 'media', label: '定期健康診断の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-purpose-limitation',
+      domain: 'legal',
+      title: '個人情報の利用目的の特定・通知・目的外利用制限',
+      statement:
+        '個人情報取扱事業者は利用目的をできる限り特定し、取得時に通知・公表または明示しなければならない。' +
+        'あらかじめ本人の同意を得ずに、特定した利用目的の達成に必要な範囲を超えて取り扱うこと（目的外利用）は原則禁止される。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q103/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の特定' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q102/', type: 'government', label: '個人情報保護委員会 FAQ 利用目的の公表' },
+      { url: 'https://storialaw.jp/blog/9609', type: 'media', label: 'STORIA法律事務所 個人情報保護法の整理' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-superior-ledger',
+      domain: 'tax',
+      title: '優良な電子帳簿の過少申告加算税軽減',
+      statement:
+        '訂正削除履歴の確保・帳簿間の相互関連性・検索機能の確保の要件を満たす「優良な電子帳簿」を備付け保存し、' +
+        '適用を受ける旨の届出書をあらかじめ所轄税務署長に提出すると、その帳簿に係る申告漏れの過少申告加算税が5%軽減される。',
+      authority: '所管: 国税庁（電子帳簿保存法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/05.htm', type: 'government', label: '国税庁 優良な電子帳簿の要件' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm', type: 'government', label: '国税庁 電子帳簿保存法の概要' },
+      { url: 'https://www.zeiken.co.jp/yougo/', type: 'media', label: '税研 用語解説' },
+    ],
+  },
 ];
 // Stryker restore all
