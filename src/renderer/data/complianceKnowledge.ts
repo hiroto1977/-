@@ -4213,5 +4213,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://biz.moneyforward.com/contract/basic/21109/', type: 'media', label: '契約不適合責任（民法566条）解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-income-tax-progressive',
+      domain: 'tax',
+      title: '所得税の超過累進税率',
+      statement:
+        '所得税は、課税所得金額が大きくなるほど高い税率が適用される超過累進税率を採用しており、税率は課税所得金額に応じて' +
+        '5%・10%・20%・23%・33%・40%・45%の7段階に区分されている（平成27年分以降）。各区分には控除額が定められ、これとは別に基準所得税額の2.1%の復興特別所得税が課される。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm', type: 'government', label: '国税庁 No.2260 所得税の税率' },
+      { url: 'https://www.nta.go.jp/publication/pamph/shotoku/fukko_tokubetsu/index.htm', type: 'government', label: '国税庁 復興特別所得税のあらまし' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/income/b02_1.pdf', type: 'government', label: '財務省 所得税の税率構造' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-special-corporate-business-tax',
+      domain: 'tax',
+      title: '特別法人事業税及び特別法人事業譲与税',
+      statement:
+        '特別法人事業税は、地域間の財政力格差（税源の偏在）の是正を目的として、令和元年（2019年）10月1日以後に開始する事業年度から' +
+        '導入された国税であり、法人事業税（所得割・収入割）の納税義務者に対し、その基準法人所得割額・基準法人収入割額に一定の税率を' +
+        '乗じた額が課され、都道府県が法人事業税と併せて賦課徴収する。税収は特別法人事業譲与税として人口を基準に各都道府県へ譲与される。',
+      authority: '所管: 総務省（特別法人事業税及び特別法人事業譲与税に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_content/000689620.pdf', type: 'government', label: '総務省 特別法人事業譲与税の概要' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_10.html', type: 'government', label: '総務省 地方法人課税の偏在是正' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/tokubetsu_houjin', type: 'municipality', label: '東京都主税局 特別法人事業税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-high-cost-medical',
+      domain: 'labor',
+      title: '高額療養費制度（公的医療保険）',
+      statement:
+        '高額療養費制度は、公的医療保険の被保険者が同一月（1日から末日まで）に医療機関等の窓口で支払った自己負担額が、年齢（70歳未満／' +
+        '70歳以上）や所得区分に応じて定められた自己負担限度額を超えた場合に、その超過分が後から支給される制度である。あらかじめ' +
+        '「限度額適用認定証」等（マイナ保険証によるオンライン資格確認を含む）を提示することで、窓口での支払いを限度額までにとどめることもできる。',
+      authority: '所管: 厚生労働省（健康保険法等）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/juuyou/kougakuiryou/index.html', type: 'government', label: '厚生労働省 高額療養費制度を利用される皆さまへ' },
+      { url: 'https://www.kyoukaikenpo.or.jp/faq/benefit/004/index.html', type: 'operator', label: '協会けんぽ 高額な医療費を支払ったとき' },
+      { url: 'https://www.kyoukaikenpo.or.jp/benefit/high_cost_medical_expenses/001/index.html', type: 'operator', label: '協会けんぽ 限度額適用認定証' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-long-term-care-insurance',
+      domain: 'labor',
+      title: '介護保険制度（保険者・被保険者・自己負担）',
+      statement:
+        '介護保険は市町村（特別区を含む）を保険者とする社会保険制度で、40歳以上の人が被保険者として保険料を負担する。65歳以上の' +
+        '第1号被保険者は原因を問わず要介護・要支援認定を受ければサービスを利用でき、40歳以上65歳未満の第2号被保険者は加齢に伴う特定疾病が' +
+        '原因の場合に利用できる。サービス利用時の自己負担は原則1割（所得に応じて2割・3割）である。',
+      authority: '所管: 厚生労働省・市町村（介護保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.kaigokensaku.mhlw.go.jp/commentary/about.html', type: 'government', label: '厚生労働省 介護保険とは' },
+      { url: 'https://www.mhlw.go.jp/shingi/2004/04/s0426-6c2.html', type: 'government', label: '厚生労働省 被保険者とサービス受給者の範囲' },
+      { url: 'https://www.mhlw.go.jp/topics/kaigo/zaisei/sikumi_04.html', type: 'government', label: '厚生労働省 介護保険の保険料' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-keihyo-commitment',
+      domain: 'legal',
+      title: '景品表示法の確約手続（2024年10月施行）',
+      statement:
+        '2023年（令和5年）改正景品表示法（2024年10月1日施行）により確約手続が導入された。景品表示法違反のおそれのある行為について、' +
+        '事業者が是正措置計画（確約計画）を作成して消費者庁長官に申請し、その認定を受けた場合には、当該行為について措置命令・課徴金納付命令を受けないこととなる制度である。',
+      authority: '所管: 消費者庁（景品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/movie_explanation/assets/representation_cms216_240917_02.pdf', type: 'government', label: '消費者庁 改正景品表示法の概要（2024/10施行）' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/guideline/assets/representation_cms216_240418_04.pdf', type: 'government', label: '消費者庁 確約手続に関する運用基準' },
+      { url: 'https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html', type: 'media', label: '景表法の課徴金・確約手続 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-coolingoff-electronic',
+      domain: 'legal',
+      title: '電磁的記録によるクーリング・オフ通知（2022年6月施行）',
+      statement:
+        '2021年改正特定商取引法（令和3年改正・2022年6月1日施行）により、クーリング・オフの通知を従来の書面（はがき等）だけでなく、' +
+        '電磁的記録（電子メール、事業者ウェブサイトのクーリング・オフ専用フォーム、USBメモリ等の記録媒体、FAX等）でも行えるようになった。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/qa/coolingoff.html', type: 'government', label: '消費者庁 電磁的記録によるクーリング・オフ Q&A' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/', type: 'government', label: '消費者庁 令和3年特定商取引法の改正' },
+      { url: 'https://www.hkd.meti.go.jp/hokih/20220615/index.htm', type: 'government', label: '北海道経済産業局 電磁的記録によるクーリング・オフ' },
+    ],
+  },
 ];
 // Stryker restore all
