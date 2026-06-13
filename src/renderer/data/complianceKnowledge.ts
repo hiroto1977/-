@@ -947,5 +947,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://ueno.law/topics/keihyouhou-keihin-kisei/', type: 'media', label: '景品規制 解説' },
     ],
   },
+  {
+    value: {
+      id: 'legal-product-liability',
+      domain: 'legal',
+      title: '製造物責任法（PL法）',
+      statement:
+        '製造物の欠陥により他人の生命・身体・財産に損害が生じた場合、製造業者等は過失の有無を問わず損害賠償責任を負う（無過失責任）。' +
+        'ただし製造物自体のみの損害は対象外。',
+      authority: '所管: 消費者庁（製造物責任法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/pl_qa.html', type: 'government', label: '消費者庁 製造物責任法の概要Q&A' },
+      { url: 'https://laws.e-gov.go.jp/law/406AC0000000085', type: 'government', label: 'e-Gov 製造物責任法' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%A3%BD%E9%80%A0%E7%89%A9%E8%B2%AC%E4%BB%BB%E6%B3%95', type: 'media', label: '製造物責任法 概説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-trade-secret',
+      domain: 'legal',
+      title: '営業秘密の保護（不正競争防止法）',
+      statement:
+        '秘密管理性・有用性・非公知性の3要件をすべて満たす情報は不正競争防止法上の営業秘密として保護され、' +
+        '不正な取得・使用・開示は差止請求・損害賠償の対象となり、刑事罰（営業秘密侵害罪）も科され得る。',
+      authority: '所管: 経済産業省（不正競争防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 営業秘密' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/guideline/r7ts.pdf', type: 'government', label: '経済産業省 営業秘密管理指針' },
+      { url: 'https://kigyobengo.com/media/useful/1461.html', type: 'media', label: '営業秘密の3要件 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-corp-interim-return',
+      domain: 'tax',
+      title: '法人税の中間申告',
+      statement:
+        '前事業年度の確定法人税額が20万円を超える普通法人は、事業年度開始の日以後6か月を経過した日から2か月以内に' +
+        '中間申告・納付を行う。前年度実績による予定申告か、仮決算に基づく中間申告のいずれかを選択できる。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/nozei/oshirase/pdf/01.pdf', type: 'government', label: '国税庁 予定申告及び納税の義務' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/hojin/24/04.htm', type: 'government', label: '国税庁 中間（予定）税額の算出' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/17300/', type: 'media', label: 'マネーフォワード 法人税の中間納付' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dispatch-period',
+      domain: 'labor',
+      title: '労働者派遣の期間制限（3年ルール）',
+      statement:
+        '2015年改正により、派遣先の同一事業所での受入れは原則3年が上限（事業所単位）、同一組織単位で同一の派遣労働者を' +
+        '受け入れるのも原則3年が上限（個人単位）。事業所単位は過半数労働組合等への意見聴取で延長できる。',
+      authority: '所管: 厚生労働省（労働者派遣法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/aichi-roudoukyoku/hourei_seido_tetsuzuki/roudousha_haken/hourei_seido/hakensaki_00001.html', type: 'government', label: '厚生労働省 愛知労働局 派遣の期間制限' },
+      { url: 'https://www.manpowergroup.jp/client/manpowerclip/temporary/restriction_period.html', type: 'media', label: '派遣の抵触日 解説' },
+      { url: 'https://www.pasona.co.jp/clients/service/column/jhk/haken3years_rule/', type: 'media', label: '派遣法の3年ルール 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-maternity-leave',
+      domain: 'labor',
+      title: '産前産後休業（労働基準法第65条）',
+      statement:
+        '産前6週間（多胎妊娠は14週間）以内に出産予定の女性は本人の請求により休業でき、産後8週間は原則就業させてはならない。' +
+        'ただし産後6週間経過後は、本人が請求し医師が支障ないと認めた業務には就かせることができる。',
+      authority: '所管: 厚生労働省（労働基準法第65条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.bosei-navi.mhlw.go.jp/glossary/provide01.html', type: 'government', label: '厚生労働省 母性健康管理ナビ' },
+      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05i_0011.pdf', type: 'government', label: '厚生労働省 母性保護規定' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/87784/', type: 'media', label: '産前産後休業 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-prepaid-payment',
+      domain: 'legal',
+      title: '前払式支払手段の発行保証金供託義務',
+      statement:
+        '商品券・プリペイドカード・電子マネー等の前払式支払手段の発行者は、基準日（3月末・9月末）の未使用残高が1,000万円を' +
+        '超える場合、その2分の1以上の額を発行保証金として供託等で保全し、財務局へ届出・登録する義務を負う。',
+      authority: '所管: 金融庁（資金決済法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/news/28/20161228-3/23.pdf', type: 'government', label: '金融庁 前払式支払手段発行保証金規則' },
+      { url: 'https://www.fsa.go.jp/common/shinsei/maebaraishiki.html', type: 'government', label: '金融庁 前払式支払手段の各種様式' },
+      { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'media', label: '日本資金決済業協会 発行保証金' },
+    ],
+  },
 ];
 // Stryker restore all
