@@ -1355,5 +1355,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/1426', type: 'media', label: '保有個人データ 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-business-tax-pro-forma',
+      domain: 'tax',
+      title: '法人事業税の外形標準課税',
+      statement:
+        '資本金1億円超の普通法人には法人事業税の外形標準課税（付加価値割・資本割）が適用され、' +
+        '所得が赤字でも付加価値割・資本割が課される。',
+      authority: '所管: 総務省・各都道府県（地方税法／法人事業税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_content/000149767.pdf', type: 'government', label: '総務省 外形標準課税の概要' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/shitsumon/work/a1/index.html#gaikei-faq', type: 'municipality', label: '東京都主税局 外形標準課税 FAQ' },
+      { url: 'https://www.pwc.com/jp/ja/knowledge/column/assurance-knowledge/pro-forma-standard-taxation.html', type: 'media', label: '外形標準課税 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-year-end-adjustment',
+      domain: 'tax',
+      title: '年末調整',
+      statement:
+        '給与の支払者は、その年最後の給与支払時に、源泉徴収した所得税等の合計額と本来納めるべき年税額との' +
+        '過不足を精算する年末調整を行う。給与総額が2,000万円を超える者等は対象外となる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm', type: 'government', label: '国税庁 No.2665 年末調整の対象となる人' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2675.htm', type: 'government', label: '国税庁 No.2675 年末調整の対象となる給与' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/53611/', type: 'media', label: '年末調整 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-worktime-tracking',
+      domain: 'labor',
+      title: '労働時間の適正な把握義務',
+      statement:
+        '使用者は労働時間を適正に把握する責務を負い、始業・終業時刻の確認・記録は、使用者の現認または' +
+        'タイムカード・ICカード等の客観的な記録を基礎とすることが原則とされている。',
+      authority: '所管: 厚生労働省（労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000148322.html', type: 'government', label: '厚労省 労働時間の適正把握ガイドライン' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11200000-Roudoukijunkyoku/0000149439.pdf', type: 'government', label: '厚労省 ガイドライン本文(PDF)' },
+      { url: 'https://www.obc.co.jp/360/list/post191', type: 'media', label: '労働時間の適正把握 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-standard-remuneration',
+      domain: 'labor',
+      title: '標準報酬月額',
+      statement:
+        '健康保険・厚生年金保険の保険料や保険給付は、被保険者の報酬月額を区切りのよい幅で区分した' +
+        '標準報酬月額に基づいて算定される。原則として毎年7月の定時決定で1年間の標準報酬月額が決まる。',
+      authority: '所管: 日本年金機構・厚生労働省（健康保険法・厚生年金保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120907.html', type: 'government', label: '日本年金機構 標準報酬月額・標準賞与額とは' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo-kankei/hoshu/20120822.html', type: 'government', label: '日本年金機構 定時決定（算定基礎届）' },
+      { url: 'https://www.freee.co.jp/kb/kb-payroll/standard-monthly-remuneration/', type: 'media', label: '標準報酬月額 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-chain-sales',
+      domain: 'legal',
+      title: '連鎖販売取引（マルチ商法）',
+      statement:
+        '個人を販売員として勧誘し、その個人がさらに別の個人を販売員として勧誘する形で連鎖的に拡大する' +
+        '取引は連鎖販売取引として特定商取引法の規制を受け、概要書面・契約書面の交付や20日間のクーリングオフが義務付けられる。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/chainsales/', type: 'government', label: '消費者庁 特定商取引法ガイド 連鎖販売取引' },
+      { url: 'https://www.shouhiseikatu.metro.tokyo.lg.jp/keiyaku/torihiki/rensa.html', type: 'municipality', label: '東京くらしWEB 連鎖販売取引' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/multi.html', type: 'media', label: '国民生活センター マルチ取引' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-funds-transfer',
+      domain: 'legal',
+      title: '資金移動業',
+      statement:
+        '銀行等以外の者が為替取引（送金）を業として営む場合は資金移動業として内閣総理大臣の登録が必要であり、' +
+        '送金額の上限に応じて第一種・第二種・第三種の類型に区分され、利用者資金の保全等の義務を負う。',
+      authority: '所管: 金融庁（資金決済に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/kessai_seido/index.html', type: 'government', label: '金融庁 資金決済法関連' },
+      { url: 'https://www.fsa.go.jp/common/law/kessai/index.html', type: 'government', label: '金融庁 資金移動業者関係' },
+      { url: 'https://www.smbc.co.jp/hojin/businessjoho/keiei/fund-transfer.html', type: 'media', label: '資金移動業 解説' },
+    ],
+  },
 ];
 // Stryker restore all
