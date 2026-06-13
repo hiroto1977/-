@@ -2353,6 +2353,119 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.meti.go.jp/main/yosan/yosan_fy2025/pdf/03.pdf', type: 'government', label: '経済産業省 令和7年度 経済産業関係税制改正（防災・減災投資促進税制）' },
     ],
   },
+  {
+    id: 'subsidy-strong-agriculture',
+    level: 'national',
+    domain: 'business',
+    name: '強い農業づくり総合支援交付金',
+    authority: '所管: 農林水産省（産地基幹施設等支援タイプは都道府県・市町村を経由して運用）',
+    statement:
+      '国産農畜産物の安定的な供給体制の構築や産地の競争力強化・流通の合理化等のため、産地や担い手の発展状況に応じて必要となる集出荷貯蔵施設・加工施設等の共同利用施設（産地の基幹施設）の整備や、産地の体制づくりを支援する国の交付金。' +
+      '事業実施主体は都道府県・市町村・農協（JA）・農業者団体等で、産地基幹施設等支援タイプでは受益農業従事者が原則一定数以上であること等の要件がある。補助率・上限額・公募期間は年度・タイプにより変動するため要確認。',
+    application:
+      'タイプ（産地基幹施設等支援／生産事業モデル支援／食料システム構築支援等）により公募窓口・時期・要件が異なる。産地基幹施設等支援タイプは前年度に市町村を通じて募集が行われ、市町村・都道府県を経由して国へ申請する枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/seisan/suisin/tuyoi_nougyou/index.html', type: 'government', label: '農林水産省 強い農業づくりの支援' },
+      { url: 'https://www.maff.go.jp/j/g_biki/hojo/r7/250130_1.html', type: 'government', label: '農林水産省 強い農業づくり総合支援交付金（令和7年度当初予算）' },
+      { url: 'https://www.pref.gunma.jp/site/hojokin/8920.html', type: 'municipality', label: '群馬県 強い農業づくり総合支援交付金（産地基幹施設等支援タイプ）' },
+    ],
+  },
+  {
+    id: 'subsidy-culture-arts',
+    level: 'national',
+    domain: 'business',
+    name: '文化芸術振興費補助金（文化芸術創造活動への支援）',
+    authority: '所管: 文化庁／交付・助成実務: 独立行政法人日本芸術文化振興会',
+    statement:
+      '我が国の芸術団体の水準向上とより多くの国民への鑑賞機会の提供を図るため、優れた文化芸術の創造活動を支援する国の補助金。対象分野は音楽・舞踊・演劇等の舞台芸術、文楽・歌舞伎・能楽等の伝統芸能、大衆芸能、映画製作、メディア芸術' +
+      '（アニメ・マンガ・ゲーム等）、美術、ならびに担い手育成・国際芸術交流・文化施設の機能強化など幅広い。文化庁が予算を計上し、独立行政法人日本芸術文化振興会が舞台芸術等総合支援事業等として助成を交付する（文化庁が直接公募する事業もある）。' +
+      '補助率・上限額・公募期間・対象事業区分は年度の公募要領で定められ変動するため要確認。',
+    application:
+      '日本芸術文化振興会（基金事業）又は文化庁の各事業ごとに、年度単位で助成金交付要望書・申請を公募期間内に提出。原則として当該年度に実施する活動が対象で、申請要件は年度で更新される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bunka.go.jp/shinsei_boshu/kobo/index.html', type: 'government', label: '文化庁 公募一覧（文化芸術振興費補助金）' },
+      { url: 'https://www.ntj.jac.go.jp/kikin/', type: 'operator', label: '日本芸術文化振興会 助成事業' },
+      { url: 'https://www.ntj.jac.go.jp/kikin/bosyuu/2025/', type: 'operator', label: '日本芸術文化振興会 助成事業の募集（年度ごとの公募要件）' },
+    ],
+  },
+  {
+    id: 'subsidy-jfc-loan',
+    level: 'national',
+    domain: 'business',
+    name: '日本政策金融公庫の中小企業・小規模事業者向け融資',
+    authority: '運営: 株式会社日本政策金融公庫（日本公庫／政府が株式を保有する政策金融機関）。財務省・経済産業省等の所管政策に基づく',
+    statement:
+      '日本政策金融公庫（日本公庫）は政府系の政策金融機関で、国民生活事業・中小企業事業・農林水産事業を通じ、民間金融機関を補完しながら中小企業・小規模事業者・創業者・農林漁業者等に政策的な融資を行う。代表的な制度に' +
+      '「新規開業・スタートアップ支援資金」（創業者向け）、「経営環境変化対応資金＝セーフティネット貸付」（取引先倒産・業績悪化等で資金繰りが悪化した事業者向け）、商工会議所・商工会の経営指導と推薦に基づき無担保・無保証人で融資する' +
+      '「マル経融資（小規模事業者経営改善資金）」等がある。これらは補助金（返済不要）ではなく融資（要返済）であり、金利・融資限度額・対象要件は随時改定されるため要確認。',
+    application:
+      '日本政策金融公庫の各支店窓口又はインターネット申込で、事業計画・必要書類を提出して審査を受ける。マル経融資は商工会議所・商工会の経営指導を受けたうえで同所の推薦が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jfc.go.jp/n/finance/search/05_kinyuukankyou_m_t.html', type: 'operator', label: '日本政策金融公庫 経営環境変化対応資金（セーフティネット貸付）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/shokibo/marukei/', type: 'government', label: '中小企業庁 小規模事業者経営改善資金（マル経融資）' },
+      { url: 'https://www.mof.go.jp/policy/financial_system/fiscal_finance/financial_institution/index.html', type: 'government', label: '財務省 政府関係金融機関' },
+    ],
+  },
+  {
+    id: 'subsidy-productivity-revolution',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業生産性革命推進事業',
+    authority: '所管: 経済産業省 中小企業庁／実施: 独立行政法人中小企業基盤整備機構（中小機構）',
+    statement:
+      '中小企業・小規模事業者の生産性向上を継続的に支援するため、中小機構を実施主体として複数の補助金を統合的・機動的に運用する国の事業。傘下には小規模事業者持続化補助金、ものづくり（・商業・サービス生産性向上促進）補助金、' +
+      'IT導入補助金（近年はデジタル化・AI導入補助金や中小企業省力化投資補助金等へ再編・拡充）等が含まれ、補正予算等を財源に措置される。令和2年度補正予算で本格的に措置されて以降、複数年度にわたり累次の公募が行われている。' +
+      '各補助金の対象経費・補助率・補助上限・予算規模・公募回は年度・公募ごとに変動するため要確認。',
+    application:
+      '各補助金それぞれの公募に対し、所定の要件・事業計画を満たして個別に応募・採択を受ける枠組み。公募は累次・複数年にわたり随時実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/information_2/publicoffer/review2021/kokai/overview5.pdf', type: 'government', label: '経済産業省・中小企業庁 中小企業生産性革命推進事業について' },
+      { url: 'https://seisansei.smrj.go.jp/', type: 'government', label: '中小機構 補助金活用ナビ（中小企業生産性革命推進事業）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/', type: 'government', label: 'J-Net21 支援情報（生産性革命推進事業の各補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-agriculture-reserve',
+    level: 'national',
+    domain: 'tax-incentive',
+    name: '農業経営基盤強化準備金制度',
+    authority: '所管: 農林水産省・国税庁。根拠: 租税特別措置法第24条の2（個人）・第61条の2（法人）',
+    statement:
+      '青色申告を行う認定農業者（個人・農地所有適格法人）等が、経営所得安定対策等の交付金を農業経営改善計画等に従って「農業経営基盤強化準備金」として積み立てた場合、その積立額を個人は必要経費に、法人は損金に算入できる税制特例。' +
+      'さらに、積み立てた準備金を取り崩し又は受領した交付金をそのまま用いて農用地・農業用の建物・機械等を取得した場合には、その取得価額について圧縮記帳できる特例も併せて適用できる。適用には青色申告と農林水産大臣の証明書の添付が必要。' +
+      '令和7年度以降は地域計画に「農業を担う者」として位置づけられていること等が要件に加わる。適用期限・要件は税制改正で変動するため要確認。',
+    application:
+      '青色申告の事前届出を行ったうえで、各年の確定申告において農林水産大臣の証明書を添付して申告する（積立限度額は交付金収入の範囲内で大臣が証明する金額と所得金額のいずれか少ない額）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/kobetu_ninaite/n_seido/junbikin_tetuduki_shiryou.html', type: 'government', label: '農林水産省 農業経営基盤強化準備金 手続・資料' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/080104/03.htm', type: 'government', label: '国税庁 法令解釈通達 農業経営基盤強化準備金関係' },
+      { url: 'https://www.maff.go.jp/j/new_farmer/pdf/9_junbikin.pdf', type: 'government', label: '農林水産省 農業経営基盤強化準備金（特例措置の内容）' },
+    ],
+  },
+  {
+    id: 'subsidy-nedo-startup',
+    level: 'national',
+    domain: 'business',
+    name: 'NEDO 研究開発型スタートアップ支援事業',
+    authority: '所管: 経済産業省／実施: 国立研究開発法人 新エネルギー・産業技術総合開発機構（NEDO）',
+    statement:
+      'NEDOは、ディープテックをはじめとする研究開発型スタートアップの創出・事業化を後押しするため、技術シーズの発掘から事業化までを一貫支援する事業を実施している。シード期に起業前の人材発掘・起業家育成を行う「NEP（NEDO Entrepreneurs Program）」や、' +
+      'NEDO認定ベンチャーキャピタル等からの出資を要件として研究開発・実証費用を助成する「シード期の研究開発型スタートアップに対する事業化支援（STS）」等を通じて、研究開発・技術実証に要する費用を補助・委託の形で支援する。' +
+      '近年はディープテック・スタートアップ支援基金（DTSU）としてフェーズ別支援に再編・拡充されている。助成率・上限額・対象経費・公募内容は年度ごとに変動するため要確認。',
+    application:
+      'NEDOが年度ごとに行う公募に応募する形式。STS等の事業化支援ではNEDO認定VC等からの出資受入れが応募要件。NEP（人材育成）等は別枠で公募。詳細・締切は各年度のNEDO公募ページで確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nedo.go.jp/activities/ZZJP_100091.html', type: 'government', label: 'NEDO 研究開発型スタートアップ支援事業' },
+      { url: 'https://www8.cao.go.jp/cstp/ryoshigijutsu/21kai/sanko4.pdf', type: 'government', label: '内閣府 ディープテック・スタートアップ支援事業（経産省資料）' },
+      { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001a1j.html', type: 'operator', label: 'J-Net21 NEDO シード期スタートアップ支援' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
