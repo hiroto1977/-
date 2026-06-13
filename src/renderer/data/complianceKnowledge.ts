@@ -845,5 +845,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.yayoi-kk.co.jp/seikyusho/oyakudachi/scanner_hozon/', type: 'media', label: '弥生 スキャナ保存制度' },
     ],
   },
+  {
+    value: {
+      id: 'tax-reduced-rate',
+      domain: 'tax',
+      title: '消費税の軽減税率制度',
+      statement:
+        '2019年10月の消費税率10%への引上げと同時に軽減税率8%が導入された。対象は酒類・外食を除く飲食料品と、' +
+        '週2回以上発行され定期購読契約に基づく新聞。事業者は税率の異なる取引を区分して記帳・記載する必要がある。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6102.htm', type: 'government', label: '国税庁 No.6102 軽減税率制度' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/01.htm', type: 'government', label: '国税庁 軽減税率制度の概要' },
+      { url: 'https://zeimo.jp/article/18393', type: 'media', label: '軽減税率の対象 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-corp-inhabitant-flat',
+      domain: 'tax',
+      title: '法人住民税の均等割',
+      statement:
+        '法人住民税は法人税割と均等割からなり、均等割は資本金等の額・従業者数に応じて定額で課され、所得が赤字でも' +
+        '納税義務が生じる。法人税割は法人税額に応じて課されるため、黒字法人のみが負担する点で均等割と異なる。',
+      authority: '所管: 総務省・地方自治体（地方税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_08.html', type: 'government', label: '総務省 法人住民税' },
+      { url: 'https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/jigyosya/shizei/hojin/houjin.html', type: 'municipality', label: '横浜市 法人市民税' },
+      { url: 'https://www.yayoi-kk.co.jp/kaikei/oyakudachi/corporate-inhabitant-tax/', type: 'media', label: '弥生 法人住民税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dismissal-notice',
+      domain: 'labor',
+      title: '解雇予告（労働基準法第20条）',
+      statement:
+        '使用者が労働者を解雇しようとする場合は、少なくとも30日前に予告するか、30日分以上の平均賃金（解雇予告手当）を' +
+        '支払わなければならない。予告日数は解雇予告手当を支払った日数だけ短縮できる。',
+      authority: '所管: 厚生労働省（労働基準法第20条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/kagoshima-roudoukyoku/yokuaru_goshitsumon/qa07/0703.html', type: 'government', label: '厚生労働省 鹿児島労働局 解雇予告' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/88061/', type: 'media', label: 'マネーフォワード 解雇予告手当' },
+      { url: 'https://www.komon-lawyer.jp/qa/teate/', type: 'media', label: 'デイライト法律事務所 解雇予告' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-elderly-employment',
+      domain: 'labor',
+      title: '高年齢者雇用確保措置',
+      statement:
+        '定年を65歳未満に定める事業主は、65歳までの定年引上げ・継続雇用制度の導入・定年の廃止のいずれかの雇用確保措置を' +
+        '講じる義務がある。2021年4月施行の改正により、70歳までの就業確保措置が努力義務として加わった。',
+      authority: '所管: 厚生労働省（高年齢者雇用安定法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html', type: 'government', label: '厚生労働省 高年齢者の雇用' },
+      { url: 'https://www.mhlw.go.jp/content/11700000/001245647.pdf', type: 'government', label: '厚生労働省 高年齢者雇用安定法の概要' },
+      { url: 'https://biz.moneyforward.com/contract/basic/9357/', type: 'media', label: '高年齢者雇用安定法改正 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-superior-bargaining',
+      domain: 'legal',
+      title: '優越的地位の濫用（独占禁止法）',
+      statement:
+        '取引上優越した地位にある事業者が、取引先に正常な商慣習に照らして不当に不利益を与える行為であり、' +
+        '独占禁止法が不公正な取引方法の一類型として禁止する。課徴金納付命令の対象となる。',
+      authority: '所管: 公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 優越的地位の濫用の考え方' },
+      { url: 'https://www.jftc.go.jp/dk/dk_qa.html', type: 'government', label: '公正取引委員会 独禁法FAQ' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8', type: 'media', label: '優越的地位の濫用 概説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-premium-regulation',
+      domain: 'legal',
+      title: '景品表示法の景品規制',
+      statement:
+        '景品表示法は過大な景品類の提供を制限し、一般懸賞・共同懸賞・総付景品の類型ごとに取引価額に応じた景品の' +
+        '最高額と総額の上限を定めている。違反は措置命令等の対象となる。',
+      authority: '所管: 消費者庁（景品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/premium_regulation', type: 'government', label: '消費者庁 景品規制の概要' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/premium/lotteries', type: 'government', label: '消費者庁 一般懸賞について' },
+      { url: 'https://ueno.law/topics/keihyouhou-keihin-kisei/', type: 'media', label: '景品規制 解説' },
+    ],
+  },
 ];
 // Stryker restore all
