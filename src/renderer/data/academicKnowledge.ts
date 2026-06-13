@@ -1932,5 +1932,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.science.org/doi/10.1126/science.abl4476', type: 'academic', label: 'Rajkumar et al. (2022) A causal test of the strength of weak ties, Science（実証的追試）' },
     ],
   },
+  {
+    id: 'econ-efficiency-wage',
+    discipline: 'economics',
+    title: '効率賃金仮説（efficiency wage hypothesis）',
+    statement:
+      '企業が市場の均衡賃金より高い賃金を支払うことが、かえって企業にとって合理的・効率的になりうるとする労働経済学の理論。通常と因果が逆転し、賃金が生産性の関数ではなく、生産性が賃金の関数となる。' +
+      '高賃金が生産性を高める経路として、(1)怠業（シャーキング）の防止＝シャピロ＝スティグリッツのサボリ模型（解雇に伴う失業のコストを高めることで勤勉を促し、失業が「労働規律装置」として機能する）、(2)離職率の低下による採用・訓練費用の節約、(3)有能な人材の自己選択による逆選択の緩和、(4)忠誠心・士気の向上（アカロフの贈与交換モデル）、が挙げられる。結果として賃金は下方硬直的となり、労働市場で非自発的失業が均衡的に発生しうることを説明し、ニューケインジアン経済学の柱の一つとなった。歴史的事例としてフォードが1914年に導入した日給5ドル（当時の相場の約2倍）が引かれる。',
+    keyFigures: 'シャピロ&スティグリッツ（1984 サボリ模型）／アカロフ&イエレン（贈与交換・効率賃金、アカロフ1982 QJE）／例: フォード1914年5ドル日給',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w2101/w2101.pdf', type: 'academic', label: 'Raff & Summers — Did Henry Ford Pay Efficiency Wages? NBER WP 2101' },
+      { url: 'https://academic.oup.com/qje/article-abstract/97/4/543/1846076', type: 'academic', label: 'Akerlof (1982) Labor Contracts as Partial Gift Exchange, QJE 97(4):543-569' },
+      { url: 'https://econ.lse.ac.uk/staff/bpetrong/ec423/lecture3.pdf', type: 'academic', label: 'London School of Economics EC423 — Efficiency Wages（講義ノート）' },
+    ],
+  },
+  {
+    id: 'econ-money-neutrality',
+    discipline: 'economics',
+    title: '貨幣の中立性と古典派の二分法',
+    statement:
+      '貨幣の中立性とは、貨幣供給量の変化が長期的には物価・名目賃金・名目為替レートといった名目変数のみに比例的に影響し、生産量・雇用・実質賃金などの実質変数には影響を与えない、とする命題である。' +
+      'これと表裏をなすのが古典派の二分法で、実質変数は実物的要因（技術・選好・資源）で決まり、名目変数は貨幣的要因で決まるとして、両者を分離して分析できるとする見方である。貨幣数量説と整合的であり、古典派・新古典派マクロ経済学の基礎をなす。多くの経済学者は長期的中立性を受け入れる一方、短期では価格の硬直性や調整の遅れにより貨幣が実質変数に影響しうる（短期的には非中立）とケインジアンは主張する。さらに、貨幣供給量の「水準」だけでなく「成長率」の変化も実質変数に影響しないとする、より強い概念として貨幣の超中立性（superneutrality）がある。',
+    keyFigures: '古典派の二分法／貨幣数量説と整合・古典派/新古典派マクロの基礎／短期は価格硬直性で非中立(ケインジアン)／超中立性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Neutrality_of_money', type: 'reference', label: 'Wikipedia — Neutrality of money（中立性・超中立性・長期/短期）' },
+      { url: 'https://en.wikipedia.org/wiki/Classical_dichotomy', type: 'reference', label: 'Wikipedia — Classical dichotomy（実質変数と名目変数の分離）' },
+      { url: 'https://www.princeton.edu/~mwatson/papers/King_Watson_TestingLongRunNeutrality_FRBR_1997.pdf', type: 'academic', label: 'King & Watson — Testing Long-Run Neutrality（Princeton/Richmond Fed, 長期中立性の実証検証）' },
+    ],
+  },
+  {
+    id: 'mgmt-marketing-mix-4p',
+    discipline: 'management',
+    title: 'マーケティング・ミックス（4P）',
+    statement:
+      '企業が標的市場で望む反応を引き出すために組み合わせる、統制可能なマーケティング手段の集合。その代表的な枠組みが「4P」で、製品（Product）・価格（Price）・流通／場所（Place）・プロモーション（Promotion）の4要素から成る。' +
+      '「マーケティング・ミックス」の語はハーバード大学のニール・ボーデンが1950年代に提唱・普及させ、E.ジェローム・マッカーシーが1960年にこれを覚えやすい4Pとして整理した。その後フィリップ・コトラーの教科書を通じて世界的に普及し、入門教育の標準的枠組みとなった。4Pは売り手視点に偏るとの批判から、顧客視点に置き換えた4C（顧客価値・コスト・利便性・コミュニケーション、ローターボーン1990）や、無形性など特性をもつサービス業向けに人（People）・プロセス（Process）・物的証拠（Physical evidence）を加えた7P（ブームス&ビトナー）へと拡張された。',
+    keyFigures: 'N.ボーデン（マーケティング・ミックス命名・1950年代）／E.J.マッカーシー（4P・1960）／P.コトラー（普及）／拡張: 4C・7P',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/marketing/The-marketing-process', type: 'reference', label: 'Encyclopædia Britannica — Marketing: The marketing process（4P）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-030-14449-4_12-2', type: 'academic', label: 'Springer Nature — Lauterborn’s 4Cs' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0273475399211008', type: 'academic', label: 'Journal of Marketing Education (SAGE) — Yudelson (1999): 1960年マッカーシーの4P導入' },
+    ],
+  },
+  {
+    id: 'human-social-identity-theory',
+    discipline: 'human-science',
+    title: '社会的アイデンティティ理論（social identity theory）',
+    statement:
+      '人は自分が所属する集団（内集団）への帰属を自己概念の一部（社会的アイデンティティ）として取り込み、自尊心を高めるために内集団を外集団よりfavorablyに評価・差別する傾向があるとする社会心理学の理論。社会的カテゴリー化→社会的同一視→社会的比較という3つの過程を通じて、内集団びいき（in-group favoritism）や外集団差別が生じるとされる。' +
+      'ヘンリー・タジフェルと弟子のジョン・ターナーが1970年代に展開し、1979年に定式化した。タジフェルの「最小条件集団パラダイム」実験では、ドットの数の推定やクレー対カンディンスキーの絵画の好みといった、くじ引き同然の些末で無意味な基準で分けられただけの集団でも、人は匿名の自集団メンバーに多く報酬を配分し、しばしば自他集団間の差を最大化しようとした。偏見・差別・集団間紛争・組織帰属・ナショナリズム等の理解に応用される。後にターナーが自己カテゴリー化理論へ発展させた。',
+    keyFigures: 'ヘンリー・タジフェル & ジョン・ターナー（1979）／最小条件集団パラダイム／発展: 自己カテゴリー化理論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/social-identity-theory', type: 'reference', label: 'Encyclopaedia Britannica — Social identity theory' },
+      { url: 'https://oecs.mit.edu/pub/qlm9zp9e', type: 'academic', label: 'Open Encyclopedia of Cognitive Science (MIT Press) — Social Identity' },
+      { url: 'https://www.simplypsychology.org/social-identity-theory.html', type: 'reference', label: 'SimplyPsychology — Social Identity Theory (Tajfel & Turner, 1979)' },
+    ],
+  },
+  {
+    id: 'bizlaw-abusive-dismissal',
+    discipline: 'business-law',
+    title: '解雇権濫用法理（労働契約法16条）',
+    statement:
+      '使用者による労働者の解雇は、客観的に合理的な理由を欠き、社会通念上相当であると認められない場合は、その権利を濫用したものとして無効となる、とする日本の労働法の基本法理（労働契約法16条）。' +
+      'もとは判例（日本食塩製造事件・最判昭和50年、高知放送事件・最判昭和52年等）で確立された法理であり、2003年改正で旧労働基準法18条の2に明文化され、2008年施行の労働契約法16条に引き継がれた。経営上の理由による解雇については、判例上「整理解雇の4要件（4要素）」＝(1)人員削減の必要性、(2)解雇回避努力、(3)被解雇者選定の合理性、(4)手続の妥当性、が重視される。さらに労働基準法20条による解雇予告（30日前の予告または平均賃金30日分以上の予告手当）等の手続規制もあり、これらが解雇を容易にしない日本の「解雇規制」の中核をなす。',
+    keyFigures: '解雇権濫用法理＝労働契約法16条（2008施行・元は判例法理）／整理解雇の4要件（判例）／関連: 労基法20条解雇予告',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov法令検索 — 労働契約法（平成19年法律第128号）第16条' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/roudouseisaku/chushoukigyou/keiyakushuryo_rule.html', type: 'government', label: '厚生労働省 — 労働契約の終了に関するルール（解雇・労契法16条・整理解雇）' },
+      { url: 'https://www.jtuc-rengo.or.jp/rengo_online/2023/09/05/1776/', type: 'media', label: '連合 RENGO ONLINE — 解雇権濫用法理の法制化（旧労基法18条の2の経緯）' },
+    ],
+  },
+  {
+    id: 'infosoc-public-sphere',
+    discipline: 'information-sociology',
+    title: '公共圏（ハーバーマス）',
+    statement:
+      '私的個人が集まり、公共の関心事について理性的・批判的に討議することで世論（public opinion）を形成する社会的領域。国家（公権力）からも、経済や家族といった私的領域からも区別され、「公共的理性の使用」が行われる場とされる。ユルゲン・ハーバーマスが1962年の著書『公共性の構造転換（The Structural Transformation of the Public Sphere）』で論じた。' +
+      '18世紀の英・仏・独で、ロンドンのコーヒーハウス、パリのサロン、新聞・雑誌などを舞台に、財産と教養をもつブルジョア市民が身分でなく「より良い論証の力」によって意見を交わす「市民的公共圏」が成立したとする。しかし20世紀の福祉国家的大衆民主主義下で、マスメディアの商業化・消費文化と国家と社会の相互浸透により、公共圏は批判的討議の場から受動的な消費・操作の対象へと「再封建化（refeudalization）」し構造転換したと論じた。熟議民主主義論やメディア研究の重要概念。ブルジョア中心性・女性などの排除性への批判もある。',
+    keyFigures: 'ユルゲン・ハーバーマス（1962『公共性の構造転換』）／市民的公共圏・再封建化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere', type: 'reference', label: 'Wikipedia — The Structural Transformation of the Public Sphere（1962）' },
+      { url: 'https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/', type: 'academic', label: 'MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）' },
+    ],
+  },
 ];
 // Stryker restore all
