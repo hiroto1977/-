@@ -299,5 +299,40 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.freee.co.jp/kb/kb-blue-return/requirement/', type: 'media', label: 'freee 青色申告特別控除の要件' },
     ],
   },
+  {
+    value: {
+      id: 'legal-my-number',
+      domain: 'legal',
+      title: 'マイナンバー（特定個人情報）の取扱い（番号法）',
+      statement:
+        'マイナンバー（個人番号）の利用範囲は社会保障・税・災害対策の3分野に法律で限定される。特定個人情報は' +
+        '番号法により個人情報保護法より厳格な保護（利用・提供の制限、安全管理措置）が課され、事業者は' +
+        '組織的・人的・物理的・技術的の安全管理措置を講じる義務がある。',
+      authority: '所管: 個人情報保護委員会・デジタル庁（マイナンバー法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/legal/policy/my_number_guideline_jigyosha/', type: 'government', label: '個人情報保護委員会 特定個人情報ガイドライン（事業者編）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/mynumberinfo/gaiyo.htm', type: 'government', label: '国税庁 社会保障・税番号制度の概要' },
+      { url: 'https://www.soumu.go.jp/kojinbango_card/01.html', type: 'government', label: '総務省 マイナンバー制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-working-conditions-disclosure',
+      domain: 'labor',
+      title: '労働条件明示のルール（就業場所・業務の変更の範囲）',
+      statement:
+        '2024年4月から、労働契約の締結・有期契約の更新時の労働条件明示事項に「就業場所・業務の変更の範囲」が' +
+        '追加され、全ての労働者（有期・パート・派遣等を含む）への明示が必要となった。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
+      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 労働条件明示ルール変更' },
+      { url: 'https://proactive.jp/resources/columns/obligation-to-state-working-conditions/', type: 'media', label: '労働条件明示ルール変更 社労士解説' },
+    ],
+  },
 ];
 // Stryker restore all
