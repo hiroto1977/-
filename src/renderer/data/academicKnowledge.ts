@@ -2213,5 +2213,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Ricardian_equivalence', type: 'reference', label: 'Wikipedia, "Ricardian equivalence"（Ricardo 1820 / Barro coinage の補足確認）' },
     ],
   },
+  {
+    id: 'econ-crowding-out',
+    discipline: 'economics',
+    title: 'クラウディングアウト（押し出し効果）',
+    statement:
+      '政府が国債発行で財政支出を拡大すると、貸付資金市場での資金需要が増大して利子率が上昇し、それが民間投資（や利子感応的な消費）を抑制・減少させ、財政政策の景気刺激効果が相殺・減殺される現象。' +
+      '利子率の上昇を通じて生じる金融的クラウディングアウトが代表的だが、完全雇用下では実物資源（労働・資本）の取り合いによる実物的クラウディングアウトも論じられる。IS-LMの枠組みでは、政府支出増がIS曲線を右シフトさせ均衡所得と利子率を押し上げる。LM曲線の傾きが急なほど効果が大きく、垂直なら完全クラウディングアウト、水平（流動性の罠）ならゼロとなる。' +
+      '不況・流動性の罠では利子率が動かずクラウディングアウトは小さい、とケインジアンは主張する一方、マネタリストやリカード派は効果を重視し財政政策に懐疑的である。実証では程度（部分的か完全か）をめぐり論争が続く。',
+    keyFigures: 'IS-LM分析：政府支出増→IS右シフト→利子率上昇→民間投資減／金融的クラウディングアウト＝利子率上昇経由／LM曲線が急なほど効果大・水平（流動性の罠）でゼロ／ケインジアンは不況下では弱いと主張、マネタリスト・リカード派は重視',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/pam/pam49/pam4902.htm', type: 'government', label: 'IMF Pamphlet Series No.49 — Guidelines for Fiscal Adjustment（政府借入が金利上昇・民間投資減を招く機構）' },
+      { url: 'https://openstax.org/books/principles-economics-3e/pages/31-4-fiscal-policy-investment-and-economic-growth', type: 'academic', label: 'OpenStax, Principles of Economics 3e §31.4 — Fiscal Policy, Investment, and Crowding Out' },
+      { url: 'https://pages.stern.nyu.edu/~nroubini/NOTES/CHAP9.HTM', type: 'academic', label: 'NYU Stern (N. Roubini) — The IS-LM Model（LM曲線の傾きとクラウディングアウト）' },
+      { url: 'https://www.pgpf.org/article/the-national-debt-can-crowd-out-investments-in-the-economy-heres-how/', type: 'media', label: 'Peter G. Peterson Foundation（CBO推計：赤字1ドル増→民間投資約33セント減）' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-capabilities',
+    discipline: 'management',
+    title: 'ダイナミック・ケイパビリティ',
+    statement:
+      '急速に変化する環境の中で、企業が内外の資源・コンピテンスを統合（integrate）・構築（build）・再構成（reconfigure）して環境変化に対応・適応する高次の能力。' +
+      '資源ベース論（RBV）が企業の静的な資源・能力の保有を競争優位の源泉として重視するのに対し、ダイナミック・ケイパビリティ論はその資源基盤を動的に更新・刷新する上位の能力に注目し、RBVの動的拡張として位置づけられる。デイヴィッド・J・ティース、ゲイリー・ピサノ、エイミー・シューエンが1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal, 18巻7号, pp.509–533）で提唱・体系化した。' +
+      'ティースは後の2007年論文でこの能力を、機会・脅威を感知する「センシング（sensing）」、機会を捕捉し資源を動員する「シージング（seizing）」、資源・組織を再配置・変革する「トランスフォーミング／再構成（transforming）」の三要素に整理した。',
+    keyFigures: 'D.ティース・G.ピサノ・A.シューエン 1997（Strategic Management Journal 18(7):509–533）／三要素センシング・シージング・トランスフォーミング（Teece 2007, SMJ 28(13):1319–1350）／RBVの動的拡張',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) "Dynamic capabilities and strategic management", SMJ 18(7):509–533（Wiley, 出版元）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.640', type: 'academic', label: 'Teece (2007) "Explicating dynamic capabilities", SMJ 28(13):1319–1350 — sensing/seizing/transformingの典拠（Wiley）' },
+      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Dynamic Capabilities Theory — TheoryHub, Newcastle University（RBV拡張と三次元の解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia — Dynamic capabilities（定義と1997年提唱者の概説）' },
+    ],
+  },
+  {
+    id: 'human-hyperbolic-discounting',
+    discipline: 'human-science',
+    title: '双曲割引',
+    statement:
+      '将来の報酬の価値を割り引いて評価する際、近い将来ほど割引率が急で、遠い将来になるほど割引が緩やかになる傾向。' +
+      '標準的経済学が仮定する指数割引（時間に対し一定率で割り引く）と異なり、人は目先の小さな即時報酬を、より大きな将来報酬よりも過大評価しやすい。その結果、計画時の選好と実行時の選好が食い違う「時間的非整合性（動的非整合性）」が生じ、近い時点になるほど即時報酬へ選好が逆転する。これにより先延ばし・ダイエット失敗・貯蓄不足・依存などのセルフコントロール問題が説明される。' +
+      '選好逆転は心理学者ジョージ・アインズリーが実験的に示し、経済学ではデイヴィッド・レイブソンが準双曲割引（β-δモデル、将来効用を βδ^t で割引）として定式化した。先延ばしを防ぐコミットメント装置の理論的基礎にもなっている。',
+    keyFigures: '双曲割引＝近い将来ほど急な割引（指数割引と異なり割引率が一定でない）／時間的非整合性（選好の逆転）／準双曲割引 β-δモデル（D.レイブソン 1997, QJE 112(2):443–478）・実験的実証（G.アインズリー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/files/laibson/files/golden_eggs_and_hyperbolic_discounting.pdf', type: 'academic', label: 'David Laibson, "Golden Eggs and Hyperbolic Discounting," Quarterly Journal of Economics 112(2), 1997（β-δ準双曲割引の定式化／Harvard 配信PDF）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/112/2/443/1870925', type: 'academic', label: 'The Quarterly Journal of Economics (Oxford Academic) — 上記論文の収録記録（pp.443–478）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11591072/', type: 'academic', label: '"Navigating Time-Inconsistent Behavior … Hyperbolic Discounting," Behavioral Sciences (MDPI), PMC（双曲割引と時間的非整合性の定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Hyperbolic_discounting', type: 'reference', label: 'Wikipedia「Hyperbolic discounting」（双曲割引の概要・指数割引との対比）' },
+    ],
+  },
+  {
+    id: 'bizlaw-internal-control',
+    discipline: 'business-law',
+    title: '内部統制システム（J-SOX・内部統制報告制度）',
+    statement:
+      '内部統制システムとは、業務の適正を確保するための社内の体制・仕組みをいい、日本の法制度には大きく2つの系統がある。' +
+      '(1)会社法上、大会社である取締役会設置会社等は、取締役の職務執行が法令・定款に適合することを確保する体制その他「株式会社及びその子会社から成る企業集団の業務の適正を確保するための体制（内部統制システム）」の整備の基本方針を取締役会が決定する義務を負う（会社法362条4項6号・5項、会社法施行規則100条）。' +
+      '(2)金融商品取引法に基づく内部統制報告制度（いわゆるJ-SOX）では、上場企業の経営者が財務報告に係る内部統制の有効性を自ら評価した「内部統制報告書」を有価証券報告書と併せて内閣総理大臣（金融庁）に提出し、公認会計士・監査法人の監査を受けることが義務づけられる（金商法24条の4の4第1項）。2006年に金商法が成立し、2008年4月1日以後開始する事業年度から適用された。米国SOX法（2002年）を参考にしつつ日本向けに簡素化された制度で、COSOフレームワークの考え方が基礎にある。',
+    keyFigures: '会社法362条4項6号・5項／会社法施行規則100条＝取締役会の内部統制システム整備（基本方針決定）義務／金商法24条の4の4第1項＝内部統制報告制度（J-SOX）・2006年成立2008年4月以後開始事業年度から適用／米国SOX法2002年・COSOフレームワークが基礎',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索：会社法（362条＝取締役会の権限・内部統制システム整備の基本方針決定）' },
+      { url: 'https://laws.e-gov.go.jp/law/418AC0000000065', type: 'government', label: 'e-Gov法令検索：金融商品取引法（24条の4の4＝内部統制報告書の提出義務／J-SOX）' },
+      { url: 'https://www.fsa.go.jp/news/19/sonota/20080208-2.html', type: 'government', label: '金融庁：財務報告に係る内部統制の評価及び監査に関する実施基準等（内部統制報告制度の所管・運用基準）' },
+      { url: 'https://ja.wikipedia.org/wiki/上場企業会計改革および投資家保護法', type: 'reference', label: 'Wikipedia：上場企業会計改革および投資家保護法（米国SOX法 2002年）' },
+    ],
+  },
+  {
+    id: 'infosoc-surveillance-capitalism',
+    discipline: 'information-sociology',
+    title: '監視資本主義',
+    statement:
+      '人々のオンライン上の行動から得られる膨大な個人データ（行動余剰, behavioral surplus）を無償の原材料として一方的に収集・分析し、将来の行動を予測する「予測製品（prediction products）」を製造して、それを広告主など顧客に販売する新しい市場（行動先物市場, behavioral futures markets）で利益を得る、という新しい資本蓄積の論理。' +
+      'ハーバード・ビジネス・スクール名誉教授のショシャナ・ズボフ（Shoshana Zuboff）が、2015年の論文「Big other」で概念を提示し、2019年の著書『The Age of Surveillance Capitalism（監視資本主義）』で体系化・普及させた。' +
+      'Google（2001年のAdWordsを起点とする）やFacebook等の事業モデルを念頭に、人間の経験を予測・改変（行動修正・nudge）の対象とする「道具主義的権力（instrumentarian power）」が民主主義と個人の自律を脅かすと批判する。',
+    keyFigures: 'ショシャナ・ズボフ（ハーバード・ビジネス・スクール名誉教授）／2019『The Age of Surveillance Capitalism』・2015論文「Big other」（Journal of Information Technology 30(1):75–89）／行動余剰・予測製品・行動先物市場・道具主義的権力',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/surveillance-capitalism', type: 'reference', label: 'Encyclopaedia Britannica — Surveillance capitalism: Definition, History, & Facts' },
+      { url: 'https://news.harvard.edu/gazette/story/2019/03/harvard-professor-says-surveillance-capitalism-is-undermining-democracy/', type: 'academic', label: 'Harvard Gazette — "Harvard professor says surveillance capitalism is undermining democracy" (2019)' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=56791', type: 'academic', label: 'Harvard Business School Faculty & Research — The Age of Surveillance Capitalism（書誌）' },
+      { url: 'https://link.springer.com/article/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff (2015) "Big other…" Journal of Information Technology 30(1):75–89, DOI 10.1057/jit.2015.5' },
+    ],
+  },
+  {
+    id: 'mgmt-vrio',
+    discipline: 'management',
+    title: 'VRIO分析（VRIOフレームワーク）',
+    statement:
+      '資源ベース論（RBV）に基づき、企業の経営資源・ケイパビリティが持続的競争優位の源泉になり得るかを4つの問いで評価する分析枠組み。' +
+      '(1)Value（経済的価値があり、機会の活用や脅威への対応に役立つか）、(2)Rarity（希少で、保有する競合が少ないか）、(3)Imitability（模倣困難か＝競合が獲得・開発するのにコストがかかるか）、(4)Organization（その資源を活用できるよう組織体制・方針・手続きが整っているか）。価値はあるが希少でなければ「競争均衡」、価値・希少だが模倣容易なら「一時的競争優位」、4条件をすべて満たす資源のみが「持続的競争優位」をもたらす。' +
+      'ジェイ・バーニーが提唱したもので、初期（1991）はVRIN（Valuable・Rare・Inimitable・Non-substitutable＝価値・希少性・模倣不可能性・代替不可能性）として整理し、後の論文（1995「Looking Inside for Competitive Advantage」）でこれを発展させ、代替不可能性を見直してOrganization（組織）を加える形でVRIOフレームワークとして体系化した。',
+    keyFigures: 'ジェイ・バーニー（Jay B. Barney, RBVの代表的論者）／4つの問い Value・Rarity・Imitability・Organization／初期VRIN（1991）→VRIO（1995, Academy of Management Executive 9(4):49–61。代替不可能性をOrganizationへ再整理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://open.ncl.ac.uk/theories/4/resource-based-theory/', type: 'academic', label: 'Newcastle University — TheoryHub: Resource-Based Theory（VRIN→VRIO、Barneyの位置づけ）' },
+      { url: 'https://journals.aom.org/doi/10.5465/ame.1995.9512032192', type: 'academic', label: 'Barney, J.B. (1995) "Looking Inside for Competitive Advantage", Academy of Management Executive 9(4):49–61（VRIO原典）' },
+      { url: 'https://en.wikipedia.org/wiki/VRIO', type: 'reference', label: 'Wikipedia: VRIO（1991 VRIN提唱、1995 VRIO公表、4基準の定義）' },
+      { url: 'https://strategicmanagementinsight.com/tools/vrio/', type: 'reference', label: 'Strategic Management Insight — VRIO Framework Explained（4つの問いと競争優位の判定）' },
+    ],
+  },
 ];
 // Stryker restore all
