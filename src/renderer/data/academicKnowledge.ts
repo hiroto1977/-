@@ -1752,5 +1752,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.gutenberg.org/ebooks/6456', type: 'academic', label: 'Project Gutenberg — Walter Lippmann, Public Opinion (1922) 全文（原典）' },
     ],
   },
+  {
+    id: 'econ-money-creation',
+    discipline: 'economics',
+    title: '信用創造と貨幣乗数',
+    statement:
+      '信用創造とは、銀行システムが預金の受け入れと貸出を繰り返すことで、当初の本源的預金（マネタリーベース）の何倍もの預金通貨を生み出す仕組みである。伝統的な教科書の説明では、銀行は預金の一定割合を準備金として残し残りを貸し出し、貸出資金が別の銀行に再預金される過程が繰り返され、預金総額は理論上、準備率の逆数（1/準備率＝貨幣乗数）倍まで拡大する（準備率10%なら乗数10）。' +
+      'ただしイングランド銀行が2014年に公表した解説「Money creation in the modern economy」等、現代の中央銀行は「現実には銀行は貸出を実行する際に同額の新たな預金を同時に創造しており（loans create deposits）、準備預金が貸出を制約する乗数モデルは現実の因果と逆である」と指摘する。むしろ貨幣供給は経済の需要に応じて内生的に決まり、貸出は収益機会・自己資本規制・中央銀行の政策金利によって規律されると説明する（米セントルイス連銀も2021年「R.I.P. Money Multiplier」で同様に乗数モデルの見直しを論じた）。',
+    keyFigures: '貨幣乗数モデル（伝統的教科書, 1/準備率）／批判: イングランド銀行2014・St.Louis Fed 2021（内生的貨幣供給論・loans create deposits）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bankofengland.co.uk/-/media/boe/files/quarterly-bulletin/2014/money-creation-in-the-modern-economy', type: 'government', label: 'Bank of England Quarterly Bulletin 2014 Q1 — Money creation in the modern economy（一次資料）' },
+      { url: 'https://www.stlouisfed.org/publications/page-one-economics/2021/09/17/teaching-the-linkage-between-banks-and-the-fed-r-i-p-money-multiplier', type: 'government', label: 'St. Louis Fed (2021) — R.I.P. Money Multiplier' },
+      { url: 'https://en.wikipedia.org/wiki/Money_multiplier', type: 'reference', label: 'Wikipedia — Money multiplier（貨幣乗数=マネーサプライ/マネタリーベース・1/準備率）' },
+    ],
+  },
+  {
+    id: 'econ-deadweight-loss',
+    discipline: 'economics',
+    title: '死荷重（死重損失・超過負担）',
+    statement:
+      '市場が完全競争の均衡から乖離することで失われる、社会的余剰（消費者余剰＋生産者余剰）の正味の損失。課税・補助金・価格規制（上限/下限）・独占・外部性などが、取引量を社会的に最適な水準から減少（または過剰化）させることで生じる。' +
+      '需要曲線と供給曲線で囲まれた三角形（ハーバーガーの三角形）の面積で図示される。たとえば物品税を課すと取引量が減り、課税前なら成立していた相互利益的な取引が失われ、その厚生損失は政府の税収にも誰の便益にもならない＝「死んだ」損失となる。税の超過負担（excess burden）とも呼ばれ、効率的な税制設計（課税の歪みを最小化）の議論の基礎となる。アーノルド・ハーバーガーの分析（1950〜60年代）で知られる。',
+    keyFigures: '社会的余剰の正味損失／ハーバーガーの三角形／税の超過負担（最適課税論の基礎）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Deadweight_loss', type: 'reference', label: 'Wikipedia — Deadweight loss' },
+      { url: 'https://gspp.berkeley.edu/assets/uploads/courses/notes/Lec2-DWL-Optimal-Tax.pdf', type: 'academic', label: 'UC Berkeley GSPP, Public Economics — Deadweight Loss & Optimal Taxation（講義ノート）' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2374-1', type: 'academic', label: 'New Palgrave Dictionary of Economics (Springer) — Excess Burden of Taxation' },
+    ],
+  },
+  {
+    id: 'mgmt-goal-setting-theory',
+    discipline: 'management',
+    title: '目標設定理論（goal-setting theory）',
+    statement:
+      '具体的で挑戦的（困難）な目標は、曖昧な目標（「ベストを尽くせ」）や容易な目標、あるいは目標なしの状態よりも高い業績をもたらす、とする動機づけ理論。目標は注意と行動を方向づけ、努力を喚起し、粘り強さ（持続）を高め、課題に適した方略の探索・活用を促す、という4つのメカニズムを通じて作用する。' +
+      'エドウィン・ロックとゲイリー・ラサムが1960年代後半からの一連の実証研究を統合し、1990年の著作『A Theory of Goal Setting and Task Performance』で体系化した。効果を高める条件（モデレーター）として、目標達成へのコミットメント、達成度のフィードバック、課題の複雑さ、能力、自己効力感などが挙げられる。実務の「SMART目標」や目標による管理（MBO）の基礎理論をなす。ただし過度に困難・多数の目標は、視野狭窄、リスク選好の歪み、非倫理的行動、学習や本来業務の阻害を招きうるとの批判（Ordóñezら2009「Goals Gone Wild」）もある。',
+    keyFigures: 'エドウィン・ロック & ゲイリー・ラサム（1960年代後半〜・1990体系化）／批判: Ordóñezら（2009）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www-2.rotman.utoronto.ca/facbios/file/09%20-%20Locke%20&%20Latham%202002%20AP.pdf', type: 'academic', label: 'Locke & Latham (2002) Building a Practically Useful Theory…A 35-Year Odyssey, American Psychologist 57(9):705-717' },
+      { url: 'https://eric.ed.gov/?id=EJ654871', type: 'academic', label: 'ERIC（米国教育省）— Locke & Latham (2002) 書誌' },
+      { url: 'https://journals.aom.org/doi/10.5465/amp.2009.37007999', type: 'academic', label: 'Ordóñez et al. (2009) Goals Gone Wild, Academy of Management Perspectives 23(1):6-16（批判）' },
+    ],
+  },
+  {
+    id: 'human-delay-of-gratification',
+    discipline: 'human-science',
+    title: 'マシュマロ・テスト（満足の遅延, delay of gratification）',
+    statement:
+      '目先の小さな報酬（マシュマロ1個を今すぐ）を我慢すれば後でより大きな報酬（待てば2個）が得られる状況で、幼児がどれだけ自制し満足を遅延できるかを測る実験。ウォルター・ミシェルが1960〜70年代にスタンフォード大学で考案・実施した。' +
+      'Shoda・Mischel・Peake（1990）らによる追跡研究では、待てた子どもほど後年の学業成績（SATスコア）や社会的・認知的能力が高い傾向が報告され、自制心・実行機能の重要性を示す例として広く知られた。ただし2018年のWatts・Duncan・Quanによる大規模かつ多様なサンプルでの概念的再現研究では、4歳時の待機時間と青年期の学力との相関は当初報告の約半分にとどまり、家庭の社会経済的背景・早期の認知能力・家庭環境を統制すると約3分の2減少した。満足遅延と後年の成果との関連は当初考えられたほど強固ではなく、解釈には慎重さが求められる。',
+    keyFigures: 'ウォルター・ミシェル（1960-70年代スタンフォード）／追跡: Shoda, Mischel & Peake (1990)／再現研究: Watts, Duncan & Quan (2018)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Walter-Mischel', type: 'reference', label: 'Encyclopaedia Britannica — Walter Mischel' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0956797618761661', type: 'academic', label: 'Watts, Duncan & Quan (2018) Revisiting the Marshmallow Test, Psychological Science（再現研究）' },
+      { url: 'https://depts.washington.edu/shodalab/wordpress/wp-content/uploads/2015/05/1990.PredictingAdolescent_Shoda.pdf', type: 'academic', label: 'Shoda, Mischel & Peake (1990), Developmental Psychology（原著の追跡研究）' },
+    ],
+  },
+  {
+    id: 'bizlaw-labor-standards',
+    discipline: 'business-law',
+    title: '労働基準法（労働時間・36協定）',
+    statement:
+      '労働条件の最低基準を定める日本の基本的労働法。法定労働時間は原則1日8時間・1週40時間（32条）。これを超えて時間外労働・休日労働をさせるには、労使協定（いわゆる36協定、36条）を締結し労働基準監督署に届け出る必要がある。' +
+      '時間外・休日・深夜労働には割増賃金の支払い義務がある（37条。時間外は2割5分以上、月60時間超の時間外は5割以上、休日は3割5分以上、深夜は2割5分以上）。2018年の働き方改革関連法により、36協定でも超えられない時間外労働の罰則付き上限（原則月45時間・年360時間、特別条項でも年720時間以下・休日労働含む複数月平均80時間以内・単月100時間未満・限度超は年6か月まで）が法定された（大企業2019年4月〜、中小企業2020年4月〜）。違反には罰則。年次有給休暇（39条）等も定める。',
+    keyFigures: '労基法32条(法定労働時間 8h/日・40h/週)・36条(36協定)・37条(割増賃金)・39条(年休)／働き方改革2018(時間外上限規制)／厚生労働省所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html', type: 'government', label: '厚生労働省 — 労働時間・休日（法定労働時間8h/日・週40h・36協定）' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/36_pact.html', type: 'government', label: '厚生労働省 — 時間外労働の上限について（36協定・月45h/年360h・特別条項）' },
+      { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 — 時間外労働の上限規制 わかりやすい解説（年720h以下・複数月平均80h・単月100h未満）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-framing',
+    discipline: 'information-sociology',
+    title: 'フレーミング（メディアのフレーム分析, framing）',
+    statement:
+      'メディアが出来事や争点を報道する際に、現実の特定の側面を選択して強調し、他の側面を背景化することで、受け手の問題認識・原因解釈・道徳的評価・解決策の理解を方向づける効果。同じ事実でも「枠組み（フレーム）」の与え方によって受け止め方が変わる。' +
+      '社会学者アーヴィング・ゴッフマンの『フレーム分析』(1974)が源流とされ、彼はフレームを経験を整理する「解釈の図式（schemata of interpretation）」と捉えた。これをメディア研究に展開したロバート・エントマンは1993年の論文（Journal of Communication 43(4):51-58）で、フレーミングを「選択（selection）」と「際立たせ（salience）」の観点から定義し、(1)問題の定義、(2)原因の診断、(3)道徳的評価、(4)解決策の提示という4つの機能を整理した。議題設定理論の第二レベル（属性アジェンダ設定）と密接に関連し、政治コミュニケーション・世論研究で重要な概念である。なお人間科学の「フレーミング効果（トベルスキー&カーネマン）」とは別の社会学的・メディア論的概念。',
+    keyFigures: 'アーヴィング・ゴッフマン『フレーム分析』(1974, 源流)／ロバート・エントマン(1993, 選択・際立たせ・4機能)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/joc/article-abstract/43/4/51/4160153', type: 'academic', label: 'Entman (1993) Framing: Toward Clarification of a Fractured Paradigm, Journal of Communication 43(4):51-58' },
+      { url: 'https://eric.ed.gov/?id=EJ475698', type: 'academic', label: 'ERIC EJ475698 — Entman (1993) Framing' },
+      { url: 'https://en.wikipedia.org/wiki/Frame_analysis', type: 'reference', label: 'Wikipedia — Frame analysis（Goffman 1974 を源流とするフレーム分析）' },
+    ],
+  },
 ];
 // Stryker restore all
