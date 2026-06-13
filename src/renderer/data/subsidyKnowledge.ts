@@ -837,6 +837,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.smart-hojokin.jp/subsidies/22951', type: 'media', label: 'さっぽろ新規創業促進補助金 概要' },
     ],
   },
+  {
+    id: 'subsidy-single-parent-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '児童扶養手当',
+    authority: 'こども家庭庁・市区町村',
+    statement:
+      '父母の離婚等により父又は母と生計を同じくしていない児童（原則18歳到達後最初の3月31日まで、一定の障害がある場合は20歳未満）を養育する' +
+      'ひとり親家庭等の生活の安定と自立促進のため、市区町村が支給する手当。受給資格者本人や扶養義務者の所得による所得制限があり、手当額は毎年度' +
+      '物価変動に応じて改定される（物価スライド）。第2子以降の加算があり、所得に応じて全部支給・一部支給に分かれる。最新の支給額・所得制限は市区町村・こども家庭庁の公式情報で要確認。',
+    application:
+      'お住まいの市区町村の窓口で「認定請求書」に必要書類を添えて申請（認定請求）。原則として請求月の翌月分から支給される。受給開始後は毎年8月に「現況届」の提出が必要で、未提出の場合は11月分以降の手当が受けられなくなる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya/fuyou-teate', type: 'government', label: 'こども家庭庁 児童扶養手当について' },
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya', type: 'government', label: 'こども家庭庁 ひとり親家庭等への支援' },
+      { url: 'https://www.city.shinjuku.lg.jp/kodomo/file03_04_00006.html', type: 'municipality', label: '新宿区 児童扶養手当（認定請求・現況届）' },
+    ],
+  },
+  {
+    id: 'subsidy-mado-renovation',
+    level: 'national',
+    domain: 'welfare',
+    name: '先進的窓リノベ事業',
+    authority: '環境省（事務局）',
+    statement:
+      '既存住宅の断熱性能向上を目的に、内窓設置・外窓交換・ガラス交換等による高断熱窓への改修を定額補助する環境省の住宅省エネ支援事業' +
+      '（住宅省エネキャンペーンの一事業）。窓のサイズ・断熱性能グレード等に応じて補助額が決まり、住宅1戸あたりに上限が設定される。補助額・対象・' +
+      '実施期間・上限額は年度ごとに改定され予算上限到達で受付終了となるため、必ず最新の公式情報で要確認。',
+    application:
+      '窓改修工事を行う「登録事業者」が施主に代わって事務局へ交付申請を行い、補助金は施主へ還元される仕組み。交付申請には予約・本申請の受付期間があり、いずれも予算上限到達で受付終了となるため、受付状況を公式事務局サイトで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://window-renovation2026.env.go.jp/about/', type: 'government', label: '先進的窓リノベ2026事業 公式（環境省事務局）' },
+      { url: 'https://www.env.go.jp/earth/earth/ondanka/building_insulation/window_00004.html', type: 'government', label: '環境省 断熱窓改修支援（先進的窓リノベ事業）' },
+      { url: 'https://www.ykkap.co.jp/consumer_business/satellite/law/subsidy2026/senshintekimado/', type: 'media', label: '先進的窓リノベ事業 制度解説' },
+    ],
+  },
+  {
+    id: 'subsidy-saitama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '埼玉県中小企業省力化支援事業補助金',
+    authority: '埼玉県（産業労働部）／相談窓口: 公益財団法人埼玉県産業振興公社',
+    statement:
+      '埼玉県が実施する都道府県レベルの代表的な中小企業向け設備投資補助制度で、人手不足の改善と持続的な賃上げに向け、省力化機器の導入・更新に' +
+      '要する経費の一部を補助する。専門家派遣により作成した支援カルテに基づき省力化が見込まれる機器の導入・更新が対象。補助率・上限額・募集期間は' +
+      '年度ごとに変動するため、最新の募集要項および県公式で要確認。埼玉県には他にも創業・新製品開発・DX等の支援制度がある。',
+    application:
+      '専門家派遣による無料の支援カルテ作成→それに基づく省力化機器の導入・更新経費を補助。申請は県の電子申請システムで受付。締切・要件は県公式ページで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.saitama.lg.jp/a0805/shoryokuka/index.html', type: 'municipality', label: '埼玉県 中小企業省力化支援事業' },
+      { url: 'https://www.pref.saitama.lg.jp/a0805/shoryokuka/sinnkidounyu_20260525.html', type: 'municipality', label: '埼玉県 省力化支援事業補助金（新規導入）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/183605', type: 'government', label: 'J-Net21 埼玉県中小企業省力化支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-kyoto',
+    level: 'prefecture',
+    domain: 'business',
+    name: '京都府中小企業経営基盤強化推進事業費補助金・奨励金',
+    authority: '京都府（商工労働観光部）／執行機関: 公益財団法人 京都産業21',
+    statement:
+      '京都府が中小企業の経営基盤強化（機器・設備導入、経営コンサルティング、人材育成等の設備投資や就業規則等の整備）を支援する代表的な補助金・' +
+      '奨励金制度で、執行は公益財団法人京都産業21が担う（都道府県レベルの代表例）。補助率・上限・対象・募集期間は年度ごとに変動し、賃上げ連動の枠組みが' +
+      '併設されることもあるため、必ず最新の公式募集要項で要確認。ものづくり・創業向けには別途の支援制度もある。',
+    application:
+      '京都府又は公益財団法人京都産業21の補助金ページで当年度の募集要項・申請様式・受付期間を確認し、京都府内に事業所を有する中小企業者が所定の申請書類を提出して申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kyoto.jp/rosei/keiei/gaiyou.html', type: 'municipality', label: '京都府 中小企業経営基盤強化推進事業費補助金・奨励金' },
+      { url: 'https://www.ki21.jp/subsidy/25keiei/', type: 'operator', label: '京都産業21 同補助金・奨励金 案内' },
+      { url: 'https://www.ki21.jp/subsidy/', type: 'operator', label: '京都産業21 補助金トップ' },
+    ],
+  },
+  {
+    id: 'subsidy-hiroshima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小・ベンチャー企業チャレンジ応援事業助成金（広島県）',
+    authority: '公益財団法人ひろしま産業振興機構（広島県 商工労働局 中小企業支援課と連携）',
+    statement:
+      '広島県内に本社又は主たる事務所を有する中小企業・ベンチャー企業の、新製品・新技術の研究開発や新サービス創出といった成長に向けた挑戦を、' +
+      '資金面及び専門的アドバイスで支援する代表的な県レベルの助成制度。助成率・上限額・募集期間（一次／二次募集等）は年度ごとに変動するため、' +
+      '最新の募集要項及び広島県・ひろしま産業振興機構の公式情報で要確認。',
+    application:
+      'ひろしま産業振興機構が年度ごとに募集要項を公開し公募を実施。広島県内に本社・主たる事務所を有する中小・ベンチャー企業が対象で、近年は応募締切までに「パートナーシップ構築宣言」の登録完了が要件とされる。申請受付・問い合わせはひろしま産業振興機構。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hiwave.or.jp/purpose1/subsidy/challengesupport/', type: 'operator', label: 'ひろしま産業振興機構 中小・ベンチャー企業チャレンジ応援事業助成金' },
+      { url: 'https://www.pref.hiroshima.lg.jp/soshiki/70/index-2.html', type: 'municipality', label: '広島県 中小企業支援課' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/1495/', type: 'media', label: '広島県 チャレンジ応援事業助成金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-yokohama',
+    level: 'municipality',
+    domain: 'business',
+    name: '横浜市特定創業支援等事業（IDEC横浜）',
+    authority: '横浜市経済局／公益財団法人横浜企業経営支援財団（IDEC横浜）',
+    statement:
+      '政令指定都市である横浜市の代表例として、産業競争力強化法に基づく「特定創業支援等事業」がある。IDEC横浜の創業セミナー等を通じて経営・財務・' +
+      '人材育成・販路開拓を継続的に学び、横浜市発行の証明書を受けることで、会社設立時の登録免許税の軽減、創業向け融資の利率優遇、小規模事業者持続化補助金' +
+      '「創業枠」の申請資格等の優遇が得られる。優遇内容・要件は年度・制度改正で変動するため、最新は横浜市公式及びIDEC横浜の案内で要確認。',
+    application:
+      'これから創業する個人又は創業後5年未満の個人・法人が対象。IDEC横浜等の認定セミナーを受講し、横浜市に「認定特定創業支援等事業による支援を受けたことの証明書」を申請・発行してもらい、その証明書を各優遇制度（登記・融資・補助金等）の申請時に提示する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.yokohama.lg.jp/business/keizai/sougyo/sogyoshien/IDEC.html', type: 'municipality', label: '横浜市 ワンストップ経営相談窓口（IDEC横浜）' },
+      { url: 'https://www.city.yokohama.lg.jp/business/keizai/sougyo/sogyoshien/sougyousiennsyoumei.html', type: 'municipality', label: '横浜市 特定創業支援等事業 証明書' },
+      { url: 'https://www.idec.or.jp/event/seminar_info.html?id=1490', type: 'operator', label: 'IDEC横浜 創業セミナー（特定創業支援事業認定）' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
