@@ -4,6 +4,10 @@ import {
   routeTopic,
   routeLabel,
   orgSummaryLine,
+  scoreTopicMatch,
+  routeTopicScored,
+  confidenceLabel,
+  MIN_TEAM_SCORE,
   type RawExecutive,
   type RawManager,
   type RawTeam,
@@ -98,6 +102,11 @@ describe('routeTopic', () => {
   it('matches a non-empty domain segment after a leading separator', () => {
     expect(routeTopic(INDEX, '特殊領域の相談').executive?.id).toBe('cxo');
   });
+
+  it('returns a route with no keys (not {executive: undefined}) on no match', () => {
+    // toEqual は undefined プロパティを無視するため、キーの不在を明示的に検証する。
+    expect(Object.keys(routeTopic(INDEX, 'xyz'))).toEqual([]);
+  });
 });
 
 describe('routeLabel', () => {
@@ -117,6 +126,121 @@ describe('routeLabel', () => {
 
   it('renders COO 直轄 for an empty route', () => {
     expect(routeLabel({})).toBe('COO 直轄');
+  });
+});
+
+describe('scoreTopicMatch', () => {
+  const tax = TEAMS[0]!; // domain '税務(所得税)' (7字), focus '所得税・速算表'
+  it('returns 0 for an empty topic', () => {
+    expect(scoreTopicMatch(tax, '')).toBe(0);
+    expect(scoreTopicMatch(tax, '無関係')).toBe(0);
+  });
+  it('scores domain-substring + focus match', () => {
+    // domain.includes('所得税') +50, focus.includes('所得税') +30
+    expect(scoreTopicMatch(tax, '所得税')).toBe(80);
+  });
+  it('scores focus-only match', () => {
+    expect(scoreTopicMatch(tax, '速算表')).toBe(30);
+  });
+  it('scores topic-contains-domain by domain length × 4', () => {
+    // '税務(所得税)' = 7 字 → 28
+    expect(scoreTopicMatch(tax, '税務(所得税)の件で相談')).toBe(28);
+  });
+  it('scores an exact domain match highest', () => {
+    // domain===topic +100, かつ topic.includes(domain) で +28 → 128
+    expect(scoreTopicMatch(tax, '税務(所得税)')).toBe(128);
+  });
+  it('gives short domains a low (noisy) score below the threshold', () => {
+    const orphan = TEAMS[1]!; // domain '迷子' (2字) → 8
+    expect(scoreTopicMatch(orphan, '迷子について長い相談')).toBe(8);
+    expect(scoreTopicMatch(orphan, '迷子について長い相談')).toBeLessThan(MIN_TEAM_SCORE);
+  });
+});
+
+describe('routeTopicScored (思考の精度: 採点 + 確信度ゲート)', () => {
+  it('commits to the best-scoring team with high confidence', () => {
+    const r = routeTopicScored(INDEX, '所得税');
+    expect(r.route.team?.id).toBe('tax-income');
+    expect(r.route.executive?.id).toBe('cfo');
+    expect(r.confidence).toBe(0.8); // 80/100
+    expect(r.candidates[0]?.score).toBe(80);
+  });
+
+  it('excludes zero-scoring teams from the candidates (filter)', () => {
+    // orphan は '所得税' に 0 点 → 候補に残らない。
+    const r = routeTopicScored(INDEX, '所得税');
+    expect(r.candidates.map((c) => c.team.id)).toEqual(['tax-income']);
+  });
+
+  it('sorts candidates by score even when the input order is reversed', () => {
+    // 入力順は [low, high] だが、高スコアが先頭に来る（ソートが効いている担保）。
+    const low: RawTeam = { id: 'low', domain: '節税', focus: 'x', manager: 'mgr-tax' };
+    const high: RawTeam = { id: 'high', domain: '節税対策の特例', focus: 'x', manager: 'mgr-tax' };
+    const idx = buildOrgIndex(ORG, [low, high]);
+    const r = routeTopicScored(idx, '節税対策の特例について');
+    expect(r.candidates.map((c) => c.team.id)).toEqual(['high', 'low']);
+    expect(r.route.team?.id).toBe('high');
+  });
+
+  it('commits a team-only route when a high-scoring team has a dangling manager', () => {
+    const hi: RawTeam = { id: 'hi', domain: '特命', focus: '特命', manager: 'nope' };
+    const idx = buildOrgIndex(ORG, [hi]);
+    const r = routeTopicScored(idx, '特命');
+    expect(r.route.team?.id).toBe('hi');
+    expect(r.route.manager).toBeUndefined();
+    expect(r.confidence).toBe(1); // domain 完全一致 100+ → min(1, ..)
+  });
+
+  it('ranks candidates by score (best first)', () => {
+    // 話題が両 domain を内包: tax-income(28) と 迷子(8) がともにスコアし降順に並ぶ。
+    const r = routeTopicScored(INDEX, '税務(所得税)迷子の件');
+    expect(r.candidates.map((c) => c.team.id)).toEqual(['tax-income', 'orphan']);
+    expect(r.candidates[0]!.score).toBe(28);
+    expect(r.candidates[1]!.score).toBe(8);
+  });
+
+  it('escalates to the manager when the best team score is below the threshold', () => {
+    // 迷子(8 < 20) のみ正スコア。チーム確定せず、税務部長の語幹一致へフォールバック。
+    const r = routeTopicScored(INDEX, '迷子だが税務部長案件');
+    expect(r.route.team).toBeUndefined();
+    expect(r.route.manager?.id).toBe('mgr-tax');
+    expect(r.confidence).toBe(0.4);
+  });
+
+  it('escalates to COO (empty route) when nothing matches confidently', () => {
+    const r = routeTopicScored(INDEX, '迷子について長い相談');
+    expect(r.route).toEqual({});
+    expect(r.confidence).toBe(0);
+  });
+
+  it('falls back to executive domain when only an executive matches', () => {
+    const r = routeTopicScored(INDEX, '財務の相談');
+    expect(r.route.executive?.id).toBe('cfo');
+    expect(r.confidence).toBe(0.3);
+  });
+
+  it('returns empty for an empty topic', () => {
+    expect(routeTopicScored(INDEX, '')).toEqual({ route: {}, confidence: 0, candidates: [] });
+  });
+
+  it('commits at exactly the threshold score (>= boundary)', () => {
+    // 5字 domain → topic.includes で 5×4 = 20 == MIN_TEAM_SCORE。
+    const finTeam: RawTeam = { id: 'fin', domain: '資金調達枠', focus: 'CF', manager: 'mgr-tax' };
+    const idx = buildOrgIndex(ORG, [finTeam]);
+    const r = routeTopicScored(idx, '資金調達枠の相談');
+    expect(r.candidates[0]!.score).toBe(MIN_TEAM_SCORE);
+    expect(r.route.team?.id).toBe('fin'); // 20 >= 20 なので確定
+  });
+});
+
+describe('confidenceLabel', () => {
+  it('maps confidence to 高/中/低 at the boundaries', () => {
+    expect(confidenceLabel(0.8)).toBe('高');
+    expect(confidenceLabel(0.6)).toBe('高');
+    expect(confidenceLabel(0.4)).toBe('中');
+    expect(confidenceLabel(0.3)).toBe('中');
+    expect(confidenceLabel(0.29)).toBe('低');
+    expect(confidenceLabel(0)).toBe('低');
   });
 });
 
