@@ -6252,5 +6252,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.ey.com/ja_jp/technical/corporate-accounting/commentary/companies-act/commentary-companies-act-2016-06-03-02', type: 'media', label: '会社法 大会社の会計監査人設置義務 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-stamp-duty-electronic',
+      domain: 'tax',
+      title: '印紙税の課税文書の判断と電子契約の課税対象外扱い',
+      statement:
+        '印紙税の課税対象となる「課税文書」は、印紙税法 別表第一（課税物件表）に掲げる課税事項が記載され、当事者間で課税事項を証明する目的で作成され、かつ非課税文書に当たらない、' +
+        'の3要件をすべて満たす文書をいう（国税庁タックスアンサー No.7100）。印紙税は紙の文書を対象とする「文書課税」であり、契約内容を電磁的記録（PDF等の電子データ）として作成し' +
+        '電子メール等で送信する電子契約は印紙税法上の「文書」に該当せず、課税文書の作成にあたらないため印紙税は課税されない（国税庁文書回答事例・政府答弁書）。課税文書ごとの税額・税率は税制改正で変動しうるため要確認。',
+      authority: '所管: 国税庁（財務省）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7100.htm', type: 'government', label: '国税庁 タックスアンサー No.7100 課税文書に該当するかどうかの判断' },
+      { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 内閣答弁書 文書課税である印紙税は電磁的記録に課税されない' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 文書回答事例 電磁的記録に関する印紙税の取扱い' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-shorttime-benefit',
+      domain: 'labor',
+      title: '育児時短就業給付金（2025年4月1日施行）',
+      statement:
+        '育児時短就業給付金は2025年（令和7年）4月1日に施行された雇用保険の新たな育児休業等給付で、2歳未満の子を養育するために所定労働時間を短縮して就業（時短勤務）する被保険者を対象とし、' +
+        '時短勤務に伴う賃金減少を補い育児と就業の両立を支援することを目的とする。育児休業給付に係る育児休業から引き続き時短就業を開始した者等が対象で、時短就業中の各暦月の賃金額に応じて' +
+        '給付される（給付率は各月の賃金額の10%相当とされるが、賃金と給付の合計が時短前賃金を超えないよう調整があり、率は要確認）。',
+      authority: '所管: 厚生労働省（職業安定局雇用保険課）／申請窓口はハローワーク（事業主経由）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11600000/001395102.pdf', type: 'government', label: '厚生労働省 育児時短就業給付金リーフレット（令和7年4月1日施行）' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html', type: 'government', label: 'ハローワーク渋谷（東京労働局）出生後休業支援給付金・育児時短就業給付金の創設' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/97314/', type: 'media', label: 'マネーフォワード 育児時短就業給付金の解説（支給率・対象・申請）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-postbirth-leave-support-benefit',
+      domain: 'labor',
+      title: '出生後休業支援給付金（2025年4月1日創設・両親育休で実質手取り10割）',
+      statement:
+        '出生後休業支援給付金は雇用保険法改正により2025年（令和7年）4月1日に創設された給付で、両親がともに子の出生後一定期間内に育児休業を取得した場合に、出生時育児休業給付・育児休業給付に' +
+        '上乗せして支給される。既存の給付率（賃金の67%相当）に上乗せすることで合計約80%となり、給付が非課税かつ育休中の社会保険料が免除されることと相まって実質手取り10割相当に引き上げる。' +
+        '被保険者とその配偶者がそれぞれ一定日数以上（14日以上）の育児休業を取得することが要件とされる（上乗せ率13%・支給上限日数28日等の数値は要確認）。',
+      authority: '所管: 厚生労働省（職業安定局雇用保険課／ハローワーク）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_childcareleave.html', type: 'government', label: '厚生労働省 ハローワークインターネットサービス 育児休業等給付' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html', type: 'government', label: 'ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）' },
+      { url: 'https://canon.jp/biz/solution/smb/tips/trend/202411-romu1', type: 'operator', label: 'キヤノンMJ 2025年4月新設の出生後休業支援給付・育児時短就業給付の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-freelance-protection-act',
+      domain: 'legal',
+      title: 'フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）',
+      statement:
+        '特定受託事業者に係る取引の適正化等に関する法律（フリーランス・事業者間取引適正化等法、令和5年法律第25号）は2024年（令和6年）11月1日に施行された。発注事業者がフリーランス' +
+        '（特定受託事業者）に業務委託する際、取引条件を書面又は電磁的方法で直ちに明示する義務を課し、報酬支払期日を物品等の受領日から起算して60日以内のできる限り早い日に設定することを' +
+        '義務付ける。あわせて募集情報の的確表示、育児介護等への配慮、ハラスメント対策の体制整備等が定められ、取引適正化を公正取引委員会・中小企業庁が、就業環境の整備を厚生労働省が所管する。',
+      authority: '所管: 公正取引委員会・中小企業庁（取引適正化）／厚生労働省（就業環境の整備）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/freelancelaw_2024/', type: 'government', label: '公正取引委員会 2024年フリーランス法特設サイト' },
+      { url: 'https://www.mhlw.go.jp/content/001470693.pdf', type: 'government', label: '厚生労働省 フリーランス法のあらまし（就業環境の整備関係）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/download/freelance/law_02.pdf', type: 'government', label: '中小企業庁・公正取引委員会 説明資料（令和6年11月1日施行）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-entertainment-expense-meal-threshold',
+      domain: 'tax',
+      title: '交際費等から除外される飲食費の基準額が1人1万円以下に引上げ（2024年4月1日以後）',
+      statement:
+        '法人税法上、交際費等は原則として全額が損金不算入だが、社内飲食費を除く一定の飲食費で「1人当たり一定額以下」のものは交際費等の範囲から除外され損金算入できる特例がある。' +
+        '令和6年度税制改正により、この判定基準額が2024年（令和6年）4月1日以後に支出する飲食費から、従来の1人当たり5,000円以下から10,000円以下へ引き上げられた。基準額を超えるとその飲食費全額が' +
+        '交際費等に該当し、適用には飲食年月日・参加者の氏名/関係/人数・費用額・店名所在地等を記載した書類の保存が必要。接待飲食費50%損金算入特例や中小法人の定額控除（年800万円）の適用期限・控除額は税制改正で変動しうるため要確認。',
+      authority: '所管: 国税庁（法人税）／中小企業庁（中小企業向け特例の周知）。根拠は租税特別措置法第61条の4',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm', type: 'government', label: '国税庁 タックスアンサー No.5265 交際費等の範囲と損金不算入額の計算' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html', type: 'government', label: '中小企業庁 交際費課税の特例' },
+      { url: 'https://sorimachi.co.jp/column/taxnews/20240508_01/', type: 'media', label: 'ソリマチ 税務ニュース 交際費から除かれる飲食費が1万円までに' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disability-employment-rate',
+      domain: 'labor',
+      title: '障害者雇用率制度 — 民間企業の法定雇用率（2.5%→2.7%段階引上げ）',
+      statement:
+        '障害者雇用促進法に基づく民間企業の法定雇用率は、2024年（令和6年）4月に2.3%から2.5%へ引き上げられ施行済みで、2026年6月時点の現行率は2.5%である。さらに2026年（令和8年）7月から' +
+        '2.7%へ引き上げられる予定で、これは本記載時点（2026年6月）では未施行の将来予定である。雇用義務の対象事業主の範囲も率の引上げに連動し、常用労働者数43.5人以上→40人以上（2024年4月・施行済み）→' +
+        '37.5人以上（2026年7月・予定）へ段階的に拡大される。',
+      authority: '所管: 厚生労働省（職業安定局）。根拠法: 障害者の雇用の促進等に関する法律',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/001064502.pdf', type: 'government', label: '厚生労働省 リーフレット 法定雇用率 2.3%⇒2.5%⇒2.7% 対象事業主範囲の拡大' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_47084.html', type: 'government', label: '厚生労働省 令和6年 障害者雇用状況の集計結果（法定雇用率2.5%）' },
+      { url: 'https://www.tokai-sr.jp/column/employment-disabilities/', type: 'media', label: '社労士法人とうかい 障害者雇用率2.7%への段階的引上げ 解説' },
+    ],
+  },
 ];
 // Stryker restore all
