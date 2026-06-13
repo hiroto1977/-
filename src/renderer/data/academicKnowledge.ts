@@ -2315,5 +2315,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://strategicmanagementinsight.com/tools/vrio/', type: 'reference', label: 'Strategic Management Insight — VRIO Framework Explained（4つの問いと競争優位の判定）' },
     ],
   },
+  {
+    id: 'econ-adverse-selection',
+    discipline: 'economics',
+    title: '逆選択（レモン市場）',
+    statement:
+      '取引が成立する前に当事者間で情報の非対称性があるとき、質の悪い財やリスクの高い相手ばかりが市場に集まり、良質な財・相手が締め出される現象。' +
+      'ジョージ・アカロフが1970年の論文「The Market for "Lemons"」で中古車市場を例に示した。買い手が品質を見分けられないと、買い手はリスクを反映した平均的価格しか払わず、その結果良質な車（peach）の売り手は退出し、質の悪い車（lemon）ばかりが残って市場が縮小・崩壊しうる。同様の情報の非対称性は保険（健康リスクの高い人ほど加入したがる）や金融・信用市場でも生じる。' +
+      '情報の非対称性が「取引前」に作用する点で、取引後の隠された行動であるモラルハザードと区別される。対策としてシグナリング（スペンス）、スクリーニング（スティグリッツ）、保証、強制加入などがある。アカロフ・スペンス・スティグリッツは情報の非対称性のある市場の分析により2001年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ジョージ・アカロフ1970「The Market for Lemons」／情報の非対称性は取引前（隠れた性質）に作用・モラルハザード（取引後）と対比／対策：シグナリング・スクリーニング／2001年ノーベル賞 アカロフ・スペンス・スティグリッツ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — 2001年経済学賞 popular information（アカロフのレモン市場・逆選択・市場崩壊）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/advanced-information/', type: 'reference', label: 'NobelPrize.org — 2001年経済学賞 advanced information（3受賞者と非対称情報分析）' },
+      { url: 'https://www.britannica.com/money/George-Akerlof', type: 'reference', label: 'Encyclopaedia Britannica（Money）— George Akerlof：中古車市場での逆選択と1970年論文' },
+    ],
+  },
+  {
+    id: 'econ-moral-hazard',
+    discipline: 'economics',
+    title: 'モラルハザード（道徳的危険）',
+    statement:
+      '契約・取引の成立後に、一方当事者の行動が相手から十分に観察・監視できない（隠された行動）ために、リスクから守られた当事者が注意を怠ったり過大なリスクを取ったりするインセンティブを持つ問題。' +
+      '情報の非対称性が「取引後」に生じる点で、取引前に当事者の隠れた性質をめぐって生じる逆選択（adverse selection）と区別される。保険分野が語源かつ典型で、保険に加入することで事故回避の努力が低下する（火災保険・医療保険など）。金融では「大きすぎて潰せない（too big to fail）」金融機関が政府による救済を見込んで過大なリスクを取る例が代表的である。' +
+      '広義にはプリンシパル＝エージェント問題の一形態であり、対策として自己負担（免責・co-payment）、成果連動報酬などのインセンティブ契約、モニタリングが用いられる。',
+    keyFigures: 'モラルハザード＝取引後の「隠された行動」に起因／保険・金融（too big to fail）が典型／逆選択（取引前の隠れた性質）と対比／対策：免責・自己負担・インセンティブ契約・モニタリング',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/moral-hazard', type: 'reference', label: 'Britannica Money — Moral hazard（契約後に一方をリスクから保護することで誤った行動の誘因が生じる。保険・医療の例）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/2010/12/pdf/basics.pdf', type: 'government', label: 'IMF, Finance & Development "Back to Basics"（モラルハザードの定義・保険者が損害責任の所在を判別できない例）' },
+      { url: 'https://www.minneapolisfed.org/article/2003/too-big-to-fail-the-hazards-of-bank-bailouts', type: 'government', label: 'Federal Reserve Bank of Minneapolis — "Too Big To Fail: The Hazards of Bank Bailouts"（救済期待による過大リスク）' },
+    ],
+  },
+  {
+    id: 'mgmt-competitive-positions',
+    discipline: 'management',
+    title: '競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）',
+    statement:
+      '市場における各企業の競争上の地位（市場シェア・役割）に応じて、とるべきマーケティング戦略が異なるとする枠組み。フィリップ・コトラーは市場の企業を4類型に分類した。' +
+      '(1)マーケットリーダー：最大の市場シェアを持ち、市場全体の拡大・現在のシェアの防衛・シェアの拡大を志向する。(2)マーケットチャレンジャー：2番手等の地位からリーダーや競合に攻撃を仕掛け、差別化などによってシェア奪取を狙う。(3)マーケットフォロワー：リーダーに挑戦せず模倣・追随し、過度な競争を避けつつ既存顧客と一定のシェアを維持する。(4)マーケットニッチャー：大企業が本格参入しない特定の小さな市場（ニッチ）に専門特化する。' +
+      '各企業は自社の地位を踏まえ、保有する経営資源と整合した戦略を選ぶべきとされる。',
+    keyFigures: 'P.コトラー／リーダー・チャレンジャー・フォロワー・ニッチャーの4類型／市場シェア・役割に応じた戦略の差別化（例示的シェア配分 40/30/20/10）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nscpolteksby.ac.id/ebook/files/Ebook/Business%20Administration/Kotler%20and%20Keller%20Marketing%20Management%2014th%20Edition%20(2012)/Chapter%2011%20-%20Competitive%20Dynamics.pdf', type: 'academic', label: 'Kotler & Keller, Marketing Management 14th ed., Ch.11 "Competitive Dynamics"' },
+      { url: 'https://publications.dyson.cornell.edu/outreach/extensionpdf/2013/Cornell-Dyson-eb1305.pdf', type: 'academic', label: 'Cornell University, Dyson School — Marketing Module 4: Competitor Analysis' },
+      { url: 'https://www.nri.com/jp/knowledge/glossary/kotlers_compe.html', type: 'reference', label: '野村総合研究所（NRI）用語解説「コトラーの競争地位戦略」' },
+    ],
+  },
+  {
+    id: 'human-self-serving-bias',
+    discipline: 'human-science',
+    title: '自己奉仕バイアス',
+    statement:
+      '自己奉仕バイアス（self-serving bias、自己奉仕的帰属）とは、自分の成功は能力や努力といった内的・性質的要因に帰属させ、失敗は運・他者・状況などの外的要因に帰属させる傾向をいう。一般に、自尊心（self-esteem）を維持・高揚させようとする動機づけ（self-enhancement）によって生じる帰属の歪みと説明される。' +
+      'たとえば試験に合格すれば「自分が頑張ったから」と考え、不合格なら「問題が悪い」「運が悪い」と考える。集団場面でも、自集団の成功を内的に、失敗を外部に帰す集団奉仕バイアス（group-serving bias）が生じる。' +
+      '動機的説明のほか、Miller & Ross は、成功は期待どおりなので内的に、失敗は予想外なので外的に帰属されるという認知的（期待依存的）説明も提起した。なお、うつ傾向の人ではこのバイアスが弱まる、あるいは逆転するという知見もある（抑うつリアリズム）。他者の行動を性質に帰属しすぎる基本的帰属錯誤とは別概念である。',
+    keyFigures: '帰属パターン：成功は内的（能力・努力）・失敗は外的（運・状況）／自尊心維持（self-enhancement）動機／認知的説明 Miller & Ross 1975（Psychological Bulletin）／集団奉仕バイアス・抑うつリアリズム／基本的帰属錯誤とは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.simplypsychology.org/self-serving-bias.html', type: 'reference', label: 'Simply Psychology — Self-Serving Bias In Psychology: Definition & Examples' },
+      { url: 'https://en.wikipedia.org/wiki/Self-serving_bias', type: 'reference', label: 'Wikipedia — Self-serving bias' },
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/biases/82_Psychological_Bulletin_213_(Miller).pdf', type: 'academic', label: 'Miller & Ross (1975), Psychological Bulletin — "Self-Serving Biases in the Attribution of Causality"（MIT 配信PDF）' },
+      { url: 'https://courses.lumenlearning.com/suny-social-psychology/chapter/biases-in-attribution/', type: 'academic', label: 'Lumen Learning / SUNY — Principles of Social Psychology, "Biases in Attribution"（集団奉仕バイアス）' },
+    ],
+  },
+  {
+    id: 'bizlaw-duty-of-loyalty',
+    discipline: 'business-law',
+    title: '取締役の忠実義務（会社法355条）',
+    statement:
+      '取締役は、法令及び定款並びに株主総会の決議を遵守し、株式会社のため忠実にその職務を行わなければならないとする義務（会社法355条）。会社の利益を犠牲にして自己または第三者の利益を図ってはならないという趣旨であり、競業避止義務（356条1項1号）や利益相反取引の規制（356条1項2号〔直接取引〕・3号〔間接取引〕）などが、その具体化として置かれている。' +
+      '委任に基づく善良な管理者の注意義務である善管注意義務（会社法330条・民法644条）との関係について、判例（最大判昭和45年6月24日・八幡製鉄政治献金事件）および通説は、忠実義務は善管注意義務を敷衍し一層明確にしたにとどまり、通常の委任関係に伴う善管注意義務とは別個の高度な義務を課すものではないとする（同質説）。' +
+      'これに対し、両者を性質の異なる義務として区別する異質説も学説上有力に主張されている。',
+    keyFigures: '忠実義務＝会社法355条／具体化規定：競業避止義務（356条1項1号）・利益相反取引規制（356条1項2号3号）／善管注意義務（330条・民法644条）との関係：判例・通説は同質説（最大判昭和45年6月24日）・異質説も有力',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索：会社法（355条 忠実義務・356条 競業及び利益相反取引の制限）' },
+      { url: 'https://www.law-kobegakuin.jp/wp/wp-content/uploads/2024/09/%E5%B8%82%E5%8E%9F%E5%85%88%E7%94%9F.pdf', type: 'academic', label: '市原尚子「取締役等の責任における忠実義務の役割についての再考」（神戸学院大学法学部）— 善管注意義務と忠実義務の関係（同質説・異質説）' },
+      { url: 'https://corporate-law.net/archives/1068', type: 'reference', label: 'スマート会社法 会社法第355条（忠実義務）解説 — 民法644条善管注意義務との関係' },
+    ],
+  },
+  {
+    id: 'infosoc-echo-chamber',
+    discipline: 'information-sociology',
+    title: 'エコーチェンバー（反響室効果）',
+    statement:
+      '閉じた情報環境の中で、自分と同じ意見・信念をもつ人々とばかり交流し、同質の情報や見解が繰り返し反復・増幅されることで、特定の信念が強化され、異なる見解（反論）に触れにくくなる現象。閉じた部屋の中で音が反響する様子になぞらえた比喩である。' +
+      'SNSでは、ユーザーが自分と似た立場の他者をフォローし、共鳴する投稿を共有・拡散する傾向（選択的接触）があるため生じやすく、政治的分極化（polarization）・誤情報の拡散・確証バイアスの増幅と結びつくと論じられる。' +
+      'アルゴリズムによる情報の選別的遮断を指す「フィルターバブル」と関連するが、エコーチェンバーは主に人々の選択的な交流・同質的ネットワークによる意見増幅という能動的・社会的な側面を指す点で区別される。C.サンスティーンは、こうした情報の自己選別が熟議民主主義に及ぼす悪影響を論じた。',
+    keyFigures: 'エコーチェンバー＝同質な人々の閉じた相互作用での意見の反復・増幅（能動的・社会的）／フィルターバブル（アルゴリズムによる受動的遮断）と区別／政治的分極化・確証バイアスと関連／C.サンスティーン（#Republic）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.2023301118', type: 'academic', label: 'Cinelli et al., "The echo chamber effect on social media", PNAS (2021)' },
+      { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'academic', label: 'Reuters Institute (University of Oxford) — "Echo chambers, filter bubbles, and polarisation: a literature review"' },
+      { url: 'https://www.cambridge.org/core/books/social-media-and-democracy/social-media-echo-chambers-and-political-polarization/333A5B4DE1B67EFF7876261118CCFE19', type: 'academic', label: 'Cambridge University Press — "Social Media, Echo Chambers, and Political Polarization"' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691180908/republic', type: 'academic', label: 'Cass R. Sunstein, "#Republic: Divided Democracy in the Age of Social Media", Princeton University Press' },
+    ],
+  },
 ];
 // Stryker restore all
