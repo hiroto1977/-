@@ -5287,5 +5287,221 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/pdf/Chikujo.pdf', type: 'government', label: '経済産業省 逐条解説 不正競争防止法' },
     ],
   },
+  {
+    value: {
+      id: 'labor-managerial-supervisor',
+      domain: 'labor',
+      title: '労働基準法上の管理監督者（労基法41条2号）',
+      statement:
+        '労働基準法41条2号により、監督若しくは管理の地位にある者（管理監督者）は労働時間・休憩・休日に関する規定が適用除外となる' +
+        '（ただし深夜業の割増賃金および年次有給休暇に関する規定は適用される）。管理監督者に該当するか否かは役職名ではなく、経営者と一体的な' +
+        '立場・労働時間の裁量・地位にふさわしい待遇等の実態で判断され、いわゆる「名ばかり管理職」は管理監督者と認められない。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/dl/kanri.pdf', type: 'government', label: '厚生労働省 管理監督者の範囲の適正化' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/hourei_seido/jikan2/kanri.html', type: 'government', label: '大阪労働局 管理監督者の範囲' },
+      { url: 'https://kokoro.mhlw.go.jp/glossaries/word-1718/', type: 'media', label: '厚生労働省 こころの耳 管理監督者 用語解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-substitute-holiday',
+      domain: 'labor',
+      title: '振替休日と代休の違い（労働基準法上の取扱い）',
+      statement:
+        '振替休日（休日の振替）は、あらかじめ休日と定めた日を労働日とし他の労働日を休日に振り替えるもので、事前手続により当初の休日が労働日と' +
+        'なるため休日労働の割増賃金は発生しない（ただし振替の結果その週の法定労働時間を超える場合は時間外割増が必要）。一方、代休は休日労働を' +
+        '行わせた後に代償として他の労働日を休日とするもので、既に行われた休日労働の事実は消えないため、法定休日労働に対する3割5分以上の割増賃金の支払が必要である。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyunhou_12.html', type: 'government', label: '厚生労働省 FAQ 振替休日と代休の違い' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/roudoujikan/q8.html', type: 'government', label: '厚生労働省 確かめよう労働条件 振替休日' },
+      { url: 'https://jsite.mhlw.go.jp/yamanashi-roudoukyoku/kantoku/roudoukijun/19.html', type: 'government', label: '山梨労働局 振替休日と代休' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-special-collection-resident',
+      domain: 'tax',
+      title: '個人住民税の特別徴収（給与天引き）義務',
+      statement:
+        '所得税の源泉徴収義務がある事業主（給与支払者）は、原則として地方税法（321条の4等）により特別徴収義務者として、従業員（給与所得者）の' +
+        '個人住民税を毎月の給与から天引きし、従業員の居住する市区町村へ納入する義務がある。特別徴収は市区町村から送付される特別徴収税額決定通知書に' +
+        '基づき、原則として6月から翌年5月までの12回に分けて行い、徴収した税額は翌月10日までに納入する。',
+      authority: '所管: 総務省・各市区町村（地方税法／個人住民税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_content/000679115.pdf', type: 'government', label: '総務省 個人住民税の特別徴収（事業者向け）' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju/tokubetsu/about', type: 'municipality', label: '東京都主税局 個人住民税の特別徴収' },
+      { url: 'https://www.pref.osaka.lg.jp/o050040/zei/alacarte/juminzei_tokucho.html', type: 'municipality', label: '大阪府 個人住民税の特別徴収' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-newco-consumption-exemption',
+      domain: 'tax',
+      title: '新設法人の消費税納税義務免除の特例',
+      statement:
+        '新たに設立された法人は基準期間（原則前々事業年度）がないため設立当初の課税期間は原則として消費税の納税義務が免除されるが、事業年度' +
+        '開始の日における資本金の額又は出資の金額が1,000万円以上の法人（新設法人）は設立当初から課税事業者となる。また課税売上高5億円超の' +
+        '事業者等に支配される特定新規設立法人も納税義務は免除されず、インボイス発行事業者の登録を行えば免税点以下でも課税事業者となる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6503.htm', type: 'government', label: '国税庁 No.6503 基準期間がない法人の納税義務免除の特例' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6531.htm', type: 'government', label: '国税庁 No.6531 新規設立法人の届出' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shohi/22/15.htm', type: 'government', label: '国税庁 質疑応答 特定新規設立法人の特例' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-exaggerated-ad',
+      domain: 'legal',
+      title: '通信販売における誇大広告等の禁止（特定商取引法）',
+      statement:
+        '特定商取引法は、通信販売の広告について、商品の性能・品質、特定権利・役務の内容、原産地・製造者、引渡し時期、申込みの撤回・解除に関する事項等に関し、' +
+        '著しく事実に相違する表示や、実際のもの・競争者のものより著しく優良若しくは有利であると人を誤認させる表示（誇大広告等）を禁止している。' +
+        '違反は指示・業務停止命令等の行政処分や罰則の対象となり、消費者庁（主務大臣）は表示の裏付けとなる合理的根拠を示す資料の提出を求めることができる。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html', type: 'government', label: '消費者庁 特定商取引法ガイド 誇大広告等の禁止' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
+      { url: 'https://www.it-houmu.com/archives/1575', type: 'media', label: '特商法の広告規制（12条・12条の2）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-pse',
+      domain: 'legal',
+      title: '電気用品安全法とPSEマーク制度',
+      statement:
+        '電気用品安全法は、電気用品による危険・障害の発生を防止するため、電気用品の製造・輸入事業者に対し、事業の届出、技術基準への適合、' +
+        '自主検査（特定電気用品は登録検査機関による適合性検査）等の義務を課し、所定の手続を経た電気用品にはPSEマーク（特定電気用品は菱形、' +
+        'それ以外の電気用品は丸形）の表示を義務付けている。PSEマーク等の表示がない電気用品は、原則として販売・販売目的の陳列をしてはならない。',
+      authority: '所管: 経済産業省（電気用品安全法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/consumer/seian/denan/act_outline.html', type: 'government', label: '経済産業省 電気用品安全法の概要' },
+      { url: 'https://www.meti.go.jp/policy/consumer/seian/denan/procedure.html', type: 'government', label: '経済産業省 電気用品安全法 届出・手続' },
+      { url: 'https://www.faq.kokusen.go.jp/faq/show/1825', type: 'government', label: '国民生活センター PSEマークとは' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-collective-agreement',
+      domain: 'labor',
+      title: '労働協約（労働組合法）',
+      statement:
+        '労働協約は、労働組合と使用者（又はその団体）との間で労働条件その他に関して締結され、書面に作成して両当事者が署名し又は記名押印することに' +
+        'よって効力を生じる（労働組合法14条）。労働協約に定める労働条件その他の労働者の待遇に関する基準に違反する労働契約の部分は無効となり、無効と' +
+        'なった部分は協約の基準による（規範的効力。16条）。さらに、一の工場事業場の同種の労働者の4分の3以上が一の労働協約の適用を受けるに至ったときは、他の同種の労働者にもその協約が適用される（一般的拘束力。17条）。',
+      authority: '所管: 厚生労働省（労働組合法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=324AC0000000174', type: 'government', label: 'e-Gov法令検索 労働組合法（14条・16条・17条）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73001000&dataType=0', type: 'government', label: '厚生労働省 法令データベース 労働組合法' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/3805', type: 'government', label: '日本法令外国語訳DB 労働組合法' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-minwage-reduction-exception',
+      domain: 'labor',
+      title: '最低賃金の減額の特例許可制度（最低賃金法7条）',
+      statement:
+        '最低賃金は原則として全ての労働者に適用されるが、一般の労働者より著しく労働能力が低い等の一定の労働者にそのまま適用するとかえって雇用機会を' +
+        '狭めるおそれがあること等から、使用者が都道府県労働局長の許可を受けることを条件に、最低賃金額から一定率を減額した額を適用できる特例が認められている' +
+        '（最低賃金法7条）。対象は、精神又は身体の障害により著しく労働能力の低い者、試の使用期間中の者、認定職業訓練を受ける者、軽易な業務に従事する者、断続的労働に従事する者である。',
+      authority: '所管: 厚生労働省（最低賃金法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/chingin/newpage_43849.html', type: 'government', label: '厚生労働省 最低賃金の減額の特例許可申請' },
+      { url: 'https://jsite.mhlw.go.jp/tottori-roudoukyoku/library/tottori-roudoukyoku/seido/pdf/gengaku_leaflet.pdf', type: 'government', label: '鳥取労働局 最低賃金の減額の特例許可制度' },
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000137', type: 'government', label: 'e-Gov法令検索 最低賃金法（7条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-furusato-designation',
+      domain: 'tax',
+      title: 'ふるさと納税の指定制度（返礼品の基準）',
+      statement:
+        '2019年6月（令和元年6月1日）施行の改正地方税法により、ふるさと納税（寄附金税額控除の特例控除の対象となる寄附）の対象となる地方団体を' +
+        '総務大臣が指定する制度が導入された。指定基準として、返礼品の調達費用を寄附金額の3割以下とすること、返礼品を当該地方団体の区域内で生産された' +
+        '地場産品とすること、寄附金の募集を適正に実施すること等が定められ、基準に適合しない団体への寄附は特例控除の対象とならない。',
+      authority: '所管: 総務省（地方税法／ふるさと納税指定制度）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/topics/20190401.html', type: 'government', label: '総務省 ふるさと納税に係る指定制度' },
+      { url: 'https://www.pref.aomori.lg.jp/soshiki/zaimu/zeimu/025_shitei20190601.html', type: 'municipality', label: '青森県 ふるさと納税の総務大臣指定' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/policy/', type: 'government', label: '総務省 ふるさと納税ポータル' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-asset-replacement',
+      domain: 'tax',
+      title: '特定の事業用資産の買換えの場合の譲渡所得の課税の特例',
+      statement:
+        '個人又は法人が、一定の組合せに該当する事業用資産（例: 所有期間10年超の国内事業用土地建物等から国内の事業用資産への買換え等）を譲渡し、' +
+        '原則として一定期間内に新たな事業用資産を取得して事業の用に供した場合、譲渡益の一定割合（多くの場合80%、組合せ・地域により60〜90%）について' +
+        '課税を将来に繰り延べることができる（非課税ではなく課税の繰延べ）。対象資産の組合せ・繰延割合・要件・適用期限（令和8年度改正で2029年3月末まで延長）等は改正により変動するため最新の要件で要確認。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/3405.htm', type: 'government', label: '国税庁 No.3405 事業用資産の買換え特例' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kobetsu/shotoku/sochiho/710826/sanrin/sanjyou/soti37/01.htm', type: 'government', label: '国税庁 措置法37条 関係通達' },
+      { url: 'https://www.fp-soken.or.jp/fpnews/business-fpnews/no559/', type: 'media', label: '事業用資産の買換え特例（令和8年度改正）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-individual-credit',
+      domain: 'legal',
+      title: '個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制',
+      statement:
+        '割賦販売法は、消費者が販売業者から商品等を購入する際に個別クレジット業者（個別信用購入あっせん業者）が代金を立替払いし消費者が分割等で' +
+        '支払う「個別信用購入あっせん」について、業者の登録制、書面交付義務、過剰与信防止のための支払可能見込額の調査義務等を定めている。特に訪問販売等の' +
+        '特定商取引に係る個別クレジット契約では、消費者はクーリング・オフや、勧誘時の不実告知等を理由とする契約の取消し（既払金の返還請求を含む）ができる。',
+      authority: '所管: 経済産業省（割賦販売法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/kappuhanbaihoatobaraibunyanogaiyofaq.html', type: 'government', label: '経済産業省 割賦販売法（後払分野）FAQ' },
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/HPup.tourokunotebiki.pdf', type: 'government', label: '経済産業省 登録等申請のてびき（個別信用購入あっせん）' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20120401ra07.pdf', type: 'government', label: '消費者庁 特商法・割賦販売法改正（個別クレジット規制）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-email-ad-optin',
+      domain: 'legal',
+      title: '特定商取引法における電子メール広告のオプトイン規制',
+      statement:
+        '特定商取引法は、通信販売・連鎖販売取引・業務提供誘引販売取引について、消費者があらかじめ請求又は承諾しない限り事業者が電子メール広告を' +
+        '送信することを原則禁止している（オプトイン規制。2008年改正）。承諾を得て送信する場合、事業者は原則として最後に電子メール広告を送信した日から' +
+        '3年間その承諾等の記録を保存する義務を負い、かつ電子メール広告内に受信拒否（オプトアウト）の連絡先・方法を表示する必要がある（特定電子メール法のオプトイン規制と並ぶ規制）。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20080601sp05.pdf', type: 'government', label: '消費者庁 特商法 電子メール広告のオプトイン規制' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/mailorder/', type: 'government', label: '消費者庁 特定商取引法ガイド 通信販売' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_pamphlet.pdf', type: 'government', label: '総務省・消費者庁 特定電子メール法パンフレット' },
+    ],
+  },
 ];
 // Stryker restore all
