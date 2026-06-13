@@ -2133,6 +2133,115 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://kagoshima-kigyouricchi-guide.jp/kagoshima-prefecture-support/management-innovation/', type: 'operator', label: '鹿児島県企業立地ガイド 中小企業経営革新支援事業' },
     ],
   },
+  {
+    id: 'subsidy-employment-adjustment',
+    level: 'national',
+    domain: 'employment',
+    name: '雇用調整助成金',
+    authority: '所管: 厚生労働省（雇用保険二事業の雇用安定事業）／窓口: 都道府県労働局・ハローワーク',
+    statement:
+      '景気変動や産業構造の変化など経済上の理由により事業活動の縮小を余儀なくされた事業主が、労働者を解雇せず雇用を維持するため、一時的に休業・教育訓練・出向を実施した場合に、事業主が支払った休業手当・賃金等の一部を' +
+      '助成する国の制度。雇用保険の適用事業主であり、売上高や生産量等の事業活動指標が一定割合以上減少していること等が支給要件とされる。助成率・上限額・要件は年度や特例措置により変動するため要確認。',
+    application:
+      '原則として休業・教育訓練・出向の実施前に「休業等実施計画届」を都道府県労働局又はハローワークに提出し、労使協定を締結。実施後に支給申請を行う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/pageL07_20200515.html', type: 'government', label: '厚生労働省 雇用調整助成金' },
+      { url: 'https://www.maff.go.jp/j/keiei/nougyou_jinzaiikusei_kakuho/singatakoronataiou/kinnkyuutokuteitiiki.html', type: 'government', label: '農林水産省 雇用調整助成金の特例措置（制度解説）' },
+      { url: 'https://jinjibu.jp/keyword/detl/220/', type: 'media', label: '日本の人事部 雇用調整助成金の解説' },
+    ],
+  },
+  {
+    id: 'subsidy-industrial-employment-stability',
+    level: 'national',
+    domain: 'employment',
+    name: '産業雇用安定助成金',
+    authority: '所管: 厚生労働省（職業安定局）／窓口: 都道府県労働局・ハローワーク（電子申請は雇用関係助成金ポータル）',
+    statement:
+      '景気の変動・産業構造の変化・災害等により事業活動の一時的な縮小を余儀なくされた事業主が、在籍型出向により労働者の雇用を維持する取組や、事業再構築・スキルアップ等に伴う人材の確保・育成に取り組む場合に、' +
+      '出向元・出向先双方の事業主等に対して賃金・経費の一部を助成する厚生労働省の雇用関係助成金。在籍型出向によるスキルアップ支援コースや補助金採択企業の人材受入れ支援コース等、複数のコースで構成される。' +
+      '助成率・上限額・対象コースは年度や予算により頻繁に改正されるため要確認。',
+    application:
+      '出向計画届等を事前に都道府県労働局・ハローワークへ提出し、要件を満たしたうえで支給申請を行う。コースにより事業再構築補助金・ものづくり補助金の採択等が前提条件となる場合がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000082805_00012.html', type: 'government', label: '厚生労働省 産業雇用安定助成金（スキルアップ支援コース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/sankokinsangyourenkeijinzaikakuhotou_00001.html', type: 'government', label: '厚生労働省 産業雇用安定助成金（産業連携人材確保等支援コース）' },
+      { url: 'https://hojyokin-portal.jp/columns/sangyo_yoken_minaoshi', type: 'media', label: '補助金ポータル 産業雇用安定助成金 全コース解説' },
+    ],
+  },
+  {
+    id: 'subsidy-work-style-reform-support',
+    level: 'national',
+    domain: 'employment',
+    name: '働き方改革推進支援助成金',
+    authority: '所管: 厚生労働省（雇用環境・均等局）／窓口: 都道府県労働局 雇用環境・均等部（室）',
+    statement:
+      '生産性を向上させつつ労働時間の短縮・年次有給休暇の取得促進・労働時間管理の適正化等に取り組む中小企業事業主に対し、その実施に要した費用の一部を助成する厚生労働省の制度。時間外労働の削減や勤務間インターバル制度の' +
+      '導入等の成果目標を達成することが支給の要件となる。労働時間短縮・年休促進支援コース、勤務間インターバル導入コース、団体推進コース、業種別課題対応コース等の複数コースで構成される。助成率・上限額・対象経費・受付期間は年度ごとに変動するため要確認。',
+    application:
+      '交付申請書（事業計画書）の提出→交付決定→取組実施→支給申請の流れ。交付決定前に着手した経費は助成対象外。申請書類は管轄の都道府県労働局へ提出する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000120692.html', type: 'government', label: '厚生労働省 働き方改革推進支援助成金（労働時間短縮・年休促進支援コース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000200273.html', type: 'government', label: '厚生労働省 働き方改革推進支援助成金（団体推進コース）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/180228', type: 'government', label: 'J-Net21 働き方改革推進支援助成金（勤務間インターバル導入コース）' },
+    ],
+  },
+  {
+    id: 'subsidy-chutaikyo',
+    level: 'national',
+    domain: 'welfare',
+    name: '中小企業退職金共済制度（中退共）・新規加入等掛金助成',
+    authority: '所管: 厚生労働省／運営: 独立行政法人 勤労者退職金共済機構（中小企業退職金共済事業本部）',
+    statement:
+      '中退共は、単独では退職金制度を設けることが難しい中小企業のために、事業主の相互共済と国の援助によって退職金制度を確保する国の制度（中小企業退職金共済法に基づく）。事業主が機構と退職金共済契約を結び、従業員ごとに毎月掛金を' +
+      '全額事業主負担で納付し、退職時に機構から従業員へ退職金が直接支払われる社外積立のしくみ。新たに加入する事業主には掛金月額の一部を一定期間国が助成し、掛金を増額する事業主にも増額分の一部を一定期間助成する。助成額・期間・要件は制度改定により変動しうるため要確認。',
+    application:
+      '事業主が金融機関・委託団体等の窓口を通じて機構と退職金共済契約を締結して加入。掛金助成は別途の補助金申請ではなく、加入・掛金納付に伴い要件該当時に機構が国の助成分を反映するしくみ。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/taisilyokukin_kyousai/ippanchuutai/', type: 'government', label: '厚生労働省 一般の中小企業退職金共済制度のしくみ' },
+      { url: 'https://chutaikyo.taisyokukin.go.jp/faq/qa-01/1-2-1.html', type: 'operator', label: '中退共 掛金の一部を国が助成してくれる制度' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/taisilyokukin_kyousai/ippanchuutai/dl/kakekin_josei.pdf', type: 'government', label: '厚生労働省 一般の中小企業退職金共済制度に係る掛金助成' },
+    ],
+  },
+  {
+    id: 'subsidy-age-friendly',
+    level: 'national',
+    domain: 'employment',
+    name: 'エイジフレンドリー補助金',
+    authority: '所管: 厚生労働省（労働基準局 安全衛生部）／事務局: 一般社団法人 日本労働安全衛生コンサルタント会',
+    statement:
+      '60歳以上の高年齢労働者を常時1人以上雇用する中小企業事業主を対象に、高年齢労働者が安全・安心して働ける職場環境づくりを支援する国の補助制度。高年齢労働者に特有のリスクを低減するための設備・装置の導入、転倒・腰痛防止のための' +
+      '運動指導、コラボヘルス等の健康保持増進の取組に要する費用の一部を補助し、高年齢労働者の労働災害防止を図る。対象コース・補助率・上限額・対象経費・受付期間は年度ごとに改定されるため要確認。',
+    application:
+      '間接補助事業者である事務局（日本労働安全衛生コンサルタント会のエイジフレンドリー補助金事務センター）が交付規程に基づき申請を受付・審査・支給。事業者は所定の申請期間内に事務センターへ申請する（予算上限到達で早期終了あり）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_09940.html', type: 'government', label: '厚生労働省 エイジフレンドリー補助金' },
+      { url: 'https://www.jashcon-age.or.jp/', type: 'operator', label: '日本労働安全衛生コンサルタント会 エイジフレンドリー補助金事務センター' },
+      { url: 'https://hojyokin-portal.jp/', type: 'media', label: '補助金ポータル エイジフレンドリー補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-passive-smoking-prevention',
+    level: 'national',
+    domain: 'employment',
+    name: '受動喫煙防止対策助成金',
+    authority: '所管: 厚生労働省（労働基準局）／窓口: 各都道府県労働局（労働基準部）',
+    statement:
+      '中小企業事業主による職場の受動喫煙防止のための施設・設備の整備を支援し、事業場の受動喫煙防止対策を推進することを目的とする国の制度。健康増進法（2020年4月全面施行の原則屋内禁煙）への対応として、一定基準を満たす' +
+      '喫煙専用室・指定たばこ専用喫煙室等の設置・改修にかかる工費・設備費・備品費等の費用の一部を助成する。対象は労災保険の適用事業主である中小企業事業主。助成率・上限額・受付期間は年度ごとに変動するため要確認。',
+    application:
+      '各都道府県労働局が申請窓口。交付申請書を提出し、交付決定後に工事・設備整備を行い、完了後に実績報告・支払請求を経て助成金が交付される事前申請・精算型の枠組み。予算の範囲内で受け付けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000049868.html', type: 'government', label: '厚生労働省 受動喫煙防止対策助成金' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/jigyousya/kitsuenboushi/dl/pamphlet.pdf', type: 'government', label: '厚生労働省 受動喫煙防止対策助成金のご案内' },
+      { url: 'https://www.jti.co.jp/coexistence/bunen/subsidy/', type: 'media', label: 'JT 受動喫煙防止対策助成金の解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
