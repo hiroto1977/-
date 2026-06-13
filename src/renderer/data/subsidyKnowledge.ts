@@ -2061,6 +2061,78 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://biz.stayway.jp/hojyo_detail/74004/', type: 'media', label: '補助金クラウド 長崎県 地域産業雇用創出チャレンジ支援事業' },
     ],
   },
+  {
+    id: 'subsidy-kumamoto',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'くまもと型小規模事業者経営発展支援事業補助金（熊本県）',
+    authority: '熊本県（商工労働部 商工振興金融課）／執行・申請事務局は熊本県中小企業団体中央会。申請にあたり地域の商工会・商工会議所の伴走支援を受ける',
+    statement:
+      '平成28年熊本地震又は令和2年7月豪雨災害により影響を受けた県内の小規模事業者が、経営革新計画等の具体的な計画に基づき、商工会・商工会議所等の支援を受けながら取り組む販路開拓・生産性向上・新商品開発・第二創業等の' +
+      '取組経費を補助する熊本県の制度。一定期間で付加価値額・給与支給総額の向上を達成する取組であることが要件とされる。年度ごとに複数回公募される継続事業で、補助率・上限額・募集期間は年度・回ごとに変動するため要確認。',
+    application:
+      '公募制。地域の商工会・商工会議所に事前相談のうえ経営計画等を作成し、事務局（熊本県中小企業団体中央会内のくまもと型補助金事務局）へ申請する。締切に余裕をもって商工会・商工会議所へ相談することが案内される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kumamoto.jp/soshiki/61/240258.html', type: 'municipality', label: '熊本県 くまもと型小規模事業者経営発展支援事業補助金 公募' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/82076', type: 'government', label: 'J-Net21 熊本県 くまもと型小規模事業者経営発展支援事業補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/60616', type: 'media', label: '補助金ポータル 熊本県 くまもと型小規模事業者経営発展支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-oita',
+    level: 'prefecture',
+    domain: 'business',
+    name: '大分県省力化・生産性向上支援補助金（大分県）',
+    authority: '大分県（商工観光労働部 先端技術挑戦課）／受付・審査・問い合わせは委託事務局',
+    statement:
+      '人手不足や生産性向上に取り組む県内の中小企業・小規模事業者等を対象に、国の「中小企業省力化投資補助金（カタログ注文型）」又は「IT導入補助金（インボイス枠）」の交付額が確定した事業者に対し、県が上乗せ支給する制度。' +
+      '国の示す「大幅な賃上げ」等の県の定める要件を満たす場合は上乗せ率がさらに優遇される。補助率・上乗せ上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '国の対象補助金（省力化投資補助金カタログ注文型／IT導入補助金インボイス枠）の交付決定・額の確定を受けた後、県の上乗せ補助に申請する後追い方式。受付・審査は委託事務局が行い、申請は特設サイト経由。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.oita.jp/site/tyusyodx/dxhojyo.html', type: 'municipality', label: '大分県 省力化・生産性向上支援補助金' },
+      { url: 'https://www.pref.oita.jp/soshiki/14270/dxhojyo.html', type: 'municipality', label: '大分県 先端技術挑戦課 省力化・生産性向上支援補助金' },
+      { url: 'https://www.city.beppu.oita.jp/sangyou/sangyousinkou/sonota2/seisansei.html', type: 'municipality', label: '別府市 大分県省力化・生産性向上支援補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-miyazaki',
+    level: 'prefecture',
+    domain: 'business',
+    name: '事業承継・引継ぎ応援事業補助金（宮崎県）',
+    authority: '宮崎県（商工観光労働部 商工政策課 経営金融支援室）／相談窓口は宮崎県事業承継・引継ぎ支援センター。交付・申請は実施市町村が窓口',
+    statement:
+      '中小企業の事業承継を促進し、廃業による経営資源・雇用の喪失を防ぐことを目的に、親族内承継・第三者承継・役員従業員承継に要する経費（マッチングコーディネーターやM&A仲介業者との委託契約費（成功報酬を除く）、' +
+      '企業価値評価費、事業承継に係る資料作成費等）を補助する市町村を宮崎県が後押しする県・市町村連携型の制度。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '県との連携事業のため、本事業を実施している市町村に事業所がある中小企業が対象。支援機関（事業承継・引継ぎ支援センター、地域金融機関等）の支援を受けたうえで専門事業者と契約し、所在市町村の窓口へ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.miyazaki.lg.jp/keieikinyushien/shigoto/chushokigyo/20230703153447.html', type: 'municipality', label: '宮崎県 事業承継・引継ぎ応援事業補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/146918', type: 'government', label: 'J-Net21 宮崎県 事業承継・引継ぎ応援事業補助金' },
+      { url: 'https://www.city.miyazaki.miyazaki.jp/business/loan/106329.html', type: 'municipality', label: '宮崎市 事業バトンタッチ支援' },
+    ],
+  },
+  {
+    id: 'subsidy-kagoshima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）',
+    authority: '鹿児島県（商工労働水産部 経営金融課）／申請窓口は同課（県へ直接申請）',
+    statement:
+      '中小企業等経営強化法に基づき知事の承認を受けた「経営革新計画」に従って中小企業者・組合等が行う、新商品・新技術開発や販路開拓等の取組に要する経費の一部を補助する制度。承認された経営革新計画の実行を後押しし、' +
+      '県内中小企業の経営の向上を図ることを趣旨とする。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '前提として中小企業等経営強化法に基づく「経営革新計画」の知事承認を受けたうえで、県（経営金融課）の公募に応じて交付申請する枠組み。具体の申請書類・締切は各年度の募集要項に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kagoshima.jp/af02/keieikakushin/jigyouhishienhojokin.html', type: 'municipality', label: '鹿児島県 中小企業経営革新支援事業費補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/42600', type: 'media', label: '補助金ポータル 鹿児島県 中小企業経営革新支援事業費補助金' },
+      { url: 'https://kagoshima-kigyouricchi-guide.jp/kagoshima-prefecture-support/management-innovation/', type: 'operator', label: '鹿児島県企業立地ガイド 中小企業経営革新支援事業' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
