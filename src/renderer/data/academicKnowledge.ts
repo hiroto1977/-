@@ -852,5 +852,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.researchgate.net/publication/235250288_Can_You_See_the_Chasm_Innovation_Diffusion_According_to_Rogers_Bass_and_Moore', type: 'academic', label: 'Can You See the Chasm? — Rogers/Bass/Mooreの普及理論比較（学術文献）' },
     ],
   },
+  {
+    id: 'econ-fallacy-of-composition',
+    discipline: 'economics',
+    title: '合成の誤謬（fallacy of composition）',
+    statement:
+      '部分（個人・個別主体）にとって真または合理的なことが、全体（社会・経済全体）にもそのまま当てはまると誤って推論する誤り。論理学的には、ある性質が部分（構成要素）について真であることから全体についても真であると不当に帰属させる非形式的誤謬であり、逆方向の「分割の誤謬」と対をなす。' +
+      '経済学では、個々人が貯蓄を増やすのは合理的でも全員が同時に貯蓄を増やすと総需要（消費）が減少し、所得・産出が落ち込んで結果的に総貯蓄が却って減少しうる「倹約のパラドックス（貯蓄のパラドックス）」が代表例である。これはケインズ経済学が示すミクロとマクロの非連続性の典型で、個人の節約・賃下げ・輸出増といったミクロで合理的な行動が合成されると、かえって不況を深めうることを表す。',
+    keyFigures: '論理学の誤謬類型（分割の誤謬と対）／経済学ではケインズが普及させた倹約のパラドックスで顕著',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/fallacy-of-composition', type: 'reference', label: 'Encyclopaedia Britannica — fallacy of composition（論理学的定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Fallacy_of_composition', type: 'reference', label: 'Wikipedia — Fallacy of composition' },
+      { url: 'https://en.wikipedia.org/wiki/Paradox_of_thrift', type: 'reference', label: 'Wikipedia — Paradox of thrift（合成の誤謬の経済学的代表例）' },
+    ],
+  },
+  {
+    id: 'econ-says-law',
+    discipline: 'economics',
+    title: 'セイの法則（販路法則）',
+    statement:
+      '「供給はそれ自身の需要を創造する（supply creates its own demand）」と要約される古典派経済学の命題。財の生産・供給はそれと同額の所得（賃金・利潤等）を生み出し、その所得が他の財への需要となって支出されるため、経済全体では一般的な過剰生産（全般的供給過剰）は持続的には生じないとする考え方。' +
+      'フランスの経済学者ジャン＝バティスト・セイが主著『経済学概論』(1803)で示した「販路の法則」に由来し、リカードら英国古典派が支持した。ジョン・メイナード・ケインズは『一般理論』(1936)でこれを批判し、有効需要の不足により非自発的失業を伴う過少雇用・過少生産の均衡が持続しうる＝需要が供給（雇用量）を決める側面があるとしてセイの法則を否定した。なお「supply creates its own demand」という定式自体はセイの原典の文言ではなく後年の要約表現である点に注意。',
+    keyFigures: 'ジャン＝バティスト・セイ（1803『経済学概論』）／批判: J.M.ケインズ（1936『一般理論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/J-B-Say', type: 'reference', label: 'Encyclopædia Britannica — J.-B. Say: Law of Markets' },
+      { url: 'https://en.wikipedia.org/wiki/Say%27s_law', type: 'reference', label: "Wikipedia — Say's law（ケインズ批判・定式の来歴）" },
+      { url: 'https://classiques.uqam.ca/classiques/say_jean_baptiste/traite_eco_pol/traite_eco_pol.html', type: 'academic', label: 'UQAM — Say, Traité d’économie politique (1803) 原典（大学アーカイブ）' },
+    ],
+  },
+  {
+    id: 'mgmt-mckinsey-7s',
+    discipline: 'management',
+    title: 'マッキンゼーの7Sフレームワーク',
+    statement:
+      '組織の有効性を、相互依存する7つの要素の整合性（アラインメント）から分析する経営フレームワーク。7要素は「ハードのS」＝Strategy(戦略)・Structure(組織構造)・Systems(システム/制度)と、「ソフトのS」＝Shared Values(共通の価値観、図の中心)・Skills(スキル/組織能力)・Style(経営スタイル/文化)・Staff(人材)に分けられる。' +
+      '中核的主張は、効果的な組織変革には全7要素の整合が不可欠であり、戦略・構造・制度といったハード要素だけを変えても価値観・文化・人材といったソフト要素が伴わなければ機能しない、という点にある。1980年前後にマッキンゼーのトム・ピーターズとロバート・ウォーターマンらが開発し、論文「Structure Is Not Organization」(Business Horizons, 1980)で初出、ピーターズ＆ウォーターマン『エクセレント・カンパニー(In Search of Excellence)』(1982)等で広く普及した。',
+    keyFigures: 'トム・ピーターズ & ロバート・H・ウォーターマン（マッキンゼー、1980年前後／共著者J.フィリップス）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/McKinsey_7S_Framework', type: 'reference', label: 'Wikipedia — McKinsey 7S Framework' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/mckinsey-7s-framework', type: 'academic', label: 'EBSCO Research Starters — McKinsey 7S Framework' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0007681380900270', type: 'academic', label: 'Waterman, Peters & Phillips (1980) Structure Is Not Organization, Business Horizons 23(3):14-26（原典）' },
+    ],
+  },
+  {
+    id: 'human-asch-conformity',
+    discipline: 'human-science',
+    title: 'アッシュの同調実験（同調圧力）',
+    statement:
+      '集団の多数派が明らかに誤った判断を示すとき、個人がその誤りに同調してしまう傾向を示した社会心理学の実験。ソロモン・アッシュが1950年代（1951年〜）に行った線分の長さ比較課題で、被験者は基準線と一致する長さの線を3本の中から選ぶよう求められた。集団は7〜9人で1人を除く全員がサクラ（共謀者）であり、全18試行中12試行で一斉に誤答した。' +
+      '正答が明白な課題であったにもかかわらず、被験者は誤答が示された全試行の約3分の1（約32%）で多数派に同調して誤答し、被験者の約75%が少なくとも一度は同調した（統制条件での誤答率は1%未満）。同調率は多数派の人数や全員一致が崩れるか否か（反対するサクラが1人いるだけで大幅に低下）によって変化した。機序として、集団から外れたくないという規範的影響と、他者を情報源とみなす情報的影響が挙げられる。',
+    keyFigures: 'ソロモン・アッシュ（Solomon Asch、1951年／1950年代に実験を実施）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Solomon-Asch', type: 'reference', label: 'Encyclopaedia Britannica — Solomon Asch' },
+      { url: 'https://www.britannica.com/topic/conformity', type: 'reference', label: 'Encyclopaedia Britannica — Conformity（同調と実験設計）' },
+      { url: 'https://www.ebsco.com/research-starters/history/asch-conformity-experiments', type: 'academic', label: 'EBSCO Research Starters — Asch conformity experiments' },
+    ],
+  },
+  {
+    id: 'bizlaw-whistleblower-protection',
+    discipline: 'business-law',
+    title: '公益通報者保護法',
+    statement:
+      '労働者等が、その役務提供先である事業者の法令違反など公益にかかわる事実を通報したことを理由とする解雇その他の不利益な取扱いを禁止し、公益通報者を保護する日本の法律。保護される通報先を内部・行政機関・報道機関等に整理し、事業者の法令遵守を促すことを目的とする。' +
+      '2004年（平成16年）6月18日に公布、2006年（平成18年）4月1日に施行された（平成16年法律第122号）。消費者庁が所管する。2020年（令和2年）の改正（令和2年法律第51号、2022年6月1日施行）により、常時使用する労働者が301人以上の事業者に内部公益通報対応体制の整備（窓口設置等）が義務付けられた。あわせて公益通報対応業務従事者の指定義務と守秘義務（違反に刑事罰）が設けられ、行政機関・報道機関等への外部通報の保護要件が緩和され、保護される通報者の範囲が退職者（退職後1年以内）や役員にも拡大された。',
+    keyFigures: '公益通報者保護法（平成16年法律第122号）／消費者庁所管／2020年改正（令2法51号・2022/6/1施行・301人以上に体制整備義務）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview', type: 'government', label: '消費者庁 — 公益通報者保護法と制度の概要' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15920040618122.htm', type: 'government', label: '衆議院 — 公益通報者保護法（平成16年6月18日法律第122号）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000098401&current=-1', type: 'government', label: '国立国会図書館 日本法令索引 — 公益通報者保護法' },
+    ],
+  },
+  {
+    id: 'infosoc-agenda-setting',
+    discipline: 'information-sociology',
+    title: '議題設定理論（アジェンダ・セッティング）',
+    statement:
+      'マスメディアは人々に「何を考えるか（what to think）」を直接決めることはできないが、「何について考えるか（what to think about）」――すなわち何が重要な争点かという認識（議題＝アジェンダ）を方向づける力を持つ、とする理論。メディアが特定の争点を繰り返し強調するほど、その争点を重要だと受け手が認知する（顕著性の転移）。' +
+      'マックスウェル・マコームズとドナルド・ショーが、1968年の米大統領選におけるノースカロライナ州チャペルヒルの有権者調査とメディアの報道分析を通じて、有権者が重視する争点とメディアが強調する争点との強い相関を実証し、1972年の論文「The Agenda-Setting Function of Mass Media」(Public Opinion Quarterly 36:176-187)で提示した。後に、争点の属性（特徴づけ）の顕著性の転移を扱う第二レベル（属性アジェンダ設定）やフレーミング論へと発展した。なお「what to think about」の元表現はバーナード・コーエン(1963)に由来する。',
+    keyFigures: 'マックスウェル・マコームズ & ドナルド・ショー（1972, POQ, チャペルヒル研究）／淵源: B.コーエン(1963)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2376233', type: 'academic', label: 'McCombs & Shaw (1972) The Agenda-Setting Function of Mass Media, POQ 36:176-187（書誌）' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/agenda-setting-theory', type: 'academic', label: 'EBSCO Research Starters — Agenda-setting theory' },
+      { url: 'https://link.springer.com/article/10.1007/s44382-025-00016-x', type: 'academic', label: 'Springer Nature, Communication and Change (2025) — agenda-setting研究の系譜 1972-2025' },
+    ],
+  },
 ];
 // Stryker restore all
