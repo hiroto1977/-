@@ -1874,5 +1874,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.city.osaka.lg.jp/lnet/page/0000002409.html', type: 'municipality', label: '大阪市消費者センター 電子消費者契約法' },
     ],
   },
+  {
+    value: {
+      id: 'tax-consumption-final-return',
+      domain: 'tax',
+      title: '消費税の確定申告・納付期限',
+      statement:
+        '法人の消費税及び地方消費税の確定申告・納付期限は、原則として課税期間の末日の翌日から2か月以内である。' +
+        '個人事業者の消費税及び地方消費税の確定申告・納付期限は、原則として翌年3月31日である。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6601.htm', type: 'government', label: '国税庁 No.6601 申告と納税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6610.htm', type: 'government', label: '国税庁 No.6610 法人の消費税確定申告書の提出期限' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6137.htm', type: 'government', label: '国税庁 No.6137 課税期間（個人事業者）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-medical-expense-deduction',
+      domain: 'tax',
+      title: '医療費控除',
+      statement:
+        '納税者が自己または生計を一にする配偶者・親族のために支払った医療費が一定額を超える場合、その超える部分（最高200万円）を' +
+        '所得控除できる。控除額は「実際に支払った医療費の合計額−保険金等で補填される金額−10万円（その年の総所得金額等が200万円未満の人は総所得金額等の5%）」で計算し、適用には確定申告が必要。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1120.htm', type: 'government', label: '国税庁 No.1120 医療費を支払ったとき' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1119.htm', type: 'government', label: '国税庁 No.1119 医療費控除に関する手続' },
+      { url: 'https://www.bk.mufg.jp/column/others/b0063.html', type: 'media', label: '医療費控除 計算方法 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-minor-protection',
+      domain: 'labor',
+      title: '年少者の労働保護（労働基準法 第6章）',
+      statement:
+        '使用者は、児童が満15歳に達した日以後の最初の3月31日が終了するまで（原則として中学校卒業まで）これを使用してはならない' +
+        '（最低年齢。労基法56条）。満18歳未満の年少者は、原則として午後10時から午前5時までの深夜業が禁止され、' +
+        '時間外・休日労働や変形労働時間制も原則として制限される（労基法60条・61条等）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（第6章 年少者）' },
+      { url: 'https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/content/contents/001307499.pdf', type: 'government', label: '静岡労働局 年少者にも労働基準法が適用されます' },
+      { url: 'https://www.pref.fukui.lg.jp/doc/roudouiinkaijimukyoku/qa/qa53.html', type: 'municipality', label: '福井県労働委員会 年少者のアルバイト Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-gender-equality',
+      domain: 'labor',
+      title: '男女雇用機会均等法における性別差別の禁止',
+      statement:
+        '事業主は労働者の募集・採用について性別にかかわりなく均等な機会を与えなければならず（均等法5条）、配置・昇進・降格・' +
+        '教育訓練・福利厚生・職種変更・退職勧奨・定年・解雇等について性別を理由とする差別的取扱いが禁止される（同6条）。' +
+        'あわせて間接差別の禁止（7条）、婚姻・妊娠・出産等を理由とする不利益取扱いの禁止（9条）が定められている。',
+      authority: '所管: 厚生労働省（男女雇用機会均等法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/danjokintou/index.html', type: 'government', label: '厚生労働省 男女の均等な機会と待遇の確保' },
+      { url: 'https://www.mhlw.go.jp/content/001444637.pdf', type: 'government', label: '厚生労働省 男女雇用機会均等法のあらまし' },
+      { url: 'https://www.hataraku.metro.tokyo.lg.jp/shiryo/hatarakujosei2022.05-2bubyoudou.pdf', type: 'municipality', label: '東京都 働く女性と労働法（均等法）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-telemarketing-sales',
+      domain: 'legal',
+      title: '電話勧誘販売（特定商取引法）',
+      statement:
+        '電話勧誘販売（事業者が電話をかけ、または政令で定める方法で電話をかけさせて契約締結を勧誘し申込みを受ける取引）では、' +
+        '事業者に氏名等の明示義務（16条）と書面交付義務があり、消費者は法定の契約書面を受け取った日から8日間は無条件で解約できる。' +
+        'また契約を締結しない意思を示した者への再勧誘は禁止される（17条）。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/telemarketing/', type: 'government', label: '消費者庁 特定商取引法ガイド 電話勧誘販売' },
+      { url: 'https://www.no-trouble.caa.go.jp/pdf/20180625ac05.pdf', type: 'government', label: '消費者庁 特商法逐条解説 電話勧誘販売（16条・17条）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'media', label: '国民生活センター クーリング・オフ（電話勧誘8日間）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-continuous-service',
+      domain: 'legal',
+      title: '特定継続的役務提供（特定商取引法）',
+      statement:
+        '特定継続的役務提供は、エステティック・美容医療・語学教室・家庭教師・学習塾・パソコン教室・結婚相手紹介サービスの7類型について、' +
+        '対価が5万円を超え一定期間（原則2月超、エステ・美容医療は1月超）を超える契約を対象とし、概要書面・契約書面の交付義務、' +
+        '書面受領日から8日間のクーリング・オフ、および期間途中の中途解約権（解約時の損害賠償額に法定の上限）が定められている。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/continuousservices/', type: 'government', label: '消費者庁 特定商取引法ガイド 特定継続的役務提供' },
+      { url: 'https://www.no-trouble.caa.go.jp/qa/continuousservices.html', type: 'government', label: '消費者庁 特定継続的役務提供 Q&A' },
+      { url: 'https://www.seikatsu.city.nagoya.jp/soudan/pickup/article/4', type: 'municipality', label: '名古屋市消費生活センター 特定継続的役務提供' },
+    ],
+  },
 ];
 // Stryker restore all
