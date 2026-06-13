@@ -3011,5 +3011,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitpress.mit.edu/9780936756028/simulations/', type: 'academic', label: 'MIT Press — Baudrillard 著作の刊行情報（出版社一次情報）' },
     ],
   },
+  {
+    id: 'econ-jevons-paradox',
+    discipline: 'economics',
+    title: 'ジェヴォンズのパラドックス',
+    statement:
+      '技術進歩によって資源（エネルギー等）の利用効率が高まると、単位あたりのコストが下がって需要が増えるため、かえって資源の総消費量が増えてしまう、という逆説。' +
+      'イギリスの経済学者ウィリアム・スタンレー・ジェヴォンズが『石炭問題（The Coal Question）』（1865年）で、蒸気機関の効率改善が石炭消費を減らすどころか増大させたと論じたことに由来する。効率改善による需要増を「リバウンド効果（rebound effect）」と呼び、その効果が当初の節約を上回って総消費がむしろ増える極端なケースを「バックファイア（backfire）」という。' +
+      '省エネ・省資源政策が必ずしも総消費を減らさない可能性を示し、環境政策において効率改善だけでなく総量規制（炭素税・排出量上限キャップ等）が必要との議論の根拠とされる。',
+    keyFigures: 'W.S.ジェヴォンズ『石炭問題』1865／効率改善→コスト低下→需要増で総消費が増える逆説／リバウンド効果・バックファイア／効率改善のみでは総消費を減らせず総量規制が必要との含意',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Coal-Question', type: 'reference', label: 'Encyclopaedia Britannica — The Coal Question (work by Jevons)' },
+      { url: 'https://energyhistory.yale.edu/w-stanley-jevons-the-coal-question-1865/', type: 'academic', label: 'Yale University, Energy History — W. Stanley Jevons, "The Coal Question," 1865（一次資料・原典引用）' },
+      { url: 'https://en.wikipedia.org/wiki/Jevons_paradox', type: 'reference', label: 'Wikipedia — Jevons paradox（リバウンド効果・バックファイアの定義）' },
+    ],
+  },
+  {
+    id: 'econ-cobb-douglas',
+    discipline: 'economics',
+    title: 'コブ＝ダグラス生産関数',
+    statement:
+      '産出量 Y を、労働 L と資本 K の投入から Y = A·L^α·K^β の形で表す生産関数。A は全要素生産性（技術水準）、α・β はそれぞれ労働・資本の産出弾力性（投入を1%増やしたときの産出の変化率）を表す。' +
+      'α+β=1 のとき規模に関して収穫一定（規模を2倍にすると産出も2倍）となる。競争市場で各生産要素がその限界生産力に等しい報酬を受けるとき、α が労働分配率・β が資本分配率に一致するという便利な性質をもつ。数学者チャールズ・コブと経済学者ポール・ダグラスが1928年の論文「A Theory of Production」で、米国製造業（1899–1922年）のデータに当てはめて提示した。' +
+      '扱いやすさから成長理論（ソローモデル）やマクロ経済学で広く用いられる一方、要素間の代替弾力性が常に1であるなどの強い仮定への批判もある。',
+    keyFigures: 'Y=A·L^α·K^β／A=全要素生産性、α・β=産出弾力性／α+β=1で規模に関して収穫一定・競争市場下でα/βが労働/資本分配率に対応／C.コブ&P.ダグラス1928(米国製造業1899–1922)／代替弾力性=1の仮定への批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Cobb-Douglas-function', type: 'reference', label: 'Encyclopædia Britannica — "Cobb-Douglas function" (economics)' },
+      { url: 'https://en.wikipedia.org/wiki/Cobb%E2%80%93Douglas_production_function', type: 'reference', label: 'Wikipedia — Cobb–Douglas production function' },
+      { url: 'https://web.stanford.edu/~chadj/alpha100.pdf', type: 'academic', label: 'Stanford University (C. I. Jones) — Growth, Capital Shares, and Production Functions' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/cobb-douglas-production-function', type: 'academic', label: 'ScienceDirect Topics — Cobb-Douglas Production Function (overview)' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-culture',
+    discipline: 'management',
+    title: '組織文化（シャインの3レベル）',
+    statement:
+      '組織文化とは、組織のメンバーに共有された価値観・信念・規範・行動様式・象徴・言語などの総体で、メンバーに共通のアイデンティティを与え、意思決定や行動を方向づけるものである。' +
+      '組織心理学者でMITスローン経営大学院の教授だったエドガー・シャイン（1928–2023）は、1980年代に組織文化を3つのレベルで捉えるモデルを提示した：(1)人工物（artifacts）＝建築・服装・オフィスのレイアウト・儀礼など、外部の人にも目に見える表層、(2)標榜される価値観（espoused values）＝公式の理念・戦略・目標など、組織が言明する価値、(3)基本的前提（basic underlying assumptions）＝メンバーが当然視し意識すらしない、最も深層の無意識的な信念・前提。' +
+      'シャインは、この深層の基本的前提こそが文化の本質であり、表層の人工物や標榜される価値観だけを見ても文化は理解できず、文化変革は3レベル全て（特に基本的前提）に働きかけて初めて根づくと論じた。さらにシャインは文化が戦略を「決定し制約する」とも述べ、組織文化は戦略実行や変革の成否を大きく左右する。',
+    keyFigures: 'E.シャイン（MITスローン、組織心理学者、1928–2023、1980年代提唱）の3レベル：人工物(表層)・標榜される価値観・基本的前提(深層)／深層の基本的前提が文化の本質／文化は戦略を決定し制約する／（「文化は戦略を朝食に食べる」は帰属不確実のため不採用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/organizational-culture', type: 'reference', label: 'Encyclopædia Britannica「Organizational culture」（文化＝共有された信念・前提・価値・規範・人工物・象徴・言語の総体）' },
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/5-enduring-management-ideas-mit-sloans-edgar-schein', type: 'academic', label: 'MIT Sloan School of Management（シャインの所属大学／3レベルモデルと経歴）' },
+      { url: 'https://en.wikipedia.org/wiki/Edgar_Schein', type: 'reference', label: 'Wikipedia「Edgar Schein」（1928–2023・MITスローン教授・1980年代提唱）' },
+    ],
+  },
+  {
+    id: 'human-hindsight-bias',
+    discipline: 'human-science',
+    title: '後知恵バイアス',
+    statement:
+      'ある出来事の結果を知った後で、その結果を事前に予測可能だった・自分は最初から分かっていたと過大に思い込む認知的傾向。「I-knew-it-all-along（最初から分かっていた）効果」あるいは「creeping determinism」とも呼ばれる。' +
+      '結果を知ることで、それ以前の自分の予測を結果に近い方向へ無意識に書き換えてしまう記憶と判断の歪みが関与する。バルーク・フィッシュホフが1975年の研究（Journal of Experimental Psychology: Human Perception and Performance）で実証的に示した（結果を伝えられた群は、その結果が起こる確率を事前に高く見積もっていたと回答する）。' +
+      '事故・医療過誤・投資判断などの事後評価において、「予見できたはずだ」と当事者を不当に厳しく評価する一因となり（裁判や過失認定での結果論的判断など）、過去の判断から正しく学習することを妨げる。対策として、結果を知る前に予測を記録しておく、起こりえた別の結末を考える（反実仮想）などが有効とされる。',
+    keyFigures: '結果を知った後で「予測可能だった/分かっていた」と過大視／I-knew-it-all-along効果・creeping determinism／B.フィッシュホフ1975が実証／事故・医療・裁判の結果論的評価を歪める／対策＝事前予測の記録・反実仮想',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/hindsight-bias', type: 'reference', label: 'Encyclopaedia Britannica — Hindsight bias: Definition, Psychology, & Examples' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/12897366/', type: 'academic', label: 'Fischhoff B. (1975) "Hindsight ≠ foresight…", J. Exp. Psychol. Hum. Percept. Perform.（PubMed）' },
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Behavioral_Decision_Theory/Fischhoff_1975_Hindsight_is_not_equal_to_foresight.pdf', type: 'academic', label: 'Fischhoff (1975) 原著PDF（MIT 配信）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/19554863/', type: 'academic', label: 'Hindsight bias and outcome bias in the social construction of medical negligence: a review（PubMed）' },
+    ],
+  },
+  {
+    id: 'bizlaw-specified-commercial-transactions',
+    discipline: 'business-law',
+    title: '特定商取引法',
+    statement:
+      '事業者と消費者の間でトラブルを生じやすい特定の取引類型を対象に、事業者の行為を規制し消費者を保護する法律（特定商取引に関する法律）。1976年（昭和51年）に「訪問販売等に関する法律（訪問販売法）」として制定され、2000年の改正で現在の名称に改められた。' +
+      '規制対象は、訪問販売・通信販売・電話勧誘販売・連鎖販売取引（マルチ商法）・特定継続的役務提供（エステ・語学教室等）・業務提供誘引販売取引（内職商法等）・訪問購入の7類型。事業者に対し、氏名等の明示・書面交付・誇大広告の禁止・不当な勧誘行為（不実告知・威迫等）の禁止などの行政規制を課す。' +
+      'あわせて、一定期間内なら無条件で契約を解除できるクーリング・オフや、中途解約権・不当条項の無効など民事ルールも定め、消費者庁が所管する。',
+    keyFigures: '消費者トラブルが生じやすい7類型（訪問販売・通信販売・電話勧誘・連鎖販売・特定継続的役務・業務提供誘引・訪問購入）を規制／1976年訪問販売法として制定・2000年改正で現名称／行政規制(明示・書面交付・誇大広告/不当勧誘の禁止)＋民事ルール(クーリングオフ等)／消費者庁が所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁「特定商取引法とは」特定商取引法ガイド（7類型・行政規制・民事ルールの一次情報）' },
+      { url: 'https://laws.e-gov.go.jp/law/351AC0000000057/', type: 'government', label: 'e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号 法令本文）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000065920&current=-1', type: 'government', label: '国立国会図書館「日本法令索引」昭和51年6月4日法律第57号（制定年の確認）' },
+    ],
+  },
+  {
+    id: 'infosoc-cultural-capital',
+    discipline: 'information-sociology',
+    title: '文化資本（ブルデュー）',
+    statement:
+      'フランスの社会学者ピエール・ブルデューが提唱した概念で、金銭的な経済資本とは別に、個人が持つ知識・教養・言葉づかい・趣味・学歴・作法などの文化的な資産を指し、これらが社会的な有利さ（地位や権力）に変換されうるとする。' +
+      '文化資本は3つの形態をとる：(1)身体化された文化資本（habitusとして身につけた教養・振る舞い）、(2)客体化された文化資本（書物・絵画・楽器などの文化的財）、(3)制度化された文化資本（学歴・資格など制度が認める形）。' +
+      'ブルデューは、学校教育が一見中立に見えて実は支配階級の文化資本を評価する仕組みになっており、家庭で文化資本を受け継いだ子が学業で有利になることで、階級格差が世代を超えて再生産される（文化的再生産）と論じた。経済資本・社会関係資本（人脈）とともに社会空間を構成する。',
+    keyFigures: 'P.ブルデュー／経済資本とは別の文化的資産が社会的有利さに変換／身体化・客体化・制度化の3形態／学校教育を介した文化的再生産で階級格差が継承（ブルデュー&パスロン）／経済資本・社会関係資本と並ぶ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.stanford.edu/~eckert/PDF/Bourdieu1986.pdf', type: 'academic', label: 'Pierre Bourdieu, "The Forms of Capital" (1986) — 原典PDF（Stanford University ホスト）' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/socialproblems/chpt/cultural-capital.pdf', type: 'reference', label: 'SAGE Reference — Encyclopedia of Social Problems: "Cultural Capital"（学術百科事典）' },
+      { url: 'https://en.wikipedia.org/wiki/Cultural_capital', type: 'reference', label: 'Wikipedia: Cultural capital（概念・3形態・文化的再生産の概観）' },
+    ],
+  },
 ];
 // Stryker restore all
