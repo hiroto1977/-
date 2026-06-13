@@ -2610,5 +2610,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/environmental-kuznets-curves', type: 'reference', label: 'Encyclopedia.com — Environmental Kuznets Curves（派生概念）' },
     ],
   },
+  {
+    id: 'econ-pigouvian-tax',
+    discipline: 'economics',
+    title: 'ピグー税',
+    statement:
+      '負の外部性（公害・汚染など、取引の当事者が負担せず第三者や社会が被る社会的費用）を発生させる経済活動に対し、その外部費用に等しい額の税を課す是正手段。これにより私的費用を社会的費用に一致させ、外部性を内部化して資源配分を効率化し、社会的に最適な生産・消費水準を実現しようとする。' +
+      'アーサー・セシル・ピグー（1877–1959）が『厚生経済学』(1920)で示した、限界私的費用と限界社会的費用の乖離を税・補助金で是正するという考え方に由来し命名された（ピグー自身はマーシャルの外部性概念を発展させた）。逆に正の外部性には外部便益分を補助するピグー的補助金が対応する。炭素税が代表例（ほかタバコ税・砂糖税など）。' +
+      '市場メカニズムを通じて外部性を是正する点で直接規制と対比され、当事者間の交渉による解決を説くコースの定理とも対比される。実務上は外部費用を正確に計測することが難しい等の課題がある。',
+    keyFigures: 'A.C.ピグー『厚生経済学』(1920)／負の外部性に外部費用分を課税し内部化（私的費用＝社会的費用へ）／炭素税が代表例／正の外部性にはピグー的補助金／直接規制・コースの定理と対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Pigouvian-tax', type: 'reference', label: 'Encyclopaedia Britannica — Pigouvian tax' },
+      { url: 'https://taxfoundation.org/taxedu/glossary/pigouvian-tax/', type: 'reference', label: 'Tax Foundation (TaxEDU) — Pigouvian Tax Definition' },
+      { url: 'https://energyeducation.ca/encyclopedia/Pigouvian_subsidy', type: 'academic', label: 'Energy Education (University of Calgary) — Pigouvian subsidy' },
+      { url: 'https://en.wikipedia.org/wiki/Pigouvian_tax', type: 'reference', label: 'Wikipedia — Pigouvian tax' },
+    ],
+  },
+  {
+    id: 'econ-wage-rigidity',
+    discipline: 'economics',
+    title: '名目賃金の下方硬直性',
+    statement:
+      '名目賃金が、労働需要の減少や物価下落に直面しても下方には調整されにくい（下がりにくい）という現象。ケインズが『一般理論』(1936)で、賃金が硬直的なために労働市場が需給均衡せず非自発的失業が生じうると論じたことに端を発する。' +
+      '賃金が下がりにくい理由として、長期労働契約・最低賃金や労働組合などの制度、労働者の貨幣錯覚や公平性規範（賃下げは士気・生産性を下げる）、効率賃金的な配慮などが挙げられる。' +
+      '下方硬直性があると、不況期に実質賃金が高止まりして雇用調整が数量（解雇・採用抑制）で起こりやすく、また低インフレ下では実質賃金を引き下げる調整余地が小さくなるため、適度なインフレが「労働市場の潤滑油」として機能するという議論（Tobin等）の根拠ともなる。効率賃金（efficiency wage）とは別概念であり、効率賃金は硬直性を生む一要因にとどまる。',
+    keyFigures: '名目賃金が下方に調整されにくい現象／ケインズ『一般理論』1936に淵源（賃金硬直→非自発的失業）／要因：長期契約・組合・最低賃金・公平性規範・貨幣錯覚・効率賃金的配慮／低インフレで調整余地縮小＝インフレの潤滑油論（Tobin）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/involuntary-unemployment', type: 'reference', label: 'Encyclopaedia Britannica — Involuntary unemployment（ケインズ経済学）' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2013/07/wages-unemployment-rate/', type: 'government', label: 'Federal Reserve Bank of San Francisco Economic Letter (Daly & Hobijn, 2013) — downward nominal wage rigidity' },
+      { url: 'https://www.nber.org/system/files/chapters/c8882/c8882.pdf', type: 'academic', label: 'NBER — "Does Inflation Grease the Wheels of the Labor Market?"（Tobinの潤滑油仮説）' },
+    ],
+  },
+  {
+    id: 'mgmt-innovators-dilemma',
+    discipline: 'management',
+    title: 'イノベーションのジレンマ（破壊的イノベーション）',
+    statement:
+      '優良企業が、既存顧客の声に耳を傾け持続的イノベーション（既存製品の性能改善）に資源を集中する合理的な経営を行うがゆえに、当初は性能が低く利益率も低い「破壊的イノベーション（disruptive innovation）」への対応が遅れ、結果として新規参入企業に市場を奪われ敗れてしまうというジレンマ。' +
+      'クレイトン・クリステンセンが1997年の著書『The Innovator\'s Dilemma』で提示した。破壊的技術は当初ローエンド市場や新市場で安価・単純な製品として登場し、やがて性能を高めて主流市場を侵食する。優良企業の「正しい経営判断」こそが失敗を招く点に逆説がある。' +
+      'なお後年、破壊的イノベーション理論の適用や定義をめぐっては学術的な論争・批判もある（例：J.レポアの批判、および著者自身による2015年の再整理）。',
+    keyFigures: 'C.クリステンセン1997『The Innovator\'s Dilemma』／持続的イノベーション対破壊的イノベーション／優良企業の合理的判断が失敗を招く逆説／ローエンド・新市場から主流を侵食／適用をめぐる学術的論争（Lepore批判・2015年HBR再整理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://online.hbs.edu/blog/post/4-keys-to-understanding-clayton-christensens-theory-of-disruptive-innovation', type: 'academic', label: 'Harvard Business School Online — What Is Disruptive Innovation Theory? 4 Key Concepts' },
+      { url: 'https://hbr.org/2015/12/what-is-disruptive-innovation', type: 'academic', label: 'Christensen, Raynor & McDonald (2015), "What Is Disruptive Innovation?", Harvard Business Review' },
+      { url: 'https://en.wikipedia.org/wiki/The_Innovator%27s_Dilemma', type: 'reference', label: 'Wikipedia — The Innovator\'s Dilemma (1997, Christensen)' },
+      { url: 'https://www.christenseninstitute.org/theory/disruptive-innovation/', type: 'reference', label: 'Christensen Institute — Disruptive Innovation Theory' },
+    ],
+  },
+  {
+    id: 'human-cognitive-load',
+    discipline: 'human-science',
+    title: '認知負荷理論',
+    statement:
+      '人間のワーキングメモリ（作業記憶）が一度に処理できる情報量は限られているという制約を前提に、学習と教材設計を論じる理論。教育心理学者ジョン・スウェラーが1980年代後半（1988年の論文 "Cognitive load during problem solving" が代表的）に問題解決研究から提唱した。' +
+      '認知負荷は3種類に分けられる。(1)課題内在性負荷（intrinsic load＝学習内容そのものの複雑さ・要素間相互作用および学習者の事前知識に起因）、(2)課題外在性負荷（extraneous load＝まずい教材設計や不要な情報処理に起因し、削減すべきもの）、(3)学習関連負荷（germane load＝スキーマ構築など学習に資する処理）。これら3負荷は加算的とみなされ、合計がワーキングメモリ容量を超えると認知的過負荷が生じる。' +
+      '外在性負荷を減らし内在性負荷を適切に管理することで、限られたワーキングメモリを効果的な学習へ振り向けられるとし、ワークト・イグザンプル効果や分割注意効果など多くの教授設計原理の基礎となっている。',
+    keyFigures: 'ジョン・スウェラー（ニューサウスウェールズ大学）が1980年代後半に提唱（代表的論文1988年）／ワーキングメモリの容量制約／認知負荷の3区分：内在性・外在性・学習関連（加算的で総和が容量超で過負荷）／外在性負荷の削減＝教材設計の指針／ワークト・イグザンプル効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s10648-019-09465-5', type: 'academic', label: 'Sweller et al., "Cognitive Architecture and Instructional Design: 20 Years Later", Educational Psychology Review（Springer 査読誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Cognitive_load', type: 'reference', label: 'Wikipedia「Cognitive load」（3負荷の加算性・容量制約・過負荷の定義）' },
+      { url: 'https://www.instructionaldesign.org/theories/cognitive-load/', type: 'reference', label: 'InstructionalDesign.org「Cognitive Load Theory (John Sweller)」（理論概要・外在性負荷削減）' },
+      { url: 'https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/j.2044-8279.1992.tb01017.x', type: 'academic', label: 'Chandler & Sweller, "The split-attention effect…", British Journal of Educational Psychology（Wiley 査読誌）' },
+    ],
+  },
+  {
+    id: 'bizlaw-land-lease-act',
+    discipline: 'business-law',
+    title: '借地借家法',
+    statement:
+      '建物の所有を目的とする土地の賃借権（借地権）や、建物の賃貸借（借家）について、立場の弱い借主を保護するため民法の特則を定めた法律。1991年（平成3年）公布・1992年（平成4年）施行で、従来の借地法・借家法・建物保護ニ関スル法律を統合・現代化したもの。' +
+      '主な内容として、(1)期間満了時に賃貸人が更新を拒絶するには「正当事由」が必要で、借地・借家契約は法定更新されやすく、借主の居住・営業の安定を保護する、(2)借地権の存続期間に関する規定、(3)建物賃借人（借家人）の対抗要件は建物の引渡しで足り、借地権は借地上の建物の登記で対抗できる、(4)賃料増減額請求権、などがある。' +
+      '施行に際し更新のない「定期借地権」が新設され、後の改正で「定期借家（定期建物賃貸借）」も導入され、契約自由の要請にも配慮された。',
+    keyFigures: '借地借家法＝平成3年（1991年）公布・平成4年（1992年）施行（旧借地法・借家法・建物保護法を統合）／更新拒絶に正当事由が必要＝法定更新で借主保護／対抗要件＝借地は借地上建物の登記・借家は建物の引渡し／定期借地権を新設・後の改正で定期借家を導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000077611&current=-1', type: 'government', label: '日本法令索引（国立国会図書館）借地借家法 平成3年10月4日法律第90号' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00304.html', type: 'government', label: '法務省「借地借家法等の改正（定期借地権・定期建物賃貸借関係）について」' },
+      { url: 'https://kotobank.jp/word/%E5%80%9F%E5%9C%B0%E5%80%9F%E5%AE%B6%E6%B3%95-167983', type: 'reference', label: 'コトバンク（日本大百科全書ほか）「借地借家法」' },
+    ],
+  },
+  {
+    id: 'infosoc-propaganda-model',
+    discipline: 'information-sociology',
+    title: 'プロパガンダ・モデル',
+    statement:
+      'エドワード・S・ハーマンとノーム・チョムスキーが1988年の著書『Manufacturing Consent: The Political Economy of the Mass Media（合意の捏造／マニュファクチャリング・コンセント）』で提示した、マスメディアの報道内容がどのように体制（エリート）寄りに偏向するかを説明する構造的モデル。' +
+      '直接の検閲によるものではなく、市場原理と制度的要因によってニュースが「フィルタリング」されると論じ、5つのフィルターを挙げる：(1)メディア企業の規模・集中的所有・所有者の富・利潤志向、(2)広告収入への依存、(3)政府・企業・公認の「専門家」など権力ある情報源への依存、(4)権力側からの批判・圧力（フラック, flak）、(5)共通の敵とされる統制イデオロギー（当初は「反共産主義」）。' +
+      'これらの結果、メディアはエリートの利益に沿う「合意の製造」を行うとする。決定論的・実証性をめぐる批判もあるが、批判的メディア研究の代表的枠組みである。なお書名はW・リップマン『世論』(1922)の「manufacture of consent」に由来する。',
+    keyFigures: 'E.ハーマン&N.チョムスキー1988『Manufacturing Consent』／5つのフィルター（所有・広告・情報源・フラック・反共/敵イデオロギー）／検閲によらず市場・制度でニュースが偏向＝合意の製造',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Manufacturing-Consent-The-Political-Economy-of-the-Mass-Media', type: 'reference', label: 'Encyclopaedia Britannica「Manufacturing Consent: The Political Economy of the Mass Media」' },
+      { url: 'https://eric.ed.gov/?id=EJ846793', type: 'academic', label: 'ERIC EJ846793, "The Applicability of Herman\'s and Chomsky\'s Propaganda Model Today", College Quarterly (2005)' },
+      { url: 'https://www.westminsterpapers.org/article/129/', type: 'academic', label: 'Westminster Papers in Communication and Culture「The Propaganda Model: Theoretical and Methodological Considerations」（査読学術誌）' },
+      { url: 'https://opentextbc.ca/mediastudies101/chapter/the-propaganda-model/', type: 'academic', label: 'Media Studies 101, BCcampus OpenTextBC（大学オープン教科書）' },
+    ],
+  },
 ];
 // Stryker restore all
