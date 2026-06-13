@@ -26,7 +26,7 @@ import {
   type AvailableCapabilities,
   type VoiceIntent,
 } from './voiceCommand';
-import { routeTopic, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
+import { routeTopic, routeTopicScored, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
 import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
 import { counsel, detectCrisis, detectHarmToOthers, detectDestructiveUrge } from './counseling';
 
@@ -193,10 +193,11 @@ export function findService(
   return services.find((s) => s.id === id);
 }
 
-/** サービスの担当部署ラベルを解決する (label を話題として組織索引を引く)。 */
+/** サービスの担当部署ラベルを解決する (label を話題として組織索引を引く)。
+ *  スコアリング型ルーティング (chatOrg.routeTopicScored) で最良候補を選び精度を高める。 */
 export function routeForService(org: OrgIndex, service: ChatService | undefined): string {
   if (service === undefined) return routeLabel({});
-  return routeLabel(routeTopic(org, normalizeUtterance(service.label)));
+  return routeLabel(routeTopicScored(org, normalizeUtterance(service.label)).route);
 }
 
 /**
