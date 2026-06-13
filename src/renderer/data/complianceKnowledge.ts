@@ -196,5 +196,39 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://roudou-sos.jp/subcontract-act/', type: 'media', label: 'みらい総合法律事務所 解説' },
     ],
   },
+  {
+    value: {
+      id: 'labor-social-insurance-expansion',
+      domain: 'labor',
+      title: '社会保険（健康保険・厚生年金）の適用拡大',
+      statement:
+        '2024年10月から、被保険者数が常時51人以上の事業所（特定適用事業所）では短時間労働者も加入対象。' +
+        '加入要件は、週の所定労働時間20時間以上・月額賃金8.8万円以上・2か月を超える雇用見込み・昼間学生でないこと。',
+      authority: '所管: 厚生労働省・日本年金機構（健康保険法・厚生年金保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/tekiyoukakudai/', type: 'government', label: '厚生労働省 社会保険適用拡大特設サイト' },
+      { url: 'https://www.gov-online.go.jp/article/202209/entry-10068.html', type: 'government', label: '政府広報オンライン 社会保険の適用拡大' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/55078/', type: 'media', label: 'マネーフォワード 社会保険の適用拡大' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-esignature-presumption',
+      domain: 'legal',
+      title: '電子署名の推定効（電子署名法3条）',
+      statement:
+        '本人による電子署名（これを行うために必要な符号・物件を適正に管理し、本人だけが行えるものに限る）が' +
+        '行われた電磁的記録は、真正に成立したものと推定される（紙の押印に相当する推定効）。',
+      authority: '所管: 法務省・総務省・経済産業省（電子署名及び認証業務に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji32.html', type: 'government', label: '法務省 電子署名法の概要と認定制度' },
+      { url: 'https://www.cloudsign.jp/media/20180803-denshisyomeihou/', type: 'media', label: 'クラウドサイン 電子署名法 解説' },
+      { url: 'https://biz.moneyforward.com/contract/basic/22406/', type: 'media', label: 'マネーフォワード 電子署名法第3条' },
+    ],
+  },
 ];
 // Stryker restore all
