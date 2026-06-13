@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="4750" height="602" viewBox="0 0 4750 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="4750" height="602" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="5110" height="602" viewBox="0 0 5110 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="5110" height="602" fill="#0f172a"/>
 <text x="60" y="36" fill="#f1f5f9" font-size="22" font-weight="700">資産クラス別 年次推移（株式・不動産・仮想通貨）</text>
 <text x="60" y="60" fill="#94a3b8" font-size="12">各系列を自系列の最大値=100%に正規化して重ね描き。欠損(null=未照合／その年に存在しない資産)は線を引かない。</text>
 <line x1="80" y1="90" x2="80" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="4700" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="4700" y2="450" stroke="#1e293b"/>
+<line x1="80" y1="450" x2="5060" y2="450" stroke="#475569"/>
+<line x1="80" y1="450" x2="5060" y2="450" stroke="#1e293b"/>
 <text x="72" y="454" fill="#64748b" font-size="10" text-anchor="end">0%</text>
-<line x1="80" y1="360" x2="4700" y2="360" stroke="#1e293b"/>
+<line x1="80" y1="360" x2="5060" y2="360" stroke="#1e293b"/>
 <text x="72" y="364" fill="#64748b" font-size="10" text-anchor="end">25%</text>
-<line x1="80" y1="270" x2="4700" y2="270" stroke="#1e293b"/>
+<line x1="80" y1="270" x2="5060" y2="270" stroke="#1e293b"/>
 <text x="72" y="274" fill="#64748b" font-size="10" text-anchor="end">50%</text>
-<line x1="80" y1="180" x2="4700" y2="180" stroke="#1e293b"/>
+<line x1="80" y1="180" x2="5060" y2="180" stroke="#1e293b"/>
 <text x="72" y="184" fill="#64748b" font-size="10" text-anchor="end">75%</text>
-<line x1="80" y1="90" x2="4700" y2="90" stroke="#1e293b"/>
+<line x1="80" y1="90" x2="5060" y2="90" stroke="#1e293b"/>
 <text x="72" y="94" fill="#64748b" font-size="10" text-anchor="end">100%</text>
 <text x="80" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1940</text>
 <text x="200" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1942</text>
@@ -53,85 +53,94 @@
 <text x="4400" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2012</text>
 <text x="4520" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2014</text>
 <text x="4640" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2016</text>
-<circle cx="80" cy="448.1" r="3" fill="#38bdf8"/>
-<circle cx="140" cy="448.4" r="3" fill="#38bdf8"/>
-<circle cx="200" cy="448.3" r="3" fill="#38bdf8"/>
-<circle cx="260" cy="448.0" r="3" fill="#38bdf8"/>
-<circle cx="320" cy="447.8" r="3" fill="#38bdf8"/>
-<circle cx="380" cy="447.2" r="3" fill="#38bdf8"/>
-<circle cx="440" cy="447.4" r="3" fill="#38bdf8"/>
-<circle cx="500" cy="447.4" r="3" fill="#38bdf8"/>
-<circle cx="560" cy="447.4" r="3" fill="#38bdf8"/>
-<circle cx="620" cy="447.1" r="3" fill="#38bdf8"/>
-<circle cx="680" cy="446.6" r="3" fill="#38bdf8"/>
-<circle cx="740" cy="446.1" r="3" fill="#38bdf8"/>
-<circle cx="800" cy="445.7" r="3" fill="#38bdf8"/>
-<circle cx="860" cy="445.9" r="3" fill="#38bdf8"/>
-<circle cx="920" cy="444.1" r="3" fill="#38bdf8"/>
-<circle cx="980" cy="442.9" r="3" fill="#38bdf8"/>
-<circle cx="1040" cy="442.7" r="3" fill="#38bdf8"/>
-<circle cx="1100" cy="443.7" r="3" fill="#38bdf8"/>
-<circle cx="1160" cy="441.5" r="3" fill="#38bdf8"/>
-<circle cx="1220" cy="440.1" r="3" fill="#38bdf8"/>
-<circle cx="1280" cy="441.0" r="3" fill="#38bdf8"/>
-<circle cx="1340" cy="439.4" r="3" fill="#38bdf8"/>
-<circle cx="1400" cy="440.5" r="3" fill="#38bdf8"/>
-<circle cx="1460" cy="438.9" r="3" fill="#38bdf8"/>
-<circle cx="1520" cy="437.3" r="3" fill="#38bdf8"/>
-<circle cx="1580" cy="435.9" r="3" fill="#38bdf8"/>
-<circle cx="1640" cy="438.6" r="3" fill="#38bdf8"/>
-<circle cx="1700" cy="436.8" r="3" fill="#38bdf8"/>
-<circle cx="1760" cy="436.3" r="3" fill="#38bdf8"/>
-<circle cx="1820" cy="438.3" r="3" fill="#38bdf8"/>
-<circle cx="1880" cy="437.8" r="3" fill="#38bdf8"/>
-<circle cx="1940" cy="437.0" r="3" fill="#38bdf8"/>
-<circle cx="2000" cy="435.1" r="3" fill="#38bdf8"/>
-<circle cx="2060" cy="437.6" r="3" fill="#38bdf8"/>
-<circle cx="2120" cy="441.0" r="3" fill="#38bdf8"/>
-<circle cx="2180" cy="437.6" r="3" fill="#38bdf8"/>
-<circle cx="2240" cy="435.4" r="3" fill="#38bdf8"/>
-<circle cx="2300" cy="437.9" r="3" fill="#38bdf8"/>
-<circle cx="2360" cy="438.3" r="3" fill="#38bdf8"/>
-<circle cx="2420" cy="437.8" r="3" fill="#38bdf8"/>
-<circle cx="2480" cy="436.0" r="3" fill="#38bdf8"/>
-<circle cx="2540" cy="437.3" r="3" fill="#38bdf8"/>
-<circle cx="2600" cy="434.8" r="3" fill="#38bdf8"/>
-<circle cx="2660" cy="431.7" r="3" fill="#38bdf8"/>
-<circle cx="2720" cy="432.4" r="3" fill="#38bdf8"/>
-<circle cx="2780" cy="427.5" r="3" fill="#38bdf8"/>
-<circle cx="2840" cy="422.4" r="3" fill="#38bdf8"/>
-<circle cx="2900" cy="421.8" r="3" fill="#38bdf8"/>
-<circle cx="2960" cy="418.4" r="3" fill="#38bdf8"/>
-<circle cx="3020" cy="409.9" r="3" fill="#38bdf8"/>
-<circle cx="3080" cy="411.6" r="3" fill="#38bdf8"/>
-<circle cx="3140" cy="403.9" r="3" fill="#38bdf8"/>
-<circle cx="3200" cy="401.9" r="3" fill="#38bdf8"/>
-<circle cx="3260" cy="395.3" r="3" fill="#38bdf8"/>
-<circle cx="3320" cy="394.2" r="3" fill="#38bdf8"/>
-<circle cx="3380" cy="375.5" r="3" fill="#38bdf8"/>
-<circle cx="3440" cy="356.1" r="3" fill="#38bdf8"/>
-<circle cx="3500" cy="334.8" r="3" fill="#38bdf8"/>
-<circle cx="3560" cy="316.3" r="3" fill="#38bdf8"/>
-<circle cx="3620" cy="282.6" r="3" fill="#38bdf8"/>
-<circle cx="3680" cy="292.9" r="3" fill="#38bdf8"/>
-<circle cx="3740" cy="304.1" r="3" fill="#38bdf8"/>
-<circle cx="3800" cy="328.5" r="3" fill="#38bdf8"/>
-<circle cx="3860" cy="297.8" r="3" fill="#38bdf8"/>
-<circle cx="3920" cy="293.0" r="3" fill="#38bdf8"/>
-<circle cx="3980" cy="293.9" r="3" fill="#38bdf8"/>
-<circle cx="4040" cy="268.5" r="3" fill="#38bdf8"/>
-<circle cx="4100" cy="256.8" r="3" fill="#38bdf8"/>
-<circle cx="4160" cy="322.2" r="3" fill="#38bdf8"/>
-<circle cx="4220" cy="298.1" r="3" fill="#38bdf8"/>
-<circle cx="4280" cy="281.4" r="3" fill="#38bdf8"/>
-<circle cx="4340" cy="272.1" r="3" fill="#38bdf8"/>
-<circle cx="4400" cy="259.2" r="3" fill="#38bdf8"/>
-<circle cx="4460" cy="208.6" r="3" fill="#38bdf8"/>
-<circle cx="4520" cy="190.4" r="3" fill="#38bdf8"/>
-<circle cx="4580" cy="196.2" r="3" fill="#38bdf8"/>
-<circle cx="4640" cy="162.2" r="3" fill="#38bdf8"/>
-<circle cx="4700" cy="90.0" r="3" fill="#38bdf8"/>
-<path d="M80,448.1 L140,448.4 L200,448.3 L260,448.0 L320,447.8 L380,447.2 L440,447.4 L500,447.4 L560,447.4 L620,447.1 L680,446.6 L740,446.1 L800,445.7 L860,445.9 L920,444.1 L980,442.9 L1040,442.7 L1100,443.7 L1160,441.5 L1220,440.1 L1280,441.0 L1340,439.4 L1400,440.5 L1460,438.9 L1520,437.3 L1580,435.9 L1640,438.6 L1700,436.8 L1760,436.3 L1820,438.3 L1880,437.8 L1940,437.0 L2000,435.1 L2060,437.6 L2120,441.0 L2180,437.6 L2240,435.4 L2300,437.9 L2360,438.3 L2420,437.8 L2480,436.0 L2540,437.3 L2600,434.8 L2660,431.7 L2720,432.4 L2780,427.5 L2840,422.4 L2900,421.8 L2960,418.4 L3020,409.9 L3080,411.6 L3140,403.9 L3200,401.9 L3260,395.3 L3320,394.2 L3380,375.5 L3440,356.1 L3500,334.8 L3560,316.3 L3620,282.6 L3680,292.9 L3740,304.1 L3800,328.5 L3860,297.8 L3920,293.0 L3980,293.9 L4040,268.5 L4100,256.8 L4160,322.2 L4220,298.1 L4280,281.4 L4340,272.1 L4400,259.2 L4460,208.6 L4520,190.4 L4580,196.2 L4640,162.2 L4700,90.0" fill="none" stroke="#38bdf8" stroke-width="2"/>
+<text x="4760" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2018</text>
+<text x="4880" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2020</text>
+<text x="5000" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">2022</text>
+<circle cx="80" cy="448.7" r="3" fill="#38bdf8"/>
+<circle cx="140" cy="448.9" r="3" fill="#38bdf8"/>
+<circle cx="200" cy="448.9" r="3" fill="#38bdf8"/>
+<circle cx="260" cy="448.7" r="3" fill="#38bdf8"/>
+<circle cx="320" cy="448.5" r="3" fill="#38bdf8"/>
+<circle cx="380" cy="448.2" r="3" fill="#38bdf8"/>
+<circle cx="440" cy="448.3" r="3" fill="#38bdf8"/>
+<circle cx="500" cy="448.3" r="3" fill="#38bdf8"/>
+<circle cx="560" cy="448.3" r="3" fill="#38bdf8"/>
+<circle cx="620" cy="448.1" r="3" fill="#38bdf8"/>
+<circle cx="680" cy="447.8" r="3" fill="#38bdf8"/>
+<circle cx="740" cy="447.4" r="3" fill="#38bdf8"/>
+<circle cx="800" cy="447.2" r="3" fill="#38bdf8"/>
+<circle cx="860" cy="447.3" r="3" fill="#38bdf8"/>
+<circle cx="920" cy="446.1" r="3" fill="#38bdf8"/>
+<circle cx="980" cy="445.3" r="3" fill="#38bdf8"/>
+<circle cx="1040" cy="445.2" r="3" fill="#38bdf8"/>
+<circle cx="1100" cy="445.8" r="3" fill="#38bdf8"/>
+<circle cx="1160" cy="444.4" r="3" fill="#38bdf8"/>
+<circle cx="1220" cy="443.5" r="3" fill="#38bdf8"/>
+<circle cx="1280" cy="444.1" r="3" fill="#38bdf8"/>
+<circle cx="1340" cy="443.0" r="3" fill="#38bdf8"/>
+<circle cx="1400" cy="443.8" r="3" fill="#38bdf8"/>
+<circle cx="1460" cy="442.7" r="3" fill="#38bdf8"/>
+<circle cx="1520" cy="441.7" r="3" fill="#38bdf8"/>
+<circle cx="1580" cy="440.7" r="3" fill="#38bdf8"/>
+<circle cx="1640" cy="442.5" r="3" fill="#38bdf8"/>
+<circle cx="1700" cy="441.4" r="3" fill="#38bdf8"/>
+<circle cx="1760" cy="441.0" r="3" fill="#38bdf8"/>
+<circle cx="1820" cy="442.4" r="3" fill="#38bdf8"/>
+<circle cx="1880" cy="442.0" r="3" fill="#38bdf8"/>
+<circle cx="1940" cy="441.5" r="3" fill="#38bdf8"/>
+<circle cx="2000" cy="440.3" r="3" fill="#38bdf8"/>
+<circle cx="2060" cy="441.9" r="3" fill="#38bdf8"/>
+<circle cx="2120" cy="444.1" r="3" fill="#38bdf8"/>
+<circle cx="2180" cy="441.9" r="3" fill="#38bdf8"/>
+<circle cx="2240" cy="440.4" r="3" fill="#38bdf8"/>
+<circle cx="2300" cy="442.1" r="3" fill="#38bdf8"/>
+<circle cx="2360" cy="442.3" r="3" fill="#38bdf8"/>
+<circle cx="2420" cy="442.0" r="3" fill="#38bdf8"/>
+<circle cx="2480" cy="440.8" r="3" fill="#38bdf8"/>
+<circle cx="2540" cy="441.6" r="3" fill="#38bdf8"/>
+<circle cx="2600" cy="440.0" r="3" fill="#38bdf8"/>
+<circle cx="2660" cy="438.0" r="3" fill="#38bdf8"/>
+<circle cx="2720" cy="438.4" r="3" fill="#38bdf8"/>
+<circle cx="2780" cy="435.2" r="3" fill="#38bdf8"/>
+<circle cx="2840" cy="431.9" r="3" fill="#38bdf8"/>
+<circle cx="2900" cy="431.5" r="3" fill="#38bdf8"/>
+<circle cx="2960" cy="429.3" r="3" fill="#38bdf8"/>
+<circle cx="3020" cy="423.7" r="3" fill="#38bdf8"/>
+<circle cx="3080" cy="424.8" r="3" fill="#38bdf8"/>
+<circle cx="3140" cy="419.7" r="3" fill="#38bdf8"/>
+<circle cx="3200" cy="418.5" r="3" fill="#38bdf8"/>
+<circle cx="3260" cy="414.1" r="3" fill="#38bdf8"/>
+<circle cx="3320" cy="413.4" r="3" fill="#38bdf8"/>
+<circle cx="3380" cy="401.1" r="3" fill="#38bdf8"/>
+<circle cx="3440" cy="388.4" r="3" fill="#38bdf8"/>
+<circle cx="3500" cy="374.5" r="3" fill="#38bdf8"/>
+<circle cx="3560" cy="362.3" r="3" fill="#38bdf8"/>
+<circle cx="3620" cy="340.2" r="3" fill="#38bdf8"/>
+<circle cx="3680" cy="347.0" r="3" fill="#38bdf8"/>
+<circle cx="3740" cy="354.3" r="3" fill="#38bdf8"/>
+<circle cx="3800" cy="370.3" r="3" fill="#38bdf8"/>
+<circle cx="3860" cy="350.1" r="3" fill="#38bdf8"/>
+<circle cx="3920" cy="347.0" r="3" fill="#38bdf8"/>
+<circle cx="3980" cy="347.6" r="3" fill="#38bdf8"/>
+<circle cx="4040" cy="331.0" r="3" fill="#38bdf8"/>
+<circle cx="4100" cy="323.3" r="3" fill="#38bdf8"/>
+<circle cx="4160" cy="366.2" r="3" fill="#38bdf8"/>
+<circle cx="4220" cy="350.4" r="3" fill="#38bdf8"/>
+<circle cx="4280" cy="339.4" r="3" fill="#38bdf8"/>
+<circle cx="4340" cy="333.3" r="3" fill="#38bdf8"/>
+<circle cx="4400" cy="324.8" r="3" fill="#38bdf8"/>
+<circle cx="4460" cy="291.7" r="3" fill="#38bdf8"/>
+<circle cx="4520" cy="279.8" r="3" fill="#38bdf8"/>
+<circle cx="4580" cy="283.6" r="3" fill="#38bdf8"/>
+<circle cx="4640" cy="261.2" r="3" fill="#38bdf8"/>
+<circle cx="4700" cy="213.9" r="3" fill="#38bdf8"/>
+<circle cx="4760" cy="227.2" r="3" fill="#38bdf8"/>
+<circle cx="4820" cy="177.4" r="3" fill="#38bdf8"/>
+<circle cx="4880" cy="157.7" r="3" fill="#38bdf8"/>
+<circle cx="4940" cy="102.9" r="3" fill="#38bdf8"/>
+<circle cx="5000" cy="133.4" r="3" fill="#38bdf8"/>
+<circle cx="5060" cy="90.0" r="3" fill="#38bdf8"/>
+<path d="M80,448.7 L140,448.9 L200,448.9 L260,448.7 L320,448.5 L380,448.2 L440,448.3 L500,448.3 L560,448.3 L620,448.1 L680,447.8 L740,447.4 L800,447.2 L860,447.3 L920,446.1 L980,445.3 L1040,445.2 L1100,445.8 L1160,444.4 L1220,443.5 L1280,444.1 L1340,443.0 L1400,443.8 L1460,442.7 L1520,441.7 L1580,440.7 L1640,442.5 L1700,441.4 L1760,441.0 L1820,442.4 L1880,442.0 L1940,441.5 L2000,440.3 L2060,441.9 L2120,444.1 L2180,441.9 L2240,440.4 L2300,442.1 L2360,442.3 L2420,442.0 L2480,440.8 L2540,441.6 L2600,440.0 L2660,438.0 L2720,438.4 L2780,435.2 L2840,431.9 L2900,431.5 L2960,429.3 L3020,423.7 L3080,424.8 L3140,419.7 L3200,418.5 L3260,414.1 L3320,413.4 L3380,401.1 L3440,388.4 L3500,374.5 L3560,362.3 L3620,340.2 L3680,347.0 L3740,354.3 L3800,370.3 L3860,350.1 L3920,347.0 L3980,347.6 L4040,331.0 L4100,323.3 L4160,366.2 L4220,350.4 L4280,339.4 L4340,333.3 L4400,324.8 L4460,291.7 L4520,279.8 L4580,283.6 L4640,261.2 L4700,213.9 L4760,227.2 L4820,177.4 L4880,157.7 L4940,102.9 L5000,133.4 L5060,90.0" fill="none" stroke="#38bdf8" stroke-width="2"/>
 <circle cx="2180" cy="409.8" r="3" fill="#f97316"/>
 <circle cx="2360" cy="394.5" r="3" fill="#f97316"/>
 <circle cx="2420" cy="389.2" r="3" fill="#f97316"/>
@@ -160,21 +169,33 @@
 <circle cx="4580" cy="273.9" r="3" fill="#f97316"/>
 <circle cx="4640" cy="273.2" r="3" fill="#f97316"/>
 <circle cx="4700" cy="239.4" r="3" fill="#f97316"/>
-<path d="M2180,409.8 M2360,394.5 L2420,389.2 M2600,375.8 M2840,277.0 L2900,250.5 L2960,171.0 L3020,90.0 L3080,229.4 L3140,237.4 L3200,293.4 M3440,270.9 L3500,308.9 M3680,322.5 L3740,352.5 M3920,343.7 L3980,301.0 L4040,290.6 L4100,308.4 L4160,368.0 M4280,355.4 L4340,371.8 L4400,353.8 L4460,299.3 L4520,288.6 L4580,273.9 L4640,273.2 L4700,239.4" fill="none" stroke="#f97316" stroke-width="2"/>
-<circle cx="4400" cy="449.7" r="3" fill="#facc15"/>
-<circle cx="4460" cy="430.8" r="3" fill="#facc15"/>
-<circle cx="4520" cy="441.9" r="3" fill="#facc15"/>
-<circle cx="4580" cy="439.1" r="3" fill="#facc15"/>
-<circle cx="4640" cy="425.5" r="3" fill="#facc15"/>
-<circle cx="4700" cy="90.0" r="3" fill="#facc15"/>
-<path d="M4400,449.7 L4460,430.8 L4520,441.9 L4580,439.1 L4640,425.5 L4700,90.0" fill="none" stroke="#facc15" stroke-width="2"/>
+<circle cx="4760" cy="264.8" r="3" fill="#f97316"/>
+<circle cx="4820" cy="231.2" r="3" fill="#f97316"/>
+<circle cx="4880" cy="196.1" r="3" fill="#f97316"/>
+<circle cx="4940" cy="183.7" r="3" fill="#f97316"/>
+<circle cx="5000" cy="208.6" r="3" fill="#f97316"/>
+<circle cx="5060" cy="140.4" r="3" fill="#f97316"/>
+<path d="M2180,409.8 M2360,394.5 L2420,389.2 M2600,375.8 M2840,277.0 L2900,250.5 L2960,171.0 L3020,90.0 L3080,229.4 L3140,237.4 L3200,293.4 M3440,270.9 L3500,308.9 M3680,322.5 L3740,352.5 M3920,343.7 L3980,301.0 L4040,290.6 L4100,308.4 L4160,368.0 M4280,355.4 L4340,371.8 L4400,353.8 L4460,299.3 L4520,288.6 L4580,273.9 L4640,273.2 L4700,239.4 L4760,264.8 L4820,231.2 L4880,196.1 L4940,183.7 L5000,208.6 L5060,140.4" fill="none" stroke="#f97316" stroke-width="2"/>
+<circle cx="4400" cy="449.9" r="3" fill="#facc15"/>
+<circle cx="4460" cy="444.1" r="3" fill="#facc15"/>
+<circle cx="4520" cy="447.5" r="3" fill="#facc15"/>
+<circle cx="4580" cy="446.7" r="3" fill="#facc15"/>
+<circle cx="4640" cy="442.5" r="3" fill="#facc15"/>
+<circle cx="4700" cy="339.9" r="3" fill="#facc15"/>
+<circle cx="4760" cy="420.9" r="3" fill="#facc15"/>
+<circle cx="4820" cy="394.1" r="3" fill="#facc15"/>
+<circle cx="4880" cy="224.5" r="3" fill="#facc15"/>
+<circle cx="4940" cy="90.0" r="3" fill="#facc15"/>
+<circle cx="5000" cy="321.4" r="3" fill="#facc15"/>
+<circle cx="5060" cy="121.5" r="3" fill="#facc15"/>
+<path d="M4400,449.9 L4460,444.1 L4520,447.5 L4580,446.7 L4640,442.5 L4700,339.9 L4760,420.9 L4820,394.1 L4880,224.5 L4940,90.0 L5000,321.4 L5060,121.5" fill="none" stroke="#facc15" stroke-width="2"/>
 <rect x="60" y="486" width="13" height="13" rx="2" fill="#38bdf8"/>
-<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ78年（直近 24719.22）</text>
+<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ84年（直近 37689.54）</text>
 <rect x="60" y="504" width="13" height="13" rx="2" fill="#f97316"/>
-<text x="78" y="515" fill="#cbd5e1" font-size="11">日経平均(日本株, 年末円) — データ28年（直近 22764.94）</text>
+<text x="78" y="515" fill="#cbd5e1" font-size="11">日経平均(日本株, 年末円) — データ34年（直近 33464.17）</text>
 <rect x="60" y="522" width="13" height="13" rx="2" fill="#a3e635"/>
 <text x="78" y="533" fill="#cbd5e1" font-size="11">市街地価格指数(不動産, 1936/9=100) — データなし（N/A・未照合またはその年に存在しない資産）</text>
 <rect x="60" y="540" width="13" height="13" rx="2" fill="#facc15"/>
-<text x="78" y="551" fill="#cbd5e1" font-size="11">ビットコイン(仮想通貨, 年末USD) — データ6年（直近 14156）</text>
-<text x="4720" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
+<text x="78" y="551" fill="#cbd5e1" font-size="11">ビットコイン(仮想通貨, 年末USD) — データ12年（直近 42255.12）</text>
+<text x="5080" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
 </svg>
