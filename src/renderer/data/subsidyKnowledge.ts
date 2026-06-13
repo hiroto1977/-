@@ -1629,6 +1629,114 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://j-net21.smrj.go.jp/snavi/articles/152319', type: 'government', label: 'J-Net21 地域課題解決型創業支援補助金（栃木県）' },
     ],
   },
+  {
+    id: 'subsidy-mie',
+    level: 'prefecture',
+    domain: 'business',
+    name: '三重県経営向上計画・経営革新計画に基づく支援（三重県）',
+    authority: '三重県（雇用経済部 中小企業・サービス産業振興課）／支援窓口: 公益財団法人三重県産業支援センター',
+    statement:
+      '三重県は、中小企業者等が新商品開発・新サービス・新たな生産方式の導入等により経営の向上を図る取組を「経営向上計画」「経営革新計画」として承認し、低利融資・専門家派遣・販路開拓等の' +
+      '支援につなげている。各種補助金・融資の対象要件や上限額・募集期間は制度・年度ごとに変動するため、最新の募集要項及び県・産業支援センター公式で要確認。',
+    application:
+      '計画の承認申請は三重県の所管課または三重県産業支援センターを通じて行い、承認後に県制度融資・補助金・専門家派遣等の支援メニューを活用する。具体の補助金は公募回ごとに要項が示される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.mie.lg.jp/CHSANGYO/HP/m0151000041.htm', type: 'municipality', label: '三重県 経営革新計画の承認について' },
+      { url: 'https://www.pref.mie.lg.jp/CHSANGYO/HP/', type: 'municipality', label: '三重県 中小企業・サービス産業振興課' },
+      { url: 'https://www.miesc.or.jp/', type: 'operator', label: '三重県産業支援センター（中小企業支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-shiga',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業経営革新等応援事業補助金（滋賀県）',
+    authority: '滋賀県（商工観光労働部 中小企業支援課）／連携: 地域の商工会議所・商工会',
+    statement:
+      '滋賀県内の中小企業者等が経営革新計画等に基づき行う新商品開発・販路開拓・生産性向上等の取組を応援する滋賀県の代表的な補助制度の一例。補助率・上限額・対象経費・募集期間は' +
+      '年度・公募回ごとに変動するため、最新の募集要項及び県・商工団体の公式で要確認。',
+    application:
+      '県の募集要項に沿って事業計画を提出し、審査・採択を経て対象経費の一部が補助される。地域の商工会議所・商工会が申請の相談・伴走支援を行うことが多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shiga.lg.jp/ippan/shigotosangyou/chusyo/', type: 'municipality', label: '滋賀県 中小企業支援' },
+      { url: 'https://www.pref.shiga.lg.jp/ippan/shigotosangyou/chusyo/keieikakushin/', type: 'municipality', label: '滋賀県 経営革新計画' },
+      { url: 'https://www.moriyama-cci.or.jp/', type: 'operator', label: '守山商工会議所（中小企業向け補助金支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-okayama-pref',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）',
+    authority: '岡山県（産業労働部）／執行・申請窓口: 一般社団法人岡山県発明協会（OPTIC）',
+    statement:
+      '岡山県内の中小企業等が外国への事業展開・模倣品対策のために行う特許・実用新案・意匠・商標の外国出願に要する費用の一部を補助する制度（INPIT・特許庁の外国出願補助事業と連携）。' +
+      '補助率・上限額・対象国・募集期間は年度ごとに変動するため、最新の募集要項及び県・発明協会公式で要確認。',
+    application:
+      '岡山県発明協会（OPTIC）が公募・申請受付を行い、外国出願に要する費用（出願手数料・翻訳費・現地代理人費用等）の一部を交付。例年春〜初夏に公募期間が設けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.optic.or.jp/', type: 'operator', label: '岡山県発明協会（OPTIC）外国出願支援事業' },
+      { url: 'https://www.pref.okayama.jp/site/sangyoshinko/', type: 'municipality', label: '岡山県 産業振興（中小企業支援）' },
+      { url: 'https://www.pref.okayama.jp/', type: 'municipality', label: '岡山県 公式サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-yamaguchi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）',
+    authority: '山口県（産業労働部）／執行・申請窓口: 公益財団法人やまぐち産業振興財団',
+    statement:
+      '山口県内の中小企業者等が省エネルギー・創エネルギー（太陽光発電等）・蓄エネルギー（蓄電池等）設備を導入する際の費用の一部を補助し、エネルギーコスト削減と脱炭素を支援する制度。' +
+      '補助率・上限額・対象設備・募集期間・予算枠は年度ごとに変動するため、最新の募集要項及び県・産業振興財団公式で要確認。',
+    application:
+      'やまぐち産業振興財団が公募・申請受付を行い、設備導入計画を提出して審査・交付決定を受ける。予算枠に達し次第締切となる先着・審査方式が採られることが多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamaguchi.lg.jp/soshiki/74/', type: 'municipality', label: '山口県 産業政策課（中小企業支援）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（山口県 省・創・蓄エネ設備補助金）' },
+      { url: 'https://www.yipf.or.jp/', type: 'operator', label: 'やまぐち産業振興財団' },
+    ],
+  },
+  {
+    id: 'subsidy-fukushima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '福島県中小企業等生産性向上推進事業補助金（福島県）',
+    authority: '福島県（商工労働部）／執行・申請窓口: 公益財団法人福島県産業振興センター',
+    statement:
+      '福島県内の中小企業等が生産性向上・省力化・業務効率化のために行う設備導入やデジタル化等の取組に要する経費の一部を補助する制度。補助率・上限額・対象経費・募集期間は' +
+      '年度・公募回ごとに変動するため、最新の募集要項及び県・産業振興センター公式で要確認。',
+    application:
+      '福島県産業振興センターが公募する募集要項に沿って事業計画を提出し、審査・交付決定を経て対象経費の一部が補助される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukushima.lg.jp/sec/32011a/', type: 'municipality', label: '福島県 経営金融課（中小企業支援）' },
+      { url: 'https://www.pref.fukushima.lg.jp/', type: 'municipality', label: '福島県 公式サイト' },
+      { url: 'https://www.f-open.or.jp/', type: 'operator', label: '福島県産業振興センター' },
+    ],
+  },
+  {
+    id: 'subsidy-okinawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '沖縄県産業振興基金事業補助金（沖縄県）',
+    authority: '沖縄県（商工労働部）／執行・申請窓口: 公益財団法人沖縄県産業振興公社等',
+    statement:
+      '沖縄県が産業振興基金を活用し、県内中小企業等の新事業展開・販路開拓・人材育成・地域資源活用等の取組を支援する補助制度の一例。補助率・上限額・対象事業・募集期間は' +
+      '年度・事業区分ごとに変動するため、最新の募集要項及び県・産業振興公社公式で要確認。',
+    application:
+      '沖縄県または産業振興公社が公募する事業区分ごとの募集要項に沿って申請し、審査・採択を経て対象経費の一部が補助される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.okinawa.lg.jp/shigoto/', type: 'municipality', label: '沖縄県 仕事・産業（中小企業支援）' },
+      { url: 'https://www.pref.okinawa.jp/', type: 'municipality', label: '沖縄県 公式サイト' },
+      { url: 'https://hojyokin-portal.jp/', type: 'media', label: '補助金ポータル（沖縄県産業振興基金事業 案内）' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
