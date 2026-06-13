@@ -38,6 +38,7 @@
     "verify:all": "npm run verify:arch && npm run lint:forbidden && npm run lint:imports && npm run lint:docs && npm run lint:test-coverage && npm run lint:shell && npm run verify:orchestration",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "scaffold": "node scripts/scaffold-service.cjs",
+    "gen:econ-chart": "node scripts/gen-econ-history-chart.cjs",
     "exp:runtime": "xvfb-run -a electron --no-sandbox scripts/runtime-security-exp.cjs",
     "exp:soak": "xvfb-run -a electron --no-sandbox scripts/soak-test.cjs",
     "exp:overflow": "xvfb-run -a electron --no-sandbox scripts/overflow-check.cjs",

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1550" height="620" viewBox="0 0 1550 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="1550" height="620" fill="#0f172a"/>
+<text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
+<text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
+<line x1="60" y1="360" x2="1510" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="1510" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="1510" y2="386" stroke="#1e293b" stroke-width="1"/>
+<text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
+<text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
+<line x1="60" y1="308" x2="1510" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="1510" y2="412" stroke="#1e293b" stroke-width="1"/>
+<text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
+<text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
+<text x="54" y="298" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
+<text x="54" y="432" fill="#ef4444" font-size="11" text-anchor="end">縮小</text>
+<rect x="108" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="108" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="130" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1940</text>
+<text x="130" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和15年</text>
+<text x="130" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 130 500)">ドイツの西欧侵攻（ノルウェー・低地諸国・フランス陥落）とバトル・オブ・ブリテン</text>
+<rect x="228" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="228" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="250" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1941</text>
+<text x="250" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和16年</text>
+<text x="250" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 250 500)">米武器貸与法（Lend-Lease Act）成立（3/11）— 米経済の戦時動…</text>
+<rect x="348" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="348" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="370" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1942</text>
+<text x="370" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和17年</text>
+<text x="370" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 370 500)">ミッドウェー海戦（6/3–6）— 太平洋戦争の転換点</text>
+<rect x="468" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="468" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="490" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1943</text>
+<text x="490" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和18年</text>
+<text x="490" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 490 500)">スターリングラードの戦い終結（2/2、ドイツ第6軍降伏）— 独ソ戦の転換点</text>
+<rect x="588" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="588" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="610" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1944</text>
+<text x="610" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和19年</text>
+<text x="610" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 610 500)">ノルマンディー上陸作戦（6/6）</text>
+<rect x="708" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="708" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="730" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1945</text>
+<text x="730" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和20年</text>
+<text x="730" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 730 500)">第二次世界大戦の終結（対日戦は8/15玉音放送・9/2降伏文書調印）</text>
+<rect x="828" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="828" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="850" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1946</text>
+<text x="850" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和21年</text>
+<text x="850" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 850 500)">金融緊急措置令（2月）— 預金封鎖・新円切替で通貨膨張を抑制</text>
+<rect x="948" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="948" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="970" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1947</text>
+<text x="970" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和22年</text>
+<text x="970" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 970 500)">トルーマン・ドクトリン（3/12）／マーシャル・プラン提唱（6/5）</text>
+<rect x="1068" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="1068" y="360" width="44" height="52" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="1090" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1948</text>
+<text x="1090" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和23年</text>
+<text x="1090" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 1090 500)">マーシャル・プラン（経済協力法）成立（4/3）— 西欧復興本格化</text>
+<rect x="1188" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="1188" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="1210" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1949</text>
+<text x="1210" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和24年</text>
+<text x="1210" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 1210 500)">ドッジ・ライン発表（3/7）— 超均衡予算でインフレ強制収束</text>
+<rect x="1308" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="1308" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="1330" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1950</text>
+<text x="1330" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和25年</text>
+<text x="1330" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 1330 500)">朝鮮戦争勃発（6/25）— 冷戦初の本格的軍事衝突</text>
+<rect x="1428" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="1428" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="1450" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1951</text>
+<text x="1450" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和26年</text>
+<text x="1450" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 1450 500)">サンフランシスコ講和条約・日米安全保障条約に調印（9/8、翌1952年発効）</text>
+<rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
+<text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
+<rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
+<text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
+<text x="1510" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+</svg>
