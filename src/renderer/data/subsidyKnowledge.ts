@@ -2242,6 +2242,117 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.jti.co.jp/coexistence/bunen/subsidy/', type: 'media', label: 'JT 受動喫煙防止対策助成金の解説' },
     ],
   },
+  {
+    id: 'subsidy-small-business-mutual-aid',
+    level: 'national',
+    domain: 'welfare',
+    name: '小規模企業共済',
+    authority: '所管: 中小企業庁（経済産業省）／運営: 独立行政法人 中小企業基盤整備機構（中小機構）',
+    statement:
+      '小規模企業の個人事業主・共同経営者及び会社等の役員が、廃業・退職時の生活資金等を準備するための積立型の共済制度で、中小機構が運営する国の制度。掛金は税法上その全額が「小規模企業共済等掛金控除」として' +
+      '課税対象所得から控除でき、共済金受取時も一括受取は退職所得扱い、分割受取は公的年金等の雑所得扱いとなり税制優遇がある。掛金月額の範囲等の数値は中小機構公式で要確認。',
+    application:
+      '加入対象は常時使用する従業員が20人以下（商業・サービス業は5人以下）等の小規模事業の個人事業主・共同経営者・会社役員等。委託機関（商工会議所・商工会・金融機関等）の窓口を通じて申し込む。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq15_shokibokyosai.html', type: 'government', label: '中小企業庁 小規模企業共済制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1135.htm', type: 'government', label: '国税庁 No.1135 小規模企業共済等掛金控除' },
+      { url: 'https://www.smrj.go.jp/kyosai/skyosai/features/index.html', type: 'operator', label: '中小機構 小規模企業共済 制度の概要' },
+    ],
+  },
+  {
+    id: 'subsidy-bankruptcy-prevention-mutual-aid',
+    level: 'national',
+    domain: 'business',
+    name: '経営セーフティ共済（中小企業倒産防止共済制度）',
+    authority: '所管: 中小企業庁（経済産業省）／運営: 独立行政法人 中小企業基盤整備機構（中小機構）。根拠: 中小企業倒産防止共済法',
+    statement:
+      '取引先事業者の倒産による中小企業の連鎖倒産・経営難を防ぐため、中小機構が運営する共済制度。掛金を積み立てておくと、取引先が倒産した際に無担保・無保証人で借入れができる。掛金は法人では損金、個人事業主では' +
+      '必要経費に算入できる税制メリットがある。令和6年度税制改正により、令和6年（2024年）10月1日以後に共済契約を解除した後に再加入した場合、解除日から2年を経過する日までに支出する掛金は損金（必要経費）算入できない制限が新設された。掛金上限・貸付条件等の数値は要確認。',
+    application:
+      '加入対象は引き続き1年以上事業を行っている中小企業者等。中小機構の委託団体（金融機関・商工会議所・商工会・税理士会等）の窓口を通じて加入手続きを行い、借入は取引先倒産という共済事由の発生時に申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.smrj.go.jp/kyosai/tkyosai/features/', type: 'operator', label: '中小機構 経営セーフティ共済 制度の概要' },
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq16_tosankyosai.html', type: 'government', label: '中小企業庁 中小企業倒産防止共済制度について' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/O.pdf', type: 'government', label: '国税庁 令和6年度税制改正の概要（再加入時の掛金損金算入制限）' },
+    ],
+  },
+  {
+    id: 'subsidy-sbir',
+    level: 'national',
+    domain: 'business',
+    name: 'SBIR制度（中小企業技術革新制度）',
+    authority: '所管: 内閣府（科学技術・イノベーション推進事務局）／各省庁が連携して交付',
+    statement:
+      'スタートアップ・中小企業等による研究開発とその成果の社会実装・事業化を促進するための制度。各省庁の研究開発型補助金・委託費のうち研究開発型スタートアップ等を交付対象に含むもの（特定新技術補助金等・指定補助金等）について、' +
+      'これらへの支出目標額を定めその増大を図る。2021年（令和3年）4月施行の改正法により根拠規定が中小企業等経営強化法から科学技術・イノベーション創出の活性化に関する法律へ移管され、所管が中小企業庁から内閣府に移り省庁横断で拡充された。' +
+      '年度ごとの支出目標額・対象補助金リスト等の細目は内閣府の最新公表資料で要確認。',
+    application:
+      '各省庁が公募する特定新技術補助金等・指定補助金等（研究開発型補助金・委託費）に、スタートアップ・中小企業等が個別に応募する枠組み。統一ルールと内閣府の支出目標の下で各省が交付する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www8.cao.go.jp/cstp/openinnovation/sbirseido/sbirseido.html', type: 'government', label: '内閣府 科学技術・イノベーション SBIR制度' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/gijut/2021/210817sbr.html', type: 'government', label: '中小企業庁 SBIR制度が新しくなりました' },
+      { url: 'https://journal.startup-db.com/articles/words-sbir', type: 'media', label: 'STARTUP DB SBIR（中小企業技術革新制度）の解説' },
+    ],
+  },
+  {
+    id: 'subsidy-jstartup',
+    level: 'national',
+    domain: 'business',
+    name: 'J-Startup',
+    authority: '所管: 経済産業省／事務局: 経済産業省・JETRO・NEDO。地域版は各経済産業局が共催',
+    statement:
+      'J-Startupは、経済産業省が2018年に開始した、グローバルに活躍し得る有望なスタートアップを「J-Startup企業」として選定し、官民で集中的に支援するプログラム。選定はトップVC・アクセラレーター・大企業のイノベーション担当等の' +
+      '推薦を外部審査委員が確認したうえで行う方式をとる。選定企業には、関係省庁・JETRO・NEDO・中小機構等の公的機関と、民間の「J-Startup Supporters（サポーター企業）」による事業化・海外展開・規制対応・PR等の支援が提供される。' +
+      '各経済産業局を中心とする「J-Startup地域版」も展開されている。選定社数・地域版の対象・支援メニュー等の細目は要確認。',
+    application:
+      '公募・自薦ではなく、推薦委員（VC・アクセラレーター・大企業等の有識者）による推薦を起点に、外部審査委員会の審査を経て選定される推薦・審査型の枠組み。地域版も同様の体制で選定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.j-startup.go.jp/en/about/', type: 'government', label: 'J-Startup 公式サイト About（経産省・JETRO・NEDO）' },
+      { url: 'https://www.meti.go.jp/press/2023/04/20230406003/20230406003.html', type: 'government', label: '経済産業省 J-Startup 選定企業の発表' },
+      { url: 'https://prtimes.jp/main/html/rd/p/000000009.000052863.html', type: 'media', label: 'J-Startup 地域版 サポーター企業認定（地域版・サポーター制度の確認）' },
+    ],
+  },
+  {
+    id: 'subsidy-zeb',
+    level: 'national',
+    domain: 'business',
+    name: 'ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業',
+    authority: '所管: 環境省・経済産業省・国土交通省／執行: 一般社団法人環境共創イニシアチブ（SII）等',
+    statement:
+      '業務用建築物の省エネ・脱炭素化を進めるため、ZEB（年間の一次エネルギー消費量の収支ゼロを目指した建築物）の新築・改修やそれに資する高効率設備・システムの導入を支援する国の補助事業。環境省・経済産業省・国土交通省が' +
+      '連携し、執行は一般社団法人環境共創イニシアチブ（SII）等が担う。補助率・上限額・公募期間は年度（及び一次・二次公募）により変動するため、各年度の公募要領で要確認。',
+    application:
+      'SIIが各年度に公募要領・交付申請の手引きを公表し、補助事業者（建物所有者等）が公募期間内に交付申請を行う公募・交付申請型。ZEB基準の達成やZEBプランナーの関与等が補助要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.env.go.jp/earth/zeb/hojo/', type: 'government', label: '環境省 ZEB PORTAL 支援制度' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/index02.html', type: 'government', label: '資源エネルギー庁 ZEB 各種支援制度' },
+      { url: 'https://sii.or.jp/zeb07/public.html', type: 'operator', label: '環境共創イニシアチブ（SII）ZEB実証事業 補助事業' },
+    ],
+  },
+  {
+    id: 'subsidy-bcp-disaster-tax',
+    level: 'national',
+    domain: 'tax-incentive',
+    name: '事業継続力強化計画（認定制度）・中小企業防災・減災投資促進税制',
+    authority: '所管: 中小企業庁／経済産業省・各経済産業局。普及支援: 中小企業基盤整備機構（中小機構）',
+    statement:
+      '中小企業が自然災害・感染症・サイバー攻撃等のリスクに備えて行う防災・減災の事前対策（取組）を「事業継続力強化計画」（単独又は連携）としてまとめ、中小企業等経営強化法に基づき経済産業大臣（各経済産業局）の認定を受けられる制度' +
+      '（取り組みやすいBCPと位置づけられる）。認定事業者は、①税制措置（中小企業防災・減災投資促進税制：認定計画に記載した一定の防災・減災設備の取得等について特別償却）、②金融支援（日本政策金融公庫の低利融資・信用保証の別枠等）、' +
+      '③補助金の加点等の支援を受けられる。特別償却率・対象設備・適用期限は税制改正で変動するため要確認。',
+    application:
+      '事業者が「事業継続力強化計画」を策定し、本社所在地等を管轄する経済産業局を通じて経済産業大臣に認定申請する。税制措置を受ける場合は認定後の所定期間内に計画記載の対象設備を取得・事業供用する必要がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/antei/bousai/keizokuryoku.html', type: 'government', label: '中小企業庁 事業継続力強化計画' },
+      { url: 'https://kyoujinnka.smrj.go.jp/outline/certification-system.html', type: 'government', label: '中小機構 事業継続力強化計画の認定制度とは' },
+      { url: 'https://www.meti.go.jp/main/yosan/yosan_fy2025/pdf/03.pdf', type: 'government', label: '経済産業省 令和7年度 経済産業関係税制改正（防災・減災投資促進税制）' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
