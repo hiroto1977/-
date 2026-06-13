@@ -154,6 +154,117 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://it-shien.smrj.go.jp/pdf/it2026_koubo_tsujyo.pdf', type: 'government', label: 'デジタル化・AI導入補助金2026 公募要領（通常枠）' },
     ],
   },
+  {
+    id: 'subsidy-monodukuri',
+    level: 'national',
+    domain: 'business',
+    name: 'ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）',
+    authority: '中小企業庁・経済産業省（実施: 全国中小企業団体中央会 ものづくり補助金事務局）',
+    statement:
+      '中小企業・小規模事業者等が、生産性向上に資する革新的な新製品・新サービスの開発や、生産プロセス・サービス提供方法の改善等のために' +
+      '行う設備投資等を支援する国の補助金。製造業に限らず商業・サービス業も対象で、付加価値額の向上等を含む事業計画の策定が求められる。' +
+      '補助上限額・補助率・申請枠・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      'gBizIDプライムを用いた電子申請。公募回ごとに公募期間・締切が設定される締切制で、事前のgBizID取得と事業計画の作成が必要。最新の公募回・締切は公式ホームページ／公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260206001.html', type: 'government', label: '中小企業庁 ものづくり補助金 公募要領公開' },
+      { url: 'https://portal.monodukuri-hojo.jp/about.html', type: 'operator', label: 'ものづくり補助金 公式事務局（全国中小企業団体中央会）' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/manufacturing/', type: 'government', label: 'ミラサポplus ものづくり補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-business-restructuring',
+    level: 'national',
+    domain: 'business',
+    name: '事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）',
+    authority: '中小企業庁・経済産業省（実施: 事業再構築補助金事務局／後継は中小企業基盤整備機構）',
+    statement:
+      '事業再構築補助金は、ポストコロナ・経済社会の変化に対応するための中小企業等の事業再構築（新市場進出・事業転換・業種転換・事業再編等）を' +
+      '支援する制度。新規公募は第13回（2025年3月締切）で終了し、後継として「中小企業新事業進出補助金」が実施されている。補助上限・補助率・締切は' +
+      '公募回ごとに変動するため、最新の公募状況・要件は必ず公式サイトで要確認。',
+    application:
+      'gBizIDプライムを用いた電子申請（jGrants等）が基本。認定経営革新等支援機関と連携して事業計画を策定し、公募回ごとに設定された締切までに申請する締切制。後継の新事業進出補助金も同様の枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jigyou-saikouchiku.go.jp/news.html', type: 'government', label: '事業再構築補助金 公式事務局' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/shinjigyou/', type: 'government', label: 'ミラサポplus 中小企業新事業進出補助金（後継）' },
+      { url: 'https://shinjigyou-shinshutsu.smrj.go.jp/', type: 'government', label: '中小機構 中小企業新事業進出補助金 公式' },
+    ],
+  },
+  {
+    id: 'subsidy-specific-jobseeker',
+    level: 'national',
+    domain: 'employment',
+    name: '特定求職者雇用開発助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '高年齢者・障害者・母子家庭の母など、就職が特に困難な者をハローワーク等の紹介により継続して雇用する労働者として雇い入れる事業主に対し、' +
+      '賃金相当額の一部を一定期間助成する制度。特定就職困難者コースをはじめ複数のコースに分かれ、対象者・支給額・助成期間はコース及び年度の支給要領により変動するため要確認。',
+    application:
+      '対象労働者の雇入れ後、原則6か月単位の各支給対象期ごとに、管轄の都道府県労働局・ハローワークへ支給申請（各支給対象期末日の翌日から2か月以内）。対象者はハローワーク等の紹介による雇入れが前提。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/tokutei_konnan.html', type: 'government', label: '厚生労働省 特定就職困難者コース' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index_00058.html', type: 'government', label: '厚生労働省 特定求職者雇用開発助成金' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/67167/', type: 'media', label: '特定求職者雇用開発助成金 各コース・申請 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-trial-employment',
+    level: 'national',
+    domain: 'employment',
+    name: 'トライアル雇用助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '職業経験の不足等により安定的な就職が困難な求職者を、ハローワーク等の紹介により原則3か月間試行雇用（トライアル雇用）する事業主に対して' +
+      '助成し、常用（無期）雇用への移行を促進する制度。一般トライアルコースのほか障害者トライアルコース等がある。支給額・対象期間・要件は年度ごとに変動するため要確認。',
+    application:
+      'ハローワークの紹介でトライアル雇用を開始後、原則として開始日から2週間以内に「トライアル雇用実施計画書」を管轄のハローワーク／労働局へ提出。' +
+      'トライアル雇用期間終了後、終了日の翌日から2か月以内に結果報告書兼支給申請書を提出。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/newpage_16286.html', type: 'government', label: '厚生労働省 トライアル雇用助成金（一般トライアルコース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/trial_koyou_dl.html', type: 'government', label: '厚生労働省 トライアル雇用助成金 申請様式' },
+      { url: 'https://hojyokin-portal.jp/columns/trial', type: 'media', label: 'トライアル雇用助成金 各コース 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-elderly-employment-promotion',
+    level: 'national',
+    domain: 'employment',
+    name: '65歳超雇用推進助成金',
+    authority: '厚生労働省（実施: 高齢・障害・求職者雇用支援機構＝JEED）',
+    statement:
+      '高年齢者が年齢に関わりなく働ける生涯現役社会の実現に向け、65歳以上への定年引上げ・定年の定めの廃止・継続雇用制度の導入や、高年齢者の' +
+      '雇用管理制度の整備等を行う事業主を支援する助成金。「65歳超継続雇用促進コース」等の複数コースで構成され、支給額・要件・対象コースは年度ごとに変動するため要確認。',
+    application:
+      '申請窓口は主たる雇用保険適用事業所の所在地を管轄するJEED都道府県支部。原則として措置の実施日が属する月の翌月から起算して所定期間内に支給申請。様式・手引きはJEED公式サイトから取得（e-Gov電子申請にも対応）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/elderly/subsidy/index.html', type: 'operator', label: 'JEED 65歳超雇用推進助成金' },
+      { url: 'https://www.jeed.go.jp/elderly/subsidy/subsidy_keizoku.html', type: 'operator', label: 'JEED 65歳超継続雇用促進コース' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_54824.html', type: 'government', label: '厚生労働省 65歳超雇用推進助成金' },
+    ],
+  },
+  {
+    id: 'subsidy-tokyo-startup',
+    level: 'prefecture',
+    domain: 'business',
+    name: '創業助成事業（創業助成金）（東京都）',
+    authority: '東京都・公益財団法人東京都中小企業振興公社（TOKYO創業ステーション）',
+    statement:
+      '都内で創業を予定する個人又は創業して一定期間内（おおむね5年未満）の中小企業者等に対し、賃借料・従業員人件費・専門家指導費・広告費・' +
+      '市場調査費など創業初期に必要な経費の一部を助成する制度（都道府県レベルの補助金の代表例）。助成上限・助成率・対象経費の細目・申請受付期間は年度ごとに変動するため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに申請受付期間を設定する公募制（通常は年複数回募集）。TOKYO創業ステーションでの事業計画策定支援の利用など所定の申請要件を満たす者が対象で、申請は電子申請（jGrants、GビズID必要）で行う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tokyo-sogyo-net.metro.tokyo.lg.jp/finance/sogyo_josei.html', type: 'municipality', label: '東京都創業NET 創業助成金' },
+      { url: 'https://www.metro.tokyo.lg.jp/information/press/2026/02/2026021609', type: 'municipality', label: '東京都 令和8年度 創業助成事業 募集（報道発表）' },
+      { url: 'https://startup-station.jp/m2/services/sogyokassei/', type: 'operator', label: 'TOKYO創業ステーション 創業助成事業' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
