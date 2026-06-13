@@ -927,6 +927,74 @@ export const SNAPSHOT = {
     note: 'verified-compliance',
   },
 
+  obsidian: {
+    vault: {
+      name: 'BusinessVault',
+      path: '~/vaults/BusinessVault',
+      noteCount: 248,
+      totalWords: 312_540,
+      gitRemote: 'github.com/hiroto1977/business-vault',
+      lastSyncIso: '2026-06-13T08:30:00+09:00',
+      encrypted: true,
+    },
+    notes: [
+      { id: 'n1', title: '週次経営レビュー 2026-W24', folder: 'reviews', tags: ['経営', 'KPI'], updatedIso: '2026-06-13T08:10:00+09:00', words: 1240 },
+      { id: 'n2', title: 'セキュリティ運用ランブック', folder: 'security', tags: ['security', 'runbook'], updatedIso: '2026-06-12T19:05:00+09:00', words: 2180 },
+      { id: 'n3', title: 'Docker 開発環境メモ', folder: 'engineering', tags: ['docker', 'devops'], updatedIso: '2026-06-12T14:22:00+09:00', words: 860 },
+      { id: 'n4', title: '顧客ミーティング議事録テンプレート', folder: 'templates', tags: ['template', '営業'], updatedIso: '2026-06-10T11:00:00+09:00', words: 320 },
+      { id: 'n5', title: 'デイリーノート 2026-06-13', folder: 'daily', tags: ['daily'], updatedIso: '2026-06-13T09:00:00+09:00', words: 410 },
+    ] as { id: string; title: string; folder: string; tags: string[]; updatedIso: string; words: number }[],
+    security: [
+      { id: 's1', item: 'Vault を Git でバージョン管理', status: 'ok', detail: 'GitHub プライベートリポジトリへ毎時 push（履歴・復元可）' },
+      { id: 's2', item: 'コミット署名 (GPG/SSH)', status: 'ok', detail: '全コミットを署名し GitHub 上で Verified 表示' },
+      { id: 's3', item: '保存時の暗号化', status: 'ok', detail: 'Vault ディレクトリを LUKS/FileVault 配下に配置' },
+      { id: 's4', item: '機密情報の混入防止', status: 'warn', detail: 'gitleaks pre-commit hook 導入済みだが手動実行頻度に改善余地' },
+    ] as { id: string; item: string; status: 'ok' | 'warn' | 'action'; detail: string }[],
+    workflows: [
+      { id: 'w1', name: 'デイリーノート自動生成', description: 'Templater で毎朝のノートを定型生成し当日のタスクを集約', automated: true },
+      { id: 'w2', name: '会議議事録テンプレート', description: '議題・決定事項・ToDo を定型化し転記コストを削減', automated: true },
+      { id: 'w3', name: 'Git 自動同期', description: 'Obsidian Git プラグインで一定間隔で commit & push', automated: true },
+      { id: 'w4', name: 'ナレッジのバックリンク整理', description: 'タグ・MOC で社内ナレッジを横断検索可能化', automated: false },
+    ] as { id: string; name: string; description: string; automated: boolean }[],
+  },
+
+  docker: {
+    engine: {
+      version: '27.1.1',
+      containersRunning: 4,
+      containersTotal: 6,
+      images: 12,
+      rootless: true,
+      ghcrLinked: true,
+    },
+    containers: [
+      { id: 'c1', name: 'service-hub-web', image: 'ghcr.io/hiroto1977/service-hub:latest', status: 'running', cpuPct: 3.2, memMb: 180, ports: '8080:80' },
+      { id: 'c2', name: 'postgres', image: 'postgres:16-alpine', status: 'running', cpuPct: 1.1, memMb: 240, ports: '5432:5432' },
+      { id: 'c3', name: 'redis', image: 'redis:7-alpine', status: 'running', cpuPct: 0.4, memMb: 32, ports: '6379:6379' },
+      { id: 'c4', name: 'gitleaks-ci', image: 'zricethezav/gitleaks:latest', status: 'running', cpuPct: 0.0, memMb: 18, ports: '-' },
+      { id: 'c5', name: 'trivy-cache', image: 'aquasec/trivy:latest', status: 'exited', cpuPct: 0.0, memMb: 0, ports: '-' },
+      { id: 'c6', name: 'backup-runner', image: 'offen/docker-volume-backup:v2', status: 'exited', cpuPct: 0.0, memMb: 0, ports: '-' },
+    ] as { id: string; name: string; image: string; status: 'running' | 'exited' | 'paused'; cpuPct: number; memMb: number; ports: string }[],
+    images: [
+      { id: 'i1', repo: 'ghcr.io/hiroto1977/service-hub', tag: 'latest', sizeMb: 142, critical: 0, high: 0, medium: 2, low: 7, source: 'GHCR (GitHub Actions build)' },
+      { id: 'i2', repo: 'postgres', tag: '16-alpine', sizeMb: 238, critical: 0, high: 1, medium: 3, low: 11, source: 'Docker Hub' },
+      { id: 'i3', repo: 'redis', tag: '7-alpine', sizeMb: 41, critical: 0, high: 0, medium: 1, low: 4, source: 'Docker Hub' },
+      { id: 'i4', repo: 'node', tag: '22-bookworm-slim', sizeMb: 196, critical: 0, high: 0, medium: 4, low: 18, source: 'Docker Hub' },
+    ] as { id: string; repo: string; tag: string; sizeMb: number; critical: number; high: number; medium: number; low: number; source: string }[],
+    security: [
+      { id: 's1', item: 'rootless モードで実行', status: 'ok', detail: 'デーモンを非 root で稼働させ権限昇格リスクを低減' },
+      { id: 's2', item: 'イメージ脆弱性スキャン (Trivy)', status: 'ok', detail: 'GitHub Actions で push 毎に Trivy スキャン、CRITICAL/HIGH をゲート' },
+      { id: 's3', item: 'GHCR への署名付き push (cosign)', status: 'warn', detail: '本番イメージは署名済み、開発イメージの署名は導入途中' },
+      { id: 's4', item: 'ベースイメージの定期更新', status: 'action', detail: 'postgres:16-alpine に HIGH が1件、Dependabot で更新 PR を作成予定' },
+    ] as { id: string; item: string; status: 'ok' | 'warn' | 'action'; detail: string }[],
+    workflows: [
+      { id: 'w1', name: 'compose で開発環境を一括起動', description: 'docker compose up でアプリ・DB・キャッシュを再現性高く起動', automated: true },
+      { id: 'w2', name: 'GitHub Actions でイメージ自動ビルド', description: 'main への push で GHCR にイメージを build & push', automated: true },
+      { id: 'w3', name: 'ボリューム自動バックアップ', description: 'cron コンテナで永続ボリュームを暗号化バックアップ', automated: true },
+      { id: 'w4', name: '本番デプロイの手動承認', description: 'タグ付けリリースは人手レビューを挟む（誤デプロイ防止）', automated: false },
+    ] as { id: string; name: string; description: string; automated: boolean }[],
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   funding: {
