@@ -1564,5 +1564,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.j-credit.or.jp/security/understanding/member-store.html', type: 'operator', label: '日本クレジット協会 加盟店の義務' },
     ],
   },
+  {
+    value: {
+      id: 'tax-inheritance-basic-deduction',
+      domain: 'tax',
+      title: '相続税の基礎控除額',
+      statement:
+        '相続税の遺産に係る基礎控除額は「3,000万円＋600万円×法定相続人の数」で計算する。課税価格の合計額がこの基礎控除額の' +
+        '範囲内であれば相続税は課されず、原則として申告も不要である（配偶者の税額軽減や小規模宅地等の特例の適用で税額が0円になる場合は申告が必要）。',
+      authority: '所管: 国税庁（相続税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4152.htm', type: 'government', label: '国税庁 No.4152 相続税の計算' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4102.htm', type: 'government', label: '国税庁 No.4102 相続税がかかる場合' },
+      { url: 'https://www.smtb.jp/personal/entrustment/entrustment-column/column-08', type: 'media', label: '相続税の基礎控除 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-export-exemption',
+      domain: 'tax',
+      title: '消費税の輸出免税',
+      statement:
+        '事業者が国内から国外への資産の譲渡・貸付け等の輸出取引等を行った場合、その取引は消費税が免除される（免税取引）。' +
+        '免税の適用を受けるには、輸出許可書・税関長の証明書等の証明書類を整理し原則7年間保存することが要件とされる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6551.htm', type: 'government', label: '国税庁 No.6551 輸出取引の免税' },
+      { url: 'https://www.jetro.go.jp/world/qa/04J-120102.html', type: 'government', label: 'ジェトロ 輸出時の消費税 Q&A' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shohi/11/01.htm', type: 'government', label: '国税庁 質疑応答事例 輸出免税の適用者' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-sexual-harassment',
+      domain: 'labor',
+      title: '職場のセクシュアルハラスメント防止措置義務',
+      statement:
+        '事業主は、職場におけるセクシュアルハラスメント（性的な言動に起因する問題）を防止するため、相談に応じ適切に対応する' +
+        'ための体制の整備、事後の迅速・適切な対応、再発防止等、雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条）。',
+      authority: '所管: 厚生労働省（男女雇用機会均等法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/seisaku06/index.html', type: 'government', label: '厚生労働省 職場におけるハラスメントの防止のために' },
+      { url: 'https://www.mhlw.go.jp/general/seido/koyou/danjokintou/dl/kigyou01b_0002.pdf', type: 'government', label: '厚生労働省 セクハラ対策パンフレット（均等法11条）' },
+      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_41.html', type: 'media', label: '連合 セクシュアルハラスメント Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-resignation-notice',
+      domain: 'labor',
+      title: '期間の定めのない労働契約の退職申入れ（民法627条）',
+      statement:
+        '期間の定めのない雇用契約では、労働者はいつでも解約（退職）の申入れができ、使用者の承諾がなくても、' +
+        '申入れの日から2週間を経過することによって雇用は終了する（民法627条1項）。',
+      authority: '所管: 法務省（民法）・厚生労働省（労働行政）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/kaiko/q7.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 Q&A（民法627条）' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（第627条）' },
+      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_22.html', type: 'media', label: '連合 退職の自由 Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-antimonopoly',
+      domain: 'legal',
+      title: '独占禁止法',
+      statement:
+        '独占禁止法は、私的独占・不当な取引制限（カルテル・入札談合等）・不公正な取引方法を禁止し、公正かつ自由な競争を促進する' +
+        '法律で、公正取引委員会が運用する。違反に対しては排除措置命令や課徴金納付命令等が行われる。',
+      authority: '所管: 公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/gaiyo.html', type: 'government', label: '公正取引委員会 独占禁止法の概要' },
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会 独占禁止法の規制内容' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/lawdk.html', type: 'government', label: '公正取引委員会 独占禁止法 法令' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-digital-platform-transparency',
+      domain: 'legal',
+      title: '取引透明化法（特定デジタルプラットフォーム透明化法）',
+      statement:
+        '規模等により経済産業大臣に指定された特定デジタルプラットフォーム提供者は、取引条件等の情報開示および運営の公正性確保の' +
+        'ための体制整備を行うとともに、毎年度、自己評価を付した運営状況に関する報告書を経済産業大臣へ提出する義務を負う。',
+      authority: '所管: 経済産業省（取引透明化法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/transparency.html', type: 'government', label: '経済産業省 取引透明化法 法律のポイント' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=502AC0000000038_20220525_504AC0000000048', type: 'government', label: 'e-Gov法令検索 取引透明化法（令和2年法律第38号）' },
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'media', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
+    ],
+  },
 ];
 // Stryker restore all
