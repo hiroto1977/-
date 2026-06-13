@@ -14,6 +14,20 @@ import {
   DEFAULT_RANGE_CORPUS,
   DEFAULT_EVASIONS,
 } from '../../shared/securityRange';
+import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
+import { isEncryptionEnabled } from '../data/recordEncryption';
+
+const GRADE_COLOR: Record<string, string> = {
+  A: '#22c55e',
+  B: '#3ec98a',
+  C: '#f59e0b',
+  D: '#ef4444',
+};
+const SEVERITY_COLOR: Record<string, string> = {
+  critical: '#ef4444',
+  high: '#f59e0b',
+  medium: '#94a3b8',
+};
 
 const VERDICT_COLOR: Record<string, string> = {
   weak: '#ef4444',
@@ -59,6 +73,19 @@ export function SecurityPage() {
 
   // レッド×ブルー演習場 (純ロジック・決定論的・実行を伴わない) を毎回算出。
   const range = useMemo(() => runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS), []);
+
+  // ローカルDB (IndexedDB レコードストア) のセキュリティ姿勢診断。
+  // 検出可能な設定 (レコード暗号化) で評価し、確認できない保護は保守的に改善候補とする。
+  const dbReport = useMemo(() => {
+    const encrypted = isEncryptionEnabled();
+    return buildDbSecurityReport({
+      encryptionEnabled: encrypted,
+      masterPasswordSet: encrypted, // 暗号化有効化にはマスターパスワードが必要
+      integrityVerified: false, // 整合性チェックの常時検証は未配線 (改善候補)
+      autoLockEnabled: false, // 自動ロック状態は未検出 (要確認)
+      cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },
+    });
+  }, []);
 
   // --- breach check form
   const [showBreach, setShowBreach] = useState(false);
@@ -312,6 +339,68 @@ export function SecurityPage() {
             </div>
           </div>
         )}
+      </Section>
+
+      <Section title="データベース・セキュリティ診断 (ローカル IndexedDB レコードストア)">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 10 }}>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>セキュリティ・グレード</div>
+            <div style={{ ...statValueStyle, color: GRADE_COLOR[dbReport.grade] }}>{dbReport.grade}</div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>スコア</div>
+            <div style={statValueStyle}>{dbReport.score} / 100</div>
+          </div>
+          <div style={statCardStyle}>
+            <div style={statLabelStyle}>達成 / 全項目</div>
+            <div style={statValueStyle}>{dbReport.checks.filter((c) => c.ok).length} / {dbReport.checks.length}</div>
+          </div>
+        </div>
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr>
+              <th style={thLeft}>項目</th>
+              <th style={{ ...thLeft, textAlign: 'center' }}>重要度</th>
+              <th style={{ ...thLeft, textAlign: 'right' }}>重み</th>
+              <th style={{ ...thLeft, textAlign: 'center' }}>状態</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dbReport.checks.map((c) => (
+              <tr key={c.id}>
+                <td style={tdLeft}>{c.label}</td>
+                <td style={{ ...tdLeft, textAlign: 'center', color: SEVERITY_COLOR[c.severity] }}>{c.severity}</td>
+                <td style={{ ...tdLeft, textAlign: 'right' }}>{c.weight}</td>
+                <td style={{ ...tdLeft, textAlign: 'center', color: c.ok ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                  {c.ok ? '✅' : '⚠'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {dbReport.findings.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+              改善候補 (重み降順) — {dbReport.findings.length} 件
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
+              {dbReport.findings.map((f) => (
+                <li key={f.id} style={{ color: SEVERITY_COLOR[f.severity] }}>
+                  <strong>{f.label}</strong>: {f.recommendation}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div style={{ marginTop: 12, padding: 10, background: 'rgba(91, 141, 239, 0.08)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+          🗄 検出可能な設定 (レコード暗号化) に基づく評価です。自動ロック・整合性・クラウドバックアップは
+          現状サブシステムの状態を未配線のため保守的に改善候補として表示します (今後の連携で精緻化)。
+          本診断はアプリ層の姿勢評価で、OS/物理層を含む完全な安全を保証するものではありません
+          (docs/DATA_PROTECTION.md)。
+        </div>
       </Section>
 
       <Section title="レッドチーム×ブルーチーム演習場 (実行を伴わない検知精度ハーネス)">

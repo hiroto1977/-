@@ -113,6 +113,7 @@
     "src/renderer/data/saasWriteWeb.ts",
     "src/renderer/data/store.ts",
     "src/shared/passwordStrength.ts",
+    "src/shared/dbSecurityPosture.ts",
     "src/shared/securityRange.ts",
     "src/shared/redact.ts",
     "src/shared/team.ts",
