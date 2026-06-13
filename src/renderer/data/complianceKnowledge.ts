@@ -7086,5 +7086,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://houmukyoku.moj.go.jp/kumamoto/page000001_00331.html', type: 'government', label: '熊本地方法務局 自筆証書遺言書保管制度（令和2年7月10日開始）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-platform-taxation-digital',
+      domain: 'tax',
+      title: '国外事業者デジタル役務の消費税（プラットフォーム課税・リバースチャージ）',
+      statement:
+        '2025年（令和7年）4月1日以後、国外事業者がデジタルプラットフォームを介して行う消費者向け電気通信利用役務の提供のうち、国税庁長官が指定した「特定プラットフォーム事業者」を介して対価を収受するものについては、当該特定プラットフォーム事業者が' +
+        '役務提供を行ったものとみなして消費税の申告・納税義務を負う（プラットフォーム課税）。指定基準は、その課税期間にプラットフォーム経由で収受する対象取引の対価の合計額が50億円超であること。一方、国外事業者から受ける「事業者向け電気通信利用役務の提供」' +
+        '（広告配信等）は、従来どおりリバースチャージ方式により、役務の提供を受けた国内事業者が申告・納税する。基準額・対象は税制改正で変動しうるため要確認。',
+      authority: '所管: 国税庁（消費税）／制度設計は財務省',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6568.htm', type: 'government', label: '国税庁 No.6568 プラットフォーム課税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6118.htm', type: 'government', label: '国税庁 No.6118 国境を越えた役務の提供に係る消費税（リバースチャージ）' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/PF_honnbunn.pdf', type: 'government', label: '財務省 国境を越えたデジタルサービスに対する消費税の課税のあり方' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dispatch-deemed-offer',
+      domain: 'labor',
+      title: '労働契約申込みみなし制度（労働者派遣法40条の6）',
+      statement:
+        '派遣先等が一定の違法派遣（①派遣禁止業務への受入れ、②無許可事業主からの受入れ、③派遣可能期間の制限違反、④いわゆる偽装請負等）を受け入れた場合、その時点で派遣先等が当該派遣労働者に対し、派遣元における労働条件と同一の内容の労働契約の' +
+        '申込みをしたものとみなされる（労働者派遣法第40条の6）。ただし派遣先等が違法派遣に該当することを知らず、かつ知らなかったことに過失がなかった場合は除かれる。この制度は平成24年改正で創設され、施行は猶予されて2015年（平成27年）10月1日から適用されている。' +
+        'みなし申込みに対し派遣労働者がみなされた日から1年以内に承諾の意思表示をすれば、派遣先との間で労働契約が成立する。',
+      authority: '所管: 厚生労働省（職業安定局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000904257.pdf', type: 'government', label: '厚生労働省 労働契約申込みみなし制度とは' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11600000-Shokugyouanteikyoku/0000092369.pdf', type: 'government', label: '厚生労働省 労働契約申込みみなし制度について（通達）' },
+      { url: 'https://jinjibu.jp/keyword/detl/765/', type: 'media', label: '日本の人事部 労働契約申込みみなし制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-disability-comprehensive-support',
+      domain: 'legal',
+      title: '障害者総合支援法（2013年4月1日施行）',
+      statement:
+        '障害者総合支援法（正式名称「障害者の日常生活及び社会生活を総合的に支援するための法律」）は、障害者自立支援法を改正・改称し2013年（平成25年）4月1日に施行された。障害者・障害児が基本的人権を享有する個人としての尊厳にふさわしい' +
+        '日常生活・社会生活を営めるよう、自立支援給付（介護給付・訓練等給付・自立支援医療・補装具等）と地域生活支援事業を総合的に提供することを目的とし、新たに難病等も対象に加えた。障害福祉サービスの利用は市町村が支給決定を行い、利用者負担は' +
+        '最大でも費用の1割で、所得に応じた負担上限額が設定されている（応能負担を原則）。',
+      authority: '所管: 厚生労働省（社会・援護局 障害保健福祉部）／実施: 市町村',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/sougoushien/index.html', type: 'government', label: '厚生労働省 障害者総合支援法が施行されました' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/service/hutan1.html', type: 'government', label: '厚生労働省 障害者の利用者負担' },
+      { url: 'https://www.rehab.go.jp/ddis/system/supportact/comprehensive/', type: 'government', label: '国立障害者リハビリテーションセンター 障害者総合支援法' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-personal-guarantee-reform',
+      domain: 'legal',
+      title: '改正民法による個人保証の保護強化（根保証の極度額・保証意思宣明公正証書／2020年4月施行）',
+      statement:
+        '2020年（令和2年）4月1日施行の改正民法（債権法改正）により、個人が保証人となる根保証契約は、保証の上限である極度額を定めなければ効力を生じない（無効となる）こととされた（民法465条の2）。また、事業のために負担した貸金等債務を' +
+        '主たる債務とする個人保証（事業用融資の個人保証等）については、契約締結に先立ち締結日前1か月以内に公証人が保証人本人の保証意思を確認して作成する「保証意思宣明公正証書」がなければ、原則として保証契約は効力を生じない（民法465条の6。主債務者の経営者など一定の者は例外）。' +
+        '想定外の多額の保証債務による個人保証人の生活破綻を防ぐ保護強化を趣旨とする。',
+      authority: '所管: 法務省（民事局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/content/001254262.pdf', type: 'government', label: '法務省 保証に関する民法のルールが大きく変わります（2020年4月1日）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法の一部を改正する法律（債権法改正）について' },
+      { url: 'https://www.koshonin.gr.jp/notary/ow05_2', type: 'operator', label: '日本公証人連合会 保証意思宣明公正証書' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-qualified-invoice-issuer-registration',
+      domain: 'tax',
+      title: '適格請求書発行事業者の登録制度（インボイス制度）',
+      statement:
+        '2023年（令和5年）10月1日に開始したインボイス制度（適格請求書等保存方式）において、適格請求書（インボイス）を交付できるのは、納税地を所轄する税務署長の登録を受けた「適格請求書発行事業者」に限られる。登録を受けると課税事業者となり、' +
+        '「T」＋13桁の登録番号が付与される（法人は「T」＋法人番号）。登録を受けるかは事業者の任意だが、登録しないと取引先はその仕入れについて仕入税額控除のためのインボイスを受け取れない。登録情報（氏名・法人名・登録番号等）は国税庁の' +
+        '「適格請求書発行事業者公表サイト」で確認できる。免税事業者が登録する場合の2割特例等の経過措置や登録の取りやめ手続もある。',
+      authority: '所管: 国税庁',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://www.invoice-kohyo.nta.go.jp/about-toroku/index.html', type: 'government', label: '国税庁 適格請求書発行事業者公表サイト 登録番号とは' },
+      { url: 'https://biz.moneyforward.com/invoice/basic/55222/', type: 'media', label: 'マネーフォワード 適格請求書発行事業者の登録 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-abuse-superior-bargaining-position',
+      domain: 'legal',
+      title: '優越的地位の濫用（独占禁止法上の不公正な取引方法）',
+      statement:
+        '独占禁止法は、自己の取引上の地位が相手方に優越していることを利用して、正常な商慣習に照らして不当に、相手方に不利益となるよう取引条件を設定・変更し又は取引を実施する行為（押し付け販売、購入要請、経済上の利益の提供要請、受領拒否、返品、' +
+        '支払遅延、減額等）を「優越的地位の濫用」として、不公正な取引方法の一類型に位置付け禁止している（独禁法2条9項5号・19条）。公正取引委員会は違反に対し排除措置命令を行えるほか、課徴金納付命令を課すことができる。さらに公取委は2019年12月公表の指針で、' +
+        'デジタル・プラットフォーム事業者と個人情報等を提供する消費者との取引にも本規制が適用されうるとの考え方を示している。',
+      authority: '所管: 公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 優越的地位の濫用に関する独占禁止法上の考え方' },
+      { url: 'https://www.jftc.go.jp/houdou/pressrelease/2019/dec/191217_dpfgl.html', type: 'government', label: '公正取引委員会 デジタルPF事業者と消費者の取引における優越的地位の濫用の考え方' },
+      { url: 'https://www.businesslawyers.jp/practices/675', type: 'media', label: 'BUSINESS LAWYERS 優越的地位の濫用とは 解説' },
+    ],
+  },
 ];
 // Stryker restore all
