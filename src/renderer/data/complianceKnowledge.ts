@@ -3253,5 +3253,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://j-net21.smrj.go.jp/law/20221228.html', type: 'media', label: '中小機構 J-Net21 仮名加工情報とは' },
     ],
   },
+  {
+    value: {
+      id: 'tax-city-planning-tax',
+      domain: 'tax',
+      title: '都市計画税',
+      statement:
+        '都市計画税は、原則として市街化区域内に所在する土地・家屋の所有者（毎年1月1日現在）に対し、都市計画事業や土地区画整理事業の' +
+        '費用に充てるため市町村（東京23区は都）が課す目的税である。課税標準は固定資産税評価額で、税率は制限税率0.3%を上限に各市町村が条例で定め、固定資産税と併せて課税される。',
+      authority: '所管: 総務省・各市町村（地方税法／都市計画税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_10.html', type: 'government', label: '総務省 地方税制度 都市計画税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/real_estate/kotei_tosi', type: 'municipality', label: '東京都主税局 固定資産税・都市計画税' },
+      { url: 'https://www.city.osaka.lg.jp/zaisei/page/0000370734.html', type: 'municipality', label: '大阪市 都市計画税' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-automobile-tax',
+      domain: 'tax',
+      title: '自動車税（種別割）',
+      statement:
+        '自動車税（種別割）は、毎年4月1日現在の自動車（軽自動車・二輪等を除く）の所有者に対し、その自動車の主たる定置場の所在する' +
+        '都道府県が課す地方税である。税額は自動車の種別・用途・総排気量等に応じて定められ、原則として5月に送付される納税通知書により納付する。' +
+        'なお軽自動車税（種別割）は市町村税であり、自動車税とは別の税である。',
+      authority: '所管: 総務省・各都道府県（地方税法／自動車税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_11.html', type: 'government', label: '総務省 地方税制度 自動車税・軽自動車税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/automobiles/shubetsu', type: 'municipality', label: '東京都主税局 自動車税（種別割）' },
+      { url: 'https://www.pref.saitama.lg.jp/a0209/z-kurashiindex/z-2-6.html', type: 'municipality', label: '埼玉県 自動車税（種別割）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-workers-comp-benefits',
+      domain: 'labor',
+      title: '労災保険の保険給付の種類',
+      statement:
+        '業務災害・複数業務要因災害・通勤災害により労働者が負傷・疾病・障害・死亡した場合、労災保険から保険給付が行われる。' +
+        '主な給付には、療養（補償）等給付（治療費）、休業（補償）等給付（休業4日目から給付基礎日額の60%を支給し、別途休業特別支給金20%）、' +
+        '障害（補償）等給付、遺族（補償）等給付、葬祭料（葬祭給付）、傷病（補償）等年金、介護（補償）等給付がある。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/rousai/index.html', type: 'government', label: '厚生労働省 労働災害が発生したとき' },
+      { url: 'https://jsite.mhlw.go.jp/tottori-roudoukyoku/hourei_seido_tetsuzuki/rousai_hoken/rousaikyuuhushurui.html', type: 'government', label: '鳥取労働局 労災給付の種類' },
+      { url: 'https://www.mhlw.go.jp/content/000662505.pdf', type: 'government', label: '厚生労働省 複数事業労働者への労災保険給付' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dispatch-equal-treatment',
+      domain: 'labor',
+      title: '派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）',
+      statement:
+        '2020年4月施行の改正労働者派遣法により、派遣元事業主は、派遣労働者の待遇について「派遣先均等・均衡方式」（派遣先の通常の労働者との' +
+        '均等・均衡待遇の確保）または一定の要件を満たす労使協定による「労使協定方式」のいずれかにより、派遣先の通常の労働者との不合理な待遇差を' +
+        '解消することが義務付けられている。これはパート・有期労働者の同一労働同一賃金とは別の制度である。',
+      authority: '所管: 厚生労働省（労働者派遣法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000077386_00001.html', type: 'government', label: '厚生労働省 派遣労働者の同一労働同一賃金について' },
+      { url: 'https://www.mhlw.go.jp/content/000497032.pdf', type: 'government', label: '厚生労働省 派遣先均等・均衡方式／労使協定方式' },
+      { url: 'https://www.mhlw.go.jp/content/000473039.pdf', type: 'government', label: '厚生労働省 労働者派遣法改正の概要（同一労働同一賃金）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-related-personal-info',
+      domain: 'legal',
+      title: '個人関連情報の第三者提供の制限（個人情報保護法31条）',
+      statement:
+        '個人関連情報（生存する個人に関する情報のうち、個人情報・仮名加工情報・匿名加工情報のいずれにも該当しないもの。例: Cookie等の' +
+        '端末識別子に紐づく閲覧履歴・位置情報等）を第三者に提供する場合、提供先が当該情報を個人データとして取得することが想定されるときは、' +
+        '原則として、提供先が本人の同意を得ていること等を提供元があらかじめ確認しなければならない（個人情報保護法31条。2022年4月施行）。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq2-q2-8/', type: 'government', label: '個人情報保護委員会 個人関連情報とは FAQ' },
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057/20220401_502AC0000000044', type: 'government', label: 'e-Gov法令検索 個人情報保護法（31条・2022年4月施行版）' },
+      { url: 'https://www.morihamada.com/ja/insights/legal-topics/105366/105381', type: 'media', label: '個人関連情報 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-moral-rights',
+      domain: 'legal',
+      title: '著作者人格権',
+      statement:
+        '著作者人格権は、著作者の人格的利益を保護する権利で、公表権（著作権法18条）、氏名表示権（19条）、同一性保持権（20条）から成る。' +
+        '著作者の一身に専属し、譲渡・相続することができず（一身専属性。59条）、財産権である著作権（著作財産権）とは別個の権利である。',
+      authority: '所管: 文化庁（著作権法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁 著作権テキスト' },
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 著作権法' },
+      { url: 'https://www.cric.or.jp/qa/hajime/hajime2.html', type: 'media', label: '著作権情報センター 著作者の権利' },
+    ],
+  },
 ];
 // Stryker restore all
