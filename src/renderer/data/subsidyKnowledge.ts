@@ -493,6 +493,123 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.johas.go.jp/Portals/0/data0/sanpo/sanpojoseikin/R7/org_josei_tebiki_R7.pdf', type: 'government', label: '労働者健康安全機構 団体経由産業保健活動推進助成金 手引' },
     ],
   },
+  {
+    id: 'subsidy-education-training-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '教育訓練給付金（雇用保険）',
+    authority: '厚生労働省（窓口: ハローワーク）',
+    statement:
+      '働く人の主体的な能力開発・キャリア形成を支援するため、雇用保険の被保険者又は被保険者であった者が、厚生労働大臣の指定する教育訓練を' +
+      '受講・修了した場合に、支払った受講費用の一定割合を支給する雇用保険の給付。「一般教育訓練給付金」「特定一般教育訓練給付金」「専門実践教育' +
+      '訓練給付金」の3区分があり、給付率・上限・支給対象訓練・支給要件期間は区分及び改正により異なるため、最新の制度内容で要確認。',
+    application:
+      '受講開始前に一定の区分では訓練前キャリアコンサルティング・受給資格確認が必要。受講修了後（専門実践は受講中も）、原則として受講修了日の翌日から' +
+      '1か月以内に住所地を管轄するハローワークへ支給申請。区分・必要書類はハローワークの案内で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/d01-1.html', type: 'government', label: '厚生労働省 教育訓練給付制度' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_education.html', type: 'government', label: 'ハローワーク 教育訓練給付' },
+      { url: 'https://www.kyufu.mhlw.go.jp/kyufuportal/', type: 'government', label: '厚生労働省 教育訓練給付制度 検索システム' },
+    ],
+  },
+  {
+    id: 'subsidy-iju-shienkin',
+    level: 'prefecture',
+    domain: 'welfare',
+    name: '移住支援金・起業支援金（地方創生）',
+    authority: '内閣官房・内閣府（デジタル田園都市国家構想交付金）／実施: 都道府県・市町村',
+    statement:
+      '東京圏（東京・埼玉・千葉・神奈川）からの地方への移住・就業や起業を促進するため、東京23区在住又は通勤していた者等が一定要件を満たして' +
+      '地方公共団体が指定する地域へ移住し就業・起業した場合に、都道府県・市町村が移住支援金（単身・世帯で異なる）や起業支援金を支給する制度。' +
+      '支給額（子育て世帯加算等）・対象地域・要件は実施する都道府県・市町村及び年度ごとに異なるため、移住先自治体の最新情報で要確認。',
+    application:
+      '移住先の都道府県・市町村が実施主体で、移住・就業（マッチングサイト掲載求人への就業等）・起業（都道府県の起業支援金交付決定等）の要件を満たした後、' +
+      '移住先の市町村へ申請する。申請期限・対象・金額は自治体ごとに設定されるため移住先自治体で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chisou.go.jp/sousei/about/ijuu_shienkin/index.html', type: 'government', label: '内閣官房・内閣府 移住支援金・起業支援金' },
+      { url: 'https://www.chisou.go.jp/sousei/about/ijuu_shienkin/pdf/r5_ijuu_gaiyou.pdf', type: 'government', label: '内閣府 移住支援金の概要' },
+      { url: 'https://www.iju-join.jp/feature_cont/guide/079.html', type: 'media', label: 'JOIN（移住・交流推進機構）移住支援金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-childcare-support-grant',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '出産・子育て応援交付金（出産・子育て応援給付金）',
+    authority: 'こども家庭庁（実施主体: 市区町村）',
+    statement:
+      '妊娠期から出産・子育てまで一貫して身近で相談に応じる「伴走型相談支援」と、妊娠届出時・出生届出後の経済的支援（出産応援ギフト・子育て応援ギフト' +
+      '＝給付金やクーポン等）を一体的に実施する制度。経済的支援は妊娠届出時に5万円相当、出生後に子1人あたり5万円相当が基本とされてきたが、' +
+      '2025年度以降は妊婦のための支援給付（妊婦支援給付金）として制度化が進められており、給付方法・金額・手続は実施する市区町村及び年度ごとに異なるため要確認。',
+    application:
+      '実施主体は市区町村。妊娠届出・出生届出の機会等に市区町村の窓口で面談・申請を行い、給付（現金・クーポン等）を受ける。申請方法・給付形態は市区町村ごとに異なるため居住自治体で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/shussan-kosodate', type: 'government', label: 'こども家庭庁 出産・子育て応援交付金' },
+      { url: 'https://www.cfa.go.jp/policies/shussan-kosodate/joseikingaku', type: 'government', label: 'こども家庭庁 妊婦のための支援給付' },
+      { url: 'https://www.city.yokohama.lg.jp/kurashi/kosodate-kyoiku/oyako/teate-josei/shussankosodate.html', type: 'municipality', label: '横浜市 出産・子育て応援事業' },
+    ],
+  },
+  {
+    id: 'subsidy-aichi-rd',
+    level: 'prefecture',
+    domain: 'business',
+    name: '新あいち創造研究開発補助金（愛知県）',
+    authority: '愛知県（経済産業局 産業科学技術課等）',
+    statement:
+      '愛知県内の事業者が、次世代産業分野等における新製品・新技術の研究開発や実証実験を行う取組を支援する愛知県の補助金（都道府県レベルの補助金の代表例）。' +
+      '県が重点を置く分野（次世代自動車・航空宇宙・ロボット・環境・健康長寿等）に関する研究開発等が対象とされる。補助上限額・補助率・対象分野・募集期間は' +
+      '年度ごとに変動するため、必ず愛知県の最新の募集要領で要確認。',
+    application:
+      '年度ごとに募集期間を設定する公募制。愛知県の募集案内に従い事業計画等を提出して申請し、審査・交付決定を経て事業を実施する。受付期間・要件は各年度の募集要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.aichi.jp/soshiki/sangaku/shinaichi-r-d.html', type: 'municipality', label: '愛知県 新あいち創造研究開発補助金' },
+      { url: 'https://www.pref.aichi.jp/soshiki/sangaku/', type: 'municipality', label: '愛知県 産業科学技術課' },
+      { url: 'https://hojyokin-portal.jp/columns/shin_aichi', type: 'media', label: '新あいち創造研究開発補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-fukuoka-startup',
+    level: 'municipality',
+    domain: 'business',
+    name: '福岡市 スタートアップ法人減税（国家戦略特区）',
+    authority: '福岡市（国家戦略特区「グローバル創業・雇用創出特区」）',
+    statement:
+      '福岡市は国家戦略特区「グローバル創業・雇用創出特区」の枠組みで、革新的事業に挑戦するスタートアップ企業を対象に、国の特例措置に併せて' +
+      '市独自に法人市民税（法人税割）を一定期間軽減する制度を実施している（政令指定都市＝市町村レベルの代表的なスタートアップ支援策の一例）。' +
+      '対象事業分野・雇用要件・軽減割合・適用期間は制度改正・年度により変動するため、適用可否や最新の要件は福岡市公式で要確認。',
+    application:
+      '国家戦略特区の認定（特区の特例を活用する革新的事業であること、対象事業の割合や福岡市民を含む常用雇用 等）を前提に、福岡市の特区担当窓口を通じて相談・認定手続を行う。' +
+      '福岡市の創業・スタートアップ支援窓口も併用可能。具体の手順・必要書類は市公式で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.fukuoka.lg.jp/soki/kikaku/shisei/f-tokku/Startuphoujingennzei.html', type: 'municipality', label: '福岡市 スタートアップ法人減税' },
+      { url: 'https://www.city.fukuoka.lg.jp/soki/kikaku/fukuoka_tokku_top.html', type: 'municipality', label: '福岡市 グローバル創業・雇用創出特区' },
+      { url: 'https://www8.cao.go.jp/cstp/openinnovation/ecosystem/fukuoka/2-2_3fukuoka.pdf', type: 'government', label: '内閣府 福岡市のスタートアップ支援（賃料補助・法人減税）' },
+    ],
+  },
+  {
+    id: 'subsidy-saigai-nariwai',
+    level: 'national',
+    domain: 'business',
+    name: 'なりわい再建支援補助金（中小企業等グループ補助金）',
+    authority: '中小企業庁・経済産業省（実施: 被災都道府県）',
+    statement:
+      '大規模災害により被災した中小企業等が、複数の事業者でグループを構成し、地域経済・雇用の中核として復興事業計画の認定を受けた上で行う' +
+      '施設・設備の復旧整備等を支援する補助制度（中小企業等グループ施設等復旧整備補助事業＝グループ補助金。災害ごとに「なりわい再建支援補助金」等の名称で実施）。' +
+      '対象災害・補助率・上限額・公募期間は災害・年度ごとに異なるため、対象地域の被災都道府県・中小企業庁の最新案内で要確認。',
+    application:
+      '被災事業者が複数でグループを構成し、復興事業計画を作成して被災都道府県の認定を受けた上で、都道府県の公募に応じて交付申請する。対象災害・受付期間は災害発生の都度設定されるため要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/saigai/index.html', type: 'government', label: '中小企業庁 自然災害関連支援（グループ補助金等）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/shokibo/index.html', type: 'government', label: '中小企業庁 中小企業支援' },
+      { url: 'https://www.meti.go.jp/press/index.html', type: 'government', label: '経済産業省 報道発表（なりわい再建支援補助金の公募）' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
