@@ -7000,5 +7000,91 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.tepco.co.jp/network/renewable_energy/fixedprice_purchase/index.html', type: 'operator', label: '送配電事業者 FIT制度（2012年7月開始）の解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-forest-environment-tax',
+      domain: 'tax',
+      title: '森林環境税（2024年度〜・国税・個人住民税均等割に上乗せ年1,000円）',
+      statement:
+        '森林環境税は、温室効果ガス排出削減目標の達成や災害防止のための森林整備等に必要な財源を確保するために創設された国税で、2024年度（令和6年度）から課税が開始された。市町村が個人住民税の均等割と併せて1人あたり年額1,000円を' +
+        '賦課徴収する。その税収の全額は「森林環境譲与税」として、私有林人工林面積・林業就業者数・人口に応じた基準で都道府県・市町村に譲与され、間伐や人材育成・担い手確保、木材利用や普及啓発等の森林整備に充てられる。',
+      authority: '所管: 総務省（森林環境税・譲与税）・林野庁（森林整備）／徴収は市町村',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/04000067.html', type: 'government', label: '総務省 森林環境税及び森林環境譲与税について' },
+      { url: 'https://www.rinya.maff.go.jp/j/keikaku/kankyouzei/kankyouzei_jouyozei.html', type: 'government', label: '林野庁 森林環境税及び森林環境譲与税' },
+      { url: 'https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/y-shizei/kojin-shiminzei-kenminzei/shinrinkankyouzei.html', type: 'municipality', label: '横浜市 森林環境税（国税）について' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-overseas-asset-report',
+      domain: 'tax',
+      title: '国外財産調書制度（国外財産5,000万円超の保有者の提出義務）',
+      statement:
+        '居住者（非永住者を除く）が、その年の12月31日において合計5,000万円を超える国外財産を有する場合、その種類・数量・価額等を記載した「国外財産調書」を、翌年6月30日まで（令和5年分以降。令和4年分以前は翌年3月15日であったが令和4年度改正で後ろ倒し）に所轄税務署長に提出しなければならない制度。国外財産に係る' +
+        '所得税・相続税の適正な課税を確保することが目的で、調書の提出があり記載された財産に申告漏れが生じた場合は過少申告加算税等が軽減され、提出がない場合や記載がない場合は加重される加算税の特例がある。故意の不提出・虚偽記載には罰則も定められている。提出期限・基準額は改正で変動しうるため要確認。',
+      authority: '所管: 国税庁（国外送金等調書法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hotei/7456.htm', type: 'government', label: '国税庁 No.7456 国外財産調書の提出義務' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hotei/kokugai_zaisan/index.htm', type: 'government', label: '国税庁 国外財産調書制度に関するお知らせ' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/qa/12.htm', type: 'government', label: '国税庁 国外財産調書及び財産債務調書の提出（QA）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-address-change-registration',
+      domain: 'legal',
+      title: '所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）',
+      statement:
+        '所有者不明土地対策のための不動産登記法改正により、不動産の所有権の登記名義人は、氏名・名称又は住所に変更があった日から2年以内にその変更登記を申請することが義務付けられ、正当な理由なく怠ると5万円以下の過料の対象となる。' +
+        'この住所等変更登記の義務化は2026年（令和8年）4月1日に施行され、2024年4月1日施行の相続登記義務化とは別の制度である。施行前に生じた変更も対象で、施行日から2年（令和10年3月31日まで）の経過措置がある。あわせて、検索用情報の申出により登記官が職権で変更登記を行える仕組みも導入される。',
+      authority: '所管: 法務省（民事局）／法務局',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/jushohenko/index.html', type: 'government', label: '法務省 住所等変更登記の義務化' },
+      { url: 'https://houmukyoku.moj.go.jp/nagoya/page000001_00951.html', type: 'government', label: '名古屋法務局 住所・名前の変更登記の手続（令和8年4月から義務化）' },
+      { url: 'https://guide.callcenter.city.sendai.jp/hc/ja/articles/5130051096606', type: 'municipality', label: '仙台市 住所・氏名の変更登記が義務化' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-spousal-residence-right',
+      domain: 'legal',
+      title: '配偶者居住権（2020年4月1日施行の改正相続法）',
+      statement:
+        '配偶者居住権は、2018年（平成30年）成立の改正相続法（民法）により創設され、2020年（令和2年）4月1日に施行された権利で、被相続人の配偶者が相続開始時に被相続人所有の建物に居住していた場合に、遺産分割・遺贈・死因贈与等により、' +
+        'その建物に終身又は一定期間、無償で居住し続けることができる権利。配偶者居住権は建物の「所有権」とは別の権利として評価されるため、配偶者は居住権（所有権より低い評価額）を取得しつつ預貯金等の他の遺産も取得しやすくなり、居住の確保と生活資金の両立に資する。' +
+        '第三者対抗には登記が必要となる。',
+      authority: '所管: 法務省（民事局・相続法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00028.html', type: 'government', label: '法務省 残された配偶者の居住権を保護するための方策が新設されます' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00222.html', type: 'government', label: '法務省 民法（相続法）の改正について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hyoka/4666.htm', type: 'government', label: '国税庁 No.4666 配偶者居住権等の評価' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-handwritten-will-storage',
+      domain: 'legal',
+      title: '自筆証書遺言書保管制度（法務局、2020年7月10日施行）',
+      statement:
+        '自筆証書遺言書保管制度は、法務局における遺言書の保管等に関する法律に基づき2020年（令和2年）7月10日に開始された制度で、自筆証書による遺言書を遺言者本人が法務局（遺言書保管所）に申請して保管してもらえる。これにより遺言書の紛失・隠匿・改ざんを防止でき、' +
+        '保管された自筆証書遺言は家庭裁判所による検認手続が不要となる。申請は代理できず遺言者本人が遺言書保管所へ出頭して行う必要があり、保管官は本人確認と方式（日付・氏名・押印等）の外形的確認は行うが遺言内容の有効性まで保証するものではない。遺言者の死亡後は、相続人等が遺言書情報証明書の交付請求や閲覧を行える。手数料額等は要確認。',
+      authority: '所管: 法務省（民事局）／法務局（遺言書保管所）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/02.html', type: 'government', label: '法務省 自筆証書遺言書保管制度（概要）' },
+      { url: 'https://www.moj.go.jp/MINJI/04.html', type: 'government', label: '法務省 自筆証書遺言書保管制度（保管制度利用で検認不要）' },
+      { url: 'https://houmukyoku.moj.go.jp/kumamoto/page000001_00331.html', type: 'government', label: '熊本地方法務局 自筆証書遺言書保管制度（令和2年7月10日開始）' },
+    ],
+  },
 ];
 // Stryker restore all
