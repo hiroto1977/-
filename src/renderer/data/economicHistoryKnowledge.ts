@@ -2080,14 +2080,17 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
 export const ASSET_SERIES_NOTES =
   '株式（DJIA年末終値）は複数の独立系列で一致を確認した確証値（1994年以降は毎年収録）。日本株（日経平均）は東証再開1949年5月以降が対象（取引所閉鎖の1945–1949年4月はN/A）。' +
   '各年確定値のうち独立2源以上で一致を確認できた年のみ収録し、集約サイトが403等で二重確認できなかった年（1993・1994・1995・1998・1999・2002・2003・2009など）はnull（捏造回避）。' +
-  '市街地価格指数（全国・1936年9月=100、1946年9月以降は半期）は各年確定値が未照合でnull。' +
+  '不動産（市街地価格指数, 日本不動産研究所が3月末・9月末の半期で公表, 全国/六大都市/六大都市以外・用途別の系列あり, 全国平均は1991年がピーク）は、年次の確定指数値が専門統計（有料冊子・統計局Excel）にのみ存在しWeb検索では独立2源照合ができないため全年null（捏造回避）。' +
+  'なお基準時点は系列により異なり、戦前基準「1936年9月=100」と現行公表系列「2000年3月末=100」は別物のため、数値を追補する際は基準の取り違えに注意（一次資料: 日本不動産研究所 reinet.or.jp, 総務省統計局 g4217, 国立国会図書館リサーチ・ナビ）。' +
   '仮想通貨はビットコイン稼働開始（2009年1月）・市場価格成立（2010年）以前は存在せずN/A。2012年以降の年末値を収録するが、ビットコインには公的な単一の引け値が存在せず取引所・指数により数%の幅があるため、独立複数源が概ね一致した代表的な年末スポット値（概数）である点に留意。値が得られ次第、確証のうえ追補する。';
 
 export const ASSET_SERIES_SOURCES: EconHistorySource[] = [
   { url: 'https://www.measuringworth.com/datasets/DJA/index.php', type: 'academic', label: 'MeasuringWorth — Dow Jones Average 日次/月次終値データセット' },
   { url: 'https://fred.stlouisfed.org/series/M1109BUSM293NNBR', type: 'government', label: 'FRED, St. Louis Fed — Dow-Jones Industrial Stock Price Index' },
   { url: 'https://indexes.nikkei.co.jp/atoz/2016/06/1950s.html', type: 'reference', label: '日経平均プロフィル — 算出開始1950/9/7・1949/5/16へ遡及（日本株の起点）' },
-  { url: 'https://www.reinet.or.jp/?page_id=168', type: 'government', label: '日本不動産研究所 — 市街地価格指数（1936年9月=100基準）' },
+  { url: 'https://www.reinet.or.jp/?page_id=168', type: 'government', label: '日本不動産研究所 — 市街地価格指数・全国木造建築費指数（戦前基準1936/9=100と現行基準2000/3末=100の併載元）' },
+  { url: 'https://www.stat.go.jp/data/nihon/g4217.html', type: 'government', label: '総務省統計局 日本の統計 — 市街地価格指数（全用途平均, 2000/3末=100系列の確定値Excel所在）' },
+  { url: 'https://ndlsearch.ndl.go.jp/rnavi/business/post_102136', type: 'government', label: '国立国会図書館リサーチ・ナビ — 市街地価格指数の調べ方（戦前基準系列・印刷統計書の案内）' },
   { url: 'https://www.britannica.com/biography/Satoshi-Nakamoto', type: 'reference', label: 'Encyclopaedia Britannica — Satoshi Nakamoto（ビットコイン2009年稼働開始）' },
 ];
 // Stryker restore all
