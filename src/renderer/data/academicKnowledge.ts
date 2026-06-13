@@ -1572,5 +1572,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Gatekeeping_(communication)', type: 'reference', label: 'Wikipedia — Gatekeeping (communication)' },
     ],
   },
+  {
+    id: 'econ-income-substitution-effect',
+    discipline: 'economics',
+    title: '所得効果と代替効果',
+    statement:
+      'ある財の価格変化が需要量に与える影響（価格効果）を2つに分解したもの。代替効果は、相対価格の変化により相対的に安くなった財へ消費を振り替える効果で、効用（実質所得）を一定に保ったときの需要変化を指し、価格が下がった財の需要は必ず増える（代替効果は常に価格と逆方向）。' +
+      '所得効果は、価格変化によって実質的な購買力（実質所得）が変化することで生じる需要変化。通常財（上級財）では両効果が同方向に働き需要曲線は右下がりになる。下級財（劣等財）では所得効果が代替効果と逆向きになり、所得効果が代替効果を上回るとギッフェン財（価格が下がると需要が減る）が生じうる。ロシアの経済学者エフゲニー・スルツキーが1915年に定式化（スルツキー分解）し、後にヒックスが効用一定の補償需要に基づく分解を確立した。価格効果＝代替効果＋所得効果。',
+    keyFigures: 'エフゲニー・スルツキー（1915、スルツキー分解）／ヒックス（補償需要・ヒックス分解）／ギッフェン財との関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/substitution-effect', type: 'reference', label: 'Encyclopaedia Britannica — Substitution effect' },
+      { url: 'https://www.britannica.com/topic/income-effect', type: 'reference', label: 'Encyclopaedia Britannica — Income effect' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/Intermediate_Microeconomics_with_Excel_(Barreto)/04:_Compartive_Statics/4.06:_Income_and_Substitution_Effects', type: 'academic', label: 'LibreTexts, Intermediate Microeconomics — Income and Substitution Effects（Hicks/Slutsky）' },
+    ],
+  },
+  {
+    id: 'econ-diminishing-returns',
+    discipline: 'economics',
+    title: '収穫逓減の法則（限界生産力逓減）',
+    statement:
+      '他の生産要素を一定に保ったまま、ある可変的な生産要素（例：労働）の投入量を増やしていくと、ある点を超えると追加1単位の投入から得られる産出の増加分（限界生産物）が次第に減少していくという生産理論の法則。短期において少なくとも1つの固定的要素（例：土地・資本設備）が存在することが前提である。' +
+      '当初は分業や設備の有効活用によって限界生産物が増加することもあるが、固定要素に対し可変要素が過剰になると逓減に転じる（さらに進むと限界生産物がゼロないし負となり、総生産物自体が減少しうる）。18世紀にチュルゴーが農業に即して指摘し、リカードやマルサスの古典派経済学（地代論・人口論）で重要な役割を果たした。消費の満足度に関する限界効用逓減の法則とは異なる概念である。',
+    keyFigures: 'チュルゴー（18世紀の初期指摘）／マルサス（人口論）・リカード（地代論）で展開／限界効用逓減とは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/diminishing-returns', type: 'reference', label: 'Britannica Money — Diminishing returns' },
+      { url: 'https://www.ebsco.com/research-starters/economics/diminishing-returns-economics', type: 'academic', label: 'EBSCO Research Starters — Diminishing returns (economics)' },
+      { url: 'https://www.encyclopedia.com/finance/encyclopedias-almanacs-transcripts-and-maps/law-diminishing-returns', type: 'reference', label: 'Encyclopedia.com — Law of Diminishing Returns' },
+    ],
+  },
+  {
+    id: 'mgmt-stakeholder-theory',
+    discipline: 'management',
+    title: 'ステークホルダー理論（stakeholder theory）',
+    statement:
+      '企業は株主（シェアホルダー）だけでなく、従業員・顧客・取引先・地域社会・債権者など、企業活動に利害関係を持つ多様な「ステークホルダー（利害関係者）」全体の利益を考慮して経営されるべきだとする経営・倫理の理論。' +
+      'フリーマンはステークホルダーを「組織の目的達成に影響を与えうる、または影響を受ける集団・個人」と定義した。株主の利益最大化を最優先するフリードマン流の株主価値説（Friedman doctrine）への対抗・補完として位置づけられる。R・エドワード・フリーマンが1984年の著書『Strategic Management: A Stakeholder Approach』で体系化・普及させた。CSR（企業の社会的責任）、ESG、コーポレートガバナンス、サステナビリティ経営の理論的基盤の一つで、記述的・規範的・道具的の3側面で論じられる。誰をステークホルダーとみなすか、利害が対立する際の優先順位づけが難しい等の批判もある。',
+    keyFigures: 'R・エドワード・フリーマン（1984『Strategic Management: A Stakeholder Approach』）／対比: フリードマンの株主価値説',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.darden.virginia.edu/stakeholder-theory', type: 'academic', label: 'University of Virginia Darden School of Business — Stakeholder Theory（フリーマン所属機関）' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/stakeholder-theory-and-analysis', type: 'academic', label: 'EBSCO Research Starters — Stakeholder Theory and Analysis' },
+      { url: 'https://en.wikipedia.org/wiki/Friedman_doctrine', type: 'reference', label: 'Wikipedia — Friedman doctrine（対比される株主価値説）' },
+    ],
+  },
+  {
+    id: 'human-group-polarization',
+    discipline: 'human-science',
+    title: '集団極化（集団分極化, group polarization）',
+    statement:
+      '集団で討議すると、討議後の集団の意見が、メンバーが当初もっていた意見の平均よりもより極端な方向へ移行する現象。集団がリスキーな方向へ傾く「リスキー・シフト」と、慎重な方向へ傾く「コーシャス・シフト」の双方を含む、より一般的な概念である。' +
+      '機序として、討議中に自分の立場を支持する新たな論拠に接することで態度が強まるとする「説得的論拠説（persuasive arguments theory）」と、集団内で望ましいとされる立場へ自分を位置づけようとする「社会的比較説（social comparison theory）」の二つが主に挙げられ、両者は併存しうる。1961年のストーナーのリスキー・シフト研究を起点とし、モスコビッシとザヴァローニが1969年に「集団極化」と命名（JPSP 12:125-135）、D.マイヤーズらが研究を発展させた。陪審評議、政治的分極化、インターネット上のエコーチェンバーでの意見の過激化などの説明に用いられる。',
+    keyFigures: 'ストーナー（1961 リスキー・シフト）／モスコビッシ & ザヴァローニ（1969 命名）／D.マイヤーズ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/group-polarization', type: 'academic', label: 'APA Dictionary of Psychology — Group polarization（米国心理学会）' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2680487', type: 'academic', label: 'Moscovici & Zavalloni (1969) The Group as a Polarizer of Attitudes, JPSP 12:125-135（原典書誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Group_polarization', type: 'reference', label: 'Wikipedia — Group polarization' },
+    ],
+  },
+  {
+    id: 'bizlaw-apparent-agency',
+    discipline: 'business-law',
+    title: '表見代理',
+    statement:
+      '本来は代理権がない者（無権代理人）による行為であっても、本人に一定の帰責性があり、相手方が代理権の存在を信じたことに正当な理由（善意無過失）がある場合に、有効な代理行為と同様に本人に効果を帰属させ、取引の相手方と取引の安全を保護する制度。' +
+      '民法は3類型を定める：(1)代理権授与の表示による表見代理（109条。本人が第三者に対し他人に代理権を与えた旨を表示した場合）、(2)権限外の行為の表見代理（110条。何らかの基本代理権を持つ者がその権限を越えて行為した場合）、(3)代理権消滅後の表見代理（112条。かつて代理権があったが消滅した後に行為がされた場合）。いずれも外観への本人の帰責性と相手方の善意無過失等の要件を満たすと本人が責任を負う。代理権が全くない無権代理（113条以下、本人の追認・相手方の催告権/取消権、117条の無権代理人の責任）とあわせて代理制度の重要論点を構成する。',
+    keyFigures: '表見代理＝民法109条（授与表示）・110条（権限外）・112条（消滅後）／本人の帰責性＋相手方の善意無過失／関連: 無権代理113-117条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（109条・110条・112条）' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2005_minpou-1_16.pdf', type: 'academic', label: '京都大学OCW 民法第1部 第16回 — 代理(3)表見代理の基本問題（松岡久和教授）' },
+      { url: 'https://biz.moneyforward.com/contract/basic/17902/', type: 'media', label: 'マネーフォワード クラウド契約 — 表見代理と無権代理（成立要件・具体例）' },
+    ],
+  },
+  {
+    id: 'infosoc-symbolic-interactionism',
+    discipline: 'information-sociology',
+    title: '象徴的相互作用論（symbolic interactionism）',
+    statement:
+      '人間は事物に対し、それが自分にとって持つ「意味」に基づいて行為し、その意味は他者との社会的相互作用の中で生まれ、解釈の過程を通じて修正されていく、とする社会学の理論的立場。ミクロ社会学・解釈的アプローチの代表で、社会を客観的構造としてではなく、人々の相互行為と意味づけの過程として捉える。' +
+      'ジョージ・ハーバート・ミードの自我・役割取得の理論を源流とし、その学生ハーバート・ブルーマーが1937年に「シンボリック相互作用論」と命名、1969年の著書で3つの基本前提として体系化した：(1)人間は事物が持つ意味に基づいて行為する、(2)その意味は社会的相互作用から生じる、(3)意味は解釈の過程を通じて扱われ修正される。アーヴィング・ゴッフマンのドラマトゥルギー（自己呈示・印象操作・役割演技）もこの系譜にあり、ラベリング理論など逸脱研究にも影響を与えた。',
+    keyFigures: 'G.H.ミード（源流）／H.ブルーマー（1937命名・1969体系化）／関連: E.ゴッフマン（ドラマトゥルギー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences-and-law/sociology-and-social-reform/sociology-general-terms-and-concepts/symbolic-interactionism', type: 'reference', label: 'Encyclopedia.com — Symbolic Interactionism（ミード起源・ブルーマー1937命名）' },
+      { url: 'https://www.cambridge.org/core/books/abs/cambridge-handbook-of-social-theory/symbolic-interactionism/AF7CEEEDDD2193573F45E2E5CB30B633', type: 'academic', label: 'The Cambridge Handbook of Social Theory, Ch.11 — Symbolic Interactionism' },
+      { url: 'https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-5-symbolic-interactionism-george-herbert-mead-herbert-blumer/', type: 'academic', label: 'Montgomery College — Symbolic Interactionism: Mead & Blumer（3前提）' },
+    ],
+  },
 ];
 // Stryker restore all
