@@ -492,5 +492,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.federalreserve.gov/faqs/economy_14400.htm', type: 'government', label: 'Federal Reserve — Why 2 percent inflation?' },
     ],
   },
+  {
+    id: 'econ-coase-theorem',
+    discipline: 'economics',
+    title: 'コースの定理（Coase theorem）',
+    statement:
+      '取引費用がゼロ（または無視できるほど小さく）かつ所有権が明確に定義・執行可能であれば、外部性が存在しても当事者間の自発的な交渉によってパレート効率的な資源配分が達成され、その結果は権利の初期配分に依存しない、とする命題。' +
+      'ロナルド・コースが1960年の論文「社会的費用の問題」で示した考えに基づき（「コースの定理」の命名はジョージ・スティグラー1966）、外部性に対しピグー税などの政府介入を当然視する立場への反論となる。ただしコース自身が強調したのは現実には取引費用が正であり交渉が成立しにくい点であり、だからこそ権利配分や法・制度の設計が効率に影響する。「取引費用ゼロ」は理想化された前提であって、定理の主眼はむしろ現実の取引費用の重要性にある（1991年ノーベル講演で本来の主張がしばしば誤解されてきたと述べた）。',
+    keyFigures: 'ロナルド・コース（1960「社会的費用の問題」、1991年ノーベル経済学賞）／命名: ジョージ・スティグラー（1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/environmental-economics/The-Coase-theorem', type: 'reference', label: 'Encyclopædia Britannica (Money) — The Coase theorem' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/', type: 'government', label: 'NobelPrize.org — Ronald Coase, 1991 Prize Lecture' },
+      { url: 'https://en.wikipedia.org/wiki/Coase_theorem', type: 'reference', label: 'Wikipedia — Coase theorem（定義・スティグラー命名の経緯）' },
+    ],
+  },
+  {
+    id: 'econ-liquidity-trap',
+    discipline: 'economics',
+    title: '流動性の罠（liquidity trap）',
+    statement:
+      '名目金利がゼロ近傍まで低下した結果、貨幣と債券が事実上の完全代替物となり、人々が両者を無差別に保有する（追加供給された貨幣を退蔵する）ため、中央銀行が貨幣供給を増やしても金利をそれ以上下げられず総需要を刺激できなくなる状態。' +
+      'IS-LM分析では貨幣需要曲線（LM曲線の一部）が水平となり、貨幣供給の増加が金利低下を生まないため伝統的金融政策が無効化する。J.M.ケインズが『一般理論』(1936)で示唆し、J.R.ヒックスがIS-LMモデルで概念と政策的含意を定式化、ポール・クルーグマンが1998年の論文で日本のデフレ・ゼロ金利不況を分析して現代的に再評価した。含意として財政政策の有効性、インフレ期待の醸成（負の実質金利の実現）、量的緩和など非伝統的金融政策の役割が論じられる。',
+    keyFigures: 'J.M.ケインズ（1936『一般理論』で示唆）／J.R.ヒックス（IS-LMで定式化）／ポール・クルーグマン（1998 日本の流動性の罠を再評価）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/liquidity-trap', type: 'reference', label: 'Encyclopedia.com — Liquidity Trap（ケインズ示唆／ヒックスIS-LM定式化）' },
+      { url: 'https://www.brookings.edu/articles/its-baaack-japans-slump-and-the-return-of-the-liquidity-trap/', type: 'academic', label: 'Krugman (1998) — It’s Baaack: Japan’s Slump and the Return of the Liquidity Trap（BPEA）' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2000/06/japan-recession-is-the-liquidity-trap-back/', type: 'government', label: 'San Francisco Fed — Japan’s Recession: Is the Liquidity Trap Back? (2000)' },
+    ],
+  },
+  {
+    id: 'mgmt-resource-based-view',
+    discipline: 'management',
+    title: '資源ベース理論（Resource-Based View, RBV）とVRIO',
+    statement:
+      '持続的競争優位の源泉を業界構造（外部要因）ではなく企業内部に蓄積された経営資源・ケイパビリティの異質性に求める経営戦略論。バーガー・ワーナーフェルトの1984年論文「A Resource-Based View of the Firm」が起点とされ、エディス・ペンローズの1959年『企業成長の理論』が源流的影響を与えた。' +
+      'ジェイ・バーニーは1991年論文で体系化し、資源が価値(Value)・希少性(Rarity)・模倣困難性(Inimitability)・組織(Organization)の条件＝VRIOを満たすとき持続的競争優位がもたらされると論じた。当初の枠組みはVRIN（価値・希少・模倣困難・代替不可能）で、後に代替不可能性を模倣困難性に統合し組織(O)を加えてVRIOとなった。限界として、資源価値を成功から事後的に推論する循環論法的・静態的で反証困難との批判（Priem & Butler 2001 ほか）や急速な環境変化への対応の弱さが指摘される。',
+    keyFigures: 'ジェイ・B・バーニー（1991体系化・VRIO）／バーガー・ワーナーフェルト（1984起点）／エディス・ペンローズ（1959源流）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250050207', type: 'academic', label: 'Wernerfelt (1984) A Resource-Based View of the Firm, SMJ 5(2):171-180（原典）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/014920639101700108', type: 'academic', label: 'Barney (1991) Firm Resources and Sustained Competitive Advantage, J. of Management 17(1):99-120（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Resource-based_view', type: 'reference', label: 'Wikipedia — Resource-based view（VRIN→VRIOの経緯・限界）' },
+    ],
+  },
+  {
+    id: 'human-confirmation-bias',
+    discipline: 'human-science',
+    title: '確証バイアス（confirmation bias）',
+    statement:
+      '自分が既に持つ信念・仮説・期待に合致する情報を選択的に探索・解釈・記憶し、それに反する証拠を軽視・無視する認知バイアス。情報の「探索」「解釈」「想起」の各段階で生じうる。' +
+      'イギリスの認知心理学者ピーター・ウェイソンが1960年代に「2-4-6課題」（数列を生成した規則を当てる課題）や「選択課題（Wason selection task）」で実証し、人が自説を反証する事例ではなく確証する事例ばかりを検証する傾向を示した。レイモンド・S・ニッカーソンは1998年の論文「Confirmation Bias: A Ubiquitous Phenomenon in Many Guises」(Review of General Psychology 2(2):175-220)で包括的にレビューした。仮説検証・科学的推論・司法判断・投資判断などにおける誤りの原因とされ、反証可能性の軽視と深く関わる。',
+    keyFigures: 'ピーター・ウェイソン（1960年代、2-4-6課題/選択課題で実証）／レイモンド・S・ニッカーソン（1998 包括レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/confirmation-bias', type: 'reference', label: 'Encyclopaedia Britannica — Confirmation bias' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1037/1089-2680.2.2.175', type: 'academic', label: 'Nickerson (1998) Confirmation Bias, Review of General Psychology 2(2):175-220（SAGE 査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Confirmation_bias', type: 'reference', label: 'Wikipedia — Confirmation bias' },
+    ],
+  },
+  {
+    id: 'bizlaw-duty-of-care',
+    discipline: 'business-law',
+    title: '善管注意義務（善良な管理者の注意義務）',
+    statement:
+      '一定の職業・地位にある者に、その立場で社会通念上通常期待される客観的水準の注意をもって事務を処理することを求める義務。民法644条は「受任者は、委任の本旨に従い、善良な管理者の注意をもって、委任事務を処理する義務を負う」と定め、これを受任者一般に課す。' +
+      '会社法330条により株式会社と取締役・監査役等の役員との関係は委任に関する規定に従うため、役員も会社に対し善管注意義務を負う。違反した場合は債務不履行責任、役員については任務懈怠（会社法423条）に基づく損害賠償責任を生じうる。注意の水準は本人の主観的能力ではなく地位・職業から客観的に定まる点が特徴で、無報酬の受寄者に課される「自己の財産に対するのと同一の注意」（民法659条）など、より軽い注意義務とは区別される。なお会社法355条の忠実義務は、判例（最大判昭45.6.24）上、善管注意義務を敷衍・具体化したもので別個の高度な義務ではないとされる（同質説）。',
+    keyFigures: '民法644条（受任者の善管注意義務）／会社法330条（役員と会社の委任関係）・355条（忠実義務）・423条（任務懈怠責任）／対比: 民法659条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索『会社法』（330条・355条の正文）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0644-00/', type: 'reference', label: 'クレアール — 民法644条【受任者の注意義務】条文解説' },
+      { url: 'https://nexpert-law.com/business/columns/responsibility/52/', type: 'media', label: '弁護士法人ネクスパート法律事務所 — 取締役の善管注意義務（会社法330条・民法644条の関係）' },
+    ],
+  },
+  {
+    id: 'infosoc-filter-bubble',
+    discipline: 'information-sociology',
+    title: 'フィルターバブルとエコーチェンバー',
+    statement:
+      'フィルターバブル（filter bubble）は活動家イーライ・パリサーが2011年の著書『The Filter Bubble』で提唱・普及させた概念で、検索エンジンやSNSのパーソナライズ・アルゴリズムが利用者の履歴等に基づき各人に好みに合う情報を選択的に提示し、結果として異なる視点から知的に隔離される現象を指す。' +
+      'エコーチェンバー（echo chamber、起点はカス・サンスティーン2001年頃の議論）は、同質な意見が閉じた集団内で反響・反復され外部からの反証から遮断されて既存の信念が増幅・強化される環境を指す。フィルターバブルがアルゴリズム由来の選択的曝露であるのに対し、エコーチェンバーは集団内のコミュニケーションによる反響増幅であり外部の意見を能動的に排除・不信視する点で区別される。両者は世論の分極化や誤情報拡散との関連で論じられるが、実証研究では効果の大きさや存在範囲について証拠が一致しておらず（フィルターバブル仮説への支持は限定的との指摘あり）、評価は依然として議論が分かれている。',
+    keyFigures: 'イーライ・パリサー（2011 フィルターバブル提唱）／カス・サンスティーン（2001 エコーチェンバー概念の起点）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'academic', label: 'Reuters Institute（Oxford）— Echo chambers, filter bubbles, and polarisation: a literature review' },
+      { url: 'https://en.wikipedia.org/wiki/Filter_bubble', type: 'reference', label: 'Wikipedia — Filter bubble' },
+      { url: 'https://en.wikipedia.org/wiki/Echo_chamber_(media)', type: 'reference', label: 'Wikipedia — Echo chamber (media)' },
+    ],
+  },
 ];
 // Stryker restore all
