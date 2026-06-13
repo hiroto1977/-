@@ -2936,5 +2936,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jpo.go.jp/system/design/gaiyo/seidogaiyo/torokugaiyo/index.html', type: 'government', label: '特許庁 意匠制度の概要' },
     ],
   },
+  {
+    value: {
+      id: 'tax-listed-securities',
+      domain: 'tax',
+      title: '上場株式等の譲渡益・配当に対する課税',
+      statement:
+        '上場株式等を売却して得た譲渡益は、原則として申告分離課税の対象となり、税率は所得税及び復興特別所得税15.315%と住民税5%の' +
+        '合計20.315%である。上場株式等の配当等は原則として確定申告不要だが、申告分離課税を選択した場合の税率は譲渡益と同じ20.315%となる' +
+        '（総合課税を選択することも可能）。',
+      authority: '所管: 国税庁（所得税法・租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm', type: 'government', label: '国税庁 No.1463 株式等を譲渡したときの課税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm', type: 'government', label: '国税庁 No.1330 配当金を受け取ったとき' },
+      { url: 'https://faq.monex.co.jp/faq/show/900', type: 'media', label: '上場株式の譲渡・配当課税 20.315% 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-nisa',
+      domain: 'tax',
+      title: 'NISA（少額投資非課税制度）',
+      statement:
+        'NISAは、NISA口座（非課税口座）内で得た上場株式・投資信託等の譲渡益や配当・分配金が非課税となる制度。2024年1月開始の' +
+        '新しいNISAでは、つみたて投資枠（年120万円）と成長投資枠（年240万円）が併用でき、生涯非課税保有限度額は1,800万円' +
+        '（うち成長投資枠は1,200万円まで）、非課税保有期間は無期限化された。',
+      authority: '所管: 金融庁（NISA・租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/nisa2/know/index.html', type: 'government', label: '金融庁 NISA特設ウェブサイト' },
+      { url: 'https://www.gov-online.go.jp/article/202401/entry-5555.html', type: 'government', label: '政府広報オンライン NISAって何？' },
+      { url: 'https://www.jsda.or.jp/nisa/assets/file/2024nisaleaflet.pdf', type: 'media', label: '日本証券業協会 2024年NISAリーフレット' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-foreign-employment-report',
+      domain: 'labor',
+      title: '外国人雇用状況の届出',
+      statement:
+        '事業主は、外国人労働者（特別永住者及び在留資格「外交」「公用」の者を除く）を雇い入れた場合及び離職した場合に、その氏名・' +
+        '在留資格・在留期間等を確認し、厚生労働大臣（ハローワーク）へ届け出ることが義務付けられている（労働施策総合推進法28条）。' +
+        '届出を怠った場合や虚偽の届出を行った場合は、30万円以下の罰金の対象となる。',
+      authority: '所管: 厚生労働省（労働施策総合推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/todokede/index.html', type: 'government', label: '厚生労働省 外国人雇用状況の届出について' },
+      { url: 'https://www.mhlw.go.jp/content/001261965.pdf', type: 'government', label: '厚生労働省 外国人労働者の雇用管理ルール' },
+      { url: 'https://www.keishicho.metro.tokyo.lg.jp/kurashi/anzen/live_in_tokyo/tekiseikoyo.html', type: 'municipality', label: '警視庁 外国人の適正雇用について' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-postpartum-paternity-leave',
+      domain: 'labor',
+      title: '出生時育児休業（産後パパ育休）',
+      statement:
+        '出生時育児休業（産後パパ育休）は、改正育児・介護休業法により2022年10月1日に創設された、子の出生後8週間以内に4週間（28日）まで' +
+        '取得できる、通常の育児休業とは別の休業制度である。原則2回まで分割取得でき、労使協定を締結している場合は休業中に一定の範囲で就業することも可能である。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_27491.html', type: 'government', label: '厚生労働省 産後パパ育休の施行' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/paternity/', type: 'government', label: '厚生労働省 産後パパ育休 特設サイト' },
+      { url: 'https://ryouritsu.mhlw.go.jp/qa02_20.html', type: 'government', label: '厚生労働省 産後パパ育休とは Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-money-lending',
+      domain: 'legal',
+      title: '貸金業法（登録制と総量規制）',
+      statement:
+        '貸金業を営むには、2以上の都道府県に営業所等を設置する場合は内閣総理大臣（財務局長）、1つの都道府県内のみの場合はその都道府県知事の' +
+        '登録を受ける必要がある（貸金業法3条）。また、貸金業者からの個人の借入総額は原則として年収の3分の1を超えることができない「総量規制」が設けられている。',
+      authority: '所管: 金融庁（貸金業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/kashikin/kihon.html', type: 'government', label: '金融庁 貸金業法のキホン' },
+      { url: 'https://laws.e-gov.go.jp/law/358AC1000000032', type: 'government', label: 'e-Gov法令検索 貸金業法（3条）' },
+      { url: 'https://www.j-fsa.or.jp/association/money_lending/law/annual_income.php', type: 'operator', label: '日本貸金業協会 総量規制（年収の3分の1）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-interest-limit',
+      domain: 'legal',
+      title: '利息制限法の上限金利',
+      statement:
+        '利息制限法では、金銭消費貸借の利息の上限が元本の額に応じて定められており、元本10万円未満は年20%、元本10万円以上100万円未満は' +
+        '年18%、元本100万円以上は年15%である。これを超える部分の利息の約定は無効となる（出資法の上限金利・年20%とは別の法律で、利息制限法は民事上の無効を定める）。',
+      authority: '所管: 法務省（利息制限法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/329AC0000000100', type: 'government', label: 'e-Gov法令検索 利息制限法（1条）' },
+      { url: 'https://www.fsa.go.jp/policy/kashikin/kihon.html', type: 'government', label: '金融庁 貸金業法のキホン（利息制限法と出資法）' },
+      { url: 'https://www.j-flec.go.jp/public/learn/glossary/r_risoku_seigenho/', type: 'government', label: 'J-FLEC 用語集 利息制限法' },
+    ],
+  },
 ];
 // Stryker restore all
