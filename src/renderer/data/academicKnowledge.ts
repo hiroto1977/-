@@ -2911,5 +2911,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://soztheo.com/sociology/key-works-in-sociology/michel-foucault-discipline-and-punish-1975/', type: 'reference', label: 'SozTheo — Michel Foucault, Discipline and Punish (1975)（規律権力・自己監視の解説）' },
     ],
   },
+  {
+    id: 'econ-ppp',
+    discipline: 'economics',
+    title: '購買力平価（PPP）',
+    statement:
+      '2国間の為替レートは、長期的には各国通貨の購買力が等しくなる水準（同一の財・サービスのバスケットが両国で同じ価格になる水準）に決まる、とする国際金融の理論。一物一価の法則（law of one price）を一国の物価水準全体に拡張したもの。' +
+      '絶対的購買力平価（absolute PPP）は為替レート＝自国物価÷外国物価とし、相対的購買力平価（relative PPP）は為替レートの変化率が2国のインフレ率の差（インフレ格差）に等しくなるとする。スウェーデンの経済学者グスタフ・カッセルが第一次大戦後（1918年頃、国際連盟向けの覚書）に近代的な形で定式化・普及させた。' +
+      '実際には貿易されない財（非貿易財）・輸送費・関税・生産性格差などのため、短期的には市場為替レートから大きく乖離する（エコノミスト誌の「ビッグマック指数」は身近な例）。GDPの国際比較では市場為替レートでなくPPP換算が用いられ、IMFやOECDはこのPPPウェイトを採用する。',
+    keyFigures: '2通貨の購買力が等しくなる為替水準／一物一価の法則の一般化／絶対的PPP(為替=物価比)と相対的PPP(為替変化率=インフレ率差)／G.カッセルが定式化(1918頃)／ビッグマック指数・GDPのPPP換算',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/en/Publications/fandd/issues/Series/Back-to-Basics/Purchasing-Power-Parity-PPP', type: 'government', label: 'IMF, Finance & Development "Back to Basics: Purchasing Power Parity — Weights Matter" (Tim Callen)' },
+      { url: 'https://www.bankofcanada.ca/wp-content/uploads/2010/06/lafrance_e.pdf', type: 'government', label: 'Bank of Canada Review, "Purchasing-Power Parity: Definition, Measurement, and Interpretation" (Lafrance & Schembri)' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Cassel.html', type: 'reference', label: 'The Library of Economics and Liberty (Econlib), biography of Gustav Cassel' },
+      { url: 'https://en.wikipedia.org/wiki/Purchasing_power_parity', type: 'reference', label: 'Wikipedia, "Purchasing power parity"' },
+    ],
+  },
+  {
+    id: 'econ-arbitrage',
+    discipline: 'economics',
+    title: '裁定取引（アービトラージ）と一物一価の法則',
+    statement:
+      '同一の財や金融資産が異なる市場で異なる価格で取引されているとき、安い方で買い高い方で売ることで、リスクなしに価格差から利益（サヤ）を得る取引を裁定取引（アービトラージ）という。' +
+      '多数の裁定者がこれを行うと、安い市場では需要増で価格が上がり高い市場では供給増で価格が下がるため、価格差は解消し、最終的に同一物の価格は1つに収束する。これを「一物一価の法則（law of one price）」という。裁定機会が存在しないこと（無裁定, no-arbitrage）は、金融資産の合理的価格づけ（デリバティブ評価・資本資産評価・購買力平価など）の基礎的前提となっている。' +
+      '現実には取引費用・情報の非対称・空売り制約等のため完全には成立せず、一物一価はむしろ価格差が一時的にしか続かない「引力的均衡（attractor equilibrium）」として理解される。',
+    keyFigures: '裁定＝同一物の市場間価格差からリスクなしに利益（買い低・売り高）／裁定により価格差が解消し一物一価へ収束／無裁定(no-arbitrage)が資産価格づけ(デリバティブ・PPP・金利平価等)の基礎前提／取引費用等で現実には不完全',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/what-is-arbitrage', type: 'reference', label: 'Britannica Money — "What Is Arbitrage?"（裁定の定義・リスクフリー利益・市場間価格差の解消）' },
+      { url: 'https://eh.net/encyclopedia/the-law-of-one-price/', type: 'academic', label: 'EH.net Encyclopedia — "The Law of One Price"（裁定と一物一価、取引費用による不完全性）' },
+      { url: 'https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr216.pdf', type: 'government', label: 'Federal Reserve Bank of New York Staff Report No. 216 — Arbitrage Pricing Theory（無裁定と資産価格づけ）' },
+      { url: 'https://en.wikipedia.org/wiki/Law_of_one_price', type: 'reference', label: 'Wikipedia — "Law of one price"' },
+    ],
+  },
+  {
+    id: 'mgmt-okr',
+    discipline: 'management',
+    title: 'OKR（目標と主要な結果）',
+    statement:
+      '組織・チーム・個人の目標を整合させ進捗を測る目標管理のフレームワーク。定性的で野心的な「目標（Objective）＝どこを目指すか」と、その達成度を測る2〜5個程度の定量的な「主要な結果（Key Results）＝どう測るか」をセットで設定する。' +
+      'インテルのアンディ・グローブがピーター・ドラッカーの目標管理（MBO）を発展させて生み出し（『High Output Management』1983）、同社出身の投資家ジョン・ドーアがGoogleに導入したことで広く普及した（『Measure What Matters』2017）。' +
+      '四半期など短いサイクルで設定・評価し、全社の目標を上から下へ連結して透明性を高める。野心的な「ストレッチゴール」を奨励し、達成率6〜7割を健全とみなすことが多く、人事評価とは切り離して運用するのが原則とされる。',
+    keyFigures: 'Objective(定性・野心的)＋Key Results(定量2〜5個)／A.グローブ(インテル)がMBOを発展(High Output Management 1983)／J.ドーアがGoogleに導入し普及(Measure What Matters 2017)／短サイクル・透明な連結・ストレッチゴール・評価とは分離',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://rework.withgoogle.com/intl/en/guides/set-goals-with-okrs', type: 'reference', label: 'Google re:Work — Guides: Set goals with OKRs（実務一次資料）' },
+      { url: 'https://en.wikipedia.org/wiki/Objectives_and_key_results', type: 'reference', label: 'Wikipedia — Objectives and key results（定義・グローブ/ドーア由来）' },
+      { url: 'https://www.ibm.com/think/topics/okrs', type: 'reference', label: 'IBM — What are objectives and key results (OKRs)?（構造・MBOとの関係）' },
+      { url: 'https://www.whatmatters.com/faqs/okr-meaning-definition-example', type: 'reference', label: 'What Matters（John Doerr）— OKR Meaning, Definition & Examples' },
+    ],
+  },
+  {
+    id: 'human-social-proof',
+    discipline: 'human-science',
+    title: '社会的証明',
+    statement:
+      '何が正しい行動か不確実・曖昧な状況で、人は他者（特に多数派や、自分と似た他者）の行動を「正しさの証拠」とみなし、それに倣って自分の行動を決める傾向。情報的社会的影響（informational social influence）とも呼ばれる。' +
+      '社会心理学者ロバート・チャルディーニが著書『影響力の武器（Influence、1984）』で示した説得・承諾の6原理（返報性／コミットメントと一貫性／社会的証明／好意／権威／希少性）の一つ。行列のできる店に並ぶ、レビューの星評価や「累計○万個販売」を信頼する、笑い声の効果音（ラフトラック）で面白く感じる、などが例。状況が曖昧なときや、自分と似た他者の行動であるときに特に強く働く。' +
+      'マーケティングや行動変容に応用される一方、緊急時に皆が傍観して誰も動かない「多元的無知」による傍観者効果の一因にもなる。',
+    keyFigures: '他者(特に多数派・類似他者)の行動を正しさの証拠とみなし倣う／R.チャルディーニ『影響力の武器』(1984)の説得6原理の一つ／情報的社会的影響、状況が曖昧・類似他者で強まる／レビュー・行列・ラフトラック／多元的無知・傍観者効果と関連（同調(アッシュ)とは別概念）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Social_proof', type: 'reference', label: 'Wikipedia — Social proof（定義・情報的社会的影響・多元的無知）' },
+      { url: 'https://news.wpcarey.asu.edu/20070103-gentle-science-persuasion-part-three-social-proof', type: 'academic', label: 'Arizona State University, W. P. Carey News — The gentle science of persuasion: Social proof' },
+      { url: 'https://link.springer.com/article/10.1007/s11229-014-0435-0', type: 'academic', label: 'Synthese (Springer) — Pluralistic ignorance in the bystander effect（社会的証明と傍観者効果）' },
+      { url: 'https://www.media-studies.ca/articles/influence_ch4.htm', type: 'reference', label: 'Robert Cialdini, Influence, Ch.4 "Social Proof"（原典・ラフトラック例）' },
+    ],
+  },
+  {
+    id: 'bizlaw-e-signature',
+    discipline: 'business-law',
+    title: '電子署名法',
+    statement:
+      '電子文書（電磁的記録）に付された電子署名の法的効力を定める法律。正式名称は「電子署名及び認証業務に関する法律」（平成12年法律第102号、2000年〔平成12年〕公布、2001年〔平成13年〕4月1日施行）。' +
+      '本人による一定の電子署名が行われている電磁的記録は、真正に成立したものと推定される（法3条）。これは、私文書に本人またはその代理人の署名・押印があるときに真正成立を推定する民事訴訟法228条4項に対応する規定で、電子契約の証拠力を支える。所管は総務省・法務省・経済産業省の共管。あわせて、本人確認方法など一定の基準を満たす認証業務を国が認定する制度（特定認証業務の認定／認定認証業務）を設ける。' +
+      '近年、クラウド型（立会人型・事業者署名型）電子署名サービスの普及を受け、主務三省は2020年（令和2年）にQ&Aを公表し、サービス提供事業者が利用者の意思に基づき行う電子署名も一定の要件下で3条の推定が及びうるとの解釈を示した。',
+    keyFigures: '正式名称＝電子署名及び認証業務に関する法律（平成12年法律102号）／2000年公布・2001年4月施行／本人の電子署名ある電磁的記録は真正成立を推定(3条)／民訴228条4項に対応／総務省・法務省・経産省共管／特定認証業務の認定／2020年に立会人型クラウド署名の解釈公表',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/412AC0000000102', type: 'government', label: 'e-Gov法令検索 電子署名及び認証業務に関する法律（平成12年法律第102号）条文' },
+      { url: 'https://www.moj.go.jp/MINJI/minji32.html', type: 'government', label: '法務省「電子署名法の概要と認定制度について」' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/top/denshi_syomei/index.html', type: 'government', label: '総務省「電子署名及び認証業務に関する法律の施行について」' },
+    ],
+  },
+  {
+    id: 'infosoc-simulacra',
+    discipline: 'information-sociology',
+    title: 'シミュラークルとハイパーリアリティ',
+    statement:
+      'フランスの思想家ジャン・ボードリヤールが『シミュラークルとシミュレーション』（Simulacres et Simulation, 1981）で展開した概念。シミュラークル（simulacre）とは、もとになる現実（オリジナル）を持たない「模像・コピー」を指す。' +
+      '現代の消費社会・メディア社会では、記号やイメージが現実を写すのではなく、現実から切り離されて自己増殖し、オリジナルなき複製（シミュラークル）が「現実そのもの」として通用する。こうして模像と現実の区別が消え、メディアが作り出すイメージが現実より現実らしく感じられる状態を「ハイパーリアリティ（hyperreality、モデルによって生成される、起源も現実もない実在）」と呼ぶ。' +
+      'ボードリヤール自身はテーマパーク（ディズニーランド）を例に、それが「現実」幻想を支える装置だと論じた。広告やメディア・イメージを含め、現代の情報社会における現実とイメージの関係を批判的に問う枠組みとなっている。',
+    keyFigures: 'J.ボードリヤール『シミュラークルとシミュレーション』1981／シミュラークル＝オリジナルなき模像／記号・イメージが自己増殖し現実を代替（「現実の砂漠」）／ハイパーリアリティ＝模像が現実より現実らしい状態／ディズニーランド・広告',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/baudrillard/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — "Jean Baudrillard"（simulation／hyperreality を解説）' },
+      { url: 'https://www.britannica.com/biography/Jean-Baudrillard', type: 'reference', label: 'Encyclopaedia Britannica — "Jean Baudrillard"（hyperreal／simulacra／"desert of the real"）' },
+      { url: 'https://mitpress.mit.edu/9780936756028/simulations/', type: 'academic', label: 'MIT Press — Baudrillard 著作の刊行情報（出版社一次情報）' },
+    ],
+  },
 ];
 // Stryker restore all
