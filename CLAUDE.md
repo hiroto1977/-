@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **65 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **66 services** through a unified,
 category-grouped sidebar (おすすめ / 分析・ツール / 外部サービス連携). Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local

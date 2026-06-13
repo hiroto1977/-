@@ -63,6 +63,7 @@ import { fetchFundingSnapshot } from './funding';
 import { fetchFreeeSnapshot } from './freee';
 import { fetchConnectorsSnapshot } from './connectors';
 import { fetchLinuxSnapshot } from './linux';
+import { fetchComplianceSnapshot } from './compliance';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -135,6 +136,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   freee: fetchFreeeSnapshot,
   connectors: fetchConnectorsSnapshot,
   linux: fetchLinuxSnapshot,
+  compliance: fetchComplianceSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -217,6 +219,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'connectors',
   // Linux システムモニター: Electron main の `os` から実値を読む。認証不要。
   'linux',
+  // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
+  'compliance',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
