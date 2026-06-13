@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="6590" height="620" viewBox="0 0 6590 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="6590" height="620" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="7310" height="620" viewBox="0 0 7310 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="7310" height="620" fill="#0f172a"/>
 <text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
 <text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
-<line x1="60" y1="360" x2="6550" y2="360" stroke="#475569" stroke-width="1.5"/>
-<line x1="60" y1="334" x2="6550" y2="334" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="386" x2="6550" y2="386" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="360" x2="7270" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="7270" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="7270" y2="386" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
 <text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
-<line x1="60" y1="308" x2="6550" y2="308" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="412" x2="6550" y2="412" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="308" x2="7270" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="7270" y2="412" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
-<line x1="60" y1="282" x2="6550" y2="282" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="438" x2="6550" y2="438" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="282" x2="7270" y2="282" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="438" x2="7270" y2="438" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="286" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="442" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="272" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
@@ -287,9 +287,39 @@
 <text x="6490" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1993</text>
 <text x="6490" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成5年</text>
 <text x="6490" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6490 526)">クリントン米大統領就任（1月）、米景気回復が本格化</text>
+<rect x="6588" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6588" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6610" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1994</text>
+<text x="6610" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成6年</text>
+<text x="6610" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6610 526)">NAFTA（北米自由貿易協定）発効（1/1）</text>
+<rect x="6708" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6708" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6730" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1995</text>
+<text x="6730" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成7年</text>
+<text x="6730" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6730 526)">WTO（世界貿易機関）発足（1/1）</text>
+<rect x="6828" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6828" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6850" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1996</text>
+<text x="6850" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成8年</text>
+<text x="6850" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6850 526)">第1次橋本龍太郎内閣の経済運営／一時的な景気回復</text>
+<rect x="6948" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6948" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6970" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1997</text>
+<text x="6970" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成9年</text>
+<text x="6970" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6970 526)">消費税率を3%→5%へ引き上げ（4/1）—消費・景気を圧迫</text>
+<rect x="7068" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="7068" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="7090" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1998</text>
+<text x="7090" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成10年</text>
+<text x="7090" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 7090 526)">ロシア財政危機—ルーブル切り下げ・デフォルト・対外債務モラトリアム（8月）</text>
+<rect x="7188" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="7188" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="7210" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1999</text>
+<text x="7210" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成11年</text>
+<text x="7210" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 7210 526)">ユーロ導入（1/1、11か国）</text>
 <rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
 <text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
 <rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
 <text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
-<text x="6550" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+<text x="7270" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
 </svg>

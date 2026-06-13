@@ -1231,6 +1231,144 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.brookings.edu/articles/retrospective-on-american-economic-policy-in-the-1990s/', type: 'academic', label: 'Brookings — Retrospective on American Economic Policy in the 1990s' },
     ],
   },
+  {
+    year: 1994,
+    era: '平成6年',
+    world:
+      '1月1日にNAFTA（北米自由貿易協定）が発効し北米自由貿易圏が始動した。米FRB（グリーンスパン議長）が3月から年末にかけてFF金利を3.0%から5.5%へ断続的に引き上げ、油断していた債券市場が暴落した（「1994年の債券大虐殺」）。12月にはメキシコがペソを切り下げて「テキーラ危機」が勃発し新興国市場に波及した。DJIAは年末3,834.44で越年した。',
+    japan:
+      'バブル崩壊後の調整が続き、1993年秋からの景気回復は力強さを欠いて「回復の遅れ」が長引いた。1994年半ばから円高が再燃し、製造業の海外移転（空洞化）懸念が強まった。政治は混乱し、羽田内閣（4〜6月、戦後最短）の後、6月30日に村山富市を首相とする自民・社会・さきがけの「自社さ」連立内閣が発足した。',
+    keyEvents: [
+      'NAFTA（北米自由貿易協定）発効（1/1）',
+      'FRBが年内に連続利上げ（FF金利3.0%→5.5%）—「債券大虐殺」',
+      '羽田内閣（戦後最短）→ 村山内閣（自社さ連立）発足（6/30）',
+      '円高の再燃と製造業の空洞化懸念',
+      'メキシコ・ペソ危機（テキーラ危機、12月）',
+    ],
+    risingSectors: ['（定性）円高メリットを受ける輸入・内需関連（業種別ランキングの確証なし）'],
+    decliningSectors: ['（定性）円高直撃の輸出製造業（自動車・電機）と国内空洞化圧力、債券・金利感応資産（債券大虐殺）、メキシコ等の新興国資産。'],
+    caveats: 'DJIA年末値3834.44（12/30終値・年間約+2.1%）は独立2源で一致。日経平均の1994年末終値は独立2源での一致を確認できず捏造回避のためnull。円の戦後最高値（約79円）は1994年ではなく1995年春の出来事。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreserve.gov/fomc/19940418default.htm', type: 'government', label: '米FRB — FOMC 1994年声明（同年の金融引き締め）' },
+      { url: 'https://en.wikipedia.org/wiki/Mexican_peso_crisis', type: 'reference', label: 'Wikipedia — Mexican peso crisis（1994/12 テキーラ危機）' },
+      { url: 'https://en.wikipedia.org/wiki/North_American_Free_Trade_Agreement', type: 'reference', label: 'Wikipedia — NAFTA（1994/1/1発効）' },
+    ],
+  },
+  {
+    year: 1995,
+    era: '平成7年',
+    world:
+      '1月1日にWTO（世界貿易機関）が発足し、GATT体制を引き継ぐ多角的貿易体制の中核となった。米国は景気拡大が続き株式市場は大きく上昇、DJIAは年末5,117.12（年間約+33.5%）で越年した。前年末のメキシコ通貨危機の余波が新興国に残った。',
+    japan:
+      '1月17日に阪神・淡路大震災（M7.3、死者6,400人超）、3月20日に地下鉄サリン事件が発生し社会に衝撃を与えた。4月には為替が一時1ドル=79円75銭の戦後最高値（超円高）を記録し輸出企業を圧迫した。住専（住宅金融専門会社）の不良債権問題が深刻化し、大和銀行ニューヨーク支店の巨額損失事件も発覚して金融システム不安が高まった。',
+    keyEvents: [
+      'WTO（世界貿易機関）発足（1/1）',
+      '阪神・淡路大震災（1/17、M7.3）',
+      '地下鉄サリン事件（3/20）',
+      '為替が一時1ドル=79円75銭の戦後最高値（4月、超円高）',
+      '住専の不良債権問題深刻化／大和銀行NY支店巨額損失事件',
+    ],
+    risingSectors: ['（定性）震災復興に伴う建設・土木需要（業種別ランキングの確証なし）、米国の株式・テクノロジー関連'],
+    decliningSectors: ['（定性・日本）超円高直撃の輸出製造業、不良債権を抱える銀行・住専・金融セクター。'],
+    caveats: 'DJIA年末値5117.12（12/29終値、12/30-31は週末・年間約+33.5%）は独立2源で一致。日経平均の1995年末終値は独立2源での一致を確認できず捏造回避のためnull。円の戦後最高値79円75銭は1995/4の出来事。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.wto.org/english/thewto_e/whatis_e/inbrief_e/inbr_e.htm', type: 'government', label: 'WTO — 世界貿易機関の概要（1995/1/1発足）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E9%98%AA%E7%A5%9E%E3%83%BB%E6%B7%A1%E8%B7%AF%E5%A4%A7%E9%9C%87%E7%81%BD', type: 'reference', label: 'Wikipedia（日本語）— 阪神・淡路大震災（1995/1/17）' },
+      { url: 'https://www.statmuse.com/money/ask/dow-jones-close-1995', type: 'media', label: 'StatMuse — DJIA 1995年末終値 5,117.12（12/29）' },
+    ],
+  },
+  {
+    year: 1996,
+    era: '平成8年',
+    world:
+      '米国は景気拡大が継続し、IT・ハイテク株を中心とした強気相場が進行した。12月5日にFRB議長グリーンスパンが「irrational exuberance（根拠なき熱狂）」と発言し資産価格高騰へ警戒を示したが、相場はその後も上昇を続けた。DJIAは年間約+26%上昇して年末6,448.26で越年した。',
+    japan:
+      '1995年度の強力な金融・財政政策に支えられ一時的・循環的な景気回復局面となった（1〜3月期は特殊要因込みで高めの成長）。橋本龍太郎内閣のもとで住専処理に公的資金6,850億円を投入し「住専国会」が世論の反発を招いた。11月には金融システム改革「日本版金融ビッグバン」構想が表明され、3月には薬害エイズ訴訟が和解した。',
+    keyEvents: [
+      '第1次橋本龍太郎内閣の経済運営／一時的な景気回復',
+      '薬害エイズ訴訟の和解成立（3月）',
+      '住専処理に公的資金6,850億円を投入（「住専国会」）',
+      '日本版金融ビッグバン構想を表明（11月）',
+      'グリーンスパン「根拠なき熱狂」発言（12/5）',
+    ],
+    risingSectors: ['（米国）IT・PC・ソフトウェア・インターネット関連（株式ブームの牽引）、（日本）円安で採算改善した輸出製造業・大企業（定性）'],
+    decliningSectors: ['（日本）不良債権を抱えた金融セクター（住専問題）、不動産（地価下落・資産デフレ継続）。'],
+    caveats: 'DJIA年末値6448.26（年間+26.01%）と日経平均年末値19361.35（大納会、年内高値は6月の約22,666円）は独立2源以上で一致。1〜3月期の高成長は特殊要因込みで通年成長率（政府推計で概ね+2〜3%台）とは区別が必要。住専6,850億円は会計検査院・国会記録で確認。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/research/past_release/haku96.htm', type: 'government', label: '日本銀行 — 1996年度の金融および経済の動向' },
+      { url: 'https://report.jbaudit.go.jp/org/h08/1996-h08-0473-0.htm', type: 'government', label: '会計検査院 — 平成8年度決算検査報告（住専6,850億円）' },
+      { url: 'https://en.wikipedia.org/wiki/Irrational_exuberance', type: 'reference', label: 'Wikipedia — Irrational exuberance（グリーンスパン1996/12/5講演）' },
+    ],
+  },
+  {
+    year: 1997,
+    era: '平成9年',
+    world:
+      '世界経済の分水嶺となった年。米国は好況下で株高が続いた（DJIA年間+22.6%）一方、7月2日のタイバーツ変動相場制移行を起点にアジア通貨危機が発生しタイ・インドネシア・韓国へ波及した（IMF支援要請へ）。7月1日に香港が英国から中国へ返還され、10月27日にはアジア発の動揺で米株が急落した。',
+    japan:
+      '4月1日に消費税が3%から5%へ引き上げられ、特別減税の打ち切りと相まって個人消費が腰折れし景気後退局面に入った。年後半は金融システム危機が表面化し、11月に三洋証券破綻（11/3）・北海道拓殖銀行破綻（11/17）・山一證券自主廃業（11/24）と大手金融機関が連鎖破綻した。日経平均は年末15,258円と前年末比約-21%の大幅下落となった。',
+    keyEvents: [
+      '消費税率を3%→5%へ引き上げ（4/1）—消費・景気を圧迫',
+      '香港返還（7/1）',
+      'タイバーツ変動相場制移行（7/2）—アジア通貨危機の起点',
+      '金融危機—三洋証券(11/3)・北海道拓殖銀行(11/17)・山一證券自主廃業(11/24)',
+      'NY株式市場ミニ・クラッシュ（10/27、アジア危機の波及）',
+    ],
+    risingSectors: ['（米国）大型ハイテク・IT関連、金融・消費関連（好況と株高の恩恵、定性）'],
+    decliningSectors: ['（日本）銀行・証券など金融セクター（連鎖破綻）、小売・個人消費関連（増税後の反動）。（アジア新興国）通貨・金融・不動産（通貨危機）。'],
+    caveats: 'DJIA年末値7908.24（年間+22.6%）は独立2源で一致。日経平均年末値は整数部15,258で複数源一致（端数15,258.74は単一源依存のため概数扱い、前年比約-21%）。アジア通貨危機の起点はタイバーツのフロート移行=1997/7/2。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/asian-financial-crisis', type: 'government', label: 'Federal Reserve History — Asian Financial Crisis（1997）' },
+      { url: 'https://money.cnn.com/1997/12/31/markets/yearend/', type: 'media', label: 'CNN Money — 1997 market in review（DJIA年末7,908.24・+22.6%）' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2011/02/asian-financial-crisis-1997-1998/', type: 'government', label: 'San Francisco Fed — The Asian Financial Crisis of 1997-98' },
+    ],
+  },
+  {
+    year: 1998,
+    era: '平成10年',
+    world:
+      '1997年アジア通貨危機の余波が世界に波及した年。8月にロシアがルーブル切り下げと国内債デフォルト・対外債務モラトリアムを宣言し、これが大手ヘッジファンドLTCMの巨額損失を招いて9月23日にNY連銀監督下で14金融機関による救済再編（約36.5億ドル）が実施された。新興国からの資本逃避と信用収縮が世界的に連鎖したが、米株は年間では+約16%上昇した。',
+    japan:
+      '消費税引き上げ・アジア通貨危機・金融機関連鎖破綻を引きずり、本格的なデフレと景気後退（マイナス成長）に陥った。金融再生法などが成立し、10月23日に日本長期信用銀行、12月14日に日本債券信用銀行がそれぞれ同法に基づく特別公的管理（一時国有化）となった（戦後初の銀行国有化）。',
+    keyEvents: [
+      'ロシア財政危機—ルーブル切り下げ・デフォルト・対外債務モラトリアム（8月）',
+      'LTCM救済—NY連銀監督下で14金融機関が約36.5億ドルを資本注入（9/23）',
+      '日本長期信用銀行を特別公的管理＝一時国有化（10/23）—戦後初の銀行国有化',
+      '日本債券信用銀行を特別公的管理＝一時国有化（12/14）',
+      '日本が本格的デフレ・マイナス成長に',
+    ],
+    risingSectors: ['（米国）情報技術・インターネット関連、危機時の「質への逃避」で米国債等の安全資産（定性）'],
+    decliningSectors: ['（日本）銀行・金融（不良債権・連鎖破綻）。（新興国）ロシア関連資産・新興国市場全般（デフォルト・資本逃避）。'],
+    caveats: 'DJIA年末値9181.43は独立2源（CBS News/CNN Money）で一致。日経平均の1998年末終値は独立2源での一致を確認できず捏造回避のためnull。長銀1998/10/23・日債銀1998/12/14の一時国有化は日銀・首相官邸の一次資料で確認。ロシアの債務規模・LTCM救済額は出典で表現が異なり概数扱い。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/about/press/danwa/dan9810a.htm', type: 'government', label: '日本銀行 — 日本長期信用銀行の特別公的管理に関する総裁談話（1998/10）' },
+      { url: 'https://japan.kantei.go.jp/souri/981214nisaiken.html', type: 'government', label: '首相官邸 — 日本債券信用銀行の一時国有化に関する声明（1998/12/14）' },
+      { url: 'https://en.wikipedia.org/wiki/1998_Russian_financial_crisis', type: 'reference', label: 'Wikipedia — 1998 Russian financial crisis' },
+    ],
+  },
+  {
+    year: 1999,
+    era: '平成11年',
+    world:
+      '1月1日に欧州単一通貨ユーロが11か国で導入された。米国ではIT・ドットコム株を中心とした株高が加速し、3月29日にDJIAが史上初めて1万ドルの大台を突破、年末は11,497.12（年間約+25%）で越年した。アジア通貨危機からの回復が進んだ。',
+    japan:
+      'デフレが定着し（GDPデフレーターが−1.2%）、景気は財政刺激に依存した弱い回復にとどまった。日銀は2月12日にゼロ金利政策を導入し「デフレ懸念が払拭されるまで」継続するとコミットした。金融再編が加速し、8月20日に第一勧銀・富士・興銀が経営統合（みずほ）を、10月14日に住友・さくらが統合（後の三井住友）を表明、2月22日にはNTTドコモがiモードを開始してモバイルネットが普及し始めた。',
+    keyEvents: [
+      'ユーロ導入（1/1、11か国）',
+      '日銀がゼロ金利政策を導入（2/12）',
+      'NTTドコモがiモードを開始（2/22）',
+      'DJIAが史上初の1万ドル突破（3/29）',
+      '金融再編—みずほ統合表明(8/20)・住友/さくら→三井住友統合表明(10/14)',
+    ],
+    risingSectors: ['（米国・日本）IT・インターネット・携帯（iモード）関連（ドットコム/ITブーム）、米株式全般（定性）'],
+    decliningSectors: ['（日本）デフレ下で価格下落が続く広範な業種、再編・不良債権処理下の銀行（定性）。'],
+    caveats: 'DJIA年末値11497.12（年間約+25%）とDJIAの1万ドル初突破（3/29）は独立2源で一致。日経平均の1999年末終値は集約サイトが一律WebFetch 403で独立2源確認できず捏造回避のためnull（通称18,934.34だが未確証）。ゼロ金利導入2/12・iモード2/22・みずほ8/20・三井住友10/14は一次/複数源で確認。1999暦年の実質成長率は出典間で不一致のため定性傾向に留める。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/announcements/release_1999/k990212c.htm/', type: 'government', label: '日本銀行 — 1999/2/12 金融政策決定会合の決定（ゼロ金利政策導入）' },
+      { url: 'https://en.wikipedia.org/wiki/Euro', type: 'reference', label: 'Wikipedia — Euro（1999/1/1導入）' },
+      { url: 'https://www.federalreservehistory.org/essays/great-inflation', type: 'government', label: 'Federal Reserve History — 1990年代の米経済・株高の背景' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1307,6 +1445,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1991: { djiaYearEnd: 3168.83, nikkeiYearEnd: 22983.77, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1992: { djiaYearEnd: 3301.11, nikkeiYearEnd: 16924, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1993: { djiaYearEnd: 3754.09, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1994: { djiaYearEnd: 3834.44, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1995: { djiaYearEnd: 5117.12, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1996: { djiaYearEnd: 6448.26, nikkeiYearEnd: 19361.35, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1997: { djiaYearEnd: 7908.24, nikkeiYearEnd: 15258, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1998: { djiaYearEnd: 9181.43, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1999: { djiaYearEnd: 11497.12, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
