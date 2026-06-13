@@ -1065,6 +1065,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.sendaicci.or.jp/news/support-measures/', type: 'operator', label: '仙台商工会議所 補助金・助成金情報' },
     ],
   },
+  {
+    id: 'subsidy-special-disability-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '特別障害者手当',
+    authority: '厚生労働省・市区町村',
+    statement:
+      '精神又は身体に著しく重度の障害があり、日常生活において常時特別の介護を必要とする在宅の20歳以上の者に支給される国の手当（支給事務は市区町村）。' +
+      '月額は物価スライドで毎年度改定される。本人・配偶者・扶養義務者の前年所得による所得制限があり、施設入所者や病院・診療所に継続して3か月を超えて' +
+      '入院している者は対象外。最新の金額・所得制限額は市区町村窓口で要確認。',
+    application:
+      'お住まいの市区町村（障害福祉担当課・福祉事務所）の窓口で認定請求書に医師の所定様式の診断書・戸籍・住民票・所得関係書類等を添えて提出する。認定後、原則として2月・5月・8月・11月に前月までの3か月分がまとめて振り込まれる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/shougaihoken/jidou/tokubetsu.html', type: 'government', label: '厚生労働省 特別障害者手当について' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=82095000&dataType=0', type: 'government', label: '厚生労働省 障害児福祉手当及び特別障害者手当の支給に関する省令' },
+      { url: 'https://www.pref.hiroshima.lg.jp/soshiki/62/tokusyou.html', type: 'municipality', label: '広島県 特別障害者手当' },
+    ],
+  },
+  {
+    id: 'subsidy-funeral-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '埋葬料・葬祭費（公的医療保険）',
+    authority: '厚生労働省・全国健康保険協会・市区町村',
+    statement:
+      '被保険者等が死亡したとき、健康保険では埋葬を行った者に「埋葬料」（被扶養者死亡時は被保険者に「家族埋葬料」）が支給され、協会けんぽでは原則として' +
+      '定額5万円。国民健康保険・後期高齢者医療制度では葬祭を行った者（喪主）に「葬祭費」が支給され、金額は保険者・自治体により概ね3万〜7万円など異なる' +
+      '（最新で要確認）。申請期限は通常、埋葬・葬祭を行った日（又は翌日）から2年で時効となる。',
+    application:
+      '健康保険加入者は加入していた保険者（協会けんぽ各支部／健保組合）へ「埋葬料（費）支給申請書」等を提出。国保・後期高齢者医療制度の加入者は、亡くなった方の住所地の市区町村役場の担当窓口へ申請する。金額・必要書類は保険者・自治体ごとに異なるため各窓口で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.kyoukaikenpo.or.jp/g3/cat320/sb3170/sbb31711/1956-20887/', type: 'operator', label: '協会けんぽ 埋葬料（費）' },
+      { url: 'https://www.city.setagaya.lg.jp/02060/329.html', type: 'municipality', label: '世田谷区 葬祭費の支給（国民健康保険）' },
+      { url: 'https://www.city.tokyo-nakano.lg.jp/kurashi/koukikourei/sosaihi.html', type: 'municipality', label: '中野区 後期高齢者医療 葬祭費' },
+    ],
+  },
+  {
+    id: 'subsidy-hyogo',
+    level: 'prefecture',
+    domain: 'business',
+    name: '起業家支援事業助成金（兵庫県）',
+    authority: '兵庫県（産業労働部）／申請窓口: 公益財団法人ひょうご産業活性化センター',
+    statement:
+      '兵庫県内で新たに起業する者や第二創業を目指す事業者のビジネスプランを募集し、起業に要する経費の一部を助成する県の代表的な創業・中小企業支援制度' +
+      '（都道府県レベルの代表例）。一般事業枠のほかふるさと・事業承継枠、若者枠、社会的事業枠等が設けられている。助成上限額・補助率・対象経費・募集期間は' +
+      '年度ごとに変動するため、必ず最新の募集要項及び県・センター公式で要確認。',
+    application:
+      '公益財団法人ひょうご産業活性化センター（創業推進部 新事業課）が申請・相談窓口。募集要項・申請様式はセンター公式サイトから取得し、募集期間内に提出する。年度により募集枠・締切が異なるため公式の最新情報を要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.pref.hyogo.lg.jp/sr10/kigyouippann.html', type: 'municipality', label: '兵庫県 起業家支援事業（一般事業枠）' },
+      { url: 'https://web.hyogo-iic.ne.jp/shinjigyo/kigyoka', type: 'operator', label: 'ひょうご産業活性化センター 起業家支援事業' },
+      { url: 'https://hojyokin-portal.jp/subsidies/55660', type: 'media', label: '兵庫県 起業家支援事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-fukuoka-pref',
+    level: 'prefecture',
+    domain: 'business',
+    name: '福岡県中小企業生産性向上・賃上げ緊急支援補助金',
+    authority: '福岡県（商工部）／伴走支援: 福岡県中小企業生産性向上支援センター',
+    statement:
+      '福岡県が実施する代表的な県レベルの中小企業向け補助金の一つで、県内中小企業等が省力化・省エネ化により生産性を向上させ賃上げを行う取組（設備・' +
+      'ソフトウェア導入等）を支援する制度（福岡「市」ではなく福岡「県」の制度）。補助率・上限額・募集期間・対象経費は年度や補正予算ごとに変動するため、' +
+      '必ず最新の募集要項及び福岡県公式で要確認。福岡県には経営革新・賃上げ緊急支援補助金や起業支援金等もある。',
+    application:
+      '県が設置する生産性向上支援センターによる伴走支援を受けることが要件で、従業員を雇用する場合は補助事業終了時までに事業場内最低賃金を一定額引き上げることが求められる。募集は年度内に複数次行われ、交付決定日以降に着手した事業が対象。最新の受付状況は福岡県公式で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukuoka.lg.jp/contents/productivity-improvement-subsidy-2025-26.html', type: 'municipality', label: '福岡県 中小企業生産性向上・賃上げ緊急支援補助金' },
+      { url: 'https://www.joho-fukuoka.or.jp/chinage/index.html', type: 'operator', label: '福岡県中小企業振興センター 経営革新・賃上げ緊急支援補助金' },
+      { url: 'https://biz.ncbank.co.jp/posts/subsidies-available-in-fukuoka/', type: 'media', label: '福岡県で使える補助金まとめ' },
+    ],
+  },
+  {
+    id: 'subsidy-kawasaki',
+    level: 'municipality',
+    domain: 'business',
+    name: '川崎市新技術・新製品開発等支援事業補助金',
+    authority: '川崎市（経済労働局 産業振興部 工業振興課）',
+    statement:
+      '川崎市が市内中小企業者を対象に、新技術・新製品の事業化に向けた研究開発に要する経費を助成する補助金制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '対象は市内に事業所を有し一定期間以上事業を営む中小企業者（単独又は他企業等との連携での研究開発）。補助限度額・補助率・募集期間は年度ごとに変動するため、' +
+      '最新の公募要領及び川崎市公式で要確認。',
+    application:
+      '川崎市公式サイト掲載の公募要領・申請様式に基づき、例年4月ごろの公募期間内にオンライン手続又はWEB申請で提出（郵送可の場合あり）。所管は経済労働局工業振興課。創業・経営相談は公益財団法人川崎市産業振興財団も担う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kawasaki.jp/280/page/0000184258.html', type: 'municipality', label: '川崎市 新技術・新製品開発等支援事業補助金' },
+      { url: 'https://www.city.kawasaki.jp/jigyou/category/77-25-5-0-0-0-0-0-0-0.html', type: 'municipality', label: '川崎市 事業者向け補助金（工業振興）' },
+      { url: 'https://hojyokin-portal.jp/subsidies/list?pref_id=14&city_id=740', type: 'media', label: '川崎市の補助金一覧' },
+    ],
+  },
+  {
+    id: 'subsidy-saitama-city',
+    level: 'municipality',
+    domain: 'business',
+    name: 'さいたま市起業家支援補助金（SCAP連動）',
+    authority: '公益財団法人さいたま市産業創造財団（SCAP運営事務局）／さいたま市経済局',
+    statement:
+      'さいたま市の市区町村レベルの代表例として、公益財団法人さいたま市産業創造財団が「さいたまアクセラレータープログラム（SCAP）」の採択者を対象に' +
+      '実施する起業家支援補助金がある。補助率・補助上限額・要件・募集期間は年度ごとに変動するため、最新の募集要項・市公式／財団公式で要確認。さいたま市は' +
+      '創業支援等事業計画に基づく相談・セミナー・特定創業支援等事業証明や中小企業融資制度も併せて提供している。',
+    application:
+      '申請窓口は公益財団法人さいたま市産業創造財団（SCAP運営事務局）。原則として当該年度のSCAPに応募・採択され所定プログラムに参加したうえで補助金交付申請を行う。対象経費・締切は財団の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.saitama.lg.jp/005/002/010/005/index.html', type: 'municipality', label: 'さいたま市 創業支援' },
+      { url: 'https://www.sozo-saitama.or.jp/', type: 'operator', label: 'さいたま市産業創造財団' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/51400/', type: 'media', label: 'さいたま市起業家支援補助金 解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
