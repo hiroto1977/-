@@ -3997,5 +3997,114 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://biz.moneyforward.com/ipo/basic/10318/', type: 'media', label: '取締役の善管注意義務 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-rd-credit',
+      domain: 'tax',
+      title: '研究開発税制（試験研究費の税額控除）',
+      statement:
+        '研究開発税制は、青色申告法人が支出した試験研究費の一定割合を法人税額（一定の上限あり）から控除できる制度である。一般試験研究費に' +
+        '係る一般型、共同・委託研究等を対象とする特別試験研究費（オープンイノベーション型）等で構成され、試験研究費の増減割合等に応じて控除率・' +
+        '上限が決まる。中小企業者等には控除率等の優遇措置がある（具体的な控除率・上限は各年度の税制改正で変動する）。',
+      authority: '所管: 経済産業省・国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5441.htm', type: 'government', label: '国税庁 No.5441 研究開発税制について' },
+      { url: 'https://www.meti.go.jp/policy/tech_promotion/tax/about_tax.html', type: 'government', label: '経済産業省 研究開発税制について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5444.htm', type: 'government', label: '国税庁 No.5444 中小企業技術基盤強化税制' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-wage-increase-credit',
+      domain: 'tax',
+      title: '賃上げ促進税制',
+      statement:
+        '賃上げ促進税制は、企業が前年度より給与等の支給額を増加させた場合に、その増加額の一定割合を法人税額（個人事業主は所得税額）から' +
+        '控除できる制度である。大企業向け・中堅企業向け・中小企業向けの区分があり、賃上げ率や教育訓練費の増加、くるみん／えるぼし認定等に' +
+        '応じて控除率が上乗せされる。中小企業向けには控除しきれなかった額を最長5年間繰り越せる措置がある（控除率は年度の税制改正で変動する）。',
+      authority: '所管: 経済産業省・中小企業庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/syotokukakudai.html', type: 'government', label: '中小企業庁 中小企業向け賃上げ促進税制' },
+      { url: 'https://www.meti.go.jp/policy/economy/jinzai/syotokukakudaisokushin/r6_chinagesokushinzeisei_pamphlet.pdf', type: 'government', label: '経済産業省 賃上げ促進税制 パンフレット' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5927-2.htm', type: 'government', label: '国税庁 No.5927-2 中小企業者等の賃上げ促進税制' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-retirement-mutual-aid',
+      domain: 'labor',
+      title: '中小企業退職金共済制度（中退共）',
+      statement:
+        '中小企業退職金共済制度（中退共）は、中小企業退職金共済法に基づき、独力では退職金制度を設けることが困難な中小企業について、' +
+        '事業主の相互共済と国の援助により退職金制度を確立する制度である。事業主が勤労者退職金共済機構と退職金共済契約を結び毎月掛金を' +
+        '納付し、従業員の退職時には同機構から直接退職金が支払われる。新規加入時等には国の掛金助成がある。',
+      authority: '所管: 厚生労働省（中小企業退職金共済法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000113598.html', type: 'government', label: '厚生労働省 中小企業退職金共済制度' },
+      { url: 'https://chutaikyo.taisyokukin.go.jp/kentou/seido/seido01.html', type: 'government', label: '勤労者退職金共済機構 中退共 制度の概要' },
+      { url: 'https://chutaikyo.taisyokukin.go.jp/faq/qa-01/1-2-1.html', type: 'operator', label: '中退共 Q&A 国の掛金助成' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-workers-comp-special-enrollment',
+      domain: 'labor',
+      title: '労災保険の特別加入制度',
+      statement:
+        '労災保険は本来、事業主に雇用される労働者を対象とする制度だが、業務の実情や災害の発生状況等から労働者に準じて保護することが' +
+        '適当と認められる一定の者（中小事業主等、一人親方その他の自営業者、特定作業従事者、海外派遣者）について、任意で労災保険に加入できる' +
+        '「特別加入制度」が設けられている。令和6年（2024年）11月1日からは、業務委託を受けて働くフリーランス（特定受託事業者）も特別加入の対象に拡大された。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/faq_kijyungyosei15.html', type: 'government', label: '厚生労働省 特別加入制度とは FAQ' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/rousai/kanyu_r3.4.1_00010.html', type: 'government', label: '厚生労働省 フリーランスの労災特別加入（2024/11）' },
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/hourei_seido_tetsuzuki/rousaihoken-tokubetukanyuu_2020.html', type: 'government', label: '神奈川労働局 労災保険の特別加入制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-corporate-registration',
+      domain: 'legal',
+      title: '会社の商業登記（設立登記・変更登記）',
+      statement:
+        '株式会社等の会社は、本店の所在地において設立の登記をすることにより成立する（会社法49条）。商号・本店・目的・資本金の額・役員等の' +
+        '登記事項に変更が生じたときは、原則としてその変更が生じた日から2週間以内に変更の登記を申請しなければならず（会社法915条1項）、' +
+        'これを怠ると100万円以下の過料に処せられる（会社法976条1号）。商業登記は法務局（登記所）が所管し、登記された事項は登記事項証明書として公示される。',
+      authority: '所管: 法務省（会社法・商業登記法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（49条・915条・976条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_00134.html', type: 'government', label: '法務省 株式会社の設立手続' },
+      { url: 'https://houmukyoku.moj.go.jp/homu/shomeisho_000002.html', type: 'government', label: '法務局 登記事項証明書の取得' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-provider-liability',
+      domain: 'legal',
+      title: '発信者情報開示制度（情報流通プラットフォーム対処法）',
+      statement:
+        'インターネット上で他人の権利を侵害する情報が流通した場合、特定電気通信役務提供者（プロバイダ等）の損害賠償責任の制限と、被害者が' +
+        'プロバイダ等に発信者の情報の開示を求められる「発信者情報開示請求」の制度が定められている。従来の「プロバイダ責任制限法」は2022年10月1日' +
+        '施行の改正で発信者情報開示の新たな裁判手続（開示命令等）が新設され、さらに改正法（令和6年法律第25号、2025年4月1日施行）により題名が' +
+        '「情報流通プラットフォーム対処法」に改められ、大規模事業者に削除申出への迅速な対応・運用状況の公表等の義務が課された。',
+      authority: '所管: 総務省（情報流通プラットフォーム対処法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/ihoyugai.html', type: 'government', label: '総務省 インターネット上の違法・有害情報への対応' },
+      { url: 'https://www.soumu.go.jp/menu_news/s-news/01ryutsu02_02000435.html', type: 'government', label: '総務省 大規模特定電気通信役務提供者の指定' },
+      { url: 'https://www.kantei.go.jp/jp/singi/titeki2/kaizokuban_taisaku/gijisidai/dai3/siryou5.pdf', type: 'media', label: '情報流通プラットフォーム対処法の概要' },
+    ],
+  },
 ];
 // Stryker restore all
