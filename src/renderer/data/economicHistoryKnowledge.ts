@@ -1507,6 +1507,144 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.nbcnews.com/news/amp/wbna10690700', type: 'media', label: 'NBC News — 2005年最終取引日の株式（DJIA 10,717.50）' },
     ],
   },
+  {
+    year: 2006,
+    era: '平成18年',
+    world:
+      '世界株高の年。米FRBは6月29日のFOMCでFF金利を5.25%へ引き上げ（17回連続）、これが引き締めサイクルの打ち止めとなった。原油・エネルギー高が続く一方、米住宅バブルは年初にピークを打ち年後半に住宅市場が冷え込み始めた（後のサブプライム危機の前夜）。DJIAは年末12,463.15で越年した。',
+    japan:
+      'いざなみ景気が継続し、デフレ脱却の兆しを背景に金融政策が転換した。日銀は3月に量的緩和政策を解除し、7月14日には無担保コール翌日物を約0.25%へ誘導してゼロ金利政策を解除した。一方、1月のライブドア・ショックや村上ファンド事件で市場と企業統治への不信が高まり、9月26日に第1次安倍内閣が発足した。',
+    keyEvents: [
+      'ライブドア・ショック（1/16-17、IT関連株急落・東証が全銘柄取引停止）',
+      '日銀が量的緩和政策を解除（3月）',
+      'FRBがFF金利を5.25%へ利上げ（6/29、17回連続で打ち止め）',
+      '日銀がゼロ金利政策を解除（7/14、政策金利を約0.25%へ）',
+      '第1次安倍晋三内閣が発足（9/26）',
+    ],
+    risingSectors: ['（定性）資源・エネルギー（原油・素材高で商社・鉱業）、海運・鉄鋼など景気敏感業種、輸出関連製造業（円安基調）'],
+    decliningSectors: ['（定性）新興・IT/ネット関連（ライブドア・ショックでマザーズ等が調整）、米住宅・住宅建設関連（ピークアウト）。'],
+    caveats: 'DJIA年末値12463.15（12/29終値）は独立3源で一致。日経平均年末値17225.83（年間約+6.9%）は複数の金融データ源で一致。日銀の量的緩和解除3月・ゼロ金利解除7/14は日銀公式で確認。いざなみ景気は事後呼称。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreserve.gov/newsevents/pressreleases/monetary20060629a.htm', type: 'government', label: '米FRB — FOMC声明 2006/6/29（FF金利5.25%へ・打ち止め）' },
+      { url: 'https://www.boj.or.jp/en/mopo/mpmsche_minu/minu_2006/g060309.htm', type: 'government', label: '日本銀行 — 2006/3 金融政策決定会合議事要旨（量的緩和解除）' },
+      { url: 'https://en.wikipedia.org/wiki/First_premiership_of_Shinzo_Abe', type: 'reference', label: 'Wikipedia — First premiership of Shinzo Abe（第1次安倍内閣 2006/9/26）' },
+    ],
+  },
+  {
+    year: 2007,
+    era: '平成19年',
+    world:
+      'サブプライム住宅ローン危機が表面化した転換の年。8月9日にBNPパリバが傘下3ファンドの解約を凍結（パリバショック）し信用収縮が世界の短期金融市場へ波及した。FRBは9月・10月に4年超ぶりの利下げに転換した。一方で米株は好調を維持し、DJIAは10月9日に史上最高値（終値14,164.53）を更新した。DJIAは年末13,264.82で越年した。',
+    japan:
+      '「いざなみ景気」の最終局面で、輸出と企業収益主導の緩やかな拡大が続いたが実感に乏しい回復だった。7月29日の参院選で自民党が歴史的大敗し民主党が参院第1党となり「ねじれ国会」に突入、安倍首相は9月に退陣し福田康夫内閣が発足した。10月1日には日本郵政公社が解散し日本郵政グループが発足、郵政民営化がスタートした。米サブプライム問題の波及で株式は軟調、日経平均は年間で約-11%。',
+    keyEvents: [
+      '参院選で自民党が歴史的大敗、民主党が参院第1党に（7/29）→ ねじれ国会（→安倍退陣・福田内閣）',
+      'BNPパリバ・ショック（8/9）—サブプライム危機が世界の金融市場へ表面化',
+      'FRBが4年超ぶりに利下げに転換（9月-50bp→4.75%、10/31-25bp→4.50%）',
+      '郵政民営化スタート、日本郵政グループ発足（10/1）',
+      'DJIAが史上最高値を更新（10/9、終値14,164.53）／原油が年後半に90〜99ドルへ急騰',
+    ],
+    risingSectors: ['（定性）資源・エネルギー（原油・商品市況高騰）、新興国向け輸出関連・海運（年前半まで）、米国の大型優良株'],
+    decliningSectors: ['（定性）金融・住宅金融（サブプライム関連でモーゲージ・投資銀行が悪化）、米住宅・不動産、日本の新興市場・内需関連。'],
+    caveats: 'DJIA年末値13264.82（年間+6.43%）と日経平均年末値15307.78（12/28大納会、前年比約-11%）は独立2源で一致。DJIA史上最高値は10/9終値14,164.53。原油の100ドル超え終値は2008/2であり2007年内は99ドル台が上限。いざなみ景気は事後呼称。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.cfr.org/timelines/us-financial-crisis', type: 'government', label: 'CFR — The U.S. Financial Crisis（パリバショック/FRB利下げのタイムライン）' },
+      { url: 'https://www.newyorkfed.org/medialibrary/media/research/global_economy/Crisis_Timeline.pdf', type: 'government', label: 'New York Fed — Crisis Timeline（2007年危機の日付別整理）' },
+      { url: 'https://www.nippon.com/ja/japan-topics/today07291/', type: 'media', label: 'nippon.com — 2007/7/29 自民、参院選で歴史的敗北' },
+    ],
+  },
+  {
+    year: 2008,
+    era: '平成20年',
+    world:
+      'サブプライム問題に端を発した世界金融危機（リーマン・ショック）が世界経済を直撃した。9月15日にリーマン・ブラザーズが破綻（米史上最大）、翌16日に米政府がAIGへ最大850億ドルの緊急融資で救済した。世界同時株安が連鎖しDJIAは年間-33.8%で1931年以来最悪の年となった。原油は7月11日にWTI約147ドルの史上最高値を付けた後、年末には40ドル割れまで暴落した。DJIAは年末8,776.39で越年した。',
+    japan:
+      '戦後最長の「いざなみ景気」（2002年2月〜）が2008年2月を山に終了し景気後退に転入した。輸出急減・急激な円高・株安が重なり、日経平均は年間-42.1%と1949年の算出開始以来最悪の下落率を記録、10月27日には終値7,162.90円とバブル後安値を付けた。政治面では9月24日に麻生太郎内閣が発足した。',
+    keyEvents: [
+      'リーマン・ブラザーズ破綻（9/15、米史上最大の倒産）→ 世界金融危機の本格化',
+      '米FRBがAIGを最大850億ドルで救済（9/16）',
+      '原油が史上最高値（7/11、WTI約147ドル）→ 年末に40ドル割れへ暴落',
+      'いざなみ景気が2008年2月を山に終了し景気後退入り、急激な円高と輸出急減',
+      '麻生太郎内閣発足（9/24）／日経平均が10/27に7,162円までバブル後安値',
+    ],
+    risingSectors: ['（定性）金・国債など逃避資産、上期（〜7月）の資源・エネルギー（原油147ドルまでの高騰、ただし下期に急反落）'],
+    decliningSectors: ['（定性）金融（銀行・証券・保険、危機の震源）、自動車・電機など輸出製造業（円高・海外需要急減）、不動産・建設、下期のエネルギー・素材（原油急落）。'],
+    caveats: 'DJIA年末値8776.39と日経平均年末値8859.56（12/30大納会、年間-42.1%＝算出開始以来最悪）は独立2源で一致。原油最高値は出典により147.02ドル等と僅差。DJIAの「1931年以来最悪」は複数報道で一致。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://money.cnn.com/2008/12/31/markets/markets_newyork/index.htm', type: 'media', label: 'CNNMoney 2008/12/31 — DJIA年末終値8,776.39' },
+      { url: 'https://www.federalreservehistory.org/essays/support-for-specific-institutions', type: 'government', label: 'Federal Reserve History — AIGへ最大850億ドル融資（9/16）' },
+      { url: 'https://www.france24.com/en/20081230-tokyos-nikkei-lost-42-2008-', type: 'media', label: "France24 — Tokyo's Nikkei lost 42% in 2008（8,859.56）" },
+    ],
+  },
+  {
+    year: 2009,
+    era: '平成21年',
+    world:
+      '2007年末に始まった「大不況（Great Recession）」が底を打った年。米株は3月9日にリーマン後の最安値（DJIA 6,547.05）を付け、以降9か月の反発相場へ転じた。6月1日にGMがChapter11破綻（米産業史上最大級）、4月のG20ロンドン・サミットで各国が協調刺激策を表明した。年末11月25日のドバイ・ショックで市場が一時動揺した。DJIAは年末10,428.05で越年した。',
+    japan:
+      '戦後最悪級のマイナス成長となり輸出・製造業が急減した。8月30日の衆院選で民主党が圧勝し政権交代、9月16日に鳩山由紀夫内閣が発足した（自民からの交代は1993年以来16年ぶり）。景気対策としてエコポイント制度・エコカー減税が消費を一部下支えし、11月に政府が事実上のデフレ宣言（月例経済報告でデフレ認定）を行った。',
+    keyEvents: [
+      '米株がリーマン後最安値（3/9、DJIA 6,547.05）を付け反発開始',
+      'G20ロンドン・サミットで協調的な大型刺激策に合意（4/2）',
+      'ゼネラルモーターズ（GM）がChapter11破産申請（6/1）',
+      '衆院選で民主党圧勝→政権交代、鳩山内閣発足（8/30→9/16）',
+      'ドバイ・ショック（11/25）／同月 日本政府がデフレ宣言',
+    ],
+    risingSectors: ['（定性）金など貴金属・資源/素材（安全資産需要と回復期待）、テクノロジー株（年後半の反発を牽引）、日本の省エネ家電・低燃費車（エコポイント/エコカー減税）'],
+    decliningSectors: ['（定性）金融・銀行（信用収縮・米地銀破綻多発）、自動車（GM破綻・需要急減）、製造業/輸出産業（世界需要急減で生産・雇用が大幅減）。'],
+    caveats: 'DJIA年末値10428.05（年間約+18.8%）は独立2源で一致。日経平均年末値は通称10,546.44円で規模（2008末8,859.56から約+19%）は独立源で裏付くが、正確値を明示する独立2源を確認できず捏造回避のためnull。GDP成長率は暦年/年度・速報/確報で分散するため定性表現。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/great-recession-and-its-aftermath', type: 'government', label: 'Federal Reserve History — The Great Recession and Its Aftermath' },
+      { url: 'https://www.britannica.com/money/great-recession', type: 'reference', label: 'Britannica Money — Great Recession' },
+      { url: 'https://ja.wikipedia.org/wiki/%E9%B3%A9%E5%B1%B1%E7%94%B1%E7%B4%80%E5%A4%AB%E5%86%85%E9%96%A3', type: 'reference', label: 'Wikipedia（日本語）— 鳩山由紀夫内閣（政権交代・経済対策）' },
+    ],
+  },
+  {
+    year: 2010,
+    era: '平成22年',
+    world:
+      '欧州ソブリン債務危機が本格化した年。ギリシャの財政赤字を契機に5月にEU・IMFが1,100億ユーロの第1次支援で合意し、欧州金融安定ファシリティ（EFSF）等が創設された。米国では5月6日に「フラッシュクラッシュ」が発生しDJIAが数分で約1,000ポイント急落後ほぼ回復した。中国の名目GDPが日本を抜き世界2位に浮上した。DJIAは年末11,577.51で越年した。',
+    japan:
+      '超円高が進行し（年内に一時1ドル80円台前半まで）デフレが継続した。日銀は10月5日に「包括的金融緩和」（実質ゼロ金利＋資産買入等の基金創設）を導入した。政治は菅直人内閣で、9月の尖閣諸島中国漁船衝突事件で日中関係が緊張した。1月にはJAL（日本航空）が会社更生法を申請した（戦後最大級）。日経平均は2年ぶりに年間下落した。',
+    keyEvents: [
+      '欧州ソブリン債務危機本格化—ギリシャ支援（EU・IMF 1,100億ユーロ）とEFSF創設（5月）',
+      '米フラッシュクラッシュ（5/6）—DJIAが数分で約1,000pt急落後に大半回復',
+      '中国の名目GDPが日本を抜き世界第2位に',
+      '日銀が包括的金融緩和を導入（10/5）／円高・デフレ継続',
+      'JALが会社更生法申請（1/19）／尖閣諸島中国漁船衝突事件（9/7）',
+    ],
+    risingSectors: ['（定性）中国・新興国向け輸出関連（資源・機械）、金・貴金属（リスク回避）、スマートフォン関連エレクトロニクス'],
+    decliningSectors: ['（定性）南欧の金融・国債関連（ソブリン危機）、日本の航空（JAL破綻）、円高直撃の輸出製造業（自動車・電機）。'],
+    caveats: 'DJIA年末値11577.51（年間+11%）と日経平均年末値10228.92（12/30大納会、前年比-3%）は独立2源で一致。円の「80円割れ」は厳密には2011年で2010年は80円台前半まで。中国GDP逆転は四半期/通年で報道時期が分かれるが通年で確定。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/about/education/oshiete/seisaku/b42.htm', type: 'government', label: '日本銀行 — 金融市場調節方針の変遷（2010/10 包括的金融緩和）' },
+      { url: 'https://www.nikkei.com/article/DGXNASS0ISS16_Q0A231C1000000/', type: 'media', label: '日本経済新聞 — 大納会 日経平均終値10,228.92（円高で反落）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%B0%96%E9%96%A3%E8%AB%B8%E5%B3%B6%E4%B8%AD%E5%9B%BD%E6%BC%81%E8%88%B9%E8%A1%9D%E7%AA%81%E4%BA%8B%E4%BB%B6', type: 'reference', label: 'Wikipedia（日本語）— 尖閣諸島中国漁船衝突事件' },
+    ],
+  },
+  {
+    year: 2011,
+    era: '平成23年',
+    world:
+      '欧州ソブリン債務危機が深刻化し（ギリシャ・イタリア・スペインへ波及）、8月5日にS&Pが米国の長期格付けをAAA→AA+へ史上初の格下げを行い世界の株式市場が急落した。中東・北アフリカでは「アラブの春」が拡大し、10〜11月のタイ大洪水が製造業集積地を直撃して自動車・HDDなどのグローバル・サプライチェーンを混乱させた。DJIAは年末12,217.56で越年した。',
+    japan:
+      '3月11日の東日本大震災と東京電力福島第一原発事故により甚大な被害が生じた。東北の部品供給拠点が被災してサプライチェーンが寸断され、3月の鉱工業生産は前月比約16%減、原発停止に伴う電力供給不足で計画停電・節電が行われた。為替は歴史的超円高が進み10月31日に1ドル=75円32銭の戦後最高値を記録、政府・日銀が大規模な円売り介入を実施した。年後半は復興需要で持ち直し局面へ向かった。',
+    keyEvents: [
+      '東日本大震災・福島第一原発事故（3/11）—サプライチェーン寸断・電力不足',
+      'S&Pが米国債を史上初の格下げ（8/5、AAA→AA+）→ 世界株安',
+      '欧州ソブリン債務危機の深刻化（ギリシャ・イタリア等へ波及）',
+      '円が1ドル=75円32銭の史上最高値（10/31）、政府・日銀が為替介入',
+      'タイ大洪水（10〜11月）で自動車・電子部品のグローバル供給混乱',
+    ],
+    risingSectors: ['（定性）復興関連（建設・土木・セメント等、震災復興需要）、金など安全資産・ディフェンシブ'],
+    decliningSectors: ['（定性）電力（特に東京電力＝原発事故で当年の下落率トップ級）、輸出型製造業（自動車・電機、超円高・震災・タイ洪水の供給制約）、欧州金融株（債務危機）。'],
+    caveats: 'DJIA年末値12217.56（12/30、一部報道は12,217.60の丸め）と日経平均年末値8455.35（12/30大納会、前年比約-17%）は独立2源で一致。「下落率首位＝東京電力／上昇上位＝復興関連」は日経記事で確認。各国GDP等の精密数値は本調査範囲外。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www5.cao.go.jp/keizai3/2011/1221nk/n11_1/n11_1_2.html', type: 'government', label: '内閣府 経済財政白書 — 円高と日本経済（超円高・75円台）' },
+      { url: 'https://en.wikipedia.org/wiki/United_States_federal_government_credit-rating_downgrades', type: 'reference', label: 'Wikipedia — 米国債格下げ（2011/8/5 S&P AAA→AA+）' },
+      { url: 'https://www.nikkei.com/article/DGXNASFL3007P_Q1A231C1000000/', type: 'media', label: '日本経済新聞 — 日経平均2011年は17%安・大納会終値8455円35銭' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1595,6 +1733,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   2003: { djiaYearEnd: 10453.92, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   2004: { djiaYearEnd: 10783.01, nikkeiYearEnd: 11488.76, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   2005: { djiaYearEnd: 10717.5, nikkeiYearEnd: 16111.43, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2006: { djiaYearEnd: 12463.15, nikkeiYearEnd: 17225.83, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2007: { djiaYearEnd: 13264.82, nikkeiYearEnd: 15307.78, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2008: { djiaYearEnd: 8776.39, nikkeiYearEnd: 8859.56, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2009: { djiaYearEnd: 10428.05, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2010: { djiaYearEnd: 11577.51, nikkeiYearEnd: 10228.92, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2011: { djiaYearEnd: 12217.56, nikkeiYearEnd: 8455.35, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
