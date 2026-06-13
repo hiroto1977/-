@@ -1369,6 +1369,144 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.federalreservehistory.org/essays/great-inflation', type: 'government', label: 'Federal Reserve History — 1990年代の米経済・株高の背景' },
     ],
   },
+  {
+    year: 2000,
+    era: '平成12年',
+    world:
+      'ITバブル（ドットコム相場）が3月10日にNASDAQ総合指数のピーク（終値5,048.62、取引時間中高値5,132.52）を付けた後、3月後半から崩壊が始まりハイテク株の長期下落局面に入った。実体経済は1990年代から続く米景気拡大の最終局面にあり、年末にかけ主要株価指数は軟調に推移した。DJIAは年末10,786.85で越年した。',
+    japan:
+      '「IT革命」が流行語となるITブームの一方、3月の国内相場形成後にバブルが崩壊し、持ち合い株の解消売りも重なって株式相場は年間を通じ大きく下落した（日経平均は約-27%）。4月1日に介護保険制度が施行され、8月11日に日銀が政府の延期要請を退けてゼロ金利政策を解除した。大手百貨店そごうの経営破綻（7/12 民事再生法申請）、有珠山・三宅島の噴火も相次いだ。',
+    keyEvents: [
+      'NASDAQ総合指数が3/10にピーク（終値5,048.62）→ ドットコムバブル崩壊が開始',
+      '介護保険制度が施行（4/1）',
+      '大手百貨店そごうが民事再生法を申請し破綻（7/12）',
+      '日銀がゼロ金利政策を解除（8/11）',
+      '有珠山噴火（3/31）・三宅島噴火（全島避難へ）',
+    ],
+    risingSectors: ['（前半）情報通信・IT/インターネット関連、携帯データ（iモード等）の通信（ITブームで物色集中、ただし後半は急落）'],
+    decliningSectors: ['ハイテク・ドットコム/新興ハイテク株（3月以降急落）、日本の持ち合い銘柄（解消売り）、流通・百貨店など過剰債務業種（そごう破綻）。'],
+    caveats: 'DJIA年末値10786.85（12/29終値）は独立2源で一致。日経平均年末値は複数源が概ね13,785円（前年比約-27%）で整数一致だが小数点以下（通称13,785.69）は独立2源で確証できず整数値を採用。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Dot-com_bubble', type: 'reference', label: 'Wikipedia — Dot-com bubble（NASDAQ 3/10ピーク・崩壊）' },
+      { url: 'https://www.boj.or.jp/mopo/mpmsche_minu/minu_2000/g000811.htm', type: 'government', label: '日本銀行 — 2000/8/11 金融政策決定会合議事要旨（ゼロ金利解除）' },
+      { url: 'https://money.cnn.com/2000/12/29/markets/markets_newyork/', type: 'media', label: "CNN Money 2000/12/29 — Wall St.'s year to forget（DJIA年末終値）" },
+    ],
+  },
+  {
+    year: 2001,
+    era: '平成13年',
+    world:
+      'ITバブル（ドットコム）崩壊が本格化し米景気が後退入りした（NBERは3〜11月を景気後退と認定、9/11以前に既にリセッション入り）。9月11日の米同時多発テロが不確実性を一段と増幅し、FRBは年内に計11回利下げしFF金利を6.5%から1.75%へ引き下げた。打撃はテクノロジー・通信・航空に集中した。DJIAは年末10,021.57で越年した。',
+    japan:
+      'デフレ継続下で景気が低迷。日銀は3月19日に量的緩和政策を世界に先駆けて導入し、操作目標を無担保コールレートから日銀当座預金残高へ変更、コアCPIが安定的に0%以上となるまでの継続をコミットした。4月26日に小泉純一郎内閣が発足し構造改革・不良債権処理を掲げた。9月には国内初のBSE（牛海綿状脳症）が千葉県で確認された。日経平均は年間で約-23%。',
+    keyEvents: [
+      '日銀が量的緩和政策を初導入（3/19、当座預金残高を操作目標化）',
+      '小泉純一郎内閣発足（4/26）—構造改革・不良債権処理',
+      '米同時多発テロ（9/11）',
+      '国内初のBSE（狂牛病）を千葉県で確認（9月）',
+      '米景気後退（NBER認定3〜11月）、FRBが年内11回利下げ（6.5%→1.75%）',
+    ],
+    risingSectors: ['（定性）景気後退局面で相対的に底堅いディフェンシブ・生活必需・公益、不確実性を背景とした金など安全資産'],
+    decliningSectors: ['情報技術（IT）・インターネット（ドットコム崩壊の中心）、通信（設備過剰・株価急落）、航空・旅行（9/11後の需要急減）、日本の畜産・牛肉・外食（BSE）。'],
+    caveats: 'DJIA年末値10021.57（12/31）と日経平均年末値10542.62（12/28大納会）は独立2源で一致。DJIAの年間騰落率は価格指数/配当込みで出典差あり。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/mopo/mpmsche_minu/minu_2001/g010319.htm', type: 'government', label: '日本銀行 — 2001/3/19 金融政策決定会合議事要旨（量的緩和導入）' },
+      { url: 'https://en.wikipedia.org/wiki/Early_2000s_recession', type: 'reference', label: 'Wikipedia — Early 2000s recession（NBER認定・FRB利下げ）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%89%9B%E6%B5%B7%E7%B6%BF%E7%8A%B6%E8%84%B3%E7%97%87', type: 'reference', label: 'Wikipedia（日本語）— 牛海綿状脳症（BSE国内初確認 2001年・千葉県）' },
+    ],
+  },
+  {
+    year: 2002,
+    era: '平成14年',
+    world:
+      '米国は前年末からの企業会計不正の連鎖（エンロン破綻→7/21にWorldComが当時史上最大のChapter11申請、アーサー・アンダーセン解体）で企業統治不信が広がり株式は3年連続の下落となった（DJIA年間約-16.8%）。1月1日にユーロの紙幣・硬貨が12か国で流通開始し2月末に各国通貨が法定通貨の地位を喪失、7月にはSarbanes-Oxley法が成立した。',
+    japan:
+      '景気は2002年2月を谷として回復局面に入り、これが2008年2月まで続く戦後最長級（73か月）の景気拡大「いざなみ景気」の起点となった（内閣府が後に確定）。回復は海外経済を背景とした輸出・生産主導の外需依存型で、消費者物価・GDPデフレータはマイナスでデフレが継続した。4月にペイオフが一部解禁され、9月に小泉首相が訪朝した。',
+    keyEvents: [
+      'ユーロ紙幣・硬貨が12か国で流通開始（1/1）',
+      '日本の景気が谷を打ち回復へ（2月）—戦後最長級「いざなみ景気」の起点',
+      'ペイオフ一部解禁（4月、定期性預金は元本1,000万円＋利息まで保護）',
+      '米WorldComが当時史上最大のChapter11申請（7/21、会計不正）',
+      '小泉首相訪朝・日朝首脳会談（9/17）',
+    ],
+    risingSectors: ['（定性）輸出関連製造業（電機・自動車・一般機械、外需牽引で生産持ち直し）、株式からの逃避先となった金・債券'],
+    decliningSectors: ['（定性）IT・通信・メディア（ドットコム崩壊の余波・WorldCom等の信用不安）、日本の銀行（不良債権）・内需小売（デフレで名目縮小）。'],
+    caveats: 'DJIA年末値8341.63は独立3源（StatMuse/macrotrends/Wikipedia）で一致。日経平均年末値は通説8,578.95円だが独立2源の数値一致を確認できず捏造回避のためnull。いざなみ景気の2002/2起点・73か月は内閣府の事後確定。ペイオフは2002/4が一部解禁（全面解禁は2005/4）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www5.cao.go.jp/j-j/wp/wp-je02/wp-je02-00101.html', type: 'government', label: '内閣府 経済財政白書 — 景気底入れの背景（2002年・外需主導回復・デフレ）' },
+      { url: 'https://www.ecb.europa.eu/euro/changeover/2002/html/index.en.html', type: 'government', label: '欧州中央銀行（ECB）— 2002年ユーロ現金流通開始（1/1）' },
+      { url: 'https://en.wikipedia.org/wiki/Closing_milestones_of_the_Dow_Jones_Industrial_Average', type: 'reference', label: 'Wikipedia — Closing milestones of the DJIA（2002年終値）' },
+    ],
+  },
+  {
+    year: 2003,
+    era: '平成15年',
+    world:
+      '地政学ショックと景気回復が同居した年。3月20日に米英主導の有志連合がイラク侵攻を開始（イラク戦争開戦）。同時期に新型肺炎SARSがアジア中心に流行し旅行・観光・対面サービスに打撃を与えた。後半は米国の減税（JGTRRA）と超低金利（FF金利1%、約半世紀ぶり低水準）を背景に景気が急回復し、第3四半期の実質GDPは年率約7.2%と高成長となった。DJIAは年末10,453.92で越年した。',
+    japan:
+      '「失われた10年」後半の転換点。年初は金融システム不安が深刻で、日経平均は4月28日にバブル後最安値（終値ベース約7,607円）を記録した。5月17日にりそなグループへ預金保険法102条に基づき約2兆円の公的資金を注入し実質国有化、11月29日には足利銀行を同条に基づき一時国有化した。一方で実体経済は輸出（対中国・対アジアの中国特需）とIT関連・設備投資に支えられ、株価は後半に大きく戻して暦年ベースで4年ぶりの上昇となった。',
+    keyEvents: [
+      'イラク戦争開戦（3/20）',
+      'SARS（重症急性呼吸器症候群）流行—アジアの旅行・サービス業に打撃',
+      'りそなグループへ約2兆円の公的資金注入＝実質国有化（5/17、預金保険法102条の初適用）',
+      '米でJGTRRA減税成立＋FF金利1%、第3四半期GDP年率約7.2%の急回復',
+      '足利銀行を一時国有化（11/29）',
+    ],
+    risingSectors: ['（定性）輸出関連製造業（自動車・電機・機械、対中国・対アジア需要）、半導体・電子部品・IT関連（前年のIT不況からの回復）、鉄鋼・素材（中国向け需要）'],
+    decliningSectors: ['（定性）銀行・金融（りそな・足利の国有化に象徴される不良債権問題）、旅行・航空・観光（イラク戦争＋SARS）、内需小売・サービス（デフレ圧力継続）。'],
+    caveats: 'DJIA年末値10453.92（年間約+25%）は独立2源で一致。日経平均年末値は通説10,676.64円・暦年4年ぶり上昇（前年比約+24%）で定性的に一致するが厳密値を独立2源で確認できず捏造回避のためnull。4/28最安値はザラ場7,603円台/終値約7,607円台が混在。米Q3成長率は速報8.2%/確報7.2%で版差。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.britannica.com/event/Iraq-War', type: 'reference', label: 'Britannica — Iraq War（2003/3/20開戦）' },
+      { url: 'https://www.mof.go.jp/public_relations/finance/202304/202304i.html', type: 'government', label: '財務省 — 公的資金注入・一時国有化スキーム（預金保険法102条）' },
+      { url: 'https://www.nikkei.com/article/DGKKZO71874280U1A510C2EAC000/', type: 'media', label: '日本経済新聞 — 2003/5/17 りそな実質国有化・公的資金2兆円注入' },
+    ],
+  },
+  {
+    year: 2004,
+    era: '平成16年',
+    world:
+      '世界経済は堅調な拡大局面。米FRBは6月30日にFF金利を1.00%→1.25%へ約4年ぶりに引き上げ「慎重なペース」での金融引き締めに転換した。中国は高成長を持続（実質GDP+9.5%、国家統計局）。原油は需給逼迫と中国需要で高騰し10月にWTIが約55ドルの当時最高値を更新した。12月26日にスマトラ島沖地震（Mw≈9.1）とインド洋大津波が14か国で約23万人の死者をもたらした。DJIAは年末10,783.01で越年した。',
+    japan:
+      '景気回復が継続（後に「いざなみ景気」と呼ばれる戦後最長拡大の一部）。輸出と設備投資が牽引し、デジタル家電（薄型テレビ・DVDレコーダー・デジカメ）が国内外で好調だった。日経平均は大納会で11,488.76円と前年末比で上昇した。政策面では年金改革関連法（マクロ経済スライド導入）が成立し、陸上自衛隊のイラク（サマワ）人道復興支援派遣が本格展開した。10月23日に新潟県中越地震（M6.8、最大震度7）が発生した。',
+    keyEvents: [
+      'FRBが約4年ぶりに利上げ（6/30、FF金利1.00→1.25%）—引き締めへ転換',
+      '原油高騰—10月にWTI原油が当時最高値の約55ドルを更新',
+      '新潟県中越地震（10/23、M6.8、最大震度7、上越新幹線脱線）',
+      'スマトラ島沖地震（Mw≈9.1）・インド洋大津波（12/26、約23万人死亡）',
+      '中国の高成長持続（実質GDP+9.5%）／自衛隊イラク派遣・年金改革',
+    ],
+    risingSectors: ['（定性）デジタル家電・薄型テレビ・デジカメ、半導体・電子部品（デジタル家電需要）、中国向け輸出関連（鉄鋼・建設機械・素材）、エネルギー・資源'],
+    decliningSectors: ['（定性）原油高でコスト圧迫を受けた運輸・素材川下・電力など。'],
+    caveats: 'DJIA年末値10783.01（12/31）と日経平均年末値11488.76（大納会）は独立2源で一致。中国GDPは国家統計局公表の+9.5%。原油「約55ドル」は2004/10の当時最高値で年間変動大。津波死者は約227,900〜230,000+人と出典差。いざなみ景気は事後呼称。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreserve.gov/boarddocs/press/monetary/2004/20040630/default.htm', type: 'government', label: '米FRB — FOMC声明 2004/6/30（FF金利1.25%へ利上げ）' },
+      { url: 'https://www.britannica.com/event/Indian-Ocean-tsunami-of-2004', type: 'reference', label: 'Britannica — 2004年インド洋大津波（12/26）' },
+      { url: 'https://www.stats.gov.cn/english/NewsEvents/200502/t20050228_25600.html', type: 'government', label: '中国国家統計局 — 2004年国民経済統計公報（実質GDP+9.5%）' },
+    ],
+  },
+  {
+    year: 2005,
+    era: '平成17年',
+    world:
+      '世界経済は原油高騰の重圧下でも底堅く拡大した。米FRBは利上げを継続し（9月で11回連続、年末FF金利4.25%）、住宅・不動産ブームが消費を下支えした。8月末のハリケーン・カトリーナがメキシコ湾岸の石油精製を直撃し原油は一時70ドル超へ。7月21日に中国が人民元を対ドル2.1%切り上げ（8.28→8.11）し10年超の固定相場を撤廃、管理フロートへ移行した。DJIAは年末10,717.50で越年した。',
+    japan:
+      '「いざなみ景気」下で景気回復が鮮明化した。小泉首相は郵政民営化法案の参院否決を受け衆院を解散（郵政解散）、9月11日の総選挙で自民党が296議席を獲得し与党圧勝、民営化法が成立した。企業業績改善と外国人買いで株価が急騰し、日経平均は年末に16,111.43円（前年末比約+40%）へ回復した。ライブドアなど新興市場ブームが過熱し、3〜9月に愛知万博（愛・地球博）を開催した。',
+    keyEvents: [
+      'ハリケーン・カトリーナが米湾岸を直撃（8/29）—石油精製打撃・原油高騰',
+      '中国が人民元を2.1%切り上げ、ドルペッグ撤廃し管理フロートへ移行（7/21）',
+      '米FRBが利上げ継続（9月で11回連続、年末FF金利4.25%）',
+      '郵政解散総選挙で小泉自民党が296議席の圧勝、郵政民営化法成立（9/11）',
+      '愛知万博（愛・地球博）開催（3/25〜9/25）／日経平均が年末16,000円台へ回復',
+    ],
+    risingSectors: ['（定性）エネルギー・石油（原油高で資源・石油メジャー好業績）、米不動産・住宅関連（住宅ブーム・低金利）、日本の輸出製造業・商社・銀行（景気回復・株高）、新興市場/IT・ネット関連'],
+    decliningSectors: ['（定性）航空（燃料高でDelta・Northwestが9月にChapter11申請）、米自動車（GM・FordがSUV不振・高コストで業績悪化）。'],
+    caveats: 'DJIA年末値10717.50（12/30）と日経平均年末値16111.43（大納会、前年比約+40%）は独立2源で一致。米GDP成長率は出典により3%強〜約3.5%。いざなみ景気は事後呼称。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2005/09/a-look-at-china-new-exchange-rate-regime/', type: 'government', label: "San Francisco Fed — China's New Exchange Rate Regime（人民元7/21切り上げ）" },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%AC%AC44%E5%9B%9E%E8%A1%86%E8%AD%B0%E9%99%A2%E8%AD%B0%E5%93%A1%E7%B7%8F%E9%81%B8%E6%8C%99', type: 'reference', label: 'Wikipedia（日本語）— 第44回衆議院議員総選挙（9/11郵政解散・自民圧勝）' },
+      { url: 'https://www.nbcnews.com/news/amp/wbna10690700', type: 'media', label: 'NBC News — 2005年最終取引日の株式（DJIA 10,717.50）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1451,6 +1589,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1997: { djiaYearEnd: 7908.24, nikkeiYearEnd: 15258, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1998: { djiaYearEnd: 9181.43, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1999: { djiaYearEnd: 11497.12, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2000: { djiaYearEnd: 10786.85, nikkeiYearEnd: 13785, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2001: { djiaYearEnd: 10021.57, nikkeiYearEnd: 10542.62, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2002: { djiaYearEnd: 8341.63, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2003: { djiaYearEnd: 10453.92, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2004: { djiaYearEnd: 10783.01, nikkeiYearEnd: 11488.76, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2005: { djiaYearEnd: 10717.5, nikkeiYearEnd: 16111.43, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
