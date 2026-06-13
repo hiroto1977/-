@@ -2191,5 +2191,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/', type: 'government', label: '消費者庁 消費者安全（重大製品事故）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-blue-return-application',
+      domain: 'tax',
+      title: '所得税の青色申告承認申請',
+      statement:
+        '所得税の青色申告をするには、納税地の所轄税務署長に「青色申告承認申請書」を提出して承認を受ける必要がある。' +
+        '提出期限は原則としてその年の3月15日まで（その年の1月16日以後に新たに業務を開始した場合は業務開始日から2か月以内）であり、' +
+        '青色申告者は一定水準（原則として複式簿記）の帳簿の備付け・記帳・保存が必要となる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2070.htm', type: 'government', label: '国税庁 No.2070 青色申告制度' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm', type: 'government', label: '国税庁 A1-8 青色申告承認申請手続' },
+      { url: 'https://www.freee.co.jp/kb/kb-kaigyou/blue-return-approval-application/', type: 'media', label: '青色申告承認申請書 提出期限 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-invoice-2wari',
+      domain: 'tax',
+      title: 'インボイス制度の2割特例（小規模事業者の負担軽減）',
+      statement:
+        '免税事業者からインボイス発行事業者として課税事業者になった小規模事業者は、令和5年10月1日から令和8年9月30日までの日の属する' +
+        '各課税期間について、納付する消費税額を売上に係る消費税額の2割とすることができる経過措置（2割特例）を適用できる。' +
+        '事前の届出は不要で、確定申告書にその旨を付記して課税期間ごとに選択適用できる。',
+      authority: '所管: 国税庁（消費税法／経過措置）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm', type: 'government', label: '国税庁 2割特例の概要' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_2tokurei.htm', type: 'government', label: '国税庁 2割特例 特設ページ' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/socat4/scid1924.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 2割特例' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-safety-education',
+      domain: 'labor',
+      title: '雇入れ時等の安全衛生教育（労働安全衛生法59条）',
+      statement:
+        '事業者は、労働者を雇い入れたとき、および労働者の作業内容を変更したときは、その従事する業務に関する安全または衛生のための' +
+        '教育を行わなければならない（労働安全衛生法59条1項・2項）。さらに危険または有害な業務に就かせるときは、当該業務に関する特別教育を行わなければならない（同条3項）。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11300000/001403814.pdf', type: 'government', label: '厚生労働省 特別教育の概要（59条3項）' },
+      { url: 'https://jsite.mhlw.go.jp/yamaguchi-roudoukyoku/content/contents/000540912.pdf', type: 'government', label: '山口労働局 安全衛生教育（59条・安衛則35条）' },
+      { url: 'https://www.rodo.co.jp/laws/116958/', type: 'media', label: '労働安全衛生法 59条 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-accident-report',
+      domain: 'labor',
+      title: '労働者死傷病報告（労働安全衛生規則97条）',
+      statement:
+        '事業者は、労働者が労働災害等により死亡し、または休業したときは「労働者死傷病報告」を所轄労働基準監督署長に提出しなければ' +
+        'ならない（安衛則97条）。休業4日以上は遅滞なく、休業4日未満は四半期ごとにまとめて報告する。報告を怠る・虚偽報告をする' +
+        '「労災かくし」は犯罪である。2025年1月からは原則として電子申請が義務化された。',
+      authority: '所管: 厚生労働省（労働安全衛生法／規則）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/general/seido/roudou/rousai/', type: 'government', label: '厚生労働省 労災かくしは犯罪です' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/denshishinsei_00002.html', type: 'government', label: '厚生労働省 死傷病報告の電子申請義務化' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/17.html', type: 'government', label: '厚生労働省 労働者死傷病報告' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-subscription-sales',
+      domain: 'legal',
+      title: '通信販売の定期購入の表示規制（令和3年改正特商法）',
+      statement:
+        '令和3年改正特定商取引法（2022年6月1日施行）により、通信販売の申込み最終確認画面において、分量・販売価格・支払時期・' +
+        '引渡時期・申込みの撤回や解除に関する事項等を明確に表示することが義務付けられた。定期購入でないと誤認させる表示等は禁止され、' +
+        'そうした表示で誤認して申し込んだ場合は申込みの取消しが可能で、違反には罰則がある。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/notice03/', type: 'government', label: '消費者庁 通販の定期購入トラブル注意・最終確認画面' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/', type: 'government', label: '消費者庁 令和3年特定商取引法・預託法の改正' },
+      { url: 'https://www.it-houmu.com/archives/2178', type: 'media', label: '改正特商法 最終確認画面の表示義務 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-unfair-competition',
+      domain: 'legal',
+      title: '不正競争防止法（混同惹起・著名表示冒用・形態模倣）',
+      statement:
+        '不正競争防止法は不正競争行為を類型化し、他人の周知な商品等表示と同一・類似のものを使用して混同を生じさせる行為（混同惹起・' +
+        '2条1項1号）、他人の著名な商品等表示の冒用行為（同2号）、他人の商品の形態を模倣した商品の譲渡等（形態模倣・同3号。最初の販売日から3年以内）' +
+        '等を規制し、これらは差止請求（3条）や損害賠償請求（4条）の対象となる。',
+      authority: '所管: 経済産業省（不正競争防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/unfaircompetition_new.html', type: 'government', label: '経済産業省 不正競争防止法の概要' },
+      { url: 'https://www.jpo.go.jp/support/ipr/fusei-kyusai.html', type: 'government', label: '特許庁 不正競争防止法違反被害への救済' },
+      { url: 'https://www.jpo.go.jp/support/ipr/qanda/q09.html', type: 'government', label: '特許庁 デッドコピー商品への対策（形態模倣）' },
+    ],
+  },
 ];
 // Stryker restore all
