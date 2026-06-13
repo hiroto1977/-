@@ -1737,6 +1737,114 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://hojyokin-portal.jp/', type: 'media', label: '補助金ポータル（沖縄県産業振興基金事業 案内）' },
     ],
   },
+  {
+    id: 'subsidy-aomori',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'あおもり起業支援事業費補助金（青森県）',
+    authority: '青森県（経済産業部 立地企業課・創業/起業支援担当）／執行・申請窓口: 公益財団法人21あおもり産業総合支援センター',
+    statement:
+      '青森県への移住者（移住予定者を含む）または県内在住の若者・女性が、デジタル技術を活用して地域課題の解決を図る起業や、付加価値の高い産業分野でデジタル技術を活用した事業承継・第二創業を' +
+      '行う場合に、創業等に要する経費の一部を補助する青森県の代表的な創業支援制度。補助率・上限額・募集期間は年度ごとに変動するため、最新の募集要項及び県・支援センター公式で要確認。',
+    application:
+      '公益財団法人21あおもり産業総合支援センターが公募・受付を行い、事業計画の策定や専門家による伴走支援を前提に申請する。対象経費は人件費・設備費・店舗賃料・広報費等が想定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.aomori.lg.jp/soshiki/sangyo/richi/support_for_entrepreneurs.html', type: 'municipality', label: '青森県 立地企業課 創業・起業の支援' },
+      { url: 'https://www.21aomori.or.jp/topics/25496', type: 'operator', label: '21あおもり産業総合支援センター あおもり起業支援事業費補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/184141', type: 'government', label: 'J-Net21 青森県 起業・スタートアップ補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-iwate',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業者等賃上げ環境整備支援事業費補助金（岩手県）',
+    authority: '岩手県（商工労働観光部 経営支援課 中小企業振興担当）／公募周知は岩手県中小企業団体中央会等を通じて案内',
+    statement:
+      '承認を受けた経営革新計画に基づき、生産性向上・適切な価格転嫁・賃上げのための環境整備に取り組む県内の中小企業・小規模事業者を対象に、設備投資・人材育成・販路開拓等に要する経費の一部を' +
+      '補助する岩手県の制度。給与支給総額の引上げ見込みや「パートナーシップ構築宣言」等が要件として設定される。補助率・上限額・公募期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '経営革新計画の承認取得を前提に、県（経営支援課）が定める公募要領に沿って所定様式で申請する。年度内に複数回公募される回次制で、受付期間・審査・採択・交付決定が回ごとに設定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.iwate.jp/kensei/nyuusatsu/1010807/1066780.html', type: 'municipality', label: '岩手県 中小企業者等賃上げ環境整備支援事業費補助金 公募' },
+      { url: 'https://www.ginga.or.jp/2025/04/07/14868/', type: 'operator', label: '岩手県中小企業団体中央会 公募告知' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（岩手県 賃上げ環境整備補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-akita',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'あきた農商工応援ファンド事業（助成金）（秋田県）',
+    authority: '公益財団法人あきた企業活性化センター（秋田県が関与する産業支援機関）／秋田県 産業労働部の中小企業支援施策の一環',
+    statement:
+      '秋田県内の中小企業者等と農林漁業者が組む「連携体」が、県産農林水産物等を活用して取り組む新商品・新サービスの開発や販路開拓を支援する助成金制度。県の産業支援機関であるあきた企業活性化センターが' +
+      '基金（ファンド）の運用益等を原資に実施する。助成率・上限額・募集期間は年度ごとに変動するため、最新の募集要項で要確認。',
+    application:
+      '公募制。あきた企業活性化センターが年度ごとに募集要項を公表し、原則として事前相談を経たうえで連携体が申請書類を提出、審査・採択を受けて交付決定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bic-akita.or.jp/support/20.html', type: 'operator', label: 'あきた企業活性化センター あきた農商工応援ファンド事業' },
+      { url: 'https://www.pref.akita.lg.jp/pages/genre/11973', type: 'municipality', label: '秋田県 あきた企業活性化センター 紹介' },
+      { url: 'https://hojyokin-portal.jp/subsidies/72685', type: 'media', label: '補助金ポータル 秋田県 あきた農商工応援ファンド事業' },
+    ],
+  },
+  {
+    id: 'subsidy-yamagata',
+    level: 'prefecture',
+    domain: 'business',
+    name: '山形県中小企業まるっとサポート補助金（山形県）',
+    authority: '山形県（産業労働部 商業振興・経営支援課）／一部の枠は公益財団法人やまがた産業支援機構に事務局を設置',
+    statement:
+      '県内産業の持続的発展を目的に、新技術・新サービスの開発から設備投資、販路開拓までを一貫支援する山形県の総合的な中小企業支援制度。県内に事業所を有する中小企業・小規模事業者等が対象で、' +
+      '収益力向上（設備投資）・販路開拓（展示会等出展）・DX推進・事業継続力強化など複数の枠に分かれて公募される。補助率・上限額・募集期間は枠ごと・年度ごとに変動するため要確認。',
+    application:
+      '県（商業振興・経営支援課）または各枠の事務局（やまがた産業支援機構）が年度ごと・枠ごとに公募。事業者が募集要領に沿って申請書類を提出する交付申請方式（一部の枠はパートナーシップ構築宣言の公表が要件）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamagata.jp/110013/sangyo/shokogyo/shinko/marusapo.html', type: 'municipality', label: '山形県 中小企業まるっとサポート補助金' },
+      { url: 'https://www.pref.yamagata.jp/documents/44650/gaiyo_hanro.pdf', type: 'municipality', label: '山形県 まるっとサポート補助金 販路開拓支援 概要' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（山形県 まるっとサポート補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-toyama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '富山県中小企業トランスフォーメーション補助金（富山県）',
+    authority: '富山県（商工労働部の商工施策として実施）／執行・申請窓口（事務局）: 公益財団法人富山県新世紀産業機構（Tonio）',
+    statement:
+      '富山県内の中小企業等が、自社の経営課題（エネルギー使用量・CO2排出量・機器稼働状況等）を「見える化」し、DX（デジタル変革）・GX（グリーン変革）・省力化の視点から業務プロセスや事業構造の変革に' +
+      '取り組む経費を支援する県の補助金。課題見える化枠・DX枠・GX枠など複数区分で構成される。補助率・各枠の上限額・募集期間は募集回・年度ごとに変動するため要確認。',
+    application:
+      '事務局（富山県新世紀産業機構）への申請。希望する枠を選び、補助金の手引き・Q&Aに沿って事業計画と必要書類を提出する公募・審査・交付決定方式。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.toyama.jp/1300/sangyou/shoukoukensetsu/shoukougyou/transformation.html', type: 'municipality', label: '富山県 中小企業トランスフォーメーション補助金' },
+      { url: 'https://www.tonio.or.jp/search/20251216-xformation/', type: 'operator', label: '富山県新世紀産業機構（Tonio）募集案内' },
+      { url: 'https://toyama-yorozushien.go.jp/news/2026/02/post-5153/', type: 'government', label: '富山県よろず支援拠点 補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-ishikawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）',
+    authority: '石川県（商工労働部 経営支援課）／周知・受付支援: 公益財団法人石川県産業創出支援機構（ISICO）及び地域の商工会・商工会議所',
+    statement:
+      '国の「小規模事業者持続化補助金（災害支援枠）」の交付決定・受給を受けた石川県内の小規模事業者等に対し、県が独自に上乗せ補助を行う制度。能登半島地震等の災害からの事業再建・継続を後押しする趣旨で、' +
+      '建物の修繕費・機械の修理／入替など復旧関連経費を含むことが要件とされる。補助率・上乗せ上限額・募集期間は年度ごとに設定・変動するため要確認。',
+    application:
+      '国の持続化補助金（災害支援枠）で交付決定・受給を完了したうえで、県の上乗せ分を別途申請する枠組み。申請・相談は地域の商工会／商工会議所を通じて行い、ISICO（DGnet）・県公式で制度詳細・様式が案内される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ishikawa.lg.jp/kinyuu/jishin/zizokuka.html', type: 'municipality', label: '石川県 小規模事業者事業継続支援補助金' },
+      { url: 'https://www.isico.or.jp/support/dgnet/d41187942.html', type: 'operator', label: '石川県産業創出支援機構（ISICO）制度ページ' },
+      { url: 'https://shoko.or.jp/info/common/3132', type: 'operator', label: '石川県商工会連合会 事業継続支援補助金 案内' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
