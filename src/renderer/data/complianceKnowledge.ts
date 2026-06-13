@@ -368,5 +368,40 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://onehr.jp/column/labor/workers-accident-insurance-who-pays/', type: 'media', label: '労災保険料の負担 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-furusato-onestop',
+      domain: 'tax',
+      title: 'ふるさと納税のワンストップ特例',
+      statement:
+        '確定申告が不要な給与所得者等で、寄付先が年間5自治体以内であれば、各自治体へワンストップ特例の' +
+        '申請（期限は翌年1月10日）を行うことで確定申告なしに控除を受けられる。6自治体以上は確定申告が必要。',
+      authority: '所管: 総務省・国税庁（地方税法・所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/furusato/mechanism/procedure.html', type: 'government', label: '総務省 ふるさと納税の流れ' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/keisubetsu/furusato.htm', type: 'government', label: '国税庁 ふるさと納税をされた方へ' },
+      { url: 'https://biz.moneyforward.com/tax_return/basic/48272/', type: 'media', label: 'マネーフォワード ワンストップ特例' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-leave-2025',
+      domain: 'labor',
+      title: '育児・介護休業法 2025年4月改正',
+      statement:
+        '2025年4月施行。子の看護休暇の対象が「小学校3年生修了まで」に拡大し、感染症に伴う学級閉鎖・' +
+        '入園/卒園式等が取得事由に追加（勤続6か月未満も取得可）。所定外労働の制限（残業免除）の対象が' +
+        '「小学校就学前までの子を養育する労働者」に拡大された。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/point02.html', type: 'government', label: '厚生労働省 育児休業制度 特設サイト' },
+      { url: 'https://sendai-elcc.mhlw.go.jp/column/column1783/', type: 'government', label: '厚生労働省 育児・介護休業法 2025年4月改正' },
+      { url: 'https://www.businesslawyers.jp/articles/1442', type: 'media', label: '2025年改正ポイント 解説' },
+    ],
+  },
 ];
 // Stryker restore all
