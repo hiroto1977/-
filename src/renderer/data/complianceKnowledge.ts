@@ -3890,5 +3890,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk3_000059.html', type: 'government', label: '国土交通省 定期建物賃貸借' },
     ],
   },
+  {
+    value: {
+      id: 'tax-tax-audit',
+      domain: 'tax',
+      title: '税務調査（質問検査権と事前通知）',
+      statement:
+        '国税通則法に基づき、税務署等の調査担当者は、納税義務者に対して質問し帳簿書類等を検査する権限（質問検査権）を有する。' +
+        '実地の調査を行う場合は、原則として調査の開始日時・場所・目的・対象税目・対象期間等をあらかじめ納税義務者（税務代理人を含む）に' +
+        '通知する（事前通知。74条の9）が、正確な課税標準等の把握を困難にするおそれ等があると認められる場合は事前通知をしないことがある（74条の10）。',
+      authority: '所管: 国税庁（国税通則法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kobetsu/zeimuchosa/120912/03_2.htm', type: 'government', label: '国税庁 法令解釈通達 事前通知（74条の9〜11）' },
+      { url: 'https://www.nta.go.jp/information/other/data/h24/nozeikankyo/ippan.htm', type: 'government', label: '国税庁 税務調査手続に関するFAQ' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kobetsu/zeimuchosa/120912/01.htm', type: 'government', label: '国税庁 法令解釈通達 質問検査権（74条の2〜6）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-large-corp-efiling',
+      domain: 'tax',
+      title: '大法人の電子申告（e-Tax）義務化',
+      statement:
+        '2020年（令和2年）4月1日以後に開始する事業年度から、事業年度開始時の資本金の額等が1億円を超える法人（大法人）等については、' +
+        '法人税・地方法人税及び消費税・地方消費税の確定申告書・中間申告書等の提出を、電子情報処理組織（e-Tax）により行うことが義務付けられている。',
+      authority: '所管: 国税庁（法人税法・消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.e-tax.nta.go.jp/hojin/gimuka/index.htm', type: 'government', label: '国税庁 e-Tax 大法人の電子申告の義務化' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r2/Apr/04.htm', type: 'government', label: '国税庁 大法人の電子申告義務化について' },
+      { url: 'https://www.pref.saitama.lg.jp/a0209/z-kurashiindex/z-eltax-gimuka.html', type: 'municipality', label: '埼玉県 大法人の電子申告義務化の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-digital-wage-payment',
+      domain: 'labor',
+      title: '賃金のデジタル払い（資金移動業者口座への賃金支払）',
+      statement:
+        '2023年（令和5年）4月1日施行の労働基準法施行規則改正により、厚生労働大臣の指定を受けた資金移動業者（〇〇Pay等）の口座への' +
+        '賃金支払（賃金のデジタル払い）が解禁された。賃金支払の通貨払い原則の例外として、労働者本人の同意・労使協定の締結が必要であり、' +
+        '指定要件として口座残高上限100万円以下等が定められている。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_41528.html', type: 'government', label: '厚生労働省 賃金のデジタル払い（資金移動業者の指定）' },
+      { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'media', label: 'JILPT 給与デジタル払いの解禁（本人同意・100万円上限）' },
+      { url: 'https://j-net21.smrj.go.jp/law/20231115.html', type: 'media', label: '中小機構 J-Net21 賃金のデジタル払い' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childbirth-lumpsum',
+      domain: 'labor',
+      title: '健康保険の出産育児一時金（原則50万円）',
+      statement:
+        '健康保険の被保険者または被扶養者が出産したときは、出産育児一時金（被扶養者の場合は家族出産育児一時金）が支給される。支給額は' +
+        '2023年（令和5年）4月1日から、産科医療補償制度に加入する医療機関等で在胎週数22週以降に出産した場合は原則として1児につき50万円' +
+        '（同制度の対象外は48万8千円）であり、保険者が医療機関等へ直接支払う「直接支払制度」が利用できる（出産手当金とは別の給付）。',
+      authority: '所管: 厚生労働省・全国健康保険協会（健康保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.kyoukaikenpo.or.jp/benefit/childbirth/002/index.html', type: 'operator', label: '協会けんぽ 出産育児一時金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/shussan/index.html', type: 'government', label: '厚生労働省 出産育児一時金等について' },
+      { url: 'https://www.kyoukaikenpo.or.jp/g6/cat620/r310/', type: 'operator', label: '協会けんぽ 子どもが生まれたとき FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-insolvency-procedures',
+      domain: 'legal',
+      title: '法的倒産処理手続（破産・民事再生・会社更生・特別清算）',
+      statement:
+        '日本の法的倒産処理手続には、清算型として財産を換価し債権者へ配当して法人格を消滅させる破産手続（破産法）と会社法に基づく特別清算が' +
+        'あり、再建型として事業を継続しながら再生計画で債務を整理し中小企業や個人も利用できる民事再生手続（民事再生法）と、主に大規模な' +
+        '株式会社を対象に裁判所が選任した管財人が再建を進める会社更生手続（会社更生法）がある。いずれも裁判所が関与する手続である。',
+      authority: '所管: 法務省（破産法・民事再生法・会社更生法・会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.courts.go.jp/saiban/syurui/syurui_minzi/minzi_25_19/index.html', type: 'government', label: '裁判所 会社更生・特別清算の手続概要' },
+      { url: 'https://www.courts.go.jp/tokyo/saiban/minzi_section20/index.html', type: 'government', label: '東京地方裁判所 民事第20部（倒産部）' },
+      { url: 'https://www.moj.go.jp/shingi1/shingi_030910-1-1.html', type: 'government', label: '法務省 破産法等の見直しに関する要綱' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-director-duty',
+      domain: 'legal',
+      title: '取締役の善管注意義務・忠実義務（会社法）',
+      statement:
+        '株式会社と取締役との関係は委任に関する規定に従い（会社法330条・民法644条）、取締役は会社に対して善良な管理者の注意をもって職務を' +
+        '行う善管注意義務を負う。また取締役は、法令・定款・株主総会の決議を遵守し会社のため忠実に職務を行う忠実義務を負い（会社法355条）、' +
+        'これらに違反して会社に損害を与えた場合は任務懈怠による損害賠償責任を負う（会社法423条）。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（330条・355条・423条）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_kaishahou/kaishahou_355/', type: 'media', label: '会社法355条 忠実義務 解説' },
+      { url: 'https://biz.moneyforward.com/ipo/basic/10318/', type: 'media', label: '取締役の善管注意義務 解説' },
+    ],
+  },
 ];
 // Stryker restore all
