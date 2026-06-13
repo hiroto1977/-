@@ -922,6 +922,11 @@ export const SNAPSHOT = {
     },
   },
 
+  // コンプライアンス: 実データは complianceKnowledge を参照。スナップショットはスタブ標識のみ。
+  compliance: {
+    note: 'verified-compliance',
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   funding: {

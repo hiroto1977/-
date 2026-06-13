@@ -195,6 +195,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   freee: ['freee', 'ふりー', 'freee会計', '会計', 'かいけい'],
   connectors: ['こねくたー', 'connectors', '自動化', 'じどうか', '連携', 'れんけい', 'ぷらぐいん', 'plugin'],
   linux: ['linux', 'りなっくす', 'しすてむもにたー', 'systemmonitor', 'かーねる', 'kernel'],
+  compliance: ['こんぷらいあんす', 'compliance', '法令', 'ほうれい', '確証', 'かくしょう', 'コンプラ', 'こんぷら'],
 };
 // Stryker restore all
 

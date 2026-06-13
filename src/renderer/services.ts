@@ -61,6 +61,7 @@ import { FundingPage } from './pages/FundingPage';
 import { FreeePage } from './pages/FreeePage';
 import { ConnectorsPage } from './pages/ConnectorsPage';
 import { LinuxPage } from './pages/LinuxPage';
+import { CompliancePage } from './pages/CompliancePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -593,6 +594,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: '🐧',
     description: 'システムモニター — OS/カーネル/CPU/メモリ/ロード/稼働時間 (os から実値・読み取り専用)',
     page: LinuxPage,
+    category: 'tools',
+  },
+  {
+    id: 'compliance',
+    label: 'コンプライアンス',
+    icon: 'CP',
+    description: '法務/税務/労務の確証済み制度知識を分野別に表示 (一次情報で裏取り・出典リンク付き)',
+    page: CompliancePage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
