@@ -5611,5 +5611,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.chusho.meti.go.jp/shogyo/shogyo/laws.html', type: 'government', label: '中小企業庁 中小小売商業振興法 法令' },
     ],
   },
+  {
+    value: {
+      id: 'labor-fixed-overtime-pay',
+      domain: 'labor',
+      title: '固定残業代（定額残業代）の有効要件',
+      statement:
+        '固定残業代（一定時間分の時間外手当をあらかじめ定額で支払う方法）は、判例上、通常の労働時間の賃金部分と労働基準法37条の割増賃金部分とが' +
+        '判別できること（明確区分性）が必要であり、定額分が実際の時間外労働等に対する割増賃金額を下回る場合は使用者が差額を支払う義務を負う。' +
+        '有効とするには、何時間分の時間外労働に対する手当かを労働契約・就業規則・求人票等で明示すること等が求められる。',
+      authority: '所管: 厚生労働省（労働基準法・判例法理）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11600000-Shokugyouanteikyoku/0000184068.pdf', type: 'government', label: '厚生労働省 固定残業代制を採用する場合の明示事項' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_jikangai.html', type: 'government', label: '厚生労働省 確かめよう労働条件 時間外労働と割増賃金' },
+      { url: 'https://roudou-bengoshi.com/zangyoudai/4052/', type: 'media', label: '固定残業代 厚労省通達・明確区分性 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-maternity-harassment',
+      domain: 'labor',
+      title: '妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）',
+      statement:
+        '事業主は、職場における妊娠・出産等に関する言動及び育児休業等の利用に関する言動により女性労働者・労働者の就業環境が害されることのないよう、' +
+        '相談に応じ適切に対応するための体制整備その他雇用管理上必要な措置を講じる義務を負う（男女雇用機会均等法11条の3・育児・介護休業法25条）。' +
+        'あわせて、妊娠・出産・育児休業等を理由とする解雇その他不利益取扱いは禁止されている（均等法9条3項・育介法10条等）。',
+      authority: '所管: 厚生労働省（男女雇用機会均等法・育児介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-harassment.mhlw.go.jp/foundation/law-measure/', type: 'government', label: '厚生労働省 あかるい職場応援団 ハラスメント防止措置' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/seisaku06/index.html', type: 'government', label: '厚生労働省 職場におけるハラスメントの防止' },
+      { url: 'https://www.gov-online.go.jp/article/202510/entry-9438.html', type: 'media', label: '政府広報オンライン ハラスメント防止の措置義務' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-depreciation-useful-life',
+      domain: 'tax',
+      title: '減価償却資産の法定耐用年数',
+      statement:
+        '建物・建物附属設備・機械装置・車両運搬具・器具備品等の減価償却資産は、その種類・構造・用途等に応じて「減価償却資産の耐用年数等に関する省令」の' +
+        '別表で法定耐用年数が定められており、減価償却費はこの法定耐用年数に基づいて計算する。中古資産を取得した場合は、法定耐用年数によらず、使用可能期間の' +
+        '見積り又は簡便法（経過年数に応じた算定）による年数を用いることができる。',
+      authority: '所管: 国税庁（法人税法・所得税法／耐用年数省令）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm', type: 'government', label: '国税庁 No.2100 減価償却のあらまし' },
+      { url: 'https://laws.e-gov.go.jp/law/340M50000040015', type: 'government', label: 'e-Gov法令検索 減価償却資産の耐用年数等に関する省令' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5404_qa.htm', type: 'government', label: '国税庁 No.5404 中古資産の耐用年数' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-group-corporate',
+      domain: 'tax',
+      title: 'グループ法人税制（完全支配関係への強制適用）',
+      statement:
+        'グループ法人税制は、完全支配関係（原則として発行済株式の全部を直接又は間接に保有する関係）にある内国法人グループ内の取引に強制適用される' +
+        '法人税の制度で、選択制のグループ通算制度とは別に適用される。主な内容として、完全支配関係にある内国法人間での譲渡損益調整資産の譲渡損益の繰延べ、' +
+        '法人による完全支配関係にある法人間の寄附金（支出側は全額損金不算入・受領側は受贈益を全額益金不算入）、受取配当等の益金不算入等がある。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/hojin/09/09_04_02.htm', type: 'government', label: '国税庁 法人税基本通達 完全支配関係がある法人間の寄附金' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/101006/index.htm', type: 'government', label: '国税庁 グループ法人税制 質疑応答事例' },
+      { url: 'https://u-ks.jp/column/company-management/group-houjin-requirements', type: 'media', label: 'グループ法人税制 適用範囲 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-financial-services-intermediary',
+      domain: 'legal',
+      title: '金融サービス仲介業（金融サービス提供法）',
+      statement:
+        '2021年11月1日施行の金融サービス仲介業は、1つの登録で銀行・証券・保険・貸金業の全分野にわたる金融サービスの仲介を可能とする制度で、' +
+        '従来の分野別の所属制（特定の金融機関への所属）を不要とする一方、利用者保護のため取扱可能な商品の制限や保証金の供託等の義務が課される。',
+      authority: '所管: 金融庁（金融サービスの提供及び利用環境の整備等に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/common/law/guide/kinsa/index.html', type: 'government', label: '金融庁 金融サービス仲介業者向け監督指針' },
+      { url: 'https://laws.e-gov.go.jp/law/412AC0000000101', type: 'government', label: 'e-Gov法令検索 金融サービス提供法' },
+      { url: 'https://www.businesslawyers.jp/articles/1030', type: 'media', label: '金融サービス仲介業 態勢整備 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-financial-statements-disclosure',
+      domain: 'legal',
+      title: '株式会社の計算書類の公告（決算公告）義務',
+      statement:
+        '株式会社は、定時株主総会の終結後遅滞なく、貸借対照表（大会社は貸借対照表及び損益計算書）を公告しなければならない（会社法440条1項）。' +
+        '公告方法は定款で官報・日刊新聞紙・電子公告のいずれかを定め、官報・日刊新聞紙による場合は要旨の公告で足りる。電子公告以外を公告方法とする会社も、' +
+        '貸借対照表の内容である情報を定時株主総会終結の日後5年間継続して電磁的方法により開示（ウェブ開示）すれば足りる。公告を怠ると過料の制裁がある。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（440条・976条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji81.html', type: 'government', label: '法務省 電子公告制度について' },
+      { url: 'https://biz.moneyforward.com/erp/basic/2193/', type: 'media', label: '決算公告の期限・方法・罰則 解説' },
+    ],
+  },
 ];
 // Stryker restore all
