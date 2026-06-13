@@ -697,6 +697,138 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://ja.wikipedia.org/wiki/いざなぎ景気', type: 'reference', label: 'Wikipedia — いざなぎ景気（期間・成長率・GNP世界第2位）' },
     ],
   },
+  {
+    year: 1970,
+    era: '昭和45年',
+    world:
+      '米国は1969年12月から1970年11月まで約11か月続いた比較的軽い景気後退に陥り（NBER基準、失業率は12月に約6.1%）、後退局面でもインフレが鈍化せずスタグフレーションの前兆を示した。米ソ冷戦・ベトナム戦争が継続した。',
+    japan:
+      '戦後最長の好景気「いざなぎ景気」（1965/11〜1970/7、57か月）が7月に終了し、その後1971年12月まで景気後退（いわゆる昭和45・46年不況の入口）に入った。3〜9月に大阪万博（EXPO\'70）を開催して高度成長と世界第2位の経済力を象徴し、11〜12月の臨時国会（公害国会）で公害関連14法が成立して公害問題への政策転換が図られた。',
+    keyEvents: [
+      '大阪万博（EXPO\'70）開催（3/15〜9/13）',
+      'いざなぎ景気の終了（景気の山＝7月）と、その後の景気後退入り',
+      '公害国会（11〜12月）で公害関連14法が成立',
+      '米国の1969–70年景気後退（〜11月）と根強いインフレ',
+    ],
+    risingSectors: ['（日本）建設・インフラ・観光関連（大阪万博特需、関西圏）、重化学工業（鉄鋼・自動車・電機・化学）'],
+    decliningSectors: ['（日本）公害規制強化でコスト増に直面し始めた重化学・素材産業、景気後退入りで設備投資に減速感'],
+    caveats: 'DJIA年末値838.92は確証値。日経平均1970年末確定値は独立2源で確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Recession_of_1969%E2%80%931970', type: 'reference', label: 'Wikipedia — Recession of 1969–1970（米景気後退）' },
+      { url: 'https://www.erca.go.jp/yobou/taiki/rekishi/03_05.html', type: 'government', label: '環境再生保全機構 — 公害国会（1970年・公害関連14法）' },
+      { url: 'https://ocw.u-tokyo.ac.jp/lecture_files/eco_05/12/notes/ja/JEH-25.pdf', type: 'academic', label: '東京大学OCW 武田晴人 現代日本経済史（高度成長の終焉）' },
+    ],
+  },
+  {
+    year: 1971,
+    era: '昭和46年',
+    world:
+      '戦後国際通貨体制（ブレトンウッズ）が事実上崩壊した転換点。8月15日にニクソン米大統領が「新経済政策」で金・ドル交換停止・10%輸入課徴金・賃金物価凍結を発表（ニクソン・ショック）し、12月17–18日のスミソニアン協定でドルを金に対し切り下げ（金35→38ドル/oz）、変動許容幅±2.25%の新固定相場を設定した（同体制は約15か月で破綻）。',
+    japan:
+      '高度成長末期で外需依存度が高い日本にとってドル・ショックは重大な打撃となった。8月28日に1ドル=360円（1949年来の固定）を放棄し、12月のスミソニアン協定で1ドル=308円へ切り上げ（約16.88%の円高、参加国中最大）。輸出企業・産地は「死活問題」と反発し円高不況（ドルショック不況）懸念が広がった。並行して日米繊維交渉が決着し（政府間協定は1972年1月署名）、繊維など輸出産業は対米輸出規制と円高の二重圧力に直面した。なお景気後退自体は1970年7月から続いていた（谷は1971年12月）。',
+    keyEvents: [
+      'ニクソン・ショック（8/15）— 金・ドル交換停止＝ブレトンウッズ体制崩壊・10%輸入課徴金',
+      '日本が1ドル=360円の固定相場を放棄（8/28）',
+      'スミソニアン協定（12/17–18）— 円は1ドル=308円へ切り上げ（約16.88%）',
+      '日米繊維交渉が決着し対米輸出自主規制へ（協定署名は1972年1月）',
+    ],
+    risingSectors: ['（円高による輸入コスト低下の恩恵を受けうる内需・輸入依存型業種。明確な一次資料ランキングは未確認）'],
+    decliningSectors: ['（日本）繊維（対米輸出規制＋円高の二重圧力）、造船（円高で価格競争力低下）、自動車・電機など輸出依存製造業の打撃懸念'],
+    caveats: 'DJIA年末値890.20は確証値（年間平均884〜885と取り違え注意）。日経平均1971年末確定値は独立2源で確認できずnull（定性的に約2,700円台）。円切り上げ幅は16.88%、ドル切り下げは対金約8.5%/対主要通貨平均約10.7%と基準で異なる。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/gold-convertibility-ends', type: 'government', label: 'Federal Reserve History — Nixon Ends Convertibility of U.S. Dollars to Gold (1971/8/15)' },
+      { url: 'https://history.state.gov/milestones/1969-1976/nixon-shock', type: 'government', label: 'U.S. Dept. of State, Office of the Historian — Nixon Shock / End of Bretton Woods' },
+      { url: 'https://www.nippon.com/en/in-depth/d00958/', type: 'media', label: 'Nippon.com — 変動相場制50年史（360→308円・16.88%）' },
+    ],
+  },
+  {
+    year: 1972,
+    era: '昭和47年',
+    world:
+      'デタント（緊張緩和）が国際政治の主旋律となった転換の年。ニクソン米大統領が2月に電撃訪中し（米中接近）、5月にモスクワを訪問してSALT Iに調印した。経済面では前年のニクソン・ショックとスミソニアン協定を受けた固定相場の再調整下にあり、各国の金融緩和を背景に世界的に過剰流動性とインフレ圧力が高まった（OECD主要7か国の実質成長は約5.75%へ加速）。',
+    japan:
+      '高度成長末期の過熱局面。5月15日に沖縄が日本へ復帰し、7月に田中角栄内閣が発足して「日本列島改造論」を掲げた。これが地価急騰（列島改造ブーム）を招き、日銀の金融緩和（M2は1972年に+約26%）による過剰流動性が重なって土地・株式の資産価格が急上昇し、日経平均は1年でほぼ倍増（年末は約5,200円台）した。9月29日に田中首相訪中で日中共同声明（国交正常化）が結ばれた。',
+    keyEvents: [
+      'ニクソン米大統領訪中（2/21–28）— 米中接近',
+      '沖縄の本土復帰（5/15）',
+      '田中角栄内閣発足（7/7）と「日本列島改造論」',
+      '日中共同声明・国交正常化（9/29）／DJIA史上初の終値1000ドル台乗せ（11/14）',
+    ],
+    risingSectors: ['（日本）不動産・土地（列島改造ブームと過剰流動性で地価急騰）、建設・土木・セメント等資材、総合商社・鉄鋼、金融'],
+    decliningSectors: ['（年間は株価・景気全体が上昇基調で、明確に「衰退」と断定できる業種は確認できず。固定相場是正後で輸出採算が圧迫された輸出依存業種に逆風との指摘あり）'],
+    caveats: 'DJIA年末値1020.02は確証値（初の1000ドル乗せは11/14=1003.16）。日経平均1972年末値は複数源が「約5,200円台（前年比ほぼ倍増）」で一致するが精密な確定終値は独立2源で確証できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.goldmansachs.com/our-firm/history/moments/1972-djia-1000', type: 'media', label: 'Goldman Sachs — DJIAが1972年に史上初の1000突破' },
+      { url: 'https://www.archives.go.jp/ayumi/kobetsu/s47_1972_02.html', type: 'government', label: '国立公文書館 — 沖縄返還（昭和47年5月15日）' },
+      { url: 'https://www.mofa.go.jp/mofaj/gaiko/bluebook/1973/s48-shiryou-3-11.htm', type: 'government', label: '外務省 外交青書 — 日中共同声明（1972/9/29）' },
+    ],
+  },
+  {
+    year: 1973,
+    era: '昭和48年',
+    world:
+      '1971年のニクソン・ショック後に成立したスミソニアン体制が1973年2月の投機圧力で崩壊し、2〜3月に主要国が相次いで変動相場制へ移行した（ブレトンウッズ体制の事実上の終焉）。10月6日の第四次中東戦争を契機にOPEC/OAPECが原油価格引き上げ・供給制限・禁輸を発動し、第一次石油危機が発生（原油の国際価格が約3か月で約4倍）、西側先進国は同時にインフレと景気後退（スタグフレーション）に直面した。',
+    japan:
+      '日本は2月14日に変動相場制へ移行した。前年の列島改造を背景に地価・物価が既に上昇していたところへ石油危機が重なり、物価が暴騰する「狂乱物価」が発生、10月末〜11月にはトイレットペーパー等の買い占め・品薄騒動が起きた。原油・資源を輸入に依存する日本は打撃が大きく、翌1974年の戦後初の実質マイナス成長と高度成長の終焉につながった。',
+    keyEvents: [
+      '日本が変動相場制へ移行（2/14）／主要国が2〜3月に変動相場制へ（ブレトンウッズ体制終焉）',
+      '第四次中東戦争（10/6）を契機に第一次石油危機（原油価格約4倍）',
+      '日本で「狂乱物価」・トイレットペーパー買い占め騒動（10〜11月）',
+      '高度経済成長の終焉へ（翌1974年に戦後初のマイナス成長）',
+    ],
+    risingSectors: ['（産油国・石油メジャー側の石油・資源関連）、省エネルギー・代替エネルギー関連（脱石油の機運で注目）'],
+    decliningSectors: ['（日本）エネルギー多消費型の重厚長大産業（鉄鋼・石油化学・アルミ精錬・海運）、石油依存度の高い製造業・運輸全般、株式市場全般（1973–75年弱気相場入り）'],
+    caveats: 'DJIA年末値850.86は確証値（年間約-16%。年間平均924.10と混同注意）。日経平均1973年末確定値は独立2源で確証できずnull（年初1/24高値5,359円のみ確証）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/oil-shock-of-1973-74', type: 'government', label: 'Federal Reserve History — Oil Shock of 1973–74' },
+      { url: 'https://en.wikipedia.org/wiki/1973_oil_crisis', type: 'reference', label: 'Wikipedia — 1973 oil crisis（第四次中東戦争・OPEC禁輸・価格約4倍）' },
+      { url: 'https://www.nippon.com/ja/japan-topics/today11010/', type: 'media', label: 'nippon.com — 1973年トイレットペーパーパニック（狂乱物価）' },
+    ],
+  },
+  {
+    year: 1974,
+    era: '昭和49年',
+    world:
+      '第一次石油危機の影響が本格化し、西側先進国が同時不況に突入、高インフレと高失業が併存する「スタグフレーション」が典型化した（米国のCPI上昇率は約11%、景気後退は1973年11月〜1975年3月）。政治面ではウォーターゲート事件によりニクソン大統領が8月9日に辞任（米大統領初の辞任）しフォードが昇格した。',
+    japan:
+      '石油危機の打撃が最も鮮明に出た年。1974年度の実質経済成長率は戦後初のマイナスを記録し、1955年頃から続いた高度経済成長が事実上終焉した。消費者物価上昇率は1974年に約20.9%に達し「狂乱物価」と呼ばれた。政府は前年11月の石油緊急対策要綱以降「総需要抑制策」（金融引き締め・財政抑制）を採用し、インフレ鎮静と引き換えに景気を冷やし、以後の日本は「安定成長期」へ移行した。',
+    keyEvents: [
+      '第一次石油危機の影響本格化 — 先進国で世界同時不況・スタグフレーション',
+      '米：ウォーターゲート事件でニクソン大統領が辞任（8/9）、フォード昇格',
+      '日本：1974年度に戦後初の実質マイナス成長 — 高度経済成長の終焉',
+      '日本：消費者物価上昇率が約20.9%の「狂乱物価」／総需要抑制策の継続',
+    ],
+    risingSectors: ['（日本）省エネ・低燃費関連（自動車の小型化等、日本車の競争力向上の素地）、資源・原油関連（価格高騰の恩恵）'],
+    decliningSectors: ['（日本）エネルギー多消費型の素材・重厚長大産業（鉄鋼・石油化学・アルミ精錬）、個人消費依存セクター、株式市場全般（DJIAは年間約-27.6%）'],
+    caveats: 'DJIA年末値616.24は確証値（年間約-27.6%。年内最安値12/6=577.60とは別）。日経平均1974年末確定値は独立2源で確証できずnull（単一源で約3,814円との情報）。物価上昇率は年度/暦年・指標で差異。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://history.state.gov/milestones/1969-1976/oil-embargo', type: 'government', label: 'U.S. Dept. of State, Office of the Historian — Oil Embargo, 1973–1974' },
+      { url: 'https://www.enecho.meti.go.jp/about/special/johoteikyo/history4shouwa2.html', type: 'government', label: '経産省 資源エネルギー庁 — 日本のエネルギー史（2度のオイルショック）' },
+      { url: 'https://www.govinfo.gov/content/pkg/ERP-2021/pdf/ERP-2021-table55.pdf', type: 'government', label: '米国 Economic Report of the President 表B-55（DJIA年次）' },
+    ],
+  },
+  {
+    year: 1975,
+    era: '昭和50年',
+    world:
+      '1973年オイルショック後の世界的スタグフレーションが底を打ち、年後半から緩やかな回復局面へ向かった（米国は失業率が約9%まで上昇）。4月30日にサイゴン陥落でベトナム戦争が事実上終結し、11月に仏ランブイエで第1回先進国首脳会議（G6サミット）が開催されて主要国が協調対応を確認した。',
+    japan:
+      'オイルショック後の不況が継続し、総需要抑制策の影響で低成長となった。高度経済成長期が終わり「安定成長期」（実質成長率おおむね5%目安）へ移行し、1975年度に税収不足を補うため特例公債法を成立させて戦後初の本格的な赤字国債（特例公債）発行を再開した（以後の国債大量発行時代の起点）。省資源・省エネ志向と加工組立型産業の技術革新が進む転換点となった。',
+    keyEvents: [
+      'サイゴン陥落（4/30）— ベトナム戦争が事実上終結',
+      '第1回先進国首脳会議（ランブイエ・サミット、11/15–17）',
+      '日本：戦後初の本格的な特例公債（赤字国債）発行を再開（1975年度）',
+      '日本：高度成長期から安定成長期へ移行',
+    ],
+    risingSectors: ['（日本）自動車・カラーテレビ等の輸出産業（省エネ・低燃費が追い風、対米シェア拡大）、鉄鋼輸出、省資源・省エネルギー関連、サービス・不動産業'],
+    decliningSectors: ['（日本）繊維工業（構造不況業種化）、エネルギー多消費型・素材重厚長大型産業（原油高でコスト圧迫）'],
+    caveats: 'DJIA年末値852.41（年間約+38%）・日経平均年末値4342.06はいずれも独立2源で一致した確証値（日経は225.jpn.org＋kabudreamの年足対照）。米1975年実質GDPは「微減/横ばい」と出典で幅。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.govinfo.gov/content/pkg/ERP-2021/pdf/ERP-2021-table55.pdf', type: 'government', label: '米国 Economic Report of the President 表B-55（DJIA 1975=852.41）' },
+      { url: 'https://history.state.gov/historicaldocuments/frus1969-76v31/ch3', type: 'government', label: 'U.S. Dept. of State / FRUS — 第1回ランブイエ・サミット' },
+      { url: 'https://225.jpn.org/1975/12/1975all/', type: 'reference', label: '日経平均チャート資料室 1975年（年末終値4,342.06）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -749,6 +881,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1967: { djiaYearEnd: 905.11, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1968: { djiaYearEnd: 943.75, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1969: { djiaYearEnd: 800.36, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1970: { djiaYearEnd: 838.92, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1971: { djiaYearEnd: 890.2, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1972: { djiaYearEnd: 1020.02, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1973: { djiaYearEnd: 850.86, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1974: { djiaYearEnd: 616.24, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1975: { djiaYearEnd: 852.41, nikkeiYearEnd: 4342.06, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
