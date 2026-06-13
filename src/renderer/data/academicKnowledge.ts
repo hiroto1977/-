@@ -1302,5 +1302,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://sk.sagepub.com/ency/edvol/download/communicationtheory/chpt/twostep-multistep-flow.pdf', type: 'academic', label: 'SAGE Encyclopedia of Communication Theory — Two-Step and Multi-Step Flow' },
     ],
   },
+  {
+    id: 'econ-supply-demand-equilibrium',
+    discipline: 'economics',
+    title: '需要と供給の均衡（価格メカニズム）',
+    statement:
+      '市場において、価格が上がると需要量は減り供給量は増える（右下がりの需要曲線・右上がりの供給曲線）。両曲線が交わる点で需要量と供給量が一致し、均衡価格と均衡数量が決まる。' +
+      '価格がそれより高ければ超過供給（売れ残り）で価格は下落し、低ければ超過需要（品不足）で価格は上昇し、市場メカニズム（見えざる手）を通じて自動的に均衡へ調整される。この自己調整の発想はアダム・スミスが『国富論』(1776)で示した「見えざる手」に淵源し、アルフレッド・マーシャルが需要・供給の両曲線をはさみの二枚刃にたとえて体系化（マーシャリアン・クロス、1890『経済学原理』）した。需給曲線のシフトが均衡価格・数量を変化させ、価格による資源配分の効率性を支えるミクロ経済学の基礎理論である。',
+    keyFigures: 'アダム・スミス（『国富論』1776・見えざる手）／アルフレッド・マーシャル（1890『経済学原理』・需給曲線の体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/supply-and-demand/Market-equilibrium-or-balance-between-supply-and-demand', type: 'reference', label: 'Encyclopædia Britannica Money — Supply and demand: Market equilibrium' },
+      { url: 'https://www.britannica.com/money/Alfred-Marshall', type: 'reference', label: 'Encyclopædia Britannica Money — Alfred Marshall（はさみの両刃・1890）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Marshall.html', type: 'academic', label: 'Econlib — Alfred Marshall（需給を「はさみの二枚刃」とした原典引用）' },
+    ],
+  },
+  {
+    id: 'econ-natural-rate-unemployment',
+    discipline: 'economics',
+    title: '自然失業率（NAIRU）',
+    statement:
+      'インフレを加速も減速もさせず、長期的に持続可能な失業率の水準。摩擦的失業（転職に伴う一時的失業）と構造的失業（技能・地域のミスマッチ等）から成り、景気循環的（需要変動による）失業を含まない。' +
+      '実際の失業率がこの水準を下回ると労働需給が逼迫してインフレが加速し、上回ると減速する。ミルトン・フリードマンとエドムンド・フェルプスが1960年代後半に提唱し、長期的にはフィリップス曲線が自然失業率の水準で垂直になる（失業とインフレの間に長期的トレードオフは存在しない）とした。インフレ非加速的失業率（NAIRU, Non-Accelerating Inflation Rate of Unemployment）とほぼ同義で用いられる。フリードマンは1976年、フェルプスは2006年にノーベル経済学賞を受賞。水準は直接観測できず、推計に幅がある。',
+    keyFigures: 'ミルトン・フリードマン & エドムンド・フェルプス（1960年代後半提唱）／長期フィリップス曲線の垂直／ノーベル賞: F.1976・P.2006',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/1998/09/the-natural-rate-nairu-and-monetary-policy/', type: 'government', label: 'San Francisco Fed — The Natural Rate, NAIRU, and Monetary Policy' },
+      { url: 'https://www.britannica.com/money/Edmund-Phelps', type: 'reference', label: 'Encyclopaedia Britannica — Edmund S. Phelps（自然失業率・期待修正フィリップス曲線）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2006/press-release/', type: 'government', label: 'NobelPrize.org — 2006年経済学賞 Phelps（Friedman 1976も併記）' },
+    ],
+  },
+  {
+    id: 'mgmt-value-chain',
+    discipline: 'management',
+    title: 'バリューチェーン（価値連鎖）',
+    statement:
+      '企業の事業活動を、製品・サービスの価値を生み出す一連の活動の連鎖として捉え、競争優位の源泉を分析する経営戦略の枠組み。活動は、製品の創出・販売・流通に直接関わる「主活動（購買物流／製造／出荷物流／販売・マーケティング／サービス）」と、それらを支える「支援活動（全般管理／人事・労務管理／技術開発／調達）」に分類される。' +
+      '各活動が生むコストと差別化の価値を分析し、どの活動が競争優位を生むか、活動間のリンケージをどう最適化するかを検討する。マイケル・E・ポーターが1985年の著書『競争優位の戦略（Competitive Advantage）』で提示した。買い手が支払う価値とその価値を生む総コストとの差がマージン（利益）であり、ここからコストリーダーシップと差別化の2つの基本戦略が導かれる。原材料から最終消費までの企業間の流れを指すサプライチェーンとは概念が異なる。',
+    keyFigures: 'マイケル・E・ポーター（1985『競争優位の戦略』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://online.hbs.edu/blog/post/what-is-value-chain-analysis', type: 'academic', label: 'Harvard Business School Online — What Is a Value Chain Analysis?' },
+      { url: 'https://www.britannica.com/money/value-chain-analysis-overview', type: 'reference', label: 'Encyclopædia Britannica Money — What Is a Value Chain?' },
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/value-chain-/', type: 'academic', label: 'University of Cambridge, Institute for Manufacturing — Porter’s Value Chain' },
+    ],
+  },
+  {
+    id: 'human-mere-exposure',
+    discipline: 'human-science',
+    title: '単純接触効果（ザイアンス効果, mere exposure effect）',
+    statement:
+      'ある刺激（人・物・記号・音楽など）に繰り返し接触するだけで、その対象への好意度・選好が高まる現象。理由づけや報酬がなくとも、単に接触頻度が増えるほど好意的評価が増す。' +
+      '社会心理学者ロバート・ザイアンスが1968年の論文「Attitudinal Effects of Mere Exposure」(Journal of Personality and Social Psychology 9:1-27)で体系的に実証した。広告で同じ商品・ブランドへ繰り返し接触させる手法や、対人的好意の形成の説明に用いられる。ただし過度な接触では飽き・満腹化により効果が低下しうること、刺激が中立〜やや好意的な場合に効果が出やすく、最初から強い嫌悪・否定的感情を抱く対象では逆効果（嫌悪の増幅）になりうる等の条件・限界も指摘されている。',
+    keyFigures: 'ロバート・ザイアンス（Robert B. Zajonc, 1968, JPSP 9:1-27）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doi/10.1037/h0025848', type: 'academic', label: 'Zajonc (1968) Attitudinal Effects of Mere Exposure, JPSP 9(2,Pt.2):1-27（原典）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/mere-exposure-effect', type: 'academic', label: 'EBSCO Research Starters — Mere-exposure effect' },
+      { url: 'https://en.wikipedia.org/wiki/Mere-exposure_effect', type: 'reference', label: 'Wikipedia — Mere-exposure effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-prescription',
+    discipline: 'business-law',
+    title: '時効（消滅時効・取得時効）',
+    statement:
+      '一定の事実状態が継続した場合に、それに即した法律関係（権利の取得・消滅）を認める制度。取得時効（民法162条）は、他人の物を所有の意思をもって平穏かつ公然と一定期間占有した者がその所有権を取得する制度で、占有開始時に善意無過失であれば10年（同条2項）、そうでなければ20年（同条1項）で完成する。' +
+      '消滅時効は権利を行使しないまま一定期間が経過すると権利が消滅する制度である。2017年改正民法（2020年4月1日施行）により、債権の消滅時効は原則として「権利を行使することができることを知った時（主観的起算点）から5年間」または「権利を行使することができる時（客観的起算点）から10年間」のいずれか早い方に統一され、従来の職業別短期消滅時効は廃止された（民法166条1項）。時効は当事者の援用により効力を生じ（民法145条）、完成猶予・更新の事由がある（民法147条以下）。',
+    keyFigures: '取得時効=民法162条（善意無過失10年/それ以外20年）／消滅時効=民法166条1項（2020改正で5年・10年に統一）／援用145条・完成猶予/更新147条以下',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（162条・166条・145条・147条以下）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0166-00/', type: 'reference', label: 'クレアール — 民法166条【債権等の消滅時効】（2020改正）' },
+      { url: 'https://www.businesslawyers.jp/practices/1185', type: 'media', label: 'BUSINESS LAWYERS（弁護士監修）— 民法改正による消滅時効の変更点（主観的起算点）' },
+    ],
+  },
+  {
+    id: 'infosoc-medium-is-the-message',
+    discipline: 'information-sociology',
+    title: 'メディアはメッセージである（マクルーハン）',
+    statement:
+      'メディアが社会に与える影響は、それが運ぶ「内容（コンテンツ）」よりも、メディアという形式・技術そのもの（人々の知覚や社会組織を変える仕方）にある、とする命題。カナダの文明批評家マーシャル・マクルーハンが1964年の著書『メディア論（Understanding Media: The Extensions of Man）』で提示した。' +
+      'マクルーハンはメディアを「人間の身体・感覚の拡張（extensions of ourselves）」と捉え、あらゆるメディア＝新技術がわれわれの諸事に導入する新たな「尺度（scale）」から個人的・社会的帰結が生じるとした。すなわち新しいメディアの登場は、内容に関わらず人々の知覚の比率や社会の尺度・形態を変える。関連概念に、受け手の参与度で分ける「ホット／クール・メディア」、電子メディアが世界を縮める「グローバル・ヴィレッジ（地球村）」がある（後者の初出は1962『グーテンベルクの銀河系』）。技術決定論的だとの批判もある。',
+    keyFigures: 'マーシャル・マクルーハン（1911-1980, 1964『Understanding Media』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Marshall-McLuhan', type: 'reference', label: 'Encyclopaedia Britannica — Marshall McLuhan（"the medium is the message"・1964）' },
+      { url: 'https://www.britannica.com/topic/global-village', type: 'reference', label: 'Encyclopaedia Britannica — Global village（地球村）' },
+      { url: 'https://web.mit.edu/allanmc/www/mcluhan.mediummessage.pdf', type: 'academic', label: 'MIT 提供 — McLuhan『Understanding Media』(1964) 第1章 The Medium is the Message 抜粋（原典）' },
+    ],
+  },
 ];
 // Stryker restore all
