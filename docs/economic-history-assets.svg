@@ -1,51 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="790" height="602" viewBox="0 0 790 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="790" height="602" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="602" viewBox="0 0 1150 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="1150" height="602" fill="#0f172a"/>
 <text x="60" y="36" fill="#f1f5f9" font-size="22" font-weight="700">資産クラス別 年次推移（株式・不動産・仮想通貨）</text>
 <text x="60" y="60" fill="#94a3b8" font-size="12">各系列を自系列の最大値=100%に正規化して重ね描き。欠損(null=未照合／その年に存在しない資産)は線を引かない。</text>
 <line x1="80" y1="90" x2="80" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="740" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="740" y2="450" stroke="#1e293b"/>
+<line x1="80" y1="450" x2="1100" y2="450" stroke="#475569"/>
+<line x1="80" y1="450" x2="1100" y2="450" stroke="#1e293b"/>
 <text x="72" y="454" fill="#64748b" font-size="10" text-anchor="end">0%</text>
-<line x1="80" y1="360" x2="740" y2="360" stroke="#1e293b"/>
+<line x1="80" y1="360" x2="1100" y2="360" stroke="#1e293b"/>
 <text x="72" y="364" fill="#64748b" font-size="10" text-anchor="end">25%</text>
-<line x1="80" y1="270" x2="740" y2="270" stroke="#1e293b"/>
+<line x1="80" y1="270" x2="1100" y2="270" stroke="#1e293b"/>
 <text x="72" y="274" fill="#64748b" font-size="10" text-anchor="end">50%</text>
-<line x1="80" y1="180" x2="740" y2="180" stroke="#1e293b"/>
+<line x1="80" y1="180" x2="1100" y2="180" stroke="#1e293b"/>
 <text x="72" y="184" fill="#64748b" font-size="10" text-anchor="end">75%</text>
-<line x1="80" y1="90" x2="740" y2="90" stroke="#1e293b"/>
+<line x1="80" y1="90" x2="1100" y2="90" stroke="#1e293b"/>
 <text x="72" y="94" fill="#64748b" font-size="10" text-anchor="end">100%</text>
 <text x="80" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1940</text>
-<text x="140" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1941</text>
 <text x="200" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1942</text>
-<text x="260" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1943</text>
 <text x="320" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1944</text>
-<text x="380" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1945</text>
 <text x="440" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1946</text>
-<text x="500" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1947</text>
 <text x="560" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1948</text>
-<text x="620" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1949</text>
 <text x="680" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1950</text>
-<text x="740" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1951</text>
-<circle cx="80" cy="274.7" r="3" fill="#38bdf8"/>
-<circle cx="140" cy="301.6" r="3" fill="#38bdf8"/>
-<circle cx="200" cy="290.3" r="3" fill="#38bdf8"/>
-<circle cx="260" cy="268.3" r="3" fill="#38bdf8"/>
-<circle cx="320" cy="246.3" r="3" fill="#38bdf8"/>
-<circle cx="380" cy="192.1" r="3" fill="#38bdf8"/>
-<circle cx="440" cy="213.1" r="3" fill="#38bdf8"/>
-<circle cx="500" cy="207.8" r="3" fill="#38bdf8"/>
-<circle cx="560" cy="212.9" r="3" fill="#38bdf8"/>
-<circle cx="620" cy="182.4" r="3" fill="#38bdf8"/>
-<circle cx="680" cy="135.2" r="3" fill="#38bdf8"/>
-<circle cx="740" cy="90.0" r="3" fill="#38bdf8"/>
-<path d="M80,274.7 L140,301.6 L200,290.3 L260,268.3 L320,246.3 L380,192.1 L440,213.1 L500,207.8 L560,212.9 L620,182.4 L680,135.2 L740,90.0" fill="none" stroke="#38bdf8" stroke-width="2"/>
+<text x="800" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1952</text>
+<text x="920" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1954</text>
+<text x="1040" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1956</text>
+<circle cx="80" cy="355.5" r="3" fill="#38bdf8"/>
+<circle cx="140" cy="370.0" r="3" fill="#38bdf8"/>
+<circle cx="200" cy="363.9" r="3" fill="#38bdf8"/>
+<circle cx="260" cy="352.1" r="3" fill="#38bdf8"/>
+<circle cx="320" cy="340.2" r="3" fill="#38bdf8"/>
+<circle cx="380" cy="311.0" r="3" fill="#38bdf8"/>
+<circle cx="440" cy="322.3" r="3" fill="#38bdf8"/>
+<circle cx="500" cy="319.4" r="3" fill="#38bdf8"/>
+<circle cx="560" cy="322.2" r="3" fill="#38bdf8"/>
+<circle cx="620" cy="305.8" r="3" fill="#38bdf8"/>
+<circle cx="680" cy="280.3" r="3" fill="#38bdf8"/>
+<circle cx="740" cy="255.9" r="3" fill="#38bdf8"/>
+<circle cx="800" cy="239.6" r="3" fill="#38bdf8"/>
+<circle cx="860" cy="247.5" r="3" fill="#38bdf8"/>
+<circle cx="920" cy="158.5" r="3" fill="#38bdf8"/>
+<circle cx="980" cy="98.0" r="3" fill="#38bdf8"/>
+<circle cx="1040" cy="90.0" r="3" fill="#38bdf8"/>
+<circle cx="1100" cy="136.0" r="3" fill="#38bdf8"/>
+<path d="M80,355.5 L140,370.0 L200,363.9 L260,352.1 L320,340.2 L380,311.0 L440,322.3 L500,319.4 L560,322.2 L620,305.8 L680,280.3 L740,255.9 L800,239.6 L860,247.5 L920,158.5 L980,98.0 L1040,90.0 L1100,136.0" fill="none" stroke="#38bdf8" stroke-width="2"/>
 <rect x="60" y="486" width="13" height="13" rx="2" fill="#38bdf8"/>
-<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ12年（直近 269.23）</text>
+<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ18年（直近 435.69）</text>
 <rect x="60" y="504" width="13" height="13" rx="2" fill="#f97316"/>
 <text x="78" y="515" fill="#cbd5e1" font-size="11">日経平均(日本株, 年末円) — データなし（N/A・未照合またはその年に存在しない資産）</text>
 <rect x="60" y="522" width="13" height="13" rx="2" fill="#a3e635"/>
 <text x="78" y="533" fill="#cbd5e1" font-size="11">市街地価格指数(不動産, 1936/9=100) — データなし（N/A・未照合またはその年に存在しない資産）</text>
 <rect x="60" y="540" width="13" height="13" rx="2" fill="#facc15"/>
 <text x="78" y="551" fill="#cbd5e1" font-size="11">ビットコイン(仮想通貨, 年末USD) — データなし（N/A・未照合またはその年に存在しない資産）</text>
-<text x="760" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
+<text x="1120" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
 </svg>
