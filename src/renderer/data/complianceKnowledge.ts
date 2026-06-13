@@ -1666,5 +1666,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/index.html', type: 'media', label: '経済産業省 デジタルプラットフォーム取引 関連情報' },
     ],
   },
+  {
+    value: {
+      id: 'tax-spouse-deduction',
+      domain: 'tax',
+      title: '配偶者控除・配偶者特別控除',
+      statement:
+        '配偶者控除は、生計を一にする配偶者の合計所得金額が一定額以下（令和7年分以降は58万円以下＝給与収入のみなら123万円以下）で、' +
+        'かつ納税者本人の合計所得金額が1,000万円以下の場合に適用される。配偶者の所得がこの額を超えると配偶者特別控除に移行し、' +
+        '所得の増加に応じて控除額が段階的に逓減する。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm', type: 'government', label: '国税庁 No.1191 配偶者控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1195.htm', type: 'government', label: '国税庁 No.1195 配偶者特別控除' },
+      { url: 'https://www.yayoi-kk.co.jp/kyuyo/oyakudachi/haigushakojo-nenshu/', type: 'media', label: '配偶者（特別）控除と年収 解説（令和7年改正）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-real-estate-acquisition',
+      domain: 'tax',
+      title: '不動産取得税',
+      statement:
+        '不動産取得税は、土地や家屋を売買・贈与・交換・新築・増改築等により取得した者に対し、その不動産の所在地の都道府県が課す' +
+        '地方税である（相続による取得は非課税）。課税標準は原則として固定資産税評価額で、一定の要件を満たす住宅・住宅用土地には軽減措置がある。',
+      authority: '所管: 総務省・各都道府県（地方税法／不動産取得税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_17.html', type: 'government', label: '総務省 地方税制度 不動産取得税' },
+      { url: 'https://www.pref.hokkaido.lg.jp/sm/zim/tax/fudou01.html', type: 'municipality', label: '北海道 不動産取得税（相続は非課税）' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/shitsumon/real_estate/f', type: 'municipality', label: '東京都主税局 不動産取得税（課税標準・軽減措置）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-leave',
+      domain: 'labor',
+      title: '育児休業と育児休業給付金',
+      statement:
+        '労働者は原則として子が1歳に達するまで（保育所に入所できない等一定の場合は最長2歳まで）育児休業を取得でき、' +
+        '申し出に対し事業主は原則これを拒めない。一定要件を満たす雇用保険被保険者には育児休業給付金が支給され、' +
+        '支給率は休業開始から原則180日目までが67%、181日目以降は50%である。',
+      authority: '所管: 厚生労働省（育児・介護休業法／雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000130583.html', type: 'government', label: '厚生労働省 育児・介護休業法について' },
+      { url: 'https://ryouritsu.mhlw.go.jp/qa02_05.html', type: 'government', label: '厚生労働省 両立支援サイト Q&A（育児休業）' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11600000-Shokugyouanteikyoku/0000042797.pdf', type: 'government', label: '厚生労働省 育児休業給付金（支給率67%/50%）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-care-leave',
+      domain: 'labor',
+      title: '介護休業と介護休業給付金',
+      statement:
+        '労働者は、要介護状態にある対象家族1人につき通算93日まで、3回を上限に分割して介護休業を取得できる。' +
+        '一定要件を満たす雇用保険被保険者には、休業開始時賃金日額の67%相当額の介護休業給付金が支給される。',
+      authority: '所管: 厚生労働省（育児・介護休業法／雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 Q&A 介護休業給付（67%）' },
+      { url: 'https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-2/w-2-12/', type: 'municipality', label: '東京都 両立支援ポータル 介護休業中の給与' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-freelance-protection',
+      domain: 'legal',
+      title: 'フリーランス・事業者間取引適正化等法（フリーランス保護法）',
+      statement:
+        '「特定受託事業者に係る取引の適正化等に関する法律」は2024年11月1日に施行され、業務委託をする発注事業者に対し、' +
+        'フリーランス（特定受託事業者）への取引条件の書面等による明示、報酬の支払期日（給付受領日から原則60日以内）の設定・支払、' +
+        '受領拒否・報酬減額・買いたたき等の禁止、ハラスメント対策の体制整備等を義務付ける。',
+      authority: '所管: 公正取引委員会・中小企業庁・厚生労働省（フリーランス保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/fllaw_limited.html', type: 'government', label: '公正取引委員会 フリーランスの取引適正化' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/law_freelance.html', type: 'government', label: '中小企業庁 フリーランス・事業者間取引適正化等法' },
+      { url: 'https://www.gov-online.go.jp/article/202408/entry-6301.html', type: 'media', label: '政府広報オンライン フリーランス新法 2024年11月開始' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-trademark',
+      domain: 'legal',
+      title: '商標権の発生・存続期間と更新',
+      statement:
+        '商標を独占的に使用する権利（商標権）は、特許庁に出願し設定登録を受けることで発生する。商標権の存続期間は設定登録の日から' +
+        '10年であり、更新登録の申請により10年ごとに何度でも更新できる。',
+      authority: '所管: 特許庁（商標法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/seidogaiyo/chizai08.html', type: 'government', label: '特許庁 商標制度の概要' },
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000127', type: 'government', label: 'e-Gov法令検索 商標法（昭和34年法律第127号）' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000204.html', type: 'government', label: 'INPIT 商標権更新手続 FAQ' },
+    ],
+  },
 ];
 // Stryker restore all
