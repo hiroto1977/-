@@ -5503,5 +5503,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_pamphlet.pdf', type: 'government', label: '総務省・消費者庁 特定電子メール法パンフレット' },
     ],
   },
+  {
+    value: {
+      id: 'labor-worktime-aggregation',
+      domain: 'labor',
+      title: '副業・兼業における労働時間の通算（労基法38条1項）',
+      statement:
+        '労働基準法38条1項により、労働時間は事業場を異にする場合（使用者を異にする場合を含む）でも通算され、副業・兼業では自社と他社の労働時間を' +
+        '通算して法定労働時間を超える時間外労働が生じる。その割増賃金は原則として時間的に後から労働契約を締結した使用者が負い、厚生労働省は' +
+        '「副業・兼業の促進に関するガイドライン」で原則的な通算管理の方法と簡便な方法（管理モデル）を示している。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000192188.html', type: 'government', label: '厚生労働省 副業・兼業（ガイドライン）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_fukugyoutokengyou.html', type: 'government', label: '厚生労働省 確かめよう労働条件 副業・兼業と労働時間通算' },
+      { url: 'https://joshrc.net/archives/6441', type: 'media', label: '基発0901第3号 労働時間通算の解釈 通達' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-foreign-worker-status',
+      domain: 'labor',
+      title: '外国人材の在留資格（特定技能・技能実習→育成就労）',
+      statement:
+        '外国人が日本で就労するには入管法上の在留資格が必要で、就労可能な範囲は在留資格ごとに定められている。人手不足分野向けの「特定技能」' +
+        '（1号・2号、分野は順次追加）や技能移転目的の「技能実習」があり、技能実習は改正法（令和6年6月公布）により新制度「育成就労」へ移行することが' +
+        '決まっている（施行は2027年4月1日予定・経過措置あり）。受入れには分野・要件・手続が定められ、事業主には外国人雇用状況の届出等の適正な雇用管理が求められる。具体の分野・要件・施行時期は最新の公式情報で要確認。',
+      authority: '所管: 出入国在留管理庁（法務省）・厚生労働省（入管法等）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/isa/applications/ssw/index.html', type: 'government', label: '出入国在留管理庁 特定技能制度' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/todokede/index.html', type: 'government', label: '厚生労働省 外国人雇用状況の届出' },
+      { url: 'https://global-saponet.mgl.mynavi.jp/visa/18276', type: 'media', label: '育成就労制度（技能実習からの移行）解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-retained-earnings',
+      domain: 'tax',
+      title: '特定同族会社の留保金課税（特別税率）',
+      statement:
+        '法人税法67条により、特定同族会社（被支配会社のうち一定のもの）が各事業年度の所得等のうち留保控除額を超えて社内留保した場合、その超過部分' +
+        '（課税留保金額）に対し、通常の法人税とは別に特別税率による法人税（留保金課税）が課される。ただし、原則として資本金の額が1億円以下である' +
+        '中小特定同族会社は適用対象から除外される（資本金5億円以上の大法人による完全支配関係がある場合等を除く）。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/070313/15.htm', type: 'government', label: '国税庁 特定同族会社の特別税率（留保金課税）' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=340AC0000000034', type: 'government', label: 'e-Gov法令検索 法人税法（67条）' },
+      { url: 'https://www.sn-hoki.co.jp/article/tamasters/ta3445/', type: 'media', label: '中小特定同族会社の留保金課税の適用除外 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-bad-debt',
+      domain: 'tax',
+      title: '法人税の貸倒損失と貸倒引当金',
+      statement:
+        '法人税では、金銭債権が法律上消滅した場合（会社更生法等による切捨て等）、債務者の資産状況等からみて全額が回収不能となった場合、又は一定期間' +
+        '取引停止後に弁済がない場合等の要件を満たすときに、その金銭債権の貸倒れによる損失を損金算入できる（貸倒損失）。また、中小法人等は、期末の一括評価' +
+        '金銭債権について将来の貸倒れに備えた貸倒引当金の繰入額を、繰入限度額（実績繰入率又は法定繰入率による）まで損金算入できる（貸倒引当金。法人税法52条）。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5320.htm', type: 'government', label: '国税庁 No.5320 貸倒損失として処理できる場合' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5501.htm', type: 'government', label: '国税庁 No.5501 一括評価金銭債権に係る貸倒引当金' },
+      { url: 'https://report.jbaudit.go.jp/org/h30/2018-h30-0669-0.htm', type: 'government', label: '会計検査院 中小企業等の貸倒引当金の特例' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-consumer-dpf',
+      domain: 'legal',
+      title: '取引デジタルプラットフォーム消費者保護法',
+      statement:
+        '2022年5月1日施行の消費者庁所管の法律で、オンラインモール等の取引デジタルプラットフォーム提供者に対し、販売条件等の表示の適正化・苦情対応の' +
+        '体制整備・販売業者の特定に資する情報の提供などの努力義務を課し、危険商品が出品され販売業者を特定できない場合に内閣総理大臣（消費者庁）が出品削除等を' +
+        '要請できる仕組みや、消費者による販売業者情報の開示請求制度を設けている。経済産業省所管の「取引透明化法」とは別の法律である。',
+      authority: '所管: 消費者庁（取引デジタルプラットフォーム消費者保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/digital_platform/', type: 'government', label: '消費者庁 取引デジタルプラットフォーム消費者保護法' },
+      { url: 'https://www.gov-online.go.jp/useful/article/202212/3.html', type: 'government', label: '政府広報オンライン 取引DPF消費者保護法' },
+      { url: 'https://www.kokusen.go.jp/wko/pdf/wko-202204_04.pdf', type: 'media', label: '国民生活センター 取引DPF消費者保護法の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-franchise',
+      domain: 'legal',
+      title: 'フランチャイズ契約の規制（情報開示義務・独禁法ガイドライン）',
+      statement:
+        '中小小売商業振興法（11条）は、特定連鎖化事業（フランチャイズ）を行う本部に対し、加盟しようとする者との契約締結前に、加盟金・ロイヤルティ、' +
+        '契約の期間・更新・解除、本部の事業概要等の重要事項を記載した法定開示書面を交付し説明する義務を課している。また公正取引委員会の「フランチャイズ・' +
+        'ガイドライン」により、本部の加盟者募集時の不十分・不正確な開示による勧誘はぎまん的顧客誘引に、取引上の優越的地位を利用した不当な行為は優越的地位の濫用に該当しうるとされている。',
+      authority: '所管: 経済産業省・中小企業庁（中小小売商業振興法）・公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/shogyo/shogyo/franchise.html', type: 'government', label: '中小企業庁 特定連鎖化事業（フランチャイズ）の情報開示' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/franchise.html', type: 'government', label: '公正取引委員会 フランチャイズ・ガイドライン' },
+      { url: 'https://www.chusho.meti.go.jp/shogyo/shogyo/laws.html', type: 'government', label: '中小企業庁 中小小売商業振興法 法令' },
+    ],
+  },
 ];
 // Stryker restore all
