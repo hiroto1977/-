@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="8030" height="620" viewBox="0 0 8030 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="8030" height="620" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="8750" height="620" viewBox="0 0 8750 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="8750" height="620" fill="#0f172a"/>
 <text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
 <text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
-<line x1="60" y1="360" x2="7990" y2="360" stroke="#475569" stroke-width="1.5"/>
-<line x1="60" y1="334" x2="7990" y2="334" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="386" x2="7990" y2="386" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="360" x2="8710" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="8710" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="8710" y2="386" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
 <text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
-<line x1="60" y1="308" x2="7990" y2="308" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="412" x2="7990" y2="412" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="308" x2="8710" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="8710" y2="412" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
-<line x1="60" y1="282" x2="7990" y2="282" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="438" x2="7990" y2="438" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="282" x2="8710" y2="282" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="438" x2="8710" y2="438" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="286" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="442" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="272" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
@@ -347,9 +347,39 @@
 <text x="7930" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2005</text>
 <text x="7930" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成17年</text>
 <text x="7930" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 7930 526)">ハリケーン・カトリーナが米湾岸を直撃（8/29）—石油精製打撃・原油高騰</text>
+<rect x="8028" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8028" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8050" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2006</text>
+<text x="8050" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成18年</text>
+<text x="8050" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8050 526)">ライブドア・ショック（1/16-17、IT関連株急落・東証が全銘柄取引停止）</text>
+<rect x="8148" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8148" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8170" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2007</text>
+<text x="8170" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成19年</text>
+<text x="8170" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8170 526)">参院選で自民党が歴史的大敗、民主党が参院第1党に（7/29）→ ねじれ国会（→…</text>
+<rect x="8268" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8268" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8290" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2008</text>
+<text x="8290" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成20年</text>
+<text x="8290" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8290 526)">リーマン・ブラザーズ破綻（9/15、米史上最大の倒産）→ 世界金融危機の本格化</text>
+<rect x="8388" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8388" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8410" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2009</text>
+<text x="8410" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成21年</text>
+<text x="8410" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8410 526)">米株がリーマン後最安値（3/9、DJIA 6,547.05）を付け反発開始</text>
+<rect x="8508" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8508" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8530" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2010</text>
+<text x="8530" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成22年</text>
+<text x="8530" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8530 526)">欧州ソブリン債務危機本格化—ギリシャ支援（EU・IMF 1,100億ユーロ）と…</text>
+<rect x="8628" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8628" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8650" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2011</text>
+<text x="8650" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成23年</text>
+<text x="8650" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8650 526)">東日本大震災・福島第一原発事故（3/11）—サプライチェーン寸断・電力不足</text>
 <rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
 <text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
 <rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
 <text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
-<text x="7990" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+<text x="8710" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
 </svg>
