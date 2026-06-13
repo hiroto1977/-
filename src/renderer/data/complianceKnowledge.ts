@@ -6468,5 +6468,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.ht-tax.or.jp/topics/r6-chinage-tekiyou/', type: 'media', label: '辻・本郷 令和6年改正 中小企業向け賃上げ促進税制の留意点' },
     ],
   },
+  {
+    value: {
+      id: 'legal-tokyo-customer-harassment-ordinance',
+      domain: 'legal',
+      title: '東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）',
+      statement:
+        '東京都カスタマー・ハラスメント防止条例は、都道府県レベルでは全国初のカスタマーハラスメント防止条例として2024年（令和6年）10月に東京都議会で成立し、2025年（令和7年）4月1日に施行された。' +
+        '「何人も、あらゆる場において、カスタマー・ハラスメントを行ってはならない」と定める一方、違反に対する罰則を設けない理念条例である。基本理念を定めるとともに、顧客等・就業者・事業者及び東京都の責務を規定している。' +
+        'なお、国の労働施策総合推進法改正によるカスハラ対策の事業主措置義務化（2026年10月施行予定）とは別の、東京都の独自条例である。',
+      authority: '所管: 東京都（産業労働局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.koho.metro.tokyo.lg.jp/2025/04/03.html', type: 'municipality', label: '東京都 4月1日から東京都カスタマーハラスメント防止条例を施行します' },
+      { url: 'https://www.metro.tokyo.lg.jp/information/press/2024/12/2024122511', type: 'municipality', label: '東京都 カスハラ防止指針（ガイドライン）の策定' },
+      { url: 'https://www.nikkei.com/article/DGXZQOCC0141C0R01C24A0000000/', type: 'media', label: '日本経済新聞 東京都 全国初のカスハラ防止条例成立 25年4月施行' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-family-register-furigana',
+      domain: 'legal',
+      title: '戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）',
+      statement:
+        '改正戸籍法により、令和7年（2025年）5月26日から、これまで戸籍の記載事項でなかった氏名の「振り仮名（フリガナ）」が新たに戸籍の記載事項として加えられた。施行後、本籍地の市区町村長から既に戸籍に記載されている者へ' +
+        '住民票の情報等に基づく振り仮名が通知され、内容が異なる場合等は届出ができる。施行から1年以内（令和8年5月25日まで）に届出がない場合は、通知された振り仮名が市区町村長の職権で戸籍に記載される。',
+      authority: '所管: 法務省（民事局）／実務は本籍地の市区町村',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/furigana/index.html', type: 'government', label: '法務省 戸籍にフリガナが記載されます' },
+      { url: 'https://www.gov-online.go.jp/article/202505/entry-7609.html', type: 'government', label: '政府広報オンライン 戸籍にフリガナが記載されます' },
+      { url: 'https://www.city.shibuya.tokyo.jp/kurashi/koseki/koseki-todokede/shibuyakosekifurigana.html', type: 'municipality', label: '渋谷区 戸籍に氏名の振り仮名が記載されます' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-global-minimum-tax',
+      domain: 'tax',
+      title: 'グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）',
+      statement:
+        'OECD/G20のBEPS2.0「第2の柱」に基づき、日本では令和5年度税制改正で「各対象会計年度の国際最低課税額に対する法人税」（所得合算ルール=IIR）が創設され、内国法人の令和6年（2024年）4月1日以後に開始する' +
+        '対象会計年度から適用されている。対象は、直前4対象会計年度のうち2以上で連結総収入金額が7.5億ユーロ以上の多国籍企業グループ等で、軽課税国の子会社等の国別実効税率が最低税率15%に満たない場合、親会社所在国（日本）で' +
+        '15%に達するまで上乗せ課税する。軽課税所得ルール（UTPR）・適格国内ミニマム課税（QDMTT）は令和7年度税制改正で法制化され令和8年4月1日以後開始会計年度から適用となる。税率・基準・適用時期は今後の改正で変動しうるため要確認。',
+      authority: '所管: 財務省（制度）／国税庁（執行・申告）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/kokusai/global-minimum/index.htm', type: 'government', label: '国税庁 グローバル・ミニマム課税関係' },
+      { url: 'https://www.mof.go.jp/tax_policy/publication/brochure/zeisei23/05.html', type: 'government', label: '財務省 令和5年度税制改正 国際課税' },
+      { url: 'https://www.meti.go.jp/policy/external_economy/toshi/kokusaisozei/itaxseminar2023/26.Pillar2.pdf', type: 'government', label: '経済産業省 Pillar2（グローバル・ミニマム課税）制度の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-land-state-attribution',
+      domain: 'legal',
+      title: '相続土地国庫帰属制度（2023年4月施行）',
+      statement:
+        '相続土地国庫帰属制度は、相続又は遺贈により土地を取得した相続人等が、一定の要件を満たす場合に法務大臣の承認を受けて、その土地の所有権を国庫に帰属させることができる制度で、令和5年（2023年）4月27日に施行された' +
+        '（相続等により取得した土地所有権の国庫への帰属に関する法律に基づく）。建物がある土地・担保権等が設定されている土地・通路など他人による使用が予定される土地等は対象外で、審査手数料及び10年分の標準的な土地管理費相当額の' +
+        '負担金（原則20万円だが土地の種目・面積・区域により算定が変わるため要確認）の納付が必要。所有者不明土地の発生予防が目的。',
+      authority: '所管: 法務省（民事局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji05_00457.html', type: 'government', label: '法務省 相続土地国庫帰属制度の概要' },
+      { url: 'https://www.gov-online.go.jp/article/202303/entry-10064.html', type: 'government', label: '政府広報オンライン 相続土地国庫帰属制度' },
+      { url: 'https://www.shiho-shoshi.or.jp/activity/souzokukokko/', type: 'operator', label: '日本司法書士会連合会 相続土地国庫帰属制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-building-energy-compliance',
+      domain: 'legal',
+      title: '改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）',
+      statement:
+        '令和4年改正の建築物省エネ法により、令和7年（2025年）4月1日以降に着工する原則すべての新築住宅・非住宅建築物について、省エネ基準（建築物エネルギー消費性能基準）への適合が義務化された。従来は300㎡以上の中・大規模' +
+        '非住宅のみが適合義務の対象で、それ以外の建築物は届出義務又は説明義務にとどまっていた。この適合性は建築確認手続の中で構造安全等の審査と一体的に審査され、適合しなければ建築確認・確認済証を受けられない（一部の小規模建築物等で審査省略あり）。',
+      authority: '所管: 国土交通省（建築物省エネ法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mlit.go.jp/report/press/house05_hh_001001.html', type: 'government', label: '国土交通省 令和7年4月1日から省エネ基準適合の全面義務化が施行されます' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/01.html', type: 'government', label: '国土交通省 建築物省エネ法 省エネ基準適合義務の対象拡大' },
+      { url: 'https://www.city.sapporo.jp/toshi/k-shido/kankyou/shouene/2025kaisei.html', type: 'municipality', label: '札幌市 令和7年4月施行 建築物省エネ法改正' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-defense-special-corporate',
+      domain: 'tax',
+      title: '防衛特別法人税（令和7年度創設・2026年4月以後開始事業年度から適用）',
+      statement:
+        '防衛特別法人税は、令和7年度税制改正において防衛力強化に係る財源確保のための税制措置として創設された付加的な国税で、令和8年（2026年）4月1日以後に開始する事業年度から適用される。課税標準は基準法人税額から年500万円の' +
+        '基礎控除額を控除した金額で、これに税率4%を乗じて計算する。中小法人等への配慮として年500万円の基礎控除が設けられており、基準法人税額が500万円以下の法人は実質非課税となる。法令は令和7年に公布済みだが、適用は令和8年4月1日以後' +
+        '開始事業年度からであり、本記載時点（2026年6月）では多くの法人で適用前又は初年度の段階である。税率・基礎控除・適用時期は今後の改正で変動しうるため要確認。',
+      authority: '所管: 財務省（制度）／国税庁（賦課徴収・申告）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mof.go.jp/tax_policy/publication/brochure/zeisei2025/05.html', type: 'government', label: '財務省 令和7年度税制改正 防衛力強化に係る財源確保のための税制措置' },
+      { url: 'https://www.nta.go.jp/taxes/nozei/bouei_noufu/index.htm', type: 'government', label: '国税庁 防衛特別法人税に関する納付手続等について' },
+      { url: 'https://www.freee.co.jp/kb/kb-healthcare/corporate-tax2026/', type: 'media', label: 'freee 防衛特別法人税とは 2026年から適用される新税制の概要' },
+    ],
+  },
 ];
 // Stryker restore all
