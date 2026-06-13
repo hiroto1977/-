@@ -3466,5 +3466,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.moj.go.jp/MINJI/minji06_00076.html', type: 'government', label: '法務省 商号調査について' },
     ],
   },
+  {
+    value: {
+      id: 'tax-securities-account',
+      domain: 'tax',
+      title: '上場株式等の特定口座制度',
+      statement:
+        '特定口座は、証券会社等の金融機関が上場株式等の譲渡損益等を計算して投資家の申告手続の負担を軽減する制度で、「源泉徴収あり」と' +
+        '「源泉徴収なし」がある。「源泉徴収あり」を選択した場合は、譲渡益等について金融機関が所得税・住民税を源泉徴収・納付するため、原則として確定申告が不要となる。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1476.htm', type: 'government', label: '国税庁 No.1476 特定口座制度' },
+      { url: 'https://www.keisan.nta.go.jp/r2yokuaru/cat2/cat21/cat219/yogosetsumei/gensenchoshukoza.html', type: 'government', label: '国税庁 特定口座（源泉徴収あり）とは' },
+      { url: 'https://member.rakuten-sec.co.jp/web/service/specific/tax_system_outline.html', type: 'media', label: '特定口座制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-small-residential-land',
+      domain: 'tax',
+      title: '小規模宅地等についての相続税の課税価格の計算の特例',
+      statement:
+        '相続又は遺贈により取得した宅地等のうち、被相続人等の事業用又は居住用であった一定の宅地等については、相続税の課税価格に算入すべき' +
+        '価額を一定の限度面積まで減額できる特例がある。特定居住用宅地等は330㎡まで80%減額、特定事業用宅地等は400㎡まで80%減額、' +
+        '貸付事業用宅地等は200㎡まで50%減額となる。適用には相続税の申告が必要。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4124.htm', type: 'government', label: '国税庁 No.4124 小規模宅地等の特例' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kobetsu/sozoku/sochiho/080708/69_4/01.htm', type: 'government', label: '国税庁 法令解釈通達 措置法69条の4' },
+      { url: 'https://www.keisan.nta.go.jp/oshirase/sozoku/yohihantei/yohihantei/shokibo.html', type: 'government', label: '国税庁 相続税申告要否判定 小規模宅地等' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-old-age-pension',
+      domain: 'labor',
+      title: '老齢年金（老齢基礎年金・老齢厚生年金）の受給',
+      statement:
+        '老齢基礎年金は、保険料納付済期間と保険料免除期間等を合算した受給資格期間が原則10年以上ある人が65歳から受給でき、老齢厚生年金は、' +
+        '厚生年金保険の被保険者期間がある人がこの受給資格を満たしたうえで原則65歳から老齢基礎年金に上乗せして受給できる。' +
+        '年金は希望により60歳から75歳の範囲で繰上げ受給（減額）・繰下げ受給（増額）を選択できる。',
+      authority: '所管: 日本年金機構・厚生労働省（国民年金法・厚生年金保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/roureinenkin/jukyu-yoken/index.html', type: 'government', label: '日本年金機構 老齢年金（受給要件・支給開始）' },
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/roureinenkin/kuriage-kurisage/20140421-01.html', type: 'government', label: '日本年金機構 年金の繰上げ・繰下げ受給' },
+      { url: 'https://www.mhlw.go.jp/stf/nenkin_shikumi_011.html', type: 'government', label: '厚生労働省 老齢年金の繰下げ・繰上げ受給' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-customer-harassment',
+      domain: 'labor',
+      title: 'カスタマーハラスメント対策の事業主の措置義務化（2025年改正）',
+      statement:
+        '2025年（令和7年）に成立・公布された改正労働施策総合推進法等により、事業主は顧客等からの著しい迷惑行為（カスタマーハラスメント）から' +
+        '労働者を守るための雇用管理上の措置（方針の明確化・相談体制の整備等）を講じることが義務付けられた。施行日は2026年（令和8年）10月1日とされ、' +
+        '2026年6月時点では未施行である（改正前は厚生労働省のマニュアル等に基づく任意の取組にとどまっていた）。',
+      authority: '所管: 厚生労働省（労働施策総合推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/zaitaku/index_00003.html', type: 'government', label: '厚生労働省 令和7年労働施策総合推進法等の改正' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001662576.pdf', type: 'government', label: '厚生労働省 カスタマーハラスメント対策の義務化（2026/10施行）' },
+      { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2025/03/harassment_01.html', type: 'media', label: 'JILPT カスハラ対策の措置義務化 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-prescription',
+      domain: 'legal',
+      title: '債権の消滅時効（改正民法・5年/10年ルール）',
+      statement:
+        '2020年4月1日施行の改正民法により、債権の消滅時効は、原則として「債権者が権利を行使することができることを知った時から5年間」または' +
+        '「権利を行使することができる時から10年間」のいずれか早い方の経過によって完成する（民法166条1項）。これに伴い、改正前にあった' +
+        '職業別の短期消滅時効は廃止され、時効期間が統一された。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（166条 消滅時効）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://j-net21.smrj.go.jp/qa/org/Q1277.html', type: 'media', label: '民法改正による時効の規定 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-statutory-interest',
+      domain: 'legal',
+      title: '民法の法定利率（変動制）',
+      statement:
+        '2020年4月1日施行の改正民法により、法定利率は当初年3%とされ、その後3年ごとに市場金利の動向に応じて自動的に見直される変動制が導入された' +
+        '（民法404条）。改正前は年5%の固定であり、約定利率の定めがない場合の遅延損害金等の計算に用いられる（具体的な利率は3年ごとに変動し得る）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（404条 法定利率）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00366.html', type: 'government', label: '法務省 令和8年4月1日以降の法定利率について' },
+    ],
+  },
 ];
 // Stryker restore all
