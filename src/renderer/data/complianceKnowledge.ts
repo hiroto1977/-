@@ -2298,5 +2298,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jpo.go.jp/support/ipr/qanda/q09.html', type: 'government', label: '特許庁 デッドコピー商品への対策（形態模倣）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-dependent-deduction',
+      domain: 'tax',
+      title: '扶養控除',
+      statement:
+        '納税者にその年12月31日時点で16歳以上の控除対象扶養親族（生計を一にする一定の親族等で合計所得金額が令和7年分以降58万円以下＝' +
+        '給与収入のみなら123万円以下）がいる場合、所得税の扶養控除を受けられる。控除額は区分により異なり、一般38万円、' +
+        '特定扶養親族（19歳以上23歳未満）63万円、老人扶養親族（70歳以上）48万円、うち同居老親等は58万円。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1180.htm', type: 'government', label: '国税庁 No.1180 扶養控除' },
+      { url: 'https://www.nta.go.jp/users/gensen/2025kiso/index.htm', type: 'government', label: '国税庁 令和7年度税制改正（所得要件の見直し）' },
+      { url: 'https://www.bk.mufg.jp/column/others/b0035.html', type: 'media', label: '扶養控除 要件・概要 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-withholding-nonresident',
+      domain: 'tax',
+      title: '非居住者・外国法人への源泉徴収',
+      statement:
+        '非居住者や外国法人に対して国内源泉所得（不動産の賃借料、使用料、人的役務の提供に対する報酬等）を支払う者は、原則として' +
+        '支払の際に所得税及び復興特別所得税を源泉徴収して納付する義務がある（税率は所得の種類により異なり、多くは20.42%）。' +
+        '租税条約により軽減・免除を受ける場合は届出書の提出が必要。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm', type: 'government', label: '国税庁 No.2884 非居住者等に対する源泉徴収の税率' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2880.htm', type: 'government', label: '国税庁 No.2880 非居住者等に不動産の賃借料を支払ったとき' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2878.htm', type: 'government', label: '国税庁 No.2878 国内源泉所得の範囲' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-short-time',
+      domain: 'labor',
+      title: '育児のための短時間勤務制度（育児・介護休業法23条）',
+      statement:
+        '事業主は、3歳に満たない子を養育する労働者について、労働者が希望すれば利用できる短時間勤務制度（1日の所定労働時間を' +
+        '原則6時間とする措置を含む）を講じなければならない（育児・介護休業法23条1項）。業務の性質上困難な労働者等は労使協定で適用除外できる。' +
+        'なお2025年改正でテレワークが代替措置に追加され、3歳以上の子を養育する労働者向けの「柔軟な働き方を実現するための措置」が新設された。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/shortworking/', type: 'government', label: '厚生労働省 短時間勤務等の措置（23条1項）' },
+      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/pamphlet/dl/32_15-3.pdf', type: 'government', label: '厚生労働省 所定労働時間の短縮措置 パンフレット' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001407488.pdf', type: 'government', label: '厚生労働省 育児・介護休業法 令和6年改正の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-payment-on-termination',
+      domain: 'labor',
+      title: '金品の返還（労働基準法23条）',
+      statement:
+        '使用者は、労働者の死亡または退職の場合において、権利者（労働者本人や遺族等）から請求があったときは、7日以内に賃金を支払い、' +
+        '積立金・保証金・貯蓄金その他名称のいかんを問わず労働者の権利に属する金品を返還しなければならない（労働基準法23条）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（23条）' },
+      { url: 'https://www.mhlw.go.jp/file/04-Houdouhappyou-11202000-Roudoukijunkyoku-Kantokuka/0000126325.pdf', type: 'government', label: '厚生労働省 労働基準法23条 金品の返還' },
+      { url: 'https://hrnote.jp/contents/roumu-rodokijunho-23jo-20230120/', type: 'media', label: '労働基準法23条 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-crypto-asset',
+      domain: 'legal',
+      title: '暗号資産交換業の登録制（資金決済法）',
+      statement:
+        '暗号資産の売買・交換やその媒介、利用者の金銭・暗号資産の管理等を業として行う「暗号資産交換業」を営むには、資金決済に関する' +
+        '法律に基づき内閣総理大臣（金融庁）の登録を受ける必要がある。登録業者には利用者財産の分別管理、情報の安全管理、利用者への情報提供等の義務が課される。',
+      authority: '所管: 金融庁（資金決済に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/virtual_currency/index_2.html', type: 'government', label: '金融庁 暗号資産関連事業を行うみなさまへ' },
+      { url: 'https://laws.e-gov.go.jp/law/421AC0000000059', type: 'government', label: 'e-Gov法令検索 資金決済に関する法律' },
+      { url: 'https://www.businesslawyers.jp/articles/788', type: 'media', label: '暗号資産交換業の登録 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-food-labeling',
+      domain: 'legal',
+      title: '食品表示法・食品表示基準（加工食品の表示・アレルゲン）',
+      statement:
+        '食品表示法に基づく食品表示基準により、容器包装された一般用加工食品には、名称・原材料名・添加物・内容量・消費期限または賞味期限・' +
+        '保存方法・食品関連事業者等の表示が義務付けられている。特定原材料を含む食品にはアレルゲン表示が義務付けられ、長く8品目' +
+        '（えび・かに・くるみ・小麦・そば・卵・乳・落花生）であったが、2026年4月1日にカシューナッツが追加され、2026年6月現在は計9品目が対象である。',
+      authority: '所管: 消費者庁（食品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/food_labeling/food_sanitation/allergy/', type: 'government', label: '消費者庁 食物アレルギー表示' },
+      { url: 'https://www.caa.go.jp/policies/policy/food_labeling/food_labeling_act/assets/food_labeling_cms201_230309_13.pdf', type: 'government', label: '消費者庁 食品表示基準Q&A 加工食品の義務表示' },
+      { url: 'https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/hyouji/shokuhyouhou_kakou_allegy.html', type: 'municipality', label: '東京都 食品衛生の窓 アレルゲン表示' },
+    ],
+  },
 ];
 // Stryker restore all
