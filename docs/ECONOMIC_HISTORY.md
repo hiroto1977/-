@@ -51,4 +51,19 @@ Service Hub が参照する 1940年〜現在の世界経済・日本経済の年
 
 ![経済史タイムライン](economic-history-timeline.svg)
 
+## 資産クラス別 年次推移グラフ（株式・不動産・仮想通貨）
+
+`ECONOMIC_HISTORY` と同じ年に連動した資産指標を `ASSET_SERIES`（`economicHistoryKnowledge.ts`）に保持し、
+`scripts/gen-econ-asset-chart.cjs`（`npm run gen:econ-asset-chart`）で `docs/economic-history-assets.svg` に
+折れ線グラフ化する（各系列を自系列の最大値=100%に正規化して重ね描き）。
+
+- **株式**：ダウ工業株30種平均の年末終値（USD、MeasuringWorth/FRED 等で確証）。日経平均は東証再開（1949年5月）以降が対象で、
+  1945–1949年4月の取引所閉鎖期間および各年確定値が未照合の年は N/A（捏造しない）。
+- **不動産**：日本不動産研究所「市街地価格指数」（全国・1936年9月=100）。各年確定値は一次データ未照合のため現状 N/A。
+- **仮想通貨**：ビットコインは2009年1月稼働開始・2010年に市場価格成立。**それ以前（1940–1951を含む）は存在せず N/A。**
+
+数値が確証でき次第、各系列を追補する（年が進むほど線が伸びる）。
+
+![資産クラス別 年次推移](economic-history-assets.svg)
+
 出典 URL は `economicHistoryKnowledge.ts` の各 `sources` に機械可読で保持。年の追加・更新は本書と当該データを PR で更新する。
