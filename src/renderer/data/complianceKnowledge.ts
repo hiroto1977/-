@@ -6787,5 +6787,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://aglaw.jp/chutosaiyou-kouhyougimuka/', type: 'media', label: '浅野総合法律事務所 中途採用比率の公表義務化の解説' },
     ],
   },
+  {
+    value: {
+      id: 'labor-chemical-substance-autonomous-management',
+      domain: 'labor',
+      title: '化学物質の自律的な管理への移行（2024年4月 規制強化）',
+      statement:
+        '厚生労働省は2022年（令和4年）5月公布の労働安全衛生規則等の改正により、特定の化学物質を国が個別に規制する方式から、事業者が自らリスクアセスメントを行い自律的に管理する方式へ段階的に移行する仕組みを導入した。' +
+        '2024年（令和6年）4月1日からは、ラベル表示・SDS交付及びリスクアセスメント実施義務の対象物（リスクアセスメント対象物）が国のGHS分類で危険性・有害性が確認された物質へ大幅に拡大された。あわせて、対象物を製造・取扱い等する事業場ごとに' +
+        '化学物質管理者の選任が義務付けられ、リスクアセスメント結果に基づき労働者のばく露を最小限度にする措置等が義務化された。対象物質数や移行スケジュールの細目は所管資料で要確認。',
+      authority: '所管: 厚生労働省（労働基準局 安全衛生部）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000099121_00005.html', type: 'government', label: '厚生労働省 化学物質による労働災害防止のための新たな規制' },
+      { url: 'https://jsite.mhlw.go.jp/kyoto-roudoukyoku/content/contents/chemicalmaterial2024.pdf', type: 'government', label: '京都労働局 令和6年4月1日から新たな化学物質規制が全面施行' },
+      { url: 'https://keiyaku-watch.jp/media/hourei/kagakubusshitsukanrisya-2024/', type: 'media', label: 'KEIYAKU-WATCH 化学物質管理者 選任義務の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-civil-procedure-digitalization',
+      domain: 'legal',
+      title: '民事訴訟手続のIT化（改正民事訴訟法・段階施行）',
+      statement:
+        '2022年（令和4年）5月に成立した民事訴訟法等の一部を改正する法律（令和4年法律第48号）により、民事裁判手続のIT化が段階的に導入される。具体的にはインターネットを利用した訴えの提起・主張書面のオンライン提出、Web会議による' +
+        '口頭弁論・弁論準備手続（争点整理）への参加、訴訟記録の電子化等が含まれる。このうちWeb会議による弁論準備手続等は2023年から、口頭弁論のWeb会議参加は2024年から既に施行されている。オンライン提訴や訴訟記録の電子化等を含む全面施行は' +
+        '2026年（令和8年）5月までに予定されており、本記載時点（2026年6月）の運用状況は要確認。',
+      authority: '所管: 法務省（民事局）／運用: 最高裁判所・各裁判所',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00316.html', type: 'government', label: '法務省 民事訴訟法等の一部を改正する法律について' },
+      { url: 'https://www.courts.go.jp/saiban/minjidejitaruka/index.html', type: 'government', label: '裁判所 民事裁判手続のデジタル化' },
+      { url: 'https://www.nikkei.com/article/DGXZQOUA121FQ0S5A211C2000000/', type: 'media', label: '日本経済新聞 民事裁判IT化 26年5月全面施行' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-cfc-taxation',
+      domain: 'tax',
+      title: '外国子会社合算税制（タックスヘイブン対策税制／CFC税制）',
+      statement:
+        '外国子会社合算税制は、内国法人等が税負担の低い国・地域に所在する外国関係会社（日本の居住者・内国法人等が合計で50%超の持分を保有する等の外国法人）を利用して所得を留保することによる租税回避を防止するための制度で、' +
+        '一定の要件のもとで当該外国関係会社の所得を日本の親会社等の所得に合算して課税する。合算対象となるかは、外国関係会社の租税負担割合（ペーパー・カンパニー等は一定割合未満が対象）や、事業実体の有無を見る経済活動基準' +
+        '（事業基準・実体基準・管理支配基準・所在地国/非関連者基準）等により判定される。これらを満たす場合でも実質的活動のない受動的所得は合算対象となり得る。租税負担割合の基準値等は税制改正で変動するため要確認。',
+      authority: '所管: 財務省（制度設計）・国税庁（執行）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mof.go.jp/tax_policy/summary/international/175.htm', type: 'government', label: '財務省 外国子会社合算税制の概要' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180516/pdf/01.pdf', type: 'government', label: '国税庁 内国法人の外国関係会社に係る所得の課税の特例（制度の概要）' },
+      { url: 'https://www.ma-cp.com/about-ma/cfc-taxation/', type: 'media', label: 'M&Aキャピタルパートナーズ 外国子会社合算税制（CFC税制）の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disability-employment-levy',
+      domain: 'labor',
+      title: '障害者雇用納付金制度（事業主間の経済的負担の調整）',
+      statement:
+        '障害者雇用納付金制度は、社会連帯責任の理念に基づき、障害者の雇用に伴う事業主間の経済的負担を調整するとともに障害者雇用の水準を引き上げることを目的とする制度。法定雇用率を達成していない一定規模（常時雇用労働者が一定数を超える）の' +
+        '事業主から「障害者雇用納付金」を徴収し、その財源をもとに、法定雇用率を超えて雇用する事業主には「障害者雇用調整金」、一定規模以下の事業主には「報奨金」を支給する。これは法定雇用率制度（雇用義務）とは別個の経済的調整の仕組みであり、' +
+        '納付金を納付しても障害者の雇用義務を免れるものではない。徴収・支給の対象事業主規模や金額は法改正で変動するため要確認。',
+      authority: '所管: 厚生労働省／制度運営: 独立行政法人 高齢・障害・求職者雇用支援機構（JEED）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jeed.go.jp/disability/about_levy_grant_system.html', type: 'government', label: 'JEED 障害者雇用納付金制度の概要' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page10.html', type: 'government', label: '厚生労働省 事業主の方へ（障害者雇用納付金制度）' },
+      { url: 'https://www.jeed.go.jp/disability/about_levy_grant_Q_A.html', type: 'government', label: 'JEED 障害者雇用納付金制度 Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-logistics-efficiency-act',
+      domain: 'legal',
+      title: '改正物流効率化法（物流2法・物流2024年問題への対応）',
+      statement:
+        '流通業務の総合化及び効率化の促進に関する法律及び貨物自動車運送事業法の一部を改正する法律（令和6年法律第23号、いわゆる改正物流2法）は、トラックドライバーの時間外労働上限規制による輸送力不足（物流「2024年問題」）への対応として' +
+        '2024年（令和6年）に成立・公布された。2025年（令和7年）4月1日の第一段階施行で、荷主（発荷主・着荷主）及び物流事業者に荷待ち・荷役時間の削減等の物流効率化に向けた努力義務が課された。一定規模以上の「特定事業者」に対する' +
+        '中長期計画の作成義務・物流統括管理者（CLO）の選任義務は2026年（令和8年）4月1日施行の第二段階であり、施行時期が分かれている点に注意。対象規模等の細目は政省令で定められ要確認。',
+      authority: '所管: 国土交通省（経済産業省・農林水産省等と共管）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.revised-logistics-act-portal.mlit.go.jp/', type: 'government', label: '国土交通省 物流効率化法 理解促進ポータルサイト' },
+      { url: 'https://www.mlit.go.jp/jidosha/jidosha_mn4_000014.html', type: 'government', label: '国土交通省 改正貨物自動車運送事業法（令和7年4月1日施行等）' },
+      { url: 'https://www.mlit.go.jp/report/press/tokatsu01_hh_000786.html', type: 'government', label: '国土交通省 改正物流2法の施行期日を定める政令' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-digital-wage-payment',
+      domain: 'labor',
+      title: '賃金のデジタル払い（指定資金移動業者口座への賃金支払）',
+      statement:
+        '2023年（令和5年）4月1日施行の労働基準法施行規則の改正（令和4年厚生労働省令第158号）により、従来の通貨・銀行口座・証券総合口座への支払に加え、厚生労働大臣の指定を受けた資金移動業者（指定資金移動業者）の口座への資金移動による' +
+        '賃金支払（賃金のデジタル払い）が可能になった。実施には、事業場ごとに過半数労働組合（ない場合は過半数代表者）との労使協定を締結し、かつ賃金のデジタル払いを希望する個々の労働者から同意を得る必要がある。取り扱える業者は厚生労働大臣の' +
+        '指定を受けた資金移動業者に限られ、希望しない労働者に強制することはできない。',
+      authority: '所管: 厚生労働省（労働基準局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/03_00028.html', type: 'government', label: '厚生労働省 資金移動業者の口座への賃金支払（賃金のデジタル払い）について' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=00tc7167&dataType=1&pageNo=1', type: 'government', label: '厚生労働省 労働基準法施行規則の一部を改正する省令の公布について' },
+      { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'government', label: 'JILPT 給与のデジタル振り込みを2023年4月から解禁' },
+    ],
+  },
 ];
 // Stryker restore all
