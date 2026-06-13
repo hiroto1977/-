@@ -2723,5 +2723,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/283', type: 'media', label: '要配慮個人情報・オプトアウト 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-gift-spouse-deduction',
+      domain: 'tax',
+      title: '贈与税の配偶者控除（おしどり贈与）',
+      statement:
+        '婚姻期間が20年以上である配偶者から、居住用不動産またはその取得資金の贈与を受けた場合、その年分の贈与税について、' +
+        '基礎控除110万円のほかに最高2,000万円まで配偶者控除を受けることができる。同一の配偶者からの贈与については一生に一度のみ適用可能で、適用には贈与税の申告が必要。',
+      authority: '所管: 国税庁（相続税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4452.htm', type: 'government', label: '国税庁 No.4452 夫婦間の居住用不動産贈与の配偶者控除' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/shinkoku/zoyo/tebiki2018/pdf/015.pdf', type: 'government', label: '国税庁 贈与税の配偶者控除の特例（概要・要件）' },
+      { url: 'https://legacy.ne.jp/knowledge/before/zouyo-zei/240-haiguushakoujyo-kyojyuuyoufudousan-tokurei/', type: 'media', label: '贈与税の配偶者控除 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-housing-fund-gift',
+      domain: 'tax',
+      title: '直系尊属からの住宅取得等資金贈与の非課税特例',
+      statement:
+        '父母や祖父母など直系尊属から、自己の居住用住宅の新築・取得・増改築等のための資金（住宅取得等資金）の贈与を受け一定の' +
+        '要件を満たす場合、一定の限度額まで贈与税が非課税となる特例がある。非課税限度額は住宅の区分や契約時期等により異なり、' +
+        '基本枠は省エネ等住宅で1,000万円、それ以外の住宅で500万円とされる。適用には贈与税の申告が必要。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4508.htm', type: 'government', label: '国税庁 No.4508 住宅取得等資金贈与の非課税' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk2_000018.html', type: 'government', label: '国土交通省 住宅取得等資金に係る贈与税の非課税措置' },
+      { url: 'https://suumo.jp/article/oyakudachi/oyaku/sumai_nyumon/money/jukatsu-2244/', type: 'media', label: '住宅資金贈与の非課税枠 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-deemed-working-hours',
+      domain: 'labor',
+      title: '事業場外労働のみなし労働時間制（労働基準法38条の2）',
+      statement:
+        '労働者が労働時間の全部または一部について事業場外で業務に従事し、使用者の具体的な指揮監督が及ばず労働時間を算定することが' +
+        '困難な場合は、原則として所定労働時間労働したものとみなすことができる（労働基準法38条の2）。当該業務の遂行に通常所定労働時間を' +
+        '超えて労働することが必要な場合は、その業務の遂行に通常必要とされる時間労働したものとみなす。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article38-2.html', type: 'government', label: '栃木労働局 事業場外みなし労働時間制（38条の2）' },
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（38条の2）' },
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/roudoujikan/q10.html', type: 'government', label: '厚生労働省 事業場外みなし労働 Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-discretionary-work',
+      domain: 'labor',
+      title: '裁量労働制（専門業務型・企画業務型）',
+      statement:
+        '裁量労働制は、業務の遂行方法を大幅に労働者の裁量に委ねる必要がある業務について、実際の労働時間に関わらず労使協定等で定めた' +
+        '時間を働いたものとみなす制度で、専門業務型（労基法38条の3）と企画業務型（同38条の4）がある。導入には労使協定の締結・届出' +
+        '（企画業務型は労使委員会の決議・本人同意等）が必要で、2024年4月施行の改正により本人同意・同意撤回の手続等の要件が追加された。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/kantoku/040324-9.html', type: 'government', label: '厚生労働省 専門業務型裁量労働制' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/_79159/discretion38-3-4.html', type: 'government', label: '栃木労働局 裁量労働制（38条の3・38条の4）' },
+      { url: 'https://jsite.mhlw.go.jp/fukui-roudoukyoku/content/contents/001661796.pdf', type: 'government', label: '厚生労働省 専門業務型裁量労働制の解説（令和6年改正対応）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-container-recycling',
+      domain: 'legal',
+      title: '容器包装リサイクル法における特定事業者の再商品化義務',
+      statement:
+        '容器包装リサイクル法では、容器包装を利用して商品を販売する事業者や容器を製造・輸入する事業者等（特定事業者）に対し、' +
+        '市町村が分別収集した容器包装の再商品化（リサイクル）を行う義務が課されている。多くの特定事業者は指定法人（日本容器包装' +
+        'リサイクル協会）に委託料を支払うことでこの義務を果たし、一定規模以下の小規模事業者等は適用除外となる。',
+      authority: '所管: 経済産業省・環境省（容器包装リサイクル法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.env.go.jp/recycle/yoki/a_1_recycle/recycle_02.html', type: 'government', label: '環境省 容器包装リサイクル法の概要' },
+      { url: 'https://www.meti.go.jp/policy/recycle/main/data/pamphlet/yoriho/15setsumei/all.pdf', type: 'government', label: '経済産業省 容器包装リサイクル法 説明資料' },
+      { url: 'https://www.jcpra.or.jp/law/duty/specified/', type: 'operator', label: '日本容器包装リサイクル協会 特定事業者について' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-home-appliance-recycling',
+      domain: 'legal',
+      title: '家電リサイクル法（家電4品目の引取り・リサイクル義務）',
+      statement:
+        '家電リサイクル法（特定家庭用機器再商品化法）は、エアコン・テレビ（ブラウン管式・液晶/プラズマ式）・冷蔵庫/冷凍庫・' +
+        '洗濯機/衣類乾燥機の家電4品目について、小売業者に消費者からの引取りと製造業者等への引渡しの義務を、製造業者等に' +
+        '引き取った廃家電の再商品化（リサイクル）の義務を課している。消費者（排出者）はリサイクル料金と収集運搬料金を負担する。',
+      authority: '所管: 経済産業省・環境省（家電リサイクル法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.env.go.jp/recycle/kaden/gaiyo.html', type: 'government', label: '環境省 家電リサイクル法の概要' },
+      { url: 'https://www.meti.go.jp/policy/it_policy/kaden_recycle/index.html', type: 'government', label: '経済産業省 家電リサイクル法' },
+      { url: 'https://www.rkc.aeha.or.jp/recycleticket/target_items.html', type: 'operator', label: '家電リサイクル券センター 対象廃棄物（家電4品目）' },
+    ],
+  },
 ];
 // Stryker restore all
