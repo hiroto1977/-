@@ -1518,6 +1518,117 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.b-nest.jp/want_to/hojokin.html', type: 'operator', label: 'B-nest 静岡市中小企業支援センター 補助金' },
     ],
   },
+  {
+    id: 'subsidy-osaka-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）',
+    authority: '大阪市（経済戦略局）／連携: 公益財団法人大阪産業局（大阪産業創造館）',
+    statement:
+      '大阪市は政令指定都市（市区町村レベル）の代表例として、産業競争力強化法に基づく認定創業支援等事業計画のもと、経営・財務・人材育成・販路開拓に関する継続的支援' +
+      '（特定創業支援等事業）を受けた創業者に証明書を発行し、会社設立時の登録免許税の軽減や創業関連保証の特例等を可能にしている。加えて産学連携の研究開発を対象とする' +
+      '「大阪市イノベーション創出支援補助金」等の市独自補助も実施。金額・要件・募集期間は年度ごとに変動するため最新の募集要項及び大阪市公式で要確認。',
+    application:
+      '特定創業支援等事業は大阪産業創造館等の所定セミナー・面談を一定期間受講し要件を満たした後、大阪市経済戦略局へ証明書発行を申請。イノベーション創出支援補助金は連携大学とともに公募期間内に経済戦略局へ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.osaka.lg.jp/keizaisenryaku/page/0000650806.html', type: 'municipality', label: '大阪市 特定創業支援等事業' },
+      { url: 'https://www.city.osaka.lg.jp/keizaisenryaku/page/0000642452.html', type: 'municipality', label: '大阪市 イノベーション創出支援補助金' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/chiiki/27.nintei_osaka.html', type: 'government', label: '中小企業庁 認定創業支援等事業計画（大阪市）' },
+    ],
+  },
+  {
+    id: 'subsidy-kyoto-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '京都市伝統産業設備改修等補助制度',
+    authority: '京都市（産業観光局 伝統産業課）／創業系は公益財団法人京都高度技術研究所（ASTEM）',
+    statement:
+      '京都市が政令指定都市（市区町村レベル）として独自に実施する中小企業向け支援制度の代表例で、市内に主たる事務所を有し市指定の伝統産業製品等を製造する中小企業者・' +
+      '組合を対象に、老朽化や法令改正等に伴う設備の改修・更新・新設費用を補助する。補助率・上限額・募集期間は年度ごとに変動するため最新の募集要項及び京都市公式で要確認。' +
+      '京都市は創業者向けにもASTEMによるスタートアップ支援等の制度を整備している。',
+    application:
+      '京都市産業観光局（伝統産業課）へ年度ごとの募集期間内に交付申請書・必要書類を提出し、審査・交付決定後に設備改修等を実施、完了後に実績報告して補助金を受給する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kyoto.lg.jp/sankan/page/0000339416.html', type: 'municipality', label: '京都市 伝統産業設備改修等補助制度' },
+      { url: 'https://www.city.kyoto.lg.jp/sankan/cmsfiles/contents/0000268/268990/shienseido.pdf', type: 'municipality', label: '京都市 中小企業支援補助金等一覧' },
+      { url: 'https://www.astem.or.jp/entre/startup', type: 'operator', label: '京都高度技術研究所（ASTEM）スタートアップ支援' },
+    ],
+  },
+  {
+    id: 'subsidy-hiroshima-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '広島市中小企業支援センターの創業・中小企業支援',
+    authority: '公益財団法人広島市産業振興センター（広島市中小企業支援センター運営）／所管: 広島市経済観光局',
+    statement:
+      '広島市は政令指定都市の市区町村レベル代表例として、公益財団法人広島市産業振興センター内の「中小企業支援センター」を通じ、市内の中小企業者・創業者向けに経営相談・' +
+      '専門家派遣・セミナー・創業支援等を提供している。代表的なメニューとして創業チャレンジ・ベンチャー支援事業（制度融資＋経営支援）や新規ビジネス事業化支援事業（助成金）等があり、' +
+      '金額・要件・対象・募集期間は年度ごとに変動するため、最新の募集要項・広島市公式／産業振興センター公式で要確認。',
+    application:
+      '広島市中小企業支援センター又は広島市公式ウェブサイトの創業者向け支援メニュー案内から相談・申込。各助成・支援事業ごとに募集要項・申請様式が定められ所定期間内に申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.hiroshima.lg.jp/business/sangyo/1021492/1038804/1034131.html', type: 'municipality', label: '広島市 創業者向け支援メニュー' },
+      { url: 'https://www.assist.ipc.city.hiroshima.jp/sougyou/sougyou05.html', type: 'operator', label: '広島市中小企業支援センター 創業チャレンジ・ベンチャー支援' },
+      { url: 'https://www.ipc.city.hiroshima.jp/gaiyou.html', type: 'operator', label: '広島市産業振興センター 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-gunma',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'ぐんまクロススタート補助金（群馬県・旧 起業支援金）',
+    authority: '群馬県（未来投資・デジタル産業課）／執行・申請窓口: 公益財団法人群馬県産業支援機構',
+    statement:
+      'ぐんまクロススタート補助金は、地域課題の解決等に取り組みながら群馬県産業経済の成長を牽引する「ぐんま発スタートアップ」の創出を目的に、起業に要する対象経費の一部を' +
+      '補助する群馬県の代表的な創業・起業支援制度（旧称・群馬県起業支援金）。補助額・補助率・対象経費・募集期間・採択件数は年度ごとに変動するため、最新の募集要項及び県・産業支援機構の公式で要確認。',
+    application:
+      '公益財団法人群馬県産業支援機構が公募・申請受付・伴走支援を担当。対象経費は人件費・店舗等借入費・設備費・知的財産等関連経費・広報費・外注費等。例年春に公募期間を設け、事業計画等を提出して審査・採択される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.gunma.jp/site/houdou/701622.html', type: 'municipality', label: '群馬県 ぐんまクロススタート補助金 公募' },
+      { url: 'https://www.g-inf.or.jp/html/startup_002.html', type: 'operator', label: '群馬県産業支援機構 創業に関する補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/56584', type: 'media', label: 'ぐんまクロススタート補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-gifu',
+    level: 'prefecture',
+    domain: 'business',
+    name: '岐阜県地域活性化ファンド事業費助成金',
+    authority: '公益財団法人岐阜県産業経済振興センター（岐阜県 地域産業課が所管・連携）',
+    statement:
+      '岐阜県内の中小企業者等が行う新商品・新技術の開発やその販路開拓・販売力強化の取組を支援する、岐阜県の代表的な中小企業向け助成制度の一例。助成率・助成額・要件・' +
+      '募集期間は年度ごとに変動するため、最新の募集要項及び岐阜県・同センターの公式で要確認。岐阜県には他にも省エネ設備導入・創業支援等の制度がある。',
+    application:
+      '公益財団法人岐阜県産業経済振興センターが公募する募集要項に沿って申請。年度内に複数回の募集が行われることがあり、地域の商工会議所・商工会経由で案内されることも多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.gifu.lg.jp/site/pressrelease/304491.html', type: 'municipality', label: '岐阜県 地域活性化ファンド事業費助成金 募集' },
+      { url: 'https://www.gpc-gifu.or.jp/fund/chiiki/index.asp', type: 'operator', label: '岐阜県産業経済振興センター 地域活性化ファンド助成金' },
+      { url: 'https://www.gifushoko.or.jp/grant20251128/', type: 'media', label: '岐阜県地域活性化ファンド助成金 案内' },
+    ],
+  },
+  {
+    id: 'subsidy-tochigi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '地域課題解決型創業支援補助金（栃木県）',
+    authority: '栃木県（産業労働観光部）／事務局・申請窓口: 公益財団法人栃木県産業振興センター',
+    statement:
+      '栃木県の代表的な創業支援制度の一例で、県内の地域課題をデジタル技術を活用して解決する新規創業者や、付加価値の高い分野でデジタル技術を活用して事業承継・第二創業を' +
+      '行う者に対し、創業等に要する経費の一部を補助する制度。補助額・要件・募集期間は年度ごとに変動するため、最新の募集要項及び県・産業振興センター公式で要確認。',
+    application:
+      '年度ごとに公募が行われ、事務局である公益財団法人栃木県産業振興センターへ募集要項に沿って申請し、審査・交付決定を経て補助対象経費（人件費・店舗等借入費・改装費・設備費・広報費・外注費等）の一部が交付される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tochigi.lg.jp/f03/chiikikadai_hojo.html', type: 'municipality', label: '栃木県 地域課題解決型創業支援補助金' },
+      { url: 'https://www.tochigi-iin.or.jp/home/2/5/1.html', type: 'operator', label: '栃木県産業振興センター 地域課題解決型創業支援補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/152319', type: 'government', label: 'J-Net21 地域課題解決型創業支援補助金（栃木県）' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
