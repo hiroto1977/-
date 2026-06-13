@@ -1253,5 +1253,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://hayward-law.com/kobutsusho/archives/5383', type: 'media', label: '古物商の本人確認義務 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-receipt-stamp',
+      domain: 'tax',
+      title: '領収書の印紙税と非課税範囲',
+      statement:
+        '売上代金に係る金銭の受取書（領収書）は印紙税の課税文書で記載金額に応じて課税されるが、記載受取金額が5万円未満の' +
+        'ものは非課税。クレジットカード払いは信用取引で金銭の受領がないため、その旨を記載した領収書は金銭の受取書に当たらず非課税。',
+      authority: '所管: 国税庁（印紙税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7105.htm', type: 'government', label: '国税庁 No.7105 金銭の受取書・領収書' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/19/37.htm', type: 'government', label: '国税庁 クレジット販売の領収書' },
+      { url: 'https://www.keihi.com/column/22359/', type: 'media', label: '領収書と収入印紙 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-officer-retirement',
+      domain: 'tax',
+      title: '役員退職給与の損金算入',
+      statement:
+        '適正な役員退職給与は損金算入できるが、不相当に高額な部分の金額は損金不算入となる。適正額は功績倍率法等により、' +
+        '勤続期間・退職事情・同業類似法人の支給状況等に照らして判断される。',
+      authority: '所管: 国税庁（法人税法第34条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/070313/10.htm', type: 'government', label: '国税庁 法令解釈通達 役員給与等' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/111/04/index.htm', type: 'government', label: '国税庁 税務大学校 論叢' },
+      { url: 'https://legacy.ne.jp/legacy-cloud/tax_practice/001-yakuin-taishokukin-keisanhouhou-kougaku/', type: 'media', label: '役員退職金の計算 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-overtime-special-cap',
+      domain: 'labor',
+      title: '時間外労働の上限（特別条項付き36協定）',
+      statement:
+        '特別条項付き36協定でも、時間外労働は年720時間以内、休日労働を含め単月100時間未満かつ複数月（2〜6か月）平均80時間以内に' +
+        '収めねばならず、月45時間を超えられるのは年6か月までである。違反には罰則が科され得る。',
+      authority: '所管: 厚生労働省（労働基準法第36条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000463185.pdf', type: 'government', label: '厚生労働省 時間外労働の上限規制 解説' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/gyosyu/topics/01.html', type: 'government', label: '厚生労働省 時間外労働の上限規制' },
+      { url: 'https://jp.indeed.com/career-advice/career-development/labor-law-36-agreement-rules', type: 'media', label: '36協定の特別条項 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-paid-leave-grant',
+      domain: 'labor',
+      title: '年次有給休暇の付与',
+      statement:
+        '雇入れの日から6か月継続勤務し全労働日の8割以上出勤した労働者には年次有給休暇が10日付与され、以後継続勤務年数に応じて' +
+        '逓増し6年6か月以降は最大20日となる。所定労働日数の少ないパート等には比例付与が適用される。',
+      authority: '所管: 厚生労働省（労働基準法第39条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000350327.pdf', type: 'government', label: '厚生労働省 年次有給休暇' },
+      { url: 'https://www.kantei.go.jp/jp/singi/katsuryoku_kojyo/choujikan_wg/dai5/sankou3.pdf', type: 'government', label: '内閣官房 長時間労働WG 参考資料' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/83032/', type: 'media', label: '年次有給休暇の付与 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-unauthorized-access',
+      domain: 'legal',
+      title: '不正アクセス禁止法',
+      statement:
+        '他人の識別符号（ID・パスワード）の無断入力による不正ログインやセキュリティホールを突いた不正アクセスを禁止し、' +
+        '識別符号の不正取得・保管・フィッシング等の不正な要求も罰則付きで禁止する。',
+      authority: '所管: 警察庁・総務省・経済産業省（不正アクセス禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.npa.go.jp/bureau/cyber/countermeasures/unauthorized-access.html', type: 'government', label: '警察庁 不正アクセス対策' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/09/', type: 'government', label: '総務省 サイバーセキュリティサイト' },
+      { url: 'https://www.fortinet.com/jp/resources/cyberglossary/unauthorized-computer-access-law', type: 'media', label: '不正アクセス禁止法 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-data-subject-rights',
+      domain: 'legal',
+      title: '保有個人データに関する本人の権利',
+      statement:
+        '本人は個人情報取扱事業者に対し、保有個人データの開示・訂正等・利用停止等・第三者提供の停止・第三者提供記録の開示を' +
+        '請求できる。2022年改正法施行により、本人は電磁的記録の提供による方法での開示も請求できる。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q9-10/', type: 'government', label: '個人情報保護委員会 開示請求 FAQ' },
+      { url: 'https://www.ppc.go.jp/news/kaiseihogohou_checkpoint/', type: 'government', label: '個人情報保護委員会 改正法チェックポイント' },
+      { url: 'https://www.businesslawyers.jp/practices/1426', type: 'media', label: '保有個人データ 解説' },
+    ],
+  },
 ];
 // Stryker restore all
