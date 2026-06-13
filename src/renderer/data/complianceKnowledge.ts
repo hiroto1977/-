@@ -5824,5 +5824,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.zeiken.co.jp/hourei/HHKAI000000/847.html', type: 'media', label: '会社法847条 株主による責任追及等の訴え' },
     ],
   },
+  {
+    value: {
+      id: 'labor-leave-allowance',
+      domain: 'labor',
+      title: '休業手当（労働基準法26条）',
+      statement:
+        '使用者の責めに帰すべき事由による休業の場合、使用者は休業期間中、当該労働者にその平均賃金の100分の60以上の手当（休業手当）を支払わなければ' +
+        'ならない（労働基準法26条）。これは民法536条2項に基づく賃金全額請求権を縮減するものではなく、労働者の最低生活保障を目的に労基法が罰則付きで定める最低基準である。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/chingin/q7.html', type: 'government', label: '厚生労働省 休業手当（労基法26条）Q&A' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article26.html', type: 'government', label: '栃木労働局 労働基準法26条（休業手当）' },
+      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_08.html', type: 'media', label: '連合 休業中の賃金（労基法26条と民法536条2項）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-average-wage',
+      domain: 'labor',
+      title: '平均賃金（労働基準法12条）',
+      statement:
+        '平均賃金は、解雇予告手当・休業手当・年次有給休暇中の賃金・災害補償・減給制裁の制限額等を算定する基礎となる金額であり、原則として算定すべき事由の' +
+        '発生した日以前3か月間にその労働者に支払われた賃金の総額を、その期間の総日数（暦日数）で除して算出する（労働基準法12条）。賃金が日給・時間給・出来高払制等の場合は、賃金総額を労働日数で除した額の60%を最低保障とする特則がある。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/chiba-roudoukyoku/content/contents/heikinchingin.pdf', type: 'government', label: '千葉労働局 平均賃金（労基法12条）' },
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（12条）' },
+      { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/hourei_seido_tetsuzuki/saiteichingin_chinginseido/heikinchi.html', type: 'government', label: '神奈川労働局 平均賃金について' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-consumption-taxable-scope',
+      domain: 'tax',
+      title: '消費税の課税対象（課税・非課税・不課税）',
+      statement:
+        '消費税は、国内において事業者が事業として対価を得て行う資産の譲渡・貸付け及び役務の提供（並びに保税地域から引き取る外国貨物＝輸入取引）を' +
+        '課税対象とする。これらの要件に当たらない取引（給与、寄附金、配当、国外取引等）は課税対象外（不課税取引）であり、課税対象のうち消費税の性格や' +
+        '社会政策的配慮から課税しないもの（土地の譲渡・貸付け、有価証券の譲渡、預貯金・貸付金の利子、社会保険診療、住宅の貸付け等）は非課税取引とされる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6105.htm', type: 'government', label: '国税庁 No.6105 課税の対象' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6209.htm', type: 'government', label: '国税庁 No.6209 非課税と不課税の違い' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6201.htm', type: 'government', label: '国税庁 No.6201 非課税となる取引' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-income-categories',
+      domain: 'tax',
+      title: '所得税における所得の10種類の区分',
+      statement:
+        '所得税法は、所得をその性質に応じて利子所得・配当所得・不動産所得・事業所得・給与所得・退職所得・山林所得・譲渡所得・一時所得・雑所得の10種類に' +
+        '区分し、それぞれ所得金額の計算方法を定めている。原則は各所得を合算する総合課税だが、退職所得・山林所得・一部の譲渡所得等は他の所得と分離して課税する分離課税の対象となる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1300.htm', type: 'government', label: '国税庁 No.1300 所得の区分のあらまし' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2025/01/1_03.htm', type: 'government', label: '国税庁 確定申告の手引き 所得の種類' },
+      { url: 'https://zeimo.jp/article/13508', type: 'media', label: '10種類の所得と計算方法 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-consumer-safety-act',
+      domain: 'legal',
+      title: '消費者安全法',
+      statement:
+        '消費者安全法は、消費者の消費生活における被害を防止し安全を確保するため、内閣総理大臣（消費者庁）による基本方針の策定、都道府県・市町村による' +
+        '消費生活相談等の事務（消費生活センターの設置等）、行政機関等から消費者庁への消費者事故等の通知（情報の一元的集約）、及び生命・身体被害に係る重大事故等の' +
+        '原因究明調査を行う消費者安全調査委員会（消費者事故調）等について定めている。',
+      authority: '所管: 消費者庁（消費者安全法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/', type: 'government', label: '消費者庁 消費者安全' },
+      { url: 'https://www.caa.go.jp/policies/council/csic/about', type: 'government', label: '消費者庁 消費者安全調査委員会の概要' },
+      { url: 'https://www.cas.go.jp/jp/houan/syouhisya/anzen/gaiyou.pdf', type: 'government', label: '内閣官房 消費者安全法案のポイント' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-keihyo-management',
+      domain: 'legal',
+      title: '景品表示法上の表示等の管理上の措置義務（26条）',
+      statement:
+        '景品表示法26条は、事業者に対し、自己の供給する商品・役務の取引について不当な表示や過大な景品類の提供を防止するために必要な体制の整備その他の' +
+        '必要な措置（表示等の管理上の措置）を講じる義務を課している。内閣総理大臣（消費者庁）はこの措置に関する指針を定めており、表示の根拠となる情報の確認、' +
+        '表示に関する社内の確認体制の整備、関係資料の保管等が求められる。',
+      authority: '所管: 消費者庁（景品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling', type: 'government', label: '消費者庁 景品表示法（26条・管理措置の指針）' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/pdf/141114premiums_5.pdf', type: 'government', label: '消費者庁 表示等の管理上の措置についての指針' },
+      { url: 'https://www.jftc.go.jp/info/nenpou/h27/div02/div_02_13.html', type: 'government', label: '公正取引委員会 景品表示法に関する業務' },
+    ],
+  },
 ];
 // Stryker restore all
