@@ -3041,5 +3041,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.j-flec.go.jp/public/learn/glossary/r_risoku_seigenho/', type: 'government', label: 'J-FLEC 用語集 利息制限法' },
     ],
   },
+  {
+    value: {
+      id: 'tax-sole-proprietor-notification',
+      domain: 'tax',
+      title: '個人事業の開業・廃業等届出書（開業届）',
+      statement:
+        '新たに事業所得・不動産所得・山林所得を生ずべき事業を開始した個人は、その事実があった日から1か月以内に' +
+        '「個人事業の開業・廃業等届出書」を納税地の所轄税務署長に提出しなければならない（所得税法229条）。提出はe-Taxまたは書面で行う。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/04.htm', type: 'government', label: '国税庁 A1-5 個人事業の開業・廃業等届出手続' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2090.htm', type: 'government', label: '国税庁 No.2090 新たに事業を始めたときの届出' },
+      { url: 'https://laws.e-gov.go.jp/law/340AC0000000033', type: 'government', label: 'e-Gov法令検索 所得税法（229条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-tax-inclusive-pricing',
+      domain: 'tax',
+      title: '消費税の総額表示義務（税込価格表示）',
+      statement:
+        '消費税の課税事業者が、消費者に対してあらかじめ商品・サービスの価格を表示する場合には、消費税額（地方消費税額を含む）を' +
+        '含めた支払総額（税込価格）を表示しなければならない（総額表示義務。消費税法63条）。値札・広告など不特定多数の消費者向け価格表示が対象で、事業者間取引は対象外である。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm', type: 'government', label: '国税庁 No.6902 総額表示の義務付け' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/sougakuhyoji_gaiyou.htm', type: 'government', label: '財務省 総額表示方式の概要' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/sougakuhyoji_faq.htm', type: 'government', label: '財務省 総額表示 FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-rule-disadvantage-change',
+      domain: 'labor',
+      title: '就業規則による労働条件の不利益変更（労働契約法9条・10条）',
+      statement:
+        '使用者は、原則として労働者の合意なく就業規則を変更して労働者の不利益に労働条件を変更することはできない（労働契約法9条）。' +
+        'ただし、変更後の就業規則を労働者に周知させ、かつその変更が、労働者の受ける不利益の程度・変更の必要性・変更後の内容の相当性・' +
+        '労働組合等との交渉の状況等に照らして合理的である場合には、変更後の就業規則による労働条件が適用される（同10条）。',
+      authority: '所管: 厚生労働省（労働契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov法令検索 労働契約法（9条・10条）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73aa9536', type: 'government', label: '厚生労働省 法令データ 労働契約法' },
+      { url: 'https://hcm-jinjer.com/blog/jinji/labor-contract-law_article-10/', type: 'media', label: '就業規則の不利益変更 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-disability-accommodation-employment',
+      domain: 'labor',
+      title: '障害者雇用促進法における差別禁止と合理的配慮',
+      statement:
+        '障害者雇用促進法は、事業主に対し、募集・採用や賃金・配置・昇進等の雇用に関するあらゆる局面で障害者であることを理由とする' +
+        '不当な差別的取扱いを禁止するとともに、障害者が職場で働くうえでの支障を改善するための措置（合理的配慮）を、過重な負担にならない範囲で提供することを義務付けている。',
+      authority: '所管: 厚生労働省（障害者雇用促進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaishakoyou/shougaisha_h25/index.html', type: 'government', label: '厚生労働省 雇用分野の障害者差別禁止・合理的配慮' },
+      { url: 'https://www.jeed.go.jp/disability/data/handbook/q2k4vk000003mbmt.html', type: 'government', label: 'JEED 障害者への差別禁止と合理的配慮' },
+      { url: 'https://www.pref.kagoshima.jp/af04/sangyo-rodo/rodo/syogaisya/gouritekihairyo.html', type: 'municipality', label: '鹿児島県 雇用分野の合理的配慮' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-utility-model',
+      domain: 'legal',
+      title: '実用新案権（無審査・存続期間・技術評価書）',
+      statement:
+        '実用新案権は、物品の形状・構造・組合せに係る考案を保護する権利で、特許庁への出願と設定登録により発生する。' +
+        '基礎的要件のみを審査する無審査主義が採られ、存続期間は出願の日から10年で終了する。権利行使に当たっては、' +
+        '特許庁が作成する実用新案技術評価書を提示して警告することが必要とされる（実用新案法29条の2）。',
+      authority: '所管: 特許庁（実用新案法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/basic/jituyo/index.html', type: 'government', label: '特許庁 実用新案出願のいろは' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000197.html', type: 'government', label: 'INPIT 実用新案権の存続期間 FAQ' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/02/000098.html', type: 'government', label: 'INPIT 実用新案権の行使の注意点 FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-anonymized-info',
+      domain: 'legal',
+      title: '匿名加工情報（個人情報保護法）',
+      statement:
+        '匿名加工情報とは、特定の個人を識別できないように個人情報を加工し、かつ当該個人情報を復元できないようにしたものをいう。' +
+        '個人情報取扱事業者は、個人情報保護委員会規則で定める基準に従って適正に加工し、加工方法等の安全管理措置・作成時の項目の公表・' +
+        '第三者提供時の公表および明示等の義務を守れば、本人の同意なく第三者提供・利活用ができる。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/tokumeikakouInfo/', type: 'government', label: '個人情報保護委員会 匿名加工情報' },
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057', type: 'government', label: 'e-Gov法令検索 個人情報の保護に関する法律' },
+      { url: 'https://www.soumu.go.jp/main_content/000471963.pdf', type: 'government', label: '総務省 匿名加工情報について' },
+    ],
+  },
 ];
 // Stryker restore all
