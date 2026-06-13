@@ -582,5 +582,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Echo_chamber_(media)', type: 'reference', label: 'Wikipedia — Echo chamber (media)' },
     ],
   },
+  {
+    id: 'econ-prisoners-dilemma',
+    discipline: 'economics',
+    title: '囚人のジレンマ（prisoner’s dilemma）',
+    statement:
+      '各プレイヤーが自己の合理性に従って「裏切り」という支配戦略を選ぶ結果、相互に協調した場合より双方にとって悪い帰結に陥る、代表的な非協力ゲーム。' +
+      '支配戦略の組が唯一のナッシュ均衡を成すが、その均衡はパレート効率的ではなく（双方が黙秘すればより良い帰結が得られる）、個人合理性と全体最適が一致しない例として知られる。ランド研究所のメリル・フラッドとメルヴィン・ドレッシャーが1950年に原型を考案し、数学者アルバート・W・タッカーが囚人の物語として定式化し「囚人のジレンマ」と命名した。ゲームが繰り返される場合には協調が成立しうることが知られ、ロバート・アクセルロッドのトーナメントでは「しっぺ返し（tit for tat）」戦略が最も高い成績を収めた。',
+    keyFigures: 'M.フラッド&M.ドレッシャー（1950 RAND考案）／A.W.タッカー（命名）／R.アクセルロッド（反復ゲーム・しっぺ返し）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Prisoner’s Dilemma' },
+      { url: 'https://www.britannica.com/science/game-theory/The-prisoners-dilemma', type: 'reference', label: 'Encyclopaedia Britannica — Game theory: The prisoners’ dilemma' },
+      { url: 'https://www.econlib.org/library/Enc/PrisonersDilemma.html', type: 'reference', label: 'Econlib, Concise Encyclopedia of Economics — Prisoners’ Dilemma' },
+    ],
+  },
+  {
+    id: 'econ-public-goods',
+    discipline: 'economics',
+    title: '公共財（非競合性・非排除性）',
+    statement:
+      '消費の非競合性（ある人の消費が他者の消費可能量を減らさない）と非排除性（対価を払わない者を消費から排除できない）を併せ持つ財・サービス。' +
+      'これらの性質ゆえ市場では対価を払わずに便益を得るフリーライダー（ただ乗り）問題が生じ、供給者が費用を回収できないため過少供給に陥りやすい。この市場の失敗を是正するため政府による供給と租税による財源調達が正当化されうる。国防・灯台・一般道路・街灯などが典型例とされる（純粋公共財か否かには論争もある）。理論はポール・サミュエルソンが1954年論文「The Pure Theory of Public Expenditure」で定式化した。非排除的だが競合的な共有資源（コモンズ）や、両性質を部分的にしか満たさない準公共財とは区別される。',
+    keyFigures: 'ポール・サミュエルソン（1954「The Pure Theory of Public Expenditure」, RES 36:387-389）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/PublicGoods.html', type: 'reference', label: 'Library of Economics and Liberty (Econlib) — Public Goods' },
+      { url: 'https://www.imf.org/en/publications/fandd/issues/2021/12/global-public-goods-chin-basics', type: 'government', label: 'IMF Finance & Development — What Are Global Public Goods?' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-the-history-of-economic-thought/article/abs/fifty-years-after-samuelsons-the-pure-theory-of-public-expenditure-what-are-we-left-with/CD54F8996C2F64B8C1E137D68E9B79DB', type: 'academic', label: 'Journal of the History of Economic Thought (Cambridge UP) — サミュエルソン1954論文の評価' },
+    ],
+  },
+  {
+    id: 'human-anchoring',
+    discipline: 'human-science',
+    title: 'アンカリング効果（係留と調整）',
+    statement:
+      '最初に提示された数値（アンカー）が、その後の数量推定や判断の基準点となり、人はそこから十分に調整せず判断がアンカーに偏る認知バイアス。' +
+      'エイモス・トベルスキーとダニエル・カーネマンが1974年の論文「Judgment under Uncertainty: Heuristics and Biases」(Science誌)で「係留と調整（anchoring and adjustment）ヒューリスティック」として実証した。回転盤で得た無関係な数字を見せた後に国連加盟国に占めるアフリカ諸国の割合を推定させると、回転盤が10で止まった群の推定中央値は約25%、60で止まった群では約45%となり、本来無関係な初期値が推定を大きく左右した。価格交渉・販売・量刑・各種見積りなど数量判断を伴う多くの場面に広く影響する。',
+    keyFigures: 'エイモス・トベルスキー & ダニエル・カーネマン（1974, Science 185:1124-1131）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky & Kahneman (1974) Judgment under Uncertainty, Science 185(4157):1124-1131（一次資料）' },
+      { url: 'https://www.britannica.com/topic/heuristic-reasoning', type: 'reference', label: 'Encyclopaedia Britannica — Heuristic（係留と調整ヒューリスティックの帰属）' },
+      { url: 'https://en.wikipedia.org/wiki/Anchoring_effect', type: 'reference', label: 'Wikipedia — Anchoring effect（回転盤実験 10→25%/60→45%）' },
+    ],
+  },
+  {
+    id: 'bizlaw-keihyo-misrepresentation',
+    discipline: 'business-law',
+    title: '景品表示法の優良誤認・有利誤認表示',
+    statement:
+      '景品表示法（不当景品類及び不当表示防止法、通称「景表法」）5条は、一般消費者の自主的かつ合理的な選択を阻害するおそれのある不当な表示を禁止する。' +
+      '優良誤認表示（5条1号）とは商品・役務の品質・規格その他の内容を実際または競争事業者のものより著しく優良と誤認させる表示、有利誤認表示（5条2号）とは価格その他の取引条件を実際または競争事業者のものより取引相手に著しく有利と誤認させる表示をいう。消費者庁が所管し、違反には措置命令や課徴金納付命令（課徴金制度は2014年改正で導入、2016年4月1日施行）が課される。優良誤認では不実証広告規制があり、消費者庁は事業者に表示の合理的根拠資料の提出を求めうる。2023年改正（2024年10月1日施行）で確約手続の導入や直罰規定（100万円以下の罰金）の新設等が行われた。',
+    keyFigures: '景品表示法5条1号（優良誤認）・5条2号（有利誤認）／所管: 消費者庁／課徴金2016年施行・2023年改正(2024/10施行)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/representation_regulation/misleading_representation', type: 'government', label: '消費者庁 — 優良誤認とは（5条1号の定義・具体例）' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/representation_regulation/advantageous_misidentification', type: 'government', label: '消費者庁 — 有利誤認とは（5条2号の定義・具体例）' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/pdf/fair_labeling_181225_0002.pdf', type: 'government', label: '消費者庁 — 景品表示法への課徴金制度導入について（2016/4/1施行）' },
+    ],
+  },
+  {
+    id: 'mgmt-ansoff-matrix',
+    discipline: 'management',
+    title: 'アンゾフの成長マトリクス',
+    statement:
+      '企業の成長戦略を「製品（既存/新規）」×「市場（既存/新規）」の2軸4象限で類型化する経営戦略フレームワーク。' +
+      '4戦略は、(1)市場浸透（既存製品×既存市場）、(2)新製品開発（新規製品×既存市場）、(3)新市場開拓（既存製品×新規市場）、(4)多角化（新規製品×新規市場）。製品・市場ともに未知となる多角化はリスクが最も高く、製品も市場も既存の市場浸透が最もリスクが低い。イゴール・アンゾフが1957年のHarvard Business Review論文「Strategies for Diversification」で提示し、著書『企業戦略論（Corporate Strategy）』(1965)で体系化した。アンゾフは「戦略経営（戦略的マネジメント）の父」と称される。',
+    keyFigures: 'イゴール・アンゾフ（1957 HBR「Strategies for Diversification」／1965『Corporate Strategy』、「戦略経営の父」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/ansoff-matrix', type: 'academic', label: 'EBSCO Research Starters — Ansoff Matrix（4戦略・多角化が最高リスク）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/jsc.2600', type: 'academic', label: 'Puyt (2024) The Ansoff archive, Strategic Change (Wiley)' },
+      { url: 'https://en.wikipedia.org/wiki/Ansoff_matrix', type: 'reference', label: 'Wikipedia — Ansoff matrix（1957 HBR論文・4戦略・リスク逓増）' },
+    ],
+  },
+  {
+    id: 'infosoc-knowledge-gap',
+    discipline: 'information-sociology',
+    title: '知識ギャップ仮説（knowledge gap hypothesis）',
+    statement:
+      'マスメディアによる情報の流入が社会システム内で増大すると、社会経済的地位（SES）や教育水準の高い層が低い層よりも速く情報・知識を獲得するため、両層の知識格差は縮小せずむしろ拡大する傾向がある、とするマスコミュニケーション論の仮説。' +
+      '1970年、ミネソタ大学のフィリップ・ティチェナー、ジョージ・ドナヒュー、クラリス・オリエンが Public Opinion Quarterly 誌の論文「Mass Media Flow and Differential Growth in Knowledge」で提唱した。高学歴層が持つ優れた読解力、既存の蓄積知識、関連する社会的接触、情報の保持力などが格差拡大の背景とされる。情報アクセスがすべての人に等しく恩恵をもたらすという前提に疑問を投げかけ、後のデジタルデバイド論やインターネット時代の格差議論にも接続している。',
+    keyFigures: 'P.ティチェナー / G.ドナヒュー / C.オリエン（1970, Public Opinion Quarterly 34(2):159-170, ミネソタ大学）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/poq/article-abstract/34/2/159/1844584', type: 'academic', label: 'Tichenor, Donohue & Olien (1970) Mass Media Flow and Differential Growth in Knowledge, POQ 34(2):159-170（原典）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/009365027500200101', type: 'academic', label: 'Donohue, Tichenor & Olien (1975) Mass Media and the Knowledge Gap, Communication Research（SAGE 続報）' },
+      { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia — Knowledge gap hypothesis' },
+    ],
+  },
 ];
 // Stryker restore all
