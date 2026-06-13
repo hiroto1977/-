@@ -2578,6 +2578,116 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.refonavi.or.jp/how-to/hojokin/424', type: 'operator', label: 'リフォーム評価ナビ 長期優良住宅化リフォーム推進事業 解説' },
     ],
   },
+  {
+    id: 'subsidy-housing-safety-net',
+    level: 'national',
+    domain: 'welfare',
+    name: '住宅セーフティネット制度',
+    authority: '所管: 国土交通省（福祉・居住支援面で厚生労働省が連携）',
+    statement:
+      '低額所得者・高齢者・障害者・子育て世帯・被災者・外国人等の「住宅確保要配慮者」の入居を拒まない賃貸住宅（セーフティネット住宅）の登録制度を中核とし、登録住宅の改修費補助、入居者の家賃・家賃債務保証料の低廉化補助、' +
+      '居住支援法人・居住支援協議会による入居・生活支援の3本柱からなる国の制度。2017年（平成29年）10月施行の改正住宅セーフティネット法に基づく。2024年（令和6年）公布の改正法により、安否確認・見守り・福祉サービスへのつなぎを行う' +
+      '「居住サポート住宅」の認定制度等が新設され2025年（令和7年）10月1日に施行された。改修費補助・家賃低廉化補助の有無や額は実施自治体・年度により変動するため要確認。',
+    application:
+      '賃貸人がセーフティネット住宅として都道府県・政令市・中核市等に登録（情報提供システムで公開）。改修費・家賃低廉化補助は地方公共団体と国が協力して交付し、実施有無・額は自治体ごとに異なる。要配慮者は居住支援法人・協議会・自治体窓口を通じ入居相談・支援を受けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk3_000055.html', type: 'government', label: '国土交通省 住宅セーフティネット制度' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk7_000054.html', type: 'government', label: '国土交通省 住宅セーフティネット法等の改正について（2024年改正）' },
+      { url: 'https://www.safetynet-jutaku.jp/', type: 'operator', label: 'セーフティネット住宅情報提供システム' },
+    ],
+  },
+  {
+    id: 'subsidy-livelihood-welfare-loan',
+    level: 'national',
+    domain: 'welfare',
+    name: '生活福祉資金貸付制度',
+    authority: '所管: 厚生労働省／実施: 都道府県社会福祉協議会（窓口は市区町村社会福祉協議会）',
+    statement:
+      '他から必要な資金の借入が困難な低所得世帯・障害者世帯・高齢者世帯を対象に、都道府県社会福祉協議会が実施主体（窓口は市区町村社協）となって、総合支援資金・福祉資金・教育支援資金・不動産担保型生活資金の各資金を無利子又は低利で' +
+      '貸し付ける厚生労働省所管の公的制度。資金の貸付と併せて民生委員等による相談支援を行い、経済的自立と生活の安定を図ることを目的とする。貸付限度額・据置期間・利率（連帯保証人の有無で無利子又は年1.5%等）は資金の種類・時期により異なるため要確認。',
+    application:
+      '居住地の市区町村社会福祉協議会（又は担当の民生委員）に相談・申請する。世帯の状況に応じて資金種別を選定し、相談支援と併せて貸付審査が行われる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/seikatsu-fukushi-shikin1/index.html', type: 'government', label: '厚生労働省 生活福祉資金貸付制度' },
+      { url: 'https://www.gov-online.go.jp/article/201001/entry-7801.html', type: 'government', label: '政府広報オンライン 生活福祉資金貸付制度があります' },
+      { url: 'https://www.zcwvc.net/', type: 'operator', label: '全国社会福祉協議会（社協の生活支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-single-parent-welfare-loan',
+    level: 'national',
+    domain: 'welfare',
+    name: '母子父子寡婦福祉資金貸付金',
+    authority: '所管: こども家庭庁（支援局家庭福祉課）／実施（貸付主体）: 都道府県・指定都市・中核市',
+    statement:
+      '「母子及び父子並びに寡婦福祉法」に基づき、母子家庭の母・父子家庭の父・寡婦等の経済的自立と、その扶養する児童の福祉の増進を図ることを目的として、都道府県・指定都市・中核市が無利子又は低利で各種資金を貸し付ける制度。' +
+      '資金は事業開始資金・修学資金・就学支度資金・生活資金など目的別に区分される（12種類）。利率は資金種別や連帯保証人の有無により無利子又は年1.0%とされ、貸付限度額・利率は資金種別及び年度・実施主体により異なるため要確認。',
+    application:
+      '居住地を所管する地方公共団体の福祉担当窓口（都道府県の福祉事務所、又は指定都市・中核市の担当課）に事前相談し、面接・審査を経て貸付決定。子に関する資金は親子双方が面接対象となる場合がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya', type: 'government', label: 'こども家庭庁 ひとり親家庭等の支援' },
+      { url: 'https://www.pref.kanagawa.jp/docs/he8/hitorioya-support/fukushishikin/index.html', type: 'municipality', label: '神奈川県 母子父子寡婦福祉資金について' },
+      { url: 'https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/hitorioya/boshifushikafushikin.html', type: 'municipality', label: '横浜市 母子父子寡婦福祉資金' },
+    ],
+  },
+  {
+    id: 'subsidy-hilly-mountainous-payment',
+    level: 'national',
+    domain: 'business',
+    name: '中山間地域等直接支払制度',
+    authority: '所管: 農林水産省（農村振興局）／実施: 市町村・都道府県を経由',
+    statement:
+      '農業生産条件が不利な中山間地域等において、集落協定等に基づき5年以上継続して農用地の維持・農業生産活動を行う農業者等に対し、農用地の面積・地目（田・畑・草地等）に応じて交付金を交付する制度。耕作放棄の発生防止と国土保全・' +
+      '水源涵養等の多面的機能の確保を目的とし、平成12年度から実施されている。現在は第5期対策（令和2〜令和6年度＝2020〜2024年度を一区切り）として実施され、令和6年8月に第5期対策の最終評価が公表された。交付単価・要件は地目・年度・体制整備の有無等で異なり対策期ごとに見直されるため要確認。',
+    application:
+      '農業者等が集落協定（又は個人協定）を締結し、5年以上の農業生産活動の継続等を約束したうえで市町村に申請。交付金は協定単位で交付され共同取組活動等に充当される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/nousin/tyusan/siharai_seido/s_about/', type: 'government', label: '農林水産省 中山間地域等直接支払制度とは' },
+      { url: 'https://www.maff.go.jp/j/press/nousin/tyusan/240830.html', type: 'government', label: '農林水産省 中山間地域等直接支払制度（第5期対策）の最終評価' },
+      { url: 'https://www.pref.niigata.lg.jp/sec/chiikinosei/tyuusankan-tyokubarai.html', type: 'municipality', label: '新潟県 中山間地域等直接支払制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-multifunctional-payment',
+    level: 'national',
+    domain: 'business',
+    name: '多面的機能支払交付金',
+    authority: '所管: 農林水産省（農村振興局）／実施: 市町村・都道府県を経由し地域の活動組織へ交付',
+    statement:
+      '農業・農村が有する多面的機能（国土保全・水源涵養・良好な景観形成等）の維持・発揮を図るため、地域の共同活動に取り組む活動組織に対し農用地の面積に応じて交付金を交付する国の制度。「農地維持支払」（農地法面の草刈り・水路の泥上げ・' +
+      '農道の路面維持等の基礎的保全活動）と「資源向上支払」（施設の軽微な補修・長寿命化・植栽による景観形成等の農村環境保全）の2区分から成る。多面的機能発揮促進法（2014年制定）に基づき平成26年度（2014年度）に創設された日本型直接支払制度の一つ。' +
+      '交付単価・要件は地目（田・畑・草地）・地域・活動区分・継続年数で異なるため要確認。',
+    application:
+      '地域内の農業者等が共同活動に取り組む活動組織を組成し市町村と協定を締結。市町村・都道府県を経由して対象農用地の面積に応じた交付金が交付される（資源向上支払は地域住民等を含む組織が対象）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/nousin/kanri/tamen_siharai.html', type: 'government', label: '農林水産省 多面的機能支払交付金' },
+      { url: 'https://www.maff.go.jp/j/nousin/kanri/attach/pdf/tamen_siharai-148.pdf', type: 'government', label: '農林水産省 多面的機能支払交付金実施要綱' },
+      { url: 'https://www.pref.kochi.lg.jp/doc/2025051200191/', type: 'municipality', label: '高知県 多面的機能支払制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-regional-public-transport',
+    level: 'national',
+    domain: 'business',
+    name: '地域公共交通確保維持改善事業',
+    authority: '所管: 国土交通省（総合政策局交通計画課）／窓口: 各地方運輸局',
+    statement:
+      '地域の多様な関係者が協働して地域の実情に応じた生活交通の確保・維持・改善を図ることを目的に、国土交通省が運行・設備整備等に要する経費を補助する制度。補助対象には地域間幹線系統バス・地域内フィーダー系統バス・デマンド交通、' +
+      '離島航路/離島航空路、鉄道駅等のバリアフリー化や利用環境改善等が含まれ、過疎地域など交通不便地域の移動手段確保を支援する。実施は地域公共交通計画や地域協議会での議論に基づくことが要件とされる。補助率・対象要件・事業区分は年度の交付要綱・予算で改正されるため要確認。',
+    application:
+      '地域公共交通計画等に基づき、地方公共団体・交通事業者・地域公共交通活性化協議会等が最寄りの地方運輸局を窓口に申請。事業区分ごとの交付要綱・実施要領に従って国費補助を受ける。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/sogoseisaku/transport/sosei_transport_tk_000041.html', type: 'government', label: '国土交通省 地域公共交通確保維持改善事業' },
+      { url: 'https://www.chisou.go.jp/tiiki/tiikisaisei/danchisaisei/pdf/danchi_sienmenu_koukyoukoutsuu.pdf', type: 'government', label: '内閣府 地域公共交通確保維持事業の支援メニュー' },
+      { url: 'https://www.city.kure.lg.jp/uploaded/attachment/3898.pdf', type: 'municipality', label: '呉市 地域公共交通確保維持改善事業について' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
