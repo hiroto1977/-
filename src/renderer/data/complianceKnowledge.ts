@@ -3146,5 +3146,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.soumu.go.jp/main_content/000471963.pdf', type: 'government', label: '総務省 匿名加工情報について' },
     ],
   },
+  {
+    value: {
+      id: 'tax-corp-blue-application',
+      domain: 'tax',
+      title: '法人税の青色申告の承認申請',
+      statement:
+        '法人が法人税の確定申告書等を青色申告書により提出するには、所轄税務署長に「青色申告の承認申請書」を提出して承認を受ける' +
+        '必要がある。提出期限は原則として青色申告によろうとする事業年度開始の日の前日まで（設立第1期は設立の日以後3か月を経過した日と' +
+        '当該事業年度終了の日のいずれか早い日の前日まで）。青色申告法人は帳簿書類の備付け・記録・保存が義務付けられ、欠損金の繰越控除等の特典を受けられる。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_14.htm', type: 'government', label: '国税庁 C1-19 青色申告書の承認の申請' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 青色申告と欠損金の繰越控除' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-loss-carryback',
+      domain: 'tax',
+      title: '法人税の欠損金の繰戻しによる還付',
+      statement:
+        '青色申告書を提出する中小企業者等が、ある事業年度に欠損金額が生じた場合、その欠損金額を、欠損事業年度開始の日前1年以内に' +
+        '開始した黒字の事業年度に繰り戻し、その黒字事業年度に納付した法人税の還付を請求することができる（欠損金の繰戻しによる還付）。' +
+        '適用には前期・当期連続の青色申告等の要件を満たす必要がある。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5763.htm', type: 'government', label: '国税庁 No.5763 欠損金の繰戻しによる還付' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_38.htm', type: 'government', label: '国税庁 C1-52 欠損金の繰戻し還付の請求' },
+      { url: 'https://j-net21.smrj.go.jp/qa/financial/Q0625.html', type: 'media', label: '中小機構 J-Net21 欠損金の繰戻し還付' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-mandatory-retirement-age',
+      domain: 'labor',
+      title: '定年年齢の下限（60歳未満定年の禁止）',
+      statement:
+        '事業主が定年を定める場合、その定年年齢は60歳を下回ることができない（高年齢者雇用安定法8条。坑内作業など厚生労働省令で定める' +
+        '一部業務を除く）。これは同法9条が定める「65歳までの高年齢者雇用確保措置」とは別の、定年年齢そのものに対する下限規制である。',
+      authority: '所管: 厚生労働省（高年齢者雇用安定法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/koureisha/topics/tp120903-1_00001.html', type: 'government', label: '厚生労働省 高年齢者雇用安定法の概要' },
+      { url: 'https://www.mhlw.go.jp/content/11700000/001245647.pdf', type: 'government', label: '厚生労働省 高年齢者雇用安定法の概要（PDF）' },
+      { url: 'https://www.rodo.co.jp/laws/117605/', type: 'media', label: '高年齢者雇用安定法 8条 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-overtime-exemption',
+      domain: 'labor',
+      title: '育児のための所定外労働の制限（残業免除）',
+      statement:
+        '育児・介護休業法16条の8により、所定外労働の制限（残業免除）を請求できる労働者の対象が、令和7年（2025年）4月1日施行の改正で' +
+        '「3歳に満たない子を養育する労働者」から「小学校就学前の子を養育する労働者」に拡大された。対象労働者が請求した場合、' +
+        '事業主は事業の正常な運営を妨げる場合を除き、所定労働時間を超える労働をさせてはならない。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/unscheduled/', type: 'government', label: '厚生労働省 所定外労働の制限（残業免除）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001407488.pdf', type: 'government', label: '厚生労働省 令和7年4月1日施行の改正内容' },
+      { url: 'https://www.businesslawyers.jp/articles/1442', type: 'media', label: '2025年育児介護休業法改正のポイント 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-copyright-quotation',
+      domain: 'legal',
+      title: '著作物の引用（著作権法32条）',
+      statement:
+        '公表された著作物は、公正な慣行に合致し、報道・批評・研究その他の引用の目的上正当な範囲内であれば、許諾なく引用して利用できる' +
+        '（著作権法32条1項）。判例・解釈上、適法な引用には、引用部分と自己の著作物の区別が明確であること（明瞭区別性）、' +
+        '自己の著作物が主・引用が従の関係にあること（主従関係）、および出所の明示（同48条）が求められる。',
+      authority: '所管: 文化庁（著作権法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 著作権法（32条）' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/seminar/2024/pdf/94088901_01.pdf', type: 'government', label: '文化庁 著作権制度の概要（引用の要件）' },
+      { url: 'https://www.cric.or.jp/qa/hajime/hajime7.html', type: 'media', label: '著作権情報センター 引用の要件' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-pseudonymized-info',
+      domain: 'legal',
+      title: '仮名加工情報（個人情報保護法）',
+      statement:
+        '仮名加工情報とは、他の情報と照合しない限り特定の個人を識別することができないように個人情報を加工して得られる個人に関する' +
+        '情報をいう（2020年改正で導入、2022年4月施行）。個人情報である仮名加工情報は原則として第三者提供が禁止される一方、利用目的の' +
+        '変更の制限が緩和され、漏えい等の報告や本人からの開示・利用停止等の請求への対応義務が免除されるなど、社内での分析・利活用がしやすい取扱いとなっている（匿名加工情報とは別概念）。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q14-17/', type: 'government', label: '個人情報保護委員会 仮名加工情報の第三者提供 FAQ' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_anonymous/', type: 'government', label: '個人情報保護委員会 ガイドライン（仮名加工情報・匿名加工情報編）' },
+      { url: 'https://j-net21.smrj.go.jp/law/20221228.html', type: 'media', label: '中小機構 J-Net21 仮名加工情報とは' },
+    ],
+  },
 ];
 // Stryker restore all
