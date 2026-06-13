@@ -2710,5 +2710,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://opentextbc.ca/mediastudies101/chapter/the-propaganda-model/', type: 'academic', label: 'Media Studies 101, BCcampus OpenTextBC（大学オープン教科書）' },
     ],
   },
+  {
+    id: 'econ-tobins-q',
+    discipline: 'economics',
+    title: 'トービンのq',
+    statement:
+      '企業（または資本）の市場価値を、その資産の再取得（再調達）費用で割った比率。ジェームズ・トービンが提唱した投資理論の指標で、q＝市場価値÷資本の再取得費用。' +
+      'q>1なら市場は資本を再取得費用以上に評価しており、新規投資（資本の追加）は企業価値を高めるので投資が促進される。q<1なら投資は割に合わず抑制される。これにより、企業の設備投資水準が株式市場の評価と関連づけて説明される。理論的に投資決定に対応するのは「限界のq」（追加1単位の投資がもたらす将来利益の割引現在価値を投資財価格で割った比）だが、実証では計測しやすい「平均のq」（既存資本の市場価値をその再取得費用で割った比）が用いられることが多い。' +
+      'トービンは資産選択・ポートフォリオ理論等の金融市場分析への貢献で1981年ノーベル経済学賞を受賞した。',
+    keyFigures: 'J.トービン提唱／q＝市場価値÷資本の再取得費用／q>1で投資促進・q<1で抑制／限界のq（理論）と平均のq（実証）／トービン1981ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1981/press-release/', type: 'reference', label: 'NobelPrize.org — The Prize in Economics 1981, Press release（市場価値／再取得費用の比とq>1の解釈、受賞理由）' },
+      { url: 'https://www.britannica.com/topic/Tobins-q', type: 'reference', label: 'Encyclopaedia Britannica — Tobin\'s q（資産の市場価値の再取得費用に対する比、q>1で新規投資が有利）' },
+      { url: 'https://en.wikipedia.org/wiki/Tobin%27s_q', type: 'reference', label: 'Wikipedia — Tobin\'s q（市場価値÷再取得費用、限界q／平均qの区別）' },
+    ],
+  },
+  {
+    id: 'econ-menu-costs',
+    discipline: 'economics',
+    title: 'メニューコスト',
+    statement:
+      '企業が価格を変更する際にかかる費用のこと。語源は、レストランがメニュー表を刷り直すコストの比喩。価格表の改訂・値札の貼り替え・顧客への通知・意思決定や交渉のコストなどを含む。' +
+      'ニューケインジアン経済学では、このメニューコストの存在が、企業が需要や費用の変化に応じて価格を即座に調整せず据え置く「価格の硬直性（名目硬直性）」のミクロ的基礎の一つとして説明される。個々の企業にとって価格改定を見送る損失は小さくても、価格硬直性が経済全体では総需要ショックを実質変数（生産・雇用）に波及させ、景気変動を増幅する大きな影響を持ちうる。' +
+      'グレゴリー・マンキュー（1985, QJE「Small Menu Costs and Large Business Cycles」）やアカロフ＆イエレンらが、小さなメニューコストが大きな景気的帰結を生みうることを示した。インフレ下では企業が価格改定をより頻繁に行い、メニューコストの発生も増える。',
+    keyFigures: '価格変更に伴う費用（メニュー刷り直しの比喩）／ニューケインジアンの価格硬直性（名目硬直性）のミクロ的基礎／小さなメニューコストが大きな景気変動を生む（マンキュー1985・アカロフ&イエレン）／インフレで価格改定頻度増',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/econres/feds/files/2024005pap.pdf', type: 'government', label: 'Federal Reserve Board, FEDS "Nonlinear Inflation Dynamics in Menu Cost Economies" (2024)' },
+      { url: 'https://www.clevelandfed.org/publications/working-paper/2019/wp-1923-price-points-menu-costs-price-rigidity', type: 'government', label: 'Federal Reserve Bank of Cleveland WP 19-23, "The Roles of Price Points and Menu Costs in Price Rigidity"' },
+      { url: 'https://scholar.harvard.edu/files/mankiw/files/small_menu_costs.pdf', type: 'academic', label: 'N.G. Mankiw, "Small Menu Costs and Large Business Cycles," Quarterly Journal of Economics (1985)（Harvard 配信）' },
+      { url: 'https://www.econlib.org/library/Enc/NewKeynesianEconomics.html', type: 'reference', label: 'N.G. Mankiw, "New Keynesian Economics," The Concise Encyclopedia of Economics（Econlib）' },
+    ],
+  },
+  {
+    id: 'mgmt-product-life-cycle',
+    discipline: 'management',
+    title: 'プロダクト・ライフサイクル（製品ライフサイクル）',
+    statement:
+      '製品が市場に登場してから姿を消すまでの過程を、生物の一生になぞらえて4つの段階で捉え、各段階に応じたマーケティング戦略をとるべきとする概念。' +
+      '(1)導入期：市場投入直後で認知が低く売上は小さい。開発費・販促費がかさみ利益はマイナスになりがち。(2)成長期：需要が急拡大し売上・利益が伸びる一方、競合の参入が増える。(3)成熟期：市場が飽和して売上の伸びが鈍化し、価格競争が激化して差別化・シェア維持が課題となる。(4)衰退期：売上が減少し、撤退や再活性化を検討する。各段階で製品・価格・流通・販促（マーケティング・ミックス）の重点が変わる。' +
+      'セオドア・レビットが1965年のHBR論文「Exploit the Product Life Cycle」で経営実務に広めたが、概念の起源には諸説があり（例：1950年のジョエル・ディーンの議論が先行とされる）、特定の一人に帰すのは難しい。また「すべての製品が同じ曲線を描くわけではない」との批判もある。',
+    keyFigures: '導入期・成長期・成熟期・衰退期の4段階／各段階で異なるマーケティング戦略／T.レビット1965 HBRが普及（起源は諸説、ディーン1950が先行）／全製品が同曲線ではないとの批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1965/11/exploit-the-product-life-cycle', type: 'academic', label: 'Theodore Levitt, "Exploit the Product Life Cycle", Harvard Business Review, 1965（概念を実務に普及させた一次文献）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-349-58802-2_1344', type: 'academic', label: 'SpringerLink（The Palgrave Encyclopedia of Strategic Management）"Product Life Cycle"（定義・4段階）' },
+      { url: 'https://core.ac.uk/download/pdf/62433731.pdf', type: 'academic', label: '学術論文 "Origins and Development of the Product Life Cycle Concept"（起源と発展・批判の整理）' },
+      { url: 'https://pressbooks.pub/agreatmarketingtextbook/chapter/introduction-to-product-life-cycle/', type: 'academic', label: 'オープン教科書 "A Great Marketing Textbook"（4段階と全製品同曲線ではない点）' },
+    ],
+  },
+  {
+    id: 'human-peak-end-rule',
+    discipline: 'human-science',
+    title: 'ピーク・エンドの法則',
+    statement:
+      '人が過去の経験を全体として評価・記憶する際、その経験の「最も感情が強かった瞬間（ピーク）」と「終わり方（エンド）」の2点が支配的で、経験の持続時間や各瞬間の総和はあまり考慮されない、という傾向。心理学者ダニエル・カーネマンがバーバラ・フレドリクソンらとともに1990年代に提唱した。' +
+      '関連して、苦痛などの経験の長さがその評価にほとんど影響しない「持続時間の無視（duration neglect）」も指摘される。レデルマイヤーとカーネマンの大腸内視鏡検査などの研究（Pain誌, 1996）では、検査時間が長くても最後を穏やかに終えた患者の方が、短くても痛みのピークで終えた患者より「つらさ」の記憶が小さいことが示された。' +
+      'これは、その瞬間ごとに感じる「経験する自己」と、後から評価する「記憶する自己」の乖離を示す例として、サービス設計・患者ケア・UXなどに応用される。',
+    keyFigures: 'D.カーネマンら（B.フレドリクソン）が1990年代に提唱／評価はピークと終わりの2点に支配される／持続時間の無視（duration neglect）／大腸内視鏡実験（Redelmeier & Kahneman, Pain 1996）／経験する自己と記憶する自己の乖離',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/8857625/', type: 'academic', label: 'Redelmeier & Kahneman (1996), "Patients\' memories of painful medical treatments", Pain 66(1):3–8（PubMed, PMID 8857625）' },
+      { url: 'https://en.wikipedia.org/wiki/Peak%E2%80%93end_rule', type: 'reference', label: 'Wikipedia — Peak–end rule' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/peak-end-rule/', type: 'reference', label: 'BehavioralEconomics.com Mini-Encyclopedia of BE — Peak-end rule' },
+      { url: 'https://kahneman.scholar.princeton.edu/document/7', type: 'academic', label: 'Daniel Kahneman scholar archive — Princeton University' },
+    ],
+  },
+  {
+    id: 'bizlaw-unjust-enrichment',
+    discipline: 'business-law',
+    title: '不当利得（民法703条・704条）',
+    statement:
+      '法律上の正当な原因がないのに、他人の財産または労務によって利益を受け、そのために他人に損失を及ぼした者に、その利益の返還義務を負わせる制度（民法703条以下）。公平の理念に基づき、正当な理由のない財産的価値の移動を矛盾なく調整することを目的とする。' +
+      '返還の範囲は受益者の善意・悪意で異なり、善意の受益者は「その利益の存する限度（現存利益）」で返還すれば足りる（703条）のに対し、悪意の受益者は受けた利益に利息を付して返還し、なお損害があれば賠償責任も負う（704条）。' +
+      'なお、債務がないことを知りながら弁済した場合の非債弁済（705条）や不法原因給付（708条）など、返還請求が認められない例外もある。',
+    keyFigures: '不当利得＝民法703条以下（法律上の原因なく利益・他人に損失→返還義務）／公平の理念／善意受益者は現存利益(703条)・悪意受益者は利息付返還+賠償(704条)／非債弁済(705条)・不法原因給付(708条)の例外',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089/', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第三編債権 第四章不当利得 第703条—第708条' },
+      { url: 'https://da.lib.kobe-u.ac.jp/da/kernel/81005103/81005103.pdf', type: 'academic', label: '神戸大学附属図書館リポジトリ「不法原因給付に関する一つの覚書」（民法708条）' },
+      { url: 'https://ja.wikibooks.org/wiki/%E6%B0%91%E6%B3%95%E7%AC%AC703%E6%9D%A1', type: 'reference', label: 'Wikibooks 民法第703条（不当利得の返還義務）条文' },
+    ],
+  },
+  {
+    id: 'infosoc-hypodermic-needle',
+    discipline: 'information-sociology',
+    title: '弾丸理論（皮下注射モデル）',
+    statement:
+      'マスメディアが発するメッセージは、受け手である大衆に直接的・一様かつ強力に作用し、注射器で薬を注入する（皮下注射）、あるいは銃弾を撃ち込む（magic bullet）ように、意図した効果をそのまま生み出すとする初期のマスコミュニケーション効果理論。受け手を受動的で均質な「原子化された大衆」とみなす。' +
+      '20世紀前半、第一次大戦のプロパガンダ（ラスウェル）やナチスの宣伝、ラジオ「宇宙戦争」放送（1938）のパニック逸話などを背景に広まった強力効果論である。しかしラザースフェルドらの選挙研究『ピープルズ・チョイス』（1944）で、メディアの効果は対人的影響（オピニオンリーダー）や受け手の素因に媒介されることが示され、2段の流れ仮説や限定効果論へと修正された。' +
+      'なお弾丸理論は後世に整理・命名された側面が強く、当時厳密に定式化された単一理論であったかには留保もある。',
+    keyFigures: '初期の強力効果論（メディアが大衆に直接・一様・強力に作用、注射／銃弾の比喩）／原子化された受動的・均質な大衆観／第一次大戦プロパガンダ・ナチス宣伝・「宇宙戦争」放送を背景／ラザースフェルド『ピープルズ・チョイス』1944で否定→限定効果論・2段の流れへ／後世の命名で単一理論性には留保',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/hypodermic-needle-theory-magic-bullet-theory', type: 'reference', label: 'EBSCO Research Starters — Hypodermic Needle Theory (Magic Bullet Theory)' },
+      { url: 'https://courses.lumenlearning.com/introductiontocommunication/chapter/grounding-theories-of-mass-communication/', type: 'academic', label: 'Lumen Learning (OER大学教材) — Grounding Theories of Mass Communication' },
+      { url: 'https://en.wikipedia.org/wiki/Two-step_flow_of_communication', type: 'reference', label: 'Wikipedia — Two-step flow of communication（Lazarsfeld他 The People\'s Choice 1944）' },
+      { url: 'https://en.wikipedia.org/wiki/Hypodermic_needle_model', type: 'reference', label: 'Wikipedia — Hypodermic needle model' },
+    ],
+  },
 ];
 // Stryker restore all
