@@ -1122,5 +1122,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/009365027900600102', type: 'academic', label: 'Blumler (1979) The Role of Theory in Uses and Gratifications Studies, Communication Research（SAGE 査読誌）' },
     ],
   },
+  {
+    id: 'econ-gdp-triple-equivalence',
+    discipline: 'economics',
+    title: 'GDPと三面等価の原則',
+    statement:
+      '国内総生産（GDP）は、一定期間に一国の国内で生産された付加価値の総額であり、一国の経済規模を測る代表的な指標である。GDPは三つの側面から計測できる。' +
+      '「生産面」は各産業の産出から中間投入を差し引いた付加価値の合計、「分配面」は生産で生じた所得（雇用者報酬＋営業余剰・混合所得＋固定資本減耗＋生産・輸入品に課される税－補助金）、「支出面」は最終需要（民間消費＋投資＋政府支出＋純輸出）である。正確に計測すればこれら三面は事後的に必ず等しくなり、これを三面等価の原則という。なお名目GDP（時価表示）と実質GDP（物価変動を除去）、GDPとGNI（国民総所得）は区別される。自家消費の家事労働や地下経済などSNAの生産境界外の活動は計上されないという限界もある。日本では内閣府（経済社会総合研究所）が国連の国際基準（SNA）に基づき国民経済計算として推計・公表している。',
+    keyFigures: '国民経済計算（SNA）の体系（国連の国際基準）／日本は内閣府（ESRI）が推計／三面: 生産＝分配＝支出',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/en/publications/fandd/issues/series/back-to-basics/gross-domestic-product-gdp', type: 'government', label: 'IMF Finance & Development — Gross Domestic Product（三アプローチが同一額になる）' },
+      { url: 'https://www.britannica.com/money/gross-domestic-product', type: 'reference', label: 'Encyclopædia Britannica Money — Gross domestic product（定義・支出法）' },
+      { url: 'https://www.esri.cao.go.jp/jp/sna/contents/sna.html', type: 'government', label: '内閣府 経済社会総合研究所 — 国民経済計算とは（SNA国際基準）' },
+    ],
+  },
+  {
+    id: 'econ-quantity-theory-of-money',
+    discipline: 'economics',
+    title: '貨幣数量説（quantity theory of money）',
+    statement:
+      '物価水準は流通する貨幣量に比例して決まるとする金融・マクロ経済学の理論。アーヴィング・フィッシャーが『貨幣の購買力』(1911)で定式化した交換方程式 MV=PT（M=貨幣量、V=貨幣の流通速度、P=物価水準、T=取引量。実質産出を用いるMV=PYの形でも表す）で示される。' +
+      'これは恒等式だが、長期・完全雇用下でVとT（または産出Y）が安定的とみなせば、貨幣量Mの増加は比例的に物価Pを押し上げる――すなわちインフレは究極的には貨幣的現象だ――と含意する。源流は16世紀のジャン・ボーダンに遡り、ロック・カンティロン・デイヴィッド・ヒュームら古典派が精緻化、20世紀にフィッシャー、ケンブリッジ学派（マーシャル・ピグーの現金残高方程式＝貨幣需要に着目）、さらにミルトン・フリードマンが1956年の「貨幣数量説――再説」でマネタリズムの中核として現代的に再構築した。流通速度の安定性や短期での有効性をめぐってはケインズ派から批判がある。',
+    keyFigures: 'アーヴィング・フィッシャー（交換方程式 MV=PT, 1911）／ケンブリッジ学派（現金残高）／ミルトン・フリードマン（マネタリズム1956）／源流: ヒューム等',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.richmondfed.org/-/media/richmondfedorg/publications/research/economic_review/1974/pdf/er600301.pdf', type: 'government', label: 'Humphrey (1974) The Quantity Theory of Money: Historical Evolution, Richmond Fed Economic Review' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/quantity-theory-money', type: 'academic', label: 'EBSCO Research Starters — Quantity theory of money' },
+      { url: 'https://en.wikipedia.org/wiki/Quantity_theory_of_money', type: 'reference', label: 'Wikipedia — Quantity theory of money' },
+    ],
+  },
+  {
+    id: 'mgmt-lean-startup',
+    discipline: 'management',
+    title: 'リーン・スタートアップ（Lean Startup）',
+    statement:
+      '不確実性の高い新事業・製品開発において、最小限の機能を持つ試作品＝MVP（Minimum Viable Product）を素早く作り、顧客の反応を計測して学習する「構築-計測-学習（Build-Measure-Learn）」のフィードバックループを高速で回すことで、無駄を省きつつ事業仮説を検証していく方法論。' +
+      '検証による学習（validated learning）を重視し、当初の仮説が誤りであれば方向転換＝ピボット（pivot）を行う。エリック・リースが2011年の著書『The Lean Startup』で提唱した。トヨタ生産方式に代表されるリーン生産方式と、スティーブ・ブランクの顧客開発（customer development）モデルに着想を得ている。',
+    keyFigures: 'エリック・リース（2011『The Lean Startup』）／源流: スティーブ・ブランク（顧客開発）・トヨタ生産方式',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://theleanstartup.com/principles', type: 'reference', label: 'エリック・リース公式サイト — The Lean Startup Principles（BMLループ）' },
+      { url: 'https://www.lse.ac.uk/assets/richmedia/channels/publicLecturesAndEvents/slides/20120112_1830_theLeanStartup_sl.pdf', type: 'academic', label: 'London School of Economics — The Lean Startup 公開講義スライド（リース登壇）' },
+      { url: 'https://leanstartup.co/about/principles/', type: 'reference', label: 'Lean Startup Co.（リース主宰）— 中核原則' },
+    ],
+  },
+  {
+    id: 'human-pygmalion-effect',
+    discipline: 'human-science',
+    title: 'ピグマリオン効果（教師期待効果）',
+    statement:
+      '他者からの期待が、その対象者の成績やパフォーマンスを実際に高める現象。教師が特定の生徒に高い期待を抱くと、その期待が態度・接し方を通じて生徒に伝わり、生徒の成績が向上するとされる。' +
+      'ロバート・ローゼンタールとレノア・ジェイコブソンが1968年の著書『Pygmalion in the Classroom』で報告した（教師に一部の生徒を「これから成績が伸びる（intellectual bloomers）」と偽って伝えると、その群の知能テスト得点が実際に伸びたとする実験）。社会学者R.K.マートンの「自己成就予言」の一種であり、逆に低い期待が成績を下げる「ゴーレム効果」と対をなす。なお当初研究はIQ測定具の欠陥・データ品質・統計（平均への回帰の可能性）・再現性に関してソーンダイク(1968)やスノウ(1969)らから強い批判を受けており、効果量や一般化には留保が必要である。',
+    keyFigures: 'ロバート・ローゼンタール & レノア・ジェイコブソン（1968『Pygmalion in the Classroom』）／批判: Thorndike(1968)・Snow(1969)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/education/pygmalion-effect-rosenthal-effect', type: 'academic', label: 'EBSCO Research Starters — Pygmalion effect (Rosenthal effect)' },
+      { url: 'https://en.wikipedia.org/wiki/Pygmalion_in_the_Classroom', type: 'reference', label: 'Wikipedia — Pygmalion in the Classroom（1968研究と方法論批判）' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/13803611.2018.1548817', type: 'academic', label: 'Educational Research and Evaluation (2018) — Expectation effects: Pygmalion（査読・効果と限界）' },
+    ],
+  },
+  {
+    id: 'bizlaw-freedom-of-contract',
+    discipline: 'business-law',
+    title: '契約自由の原則',
+    statement:
+      '私人は国家の干渉を受けず、自由な意思に基づいて契約を締結できるという近代私法の基本原則。一般に(1)契約締結の自由、(2)相手方選択の自由、(3)内容決定の自由、(4)方式の自由の4つを含む。' +
+      '従来の民法に明文規定はなかったが、2017年（平成29年）改正民法（2020年4月1日施行）で明文化された。民法521条が「契約をするかどうか」（締結の自由）と「契約の内容」（内容決定の自由）を、522条2項が方式の自由（法令に特別の定めがある場合を除き、契約の成立に書面その他の方式を要しない）を定める。ただし公序良俗（民法90条）や強行規定に反する契約は無効であり、消費者契約法・借地借家法・労働法等による修正（弱者保護）や、定型約款の規律（548条の2以下）など、現代では制約も大きい。',
+    keyFigures: '契約自由の原則（締結・相手方選択・内容決定・方式の4自由）／2017改正民法521条・522条で明文化／制約: 90条公序良俗等',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（521条・522条・90条・548条の2 等）' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/15-56/036%20yamadanozomi.pdf', type: 'academic', label: '山田希 — 契約自由の原則とその制約法理をめぐる改正論議（立命館法学）' },
+      { url: 'https://www.cloudsign.jp/media/houshikinojiyuu/', type: 'media', label: 'クラウドサイン — 改正民法522条・契約方式自由の原則とその例外' },
+    ],
+  },
+  {
+    id: 'infosoc-cultivation-theory',
+    discipline: 'information-sociology',
+    title: '培養理論（カルティベーション理論, cultivation theory）',
+    statement:
+      'テレビなどのマスメディアに長時間接触する人ほど、メディアが繰り返し描く世界像を現実だと認識するようになる、という長期的・累積的なメディア効果論。ジョージ・ガーブナーらが1960年代後半〜1970年代の「文化指標プロジェクト」で提唱した。' +
+      '代表例が「Mean World Syndrome（冷酷な世界症候群）」で、暴力描写の多いテレビをよく見る重視聴者（ヘビービューワー）ほど、現実世界を実際より危険・暴力的だと過大評価する傾向を示す。視聴者の認識が均質化する「メインストリーミング」や、現実体験と番組内容が一致すると効果が増幅される「共鳴（resonance）」の概念を含む。効果は小さく漸進的とされ、因果方向の不明確さや社会経済的地位などの交絡変数を十分統制していないとの批判もある。',
+    keyFigures: 'ジョージ・ガーブナー（1960年代後半〜、文化指標プロジェクト、ペンシルベニア大アネンバーグ校）／共同: ラリー・グロス',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/cultivation-analysis', type: 'reference', label: 'Encyclopaedia Britannica — Cultivation analysis' },
+      { url: 'https://eric.ed.gov/?id=EJ139260', type: 'academic', label: 'Gerbner & Gross (1976) Living with Television: The Violence Profile, Journal of Communication 26(2):172-194（原典）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-2958.1993.tb00313.x', type: 'academic', label: 'Potter (1993) Cultivation Theory and Research, Human Communication Research（査読・批判）' },
+    ],
+  },
 ];
 // Stryker restore all
