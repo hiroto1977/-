@@ -6680,5 +6680,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/articles/1312', type: 'media', label: 'BUSINESS LAWYERS 令和5年景表法改正 確約手続・直罰規定の導入 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-flat-amount-reduction-2024',
+      domain: 'tax',
+      title: '令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）',
+      statement:
+        '令和6年度税制改正により、令和6年（2024年）分の所得税及び令和6年度分の個人住民税について、納税者本人並びに同一生計配偶者・扶養親族1人につき所得税3万円・個人住民税1万円（合計4万円）を特別に控除する「定額減税」が実施された。' +
+        '給与所得者については令和6年6月1日以後最初に支払われる給与等から源泉徴収・特別徴収の段階で順次控除された。対象は居住者で、納税者本人の合計所得金額1,805万円以下の所得制限があった。デフレ完全脱却のための' +
+        '総合経済対策の一環として導入された令和6年分（度）限りの一時的措置である。',
+      authority: '所管: 所得税は国税庁・財務省／個人住民税は総務省',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/users/gensen/teigakugenzei/01.htm', type: 'government', label: '国税庁 定額減税について' },
+      { url: 'https://www.soumu.go.jp/main_content/000939507.pdf', type: 'government', label: '総務省 個人住民税の定額減税について（令和6年度分）' },
+      { url: 'https://www.mof.go.jp/public_relations/finance/202407/202407c.pdf', type: 'government', label: '財務省 所得税の定額減税の意義と実施方法' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-economic-security-promotion-act',
+      domain: 'legal',
+      title: '経済安全保障推進法（4本柱・段階的施行）',
+      statement:
+        '経済安全保障推進法（経済施策を一体的に講ずることによる安全保障の確保の推進に関する法律、令和4年法律第43号）は2022年（令和4年）5月11日に成立し、同月18日に公布された。同法は①重要物資の安定的な供給の確保' +
+        '（サプライチェーン強靱化）、②基幹インフラ役務の安定的な提供の確保（重要設備の導入・維持管理等の事前審査）、③先端的な重要技術の開発支援、④特許出願の非公開、の4つの制度（4本柱）からなる。これらは一斉ではなく段階的に' +
+        '施行され、①と③が2022年8月1日、②が2023年11月17日、④が2024年5月1日に施行された。',
+      authority: '所管: 内閣府（政策統括官・経済安全保障担当）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.cao.go.jp/keizai_anzen_hosho/suishinhou/suishinhou.html', type: 'government', label: '内閣府 経済安全保障推進法' },
+      { url: 'https://www.cas.go.jp/jp/seisaku/keizai_anzen_hosyohousei/', type: 'government', label: '内閣官房 経済安全保障法制' },
+      { url: 'https://keiyaku-watch.jp/media/hourei/202405-keizaianzenhosyo/', type: 'media', label: 'KEIYAKU-WATCH 経済安全保障推進法の4制度と施行日 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-coowned-property-reform',
+      domain: 'legal',
+      title: '所有者不明土地等対応の民法改正（共有・財産管理・相隣関係の見直し、2023年4月1日施行）',
+      statement:
+        '所有者不明土地・管理不全土地問題に対応するため、令和3年（2021年）に成立した民法等の一部を改正する法律のうち民法本体の改正（共有制度・財産管理制度・相隣関係の見直し）が2023年（令和5年）4月1日に施行された。' +
+        '具体的には、①共有物の管理に関するルールを整備し軽微変更を含む管理行為を持分の価格の過半数で決定できるようにし、②所在等不明共有者がいる場合に裁判所の関与でその持分の取得・譲渡を可能にする制度（民法262条の2・262条の3等）を新設し、' +
+        '③個々の土地・建物の管理に特化した所有者不明土地・建物管理制度を創設し、④相隣関係（隣地使用権の見直し、ライフラインの設備設置・使用権＝民法213条の2等）を整備した。相続登記義務化（2024年4月施行）や相続土地国庫帰属制度（2023年4月施行）とは別個の論点。',
+      authority: '所管: 法務省（民事局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji05_00343.html', type: 'government', label: '法務省 所有者不明土地の解消に向けた民事基本法制の見直し' },
+      { url: 'https://j-net21.smrj.go.jp/law/20230922.html', type: 'government', label: 'J-Net21 改正民法 所有者不明土地管理制度などの創設' },
+      { url: 'https://souzoku.nagasesogo.com/column-230222/', type: 'media', label: '長瀬総合法律事務所 令和3年改正 共有制度の見直し（令和5年4月施行）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-invoice-small-amount-special',
+      domain: 'tax',
+      title: 'インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）',
+      statement:
+        '消費税のインボイス制度では、基準期間における課税売上高が1億円以下、又は特定期間における課税売上高が5,000万円以下の一定規模以下の事業者は、税込1万円未満の課税仕入れについて、適格請求書（インボイス）の保存がなくても、' +
+        '一定の事項を記載した帳簿のみの保存で仕入税額控除が認められる（少額特例）。1万円未満の判定は商品単位ではなく一回の取引の合計金額（税込）で行う。これは経過措置であり、対象期間は令和5年（2023年）10月1日から令和11年（2029年）9月30日まで。' +
+        '納税額を売上税額の2割とする「2割特例」とは異なる制度。金額しきい値・適用期間は税制改正で変動しうるため要確認。',
+      authority: '所管: 国税庁',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/02.htm', type: 'government', label: '国税庁 少額特例（事務負担の軽減措置）の概要' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/pdf/qa/111.pdf', type: 'government', label: '国税庁 インボイスQ&A 事務負担の軽減措置' },
+      { url: 'https://biz.moneyforward.com/invoice/basic/60404/', type: 'media', label: 'マネーフォワード 少額特例の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-sme-management-enhancement',
+      domain: 'tax',
+      title: '中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）',
+      statement:
+        '中小企業等経営強化法に基づく「経営力向上計画」の認定を受けた中小企業者等が、その計画に従って一定の特定経営力向上設備等（生産性向上設備・収益力強化設備等）を取得・製作等した場合に、即時償却又は取得価額の一定割合の' +
+        '税額控除を選択適用できる制度（租税特別措置法第42条の12の4ほか）。計画認定や工業会証明書・経済産業局確認書を要する点で、設備導入のみで適用でき計画認定を前提としない「中小企業投資促進税制」とは別の制度である。' +
+        '控除率・対象設備類型・適用期限は税制改正により変動するため要確認。',
+      authority: '所管: 中小企業庁（経営強化法）・国税庁（税務上の取扱い）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5434.htm', type: 'government', label: '国税庁 No.5434 中小企業経営強化税制' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/kyoka/kyoka_zeisei.html', type: 'government', label: '中小企業庁 中小企業経営強化税制' },
+      { url: 'https://j-net21.smrj.go.jp/support/publicsupport/ffsr28000000caa6.html', type: 'government', label: 'J-Net21 中小企業経営強化税制・投資促進税制の比較' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-midcareer-hiring-ratio-disclosure',
+      domain: 'labor',
+      title: '正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）',
+      statement:
+        '改正労働施策総合推進法（第27条の2）により、2021年（令和3年）4月1日から、常時雇用する労働者数が301人以上の事業主に対し、正規雇用労働者の中途採用比率の公表が義務付けられた。具体的には、直近の3事業年度の各年度について、' +
+        '採用した正規雇用労働者数に占める中途採用者数の割合（中途採用比率）を、おおむね年1回、インターネットの利用その他の方法で求職者が容易に閲覧できる形で公表する必要がある。これは労働者の職業選択に資すること（中途採用希望者と企業のマッチング促進）を目的とする。罰則規定はないが対象事業主に課された法的義務である。',
+      authority: '所管: 厚生労働省（労働施策総合推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/tp120903-1_00001.html', type: 'government', label: '厚生労働省 正規雇用労働者の中途採用比率の公表' },
+      { url: 'https://jsite.mhlw.go.jp/aomori-roudoukyoku/news_topics/topics/_00048.html', type: 'government', label: '青森労働局 中途採用比率の公表義務化（令和3年4月1日）' },
+      { url: 'https://aglaw.jp/chutosaiyou-kouhyougimuka/', type: 'media', label: '浅野総合法律事務所 中途採用比率の公表義務化の解説' },
+    ],
+  },
 ];
 // Stryker restore all
