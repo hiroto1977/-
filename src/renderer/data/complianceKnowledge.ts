@@ -5929,5 +5929,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jftc.go.jp/info/nenpou/h27/div02/div_02_13.html', type: 'government', label: '公正取引委員会 景品表示法に関する業務' },
     ],
   },
+  {
+    value: {
+      id: 'labor-tribunal',
+      domain: 'labor',
+      title: '労働審判制度（労働審判法）',
+      statement:
+        '労働審判制度は、解雇や賃金未払いなど個々の労働者と事業主との間の労働関係に関する民事紛争について、裁判官1名（労働審判官）と労働関係に関する' +
+        '専門的知識経験を有する労働審判員2名で構成する労働審判委員会が、原則として3回以内の期日で審理し、調停の成立による解決を試み、調停が成立しない場合は' +
+        '事案に即した労働審判を行う制度である。労働審判に対し当事者から適法な異議の申立てがあると、労働審判は効力を失い通常の訴訟手続に移行する。',
+      authority: '所管: 裁判所（労働審判法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.courts.go.jp/saiban/syurui/syurui_minzi/roudousinpan/index.html', type: 'government', label: '裁判所 労働審判手続' },
+      { url: 'https://laws.e-gov.go.jp/law/416AC0000000045/', type: 'government', label: 'e-Gov法令検索 労働審判法' },
+      { url: 'https://www.courts.go.jp/vc-files/courts/file2/20910003.pdf', type: 'government', label: '裁判所 労働審判制度 パンフレット' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-worktime-status-grasp',
+      domain: 'labor',
+      title: '労働時間の状況の把握義務（労働安全衛生法66条の8の3）',
+      statement:
+        '2019年4月施行の改正労働安全衛生法66条の8の3により、事業者は医師による面接指導を適切に実施するため、タイムカードやパソコン等の使用時間の記録といった' +
+        '客観的な方法その他の適切な方法で、労働者（高度プロフェッショナル制度対象者を除く）の労働時間の状況を把握しなければならない。管理監督者やみなし労働時間制の' +
+        '対象者も含む全ての労働者が対象で、労働基準法上の労働時間の適正把握とは別個の安衛法上の義務として定められたものである。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/shizuoka-roudoukyoku/content/contents/001511075.pdf', type: 'government', label: '静岡労働局 労働時間の状況の把握義務' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/070614-2.html', type: 'government', label: '厚生労働省 労働時間の適正把握ガイドライン' },
+      { url: 'https://www.saitama-bengoshi.com/oyakudachi/20230424-20/', type: 'media', label: '安衛法上の労働時間把握義務 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-input-credit-method',
+      domain: 'tax',
+      title: '消費税の仕入税額控除（個別対応方式・一括比例配分方式）',
+      statement:
+        '課税売上割合が95%未満又は課税売上高が5億円超の場合、課税仕入れ等に係る消費税額の全額は控除できず、課税仕入れ等を「課税売上対応」「非課税売上対応」' +
+        '「共通対応」に区分して計算する個別対応方式（控除税額＝課税売上対応分＋共通対応分×課税売上割合）、又は課税仕入れ等の税額全体に課税売上割合を乗じる' +
+        '一括比例配分方式のいずれかを選択する。一括比例配分方式を選択した場合は2年間継続して適用しなければならない。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6401.htm', type: 'government', label: '国税庁 No.6401 仕入控除税額の計算方法' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/socat4/scid1969.html', type: 'government', label: '国税庁 一括比例配分方式とは' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shohi/19/19.htm', type: 'government', label: '国税庁 課税売上高5億円超の場合の仕入税額控除' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-pension-income-deduction',
+      domain: 'tax',
+      title: '公的年金等控除（所得税）',
+      statement:
+        '国民年金・厚生年金・企業年金等の公的年金等は所得税法上「雑所得」として課税され、その雑所得の金額は収入金額から「公的年金等控除額」を差し引いて計算する。' +
+        '公的年金等控除額は、受給者の年齢（65歳未満／65歳以上）、公的年金等の収入金額、及び公的年金等に係る雑所得以外の所得に係る合計所得金額（1,000万円以下／' +
+        '1,000万円超2,000万円以下／2,000万円超）に応じて定められている。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1600.htm', type: 'government', label: '国税庁 No.1600 公的年金等の課税関係' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/03_1.htm', type: 'government', label: '国税庁 暮らしの税情報 年金と税' },
+      { url: 'https://www.jili.or.jp/lifeplan/lifesecurity/1125.html', type: 'media', label: '公的年金の所得税の計算 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-merger-control',
+      domain: 'legal',
+      title: '独占禁止法の企業結合規制（M&A・合併等の届出）',
+      statement:
+        '独占禁止法は、会社の合併・分割・共同株式移転・事業譲受け・株式取得等の企業結合により一定の取引分野における競争を実質的に制限することとなる場合等を' +
+        '禁止している。国内売上高合計額が一定基準を超える等の規模を満たす企業結合については、あらかじめ公正取引委員会への届出が義務付けられ、原則として届出受理の日から' +
+        '30日間（待機期間）は当該企業結合を行うことができず、公正取引委員会が競争への影響を審査する。',
+      authority: '所管: 公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会 独占禁止法の規制内容（企業結合）' },
+      { url: 'https://www.jftc.go.jp/dk/kiketsu/kigyoketsugo/qa/kinshikikan.html', type: 'government', label: '公正取引委員会 企業結合の禁止期間' },
+      { url: 'https://www.businesslawyers.jp/practices/643', type: 'media', label: '独占禁止法の企業結合規制 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-corporate-reorganization',
+      domain: 'legal',
+      title: '会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）',
+      statement:
+        '会社法は組織再編行為として、合併（吸収合併・新設合併）、会社分割（吸収分割・新設分割）、株式交換、株式移転、及び令和元年改正で創設された株式交付を' +
+        '定めている。これらを行うには原則として組織再編契約・計画の作成、株主総会の特別決議による承認のほか、反対株主の株式買取請求や債権者異議手続（債権者保護手続）等の所定の手続を経る必要がある。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（第五編 組織再編）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00001.html', type: 'government', label: '法務省 会社法改正（株式交付制度の創設）' },
+      { url: 'https://shiodome.co.jp/js/blog/7478', type: 'media', label: '組織再編の会社形態一覧 解説' },
+    ],
+  },
 ];
 // Stryker restore all
