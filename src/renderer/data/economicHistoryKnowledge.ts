@@ -961,6 +961,138 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://ja.wikipedia.org/wiki/第二次臨時行政調査会', type: 'reference', label: 'Wikipedia — 第二次臨時行政調査会（土光臨調）' },
     ],
   },
+  {
+    year: 1982,
+    era: '昭和57年',
+    world:
+      '米国の景気後退の底だった。ボルカーFRBの反インフレ高金利政策（FF金利は1981年に約19%のピーク）が需要を冷やし、1981年7月〜1982年11月の景気後退で失業率は年末に10.8%（戦後最悪）に達した。8月にメキシコが債務返済不能を通告してラテンアメリカ債務危機が表面化した一方、インフレは鎮静化し株式市場は8月の底（DJIA 776.92）から反発、長期強気相場が始まった。',
+    japan:
+      '対米貿易黒字の拡大が続き米欧との貿易摩擦が深刻化した（経常黒字約200億ドル規模）。実質GNP成長率は約3.3%と緩やかで成長は内需より輸出が主導し、内需は低迷気味だった。政治面では11月27日に第1次中曽根康弘内閣が発足した。',
+    keyEvents: [
+      'メキシコが債務返済不能を通告（8/20）— ラテンアメリカ債務危機の表面化',
+      '米国の景気後退が底入れ（11月、失業率10.8%で戦後最悪）／DJIAが8/12に776.92で底打ち',
+      '第1次中曽根康弘内閣発足（11/27）',
+      '日本の対米貿易黒字拡大による貿易摩擦の激化',
+    ],
+    risingSectors: ['（米）年後半の金利低下・株反発で恩恵を受けた金融・株式関連', '（日）輸出主導の自動車・電機など製造業'],
+    decliningSectors: ['（米）高金利に直撃された製造業・建設・自動車', '（中南米）債務危機で収縮した産業・公的部門', '（日）内需関連（個人消費・国内投資が低迷気味）'],
+    caveats: 'DJIA年末値1046.54（年間+19.6%）・日経平均年末値8016.67はいずれも独立2源で一致した確証値。失業率10.8%は戦後最悪のピーク。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/recession-of-1981-82', type: 'government', label: 'Federal Reserve History — Recession of 1981–82' },
+      { url: 'https://japan.kantei.go.jp/cabinet/71_e.html', type: 'government', label: '首相官邸 — 中曽根内閣（1982–）' },
+      { url: 'https://en.wikipedia.org/wiki/First_Nakasone_Cabinet', type: 'reference', label: 'Wikipedia — First Nakasone Cabinet（1982/11/27発足）' },
+    ],
+  },
+  {
+    year: 1983,
+    era: '昭和58年',
+    world:
+      '米国は1981–82年の深い景気後退から1982年末を底に力強い回復局面へ転換した「レーガン景気」の初年度で、実質GNPは約3.6%増。インフレは1980年代初頭ピークの約1/3まで低下し（ディスインフレ）、金利はピークから大幅低下した。1981年の大型減税と金融緩和転換が回復を後押しした一方、失業率はなお8%台と高止まり、財政赤字拡大が懸念材料となった。',
+    japan:
+      '内需が力強さを欠く中で輸出主導の景気回復となった。自動車・VTR・半導体などハイテク・耐久財輸出が伸長して対米貿易黒字が拡大し、対米貿易摩擦が激化した（自動車のVER継続、半導体での市場アクセス要求、12月に米下院ローカルコンテント法案可決）。4月15日に東京ディズニーランドが開園した（米国外初）。',
+    keyEvents: [
+      '米国でレーガン景気が始動（実質GNP約3.6%増・ディスインフレ・金利低下）',
+      '日本：自動車・VTR・半導体などハイテク輸出が伸長し輸出主導の回復',
+      '対米貿易摩擦の激化（自動車VER継続・半導体市場アクセス要求・12月ローカルコンテント法案可決）',
+      '東京ディズニーランド開園（4/15、米国外初）',
+    ],
+    risingSectors: ['（日本）半導体（DRAM等）・VTR・自動車（輸出競争力）、レジャー/テーマパーク', '（米国）株式市場全般（DJIA年間約+20%）'],
+    decliningSectors: ['（米国）対日競争業種（自動車・半導体）・輸入圧力下の重厚長大製造業'],
+    caveats: 'DJIA年末値1258.64は確証値（12/30、年間約+20%）。日経平均1983年末確定値は独立2源で確認できずnull（流布値約9,800円台は未確証）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.reaganfoundation.org/ronald-reagan/the-presidency/economic-policy', type: 'reference', label: 'Reagan Presidential Foundation — Economic Policy（レーガン景気）' },
+      { url: 'https://www.statmuse.com/money/ask/what+was+the+price+of+dow+jones+at+the+end+of+1983', type: 'media', label: 'StatMuse — DJIA 1983年末終値 1,258.64' },
+      { url: 'https://en.wikipedia.org/wiki/Tokyo_Disneyland', type: 'reference', label: 'Wikipedia — Tokyo Disneyland（1983/4/15開園）' },
+    ],
+  },
+  {
+    year: 1984,
+    era: '昭和59年',
+    world:
+      '米国経済は力強い景気拡大局面で、実質GNPは年間約6.8%増（34年ぶりの高い伸び）、インフレは沈静化（GNPデフレーター約3.7%）した。レーガン政権下で名目金利は1981年比で大幅低下したが歴史的にはなお高水準で、財政赤字拡大と高金利を背景にドルは独歩高となり、米国の貿易・経常赤字が拡大して対米黒字国との通商摩擦が先鋭化した。',
+    japan:
+      '景気は外需（輸出）主導で堅調だった。対米貿易黒字が記録的に拡大し、自動車・民生/産業エレクトロニクスなどハイテク輸出が好調だった。5月に日米円ドル委員会が報告書を公表し、金融・資本市場の自由化（東京市場・金利の自由化、ユーロ円市場の整備）と円の国際化を打ち出した（後の金融自由化・国際化の出発点）。1月9日には日経平均が史上初めて1万円を突破した。',
+    keyEvents: [
+      '日経平均が史上初めて1万円台を突破（1/9）',
+      '米国の力強い景気拡大（年間実質GNP約6.8%増）とインフレ沈静',
+      '日米円ドル委員会が報告書公表（5月）— 金融自由化と円の国際化',
+      '日本の対米貿易黒字が記録的に拡大（自動車・ハイテク電子が牽引）',
+    ],
+    risingSectors: ['（日本）輸出向け自動車、民生・産業エレクトロニクス/半導体、対米輸出型製造業全般（ドル高の追い風）'],
+    decliningSectors: ['（日本）内需依存・財政支出縮小の影響を受けたセクター（具体の業種序列は未確認の定性傾向）'],
+    caveats: 'DJIA年末値1211.57は確証値（年間約-3.7%）。日経平均1984年末確定値は独立2源で確認できずnull（1/9の初の1万円突破は確証）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.reaganlibrary.gov/archives/speech/statement-1984-gross-national-product-and-inflation-figures', type: 'government', label: 'Reagan Library — 1984年GNP・インフレ声明' },
+      { url: 'https://www5.cao.go.jp/keizai3/sekaikeizaiwp/wp-we84/wp-we84-00104.html', type: 'government', label: '内閣府 昭和59年 年次世界経済報告（日米円ドル委員会）' },
+      { url: 'https://www.nikkei.com/article/DGKDZO50309040V00C13A1KB2000/', type: 'media', label: '日本経済新聞 — 1984年1月9日 日経平均初の1万円' },
+    ],
+  },
+  {
+    year: 1985,
+    era: '昭和60年',
+    world:
+      '「ドル高の転換点」となった年。米ドルは1980年以降主要通貨に対し約50%上昇し1985年2月にピークに達していたが、9月22日にNYのプラザホテルでG5（米・日・西独・仏・英）がドル高是正に向けた協調介入で合意した（プラザ合意）。公表翌週からドルは急落し、非ドル通貨の秩序ある上昇が誘導された（背景に米国の貿易赤字拡大と保護主義圧力）。',
+    japan:
+      'プラザ合意を受け円は急騰し、合意前後の1ドル=約242円から1986年に約153円へ1年あまりで進行して輸出依存の製造業に打撃を与え「円高不況」の入口となった。行政改革の象徴として4月1日に電電公社→NTT、専売公社→JTが発足し（通信自由化も施行）、3〜9月に科学万博つくば\'85が開催された。',
+    keyEvents: [
+      'プラザ合意（9/22）— G5がドル高是正へ協調介入で合意',
+      'プラザ合意後の急激な円高（約242円→1986年に約153円台へ）',
+      '電電公社民営化でNTT発足／専売公社民営化でJT発足（4/1）・通信自由化',
+      '科学万博つくば\'85開催（3/17〜9/16）',
+    ],
+    risingSectors: ['（日本）情報通信（NTT発足・通信自由化）、内需・サービス/金融（円高・低金利下で資産価格上昇の素地）、輸入関連・エネルギー'],
+    decliningSectors: ['（日本）輸出依存型製造業（自動車・電機・機械、急激な円高で採算悪化＝円高不況）、旧公社の独占事業'],
+    caveats: 'DJIA年末値1546.67は確証値。日経平均1985年末確定値は独立2源で確認できずnull（12月に13,000台到達は確認だが正確終値は2源一致せず）。為替数値は月次・概数で揺れ。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.bakerinstitute.org/research/personal-account-plaza-accord-september-22-1985', type: 'academic', label: 'Baker Institute — A Personal Account of the Plaza Accord (1985/9/22)' },
+      { url: 'https://ja.wikipedia.org/wiki/日本電信電話公社', type: 'reference', label: 'Wikipedia — 日本電信電話公社（NTT 1985/4/1民営化）' },
+      { url: 'https://en.wikipedia.org/wiki/Closing_milestones_of_the_Dow_Jones_Industrial_Average', type: 'reference', label: 'Wikipedia — Closing milestones of the DJIA（1985年末1,546.67）' },
+    ],
+  },
+  {
+    year: 1986,
+    era: '昭和61年',
+    world:
+      '「逆オイルショック」が主旋律で、原油価格が約4か月で6〜7割急落し（$30台→$10前後）、産油国から消費国への大規模な所得移転として作用した。米国ではインフレ率が約2%まで低下するディスインフレが進行し、低金利環境のもとで1982年来の景気拡大が延命された。',
+    japan:
+      'プラザ合意後の急激な円高が輸出産業を直撃し前半は「円高不況」となった。政府・日銀は内需拡大へ転換し、4月に「前川レポート」が内需主導型成長・市場開放・国際協調を提言、日銀は1986年1月〜1987年2月に公定歩合を5回、5.0%→2.50%（当時の戦後最低）へ引き下げた。円高不況は11月に底を打ち、12月から「バブル景気（平成景気、〜1991年2月）」が始動した（後年のバブルの萌芽がこの金融緩和に内在）。',
+    keyEvents: [
+      '原油価格の急落（逆オイルショック、約4か月で6〜7割下落）',
+      '米国のディスインフレ（インフレ率約2%へ）・低金利下で景気拡大継続',
+      '前川レポート（4月）— 内需拡大・市場開放・国際協調を提言',
+      '日銀の連続利下げ（公定歩合5.0%→2.50%）／円高不況の底入れ（11月）と平成景気の起点（12月）',
+    ],
+    risingSectors: ['（日本）内需・非製造業（建設・不動産・小売・サービス）、金融（銀行・証券、資産価格上昇の初期局面）、円高で交易条件が改善した加工産業'],
+    decliningSectors: ['（日本）輸出依存の製造業（自動車・電機・鉄鋼、急激な円高＝円高不況）', '（世界）石油・エネルギー関連・産油地域経済（原油急落）'],
+    caveats: 'DJIA年末値1895.95・日経平均年末値約18,701はいずれも独立2源で一致（日経の銭単位は未確定で整数採用）。原油下落率は出典で幅。前川レポートは私的諮問機関の報告書。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.cfr.org/blog/oil-lesson-1986-wrong', type: 'media', label: 'Council on Foreign Relations — The Oil Lesson of 1986（原油急落）' },
+      { url: 'https://www.esri.cao.go.jp/jp/esri/prj/sbubble/history/history_01/analysis_01_02_02.pdf', type: 'government', label: '内閣府ESRI バブル史 — プラザ合意後の円高と円高不況' },
+      { url: 'https://en.wikipedia.org/wiki/Japanese_asset_price_bubble', type: 'reference', label: 'Wikipedia — Japanese asset price bubble（公定歩合5回引き下げ・1986年の日経水準）' },
+    ],
+  },
+  {
+    year: 1987,
+    era: '昭和62年',
+    world:
+      'ドル安是正を狙うルーブル合意（2/22、G6/G7パリ）で為替の安定化に転換した。米株は年初から夏まで急騰した後、10月19日「ブラックマンデー」でDJIAが1日−508.32pt（−22.61%）と過去最大の暴落を記録し世界同時株安に波及したが、金融当局の流動性供給で金融システム崩壊は回避され、米株は年末にかけ反発して通年では小幅プラスで着地した（低金利・過剰流動性が資産価格を押し上げる地合い）。',
+    japan:
+      '中曽根内閣の行政改革の総仕上げとして4月1日に国鉄が分割・民営化されJR各社（旅客6社＋貨物1社）が発足、先立つ2月9日にNTT株が上場した。プラザ合意後の円高・超低金利と過剰流動性を背景に地価・株価が急騰しバブル景気が本格化した。ブラックマンデーで10/20に日経が−14.9%（終値21,910円）と急落したが翌1988年に回復し上昇基調へ向かった。',
+    keyEvents: [
+      'NTT株上場（2/9）／ルーブル合意（2/22、為替安定化で協調）',
+      '国鉄分割民営化でJR各社発足（4/1）',
+      'ブラックマンデー（10/19）— DJIAが1日−22.61%、史上最大の下落率・世界同時株安',
+      '日経平均が10/20に−14.9%急落（当時の過去最大下落率）／バブル景気の本格化',
+    ],
+    risingSectors: ['（日本）不動産・建設（地価高騰）、銀行・証券などの金融（過剰流動性・財テクブーム）、内需・消費関連、電気・通信（NTT上場）'],
+    decliningSectors: ['（日本）輸出依存の製造業（プラザ合意後の円高で採算悪化＝円高不況局面。ただし後半は内需転換で景気拡大へ）'],
+    caveats: 'DJIA年末値1938.83（年間+2.26%）・日経平均年末値21564.00（大納会）はいずれも独立2源で一致した確証値。ブラックマンデーの下落率は−22.61%（−22.6%は丸め）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/stock-market-crash-of-1987', type: 'government', label: 'Federal Reserve History — Stock Market Crash of 1987（ブラックマンデー）' },
+      { url: 'https://en.wikipedia.org/wiki/Louvre_Accord', type: 'reference', label: 'Wikipedia — Louvre Accord（1987/2/22 ルーブル合意）' },
+      { url: 'https://www.nikkei.com/article/DGKKZO85024940Z20C15A3KB2000/', type: 'media', label: '日本経済新聞 — 1987年4月1日 国鉄が分割・民営化' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1025,6 +1157,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1979: { djiaYearEnd: 838.74, nikkeiYearEnd: 6569.47, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1980: { djiaYearEnd: 963.99, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1981: { djiaYearEnd: 875.0, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1982: { djiaYearEnd: 1046.54, nikkeiYearEnd: 8016.67, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1983: { djiaYearEnd: 1258.64, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1984: { djiaYearEnd: 1211.57, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1985: { djiaYearEnd: 1546.67, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1986: { djiaYearEnd: 1895.95, nikkeiYearEnd: 18701, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1987: { djiaYearEnd: 1938.83, nikkeiYearEnd: 21564.0, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
