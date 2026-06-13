@@ -265,6 +265,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://startup-station.jp/m2/services/sogyokassei/', type: 'operator', label: 'TOKYO創業ステーション 創業助成事業' },
     ],
   },
+  {
+    id: 'subsidy-jinzai-kakuho',
+    level: 'national',
+    domain: 'employment',
+    name: '人材確保等支援助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '魅力ある職場づくりのため、雇用管理制度（賃金制度・諸手当・健康づくり等）の導入や雇用環境整備、生産性向上等に取り組み、離職率の低下を' +
+      '通じて人材の確保・定着を図る事業主・事業協同組合等を支援する助成金。雇用管理制度・雇用環境整備助成コース、中小企業団体助成コース、' +
+      '建設分野の各コース、外国人労働者就労環境整備助成コース、テレワークコース等で構成され、コース構成・支給額・要件は年度ごとに変動するため要確認。',
+    application:
+      '雇用保険適用事業所の事業主が対象。多くのコースは事前に計画の認定・届出を行い、制度導入・運用後に管轄の都道府県労働局（コースによりハローワーク）へ支給申請。申請時期・必要書類はコース及び年度の支給要領による。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000199292_00005.html', type: 'government', label: '厚生労働省 人材確保等支援助成金' },
+      { url: 'https://www.mhlw.go.jp/content/11600000/000465959.pdf', type: 'government', label: '厚生労働省 人材確保等支援助成金のご案内' },
+      { url: 'https://hojyokin-portal.jp/columns/jinzaikakuho_jyosei_summary', type: 'media', label: '人材確保等支援助成金 各コース 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-jobseeker-training-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '求職者支援制度（職業訓練受講給付金）',
+    authority: '厚生労働省（窓口: ハローワーク／都道府県労働局）',
+    statement:
+      '雇用保険を受給できない求職者（受給終了者・受給資格要件を満たさなかった者・自営業を廃業した者等＝特定求職者）が、ハローワークの支援指示を' +
+      '受けて無料の求職者支援訓練・公共職業訓練を受講する制度。本人収入・世帯収入・世帯金融資産・出席状況等の一定要件をすべて満たす場合に、' +
+      '職業訓練受講給付金（職業訓練受講手当・通所手当等）が支給され、雇用保険と生活保護の間の「第2のセーフティネット」として早期就職を支援する（支給額・要件は最新の支給要領で要確認）。',
+    application:
+      '住所地を管轄するハローワークで求職申込みのうえ職業相談を受け、訓練の必要性が認められると就職支援計画の交付・支援指示を受けて訓練に申込む。給付金は訓練の各支給単位期間ごとにハローワークで支給申請し、収入・資産・全日出席等の要件審査を経て支給。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyushokusha_shien/index.html', type: 'government', label: '厚生労働省 求職者支援制度のご案内' },
+      { url: 'https://www.mhlw.go.jp/bunya/nouryoku/training/dl/training01m.pdf', type: 'government', label: '厚生労働省 求職者支援訓練 リーフレット' },
+      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_35.html', type: 'media', label: '連合 求職者支援制度 Q&A' },
+    ],
+  },
+  {
+    id: 'subsidy-housing-security',
+    level: 'national',
+    domain: 'welfare',
+    name: '住居確保給付金（生活困窮者自立支援制度）',
+    authority: '厚生労働省（実施主体: 福祉事務所設置自治体／窓口: 自立相談支援機関）',
+    statement:
+      '離職・廃業（原則2年以内）や、本人の責によらない就業機会・収入の減少により経済的に困窮し住居を失うおそれがある人に対し、求職活動等を' +
+      '条件として、原則3か月（延長により最長9か月）家賃相当額を自治体が家主等へ直接支給し、住居を確保しながら自立を支援する制度（生活困窮者自立支援法）。' +
+      '支給上限額は地域・世帯人数により異なり、収入・資産要件や延長可否も含め、お住まいの自治体・最新年度の要件で要確認。',
+    application:
+      '申請・相談窓口は市区町村等の「自立相談支援機関」。住居を失うおそれが生じた時点で随時申請でき、申請時には自立相談支援事業の利用申込みも併せて行う。支給期間中はハローワーク登録や定期的な求職活動が要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corona-support.mhlw.go.jp/jukyokakuhokyufukin/index.html', type: 'government', label: '厚生労働省 住居確保給付金' },
+      { url: 'https://www.mhlw.go.jp/stf/wp/hakusyo/kousei/20/backdata/2-1-4-6.html', type: 'government', label: '厚生労働省 住居確保給付金の概要' },
+      { url: 'https://www.city.osaka.lg.jp/fukushi/page/0000501083.html', type: 'municipality', label: '大阪市 住居確保給付金（家賃補助）' },
+    ],
+  },
+  {
+    id: 'subsidy-business-succession',
+    level: 'national',
+    domain: 'business',
+    name: '事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）',
+    authority: '中小企業庁・経済産業省（実施: 公募事務局・中小機構等）',
+    statement:
+      '事業承継やM&A（経営資源の引継ぎ）を契機とした中小企業者等の新たな取組や、承継・M&Aに係る専門家活用費用・廃業費用等を支援する国の補助金。' +
+      '経営革新／専門家活用／廃業・再チャレンジ等の複数の枠（近年は事業承継促進枠・専門家活用枠・PMI推進枠・廃業再チャレンジ枠等）で構成され、' +
+      '補助上限額・補助率・支援枠の構成・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '公募回ごとの締切制で、原則として電子申請システム「jGrants（要 gBizIDプライム）」から申請する。公募期間・締切は公募回ごとに中小企業庁・公式事務局が公表。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo.html', type: 'government', label: '中小企業庁 補助金公募情報' },
+      { url: 'https://jsh.go.jp/', type: 'government', label: '事業承継・M&A補助金 公式事務局' },
+      { url: 'https://seisansei.smrj.go.jp/subsidy_guide/subsidy_info/succession_subsidy.html', type: 'government', label: '中小機構 事業承継・M&A補助金のご案内' },
+    ],
+  },
+  {
+    id: 'subsidy-labor-saving-investment',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業省力化投資補助金',
+    authority: '経済産業省・中小企業庁（実施: 中小企業基盤整備機構 事務局）',
+    statement:
+      '人手不足に悩む中小企業等が、IoT・ロボット等の省力化に資する製品の導入やオーダーメイドの設備投資等を行うことで、付加価値額の向上・' +
+      '生産性向上・賃上げにつなげる取組を支援する補助金。申請類型として登録製品カタログから選ぶ「カタログ注文型」と、個別の現場に合わせる「一般型」がある。' +
+      '補助上限額・補助率・対象枠・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '公募回ごとの締切制。GビズIDプライムを用いた電子申請（申請ポータル）で行い、一般型では事業計画書等の提出が必要。受付期間・スケジュールは公募回ごとに設定。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://shoryokuka.smrj.go.jp/about/', type: 'government', label: '中小企業省力化投資補助金 公式事務局（中小機構）' },
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2025/250919001.html', type: 'government', label: '中小企業庁 省力化投資補助事業（一般型）公募要領' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/shoryokuka/', type: 'government', label: 'ミラサポplus 省力化投資補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-kosodate-green-housing',
+    level: 'national',
+    domain: 'welfare',
+    name: '子育てグリーン住宅支援事業',
+    authority: '国土交通省（住宅省エネキャンペーンの一事業。経産省・環境省と連携）',
+    statement:
+      'エネルギー価格高騰の影響を受けやすい子育て世帯・若者夫婦世帯等による高い省エネ性能の新築住宅取得や、住宅の省エネ改修（断熱・エコ設備等）を' +
+      '支援し、2050年カーボンニュートラルの実現を図る国の補助制度。GX志向型住宅・長期優良住宅・ZEH水準住宅の新築や既存住宅の省エネリフォームが対象とされるが、' +
+      '補助額・対象要件・実施期間は年度ごとに変動し予算上限到達で締め切られるため、最新の公式情報で要確認。',
+    application:
+      '申請は原則として事務局に登録された「登録事業者（グリーン住宅支援事業者＝住宅事業者・施工業者等）」が補助対象者に代わって交付申請・受給・還元を代行する仕組みで、一般消費者が直接申請することはできない。受付は予算上限に達した時点で終了する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kosodate-green.mlit.go.jp/about/', type: 'government', label: '子育てグリーン住宅支援事業 公式（国土交通省）' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk4_000290.html', type: 'government', label: '国土交通省 子育てグリーン住宅支援事業について' },
+      { url: 'https://www.lixil.co.jp/shoenehojokin/2025/kosodategreen/', type: 'media', label: '住宅省エネキャンペーン 子育てグリーン住宅支援事業 解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
