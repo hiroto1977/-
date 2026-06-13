@@ -379,6 +379,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.lixil.co.jp/shoenehojokin/2025/kosodategreen/', type: 'media', label: '住宅省エネキャンペーン 子育てグリーン住宅支援事業 解説' },
     ],
   },
+  {
+    id: 'subsidy-tokyo-equipment',
+    level: 'prefecture',
+    domain: 'business',
+    name: '躍進的な事業推進のための設備投資支援事業（東京都）',
+    authority: '東京都・公益財団法人東京都中小企業振興公社',
+    statement:
+      '都内の中小企業者等が生産性向上や持続的発展に向けて行う機械設備等の導入を支援する東京都の補助事業（都道府県レベルの補助金の代表例）。' +
+      '一般的な生産性向上等の区分のほか、DX・GX（脱炭素）等のテーマに応じた区分が設けられることがある。補助上限額・補助率・対象設備・申請受付期間は' +
+      '年度・回ごとに変動し予算上限で締め切られるため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに申請受付期間を設定する公募制（年複数回の場合あり）。東京都中小企業振興公社の電子申請システム等を通じて申請し、交付決定後に発注・契約を行う必要がある（交付決定前の発注は対象外）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tokyo-kosha.or.jp/support/josei/jigyo/yakushinsetsubi.html', type: 'operator', label: '東京都中小企業振興公社 躍進的な事業推進のための設備投資支援事業' },
+      { url: 'https://www.sangyo-rodo.metro.tokyo.lg.jp/chusho/shoko/keiei/setubi/', type: 'municipality', label: '東京都産業労働局 設備投資支援' },
+      { url: 'https://hojyokin-portal.jp/columns/tokyo_yakushinteki', type: 'media', label: '東京都 設備投資支援事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-osaka-startup',
+    level: 'prefecture',
+    domain: 'business',
+    name: '大阪起業家グローイングアップ補助金（大阪府）',
+    authority: '大阪府（実施: 大阪起業家グローイングアップ事業 事務局）',
+    statement:
+      '大阪府内で創業して間もない、又は創業を予定する起業家の事業立ち上げ・成長を支援する大阪府の補助金（都道府県レベルの補助金の代表例）。' +
+      '創業期の経費等を対象とし、ビジネスプランコンテストの受賞等を要件とする区分が設けられることがある。補助上限額・補助率・対象経費・募集期間は' +
+      '年度ごとに変動するため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに募集期間を設定する公募制。大阪府・事務局の募集案内に従い申請し、区分により事業計画書やコンテスト参加等が要件となる。受付期間・要件は各年度の募集要項で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.osaka.lg.jp/o120030/keieishien/growingup/index.html', type: 'municipality', label: '大阪府 大阪起業家グローイングアップ補助金' },
+      { url: 'https://www.startupport-osaka.com/', type: 'operator', label: '大阪産業局 スタートアップ支援' },
+      { url: 'https://hojyokin-portal.jp/columns/osaka_kigyoka', type: 'media', label: '大阪起業家グローイングアップ補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-energy-saving-sii',
+    level: 'national',
+    domain: 'business',
+    name: '省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）',
+    authority: '経済産業省・資源エネルギー庁（実施: 一般社団法人環境共創イニシアチブ＝SII 等）',
+    statement:
+      '工場・事業場等における省エネルギー性能の高い設備への更新（生産設備・空調・照明・ボイラー等）や、エネルギー需要の構造転換に資する投資を' +
+      '行う事業者を支援する経済産業省の補助金。事業区分（工場・事業場型、設備単位型等）ごとに対象設備・要件が定められる。補助上限額・補助率・対象設備・' +
+      '公募期間は年度・事業ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '事業ごとに公募期間が設定される公募制で、原則として補助事業者（SII等）の指定する方法による電子申請。交付決定後に発注・契約・工事を行う必要がある（交付決定前の着手は対象外）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sii.or.jp/', type: 'operator', label: '環境共創イニシアチブ（SII）省エネ補助金事務局' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/', type: 'government', label: '資源エネルギー庁 省エネ設備導入支援' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/', type: 'government', label: '資源エネルギー庁 省エネルギー政策' },
+    ],
+  },
+  {
+    id: 'subsidy-gotech',
+    level: 'national',
+    domain: 'business',
+    name: 'Go-Tech事業（成長型中小企業等研究開発支援事業）',
+    authority: '経済産業省・中小企業庁（関東経済産業局等の経済産業局が実施）',
+    statement:
+      '中小企業が大学・公設試験研究機関等と連携して行う、ものづくり基盤技術・サービスの高度化等に向けた research and development（研究開発）・試作品開発・' +
+      '販路開拓の取組を、複数年度にわたり支援する国の補助事業。事業管理機関・研究等実施機関等の体制を組んで申請する必要がある。補助上限額・補助率・補助対象期間・' +
+      '公募期間は年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '年度ごとに公募期間が設定される公募制で、所管の経済産業局へ申請（電子申請システムを利用）。大学・公設試等との連携体制や事業計画の策定が要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/sapoin/index.html', type: 'government', label: '中小企業庁 Go-Tech事業（成長型中小企業等研究開発支援事業）' },
+      { url: 'https://www.kanto.meti.go.jp/seisaku/sapoin/index.html', type: 'government', label: '関東経済産業局 Go-Tech事業' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/go-tech/', type: 'government', label: 'ミラサポplus Go-Tech事業' },
+    ],
+  },
+  {
+    id: 'subsidy-disabled-facility',
+    level: 'national',
+    domain: 'employment',
+    name: '障害者作業施設設置等助成金（障害者雇用納付金関係助成金）',
+    authority: '厚生労働省（実施: 高齢・障害・求職者雇用支援機構＝JEED）',
+    statement:
+      '障害者を雇用する事業主が、その障害者が作業を容易に行えるよう配慮された作業施設・作業設備の設置・整備等を行う場合に、その費用の一部を' +
+      '助成する障害者雇用納付金制度に基づく助成金。作業施設設置等助成金のほか、職場介助者の配置・委嘱助成金、重度障害者等通勤対策助成金など複数の' +
+      '納付金関係助成金があり、対象・助成率・上限額・受付は年度の支給要領で変動するため要確認。',
+    application:
+      '申請窓口はJEEDの都道府県支部（高齢・障害者業務課等）。原則として支給対象となる措置の計画認定を受けた上で実施し、その後に支給請求を行う方式で、受付期間・様式は年度の業務規程・支給要領による。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/disability/employer/subsidy/index.html', type: 'operator', label: 'JEED 障害者雇用納付金制度に基づく助成金' },
+      { url: 'https://www.jeed.go.jp/disability/employer/subsidy/sa01.html', type: 'operator', label: 'JEED 障害者作業施設設置等助成金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaishakoyou/03c.html', type: 'government', label: '厚生労働省 障害者雇用納付金制度に基づく助成金' },
+    ],
+  },
+  {
+    id: 'subsidy-occupational-health',
+    level: 'national',
+    domain: 'employment',
+    name: '産業保健関係助成金（団体経由産業保健活動推進助成金 等）',
+    authority: '独立行政法人労働者健康安全機構（JOHAS）／所管: 厚生労働省（労災保険 社会復帰促進等事業）',
+    statement:
+      '労働者の健康確保のため、事業者等が行う産業保健活動（産業医・保健師等による活動、ストレスチェック後の措置、治療と仕事の両立支援等）の費用の' +
+      '一部を労働者健康安全機構が助成する制度群。かつての「ストレスチェック助成金」「小規模事業場産業医活動助成金」「治療と仕事の両立支援助成金」等の個別助成金は' +
+      '令和4年度をもって順次廃止され、令和5年度以降は事業主団体等を経由して中小企業を支援する「団体経由産業保健活動推進助成金」に再編された。対象・助成率・上限・受付期間は年度で変動し予算上限で締切となるため要確認。',
+    application:
+      '申請窓口は独立行政法人労働者健康安全機構（産業保健業務指導課）。現行の団体経由産業保健活動推進助成金は事業主団体等を経由して実施計画提出・利用申込・支給申請を行う方式で、年度ごとの受付期間が設定され予算枠到達で締め切られる。最新の年度版の手引で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.johas.go.jp/sangyouhoken/tabid/1251/Default.aspx', type: 'government', label: '労働者健康安全機構 産業保健関係助成金' },
+      { url: 'https://www.mhlw.go.jp/content/001492559.pdf', type: 'government', label: '厚生労働省 団体経由産業保健活動推進助成金 案内' },
+      { url: 'https://www.johas.go.jp/Portals/0/data0/sanpo/sanpojoseikin/R7/org_josei_tebiki_R7.pdf', type: 'government', label: '労働者健康安全機構 団体経由産業保健活動推進助成金 手引' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
