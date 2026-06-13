@@ -951,6 +951,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.idec.or.jp/event/seminar_info.html?id=1490', type: 'operator', label: 'IDEC横浜 創業セミナー（特定創業支援事業認定）' },
     ],
   },
+  {
+    id: 'subsidy-elderly-jobseeker',
+    level: 'national',
+    domain: 'welfare',
+    name: '高年齢求職者給付金（雇用保険）',
+    authority: '厚生労働省（ハローワーク）',
+    statement:
+      '65歳以上の高年齢被保険者であった者が離職し、就職の意思・能力があるのに失業の状態にある場合に、基本手当に代えて一時金として支給される' +
+      '雇用保険の給付。支給額は基本手当日額に対し、算定基礎期間1年未満で30日分、1年以上で50日分相当（上限あり）。受給には原則として離職の日以前' +
+      '1年間に被保険者期間が通算6か月以上あること等が必要で、要件・金額は最新の制度内容で要確認。',
+    application:
+      '離職後、住所地を管轄するハローワークで離職票等を提出して求職の申込みを行い、失業の認定を受けると後日一時金が指定口座に振り込まれる。受給期限は離職日の翌日から1年以内のため早めの手続が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11600000/000695108.pdf', type: 'government', label: '厚生労働省 高年齢求職者給付金のご案内' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_continue.html', type: 'government', label: 'ハローワーク 雇用保険の給付' },
+      { url: 'https://www.orixbank.co.jp/column/article/277/', type: 'media', label: '高年齢求職者給付金 条件・金額 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-special-child-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '特別児童扶養手当',
+    authority: 'こども家庭庁・都道府県／市区町村',
+    statement:
+      '精神又は身体に一定の障害（おおむね中度以上）を有する20歳未満の児童を家庭で監護・養育している父母等に支給される国の手当で、障害の程度に' +
+      '応じ1級・2級がある。手当月額は消費者物価指数に連動した物価スライド制で毎年度改定される。請求者・配偶者・扶養義務者の前年所得が限度額を' +
+      '超える場合は支給停止となる所得制限がある（最新の支給額・所得制限は要確認）。',
+    application:
+      'お住まいの市区町村の担当窓口で認定請求書に医師の診断書・戸籍住民票・所得関係書類等を添えて申請する。書類は都道府県（指定都市）へ送られ知事等が審査・認定し、原則として認定請求月の翌月分から支給される（年3回程度のまとめ払い）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/shougaijihukushi/', type: 'government', label: 'こども家庭庁 障害児支援（特別児童扶養手当）' },
+      { url: 'https://www.pref.osaka.lg.jp/o090135/kateishien/teate/tokubetsujihu.html', type: 'municipality', label: '大阪府 特別児童扶養手当' },
+      { url: 'https://h-navi.jp/column/article/35025553', type: 'media', label: '特別児童扶養手当 認定基準・所得制限 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-overseas-expansion',
+    level: 'national',
+    domain: 'business',
+    name: '新輸出大国コンソーシアム（中小企業の海外展開支援）',
+    authority: '独立行政法人日本貿易振興機構（JETRO）／経済産業省と連携（中小機構・商工会議所等が参画）',
+    statement:
+      '海外展開を図る中堅・中小企業等に対し、戦略策定から事業計画策定・実行段階まで一貫したワンストップ支援を提供する、JETROが事務局を務める' +
+      '官民の支援枠組み。各国・地域事情や実務に精通した専門家による「海外展開ハンズオン支援」が中核。支援内容・対象要件・ハンズオン支援の審査基準・' +
+      '申込締切等は年度により変動するため、最新の公式案内（JETRO公式）で要確認。',
+    application:
+      'JETROの「新輸出大国コンソーシアム」ポータルから利用相談・登録を行う。中核の「海外展開ハンズオン支援」は審査ありの申込制で、採択後に専門家が継続的に伴走支援する。具体の申込手続・締切・要件は最新の公式案内で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jetro.go.jp/consortium/about.html', type: 'government', label: 'JETRO 新輸出大国コンソーシアムとは' },
+      { url: 'https://www.meti.go.jp/publication/pdf/pamph_yushutsu.pdf', type: 'government', label: '経済産業省 新輸出大国コンソーシアムの概要' },
+      { url: 'https://j-net21.smrj.go.jp/news/q9cs5q0000006les.html', type: 'media', label: 'J-Net21 新輸出大国コンソーシアム 事例' },
+    ],
+  },
+  {
+    id: 'subsidy-chiba',
+    level: 'prefecture',
+    domain: 'business',
+    name: '千葉県中小企業成長促進補助金',
+    authority: '千葉県（商工労働部）／中小企業支援は公益財団法人千葉県産業振興センター等と連携',
+    statement:
+      '千葉県内に事業所を有する中小企業等を対象に、省力化・業務効率化・生産性向上に必要な設備投資（機械装置の購入・製作・改良、専用ソフトウェア／' +
+      '情報システムの構築、導入に伴う運搬・据付等）を補助する都道府県レベルの代表的な設備投資補助制度。補助率・補助上限・下限・募集期間は年度ごとに' +
+      '変動するため、最新の募集要項および千葉県公式ページで要確認。',
+    application:
+      '千葉県公式ページ又は事務局特設サイトで公募要領を確認し、公募期間内に電子申請等で交付申請を行う。対象要件（県内事業所・対象経費・補助下限/上限）を事前確認のうえ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.chiba.lg.jp/keisei/zaisei/chiba-seichohojyo3.html', type: 'municipality', label: '千葉県 中小企業成長促進補助金' },
+      { url: 'https://www.ccjc-net.or.jp/', type: 'operator', label: '千葉県産業振興センター' },
+      { url: 'https://www.sato-group-sr.jp/business_guide/archives/1083', type: 'media', label: '千葉県 中小企業成長促進補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-shizuoka',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等収益力向上事業費補助金（静岡県）',
+    authority: '静岡県（経済産業部 経営支援課）／運用・募集窓口: 公益財団法人静岡県産業振興財団',
+    statement:
+      '静岡県が県内中小企業者等の収益力・生産性向上と賃上げの継続を支援するため交付する代表的な補助金（都道府県レベルの代表例）で、独自の技術・' +
+      'サービス展開やデジタル化（DX推進枠）等の取組を対象とし、賃上げと併せて取り組むと補助が手厚くなる枠がある。補助上限額・補助率・対象経費・募集期間・' +
+      '要件は年度ごとに変動するため、最新の募集要項および静岡県公式・財団公式で要確認。',
+    application:
+      '申請は国の補助金電子申請システム「jGrants」から行い、利用にはGビズIDプライムの取得が必要。対象は原則として静岡県内に本店を置く法人又は県内在住の個人事業主で県内で1年以上事業を営んでいること等（年度の公募要領で要確認）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shizuoka.jp/sangyoshigoto/kigyoshien/1047031/1062522.html', type: 'municipality', label: '静岡県 中小企業等収益力向上事業費補助金' },
+      { url: 'https://www.ric-shizuoka.or.jp/keiei/shuekiryoku-chinage.html', type: 'operator', label: '静岡県産業振興財団 収益力向上（賃上げ環境整備）補助金' },
+      { url: 'https://www.pref.shizuoka.jp/sangyoshigoto/kigyoshien/1047031/1081779.html', type: 'municipality', label: '静岡県 収益力向上（賃上げ環境整備）補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-sendai',
+    level: 'municipality',
+    domain: 'business',
+    name: '仙台市中小企業チャレンジ補助金',
+    authority: '仙台市（経済局）／相談・支援窓口: 公益財団法人仙台市産業振興事業団',
+    statement:
+      '仙台市が実施する、市内中小企業者等・個人事業者を対象とした補助金制度で、社会の変化に対応して新たな製品・商品・サービスの提供や、製造・提供' +
+      '方法の変更に挑戦する事業を支援する（政令指定都市＝市区町村レベルの代表例）。補助額・補助率・対象経費・募集期間は年度・募集回ごとに変動するため、' +
+      '最新の募集要項・仙台市公式サイトで要確認。これまで複数回に分けて募集が行われている。',
+    application:
+      '仙台市公式サイトで各募集回の実施要領・申請受付期間を確認のうえ、所定の申請手続を行う。創業・経営相談は仙台市経済局及び公益財団法人仙台市産業振興事業団の窓口で受付。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sendai.jp/kikakushien/challengehojokin/jigyougaiyou.html', type: 'municipality', label: '仙台市 中小企業チャレンジ補助金 事業概要' },
+      { url: 'https://www.city.sendai.jp/kikakushien/jigyosha/kezai/hojokin/index.html', type: 'municipality', label: '仙台市 事業者向け補助金一覧' },
+      { url: 'https://www.sendaicci.or.jp/news/support-measures/', type: 'operator', label: '仙台商工会議所 補助金・助成金情報' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
