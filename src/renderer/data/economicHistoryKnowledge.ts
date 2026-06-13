@@ -433,6 +433,138 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://indexes.nikkei.co.jp/atoz/2016/06/1950s.html', type: 'reference', label: '日経平均プロフィル 1950年代（指数の歴史）' },
     ],
   },
+  {
+    year: 1958,
+    era: '昭和33年',
+    world:
+      '1957年8月〜1958年4月の「アイゼンハワー不況」（戦後3度目の景気後退）から5月に急回復し、年末までに失地の大半を取り戻した。1月1日にローマ条約が発効して欧州経済共同体（EEC）・ユーラトムが6か国で発足し、年末には西欧主要通貨が経常取引の対外交換性を回復してブレトンウッズ体制が実質的に機能し始めた。',
+    japan:
+      'なべ底不況（1957/7〜1958/6）から、国内消費の高まりと1958年に3回行われた公定歩合引き下げにより後半に景気拡大へ転換し、これが42か月続く「岩戸景気」（1958/7〜1961/12）の始まりとなった。神武景気を上回る設備投資・技術革新主導の成長で、12月23日に東京タワーが竣工した。',
+    keyEvents: [
+      'ローマ条約発効（1/1）— EEC・ユーラトム発足（原加盟6か国）',
+      '米国がアイゼンハワー不況から回復（5月）',
+      '岩戸景気の開始（6〜7月、〜1961/12・42か月）',
+      '東京タワー竣工（12/23）／西欧主要通貨が経常取引の対外交換性回復（年末）',
+    ],
+    risingSectors: ['（日本）耐久消費財（三種の神器）・設備投資関連（鉄鋼・機械・電機）— 岩戸景気の主導役', '（米国）自動車・住宅など内需（不況後の回復）'],
+    decliningSectors: ['（米国）1957–58不況の渦中は工業生産・製造業が前年比で縮小（年央以降回復）'],
+    caveats: 'DJIA年末値583.65は確証値（年間約+34%）。日経平均1958年末確定値は独立確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.europarl.europa.eu/factsheets/en/sheet/1/the-first-treaties', type: 'government', label: 'European Parliament — The First Treaties（ローマ条約・EEC発足）' },
+      { url: 'https://www.ebsco.com/research-starters/history/recession-1957-1958', type: 'academic', label: 'EBSCO — Recession of 1957-1958（米不況と回復）' },
+      { url: 'https://ja.wikipedia.org/wiki/岩戸景気', type: 'reference', label: 'Wikipedia — 岩戸景気（1958/7〜1961/12）' },
+    ],
+  },
+  {
+    year: 1959,
+    era: '昭和34年',
+    world:
+      '1957–58年の世界的景気後退からの力強い回復・拡大局面で、米国は1959年に実質GDP成長率が高く失業率も低下した。冷戦下で国防関連が連邦予算の大きな割合を占める一方、FRBは利上げに転じ（翌1960–61年の景気後退の伏線）、年内に大規模な鉄鋼ストライキが発生した。',
+    japan:
+      '岩戸景気の進行期で「投資が投資を呼ぶ」と評され、神武景気を上回る規模の高度成長が続いた。4月10日の皇太子ご成婚（ミッチー・ブーム）が白黒テレビの爆発的普及を加速し三種の神器が全国へ波及した一方、9月の伊勢湾台風が戦後最悪級の風水害をもたらした。',
+    keyEvents: [
+      '皇太子ご成婚（4/10）— テレビ需要で白黒TV普及を加速（ミッチー・ブーム）',
+      '岩戸景気の進行（設備投資主導の高度成長）',
+      '伊勢湾台風（9/26）— 死者・行方不明約5,000名超の戦後最悪級風水害',
+      '米国は1957–58不況から回復、鉄鋼ストとFRB利上げ',
+    ],
+    risingSectors: ['（日本）家電・耐久消費財（三種の神器）、鉄鋼・機械・設備投資関連製造業'],
+    decliningSectors: ['（日本）伊勢湾台風被災地域の農業・水産・地場産業に一時的甚大被害（構造的衰退ではない）'],
+    caveats: 'DJIA年末値679.36は確証値（米政府ERP表B-55で裏付け）。日経平均1959年末確定値は独立確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.govinfo.gov/content/pkg/ERP-2021/pdf/ERP-2021-table55.pdf', type: 'government', label: '米国 Economic Report of the President 表B-55（DJIA含む株価史）' },
+      { url: 'https://www.data.jma.go.jp/stats/data/bosai/report/1959/19590926/19590926.html', type: 'government', label: '気象庁 — 伊勢湾台風（昭和34年9月）災害報告' },
+      { url: 'https://ja.wikipedia.org/wiki/岩戸景気', type: 'reference', label: 'Wikipedia — 岩戸景気（投資が投資を呼ぶ）' },
+    ],
+  },
+  {
+    year: 1960,
+    era: '昭和35年',
+    world:
+      '冷戦下の好況・拡大期だが、米国は1960年4月〜1961年2月に短い景気後退があった。最大の構造的出来事は脱植民地化で、17のアフリカ諸国が独立した「アフリカの年」となり国連加盟国が急増した。11月8日の米大統領選でケネディが当選した。',
+    japan:
+      '岩戸景気の最中で設備投資・重化学工業化・輸出が成長を牽引した。6月に日米安保条約改定をめぐる「60年安保闘争」が頂点に達し岸内閣が退陣、7月成立の池田勇人内閣は「寛容と忍耐」を掲げ国民の関心を経済へ転換、12月27日に「国民所得倍増計画」を閣議決定した。エネルギー革命を背景とする三井三池争議もこの年に終結した。',
+    keyEvents: [
+      '60年安保闘争が頂点（6月）→ 岸内閣退陣／池田内閣成立（7月）',
+      '米大統領選でケネディ当選（11/8）',
+      '「アフリカの年」— 17のアフリカ諸国が独立',
+      '国民所得倍増計画の閣議決定（12/27）／三井三池争議終結',
+    ],
+    risingSectors: ['（日本）重化学工業（鉄鋼・化学・機械）・家電・設備投資・輸出（岩戸景気と倍増計画）'],
+    decliningSectors: ['（日本）石炭産業（エネルギー革命で石炭→石油の構造不況。三井三池争議はその象徴）'],
+    caveats: 'DJIA年末値615.89は確証値（年間約-9%）。日経平均1960年末値は巷間≈1,356円とされるが権威ある出典で確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Year_of_Africa', type: 'reference', label: 'Wikipedia — Year of Africa（1960年に17か国独立）' },
+      { url: 'https://www.jfklibrary.org/learn/about-jfk/jfk-in-history/john-f-kennedy-and-african-independence', type: 'government', label: 'JFK Library — 1960年ケネディ当選とアフリカ独立' },
+      { url: 'https://ja.wikipedia.org/wiki/所得倍増計画', type: 'reference', label: 'Wikipedia — 所得倍増計画（1960/12/27閣議決定）' },
+    ],
+  },
+  {
+    year: 1961,
+    era: '昭和36年',
+    world:
+      '冷戦が緊張のピークに達した年。4月にソ連のガガーリンが人類初の有人宇宙飛行を達成し、米国はケネディが「10年以内の月着陸」を表明、8月にベルリンの壁の建設が始まり東西対立が固定化した。米国経済は1960–61年の景気後退から回復局面に入り、ケネディ政権の財政・防衛支出が下支えしてDJIAは年間で大幅高となった（12/13に当時最高値734.91）。',
+    japan:
+      '高度経済成長の中核期で、1958年7月からの「岩戸景気」（42か月）が1961年12月にピークを打って終了した。国民所得倍増計画の初年度にあたり実質GNP成長は約10%と目標を大きく上回ったが、設備投資の過熱で輸入が急増して国際収支が悪化し、年後半に日銀が金融引き締めに転じた。農業基本法が制定された。',
+    keyEvents: [
+      'ガガーリン人類初の有人宇宙飛行（4/12）／ベルリンの壁建設開始（8月）',
+      '岩戸景気がピークを打って終了（12月）',
+      '農業基本法の制定（戦後農政の基本法）',
+      '所得倍増計画初年度（実質GNP成長約10%）／国際収支悪化で金融引き締めへ',
+    ],
+    risingSectors: ['（日本）機械・鉄鋼・電機など設備投資関連、家電・自動車（所得倍増下の消費拡大）', '（米国）航空宇宙・防衛（宇宙開発競争）'],
+    decliningSectors: ['（日本）年後半の金融引き締め下で素材・在庫需給が調整局面に向かった（明確に縮小と断定できる業種データは未確認）'],
+    caveats: 'DJIA年末値731.14は確証値（年間約+18.7%、12/13に当時高値734.91）。日経平均1961年末値は独立確認できずnull（頻出の「1,356円71銭」は1960年の値）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://fraser.stlouisfed.org/title/economic-report-president-45/1963-8134/fulltext', type: 'government', label: 'Economic Report of the President 1963（FRASER, St. Louis Fed）' },
+      { url: 'https://ja.wikipedia.org/wiki/岩戸景気', type: 'reference', label: 'Wikipedia — 岩戸景気（1961/12にピーク・国際収支悪化）' },
+      { url: 'https://www.ndl.go.jp/modern/e/cha6/description14.html', type: 'government', label: '国立国会図書館 — 池田内閣 所得倍増計画' },
+    ],
+  },
+  {
+    year: 1962,
+    era: '昭和37年',
+    world:
+      '冷戦の頂点の年で、10月の「キューバ危機」（13日間）で米ソが核戦争に最接近し10/28に回避された。経済面では米国株式市場が大きく調整し、1961年12月のピークから1962年6月にかけて約27〜29%下落した（「ケネディ・スライド」、5/28に急落）。DJIAは年間で約-10.8%の下落年となった。',
+    japan:
+      '高度成長期のなかの景気調整局面。岩戸景気後の国際収支悪化（「国際収支の天井」）を受けた金融引き締めで1961年12月〜1962年10月は景気後退（踊り場）となった。池田内閣の所得倍増計画下にあり、10月5日に第一次「全国総合開発計画（全総）」を閣議決定、東京五輪・東海道新幹線（1964）に向けたインフラ投資が本格化していった。',
+    keyEvents: [
+      'キューバ危機（10月、約13日間）— 冷戦下で核戦争に最接近',
+      '米株の「ケネディ・スライド」（1961/12ピークから約-29%、5/28急落）',
+      '全国総合開発計画（全総）の閣議決定（10/5）',
+      '岩戸景気後の金融引き締めによる景気後退（1961/12〜1962/10）',
+    ],
+    risingSectors: ['（日本）建設・土木・鉄鋼・セメント等インフラ関連（五輪・新幹線・全総）、耐久消費財（所得倍増下）'],
+    decliningSectors: ['（日本）金融引き締めの影響を受けた設備投資・在庫調整局面の業種', '（米国）株式市場全般（年間約-10.8%、投機的成長株が調整）'],
+    caveats: 'DJIA年末値652.10は確証値（年間約-10.8%）。日経平均1962年末確定値は独立確認できずnull（調整局面で軟調という定性傾向のみ確実）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.britannica.com/event/Cuban-missile-crisis', type: 'reference', label: 'Encyclopaedia Britannica — Cuban missile crisis' },
+      { url: 'https://www.archives.go.jp/ayumi/kobetsu/s37_1962_01.html', type: 'government', label: '国立公文書館 — 全国総合開発計画 閣議決定（昭和37年10月）' },
+      { url: 'https://en.wikipedia.org/wiki/Kennedy_Slide_of_1962', type: 'reference', label: 'Wikipedia — Kennedy Slide of 1962（米株調整）' },
+    ],
+  },
+  {
+    year: 1963,
+    era: '昭和38年',
+    world:
+      '戦後の「資本主義の黄金時代」のただ中で、米国は長期の景気拡大局面にあり西欧（特に西独・伊）と日本が高成長を牽引した。米ソは前年のキューバ危機の反動から緊張緩和（デタント）へ向かい、8月の部分的核実験禁止条約（PTBT）署名がその象徴となった。11月22日にケネディ大統領が暗殺された。',
+    japan:
+      '池田内閣「所得倍増計画」下の高度経済成長期で実質GNP成長率は約7.5%。開放経済体制への移行が本格化し、貿易自由化率が1960年の約41%から1963年に92%超へ上昇、2月にGATT11条国へ移行した。二重構造是正のため7月に中小企業基本法が制定され、翌1964年の東京五輪・東海道新幹線へ向けた建設投資が活発化した。',
+    keyEvents: [
+      'GATT11条国へ移行（2月）— 国際収支を理由とする輸入制限ができなくなる',
+      '中小企業基本法の制定（7/20）— 二重構造是正・近代化',
+      '部分的核実験禁止条約（PTBT）署名（8/5・発効10/10）',
+      'ケネディ大統領暗殺（11/22）／東京五輪・新幹線へ向けた建設ブーム',
+    ],
+    risingSectors: ['（日本）建設・土木（五輪・新幹線・首都高）、鉄鋼・機械・自動車、家電・耐久消費財、運輸・物流インフラ'],
+    decliningSectors: ['（日本）貿易自由化・GATT11条国移行で輸入圧力にさらされた一部の国内保護産業・二重構造下の伝統的零細部門（中小企業基本法はこの是正が動機）'],
+    caveats: 'DJIA年末値762.95は確証値（年間約+17.1%）。日経平均1963年末確定値は独立確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。当時は1ドル=360円固定相場・ブレトンウッズ体制下。',
+    sources: [
+      { url: 'https://history.state.gov/milestones/1961-1968/limited-ban', type: 'government', label: 'U.S. Dept. of State, Office of the Historian — The Limited Test Ban Treaty, 1963' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000055026&current=-1', type: 'government', label: '国立国会図書館 日本法令索引 — 中小企業基本法（昭和38年7月20日 法律第154号）' },
+      { url: 'https://ja.wikipedia.org/wiki/高度経済成長', type: 'reference', label: 'Wikipedia — 高度経済成長（貿易自由化・GATT11条国移行）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -473,6 +605,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1955: { djiaYearEnd: 488.4, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1956: { djiaYearEnd: 499.47, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1957: { djiaYearEnd: 435.69, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1958: { djiaYearEnd: 583.65, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1959: { djiaYearEnd: 679.36, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1960: { djiaYearEnd: 615.89, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1961: { djiaYearEnd: 731.14, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1962: { djiaYearEnd: 652.1, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1963: { djiaYearEnd: 762.95, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
