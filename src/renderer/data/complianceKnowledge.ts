@@ -265,5 +265,39 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://support.freee.co.jp/hc/ja/articles/23391692865177', type: 'media', label: 'freee 消費税の簡易課税制度' },
     ],
   },
+  {
+    value: {
+      id: 'labor-paid-leave-5days',
+      domain: 'labor',
+      title: '年次有給休暇の年5日取得義務',
+      statement:
+        '2019年4月から、年次有給休暇が年10日以上付与される労働者に対し、使用者は年5日について' +
+        '時季を指定して取得させる義務がある（パート・アルバイトも対象）。違反は労働基準法違反として罰則の対象。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000463186.pdf', type: 'government', label: '厚生労働省 年5日の年次有給休暇の確実な取得' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/qa/zigyonushi/yukyu/q9.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 有給休暇' },
+      { url: 'https://www.aig.co.jp/kokokarakaeru/management/human-resource/yuukyu02', type: 'media', label: '有給休暇の年5日取得義務 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-blue-return-deduction',
+      domain: 'tax',
+      title: '青色申告特別控除（所得税）',
+      statement:
+        '複式簿記・貸借対照表/損益計算書の添付・期限内申告の要件を満たすと55万円。加えて e-Tax による' +
+        '電子申告または優良な電子帳簿の保存を満たすと65万円。簡易な記帳等は10万円の控除。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/pdf/0021010-076.pdf', type: 'government', label: '国税庁 青色申告特別控除' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru_sp/cat2/cat26/cat267/scid1688.html', type: 'government', label: '国税庁 65万円控除の適用要件' },
+      { url: 'https://www.freee.co.jp/kb/kb-blue-return/requirement/', type: 'media', label: 'freee 青色申告特別控除の要件' },
+    ],
+  },
 ];
 // Stryker restore all
