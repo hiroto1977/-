@@ -672,5 +672,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia — Knowledge gap hypothesis' },
     ],
   },
+  {
+    id: 'econ-tragedy-of-commons',
+    discipline: 'economics',
+    title: 'コモンズの悲劇（tragedy of the commons）',
+    statement:
+      '誰でも利用でき排除が困難だが消費が競合的な共有資源（共有地・漁場・水・大気など）について、各個人が自己の利益を最大化しようと利用を増やした結果、資源が過剰利用されて枯渇・劣化し、結局は全員が損をする状況。' +
+      '利用による便益は個人に帰属する一方コストは全利用者で共有されるため、個人にとって合理的な行動が集団全体には不利益をもたらす、個人と集団の合理性の衝突が本質である。米国の生態学者ギャレット・ハーディンが1968年の『Science』論文「The Tragedy of the Commons」で牧草地の例を用いて広く知らしめた。後にエリノア・オストロムが、共同体による自主的なルールや制度設計を通じてコモンズが持続的に管理されうることを実地調査に基づき実証し2009年にノーベル経済学賞を受賞、ハーディンの悲観的結論が普遍的ではなく限定的であることを示した。',
+    keyFigures: 'ギャレット・ハーディン（1968 Science 162:1243-1248）／エリノア・オストロム（自主管理を実証、2009ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.162.3859.1243', type: 'academic', label: 'Garrett Hardin (1968) The Tragedy of the Commons, Science 162(3859):1243-1248（原典）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/', type: 'government', label: 'NobelPrize.org — Elinor Ostrom 2009（コモンズの分析）' },
+      { url: 'https://www.britannica.com/science/tragedy-of-the-commons', type: 'reference', label: 'Encyclopaedia Britannica — Tragedy of the commons' },
+    ],
+  },
+  {
+    id: 'econ-sunk-cost',
+    discipline: 'economics',
+    title: 'サンクコスト（埋没費用）とサンクコストの誤謬',
+    statement:
+      'サンクコスト（埋没費用）とは既に支出され回収不能な費用を指す。経済学の基本原則では、合理的な意思決定は将来の限界的な費用と便益のみに基づくべきであり、回収不能な過去の費用は判断材料に含めるべきでない（過ぎたコストは無視する）。' +
+      'これは損失回避の状況で「悪い投資にさらに資金を投じる（throwing good money after bad）」ことを防ぐ。にもかかわらず、既に投じた費用を惜しんで「ここでやめると今までの投資が無駄になる」と考え非合理に事業や行動を継続してしまう傾向が「サンクコストの誤謬（sunk cost fallacy）」である。心理学者アークス＆ブルーマー（Arkes & Blumer 1985）が実験で実証し、コンコルド効果（Concorde fallacy）とも呼ばれる。',
+    keyFigures: '経済学の基本原則（将来の限界費用便益のみで判断）／Arkes & Blumer（1985, OBHDP 35(1):124-140）／別称: コンコルド効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/sunk-cost', type: 'reference', label: 'Encyclopaedia Britannica Money — Sunk cost' },
+      { url: 'https://ideas.repec.org/a/eee/jobhdp/v35y1985i1p124-140.html', type: 'academic', label: 'Arkes & Blumer (1985) The Psychology of Sunk Cost, OBHDP 35(1):124-140（RePEc）' },
+      { url: 'https://thedecisionlab.com/biases/the-sunk-cost-fallacy', type: 'reference', label: 'The Decision Lab — Sunk Cost Fallacy（コンコルド効果）' },
+    ],
+  },
+  {
+    id: 'human-dunning-kruger',
+    discipline: 'human-science',
+    title: 'ダニング＝クルーガー効果',
+    statement:
+      '能力の低い人ほど自分の能力を過大評価し、能力の高い人はむしろ過小評価する傾向があるとされる認知バイアス。ある領域で良い成績を出すために必要な能力は自分の成績を正しく評価するために必要な能力でもあるため、能力が欠如している人は同時に自分の不足を認識するメタ認知能力も欠き自己を過大評価してしまうと説明される。' +
+      '心理学者デイヴィッド・ダニングとジャスティン・クルーガーが1999年の論文「Unskilled and Unaware of It」(Journal of Personality and Social Psychology 77(6):1121-1134)で報告し、下位四分位の成績者が自身の順位を大きく過大評価した結果を示した。ただし近年は、観察されたパターンの少なくとも一部は平均への回帰や自己相関といった統計的アーティファクトで説明できるとする批判・再検証がある。',
+    keyFigures: 'デイヴィッド・ダニング & ジャスティン・クルーガー（1999, JPSP 77(6):1121-1134）／批判: Gignac & Zajenkowski（2020）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Dunning-Kruger-effect', type: 'reference', label: 'Encyclopaedia Britannica — Dunning-Kruger effect' },
+      { url: 'https://sites.lsa.umich.edu/sasi/wp-content/uploads/sites/275/2015/11/krugerdunning02.pdf', type: 'academic', label: 'Kruger & Dunning (1999) Unskilled and Unaware of It, JPSP 77(6):1121-1134（原典）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0160289620300271', type: 'academic', label: 'Gignac & Zajenkowski (2020) Intelligence — 統計的アーティファクト批判' },
+    ],
+  },
+  {
+    id: 'bizlaw-subcontract-act',
+    discipline: 'business-law',
+    title: '下請法（下請代金支払遅延等防止法）',
+    statement:
+      '親事業者による優越的地位の濫用から下請事業者を保護する独占禁止法の補完法（昭和31年法律第120号）。適用は「取引（委託）の内容」と「取引当事者の資本金区分」の2要件で決まり、対象取引は製造委託・修理委託・情報成果物作成委託・役務提供委託の4類型。' +
+      '親事業者には4つの義務（発注書面〔3条書面〕の交付、支払期日を給付の受領後60日以内に定めること、取引書類の作成・保存、支払遅延時の遅延利息の支払）を課し、11の禁止行為（受領拒否、下請代金の支払遅延、減額、返品、買いたたき、購入・利用強制、報復措置、有償支給原材料等の対価の早期決済、割引困難な手形の交付、不当な経済上の利益の提供要請、不当な給付内容の変更・やり直し）を定める。公正取引委員会と中小企業庁が共同で運用する。なお2025年5月成立の改正法が2026年1月1日施行で規制対象拡大・名称変更（通称「取適法」）を予定する（本項は確認できた従来枠組みの範囲で記載）。',
+    keyFigures: '下請代金支払遅延等防止法（昭和31年法律第120号）／公正取引委員会・中小企業庁（共同所管）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/shitauke/shitaukegaiyo/gaiyo.html', type: 'government', label: '公正取引委員会 — 下請法の概要' },
+      { url: 'https://www.jftc.go.jp/shitauke/shitaukegaiyo/oyakinsi.html', type: 'government', label: '公正取引委員会 — 親事業者の禁止行為（11項目）' },
+      { url: 'https://laws.e-gov.go.jp/document?lawid=331AC0000000120', type: 'government', label: 'e-Gov法令検索 — 下請代金支払遅延等防止法（法令ID 331AC0000000120）' },
+    ],
+  },
+  {
+    id: 'infosoc-gdpr-right-erasure',
+    discipline: 'information-sociology',
+    title: 'GDPRと忘れられる権利（消去権）',
+    statement:
+      'GDPR（EU一般データ保護規則, Regulation (EU) 2016/679）は2016年4月27日に採択され2018年5月25日に適用が開始されたEUの包括的個人データ保護法で、旧データ保護指令（95/46/EC）を置き換えた。' +
+      'EU域外の事業者にも及ぶ域外適用と、重大な違反に対し最大で全世界年間売上高の4%または2000万ユーロのいずれか高い方という高額の制裁金が特徴である。「忘れられる権利」は第17条「消去権（right to erasure / right to be forgotten）」として明文化され、データ主体は一定の要件（収集目的に照らし不要となった、同意を撤回した等）の下で自己の個人データの消去を管理者に求めうる。この概念の源流はEU司法裁判所（CJEU）が2014年5月13日に下したGoogle Spain判決（C-131/12）にある。ただし表現・情報の自由、公益目的の保存、報道・学術・統計目的等との調整のため例外も定められている。',
+    keyFigures: 'GDPR=Regulation (EU) 2016/679（2018/5/25適用）・第17条消去権／Google Spain判決（CJEU C-131/12, 2014/5/13）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng', type: 'government', label: 'Regulation (EU) 2016/679 — EUR-Lex（EU公式法令データベース原典）' },
+      { url: 'https://gdpr-info.eu/art-17-gdpr/', type: 'reference', label: 'Art. 17 GDPR — Right to erasure (right to be forgotten)' },
+      { url: 'https://globalfreedomofexpression.columbia.edu/cases/google-spain-sl-v-agencia-espanola-de-proteccion-de-datos-aepd/', type: 'academic', label: 'Columbia Global Freedom of Expression — Google Spain v. AEPD（C-131/12）' },
+    ],
+  },
+  {
+    id: 'mgmt-blue-ocean',
+    discipline: 'management',
+    title: 'ブルー・オーシャン戦略（Blue Ocean Strategy）',
+    statement:
+      '既存の競争が激しく価格・コストの消耗戦に陥った市場＝レッド・オーシャンを避け、競争のない未開拓の市場空間＝ブルー・オーシャンを創造して競争自体を無意味化する経営戦略論。' +
+      '差別化と低コストを同時に追求する「価値革新（バリュー・イノベーション）」を核とし、業界の競争要因を可視化する戦略キャンバスや、競争要因を除去(Eliminate)・削減(Reduce)・増加(Raise)・創造(Create)の4アクションで再構成するERRCグリッドなどのツールを用いる。W・チャン・キムとレネ・モボルニュ（ともにINSEAD教授）が、1880〜2000年の30超の業界における150の戦略的打ち手の研究をもとに2005年の著書『Blue Ocean Strategy』で体系化した。シルク・ドゥ・ソレイユ等が代表的事例とされる。',
+    keyFigures: 'W・チャン・キム & レネ・モボルニュ（2005『Blue Ocean Strategy』、INSEAD）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/blue-ocean-strategy-explained', type: 'reference', label: 'Encyclopaedia Britannica (Money) — Blue Ocean Strategy Explained' },
+      { url: 'https://knowledge.insead.edu/series/blue-ocean-strategy', type: 'academic', label: 'INSEAD Knowledge — Blue Ocean Strategy series（著者所属校の一次情報）' },
+      { url: 'https://www.emerald.com/insight/content/doi/10.1108/02756660510608521/full/html', type: 'academic', label: 'Kim & Mauborgne (2005) Value innovation: a leap into the blue ocean, J. of Business Strategy（Emerald 査読誌）' },
+    ],
+  },
 ];
 // Stryker restore all
