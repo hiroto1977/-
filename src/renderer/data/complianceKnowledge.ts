@@ -6574,5 +6574,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.freee.co.jp/kb/kb-healthcare/corporate-tax2026/', type: 'media', label: 'freee 防衛特別法人税とは 2026年から適用される新税制の概要' },
     ],
   },
+  {
+    value: {
+      id: 'labor-heatstroke-prevention-mandatory',
+      domain: 'labor',
+      title: '職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）',
+      statement:
+        '2025年（令和7年）6月1日に改正労働安全衛生規則が施行され、WBGT値28度以上又は気温31度以上の暑熱環境下で連続1時間以上又は1日4時間を超えて行うことが見込まれる作業について、事業者に熱中症対策が義務付けられた。' +
+        '具体的には、①作業者の自覚症状や他の作業者が熱中症の疑いを発見した場合に報告するための体制整備、②作業離脱・身体冷却・医療機関への搬送等、重篤化を防止するための措置の実施手順の作成、③これらの体制・手順の関係労働者への' +
+        '周知が求められる。違反には罰則も定められている。',
+      authority: '所管: 厚生労働省（労働基準局）。根拠: 改正労働安全衛生規則・通達 基発0520第6号',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/001490909.pdf', type: 'government', label: '厚生労働省 改正労働安全衛生規則の施行について（基発0520第6号）' },
+      { url: 'https://jsite.mhlw.go.jp/kumamoto-roudoukyoku/newpage_01552.html', type: 'government', label: '熊本労働局 熱中症対策が義務化されます（令和7年6月1日施行）' },
+      { url: 'https://www.city.kamaishi.iwate.jp/docs/2025052100056/', type: 'municipality', label: '釜石市 職場における熱中症対策強化（令和7年6月1日施行）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-subcontract-act-amendment-2026',
+      domain: 'legal',
+      title: '下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）',
+      statement:
+        '「下請代金支払遅延等防止法及び下請中小企業振興法の一部を改正する法律」が令和7年（2025年）5月16日に成立・同年5月23日に公布された。これにより下請法は「中小受託取引適正化法（取適法）」に改称され、令和8年（2026年）1月1日から施行される。' +
+        '主な見直しは、従業員数基準による規制・保護対象の拡充、買いたたきの判断要素として労務費・原材料費・エネルギーコスト等の上昇分の価格転嫁拒否（協議せず据え置くこと等）の明確化、協議に応じない一方的な代金決定の禁止、' +
+        '手形払い等（支払期日までに代金相当額を得ることが困難な支払手段）の禁止、運送委託の対象追加など。あわせて下請中小企業振興法も「受託中小企業振興法」へ改称される。',
+      authority: '所管: 公正取引委員会・中小企業庁（経済産業省）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/2025/250516shitauke.html', type: 'government', label: '中小企業庁 下請法等改正法が成立しました（令和7年5月16日）' },
+      { url: 'https://www.jftc.go.jp/toriteki_2025/', type: 'government', label: '公正取引委員会 取適法・振興法 特設ページ' },
+      { url: 'https://www.meti.go.jp/policy/kyoso_seisaku/20250625_shitaukekaisei.pdf', type: 'government', label: '経済産業省・公正取引委員会 中小受託取引適正化法（下請法改正法）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-worker-cooperative',
+      domain: 'legal',
+      title: '労働者協同組合法の施行（2022年10月1日・準則主義による新法人制度）',
+      statement:
+        '労働者協同組合法（令和2年法律第78号）は2022年（令和4年）10月1日に施行され、「労働者協同組合」という新たな法人制度を創設した。この法人は、①組合員が出資すること、②その事業を行うに当たり組合員の意見が適切に反映されること、' +
+        '③組合員が組合の事業に従事すること、を基本原理とする。設立に当たっては行政庁の認可を要せず、法律に定める要件を満たして登記することにより法人格を得られる準則主義が採られている。持続可能で活力ある地域社会の実現に資することを目的とする。',
+      authority: '所管: 厚生労働省（雇用環境・均等局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.roukyouhou.mhlw.go.jp/about', type: 'government', label: '厚生労働省 知りたい！労働者協同組合法' },
+      { url: 'https://www.mhlw.go.jp/content/11909000/001088310.pdf', type: 'government', label: '厚生労働省 労働者協同組合法リーフレット（令和4年10月1日施行）' },
+      { url: 'https://www.pref.aichi.jp/uploaded/attachment/504480.pdf', type: 'municipality', label: '愛知県 労働者協同組合 理解促進サポートブック' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-crypto-asset-valuation',
+      domain: 'tax',
+      title: '法人税における暗号資産の期末時価評価課税の見直し（令和5・6年度税制改正）',
+      statement:
+        '従来、法人が事業年度末に保有する活発な市場が存在する暗号資産（市場暗号資産）は時価評価が必要で評価損益（含み益を含む）が課税対象とされていた。令和5年度税制改正で、自己が発行し発行時から継続保有し継続して譲渡制限が付されている' +
+        '暗号資産（自己発行暗号資産）が期末時価評価の対象外（原価法）とされた。令和6年度税制改正では、他者が発行した市場暗号資産であっても一定の譲渡制限が付され継続保有される「特定譲渡制限付暗号資産」について時価法・原価法のいずれかを' +
+        '選定でき、原価法を選定すれば期末時価評価課税の対象外となった。Web3・ブロックチェーン関連事業の国内環境整備が目的。要件の細目は国税庁の法令・FAQで要確認。資金決済法に基づく暗号資産交換業の登録（金融庁所管）とは別の論点。',
+      authority: '所管: 国税庁（法人税法）／政策目的は経済産業省（Web3推進）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/L.pdf', type: 'government', label: '国税庁 令和6年度 法人税関係法令の改正の概要（暗号資産の評価方法の見直し）' },
+      { url: 'https://www.meti.go.jp/policy/economy/keiei_innovation/sangyokinyu/Web3/zeiseikaisei_results_R6.pdf', type: 'government', label: '経済産業省 Web3 第三者保有の暗号資産の期末時価評価課税の見直し' },
+      { url: 'https://www.pwc.com/jp/ja/knowledge/news/tax-jtu/20240710.html', type: 'media', label: 'PwC 暗号資産の評価方法の改正と届出 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-furusato-point-ban',
+      domain: 'tax',
+      title: 'ふるさと納税 ポイント付与する仲介サイト経由の募集禁止（2025年10月〜）',
+      statement:
+        '総務省は、ふるさと納税の指定基準（募集適正基準）を定めた告示を令和6年（2024年）6月28日付けで改正し、寄附に伴いポイント等の経済的利益の付与を行う者（仲介ポータルサイト等）を通じた寄附の募集を禁止した。この基準は令和7年（2025年）' +
+        '10月1日から適用され、実質的にポータルサイト各社の独自ポイント還元が禁止された。ポイント付与による寄附者の誘引や付与率競争の過熱が制度本来の趣旨に反し適正でないとして、制度趣旨に沿った適正化を目的とする（クレジットカード決済自体に付くカード会社の通常ポイントは対象外）。',
+      authority: '所管: 総務省（自治税務局市町村税課）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/menu_news/s-news/01zeimu04_02000126.html', type: 'government', label: '総務省 ふるさと納税の指定基準の見直し等' },
+      { url: 'https://www.soumu.go.jp/main_content/000955668.pdf', type: 'government', label: '総務省 募集適正基準 告示改正通知（総税市第65号）' },
+      { url: 'https://www.yamada-partners.jp/tax-topics/r070929', type: 'media', label: '山田&パートナーズ ふるさと納税ポイント付与禁止の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-premium-labeling-commitment-procedure',
+      domain: 'legal',
+      title: '景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行',
+      statement:
+        '不当景品類及び不当表示防止法の一部を改正する法律（令和5年法律第29号）は令和5年（2023年）5月17日に公布され、令和6年（2024年）10月1日に施行された。これにより、①違反被疑行為をした事業者が是正措置計画を自主的に作成・申請し' +
+        '内閣総理大臣（消費者庁）の認定を受ければ措置命令・課徴金納付命令の対象外とする「確約手続」が導入され、②優良誤認表示・有利誤認表示を故意に行う行為に対し直接100万円以下の罰金を科す「直罰規定」が新設された。さらに違反行為から遡り' +
+        '10年以内に課徴金納付命令を受けた事業者に課徴金額を1.5倍に加算する割増算定率等の見直しも行われた。別途2023年10月施行のステルスマーケティング規制（告示）とは異なる改正論点である。',
+      authority: '所管: 消費者庁（表示対策課）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/movie_explanation/assets/representation_cms216_240917_02.pdf', type: 'government', label: '消費者庁 令和6年10月1日施行 改正景品表示法の概要' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling', type: 'government', label: '消費者庁 景品表示法' },
+      { url: 'https://www.businesslawyers.jp/articles/1312', type: 'media', label: 'BUSINESS LAWYERS 令和5年景表法改正 確約手続・直罰規定の導入 解説' },
+    ],
+  },
 ];
 // Stryker restore all
