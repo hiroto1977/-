@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="5870" height="620" viewBox="0 0 5870 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="5870" height="620" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="6590" height="620" viewBox="0 0 6590 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="6590" height="620" fill="#0f172a"/>
 <text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
 <text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
-<line x1="60" y1="360" x2="5830" y2="360" stroke="#475569" stroke-width="1.5"/>
-<line x1="60" y1="334" x2="5830" y2="334" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="386" x2="5830" y2="386" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="360" x2="6550" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="6550" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="6550" y2="386" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
 <text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
-<line x1="60" y1="308" x2="5830" y2="308" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="412" x2="5830" y2="412" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="308" x2="6550" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="6550" y2="412" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
-<line x1="60" y1="282" x2="5830" y2="282" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="438" x2="5830" y2="438" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="282" x2="6550" y2="282" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="438" x2="6550" y2="438" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="286" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="442" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="272" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
@@ -257,9 +257,39 @@
 <text x="5770" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1987</text>
 <text x="5770" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">昭和62年</text>
 <text x="5770" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 5770 526)">NTT株上場（2/9）／ルーブル合意（2/22、為替安定化で協調）</text>
+<rect x="5868" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="5868" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="5890" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1988</text>
+<text x="5890" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">昭和63年</text>
+<text x="5890" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 5890 526)">ブラックマンデー（1987/10）からの回復定着、米景気拡大が6年目に継続</text>
+<rect x="5988" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="5988" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6010" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1989</text>
+<text x="6010" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">昭和64/平成元年</text>
+<text x="6010" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6010 526)">昭和天皇崩御（1/7）→「平成」改元（1/8）</text>
+<rect x="6108" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6108" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6130" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1990</text>
+<text x="6130" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成2年</text>
+<text x="6130" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6130 526)">東西ドイツ統一（10/3）</text>
+<rect x="6228" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6228" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6250" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1991</text>
+<text x="6250" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成3年</text>
+<text x="6250" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6250 526)">湾岸戦争（1〜2月「砂漠の嵐」作戦）でクウェート解放</text>
+<rect x="6348" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6348" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6370" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1992</text>
+<text x="6370" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成4年</text>
+<text x="6370" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6370 526)">マーストリヒト条約調印（2月）—EU・経済通貨同盟の枠組み</text>
+<rect x="6468" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="6468" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="6490" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1993</text>
+<text x="6490" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成5年</text>
+<text x="6490" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 6490 526)">クリントン米大統領就任（1月）、米景気回復が本格化</text>
 <rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
 <text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
 <rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
 <text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
-<text x="5830" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+<text x="6550" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
 </svg>

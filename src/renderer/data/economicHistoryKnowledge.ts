@@ -1093,6 +1093,144 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.nikkei.com/article/DGKKZO85024940Z20C15A3KB2000/', type: 'media', label: '日本経済新聞 — 1987年4月1日 国鉄が分割・民営化' },
     ],
   },
+  {
+    year: 1988,
+    era: '昭和63年',
+    world:
+      '1987年10月のブラックマンデーからの回復が定着し、米景気拡大は6年目に入った。レーガン政権下で実質成長は力強く（実質GNP成長は概ね4%台半ば）、インフレは沈静化し失業率も低下基調で、株価暴落は実体経済への一時的な調整にとどまった。DJIAは年間約+11.8%上昇して年末2,168.57で越年した。',
+    japan:
+      'プラザ合意後の超低金利・過剰流動性を背景にバブル景気が本格化し、地価・株価が急騰、日経平均は大納会で30,159円（前年末比約+40%）まで上昇した。経済企画庁の昭和63年度年次経済報告は「内需主導型成長」の達成を掲げ、輸出主導から内需主導の好況へ転換した。一方で6月にリクルート事件が発覚し政官界を直撃、竹下内閣は内需刺激の象徴として全市区町村へ一律1億円を交付する「ふるさと創生事業」を始めた。',
+    keyEvents: [
+      'ブラックマンデー（1987/10）からの回復定着、米景気拡大が6年目に継続',
+      '日本のバブル景気が本格化—地価・株価が急騰、日経平均が年間約+40%上昇',
+      'リクルート事件発覚（6/18）—戦後最大級の汚職事件に発展',
+      'ふるさと創生事業（竹下内閣）—全市区町村へ一律1億円交付',
+      '昭和63年度年次経済報告が「内需主導型成長」の達成を宣言',
+    ],
+    risingSectors: ['（日本）不動産・建設（地価急騰）、銀行・証券などの金融（過剰流動性・財テク）、内需・消費関連、自動車・エレクトロニクスなどの製造業（好況下で堅調）'],
+    decliningSectors: ['好況局面のため明確に縮小した業種を独立2源以上で特定できず（捏造せず）。輸出比率は内需転換で低下傾向。'],
+    caveats: 'DJIA年末値2168.57（12/30終値、12/31は土曜で休場・年間約+11.8%）と日経平均年末値30159.00（大納会・翌年大発会始値30,165.52と整合）は独立2源で一致。1988年の実質成長率は高水準だが出典・指標（GNP/GDP）により概ね5〜7%と幅があり、本文では概数表現に留める。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www5.cao.go.jp/keizai3/keizaiwp/wp-je88/wp-je88-000i1.html', type: 'government', label: '内閣府（経済企画庁）— 昭和63年度 年次経済報告（内需主導型成長）' },
+      { url: 'https://www.mofa.go.jp/policy/other/bluebook/1988/1988-2-2.htm', type: 'government', label: 'MOFA 外交青書1988 — 内需主導成長・需要項目別成長率' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%83%AA%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%88%E4%BA%8B%E4%BB%B6', type: 'reference', label: 'Wikipedia（日本語）— リクルート事件（1988/6/18発覚）' },
+    ],
+  },
+  {
+    year: 1989,
+    era: '昭和64/平成元年',
+    world:
+      '冷戦終結が劇的に進み、6月の天安門事件、11月9日のベルリンの壁崩壊、12月のマルタ会談（冷戦終結宣言）が相次いだ。米経済は拡大を続け、DJIAは年間約+27%上昇して年末2,753.20で越年した。インフレ警戒から各国が金融引き締めに転じる局面となった。',
+    japan:
+      '1月7日に昭和天皇が崩御し翌8日に「平成」へ改元、4月1日に税率3%の消費税が初めて導入された。バブル景気の絶頂で、日経平均は12月29日の大納会で史上最高値38,915.87円（取引時間中38,957.44円）を記録した。資産価格高騰を受け日銀は5月から公定歩合の引き上げに転じ、金融引き締めへ方針転換した。',
+    keyEvents: [
+      '昭和天皇崩御（1/7）→「平成」改元（1/8）',
+      '消費税3%を初導入（4/1）',
+      '天安門事件（6/4）／ベルリンの壁崩壊（11/9）／マルタ会談（12月・冷戦終結）',
+      '日経平均が史上最高値38,915.87円（12/29 大納会）',
+      '日銀が公定歩合引き上げに転換（5月〜）、金融引き締めへ',
+    ],
+    risingSectors: ['（日本）不動産・建設、銀行・証券などの金融（バブル絶頂・財テク）、内需・消費関連、レジャー・リゾート'],
+    decliningSectors: ['バブル絶頂の好況局面のため明確に縮小した業種を独立2源以上で特定できず（捏造せず）。'],
+    caveats: 'DJIA年末値2753.20と日経平均年末値38915.87（12/29大納会の史上最高値・終値）はいずれも広く一致する確証値。消費税導入は税率3%。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/fall-of-the-berlin-wall', type: 'government', label: 'Federal Reserve History — Fall of the Berlin Wall（1989/11/9）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%96%E3%83%AB%E6%99%AF%E6%B0%97', type: 'reference', label: 'Wikipedia（日本語）— バブル景気（日経平均38,915.87円・1989/12/29）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/02.htm', type: 'government', label: '国税庁 — 消費税の沿革（1989/4/1 税率3%で導入）' },
+    ],
+  },
+  {
+    year: 1990,
+    era: '平成2年',
+    world:
+      '10月3日に東西ドイツが統一され、欧州の冷戦構造が解消へ向かった。8月にイラクがクウェートに侵攻して湾岸危機が発生し、原油価格が急騰した。米国は年央から景気後退（1990/7〜1991/3）に入り、DJIAは年末2,633.66とおおむね横ばいで越年した。',
+    japan:
+      'バブル崩壊の起点となった年。日銀は資産価格抑制のため公定歩合を引き上げ、8月には6.0%へ到達した。3月27日には大蔵省が不動産向け融資の「総量規制」を通達し、株価は年初から急落、日経平均は年末23,848円とピーク（前年末38,915円）から約4割下落した。地価下落はやや遅れて顕在化していく。',
+    keyEvents: [
+      '東西ドイツ統一（10/3）',
+      'イラクのクウェート侵攻＝湾岸危機（8/2）、原油価格急騰',
+      '日銀が公定歩合を6.0%へ引き上げ（8月）—金融引き締め強化',
+      '大蔵省が不動産向け融資の総量規制を通達（3/27）',
+      '株バブル崩壊—日経平均が年間で約4割下落',
+    ],
+    risingSectors: ['（世界）石油・エネルギー（湾岸危機による原油高、定性）'],
+    decliningSectors: ['（日本）不動産・建設、銀行・証券などの金融（総量規制・株価急落）、財テク依存企業。（米国）景気後退局面で広範に減速。'],
+    caveats: 'DJIA年末値2633.66と日経平均年末値23848（前年末38,915円からの大幅下落）は独立2源で一致。総量規制は1990/3/27の大蔵省通達（行政指導）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/gulf-war', type: 'government', label: 'Federal Reserve History — 1990-91景気後退・湾岸戦争' },
+      { url: 'https://en.wikipedia.org/wiki/Japanese_asset_price_bubble', type: 'reference', label: 'Wikipedia — Japanese asset price bubble（1990年の株価下落・総量規制）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%83%89%E3%82%A4%E3%83%84%E5%86%8D%E7%B5%B1%E4%B8%80', type: 'reference', label: 'Wikipedia（日本語）— ドイツ再統一（1990/10/3）' },
+    ],
+  },
+  {
+    year: 1991,
+    era: '平成3年',
+    world:
+      '1〜2月の湾岸戦争（多国籍軍「砂漠の嵐」作戦）でクウェートが解放され、原油高は短期で沈静化した。米国は1990/7〜1991/3の景気後退（S&L危機・不動産バブル崩壊が背景）から回復局面に入った。12月25日にゴルバチョフが辞任しソ連が正式に解体、CIS（独立国家共同体）が成立して冷戦が最終的に終結した。DJIAは年末3,168.83で越年した。',
+    japan:
+      'バブル景気（1986/12〜1991/2、51か月）が1991年2月の「景気の山」で終わり後退局面に入った。これが第1次平成不況・「失われた10年」の起点で、株価・地価の本格的な下落と資産デフレが進行した。証券業界では大手による大口顧客への損失補填問題と暴力団取引が発覚し、四大証券の社長辞任・営業自粛処分に発展、金融システムへの不安が広がった。',
+    keyEvents: [
+      '湾岸戦争（1〜2月「砂漠の嵐」作戦）でクウェート解放',
+      'ソ連崩壊（12/25 ゴルバチョフ辞任・CIS成立）—冷戦の最終的終結',
+      '米景気後退（1990/7〜1991/3）からの回復開始',
+      'バブル景気の終焉（1991年2月が景気の山）—平成不況の始まり',
+      '証券損失補填問題・暴力団取引発覚—四大証券の社長辞任・営業自粛処分',
+    ],
+    risingSectors: ['（日本）相対的に底堅いとされたディフェンシブ業種（公益・生活必需、定性）'],
+    decliningSectors: ['（日本）不動産・建設（地価下落の本格化）、銀行・証券・ノンバンク（株安・損失補填・不良債権の萌芽）。（米国）金融（S&L危機）・不動産。'],
+    caveats: 'DJIA年末値3168.83と日経平均年末値22983.77（≈22,984、1991/12/30大納会）は独立2源で一致。ソ連解体は段階的事象だが12/25-26を確定的解体時点とする一般的整理に依拠。損失補填の金額は出典で幅があり確定値は採用せず。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Japanese_asset_price_bubble', type: 'reference', label: 'Wikipedia — Japanese asset price bubble（日経225が1991/12/30に22,984へ）' },
+      { url: 'https://nsarchive.gwu.edu/briefing-book/russia-programs/2021-12-21/end-soviet-union-1991', type: 'academic', label: 'National Security Archive（GWU）— The End of the Soviet Union 1991' },
+      { url: 'https://www.upi.com/Archives/1991/09/25/Big-Four-securities-firms-punished-for-role-in-scandal/6364685771200/', type: 'media', label: 'UPI Archives（1991/9/25）— 四大証券の損失補填・暴力団取引と処分' },
+    ],
+  },
+  {
+    year: 1992,
+    era: '平成4年',
+    world:
+      '欧州の通貨混乱が中心の年。2月にマーストリヒト条約が調印されEU・単一通貨への道筋が引かれたが、ERM（欧州為替相場メカニズム）通貨に投機が集中し、9月16日「ブラック・ウェンズデー」で英ポンドがERMを離脱（伊リラも離脱）した。米国は景気回復の遅れを背景に11月の大統領選でクリントンが現職ブッシュを破り当選した。DJIAは年末3,301.11で越年した。',
+    japan:
+      'バブル崩壊後の調整が深刻化した「複合不況（平成不況）」の年。株価・地価がともに続落し、日経平均は8月に一時14,000円台へ急落、公示地価（全国全用途平均）が17年ぶりに下落へ転じた。金融機関の不良債権問題が表面化しBIS自己資本比率規制も重なって「貸し渋り」が問題化、宮沢内閣は8月28日に事業規模約10.7兆円の総合経済対策を決定した。',
+    keyEvents: [
+      'マーストリヒト条約調印（2月）—EU・経済通貨同盟の枠組み',
+      'ブラック・ウェンズデー（9/16）—英ポンドがERM離脱、欧州通貨危機',
+      'クリントンが米大統領選で当選（11月）',
+      '日経平均が8月に一時14,000円台へ急落、公示地価が17年ぶり下落',
+      '宮沢内閣が総合経済対策（事業規模約10.7兆円）を決定（8/28）',
+    ],
+    risingSectors: ['（日本）総合経済対策による公共事業・建設関連の下支え（定性）'],
+    decliningSectors: ['（日本）不動産・建設（資産デフレ直撃）、銀行・ノンバンク（不良債権増大）、証券（売買低迷）、内需依存の製造業・設備投資関連。'],
+    caveats: 'DJIA年末値3301.11は独立3源（macrotrends/fedprimerate/statmuse）で一致。日経平均年末値16924（≈16,924.95、前年比約-26%）は独立3源で整数一致、端数は単一資料依存のため概数扱い。8月の安値は「14,000円台」で複数源一致だが最安値の正確な日付・値は概数表現に留める。不良債権額は定義・時点で大きく異なり確定値は採用せず。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Black_Wednesday', type: 'reference', label: 'Wikipedia — Black Wednesday（1992/9/16 ポンドERM離脱）' },
+      { url: 'https://www.mof.go.jp/pri/publication/policy_history/series/h1-12/1_2_5.pdf', type: 'government', label: '財務省財務総合政策研究所 — 財政金融政策史（不良債権・地価/株価下落）' },
+      { url: 'https://en.wikipedia.org/wiki/Japanese_asset_price_bubble', type: 'reference', label: 'Wikipedia — Japanese asset price bubble（日経1992年末≈16,924）' },
+    ],
+  },
+  {
+    year: 1993,
+    era: '平成5年',
+    world:
+      '米国は1990-91年景気後退後の「雇用なき回復」を脱し、1月発足のクリントン政権下で回復が定着していった。欧州では11月1日にマーストリヒト条約が発効し欧州連合（EU）が正式に成立した。インフレ鈍化と金利低下が米株高を後押しし、DJIAは年末3,754.09と当時の史上最高値圏で越年した。',
+    japan:
+      'バブル崩壊後の複合不況が継続。記録的な円高が進行し夏場には1ドル=100円台前半（8月平均≒103.77円）まで急騰して輸出企業を圧迫した。8月に細川護熙を首相とする非自民連立内閣が発足し、1955年以来38年続いた自民党単独政権＝55年体制が崩壊した。記録的冷夏による作況不良で米が不足し（平成の米騒動）、政府はタイ・中国・米国などから合計約259万トンを緊急輸入した。',
+    keyEvents: [
+      'クリントン米大統領就任（1月）、米景気回復が本格化',
+      '細川連立内閣発足（8月）→ 55年体制（自民党単独政権）崩壊',
+      'マーストリヒト条約発効（11/1）—欧州連合（EU）正式成立',
+      '記録的冷夏による米不足「平成の米騒動」—政府が米を緊急輸入（約259万トン）',
+      '円高進行—夏に一時1ドル=100円台前半に到達',
+    ],
+    risingSectors: ['（米国）金利低下を背景とした住宅・自動車・設備投資関連、株式市場全般（DJIA最高値圏）、情報技術・ハイテク（90年代成長サイクルの起点、定性）'],
+    decliningSectors: ['（日本）円高直撃の輸出製造業（自動車・電機など）、不動産・金融（不良債権・資産デフレ継続）、米作・農業（冷夏による不作）。'],
+    caveats: 'DJIA年末値3754.09（年間約+13.7%）は複数の検索源で一致。日経平均年末値は参照したデータ集約サイトが一律WebFetch 403で≥2独立源の数値一致を確認できなかったため、捏造回避としてnull（資産系列でもN/A）。円相場は8月平均≒103.77円で「100円台前半に到達」と保守的に記述。業種別ランキングは一次順位データ未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.history.com/this-day-in-history/november-1/european-union-goes-into-effect', type: 'media', label: 'HISTORY — European Union officially established（マーストリヒト発効 1993/11/1）' },
+      { url: 'https://ja.wikipedia.org/wiki/1993%E5%B9%B4%E7%B1%B3%E9%A8%92%E5%8B%95', type: 'reference', label: 'Wikipedia（日本語）— 1993年米騒動（平成の米騒動・緊急輸入259万トン）' },
+      { url: 'https://www.brookings.edu/articles/retrospective-on-american-economic-policy-in-the-1990s/', type: 'academic', label: 'Brookings — Retrospective on American Economic Policy in the 1990s' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1163,6 +1301,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1985: { djiaYearEnd: 1546.67, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1986: { djiaYearEnd: 1895.95, nikkeiYearEnd: 18701, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1987: { djiaYearEnd: 1938.83, nikkeiYearEnd: 21564.0, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1988: { djiaYearEnd: 2168.57, nikkeiYearEnd: 30159.0, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1989: { djiaYearEnd: 2753.2, nikkeiYearEnd: 38915.87, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1990: { djiaYearEnd: 2633.66, nikkeiYearEnd: 23848, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1991: { djiaYearEnd: 3168.83, nikkeiYearEnd: 22983.77, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1992: { djiaYearEnd: 3301.11, nikkeiYearEnd: 16924, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1993: { djiaYearEnd: 3754.09, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
