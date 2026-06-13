@@ -178,5 +178,23 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.rshd.co.jp/news/saiyou-kaitei.html', type: 'media', label: '最低賃金ランキング解説' },
     ],
   },
+  {
+    value: {
+      id: 'legal-subcontract-act',
+      domain: 'legal',
+      title: '親事業者の義務・禁止行為（下請代金支払遅延等防止法／下請法）',
+      statement:
+        '親事業者は、発注書面（3条書面）の交付・取引書類の作成保存（2年）・下請代金の支払期日を給付受領日から' +
+        '60日以内に定めること・遅延時の遅延利息支払 等の義務を負う。受領拒否、下請代金の減額・支払遅延、返品、' +
+        '買いたたき、報復措置 等が禁止行為として定められている。',
+      authority: '所管: 公正取引委員会・中小企業庁（下請代金支払遅延等防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/shitauke/shitaukegaiyo/oyakinsi.html', type: 'government', label: '公正取引委員会 親事業者の禁止行為' },
+      { url: 'https://www.gov-online.go.jp/tokusyu/shitauke/', type: 'government', label: '政府広報オンライン 下請法' },
+      { url: 'https://roudou-sos.jp/subcontract-act/', type: 'media', label: 'みらい総合法律事務所 解説' },
+    ],
+  },
 ];
 // Stryker restore all
