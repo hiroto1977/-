@@ -1980,5 +1980,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.seikatsu.city.nagoya.jp/soudan/pickup/article/4', type: 'municipality', label: '名古屋市消費生活センター 特定継続的役務提供' },
     ],
   },
+  {
+    value: {
+      id: 'tax-corp-tax-return-deadline',
+      domain: 'tax',
+      title: '法人税の確定申告・納付期限',
+      statement:
+        '法人税の確定申告書は、原則として各事業年度終了の日の翌日から2か月以内に提出し、同期限までに納付しなければならない。' +
+        '会計監査人監査等で決算が確定しない場合等は、申告期限の延長の特例（申請により原則1か月、一定の場合さらに延長）があるが、納付期限自体は延長されない。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/shinkoku/01.htm', type: 'government', label: '国税庁 C1-1 法人税の申告' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_12.htm', type: 'government', label: '国税庁 C1-17 申告期限の延長の特例' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/21077/', type: 'media', label: '法人税の申告期限 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-retirement-income',
+      domain: 'tax',
+      title: '退職所得の課税（退職金にかかる所得税）',
+      statement:
+        '退職所得は原則として（収入金額−退職所得控除額）×1/2で計算され、他の所得と分離して課税される。退職所得控除額は勤続年数に応じ、' +
+        '勤続20年以下は40万円×勤続年数、20年超は800万円＋70万円×(勤続年数−20年)で計算する。' +
+        '「退職所得の受給に関する申告書」を支払者に提出していれば、原則として源泉徴収だけで課税関係が完結する。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1420.htm', type: 'government', label: '国税庁 No.1420 退職金を受け取ったとき' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2732.htm', type: 'government', label: '国税庁 No.2732 退職手当等に対する源泉徴収' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/02_3.htm', type: 'government', label: '国税庁 暮らしの税情報 退職金と税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-36-agreement',
+      domain: 'labor',
+      title: '36協定（時間外・休日労働に関する労使協定）',
+      statement:
+        '法定労働時間（原則1日8時間・週40時間）を超える時間外労働や法定休日労働を行わせるには、労働者の過半数代表等との書面による' +
+        '労使協定（36協定）を締結し、所轄労働基準監督署長に届け出ることが必要である（労基法36条）。36協定で延長できる時間外労働には' +
+        '上限規制があり、原則として月45時間・年360時間が限度とされる。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/shinsai_jouhou/koyou_roudou/2r9852000001auw2.html', type: 'government', label: '厚生労働省 労働基準法36条について' },
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/overtime.html', type: 'government', label: '厚生労働省 働き方改革 時間外労働の上限規制' },
+      { url: 'https://www.startup-roudou.mhlw.go.jp/36_pact.html', type: 'government', label: '厚生労働省 スタートアップ労働条件 36協定' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-dismissal-abuse',
+      domain: 'labor',
+      title: '解雇権濫用法理（労働契約法16条）',
+      statement:
+        '解雇は、客観的に合理的な理由を欠き、社会通念上相当であると認められない場合は、その権利を濫用したものとして無効となる' +
+        '（労働契約法16条）。これは解雇全般に及ぶ法理であり、解雇予告（30日前予告・労基法20条）とは別個の規制である。',
+      authority: '所管: 厚生労働省（労働契約法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73aa9536', type: 'government', label: '厚生労働省 法令データベース 労働契約法' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudoukeiyaku01/dl/11_0003.pdf', type: 'government', label: '厚生労働省 労働契約法16条 権利濫用に該当する解雇' },
+      { url: 'https://www.konishilaw.jp/column/7862/', type: 'media', label: '解雇権濫用の法理 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-business-opportunity-sales',
+      domain: 'legal',
+      title: '業務提供誘引販売取引（内職商法・モニター商法）',
+      statement:
+        '業務提供誘引販売取引とは、「提供する仕事で収入が得られる」と勧誘し、その仕事に必要だとして商品等を販売し金銭負担を' +
+        '負わせる取引で、特定商取引法の規制対象として概要書面・契約書面の交付義務がある。消費者は契約書面を受け取った日から' +
+        '20日間、書面または電磁的方法によりクーリング・オフができる。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/businessopportunity/', type: 'government', label: '消費者庁 特定商取引法ガイド 業務提供誘引販売取引' },
+      { url: 'https://www.shouhiseikatu.metro.tokyo.lg.jp/torihiki/f_tori/tokushohou/t_gyomu.html', type: 'municipality', label: '東京くらしWEB 業務提供誘引販売取引' },
+      { url: 'https://www.pref.okayama.jp/site/syohi/mame-advice-gyoumuteikyou.html', type: 'municipality', label: '岡山県消費生活センター 業務提供誘引販売取引' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-negative-option',
+      domain: 'legal',
+      title: '送り付け商法（ネガティブオプション）',
+      statement:
+        '注文や契約をしていないのに一方的に送り付けられた商品（売買契約に基づかないで送付された商品）は、令和3年の特定商取引法改正' +
+        '（2021年7月6日施行）により、受け取った側は直ちに自由に処分できる（従来必要だった14日間の保管が不要となった）。' +
+        '売買契約は成立しておらず、代金を支払う義務はない。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/notice/index.html', type: 'government', label: '消費者庁 送り付け商法 その商品は直ちに処分できます' },
+      { url: 'https://www.no-trouble.caa.go.jp/qa/negativeoption.html', type: 'government', label: '消費者庁 売買契約に基づかないで送付された商品 Q&A' },
+      { url: 'https://www.kokusen.go.jp/soudan_topics/data/negative_option.html', type: 'media', label: '国民生活センター 送り付け（ネガティブオプション）' },
+    ],
+  },
 ];
 // Stryker restore all
