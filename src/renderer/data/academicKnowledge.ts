@@ -942,5 +942,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.1007/s44382-025-00016-x', type: 'academic', label: 'Springer Nature, Communication and Change (2025) — agenda-setting研究の系譜 1972-2025' },
     ],
   },
+  {
+    id: 'econ-natural-monopoly',
+    discipline: 'economics',
+    title: '自然独占（natural monopoly）',
+    statement:
+      '巨大な固定費（インフラ設備など）と規模の経済により、市場全体の需要を1社が供給する方が複数社で分割供給するよりも平均費用が低くなり、結果として1社による独占が自然に成立する市場構造。生産量が増えるほど平均費用が逓減する「費用逓減産業」で生じ、後発の新規参入は費用面で不利となるため困難である。' +
+      '電気・ガス・水道・鉄道・固定通信網などネットワーク型インフラが典型例である。1社独占は価格のつり上げや過少供給といった弊害を招きうるため、料金規制（公正報酬率規制など）や公益事業規制、公的所有といった政策がとられてきた。近年は、独占性の強い設備（ボトルネック）部分と競争導入が可能なサービス部分とを分離するアンバンドリング（構造分離・第三者アクセス）も用いられる。',
+    keyFigures: '産業組織論・規制経済学の中心概念／J.S.ミル『経済学原理』(1848)が初期に議論／基礎: 規模の経済・費用逓減産業',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://courses.lumenlearning.com/wm-microeconomics/chapter/reading-regulating-natural-monopolies/', type: 'academic', label: 'Lumen Learning, Microeconomics — Regulating Natural Monopolies（大学教材）' },
+      { url: 'https://opentextbc.ca/principlesofeconomics/chapter/11-3-regulating-natural-monopolies/', type: 'academic', label: 'OpenStax/BCcampus, Principles of Economics 11.3 — Regulating Natural Monopolies' },
+      { url: 'https://en.wikipedia.org/wiki/Natural_monopoly', type: 'reference', label: 'Wikipedia — Natural monopoly（固定費優位・規模の経済）' },
+    ],
+  },
+  {
+    id: 'econ-laffer-curve',
+    discipline: 'economics',
+    title: 'ラッファー曲線（Laffer curve）',
+    statement:
+      '税率と税収の関係を示す曲線。税率0%では税収はゼロであり、税率100%でも労働・生産・投資のインセンティブが消失して課税対象が縮小するため税収はゼロに近づく。したがってその間に税収を最大化する税率が存在し、曲線は逆U字型（山型）になるという考え方である。' +
+      '税率がこの最適点を超えて高い領域では、減税がかえって税収を増やしうると主張され、1980年代の供給側経済学（レーガノミクス）の理論的根拠の一つとなった。米国の経済学者アーサー・ラッファーにちなんで名付けられたが、ラッファー自身はこの着想の起源を14世紀のイブン・ハルドゥーンやJ.M.ケインズらに帰しており自らの発明ではないとしている。ただし税収最大化税率の具体的水準は学説により大きく異なり（推計は概ね30%台〜70%程度に分散）、現実の多くの先進国の税率が実際にその点を超えているかについては実証的な異論が多い。',
+    keyFigures: 'アーサー・ラッファー（1970年代に普及）／供給側経済学／着想の先駆: イブン・ハルドゥーン（14世紀）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Laffer-curve', type: 'reference', label: 'Encyclopaedia Britannica — Laffer curve' },
+      { url: 'https://en.wikipedia.org/wiki/Laffer_curve', type: 'reference', label: 'Wikipedia — Laffer curve（起源・批判・実証推計）' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_2088-1', type: 'academic', label: 'The New Palgrave Dictionary of Economics (Springer) — Laffer curve' },
+    ],
+  },
+  {
+    id: 'mgmt-learning-organization',
+    discipline: 'management',
+    title: '学習する組織（learning organization）',
+    statement:
+      '組織自体が継続的に学習し、環境変化に適応しながら自己変革していく能力を備えた組織像。MITスローン経営大学院のピーター・センゲが1990年の著書『The Fifth Discipline: The Art and Practice of the Learning Organization』（邦題『最強組織の法則』／改訳『学習する組織』）で提示した。' +
+      'センゲは学習する組織の実現に必要な5つのディシプリン（修練）として、(1)自己マスタリー、(2)メンタルモデル、(3)共有ビジョン、(4)チーム学習、(5)システム思考を挙げた。第5の「システム思考」が中核（cornerstone）であり、これが他の4つを統合する。問題を要素還元的にではなく、相互関係から成る全体構造として捉えることを重視する。組織学習論の代表的理論で、アージリス＆ショーンのシングルループ／ダブルループ学習とも関連する。',
+    keyFigures: 'ピーター・M・センゲ（1990『The Fifth Discipline』、MIT）／関連: アージリス&ショーン（ダブルループ学習）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitsloan.mit.edu/faculty/directory/peter-m-senge', type: 'academic', label: 'MIT Sloan School of Management — Peter M. Senge 教員ページ（一次）' },
+      { url: 'https://systemdynamics.org/product/the-fifth-discipline/', type: 'academic', label: 'System Dynamics Society — The Fifth Discipline 書誌' },
+      { url: 'https://en.wikipedia.org/wiki/The_Fifth_Discipline', type: 'reference', label: 'Wikipedia — The Fifth Discipline（5つのディシプリン）' },
+    ],
+  },
+  {
+    id: 'human-groupthink',
+    discipline: 'human-science',
+    title: '集団思考（グループシンク, groupthink）',
+    statement:
+      '結束の強い集団において、メンバーの合意・調和への希求が現実的な代替案の批判的検討を上回り、不合理または危険な意思決定に至る心理現象。社会心理学者アーヴィング・ジャニスが1972年の著書『Victims of Groupthink』（1982年に『Groupthink』として改訂）で提唱し、真珠湾攻撃の予見失敗、ピッグス湾事件、ベトナム戦争のエスカレーション等の政策的失敗を分析した。' +
+      'ジャニスは8つの症状を挙げ、無謬性の幻想、集団の決定の集団的合理化、集団の道徳性への無批判な信奉、相手集団のステレオタイプ化、自己検閲、満場一致の幻想、反対者への同調圧力、マインドガード（不都合な情報の遮断）を含むとした。予防策として悪魔の代弁者の設置や外部意見の導入が提案される。後にチャレンジャー号事故等でも援用されたが、実証研究の支持は限定的・混在的との批判もある。',
+    keyFigures: 'アーヴィング・ジャニス（Irving L. Janis, 1972提唱／1982改訂）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/groupthink', type: 'reference', label: 'Encyclopaedia Britannica — Groupthink' },
+      { url: 'https://www.britannica.com/topic/Victims-of-Groupthink-A-Psychological-Study-of-Foreign-Policy-Decisions-and-Fiascoes', type: 'reference', label: 'Encyclopaedia Britannica — Victims of Groupthink（原著解説）' },
+      { url: 'https://med.stanford.edu/content/dam/sm/pedsendo-1/documents/Groupthink_by_Iriving_L_Janis_Summary_pd.pdf', type: 'academic', label: 'Stanford Medicine — Groupthink 原著要約（1982年版定義）' },
+    ],
+  },
+  {
+    id: 'bizlaw-cooling-off',
+    discipline: 'business-law',
+    title: 'クーリング・オフ（特定商取引法）',
+    statement:
+      '訪問販売や電話勧誘販売など不意打ち的でトラブルの多い取引類型について、契約後一定期間内であれば消費者が理由を問わず無条件で契約の申込みの撤回・解除をできる制度で、特定商取引法等が定める。' +
+      '期間は取引類型で異なり、訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は法定書面（申込書面または契約書面）の交付日を1日目として8日間、連鎖販売取引（マルチ商法）・業務提供誘引販売取引は20日間である。通信販売には法律上のクーリング・オフ制度はなく、返品の可否は事業者の返品特約（広告に特約がなければ商品受取日から8日間返品可・送料は消費者負担）による。店舗での自発的な購入も原則対象外。2022年6月1日からは書面に加え電子メール等の電磁的記録による通知も可能になった。消費者庁・国民生活センターが制度の普及啓発を担う。',
+    keyFigures: '特定商取引法のクーリング・オフ（書面交付日起算8日間／20日間）／消費者庁・国民生活センター',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド — 特定商取引法とは（類型別クーリング・オフ期間）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター — クーリング・オフ（テーマ別特集）' },
+      { url: 'https://www.no-trouble.caa.go.jp/qa/coolingoff.html', type: 'government', label: '消費者庁 — 電磁的記録によるクーリング・オフに関するQ&A（2022年6月施行）' },
+    ],
+  },
+  {
+    id: 'infosoc-spiral-of-silence',
+    discipline: 'information-sociology',
+    title: '沈黙の螺旋（spiral of silence）',
+    statement:
+      '人は自分の意見が社会の少数派だと感じると、孤立を恐れて意見表明を控え沈黙する傾向があり、その結果、多数派とされる意見はますます大きく聞こえ、少数派意見はますます沈黙へ追い込まれる、という螺旋的な世論形成過程。' +
+      '前提として、人々が周囲の意見分布を察知する「準統計的感覚（quasi-statistical sense）」を持つこと、および社会的孤立への恐怖が普遍的に働くことが置かれる。マスメディアは何が多数意見かについての認知を強く方向づけるため、この螺旋過程を加速しうる。ドイツの世論・コミュニケーション研究者エリザベート・ノエル＝ノイマンが1974年の論文「The Spiral of Silence: A Theory of Public Opinion」（Journal of Communication）で提唱し、1980年のドイツ語の著書（英訳1984年『The Spiral of Silence: Public Opinion—Our Social Skin』）で体系化した。',
+    keyFigures: 'エリザベート・ノエル＝ノイマン（1974論文 Journal of Communication／1980著書）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/spiral-of-silence', type: 'reference', label: 'Encyclopaedia Britannica — Spiral of silence' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.1974.tb00367.x', type: 'academic', label: 'Noelle-Neumann (1974) The Spiral of Silence, Journal of Communication（原典・査読誌）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/spiral-silence', type: 'academic', label: 'EBSCO Research Starters — Spiral of silence' },
+    ],
+  },
 ];
 // Stryker restore all
