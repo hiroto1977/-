@@ -5180,5 +5180,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0505-00/', type: 'media', label: '民法505条 相殺の要件 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-self-medication',
+      domain: 'tax',
+      title: 'セルフメディケーション税制（医療費控除の特例）',
+      statement:
+        '健康の保持増進及び疾病の予防への一定の取組（特定健診・予防接種等）を行う個人が、自己又は生計を一にする親族のために支払った' +
+        '特定一般用医薬品等（スイッチOTC医薬品等）の購入費が年間1万2千円を超える場合、その超える部分（上限8万8千円）を総所得金額等から' +
+        '控除できる制度（医療費控除の特例）である。通常の医療費控除との選択適用となる。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1129.htm', type: 'government', label: '国税庁 No.1129 セルフメディケーション税制' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1131.htm', type: 'government', label: '国税庁 No.1131 通常の医療費控除との選択適用' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000124853.html', type: 'government', label: '厚生労働省 セルフメディケーション税制について' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-disability-deduction',
+      domain: 'tax',
+      title: '所得税の障害者控除',
+      statement:
+        '納税者本人、又は同一生計配偶者・扶養親族が所得税法上の障害者に該当する場合、一定金額の所得控除（障害者控除）を受けられる。' +
+        '控除額は障害者1人につき27万円、特別障害者は40万円、特別障害者である同一生計配偶者・扶養親族で納税者等と同居を常況とする者（同居特別障害者）は75万円である。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1160.htm', type: 'government', label: '国税庁 No.1160 障害者控除' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/kurashi/html/03_2.htm', type: 'government', label: '国税庁 障害者と税' },
+      { url: 'https://www.freee.co.jp/kb/kb-payroll/yearend-adjustment-exemption-for-the-disabled/', type: 'media', label: '障害者控除 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-job-offer-rescind',
+      domain: 'labor',
+      title: '採用内定の取消（労働法上の取扱い）',
+      statement:
+        '採用内定は判例上、始期付・解約権留保付の労働契約が成立したものと解され（大日本印刷事件・最判昭和54年7月20日）、内定取消しは' +
+        '留保された解約権の行使に当たるため、内定当時知ることができず知ることも期待できない事実を理由とし、その取消しが客観的に合理的で' +
+        '社会通念上相当と認められる場合に限り有効とされる。新規学卒者の内定取消しについては、事業主はハローワーク等への通知が必要で、一定の場合に企業名が公表されることがある。',
+      authority: '所管: 厚生労働省（労働契約法・判例法理）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.check-roudou.mhlw.go.jp/qa/roudousya/koyou/q4.html', type: 'government', label: '厚生労働省 確かめよう労働条件 採用内定の取消' },
+      { url: 'https://www.mhlw.go.jp/houdou/2009/01/h0119-2a.html', type: 'government', label: '厚生労働省 新規学卒者の内定取消し（通知・企業名公表）' },
+      { url: 'https://www.roudoukeiyaku.net/dnp.html', type: 'media', label: '大日本印刷事件（採用内定の取消）判例解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-individual-dispute-mediation',
+      domain: 'labor',
+      title: '個別労働紛争解決制度（個別労働関係紛争解決促進法）',
+      statement:
+        '個別労働関係紛争の解決の促進に関する法律に基づき、労働者と事業主との間の個別労働紛争（解雇・雇止め・労働条件の不利益変更・いじめ' +
+        '嫌がらせ等）について、都道府県労働局が「総合労働相談コーナーでの情報提供・相談」「都道府県労働局長による助言・指導」「紛争調整委員会による' +
+        'あっせん」の3つの援助を無料で行う。これにより裁判によらない迅速・円満な解決を図る制度である。',
+      authority: '所管: 厚生労働省（個別労働関係紛争解決促進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/general/seido/chihou/kaiketu/index.html', type: 'government', label: '厚生労働省 個別労働紛争解決制度' },
+      { url: 'https://laws.e-gov.go.jp/law/413AC0000000112', type: 'government', label: 'e-Gov法令検索 個別労働関係紛争解決促進法' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/kobetsu_roudou_funsou.html', type: 'government', label: '東京労働局 個別労働紛争解決制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-risk-bearing',
+      domain: 'legal',
+      title: '危険負担（改正民法536条）',
+      statement:
+        '2020年4月1日施行の改正民法により、危険負担の規律が見直された。双務契約で当事者双方の責めに帰することができない事由により債務を' +
+        '履行できなくなった場合、債権者は反対給付の履行（例：代金支払）を拒むことができる（民法536条1項）。改正前の特定物に関する債権者主義の' +
+        '規定（旧534条）は削除され、履行不能時の契約解除は別途解除の規定（542条等）による。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（536条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第536条', type: 'media', label: '民法536条（危険負担）条文' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-trade-disparagement',
+      domain: 'legal',
+      title: '不正競争防止法上の営業誹謗行為（信用毀損行為）',
+      statement:
+        '不正競争防止法は、競争関係にある他人の営業上の信用を害する虚偽の事実を告知し、又は流布する行為（営業誹謗行為・信用毀損行為。' +
+        '2条1項21号）を不正競争として規制している。競合他社の商品・サービスに関する根拠のない誹謗中傷や虚偽情報の流布がこれに該当し、' +
+        '被害事業者は差止請求（3条）・損害賠償請求（4条）・信用回復措置請求（14条）を行うことができる。',
+      authority: '所管: 経済産業省（不正競争防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/support/ipr/fusei-kyusai.html', type: 'government', label: '特許庁 不正競争防止法違反被害への救済' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/unfaircompetition_new.html', type: 'government', label: '経済産業省 不正競争防止法の概要' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/pdf/Chikujo.pdf', type: 'government', label: '経済産業省 逐条解説 不正競争防止法' },
+    ],
+  },
 ];
 // Stryker restore all
