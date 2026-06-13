@@ -2086,5 +2086,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.kokusen.go.jp/soudan_topics/data/negative_option.html', type: 'media', label: '国民生活センター 送り付け（ネガティブオプション）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-resident-tax',
+      domain: 'tax',
+      title: '個人住民税（道府県民税・市町村民税）',
+      statement:
+        '個人住民税は、その年の1月1日現在の住所地の都道府県・市区町村が課す地方税で、前年中の所得に応じて課される' +
+        '「所得割」（標準税率は道府県民税4%＋市町村民税6%の合計10%）と、定額の「均等割」から構成される。賦課課税方式で、' +
+        '給与所得者は原則として特別徴収（給与天引き）の方法で納付する。',
+      authority: '所管: 総務省・各市区町村（地方税法／個人住民税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_06.html', type: 'government', label: '総務省 地方税制度 個人住民税' },
+      { url: 'https://www.city.edogawa.tokyo.jp/e013/kurashi/zeikin/juminzei/zei_gaiyo/jyuuminzei-gaiyo.html', type: 'municipality', label: '江戸川区 住民税とは' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju', type: 'municipality', label: '東京都主税局 個人住民税' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-fixed-asset-tax',
+      domain: 'tax',
+      title: '固定資産税（土地・家屋）',
+      statement:
+        '固定資産税は、毎年1月1日（賦課期日）現在に土地・家屋・償却資産を所有する者に対し、その資産が所在する市町村' +
+        '（東京23区は東京都）が課す地方税である。課税標準は固定資産課税台帳に登録された価格（評価額）で標準税率は1.4%。' +
+        '住宅用地には課税標準の特例があり、小規模住宅用地（200㎡以下の部分）は価格の6分の1に軽減される。',
+      authority: '所管: 総務省・各市町村（地方税法／固定資産税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_08.html', type: 'government', label: '総務省 地方税制度 固定資産税の概要' },
+      { url: 'https://www.town.yuzawa.lg.jp/soshikikarasagasu/zeimuchomimbu/zeimuka/kotei/1420.html', type: 'municipality', label: '湯沢町 固定資産税 FAQ' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/shitsumon/real_estate/o', type: 'municipality', label: '東京都主税局 固定資産税・都市計画税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-industrial-physician',
+      domain: 'labor',
+      title: '産業医の選任義務（労働安全衛生法13条）',
+      statement:
+        '事業者は、常時50人以上の労働者を使用する事業場ごとに、医師のうちから産業医を選任し、労働者の健康管理等を行わせなければ' +
+        'ならない（労働安全衛生法13条・安衛則）。常時1,000人以上（一定の有害業務は500人以上）の事業場では専属の産業医を選任する必要がある。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/347AC0000000057', type: 'government', label: 'e-Gov法令検索 労働安全衛生法（13条）' },
+      { url: 'https://laws.e-gov.go.jp/law/347M50002000032', type: 'government', label: 'e-Gov法令検索 労働安全衛生規則（産業医の選任）' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11300000-Roudoukijunkyokuanzeneiseibu/0000168242.pdf', type: 'government', label: '厚生労働省 産業医の選任 リーフレット' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-medical-interview',
+      domain: 'labor',
+      title: '長時間労働者に対する医師による面接指導',
+      statement:
+        '事業者は、休憩時間を除き1週間あたり40時間を超えて労働させた時間（時間外・休日労働時間）が1か月あたり80時間を超え、' +
+        'かつ疲労の蓄積が認められる労働者から申出があった場合、医師による面接指導を行わなければならない（労働安全衛生法66条の8）。' +
+        '研究開発業務従事者や高度プロフェッショナル制度対象者には、申出の有無によらず面接指導を義務付ける別途の基準がある。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://kokoro.mhlw.go.jp/mensetsushidou/', type: 'government', label: '厚生労働省 こころの耳 面接指導について' },
+      { url: 'https://anzeninfo.mhlw.go.jp/yougo/yougo05_1.html', type: 'government', label: '厚生労働省 職場のあんぜんサイト 過重労働対策' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=347AC0000000057_20220617_504AC0000000068', type: 'government', label: 'e-Gov法令検索 労働安全衛生法（66条の8）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-deposit-transaction',
+      domain: 'legal',
+      title: '預託法（販売を伴う預託等取引の原則禁止）',
+      statement:
+        '2021年の預託法改正（2022年6月1日施行）により、販売を伴う預託等取引（物品等を販売して預かり、運用・レンタル等で配当等を' +
+        '約する「販売預託」）は原則として禁止された。例外的に行う場合は内閣総理大臣（消費者庁）の確認が必要であり、確認を受けずに締結した契約は無効となる。',
+      authority: '所管: 消費者庁（預託等取引に関する法律）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/act_on_deposit/', type: 'government', label: '消費者庁 預託等取引に関する法律（預託法）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/act_on_deposit/sales_consignment/index.html', type: 'government', label: '消費者庁 販売預託は原則禁止' },
+      { url: 'https://www.city.kumamoto.jp/kiji00364405/index.html', type: 'municipality', label: '熊本市 販売預託は原則禁止' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-product-safety',
+      domain: 'legal',
+      title: '消費生活用製品安全法（消安法）',
+      statement:
+        '消費生活用製品安全法は、消費生活用製品による一般消費者の生命・身体への危害の防止を目的とし、特に危険が生じるおそれが' +
+        '多い「特定製品」については国の技術基準への適合とPSCマークの表示がなければ販売できない。製品事故が生じた場合、製造・輸入事業者には重大製品事故の報告義務がある。',
+      authority: '所管: 経済産業省（消費生活用製品安全法。重大製品事故の報告・公表は消費者庁）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/consumer/seian/shouan/act_outline.html', type: 'government', label: '経済産業省 消費生活用製品安全法の概要' },
+      { url: 'https://www.kanto.meti.go.jp/seisaku/seihin_anzen/index_shoanho.html', type: 'government', label: '関東経済産業局 消費生活用製品安全法' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/', type: 'government', label: '消費者庁 消費者安全（重大製品事故）' },
+    ],
+  },
 ];
 // Stryker restore all
