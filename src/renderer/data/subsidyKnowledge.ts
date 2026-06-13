@@ -2466,6 +2466,118 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001a1j.html', type: 'operator', label: 'J-Net21 NEDO シード期スタートアップ支援' },
     ],
   },
+  {
+    id: 'subsidy-childcare-support-grant',
+    level: 'national',
+    domain: 'welfare',
+    name: '子ども・子育て支援交付金（地域子ども・子育て支援事業）',
+    authority: '所管: こども家庭庁／実施主体: 市町村（国・都道府県が費用を負担・交付）',
+    statement:
+      '子ども・子育て支援法に基づき市町村が策定する事業計画に従い、地域の実情に応じて実施する「地域子ども・子育て支援事業」（利用者支援・延長保育・放課後児童健全育成（学童保育）・地域子育て支援拠点・一時預かり・病児保育・' +
+      'ファミリー・サポート・センター等）に要する費用を国・都道府県・市町村が分担（交付金として交付）する仕組み。実施主体は市町村で、こども家庭庁が交付金を所管する。負担割合・対象事業の範囲は年度ごとに変動するため要確認。',
+    application:
+      '市町村が地域のニーズに基づき事業計画を策定・実施し、国（こども家庭庁）へ交付申請を行って交付金を受領する自治体向けの財政支援。住民（保護者）は各事業を市町村・委託事業者を通じて利用する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/kokoseido', type: 'government', label: 'こども家庭庁 子ども・子育て支援制度' },
+      { url: 'https://kouseikyoku.mhlw.go.jp/kantoshinetsu/gyomu/bu_ka/kenko_fukushi/kodomo_004.html', type: 'government', label: '関東信越厚生局 子ども・子育て支援交付金について' },
+      { url: 'https://laws.e-gov.go.jp/law/424AC0000000065', type: 'government', label: 'e-Gov法令検索 子ども・子育て支援法' },
+    ],
+  },
+  {
+    id: 'subsidy-decarbonization-region',
+    level: 'national',
+    domain: 'business',
+    name: '地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）',
+    authority: '所管: 環境省',
+    statement:
+      '環境省が、2050年カーボンニュートラル及び2030年度の温室効果ガス削減目標の達成に向け、脱炭素に意欲的に取り組む地方公共団体等を複数年度にわたり継続的・包括的に支援する国の交付金。地域特性に応じた先行的な脱炭素の取組を実施する' +
+      '「脱炭素先行地域」づくりや、屋根置き等の自家消費型太陽光発電の導入等の「重点対策加速化事業」を含む。交付対象は地方公共団体等で、官民連携により民間事業者と共同で実施する事業も支援対象となる。交付率・上限額・対象・採択要件は年度（募集回）ごとに変動するため要確認。',
+    application:
+      '地方公共団体が環境省の各回募集（脱炭素先行地域の公募、又は重点対策加速化事業）に計画提案・申請を行い、選定・採択を経て交付を受ける。民間事業者は地方公共団体との連携事業として参画する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://policies.env.go.jp/policy/roadmap/grants/', type: 'government', label: '環境省 地域脱炭素推進交付金' },
+      { url: 'https://www.env.go.jp/press/press_03770.html', type: 'government', label: '環境省 脱炭素先行地域選定結果' },
+      { url: 'https://www.city.setouchi.lg.jp/site/zero-co2/133814.html', type: 'municipality', label: '瀬戸内市 脱炭素先行地域に選定' },
+    ],
+  },
+  {
+    id: 'subsidy-midori-food-system',
+    level: 'national',
+    domain: 'business',
+    name: 'みどりの食料システム戦略推進対策（みどりの食料システム法）',
+    authority: '所管: 農林水産省（環境負荷低減事業活動実施計画の認定は都道府県知事、基盤確立事業実施計画は国が認定）',
+    statement:
+      '2021年策定の「みどりの食料システム戦略」を法制化した「みどりの食料システム法」は2022年7月1日に施行され、化学農薬・化学肥料の低減、有機農業の拡大、温室効果ガス削減等、環境負荷低減に取り組む農林漁業者等を支援する。' +
+      '農林漁業者が都道府県の基本計画に即して「環境負荷低減事業活動実施計画」を作成し都道府県知事の認定（みどり認定）を受けると、設備投資に対する税制特例（みどり投資促進税制の特別償却）、日本政策金融公庫の融資、各種国庫補助での優遇等の支援を受けられる。' +
+      '補助率・特別償却率・対象機種・適用期限等の細目は年度ごとに変動するため要確認。',
+    application:
+      '農林漁業者等が都道府県の基本計画に即して環境負荷低減事業活動実施計画を作成し都道府県知事の認定を受ける。機械・資材メーカー等は国（農林水産大臣）認定の基盤確立事業実施計画が別枠で存在。認定後に税制・融資・補助金優遇が適用される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/kanbo/kankyo/seisaku/midori/houritsu.html', type: 'government', label: '農林水産省 みどりの食料システム法について（みどり認定・基盤認定）' },
+      { url: 'https://www.pref.yamagata.jp/140001/midorikihonkeikaku.html', type: 'municipality', label: '山形県 みどりの食料システム法に基づく計画の認定について' },
+      { url: 'https://minorasu.basf.co.jp/81008', type: 'media', label: 'minorasu みどりの食料システム法 認定で得られる補助金・税制優遇' },
+    ],
+  },
+  {
+    id: 'subsidy-revitalization-council',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業活性化協議会',
+    authority: '所管: 中小企業庁（経済産業省）／産業競争力強化法に基づき各都道府県（全47）に設置、商工会議所等が運営を受託',
+    statement:
+      '中小企業活性化協議会は、産業競争力強化法に基づき全47都道府県に設置された公正中立な公的機関で、2022年4月に旧・中小企業再生支援協議会と経営改善支援センターが統合して発足した。収益力改善・事業再生・廃業や再チャレンジまで、' +
+      '中小企業の幅広い経営課題にワンストップで対応する。弁護士・公認会計士・税理士・中小企業診断士・金融機関OB等の常駐専門家が、相談・助言から収益力改善計画や再生計画の策定支援、金融機関との調整までを原則無料で行う。' +
+      '返済不要の補助金を支給する制度ではなく、計画策定と経営改善・事業再生を伴走支援する公的機関である点に注意。',
+    application:
+      '企業の本社・事業所がある都道府県の中小企業活性化協議会（多くは地域の商工会議所内に設置）の相談窓口に問い合わせる。相談・申込内容ともに秘密厳守で、相談は無料。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/saisei/index.html', type: 'government', label: '中小企業庁 中小企業活性化協議会' },
+      { url: 'https://www.smrj.go.jp/sme/succession/revitalization/index.html', type: 'operator', label: '中小機構 中小企業活性化協議会による支援' },
+      { url: 'https://www.tokyo-cci.or.jp/regene/', type: 'operator', label: '東京商工会議所 中小企業活性化協議会（運営受託）' },
+    ],
+  },
+  {
+    id: 'subsidy-tourism-revitalization',
+    level: 'national',
+    domain: 'business',
+    name: '地域一体となった観光地・観光産業の再生・高付加価値化事業（観光庁）',
+    authority: '所管: 観光庁（国土交通省 外局）',
+    statement:
+      '観光庁が地域の観光地・観光産業の再生と高付加価値化を図るために実施した補助事業（前身は「既存観光拠点の再生・高付加価値化推進事業」）。観光地経営のマスタープランとなる「地域計画」の策定・磨き上げと、その計画に基づく' +
+      '宿泊施設・観光施設等の改修、廃屋撤去、面的DX化、観光地域づくり法人（DMO）・宿泊事業者等が行う受入環境整備等を、複数年度にわたり計画的・継続的に支援する。地域計画のもとで自治体・DMO・複数の民間事業者が連携して面的に取り組む点が特徴。' +
+      '補助率・上限額・公募期間・事業類型は年度・予算により変動し、事業名も改称されうるため要確認。',
+    application:
+      '計画対象地域を所管する自治体・DMO・地域内の民間事業者等が地域計画を策定して地域公募に応募し、採択後に計画に基づく個別事業（施設改修・廃屋撤去・面的DX・受入環境整備等）を実施する枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/kankocho/seisaku_seido/kihonkeikaku/jizoku_kankochi/saisei_kofukakachika.html', type: 'government', label: '観光庁 地域一体となった観光地・観光産業の再生・高付加価値化' },
+      { url: 'https://www.mlit.go.jp/kankocho/page06_000302.html', type: 'government', label: '観光庁 再生・高付加価値化事業 地域公募' },
+      { url: 'https://kankosaisei-chiiki.net/', type: 'operator', label: '事業事務局 観光地・観光産業の再生・高付加価値化事業 特設サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-long-life-housing-renovation',
+    level: 'national',
+    domain: 'business',
+    name: '長期優良住宅化リフォーム推進事業',
+    authority: '所管: 国土交通省（住宅局）／評価室は建築研究所に設置',
+    statement:
+      '良質な住宅ストックの形成を図るため、既存住宅の性能向上（構造躯体等の劣化対策・耐震性・省エネルギー性・維持管理更新の容易性等）に資するリフォーム工事や、三世代同居対応改修、子育て世帯向け改修等を支援する国土交通省の補助事業。' +
+      '支援対象となるには、リフォーム前にインスペクション（住宅診断）を実施し、リフォーム後の維持保全計画・履歴を作成することが要件となる。新築のGX志向型住宅等を対象とする「子育てグリーン住宅支援事業」とは別個の既存住宅リフォーム向けの事業。' +
+      '補助率・上限額・公募期間・実施年度の有無は年度ごとに変動するため最新の公募要領で要確認。',
+    application:
+      '国（国土交通省）が年度ごとに公募を実施し、評価室を通じて、原則として施工事業者等がインスペクションを行ったうえで交付申請を行う。通年申請（予算上限到達まで）又は期間募集の形式で、年度ごとの公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/shienjigyo_r7-03.html', type: 'government', label: '国土交通省 長期優良住宅化リフォーム推進事業' },
+      { url: 'https://www.mlit.go.jp/report/press/house04_hh_001273.html', type: 'government', label: '国土交通省 長期優良住宅化リフォームを支援します（報道発表）' },
+      { url: 'https://www.refonavi.or.jp/how-to/hojokin/424', type: 'operator', label: 'リフォーム評価ナビ 長期優良住宅化リフォーム推進事業 解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
