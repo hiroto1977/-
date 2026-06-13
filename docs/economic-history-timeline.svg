@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2990" height="620" viewBox="0 0 2990 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="2990" height="620" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="3710" height="620" viewBox="0 0 3710 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="3710" height="620" fill="#0f172a"/>
 <text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
 <text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
-<line x1="60" y1="360" x2="2950" y2="360" stroke="#475569" stroke-width="1.5"/>
-<line x1="60" y1="334" x2="2950" y2="334" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="386" x2="2950" y2="386" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="360" x2="3670" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="3670" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="3670" y2="386" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
 <text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
-<line x1="60" y1="308" x2="2950" y2="308" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="412" x2="2950" y2="412" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="308" x2="3670" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="3670" y2="412" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="298" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
@@ -133,9 +133,39 @@
 <text x="2890" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1963</text>
 <text x="2890" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和38年</text>
 <text x="2890" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 2890 500)">GATT11条国へ移行（2月）— 国際収支を理由とする輸入制限ができなくなる</text>
+<rect x="2988" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="2988" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3010" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1964</text>
+<text x="3010" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和39年</text>
+<text x="3010" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3010 500)">東海道新幹線 開業（10/1）／東京オリンピック開幕（10/10）</text>
+<rect x="3108" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="3108" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3130" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1965</text>
+<text x="3130" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和40年</text>
+<text x="3130" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3130 500)">米軍が北爆「ローリング・サンダー」開始（3/2）／海兵隊ダナン上陸（3/8）</text>
+<rect x="3228" y="308" width="44" height="52" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="3228" y="360" width="44" height="52" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3250" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1966</text>
+<text x="3250" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和41年</text>
+<text x="3250" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3250 500)">米国：ベトナム戦費拡大で需要過熱・インフレ圧力台頭、FRB引き締めでDJIA年…</text>
+<rect x="3348" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="3348" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3370" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1967</text>
+<text x="3370" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和42年</text>
+<text x="3370" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3370 500)">EC（欧州共同体）執政機関統合が発効（7/1）</text>
+<rect x="3468" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="3468" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3490" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1968</text>
+<text x="3490" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和43年</text>
+<text x="3490" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3490 500)">ロンドン金プール崩壊→金の二重価格制へ（3月、ブレトンウッズ動揺）</text>
+<rect x="3588" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="3588" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="3610" y="462" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">1969</text>
+<text x="3610" y="480" fill="#94a3b8" font-size="11" text-anchor="middle">昭和44年</text>
+<text x="3610" y="500" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 3610 500)">東名高速道路 全線開通（5月、東京〜小牧）</text>
 <rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
 <text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
 <rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
 <text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
-<text x="2950" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+<text x="3670" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
 </svg>

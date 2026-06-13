@@ -565,6 +565,138 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://ja.wikipedia.org/wiki/高度経済成長', type: 'reference', label: 'Wikipedia — 高度経済成長（貿易自由化・GATT11条国移行）' },
     ],
   },
+  {
+    year: 1964,
+    era: '昭和39年',
+    world:
+      '米国は戦後最長級の長期好況のさなかにあり、ケネディが提案しジョンソンが2月に署名した歳入法（ケネディ＝ジョンソン減税。最高税率91%→70%、法人税52%→48%）がケインズ的な総需要刺激として景気拡大を後押しした。8月のトンキン湾事件が翌1965年の本格的軍事介入への転機となった。',
+    japan:
+      '高度経済成長の象徴的な年。10月1日に東海道新幹線（東京-新大阪）が開業し10月10日に東京オリンピックが開幕、「オリンピック景気」で内需が高揚した。4月にIMF8条国へ移行（為替制限の撤廃義務）し同月OECDに加盟して先進国入りを承認された一方、五輪後は反動と金融引き締めが重なり後半から「証券不況」の入口に入った。',
+    keyEvents: [
+      '東海道新幹線 開業（10/1）／東京オリンピック開幕（10/10）',
+      'IMF8条国へ移行（4月）＋OECD加盟（4月）＝先進国入り',
+      '米国 ケネディ＝ジョンソン減税成立（2月）／トンキン湾事件（8月）',
+      '五輪後の反動・金融引き締めで「証券不況」の入口へ',
+    ],
+    risingSectors: ['（日本）建設・土木（五輪・新幹線・首都高）、鉄道車両・重電・電機、鉄鋼・セメント、観光・運輸・放送、自動車'],
+    decliningSectors: ['（日本）後半からの証券業の収益悪化、五輪特需に依存した内需業種の反動減（1964後半〜1965に顕在化）'],
+    caveats: 'DJIA年末値874.13は確証値（前年比約+15%）。日経平均1964年末確定値は独立確認できずnull（推定1,200円台前半）。証券不況は厳密には1964後半〜1965の現象。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Revenue_Act_of_1964', type: 'reference', label: 'Wikipedia — Revenue Act of 1964（ケネディ＝ジョンソン減税）' },
+      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/1964/07/oecd-economic-surveys-japan-1964_g1g16d65/eco_surveys-jpn-1964-en.pdf', type: 'government', label: 'OECD Economic Surveys: Japan 1964' },
+      { url: 'https://en.wikipedia.org/wiki/1964_in_Japan', type: 'reference', label: 'Wikipedia — 1964 in Japan（新幹線・五輪・IMF8条国・OECD加盟）' },
+    ],
+  },
+  {
+    year: 1965,
+    era: '昭和40年',
+    world:
+      'ベトナム戦争で米国が本格的軍事介入に転換した年。3月2日に北爆作戦「ローリング・サンダー」が開始され、3月8日にダナンに初の米地上戦闘部隊（海兵隊）が上陸した。米株式市場は強気相場が続きDJIAは年末に1000の大台に接近した（年末終値969.26、年間+10.88%）。',
+    japan:
+      '「昭和40年不況（証券不況／構造不況）」の年。東京五輪後の反動と過剰設備・在庫調整が重なって証券市場が低迷し、5月に経営難の山一證券へ日銀特融が発動された。歳入不足に対応するため11月19日に戦後初の赤字国債（特例公債）発行を閣議決定し、この財政・金融両面の下支えを契機に11月を起点として戦後最長級の「いざなぎ景気」（〜1970/7、約57か月）が始まった。',
+    keyEvents: [
+      '米軍が北爆「ローリング・サンダー」開始（3/2）／海兵隊ダナン上陸（3/8）',
+      '山一證券への日銀特融発動（5月、証券不況下の信用不安回避）',
+      '戦後初の赤字国債（特例公債）発行を閣議決定（11/19）',
+      'いざなぎ景気の起点（11月、〜1970/7・約57か月）',
+    ],
+    risingSectors: ['（日本）重化学工業（鉄鋼・造船・自動車・電機）・輸出関連製造業（いざなぎ景気を牽引）', '（米国）軍需・航空（ベトナム戦費拡大）'],
+    decliningSectors: ['（日本）証券業（証券不況で収益悪化、山一が日銀特融を要する経営難）、不況期に倒産が相次いだ一部の鉄鋼・素材中堅（個社事例）'],
+    caveats: 'DJIA年末値969.26は確証値（年間+10.88%）。日経平均1965年末確定値は独立2情報源で確証できずnull。業種別ランキングは一次統計未確認のため定性傾向＋個社事例に留める。',
+    sources: [
+      { url: 'https://www.nikkei.com/article/DGKDZO18159330T11C10A1KB2000/', type: 'media', label: '日本経済新聞 — 1965年11月19日 戦後初の赤字国債発行決定' },
+      { url: 'https://www.history.com/articles/operation-rolling-thunder', type: 'media', label: 'History.com — Operation Rolling Thunder（1965年3月の北爆開始・地上部隊投入）' },
+      { url: 'https://www.govinfo.gov/content/pkg/ERP-2021/pdf/ERP-2021-table55.pdf', type: 'government', label: '米国 Economic Report of the President 表B-55（DJIA年次）' },
+    ],
+  },
+  {
+    year: 1966,
+    era: '昭和41年',
+    world:
+      'ベトナム戦争の本格的拡大に伴う軍事支出の急増を背景に、米国経済は高成長と完全雇用に近い水準を実現する一方、需要超過によるインフレ圧力が顕在化し始めた。ジョンソン政権が戦費と「偉大な社会」の国内支出を同時に拡大したが相応の増税を行わなかったため総需要が過熱し、FRBの金融引き締めで金利が上昇、DJIAは年間約-19%下落した（年末785.69）。',
+    japan:
+      '「いざなぎ景気」（1965/11〜1970/7）が本格化した年。1965年度の（建設）国債発行を起点とする財政主導の景気拡大が下支えとなり実質経済成長率は再び年10%超へ復帰した。耐久消費財が消費を牽引し、いわゆる「新三種の神器＝3C」（カー・クーラー・カラーテレビ）が新たな憧れの対象となりマイカーブームが始まった。',
+    keyEvents: [
+      '米国：ベトナム戦費拡大で需要過熱・インフレ圧力台頭、FRB引き締めでDJIA年間約-19%',
+      '日本：いざなぎ景気の本格化、実質成長率が再び年10%超へ復帰',
+      '日本：「新三種の神器（3C）」台頭・マイカーブーム',
+      '日本：1965年度の（建設）国債発行を起点とする財政主導の景気拡大が定着',
+    ],
+    risingSectors: ['（日本）自動車（大衆車＝カローラ/サニー等）、家電（カラーテレビ・ルームエアコン）、百貨店・小売', '（米国）軍需・防衛関連'],
+    decliningSectors: ['（米国）金利上昇局面で株式全般が軟調', '（日本）白黒テレビ・旧来型家電（3Cへの需要シフトで相対的地盤沈下）'],
+    caveats: 'DJIA年末値785.69は確証値（年間約-18.94%）。日経平均1966年末確定値は独立確認できずnull。米実質GDP成長率は出典により6〜7%台と幅。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www5.cao.go.jp/keizai3/sekaikeizaiwp/wp-we66-1/wp-we66-00201.html', type: 'government', label: '内閣府 昭和41年 年次世界経済報告' },
+      { url: 'https://www.commentary.org/articles/oscar-gass/the-u-s-economy-1966/', type: 'media', label: 'Commentary Magazine — The U.S. Economy, 1966' },
+      { url: 'https://ja.wikipedia.org/wiki/いざなぎ景気', type: 'reference', label: 'Wikipedia — いざなぎ景気（3C・本格化）' },
+    ],
+  },
+  {
+    year: 1967,
+    era: '昭和42年',
+    world:
+      '米欧主導の戦後成長と自由貿易拡大が続く一方、地政学リスクが顕在化した。7月1日にEC（欧州共同体）の執政機関統合が発効し、6月にGATTケネディ・ラウンドが妥結して大幅な関税引き下げに合意した。他方で6月に第三次中東戦争（六日間戦争）が勃発しスエズ運河閉鎖など後の石油危機の遠因となる緊張を残し、11月には英ポンド切り下げがあった。',
+    japan:
+      '「いざなぎ景気」の拡大局面のただ中で高度経済成長が継続した。OECD加盟後の国際公約として7月1日に第一次資本自由化を開始（対内直接投資の段階的開放）した。急成長の負の側面として公害が深刻化し、8月3日に公害対策基本法が制定された（四大公害が社会問題化）。',
+    keyEvents: [
+      'EC（欧州共同体）執政機関統合が発効（7/1）',
+      'GATTケネディ・ラウンド妥結（関税大幅引き下げ）',
+      '第三次中東戦争（六日間戦争、6/5–6/10）／英ポンド切り下げ（11月）',
+      '日本：第一次資本自由化開始（7/1）／公害対策基本法 制定（8/3）',
+    ],
+    risingSectors: ['（日本）重化学工業（鉄鋼・石油化学・機械）、自動車・家電、エレクトロニクス・精密機械'],
+    decliningSectors: ['（日本）石炭産業（エネルギー革命で構造的縮小が継続）、繊維など労働集約型在来産業'],
+    caveats: 'DJIA年末値905.11は確証値（年間約+15%）。日経平均1967年末確定値は独立確認できずnull。当時の指数は「東証ダウ平均」として算出。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.archives.go.jp/ayumi/kobetsu/s42_1967_01.html', type: 'government', label: '国立公文書館 — 公害対策基本法が制定される（昭和42年8月）' },
+      { url: 'https://www.britannica.com/event/Six-Day-War', type: 'reference', label: 'Encyclopaedia Britannica — Six-Day War（1967/6）' },
+      { url: 'https://en.wikipedia.org/wiki/Merger_Treaty', type: 'reference', label: 'Wikipedia — Merger Treaty（EC執政機関統合 1967/7/1発効）' },
+    ],
+  },
+  {
+    year: 1968,
+    era: '昭和43年',
+    world:
+      'ブレトンウッズ体制の動揺が表面化した年。3月にロンドン金プールが崩壊し金の二重価格制へ移行、ドルと米金準備への圧力が増して1971年ニクソン・ショックの伏線となった。ベトナム戦争のテト攻勢を契機に米欧で反戦運動が激化し、フランス五月革命やプラハの春など世界的な学生運動・政治的動乱が同時多発した。',
+    japan:
+      '「いざなぎ景気」のただ中で高度経済成長が続き、1968年に日本のGNPが資本主義（自由主義）諸国で米国に次ぐ世界第2位となり西ドイツを抜いた。耐久消費財の「3C」（カー・クーラー・カラーテレビ）普及が進む一方、大学紛争が広がった。',
+    keyEvents: [
+      'ロンドン金プール崩壊→金の二重価格制へ（3月、ブレトンウッズ動揺）',
+      'テト攻勢を契機に米欧で反戦・抗議運動が拡大／フランス五月革命（5月）',
+      '日本のGNPが資本主義国で世界第2位に（西ドイツを抜く）',
+      '日本：3C普及と大学紛争の同時進行',
+    ],
+    risingSectors: ['（日本）自動車・耐久消費財（3C需要）、鉄鋼・重化学工業・電機、輸出関連製造業'],
+    decliningSectors: ['（日本）相対的に農業など第一次産業の比重低下（構造的シフト）'],
+    caveats: 'DJIA年末値943.75は確証値（12/31終値。月中平均由来の965.39と混在に注意）。日経平均1968年末確定値は独立確認できずnull。GNP世界第2位は資本主義国の中での順位。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'http://www.econ.yale.edu/growth_pdf/cdp764.pdf', type: 'academic', label: 'Yale Univ. Economic Growth Center — Japan 1968（GNP資本主義国2位・西独超え）' },
+      { url: 'https://en.wikipedia.org/wiki/London_Gold_Pool', type: 'reference', label: 'Wikipedia — London Gold Pool（1968/3崩壊・二重価格制）' },
+      { url: 'https://www.britannica.com/event/events-of-May-1968', type: 'reference', label: 'Encyclopaedia Britannica — Events of May 1968（フランス五月革命）' },
+    ],
+  },
+  {
+    year: 1969,
+    era: '昭和44年',
+    world:
+      '米国は景気拡大の最終局面でインフレが加速し、FRBが金融引き締めを強化して金利を引き上げ、12月には景気後退入りした（〜1970/11、比較的軽微）。7月20日にアポロ11号が人類初の有人月面着陸を達成した一方、金・ドル交換性をめぐる緊張などブレトンウッズ体制の動揺が進行した。',
+    japan:
+      '「いざなぎ景気」（1965/11〜1970/7、約57か月）の終盤で高度経済成長の絶頂期にあった。1968年に達成したGNP資本主義国世界第2位の地位が定着し、5月に東名高速道路が全線開通して東京〜西日本の高速道路網が完成、3C（カラーテレビ・クーラー・自動車）普及など消費の高度化が進んだ。',
+    keyEvents: [
+      '東名高速道路 全線開通（5月、東京〜小牧）',
+      'アポロ11号 人類初の月面着陸（7/20）',
+      '米国でインフレ加速・FRB金融引き締め、12月に景気後退入り',
+      '日本：いざなぎ景気終盤、GNP世界第2位が定着・消費の高度化',
+    ],
+    risingSectors: ['（日本）自動車（マイカー普及・東名開通）、家電（カラーテレビ・クーラー）、鉄鋼・機械・重化学工業、建設・土木（1970大阪万博関連）'],
+    decliningSectors: ['（日本）繊維・軽工業など労働集約型の伝統産業（重化学工業へのシフトで相対的地位低下）、石炭（石油への転換継続）'],
+    caveats: 'DJIA年末値800.36は確証値（年間約-15%）。日経平均1969年末確定値は複数の独立した一次ソースで確証できずnull（流通値2358.96は独立2情報源での裏取り不可）。業種別ランキングは一次統計未確認のため定性傾向のみ。ニクソン・ショック（金兌換停止）は1971年で1969年時点では未発生。',
+    sources: [
+      { url: 'https://www.nasa.gov/history/july-20-1969-one-giant-leap-for-mankind/', type: 'government', label: 'NASA — July 20, 1969 アポロ11号月面着陸' },
+      { url: 'https://en.wikipedia.org/wiki/Recession_of_1969%E2%80%931970', type: 'reference', label: 'Wikipedia — Recession of 1969–1970（米インフレ・FRB引き締め・12月後退入り）' },
+      { url: 'https://ja.wikipedia.org/wiki/いざなぎ景気', type: 'reference', label: 'Wikipedia — いざなぎ景気（期間・成長率・GNP世界第2位）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -611,6 +743,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1961: { djiaYearEnd: 731.14, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1962: { djiaYearEnd: 652.1, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1963: { djiaYearEnd: 762.95, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1964: { djiaYearEnd: 874.13, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1965: { djiaYearEnd: 969.26, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1966: { djiaYearEnd: 785.69, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1967: { djiaYearEnd: 905.11, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1968: { djiaYearEnd: 943.75, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1969: { djiaYearEnd: 800.36, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =

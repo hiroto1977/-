@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1510" height="602" viewBox="0 0 1510 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="1510" height="602" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1870" height="602" viewBox="0 0 1870 602" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="1870" height="602" fill="#0f172a"/>
 <text x="60" y="36" fill="#f1f5f9" font-size="22" font-weight="700">資産クラス別 年次推移（株式・不動産・仮想通貨）</text>
 <text x="60" y="60" fill="#94a3b8" font-size="12">各系列を自系列の最大値=100%に正規化して重ね描き。欠損(null=未照合／その年に存在しない資産)は線を引かない。</text>
 <line x1="80" y1="90" x2="80" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="1460" y2="450" stroke="#475569"/>
-<line x1="80" y1="450" x2="1460" y2="450" stroke="#1e293b"/>
+<line x1="80" y1="450" x2="1820" y2="450" stroke="#475569"/>
+<line x1="80" y1="450" x2="1820" y2="450" stroke="#1e293b"/>
 <text x="72" y="454" fill="#64748b" font-size="10" text-anchor="end">0%</text>
-<line x1="80" y1="360" x2="1460" y2="360" stroke="#1e293b"/>
+<line x1="80" y1="360" x2="1820" y2="360" stroke="#1e293b"/>
 <text x="72" y="364" fill="#64748b" font-size="10" text-anchor="end">25%</text>
-<line x1="80" y1="270" x2="1460" y2="270" stroke="#1e293b"/>
+<line x1="80" y1="270" x2="1820" y2="270" stroke="#1e293b"/>
 <text x="72" y="274" fill="#64748b" font-size="10" text-anchor="end">50%</text>
-<line x1="80" y1="180" x2="1460" y2="180" stroke="#1e293b"/>
+<line x1="80" y1="180" x2="1820" y2="180" stroke="#1e293b"/>
 <text x="72" y="184" fill="#64748b" font-size="10" text-anchor="end">75%</text>
-<line x1="80" y1="90" x2="1460" y2="90" stroke="#1e293b"/>
+<line x1="80" y1="90" x2="1820" y2="90" stroke="#1e293b"/>
 <text x="72" y="94" fill="#64748b" font-size="10" text-anchor="end">100%</text>
 <text x="80" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1940</text>
 <text x="200" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1942</text>
@@ -26,38 +26,47 @@
 <text x="1160" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1958</text>
 <text x="1280" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1960</text>
 <text x="1400" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1962</text>
-<circle cx="80" cy="388.1" r="3" fill="#38bdf8"/>
-<circle cx="140" cy="397.6" r="3" fill="#38bdf8"/>
-<circle cx="200" cy="393.7" r="3" fill="#38bdf8"/>
-<circle cx="260" cy="385.9" r="3" fill="#38bdf8"/>
-<circle cx="320" cy="378.1" r="3" fill="#38bdf8"/>
-<circle cx="380" cy="359.0" r="3" fill="#38bdf8"/>
-<circle cx="440" cy="366.4" r="3" fill="#38bdf8"/>
-<circle cx="500" cy="364.5" r="3" fill="#38bdf8"/>
-<circle cx="560" cy="366.3" r="3" fill="#38bdf8"/>
-<circle cx="620" cy="355.6" r="3" fill="#38bdf8"/>
-<circle cx="680" cy="338.9" r="3" fill="#38bdf8"/>
-<circle cx="740" cy="323.0" r="3" fill="#38bdf8"/>
-<circle cx="800" cy="312.3" r="3" fill="#38bdf8"/>
-<circle cx="860" cy="317.5" r="3" fill="#38bdf8"/>
-<circle cx="920" cy="259.2" r="3" fill="#38bdf8"/>
-<circle cx="980" cy="219.5" r="3" fill="#38bdf8"/>
-<circle cx="1040" cy="214.3" r="3" fill="#38bdf8"/>
-<circle cx="1100" cy="244.4" r="3" fill="#38bdf8"/>
-<circle cx="1160" cy="174.6" r="3" fill="#38bdf8"/>
-<circle cx="1220" cy="129.4" r="3" fill="#38bdf8"/>
-<circle cx="1280" cy="159.4" r="3" fill="#38bdf8"/>
-<circle cx="1340" cy="105.0" r="3" fill="#38bdf8"/>
-<circle cx="1400" cy="142.3" r="3" fill="#38bdf8"/>
-<circle cx="1460" cy="90.0" r="3" fill="#38bdf8"/>
-<path d="M80,388.1 L140,397.6 L200,393.7 L260,385.9 L320,378.1 L380,359.0 L440,366.4 L500,364.5 L560,366.3 L620,355.6 L680,338.9 L740,323.0 L800,312.3 L860,317.5 L920,259.2 L980,219.5 L1040,214.3 L1100,244.4 L1160,174.6 L1220,129.4 L1280,159.4 L1340,105.0 L1400,142.3 L1460,90.0" fill="none" stroke="#38bdf8" stroke-width="2"/>
+<text x="1520" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1964</text>
+<text x="1640" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1966</text>
+<text x="1760" y="468" fill="#cbd5e1" font-size="10" text-anchor="middle">1968</text>
+<circle cx="80" cy="401.3" r="3" fill="#38bdf8"/>
+<circle cx="140" cy="408.8" r="3" fill="#38bdf8"/>
+<circle cx="200" cy="405.7" r="3" fill="#38bdf8"/>
+<circle cx="260" cy="399.5" r="3" fill="#38bdf8"/>
+<circle cx="320" cy="393.4" r="3" fill="#38bdf8"/>
+<circle cx="380" cy="378.3" r="3" fill="#38bdf8"/>
+<circle cx="440" cy="384.2" r="3" fill="#38bdf8"/>
+<circle cx="500" cy="382.7" r="3" fill="#38bdf8"/>
+<circle cx="560" cy="384.1" r="3" fill="#38bdf8"/>
+<circle cx="620" cy="375.7" r="3" fill="#38bdf8"/>
+<circle cx="680" cy="362.6" r="3" fill="#38bdf8"/>
+<circle cx="740" cy="350.0" r="3" fill="#38bdf8"/>
+<circle cx="800" cy="341.6" r="3" fill="#38bdf8"/>
+<circle cx="860" cy="345.7" r="3" fill="#38bdf8"/>
+<circle cx="920" cy="299.8" r="3" fill="#38bdf8"/>
+<circle cx="980" cy="268.6" r="3" fill="#38bdf8"/>
+<circle cx="1040" cy="264.5" r="3" fill="#38bdf8"/>
+<circle cx="1100" cy="288.2" r="3" fill="#38bdf8"/>
+<circle cx="1160" cy="233.2" r="3" fill="#38bdf8"/>
+<circle cx="1220" cy="197.7" r="3" fill="#38bdf8"/>
+<circle cx="1280" cy="221.2" r="3" fill="#38bdf8"/>
+<circle cx="1340" cy="178.4" r="3" fill="#38bdf8"/>
+<circle cx="1400" cy="207.8" r="3" fill="#38bdf8"/>
+<circle cx="1460" cy="166.6" r="3" fill="#38bdf8"/>
+<circle cx="1520" cy="125.3" r="3" fill="#38bdf8"/>
+<circle cx="1580" cy="90.0" r="3" fill="#38bdf8"/>
+<circle cx="1640" cy="158.2" r="3" fill="#38bdf8"/>
+<circle cx="1700" cy="113.8" r="3" fill="#38bdf8"/>
+<circle cx="1760" cy="99.5" r="3" fill="#38bdf8"/>
+<circle cx="1820" cy="152.7" r="3" fill="#38bdf8"/>
+<path d="M80,401.3 L140,408.8 L200,405.7 L260,399.5 L320,393.4 L380,378.3 L440,384.2 L500,382.7 L560,384.1 L620,375.7 L680,362.6 L740,350.0 L800,341.6 L860,345.7 L920,299.8 L980,268.6 L1040,264.5 L1100,288.2 L1160,233.2 L1220,197.7 L1280,221.2 L1340,178.4 L1400,207.8 L1460,166.6 L1520,125.3 L1580,90.0 L1640,158.2 L1700,113.8 L1760,99.5 L1820,152.7" fill="none" stroke="#38bdf8" stroke-width="2"/>
 <rect x="60" y="486" width="13" height="13" rx="2" fill="#38bdf8"/>
-<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ24年（直近 762.95）</text>
+<text x="78" y="497" fill="#cbd5e1" font-size="11">ダウ平均(米株, 年末USD) — データ30年（直近 800.36）</text>
 <rect x="60" y="504" width="13" height="13" rx="2" fill="#f97316"/>
 <text x="78" y="515" fill="#cbd5e1" font-size="11">日経平均(日本株, 年末円) — データなし（N/A・未照合またはその年に存在しない資産）</text>
 <rect x="60" y="522" width="13" height="13" rx="2" fill="#a3e635"/>
 <text x="78" y="533" fill="#cbd5e1" font-size="11">市街地価格指数(不動産, 1936/9=100) — データなし（N/A・未照合またはその年に存在しない資産）</text>
 <rect x="60" y="540" width="13" height="13" rx="2" fill="#facc15"/>
 <text x="78" y="551" fill="#cbd5e1" font-size="11">ビットコイン(仮想通貨, 年末USD) — データなし（N/A・未照合またはその年に存在しない資産）</text>
-<text x="1480" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
+<text x="1840" y="594" fill="#64748b" font-size="10" text-anchor="end">出典: economicHistoryKnowledge.ts ASSET_SERIES（DJIA=MeasuringWorth/FRED 他・確証値）</text>
 </svg>
