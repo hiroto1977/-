@@ -2512,5 +2512,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://blogs.cornell.edu/info2040/2017/11/24/informational-cascade-vs-herd-behavior/', type: 'academic', label: 'Cornell INFO 2040 course blog — 情報カスケード対群集行動の区別' },
     ],
   },
+  {
+    id: 'econ-bertrand-competition',
+    discipline: 'economics',
+    title: 'ベルトラン競争（価格競争モデル）',
+    statement:
+      '寡占市場で企業が「価格」を戦略変数として同時に設定して競争するモデル。数量を戦略変数とするクールノーモデル（A.クールノー1838）に対し、ジョセフ・ベルトランが1883年にクールノーの著書への書評の中で批判的に提示した。' +
+      '同質財・限界費用一定・2企業という標準設定では、消費者は1円でも安い企業から全量を購入するため、各企業は相手をわずかに下回る価格を付けようと値下げ競争に陥り、ナッシュ均衡では価格が限界費用まで低下して企業の利潤がゼロになる（完全競争と同じ結果）。わずか2社でも競争的結果が生じるこの直観に反する帰結は「ベルトランのパラドックス」と呼ばれる。' +
+      '容量制約・製品差別化・繰り返しゲームを導入すると、価格は限界費用を上回りパラドックスは緩和される。',
+    keyFigures: 'J.ベルトラン1883（クールノー批判）／戦略変数は価格／同質財では価格=限界費用・利潤ゼロ＝ベルトランのパラドックス／クールノー（数量競争）と対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Bertrand_competition', type: 'reference', label: 'Wikipedia — Bertrand competition' },
+      { url: 'https://en.wikipedia.org/wiki/Bertrand_paradox_(economics)', type: 'reference', label: 'Wikipedia — Bertrand paradox (economics)' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-349-58802-2_129', type: 'academic', label: 'The New Palgrave Dictionary of Economics — "Bertrand competition"（Springer Nature）' },
+    ],
+  },
+  {
+    id: 'mgmt-transaction-cost',
+    discipline: 'management',
+    title: '取引費用理論',
+    statement:
+      '市場での取引にも、相手の探索・交渉・契約の作成・履行の監視・紛争解決などのコスト（取引費用）がかかるとし、その大小によって、ある経済活動を「市場（外部調達）」で行うか「組織（内部化＝企業内）」で行うか（make or buy／組織の境界）が決まると説明する理論。' +
+      'ロナルド・コースが1937年の論文「企業の本質（The Nature of the Firm）」で、企業が存在する理由を市場取引のコスト節約に求めたのが起源。オリバー・ウィリアムソンがこれを発展させ、人間の限定合理性と機会主義、取引の資産特殊性・不確実性・頻度といった要因が取引費用を高め、特殊資産を伴う取引ほど内部化（垂直統合）やハイブリッドなガバナンス構造が選ばれると体系化した。' +
+      'コースは1991年、ウィリアムソンは2009年にノーベル経済学賞を受賞した。',
+    keyFigures: 'R.コース1937「企業の本質」（理論の起源・1991年ノーベル賞）／O.ウィリアムソン（限定合理性・機会主義・資産特殊性、2009年ノーベル賞）／市場か組織か＝組織の境界',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1991/press-release/', type: 'reference', label: 'NobelPrize.org — 1991年ノーベル経済学賞 プレスリリース（コース：取引費用と財産権）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/summary/', type: 'reference', label: 'NobelPrize.org — 2009年ノーベル経済学賞（ウィリアムソン：経済ガバナンス・企業の境界）' },
+      { url: 'https://www.britannica.com/money/transaction-cost', type: 'reference', label: 'Britannica Money — Transaction cost（限定合理性・資産特殊性・ガバナンス構造）' },
+    ],
+  },
+  {
+    id: 'human-planning-fallacy',
+    discipline: 'human-science',
+    title: '計画錯誤（計画の誤謬）',
+    statement:
+      'あるタスクの完了に必要な時間・コスト・リスクを、過去の類似経験からすれば明らかに不足するにもかかわらず、楽観的に過小評価してしまう傾向。ダニエル・カーネマンとエイモス・トベルスキーが1979年（論文「Intuitive Prediction」）に提唱した。' +
+      '自分の計画では各人が最良のシナリオ（うまくいく場合）に注目し、過去の同種タスクの実績（基準率・分布情報）を軽視する「内側からの視点」を取るため生じるとされる。当人の計画は過小評価される一方、他者のタスクはむしろ悲観的に見積もられる非対称性も指摘される（ビューラー、グリフィン&ロス1994）。' +
+      '対策として、外部の類似事例の分布から見積もる「外側からの視点（outside view）／参照クラス予測」が有効とされ（ロヴァロ&カーネマン、フリヴュビヤの大型公共事業研究等）、建設・ITプロジェクトの恒常的な納期・予算超過の一因とされる。',
+    keyFigures: 'D.カーネマン&A.トベルスキー1979提唱（「Intuitive Prediction」）／最良シナリオ重視・基準率軽視の「内側からの視点」で過小評価／非対称性（Buehler, Griffin & Ross 1994）／対策＝外側からの視点・参照クラス予測（Flyvbjerg）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/biases/67_J_Personality_and_Social_Psychology_366,_1994.pdf', type: 'academic', label: 'Buehler, Griffin & Ross (1994), "Exploring the Planning Fallacy", Journal of Personality and Social Psychology 67(3):366–381（MIT 配信PDF）' },
+      { url: 'https://spsp.org/news-center/character-context-blog/planning-fallacy-inside-view', type: 'academic', label: 'Society for Personality and Social Psychology (SPSP) — "The Planning Fallacy: An Inside View"' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0065260110430014', type: 'academic', label: 'Buehler, Griffin & Peetz (2010), "The Planning Fallacy", Advances in Experimental Social Psychology（ScienceDirect）' },
+      { url: 'https://en.wikipedia.org/wiki/Planning_fallacy', type: 'reference', label: 'Wikipedia — Planning fallacy（概観の補強）' },
+    ],
+  },
+  {
+    id: 'bizlaw-bona-fide-acquisition',
+    discipline: 'business-law',
+    title: '即時取得（善意取得・民法192条）',
+    statement:
+      '取引行為によって、平穏かつ公然と動産の占有を始めた者が、善意・無過失であるときは、たとえその動産を譲り渡した相手が真の権利者（所有者）でなくても、即時にその動産の所有権を取得できるという制度（民法192条）。' +
+      '動産取引の安全と迅速を保護するため、占有という外観を信頼した取得者を保護する公信の原則の現れである。要件は、(1)動産であること（不動産・登録された自動車等は対象外）、(2)有効な取引行為に基づくこと、(3)平穏・公然・善意・無過失で占有を取得したこと。' +
+      'ただし占有物が盗品・遺失物である場合は、被害者・遺失者は盗難・遺失の時から2年間は占有者にその物の回復を請求できる（民法193条）という例外がある。',
+    keyFigures: '即時取得＝民法192条（善意・無過失で動産の所有権を即時取得）／公信の原則・取引安全の保護／要件：動産・有効な取引・平穏公然善意無過失／盗品遺失物の2年回復請求の例外（193条、起算点は盗難・遺失の時）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第192条・第193条' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/4848/ja', type: 'government', label: '日本法令外国語訳DBシステム（法務省）民法' },
+      { url: 'https://law.meijo-u.ac.jp/staff/contents/66-4/660402_sugiura.pdf', type: 'academic', label: '名城大学 法学部 即時取得（民法192条）に関する論文PDF' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-natives',
+    discipline: 'information-sociology',
+    title: 'デジタルネイティブ',
+    statement:
+      '生まれたときから、あるいは物心ついた頃からインターネット・コンピュータ・携帯端末などのデジタル技術が当たり前に存在する環境で育った世代を指す概念。教育コンサルタントのマーク・プレンスキー（Marc Prensky）が2001年の論考「Digital Natives, Digital Immigrants」で提唱し、デジタル技術に後から適応した上の世代を「デジタル移民（digital immigrants）」と対比した。' +
+      'プレンスキーは、ネイティブ世代は並行処理（マルチタスク）や視覚的・即時的な情報処理を好み、ネットワーク環境で力を発揮する一方、従来型の教育とのミスマッチが生じると論じた。' +
+      'ただしこの概念は、年齢で一律にデジタル能力を仮定するのは過度な単純化で実証的裏付けが弱い（原論文は科学的研究ではない）、世代内の格差（第二のデジタルデバイド／デジタル不平等）を見落とす、という学術的批判を多く受けており、教育研究者からは「モラル・パニック」になぞらえられている。',
+    keyFigures: 'マーク・プレンスキー2001「Digital Natives, Digital Immigrants」／デジタル移民との対比／Bennett, Maton & Kervin 2008の批判（実証的根拠の弱さ・モラルパニック）／Helsper & Eynon（LSE）：世代内格差を強調',
+    asOf: '2026-06',
+    sources: [
+      { url: 'http://www.technologysource.org/article/digital_natives_digital_immigrants/', type: 'reference', label: 'Prensky, M. (2001) "Digital Natives, Digital Immigrants" — 原典（On the Horizon 掲載版）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-4614-6439-6_101949-1', type: 'academic', label: 'Springer Nature "Digital Native"（Encyclopedia of Educational Philosophy and Theory）— 概念定義と批判的評価' },
+      { url: 'https://bera-journals.onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8535.2007.00793.x', type: 'academic', label: 'Bennett, Maton & Kervin (2008) "The digital natives debate: A critical review of the evidence", British Journal of Educational Technology 39(5):775–786' },
+      { url: 'https://eprints.lse.ac.uk/27739/1/Digital_natives_(LSERO).pdf', type: 'academic', label: 'Helsper & Eynon, "Digital natives: where is the evidence?"（London School of Economics リポジトリ）— 実証的批判' },
+    ],
+  },
+  {
+    id: 'econ-kuznets-curve',
+    discipline: 'economics',
+    title: 'クズネッツ曲線',
+    statement:
+      '経済発展（一人当たり所得）の初期段階では所得の不平等が拡大し、ある転換点を過ぎると不平等が縮小していくという、逆U字型の関係を表す仮説。サイモン・クズネッツが1955年の論文・会長講演「Economic Growth and Income Inequality」（American Economic Review）で提示した。' +
+      '農業中心の経済から工業化が進む過程で、農村から都市への労働移動や産業構造の変化により都市・農村間の格差が一旦拡大し、その後、教育の普及・再分配政策・民主化や福祉国家化・産業の成熟とともに縮小していくと説明される。' +
+      'ただしその後の各国データでは逆U字が必ずしも成立せず（一部ラテンアメリカ諸国を除くと関係が崩れる、近年の先進国では不平等が再拡大）、仮説の一般性には批判・反証も多い。所得を環境汚染に置き換えた「環境クズネッツ曲線」など派生概念もある。クズネッツはGNP統計の整備など経済成長の実証的解明への貢献により、1971年にノーベル経済学賞を受賞した。',
+    keyFigures: 'サイモン・クズネッツ1955「Economic Growth and Income Inequality」(AER)／所得と不平等の逆U字仮説／実証的反証・批判が多い／環境クズネッツ曲線へ派生／クズネッツ1971ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1971/kuznets/facts/', type: 'reference', label: 'NobelPrize.org — Simon Kuznets, Prize in Economic Sciences 1971 (Facts)' },
+      { url: 'https://www.ebsco.com/research-starters/economics/kuznets-curve', type: 'reference', label: 'EBSCO Research Starters (Economics) — Kuznets Curve' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/environmental-kuznets-curves', type: 'reference', label: 'Encyclopedia.com — Environmental Kuznets Curves（派生概念）' },
+    ],
+  },
 ];
 // Stryker restore all
