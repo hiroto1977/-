@@ -230,5 +230,40 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://biz.moneyforward.com/contract/basic/22406/', type: 'media', label: 'マネーフォワード 電子署名法第3条' },
     ],
   },
+  {
+    value: {
+      id: 'labor-stress-check',
+      domain: 'labor',
+      title: 'ストレスチェック制度（労働安全衛生法）',
+      statement:
+        '常時50人以上の労働者を使用する事業場は、年1回、医師・保健師等によるストレスチェック' +
+        '（心理的な負担の程度を把握する検査）の実施が義務（2015年12月〜）。結果は本人に通知し、' +
+        '高ストレス者は申出により医師の面接指導につなげる。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/anzen_eisei/stress_check.html', type: 'government', label: '厚生労働省 東京労働局 ストレスチェック制度の概要' },
+      { url: 'https://www.armg.jp/journal/404-2/', type: 'media', label: 'アドバンテッジ ストレスチェック義務化 解説' },
+      { url: 'https://www.sompo-hs.co.jp/useful/2025/10/000873/', type: 'media', label: 'SOMPO ヘルスサポート 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-simplified-consumption',
+      domain: 'tax',
+      title: '消費税の簡易課税制度',
+      statement:
+        '基準期間の課税売上高が5,000万円以下の事業者は、「消費税簡易課税制度選択届出書」を提出することで' +
+        '簡易課税を選択でき、事業区分ごとの「みなし仕入率」で仕入控除税額を計算する（原則2年間継続）。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6505.htm', type: 'government', label: '国税庁 No.6505 簡易課税制度' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r5/Nov/02.htm', type: 'government', label: '国税庁 消費税の届出' },
+      { url: 'https://support.freee.co.jp/hc/ja/articles/23391692865177', type: 'media', label: 'freee 消費税の簡易課税制度' },
+    ],
+  },
 ];
 // Stryker restore all
