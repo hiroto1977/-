@@ -1392,5 +1392,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://web.mit.edu/allanmc/www/mcluhan.mediummessage.pdf', type: 'academic', label: 'MIT 提供 — McLuhan『Understanding Media』(1964) 第1章 The Medium is the Message 抜粋（原典）' },
     ],
   },
+  {
+    id: 'econ-principal-agent',
+    discipline: 'economics',
+    title: 'プリンシパル・エージェント理論（agency theory）',
+    statement:
+      '依頼人（プリンシパル）が、意思決定や業務の遂行を代理人（エージェント）に委ねる関係において、両者の利害が一致せずかつ情報の非対称性が存在するために生じる問題（エージェンシー問題）を分析する経済学の理論。' +
+      '中心となるのは、エージェントの行動を依頼人が十分に観察できないことに起因するモラルハザードと、エージェントの隠れた情報による逆選択である。株主と経営者、依頼人と弁護士、有権者と政治家などが典型例。委ねる側はモニタリング費用、委ねられる側はボンディング費用を負い、なお残る損失を残余損失と呼び、これらの総和をエージェンシーコストという。これを抑えるため業績連動報酬やストックオプションといったインセンティブ契約・ガバナンスの仕組みが用いられる。マイケル・ジェンセンとウィリアム・メックリングが1976年の論文でエージェンシーコストを定式化し、契約理論の中核を成す。ベングト・ホルムストロームとオリバー・ハートはこの分野への貢献により2016年にノーベル経済学賞を受賞した。',
+    keyFigures: 'ジェンセン & メックリング（1976、エージェンシーコストの定式化）／ホルムストローム & ハート（2016ノーベル経済学賞・契約理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/financial-agency-theory', type: 'reference', label: 'Britannica Money — Financial agency theory' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2016/popular-information/', type: 'government', label: 'NobelPrize.org — 2016年経済学賞 Hart & Holmström（契約理論・本人-代理人モデル）' },
+      { url: 'https://ideas.repec.org/a/eee/jfinec/v3y1976i4p305-360.html', type: 'academic', label: 'Jensen & Meckling (1976) Theory of the Firm, Journal of Financial Economics 3:305-360（RePEc）' },
+    ],
+  },
+  {
+    id: 'econ-rational-expectations',
+    discipline: 'economics',
+    title: '合理的期待形成（合理的期待仮説）',
+    statement:
+      '経済主体は、利用可能な情報を最大限かつ効率的に活用し、体系的（systematic）な誤りを犯さない形で将来を予想する（期待を形成する）とする仮説。予想は平均的には正しく、誤差はランダムにとどまる。' +
+      'ジョン・F・ミュースが1961年の論文「Rational Expectations and the Theory of Price Movements」で概念を提示し、ロバート・E・ルーカスらが1970年代にマクロ経済学へ導入・応用して「合理的期待革命」を起こした。重要な含意として、人々が政策の効果を見越して行動を調整するため、予見された金融・財政政策は実質変数（産出・雇用）に影響を与えられないとする「政策無効命題」がある。さらに、過去データに基づき推定された計量モデルの方程式は政策（期待）が変われば不安定になり予測に使えなくなるという「ルーカス批判（1976）」も中心的な帰結である。ルーカスはこの貢献により1995年ノーベル経済学賞を受賞した。前提の現実性については批判もある。',
+    keyFigures: 'ジョン・F・ミュース（1961提示）／ロバート・E・ルーカス（1970年代導入・1995ノーベル賞・ルーカス批判1976・政策無効命題）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/theory-of-rational-expectations', type: 'reference', label: 'Encyclopaedia Britannica — Theory of rational expectations' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1995/summary/', type: 'government', label: 'NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）' },
+      { url: 'https://www.econlib.org/library/Enc/RationalExpectations.html', type: 'academic', label: 'Econlib, Concise Encyclopedia of Economics — Rational Expectations' },
+    ],
+  },
+  {
+    id: 'mgmt-theory-x-y',
+    discipline: 'management',
+    title: 'X理論・Y理論（マグレガー）',
+    statement:
+      '経営者が従業員に対して抱く人間観を、2つの対照的な前提として整理した動機づけ・組織行動の理論。X理論は「人間は本来仕事を嫌い怠惰で、責任を回避するため、命令・統制・処罰によって管理する必要がある」という性悪説的・権威主義的な前提を指す。' +
+      'これに対しY理論は「条件が整えば人間は仕事に進んで取り組み、自ら方向づけ（自己統制）を行い、責任や自己実現を求める」という性善説的な前提で、目標による管理・自主性の尊重・参加的経営が適するとする。マグレガーはこれらを労働者の類型ではなく経営者側の前提の集合と捉え、その前提が自己成就的に対応する行動を生むと論じた。ダグラス・マグレガーが1960年の著書『企業の人間的側面（The Human Side of Enterprise）』で提示し、マズローの欲求段階説の影響を受けている。後にウィリアム・オオウチが日本的経営を踏まえた「Z理論」（1981）を提唱した。',
+    keyFigures: 'ダグラス・マグレガー（1960『企業の人間的側面』）／関連: マズロー、オオウチのZ理論（1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Human-Side-of-Enterprise', type: 'reference', label: 'Encyclopædia Britannica — The Human Side of Enterprise（McGregor）' },
+      { url: 'https://www.ebsco.com/research-starters/economics/theory-x-and-theory-y', type: 'academic', label: 'EBSCO Research Starters — Theory X and Theory Y' },
+      { url: 'https://courses.lumenlearning.com/wm-organizationalbehavior/chapter/mcgregors-theory-x-and-theory-y/', type: 'academic', label: 'Lumen Learning — McGregor’s Theory X and Theory Y' },
+    ],
+  },
+  {
+    id: 'human-reciprocity',
+    discipline: 'human-science',
+    title: '返報性の原理（reciprocity）',
+    statement:
+      '他者から好意・贈り物・譲歩などを受け取ると、お返しをしなければならないという心理的義務感が生じる社会規範。試供品・無料サンプル、先に大きな要求を示してから本命を出す交渉術（ドア・イン・ザ・フェイス＝譲歩の返報）などの承諾誘導（説得）に利用される。' +
+      '社会心理学者ロバート・チャルディーニ（アリゾナ州立大学）が1984年の著書『影響力の武器（Influence: The Psychology of Persuasion）』で、人を承諾させる6つの原理（返報性・コミットメントと一貫性・社会的証明・好意・権威・希少性）の一つとして体系化した（2016年に第7原理「一体性」を追加）。文化人類学者マルセル・モースの『贈与論』(1925)など贈与交換の互酬性の議論にも淵源を持つ、文化を越えて普遍的な社会規範である。',
+    keyFigures: 'ロバート・チャルディーニ（1984『影響力の武器』・6原理）／淵源: マルセル・モース『贈与論』(1925)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Robert_Cialdini', type: 'reference', label: 'Wikipedia — Robert Cialdini（影響力の6原理・返報性）' },
+      { url: 'https://www.semanticscholar.org/paper/Reciprocal-Concessions-Procedure-for-Inducing-The-Cialdini-Vincent/92b260654b792a48084c99fb8f844e18183a5933', type: 'academic', label: 'Cialdini et al. (1975) Reciprocal Concessions Procedure (Door-in-the-Face), JPSP' },
+      { url: 'https://en.wikipedia.org/wiki/The_Gift_(essay)', type: 'reference', label: 'Wikipedia — The Gift (Mauss, 1925)（互酬性の社会理論の基礎）' },
+    ],
+  },
+  {
+    id: 'bizlaw-tort-liability',
+    discipline: 'business-law',
+    title: '不法行為責任（民法709条）',
+    statement:
+      '故意又は過失によって他人の権利又は法律上保護される利益を侵害した者は、これによって生じた損害を賠償する責任を負う（民法709条）という、損害の公平な分担を図る制度。' +
+      '成立要件は一般に、(1)故意又は過失、(2)権利・法益侵害（違法性）、(3)損害の発生、(4)行為と損害との因果関係、(5)責任能力の5つとされ、自己の過失に基づく行為についてのみ責任を負う過失責任主義を原則とする。契約関係になくても成立しうる点で債務不履行責任（415条）と異なる。特則として使用者責任（715条）、土地工作物責任（717条。占有者は過失責任〔免責の余地あり〕、所有者は無過失責任）、共同不法行為（719条）等があり、製造物責任法や自動車損害賠償保障法は無過失責任に近い特別法。損害賠償は金銭賠償が原則（722条1項）で、精神的損害に対する慰謝料（710条）も含む。',
+    keyFigures: '民法709条（一般不法行為）・710条慰謝料・715条使用者責任・717条工作物責任・719条共同不法行為／過失責任主義',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（709条・710条・715条・717条・719条・722条）' },
+      { url: 'https://nagasaki-u.repo.nii.ac.jp/record/14482/files/keinen26_101.pdf', type: 'academic', label: '長崎大学学術リポジトリ — 民法709条における不法行為の成立要件の再構築' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/040wadashinichi.pdf', type: 'academic', label: '立命館大学 — 民法715条における使用者の負担部分' },
+    ],
+  },
+  {
+    id: 'infosoc-social-capital',
+    discipline: 'information-sociology',
+    title: '社会関係資本（ソーシャル・キャピタル）',
+    statement:
+      '人々の間の信頼・規範（互酬性）・ネットワークといった社会的つながりがもつ、協調行動を促し社会を効率的に機能させる資源・価値を指す概念。物的資本・人的資本になぞらえた「資本」概念として位置づけられる。' +
+      '同質的な集団内の結束を強める「結合型（bonding）」と、異質な集団間を橋渡しする「橋渡し型（bridging）」が区別される（OECDはさらにlinking型にも言及）。ロバート・パットナムが『孤独なボウリング（Bowling Alone）』(2000)等で、米国におけるコミュニティの衰退と市民参加の低下を社会関係資本の減少として論じ、概念を広く普及させた。ピエール・ブルデュー、ジェームズ・コールマンも独自の定義で理論化に貢献している。市民社会・民主主義・健康・教育・経済発展との関連で研究されるが、定義の多義性や負の側面（排他性・閉鎖性）も指摘される。',
+    keyFigures: 'ロバート・パットナム（『Bowling Alone』2000・bonding/bridging普及）／ピエール・ブルデュー／ジェームズ・コールマン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/social-capital', type: 'reference', label: 'Encyclopaedia Britannica — Social capital' },
+      { url: 'https://www.oecd.org/en/publications/four-interpretations-of-social-capital_5jzbcx010wmt-en.html', type: 'government', label: 'OECD — Four Interpretations of Social Capital（bonding/bridging/linking）' },
+      { url: 'https://en.wikipedia.org/wiki/Bowling_Alone', type: 'reference', label: 'Wikipedia — Bowling Alone（Putnam 2000）' },
+    ],
+  },
 ];
 // Stryker restore all
