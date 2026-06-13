@@ -2810,5 +2810,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Hypodermic_needle_model', type: 'reference', label: 'Wikipedia — Hypodermic needle model' },
     ],
   },
+  {
+    id: 'econ-fiscal-multiplier',
+    discipline: 'economics',
+    title: '乗数効果（財政乗数）',
+    statement:
+      '政府支出や投資など独立支出の増加が、それと同額以上に国民所得（GDP）を増加させる波及効果。最初の支出が誰かの所得となり、その一部が消費に回って別の人の所得を生む、という連鎖が繰り返されることで、当初の支出を上回る総需要・所得の増加が生じる。' +
+      'ケインズ経済学の中核概念で、単純なモデルでは政府支出乗数＝1/(1−限界消費性向(MPC))と表され、MPCが大きいほど乗数は大きい（例：MPC=0.8なら乗数=5）。概念の起源はリチャード・カーンの雇用乗数(1931年, Economic Journal)にあり、ケインズが投資乗数として発展させた（『一般理論』1936年）。' +
+      '租税・輸入(漏出)・貨幣的要因（政府借入に伴う金利上昇によるクラウディングアウト）等は乗数を小さくする。乗数の大きさは景気局面に依存し（不況期や金融緩和下・ゼロ金利制約下では大きくなる）、実証的な推定値をめぐっては論争がある。',
+    keyFigures: '独立支出増→所得増→消費増の連鎖で総需要が当初支出以上に増加／単純乗数＝1/(1−MPC)／R.カーンの雇用乗数(1931)に起源・ケインズが投資乗数として発展(一般理論1936)／クラウディングアウト等で縮小・推定値は論争的',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/tnm/2014/tnm1404.pdf', type: 'government', label: 'IMF Technical Notes and Manuals: Fiscal Multipliers — Size, Determinants, and Use in Macroeconomic Projections (2014)' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2012/wp12286.pdf', type: 'government', label: 'IMF Working Paper WP/12/286: Fiscal Multipliers and the State of the Economy (2012)' },
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_multiplier', type: 'reference', label: 'Wikipedia: Fiscal multiplier（mechanism, formula, Kahn 1931 origin）' },
+      { url: 'https://www.jec.senate.gov/public/_cache/files/aa63e97b-ad62-4910-884f-54ff1aa67c6f/keynesiantaxandspendingmultipliers.pdf', type: 'government', label: 'U.S. Congress Joint Economic Committee: Keynesian Tax and Spending Multipliers (2009)' },
+    ],
+  },
+  {
+    id: 'econ-output-gap',
+    discipline: 'economics',
+    title: 'GDPギャップ（需給ギャップ）',
+    statement:
+      'GDPギャップ（需給ギャップ、output gap）は、現実のGDP（実際の総需要）と、その経済が労働・資本などの生産要素を平均的・持続可能な水準で用いたときに実現できる潜在GDP（供給力）との差を、潜在GDP比などで表したマクロ経済指標である。' +
+      '基本式は「（実際GDP−潜在GDP）÷潜在GDP」で、値がプラスなら総需要が供給力を上回るインフレギャップ（景気の過熱・物価上昇圧力）、マイナスなら需要不足のデフレギャップ（失業・物価下落圧力・景気停滞）を示し、景気の過熱・停滞を測る目安となる。金融・財政政策の判断材料として中央銀行・政府（日本では日銀と内閣府が独自に推計）が用いる。' +
+      'ただし潜在GDPは直接観測できず推計手法（生産関数法など）に依存するため、ギャップの値は機関や基準改定で大きく変わりうるという計測上の限界がある。オークンの法則を介して失業率とも関連づけられる。',
+    keyFigures: 'GDPギャップ＝（実際GDP−潜在GDP）÷潜在GDP（IMF表記 (Y−Y*)/Y*）／プラス＝インフレギャップ・マイナス＝デフレギャップ／日銀・内閣府・IMF等が推計し政策判断に利用／潜在GDP推計依存で値が改定されやすい／オークンの法則と関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www5.cao.go.jp/j-j/wp/wp-je07/07f61020.html', type: 'government', label: '内閣府『経済財政白書』付注「GDPギャップの推計方法について」（定義・生産関数による潜在GDP推計）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/basics/22_output-gap.htm', type: 'government', label: 'IMF Finance & Development, Back to Basics: "The Output Gap: Veering from Potential"' },
+      { url: 'https://www.boj.or.jp/research/research_data/gap/index.htm', type: 'government', label: '日本銀行「需給ギャップ・潜在成長率および労働需給関連指標」（観測不能で推計依存・四半期公表）' },
+      { url: 'https://en.wikipedia.org/wiki/Output_gap', type: 'reference', label: 'Wikipedia "Output gap"（actual−potential の定義、正＝inflationary gap、オークンの法則）' },
+    ],
+  },
+  {
+    id: 'mgmt-contingency-theory',
+    discipline: 'management',
+    title: 'コンティンジェンシー理論（条件適合理論）',
+    statement:
+      'あらゆる状況に通用する唯一最善の組織化・管理方法は存在せず、最適な組織構造やリーダーシップのあり方は、環境・技術・規模などの状況要因（コンティンジェンシー要因）に依存して変わるとする組織論の立場。古典的管理論やテイラーの「唯一最善の方法」を批判し、組織と環境の適合（fit）を重視する。' +
+      'バーンズ&ストーカーは安定環境には機械的組織・変動環境には有機的組織が適すると示し、ローレンス&ローシュは環境の不確実性に応じた分化と統合を論じた。ウッドワードは技術と組織構造の関係を実証した。リーダーシップ分野ではフィードラーの条件適合モデル（リーダーの効果は状況の好意性に依存）が代表的。' +
+      '状況に応じて打ち手を変えるべきという現代的なマネジメント観の基礎となった。',
+    keyFigures: '唯一最善の方法を否定し組織と環境の適合(fit)を重視／バーンズ&ストーカー(機械的/有機的組織)／ローレンス&ローシュ(分化と統合)／ウッドワード(技術と構造)／フィードラーの条件適合リーダーシップ・モデル',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/contingency-theory', type: 'reference', label: 'EBSCO Research Starters — Contingency theory（学術データベース）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/fiedler-contingency-model', type: 'reference', label: 'EBSCO Research Starters — Fiedler contingency model' },
+      { url: 'https://en.wikipedia.org/wiki/Contingency_theory', type: 'reference', label: 'Wikipedia — Contingency theory' },
+      { url: 'https://www.sciencedirect.com/topics/social-sciences/contingency-theory', type: 'academic', label: 'ScienceDirect Topics — Contingency Theory（Elsevier）' },
+    ],
+  },
+  {
+    id: 'human-endowment-effect',
+    discipline: 'human-science',
+    title: '保有効果（授かり効果）',
+    statement:
+      '人が自分の所有している物に対して、所有していない時よりも高い価値を感じ、手放したがらなくなる傾向。同じ物でも、それを売る際に求める最低額（WTA: 受入意思額）が、買う際に支払ってもよい額（WTP: 支払意思額）を上回るという形で表れる。' +
+      '経済学者リチャード・セイラーが1980年に命名し、カーネマン、ネッチ、セイラーらがコーネル大学の学生にマグカップを配って行った実験（1990）で実証された。売り手が要求する価格（中央値 約5.25ドル）が買い手の提示額（中央値 約2.25〜2.75ドル）のおよそ2倍に達し、取引はほとんど成立しなかった。' +
+      'プロスペクト理論の「損失回避（手放す痛みは得る喜びより大きい）」が背景にあると説明される。保有状況に依存しない安定した選好を前提とする標準的経済学と矛盾し、現状維持バイアスとも密接に関連する概念である。',
+    keyFigures: 'R.セイラーが1980年に命名／WTA(受入額)>WTP(支払額)／カーネマン・ネッチ・セイラーのマグカップ実験(コーネル大1990, 売値≈$5.25 vs 買値≈$2.25–2.75)／損失回避(プロスペクト理論)が背景／現状維持バイアスと関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Behavioral_Decision_Theory/Kahneman_et_al_1990_Experimental_tests.pdf', type: 'academic', label: 'Kahneman, Knetsch & Thaler (1990), "Experimental Tests of the Endowment Effect and the Coase Theorem," Journal of Political Economy 98(6):1325–1348（MIT 配信PDF）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.5.1.193', type: 'academic', label: 'Kahneman, Knetsch & Thaler (1991), "Anomalies: The Endowment Effect, Loss Aversion, and Status Quo Bias," Journal of Economic Perspectives 5(1):193–206（AEA）' },
+      { url: 'https://en.wikipedia.org/wiki/Endowment_effect', type: 'reference', label: 'Wikipedia: Endowment effect（Thaler 1980 命名・WTA>WTP の補強）' },
+    ],
+  },
+  {
+    id: 'bizlaw-insider-trading',
+    discipline: 'business-law',
+    title: 'インサイダー取引規制',
+    statement:
+      '上場会社等の役員・従業員・大株主や契約締結者などの「会社関係者」が、その職務等に関連して知った、投資判断に重要な影響を及ぼす未公表の「重要事実」（決算予想の大幅修正・合併・新株発行・業務提携等）に基づき、その公表前に当該会社の株式等を売買することを禁止する規制（金融商品取引法166条等）。証券市場の公正性と投資家の信頼を保護することを目的とする。' +
+      '会社関係者から重要事実の伝達を受けた情報受領者（第一次情報受領者）も規制対象に含まれる。違反には課徴金（利得相当額）のほか刑事罰（5年以下の懲役・500万円以下の罰金、法人は5億円以下の罰金）が科され、得た財産は没収・追徴される。' +
+      '調査・摘発は金融庁に置かれた証券取引等監視委員会が担う。会社関係者でなくなって一定期間内の者も対象となるなど規制の範囲は広い。',
+    keyFigures: '会社関係者が職務上知った未公表の重要事実に基づく公表前の売買を禁止／金商法166条等／市場の公正性・投資家保護／第一次情報受領者も対象／課徴金+刑事罰(5年以下の懲役等)、証券取引等監視委員会が摘発',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=323AC0000000025_20251213_505AC0000000053', type: 'government', label: 'e-Gov法令検索「金融商品取引法」（166条・197条の2等／権威ある一次法令）' },
+      { url: 'https://www.fsa.go.jp/news/r5/shouken/20240419/240419insider_qa_.pdf', type: 'government', label: '金融庁「インサイダー取引規制に関するＱ＆Ａ」（所管官庁資料）' },
+      { url: 'https://www.jpx.co.jp/regulation/preventing/insider/index.html', type: 'reference', label: '日本取引所グループ（JPX）「インサイダー取引規制」' },
+      { url: 'https://www.jpx.co.jp/corporate/research-study/research-group/nlsgeu0000037sge-att/20180323_2.pdf', type: 'academic', label: '志谷匡史（神戸大学）「金商法166条 会社情報に関する内部者取引の禁止」（学術解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-panopticon',
+    discipline: 'information-sociology',
+    title: 'パノプティコンと規律権力',
+    statement:
+      'パノプティコン（一望監視施設）は、功利主義者ジェレミー・ベンサムが18世紀末（設計図は1791年公刊）に考案した刑務所の建築モデルで、中央の監視塔から円環状に配置された独房を一望でき、囚人からは監視者が見えない構造を持つ。囚人は常に監視されているかもしれないと意識し、自ら行動を律するようになる。' +
+      '哲学者ミシェル・フーコーは『監獄の誕生』（Surveiller et punir, 1975）でこれを近代社会の「規律権力（規律訓練型権力）」の比喩・モデルとして理論化した。すなわち、実際に常時監視せずとも、見られているかもしれないという意識を内面化させることで、人々を自発的に従順な主体へと規律化する権力作用を象徴する。フーコーはこの作用を学校・病院・工場・兵営など近代の諸制度に広がるものとして論じた。' +
+      '監視カメラやデータ監視が遍在する現代のサーベイランス社会論（電子パノプティコン等）の基礎概念となっている。',
+    keyFigures: 'ベンサムが考案した一望監視の刑務所建築（設計図1791年公刊）／中央塔から一望・囚人からは監視者が見えず自己規律化／フーコー『監獄の誕生』1975が規律権力の比喩として理論化／学校・病院・工場等へ拡張／現代の監視社会論の基礎',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/panopticon', type: 'reference', label: 'Encyclopaedia Britannica — Panopticon（ベンサム考案、1791年設計図公刊、構造と自己規律化）' },
+      { url: 'https://plato.stanford.edu/entries/foucault/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Michel Foucault（規律権力とパノプティコン）' },
+      { url: 'https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/8346', type: 'academic', label: 'Surveillance & Society (Queen\'s University) — Surveillance, Panopticism, and Self-Discipline in the Digital Age' },
+      { url: 'https://soztheo.com/sociology/key-works-in-sociology/michel-foucault-discipline-and-punish-1975/', type: 'reference', label: 'SozTheo — Michel Foucault, Discipline and Punish (1975)（規律権力・自己監視の解説）' },
+    ],
+  },
 ];
 // Stryker restore all
