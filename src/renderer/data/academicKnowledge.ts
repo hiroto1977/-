@@ -2413,5 +2413,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://press.princeton.edu/books/paperback/9780691180908/republic', type: 'academic', label: 'Cass R. Sunstein, "#Republic: Divided Democracy in the Age of Social Media", Princeton University Press' },
     ],
   },
+  {
+    id: 'econ-giffen-good',
+    discipline: 'economics',
+    title: 'ギッフェン財',
+    statement:
+      '価格が上昇すると需要量がかえって増加する（需要法則に反する）特殊な財。下級財（劣等財）の一種で、価格変化の「所得効果」が「代替効果」を上回る場合に生じる。' +
+      '価格上昇で実質所得が低下すると、その財が家計支出に占める比重が大きいため、より高価な代替財を諦めて、安価な必需品であるこの財の消費をかえって増やす。スコットランドの統計学者ロバート・ギッフェンにちなみ、アルフレッド・マーシャルが『経済学原理』（1890年）で言及・紹介して命名された（アイルランドのジャガイモ飢饉の逸話で知られるが、その実証性は長く論争的だった）。' +
+      '近年、Jensen & Miller (2008) が中国の貧困地域の主食（湖南省の米・甘粛省の小麦）についてギッフェン行動を実証的に確認した。すべての下級財がギッフェン財ではないが、ギッフェン財は必ず下級財である。',
+    keyFigures: 'ロバート・ギッフェン（名の由来）／A.マーシャル『経済学原理』(1890)が命名・紹介／所得効果>代替効果で需要法則に反する／下級財の一種／Jensen&Miller 2008の実証（中国の米・小麦）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/economics/giffen-good', type: 'reference', label: 'EBSCO Research Starters — Giffen good（百科事典的レファレンス）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w13243/w13243.pdf', type: 'academic', label: 'Jensen & Miller, "Giffen Behavior: Theory and Evidence"（NBER Working Paper w13243）' },
+      { url: 'https://en.wikipedia.org/wiki/Giffen_good', type: 'reference', label: 'Wikipedia — Giffen good（突合用の二次情報源）' },
+    ],
+  },
+  {
+    id: 'econ-liquidity-preference',
+    discipline: 'economics',
+    title: '流動性選好',
+    statement:
+      'ジョン・メイナード・ケインズが『雇用・利子および貨幣の一般理論』(1936)で示した貨幣需要の理論。人々が富を、利子を生むが流動性の低い債券ではなく、最も流動性の高い貨幣の形で保有しようとする選好を指す。' +
+      'ケインズは貨幣を保有する動機を3つに分類した：(1)取引動機（日常の支払いのため）、(2)予備的動機（不意の支出に備えるため）、(3)投機的動機（将来の利子率変動を見越して有利な時に債券を売買するため）。利子とは「流動性を手放すことへの対価（reward for parting with liquidity）」であり、貨幣需要（流動性選好）と貨幣供給とが利子率を決定するとした（利子率を貯蓄と投資で決まるとする古典派の貸付資金説と対比される）。' +
+      '投機的動機による貨幣需要は利子率の減少関数であり、利子率が極端に低いと貨幣需要が無限に弾力的になる「流動性の罠」が生じうる。',
+    keyFigures: 'J.M.ケインズ『一般理論』1936／取引・予備・投機の3動機／利子＝流動性を手放す対価／流動性選好と貨幣供給で利子率決定（古典派の貸付資金説と対比）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/liquidity-preference', type: 'reference', label: 'Britannica Money — Liquidity preference（権威ある百科事典）' },
+      { url: 'https://www.ebsco.com/research-starters/economics/liquidity-preference-macroeconomic-theory', type: 'reference', label: 'EBSCO Research Starters — Liquidity preference (macroeconomic theory)' },
+      { url: 'https://www.marxists.org/reference/subject/economics/keynes/general-theory/ch13.htm', type: 'academic', label: 'Keynes, The General Theory, Ch.13「The General Theory of the Rate of Interest」（一次資料）' },
+    ],
+  },
+  {
+    id: 'mgmt-pest-analysis',
+    discipline: 'management',
+    title: 'PEST分析（PESTLE分析）',
+    statement:
+      '企業を取り巻くマクロ環境（外部環境）を4つの観点から分析し、戦略立案の前提となる機会・脅威を把握するためのフレームワーク。Politics（政治：法規制・税制・政権の方針等）、Economy（経済：景気・金利・為替・物価等）、Society（社会：人口動態・ライフスタイル・価値観等）、Technology（技術：技術革新・特許・インフラ等）の頭字語である。' +
+      '自社では統制できないマクロ要因を体系的に洗い出す点に意義があり、戦略マネジメントやマーケティングリサーチで広く用いられる。SWOT分析の外部環境（機会・脅威）の入力としても活用され、SWOTと組み合わせて使うと効果的とされる。近年はLegal（法律）とEnvironment（環境）を加えたPESTLE（PESTEL）分析へ拡張されることが多い。' +
+      '原型は、F.J.アギュラーが1967年の著書『Scanning the Business Environment』で示した ETPS（経済・技術・政治・社会）にあるとされるが、頭字語PESTの確立経緯や帰属には諸説がある。',
+    keyFigures: 'Politics・Economy・Society・Technologyのマクロ環境分析／SWOTの外部環境（機会・脅威）入力／PESTLE（Legal・Environment追加）へ拡張／原型はアギュラー1967 ETPSとされる（帰属に諸説あり）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/pest-analysis', type: 'reference', label: 'EBSCO Research Starters「PEST Analysis」（定義・4要素・戦略管理上の用途）' },
+      { url: 'https://www.cipd.org/en/knowledge/factsheets/pestle-analysis-factsheet/', type: 'reference', label: 'CIPD（英国人材開発協会）ファクトシート「PESTLE analysis」（Legal・Environment追加、SWOTとの併用）' },
+      { url: 'https://libguides.libraries.wsu.edu/c.php?g=294263&p=4358409', type: 'academic', label: 'Washington State University Libraries LibGuide「PESTEL Analysis」（外部環境分析ツールの解説）' },
+      { url: 'https://en.wikipedia.org/wiki/PEST_analysis', type: 'reference', label: 'Wikipedia「PEST analysis」（アギュラー1967/ETPS起源説と帰属の議論）' },
+    ],
+  },
+  {
+    id: 'human-foot-in-the-door',
+    discipline: 'human-science',
+    title: 'フット・イン・ザ・ドア・テクニック（段階的要請法）',
+    statement:
+      'まず相手が断りにくい小さな要請を承諾させ、その後に本命のより大きな要請を行うと、最初から大きな要請をするよりも承諾を得やすくなるという説得・承諾誘導の技法。' +
+      '一度小さな要請に応じると「自分は協力的な人間だ」という自己認知が更新され、その自己像と一貫した行動をとろうとする動機が働くため、後続の大きな要請にも応じやすくなると説明される（自己知覚理論／一貫性）。ジョナサン・フリードマンとスコット・フレイザーが1966年の論文で実証し、自宅の庭に大きな交通安全の看板を立てる要請の前に小さなステッカー等の依頼に応じた群では承諾率が約76%に達し、いきなり大きな要請をした統制群（約17%）を大きく上回った。' +
+      '先に過大な要請をして断らせてから小さな本命要請に応じさせる「ドア・イン・ザ・フェイス」とは逆方向の技法である。',
+    keyFigures: 'J.フリードマン&S.フレイザー 1966（Journal of Personality and Social Psychology）／小さな承諾→大きな承諾／一貫性・自己知覚理論（D.ベム）で説明／実験は承諾率 約76% vs 統制群 約17%／ドア・イン・ザ・フェイスと対照',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Foot-in-the-door_technique', type: 'reference', label: 'Wikipedia — Foot-in-the-door technique' },
+      { url: 'https://www.simplypsychology.org/compliance.html', type: 'reference', label: 'Simply Psychology — Techniques of Compliance' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/social-influence/foot-in-the-door-technique/', type: 'reference', label: 'iResearchNet (Psychology) — Foot-in-the-Door Technique' },
+      { url: 'https://www.scu.edu/media/college-of-arts-and-sciences/psychology/documents/Burger-Guadagno-BASP-2003.pdf', type: 'academic', label: 'Burger & Guadagno (2003), Basic and Applied Social Psychology（Santa Clara University 配信PDF）' },
+    ],
+  },
+  {
+    id: 'bizlaw-worker-dispatch',
+    discipline: 'business-law',
+    title: '労働者派遣法',
+    statement:
+      '労働者派遣（派遣元事業主が雇用する労働者を、その雇用関係のもとで他人＝派遣先の指揮命令を受けて派遣先のために労働させること）の適正な運営と派遣労働者の保護を図る法律。正式名称は「労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律」（昭和60年法律第88号）。1985年に制定され1986年に施行された。' +
+      '当初は派遣可能業務を列挙する「ポジティブリスト」方式だったが、1999年改正で原則自由化され、禁止業務のみを定めるネガティブリスト方式となった。派遣元（雇用主）・派遣先（指揮命令）・派遣労働者という三者関係が特徴で、職業安定法が原則禁止する労働者供給事業の例外として位置づけられる。' +
+      '2015年改正で派遣可能期間のルールが見直され、事業所単位・個人単位で原則3年の期間制限に統一された。2020年からは「同一労働同一賃金」（派遣労働者と派遣先労働者の不合理な待遇差の禁止）が施行された。',
+    keyFigures: '労働者派遣法＝1985年制定・1986年施行（昭和60年法律第88号）／三者関係：派遣元=雇用・派遣先=指揮命令・派遣労働者／1999年改正で原則自由化（ネガティブリスト化）／2015年期間制限見直し（原則3年）・2020年同一労働同一賃金',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/360AC0000000088', type: 'government', label: 'e-Gov法令検索｜労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律（昭和60年法律第88号）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=75021000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省｜労働者派遣法（昭和60年7月5日法律第88号）' },
+      { url: 'http://www1.tcue.ac.jp/home1/takamatsu/107016/6.html', type: 'academic', label: '高崎経済大学｜労働者派遣法の歴史' },
+    ],
+  },
+  {
+    id: 'infosoc-information-cascade',
+    discipline: 'information-sociology',
+    title: '情報カスケード',
+    statement:
+      '個人が逐次的に意思決定する状況で、各人が自分自身の私的情報よりも、先行する他者の行動から推測される情報を重視し、自分の私的情報を無視して先行者の選択に追随する現象。' +
+      '各人がベイズ的推論を行う合理的主体であっても生じる点が特徴で、ある段階以降は皆が先行者を模倣するため新たな情報伝達が止まり、誤った選択が集団全体に広がりうる。そのため脆く、わずかな新情報の流入でも崩れやすい。ビクチャンダニ、ハーシュライファー、ウェルチが1992年の論文（Journal of Political Economy）で定式化した。' +
+      '流行・ファッション・口コミ・株式市場のバブル・SNSでのバイラル拡散などを説明し、群衆が必ずしも正しい情報を集約しない「集合知の失敗」の一形態である。社会的承認を求める同調圧力（規範的影響）とは異なり、他者の行動を現実についての証拠とみなす情報的影響に基づく。',
+    keyFigures: 'ビクチャンダニ・ハーシュライファー・ウェルチ 1992（Journal of Political Economy）／私的情報を無視し先行者を模倣する逐次的意思決定／ベイズ的に合理的だが脆い／バブル・流行・バイラル拡散を説明／規範的影響（同調圧力）と区別される情報的影響',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sites.uci.edu/dhirshle/abstracts/a-theory-of-fads-fashion-custom-and-cultural-change-in-informational-cascades/', type: 'academic', label: 'David Hirshleifer (UC Irvine) — 原著論文 BHW 1992 のアブストラクト（著者本人ページ）' },
+      { url: 'https://tamuz.caltech.edu/papers/cascades_survey.pdf', type: 'academic', label: 'Bikhchandani & Hirshleifer, "Information Cascades and Social Learning"（Caltech 配布のサーベイ）' },
+      { url: 'https://en.wikipedia.org/wiki/Information_cascade', type: 'reference', label: 'Wikipedia "Information cascade" — 定義・ハーディングとの区別' },
+      { url: 'https://blogs.cornell.edu/info2040/2017/11/24/informational-cascade-vs-herd-behavior/', type: 'academic', label: 'Cornell INFO 2040 course blog — 情報カスケード対群集行動の区別' },
+    ],
+  },
 ];
 // Stryker restore all
