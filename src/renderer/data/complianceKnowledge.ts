@@ -2510,5 +2510,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.gov-online.go.jp/article/202402/entry-5611.html', type: 'media', label: '政府広報オンライン 合理的配慮の提供が義務化' },
     ],
   },
+  {
+    value: {
+      id: 'tax-small-enterprise-mutual-aid',
+      domain: 'tax',
+      title: '小規模企業共済等掛金控除',
+      statement:
+        '小規模企業共済の掛金、確定拠出年金（企業型・個人型iDeCo）の加入者掛金、地方公共団体が実施する心身障害者扶養共済制度の掛金などを' +
+        '支払った場合、その年に支払った掛金の全額が小規模企業共済等掛金控除として所得控除の対象となる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1135.htm', type: 'government', label: '国税庁 No.1135 小規模企業共済等掛金控除' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru/cat2/cat22/cat223/cid073.html', type: 'government', label: '国税庁 確定申告書等作成コーナー 掛金控除' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/shotoku/16/02.htm', type: 'government', label: '国税庁 所得税基本通達 法第75条関係' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-life-insurance-deduction',
+      domain: 'tax',
+      title: '生命保険料控除',
+      statement:
+        '納税者がその年に支払った生命保険料・介護医療保険料・個人年金保険料がある場合、一定額の所得控除（生命保険料控除）を受けられる。' +
+        '平成24年（2012年）1月1日以後に締結した契約（新契約）では、一般生命保険料・介護医療保険料・個人年金保険料の3区分それぞれにつき' +
+        '所得税で最高4万円が控除され、合計の適用限度額は12万円となる。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1140.htm', type: 'government', label: '国税庁 No.1140 生命保険料控除' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shotoku/05/76.htm', type: 'government', label: '国税庁 質疑応答事例 生命保険料控除の限度額' },
+      { url: 'https://www.seiho.or.jp/data/billboard/deduction/pdf/01.pdf', type: 'media', label: '生命保険協会 生命保険料控除制度の改正' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-commuting-injury',
+      domain: 'labor',
+      title: '通勤災害（労災保険）',
+      statement:
+        '労災保険では、労働者が「通勤」（住居と就業の場所との間の往復等を、就業に関し合理的な経路及び方法で行うこと）により被った' +
+        '負傷・疾病・障害・死亡（通勤災害）について保険給付が行われる。通勤の経路を逸脱・中断した場合は原則としてその後は通勤と認められないが、' +
+        '日用品の購入など日常生活上必要な行為で最小限度のものは、合理的な経路に復した後は再び通勤と認められる。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/houdou/2r98520000016ahx.html', type: 'government', label: '厚生労働省 通勤災害関係' },
+      { url: 'https://jsite.mhlw.go.jp/ishikawa-roudoukyoku/hourei_seido_tetsuzuki/rousai_hoken/hourei_seido/kyufu/kyufu05.html', type: 'government', label: '石川労働局 通勤災害に関する保険給付' },
+      { url: 'https://www.rouki.jp/itsudatsu', type: 'media', label: '通勤災害の逸脱・中断 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-employment-certificate',
+      domain: 'labor',
+      title: '退職時等の証明（労働基準法22条）',
+      statement:
+        '労働者が退職（解雇を含む）に際し、使用期間・業務の種類・その事業における地位・賃金・退職の事由（解雇の場合はその理由を含む）について' +
+        '証明書を請求したときは、使用者は遅滞なくこれを交付しなければならない（労働基準法22条）。解雇予告日から退職日までに解雇理由の証明書を' +
+        '請求された場合も交付義務があり、いずれの証明書にも労働者の請求しない事項を記入してはならない。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（22条）' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article22.html', type: 'government', label: '栃木労働局 退職時の証明（22条）' },
+      { url: 'https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00486.html', type: 'government', label: '和歌山労働局 解雇理由・退職時の証明（22条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-data-security-measures',
+      domain: 'legal',
+      title: '個人データの安全管理措置義務（個人情報保護法23条）',
+      statement:
+        '個人情報取扱事業者は、取り扱う個人データの漏えい・滅失・毀損の防止その他の安全管理のために必要かつ適切な措置を講じなければならない' +
+        '（個人情報保護法23条）。個人情報保護委員会のガイドラインは、基本方針の策定に加え、組織的・人的・物理的・技術的の各安全管理措置を求め、' +
+        'これとは別に従業者の監督（24条）・委託先の監督（25条）を義務付けている。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q9-3/', type: 'government', label: '個人情報保護委員会 安全管理措置 FAQ（23条）' },
+      { url: 'https://www.ppc.go.jp/files/pdf/280526_siryou1-2.pdf', type: 'government', label: '個人情報保護委員会 安全管理措置の基本的な考え方' },
+      { url: 'https://security-portal.cyber.go.jp/guidance/law-handbook/v2-04.html', type: 'government', label: '内閣サイバーセキュリティ 法令ハンドブック 安全管理措置' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-cross-border-data',
+      domain: 'legal',
+      title: '外国にある第三者への個人データ提供の制限（個人情報保護法28条）',
+      statement:
+        '個人情報取扱事業者が外国にある第三者へ個人データを提供する場合は、原則としてあらかじめ「外国にある第三者への提供を認める旨の' +
+        '本人の同意」を得る必要がある（個人情報保護法28条1項）。例外として、日本と同等の水準にあると個人情報保護委員会規則で認められる国への提供、' +
+        'または基準に適合する体制を整備している提供先への提供がある。本人同意を得る際には移転先国の名称・保護制度等の情報提供が必要（同条2項）。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_offshore/', type: 'government', label: '個人情報保護委員会 ガイドライン（外国第三者提供編）' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq2-q5-8/', type: 'government', label: '個人情報保護委員会 外国第三者提供 FAQ' },
+      { url: 'https://www.businesslawyers.jp/practices/1438', type: 'media', label: '外国にある第三者への提供と本人同意 解説' },
+    ],
+  },
 ];
 // Stryker restore all
