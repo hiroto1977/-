@@ -1921,6 +1921,52 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.nikkei.com/article/DGXZQOUB291980Z21C23A2000000/', type: 'media', label: '日本経済新聞 — 日経平均2023年終値33,464円・年間+7,369円高' },
     ],
   },
+  {
+    year: 2024,
+    era: '令和6年',
+    world:
+      '世界経済はインフレ鈍化と「ソフトランディング」観測のもとで底堅く推移し、IMFは2024年の世界実質GDP成長率を約3.2%と見込んだ。米FRBは9月18日に4年ぶりの利下げを0.50%（50bp）の大幅幅で開始し緩和サイクルに転じた。AI関連（Nvidia等）と大型テックが市場を牽引して米株は最高値を更新し、11月5日の大統領選でトランプが再選された。DJIAは年末42,544.22で越年した。',
+    japan:
+      '日経平均は2月22日に1989年バブル期の史上最高値（38,915円）を約34年ぶりに更新し、3月には史上初の4万円台に乗せた。日銀は3月19日にマイナス金利政策を解除しYCCも撤廃、17年ぶりの利上げに踏み切った（短期金利0〜0.1%へ）。8月5日には円キャリー取引の巻き戻しで日経が史上最大の下げ幅（▲4,451円、約-12.4%）を記録した後に急反発した。1月の新NISA開始、1月1日の能登半島地震、10月の石破内閣発足も節目となった。',
+    keyEvents: [
+      '能登半島地震（1/1、M7.6）／新NISA制度開始・米ビットコイン現物ETF承認（1月）',
+      '日経平均が34年ぶりに史上最高値を更新（2/22）→ 3月に史上初の4万円突破',
+      '日銀がマイナス金利解除・YCC撤廃、17年ぶりの利上げ（3/19）',
+      '日経平均が史上最大の下げ幅▲4,451円（約-12.4%）の暴落（8/5）→ 翌日以降急反発',
+      '米FRBが4年ぶり利下げを50bpで開始（9/18）／トランプ再選（11/5）／石破内閣発足（10月）',
+    ],
+    risingSectors: ['（定性・主に米S&P500）コミュニケーション・サービス（Meta・Google）、情報技術・半導体（Nvidia +171%等、AI需要）、公益（AIデータセンター電力需要）、金融'],
+    decliningSectors: ['（定性）素材・資材、不動産（相対的に劣後）。2024年は米株ほぼ全セクターがプラスで明確な下落セクターは限定的。'],
+    caveats: 'DJIA年末値42544.22（12/31）・日経平均年末値39894.54（12/30大納会・年末値で35年ぶり最高）・ビットコイン年末値約93,429ドルはいずれも独立2源で一致。ビットコインは取引所により$93,429〜93,460の幅（概数）。8/5の暴落は下げ幅・下落率とも当時史上最大級。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2024/k240319a.pdf', type: 'government', label: '日本銀行 — 2024/3/19 Changes in the Monetary Policy Framework（マイナス金利解除・YCC撤廃）' },
+      { url: 'https://www.imf.org/en/Publications/WEO/Issues/2024/04/16/world-economic-outlook-april-2024', type: 'government', label: 'IMF WEO April 2024（世界GDP成長率約3.2%）' },
+      { url: 'https://www.nikkei.com/article/DGXZQOUB300DT0Q4A231C2000000/', type: 'media', label: '日本経済新聞 — 日経平均終値3万9894円、年末値で35年ぶり最高値' },
+    ],
+  },
+  {
+    year: 2025,
+    era: '令和7年',
+    world:
+      'トランプ政権の「相互関税」（4月2日、Liberation Day）を起点とする通商摩擦が最大の波乱要因となり4月に株式市場が急落したが、その後の各国との貿易合意と米FRBの利下げ（9・10・12月の3会合連続、年末FF金利目標3.50-3.75%）で持ち直した。IMFは10月に2025年の世界成長率を3.2%へ上方修正した。米株はAI関連株主導で記録的高値を更新したが、年後半は「AIバブル」懸念で変動が拡大した。DJIAは年末48,063.29で越年した。',
+    japan:
+      '石破茂首相が9月に退陣表明し、10月21日に高市早苗が初の女性首相に就任した。日銀は12月19日に政策金利を0.75%へ追加利上げし約30年ぶりの高水準に到達した。2025年春闘は平均賃上げ率5%超と高水準だったが物価上昇がこれを上回り、実質賃金は前年比マイナスで「賃上げの実感なき物価高」が続いた。日経平均は史上初めて年末終値で5万円台（50,339.48）に乗せ、年間+26%超と好調だった。4〜10月に大阪・関西万博を開催した。',
+    keyEvents: [
+      'トランプ「相互関税」発表（4/2 Liberation Day）→ 4月の世界同時株安、その後日米貿易合意（7月）',
+      '米FRBが2025年に3会合連続で利下げ（9・10・12月）、年末FF金利目標3.50-3.75%',
+      '日銀が政策金利0.75%へ追加利上げ（12/19、約30年ぶり高水準）',
+      '石破退陣→高市早苗が初の女性首相に就任（10/21）',
+      '大阪・関西万博（4/13〜10/13、来場者約2,902万人）／日経平均が年末終値で史上初の5万円台',
+    ],
+    risingSectors: ['（定性）AI・半導体関連（Nvidia・AMD・Broadcom・Micron等の米メガキャップ技術株）、データセンター・AIインフラ投資関連、日本株全般（輸出関連・銀行/金融は利上げ局面で相対的に堅調）'],
+    decliningSectors: ['（定性）暗号資産（ビットコインは10月の最高値$126,000台から反落し年間ではマイナス）、通商摩擦の影響を受けた一部輸出・自動車関連（年前半の関税ショック局面）。'],
+    caveats: 'DJIA年末値48063.29・日経平均年末値50339.48（史上初の年末5万円台）・ビットコイン年末値約87,501.95ドル（10月の最高値$126,000台から反落・年間約-6%）はいずれも独立2源で一致。実質賃金は概ねマイナスだが確報定義差あり。高市政権の追加経済政策等は本データの範囲で複数源確認未完のため未記載。「AIバブル」評価は市場参加者の見方で確定的判断ではない。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.imf.org/en/publications/weo/issues/2025/10/14/world-economic-outlook-october-2025', type: 'government', label: 'IMF WEO October 2025（世界成長率2025=3.2%へ上方修正）' },
+      { url: 'https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a1.htm', type: 'government', label: '米FRB — 2025/12 Implementation Note（FF金利3.50-3.75%へ利下げ）' },
+      { url: 'https://www.nippon.com/en/news/yjj2025123000562/', type: 'media', label: 'Nippon.com — Nikkei Marks Record Year-End Finish above 50,000（50,339.48）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -2027,6 +2073,8 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   2021: { djiaYearEnd: 36338.3, nikkeiYearEnd: 28791.71, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 46306 },
   2022: { djiaYearEnd: 33147.25, nikkeiYearEnd: 26094.5, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 16547 },
   2023: { djiaYearEnd: 37689.54, nikkeiYearEnd: 33464.17, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 42255.12 },
+  2024: { djiaYearEnd: 42544.22, nikkeiYearEnd: 39894.54, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 93429 },
+  2025: { djiaYearEnd: 48063.29, nikkeiYearEnd: 50339.48, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 87501.95 },
 };
 
 export const ASSET_SERIES_NOTES =
