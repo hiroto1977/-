@@ -4856,5 +4856,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/19', type: 'media', label: '株主総会の決議方法（普通決議・特別決議）解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-business-premise-tax',
+      domain: 'tax',
+      title: '事業所税（地方税・目的税）',
+      statement:
+        '事業所税は、都市環境の整備・改善に要する費用に充てるための目的税で、地方税法で定める一定規模以上の都市（政令指定都市・東京都23区・' +
+        '人口30万以上の都市等）において事業所等で事業を行う者に課される地方税である。課税標準を事業所床面積とする「資産割」と従業者給与総額とする' +
+        '「従業者割」から成り、事業所床面積（1,000㎡以下）・従業者数（100人以下）について免税点が設けられている。',
+      authority: '所管: 総務省・各市町村（地方税法／事業所税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/173414_2.html', type: 'government', label: '総務省 地方税制度 事業所税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/jigyo', type: 'municipality', label: '東京都主税局 事業所税' },
+      { url: 'https://www.city.saitama.lg.jp/005/004/005/p005315.html', type: 'municipality', label: 'さいたま市 事業所税' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-light-vehicle-tax',
+      domain: 'tax',
+      title: '軽自動車税（種別割）',
+      statement:
+        '軽自動車税（種別割）は、毎年4月1日（賦課期日）現在で原動機付自転車・軽自動車・小型特殊自動車・二輪の小型自動車を所有する者に対し、' +
+        'その定置場所在の市町村（東京23区は都）が課す市町村税である。税額は車種・用途等に応じて年額で定められ、通常5月に納税通知書が送付され' +
+        '同月中に納付する。都道府県が普通自動車に課す自動車税とは別の税である（令和8年4月1日より名称は「軽自動車税」に変更されるが税率に変更はない）。',
+      authority: '所管: 総務省・各市町村（地方税法／軽自動車税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_11.html', type: 'government', label: '総務省 地方税制度 自動車税・軽自動車税' },
+      { url: 'https://www.city.yokohama.lg.jp/kurashi/koseki-zei-hoken/zeikin/y-shizei/keijidousyazei/keiji.html', type: 'municipality', label: '横浜市 軽自動車税について' },
+      { url: 'https://www.city.isesaki.lg.jp/kurashi_tetsuzuki/zeikin/keijidoshazei/18574.html', type: 'municipality', label: '伊勢崎市 軽自動車税（種別割）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-childcare-disclosure',
+      domain: 'labor',
+      title: '育児休業取得状況の公表義務（300人超企業へ拡大）',
+      statement:
+        '育児・介護休業法により、常時雇用する労働者数が一定規模を超える事業主は、男性労働者の育児休業等の取得状況（取得率）を年1回公表する' +
+        '義務を負う。2023年（令和5年）4月1日施行時の対象は常時雇用労働者数1,000人を超える事業主であったが、2024年改正により2025年（令和7年）' +
+        '4月1日からは300人を超える事業主へ対象が拡大された。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11909000/001029776.pdf', type: 'government', label: '厚生労働省 育休取得率の公表義務化（300人超へ拡大）' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/law-amendment/', type: 'government', label: '厚生労働省 育児・介護休業法 法改正のポイント' },
+      { url: 'https://www.nikkei.com/article/DGKKZO79165740S4A310C2MM0000/', type: 'media', label: '男性育休取得率 開示義務化を300人超企業に拡大' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-women-advancement',
+      domain: 'labor',
+      title: '女性活躍推進法（一般事業主行動計画・情報公表・えるぼし認定）',
+      statement:
+        '女性活躍推進法により、常時雇用する労働者が101人以上の事業主は、自社の女性の活躍状況の把握・課題分析を行い、数値目標を含む' +
+        '「一般事業主行動計画」の策定・社内周知・公表・都道府県労働局への届出、及び女性の活躍に関する情報公表が義務付けられている' +
+        '（100人以下の事業主は努力義務）。一定の基準を満たす事業主は、厚生労働大臣による「えるぼし」「プラチナえるぼし」認定を受けることができる。',
+      authority: '所管: 厚生労働省（女性活躍推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000091025.html', type: 'government', label: '厚生労働省 女性活躍推進法特集ページ' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000614010.pdf', type: 'government', label: '厚生労働省 一般事業主行動計画を策定しましょう' },
+      { url: 'https://jsite.mhlw.go.jp/ehime-roudoukyoku/hourei_seido_tetsuzuki/koyou_kintou/newpage_00341.html', type: 'government', label: '愛媛労働局 女性活躍推進法 行動計画・認定' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-employee-invention',
+      domain: 'legal',
+      title: '職務発明（特許法35条）',
+      statement:
+        '職務発明とは、従業者等がした発明であって、その性質上使用者等の業務範囲に属し、かつその発明をするに至った行為が使用者等における' +
+        '従業者等の現在又は過去の職務に属するものをいう。特許法35条により、使用者等は職務発明について無償の通常実施権を有する。さらに契約・' +
+        '勤務規則等であらかじめ定めておくことで特許を受ける権利を当初から使用者等に帰属させることができ、その場合等は従業者等は「相当の利益」を受ける権利を有する。',
+      authority: '所管: 特許庁（特許法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/patent/shutugan/shokumu/shokumu.html', type: 'government', label: '特許庁 職務発明制度の概要' },
+      { url: 'https://www.jpo.go.jp/support/startup/document/index/shokumuhatsumeiseido.pdf', type: 'government', label: '特許庁 職務発明制度の概要（PDF）' },
+      { url: 'https://www.nta.go.jp/about/organization/nagoya/bunshokaito/shotoku/170206/besshi.htm', type: 'government', label: '名古屋国税局 職務発明の相当の利益の税務上の取扱い' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-contract-cancellation',
+      domain: 'legal',
+      title: '契約の解除（催告解除・無催告解除／改正民法）',
+      statement:
+        '2020年4月1日施行の改正民法により、当事者の一方が債務を履行しないときは、相手方が相当の期間を定めて履行を催告し期間内に履行が' +
+        'なければ契約を解除でき（催告解除・民法541条、ただし不履行が軽微なときを除く）、履行不能や明確な履行拒絶等の一定の場合には催告なしに' +
+        '直ちに解除できる（無催告解除・542条）。解除に債務者の帰責事由は不要となった一方、債務不履行が債権者の責めに帰すべき事由によるときは解除できない（543条）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（541条・542条・543条）' },
+      { url: 'https://www.businesslawyers.jp/practices/1175', type: 'media', label: '契約解除と帰責事由の関係 解説' },
+    ],
+  },
 ];
 // Stryker restore all
