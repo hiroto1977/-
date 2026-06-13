@@ -762,5 +762,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.emerald.com/insight/content/doi/10.1108/02756660510608521/full/html', type: 'academic', label: 'Kim & Mauborgne (2005) Value innovation: a leap into the blue ocean, J. of Business Strategy（Emerald 査読誌）' },
     ],
   },
+  {
+    id: 'econ-diminishing-marginal-utility',
+    discipline: 'economics',
+    title: '限界効用逓減の法則',
+    statement:
+      'ある財の消費量が増えるにつれ、追加1単位の消費から得られる満足（限界効用）が次第に小さくなるというミクロ経済学の法則。ゴッセンの第一法則とも呼ばれ、ドイツの経済学者ヘルマン・ハインリヒ・ゴッセンが1854年の著作で定式化した。' +
+      '1870年代の「限界革命」でジェヴォンズ（英）・メンガー（墺）・ワルラス（スイス）が独立に再発見・発展させ近代の限界効用価値説を確立した。この法則は、価格が下がると需要が増える＝需要曲線が右下がりになることや、生命に不可欠な水が安く装飾品のダイヤモンドが高いという「価値の逆説（水とダイヤモンドのパラドックス）」を限界効用の差として説明する基礎となる。さらに各財の限界効用を価格で割った値がすべての財で等しくなる点で総効用が最大化されるという消費者均衡（ゴッセンの第二法則・限界効用均等の法則）の土台でもある。',
+    keyFigures: 'H.H.ゴッセン（1854、第一法則）／限界革命: ジェヴォンズ(1871)・メンガー(1871)・ワルラス(1874)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/marginal-utility', type: 'reference', label: 'Encyclopaedia Britannica (Money) — Marginal utility' },
+      { url: 'https://www.britannica.com/topic/diamond-water-paradox', type: 'reference', label: 'Encyclopaedia Britannica — Diamond-water paradox（価値の逆説の限界効用による解決）' },
+      { url: 'https://en.wikipedia.org/wiki/Gossen%27s_laws', type: 'reference', label: 'Wikipedia — Gossen’s laws（第一法則=限界効用逓減・第二法則=均等）' },
+    ],
+  },
+  {
+    id: 'mgmt-pdca-cycle',
+    discipline: 'management',
+    title: 'PDCAサイクル',
+    statement:
+      '計画(Plan)→実行(Do)→評価・点検(Check)→改善(Act)の4段階を繰り返し、業務やプロセス・製品を継続的に改善する反復的なマネジメント手法。品質管理(QC)、継続的改善(カイゼン)、ISO 9001等のマネジメントシステムで広く用いられる。' +
+      '源流は1920〜30年代にベル研究所の物理学者ウォルター・シューハートが示した統計的品質管理の科学的サイクルにあり、W・エドワーズ・デミングがこれを改変し1950年代に戦後日本へ普及させた（「デミングサイクル」）。日本では日本科学技術連盟(JUSE)を通じて「PDCA」「デミングサイクル」として定着した。なおデミング自身は"Check"より"Study"が原意に近いとして、後年はPDCAではなくPDSA(Plan-Do-Study-Act)を一貫して推奨した点に注意を要する（PDCAとPDSAの区別）。',
+    keyFigures: 'ウォルター・A・シューハート（源流・統計的品質管理）／W・エドワーズ・デミング（改変・日本普及、後年はPDSAを推奨）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://asq.org/quality-resources/pdca-cycle', type: 'reference', label: 'ASQ（米国品質協会）— PDCA Cycle（4段階の定義・継続的改善）' },
+      { url: 'https://deming.org/explore/pdsa/', type: 'reference', label: 'The W. Edwards Deming Institute — PDSA Cycle（CheckよりStudy・源流はシューハート）' },
+      { url: 'https://en.wikipedia.org/wiki/PDCA', type: 'reference', label: 'Wikipedia — PDCA（シューハート→デミング→JUSEの沿革と別名）' },
+    ],
+  },
+  {
+    id: 'human-bystander-effect',
+    discipline: 'human-science',
+    title: '傍観者効果（bystander effect, 責任の分散）',
+    statement:
+      '緊急事態において、その場に居合わせた人（傍観者）が多いほど各個人が援助行動を起こしにくくなる現象。主な機序として、責任の分散（自分以外の誰かが助けるだろうと考える）、多元的無知（他者が動かないのを見て緊急ではないと判断する）、評価懸念（誤った対応で否定的に評価される恐れ）が挙げられる。' +
+      '1964年のキティ・ジェノヴィーズ事件を契機に、社会心理学者ジョン・ダーリーとビブ・ラタネが1968年以降の一連の実験で実証した。被験者が自分だけが緊急事態を認知していると思った場合の援助率は高く、他の傍観者が存在すると思った場合には大きく低下した。なお「38人の目撃者が誰も通報しなかった」という当時のニューヨーク・タイムズ報道に基づく通説は、後の検証（2007年の学術論文等）で人数や状況が誇張・不正確であったと指摘されている。',
+    keyFigures: 'ジョン・ダーリー & ビブ・ラタネ（1968, JPSP 8(4):377-383）／契機: キティ・ジェノヴィーズ事件1964',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/bystander-effect', type: 'reference', label: 'Encyclopaedia Britannica — Bystander effect' },
+      { url: 'https://psycnet.apa.org/record/1968-08862-001', type: 'academic', label: 'Darley & Latané (1968) Bystander intervention in emergencies, JPSP 8(4):377-383（原典）' },
+      { url: 'https://www.bps.org.uk/research-digest/truth-behind-story-kitty-genovese-and-bystander-effect', type: 'reference', label: 'British Psychological Society — ジェノヴィーズ通説の検証' },
+    ],
+  },
+  {
+    id: 'bizlaw-appi',
+    discipline: 'business-law',
+    title: '個人情報保護法（個人情報の保護に関する法律）',
+    statement:
+      '個人情報の適正な取扱いを定め個人の権利利益を保護することを目的とする日本の法律（平成15年法律第57号、2003年成立・公布、2005年に民間部門の義務規定が全面施行）。我が国の個人情報保護制度の基本法かつ一般法として機能する。' +
+      '個人情報取扱事業者に対し、利用目的の特定・通知公表、目的外利用の制限、安全管理措置、第三者提供の制限（原則本人同意が必要）、本人からの開示・訂正・利用停止等の請求への対応などを義務付ける。要配慮個人情報や匿名加工情報といった類型を設ける。2015年改正でいわゆる3年ごと見直し規定を導入し個人情報保護委員会（PPC）を設置、2020年改正、2021年改正で官民・地方の規制を一本化しPPCが一元的に監督する体制とした。EUはGDPR第45条に基づき日本の十分性認定を行っている。違反には勧告・命令・罰則が定められている。',
+    keyFigures: '個人情報の保護に関する法律（平成15年法律第57号）／個人情報保護委員会（PPC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/', type: 'government', label: '個人情報保護委員会（PPC）— 法令・ガイドライン等' },
+      { url: 'https://www.ppc.go.jp/personalinfo/minaoshi/', type: 'government', label: '個人情報保護委員会（PPC）— 令和3年改正個人情報保護法について' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000095240&current=-1', type: 'government', label: '日本法令索引（国立国会図書館）— 個人情報の保護に関する法律 平成15年法律第57号' },
+    ],
+  },
+  {
+    id: 'infosoc-third-person-effect',
+    discipline: 'information-sociology',
+    title: '第三者効果（third-person effect）',
+    statement:
+      '人はマスメディアのメッセージ、とりわけ説得的・好ましくないとされる内容の影響について、自分自身よりも「他人（第三者）」のほうが大きく受けると認知する傾向。' +
+      '社会学者W・フィリップス・デイヴィソンが1983年の論文「The Third-Person Effect in Communication」（Public Opinion Quarterly 47(1):1-15）で提唱した。理論は二要素からなる。すなわち影響を自分より他人で過大評価する「知覚的要素」と、その過大評価がメディア規制・検閲・有害コンテンツ抑制策への支持といった行動につながりうるとする「行動仮説」である。プロパガンダ・暴力的/性的表現・広告・世論調査報道などの文脈で多数の実証研究が蓄積された。自分への負の影響を過小評価する点で楽観バイアスとも関連づけられる。',
+    keyFigures: 'W・フィリップス・デイヴィソン（1983, Public Opinion Quarterly 47(1):1-15）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/poq/article-abstract/47/1/1/1906961', type: 'academic', label: 'Davison (1983) The Third-Person Effect in Communication, POQ 47(1):1-15（原典・査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Third-person_effect', type: 'reference', label: 'Wikipedia — Third-person effect（知覚的要素・行動仮説）' },
+      { url: 'https://www.jou.ufl.edu/insights/third-person-effect/', type: 'academic', label: 'University of Florida, College of Journalism — 第三者効果と検閲支持の解説' },
+    ],
+  },
+  {
+    id: 'mgmt-crossing-the-chasm',
+    discipline: 'management',
+    title: 'キャズム理論（Crossing the Chasm）',
+    statement:
+      'ハイテク製品の市場普及において、初期市場（イノベーター＋アーリーアダプター＝技術愛好者・ビジョナリー）と主流市場（アーリーマジョリティ以降＝実利主義者）の間に存在する深い断絶を「キャズム（溝）」と呼ぶ理論。' +
+      'E・ロジャーズの採用者5分類を前提としつつ、ジェフリー・A・ムーアが1991年の著書『Crossing the Chasm』で、多くの破壊的ハイテク製品はアーリーアダプターには受容されてもアーリーマジョリティへ移行できずに失敗すると指摘した。両者は購買動機が根本的に異なり、ビジョナリーは先進性・優位性のためにリスクを許容するが、実利主義者は実用性・実績・安心（リファレンス）を重視しリスクを回避する。ムーアは、勝てる規模の特定ニッチ市場（ビーチヘッド）に資源を集中し、完成された「ホール・プロダクト」と顧客リファレンスを足がかりに溝を突破する戦略を処方箋として示した（ロジャーズの普及理論とは別概念）。',
+    keyFigures: 'ジェフリー・A・ムーア（1991『Crossing the Chasm』）／前提: E.ロジャーズの採用者5分類',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://geoffreyamoore.com/book/crossing-the-chasm/', type: 'reference', label: 'Geoffrey A. Moore 公式サイト — Crossing the Chasm（ビーチヘッド戦略・一次情報）' },
+      { url: 'https://en.wikipedia.org/wiki/Crossing_the_Chasm', type: 'reference', label: 'Wikipedia — Crossing the Chasm（1991年刊・ビジョナリーと実利主義者の断絶）' },
+      { url: 'https://www.researchgate.net/publication/235250288_Can_You_See_the_Chasm_Innovation_Diffusion_According_to_Rogers_Bass_and_Moore', type: 'academic', label: 'Can You See the Chasm? — Rogers/Bass/Mooreの普及理論比較（学術文献）' },
+    ],
+  },
 ];
 // Stryker restore all
