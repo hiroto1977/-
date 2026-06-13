@@ -723,6 +723,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://sogyotecho.jp/hojokin_match/11407/', type: 'media', label: '神戸市中小企業投資促進等助成制度 解説' },
     ],
   },
+  {
+    id: 'subsidy-pension-support-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '年金生活者支援給付金',
+    authority: '厚生労働省・日本年金機構',
+    statement:
+      '公的年金等の収入金額やその他の所得額が一定の基準額以下である年金受給者の生活を支援するため、年金に上乗せして支給される給付金' +
+      '（2019年10月創設）。受給する年金の種類に応じて老齢・障害・遺族の支援給付金があり、それぞれ所得・課税等の支給要件をすべて満たす必要がある。' +
+      '支給要件・所得基準額・給付基準額（月額）は毎年度物価等に応じて改定されるため、最新の制度内容で要確認。',
+    application:
+      '支給要件を満たしたうえで「年金生活者支援給付金請求書（認定請求書）」の提出が必要。日本年金機構が対象見込者へ毎年案内（はがき型請求書）を送付し、新規裁定者は年金の請求と併せて認定請求を行う。原則として請求月の翌月分から年金と同じ口座に偶数月に支払われる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/sonota-kyufu/shienkyufukin/20190805.html', type: 'government', label: '日本年金機構 年金生活者支援給付金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000143356_00002.html', type: 'government', label: '厚生労働省 年金生活者支援給付金制度について' },
+      { url: 'https://www.jili.or.jp/lifeplan/lifesecurity/1120.html', type: 'media', label: '老齢年金生活者支援給付金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-reemployment-allowance',
+    level: 'national',
+    domain: 'welfare',
+    name: '再就職手当（就業促進手当）',
+    authority: '厚生労働省（ハローワーク）',
+    statement:
+      '雇用保険の基本手当の受給資格者が、所定給付日数の3分の1以上を残して安定した職業に就く等の要件を満たした場合に支給される就業促進手当。' +
+      '支給額は「支給残日数 × 給付率 × 基本手当日額（上限あり）」で、残日数3分の1以上は給付率60%、3分の2以上は70%とされる。1年を超えて雇用が確実であること、' +
+      '離職前事業主への再就職でないこと等の要件があり、支給率・要件・給付制限の運用は改定され得るため最新の制度内容で要確認。',
+    application:
+      '再就職後、原則として就職日の翌日から1か月以内に「再就職手当支給申請書」（再就職先の事業主記入欄を含む）と受給資格者証等を管轄のハローワークへ提出して支給申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000139508.html', type: 'government', label: '厚生労働省 Q&A（基本手当・再就職手当）' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/hourei_seido_tetsuzuki/koyou_hoken/hourei_seido/situgyo/minasama/sokusin.html', type: 'government', label: '大阪労働局 就業促進手当（再就職手当）' },
+      { url: 'https://doda.jp/guide/naiteitaisyoku/006.html', type: 'media', label: '再就職手当 受給条件・手続き 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-kyuto-shoene',
+    level: 'national',
+    domain: 'welfare',
+    name: '給湯省エネ事業',
+    authority: '経済産業省・資源エネルギー庁（事務局）',
+    statement:
+      '高効率給湯器（エコキュート＝ヒートポンプ給湯機・ハイブリッド給湯機・家庭用燃料電池＝エネファーム等）の家庭への導入を定額で支援する' +
+      '住宅省エネキャンペーンの一事業。2026年6月時点では令和7年度補正予算による「給湯省エネ2026事業」が実施されている。補助額・対象機器・実施期間は' +
+      '年度ごとに変動し予算上限到達で受付終了となるため、必ず最新の公式情報で要確認。',
+    application:
+      '住宅省エネ支援事業者として登録された施工業者（給湯省エネ事業者）が補助対象者（一般消費者）に代わって代行申請する仕組みで、消費者個人が直接申請することはできない。交付申請は予算上限（先着順）到達で受付終了となるため最新の公式情報で受付状況を要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kyutou-shoene2026.meti.go.jp/', type: 'government', label: '給湯省エネ2026事業 公式（経産省・資源エネルギー庁事務局）' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/general/housing/kyutokidonyu/kyutodonyuhojo2025.html', type: 'government', label: '資源エネルギー庁 給湯省エネ事業について' },
+      { url: 'https://rehome-navi.com/articles/3637', type: 'media', label: '給湯省エネ事業 補助額・申請方法 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-kanagawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業生産性向上促進事業費補助金（神奈川県）',
+    authority: '神奈川県（産業労働局 中小企業部 中小企業支援課）',
+    statement:
+      '神奈川県が県内中小企業者・小規模事業者を対象に、業務効率化・省力化・人手不足対応など生産性向上に資する設備導入経費を補助する制度' +
+      '（都道府県レベルの補助金の代表例）。単なる設備の入替え等は対象外とされる。補助上限・補助率・公募期間・対象経費は年度ごとに変動するため、' +
+      '最新の募集要項および県公式（pref.kanagawa.jp）で要確認。経営相談・活用支援は公益財団法人神奈川産業振興センター（KIP）が窓口を提供する。',
+    application:
+      '県の専用ポータル又は県公式ページ経由で、年度内に設定される公募期間中に電子申請する。要件・補助率・上限額・対象経費・実施期間は毎年度の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kanagawa.jp/docs/m2w/seisansei/r8.html', type: 'municipality', label: '神奈川県 中小企業生産性向上促進事業費補助金' },
+      { url: 'https://www.pref.kanagawa.jp/docs/m2w/prs/r2625041.html', type: 'municipality', label: '神奈川県 補助金公募開始 プレスリリース' },
+      { url: 'https://www.kipc.or.jp/topics/information/subgrants/', type: 'operator', label: '神奈川産業振興センター 補助金・助成金のご案内' },
+    ],
+  },
+  {
+    id: 'subsidy-nagoya',
+    level: 'municipality',
+    domain: 'business',
+    name: '名古屋市スタートアップ企業支援補助金',
+    authority: '名古屋市（経済局 産業労働部 中小企業振興課）',
+    statement:
+      '名古屋市内で新たに創業する者又は市内に本社等を置く創業後5年以内の中小企業者が新しい取り組みに挑戦する際の経費の一部を補助する、' +
+      '政令指定都市（市区町村レベル）の代表的な創業支援制度。補助率・補助限度額（通常枠は補助対象経費の3分の1・限度額100万円等と報じられる）・募集期間・要件は' +
+      '年度ごとに変動するため、最新の募集要項および名古屋市公式で要確認。',
+    application:
+      '名古屋市の創業支援等事業計画における認定連携創業支援事業者（公益財団法人名古屋産業振興公社＝名古屋市新事業支援センター等）の支援を受けたうえで、名古屋市経済局が公表する年度ごとの募集案内に従って申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.nagoya.jp/keizai/page/0000080543.html', type: 'municipality', label: '名古屋市 スタートアップ企業支援補助金' },
+      { url: 'https://www.city.nagoya.jp/keizai/cmsfiles/contents/0000080/80543/00_1_bosyuuannai.pdf', type: 'municipality', label: '名古屋市 スタートアップ企業支援補助金 募集案内' },
+      { url: 'https://hojyokin-portal.jp/subsidies/42352', type: 'media', label: '名古屋市スタートアップ企業支援補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-sapporo',
+    level: 'municipality',
+    domain: 'business',
+    name: 'さっぽろ新規創業促進補助金（札幌市）',
+    authority: '札幌市（経済観光局）／創業支援窓口: 一般財団法人さっぽろ産業振興財団 札幌中小企業支援センター',
+    statement:
+      '札幌市が政令指定都市（市区町村レベル）として実施する創業支援制度の代表例で、市の「特定創業支援等事業」を修了し登録免許税の軽減を受けた上で' +
+      '新たに会社を設立した創業者に対し市独自に補助金を交付する制度。補助額（株式会社設立175,000円・合同会社等80,000円等と報じられる）・要件・受付期間は' +
+      '年度により変動するため、最新の募集要項および札幌市公式で要確認。',
+    application:
+      '市の特定創業支援等事業（窓口相談・セミナー等）を修了して証明を受け、その後に法人設立登記を行い、会社設立日から原則90日以内に札幌市へ申請する。詳細は札幌市公式・さっぽろ産業振興財団で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sapporo.jp/keizai/center/sinkisougyouhojyo.html', type: 'municipality', label: '札幌市 さっぽろ新規創業促進補助金' },
+      { url: 'https://www.sapporo-cci.or.jp/web/purpose/04/details/post_128.html', type: 'operator', label: '札幌商工会議所 補助金等支援策' },
+      { url: 'https://www.smart-hojokin.jp/subsidies/22951', type: 'media', label: 'さっぽろ新規創業促進補助金 概要' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
