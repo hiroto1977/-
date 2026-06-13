@@ -539,5 +539,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.zeiken.co.jp/yougo/', type: 'media', label: '税研 用語解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-consumption-taxpayer',
+      domain: 'tax',
+      title: '消費税の納税義務者の判定',
+      statement:
+        '基準期間（個人は前々年、法人は前々事業年度）の課税売上高が1,000万円を超える事業者は課税事業者となる。' +
+        '1,000万円以下でも特定期間の課税売上高等が1,000万円超なら課税事業者。適格請求書発行事業者の登録時は基準期間の売上に関わらず課税事業者となる。',
+      authority: '所管: 国税庁（消費税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6501.htm', type: 'government', label: '国税庁 No.6501 納税義務の免除' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/shohi/22/08.htm', type: 'government', label: '国税庁 特定期間による判定' },
+      { url: 'https://www.freee.co.jp/kb/kb-invoice/consumption_tax_structure/', type: 'media', label: 'freee 課税事業者と免税事業者' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-employment-income-deduction',
+      domain: 'tax',
+      title: '給与所得控除',
+      statement:
+        '給与所得控除は給与収入に対し概算経費として差し引かれる控除で、控除額は収入に応じて段階的に逓増する。' +
+        '一定の最低保証額がある一方、高額収入には上限額が設定され、それ以上は控除額が増えない。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm', type: 'government', label: '国税庁 No.1410 給与所得控除' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/2894/', type: 'media', label: 'マネーフォワード 給与所得控除' },
+      { url: 'https://www.freee.co.jp/kb/kb-payroll/the-deduction-for-employment-income/', type: 'media', label: 'freee 給与所得控除' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-overtime-premium',
+      domain: 'labor',
+      title: '割増賃金率（時間外・休日・深夜）',
+      statement:
+        '労働基準法上、時間外労働は25%以上、深夜労働(22時〜翌5時)は25%以上、法定休日労働は35%以上の割増賃金率。' +
+        '1か月60時間を超える時間外労働には50%以上が適用される（中小企業も2023年4月から適用）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000930914.pdf', type: 'government', label: '厚生労働省 月60時間超の割増賃金率引上げ' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/tp1216-1l-02.pdf', type: 'government', label: '厚生労働省 法定割増賃金率の引上げ' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/82774/', type: 'media', label: 'マネーフォワード 残業代の割増率' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-36-agreement',
+      domain: 'labor',
+      title: '36協定の締結・届出義務',
+      statement:
+        '法定労働時間を超える時間外労働・休日労働には、労使で36協定（時間外労働・休日労働に関する協定届）を' +
+        '締結し所轄労働基準監督署へ届け出る義務がある。届出のない時間外・休日労働は労働基準法違反となる。',
+      authority: '所管: 厚生労働省（労働基準法第36条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.check-roudou.mhlw.go.jp/saburoku/', type: 'government', label: '厚生労働省 確かめよう労働条件 36協定' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/36_kyoutei.html', type: 'government', label: '東京労働局 36協定届' },
+      { url: 'https://hrnote.jp/contents/roumu-rodokijunho-36jo-20230114/', type: 'media', label: 'HR NOTE 36協定の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-keihyo-surcharge',
+      domain: 'legal',
+      title: '景品表示法の課徴金制度',
+      statement:
+        '優良誤認表示・有利誤認表示に対し、対象商品・役務の売上額の3%（対象期間は最長3年）が課徴金として' +
+        '賦課される。違反行為を自主申告した事業者は課徴金額が2分の1に減額される。',
+      authority: '所管: 消費者庁（景品表示法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/violation', type: 'government', label: '消費者庁 景品表示法違反行為の措置' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/amendment/pdf/141127premiums_1.pdf', type: 'government', label: '消費者庁 課徴金制度の概要' },
+      { url: 'https://www.89ji.com/keihyou-guide/administrative_monetary_penalty.html', type: 'media', label: '景品表示法の課徴金 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-cooling-off',
+      domain: 'legal',
+      title: 'クーリング・オフ（特定商取引法）',
+      statement:
+        '訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は8日間、連鎖販売取引・業務提供誘引販売取引は20日間、' +
+        '法定書面の受領日から無条件で契約解除（クーリング・オフ）できる。通信販売にはクーリング・オフ制度はない。',
+      authority: '所管: 消費者庁（特定商取引法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド' },
+      { url: 'https://www.no-trouble.caa.go.jp/what/doortodoorsales/', type: 'government', label: '消費者庁 訪問販売' },
+      { url: 'https://www.pref.shiga.lg.jp/shohi/105947.html', type: 'municipality', label: '滋賀県 クーリング・オフ' },
+    ],
+  },
 ];
 // Stryker restore all
