@@ -743,5 +743,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.cloudsign.jp/media/20170224-basics-of-e-contract-02/', type: 'media', label: 'クラウドサイン 電子契約と収入印紙' },
     ],
   },
+  {
+    value: {
+      id: 'labor-wage-payment',
+      domain: 'labor',
+      title: '賃金支払の5原則とデジタル払い',
+      statement:
+        '労働基準法は賃金を通貨・直接・全額・毎月1回以上・一定期日に支払うよう定める（賃金支払の5原則）。' +
+        '2023年4月の省令改正により、労働者の同意を条件に厚生労働大臣の指定する資金移動業者口座へのデジタル払いも可能となった。',
+      authority: '所管: 厚生労働省（労働基準法第24条）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/03_00028.html', type: 'government', label: '厚生労働省 賃金のデジタル払いについて' },
+      { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'government', label: '労働政策研究・研修機構 解説' },
+      { url: 'https://keiyaku-watch.jp/media/hourei/digital-payroll/', type: 'media', label: '賃金デジタル払いの解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-entertainment-expense',
+      domain: 'tax',
+      title: '交際費等の損金不算入と中小法人特例',
+      statement:
+        '法人の交際費等は原則として損金不算入だが、資本金1億円以下の中小法人は年800万円までの定額控除限度額か' +
+        '接待飲食費の50%相当額のいずれかを選択して損金算入できる。1人当たり一定額以下の飲食費は交際費等から除外される。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5265.htm', type: 'government', label: '国税庁 No.5265 交際費等の損金不算入' },
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/tokurei/kousai.html', type: 'government', label: '中小企業庁 交際費課税の特例' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/settai_faq/01.htm', type: 'government', label: '国税庁 接待飲食費FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-safety-management',
+      domain: 'labor',
+      title: '安全衛生管理体制（50人以上）',
+      statement:
+        '常時50人以上の労働者を使用する事業場は、衛生管理者および産業医を選任し（事由発生から14日以内）、' +
+        '衛生委員会を設置して、所轄労働基準監督署長へ選任を報告する義務がある。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei36/20.html', type: 'government', label: '厚生労働省 選任報告' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 衛生委員会FAQ' },
+      { url: 'https://doctor-trust.co.jp/law/law.html', type: 'media', label: '安全衛生管理体制 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-corp-establishment-filing',
+      domain: 'tax',
+      title: '法人設立後の税務署への届出期限',
+      statement:
+        '内国普通法人の設立後、法人設立届出書は設立の日以後2か月以内に所轄税務署長へ提出する。青色申告の承認申請書は' +
+        '設立の日以後3か月を経過した日と設立第1期の事業年度終了日のいずれか早い日の前日までに提出する。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5100.htm', type: 'government', label: '国税庁 No.5100 新設法人の届出書類' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/hojin/annai/1554_14.htm', type: 'government', label: '国税庁 青色申告の承認申請' },
+      { url: 'https://biz.moneyforward.com/establish/basic/683/', type: 'media', label: 'マネーフォワード 会社設立の届出' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-copyright-term',
+      domain: 'legal',
+      title: '著作権の保護期間と私的複製',
+      statement:
+        '著作権の保護期間は原則として著作者の死後70年、法人著作物・映画は公表後70年であり、2018年のTPP整備法施行で' +
+        '50年から70年へ延長された。著作権法第30条により、個人的・家庭内など限られた範囲での私的使用目的の複製は認められる。',
+      authority: '所管: 文化庁（著作権法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/kantaiheiyo_chosakuken/1411890.html', type: 'government', label: '文化庁 保護期間延長Q&A' },
+      { url: 'https://www.bunka.go.jp/seisaku/bunkashingikai/chosakuken/hoki/h30_06/pdf/r1411529_06.pdf', type: 'government', label: '文化庁 私的複製の権利制限' },
+      { url: 'https://www.watch.impress.co.jp/docs/news/1152314.html', type: 'media', label: '著作権保護期間70年化 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-scanner-storage',
+      domain: 'tax',
+      title: '電子帳簿保存法のスキャナ保存制度',
+      statement:
+        '紙で受領・作成した請求書・領収書等の国税関係書類を、解像度等の要件を満たしてスキャンし電子保存できる制度。' +
+        'タイムスタンプ付与等による真実性の確保と、取引年月日・金額・取引先による検索機能等の可視性要件を満たす必要がある。',
+      authority: '所管: 国税庁（電子帳簿保存法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/02.htm', type: 'government', label: '国税庁 スキャナ保存の適用要件' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/07scan/index.htm', type: 'government', label: '国税庁 スキャナ保存一問一答' },
+      { url: 'https://www.yayoi-kk.co.jp/seikyusho/oyakudachi/scanner_hozon/', type: 'media', label: '弥生 スキャナ保存制度' },
+    ],
+  },
 ];
 // Stryker restore all
