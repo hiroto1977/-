@@ -5718,5 +5718,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://biz.moneyforward.com/erp/basic/2193/', type: 'media', label: '決算公告の期限・方法・罰則 解説' },
     ],
   },
+  {
+    value: {
+      id: 'labor-pregnant-work-restriction',
+      domain: 'labor',
+      title: '妊産婦の就業制限（労働基準法の母性保護規定）',
+      statement:
+        '労働基準法は、妊娠中及び産後1年を経過しない女性（妊産婦）を保護し、重量物の取扱いや有害ガスを発散する場所での業務など妊娠・出産・哺育に' +
+        '有害な業務への就業を禁じる（64条の3）ほか、妊産婦が請求した場合は時間外・休日労働及び深夜業をさせてはならない（66条）。さらに産前6週間' +
+        '（多胎妊娠は14週間）以内で休業を請求した女性、及び産後8週間（本人請求かつ医師が支障ないと認めた業務は産後6週間経過後を除く）を経過しない女性を就業させてはならない（65条）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05i_0011.pdf', type: 'government', label: '厚生労働省 労働基準法の母性保護規定' },
+      { url: 'https://www.mhlw.go.jp/bunya/koyoukintou/seisaku05/pdf/seisaku05a.pdf', type: 'government', label: '厚生労働省 女性労働者の母性健康管理' },
+      { url: 'https://www.rodo.co.jp/laws/116890/', type: 'media', label: '労働基準法 64条の2〜68条 条文' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-paid-leave-timing',
+      domain: 'labor',
+      title: '年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）',
+      statement:
+        '年次有給休暇は労働者が請求する時季に与えなければならない（時季指定権。労基法39条5項）が、その時季に与えることが事業の正常な運営を妨げる場合、' +
+        '使用者は他の時季に与えることができる（時季変更権）。また労使協定により、年5日を超える部分について計画的に付与する計画年休の制度がある（同条6項）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（39条）' },
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/dl/140811-3.pdf', type: 'government', label: '厚生労働省 年次有給休暇 リーフレット' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73022000', type: 'government', label: '厚生労働省 法令データベース 労働基準法' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-withholding-slip',
+      domain: 'tax',
+      title: '給与所得の源泉徴収票の交付義務（所得税法226条）',
+      statement:
+        '給与等の支払をする者は、所得税法226条により、その年中に支払の確定した給与等について給与所得の源泉徴収票を作成し、原則としてその年の翌年1月31日まで' +
+        '（中途退職者については退職の日以後1か月以内）に、給与の支払を受ける者（受給者）に交付しなければならない。あわせて、提出範囲に該当する一定のものは税務署長へも提出する。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/shitsugi/hotei/1/04.htm', type: 'government', label: '国税庁 質疑応答事例 源泉徴収票等の交付義務' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hotei/7411.htm', type: 'government', label: '国税庁 No.7411 源泉徴収票の提出範囲' },
+      { url: 'https://laws.e-gov.go.jp/law/340AC0000000033', type: 'government', label: 'e-Gov法令検索 所得税法（226条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-lump-sum-depreciation',
+      domain: 'tax',
+      title: '一括償却資産の損金算入（3年均等償却）',
+      statement:
+        '取得価額が20万円未満の減価償却資産については、各事業年度ごとにその全部又は一部を一括し、その取得価額の合計額の3分の1ずつを3年間にわたって' +
+        '損金算入できる「一括償却資産」の制度がある（法人税法施行令133条の2、所得税は所得税法施行令139条）。法定耐用年数による通常の減価償却や、中小企業者等の' +
+        '少額減価償却資産の特例（取得価額30万円未満）とは別個に選択できる方法である。',
+      authority: '所管: 国税庁（法人税法・所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5403.htm', type: 'government', label: '国税庁 No.5403 少額の減価償却資産の判定' },
+      { url: 'https://www.keisan.nta.go.jp/r5yokuaru/aoiroshinkoku/hitsuyokeihi/genkashokyakuhi/ikkatsushokyaku.html', type: 'government', label: '国税庁 一括償却資産とは' },
+      { url: 'https://www.freee.co.jp/kb/kb-accounting/lump-sum-depreciable-assets/', type: 'media', label: '一括償却資産 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-leniency',
+      domain: 'legal',
+      title: '課徴金減免制度（リーニエンシー制度）',
+      statement:
+        '独占禁止法は、カルテルや入札談合（不当な取引制限）について、事業者が自ら関与した違反内容を公正取引委員会に自主的に報告し資料を提出した場合に、' +
+        '報告の順位等に応じて課徴金が免除又は減額される課徴金減免制度（リーニエンシー制度）を設けている。2020年12月施行の令和元年改正により、申請順位に応じた' +
+        '減免率に加え、事業者の協力が事件の真相解明に資する程度に応じて減算する仕組み（調査協力減算制度）が導入された。',
+      authority: '所管: 公正取引委員会（独占禁止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/seido/genmen/index.html', type: 'government', label: '公正取引委員会 課徴金減免制度' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/tyousakyouryoku.html', type: 'government', label: '公正取引委員会 調査協力減算制度の運用方針' },
+      { url: 'https://www.keidanren.or.jp/journal/times/2020/1022_06.html', type: 'media', label: '独禁法改正 課徴金減免の新制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-shareholder-derivative-suit',
+      domain: 'legal',
+      title: '株主代表訴訟（責任追及等の訴え・会社法847条）',
+      statement:
+        '会社法は、6か月（定款で短縮可。非公開会社では期間要件なし）前から引き続き株式を有する株主が、株式会社に対し書面その他の方法により取締役等の責任を' +
+        '追及する訴えの提起を請求でき、会社が請求の日から60日以内に訴えを提起しないときは、当該株主が会社のために自ら責任追及等の訴え（株主代表訴訟）を提起できる' +
+        '制度を定めている（会社法847条）。これにより取締役等の任務懈怠等による会社への損害賠償責任等を追及できる。',
+      authority: '所管: 法務省（会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（847条）' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/4482', type: 'government', label: '日本法令外国語訳DB 会社法 株主代表訴訟' },
+      { url: 'https://www.zeiken.co.jp/hourei/HHKAI000000/847.html', type: 'media', label: '会社法847条 株主による責任追及等の訴え' },
+    ],
+  },
 ];
 // Stryker restore all
