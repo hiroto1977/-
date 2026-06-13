@@ -334,5 +334,39 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://proactive.jp/resources/columns/obligation-to-state-working-conditions/', type: 'media', label: '労働条件明示ルール変更 社労士解説' },
     ],
   },
+  {
+    value: {
+      id: 'legal-anti-spam',
+      domain: 'legal',
+      title: '広告メールのオプトイン規制（特定電子メール法）',
+      statement:
+        '広告・宣伝を目的とする電子メール（特定電子メール）の送信は、原則として受信者の事前同意（オプトイン）が必要。' +
+        '送信時は送信者の氏名・名称、受信拒否の通知先と方法、住所・苦情等の連絡先の表示が義務付けられる。',
+      authority: '所管: 総務省・消費者庁（特定電子メール法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/specifed_email/', type: 'government', label: '消費者庁 特定電子メール法' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/pdf/m_mail_081114_1.pdf', type: 'government', label: '総務省・消費者庁 特定電子メールガイドライン' },
+      { url: 'https://emberpoint.com/blog/column/240606-002.html', type: 'media', label: '特定電子メール法 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-workers-comp',
+      domain: 'labor',
+      title: '労災保険（労働者災害補償保険）の加入義務',
+      statement:
+        '労働者を1人でも雇用する事業は、雇用形態（正社員・パート・アルバイト・契約社員等）を問わず労災保険の' +
+        '加入義務がある。労災保険料は全額を事業主が負担する。',
+      authority: '所管: 厚生労働省（労働者災害補償保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/kochi-roudoukyoku/riyousha_mokuteki_menu/mokuteki_naiyou/kakushu_hoken.html', type: 'government', label: '厚生労働省 高知労働局 各種保険' },
+      { url: 'https://www.freee.co.jp/kb/kb-payroll/how-to-calculate-labor-insurance-premium/', type: 'media', label: 'freee 労働保険の基礎' },
+      { url: 'https://onehr.jp/column/labor/workers-accident-insurance-who-pays/', type: 'media', label: '労災保険料の負担 解説' },
+    ],
+  },
 ];
 // Stryker restore all
