@@ -2404,5 +2404,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/hyouji/shokuhyouhou_kakou_allegy.html', type: 'municipality', label: '東京都 食品衛生の窓 アレルゲン表示' },
     ],
   },
+  {
+    value: {
+      id: 'tax-estimated-prepayment',
+      domain: 'tax',
+      title: '所得税の予定納税',
+      statement:
+        'その年の前年分の所得金額や税額などを基に計算した「予定納税基準額」が15万円以上である場合、納税者はその年の所得税及び' +
+        '復興特別所得税の一部をあらかじめ納付する（予定納税）。原則として予定納税基準額の3分の1ずつを第1期分（7月）と第2期分（11月）に納付する。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2040.htm', type: 'government', label: '国税庁 No.2040 予定納税' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r7/Jul/02.htm', type: 'government', label: '国税庁 予定納税（第1期分）' },
+      { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r7/Nov/02.htm', type: 'government', label: '国税庁 予定納税（第2期分）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-delinquent-tax',
+      domain: 'tax',
+      title: '国税の延滞税',
+      statement:
+        '国税を法定納期限までに完納しない場合、原則として法定納期限の翌日から完納日までの日数に応じて延滞税が課される。' +
+        '割合は、納期限の翌日から2か月を経過する日までは比較的低い割合、それ以降は高い割合となる二段階構造で、' +
+        'いずれも延滞税特例基準割合に連動して毎年変動する（具体的な税率は年により異なる）。',
+      authority: '所管: 国税庁（国税通則法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/osirase/9205.htm', type: 'government', label: '国税庁 No.9205 延滞税について' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/tsusoku/06/01/60.htm', type: 'government', label: '国税庁 国税通則法基本通達 第60条関係' },
+      { url: 'https://laws.e-gov.go.jp/law/337AC0000000066', type: 'government', label: 'e-Gov法令検索 国税通則法（60条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-contract-period-cap',
+      domain: 'labor',
+      title: '有期労働契約の契約期間の上限（労働基準法14条）',
+      statement:
+        '期間の定めのある労働契約（有期労働契約）の1回あたりの契約期間は、原則として最長3年である（労働基準法14条）。ただし、' +
+        '高度の専門的知識等を有する者との契約や満60歳以上の労働者との契約は最長5年とすることができる。これは1回の契約期間の上限であり、' +
+        '通算5年超で無期転換できる無期転換ルール（労働契約法18条）とは別の制度である。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/keiyaku/index.html', type: 'government', label: '厚生労働省 労働契約に関する法令・ルール' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/roudoukijun/keiyaku/kaisei/dl/pamphlet09.pdf', type: 'government', label: '厚生労働省 1回の契約期間の上限（14条）' },
+      { url: 'https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00463.html', type: 'government', label: '和歌山労働局 労働契約期間（14条）' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-legal-holiday',
+      domain: 'labor',
+      title: '法定休日（労働基準法35条）',
+      statement:
+        '使用者は、労働者に対して毎週少なくとも1回の休日を与えなければならない（労働基準法35条1項）。ただし、4週間を通じ4日以上の' +
+        '休日を与える場合（変形休日制）はこの限りでない（同条2項）。この法律上の休日を法定休日という。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://jsite.mhlw.go.jp/gunma-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/jyouken03_2.html', type: 'government', label: '群馬労働局 労働条件・休日' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html', type: 'government', label: '厚生労働省 労働時間・休日' },
+      { url: 'https://www.komon-lawyer.jp/qa/holiday/', type: 'media', label: '労働基準法上の休日とは 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-copyright-private-use',
+      domain: 'legal',
+      title: '私的使用のための複製（著作権法30条）',
+      statement:
+        '著作権法では、個人的に又は家庭内その他これに準ずる限られた範囲内で使用すること（私的使用）を目的とする場合、一定の例外を' +
+        '除き、使用する者は著作物を複製できる（著作権法30条）。ただし、違法にアップロードされた著作物（音楽・映像に加え、2021年1月1日からは' +
+        '漫画・書籍等を含む著作物全般）であると知りながらダウンロードする行為は、私的使用目的でも違法となる。',
+      authority: '所管: 文化庁（著作権法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/92735201.html', type: 'government', label: '文化庁 侵害コンテンツのダウンロード違法化' },
+      { url: 'https://www.gov-online.go.jp/useful/article/202012/3.html', type: 'government', label: '政府広報オンライン 海賊版ダウンロードは違法' },
+      { url: 'https://www.cric.or.jp/qa/hajime/hajime7.html', type: 'media', label: '著作権情報センター 私的使用のための複製' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-disability-accommodation',
+      domain: 'legal',
+      title: '障害者差別解消法における合理的配慮の提供義務',
+      statement:
+        '障害者差別解消法は、行政機関等・事業者に対し、障害を理由とする不当な差別的取扱いを禁止するとともに、障害者から社会的障壁の' +
+        '除去を必要としている旨の意思の表明があった場合に、過重な負担にならない範囲で必要な合理的配慮を提供することを求めている。' +
+        '2024年4月1日施行の改正により、事業者による合理的配慮の提供が努力義務から法的義務に改められた。',
+      authority: '所管: 内閣府（障害者差別解消法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www8.cao.go.jp/shougai/suishin/sabekai.html', type: 'government', label: '内閣府 障害を理由とする差別の解消の推進' },
+      { url: 'https://www8.cao.go.jp/shougai/suishin/sabekai_leaflet-r05.html', type: 'government', label: '内閣府 合理的配慮の提供義務化リーフレット' },
+      { url: 'https://www.gov-online.go.jp/article/202402/entry-5611.html', type: 'media', label: '政府広報オンライン 合理的配慮の提供が義務化' },
+    ],
+  },
 ];
 // Stryker restore all
