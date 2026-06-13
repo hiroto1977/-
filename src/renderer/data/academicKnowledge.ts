@@ -1032,5 +1032,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/spiral-silence', type: 'academic', label: 'EBSCO Research Starters — Spiral of silence' },
     ],
   },
+  {
+    id: 'econ-nudge-theory',
+    discipline: 'economics',
+    title: 'ナッジ理論（nudge theory）',
+    statement:
+      '選択の自由を保持しつつ、選択肢の提示方法（選択アーキテクチャ）を工夫することで、人々の行動を予測可能な形でより良い方向へ後押しする手法。禁止や経済的インセンティブの大きな変更によらず、デフォルト設定の変更や情報提示の工夫等で行動変容を促す。' +
+      'リチャード・セイラーとキャス・サンスティーンが2008年の著書『Nudge』で提唱し、「リバタリアン・パターナリズム」を掲げた。臓器提供のオプトアウト方式や年金への自動加入などが代表例。セイラーは行動経済学への貢献により2017年にノーベル経済学賞を受賞した。英国のBehavioural Insights Team（BIT、通称ナッジ・ユニット、2010年設立）をはじめ各国政府に応用組織が設けられた。批判として効果の持続性や操作性・倫理をめぐる議論がある。',
+    keyFigures: 'リチャード・セイラー & キャス・サンスティーン（2008『Nudge』）／セイラー2017ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Richard-Thaler', type: 'reference', label: 'Encyclopaedia Britannica — Richard Thaler（Nudge・libertarian paternalism）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/', type: 'government', label: 'NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）' },
+      { url: 'https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit', type: 'reference', label: 'Institute for Government — Nudge Unit（BIT 2010設立・応用例）' },
+    ],
+  },
+  {
+    id: 'econ-automatic-stabilizers',
+    discipline: 'economics',
+    title: '自動安定化装置（ビルトイン・スタビライザー）',
+    statement:
+      '政府が裁量的な政策判断や新たな立法を行わなくても、財政制度にあらかじめ組み込まれた仕組みが景気変動を自動的に緩和する機能。' +
+      '代表例は累進所得税（好況時に所得増加に伴い税負担が自動的に増えて総需要を抑制し、不況時には税負担が減って可処分所得を下支えする）と、失業保険・生活保護等の社会保障給付（不況時に受給者増で給付が自動的に増え家計の可処分所得を支える）。裁量的財政政策と異なり、認知・立法・実施に伴う政策ラグがなく即時に働く点が長所で、総需要の振れを小さくして景気を安定化させる（反景気循環的に作用）。一方で完全な景気安定化はできず、不況期には財政赤字の自動的な拡大を伴う。ケインズ経済学における財政の景気安定化機能の議論の中で重視される。',
+    keyFigures: 'ケインズ的財政政策論（財政の景気安定化機能）／累進所得税・失業保険・社会保障給付等の制度',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/fiscal-policy', type: 'reference', label: 'Encyclopaedia Britannica (Money) — Fiscal Policy（automatic stabilizers）' },
+      { url: 'https://www.imf.org/external/pubs/ft/spn/2009/spn0923.pdf', type: 'government', label: 'IMF Staff Position Note — Automatic Fiscal Stabilizers (2009)' },
+      { url: 'https://www.brookings.edu/articles/what-are-automatic-stabilizers/', type: 'academic', label: 'Brookings Institution — What are automatic stabilizers?' },
+    ],
+  },
+  {
+    id: 'mgmt-ambidexterity',
+    discipline: 'management',
+    title: '両利きの経営（organizational ambidexterity, 知の探索と深化）',
+    statement:
+      '企業が既存事業の改善・効率化＝「知の深化（exploitation）」と、新規領域の開拓・実験＝「知の探索（exploration）」を高い次元で両立させる経営。' +
+      'ジェームズ・G・マーチが1991年の論文「Exploration and Exploitation in Organizational Learning」(Organization Science)で両者のトレードオフと両立の重要性を提示し、適応プロセスが探索より深化を速く洗練させるため組織は短期的に有効でも長期的に自己破壊的になりやすいと論じた。深化に偏り探索を怠ると、成功体験ゆえに既存能力に固執する「コンピテンシー・トラップ／サクセス・トラップ」に陥り環境変化への適応力を失う。チャールズ・A・オライリーとマイケル・L・タッシュマンがこれを探索と深化を同時追求する組織能力＝両利き性として体系化し、専門部門を分離する「構造的両利き」と同一部門内で両立を図る「文脈的両利き」を整理した。日本では入山章栄が「知の探索／知の深化」として紹介している。',
+    keyFigures: 'J.G.マーチ（1991, exploration/exploitation）／オライリー&タッシュマン（両利き組織の体系化）／入山章栄（日本での紹介）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) Exploration and Exploitation in Organizational Learning, Organization Science 2(1):71-87（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Success_trap', type: 'reference', label: 'Wikipedia — Success trap（深化偏重によるコンピテンシー・トラップ）' },
+      { url: 'https://dhbr.diamond.jp/articles/-/10194', type: 'media', label: '入山章栄 — 知の探索・知の深化と両利きの経営（DIAMONDハーバード・ビジネス・レビュー）' },
+    ],
+  },
+  {
+    id: 'human-learned-helplessness',
+    discipline: 'human-science',
+    title: '学習性無力感（learned helplessness）',
+    statement:
+      '回避・制御不可能な不快刺激（電気ショック等）に繰り返しさらされた結果、「何をしても状況は変わらない」と学習し、後に回避可能な状況に置かれても逃避・回避行動を起こさなくなる現象。' +
+      'マーティン・セリグマンとスティーブン・マイヤーが1967年から犬を用いた実験で見出した（逃れられないショックを受けた群は、その後に障壁を越えれば逃げられるシャトル箱でも多くが逃げようとしなかった）。人間のうつ病・無気力、教育・職場・虐待状況の理解に応用され、原因帰属（悲観的説明スタイル）の理論へ発展した。なお2016年にマイヤー＆セリグマンは神経科学的知見から当初理論を修正し、「受動性（無力感）はむしろ生得的な初期設定の反応であり、学習されるのはむしろ制御可能性（コントロールできるという認識）の方である」とした。',
+    keyFigures: 'マーティン・セリグマン & スティーブン・マイヤー（1967〜／2016年に Psychological Review で理論修正）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/learned-helplessness', type: 'reference', label: 'Encyclopaedia Britannica — Learned helplessness' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/', type: 'academic', label: 'Maier & Seligman (2016) Learned Helplessness at Fifty, Psychological Review 123(4):349-367（査読・PMC全文）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/27337390/', type: 'academic', label: 'PubMed — Maier & Seligman (2016) 書誌（DOI:10.1037/rev0000033）' },
+    ],
+  },
+  {
+    id: 'bizlaw-abuse-superior-position',
+    discipline: 'business-law',
+    title: '優越的地位の濫用（独占禁止法）',
+    statement:
+      '自己の取引上の地位が相手方に優越している事業者が、取引の相手方に対しその地位を利用して、正常な商慣習に照らし不当に不利益を与える行為。独占禁止法が禁止する「不公正な取引方法」の一類型で、同法第2条第9項第5号に行為類型が定義され、第19条で禁止される。' +
+      '具体例として、取引に係る商品・役務以外の購入強制（押し付け販売）、協賛金・従業員派遣その他の経済上の利益の提供要請、受領拒否、返品、支払遅延、対価の減額、その他相手方に不利益となる取引条件の設定・変更などが挙げられる。大規模小売業者と納入業者、親事業者と下請事業者の間で典型的に問題化し、近年はデジタル・プラットフォーム事業者と利用者・消費者（個人情報等の提供）の文脈でも論じられる。公正取引委員会が運用し、違反は排除措置命令・課徴金納付命令の対象となりうる。下請法は本規制を補完する特別法。',
+    keyFigures: '独占禁止法2条9項5号（定義）・19条（禁止）／公正取引委員会／補完: 下請法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 — 優越的地位の濫用に関する独占禁止法上の考え方（ガイドライン）' },
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会 — 独占禁止法の規制内容（不公正な取引方法・19条・排除措置/課徴金）' },
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000054/', type: 'government', label: 'e-Gov法令検索 — 私的独占の禁止及び公正取引の確保に関する法律（昭和22年法律第54号）' },
+    ],
+  },
+  {
+    id: 'infosoc-uses-gratifications',
+    discipline: 'information-sociology',
+    title: '利用と満足理論（uses and gratifications theory）',
+    statement:
+      '「メディアが人々に何をするか」ではなく「人々がメディアを使って何をするか（どんな欲求を満たすか）」に着目する、能動的オーディエンス観に立つマスコミュニケーション理論。受け手は情報・娯楽・社会的つながり・自己確認・現実逃避などの欲求を満たすため能動的にメディアを選択・利用すると捉える。' +
+      '受け手を一方的に影響を受ける受動的存在とみなす皮下注射モデル（強力効果論）への反動として、ラジオ番組の聴取動機を問うた1940年代の研究（H.ヘルツォークによる連続ラジオドラマ研究など）に萌芽し、エリフ・カッツ、ジェイ・ブラムラー、マイケル・グレヴィッチらが1970年代（特に1974年の論考）に体系化した。SNS・スマホ時代の能動的なメディア利用の説明にも援用される一方、受け手の合理性・自覚性を過度に前提しているとの批判もある。',
+    keyFigures: 'E.カッツ／J.ブラムラー／M.グレヴィッチ（1970年代体系化）／先駆: H.ヘルツォーク（1944）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/uses-and-gratifications-theory', type: 'academic', label: 'EBSCO Research Starters — Uses and gratifications theory' },
+      { url: 'https://en.wikipedia.org/wiki/Uses_and_gratifications_theory', type: 'reference', label: 'Wikipedia — Uses and gratifications theory' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/009365027900600102', type: 'academic', label: 'Blumler (1979) The Role of Theory in Uses and Gratifications Studies, Communication Research（SAGE 査読誌）' },
+    ],
+  },
 ];
 // Stryker restore all
