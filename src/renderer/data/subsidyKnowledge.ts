@@ -1179,6 +1179,121 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://biz.stayway.jp/hojyo_detail/51400/', type: 'media', label: 'さいたま市起業家支援補助金 解説' },
     ],
   },
+  {
+    id: 'subsidy-unpaid-wage',
+    level: 'national',
+    domain: 'welfare',
+    name: '未払賃金立替払制度',
+    authority: '厚生労働省・独立行政法人労働者健康安全機構',
+    statement:
+      '企業の倒産（法律上の倒産又は労働基準監督署長による事実上の倒産の認定）により賃金が支払われないまま退職した労働者に対し、独立行政法人' +
+      '労働者健康安全機構が事業主に代わって未払賃金の一部を立替払いする制度（賃金の支払の確保等に関する法律）。立替払される額は未払賃金総額' +
+      '（定期賃金と退職金が対象、賞与は対象外）の8割で、退職日における年齢に応じた上限がある（具体額は改定され得るため最新で要確認）。',
+    application:
+      'まず倒産の事実を確認（法律上の倒産は破産管財人等から、事実上の倒産は所轄労働基準監督署長から「倒産の事実」「未払賃金額等」の認定・確認を受ける）。' +
+      'その確認を踏まえ、退職労働者が労働者健康安全機構に立替払請求書を提出して請求する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/shinsai_rousaihoshouseido/tatekae/index.html', type: 'government', label: '厚生労働省 未払賃金立替払制度' },
+      { url: 'https://www.johas.go.jp/chinginengo/miharai/tabid/417/Default.aspx', type: 'government', label: '労働者健康安全機構 未払賃金の立替払事業' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/faq_miharaichingin.html', type: 'government', label: '厚生労働省 未払賃金立替払制度 Q&A' },
+    ],
+  },
+  {
+    id: 'subsidy-new-farmer',
+    level: 'national',
+    domain: 'business',
+    name: '就農準備資金・経営開始資金（旧 農業次世代人材投資資金）',
+    authority: '農林水産省（実施: 都道府県等）',
+    statement:
+      '次世代を担う農業者となることを志向する者に対し、就農前の研修期間や経営開始直後の所得を確保するため資金を交付する国の制度（新規就農者育成総合対策の一部）。' +
+      '原則として就農・研修開始時に49歳以下であることが対象要件で、就農準備資金は最長2年間、経営開始資金は最長3年間、それぞれ年間上限額が定められている。' +
+      '対象年齢・交付期間・金額・所得要件等は年度で変動するため、最新の公式情報（農林水産省・各都道府県）で要確認。',
+    application:
+      '申請・利用は居住予定地又は就農予定地を所管する市町村・都道府県が窓口（就農準備資金は都道府県等、経営開始資金は主に市町村に申請）。研修計画・就農計画の認定や所定の研修等が要件となるため、事前に交付主体への相談が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/new_farmer/n_syunou/roudou.html', type: 'government', label: '農林水産省 就農準備資金・経営開始資金' },
+      { url: 'https://www.maff.go.jp/j/new_farmer/n_syunou/attach/pdf/roudou-144.pdf', type: 'government', label: '農林水産省 新規就農者育成総合対策のポイント' },
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/noushin/portal/nougyou/syunokyuhu/index.html', type: 'municipality', label: '浜松市 経営開始資金（旧 農業次世代人材投資事業）' },
+    ],
+  },
+  {
+    id: 'subsidy-niigata',
+    level: 'prefecture',
+    domain: 'business',
+    name: '稼ぐ力強化支援事業 補助金（新潟県）',
+    authority: '新潟県（産業労働部）／関連窓口: 公益財団法人にいがた産業創造機構（NICO）',
+    statement:
+      '新潟県が実施する県レベルの代表的な中小企業向け補助制度の一例で、持続的な賃上げに意欲的な県内中小企業等が「稼ぐ力」を強化するための高付加価値化に' +
+      '向けた設備投資や商品・サービス開発の取組を支援するもの。対象者・補助率・上限額・募集期間は年度ごとに変動するため、必ず新潟県公式の最新の募集要項で要確認。' +
+      '県内には他にも多数の補助金があり、本制度は代表例の一つ。NICOが県内中小企業向けの補助金情報・経営/研究開発支援の総合窓口を担う。',
+    application:
+      '新潟県公式サイト（産業労働部）で公開される募集要項に基づき申請。賃上げ計画・パートナーシップ構築宣言登録等の要件が課されることがある（年度で変動）。相談・併用制度の確認はNICOの窓口を利用できる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.niigata.lg.jp/site/sangyorodo/kaseguchikara-bosyu.html', type: 'municipality', label: '新潟県 稼ぐ力強化支援事業 募集' },
+      { url: 'https://www.nico.or.jp/hojokin/', type: 'operator', label: 'にいがた産業創造機構（NICO）補助金一覧' },
+      { url: 'https://hojokin-agent.jp/audience/sme/niigata', type: 'media', label: '新潟県の中小企業向け補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-okayama',
+    level: 'municipality',
+    domain: 'business',
+    name: '岡山市創業者支援事業補助金',
+    authority: '岡山市（産業観光局／経済局 産業振興・中小企業振興）',
+    statement:
+      '岡山市が市内の創業者数の増加と地域経済の活性化を目的に、創業に係る経費（店舗等借入費・設備費・広報費等）の一部を補助する市区町村レベルの代表的な' +
+      '創業支援制度。産業競争力強化法に基づき岡山市が認定した連携創業支援事業者による「特定創業支援等事業」の支援を受けたうえで市内で創業した中小企業者が対象。' +
+      '補助上限額・対象要件・募集期間は年度ごとに変動するため、最新の募集要項及び岡山市公式で要確認。',
+    application:
+      '岡山市内に住民登録又は法人本店があること、特定創業支援等事業を受けていること、市内で創業し必要な許認可を取得済みであること等が要件。年度ごとに公募が行われ、申請・問い合わせは岡山市の担当課又はおかやま創業サポートデスクが窓口。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.okayama.jp/jigyosha/0000058030.html', type: 'municipality', label: '岡山市 創業促進助成金' },
+      { url: 'https://www.city.okayama.jp/jigyosha/0000009171.html', type: 'municipality', label: '岡山市 特定創業支援等事業' },
+      { url: 'https://okayama-sougyo.jp/bounty-system/', type: 'operator', label: 'おかやま創業サポートデスク 補助金情報' },
+    ],
+  },
+  {
+    id: 'subsidy-kumamoto',
+    level: 'municipality',
+    domain: 'business',
+    name: '熊本市創業者チャレンジ支援補助金',
+    authority: '熊本市（経済観光局 起業・新産業支援課）',
+    statement:
+      '熊本市が市内で創業する事業者を対象に、創業に要する経費の一部を補助するとともに専門家派遣等の経営支援を一体的に行う制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '対象経費は人件費・店舗等借入費・設備費・マーケティング費・知的財産権等関連経費などが例示される。補助率・補助上限・対象経費・募集期間は年度ごとに変動するため、' +
+      '最新の募集要項及び熊本市公式で要確認。',
+    application:
+      '募集期間中に熊本市（起業・新産業支援課）へ申請する。年度により募集回・要件・上限が変わるため、最新の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kumamoto.jp/list03447.html', type: 'municipality', label: '熊本市 起業・新産業支援課' },
+      { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001bx7.html', type: 'government', label: 'J-Net21 熊本市 創業チャレンジ支援' },
+      { url: 'https://hojyokin-portal.jp/subsidies/19611', type: 'media', label: '熊本市創業者チャレンジ支援補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-kitakyushu',
+    level: 'municipality',
+    domain: 'business',
+    name: '北九州市の創業支援（特定創業支援等事業・COMPASS小倉）',
+    authority: '北九州市（産業経済局 スタートアップ推進課）／連携: 北九州産業学術推進機構（FAIS）・商工会議所',
+    statement:
+      '北九州市は産業競争力強化法に基づき国の認定を受けた「創業支援等事業計画」を運用し、市内の創業者・中小企業向けに相談窓口（COMPASS小倉）・専門家支援・' +
+      '創業セミナー等を提供する政令指定都市（市区町村レベル）の代表的な創業支援。同事業による継続支援を受け市が交付する証明書を取得した創業者は、会社設立時の' +
+      '登録免許税の軽減や日本政策金融公庫の融資制度の優遇等のメリットを受けられる。対象要件・支援メニュー・受付期間は年度で変動するため最新の市公式で要確認。',
+    application:
+      'COMPASS小倉等の相談窓口を通じて特定創業支援等事業（経営・財務・人材育成・販路開拓の知識習得を伴う継続支援）を受け、要件を満たした上で市に証明書交付を申請。交付された証明書を法務局・金融機関等に提出して各種メリットを受ける。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kitakyushu.lg.jp/contents/10700156.html', type: 'municipality', label: '北九州市 創業のメリット（特定創業支援等事業）' },
+      { url: 'https://www.city.kitakyushu.lg.jp/contents/k9901001.html', type: 'municipality', label: '北九州市 スタートアップ支援' },
+      { url: 'https://shikin.yayoi-kk.co.jp/search/y24284', type: 'media', label: '特定創業支援事業（北九州市）解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
