@@ -3784,5 +3784,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jpx.co.jp/glossary/ya/446.html', type: 'media', label: '日本取引所グループ 用語集 有価証券報告書' },
     ],
   },
+  {
+    value: {
+      id: 'tax-individual-business-tax',
+      domain: 'tax',
+      title: '個人事業税',
+      statement:
+        '個人事業税は、地方税法で定める一定の事業（法定業種）を営む個人に対し、事業所の所在する都道府県がその事業の所得に応じて課す' +
+        '地方税である。事業の種類に応じて標準税率3%〜5%が定められ、事業主控除として年290万円が控除される。所得税の確定申告等をしていれば' +
+        '原則として個人事業税の申告は不要で、都道府県から送付される納税通知書により納付する。',
+      authority: '所管: 総務省・各都道府県（地方税法／個人事業税）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_07.html', type: 'government', label: '総務省 地方税制度 個人事業税' },
+      { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/kojin_ji', type: 'municipality', label: '東京都主税局 個人事業税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2023/03/order6/3-6_02.htm', type: 'government', label: '国税庁 確定申告の手引き（住民税・事業税）' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-payment-grace',
+      domain: 'tax',
+      title: '国税の納税の猶予・換価の猶予',
+      statement:
+        '災害・病気・事業の休廃業・著しい損失などにより国税を一時に納付できない事情がある場合は、税務署長に申請して「納税の猶予」' +
+        '（国税通則法46条）を受けられることがある。また、国税を一時に納付すると事業の継続や生活の維持が困難になるおそれがある場合等には、' +
+        '納期限から6か月以内の申請により「換価の猶予」（国税徴収法151条の2）を受けられる。猶予が認められると原則1年以内の分割納付が可能となり、延滞税の軽減等の効果がある。',
+      authority: '所管: 国税庁（国税通則法・国税徴収法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/nozei/nofu_konnan.htm', type: 'government', label: '国税庁 納期限までに納付が困難な方へ（猶予制度）' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/chosyu/06/01/151_2/01.htm', type: 'government', label: '国税庁 国税徴収法基本通達 換価の猶予の要件' },
+      { url: 'https://www.nta.go.jp/taxes/nozei/nofu_konnan/pdf/0021001-141_05.pdf', type: 'government', label: '国税庁 納税の猶予制度 FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-wage-prescription',
+      domain: 'labor',
+      title: '賃金請求権の消滅時効（労働基準法115条）',
+      statement:
+        '2020年4月1日施行の改正労働基準法により、賃金（退職手当を除く）の請求権の消滅時効期間は2年から原則5年に延長されたが、' +
+        '附則（労働基準法143条3項）の経過措置により当分の間は3年とされている。退職手当の請求権の消滅時効は5年である。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000617974.pdf', type: 'government', label: '厚生労働省 未払賃金が請求できる期間の延長（115条）' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（115条・143条3項）' },
+      { url: 'https://jsite.mhlw.go.jp/miyazaki-roudoukyoku/content/contents/000631277.pdf', type: 'government', label: '宮崎労働局 未払賃金の請求期間の延長' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-prohibited-contract-terms',
+      domain: 'labor',
+      title: '賠償予定・前借金相殺・強制貯金の禁止（労基法16〜18条）',
+      statement:
+        '労働基準法では、使用者は、労働契約の不履行について違約金を定めたり損害賠償額を予定する契約をしてはならず（賠償予定の禁止・16条）、' +
+        '前借金その他労働することを条件とする前貸の債権と賃金を相殺してはならず（前借金相殺の禁止・17条）、労働契約に附随して貯蓄の契約をさせたり' +
+        '貯蓄金を管理する契約をしてはならない（強制貯金の禁止・18条）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=322AC0000000049', type: 'government', label: 'e-Gov法令検索 労働基準法（16条・17条・18条）' },
+      { url: 'https://jsite.mhlw.go.jp/tochigi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/roukijou/roukihou_point/kijunhou_kaisetsu/article16.html', type: 'government', label: '栃木労働局 賠償予定の禁止（16条）' },
+      { url: 'https://jsite.mhlw.go.jp/wakayama-roudoukyoku/newpage_00465.html', type: 'government', label: '和歌山労働局 賠償予定の禁止 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-standard-terms',
+      domain: 'legal',
+      title: '定型約款（改正民法）',
+      statement:
+        '2020年4月1日施行の改正民法により、定型約款（548条の2〜548条の4）の規定が新設された。不特定多数を相手方とし内容の全部又は一部が' +
+        '画一的であることが双方にとって合理的な「定型取引」で、定型約款を契約内容とする旨を合意し又は準備者があらかじめ表示していた等の場合は、' +
+        '個別の条項についても合意したものとみなされる（みなし合意）。ただし信義則に反して相手方の利益を一方的に害する不当条項は除外され、一定の場合は約款変更により同意なく契約内容を変更できる。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/content/001289629.pdf', type: 'government', label: '法務省 改正民法 定型約款などのルール' },
+      { url: 'https://www.sonpo.or.jp/news/caution/minpou.html', type: 'media', label: '日本損害保険協会 改正民法について' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第548条の2', type: 'media', label: '民法548条の2（条文・定型取引）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-land-building-lease',
+      domain: 'legal',
+      title: '借地借家法における建物賃貸借（借家）',
+      statement:
+        '借地借家法は建物の賃貸借について賃借人を保護する規律を定めており、期間の定めのある建物賃貸借では、賃貸人が更新を拒絶し又は解約を' +
+        '申し入れるには「正当の事由」が必要で、正当事由がなければ契約は従前と同一条件で法定更新される（26条・28条）。一方、一定の要件を満たせば、更新のない「定期建物賃貸借（定期借家）」を設定することもできる（38条）。',
+      authority: '所管: 法務省（借地借家法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/403AC0000000090', type: 'government', label: 'e-Gov法令検索 借地借家法' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00380.html', type: 'government', label: '法務省 借地借家法の更新拒絶等要件の調査研究' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk3_000059.html', type: 'government', label: '国土交通省 定期建物賃貸借' },
+    ],
+  },
 ];
 // Stryker restore all
