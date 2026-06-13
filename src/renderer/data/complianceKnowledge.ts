@@ -6360,5 +6360,113 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.tokai-sr.jp/column/employment-disabilities/', type: 'media', label: '社労士法人とうかい 障害者雇用率2.7%への段階的引上げ 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-invoice-20percent-special',
+      domain: 'tax',
+      title: 'インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）',
+      statement:
+        'インボイス制度を機に免税事業者からインボイス発行事業者（課税事業者）となった小規模事業者は、消費税の納付税額を「課税標準額に対する消費税額（売上に係る消費税額）の2割」とできる経過措置' +
+        '（2割特例）の適用を受けられる。適用対象は令和5年（2023年）10月1日から令和8年（2026年）9月30日までの日の属する各課税期間。基準期間の課税売上高が1,000万円超の事業者等、インボイスを機とせず課税事業者となった者は対象外。' +
+        '事前届出は不要で、一般課税・簡易課税のいずれでも確定申告書への付記により適用できる。適用の当てはめは課税期間により異なるため要確認。',
+      authority: '所管: 国税庁（消費税・インボイス制度）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_2tokurei.htm', type: 'government', label: '国税庁 2割特例 特設ページ' },
+      { url: 'https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm', type: 'government', label: '国税庁 2割特例（小規模事業者に対する負担軽減措置）の概要' },
+      { url: 'https://biz.moneyforward.com/invoice/basic/55388/', type: 'media', label: 'マネーフォワード インボイス制度における軽減措置の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-social-insurance-expansion',
+      domain: 'labor',
+      title: '短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）',
+      statement:
+        '2024年（令和6年）10月から、健康保険・厚生年金保険の適用拡大の対象が、厚生年金保険の被保険者総数が常時51人以上（従来は101人以上）の特定適用事業所に拡大された。当該事業所で働く短時間労働者は、' +
+        '①週の所定労働時間20時間以上、②所定内賃金が月額8.8万円以上、③雇用期間が2か月超見込み、④学生でない、の4要件をすべて満たすと被保険者となる。なお賃金要件の撤廃や企業規模要件の段階的縮小は2025年成立の年金制度改正法で予定されているが、' +
+        '本記載時点（2026年6月）では将来予定であり、施行済みの事実（2024年10月・51人以上）と区別を要する。',
+      authority: '所管: 厚生労働省（年金局・保険局）／日本年金機構',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/kounen/tekiyo/jigyosho/tanjikan.html', type: 'government', label: '日本年金機構 短時間労働者に対する適用の拡大' },
+      { url: 'https://www.mhlw.go.jp/tekiyoukakudai/', type: 'government', label: '厚生労働省 社会保険適用拡大特設サイト' },
+      { url: 'https://www.gov-online.go.jp/article/202209/entry-10068.html', type: 'government', label: '政府広報オンライン 社会保険の適用が拡大 従業員51人以上' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-electronic-bookkeeping-etransaction',
+      domain: 'tax',
+      title: '電子取引データの電子保存義務化（2024年1月〜）',
+      statement:
+        '電子帳簿保存法上、所得税・法人税に係る保存義務者が注文書・契約書・請求書・領収書等の取引情報を電子メールやEC等の電子取引で授受した場合、2024年（令和6年）1月1日以後は原則としてその電子データのまま保存することが' +
+        '義務付けられ、出力書面のみの保存は認められなくなった（宥恕措置の終了）。保存には改ざん防止措置（タイムスタンプ・訂正削除の記録が残るシステム・事務処理規程の整備運用のいずれか）と、ディスプレイ等の備付け、' +
+        '「日付・金額・取引先」での検索要件を満たす必要がある。ただし税務署長が「相当の理由」を認め、調査時にデータと出力書面の提示提出に応じられる場合は検索要件等を満たさなくてよい猶予措置がある。基準額・細目は改正で変動するため要確認。',
+      authority: '所管: 国税庁（電子帳簿保存法第7条等）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023011-012.pdf', type: 'government', label: '国税庁 令和6年1月からの電子取引データの保存方法' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/03-6.pdf', type: 'government', label: '国税庁 電子帳簿保存法一問一答（電子取引関係）' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/44331/', type: 'media', label: 'マネーフォワード 電子帳簿保存法 2024年改正点・保存要件の解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-working-condition-disclosure-2024',
+      domain: 'labor',
+      title: '労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）',
+      statement:
+        '2024年（令和6年）4月1日施行の労働基準法施行規則等の改正により、労働条件の明示事項が追加された。すべての労働者に対し、契約締結時及び有期労働契約の更新時に「就業場所・業務の変更の範囲」の明示が義務化された。' +
+        '有期契約労働者に対しては、更新上限（通算契約期間又は更新回数の上限）の有無と内容の明示が、また無期転換申込権が発生する更新時ごとに「無期転換を申し込むことができる旨（申込機会）」及び「無期転換後の労働条件」の明示が、' +
+        'それぞれ新たに義務付けられた。',
+      authority: '所管: 厚生労働省（労働基準局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_32105.html', type: 'government', label: '厚生労働省 2024年4月から労働条件明示のルールが変わります' },
+      { url: 'https://muki.mhlw.go.jp/rule.html', type: 'government', label: '厚生労働省 無期転換サイト 労働条件明示ルールの変更' },
+      { url: 'https://jsite.mhlw.go.jp/shiga-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/youshiki_newroudoutuuti.html', type: 'government', label: '滋賀労働局 令和6年4月から労働条件明示のルールが変わります' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-inheritance-registration-mandatory',
+      domain: 'legal',
+      title: '相続登記の申請義務化（2024年4月1日施行）',
+      statement:
+        '2024年（令和6年）4月1日施行の改正不動産登記法により、相続（遺言を含む）で不動産の所有権を取得した相続人は、自己のために相続の開始があったことを知り、かつ当該不動産の所有権を取得したことを知った日から3年以内に' +
+        '相続登記の申請をする義務を負い、正当な理由なく怠ると10万円以下の過料の対象となる。施行日前に発生した相続も対象で、その場合は施行日から3年後の2027年（令和9年）3月31日が期限となる経過措置がある。' +
+        '期限内の正式な相続登記が難しい場合に備え、法務局に相続人である旨を申し出ることで申請義務を履行したものとみなす「相続人申告登記」制度（不動産登記法76条の3）も新設された。',
+      authority: '所管: 法務省（民事局）。根拠: 不動産登記法76条の2・76条の3',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji05_00599.html', type: 'government', label: '法務省 相続登記の申請義務化について' },
+      { url: 'https://www.moj.go.jp/MINJI/minji05_00602.html', type: 'government', label: '法務省 相続人申告登記について' },
+      { url: 'https://www.gov-online.go.jp/article/202512/entry-10431.html', type: 'government', label: '政府広報オンライン 不動産の相続登記義務化' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-wage-increase-promotion-sme',
+      domain: 'tax',
+      title: '中小企業向け賃上げ促進税制（令和6年度改正で5年間の繰越控除を創設）',
+      statement:
+        '賃上げ促進税制は、中小企業者等が雇用者給与等支給額を前年度比で一定割合以上増加させた場合に、その増加額の一定割合を法人税（個人事業主は所得税）から税額控除できる制度。令和6年度税制改正により、中小企業については' +
+        '当期の税額から控除しきれなかった金額を翌年度以降5年間繰り越せる「繰越税額控除制度」が新設され、赤字等で控除枠を使い切れない中小企業も後年度に活用できるようになった。控除率・賃上げ要件・控除上限（法人税額の20%）・' +
+        '繰越適用時の継続賃上げ要件などは年度の税制改正により変動するため、適用年度の最新情報で要確認。',
+      authority: '所管: 中小企業庁（制度）／国税庁（税額控除の取扱い）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/zaimu/zeisei/syotokukakudai.html', type: 'government', label: '中小企業庁 中小企業向け賃上げ促進税制' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5927-2.htm', type: 'government', label: '国税庁 No.5927-2 中小企業者等における賃上げ促進税制' },
+      { url: 'https://www.ht-tax.or.jp/topics/r6-chinage-tekiyou/', type: 'media', label: '辻・本郷 令和6年改正 中小企業向け賃上げ促進税制の留意点' },
+    ],
+  },
 ];
 // Stryker restore all
