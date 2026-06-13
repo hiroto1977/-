@@ -1049,5 +1049,107 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.s-kessai.jp/businesses/issue_deposit.html', type: 'media', label: '日本資金決済業協会 発行保証金' },
     ],
   },
+  {
+    value: {
+      id: 'tax-loss-carryforward',
+      domain: 'tax',
+      title: '青色申告法人の繰越欠損金',
+      statement:
+        '青色申告書を提出した事業年度に生じた欠損金は、平成30年4月1日以後開始事業年度発生分につき翌期以後10年間' +
+        '繰り越して所得から控除できる。控除限度は大法人が所得の50%、中小法人等は全額控除可。',
+      authority: '所管: 国税庁（法人税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5762.htm', type: 'government', label: '国税庁 No.5762 欠損金の繰越控除' },
+      { url: 'https://www.meti.go.jp/policy/economy/kyosoryoku_kyoka/kurikoshi.pdf', type: 'government', label: '経済産業省 繰越欠損金の控除上限特例' },
+      { url: 'https://www.ht-tax.or.jp/topics/kurikoshi-kessonkin/', type: 'media', label: '繰越欠損金 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-depreciable-asset-filing',
+      domain: 'tax',
+      title: '固定資産税（償却資産）の申告',
+      statement:
+        '1月1日時点で事業用の機械・器具備品等の償却資産を所有する者は、毎年1月31日までに資産所在地の市町村へ申告する' +
+        '義務がある。課税標準額の合計が150万円未満の場合は免税点に達せず課税されないが、申告自体は必要。',
+      authority: '所管: 総務省・市町村（地方税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_08.html', type: 'government', label: '総務省 固定資産税の概要' },
+      { url: 'https://www.city.funabashi.lg.jp/kurashi/zei/003/04/p000859.html', type: 'municipality', label: '船橋市 償却資産の概要' },
+      { url: 'https://www.tkc.jp/consolidate/webcolumn/023880/', type: 'media', label: '償却資産申告の留意点' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-statutory-ledgers',
+      domain: 'labor',
+      title: '法定三帳簿の作成・保存義務',
+      statement:
+        '使用者は労働者名簿・賃金台帳を各事業場ごとに調製し、出勤簿等の労働関係に関する重要書類とあわせて法定の期間' +
+        '保存しなければならない（労働基準法第107〜109条。第109条の保存期間は5年だが当分の間3年）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000049', type: 'government', label: 'e-Gov 労働基準法' },
+      { url: 'https://jsite.mhlw.go.jp/okinawa-roudoukyoku/library/okinawa-roudoukyoku/04rouki/houteichoubo.pdf', type: 'government', label: '厚生労働省 沖縄労働局 法定帳簿' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/87661/', type: 'media', label: '法定三帳簿 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-variable-working-hours',
+      domain: 'labor',
+      title: '変形労働時間制',
+      statement:
+        '一定期間を平均し1週間あたりの労働時間が法定労働時間（原則週40時間）の範囲内であれば、特定の日・週に法定労働時間を' +
+        '超えて労働させられる制度（1か月単位・1年単位・1週間単位等）。導入には労使協定の締結・届出または就業規則の定めが必要。',
+      authority: '所管: 厚生労働省（労働基準法第32条の2等）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/henkei.html', type: 'government', label: '厚生労働省 変形労働時間制の概要' },
+      { url: 'https://jsite.mhlw.go.jp/hyogo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/_79872/roudoujikan.html', type: 'government', label: '兵庫労働局 労働時間' },
+      { url: 'https://www.freee.co.jp/kb/kb-attendance/variable-working-hours-systems/', type: 'media', label: '変形労働時間制 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-third-party-provision',
+      domain: 'legal',
+      title: '個人データの第三者提供の制限',
+      statement:
+        '個人データを第三者に提供するには原則あらかじめ本人の同意が必要で、オプトアウトによる提供は個人情報保護委員会への' +
+        '届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/optout/', type: 'government', label: '個人情報保護委員会 オプトアウト届出' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_thirdparty/', type: 'government', label: '個人情報保護委員会 第三者提供時の確認・記録義務' },
+      { url: 'https://www.miyake.gr.jp/', type: 'media', label: '三宅法律事務所 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-external-transmission',
+      domain: 'legal',
+      title: '電気通信事業法の外部送信規律',
+      statement:
+        '電気通信事業者等は、利用者の端末に記録された Cookie 等の情報を外部に送信させる際、送信される情報の内容・送信先等を' +
+        '利用者に通知し、又は容易に知り得る状態に置く（公表等）義務を負う（2023年6月施行）。',
+      authority: '所管: 総務省（電気通信事業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/gaibusoushin_kiritsu_00002.html', type: 'government', label: '総務省 外部送信規律FAQ' },
+      { url: 'https://www.soumu.go.jp/main_content/000862755.pdf', type: 'government', label: '総務省 外部送信規律パンフレット' },
+      { url: 'https://privtech.co.jp/blog/law/revised-telecommunications-business-law-cookie.html', type: 'media', label: '外部送信規律 解説' },
+    ],
+  },
 ];
 // Stryker restore all
