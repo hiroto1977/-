@@ -2022,5 +2022,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/', type: 'academic', label: 'MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）' },
     ],
   },
+  {
+    id: 'econ-price-discrimination',
+    discipline: 'economics',
+    title: '価格差別（price discrimination）',
+    statement:
+      '同一またはほぼ同一の財・サービスを、費用の差では説明できない異なる価格で、異なる買い手（または同一買い手の異なる購入量）に販売することをいう。一物一価の法則からの乖離であり、成立には(1)売り手が市場支配力をもつこと、(2)買い手ごとの支払意思額（留保価格）の違いを識別できること、(3)安く買った者による転売＝裁定を防げること、の3条件が必要とされる。' +
+      'アーサー・ピグーの分類で3つの「度合い」に分けられる。第1度（完全価格差別）は各人の支払意思額ぴったりの価格で販売するもの。第2度は購入数量やパッケージに応じた価格付けで、数量割引や二部料金がこれにあたる。第3度は年齢・地域・時間帯など観察可能な属性で市場を分割するもので、学割・シニア割・早割などが典型例。独占企業が消費者余剰を奪い生産者余剰へ転化させる手段だが、第1度では取引量が効率的水準まで増え独占に伴う死荷重が消える場合もある。',
+    keyFigures: 'A.C.ピグー（3度の分類）／成立条件: 市場支配力・支払意思額の識別・転売(裁定)の防止',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/price-discrimination', type: 'reference', label: 'Britannica Money — Price discrimination' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/price-discrimination', type: 'academic', label: 'ScienceDirect Topics — Price Discrimination: an overview' },
+      { url: 'https://ocw.mit.edu/courses/14-271-industrial-organization-i-fall-2022/mit14_271_f22_lec3slides.pdf', type: 'academic', label: 'MIT OpenCourseWare 14.271 Industrial Organization — Price Discrimination' },
+    ],
+  },
+  {
+    id: 'econ-solow-growth-model',
+    discipline: 'economics',
+    title: 'ソロー成長モデル（新古典派成長理論）',
+    statement:
+      '長期の経済成長を、資本蓄積・労働力の増加・技術進歩から説明する新古典派の経済成長モデル。資本には収穫逓減（限界生産力の逓減）が働くため、貯蓄・投資による資本蓄積だけでは成長は次第に鈍化し、経済は資本・産出が一定比率で成長する「定常状態（steady state）」に収束する。' +
+      'したがって一人当たり所得を持続的に成長させる究極の源泉は、モデル内では説明されない外生的な「技術進歩（全要素生産性, TFP）」であると結論づける（成長会計で資本・労働の寄与で説明できない残差を『ソロー残差』と呼ぶ）。初期資本が乏しい国ほど資本の限界生産力が高く速く成長するという『収束仮説』も含意する。ロバート・ソローとトレバー・スワンが1956年にそれぞれ独立に提唱し（ソローは1987年ノーベル経済学賞）、技術進歩を外生変数とする限界が、後の内生的成長理論（ローマー等）を生む契機となった。',
+    keyFigures: 'ロバート・M・ソロー & トレバー・スワン（1956独立提唱）／ソロー残差(TFP)・収束仮説／ソロー1987ノーベル賞／対比: 内生的成長理論(ローマー)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Robert-Solow', type: 'reference', label: 'Encyclopædia Britannica — Robert Solow / neoclassical growth model' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1987/summary/', type: 'government', label: 'NobelPrize.org — 1987年経済学賞（ソロー、経済成長理論）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w13950/w13950.pdf', type: 'academic', label: 'NBER WP 13950 — Trevor Swan and the Neoclassical Growth Model' },
+    ],
+  },
+  {
+    id: 'mgmt-generic-strategies',
+    discipline: 'management',
+    title: 'ポーターの3つの基本戦略（generic strategies）',
+    statement:
+      '企業が競争優位を築くための基本的な戦略類型を、「競争優位の源泉（低コストか差別化か）」と「競争の範囲（広い市場か狭いニッチか）」の2軸で整理したもの。' +
+      '(1)コスト・リーダーシップ戦略（広い市場で業界最低コストを実現）、(2)差別化戦略（広い市場で製品・サービスの独自性により高価格を実現）、(3)集中戦略（特定の狭いセグメントに経営資源を集中。さらにコスト集中と差別化集中の2つに分かれる）の3類型からなる。マイケル・E・ポーターが1980年の著書『競争の戦略（Competitive Strategy）』で提示した（集中戦略を2変種に分ける整理は1985年『競争優位の戦略』で明確化）。ポーターは、コスト優位と差別化のどちらにも徹しきれない企業は「スタック・イン・ザ・ミドル（中途半端）」に陥り低収益になると警告した（ただし両立は可能とする反論もある）。ファイブフォース分析と並ぶポーターの代表的フレームワーク。',
+    keyFigures: 'マイケル・E・ポーター（1980『競争の戦略』／集中の2変種は1985『競争優位の戦略』）／スタック・イン・ザ・ミドル',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=193', type: 'academic', label: 'Harvard Business School — Competitive Advantage (Michael E. Porter) 書誌' },
+      { url: 'https://www.ebsco.com/research-starters/marketing/porters-generic-strategies', type: 'academic', label: 'EBSCO Research Starters — Porter’s Generic Strategies' },
+      { url: 'https://en.wikipedia.org/wiki/Porter%27s_generic_strategies', type: 'reference', label: 'Wikipedia — Porter’s generic strategies' },
+    ],
+  },
+  {
+    id: 'human-halo-effect',
+    discipline: 'human-science',
+    title: 'ハロー効果（後光効果, halo effect）',
+    statement:
+      'ある対象がもつ一つの顕著な特徴（好ましい／好ましくない）の印象が、その対象の他の無関係な特徴の評価にまで波及してしまう認知バイアス。たとえば外見が魅力的な人を、知性や誠実さといった本来無関係な面でも高く評価しやすい。' +
+      '心理学者エドワード・ソーンダイクが1920年の論文「A Constant Error in Psychological Ratings」(Journal of Applied Psychology 4:25-29)で、上官が部下（航空隊員）を評価する際に諸特性の評価が不自然に高く・均一に相関していたこと（全体的印象に引きずられ、個々の特性を独立に評価できていなかったこと）を実証的に示し、この現象を指摘した。人事評価・面接・教育評価・ブランド評価・口コミなどで生じ、評価の歪みの原因となる。好ましくない特徴が他の評価を引き下げる逆方向は「逆ハロー効果（ホーン効果, horn effect）」と呼ばれる。',
+    keyFigures: 'エドワード・L・ソーンダイク（1920「A Constant Error in Psychological Ratings」, JAP 4:25-29）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/halo-effect', type: 'reference', label: 'Encyclopaedia Britannica — Halo effect' },
+      { url: 'https://psycnet.apa.org/record/1920-10104-014', type: 'academic', label: 'Thorndike (1920) A Constant Error in Psychological Ratings — APA PsycNet（原典書誌）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11614318/', type: 'academic', label: 'A Constant Error, Revisited: A New Explanation of the Halo Effect — PMC（査読）' },
+    ],
+  },
+  {
+    id: 'bizlaw-consumer-contract-act',
+    discipline: 'business-law',
+    title: '消費者契約法',
+    statement:
+      '消費者と事業者との間の情報の質・量および交渉力の格差に鑑み、消費者の利益の擁護を図ることを目的とする日本の法律。2000年（平成12年）公布（平成12年法律第61号）、2001年（平成13年）4月1日施行で、消費者庁が所管する。' +
+      '主な内容は、(1)不当な勧誘による契約の取消権——事業者の不実告知・断定的判断の提供・不利益事実の不告知や、不退去・退去妨害等があった場合に、消費者は契約の意思表示を取り消すことができる、(2)不当な契約条項の無効——事業者の損害賠償責任を全部免除する条項や、平均的な損害を超える違約金条項、消費者の利益を一方的に害する条項等を無効とする、(3)適格消費者団体による差止請求制度（2006年改正で導入・2007年6月施行）。民法・特定商取引法等と並ぶ消費者保護法制の基幹をなし、2016年・2018年・2022年等の複数回の改正で取消事由・無効条項が拡充されてきた。',
+    keyFigures: '消費者契約法（平成12年法律第61号・2001/4施行）／消費者庁所管／取消権・不当条項の無効・適格消費者団体の差止請求(2006導入)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/', type: 'government', label: '消費者庁 — 消費者契約法' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=412AC0000000061_20250616_504AC0000000068', type: 'government', label: 'e-Gov法令検索 — 消費者契約法（平成12年法律第61号）' },
+      { url: 'https://www.sangiin.go.jp/japanese/annai/chousa/rippou_chousa/backnumber/2006pdf/2006070709.pdf', type: 'government', label: '参議院 — 消費者団体訴訟制度の創設（2006年改正）' },
+    ],
+  },
+  {
+    id: 'infosoc-network-society',
+    discipline: 'information-sociology',
+    title: 'ネットワーク社会論（カステル）',
+    statement:
+      '情報通信技術（ICT）の発展により、社会の中核的な構造と活動が、垂直的な階層組織から、ノードの結びつきである「ネットワーク」を基盤に組織化される社会へ移行したとする社会理論。社会学者マニュエル・カステルが三部作『情報の時代（The Information Age）』（第1巻『The Rise of the Network Society』1996, Blackwell）で体系化した。' +
+      '資本・情報・イメージが瞬時に行き交う「フローの空間（space of flows）」が、地理的な「場所の空間（space of places）」に対して支配的になり、時間感覚も「無時間的時間（timeless time）」へと変容すると論じた。グローバル経済・社会運動・アイデンティティの変容を、ネットワークへの接続/切断という観点から分析する。現代の情報社会・デジタル経済論の基礎文献。',
+    keyFigures: 'マニュエル・カステル（1996『The Rise of the Network Society』三部作『情報の時代』第1巻）／フローの空間・無時間的時間',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/The_Information_Age:_Economy,_Society_and_Culture', type: 'reference', label: 'Wikipedia — The Information Age: Economy, Society and Culture（三部作の構成・刊行年）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781444319514', type: 'academic', label: 'Wiley Online Library — The Rise of the Network Society（書誌）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-68824-0_24', type: 'academic', label: 'Springer Nature — Space of Flows and Space of Places: Castells and the Information Age' },
+    ],
+  },
 ];
 // Stryker restore all
