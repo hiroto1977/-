@@ -2112,5 +2112,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/chapter/10.1007/978-3-030-68824-0_24', type: 'academic', label: 'Springer Nature — Space of Flows and Space of Places: Castells and the Information Age' },
     ],
   },
+  {
+    id: 'econ-mundell-fleming',
+    discipline: 'economics',
+    title: 'マンデル＝フレミング・モデル',
+    statement:
+      '開放経済（国際的な資本移動がある経済）における IS-LM モデルの拡張で、財市場・貨幣市場に国際収支（為替）の均衡を加え（IS-LM-BoP モデルとも呼ばれる）、三市場の同時均衡を分析し、為替相場制度の違いによる財政・金融政策の有効性を比較する。' +
+      '資本移動が完全な小国開放経済の場合、変動相場制では金融政策が有効で財政政策は（金利上昇→資本流入→為替増価で輸出が減り）無効になり、固定相場制では逆に財政政策が有効で金融政策は無効になる、と示す。' +
+      'これは「国際金融のトリレンマ（不可能の三角形 / impossible trinity）」＝(1)自由な資本移動、(2)固定為替相場、(3)独立した金融政策の3つを同時に達成することはできず2つしか選べない、という命題の基礎をなす。ロバート・マンデルと J. マーカス・フレミングが IMF 調査局で1960年代前半に独立に展開し（フレミング1962年・マンデル1963年の論文）、マンデルは異なる為替相場制度下の金融・財政政策分析と最適通貨圏の理論により1999年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ロバート・マンデル＆J.マーカス・フレミング（ともにIMF調査局、1960年代前半に独立に展開。フレミング1962年・マンデル1963年論文）／国際金融のトリレンマ（不可能の三角形）の基礎／マンデル：1999年ノーベル経済学賞（最適通貨圏の理論を含む）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'reference', label: 'NobelPrize.org — 1999年経済学賞 公式（受賞理由：為替相場制度下の金融・財政政策分析および最適通貨圏の理論）' },
+      { url: 'https://www.imf.org/external/pubs/ft/staffp/2003/01/PDF/Bough.pdf', type: 'government', label: 'IMF Staff Papers — James M. Boughton "On the Origins of the Fleming-Mundell Model"（モデルの起源・1962/1963論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Fleming_model', type: 'reference', label: 'Wikipedia — Mundell–Fleming model（IS-LM-BoP、為替制度別の政策有効性）' },
+      { url: 'https://en.wikipedia.org/wiki/Impossible_trinity', type: 'reference', label: 'Wikipedia — Impossible trinity（トリレンマの3条件と二者択一）' },
+    ],
+  },
+  {
+    id: 'mgmt-stp-marketing',
+    discipline: 'management',
+    title: 'STPマーケティング',
+    statement:
+      '標的市場を選定し、その市場での自社の位置づけを定める、マーケティング戦略の中核プロセス。' +
+      '(1)セグメンテーション（Segmentation）＝市場を地理・人口統計・心理・行動などの基準で同質な顧客集団に細分化、(2)ターゲティング（Targeting）＝細分化した市場の中から自社が狙う標的セグメントを選定、(3)ポジショニング（Positioning）＝標的顧客の心の中で競合と差別化された独自の位置づけを確立、の3段階から成る。' +
+      '「ポジショニング」概念はアル・ライズ&ジャック・トラウトが1969年の論考に端を発し1970年代の連載を通じて広め、STPの体系化はフィリップ・コトラーの教科書を通じて普及した。4P（マーケティングミックス）が「どう実行するか（戦術）」であるのに対し、STPは「誰に何を提供するか（戦略）」を定め、両者を組み合わせてマーケティング計画が立案される。',
+    keyFigures: 'P.コトラー（STPの体系化・普及）／ポジショニング：アル・ライズ&ジャック・トラウト（1969年提唱・1970年代普及）／4Pとの関係（STP=戦略 vs 4P=戦術）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/target-marketing', type: 'reference', label: 'Encyclopaedia Britannica — Target marketing（segmentation→targeting→positioning）' },
+      { url: 'https://pressbooks.library.vcu.edu/marketingprinciples/chapter/chapter-7-segmentation-targeting-and-positioning/', type: 'academic', label: 'Virginia Commonwealth University — Marketing Principles, Ch.7 Segmentation, Targeting, and Positioning' },
+      { url: 'https://en.wikipedia.org/wiki/Segmenting-targeting-positioning', type: 'reference', label: 'Wikipedia — Segmenting-targeting-positioning（STP, Kotler; STP戦略 vs 4P戦術）' },
+      { url: 'https://faculty.marshall.usc.edu/Davide-Proserpio/BUAD307-fall19/lectures/BUAD-307-Chap09.pdf', type: 'academic', label: 'USC Marshall School of Business — STP（BUAD 307 講義資料）' },
+    ],
+  },
+  {
+    id: 'human-availability-heuristic',
+    discipline: 'human-science',
+    title: '利用可能性ヒューリスティック',
+    statement:
+      'ある事象の頻度や確率を判断する際に、その事例がどれだけ容易に思い浮かぶか（想起のしやすさ）に基づいて見積もる、心の近道（ヒューリスティック）。' +
+      '記憶から取り出しやすい事例（最近の出来事・鮮烈な出来事・メディアで大きく報じられた事象）ほど、実際の頻度より高頻度だと過大評価しやすい。たとえば航空機事故や凶悪犯罪は報道で印象に残るため、実際のリスクより過大に見積もられがちである。' +
+      'エイモス・トベルスキーとダニエル・カーネマンが1973年の論文「Availability: A Heuristic for Judging Frequency and Probability」（Cognitive Psychology誌）で提唱した。代表性ヒューリスティック・アンカリングと並ぶ判断のヒューリスティックの一つで、リスク認知の歪み・確率判断の誤りの原因となる。',
+    keyFigures: 'Amos Tversky & Daniel Kahneman（1973）, Cognitive Psychology, 5(2), 207–232',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0010028573900339', type: 'academic', label: 'Tversky & Kahneman (1973), "Availability: A heuristic for judging frequency and probability", Cognitive Psychology 5(2):207–232（原著査読論文）' },
+      { url: 'https://www.britannica.com/topic/heuristic-reasoning', type: 'reference', label: 'Encyclopaedia Britannica — "Heuristic"（Kahneman, Tversky 解説）' },
+      { url: 'https://www.simplypsychology.org/availability-heuristic.html', type: 'reference', label: 'Simply Psychology — Availability Heuristic: Definition & Examples' },
+    ],
+  },
+  {
+    id: 'bizlaw-derivative-suit',
+    discipline: 'business-law',
+    title: '株主代表訴訟（責任追及等の訴え）',
+    statement:
+      '取締役等の役員が会社に対して負う責任（任務懈怠による損害賠償責任等）について、会社がその追及を怠っている場合に、株主が会社に代わって役員等の責任を追及する訴えを提起できる制度（会社法847条。条文上は「責任追及等の訴え」）。経営者が身内の役員の責任を追及しにくい状況を是正し、コーポレートガバナンスを担保する機能をもつ。' +
+      '提訴できるのは原則6か月前から引き続き株式を保有する株主で、まず会社に対し書面その他法務省令で定める方法により提訴を請求し、会社が請求の日から60日以内に訴えを提起しないときに株主自身が会社のために提訴できる。勝訴しても賠償金は株主個人ではなく会社に帰属する。' +
+      '株主代表訴訟は財産権上の請求でない訴えとして訴額が160万円とみなされ、訴訟手数料は訴額にかかわらず一律13,000円とされており（民事訴訟費用等に関する法律）、提訴の経済的ハードルが低い。2014年（平成26年）改正では多重代表訴訟（最終完全親会社等の株主が子会社役員の責任を追及する特定責任追及の訴え。会社法847条の3）も導入された。',
+    keyFigures: '株主代表訴訟＝会社法847条（責任追及等の訴え）／6か月保有要件・会社への提訴請求後60日待機／訴額160万円みなし・手数料一律13,000円／2014年改正で多重代表訴訟（847条の3）導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索「会社法」（平成十七年法律第八十六号）第847条—第853条 責任追及等の訴え' },
+      { url: 'https://www.kokugakuin.ac.jp/article/11359', type: 'academic', label: '國學院大學「親会社の株主が子会社の取締役を訴える『多重代表訴訟』制度とは」' },
+      { url: 'https://www.businesslawyers.jp/practices/839', type: 'reference', label: 'BUSINESS LAWYERS「株主代表訴訟とは？ 提訴請求の要件、流れ、会社側の対応など」' },
+      { url: 'https://ja.wikipedia.org/wiki/株主代表訴訟', type: 'reference', label: 'Wikipedia「株主代表訴訟」（手数料・改正経緯の概観）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-literacy',
+    discipline: 'information-sociology',
+    title: 'メディア・リテラシー',
+    statement:
+      '多様な形態のメディアにアクセスし、その内容を批判的に分析・評価し、自ら情報を創造・発信する能力。メディアが現実をそのまま映すのではなく、特定の視点・価値・商業的または政治的な意図のもとに構成（構築）されたものであることを理解し、誰がどんな目的で発信し、何が省かれているのかを問う力を含む。' +
+      '1992年にアスペン研究所が主催した全米メディアリテラシー指導者会議で示された「市民がさまざまな形態のメディアにアクセスし、分析・評価し、発信する能力」という定義が広く参照される（後に access・analyze・evaluate・create の4要素として整理された）。' +
+      'ユネスコは情報リテラシーとメディアリテラシーを統合した「メディア情報リテラシー（MIL）」を提唱し、教師向けカリキュラムや政策ガイドラインを通じて各国の教育政策への組み込みを支援している。フェイクニュース・偽情報・ヘイトスピーチが問題化するデジタル時代において、ユネスコはMILを偽情報に対する「第一の防衛線」と位置づけ、民主主義の基盤としてその重要性が高まっている。',
+    keyFigures: 'アスペン研究所 全米メディアリテラシー指導者会議（1992）— 4要素 access・analyze・evaluate・create／ユネスコ（UNESCO）— メディア情報リテラシー（MIL）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.unesco.org/en/media-information-literacy', type: 'government', label: 'UNESCO — Media and Information Literacy（MILの定義・政策・教育枠組み）' },
+      { url: 'https://www.unesco.org/en/articles/media-and-information-literacy-first-line-defence-against-disinformation', type: 'government', label: 'UNESCO — MIL as the first line of defence against disinformation' },
+      { url: 'https://www.medialit.org/reading-room/aspen-institute-report-national-leadership-conference-media-literacy', type: 'reference', label: 'Center for Media Literacy — Aspen Institute 1992 会議報告（定義の出典）' },
+      { url: 'https://eric.ed.gov/?id=ED365294', type: 'government', label: 'ERIC（米国教育省）ED365294 — Aufderheide, Media Literacy: A Report of the National Leadership Conference (1992/93)' },
+    ],
+  },
+  {
+    id: 'econ-ricardian-equivalence',
+    discipline: 'economics',
+    title: 'リカードの等価定理（リカード=バローの中立命題）',
+    statement:
+      '政府が一定の支出を税で賄うか国債発行で賄うかは、経済全体の総需要に影響を与えない（両者は等価である）とする命題。合理的で先見的な家計は、国債発行による減税が将来の増税（償還財源の調達）を意味すると予期し、減税分を消費に回さず将来の納税に備えて貯蓄するため、減税は消費・総需要を刺激しないと説く。' +
+      'デイヴィッド・リカードが19世紀前半（1820年「Essay on the Funding System」など）でこの可能性を論じたが、リカード自身は現実妥当性に懐疑的だった。ロバート・バローが1974年の論文「Are Government Bonds Net Wealth?」で、世代間の利他性（遺産動機）を組み込み家計を無限視野の世代連鎖として扱うことで現代的に定式化した（リカード=バローの等価命題）。' +
+      '成立には合理的期待・完全資本市場・一括（定額）税・無限視野または世代間利他性といった強い前提が必要であり、現実にはこれらが崩れるため厳密には成立しにくく、減税の景気刺激効果をめぐる論争点となっている。',
+    keyFigures: 'デイヴィッド・リカード（19世紀前半に原型を提示、本人は現実妥当性に懐疑的）／ロバート・バロー1974「Are Government Bonds Net Wealth?」（JPE 82(6), 1095–1117。世代間利他性で現代的に定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.richmondfed.org/-/media/richmondfedorg/publications/research/econ_focus/2008/winter/pdf/jargon_alert.pdf', type: 'government', label: 'Federal Reserve Bank of Richmond, "Jargon Alert: Ricardian Equivalence"（Econ Focus, 2008）' },
+      { url: 'https://www.minneapolisfed.org/article/2005/interview-with-robert-barro', type: 'government', label: 'Federal Reserve Bank of Minneapolis, "Interview with Robert Barro"（2005）' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/260266', type: 'academic', label: 'Robert J. Barro, "Are Government Bonds Net Wealth?", Journal of Political Economy 82(6), 1974（University of Chicago Press）' },
+      { url: 'https://en.wikipedia.org/wiki/Ricardian_equivalence', type: 'reference', label: 'Wikipedia, "Ricardian equivalence"（Ricardo 1820 / Barro coinage の補足確認）' },
+    ],
+  },
 ];
 // Stryker restore all
