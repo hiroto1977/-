@@ -2830,5 +2830,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.rkc.aeha.or.jp/recycleticket/target_items.html', type: 'operator', label: '家電リサイクル券センター 対象廃棄物（家電4品目）' },
     ],
   },
+  {
+    value: {
+      id: 'tax-claim-for-correction',
+      domain: 'tax',
+      title: '更正の請求（払い過ぎた税金の是正）',
+      statement:
+        '確定申告等で申告した課税標準等・税額等が過大であった（税金を納め過ぎた）場合、納税者は税務署長に対して「更正の請求」を行い、' +
+        '減額更正と納め過ぎた税金の還付を求めることができる。更正の請求ができる期間は、原則として法定申告期限から5年以内である。',
+      authority: '所管: 国税庁（国税通則法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2026.htm', type: 'government', label: '国税庁 No.2026 確定申告を間違えたとき' },
+      { url: 'https://www.nta.go.jp/information/other/encho/index.htm', type: 'government', label: '国税庁 更正の請求期間の延長等について' },
+      { url: 'https://www.keisan.nta.go.jp/r6yokuaru/koseiseikyusho/shohizeishusei/koseiseikyushotoha/h23iko.html', type: 'government', label: '国税庁 更正の請求はいつまで行えるか' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-amended-return',
+      domain: 'tax',
+      title: '修正申告・期限後申告と加算税',
+      statement:
+        '申告した税額が過少であった場合や申告期限後に申告する場合、納税者は自主的に修正申告・期限後申告を行うことができる。' +
+        '税務調査の事前通知後・更正等の予知後に行う申告や、税務署長による更正・決定がされた場合には、過少申告加算税・無申告加算税・' +
+        '重加算税などの加算税が課されることがあり、更正等を予知しない自主的な申告など一定の場合には加算税が軽減または不適用となる。',
+      authority: '所管: 国税庁（国税通則法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2026.htm', type: 'government', label: '国税庁 No.2026 確定申告を間違えたとき（修正申告）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2024.htm', type: 'government', label: '国税庁 No.2024 確定申告を忘れたとき（期限後申告）' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/tins/n04_3.pdf', type: 'government', label: '財務省 加算税制度の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-pension-enrollment',
+      domain: 'labor',
+      title: '厚生年金保険・健康保険の適用事業所と加入義務',
+      statement:
+        '法人の事業所（事業主のみの場合を含む）は業種・規模を問わず厚生年金保険・健康保険の強制適用事業所であり、常時1人でも従業員を' +
+        '使用すれば加入が義務付けられる。個人の事業所も、法定された業種で常時5人以上の従業員を使用する場合は強制適用事業所となる。' +
+        '適用事業所に常時使用される70歳未満の者は、原則として被保険者となる。',
+      authority: '所管: 日本年金機構・厚生労働省（厚生年金保険法・健康保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/kounen/tekiyo/jigyosho/20150518.html', type: 'government', label: '日本年金機構 適用事業所と被保険者' },
+      { url: 'https://www.mhlw.go.jp/content/12601000/001257528.pdf', type: 'government', label: '厚生労働省 個人事業所に係る適用範囲' },
+      { url: 'https://kouseikyoku.mhlw.go.jp/tokaihokuriku/shinsei/shido_kansa/hoken_shitei/documents/hoken-miteki.pdf', type: 'government', label: '東海北陸厚生局 強制適用事業所' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-safety-health-committee',
+      domain: 'labor',
+      title: '安全委員会・衛生委員会・安全衛生委員会の設置義務',
+      statement:
+        '事業者は、一定の業種・規模の事業場では安全委員会を、業種を問わず常時50人以上の労働者を使用する事業場では衛生委員会を設置' +
+        'しなければならず、両方を設けるべき場合はそれぞれに代えて安全衛生委員会を設置できる（労働安全衛生法17条〜19条）。' +
+        '委員会は毎月1回以上開催し、議事の概要を労働者に周知するとともに、議事録等を3年間保存しなければならない。',
+      authority: '所管: 厚生労働省（労働安全衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/new-info/kobetu/roudou/gyousei/anzen/dl/0902-2a.pdf', type: 'government', label: '厚生労働省 安全衛生委員会を設置しましょう' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/1.html', type: 'government', label: '厚生労働省 安全委員会・衛生委員会 FAQ' },
+      { url: 'https://www.rodo.co.jp/laws/117010/', type: 'media', label: '安全衛生委員会 開催・保存 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-patent-right',
+      domain: 'legal',
+      title: '特許権の発生・存続期間・効力（特許法）',
+      statement:
+        '特許権は、発明（自然法則を利用した技術的思想の創作のうち高度のもの）について特許庁に出願し、審査を経て設定登録を受けることで' +
+        '発生する。特許権の存続期間は、原則として特許出願の日から20年で終了し、特許権者は業として特許発明を実施する権利を専有する。',
+      authority: '所管: 特許庁（特許法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/patent/gaiyo/seidogaiyo/chizai04.html', type: 'government', label: '特許庁 特許・実用新案とは' },
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000121', type: 'government', label: 'e-Gov法令検索 特許法' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000195.html', type: 'government', label: 'INPIT 特許権の存続期間 FAQ' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-design-right',
+      domain: 'legal',
+      title: '意匠権（意匠法）',
+      statement:
+        '意匠権は、物品等の形状・模様・色彩等のデザイン（意匠）について特許庁へ出願し、審査を経て設定登録を受けることで発生し、' +
+        '意匠権者は業として登録意匠及びこれに類似する意匠を実施する権利を専有する。存続期間は、令和元年改正意匠法（2020年4月1日施行）により' +
+        '出願日から25年で終了する（改正前は登録日から20年）。',
+      authority: '所管: 特許庁（意匠法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/design/gaiyo/seidogaiyo/isyou_kaisei_2019.html', type: 'government', label: '特許庁 令和元年意匠法改正（存続期間25年）' },
+      { url: 'https://faq.inpit.go.jp/FAQ/2024/01/000198.html', type: 'government', label: 'INPIT 意匠権の存続期間 FAQ' },
+      { url: 'https://www.jpo.go.jp/system/design/gaiyo/seidogaiyo/torokugaiyo/index.html', type: 'government', label: '特許庁 意匠制度の概要' },
+    ],
+  },
 ];
 // Stryker restore all
