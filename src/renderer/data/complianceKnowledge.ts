@@ -3572,5 +3572,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.moj.go.jp/MINJI/minji07_00366.html', type: 'government', label: '法務省 令和8年4月1日以降の法定利率について' },
     ],
   },
+  {
+    value: {
+      id: 'tax-loss-offsetting',
+      domain: 'tax',
+      title: '所得税の損益通算',
+      statement:
+        '所得税では、不動産所得・事業所得・山林所得・譲渡所得の金額の計算上生じた損失（赤字）がある場合、一定の順序で他の各種所得の' +
+        '金額（黒字）から差し引くことができる（損益通算）。これら4種類以外の所得（配当所得・一時所得・雑所得・給与所得等）の損失は、原則として損益通算の対象とならない。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2250.htm', type: 'government', label: '国税庁 No.2250 損益通算' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1391.htm', type: 'government', label: '国税庁 No.1391 不動産所得が赤字のときの通算' },
+      { url: 'https://biz.moneyforward.com/accounting/basic/18981/', type: 'media', label: '損益通算 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-individual-loss-carryover',
+      domain: 'tax',
+      title: '所得税 純損失の繰越控除（青色申告者）',
+      statement:
+        '青色申告者について、損益通算をしてもなお控除しきれない損失（純損失）の金額が生じた場合、その純損失の金額を翌年以後3年間にわたり' +
+        '繰り越して、各年分の所得金額から控除することができる（純損失の繰越控除）。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2070.htm', type: 'government', label: '国税庁 No.2070 青色申告制度' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2024/pdf/003.pdf', type: 'government', label: '国税庁 確定申告の手引き（損失申告用）' },
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/23200002.htm', type: 'government', label: '国税庁 A1-4 純損失の繰戻し還付請求' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-child-nursing-leave',
+      domain: 'labor',
+      title: '子の看護等休暇（育児・介護休業法）',
+      statement:
+        '対象となる子を養育する労働者は、申し出により、1年度において子が1人なら5労働日、2人以上なら10労働日を限度として子の看護等休暇を' +
+        '取得できる。2025年（令和7年）4月1日施行の改正で、名称が「子の看護休暇」から「子の看護等休暇」に改められ、対象となる子の範囲が' +
+        '「小学校就学前」から「小学校3年生修了まで」に拡大され、取得事由にも感染症に伴う学級閉鎖や入園・卒園式等への参加が追加された。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11900000/001259367.pdf', type: 'government', label: '厚生労働省 子の看護休暇の見直し（改正内容）' },
+      { url: 'https://www.mhlw.go.jp/content/11909000/000685056.pdf', type: 'government', label: '厚生労働省 育児・介護休業等の規則の規定例（令和7年改正対応）' },
+      { url: 'https://www.hitachi-solutions.co.jp/lysithea_job/column/hild-nursing-leave-2025-revision.html', type: 'media', label: '子の看護等休暇 2025年改正 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-family-care-days',
+      domain: 'labor',
+      title: '介護休暇（育児・介護休業法16条の5）',
+      statement:
+        '要介護状態にある対象家族の介護その他の世話を行う労働者は、申し出により、1年度において対象家族が1人であれば5日、2人以上であれば' +
+        '10日を限度として介護休暇を取得できる。1日単位または時間単位で取得可能で、通院の付添い等の単発的な世話に用いる制度であり、通算93日の介護休業とは別の制度である。',
+      authority: '所管: 厚生労働省（育児・介護休業法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/shorttime-leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト 介護休暇' },
+      { url: 'https://www.mhlw.go.jp/content/11909000/000355354.pdf', type: 'government', label: '厚生労働省 育児・介護休業法のあらまし' },
+      { url: 'https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-1/ikuji-kaigo/', type: 'municipality', label: '東京都 育児・介護休業法の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-foreign-bribery',
+      domain: 'legal',
+      title: '外国公務員贈賄罪（不正競争防止法）',
+      statement:
+        '不正競争防止法は、国際的な商取引に関して営業上の不正の利益を得る目的で、外国公務員等に対し、その職務に関する行為をさせ又は' +
+        'させないようにするために金銭その他の利益を供与・申込み・約束する行為（外国公務員贈賄）を禁止し、罰則を定めている。' +
+        '同罪はOECD外国公務員贈賄防止条約の国内担保法として導入されたものである。',
+      authority: '所管: 経済産業省（不正競争防止法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/external_economy/zouwai/index.html', type: 'government', label: '経済産業省 外国公務員贈賄防止' },
+      { url: 'https://www.mofa.go.jp/mofaj/gaiko/oecd/komuin.html', type: 'government', label: '外務省 OECD外国公務員贈賄防止条約の概要' },
+      { url: 'https://www.meti.go.jp/policy/external_economy/zouwai/overviewofguidelines.html', type: 'government', label: '経済産業省 外国公務員贈賄防止指針' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-food-sanitation',
+      domain: 'legal',
+      title: '食品衛生法の営業許可・届出とHACCPに沿った衛生管理',
+      statement:
+        '食品衛生法では、飲食店営業など政令で定める一定の業種（令和3年6月1日施行後は32業種）について都道府県知事等の営業許可が必要であり、' +
+        '許可業種以外の食品等事業者にも原則として営業の届出が義務付けられている。また2021年6月1日から、原則としてすべての食品等事業者に' +
+        'HACCP（危害分析・重要管理点）に沿った衛生管理が義務化された。',
+      authority: '所管: 厚生労働省（食品衛生法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/kigu/index_00010.html', type: 'government', label: '厚生労働省 営業規制（営業許可・営業届出）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html', type: 'government', label: '厚生労働省 HACCP' },
+      { url: 'https://www.hokeniryo1.metro.tokyo.lg.jp/shokuhin/kaisei/haccp.html', type: 'municipality', label: '東京都 HACCPに沿った衛生管理の制度化' },
+    ],
+  },
 ];
 // Stryker restore all
