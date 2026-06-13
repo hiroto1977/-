@@ -205,22 +205,53 @@ describe('routeTopicScored (思考の精度: 採点 + 確信度ゲート)', () =
     expect(r.route.team).toBeUndefined();
     expect(r.route.manager?.id).toBe('mgr-tax');
     expect(r.confidence).toBe(0.4);
+    expect(r.ambiguous).toBe(false); // フォールバックは曖昧扱いしない
   });
 
   it('escalates to COO (empty route) when nothing matches confidently', () => {
     const r = routeTopicScored(INDEX, '迷子について長い相談');
     expect(r.route).toEqual({});
     expect(r.confidence).toBe(0);
+    expect(r.ambiguous).toBe(false);
   });
 
   it('falls back to executive domain when only an executive matches', () => {
     const r = routeTopicScored(INDEX, '財務の相談');
     expect(r.route.executive?.id).toBe('cfo');
     expect(r.confidence).toBe(0.3);
+    expect(r.ambiguous).toBe(false);
   });
 
   it('returns empty for an empty topic', () => {
-    expect(routeTopicScored(INDEX, '')).toEqual({ route: {}, confidence: 0, candidates: [] });
+    expect(routeTopicScored(INDEX, '')).toEqual({ route: {}, confidence: 0, candidates: [], ambiguous: false });
+  });
+
+  it('flags an ambiguous decision when the top two teams score within the margin', () => {
+    // 2チームがともに focus 一致(30) → 同点 (差 0 < 20) → 曖昧。
+    const a: RawTeam = { id: 'a', domain: 'X', focus: '共通語', manager: 'mgr-tax' };
+    const b: RawTeam = { id: 'b', domain: 'Y', focus: '共通語', manager: 'mgr-tax' };
+    const idx = buildOrgIndex(ORG, [a, b]);
+    const r = routeTopicScored(idx, '共通語');
+    expect(r.candidates.map((c) => c.score)).toEqual([30, 30]);
+    expect(r.ambiguous).toBe(true);
+    expect(r.runnerUp?.team.id).toBe('b');
+  });
+
+  it('is not ambiguous when the winner leads by exactly the margin (< boundary)', () => {
+    // a: domain が話題を内包(+50) vs b: focus 一致(+30) → 差 20 == AMBIGUITY_MARGIN → 曖昧でない。
+    const a: RawTeam = { id: 'a', domain: '共通語パート', focus: 'X', manager: 'mgr-tax' };
+    const b: RawTeam = { id: 'b', domain: 'Y', focus: '共通語', manager: 'mgr-tax' };
+    const idx = buildOrgIndex(ORG, [a, b]);
+    const r = routeTopicScored(idx, '共通語');
+    expect(r.candidates.map((c) => c.score)).toEqual([50, 30]);
+    expect(r.ambiguous).toBe(false);
+    expect(r.runnerUp?.team.id).toBe('b');
+  });
+
+  it('is not ambiguous when there is only one candidate (no runner-up)', () => {
+    const r = routeTopicScored(INDEX, '所得税');
+    expect(r.runnerUp).toBeUndefined();
+    expect(r.ambiguous).toBe(false);
   });
 
   it('commits at exactly the threshold score (>= boundary)', () => {

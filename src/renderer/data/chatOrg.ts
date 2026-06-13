@@ -181,7 +181,14 @@ export interface ScoredRoute {
   readonly confidence: number;
   /** スコア降順の候補 (透明性・上位デバッグ用)。 */
   readonly candidates: readonly ScoredCandidate[];
+  /** 最良と次点のスコア差が小さい曖昧な判定か (人のレビューを促す)。 */
+  readonly ambiguous: boolean;
+  /** 次点のチーム候補 (あれば)。曖昧判定の根拠。 */
+  readonly runnerUp?: ScoredCandidate;
 }
+
+/** 最良と次点がこの点差未満なら「僅差＝曖昧」とみなす。 */
+export const AMBIGUITY_MARGIN = 20;
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
@@ -196,16 +203,20 @@ export function routeTopicScored(index: OrgIndex, topic: string): ScoredRoute {
     .filter((c) => c.score > 0)
     .sort((a, b) => b.score - a.score);
   const best = candidates[0];
+  const runnerUp = candidates[1];
   if (best !== undefined && best.score >= MIN_TEAM_SCORE) {
     const manager = managerById(index, best.team.manager);
     const route = manager !== undefined ? routeFromManager(index, manager, best.team) : { team: best.team };
-    return { route, confidence: round2(Math.min(1, best.score / 100)), candidates };
+    const ambiguous = runnerUp !== undefined && best.score - runnerUp.score < AMBIGUITY_MARGIN;
+    return { route, confidence: round2(Math.min(1, best.score / 100)), candidates, ambiguous, runnerUp };
   }
   const manager = matchManagerStem(index, topic);
-  if (manager !== undefined) return { route: routeFromManager(index, manager), confidence: 0.4, candidates };
+  if (manager !== undefined) {
+    return { route: routeFromManager(index, manager), confidence: 0.4, candidates, ambiguous: false, runnerUp };
+  }
   const executive = matchExecutiveDomain(index, topic);
-  if (executive !== undefined) return { route: { executive }, confidence: 0.3, candidates };
-  return { route: {}, confidence: 0, candidates };
+  if (executive !== undefined) return { route: { executive }, confidence: 0.3, candidates, ambiguous: false, runnerUp };
+  return { route: {}, confidence: 0, candidates, ambiguous: false, runnerUp };
 }
 
 /** 確信度を 高/中/低 のラベルへ (チャット表示用)。 */
