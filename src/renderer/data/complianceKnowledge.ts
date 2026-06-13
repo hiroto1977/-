@@ -2617,5 +2617,111 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.businesslawyers.jp/practices/1438', type: 'media', label: '外国にある第三者への提供と本人同意 解説' },
     ],
   },
+  {
+    value: {
+      id: 'tax-basic-deduction',
+      domain: 'tax',
+      title: '所得税の基礎控除（令和7年改正反映）',
+      statement:
+        '基礎控除は、合計所得金額が一定額以下の納税者に適用される所得控除である。令和7年度税制改正により、令和7年分以後、基本額が' +
+        '48万円から58万円（合計所得金額2,350万円以下が対象）に引き上げられ、令和7・8年分に限り中・低所得層には期限付きの上乗せ措置がある。' +
+        '高所得者については、合計所得金額が2,400万円を超えると控除額が逓減し、2,500万円を超えると適用されない。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/users/gensen/2025kiso/index.htm', type: 'government', label: '国税庁 令和7年度税制改正による基礎控除の見直し' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm', type: 'government', label: '国税庁 No.1199 基礎控除' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2025/07taikou_01.htm', type: 'government', label: '財務省 令和7年度税制改正の大綱' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-earthquake-insurance-deduction',
+      domain: 'tax',
+      title: '地震保険料控除',
+      statement:
+        '納税者がその年に地震保険契約等に係る地震保険料を支払った場合、一定額の所得控除（地震保険料控除）を受けられる。' +
+        '所得税では、その年に支払った地震保険料の全額（最高5万円。5万円を超える場合は一律5万円）が課税所得から控除される。',
+      authority: '所管: 国税庁（所得税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1145.htm', type: 'government', label: '国税庁 No.1145 地震保険料控除' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1146.htm', type: 'government', label: '国税庁 No.1146 地震保険料控除の対象契約' },
+      { url: 'https://www.sonysonpo.co.jp/fire/earthquake_005.html', type: 'media', label: '地震保険料控除 控除額 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-overtime-60h-premium',
+      domain: 'labor',
+      title: '月60時間超の時間外労働の割増賃金率（50%以上）',
+      statement:
+        '1か月の時間外労働が60時間を超えた場合、その超えた部分については割増賃金率が50%以上となる（通常の時間外労働は25%以上）。' +
+        'この月60時間超の引上げは、それまで猶予されていた中小企業にも2023年（令和5年）4月1日から適用されている（労働基準法37条）。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.check-roudou.mhlw.go.jp/study/roudousya_jikangai.html', type: 'government', label: '厚生労働省 時間外・休日労働と割増賃金' },
+      { url: 'https://jsite.mhlw.go.jp/aomori-roudoukyoku/newpage_00901.html', type: 'government', label: '青森労働局 中小企業の月60時間超割増率引上げ' },
+      { url: 'https://jsite.mhlw.go.jp/yamaguchi-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/warihikiage_01.html', type: 'government', label: '山口労働局 月60時間超の割増賃金率は50%以上' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-unemployment-benefit',
+      domain: 'labor',
+      title: '雇用保険の基本手当（失業給付）の受給要件',
+      statement:
+        '雇用保険の被保険者が離職し、就職しようとする意思と能力があり求職活動を行っているのに職業に就けない「失業の状態」にあって、' +
+        '原則として離職の日以前2年間に被保険者期間が通算12か月以上ある場合（倒産・解雇等による特定受給資格者等は離職前1年間に通算6か月以上）に、' +
+        '求職者給付の基本手当が支給される。受給には住所地のハローワークでの求職の申込みと失業の認定が必要である。',
+      authority: '所管: 厚生労働省（雇用保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_basicbenefit.html', type: 'government', label: 'ハローワーク 基本手当について' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000139508.html', type: 'government', label: '厚生労働省 基本手当・再就職手当 Q&A' },
+      { url: 'https://jsite.mhlw.go.jp/ishikawa-roudoukyoku/content/contents/001763032.pdf', type: 'government', label: '石川労働局 雇用保険（基本手当）Q&A' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-waste-management',
+      domain: 'legal',
+      title: '廃棄物処理法の排出事業者責任とマニフェスト制度',
+      statement:
+        '廃棄物処理法では、事業活動に伴って生じた産業廃棄物は事業者が自らの責任において適正に処理しなければならず（3条1項・11条1項）、' +
+        'その処理を他人に委託する場合は都道府県知事等の許可を受けた処理業者へ委託基準に従って委託し、引渡しと同時に産業廃棄物管理票' +
+        '（マニフェスト）を交付して最終処分までの処理の流れを管理することが義務付けられている（12条の3）。',
+      authority: '所管: 環境省（廃棄物処理法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.env.go.jp/recycle/waste/haisyutsu.html', type: 'government', label: '環境省 排出事業者責任の徹底について' },
+      { url: 'https://www.env.go.jp/recycle/waste/manifest.html', type: 'government', label: '環境省 産業廃棄物管理票・電子マニフェスト' },
+      { url: 'https://www.kankyo.metro.tokyo.lg.jp/resource/industrial_waste/on_waste/sekimu', type: 'municipality', label: '東京都環境局 排出事業者の責務' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-sensitive-personal-info',
+      domain: 'legal',
+      title: '要配慮個人情報の取扱い',
+      statement:
+        '要配慮個人情報とは、本人の人種・信条・社会的身分・病歴・犯罪の経歴・犯罪により害を被った事実その他本人に対する不当な差別・偏見等の' +
+        '不利益が生じないようその取扱いに特に配慮を要するものとして政令で定める記述等が含まれる個人情報をいう（個人情報保護法2条3項）。' +
+        'その取得は原則としてあらかじめ本人の同意を得る必要があり、オプトアウトによる第三者提供は認められない。',
+      authority: '所管: 個人情報保護委員会（個人情報保護法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq4-q011/', type: 'government', label: '個人情報保護委員会 要配慮個人情報とは FAQ' },
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057/', type: 'government', label: 'e-Gov法令検索 個人情報の保護に関する法律' },
+      { url: 'https://www.businesslawyers.jp/practices/283', type: 'media', label: '要配慮個人情報・オプトアウト 解説' },
+    ],
+  },
 ];
 // Stryker restore all
