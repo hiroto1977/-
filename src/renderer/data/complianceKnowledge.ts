@@ -4106,5 +4106,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.kantei.go.jp/jp/singi/titeki2/kaizokuban_taisaku/gijisidai/dai3/siryou5.pdf', type: 'media', label: '情報流通プラットフォーム対処法の概要' },
     ],
   },
+  {
+    value: {
+      id: 'tax-vehicle-weight-tax',
+      domain: 'tax',
+      title: '自動車重量税',
+      statement:
+        '自動車重量税は、検査自動車及び届出軽自動車について、その重量等に応じて課される国税である。新規登録時や車検（自動車検査証の' +
+        '交付等）の際に、原則として車検証の有効期間分をまとめて納付し、税額は重量・経過年数・環境性能（エコカー減税等）に応じて定められる。',
+      authority: '所管: 国税庁・国土交通省（自動車重量税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7192.htm', type: 'government', label: '国税庁 No.7192 自動車重量税のあらまし' },
+      { url: 'https://www.mlit.go.jp/jidosha/jidosha_fr1_000076.html', type: 'government', label: '国土交通省 自動車重量税額について' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/131.pdf', type: 'government', label: '財務省 自動車重量税の概要' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-real-estate-capital-gains',
+      domain: 'tax',
+      title: '土地・建物等の譲渡所得の課税',
+      statement:
+        '個人が土地・建物等を譲渡して生じた譲渡所得は、他の所得と分離して課税される（申告分離課税）。譲渡した年の1月1日時点の所有期間が' +
+        '5年を超えるものは「長期譲渡所得」（所得税15%＋住民税5%）、5年以下のものは「短期譲渡所得」（所得税30%＋住民税9%）に区分され、' +
+        'いずれも別途、復興特別所得税が課される。',
+      authority: '所管: 国税庁（所得税法・租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1440.htm', type: 'government', label: '国税庁 No.1440 譲渡所得（土地や建物を譲渡したとき）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/3208.htm', type: 'government', label: '国税庁 No.3208 長期譲渡所得の税額の計算' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/3211.htm', type: 'government', label: '国税庁 No.3211 短期譲渡所得の税額の計算' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-national-pension',
+      domain: 'labor',
+      title: '国民年金の加入と被保険者の種別',
+      statement:
+        '日本国内に住所を有する20歳以上60歳未満のすべての人は、原則として国民年金に加入する。被保険者は、自営業者・学生・無職等の' +
+        '「第1号被保険者」、厚生年金保険の被保険者である会社員・公務員等の「第2号被保険者」、第2号被保険者に扶養される配偶者の' +
+        '「第3号被保険者」に区分され、第1号被保険者は自ら保険料を納付する。',
+      authority: '所管: 日本年金機構・厚生労働省（国民年金法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/seidozenpan/20140710.html', type: 'government', label: '日本年金機構 公的年金制度の種類と加入する制度' },
+      { url: 'https://www.mhlw.go.jp/stf/nenkin_shikumi_002.html', type: 'government', label: '厚生労働省 公的年金制度の体系（被保険者・保険料）' },
+      { url: 'https://www.gov-online.go.jp/article/201309/entry-7726.html', type: 'media', label: '政府広報オンライン 国民年金の第3号被保険者' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-national-health-insurance',
+      domain: 'labor',
+      title: '国民健康保険（国保）',
+      statement:
+        '国民健康保険（国保）は、被用者保険（職場の健康保険）や後期高齢者医療制度等に加入していない人（自営業者・無職・退職者等）を' +
+        '対象とする公的医療保険であり、都道府県と市町村が共同で運営し、加入者（世帯主等）が所得等に応じた保険料（保険税）を納付する。' +
+        '医療機関での自己負担割合は原則3割（年齢等により異なる）。',
+      authority: '所管: 厚生労働省・都道府県・市町村（国民健康保険法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/koukikourei/index_00002.html', type: 'government', label: '厚生労働省 国民健康保険制度' },
+      { url: 'https://www.pref.osaka.lg.jp/annai/qa/detail.php?recid=1041', type: 'municipality', label: '大阪府 国保の自己負担割合' },
+      { url: 'https://www.city.chiba.jp/faq/hokenfukushi/iryoeisei/hoken/729.html', type: 'municipality', label: '千葉市 国保の医療費の自己負担割合' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-guarantee-contract',
+      domain: 'legal',
+      title: '改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）',
+      statement:
+        '保証契約は書面（又は電磁的記録）でしなければ効力を生じず（民法446条2項・3項）、個人が保証人となる根保証契約は極度額を定めなければ' +
+        '効力を生じない（465条の2）。さらに、2020年4月1日施行の改正民法により、事業のために負担した貸金等債務を主たる債務とする保証等について' +
+        '個人が保証人となる場合は、原則として契約締結前1か月以内に作成された公正証書で保証意思を表示しなければ効力を生じない（465条の6。経営者等は適用除外）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://www.moj.go.jp/MINJI/minji03_00058.html', type: 'government', label: '法務省 保証意思宣明公正証書の公証事務' },
+      { url: 'https://niben.jp/niben/books/frontier/backnumber/201812/post-49.html', type: 'media', label: '改正民法の保証 解説（第二東京弁護士会）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-contract-nonconformity',
+      domain: 'legal',
+      title: '契約不適合責任（改正民法）',
+      statement:
+        '2020年4月1日施行の改正民法により、従来の「瑕疵担保責任」に代わり「契約不適合責任」が導入された。引き渡された目的物が種類・品質・' +
+        '数量に関して契約の内容に適合しない場合、買主は売主に対し、履行の追完請求・代金減額請求・損害賠償請求・契約の解除をすることができる。' +
+        '種類・品質の不適合については、買主は不適合を知った時から1年以内にその旨を売主に通知しなければ、原則としてこれらの権利を失う（民法566条）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/4314', type: 'government', label: '日本法令外国語訳DB 民法（562・563・566条）' },
+      { url: 'https://biz.moneyforward.com/contract/basic/21109/', type: 'media', label: '契約不適合責任（民法566条）解説' },
+    ],
+  },
 ];
 // Stryker restore all
