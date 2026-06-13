@@ -610,6 +610,119 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.meti.go.jp/press/index.html', type: 'government', label: '経済産業省 報道発表（なりわい再建支援補助金の公募）' },
     ],
   },
+  {
+    id: 'subsidy-child-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '児童手当',
+    authority: '所管: こども家庭庁／支給主体: 市区町村（公務員は勤務先経由）',
+    statement:
+      '児童を養育する人に支給される手当で、2024年（令和6年）10月分から制度が拡充された。拡充により所得制限が撤廃され、支給対象が高校生年代' +
+      '（18歳到達後最初の3月31日）まで延長され、第3子以降の多子加算が増額された。改正後の月額は3歳未満15,000円、3歳〜高校生年代10,000円、' +
+      '第3子以降は一律30,000円で、支給は偶数月の年6回となった（金額・要件は最新の制度内容で要確認）。',
+    application:
+      '受給には居住する市区町村への「認定請求」が必要（公務員は勤務先へ申請）。出生・転入時は事由発生の翌日から原則15日以内の申請で申請月の翌月分から支給（15日特例）。支給は原則偶数月の年6回、指定口座へ振込。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/kokoseido/jidouteate/annai', type: 'government', label: 'こども家庭庁 児童手当制度のご案内' },
+      { url: 'https://www.gov-online.go.jp/tokusyu/jidoteate/', type: 'government', label: '政府広報オンライン 2024年10月分から児童手当が大幅拡充' },
+      { url: 'https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/teate/teate/jite-R6kaisei.html', type: 'municipality', label: '横浜市 児童手当 令和6年10月制度拡充' },
+    ],
+  },
+  {
+    id: 'subsidy-highschool-tuition',
+    level: 'national',
+    domain: 'welfare',
+    name: '高等学校等就学支援金',
+    authority: '文部科学省（窓口: 在学する高等学校等／都道府県）',
+    statement:
+      '高等学校等に通う生徒の授業料負担を軽減する国の制度で、要件を満たすと授業料に充てる就学支援金が支給される（生徒本人ではなく学校設置者が' +
+      '受け取り授業料に充当）。従来は世帯所得に応じた所得要件・支給上限額が設けられていたが、2025年度以降、所得制限の見直し・支援拡充が段階的に' +
+      '進められている。対象範囲・支給上限額・所得要件・適用時期は年度の制度内容により変動するため、最新の制度内容で必ず要確認。',
+    application:
+      '原則として在学する学校等を通じ、文部科学省のオンライン申請システム「e-Shien」で申請。入学・転入時に意向登録と受給資格認定申請、在校中は毎年の継続手続を行う。申請方法・締切は学校／都道府県により異なるため在学校の案内に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mext.go.jp/a_menu/shotou/mushouka/01753.html', type: 'government', label: '文部科学省 高等学校等就学支援金（e-Shien）' },
+      { url: 'https://www.e-shien.mext.go.jp/', type: 'government', label: '高等学校等就学支援金オンライン申請システム e-Shien' },
+      { url: 'https://www.bk.mufg.jp/column/others/b0105.html', type: 'media', label: '高校就学支援金・所得制限見直し 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-regional-employment',
+    level: 'national',
+    domain: 'employment',
+    name: '地域雇用開発助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '雇用機会が特に不足している地域（同意雇用開発促進地域・過疎等雇用改善地域等）において、事業所の設置・整備を行い、あわせてその地域に居住する' +
+      '求職者等を雇い入れる事業主に対し、設置・整備費用と対象労働者の増加数に応じた額を助成する制度（地域雇用開発コース）。助成は完了日を起点に' +
+      '1年ごとに最大3回（最長3年間）支給される。支給額・対象地域・要件は年度ごとに変動するため、最新の支給要領で要確認。',
+    application:
+      '事業所の施設・設備の設置整備および地域求職者等の雇入れに関する計画書を都道府県労働局長に提出→計画期間内に設置整備・雇入れ→完了日後、各支給基準日の翌日から原則2か月以内に支給申請（最大3回）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/chiiki_koyou.html', type: 'government', label: '厚生労働省 地域雇用開発助成金（地域雇用開発コース）' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/dl/chikikoyoukaihatu.pdf', type: 'government', label: '厚生労働省 地域雇用開発助成金 パンフレット' },
+      { url: 'https://www.pref.hokkaido.lg.jp/kz/rkr/chikaikin.html', type: 'municipality', label: '北海道 地域雇用開発助成金 案内' },
+    ],
+  },
+  {
+    id: 'subsidy-zeh',
+    level: 'national',
+    domain: 'welfare',
+    name: 'ZEH支援事業',
+    authority: '経済産業省・環境省・国土交通省（連携）／実施: 環境共創イニシアチブ（SII）',
+    statement:
+      '年間の一次エネルギー消費量の収支を実質ゼロ以下にすることを目指し、高い断熱性能・高効率設備・太陽光発電等の創エネを備えた住宅（ZEH）の' +
+      '新築・取得・改修を行う個人・事業者に対し定額で補助する事業。ZEH・ZEH+・集合住宅向けのZEH-M等の事業区分があり、区分に応じた定額補助に' +
+      '蓄電システム等の設備加算が付く。補助額・要件・公募期間は年度・事業ごとに変動し予算上限到達で締切となるため、必ず最新の公募要領（SII公式）で要確認。',
+    application:
+      'SIIが運営する電子申請システム（ZEHポータル等）を通じて、年度ごとに設定される公募期間内に交付申請。先着・予算上限到達で受付終了となるため、最新の公募要領・スケジュールをSII公式で確認のうえ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sii.or.jp/zeh07/', type: 'operator', label: 'SII 令和7年度 ZEH・ZEH-M補助事業' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk4_000153.html', type: 'government', label: '国土交通省 ZEH・LCCM住宅の推進' },
+      { url: 'https://www.env.go.jp/press/press_04098.html', type: 'government', label: '環境省 住宅の省エネ化支援（3省連携）' },
+    ],
+  },
+  {
+    id: 'subsidy-hokkaido',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業競争力強化促進事業（北海道）',
+    authority: '北海道（経済部 産業振興局 産業振興課）／募集事務: 公益財団法人 北海道中小企業総合支援センター',
+    statement:
+      '北海道が「北海道産業振興条例」に基づき実施する、道内中小企業者等の競争力強化を支援する補助制度（都道府県レベルの補助金の代表例）。' +
+      '新たな事業分野への進出や市場開拓等に取り組む事業者を対象に、マーケティング支援・コンサルタント等招へい支援・産業人材育成確保支援・' +
+      '市場対応型製品開発支援等の補助メニューを設ける。補助率・上限額・対象要件・募集期間は年度ごとに変動するため、必ず最新の募集要領及び北海道公式で要確認。',
+    application:
+      '例年、年度ごとに複数回（1次・2次等）の公募を実施。申請・問い合わせは公益財団法人 北海道中小企業総合支援センター又は北海道経済部 産業振興課が窓口。最新の公募要領・申請様式・締切は道公式／支援センターで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.hokkaido.lg.jp/kz/ssg/kyosoryoku.html', type: 'municipality', label: '北海道 中小企業競争力強化促進事業' },
+      { url: 'https://www.hsc.or.jp/news/2024jyourei_1-2/', type: 'operator', label: '北海道中小企業総合支援センター 競争力強化促進事業 募集' },
+      { url: 'https://www.hsc.or.jp/', type: 'operator', label: '公益財団法人 北海道中小企業総合支援センター' },
+    ],
+  },
+  {
+    id: 'subsidy-kobe',
+    level: 'municipality',
+    domain: 'business',
+    name: '神戸市中小企業投資促進等助成制度',
+    authority: '神戸市（経済観光局）／運用協力: 公益財団法人こうべ産業・就労支援財団',
+    statement:
+      '神戸市が実施する、市内中小企業の設備投資・新増設、国際品質マネジメント規格の認証取得、生産現場へのロボット導入等を支援する助成制度' +
+      '（政令指定都市＝市区町村レベルの中小企業向け制度の代表例）。助成額・要件・募集期間は年度ごとに変動するため、必ず最新の募集要項及び神戸市公式で要確認。',
+    application:
+      '神戸市内に一定期間継続して主たる事業所を有する中小企業者等が対象。各年度に公募され、申請書類を神戸市（経済観光局）へ提出する。公募回・締切・必要書類は神戸市公式の募集要項で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kobe.lg.jp/a93457/business/sangyoshinko/shokogyo/venture/monodukuri/toshisokushin/index.html', type: 'municipality', label: '神戸市 中小企業投資促進等助成制度' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/153108', type: 'government', label: 'J-Net21 神戸市中小企業投資促進等助成制度 公募' },
+      { url: 'https://sogyotecho.jp/hojokin_match/11407/', type: 'media', label: '神戸市中小企業投資促進等助成制度 解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
