@@ -4534,5 +4534,112 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://ja.wikibooks.org/wiki/民法第113条', type: 'media', label: '民法113条（無権代理）条文' },
     ],
   },
+  {
+    value: {
+      id: 'tax-transfer-pricing',
+      domain: 'tax',
+      title: '移転価格税制',
+      statement:
+        '移転価格税制は、法人が国外関連者（一定の資本関係等のある外国法人）との国外関連取引を、独立した第三者との通常の取引価格' +
+        '（独立企業間価格＝アームズ・レングス・プライス）と異なる価格で行うことにより所得が国外に移転することを防ぐため、その取引が' +
+        '独立企業間価格で行われたものとみなして所得を計算し課税する制度である。',
+      authority: '所管: 国税庁（租税特別措置法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/sodan/kobetsu/itenkakakuzeisei/index.htm', type: 'government', label: '国税庁 移転価格税制（事前確認）' },
+      { url: 'https://www.mof.go.jp/tax_policy/summary/international/177.htm', type: 'government', label: '財務省 移転価格税制の概要' },
+      { url: 'https://www.meti.go.jp/policy/external_economy/toshi/kokusaisozei/itaxseminar2023/02.itenkakaku.pdf', type: 'government', label: '経済産業省 移転価格税制の基礎知識' },
+    ],
+  },
+  {
+    value: {
+      id: 'tax-electronic-contract-stamp',
+      domain: 'tax',
+      title: '電子契約（電磁的記録）と印紙税の非課税',
+      statement:
+        '印紙税は課税物件表に掲げる「文書」の作成に対して課される税であり、課税文書を電磁的記録（電子契約・PDF等）で作成し電子的に' +
+        '交付・保存する場合は、文書の「作成」に当たらないため印紙税は課されないと解されている（国税庁の質疑応答事例および平成17年の政府答弁書による）。',
+      authority: '所管: 国税庁（印紙税法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/02/10.htm', type: 'government', label: '国税庁 質疑応答事例 電磁的記録と印紙税' },
+      { url: 'https://www.sangiin.go.jp/japanese/joho1/kousei/syuisyo/162/touh/t162009.htm', type: 'government', label: '参議院 印紙税に関する答弁書（平成17年）' },
+      { url: 'https://www.nta.go.jp/about/organization/fukuoka/bunshokaito/inshi_sonota/081024/01.htm', type: 'government', label: '福岡国税局 注文請書を電子メール送信した場合の印紙税' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-high-professional',
+      domain: 'labor',
+      title: '高度プロフェッショナル制度（労基法41条の2）',
+      statement:
+        '高度プロフェッショナル制度は、2019年4月施行の制度で、高度の専門的知識等を必要とし職務の範囲が明確で一定の年収要件' +
+        '（年収1,075万円以上）を満たす労働者を対象に、労使委員会の決議及び本人の同意等を要件として、労働基準法の労働時間・休憩・休日・' +
+        '深夜の割増賃金に関する規定を適用しないものである。対象労働者には年104日以上の休日確保等の健康確保措置が義務付けられる。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/001164547.pdf', type: 'government', label: '厚生労働省 高度プロフェッショナル制度 わかりやすい解説' },
+      { url: 'https://www.jaish.gr.jp/anzen/hor/hombun/hor1-4/hor1-4-8-1-0.htm', type: 'government', label: '安全衛生情報センター 高度プロ制度の指針' },
+      { url: 'https://www.tis.amano.co.jp/glossary/1414/', type: 'media', label: '高度プロフェッショナル制度 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-overtime-2024-problem',
+      domain: 'labor',
+      title: '時間外労働の上限規制 適用猶予業種への適用（2024年問題）',
+      statement:
+        '働き方改革関連法による時間外労働の上限規制について、建設事業・自動車運転の業務（運送業）・医師・鹿児島県及び沖縄県の砂糖製造業は' +
+        '施行から5年間（2019年4月〜2024年3月）の適用が猶予されていたが、2024年（令和6年）4月1日からこれらの業種にも上限規制が適用される' +
+        'ようになった（いわゆる「2024年問題」）。業種ごとに特例があり、例えば自動車運転の業務は時間外労働の上限が年960時間とされている。',
+      authority: '所管: 厚生労働省（労働基準法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://hatarakikatakaikaku.mhlw.go.jp/overtime.html', type: 'government', label: '厚生労働省 働き方改革 時間外労働の上限規制' },
+      { url: 'https://hatarakikatasusume.mhlw.go.jp/about.html', type: 'government', label: '厚生労働省 建設業・ドライバー・医師の上限規制 特設サイト' },
+      { url: 'https://www.otsuka-shokai.co.jp/erpnavi/service/personnel/startingwork/solving-problems/archive/240418-02.html', type: 'media', label: '2024年問題 時間外労働上限規制 解説' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-claim-assignment',
+      domain: 'legal',
+      title: '債権譲渡と譲渡制限特約（改正民法）',
+      statement:
+        '債権は原則として自由に譲渡でき（民法466条1項）、2020年4月1日施行の改正民法により、譲渡を禁止・制限する特約（譲渡制限特約）が' +
+        'あっても債権譲渡の効力は妨げられない（同条2項。ただし債務者は悪意・重過失の譲受人に対し履行を拒める等、債務者保護の規律がある）。' +
+        '債権譲渡を債務者その他の第三者に対抗するには債務者への通知又は債務者の承諾が必要で、第三者対抗要件は確定日付のある証書による（467条）。',
+      authority: '所管: 法務省（民法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（466条・467条）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法（債権法）改正について' },
+      { url: 'https://www.meti.go.jp/policy/economy/keiei_innovation/sangyokinyu/ABL/14_1.pdf', type: 'government', label: '経済産業省 債権法改正と資金調達（譲渡制限特約）' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-computer-virus',
+      domain: 'legal',
+      title: '不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）',
+      statement:
+        '刑法は、正当な理由がないのに、人の電子計算機における実行の用に供する目的で、コンピュータウイルス等（人が電子計算機を使用するに際して' +
+        'その意図に沿うべき動作をさせず、又はその意図に反する動作をさせるべき不正な指令を与える電磁的記録＝不正指令電磁的記録）を作成・提供・' +
+        '供用・取得・保管する行為を「不正指令電磁的記録に関する罪」として処罰する（刑法168条の2・168条の3。2011年新設）。',
+      authority: '所管: 法務省（刑法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/140AC0000000045', type: 'government', label: 'e-Gov法令検索 刑法（168条の2・168条の3）' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/basic_legal_02.html', type: 'government', label: '総務省 サイバーセキュリティサイト 刑法' },
+      { url: 'https://www.moj.go.jp/content/001267498.pdf', type: 'government', label: '法務省 コンピュータ・ウイルスに関する罪について' },
+    ],
+  },
 ];
 // Stryker restore all
