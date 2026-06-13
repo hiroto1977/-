@@ -107,6 +107,7 @@
     "src/renderer/data/foodDelivery.ts",
     "src/renderer/data/backup.ts",
     "src/renderer/data/cloudBackup.ts",
+    "src/renderer/data/backupPosture.ts",
     "src/renderer/data/emotionsWeb.ts",
     "src/renderer/data/stocksWatchlistWeb.ts",
     "src/renderer/data/stocksAnalysisWeb.ts",
