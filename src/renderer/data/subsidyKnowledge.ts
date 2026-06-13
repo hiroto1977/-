@@ -1845,6 +1845,114 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://shoko.or.jp/info/common/3132', type: 'operator', label: '石川県商工会連合会 事業継続支援補助金 案内' },
     ],
   },
+  {
+    id: 'subsidy-fukui',
+    level: 'prefecture',
+    domain: 'business',
+    name: '企業における省エネ設備等導入支援事業補助金（福井県）',
+    authority: '福井県（産業労働部 地域産業・技術振興課）／執行・申請窓口: 同補助金事務局',
+    statement:
+      'エネルギー価格高騰及び脱炭素社会の推進に対応した経営体質への転換を加速するため、福井県内で製造業又は商業・サービス業を営む中小企業者が行う、省エネルギー・省CO2性能に優れた設備（高効率空調/給湯・' +
+      '調光制御付きLED照明・高効率生産設備等。原則として既存設備に対し一定以上の省CO2効果が要件）の導入を支援する県の補助金。補助率・上限額・募集件数・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '県（地域産業・技術振興課）が年度ごとに募集要領を公表し、指定の事務局へ交付申請書類を提出する公募・審査型。原則として交付決定後に着手・発注する事前申請方式で、既存稼働設備の更新が基本。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukui.lg.jp/doc/chisangi/bosyu/syouene2025.html', type: 'municipality', label: '福井県 企業における省エネ設備等導入支援事業補助金 募集' },
+      { url: 'https://www.shokokai-fukui.or.jp/', type: 'operator', label: '福井県商工会連合会 補助金案内' },
+      { url: 'https://hojyokin-portal.jp/subsidies/58521', type: 'media', label: '補助金ポータル 福井県 省エネ設備等導入支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-yamanashi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等生産性向上設備整備等支援補助金（山梨県）',
+    authority: '山梨県（産業政策課）／執行・申請窓口: やまなし生産性向上設備補助金事務局。相談窓口: やまなし産業支援機構・各商工会/商工会議所',
+    statement:
+      'エネルギー価格・物価高騰に対応し、山梨県内の中小企業等が生産性向上のために行う設備の導入・整備等に要する経費の一部を補助する県の制度。設備導入のほか会計ソフト・パソコン本体費、税理士との新規顧問契約費用等も' +
+      '補助対象に含まれる。補助率・上限額・対象経費・募集期間は年度ごとに変動するため、公式ポータル及び県公式で要確認（予算到達時は早期終了の場合あり）。',
+    application:
+      '専門家による事前支援を受けていること、県の認証制度の取得（又は取得見込み）等が要件。事務局を通じた公募申請で、受付期間は年度ごとに設定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamanashi.jp/shouko-kik/seisansei-up.html', type: 'municipality', label: '山梨県 中小企業等生産性向上設備整備等支援補助金' },
+      { url: 'https://www.yamanashi-seisansei-up.jp/', type: 'operator', label: '山梨県生産性向上設備補助金 公式ポータル（事務局）' },
+      { url: 'https://www.city.koshu.yamanashi.jp/docs/2026050700026', type: 'municipality', label: '甲州市 生産性向上設備整備等支援補助金の募集について' },
+    ],
+  },
+  {
+    id: 'subsidy-nara',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業省力化・生産性向上設備投資支援補助金（奈良県）',
+    authority: '奈良県（産業・雇用振興部 産業政策課）／申請・面談対応は県委託の補助金事務局',
+    statement:
+      '人手不足に悩む奈良県内の中小企業等が、県が派遣する中小企業診断士の助言を受けて業務プロセスを改善しつつ、省力化に資する設備投資を行う事業を、賃上げを条件に支援する県の補助金。県内に事業所を有し、設備導入前に' +
+      '診断士支援を受け、実績報告時点で給与支給総額を基準月比で一定割合以上引き上げること等が要件とされる。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '申請に先立ち県派遣の中小企業診断士との面談（複数回）で事業計画を精査したうえで、所定期間内に事務局へ申請する枠組み。電子申請の要否や締切は年度の公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nara.jp/69203.htm', type: 'municipality', label: '奈良県 中小企業省力化・生産性向上設備投資支援補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/166983', type: 'government', label: 'J-Net21 奈良県 省力化・生産性向上設備投資支援補助金' },
+      { url: 'https://www.city.yamatokoriyama.lg.jp/soshiki/chiikishinkoka/sangyo/8/16140.html', type: 'municipality', label: '大和郡山市 令和7年度 支援策のご案内（奈良県）' },
+    ],
+  },
+  {
+    id: 'subsidy-wakayama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '和歌山県中小企業成長促進補助金（和歌山県）',
+    authority: '和歌山県（商工労働部 商工企画課）／申請の実務窓口は地域の商工会・商工会議所（伴走支援）',
+    statement:
+      '原材料・エネルギー価格高騰や人手不足の経営環境の中で、持続的な賃上げを目指す県内中小企業者等が、省力化・業務効率化など生産性向上のために行う機械装置・システム導入等の設備投資を支援する県の補助金' +
+      '（「わかやま賃上げ環境整備支援パッケージ」の一環）。付加価値額・賃金の向上に関する計画の達成が要件とされる。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '地域の商工会・商工会議所に申請意向を相談し、伴走支援を受けて事業計画を策定→確認書の交付を受けたうえで必要書類を提出する流れ（年度ごとの公募・受付期間あり）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.wakayama.lg.jp/prefg/060100/d00221813.html', type: 'municipality', label: '和歌山県 中小企業成長促進事業について' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/181089', type: 'government', label: 'J-Net21 和歌山県 中小企業成長促進補助金' },
+      { url: 'https://kishuarida-cci.jp/5816/', type: 'operator', label: '紀州有田商工会議所 制度案内' },
+    ],
+  },
+  {
+    id: 'subsidy-tottori',
+    level: 'prefecture',
+    domain: 'business',
+    name: '鳥取県産業成長応援補助金（企業立地・設備投資等大型投資への支援）（鳥取県）',
+    authority: '鳥取県（商工労働部 立地戦略課等）／県の企業立地情報サイト TOTTORICH NAVI でも案内',
+    statement:
+      '鳥取県内で工場等の新設・増設を行う事業者の大型投資（企業立地・設備投資）を支援し、地域への投資・雇用創出を促す県の補助制度。土地・建物・設備投資の一部、初年度のリース料、人材確保経費、従業員福利厚生施設の' +
+      '整備費等が補助対象として案内される。補助率・上限額・募集期間は年度の予算・要綱により変動するため、最新の募集要項で要確認。',
+    application:
+      '県条例に基づく投資計画の認定を前提とする枠組みで、所管部局（立地戦略課等）への事前相談・計画認定を経て交付申請を行う方式。対象要件・申請手続は年度の公募要項で確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tottori.lg.jp/286865.htm', type: 'municipality', label: '鳥取県 産業成長応援補助金（大型投資への支援）' },
+      { url: 'https://www.pref.tottori.lg.jp/291544.htm', type: 'municipality', label: '鳥取県 産業成長応援補助金（大型投資）認定要件の改正' },
+      { url: 'https://ritti-pref.tottori.jp/support/', type: 'operator', label: '鳥取県企業立地情報サイト TOTTORICH NAVI 各種支援制度' },
+    ],
+  },
+  {
+    id: 'subsidy-shimane',
+    level: 'prefecture',
+    domain: 'business',
+    name: '地域課題解決型しまね起業支援事業費補助金（島根県）',
+    authority: '島根県（商工労働部 中小企業課等）／執行・申請受付団体: 島根県商工会連合会。事前相談窓口: 起業予定地の市町村窓口',
+    statement:
+      '島根県内に移住・在住し、地域の課題解決に資する「社会的事業」（中山間地域・離島の生活機能確保、まちづくり・地域活性化、教育・子育て、高齢者の暮らし・福祉向上等）で起業・第二創業する者に、起業に必要な経費の一部を' +
+      '補助する制度。社会性・事業性・必要性・デジタル技術の活用の観点で審査される。補助率・上限額・対象経費・公募期間は年度（及び公募回）ごとに変動するため要確認。',
+    application:
+      '起業予定地の市町村窓口で事前相談を行い、地域課題解決に資する事業であることの確認を受けたうえで、起業地域を管轄する商工会等を通じて執行団体（島根県商工会連合会）に必要書類を提出して申請する。例年複数回の公募が実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shimane.lg.jp/industry/syoko/sangyo/kigyo/kigyo_sien/wakuwaushimane.html', type: 'municipality', label: '島根県 地域課題解決型しまね起業支援事業費補助金' },
+      { url: 'https://shoko-shimane.or.jp/2025/06/20/6763/', type: 'operator', label: '島根県商工会連合会 公募案内' },
+      { url: 'https://www.town.okuizumo.shimane.jp/www/contents/1750639339577/index.html', type: 'municipality', label: '奥出雲町 しまね起業支援事業費補助金 公募のお知らせ' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
