@@ -1482,5 +1482,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Bowling_Alone', type: 'reference', label: 'Wikipedia — Bowling Alone（Putnam 2000）' },
     ],
   },
+  {
+    id: 'econ-pareto-efficiency',
+    discipline: 'economics',
+    title: 'パレート効率性（パレート最適）',
+    statement:
+      '誰かの効用（満足）を高めるためには他の誰かの効用を下げざるをえない状態、すなわちこれ以上、誰も損なわずに誰かを改善する余地（パレート改善）がない資源配分の状態を指す。イタリアの経済学者ヴィルフレド・パレートにちなんで名づけられた、厚生経済学における効率性の基準である。' +
+      '一定の条件（完全競争・完備市場・外部性や情報の非対称性がないこと）の下で競争均衡はパレート効率的になるとする「厚生経済学の第一基本定理」がよく知られる。重要な限界として、パレート効率性は「効率」のみを問い「公平・分配」は問わない（極端な格差状態でもパレート効率的でありうる）こと、また効率的な配分は無数に存在することが挙げられる。実際の政策評価では、誰かが損をしても全体の利得が損失を上回り（理論上）補償可能とみなすカルドア=ヒックス基準が補完的に用いられる。',
+    keyFigures: 'ヴィルフレド・パレート／厚生経済学の第一基本定理／補完: カルドア=ヒックス基準',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Pareto-optimality', type: 'reference', label: 'Britannica Money — Pareto-optimality' },
+      { url: 'https://en.wikipedia.org/wiki/Fundamental_theorems_of_welfare_economics', type: 'reference', label: 'Wikipedia — Fundamental theorems of welfare economics（第一基本定理）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095838553', type: 'academic', label: 'Oxford Reference — Fundamental theorems of welfare' },
+    ],
+  },
+  {
+    id: 'econ-public-choice',
+    discipline: 'economics',
+    title: '公共選択論（public choice theory）',
+    statement:
+      '政治家・官僚・有権者・利益集団といった政治過程の主体も、市場の主体と同様に自己利益を合理的に追求すると仮定し、経済学の手法で政治的意思決定や政府の行動を分析する学問分野。「政治の経済学」とも呼ばれる。' +
+      '政府が常に公益を実現するという前提（善意の独裁者）を疑い、政府の失敗（レントシーキング、官僚の予算最大化、特殊利益による政策歪曲、財政赤字バイアス等）を理論化した。ジェームズ・M・ブキャナンとゴードン・タロックが1962年の『公共選択の理論（The Calculus of Consent）』で基礎を築き、ブキャナンは1986年に「経済的・政治的意思決定の理論に関する契約的・憲法的基礎の発展」によりノーベル経済学賞を受賞した。アンソニー・ダウンズの投票・民主主義の経済分析とも関連する。',
+    keyFigures: 'J.M.ブキャナン & G.タロック（1962『The Calculus of Consent』）／ブキャナン1986ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/public-choice-theory', type: 'reference', label: 'Encyclopaedia Britannica — Public-choice theory' },
+      { url: 'https://www.econlib.org/library/Enc/PublicChoice.html', type: 'academic', label: 'Econlib, Concise Encyclopedia of Economics — Public Choice' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1986/buchanan/facts/', type: 'government', label: 'NobelPrize.org — James M. Buchanan 1986' },
+    ],
+  },
+  {
+    id: 'mgmt-expectancy-theory',
+    discipline: 'management',
+    title: '期待理論（ブルームのVIE理論, expectancy theory）',
+    statement:
+      '人の動機づけ（モチベーションの強さ）は、努力が成果につながるという「期待（Expectancy）」、成果が報酬をもたらすという「手段性（Instrumentality）」、その報酬がどれだけ魅力的かという「誘意性（Valence）」の3要素の積で決まるとする動機づけ理論。動機づけ＝期待×手段性×誘意性 と定式化され、3つのいずれかがゼロなら動機づけもゼロになる。' +
+      'ビクター・ブルームが1964年の著書『Work and Motivation』で提唱した。報酬の魅力と達成可能性の主観的認知を重視する点が特徴である。後にポーター&ローラーが1968年の著書『Managerial Attitudes and Performance』で、能力・役割認識・報酬の公平性、および業績と満足の関係を加えて拡張した。マズローやハーズバーグの内容理論（人が何を求めるか）に対し、動機づけのプロセス（どう行動を選ぶか）に着目するプロセス理論に分類される。',
+    keyFigures: 'ビクター・ブルーム（1964『Work and Motivation』）／拡張: ポーター&ローラー（1968）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/vrooms-expectancy-theory/', type: 'academic', label: 'University of Cambridge IfM — Vroom’s expectancy theory' },
+      { url: 'https://www.ebsco.com/research-starters/economics/expectancy-theory', type: 'academic', label: 'EBSCO Research Starters — Expectancy theory' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/21582440211021896', type: 'academic', label: 'SAGE Open (2021) — Valence–Instrumentality–Expectancy Model of Motivation' },
+    ],
+  },
+  {
+    id: 'human-milgram-obedience',
+    discipline: 'human-science',
+    title: 'ミルグラムの服従実験（Milgram experiment）',
+    statement:
+      '権威者の指示があれば、人は自らの良心に反してでも他者に有害な行為を行いうることを示した社会心理学の実験。スタンレー・ミルグラムが1961年（論文発表は1963年）にイェール大学で実施した。' +
+      '被験者（教師役、新聞広告で募った男性40名）は実験者（権威）の指示で、間違えた「生徒役」（実はサクラ）に段階的に強い電気ショック（最大450ボルト、実際には電流は流れていない）を与えるよう求められた。多くの被験者が強い心理的葛藤を示しつつも、最初の実験では約65%（40名中26名）が最大電圧まで指示に従い続けた。ミルグラムはこれをホロコーストにおける一般人の加担の理解と結びつけて論じた（「悪の凡庸さ」の語自体はハンナ・アーレントによる）。一方、被験者に深刻な心理的苦痛を与え欺瞞を用いた点で研究倫理上の重大な批判（ダイアナ・バウムリンド1964）を招き、後の研究倫理審査（IRB）強化の契機の一つとなった。',
+    keyFigures: 'スタンレー・ミルグラム（1961実施・1963発表、イェール大学）／倫理批判: ダイアナ・バウムリンド（1964）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Milgram-experiment', type: 'reference', label: 'Encyclopaedia Britannica — Milgram experiment' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/14049516/', type: 'academic', label: 'Milgram (1963) Behavioral Study of Obedience, J. Abnormal and Social Psychology 67:371-378（原典）' },
+      { url: 'https://www.open.edu/openlearn/society-politics-law/sociology/psychological-research-obedience-and-ethics/content-section-2.2', type: 'academic', label: 'The Open University — 服従研究の倫理的批判（バウムリンド）' },
+    ],
+  },
+  {
+    id: 'bizlaw-contract-nonconformity',
+    discipline: 'business-law',
+    title: '契約不適合責任（旧・瑕疵担保責任）',
+    statement:
+      '売買等で引き渡された目的物が種類・品質・数量に関して契約の内容に適合しない場合に、売主が買主に対して負う責任。2017年改正民法（2020年4月1日施行）により、従来の「瑕疵担保責任」が「契約不適合責任」へと再構成された。' +
+      '買主は、(1)追完請求（目的物の修補・代替物の引渡し・不足分の引渡し、民法562条）、(2)代金減額請求（563条）、(3)損害賠償請求（564条が準用する415条）、(4)契約の解除（564条が準用する541条・542条）を行いうる。旧法と異なり契約不適合責任は債務不履行責任の一種として位置づけられ、種類・品質の不適合の場合、買主は不適合を知った時から1年以内にその旨を売主に通知する必要がある（566条。旧法の「権利行使」から「通知」へ緩和）。法定責任説から契約責任説への転換と整理される。',
+    keyFigures: '契約不適合責任＝改正民法562条以下（2020施行）／追完562・代金減額563・損害賠償/解除564（→415・541・542）／通知1年566（種類・品質）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（562条以下・566条）' },
+      { url: 'https://www.businesslawyers.jp/practices/1048', type: 'media', label: 'BUSINESS LAWYERS — 民法改正と契約不適合責任条項' },
+      { url: 'https://kigyobengo.com/media/useful/1618.html', type: 'media', label: '咲くやこの花法律事務所 — 契約不適合責任とは（責任内容・期間・免責）' },
+    ],
+  },
+  {
+    id: 'infosoc-gatekeeping',
+    discipline: 'information-sociology',
+    title: 'ゲートキーピング（門番機能, gatekeeping）',
+    statement:
+      '膨大な情報の中から、何をニュースとして報じ何を報じないかを、編集者・記者などメディア組織内の「門番（ゲートキーパー）」が選別・取捨選択する過程を指す。' +
+      '社会心理学者クルト・レヴィンが、集団内の意思決定や情報・物資の流れを「チャネル」と「ゲート」で論じる研究の中でゲートキーパーの概念を提示し（1947年の論文「Frontiers in Group Dynamics」, Human Relations 誌）、その学生デヴィッド・マニング・ホワイトが1950年に新聞の電信ニュース担当編集者「ミスター・ゲイツ」の取捨選択を分析した古典的研究でマスコミ研究に応用した。報道の選択は個人の主観だけでなく、組織のルーチンやニュース価値、媒体の制約等にも規定される。議題設定理論とも密接に関連し、インターネット・SNS時代にはアルゴリズムやプラットフォームによる新たなゲートキーピングが論じられている。',
+    keyFigures: 'クルト・レヴィン（1947 概念提示）／デヴィッド・マニング・ホワイト（1950 Mr.Gates研究でマスコミに応用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oxfordre.com/communication/display/10.1093/acrefore/9780190228613.001.0001/acrefore-9780190228613-e-290', type: 'academic', label: 'Oxford Research Encyclopedia of Communication — Gatekeeping' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/001872674700100201', type: 'academic', label: 'Lewin (1947) Frontiers in Group Dynamics, Human Relations 1(1):5-41（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Gatekeeping_(communication)', type: 'reference', label: 'Wikipedia — Gatekeeping (communication)' },
+    ],
+  },
 ];
 // Stryker restore all
