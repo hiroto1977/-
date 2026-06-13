@@ -1842,5 +1842,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Frame_analysis', type: 'reference', label: 'Wikipedia — Frame analysis（Goffman 1974 を源流とするフレーム分析）' },
     ],
   },
+  {
+    id: 'econ-permanent-income-hypothesis',
+    discipline: 'economics',
+    title: '恒常所得仮説（permanent income hypothesis）',
+    statement:
+      '人々の消費は、その時々の現在所得ではなく、生涯にわたって期待される平均的・長期的な所得＝「恒常所得（permanent income）」に基づいて決定されるとする消費理論。所得を恒常所得と一時的な「変動所得（transitory income）」に分け、変動所得（臨時ボーナス・宝くじ等）の多くは消費されず貯蓄に回るため、短期の限界消費性向は長期より小さくなると説明する。' +
+      'ミルトン・フリードマンが1957年の著作『A Theory of the Consumption Function（消費の経済理論）』で提唱した。ケインズの絶対所得仮説（消費は現在所得の関数）では説明できない実証的パズル（平均消費性向と限界消費性向の食い違い）を解き、モディリアーニのライフサイクル仮説と並ぶ消費理論の代表とされる。一時的な減税が消費を大きく刺激しにくいという政策含意をもつ。フリードマンはこの消費分析を含む業績で1976年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ミルトン・フリードマン（1957）／対比: ケインズの絶対所得仮説・モディリアーニのライフサイクル仮説／1976ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/permanent-income-hypothesis', type: 'reference', label: 'Encyclopaedia Britannica — Permanent income hypothesis' },
+      { url: 'https://www.nber.org/system/files/chapters/c4405/c4405.pdf', type: 'academic', label: 'NBER — The Permanent Income Hypothesis（Friedman, A Theory of the Consumption Function 所収）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1976/press-release/', type: 'government', label: 'NobelPrize.org — 1976年経済学賞 Milton Friedman（消費分析の業績）' },
+    ],
+  },
+  {
+    id: 'econ-oligopoly-cournot',
+    discipline: 'economics',
+    title: '寡占とクールノー競争（oligopoly / Cournot competition）',
+    statement:
+      '少数の企業が市場を支配する市場形態＝寡占では、各企業の意思決定が相互に影響し合う（相互依存）ため、ライバルの反応を考慮した戦略的行動が分析の中心となる。' +
+      '代表的モデルとして、各企業が「生産量」を戦略変数とし、相手の生産量を所与として自社の利潤を最大化するクールノー競争（アントワーヌ・クールノー、1838『富の理論の数学的原理に関する研究』）があり、均衡（クールノー＝ナッシュ均衡）では各社の生産量が互いの最適反応となり、価格は完全競争より高く独占より低くなる。価格を戦略変数とするベルトラン競争、一方が先導するシュタッケルベルク競争などの派生がある。寡占企業は明示的・暗黙的に協調（カルテル・価格先導）してより独占に近い利潤を狙うこともあるが、各社に裏切りの誘因が働くため安定は難しい（囚人のジレンマ構造）。',
+    keyFigures: 'アントワーヌ・クールノー（1838 生産量競争）／ベルトラン（価格競争）・シュタッケルベルク（先導者-追随者）／クールノー＝ナッシュ均衡',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Antoine-Augustin-Cournot', type: 'reference', label: 'Encyclopaedia Britannica — Antoine-Augustin Cournot（複占・均衡分析）' },
+      { url: 'https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/pages/unit-5-monopoly-and-oligopoly/oligopoly-ii/', type: 'academic', label: 'MIT OpenCourseWare — Principles of Microeconomics, Oligopoly II（クールノー均衡・ベルトラン・カルテル）' },
+      { url: 'https://www.britannica.com/topic/Researches-into-the-Mathematical-Principles-of-the-Theory-of-Wealth', type: 'reference', label: 'Encyclopaedia Britannica — Researches into the Mathematical Principles of the Theory of Wealth (1838)' },
+    ],
+  },
+  {
+    id: 'mgmt-job-characteristics',
+    discipline: 'management',
+    title: '職務特性モデル（ハックマン&オルダム）',
+    statement:
+      '職務そのものが持つ特性が、従業員の内発的動機づけ・職務満足・業績を高める仕組みを説明する組織行動論の職務設計モデル。5つの中核的職務特性すなわち(1)技能多様性(skill variety)、(2)タスク完結性(task identity)、(3)タスク重要性(task significance)、(4)自律性(autonomy)、(5)フィードバック(feedback)が、3つの重要な心理状態（仕事の有意味感・結果への責任感・結果の認識）を媒介として生じさせ、それが高い内発的動機づけ・職務満足・仕事の質、ならびに低い離職率・欠勤につながるとする。' +
+      '前者3特性は有意味感に、自律性は責任感に、フィードバックは結果の認識に主に対応する。5特性から「動機づけ可能性指数（MPS）」が算出され、MPS＝((技能多様性+タスク完結性+タスク重要性)/3)×自律性×フィードバック で表される（自律性とフィードバックは乗法的でいずれかがゼロならMPSもゼロ）。さらに従業員の「成長欲求の強さ（GNS）」が効果を調整する。J.リチャード・ハックマンとグレッグ・オルダムが1976年論文・1980年著書『Work Redesign』で提唱し、職務充実（job enrichment）の理論的基盤となった。',
+    keyFigures: 'J.リチャード・ハックマン & グレッグ・オルダム（1976/1980『Work Redesign』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100021207', type: 'academic', label: 'Oxford Reference — Job Characteristics Model' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/job-characteristics', type: 'academic', label: 'ScienceDirect Topics — Job Characteristics' },
+      { url: 'https://books.google.com/books/about/Work_Redesign.html?id=MhpPAAAAMAAJ', type: 'reference', label: 'Hackman & Oldham, Work Redesign (Addison-Wesley, 1980) — 一次文献（書誌）' },
+    ],
+  },
+  {
+    id: 'human-self-efficacy',
+    discipline: 'human-science',
+    title: '自己効力感（self-efficacy）',
+    statement:
+      'ある課題や状況において、必要な行動をうまく遂行できるという、自分の能力に対する主観的な確信・信念。心理学者アルバート・バンデューラが1977年の論文で提唱し、社会的認知理論（social cognitive theory）の中核概念とした。自己効力感が高いほど、困難な課題に挑戦し、努力を持続し、ストレス下でも粘り強く行動する傾向がある。' +
+      '効力感を形成する主な情報源は、(1)達成経験（自分で成功した経験。最も強力）、(2)代理経験（他者の成功の観察・モデリング）、(3)言語的説得（他者からの励まし）、(4)生理的・情動的状態（緊張や気分の解釈）の4つである。「結果期待（ある行動が特定の結果を生むという予期）」とは区別される——人は何をすれば成功するかを理解していても、それを実行できるかを疑うことがあるためである。教育・健康行動・キャリア・臨床（不安や恐怖症の治療）など広範な領域に応用されている。',
+    keyFigures: 'アルバート・バンデューラ（1977）／社会的認知理論／4つの情報源（達成経験・代理経験・言語的説得・生理的情動的状態）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/research-practice/conduct-research/self-efficacy-human-agency', type: 'academic', label: 'American Psychological Association (APA) — Self-efficacy: the theory at the heart of human agency' },
+      { url: 'https://www.britannica.com/biography/Albert-Bandura', type: 'reference', label: 'Encyclopaedia Britannica — Albert Bandura' },
+      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia — Self-efficacy' },
+    ],
+  },
+  {
+    id: 'bizlaw-good-faith-principle',
+    discipline: 'business-law',
+    title: '信義誠実の原則（信義則）',
+    statement:
+      '権利の行使及び義務の履行は、信義に従い誠実に行わなければならない、とする民法の基本原則（民法1条2項）。私法全体を貫く一般条項・帝王条項であり、具体的な規定がない場面でも当事者間の信頼を保護し、形式的な権利行使が実質的な公平に反する場合にこれを修正する機能を持つ。' +
+      '判例・学説により多くの派生原則が発展しており、自らの先行行為と矛盾する態度を禁じる「禁反言（エストッペル）の法理」、長期間の権利不行使の後の突然の行使を制限する「権利失効の原則」、契約締結前の交渉段階における「契約締結上の過失」、契約後の著しい事情変動に対応する「事情変更の原則」などが導かれる。民法1条には信義則のほか、公共の福祉（1項）・権利濫用の禁止（3項）も定められ、これらと並ぶ民法の指導原理を構成する。',
+    keyFigures: '信義誠実の原則＝民法1条2項／派生: 禁反言・権利失効・契約締結上の過失・事情変更の原則／民法1条(公共の福祉/権利濫用の禁止)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法 第1条（公共の福祉・信義誠実の原則・権利濫用の禁止）' },
+      { url: 'https://ja.wikibooks.org/wiki/%E6%B0%91%E6%B3%95%E7%AC%AC1%E6%9D%A1', type: 'reference', label: 'Wikibooks — 民法第1条（条文・基本原則の解説）' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/08/67/hajimeni.htm', type: 'government', label: '国税庁 税務大学校 研究論叢 — 税法における信義則の適用について' },
+    ],
+  },
+  {
+    id: 'infosoc-strength-of-weak-ties',
+    discipline: 'information-sociology',
+    title: '弱い紐帯の強さ（the strength of weak ties）',
+    statement:
+      '新規で有用な情報（例：就職・転職の機会）は、家族や親友のような結びつきの強い「強い紐帯（strong ties）」よりも、知人や薄いつながりの「弱い紐帯（weak ties）」を通じてもたらされやすい、という社会ネットワーク論の知見。' +
+      '強い紐帯どうしは互いに重複した同質的な情報の中に閉じがちなのに対し、弱い紐帯は異なる社会集団（クラスター）を架橋する「ブリッジ」として、新しい情報や多様な機会を運ぶ。社会学者マーク・グラノヴェッターが1973年の論文「The Strength of Weak Ties」(American Journal of Sociology 78(6):1360-1380)で提唱し、職に就いた男性282名への調査で多くが弱い紐帯経由で職を見つけた事実を示した。情報拡散・イノベーション普及・コミュニティ統合の研究に大きな影響を与えた（2022年にはScience誌で大規模な因果検証も行われた）。',
+    keyFigures: 'マーク・グラノヴェッター（1973, American Journal of Sociology 78(6):1360-1380）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/225469', type: 'academic', label: 'Granovetter (1973) The Strength of Weak Ties, AJS 78(6):1360-1380（原典・University of Chicago Press）' },
+      { url: 'https://news.stanford.edu/stories/2023/07/strength-weak-ties', type: 'academic', label: 'Stanford Report — The strength of weak ties（50周年解説、就職調査282名）' },
+      { url: 'https://www.science.org/doi/10.1126/science.abl4476', type: 'academic', label: 'Rajkumar et al. (2022) A causal test of the strength of weak ties, Science（実証的追試）' },
+    ],
+  },
 ];
 // Stryker restore all
