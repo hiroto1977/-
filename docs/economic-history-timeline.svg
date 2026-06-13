@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="8750" height="620" viewBox="0 0 8750 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
-<rect width="8750" height="620" fill="#0f172a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="9470" height="620" viewBox="0 0 9470 620" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="9470" height="620" fill="#0f172a"/>
 <text x="70" y="40" fill="#f1f5f9" font-size="24" font-weight="700">世界経済・日本経済 年表（1940〜） — 出典確証済み</text>
 <text x="70" y="66" fill="#94a3b8" font-size="13">上向き=拡大産業の傾向数 / 下向き=縮小産業の傾向数（出典で裏付く定性傾向の件数。厳密な経済指標ではない）</text>
-<line x1="60" y1="360" x2="8710" y2="360" stroke="#475569" stroke-width="1.5"/>
-<line x1="60" y1="334" x2="8710" y2="334" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="386" x2="8710" y2="386" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="360" x2="9430" y2="360" stroke="#475569" stroke-width="1.5"/>
+<line x1="60" y1="334" x2="9430" y2="334" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="386" x2="9430" y2="386" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="338" fill="#64748b" font-size="11" text-anchor="end">1</text>
 <text x="54" y="390" fill="#64748b" font-size="11" text-anchor="end">1</text>
-<line x1="60" y1="308" x2="8710" y2="308" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="412" x2="8710" y2="412" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="308" x2="9430" y2="308" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="412" x2="9430" y2="412" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="312" fill="#64748b" font-size="11" text-anchor="end">2</text>
 <text x="54" y="416" fill="#64748b" font-size="11" text-anchor="end">2</text>
-<line x1="60" y1="282" x2="8710" y2="282" stroke="#1e293b" stroke-width="1"/>
-<line x1="60" y1="438" x2="8710" y2="438" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="282" x2="9430" y2="282" stroke="#1e293b" stroke-width="1"/>
+<line x1="60" y1="438" x2="9430" y2="438" stroke="#1e293b" stroke-width="1"/>
 <text x="54" y="286" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="442" fill="#64748b" font-size="11" text-anchor="end">3</text>
 <text x="54" y="272" fill="#22c55e" font-size="11" text-anchor="end">拡大</text>
@@ -377,9 +377,39 @@
 <text x="8650" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2011</text>
 <text x="8650" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成23年</text>
 <text x="8650" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8650 526)">東日本大震災・福島第一原発事故（3/11）—サプライチェーン寸断・電力不足</text>
+<rect x="8748" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8748" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8770" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2012</text>
+<text x="8770" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成24年</text>
+<text x="8770" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8770 526)">ドラギECB総裁「whatever it takes」発言（7/26）→ OM…</text>
+<rect x="8868" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8868" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="8890" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2013</text>
+<text x="8890" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成25年</text>
+<text x="8890" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 8890 526)">日銀・黒田総裁が量的・質的金融緩和（異次元緩和/QQE）を導入（4/4）</text>
+<rect x="8988" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="8988" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="9010" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2014</text>
+<text x="9010" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成26年</text>
+<text x="9010" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 9010 526)">消費税を8%へ引き上げ（4/1）→ 反動減で2四半期連続マイナス成長＝景気後退</text>
+<rect x="9108" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="9108" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="9130" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2015</text>
+<text x="9130" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成27年</text>
+<text x="9130" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 9130 526)">チャイナショック—中国株急落と人民元切り下げ（8/11）で世界同時株安</text>
+<rect x="9228" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="9228" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="9250" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2016</text>
+<text x="9250" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成28年</text>
+<text x="9250" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 9250 526)">日銀がマイナス金利政策を決定（1/29、2月適用、-0.1%）</text>
+<rect x="9348" y="334" width="44" height="26" rx="3" fill="#22c55e" opacity="0.85"/>
+<rect x="9348" y="360" width="44" height="26" rx="3" fill="#ef4444" opacity="0.85"/>
+<text x="9370" y="488" fill="#f1f5f9" font-size="15" font-weight="700" text-anchor="middle">2017</text>
+<text x="9370" y="506" fill="#94a3b8" font-size="11" text-anchor="middle">平成29年</text>
+<text x="9370" y="526" fill="#cbd5e1" font-size="10" text-anchor="middle" transform="rotate(12 9370 526)">トランプ米大統領就任（1/20）—米株最高値更新が続く</text>
 <rect x="70" y="584" width="14" height="14" rx="2" fill="#22c55e"/>
 <text x="90" y="596" fill="#cbd5e1" font-size="12">拡大傾向の産業数</text>
 <rect x="230" y="584" width="14" height="14" rx="2" fill="#ef4444"/>
 <text x="250" y="596" fill="#cbd5e1" font-size="12">縮小傾向の産業数</text>
-<text x="8710" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
+<text x="9430" y="596" fill="#64748b" font-size="11" text-anchor="end">出典: economicHistoryKnowledge.ts（各年 ≥2 出典・うち権威ある出典1件以上）</text>
 </svg>

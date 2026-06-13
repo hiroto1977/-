@@ -1645,6 +1645,144 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://www.nikkei.com/article/DGXNASFL3007P_Q1A231C1000000/', type: 'media', label: '日本経済新聞 — 日経平均2011年は17%安・大納会終値8455円35銭' },
     ],
   },
+  {
+    year: 2012,
+    era: '平成24年',
+    world:
+      '欧州ソブリン債務危機がピークを迎えた。スペイン・イタリアの国債利回りが急騰しユーロ崩壊が懸念されたが、7月26日のドラギECB総裁「whatever it takes」発言とその後のOMT導入が転換点となり市場は安定へ向かった。米国ではFRBが9月13日にオープンエンド型のQE3を決定する一方、年末にかけ「財政の崖」懸念が重しとなった。DJIAは年末13,104.14で越年した。',
+    japan:
+      '年前半は歴史的円高とデフレが続き、10〜12月期は3四半期連続のマイナス成長となるなど停滞が深刻だった。しかし12月16日の衆院選で自民党が圧勝し（294議席）、12月26日に第2次安倍内閣が発足、大胆な金融緩和を柱とする「アベノミクス」期待から年末にかけ急速な円安・株高に転換した。5月22日には東京スカイツリー（634m）が開業した。',
+    keyEvents: [
+      'ドラギECB総裁「whatever it takes」発言（7/26）→ OMT導入、欧州債務危機の転換点',
+      'FRBがオープンエンドQE3を決定（9/13、毎月400億ドルのMBS購入）',
+      '東京スカイツリー開業（5/22、高さ634m）',
+      '衆院選で自民党が圧勝し政権交代（12/16）',
+      '第2次安倍内閣発足（12/26）、アベノミクス始動（円安・株高へ転換）',
+    ],
+    risingSectors: ['（定性）輸出関連（自動車・電機、年末の円安進行で恩恵期待）、金融・証券・不動産（アベノミクス期待の株高）、米住宅関連（QE3）'],
+    decliningSectors: ['（定性）年前半の日本の輸出型製造業（歴史的円高で採算圧迫）、欧州周縁国の銀行・金融（債務危機）。'],
+    caveats: 'DJIA年末値13104.14・日経平均年末値10395.18（12/28大納会・年間+約23%）・ビットコイン年末値約13.50ドルはいずれも独立2源で一致。ビットコインは取引所により$13.50〜$13.53と微差（概数）。年末の株高・円安は政策期待先行の側面が強い。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.europarl.europa.eu/thinktank/en/document/IPOL_STU(2022)703367', type: 'government', label: '欧州議会シンクタンク — 10 years after "whatever it takes"（ドラギ発言7/26）' },
+      { url: 'https://www.federalreserve.gov/monetarypolicy/timeline-balance-sheet-policies.htm', type: 'government', label: 'FRB — Balance Sheet Policies Timeline（QE3 9/13/2012）' },
+      { url: 'https://en.wikipedia.org/wiki/2012_Japanese_general_election', type: 'reference', label: 'Wikipedia — 2012 Japanese general election（12/16自民圧勝・第2次安倍内閣）' },
+    ],
+  },
+  {
+    year: 2013,
+    era: '平成25年',
+    world:
+      '米国経済が回復基調を強めるなか、5月にバーナンキFRB議長が量的緩和縮小（テーパリング）を初めて示唆し、長期金利急騰と新興国からの資金流出「テーパー・タントラム」が発生、ブラジル・インド・インドネシア・トルコ・南アの「フラジャイル5」通貨が下落した。FRBは12月にテーパリング開始を決定し、米株は記録的高値で年を終えた。DJIAは年末16,576.66で越年した。',
+    japan:
+      '3月就任の黒田東彦・日銀総裁が4月4日に「量的・質的金融緩和（QQE、異次元緩和）」を導入し、2年で2%の物価目標・マネタリーベース倍増を表明した。アベノミクスと相まって急速な円安・株高が進行し、日経平均は年間約+57%と40年超ぶりの大幅上昇となった。9月にはIOC総会で2020年夏季五輪の東京開催が決定し、消費税を2014年4月に8%へ引き上げる方針も正式決定された。',
+    keyEvents: [
+      '日銀・黒田総裁が量的・質的金融緩和（異次元緩和/QQE）を導入（4/4）',
+      'FRBのテーパリング示唆で「テーパー・タントラム」、新興国通貨が動揺（5〜9月）',
+      '2020年夏季オリンピックの東京開催決定（9月）',
+      '消費税率8%への引き上げ（2014年4月実施）を正式決定（秋）',
+      'FRBが12月FOMCでテーパリング開始を決定',
+    ],
+    risingSectors: ['（定性）日本の輸出関連株（自動車・電機、大幅円安）、米国・先進国株式全般（緩和マネー・リスクオン）、暗号資産（ビットコインが年間で急騰）'],
+    decliningSectors: ['（定性）新興国通貨・資産（フラジャイル5）、米国債など長期債（テーパー観測で利回り急騰）、金（年間で大幅下落）。'],
+    caveats: 'DJIA年末値16576.66（年間+26.5%）と日経平均年末値16291.31（12/30大納会・年間約+57%）は独立2源で一致。ビットコイン年末値は約754ドル（取引所により$750〜760と幅、概数）。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2013/k130404a.pdf', type: 'government', label: '日本銀行 — Introduction of Quantitative and Qualitative Monetary Easing（2013/4/4）' },
+      { url: 'https://www.brookings.edu/articles/emerging-markets-taper-tantrum/', type: 'academic', label: 'Brookings — Emerging Markets Taper Tantrum' },
+      { url: 'https://money.cnn.com/2013/12/31/investing/japan-nikkei-stocks/index.html', type: 'media', label: "CNN Money — Japan's Nikkei posts 57% rise in 2013（16,291.31）" },
+    ],
+  },
+  {
+    year: 2014,
+    era: '平成26年',
+    world:
+      '世界経済は緩慢な回復局面。米FRBは10月29日のFOMCで資産購入プログラム（QE3）の終了を決定し量的緩和の出口へ向かった。年後半に原油価格が急落し（6月の高値から12月にかけ約50%下落）、産油国・新興国に下押し圧力がかかった。地政学ではロシアのクリミア併合と対露制裁・ルーブル急落、西アフリカでエボラ出血熱が大流行した。DJIAは年末17,823.07で越年した。',
+    japan:
+      '4月1日に消費税率を5%→8%へ引き上げ、駆け込み需要の反動で個人消費が落ち込み、実質GDPは2四半期連続のマイナス成長＝景気後退入りとなった。10月31日に日銀がサプライズの追加金融緩和（QQE拡大）を決定し、同日GPIFが基本ポートフォリオを国内株25%/外株25%へ大幅シフトした。円安が進行し株高を後押しした。',
+    keyEvents: [
+      '消費税を8%へ引き上げ（4/1）→ 反動減で2四半期連続マイナス成長＝景気後退',
+      '日銀がサプライズ追加緩和（10/31、QQE拡大）、同日GPIFが運用見直し（国内株25%へ）',
+      '米FRBがQE3（資産購入）を終了（10/29 FOMC）',
+      '原油価格が年後半に急落（年央高値比 約-50%）',
+      'ロシアのクリミア併合と対露制裁→ルーブル暴落／西アフリカでエボラ流行',
+    ],
+    risingSectors: ['（定性）日本の輸出関連（自動車・電機、円安）、インバウンド・観光、米テクノロジー・株式、原油安が追い風の石油消費国の製造業・運輸'],
+    decliningSectors: ['（定性）日本の個人消費依存の小売・耐久財（増税の反動減）、石油・上流エネルギー・産油国財政（原油急落）、ロシア関連資産・新興国通貨、ビットコイン（Mt.Gox破綻等で年間-約57%）。'],
+    caveats: 'DJIA年末値17823.07（年間+7.5%）・日経平均年末値約17,450.77（12/30大納会）・ビットコイン年末値約320ドル（$315〜320の幅・年間-約57%）はいずれも独立2源で一致。GDPは速報/改定で版差あるが「2四半期連続マイナス→Q4回復」の傾向は確実。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.newyorkfed.org/markets/programs-archive/large-scale-asset-purchases', type: 'government', label: 'NY Fed — Large-Scale Asset Purchases（QE3を2014/10終了）' },
+      { url: 'https://www.richmondfed.org/publications/research/economic_brief/2019/eb_19-10', type: 'government', label: 'Richmond Fed — 日本の消費税引き上げ（2014/4 5→8%）の景気影響' },
+      { url: 'https://asia.nikkei.com/Business/Markets/Stocks/Nikkei-index-up-a-third-year-in-2014', type: 'media', label: 'Nikkei Asia — 日経平均2014年は3年連続上昇（≈17,450）' },
+    ],
+  },
+  {
+    year: 2015,
+    era: '平成27年',
+    world:
+      '世界経済は中国減速とコモディティ安に揺れた。6月にピークを付けた上海株が夏に急落し、8月11日の人民元切り下げ（約1.9%）を契機に世界同時株安「チャイナショック」が発生した。原油は供給過剰で2009年以来の安値（前年比約-53%）となり、ギリシャ債務危機も再燃した。12月16日に米FRBが約9年半ぶりに利上げしゼロ金利政策を解除した（0-0.25%→0.25-0.5%）。DJIAは年末17,425.03で越年した。',
+    japan:
+      'アベノミクス・円安・金融緩和を背景に株高基調が継続し、日経平均は4月に約15年ぶりに2万円を回復、年末終値は4年連続上昇となった。訪日外国人は約1,974万人・消費額約3.5兆円に達し、中国人観光客の「爆買い」が流行語となった。一方で実質GDPは伸び悩み、10月にマイナンバー（社会保障・税番号）制度の通知が始まった。',
+    keyEvents: [
+      'チャイナショック—中国株急落と人民元切り下げ（8/11）で世界同時株安',
+      '米FRBが約9年半ぶりの利上げでゼロ金利政策を解除（12/16、0.25-0.5%へ）',
+      '原油安の継続（WTI/Brent年平均約49〜52ドル、2009年以来の安値）',
+      'ギリシャ債務危機の再燃（第3次金融支援交渉）',
+      '日経平均が約15年ぶりに2万円回復／インバウンド「爆買い」・マイナンバー制度開始',
+    ],
+    risingSectors: ['（定性）訪日インバウンド関連（百貨店・ドラッグストア・化粧品・家電量販・宿泊/観光）、原油安の恩恵を受ける消費・運輸/航空'],
+    decliningSectors: ['（定性）資源・エネルギー（石油・鉱業・素材、原油/コモディティ安の直撃）、対中依存の資本財・素材輸出（中国減速）。'],
+    caveats: 'DJIA年末値17425.03・日経平均年末値19033.71（12/30大納会・4年連続上昇）・ビットコイン年末値約430.57ドルはいずれも独立2源で一致。ビットコインは取引所により$430〜432の小差。日本のGDPは四半期改定差あり通年確定値は固定せず。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.europarl.europa.eu/RegData/etudes/IDAN/2015/549067/EXPO_IDA(2015)549067_EN.pdf', type: 'government', label: '欧州議会 — 上海株式市場の暴落と中国経済（2015）' },
+      { url: 'https://www.jec.senate.gov/public/index.cfm/republicans/2015/12/dec-17-2015-federal-open-market-committee-announcement-review', type: 'government', label: '米議会JEC — FOMC 2015年12月利上げ（ゼロ金利解除）レビュー' },
+      { url: 'https://response.jp/article/2015/12/31/267046.html', type: 'media', label: 'Response.jp — 2015年大納会 日経平均終値19,033円（4年連続上昇）' },
+    ],
+  },
+  {
+    year: 2016,
+    era: '平成28年',
+    world:
+      '年初は中国景気減速懸念と原油急落で世界同時株安・リスクオフ（円高進行）となり、原油は2月にWTI約26ドルへ13年ぶり安値を付け底打ち、年末には約54ドルへ反発した。6月23日の英国EU離脱（Brexit）国民投票は離脱51.9%対残留48.1%で可決し市場に一時ショックを与えた。11月8日の米大統領選でトランプが当選し、選挙後は減税・財政拡張期待で株高（トランプ・ラリー）となった。DJIAは年末19,762.60で越年した。',
+    japan:
+      '日銀が1月29日にマイナス金利政策（QQE＋マイナス金利、当座預金一部に-0.1%）を決定し2月適用した。年初は世界同時株安と急速な円高（一時100円台）で日経平均は下落、Brexitでさらに動揺したが、9月21日に長短金利操作付き量的・質的金融緩和（YCC、10年国債利回り0%程度誘導）へ枠組みを変更した。4月に熊本地震（前震M6.5・本震M7.0）が発生し、日経平均は米大統領選後の世界的株高と円安で急回復し5年連続の年間上昇となった。',
+    keyEvents: [
+      '日銀がマイナス金利政策を決定（1/29、2月適用、-0.1%）',
+      '熊本地震（4/14前震M6.5・4/16本震M7.0）',
+      '英国EU離脱（Brexit）国民投票で離脱が可決（6/23、離脱51.9%）',
+      '日銀が長短金利操作（YCC）付きQQEを導入（9/21）',
+      'トランプ米大統領当選（11/8）→ トランプ・ラリーで株高',
+    ],
+    risingSectors: ['（定性）エネルギー（原油底打ち・反発）、金融・銀行（選挙後の金利上昇・規制緩和期待）、素材・資本財（商品価格回復・財政期待）'],
+    decliningSectors: ['（定性）ヘルスケア（米株で軟調、薬価批判が逆風）、生活必需品・公益（金利上昇局面の年後半に相対的に劣後）。'],
+    caveats: 'DJIA年末値19762.60・日経平均年末値19114.37（12/30大納会・5年連続上昇）・ビットコイン年末値約963.74ドルはいずれも独立2源で一致。ビットコインは取引所により$960〜970帯。セクター騰落は主に米国S&P500ベースの定性傾向で集計時点・指数により順位が変わる。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/2016_United_Kingdom_European_Union_membership_referendum', type: 'reference', label: 'Wikipedia — 2016 UK EU membership referendum（Brexit 6/23）' },
+      { url: 'https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2016/k160129a.pdf', type: 'government', label: '日本銀行 — マイナス金利導入決定文（2016/1/29、一次資料）' },
+      { url: 'https://www.sipa.columbia.edu/bank-japan-japan-yield-curve-control-regime', type: 'academic', label: 'Columbia SIPA — 日銀YCC（2016/9/21導入）解説' },
+    ],
+  },
+  {
+    year: 2017,
+    era: '平成29年',
+    world:
+      '世界経済は「同時好況（synchronized upswing）」の年で、IMFは2017年成長率を約3.6%とし広範な上方修正を行った。米国では1月20日にトランプ政権が発足し株式は史上最高値を更新、DJIAは年間約+25%上昇した。FRBは2017年に3回利上げ（3・6・12月）し10月から約4.5兆ドルのバランスシート縮小（QT）を開始した。北朝鮮が弾道ミサイル発射を繰り返し（7/4に初のICBM級発射）地政学的緊張が高まり、年末にかけビットコイン等の仮想通貨が急騰した。DJIAは年末24,719.22で越年した。',
+    japan:
+      '景気回復が継続し、完全失業率は2月に約22年ぶりに3%を割り込み、有効求人倍率はバブル期超えの高水準で広範な産業で人手不足が深刻化した。株式は好調で、日経平均は大納会（12/29）に22,764.94円で引け、6年連続上昇・年末値としては1991年以来26年ぶりの高水準となった。10月22日の第48回衆院選で自民党が大勝し、与党で3分の2超を維持した。',
+    keyEvents: [
+      'トランプ米大統領就任（1/20）—米株最高値更新が続く',
+      'FRBが3回利上げ＋10月からバランスシート縮小（QT）開始',
+      '北朝鮮が弾道ミサイル/核実験を繰り返す（7/4 初のICBM級発射、9月 核実験）',
+      '第48回衆院選で自民党が大勝（10/22、与党3分の2超）',
+      'ビットコイン等仮想通貨が急騰しバブル様相（12月中旬に一時約1.9万ドル接近）',
+    ],
+    risingSectors: ['（定性）ハイテク/IT・半導体（米FAANG等の株高）、仮想通貨・ブロックチェーン関連（ビットコイン年間+約1,369%）、輸出関連・製造業（世界同時好況・円安）、省力化・自動化/人材サービス'],
+    decliningSectors: ['（定性）伝統的小売（EC化圧力・米国で店舗閉鎖増）。人手不足が深刻な労働集約型サービス（建設・運輸・飲食・介護）は供給制約で成長が抑制（衰退ではなく制約）。'],
+    caveats: 'DJIA年末値24719.22（年間約+25%）・日経平均年末値22764.94（12/29大納会・6年連続上昇・年末値で26年ぶり高値）・ビットコイン年末値約14,156ドルはいずれも独立2源で一致。ビットコインは取引所により$13,800〜14,200の幅（概数）。日経の高値は「21年ぶり」ではなく年末値で26年ぶり。「いざなぎ超え」認定は2018年12月の事後認定。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.imf.org/en/publications/weo/issues/2017/09/19/world-economic-outlook-october-2017', type: 'government', label: 'IMF World Economic Outlook 2017/10 — 世界同時好況（成長率約3.6%）' },
+      { url: 'https://www5.cao.go.jp/j-j/wp/wp-je17/pdf/p01013.pdf', type: 'government', label: '内閣府 平成29年度経済財政白書 — 四半世紀ぶりの人手不足・雇用改善' },
+      { url: 'https://toyokeizai.net/articles/-/203216', type: 'media', label: '東洋経済 — 2017年日経平均は22,764円で終了・6年連続上昇' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -1739,12 +1877,19 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   2009: { djiaYearEnd: 10428.05, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   2010: { djiaYearEnd: 11577.51, nikkeiYearEnd: 10228.92, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   2011: { djiaYearEnd: 12217.56, nikkeiYearEnd: 8455.35, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  2012: { djiaYearEnd: 13104.14, nikkeiYearEnd: 10395.18, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 13.5 },
+  2013: { djiaYearEnd: 16576.66, nikkeiYearEnd: 16291.31, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 754 },
+  2014: { djiaYearEnd: 17823.07, nikkeiYearEnd: 17450.77, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 320 },
+  2015: { djiaYearEnd: 17425.03, nikkeiYearEnd: 19033.71, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 430.57 },
+  2016: { djiaYearEnd: 19762.6, nikkeiYearEnd: 19114.37, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 963.74 },
+  2017: { djiaYearEnd: 24719.22, nikkeiYearEnd: 22764.94, japanUrbanLandIndex: null, bitcoinUsdYearEnd: 14156 },
 };
 
 export const ASSET_SERIES_NOTES =
-  '株式（DJIA年末終値）は複数の独立系列で一致を確認した確証値。日本株（日経平均）は東証再開1949年5月以降が対象（取引所閉鎖の1945–1949年4月はN/A）、' +
-  '各年確定値は一次データ未照合のため現状null。市街地価格指数（全国・1936年9月=100、1946年9月以降は半期）も各年確定値は未照合でnull。' +
-  '仮想通貨はビットコイン稼働開始（2009年1月）・市場価格成立（2010年）以前は存在せずN/A。値が得られ次第、確証のうえ追補する。';
+  '株式（DJIA年末終値）は複数の独立系列で一致を確認した確証値（1994年以降は毎年収録）。日本株（日経平均）は東証再開1949年5月以降が対象（取引所閉鎖の1945–1949年4月はN/A）。' +
+  '各年確定値のうち独立2源以上で一致を確認できた年のみ収録し、集約サイトが403等で二重確認できなかった年（1993・1994・1995・1998・1999・2002・2003・2009など）はnull（捏造回避）。' +
+  '市街地価格指数（全国・1936年9月=100、1946年9月以降は半期）は各年確定値が未照合でnull。' +
+  '仮想通貨はビットコイン稼働開始（2009年1月）・市場価格成立（2010年）以前は存在せずN/A。2012年以降の年末値を収録するが、ビットコインには公的な単一の引け値が存在せず取引所・指数により数%の幅があるため、独立複数源が概ね一致した代表的な年末スポット値（概数）である点に留意。値が得られ次第、確証のうえ追補する。';
 
 export const ASSET_SERIES_SOURCES: EconHistorySource[] = [
   { url: 'https://www.measuringworth.com/datasets/DJA/index.php', type: 'academic', label: 'MeasuringWorth — Dow Jones Average 日次/月次終値データセット' },
