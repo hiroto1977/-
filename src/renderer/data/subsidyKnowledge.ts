@@ -1953,6 +1953,114 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.town.okuizumo.shimane.jp/www/contents/1750639339577/index.html', type: 'municipality', label: '奥出雲町 しまね起業支援事業費補助金 公募のお知らせ' },
     ],
   },
+  {
+    id: 'subsidy-tokushima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '徳島県生産性向上・成長力強化支援事業費補助金（徳島県）',
+    authority: '徳島県（商工政策課）／申請は県内の商工団体（商工会・商工会議所・中小企業団体中央会）の支援を受け、補助金事務局が受付・交付事務を担う',
+    statement:
+      '徳島県内に事業所を有する中小・小規模事業者等（個人事業者を含む）が、商工団体の支援を受けて策定した「経営計画」に基づき、生産プロセスの改善・生産性の向上・収益構造の強化に資する設備導入や改修・改装を行う取組を支援する制度。' +
+      '計画期間に付加価値額等を年率平均一定割合以上増加させる計画であることが要件とされる。補助率・上限額・募集期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '申請者は単独では申請できず、県内の商工団体（商工会・商工会議所・中小企業団体中央会）いずれかの支援を受けながら「経営計画」を策定し、その支援機関を通じて補助金事務局へ申請書を提出する枠組み（書類は支援機関必着）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tokushima.lg.jp/jigyoshanokata/sangyo/shokogyo/7309846/', type: 'municipality', label: '徳島県 生産性向上・成長力強化支援事業費補助金' },
+      { url: 'https://pgup-tokushima.jp/', type: 'operator', label: '徳島県生産性向上・成長力強化支援事業費補助金 公式ポータル（事務局）' },
+      { url: 'https://www.tokushimacci.or.jp/latest_information/2026013062064/', type: 'operator', label: '徳島商工会議所 制度案内' },
+    ],
+  },
+  {
+    id: 'subsidy-kagawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '香川県事業者の未来への投資を応援する総合補助金（未来投資応援補助金）（香川県）',
+    authority: '香川県（商工労働部 産業政策課）／申請・問い合わせは未来投資応援補助金事務局',
+    statement:
+      '物価高騰が続く中、県内事業者の「稼ぐ力」強化と賃上げの好循環実現を目的に、香川県内で行う設備投資（成長につながる新事業展開・事業分野拡大に必要な設備投資、又は生産性向上につながる設備投資）の経費を補助する制度。' +
+      '対象は香川県内の中小企業者・個人事業主等。補助率・補助上限額・対象経費下限・募集期間は年度ごとに変動するため、県公式及び事務局で要確認。',
+    application:
+      '公募期間内に申請書類を事務局へ郵送（送達確認可能な方法）。詳細要件・様式・電子申請の有無は各年度の公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kagawa.lg.jp/sangyo/miraitoshi/index.html', type: 'municipality', label: '香川県 事業者の未来への投資を応援する総合補助金' },
+      { url: 'https://www.city.kanonji.kagawa.jp/soshiki/21/59935.html', type: 'municipality', label: '観音寺市 香川県未来投資応援補助金の案内' },
+      { url: 'https://www.takacci.or.jp/news/news-16254/', type: 'operator', label: '高松商工会議所 香川県未来投資応援補助金について' },
+    ],
+  },
+  {
+    id: 'subsidy-ehime',
+    level: 'prefecture',
+    domain: 'business',
+    name: '生産性向上設備等投資支援補助金（愛媛県）',
+    authority: '愛媛県（経済労働部 産業支援局 産業創出課）／執行・申請窓口は事務局の愛媛県中小企業団体中央会',
+    statement:
+      '愛媛県内の中小企業者等が、業務効率化・省コスト化など生産性向上を目的とした設備投資等を行う際に、その経費の一部を助成する県の補助金。物価高騰対応の地方創生臨時交付金を活用し、物価高騰の影響緩和と賃上げの後押しを' +
+      '通じて県内企業の持続的発展を図る。補助率（通常枠/賃上げ枠で異なる）・補助上限額・募集期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '公募制。事務局である愛媛県中小企業団体中央会が公募要領・申請様式を配布し、県内の中小企業者等が同会へ申請する。年度ごとに予算の範囲内で複数次の公募が実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ehime.jp/page/4649.html', type: 'municipality', label: '愛媛県 生産性向上設備等投資支援補助金の公募について' },
+      { url: 'https://www.pref.ehime.jp/site/madoguchi/132941.html', type: 'municipality', label: '愛媛県 生産性向上設備等投資支援補助金（2次）の公募' },
+      { url: 'https://bp-ehime.or.jp/sk/', type: 'operator', label: '愛媛県中小企業団体中央会 補助金事務局サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-kochi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '高知県戦略的製品開発推進事業費補助金（高知県）',
+    authority: '高知県（商工労働部 工業振興課・製品開発支援チーム）／事前確認は高知県産業振興センター等で構成する製品開発支援チーム',
+    statement:
+      '県内企業の製品・技術開発の量的拡大と質的向上を図るため、製造業分野（食品製造業を除く）における製品・技術の構想・企画立案、市場調査、試作開発、製品化など独自性の高い製品開発に必要な経費の一部を予算の範囲内で補助する高知県の制度。' +
+      '「製品開発事業」「開発チャレンジ事業」等の区分があり複数回の公募が行われる。補助率・上限額・募集期間は年度・募集回ごとに変動するため要確認。',
+    application:
+      '高知県（工業振興課）が公募。申請には事前に「製品開発支援チーム」の確認を受け確認書類を申請書に添付する必要がある。区分別・複数回の募集回方式で、詳細は各年度の交付要綱・公募要領で確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kochi.lg.jp/doc/2025040300154', type: 'municipality', label: '高知県 戦略的製品開発推進事業費補助金の公募について' },
+      { url: 'https://joho-kochi.or.jp/center/kochisangyokikin_2024a.php', type: 'operator', label: '高知県産業振興センター 製品開発支援関連' },
+      { url: 'https://hojyokin-portal.jp/subsidies/55842', type: 'media', label: '補助金ポータル 高知県 戦略的製品開発推進事業費補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-saga',
+    level: 'prefecture',
+    domain: 'business',
+    name: '佐賀県中小企業生産性向上支援補助金（佐賀県）',
+    authority: '佐賀県（産業労働部 産業政策課）／相談支援は佐賀県産業イノベーションセンター・佐賀県よろず支援拠点等',
+    statement:
+      '原材料・エネルギー価格高騰や人材不足等の経営環境の中で、佐賀県内に店舗・事業所を有する中小企業者等（一次産業・医療福祉関連業等は除く）の生産性向上（高付加価値化・効率化）の取組を支援する県の補助金。デジタル技術を活用した' +
+      '業務改善、生産の効率化、新商品開発・販路開拓など売上向上につながる取組を対象とし、機械装置・システム構築費・広報費・外注費等が補助対象。「第○弾」等として公募回ごとに繰り返し実施され、補助率・上限額・公募期間は各回で変動するため要確認。',
+    application:
+      '公募回ごとに公募要領が公表され、所定の申請書類を提出して交付申請（電子申請 jGrants 等又は県指定窓口）。採択審査を経て交付決定、事業実施後に実績報告・補助金確定という枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.saga.lg.jp/kiji003112112/index.html', type: 'municipality', label: '佐賀県 中小企業生産性向上支援補助金 申請受付' },
+      { url: 'https://www.pref.saga.lg.jp/list00056.html', type: 'municipality', label: '佐賀県 産業政策課' },
+      { url: 'https://yorozu-saga.go.jp/archives/28662', type: 'government', label: '佐賀県よろず支援拠点 中小企業生産性向上支援補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-nagasaki',
+    level: 'prefecture',
+    domain: 'business',
+    name: '長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）',
+    authority: '長崎県（産業労働部）／事務局・申請窓口は一般社団法人長崎県中小企業診断士協会内の補助金事務局',
+    statement:
+      '長崎県が人口減少対策・地域課題の解決・地場産業振興と雇用創出を目的に、県内での創業（付加価値向上が見込まれる事業承継を含む）に要する経費の一部を補助する制度。商工会・商工会議所・認定経営革新等支援機関の助言を受けて事業計画を' +
+      '作成・実行する者で県内居住・定住が要件。補助対象経費は人件費・設備費・店舗等借入費・広告宣伝費等。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '事務局（長崎県中小企業診断士協会）が公募する年度ごとの要項に基づき、商工会・商工会議所・認定経営革新等支援機関の支援を受けて事業計画を作成のうえ、事務局へ申請（公募・交付決定方式）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nagasaki.jp/bunrui/shigoto-sangyo/sangyoshien/hojokin-sangyoshien/challenge-hojokin-sangyoshien/', type: 'municipality', label: '長崎県 地域産業雇用創出チャレンジ支援事業' },
+      { url: 'https://sougyoushien.com/detail/', type: 'operator', label: '長崎県創業支援事業補助金 事務局 事業概要' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/74004/', type: 'media', label: '補助金クラウド 長崎県 地域産業雇用創出チャレンジ支援事業' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
