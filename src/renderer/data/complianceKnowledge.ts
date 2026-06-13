@@ -6895,5 +6895,110 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'government', label: 'JILPT 給与のデジタル振り込みを2023年4月から解禁' },
     ],
   },
+  {
+    value: {
+      id: 'legal-anti-money-laundering-act',
+      domain: 'legal',
+      title: '犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）',
+      statement:
+        '犯罪収益移転防止法（犯罪による収益の移転防止に関する法律）は、マネー・ローンダリング及びテロ資金供与の防止を目的とし、金融機関・宅地建物取引業者・古物商・士業等の「特定事業者」に対し、顧客との一定の取引に際して本人特定事項等を確認する' +
+        '「取引時確認」、確認記録・取引記録の作成保存、疑わしい取引の届出等を義務付ける法律。所管は国家公安委員会・警察庁で、犯罪収益移転防止対策室（JAFIC）が疑わしい取引の届出情報を集約・分析する。届出先は業種ごとの主管行政庁（金融機関は金融庁等）。',
+      authority: '所管: 国家公安委員会・警察庁（犯罪収益移転防止対策室＝JAFIC）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.npa.go.jp/sosikihanzai/jafic/todoke/todotop.htm', type: 'government', label: 'JAFIC・警察庁 疑わしい取引の届出と届出先行政庁' },
+      { url: 'https://www.fsa.go.jp/str/tetuzuki/index.html', type: 'government', label: '金融庁 疑わしい取引の届出手続き' },
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/anti_money_laundering.html', type: 'government', label: '経済産業省 犯罪収益移転防止法関係' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-adult-age-18',
+      domain: 'legal',
+      title: '成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）',
+      statement:
+        '2018年（平成30年）6月成立の改正民法により、2022年（令和4年）4月1日から成年年齢が20歳から18歳に引き下げられた。これにより18歳・19歳は親（法定代理人）の同意なく携帯電話・ローン・クレジットカード契約等を単独で締結できる一方、' +
+        '2022年4月1日以降に結んだ契約には未成年者取消権が使えなくなった。他方、飲酒・喫煙及び公営競技（競馬・競輪・オートレース・モーターボート競走）の年齢制限は、健康面・依存症対策等の観点から従来どおり20歳のまま維持されている。',
+      authority: '所管: 法務省（民事局）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00238.html', type: 'government', label: '法務省 民法（成年年齢関係）改正 Q&A' },
+      { url: 'https://www.gov-online.go.jp/useful/article/201808/2.html', type: 'government', label: '政府広報オンライン 18歳から大人に 成年年齢引下げ' },
+      { url: 'https://www.pref.tottori.lg.jp/298225.htm', type: 'municipality', label: '鳥取県 2022年4月に成年年齢が18歳に引き下げられました' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-lgbt-understanding-promotion-act',
+      domain: 'legal',
+      title: 'LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）',
+      statement:
+        '「性的指向及びジェンダーアイデンティティの多様性に関する国民の理解の増進に関する法律」（通称LGBT理解増進法、令和5年法律第68号）は、2023年（令和5年）6月23日に公布・施行された。性的指向及びジェンダーアイデンティティの多様性に関する' +
+        '国民の理解の増進を図り、多様性に寛容な社会の実現に資することを目的とし、基本理念、国及び地方公共団体の役割、事業主等の努力（事業主は雇用する労働者の理解の増進に自ら努める等）を定める。違反に対する罰則を設けない理念法であり、所管は内閣府。',
+      authority: '所管: 内閣府（政策統括官・共生共助担当）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www8.cao.go.jp/rikaizoshin/qa/index.html', type: 'government', label: '内閣府 理解増進法に関するQ&A' },
+      { url: 'https://laws.e-gov.go.jp/law/504AC0000000068', type: 'government', label: 'e-Gov法令検索 LGBT理解増進法（令和5年法律第68号）' },
+      { url: 'https://www.city.daito.lg.jp/soshiki/19/56048.html', type: 'municipality', label: '大東市 LGBT理解増進法が令和5年6月23日に公布・施行' },
+    ],
+  },
+  {
+    value: {
+      id: 'labor-gender-wage-gap-disclosure',
+      domain: 'labor',
+      title: '男女の賃金の差異の公表義務（女性活躍推進法・301人以上）',
+      statement:
+        '2022年（令和4年）7月8日施行の女性活躍推進法に基づく省令・告示改正により、常時雇用する労働者が301人以上の事業主に対し、女性の活躍に関する情報公表の必須項目として「男女の賃金の差異」が追加・義務化された。差異は' +
+        '「女性労働者の賃金が男性労働者の賃金に占める割合」として、全労働者・正規雇用労働者・非正規雇用労働者の区分ごとに算出し、事業年度ごとに（おおむね年1回）公表する。なお2025年（令和7年）公布の改正により、令和8年（2026年）4月1日からは' +
+        '対象が常時雇用労働者101人以上の事業主へ拡大される予定で、本記載時点（2026年6月）では将来予定として区別を要する。',
+      authority: '所管: 厚生労働省（女性活躍推進法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_26587.html', type: 'government', label: '厚生労働省 女性活躍推進法の省令・告示を改正しました' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/000970983.pdf', type: 'government', label: '厚生労働省 男女の賃金の差異の情報公表について' },
+      { url: 'https://www.hrpro.co.jp/series_detail.php?t_no=3090', type: 'media', label: 'HRプロ 男女の賃金差の公表義務 101人以上への拡大' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-companies-act-2019-reform',
+      domain: 'legal',
+      title: '令和元年改正会社法（社外取締役の設置義務化・株主総会資料の電子提供制度）',
+      statement:
+        '2019年（令和元年）12月成立の会社法の一部を改正する法律により、公開会社かつ大会社である監査役会設置会社のうち有価証券報告書提出会社（上場会社等）に社外取締役を1名以上置くことが義務付けられ（会社法327条の2）、2021年3月1日に施行された。' +
+        'あわせて、株主総会資料を自社ウェブサイト等に掲載しそのアドレス等を記載した招集通知を株主に送付すれば適法に資料を提供したものとみなす「電子提供制度」（325条の2以下）が創設され、2022年9月1日に施行された（上場会社等は措置義務）。さらに濫用的提案を防ぐため、' +
+        '1人の株主が提案できる議案の数を10個までとする株主提案権の制限（305条）等が設けられた。既存の会社法の機関設計とは別の令和元年改正の論点である。',
+      authority: '所管: 法務省（民事局・会社法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00001.html', type: 'government', label: '法務省 会社法の一部を改正する法律について' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_00166.html', type: 'government', label: '法務省 商業登記規則等の改正（電子提供措置 令和4年9月1日施行）' },
+      { url: 'https://www.jsda.or.jp/shijyo/minasama/soukaishiryou.html', type: 'operator', label: '日本証券業協会 株主総会資料の電子提供制度' },
+    ],
+  },
+  {
+    value: {
+      id: 'legal-fit-fip-renewable-energy',
+      domain: 'legal',
+      title: '再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）',
+      statement:
+        '再生可能エネルギー電気の利用の促進に関する特別措置法（再エネ特措法）に基づき、再エネで発電した電気を一定価格・一定期間にわたり電気事業者が買い取ることを義務付ける固定価格買取制度（FIT制度）が2012年7月1日に開始された。' +
+        '2022年（令和4年）4月には、市場価格に一定のプレミアム（基準価格と参照価格の差）を上乗せして交付するFIP制度（Feed-in Premium）が導入され、一定規模以上の電源では新規認定でFIPが求められる。これらの買取に要する費用は' +
+        '「再生可能エネルギー発電促進賦課金（再エネ賦課金）」として電気料金に上乗せされ、電気を使う全需要家が負担する。買取価格・賦課金単価は電源種別ごとに毎年度経済産業省が設定し変動するため要確認。',
+      authority: '所管: 経済産業省 資源エネルギー庁（再エネ特措法）',
+      asOf: '2026-06',
+    },
+    sources: [
+      { url: 'https://www.enecho.meti.go.jp/about/special/johoteikyo/fip.html', type: 'government', label: '資源エネルギー庁 FIP制度が2022年4月スタート' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saiene/kaitori/surcharge.html', type: 'government', label: '資源エネルギー庁 再エネ賦課金の仕組み' },
+      { url: 'https://www.tepco.co.jp/network/renewable_energy/fixedprice_purchase/index.html', type: 'operator', label: '送配電事業者 FIT制度（2012年7月開始）の解説' },
+    ],
+  },
 ];
 // Stryker restore all
