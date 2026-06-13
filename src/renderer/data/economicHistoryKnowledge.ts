@@ -829,6 +829,138 @@ export const ECONOMIC_HISTORY: YearlyEconomy[] = [
       { url: 'https://225.jpn.org/1975/12/1975all/', type: 'reference', label: '日経平均チャート資料室 1975年（年末終値4,342.06）' },
     ],
   },
+  {
+    year: 1976,
+    era: '昭和51年',
+    world:
+      '1973年の石油危機による戦後最悪級の不況からの回復が1975年春に始まり1976年前半まで続いたが、個人消費・設備投資の鈍さと高止まりする失業・インフレにより後半は減速した（緩やかで不均一な回復）。11月2日の米大統領選で民主党ジミー・カーターが現職フォードを破り当選した。米株はダウ平均が年末ベースで1000ドル台を回復した（年末1004.65、年間約+17.9%）。',
+    japan:
+      '高度成長期から安定成長期への移行期にあり、石油危機後の景気回復基調にあった。財政支出拡大・在庫投資・個人消費の持ち直しに加え、主要国の景気回復に伴う輸出（特に対米輸出）増加が回復を牽引した。一方、7月27日に田中角栄前首相がロッキード事件（外為法違反容疑）で逮捕され戦後最大級の政治疑獄となった。',
+    keyEvents: [
+      'ロッキード事件で田中角栄前首相を逮捕（7/27）',
+      '米大統領選でカーター当選（11/2、フォードを破る）',
+      'ダウ平均が年末ベースで1000ドル台を回復（年末1004.65）',
+      '日本は安定成長期へ移行、対米輸出・財政/在庫投資主導で景気回復',
+    ],
+    risingSectors: ['（日本）輸出関連製造業（自動車・電機・機械、対米輸出増）', '（米国）株式市場全般（ダウ年間+約17.9%の回復）'],
+    decliningSectors: ['（日本）エネルギー多消費型・石油依存型産業（高油価の影響継続）、内需依存セクター（後半減速）'],
+    caveats: 'DJIA年末値1004.65は確証値（年間平均約974とは別。混同注意）。日経平均1976年末確定値は独立2源で確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www5.cao.go.jp/keizai3/keizaiwp/wp-je77/wp-je77-02402.html', type: 'government', label: '内閣府 昭和52年 年次経済報告（1976年の対米輸出増・回復要因）' },
+      { url: 'https://www.britannica.com/event/United-States-presidential-election-of-1976', type: 'reference', label: 'Encyclopaedia Britannica — 1976年米大統領選（カーター当選）' },
+      { url: 'https://www.nippon.com/ja/japan-topics/today07272/', type: 'media', label: 'nippon.com — 田中角栄前首相逮捕（1976/7/27）' },
+    ],
+  },
+  {
+    year: 1977,
+    era: '昭和52年',
+    world:
+      'スタグフレーション（高インフレ＋高失業の併存）が石油危機後も残存。米国は1月就任のカーター政権下で雇用創出を最優先に景気刺激策（公共雇用・財政出動）を実施し失業は低下したが、後にエネルギー価格上昇でインフレが再加速へ向かった。5月のロンドン・サミット（G7）で経常黒字が大きい日本・西独に内需拡大で世界経済を牽引する「機関車」役が要請された（機関車論）。米株は軟調（DJIA年間約-17.3%）。なお1977年はパソコンの「1977 Trinity」（Apple II・Commodore PET・TRS-80）やAtari VCS登場で個人向けPC・家庭用ゲーム産業が興隆した転換点でもある。',
+    japan:
+      '福田赳夫内閣の下、円高（ドル安）が進行し年初の約290円前後から年末にかけ240円前後へ円高が進んだ（翌1978年初に1ドル=200円突破）。円高で輸出採算が悪化する「円高不況（第2次円高不況）」局面となり、日銀は公定歩合を数次引き下げて金融緩和、福田内閣は機関車論を受けて内需拡大（1978年度予算で公共事業費を大幅増）へ舵を切った。',
+    keyEvents: [
+      'カーター米大統領就任（1月）／ロンドン・サミットで機関車論（5月）',
+      '円高進行（年末にかけ1ドル=240円前後へ）',
+      '日銀の公定歩合引き下げ（金融緩和）と福田内閣の内需拡大転換',
+      '世界：パソコンの「1977 Trinity」・Atari VCS登場（PC/家庭用ゲーム産業の興隆）',
+    ],
+    risingSectors: ['（日本）内需・公共事業関連（建設・土木）、輸入採算が改善する内需型業種', '（米国）パソコン・家庭用ゲーム（新興）、自動車（1977年は販売好調）'],
+    decliningSectors: ['（日本）輸出依存度の高い製造業（自動車・電機・繊維等、円高で採算悪化＝円高不況）、造船（世界的な発注激減で構造不況へ）'],
+    caveats: 'DJIA年末値831.17は確証値（12/31休場のため最終取引日は12/30、年間約-17.3%）。日経平均1977年末確定値は独立2源で確認できずnull。為替「240円前後」は年末の概略水準。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.govinfo.gov/content/pkg/ERP-2021/pdf/ERP-2021-table55.pdf', type: 'government', label: '米国 Economic Report of the President 表B-55（DJIA 1977=831.17）' },
+      { url: 'https://g7.utoronto.ca/summit/1977london/communique.html', type: 'academic', label: 'G7 Information Centre — 1977 London Summit Declaration（機関車論）' },
+      { url: 'https://www.computerhistory.org/timeline/1977/', type: 'reference', label: 'Computer History Museum — 1977（PC「Trinity」）' },
+    ],
+  },
+  {
+    year: 1978,
+    era: '昭和53年',
+    world:
+      'ドル安が世界経済の中心的テーマとなり、対円・対独マルクでドルが戦後最安値圏まで下落した。7月16–17日の西独ボン・サミットで日・独が内需拡大（機関車役）、米国がエネルギー消費抑制を約束する協調パッケージで合意した（G7政策協調の初期の代表例）。11月1日に米国が大規模なドル防衛策を発表し、年末にかけイラン情勢悪化で第二次石油危機の前夜となった（DJIA年間約-3%）。',
+    japan:
+      '円高が輸出産業を直撃し産業構造の調整圧力が強まった一方、原油・輸入原材料は割安化した。5月20日に新東京国際空港（成田）が開港し、8月12日に日中平和友好条約に調印（10月批准）した。株式市場は堅調で日経平均は1973年1月の高値を上回り回復を確認、年末は約6,001円台で引けた。',
+    keyEvents: [
+      '新東京国際空港（成田）開港（5/20）',
+      '西独ボンで第4回G7サミット（7/16–17、機関車論の協調合意）',
+      '日中平和友好条約に調印（8/12）',
+      'ドル安・円高がピーク圏へ／米ドル防衛策（11/1）／第二次石油危機の前夜',
+    ],
+    risingSectors: ['（日本）円高で輸入コストが低下した内需・素材/電力等、内需・インフラ関連（財政刺激）'],
+    decliningSectors: ['（日本）円高で採算が悪化した輸出主導の製造業（自動車・電機・鉄鋼・造船）'],
+    caveats: 'DJIA年末値805.01（年間約-3.1%）・日経平均年末値約6,001（小数部は源により6001.85等の差異あり整数採用）はいずれも独立2源で一致。為替「秋に175円台」の具体水準は独立確認できず未確定。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://g7.utoronto.ca/summit/1978bonn/communique/', type: 'academic', label: 'G7 Information Centre — 1978 Bonn Economic Declaration' },
+      { url: 'https://www.elibrary.imf.org/display/book/9781451931068/ch044.xml', type: 'academic', label: 'IMF History Vol.2 — The Dollar in 1978（ドル安・協調介入）' },
+      { url: 'https://www.jpx.co.jp/markets/statistics-equities/daily/03/1949-1980.html', type: 'government', label: 'JPX 東京証券取引所日報（株価一次データ）' },
+    ],
+  },
+  {
+    year: 1979,
+    era: '昭和54年',
+    world:
+      'イラン革命を契機とする「第二次石油危機」の年。イランの石油輸出停止に買い溜め・投機が重なり原油価格は約1年で2倍超に急騰、先進国はインフレ高進と景気後退に直面した。6月に東京で第5回先進国首脳会議（東京サミット、日本初開催）が開かれ、12月末にソ連がアフガニスタンへ軍事侵攻して米ソデタントが終焉した。',
+    japan:
+      '第一次石油危機（1973–74）の教訓から省エネルギー投資・「減量経営」を進めており、第二次石油危機の打撃は欧米と比べ相対的に軽微にとどまった（"優等生"と評された）。同年、エズラ・ヴォーゲルの『ジャパン・アズ・ナンバーワン』が刊行され日本的経営への国際的注目を象徴した。',
+    keyEvents: [
+      '第二次石油危機（イラン革命を契機に原油価格が約1年で2倍超）',
+      '第5回先進国首脳会議（東京サミット、日本初の議長国、6/28–29）',
+      'ソ連のアフガニスタン軍事侵攻（12月下旬）— 新冷戦の引き金',
+      'エズラ・ヴォーゲル『ジャパン・アズ・ナンバーワン』刊行',
+    ],
+    risingSectors: ['（日本）省エネルギー・代替エネルギー関連、自動車・精密機械など輸出製造業（低燃費車需要・国際競争力）', '石油・資源（産油国・上流の価格高騰の恩恵）'],
+    decliningSectors: ['（日本）エネルギー多消費型・素材重厚長大産業（原油コスト高で採算圧迫）、石油依存度の高い運輸・物流'],
+    caveats: 'DJIA年末値838.74・日経平均年末値6569.47（大納会12/28）はいずれも独立2源で一致した確証値。原油価格は指標（公定/スポット/銘柄）で数値差。「日本の影響が軽微」は相対評価。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/oil-shock-of-1978-79', type: 'government', label: 'Federal Reserve History — Oil Shock of 1978-79' },
+      { url: 'https://g7.utoronto.ca/summit/1979tokyo/communique.html', type: 'academic', label: 'G7 Information Centre — 1979 Tokyo Summit Declaration' },
+      { url: 'https://history.state.gov/milestones/1977-1980/soviet-invasion-afghanistan', type: 'government', label: 'U.S. Dept. of State — Soviet Invasion of Afghanistan' },
+    ],
+  },
+  {
+    year: 1980,
+    era: '昭和55年',
+    world:
+      '第二次石油危機が世界的インフレを再燃させ（米国CPIは約13%）、ボルカーFRBが超金融引き締めに転じてFF金利は1980年初に17%台へ急騰、米国は1980年1〜7月に短期景気後退に入った。スタグフレーション末期からディスインフレ局面への転換点となった。',
+    japan:
+      '第二次石油危機の影響下にあったが、第一次危機後の省エネ・減量経営・合理化により主要先進国の中で相対的に良好なパフォーマンスを示した。自動車生産が米国を抜いて世界一になり、輸出競争力の高まりを背景に対米自動車輸出摩擦が激化した（翌1981年の輸出自主規制へ）。',
+    keyEvents: [
+      '第二次石油危機による世界的インフレ再燃（米CPI約13%）',
+      'ボルカーFRBの超高金利政策（FF金利17%台）と米国の短期景気後退（1〜7月）',
+      '日本の自動車生産が米国を抜き世界一に',
+      '対米自動車輸出摩擦の激化',
+    ],
+    risingSectors: ['（日本）自動車・小型省燃費車（燃費優位で輸出急増、世界生産1位へ）、省エネ・電機/精密'],
+    decliningSectors: ['（米国）自動車産業（日本車に押され生産大幅減）、高金利・景気後退に敏感な住宅・建設、エネルギー多消費型産業'],
+    caveats: 'DJIA年末値963.99は確証値（年間+14.9%）。日経平均1980年末確定値は独立2源で確認できずnull（候補値≈7,116円は未確認）。自動車「世界一」の台数は集計範囲で幅。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/recession-of-1981-82', type: 'government', label: 'Federal Reserve History — ボルカー金融引き締め・1980年代の景気後退' },
+      { url: 'https://www.elibrary.imf.org/view/journals/022/0018/004/article-A008-en.xml', type: 'academic', label: 'IMF Finance & Development (1981) — 二度の石油危機への日本の調整' },
+      { url: 'https://www.upi.com/Archives/1980/12/23/Japan-tops-US-as-worlds-largest-automaker/2075346395600/', type: 'media', label: 'UPI Archives (1980/12/23) — 日本が米国を抜き世界最大の自動車生産国に' },
+    ],
+  },
+  {
+    year: 1981,
+    era: '昭和56年',
+    world:
+      '米国でレーガン政権が1月に発足し、レーガノミクス（大型減税・規制緩和・歳出抑制・通貨引き締め）を推進、8月に経済再生租税法（ERTA）が成立して最高限界税率を70%→50%へ引き下げた。インフレ抑制のためFRBの高金利政策が続き、ドル高と世界的な景気後退を招いた（DJIA年末875、年間約-9.2%）。',
+    japan:
+      '鈴木善幸内閣の下、3月に第二次臨時行政調査会（土光臨調）が発足し「増税なき財政再建」を掲げて行財政改革（三公社の分割民営化等を提言、後にJR・NTT・JTとして実現）を審議した。対外では5月に対米乗用車の輸出自主規制（VER）を開始した（年168万台枠）。',
+    keyEvents: [
+      'レーガン大統領就任（1月）・レーガノミクス始動',
+      '第二次臨時行政調査会（土光臨調）発足（3月）— 増税なき財政再建',
+      '対米乗用車の輸出自主規制（VER）開始（5月、年168万台枠）',
+      '経済再生租税法（ERTA）成立（8月、最高税率70%→50%）',
+    ],
+    risingSectors: ['（日本）自動車（VERにもかかわらず競争力は高く現地生産シフトの契機に）、家電・精密機械など輸出型製造業（ドル高局面で追い風）'],
+    decliningSectors: ['（米国）自動車産業（ビッグ3が深刻な不振・大量レイオフ）、金利敏感業種（住宅・建設、超高金利で低迷）'],
+    caveats: 'DJIA年末値875.00は確証値（年間約-9.2%。4/27に1,024.05の高値、9/25に824.01の安値）。日経平均1981年末確定値は独立2源で確認できずnull。業種別ランキングは一次統計未確認のため定性傾向のみ。',
+    sources: [
+      { url: 'https://www.upi.com/Archives/1982/01/02/The-1981-stock-market-confronted-with-big-mergers-unprecedented/3701378795600/', type: 'media', label: 'UPI Archives (1982/1/2) — 1981年株式市場総括（DJIA年末875）' },
+      { url: 'https://en.wikipedia.org/wiki/Economic_Recovery_Tax_Act_of_1981', type: 'reference', label: 'Wikipedia — Economic Recovery Tax Act of 1981（ERTA）' },
+      { url: 'https://ja.wikipedia.org/wiki/第二次臨時行政調査会', type: 'reference', label: 'Wikipedia — 第二次臨時行政調査会（土光臨調）' },
+    ],
+  },
 ];
 // Stryker restore all
 
@@ -887,6 +1019,12 @@ export const ASSET_SERIES: Record<number, AssetPoint> = {
   1973: { djiaYearEnd: 850.86, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1974: { djiaYearEnd: 616.24, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
   1975: { djiaYearEnd: 852.41, nikkeiYearEnd: 4342.06, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1976: { djiaYearEnd: 1004.65, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1977: { djiaYearEnd: 831.17, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1978: { djiaYearEnd: 805.01, nikkeiYearEnd: 6001, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1979: { djiaYearEnd: 838.74, nikkeiYearEnd: 6569.47, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1980: { djiaYearEnd: 963.99, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
+  1981: { djiaYearEnd: 875.0, nikkeiYearEnd: null, japanUrbanLandIndex: null, bitcoinUsdYearEnd: null },
 };
 
 export const ASSET_SERIES_NOTES =
