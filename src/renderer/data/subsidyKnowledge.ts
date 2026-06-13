@@ -1294,6 +1294,120 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://shikin.yayoi-kk.co.jp/search/y24284', type: 'media', label: '特定創業支援事業（北九州市）解説' },
     ],
   },
+  {
+    id: 'subsidy-disability-employment-grant',
+    level: 'national',
+    domain: 'employment',
+    name: '障害者雇用調整金・報奨金（障害者雇用納付金制度）',
+    authority: '厚生労働省・独立行政法人高齢・障害・求職者雇用支援機構（JEED）',
+    statement:
+      '障害者雇用納付金制度（運営: JEED）に基づき、法定雇用率を超えて障害者を雇用する事業主に対し、納付金を財源として支給される。常時雇用労働者' +
+      '100人超の事業主には法定雇用率超過分1人あたり月額の「調整金」、100人以下で一定数を超えて雇用する事業主には「報奨金」が支給される。2024年度以降は' +
+      '支給対象人数が一定数を超えると単価が引き下げられる調整が導入されており、金額・支給対象数・調整方法は制度改正で変動するため、申請時には最新の公表内容をJEEDで要確認。',
+    application:
+      '事業主が前年度（4月〜翌3月）の障害者雇用状況に基づき、JEEDへ申告書・支給申請書を提出（申告と支給申請を兼ねる）。申告申請期間は原則として翌年度の4月1日〜5月15日（常用労働者100人超）、報奨金等を申請する100人以下の事業主は4月1日〜7月31日。JEEDの電子申告申請システムによるオンライン提出が可能。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/disability/about_levy_grant_system.html', type: 'government', label: 'JEED 障害者雇用納付金制度の概要' },
+      { url: 'https://www.jeed.go.jp/location/shibu/osaka/r8_nofukin-shinkoku.html', type: 'government', label: 'JEED 令和8年度 納付金・調整金等 申告申請案内' },
+      { url: 'https://www.mhlw.go.jp/content/11704000/001462468.pdf', type: 'government', label: '厚生労働省 障害者雇用納付金制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-patent-fee-reduction',
+    level: 'national',
+    domain: 'business',
+    name: '特許料等の減免制度',
+    authority: '特許庁',
+    statement:
+      '中小企業・小規模企業・中小スタートアップ企業等を対象に、出願審査請求料及び特許料（第1年分〜第10年分）等を軽減する制度。減免割合は対象者により' +
+      '異なり、中小企業（会社）は原則2分の1、小規模企業・中小スタートアップ企業・研究開発型中小企業等は3分の1に軽減される（出願料及び第11年分以降の特許料は対象外）。' +
+      '対象・割合・件数上限等は制度改正で変動するため、最新の特許庁公式情報で要確認。',
+    application:
+      '2019年4月1日以降に審査請求した案件では原則として別途の減免申請書・証明書の提出は不要で、出願審査請求書又は特許料納付書の所定欄に減免を受ける旨を記載することで申請できる（対象者区分・要件の詳細は特許庁公式で要確認）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/process/tesuryo/genmen/genmen20190401/index.html', type: 'government', label: '特許庁 減免制度（2019年4月1日以降）' },
+      { url: 'https://www.jpo.go.jp/system/process/tesuryo/genmen/genmen_240131.html', type: 'government', label: '特許庁 審査請求料の減免制度の改正（令和6年4月）' },
+      { url: 'https://j-net21.smrj.go.jp/support/publicsupport/2020010701.html', type: 'media', label: 'J-Net21 特許料等の減免制度' },
+    ],
+  },
+  {
+    id: 'subsidy-nagano',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業賃上げ・生産性向上サポート補助金（長野県）',
+    authority: '長野県（産業労働部 労働雇用課）',
+    statement:
+      '長野県が県内中小企業の賃上げと生産性向上（設備投資促進）を支援する代表的な県独自制度の一つで、国（厚生労働省）の「業務改善助成金」に上乗せ交付する' +
+      '補助金。県内に事業場があり業務改善助成金の交付決定を受けた事業者が対象で、補助額は業務改善助成金の支給決定額に一定割合を乗じた額とされる。補助率・対象期間・' +
+      '要件は年度により変動するため、最新の募集要項及び長野県公式で要確認（長野県には他にも創業・設備投資等の支援制度がある）。',
+    application:
+      '前提として国の業務改善助成金（長野労働局）の交付申請・支給決定を受けたうえで、県の所定の宣言（社員の子育て応援宣言／パートナーシップ構築宣言等）を行い、県の募集要項に従って申請書類を長野県産業労働部へ提出する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nagano.lg.jp/rodokoyo/seisanseisupport.html', type: 'municipality', label: '長野県 中小企業賃上げ・生産性向上サポート補助金' },
+      { url: 'https://www.pref.nagano.lg.jp/rodokoyo/tinnage/uwanose.html', type: 'municipality', label: '長野県 業務改善助成金上乗せ補助' },
+      { url: 'https://www.smart-hojokin.jp/subsidies/46872', type: 'media', label: '長野県 賃上げ・生産性向上サポート補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-chiba-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '千葉市創業支援補助金',
+    authority: '千葉市（経済農政局 経済部 産業支援課）／相談・支援: 千葉市産業振興財団・千葉商工会議所等',
+    statement:
+      '千葉市創業支援補助金は、市内での創業を推進するため、市が認定した「特定創業支援等事業」（創業者向けセミナー等）を受講した創業2年以内の創業者・創業予定者に' +
+      '対し、創業に必要な経費の一部（補助対象経費の2分の1以内・補助限度額30万円）を補助する政令指定都市（市区町村レベル）の代表的な創業支援制度。補助率・限度額・対象要件・' +
+      '募集期間は年度ごとに変動するため、最新の募集要項及び千葉市公式で要確認。',
+    application:
+      '市が認定した特定創業支援等事業（創業セミナー等）の全日程受講が前提。対象は申請時点で創業2年以内かつ市内に住民票・主たる事業所を置く個人又は市内に本店を置く会社等。募集期間中に必要書類を提出し、相談は千葉市産業振興財団等の指定経営支援機関で対応。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.chiba.jp/keizainosei/keizai/sangyo/2021sougyousiennhozyokin.html', type: 'municipality', label: '千葉市 創業支援補助金' },
+      { url: 'https://www.city.chiba.jp/keizainosei/keizai/sangyo/sougyoshienkeikaku.html', type: 'municipality', label: '千葉市 特定創業支援等事業' },
+      { url: 'https://hojyokin-portal.jp/subsidies/40278', type: 'media', label: '千葉市創業支援補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-sakai',
+    level: 'municipality',
+    domain: 'business',
+    name: '堺市の創業支援（特定創業支援等事業・S-Cube）',
+    authority: '堺市（産業振興局 地域産業創造課）／連携: 堺商工会議所・さかい新事業創造センター（S-Cube）等',
+    statement:
+      '堺市は政令指定都市の市区町村レベル代表例として、産業競争力強化法に基づく「特定創業支援等事業」を実施し、所定の継続支援（窓口相談・セミナー等）を受けた' +
+      '創業者に市が証明書を発行することで、会社設立時の登録免許税の軽減や信用保証枠の拡充などの優遇が受けられる。あわせてインキュベーション施設「S-Cube」入居者向けの' +
+      '賃料補助等の支援メニューもある。金額・対象・受付期間は年度で変動するため、最新の募集要項・堺市公式で要確認。',
+    application:
+      '創業希望者・創業者が堺商工会議所／S-Cube／堺市産業振興センター等の継続的支援を受けたうえで、証明書交付申請書を堺市地域産業創造課へ提出し、内容確認後に証明書が発行される。証明書を会社設立登記や信用保証申込時に利用する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sakai.lg.jp/sangyo/shienyuushi/sogyo/tokutei.html', type: 'municipality', label: '堺市 特定創業支援等事業' },
+      { url: 'https://www.city.sakai.lg.jp/sangyo/shienyuushi/sogyo/index.html', type: 'municipality', label: '堺市 創業支援' },
+      { url: 'https://www.s-cube.biz/nakamozufounding', type: 'operator', label: 'S-Cube なかもず創業メリット（賃料補助等）' },
+    ],
+  },
+  {
+    id: 'subsidy-hamamatsu',
+    level: 'municipality',
+    domain: 'business',
+    name: '浜松市ファンドサポート事業（スタートアップ支援）',
+    authority: '浜松市（産業部 産業振興課／スタートアップ推進）',
+    statement:
+      '浜松市ファンドサポート事業は、起業後の本格的な事業離陸や急成長を目指す市内スタートアップ・ベンチャー企業に対し、浜松市の認定ベンチャーキャピタル（認定VC）や' +
+      '認定金融機関の資金調達と協調して市が交付金を交付し、ハンズオンで支援する制度（政令指定都市＝市区町村レベルの代表例）。交付区分（シード・R&D枠／一般枠／デット枠等）・' +
+      '交付額・募集期間は年度ごとに変動するため、最新の募集要項・浜松市公式で要確認。',
+    application:
+      'まず浜松市が認定VC・認定金融機関を公募・認定し、申請企業はその認定VC等から投資（又は融資）を受けることが前提。認定VC等の投資・融資と協調する形で、市内に本社又は主たる事業所を持つ企業が交付金交付を申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/hamact/support/fund-support.html', type: 'municipality', label: '浜松市 ファンドサポート事業' },
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/sangyoshinko/2016122601.html', type: 'municipality', label: '浜松市 創業支援事業費補助金（賃料補助）' },
+      { url: 'https://expact.jp/hamamatsu_fund_support/', type: 'media', label: '浜松市ファンドサポート事業 解説' },
+    ],
+  },
 ];
 
 // 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
