@@ -64,6 +64,8 @@ import { fetchFreeeSnapshot } from './freee';
 import { fetchConnectorsSnapshot } from './connectors';
 import { fetchLinuxSnapshot } from './linux';
 import { fetchComplianceSnapshot } from './compliance';
+import { fetchObsidianSnapshot } from './obsidian';
+import { fetchDockerSnapshot } from './docker';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -137,6 +139,8 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   connectors: fetchConnectorsSnapshot,
   linux: fetchLinuxSnapshot,
   compliance: fetchComplianceSnapshot,
+  obsidian: fetchObsidianSnapshot,
+  docker: fetchDockerSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -221,6 +225,10 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'linux',
   // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
   'compliance',
+  // Obsidian: ローカル Vault (Markdown) の可視化。実 Vault は fs で読む。認証不要。
+  'obsidian',
+  // Docker: ローカル Docker Engine の可視化。実 Engine は socket で読む。認証不要。
+  'docker',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more

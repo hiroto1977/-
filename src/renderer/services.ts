@@ -62,6 +62,8 @@ import { FreeePage } from './pages/FreeePage';
 import { ConnectorsPage } from './pages/ConnectorsPage';
 import { LinuxPage } from './pages/LinuxPage';
 import { CompliancePage } from './pages/CompliancePage';
+import { ObsidianPage } from './pages/ObsidianPage';
+import { DockerPage } from './pages/DockerPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -602,6 +604,22 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'CP',
     description: '法務/税務/労務の確証済み制度知識を分野別に表示 (一次情報で裏取り・出典リンク付き)',
     page: CompliancePage,
+    category: 'tools',
+  },
+  {
+    id: 'obsidian',
+    label: 'Obsidian',
+    icon: 'OB',
+    description: 'ローカル知識ベース (Vault) を GitHub 連携・暗号化し業務効率化を仕組み化',
+    page: ObsidianPage,
+    category: 'tools',
+  },
+  {
+    id: 'docker',
+    label: 'Docker',
+    icon: 'DK',
+    description: 'コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化',
+    page: DockerPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
