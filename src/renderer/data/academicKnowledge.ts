@@ -7822,5 +7822,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.soumu.go.jp/main_sosiki/kenkyu/network_churitsu/02kiban04_04000246.html', type: 'government', label: '日本・総務省「ネットワーク中立性に関する研究会」公式ページ' },
     ],
   },
+  {
+    id: 'econ-minsky-financial-instability',
+    discipline: 'economics',
+    title: '金融不安定性仮説（ミンスキー）',
+    statement:
+      '経済学者ハイマン・ミンスキーが提唱した、資本主義経済の金融システムは好況の持続そのものによって内生的に不安定化し、やがて金融危機を招くとする理論。中心命題は「安定が不安定を生む」。好況が続くとリスク認識が緩み、借入と投機が膨張して債務が積み上がる。ミンスキーは資金調達構造を、営業キャッシュフローで元利を返済できるヘッジ金融、利息は払えるが元本返済を借換に依存する投機的金融、' +
+      '利息さえキャッシュフローで賄えず資産価格上昇と追加借入に依存するポンツィ金融の三類型に分けた。好況下で経済全体がヘッジから投機的・ポンツィへ移行して脆弱化し、資産価格の下落を契機に投げ売り・債務デフレ・信用収縮の連鎖が起きるとする。この転換点は「ミンスキー・モーメント」（1998年にポール・マカリーが命名）と呼ばれ、2008年の世界金融危機で同仮説は広く再評価された。',
+    keyFigures:
+      'ハイマン・ミンスキー（Hyman P. Minsky, 1919-1996, 提唱者）／ポール・マカリー（Paul McCulley, 「ミンスキー・モーメント」を1998年に命名）／三類型＝ヘッジ金融・投機的金融・ポンツィ金融',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.levyinstitute.org/pubs/wp74.pdf', type: 'academic', label: 'Hyman P. Minsky, “The Financial Instability Hypothesis,” Levy Economics Institute Working Paper No. 74 (1992) — 著者本人による一次資料' },
+      { url: 'https://en.wikipedia.org/wiki/Minsky_moment', type: 'reference', label: 'Wikipedia: Minsky moment（マカリーによる1998年の命名・2008年危機での再評価）' },
+      { url: 'https://en.wikipedia.org/wiki/Hyman_Minsky', type: 'reference', label: 'Wikipedia: Hyman Minsky（金融不安定性仮説・3類型の概観）' },
+    ],
+  },
+  {
+    id: 'mgmt-experience-economy',
+    discipline: 'management',
+    title: '経験経済（パイン＆ギルモア）',
+    statement:
+      '経験経済とは、経済価値の中心がコモディティ（農業経済）→製品（産業経済）→サービス（サービス経済）へと進化してきた延長線上に、第4の差別化された経済価値として「経験（experience）」が登場したとする考え方である。' +
+      'B・ジョセフ・パインⅡとジェームズ・H・ギルモアが1998年のHBR論文「Welcome to the Experience Economy」および1999年の著書で提唱した。企業はサービスを「舞台」、製品を「小道具」として用い、顧客に思い出に残る個人的な経験を演出することで高い価値を生む。経験は顧客の参加度（能動的⇔受動的）と環境との関係（没入⇔吸収）の2軸で4領域（エンターテインメント／エデュケーション／エスケープ／エステティック）に分類される。後に彼らは経験を超え顧客自身を変える「変革（transformation）」を第5の価値とした。',
+    keyFigures:
+      'B・ジョセフ・パインⅡ（B. Joseph Pine II）／ジェームズ・H・ギルモア（James H. Gilmore）（1998 HBR・1999『The Experience Economy』）／4領域＝娯楽・教育・脱日常・審美／第5の価値＝変革',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1998/07/welcome-to-the-experience-economy', type: 'academic', label: 'Pine & Gilmore, “Welcome to the Experience Economy,” Harvard Business Review, July–August 1998（提唱原典）' },
+      { url: 'https://www.researchgate.net/publication/233101787_Pine_and_Gilmore%27s_Concept_of_Experience_Economy_and_Its_Dimensions_An_Empirical_Examination_in_Tourism', type: 'academic', label: "Oh, Fiore & Jeong, “Pine and Gilmore's Concept of Experience Economy and Its Dimensions”（査読論文・4領域と2軸の実証）" },
+      { url: 'https://en.wikipedia.org/wiki/B._Joseph_Pine_II', type: 'reference', label: 'Wikipedia: B. Joseph Pine II（提唱者・著書1999）' },
+    ],
+  },
+  {
+    id: 'human-self-monitoring',
+    discipline: 'human-science',
+    title: 'セルフ・モニタリング（スナイダー）',
+    statement:
+      'セルフ・モニタリングとは、社会的状況や他者の反応といった手がかりに応じて、自分の自己呈示・表情・態度・行動をどの程度モニターし調整するかという、パーソナリティ特性（個人差変数）である。' +
+      '社会心理学者マーク・スナイダーが1974年の論文「Self-monitoring of expressive behavior」（Journal of Personality and Social Psychology誌）で概念化し、25項目の真偽（True/False）形式の自己監視尺度（Self-Monitoring Scale）を開発した。高セルフ・モニターは状況や相手の期待に敏感で、社会的に適切に見えるよう振る舞いを柔軟に変える「社会的カメレオン」型で印象管理に長ける。一方、低セルフ・モニターは状況より自分の内的態度・価値観に従い、一貫した自己像を呈示する。対人関係・リーダーシップ・広告反応・職場行動との関連が研究され、尺度の因子構造（演技・外向性・他者志向の3因子など）をめぐる議論もある。',
+    keyFigures:
+      'マーク・スナイダー（Mark Snyder、1974 JPSP 30(4):526-537）／尺度批判・改訂＝Briggs・Cheek・Buss／Lennox・Wolfe／高低セルフ・モニターの個人差',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://experts.umn.edu/en/publications/self-monitoring-of-expressive-behavior/', type: 'academic', label: 'University of Minnesota (Experts@Minnesota) — Snyder, M. (1974). Self-monitoring of expressive behavior, J. Personality and Social Psychology, 30(4), 526-537' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/self-monitoring', type: 'reference', label: 'Encyclopedia.com — Self-Monitoring（概念・スナイダー起源・高低自己監視者）' },
+      { url: 'https://en.wikipedia.org/wiki/Self-monitoring', type: 'reference', label: 'Wikipedia — Self-monitoring（尺度・因子構造・改訂版の議論）' },
+    ],
+  },
+  {
+    id: 'human-self-handicapping',
+    discipline: 'human-science',
+    title: 'セルフ・ハンディキャッピング',
+    statement:
+      'セルフ・ハンディキャッピングとは、試験や競技など重要な遂行に先立って、自らの成功を妨げかねない障害（ハンディキャップ）をあえて作り出したり言葉で主張したりする、自己防衛的な方略である。失敗時にはその障害に原因を帰属させて能力不足という内的帰属を回避し（自尊心を守る）、成功時には障害を乗り越えたとして評価が高まる。' +
+      'このように失敗の外在化と成功の内在化という二重の利得を狙う点が核心で、社会心理学者エドワード・ジョーンズとスティーブン・バーグラスが1978年の論文で概念化・命名した。実際に成功を妨げる行動をとる「行動的（練習回避・飲酒等）」と、体調不良・不安・睡眠不足等を口頭で訴える「主張的（自己報告的）」に大別され、原因帰属理論や自己呈示と密接に関連し、性差も論じられる。',
+    keyFigures:
+      'エドワード・E・ジョーンズ（Edward E. Jones）／スティーブン・バーグラス（Steven Berglas）（Berglas & Jones 1978, JPSP 36(4):405-417）／行動的・主張的（自己報告的）の2類型',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/650387/', type: 'academic', label: 'Berglas, S., & Jones, E. E. (1978). Drug choice as a self-handicapping strategy in response to noncontingent success. Journal of Personality and Social Psychology, 36(4), 405–417 (PubMed, PMID 650387)' },
+      { url: 'https://dictionary.apa.org/self-handicapping', type: 'reference', label: 'APA Dictionary of Psychology — “self-handicapping”（米国心理学会）' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/self/self-handicapping/', type: 'reference', label: 'iResearchNet, Social Psychology — “Self-Handicapping”（行動的／主張的の区分・性差）' },
+    ],
+  },
+  {
+    id: 'bizlaw-design-right',
+    discipline: 'business-law',
+    title: '意匠権（意匠法）',
+    statement:
+      '意匠権は、物品・建築物・画像のデザイン（意匠）を保護する知的財産権で、意匠法に基づき特許庁への出願・登録によって発生する。意匠法上の「意匠」とは、物品（物品の部分を含む）の形状・模様・色彩若しくはこれらの結合、建築物（同）の形状等又は画像であって、視覚を通じて美感を起こさせるものをいう（意匠法2条1項）。登録要件は(1)工業上利用可能性、(2)新規性、(3)創作非容易性である。' +
+      '意匠権者は、登録意匠及びこれに類似する意匠を業として独占的に実施する権利を専有し、無断実施に対しては差止請求・損害賠償請求ができる。存続期間は2019年改正（令和元年改正、2020年4月施行）により出願日から25年に延長された（改正前は設定登録日から20年）。同改正で建築物の意匠・内装の意匠・画像デザインも保護対象に追加された。保護対象を異にする特許（発明）・実用新案（考案）・商標（出所識別）とは別個の権利である。',
+    keyFigures:
+      '根拠法＝意匠法（昭和34年法律第125号、e-Gov law id 334AC0000000125）／所管＝特許庁／意匠の定義＝物品・建築物の形状等又は画像で視覚を通じ美感を起こさせるもの（2条1項）／登録3要件＝工業上利用可能性・新規性・創作非容易性／存続期間＝出願日から25年（2020年4月施行の令和元年改正、改正前は登録日から20年）／2019年改正で建築物・内装・画像を保護対象に追加',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000125', type: 'government', label: 'e-Gov法令検索 意匠法（昭和34年法律第125号）' },
+      { url: 'https://www.jpo.go.jp/system/design/gaiyo/seidogaiyo/isyou_kaisei_2019.html', type: 'government', label: '特許庁 令和元年意匠法改正特設サイト（保護対象拡充・存続期間延長）' },
+      { url: 'https://www.jpo.go.jp/system/laws/rule/kaisetu/2019/document/2019-03kaisetsu/2019-03kaisetsu-02-01.pdf', type: 'government', label: '特許庁 産業財産権法（令和元年改正）解説書 第1章 意匠の定義の見直し' },
+    ],
+  },
+  {
+    id: 'infosoc-data-colonialism',
+    discipline: 'information-sociology',
+    title: 'データ植民地主義',
+    statement:
+      'データ植民地主義（data colonialism）とは、人々の日常の経験・行動・社会関係といった「生（life）」そのものを、データ化（datafication）を通じて新たな収奪・領有（appropriation）の対象とし、資本主義のための価値抽出にあてる現代の大規模データ収集・利用のあり方を、歴史的な植民地主義になぞらえて批判的に分析する概念・枠組みである。' +
+      'メディア研究者のニック・クルドリー（LSE）とウリセス・A・メヒアスが2019年の著書『The Costs of Connection』および同年の論文（Television & New Media 誌）で提唱した。歴史的植民地主義が土地・資源・労働を収奪したのに対し、本概念は「データ関係（data relations）」を介して人間生活そのものを収奪対象とする点を強調する。ショシャナ・ズボフの監視資本主義と問題意識を共有しつつ、(1)資本主義の一段階ではなく長期の歴史的暴力の連続として捉える、(2)北の巨大プラットフォームによる南の人々のデータ収奪というグローバルな権力の非対称性を強調する点に特徴があり、デジタル時代の社会的正義・脱植民地化の議論につながる。',
+    keyFigures:
+      'ニック・クルドリー（Nick Couldry, LSE）／ウリセス・A・メヒアス（Ulises A. Mejias）（2019『The Costs of Connection』・Television & New Media 20(4):336-349）／対比＝ズボフの監視資本主義',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias, “Data Colonialism: Rethinking Big Data’s Relation to the Contemporary Subject”, Television & New Media 20(4): 336–349 (2019)' },
+      { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'academic', label: 'Couldry & Mejias, The Costs of Connection (Stanford University Press, 2019) — 出版社書誌ページ' },
+      { url: 'https://eprints.lse.ac.uk/89511/1/Couldry_Data-colonialism_Accepted.pdf', type: 'academic', label: 'LSE Research Online — 同論文の著者最終稿（グローバル・サウス／ズボフとの区別を含む）' },
+      { url: 'https://en.wikipedia.org/wiki/Data_colonialism', type: 'reference', label: 'Wikipedia: Data colonialism（概観リファレンス）' },
+    ],
+  },
 ];
 // Stryker restore all
