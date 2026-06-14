@@ -5424,5 +5424,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Mireille_Hildebrandt', type: 'reference', label: 'Mireille Hildebrandt — profiling, automated decision-making and the rule of law' },
     ],
   },
+  {
+    id: 'econ-mechanism-design',
+    discipline: 'economics',
+    title: 'メカニズムデザイン',
+    statement:
+      '各参加者が自分だけが知る私的情報を持ち戦略的に行動する状況で、効率的な資源配分・公共財供給・取引・投票など望ましい社会的結果を実現するように、ゲームのルール（メカニズム＝配分と支払いの規則）そのものを目的から逆算して設計するゲーム理論の一分野。通常のゲーム理論が所与のルールでの均衡を分析するのに対し、結果を先に定めてルールを設計するため「逆向きのゲーム理論（reverse game theory）」とも呼ばれる。' +
+      '鍵となるのは、参加者が真の選好を正直に申告することが最適となる「誘因両立性（incentive compatibility）」と、参加が棄権より得になる「個人合理性」を満たすルールの探索である。「表明原理（revelation principle）」により、任意のメカニズムは正直申告を最適とする直接メカニズムで再現でき、設計対象を絞り込める。オークション設計・規制・公共財供給・マッチング市場などに広く応用される。',
+    keyFigures: 'レオニード・ハーヴィッツ（Leonid Hurwicz、1960年代に分野を創始し誘因両立性の概念を導入）／エリック・マスキン（Eric Maskin、遂行理論／implementation theory）／ロジャー・マイヤーソン（Roger Myerson、表明原理・最適オークション理論）／3名は2007年ノーベル経済学賞を共同受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2007/9276-mechanism-design-theory/', type: 'government', label: 'NobelPrize.org — Mechanism Design Theory（2007年経済学賞 公式解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Mechanism_design', type: 'reference', label: 'Wikipedia — Mechanism design（逆向きのゲーム理論・誘因両立性・表明原理）' },
+      { url: 'https://cepr.org/voxeu/columns/nobel-prize-what-mechanism-design-and-why-does-it-matter-policy-making', type: 'academic', label: 'CEPR / VoxEU — What is mechanism design and why does it matter for policy-making?' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'government', label: 'ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）' },
+    ],
+  },
+  {
+    id: 'econ-okuns-law',
+    discipline: 'economics',
+    title: 'オーカンの法則',
+    statement:
+      '失業率と実質GDP（産出）の間に観察される負の経験的関係を表すマクロ経済学の経験則。代表的な「ギャップ版」では、失業率が自然失業率（完全雇用水準）から1パーセントポイント上昇すると、実質GDPは潜在GDPを約2〜3％（米国では概ね2％程度）下回るとされる。「差分版」は失業率の変化と実質GDP成長率の変化を対応づける。1947〜1960年の米国四半期データに基づきアーサー・オーカンが1962年に提示した。' +
+      'これは厳密な構造的・物理的法則ではなく統計的な経験則・近似であり、オーカン係数は国・時代・景気局面によって異なり安定的ではないという限界がある。また潜在GDPや自然失業率は観測不能で推定値に依存し、失業率だけでは労働参加率や労働時間など労働市場の緩みを十分に捉えられない点も指摘される。景気循環と労働市場の関係分析やGDPギャップの推定に用いられる。',
+    keyFigures: '提唱者: アーサー・M・オーカン（Arthur M. Okun、米国の経済学者、ケネディ政権の経済諮問委員会CEA）／初出: 1962年（米国1947〜1960年の四半期データに基づく研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Okuns-Law', type: 'reference', label: 'Encyclopædia Britannica — “Okun’s Law”' },
+      { url: 'https://en.wikipedia.org/wiki/Okun%27s_law', type: 'reference', label: 'Wikipedia — “Okun’s law”（ギャップ版/差分版・係数2〜3の解説）' },
+      { url: 'https://www.clevelandfed.org/publications/economic-commentary/2012/ec-201208-an-unstable-okuns-law-not-the-best-rule-of-thumb', type: 'government', label: 'Federal Reserve Bank of Cleveland — “An Unstable Okun’s Law”（係数の不安定性）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w18668/w18668.pdf', type: 'academic', label: 'Laurence M. Ball et al., “Okun’s Law: Fit at Fifty?” NBER Working Paper No. 18668' },
+    ],
+  },
+  {
+    id: 'mgmt-sensemaking',
+    discipline: 'management',
+    title: 'センスメイキング',
+    statement:
+      '人々（とくに組織のメンバー）が、曖昧で不確実な状況に直面したときに、起こっていることへ意味を与え、納得のいく解釈や物語を作り上げ、それに基づいて行動していく継続的な過程。カール・ワイクが体系化し、(1)アイデンティティの構築に根ざす、(2)回顧的（事後的に意味づける）、(3)有意味な環境を自ら作り出す（イナクトメント）、(4)社会的、(5)継続的、(6)抽出された手がかりに焦点化する、(7)正確さより尤もらしさ（plausibility）を重視する、という7つの特性を挙げた。' +
+      'マン・ガルチ火災やテネリフェ空港事故など、危機下でセンスメイキングが崩壊する過程の分析でも知られる。限定合理性や組織学習とは区別される独立した概念である。',
+    keyFigures: 'カール・E・ワイク（Karl E. Weick）が体系化／初出：著書『Sensemaking in Organizations』（Sage, 1995年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Karl_Weick', type: 'reference', label: 'Karl E. Weick — Wikipedia（提唱者・7特性・1995年著書）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-031-25984-5_539', type: 'reference', label: 'Sense Making, Organizational — Springer Nature リファレンス' },
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2005.15993111', type: 'academic', label: 'The Social Processes of Organizational Sensemaking — Academy of Management Journal（査読論文）' },
+    ],
+  },
+  {
+    id: 'human-locus-of-control',
+    discipline: 'human-science',
+    title: '統制の所在（ローカス・オブ・コントロール）',
+    statement:
+      '人が、自分の身に起こる出来事や行動の結果（報酬・罰）の原因を、どこに帰属させるかという、一般化された統制期待を表すパーソナリティ特性。結果を自分の能力・努力・行動など内的な要因に帰し、自らコントロールできると考える傾向を「内的統制（internal locus of control）」、運・運命・偶然・他者・状況など自分の外にある要因に帰すると考える傾向を「外的統制（external locus of control）」と呼ぶ。' +
+      'ジュリアン・B・ロッター（Julian B. Rotter）が社会的学習理論の枠組みで概念化し、1966年に測定尺度（I-E尺度）を発表した。内的統制傾向は学業成績・職業的達成・健康行動・ストレス対処などとの関連が報告されている。帰属理論や自己効力感とは区別される、状況横断的に一般化された統制期待というパーソナリティ次元である。',
+    keyFigures: 'ジュリアン・B・ロッター（Julian B. Rotter）／社会的学習理論の枠組みで概念化／初出: Rotter, J. B. (1966)「Generalized expectancies for internal versus external control of reinforcement」, Psychological Monographs, 80(1), 1-28（I-E尺度を発表）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/rotters-internal-external-locus-control-scale', type: 'reference', label: 'Encyclopedia.com（International Encyclopedia of the Social Sciences）: Rotter’s Internal-External Locus of Control Scale' },
+      { url: 'https://psych.fullerton.edu/jmearns/rotter.htm', type: 'academic', label: 'California State University, Fullerton（J. Mearns）: The Social Learning Theory of Julian B. Rotter' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1007/978-3-319-24612-3_41', type: 'reference', label: 'Springer, Encyclopedia of Personality and Individual Differences: Locus of Control' },
+      { url: 'https://en.wikipedia.org/wiki/Locus_of_control', type: 'reference', label: 'Wikipedia: Locus of control（一次文献 Rotter 1966 の書誌情報を含む）' },
+    ],
+  },
+  {
+    id: 'bizlaw-administrative-guidance',
+    discipline: 'business-law',
+    title: '行政指導（行政手続法）',
+    statement:
+      '行政指導とは、行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導・勧告・助言その他の行為であって、処分に該当しないものをいう（行政手続法2条6号）。法的拘束力を持たず、相手方の任意の協力によってのみ実現される点に本質的特徴がある（32条1項）。' +
+      '行政手続法は、相手方が指導に従わなかったことを理由とする不利益な取扱いの禁止（32条2項）、申請に関連する行政指導での権利行使妨害の禁止（33条）、許認可等の権限に関連する行政指導での留意事項（34条）、趣旨・内容・責任者の明示と書面交付などの方式（35条）を定める。許認可行政を補完する、日本の行政運営に特徴的な非権力的手法である。取消訴訟・国家賠償等とは別概念。',
+    keyFigures: '根拠法＝行政手続法（平成5年法律第88号、e-Gov法令ID 405AC0000000088）／定義＝2条6号（処分に該当しない指導・勧告・助言）／一般原則＝32条1項（所掌事務の範囲内・任意の協力のみで実現）／不利益取扱いの禁止＝32条2項／申請関連の権利行使妨害の禁止＝33条／許認可等の権限に関連する行政指導の留意事項＝34条／方式（趣旨・内容・責任者の明示）＝35条／法的拘束力なし・任意性が核心',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/tetsuzukihou/gaiyou.html', type: 'government', label: '総務省 行政手続法の概要（所管官庁による制度解説）' },
+      { url: 'https://laws.e-gov.go.jp/law/405AC0000000088', type: 'government', label: 'e-Gov法令検索 行政手続法（平成5年法律第88号、法令ID 405AC0000000088）' },
+      { url: 'https://ja.wikipedia.org/wiki/行政手続法', type: 'reference', label: 'Wikipedia「行政手続法」（条文構成・2014年改正の概観）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-theory',
+    discipline: 'information-sociology',
+    title: '情報理論（シャノン）',
+    statement:
+      '情報の量を数学的に定義し、通信における情報の伝送・圧縮・誤り訂正の限界を論じる基礎理論。情報量はメッセージの不確実性の減少として捉えられ、確率に基づく「情報エントロピー（Shannon entropy）」で測られる。単位はビット（bit）。主要な成果として、(1)情報源符号化定理（無損失データ圧縮の限界は情報源のエントロピーで決まる）、(2)通信路符号化定理（雑音のある通信路でも、通信路容量 capacity 以下の伝送速度なら誤り確率をいくらでも小さくして伝送できる）がある。' +
+      '情報源・送信機・通信路・受信機・雑音から成る通信モデルを提示した。意味内容ではなく確率的な情報量を扱う点が特徴で、現代のデジタル通信・データ圧縮・暗号・機械学習の基礎をなす。',
+    keyFigures: 'クロード・シャノン（Claude E. Shannon）が提唱／初出は1948年の論文「A Mathematical Theory of Communication」（Bell System Technical Journal, vol.27, pp.379-423・623-656）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/j.1538-7305.1948.tb01338.x', type: 'academic', label: 'C. E. Shannon, “A Mathematical Theory of Communication,” Bell System Technical Journal, 27 (1948)（Wiley Online Library・原典）' },
+      { url: 'https://www.britannica.com/science/information-theory', type: 'reference', label: 'Encyclopædia Britannica — Information theory（定義・歴史・通信モデル）' },
+      { url: 'https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem', type: 'reference', label: 'Wikipedia — Shannon’s source coding theorem（情報源符号化定理：圧縮限界=エントロピー）' },
+      { url: 'https://www.britannica.com/biography/Claude-Shannon', type: 'reference', label: 'Encyclopædia Britannica — Claude Shannon（提唱者・情報理論の創始）' },
+    ],
+  },
 ];
 // Stryker restore all
