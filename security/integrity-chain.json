@@ -1,0 +1,48 @@
+{
+  "algorithm": "sha256",
+  "genesisHash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9",
+  "protected": [
+    ".github/workflows/ci.yml",
+    "docs/SECURITY_CHAIN.md",
+    "scripts/integrity-chain.cjs",
+    "scripts/security-audit.sh",
+    "scripts/setup-linux.sh",
+    "scripts/setup-obsidian-docker.sh",
+    "src/main/oauth.ts",
+    "src/main/secrets.ts",
+    "src/preload/preload.ts",
+    "src/renderer/security/LockScreen.tsx",
+    "src/renderer/security/autoLock.ts",
+    "src/renderer/security/dataCrypto.ts",
+    "src/renderer/security/mnemonic.ts",
+    "src/renderer/security/vault.ts",
+    "src/renderer/security/webauthn.ts"
+  ],
+  "blocks": [
+    {
+      "index": 0,
+      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "merkleRoot": "6c2cc5354cb080c4cf5d39bdb2236c9bdc65e952014143d038515f001c2d4e31",
+      "leafCount": 15,
+      "note": "genesis",
+      "hash": "773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9"
+    }
+  ],
+  "tipManifest": {
+    ".github/workflows/ci.yml": "48bcffdebc7e1917c8e0960e7e9c7e9692b043a51c784c3a2348590f6f4a0ea6",
+    "docs/SECURITY_CHAIN.md": "df4126864c8e17b6464fd4fc16715885ba415cc199c6ee88b9055563ce7d1012",
+    "scripts/integrity-chain.cjs": "4bf5dcba4528d6607f348a6aed6c03d506c126fef7a26eced145bf7928911ada",
+    "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
+    "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
+    "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
+    "src/main/oauth.ts": "a1dfc4a65dbe993c42385a401e911ed685e4d1a4550b4bec17e1a5179489beba",
+    "src/main/secrets.ts": "058491d3b22b2db5a65b46271a8b67abc6fa74a3c59648f646804930e94dff65",
+    "src/preload/preload.ts": "e6c255ca2fad685a4c6e7a50500e34e281708a3f482b250fe2ac9996c3a0c7ce",
+    "src/renderer/security/LockScreen.tsx": "a1bff757fe798e4f6102aa41bc5da30a7014f79750b813d5bae58270a386e827",
+    "src/renderer/security/autoLock.ts": "e1cd5a4fc282d6f32d14e1ae99b5cb0701f5600dbd4dfd8366419938282fbed0",
+    "src/renderer/security/dataCrypto.ts": "d70dc8c317bd046d7a1dc67bfed2423c384a14ac598e9d74b39dad8a16d473c4",
+    "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
+    "src/renderer/security/vault.ts": "66e19d3035754915354cd32a790ef8cbf9206ca3ea041d08f31e992b6e7291bf",
+    "src/renderer/security/webauthn.ts": "1c9b4021790ec730fb879d039bdca309793eb55b8535733320021e4b3d810b62"
+  }
+}
