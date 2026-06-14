@@ -8008,5 +8008,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/journals/international-legal-materials/article/regulation-20241689-of-the-eur-parl-council-of-june-13-2024-eu-artificial-intelligence-act/64F1F6734F8C66CA3EEA149C9759194E', type: 'academic', label: 'Cambridge Core / International Legal Materials「Regulation 2024/1689 of June 13, 2024」' },
     ],
   },
+  {
+    id: 'econ-ultimatum-game',
+    discipline: 'economics',
+    title: '最後通牒ゲーム',
+    statement:
+      '2人で固定額（例: 1000円）の分配を決める一回限りの実験ゲーム。「提案者」が分け方を提示し、「応答者」は受諾（提案どおり分配）か拒否（両者ゼロ）を選ぶ。利己的合理性を前提とする標準理論（サブゲーム完全均衡）では、応答者はわずかでも得る方が得なので最小額でも受諾し、提案者はほぼ全額を取る最小提示をするはずである。' +
+      'しかしGüth・Schmittberger・Schwarze(1982)の実験以来、提案者は平均で4〜5割の比較的公平な分配を提案し、応答者は約2〜3割未満の不公平な低額提案を自らの利得を犠牲にして拒否することが繰り返し観察された。これは公平性・互恵性への選好（社会的選好）と不公平への利他的懲罰を示し、標準的経済学への重要な反証となった。応答者が拒否できない独裁者ゲームとの対比で動機が検討される。',
+    keyFigures:
+      'ヴェルナー・ギュート（Werner Güth、1982年に共著で最初の実験を実施）／Rolf Schmittberger・Bernd Schwarze／関連研究: Ernst Fehr・Colin Camerer・Joseph Henrich ら（社会的選好・文化差）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/jeborg/v3y1982i4p367-388.html', type: 'academic', label: 'Güth, Schmittberger & Schwarze (1982) “An Experimental Analysis of Ultimatum Bargaining”, J. of Economic Behavior & Organization 3(4):367-388 (IDEAS/RePEc 原典書誌)' },
+      { url: 'https://en.wikipedia.org/wiki/Ultimatum_game', type: 'reference', label: 'Wikipedia: Ultimatum game（ゲーム定義・SPNE予測・経験的乖離の概説）' },
+      { url: 'https://www.sciencedirect.com/topics/neuroscience/ultimatum-game', type: 'academic', label: 'ScienceDirect Topics: Ultimatum Game（提案・拒否率と公平性解釈の学術概説）' },
+      { url: 'https://econweb.ucsd.edu/~jandreon/Publications/ExEc%202006.pdf', type: 'academic', label: 'UC San Diego (Andreoni et al.): subgame perfection と公平性を分離する実験' },
+    ],
+  },
+  {
+    id: 'mgmt-theory-of-constraints',
+    discipline: 'management',
+    title: '制約理論（TOC）',
+    statement:
+      'システム全体の成果は、ごく少数の「制約（ボトルネック）」によって決定されるとし、その制約に集中して管理・改善することで全体最適を図るマネジメント手法。物理学者で経営コンサルタントのエリヤフ・ゴールドラットが1984年の小説『ザ・ゴール』で提示・普及させた。鎖が最も弱い環で決まるように、システムのスループット（販売を通じて金を生み出す速度）は制約工程に律速される。' +
+      '中心は「集中の5ステップ」：(1)制約を特定し、(2)徹底活用し、(3)他のすべてを制約に従属させ、(4)制約能力を高め、(5)解消後は惰性に陥らず次の制約へ戻り繰り返す。会計面では伝統的原価計算に代えスループット・在庫・業務費用を重視するスループット会計を用い、生産では「ドラム・バッファ・ロープ」、プロジェクトでは「クリティカルチェーン」を含む。',
+    keyFigures:
+      'エリヤフ・ゴールドラット（Eliyahu M. Goldratt, 1947–2011, 物理学者・経営コンサルタント）／『ザ・ゴール（The Goal）』(1984)／集中の5ステップ・スループット会計・ドラムバッファロープ・クリティカルチェーン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Theory_of_constraints', type: 'reference', label: 'Wikipedia: Theory of constraints（五ステップ・スループット会計・DBR）' },
+      { url: 'https://en.wikipedia.org/wiki/Eliyahu_M._Goldratt', type: 'reference', label: 'Wikipedia: Eliyahu M. Goldratt（提唱者・略歴・TOC派生手法）' },
+      { url: 'https://www.leanproduction.com/theory-of-constraints/', type: 'media', label: 'LeanProduction: Theory of Constraints（5 Focusing Steps / POOGI 解説）' },
+      { url: 'https://www.tocinstitute.org/five-focusing-steps.html', type: 'reference', label: 'Theory of Constraints Institute: Five Focusing Steps' },
+    ],
+  },
+  {
+    id: 'human-moral-foundations',
+    discipline: 'human-science',
+    title: '道徳基盤理論（ハイト）',
+    statement:
+      '道徳基盤理論（MFT）は、人間の道徳的判断が複数の生得的・進化的な直観の基盤に支えられるとする道徳心理学の理論で、ジョナサン・ハイト、ジェシー・グレアム、クレイグ・ジョセフらが提唱した。道徳はまず速い情動的直観によって駆動され、推論は多くの場合その後づけの正当化だとする（社会的直観モデル）。' +
+      '当初の主要5基盤は、ケア／危害、公正／欺瞞、忠誠／背信、権威／転覆、神聖／堕落であり、のちに自由／抑圧が加えられた。政治的リベラルは主にケアと公正を重視するのに対し、保守は5〜6基盤をより均等に重視する傾向があり、これが政治的・道徳的対立を説明する。測定には道徳基盤質問紙（MFQ）が用いられる。',
+    keyFigures:
+      'ジョナサン・ハイト（Jonathan Haidt）／ジェシー・グレアム（Jesse Graham）／クレイグ・ジョセフ（Craig Joseph）／5＋1基盤（ケア・公正・忠誠・権威・神聖＋自由）／測定＝道徳基盤質問紙（MFQ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://moralfoundations.org/', type: 'academic', label: 'MoralFoundations.org — 理論提唱者らによる公式解説サイト（5＋1基盤・MFQ）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/21244182/', type: 'academic', label: 'Graham et al. (2011) “Mapping the Moral Domain”, J. Personality and Social Psychology 101:366-385（査読論文・MFQ・リベラル/保守の差）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11699120/', type: 'academic', label: 'Haidt (2001) “The emotional dog and its rational tail”, Psychological Review（社会的直観モデルの基礎論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Moral_foundations_theory', type: 'reference', label: 'Wikipedia「Moral foundations theory」（百科事典級の概観・6基盤）' },
+    ],
+  },
+  {
+    id: 'human-dunbars-number',
+    discipline: 'human-science',
+    title: 'ダンバー数（社会脳仮説）',
+    statement:
+      'ダンバー数とは、一人の人間が安定した社会的関係（相手が誰かを知り、各人が互いにどう関係するかを把握している関係）を維持できる人数の認知的上限で、およそ150人とされる。イギリスの人類学者・進化心理学者ロビン・ダンバーが1990年代に提唱した。霊長類では種ごとの平均集団サイズが大脳新皮質の相対的大きさ（新皮質比）と相関するという発見（社会脳仮説＝大きな脳は複雑な社会関係を処理するために進化したとする説）に基づき、' +
+      'ヒトの新皮質サイズから予測される集団規模を約150と外挿した（Dunbar 1992, J. Hum. Evol.）。狩猟採集集団・村落・軍隊単位・企業の部門などの歴史的・民族誌的データでも約150が繰り返し現れると論じた。150は近似値で、親密さに応じ約5人・15人・50人・150人・500人…と約3倍ずつ広がる同心円状の階層があるとされる。SNS上の友人関係への適用も議論される一方、推定の方法論や数値の確かさには批判・論争もある。',
+    keyFigures:
+      'ロビン・ダンバー（Robin I. M. Dunbar、英国の人類学者・進化心理学者、ダンバー数と社会脳仮説の提唱者）／Dunbar 1992, Journal of Human Evolution／階層構造（約5・15・50・150・500人）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ui.adsabs.harvard.edu/abs/1992JHumE..22..469D/abstract', type: 'academic', label: 'Dunbar, R. I. M. (1992) Neocortex size as a constraint on group size in primates. Journal of Human Evolution 22:469-493（一次査読論文、NASA ADS）' },
+      { url: 'https://royalsocietypublishing.org/doi/10.1098/rsbl.2021.0158', type: 'academic', label: "Lindenfors et al. (2021) “Dunbar's number deconstructed”. Biology Letters（英国王立協会・査読論文、批判的検証）" },
+      { url: 'https://en.wikipedia.org/wiki/Dunbar%27s_number', type: 'reference', label: "Wikipedia: Dunbar's number（定義・階層構造・論争の概観）" },
+      { url: 'https://www.scientificamerican.com/article/social-network-size-linked-brain-size/', type: 'media', label: 'Scientific American: Social Network Size Linked to Brain Size（社会脳仮説の解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-cooling-off',
+    discipline: 'business-law',
+    title: 'クーリング・オフ（特定商取引法）',
+    statement:
+      'クーリング・オフとは、訪問販売・電話勧誘販売など不意打ち的な取引で契約した消費者が、一定期間内であれば理由を問わず無条件で、書面または電磁的記録による通知で契約を一方的に解除できる制度である。頭を冷やして契約を再考する機会を消費者に与え、不本意な契約から保護する趣旨で、特定商取引法（昭和51年法律第57号）に定められる。' +
+      '取引類型ごとに期間が異なり、訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は8日間、連鎖販売取引・業務提供誘引販売取引は20日間で、原則として法定書面（申込書面・契約書面）を受け取った日から起算する。2022年6月施行の改正で電子メール等の電磁的方法による通知も可能となった。解除すれば支払済代金は返還され、引取り費用は事業者負担で、損害賠償・違約金を請求されない。自ら申し込む通信販売は対象外である。',
+    keyFigures:
+      '訪問販売・電話勧誘販売・特定継続的役務提供（エステ／語学教室／学習塾等）・訪問購入＝8日間／連鎖販売取引（マルチ商法）・業務提供誘引販売取引（内職商法）＝20日間／起算点＝法定書面の受領日／2022年6月1日施行で電磁的記録による通知が可能／効果＝無条件解除・代金返還・引取り費用は事業者負担・損害賠償/違約金請求なし／通信販売は対象外／e-Gov law id 351AC0000000057',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド「特定商取引法とは」' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター「クーリング・オフ（テーマ別特集）」' },
+      { url: 'https://www.no-trouble.caa.go.jp/qa/coolingoff.html', type: 'government', label: '消費者庁「電磁的記録によるクーリング・オフに関するQ&A」' },
+      { url: 'https://laws.e-gov.go.jp/law/351AC0000000057/', type: 'government', label: 'e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号）' },
+    ],
+  },
+  {
+    id: 'infosoc-deliberative-democracy',
+    discipline: 'information-sociology',
+    title: '熟議民主主義',
+    statement:
+      '熟議民主主義（deliberative democracy）とは、民主的正統性の源泉を、単なる投票や選好の集計（aggregation）でも利益の交渉でもなく、自由で平等な市民による公共的な討議・熟議（deliberation）に求める政治理論である。政治的決定は、影響を受ける人々が互いに受容可能な理由を提示し合い（reason-giving）、それを吟味する公共的討議を経てこそ正統性をもつとされる。' +
+      '1980年代以降「熟議的転回（deliberative turn）」として発展し、ハーバーマス（討議理論・コミュニケーション的行為）、ロールズ（公共的理性）、コーエン、ガットマン＆トンプソンらが理論化した。自己利益でなく他者も受け入れうる公共的理由への訴え、討議を通じた選好の変容、包摂性・平等・相互尊重を重視する。ミニ・パブリックス、フィシュキンの討論型世論調査、市民議会などが実践例で、現実の権力・不平等の軽視やオンライン熟議の分極化リスクも論じられる。',
+    keyFigures:
+      'ユルゲン・ハーバーマス／ジョン・ロールズ（公共的理性）／ジョシュア・コーエン／エイミー・ガットマン＆デニス・トンプソン／ジェイムズ・フィシュキン（討論型世論調査）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/democracy/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Democracy（熟議民主主義・理由の交換・ハーバーマスの討議理論）' },
+      { url: 'https://plato.stanford.edu/entries/legitimacy/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Political Legitimacy（公共的討議に依拠する正統性）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118474396.wbept0247', type: 'academic', label: 'Michelbach, “Deliberative Democracy,” Wiley Encyclopedia of Political Thought（定義・熟議的転回・キーパーソン）' },
+      { url: 'https://deliberation.stanford.edu/publications/journal-articles/deliberative-polling-comes-age-symposium-james-s-fishkin-democracy', type: 'academic', label: 'Stanford Deliberative Democracy Lab — Deliberative Polling / Fishkin（ミニ・パブリックス・討論型世論調査）' },
+    ],
+  },
 ];
 // Stryker restore all
