@@ -7199,5 +7199,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.heinz.cmu.edu/~acquisti/papers/Acquisti-Grossklags-Chapter-Etrics.pdf', type: 'academic', label: 'Acquisti, A. & Grossklags, J. “What Can Behavioral Economics Teach Us About Privacy?”（Carnegie Mellon University, Heinz College）' },
     ],
   },
+  {
+    id: 'econ-screening',
+    discipline: 'economics',
+    title: 'スクリーニング（選別理論）',
+    statement:
+      'スクリーニングとは、情報の非対称性のもとで、情報をもたない側（uninformed party）が情報をもつ側（informed party）に複数の選択肢からなるメニューを提示し、相手の自己選択（self-selection）を通じて隠れた属性・タイプを識別・分離しようとする仕組みである。' +
+      'マイケル・ロスチャイルドとジョセフ・スティグリッツが保険市場分析（Rothschild–Stiglitz 1976, QJE）で定式化し、保険会社が「高保険料・高補償」と「低保険料・高免責（低補償）」の契約を用意して高リスク者と低リスク者を分離均衡へ導く例が代表的である。情報をもつ側が自ら信号を発するシグナリング（スペンスの教育シグナル）とは仕掛ける主体が逆で、逆選択への対処手段でもある。',
+    keyFigures:
+      'マイケル・ロスチャイルド（Michael Rothschild）／ジョセフ・スティグリッツ（Joseph E. Stiglitz、2001年ノーベル経済学賞、A. Michael Spence・George Akerlof と共同受賞）／対をなす概念＝シグナリング（情報をもつ側が仕掛ける）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'government', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（保険会社がメニューでリスク類型を選別＝スクリーニング）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/90/4/629/1886620', type: 'academic', label: 'Rothschild & Stiglitz (1976), “Equilibrium in Competitive Insurance Markets,” The Quarterly Journal of Economics 90(4): 629–649（Oxford Academic）' },
+      { url: 'https://www.nber.org/papers/t0093', type: 'academic', label: 'Stiglitz & Weiss, “Sorting Out the Differences Between Signaling and Screening Models,” NBER' },
+      { url: 'https://en.wikipedia.org/wiki/Screening_(economics)', type: 'reference', label: 'Wikipedia — Screening (economics)（自己選択・分離均衡・シグナリングとの対比）' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-capabilities',
+    discipline: 'management',
+    title: 'ダイナミック・ケイパビリティ',
+    statement:
+      'ダイナミック・ケイパビリティとは、急速に変化する環境に対応するため、企業が内外の能力・コンピタンスを統合・構築・再構成（integrate, build, reconfigure）する組織的・経営的な能力を指す。デイヴィッド・ティース、ゲイリー・ピサノ、エイミー・シューエンが1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal 18巻7号）で提示した。静的な資源・能力に着目する資源ベース理論（RBV＝バーニー）が、環境変化への対応＝資源・能力の更新を十分扱えない点を補い、競争優位の持続を動学的に説明する。' +
+      'ティースは後に、ダイナミック・ケイパビリティを3つの活動に整理した：(1)感知（sensing＝機会・脅威の察知）、(2)捕捉（seizing＝資源を動員し機会から価値を獲得）、(3)変容・再配置（transforming/reconfiguring＝組織・資源の継続的な刷新）。日常業務を効率的にこなす「通常のケイパビリティ（ordinary capabilities）」とは区別され、模倣・外注が難しく、投資と学習を通じて構築・維持される点に特徴がある。',
+    keyFigures:
+      'デイヴィッド・J・ティース（David J. Teece）／ゲイリー・ピサノ（Gary Pisano）／エイミー・シューエン（Amy Shuen）（1997, Strategic Management Journal 18(7):509-533）／3活動＝感知・捕捉・変容／資源ベース理論（RBV）の動学的拡張',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) “Dynamic Capabilities and Strategic Management”, Strategic Management Journal 18(7):509-533（Wiley Online Library・原典）' },
+      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Dynamic Capabilities Theory — TheoryHub, Newcastle University（sensing/seizing/transforming と ordinary capabilities の区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Dynamic capabilities — Wikipedia（RBV/バーニーとの関係）' },
+      { url: 'https://www.strategy-business.com/article/00225', type: 'media', label: 'The Dynamic Capabilities of David Teece — strategy+business（ティース本人へのインタビュー）' },
+    ],
+  },
+  {
+    id: 'human-flow-theory',
+    discipline: 'human-science',
+    title: 'フロー理論（チクセントミハイ）',
+    statement:
+      'フロー（flow）とは、ある活動に完全に没入し集中エネルギーを注ぎ、その活動自体に楽しみと充実を感じる最適な精神状態で、俗に「ゾーン」とも呼ばれる。ハンガリー系米国の心理学者ミハイ・チクセントミハイが1970年代から研究し（1975年『Beyond Boredom and Anxiety』）、1990年の著書『フロー体験 喜びの現象学（Flow: The Psychology of Optimal Experience）』で広めた、ポジティブ心理学の中心概念の一つである。' +
+      'フローが生じる主条件は、(1)課題の難易度（challenge）と本人のスキル（skill）が高水準で釣り合うこと（両方が低いと無関心、難易度過剰だと不安、スキル過剰だと退屈）、(2)明確な目標、(3)即時のフィードバック。特徴として、強い集中、行為と意識の融合、自意識の喪失、時間感覚の変容、活動が内発的報酬となる自己目的的（autotelic）性質などが挙げられる。',
+    keyFigures:
+      'ミハイ・チクセントミハイ（Mihaly Csikszentmihalyi, 1934–2021）／1975『Beyond Boredom and Anxiety』・1990『Flow: The Psychology of Optimal Experience』／挑戦–スキル均衡・明確な目標・即時フィードバックが発生条件／自己目的的（autotelic）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/psychology/flow-psychology', type: 'reference', label: 'EBSCO Research Starters — Flow (psychology)' },
+      { url: 'https://news.uchicago.edu/story/mihaly-csikszentmihalyi-pioneering-psychologist-and-father-flow-1934-2021', type: 'academic', label: 'University of Chicago News — Mihaly Csikszentmihalyi, father of flow (1934–2021)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7033418/', type: 'academic', label: 'PMC（査読論文）— Investigating the “Flow” Experience: Key Conceptual and Operational Issues' },
+      { url: 'https://www.cgu.edu/news/2021/10/passings-mihaly-csikszentmihalyi-the-father-of-flow-1934-2021/', type: 'academic', label: 'Claremont Graduate University — Passings: Mihaly Csikszentmihalyi' },
+    ],
+  },
+  {
+    id: 'human-dunning-kruger',
+    discipline: 'human-science',
+    title: 'ダニング＝クルーガー効果',
+    statement:
+      'ある領域で能力・知識の乏しい人ほど、自分の無能さを正しく認識（メタ認知）できないために自分の能力を実際より高く過大評価する傾向を指す認知バイアス。誤りに気づくのに必要なメタ認知能力そのものを欠くという「二重の負担（dual burden）」が核心とされる。' +
+      '逆に能力の高い人は課題の難しさを理解し、他者も自分と同程度にできると考えて自分の相対的能力をやや過小評価しがちである。社会心理学者デイヴィッド・ダニングとジャスティン・クルーガーがコーネル大学の被験者で行い1999年に報告した。なお平均への回帰やbetter-than-average効果による統計的アーティファクトだとする批判・論争もある。',
+    keyFigures:
+      'デイヴィッド・ダニング（David Dunning）／ジャスティン・クルーガー（Justin Kruger）／初出 Kruger & Dunning (1999)『Unskilled and Unaware of It』JPSP 77(6):1121–1134／核心＝二重の負担（dual burden）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Dunning-Kruger-effect', type: 'reference', label: 'Encyclopaedia Britannica — Dunning-Kruger effect' },
+      { url: 'https://doi.org/10.1037/0022-3514.77.6.1121', type: 'academic', label: 'Kruger & Dunning (1999), “Unskilled and Unaware of It,” Journal of Personality and Social Psychology 77(6):1121–1134（APA PsycNet, DOI）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0160289620300271', type: 'academic', label: 'Gignac & Zajenkowski (2020) — The Dunning-Kruger effect is (mostly) a statistical artefact（Intelligence, ScienceDirect・批判）' },
+    ],
+  },
+  {
+    id: 'bizlaw-joint-several-obligation',
+    discipline: 'business-law',
+    title: '連帯債務（民法436条）',
+    statement:
+      '連帯債務とは、複数の債務者が、その性質上可分な給付（典型的には金銭債務）について、各自が独立して債務の全部を履行する義務を負い、そのうち一人が弁済すれば他の債務者も債務を免れる多数当事者の債務関係をいう（民法436条）。債権者は、連帯債務者の一人に対し、または同時・順次にすべての連帯債務者に対し、全部または一部の履行を請求できる。' +
+      '弁済した連帯債務者は、各自の負担部分に応じて他の連帯債務者に求償権を行使できる（442条）。2017年改正（2020年4月施行）民法は絶対的効力事由を整理し、改正前は絶対的効力をもった履行の請求・免除・時効の完成を原則として相対的効力事由に改めた（弁済・更改・相殺・混同は引き続き絶対的効力を有する）。保証債務（主たる債務に付従・補充する関係）とは別概念である。',
+    keyFigures:
+      '根拠条文＝民法436条（連帯債務者に対する履行の請求）・442条（連帯債務者間の求償権）（e-Gov law id 129AC0000000089）／2017年改正・2020年4月1日施行／相対的効力化した事由＝履行の請求・免除・時効の完成（原則）／絶対的効力が残る事由＝弁済・更改・相殺・混同／例：A・B・Cが300万円の連帯債務→債権者は誰にでも全額請求可、一人が全額弁済すれば債務消滅／保証債務とは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（条文・法令ID 129AC0000000089、436条・442条）' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/030matsuoka.pdf', type: 'academic', label: '松岡久和「民法（債権関係）の改正と不真正連帯債務」立命館法学（連帯債務改正・絶対効/相対効）' },
+      { url: 'https://www.businesslawyers.jp/practices/1196', type: 'media', label: 'BUSINESS LAWYERS「民法の連帯債務とは？」（改正による相対効化の解説）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第436条', type: 'reference', label: 'Wikibooks 民法第436条（条文と注釈）' },
+    ],
+  },
+  {
+    id: 'infosoc-post-truth',
+    discipline: 'information-sociology',
+    title: 'ポスト・トゥルース（脱真実）',
+    statement:
+      'ポスト・トゥルース（post-truth、脱真実）とは、世論形成において客観的事実よりも、感情や個人的信条への訴えかけの方が大きな影響力をもつようになった状況を指す語。Oxford Dictionaries（現Oxford Languages）が2016年の「ワード・オブ・ザ・イヤー」に選び、「客観的事実が、感情や個人的信条への訴えよりも世論形成に影響を与えにくい状況に関する、またはそれを表す」と定義した。' +
+      '接頭辞「post-」は「〜の後」ではなく、「真実という概念が重要でなくなった時代に属する」というニュアンスをもつ。2016年の英国EU離脱（ブレグジット）国民投票や米大統領選を背景に使用が前年比約2,000%増となり広まった。哲学者は真実概念の軽視を、メディア研究者はフェイクニュース・ソーシャルメディアのエコーチェンバー・確証バイアスとの関連を論じる。',
+    keyFigures:
+      'Oxford Dictionaries（2016 Word of the Year に選定・定義）／ラルフ・キーズ（Ralph Keyes、2004『The Post-Truth Era』）／リー・マッキンタイア（Lee McIntyre、2018『Post-Truth』MIT Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://languages.oup.com/word-of-the-year/2016/', type: 'reference', label: 'Oxford Languages — Word of the Year 2016: Post-Truth（公式定義・語法）' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/post-truth-politics', type: 'academic', label: 'EBSCO Research Starters — Post-truth politics' },
+      { url: 'https://direct.mit.edu/books/book/3594/Post-Truth', type: 'academic', label: 'Lee McIntyre, Post-Truth, MIT Press (2018) — Books Gateway' },
+      { url: 'https://philpapers.org/rec/KEYTPE', type: 'academic', label: 'Ralph Keyes, The Post-Truth Era (2004) — PhilPapers 書誌' },
+    ],
+  },
 ];
 // Stryker restore all
