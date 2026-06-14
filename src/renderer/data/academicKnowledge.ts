@@ -3210,5 +3210,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Risk_society', type: 'reference', label: 'Risk society — Wikipedia（突合・補助）' },
     ],
   },
+  {
+    id: 'econ-taylor-rule',
+    discipline: 'economics',
+    title: 'テイラールール',
+    statement:
+      '中央銀行が政策金利をどの水準に設定すべきかを、インフレ率と産出（GDP）ギャップに反応させる形で示した金融政策の指針（ルール）。経済学者ジョン・B・テイラーが1993年の論文で提示した。' +
+      '基本形は、政策金利＝均衡実質金利＋目標インフレ率＋a×（実際のインフレ率−目標インフレ率）＋b×（産出ギャップ）で、a・bは反応係数（テイラーの原型はともに0.5、均衡実質金利・目標インフレ率はともに2％と置かれた）。インフレが目標を上回れば金利を引き上げ、景気が過熱（産出ギャップがプラス）でも引き上げる。特にインフレ率に対する名目金利の反応が1を超える（名目金利をインフレ以上に動かし実質金利を上げる）べきとする「テイラー原理」は物価安定の条件とされる。' +
+      '裁量的政策に対しルールに基づく政策の利点を示すものとして、また実際の中央銀行行動を記述・評価するベンチマークとして広く使われる。',
+    keyFigures: 'J.B.テイラー1993提唱／政策金利をインフレ率と産出ギャップに反応させるルール／反応係数(原型は各0.5、均衡実質金利・目標インフレ率は各2%)／テイラー原理＝インフレへの反応>1で実質金利を上げ物価安定／ルールに基づく政策・中央銀行行動のベンチマーク',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm', type: 'government', label: 'Federal Reserve Board — Policy Rules and How Policymakers Use Them' },
+      { url: 'https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy', type: 'government', label: 'Federal Reserve Bank of St. Louis — Output Gaps, Taylor Rule and the Stance of Monetary Policy' },
+      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'reference', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?' },
+      { url: 'https://www.frbsf.org/wp-content/uploads/3-16.pdf', type: 'government', label: 'Federal Reserve Bank of San Francisco — Taylor\'s Rule and the Fed: 1970–1997' },
+    ],
+  },
+  {
+    id: 'econ-tit-for-tat',
+    discipline: 'economics',
+    title: '繰り返し囚人のジレンマとしっぺ返し戦略',
+    statement:
+      '囚人のジレンマは一回限りなら裏切りが支配戦略だが、同じ相手と無限・無期限に繰り返す場合には、将来の報復・協力を見越して協力が合理的な均衡として成立しうる（フォーク定理）。' +
+      '政治学者ロバート・アクセルロッドは1980年前後にコンピュータ・トーナメントを開催し、提出された戦略を総当たりで競わせた。優勝したのは数学者アナトール・ラポポートが提出した最も単純な「しっぺ返し（tit-for-tat）」戦略で、初手は協力し、以降は相手の前回の手をそのまま真似る（協力には協力、裏切りには裏切りで応じる）というものだった。' +
+      'アクセルロッドは強い戦略の特徴を、上品（自分から裏切らない）・報復的（裏切りには即応報復）・寛容（相手が協力に戻れば許す）・明快（行動が読みやすい）と整理し、『つきあい方の科学（The Evolution of Cooperation）』（1984）で協力の進化を論じた。',
+    keyFigures: '繰り返しで協力が均衡になりうる(フォーク定理)／R.アクセルロッドのトーナメント／優勝はラポポートのしっぺ返し(tit-for-tat、初手協力＋相手の前回手を模倣)／強い戦略＝上品・報復的・寛容・明快／『The Evolution of Cooperation』1984',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Prisoner\'s Dilemma（Axelrod and Tit for Tat）' },
+      { url: 'https://heritage.umich.edu/stories/the-prisoners-dilemma/', type: 'academic', label: 'University of Michigan Heritage Project — The Prisoner\'s Dilemma（トーナメント／ラポポートのtit-for-tat優勝）' },
+      { url: 'https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012644', type: 'academic', label: 'PLOS Computational Biology — Properties of winning Iterated Prisoner\'s Dilemma strategies（nice/retaliating/forgiving/clear）' },
+      { url: 'https://scholar.harvard.edu/files/maskin/files/folk_theorem_in_repeated_games_with_discounting_or_incomplete_information.pdf', type: 'academic', label: 'Harvard (E. Maskin) — The Folk Theorem in Repeated Games' },
+    ],
+  },
+  {
+    id: 'mgmt-transformational-leadership',
+    discipline: 'management',
+    title: '変革型リーダーシップ',
+    statement:
+      'リーダーがビジョンや理念を示してフォロワーの価値観・動機を高め、組織や個人を変革へと導くリーダーシップ。報酬と業績を交換する「交換型（取引型）リーダーシップ（transactional leadership）」と対比される。' +
+      '政治学者ジェームズ・マクレガー・バーンズが1978年の著書『リーダーシップ論（Leadership）』で変革型と取引型を区別し、組織心理学者バーナード・バスがこれを発展させて測定可能なモデル（MLQ＝多因子リーダーシップ質問票、バス／アボリオ）を構築した。' +
+      'バスは変革型リーダーシップの構成要素を「4つのI」として整理した：理想化された影響（idealized influence＝ロールモデル・信頼）、鼓舞的動機づけ（inspirational motivation＝魅力的なビジョン提示）、知的刺激（intellectual stimulation＝既存前提への問い直しと創造的問題解決を促す）、個別配慮（individualized consideration＝一人ひとりの成長支援）。フォロワーの満足度・努力・業績を高めるとされ、多くの実証研究の対象となっている。',
+    keyFigures: 'J.M.バーンズ1978(著書Leadership)が変革型/取引型を区別／B.バスが発展・測定モデル化(MLQ、バス/アボリオ)／変革型の4つのI：理想化された影響・鼓舞的動機づけ・知的刺激・個別配慮／取引型(交換型)と対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/transformational-and-transactional-leadership', type: 'reference', label: 'EBSCO Research Starters — Transformational and Transactional Leadership（バーンズ1978／取引型との対比）' },
+      { url: 'https://crummer.rollins.edu/news/the-four-essential-components-of-transformational-leadership/', type: 'academic', label: 'Rollins College, Crummer School of Business — The Four Essential Components of Transformational Leadership（4つのI）' },
+      { url: 'https://www.michiganstateuniversityonline.com/resources/leadership/4-is-of-transformational-leadership/', type: 'academic', label: 'Michigan State University — The 4 "I\'s" of Transformational Leadership' },
+      { url: 'https://pressbooks.lib.jmu.edu/sslsleadershipinstrumentslibrary/chapter/4-8-multifactor-leadership-questionnaire-mlq-mlq-5x/', type: 'academic', label: 'James Madison University — Multifactor Leadership Questionnaire (MLQ)（バス／アボリオ構築）' },
+    ],
+  },
+  {
+    id: 'human-flow',
+    discipline: 'human-science',
+    title: 'フロー',
+    statement:
+      'ある活動に完全に没入し、時間を忘れ、行為と意識が融合したような最適経験（optimal experience）の心理状態。「ゾーン」とも呼ばれる。ハンガリー系アメリカ人の心理学者ミハイ・チクセントミハイが提唱し、ポジティブ心理学の中心概念の一つとなった。' +
+      'フローが生じる条件として、明確な目標、即座のフィードバック、そして課題の難易度と自分のスキルの高い水準での釣り合いが挙げられる（挑戦が高すぎると不安、低すぎると退屈になる）。フロー中は、集中の深まり、自意識の消失、強い統制感、活動自体が報酬となる自己目的的（autotelic）な性質などが体験される。' +
+      'スポーツ・芸術・仕事・学習などで見られ、幸福感や高いパフォーマンス、内発的動機づけと結びつくとされ、教育・職場設計・ゲームデザイン等に応用される。',
+    keyFigures: 'M.チクセントミハイが提唱（ポジティブ心理学の共同創始者）／活動への完全な没入＝最適経験(ゾーン)／条件：明確な目標・即時フィードバック・課題難易度とスキルの釣り合い／自意識消失・時間感覚の変容・自己目的的(autotelic)／内発的動機づけ・幸福と関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/psychology/flow-psychology', type: 'reference', label: 'EBSCO Research Starters — Flow (psychology)（査読付き参照記事）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7551835/', type: 'academic', label: 'A Review on the Role of the Neuroscience of Flow States in the Modern World (NCBI/PMC, 査読論文)' },
+      { url: 'https://www.cgu.edu/people/mihaly-csikszentmihalyi/', type: 'academic', label: 'Claremont Graduate University — Mihaly Csikszentmihalyi (所属大学の公式略歴)' },
+      { url: 'https://link.springer.com/book/10.1007/978-94-017-9088-8', type: 'academic', label: 'Flow and the Foundations of Positive Psychology: The Collected Works of Mihaly Csikszentmihalyi (Springer)' },
+    ],
+  },
+  {
+    id: 'bizlaw-e-bookkeeping',
+    discipline: 'business-law',
+    title: '電子帳簿保存法',
+    statement:
+      '本来は紙での保存が原則とされる国税関係帳簿書類について、一定の要件のもとで電子データ（電磁的記録）による保存を認める法律。正式名称は「電子計算機を使用して作成する国税関係帳簿書類の保存方法等の特例に関する法律」（平成10年法律第25号）で、1998年（平成10年）に制定された。' +
+      '保存方法は大きく3区分される：(1)電子帳簿等保存（会計ソフト等で電子的に作成した帳簿・書類をそのままデータ保存）、(2)スキャナ保存（紙で受領・作成した書類をスキャンして画像データで保存）、(3)電子取引データ保存（注文・請求などをメールやEDI等の電子的方法でやり取りした取引情報をデータのまま保存）。' +
+      '近年たびたび改正され、2022年（令和4年）1月施行の改正（令和3年度税制改正）で事前承認制度の廃止など要件が緩和される一方、電子取引データについては紙出力保存が原則認められなくなり電子保存が義務化された（中小事業者等への宥恕・猶予措置を経て段階的に適用）。真実性の確保（タイムスタンプ等）と可視性の確保（検索機能等）が共通の保存要件とされ、国税庁が所管する。',
+    keyFigures: '国税関係帳簿書類の電子データ保存を認める法律(平成10年法律25号)／1998年制定／3区分：電子帳簿等保存・スキャナ保存・電子取引データ保存／2022年改正で承認制廃止等の緩和・電子取引データは電子保存義務化／真実性確保(タイムスタンプ)・可視性確保(検索)／国税庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=410AC0000000025_20220101_503AC0000000011', type: 'government', label: 'e-Gov法令検索「電子計算機を使用して作成する国税関係帳簿書類の保存方法等の特例に関する法律」(平成10年法律第25号)' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/02.htm', type: 'government', label: '国税庁「電子帳簿保存法の概要」(3区分・電子取引保存義務)' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/index.htm', type: 'government', label: '国税庁「電子帳簿等保存制度特設サイト」' },
+    ],
+  },
+  {
+    id: 'infosoc-culture-industry',
+    discipline: 'information-sociology',
+    title: '文化産業（フランクフルト学派）',
+    statement:
+      'フランクフルト学派のテオドール・アドルノとマックス・ホルクハイマーが共著『啓蒙の弁証法（Dialektik der Aufklärung）』（1947）で展開した概念。映画・ラジオ・音楽・雑誌などの大衆向け文化が、資本主義のもとで規格化・画一化された商品として大量生産・大量消費される産業となり、文化が利潤目的に従属していると批判する。' +
+      '彼らは「マスカルチャー（mass culture）」が大衆自身から自然発生した文化であるかのような誤解を排除するため、あえて上から供給される「文化産業」という語を用いた。規格化された娯楽は受け手を受動的にし、消費者を資本主義的秩序へ統合して既存の社会秩序への順応を促し、批判的思考を麻痺させる（操作・順応）とされる。' +
+      '大衆を欺く啓蒙の裏返しとして、画一化された文化が個人の自律や抵抗の可能性を掘り崩すと論じ、現代のメディア・文化批評に大きな影響を与えた。',
+    keyFigures: 'T.アドルノ&M.ホルクハイマー『啓蒙の弁証法』1947／フランクフルト学派の批判理論／大衆文化が規格化・商品化され利潤に従属＝文化産業／「マスカルチャー」と区別しあえて文化産業と命名／受け手を受動化し既存秩序への順応・批判的思考の麻痺',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/adorno/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — "Theodor W. Adorno"（大衆文化と文化産業への批判）' },
+      { url: 'https://www.britannica.com/biography/Theodor-Wiesengrund-Adorno', type: 'reference', label: 'Encyclopaedia Britannica — "Theodor Wiesengrund Adorno"（批判理論・文化産業）' },
+      { url: 'https://www.oxfordreference.com/view/10.1093/acref/9780199532919.001.0001/acref-9780199532919-e-155', type: 'reference', label: 'Oxford Reference — "Culture industry"（ホルクハイマー&アドルノの用語定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Culture_industry', type: 'reference', label: 'Wikipedia — "Culture industry"（『啓蒙の弁証法』1947、規格化・統制の概要）' },
+    ],
+  },
 ];
 // Stryker restore all
