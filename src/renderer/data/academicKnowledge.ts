@@ -8919,5 +8919,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context collapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）' },
     ],
   },
+  {
+    id: 'econ-vickrey-auction',
+    discipline: 'economics',
+    title: 'ヴィックリー・オークション（第二価格入札）',
+    statement:
+      'ヴィックリー・オークションは、各入札者が他者の入札を見ずに札を投じる封印入札（sealed-bid）で、最高額を付けた者が落札するが、支払額は2番目に高い入札額（second price）となる方式である。ウィリアム・ヴィックリーが1961年の論文「Counterspeculation, Auctions, and Competitive Sealed Tenders」で分析し、彼は非対称情報下の誘因理論への貢献等で1996年ノーベル経済学賞を受賞した。' +
+      '最大の特徴は、支払いが自分の入札ではなく他者の入札で決まるため、真の評価額をそのまま入れる正直入札が（弱）支配戦略となる耐戦略性（strategy-proof）にある。独立私的価値の対称環境では、期待収入が第一価格・イングリッシュ・ダッチ各オークションと等しくなる（収入同値定理）。競り上げ式イングリッシュ・オークションと戦略的に同値で、複数財への一般化がVCG（Vickrey–Clarke–Groves）メカニズムである。',
+    keyFigures:
+      'ウィリアム・ヴィックリー（William Vickrey, 1914–1996, 1996年ノーベル経済学賞）／エドワード・クラーク（Edward Clarke）／セオドア・グローブス（Theodore Groves）／正直入札が支配戦略・収入同値定理・VCGへの一般化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.1961.tb02789.x', type: 'academic', label: 'Vickrey, W. (1961) “Counterspeculation, Auctions, and Competitive Sealed Tenders”, The Journal of Finance 16(1): 8–37 (Wiley)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/vickrey/facts/', type: 'reference', label: 'NobelPrize.org — Sveriges Riksbank Prize in Economic Sciences 1996 (William Vickrey)' },
+      { url: 'https://en.wikipedia.org/wiki/Vickrey_auction', type: 'reference', label: 'Wikipedia — Vickrey auction（メカニズム・支配戦略・英国式との戦略的同値・収入同値）' },
+    ],
+  },
+  {
+    id: 'mgmt-path-goal-theory',
+    discipline: 'management',
+    title: 'パス・ゴール理論（リーダーシップ）',
+    statement:
+      'リーダーの役割を、部下が目標（ゴール）を達成するための経路（パス）を明確にし、障害を除去し、必要な支援や報酬を与えて部下の動機づけ・満足・業績を高めることと捉える、リーダーシップの条件適合（コンティンジェンシー）理論。ロバート・ハウスが1971年に提唱し（"A Path-Goal Theory of Leader Effectiveness", Administrative Science Quarterly）、1996年に再定式化した。動機づけの期待理論（expectancy theory）に基礎を置く。' +
+      'リーダーは状況に応じて4つの行動——指示型（directive）・支援型（supportive）・参加型（participative）・達成志向型（achievement-oriented）——を使い分けるべきとする。リーダー行動が部下の動機づけに与える効果は、部下の特性（統制の所在・経験・能力）と環境要因（課題構造・公式権限体系・作業集団）が調整（モデレート）する。フィードラーのコンティンジェンシーモデルやハーシー＆ブランチャードのSL理論と並ぶ状況適合理論である。',
+    keyFigures:
+      'ロバート・ハウス（Robert J. House, 1971提唱・1996再定式化）／ヴィクター・ブルーム（Victor H. Vroom, 期待理論の基礎）／4行動：指示型・支援型・参加型・達成志向型',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=EJ045452', type: 'academic', label: 'House, R. J. (1971) “A Path Goal Theory of Leader Effectiveness”, Administrative Science Quarterly 16, 321-338（ERIC EJ045452）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1048984396900247', type: 'academic', label: 'House, R. J. (1996) “Path-goal theory of leadership: Lessons, legacy, and a reformulated theory”, The Leadership Quarterly 7(3), 323-352' },
+      { url: 'https://en.wikipedia.org/wiki/Path%E2%80%93goal_theory', type: 'reference', label: 'Wikipedia「Path–goal theory」（1971提唱・1996改訂、期待理論基礎、コンティンジェンシー変数）' },
+    ],
+  },
+  {
+    id: 'human-door-in-the-face',
+    discipline: 'human-science',
+    title: 'ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）',
+    statement:
+      'まず相手がほぼ確実に断る過大な要請を提示し、拒否された後に本命のより小さな要請を出すと、最初から小さな要請を単独で出すより承諾されやすくなる説得技法・現象である。' +
+      'ロバート・チャルディーニらが1975年の論文（Journal of Personality and Social Psychology）で実証し、学生に2年間の非行少年カウンセリングのボランティアを依頼して断られた後に一日の動物園引率を依頼すると承諾率が約50%に達し、後者を単独で頼んだ統制群（約17%）を大きく上回った。説明原理は、要求引き下げを譲歩とみなし応じる義務を感じる返報性（譲歩の返報性）、大要求の後で小要求が相対的に小さく見える知覚的コントラスト、拒否による罪悪感・自己呈示である。小→大と段階を踏むフット・イン・ザ・ドア（一貫性に基づく）とは対照的な大→小の技法である点が重要。',
+    keyFigures:
+      'ロバート・B・チャルディーニ（Robert B. Cialdini, 1975, JPSP）／譲歩の返報性・知覚的コントラスト・罪悪感／フット・イン・ザ・ドア（段階的要請法）とは対照（大→小 vs 小→大）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Influence_Compliance/Cialdini.et.al.Reciprocal.Concessions.Procedure.1975.article.pdf', type: 'academic', label: 'Cialdini et al. (1975) “Reciprocal Concessions Procedure for Inducing Compliance: The Door-in-the-Face Technique”, JPSP 31(2), 206-215（原典・MITホスト全文）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/door-face-technique', type: 'reference', label: 'EBSCO Research Starters: Psychology — Door-in-the-face technique（説明原理・FITDとの区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Door-in-the-face_technique', type: 'reference', label: 'Wikipedia — Door-in-the-face technique（実験数値）' },
+    ],
+  },
+  {
+    id: 'human-decision-fatigue',
+    discipline: 'human-science',
+    title: '決定疲労（decision fatigue）',
+    statement:
+      '決定疲労とは、人が次々と意思決定を重ねるうちに判断の質が低下し、決定そのものを避けて現状維持やデフォルト選択に流れたり、衝動的・短絡的な選択に傾いたりするとされる現象である。ロイ・バウマイスターらの自我消耗（ego depletion）研究の文脈で論じられ、意志力・自己制御を使うほど枯渇する有限の資源とみなす自己制御資源モデルと関連づけられる。' +
+      '代表例として、ダンジガーらの2011年PNAS論文は、イスラエルの仮釈放審査で休憩・食事直後に許可率が高く、審理が進むと低下して却下（デフォルト）に流れたと報告した。ただし同研究には案件順序の交絡など方法論的批判があり、また自我消耗効果自体も大規模事前登録再現研究（Hagger et al. 2016）で効果が確認されず、効果量や再現性をめぐる議論が続いている点に留意が必要である。応用として、重要な決定を午前に行う・選択肢を絞る・デフォルト設計（ナッジ）などが挙げられる。',
+    keyFigures:
+      'ロイ・バウマイスター（Roy Baumeister, 自我消耗）／Shai Danziger・Jonathan Levav・Liora Avnaim-Pesso（2011 PNAS 仮釈放研究）／Martin Hagger（2016 再現研究）／再現性論争あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Decision_fatigue', type: 'reference', label: 'Wikipedia「Decision fatigue」— 定義・自我消耗との関係・Danziger研究' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.1018033108', type: 'academic', label: 'Danziger, Levav & Avnaim-Pesso (2011) “Extraneous factors in judicial decisions”, PNAS 108(15):6889–6892' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1745691616652873', type: 'academic', label: 'Hagger et al. (2016) “A Multilab Preregistered Replication of the Ego-Depletion Effect”, Perspectives on Psychological Science（再現性論争）' },
+    ],
+  },
+  {
+    id: 'bizlaw-earnest-money',
+    discipline: 'business-law',
+    title: '手付（民法557条）',
+    statement:
+      '手付とは、売買等の契約締結に際し当事者の一方から相手方へ交付される金銭その他の有価物であり、機能により証約手付（契約成立の証拠）・解約手付（解除権を留保する手付）・違約手付（債務不履行時の違約罰または損害賠償の予定）に分かれる。' +
+      '民法557条が定めるのは解約手付の効果で、相手方が契約の履行に着手するまでは、買主は手付を放棄し（手付流し）、売主はその倍額を現実に提供して（手付倍返し）、契約を解除できる。2017年改正（2020年施行）で「償還」が「現実に提供して」に改められ判例法理が明文化された。「履行の着手」は相手方の着手を基準とし（自己が着手していても相手方が未着手なら解除可とするのが判例・通説）、解除に債務不履行は不要で、557条2項が545条4項を排除するため別途の損害賠償は生じない。実務では不動産売買で代金の5〜10%程度の手付が広く用いられる。',
+    keyFigures:
+      '民法557条1項：相手方の履行着手前は買主は手付放棄・売主は倍額の現実の提供で解除可（債務不履行・帰責事由不要）／557条2項：545条4項を排除し手付解除では損害賠償不可／「履行の着手」は相手方基準（判例・通説）／2017年改正で「償還」→「現実に提供」明文化／三種＝証約・解約・違約手付（557条は解約手付）／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第557条 手付' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第557条', type: 'reference', label: 'Wikibooks 民法第557条（手付の種類・解約手付・履行の着手・545条4項排除）' },
+      { url: 'https://tek-law.jp/civil-code/claims/contracts/sale/article-557/', type: 'media', label: '弁護士解説 民法第557条（手付）— 解約手付・現実の提供・損害賠償不発生' },
+    ],
+  },
+  {
+    id: 'infosoc-slacktivism',
+    discipline: 'information-sociology',
+    title: 'スラックティビズム',
+    statement:
+      'スラックティビズム（slacktivism、slacker＝怠け者＋activism の混成語。clicktivism とも）とは、SNSの「いいね」・シェア・ハッシュタグ拡散・オンライン署名・プロフィール画像変更など、ごく低コスト・低リスクで行える象徴的な社会的・政治的支援行動を指す概念で、しばしば批判的に用いられる。' +
+      '本人は社会貢献したと感じる（feel-good）一方、現実の政治的・社会的インパクトは乏しく、寄付・デモ・投票といった本格的関与の代替になる（置換効果・モラルライセンシング）と批判される。Kristofferson, White & Peloza（2014, Journal of Consumer Research）は、公的に観察されるトークン的支援は後続の意味ある支援につながりにくいが、私的な支援は後続関与を高めうると報告した。Morozov が『The Net Delusion』で批判的に論じ普及させた。一方、低コスト参加が動員の入口や規範変化となる肯定論もある（例：アイス・バケツ・チャレンジ、#BlackLivesMatter・#MeToo）。',
+    keyFigures:
+      'Kirk Kristofferson／Katherine White／John Peloza（2014, JCR）／Evgeny Morozov（『The Net Delusion』批判）／clicktivism・モラルライセンシング・置換効果 vs 動員の入口',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/jcr/article-abstract/40/6/1149/2907521', type: 'academic', label: 'Kristofferson, White & Peloza (2014) “The Nature of Slacktivism”, Journal of Consumer Research 40(6):1149' },
+      { url: 'https://link.springer.com/10.1007/978-3-031-32257-0_50-1', type: 'reference', label: 'Springer Nature, Encyclopedia of Diversity, Equity, Inclusion and Spirituality — “Slacktivism”' },
+      { url: 'https://en.wikipedia.org/wiki/Slacktivism', type: 'reference', label: 'Wikipedia — Slacktivism（定義・語源・批判と擁護の両論）' },
+    ],
+  },
 ];
 // Stryker restore all
