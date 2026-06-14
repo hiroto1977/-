@@ -7603,5 +7603,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.soumu.go.jp/main_content/000656383.pdf', type: 'government', label: '総務省『情報通信政策研究』（自己情報コントロール権論を扱う論文）' },
     ],
   },
+  {
+    id: 'econ-impossible-trinity',
+    discipline: 'economics',
+    title: '国際金融のトリレンマ（不可能な三位一体）',
+    statement:
+      '開放経済では、(1)為替相場の安定（固定相場制）、(2)自由な国際資本移動、(3)独立した金融政策、の3目標を同時に達成することは不可能であり、最大でも2つしか選べないという命題（不可能な三位一体／マンデル＝フレミングのトリレンマ）。2つを選べば残る1つは放棄される。' +
+      '例：固定相場＋自由な資本移動なら金融政策の独立を失い（金本位制・ユーロ圏各国）、独立金融政策＋自由な資本移動なら変動相場制を受け入れ（日本・米国）、固定相場＋独立金融政策なら資本移動を規制する（旧中国・ブレトンウッズ体制）。固定相場の維持には対外金利への追随が必要で、国内目的のための金利設定が制約されることに起因する。マンデル＝フレミング・モデルを理論的基礎とする。',
+    keyFigures:
+      'ロバート・マンデル（Robert Mundell, 1999年ノーベル経済学賞）／J・マーカス・フレミング（J. Marcus Fleming）（1960年代に独立に展開）／モーリス・オブストフェルド・ジェイ・C・シャンボー・アラン・M・テイラー（歴史的実証 “The Trilemma in History” 2005）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Impossible_trinity', type: 'reference', label: 'Wikipedia「Impossible trinity」（マンデルとフレミングが1960–1963年に独立に展開、3つのうち2つのみ達成可能）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/mundell/facts/', type: 'government', label: 'NobelPrize.org — 1999年経済学賞 Robert A. Mundell（為替相場制度下の金融・財政政策および最適通貨圏の分析）' },
+      { url: 'https://www.nber.org/papers/w10396', type: 'academic', label: 'Obstfeld, Shambaugh & Taylor “The Trilemma in History”（NBER Working Paper No. 10396, 2004）' },
+      { url: 'https://direct.mit.edu/rest/article-abstract/87/3/423/57557/The-Trilemma-in-History-Tradeoffs-Among-Exchange', type: 'academic', label: 'Obstfeld, Shambaugh & Taylor, Review of Economics and Statistics 87(3):423–438 (2005), MIT Press（査読論文・歴史的実証）' },
+    ],
+  },
+  {
+    id: 'econ-keynesian-beauty-contest',
+    discipline: 'economics',
+    title: 'ケインズの美人投票',
+    statement:
+      'ジョン・メイナード・ケインズが『雇用・利子および貨幣の一般理論』（1936）第12章で、株式市場の投資家行動を説明するために用いた比喩。新聞紙上の美人コンテスト（100枚の写真から最も美しい6枚を選び、全投票者の平均的選好に最も近い選択をした者に賞品が出る）を例に、賢い参加者は自分の好みではなく「他者が美しいと思いそうな顔」、さらに「他者が平均的に何を選ぶと皆が予想するか」という高次の予想で選ぶと論じた。' +
+      'ケインズはこれを「第三段階」と呼び、知性は「平均的意見が平均的意見をどう予想するかを予想する」ことに費やされるとした。投資家も株式の本来の価値（ファンダメンタルズ）ではなく、他者の将来評価という平均的予想を予想して行動するため、価格は自己言及的な相互予想で決まりうる。後にゲーム理論のp-beauty contest／推測ゲーム（Nagel 1995）や、高次の信念・バブル・群集行動の分析へ発展した。',
+    keyFigures:
+      'ジョン・メイナード・ケインズ（John Maynard Keynes、『一般理論』1936 第12章で提唱）／ローズマリー・ナーゲル（Rosemarie Nagel、p-beauty contest／推測ゲームの実験的定式化, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.marxists.org/reference/subject/economics/keynes/general-theory/ch12.htm', type: 'reference', label: 'J.M. Keynes, The General Theory of Employment, Interest and Money (1936), Chapter 12（原典全文）' },
+      { url: 'https://en.wikipedia.org/wiki/Keynesian_beauty_contest', type: 'reference', label: 'Wikipedia: Keynesian beauty contest（概念・新聞コンテストの比喩）' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v85y1995i5p1313-26.html', type: 'academic', label: 'Nagel, R. (1995) “Unraveling in Guessing Games: An Experimental Study,” American Economic Review 85(5):1313–1326（査読論文／p-beauty contest）' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/beauty-contest-metaphor', type: 'reference', label: 'Encyclopedia.com: Beauty Contest Metaphor（百科事典級リファレンス）' },
+    ],
+  },
+  {
+    id: 'mgmt-balanced-scorecard',
+    discipline: 'management',
+    title: 'バランスト・スコアカード',
+    statement:
+      'バランスト・スコアカード（BSC）は、ロバート・S・キャプラン（ハーバード大）とデイビッド・P・ノートンが1992年のHarvard Business Review論文「The Balanced Scorecard—Measures That Drive Performance」で提唱した業績評価・戦略マネジメントの枠組み。' +
+      '財務指標偏重の従来型管理を補い、ビジョンと戦略を(1)財務、(2)顧客、(3)業務プロセス、(4)学習と成長の4つの視点からバランスよく測定・管理する。各視点で戦略目標・成功要因・業績評価指標・数値目標・施策を設定し、過去を表す財務（遅行指標）と将来を生む非財務（先行指標）を結びつける。後にキャプラン＆ノートンは視点間の因果連鎖を可視化する「戦略マップ」へ発展させ、戦略の策定と実行をつなぐツールとした。',
+    keyFigures:
+      'ロバート・S・キャプラン（Robert S. Kaplan、ハーバード大）／デイビッド・P・ノートン（David P. Norton）／初出: Harvard Business Review 1992年1-2月号 pp.71-79／4視点: 財務・顧客・業務プロセス・学習と成長／発展形: 戦略マップ（Strategy Maps, 2004）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=9161', type: 'academic', label: 'Harvard Business School Faculty & Research — “The Balanced Scorecard: Measures that Drive Performance” (HBR 70, no.1, 1992: 71–79)' },
+      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'reference', label: 'Harvard Business Review — 原典記事ページ（Kaplan & Norton, 1992）' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0007681322000258', type: 'academic', label: 'Business Horizons (ScienceDirect, 査読誌) — “Thirty years with the balanced scorecard: What we have learned”' },
+      { url: 'https://balancedscorecard.org/bsc-basics/articles-videos/the-four-perspectives-of-the-balanced-scorecard/', type: 'reference', label: 'Balanced Scorecard Institute — The Four Perspectives of the Balanced Scorecard' },
+    ],
+  },
+  {
+    id: 'human-dual-process-theory',
+    discipline: 'human-science',
+    title: '二重過程理論（システム1とシステム2）',
+    statement:
+      '二重過程理論は、人間の思考・判断・意思決定が性質の異なる2つの認知過程によって担われるとする枠組みである。システム1は速く・自動的・直感的で努力をほとんど要さず無意識的・連想的に働き（例：簡単な計算、表情の読み取り、ヒューリスティック）、システム2は遅く・意識的・分析的で注意と努力を要し系列的に働く（例：複雑な計算、熟慮を要する判断）。' +
+      '多くの認知バイアスやヒューリスティックは、システム1の自動的処理がシステム2による十分な吟味を経ずに用いられることから生じると説明される。「システム1／システム2」の呼称はスタノヴィッチとウェストに由来し、カーネマンが著書『ファスト＆スロー』（2011）で採用・普及させた。同種の二過程モデルは推論研究や態度・説得研究にも広くみられるが、2つを別個の「システム」とみなす見方には批判があり、近年は連続体や複数過程とみる議論もある。',
+    keyFigures:
+      'ダニエル・カーネマン（Daniel Kahneman、『ファスト＆スロー』2011で普及）／キース・スタノヴィッチ（Keith Stanovich）＆リチャード・ウェスト（Richard West、「システム1／2」の呼称）／ジョナサン・エヴァンス（Jonathan St. B. T. Evans、推論研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1745691612460685', type: 'academic', label: 'Evans & Stanovich (2013) “Dual-Process Theories of Higher Cognition: Advancing the Debate”, Perspectives on Psychological Science (SAGE, 査読論文)' },
+      { url: 'https://www.cambridge.org/core/journals/design-science/article/design-thinking-fast-and-slow-a-framework-for-kahnemans-dualsystem-theory-in-design/A200DC637BBDC982D288FC4F8A112DE7', type: 'academic', label: 'Cambridge Core (Design Science) — Kahneman の二重システム理論（システム1／システム2）の解説' },
+      { url: 'https://link.springer.com/article/10.1007/s13164-019-00446-9', type: 'academic', label: 'Review of Philosophy and Psychology (Springer) — 行動経済学・神経経済学における二重過程理論の批判的レビュー' },
+    ],
+  },
+  {
+    id: 'bizlaw-retention-of-title',
+    discipline: 'business-law',
+    title: '所有権留保',
+    statement:
+      '所有権留保とは、動産売買（特に割賦販売・分割払い）において、買主が代金を完済するまで目的物の所有権を売主に留保しつつ、目的物の引渡し・使用は買主に認める、代金債権担保のための非典型担保（約定担保）である。買主が完済すれば所有権は買主に移転するが、代金支払を怠れば売主は留保所有権に基づき契約を解除して目的物を引き揚げ、未払代金の回収を図れる。' +
+      '抵当権・質権のような典型担保と異なり民法に直接の規定はなく、譲渡担保と並び約一世紀にわたり判例・学説で規律されてきた。自動車の割賦販売や機械・商品の継続的供給取引で広く用いられる。割賦販売法7条は、指定商品の割賦販売につき、賦払金全部の支払義務が履行される時まで所有権が割賦販売業者に留保されたものと推定する。なお2025年5月成立の「譲渡担保契約及び所有権留保契約に関する法律」により所有権留保が明文化された。',
+    keyFigures:
+      '法的性質＝非典型担保（変則担保）かつ当事者の合意による約定担保／民法に直接規定なし・判例学説で規律（譲渡担保と並ぶ代表例）／機能＝代金完済まで所有権を売主に留保し代金債権を担保、不払い時は契約解除・引揚げで回収／割賦販売法7条「所有権に関する推定」／立法＝「譲渡担保契約及び所有権留保契約に関する法律」2025年5月30日成立・6月6日公布で明文化／典型担保（抵当権・質権・留置権・先取特権）とは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/336AC0000000159/', type: 'government', label: 'e-Gov法令検索「割賦販売法」（昭和36年法律第159号）— 第7条 所有権に関する推定' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/honbun/houan/g21709043.htm', type: 'government', label: '衆議院「譲渡担保契約及び所有権留保契約に関する法律案」（2025年成立・所有権留保の明文化）' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-1/003ikuma.pdf', type: 'academic', label: '立命館大学・生熊長幸「動産譲渡担保権・留保所有権の法的構成・優劣」（留保所有権＝非典型担保の法的構成）' },
+      { url: 'https://kotobank.jp/word/所有権留保-80635', type: 'reference', label: 'コトバンク「所有権留保」（代金完済まで所有権を売主に留保する担保的特約）' },
+    ],
+  },
+  {
+    id: 'infosoc-attention-economy',
+    discipline: 'information-sociology',
+    title: 'アテンション・エコノミー（注意経済）',
+    statement:
+      'アテンション・エコノミー（注意経済）とは、情報が過剰に供給される社会において希少な資源は「情報」ではなく、それを受け取る人々の有限な「注意（アテンション）」であり、この注意をめぐって企業・メディア・プラットフォームが競争するという経済の捉え方である。' +
+      '経済学者・心理学者ハーバート・サイモンが1971年に「情報の豊かさは注意の貧困を生む」と述べ、情報の消費は受け手の注意を消費するため、情報過多の中では注意の効率的配分が課題になると指摘したことが理論的源流とされる。後にゴールドハーバー（1997）がインターネット経済として論じ、ダベンポート＆ベック（2001）が経営論として展開した。無料サービスと引き換えに利用者の注意・時間を収益化するデジタル広告、エンゲージメント最大化を狙うSNSの依存的設計、クリックベイト、情報過多などと結びつき、近年は監視資本主義批判とも接続して論じられる。',
+    keyFigures:
+      'ハーバート・サイモン（Herbert A. Simon, 理論的源流・1971）／マイケル・ゴールドハーバー（Michael H. Goldhaber, 1997・ネット経済への適用）／トーマス・ダベンポート＆ジョン・ベック（Thomas H. Davenport & John C. Beck, 2001・経営論的展開）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Wikipedia「Attention economy」— サイモン1971を起点とし、ゴールドハーバー1997、ダベンポート＆ベック2001を整理' },
+      { url: 'https://academic.oup.com/iwc/article/37/1/18/7733851', type: 'academic', label: 'Interacting with Computers (Oxford University Press), “Second Wave of Attention Economics”（査読学術誌）' },
+      { url: 'https://www.nngroup.com/articles/attention-economy/', type: 'media', label: 'Nielsen Norman Group「The Attention Economy」— 注意を希少資源とする概念とサイモンの定式化の解説' },
+      { url: 'https://islandora-dev.library.cmu.edu/node/45427', type: 'academic', label: 'Carnegie Mellon University Library — H. A. Simon “Designing Organizations for an Information-Rich World” (1971) 原典所蔵記録' },
+    ],
+  },
 ];
 // Stryker restore all
