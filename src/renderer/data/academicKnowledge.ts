@@ -7805,5 +7805,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://gdpr-info.eu/art-20-gdpr/', type: 'reference', label: 'GDPR-Info — Art. 20 GDPR Right to data portability（条文参照リファレンス）' },
     ],
   },
+  {
+    id: 'econ-solow-growth-model',
+    discipline: 'economics',
+    title: 'ソロー成長モデル',
+    statement:
+      'ソロー成長モデル（新古典派成長理論、Solow–Swan モデル）は、長期の経済成長を資本蓄積・労働人口成長・技術進歩の関係から説明する。ロバート・ソローが1956年の論文「A Contribution to the Theory of Economic Growth」（Quarterly Journal of Economics）で提示し、同年トレバー・スワンも独立に同型のモデルを発表した。生産関数は資本Kと労働Lを投入し、規模に関する収穫一定かつ各要素に収穫逓減を仮定する。資本の限界生産力が逓減するため、' +
+      '貯蓄・投資による資本蓄積だけでは成長を維持できず、経済は一人当たり資本・産出が一定の「定常状態（steady state）」へ収束する。含意は、(1)貯蓄率上昇は定常状態の所得水準を引き上げるが長期成長率は高めない（水準効果であり成長率効果ではない）、(2)持続的な一人当たり成長は外生的技術進歩によってのみ可能、(3)資本が希少な貧困国が速く成長し追いつく「条件付き収束」。資本・労働で説明できない残差は「ソロー残差（全要素生産性TFP）」と呼ばれる。ソローは1987年にノーベル経済学賞を受賞した。',
+    keyFigures:
+      'ロバート・ソロー（Robert M. Solow, 1924–2023, MIT, 1987年ノーベル経済学賞）／トレバー・スワン（Trevor W. Swan, 1956年に独立提示）／キー概念＝定常状態・条件付き収束・ソロー残差（TFP）・外生的技術進歩',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1987/press-release/', type: 'government', label: 'NobelPrize.org — Sveriges Riksbank Prize in Economic Sciences 1987 (Robert M. Solow) 公式プレスリリース' },
+      { url: 'https://www.britannica.com/money/Robert-Solow', type: 'reference', label: 'Encyclopædia Britannica — Robert Solow: Biography, Nobel Prize, & Facts' },
+      { url: 'https://faculty.sites.iastate.edu/tesfatsi/archive/tesfatsi/solowmod.pdf', type: 'academic', label: 'Iowa State University (L. Tesfatsion) — The Basic Solow-Swan Descriptive Growth Model（講義ノート）' },
+      { url: 'https://en.wikipedia.org/wiki/Solow_residual', type: 'reference', label: 'Wikipedia — Solow residual（ソロー残差／TFP、Solow 1957 の定義）' },
+    ],
+  },
+  {
+    id: 'mgmt-effectuation',
+    discipline: 'management',
+    title: 'エフェクチュエーション',
+    statement:
+      'エフェクチュエーション（Effectuation）は、サラス・サラスバシー（ヴァージニア大学ダーデン経営大学院）が熟達した連続起業家の意思決定を実証研究して見出した、高不確実性下の起業家的思考様式・論理であり、2001年の論文「Causation and Effectuation」（Academy of Management Review）で提示された。' +
+      'あらかじめ定めた目的に最適な手段を選ぶ「コーゼーション（予測の論理）」と対比され、予測できない未来はコントロールで対処できるという前提に立つ「コントロールの論理」をとる。手元の手段（自分は誰か・何を知るか・誰を知るか）から出発し目的を創発させる。5原則は、手中の鳥・許容可能な損失・クレイジーキルト・レモネード・飛行機のパイロットであり、リーン・スタートアップとも親和的である。',
+    keyFigures:
+      'サラス・D・サラスバシー（Saras D. Sarasvathy、ヴァージニア大学ダーデン経営大学院、2001 Academy of Management Review）／対比概念＝コーゼーション（予測の論理）／5原則＝手中の鳥・許容可能な損失・クレイジーキルト・レモネード・飛行機のパイロット',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) “Causation and Effectuation,” Academy of Management Review 26(2): 243-263（査読学術誌・原典）' },
+      { url: 'https://www.darden.virginia.edu/effectuation', type: 'academic', label: 'University of Virginia, Darden School of Business — Effectuation Overview（提唱者所属大学の公式解説）' },
+      { url: 'https://effectuation.org/the-five-principles-of-effectuation-detail', type: 'reference', label: 'Effectuation.org — The Five Principles of Effectuation（5原則の一次的リファレンス）' },
+      { url: 'https://en.wikipedia.org/wiki/Saras_Sarasvathy', type: 'reference', label: 'Wikipedia — Saras Sarasvathy（経歴・研究背景）' },
+    ],
+  },
+  {
+    id: 'human-emotional-labor',
+    discipline: 'human-science',
+    title: '感情労働（ホックシールド）',
+    statement:
+      '感情労働とは、職務の一環として賃金と引き換えに自分の感情を管理・調整し、組織が求める適切な感情表現（公的に観察可能な表情・身体的表出）を作り出すことが要求される労働を指す。社会学者アーリー・R・ホックシールドが1983年の著書『管理される心（The Managed Heart）』で提唱し、肉体労働・頭脳労働と並ぶ第三の労働形態として論じた。' +
+      '常に笑顔で接する客室乗務員、あえて威圧的に振る舞う集金人を代表例とする。感情管理には、内心を変えず外見的表現のみ取り繕う「表層演技（surface acting）」と、求められる感情を実際に内面へ呼び起こす「深層演技（deep acting）」がある。本心と表出すべき感情のズレ（感情的不協和）はストレス・バーンアウト・自己疎外を生みうる。サービス経済化に伴い看護・介護・接客・コールセンター等で重要性が増している。',
+    keyFigures:
+      'アーリー・ラッセル・ホックシールド（Arlie Russell Hochschild、カリフォルニア大学バークレー校 社会学）／『The Managed Heart』(1983)／表層演技・深層演技／帰結＝感情的不協和・バーンアウト・自己疎外',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ucpress.edu/books/the-managed-heart/paper', type: 'academic', label: 'University of California Press — The Managed Heart (原著出版社の書誌情報)' },
+      { url: 'https://en.wikipedia.org/wiki/The_Managed_Heart', type: 'reference', label: 'Wikipedia — The Managed Heart（表層演技・深層演技・客室乗務員/集金人事例）' },
+      { url: 'https://greatergood.berkeley.edu/article/item/what_is_emotional_labor_and_why_does_it_matter', type: 'academic', label: 'Greater Good Science Center, UC Berkeley — What Is Emotional Labor' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7078559/', type: 'academic', label: 'PMC査読論文 — 感情労働・バーンアウト・離職意図（看護職、感情的不協和の帰結）' },
+    ],
+  },
+  {
+    id: 'human-burnout',
+    discipline: 'human-science',
+    title: 'バーンアウト（燃え尽き症候群）',
+    statement:
+      'バーンアウト（燃え尽き症候群）とは、適切に管理されなかった慢性的な職場ストレスから生じる心身の消耗状態を指す症候群である。臨床心理学者ハーバート・フロイデンバーガーが1974年に対人援助職スタッフの消耗を「staff burn-out」として記述し用語を広め、社会心理学者クリスティーナ・マスラックが測定尺度マスラック・バーンアウト・インベントリ（MBI）を開発して体系化した。' +
+      'マスラックはバーンアウトを3次元で捉える：情緒的消耗感（emotional exhaustion）、脱人格化／シニシズム（depersonalization／cynicism、対象者への冷淡・無関心な態度）、個人的達成感の低下（reduced personal accomplishment）である。世界保健機関（WHO）はICD-11において、これを医学的疾患ではなく「健康状態に影響を及ぼす職業現象（occupational phenomenon）」と位置づけた。看護・教育・対人援助職に多い。',
+    keyFigures:
+      'ハーバート・フロイデンバーガー（Herbert Freudenberger、1974年に用語を提唱）／クリスティーナ・マスラック（Christina Maslach、MBIを開発）／3次元＝情緒的消耗感・脱人格化・個人的達成感の低下／WHO ICD-11で職業現象と位置づけ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases', type: 'government', label: 'WHO「Burn-out an occupational phenomenon: ICD-11」（2019年改訂のICD-11におけるバーンアウト定義・3次元）' },
+      { url: 'https://spssi.onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-4560.1974.tb00706.x', type: 'academic', label: 'Freudenberger H. J. (1974) “Staff Burn-Out”, Journal of Social Issues（用語の起源、査読誌・Wiley）' },
+      { url: 'https://www.apa.org/members/content/burnout-research', type: 'reference', label: 'American Psychological Association「Christina Maslach: The pioneer behind burnout research」（MBIと3次元の体系化）' },
+      { url: 'https://en.wikipedia.org/wiki/Maslach_Burnout_Inventory', type: 'reference', label: 'Wikipedia「Maslach Burnout Inventory」（情緒的消耗感・脱人格化・個人的達成感の低下）' },
+    ],
+  },
+  {
+    id: 'bizlaw-secrecy-of-communications',
+    discipline: 'business-law',
+    title: '通信の秘密（憲法21条2項）',
+    statement:
+      '通信の秘密とは、手紙・電話・電子メール等の通信について、その内容のみならず、通信当事者・宛先・通信回数・日時など通信の存在事実（構成要素）が、公権力や第三者によって侵害されないことを保障する基本的人権である。' +
+      '日本国憲法21条2項後段は「通信の秘密は、これを侵してはならない」と定め、検閲の禁止（前段）と並んで表現の自由・プライバシーを支える。これを具体化する電気通信事業法4条1項は「電気通信事業者の取扱中に係る通信の秘密は、侵してはならない」と規定し、同法179条は侵害行為を処罰する。侵害行為は知得・窃用・漏えいの3類型に整理され、犯罪捜査のための通信傍受など法律・令状に基づく例外が限定的に認められる。',
+    keyFigures:
+      '憲法21条2項後段＝通信の秘密は侵してはならない（検閲禁止と並列）／電気通信事業法4条1項＝電気通信事業者の取扱中に係る通信の秘密の不可侵／保護対象＝通信の内容＋構成要素（当事者・宛先・回数・日時・存在事実）／侵害の3類型＝知得・窃用・漏えい／電気通信事業法179条で処罰／信書は郵便法でも保護／例外＝通信傍受法等の法律・令状に基づく限定的措置',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/th_faq.html', type: 'government', label: '総務省 電気通信消費者情報コーナー「通信の秘密（電気通信事業法第4条）FAQ」' },
+      { url: 'https://laws.e-gov.go.jp/law/359AC0000000086/', type: 'government', label: 'e-Gov法令検索「電気通信事業法」（law id 359AC0000000086、第4条・第179条）' },
+      { url: 'https://laws.e-gov.go.jp/law/321CONSTITUTION', type: 'government', label: 'e-Gov法令検索「日本国憲法」（law id 321CONSTITUTION、第21条）' },
+      { url: 'https://ja.wikipedia.org/wiki/日本国憲法第21条', type: 'reference', label: 'ウィキペディア「日本国憲法第21条」' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-markets-act',
+    discipline: 'information-sociology',
+    title: 'デジタル市場法（DMA）',
+    statement:
+      'デジタル市場法（DMA、規則(EU)2022/1925）は、EUがデジタル分野の大規模プラットフォームによる市場支配や不公正な慣行に対処し、公正で開かれた競争可能な市場を確保するために制定した事前規制（ex ante regulation）である。2022年9月に採択、2022年11月発効、2023年5月2日に適用開始した。検索エンジン・SNS・メッセージング・OS・ブラウザ・オンライン仲介・動画共有・広告等の「中核的プラットフォームサービス」を提供し、' +
+      '売上高・利用者数・市場における強固で持続的な地位といった要件を満たす大手事業者を「ゲートキーパー」に指定し、一連の「すべきこと」「してはならないこと」の義務を課す。例として自社優遇の禁止、相互運用性の確保、取得データの利用制限、アプリのアンインストールや既定変更の自由、サイドローディングの許容がある。違反には全世界売上高の最大10％（反復違反は20％）の制裁金が科されうる。事後執行の従来型競争法を補完する点が特徴で、GDPRやDSAとは目的を異にする別の法である。',
+    keyFigures:
+      '法令番号＝規則(EU)2022/1925／採択2022年9月・発効2022年11月・適用開始2023年5月2日・義務本格遵守2024年3月7日／初回ゲートキーパー指定＝2023年9月（Alphabet・Amazon・Apple・ByteDance・Meta・Microsoftの6社）／主な義務＝自社優遇の禁止・相互運用性・取得データの利用制限・アンインストール/既定変更の自由・サイドローディング許容／制裁金＝全世界売上高の最大10％（反復違反は最大20％）／執行主体＝欧州委員会',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/eli/reg/2022/1925/oj/eng', type: 'government', label: 'Regulation (EU) 2022/1925 (Digital Markets Act) — EUR-Lex, Official Journal' },
+      { url: 'https://digital-markets-act.ec.europa.eu/about-dma_en', type: 'government', label: 'About the Digital Markets Act — European Commission' },
+      { url: 'https://www.consilium.europa.eu/en/policies/digital-markets-act/', type: 'government', label: 'Digital Markets Act — Council of the European Union' },
+      { url: 'https://www.europarl.europa.eu/news/en/press-room/20220315IPR25504/deal-on-digital-markets-act-ensuring-fair-competition-and-more-choice-for-users', type: 'government', label: 'Deal on Digital Markets Act — European Parliament' },
+    ],
+  },
 ];
 // Stryker restore all
