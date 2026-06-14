@@ -7100,5 +7100,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/1461444818797082', type: 'academic', label: 'van Deursen & van Dijk (2019), New Media & Society — first/second-level divide の査読論文' },
     ],
   },
+  {
+    id: 'econ-tragedy-of-commons',
+    discipline: 'economics',
+    title: '共有地の悲劇（コモンズの悲劇）',
+    statement:
+      '誰もが自由にアクセスできる共有資源（牧草地・漁場・大気・地下水等）について、各個人が自己利益を合理的に最大化（共有牧草地に家畜を1頭でも多く放牧する等）すると、便益は個人に帰属する一方で資源消耗のコストは全利用者に分散されるため、資源の過剰利用・枯渇を招き、結果として全員が損失を被るという社会的ジレンマ。' +
+      '個人合理性と集団合理性の乖離を示す。生物学者ギャレット・ハーディンが1968年に『Science』誌の論文 “The Tragedy of the Commons” で提示し広めた。古典的解決策は私有化（所有権設定）と政府規制だが、エリノア・オストロムは地域コミュニティによる自主的ルール形成・共同管理（self-governance）で持続的管理が可能と実証し2009年ノーベル経済学賞を受賞した。「オープンアクセス」と「共同管理されたコモンズ」の混同などハーディンへの批判もある。',
+    keyFigures:
+      'ギャレット・ハーディン（Garrett Hardin, 1968年 Science 論文 “The Tragedy of the Commons” で概念を提示・普及）／エリノア・オストロム（Elinor Ostrom, 共同管理による解決を実証、著書 Governing the Commons 1990、2009年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/tragedy-of-the-commons', type: 'reference', label: 'Encyclopaedia Britannica — Tragedy of the commons' },
+      { url: 'https://www.britannica.com/topic/Garrett-Hardin', type: 'reference', label: 'Encyclopaedia Britannica — Garrett Hardin' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/summary/', type: 'government', label: 'NobelPrize.org — Prize in Economic Sciences 2009 (Elinor Ostrom)' },
+      { url: 'https://news.cnrs.fr/opinions/debunking-the-tragedy-of-the-commons', type: 'media', label: 'CNRS News — Debunking the Tragedy of the Commons（open-access vs. commons の批判）' },
+    ],
+  },
+  {
+    id: 'econ-x-inefficiency',
+    discipline: 'economics',
+    title: 'X非効率（ライベンシュタイン）',
+    statement:
+      'X非効率とは、企業や組織が利用可能な資源・技術から得られるはずの最大産出（生産フロンティア）を実現できず、内部的要因——経営の弛緩、動機づけの欠如、努力不足、情報の不完全性など——によって生産が技術的最善を下回る状態を指す。ハーヴェイ・ライベンシュタインが1966年の論文「Allocative Efficiency vs. “X-Efficiency”」（American Economic Review）で提示した。' +
+      '「X」は原因が特定されない未知の要因を表す。新古典派が主に扱う配分の非効率（資源配分のゆがみによる厚生損失）とは区別され、ライベンシュタインは独占の弊害などにおいて配分の非効率（ハーバーガーの三角形）よりもX非効率による損失の方が大きい場合があると論じた。競争圧力の欠如（独占・規制保護）がX非効率を生みやすい。',
+    keyFigures:
+      'ハーヴェイ・ライベンシュタイン（Harvey Leibenstein, 1922–1994）／1966年論文 “Allocative Efficiency vs. ‘X-Efficiency’”, American Economic Review 56(3): 392–415／「X」＝原因未特定の未知要因／配分の非効率（ハーバーガーの三角形）との対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://msuweb.montclair.edu/~lebelp/leibensteinxeffaer1966.pdf', type: 'academic', label: 'Leibenstein, H. (1966) “Allocative Efficiency vs. X-Efficiency,” American Economic Review 56(3): 392–415（原論文フルテキスト, Montclair State University提供）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.25.4.211', type: 'academic', label: 'Retrospectives: X-Efficiency, Journal of Economic Perspectives 25(4)（American Economic Association）' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1888-2', type: 'reference', label: '“X-Efficiency”, The New Palgrave Dictionary of Economics（SpringerLink）' },
+      { url: 'https://en.wikipedia.org/wiki/X-inefficiency', type: 'reference', label: 'X-inefficiency（Wikipedia 百科事典項目）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-equilibrium',
+    discipline: 'management',
+    title: '組織均衡論（誘因と貢献）',
+    statement:
+      'チェスター・バーナードが『経営者の役割（The Functions of the Executive）』（1938）で提示し、H・サイモン『経営行動』（1947）やマーチ＝サイモン『Organizations』（1958）が発展させた、組織存続の条件に関する理論。組織は従業員・出資者・顧客などの参加者から継続的な「貢献（contributions）」を引き出して存続するが、それが可能なのは、参加者が自らの貢献に見合う（あるいはそれ以上の）「誘因（inducements）」を組織から得ていると知覚する限りにおいてである。' +
+      '誘因≧貢献のとき参加者は組織にとどまり、組織は均衡を保つ。バーナードはまた公式組織の成立条件として「共通目的」「貢献意欲（協働意志）」「コミュニケーション」の3要素を挙げ、組織の有効性（effectiveness＝協働目的の達成）と能率（efficiency＝参加者個人の動機満足）を区別した。動機づけ理論ではなく、組織存続の条件を説明する理論である点に特徴がある。',
+    keyFigures:
+      'チェスター・I・バーナード（Chester I. Barnard, 1938『経営者の役割』）／ハーバート・A・サイモン（Herbert A. Simon, 1947『経営行動』）／ジェームズ・G・マーチ（James G. March, 1958『Organizations』）／公式組織の3要素＝共通目的・貢献意欲・コミュニケーション',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/The_Functions_of_the_Executive', type: 'reference', label: 'Wikipedia「The Functions of the Executive」（バーナード1938年、協働体系・有効性と能率）' },
+      { url: 'https://en.wikipedia.org/wiki/Administrative_Behavior', type: 'reference', label: 'Wikipedia「Administrative Behavior」（サイモン1947年、誘因＝貢献均衡のバーナード由来）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/joms.12531', type: 'academic', label: 'Wilden et al. (2019) Journal of Management Studies「60 Years of March and Simon’s Organizations」（査読誌）' },
+      { url: 'https://eric.ed.gov/?id=ED213096', type: 'academic', label: 'ERIC ED213096 — バーナードの協働的組織行動と公式組織における経営者機能（米教育省データベース）' },
+    ],
+  },
+  {
+    id: 'human-fundamental-attribution-error',
+    discipline: 'human-science',
+    title: '根本的な帰属の誤り',
+    statement:
+      '根本的な帰属の誤り（fundamental attribution error）とは、他者の行動の原因を解釈する際に、その場の状況など外的・状況的要因の影響を過小評価し、本人の性格・態度・能力といった内的・気質的（dispositional）要因を過大評価する傾向を指す社会心理学の概念である。' +
+      'この用語は、ジョーンズとハリスの実験（Jones & Harris, 1967）など先行研究を踏まえ、社会心理学者リー・ロス（Lee Ross）が1977年に命名した。立場が強制的に割り当てられたと知らされても書き手本人の真の態度を推測してしまう「対応バイアス（correspondence bias）」と密接に関連し、自分の行動は状況のせいに他者の行動は気質のせいにする行為者—観察者バイアスとも関わる。個人主義的な西洋文化でより強く、東アジアの集団主義文化では状況が重視されやすいとする文化差も論じられる。',
+    keyFigures:
+      'リー・ロス（Lee Ross, 1977 命名）／エドワード・E・ジョーンズ＆ヴィクター・ハリス（Jones & Harris, 1967 古典的実験）／エドワード・E・ジョーンズ＆リチャード・ニスベット（actor-observer bias）／関連概念＝対応バイアス（correspondence bias）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/fundamental-attribution-error', type: 'reference', label: 'Encyclopaedia Britannica「Fundamental attribution error」項目' },
+      { url: 'https://www.simplypsychology.org/fundamental-attribution.html', type: 'reference', label: 'Simply Psychology: Fundamental Attribution Error Theory（Ross 1977命名・Jones & Harris 1967実験を解説）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0146167299258003', type: 'academic', label: 'Krull et al. (1999) “The Fundamental Fundamental Attribution Error: Correspondence Bias in Individualist and Collectivist Cultures”, PSPB（査読論文・文化差）' },
+    ],
+  },
+  {
+    id: 'bizlaw-simultaneous-performance',
+    discipline: 'business-law',
+    title: '同時履行の抗弁権（民法533条）',
+    statement:
+      '同時履行の抗弁権とは、双務契約（売買・賃貸借など当事者双方が対価的債務を負う契約）において、相手方がその債務の履行（またはその提供）をするまでは、自己の債務の履行を拒める権利をいう（民法533条）。たとえば売買では、買主が代金を支払うまで売主は目的物の引渡しを拒め、逆もまた同様で、公平の観点から当事者の履行を牽連的に結びつける。' +
+      '2017年改正（2020年4月1日施行）の533条本文は、括弧書で「債務の履行に代わる損害賠償の債務の履行を含む」と明記し、履行不能時にも抗弁が失われない従来の解釈を条文化した。物権である留置権と機能は似るが、本権は双務契約上の債権的抗弁権である点で異なる。',
+    keyFigures:
+      '根拠条文＝民法533条（e-Gov law id 129AC0000000089）／性質＝双務契約上の債権的抗弁権（物権の留置権とは別概念）／要件＝(1)同一双務契約から生じる対価的債務の存在、(2)相手方の債務が弁済期にあること、(3)相手方が自己の債務の履行・提供をせずに請求したこと／効果＝履行を拒絶でき、抗弁の付着する債務は相手の履行提供まで履行遅滞責任を負わない・訴訟上は引換給付判決／2017年改正・2020年4月1日施行で「履行に代わる損害賠償の債務の履行を含む」を明文化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第533条' },
+      { url: 'https://ja.wikipedia.org/wiki/同時履行の抗弁権', type: 'reference', label: 'Wikipedia「同時履行の抗弁権」（要件・効果・留置権との異同）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第533条', type: 'reference', label: 'Wikibooks 民法第533条（条文・2017年改正の趣旨）' },
+    ],
+  },
+  {
+    id: 'infosoc-privacy-paradox',
+    discipline: 'information-sociology',
+    title: 'プライバシー・パラドックス',
+    statement:
+      'プライバシー・パラドックスとは、人々が調査や言明の上ではプライバシーやオンライン上の個人情報保護を強く懸念・重視すると表明しながら、実際の行動では些細な便益や利便性と引き換えに個人情報を容易に提供・開示してしまう、態度と行動の乖離（ギャップ）を指す現象である。電子商取引やSNS研究の文脈で広く論じられる。' +
+      'スーザン・B・バーンズの2006年論文（First Monday）でこの語が広く知られるようになった。アクイスティらの行動経済学的研究は、限定合理性・即時的満足への偏り（双曲割引）・情報の非対称性・デフォルト設定や文脈の影響などを乖離の要因として挙げる。一方でココラキス（2017）らは、懸念の測定方法や状況依存性の問題からそもそもパラドックスは存在しないとする批判的レビューを示している。',
+    keyFigures:
+      'スーザン・B・バーンズ（Susan B. Barnes, 2006『A privacy paradox: Social networking in the United States』First Monday で語を普及）／アレッサンドロ・アクイスティ（Alessandro Acquisti, 行動経済学的分析）／スピロス・ココラキス（Spyros Kokolakis, 2017 批判的システマティックレビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/1394', type: 'academic', label: 'Barnes, S. B. (2006) “A privacy paradox: Social networking in the United States”, First Monday 11(9)' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0167404818303031', type: 'academic', label: 'Kokolakis, S. (2017) “Privacy attitudes and privacy behaviour: A review of current research on the privacy paradox phenomenon”, Computers & Security 64:122-134' },
+      { url: 'https://www.heinz.cmu.edu/~acquisti/papers/Acquisti-Grossklags-Chapter-Etrics.pdf', type: 'academic', label: 'Acquisti, A. & Grossklags, J. “What Can Behavioral Economics Teach Us About Privacy?”（Carnegie Mellon University, Heinz College）' },
+    ],
+  },
 ];
 // Stryker restore all
