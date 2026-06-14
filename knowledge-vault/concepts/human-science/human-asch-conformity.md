@@ -1,0 +1,38 @@
+---
+id: human-asch-conformity
+discipline: human-science
+discipline_ja: 人間科学
+title: "アッシュの同調実験（同調圧力）"
+key_figures: "ソロモン・アッシュ（Solomon Asch、1951年／1950年代に実験を実施）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - discipline/human-science
+  - knowledge/verified
+aliases:
+  - "アッシュの同調実験（同調圧力）"
+---
+
+# アッシュの同調実験（同調圧力）
+
+> [!info] 分野: [[人間科学]] ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+集団の多数派が明らかに誤った判断を示すとき、個人がその誤りに同調してしまう傾向を示した社会心理学の実験。ソロモン・アッシュが1950年代（1951年〜）に行った線分の長さ比較課題で、被験者は基準線と一致する長さの線を3本の中から選ぶよう求められた。集団は7〜9人で1人を除く全員がサクラ（共謀者）であり、全18試行中12試行で一斉に誤答した。正答が明白な課題であったにもかかわらず、被験者は誤答が示された全試行の約3分の1（約32%）で多数派に同調して誤答し、被験者の約75%が少なくとも一度は同調した（統制条件での誤答率は1%未満）。同調率は多数派の人数や全員一致が崩れるか否か（反対するサクラが1人いるだけで大幅に低下）によって変化した。機序として、集団から外れたくないという規範的影響と、他者を情報源とみなす情報的影響が挙げられる。
+
+## 提唱者・初出
+ソロモン・アッシュ（Solomon Asch、1951年／1950年代に実験を実施）
+
+## 出典
+- [Encyclopaedia Britannica — Solomon Asch](https://www.britannica.com/biography/Solomon-Asch) `リファレンス`
+- [Encyclopaedia Britannica — Conformity（同調と実験設計）](https://www.britannica.com/topic/conformity) `リファレンス`
+- [EBSCO Research Starters — Asch conformity experiments](https://www.ebsco.com/research-starters/history/asch-conformity-experiments) `学術`
+
+## 関連
+- 分野MOC: [[人間科学]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

@@ -1,0 +1,38 @@
+---
+id: mgmt-sensemaking
+discipline: management
+discipline_ja: 経営学
+title: "センスメイキング"
+key_figures: "カール・E・ワイク（Karl E. Weick）が体系化／初出：著書『Sensemaking in Organizations』（Sage, 1995年）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - discipline/management
+  - knowledge/verified
+aliases:
+  - "センスメイキング"
+---
+
+# センスメイキング
+
+> [!info] 分野: [[経営学]] ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+人々（とくに組織のメンバー）が、曖昧で不確実な状況に直面したときに、起こっていることへ意味を与え、納得のいく解釈や物語を作り上げ、それに基づいて行動していく継続的な過程。カール・ワイクが体系化し、(1)アイデンティティの構築に根ざす、(2)回顧的（事後的に意味づける）、(3)有意味な環境を自ら作り出す（イナクトメント）、(4)社会的、(5)継続的、(6)抽出された手がかりに焦点化する、(7)正確さより尤もらしさ（plausibility）を重視する、という7つの特性を挙げた。マン・ガルチ火災やテネリフェ空港事故など、危機下でセンスメイキングが崩壊する過程の分析でも知られる。限定合理性や組織学習とは区別される独立した概念である。
+
+## 提唱者・初出
+カール・E・ワイク（Karl E. Weick）が体系化／初出：著書『Sensemaking in Organizations』（Sage, 1995年）
+
+## 出典
+- [Karl E. Weick — Wikipedia（提唱者・7特性・1995年著書）](https://en.wikipedia.org/wiki/Karl_Weick) `リファレンス`
+- [Sense Making, Organizational — Springer Nature リファレンス](https://link.springer.com/rwe/10.1007/978-3-031-25984-5_539) `リファレンス`
+- [The Social Processes of Organizational Sensemaking — Academy of Management Journal（査読論文）](https://journals.aom.org/doi/10.5465/amj.2005.15993111) `学術`
+
+## 関連
+- 分野MOC: [[経営学]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

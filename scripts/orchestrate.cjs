@@ -103,6 +103,28 @@ function resolveChain(reg, teamId) {
   };
 }
 
+// 学術知識ベース (VERIFIED_CONCEPTS) を役員ロールへ対応づけた知識ブリーフ。
+// dispatch 計画へ「各役職が参照すべき検証済み概念」を注入する。知識ベースの
+// パースに失敗しても dispatch 本体は止めない (耐障害設計)。
+let _kctxMod = null;
+let _kctxData = null;
+function knowledgeBrief(execId, perDiscipline = 3, cap = 6) {
+  if (!execId) return [];
+  if (_kctxMod === null) {
+    try {
+      _kctxMod = require('../orchestration/knowledge-context.cjs');
+      _kctxData = { concepts: _kctxMod.loadConcepts(), map: _kctxMod.loadKnowledgeMap() };
+    } catch {
+      _kctxMod = false;
+    }
+  }
+  if (!_kctxMod) return [];
+  const brief = _kctxMod.briefForExecutive(execId, { concepts: _kctxData.concepts, map: _kctxData.map, limit: perDiscipline });
+  const flat = [];
+  for (const d of brief.disciplines) for (const c of d.concepts) flat.push({ discipline: d.label, title: c.title });
+  return flat.slice(0, cap);
+}
+
 function lastRoundInfo(reg) {
   const lastRound = reg.rounds.reduce((m, r) => Math.max(m, r.round), 0);
   const lastCount = reg.rounds.find((r) => r.round === lastRound)?.teamCount ?? 0;
@@ -206,6 +228,8 @@ function cmdDispatch(reg, args) {
       manager: chain.manager ? `${chain.manager.title} [${chain.manager.id}]` : null,
       executive: chain.executive ? `${chain.executive.title} [${chain.executive.id}]` : null,
       secretariat: chain.secretariat ? `${chain.secretariat.title} [${chain.secretariat.id}]` : null,
+      // 学術知識ベースから、この役員ロールが参照すべき検証済み概念ブリーフを注入。
+      knowledge: knowledgeBrief(chain.executive ? chain.executive.id : null),
       items,
     };
   });
@@ -248,6 +272,7 @@ function cmdDispatch(reg, args) {
   for (const a of assignments) {
     console.log(`   • [${a.team}] ${a.domain}`);
     console.log(`       ${a.manager ?? '(管理職なし)'} ← ${a.executive ?? '(役員なし)'}  ${a.secretariat ? `／支援: ${a.secretariat}` : ''}`);
+    if (a.knowledge && a.knowledge.length) console.log(`       ◇ 知識ブリーフ: ${a.knowledge.map((k) => k.title).join(' / ')}`);
     if (a.items.length) for (const it of a.items) console.log(`       └ [P${it.priority}] ${it.title} (${it.id})`);
   }
   console.log(`\n  ${cycleName.toUpperCase()} 実行ステージ:`);
@@ -399,6 +424,47 @@ function cmdImportRequests(reg, args) {
 }
 
 // ---------------------------------------------------------------------------
+// context — 役員ロールへの学術知識ブリーフ (knowledge-map.json 経由)
+// ---------------------------------------------------------------------------
+function cmdContext(reg, args) {
+  let mod;
+  try {
+    mod = require('../orchestration/knowledge-context.cjs');
+  } catch (e) {
+    die(`知識ベースを読めません: ${e.message}`);
+  }
+  const concepts = mod.loadConcepts();
+  const map = mod.loadKnowledgeMap();
+  const labels = map.disciplineLabels || {};
+  const limit = args.limit ? Number(args.limit) : 5;
+
+  if (!args.role) {
+    const out = {};
+    for (const [execId, e] of Object.entries(map.executiveDisciplines || {})) {
+      out[execId] = e.disciplines.map((d) => ({ discipline: d, label: labels[d] || d, count: mod.conceptsForDiscipline(concepts, d).length }));
+    }
+    if (args.json) { console.log(JSON.stringify(out, null, 2)); return; }
+    console.log('🧭 役員ロール → 学術ディシプリン（knowledge-map.json）:');
+    for (const [execId, ds] of Object.entries(out)) {
+      console.log(`  • ${execId}: ${ds.map((d) => `${d.label}(${d.count})`).join(' / ')}`);
+    }
+    console.log('\n  詳細ブリーフ: npm run orchestrate:context -- --role <execId> [--limit N]');
+    return;
+  }
+
+  const execId = String(args.role);
+  if (!(map.executiveDisciplines || {})[execId]) die(`未知の役員ロール "${execId}" (利用可能: ${Object.keys(map.executiveDisciplines || {}).join(', ')})`);
+  const brief = mod.briefForExecutive(execId, { concepts, map, limit });
+  if (args.json) { console.log(JSON.stringify(brief, null, 2)); return; }
+  console.log(`🧭 役員 ${execId} への知識ブリーフ — ${(map.executiveDisciplines[execId] || {}).rationale || ''}`);
+  for (const d of brief.disciplines) {
+    console.log(`\n  【${d.label}】（全${d.count}件）`);
+    for (const c of d.concepts) console.log(`   • ${c.title} — ${c.oneLiner}`);
+    if (d.count > d.concepts.length) console.log(`   …ほか ${d.count - d.concepts.length} 件`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 function main() {
   const argv = process.argv.slice(2);
   const cmd = (argv[0] && !argv[0].startsWith('--') ? argv.shift() : 'status').toLowerCase();
@@ -410,7 +476,8 @@ function main() {
     case 'dispatch': return cmdDispatch(reg, args);
     case 'record': return cmdRecord(reg, args);
     case 'import-requests': return cmdImportRequests(reg, args);
-    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record | import-requests)`);
+    case 'context': return cmdContext(reg, args);
+    default: die(`未知のコマンド "${cmd}" (status | cycle | dispatch | record | import-requests | context)`);
   }
 }
 

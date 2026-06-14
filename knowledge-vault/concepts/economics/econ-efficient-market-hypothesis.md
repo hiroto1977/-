@@ -1,0 +1,38 @@
+---
+id: econ-efficient-market-hypothesis
+discipline: economics
+discipline_ja: 経済学
+title: "効率的市場仮説（efficient market hypothesis, EMH）"
+key_figures: "ユージン・ファーマ（1970体系化・2013ノーベル経済学賞）／批判: ロバート・シラー（行動ファイナンス、2013共同受賞）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - discipline/economics
+  - knowledge/verified
+aliases:
+  - "効率的市場仮説（efficient market hypothesis, EMH）"
+---
+
+# 効率的市場仮説（efficient market hypothesis, EMH）
+
+> [!info] 分野: [[経済学]] ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+資産価格は利用可能な情報をすべて速やかに織り込むため、市場平均を継続的に上回る超過収益を恒常的に得ることはできない、とする金融経済学の仮説。価格に反映される情報集合の範囲により3形態に区別される。ウィーク型は情報集合を過去の価格・取引履歴とし、過去データに基づくテクニカル分析では超過収益を得られないとする。セミストロング型は公開情報すべてを対象とし、ファンダメンタル分析も無効とする。ストロング型は私的（未公開）情報まで含む。ユージン・ファーマが1970年の論文で体系化し、2013年にノーベル経済学賞を受賞した。価格変化は新情報の出現が予測不能ゆえランダムとなるランダムウォーク理論と密接に関連する。1990年代以降、行動経済学（シラー等）や、小型株効果・1月効果といった持続的アノマリーの存在から批判があり、市場参加者の合理性や完全情報の前提が現実的かが争点となっている。
+
+## 提唱者・初出
+ユージン・ファーマ（1970体系化・2013ノーベル経済学賞）／批判: ロバート・シラー（行動ファイナンス、2013共同受賞）
+
+## 出典
+- [Encyclopædia Britannica Money — Efficient-Market Hypothesis（3形態・批判）](https://www.britannica.com/money/what-is-the-efficient-market-hypothesis) `リファレンス`
+- [NobelPrize.org — Eugene F. Fama 2013（資産価格の実証分析）](https://www.nobelprize.org/prizes/economic-sciences/2013/fama/facts/) `公的`
+- [NobelPrize.org — 2013年経済学賞 Advanced information](https://www.nobelprize.org/prizes/economic-sciences/2013/advanced-information/) `公的`
+
+## 関連
+- 分野MOC: [[経済学]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
