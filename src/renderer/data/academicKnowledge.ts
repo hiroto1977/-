@@ -6901,5 +6901,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Narrative_paradigm', type: 'reference', label: 'Wikipedia: “Narrative paradigm”' },
     ],
   },
+  {
+    id: 'econ-duverger-law',
+    discipline: 'economics',
+    title: 'デュヴェルジェの法則',
+    statement:
+      '選挙制度が政党システムに与える影響を論じた命題。中心的主張（デュヴェルジェの「法則」）は、小選挙区制（一選挙区から一人を選ぶ相対多数代表制／単純多数決）が二大政党制をもたらす傾向がある、というもの。逆に比例代表制や決選投票制（二回投票制）は多党制をもたらしやすいとされ、こちらは「仮説（hypothesis）」と呼ばれることが多い。' +
+      '小選挙区制が二大政党制を生む理由として、(1)機械的効果＝小政党は得票しても議席に結びつきにくく過小代表される、(2)心理的効果＝有権者は当選可能性の低い小政党への投票が「死票」になると考え当選可能な大政党へ戦略的に投票する、の2つが挙げられる。ただし地域政党の存在等の例外があり、また「比例代表制が多党制を生む」のではなく「社会的亀裂による多党制が先にあり、それを反映して比例代表制が採用される」とする因果方向への批判（Grumm、Colomer等）も存在し、経験的支持の強さには論争がある。',
+    keyFigures:
+      '提唱者: モーリス・デュヴェルジェ（Maurice Duverger、仏政治学者）／初出: 『政党社会学（Les partis politiques）』1951年（英訳 Political Parties, 1954）／「法則（Duverger\'s law）」の呼称はウィリアム・ライカー（William H. Riker）が英語圏で普及させた',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Duverger%27s_law', type: 'reference', label: "Duverger's law — Wikipedia（百科事典級リファレンス）" },
+      { url: 'https://www.cambridge.org/core/journals/british-journal-of-political-science/article/abs/was-duverger-correct-singlemember-district-election-outcomes-in-fiftythree-countries/6FA32DFB3BDF6046F9ED0382029DE29F', type: 'academic', label: "Gaines, 'Was Duverger Correct? Single-Member District Election Outcomes in Fifty-three Countries', British Journal of Political Science（査読論文）" },
+      { url: 'https://blogs.lse.ac.uk/politicsandpolicy/duvergers-law-dead-parrot-dunleavy/', type: 'academic', label: "Dunleavy, 'Duverger's law is a dead parrot', LSE British Politics and Policy（ロンドン大学 LSE・批判的論点）" },
+      { url: 'https://kenbenoit.net/pdfs/Benoit_FrenchPolitics_2006.pdf', type: 'academic', label: "Benoit, 'Duverger's Law and the Study of Electoral Systems', French Politics（学術論文）" },
+    ],
+  },
+  {
+    id: 'econ-money-illusion',
+    discipline: 'economics',
+    title: '貨幣錯覚',
+    statement:
+      '貨幣錯覚（money illusion）とは、人々が物価変動を十分に考慮せず、お金の名目的な価値（額面の金額）を実質的な価値（購買力）と混同して判断・行動してしまう認知的傾向を指す。例えば物価が同率で上昇している状況で名目賃金が上がると、実質賃金が変わらない（あるいは下がる）にもかかわらず「給料が上がった」と満足する一方、名目賃金の引き下げには強く抵抗するのに、インフレによる同等の実質賃金低下は受け入れやすい、といった行動に表れる。' +
+      '合理的経済人を仮定する古典派・新古典派は、行動を決めるのは実質変数のみであるとして貨幣錯覚を否定する（長期的な貨幣の中立性）。しかしケインズは名目賃金の下方硬直性との関連でこれを重視し、シャフィール・ダイアモンド・トヴェルスキー（1997）らの行動経済学的研究は、人々が実際に名目額に影響される（フレーミング効果）ことを実証した。名目硬直性、インフレ・デフレの実体経済への影響、金融政策の有効性とも関連する。',
+    keyFigures:
+      'アーヴィング・フィッシャー（Irving Fisher、1928年の著書『The Money Illusion（貨幣錯覚）』で用語を定式化）／ジョン・メイナード・ケインズ（『一般理論』1936年で名目賃金の下方硬直性と関連づけて重視）／エルダー・シャフィール、ピーター・ダイアモンド、エイモス・トヴェルスキー（1997年、行動経済学的に実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article/112/2/341/1870915', type: 'academic', label: 'Shafir, Diamond & Tversky (1997) "Money Illusion", The Quarterly Journal of Economics 112(2): 341-374 (Oxford Academic)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/money-illusion', type: 'reference', label: 'Encyclopedia.com — "Money Illusion"（Fisher 1928の定義・業績循環への含意を解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Money_illusion', type: 'reference', label: 'Wikipedia — "Money illusion"（名目/実質の混同、Fisher・Keynes・古典派中立性の整理）' },
+    ],
+  },
+  {
+    id: 'mgmt-diversification',
+    discipline: 'management',
+    title: '多角化戦略',
+    statement:
+      '多角化戦略（diversification strategy）とは、企業が既存の事業・製品・市場にとどまらず、新しい製品分野や新しい市場へ同時に進出して事業範囲を広げる成長戦略である。イゴール・アンゾフが示した成長ベクトル（製品×市場マトリクス：市場浸透・市場開拓・製品開発・多角化）の中で、「新製品×新市場」という製品・市場の双方が未知である最もリスクの高い象限に位置づけられる。' +
+      '多角化は、既存事業と技術・顧客・販路などで関連性をもつ「関連多角化」と、関連性の乏しい事業へ進む「非関連多角化（コングロマリット型）」に大別される。動機・利点として、範囲の経済（資源・能力の共有によるコスト削減）、シナジー（相乗効果）、事業リスクの分散、未利用・余剰資源の活用、成長機会の確保が挙げられる。一方で経営資源の分散や統制困難、過度な多角化による「多角化ディスカウント」などの弊害も論じられる。',
+    keyFigures:
+      'イゴール・アンゾフ（H. Igor Ansoff, 1957）：成長ベクトル（製品×市場マトリクス）を提示し、多角化を最もリスクの高い象限と位置づけた／リチャード・ルメルト（Richard P. Rumelt, 1974/1982）：多角化を関連／非関連に類型化し、共通の中核的スキル・資源を活かす関連多角化型の企業が最も高い収益性を示すという実証研究を行った／主要概念：範囲の経済（economies of scope）・シナジー・リスク分散・多角化ディスカウント',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pressbooks.lib.vt.edu/strategicmanagement/chapter/8-3-diversification/', type: 'academic', label: 'Virginia Tech Pressbooks, Strategic Management — 8.3 Diversification（大学OER教科書、関連／非関連多角化）' },
+      { url: 'https://www.blackwellpublishing.com/content/GrantContemporaryStrategyAnalysis/6th_Edition/CSAC15.pdf', type: 'academic', label: 'Robert M. Grant, Contemporary Strategy Analysis（Blackwell）, Ch.15 Diversification Strategy（範囲の経済・シナジー・リスク分散・ルメルト）' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/ansoff-matrix', type: 'reference', label: 'EBSCO Research Starters — Ansoff Matrix（多角化が最もリスクの高い新製品×新市場象限であること）' },
+      { url: 'https://ocw.u-tokyo.ac.jp/lecture_files/eco_07/10/notes/ja/shintaku-10-2.pdf', type: 'academic', label: '東京大学 OpenCourseWare 経営戦略講義「多角化戦略・シナジー効果」（日本語の一次的講義資料）' },
+    ],
+  },
+  {
+    id: 'human-cialdini-influence',
+    discipline: 'human-science',
+    title: 'チャルディーニの影響力の6原理',
+    statement:
+      '社会心理学者ロバート・チャルディーニが、承諾（コンプライアンス）や説得が成立しやすくなる心理的メカニズムを、著書『影響力の武器（Influence: The Psychology of Persuasion）』（1984）で6つの普遍的原理に整理した枠組み。(1)返報性（reciprocity、何かを受け取ると返したくなる）、(2)コミットメントと一貫性（commitment and consistency、一度決めた立場・約束に一貫しようとする）、(3)社会的証明（social proof、多くの人がしている行動を正しいと判断する）、(4)好意（liking、好意を持つ相手の頼みを受け入れやすい）、(5)権威（authority、専門家・権威者に従う）、(6)希少性（scarcity、手に入りにくいものほど価値が高いと感じる）。' +
+      '後にチャルディーニは7つ目として一体性／結束（unity、自他が同じ集団・アイデンティティを共有していると感じること）を『プレ・スエージョン』（2016）で追加した。マーケティング・交渉・広告に広く応用される一方、操作（悪用）への注意も論じられる。',
+    keyFigures:
+      'ロバート・チャルディーニ（Robert B. Cialdini、社会心理学者・米アリゾナ州立大学名誉教授）／初出『影響力の武器（Influence: The Psychology of Persuasion）』1984年／第7原理「一体性（unity）」は『プレ・スエージョン（Pre-Suasion）』2016年で追加',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Robert_Cialdini', type: 'reference', label: 'Wikipedia — Robert Cialdini（6原理の列挙と2016年の第7原理「unity」を記載）' },
+      { url: 'https://news.wpcarey.asu.edu/20250422-gentle-science-persuasion-part-seven-unity', type: 'academic', label: 'Arizona State University, W. P. Carey News — “The gentle science of persuasion, part seven: Unity”（チャルディーニ所属大学による解説）' },
+      { url: 'https://www.seishinshobo.co.jp/book/b10033616.html', type: 'media', label: '誠信書房『影響力の武器［新版］』公式書誌（日本語版正式訳・6原理＋第7原理の邦訳用語の典拠）' },
+    ],
+  },
+  {
+    id: 'bizlaw-statutory-lien',
+    discipline: 'business-law',
+    title: '先取特権（民法303条）',
+    statement:
+      '先取特権とは、法律で定められた特定の種類の債権を有する者が、債務者の財産から、他の債権者に先立って優先的に弁済を受けることができる法定担保物権である（民法303条）。抵当権・質権のように当事者の合意で設定する約定担保物権と異なり、社会政策的考慮（社会的弱者の保護、公平、当事者の意思の推測等）から法律が特に認めるもので、一定の事情があれば当然に成立し、目的物の占有移転も登記も原則として不要である。' +
+      '優先弁済的効力を有する一方、留置的効力は持たない。種類は、債務者の総財産を対象とする「一般の先取特権」（306条）、特定の動産を対象とする「動産の先取特権」（311条）、特定の不動産を対象とする「不動産の先取特権」（325条）の3つに分かれ、各債権間の優先順位も法律で定められる。',
+    keyFigures:
+      '法定担保物権（当事者の合意不要・法律上当然に成立）／優先弁済的効力あり・留置的効力なし／約定担保物権（抵当権・質権）との対比／原則として占有移転・登記不要／(1)一般の先取特権＝債務者の総財産が対象：共益費用(307条)・雇用関係〔給料等〕(308条)・葬式費用(309条)・日用品供給(310条)の4種（306条）／(2)動産の先取特権＝特定動産が対象：不動産賃貸・旅館宿泊・運輸・動産売買等（311条）／(3)不動産の先取特権＝特定不動産が対象：不動産保存・不動産工事・不動産売買（325条）／例：雇用関係の給料債権は一般の先取特権で保護され、倒産時も一般債権者に優先弁済',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（法令ID 129AC0000000089）第303条以下' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/chosyu/02/03/019/01.htm', type: 'government', label: '国税庁 国税徴収法基本通達 第19条関係 不動産保存の先取特権等の優先' },
+      { url: 'https://ja.wikipedia.org/wiki/先取特権', type: 'reference', label: 'Wikipedia「先取特権」（一般・動産・不動産の3種と各条文の概説）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0303-00/', type: 'media', label: 'クレアール司法書士講座 民法第303条【先取特権の内容】' },
+    ],
+  },
+  {
+    id: 'infosoc-media-ecology',
+    discipline: 'information-sociology',
+    title: 'メディア・エコロジー（メディア生態学）',
+    statement:
+      'メディア（コミュニケーション技術）を、情報を運ぶ中立的な道具としてではなく、人間の知覚・思考・価値・社会組織のあり方を形づくる「環境（environment）」として捉え、メディアの形式そのものと文化・社会との相互作用を研究する学際的アプローチ。提唱者ニール・ポストマンは、生物学で培地（medium）の中で細菌が育つように、メディア・エコロジーでは「文化が育つ技術=環境」としてメディアを捉えると説いた。' +
+      '文字・印刷・テレビ・デジタルといったメディアの形式は単なる便利な手段ではなく、それを用いる社会の認識・価値・組織を規定する「象徴的環境」だとみなす技術環境論を核心とする。ポストマンは『愉しみながら死んでいく（Amusing Ourselves to Death, 1985）』で、テレビ的な娯楽化が合理的議論より娯楽を優先させ公共的言説を劣化させると論じた。「メディアはメッセージである」など個別命題と関連しつつ、メディアを環境として総体的に研究する分野として区別される。',
+    keyFigures:
+      'ニール・ポストマン（Neil Postman、1968年に学術用語として提唱・1971年NYUにプログラム創設・『Amusing Ourselves to Death』1985）／マーシャル・マクルーハン（Marshall McLuhan、「メディアはメッセージである」）／ウォルター・オング（Walter J. Ong、声の文化と文字の文化）／ハロルド・イニス（Harold Innis、メディアの偏向／トロント学派）／系譜にルイス・マンフォード・ジャック・エリュールら',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.media-ecology.org/What-Is-Media-Ecology', type: 'academic', label: 'Media Ecology Association — "What Is Media Ecology?"（メディア・エコロジー学会の公式定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Media_ecology', type: 'reference', label: 'Wikipedia「Media ecology」（提唱経緯・系譜の概説）' },
+      { url: 'https://www.mdpi.com/2409-9287/1/3/190', type: 'academic', label: 'Scolari, "Media Ecology: A Complex and Systemic Metadiscipline" (Humanities, MDPI 査読論文)' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-ecology', type: 'reference', label: 'EBSCO Research Starters「Media ecology」（学術リファレンス級概説）' },
+    ],
+  },
 ];
 // Stryker restore all
