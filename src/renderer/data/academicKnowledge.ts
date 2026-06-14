@@ -3610,5 +3610,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eprints.lse.ac.uk/52468/1/__libfile_REPOSITORY_Content_Couldry,%20N_Introduction%20media%20events_Couldry_Introduction%20media%20events_2013.pdf', type: 'academic', label: 'LSE Research Online — Couldry & Hepp, Introduction: Media Events in Globalized Media Cultures' },
     ],
   },
+  {
+    id: 'econ-new-trade-theory',
+    discipline: 'economics',
+    title: '新貿易理論（クルーグマン）',
+    statement:
+      '比較優位やヘクシャー＝オリーン定理では説明しにくい、似た要素賦存をもつ先進国どうしが同種の製品を相互に輸出入する「産業内貿易」を説明する理論。ポール・クルーグマンらが1980年前後に展開した。' +
+      '鍵となるのは「規模の経済（収穫逓増）」と「製品差別化（独占的競争）」である。生産に規模の経済が働くと、各国は限られた種類の製品に特化して大量生産しコストを下げ、それを輸出する一方、他国が特化した別の差別化製品を輸入する。これにより貿易は要素賦存や技術の差がなくても生じ、消費者は多様な製品を低価格で享受できる。' +
+      '先発企業が経験曲線や規模で優位に立つため、戦略的貿易政策（幼稚産業保護や補助金）が正当化されうるとの議論にもつながった。クルーグマンは貿易パターンと経済地理の分析で2008年ノーベル経済学賞を受賞した。',
+    keyFigures: 'P.クルーグマンら1980年前後／規模の経済(収穫逓増)と製品差別化(独占的競争)で産業内貿易を説明／要素賦存・技術差がなくても貿易が生じる／消費者は多様性と低価格を享受／戦略的貿易政策の議論／クルーグマン2008ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2008/press-release/', type: 'reference', label: 'NobelPrize.org — 2008年経済学賞 公式プレスリリース（貿易パターンと立地の分析）' },
+      { url: 'https://www.britannica.com/money/Paul-Krugman', type: 'reference', label: 'Encyclopaedia Britannica — Paul Krugman（New Trade Theory・収穫逓増・戦略的貿易政策）' },
+      { url: 'https://documents1.worldbank.org/curated/en/205941468764425699/pdf/multi0page.pdf', type: 'government', label: 'World Bank Policy Research Working Paper 1274 — "The New Trade Theory"' },
+    ],
+  },
+  {
+    id: 'econ-greshams-law',
+    discipline: 'economics',
+    title: 'グレシャムの法則',
+    statement:
+      '「悪貨は良貨を駆逐する（Bad money drives out good）」と要約される貨幣に関する法則。同じ額面で実質価値（金銀の含有量など素材価値）の異なる2種類の貨幣が、法律で同じ価値として強制的に通用（法定平価）させられているとき、人々は価値の高い「良貨」を手元に退蔵したり地金として溶かしたり海外へ持ち出したりする一方、価値の低い「悪貨」を支払いに使う。' +
+      'その結果、流通からは良貨が姿を消し悪貨ばかりが出回るようになる、という現象を指す。16世紀イングランドの財政家トマス・グレシャムにちなみ、19世紀にH・D・マクラウドが命名した（同様の指摘はコペルニクスやオレームら先行者にもあり、グレシャム自身が初出ではない）。' +
+      '両貨幣が強制的に等価とされる点が前提であり、為替が自由に変動できる場合には成立しない。金属貨幣の改鋳や複本位制の不安定性などを説明する古典的法則である。',
+    keyFigures: '「悪貨は良貨を駆逐する」／同額面で実質価値の異なる2貨幣が法定平価で強制通用→良貨は退蔵・溶解・流出し悪貨が流通に残る／トマス・グレシャムにちなみマクラウド(19世紀)が命名(先行者：オレーム・コペルニクス)／強制的な等価が前提・自由変動では不成立',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Greshams-law', type: 'reference', label: 'Encyclopaedia Britannica — Gresham\'s law（法定平価で安価な金属の貨幣が流通し良貨は退蔵・輸出される）' },
+      { url: 'https://www.econlib.org/library/YPDBooks/Brough/brghNLM.html', type: 'reference', label: 'Econlib（Library of Economics and Liberty）— 法定平価が前提で為替自由変動では不成立、悪貨流通・良貨退蔵の仕組み' },
+      { url: 'https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/publications/economic-commentary/2005/ec-20051001-the-tale-of-greshams-law-pdf.pdf', type: 'government', label: 'Federal Reserve Bank of Cleveland, "The Tale of Gresham\'s Law" — 命名経緯と先行者' },
+    ],
+  },
+  {
+    id: 'mgmt-porter-diamond',
+    discipline: 'management',
+    title: 'ポーターのダイヤモンド・モデル（国の競争優位）',
+    statement:
+      'なぜ特定の国・地域が特定の産業で国際競争力をもつのかを説明する枠組み。マイケル・ポーターが著書『国の競争優位（The Competitive Advantage of Nations）』（1990）で示した。10カ国・4年間の研究に基づき、国の競争優位は相互に関連する4つの決定要因（ダイヤモンドの4頂点）の相互作用から生まれるとする。' +
+      '(1)要素条件（熟練労働・インフラ・技術・資本など生産要素の質）、(2)需要条件（自国の需要の規模と質。目の肥えた厳しい顧客が企業を高度化させる）、(3)関連・支援産業（競争力ある供給業者や関連産業の集積＝クラスター）、(4)企業の戦略・構造・競争（国内の競争の激しさや経営慣行）。これに「政府」と「偶然（チャンス）」が補助要因として加わり各決定要因に影響する。' +
+      '各要因が相互に強化し合うことで産業クラスターが形成され持続的な国際競争力が生まれるとし、産業政策・地域クラスター論の基礎となった。',
+    keyFigures: 'M.ポーター『国の競争優位』1990／国の競争優位を決める4要因(ダイヤモンド)：要素条件・需要条件・関連支援産業・企業の戦略構造競争／政府と偶然が補助／10カ国4年間の研究／産業クラスター論の基礎',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'academic', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
+      { url: 'https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html', type: 'academic', label: 'Saylor Academy open textbook — "Clustering: Porter\'s National Diamond"' },
+      { url: 'https://www.ebsco.com/research-starters/economics/diamond-model', type: 'reference', label: 'EBSCO Research Starters (Economics) — "Diamond Model"' },
+    ],
+  },
+  {
+    id: 'human-representativeness',
+    discipline: 'human-science',
+    title: '代表性ヒューリスティック',
+    statement:
+      'ある対象がどのカテゴリーに属するか、ある事象が起こる確率を判断する際、それが典型例・原型（ステレオタイプ）にどれだけ似ているか（代表的か）によって見積もる心の近道。エイモス・トベルスキーとダニエル・カーネマンが提唱した（利用可能性ヒューリスティックと並ぶ代表的なヒューリスティック）。' +
+      'この近道は、客観的な基準率（事前確率）を無視する「基準率の無視」を生む。また、ある人物像の説明が典型的であるほど、より限定的な（確率の低いはずの）条件付き判断を高く見積もる「連言錯誤」が生じる（例：フェミニズム運動に熱心という描写の女性を「銀行員」より「銀行員かつフェミニスト」の方が当てはまると判断するリンダ問題）。' +
+      '少数の事例で全体を代表させて誤る「少数の法則」もこの一種。確率判断の系統的な誤りの源泉として行動経済学の基礎となった。',
+    keyFigures: '典型例・ステレオタイプへの類似度で確率・所属を判断／A.トベルスキー&D.カーネマンが提唱／基準率の無視／連言錯誤(リンダ問題)／少数の法則／利用可能性ヒューリスティックとは別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/heuristic-reasoning', type: 'reference', label: 'Encyclopaedia Britannica — Heuristic（Kahneman & Tversky: representativeness, availability, anchoring）' },
+      { url: 'https://www.simplypsychology.org/base-rate-fallacy.html', type: 'reference', label: 'SimplyPsychology — Base Rate Fallacy / 代表性と基準率の無視・連言錯誤（リンダ問題）' },
+      { url: 'https://www.semanticscholar.org/paper/BELIEF-IN-THE-LAW-OF-SMALL-NUMBERS-Tversky-Kahneman/894fc603f9b16e775f95045fb805b5d7e6935944', type: 'academic', label: 'Tversky & Kahneman (1971) "Belief in the Law of Small Numbers", Psychological Bulletin' },
+    ],
+  },
+  {
+    id: 'bizlaw-trademark',
+    discipline: 'business-law',
+    title: '商標法',
+    statement:
+      '商品やサービス（役務）を他社のものと区別するために事業者が使用する標識（商標＝文字・図形・記号・立体的形状・色彩・音など）を保護する知的財産法。現行の商標法は1959年（昭和34年）に制定された（昭和34年法律第127号）。' +
+      '商標を特許庁に出願し登録を受けると「商標権」が発生し、権利者は指定した商品・役務についてその商標を独占的に使用でき、他人の無断使用を差し止め・損害賠償請求できる。存続期間は設定登録から10年だが、更新登録の申請により何度でも更新でき半永久的に保有できる点が、特許権や著作権と異なる特色である。商標は(1)出所表示機能、(2)品質保証機能、(3)宣伝広告機能をもち、ブランドに蓄積された信用（グッドウィル）を保護することで需要者の利益と公正な競争秩序を守る。' +
+      '先願（登録）主義を採り、識別力のない普通名称等は登録できない（商標法第3条）。日本では2015年（平成27年4月）から動き・ホログラム・色彩のみ・音・位置といった「新しいタイプの商標」も登録可能になった。',
+    keyFigures: '商品・役務の標識(商標)を登録により保護／現行法は1959年(昭和34年)制定(昭和34年法律127号)／登録で商標権発生・独占使用と差止/損害賠償／存続10年だが更新で半永久／出所表示・品質保証・広告の三大機能／先願登録主義・識別力(3条)／2015年から動き・ホログラム・色彩・音・位置の新タイプ商標／特許庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000127', type: 'government', label: 'e-Gov法令検索「商標法（昭和三十四年法律第百二十七号）」' },
+      { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/seidogaiyo/chizai08.html', type: 'government', label: '特許庁「商標制度の概要」（存続期間10年・更新／商標の機能／先願主義）' },
+      { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/newtype/index.html', type: 'government', label: '特許庁「新しいタイプの商標の保護制度」（平成27年4月開始）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-richness',
+    discipline: 'information-sociology',
+    title: 'メディア・リッチネス理論',
+    statement:
+      'コミュニケーション・メディアによって伝えられる情報の「豊かさ（richness）」には差があり、課題の曖昧さ（equivocality）・不確実性に応じて適切なメディアを選ぶべきだとする理論。リチャード・L・ダフトとロバート・H・レンゲルが1986年の論文（Management Science）で体系化した（1980年代に提唱）。' +
+      'メディアのリッチネスは、(1)即時のフィードバックの速さ、(2)複数の手がかり（声の調子・表情・身振り等の伝達チャネル）、(3)自然言語・数値の多様性、(4)個人的な焦点（感情や個別性への適合）、の4基準で評価される。原典では対面コミュニケーションが最もリッチで、電話、宛先のある文書（手紙・メモ）、公式文書、数値資料の順にリーン（希薄）になるとされた。' +
+      '曖昧で多義的な課題（対立の調整・交渉等）にはリッチなメディアが、定型的で明確な課題には効率的なリーンメディアが適合し、ミスマッチは過剰簡略化や過剰複雑化を招くとする。電子メール・SNS・リモートワークのメディア選択を論じる基礎理論として広く参照されている。',
+    keyFigures: 'R.ダフト&R.レンゲルが提唱（原典1986年 Management Science）／メディアのリッチネス4基準：即時フィードバック・複数手がかり・言語多様性・個人的焦点／対面が最リッチ〜数値・公式文書がリーン／曖昧な課題にはリッチ・定型課題にはリーンが適合／メール・リモートワークのメディア選択の基礎',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-richness-theory', type: 'reference', label: 'EBSCO Research Starters — Media Richness Theory（百科事典的レファレンス）' },
+      { url: 'https://en.wikipedia.org/wiki/Media_richness_theory', type: 'reference', label: 'Wikipedia — Media richness theory（4基準・序列・1986年原典）' },
+      { url: 'https://collablab.northwestern.edu/CollabolabDistro/nucmc/DaftAndLengel-OrgInfoReq-MediaRichnessAndStructuralDesign-MngmtSci-1986.pdf', type: 'academic', label: 'Daft & Lengel (1986) "Organizational Information Requirements, Media Richness and Structural Design", Management Science 32:554–571（原典PDF, Northwestern University ホスト）' },
+      { url: 'https://is.theorizeit.org/wiki/Media_richness_theory', type: 'academic', label: 'IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory' },
+    ],
+  },
 ];
 // Stryker restore all
