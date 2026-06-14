@@ -4199,5 +4199,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/books/cambridge-habermas-lexicon/colonization-of-the-lifeworld/36E8421628B4E1914F7E675B31977ADC', type: 'academic', label: 'Colonization of the Lifeworld — The Cambridge Habermas Lexicon (Cambridge University Press)' },
     ],
   },
+  {
+    id: 'econ-ostrom-commons',
+    discipline: 'economics',
+    title: 'オストロムのコモンズ統治',
+    statement:
+      '漁場・牧草地・灌漑用水・森林などの共有資源（コモンプール資源）が、必ずしも「コモンズの悲劇」のように乱獲・枯渇に陥るとは限らず、利用者たちが自ら作るルールと組織によって持続的に管理できることを示した理論。政治学者エリノア・オストロムが著書『コモンズのガバナンス（Governing the Commons）』（1990）で、世界各地の長期持続した共有資源管理の事例を実証的に分析して示した。' +
+      '彼女は、国家による規制でも私有化でもない「当事者による自主統治（self-governance）」が機能するための条件を「設計原理（design principles）」として整理した（明確な境界、地域の条件に合った利用・供出ルール、ルール作りへの当事者の参加、監視、段階的な制裁、低コストの紛争解決、自治の承認、入れ子状の組織など）。' +
+      'これは、コモンズには国有化か私有化しかないという二分法を覆すものとして大きな影響を与え、オストロムは2009年に女性として初めてノーベル経済学賞を受賞した。',
+    keyFigures: '共有資源は利用者の自主的なルール・組織で持続管理しうる／E.オストロム『コモンズのガバナンス』1990の実証／自主統治が機能する「設計原理」(明確な境界・参加・監視・段階的制裁・紛争解決・自治の承認・入れ子状組織等)／国有化/私有化の二分法を覆す／オストロム2009ノーベル賞(女性初)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/press-release/', type: 'reference', label: 'NobelPrize.org — The Prize in Economic Sciences 2009 (Press release)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/', type: 'reference', label: 'NobelPrize.org — Elinor Ostrom Facts' },
+      { url: 'https://www.britannica.com/money/Elinor-Ostrom', type: 'reference', label: 'Encyclopaedia Britannica — Elinor Ostrom（設計原理・コモンズ理論）' },
+    ],
+  },
+  {
+    id: 'econ-general-equilibrium',
+    discipline: 'economics',
+    title: '一般均衡理論',
+    statement:
+      '経済全体の多数の市場（財・サービス・生産要素）が相互に依存しながら、すべての市場で需要と供給が同時に一致する価格体系（均衡）が存在しうることを分析する経済理論。個別の市場だけを切り出して見る部分均衡に対し、ある市場の価格変化が他の市場へ波及する相互連関を明示的に扱う点に特徴がある。' +
+      'フランスの経済学者レオン・ワルラスが19世紀後半（『純粋経済学要論』1874–77年）に、すべての市場の需給を表す連立方程式の体系として定式化し（ワルラス均衡）、創始した。20世紀半ばにケネス・アローとジェラール・ドブリュー（および同時期のマッケンジー）が、競争市場で一般均衡が存在することを、不動点定理などの数学を用いて厳密に証明した（アロー＝ドブリュー・モデル）。また、完全競争の均衡はパレート効率的であるという「厚生経済学の基本定理」も示された。' +
+      '市場メカニズムの整合性を示す理論的基礎だが、強い前提に依存し、均衡の安定性や一意性は一般には保証されない。',
+    keyFigures: '多数市場の相互依存下で全市場が同時に需給一致する価格体系(均衡)を分析／部分均衡と対比／L.ワルラスが19世紀後半(『純粋経済学要論』1874–77)に連立方程式体系として創始／アロー＝ドブリュー(およびマッケンジー)が均衡の存在を厳密に証明／厚生経済学の基本定理(競争均衡はパレート効率的)／強い前提・安定性は保証されない',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/general-equilibrium-theory', type: 'reference', label: 'Encyclopaedia Britannica「General equilibrium theory」' },
+      { url: 'https://www.britannica.com/money/Leon-Walras', type: 'reference', label: 'Encyclopaedia Britannica「Léon Walras」（『純粋経済学要論』1874–77, 連立方程式による一般均衡）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1983/press-release/', type: 'reference', label: 'NobelPrize.org 1983年経済学賞プレスリリース（ドブリュー「一般均衡理論の厳密な再定式化」）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Walras.html', type: 'reference', label: 'Econlib「Léon Walras」（連立方程式・タトヌマン・パレート最適性）' },
+    ],
+  },
+  {
+    id: 'mgmt-scenario-planning',
+    discipline: 'management',
+    title: 'シナリオ・プランニング',
+    statement:
+      '将来を単一の予測で当てようとするのではなく、起こりうる複数の異なる未来の姿（シナリオ）を構築し、それぞれに備えることで、不確実性の高い環境下での戦略的意思決定とレジリエンスを高める手法。多くは、影響が大きく不確実性も高い2つの鍵要因（ドライバー）を軸にとり、その組み合わせから3〜4本の対照的なシナリオを描く。' +
+      '第二次大戦後にランド研究所のハーマン・カーンが軍事・政策分野で発展させ、1970年代にロイヤル・ダッチ・シェルのピエール・ワックらが企業戦略に応用したことで有名になった。シェルは石油危機（1973）を想定したシナリオを用意していたため、危機に他社より迅速に対応できたとされる。' +
+      'シナリオは確率の予測ではなく、固定観念を揺さぶり「もしこうなったら」を組織で議論・準備するための物語であり、早期警戒シグナルの監視や戦略の頑健性検証に使われる。',
+    keyFigures: '複数の起こりうる未来(シナリオ)を構築し備える／不確実性下の意思決定とレジリエンス／重要かつ不確実な2軸から3〜4本の対照的シナリオ／ランド研究所のH.カーンが発展・シェルのP.ワックが企業戦略に応用／石油危機への迅速対応の逸話／予測でなく固定観念を揺さぶる物語',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://glisa.umich.edu/engagement/scenario-planning/', type: 'academic', label: 'University of Michigan (GLISA) — Scenario Planning（定義・複数の未来・頑健性）' },
+      { url: 'https://hbr.org/1985/09/scenarios-uncharted-waters-ahead', type: 'academic', label: 'Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料' },
+      { url: 'https://en.wikipedia.org/wiki/Pierre_Wack', type: 'reference', label: 'Wikipedia — Pierre Wack（H.カーン／RAND起源、シェル応用、1985年HBR論文）' },
+      { url: 'https://scienceimpact.mit.edu/node/1243', type: 'academic', label: 'MIT Science Impact Collaborative — Scenario Planning（単一予測でなく複数の妥当な未来）' },
+    ],
+  },
+  {
+    id: 'human-serial-position',
+    discipline: 'human-science',
+    title: '系列位置効果（初頭効果・新近効果）',
+    statement:
+      '一連の項目（単語リスト等）を記憶して自由再生するとき、リストの最初の方と最後の方の項目がよく覚えられ、中間の項目は再生率が低くなる（再生率を系列位置で描くとU字型になる）現象。最初の項目の再生が良いことを「初頭効果（primacy effect）」、最後の項目の再生が良いことを「新近効果（recency effect）」という。' +
+      'ヘルマン・エビングハウス（1885）が先駆的に観察し、後にマードック（Murdock, 1962）らが実験的に体系化した。多重貯蔵モデル（アトキンソン＆シフリン, 1968）では、初頭効果は最初の項目がリハーサルされて長期記憶に転送されたため、新近効果は最後の項目がまだ短期記憶に保持されているために生じると説明される。' +
+      '実際、再生までに遅延・妨害課題を入れると新近効果は消えるが初頭効果は残り、提示速度を上げると初頭効果が弱まる（リハーサルできないため）など（グランツァー＆カニッツ, 1966）、両効果が異なる記憶過程に基づくことを示す証拠とされる。広告・面接・プレゼンの順序効果などにも応用される。',
+    keyFigures: 'リストの最初(初頭効果)と最後(新近効果)がよく再生されU字型／エビングハウス1885が先駆・マードック1962が体系化／多重貯蔵モデル(Atkinson&Shiffrin 1968)：初頭効果=長期記憶への転送、新近効果=短期記憶に残存／遅延で新近効果消失・初頭効果残存(Glanzer&Cunitz 1966)／順序効果として応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.simplypsychology.org/primacy-recency.html', type: 'reference', label: 'SimplyPsychology — Serial Position Effect (Glanzer & Cunitz, 1966; Atkinson & Shiffrin model)' },
+      { url: 'https://en.wikipedia.org/wiki/Serial-position_effect', type: 'reference', label: 'Wikipedia — Serial-position effect（Ebbinghaus 起源・Murdock 1962・多重貯蔵説）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4633394/', type: 'academic', label: 'PMC（NIH）— Serial-Position Effects on a Free-Recall Task（U字型曲線・初頭/新近効果の実証）' },
+    ],
+  },
+  {
+    id: 'bizlaw-cg-code',
+    discipline: 'business-law',
+    title: 'コーポレートガバナンス・コード',
+    statement:
+      '上場会社が実効的なコーポレートガバナンス（企業統治）を実現するために守るべき原則・指針を示した規範。金融庁と東京証券取引所が中心となって策定し、2015年に適用が開始された（その後2018年・2021年に改訂）。' +
+      '会社法のような法律（ハードロー）ではなく、証券取引所の規則（有価証券上場規程）に基づくソフトローであり、各原則を一律に強制するのではなく「コンプライ・オア・エクスプレイン（原則を実施するか、実施しない場合はその理由を説明する）」の手法を採る。株主の権利・平等、株主以外のステークホルダーとの協働、適切な情報開示と透明性、取締役会等の責務（独立社外取締役の活用等）、株主との対話、という5つの基本原則からなる。' +
+      '機関投資家側の行動規範である「スチュワードシップ・コード」と車の両輪をなし、企業価値の向上と持続的成長、投資家との建設的対話の促進を目的とする。',
+    keyFigures: '上場会社の企業統治の原則・指針／金融庁と東証が策定・2015年適用開始(2018/2021改訂)／法律でなくソフトロー(有価証券上場規程)、コンプライ・オア・エクスプレイン／5つの基本原則：株主権利平等・ステークホルダー協働・情報開示透明性・取締役会の責務(独立社外取締役)・株主との対話／スチュワードシップ・コードと車の両輪',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpx.co.jp/equities/listing/cg/index.html', type: 'government', label: '日本取引所グループ(JPX/東証)「コーポレート・ガバナンス・コード」' },
+      { url: 'https://www.jpx.co.jp/english/news/1020/20210611-01.html', type: 'government', label: 'JPX「Publication of Revised Japan\'s Corporate Governance Code」(2021年改訂公表)' },
+      { url: 'https://www.fsa.go.jp/policy/corporategovernencereform/20240115.html', type: 'government', label: '金融庁「コーポレートガバナンス改革に向けた取組みについて」' },
+    ],
+  },
+  {
+    id: 'infosoc-post-industrial',
+    discipline: 'information-sociology',
+    title: '脱工業社会論（ダニエル・ベル）',
+    statement:
+      '先進社会が、モノの生産（製造業）を中心とする工業社会から、サービス・情報・知識を中心とする社会へと移行するとした社会変動の理論。アメリカの社会学者ダニエル・ベルが著書『脱工業社会の到来（The Coming of Post-Industrial Society）』（1973）で体系化した。' +
+      'ベルは脱工業社会の特徴として、(1)経済の重心が財の生産からサービス経済へ移ること、(2)専門職・技術職（ホワイトカラー）が職業構成の中心になること、(3)理論的知識（theoretical knowledge）が技術革新と政策決定の中軸的資源（axial principle）になること、(4)将来の技術を計画・制御しようとすること、(5)新しい知的技術（intellectual technology＝情報技術）の登場、を挙げた。' +
+      'とりわけ「理論的知識」を社会の戦略的資源とみなした点が特徴で、後の情報社会論・知識社会論の古典的枠組みとなった。同時期のアルビン・トフラー『第三の波』（1980）や梅棹忠夫『情報産業論』（1963）ら日本の情報社会論とも響き合う。',
+    keyFigures: '工業社会から、サービス・情報・知識中心の社会へ移行／D.ベル『脱工業社会の到来』1973／特徴：サービス経済化・専門技術職の中心化・理論的知識が中軸資源(axial principle)・技術の計画/制御・知的技術／後の情報社会論・知識社会論の古典',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Coming-of-Post-Industrial-Society-A-Venture-in-Social-Forecasting', type: 'reference', label: 'Encyclopædia Britannica — The Coming of Post-Industrial Society (work by Bell)' },
+      { url: 'https://www.britannica.com/money/postindustrial-society', type: 'reference', label: 'Encyclopædia Britannica — Postindustrial society（特徴・職業構成・知識中心）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100339541', type: 'reference', label: 'Oxford Reference — Post-industrial society' },
+      { url: 'https://iss.ndl.go.jp/books/R000000004-I728841-00', type: 'government', label: '国立国会図書館サーチ — 梅棹忠夫『情報産業論』(1963)' },
+    ],
+  },
 ];
 // Stryker restore all
