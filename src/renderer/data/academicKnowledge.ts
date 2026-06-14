@@ -8823,5 +8823,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://news.stanford.edu/stories/2023/07/strength-weak-ties', type: 'reference', label: 'Stanford Report — “The strength of weak ties”（Granovetter弱い紐帯との関連）' },
     ],
   },
+  {
+    id: 'econ-two-part-tariff',
+    discipline: 'economics',
+    title: '二部料金制（two-part tariff）',
+    statement:
+      '二部料金制とは、財・サービスの価格を「定額の入場料・基本料（fixed fee／access charge）」と「使用量に応じた従量料金（per-unit price）」の二部に分ける非線形の価格設定戦略であり、独占や市場支配力を持つ企業が、単一価格よりも多くの消費者余剰を抽出する手段として分析される（第二種価格差別の一形態）。' +
+      '基本理論では、消費者が同質と仮定すると、従量料金を限界費用に等しく設定して効率的な数量（死荷重ゼロ）を実現し、固定料金で消費者余剰を全額吸い上げるのが企業の最適戦略となる。消費者が異質な場合は限界費用価格づけが最適とは限らず分析は複雑化する。ウォルター・オイ（Walter Oi, 1971）の論文「A Disneyland Dilemma」が古典で、典型例は遊園地（入場料＋アトラクション料金）、会員制クラブ（年会費＋利用料）、電気・ガス・電話（基本料金＋従量料金）、コストコ（年会費＋商品代）。',
+    keyFigures:
+      'ウォルター・オイ（Walter Y. Oi, "A Disneyland Dilemma: Two-Part Tariffs for a Mickey Mouse Monopoly", QJE 1971）／固定料金（access charge）＋従量料金の二部構成／最適: 従量料金=限界費用・固定料金=消費者余剰（同質消費者）／第二種価格差別・非線形価格づけ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Two-part_tariff', type: 'reference', label: 'Wikipedia — Two-part tariff（定義・構成・例・価格差別の文脈）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/85/1/77/1861193', type: 'academic', label: 'Walter Y. Oi, “A Disneyland Dilemma: Two-Part Tariffs for a Mickey Mouse Monopoly,” Quarterly Journal of Economics 85(1), 1971, pp.77–96（Oxford Academic）' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/The_Economics_of_Food_and_Agricultural_Markets_(Barkley)/04:__Pricing_with_Market_Power/4.05:_Two-Part_Pricing', type: 'academic', label: 'Social Sci LibreTexts (Barkley) — Two-Part Pricing（最適理論 P=MC＋固定料金=消費者余剰）' },
+    ],
+  },
+  {
+    id: 'mgmt-cannibalization',
+    discipline: 'management',
+    title: 'カニバリゼーション（市場共食い）',
+    statement:
+      'カニバリゼーション（market/product cannibalization、市場の共食い／自社競合）とは、企業が新製品・新ブランド・新チャネルを導入した結果、自社の既存製品の販売数量・売上・市場シェアが減少する現象を指す。「共食い」の比喩であり、定義上は自社製品間でのみ成立し、競合から売上を奪う行為はこれに含まれない。製品が類似し同一ターゲット層を狙うときに起きやすく、製品ライン拡張やブランド・ポートフォリオ管理、実店舗とECの新旧チャネル併存の文脈で論じられる。' +
+      '非計画的に既存利益を侵食する負の側面がある一方、競合に奪われるより自社内で需要を移転させるべく古い製品を陳腐化させてでも先行投入する「計画的カニバリゼーション」もある。アップルがiPodをiPhoneで自社共食いさせた事例が代表例。指標はカニバリゼーション率（既存製品の売上減少分÷新製品売上）で、真の増分需要と移転需要の区別が測定上の難点となる。',
+    keyFigures:
+      '定義＝自社の新製品が既存製品の売上・シェアを奪う現象（自社製品間でのみ成立）／文脈＝ライン拡張・ブランドポートフォリオ・新旧チャネル併存／非計画的カニバリ vs 計画的カニバリ（先行陳腐化で需要を自社内移転、アップルiPod→iPhone）／指標＝カニバリゼーション率＝既存売上減÷新製品売上／論点＝増分需要と移転需要の区別の困難',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/cannibalization', type: 'reference', label: 'Encyclopedia.com — Cannibalization（定義と自社製品間限定の弁別）' },
+      { url: 'https://en.wikipedia.org/wiki/Cannibalization_(marketing)', type: 'reference', label: 'Wikipedia — Cannibalization (marketing)（定義・偶発/意図的の区別・cannibalisation strategy）' },
+      { url: 'https://arxiv.org/pdf/1811.03362', type: 'academic', label: 'arXiv 1811.03362 — Lotka-Volterra model of (inverse) product cannibalisation in ICTs（iPhone/iPad の学術的カニバリ分析）' },
+    ],
+  },
+  {
+    id: 'human-self-compassion',
+    discipline: 'human-science',
+    title: 'セルフ・コンパッション（自己への思いやり）',
+    statement:
+      'セルフ・コンパッションとは、苦痛・失敗・自己の不十分さに直面したとき、自分を厳しく批判する代わりに、親しい友人に向けるような優しさ・理解・思いやりを自分自身へ向ける態度を指す。米テキサス大学オースティン校のクリスティン・ネフが2003年に概念化し、Self-Compassion Scale（自己への思いやり尺度）として測定可能にした。ネフはこれを3つの相互に関連する構成要素から成るとする：(1)自分への優しさ 対 自己批判、(2)共通の人間性（苦しみや不完全さは人類に共通の経験だと捉える）対 孤立、(3)マインドフルネス（苦痛な感情に過剰同一化せずバランスよく気づく）対 過剰同一化。' +
+      '仏教思想の慈悲（compassion）に着想を得た概念で、APA心理学辞典も「自己の不十分さや失敗に対する非批判的な姿勢を伴う、仏教思想に由来する構成概念」と定義する。自尊心（self-esteem）が他者比較・成功・社会的承認に依存して変動しやすいのに対し、セルフ・コンパッションは評価に依存せず失敗時にも安定して自己価値を支える点で区別される（ネフ＆フォンク 2009）。抑うつ・不安・ストレスの低減やレジリエンス・幸福感の向上と関連づけられ、ネフとガーマーがマインドフル・セルフ・コンパッション（MSC）プログラムを開発した。',
+    keyFigures:
+      'クリスティン・ネフ（Kristin Neff, テキサス大学オースティン校・2003年概念化）／クリストファー・ガーマー（Christopher Germer, MSC共同開発者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/self-compassion', type: 'reference', label: 'APA Dictionary of Psychology — “Self-compassion”（米国心理学会）' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/15298860309032', type: 'academic', label: 'Neff, K. D. (2003). Self-Compassion: An Alternative Conceptualization of a Healthy Attitude Toward Oneself. Self and Identity, 2(2)（概念の原典）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/19076996/', type: 'academic', label: 'Neff, K. D. & Vonk, R. (2009). Self-compassion versus global self-esteem. Journal of Personality（自尊心との区別, PubMed）' },
+    ],
+  },
+  {
+    id: 'human-psychological-reactance',
+    discipline: 'human-science',
+    title: '心理的リアクタンス',
+    statement:
+      '心理的リアクタンスとは、自分が持つと信じる選択・行動の自由が、禁止・強制・説得圧力など外部から脅かされ、または奪われたと感じたときに、その自由を回復しようとして生じる不快な動機づけ的喚起・反発状態である。ジャック・ブレーム（Jack W. Brehm）が1966年の著書『A Theory of Psychological Reactance』で理論化した。' +
+      '主な反応は、(1)脅かされた選択肢の魅力が増す「禁断の果実」効果（ロミオとジュリエット効果も一種）、(2)失われた自由を回復するため禁じられた行動をあえて取り説得が逆効果になるブーメラン効果、(3)脅かす相手への反感である。喚起の強さは脅かされた自由の重要性・脅威の大きさ・脅かされた自由の数に依存し、説得や健康コミュニケーション、希少性マーケティング、育児・教育、検閲の場面に応用される。認知的不協和や確証バイアス・希少性原理・同調とは関連するが、自由回復の動機づけという中核機制で区別される。',
+    keyFigures:
+      'ジャック・ブレーム（Jack W. Brehm, 1966）／シャロン・ブレーム（Sharon S. Brehm）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.frontiersin.org/journals/communication/articles/10.3389/fcomm.2019.00056/full', type: 'academic', label: 'Frontiers in Communication — Psychological Reactance and Persuasive Health Communication: A Review of the Literature (2019)' },
+      { url: 'https://scholar.dominican.edu/cgi/viewcontent.cgi?article=1002&context=psychology-faculty-scholarship', type: 'academic', label: 'Rosenberg & Siegel — A 50-year review of psychological reactance theory (Dominican University)' },
+      { url: 'https://en.wikipedia.org/wiki/Reactance_(psychology)', type: 'reference', label: 'Wikipedia — Reactance (psychology)' },
+    ],
+  },
+  {
+    id: 'bizlaw-set-off',
+    discipline: 'business-law',
+    title: '相殺（民法505条）',
+    statement:
+      '相殺とは、二人が互いに同種の目的を有する債務を負担する場合に、当事者の一方からの一方的意思表示により双方の債務を対当額で消滅させる制度である（民法505条1項）。例えばAがBに100万円の貸金債権を持ち、BがAに80万円の売買代金債権を持つとき、一方が相殺を意思表示すれば80万円分が消滅し差額が残る。' +
+      '相殺の要件（相殺適状）は、(1)対立する債権の存在、(2)同種の目的（通常は金銭債権）、(3)双方の債務が弁済期にあること、(4)債務の性質が相殺を許すこと。相殺する側の債権（自働債権）は弁済期到来が必要だが、相殺される側（受働債権）は期限の利益を放棄できるため必ずしも要しない。相殺は意思表示によって行い条件・期限を付せず、効力は相殺適状時に遡及する（506条）。509条（2017年改正）は悪意による不法行為・人の生命身体侵害の損害賠償債務を受働債権とする相殺を禁止し、511条は差押え後に取得した債権による相殺は差押債権者に対抗できないとする。担保的機能（実質的な優先弁済）を持つ点が実務上重要で、過失相殺（418条・722条）とは別概念である。',
+    keyFigures:
+      '一方的意思表示で対当額の債務を消滅（505条1項）／自働債権（弁済期到来必要）・受働債権（期限の利益放棄可）の区別／要件＝相殺適状／506条：意思表示で行い条件期限を付せず効力は相殺適状時に遡及／509条（2017改正）：悪意の不法行為・生命身体侵害の損害賠償債務を受働債権とする相殺禁止／511条：差押え後取得債権による相殺は対抗不可／担保的機能／過失相殺（418・722条）とは別概念／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、第505条〜第512条の2）' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/107/04/index.htm', type: 'government', label: '国税庁 税務大学校論叢「差し押さえた債権を受働債権とする相殺について」（民法511条）' },
+      { url: 'https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2024/03/da8191bd4a70bd14d0d207a622cc7e91.pdf', type: 'academic', label: '筑波大学ロースクール 岡本裕樹「日本相殺法概観（3）」研究ノート（相殺適状・法定相殺）' },
+    ],
+  },
+  {
+    id: 'infosoc-context-collapse',
+    discipline: 'information-sociology',
+    title: 'コンテキストの崩壊（文脈崩壊）',
+    statement:
+      'コンテキストの崩壊（context collapse）とは、ソーシャルメディア上で、本来は別々の文脈（友人・家族・同僚・上司・見知らぬ他人など異なる相手や場面）に向けられていた複数の聴衆が一つの場に集約・折り重なり、それぞれに適した自己呈示や発言の使い分けが困難になる現象を指す。対面では人は相手・場面ごとに振る舞いを調整し聴衆を分離する（ゴッフマンの自己呈示論・audience segregation）が、SNSでは一つの投稿が多様な聴衆に同時に届くため、その切り替えが崩れる。' +
+      'アリス・マーウィックとダナ・ボイドが2011年論文「I tweet honestly, I tweet passionately」（New Media & Society）で概念を広め、投稿者は実際の聴衆を把握できず頭の中で想定した「想像された聴衆（imagined audience）」へ発信すると論じた。先行してメイロウィッツ（1985『No Sense of Place』）が電子メディアによる社会的場面の融合を指摘していた。誰に見られても無難な投稿へ収斂する「最低共通分母（lowest common denominator）」効果、自己検閲、プライバシー管理、炎上（文脈外流出）と関連する。',
+    keyFigures:
+      'アリス・マーウィック（Alice E. Marwick）／ダナ・ボイド（danah boyd）／ジョシュア・メイロウィッツ（Joshua Meyrowitz）／アーヴィング・ゴッフマン（Erving Goffman）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444810365313', type: 'academic', label: 'Marwick, A. E. & boyd, d. (2011) “I tweet honestly, I tweet passionately: Twitter users, context collapse, and the imagined audience.” New Media & Society 13(1): 114–133 (SAGE)' },
+      { url: 'https://academic.oup.com/jcmc/article/23/3/127/4962540', type: 'academic', label: '“One Size Fits All: Context Collapse, Self-Presentation Strategies and Language Styles on Facebook.” Journal of Computer-Mediated Communication 23(3) (Oxford Academic)' },
+      { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context collapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）' },
+    ],
+  },
 ];
 // Stryker restore all
