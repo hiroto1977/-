@@ -7907,5 +7907,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.europarl.europa.eu/news/en/press-room/20220315IPR25504/deal-on-digital-markets-act-ensuring-fair-competition-and-more-choice-for-users', type: 'government', label: 'Deal on Digital Markets Act — European Parliament' },
     ],
   },
+  {
+    id: 'econ-lewis-turning-point',
+    discipline: 'economics',
+    title: 'ルイスの二重経済モデル（転換点）',
+    statement:
+      'ルイスの二重経済モデルは、発展途上国の経済を伝統的な「生存（農村・自給）部門」と近代的な「資本主義（都市・工業）部門」の二重構造として捉える開発経済学のモデルで、W・アーサー・ルイスが1954年の論文「Economic Development with Unlimited Supplies of Labour」で示した。生存部門には限界生産力がほぼゼロの余剰労働が大量に存在し、資本主義部門は生存水準をわずかに上回る一定賃金でこれを無制限に雇用し、利潤を再投資して拡大、農村の余剰労働を吸収していく。' +
+      'ルイスの転換点とは、この余剰労働が吸収され尽くし、さらに労働を引き出すには賃金を上げざるを得なくなる転換点を指す。以後、労働は無制限供給ではなくなり賃金が上昇し始める。中国経済が転換点に達したかをめぐる議論などで現代的に参照される。ルイスは開発経済学への貢献により1979年にセオドア・シュルツと共にノーベル経済学賞を受賞した。',
+    keyFigures:
+      'W・アーサー・ルイス（W. Arthur Lewis, 1915–1991, 1954年論文・1979年ノーベル経済学賞）／セオドア・W・シュルツ（1979年共同受賞）／蔡昉（Cai Fang, 中国の転換点論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1979/press-release/', type: 'government', label: 'NobelPrize.org — The Prize in Economics 1979 (Schultz・Lewis, 授賞理由)' },
+      { url: 'https://www.humanities.manchester.ac.uk/economics/about/history-and-heritage/arthur-lewis/', type: 'academic', label: 'University of Manchester — Arthur Lewis biography（1954年論文 The Manchester School）' },
+      { url: 'https://en.wikipedia.org/wiki/Dual-sector_model', type: 'reference', label: 'Wikipedia — Dual-sector model（モデル構造・余剰労働・無制限供給）' },
+      { url: 'https://en.wikipedia.org/wiki/Lewis_turning_point', type: 'reference', label: 'Wikipedia — Lewis turning point（転換点の定義・中国の議論）' },
+    ],
+  },
+  {
+    id: 'mgmt-business-model-canvas',
+    discipline: 'management',
+    title: 'ビジネスモデル・キャンバス',
+    statement:
+      'ビジネスモデル・キャンバス（Business Model Canvas, BMC）は、企業が価値をどのように創造・提供・獲得するかというビジネスモデルを、9つの構成要素から成る1枚の図に可視化し、設計・分析・議論するための戦略フレームワークである。アレックス・オスターワルダーとイヴ・ピニュールが、オスターワルダーのローザンヌ大学博士論文（2004年「ビジネスモデル・オントロジー」）を基に開発し、2010年の共著『Business Model Generation』で普及させた。' +
+      '9要素は、顧客セグメント／価値提案／チャネル／顧客との関係／収益の流れ／主要リソース／主要活動／主要パートナー／コスト構造。中央に価値提案を置き、右側に顧客・市場、左側に基盤・社内の効率、下部に財務（収益とコスト）を配置する。事業の全体像の俯瞰、仮説検証やピボット、関係者間の共通言語として用いられ、後に顧客視点を深掘りするバリュー・プロポジション・キャンバスも開発された。',
+    keyFigures:
+      'アレックス・オスターワルダー（Alexander Osterwalder）／イヴ・ピニュール（Yves Pigneur）／ローザンヌ大学博士論文 2004「The Business Model Ontology」／書籍『Business Model Generation』Wiley 2010／9 building blocks',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Business_model_canvas', type: 'reference', label: 'Wikipedia — Business model canvas（9要素と図の構成・成立経緯）' },
+      { url: 'https://link.springer.com/article/10.1007/s12525-014-0176-4', type: 'academic', label: 'Electronic Markets (Springer), 2014 — Osterwalderインタビュー（査読誌・博士研究と普及の経緯）' },
+      { url: 'https://www.wiley.com/en-us/Business+Model+Generation:+A+Handbook+for+Visionaries,+Game+Changers,+and+Challengers-p-9780470876411', type: 'reference', label: 'Wiley（出版社）— 原典書籍 Business Model Generation, 2010' },
+      { url: 'https://www.imd.org/blog/strategy/business-model-canvas/', type: 'academic', label: 'IMD（経営大学院）— Business Model Canvas 解説（9要素とレイアウト）' },
+    ],
+  },
+  {
+    id: 'human-inclusive-fitness',
+    discipline: 'human-science',
+    title: '包括適応度と血縁選択（ハミルトン則）',
+    statement:
+      '包括適応度とは、ある個体の適応度を、自身が残す子の数（直接適応度）だけでなく、遺伝子を共有する血縁個体の繁殖成功に及ぼす自分の行動の効果（間接適応度）も含めて評価する概念である。進化生物学者W・D・ハミルトンが1964年の論文「The Genetical Evolution of Social Behaviour」（Journal of Theoretical Biology誌）で定式化した。' +
+      'これにより、自らの繁殖を犠牲にして血縁を助ける利他行動（真社会性昆虫のワーカー、警戒声など）が、共有遺伝子のコピーを次世代に多く残すことで進化しうる「血縁選択」を説明できる。中心的不等式がハミルトン則 rB > C で、血縁度r・受益者の利益B・行為者のコストCを満たすとき利他形質が選択される。J・B・S・ホールデンの「兄弟2人かいとこ8人のためなら命を投げ出す」という逸話的表現とも結びつく。',
+    keyFigures:
+      'W・D・ハミルトン（William D. Hamilton, 1964年の論文で包括適応度・血縁選択・ハミルトン則 rB>C を定式化）／J・B・S・ホールデン（J.B.S. Haldane, 血縁度に基づく自己犠牲の逸話で知られる先駆的着想）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Hamiltons-rule', type: 'reference', label: 'Encyclopaedia Britannica — Hamilton’s Rule（rB>Cと各項の定義）' },
+      { url: 'https://evolution.berkeley.edu/glossary/hamiltons-rule/', type: 'academic', label: 'University of California Berkeley — Understanding Evolution: Hamilton’s rule（大学運営の教育リソース）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Genetical_Evolution_of_Social_Behaviour', type: 'reference', label: 'Wikipedia — The Genetical Evolution of Social Behaviour（1964年論文の書誌：J. Theor. Biol. 7, 1–16 / 17–52）' },
+      { url: 'https://en.wikipedia.org/wiki/Kin_selection', type: 'reference', label: 'Wikipedia — Kin selection（血縁選択とホールデンの逸話・血縁度の数値）' },
+    ],
+  },
+  {
+    id: 'human-mirror-neurons',
+    discipline: 'human-science',
+    title: 'ミラーニューロン',
+    statement:
+      'ミラーニューロンとは、自分がある行為（物をつかむ等）を実行するときと、他者が同じ／類似の行為を行うのを観察するときの両方で発火する神経細胞である。1990年代初頭、イタリア・パルマ大学のジャコモ・リゾラッティらがマカクザルの腹側運動前野F5野の単一ニューロン記録で発見し（初報1992年）、後に下頭頂葉でも見出された。' +
+      '観察された行為が観察者自身の運動表象に「鏡のように」対応づけられることから命名された。ヒトでも下前頭回・腹側運動前野・下頭頂葉などにミラー特性をもつ「ミラーニューロンシステム」があると考えられ、証拠は主に脳機能イメージング（fMRI等）に基づく（単一細胞の直接記録は2010年のMukamel・Friedらの例など限定的）。行為理解・模倣・意図読み取り・共感・言語進化との関連や自閉症の「broken mirror仮説」が提唱される一方、その機能的役割や過大評価をめぐる批判（Hickok ら）もある。',
+    keyFigures:
+      'ジャコモ・リゾラッティ（Giacomo Rizzolatti, パルマ大学／F5野ミラーニューロン発見）／共同研究者 di Pellegrino・Fadiga・Fogassi・Gallese（1992年初報）／Mukamel・Fried（2010年, ヒト単一ニューロン直接記録）／Gregory Hickok（過大評価批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/monitor/oct05/mirror', type: 'reference', label: 'American Psychological Association (APA) — “The mind’s mirror”（リゾラッティらによるF5野での発見の解説）' },
+      { url: 'http://www.scholarpedia.org/article/Mirror_neurons', type: 'reference', label: 'Scholarpedia — “Mirror neurons”（査読付き百科事典；定義・解剖学的分布）' },
+      { url: 'https://www.jneurosci.org/content/29/32/10153', type: 'academic', label: 'Journal of Neuroscience — “Evidence of Mirror Neurons in Human Inferior Frontal Gyrus”（ヒトMNS, fMRI適応法・査読論文）' },
+      { url: 'https://www.cell.com/current-biology/fulltext/S0960-9822(10)00327-1', type: 'academic', label: 'Current Biology (Cell Press) — Mukamel, Fried et al.「Single-Neuron Responses in Humans」（ヒト単一細胞直接記録・査読論文）' },
+    ],
+  },
+  {
+    id: 'bizlaw-trade-secret',
+    discipline: 'business-law',
+    title: '営業秘密（不正競争防止法2条6項）',
+    statement:
+      '営業秘密とは、不正競争防止法によって保護される、事業活動に有用な技術上または営業上の情報をいう。同法2条6項は営業秘密を「秘密として管理されている生産方法、販売方法その他の事業活動に有用な技術上又は営業上の情報であって、公然と知られていないもの」と定義し、保護を受けるには(1)秘密管理性（アクセス制限・秘密表示等で秘密管理意思が客観的に認識できること）、(2)有用性（設計図・顧客名簿等、事業活動に有用な情報。脱税情報等の反社会的なものは除く）、(3)非公知性（公然と知られていないこと）の3要件をすべて満たす必要がある。' +
+      '不正取得・使用・開示等は不正競争（2条1項4号〜10号）に該当し差止・損害賠償の対象となり、悪質な侵害には営業秘密侵害罪として刑事罰も科される。特許と異なり登録不要で存続期間の定めはなく、秘密である限り保護される一方、公開されると保護を失う。なお2018年改正でビッグデータ等の利活用に対応した「限定提供データ」の保護も新設された。',
+    keyFigures:
+      '定義条文＝不正競争防止法2条6項／3要件＝秘密管理性・有用性・非公知性／侵害行為＝2条1項4号〜10号（不正競争）／民事救済＝差止請求・損害賠償／刑事＝営業秘密侵害罪／特徴＝登録不要・存続期間の定めなし・公開で保護喪失／2018年改正で「限定提供データ」保護を新設（e-Gov law id 405AC0000000047）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/405AC0000000047', type: 'government', label: 'e-Gov法令検索 不正競争防止法（平成5年法律第47号、法令ID 405AC0000000047）' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省「営業秘密～営業秘密を守り活用する～」' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/pdf/Chikujo.pdf', type: 'government', label: '経済産業省「逐条解説 不正競争防止法」' },
+    ],
+  },
+  {
+    id: 'infosoc-eu-ai-act',
+    discipline: 'information-sociology',
+    title: 'EU AI規制法（AI Act）',
+    statement:
+      'EU AI規制法（AI Act、規則(EU)2024/1689）は、人工知能システムを包括的に規律する世界初の本格的なAI規制であり、EUが制定した。2024年6月13日に採択、官報公布は同年7月12日、発効は8月1日で、規定は段階的に適用される。' +
+      '最大の特徴はリスクベース・アプローチで、AIを「許容できないリスク（原則禁止＝社会的スコアリング、サブリミナル操作等）」「高リスク（医療・採用・与信・重要インフラ・法執行等。適合性評価や人間による監視等の厳格な義務）」「限定的リスク（チャットボット等。透明性義務）」「最小リスク（大半。原則自由）」の4段階に分類して規律する。汎用AI（GPAI）モデルには別途、透明性・著作権・システミックリスク対応の義務が課される。違反には全世界売上高に基づく高額の制裁金が科されうる。',
+    keyFigures:
+      '規則(EU)2024/1689／採択2024年6月13日・官報公布2024年7月12日・発効2024年8月1日／禁止規定の適用2025年2月／GPAIモデル規律の適用2025年8月／高リスクAI主要規定の適用2026年8月／リスク4段階（許容できない／高／限定的／最小）／禁止規定違反の制裁金は最大3,500万ユーロまたは全世界売上高の7%／世界初の包括的AI規制',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai', type: 'government', label: "欧州委員会「AI Act｜Shaping Europe's digital future」（規制枠組み・適用日）" },
+      { url: 'https://www.europarl.europa.eu/topics/en/article/20230601STO93804/eu-ai-act-first-regulation-on-artificial-intelligence', type: 'government', label: '欧州議会「EU AI Act: first regulation on artificial intelligence」（リスク4分類・世界初）' },
+      { url: 'https://en.wikipedia.org/wiki/Artificial_Intelligence_Act', type: 'reference', label: 'Wikipedia「Artificial Intelligence Act」（規則番号・公布/発効日・条文構成）' },
+      { url: 'https://www.cambridge.org/core/journals/international-legal-materials/article/regulation-20241689-of-the-eur-parl-council-of-june-13-2024-eu-artificial-intelligence-act/64F1F6734F8C66CA3EEA149C9759194E', type: 'academic', label: 'Cambridge Core / International Legal Materials「Regulation 2024/1689 of June 13, 2024」' },
+    ],
+  },
 ];
 // Stryker restore all
