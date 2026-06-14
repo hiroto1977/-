@@ -3510,5 +3510,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.tandfonline.com/doi/full/10.1080/02673843.2025.2480712', type: 'academic', label: 'Taylor & Francis (Intl. Journal of Adolescence and Youth) — Parasocial relationships, social support and well-being（査読）' },
     ],
   },
+  {
+    id: 'econ-hayek-knowledge',
+    discipline: 'economics',
+    title: 'ハイエクの知識の分散と価格メカニズム',
+    statement:
+      '経済活動に必要な知識は、特定の時間・場所に関する断片的な知識として無数の個人に分散して存在しており、どの単一の主体（中央計画当局）も全体を把握できない、というフリードリヒ・ハイエクの中心的洞察。論文「社会における知識の利用（The Use of Knowledge in Society）」（1945、American Economic Review）で展開した。' +
+      'ハイエクは、市場の価格こそがこの分散した知識を集約・伝達する仕組みだと論じた。各人は財の価格の変化を見るだけで、その背後にある無数の事情を知らなくても、希少性の変化に適切に反応して資源配分を調整できる。価格は分散知識を要約した「シグナル」として働くため、すべての情報を集めて計算する中央計画は原理的に不可能だとし、社会主義計算論争において計画経済を批判した。' +
+      'ハイエクは1974年にノーベル経済学賞（グンナー・ミュルダールと共同受賞）を受賞した。',
+    keyFigures: 'F.ハイエク「社会における知識の利用」1945(American Economic Review)／知識は断片的に多数の個人へ分散し中央当局は把握不能／価格が分散知識を集約・伝達するシグナル／中央計画の不可能性・社会主義計算論争／ハイエク1974ノーベル賞(ミュルダールと共同)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/', type: 'reference', label: 'NobelPrize.org — Hayek 1974 Prize Lecture（市場秩序の優位性は分散した知識の活用にある）' },
+      { url: 'https://www.britannica.com/money/F-A-Hayek/Hayeks-intellectual-contributions', type: 'reference', label: 'Britannica — F.A. Hayek（価格が分散知識を伝達、社会主義批判、1974年ミュルダールと共同受賞）' },
+      { url: 'https://www.econlib.org/library/Essays/hykKnw.html', type: 'reference', label: 'Econlib — 原文「The Use of Knowledge in Society」(1945) 全文' },
+    ],
+  },
+  {
+    id: 'econ-piketty',
+    discipline: 'economics',
+    title: 'ピケティの r>g（資本収益率と格差）',
+    statement:
+      'フランスの経済学者トマ・ピケティが著書『21世紀の資本（Capital in the Twenty-First Century）』（仏語2013、英訳2014）で示した格差拡大のメカニズム。' +
+      '資本収益率（r、資産が生む利潤・配当・利子・地代等の年率）が経済成長率（g、所得や生産の伸び）を長期的に上回る（r>g）と、資本（富）が労働所得より速く増え、すでに資産を持つ者やその相続人に富が蓄積していくため、富の格差が自動的に拡大すると論じた。ピケティは欧米の数百年に及ぶ税務・歴史データを用いて、戦争や大恐慌で一時縮小した格差が再び拡大していることを示した。対策として累進的な富裕税（グローバルな資本課税）を提案した。' +
+      '一方、rとgの測り方、r>gが直ちに格差拡大を意味するかなどをめぐっては経済学界で活発な論争がある。',
+    keyFigures: 'T.ピケティ『21世紀の資本』2013(仏)/2014(英訳)／資本収益率r>経済成長率gで富が労働所得より速く増え格差が拡大／長期の税務・歴史データに依拠／対策に累進的富裕税(グローバル資本課税)／r>gの含意・測定をめぐる論争(IGM調査で約80%が不同意)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Thomas-Piketty', type: 'reference', label: 'Encyclopaedia Britannica — Thomas Piketty（r>gを資本主義の中心的矛盾とする主張、累進的富裕税の提案）' },
+      { url: 'https://libertystreeteconomics.newyorkfed.org/2015/07/a-discussion-of-thomas-pikettys-capital-in-the-twenty-first-century-by-how-much-is-r-greater-than-g/', type: 'government', label: 'Liberty Street Economics（ニューヨーク連邦準備銀行）— r>gとrの構成を解説' },
+      { url: 'https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century', type: 'reference', label: 'Wikipedia — Capital in the Twenty-First Century（仏語2013/英訳2014、Goldhammer訳、Belknap/Harvard、論争）' },
+      { url: 'https://www.chicagobooth.edu/review/piketty-on-inequality-34-economists-who-arent-convinced-and-one-who-is', type: 'academic', label: 'Chicago Booth Review（シカゴ大学）— IGM調査で約80%がr>gを最強要因とする見方に不同意' },
+    ],
+  },
+  {
+    id: 'mgmt-double-loop-learning',
+    discipline: 'management',
+    title: 'シングルループ学習とダブルループ学習',
+    statement:
+      '組織や個人の学習を2つのレベルで捉える概念で、クリス・アージリスとドナルド・ショーンが提唱した。シングルループ学習は、既存の目標・前提・価値観（支配変数/規範）はそのままに、意図と結果のずれ（誤差）を検出して行動だけを修正する学習である（サーモスタットが設定温度に向けて作動を調整するように）。' +
+      'これに対しダブルループ学習は、誤差に直面したとき、行動の背後にある目標・前提・価値観そのものを問い直して修正する、より深い学習である（なぜその設定温度なのかを問い直すように）。問題が前提自体にある場合、シングルループでは対症療法にとどまるが、ダブルループは根本的な変革を可能にする。' +
+      'アージリスは、多くの組織や有能な専門家ほど、失敗を認めず前提を問わない「防衛的思考（defensive reasoning）」に陥り、ダブルループ学習を妨げると指摘した。組織変革・組織学習論の基礎概念である。',
+    keyFigures: 'C.アージリス&D.ショーンが提唱（『Organizational Learning』1978）／シングルループ＝前提を保ち行動を修正／ダブルループ＝目標・前提・価値観そのものを問い直す／サーモスタットの比喩／防衛的思考がダブルループを妨げる（有能な専門家ほど学べない）／組織変革の基礎概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://infed.org/dir/welcome/chris-argyris-theories-of-action-double-loop-learning-and-organizational-learning/', type: 'reference', label: 'infed.org — Chris Argyris: theories of action, double-loop learning and organizational learning' },
+      { url: 'https://www.open.edu/openlearn/mod/oucontent/view.php?id=135424&section=4.2', type: 'academic', label: 'The Open University, OpenLearn — Single and Double Loop Learning' },
+      { url: 'https://hbr.org/1991/05/teaching-smart-people-how-to-learn', type: 'academic', label: 'Chris Argyris, "Teaching Smart People How to Learn," Harvard Business Review (1991)（防衛的思考）' },
+      { url: 'https://en.wikipedia.org/wiki/Double-loop_learning', type: 'reference', label: 'Wikipedia — Double-loop learning（支配変数の定義の補強）' },
+    ],
+  },
+  {
+    id: 'human-barnum-effect',
+    discipline: 'human-science',
+    title: 'バーナム効果（フォアラー効果）',
+    statement:
+      '誰にでも当てはまるような曖昧で一般的な性格描写を、あたかも自分だけに正確に当てはまる記述だと感じてしまう心理傾向。占い・血液型性格判断・星占い・性格診断などが「当たっている」と感じられる主な理由とされる。' +
+      '心理学者バートラム・フォアラーが1948年に学生（39名）を対象に行った実験で実証した。各人に同一の曖昧な性格文を「あなた個人の診断結果」として渡したところ、多くが高い的中度（平均4.26／5）を評価した。フォアラー自身は当初これを「個人的妥当化の誤謬」（1949年）と呼び、後にポール・ミールが興行師P.T.バーナムにちなんで「バーナム効果」と命名した（1956年）。このため「フォアラー効果」とも呼ばれる。' +
+      '記述が肯定的・好意的であるほど、また権威ある出所からのものと信じるほど受け入れられやすい。確証バイアスや主観的妥当化が関与し、疑似科学・占い・マーケティングの説得力を説明する。',
+    keyFigures: '誰にでも当てはまる曖昧な性格描写を自分だけに当たると感じる／占い・星占い・血液型診断が当たると感じる理由／B.フォアラー1948の実験(学生39名・平均4.26/5)で実証＝フォアラー効果／P.T.バーナムにちなみP.ミールが「バーナム効果」と命名(1956)／肯定的・権威ある記述ほど受容、確証バイアスが関与',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Barnum-Effect', type: 'reference', label: 'Encyclopaedia Britannica — Barnum Effect' },
+      { url: 'https://en.wikipedia.org/wiki/Barnum_effect', type: 'reference', label: 'Wikipedia — Barnum effect（フォアラー1948実験・平均4.26・命名経緯）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/barnum-effect', type: 'reference', label: 'EBSCO Research Starters: Psychology — Barnum effect' },
+      { url: 'https://www.all-about-psychology.com/forer-effect-psychology.html', type: 'reference', label: 'All About Psychology — Forer Effect Explained' },
+    ],
+  },
+  {
+    id: 'bizlaw-labor-union-act',
+    discipline: 'business-law',
+    title: '労働組合法',
+    statement:
+      '憲法28条が保障する労働者の団結権・団体交渉権・団体行動権（労働三権）を具体化し、労働組合の地位や使用者との関係を定める法律。1945年（昭和20年）に制定され、1949年（昭和24年）に全面改正された（現行法）。' +
+      '主な内容として、(1)正当な争議行為（ストライキ等）に対する刑事免責・民事免責（損害賠償責任を負わない）、(2)労働協約の効力（規範的効力など）、(3)使用者が労働組合の活動を妨げる「不当労働行為」の禁止がある。不当労働行為の類型は、組合員であること等を理由とする解雇・不利益取扱い、正当な理由のない団体交渉の拒否、組合の結成・運営への支配介入や経費援助などで（7条）、これらに対しては労働委員会（中央労働委員会・都道府県労働委員会）が救済命令を発する行政救済の仕組みが設けられている。' +
+      '労働基準法・労働関係調整法とあわせて「労働三法」と呼ばれる。',
+    keyFigures: '憲法28条の労働三権(団結権・団体交渉権・団体行動権)を具体化／1945年制定・1949年全面改正／正当な争議行為の刑事免責・民事免責／不当労働行為の禁止(7条：不利益取扱い・団交拒否・支配介入)／労働委員会による救済命令／労働基準法・労働関係調整法と労働三法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/324AC0000000174', type: 'government', label: 'e-Gov法令検索「労働組合法」（昭和24年法律第174号）' },
+      { url: 'https://www.mhlw.go.jp/churoi/qa/index.html', type: 'government', label: '中央労働委員会（厚生労働省）— 労働委員会とは（救済命令・三者構成）' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/00519490601174.htm', type: 'government', label: '衆議院 制定法律 — 法律第百七十四号（昭24・6・1）労働組合法（全部改正＝現行法）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-events',
+    discipline: 'information-sociology',
+    title: 'メディア・イベント',
+    statement:
+      'ダニエル・ダヤーンとエリユ・カッツが著書『メディア・イベント（Media Events: The Live Broadcasting of History）』（Harvard University Press, 1992）で論じた概念。オリンピック、国家的式典、ロイヤルウェディング、月面着陸、要人の葬儀などの、テレビで生中継される歴史的な祝祭的出来事を指す。' +
+      'これらは日常の放送を中断して放送され、国民や世界の視聴者が同じ時間に同じ出来事を共有する。ダヤーンとカッツは、メディア・イベントを「競技（Contest）」「征服（Conquest）」「戴冠（Coronation）」の3類型に分けた。こうしたイベントは社会の統合や集合的記憶の形成、儀礼的な連帯（デュルケームのいう集合的沸騰に類比）をもたらすとされる。' +
+      '一方、デジタル・SNS時代には、視聴の同時性が崩れ、テロや災害といった「破壊的（disruptive）」なメディア・イベントの比重が高まっているとの議論もある。',
+    keyFigures: 'D.ダヤーン&E.カッツ『メディア・イベント』1992／テレビ生中継される歴史的・祝祭的出来事(五輪・式典・葬儀等)／日常放送を中断し視聴者が同時に共有／3類型：競技・征服・戴冠／社会統合・集合的記憶・儀礼的連帯(デュルケーム=集合的沸騰)／SNS時代の同時性崩壊・破壊的イベント(Couldry & Hepp)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674559561', type: 'academic', label: 'Harvard University Press — Media Events（公式書誌・概要）' },
+      { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0189.xml', type: 'reference', label: 'Oxford Bibliographies (Communication) — Media Events' },
+      { url: 'https://researchportal.helsinki.fi/en/publications/daniel-dayan-and-elihu-katz-1992-media-events-the-live-broadcasti/', type: 'academic', label: 'University of Helsinki Research Portal — Dayan & Katz (1992) 解説章' },
+      { url: 'https://eprints.lse.ac.uk/52468/1/__libfile_REPOSITORY_Content_Couldry,%20N_Introduction%20media%20events_Couldry_Introduction%20media%20events_2013.pdf', type: 'academic', label: 'LSE Research Online — Couldry & Hepp, Introduction: Media Events in Globalized Media Cultures' },
+    ],
+  },
 ];
 // Stryker restore all
