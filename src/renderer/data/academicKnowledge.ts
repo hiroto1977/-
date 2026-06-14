@@ -5053,5 +5053,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.historicalmaterialism.org/article/an-introduction-to-guy-debords-the-society-of-the-spectacle/', type: 'academic', label: 'Historical Materialism — An Introduction to Guy Debord’s The Society of the Spectacle（査読系学術誌）' },
     ],
   },
+  {
+    id: 'econ-human-capital',
+    discipline: 'economics',
+    title: '人的資本論',
+    statement:
+      '教育・訓練・経験・健康などへの投資によって人が身につける知識・技能を「資本（人的資本）」とみなし、それが将来の生産性と所得を高めるとする労働経済学の理論。教育を単なる消費ではなく、授業料や訓練期間中の逸失所得という費用を払って将来の高い収益（賃金上昇）を得る「投資」として捉える点が核心である。' +
+      '訓練は、転職しても価値を持つ汎用的な「一般的訓練」（市場で評価されるため費用は労働者が負担しがち）と、特定企業でのみ有用な「企業特殊的訓練」（離職リスクゆえ費用を労使で分担）に区別される。この投資収益率の枠組みは、ミンサー方程式（log賃金を教育年数と経験年数の二次関数で説明）として実証分析に定着し、賃金格差や経済成長の理解の基礎となった。学歴を能力の「合図」とみなすシグナリング理論とは、教育が生産性自体を高めるか否かで論争があるが、別概念として並立する。',
+    keyFigures: 'ゲーリー・ベッカー（Gary Becker, 『Human Capital』1964 で体系化、1992年ノーベル経済学賞）／セオドア・シュルツ（Theodore Schultz, 1960年代初頭に概念を提唱・定着、1979年ノーベル経済学賞）／ヤコブ・ミンサー（Jacob Mincer, 『Schooling, Experience, and Earnings』1974、ミンサー方程式）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/books-and-chapters/human-capital-theoretical-and-empirical-analysis-special-reference-education-first-edition', type: 'academic', label: 'NBER — Gary Becker, Human Capital: A Theoretical and Empirical Analysis (初版書誌)' },
+      { url: 'https://www.britannica.com/money/wage/Human-capital-theory', type: 'reference', label: 'Encyclopædia Britannica（Money）— Wage: Human-capital theory' },
+      { url: 'https://en.wikipedia.org/wiki/Mincer_earnings_function', type: 'reference', label: 'Wikipedia — Mincer earnings function（教育年数・経験の二次関数によるlog賃金モデル）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1992/press-release/', type: 'government', label: 'The Nobel Prize — 1992年経済学賞 ゲーリー・ベッカー 公式プレスリリース' },
+    ],
+  },
+  {
+    id: 'econ-search-matching',
+    discipline: 'economics',
+    title: 'サーチ理論／マッチング理論',
+    statement:
+      '取引相手を見つけるのに時間・費用（探索摩擦＝search friction）がかかる市場、とくに労働市場を分析する枠組み。求職者と求人は即座にはマッチせず、失業者数 u と欠員（未充足求人）数 v から成立する雇用件数（フロー）を表す「マッチング関数 M(u, v)」を中核に置く。これにより失業（求職中）と欠員が同時に併存する状態が内生的に説明され、両者の負の相関であるベバリッジ曲線の理論的基礎を与える。' +
+      '実現したマッチの余剰（surplus）は労使で分け合い、賃金は事後的なナッシュ交渉（Nash bargaining）で決定される。均衡はベバリッジ曲線と雇用創出曲線の交点で与えられ、労働者の交渉力が効率的水準を満たすホシオス条件も導かれる。摩擦的失業や労働市場の動学を分析する標準的（workhorse）モデルとなっている。',
+    keyFigures: 'ピーター・A・ダイアモンド（Peter A. Diamond, MIT）／デール・T・モーテンセン（Dale T. Mortensen, Northwestern）／クリストファー・A・ピサリデス（Christopher A. Pissarides, LSE）の Diamond–Mortensen–Pissarides（DMP）モデル／三氏は「探索摩擦のある市場の分析」により2010年ノーベル経済学賞を共同受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2010.pdf', type: 'government', label: 'Royal Swedish Academy of Sciences, “Markets with Search Frictions” (Scientific Background, 2010 Prize)' },
+      { url: 'https://www.nber.org/news/peter-diamond-dale-t-mortensen-and-christopher-pissarides-shared-2010-nobel-prize-research-job', type: 'academic', label: 'NBER — Diamond, Mortensen & Pissarides Shared 2010 Nobel Prize for Research on Job Search and Labor Market Frictions' },
+      { url: 'https://economics.mit.edu/sites/default/files/inline-files/Lectures%2011-13%20-%20Search,%20Matching%20and%20Unemployment_2.pdf', type: 'academic', label: 'MIT 14.661 Labor Economics — Lectures 11–13: Search, Matching and Unemployment' },
+      { url: 'https://en.wikipedia.org/wiki/Search-and-matching_theory', type: 'reference', label: 'Wikipedia — Search-and-matching theory' },
+    ],
+  },
+  {
+    id: 'mgmt-work-engagement',
+    discipline: 'management',
+    title: 'ワーク・エンゲージメント',
+    statement:
+      'ワーク・エンゲージメントとは、仕事に関連するポジティブで充実した心理状態であり、活力（vigor）・熱意（dedication）・没頭（absorption）の3次元で特徴づけられる。活力は高い水準のエネルギーと精神的回復力、仕事に努力を注ぐ意欲、困難に直面しても粘り強く取り組む姿勢を指す。熱意は仕事への強い関与と、意義・誇り・挑戦・着想の感覚を伴う。没頭は仕事への深い集中と幸福な没入で、時間が速く過ぎ仕事から離れがたくなる状態を指す。' +
+      'バーンアウト（燃え尽き）の肯定的な対極に位置づけられ、UWES（ユトレヒト・ワーク・エンゲージメント尺度）で測定される。仕事の要求度－資源（JD-R）モデルでは、仕事の資源・個人資源がエンゲージメントを高めると説明される。一時的なフロー体験とは異なり、特定の対象・出来事に限定されない持続的・全般的な状態である点が要点である。',
+    keyFigures: 'ウィルマー・シャウフェリ（Wilmar Schaufeli）が中心となり提唱／初出: Schaufeli, Salanova, González-Romá & Bakker (2002)「The Measurement of Engagement and Burnout」Journal of Happiness Studies 3, 71-92／JD-Rモデルの主要発展: Arnold B. Bakker・Evangelia Demerouti',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1023/A:1015630930326', type: 'academic', label: 'Schaufeli et al. (2002) The Measurement of Engagement and Burnout, Journal of Happiness Studies（初出・査読論文／Springer）' },
+      { url: 'https://www.wilmarschaufeli.nl/publications/Schaufeli/Test%20Manuals/Test_manual_UWES_English.pdf', type: 'academic', label: 'UWES Utrecht Work Engagement Scale Preliminary Manual（Schaufeli & Bakker、提唱者本人による公式尺度マニュアル）' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-orgpsych-120920-053933', type: 'academic', label: 'Bakker & Demerouti, Job Demands–Resources Theory: Ten Years Later, Annual Review of Organizational Psychology（査読総説）' },
+      { url: 'https://en.wikipedia.org/wiki/Work_engagement', type: 'reference', label: 'Work engagement — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-attribution-theory',
+    discipline: 'human-science',
+    title: '帰属理論',
+    statement:
+      '人が自分や他者の行動・出来事の原因をどのように推論し説明するかを扱う社会心理学の理論群。原因を行為者内部に帰する「内的（性格・能力・努力）帰属」と、外部に帰する「外的（状況・運・課題の難易度）帰属」を区別する点が基盤となる。フリッツ・ハイダーが人を「素朴な科学者」とみなす素朴心理学として原型を示し、ハロルド・ケリーは合意性・弁別性・一貫性の3情報から原因を推論する共変動モデルを定式化、バーナード・ワイナーは原因を所在・安定性・統制可能性の3次元で捉え、成功・失敗の原因帰属が感情や達成動機づけを左右することを示した。' +
+      '基本的帰属の錯誤や公正世界仮説など個別現象の母体となる上位の枠組みである。',
+    keyFigures: 'フリッツ・ハイダー（Fritz Heider, 1958『対人関係の心理学』で素朴心理学として原型を提示）／ハロルド・ケリー（Harold Kelley, 1967 共変動モデル：合意性・弁別性・一貫性）／バーナード・ワイナー（Bernard Weiner, 達成帰属理論：所在・安定性・統制可能性の3次元）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Attribution_(psychology)', type: 'reference', label: 'Attribution (psychology) — Wikipedia' },
+      { url: 'https://en.wikipedia.org/wiki/Covariation_model', type: 'reference', label: 'Covariation model (Kelley) — Wikipedia' },
+      { url: 'https://www.simplypsychology.org/attribution-theory.html', type: 'reference', label: 'Attribution Theory in Psychology: Definition & Examples — SimplyPsychology' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-658-21742-6_59', type: 'academic', label: 'Heider (1958): The Psychology of Interpersonal Relations — Springer Nature' },
+    ],
+  },
+  {
+    id: 'bizlaw-employer-liability',
+    discipline: 'business-law',
+    title: '使用者責任（民法715条）',
+    statement:
+      '使用者責任とは、ある事業のために他人（被用者）を使用する者（使用者）が、被用者がその事業の執行について第三者に加えた損害を賠償する責任である（民法715条1項本文）。被用者自身の不法行為（709条）の成立を前提に、利益を得る者が損失も負担すべきとする報償責任、及び危険責任の原理に基づき、責任を使用者へ拡張する制度。成立要件は、(1)使用関係の存在、(2)「事業の執行について」なされたこと（判例＝外形標準説）、(3)被用者に709条の不法行為が成立すること。' +
+      '使用者が選任・監督に相当の注意をしたとき等は免責されうるが（1項ただし書）、実務上免責はほぼ認められない。被害者は被用者と使用者の双方に請求できる（不真正連帯）。使用者が賠償した場合は被用者に求償できるが（3項）、判例は信義則上これを制限し、被用者から使用者への逆求償も認める（最判令和2年2月28日）。',
+    keyFigures: '根拠条文＝民法715条（1項本文・ただし書／2項代理監督者／3項求償権）／前提＝被用者の709条不法行為の成立／原理＝報償責任・危険責任／要件＝使用関係・事業の執行について（外形標準説）・被用者の不法行為／責任関係＝使用者と被用者の不真正連帯／求償＝3項（判例は信義則上制限・逆求償も肯定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、law id 129AC0000000089）第715条' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/040wadashinichi.pdf', type: 'academic', label: '和田真一「民法715条における使用者の負担部分――最判令和2年2月28日判決に関する覚書」立命館法学' },
+      { url: 'https://corporate.vbest.jp/columns/2238/', type: 'media', label: 'ベリーベスト法律事務所「使用者責任（民法715条）とは？要件や損害賠償責任を負う範囲」' },
+    ],
+  },
+  {
+    id: 'infosoc-privacy-paradox',
+    discipline: 'information-sociology',
+    title: 'プライバシー・パラドックス',
+    statement:
+      '人々が調査などで「プライバシーを重視・懸念している」と表明する態度や意図と、実際にはSNS等で個人情報を容易に開示してしまう行動との間に見られる乖離（不一致）を指す概念。スーザン・B・バーンズが2006年に提唱して以降、情報社会学・HCI・情報システム研究で広く論じられてきた。乖離の説明として、便益とリスクを天秤にかける「プライバシー計算」、即時的満足を過大評価する双曲割引、開示結果に関するリスク認知の不確実性、事業者と利用者の情報の非対称性、対抗を諦めるプライバシー・シニシズムなどが挙げられる。' +
+      '一方で近年は、態度測定が一般的・抽象的であるのに対し行動は特定の文脈での選択であり両者は本来比較不能だとする方法論的批判（ソローヴ「The Myth of the Privacy Paradox」、ココラキスらの文献レビュー）が現れ、「パラドックス」の存在自体を疑問視・相対化する立場も有力である。',
+    keyFigures: 'Susan B. Barnes（初出: 2006「A privacy paradox: Social networking in the United States」First Monday 11(9)、用語を広めた）／Spyros Kokolakis（2017 体系的文献レビュー）／Daniel J. Solove（2021「The Myth of the Privacy Paradox」批判的再検討）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/1394', type: 'academic', label: 'Barnes, S. B. (2006) “A privacy paradox: Social networking in the United States”, First Monday 11(9)（初出・査読誌）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0167404818303031', type: 'academic', label: 'Kokolakis (2017) “Privacy attitudes and privacy behaviour: A review” Computers & Security (Elsevier)（体系的レビュー）' },
+      { url: 'https://www.researchgate.net/publication/339494095_The_Myth_of_the_Privacy_Paradox', type: 'academic', label: 'Solove, D. J. (2021) “The Myth of the Privacy Paradox”, George Washington Law Review（批判的検討）' },
+    ],
+  },
 ];
 // Stryker restore all
