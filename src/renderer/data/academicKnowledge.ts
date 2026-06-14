@@ -9399,5 +9399,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Meme', type: 'reference', label: 'Wikipedia「Meme」— 定義・語源・Dawkins/Blackmore・memetics批判' },
     ],
   },
+  {
+    id: 'econ-folk-theorem',
+    discipline: 'economics',
+    title: 'フォーク定理（繰り返しゲーム）',
+    statement:
+      'フォーク定理は、繰り返しゲーム（repeated game）において膨大な数のナッシュ均衡利得が存在することを示す定理群である。' +
+      'プレイヤーが十分に忍耐強く将来を重視する（割引因子が1に十分近い）場合、各プレイヤーが個別合理性（マックスミン値以上）を満たす実現可能（feasible）な利得の組は、ほぼすべて（部分ゲーム完全）均衡として達成されうる。一回限りでは協力しない囚人のジレンマでも、逸脱を将来罰するトリガー戦略の脅しにより協力が均衡として支持される。「フォーク（民間伝承）」の名は、1950年代に誰も公刊しないまま研究者間で広く知られていたことに由来する。フリードマン（1971）が部分ゲーム完全版を、ファッデンバーグ＆マスキン（1986）が割引付き完全版を示した。均衡の多重性ゆえ予測が難しい反面、カルテルや暗黙の共謀の説明に用いられる。',
+    keyFigures:
+      'James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric Maskin（1986・割引付き完全フォーク定理）／トリガー戦略・個別合理性・均衡の多重性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1986/05/01/folk-theorem-repeated-games-discounting-or-incomplete', type: 'academic', label: 'Fudenberg & Maskin, “The Folk Theorem in Repeated Games with Discounting or with Incomplete Information,” Econometrica 54(3), 1986' },
+      { url: 'https://en.wikipedia.org/wiki/Folk_theorem_(game_theory)', type: 'reference', label: 'Wikipedia「Folk theorem (game theory)」（定義・Friedman 1971・名称の由来）' },
+      { url: 'https://www.cs.cornell.edu/home/halpern/papers/itcs.pdf', type: 'academic', label: 'Halpern & Pass, “The Truth Behind the Myth of the Folk Theorem”（Cornell・個別合理性とミニマックス）' },
+    ],
+  },
+  {
+    id: 'mgmt-greiner-growth-model',
+    discipline: 'management',
+    title: 'グレイナーの企業成長モデル',
+    statement:
+      'グレイナーの企業成長モデルは、組織が年齢と規模を増すにつれて経る発展段階を示した理論で、ラリー・E・グレイナー（USCマーシャル経営大学院教授）が1972年のHarvard Business Review論文「Evolution and Revolution as Organizations Grow」で提示した。' +
+      '各段階は、比較的安定した成長期（evolution＝進化）と、その成長が招く管理上の危機（revolution＝革命）が交互に訪れ、危機を克服することで次段階へ移行する。当初の5段階と終結危機は、(1)創造性による成長→リーダーシップの危機、(2)指揮による成長→自主性の危機、(3)権限委譲による成長→統制の危機、(4)調整による成長→形式主義（レッドテープ）の危機、(5)協働による成長→内部成長の危機（1998年改訂で(6)提携による成長→アイデンティティの危機を追加）。核心は、ある段階で成功した管理方式が次段階では機能不全を起こし、各進化局面自体が次の危機の種を生む点にあり、経営者は発展段階に応じた組織変革を行う必要があると説く。',
+    keyFigures:
+      'ラリー・E・グレイナー（Larry E. Greiner, 1972 HBR・USCマーシャル）／進化（evolution）と革命（revolution）の交替／5段階＋1998年に第6段階（提携→アイデンティティの危機）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.marshall.usc.edu/personnel/larry-e-greiner', type: 'academic', label: 'USC Marshall School of Business — Larry E. Greiner 教員紹介（著者所属大学）' },
+      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'reference', label: 'Harvard Business Review (1998改訂版) — Evolution and Revolution as Organizations Grow（原典）' },
+      { url: 'https://ils.unc.edu/daniel/131/cco4/Greiner.pdf', type: 'academic', label: 'University of North Carolina 配布の原論文PDF（1972年, HBR Vol.50 No.4）' },
+    ],
+  },
+  {
+    id: 'human-mood-congruent-memory',
+    discipline: 'human-science',
+    title: '気分一致効果（気分一致記憶）',
+    statement:
+      '気分一致効果（mood-congruent memory）とは、現在の気分（感情状態）とその感情的調子（valence）が一致する情報の方が、一致しない情報よりも記憶の符号化・想起において促進される現象である。たとえば楽しい気分のときはポジティブな出来事を、悲しい気分のときはネガティブな出来事をよく覚え・思い出しやすい。' +
+      'ゴードン・バウアーが1981年の論文「Mood and Memory」（American Psychologist）で体系的に論じ、感情の連合ネットワークモデルで説明した。符号化時と想起時の気分が一致すると想起が良くなる「気分状態依存記憶（state-dependent retrieval）」とは区別される——気分一致効果は情報の感情価と現在の気分の一致が鍵であるのに対し、状態依存記憶は学習時と想起時の内的状態の一致が鍵である。うつ病の否定的記憶バイアスの理解にも応用されるが、効果の頑健性や非対称性（健常者では気分修復により弱まる等）には議論もある。',
+    keyFigures:
+      'ゴードン・H・バウアー（Gordon H. Bower, 1981「Mood and Memory」）／連合ネットワークモデル／気分状態依存記憶とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/mood-congruent-memory', type: 'reference', label: 'APA Dictionary of Psychology — “mood-congruent memory”（米国心理学会）' },
+      { url: 'https://dibs-web01.vm.duke.edu/labar/pdfs/Faul_and_LaBar_2022.pdf', type: 'academic', label: 'Faul & LaBar (2022) “Mood-Congruent Memory Revisited”, Psychological Review（査読論文、Duke University）' },
+      { url: 'https://en.wikipedia.org/wiki/Mood_congruence', type: 'reference', label: 'Wikipedia — “Mood congruence”（バウアー連合ネットワーク理論・状態依存との区別）' },
+    ],
+  },
+  {
+    id: 'bizlaw-guarantee-obligation',
+    discipline: 'business-law',
+    title: '保証債務（民法446条）',
+    statement:
+      '保証債務とは、主たる債務者がその債務を履行しないときに、保証人が主たる債務者に代わってその履行をする責任を負う債務をいう（民法446条1項）。保証契約は債権者と保証人との間で締結され、書面（電磁的記録を含む）でしなければその効力を生じない（446条2項・3項）。これは軽率な保証を防ぎ保証人を保護するための要式性である。保証債務には、(1)付従性（主たる債務が無効・消滅すれば保証債務も消滅し、内容も主たる債務より重くなれない）、(2)随伴性（主たる債務に対する債権が移転すれば保証債務も移転する）、(3)補充性という性質がある。' +
+      '補充性の現れとして、普通保証の保証人は催告の抗弁権（452条＝まず主たる債務者に催告せよと求める権利）と検索の抗弁権（453条＝主たる債務者に弁済資力がありかつ執行が容易なことを証明して拒む権利）を有する。これに対し連帯保証（454条）の保証人は催告・検索の抗弁権をもたず、債権者は連帯保証人に直ちに全額請求でき実務で広く用いられる。2017年改正民法（2020年4月施行）は個人保証人の保護を強化し、事業用融資の個人保証につき公正証書による保証意思の確認（465条の6）、保証人への情報提供義務（458条の2・465条の10）等を新設した。保証人が弁済すれば主たる債務者に求償権を取得する。',
+    keyFigures:
+      '446条1項：主債務者が履行しないとき代わって履行／446条2項・3項：書面（電磁的記録含む）でなければ無効／付従性・随伴性・補充性／催告の抗弁権（452条）・検索の抗弁権（453条）／連帯保証（454条）は補充性なし／2017改正＝公正証書による保証意思確認（465条の6）・情報提供義務（458条の2/465条の10）／求償権／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089、第446条〜465条の10）' },
+      { url: 'https://www.moj.go.jp/content/001254262.pdf', type: 'government', label: '法務省「保証に関する民法のルールが大きく変わります」（2020年4月1日施行）' },
+      { url: 'https://kslaw.jp/column/detail/6451/', type: 'reference', label: '栗林総合法律事務所「保証契約」（付従性・随伴性・補充性の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-smart-mob',
+    discipline: 'information-sociology',
+    title: 'スマートモブ',
+    statement:
+      'スマートモブ（smart mobs）とは、携帯電話・SMS・インターネット・SNSなどの情報通信技術を用い、互いに見知らぬ人々が緩やかに調整し合い、明確な指導者や中央組織なしに即座に協調的な集合行動をとる集団・現象を指す。' +
+      '米国のメディア批評家ハワード・ラインゴールドが2002年の著書『Smart Mobs: The Next Social Revolution（次なる社会革命）』で提唱・命名し、「通信と計算の能力を備えた端末を携帯するため、互いを知らなくても協調して行動できる人々」と定義した。技術が人間の協力する力を増幅し、政治的動員・抗議・市場・協働に新たな力を与えると論じた。代表例は2001年フィリピンのSMSによる大規模動員（ピープルパワー2）でのエストラダ大統領退陣であり、後のフラッシュモブやアラブの春、ハッシュタグ・アクティビズムの先駆的概念と位置づけられる。',
+    keyFigures:
+      'ハワード・ラインゴールド（Howard Rheingold, 2002『Smart Mobs』）／2001年フィリピン（ピープルパワー2）のSMS動員／フラッシュモブ・アラブの春の先駆概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.5555/579424', type: 'academic', label: 'ACM Digital Library — Rheingold, Smart Mobs: The Next Social Revolution (書誌)' },
+      { url: 'https://nvdatabase.swarthmore.edu/content/philippine-citizens-overthrow-president-joseph-estrada-people-power-ii-2001', type: 'reference', label: 'Global Nonviolent Action Database (Swarthmore College) — People Power II, 2001' },
+      { url: 'https://en.wikipedia.org/wiki/Smart_mob', type: 'reference', label: 'Wikipedia — Smart mob（定義・由来）' },
+    ],
+  },
+  {
+    id: 'econ-dictator-game',
+    discipline: 'economics',
+    title: '独裁者ゲーム',
+    statement:
+      '独裁者ゲーム（dictator game）は実験経済学・行動経済学で用いられる単純なゲームで、一方のプレイヤー（独裁者・配分者）が一定額の金銭を自分と相手（受け手）の間でどう分けるかを一方的に決め、受け手は受動的で拒否できず結果を受け入れるしかない。' +
+      '標準的な利己的・合理的予測では独裁者は全額を自分のものにする（受け手にゼロ）はずだが、実際の実験では多くの独裁者が正の金額（平均しておよそパイの2割程度、全額保持は約4割にとどまる）を分け与え、人間の利他性・公平性・社会的選好の存在を示すとされる。受け手が拒否権を持つ最後通牒ゲームと異なり拒否を恐れた戦略的配慮が働かないため、分配はより直接的な利他性・規範の指標とされる。ただし配分は実験設定（二重盲検など厳格な匿名性では分配が大きく減少）に敏感で、純粋利他性の解釈には留保も要する（Forsythe ら1994、Hoffman ら1996）。',
+    keyFigures:
+      'Forsythe・Horowitz・Savin・Sefton（1994・標準実験）／Hoffman ら（1996・二重盲検で分配減少）／最後通牒ゲーム（受け手に拒否権）とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Dictator_game', type: 'reference', label: 'Dictator game — Wikipedia（定義・最後通牒ゲームとの対比・実証結果）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-319-28099-8_652-1', type: 'reference', label: 'Dictator Game — Encyclopedia of Law and Economics (Springer Nature)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S2214804320302895', type: 'academic', label: 'Social preferences across different populations: Meta-analyses on the ultimatum game and dictator game（査読論文）' },
+    ],
+  },
 ];
 // Stryker restore all
