@@ -9015,5 +9015,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Slacktivism', type: 'reference', label: 'Wikipedia — Slacktivism（定義・語源・批判と擁護の両論）' },
     ],
   },
+  {
+    id: 'econ-stackelberg-competition',
+    discipline: 'economics',
+    title: 'シュタッケルベルク競争（先導者・追随者モデル）',
+    statement:
+      'シュタッケルベルク競争は、寡占市場で企業が生産「数量」を戦略変数とし、意思決定に時間的な先後（逐次手番）がある寡占モデルである。先導者（リーダー）が先に生産量を決定し、追随者（フォロワー）はそれを観察したうえで自らの最適生産量を選ぶ。ドイツの経済学者ハインリヒ・フォン・シュタッケルベルクが1934年の著書『Marktform und Gleichgewicht（市場形態と均衡）』で示した。' +
+      '同時手番のクールノー競争と異なり、先導者は自社の数量が追随者の反応関数に与える影響をバックワード・インダクションで織り込んで行動する。結果として先導者はクールノー均衡より多く生産し利潤も増やす「先行者の利益」を得る一方、追随者の生産量・利潤は減る。市場全体の総生産量はクールノー均衡より多く価格は低い。生産能力への先行投資などコミットメントが優位を生む、部分ゲーム完全均衡の応用例である。',
+    keyFigures:
+      'ハインリヒ・フォン・シュタッケルベルク（Heinrich von Stackelberg, 1934）／アントワーヌ・クールノー（比較対象の同時手番モデル）／先行者の利益・反応関数・部分ゲーム完全均衡',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Stackelberg_competition', type: 'reference', label: 'Wikipedia — Stackelberg competition（定義・1934年Stackelberg著作・逐次手番・反応関数・先行者利益）' },
+      { url: 'https://people.bath.ac.uk/sm2446/Oligopoly.pdf', type: 'academic', label: 'University of Bath 講義ノート Oligopoly — クールノーとの比較・先導者の高生産/高利潤' },
+      { url: 'https://open.oregonstate.education/intermediatemicroeconomics/chapter/module-18/', type: 'academic', label: 'Oregon State University 公開教科書 Intermediate Microeconomics — Cournot/Bertrand/Stackelberg・バックワード・インダクション解' },
+    ],
+  },
+  {
+    id: 'mgmt-adhocracy',
+    discipline: 'management',
+    title: 'アドホクラシー',
+    statement:
+      'アドホクラシー（adhocracy）とは、官僚制（bureaucracy）と対比される、柔軟・適応的・分権的で非公式な組織形態・組織文化を指す。ラテン語「ad hoc（特定目的の・その場限りの）」と「-cracy（支配）」の合成語で、ウォーレン・ベニスが1968年『The Temporary Society』で用い、アルビン・トフラーが1970年『Future Shock（未来の衝撃）』で広めた。' +
+      '固定的階層・標準化手続き・明確な職務分掌に依らず、変化する状況に応じて専門家がプロジェクトやチーム単位で柔軟に編成され、相互調整（mutual adjustment）で協働する。ヘンリー・ミンツバーグは組織構成の一類型として理論化し、複雑で動態的な環境やイノベーションに適すとした（運営型/管理型の区別あり）。キャメロン＆クインの競合価値フレームワークでは柔軟性×外部志向＝創造性重視の文化型とされる。一方で曖昧さ・対立・効率性の低さといった欠点もある。',
+    keyFigures:
+      'アルビン・トフラー（Alvin Toffler, 1970『Future Shock』で普及）／ヘンリー・ミンツバーグ（Henry Mintzberg, 組織類型として理論化）／ウォーレン・ベニス（Warren Bennis, 1968造語）／キャメロン＆クイン（競合価値フレームワーク）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Adhocracy', type: 'reference', label: 'Adhocracy — Wikipedia（語源・Bennis造語/Toffler普及・Mintzbergの定義と運営型/管理型）' },
+      { url: 'https://link.springer.com/article/10.1186/s41469-019-0062-9', type: 'academic', label: 'Lee & Edmondson (2019) “What makes self-managing organizations novel?” Journal of Organization Design (Springer)' },
+      { url: 'https://www.ebsco.com/research-starters/literature-and-writing/future-shock-explores-impact-change', type: 'reference', label: 'EBSCO Research Starter — Toffler『Future Shock』とアドホクラシー概念' },
+    ],
+  },
+  {
+    id: 'mgmt-matrix-organization',
+    discipline: 'management',
+    title: 'マトリックス組織',
+    statement:
+      'マトリックス組織とは、組織を職能（機能：開発・製造・営業・財務など）と製品／プロジェクト／地域という2つ以上の次元で同時に編成し、従業員が各軸の管理者の双方に報告する「二重の指揮系統（two-boss system）」をもつ組織構造である。典型的には職能マネジャーが業務・技術面の遂行責任を、プロジェクト／製品マネジャーがチーム全体の成果責任を負う。' +
+      '1960〜70年代に米国航空宇宙産業でプロジェクト管理の必要から発展した（古典は Davis & Lawrence『Matrix』1977、HBR論文「Problems of Matrix Organizations」1978）。職能の専門性とプロジェクトの機動性の両立・人的資源の柔軟な共有・部門横断的な調整の促進・環境変化への対応を利点とする一方、命令一元性（unity of command）の原則に反するため権限の対立やあいまいさ、二人の上司による役割葛藤、調整コストと会議の増加、責任所在の不明確化、権力闘争を欠点とする。強さによりPMBOKは弱／バランス型／強マトリックスに分類する。',
+    keyFigures:
+      '二次元同時編成（職能×製品/プロジェクト/地域）・二重指揮系統（two-boss）／起源は1960年代米国航空宇宙産業／古典＝Davis & Lawrence『Matrix』1977・HBR「Problems of Matrix Organizations」1978／命令一元性違反・役割葛藤・権力闘争／PMBOK：弱・バランス型・強マトリックス',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/matrix-organization', type: 'reference', label: 'Encyclopaedia Britannica (Money) — “Matrix organization: Advantages & Disadvantages”（定義・二重報告・利点欠点）' },
+      { url: 'https://hbr.org/1978/05/problems-of-matrix-organizations', type: 'academic', label: 'Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）' },
+      { url: 'https://www.pmi.org/learning/library/matrix-organization-structure-reason-evolution-1837', type: 'academic', label: 'Project Management Institute (PMI) — “The Matrix Organization”（航空宇宙起源・構造の進化）' },
+    ],
+  },
+  {
+    id: 'human-regulatory-focus',
+    discipline: 'human-science',
+    title: '制御焦点理論（促進焦点・予防焦点）',
+    statement:
+      '人が目標を追求する際の自己制御には、性質の異なる2つの動機づけ志向があるとする社会心理学の理論。E・トーリー・ヒギンズが1997年論文「Beyond Pleasure and Pain」（American Psychologist）等で提唱した。' +
+      '促進焦点は理想・願望・成長・獲得（gains）に関心を向け、ポジティブな結果の有無に敏感で熱望（eagerness）方略を採り、利益を逃さないことを重視する。予防焦点は義務・責任・安全・損失回避に関心を向け、ネガティブな結果に敏感で警戒（vigilance）方略を採り、誤りを避けることを重視する。焦点は慢性的気質としても状況的に誘導される一時的状態としても生じる。方略が自分の焦点と合致するとき動機づけや説得効果が高まる「制御適合（regulatory fit、正しいと感じる）」が重要概念で、マーケティング・意思決定・健康行動に広く応用される。',
+    keyFigures:
+      'E・トーリー・ヒギンズ（E. Tory Higgins, 1997）／促進焦点（eagerness・獲得）・予防焦点（vigilance・損失回避）／制御適合（regulatory fit）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118900772.etrds0279', type: 'reference', label: 'E. Tory Higgins「Regulatory Focus Theory」Wiley Online Library 学術参照工具' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/15008644/', type: 'academic', label: 'Cesario, Grant & Higgins「Regulatory Fit and Persuasion: Transfer From Feeling Right」PubMed（査読論文）' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.531147/full', type: 'academic', label: 'Frontiers in Psychology 査読論文（促進／予防の自己制御と方略を解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-mistake',
+    discipline: 'business-law',
+    title: '錯誤（民法95条）',
+    statement:
+      '錯誤とは、表意者の認識（内心の意思）と表示または前提が一致せず、本人がその不一致に気づかないまま意思表示をすることをいう（民法95条）。2017年改正（平成29年法律第44号、2020年4月施行）で効果が「無効」から「取消し」に整理された。' +
+      '1項は、①意思表示に対応する意思を欠く錯誤（表示錯誤）、または②表意者が法律行為の基礎とした事情についての認識が真実に反する錯誤（基礎事情の錯誤＝動機の錯誤）で、その錯誤が法律行為の目的及び取引上の社会通念に照らして重要なものであるとき、意思表示を取り消せると定める。2項は、基礎事情の錯誤による取消しはその事情が法律行為の基礎とされていることが表示されていたときに限り認める。3項は、表意者に重大な過失がある場合は原則取消しを認めないが、相手方が悪意・重過失のとき、又は共通錯誤のときは例外として取消し可とする。4項は、錯誤による取消しを善意でかつ過失がない第三者に対抗できないとする。詐欺・強迫（96条）と並ぶ意思表示の瑕疵の制度である。',
+    keyFigures:
+      '効果は「無効」→「取消し」に改正（2020年4月施行）／2類型＝表示錯誤＋基礎事情の錯誤（動機の錯誤）／要件＝法律行為の目的・取引上の社会通念に照らして重要／動機の錯誤は基礎事情が「表示」されていたときに限り取消し可（2項）／重過失で原則取消し不可・例外は相手方の悪意重過失/共通錯誤（3項）／善意無過失の第三者に対抗不可（4項）／平成29年法律第44号',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第95条' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法の一部を改正する法律（債権法改正）について' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第95条', type: 'reference', label: 'Wikibooks 民法第95条（錯誤の2類型・取消し・重過失の例外・第三者保護）' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-determinism',
+    discipline: 'information-sociology',
+    title: '技術決定論',
+    statement:
+      '技術決定論（technological determinism）とは、技術—とりわけ新しいメディアや生産技術—が社会の構造・文化・歴史の変化を規定する第一の自律的な原動力であるとみなす立場である。技術はそれ自体の論理で発展し社会はそれに従って変化する（技術→社会の一方向因果）と捉え、技術が社会を不可避に決定するとみる「ハード（強い）決定論」と、技術は重要な要因だが社会的文脈と相互作用するとみる「ソフト（弱い）決定論」に区別される。' +
+      'この語はソースタイン・ヴェブレンが用いたとされ、カール・マルクスの「手挽き臼は封建領主の社会を、蒸気臼は産業資本家の社会を与える」（『哲学の貧困』1847）に決定論的傾向が読み取られ、メディア研究ではマクルーハンの「メディアはメッセージである」が強い例とされる。これに対し技術の社会的構成（SCOT）や社会形成論は、技術を社会から切り離し人間の主体性を軽視すると批判し、レイモンド・ウィリアムズの批判が著名である。',
+    keyFigures:
+      'ソースタイン・ヴェブレン（Thorstein Veblen）／カール・マルクス（Karl Marx）／マーシャル・マクルーハン（Marshall McLuhan）／レイモンド・ウィリアムズ（Raymond Williams・批判）／ピンチ＆バイカー（SCOT）／マッケンジー＆ワイクマン（社会形成論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803102813253', type: 'reference', label: 'Oxford Reference (Chandler & Munday, A Dictionary of Media and Communication, OUP) — “technological determinism”（定義・自律性・ハード/ソフト）' },
+      { url: 'https://en.wikipedia.org/wiki/Technological_determinism', type: 'reference', label: 'Wikipedia “Technological determinism” — ヴェブレンによる語の起源・マルクス・ハード/ソフト区別' },
+      { url: 'https://www.marxists.org/archive/marx/works/1847/poverty-philosophy/ch02.htm', type: 'reference', label: 'Karl Marx, The Poverty of Philosophy (1847), Ch.2（marxists.org 一次資料）— 手挽き臼/蒸気臼の一節' },
+    ],
+  },
 ];
 // Stryker restore all
