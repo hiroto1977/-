@@ -9111,5 +9111,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.marxists.org/archive/marx/works/1847/poverty-philosophy/ch02.htm', type: 'reference', label: 'Karl Marx, The Poverty of Philosophy (1847), Ch.2（marxists.org 一次資料）— 手挽き臼/蒸気臼の一節' },
     ],
   },
+  {
+    id: 'econ-lindahl-equilibrium',
+    discipline: 'economics',
+    title: 'リンダール均衡（リンダール価格）',
+    statement:
+      'リンダール均衡とは、公共財の効率的供給と費用負担を同時に説明する公共経済学の概念で、各個人がその公共財から得る限界便益（限界評価）に応じて異なる個別価格（リンダール価格／リンダール税）を支払い、全員がその価格の下で同一の公共財供給量を需要する状態をいう。' +
+      'スウェーデンのエリク・リンダールが1919年に（師ヴィクセルの影響下で）提示した。重要な性質は、均衡での供給量が各人の限界便益の総和＝限界費用というサミュエルソン条件を満たすパレート効率的水準になる点で、私的財の競争均衡が効率的なのと類比的に、個別価格による公共財の効率均衡を与える。最大の難点はフリーライダー（ただ乗り）＝選好顕示問題で、各人は真の限界便益を過少申告する誘因を持つため分権的に実現しにくい。理論上の効率性ベンチマーク・規範的基準として、誘因両立的な公共財供給を扱うメカニズムデザインの出発点となっている。',
+    keyFigures:
+      'エリク・リンダール（Erik Lindahl, 1919）／クヌート・ヴィクセル（師・先駆）／ポール・サミュエルソン（効率条件）／個別価格・サミュエルソン条件・フリーライダー問題',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Lindahl_tax', type: 'reference', label: 'Wikipedia「Lindahl tax」— 個別の限界便益に応じた負担・サミュエルソン条件・効率性' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-349-19802-3_21', type: 'academic', label: 'The New Palgrave (Springer) “Lindahl Equilibrium” — 個別価格と限界効用に等しい税率・公共経済学の標準定義' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S004727271730169X', type: 'academic', label: 'Journal of Public Economics「The Samuelson condition and the Lindahl scheme in networks」（査読論文）' },
+    ],
+  },
+  {
+    id: 'mgmt-coopetition',
+    discipline: 'management',
+    title: 'コーペティション（協調的競争）',
+    statement:
+      'コーペティション（coopetition）とは、cooperation（協調）とcompetition（競争）の混成語で、企業が競合他社と同時に競争しつつ協調もする関係・戦略を指す。標準化・研究開発・サプライチェーン・市場創造などの領域では協力して「パイを大きくする」価値創造を行い、市場シェア獲得などの領域では競争して「パイを分け合う」価値獲得を行う。' +
+      'アダム・ブランデンバーガーとバリー・ネイルバフが1996年の著書『Co-opetition』でゲーム理論を応用して広めた（語自体は1992年にノベル社CEOレイ・ノーダが用いたとされる）。彼らは顧客・供給者・競争相手・補完的生産者（complementors）から成る「価値相関図（Value Net）」を示し補完財の重要性を強調した。利点はリスク・コスト分担と標準獲得、リスクは技術漏洩や、協調と競争の緊張のバランスの難しさにある。',
+    keyFigures:
+      'アダム・ブランデンバーガー（Adam Brandenburger）／バリー・ネイルバフ（Barry Nalebuff）／レイ・ノーダ（Ray Noorda, 1992造語）／Value Net・補完財（complementors）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-9', type: 'reference', label: 'Coopetition — Oxford Research Encyclopedia of Business and Management' },
+      { url: 'https://en.wikipedia.org/wiki/Coopetition', type: 'reference', label: 'Coopetition — Wikipedia（混成語・Noorda造語・Value Net）' },
+      { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/co-opetition', type: 'reference', label: 'Co-Opetition — Encyclopedia.com' },
+    ],
+  },
+  {
+    id: 'human-self-evaluation-maintenance',
+    discipline: 'human-science',
+    title: '自己評価維持モデル（SEM）',
+    statement:
+      '自己評価維持（self-evaluation maintenance, SEM）モデルは、人が自己評価を高く維持・増進しようと動機づけられ、その自己評価が心理的に近い他者の遂行に左右されると説く社会心理学のモデルである。エイブラハム・テッサーが1988年に体系化した。' +
+      '二つの過程が働く。反映過程では、自己定義への関連性が低い領域で近しい他者が優れた成果をあげると、その栄光を共有して（栄光浴）自己評価が高まる。比較過程では、関連性が高く自己定義に重要な領域で近しい他者が自分を上回ると、上方比較により自己評価が脅かされる。どちらが優勢かは関連性・近さ・遂行の質の3要因の相互作用で決まる。脅威時には関連性の低減、他者との距離化、遂行への介入といった方略で対処する。きょうだい・友人関係や嫉妬の研究に応用される。',
+    keyFigures:
+      'エイブラハム・テッサー（Abraham Tesser, 1988）／反映過程（栄光浴）・比較過程（上方比較）／関連性・近さ・遂行の3要因',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0065260108602270', type: 'academic', label: 'Tesser, A. (1988). Toward a Self-Evaluation Maintenance Model of Social Behavior. Advances in Experimental Social Psychology, 21, 181–227' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/self/self-evaluation-maintenance-model/', type: 'reference', label: 'Self-Evaluation Maintenance Model — Social Psychology (iResearchNet)' },
+      { url: 'https://en.wikipedia.org/wiki/Self-evaluation_maintenance_theory', type: 'reference', label: 'Self-evaluation maintenance theory — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-impact-bias',
+    discipline: 'human-science',
+    title: 'インパクト・バイアス（感情予測の偏り）',
+    statement:
+      'インパクト・バイアスとは、感情予測（affective forecasting＝将来の出来事が自分の感情にどう影響するかを予測すること）における系統的な誤りで、人は将来の感情反応の「強さ（intensity）」と「持続時間（duration）」を過大評価する傾向を指す。' +
+      '良い出来事はそれほど長く強く幸福をもたらさず、悪い出来事もそれほど長く強く不幸をもたらさないのに、人はその影響を過大に見積もる。当初は持続時間の過大評価を指す「持続性バイアス（durability bias）」と呼ばれたが、初期反応の強度も誤予測されるため上位概念として impact bias に拡張された。原因として焦点化（focalism）や免疫無視（immune neglect＝逆境に適応・合理化する心理的免疫システムを予測時に考慮し損ね、回復の速さを過小評価する）がある。ウィルソンとギルバートが体系化し、テニュア取得の成否・選挙の勝敗・恋愛の破局などで実証され、意思決定・幸福研究・医療意思決定に示唆を持つ。',
+    keyFigures:
+      'ティモシー・ウィルソン（Timothy D. Wilson）／ダニエル・ギルバート（Daniel T. Gilbert）／durability bias・focalism・immune neglect',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dtg.sites.fas.harvard.edu/Gilbert%20et%20al%20(IMMUNE%20NEGLECT).pdf', type: 'academic', label: 'Gilbert, Pinel, Wilson, Blumberg & Wheatley (1998) “Immune Neglect: A Source of Durability Bias in Affective Forecasting”, JPSP（Harvard・Gilbert研究室）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1111/j.0963-7214.2005.00355.x', type: 'academic', label: 'Wilson & Gilbert (2005) “Affective Forecasting”, Current Directions in Psychological Science（Sage・査読誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Impact_bias', type: 'reference', label: 'Wikipedia「Impact bias」' },
+    ],
+  },
+  {
+    id: 'bizlaw-agency',
+    discipline: 'business-law',
+    title: '代理（民法99条）',
+    statement:
+      '代理とは、本人に代わって代理人が第三者（相手方）に対して意思表示をし、又は意思表示を受けることにより、その法律効果が直接本人に帰属する制度である（民法99条以下）。99条1項は、代理人がその権限内において本人のためにすることを示してした意思表示（顕名）が直接本人に対して効力を生ずると定め、2項で相手方が代理人に対してした意思表示にも準用する（受働代理）。代理には本人の意思に基づく任意代理（委任による代理）と、法律の規定による法定代理（親権者・後見人など）がある。' +
+      '本人・代理人・相手方の三面関係を特徴とし、本人の意思を伝達するだけの使者とは区別される。関連規定として、顕名を欠く意思表示は原則代理人自身のためにしたものとみなすが相手方が悪意・有過失なら本人に帰属する100条、意思の不存在・詐欺・強迫等の瑕疵を原則代理人を基準に判断する101条、制限行為能力者が代理人としてした行為を原則取り消せないとする102条、自己契約・双方代理・利益相反行為を禁ずる108条がある。代理権を欠く無権代理（113〜117条）や表見代理（109・110・112条）とは区別される代理制度の基本である。',
+    keyFigures:
+      '99条：顕名・効果の本人帰属（2項＝受働代理）／任意代理（委任）vs 法定代理（親権者・後見人）／100条（顕名欠如）・101条（瑕疵は代理人基準）・102条（代理人の行為能力）・108条（自己契約・双方代理の禁止）／使者との区別／無権代理・表見代理とは別概念／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、第99条〜第118条 代理）' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2005_minpou-1_14.pdf', type: 'academic', label: '京都大学OCW 民法第1部 第14回 — 代理(1) 代理総説・有権代理（松岡久和教授）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第99条', type: 'reference', label: 'Wikibooks 民法第99条（代理行為の要件及び効果・顕名）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-multitasking',
+    discipline: 'information-sociology',
+    title: 'メディア・マルチタスキング',
+    statement:
+      'メディア・マルチタスキングとは、複数のメディアを同時に、または短時間で切り替えながら利用する行動を指し（例：テレビ視聴中のスマホ操作、勉強中のSNS・音楽・動画の並行利用）、人間は真の並行処理ではなく高速のタスクスイッチングを行うため切替には時間・エラーの増大というスイッチングコストが伴う。' +
+      'Ophir, Nass & Wagner（2009, PNAS）は、日常的に多くのメディアを併用するヘビー・メディア・マルチタスカー（HMM）が軽度の人（LMM）に比べ、無関連刺激のフィルタリングや記憶内の不要情報の抑制、課題切替の効率で劣る傾向を報告した。ただしこれは相関研究で因果の向きは不明であり、2017年の追試や2021年の大規模メタ分析では効果量が小さく測定法に依存して一貫せず、再現性が今も議論されている点に注意を要する。教育（ながら勉強）や運転、生産性、若年層のメディア利用研究で重要である。',
+    keyFigures:
+      'Eyal Ophir／Clifford Nass／Anthony D. Wagner（2009 PNAS）／HMM（ヘビー）vs LMM（ライト）／タスクスイッチングとスイッチングコスト／相関研究・再現性議論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0903620106', type: 'academic', label: 'Ophir, Nass & Wagner (2009) “Cognitive control in media multitaskers”, PNAS 106(37):15583–15587' },
+      { url: 'https://en.wikipedia.org/wiki/Media_multitasking', type: 'reference', label: 'Wikipedia「Media multitasking」（定義・HMM/LMM・タスクスイッチング・因果未確立）' },
+      { url: 'https://link.springer.com/article/10.3758/s13414-017-1408-4', type: 'academic', label: 'Wiradhany & Nieuwenstein (2017) 追試＋メタ分析, Attention, Perception, & Psychophysics（再現性議論）' },
+    ],
+  },
 ];
 // Stryker restore all
