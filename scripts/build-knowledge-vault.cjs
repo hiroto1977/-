@@ -101,6 +101,7 @@ function homeNote(byCollection, total) {
     lines,
     '',
     '## AIオーケストレーション連携',
+    '- [[Organization]] — 組織図（CEO→COO→役員→秘書室／管理職→一般職）とサイクル。各役員ノートに知識ブリーフを相互リンク',
     '- [[AI_ORCHESTRATION_CONTEXT]] — 各役員ロール（COO/CSO/CFO/CHRO/CIO/CQO）への知識ブリーフ索引',
     '- 実行時取得: `npm run orchestrate:context -- --role <execId>`（dispatch に自動注入）',
     '',
@@ -134,6 +135,7 @@ function orchestrationContextNote(entries, map) {
     if (!spec) continue;
     const brief = kc.briefForExecutive(execId, { entries, map, limit: CAP });
     parts.push(`## ${EXEC_TITLES[execId] || execId}`);
+    parts.push('', `組織ノート: [[${execId}|${EXEC_TITLES[execId] || execId}]]`);
     if (spec._rationale) parts.push('', `> ${spec._rationale}`);
     parts.push('');
     for (const g of brief.groups) {
@@ -242,6 +244,121 @@ tags:
 };
 
 // ---------------------------------------------------------------------------
+// 組織ノート（registry.json の AIオーケストレーション組織を vault 化し、知識と相互リンク）
+// ---------------------------------------------------------------------------
+function execKnowledgeSection(execId, entries, map) {
+  const brief = kc.briefForExecutive(execId, { entries, map, limit: 6 });
+  if (!brief.groups.length) return [];
+  const out = ['## 参照する確証済み知識（knowledge-map）', ''];
+  for (const g of brief.groups) {
+    out.push(`### ${g.collectionLabel} / ${g.categoryLabel}（全${g.count}件）`);
+    for (const it of g.items) out.push(`- [[${it.id}|${it.title}]]`);
+    if (g.count > g.items.length) out.push(`- …ほか ${g.count - g.items.length} 件 → [[${g.collectionLabel}]]`);
+    out.push('');
+  }
+  return out;
+}
+
+function orgRoleFrontmatter(orgId, layer, title) {
+  return ['---', `org_id: ${orgId}`, 'type: org-role', `layer: ${layer}`, `title: ${yamlStr(title)}`, 'tags:', `  - org/${layer}`, '  - orchestration', 'aliases:', `  - ${yamlStr(title)}`, '---'].join('\n');
+}
+
+function buildOrgFiles(registry, map, entries) {
+  const org = registry.org;
+  const files = {};
+  const execById = Object.fromEntries(org.executives.map((e) => [e.id, e]));
+  const secByExec = Object.fromEntries(org.secretaries.map((s) => [s.supports, s]));
+  const mgrById = Object.fromEntries(org.managers.map((m) => [m.id, m]));
+  const teamsByMgr = {};
+  for (const t of registry.teams) (teamsByMgr[t.manager] = teamsByMgr[t.manager] || []).push(t);
+
+  const tail = ['', '## 関連', '- [[Organization]]', '- [[AI_ORCHESTRATION_CONTEXT]]', '- [[Home]]', '', '---', GENERATED_NOTE, ''];
+
+  // CEO / COO
+  files[path.join('org', 'roles', 'ceo.md')] = [
+    orgRoleFrontmatter('ceo', 'ceo', org.ceo.title), '', `# ${org.ceo.title}`, '',
+    `- 役割: ${org.ceo.title}（人間・最終意思決定者）`, '- 配下: [[coo|COO]]', ...tail,
+  ].join('\n');
+  files[path.join('org', 'roles', 'coo.md')] = [
+    orgRoleFrontmatter('coo', 'coo', org.coo.title), '', `# ${org.coo.title}`, '',
+    '- 役割: オーケストレーター（Claude本体）。役員を統括し並列Agentを起動する。', '- 上位: [[ceo|CEO]]',
+    `- 統括する役員: ${org.executives.map((e) => `[[${e.id}|${e.title}]]`).join(' / ')}`, '',
+    ...execKnowledgeSection('coo', entries, map), ...tail,
+  ].join('\n');
+
+  // 役員
+  for (const e of org.executives) {
+    const sec = secByExec[e.id];
+    files[path.join('org', 'roles', `${e.id}.md`)] = [
+      orgRoleFrontmatter(e.id, 'executive', e.title), '', `# ${e.title}`, '',
+      `- ドメイン: ${e.domain || ''}`, '- 上位: [[coo|COO]]',
+      sec ? `- 支援: [[${sec.id}|${sec.title}]]` : '- 支援: （なし）',
+      `- 配下の管理職: ${(e.owns || []).map((m) => `[[${m}|${(mgrById[m] || {}).title || m}]]`).join(' / ')}`, '',
+      ...execKnowledgeSection(e.id, entries, map), ...tail,
+    ].join('\n');
+  }
+
+  // 秘書室
+  for (const s of org.secretaries) {
+    files[path.join('org', 'roles', `${s.id}.md`)] = [
+      orgRoleFrontmatter(s.id, 'secretariat', s.title), '', `# ${s.title}`, '',
+      `- 支援先: [[${s.supports}|${(execById[s.supports] || {}).title || s.supports}]]`,
+      `- 構成: AI ${s.members} 体`, s.role ? `- 役割: ${s.role}` : '', ...tail,
+    ].filter((l) => l !== '').join('\n');
+  }
+
+  // 管理職
+  for (const m of org.managers) {
+    const ts = teamsByMgr[m.id] || [];
+    files[path.join('org', 'roles', `${m.id}.md`)] = [
+      orgRoleFrontmatter(m.id, 'manager', m.title), '', `# ${m.title}`, '',
+      `- 上位: [[${m.reportsTo}|${(execById[m.reportsTo] || {}).title || m.reportsTo}]]`,
+      `- 担当チーム: ${ts.length} 件`,
+      ...ts.map((t) => `  - [[team-${t.id}|${t.domain}]]`), ...tail,
+    ].join('\n');
+  }
+
+  // 一般職（チーム）
+  for (const t of registry.teams) {
+    const mgr = mgrById[t.manager];
+    const exec = mgr ? execById[mgr.reportsTo] : null;
+    files[path.join('org', 'teams', `team-${t.id}.md`)] = [
+      ['---', `team_id: ${t.id}`, 'type: org-team', `manager: ${t.manager || ''}`, `title: ${yamlStr(t.domain)}`, 'tags:', '  - org/team', '  - orchestration', 'aliases:', `  - ${yamlStr(t.domain)}`, '---'].join('\n'),
+      '', `# ${t.domain}`, '',
+      `- 焦点: ${t.focus}`, t.role ? `- 役割: ${t.role}` : '- 役割: research',
+      `- 指揮系統: [[ceo|CEO]] → [[coo|COO]]${exec ? ` → [[${exec.id}|${exec.title}]]` : ''}${mgr ? ` → [[${mgr.id}|${mgr.title}]]` : ''} → 本チーム（並列Agent）`,
+      exec ? `- 担当役員の知識ブリーフ: [[${exec.id}|${exec.title}]] 参照` : '', ...tail,
+    ].filter((l) => l !== '').join('\n');
+  }
+
+  // サイクル
+  for (const [name, stages] of Object.entries(registry.policy.cycles)) {
+    if (name === 'description' || !Array.isArray(stages)) continue;
+    const lines = [['---', `cycle: ${name}`, 'type: org-cycle', `title: ${yamlStr(name.toUpperCase() + ' サイクル')}`, 'tags:', '  - org/cycle', '  - orchestration', '---'].join('\n'), '', `# ${name.toUpperCase()} サイクル`, ''];
+    stages.forEach((s, i) => { lines.push(`${i + 1}. **[${s.stage}]** owner=${s.owner} ${s.parallel ? '（並列）' : '（直列）'}`, `   - ${s.desc}`); });
+    lines.push(...tail);
+    files[path.join('org', 'cycles', `${name}.md`)] = lines.join('\n');
+  }
+
+  // 組織MOC
+  const orgMoc = [
+    ['---', 'title: Organization', 'type: org-moc', 'tags:', '  - org', '  - MOC', '---'].join('\n'),
+    '', '# AIオーケストレーション組織 — MOC', '',
+    'registry.json に定義された組織（CEO→COO→役員→秘書室／管理職→一般職）と PDCA/OODA サイクル。',
+    '各役員ノートには [[AI_ORCHESTRATION_CONTEXT]] と同じ知識ブリーフが相互リンクされている。', '',
+    '## 階層', '- [[ceo|CEO]]', '  - [[coo|COO]]',
+    ...org.executives.map((e) => `    - [[${e.id}|${e.title}]]${secByExec[e.id] ? `（支援: [[${secByExec[e.id].id}|秘書室]]）` : ''}`),
+    '', '## 管理職', ...org.managers.map((m) => `- [[${m.id}|${m.title}]]（${(teamsByMgr[m.id] || []).length}チーム）`),
+    '', `## 一般職（${registry.teams.length}チーム）`, '各チームは `org/teams/` に格納。担当管理職ノートから辿れる。',
+    '', '## サイクル', ...Object.keys(registry.policy.cycles).filter((k) => k !== 'description').map((k) => `- [[${k}|${k.toUpperCase()} サイクル]]`),
+    '', '## 関連', '- [[Home]]', '- [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '',
+  ].join('\n');
+  files['Organization.md'] = orgMoc;
+
+  return files;
+}
+
+// ---------------------------------------------------------------------------
 // 生成
 // ---------------------------------------------------------------------------
 function buildFiles() {
@@ -264,9 +381,10 @@ function buildFiles() {
     byCollection.get(e.collection).push(e);
   }
 
+  const map = kc.loadKnowledgeMap();
   const files = {};
   files['Home.md'] = homeNote(byCollection, entries.length);
-  files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(entries, kc.loadKnowledgeMap());
+  files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(entries, map);
 
   for (const col of kc.COLLECTIONS) {
     const list = byCollection.get(col.key) || [];
@@ -275,6 +393,21 @@ function buildFiles() {
   }
 
   for (const [name, content] of Object.entries(METHODOLOGY)) files[path.join('methodology', `${name}.md`)] = content;
+
+  // AIオーケストレーション組織を vault 化（知識と相互リンク）。
+  Object.assign(files, buildOrgFiles(kc.loadRegistry(), map, entries));
+
+  // 全ノート basename の全域一意ガード（[[wikilink]] 解決の保証）。
+  const baseSeen = new Map();
+  const baseDups = [];
+  for (const rel of Object.keys(files)) {
+    const base = path.basename(rel, '.md');
+    if (baseSeen.has(base)) baseDups.push(`${base} (${baseSeen.get(base)} / ${rel})`);
+    else baseSeen.set(base, rel);
+  }
+  if (baseDups.length) {
+    throw new Error(`ノート basename が重複しています（${baseDups.length} 件）。wikilink が曖昧になります: ${baseDups.slice(0, 20).join(', ')}`);
+  }
 
   return files;
 }
