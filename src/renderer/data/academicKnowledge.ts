@@ -6073,5 +6073,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Second-order_cybernetics', type: 'reference', label: 'Wikipedia「Second-order cybernetics」（フォン・フェルスターによる観察者を含む第二次サイバネティクス）' },
     ],
   },
+  {
+    id: 'econ-welfare-theorems',
+    discipline: 'economics',
+    title: '厚生経済学の基本定理',
+    statement:
+      '市場の効率性と分配の公正に関する一般均衡理論の2つの中心的定理。第一基本定理は、完全競争・外部性や公共財の不在・完全情報・全財の市場存在といった条件下で、市場の競争均衡（ワルラス均衡）は必ずパレート効率的（誰の効用も下げずに他者の効用を上げられない状態）になると述べ、アダム・スミスの「見えざる手」を厳密に定式化する。ただし保証されるのは効率性のみで公正（分配）ではない。' +
+      '第二基本定理は、選好と生産集合の凸性などの条件下で、任意のパレート効率的配分は初期賦存を適切に再配分（一括移転 lump-sum transfer）したうえで競争均衡として分権的に実現できると述べる。これにより効率（市場メカニズム）と分配の公正（再分配政策）を分離して扱え、再分配政策の理論的根拠となる。前提は現実には満たされにくく、市場の失敗（外部性・公共財・情報の非対称性・独占）が政府介入の根拠となる。',
+    keyFigures: 'ケネス・アロー（Kenneth Arrow）とジェラール・ドブルー（Gérard Debreu）が論文「Existence of an Equilibrium for a Competitive Economy」(Econometrica, 1954) で一般均衡の存在を厳密に証明し両定理の現代的基礎を確立／第一定理：競争均衡はパレート効率的（効率は保証するが公平は保証しない）／第二定理：任意のパレート効率配分は一括移転後の競争均衡として実現可能（効率と分配の分離）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Fundamental_theorems_of_welfare_economics', type: 'reference', label: 'Fundamental theorems of welfare economics — Wikipedia' },
+      { url: 'https://sites.pitt.edu/~luca/ECON2100/2018Class/lecture_17.pdf', type: 'academic', label: 'First Welfare Theorem, Econ 2100 Lecture 17 — University of Pittsburgh（大学講義ノート）' },
+      { url: 'https://aede.osu.edu/sites/aede/files/imce/images/WelfareTheorems_2.pdf', type: 'academic', label: 'The Welfare Theorems, AE 503 — Ohio State University（大学講義資料）' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1954/07/01/existence-equilibrium-competitive-economy', type: 'academic', label: 'Arrow & Debreu, “Existence of an Equilibrium for a Competitive Economy”, Econometrica (1954)（査読原論文）' },
+    ],
+  },
+  {
+    id: 'econ-risk-aversion',
+    discipline: 'economics',
+    title: 'リスク回避（アロー＝プラット測度）',
+    statement:
+      '不確実性下の意思決定において、同じ期待値（期待金額）であれば、リスクのあるくじよりも確実な金額を好む傾向をリスク回避という。期待効用理論の枠組みでは、フォン・ノイマン＝モルゲンシュテルン効用関数 u が富に対して凹（concave、限界効用逓減、u″<0）であることがリスク回避と同値である。確実性等価（certainty equivalent）はくじと無差別になる確実な金額で、リスク回避者では期待値より小さい。リスクプレミアムはくじの期待値と確実性等価の差で、リスクを引き受けることへの対価を表す。' +
+      'リスク回避の度合いの尺度として、ケネス・アローとジョン・プラットが独立に定式化した絶対的リスク回避度 ARA ＝ −u″(x)/u′(x) と相対的リスク回避度 RRA ＝ −x·u″(x)/u′(x) があり、アロー＝プラット測度と呼ばれる。値が正ならリスク回避、ゼロならリスク中立、負ならリスク愛好を示す。保険需要・ポートフォリオ選択・金融資産のリスクプレミアム分析の基礎をなす。',
+    keyFigures: 'John W. Pratt（1964「Risk Aversion in the Small and in the Large」）と Kenneth J. Arrow（1965「Aspects of the Theory of Risk-Bearing」）が独立並行に定式化／絶対的リスク回避度 ARA = −u″/u′／相対的リスク回避度 RRA = −x·u″/u′／凹効用（u″<0）⇔リスク回避／確実性等価＜期待値／リスクプレミアム＝期待値−確実性等価／リスク中立・リスク愛好と対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ocw.mit.edu/courses/14-123-microeconomic-theory-iii-spring-2015/f7d39636011bcb5ab9e0ef9dca295ccf_MIT14_123S15_Chap3.pdf', type: 'academic', label: 'MIT OpenCourseWare 14.123 Microeconomic Theory III, Ch.3 Attitudes Towards Risk' },
+      { url: 'https://assets.press.princeton.edu/chapters/s7945.pdf', type: 'academic', label: 'Princeton University Press, “Risk Aversion”（教科書サンプル章、確実性等価・リスクプレミアム・アロー＝プラット測度）' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis/article/abs/measures-of-risk-aversion-some-clarifying-comments/003B53B989623ECA8128543AE488CE90', type: 'academic', label: 'Journal of Financial and Quantitative Analysis (Cambridge Core), “Measures of Risk Aversion: Some Clarifying Comments”' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-socialization',
+    discipline: 'management',
+    title: '組織社会化',
+    statement:
+      '組織社会化とは、新しく組織に加わったメンバー（新入社員など）が、その役割を効果的に遂行し組織の一員（インサイダー）となるために必要な知識・スキル・価値観・態度・行動規範・組織文化を習得し、「アウトサイダー」から有能な「インサイダー」へ移行していく過程である。この過程を通じて新人は役割上の不確実性を低減し、入社時に直面するリアリティ・ショックを克服していく。' +
+      '組織側が用いる社会化戦術（制度化された戦術 対 個人化された戦術）だけでなく、新人自身による主体的な情報探索・フィードバック探索などのプロアクティブ行動も適応を促す重要な要因とされる。社会化の成否は、組織コミットメント・組織同一視・職務満足、ひいては定着（離職防止）と関連づけて論じられる。組織コミットメントや心理的契約、実践共同体とは区別される独立概念である。',
+    keyFigures: '提唱者: John Van Maanen（ジョン・ヴァン＝マーネン）／Edgar H. Schein（エドガー・シャイン）／初出: 1979年、6つの対をなす社会化戦術（集合的/個別的・公式的/非公式的・連続的/変動的・固定的/可変的・連続的[serial]/分離的[disjunctive]・付与的[investiture]/剥奪的[divestiture]）を整理し、制度化された戦術 対 個人化された戦術として類型化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psychology.iresearchnet.com/industrial-organizational-psychology/organizational-development/organizational-socialization/', type: 'reference', label: 'iResearchNet（I/O心理学リファレンス）: Organizational Socialization — 定義・6戦術・プロセス' },
+      { url: 'https://digitalcommons.uri.edu/cgi/viewcontent.cgi?article=1043&context=lrc_paper_series', type: 'academic', label: 'University of Rhode Island DigitalCommons — Van Maanen & Schein (1979) 6戦術と制度化/個別化の整理' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0001879106001205', type: 'academic', label: 'Saks, Uggerslev & Fassina (2007), Journal of Vocational Behavior — 社会化戦術と新人適応のメタ分析' },
+    ],
+  },
+  {
+    id: 'human-emotional-intelligence',
+    discipline: 'human-science',
+    title: '情動知能（EQ）',
+    statement:
+      '情動知能（EI／EQ）とは、自己および他者の感情を正確に知覚・理解し、感情を用いて思考を促進し、感情を適切に調整・管理する能力を指す。心理学者ピーター・サロベイとジョン・メイヤーが1990年の論文で「自他の感情をモニターし区別し、その情報を思考と行動に活用する能力」と定義して学術概念として提唱し、1997年に(1)感情の知覚、(2)感情による思考の促進、(3)感情の理解、(4)感情の管理という4枝（four-branch）の能力モデルとして定式化した（能力モデル、測定はMSCEIT）。' +
+      'ダニエル・ゴールマンが1995年の著書『EQ こころの知能指数』で一般に広め、ビジネス・教育・リーダーシップ分野で注目された。一方、ゴールマンらの混合モデルは能力に性格特性・動機づけを混在させるため、概念の曖昧さや測定・予測妥当性をめぐる批判があり、能力モデルと特性モデルの区別が論点となる。',
+    keyFigures: 'ピーター・サロベイ（Peter Salovey）／ジョン・メイヤー（John D. Mayer）／初出: Salovey & Mayer (1990), Imagination, Cognition, and Personality 9, 185–211／4枝モデル定式化: Mayer & Salovey (1997)／一般普及: ダニエル・ゴールマン（Daniel Goleman, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nobaproject.com/modules/emotional-intelligence', type: 'academic', label: 'Noba Project（査読制オープン心理学教科書）「Emotional Intelligence」— 定義・能力/混合モデル・MSCEIT' },
+      { url: 'https://www.ebsco.com/research-starters/health-and-medicine/emotional-intelligence-ei', type: 'reference', label: 'EBSCO Research Starters「Emotional Intelligence (EI)」— 能力/混合/特性モデルとGoleman混合モデル批判' },
+      { url: 'https://journals.sagepub.com/doi/10.2190/DUGG-P24E-52WK-6CDG', type: 'academic', label: 'Salovey, P. & Mayer, J. D. (1990) “Emotional Intelligence”, Imagination, Cognition, and Personality 9:185–211（初出・査読論文）' },
+      { url: 'http://exploresel.gse.harvard.edu/frameworks/4/', type: 'academic', label: 'Harvard GSE Explore SEL「Four Branch Model of Emotional Intelligence」' },
+    ],
+  },
+  {
+    id: 'bizlaw-risk-bearing',
+    discipline: 'business-law',
+    title: '危険負担（民法536条）',
+    statement:
+      '危険負担とは、双務契約において一方の債務（例：特定物の引渡し）が当事者双方の責めに帰することができない事由（不可抗力など）で履行不能となり消滅した場合に、その対価である他方の債務（例：代金支払）をどちらが負担するかという問題である。2017年改正・2020年4月施行の現行民法536条1項は、当事者双方の責めに帰することができない事由により債務を履行できなくなったとき、債権者は反対給付の履行を拒むことができると定める（履行拒絶構成）。' +
+      '改正前は反対債務が当然に消滅する債務消滅構成だったが、解除制度の整備に伴い改められた（反対債務を消滅させるには別途「契約の解除」が必要となる）。536条2項は、債権者の責めに帰すべき事由による履行不能のときは債権者は反対給付の履行を拒めず、債務者は自己の債務を免れて得た利益を償還すると定める。なお特定物売買では引渡し時以後の滅失・損傷の危険が買主に移転する（567条）。',
+    keyFigures: '現行536条1項＝双方無責の履行不能で債権者は反対給付の履行を拒める（履行拒絶構成）／改正前は反対債務が当然消滅する債務消滅構成だった（2017改正・2020年4月施行で転換）／反対債務を消滅させるには別途「契約の解除」が必要／536条2項＝債権者の帰責事由による履行不能では債権者は履行を拒めず、債務者は免れた債務で得た利益を償還／関連：567条（引渡し時の危険移転）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089）— 第536条・第567条の条文' },
+      { url: 'https://www.moj.go.jp/content/000125963.pdf', type: 'government', label: '法務省「雇用に関する危険負担（民法536条2項）について」' },
+      { url: 'https://keiyaku-watch.jp/media/keiyakuruikei/minpo202004_kikenfutan/', type: 'media', label: '契約ウォッチ「危険負担とは？2020年4月施行 改正ポイント解説」' },
+    ],
+  },
+  {
+    id: 'infosoc-computational-social-science',
+    discipline: 'information-sociology',
+    title: '計算社会科学',
+    statement:
+      'デジタル化に伴い大規模に生成される行動データ（ソーシャルメディア・携帯電話・取引・センサー等のビッグデータ）と、計算的手法（機械学習・ネットワーク分析・エージェントベース・シミュレーション・自然言語処理）を組み合わせ、人間の個人・集団・社会の振る舞いを定量的・実証的に研究する学際的分野。従来の調査・実験では捉えにくかった大規模・リアルタイム・実世界の社会現象（情報拡散、世論形成、人の移動、ネットワーク構造）を観測・分析できる「新しい望遠鏡」とされる。' +
+      '一方、プラットフォーム企業によるデータの囲い込み、プライバシー・倫理、再現性、代表性（サンプルの偏り）といった課題も主要な論点となる。情報理論やプロファイリングとは区別される、ビッグデータと計算手法による社会の実証研究を指す概念である。',
+    keyFigures: 'デイビッド・レイザー（David Lazer）ら15名／初出: D. Lazer et al. “Computational Social Science”, Science 323巻5915号 721–723頁 (2009)（分野確立を象徴するマニフェスト的論文）／主要共著者にA. Pentland, A.-L. Barabási, N. Christakis, J. Fowler, Gary King, M. Macy ら',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.1167742', type: 'academic', label: 'Lazer, D. et al. “Computational Social Science,” Science 323(5915):721–723 (2009)（分野の基礎論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Computational_social_science', type: 'reference', label: 'Wikipedia「Computational social science」（定義・手法・ビッグデータの位置づけ）' },
+      { url: 'https://www.sydney.edu.au/arts/news-and-events/news/2022/06/23/what-is-computational-social-science.html', type: 'academic', label: 'University of Sydney「What is computational social science?」（大学による分野解説）' },
+    ],
+  },
 ];
 // Stryker restore all
