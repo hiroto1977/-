@@ -8110,5 +8110,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://deliberation.stanford.edu/publications/journal-articles/deliberative-polling-comes-age-symposium-james-s-fishkin-democracy', type: 'academic', label: 'Stanford Deliberative Democracy Lab — Deliberative Polling / Fishkin（ミニ・パブリックス・討論型世論調査）' },
     ],
   },
+  {
+    id: 'econ-evolutionarily-stable-strategy',
+    discipline: 'economics',
+    title: '進化的に安定な戦略（ESS）',
+    statement:
+      '進化的に安定な戦略（ESS）とは、ある集団のほぼ全員が採用しているとき、まれな突然変異の「侵入者（mutant）」が別の戦略をとっても、自然選択のもとでその侵入戦略が集団に広がることができないような戦略を指す。いったん集団に固定されると、他の戦略に置き換えられない進化的に安定した状態である。' +
+      '進化生物学者ジョン・メイナード・スミスとジョージ・プライスが1973年の論文「The Logic of Animal Conflict」（Nature）で導入し、メイナード・スミスの1982年の著書『Evolution and the Theory of Games』で体系化した。動物の闘争行動を説明するタカ・ハト・ゲームが代表例である。ESSはゲーム理論のナッシュ均衡の精緻化（すべてのESSはナッシュ均衡）であり、合理的選択ではなく自然選択・進化のダイナミクスによって到達される点が特徴で、性比（1:1への進化）や協力の進化などの分析に応用される。',
+    keyFigures:
+      'ジョン・メイナード・スミス（John Maynard Smith）／ジョージ・R・プライス（George R. Price）（1973 Nature「The Logic of Animal Conflict」）／メイナード・スミス『Evolution and the Theory of Games』1982／代表例＝タカ・ハト・ゲーム',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/game-evolutionary/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy「Evolutionary Game Theory」（ESS とナッシュ均衡の精緻化・侵入不能性）' },
+      { url: 'https://royalsocietypublishing.org/rstb/article/378/1876/20210496/109181/Evolutionarily-stable-strategy-analysis-and-its', type: 'academic', label: 'Philosophical Transactions of the Royal Society B 378(1876):20210496（査読論文、ESS解析と侵入適応度）' },
+      { url: 'https://en.wikipedia.org/wiki/Evolution_and_the_Theory_of_Games', type: 'reference', label: 'Wikipedia「Evolution and the Theory of Games」（Maynard Smith 1982年著書・タカ・ハト・ゲーム）' },
+      { url: 'https://en.wikipedia.org/wiki/Evolutionarily_stable_strategy', type: 'reference', label: 'Wikipedia「Evolutionarily stable strategy」（1973年 Nature 論文での導入と定義）' },
+    ],
+  },
+  {
+    id: 'mgmt-brand-equity',
+    discipline: 'management',
+    title: 'ブランド・エクイティ',
+    statement:
+      'ブランド・エクイティとは、ブランド（名前・ロゴ・シンボル等）が製品やサービスに付与する付加的な価値であり、同一の製品でもブランドが付くことで生じる顧客の認識・態度・行動の差に由来する資産である。' +
+      'デイビッド・アーカーは1991年の著書『Managing Brand Equity』で、これをブランドに結びついた資産と負債の集合と定義し、(1)ブランド・ロイヤルティ、(2)ブランド認知、(3)知覚品質、(4)ブランド連想、(5)その他の独自資産（特許・商標等）の5要素で体系化した。ケビン・レーン・ケラーは1993年に「顧客ベースのブランド・エクイティ（CBBE）」を提唱し、ブランド知識（ブランド認知＋ブランド・イメージ）がマーケティング活動への消費者反応に及ぼす差別的効果として定義した。強いブランド・エクイティは価格プレミアム、顧客ロイヤルティ、ブランド拡張の容易さ、競争優位をもたらす。',
+    keyFigures:
+      'デイビッド・A・アーカー（David A. Aaker、『Managing Brand Equity』1991, 5要素モデル）／ケビン・レーン・ケラー（Kevin Lane Keller、顧客ベースのブランド・エクイティ CBBE, 1993, Journal of Marketing 57(1):1-22）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/002224299305700101', type: 'academic', label: 'Keller, K. L. (1993) “Conceptualizing, Measuring, and Managing Customer-Based Brand Equity”, Journal of Marketing 57(1):1-22（査読論文／SAGE）' },
+      { url: 'https://people.duke.edu/~moorman/Marketing-Strategy-Seminar-2015/Session%203/Keller.pdf', type: 'academic', label: 'Keller (1993) 本文PDF（Duke University 教員ホスト）— CBBEの差別的効果の定義' },
+      { url: 'https://en.wikipedia.org/wiki/Brand_equity', type: 'reference', label: 'Wikipedia「Brand equity」— Aakerの資産・負債定義と5要素、一般的定義' },
+    ],
+  },
+  {
+    id: 'human-behavioral-genetics',
+    discipline: 'human-science',
+    title: '行動遺伝学（双生児研究・遺伝率）',
+    statement:
+      '行動遺伝学は、知能・パーソナリティ・精神疾患の罹りやすさといった行動・心理的形質の個人差が、遺伝要因と環境要因によってどの程度説明されるかを定量的に研究する分野である。主要手法が双生児研究で、遺伝子をほぼ100%共有する一卵性双生児と平均約50%共有する二卵性双生児の類似度を比較し、形質の分散を加法的遺伝（A）・共有環境（C）・非共有環境（E）に分解する（養子研究も併用）。' +
+      '中心概念の遺伝率（h²）は、ある集団・環境下での形質の個人差（分散）のうち遺伝的差異で説明される割合（0〜1）を指す。重要な注意として、遺伝率は集団・環境に依存する統計量であり、個人の形質が何％遺伝で決まるかを意味せず、形質が変更不可能であることも、集団間の平均差の原因も意味しない。Turkheimerはこれらの知見を「行動遺伝学の三法則」として定式化した。',
+    keyFigures:
+      'エリック・タークハイマー（Eric Turkheimer、行動遺伝学の三法則, 2000）／フランシス・ゴルトン（Francis Galton、双生児・遺伝研究の先駆）／ロバート・プローミン（Robert Plomin、行動遺伝学・量的遺伝研究）／手法＝双生児研究・養子研究／A・C・E分解',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/heritability', type: 'reference', label: 'Encyclopædia Britannica — Heritability（遺伝率の定義）' },
+      { url: 'https://journals.sagepub.com/doi/10.1111/1467-8721.00084', type: 'academic', label: 'Turkheimer, E. (2000) “Three Laws of Behavior Genetics and What They Mean” Current Directions in Psychological Science（査読・三法則の原論文）' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.2319496121', type: 'academic', label: 'PNAS — Heritability within groups is uninformative about differences among groups（遺伝率の誤解：集団間差を説明しない）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4412550/', type: 'academic', label: 'PMC/NIH — What Twin Studies Tell Us About Heritability（双生児研究の方法論レビュー）' },
+    ],
+  },
+  {
+    id: 'human-fluid-crystallized-intelligence',
+    discipline: 'human-science',
+    title: '流動性知能と結晶性知能',
+    statement:
+      '心理学者レイモンド・キャッテル（Raymond B. Cattell）が1960年代に提唱し、弟子のジョン・ホーン（John L. Horn）とともに発展させた知能の理論的区分（Gf-Gc理論）。流動性知能（fluid intelligence, Gf）は、過去の知識に頼らず新奇な問題をその場で論理的に推論し解決する能力で、パターン認識・抽象的推論・関係把握などを指し、生理的基盤が大きく若年期（20歳代）にピークを迎えた後、加齢とともに比較的早く低下する。' +
+      '結晶性知能（crystallized intelligence, Gc）は、教育・経験・文化を通じて獲得・蓄積された知識やスキルを活用する能力で、語彙・一般知識・専門知識などを指し、経験の蓄積により中高年まで維持・向上し加齢による低下が緩やかである。キャッテルはスピアマンの一般知能（g因子）を2因子に分けたもので、加齢に伴う認知変化を説明し、現代のCHC理論（Cattell–Horn–Carroll理論）の基礎の一つとなっている。',
+    keyFigures:
+      'レイモンド・キャッテル（Raymond B. Cattell）／ジョン・ホーン（John L. Horn）／Gf＝流動性知能（新奇な推論・若年でピーク）・Gc＝結晶性知能（蓄積知識・中高年まで維持）／CHC理論の基礎',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/human-intelligence-psychology/Psychometric-theories', type: 'reference', label: 'Encyclopaedia Britannica — Human intelligence: Psychometric theories（Cattell–Horn の流動性／結晶性知能と加齢変化）' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156710/', type: 'academic', label: 'Brown, R. E. (2016) “Hebb and Cattell: The Genesis of the Theory of Fluid and Crystallized Intelligence”, Frontiers in Human Neuroscience（査読論文、理論の起源と定義）' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8628958/', type: 'academic', label: '加齢に伴う流動性知能の低下と結晶性知能の維持に関する査読レビュー' },
+    ],
+  },
+  {
+    id: 'bizlaw-moral-rights',
+    discipline: 'business-law',
+    title: '著作者人格権（著作権法18〜20条）',
+    statement:
+      '著作者人格権とは、著作物を創作した著作者がもつ、その人格的・精神的利益を保護する権利であり、財産権としての著作権（著作財産権）とは区別される。日本の著作権法は3つを定める：公表権（18条＝未公表の自己の著作物を公表するか、いつ・どのように公表するかを決める権利）、氏名表示権（19条＝著作者名を表示するか、実名・変名のいずれで表示するかを決める権利）、' +
+      '同一性保持権（20条＝著作物およびその題号〔タイトル〕について意に反する改変・切除その他の変更を受けない権利）。最大の特徴は一身専属性で、著作者人格権は著作者本人に専属し譲渡・相続できない（59条）。これは譲渡可能な著作財産権と対照的である。侵害には差止・損害賠償に加え、名誉回復等の措置（115条）を請求できる。実務では「不行使特約」が用いられることがある。',
+    keyFigures:
+      '公表権＝著作権法18条／氏名表示権＝19条／同一性保持権＝20条（著作物と題号の改変禁止）／一身専属・譲渡不可＝59条／名誉回復等の措置請求＝115条／著作財産権（譲渡可能）とは区別される人格的利益の保護／死後も人格的利益の保護あり（60条）／実務上の不行使特約／e-Gov 著作権法 law id 345AC0000000048',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 著作権法（昭和45年法律第48号、law id 345AC0000000048）第18〜20条・59条・115条' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/pdf/94283401_01.pdf', type: 'government', label: '文化庁「著作権テキスト（令和7年度版）」著作者人格権の解説' },
+      { url: 'https://ja.wikipedia.org/wiki/著作者人格権', type: 'reference', label: 'Wikipedia「著作者人格権」（公表権・氏名表示権・同一性保持権と一身専属性）' },
+      { url: 'https://kigyobengo.com/media/useful/837.html', type: 'media', label: '咲くやこの花法律事務所「著作者人格権とは？」（著作財産権との区別・不行使特約の実務）' },
+    ],
+  },
+  {
+    id: 'infosoc-creative-commons',
+    discipline: 'information-sociology',
+    title: 'クリエイティブ・コモンズ（CCライセンス）',
+    statement:
+      'クリエイティブ・コモンズ（CC）とは、著作者が著作権を保持したまま、自分の作品を一定の条件下で自由に共有・利用してよいと意思表示できる標準化された一連の著作権ライセンス（CCライセンス）、およびそれを提供する非営利団体（2001年に米国で法学者ローレンス・レッシグ、ハル・アベルソン、エリック・エルドレッドらが設立、最初のライセンス群は2002年12月公開）を指す。' +
+      '従来の「全ての権利を留保（all rights reserved）」と権利を主張しないパブリックドメインの中間に位置する「一部の権利を留保（some rights reserved）」という柔軟な選択肢を提供し、作品の合法的な共有・再利用を促進する。表示（BY）・非営利（NC）・改変禁止（ND）・継承（SA）の4要素の組み合わせで6種の主要ライセンスが構成され、CC0は権利放棄によりパブリックドメインに近づける表明である。ウィキペディア（CC BY-SA）やオープンアクセス論文、オープン教育リソース（OER）で広く使われる。',
+    keyFigures:
+      '設立2001年（米国・非営利団体）、設立者ローレンス・レッシグ／ハル・アベルソン／エリック・エルドレッド／最初の公式ライセンス群を2002年12月公開／4要素：表示BY・非営利NC・改変禁止ND・継承SA／6種：CC BY／CC BY-SA／CC BY-NC／CC BY-NC-SA／CC BY-ND／CC BY-NC-ND／CC0は権利放棄（2009年公開）／利用例＝ウィキペディア(CC BY-SA)・OER',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://creativecommons.org/history/', type: 'reference', label: 'Creative Commons 公式 — History（沿革・設立・ミッション）' },
+      { url: 'https://www.britannica.com/topic/Creative-Commons', type: 'reference', label: 'Encyclopædia Britannica — Creative Commons: Organization, History, & Facts' },
+      { url: 'https://pose.open.ubc.ca/open-education/creative-commons/what-are-the-different-types-of-creative-commons-licenses/', type: 'academic', label: 'University of British Columbia (POSE) — 6種CCライセンスの種類と4要素の解説' },
+      { url: 'https://en.wikipedia.org/wiki/Creative_Commons_license', type: 'reference', label: 'Wikipedia — Creative Commons license（CC0・要素・ライセンス一覧）' },
+    ],
+  },
 ];
 // Stryker restore all
