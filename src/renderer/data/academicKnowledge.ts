@@ -6165,5 +6165,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sydney.edu.au/arts/news-and-events/news/2022/06/23/what-is-computational-social-science.html', type: 'academic', label: 'University of Sydney「What is computational social science?」（大学による分野解説）' },
     ],
   },
+  {
+    id: 'econ-overlapping-generations',
+    discipline: 'economics',
+    title: '世代重複モデル（OLG）',
+    statement:
+      '各時点に生まれた時期の異なる複数の世代（典型的には若年期と老年期の2世代）が同時に存在し、世代が部分的に重なり合いながら入れ替わっていく状況をモデル化したマクロ経済学の分析枠組み。各個人は有限の寿命を持ち、若年期に働いて所得を得て一部を貯蓄し、老年期にそれを取り崩して消費する（ライフサイクル的行動）。無限に生きる代表的個人を仮定するラムゼイ＝キャス＝クープマンス型モデルと対比される。' +
+      '重要な含意として、市場均衡（競争均衡）が必ずしもパレート効率的でない（第一厚生定理が成立せず、動学的非効率＝過剰貯蓄・過剰資本蓄積が生じうる）こと、公的年金（賦課方式）・国債・貨幣の役割を分析できることがある。年金・財政・世代間の資源配分・公的債務の持続可能性の分析に広く用いられる。',
+    keyFigures: 'ポール・サミュエルソン（1958年「An Exact Consumption-Loan Model of Interest...」, Journal of Political Economy、消費貸借モデルとして定式化）／ピーター・ダイアモンド（1965年、資本蓄積を組み込んで一般化＝ダイアモンド成長モデル）／先駆としてモーリス・アレ（1947年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Overlapping_generations_model', type: 'reference', label: 'Wikipedia「Overlapping generations model」（提唱史・Ramseyモデルとの対比・第一厚生定理の不成立）' },
+      { url: 'https://economics.mit.edu/sites/default/files/inline-files/Lecture%208%20-%20Overlapping%20Generations_1.pdf', type: 'academic', label: 'D. Acemoglu, MIT 14.452 Economic Growth, Lecture 8: Overlapping Generations' },
+      { url: 'https://eml.berkeley.edu/~jsteinsson/teaching/OLG.pdf', type: 'academic', label: 'J. Steinsson, UC Berkeley 講義ノート「The OLG Model」（動学的効率性・社会保障・国債・貨幣）' },
+    ],
+  },
+  {
+    id: 'econ-merit-goods',
+    discipline: 'economics',
+    title: 'メリット財（価値財）',
+    statement:
+      'メリット財（merit good、価値財）とは、個人の自由な選択（消費者主権）に委ねると、社会的に望ましい水準よりも過少にしか消費・供給されないため、政府が補助・奨励、ときに義務化して消費を促すべきだとされる財・サービスである。教育、医療・予防接種、文化・芸術などが代表例とされる。消費者の支払い能力・意思ではなく「便益」の観点から、個人や社会がそれを持つべきだと判断される点に特徴がある。' +
+      '標準的な厚生経済学が尊重する消費者主権とは異なり、個人の選好への政府介入を正当化する。その根拠として、(1)個人の選好の不完全さ（情報不足・近視眼・非合理性）、(2)外部性（教育・予防接種は本人以外にも便益）、(3)分配・温情主義（パターナリズム）が論じられる。逆に過剰消費が望ましくないため抑制すべき財を「デメリット財（demerit good、たばこ・アルコール・ギャンブル等）」と呼ぶ。非競合・非排除を特徴とする公共財とは別概念で、メリット財自体は私的財でありうる点に注意を要する。',
+    keyFigures: 'リチャード・マスグレイブ（Richard Musgrave）が提唱／初出：論文「A Multiple Theory of Budget Determination」（FinanzArchiv, 1957）／体系化：著書『The Theory of Public Finance』（1959）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Merit_good', type: 'reference', label: 'Merit good — Wikipedia（定義・マスグレイブ1957/1959・過少消費・正の外部性・公共財との区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Demerit_good', type: 'reference', label: 'Demerit good — Wikipedia（対概念のデメリット財：たばこ・アルコール等の過剰消費）' },
+      { url: 'https://en.wikipedia.org/wiki/Richard_Musgrave_(economist)', type: 'reference', label: 'Richard Musgrave (economist) — Wikipedia（提唱者と『The Theory of Public Finance』1959）' },
+    ],
+  },
+  {
+    id: 'mgmt-balanced-scorecard',
+    discipline: 'management',
+    title: 'バランスト・スコアカード（BSC）',
+    statement:
+      '企業の業績を財務的指標だけでなく4つの視点からバランスよく測定・管理する、戦略経営・業績評価のフレームワーク。4つの視点とは、(1)財務の視点（株主から見た成功＝利益・売上・ROI等）、(2)顧客の視点（顧客から見た価値＝満足・維持・市場シェア等）、(3)社内ビジネスプロセスの視点（卓越のために優れるべき業務プロセス）、(4)学習と成長の視点（変革・改善を支える人材・情報システム等の能力）である。' +
+      '過去の結果を示す財務指標（遅行指標）だけに偏らず、将来の業績を生む非財務的な先行指標を組み合わせる点が核心。後に、戦略目標間の因果関係を可視化する「戦略マップ（strategy map）」へ発展し、ビジョン・戦略を具体的な指標・目標・施策へ落とし込む戦略実行ツールとして用いられる。',
+    keyFigures: '提唱者：ロバート・S・キャプラン（Robert S. Kaplan）／デビッド・P・ノートン（David P. Norton）／初出：1992年 Harvard Business Review 論文「The Balanced Scorecard—Measures That Drive Performance」／4つの視点：財務／顧客／社内ビジネスプロセス／学習と成長／発展：戦略マップ（2004年書籍『Strategy Maps』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'media', label: 'Kaplan & Norton, “The Balanced Scorecard—Measures That Drive Performance,” Harvard Business Review, 1992（初出論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Balanced_scorecard', type: 'reference', label: 'Balanced scorecard — Wikipedia' },
+      { url: 'https://balancedscorecard.org/bsc-basics-overview/', type: 'reference', label: 'Balanced Scorecard Basics — Balanced Scorecard Institute' },
+      { url: 'https://corporatefinanceinstitute.com/resources/management/balanced-scorecard/', type: 'reference', label: 'Balanced Scorecard: Framework for Strategic Success — Corporate Finance Institute (CFI)' },
+    ],
+  },
+  {
+    id: 'human-forgetting-curve',
+    discipline: 'human-science',
+    title: '忘却曲線（エビングハウス）',
+    statement:
+      '学習した情報が時間の経過とともにどれだけ保持・忘却されるかを表す曲線。記憶は学習直後に急激に減衰し（最初の数時間〜1日で大きく失われる）、その後は緩やかに減衰して一定水準に漸近する。ドイツの心理学者ヘルマン・エビングハウスが自分自身を唯一の被験者とし、先行知識の影響を排した無意味綴り（子音-母音-子音のCVC、例「WID」「ZOF」）の記憶・再学習を測定して、1885年の著書『記憶について（Über das Gedächtnis）』で実証的に示した。' +
+      '保持の指標として、再学習に要する手間の削減＝節約率（savings）を用いた点が方法論上の貢献で、再生できない項目でも再学習が容易になることから潜在的な記憶痕跡の存在を示した。時間をおいて反復する間隔反復・分散学習は、まとめて反復する集中学習より長期保持に優れ（間隔効果 spacing effect）、忘却を遅らせる。教育・eラーニング・学習設計に応用される。',
+    keyFigures: 'ヘルマン・エビングハウス（Hermann Ebbinghaus, 1850–1909, ドイツの心理学者）／初出: 1885年『Über das Gedächtnis（記憶について／英訳 Memory: A Contribution to Experimental Psychology）』／関連: 節約法（savings method）・間隔効果（spacing effect）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120644', type: 'academic', label: 'Murre & Dros (2015) “Replication and Analysis of Ebbinghaus’ Forgetting Curve”, PLOS ONE（査読論文・忘却曲線の追試と解析）' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9971077/', type: 'academic', label: 'NCBI PMC 掲載査読論文「Why Ebbinghaus’ savings method from 1885 is a very ‘pure’ measure of memory performance」' },
+      { url: 'https://en.wikipedia.org/wiki/Forgetting_curve', type: 'reference', label: 'Wikipedia「Forgetting curve」（曲線の定義と式）' },
+      { url: 'https://en.wikipedia.org/wiki/Hermann_Ebbinghaus', type: 'reference', label: 'Wikipedia「Hermann Ebbinghaus」（提唱者の経歴・無意味綴り・初出年）' },
+    ],
+  },
+  {
+    id: 'bizlaw-comparative-negligence',
+    discipline: 'business-law',
+    title: '過失相殺（民法418条・722条2項）',
+    statement:
+      '過失相殺とは、損害の発生・拡大について被害者（債権者）の側にも過失があった場合に、損害賠償額を定めるにあたりその過失を考慮して賠償額を減額する制度であり、損害の公平な分担という公平の理念に基づく。民法は二つの規定を置く。債務不履行については418条が、債務の不履行又はこれによる損害の発生・拡大に関して債権者に過失があったとき、裁判所はこれを考慮して損害賠償の「責任及びその額」を定めると規定し、考慮は必要的である。' +
+      '不法行為については722条2項が、被害者に過失があったとき、裁判所はこれを考慮して損害賠償の「額」を定めることが「できる」と規定し、考慮は任意的・裁量的で対象は額の減額に限られる（責任の有無は対象外）。両者は、考慮が必須か裁量か、また責任の有無まで考慮できるかという点で異なる。交通事故の賠償実務で過失割合として広く用いられ、被害者本人だけでなく身分上・生活関係上一体をなす「被害者側」の過失も考慮されうる（判例）。',
+    keyFigures: '418条＝債務不履行の過失相殺・考慮は必要的（裁判所は「定める」）・責任の有無と額の双方を考慮可／722条2項＝不法行為の過失相殺・考慮は任意的（「定めることができる」）・額の減額のみで責任の有無は対象外／制度趣旨＝損害の公平な分担／判例＝「被害者側」の過失も考慮されうる／交通事故の過失割合として実務で広く用いられる',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089）— 第418条・第722条の条文' },
+      { url: 'https://www.u-tokyo.ac.jp/biblioplaza/ja/A_00219.html', type: 'academic', label: '東京大学 UTokyo BiblioPlaza「過失相殺の原理と社会」' },
+      { url: 'https://www.moj.go.jp/content/000059836.pdf', type: 'government', label: '法務省 民法（債権関係）部会資料（改正検討事項・過失相殺）' },
+    ],
+  },
+  {
+    id: 'infosoc-diffusion-of-innovations',
+    discipline: 'information-sociology',
+    title: 'イノベーションの普及理論（ロジャーズ）',
+    statement:
+      '新しいアイデア・技術・製品（イノベーション）が、社会システムの成員の間に、コミュニケーション・チャネルを通じて時間とともに伝播・採用されていく過程を説明する理論。エベレット・ロジャーズが1962年の著書『Diffusion of Innovations』で体系化した。採用の早さによって採用者を、イノベーター（革新者、約2.5%）、アーリーアダプター（初期採用者、約13.5%）、アーリーマジョリティ（前期多数派、約34%）、レイトマジョリティ（後期多数派、約34%）、ラガード（遅滞者、約16%）の5カテゴリーに分類する（割合は正規分布＝ベル型曲線の標準偏差区分に基づく）。' +
+      '累積採用率は時間とともにS字曲線を描く。普及速度を左右するイノベーションの属性として、相対的優位性・適合性・複雑性・試行可能性・観察可能性の5つを挙げ、オピニオンリーダー（アーリーアダプターが担う）の役割を重視する。ジェフリー・ムーアの「キャズム」はこの理論を基にした派生概念である。',
+    keyFigures: 'エベレット・M・ロジャーズ（Everett M. Rogers, 提唱者）／初出『Diffusion of Innovations』(1962年)／5採用者カテゴリー・S字曲線・5つの普及属性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/diffusion-of-innovations', type: 'reference', label: 'Encyclopaedia Britannica「Diffusion of innovations」' },
+      { url: 'https://sphweb.bumc.bu.edu/otlt/mph-modules/sb/behavioralchangetheories/behavioralchangetheories4.html', type: 'academic', label: 'Boston University School of Public Health「Diffusion of Innovation Theory」（大学教材）' },
+      { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia「Diffusion of innovations」' },
+    ],
+  },
 ];
 // Stryker restore all
