@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "description": "学術知識ベース (src/renderer/data/academicKnowledge.ts の VERIFIED_CONCEPTS) の各ディシプリンを、AIオーケストレーション組織 (orchestration/registry.json) の役員ロールへ対応づける写像。dispatch / orchestrate:context が、各役職へ関連ディシプリンの検証済み概念ブリーフを注入するために参照する。registry.json とは独立した設定ファイルで、verify-orchestration の不変条件には影響しない。",
+  "disciplineLabels": {
+    "economics": "経済学",
+    "management": "経営学",
+    "human-science": "人間科学",
+    "business-law": "ビジネス法務",
+    "information-sociology": "情報社会学"
+  },
+  "executiveDisciplines": {
+    "coo": {
+      "disciplines": ["economics", "management", "human-science", "business-law", "information-sociology"],
+      "rationale": "オーケストレーター (Claude 本体)。全ディシプリンを横断的に参照し、各役員へのブリーフを統合する。"
+    },
+    "cso": {
+      "disciplines": ["management", "economics"],
+      "rationale": "経営戦略・分析・成長・予測 — 経営学 (戦略・組織・マーケティング) と経済学 (ミクロ・マクロ・産業組織) を主軸とする。"
+    },
+    "cfo": {
+      "disciplines": ["business-law", "economics"],
+      "rationale": "財務・税務・資金調達 — ビジネス法務 (契約・会社法・担保) と経済学 (情報の経済学・金融) を参照する。"
+    },
+    "chro": {
+      "disciplines": ["human-science", "business-law"],
+      "rationale": "人事・給与・労務 — 人間科学 (動機づけ・組織行動・社会心理) と労働関連の法務を参照する。"
+    },
+    "cio": {
+      "disciplines": ["economics", "information-sociology"],
+      "rationale": "投資・資産運用・為替 — 経済学 (行動ファイナンス・金融・国際) と情報社会学 (プラットフォーム・データ・規制) を参照する。"
+    },
+    "cqo": {
+      "disciplines": ["information-sociology", "business-law"],
+      "rationale": "品質保証・セキュリティ — 情報社会学 (プライバシー・規制・誤情報) とビジネス法務 (知財・データ保護) を参照する。"
+    }
+  }
+}

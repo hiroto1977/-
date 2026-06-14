@@ -1,0 +1,39 @@
+---
+id: econ-mechanism-design
+discipline: economics
+discipline_ja: 経済学
+title: "メカニズムデザイン"
+key_figures: "レオニード・ハーヴィッツ（Leonid Hurwicz、1960年代に分野を創始し誘因両立性の概念を導入）／エリック・マスキン（Eric Maskin、遂行理論／implementation theory）／ロジャー・マイヤーソン（Roger Myerson、表明原理・最適オークション理論）／3名は2007年ノーベル経済学賞を共同受賞"
+as_of: "2026-06"
+source_count: 4
+authoritative: true
+tags:
+  - discipline/economics
+  - knowledge/verified
+aliases:
+  - "メカニズムデザイン"
+---
+
+# メカニズムデザイン
+
+> [!info] 分野: [[経済学]] ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
+
+## 概要
+各参加者が自分だけが知る私的情報を持ち戦略的に行動する状況で、効率的な資源配分・公共財供給・取引・投票など望ましい社会的結果を実現するように、ゲームのルール（メカニズム＝配分と支払いの規則）そのものを目的から逆算して設計するゲーム理論の一分野。通常のゲーム理論が所与のルールでの均衡を分析するのに対し、結果を先に定めてルールを設計するため「逆向きのゲーム理論（reverse game theory）」とも呼ばれる。鍵となるのは、参加者が真の選好を正直に申告することが最適となる「誘因両立性（incentive compatibility）」と、参加が棄権より得になる「個人合理性」を満たすルールの探索である。「表明原理（revelation principle）」により、任意のメカニズムは正直申告を最適とする直接メカニズムで再現でき、設計対象を絞り込める。オークション設計・規制・公共財供給・マッチング市場などに広く応用される。
+
+## 提唱者・初出
+レオニード・ハーヴィッツ（Leonid Hurwicz、1960年代に分野を創始し誘因両立性の概念を導入）／エリック・マスキン（Eric Maskin、遂行理論／implementation theory）／ロジャー・マイヤーソン（Roger Myerson、表明原理・最適オークション理論）／3名は2007年ノーベル経済学賞を共同受賞
+
+## 出典
+- [NobelPrize.org — Mechanism Design Theory（2007年経済学賞 公式解説）](https://www.nobelprize.org/prizes/economic-sciences/2007/9276-mechanism-design-theory/) `公的`
+- [Wikipedia — Mechanism design（逆向きのゲーム理論・誘因両立性・表明原理）](https://en.wikipedia.org/wiki/Mechanism_design) `リファレンス`
+- [CEPR / VoxEU — What is mechanism design and why does it matter for policy-making?](https://cepr.org/voxeu/columns/nobel-prize-what-mechanism-design-and-why-does-it-matter-policy-making) `学術`
+- [ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `公的`
+
+## 関連
+- 分野MOC: [[経済学]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

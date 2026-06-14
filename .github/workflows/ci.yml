@@ -37,6 +37,7 @@ jobs:
       - run: npm run lint:test-coverage
       - run: npm run lint:shell
       - run: npm run verify:orchestration
+      - run: npm run vault:check
       - run: npm run lint
 
       # test: full suite + main-process coverage

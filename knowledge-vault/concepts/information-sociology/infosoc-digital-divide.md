@@ -1,0 +1,39 @@
+---
+id: infosoc-digital-divide
+discipline: information-sociology
+discipline_ja: 情報社会学
+title: "デジタルディバイド（情報格差）"
+key_figures: "普及の契機＝米NTIA「Falling Through the Net」（初版1995年／「Defining the Digital Divide」1999年）／3層モデル: first-level(アクセス)・second-level(スキル/利用、Hargittai 2002)・third-level(成果)／主要研究者＝Jan A.G.M. van Dijk・Eszter Hargittai・Alexander van Deursen／総務省『情報通信白書』分類＝地域間／個人間・集団間／国際間"
+as_of: "2026-06"
+source_count: 4
+authoritative: true
+tags:
+  - discipline/information-sociology
+  - knowledge/verified
+aliases:
+  - "デジタルディバイド（情報格差）"
+---
+
+# デジタルディバイド（情報格差）
+
+> [!info] 分野: [[情報社会学]] ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
+
+## 概要
+デジタルディバイド（情報格差）とは、インターネットやパソコン等の情報通信技術（ICT）にアクセスし利活用できる人・集団・地域と、できない人・集団・地域との間に生じる格差を指す。OECDは社会経済的水準の異なる個人・世帯・企業・地域間でのICT利用機会の差と定義する。一般に3層で論じられ、(1)アクセス格差（first-level＝物理的・物質的にICTや回線を利用できるか）、(2)利用・スキル格差（second-level＝Hargittaiやvan Dijkらが論じた利用能力・リテラシー・利用の質の差）、(3)成果格差（third-level＝ICT利用から得られる便益・成果の差）に区分される。要因は所得・教育・年齢・地域（都市/地方）・国家間など多岐にわたり、既存の社会的不平等を再生産・拡大させうる点が問題視される。米国NTIAの1990年代報告「Falling Through the Net」を契機に広く認知され、日本では総務省『情報通信白書』が地域間・個人間集団間・国際間の3類型で扱う。
+
+## 提唱者・初出
+普及の契機＝米NTIA「Falling Through the Net」（初版1995年／「Defining the Digital Divide」1999年）／3層モデル: first-level(アクセス)・second-level(スキル/利用、Hargittai 2002)・third-level(成果)／主要研究者＝Jan A.G.M. van Dijk・Eszter Hargittai・Alexander van Deursen／総務省『情報通信白書』分類＝地域間／個人間・集団間／国際間
+
+## 出典
+- [OECD「Understanding the Digital Divide」— 標準的定義](https://www.oecd.org/en/publications/understanding-the-digital-divide_236405667766.html) `公的`
+- [米国NTIA「Falling Through the Net: Defining the Digital Divide」(1999)](https://www.ntia.gov/sites/default/files/data/fttn99/FTTN.pdf) `公的`
+- [総務省『平成23年版 情報通信白書』— 日本での定義と3類型](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h23/html/nc222100.html) `公的`
+- [van Deursen & van Dijk (2019), New Media & Society — first/second-level divide の査読論文](https://journals.sagepub.com/doi/10.1177/1461444818797082) `学術`
+
+## 関連
+- 分野MOC: [[情報社会学]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
