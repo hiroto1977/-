@@ -3311,5 +3311,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Culture_industry', type: 'reference', label: 'Wikipedia — "Culture industry"（『啓蒙の弁証法』1947、規格化・統制の概要）' },
     ],
   },
+  {
+    id: 'econ-kondratiev-waves',
+    discipline: 'economics',
+    title: 'コンドラチェフの波（長期波動）',
+    statement:
+      '資本主義経済に見られるとされる約40〜60年（おおむね50年）周期の長期的な景気の波。ロシアの経済学者ニコライ・コンドラチェフが1920年代に、英・米・仏・独などの物価・利子率・生産などの長期時系列から提唱した。' +
+      '短期のキチン循環（在庫、約40か月）、中期のジュグラー循環（設備投資、約10年）、クズネッツ循環（建設、約20年）と並ぶ最も長い循環とされる。ヨーゼフ・シュンペーターは、この長期波動の駆動因を、蒸気機関・鉄道・電気・自動車・情報技術といった画期的な技術革新（イノベーション）の群生と普及に求め、各波を技術パラダイムと結びつけて説明した（「コンドラチェフの波」という名称も1939年にシュンペーターが命名）。' +
+      'ただし長期波動の存在自体は統計的な実証が難しく、その実在性をめぐっては経済学界、とりわけ主流派において議論が続いている。',
+    keyFigures: 'N.コンドラチェフが1920年代に提唱／約40〜60年(約50年)周期の長期波動／キチン/ジュグラー/クズネッツ循環と並ぶ最長の循環／シュンペーターが技術革新の群生で説明(1939年命名)／実在性には議論あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Kondratyev-cycle', type: 'reference', label: 'Encyclopaedia Britannica — "Kondratyev cycle"（約50年の景気循環、コンドラチェフにちなむ）' },
+      { url: 'https://en.wikipedia.org/wiki/Kondratiev_wave', type: 'reference', label: 'Wikipedia — "Kondratiev wave"（50〜60年周期、1926年の長波論、1939年シュンペーター命名）' },
+      { url: 'https://www.newworldencyclopedia.org/entry/Nikolai_Kondratiev', type: 'reference', label: 'New World Encyclopedia — Nikolai Kondratiev（1925年論文、物価・利子率・生産の分析、実証の論争）' },
+    ],
+  },
+  {
+    id: 'econ-harrod-domar',
+    discipline: 'economics',
+    title: 'ハロッド＝ドーマー成長モデル',
+    statement:
+      '経済成長率を貯蓄率と資本係数（資本産出比率）から説明する初期のケインズ派成長理論。経済の成長率＝貯蓄率÷資本係数（資本1単位の追加に必要な産出、ICOR＝資本産出比率）で表され、貯蓄・投資が多いほど、また資本効率が高い（資本係数が小さい）ほど成長が速いとする。' +
+      'ロイ・ハロッド（1939）とエフセイ・ドーマー（1946）が独立に展開した。資本と労働の代替を認めず固定的な技術（固定係数）を仮定するため、完全雇用を保つ「保証成長率（warranted rate）」と人口・技術で決まる「自然成長率（natural rate）」が一致する保証がなく、いったん均衡から外れると累積的に乖離する「ナイフエッジ（刃の刃先）」的な不安定性をもつ。' +
+      'この不安定性への批判から、要素代替を認めるソローらの新古典派成長モデルが生まれた。開発経済学では、必要な投資・援助規模を見積もる枠組みとしても用いられた。',
+    keyFigures: '成長率＝貯蓄率÷資本係数(ICOR、g=s/k)／R.ハロッド1939&E.ドーマー1946が独立に展開／資本労働の代替を認めず(固定係数)／保証成長率と自然成長率の不一致＝ナイフエッジの不安定性／ソロー新古典派モデルの出発点・開発経済学に応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Harrod-Domar-equation', type: 'reference', label: 'Encyclopaedia Britannica — Harrod-Domar equation' },
+      { url: 'https://en.wikipedia.org/wiki/Harrod%E2%80%93Domar_model', type: 'reference', label: 'Wikipedia — Harrod–Domar model' },
+      { url: 'https://www.econstor.eu/bitstream/10419/149739/1/chope-wp-2015-12.pdf', type: 'academic', label: 'Boianovsky & Hoover, "Harrod, Domar and the history of development economics" (Duke CHOPE working paper, EconStor)' },
+      { url: 'https://sites.middlebury.edu/econ0428/harrod-domar-model/', type: 'academic', label: 'Middlebury College, Economics 428 — Harrod-Domar Model' },
+    ],
+  },
+  {
+    id: 'mgmt-teal-organization',
+    discipline: 'management',
+    title: 'ティール組織',
+    statement:
+      '元マッキンゼーのコンサルタント、フレデリック・ラルー（ベルギー出身）が著書『ティール組織（原題 Reinventing Organizations）』（2014）で提示した、組織の発達段階モデルの最終段階。ラルーはケン・ウィルバーらの発達理論を踏まえ、人類の意識と組織の進化を色で表し、衝動型（レッド）・順応型（アンバー）・達成型（オレンジ）・多元型（グリーン）・進化型（ティール／青緑）と段階づけた。' +
+      'ティール組織は3つの突破口（ブレイクスルー）を特徴とする：(1)自主経営（セルフマネジメント＝上司や中央の指揮命令によらず、助言プロセスを通じて個人やチームが自律的に意思決定する）、(2)全体性（ホールネス＝仮面を脱ぎ自分らしさ全体を職場に持ち込める）、(3)存在目的（エボリューショナリーパーパス＝組織自体が生命体のように進化する目的をもち、それに耳を傾けて経営する）。' +
+      '固定的な階層やトップダウン管理を脱した次世代型組織として注目される一方、概念は学術理論というより、少数の事例（Buurtzorg、FAVI、Morning Star等）に基づく実務的・規範的な枠組みとされ、統計的検証の不足が指摘される。',
+    keyFigures: 'F.ラルー『ティール組織（Reinventing Organizations）』2014／組織の発達段階を色で表現(レッド〜ティール、ウィルバーの発達理論が背景)／ティールの3つの突破口：自主経営・全体性・存在目的／助言プロセス／実務的・規範的枠組み（学術理論でないとの批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Reinventing_Organizations', type: 'reference', label: 'Wikipedia — Reinventing Organizations（書誌・3つの柱・色の段階）' },
+      { url: 'https://www.reinventingorganizations.com/uploads/2/1/9/8/21988088/140305_laloux_reinventing_organizations.pdf', type: 'reference', label: 'Frédéric Laloux 本人サイト掲載の原著PDF（一次資料）' },
+      { url: 'https://en.wikipedia.org/wiki/Teal_organisation', type: 'reference', label: 'Wikipedia — Teal organisation（定義・自主経営／全体性／存在目的）' },
+    ],
+  },
+  {
+    id: 'human-mindset',
+    discipline: 'human-science',
+    title: 'マインドセット（成長/固定）',
+    statement:
+      '人が自分の能力や知能の性質について抱く暗黙の信念。スタンフォード大学の心理学者キャロル・ドゥエック（Carol Dweck）が提唱した。能力は生まれつき固定的で変わらないと信じる「固定マインドセット（fixed mindset）」と、能力は努力・学習・戦略によって伸ばせると信じる「成長マインドセット（growth mindset）」に大別される。' +
+      '固定マインドセットの人は、失敗や努力を能力の欠如の証拠と捉えて挑戦を避けがちなのに対し、成長マインドセットの人は、困難や失敗を学習・成長の機会と捉え、努力を惜しまず粘り強く取り組む傾向がある。ドゥエックは、結果（才能）でなくプロセス（努力・工夫）をほめることが成長マインドセットを育てると論じ（Mueller & Dweck 1998）、教育や人材育成に大きな影響を与えた。' +
+      '一方、近年は介入効果の大きさ（効果量）や再現性をめぐる議論もある。',
+    keyFigures: 'C.ドゥエックが提唱／固定マインドセット(能力は不変)vs成長マインドセット(能力は努力で伸びる)／成長型は困難を学習機会と捉え粘る／プロセス(努力)をほめる(Mueller & Dweck 1998)／教育・人材育成に影響、効果量・再現性の議論あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://teachingcommons.stanford.edu/teaching-guides/foundations-course-design/learning-activities/growth-mindset-and-enhanced-learning', type: 'academic', label: 'Stanford Teaching Commons — Growth Mindset and Enhanced Learning（固定/成長マインドセットの定義）' },
+      { url: 'https://www.psychologicalscience.org/observer/dweck-growth-mindsets', type: 'academic', label: 'Association for Psychological Science (APS) — Carol Dweck on How Growth Mindsets Can Bear Fruit in the Classroom' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/9686450/', type: 'academic', label: 'Mueller & Dweck (1998) "Praise for Intelligence Can Undermine Children\'s Motivation and Performance," JPSP 75:33–52（PubMed PMID 9686450）' },
+      { url: 'https://www.kqed.org/mindshift/60490/does-growth-mindset-matter-the-debate-heats-up-with-dueling-meta-analyses', type: 'media', label: 'KQED MindShift — 成長マインドセット介入の効果量・再現性をめぐる対立的メタ分析の解説' },
+    ],
+  },
+  {
+    id: 'bizlaw-labor-contract-act',
+    discipline: 'business-law',
+    title: '労働契約法',
+    statement:
+      '労働者と使用者の間の労働契約に関する民事的な基本ルールを定める法律。2007年（平成19年）制定・2008年施行。罰則を伴う取締法規である労働基準法とは異なり、労働契約の成立・変更・終了などの民事的効力を定める点に特色がある（刑事罰や労働基準監督官による監督はない）。' +
+      '主な内容として、(1)労使対等・合意原則など労働契約の基本原則、(2)判例で確立した解雇権濫用法理の明文化（客観的に合理的な理由を欠き社会通念上相当でない解雇は無効。16条）、(3)就業規則による労働条件の変更が合理的であれば契約内容になるという就業規則法理の明文化、(4)2012年（平成24年）改正で導入された有期労働契約のルール、すなわち同一使用者の下で有期契約が通算5年を超えて反復更新された場合に労働者の申込みで無期労働契約へ転換できる「無期転換ルール」（18条）、雇止め法理の明文化（19条）、不合理な労働条件の禁止などがある。' +
+      '厚生労働省が所管する。',
+    keyFigures: '労働契約の民事的ルールを定める法／2007年制定2008年施行(平成19年法律128号)／取締法規の労基法と異なり民事的効力(刑事罰なし)／解雇権濫用法理の明文化(16条)・就業規則法理／2012年改正で無期転換ルール(通算5年超で無期転換、18条)・雇止め法理(19条)／厚労省所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/419AC0000000128', type: 'government', label: 'e-Gov法令検索 労働契約法（平成19年法律第128号）' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_21917.html', type: 'government', label: '厚生労働省「無期転換ルールについて」（18条）' },
+      { url: 'https://www.jil.go.jp/institute/zassi/backnumber/2008/07/pdf/004-016.pdf', type: 'academic', label: '労働政策研究・研修機構(JILPT)「労働契約法の制定」' },
+    ],
+  },
+  {
+    id: 'infosoc-imagined-communities',
+    discipline: 'information-sociology',
+    title: '想像の共同体（アンダーソン）',
+    statement:
+      '政治学者ベネディクト・アンダーソンが著書『想像の共同体（Imagined Communities）』（1983）で提示した、国民（ネーション）とナショナリズムの捉え方。アンダーソンは国民を「イメージとして心に描かれた想像の政治共同体」と定義し、それは本来的に「限られた（limited）」かつ「主権的（sovereign）」なものとして想像されるとした。一国の成員の大半は互いに顔も知らず会うこともないのに、各人の心の中には共同の連帯（コミュニオン）のイメージが生きているからである。' +
+      '彼はこの想像を可能にした条件として、特に「出版資本主義（print capitalism）」を重視した。活版印刷による新聞や小説が、ラテン語ではなく特定の俗語（国語）で大量に流通することで、同じ言語で同じニュースを読む不特定多数の読者が互いを同じ共同体の一員と感じるようになったと論じた。' +
+      '国民は自然な実体ではなく、近代に歴史的・文化的に構成されたものだとする見方を示し、ナショナリズム研究やメディア論に決定的な影響を与えた。',
+    keyFigures: 'B.アンダーソン『想像の共同体』1983／国民＝イメージとして心に描かれた想像の政治共同体(限られた・主権的)／出版資本主義(print capitalism)が俗語(国語)の新聞・小説を通じ共同体意識を醸成／国民は自然でなく近代に構成された／ナショナリズム研究・メディア論に影響',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Imagined-Communities-Reflections-on-the-Origins-and-Spread-of-Nationalism', type: 'reference', label: 'Encyclopaedia Britannica — Imagined Communities (book summary)' },
+      { url: 'https://www.britannica.com/biography/Benedict-Anderson', type: 'reference', label: 'Encyclopaedia Britannica — Benedict Anderson (biography, political scientist)' },
+      { url: 'https://news.cornell.edu/stories/2015/12/benedict-anderson-who-wrote-imagined-communities-dies', type: 'academic', label: 'Cornell Chronicle (Cornell University) — Benedict Anderson obituary / Imagined Communities' },
+      { url: 'https://en.wikipedia.org/wiki/Imagined_Communities', type: 'reference', label: 'Wikipedia — Imagined Communities (corroborating reference)' },
+    ],
+  },
 ];
 // Stryker restore all
