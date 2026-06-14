@@ -6627,5 +6627,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/social-construction-reality', type: 'reference', label: 'EBSCO Research Starters「Social Construction of Reality」— 外在化／客体化／内在化の三過程' },
     ],
   },
+  {
+    id: 'econ-focal-point',
+    discipline: 'economics',
+    title: 'フォーカルポイント（シェリングの焦点）',
+    statement:
+      '複数のナッシュ均衡をもつ調整ゲーム（coordination game）において、当事者が事前のコミュニケーションなしに、互いに「相手も同じように考えるだろう」と予想して自然に選びがちな、際立った（salient）選択肢を指す。ゲームの利得行列そのものはどの均衡が選ばれるかを決めないが、当事者は文化・慣習・歴史・共通知識（common knowledge）や顕著性といったゲーム外の文脈を手がかりに、調整失敗を避けるべく特定の均衡へ期待を収束させる。' +
+      '古典的な例は「ニューヨークで見知らぬ相手と、時間・場所を約束せずに会うならどこ・何時か」という問いで、多くの人が「グランド・セントラル駅の正午」のような目立つ答えに集まる。純粋なゲーム理論の形式的装置だけでは決まらない均衡選択を、共通の期待と顕著性が導くことを示した点に意義がある。',
+    keyFigures: 'トーマス・シェリング（Thomas C. Schelling、提唱者）／初出：著書『The Strategy of Conflict（紛争の戦略）』1960年／2005年ノーベル経済学賞をロバート・オーマン（Robert J. Aumann）と共同受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Focal_point_(game_theory)', type: 'reference', label: 'Wikipedia: Focal point (game theory) — 定義・シェリング・1960年・ニューヨークの例' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/', type: 'government', label: 'NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）' },
+      { url: 'https://www.aeaweb.org/research/can-schellings-focal-points-help-us-understand-high-stakes-negotiations', type: 'academic', label: 'American Economic Association: Schellingの焦点と交渉に関する解説' },
+    ],
+  },
+  {
+    id: 'econ-arbitrage-pricing-theory',
+    discipline: 'economics',
+    title: '裁定価格理論（APT）',
+    statement:
+      '資産（証券）の期待リターンが、複数のマクロ経済的な系統的リスク・ファクター（例：インフレ率、GDP成長率、金利、信用スプレッド等）に対する感応度（ファクター・ローディング＝各ファクターのβ）の線形結合で決まるとする、資産価格付けのマルチファクター・モデル。中核の前提は「裁定（arbitrage）の不在」であり、リスクなしに確実な利益を得る機会は均衡では存在しない。理論価格から乖離した資産があれば、裁定取引によってその乖離が解消されるという論理（一物一価の法則）から価格関係を導く。' +
+      '資本資産価格モデル（CAPM）が市場ポートフォリオという単一ファクターに依拠し投資家の効用や市場ポートフォリオの特定を要するのに対し、APTは複数ファクターを許し、それらを必要としない点でより一般的・柔軟である。一方で、どのファクターを用いるべきかが理論からは一意に定まらず経験的に選ぶ必要があるという弱点を持つ。ファマ＝フレンチの3ファクターモデルなどマルチファクター・モデルの基礎となった。',
+    keyFigures: 'スティーブン・ロス（Stephen A. Ross）が提唱／初出: S. A. Ross (1976) “The Arbitrage Theory of Capital Asset Pricing,” Journal of Economic Theory 13(3): 341–360',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v13y1976i3p341-360.html', type: 'academic', label: 'Ross, S. A. (1976) “The Arbitrage Theory of Capital Asset Pricing,” Journal of Economic Theory 13(3):341–360（RePEc/IDEAS 書誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Arbitrage_pricing_theory', type: 'reference', label: 'Wikipedia: Arbitrage pricing theory' },
+      { url: 'https://corporatefinanceinstitute.com/resources/wealth-management/arbitrage-pricing-theory-apt/', type: 'reference', label: 'Corporate Finance Institute: Arbitrage Pricing Theory (APT)' },
+    ],
+  },
+  {
+    id: 'mgmt-bureaucracy',
+    discipline: 'management',
+    title: '官僚制（ウェーバー）',
+    statement:
+      'ドイツの社会学者マックス・ウェーバーが、近代社会で最も合理的・効率的な組織管理形態として理念型（ideal type）で定式化した組織モデル。主な特徴は、(1)明確な権限の階層（ヒエラルキー）、(2)成文化された規則・手続きに基づく職務遂行、(3)職務の専門分化・分業、(4)文書による事務処理と記録の保存、(5)個人的感情を排した没人格的（impersonal）な職務遂行、(6)専門的資格に基づく任用と年功・実績による昇進を伴う生涯キャリア、などである。' +
+      'ウェーバーは正統的支配を伝統的支配・カリスマ的支配・合法的支配（合理的支配）の3類型に分け、官僚制を合法的支配の最も純粋な形態と位置づけた。理念型は理想や善ではなく、現実の組織を測る理論的基準である。一方ロバート・マートンは、規則万能主義・形式主義による硬直化、目的の転移（goal displacement）、訓練された無能（trained incapacity）といった逆機能を指摘した。近代組織論の出発点をなす概念。',
+    keyFigures: 'マックス・ウェーバー（Max Weber、提唱者）／初出『経済と社会』（Wirtschaft und Gesellschaft、没後1921–22年刊）／ロバート・K・マートン（逆機能論「Bureaucratic Structure and Personality」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Rational-legal_authority', type: 'reference', label: 'Rational-legal authority — Wikipedia（合法的支配と官僚制の特徴）' },
+      { url: 'https://oxfordre.com/politics/display/10.1093/acrefore/9780190228637.001.0001/acrefore-9780190228637-e-166', type: 'academic', label: 'Weberian Bureaucracy — Oxford Research Encyclopedia of Politics（査読参照事典）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/mertons-dysfunctions-bureaucracies', type: 'reference', label: 'Merton’s Dysfunctions of Bureaucracies — EBSCO Research Starters（逆機能）' },
+    ],
+  },
+  {
+    id: 'human-positive-psychology',
+    discipline: 'human-science',
+    title: 'ポジティブ心理学',
+    statement:
+      '心理学を精神疾患や弱点（病理）の治療に偏らせるのではなく、人間の強み・美徳、幸福（ウェルビーイング well-being）、繁栄（フラリッシング flourishing）といったポジティブな側面と、それを高める条件を科学的に研究する心理学の一分野。マーティン・セリグマンが1998年にアメリカ心理学会（APA）会長就任時の主題として提唱・推進し、フロー研究のミハイ・チクセントミハイらと共に2000年の論文「Positive psychology: An introduction」で学問領域として確立した。' +
+      '当初は「ポジティブ感情・没頭（エンゲージメント）・意味」の3要素から出発し、後にPERMAモデル（肯定的感情 Positive emotion・没頭 Engagement・関係性 Relationships・意味 Meaning・達成 Accomplishment）として持続的幸福の構成要素を整理した。学習性無力感の研究から「学習性楽観主義」やVIA性格的強み、感謝・親切などの介入研究へと展開した。一方で、知見の頑健性・再現性や「ポジティブさの押し付け」への批判も存在する。',
+    keyFigures: 'マーティン・セリグマン（Martin Seligman；1998年APA会長就任時に提唱、PERMA提唱）／ミハイ・チクセントミハイ（Mihaly Csikszentmihalyi；フロー、共同創始者）／クリストファー・ピーターソン（VIA性格的強みを共同開発）／初出: Seligman & Csikszentmihalyi (2000) American Psychologist 55(1):5-14',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11392865/', type: 'academic', label: 'Seligman & Csikszentmihalyi (2000) “Positive psychology: An introduction.” American Psychologist 55(1):5-14（PubMed）' },
+      { url: 'https://ppc.sas.upenn.edu/learn-more/perma-theory-well-being-and-perma-workshops', type: 'academic', label: 'ペンシルベニア大学 ポジティブ心理学センター — PERMA理論とウェルビーイング' },
+      { url: 'https://en.wikipedia.org/wiki/Positive_psychology', type: 'reference', label: 'Wikipedia「Positive psychology」（定義・1998年起源・PERMA・批判の概観）' },
+    ],
+  },
+  {
+    id: 'bizlaw-mortgage',
+    discipline: 'business-law',
+    title: '抵当権（民法369条）',
+    statement:
+      '抵当権とは、債務者又は第三者（物上保証人）が、債務の担保として提供した不動産等を、その占有を設定者のもとに残したまま（引き渡さず使用・収益を続けさせたまま）、債務が弁済されない場合に債権者がその目的物から他の債権者に先立って優先的に弁済を受けられる約定担保物権である（民法369条1項）。目的物の占有を移転しない点が質権と異なる最大の特徴で、設定者は抵当不動産を使用・収益しながら担保に供せるため、不動産融資・住宅ローンの中心的担保となる。地上権・永小作権も抵当権の目的とできる（同条2項）。' +
+      '対抗要件は不動産登記であり、複数の抵当権が設定された場合は登記の前後で順位が決まり、先順位の抵当権者が優先弁済を受ける。被担保債権が弁済されないときは、抵当権者は担保不動産競売等により目的物を換価し、その売却代金から優先弁済を受ける。効力は付加して一体となった物（付加一体物）にも及び（370条）、被担保債権への附従性をもつ（債権が消滅すれば抵当権も消滅）。',
+    keyFigures: '根拠条文＝民法369条1項（抵当権の内容）／占有非移転・使用収益の継続＝質権との最大の相違点／目的物＝不動産の所有権、及び地上権・永小作権（369条2項）／対抗要件＝不動産登記／順位＝登記の前後による／実行方法＝担保不動産競売等による換価と優先弁済／効力範囲＝付加一体物（370条）／附従性／e-Gov民法 law id＝129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索「民法」（law id: 129AC0000000089）第369条・第370条・第373条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第369条', type: 'reference', label: 'Wikibooks 民法第369条（条文・解説）' },
+      { url: 'https://www.nta.go.jp/law/tsutatsu/kihon/chosyu/02/03/016/01.htm', type: 'government', label: '国税庁 徴収法基本通達（抵当権の優先・登記順位に関する官公庁解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-prosumer',
+    discipline: 'information-sociology',
+    title: 'プロシューマー（生産消費者）',
+    statement:
+      '生産者（producer）と消費者（consumer）の境界が曖昧化し、消費しながら同時に生産にも関与する主体を指す概念で、両語を組み合わせた造語。未来学者アルビン・トフラーが1980年の著書『第三の波』で提示し、産業社会で市場向け生産と消費に分離していた両者が、脱産業社会では自分で使うものを自分で作る形（DIY・セルフサービス等）で再融合すると論じた。' +
+      'デジタル時代には、ユーザー生成コンテンツ（UGC）、ブログ・SNS投稿、オープンソース、レビュー、プラットフォームへの参加など、消費者が価値・コンテンツの生産に積極関与する現象を説明する概念として再注目され、リッツァーとユルゲンソンらが「参加型文化」「Web2.0」と結びつけて理論化した。あわせて、無償の参加が企業の利潤に動員される「無償労働（フリーレイバー）」「プレイバー（playbour）」をめぐる批判的議論にもつながる。',
+    keyFigures: 'アルビン・トフラー（Alvin Toffler、提唱者）／初出『第三の波（The Third Wave）』1980年／ジョージ・リッツァー＆ネイサン・ユルゲンソン（2010、デジタル時代の理論的再定義）／ジュリアン・キュックリッヒ（playbour 概念、2005）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1469540509354673', type: 'academic', label: 'Ritzer & Jurgenson (2010) “Production, Consumption, Prosumption”, Journal of Consumer Culture (Sage)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781405165518.wbeosp132', type: 'academic', label: 'Jurgenson & Ritzer “Prosumers”, The Wiley Blackwell Encyclopedia' },
+      { url: 'https://en.wikipedia.org/wiki/The_Third_Wave_(Toffler_book)', type: 'reference', label: 'Wikipedia: The Third Wave (Toffler, 1980) — origin of “prosumer”' },
+    ],
+  },
 ];
 // Stryker restore all
