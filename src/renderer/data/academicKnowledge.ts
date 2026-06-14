@@ -3410,5 +3410,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Imagined_Communities', type: 'reference', label: 'Wikipedia — Imagined Communities (corroborating reference)' },
     ],
   },
+  {
+    id: 'econ-heckscher-ohlin',
+    discipline: 'economics',
+    title: 'ヘクシャー＝オリーンの定理',
+    statement:
+      '各国は、自国に相対的に豊富に存在する生産要素を集約的に用いる財に比較優位をもち、それを輸出するとする国際貿易の理論。たとえば資本が豊富な国は資本集約財を、労働が豊富な国は労働集約財を輸出する。' +
+      'リカードが各国の技術（労働生産性）の差から比較優位を説明したのに対し、本定理は国ごとの生産要素の賦存比率（資本/労働など）の差に貿易パターンの原因を求める点に特色がある。スウェーデンの経済学者エリ・ヘクシャーと弟子のベルティル・オリーンが20世紀前半（ヘクシャー1919年・オリーン1933年）に展開した（新古典派貿易理論の基礎）。' +
+      '関連命題として、自由貿易が各国の生産要素価格を均等化させるとする要素価格均等化定理（サミュエルソン）がある。一方、米国が資本豊富国でありながら労働集約財を輸出していたという「レオンチェフの逆説」など、実証的にうまく当てはまらない例も知られる。',
+    keyFigures: '各国は相対的に豊富な要素を集約的に使う財に比較優位／要素賦存比率の差が貿易パターンを決める(リカードの技術差説明と対比)／E.ヘクシャー&B.オリーン(1919/1933)／要素価格均等化定理(サミュエルソン)／レオンチェフの逆説',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Heckscher-Ohlin-theory', type: 'reference', label: 'Britannica Money — Heckscher-Ohlin theory (Definition, Examples, & Leontief Paradox)' },
+      { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_theorem', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin theorem' },
+      { url: 'https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-09-the-heckscher-ohlin-theorem.html', type: 'academic', label: 'Saylor Academy / International Trade: Theory and Policy — 5.9 The Heckscher-Ohlin Theorem' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Ohlin.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — Bertil Ohlin' },
+    ],
+  },
+  {
+    id: 'econ-optimal-currency-area',
+    discipline: 'economics',
+    title: '最適通貨圏（OCA）',
+    statement:
+      '複数の国や地域が共通通貨を採用する（あるいは為替を固定する）ことが経済的に最適となる条件を論じる理論。ロバート・マンデルが1961年の論文「A Theory of Optimum Currency Areas」で提唱した。' +
+      '共通通貨は為替変動リスクや両替コストをなくす利益がある一方、各国・各地域が独立した金融政策や為替調整という景気対策手段を失う費用を伴う。この費用が小さく利益が上回るための条件として、(1)労働など生産要素の地域間移動性が高いこと、(2)賃金・物価の伸縮性、(3)財政の移転（リスク分担）の仕組み、(4)各地域の景気変動（非対称ショック）が似ていること、などが挙げられる（マッキノンの開放度、ケネンの生産の多様性なども補完する）。' +
+      'ユーロ（欧州通貨統合）が最適通貨圏の条件をどこまで満たすかという議論の理論的基礎であり、マンデルは1999年にノーベル経済学賞を受賞した（マンデル＝フレミング・モデルとは別概念）。',
+    keyFigures: 'R.マンデル1961提唱／共通通貨の利益(為替リスク・コスト減)対費用(独立した金融政策・為替調整の喪失)／条件：要素移動性・賃金物価の伸縮性・財政移転・対称的な景気変動(マッキノンの開放度・ケネンの多様性が補完)／ユーロ評価の理論的基礎／マンデル1999ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'reference', label: 'NobelPrize.org — 1999年経済学賞（マンデル、最適通貨圏の分析）' },
+      { url: 'https://www.britannica.com/money/optimum-currency-area', type: 'reference', label: 'Britannica Money — Optimum currency area（定義・利益と費用・基準）' },
+      { url: 'https://www.imf.org/en/News/Articles/2015/09/28/04/54/vc121399', type: 'government', label: 'IMF — Mundell and the Theoretical Foundation for the European Monetary Union' },
+      { url: 'https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp138.pdf', type: 'government', label: 'ECB Working Paper No.138 — "New" views on the optimum currency area theory（OCA基準の整理）' },
+    ],
+  },
+  {
+    id: 'mgmt-mbo',
+    discipline: 'management',
+    title: '目標による管理（MBO）',
+    statement:
+      '組織の目標と個人の目標を連動させ、上司と部下が協働して目標を設定し、その達成度で業績を管理・評価するマネジメント手法。ピーター・ドラッカーが1954年の著書『現代の経営（The Practice of Management）』で提唱した（原語は Management by Objectives and Self-control）。' +
+      'トップダウンの一方的な統制ではなく、メンバー自身が目標設定に参加し、自己統制（セルフコントロール）によって主体的に成果へ向かう点を重視するのがドラッカーの本来の狙いだった。一般に、(1)上位目標と整合した個人目標の設定、(2)一定期間の遂行、(3)達成度の評価とフィードバック、というサイクルで運用される。' +
+      '後に人事評価制度として広く普及したが、ノルマ管理や数値偏重に堕すと本来の自己統制の理念が失われるとの批判もある。OKRや目標設定理論の源流の一つでもある。',
+    keyFigures: 'P.ドラッカー1954『現代の経営』で提唱(Management by Objectives and Self-control)／組織目標と個人目標の連動・参加型の目標設定／自己統制(セルフコントロール)を重視／設定→遂行→評価のサイクル／数値・ノルマ偏重への堕落の批判／OKRの源流',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/edited-volume/28075/chapter-abstract/212082707', type: 'academic', label: 'Oxford Academic — "Peter F. Drucker\'s Management by Objectives and Self-Control", The Oxford Handbook of Management' },
+      { url: 'https://en.wikipedia.org/wiki/Management_by_objectives', type: 'reference', label: 'Wikipedia (English) — Management by objectives' },
+      { url: 'https://www.jil.go.jp/institute/zassi/backnumber/2015/04/pdf/040-041.pdf', type: 'academic', label: 'JILPT 労働政策研究・研修機構 — MBO（目標管理）解説（日本労働研究雑誌）' },
+    ],
+  },
+  {
+    id: 'human-normalcy-bias',
+    discipline: 'human-science',
+    title: '正常性バイアス',
+    statement:
+      '災害や緊急事態など、危険が迫っているという情報や兆候に直面しても、「自分は大丈夫」「これは正常の範囲内だ」「まだ大したことにはならない」と過小評価し、危険を認めず適切な避難・対処行動が遅れてしまう心理的傾向。' +
+      '予期しない事態に直面したとき、心の平静を保とうとして異常を正常の範囲内のものとして処理しようとする働きによる。災害心理学では、避難の遅れや被害拡大の一因として重視され、火災・地震・津波・洪水などで「逃げ遅れ」を生む。集団でいると皆が動かないことで安心してしまい（同調性バイアス・多元的無知）、さらに避難が遅れることもある。' +
+      '対策として、平時からの訓練・具体的な避難計画・早期の警報と明確な行動指示が、正常性バイアスを乗り越えて行動を促すうえで重要とされる。',
+    keyFigures: '危険の兆候を「自分は大丈夫/正常範囲」と過小評価し避難・対処が遅れる／心の平静を保つため異常を正常として処理／災害心理学で逃げ遅れ・被害拡大の一因／集団では同調性バイアス・多元的無知と結びつき避難が一層遅れる／対策＝訓練・避難計画・明確な警報と行動指示',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.koka.ac.jp/sociology/news/bousailab/normalcy-bias', type: 'academic', label: '京都光華大学 防災ラボ「正常性バイアスとは何か」' },
+      { url: 'https://www.jrc.or.jp/about/publication/news/20210901_020612.html', type: 'government', label: '日本赤十字社「避難の妨げになる『正常性バイアス・同調性バイアス』」' },
+      { url: 'https://www.jumonji-u.ac.jp/sscs/ikeda/cognitive_bias/cate_d/d_19.html', type: 'academic', label: '十文字学園女子大学「錯思コレクション100：正常性バイアス」' },
+    ],
+  },
+  {
+    id: 'bizlaw-securities-disclosure',
+    discipline: 'business-law',
+    title: '企業内容開示制度（ディスクロージャー）',
+    statement:
+      '投資家が適切な投資判断を行えるよう、上場会社等に対し企業の財務・事業内容に関する情報の開示を義務づける、金融商品取引法に基づく制度。証券市場の公正性・透明性と投資家保護を目的とする。' +
+      '大きく(1)発行市場における開示（有価証券届出書・目論見書。新たに有価証券を募集・売出しする際の開示）と、(2)流通市場における継続開示（上場後、定期・適時に行う開示）に分かれる。継続開示の中心が、事業年度ごとに財政状態・経営成績等を記載して内閣総理大臣（金融庁）に提出する「有価証券報告書」（金商法24条）であり、半期報告書（2024年4月施行の令和5年改正で従来の四半期報告書から再編）や、重要事実の発生時に提出する臨時報告書もある。提出書類はEDINETで電子的に公衆縦覧に供される。' +
+      '重要事項の虚偽記載には課徴金・刑事罰や損害賠償責任が科される。証券取引所の適時開示（タイムリー・ディスクロージャー）とあわせて市場の情報インフラを構成する。',
+    keyFigures: '投資判断のための企業情報開示義務(金商法)／発行開示(有価証券届出書・目論見書)と継続開示／継続開示の中心＝有価証券報告書(金商法24条、事業年度ごと、金融庁へ提出)／半期報告書(2024年4月、令和5年改正で四半期報告書から再編)・臨時報告書／EDINETで電子公衆縦覧／虚偽記載に課徴金・刑事罰・賠償責任／取引所の適時開示と並ぶ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000025', type: 'government', label: 'e-Gov法令検索「金融商品取引法」（第24条 有価証券報告書の提出等）' },
+      { url: 'https://lfb.mof.go.jp/kantou/disclo/gaiyou.htm', type: 'government', label: '財務省 関東財務局「企業内容等開示（ディスクロージャー）制度の概要」（発行開示/継続開示・EDINET公衆縦覧）' },
+      { url: 'https://www.jpx.co.jp/equities/listing/disclosure/overview/index.html', type: 'reference', label: '日本取引所グループ（JPX）「適時開示制度の概要」' },
+      { url: 'https://www.fsa.go.jp/sesc/support/kaiji-ihan/sanshutsu.html', type: 'government', label: '金融庁 証券取引等監視委員会「開示規制違反に係る課徴金額の算定方法等」' },
+    ],
+  },
+  {
+    id: 'infosoc-parasocial',
+    discipline: 'information-sociology',
+    title: 'パラソーシャル関係',
+    statement:
+      'テレビの司会者・有名人・キャラクター、近年では配信者やインフルエンサーなどのメディア上の人物に対して、視聴者・受け手が一方的に親密さや友情・信頼といった疑似的な人間関係を感じる現象。受け手は相手をよく知り親しく感じるが、相手は受け手個人を認識しておらず、関係は一方向的（one-sided）で相互発展しない点に特徴がある。' +
+      '社会学者ドナルド・ホートンとリチャード・ウォールが1956年の論文「Mass Communication and Para-Social Interaction」で「パラソーシャル・インタラクション（parasocial interaction）」として概念化した。メディアの人物があたかも視聴者に直接語りかけるような演出（カメラ目線・呼びかけ）がこの「遠隔の親密さ（intimacy at a distance）」の感覚を強める。継続的な視聴で相互作用が深まり「パラソーシャル関係」へと発展し、対面の友人関係と似た心理的機能（所属感・慰め・社会的支援）をもちうる。' +
+      'マーケティング（インフルエンサー）・ファン心理・孤独感との関連などで研究され、SNS・ライブ配信時代に一層注目されている。',
+    keyFigures: 'メディア上の人物への一方向的(one-sided)な疑似的親密さ・友情／受け手は親しく感じるが相手は個人を認識しない／D.ホートン&R.ウォール1956が概念化(parasocial interaction)／カメラ目線・直接の呼びかけが強める／継続的相互作用でパラソーシャル関係へ発展／インフルエンサー・ファン心理・孤独感・SNSで再注目',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/parasocial-interaction', type: 'reference', label: 'Encyclopaedia Britannica — Parasocial interaction (Psychology, History & Facts)' },
+      { url: 'https://www.britannica.com/topic/parasocial-relationship', type: 'reference', label: 'Encyclopaedia Britannica — Parasocial relationship (sociology)' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/parasocial-interactions', type: 'reference', label: 'EBSCO Research Starters — Parasocial Interactions (Communication & Mass Media)' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/02673843.2025.2480712', type: 'academic', label: 'Taylor & Francis (Intl. Journal of Adolescence and Youth) — Parasocial relationships, social support and well-being（査読）' },
+    ],
+  },
 ];
 // Stryker restore all
