@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全87件）
+### 学術概念 / ビジネス法務（全88件）
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-administrative-appeal|行政不服審査（審査請求）]]
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]]
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
-- …ほか 81 件 → [[学術概念]]
+- …ほか 82 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全151件）
+### 学術概念 / 経済学（全152件）
+- [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]]
 - [[econ-arbitrage-pricing-theory|裁定価格理論（APT）]]
-- [[econ-arrow-impossibility|アローの不可能性定理]]
-- …ほか 145 件 → [[学術概念]]
+- …ほか 146 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全140件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]

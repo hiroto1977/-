@@ -7919,5 +7919,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Data_colonialism', type: 'reference', label: 'Wikipedia: Data colonialism（概観リファレンス）' },
     ],
   },
+  {
+    id: 'econ-accelerator-principle',
+    discipline: 'economics',
+    title: '加速度原理（投資の加速度原理）',
+    statement:
+      '加速度原理とは、企業の純投資（資本ストックの増加分）が、産出量（需要）の水準ではなくその「変化（増加分）」に比例して決まるとする投資理論である。' +
+      '望ましい資本ストックが産出量に比例する（資本係数が一定で資本が完全稼働する）と仮定すると、産出が増えるたびに見合う資本を追加せねばならず、純投資は産出の変化率に依存する。このため産出の増加が鈍化しただけで（減少しなくても）純投資は減少しうるという、投資変動の不安定性・増幅効果を示す。アフタリオン（1909）が分析しJ.M.クラークが1917年に用語を導入、ケインズの乗数と結合した乗数＝加速度モデル（サミュエルソン1939）は投資と所得の相互作用が景気循環を生む仕組みを説明する。',
+    keyFigures:
+      'アルベール・アフタリオン（Albert Aftalion, 1909）／ジョン・モーリス・クラーク（John Maurice Clark, 1917, 用語提唱）／ポール・サミュエルソン（Paul A. Samuelson, 1939, 乗数＝加速度モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/accelerator-principle', type: 'reference', label: 'Encyclopaedia Britannica — Accelerator principle (economics)' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_202-2', type: 'academic', label: 'The New Palgrave Dictionary of Economics — “Acceleration Principle” (Springer Nature)' },
+      { url: 'https://cruel.org/econthought/essays/capital/accelerator.html', type: 'reference', label: 'History of Economic Thought — The Aftalion-Clark Accelerator' },
+    ],
+  },
+  {
+    id: 'mgmt-jobs-to-be-done',
+    discipline: 'management',
+    title: 'ジョブ理論（片付けるべき用事）',
+    statement:
+      '顧客は製品やサービスそのものを欲しているのではなく、生活の中で生じる特定の「用事・仕事（job）」を片付け、達成したい「進歩（progress）」を遂げるために、製品・サービスを「雇用（hire）」するという顧客理解・イノベーションの枠組み。' +
+      'セオドア・レビットの「人々は1/4インチのドリルではなく1/4インチの穴を欲する」という発想を発展させ、クレイトン・クリステンセンらが提唱・普及させた。ジョブは機能的・社会的・感情的側面を含む文脈で捉えられ、期待に応えなければ製品は「解雇（fire）」される。市場を製品カテゴリや顧客属性（デモグラフィック）でなく「ジョブ」で再定義する点が核心で、クリステンセンの破壊的イノベーション理論と接続する。有名な事例に「ミルクシェイクのジレンマ」（朝の通勤者が退屈しのぎ・空腹対策にミルクシェイクを雇う）がある。',
+    keyFigures:
+      'クレイトン・クリステンセン（Clayton Christensen）／タディ・ホール（Taddy Hall）／カレン・ディロン（Karen Dillon）／デイビッド・ダンカン（David S. Duncan）（HBR 2016「Know Your Customers’ Jobs to Be Done」・著書『Competing Against Luck』2016）／源流＝セオドア・レビット',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2016/09/know-your-customers-jobs-to-be-done', type: 'academic', label: "Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62" },
+      { url: 'https://www.christenseninstitute.org/theory/jobs-to-be-done/', type: 'reference', label: 'Clayton Christensen Institute — Jobs to Be Done Theory（解説ページ）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=51553', type: 'academic', label: "Harvard Business School Faculty & Research — “Know Your Customers’ ‘Jobs to Be Done’” 書誌情報（R1609D）" },
+    ],
+  },
+  {
+    id: 'human-spotlight-effect',
+    discipline: 'human-science',
+    title: 'スポットライト効果',
+    statement:
+      '人が自分の外見・言動・失敗などを、実際よりも他者に注目され気づかれていると過大に見積もる傾向で、自己中心性バイアス（egocentric bias）の一種である。あたかも自分にスポットライトが当たっているかのように周囲が自分へ注意を払っていると感じるが、実際には他者はそれほど気にしていない。' +
+      '心理学者トーマス・ギロヴィッチ、ヴィクトリア・H・メドヴェック、ケネス・サヴィツキーが命名し、Gilovich, Medvec & Savitsky (2000, Journal of Personality and Social Psychology 78(2):211-222) で実証した。目立つTシャツ着用者は気づいた観察者数を大幅に過大評価した。原因は自分の主観的経験を起点とし他者視点への調整が不十分な「アンカリングと不十分な調整」とされ、透明性の錯覚や社会不安・自意識とも関連する。',
+    keyFigures:
+      'トーマス・ギロヴィッチ（Thomas Gilovich）／ケネス・サヴィツキー（Kenneth Savitsky）／ヴィクトリア・H・メドヴェック（Victoria H. Medvec）（2000 JPSP 78(2):211-222）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1111/1467-8721.00039', type: 'academic', label: 'Gilovich & Savitsky (1999), The Spotlight Effect and the Illusion of Transparency, Current Directions in Psychological Science' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/spotlight-effect', type: 'reference', label: 'EBSCO Research Starters — Spotlight effect (Psychology)' },
+      { url: 'https://en.wikipedia.org/wiki/Spotlight_effect', type: 'reference', label: 'Wikipedia — Spotlight effect' },
+    ],
+  },
+  {
+    id: 'human-sleeper-effect',
+    discipline: 'human-science',
+    title: 'スリーパー効果（眠り効果）',
+    statement:
+      'スリーパー効果（sleeper effect）は、説得的メッセージの効果が時間とともに逆説的に増大する社会心理学・コミュニケーション研究上の現象である。信頼性の低い情報源や「割引手がかり（discounting cue）」を伴うメッセージは、受信直後は情報源への不信から説得効果が抑えられるが、数日から数週間が経つと、メッセージ内容は記憶に残る一方で情報源との結びつき（割引手がかり）が忘却・解離されるため、かえって態度変容が強まる。' +
+      '第二次大戦中、カール・ホヴランドらが米軍の「Why We Fight」宣伝映画の兵士への効果を調べた研究に起源を持ち、Hovland & Weiss（1951）の情報源信頼性実験で定式化された。説明は「割引手がかり仮説」。ただし再現は難しく、メッセージが強い初期影響を持ち割引手がかりがメッセージの後に提示される等の厳密な条件下でのみ確実に生じる（Pratkanis ら 1988、Kumkale & Albarracín 2004 のメタ分析）。',
+    keyFigures:
+      'カール・ホヴランド（Carl Hovland）／ウォルター・ワイス（Walter Weiss）（1951）／アンソニー・プラトカニス＆アンソニー・グリーンワルド（1988, 再現条件）／Kumkale & Albarracín（2004, メタ分析）／割引手がかり仮説',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100511546', type: 'reference', label: 'Oxford Reference「Sleeper effect」(定義・相対/絶対効果・Hovland & Weiss 1951 初出)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/sleeper-effects', type: 'reference', label: 'Encyclopedia.com「Sleeper Effects」(WWII「Why We Fight」起源・割引手がかり/解離説)' },
+      { url: 'https://faculty.washington.edu/agg/pdf/Pratkanis&GLB.JPSP.1988.pdf', type: 'academic', label: 'Pratkanis, Greenwald, Leippe & Baumgardner (1988) JPSP 54(2):203-218 (再現条件・割引手がかり理論)' },
+      { url: 'https://socialactionlab.org/wp-content/uploads/2024/01/Kumkale_The-Sleeper-Effect-in-Persuasion-A-Meta-Analytic-Review_2004.pdf', type: 'academic', label: 'Kumkale & Albarracín (2004) Psychological Bulletin 130(1):143-172 メタ分析 (効果の境界条件)' },
+    ],
+  },
+  {
+    id: 'bizlaw-revolving-mortgage',
+    discipline: 'business-law',
+    title: '根抵当権（民法398条の2）',
+    statement:
+      '根抵当権とは、一定の範囲に属する不特定の債権を、極度額の限度において担保する抵当権である（民法398条の2第1項）。通常の抵当権（民法369条）が特定の債権を担保し、その債権が弁済等で消滅すれば付従性により抵当権も消滅するのに対し、根抵当権は銀行と企業の当座貸越・手形割引など継続的取引から生じる増減変動する多数の債権を、いちいち設定し直すことなく極度額の枠内で一括して担保する。' +
+      '被担保債権の範囲は「債務者との特定の継続的取引契約によって生ずるもの」等に限定して定めねばならず、包括根抵当は禁止される（同条2項）。元本が確定するまでは個々の債権が弁済されても根抵当権は消滅せず、債権が譲渡されても移転しない（付従性・随伴性の否定）。確定期日の到来や取引終了等で「元本の確定」が生じるとその時点の債権額に固定され、以後は通常の抵当権に近い扱いとなる。',
+    keyFigures:
+      '根拠条文＝民法398条の2（e-Gov law id 129AC0000000089）／担保対象＝一定の範囲に属する不特定の債権を極度額の限度で担保（包括根抵当は禁止・同条2項）／確定前の特徴＝付従性・随伴性の否定（弁済・債権譲渡で消滅・移転しない）／元本確定＝確定期日到来・取引終了等で債権額が固定／通常の抵当権（369条）との違い＝増減変動する不特定債権を一括担保／典型用途＝継続的・反復的な与信取引',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治二十九年法律第八十九号、第398条の2 根抵当権）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0398-02/', type: 'media', label: 'クレアール司法書士講座 — 民法第398条の2【根抵当権】条文解説' },
+      { url: 'https://ja.wikipedia.org/wiki/根抵当権', type: 'reference', label: 'Wikipedia — 根抵当権（元本確定前の付従性・随伴性の否定）' },
+    ],
+  },
+  {
+    id: 'infosoc-collective-intelligence',
+    discipline: 'information-sociology',
+    title: '集合知（collective intelligence）',
+    statement:
+      '集合知とは、多数の個人やエージェント（ときに人とコンピュータの集団）の知識・判断・行動が、協働・競争・集約を通じて、個々の構成員の能力を超える知性や問題解決能力として立ち現れる現象である。' +
+      'MITの集合知センター（トーマス・マローンら）は「個人やコンピュータの集団が、知的に見える形で集合的に行動すること」と捉える。ピエール・レヴィ（1994）のサイバースペース論や、スロウィッキー（2004『みんなの意見は案外正しい』）の「群衆の知恵」（多様性・独立性・分散性・集約という条件が揃えば群衆の推定が専門家を上回る／ゴルトンの雄牛の体重当ての逸話）に源流をもつ。ウィキペディア・オープンソース・予測市場・クラウドソーシング・市民科学が応用例だが、条件が崩れると集団極性化・集団思考・エコーチェンバーによる「群衆の愚かさ」も生じる。ウーリーら（Science, 2010）は小集団の集合的知能因子（c factor）を実証した。',
+    keyFigures:
+      'トーマス・マローン（Thomas W. Malone, MIT CCI）／ピエール・レヴィ（Pierre Lévy, 1994）／ジェームズ・スロウィッキー（James Surowiecki, 2004）／フランシス・ゴルトン（Francis Galton）／アニタ・ウーリー（Anita W. Woolley, 2010 Science, c factor）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Collective_intelligence', type: 'reference', label: 'Wikipedia「Collective intelligence」（定義・群衆の知恵・条件・応用・失敗モード）' },
+      { url: 'https://www.science.org/doi/10.1126/science.1193147', type: 'academic', label: 'Woolley, Chabris, Pentland, Hashmi & Malone, “Evidence for a Collective Intelligence Factor in the Performance of Human Groups,” Science 330(6004):686–688 (2010)' },
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/lets-choose-collective-intelligence-over-madness-mobs', type: 'academic', label: 'MIT Sloan / MIT Center for Collective Intelligence — collective intelligence vs. the madness of mobs' },
+    ],
+  },
 ];
 // Stryker restore all
