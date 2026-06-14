@@ -7300,5 +7300,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://philpapers.org/rec/KEYTPE', type: 'academic', label: 'Ralph Keyes, The Post-Truth Era (2004) — PhilPapers 書誌' },
     ],
   },
+  {
+    id: 'econ-mental-accounting',
+    discipline: 'economics',
+    title: 'メンタル・アカウンティング（心の会計）',
+    statement:
+      'メンタル・アカウンティング（mental accounting／心の会計）とは、人々がお金をその出所・使途・保管場所などに応じて心の中で別々の「勘定（mental account）」に振り分け、本来は代替可能（fungible＝交換可能で色のない）なはずのお金を、あたかも色分けされているかのように扱う傾向を指す行動経済学の概念である。' +
+      'リチャード・セイラーが1985年論文「Mental Accounting and Consumer Choice」や1999年論文「Mental Accounting Matters」で定式化し、2017年にノーベル経済学賞を受賞した。カーネマン＝トヴェルスキーのプロスペクト理論（価値関数・参照点）を基礎に、取引効用（transaction utility）や勘定の「締め」とも結びつく。あぶく銭は浪費しやすく給与は慎重に使う、家計を費目別に予算化し流用を避ける、といった例があり、貨幣の代替可能性という標準経済学の前提に反する。',
+    keyFigures:
+      'リチャード・セイラー（Richard H. Thaler、提唱者・2017年ノーベル経済学賞）／ダニエル・カーネマン＆エイモス・トヴェルスキー（基礎となるプロスペクト理論を構築）／初出 1985 Marketing Science・1999 Journal of Behavioral Decision Making',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/press-release/', type: 'government', label: 'NobelPrize.org — 2017年ノーベル経済学賞プレスリリース（セイラーの貢献としてメンタル・アカウンティングを明記）' },
+      { url: 'https://people.bath.ac.uk/mnsrf/Teaching%202011/Thaler-99.pdf', type: 'academic', label: 'Thaler, R.H. (1999) “Mental Accounting Matters”, Journal of Behavioral Decision Making 12:183-206（バース大学ホスト・査読論文PDF）' },
+      { url: 'https://www.ebsco.com/research-starters/economics/mental-accounting', type: 'reference', label: 'EBSCO Research Starters: Economics — “Mental accounting”' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/mental-accounting/', type: 'reference', label: 'BehavioralEconomics.com — Mini-Encyclopedia of BE: Mental accounting' },
+    ],
+  },
+  {
+    id: 'mgmt-blue-ocean-strategy',
+    discipline: 'management',
+    title: 'ブルー・オーシャン戦略',
+    statement:
+      'W・チャン・キムとレネ・モボルニュ（ともにINSEAD教授）が提唱した経営戦略論で、2005年の同名著書（Harvard Business School Press）で広く知られた。既存需要を奪い合う競争の激しい市場空間を「レッド・オーシャン（赤い海）」と呼ぶのに対し、競争のない未知の市場空間を新たに創造することを「ブルー・オーシャン（青い海）」と呼ぶ。' +
+      '核心は、従来トレードオフとされた「差別化（価値向上）」と「低コスト」を同時に追求する「バリュー・イノベーション（value innovation）」にある。分析ツールとして競争要因と提供価値を可視化する「戦略キャンバス（strategy canvas）」、価値を再構築する「4つのアクション＝ERRCグリッド」（取り除く eliminate／減らす reduce／増やす raise／付け加える create）があり、シルク・ドゥ・ソレイユや米サウスウエスト航空が代表事例とされる。',
+    keyFigures:
+      'W・チャン・キム（W. Chan Kim, INSEAD教授）／レネ・モボルニュ（Renée Mauborgne, INSEAD教授）／2005年著書『Blue Ocean Strategy』（HBR初出2004）／中核概念＝バリュー・イノベーション・戦略キャンバス・ERRCグリッド',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.insead.edu/faculty-research/publications/books/blue-ocean-strategy-how-create-uncontested-market-space-and', type: 'academic', label: 'INSEAD — Blue Ocean Strategy（著者所属校・公式書籍ページ）' },
+      { url: 'https://hbr.org/2004/10/blue-ocean-strategy', type: 'academic', label: 'Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)' },
+      { url: 'https://www.britannica.com/money/blue-ocean-strategy-explained', type: 'reference', label: 'Encyclopædia Britannica Money — Blue Ocean Strategy Explained（戦略キャンバス・ERRCグリッド・事例）' },
+      { url: 'https://en.wikipedia.org/wiki/Blue_Ocean_Strategy', type: 'reference', label: 'Wikipedia — Blue Ocean Strategy（出版情報・定義）' },
+    ],
+  },
+  {
+    id: 'mgmt-open-innovation',
+    discipline: 'management',
+    title: 'オープン・イノベーション',
+    statement:
+      'オープン・イノベーションとは、企業が自社内のR&Dだけに依存せず、外部の知識・技術・アイデアを意図的に取り込み（インバウンド／outside-in）、また自社の未活用技術を外部に提供・ライセンスする（アウトバウンド／inside-out）など、組織の境界を越えて知識を流出入させることでイノベーションを加速し、外部活用市場を拡大する考え方・モデルである。' +
+      'ヘンリー・チェスブロウ（UCバークレー）が2003年の著書『Open Innovation: The New Imperative for Creating and Profiting from Technology』で命名・提唱し、すべてを自前で完結させる従来型を「クローズド・イノベーション」と呼んで対比した。彼は後に、内外のアイデアを結合し価値を創造・獲得する「分散した知識の意図的な流出入（purposive inflows and outflows of knowledge）」と定義を精緻化した。スピンオフ、ライセンシング、共同研究、クラウドソーシング、スタートアップとの連携などが具体的手段である。',
+    keyFigures:
+      'ヘンリー・チェスブロウ（Henry Chesbrough、UCバークレー Haas School of Business、2003年命名）／対比概念＝クローズド・イノベーション／方向＝outside-in（インバウンド）・inside-out（アウトバウンド）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/edited-volume/61793/chapter/545978353', type: 'academic', label: 'Open Innovation — Oxford Research Encyclopedia of Business and Management (Oxford Academic)' },
+      { url: 'https://sloanreview.mit.edu/article/the-era-of-open-innovation/', type: 'academic', label: 'The Era of Open Innovation — Henry Chesbrough, MIT Sloan Management Review' },
+      { url: 'https://en.wikipedia.org/wiki/Open_innovation', type: 'reference', label: 'Open innovation — Wikipedia（定義・outside-in/inside-out）' },
+      { url: 'https://en.wikipedia.org/wiki/Henry_Chesbrough', type: 'reference', label: 'Henry Chesbrough — Wikipedia（UCバークレー所属・2003年著書）' },
+    ],
+  },
+  {
+    id: 'human-resilience',
+    discipline: 'human-science',
+    title: 'レジリエンス（心理的回復力）',
+    statement:
+      'レジリエンス（心理的回復力／精神的回復力）とは、逆境・トラウマ・悲劇・脅威や重大なストレス源（家族や人間関係の問題、深刻な健康問題、職場や経済的ストレス等）に直面しても、それにうまく適応し立ち直る過程・能力を指す。アメリカ心理学会（APA）はこれを「困難で挑戦的な人生経験に、精神的・感情的・行動的な柔軟性をもってうまく適応していくプロセスと結果」と定義する。' +
+      '重要な点として、レジリエンスは一部の人だけがもつ特別な特性ではなく、誰もが学習・育成しうる思考・行動・習慣を伴う「過程」である（アン・マステンの言う“ordinary magic／ありふれた魔法”）。発達心理学では過酷な環境下でも良好に発達する子どもの研究（E・ワーナーのカウアイ島縦断研究、N・ガーメジー）に起源をもつ。促進要因として支持的な人間関係、現実的な計画と実行力、肯定的な自己観と自己効力感、感情調整、対処スキル、意味づけが挙げられ、心的外傷後成長（PTG）とも関連する。',
+    keyFigures:
+      'エミー・ワーナー（Emmy Werner／カウアイ島縦断研究）／ノーマン・ガーメジー（Norman Garmezy）／アン・マステン（Ann Masten／“ordinary magic”）／APA定義',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/resilience', type: 'reference', label: 'APA Dictionary of Psychology — resilience（アメリカ心理学会 用語事典）' },
+      { url: 'https://www.apa.org/topics/resilience', type: 'academic', label: 'American Psychological Association — Resilience（APA 公式トピックページ）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11315249/', type: 'academic', label: 'Masten A.S. (2001) “Ordinary magic: Resilience processes in development,” American Psychologist（査読論文、PubMed）' },
+      { url: 'https://www.cambridge.org/core/journals/development-and-psychopathology/article/abs/risk-resilience-and-recovery-perspectives-from-the-kauai-longitudinal-study/DC3C3F10587A1A7D04C0310270717B3E', type: 'academic', label: 'Werner E.E. — Risk, resilience, and recovery: Perspectives from the Kauai Longitudinal Study, Development and Psychopathology（Cambridge、査読誌）' },
+    ],
+  },
+  {
+    id: 'bizlaw-joint-tort',
+    discipline: 'business-law',
+    title: '共同不法行為（民法719条）',
+    statement:
+      '共同不法行為とは、複数の者が共同して他人に損害を加えた場合に、各自が連帯してその損害賠償責任を負うとする日本民法上の制度である（民法719条）。同条1項前段は「数人が共同の不法行為によって他人に損害を加えたときは、各自が連帯してその損害を賠償する責任を負う」と定め、後段は共同行為者のうちいずれの者が損害を加えたかを知ることができないときも同様とし、加害者不明の共同不法行為（択一的競合）を規律する。' +
+      '2項は教唆者・幇助者を共同行為者とみなす。被害者は各加害者に損害全額を請求でき（不真正連帯債務とされる）、賠償した者は他の加害者に求償しうる。「共同」の意義については主観的共謀の要否につき学説・判例の議論があり、判例（最高裁）は客観的関連共同性で足りるとする立場を基本とする。交通事故の競合や公害訴訟（四大公害訴訟等）で重要な役割を果たす。一般の不法行為（709条）や使用者責任（715条）とは区別される。',
+    keyFigures:
+      '根拠条文＝民法719条（e-Gov law id 129AC0000000089）／1項前段＝共同不法行為の原則（連帯責任）／1項後段＝加害者不明型（択一的競合）／2項＝教唆者・幇助者を共同行為者とみなす／「共同」の意義＝判例は客観的関連共同性で足りるとする／効果＝不真正連帯債務・賠償者は他の加害者に求償可／適用場面＝交通事故の競合・公害訴訟',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第719条' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/10-56/matsumoto.pdf', type: 'academic', label: '松本克美「侵害行為者の特定と共同不法行為責任の成否」立命館法学' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第719条', type: 'reference', label: 'Wikibooks 民法第719条（条文）' },
+    ],
+  },
+  {
+    id: 'infosoc-fake-news',
+    discipline: 'information-sociology',
+    title: 'フェイクニュース（情報の無秩序）',
+    statement:
+      'フェイクニュースとは、報道記事の体裁を装って流布される虚偽・誤導的な情報を指す語。学術的には曖昧で論争的な用語であり、気に入らない報道を貶める罵倒語としても政治利用されるため、研究者はより精緻な「情報の無秩序（information disorder）」の枠組みを用いる。' +
+      'クレア・ワードルとホセイン・デラクシャンが欧州評議会報告書（2017）で示したこの枠組みは、誤情報（misinformation＝害意なく共有される誤情報）、偽情報（disinformation＝害意をもって作られ共有される虚偽）、悪意情報（malinformation＝真実だが害意で暴露・流布される情報）の3類型を区別する。2016年の米大統領選やブレグジットを機に社会的関心が高まり、ヴォソウギらの2018年Science論文（虚偽は真実より速く広く拡散すると報告）やボット・エコーチェンバー・ディープフェイク等と関連して論じられる。',
+    keyFigures:
+      'クレア・ワードル（Claire Wardle）／ホセイン・デラクシャン（Hossein Derakhshan）（情報の無秩序の3類型、欧州評議会2017）／ソルーシュ・ヴォソウギ・デブ・ロイ・シナン・アラル（Vosoughi, Roy & Aral, 2018 Science）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://shorensteincenter.org/resource/information-disorder-framework-for-research-and-policymaking/', type: 'academic', label: 'Wardle & Derakhshan, “Information Disorder” (Council of Europe / Harvard Shorenstein Center, 2017)' },
+      { url: 'https://www.coe.int/en/web/freedom-expression/information-disorder', type: 'government', label: 'Council of Europe — Information Disorder（欧州評議会・公式解説）' },
+      { url: 'https://www.science.org/doi/10.1126/science.aap9559', type: 'academic', label: 'Vosoughi, Roy & Aral, “The Spread of True and False News Online,” Science 359:1146–1151 (2018)' },
+      { url: 'https://www.britannica.com/topic/fake-news', type: 'reference', label: 'Encyclopædia Britannica — “Fake news”' },
+    ],
+  },
 ];
 // Stryker restore all
