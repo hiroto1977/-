@@ -6535,5 +6535,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.andrewchadwick.com/hybrid-media-system', type: 'academic', label: '著者アンドリュー・チャドウィック公式サイト：The Hybrid Media System（概要・受賞歴）' },
     ],
   },
+  {
+    id: 'econ-stable-matching',
+    discipline: 'economics',
+    title: '安定マッチング理論（ゲール＝シャプレー）',
+    statement:
+      '二つの集団（例：男女、研修医と病院、生徒と学校）の各メンバーが相手集団に対する選好順序を持つとき、互いに現在の相手より相手同士を選びたいと思うペア（ブロッキング・ペア）が存在しない「安定的な」マッチングを求める理論。デヴィッド・ゲールとロイド・シャプレーは1962年の論文「College Admissions and the Stability of Marriage」で、安定マッチングが常に存在することを証明し、それを構成する「受入保留方式（deferred acceptance／ゲール＝シャプレー・アルゴリズム）」を示した。' +
+      '一方の側が順に申し込み、申し込まれた側は暫定的に最良の相手を保留して他を断る手続きを繰り返すと、必ず安定マッチングに到達する。アルヴィン・ロスはこれを米国研修医マッチング（NRMP）、学校選択、腎臓交換移植などの制度設計（マーケットデザイン）に応用した。',
+    keyFigures: 'David Gale（デヴィッド・ゲール）／Lloyd Shapley（ロイド・シャプレー）：初出論文「College Admissions and the Stability of Marriage」(1962)で提唱／Alvin Roth（アルヴィン・ロス）：実社会の市場設計へ応用／シャプレーとロスは2012年ノーベル経済学賞「安定的配分の理論と市場設計の実践」',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2012/press-release/', type: 'government', label: 'The Sveriges Riksbank Prize in Economic Sciences 2012 — Press release（安定的配分の理論と市場設計）' },
+      { url: 'https://www.ams.org/publicoutreach/feature-column/fc-2015-03', type: 'academic', label: 'AMS Feature Column: The Stable Marriage Problem and School Choice（米国数学会）' },
+      { url: 'https://web.stanford.edu/~alroth/papers/GaleandShapley.revised.IJGT.pdf', type: 'academic', label: 'A. E. Roth, “Deferred Acceptance Algorithms: History, Theory, Practice, and Open Questions”（Stanford/IJGT）' },
+      { url: 'https://www.nber.org/news/alvin-e-roth-and-lloyd-s-shapley-won-nobel-prize-2012-developing-theory-stable-allocations-and', type: 'academic', label: 'NBER: Roth and Shapley Won the Nobel Prize in 2012 for the Theory of Stable Allocations and Market Design' },
+    ],
+  },
+  {
+    id: 'econ-behavioral-finance',
+    discipline: 'economics',
+    title: '行動ファイナンス',
+    statement:
+      '投資家や市場参加者は完全には合理的でなく、心理的バイアスや感情に影響されるという前提に立ち、認知心理学・行動経済学の知見を用いて金融市場を分析する分野。伝統的ファイナンス理論（合理的期待・効率的市場仮説 EMH）では説明しにくいアノマリー、バブル、過剰反応・過小反応、ホームバイアスなどの現象を説明しようとする。応用される概念として、カーネマン＆トヴェルスキーのプロスペクト理論（損失回避＝損失の痛みを同額の利得の喜びより強く感じる）、ヒューリスティックとバイアス（自信過剰、代表性、アンカリング、群集行動 herding）、メンタル・アカウンティングなどがある。' +
+      '市場の非効率性や予測可能性をめぐっては効率的市場仮説の支持者との間で論争があり、両者の評価は定まっていない。',
+    keyFigures: 'ダニエル・カーネマン＆エイモス・トヴェルスキー（プロスペクト理論 1979、損失回避・ヒューリスティックの心理学的基礎）／リチャード・セイラー（Richard Thaler、2017年ノーベル経済学賞）／ロバート・シラー（Robert Shiller、2013年ノーベル経済学賞、株価の過剰変動性と投機的バブルを実証）／対比される立場としてユージン・ファマ（Eugene Fama、効率的市場仮説 EMH、2013年に共同受賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/uploads/2018/06/shiller-lecture.pdf', type: 'government', label: 'Robert J. Shiller, “Speculative Asset Prices” (Nobel Prize Lecture, 2013) — Nobelprize.org' },
+      { url: 'https://www.ubs.com/microsites/nobel-perspectives/en/laureates/robert-shiller.html', type: 'reference', label: 'UBS Nobel Perspectives — Robert Shiller: Behavioral Finance & Economics' },
+      { url: 'https://www.ebsco.com/research-starters/economics/behavioral-finance', type: 'reference', label: 'EBSCO Research Starters (Economics) — Behavioral Finance' },
+      { url: 'https://en.wikipedia.org/wiki/Behavioural_finance', type: 'reference', label: 'Wikipedia — Behavioural finance' },
+    ],
+  },
+  {
+    id: 'mgmt-holacracy',
+    discipline: 'management',
+    title: 'ホラクラシー',
+    statement:
+      '従来の上司-部下によるピラミッド型（階層的）の指揮命令系統を廃し、権限と意思決定を、役職（人）ではなく明文化された「役割（role）」と、その集合体である自律的・自己組織化された「サークル（circle）」に分散させる組織運営・ガバナンス手法。サークルは入れ子状（ホロン的＝全体かつ部分）に組織全体を構成し、運用は「ホラクラシー憲法（Holacracy Constitution）」と呼ばれる共通ルールに従う。役割は流動的に更新され、ガバナンス・ミーティング（役割や権限構造を扱う）とタクティカル・ミーティング（日常の運営課題を扱う）という構造化された会議で処理される。' +
+      'ブライアン・ロバートソンが自社Ternary Softwareでの実践をもとに2007年頃に体系化し、2015年の著書『Holacracy』で普及、ザッポス（Zappos）の導入で広く注目された。語源はA.ケストラーの「ホラーキー（holarchy）」に由来する。一方で、ルールが複雑で実装が難しい、大規模組織では機能しにくい、肩書きを廃しても暗黙の権力関係が残る、全体像を見失いやすい等の批判もある。',
+    keyFigures: 'ブライアン・ロバートソン（Brian Robertson、Ternary Software創業者・提唱者）／初出: “Organization at the Leading Edge: Introducing Holacracy”（2007）／普及: 著書『Holacracy』（2015）／語源の源流: アーサー・ケストラー（holon／holarchy, 1967『The Ghost in the Machine』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Holacracy', type: 'reference', label: 'Wikipedia「Holacracy」— 定義・holon/Koestler語源・Robertson/Ternary 2007・憲法・サークル/役割・Zappos' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/holacracy', type: 'reference', label: 'EBSCO Research Starters (Business and Management)「Holacracy」' },
+      { url: 'https://library.uniteddiversity.coop/Decision_Making_and_Democracy/Holacracy/HolacracyIntro2007-06.pdf', type: 'media', label: 'B. J. Robertson “Organization at the Leading Edge: Introducing Holacracy” (2007) — 提唱者本人による初出論考' },
+    ],
+  },
+  {
+    id: 'human-observational-learning',
+    discipline: 'human-science',
+    title: '観察学習（バンデューラ）',
+    statement:
+      '人は、自分が直接報酬や罰を受けなくても、他者（モデル）の行動とその結果を観察するだけで新しい行動を学習できるとする理論（モデリング・代理学習）。アルバート・バンデューラが提唱し、直接的な条件づけのみで学習を説明する行動主義を、注意・記憶などの認知過程を取り入れて拡張した（後に社会的認知理論へ発展）。有名な実証が1961年の「ボボ人形実験」で、大人が人形に攻撃的に振る舞うのを見た子どもがその攻撃行動を模倣し、攻撃の社会的伝達が示された。' +
+      '観察学習が成立するには4つの過程が必要とされる：(1)注意（モデルに注目する）、(2)保持（観察した行動を記憶する）、(3)運動再生（記憶を再現できる運動能力）、(4)動機づけ（模倣する誘因。モデルが報われるのを見ると模倣されやすい＝代理強化）。自己効力感の概念もバンデューラによる。攻撃・向社会的行動・メディアの影響の理解に応用される。',
+    keyFigures: '提唱者：アルバート・バンデューラ（Albert Bandura, 1925–2021）／初出（ボボ人形実験）：Bandura, Ross & Ross (1961)「Transmission of aggression through imitation of aggressive models」, Journal of Abnormal and Social Psychology, 63(3), 575–582',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/observational-learning', type: 'reference', label: 'Encyclopaedia Britannica「Observational learning」' },
+      { url: 'https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/', type: 'academic', label: 'Washington State University, Introductory Psychology「6.5 Observational Learning (Modeling)」' },
+      { url: 'https://www.simplypsychology.org/bandura.html', type: 'reference', label: 'Simply Psychology「Albert Bandura’s Social Learning Theory」' },
+    ],
+  },
+  {
+    id: 'bizlaw-condominium-ownership',
+    discipline: 'business-law',
+    title: '区分所有（区分所有法）',
+    statement:
+      '区分所有とは、一棟の建物（分譲マンション等）のうち、構造上・利用上独立した各部分（各住戸など）を、それぞれ独立した所有権（区分所有権）の目的とする所有形態をいう。「建物の区分所有等に関する法律」（区分所有法、昭和37年法律第69号）が定める。各区分所有者が単独で所有する「専有部分」と、廊下・階段・エレベーター・外壁・敷地など全員で共有する「共用部分」とを区別し、共用部分は原則として各区分所有者の専有部分の床面積の割合に応じた持分で共有される。' +
+      '区分所有者は全員で建物・敷地等の管理を行う団体（管理組合）を構成し、集会（総会）の決議によって管理・運営に関する事項を決定する。規約の設定・変更や共用部分の重大変更には区分所有者及び議決権の各4分の3以上の特別多数決議（31条・17条）、建替え決議には各5分の4以上（62条）を要するなど、重要事項ほど加重された多数決要件が定められている。専有部分とそれに対応する敷地利用権は原則として分離して処分できない（22条）。マンションの法律関係の基礎をなす制度である。',
+    keyFigures: '根拠法＝建物の区分所有等に関する法律（区分所有法・昭和37年法律第69号、e-Gov law id 337AC0000000069）／専有部分・共用部分の区別（2条）／共用部分の持分＝原則として専有部分の床面積割合（14条）／管理団体＝区分所有者全員で構成（3条）／規約変更・共用部分の重大変更＝各4分の3以上（31条・17条）／建替え決議＝各5分の4以上（62条）／分離処分の禁止（22条）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/337AC0000000069', type: 'government', label: 'e-Gov法令検索「建物の区分所有等に関する法律」（昭和37年法律第69号、law id 337AC0000000069）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000053767', type: 'government', label: '国立国会図書館 日本法令索引「建物の区分所有等に関する法律」' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/04019620404069.htm', type: 'government', label: '衆議院 法令データ「建物の区分所有等に関する法律」' },
+    ],
+  },
+  {
+    id: 'infosoc-social-construction',
+    discipline: 'information-sociology',
+    title: '現実の社会的構成（社会構築主義）',
+    statement:
+      '私たちが「当たり前の現実」「客観的事実」とみなす社会的世界（制度・役割・知識・常識）は、自然に与えられたものではなく、人々の日常的な相互作用とコミュニケーションを通じて社会的に作り出され維持される構築物だとする、知識社会学・社会理論の立場。ピーター・バーガーとトーマス・ルックマンが1966年の著書『現実の社会的構成』で体系化した。鍵となるのは弁証法的に連関する三契機の循環である。すなわち(1)外在化（人間の活動が社会的産物を生み出す）、(2)客体化（その産物が当人から独立した客観的現実として立ち現れる）、(3)内在化（社会化を通じて個人がそれを取り込み主観的現実とする）。' +
+      'あわせて習慣化・制度化、知識の正当化（legitimation）も論じられる。シュッツの現象学的社会学やデュルケームの影響を受け、後の社会構築主義や科学技術社会論（STS）に大きな影響を与えた。',
+    keyFigures: 'ピーター・L・バーガー（Peter L. Berger）／トーマス・ルックマン（Thomas Luckmann）／初出『現実の社会的構成（The Social Construction of Reality: A Treatise in the Sociology of Knowledge）』1966年／現象学的源流：アルフレッド・シュッツ／古典的源流：エミール・デュルケーム',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/The_Social_Construction_of_Reality', type: 'reference', label: 'Wikipedia「The Social Construction of Reality」— 1966年刊行、知識社会学の再定式化' },
+      { url: 'https://link.springer.com/article/10.1007/s10746-016-9385-5', type: 'academic', label: 'Michael Lynch, “Social Constructivism in Science and Technology Studies”, Human Studies (Springer, 2016)' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/social-construction-reality', type: 'reference', label: 'EBSCO Research Starters「Social Construction of Reality」— 外在化／客体化／内在化の三過程' },
+    ],
+  },
 ];
 // Stryker restore all
