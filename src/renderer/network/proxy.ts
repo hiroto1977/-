@@ -12,7 +12,15 @@
  *
  *   proxy → client:   200 OK
  *     Body: { status, headers, body }
+ *
+ * ⚠ 機密性の前提: このプロキシは upstream へ Authorization ヘッダーを *透過* する
+ * 必要があるため、プロキシ運用者は転送されるトークンを技術的に閲覧できる。
+ * 第三者運用のプロキシではなく **ユーザー自身が管理する** Worker を使うこと
+ * (docs/PROXY_EXAMPLE.md)。本クライアントの防御は (a) SSRF 宛先ブロック、
+ * (b) レスポンスサイズ上限、(c) プロキシのエラー応答に含まれうるトークンの
+ * redactSecrets による秘匿 — に限られる。
  */
+import { redactSecrets } from '../../shared/redact';
 
 // Constants + IDB infra below — decorative error strings, default-arrow
 // fallbacks, and the request/response envelope structure are pinned by
@@ -57,14 +65,17 @@ export async function getProxyConfig(): Promise<ProxyConfig | null> {
   } catch {
     return null;
   }
-  const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
-    const tx = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).get(KEY);
-    req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
-    req.onerror = () => reject(req.error ?? new Error('get failed'));
-  });
-  db.close();
-  return cfg ?? null;
+  try {
+    const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(KEY);
+      req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
+      req.onerror = () => reject(req.error ?? new Error('get failed'));
+    });
+    return cfg ?? null;
+  } finally {
+    db.close();
+  }
 }
 
 export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
@@ -86,11 +97,14 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
     }
   }
   const db = await openDb();
-  const tx = db.transaction(STORE, 'readwrite');
-  if (cfg === null) tx.objectStore(STORE).delete(KEY);
-  else tx.objectStore(STORE).put(cfg, KEY);
-  await txDone(tx);
-  db.close();
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    if (cfg === null) tx.objectStore(STORE).delete(KEY);
+    else tx.objectStore(STORE).put(cfg, KEY);
+    await txDone(tx);
+  } finally {
+    db.close();
+  }
 }
 
 interface ProxyResponseEnvelope {
@@ -439,7 +453,9 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
 
   if (!proxyRes.ok) {
     const body = await proxyRes.text().catch(() => '');
-    throw new Error(`proxy ${proxyRes.status}: ${body.slice(0, 200)}`);
+    // A misbehaving proxy may echo the forwarded request (incl. the
+    // Authorization header) back in its error body. Redact before surfacing.
+    throw new Error(`proxy ${proxyRes.status}: ${redactSecrets(body.slice(0, 200))}`);
   }
 
   // Defense-in-depth: cap response body before json() to prevent OOM on

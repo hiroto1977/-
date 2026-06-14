@@ -25,6 +25,47 @@ import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
 import { fetchQualitySnapshot } from './quality';
+import { fetchMicrosoft365Snapshot, ACTIONS as MICROSOFT365_ACTIONS } from './microsoft-365';
+import { fetchDropboxSnapshot } from './dropbox';
+import { fetchSalesforceSnapshot } from './salesforce';
+import { fetchDiscordSnapshot } from './discord';
+import { fetchAsanaSnapshot } from './asana';
+import { fetchLinearSnapshot } from './linear';
+import { fetchSentrySnapshot } from './sentry';
+import { fetchShopifySnapshot, ACTIONS as SHOPIFY_ACTIONS } from './shopify';
+import { fetchStripeSnapshot } from './stripe';
+import { fetchLineSnapshot } from './line';
+import { fetchStorageSnapshot } from './storage';
+import { fetchTaxAccountantSnapshot } from './tax-accountant';
+import { fetchLaborConsultantSnapshot } from './labor-consultant';
+import { fetchLawyerSnapshot } from './lawyer';
+import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
+import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
+import { fetchSmeConsultantSnapshot } from './sme-consultant';
+import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchBaseSnapshot } from './base';
+import { fetchNetseaSnapshot } from './netsea';
+import { fetchSuperDeliverySnapshot } from './super-delivery';
+import { fetchTopsellerSnapshot } from './topseller';
+import { fetchA8netSnapshot } from './a8net';
+import { fetchAiBlogkunSnapshot } from './ai-blogkun';
+import { fetchMoneyforwardSnapshot } from './moneyforward';
+import { fetchAmazonSnapshot } from './amazon';
+import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
+import { fetchSalesSnapshot } from './sales';
+import { fetchTeamSnapshot } from './team';
+import { fetchYoutubeSnapshot } from './youtube';
+import { fetchOverviewSnapshot } from './overview';
+import { fetchCoconalaSnapshot } from './coconala';
+import { fetchTiktokSnapshot } from './tiktok';
+import { fetchTaxSnapshot } from './tax';
+import { fetchFundingSnapshot } from './funding';
+import { fetchFreeeSnapshot } from './freee';
+import { fetchConnectorsSnapshot } from './connectors';
+import { fetchLinuxSnapshot } from './linux';
+import { fetchComplianceSnapshot } from './compliance';
+import { fetchObsidianSnapshot } from './obsidian';
+import { fetchDockerSnapshot } from './docker';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -59,6 +100,47 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
   quality: fetchQualitySnapshot,
+  'microsoft-365': fetchMicrosoft365Snapshot,
+  dropbox: fetchDropboxSnapshot,
+  salesforce: fetchSalesforceSnapshot,
+  discord: fetchDiscordSnapshot,
+  asana: fetchAsanaSnapshot,
+  linear: fetchLinearSnapshot,
+  sentry: fetchSentrySnapshot,
+  shopify: fetchShopifySnapshot,
+  stripe: fetchStripeSnapshot,
+  line: fetchLineSnapshot,
+  storage: fetchStorageSnapshot,
+  'tax-accountant': fetchTaxAccountantSnapshot,
+  'labor-consultant': fetchLaborConsultantSnapshot,
+  lawyer: fetchLawyerSnapshot,
+  'judicial-scrivener': fetchJudicialScrivenerSnapshot,
+  'admin-scrivener': fetchAdminScrivenerSnapshot,
+  'sme-consultant': fetchSmeConsultantSnapshot,
+  'patent-attorney': fetchPatentAttorneySnapshot,
+  base: fetchBaseSnapshot,
+  netsea: fetchNetseaSnapshot,
+  'super-delivery': fetchSuperDeliverySnapshot,
+  topseller: fetchTopsellerSnapshot,
+  a8net: fetchA8netSnapshot,
+  'ai-blogkun': fetchAiBlogkunSnapshot,
+  moneyforward: fetchMoneyforwardSnapshot,
+  amazon: fetchAmazonSnapshot,
+  'amazon-associates': fetchAmazonAssociatesSnapshot,
+  sales: fetchSalesSnapshot,
+  team: fetchTeamSnapshot,
+  youtube: fetchYoutubeSnapshot,
+  overview: fetchOverviewSnapshot,
+  coconala: fetchCoconalaSnapshot,
+  tiktok: fetchTiktokSnapshot,
+  tax: fetchTaxSnapshot,
+  funding: fetchFundingSnapshot,
+  freee: fetchFreeeSnapshot,
+  connectors: fetchConnectorsSnapshot,
+  linux: fetchLinuxSnapshot,
+  compliance: fetchComplianceSnapshot,
+  obsidian: fetchObsidianSnapshot,
+  docker: fetchDockerSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -95,6 +177,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'kpi',
   'stocks',
   'business',
+  'funding',
   'teamradar',
   'templates',
   'library',
@@ -104,6 +187,48 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'real-estate',
   'mutual-funds',
   'quality',
+  'storage',
+  // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
+  'tax-accountant',
+  'labor-consultant',
+  'lawyer',
+  'judicial-scrivener',
+  'admin-scrivener',
+  'sme-consultant',
+  'patent-attorney',
+  // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
+  // クラウド会計 (公式 API はパートナー登録 + OAuth 必須) で snapshot-only。
+  'moneyforward',
+  // Amazon セラー (SP-API) / アソシエイト: 要パートナー承認で snapshot-only。
+  'amazon',
+  'amazon-associates',
+  // 売上集計: データは renderer の record store に保存、認証不要。
+  'sales',
+  // チーム管理: メンバーは renderer の record store に保存、認証不要。
+  'team',
+  // 経営サマリー: 既存機能の集約のみ。認証不要。
+  'overview',
+  // ココナラ: 公開 API なしで snapshot-only。
+  'coconala',
+  // TikTok: 公式 API はパートナー審査 + OAuth 前提で snapshot-only。
+  'tiktok',
+  // 税務試算: 計算のみ・公式ツールへ導線。納付は手動。snapshot-only。
+  'tax',
+  // コネクター/自動化: 無料(認証不要)カタログの可視化のみ。snapshot-only。
+  'connectors',
+  // Linux システムモニター: Electron main の `os` から実値を読む。認証不要。
+  'linux',
+  // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
+  'compliance',
+  // Obsidian: ローカル Vault (Markdown) の可視化。実 Vault は fs で読む。認証不要。
+  'obsidian',
+  // Docker: ローカル Docker Engine の可視化。実 Engine は socket で読む。認証不要。
+  'docker',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -131,6 +256,8 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'demae-can': DEMAE_CAN_ACTIONS,
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
+  shopify: SHOPIFY_ACTIONS,
+  'microsoft-365': MICROSOFT365_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

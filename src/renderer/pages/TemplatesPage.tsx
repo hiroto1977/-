@@ -14,18 +14,18 @@ interface TemplateParams {
 }
 
 interface TemplateDef {
-  id: string;
-  label: string;
-  description: string;
-  width: number;
-  height: number;
-  defaults: TemplateParams;
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+  readonly width: number;
+  readonly height: number;
+  readonly defaults: TemplateParams;
 }
 
 interface TemplatesSnapshot {
-  templates: TemplateDef[];
-  fetchedAt: string;
-  isMock: boolean;
+  readonly templates: readonly TemplateDef[];
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
@@ -176,7 +176,7 @@ function svgDataUrl(svg: string): string {
 export function TemplatesPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<TemplatesSnapshot>(
     'templates',
-    SNAPSHOT.templates as unknown as TemplatesSnapshot,
+    SNAPSHOT.templates,
   );
 
   const [selectedId, setSelectedId] = useState<string>(data.templates[0]?.id ?? 'presentation-cover');
@@ -277,7 +277,7 @@ export function TemplatesPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
             gap: 8,
           }}
         >

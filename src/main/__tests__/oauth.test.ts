@@ -334,6 +334,51 @@ describe('OAUTH_CONFIGS shape', () => {
     });
   });
 
+  it('freee uses its production OAuth endpoints with read scope and a string clientId', () => {
+    // Pins the ObjectLiteral (entry → {}), StringLiteral (each URL/scope),
+    // ArrayDeclaration (scopes → []), and LogicalOperator (`?? ''` → `&& ''`) mutants.
+    const cfg = OAUTH_CONFIGS.freee;
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe('https://accounts.secure.freee.co.jp/public_api/authorize');
+    expect(cfg?.tokenUrl).toBe('https://accounts.secure.freee.co.jp/public_api/token');
+    expect(cfg?.scopes).toEqual(['read']);
+    // clientId is always a string (empty string when FREEE_OAUTH_CLIENT_ID is unset).
+    // Kills `process.env.FREEE_OAUTH_CLIENT_ID ?? ''` → `&& ''` (which would give undefined).
+    expect(typeof cfg?.clientId).toBe('string');
+    // Pins the empty-string fallback value itself (kills StringLiteral `'' → "Stryker..."`).
+    // テスト環境では FREEE_OAUTH_CLIENT_ID 未設定 → clientId は空文字。
+    expect(cfg?.clientId).toBe('');
+    // freee does not need extraAuthParams (no offline/prompt overrides).
+    expect(cfg?.extraAuthParams).toBeUndefined();
+  });
+
+  it('microsoft-365 uses Microsoft identity platform endpoints with read+write scopes and a string clientId', () => {
+    // Pins the ObjectLiteral (entry → {}), each StringLiteral in the scopes array,
+    // ArrayDeclaration (scopes → []), and LogicalOperator (`?? ''` → `&& ''`) mutants.
+    const cfg = OAUTH_CONFIGS['microsoft-365'];
+    expect(cfg).toBeDefined();
+    expect(cfg?.authorizeUrl).toBe(
+      'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+    );
+    expect(cfg?.tokenUrl).toBe('https://login.microsoftonline.com/common/oauth2/v2.0/token');
+    // 読み取り (User.Read / Mail.Read / Calendars.Read) に加え、書き込みアクション
+    // (send-mail / create-event) 用の Mail.Send / Calendars.ReadWrite を含む。
+    expect(cfg?.scopes).toEqual([
+      'User.Read',
+      'Mail.Read',
+      'Mail.Send',
+      'Calendars.Read',
+      'Calendars.ReadWrite',
+      'offline_access',
+    ]);
+    // clientId is always a string (empty string when MS365_OAUTH_CLIENT_ID is unset).
+    // Kills `process.env.MS365_OAUTH_CLIENT_ID ?? ''` → `&& ''`.
+    expect(typeof cfg?.clientId).toBe('string');
+    // Pins the empty-string fallback value itself (kills StringLiteral `'' → "Stryker..."`).
+    // テスト環境では MS365_OAUTH_CLIENT_ID 未設定 → clientId は空文字。
+    expect(cfg?.clientId).toBe('');
+  });
+
   it('does not register OAuth configs for non-Google services', () => {
     // Kills the outer OBJECT_LITERAL mutation that would replace the
     // whole OAUTH_CONFIGS with {} — by inversion the assertion checks

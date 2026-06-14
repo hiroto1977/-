@@ -3,19 +3,19 @@
 業務支援ダッシュボード。Electron デスクトップアプリ + ブラウザ単体 HTML の
 2 通りの実行形態。
 
-## サービス一覧 (22)
+## サービス一覧 (68)
 
 | カテゴリ | サービス |
 |---|---|
-| **おすすめ** (常時表示) | ホーム / 事業ダッシュボード / チームレーダー / Canva テンプレート / ライブラリ / 設定 |
-| **分析・ツール** | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks |
-| **外部 SaaS 連携** | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva |
+| **おすすめ** (常時表示, 9) | ホーム / 事業ダッシュボード / チームレーダー / テンプレート / ライブラリ / 設定 / 売上集計 / チーム管理 / 経営サマリー |
+| **分析・ツール** (14) | Skills / Security / Cloudflare / Emotions / Ollama / KPI / Stocks / Uber Eats / 出前館 / 不動産投資 / 投資信託 / 品質ダッシュボード / ストレージ最適化 / 税務試算 |
+| **外部サービス連携** (38) | GitHub / WordPress.com / Atlassian / Notion / Google Drive / Google Calendar / Gmail / Slack / Canva / Microsoft 365 / Dropbox / Salesforce / Discord / Asana / Linear / Sentry / Shopify / Stripe / LINE / 税理士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士 / BASE / NETSEA / スーパーデリバリー / TopSeller / A8.net / AIブログくん / マネーフォワード / Amazon / Amazon アソシエイト / YouTube / ココナラ / TikTok |
 
 ## 2 通りの動かし方
 
 ### 1. ブラウザだけで動かす (最速・インストール不要)
 
-`dist/standalone.html` (376 KB の単一ファイル) をブラウザでダブルクリックするだけ。
+`dist/standalone.html` (約 510 KB の単一ファイル) をブラウザでダブルクリックするだけ。
 Node.js も Electron も不要、Chrome / Edge / Safari / Firefox どこでも動きます。
 
 ```bash
@@ -41,7 +41,7 @@ npm run build          # tsc -b + vite build + electron-builder で
 
 ```bash
 npm run typecheck         # tsc -b --noEmit
-npm test                  # vitest run (1113 件)
+npm test                  # vitest run (2243 件)
 npm run lint              # ESLint v9
 npm run lint:imports      # main/preload/renderer の境界チェック
 npm run lint:forbidden    # 禁止パターン (nodeIntegration: true など) 検出
@@ -49,7 +49,7 @@ npm run lint:test-coverage # 全サービスに test + action がある確認
 npm run lint:docs         # cross-doc 一貫性
 npm run verify:arch       # docs/ARCHITECTURE.md の file:line 参照 + 6 ライブメトリクス
 npm run mutate            # Stryker mutation testing (30 modules, 100%)
-npm run smoke             # xvfb + Electron で 22 ページ smoke screenshot
+npm run smoke             # xvfb + Electron で 61 ページ smoke screenshot
 ```
 
 CI: `.github/workflows/ci.yml` が typecheck + test + build:renderer を push/PR 毎に実行。
@@ -63,15 +63,15 @@ src/main/              ← Electron main process
   main.ts                IPC handlers (11)
   secrets.ts             OS Keychain / safeStorage トークン保管
   oauth.ts               PKCE OAuth (Google)
-  clients/               22 sub-clients (各 service の REST fetcher + actions)
+  clients/               63 sub-clients (各 service の REST fetcher + actions)
 src/preload/           ← contextBridge bridge
   preload.ts             window.serviceHub を公開
 src/renderer/          ← React app
   App.tsx                サイドバー (カテゴリ 3 段折りたたみ)
-  pages/                 22 個のサービスページ
+  pages/                 63 個のサービスページ
   components/            StatusBar / DataList / ExportActions
   hooks/useServiceData   snapshot ↔ live fetch
-  data/snapshot.ts       全 22 サービスの bundled 静的データ
+  data/snapshot.ts       全 63 サービスの bundled 静的データ
 ```
 
 ### ブラウザ版の追加レイヤー
@@ -117,17 +117,18 @@ scripts/
 | ゲート | 状態 |
 |---|---|
 | typecheck (`tsc -b`) | 100% pass |
-| unit tests (`vitest`) | 1113 / 1113 ✅ |
+| unit tests (`vitest`) | 2243 / 2243 ✅ |
 | eslint | 0 errors |
-| lint:imports | 246 imports, 全境界 OK |
+| lint:imports | 693 imports, 全境界 OK |
 | lint:forbidden | 8 patterns scanned, 全 clean |
-| lint:test-coverage | 22 services, 全 test 存在 |
-| verify:arch | 170 file:line refs + 6 metrics 一致 |
+| lint:test-coverage | 63 services, 全 test 存在 |
+| verify:arch | 173 file:line refs + 6 metrics 一致 |
 | mutation (Stryker) | **100.00%** (30 modules) |
 
 ## ドキュメント
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 22 services 認証マトリクス
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 全体設計 + 認証マトリクス + ライブメトリクス
+- [docs/BUSINESS_PLATFORM.md](docs/BUSINESS_PLATFORM.md) — 事業プラットフォーム層 (プラン/売上/KPI/チーム/経営サマリー)
 - [docs/DESIGN_BLUEPRINT.md](docs/DESIGN_BLUEPRINT.md) — 設計図 (16 セクション)
 - [docs/BROWSER_REDESIGN.md](docs/BROWSER_REDESIGN.md) — ブラウザネイティブ再設計
 - [docs/PROXY_EXAMPLE.md](docs/PROXY_EXAMPLE.md) — Cloudflare Worker サンプル

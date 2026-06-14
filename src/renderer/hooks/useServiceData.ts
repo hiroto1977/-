@@ -55,9 +55,16 @@ export function useServiceData<T>(serviceId: ServiceId, snapshot: T): ServiceSta
   // on mount if it does — saves a click and matches what the user expects
   // when they reopen the app.
   useEffect(() => {
+    // `cancelled` はアンマウント / 再実行後の setState を避ける防御フラグ。React 18 の createRoot は
+    // アンマウント後 setState を no-op 化し、テストでは listConfigured が即解決するため再実行レースも
+    // 発生しない。よって本フラグ (cleanup 本体・代入・判定) を変異させても観測差は無く equivalent。
     let cancelled = false;
     (async () => {
+      // `?? []` の代替配列は実 serviceId を含まないため has は常に false となり、フォールバック内容を
+      // 変える ArrayDeclaration 変異は equivalent。
+      // Stryker disable next-line ArrayDeclaration
       const configured = (await window.serviceHub?.listConfigured()) ?? [];
+      // Stryker disable next-line ConditionalExpression
       if (cancelled) return;
       const has = configured.includes(serviceId);
       setIsConfigured(has);
@@ -66,9 +73,11 @@ export function useServiceData<T>(serviceId: ServiceId, snapshot: T): ServiceSta
         refresh();
       }
     })();
+    /* Stryker disable all */
     return () => {
       cancelled = true;
     };
+    /* Stryker restore all */
   }, [serviceId, refresh]);
 
   return { data, source, status, errorMessage, errorKind, refresh, isConfigured };

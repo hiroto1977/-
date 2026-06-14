@@ -1,0 +1,2701 @@
+// 補助金・助成金・給付金 確証済み知識ベース
+//
+// 法務・税務・労務の VERIFIED_COMPLIANCE と同じ確証ディシプリンで運用する：
+//   - 独立 2 出典以上、うち公的（.go.jp / 公式実施機関）1 件以上で確証できたもののみ採録。
+//   - 補助金・助成金は「金額・補助率・締切」が公募回／年度ごとに変動するため、
+//     これらは固定値として断定せず、各エントリの application／statement に
+//     「最新の公募要領・支給要領で要確認」と明記する（古い締切情報は有害なため）。
+//   - 全国約 1,700 市町村の網羅は精度維持の観点から行わず、制度レベルの正確な情報＋
+//     自治体横断の公式検索ポータル（SUBSIDY_PORTALS）への導線で補完する。
+//
+// ⚠ 本データは一般的な制度情報であり、申請可否・金額の保証ではない。
+//    申請にあたっては必ず最新の公募要領／支給要領および専門家の確認を要する。
+
+export type SubsidyLevel = 'national' | 'prefecture' | 'municipality';
+export type SubsidyDomain = 'employment' | 'business' | 'welfare' | 'tax-incentive';
+export type SubsidySourceType = 'government' | 'municipality' | 'operator' | 'media';
+
+export interface SubsidySource {
+  url: string;
+  type: SubsidySourceType;
+  label: string;
+}
+
+export interface VerifiedSubsidy {
+  id: string;
+  level: SubsidyLevel;
+  domain: SubsidyDomain;
+  name: string;
+  authority: string; // 所管 / 実施機関
+  statement: string; // 目的・対象・要件の概要（金額/率/締切は要確認と明記）
+  application: string; // 申請時期・方法の概要
+  asOf: string;
+  sources: SubsidySource[];
+}
+
+// Stryker disable all : 静的な確証済みデータ（ロジックなし）
+export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
+  {
+    id: 'subsidy-career-up',
+    level: 'national',
+    domain: 'employment',
+    name: 'キャリアアップ助成金',
+    authority: '厚生労働省（実施機関: 都道府県労働局・ハローワーク）',
+    statement:
+      '有期雇用労働者・短時間労働者・派遣労働者など非正規雇用労働者の企業内でのキャリアアップ（正社員化や処遇改善）を促進する取組を' +
+      '実施した事業主を支援する厚生労働省所管の助成金。正社員化コースをはじめ複数のコースがあり、対象範囲・支給額・要件はコース及び年度ごとに' +
+      '変動するため、必ず該当年度の支給要領で要確認。',
+    application:
+      '各コースの取組実施日の前日までに「キャリアアップ計画」を作成し管轄の都道府県労働局・ハローワークへ提出。取組を行い、所定期間経過後に' +
+      '支給申請（窓口持参・郵送・電子申請）。申請時期・締切・様式は年度の支給要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/jigyounushi/career.html', type: 'government', label: '厚生労働省 キャリアアップ助成金' },
+      { url: 'https://www.mhlw.go.jp/content/11910500/001512366.pdf', type: 'government', label: '厚生労働省 キャリアアップ助成金のご案内' },
+      { url: 'https://hojyokin-portal.jp/columns/career-up_summary', type: 'media', label: 'キャリアアップ助成金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-work-improvement',
+    level: 'national',
+    domain: 'employment',
+    name: '業務改善助成金',
+    authority: '厚生労働省（窓口: 各都道府県労働局／業務改善助成金コールセンター）',
+    statement:
+      '事業場内最低賃金を一定額以上引き上げ、あわせて生産性向上のための設備投資等を行った中小企業・小規模事業者に対しその費用の一部を' +
+      '助成する制度。対象は事業場内最低賃金と地域別最低賃金の差が一定額以内であるなどの要件を満たす者。助成上限額・助成率・引上げ額区分は' +
+      '年度ごとに変動するため、必ず当該年度の交付要綱で要確認。',
+    application:
+      '「賃金引上げ・業務改善計画の作成→交付申請（事業実施前）→交付決定→事業実施→支給申請」の順。交付決定前の発注・契約・支払いは助成対象外。' +
+      '窓口は各都道府県労働局（電子申請jGrantsも可）。受付期間は年度ごとに設定。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/zigyonushi/shienjigyou/03.html', type: 'government', label: '厚生労働省 業務改善助成金' },
+      { url: 'https://saiteichingin.mhlw.go.jp/chusyo/index.html', type: 'government', label: '厚生労働省 最低賃金ポータル 業務改善助成金' },
+      { url: 'https://www.mhlw.go.jp/content/11200000/001471309.pdf', type: 'government', label: '厚生労働省 業務改善助成金のご案内' },
+    ],
+  },
+  {
+    id: 'subsidy-human-resource-development',
+    level: 'national',
+    domain: 'employment',
+    name: '人材開発支援助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '事業主が雇用する労働者に職務に必要な知識・技能を習得させる職業訓練等を計画に沿って実施した場合に、訓練経費及び訓練期間中の賃金の' +
+      '一部を助成する制度。複数のコースがあり、対象訓練・助成率・上限額はコース及び年度ごとに異なるため、必ず当該年度の支給要領で要確認。',
+    application:
+      '訓練開始前（年度・コースにより原則1か月前等まで）に職業訓練実施計画届等を管轄の都道府県労働局へ提出し、訓練実施後、原則として' +
+      '訓練終了日の翌日から一定期間内に支給申請。様式・提出期限は年度の支給要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000159233.html', type: 'government', label: '厚生労働省 人材開発支援助成金' },
+      { url: 'https://jsite.mhlw.go.jp/niigata-roudoukyoku/content/contents/2-1_keikakutodokejinzaiikusei.docx', type: 'government', label: '新潟労働局 職業訓練実施計画届 様式' },
+      { url: 'https://www.manpowergroup.jp/client/manpowerclip/hrtraining/subsidy3.html', type: 'media', label: '人材開発支援助成金 コース・申請の流れ 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-work-life-balance',
+    level: 'national',
+    domain: 'employment',
+    name: '両立支援等助成金（子ども・子育て両立支援等助成金）',
+    authority: '厚生労働省（窓口: 各都道府県労働局 雇用環境・均等部／室）',
+    statement:
+      '職業生活と家庭生活の両立支援に取り組む事業主を助成する制度で、育児・介護等を行う労働者が働き続けられる雇用環境整備を行った中小企業' +
+      '事業主等を主な対象とする。出生時両立支援コース・育児休業等支援コース・介護離職防止支援コース等で構成されるが、コース構成・支給要件・' +
+      '支給額は毎年度の支給要領で変動するため、必ず該当年度の支給要領で要確認。',
+    application:
+      '取組実施・要件充足後に、雇用保険適用事業所の所在地を管轄する都道府県労働局の雇用環境・均等部（室）へ支給申請（電子申請も可）。' +
+      '申請時期・必要書類・締切はコース及び年度により異なるため要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kodomo/shokuba_kosodate/ryouritsu01/index.html', type: 'government', label: '厚生労働省 子ども・子育て両立支援等助成金' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/newpage_00331.html', type: 'government', label: '東京労働局 両立支援等助成金 支給申請の案内' },
+      { url: 'https://hrzine.jp/article/detail/6540', type: 'media', label: '両立支援等助成金 各コースの要点 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-jizokuka',
+    level: 'national',
+    domain: 'business',
+    name: '小規模事業者持続化補助金',
+    authority: '中小企業庁（実施: 日本商工会議所／全国商工会連合会）',
+    statement:
+      '小規模事業者が商工会議所・商工会の助言を受けながら自ら経営計画を策定し、その計画に基づいて行う販路開拓・生産性向上の取組経費の' +
+      '一部を補助する中小企業庁所管の制度。申請にあたり経営計画を作成し商工会議所・商工会の確認を受ける必要がある。補助上限額・補助率・対象' +
+      '経費・公募締切は公募回・枠ごとに異なるため、必ず最新の公募要領で要確認。',
+    application:
+      '公募回ごとの締切制で、各回の公募要領で受付開始日・締切日が定められる。申請は原則として電子申請システム「jGrants（要 gBizIDプライム）」' +
+      'のほか郵送も可。商工会議所・商工会の確認を受けた経営計画書等を添付して提出。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/shokibo/jizoku/', type: 'government', label: '中小企業庁 小規模事業者持続化補助金' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/jizokuka/', type: 'government', label: 'ミラサポplus 小規模事業者持続化補助金' },
+      { url: 'https://www.jizokukanb.com/', type: 'operator', label: '全国商工会連合会 持続化補助金事務局' },
+    ],
+  },
+  {
+    id: 'subsidy-it-introduction',
+    level: 'national',
+    domain: 'business',
+    name: 'IT導入補助金（2026年度より「デジタル化・AI導入補助金」に名称変更）',
+    authority: '経済産業省・中小企業庁（実施: 中小企業基盤整備機構 事務局）',
+    statement:
+      '中小企業・小規模事業者等が自社の経営課題に合ったITツール（ソフトウェア・サービス等）の導入経費の一部の補助を受け、業務効率化・DX・' +
+      '生産性向上を図ることを目的とした国の補助制度。2026年度より名称が「デジタル化・AI導入補助金」に変更された。補助上限額・補助率・申請枠・' +
+      '各回の締切は年度及び公募回ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      'あらかじめ事務局に登録された「IT導入支援事業者」とパートナーを組み、登録済みのITツールから選定して申請。gBizIDプライムの取得と' +
+      '「SECURITY ACTION」自己宣言等が前提で、申請マイページを通じた電子申請で行う。公募回ごとの締切制のため最新の事業スケジュールで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://it-shien.smrj.go.jp/', type: 'government', label: 'デジタル化・AI導入補助金（旧IT導入補助金）公式事務局' },
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260310001.html', type: 'government', label: '中小企業庁 デジタル化・AI導入補助金2026 公募要領公開' },
+      { url: 'https://it-shien.smrj.go.jp/pdf/it2026_koubo_tsujyo.pdf', type: 'government', label: 'デジタル化・AI導入補助金2026 公募要領（通常枠）' },
+    ],
+  },
+  {
+    id: 'subsidy-monodukuri',
+    level: 'national',
+    domain: 'business',
+    name: 'ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）',
+    authority: '中小企業庁・経済産業省（実施: 全国中小企業団体中央会 ものづくり補助金事務局）',
+    statement:
+      '中小企業・小規模事業者等が、生産性向上に資する革新的な新製品・新サービスの開発や、生産プロセス・サービス提供方法の改善等のために' +
+      '行う設備投資等を支援する国の補助金。製造業に限らず商業・サービス業も対象で、付加価値額の向上等を含む事業計画の策定が求められる。' +
+      '補助上限額・補助率・申請枠・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      'gBizIDプライムを用いた電子申請。公募回ごとに公募期間・締切が設定される締切制で、事前のgBizID取得と事業計画の作成が必要。最新の公募回・締切は公式ホームページ／公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2026/260206001.html', type: 'government', label: '中小企業庁 ものづくり補助金 公募要領公開' },
+      { url: 'https://portal.monodukuri-hojo.jp/about.html', type: 'operator', label: 'ものづくり補助金 公式事務局（全国中小企業団体中央会）' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/manufacturing/', type: 'government', label: 'ミラサポplus ものづくり補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-business-restructuring',
+    level: 'national',
+    domain: 'business',
+    name: '事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）',
+    authority: '中小企業庁・経済産業省（実施: 事業再構築補助金事務局／後継は中小企業基盤整備機構）',
+    statement:
+      '事業再構築補助金は、ポストコロナ・経済社会の変化に対応するための中小企業等の事業再構築（新市場進出・事業転換・業種転換・事業再編等）を' +
+      '支援する制度。新規公募は第13回（2025年3月締切）で終了し、後継として「中小企業新事業進出補助金」が実施されている。補助上限・補助率・締切は' +
+      '公募回ごとに変動するため、最新の公募状況・要件は必ず公式サイトで要確認。',
+    application:
+      'gBizIDプライムを用いた電子申請（jGrants等）が基本。認定経営革新等支援機関と連携して事業計画を策定し、公募回ごとに設定された締切までに申請する締切制。後継の新事業進出補助金も同様の枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jigyou-saikouchiku.go.jp/news.html', type: 'government', label: '事業再構築補助金 公式事務局' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/shinjigyou/', type: 'government', label: 'ミラサポplus 中小企業新事業進出補助金（後継）' },
+      { url: 'https://shinjigyou-shinshutsu.smrj.go.jp/', type: 'government', label: '中小機構 中小企業新事業進出補助金 公式' },
+    ],
+  },
+  {
+    id: 'subsidy-specific-jobseeker',
+    level: 'national',
+    domain: 'employment',
+    name: '特定求職者雇用開発助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '高年齢者・障害者・母子家庭の母など、就職が特に困難な者をハローワーク等の紹介により継続して雇用する労働者として雇い入れる事業主に対し、' +
+      '賃金相当額の一部を一定期間助成する制度。特定就職困難者コースをはじめ複数のコースに分かれ、対象者・支給額・助成期間はコース及び年度の支給要領により変動するため要確認。',
+    application:
+      '対象労働者の雇入れ後、原則6か月単位の各支給対象期ごとに、管轄の都道府県労働局・ハローワークへ支給申請（各支給対象期末日の翌日から2か月以内）。対象者はハローワーク等の紹介による雇入れが前提。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/tokutei_konnan.html', type: 'government', label: '厚生労働省 特定就職困難者コース' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index_00058.html', type: 'government', label: '厚生労働省 特定求職者雇用開発助成金' },
+      { url: 'https://biz.moneyforward.com/payroll/basic/67167/', type: 'media', label: '特定求職者雇用開発助成金 各コース・申請 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-trial-employment',
+    level: 'national',
+    domain: 'employment',
+    name: 'トライアル雇用助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '職業経験の不足等により安定的な就職が困難な求職者を、ハローワーク等の紹介により原則3か月間試行雇用（トライアル雇用）する事業主に対して' +
+      '助成し、常用（無期）雇用への移行を促進する制度。一般トライアルコースのほか障害者トライアルコース等がある。支給額・対象期間・要件は年度ごとに変動するため要確認。',
+    application:
+      'ハローワークの紹介でトライアル雇用を開始後、原則として開始日から2週間以内に「トライアル雇用実施計画書」を管轄のハローワーク／労働局へ提出。' +
+      'トライアル雇用期間終了後、終了日の翌日から2か月以内に結果報告書兼支給申請書を提出。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/newpage_16286.html', type: 'government', label: '厚生労働省 トライアル雇用助成金（一般トライアルコース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/trial_koyou_dl.html', type: 'government', label: '厚生労働省 トライアル雇用助成金 申請様式' },
+      { url: 'https://hojyokin-portal.jp/columns/trial', type: 'media', label: 'トライアル雇用助成金 各コース 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-elderly-employment-promotion',
+    level: 'national',
+    domain: 'employment',
+    name: '65歳超雇用推進助成金',
+    authority: '厚生労働省（実施: 高齢・障害・求職者雇用支援機構＝JEED）',
+    statement:
+      '高年齢者が年齢に関わりなく働ける生涯現役社会の実現に向け、65歳以上への定年引上げ・定年の定めの廃止・継続雇用制度の導入や、高年齢者の' +
+      '雇用管理制度の整備等を行う事業主を支援する助成金。「65歳超継続雇用促進コース」等の複数コースで構成され、支給額・要件・対象コースは年度ごとに変動するため要確認。',
+    application:
+      '申請窓口は主たる雇用保険適用事業所の所在地を管轄するJEED都道府県支部。原則として措置の実施日が属する月の翌月から起算して所定期間内に支給申請。様式・手引きはJEED公式サイトから取得（e-Gov電子申請にも対応）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/elderly/subsidy/index.html', type: 'operator', label: 'JEED 65歳超雇用推進助成金' },
+      { url: 'https://www.jeed.go.jp/elderly/subsidy/subsidy_keizoku.html', type: 'operator', label: 'JEED 65歳超継続雇用促進コース' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_54824.html', type: 'government', label: '厚生労働省 65歳超雇用推進助成金' },
+    ],
+  },
+  {
+    id: 'subsidy-tokyo-startup',
+    level: 'prefecture',
+    domain: 'business',
+    name: '創業助成事業（創業助成金）（東京都）',
+    authority: '東京都・公益財団法人東京都中小企業振興公社（TOKYO創業ステーション）',
+    statement:
+      '都内で創業を予定する個人又は創業して一定期間内（おおむね5年未満）の中小企業者等に対し、賃借料・従業員人件費・専門家指導費・広告費・' +
+      '市場調査費など創業初期に必要な経費の一部を助成する制度（都道府県レベルの補助金の代表例）。助成上限・助成率・対象経費の細目・申請受付期間は年度ごとに変動するため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに申請受付期間を設定する公募制（通常は年複数回募集）。TOKYO創業ステーションでの事業計画策定支援の利用など所定の申請要件を満たす者が対象で、申請は電子申請（jGrants、GビズID必要）で行う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tokyo-sogyo-net.metro.tokyo.lg.jp/finance/sogyo_josei.html', type: 'municipality', label: '東京都創業NET 創業助成金' },
+      { url: 'https://www.metro.tokyo.lg.jp/information/press/2026/02/2026021609', type: 'municipality', label: '東京都 令和8年度 創業助成事業 募集（報道発表）' },
+      { url: 'https://startup-station.jp/m2/services/sogyokassei/', type: 'operator', label: 'TOKYO創業ステーション 創業助成事業' },
+    ],
+  },
+  {
+    id: 'subsidy-jinzai-kakuho',
+    level: 'national',
+    domain: 'employment',
+    name: '人材確保等支援助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '魅力ある職場づくりのため、雇用管理制度（賃金制度・諸手当・健康づくり等）の導入や雇用環境整備、生産性向上等に取り組み、離職率の低下を' +
+      '通じて人材の確保・定着を図る事業主・事業協同組合等を支援する助成金。雇用管理制度・雇用環境整備助成コース、中小企業団体助成コース、' +
+      '建設分野の各コース、外国人労働者就労環境整備助成コース、テレワークコース等で構成され、コース構成・支給額・要件は年度ごとに変動するため要確認。',
+    application:
+      '雇用保険適用事業所の事業主が対象。多くのコースは事前に計画の認定・届出を行い、制度導入・運用後に管轄の都道府県労働局（コースによりハローワーク）へ支給申請。申請時期・必要書類はコース及び年度の支給要領による。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000199292_00005.html', type: 'government', label: '厚生労働省 人材確保等支援助成金' },
+      { url: 'https://www.mhlw.go.jp/content/11600000/000465959.pdf', type: 'government', label: '厚生労働省 人材確保等支援助成金のご案内' },
+      { url: 'https://hojyokin-portal.jp/columns/jinzaikakuho_jyosei_summary', type: 'media', label: '人材確保等支援助成金 各コース 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-jobseeker-training-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '求職者支援制度（職業訓練受講給付金）',
+    authority: '厚生労働省（窓口: ハローワーク／都道府県労働局）',
+    statement:
+      '雇用保険を受給できない求職者（受給終了者・受給資格要件を満たさなかった者・自営業を廃業した者等＝特定求職者）が、ハローワークの支援指示を' +
+      '受けて無料の求職者支援訓練・公共職業訓練を受講する制度。本人収入・世帯収入・世帯金融資産・出席状況等の一定要件をすべて満たす場合に、' +
+      '職業訓練受講給付金（職業訓練受講手当・通所手当等）が支給され、雇用保険と生活保護の間の「第2のセーフティネット」として早期就職を支援する（支給額・要件は最新の支給要領で要確認）。',
+    application:
+      '住所地を管轄するハローワークで求職申込みのうえ職業相談を受け、訓練の必要性が認められると就職支援計画の交付・支援指示を受けて訓練に申込む。給付金は訓練の各支給単位期間ごとにハローワークで支給申請し、収入・資産・全日出席等の要件審査を経て支給。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyushokusha_shien/index.html', type: 'government', label: '厚生労働省 求職者支援制度のご案内' },
+      { url: 'https://www.mhlw.go.jp/bunya/nouryoku/training/dl/training01m.pdf', type: 'government', label: '厚生労働省 求職者支援訓練 リーフレット' },
+      { url: 'https://www.jtuc-rengo.or.jp/soudan/qa/data/QA_35.html', type: 'media', label: '連合 求職者支援制度 Q&A' },
+    ],
+  },
+  {
+    id: 'subsidy-housing-security',
+    level: 'national',
+    domain: 'welfare',
+    name: '住居確保給付金（生活困窮者自立支援制度）',
+    authority: '厚生労働省（実施主体: 福祉事務所設置自治体／窓口: 自立相談支援機関）',
+    statement:
+      '離職・廃業（原則2年以内）や、本人の責によらない就業機会・収入の減少により経済的に困窮し住居を失うおそれがある人に対し、求職活動等を' +
+      '条件として、原則3か月（延長により最長9か月）家賃相当額を自治体が家主等へ直接支給し、住居を確保しながら自立を支援する制度（生活困窮者自立支援法）。' +
+      '支給上限額は地域・世帯人数により異なり、収入・資産要件や延長可否も含め、お住まいの自治体・最新年度の要件で要確認。',
+    application:
+      '申請・相談窓口は市区町村等の「自立相談支援機関」。住居を失うおそれが生じた時点で随時申請でき、申請時には自立相談支援事業の利用申込みも併せて行う。支給期間中はハローワーク登録や定期的な求職活動が要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corona-support.mhlw.go.jp/jukyokakuhokyufukin/index.html', type: 'government', label: '厚生労働省 住居確保給付金' },
+      { url: 'https://www.mhlw.go.jp/stf/wp/hakusyo/kousei/20/backdata/2-1-4-6.html', type: 'government', label: '厚生労働省 住居確保給付金の概要' },
+      { url: 'https://www.city.osaka.lg.jp/fukushi/page/0000501083.html', type: 'municipality', label: '大阪市 住居確保給付金（家賃補助）' },
+    ],
+  },
+  {
+    id: 'subsidy-business-succession',
+    level: 'national',
+    domain: 'business',
+    name: '事業承継・引継ぎ補助金（現行公募は「事業承継・M&A補助金」として実施）',
+    authority: '中小企業庁・経済産業省（実施: 公募事務局・中小機構等）',
+    statement:
+      '事業承継やM&A（経営資源の引継ぎ）を契機とした中小企業者等の新たな取組や、承継・M&Aに係る専門家活用費用・廃業費用等を支援する国の補助金。' +
+      '経営革新／専門家活用／廃業・再チャレンジ等の複数の枠（近年は事業承継促進枠・専門家活用枠・PMI推進枠・廃業再チャレンジ枠等）で構成され、' +
+      '補助上限額・補助率・支援枠の構成・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '公募回ごとの締切制で、原則として電子申請システム「jGrants（要 gBizIDプライム）」から申請する。公募期間・締切は公募回ごとに中小企業庁・公式事務局が公表。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo.html', type: 'government', label: '中小企業庁 補助金公募情報' },
+      { url: 'https://jsh.go.jp/', type: 'government', label: '事業承継・M&A補助金 公式事務局' },
+      { url: 'https://seisansei.smrj.go.jp/subsidy_guide/subsidy_info/succession_subsidy.html', type: 'government', label: '中小機構 事業承継・M&A補助金のご案内' },
+    ],
+  },
+  {
+    id: 'subsidy-labor-saving-investment',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業省力化投資補助金',
+    authority: '経済産業省・中小企業庁（実施: 中小企業基盤整備機構 事務局）',
+    statement:
+      '人手不足に悩む中小企業等が、IoT・ロボット等の省力化に資する製品の導入やオーダーメイドの設備投資等を行うことで、付加価値額の向上・' +
+      '生産性向上・賃上げにつなげる取組を支援する補助金。申請類型として登録製品カタログから選ぶ「カタログ注文型」と、個別の現場に合わせる「一般型」がある。' +
+      '補助上限額・補助率・対象枠・締切は公募回／年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '公募回ごとの締切制。GビズIDプライムを用いた電子申請（申請ポータル）で行い、一般型では事業計画書等の提出が必要。受付期間・スケジュールは公募回ごとに設定。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://shoryokuka.smrj.go.jp/about/', type: 'government', label: '中小企業省力化投資補助金 公式事務局（中小機構）' },
+      { url: 'https://www.chusho.meti.go.jp/koukai/hojyokin/kobo/2025/250919001.html', type: 'government', label: '中小企業庁 省力化投資補助事業（一般型）公募要領' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/shoryokuka/', type: 'government', label: 'ミラサポplus 省力化投資補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-kosodate-green-housing',
+    level: 'national',
+    domain: 'welfare',
+    name: '子育てグリーン住宅支援事業',
+    authority: '国土交通省（住宅省エネキャンペーンの一事業。経産省・環境省と連携）',
+    statement:
+      'エネルギー価格高騰の影響を受けやすい子育て世帯・若者夫婦世帯等による高い省エネ性能の新築住宅取得や、住宅の省エネ改修（断熱・エコ設備等）を' +
+      '支援し、2050年カーボンニュートラルの実現を図る国の補助制度。GX志向型住宅・長期優良住宅・ZEH水準住宅の新築や既存住宅の省エネリフォームが対象とされるが、' +
+      '補助額・対象要件・実施期間は年度ごとに変動し予算上限到達で締め切られるため、最新の公式情報で要確認。',
+    application:
+      '申請は原則として事務局に登録された「登録事業者（グリーン住宅支援事業者＝住宅事業者・施工業者等）」が補助対象者に代わって交付申請・受給・還元を代行する仕組みで、一般消費者が直接申請することはできない。受付は予算上限に達した時点で終了する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kosodate-green.mlit.go.jp/about/', type: 'government', label: '子育てグリーン住宅支援事業 公式（国土交通省）' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk4_000290.html', type: 'government', label: '国土交通省 子育てグリーン住宅支援事業について' },
+      { url: 'https://www.lixil.co.jp/shoenehojokin/2025/kosodategreen/', type: 'media', label: '住宅省エネキャンペーン 子育てグリーン住宅支援事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-tokyo-equipment',
+    level: 'prefecture',
+    domain: 'business',
+    name: '躍進的な事業推進のための設備投資支援事業（東京都）',
+    authority: '東京都・公益財団法人東京都中小企業振興公社',
+    statement:
+      '都内の中小企業者等が生産性向上や持続的発展に向けて行う機械設備等の導入を支援する東京都の補助事業（都道府県レベルの補助金の代表例）。' +
+      '一般的な生産性向上等の区分のほか、DX・GX（脱炭素）等のテーマに応じた区分が設けられることがある。補助上限額・補助率・対象設備・申請受付期間は' +
+      '年度・回ごとに変動し予算上限で締め切られるため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに申請受付期間を設定する公募制（年複数回の場合あり）。東京都中小企業振興公社の電子申請システム等を通じて申請し、交付決定後に発注・契約を行う必要がある（交付決定前の発注は対象外）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tokyo-kosha.or.jp/support/josei/jigyo/yakushinsetsubi.html', type: 'operator', label: '東京都中小企業振興公社 躍進的な事業推進のための設備投資支援事業' },
+      { url: 'https://www.sangyo-rodo.metro.tokyo.lg.jp/chusho/shoko/keiei/setubi/', type: 'municipality', label: '東京都産業労働局 設備投資支援' },
+      { url: 'https://hojyokin-portal.jp/columns/tokyo_yakushinteki', type: 'media', label: '東京都 設備投資支援事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-osaka-startup',
+    level: 'prefecture',
+    domain: 'business',
+    name: '大阪起業家グローイングアップ補助金（大阪府）',
+    authority: '大阪府（実施: 大阪起業家グローイングアップ事業 事務局）',
+    statement:
+      '大阪府内で創業して間もない、又は創業を予定する起業家の事業立ち上げ・成長を支援する大阪府の補助金（都道府県レベルの補助金の代表例）。' +
+      '創業期の経費等を対象とし、ビジネスプランコンテストの受賞等を要件とする区分が設けられることがある。補助上限額・補助率・対象経費・募集期間は' +
+      '年度ごとに変動するため、必ず最新の募集要項で要確認。',
+    application:
+      '年度ごとに募集期間を設定する公募制。大阪府・事務局の募集案内に従い申請し、区分により事業計画書やコンテスト参加等が要件となる。受付期間・要件は各年度の募集要項で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.osaka.lg.jp/o120030/keieishien/growingup/index.html', type: 'municipality', label: '大阪府 大阪起業家グローイングアップ補助金' },
+      { url: 'https://www.startupport-osaka.com/', type: 'operator', label: '大阪産業局 スタートアップ支援' },
+      { url: 'https://hojyokin-portal.jp/columns/osaka_kigyoka', type: 'media', label: '大阪起業家グローイングアップ補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-energy-saving-sii',
+    level: 'national',
+    domain: 'business',
+    name: '省エネ補助金（省エネルギー投資促進・需要構造転換支援事業等）',
+    authority: '経済産業省・資源エネルギー庁（実施: 一般社団法人環境共創イニシアチブ＝SII 等）',
+    statement:
+      '工場・事業場等における省エネルギー性能の高い設備への更新（生産設備・空調・照明・ボイラー等）や、エネルギー需要の構造転換に資する投資を' +
+      '行う事業者を支援する経済産業省の補助金。事業区分（工場・事業場型、設備単位型等）ごとに対象設備・要件が定められる。補助上限額・補助率・対象設備・' +
+      '公募期間は年度・事業ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '事業ごとに公募期間が設定される公募制で、原則として補助事業者（SII等）の指定する方法による電子申請。交付決定後に発注・契約・工事を行う必要がある（交付決定前の着手は対象外）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sii.or.jp/', type: 'operator', label: '環境共創イニシアチブ（SII）省エネ補助金事務局' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/', type: 'government', label: '資源エネルギー庁 省エネ設備導入支援' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/', type: 'government', label: '資源エネルギー庁 省エネルギー政策' },
+    ],
+  },
+  {
+    id: 'subsidy-gotech',
+    level: 'national',
+    domain: 'business',
+    name: 'Go-Tech事業（成長型中小企業等研究開発支援事業）',
+    authority: '経済産業省・中小企業庁（関東経済産業局等の経済産業局が実施）',
+    statement:
+      '中小企業が大学・公設試験研究機関等と連携して行う、ものづくり基盤技術・サービスの高度化等に向けた research and development（研究開発）・試作品開発・' +
+      '販路開拓の取組を、複数年度にわたり支援する国の補助事業。事業管理機関・研究等実施機関等の体制を組んで申請する必要がある。補助上限額・補助率・補助対象期間・' +
+      '公募期間は年度ごとに変動するため、必ず最新の公募要領で要確認。',
+    application:
+      '年度ごとに公募期間が設定される公募制で、所管の経済産業局へ申請（電子申請システムを利用）。大学・公設試等との連携体制や事業計画の策定が要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/sapoin/index.html', type: 'government', label: '中小企業庁 Go-Tech事業（成長型中小企業等研究開発支援事業）' },
+      { url: 'https://www.kanto.meti.go.jp/seisaku/sapoin/index.html', type: 'government', label: '関東経済産業局 Go-Tech事業' },
+      { url: 'https://mirasapo-plus.go.jp/subsidy/go-tech/', type: 'government', label: 'ミラサポplus Go-Tech事業' },
+    ],
+  },
+  {
+    id: 'subsidy-disabled-facility',
+    level: 'national',
+    domain: 'employment',
+    name: '障害者作業施設設置等助成金（障害者雇用納付金関係助成金）',
+    authority: '厚生労働省（実施: 高齢・障害・求職者雇用支援機構＝JEED）',
+    statement:
+      '障害者を雇用する事業主が、その障害者が作業を容易に行えるよう配慮された作業施設・作業設備の設置・整備等を行う場合に、その費用の一部を' +
+      '助成する障害者雇用納付金制度に基づく助成金。作業施設設置等助成金のほか、職場介助者の配置・委嘱助成金、重度障害者等通勤対策助成金など複数の' +
+      '納付金関係助成金があり、対象・助成率・上限額・受付は年度の支給要領で変動するため要確認。',
+    application:
+      '申請窓口はJEEDの都道府県支部（高齢・障害者業務課等）。原則として支給対象となる措置の計画認定を受けた上で実施し、その後に支給請求を行う方式で、受付期間・様式は年度の業務規程・支給要領による。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/disability/employer/subsidy/index.html', type: 'operator', label: 'JEED 障害者雇用納付金制度に基づく助成金' },
+      { url: 'https://www.jeed.go.jp/disability/employer/subsidy/sa01.html', type: 'operator', label: 'JEED 障害者作業施設設置等助成金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/shougaishakoyou/03c.html', type: 'government', label: '厚生労働省 障害者雇用納付金制度に基づく助成金' },
+    ],
+  },
+  {
+    id: 'subsidy-occupational-health',
+    level: 'national',
+    domain: 'employment',
+    name: '産業保健関係助成金（団体経由産業保健活動推進助成金 等）',
+    authority: '独立行政法人労働者健康安全機構（JOHAS）／所管: 厚生労働省（労災保険 社会復帰促進等事業）',
+    statement:
+      '労働者の健康確保のため、事業者等が行う産業保健活動（産業医・保健師等による活動、ストレスチェック後の措置、治療と仕事の両立支援等）の費用の' +
+      '一部を労働者健康安全機構が助成する制度群。かつての「ストレスチェック助成金」「小規模事業場産業医活動助成金」「治療と仕事の両立支援助成金」等の個別助成金は' +
+      '令和4年度をもって順次廃止され、令和5年度以降は事業主団体等を経由して中小企業を支援する「団体経由産業保健活動推進助成金」に再編された。対象・助成率・上限・受付期間は年度で変動し予算上限で締切となるため要確認。',
+    application:
+      '申請窓口は独立行政法人労働者健康安全機構（産業保健業務指導課）。現行の団体経由産業保健活動推進助成金は事業主団体等を経由して実施計画提出・利用申込・支給申請を行う方式で、年度ごとの受付期間が設定され予算枠到達で締め切られる。最新の年度版の手引で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.johas.go.jp/sangyouhoken/tabid/1251/Default.aspx', type: 'government', label: '労働者健康安全機構 産業保健関係助成金' },
+      { url: 'https://www.mhlw.go.jp/content/001492559.pdf', type: 'government', label: '厚生労働省 団体経由産業保健活動推進助成金 案内' },
+      { url: 'https://www.johas.go.jp/Portals/0/data0/sanpo/sanpojoseikin/R7/org_josei_tebiki_R7.pdf', type: 'government', label: '労働者健康安全機構 団体経由産業保健活動推進助成金 手引' },
+    ],
+  },
+  {
+    id: 'subsidy-education-training-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '教育訓練給付金（雇用保険）',
+    authority: '厚生労働省（窓口: ハローワーク）',
+    statement:
+      '働く人の主体的な能力開発・キャリア形成を支援するため、雇用保険の被保険者又は被保険者であった者が、厚生労働大臣の指定する教育訓練を' +
+      '受講・修了した場合に、支払った受講費用の一定割合を支給する雇用保険の給付。「一般教育訓練給付金」「特定一般教育訓練給付金」「専門実践教育' +
+      '訓練給付金」の3区分があり、給付率・上限・支給対象訓練・支給要件期間は区分及び改正により異なるため、最新の制度内容で要確認。',
+    application:
+      '受講開始前に一定の区分では訓練前キャリアコンサルティング・受給資格確認が必要。受講修了後（専門実践は受講中も）、原則として受講修了日の翌日から' +
+      '1か月以内に住所地を管轄するハローワークへ支給申請。区分・必要書類はハローワークの案内で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/d01-1.html', type: 'government', label: '厚生労働省 教育訓練給付制度' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_education.html', type: 'government', label: 'ハローワーク 教育訓練給付' },
+      { url: 'https://www.kyufu.mhlw.go.jp/kyufuportal/', type: 'government', label: '厚生労働省 教育訓練給付制度 検索システム' },
+    ],
+  },
+  {
+    id: 'subsidy-iju-shienkin',
+    level: 'prefecture',
+    domain: 'welfare',
+    name: '移住支援金・起業支援金（地方創生）',
+    authority: '内閣官房・内閣府（デジタル田園都市国家構想交付金）／実施: 都道府県・市町村',
+    statement:
+      '東京圏（東京・埼玉・千葉・神奈川）からの地方への移住・就業や起業を促進するため、東京23区在住又は通勤していた者等が一定要件を満たして' +
+      '地方公共団体が指定する地域へ移住し就業・起業した場合に、都道府県・市町村が移住支援金（単身・世帯で異なる）や起業支援金を支給する制度。' +
+      '支給額（子育て世帯加算等）・対象地域・要件は実施する都道府県・市町村及び年度ごとに異なるため、移住先自治体の最新情報で要確認。',
+    application:
+      '移住先の都道府県・市町村が実施主体で、移住・就業（マッチングサイト掲載求人への就業等）・起業（都道府県の起業支援金交付決定等）の要件を満たした後、' +
+      '移住先の市町村へ申請する。申請期限・対象・金額は自治体ごとに設定されるため移住先自治体で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chisou.go.jp/sousei/about/ijuu_shienkin/index.html', type: 'government', label: '内閣官房・内閣府 移住支援金・起業支援金' },
+      { url: 'https://www.chisou.go.jp/sousei/about/ijuu_shienkin/pdf/r5_ijuu_gaiyou.pdf', type: 'government', label: '内閣府 移住支援金の概要' },
+      { url: 'https://www.iju-join.jp/feature_cont/guide/079.html', type: 'media', label: 'JOIN（移住・交流推進機構）移住支援金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-childcare-support-grant',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '出産・子育て応援交付金（出産・子育て応援給付金）',
+    authority: 'こども家庭庁（実施主体: 市区町村）',
+    statement:
+      '妊娠期から出産・子育てまで一貫して身近で相談に応じる「伴走型相談支援」と、妊娠届出時・出生届出後の経済的支援（出産応援ギフト・子育て応援ギフト' +
+      '＝給付金やクーポン等）を一体的に実施する制度。経済的支援は妊娠届出時に5万円相当、出生後に子1人あたり5万円相当が基本とされてきたが、' +
+      '2025年度以降は妊婦のための支援給付（妊婦支援給付金）として制度化が進められており、給付方法・金額・手続は実施する市区町村及び年度ごとに異なるため要確認。',
+    application:
+      '実施主体は市区町村。妊娠届出・出生届出の機会等に市区町村の窓口で面談・申請を行い、給付（現金・クーポン等）を受ける。申請方法・給付形態は市区町村ごとに異なるため居住自治体で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/shussan-kosodate', type: 'government', label: 'こども家庭庁 出産・子育て応援交付金' },
+      { url: 'https://www.cfa.go.jp/policies/shussan-kosodate/joseikingaku', type: 'government', label: 'こども家庭庁 妊婦のための支援給付' },
+      { url: 'https://www.city.yokohama.lg.jp/kurashi/kosodate-kyoiku/oyako/teate-josei/shussankosodate.html', type: 'municipality', label: '横浜市 出産・子育て応援事業' },
+    ],
+  },
+  {
+    id: 'subsidy-aichi-rd',
+    level: 'prefecture',
+    domain: 'business',
+    name: '新あいち創造研究開発補助金（愛知県）',
+    authority: '愛知県（経済産業局 産業科学技術課等）',
+    statement:
+      '愛知県内の事業者が、次世代産業分野等における新製品・新技術の研究開発や実証実験を行う取組を支援する愛知県の補助金（都道府県レベルの補助金の代表例）。' +
+      '県が重点を置く分野（次世代自動車・航空宇宙・ロボット・環境・健康長寿等）に関する研究開発等が対象とされる。補助上限額・補助率・対象分野・募集期間は' +
+      '年度ごとに変動するため、必ず愛知県の最新の募集要領で要確認。',
+    application:
+      '年度ごとに募集期間を設定する公募制。愛知県の募集案内に従い事業計画等を提出して申請し、審査・交付決定を経て事業を実施する。受付期間・要件は各年度の募集要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.aichi.jp/soshiki/sangaku/shinaichi-r-d.html', type: 'municipality', label: '愛知県 新あいち創造研究開発補助金' },
+      { url: 'https://www.pref.aichi.jp/soshiki/sangaku/', type: 'municipality', label: '愛知県 産業科学技術課' },
+      { url: 'https://hojyokin-portal.jp/columns/shin_aichi', type: 'media', label: '新あいち創造研究開発補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-fukuoka-startup',
+    level: 'municipality',
+    domain: 'business',
+    name: '福岡市 スタートアップ法人減税（国家戦略特区）',
+    authority: '福岡市（国家戦略特区「グローバル創業・雇用創出特区」）',
+    statement:
+      '福岡市は国家戦略特区「グローバル創業・雇用創出特区」の枠組みで、革新的事業に挑戦するスタートアップ企業を対象に、国の特例措置に併せて' +
+      '市独自に法人市民税（法人税割）を一定期間軽減する制度を実施している（政令指定都市＝市町村レベルの代表的なスタートアップ支援策の一例）。' +
+      '対象事業分野・雇用要件・軽減割合・適用期間は制度改正・年度により変動するため、適用可否や最新の要件は福岡市公式で要確認。',
+    application:
+      '国家戦略特区の認定（特区の特例を活用する革新的事業であること、対象事業の割合や福岡市民を含む常用雇用 等）を前提に、福岡市の特区担当窓口を通じて相談・認定手続を行う。' +
+      '福岡市の創業・スタートアップ支援窓口も併用可能。具体の手順・必要書類は市公式で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.fukuoka.lg.jp/soki/kikaku/shisei/f-tokku/Startuphoujingennzei.html', type: 'municipality', label: '福岡市 スタートアップ法人減税' },
+      { url: 'https://www.city.fukuoka.lg.jp/soki/kikaku/fukuoka_tokku_top.html', type: 'municipality', label: '福岡市 グローバル創業・雇用創出特区' },
+      { url: 'https://www8.cao.go.jp/cstp/openinnovation/ecosystem/fukuoka/2-2_3fukuoka.pdf', type: 'government', label: '内閣府 福岡市のスタートアップ支援（賃料補助・法人減税）' },
+    ],
+  },
+  {
+    id: 'subsidy-saigai-nariwai',
+    level: 'national',
+    domain: 'business',
+    name: 'なりわい再建支援補助金（中小企業等グループ補助金）',
+    authority: '中小企業庁・経済産業省（実施: 被災都道府県）',
+    statement:
+      '大規模災害により被災した中小企業等が、複数の事業者でグループを構成し、地域経済・雇用の中核として復興事業計画の認定を受けた上で行う' +
+      '施設・設備の復旧整備等を支援する補助制度（中小企業等グループ施設等復旧整備補助事業＝グループ補助金。災害ごとに「なりわい再建支援補助金」等の名称で実施）。' +
+      '対象災害・補助率・上限額・公募期間は災害・年度ごとに異なるため、対象地域の被災都道府県・中小企業庁の最新案内で要確認。',
+    application:
+      '被災事業者が複数でグループを構成し、復興事業計画を作成して被災都道府県の認定を受けた上で、都道府県の公募に応じて交付申請する。対象災害・受付期間は災害発生の都度設定されるため要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/saigai/index.html', type: 'government', label: '中小企業庁 自然災害関連支援（グループ補助金等）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/shokibo/index.html', type: 'government', label: '中小企業庁 中小企業支援' },
+      { url: 'https://www.meti.go.jp/press/index.html', type: 'government', label: '経済産業省 報道発表（なりわい再建支援補助金の公募）' },
+    ],
+  },
+  {
+    id: 'subsidy-child-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '児童手当',
+    authority: '所管: こども家庭庁／支給主体: 市区町村（公務員は勤務先経由）',
+    statement:
+      '児童を養育する人に支給される手当で、2024年（令和6年）10月分から制度が拡充された。拡充により所得制限が撤廃され、支給対象が高校生年代' +
+      '（18歳到達後最初の3月31日）まで延長され、第3子以降の多子加算が増額された。改正後の月額は3歳未満15,000円、3歳〜高校生年代10,000円、' +
+      '第3子以降は一律30,000円で、支給は偶数月の年6回となった（金額・要件は最新の制度内容で要確認）。',
+    application:
+      '受給には居住する市区町村への「認定請求」が必要（公務員は勤務先へ申請）。出生・転入時は事由発生の翌日から原則15日以内の申請で申請月の翌月分から支給（15日特例）。支給は原則偶数月の年6回、指定口座へ振込。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/kokoseido/jidouteate/annai', type: 'government', label: 'こども家庭庁 児童手当制度のご案内' },
+      { url: 'https://www.gov-online.go.jp/tokusyu/jidoteate/', type: 'government', label: '政府広報オンライン 2024年10月分から児童手当が大幅拡充' },
+      { url: 'https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/teate/teate/jite-R6kaisei.html', type: 'municipality', label: '横浜市 児童手当 令和6年10月制度拡充' },
+    ],
+  },
+  {
+    id: 'subsidy-highschool-tuition',
+    level: 'national',
+    domain: 'welfare',
+    name: '高等学校等就学支援金',
+    authority: '文部科学省（窓口: 在学する高等学校等／都道府県）',
+    statement:
+      '高等学校等に通う生徒の授業料負担を軽減する国の制度で、要件を満たすと授業料に充てる就学支援金が支給される（生徒本人ではなく学校設置者が' +
+      '受け取り授業料に充当）。従来は世帯所得に応じた所得要件・支給上限額が設けられていたが、2025年度以降、所得制限の見直し・支援拡充が段階的に' +
+      '進められている。対象範囲・支給上限額・所得要件・適用時期は年度の制度内容により変動するため、最新の制度内容で必ず要確認。',
+    application:
+      '原則として在学する学校等を通じ、文部科学省のオンライン申請システム「e-Shien」で申請。入学・転入時に意向登録と受給資格認定申請、在校中は毎年の継続手続を行う。申請方法・締切は学校／都道府県により異なるため在学校の案内に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mext.go.jp/a_menu/shotou/mushouka/01753.html', type: 'government', label: '文部科学省 高等学校等就学支援金（e-Shien）' },
+      { url: 'https://www.e-shien.mext.go.jp/', type: 'government', label: '高等学校等就学支援金オンライン申請システム e-Shien' },
+      { url: 'https://www.bk.mufg.jp/column/others/b0105.html', type: 'media', label: '高校就学支援金・所得制限見直し 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-regional-employment',
+    level: 'national',
+    domain: 'employment',
+    name: '地域雇用開発助成金',
+    authority: '厚生労働省（窓口: 都道府県労働局・ハローワーク）',
+    statement:
+      '雇用機会が特に不足している地域（同意雇用開発促進地域・過疎等雇用改善地域等）において、事業所の設置・整備を行い、あわせてその地域に居住する' +
+      '求職者等を雇い入れる事業主に対し、設置・整備費用と対象労働者の増加数に応じた額を助成する制度（地域雇用開発コース）。助成は完了日を起点に' +
+      '1年ごとに最大3回（最長3年間）支給される。支給額・対象地域・要件は年度ごとに変動するため、最新の支給要領で要確認。',
+    application:
+      '事業所の施設・設備の設置整備および地域求職者等の雇入れに関する計画書を都道府県労働局長に提出→計画期間内に設置整備・雇入れ→完了日後、各支給基準日の翌日から原則2か月以内に支給申請（最大3回）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/chiiki_koyou.html', type: 'government', label: '厚生労働省 地域雇用開発助成金（地域雇用開発コース）' },
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/dl/chikikoyoukaihatu.pdf', type: 'government', label: '厚生労働省 地域雇用開発助成金 パンフレット' },
+      { url: 'https://www.pref.hokkaido.lg.jp/kz/rkr/chikaikin.html', type: 'municipality', label: '北海道 地域雇用開発助成金 案内' },
+    ],
+  },
+  {
+    id: 'subsidy-zeh',
+    level: 'national',
+    domain: 'welfare',
+    name: 'ZEH支援事業',
+    authority: '経済産業省・環境省・国土交通省（連携）／実施: 環境共創イニシアチブ（SII）',
+    statement:
+      '年間の一次エネルギー消費量の収支を実質ゼロ以下にすることを目指し、高い断熱性能・高効率設備・太陽光発電等の創エネを備えた住宅（ZEH）の' +
+      '新築・取得・改修を行う個人・事業者に対し定額で補助する事業。ZEH・ZEH+・集合住宅向けのZEH-M等の事業区分があり、区分に応じた定額補助に' +
+      '蓄電システム等の設備加算が付く。補助額・要件・公募期間は年度・事業ごとに変動し予算上限到達で締切となるため、必ず最新の公募要領（SII公式）で要確認。',
+    application:
+      'SIIが運営する電子申請システム（ZEHポータル等）を通じて、年度ごとに設定される公募期間内に交付申請。先着・予算上限到達で受付終了となるため、最新の公募要領・スケジュールをSII公式で確認のうえ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sii.or.jp/zeh07/', type: 'operator', label: 'SII 令和7年度 ZEH・ZEH-M補助事業' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk4_000153.html', type: 'government', label: '国土交通省 ZEH・LCCM住宅の推進' },
+      { url: 'https://www.env.go.jp/press/press_04098.html', type: 'government', label: '環境省 住宅の省エネ化支援（3省連携）' },
+    ],
+  },
+  {
+    id: 'subsidy-hokkaido',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業競争力強化促進事業（北海道）',
+    authority: '北海道（経済部 産業振興局 産業振興課）／募集事務: 公益財団法人 北海道中小企業総合支援センター',
+    statement:
+      '北海道が「北海道産業振興条例」に基づき実施する、道内中小企業者等の競争力強化を支援する補助制度（都道府県レベルの補助金の代表例）。' +
+      '新たな事業分野への進出や市場開拓等に取り組む事業者を対象に、マーケティング支援・コンサルタント等招へい支援・産業人材育成確保支援・' +
+      '市場対応型製品開発支援等の補助メニューを設ける。補助率・上限額・対象要件・募集期間は年度ごとに変動するため、必ず最新の募集要領及び北海道公式で要確認。',
+    application:
+      '例年、年度ごとに複数回（1次・2次等）の公募を実施。申請・問い合わせは公益財団法人 北海道中小企業総合支援センター又は北海道経済部 産業振興課が窓口。最新の公募要領・申請様式・締切は道公式／支援センターで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.hokkaido.lg.jp/kz/ssg/kyosoryoku.html', type: 'municipality', label: '北海道 中小企業競争力強化促進事業' },
+      { url: 'https://www.hsc.or.jp/news/2024jyourei_1-2/', type: 'operator', label: '北海道中小企業総合支援センター 競争力強化促進事業 募集' },
+      { url: 'https://www.hsc.or.jp/', type: 'operator', label: '公益財団法人 北海道中小企業総合支援センター' },
+    ],
+  },
+  {
+    id: 'subsidy-kobe',
+    level: 'municipality',
+    domain: 'business',
+    name: '神戸市中小企業投資促進等助成制度',
+    authority: '神戸市（経済観光局）／運用協力: 公益財団法人こうべ産業・就労支援財団',
+    statement:
+      '神戸市が実施する、市内中小企業の設備投資・新増設、国際品質マネジメント規格の認証取得、生産現場へのロボット導入等を支援する助成制度' +
+      '（政令指定都市＝市区町村レベルの中小企業向け制度の代表例）。助成額・要件・募集期間は年度ごとに変動するため、必ず最新の募集要項及び神戸市公式で要確認。',
+    application:
+      '神戸市内に一定期間継続して主たる事業所を有する中小企業者等が対象。各年度に公募され、申請書類を神戸市（経済観光局）へ提出する。公募回・締切・必要書類は神戸市公式の募集要項で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kobe.lg.jp/a93457/business/sangyoshinko/shokogyo/venture/monodukuri/toshisokushin/index.html', type: 'municipality', label: '神戸市 中小企業投資促進等助成制度' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/153108', type: 'government', label: 'J-Net21 神戸市中小企業投資促進等助成制度 公募' },
+      { url: 'https://sogyotecho.jp/hojokin_match/11407/', type: 'media', label: '神戸市中小企業投資促進等助成制度 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-pension-support-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '年金生活者支援給付金',
+    authority: '厚生労働省・日本年金機構',
+    statement:
+      '公的年金等の収入金額やその他の所得額が一定の基準額以下である年金受給者の生活を支援するため、年金に上乗せして支給される給付金' +
+      '（2019年10月創設）。受給する年金の種類に応じて老齢・障害・遺族の支援給付金があり、それぞれ所得・課税等の支給要件をすべて満たす必要がある。' +
+      '支給要件・所得基準額・給付基準額（月額）は毎年度物価等に応じて改定されるため、最新の制度内容で要確認。',
+    application:
+      '支給要件を満たしたうえで「年金生活者支援給付金請求書（認定請求書）」の提出が必要。日本年金機構が対象見込者へ毎年案内（はがき型請求書）を送付し、新規裁定者は年金の請求と併せて認定請求を行う。原則として請求月の翌月分から年金と同じ口座に偶数月に支払われる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/sonota-kyufu/shienkyufukin/20190805.html', type: 'government', label: '日本年金機構 年金生活者支援給付金' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000143356_00002.html', type: 'government', label: '厚生労働省 年金生活者支援給付金制度について' },
+      { url: 'https://www.jili.or.jp/lifeplan/lifesecurity/1120.html', type: 'media', label: '老齢年金生活者支援給付金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-reemployment-allowance',
+    level: 'national',
+    domain: 'welfare',
+    name: '再就職手当（就業促進手当）',
+    authority: '厚生労働省（ハローワーク）',
+    statement:
+      '雇用保険の基本手当の受給資格者が、所定給付日数の3分の1以上を残して安定した職業に就く等の要件を満たした場合に支給される就業促進手当。' +
+      '支給額は「支給残日数 × 給付率 × 基本手当日額（上限あり）」で、残日数3分の1以上は給付率60%、3分の2以上は70%とされる。1年を超えて雇用が確実であること、' +
+      '離職前事業主への再就職でないこと等の要件があり、支給率・要件・給付制限の運用は改定され得るため最新の制度内容で要確認。',
+    application:
+      '再就職後、原則として就職日の翌日から1か月以内に「再就職手当支給申請書」（再就職先の事業主記入欄を含む）と受給資格者証等を管轄のハローワークへ提出して支給申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000139508.html', type: 'government', label: '厚生労働省 Q&A（基本手当・再就職手当）' },
+      { url: 'https://jsite.mhlw.go.jp/osaka-roudoukyoku/hourei_seido_tetsuzuki/koyou_hoken/hourei_seido/situgyo/minasama/sokusin.html', type: 'government', label: '大阪労働局 就業促進手当（再就職手当）' },
+      { url: 'https://doda.jp/guide/naiteitaisyoku/006.html', type: 'media', label: '再就職手当 受給条件・手続き 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-kyuto-shoene',
+    level: 'national',
+    domain: 'welfare',
+    name: '給湯省エネ事業',
+    authority: '経済産業省・資源エネルギー庁（事務局）',
+    statement:
+      '高効率給湯器（エコキュート＝ヒートポンプ給湯機・ハイブリッド給湯機・家庭用燃料電池＝エネファーム等）の家庭への導入を定額で支援する' +
+      '住宅省エネキャンペーンの一事業。2026年6月時点では令和7年度補正予算による「給湯省エネ2026事業」が実施されている。補助額・対象機器・実施期間は' +
+      '年度ごとに変動し予算上限到達で受付終了となるため、必ず最新の公式情報で要確認。',
+    application:
+      '住宅省エネ支援事業者として登録された施工業者（給湯省エネ事業者）が補助対象者（一般消費者）に代わって代行申請する仕組みで、消費者個人が直接申請することはできない。交付申請は予算上限（先着順）到達で受付終了となるため最新の公式情報で受付状況を要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kyutou-shoene2026.meti.go.jp/', type: 'government', label: '給湯省エネ2026事業 公式（経産省・資源エネルギー庁事務局）' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/general/housing/kyutokidonyu/kyutodonyuhojo2025.html', type: 'government', label: '資源エネルギー庁 給湯省エネ事業について' },
+      { url: 'https://rehome-navi.com/articles/3637', type: 'media', label: '給湯省エネ事業 補助額・申請方法 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-kanagawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業生産性向上促進事業費補助金（神奈川県）',
+    authority: '神奈川県（産業労働局 中小企業部 中小企業支援課）',
+    statement:
+      '神奈川県が県内中小企業者・小規模事業者を対象に、業務効率化・省力化・人手不足対応など生産性向上に資する設備導入経費を補助する制度' +
+      '（都道府県レベルの補助金の代表例）。単なる設備の入替え等は対象外とされる。補助上限・補助率・公募期間・対象経費は年度ごとに変動するため、' +
+      '最新の募集要項および県公式（pref.kanagawa.jp）で要確認。経営相談・活用支援は公益財団法人神奈川産業振興センター（KIP）が窓口を提供する。',
+    application:
+      '県の専用ポータル又は県公式ページ経由で、年度内に設定される公募期間中に電子申請する。要件・補助率・上限額・対象経費・実施期間は毎年度の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kanagawa.jp/docs/m2w/seisansei/r8.html', type: 'municipality', label: '神奈川県 中小企業生産性向上促進事業費補助金' },
+      { url: 'https://www.pref.kanagawa.jp/docs/m2w/prs/r2625041.html', type: 'municipality', label: '神奈川県 補助金公募開始 プレスリリース' },
+      { url: 'https://www.kipc.or.jp/topics/information/subgrants/', type: 'operator', label: '神奈川産業振興センター 補助金・助成金のご案内' },
+    ],
+  },
+  {
+    id: 'subsidy-nagoya',
+    level: 'municipality',
+    domain: 'business',
+    name: '名古屋市スタートアップ企業支援補助金',
+    authority: '名古屋市（経済局 産業労働部 中小企業振興課）',
+    statement:
+      '名古屋市内で新たに創業する者又は市内に本社等を置く創業後5年以内の中小企業者が新しい取り組みに挑戦する際の経費の一部を補助する、' +
+      '政令指定都市（市区町村レベル）の代表的な創業支援制度。補助率・補助限度額（通常枠は補助対象経費の3分の1・限度額100万円等と報じられる）・募集期間・要件は' +
+      '年度ごとに変動するため、最新の募集要項および名古屋市公式で要確認。',
+    application:
+      '名古屋市の創業支援等事業計画における認定連携創業支援事業者（公益財団法人名古屋産業振興公社＝名古屋市新事業支援センター等）の支援を受けたうえで、名古屋市経済局が公表する年度ごとの募集案内に従って申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.nagoya.jp/keizai/page/0000080543.html', type: 'municipality', label: '名古屋市 スタートアップ企業支援補助金' },
+      { url: 'https://www.city.nagoya.jp/keizai/cmsfiles/contents/0000080/80543/00_1_bosyuuannai.pdf', type: 'municipality', label: '名古屋市 スタートアップ企業支援補助金 募集案内' },
+      { url: 'https://hojyokin-portal.jp/subsidies/42352', type: 'media', label: '名古屋市スタートアップ企業支援補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-sapporo',
+    level: 'municipality',
+    domain: 'business',
+    name: 'さっぽろ新規創業促進補助金（札幌市）',
+    authority: '札幌市（経済観光局）／創業支援窓口: 一般財団法人さっぽろ産業振興財団 札幌中小企業支援センター',
+    statement:
+      '札幌市が政令指定都市（市区町村レベル）として実施する創業支援制度の代表例で、市の「特定創業支援等事業」を修了し登録免許税の軽減を受けた上で' +
+      '新たに会社を設立した創業者に対し市独自に補助金を交付する制度。補助額（株式会社設立175,000円・合同会社等80,000円等と報じられる）・要件・受付期間は' +
+      '年度により変動するため、最新の募集要項および札幌市公式で要確認。',
+    application:
+      '市の特定創業支援等事業（窓口相談・セミナー等）を修了して証明を受け、その後に法人設立登記を行い、会社設立日から原則90日以内に札幌市へ申請する。詳細は札幌市公式・さっぽろ産業振興財団で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sapporo.jp/keizai/center/sinkisougyouhojyo.html', type: 'municipality', label: '札幌市 さっぽろ新規創業促進補助金' },
+      { url: 'https://www.sapporo-cci.or.jp/web/purpose/04/details/post_128.html', type: 'operator', label: '札幌商工会議所 補助金等支援策' },
+      { url: 'https://www.smart-hojokin.jp/subsidies/22951', type: 'media', label: 'さっぽろ新規創業促進補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-single-parent-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '児童扶養手当',
+    authority: 'こども家庭庁・市区町村',
+    statement:
+      '父母の離婚等により父又は母と生計を同じくしていない児童（原則18歳到達後最初の3月31日まで、一定の障害がある場合は20歳未満）を養育する' +
+      'ひとり親家庭等の生活の安定と自立促進のため、市区町村が支給する手当。受給資格者本人や扶養義務者の所得による所得制限があり、手当額は毎年度' +
+      '物価変動に応じて改定される（物価スライド）。第2子以降の加算があり、所得に応じて全部支給・一部支給に分かれる。最新の支給額・所得制限は市区町村・こども家庭庁の公式情報で要確認。',
+    application:
+      'お住まいの市区町村の窓口で「認定請求書」に必要書類を添えて申請（認定請求）。原則として請求月の翌月分から支給される。受給開始後は毎年8月に「現況届」の提出が必要で、未提出の場合は11月分以降の手当が受けられなくなる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya/fuyou-teate', type: 'government', label: 'こども家庭庁 児童扶養手当について' },
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya', type: 'government', label: 'こども家庭庁 ひとり親家庭等への支援' },
+      { url: 'https://www.city.shinjuku.lg.jp/kodomo/file03_04_00006.html', type: 'municipality', label: '新宿区 児童扶養手当（認定請求・現況届）' },
+    ],
+  },
+  {
+    id: 'subsidy-mado-renovation',
+    level: 'national',
+    domain: 'welfare',
+    name: '先進的窓リノベ事業',
+    authority: '環境省（事務局）',
+    statement:
+      '既存住宅の断熱性能向上を目的に、内窓設置・外窓交換・ガラス交換等による高断熱窓への改修を定額補助する環境省の住宅省エネ支援事業' +
+      '（住宅省エネキャンペーンの一事業）。窓のサイズ・断熱性能グレード等に応じて補助額が決まり、住宅1戸あたりに上限が設定される。補助額・対象・' +
+      '実施期間・上限額は年度ごとに改定され予算上限到達で受付終了となるため、必ず最新の公式情報で要確認。',
+    application:
+      '窓改修工事を行う「登録事業者」が施主に代わって事務局へ交付申請を行い、補助金は施主へ還元される仕組み。交付申請には予約・本申請の受付期間があり、いずれも予算上限到達で受付終了となるため、受付状況を公式事務局サイトで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://window-renovation2026.env.go.jp/about/', type: 'government', label: '先進的窓リノベ2026事業 公式（環境省事務局）' },
+      { url: 'https://www.env.go.jp/earth/earth/ondanka/building_insulation/window_00004.html', type: 'government', label: '環境省 断熱窓改修支援（先進的窓リノベ事業）' },
+      { url: 'https://www.ykkap.co.jp/consumer_business/satellite/law/subsidy2026/senshintekimado/', type: 'media', label: '先進的窓リノベ事業 制度解説' },
+    ],
+  },
+  {
+    id: 'subsidy-saitama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '埼玉県中小企業省力化支援事業補助金',
+    authority: '埼玉県（産業労働部）／相談窓口: 公益財団法人埼玉県産業振興公社',
+    statement:
+      '埼玉県が実施する都道府県レベルの代表的な中小企業向け設備投資補助制度で、人手不足の改善と持続的な賃上げに向け、省力化機器の導入・更新に' +
+      '要する経費の一部を補助する。専門家派遣により作成した支援カルテに基づき省力化が見込まれる機器の導入・更新が対象。補助率・上限額・募集期間は' +
+      '年度ごとに変動するため、最新の募集要項および県公式で要確認。埼玉県には他にも創業・新製品開発・DX等の支援制度がある。',
+    application:
+      '専門家派遣による無料の支援カルテ作成→それに基づく省力化機器の導入・更新経費を補助。申請は県の電子申請システムで受付。締切・要件は県公式ページで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.saitama.lg.jp/a0805/shoryokuka/index.html', type: 'municipality', label: '埼玉県 中小企業省力化支援事業' },
+      { url: 'https://www.pref.saitama.lg.jp/a0805/shoryokuka/sinnkidounyu_20260525.html', type: 'municipality', label: '埼玉県 省力化支援事業補助金（新規導入）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/183605', type: 'government', label: 'J-Net21 埼玉県中小企業省力化支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-kyoto',
+    level: 'prefecture',
+    domain: 'business',
+    name: '京都府中小企業経営基盤強化推進事業費補助金・奨励金',
+    authority: '京都府（商工労働観光部）／執行機関: 公益財団法人 京都産業21',
+    statement:
+      '京都府が中小企業の経営基盤強化（機器・設備導入、経営コンサルティング、人材育成等の設備投資や就業規則等の整備）を支援する代表的な補助金・' +
+      '奨励金制度で、執行は公益財団法人京都産業21が担う（都道府県レベルの代表例）。補助率・上限・対象・募集期間は年度ごとに変動し、賃上げ連動の枠組みが' +
+      '併設されることもあるため、必ず最新の公式募集要項で要確認。ものづくり・創業向けには別途の支援制度もある。',
+    application:
+      '京都府又は公益財団法人京都産業21の補助金ページで当年度の募集要項・申請様式・受付期間を確認し、京都府内に事業所を有する中小企業者が所定の申請書類を提出して申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kyoto.jp/rosei/keiei/gaiyou.html', type: 'municipality', label: '京都府 中小企業経営基盤強化推進事業費補助金・奨励金' },
+      { url: 'https://www.ki21.jp/subsidy/25keiei/', type: 'operator', label: '京都産業21 同補助金・奨励金 案内' },
+      { url: 'https://www.ki21.jp/subsidy/', type: 'operator', label: '京都産業21 補助金トップ' },
+    ],
+  },
+  {
+    id: 'subsidy-hiroshima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小・ベンチャー企業チャレンジ応援事業助成金（広島県）',
+    authority: '公益財団法人ひろしま産業振興機構（広島県 商工労働局 中小企業支援課と連携）',
+    statement:
+      '広島県内に本社又は主たる事務所を有する中小企業・ベンチャー企業の、新製品・新技術の研究開発や新サービス創出といった成長に向けた挑戦を、' +
+      '資金面及び専門的アドバイスで支援する代表的な県レベルの助成制度。助成率・上限額・募集期間（一次／二次募集等）は年度ごとに変動するため、' +
+      '最新の募集要項及び広島県・ひろしま産業振興機構の公式情報で要確認。',
+    application:
+      'ひろしま産業振興機構が年度ごとに募集要項を公開し公募を実施。広島県内に本社・主たる事務所を有する中小・ベンチャー企業が対象で、近年は応募締切までに「パートナーシップ構築宣言」の登録完了が要件とされる。申請受付・問い合わせはひろしま産業振興機構。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hiwave.or.jp/purpose1/subsidy/challengesupport/', type: 'operator', label: 'ひろしま産業振興機構 中小・ベンチャー企業チャレンジ応援事業助成金' },
+      { url: 'https://www.pref.hiroshima.lg.jp/soshiki/70/index-2.html', type: 'municipality', label: '広島県 中小企業支援課' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/1495/', type: 'media', label: '広島県 チャレンジ応援事業助成金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-yokohama',
+    level: 'municipality',
+    domain: 'business',
+    name: '横浜市特定創業支援等事業（IDEC横浜）',
+    authority: '横浜市経済局／公益財団法人横浜企業経営支援財団（IDEC横浜）',
+    statement:
+      '政令指定都市である横浜市の代表例として、産業競争力強化法に基づく「特定創業支援等事業」がある。IDEC横浜の創業セミナー等を通じて経営・財務・' +
+      '人材育成・販路開拓を継続的に学び、横浜市発行の証明書を受けることで、会社設立時の登録免許税の軽減、創業向け融資の利率優遇、小規模事業者持続化補助金' +
+      '「創業枠」の申請資格等の優遇が得られる。優遇内容・要件は年度・制度改正で変動するため、最新は横浜市公式及びIDEC横浜の案内で要確認。',
+    application:
+      'これから創業する個人又は創業後5年未満の個人・法人が対象。IDEC横浜等の認定セミナーを受講し、横浜市に「認定特定創業支援等事業による支援を受けたことの証明書」を申請・発行してもらい、その証明書を各優遇制度（登記・融資・補助金等）の申請時に提示する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.yokohama.lg.jp/business/keizai/sougyo/sogyoshien/IDEC.html', type: 'municipality', label: '横浜市 ワンストップ経営相談窓口（IDEC横浜）' },
+      { url: 'https://www.city.yokohama.lg.jp/business/keizai/sougyo/sogyoshien/sougyousiennsyoumei.html', type: 'municipality', label: '横浜市 特定創業支援等事業 証明書' },
+      { url: 'https://www.idec.or.jp/event/seminar_info.html?id=1490', type: 'operator', label: 'IDEC横浜 創業セミナー（特定創業支援事業認定）' },
+    ],
+  },
+  {
+    id: 'subsidy-elderly-jobseeker',
+    level: 'national',
+    domain: 'welfare',
+    name: '高年齢求職者給付金（雇用保険）',
+    authority: '厚生労働省（ハローワーク）',
+    statement:
+      '65歳以上の高年齢被保険者であった者が離職し、就職の意思・能力があるのに失業の状態にある場合に、基本手当に代えて一時金として支給される' +
+      '雇用保険の給付。支給額は基本手当日額に対し、算定基礎期間1年未満で30日分、1年以上で50日分相当（上限あり）。受給には原則として離職の日以前' +
+      '1年間に被保険者期間が通算6か月以上あること等が必要で、要件・金額は最新の制度内容で要確認。',
+    application:
+      '離職後、住所地を管轄するハローワークで離職票等を提出して求職の申込みを行い、失業の認定を受けると後日一時金が指定口座に振り込まれる。受給期限は離職日の翌日から1年以内のため早めの手続が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11600000/000695108.pdf', type: 'government', label: '厚生労働省 高年齢求職者給付金のご案内' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_continue.html', type: 'government', label: 'ハローワーク 雇用保険の給付' },
+      { url: 'https://www.orixbank.co.jp/column/article/277/', type: 'media', label: '高年齢求職者給付金 条件・金額 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-special-child-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '特別児童扶養手当',
+    authority: 'こども家庭庁・都道府県／市区町村',
+    statement:
+      '精神又は身体に一定の障害（おおむね中度以上）を有する20歳未満の児童を家庭で監護・養育している父母等に支給される国の手当で、障害の程度に' +
+      '応じ1級・2級がある。手当月額は消費者物価指数に連動した物価スライド制で毎年度改定される。請求者・配偶者・扶養義務者の前年所得が限度額を' +
+      '超える場合は支給停止となる所得制限がある（最新の支給額・所得制限は要確認）。',
+    application:
+      'お住まいの市区町村の担当窓口で認定請求書に医師の診断書・戸籍住民票・所得関係書類等を添えて申請する。書類は都道府県（指定都市）へ送られ知事等が審査・認定し、原則として認定請求月の翌月分から支給される（年3回程度のまとめ払い）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/shougaijihukushi/', type: 'government', label: 'こども家庭庁 障害児支援（特別児童扶養手当）' },
+      { url: 'https://www.pref.osaka.lg.jp/o090135/kateishien/teate/tokubetsujihu.html', type: 'municipality', label: '大阪府 特別児童扶養手当' },
+      { url: 'https://h-navi.jp/column/article/35025553', type: 'media', label: '特別児童扶養手当 認定基準・所得制限 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-overseas-expansion',
+    level: 'national',
+    domain: 'business',
+    name: '新輸出大国コンソーシアム（中小企業の海外展開支援）',
+    authority: '独立行政法人日本貿易振興機構（JETRO）／経済産業省と連携（中小機構・商工会議所等が参画）',
+    statement:
+      '海外展開を図る中堅・中小企業等に対し、戦略策定から事業計画策定・実行段階まで一貫したワンストップ支援を提供する、JETROが事務局を務める' +
+      '官民の支援枠組み。各国・地域事情や実務に精通した専門家による「海外展開ハンズオン支援」が中核。支援内容・対象要件・ハンズオン支援の審査基準・' +
+      '申込締切等は年度により変動するため、最新の公式案内（JETRO公式）で要確認。',
+    application:
+      'JETROの「新輸出大国コンソーシアム」ポータルから利用相談・登録を行う。中核の「海外展開ハンズオン支援」は審査ありの申込制で、採択後に専門家が継続的に伴走支援する。具体の申込手続・締切・要件は最新の公式案内で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jetro.go.jp/consortium/about.html', type: 'government', label: 'JETRO 新輸出大国コンソーシアムとは' },
+      { url: 'https://www.meti.go.jp/publication/pdf/pamph_yushutsu.pdf', type: 'government', label: '経済産業省 新輸出大国コンソーシアムの概要' },
+      { url: 'https://j-net21.smrj.go.jp/news/q9cs5q0000006les.html', type: 'media', label: 'J-Net21 新輸出大国コンソーシアム 事例' },
+    ],
+  },
+  {
+    id: 'subsidy-chiba',
+    level: 'prefecture',
+    domain: 'business',
+    name: '千葉県中小企業成長促進補助金',
+    authority: '千葉県（商工労働部）／中小企業支援は公益財団法人千葉県産業振興センター等と連携',
+    statement:
+      '千葉県内に事業所を有する中小企業等を対象に、省力化・業務効率化・生産性向上に必要な設備投資（機械装置の購入・製作・改良、専用ソフトウェア／' +
+      '情報システムの構築、導入に伴う運搬・据付等）を補助する都道府県レベルの代表的な設備投資補助制度。補助率・補助上限・下限・募集期間は年度ごとに' +
+      '変動するため、最新の募集要項および千葉県公式ページで要確認。',
+    application:
+      '千葉県公式ページ又は事務局特設サイトで公募要領を確認し、公募期間内に電子申請等で交付申請を行う。対象要件（県内事業所・対象経費・補助下限/上限）を事前確認のうえ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.chiba.lg.jp/keisei/zaisei/chiba-seichohojyo3.html', type: 'municipality', label: '千葉県 中小企業成長促進補助金' },
+      { url: 'https://www.ccjc-net.or.jp/', type: 'operator', label: '千葉県産業振興センター' },
+      { url: 'https://www.sato-group-sr.jp/business_guide/archives/1083', type: 'media', label: '千葉県 中小企業成長促進補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-shizuoka',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等収益力向上事業費補助金（静岡県）',
+    authority: '静岡県（経済産業部 経営支援課）／運用・募集窓口: 公益財団法人静岡県産業振興財団',
+    statement:
+      '静岡県が県内中小企業者等の収益力・生産性向上と賃上げの継続を支援するため交付する代表的な補助金（都道府県レベルの代表例）で、独自の技術・' +
+      'サービス展開やデジタル化（DX推進枠）等の取組を対象とし、賃上げと併せて取り組むと補助が手厚くなる枠がある。補助上限額・補助率・対象経費・募集期間・' +
+      '要件は年度ごとに変動するため、最新の募集要項および静岡県公式・財団公式で要確認。',
+    application:
+      '申請は国の補助金電子申請システム「jGrants」から行い、利用にはGビズIDプライムの取得が必要。対象は原則として静岡県内に本店を置く法人又は県内在住の個人事業主で県内で1年以上事業を営んでいること等（年度の公募要領で要確認）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shizuoka.jp/sangyoshigoto/kigyoshien/1047031/1062522.html', type: 'municipality', label: '静岡県 中小企業等収益力向上事業費補助金' },
+      { url: 'https://www.ric-shizuoka.or.jp/keiei/shuekiryoku-chinage.html', type: 'operator', label: '静岡県産業振興財団 収益力向上（賃上げ環境整備）補助金' },
+      { url: 'https://www.pref.shizuoka.jp/sangyoshigoto/kigyoshien/1047031/1081779.html', type: 'municipality', label: '静岡県 収益力向上（賃上げ環境整備）補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-sendai',
+    level: 'municipality',
+    domain: 'business',
+    name: '仙台市中小企業チャレンジ補助金',
+    authority: '仙台市（経済局）／相談・支援窓口: 公益財団法人仙台市産業振興事業団',
+    statement:
+      '仙台市が実施する、市内中小企業者等・個人事業者を対象とした補助金制度で、社会の変化に対応して新たな製品・商品・サービスの提供や、製造・提供' +
+      '方法の変更に挑戦する事業を支援する（政令指定都市＝市区町村レベルの代表例）。補助額・補助率・対象経費・募集期間は年度・募集回ごとに変動するため、' +
+      '最新の募集要項・仙台市公式サイトで要確認。これまで複数回に分けて募集が行われている。',
+    application:
+      '仙台市公式サイトで各募集回の実施要領・申請受付期間を確認のうえ、所定の申請手続を行う。創業・経営相談は仙台市経済局及び公益財団法人仙台市産業振興事業団の窓口で受付。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sendai.jp/kikakushien/challengehojokin/jigyougaiyou.html', type: 'municipality', label: '仙台市 中小企業チャレンジ補助金 事業概要' },
+      { url: 'https://www.city.sendai.jp/kikakushien/jigyosha/kezai/hojokin/index.html', type: 'municipality', label: '仙台市 事業者向け補助金一覧' },
+      { url: 'https://www.sendaicci.or.jp/news/support-measures/', type: 'operator', label: '仙台商工会議所 補助金・助成金情報' },
+    ],
+  },
+  {
+    id: 'subsidy-special-disability-allowance',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '特別障害者手当',
+    authority: '厚生労働省・市区町村',
+    statement:
+      '精神又は身体に著しく重度の障害があり、日常生活において常時特別の介護を必要とする在宅の20歳以上の者に支給される国の手当（支給事務は市区町村）。' +
+      '月額は物価スライドで毎年度改定される。本人・配偶者・扶養義務者の前年所得による所得制限があり、施設入所者や病院・診療所に継続して3か月を超えて' +
+      '入院している者は対象外。最新の金額・所得制限額は市区町村窓口で要確認。',
+    application:
+      'お住まいの市区町村（障害福祉担当課・福祉事務所）の窓口で認定請求書に医師の所定様式の診断書・戸籍・住民票・所得関係書類等を添えて提出する。認定後、原則として2月・5月・8月・11月に前月までの3か月分がまとめて振り込まれる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/shougaihoken/jidou/tokubetsu.html', type: 'government', label: '厚生労働省 特別障害者手当について' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=82095000&dataType=0', type: 'government', label: '厚生労働省 障害児福祉手当及び特別障害者手当の支給に関する省令' },
+      { url: 'https://www.pref.hiroshima.lg.jp/soshiki/62/tokusyou.html', type: 'municipality', label: '広島県 特別障害者手当' },
+    ],
+  },
+  {
+    id: 'subsidy-funeral-benefit',
+    level: 'national',
+    domain: 'welfare',
+    name: '埋葬料・葬祭費（公的医療保険）',
+    authority: '厚生労働省・全国健康保険協会・市区町村',
+    statement:
+      '被保険者等が死亡したとき、健康保険では埋葬を行った者に「埋葬料」（被扶養者死亡時は被保険者に「家族埋葬料」）が支給され、協会けんぽでは原則として' +
+      '定額5万円。国民健康保険・後期高齢者医療制度では葬祭を行った者（喪主）に「葬祭費」が支給され、金額は保険者・自治体により概ね3万〜7万円など異なる' +
+      '（最新で要確認）。申請期限は通常、埋葬・葬祭を行った日（又は翌日）から2年で時効となる。',
+    application:
+      '健康保険加入者は加入していた保険者（協会けんぽ各支部／健保組合）へ「埋葬料（費）支給申請書」等を提出。国保・後期高齢者医療制度の加入者は、亡くなった方の住所地の市区町村役場の担当窓口へ申請する。金額・必要書類は保険者・自治体ごとに異なるため各窓口で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.kyoukaikenpo.or.jp/g3/cat320/sb3170/sbb31711/1956-20887/', type: 'operator', label: '協会けんぽ 埋葬料（費）' },
+      { url: 'https://www.city.setagaya.lg.jp/02060/329.html', type: 'municipality', label: '世田谷区 葬祭費の支給（国民健康保険）' },
+      { url: 'https://www.city.tokyo-nakano.lg.jp/kurashi/koukikourei/sosaihi.html', type: 'municipality', label: '中野区 後期高齢者医療 葬祭費' },
+    ],
+  },
+  {
+    id: 'subsidy-hyogo',
+    level: 'prefecture',
+    domain: 'business',
+    name: '起業家支援事業助成金（兵庫県）',
+    authority: '兵庫県（産業労働部）／申請窓口: 公益財団法人ひょうご産業活性化センター',
+    statement:
+      '兵庫県内で新たに起業する者や第二創業を目指す事業者のビジネスプランを募集し、起業に要する経費の一部を助成する県の代表的な創業・中小企業支援制度' +
+      '（都道府県レベルの代表例）。一般事業枠のほかふるさと・事業承継枠、若者枠、社会的事業枠等が設けられている。助成上限額・補助率・対象経費・募集期間は' +
+      '年度ごとに変動するため、必ず最新の募集要項及び県・センター公式で要確認。',
+    application:
+      '公益財団法人ひょうご産業活性化センター（創業推進部 新事業課）が申請・相談窓口。募集要項・申請様式はセンター公式サイトから取得し、募集期間内に提出する。年度により募集枠・締切が異なるため公式の最新情報を要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.pref.hyogo.lg.jp/sr10/kigyouippann.html', type: 'municipality', label: '兵庫県 起業家支援事業（一般事業枠）' },
+      { url: 'https://web.hyogo-iic.ne.jp/shinjigyo/kigyoka', type: 'operator', label: 'ひょうご産業活性化センター 起業家支援事業' },
+      { url: 'https://hojyokin-portal.jp/subsidies/55660', type: 'media', label: '兵庫県 起業家支援事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-fukuoka-pref',
+    level: 'prefecture',
+    domain: 'business',
+    name: '福岡県中小企業生産性向上・賃上げ緊急支援補助金',
+    authority: '福岡県（商工部）／伴走支援: 福岡県中小企業生産性向上支援センター',
+    statement:
+      '福岡県が実施する代表的な県レベルの中小企業向け補助金の一つで、県内中小企業等が省力化・省エネ化により生産性を向上させ賃上げを行う取組（設備・' +
+      'ソフトウェア導入等）を支援する制度（福岡「市」ではなく福岡「県」の制度）。補助率・上限額・募集期間・対象経費は年度や補正予算ごとに変動するため、' +
+      '必ず最新の募集要項及び福岡県公式で要確認。福岡県には経営革新・賃上げ緊急支援補助金や起業支援金等もある。',
+    application:
+      '県が設置する生産性向上支援センターによる伴走支援を受けることが要件で、従業員を雇用する場合は補助事業終了時までに事業場内最低賃金を一定額引き上げることが求められる。募集は年度内に複数次行われ、交付決定日以降に着手した事業が対象。最新の受付状況は福岡県公式で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukuoka.lg.jp/contents/productivity-improvement-subsidy-2025-26.html', type: 'municipality', label: '福岡県 中小企業生産性向上・賃上げ緊急支援補助金' },
+      { url: 'https://www.joho-fukuoka.or.jp/chinage/index.html', type: 'operator', label: '福岡県中小企業振興センター 経営革新・賃上げ緊急支援補助金' },
+      { url: 'https://biz.ncbank.co.jp/posts/subsidies-available-in-fukuoka/', type: 'media', label: '福岡県で使える補助金まとめ' },
+    ],
+  },
+  {
+    id: 'subsidy-kawasaki',
+    level: 'municipality',
+    domain: 'business',
+    name: '川崎市新技術・新製品開発等支援事業補助金',
+    authority: '川崎市（経済労働局 産業振興部 工業振興課）',
+    statement:
+      '川崎市が市内中小企業者を対象に、新技術・新製品の事業化に向けた研究開発に要する経費を助成する補助金制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '対象は市内に事業所を有し一定期間以上事業を営む中小企業者（単独又は他企業等との連携での研究開発）。補助限度額・補助率・募集期間は年度ごとに変動するため、' +
+      '最新の公募要領及び川崎市公式で要確認。',
+    application:
+      '川崎市公式サイト掲載の公募要領・申請様式に基づき、例年4月ごろの公募期間内にオンライン手続又はWEB申請で提出（郵送可の場合あり）。所管は経済労働局工業振興課。創業・経営相談は公益財団法人川崎市産業振興財団も担う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kawasaki.jp/280/page/0000184258.html', type: 'municipality', label: '川崎市 新技術・新製品開発等支援事業補助金' },
+      { url: 'https://www.city.kawasaki.jp/jigyou/category/77-25-5-0-0-0-0-0-0-0.html', type: 'municipality', label: '川崎市 事業者向け補助金（工業振興）' },
+      { url: 'https://hojyokin-portal.jp/subsidies/list?pref_id=14&city_id=740', type: 'media', label: '川崎市の補助金一覧' },
+    ],
+  },
+  {
+    id: 'subsidy-saitama-city',
+    level: 'municipality',
+    domain: 'business',
+    name: 'さいたま市起業家支援補助金（SCAP連動）',
+    authority: '公益財団法人さいたま市産業創造財団（SCAP運営事務局）／さいたま市経済局',
+    statement:
+      'さいたま市の市区町村レベルの代表例として、公益財団法人さいたま市産業創造財団が「さいたまアクセラレータープログラム（SCAP）」の採択者を対象に' +
+      '実施する起業家支援補助金がある。補助率・補助上限額・要件・募集期間は年度ごとに変動するため、最新の募集要項・市公式／財団公式で要確認。さいたま市は' +
+      '創業支援等事業計画に基づく相談・セミナー・特定創業支援等事業証明や中小企業融資制度も併せて提供している。',
+    application:
+      '申請窓口は公益財団法人さいたま市産業創造財団（SCAP運営事務局）。原則として当該年度のSCAPに応募・採択され所定プログラムに参加したうえで補助金交付申請を行う。対象経費・締切は財団の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.saitama.lg.jp/005/002/010/005/index.html', type: 'municipality', label: 'さいたま市 創業支援' },
+      { url: 'https://www.sozo-saitama.or.jp/', type: 'operator', label: 'さいたま市産業創造財団' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/51400/', type: 'media', label: 'さいたま市起業家支援補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-unpaid-wage',
+    level: 'national',
+    domain: 'welfare',
+    name: '未払賃金立替払制度',
+    authority: '厚生労働省・独立行政法人労働者健康安全機構',
+    statement:
+      '企業の倒産（法律上の倒産又は労働基準監督署長による事実上の倒産の認定）により賃金が支払われないまま退職した労働者に対し、独立行政法人' +
+      '労働者健康安全機構が事業主に代わって未払賃金の一部を立替払いする制度（賃金の支払の確保等に関する法律）。立替払される額は未払賃金総額' +
+      '（定期賃金と退職金が対象、賞与は対象外）の8割で、退職日における年齢に応じた上限がある（具体額は改定され得るため最新で要確認）。',
+    application:
+      'まず倒産の事実を確認（法律上の倒産は破産管財人等から、事実上の倒産は所轄労働基準監督署長から「倒産の事実」「未払賃金額等」の認定・確認を受ける）。' +
+      'その確認を踏まえ、退職労働者が労働者健康安全機構に立替払請求書を提出して請求する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/shinsai_rousaihoshouseido/tatekae/index.html', type: 'government', label: '厚生労働省 未払賃金立替払制度' },
+      { url: 'https://www.johas.go.jp/chinginengo/miharai/tabid/417/Default.aspx', type: 'government', label: '労働者健康安全機構 未払賃金の立替払事業' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/faq/faq_miharaichingin.html', type: 'government', label: '厚生労働省 未払賃金立替払制度 Q&A' },
+    ],
+  },
+  {
+    id: 'subsidy-new-farmer',
+    level: 'national',
+    domain: 'business',
+    name: '就農準備資金・経営開始資金（旧 農業次世代人材投資資金）',
+    authority: '農林水産省（実施: 都道府県等）',
+    statement:
+      '次世代を担う農業者となることを志向する者に対し、就農前の研修期間や経営開始直後の所得を確保するため資金を交付する国の制度（新規就農者育成総合対策の一部）。' +
+      '原則として就農・研修開始時に49歳以下であることが対象要件で、就農準備資金は最長2年間、経営開始資金は最長3年間、それぞれ年間上限額が定められている。' +
+      '対象年齢・交付期間・金額・所得要件等は年度で変動するため、最新の公式情報（農林水産省・各都道府県）で要確認。',
+    application:
+      '申請・利用は居住予定地又は就農予定地を所管する市町村・都道府県が窓口（就農準備資金は都道府県等、経営開始資金は主に市町村に申請）。研修計画・就農計画の認定や所定の研修等が要件となるため、事前に交付主体への相談が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/new_farmer/n_syunou/roudou.html', type: 'government', label: '農林水産省 就農準備資金・経営開始資金' },
+      { url: 'https://www.maff.go.jp/j/new_farmer/n_syunou/attach/pdf/roudou-144.pdf', type: 'government', label: '農林水産省 新規就農者育成総合対策のポイント' },
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/noushin/portal/nougyou/syunokyuhu/index.html', type: 'municipality', label: '浜松市 経営開始資金（旧 農業次世代人材投資事業）' },
+    ],
+  },
+  {
+    id: 'subsidy-niigata',
+    level: 'prefecture',
+    domain: 'business',
+    name: '稼ぐ力強化支援事業 補助金（新潟県）',
+    authority: '新潟県（産業労働部）／関連窓口: 公益財団法人にいがた産業創造機構（NICO）',
+    statement:
+      '新潟県が実施する県レベルの代表的な中小企業向け補助制度の一例で、持続的な賃上げに意欲的な県内中小企業等が「稼ぐ力」を強化するための高付加価値化に' +
+      '向けた設備投資や商品・サービス開発の取組を支援するもの。対象者・補助率・上限額・募集期間は年度ごとに変動するため、必ず新潟県公式の最新の募集要項で要確認。' +
+      '県内には他にも多数の補助金があり、本制度は代表例の一つ。NICOが県内中小企業向けの補助金情報・経営/研究開発支援の総合窓口を担う。',
+    application:
+      '新潟県公式サイト（産業労働部）で公開される募集要項に基づき申請。賃上げ計画・パートナーシップ構築宣言登録等の要件が課されることがある（年度で変動）。相談・併用制度の確認はNICOの窓口を利用できる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.niigata.lg.jp/site/sangyorodo/kaseguchikara-bosyu.html', type: 'municipality', label: '新潟県 稼ぐ力強化支援事業 募集' },
+      { url: 'https://www.nico.or.jp/hojokin/', type: 'operator', label: 'にいがた産業創造機構（NICO）補助金一覧' },
+      { url: 'https://hojokin-agent.jp/audience/sme/niigata', type: 'media', label: '新潟県の中小企業向け補助金 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-okayama',
+    level: 'municipality',
+    domain: 'business',
+    name: '岡山市創業者支援事業補助金',
+    authority: '岡山市（産業観光局／経済局 産業振興・中小企業振興）',
+    statement:
+      '岡山市が市内の創業者数の増加と地域経済の活性化を目的に、創業に係る経費（店舗等借入費・設備費・広報費等）の一部を補助する市区町村レベルの代表的な' +
+      '創業支援制度。産業競争力強化法に基づき岡山市が認定した連携創業支援事業者による「特定創業支援等事業」の支援を受けたうえで市内で創業した中小企業者が対象。' +
+      '補助上限額・対象要件・募集期間は年度ごとに変動するため、最新の募集要項及び岡山市公式で要確認。',
+    application:
+      '岡山市内に住民登録又は法人本店があること、特定創業支援等事業を受けていること、市内で創業し必要な許認可を取得済みであること等が要件。年度ごとに公募が行われ、申請・問い合わせは岡山市の担当課又はおかやま創業サポートデスクが窓口。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.okayama.jp/jigyosha/0000058030.html', type: 'municipality', label: '岡山市 創業促進助成金' },
+      { url: 'https://www.city.okayama.jp/jigyosha/0000009171.html', type: 'municipality', label: '岡山市 特定創業支援等事業' },
+      { url: 'https://okayama-sougyo.jp/bounty-system/', type: 'operator', label: 'おかやま創業サポートデスク 補助金情報' },
+    ],
+  },
+  {
+    id: 'subsidy-kumamoto',
+    level: 'municipality',
+    domain: 'business',
+    name: '熊本市創業者チャレンジ支援補助金',
+    authority: '熊本市（経済観光局 起業・新産業支援課）',
+    statement:
+      '熊本市が市内で創業する事業者を対象に、創業に要する経費の一部を補助するとともに専門家派遣等の経営支援を一体的に行う制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '対象経費は人件費・店舗等借入費・設備費・マーケティング費・知的財産権等関連経費などが例示される。補助率・補助上限・対象経費・募集期間は年度ごとに変動するため、' +
+      '最新の募集要項及び熊本市公式で要確認。',
+    application:
+      '募集期間中に熊本市（起業・新産業支援課）へ申請する。年度により募集回・要件・上限が変わるため、最新の公募要領で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kumamoto.jp/list03447.html', type: 'municipality', label: '熊本市 起業・新産業支援課' },
+      { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001bx7.html', type: 'government', label: 'J-Net21 熊本市 創業チャレンジ支援' },
+      { url: 'https://hojyokin-portal.jp/subsidies/19611', type: 'media', label: '熊本市創業者チャレンジ支援補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-kitakyushu',
+    level: 'municipality',
+    domain: 'business',
+    name: '北九州市の創業支援（特定創業支援等事業・COMPASS小倉）',
+    authority: '北九州市（産業経済局 スタートアップ推進課）／連携: 北九州産業学術推進機構（FAIS）・商工会議所',
+    statement:
+      '北九州市は産業競争力強化法に基づき国の認定を受けた「創業支援等事業計画」を運用し、市内の創業者・中小企業向けに相談窓口（COMPASS小倉）・専門家支援・' +
+      '創業セミナー等を提供する政令指定都市（市区町村レベル）の代表的な創業支援。同事業による継続支援を受け市が交付する証明書を取得した創業者は、会社設立時の' +
+      '登録免許税の軽減や日本政策金融公庫の融資制度の優遇等のメリットを受けられる。対象要件・支援メニュー・受付期間は年度で変動するため最新の市公式で要確認。',
+    application:
+      'COMPASS小倉等の相談窓口を通じて特定創業支援等事業（経営・財務・人材育成・販路開拓の知識習得を伴う継続支援）を受け、要件を満たした上で市に証明書交付を申請。交付された証明書を法務局・金融機関等に提出して各種メリットを受ける。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kitakyushu.lg.jp/contents/10700156.html', type: 'municipality', label: '北九州市 創業のメリット（特定創業支援等事業）' },
+      { url: 'https://www.city.kitakyushu.lg.jp/contents/k9901001.html', type: 'municipality', label: '北九州市 スタートアップ支援' },
+      { url: 'https://shikin.yayoi-kk.co.jp/search/y24284', type: 'media', label: '特定創業支援事業（北九州市）解説' },
+    ],
+  },
+  {
+    id: 'subsidy-disability-employment-grant',
+    level: 'national',
+    domain: 'employment',
+    name: '障害者雇用調整金・報奨金（障害者雇用納付金制度）',
+    authority: '厚生労働省・独立行政法人高齢・障害・求職者雇用支援機構（JEED）',
+    statement:
+      '障害者雇用納付金制度（運営: JEED）に基づき、法定雇用率を超えて障害者を雇用する事業主に対し、納付金を財源として支給される。常時雇用労働者' +
+      '100人超の事業主には法定雇用率超過分1人あたり月額の「調整金」、100人以下で一定数を超えて雇用する事業主には「報奨金」が支給される。2024年度以降は' +
+      '支給対象人数が一定数を超えると単価が引き下げられる調整が導入されており、金額・支給対象数・調整方法は制度改正で変動するため、申請時には最新の公表内容をJEEDで要確認。',
+    application:
+      '事業主が前年度（4月〜翌3月）の障害者雇用状況に基づき、JEEDへ申告書・支給申請書を提出（申告と支給申請を兼ねる）。申告申請期間は原則として翌年度の4月1日〜5月15日（常用労働者100人超）、報奨金等を申請する100人以下の事業主は4月1日〜7月31日。JEEDの電子申告申請システムによるオンライン提出が可能。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jeed.go.jp/disability/about_levy_grant_system.html', type: 'government', label: 'JEED 障害者雇用納付金制度の概要' },
+      { url: 'https://www.jeed.go.jp/location/shibu/osaka/r8_nofukin-shinkoku.html', type: 'government', label: 'JEED 令和8年度 納付金・調整金等 申告申請案内' },
+      { url: 'https://www.mhlw.go.jp/content/11704000/001462468.pdf', type: 'government', label: '厚生労働省 障害者雇用納付金制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-patent-fee-reduction',
+    level: 'national',
+    domain: 'business',
+    name: '特許料等の減免制度',
+    authority: '特許庁',
+    statement:
+      '中小企業・小規模企業・中小スタートアップ企業等を対象に、出願審査請求料及び特許料（第1年分〜第10年分）等を軽減する制度。減免割合は対象者により' +
+      '異なり、中小企業（会社）は原則2分の1、小規模企業・中小スタートアップ企業・研究開発型中小企業等は3分の1に軽減される（出願料及び第11年分以降の特許料は対象外）。' +
+      '対象・割合・件数上限等は制度改正で変動するため、最新の特許庁公式情報で要確認。',
+    application:
+      '2019年4月1日以降に審査請求した案件では原則として別途の減免申請書・証明書の提出は不要で、出願審査請求書又は特許料納付書の所定欄に減免を受ける旨を記載することで申請できる（対象者区分・要件の詳細は特許庁公式で要確認）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpo.go.jp/system/process/tesuryo/genmen/genmen20190401/index.html', type: 'government', label: '特許庁 減免制度（2019年4月1日以降）' },
+      { url: 'https://www.jpo.go.jp/system/process/tesuryo/genmen/genmen_240131.html', type: 'government', label: '特許庁 審査請求料の減免制度の改正（令和6年4月）' },
+      { url: 'https://j-net21.smrj.go.jp/support/publicsupport/2020010701.html', type: 'media', label: 'J-Net21 特許料等の減免制度' },
+    ],
+  },
+  {
+    id: 'subsidy-nagano',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業賃上げ・生産性向上サポート補助金（長野県）',
+    authority: '長野県（産業労働部 労働雇用課）',
+    statement:
+      '長野県が県内中小企業の賃上げと生産性向上（設備投資促進）を支援する代表的な県独自制度の一つで、国（厚生労働省）の「業務改善助成金」に上乗せ交付する' +
+      '補助金。県内に事業場があり業務改善助成金の交付決定を受けた事業者が対象で、補助額は業務改善助成金の支給決定額に一定割合を乗じた額とされる。補助率・対象期間・' +
+      '要件は年度により変動するため、最新の募集要項及び長野県公式で要確認（長野県には他にも創業・設備投資等の支援制度がある）。',
+    application:
+      '前提として国の業務改善助成金（長野労働局）の交付申請・支給決定を受けたうえで、県の所定の宣言（社員の子育て応援宣言／パートナーシップ構築宣言等）を行い、県の募集要項に従って申請書類を長野県産業労働部へ提出する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nagano.lg.jp/rodokoyo/seisanseisupport.html', type: 'municipality', label: '長野県 中小企業賃上げ・生産性向上サポート補助金' },
+      { url: 'https://www.pref.nagano.lg.jp/rodokoyo/tinnage/uwanose.html', type: 'municipality', label: '長野県 業務改善助成金上乗せ補助' },
+      { url: 'https://www.smart-hojokin.jp/subsidies/46872', type: 'media', label: '長野県 賃上げ・生産性向上サポート補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-chiba-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '千葉市創業支援補助金',
+    authority: '千葉市（経済農政局 経済部 産業支援課）／相談・支援: 千葉市産業振興財団・千葉商工会議所等',
+    statement:
+      '千葉市創業支援補助金は、市内での創業を推進するため、市が認定した「特定創業支援等事業」（創業者向けセミナー等）を受講した創業2年以内の創業者・創業予定者に' +
+      '対し、創業に必要な経費の一部（補助対象経費の2分の1以内・補助限度額30万円）を補助する政令指定都市（市区町村レベル）の代表的な創業支援制度。補助率・限度額・対象要件・' +
+      '募集期間は年度ごとに変動するため、最新の募集要項及び千葉市公式で要確認。',
+    application:
+      '市が認定した特定創業支援等事業（創業セミナー等）の全日程受講が前提。対象は申請時点で創業2年以内かつ市内に住民票・主たる事業所を置く個人又は市内に本店を置く会社等。募集期間中に必要書類を提出し、相談は千葉市産業振興財団等の指定経営支援機関で対応。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.chiba.jp/keizainosei/keizai/sangyo/2021sougyousiennhozyokin.html', type: 'municipality', label: '千葉市 創業支援補助金' },
+      { url: 'https://www.city.chiba.jp/keizainosei/keizai/sangyo/sougyoshienkeikaku.html', type: 'municipality', label: '千葉市 特定創業支援等事業' },
+      { url: 'https://hojyokin-portal.jp/subsidies/40278', type: 'media', label: '千葉市創業支援補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-sakai',
+    level: 'municipality',
+    domain: 'business',
+    name: '堺市の創業支援（特定創業支援等事業・S-Cube）',
+    authority: '堺市（産業振興局 地域産業創造課）／連携: 堺商工会議所・さかい新事業創造センター（S-Cube）等',
+    statement:
+      '堺市は政令指定都市の市区町村レベル代表例として、産業競争力強化法に基づく「特定創業支援等事業」を実施し、所定の継続支援（窓口相談・セミナー等）を受けた' +
+      '創業者に市が証明書を発行することで、会社設立時の登録免許税の軽減や信用保証枠の拡充などの優遇が受けられる。あわせてインキュベーション施設「S-Cube」入居者向けの' +
+      '賃料補助等の支援メニューもある。金額・対象・受付期間は年度で変動するため、最新の募集要項・堺市公式で要確認。',
+    application:
+      '創業希望者・創業者が堺商工会議所／S-Cube／堺市産業振興センター等の継続的支援を受けたうえで、証明書交付申請書を堺市地域産業創造課へ提出し、内容確認後に証明書が発行される。証明書を会社設立登記や信用保証申込時に利用する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sakai.lg.jp/sangyo/shienyuushi/sogyo/tokutei.html', type: 'municipality', label: '堺市 特定創業支援等事業' },
+      { url: 'https://www.city.sakai.lg.jp/sangyo/shienyuushi/sogyo/index.html', type: 'municipality', label: '堺市 創業支援' },
+      { url: 'https://www.s-cube.biz/nakamozufounding', type: 'operator', label: 'S-Cube なかもず創業メリット（賃料補助等）' },
+    ],
+  },
+  {
+    id: 'subsidy-hamamatsu',
+    level: 'municipality',
+    domain: 'business',
+    name: '浜松市ファンドサポート事業（スタートアップ支援）',
+    authority: '浜松市（産業部 産業振興課／スタートアップ推進）',
+    statement:
+      '浜松市ファンドサポート事業は、起業後の本格的な事業離陸や急成長を目指す市内スタートアップ・ベンチャー企業に対し、浜松市の認定ベンチャーキャピタル（認定VC）や' +
+      '認定金融機関の資金調達と協調して市が交付金を交付し、ハンズオンで支援する制度（政令指定都市＝市区町村レベルの代表例）。交付区分（シード・R&D枠／一般枠／デット枠等）・' +
+      '交付額・募集期間は年度ごとに変動するため、最新の募集要項・浜松市公式で要確認。',
+    application:
+      'まず浜松市が認定VC・認定金融機関を公募・認定し、申請企業はその認定VC等から投資（又は融資）を受けることが前提。認定VC等の投資・融資と協調する形で、市内に本社又は主たる事業所を持つ企業が交付金交付を申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/hamact/support/fund-support.html', type: 'municipality', label: '浜松市 ファンドサポート事業' },
+      { url: 'https://www.city.hamamatsu.shizuoka.jp/sangyoshinko/2016122601.html', type: 'municipality', label: '浜松市 創業支援事業費補助金（賃料補助）' },
+      { url: 'https://expact.jp/hamamatsu_fund_support/', type: 'media', label: '浜松市ファンドサポート事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-high-cost-care',
+    level: 'municipality',
+    domain: 'welfare',
+    name: '高額介護（予防）サービス費',
+    authority: '厚生労働省・市区町村',
+    statement:
+      '介護保険のサービス利用者が同一世帯で1か月に支払った利用者負担（1〜3割の自己負担）の合計が、所得区分ごとに定められた負担上限額（月額）を' +
+      '超えた場合に、その超過分が高額介護（予防）サービス費として後から払い戻される制度。上限額は所得区分により異なり改定もあるため最新で要確認。' +
+      '福祉用具購入費・住宅改修費・施設の居住費や食費は対象外である。',
+    application:
+      'お住まいの市区町村（介護保険担当窓口）へ支給申請する。対象者には市区町村から申請書（勧奨通知）が送付されることが多く、初回に申請して振込口座を登録すれば、以後は該当月分が原則として申請不要で同一口座に自動的に振り込まれる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/000334526.pdf', type: 'government', label: '厚生労働省 高額介護サービス費の負担限度額' },
+      { url: 'https://www.mhlw.go.jp/content/001499328.pdf', type: 'government', label: '厚生労働省 介護保険最新情報（負担限度額の見直し）' },
+      { url: 'https://www.city.koto.lg.jp/212105/fukushi/kaigohoken/kyufu/6539.html', type: 'municipality', label: '江東区 高額介護サービス費の支給' },
+    ],
+  },
+  {
+    id: 'subsidy-ibaraki',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'いばらき業務改善奨励金（茨城県）',
+    authority: '茨城県（産業戦略部 労働政策課）',
+    statement:
+      '事業場内最低賃金を一定額引き上げ、生産性向上のための設備投資等を行った県内中小企業・小規模事業者を対象に、国の「業務改善助成金」の自己負担分の一部を' +
+      '上乗せ助成する茨城県の代表的な賃上げ・生産性向上支援制度（都道府県レベルの代表例）。補助率・上限額・要件・募集期間は年度ごとに変動するため、最新の募集要項及び県公式で要確認。',
+    application:
+      '国の業務改善助成金の交付決定・支給を受けたうえで、賃上げ・設備投資の実績を添えて茨城県（産業戦略部 労働政策課）へ申請する上乗せ助成方式。申請様式・受付期間は年度の募集要項に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ibaraki.jp/shokorodo/rosei/rodo/gyoumukaizen.html', type: 'municipality', label: '茨城県 いばらき業務改善奨励金' },
+      { url: 'https://www.city.ibaraki-koga.lg.jp/soshiki/syoko/3/20609.html', type: 'municipality', label: '古河市 いばらき業務改善奨励金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/58756', type: 'media', label: 'いばらき業務改善奨励金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-miyagi',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'ものづくり中小企業生産性向上設備導入補助金（宮城県）',
+    authority: '宮城県（経済商工観光部）／関連支援機関: 公益財団法人みやぎ産業振興機構',
+    statement:
+      '宮城県が県内のものづくり中小企業を対象に実施する、生産性向上のための設備の新設・更新を支援する代表的な設備投資系補助金（都道府県レベルの代表例）。' +
+      '補助率・上限額・対象要件・募集期間は年度ごとに変動するため、必ず最新の募集要項及び宮城県公式で要確認。県には創業支援・経営革新・デジタル化支援など他の制度も併存する。',
+    application:
+      '宮城県公式サイトの募集ページから交付要綱・様式を入手し、電子申請フォーム等で申請書類を提出する（先着順の年度あり）。詳細は交付要綱で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.miyagi.jp/soshiki/shinsan/seisansei-hojo.html', type: 'municipality', label: '宮城県 ものづくり中小企業生産性向上設備導入補助金' },
+      { url: 'https://www.pref.miyagi.jp/soshiki/chukisi/', type: 'municipality', label: '宮城県 中小企業支援室' },
+      { url: 'https://www.joho-miyagi.or.jp/', type: 'operator', label: 'みやぎ産業振興機構' },
+    ],
+  },
+  {
+    id: 'subsidy-sagamihara',
+    level: 'municipality',
+    domain: 'business',
+    name: '相模原市ベンチャー・スタートアップ企業進出補助金',
+    authority: '相模原市（経済部）／関連窓口: 公益財団法人相模原市産業振興財団',
+    statement:
+      '相模原市が実施する、市外から市内へ事業所を新設するベンチャー・スタートアップ企業向けの代表的な補助制度（政令指定都市＝市区町村レベルの代表例）。' +
+      '法人登記又は開業届を行って一定年数以内の中小企業等を対象に、市内事業所の設置に係る賃料や外注加工費等の一部を補助する。補助額・対象要件・募集期間は年度ごとに変動するため、最新の募集要項及び相模原市公式で要確認。',
+    application:
+      '相模原市公式サイトの事業主向け助成制度ページから募集要項・申請様式を確認し、所定の申請期間内に市（経済部）の担当窓口へ申請する。創業全般の相談・併用支援は相模原市産業振興財団の窓口で対応。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.sagamihara.kanagawa.jp/sangyo/sangyo/1026664/1003291/josei/1029250.html', type: 'municipality', label: '相模原市 ベンチャー・スタートアップ企業進出補助金' },
+      { url: 'https://www.city.sagamihara.kanagawa.jp/sangyo/sangyo/1026664/1003291/josei/index.html', type: 'municipality', label: '相模原市 事業主向け助成制度' },
+      { url: 'https://ssz.or.jp/foundation/sogyoshien', type: 'operator', label: '相模原市産業振興財団 創業・起業総合支援' },
+    ],
+  },
+  {
+    id: 'subsidy-niigata-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '創業サポート事業補助金（新潟市）',
+    authority: '新潟市（経済部 産業政策・イノベーション推進課）',
+    statement:
+      '新潟市が市内で新たに事業を始める個人・グループ・中小ベンチャー企業を対象に、事業所（オフィス／店舗）の賃借料の一部を補助する制度（政令指定都市＝' +
+      '市区町村レベルの創業支援の代表例）。近年は新規募集を終了し継続交付者のみが対象となるなど運用は年度で変動する。金額・要件・募集の有無は年度ごとに変わるため、最新の募集要項及び新潟市公式で要確認。',
+    application:
+      '新潟市公式サイト（商工支援・創業支援ページ）又は経済部 産業政策・イノベーション推進課を通じて、募集回ごとの募集要項に従い申請。創業計画・賃貸借契約等の書類を提出し、市の審査・交付決定を経て賃料補助を受ける。募集の有無・スケジュールは申請前に公式窓口で要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.niigata.lg.jp/business/shoko/shokoshien/sogyoshien/sougyousapotoofisu/seidonitsuite.html', type: 'municipality', label: '新潟市 創業サポート事業（オフィス）補助金' },
+      { url: 'https://www.city.niigata.lg.jp/shisei/gyoseiunei/hojyokin/hojyokin7.files/R07hozyokin.pdf', type: 'municipality', label: '新潟市 令和7年度 補助金一覧表' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/44683', type: 'government', label: 'J-Net21 新潟市 創業サポート事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-shizuoka-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '静岡市中小企業等デジタル活用事業補助金（及び特定創業支援等事業）',
+    authority: '静岡市（経済局）／中小企業支援センター B-nest',
+    statement:
+      '静岡市（政令指定都市）が市内中小企業者・個人事業主向けに実施する代表的な市レベルの補助制度の一例として、中小企業等デジタル活用事業補助金がある' +
+      '（PC・タブレット・キャッシュレス決済端末等の導入支援）。あわせて静岡市は特定創業支援等事業（B-nest等での支援）を認定しており、証明書発行により会社設立時の' +
+      '登録免許税軽減等の創業者向け優遇が受けられる。補助率・上限額・対象・募集期間は年度ごとに変動するため、最新の市公式・募集要項で要確認。',
+    application:
+      'デジタル活用補助金は市が定める公募期間内に交付申請。創業者はB-nest等の特定創業支援を受けたうえで市へ証明書発行を申請し各種優遇を利用する。詳細・最新の募集状況は静岡市経済局又はB-nestで要確認。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.shizuoka.lg.jp/000_004012_00011.html', type: 'municipality', label: '静岡市 中小企業等デジタル活用事業補助金' },
+      { url: 'https://www.city.shizuoka.lg.jp/s2859/s003858.html', type: 'municipality', label: '静岡市 特定創業支援等事業' },
+      { url: 'https://www.b-nest.jp/want_to/hojokin.html', type: 'operator', label: 'B-nest 静岡市中小企業支援センター 補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-osaka-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '大阪市の創業支援（特定創業支援等事業・イノベーション創出支援補助金）',
+    authority: '大阪市（経済戦略局）／連携: 公益財団法人大阪産業局（大阪産業創造館）',
+    statement:
+      '大阪市は政令指定都市（市区町村レベル）の代表例として、産業競争力強化法に基づく認定創業支援等事業計画のもと、経営・財務・人材育成・販路開拓に関する継続的支援' +
+      '（特定創業支援等事業）を受けた創業者に証明書を発行し、会社設立時の登録免許税の軽減や創業関連保証の特例等を可能にしている。加えて産学連携の研究開発を対象とする' +
+      '「大阪市イノベーション創出支援補助金」等の市独自補助も実施。金額・要件・募集期間は年度ごとに変動するため最新の募集要項及び大阪市公式で要確認。',
+    application:
+      '特定創業支援等事業は大阪産業創造館等の所定セミナー・面談を一定期間受講し要件を満たした後、大阪市経済戦略局へ証明書発行を申請。イノベーション創出支援補助金は連携大学とともに公募期間内に経済戦略局へ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.osaka.lg.jp/keizaisenryaku/page/0000650806.html', type: 'municipality', label: '大阪市 特定創業支援等事業' },
+      { url: 'https://www.city.osaka.lg.jp/keizaisenryaku/page/0000642452.html', type: 'municipality', label: '大阪市 イノベーション創出支援補助金' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/chiiki/27.nintei_osaka.html', type: 'government', label: '中小企業庁 認定創業支援等事業計画（大阪市）' },
+    ],
+  },
+  {
+    id: 'subsidy-kyoto-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '京都市伝統産業設備改修等補助制度',
+    authority: '京都市（産業観光局 伝統産業課）／創業系は公益財団法人京都高度技術研究所（ASTEM）',
+    statement:
+      '京都市が政令指定都市（市区町村レベル）として独自に実施する中小企業向け支援制度の代表例で、市内に主たる事務所を有し市指定の伝統産業製品等を製造する中小企業者・' +
+      '組合を対象に、老朽化や法令改正等に伴う設備の改修・更新・新設費用を補助する。補助率・上限額・募集期間は年度ごとに変動するため最新の募集要項及び京都市公式で要確認。' +
+      '京都市は創業者向けにもASTEMによるスタートアップ支援等の制度を整備している。',
+    application:
+      '京都市産業観光局（伝統産業課）へ年度ごとの募集期間内に交付申請書・必要書類を提出し、審査・交付決定後に設備改修等を実施、完了後に実績報告して補助金を受給する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.kyoto.lg.jp/sankan/page/0000339416.html', type: 'municipality', label: '京都市 伝統産業設備改修等補助制度' },
+      { url: 'https://www.city.kyoto.lg.jp/sankan/cmsfiles/contents/0000268/268990/shienseido.pdf', type: 'municipality', label: '京都市 中小企業支援補助金等一覧' },
+      { url: 'https://www.astem.or.jp/entre/startup', type: 'operator', label: '京都高度技術研究所（ASTEM）スタートアップ支援' },
+    ],
+  },
+  {
+    id: 'subsidy-hiroshima-city',
+    level: 'municipality',
+    domain: 'business',
+    name: '広島市中小企業支援センターの創業・中小企業支援',
+    authority: '公益財団法人広島市産業振興センター（広島市中小企業支援センター運営）／所管: 広島市経済観光局',
+    statement:
+      '広島市は政令指定都市の市区町村レベル代表例として、公益財団法人広島市産業振興センター内の「中小企業支援センター」を通じ、市内の中小企業者・創業者向けに経営相談・' +
+      '専門家派遣・セミナー・創業支援等を提供している。代表的なメニューとして創業チャレンジ・ベンチャー支援事業（制度融資＋経営支援）や新規ビジネス事業化支援事業（助成金）等があり、' +
+      '金額・要件・対象・募集期間は年度ごとに変動するため、最新の募集要項・広島市公式／産業振興センター公式で要確認。',
+    application:
+      '広島市中小企業支援センター又は広島市公式ウェブサイトの創業者向け支援メニュー案内から相談・申込。各助成・支援事業ごとに募集要項・申請様式が定められ所定期間内に申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.city.hiroshima.lg.jp/business/sangyo/1021492/1038804/1034131.html', type: 'municipality', label: '広島市 創業者向け支援メニュー' },
+      { url: 'https://www.assist.ipc.city.hiroshima.jp/sougyou/sougyou05.html', type: 'operator', label: '広島市中小企業支援センター 創業チャレンジ・ベンチャー支援' },
+      { url: 'https://www.ipc.city.hiroshima.jp/gaiyou.html', type: 'operator', label: '広島市産業振興センター 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-gunma',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'ぐんまクロススタート補助金（群馬県・旧 起業支援金）',
+    authority: '群馬県（未来投資・デジタル産業課）／執行・申請窓口: 公益財団法人群馬県産業支援機構',
+    statement:
+      'ぐんまクロススタート補助金は、地域課題の解決等に取り組みながら群馬県産業経済の成長を牽引する「ぐんま発スタートアップ」の創出を目的に、起業に要する対象経費の一部を' +
+      '補助する群馬県の代表的な創業・起業支援制度（旧称・群馬県起業支援金）。補助額・補助率・対象経費・募集期間・採択件数は年度ごとに変動するため、最新の募集要項及び県・産業支援機構の公式で要確認。',
+    application:
+      '公益財団法人群馬県産業支援機構が公募・申請受付・伴走支援を担当。対象経費は人件費・店舗等借入費・設備費・知的財産等関連経費・広報費・外注費等。例年春に公募期間を設け、事業計画等を提出して審査・採択される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.gunma.jp/site/houdou/701622.html', type: 'municipality', label: '群馬県 ぐんまクロススタート補助金 公募' },
+      { url: 'https://www.g-inf.or.jp/html/startup_002.html', type: 'operator', label: '群馬県産業支援機構 創業に関する補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/56584', type: 'media', label: 'ぐんまクロススタート補助金 概要' },
+    ],
+  },
+  {
+    id: 'subsidy-gifu',
+    level: 'prefecture',
+    domain: 'business',
+    name: '岐阜県地域活性化ファンド事業費助成金',
+    authority: '公益財団法人岐阜県産業経済振興センター（岐阜県 地域産業課が所管・連携）',
+    statement:
+      '岐阜県内の中小企業者等が行う新商品・新技術の開発やその販路開拓・販売力強化の取組を支援する、岐阜県の代表的な中小企業向け助成制度の一例。助成率・助成額・要件・' +
+      '募集期間は年度ごとに変動するため、最新の募集要項及び岐阜県・同センターの公式で要確認。岐阜県には他にも省エネ設備導入・創業支援等の制度がある。',
+    application:
+      '公益財団法人岐阜県産業経済振興センターが公募する募集要項に沿って申請。年度内に複数回の募集が行われることがあり、地域の商工会議所・商工会経由で案内されることも多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.gifu.lg.jp/site/pressrelease/304491.html', type: 'municipality', label: '岐阜県 地域活性化ファンド事業費助成金 募集' },
+      { url: 'https://www.gpc-gifu.or.jp/fund/chiiki/index.asp', type: 'operator', label: '岐阜県産業経済振興センター 地域活性化ファンド助成金' },
+      { url: 'https://www.gifushoko.or.jp/grant20251128/', type: 'media', label: '岐阜県地域活性化ファンド助成金 案内' },
+    ],
+  },
+  {
+    id: 'subsidy-tochigi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '地域課題解決型創業支援補助金（栃木県）',
+    authority: '栃木県（産業労働観光部）／事務局・申請窓口: 公益財団法人栃木県産業振興センター',
+    statement:
+      '栃木県の代表的な創業支援制度の一例で、県内の地域課題をデジタル技術を活用して解決する新規創業者や、付加価値の高い分野でデジタル技術を活用して事業承継・第二創業を' +
+      '行う者に対し、創業等に要する経費の一部を補助する制度。補助額・要件・募集期間は年度ごとに変動するため、最新の募集要項及び県・産業振興センター公式で要確認。',
+    application:
+      '年度ごとに公募が行われ、事務局である公益財団法人栃木県産業振興センターへ募集要項に沿って申請し、審査・交付決定を経て補助対象経費（人件費・店舗等借入費・改装費・設備費・広報費・外注費等）の一部が交付される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tochigi.lg.jp/f03/chiikikadai_hojo.html', type: 'municipality', label: '栃木県 地域課題解決型創業支援補助金' },
+      { url: 'https://www.tochigi-iin.or.jp/home/2/5/1.html', type: 'operator', label: '栃木県産業振興センター 地域課題解決型創業支援補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/152319', type: 'government', label: 'J-Net21 地域課題解決型創業支援補助金（栃木県）' },
+    ],
+  },
+  {
+    id: 'subsidy-mie',
+    level: 'prefecture',
+    domain: 'business',
+    name: '三重県経営向上計画・経営革新計画に基づく支援（三重県）',
+    authority: '三重県（雇用経済部 中小企業・サービス産業振興課）／支援窓口: 公益財団法人三重県産業支援センター',
+    statement:
+      '三重県は、中小企業者等が新商品開発・新サービス・新たな生産方式の導入等により経営の向上を図る取組を「経営向上計画」「経営革新計画」として承認し、低利融資・専門家派遣・販路開拓等の' +
+      '支援につなげている。各種補助金・融資の対象要件や上限額・募集期間は制度・年度ごとに変動するため、最新の募集要項及び県・産業支援センター公式で要確認。',
+    application:
+      '計画の承認申請は三重県の所管課または三重県産業支援センターを通じて行い、承認後に県制度融資・補助金・専門家派遣等の支援メニューを活用する。具体の補助金は公募回ごとに要項が示される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.mie.lg.jp/CHSANGYO/HP/m0151000041.htm', type: 'municipality', label: '三重県 経営革新計画の承認について' },
+      { url: 'https://www.pref.mie.lg.jp/CHSANGYO/HP/', type: 'municipality', label: '三重県 中小企業・サービス産業振興課' },
+      { url: 'https://www.miesc.or.jp/', type: 'operator', label: '三重県産業支援センター（中小企業支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-shiga',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業経営革新等応援事業補助金（滋賀県）',
+    authority: '滋賀県（商工観光労働部 中小企業支援課）／連携: 地域の商工会議所・商工会',
+    statement:
+      '滋賀県内の中小企業者等が経営革新計画等に基づき行う新商品開発・販路開拓・生産性向上等の取組を応援する滋賀県の代表的な補助制度の一例。補助率・上限額・対象経費・募集期間は' +
+      '年度・公募回ごとに変動するため、最新の募集要項及び県・商工団体の公式で要確認。',
+    application:
+      '県の募集要項に沿って事業計画を提出し、審査・採択を経て対象経費の一部が補助される。地域の商工会議所・商工会が申請の相談・伴走支援を行うことが多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shiga.lg.jp/ippan/shigotosangyou/chusyo/', type: 'municipality', label: '滋賀県 中小企業支援' },
+      { url: 'https://www.pref.shiga.lg.jp/ippan/shigotosangyou/chusyo/keieikakushin/', type: 'municipality', label: '滋賀県 経営革新計画' },
+      { url: 'https://www.moriyama-cci.or.jp/', type: 'operator', label: '守山商工会議所（中小企業向け補助金支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-okayama-pref',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等海外展開支援事業費補助金（海外出願支援／岡山県）',
+    authority: '岡山県（産業労働部）／執行・申請窓口: 一般社団法人岡山県発明協会（OPTIC）',
+    statement:
+      '岡山県内の中小企業等が外国への事業展開・模倣品対策のために行う特許・実用新案・意匠・商標の外国出願に要する費用の一部を補助する制度（INPIT・特許庁の外国出願補助事業と連携）。' +
+      '補助率・上限額・対象国・募集期間は年度ごとに変動するため、最新の募集要項及び県・発明協会公式で要確認。',
+    application:
+      '岡山県発明協会（OPTIC）が公募・申請受付を行い、外国出願に要する費用（出願手数料・翻訳費・現地代理人費用等）の一部を交付。例年春〜初夏に公募期間が設けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.optic.or.jp/', type: 'operator', label: '岡山県発明協会（OPTIC）外国出願支援事業' },
+      { url: 'https://www.pref.okayama.jp/site/sangyoshinko/', type: 'municipality', label: '岡山県 産業振興（中小企業支援）' },
+      { url: 'https://www.pref.okayama.jp/', type: 'municipality', label: '岡山県 公式サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-yamaguchi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）',
+    authority: '山口県（産業労働部）／執行・申請窓口: 公益財団法人やまぐち産業振興財団',
+    statement:
+      '山口県内の中小企業者等が省エネルギー・創エネルギー（太陽光発電等）・蓄エネルギー（蓄電池等）設備を導入する際の費用の一部を補助し、エネルギーコスト削減と脱炭素を支援する制度。' +
+      '補助率・上限額・対象設備・募集期間・予算枠は年度ごとに変動するため、最新の募集要項及び県・産業振興財団公式で要確認。',
+    application:
+      'やまぐち産業振興財団が公募・申請受付を行い、設備導入計画を提出して審査・交付決定を受ける。予算枠に達し次第締切となる先着・審査方式が採られることが多い。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamaguchi.lg.jp/soshiki/74/', type: 'municipality', label: '山口県 産業政策課（中小企業支援）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（山口県 省・創・蓄エネ設備補助金）' },
+      { url: 'https://www.yipf.or.jp/', type: 'operator', label: 'やまぐち産業振興財団' },
+    ],
+  },
+  {
+    id: 'subsidy-fukushima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '福島県中小企業等生産性向上推進事業補助金（福島県）',
+    authority: '福島県（商工労働部）／執行・申請窓口: 公益財団法人福島県産業振興センター',
+    statement:
+      '福島県内の中小企業等が生産性向上・省力化・業務効率化のために行う設備導入やデジタル化等の取組に要する経費の一部を補助する制度。補助率・上限額・対象経費・募集期間は' +
+      '年度・公募回ごとに変動するため、最新の募集要項及び県・産業振興センター公式で要確認。',
+    application:
+      '福島県産業振興センターが公募する募集要項に沿って事業計画を提出し、審査・交付決定を経て対象経費の一部が補助される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukushima.lg.jp/sec/32011a/', type: 'municipality', label: '福島県 経営金融課（中小企業支援）' },
+      { url: 'https://www.pref.fukushima.lg.jp/', type: 'municipality', label: '福島県 公式サイト' },
+      { url: 'https://www.f-open.or.jp/', type: 'operator', label: '福島県産業振興センター' },
+    ],
+  },
+  {
+    id: 'subsidy-okinawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '沖縄県産業振興基金事業補助金（沖縄県）',
+    authority: '沖縄県（商工労働部）／執行・申請窓口: 公益財団法人沖縄県産業振興公社等',
+    statement:
+      '沖縄県が産業振興基金を活用し、県内中小企業等の新事業展開・販路開拓・人材育成・地域資源活用等の取組を支援する補助制度の一例。補助率・上限額・対象事業・募集期間は' +
+      '年度・事業区分ごとに変動するため、最新の募集要項及び県・産業振興公社公式で要確認。',
+    application:
+      '沖縄県または産業振興公社が公募する事業区分ごとの募集要項に沿って申請し、審査・採択を経て対象経費の一部が補助される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.okinawa.lg.jp/shigoto/', type: 'municipality', label: '沖縄県 仕事・産業（中小企業支援）' },
+      { url: 'https://www.pref.okinawa.jp/', type: 'municipality', label: '沖縄県 公式サイト' },
+      { url: 'https://hojyokin-portal.jp/', type: 'media', label: '補助金ポータル（沖縄県産業振興基金事業 案内）' },
+    ],
+  },
+  {
+    id: 'subsidy-aomori',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'あおもり起業支援事業費補助金（青森県）',
+    authority: '青森県（経済産業部 立地企業課・創業/起業支援担当）／執行・申請窓口: 公益財団法人21あおもり産業総合支援センター',
+    statement:
+      '青森県への移住者（移住予定者を含む）または県内在住の若者・女性が、デジタル技術を活用して地域課題の解決を図る起業や、付加価値の高い産業分野でデジタル技術を活用した事業承継・第二創業を' +
+      '行う場合に、創業等に要する経費の一部を補助する青森県の代表的な創業支援制度。補助率・上限額・募集期間は年度ごとに変動するため、最新の募集要項及び県・支援センター公式で要確認。',
+    application:
+      '公益財団法人21あおもり産業総合支援センターが公募・受付を行い、事業計画の策定や専門家による伴走支援を前提に申請する。対象経費は人件費・設備費・店舗賃料・広報費等が想定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.aomori.lg.jp/soshiki/sangyo/richi/support_for_entrepreneurs.html', type: 'municipality', label: '青森県 立地企業課 創業・起業の支援' },
+      { url: 'https://www.21aomori.or.jp/topics/25496', type: 'operator', label: '21あおもり産業総合支援センター あおもり起業支援事業費補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/184141', type: 'government', label: 'J-Net21 青森県 起業・スタートアップ補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-iwate',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業者等賃上げ環境整備支援事業費補助金（岩手県）',
+    authority: '岩手県（商工労働観光部 経営支援課 中小企業振興担当）／公募周知は岩手県中小企業団体中央会等を通じて案内',
+    statement:
+      '承認を受けた経営革新計画に基づき、生産性向上・適切な価格転嫁・賃上げのための環境整備に取り組む県内の中小企業・小規模事業者を対象に、設備投資・人材育成・販路開拓等に要する経費の一部を' +
+      '補助する岩手県の制度。給与支給総額の引上げ見込みや「パートナーシップ構築宣言」等が要件として設定される。補助率・上限額・公募期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '経営革新計画の承認取得を前提に、県（経営支援課）が定める公募要領に沿って所定様式で申請する。年度内に複数回公募される回次制で、受付期間・審査・採択・交付決定が回ごとに設定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.iwate.jp/kensei/nyuusatsu/1010807/1066780.html', type: 'municipality', label: '岩手県 中小企業者等賃上げ環境整備支援事業費補助金 公募' },
+      { url: 'https://www.ginga.or.jp/2025/04/07/14868/', type: 'operator', label: '岩手県中小企業団体中央会 公募告知' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（岩手県 賃上げ環境整備補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-akita',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'あきた農商工応援ファンド事業（助成金）（秋田県）',
+    authority: '公益財団法人あきた企業活性化センター（秋田県が関与する産業支援機関）／秋田県 産業労働部の中小企業支援施策の一環',
+    statement:
+      '秋田県内の中小企業者等と農林漁業者が組む「連携体」が、県産農林水産物等を活用して取り組む新商品・新サービスの開発や販路開拓を支援する助成金制度。県の産業支援機関であるあきた企業活性化センターが' +
+      '基金（ファンド）の運用益等を原資に実施する。助成率・上限額・募集期間は年度ごとに変動するため、最新の募集要項で要確認。',
+    application:
+      '公募制。あきた企業活性化センターが年度ごとに募集要項を公表し、原則として事前相談を経たうえで連携体が申請書類を提出、審査・採択を受けて交付決定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bic-akita.or.jp/support/20.html', type: 'operator', label: 'あきた企業活性化センター あきた農商工応援ファンド事業' },
+      { url: 'https://www.pref.akita.lg.jp/pages/genre/11973', type: 'municipality', label: '秋田県 あきた企業活性化センター 紹介' },
+      { url: 'https://hojyokin-portal.jp/subsidies/72685', type: 'media', label: '補助金ポータル 秋田県 あきた農商工応援ファンド事業' },
+    ],
+  },
+  {
+    id: 'subsidy-yamagata',
+    level: 'prefecture',
+    domain: 'business',
+    name: '山形県中小企業まるっとサポート補助金（山形県）',
+    authority: '山形県（産業労働部 商業振興・経営支援課）／一部の枠は公益財団法人やまがた産業支援機構に事務局を設置',
+    statement:
+      '県内産業の持続的発展を目的に、新技術・新サービスの開発から設備投資、販路開拓までを一貫支援する山形県の総合的な中小企業支援制度。県内に事業所を有する中小企業・小規模事業者等が対象で、' +
+      '収益力向上（設備投資）・販路開拓（展示会等出展）・DX推進・事業継続力強化など複数の枠に分かれて公募される。補助率・上限額・募集期間は枠ごと・年度ごとに変動するため要確認。',
+    application:
+      '県（商業振興・経営支援課）または各枠の事務局（やまがた産業支援機構）が年度ごと・枠ごとに公募。事業者が募集要領に沿って申請書類を提出する交付申請方式（一部の枠はパートナーシップ構築宣言の公表が要件）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamagata.jp/110013/sangyo/shokogyo/shinko/marusapo.html', type: 'municipality', label: '山形県 中小企業まるっとサポート補助金' },
+      { url: 'https://www.pref.yamagata.jp/documents/44650/gaiyo_hanro.pdf', type: 'municipality', label: '山形県 まるっとサポート補助金 販路開拓支援 概要' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/support', type: 'government', label: 'J-Net21 支援情報（山形県 まるっとサポート補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-toyama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '富山県中小企業トランスフォーメーション補助金（富山県）',
+    authority: '富山県（商工労働部の商工施策として実施）／執行・申請窓口（事務局）: 公益財団法人富山県新世紀産業機構（Tonio）',
+    statement:
+      '富山県内の中小企業等が、自社の経営課題（エネルギー使用量・CO2排出量・機器稼働状況等）を「見える化」し、DX（デジタル変革）・GX（グリーン変革）・省力化の視点から業務プロセスや事業構造の変革に' +
+      '取り組む経費を支援する県の補助金。課題見える化枠・DX枠・GX枠など複数区分で構成される。補助率・各枠の上限額・募集期間は募集回・年度ごとに変動するため要確認。',
+    application:
+      '事務局（富山県新世紀産業機構）への申請。希望する枠を選び、補助金の手引き・Q&Aに沿って事業計画と必要書類を提出する公募・審査・交付決定方式。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.toyama.jp/1300/sangyou/shoukoukensetsu/shoukougyou/transformation.html', type: 'municipality', label: '富山県 中小企業トランスフォーメーション補助金' },
+      { url: 'https://www.tonio.or.jp/search/20251216-xformation/', type: 'operator', label: '富山県新世紀産業機構（Tonio）募集案内' },
+      { url: 'https://toyama-yorozushien.go.jp/news/2026/02/post-5153/', type: 'government', label: '富山県よろず支援拠点 補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-ishikawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）',
+    authority: '石川県（商工労働部 経営支援課）／周知・受付支援: 公益財団法人石川県産業創出支援機構（ISICO）及び地域の商工会・商工会議所',
+    statement:
+      '国の「小規模事業者持続化補助金（災害支援枠）」の交付決定・受給を受けた石川県内の小規模事業者等に対し、県が独自に上乗せ補助を行う制度。能登半島地震等の災害からの事業再建・継続を後押しする趣旨で、' +
+      '建物の修繕費・機械の修理／入替など復旧関連経費を含むことが要件とされる。補助率・上乗せ上限額・募集期間は年度ごとに設定・変動するため要確認。',
+    application:
+      '国の持続化補助金（災害支援枠）で交付決定・受給を完了したうえで、県の上乗せ分を別途申請する枠組み。申請・相談は地域の商工会／商工会議所を通じて行い、ISICO（DGnet）・県公式で制度詳細・様式が案内される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ishikawa.lg.jp/kinyuu/jishin/zizokuka.html', type: 'municipality', label: '石川県 小規模事業者事業継続支援補助金' },
+      { url: 'https://www.isico.or.jp/support/dgnet/d41187942.html', type: 'operator', label: '石川県産業創出支援機構（ISICO）制度ページ' },
+      { url: 'https://shoko.or.jp/info/common/3132', type: 'operator', label: '石川県商工会連合会 事業継続支援補助金 案内' },
+    ],
+  },
+  {
+    id: 'subsidy-fukui',
+    level: 'prefecture',
+    domain: 'business',
+    name: '企業における省エネ設備等導入支援事業補助金（福井県）',
+    authority: '福井県（産業労働部 地域産業・技術振興課）／執行・申請窓口: 同補助金事務局',
+    statement:
+      'エネルギー価格高騰及び脱炭素社会の推進に対応した経営体質への転換を加速するため、福井県内で製造業又は商業・サービス業を営む中小企業者が行う、省エネルギー・省CO2性能に優れた設備（高効率空調/給湯・' +
+      '調光制御付きLED照明・高効率生産設備等。原則として既存設備に対し一定以上の省CO2効果が要件）の導入を支援する県の補助金。補助率・上限額・募集件数・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '県（地域産業・技術振興課）が年度ごとに募集要領を公表し、指定の事務局へ交付申請書類を提出する公募・審査型。原則として交付決定後に着手・発注する事前申請方式で、既存稼働設備の更新が基本。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.fukui.lg.jp/doc/chisangi/bosyu/syouene2025.html', type: 'municipality', label: '福井県 企業における省エネ設備等導入支援事業補助金 募集' },
+      { url: 'https://www.shokokai-fukui.or.jp/', type: 'operator', label: '福井県商工会連合会 補助金案内' },
+      { url: 'https://hojyokin-portal.jp/subsidies/58521', type: 'media', label: '補助金ポータル 福井県 省エネ設備等導入支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-yamanashi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業等生産性向上設備整備等支援補助金（山梨県）',
+    authority: '山梨県（産業政策課）／執行・申請窓口: やまなし生産性向上設備補助金事務局。相談窓口: やまなし産業支援機構・各商工会/商工会議所',
+    statement:
+      'エネルギー価格・物価高騰に対応し、山梨県内の中小企業等が生産性向上のために行う設備の導入・整備等に要する経費の一部を補助する県の制度。設備導入のほか会計ソフト・パソコン本体費、税理士との新規顧問契約費用等も' +
+      '補助対象に含まれる。補助率・上限額・対象経費・募集期間は年度ごとに変動するため、公式ポータル及び県公式で要確認（予算到達時は早期終了の場合あり）。',
+    application:
+      '専門家による事前支援を受けていること、県の認証制度の取得（又は取得見込み）等が要件。事務局を通じた公募申請で、受付期間は年度ごとに設定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.yamanashi.jp/shouko-kik/seisansei-up.html', type: 'municipality', label: '山梨県 中小企業等生産性向上設備整備等支援補助金' },
+      { url: 'https://www.yamanashi-seisansei-up.jp/', type: 'operator', label: '山梨県生産性向上設備補助金 公式ポータル（事務局）' },
+      { url: 'https://www.city.koshu.yamanashi.jp/docs/2026050700026', type: 'municipality', label: '甲州市 生産性向上設備整備等支援補助金の募集について' },
+    ],
+  },
+  {
+    id: 'subsidy-nara',
+    level: 'prefecture',
+    domain: 'business',
+    name: '中小企業省力化・生産性向上設備投資支援補助金（奈良県）',
+    authority: '奈良県（産業・雇用振興部 産業政策課）／申請・面談対応は県委託の補助金事務局',
+    statement:
+      '人手不足に悩む奈良県内の中小企業等が、県が派遣する中小企業診断士の助言を受けて業務プロセスを改善しつつ、省力化に資する設備投資を行う事業を、賃上げを条件に支援する県の補助金。県内に事業所を有し、設備導入前に' +
+      '診断士支援を受け、実績報告時点で給与支給総額を基準月比で一定割合以上引き上げること等が要件とされる。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '申請に先立ち県派遣の中小企業診断士との面談（複数回）で事業計画を精査したうえで、所定期間内に事務局へ申請する枠組み。電子申請の要否や締切は年度の公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nara.jp/69203.htm', type: 'municipality', label: '奈良県 中小企業省力化・生産性向上設備投資支援補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/166983', type: 'government', label: 'J-Net21 奈良県 省力化・生産性向上設備投資支援補助金' },
+      { url: 'https://www.city.yamatokoriyama.lg.jp/soshiki/chiikishinkoka/sangyo/8/16140.html', type: 'municipality', label: '大和郡山市 令和7年度 支援策のご案内（奈良県）' },
+    ],
+  },
+  {
+    id: 'subsidy-wakayama',
+    level: 'prefecture',
+    domain: 'business',
+    name: '和歌山県中小企業成長促進補助金（和歌山県）',
+    authority: '和歌山県（商工労働部 商工企画課）／申請の実務窓口は地域の商工会・商工会議所（伴走支援）',
+    statement:
+      '原材料・エネルギー価格高騰や人手不足の経営環境の中で、持続的な賃上げを目指す県内中小企業者等が、省力化・業務効率化など生産性向上のために行う機械装置・システム導入等の設備投資を支援する県の補助金' +
+      '（「わかやま賃上げ環境整備支援パッケージ」の一環）。付加価値額・賃金の向上に関する計画の達成が要件とされる。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '地域の商工会・商工会議所に申請意向を相談し、伴走支援を受けて事業計画を策定→確認書の交付を受けたうえで必要書類を提出する流れ（年度ごとの公募・受付期間あり）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.wakayama.lg.jp/prefg/060100/d00221813.html', type: 'municipality', label: '和歌山県 中小企業成長促進事業について' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/181089', type: 'government', label: 'J-Net21 和歌山県 中小企業成長促進補助金' },
+      { url: 'https://kishuarida-cci.jp/5816/', type: 'operator', label: '紀州有田商工会議所 制度案内' },
+    ],
+  },
+  {
+    id: 'subsidy-tottori',
+    level: 'prefecture',
+    domain: 'business',
+    name: '鳥取県産業成長応援補助金（企業立地・設備投資等大型投資への支援）（鳥取県）',
+    authority: '鳥取県（商工労働部 立地戦略課等）／県の企業立地情報サイト TOTTORICH NAVI でも案内',
+    statement:
+      '鳥取県内で工場等の新設・増設を行う事業者の大型投資（企業立地・設備投資）を支援し、地域への投資・雇用創出を促す県の補助制度。土地・建物・設備投資の一部、初年度のリース料、人材確保経費、従業員福利厚生施設の' +
+      '整備費等が補助対象として案内される。補助率・上限額・募集期間は年度の予算・要綱により変動するため、最新の募集要項で要確認。',
+    application:
+      '県条例に基づく投資計画の認定を前提とする枠組みで、所管部局（立地戦略課等）への事前相談・計画認定を経て交付申請を行う方式。対象要件・申請手続は年度の公募要項で確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tottori.lg.jp/286865.htm', type: 'municipality', label: '鳥取県 産業成長応援補助金（大型投資への支援）' },
+      { url: 'https://www.pref.tottori.lg.jp/291544.htm', type: 'municipality', label: '鳥取県 産業成長応援補助金（大型投資）認定要件の改正' },
+      { url: 'https://ritti-pref.tottori.jp/support/', type: 'operator', label: '鳥取県企業立地情報サイト TOTTORICH NAVI 各種支援制度' },
+    ],
+  },
+  {
+    id: 'subsidy-shimane',
+    level: 'prefecture',
+    domain: 'business',
+    name: '地域課題解決型しまね起業支援事業費補助金（島根県）',
+    authority: '島根県（商工労働部 中小企業課等）／執行・申請受付団体: 島根県商工会連合会。事前相談窓口: 起業予定地の市町村窓口',
+    statement:
+      '島根県内に移住・在住し、地域の課題解決に資する「社会的事業」（中山間地域・離島の生活機能確保、まちづくり・地域活性化、教育・子育て、高齢者の暮らし・福祉向上等）で起業・第二創業する者に、起業に必要な経費の一部を' +
+      '補助する制度。社会性・事業性・必要性・デジタル技術の活用の観点で審査される。補助率・上限額・対象経費・公募期間は年度（及び公募回）ごとに変動するため要確認。',
+    application:
+      '起業予定地の市町村窓口で事前相談を行い、地域課題解決に資する事業であることの確認を受けたうえで、起業地域を管轄する商工会等を通じて執行団体（島根県商工会連合会）に必要書類を提出して申請する。例年複数回の公募が実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.shimane.lg.jp/industry/syoko/sangyo/kigyo/kigyo_sien/wakuwaushimane.html', type: 'municipality', label: '島根県 地域課題解決型しまね起業支援事業費補助金' },
+      { url: 'https://shoko-shimane.or.jp/2025/06/20/6763/', type: 'operator', label: '島根県商工会連合会 公募案内' },
+      { url: 'https://www.town.okuizumo.shimane.jp/www/contents/1750639339577/index.html', type: 'municipality', label: '奥出雲町 しまね起業支援事業費補助金 公募のお知らせ' },
+    ],
+  },
+  {
+    id: 'subsidy-tokushima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '徳島県生産性向上・成長力強化支援事業費補助金（徳島県）',
+    authority: '徳島県（商工政策課）／申請は県内の商工団体（商工会・商工会議所・中小企業団体中央会）の支援を受け、補助金事務局が受付・交付事務を担う',
+    statement:
+      '徳島県内に事業所を有する中小・小規模事業者等（個人事業者を含む）が、商工団体の支援を受けて策定した「経営計画」に基づき、生産プロセスの改善・生産性の向上・収益構造の強化に資する設備導入や改修・改装を行う取組を支援する制度。' +
+      '計画期間に付加価値額等を年率平均一定割合以上増加させる計画であることが要件とされる。補助率・上限額・募集期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '申請者は単独では申請できず、県内の商工団体（商工会・商工会議所・中小企業団体中央会）いずれかの支援を受けながら「経営計画」を策定し、その支援機関を通じて補助金事務局へ申請書を提出する枠組み（書類は支援機関必着）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.tokushima.lg.jp/jigyoshanokata/sangyo/shokogyo/7309846/', type: 'municipality', label: '徳島県 生産性向上・成長力強化支援事業費補助金' },
+      { url: 'https://pgup-tokushima.jp/', type: 'operator', label: '徳島県生産性向上・成長力強化支援事業費補助金 公式ポータル（事務局）' },
+      { url: 'https://www.tokushimacci.or.jp/latest_information/2026013062064/', type: 'operator', label: '徳島商工会議所 制度案内' },
+    ],
+  },
+  {
+    id: 'subsidy-kagawa',
+    level: 'prefecture',
+    domain: 'business',
+    name: '香川県事業者の未来への投資を応援する総合補助金（未来投資応援補助金）（香川県）',
+    authority: '香川県（商工労働部 産業政策課）／申請・問い合わせは未来投資応援補助金事務局',
+    statement:
+      '物価高騰が続く中、県内事業者の「稼ぐ力」強化と賃上げの好循環実現を目的に、香川県内で行う設備投資（成長につながる新事業展開・事業分野拡大に必要な設備投資、又は生産性向上につながる設備投資）の経費を補助する制度。' +
+      '対象は香川県内の中小企業者・個人事業主等。補助率・補助上限額・対象経費下限・募集期間は年度ごとに変動するため、県公式及び事務局で要確認。',
+    application:
+      '公募期間内に申請書類を事務局へ郵送（送達確認可能な方法）。詳細要件・様式・電子申請の有無は各年度の公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kagawa.lg.jp/sangyo/miraitoshi/index.html', type: 'municipality', label: '香川県 事業者の未来への投資を応援する総合補助金' },
+      { url: 'https://www.city.kanonji.kagawa.jp/soshiki/21/59935.html', type: 'municipality', label: '観音寺市 香川県未来投資応援補助金の案内' },
+      { url: 'https://www.takacci.or.jp/news/news-16254/', type: 'operator', label: '高松商工会議所 香川県未来投資応援補助金について' },
+    ],
+  },
+  {
+    id: 'subsidy-ehime',
+    level: 'prefecture',
+    domain: 'business',
+    name: '生産性向上設備等投資支援補助金（愛媛県）',
+    authority: '愛媛県（経済労働部 産業支援局 産業創出課）／執行・申請窓口は事務局の愛媛県中小企業団体中央会',
+    statement:
+      '愛媛県内の中小企業者等が、業務効率化・省コスト化など生産性向上を目的とした設備投資等を行う際に、その経費の一部を助成する県の補助金。物価高騰対応の地方創生臨時交付金を活用し、物価高騰の影響緩和と賃上げの後押しを' +
+      '通じて県内企業の持続的発展を図る。補助率（通常枠/賃上げ枠で異なる）・補助上限額・募集期間は年度・公募回ごとに変動するため要確認。',
+    application:
+      '公募制。事務局である愛媛県中小企業団体中央会が公募要領・申請様式を配布し、県内の中小企業者等が同会へ申請する。年度ごとに予算の範囲内で複数次の公募が実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.ehime.jp/page/4649.html', type: 'municipality', label: '愛媛県 生産性向上設備等投資支援補助金の公募について' },
+      { url: 'https://www.pref.ehime.jp/site/madoguchi/132941.html', type: 'municipality', label: '愛媛県 生産性向上設備等投資支援補助金（2次）の公募' },
+      { url: 'https://bp-ehime.or.jp/sk/', type: 'operator', label: '愛媛県中小企業団体中央会 補助金事務局サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-kochi',
+    level: 'prefecture',
+    domain: 'business',
+    name: '高知県戦略的製品開発推進事業費補助金（高知県）',
+    authority: '高知県（商工労働部 工業振興課・製品開発支援チーム）／事前確認は高知県産業振興センター等で構成する製品開発支援チーム',
+    statement:
+      '県内企業の製品・技術開発の量的拡大と質的向上を図るため、製造業分野（食品製造業を除く）における製品・技術の構想・企画立案、市場調査、試作開発、製品化など独自性の高い製品開発に必要な経費の一部を予算の範囲内で補助する高知県の制度。' +
+      '「製品開発事業」「開発チャレンジ事業」等の区分があり複数回の公募が行われる。補助率・上限額・募集期間は年度・募集回ごとに変動するため要確認。',
+    application:
+      '高知県（工業振興課）が公募。申請には事前に「製品開発支援チーム」の確認を受け確認書類を申請書に添付する必要がある。区分別・複数回の募集回方式で、詳細は各年度の交付要綱・公募要領で確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kochi.lg.jp/doc/2025040300154', type: 'municipality', label: '高知県 戦略的製品開発推進事業費補助金の公募について' },
+      { url: 'https://joho-kochi.or.jp/center/kochisangyokikin_2024a.php', type: 'operator', label: '高知県産業振興センター 製品開発支援関連' },
+      { url: 'https://hojyokin-portal.jp/subsidies/55842', type: 'media', label: '補助金ポータル 高知県 戦略的製品開発推進事業費補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-saga',
+    level: 'prefecture',
+    domain: 'business',
+    name: '佐賀県中小企業生産性向上支援補助金（佐賀県）',
+    authority: '佐賀県（産業労働部 産業政策課）／相談支援は佐賀県産業イノベーションセンター・佐賀県よろず支援拠点等',
+    statement:
+      '原材料・エネルギー価格高騰や人材不足等の経営環境の中で、佐賀県内に店舗・事業所を有する中小企業者等（一次産業・医療福祉関連業等は除く）の生産性向上（高付加価値化・効率化）の取組を支援する県の補助金。デジタル技術を活用した' +
+      '業務改善、生産の効率化、新商品開発・販路開拓など売上向上につながる取組を対象とし、機械装置・システム構築費・広報費・外注費等が補助対象。「第○弾」等として公募回ごとに繰り返し実施され、補助率・上限額・公募期間は各回で変動するため要確認。',
+    application:
+      '公募回ごとに公募要領が公表され、所定の申請書類を提出して交付申請（電子申請 jGrants 等又は県指定窓口）。採択審査を経て交付決定、事業実施後に実績報告・補助金確定という枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.saga.lg.jp/kiji003112112/index.html', type: 'municipality', label: '佐賀県 中小企業生産性向上支援補助金 申請受付' },
+      { url: 'https://www.pref.saga.lg.jp/list00056.html', type: 'municipality', label: '佐賀県 産業政策課' },
+      { url: 'https://yorozu-saga.go.jp/archives/28662', type: 'government', label: '佐賀県よろず支援拠点 中小企業生産性向上支援補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-nagasaki',
+    level: 'prefecture',
+    domain: 'business',
+    name: '長崎県地域産業雇用創出チャレンジ支援事業（長崎県創業支援事業補助金）（長崎県）',
+    authority: '長崎県（産業労働部）／事務局・申請窓口は一般社団法人長崎県中小企業診断士協会内の補助金事務局',
+    statement:
+      '長崎県が人口減少対策・地域課題の解決・地場産業振興と雇用創出を目的に、県内での創業（付加価値向上が見込まれる事業承継を含む）に要する経費の一部を補助する制度。商工会・商工会議所・認定経営革新等支援機関の助言を受けて事業計画を' +
+      '作成・実行する者で県内居住・定住が要件。補助対象経費は人件費・設備費・店舗等借入費・広告宣伝費等。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '事務局（長崎県中小企業診断士協会）が公募する年度ごとの要項に基づき、商工会・商工会議所・認定経営革新等支援機関の支援を受けて事業計画を作成のうえ、事務局へ申請（公募・交付決定方式）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.nagasaki.jp/bunrui/shigoto-sangyo/sangyoshien/hojokin-sangyoshien/challenge-hojokin-sangyoshien/', type: 'municipality', label: '長崎県 地域産業雇用創出チャレンジ支援事業' },
+      { url: 'https://sougyoushien.com/detail/', type: 'operator', label: '長崎県創業支援事業補助金 事務局 事業概要' },
+      { url: 'https://biz.stayway.jp/hojyo_detail/74004/', type: 'media', label: '補助金クラウド 長崎県 地域産業雇用創出チャレンジ支援事業' },
+    ],
+  },
+  {
+    id: 'subsidy-kumamoto',
+    level: 'prefecture',
+    domain: 'business',
+    name: 'くまもと型小規模事業者経営発展支援事業補助金（熊本県）',
+    authority: '熊本県（商工労働部 商工振興金融課）／執行・申請事務局は熊本県中小企業団体中央会。申請にあたり地域の商工会・商工会議所の伴走支援を受ける',
+    statement:
+      '平成28年熊本地震又は令和2年7月豪雨災害により影響を受けた県内の小規模事業者が、経営革新計画等の具体的な計画に基づき、商工会・商工会議所等の支援を受けながら取り組む販路開拓・生産性向上・新商品開発・第二創業等の' +
+      '取組経費を補助する熊本県の制度。一定期間で付加価値額・給与支給総額の向上を達成する取組であることが要件とされる。年度ごとに複数回公募される継続事業で、補助率・上限額・募集期間は年度・回ごとに変動するため要確認。',
+    application:
+      '公募制。地域の商工会・商工会議所に事前相談のうえ経営計画等を作成し、事務局（熊本県中小企業団体中央会内のくまもと型補助金事務局）へ申請する。締切に余裕をもって商工会・商工会議所へ相談することが案内される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kumamoto.jp/soshiki/61/240258.html', type: 'municipality', label: '熊本県 くまもと型小規模事業者経営発展支援事業補助金 公募' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/82076', type: 'government', label: 'J-Net21 熊本県 くまもと型小規模事業者経営発展支援事業補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/60616', type: 'media', label: '補助金ポータル 熊本県 くまもと型小規模事業者経営発展支援事業補助金' },
+    ],
+  },
+  {
+    id: 'subsidy-oita',
+    level: 'prefecture',
+    domain: 'business',
+    name: '大分県省力化・生産性向上支援補助金（大分県）',
+    authority: '大分県（商工観光労働部 先端技術挑戦課）／受付・審査・問い合わせは委託事務局',
+    statement:
+      '人手不足や生産性向上に取り組む県内の中小企業・小規模事業者等を対象に、国の「中小企業省力化投資補助金（カタログ注文型）」又は「IT導入補助金（インボイス枠）」の交付額が確定した事業者に対し、県が上乗せ支給する制度。' +
+      '国の示す「大幅な賃上げ」等の県の定める要件を満たす場合は上乗せ率がさらに優遇される。補助率・上乗せ上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '国の対象補助金（省力化投資補助金カタログ注文型／IT導入補助金インボイス枠）の交付決定・額の確定を受けた後、県の上乗せ補助に申請する後追い方式。受付・審査は委託事務局が行い、申請は特設サイト経由。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.oita.jp/site/tyusyodx/dxhojyo.html', type: 'municipality', label: '大分県 省力化・生産性向上支援補助金' },
+      { url: 'https://www.pref.oita.jp/soshiki/14270/dxhojyo.html', type: 'municipality', label: '大分県 先端技術挑戦課 省力化・生産性向上支援補助金' },
+      { url: 'https://www.city.beppu.oita.jp/sangyou/sangyousinkou/sonota2/seisansei.html', type: 'municipality', label: '別府市 大分県省力化・生産性向上支援補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-miyazaki',
+    level: 'prefecture',
+    domain: 'business',
+    name: '事業承継・引継ぎ応援事業補助金（宮崎県）',
+    authority: '宮崎県（商工観光労働部 商工政策課 経営金融支援室）／相談窓口は宮崎県事業承継・引継ぎ支援センター。交付・申請は実施市町村が窓口',
+    statement:
+      '中小企業の事業承継を促進し、廃業による経営資源・雇用の喪失を防ぐことを目的に、親族内承継・第三者承継・役員従業員承継に要する経費（マッチングコーディネーターやM&A仲介業者との委託契約費（成功報酬を除く）、' +
+      '企業価値評価費、事業承継に係る資料作成費等）を補助する市町村を宮崎県が後押しする県・市町村連携型の制度。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '県との連携事業のため、本事業を実施している市町村に事業所がある中小企業が対象。支援機関（事業承継・引継ぎ支援センター、地域金融機関等）の支援を受けたうえで専門事業者と契約し、所在市町村の窓口へ申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.miyazaki.lg.jp/keieikinyushien/shigoto/chushokigyo/20230703153447.html', type: 'municipality', label: '宮崎県 事業承継・引継ぎ応援事業補助金' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/articles/146918', type: 'government', label: 'J-Net21 宮崎県 事業承継・引継ぎ応援事業補助金' },
+      { url: 'https://www.city.miyazaki.miyazaki.jp/business/loan/106329.html', type: 'municipality', label: '宮崎市 事業バトンタッチ支援' },
+    ],
+  },
+  {
+    id: 'subsidy-kagoshima',
+    level: 'prefecture',
+    domain: 'business',
+    name: '鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）',
+    authority: '鹿児島県（商工労働水産部 経営金融課）／申請窓口は同課（県へ直接申請）',
+    statement:
+      '中小企業等経営強化法に基づき知事の承認を受けた「経営革新計画」に従って中小企業者・組合等が行う、新商品・新技術開発や販路開拓等の取組に要する経費の一部を補助する制度。承認された経営革新計画の実行を後押しし、' +
+      '県内中小企業の経営の向上を図ることを趣旨とする。補助率・上限額・募集期間は年度ごとに変動するため要確認。',
+    application:
+      '前提として中小企業等経営強化法に基づく「経営革新計画」の知事承認を受けたうえで、県（経営金融課）の公募に応じて交付申請する枠組み。具体の申請書類・締切は各年度の募集要項に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pref.kagoshima.jp/af02/keieikakushin/jigyouhishienhojokin.html', type: 'municipality', label: '鹿児島県 中小企業経営革新支援事業費補助金' },
+      { url: 'https://hojyokin-portal.jp/subsidies/42600', type: 'media', label: '補助金ポータル 鹿児島県 中小企業経営革新支援事業費補助金' },
+      { url: 'https://kagoshima-kigyouricchi-guide.jp/kagoshima-prefecture-support/management-innovation/', type: 'operator', label: '鹿児島県企業立地ガイド 中小企業経営革新支援事業' },
+    ],
+  },
+  {
+    id: 'subsidy-employment-adjustment',
+    level: 'national',
+    domain: 'employment',
+    name: '雇用調整助成金',
+    authority: '所管: 厚生労働省（雇用保険二事業の雇用安定事業）／窓口: 都道府県労働局・ハローワーク',
+    statement:
+      '景気変動や産業構造の変化など経済上の理由により事業活動の縮小を余儀なくされた事業主が、労働者を解雇せず雇用を維持するため、一時的に休業・教育訓練・出向を実施した場合に、事業主が支払った休業手当・賃金等の一部を' +
+      '助成する国の制度。雇用保険の適用事業主であり、売上高や生産量等の事業活動指標が一定割合以上減少していること等が支給要件とされる。助成率・上限額・要件は年度や特例措置により変動するため要確認。',
+    application:
+      '原則として休業・教育訓練・出向の実施前に「休業等実施計画届」を都道府県労働局又はハローワークに提出し、労使協定を締結。実施後に支給申請を行う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/pageL07_20200515.html', type: 'government', label: '厚生労働省 雇用調整助成金' },
+      { url: 'https://www.maff.go.jp/j/keiei/nougyou_jinzaiikusei_kakuho/singatakoronataiou/kinnkyuutokuteitiiki.html', type: 'government', label: '農林水産省 雇用調整助成金の特例措置（制度解説）' },
+      { url: 'https://jinjibu.jp/keyword/detl/220/', type: 'media', label: '日本の人事部 雇用調整助成金の解説' },
+    ],
+  },
+  {
+    id: 'subsidy-industrial-employment-stability',
+    level: 'national',
+    domain: 'employment',
+    name: '産業雇用安定助成金',
+    authority: '所管: 厚生労働省（職業安定局）／窓口: 都道府県労働局・ハローワーク（電子申請は雇用関係助成金ポータル）',
+    statement:
+      '景気の変動・産業構造の変化・災害等により事業活動の一時的な縮小を余儀なくされた事業主が、在籍型出向により労働者の雇用を維持する取組や、事業再構築・スキルアップ等に伴う人材の確保・育成に取り組む場合に、' +
+      '出向元・出向先双方の事業主等に対して賃金・経費の一部を助成する厚生労働省の雇用関係助成金。在籍型出向によるスキルアップ支援コースや補助金採択企業の人材受入れ支援コース等、複数のコースで構成される。' +
+      '助成率・上限額・対象コースは年度や予算により頻繁に改正されるため要確認。',
+    application:
+      '出向計画届等を事前に都道府県労働局・ハローワークへ提出し、要件を満たしたうえで支給申請を行う。コースにより事業再構築補助金・ものづくり補助金の採択等が前提条件となる場合がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000082805_00012.html', type: 'government', label: '厚生労働省 産業雇用安定助成金（スキルアップ支援コース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/sankokinsangyourenkeijinzaikakuhotou_00001.html', type: 'government', label: '厚生労働省 産業雇用安定助成金（産業連携人材確保等支援コース）' },
+      { url: 'https://hojyokin-portal.jp/columns/sangyo_yoken_minaoshi', type: 'media', label: '補助金ポータル 産業雇用安定助成金 全コース解説' },
+    ],
+  },
+  {
+    id: 'subsidy-work-style-reform-support',
+    level: 'national',
+    domain: 'employment',
+    name: '働き方改革推進支援助成金',
+    authority: '所管: 厚生労働省（雇用環境・均等局）／窓口: 都道府県労働局 雇用環境・均等部（室）',
+    statement:
+      '生産性を向上させつつ労働時間の短縮・年次有給休暇の取得促進・労働時間管理の適正化等に取り組む中小企業事業主に対し、その実施に要した費用の一部を助成する厚生労働省の制度。時間外労働の削減や勤務間インターバル制度の' +
+      '導入等の成果目標を達成することが支給の要件となる。労働時間短縮・年休促進支援コース、勤務間インターバル導入コース、団体推進コース、業種別課題対応コース等の複数コースで構成される。助成率・上限額・対象経費・受付期間は年度ごとに変動するため要確認。',
+    application:
+      '交付申請書（事業計画書）の提出→交付決定→取組実施→支給申請の流れ。交付決定前に着手した経費は助成対象外。申請書類は管轄の都道府県労働局へ提出する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000120692.html', type: 'government', label: '厚生労働省 働き方改革推進支援助成金（労働時間短縮・年休促進支援コース）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000200273.html', type: 'government', label: '厚生労働省 働き方改革推進支援助成金（団体推進コース）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi2/articles/180228', type: 'government', label: 'J-Net21 働き方改革推進支援助成金（勤務間インターバル導入コース）' },
+    ],
+  },
+  {
+    id: 'subsidy-chutaikyo',
+    level: 'national',
+    domain: 'welfare',
+    name: '中小企業退職金共済制度（中退共）・新規加入等掛金助成',
+    authority: '所管: 厚生労働省／運営: 独立行政法人 勤労者退職金共済機構（中小企業退職金共済事業本部）',
+    statement:
+      '中退共は、単独では退職金制度を設けることが難しい中小企業のために、事業主の相互共済と国の援助によって退職金制度を確保する国の制度（中小企業退職金共済法に基づく）。事業主が機構と退職金共済契約を結び、従業員ごとに毎月掛金を' +
+      '全額事業主負担で納付し、退職時に機構から従業員へ退職金が直接支払われる社外積立のしくみ。新たに加入する事業主には掛金月額の一部を一定期間国が助成し、掛金を増額する事業主にも増額分の一部を一定期間助成する。助成額・期間・要件は制度改定により変動しうるため要確認。',
+    application:
+      '事業主が金融機関・委託団体等の窓口を通じて機構と退職金共済契約を締結して加入。掛金助成は別途の補助金申請ではなく、加入・掛金納付に伴い要件該当時に機構が国の助成分を反映するしくみ。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/taisilyokukin_kyousai/ippanchuutai/', type: 'government', label: '厚生労働省 一般の中小企業退職金共済制度のしくみ' },
+      { url: 'https://chutaikyo.taisyokukin.go.jp/faq/qa-01/1-2-1.html', type: 'operator', label: '中退共 掛金の一部を国が助成してくれる制度' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/taisilyokukin_kyousai/ippanchuutai/dl/kakekin_josei.pdf', type: 'government', label: '厚生労働省 一般の中小企業退職金共済制度に係る掛金助成' },
+    ],
+  },
+  {
+    id: 'subsidy-age-friendly',
+    level: 'national',
+    domain: 'employment',
+    name: 'エイジフレンドリー補助金',
+    authority: '所管: 厚生労働省（労働基準局 安全衛生部）／事務局: 一般社団法人 日本労働安全衛生コンサルタント会',
+    statement:
+      '60歳以上の高年齢労働者を常時1人以上雇用する中小企業事業主を対象に、高年齢労働者が安全・安心して働ける職場環境づくりを支援する国の補助制度。高年齢労働者に特有のリスクを低減するための設備・装置の導入、転倒・腰痛防止のための' +
+      '運動指導、コラボヘルス等の健康保持増進の取組に要する費用の一部を補助し、高年齢労働者の労働災害防止を図る。対象コース・補助率・上限額・対象経費・受付期間は年度ごとに改定されるため要確認。',
+    application:
+      '間接補助事業者である事務局（日本労働安全衛生コンサルタント会のエイジフレンドリー補助金事務センター）が交付規程に基づき申請を受付・審査・支給。事業者は所定の申請期間内に事務センターへ申請する（予算上限到達で早期終了あり）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/newpage_09940.html', type: 'government', label: '厚生労働省 エイジフレンドリー補助金' },
+      { url: 'https://www.jashcon-age.or.jp/', type: 'operator', label: '日本労働安全衛生コンサルタント会 エイジフレンドリー補助金事務センター' },
+      { url: 'https://hojyokin-portal.jp/', type: 'media', label: '補助金ポータル エイジフレンドリー補助金の案内' },
+    ],
+  },
+  {
+    id: 'subsidy-passive-smoking-prevention',
+    level: 'national',
+    domain: 'employment',
+    name: '受動喫煙防止対策助成金',
+    authority: '所管: 厚生労働省（労働基準局）／窓口: 各都道府県労働局（労働基準部）',
+    statement:
+      '中小企業事業主による職場の受動喫煙防止のための施設・設備の整備を支援し、事業場の受動喫煙防止対策を推進することを目的とする国の制度。健康増進法（2020年4月全面施行の原則屋内禁煙）への対応として、一定基準を満たす' +
+      '喫煙専用室・指定たばこ専用喫煙室等の設置・改修にかかる工費・設備費・備品費等の費用の一部を助成する。対象は労災保険の適用事業主である中小企業事業主。助成率・上限額・受付期間は年度ごとに変動するため要確認。',
+    application:
+      '各都道府県労働局が申請窓口。交付申請書を提出し、交付決定後に工事・設備整備を行い、完了後に実績報告・支払請求を経て助成金が交付される事前申請・精算型の枠組み。予算の範囲内で受け付けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000049868.html', type: 'government', label: '厚生労働省 受動喫煙防止対策助成金' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/jigyousya/kitsuenboushi/dl/pamphlet.pdf', type: 'government', label: '厚生労働省 受動喫煙防止対策助成金のご案内' },
+      { url: 'https://www.jti.co.jp/coexistence/bunen/subsidy/', type: 'media', label: 'JT 受動喫煙防止対策助成金の解説' },
+    ],
+  },
+  {
+    id: 'subsidy-small-business-mutual-aid',
+    level: 'national',
+    domain: 'welfare',
+    name: '小規模企業共済',
+    authority: '所管: 中小企業庁（経済産業省）／運営: 独立行政法人 中小企業基盤整備機構（中小機構）',
+    statement:
+      '小規模企業の個人事業主・共同経営者及び会社等の役員が、廃業・退職時の生活資金等を準備するための積立型の共済制度で、中小機構が運営する国の制度。掛金は税法上その全額が「小規模企業共済等掛金控除」として' +
+      '課税対象所得から控除でき、共済金受取時も一括受取は退職所得扱い、分割受取は公的年金等の雑所得扱いとなり税制優遇がある。掛金月額の範囲等の数値は中小機構公式で要確認。',
+    application:
+      '加入対象は常時使用する従業員が20人以下（商業・サービス業は5人以下）等の小規模事業の個人事業主・共同経営者・会社役員等。委託機関（商工会議所・商工会・金融機関等）の窓口を通じて申し込む。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq15_shokibokyosai.html', type: 'government', label: '中小企業庁 小規模企業共済制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1135.htm', type: 'government', label: '国税庁 No.1135 小規模企業共済等掛金控除' },
+      { url: 'https://www.smrj.go.jp/kyosai/skyosai/features/index.html', type: 'operator', label: '中小機構 小規模企業共済 制度の概要' },
+    ],
+  },
+  {
+    id: 'subsidy-bankruptcy-prevention-mutual-aid',
+    level: 'national',
+    domain: 'business',
+    name: '経営セーフティ共済（中小企業倒産防止共済制度）',
+    authority: '所管: 中小企業庁（経済産業省）／運営: 独立行政法人 中小企業基盤整備機構（中小機構）。根拠: 中小企業倒産防止共済法',
+    statement:
+      '取引先事業者の倒産による中小企業の連鎖倒産・経営難を防ぐため、中小機構が運営する共済制度。掛金を積み立てておくと、取引先が倒産した際に無担保・無保証人で借入れができる。掛金は法人では損金、個人事業主では' +
+      '必要経費に算入できる税制メリットがある。令和6年度税制改正により、令和6年（2024年）10月1日以後に共済契約を解除した後に再加入した場合、解除日から2年を経過する日までに支出する掛金は損金（必要経費）算入できない制限が新設された。掛金上限・貸付条件等の数値は要確認。',
+    application:
+      '加入対象は引き続き1年以上事業を行っている中小企業者等。中小機構の委託団体（金融機関・商工会議所・商工会・税理士会等）の窓口を通じて加入手続きを行い、借入は取引先倒産という共済事由の発生時に申請する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.smrj.go.jp/kyosai/tkyosai/features/', type: 'operator', label: '中小機構 経営セーフティ共済 制度の概要' },
+      { url: 'https://www.chusho.meti.go.jp/faq/faq/faq16_tosankyosai.html', type: 'government', label: '中小企業庁 中小企業倒産防止共済制度について' },
+      { url: 'https://www.nta.go.jp/publication/pamph/hojin/kaisei_gaiyo2024/pdf/O.pdf', type: 'government', label: '国税庁 令和6年度税制改正の概要（再加入時の掛金損金算入制限）' },
+    ],
+  },
+  {
+    id: 'subsidy-sbir',
+    level: 'national',
+    domain: 'business',
+    name: 'SBIR制度（中小企業技術革新制度）',
+    authority: '所管: 内閣府（科学技術・イノベーション推進事務局）／各省庁が連携して交付',
+    statement:
+      'スタートアップ・中小企業等による研究開発とその成果の社会実装・事業化を促進するための制度。各省庁の研究開発型補助金・委託費のうち研究開発型スタートアップ等を交付対象に含むもの（特定新技術補助金等・指定補助金等）について、' +
+      'これらへの支出目標額を定めその増大を図る。2021年（令和3年）4月施行の改正法により根拠規定が中小企業等経営強化法から科学技術・イノベーション創出の活性化に関する法律へ移管され、所管が中小企業庁から内閣府に移り省庁横断で拡充された。' +
+      '年度ごとの支出目標額・対象補助金リスト等の細目は内閣府の最新公表資料で要確認。',
+    application:
+      '各省庁が公募する特定新技術補助金等・指定補助金等（研究開発型補助金・委託費）に、スタートアップ・中小企業等が個別に応募する枠組み。統一ルールと内閣府の支出目標の下で各省が交付する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www8.cao.go.jp/cstp/openinnovation/sbirseido/sbirseido.html', type: 'government', label: '内閣府 科学技術・イノベーション SBIR制度' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/gijut/2021/210817sbr.html', type: 'government', label: '中小企業庁 SBIR制度が新しくなりました' },
+      { url: 'https://journal.startup-db.com/articles/words-sbir', type: 'media', label: 'STARTUP DB SBIR（中小企業技術革新制度）の解説' },
+    ],
+  },
+  {
+    id: 'subsidy-jstartup',
+    level: 'national',
+    domain: 'business',
+    name: 'J-Startup',
+    authority: '所管: 経済産業省／事務局: 経済産業省・JETRO・NEDO。地域版は各経済産業局が共催',
+    statement:
+      'J-Startupは、経済産業省が2018年に開始した、グローバルに活躍し得る有望なスタートアップを「J-Startup企業」として選定し、官民で集中的に支援するプログラム。選定はトップVC・アクセラレーター・大企業のイノベーション担当等の' +
+      '推薦を外部審査委員が確認したうえで行う方式をとる。選定企業には、関係省庁・JETRO・NEDO・中小機構等の公的機関と、民間の「J-Startup Supporters（サポーター企業）」による事業化・海外展開・規制対応・PR等の支援が提供される。' +
+      '各経済産業局を中心とする「J-Startup地域版」も展開されている。選定社数・地域版の対象・支援メニュー等の細目は要確認。',
+    application:
+      '公募・自薦ではなく、推薦委員（VC・アクセラレーター・大企業等の有識者）による推薦を起点に、外部審査委員会の審査を経て選定される推薦・審査型の枠組み。地域版も同様の体制で選定される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.j-startup.go.jp/en/about/', type: 'government', label: 'J-Startup 公式サイト About（経産省・JETRO・NEDO）' },
+      { url: 'https://www.meti.go.jp/press/2023/04/20230406003/20230406003.html', type: 'government', label: '経済産業省 J-Startup 選定企業の発表' },
+      { url: 'https://prtimes.jp/main/html/rd/p/000000009.000052863.html', type: 'media', label: 'J-Startup 地域版 サポーター企業認定（地域版・サポーター制度の確認）' },
+    ],
+  },
+  {
+    id: 'subsidy-zeb',
+    level: 'national',
+    domain: 'business',
+    name: 'ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業',
+    authority: '所管: 環境省・経済産業省・国土交通省／執行: 一般社団法人環境共創イニシアチブ（SII）等',
+    statement:
+      '業務用建築物の省エネ・脱炭素化を進めるため、ZEB（年間の一次エネルギー消費量の収支ゼロを目指した建築物）の新築・改修やそれに資する高効率設備・システムの導入を支援する国の補助事業。環境省・経済産業省・国土交通省が' +
+      '連携し、執行は一般社団法人環境共創イニシアチブ（SII）等が担う。補助率・上限額・公募期間は年度（及び一次・二次公募）により変動するため、各年度の公募要領で要確認。',
+    application:
+      'SIIが各年度に公募要領・交付申請の手引きを公表し、補助事業者（建物所有者等）が公募期間内に交付申請を行う公募・交付申請型。ZEB基準の達成やZEBプランナーの関与等が補助要件となる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.env.go.jp/earth/zeb/hojo/', type: 'government', label: '環境省 ZEB PORTAL 支援制度' },
+      { url: 'https://www.enecho.meti.go.jp/category/saving_and_new/saving/enterprise/support/index02.html', type: 'government', label: '資源エネルギー庁 ZEB 各種支援制度' },
+      { url: 'https://sii.or.jp/zeb07/public.html', type: 'operator', label: '環境共創イニシアチブ（SII）ZEB実証事業 補助事業' },
+    ],
+  },
+  {
+    id: 'subsidy-bcp-disaster-tax',
+    level: 'national',
+    domain: 'tax-incentive',
+    name: '事業継続力強化計画（認定制度）・中小企業防災・減災投資促進税制',
+    authority: '所管: 中小企業庁／経済産業省・各経済産業局。普及支援: 中小企業基盤整備機構（中小機構）',
+    statement:
+      '中小企業が自然災害・感染症・サイバー攻撃等のリスクに備えて行う防災・減災の事前対策（取組）を「事業継続力強化計画」（単独又は連携）としてまとめ、中小企業等経営強化法に基づき経済産業大臣（各経済産業局）の認定を受けられる制度' +
+      '（取り組みやすいBCPと位置づけられる）。認定事業者は、①税制措置（中小企業防災・減災投資促進税制：認定計画に記載した一定の防災・減災設備の取得等について特別償却）、②金融支援（日本政策金融公庫の低利融資・信用保証の別枠等）、' +
+      '③補助金の加点等の支援を受けられる。特別償却率・対象設備・適用期限は税制改正で変動するため要確認。',
+    application:
+      '事業者が「事業継続力強化計画」を策定し、本社所在地等を管轄する経済産業局を通じて経済産業大臣に認定申請する。税制措置を受ける場合は認定後の所定期間内に計画記載の対象設備を取得・事業供用する必要がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/antei/bousai/keizokuryoku.html', type: 'government', label: '中小企業庁 事業継続力強化計画' },
+      { url: 'https://kyoujinnka.smrj.go.jp/outline/certification-system.html', type: 'government', label: '中小機構 事業継続力強化計画の認定制度とは' },
+      { url: 'https://www.meti.go.jp/main/yosan/yosan_fy2025/pdf/03.pdf', type: 'government', label: '経済産業省 令和7年度 経済産業関係税制改正（防災・減災投資促進税制）' },
+    ],
+  },
+  {
+    id: 'subsidy-strong-agriculture',
+    level: 'national',
+    domain: 'business',
+    name: '強い農業づくり総合支援交付金',
+    authority: '所管: 農林水産省（産地基幹施設等支援タイプは都道府県・市町村を経由して運用）',
+    statement:
+      '国産農畜産物の安定的な供給体制の構築や産地の競争力強化・流通の合理化等のため、産地や担い手の発展状況に応じて必要となる集出荷貯蔵施設・加工施設等の共同利用施設（産地の基幹施設）の整備や、産地の体制づくりを支援する国の交付金。' +
+      '事業実施主体は都道府県・市町村・農協（JA）・農業者団体等で、産地基幹施設等支援タイプでは受益農業従事者が原則一定数以上であること等の要件がある。補助率・上限額・公募期間は年度・タイプにより変動するため要確認。',
+    application:
+      'タイプ（産地基幹施設等支援／生産事業モデル支援／食料システム構築支援等）により公募窓口・時期・要件が異なる。産地基幹施設等支援タイプは前年度に市町村を通じて募集が行われ、市町村・都道府県を経由して国へ申請する枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/seisan/suisin/tuyoi_nougyou/index.html', type: 'government', label: '農林水産省 強い農業づくりの支援' },
+      { url: 'https://www.maff.go.jp/j/g_biki/hojo/r7/250130_1.html', type: 'government', label: '農林水産省 強い農業づくり総合支援交付金（令和7年度当初予算）' },
+      { url: 'https://www.pref.gunma.jp/site/hojokin/8920.html', type: 'municipality', label: '群馬県 強い農業づくり総合支援交付金（産地基幹施設等支援タイプ）' },
+    ],
+  },
+  {
+    id: 'subsidy-culture-arts',
+    level: 'national',
+    domain: 'business',
+    name: '文化芸術振興費補助金（文化芸術創造活動への支援）',
+    authority: '所管: 文化庁／交付・助成実務: 独立行政法人日本芸術文化振興会',
+    statement:
+      '我が国の芸術団体の水準向上とより多くの国民への鑑賞機会の提供を図るため、優れた文化芸術の創造活動を支援する国の補助金。対象分野は音楽・舞踊・演劇等の舞台芸術、文楽・歌舞伎・能楽等の伝統芸能、大衆芸能、映画製作、メディア芸術' +
+      '（アニメ・マンガ・ゲーム等）、美術、ならびに担い手育成・国際芸術交流・文化施設の機能強化など幅広い。文化庁が予算を計上し、独立行政法人日本芸術文化振興会が舞台芸術等総合支援事業等として助成を交付する（文化庁が直接公募する事業もある）。' +
+      '補助率・上限額・公募期間・対象事業区分は年度の公募要領で定められ変動するため要確認。',
+    application:
+      '日本芸術文化振興会（基金事業）又は文化庁の各事業ごとに、年度単位で助成金交付要望書・申請を公募期間内に提出。原則として当該年度に実施する活動が対象で、申請要件は年度で更新される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bunka.go.jp/shinsei_boshu/kobo/index.html', type: 'government', label: '文化庁 公募一覧（文化芸術振興費補助金）' },
+      { url: 'https://www.ntj.jac.go.jp/kikin/', type: 'operator', label: '日本芸術文化振興会 助成事業' },
+      { url: 'https://www.ntj.jac.go.jp/kikin/bosyuu/2025/', type: 'operator', label: '日本芸術文化振興会 助成事業の募集（年度ごとの公募要件）' },
+    ],
+  },
+  {
+    id: 'subsidy-jfc-loan',
+    level: 'national',
+    domain: 'business',
+    name: '日本政策金融公庫の中小企業・小規模事業者向け融資',
+    authority: '運営: 株式会社日本政策金融公庫（日本公庫／政府が株式を保有する政策金融機関）。財務省・経済産業省等の所管政策に基づく',
+    statement:
+      '日本政策金融公庫（日本公庫）は政府系の政策金融機関で、国民生活事業・中小企業事業・農林水産事業を通じ、民間金融機関を補完しながら中小企業・小規模事業者・創業者・農林漁業者等に政策的な融資を行う。代表的な制度に' +
+      '「新規開業・スタートアップ支援資金」（創業者向け）、「経営環境変化対応資金＝セーフティネット貸付」（取引先倒産・業績悪化等で資金繰りが悪化した事業者向け）、商工会議所・商工会の経営指導と推薦に基づき無担保・無保証人で融資する' +
+      '「マル経融資（小規模事業者経営改善資金）」等がある。これらは補助金（返済不要）ではなく融資（要返済）であり、金利・融資限度額・対象要件は随時改定されるため要確認。',
+    application:
+      '日本政策金融公庫の各支店窓口又はインターネット申込で、事業計画・必要書類を提出して審査を受ける。マル経融資は商工会議所・商工会の経営指導を受けたうえで同所の推薦が必要。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jfc.go.jp/n/finance/search/05_kinyuukankyou_m_t.html', type: 'operator', label: '日本政策金融公庫 経営環境変化対応資金（セーフティネット貸付）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/shokibo/marukei/', type: 'government', label: '中小企業庁 小規模事業者経営改善資金（マル経融資）' },
+      { url: 'https://www.mof.go.jp/policy/financial_system/fiscal_finance/financial_institution/index.html', type: 'government', label: '財務省 政府関係金融機関' },
+    ],
+  },
+  {
+    id: 'subsidy-productivity-revolution',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業生産性革命推進事業',
+    authority: '所管: 経済産業省 中小企業庁／実施: 独立行政法人中小企業基盤整備機構（中小機構）',
+    statement:
+      '中小企業・小規模事業者の生産性向上を継続的に支援するため、中小機構を実施主体として複数の補助金を統合的・機動的に運用する国の事業。傘下には小規模事業者持続化補助金、ものづくり（・商業・サービス生産性向上促進）補助金、' +
+      'IT導入補助金（近年はデジタル化・AI導入補助金や中小企業省力化投資補助金等へ再編・拡充）等が含まれ、補正予算等を財源に措置される。令和2年度補正予算で本格的に措置されて以降、複数年度にわたり累次の公募が行われている。' +
+      '各補助金の対象経費・補助率・補助上限・予算規模・公募回は年度・公募ごとに変動するため要確認。',
+    application:
+      '各補助金それぞれの公募に対し、所定の要件・事業計画を満たして個別に応募・採択を受ける枠組み。公募は累次・複数年にわたり随時実施される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/information_2/publicoffer/review2021/kokai/overview5.pdf', type: 'government', label: '経済産業省・中小企業庁 中小企業生産性革命推進事業について' },
+      { url: 'https://seisansei.smrj.go.jp/', type: 'government', label: '中小機構 補助金活用ナビ（中小企業生産性革命推進事業）' },
+      { url: 'https://j-net21.smrj.go.jp/snavi/', type: 'government', label: 'J-Net21 支援情報（生産性革命推進事業の各補助金）' },
+    ],
+  },
+  {
+    id: 'subsidy-agriculture-reserve',
+    level: 'national',
+    domain: 'tax-incentive',
+    name: '農業経営基盤強化準備金制度',
+    authority: '所管: 農林水産省・国税庁。根拠: 租税特別措置法第24条の2（個人）・第61条の2（法人）',
+    statement:
+      '青色申告を行う認定農業者（個人・農地所有適格法人）等が、経営所得安定対策等の交付金を農業経営改善計画等に従って「農業経営基盤強化準備金」として積み立てた場合、その積立額を個人は必要経費に、法人は損金に算入できる税制特例。' +
+      'さらに、積み立てた準備金を取り崩し又は受領した交付金をそのまま用いて農用地・農業用の建物・機械等を取得した場合には、その取得価額について圧縮記帳できる特例も併せて適用できる。適用には青色申告と農林水産大臣の証明書の添付が必要。' +
+      '令和7年度以降は地域計画に「農業を担う者」として位置づけられていること等が要件に加わる。適用期限・要件は税制改正で変動するため要確認。',
+    application:
+      '青色申告の事前届出を行ったうえで、各年の確定申告において農林水産大臣の証明書を添付して申告する（積立限度額は交付金収入の範囲内で大臣が証明する金額と所得金額のいずれか少ない額）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/kobetu_ninaite/n_seido/junbikin_tetuduki_shiryou.html', type: 'government', label: '農林水産省 農業経営基盤強化準備金 手続・資料' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/080104/03.htm', type: 'government', label: '国税庁 法令解釈通達 農業経営基盤強化準備金関係' },
+      { url: 'https://www.maff.go.jp/j/new_farmer/pdf/9_junbikin.pdf', type: 'government', label: '農林水産省 農業経営基盤強化準備金（特例措置の内容）' },
+    ],
+  },
+  {
+    id: 'subsidy-nedo-startup',
+    level: 'national',
+    domain: 'business',
+    name: 'NEDO 研究開発型スタートアップ支援事業',
+    authority: '所管: 経済産業省／実施: 国立研究開発法人 新エネルギー・産業技術総合開発機構（NEDO）',
+    statement:
+      'NEDOは、ディープテックをはじめとする研究開発型スタートアップの創出・事業化を後押しするため、技術シーズの発掘から事業化までを一貫支援する事業を実施している。シード期に起業前の人材発掘・起業家育成を行う「NEP（NEDO Entrepreneurs Program）」や、' +
+      'NEDO認定ベンチャーキャピタル等からの出資を要件として研究開発・実証費用を助成する「シード期の研究開発型スタートアップに対する事業化支援（STS）」等を通じて、研究開発・技術実証に要する費用を補助・委託の形で支援する。' +
+      '近年はディープテック・スタートアップ支援基金（DTSU）としてフェーズ別支援に再編・拡充されている。助成率・上限額・対象経費・公募内容は年度ごとに変動するため要確認。',
+    application:
+      'NEDOが年度ごとに行う公募に応募する形式。STS等の事業化支援ではNEDO認定VC等からの出資受入れが応募要件。NEP（人材育成）等は別枠で公募。詳細・締切は各年度のNEDO公募ページで確認する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nedo.go.jp/activities/ZZJP_100091.html', type: 'government', label: 'NEDO 研究開発型スタートアップ支援事業' },
+      { url: 'https://www8.cao.go.jp/cstp/ryoshigijutsu/21kai/sanko4.pdf', type: 'government', label: '内閣府 ディープテック・スタートアップ支援事業（経産省資料）' },
+      { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001a1j.html', type: 'operator', label: 'J-Net21 NEDO シード期スタートアップ支援' },
+    ],
+  },
+  {
+    id: 'subsidy-childcare-support-grant',
+    level: 'national',
+    domain: 'welfare',
+    name: '子ども・子育て支援交付金（地域子ども・子育て支援事業）',
+    authority: '所管: こども家庭庁／実施主体: 市町村（国・都道府県が費用を負担・交付）',
+    statement:
+      '子ども・子育て支援法に基づき市町村が策定する事業計画に従い、地域の実情に応じて実施する「地域子ども・子育て支援事業」（利用者支援・延長保育・放課後児童健全育成（学童保育）・地域子育て支援拠点・一時預かり・病児保育・' +
+      'ファミリー・サポート・センター等）に要する費用を国・都道府県・市町村が分担（交付金として交付）する仕組み。実施主体は市町村で、こども家庭庁が交付金を所管する。負担割合・対象事業の範囲は年度ごとに変動するため要確認。',
+    application:
+      '市町村が地域のニーズに基づき事業計画を策定・実施し、国（こども家庭庁）へ交付申請を行って交付金を受領する自治体向けの財政支援。住民（保護者）は各事業を市町村・委託事業者を通じて利用する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/kokoseido', type: 'government', label: 'こども家庭庁 子ども・子育て支援制度' },
+      { url: 'https://kouseikyoku.mhlw.go.jp/kantoshinetsu/gyomu/bu_ka/kenko_fukushi/kodomo_004.html', type: 'government', label: '関東信越厚生局 子ども・子育て支援交付金について' },
+      { url: 'https://laws.e-gov.go.jp/law/424AC0000000065', type: 'government', label: 'e-Gov法令検索 子ども・子育て支援法' },
+    ],
+  },
+  {
+    id: 'subsidy-decarbonization-region',
+    level: 'national',
+    domain: 'business',
+    name: '地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）',
+    authority: '所管: 環境省',
+    statement:
+      '環境省が、2050年カーボンニュートラル及び2030年度の温室効果ガス削減目標の達成に向け、脱炭素に意欲的に取り組む地方公共団体等を複数年度にわたり継続的・包括的に支援する国の交付金。地域特性に応じた先行的な脱炭素の取組を実施する' +
+      '「脱炭素先行地域」づくりや、屋根置き等の自家消費型太陽光発電の導入等の「重点対策加速化事業」を含む。交付対象は地方公共団体等で、官民連携により民間事業者と共同で実施する事業も支援対象となる。交付率・上限額・対象・採択要件は年度（募集回）ごとに変動するため要確認。',
+    application:
+      '地方公共団体が環境省の各回募集（脱炭素先行地域の公募、又は重点対策加速化事業）に計画提案・申請を行い、選定・採択を経て交付を受ける。民間事業者は地方公共団体との連携事業として参画する。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://policies.env.go.jp/policy/roadmap/grants/', type: 'government', label: '環境省 地域脱炭素推進交付金' },
+      { url: 'https://www.env.go.jp/press/press_03770.html', type: 'government', label: '環境省 脱炭素先行地域選定結果' },
+      { url: 'https://www.city.setouchi.lg.jp/site/zero-co2/133814.html', type: 'municipality', label: '瀬戸内市 脱炭素先行地域に選定' },
+    ],
+  },
+  {
+    id: 'subsidy-midori-food-system',
+    level: 'national',
+    domain: 'business',
+    name: 'みどりの食料システム戦略推進対策（みどりの食料システム法）',
+    authority: '所管: 農林水産省（環境負荷低減事業活動実施計画の認定は都道府県知事、基盤確立事業実施計画は国が認定）',
+    statement:
+      '2021年策定の「みどりの食料システム戦略」を法制化した「みどりの食料システム法」は2022年7月1日に施行され、化学農薬・化学肥料の低減、有機農業の拡大、温室効果ガス削減等、環境負荷低減に取り組む農林漁業者等を支援する。' +
+      '農林漁業者が都道府県の基本計画に即して「環境負荷低減事業活動実施計画」を作成し都道府県知事の認定（みどり認定）を受けると、設備投資に対する税制特例（みどり投資促進税制の特別償却）、日本政策金融公庫の融資、各種国庫補助での優遇等の支援を受けられる。' +
+      '補助率・特別償却率・対象機種・適用期限等の細目は年度ごとに変動するため要確認。',
+    application:
+      '農林漁業者等が都道府県の基本計画に即して環境負荷低減事業活動実施計画を作成し都道府県知事の認定を受ける。機械・資材メーカー等は国（農林水産大臣）認定の基盤確立事業実施計画が別枠で存在。認定後に税制・融資・補助金優遇が適用される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/kanbo/kankyo/seisaku/midori/houritsu.html', type: 'government', label: '農林水産省 みどりの食料システム法について（みどり認定・基盤認定）' },
+      { url: 'https://www.pref.yamagata.jp/140001/midorikihonkeikaku.html', type: 'municipality', label: '山形県 みどりの食料システム法に基づく計画の認定について' },
+      { url: 'https://minorasu.basf.co.jp/81008', type: 'media', label: 'minorasu みどりの食料システム法 認定で得られる補助金・税制優遇' },
+    ],
+  },
+  {
+    id: 'subsidy-revitalization-council',
+    level: 'national',
+    domain: 'business',
+    name: '中小企業活性化協議会',
+    authority: '所管: 中小企業庁（経済産業省）／産業競争力強化法に基づき各都道府県（全47）に設置、商工会議所等が運営を受託',
+    statement:
+      '中小企業活性化協議会は、産業競争力強化法に基づき全47都道府県に設置された公正中立な公的機関で、2022年4月に旧・中小企業再生支援協議会と経営改善支援センターが統合して発足した。収益力改善・事業再生・廃業や再チャレンジまで、' +
+      '中小企業の幅広い経営課題にワンストップで対応する。弁護士・公認会計士・税理士・中小企業診断士・金融機関OB等の常駐専門家が、相談・助言から収益力改善計画や再生計画の策定支援、金融機関との調整までを原則無料で行う。' +
+      '返済不要の補助金を支給する制度ではなく、計画策定と経営改善・事業再生を伴走支援する公的機関である点に注意。',
+    application:
+      '企業の本社・事業所がある都道府県の中小企業活性化協議会（多くは地域の商工会議所内に設置）の相談窓口に問い合わせる。相談・申込内容ともに秘密厳守で、相談は無料。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.chusho.meti.go.jp/keiei/saisei/index.html', type: 'government', label: '中小企業庁 中小企業活性化協議会' },
+      { url: 'https://www.smrj.go.jp/sme/succession/revitalization/index.html', type: 'operator', label: '中小機構 中小企業活性化協議会による支援' },
+      { url: 'https://www.tokyo-cci.or.jp/regene/', type: 'operator', label: '東京商工会議所 中小企業活性化協議会（運営受託）' },
+    ],
+  },
+  {
+    id: 'subsidy-tourism-revitalization',
+    level: 'national',
+    domain: 'business',
+    name: '地域一体となった観光地・観光産業の再生・高付加価値化事業（観光庁）',
+    authority: '所管: 観光庁（国土交通省 外局）',
+    statement:
+      '観光庁が地域の観光地・観光産業の再生と高付加価値化を図るために実施した補助事業（前身は「既存観光拠点の再生・高付加価値化推進事業」）。観光地経営のマスタープランとなる「地域計画」の策定・磨き上げと、その計画に基づく' +
+      '宿泊施設・観光施設等の改修、廃屋撤去、面的DX化、観光地域づくり法人（DMO）・宿泊事業者等が行う受入環境整備等を、複数年度にわたり計画的・継続的に支援する。地域計画のもとで自治体・DMO・複数の民間事業者が連携して面的に取り組む点が特徴。' +
+      '補助率・上限額・公募期間・事業類型は年度・予算により変動し、事業名も改称されうるため要確認。',
+    application:
+      '計画対象地域を所管する自治体・DMO・地域内の民間事業者等が地域計画を策定して地域公募に応募し、採択後に計画に基づく個別事業（施設改修・廃屋撤去・面的DX・受入環境整備等）を実施する枠組み。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/kankocho/seisaku_seido/kihonkeikaku/jizoku_kankochi/saisei_kofukakachika.html', type: 'government', label: '観光庁 地域一体となった観光地・観光産業の再生・高付加価値化' },
+      { url: 'https://www.mlit.go.jp/kankocho/page06_000302.html', type: 'government', label: '観光庁 再生・高付加価値化事業 地域公募' },
+      { url: 'https://kankosaisei-chiiki.net/', type: 'operator', label: '事業事務局 観光地・観光産業の再生・高付加価値化事業 特設サイト' },
+    ],
+  },
+  {
+    id: 'subsidy-long-life-housing-renovation',
+    level: 'national',
+    domain: 'business',
+    name: '長期優良住宅化リフォーム推進事業',
+    authority: '所管: 国土交通省（住宅局）／評価室は建築研究所に設置',
+    statement:
+      '良質な住宅ストックの形成を図るため、既存住宅の性能向上（構造躯体等の劣化対策・耐震性・省エネルギー性・維持管理更新の容易性等）に資するリフォーム工事や、三世代同居対応改修、子育て世帯向け改修等を支援する国土交通省の補助事業。' +
+      '支援対象となるには、リフォーム前にインスペクション（住宅診断）を実施し、リフォーム後の維持保全計画・履歴を作成することが要件となる。新築のGX志向型住宅等を対象とする「子育てグリーン住宅支援事業」とは別個の既存住宅リフォーム向けの事業。' +
+      '補助率・上限額・公募期間・実施年度の有無は年度ごとに変動するため最新の公募要領で要確認。',
+    application:
+      '国（国土交通省）が年度ごとに公募を実施し、評価室を通じて、原則として施工事業者等がインスペクションを行ったうえで交付申請を行う。通年申請（予算上限到達まで）又は期間募集の形式で、年度ごとの公募要領に従う。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/shienjigyo_r7-03.html', type: 'government', label: '国土交通省 長期優良住宅化リフォーム推進事業' },
+      { url: 'https://www.mlit.go.jp/report/press/house04_hh_001273.html', type: 'government', label: '国土交通省 長期優良住宅化リフォームを支援します（報道発表）' },
+      { url: 'https://www.refonavi.or.jp/how-to/hojokin/424', type: 'operator', label: 'リフォーム評価ナビ 長期優良住宅化リフォーム推進事業 解説' },
+    ],
+  },
+  {
+    id: 'subsidy-housing-safety-net',
+    level: 'national',
+    domain: 'welfare',
+    name: '住宅セーフティネット制度',
+    authority: '所管: 国土交通省（福祉・居住支援面で厚生労働省が連携）',
+    statement:
+      '低額所得者・高齢者・障害者・子育て世帯・被災者・外国人等の「住宅確保要配慮者」の入居を拒まない賃貸住宅（セーフティネット住宅）の登録制度を中核とし、登録住宅の改修費補助、入居者の家賃・家賃債務保証料の低廉化補助、' +
+      '居住支援法人・居住支援協議会による入居・生活支援の3本柱からなる国の制度。2017年（平成29年）10月施行の改正住宅セーフティネット法に基づく。2024年（令和6年）公布の改正法により、安否確認・見守り・福祉サービスへのつなぎを行う' +
+      '「居住サポート住宅」の認定制度等が新設され2025年（令和7年）10月1日に施行された。改修費補助・家賃低廉化補助の有無や額は実施自治体・年度により変動するため要確認。',
+    application:
+      '賃貸人がセーフティネット住宅として都道府県・政令市・中核市等に登録（情報提供システムで公開）。改修費・家賃低廉化補助は地方公共団体と国が協力して交付し、実施有無・額は自治体ごとに異なる。要配慮者は居住支援法人・協議会・自治体窓口を通じ入居相談・支援を受けられる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk3_000055.html', type: 'government', label: '国土交通省 住宅セーフティネット制度' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_tk7_000054.html', type: 'government', label: '国土交通省 住宅セーフティネット法等の改正について（2024年改正）' },
+      { url: 'https://www.safetynet-jutaku.jp/', type: 'operator', label: 'セーフティネット住宅情報提供システム' },
+    ],
+  },
+  {
+    id: 'subsidy-livelihood-welfare-loan',
+    level: 'national',
+    domain: 'welfare',
+    name: '生活福祉資金貸付制度',
+    authority: '所管: 厚生労働省／実施: 都道府県社会福祉協議会（窓口は市区町村社会福祉協議会）',
+    statement:
+      '他から必要な資金の借入が困難な低所得世帯・障害者世帯・高齢者世帯を対象に、都道府県社会福祉協議会が実施主体（窓口は市区町村社協）となって、総合支援資金・福祉資金・教育支援資金・不動産担保型生活資金の各資金を無利子又は低利で' +
+      '貸し付ける厚生労働省所管の公的制度。資金の貸付と併せて民生委員等による相談支援を行い、経済的自立と生活の安定を図ることを目的とする。貸付限度額・据置期間・利率（連帯保証人の有無で無利子又は年1.5%等）は資金の種類・時期により異なるため要確認。',
+    application:
+      '居住地の市区町村社会福祉協議会（又は担当の民生委員）に相談・申請する。世帯の状況に応じて資金種別を選定し、相談支援と併せて貸付審査が行われる。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/seikatsu-fukushi-shikin1/index.html', type: 'government', label: '厚生労働省 生活福祉資金貸付制度' },
+      { url: 'https://www.gov-online.go.jp/article/201001/entry-7801.html', type: 'government', label: '政府広報オンライン 生活福祉資金貸付制度があります' },
+      { url: 'https://www.zcwvc.net/', type: 'operator', label: '全国社会福祉協議会（社協の生活支援）' },
+    ],
+  },
+  {
+    id: 'subsidy-single-parent-welfare-loan',
+    level: 'national',
+    domain: 'welfare',
+    name: '母子父子寡婦福祉資金貸付金',
+    authority: '所管: こども家庭庁（支援局家庭福祉課）／実施（貸付主体）: 都道府県・指定都市・中核市',
+    statement:
+      '「母子及び父子並びに寡婦福祉法」に基づき、母子家庭の母・父子家庭の父・寡婦等の経済的自立と、その扶養する児童の福祉の増進を図ることを目的として、都道府県・指定都市・中核市が無利子又は低利で各種資金を貸し付ける制度。' +
+      '資金は事業開始資金・修学資金・就学支度資金・生活資金など目的別に区分される（12種類）。利率は資金種別や連帯保証人の有無により無利子又は年1.0%とされ、貸付限度額・利率は資金種別及び年度・実施主体により異なるため要確認。',
+    application:
+      '居住地を所管する地方公共団体の福祉担当窓口（都道府県の福祉事務所、又は指定都市・中核市の担当課）に事前相談し、面接・審査を経て貸付決定。子に関する資金は親子双方が面接対象となる場合がある。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cfa.go.jp/policies/hitori-oya', type: 'government', label: 'こども家庭庁 ひとり親家庭等の支援' },
+      { url: 'https://www.pref.kanagawa.jp/docs/he8/hitorioya-support/fukushishikin/index.html', type: 'municipality', label: '神奈川県 母子父子寡婦福祉資金について' },
+      { url: 'https://www.city.yokohama.lg.jp/kosodate-kyoiku/oyakokenko/hitorioya/boshifushikafushikin.html', type: 'municipality', label: '横浜市 母子父子寡婦福祉資金' },
+    ],
+  },
+  {
+    id: 'subsidy-hilly-mountainous-payment',
+    level: 'national',
+    domain: 'business',
+    name: '中山間地域等直接支払制度',
+    authority: '所管: 農林水産省（農村振興局）／実施: 市町村・都道府県を経由',
+    statement:
+      '農業生産条件が不利な中山間地域等において、集落協定等に基づき5年以上継続して農用地の維持・農業生産活動を行う農業者等に対し、農用地の面積・地目（田・畑・草地等）に応じて交付金を交付する制度。耕作放棄の発生防止と国土保全・' +
+      '水源涵養等の多面的機能の確保を目的とし、平成12年度から実施されている。現在は第5期対策（令和2〜令和6年度＝2020〜2024年度を一区切り）として実施され、令和6年8月に第5期対策の最終評価が公表された。交付単価・要件は地目・年度・体制整備の有無等で異なり対策期ごとに見直されるため要確認。',
+    application:
+      '農業者等が集落協定（又は個人協定）を締結し、5年以上の農業生産活動の継続等を約束したうえで市町村に申請。交付金は協定単位で交付され共同取組活動等に充当される。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/nousin/tyusan/siharai_seido/s_about/', type: 'government', label: '農林水産省 中山間地域等直接支払制度とは' },
+      { url: 'https://www.maff.go.jp/j/press/nousin/tyusan/240830.html', type: 'government', label: '農林水産省 中山間地域等直接支払制度（第5期対策）の最終評価' },
+      { url: 'https://www.pref.niigata.lg.jp/sec/chiikinosei/tyuusankan-tyokubarai.html', type: 'municipality', label: '新潟県 中山間地域等直接支払制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-multifunctional-payment',
+    level: 'national',
+    domain: 'business',
+    name: '多面的機能支払交付金',
+    authority: '所管: 農林水産省（農村振興局）／実施: 市町村・都道府県を経由し地域の活動組織へ交付',
+    statement:
+      '農業・農村が有する多面的機能（国土保全・水源涵養・良好な景観形成等）の維持・発揮を図るため、地域の共同活動に取り組む活動組織に対し農用地の面積に応じて交付金を交付する国の制度。「農地維持支払」（農地法面の草刈り・水路の泥上げ・' +
+      '農道の路面維持等の基礎的保全活動）と「資源向上支払」（施設の軽微な補修・長寿命化・植栽による景観形成等の農村環境保全）の2区分から成る。多面的機能発揮促進法（2014年制定）に基づき平成26年度（2014年度）に創設された日本型直接支払制度の一つ。' +
+      '交付単価・要件は地目（田・畑・草地）・地域・活動区分・継続年数で異なるため要確認。',
+    application:
+      '地域内の農業者等が共同活動に取り組む活動組織を組成し市町村と協定を締結。市町村・都道府県を経由して対象農用地の面積に応じた交付金が交付される（資源向上支払は地域住民等を含む組織が対象）。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/nousin/kanri/tamen_siharai.html', type: 'government', label: '農林水産省 多面的機能支払交付金' },
+      { url: 'https://www.maff.go.jp/j/nousin/kanri/attach/pdf/tamen_siharai-148.pdf', type: 'government', label: '農林水産省 多面的機能支払交付金実施要綱' },
+      { url: 'https://www.pref.kochi.lg.jp/doc/2025051200191/', type: 'municipality', label: '高知県 多面的機能支払制度について' },
+    ],
+  },
+  {
+    id: 'subsidy-regional-public-transport',
+    level: 'national',
+    domain: 'business',
+    name: '地域公共交通確保維持改善事業',
+    authority: '所管: 国土交通省（総合政策局交通計画課）／窓口: 各地方運輸局',
+    statement:
+      '地域の多様な関係者が協働して地域の実情に応じた生活交通の確保・維持・改善を図ることを目的に、国土交通省が運行・設備整備等に要する経費を補助する制度。補助対象には地域間幹線系統バス・地域内フィーダー系統バス・デマンド交通、' +
+      '離島航路/離島航空路、鉄道駅等のバリアフリー化や利用環境改善等が含まれ、過疎地域など交通不便地域の移動手段確保を支援する。実施は地域公共交通計画や地域協議会での議論に基づくことが要件とされる。補助率・対象要件・事業区分は年度の交付要綱・予算で改正されるため要確認。',
+    application:
+      '地域公共交通計画等に基づき、地方公共団体・交通事業者・地域公共交通活性化協議会等が最寄りの地方運輸局を窓口に申請。事業区分ごとの交付要綱・実施要領に従って国費補助を受ける。',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/sogoseisaku/transport/sosei_transport_tk_000041.html', type: 'government', label: '国土交通省 地域公共交通確保維持改善事業' },
+      { url: 'https://www.chisou.go.jp/tiiki/tiikisaisei/danchisaisei/pdf/danchi_sienmenu_koukyoukoutsuu.pdf', type: 'government', label: '内閣府 地域公共交通確保維持事業の支援メニュー' },
+      { url: 'https://www.city.kure.lg.jp/uploaded/attachment/3898.pdf', type: 'municipality', label: '呉市 地域公共交通確保維持改善事業について' },
+    ],
+  },
+];
+
+// 自治体横断・制度横断の公式検索ポータル（国・都道府県・市町村の制度を最新の締切付きで探すための一次導線）。
+// 全市町村を静的に網羅する代わりに、利用者が「現在募集中・締切付き」の制度を公式ソースで確認できるようにする。
+export const SUBSIDY_PORTALS: SubsidySource[] = [
+  { url: 'https://www.jgrants-portal.go.jp/', type: 'government', label: 'jGrants（デジタル庁・補助金電子申請システム／募集中の補助金検索）' },
+  { url: 'https://mirasapo-plus.go.jp/', type: 'government', label: 'ミラサポplus（中小企業庁／国・自治体の支援制度・補助金検索）' },
+  { url: 'https://j-net21.smrj.go.jp/snavi/', type: 'government', label: 'J-Net21 支援情報ヘッドライン（中小機構／補助金・助成金・融資の最新情報）' },
+  { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/index.html', type: 'government', label: '厚生労働省 雇用関係助成金（一覧・支給要領）' },
+];
+// Stryker restore all

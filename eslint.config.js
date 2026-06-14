@@ -82,6 +82,22 @@ export default tseslint.config(
     },
   },
   {
+    // Service Worker (PWA) — static asset served as-is. ServiceWorkerGlobalScope の
+    // グローバル (self / caches / fetch / clients) を許可する。
+    files: ['assets/sw.js'],
+    languageOptions: {
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        clients: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+    },
+  },
+  {
     // Tests can use looser typing.
     files: ['src/**/__tests__/**/*.{ts,tsx}'],
     rules: {

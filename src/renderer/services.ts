@@ -20,11 +20,50 @@ import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { UberEatsPage } from './pages/UberEatsPage';
-import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
 import { QualityPage } from './pages/QualityPage';
+import { Microsoft365Page } from './pages/Microsoft365Page';
+import { DropboxPage } from './pages/DropboxPage';
+import { SalesforcePage } from './pages/SalesforcePage';
+import { DiscordPage } from './pages/DiscordPage';
+import { AsanaPage } from './pages/AsanaPage';
+import { LinearPage } from './pages/LinearPage';
+import { SentryPage } from './pages/SentryPage';
+import { ShopifyPage } from './pages/ShopifyPage';
+import { StripePage } from './pages/StripePage';
+import { LinePage } from './pages/LinePage';
+import { StoragePage } from './pages/StoragePage';
+import { TaxAccountantPage } from './pages/TaxAccountantPage';
+import { LaborConsultantPage } from './pages/LaborConsultantPage';
+import { LawyerPage } from './pages/LawyerPage';
+import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
+import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
+import { SmeConsultantPage } from './pages/SmeConsultantPage';
+import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
+import { BasePage } from './pages/BasePage';
+import { NetseaPage } from './pages/NetseaPage';
+import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
+import { TopsellerPage } from './pages/TopsellerPage';
+import { A8netPage } from './pages/A8netPage';
+import { AiBlogkunPage } from './pages/AiBlogkunPage';
+import { MoneyforwardPage } from './pages/MoneyforwardPage';
+import { AmazonPage } from './pages/AmazonPage';
+import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
+import { SalesPage } from './pages/SalesPage';
+import { TeamPage } from './pages/TeamPage';
+import { YoutubePage } from './pages/YoutubePage';
+import { OverviewPage } from './pages/OverviewPage';
+import { CoconalaPage } from './pages/CoconalaPage';
+import { TiktokPage } from './pages/TiktokPage';
+import { TaxPage } from './pages/TaxPage';
+import { FundingPage } from './pages/FundingPage';
+import { FreeePage } from './pages/FreeePage';
+import { ConnectorsPage } from './pages/ConnectorsPage';
+import { LinuxPage } from './pages/LinuxPage';
+import { CompliancePage } from './pages/CompliancePage';
+import { ObsidianPage } from './pages/ObsidianPage';
+import { DockerPage } from './pages/DockerPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -228,22 +267,9 @@ export const SERVICES: ServiceDefinition[] = [
     page: SettingsPage,
     category: 'featured',
   },
-  {
-    id: 'uber-eats',
-    label: 'Uber Eats',
-    icon: 'UE',
-    description: 'フードデリバリー — 売上 / 注文数 / 評価を一覧',
-    page: UberEatsPage,
-    category: 'tools',
-  },
-  {
-    id: 'demae-can',
-    label: '出前館',
-    icon: 'DM',
-    description: 'フードデリバリー — 受注 / 配達ステータス / 月次集計',
-    page: DemaeCanPage,
-    category: 'tools',
-  },
+  // Uber Eats / 出前館 はサイドバーから「事業ダッシュボード」へ統合した
+  // (BusinessPage の FoodDeliverySection)。SERVICE_IDS / クライアント /
+  // snapshot / テストはデータ源として温存している (不変条件維持)。
   {
     id: 'real-estate',
     label: '不動産投資',
@@ -266,6 +292,334 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'QA',
     description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
     page: QualityPage,
+    category: 'tools',
+  },
+  {
+    id: 'microsoft-365',
+    label: 'Microsoft 365',
+    icon: 'M3',
+    description: 'Outlook / OneDrive / Teams — メール / ファイル / 会議',
+    page: Microsoft365Page,
+    category: 'integrations',
+  },
+  {
+    id: 'dropbox',
+    label: 'Dropbox',
+    icon: 'DB',
+    description: 'ファイル保管 — 最近のファイル / 共有リンク / 容量',
+    page: DropboxPage,
+    category: 'integrations',
+  },
+  {
+    id: 'salesforce',
+    label: 'Salesforce',
+    icon: 'SF',
+    description: 'CRM — リード / 商談 / 連絡先 / パイプライン',
+    page: SalesforcePage,
+    category: 'integrations',
+  },
+  {
+    id: 'discord',
+    label: 'Discord',
+    icon: 'DS',
+    description: 'チャット — サーバー / チャンネル / メッセージ',
+    page: DiscordPage,
+    category: 'integrations',
+  },
+  {
+    id: 'asana',
+    label: 'Asana',
+    icon: 'AS',
+    description: 'プロジェクト管理 — タスク / プロジェクト / 進捗',
+    page: AsanaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'linear',
+    label: 'Linear',
+    icon: 'LN',
+    description: 'イシュー追跡 — issue / cycle / project',
+    page: LinearPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sentry',
+    label: 'Sentry',
+    icon: 'SN',
+    description: 'エラー監視 — issues / performance / releases',
+    page: SentryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'shopify',
+    label: 'Shopify',
+    icon: 'SH',
+    description: 'EC — 注文 / 売上 / 商品 / 顧客',
+    page: ShopifyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'stripe',
+    label: 'Stripe',
+    icon: 'SP',
+    description: '決済 — MRR / 顧客 / 請求 / トランザクション',
+    page: StripePage,
+    category: 'integrations',
+  },
+  {
+    id: 'line',
+    label: 'LINE',
+    icon: 'LN2',
+    description: '公式アカウント — 友達 / 配信 / メッセージ統計',
+    page: LinePage,
+    category: 'integrations',
+  },
+  {
+    id: 'storage',
+    label: 'ストレージ最適化',
+    icon: 'SZ',
+    description: 'PC ストレージ分析 + クリーンアップ推奨 + パフォーマンス監視',
+    page: StoragePage,
+    category: 'tools',
+  },
+  {
+    id: 'tax-accountant',
+    label: '税理士',
+    icon: 'TX',
+    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談',
+    page: TaxAccountantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'labor-consultant',
+    label: '社労士',
+    icon: 'LC',
+    description: '社会保険手続 / 給与計算 / 就業規則 / 労務相談',
+    page: LaborConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'lawyer',
+    label: '弁護士',
+    icon: 'LW',
+    description: '契約書レビュー / 紛争対応 / 法務顧問',
+    page: LawyerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'judicial-scrivener',
+    label: '司法書士',
+    icon: 'JS',
+    description: '商業登記 / 不動産登記 / 相続手続',
+    page: JudicialScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'admin-scrivener',
+    label: '行政書士',
+    icon: 'AD',
+    description: '許認可申請 / 在留資格 / 補助金',
+    page: AdminScrivenerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sme-consultant',
+    label: '中小企業診断士',
+    icon: 'SM',
+    description: '経営診断 / 補助金申請 / 事業計画',
+    page: SmeConsultantPage,
+    category: 'integrations',
+  },
+  {
+    id: 'patent-attorney',
+    label: '弁理士',
+    icon: 'PA',
+    description: '特許 / 商標 / 意匠出願 / 知財コンサル',
+    page: PatentAttorneyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'base',
+    label: 'BASE',
+    icon: 'BS',
+    description: 'ネットショップの商品・在庫・公開状態 (公式 OAuth API)',
+    page: BasePage,
+    category: 'integrations',
+  },
+  {
+    id: 'netsea',
+    label: 'NETSEA',
+    icon: 'NS',
+    description: 'B2B 卸・仕入れマーケットプレイス (snapshot)',
+    page: NetseaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'super-delivery',
+    label: 'スーパーデリバリー',
+    icon: 'SD',
+    description: 'B2B 卸売仕入れサイト (snapshot)',
+    page: SuperDeliveryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'topseller',
+    label: 'TopSeller',
+    icon: 'TS',
+    description: 'ドロップシッピング卸 (snapshot)',
+    page: TopsellerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'a8net',
+    label: 'A8.net',
+    icon: 'A8',
+    description: 'アフィリエイト ASP の成果・レポート (snapshot)',
+    page: A8netPage,
+    category: 'integrations',
+  },
+  {
+    id: 'ai-blogkun',
+    label: 'AIブログくん',
+    icon: 'AB',
+    description: 'AI 自動ブログ生成 SaaS (snapshot)',
+    page: AiBlogkunPage,
+    category: 'integrations',
+  },
+  {
+    id: 'moneyforward',
+    label: 'マネーフォワード',
+    icon: 'MF',
+    description: 'クラウド会計・請求・確定申告 (snapshot)',
+    page: MoneyforwardPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon',
+    label: 'Amazon',
+    icon: 'AZ',
+    description: 'セラー出品の注文・在庫・売上 (SP-API、snapshot)',
+    page: AmazonPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon-associates',
+    label: 'Amazon アソシエイト',
+    icon: 'AA',
+    description: 'アフィリエイト成果レポート (snapshot)',
+    page: AmazonAssociatesPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sales',
+    label: '売上集計',
+    icon: 'SA',
+    description: 'Amazon / Shopify / BASE など EC チャネル横断の売上集計 (ローカル保存・実データ)',
+    page: SalesPage,
+    category: 'featured',
+  },
+  {
+    id: 'team',
+    label: 'チーム管理',
+    icon: 'TM',
+    description: 'メンバー・権限管理 (オーナー/管理者/メンバー) — プランのシート上限と連動',
+    page: TeamPage,
+    category: 'featured',
+  },
+  {
+    id: 'youtube',
+    label: 'YouTube',
+    icon: 'YT',
+    description: 'チャンネル統計・最近の動画 (YouTube Data API v3 実連携)',
+    page: YoutubePage,
+    category: 'integrations',
+  },
+  {
+    id: 'overview',
+    label: '経営サマリー',
+    icon: 'OV',
+    description: '売上・KPI・チーム・プランを横断した経営概況 (実データ集約)',
+    page: OverviewPage,
+    category: 'featured',
+  },
+  {
+    id: 'coconala',
+    label: 'ココナラ',
+    icon: 'CO',
+    description: 'スキルマーケットの出品・受注・評価 (snapshot)',
+    page: CoconalaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tiktok',
+    label: 'TikTok',
+    icon: 'TT',
+    description: '投稿・広告・フォロワーの運用サマリー (snapshot)',
+    page: TiktokPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tax',
+    label: '税務試算',
+    icon: 'TX',
+    description: '所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 (納付は手動)',
+    page: TaxPage,
+    category: 'tools',
+  },
+  {
+    id: 'funding',
+    label: '資金調達レーダー',
+    icon: 'FR',
+    description: '補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒)',
+    page: FundingPage,
+    category: 'tools',
+  },
+  {
+    id: 'freee',
+    label: 'freee 会計',
+    icon: 'FE',
+    description: 'freee の取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携・実 API)',
+    page: FreeePage,
+    category: 'integrations',
+  },
+  {
+    id: 'connectors',
+    label: 'コネクター / 自動化',
+    icon: 'CN',
+    description: '無料(認証不要)のローカル連携カタログとプラグインを一覧・ドライラン',
+    page: ConnectorsPage,
+    category: 'tools',
+  },
+  {
+    id: 'linux',
+    label: 'Linux',
+    icon: '🐧',
+    description: 'システムモニター — OS/カーネル/CPU/メモリ/ロード/稼働時間 (os から実値・読み取り専用)',
+    page: LinuxPage,
+    category: 'tools',
+  },
+  {
+    id: 'compliance',
+    label: 'コンプライアンス',
+    icon: 'CP',
+    description: '法務/税務/労務の確証済み制度知識を分野別に表示 (一次情報で裏取り・出典リンク付き)',
+    page: CompliancePage,
+    category: 'tools',
+  },
+  {
+    id: 'obsidian',
+    label: 'Obsidian',
+    icon: 'OB',
+    description: 'ローカル知識ベース (Vault) を GitHub 連携・暗号化し業務効率化を仕組み化',
+    page: ObsidianPage,
+    category: 'tools',
+  },
+  {
+    id: 'docker',
+    label: 'Docker',
+    icon: 'DK',
+    description: 'コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化',
+    page: DockerPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

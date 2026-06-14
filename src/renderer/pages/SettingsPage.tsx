@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
+import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
+import { summarizeConnections } from '../data/connectionStatus';
+import { BackupPanel } from '../components/BackupPanel';
+import { CloudSyncPanel } from '../components/CloudSyncPanel';
+import { usePlan } from '../plan/usePlan';
+import { getPlan } from '../../shared/plan';
+import { issueInviteCode } from '../plan/internalLicense';
 import { getVault } from '../security/vault';
 import { getProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -75,6 +82,40 @@ const SLOTS: readonly CredentialSlot[] = [
     label: 'WordPress.com Bearer',
     description: 'WordPress.com サービスで使用。',
     placeholder: 'Bearer token',
+  },
+  {
+    vaultKey: 'atlassian',
+    emoji: '🟦',
+    label: 'Atlassian (Jira) トークン',
+    description:
+      'Atlassian (Jira) 課題作成で使用。JSON 形式で保存: {"email":"you@example.com","token":"<APIトークン>","site":"https://your-team.atlassian.net"}。id.atlassian.com で API トークンを発行。',
+    placeholder: '{"email":"...","token":"...","site":"https://...atlassian.net"}',
+    helpUrl: 'https://id.atlassian.com/manage-profile/security/api-tokens',
+  },
+  {
+    vaultKey: 'canva',
+    emoji: '🎨',
+    label: 'Canva Connect トークン',
+    description: 'Canva フォルダ作成で使用。Canva Developers で Connect API のアクセストークンを発行。',
+    placeholder: 'Bearer token',
+    helpUrl: 'https://www.canva.com/developers/',
+  },
+  {
+    vaultKey: 'cloudflare',
+    emoji: '☁️',
+    label: 'Cloudflare API トークン',
+    description: 'Cloudflare DNS / キャッシュ操作で使用。dash.cloudflare.com の My Profile → API Tokens で Zone 編集権限のトークンを発行。',
+    placeholder: 'Cloudflare API token',
+    helpUrl: 'https://dash.cloudflare.com/profile/api-tokens',
+  },
+  {
+    vaultKey: 'security',
+    emoji: '🛡️',
+    label: 'セキュリティ (HIBP / VirusTotal)',
+    description:
+      'メール漏洩チェック (HIBP) と URL スキャン (VirusTotal) で使用。JSON 形式で保存: {"hibp":"<HIBPキー>","vt":"<VirusTotalキー>"}。どちらか一方だけでも可。',
+    placeholder: '{"hibp":"...","vt":"..."}',
+    helpUrl: 'https://haveibeenpwned.com/API/Key',
   },
 ];
 
@@ -459,6 +500,166 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
   );
 }
 
+/** 社内ライセンス (招待コードで全機能無償) のパネル。 */
+function LicenseSection() {
+  const { plan, internalUnlocked, redeemInvite, revokeInvite } = usePlan();
+  const [code, setCode] = useState('');
+  const [holder, setHolder] = useState('');
+  const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  // オーナーが配布できる汎用招待コード (合言葉から導出・固定)。
+  const ownerCode = issueInviteCode('');
+
+  function redeem() {
+    const ok = redeemInvite(code.trim(), holder.trim());
+    setMsg(ok
+      ? { text: '✅ 全機能を有効化しました（社内ライセンス・無償）。', ok: true }
+      : { text: '⚠ 招待コードが正しくありません。', ok: false });
+    if (ok) setCode('');
+  }
+
+  const inputStyle: React.CSSProperties = {
+    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
+    color: 'var(--text)', padding: '8px 10px', fontSize: 13, width: 220,
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, margin: 0 }}>
+        自社商品のため、<strong>オーナー・自社社員・招待された方</strong>は招待コードを入力すると
+        全機能を<strong>無償</strong>で利用できます（{getPlan('internal').label}・{getPlan('internal').audience}）。
+      </p>
+
+      {internalUnlocked ? (
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, color: '#22c55e' }}>
+            ✅ 社内ライセンス有効 — 全機能が無償で利用できます（現在のプラン: {getPlan(plan).label}）。
+          </span>
+          <button type="button" onClick={() => { revokeInvite(); setMsg(null); }}>解除</button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            招待コード
+            <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="SVCHUB-XXXXXXXX" style={inputStyle} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            お名前 / メール（任意）
+            <input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder="例: 山田太郎" style={inputStyle} />
+          </label>
+          <button type="button" onClick={redeem} disabled={code.trim().length === 0}>有効化</button>
+        </div>
+      )}
+
+      {msg && <div style={{ fontSize: 12, color: msg.ok ? '#22c55e' : '#f87171' }}>{msg.text}</div>}
+
+      <details style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+        <summary style={{ cursor: 'pointer' }}>オーナー向け — 招待コードを発行・配布する</summary>
+        <div style={{ marginTop: 8, lineHeight: 1.7 }}>
+          下記の<strong>汎用招待コード</strong>を社員・招待者に共有してください。受け取った人は
+          このページで入力するだけで全機能が無償で開放されます。
+          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 14, color: 'var(--text)', userSelect: 'all' }}>
+            {ownerCode}
+          </div>
+          <div style={{ marginTop: 6 }}>
+            ※ このコードを知っている範囲が配布範囲になります。社外に広く出さないでください。
+          </div>
+        </div>
+      </details>
+    </div>
+  );
+}
+
+/** 接続状況ハブ — 全サービスの資格情報設定状況を一覧し、未接続はページへ誘導する。 */
+function ConnectionHub({ refreshKey }: { refreshKey: number }) {
+  const [configured, setConfigured] = useState<ReadonlySet<string> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getVault()
+      .listConfigured()
+      .then((ids) => {
+        if (!cancelled) setConfigured(new Set(ids));
+      })
+      .catch(() => {
+        if (!cancelled) setConfigured(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshKey]);
+
+  const summary = summarizeConnections(
+    SERVICES.map((s) => ({ id: s.id, label: s.label, category: s.category })),
+    configured ?? new Set(),
+  );
+
+  const open = (id: string) => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: id }));
+
+  if (configured === null) {
+    return <div style={{ fontSize: 13, color: 'var(--text-mute)' }}>読み込み中…</div>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ fontSize: 13 }}>
+        <strong>{summary.connectedCount}</strong> / {summary.total} サービスが接続済み
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {summary.byCategory.map((c) => (
+          <span
+            key={c.category}
+            style={{
+              fontSize: 12,
+              border: '1px solid var(--border)',
+              borderRadius: 999,
+              padding: '2px 10px',
+              color: 'var(--text-mute)',
+            }}
+          >
+            {CATEGORY_LABEL[c.category as ServiceCategory] ?? c.category}: {c.connected}/{c.total}
+          </span>
+        ))}
+      </div>
+
+      {summary.connected.length > 0 ? (
+        <div>
+          <div style={{ fontSize: 12, color: 'var(--success)', marginBottom: 4 }}>✅ 接続済み</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {summary.connected.map((s) => (
+              <button key={s.id} type="button" onClick={() => open(s.id)} style={{ fontSize: 12 }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div>
+        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 4 }}>
+          ⚪ 未接続 ({summary.notConnected.length}) — クリックで開いて接続
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 180, overflowY: 'auto' }}>
+          {summary.notConnected.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => open(s.id)}
+              style={{ fontSize: 12, opacity: 0.85 }}
+              title={`${s.label} を開いて接続する`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p style={{ fontSize: 11, color: 'var(--text-mute)', margin: 0, lineHeight: 1.6 }}>
+        ※ Microsoft 365 / Google (Drive・Calendar・Gmail) は各ページの「かんたん接続」から、
+        ローカルツール (税務試算・コネクター 等) は認証不要で利用できます。
+      </p>
+    </div>
+  );
+}
+
 export function SettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -500,8 +701,20 @@ export function SettingsPage() {
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
 
+      <Section title="接続状況ハブ" count={SERVICES.length}>
+        <ConnectionHub refreshKey={refreshKey} />
+      </Section>
+
+      <Section title="ライセンス · 招待コード (全機能を無償開放)" count={1}>
+        <LicenseSection />
+      </Section>
+
+      <BackupPanel />
+
+      <CloudSyncPanel />
+
       <Section title="API キーとトークン" count={SLOTS.length}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }} key={refreshKey}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>
           {SLOTS.map((s) => (
             <CredentialRow key={s.vaultKey} slot={s} onChange={() => setRefreshKey((k) => k + 1)} />
           ))}
@@ -509,7 +722,7 @@ export function SettingsPage() {
       </Section>
 
       <Section title="ネットワーク (Phase D)" count={2}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }}>
           <ProxySection />
           <FsaSection />
         </div>

@@ -361,8 +361,17 @@ class BrowserVault implements Vault {
     } catch {
       return 'uninitialized';
     }
-    const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-    db.close();
+    // idbGet が reject すると status() が reject し、呼び出し側 (App) が
+    // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
+    // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
+    let meta: VaultMeta | undefined;
+    try {
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+    } catch {
+      // 読取失敗 → meta は undefined のまま (下で uninitialized を返す)
+    } finally {
+      db.close();
+    }
     if (!meta) return 'uninitialized';
     return this.currentKey ? 'unlocked' : 'locked';
   }
@@ -484,16 +493,23 @@ class BrowserVault implements Vault {
       throw new Error('token が不正です (1-8192 字)');
     }
     const db = await openDb();
-    const blob = await encryptString(this.currentKey, token);
-    await idbPut(db, TOKEN_STORE, serviceId, blob);
-    db.close();
+    try {
+      const blob = await encryptString(this.currentKey, token);
+      await idbPut(db, TOKEN_STORE, serviceId, blob);
+    } finally {
+      db.close();
+    }
   }
 
   async getToken(serviceId: string): Promise<string | null> {
     if (!this.currentKey) throw new Error('Vault がロックされています');
     const db = await openDb();
-    const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, serviceId);
-    db.close();
+    let blob: EncryptedToken | undefined;
+    try {
+      blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, serviceId);
+    } finally {
+      db.close();
+    }
     if (!blob) return null;
     try {
       return await decryptString(this.currentKey, blob);
@@ -504,15 +520,20 @@ class BrowserVault implements Vault {
 
   async clearToken(serviceId: string): Promise<void> {
     const db = await openDb();
-    await idbDelete(db, TOKEN_STORE, serviceId);
-    db.close();
+    try {
+      await idbDelete(db, TOKEN_STORE, serviceId);
+    } finally {
+      db.close();
+    }
   }
 
   async listConfigured(): Promise<string[]> {
     const db = await openDb();
-    const keys = await idbKeys(db, TOKEN_STORE);
-    db.close();
-    return keys;
+    try {
+      return await idbKeys(db, TOKEN_STORE);
+    } finally {
+      db.close();
+    }
   }
 
   // --- Phase E: recovery API ----------------------------------------

@@ -9,7 +9,7 @@
 ## 全体像 (System at a Glance)
 
 Service Hub は **Electron + React + TypeScript** のデスクトップ + ブラウザ単体
-ダッシュボード。27 のサービス (Home / 事業ダッシュボード / チームレーダー /
+ダッシュボード。62 のサービス (Home / 事業ダッシュボード / チームレーダー /
 Canva テンプレート / Library / Settings + 分析・ツール 7 種 + 外部 SaaS 連携 9 種)
 を 1 つのサイドバー UI で一元操作する。`npm run build:web` でビルドした
 standalone HTML (403 KB) はブラウザ単体で動作する。
@@ -18,18 +18,18 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 27 | `src/shared/serviceId.ts:9-33` |
+| サービス数 | 68 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 27 | `src/main/clients/index.ts:33-85` |
-| OAuth 対応サービス | 3 (drive / calendar / gmail) | `src/main/oauth.ts:54-85` |
+| client モジュール (fetcher + actions) | 68 | `src/main/clients/index.ts:44-83` |
+| OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **1175** | `npm test` (静的 `it(` 数; `it.each(seeds)` の 5×5 展開で実行時は 1224) |
+| ユニットテスト | **5399** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5484) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 170 | 自己検証 |
+| `file:line` 参照数 | 175 | 自己検証 |
 
 ### 統合フロー図
 
@@ -42,14 +42,14 @@ flowchart LR
   subgraph ELE["Electron app (single OS process tree)"]
     direction TB
     subgraph RND["Renderer (sandboxed, contextIsolated, CSP)"]
-      PAGES[27 React pages<br/>+ useServiceData hook]
+      PAGES[68 React pages<br/>+ useServiceData hook]
     end
     subgraph PRE["Preload (contextBridge)"]
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
       IPC[ipcMain.handle × 11]
-      CLIENTS[27 clients<br/>fetcher + ActionMap]
+      CLIENTS[68 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
     end
@@ -369,7 +369,7 @@ sequenceDiagram
   M->>M: setOAuthTokens(svc, ts)
 ```
 
-### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:134-164`)
+### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:177-262`)
 
 ```mermaid
 stateDiagram-v2
@@ -416,13 +416,13 @@ flowchart LR
 ```
 
 OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bearer 文字列。
-`getValidToken()` (`src/main/secrets.ts:134-164`) が `JSON.parse` → `isTokenSet` で振り分け。
+`getValidToken()` (`src/main/secrets.ts:177-262`) が `JSON.parse` → `isTokenSet` で振り分け。
 
 ---
 
 ## 3. サービスレジストリ
 
-### 3.1 27 services の認証スタイル
+### 3.1 68 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -448,6 +448,8 @@ union を参照する。
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
+| `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
+| `freee` | freee 会計 — 取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携) | OAuth (read scope) | ✅ | | (read-only — deals を月次CFに正規化。書き込みなし) |
 | `teamradar` | チームレーダー (1-5 評価 × 5 軸 × N 人) | none | ✅ | | `save-state`, `export-svg` (Canva ドラッグ&ドロップ可能な SVG 出力) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
@@ -457,11 +459,50 @@ union を参照する。
 | `real-estate` | 不動産投資 (snapshot のみ) | Bearer (将来 REIT/楽待) | ✅ | | (read-only — 保有物件 / 月次キャッシュフロー / 利回り / 入居率) |
 | `mutual-funds` | 投資信託 (snapshot のみ) | Bearer (将来 SBI/楽天証券) | ✅ | | (read-only — 保有ファンド / 評価額 / 基準価額 / 分配金) |
 | `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
+| `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
+| `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
+| `salesforce` | Salesforce CRM (snapshot) | Bearer (将来) | | | (read-only — 商談 / リード / パイプライン) |
+| `discord` | Discord (snapshot) | Bearer (将来) | | | (read-only — サーバー / チャンネル / メッセージ) |
+| `asana` | Asana PM (snapshot) | Bearer (将来) | | | (read-only — タスク / プロジェクト / 進捗) |
+| `linear` | Linear (snapshot) | Bearer (将来) | | | (read-only — issue / cycle / project) |
+| `sentry` | Sentry (snapshot) | Bearer (将来) | | | (read-only — errors / performance / releases) |
+| `shopify` | Shopify EC (snapshot) | Bearer (将来) | | | (read-only — 注文 / 売上 / 商品) |
+| `stripe` | Stripe 決済 (snapshot) | Bearer (将来) | | | (read-only — MRR / 顧客 / 請求) |
+| `line` | LINE 公式アカウント (snapshot) | Bearer (将来) | | | (read-only — 友達 / 配信 / 統計) |
+| `storage` | ストレージ最適化 (snapshot のみ) | none | ✅ | | (read-only — ディスク使用 / クリーンアップ推奨 / フラグメント率 / メモリ) |
+| `tax-accountant` | 税理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 相談履歴 / 書類 / 月次顧問料) |
+| `labor-consultant` | 社労士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 社保手続 / 給与計算 / 顧問料) |
+| `lawyer` | 弁護士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 契約書レビュー / 紛争対応) |
+| `judicial-scrivener` | 司法書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 商業登記 / 不動産登記) |
+| `admin-scrivener` | 行政書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 許認可申請 / 補助金) |
+| `sme-consultant` | 中小企業診断士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 経営診断 / 事業計画) |
+| `patent-attorney` | 弁理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 特許 / 商標 / 意匠出願) |
+| `base` | BASE ネットショップ (公式 OAuth API 実配線) | OAuth (`api.thebase.in`) | | ✅ | (read-only — 商品 / 価格 / 在庫 / 公開状態) |
+| `netsea` | NETSEA B2B 卸 (snapshot のみ) | パートナー API (未公開) | ✅ | | (read-only) |
+| `super-delivery` | スーパーデリバリー B2B 卸 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
+| `topseller` | TopSeller ドロップシッピング卸 (snapshot のみ) | CSV/契約 (公開 API なし) | ✅ | | (read-only) |
+| `a8net` | A8.net アフィリエイト ASP (snapshot のみ) | 管理画面/CSV (公開 API なし) | ✅ | | (read-only) |
+| `ai-blogkun` | AIブログくん 自動ブログ生成 (snapshot のみ) | 公開 API なし | ✅ | | (read-only) |
+| `moneyforward` | マネーフォワード クラウド会計 (snapshot のみ) | OAuth (パートナー登録必須) | ✅ | | (read-only) |
+| `amazon` | Amazon セラー SP-API (snapshot のみ) | LWA+IAM (要出品者登録) | ✅ | | (read-only — 注文/在庫/売上) |
+| `amazon-associates` | Amazon アソシエイト (snapshot のみ) | PA-API (要承認) | ✅ | | (read-only — 成果レポート) |
+| `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
+| `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`) |
+| `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約) |
+| `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
+| `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
+| `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動) |
+| `connectors` | コネクター/自動化 — 無料(認証不要)ローカル連携カタログ + プラグインの一覧・ドライラン | 認証不要 (純ロジック) | ✅ | | (read-only — `shared/connectors/*` を描画。実送信はアダプタ層) |
+| `linux` | Linux システムモニター — OS/カーネル/CPU/メモリ/ロード/稼働時間 | none | ✅ | | (read-only — Electron main の `os` から実値。シェル実行なし) |
+| `compliance` | コンプライアンス — 法務/税務/労務の確証済み制度知識 (出典付き) | none | ✅ | | (read-only — 実データは renderer の complianceKnowledge。確証規律で集計) |
+| `obsidian` | Obsidian — ローカル知識ベース (Vault) を GitHub 連携・暗号化し業務効率化を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.obsidian。実 Vault は fs で読む Phase 6) |
+| `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
 
-- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:87-102`)。トークン未設定でも snapshot OK。
+- **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:145-183`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。
 
-### 3.2 Action payload スキーマ (17 actions)
+### 3.2 Action payload スキーマ (19 actions)
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
@@ -482,6 +523,8 @@ union を参照する。
 | emotions | `log-mood` | `{ text, mood, source? }` | text 32KB clamp | `emotions.ts:100-261` |
 | emotions | `analyze-text` | `{ text }` | text 32KB clamp + extractJson | `emotions.ts:134-262` |
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp | `ollama.ts:233-314` |
+| microsoft-365 | `send-mail` | `{ to, subject, body? }` | to/subject 必須 + Graph message envelope | `microsoft-365.ts:131-169` |
+| microsoft-365 | `create-event` | `{ subject, start, end, location? }` | subject/start/end 必須 + Tokyo TZ | `microsoft-365.ts:171-209` |
 
 ### 3.3 ネットワーク egress マトリクス (13 ホスト)
 
@@ -519,7 +562,7 @@ npm run scaffold -- <id> "<Label>" <ICON>
 
 1. `src/shared/serviceId.ts:9-25` — `SERVICE_IDS` に id 追加
 2. `src/main/clients/<id>.ts` — fetcher + ACTIONS の skeleton
-3. `src/main/clients/index.ts:33-85` — `LIVE_FETCHERS` + `LIVE_ACTIONS` 登録
+3. `src/main/clients/index.ts:44-83` — `LIVE_FETCHERS` + `LIVE_ACTIONS` 登録
 4. `src/renderer/data/snapshot.ts` — `SNAPSHOT[<id>]` 追加
 5. `src/renderer/services.ts` — サイドバーエントリ
 6. `src/renderer/pages/<Label>Page.tsx` — ページ skeleton
@@ -539,7 +582,7 @@ graph TB
     L0["contextIsolation + sandbox + nodeIntegration:false<br/>(main.ts:42-48)<br/>CSP meta (index.html:29)<br/>setWindowOpenHandler + will-navigate (main.ts:50-75)"]
   end
   subgraph "L1 — IPC 境界"
-    L1["isServiceId() guard (serviceId.ts:37)<br/>Object.hasOwn() — proto lookup 無効<br/>action 名 1≤length≤64 + own-property<br/>payload plain-object 強制"]
+    L1["isServiceId() guard (serviceId.ts:60)<br/>Object.hasOwn() — proto lookup 無効<br/>action 名 1≤length≤64 + own-property<br/>payload plain-object 強制"]
   end
   subgraph "L2 — クライアント入力検証"
     L2["Ollama: ALLOWED_ENDPOINTS + isSafeModelName + \0 reject<br/>Skills: isSafeSkillName + path containment<br/>Gmail: isSafeHeaderValue (CR/LF/NUL reject)<br/>Atlassian: site https:// 必須<br/>GitHub PR detail: api.github.com pin<br/>URL 動的部分は encodeURIComponent"]
@@ -557,7 +600,7 @@ graph TB
 
 | 攻撃面 | 例 | 防御 (file:line) |
 |---|---|---|
-| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:37`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
+| **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:77`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:27`) + `ALLOWED_ENDPOINTS` (`ollama.ts:40-46`) |
 | **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:171`) + `path.resolve().startsWith()` (`skills.ts:150-156`) |
@@ -649,7 +692,7 @@ graph LR
     C2[verify:arch]
     C3[test]
     C4[coverage]
-    C5[build:renderer]
+    C5[build:web]
   end
   subgraph "Weekly (mutation.yml)"
     M1[stryker run]
@@ -888,7 +931,7 @@ classDiagram
     +listConfiguredServices() : secrets.ts:92
     +setOAuthTokens(id, ts) : secrets.ts:113
     +getOAuthTokens(id) : secrets.ts:117
-    +getValidToken(id) : secrets.ts:134 ~auto-refresh~
+    +getValidToken(id) : secrets.ts:223 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
@@ -973,7 +1016,7 @@ classDiagram
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `src/main/oauth.ts:196-201` |
 | 13 | secrets.json は ≤ 1 MB かつ plain object | `src/main/secrets.ts:14-39` |
-| 14 | 新規 client は `LIVE_FETCHERS` / `SERVICES` 両方に登録 | scaffold script + `src/main/clients/index.ts:33-85` |
+| 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:44-83`) / `SERVICES` (`src/renderer/services.ts:81`) 両方に登録 | scaffold script |
 | 15 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |
 
 ### 8.2 自己検証スクリプト群 (4 mechanism × CI gate)

@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { analyzeProfile } from '../data/emotionInsights';
+import { counsel } from '../data/counseling';
+import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -115,6 +118,88 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
         {(score * 100).toFixed(0)}%
       </span>
     </div>
+  );
+}
+
+/** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
+function CounselingCard({ moods, analyses, draftNote, draftScore }: {
+  moods: readonly MoodLog[];
+  analyses: readonly Analysis[];
+  draftNote: string;
+  draftScore: number;
+}) {
+  const profile = useMemo(() => analyzeProfile(moods, analyses), [moods, analyses]);
+  // 応答の対象: 入力中のメモがあればそれ、なければ最新の気分メモ。
+  const latestMood = moods[moods.length - 1];
+  const note = draftNote.trim() || latestMood?.note || '';
+  const score = draftNote.trim() ? draftScore : latestMood?.score;
+  // 最新のテキスト分析から dominant / sentiment を補助情報として使う。
+  const latestAnalysis = analyses.reduce<Analysis | undefined>(
+    (acc, a) => (acc === undefined || a.timestamp > acc.timestamp ? a : acc),
+    undefined,
+  );
+  const response = useMemo(
+    () =>
+      counsel({
+        note,
+        score,
+        dominant: latestAnalysis?.dominant,
+        sentiment: latestAnalysis?.sentiment,
+        profile,
+      }),
+    [note, score, latestAnalysis, profile],
+  );
+
+  const trendLabel: Record<string, string> = { improving: '上向き ↗', declining: '下向き ↘', stable: '横ばい →' };
+
+  return (
+    <Section title="寄り添いカウンセリング (セルフケア支援)">
+      <div
+        className="card"
+        style={{
+          gap: 10,
+          borderColor: response.isCrisis ? 'var(--danger, #ef4444)' : 'var(--border)',
+          background: response.isCrisis ? 'rgba(239,68,68,0.06)' : undefined,
+        }}
+      >
+        <p style={{ fontSize: 14, lineHeight: 1.8, margin: 0, whiteSpace: 'pre-wrap' }}>{response.message}</p>
+        <p style={{ fontSize: 13, lineHeight: 1.7, margin: 0, color: 'var(--text-mute)' }}>
+          💡 {response.suggestion}
+        </p>
+
+        {response.isCrisis ? (
+          <div style={{ border: '1px solid var(--danger, #ef4444)', borderRadius: 8, padding: 12 }}>
+            <strong style={{ color: 'var(--danger, #ef4444)' }}>相談できる窓口（日本）</strong>
+            <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13, lineHeight: 1.8 }}>
+              {response.resources.map((r) => (
+                <li key={r.label}>
+                  <strong>{r.label}</strong>: {r.detail}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              style={{ marginTop: 8, fontSize: 12 }}
+              onClick={() => window.serviceHub?.openExternal('https://www.mhlw.go.jp/mamorouyokokoro/')}
+            >
+              厚労省「まもろうよこころ」を開く
+            </button>
+          </div>
+        ) : null}
+
+        {profile.count > 0 ? (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', borderTop: '1px solid var(--border)', paddingTop: 8, lineHeight: 1.7 }}>
+            📈 縦断的な見立て（あなた自身の記録 {profile.count} 件より）:
+            傾向 {trendLabel[profile.trend]} ／ 平均 {profile.averageScore.toFixed(1)}
+            {profile.lowStreak >= 2 ? ` ／ 連続して低調 ${profile.lowStreak} 日` : ''}
+            {profile.dominantEmotion ? ` ／ 優勢な感情: ${profile.dominantEmotion}` : ''}
+            {profile.topTriggers.length > 0 ? ` ／ よく出る言葉: ${profile.topTriggers.slice(0, 5).join('・')}` : ''}
+          </div>
+        ) : null}
+
+        <p style={{ fontSize: 11, color: 'var(--text-mute)', margin: 0 }}>{response.disclaimer}</p>
+      </div>
+    </Section>
   );
 }
 
@@ -242,6 +327,8 @@ export function EmotionsPage() {
         </div>
       </Section>
 
+      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} />
+
       {moods.length > 0 ? (
         <Section title="過去 30 日のトレンド">
           <div className="card">
@@ -322,6 +409,52 @@ export function EmotionsPage() {
           ))}
         </Section>
       ) : null}
+
+      <Section title="セルフケア・ライブラリ (科学的根拠つき)" count={SELF_CARE_LIBRARY.length}>
+        <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 10px', lineHeight: 1.6 }}>
+          厚生労働省・WHO 等の<strong>複数の独立した出典で確証できた技法のみ</strong>を掲載しています
+          （独立2出典以上・うち公的1件以上 — 確証できない情報は載せません）。一般的な健康情報であり、
+          診断・治療ではありません。
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {SELF_CARE_LIBRARY.map((c) => (
+            <details
+              key={c.value.id}
+              style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px' }}
+            >
+              <summary style={{ cursor: 'pointer', fontSize: 14 }}>
+                <strong>{c.value.title}</strong>
+                <span style={{ fontSize: 11, color: 'var(--text-mute)', marginLeft: 8 }}>
+                  [{c.value.category}]
+                </span>
+              </summary>
+              <p style={{ fontSize: 13, lineHeight: 1.7, margin: '8px 0 4px' }}>
+                🔬 {c.value.evidence}
+              </p>
+              <p style={{ fontSize: 13, lineHeight: 1.7, margin: '4px 0', color: 'var(--success)' }}>
+                ✅ 実践: {c.value.practice}
+              </p>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
+                出典:{' '}
+                {c.sources.map((s, i) => (
+                  <span key={s.url}>
+                    {i > 0 ? ' / ' : ''}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.serviceHub?.openExternal(s.url);
+                      }}
+                    >
+                      {s.label}
+                    </a>
+                  </span>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }
