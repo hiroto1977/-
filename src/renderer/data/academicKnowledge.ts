@@ -5703,5 +5703,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Post-truth_politics', type: 'reference', label: 'Wikipedia「Post-truth politics」— 認識論的含意とブレグジット/トランプ関連' },
     ],
   },
+  {
+    id: 'econ-two-sided-markets',
+    discipline: 'economics',
+    title: '両面市場（two-sided markets）',
+    statement:
+      '両面市場とは、プラットフォーム（仲介者）が相互に異なる2つ（以上）の利用者グループを引き合わせ、両グループ間の取引・相互作用を可能にする市場をいう。本質は「間接ネットワーク効果（クロスサイド・ネットワーク効果）」、すなわち一方のグループの参加・規模が他方のグループの便益を高める外部性が働く点にある。例として、クレジットカード（消費者と加盟店）、OS・ゲーム機（利用者と開発者）、新聞・検索（読者と広告主）、マッチングアプリ、ECモールが挙げられる。' +
+      'プラットフォームは両側への価格を非対称に設計でき、一方を無料・赤字にして他方から回収できる。総価格水準だけでなく価格の配分（どちら側にどれだけ課金するか）が取引量を左右する「価格構造の非中立性」が特徴であり、この点が通常の市場と決定的に異なる。デジタル・プラットフォーム規制や独占禁止政策の論点となる。',
+    keyFigures: 'ジャン＝シャルル・ロシェ（Jean-Charles Rochet）／ジャン・ティロール（Jean Tirole）／初出: Rochet & Tirole, “Platform Competition in Two-Sided Markets,” Journal of the European Economic Association, vol.1, no.4 (2003), pp.990-1029／ティロールは2014年ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/jeea/article-abstract/1/4/990/2280902', type: 'academic', label: 'Rochet & Tirole, “Platform Competition in Two-Sided Markets,” JEEA 1(4):990-1029 (2003) — Oxford Academic' },
+      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2009/12/two-sided-markets_39bffd74/1ab6f5f3-en.pdf', type: 'government', label: 'OECD Policy Roundtable, “Two-Sided Markets” (2009)' },
+      { url: 'https://faculty.wcas.northwestern.edu/apa522/Two-Sided-Market-and-Network-Effects.pdf', type: 'academic', label: 'Belleflamme & Peitz, “Two-sided Markets, Pricing, and Network Effects”（Northwestern University 配布版）' },
+      { url: 'https://en.wikipedia.org/wiki/Two-sided_market', type: 'reference', label: 'Wikipedia: Two-sided market' },
+    ],
+  },
+  {
+    id: 'econ-evolutionary-game-theory',
+    discipline: 'economics',
+    title: '進化ゲーム理論（ESS）',
+    statement:
+      '古典的ゲーム理論を、合理的意思決定主体ではなく生物集団における戦略（行動・形質）の頻度の進化・淘汰のダイナミクスへ応用した理論。プレイヤーの合理性ではなく、適応度（fitness＝利得）の高い戦略が自然選択により集団中で増えるという進化プロセスを扱う。中心概念は「進化的に安定な戦略（Evolutionarily Stable Strategy, ESS）」で、ある戦略が集団に広く行き渡っているとき、稀な突然変異の別戦略が侵入しても増殖できない（侵入者に対し有利である）戦略を指し、ナッシュ均衡の特殊な一形態にあたる。' +
+      'タカ・ハト・ゲーム（Hawk-Dove game）が代表例で、動物の儀礼的闘争・性比・利他行動などの説明に用いられ、戦略頻度の変化を記述するレプリケーター・ダイナミクスとも結びつく。経済学・社会科学・学習理論にも応用される。',
+    keyFigures: 'ジョン・メイナード・スミス（John Maynard Smith）／ジョージ・プライス（George R. Price）が共同提唱／初出は1973年の Nature 論文「The Logic of Animal Conflict」／メイナード・スミスによる1982年の体系的著作『Evolution and the Theory of Games』',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/game-evolutionary/', type: 'reference', label: 'Evolutionary Game Theory — Stanford Encyclopedia of Philosophy（査読つき哲学百科事典）' },
+      { url: 'https://en.wikipedia.org/wiki/Evolutionarily_stable_strategy', type: 'reference', label: 'Evolutionarily stable strategy — Wikipedia' },
+      { url: 'https://royalsocietypublishing.org/rstb/article/378/1876/20210496/109181/Evolutionarily-stable-strategy-analysis-and-its', type: 'academic', label: 'Evolutionarily stable strategy analysis... — Philosophical Transactions of the Royal Society B（査読論文）' },
+    ],
+  },
+  {
+    id: 'mgmt-triple-bottom-line',
+    discipline: 'management',
+    title: 'トリプルボトムライン（TBL）',
+    statement:
+      '企業の業績や価値を、財務的利益（経済）のみでなく、社会的側面と環境的側面を加えた3つの次元――People（人・社会）・Planet（環境）・Profit（利益）、いわゆる「3つのP」――で測るべきだとする会計・経営の枠組み。従来は損益計算書の最終行（bottom line）＝利益だけで企業を評価したのに対し、社会的ボトムライン（社会的公正・福祉への貢献）と環境的ボトムライン（生態系への影響）も併せて評価する。ジョン・エルキントンが1994年に提唱し、1997年の著書『Cannibals with Forks』で広めた。' +
+      '持続可能な開発・CSR・ESG投資・サステナビリティ報告の基礎概念。ただし提唱者自身が2018年、TBLが本来意図した資本主義の変革ではなく単なる会計・チェックリストの道具に矮小化されたとして「リコール（再考）」を表明した経緯もある。',
+    keyFigures: 'ジョン・エルキントン（John Elkington、SustainAbility共同創設者）が1994年に提唱／1997年の著書『Cannibals with Forks: The Triple Bottom Line of 21st Century Business』（Capstone）で普及／2018年にエルキントン自身がHarvard Business Reviewで概念の「リコール（再考）」を表明',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hec.edu/en/what-triple-bottom-line', type: 'academic', label: 'HEC Paris（経営大学院）— What is the “Triple Bottom Line”?' },
+      { url: 'https://www.ebsco.com/research-starters/environmental-sciences/triple-bottom-line-accounting', type: 'reference', label: 'EBSCO Research Starters — Triple bottom line (accounting)' },
+      { url: 'https://hbr.org/2018/06/25-years-ago-i-coined-the-phrase-triple-bottom-line-heres-why-im-giving-up-on-it', type: 'media', label: 'Harvard Business Review (2018), John Elkington — TBLの「リコール」表明（一次資料）' },
+      { url: 'https://en.wikipedia.org/wiki/John_Elkington_(business_author)', type: 'reference', label: 'Wikipedia — John Elkington（提唱者・初出・1997年著書・2018年リコール）' },
+    ],
+  },
+  {
+    id: 'human-cbt',
+    discipline: 'human-science',
+    title: '認知行動療法（CBT）',
+    statement:
+      '気分や行動は出来事そのものではなく、その出来事をどう「認知（解釈・考え方）」するかに影響されるという考えに基づく心理療法（精神療法）の一群。思考・感情・行動は相互に連動するととらえ、非機能的・非合理的な認知（自動思考・認知の歪み・スキーマ）と、それに伴う行動パターンを、思考記録・行動実験・曝露・行動活性化などの構造化された手続きで同定・検証・修正していく。' +
+      '問題を扱いやすい要素に分解し、セッション間の課題（ホームワーク）を併用するのが特徴。うつ病・不安障害・パニック障害・PTSDなどで有効性が実証され、多くの診療ガイドラインでエビデンスに基づく第一選択の標準治療の一つとされる。',
+    keyFigures: 'アーロン・ベック（Aaron T. Beck）：1960年代に認知療法を創始、うつ病の認知モデルと「認知の三徴」（自己・世界・将来への否定的見方、1967）を提唱／アルバート・エリス（Albert Ellis）：1950年代に論理情動行動療法（REBT、ABCモデル）を創始（CBTの源流の一つ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nhs.uk/tests-and-treatments/cognitive-behavioural-therapy-cbt/', type: 'government', label: 'NHS（英国国民保健サービス）— Cognitive behavioural therapy (CBT)' },
+      { url: 'https://www.simplypsychology.org/cognitive-therapy.html', type: 'reference', label: 'Simply Psychology — Cognitive Behavioral Therapy (CBT): Beck と Ellis の理論' },
+      { url: 'https://en.wikipedia.org/wiki/Beck%27s_cognitive_triad', type: 'reference', label: 'Wikipedia — Beck’s cognitive triad（認知の三徴：自己・世界・将来）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/becks-cognitive-triad', type: 'reference', label: 'EBSCO Research Starters — Beck’s cognitive triad' },
+    ],
+  },
+  {
+    id: 'bizlaw-administrative-appeal',
+    discipline: 'business-law',
+    title: '行政不服審査（審査請求）',
+    statement:
+      '行政不服審査とは、行政庁の違法又は不当な処分その他公権力の行使に当たる行為に関し、国民が簡易迅速かつ公正な手続のもとで行政庁に不服を申し立て、その見直しを求める制度である。一般法として行政不服審査法（昭和37年法律第160号を全部改正した平成26年法律第68号、2016年4月施行）が定める。中心的な不服申立ての類型は「審査請求」で、原則として処分庁等の最上級行政庁に対して行う。裁判（取消訴訟）と異なり、違法のみならず裁量の「不当」も争うことができ、簡易・迅速・無料という特徴をもつ。' +
+      '2014年の全部改正で、審理の公正性を高めるため、処分に関与しない職員から指名される「審理員」による審理や、第三者機関「行政不服審査会」への諮問の仕組みが導入され、審査請求期間は処分を知った日の翌日から原則3か月に統一された。審査請求と取消訴訟は原則として自由選択（自由選択主義。例外として個別法の審査請求前置主義）。',
+    keyFigures: '根拠法＝行政不服審査法（平成26年法律第68号・2016年4月施行、e-Gov法令ID 426AC0000000068）／中心類型＝審査請求、原則として最上級行政庁が審査庁（第4条）／対象＝違法又は不当な処分その他公権力の行使／審査請求期間＝処分を知った日の翌日から原則3か月（第18条第1項）／2014年全部改正で審理員制度・第三者機関「行政不服審査会」への諮問を導入／取消訴訟とは原則自由選択主義',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/426AC0000000068', type: 'government', label: 'e-Gov法令検索 行政不服審査法（平成26年法律第68号、法令ID 426AC0000000068）' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/fufuku/gaiyou02.html', type: 'government', label: '総務省 行政不服審査法の概要' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/singi/fufukushinsa/index.html', type: 'government', label: '総務省 行政不服審査会' },
+    ],
+  },
+  {
+    id: 'infosoc-computational-propaganda',
+    discipline: 'information-sociology',
+    title: '計算的プロパガンダ',
+    statement:
+      'ソーシャルメディア上で、自動化（ボット）・アルゴリズム・ビッグデータと人間によるキュレーションを組み合わせ、世論を操作・誘導する目的で政治的な誤情報・偽情報を組織的に拡散する活動。提唱者ウーリーとハワードは「アルゴリズム、自動化、人手によるキュレーションを用いて、ソーシャルメディア網上に意図的に誤導的情報を流布すること」と定義する。' +
+      '手法には、ソーシャルボットによる水増し（人気や支持の偽装＝アストロターフィング）、トレンドの人工的な操作・増幅、ヘイトや社会的分断の煽動、特定集団へのマイクロターゲティングなどが含まれ、人間とアルゴリズムの組合せで運用される点が特徴。国家・政党・個人が担い手となり、選挙介入や民主主義への脅威として論じられる。',
+    keyFigures: 'フィリップ・N・ハワード（Philip N. Howard）／サミュエル・C・ウーリー（Samuel C. Woolley）／オックスフォード・インターネット研究所（OII）「Computational Propaganda Project」（DemTech）で研究・概念化（Woolley & Howard 2016の定義が初出）／編著『Computational Propaganda』2018, Oxford University Press',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oii.ox.ac.uk/research/projects/computational-propaganda/', type: 'academic', label: 'Oxford Internet Institute — Computational Propaganda（プロジェクト公式ページ）' },
+      { url: 'https://global.oup.com/academic/product/computational-propaganda-9780190931407', type: 'academic', label: 'Woolley & Howard (eds.), Computational Propaganda, Oxford University Press, 2018' },
+      { url: 'https://www.cambridge.org/core/books/social-media-and-democracy/bots-and-computational-propaganda-automation-for-communication-and-control/A15EE25C278B442EF00199AA660BFADD', type: 'academic', label: 'Woolley, “Bots and Computational Propaganda”, in Social Media and Democracy, Cambridge University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Computational_propaganda', type: 'reference', label: 'Wikipedia — Computational propaganda' },
+    ],
+  },
 ];
 // Stryker restore all
