@@ -8520,5 +8520,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/journals/social-philosophy-and-policy/article/algorithmic-accountability-in-the-making/6F3CE994EC96C65392C5374B3CDE3C51', type: 'academic', label: '“Algorithmic Accountability in the Making,” Social Philosophy and Policy (Cambridge Core, 査読誌)' },
     ],
   },
+  {
+    id: 'econ-pigou-effect',
+    discipline: 'economics',
+    title: 'ピグー効果（実質残高効果）',
+    statement:
+      'ピグー効果（実質残高効果, Pigou effect / real balance effect）とは、物価水準の下落（デフレ）が人々の保有する貨幣・名目資産の実質価値（実質残高 real money balances）を高め、その結果として実質的に豊かになった人々が消費を増やし、総需要が刺激される効果をいう。A.C.ピグーが1943年の論文「The Classical Stationary State」(Economic Journal)で論じ、ドン・パティンキンが「実質残高効果」として一般化した（富効果 wealth effect の一種）。' +
+      '理論的含意として、ケインズが流動性のわな等では物価下落・金融政策だけでは完全雇用を回復できないとしたのに対し、ピグー効果は、物価が十分に下落すれば実質残高の増加を通じ消費が回復し市場が自律的に完全雇用へ復帰しうるとする古典派的調整機構を示し、ケインズ体系への反論となった。ただし現実には、(1)デフレが債務の実質負担を増やし倒産・需要減を招く（フィッシャーの負債デフレ、カレツキの批判）、(2)デフレ期待が消費を先送りさせる、(3)物価下落の効果は限定的、等の理由から完全雇用回復力は弱く、理論的に重要だが実務的効果は小さいと一般に評価される。',
+    keyFigures:
+      'アーサー・セシル・ピグー（Arthur Cecil Pigou, 1943「The Classical Stationary State」Economic Journal）／ドン・パティンキン（Don Patinkin, 「real balance effect」として命名・一般化, Money, Interest and Prices 1956）／批判: I.フィッシャー（負債デフレ, 1933）・M.カレツキ（1944）／関連だが別概念: 流動性のわな・有効需要・名目賃金の下方硬直性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100327473', type: 'reference', label: 'Oxford Reference (A Dictionary of Economics) — Pigou effect: 物価下落が実質富を増やし総需要を高めるという議論' },
+      { url: 'https://en.wikipedia.org/wiki/Pigou_effect', type: 'reference', label: 'Wikipedia — Pigou effect（Pigou 1943「The Classical Stationary State」/ Patinkin による命名・実質残高効果 / ケインズ反論 / Kalecki・負債デフレ批判）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Pigou.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — Arthur Cecil Pigou 略伝（実質残高効果＝Pigou効果の提唱者）' },
+      { url: 'https://www.britannica.com/money/Arthur-Cecil-Pigou', type: 'reference', label: 'Encyclopaedia Britannica Money — Arthur Cecil Pigou（厚生経済学・Pigou effect の名祖）' },
+    ],
+  },
+  {
+    id: 'econ-internal-labor-market',
+    discipline: 'economics',
+    title: '内部労働市場（ドリンジャー＆ピオレ）',
+    statement:
+      '内部労働市場とは、企業など組織の内部で労働力の価格決定（賃金）と配分（採用・配置・昇進）が、外部労働市場の需給ではなく組織内の管理的なルールや手続きによって規律される仕組み・領域を指す。' +
+      'ピーター・ドリンジャーとマイケル・ピオレが1971年の著書『Internal Labor Markets and Manpower Analysis』で概念化した。外部労働市場と対比され、入職口（port of entry）は限られ、上位の職は内部労働者の昇進（はしご job ladder）で埋められる。形成要因として(1)企業特殊的技能、(2)OJT（オン・ザ・ジョブ・トレーニング）、(3)慣習（custom）が挙げられ、利点は技能投資の回収・労働者の定着・暗黙知の蓄積にある。関連して労働市場を一次（primary）と二次（secondary）に分ける二重労働市場論があり、日本的雇用（長期雇用・年功賃金）の分析にも援用される。',
+    keyFigures:
+      'ピーター・B・ドリンジャー（Peter B. Doeringer）／マイケル・J・ピオレ（Michael J. Piore）（1971『Internal Labor Markets and Manpower Analysis』）／形成要因＝企業特殊的技能・OJT・慣習／関連＝二重労働市場論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Internal_labor_market', type: 'reference', label: 'Wikipedia「Internal labor market」— 定義・ドリンジャー＆ピオレ1971・企業特殊的技能/OJT/慣習・入職口' },
+      { url: 'https://eric.ed.gov/?id=ED048457', type: 'government', label: 'ERIC (米国教育省) ED048457 — Doeringer & Piore “Internal Labor Markets and Manpower Analysis”' },
+      { url: 'https://link.springer.com/content/pdf/10.1007/978-1-349-58802-2_1337.pdf', type: 'reference', label: 'Springer (The New Palgrave) “Primary and Secondary Labour Markets” — 一次/二次労働市場と内部労働市場（二重労働市場論）' },
+      { url: 'https://docs.iza.org/dp14637.pdf', type: 'academic', label: 'IZA Discussion Paper No.14637 “Internal Labor Markets: A Worker Flow Approach”' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-identity',
+    discipline: 'management',
+    title: '組織アイデンティティ（アルバート＆ウェッテン）',
+    statement:
+      '組織アイデンティティとは、組織のメンバーが「自分たちの組織は何者か（Who are we as an organization?）」について抱く、中心的・特徴的・連続的な自己定義・自己認識である。スチュアート・アルバートとデイヴィッド・ウェッテンが1985年の論文「Organizational Identity」（Research in Organizational Behavior）で概念化し、それを構成する3基準（CED基準）を示した。' +
+      '(1)中心性（central＝組織の本質的・中核的な特徴）、(2)識別性／特徴性（distinctive＝他組織と区別する独自性）、(3)連続性（enduring＝時を超えて持続する）。メンバー内部の自己定義である点で、外部から見た像である組織イメージや評判（reputation）とは区別される。後の研究（ジョイア＆シュルツ＆コーリー2000）では、アイデンティティは実際には環境やイメージとの相互作用で変わりうる「適応的不安定性」を持つと論じられた。',
+    keyFigures:
+      'スチュアート・アルバート（Stuart Albert）／デイヴィッド・A・ウェッテン（David A. Whetten）（1985, CED基準）／デニス・A・ジョイア（Dennis A. Gioia, 2000 適応的不安定性）／組織文化・イメージ・評判とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Organizational_identity', type: 'reference', label: 'Wikipedia「Organizational identity」（Albert & Whetten 1985、CED基準の定義）' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/identity/chpt/organizational-identity.pdf', type: 'reference', label: 'SAGE Encyclopedia of Identity「Organizational Identity」（百科事典級リファレンス）' },
+      { url: 'https://journals.aom.org/doi/10.5465/AMR.2000.2791603', type: 'academic', label: 'Gioia, Schultz & Corley (2000) “Organizational Identity, Image, and Adaptive Instability,” Academy of Management Review 25(1):63–81（査読）' },
+      { url: 'https://link.springer.com/article/10.1007/s11301-022-00311-7', type: 'academic', label: 'Management Review Quarterly (Springer)「Since Albert and Whetten」（概念伝播の査読レビュー）' },
+    ],
+  },
+  {
+    id: 'human-contact-hypothesis',
+    discipline: 'human-science',
+    title: '接触仮説（オールポート）',
+    statement:
+      '接触仮説（集団間接触理論）は、異なる集団（人種・民族・宗教など）の成員同士が接触・交流することで相互の偏見・ステレオタイプ・敵意が減少しうるとする社会心理学の理論。ゴードン・オールポートが1954年の著書『偏見の心理（The Nature of Prejudice）』で体系化した。' +
+      'ただし単なる接触では不十分で、偏見低減には4つの最適条件が必要とされる：(1)集団間の対等な地位、(2)共通の目標、(3)集団間の協力（競争でなく協同）、(4)権威・法・慣習による支持。応用例にシェリフの泥棒洞窟実験（上位目標による敵対集団の和解）やアロンソンのジグソー学習法がある。ペティグルーとトロップの2006年メタ分析（515研究）は、接触が概して偏見を低減し、最適条件が揃わなくても一定の効果が、揃えばより大きな効果が得られることを示した。',
+    keyFigures:
+      'ゴードン・オールポート（Gordon Allport, 1954『The Nature of Prejudice』）／トーマス・ペティグルー＆リンダ・トロップ（2006 メタ分析・515研究）／ムザファー・シェリフ（泥棒洞窟実験）／エリオット・アロンソン（ジグソー学習法）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/topics/psychology/intergroup-contact-theory', type: 'academic', label: 'ScienceDirect Topics — Intergroup Contact Theory（Allportの4条件の概観）' },
+      { url: 'https://ideas.wharton.upenn.edu/wp-content/uploads/2018/07/Pettigrew-Tropp.pdf', type: 'academic', label: 'Pettigrew & Tropp (2006) A Meta-Analytic Test of Intergroup Contact Theory, JPSP 90(5):751-783（査読論文PDF, U. Pennsylvania Wharton）' },
+      { url: 'https://en.wikipedia.org/wiki/Contact_hypothesis', type: 'reference', label: 'Wikipedia — Contact hypothesis（百科事典級リファレンス）' },
+      { url: 'https://www.simplypsychology.org/contact-hypothesis.html', type: 'reference', label: 'Simply Psychology — Contact Hypothesis（教育リファレンス）' },
+    ],
+  },
+  {
+    id: 'bizlaw-novation',
+    discipline: 'business-law',
+    title: '更改（民法513条）',
+    statement:
+      '更改とは、当事者が従前の債務に代えて、給付の内容または債務者・債権者を変更した新たな債務を発生させる契約をいい、これにより従前の債務は消滅する（民法513条）。旧債務を消滅させ新債務を成立させる点に特徴があり、新旧債務の間に同一性がない点で、債務の同一性を保ったまま移転する債権譲渡・債務引受とは区別される。' +
+      '513条は更改の3類型を定める。すなわち(1)給付の内容についての重要な変更、(2)債務者の交替による更改（514条）、(3)債権者の交替による更改（515条）である。旧債務が消滅するため担保・保証は原則消滅するが、518条により更改前の債務の目的の限度で質権・抵当権を更改後の債務に移せる（担保移転の特則）。2017年改正で要件・効果が整理された。実務では同一性を維持する債権譲渡・債務引受・準消費貸借が多く用いられ、更改の活用場面は限定的とされる。',
+    keyFigures:
+      '根拠条文＝民法513条（更改の定義・3類型）・514条（債務者の交替）・515条（債権者の交替）・518条（更改後の債務への担保の移転）／効果＝旧債務消滅＋同一性のない新債務成立・従たる担保や保証は原則消滅／2017年改正で整理／区別＝債権譲渡・債務引受・準消費貸借（同一性を維持）（e-Gov law id 129AC0000000089）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、law id 129AC0000000089）第513条' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法の一部を改正する法律（債権法改正）について' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第513条', type: 'reference', label: 'Wikibooks 民法第513条（条文・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-wellbeing',
+    discipline: 'information-sociology',
+    title: 'デジタル・ウェルビーイング',
+    statement:
+      'デジタル・ウェルビーイング（digital wellbeing）は、スマートフォン・SNS・各種アプリといったデジタル技術の利用が個人の心身の健康と幸福に与える影響に着目し、依存・過剰使用・注意の断片化・他者比較による不安などの害を避けつつ技術との関わりを価値ある形へ最適化しようとする概念・実践・研究領域である。' +
+      '背景にはアテンション・エコノミー下でエンゲージメント最大化を狙う設計（無限スクロール・通知・ダークパターン）への問題意識があり、トリスタン・ハリスらが2018年に設立したCenter for Humane Technologyの倫理的設計論とも結びつく。同年GoogleのDigital WellbeingとAppleのスクリーンタイムが利用の可視化・制御ツールとして登場した。学術的には、単純な利用時間（スクリーンタイム）と幸福度の関連は弱く一貫しないことが大規模研究（Orben & Przybylski 2019, Nature Human Behaviour）で示され、利用の量より質・文脈・動機（受動的閲覧か能動的交流か等）が重要だとされる。WHOがICD-11でゲーム障害を収載した点とも関連して論じられる。',
+    keyFigures:
+      'エイミー・オーベン（Amy Orben）＆アンドリュー・プシビルスキ（Andrew K. Przybylski, 2019 Nature Human Behaviour）／フィリップ・ヴェルダイン（Philippe Verduyn, 能動/受動利用）／トリスタン・ハリス（Tristan Harris, Center for Humane Technology）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/s41562-018-0506-1', type: 'academic', label: 'Orben, A. & Przybylski, A. K. (2019) “The association between adolescent well-being and digital technology use,” Nature Human Behaviour 3, 173–182' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/wps.20820', type: 'academic', label: 'Verduyn, P. et al. (2021) “The impact of social network sites on mental health: distinguishing active from passive use,” World Psychiatry 20(1):128–129' },
+      { url: 'https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder', type: 'government', label: 'World Health Organization — “Addictive behaviours: Gaming disorder” (ICD-11)' },
+      { url: 'https://en.wikipedia.org/wiki/Center_for_Humane_Technology', type: 'reference', label: 'Wikipedia — “Center for Humane Technology” (Tristan Harris, 2018 Digital Wellbeing/Screen Time)' },
+    ],
+  },
 ];
 // Stryker restore all
