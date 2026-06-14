@@ -29,7 +29,7 @@ src/renderer/data/*Knowledge.ts                ← 単一の真実源（確証�
 
 ## 1. Obsidian 知識ヴォルト（`knowledge-vault/`）
 
-`npm run vault:build` で生成（約 1,130 ファイル）。Obsidian で `knowledge-vault/` を Vault として開ける。
+`npm run vault:build` で生成（約 1,260 ファイル）。Obsidian で `knowledge-vault/` を Vault として開ける。
 
 | パス | 内容 |
 | --- | --- |
@@ -38,6 +38,10 @@ src/renderer/data/*Knowledge.ts                ← 単一の真実源（確証�
 | `notes/<collection>/<category>/<id>.md` | 1エントリ＝1ノート（frontmatter＋概要＋メタ＋出典＋関連） |
 | `methodology/*.md` | 蓄積した運用知（確証ディシプリン・並列ループ・出典衛生） |
 | `AI_ORCHESTRATION_CONTEXT.md` | 役員ロールごとの知識ブリーフ索引 |
+| `Organization.md` | AIオーケストレーション組織の MOC（階層・サイクル） |
+| `org/roles/<id>.md` | CEO/COO/役員/秘書室/管理職（20体）。役員ノートは知識ブリーフを相互リンク |
+| `org/teams/team-<id>.md` | 一般職108チーム（指揮系統＋担当役員の知識ブリーフへのリンク） |
+| `org/cycles/<pdca\|ooda>.md` | PDCA/OODA サイクルのステージ定義 |
 
 各ノートは YAML frontmatter（`collection`/`id`/`category`/`title`/`as_of`/`source_count`/
 `authoritative`/`tags`/`aliases`）を持ち、`[[コレクション]]`/`[[Home]]`/
@@ -61,6 +65,10 @@ src/renderer/data/*Knowledge.ts                ← 単一の真実源（確証�
 - **実行時取得**: `npm run orchestrate:context -- --role <execId> [--limit N] [--json]`
 - **ディスパッチ注入**: `npm run orchestrate:dispatch` は各チームを指揮系統へ解決する際、
   その担当役員の知識ブリーフ（`◇ 知識ブリーフ: …`）を計画へ自動で添える。
+- **組織グラフのヴォルト化**: `registry.json` の組織（CEO→COO→役員→秘書室／管理職→108一般職）と
+  PDCA/OODA サイクルも `org/` 配下のノートとして生成され、各役員ノートが参照知識へ `[[wikilink]]` で
+  繋がる。これにより「どの役職が・どの確証済み知識を参照するか」という**全オーケストレーション文脈**が
+  Obsidian の単一グラフとして辿れる（[[Organization]] が入口）。
 
 ## 3. 同期と整合の保証（CI ゲート）
 

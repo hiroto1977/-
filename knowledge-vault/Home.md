@@ -21,6 +21,7 @@ tags:
 - [[経済史]] — 86件
 
 ## AIオーケストレーション連携
+- [[Organization]] — 組織図（CEO→COO→役員→秘書室／管理職→一般職）とサイクル。各役員ノートに知識ブリーフを相互リンク
 - [[AI_ORCHESTRATION_CONTEXT]] — 各役員ロール（COO/CSO/CFO/CHRO/CIO/CQO）への知識ブリーフ索引
 - 実行時取得: `npm run orchestrate:context -- --role <execId>`（dispatch に自動注入）
 
