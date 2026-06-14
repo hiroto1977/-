@@ -7001,5 +7001,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-ecology', type: 'reference', label: 'EBSCO Research Starters「Media ecology」（学術リファレンス級概説）' },
     ],
   },
+  {
+    id: 'econ-dependence-effect',
+    discipline: 'economics',
+    title: '依存効果（ガルブレイス）',
+    statement:
+      'ジョン・ケネス・ガルブレイスが『ゆたかな社会（The Affluent Society）』（1958年）第11章で提示した概念。消費者の欲望は本人の内側から自律的に生じるのではなく、それを満たす生産プロセス自体——広告・宣伝・販売術（salesmanship）、および示唆や模倣（emulation）——によって作り出される、と論じる。豊かな社会では、生産が欲望を生み、その欲望を生産が満たすという循環が生じ、欲望は生産（output）に「依存」する。' +
+      'ガルブレイスは「生産が欲望を作り出すのなら、その生産を欲望充足として擁護することはできない」と述べ、欲望を所与とし生産はそれを満たすだけとする伝統的経済学および消費者主権の前提を批判した。関連概念に「社会的アンバランス（social imbalance）」があり、私的財の過剰供給と公共財・公共サービスの過少供給（“private affluence and public squalor”）を指す。ヴェブレンの誇示的消費とは別概念である。',
+    keyFigures:
+      'ジョン・ケネス・ガルブレイス（John Kenneth Galbraith, 1908–2006）／『ゆたかな社会 The Affluent Society』1958年・第11章／関連概念: 社会的アンバランス（private affluence and public squalor）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Affluent-Society', type: 'reference', label: 'Encyclopaedia Britannica — The Affluent Society (work by Galbraith)' },
+      { url: 'https://www.britannica.com/money/John-Kenneth-Galbraith', type: 'reference', label: 'Encyclopaedia Britannica — John Kenneth Galbraith: Biography & Facts' },
+      { url: 'https://westernsydney.pressbooks.pub/criticalanalysis/chapter/galbraith-1958-the-dependence-effect/', type: 'academic', label: 'Western Sydney University (Pressbooks) — Galbraith (1958): The Dependence Effect' },
+      { url: 'https://msuweb.montclair.edu/~lebelp/GalbraithDepEffect1958.pdf', type: 'academic', label: 'Montclair State University — Galbraith, “Consumer Behavior and the Dependence Effect”（一次テキスト抜粋）' },
+    ],
+  },
+  {
+    id: 'econ-exit-voice-loyalty',
+    discipline: 'economics',
+    title: '離脱・発言・忠誠（ハーシュマン）',
+    statement:
+      'アルバート・O・ハーシュマンが1970年の著書『離脱・発言・忠誠（Exit, Voice, and Loyalty: Responses to Decline in Firms, Organizations, and States）』で提示した学際的理論。企業・組織・国家の業績や品質が悪化したとき、その構成員（顧客・従業員・市民）が取りうる反応を「離脱（exit＝関係を断つ、競合製品へ乗り換える／退職する）」と「発言（voice＝不満を表明し内部から改善を求める）」の2類型に整理する。' +
+      'さらに両者を媒介する「忠誠（loyalty＝組織への愛着）」を導入し、忠誠が高いほど即座の離脱を思いとどまり発言を選びやすくなる結果、発言が有効に機能すると論じた。離脱は市場メカニズム（経済学）、発言は民主的プロセス（政治学）に対応し、経済学と政治学を架橋する概念として、移民・抗議運動・政党・人間関係など広範な現象に応用されてきた。',
+    keyFigures:
+      'アルバート・O・ハーシュマン（Albert O. Hirschman、経済学者、1915–2012）／『Exit, Voice, and Loyalty』Harvard University Press, 1970年／離脱=市場メカニズム（経済学）・発言=民主的プロセス（政治学）を架橋',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Exit,_Voice,_and_Loyalty', type: 'reference', label: 'Wikipedia: Exit, Voice, and Loyalty' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/exit-voice-and-loyalty', type: 'reference', label: 'Encyclopedia.com: Exit, Voice, and Loyalty' },
+      { url: 'https://www.hup.harvard.edu/books/9780674276604', type: 'academic', label: 'Harvard University Press — Exit, Voice, and Loyalty (book page)' },
+    ],
+  },
+  {
+    id: 'mgmt-expectancy-theory',
+    discipline: 'management',
+    title: '期待理論（ブルーム）',
+    statement:
+      'ヴィクター・ブルームが1964年の著書『Work and Motivation』で提唱した動機づけ理論。人がある行動（努力）へ動機づけられる力は、3つの認知的要素の積で決まるとする。(1)期待（Expectancy）＝努力すれば良い業績につながるという主観確率（E→P、0〜1）、(2)手段性／道具性（Instrumentality）＝業績が報酬・結果につながるという認知（P→O、0〜1）、(3)誘意性（Valence）＝その報酬が本人にとってもつ魅力・価値。' +
+      '動機づけの力（Force）＝期待×手段性×誘意性で表され、乗法モデルゆえいずれか一つでもゼロなら全体もゼロになる。後にポーター＝ローラー（Porter & Lawler, 1968）が能力・役割認知や業績と満足の関係を組み込み発展させた。マズロー・ハーズバーグら内容理論（何が動機づけるか）に対し、認知的プロセス（いかに動機づくか）に着目する過程理論の代表とされる。',
+    keyFigures:
+      'ヴィクター・H・ブルーム（Victor H. Vroom, 1964『Work and Motivation』）／ライマン・ポーター＆エドワード・ローラー（Porter & Lawler, 1968）が発展／Force＝期待(E→P)×手段性(P→O)×誘意性の乗法モデル／内容理論に対する過程理論の代表',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/economics/expectancy-theory', type: 'reference', label: 'EBSCO Research Starters: Expectancy theory（MF = V × I × E、3要素の定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Expectancy_theory', type: 'reference', label: 'Wikipedia: Expectancy theory（Vroom 1964、Force=E×I×V、過程理論）' },
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/vrooms-expectancy-theory/', type: 'academic', label: "University of Cambridge, Institute for Manufacturing: Vroom's expectancy theory" },
+    ],
+  },
+  {
+    id: 'human-group-polarization',
+    discipline: 'human-science',
+    title: '集団極性化',
+    statement:
+      '個人が集団で討議すると、討議後の集団の決定や態度が、討議前の各人の平均的傾向よりもいっそう極端な方向へ強まる現象。当初ストーナー（James Stoner, 1961）が、集団討議後により危険な決定へ傾く「リスキー・シフト（risky shift）」として見出したが、後に慎重化する「コーシャス・シフト（cautious shift）」も観察され、討議は元の傾向を方向を問わず増幅すると再定式化された。' +
+      'モスコヴィッシとザヴァローニ（Moscovici & Zavalloni, 1969）が「集団極性化」と命名した。主な説明は、集団内で自説に有利な新たな論拠に多く触れる「説得的論拠理論（persuasive arguments theory）」と、集団規範に照らし望ましい方向で自己呈示する「社会的比較理論（social comparison）」である。エコーチェンバー等オンライン討議の文脈でも論じられる。',
+    keyFigures:
+      'ジェームズ・ストーナー（James Stoner、リスキー・シフトの発見, 1961）／セルジュ・モスコヴィッシ＆マリサ・ザヴァローニ（Moscovici & Zavalloni、「集団極性化」命名, 1969）／2大説明＝説得的論拠理論・社会的比較理論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095909939', type: 'reference', label: 'Oxford Reference — Group polarization（Moscovici & Zavalloni 1969 命名）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/group-polarization', type: 'academic', label: 'EBSCO Research Starters — Group Polarization（Stoner 1961 起源、2機構）' },
+      { url: 'https://www.simplypsychology.org/group-polarization.html', type: 'reference', label: 'SimplyPsychology — Group Polarization: Definition & Examples' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5131349/', type: 'academic', label: 'PNAS / PMC — Echo Chambers: Emotional Contagion and Group Polarization on Facebook（査読論文）' },
+    ],
+  },
+  {
+    id: 'bizlaw-abuse-of-rights',
+    discipline: 'business-law',
+    title: '権利濫用の禁止（民法1条3項）',
+    statement:
+      '権利濫用の禁止とは、形式的には権利の行使に見えても、それが社会的に許される限度を超え、正当な利益を欠いて相手に損害を与えるなど不当な場合に、その行使を権利の濫用として許さないとする民法の基本原則である。民法1条3項は「権利の濫用は、これを許さない。」と定め、同条2項の信義誠実の原則（信義則）とともに、私権行使の一般的制約として民法第1条に置かれる。' +
+      '濫用とされた権利行使は法的効果を生じず（差止め・妨害排除や損害賠償の請求が棄却されるなど）、場合により権利自体の剥奪に至ることもある。権利者の利益と相手方の損害を比較衡量し、客観的な社会的標準により濫用の有無が判断される。リーディングケースの宇奈月温泉事件（大審院昭和10年10月5日判決、民集14巻1965頁）は、他人地のごく一部を通過する引湯木管の撤去を不当な高値での買取り目的で求めた事案で、所有権に基づく請求であっても権利濫用にあたり許されないとして請求を棄却した。',
+    keyFigures:
+      '根拠条文＝民法1条3項「権利の濫用は、これを許さない。」／民法1条の構成＝1項:公共の福祉・2項:信義則・3項:権利濫用の禁止（信義則とは別個の独立原則）／リーディングケース＝宇奈月温泉事件（大審院昭和10年10月5日判決、民集14巻1965頁、妨害排除請求事件）／効果＝濫用の権利行使は効力を生じず請求棄却・場合により権利剥奪',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（第1条 基本原則、権利濫用の禁止）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第1条', type: 'reference', label: 'Wikibooks 民法第1条（条文と各項の趣旨）' },
+      { url: 'https://ja.wikipedia.org/wiki/宇奈月温泉事件', type: 'reference', label: 'Wikipedia 宇奈月温泉事件（大判昭10.10.5 民集14巻1965頁・事案・判旨）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-divide',
+    discipline: 'information-sociology',
+    title: 'デジタルディバイド（情報格差）',
+    statement:
+      'デジタルディバイド（情報格差）とは、インターネットやパソコン等の情報通信技術（ICT）にアクセスし利活用できる人・集団・地域と、できない人・集団・地域との間に生じる格差を指す。OECDは社会経済的水準の異なる個人・世帯・企業・地域間でのICT利用機会の差と定義する。一般に3層で論じられ、(1)アクセス格差（first-level＝物理的・物質的にICTや回線を利用できるか）、' +
+      '(2)利用・スキル格差（second-level＝Hargittaiやvan Dijkらが論じた利用能力・リテラシー・利用の質の差）、(3)成果格差（third-level＝ICT利用から得られる便益・成果の差）に区分される。要因は所得・教育・年齢・地域（都市/地方）・国家間など多岐にわたり、既存の社会的不平等を再生産・拡大させうる点が問題視される。米国NTIAの1990年代報告「Falling Through the Net」を契機に広く認知され、日本では総務省『情報通信白書』が地域間・個人間集団間・国際間の3類型で扱う。',
+    keyFigures:
+      '普及の契機＝米NTIA「Falling Through the Net」（初版1995年／「Defining the Digital Divide」1999年）／3層モデル: first-level(アクセス)・second-level(スキル/利用、Hargittai 2002)・third-level(成果)／主要研究者＝Jan A.G.M. van Dijk・Eszter Hargittai・Alexander van Deursen／総務省『情報通信白書』分類＝地域間／個人間・集団間／国際間',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/en/publications/understanding-the-digital-divide_236405667766.html', type: 'government', label: 'OECD「Understanding the Digital Divide」— 標準的定義' },
+      { url: 'https://www.ntia.gov/sites/default/files/data/fttn99/FTTN.pdf', type: 'government', label: '米国NTIA「Falling Through the Net: Defining the Digital Divide」(1999)' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h23/html/nc222100.html', type: 'government', label: '総務省『平成23年版 情報通信白書』— 日本での定義と3類型' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444818797082', type: 'academic', label: 'van Deursen & van Dijk (2019), New Media & Society — first/second-level divide の査読論文' },
+    ],
+  },
 ];
 // Stryker restore all
