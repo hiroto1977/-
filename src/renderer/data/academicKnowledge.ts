@@ -8419,5 +8419,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.goodreads.com/book/show/75560036-technofeudalism', type: 'reference', label: 'Yanis Varoufakis, Technofeudalism: What Killed Capitalism (2023) — 概念の主要文献' },
     ],
   },
+  {
+    id: 'econ-natural-rate-of-interest',
+    discipline: 'economics',
+    title: '自然利子率（ヴィクセル）',
+    statement:
+      '自然利子率とは、経済が完全雇用・潜在産出の水準にあり、インフレを加速も減速もさせない中立的な実質利子率を指す。スウェーデンの経済学者クヌート・ヴィクセルが1898年の『利子と物価（Geldzins und Güterpreise）』で導入した概念で、彼はこれを物価に対して中立的で「物価を上げも下げもしない」貸出利子率と定義し、貯蓄と投資を均衡させる利子率とした。' +
+      '市場利子率（貨幣利子率）が自然利子率を下回るとインフレ（累積的物価上昇）が、上回るとデフレが生じるとする「累積過程（cumulative process）」を論じた。現代マクロでは r*（アール・スター）と表記され金融政策の中立スタンスの基準となり、実質金利が r* を下回れば緩和的、上回れば引き締め的とされる。r* は直接観察できず Laubach–Williams 等のモデルで推計され、近年は人口減少・生産性低下・過剰貯蓄により先進国で長期的に低下しているとの議論（長期停滞論、サマーズ）がある。',
+    keyFigures:
+      'クヌート・ヴィクセル（Knut Wicksell, 1851–1926, 概念の創始者・1898年）／トーマス・ローバック＆ジョン・C・ウィリアムズ（Laubach–Williams モデル, 2001年）／ローレンス・サマーズ（Lawrence Summers, 長期停滞論）／r*（中立金利）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Interest-and-Prices', type: 'reference', label: 'Encyclopædia Britannica — Interest and Prices (Wicksell)' },
+      { url: 'https://www.brookings.edu/articles/the-hutchins-center-explains-the-neutral-rate-of-interest/', type: 'government', label: 'Brookings Hutchins Center — What is the neutral rate of interest? (r*, policy stance)' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2016/08/monetary-policy-and-low-r-star-natural-rate-of-interest/', type: 'government', label: 'Federal Reserve Bank of San Francisco — Monetary Policy in a Low R-star World (Williams)' },
+      { url: 'https://en.wikipedia.org/wiki/Cumulative_process', type: 'reference', label: 'Wikipedia — Cumulative process (Wicksell, 累積過程)' },
+    ],
+  },
+  {
+    id: 'mgmt-psychological-ownership',
+    discipline: 'management',
+    title: '心理的所有感',
+    statement:
+      '心理的所有感（psychological ownership）とは、法的な所有権の有無にかかわらず、ある対象（仕事・組織・製品・アイデア・チーム等）を「自分のもの（mine／our）」と感じる心理状態を指す。所有対象に自己を投影し、自己アイデンティティの一部として組み込む点が核心であり、対象は具体物だけでなく抽象的概念にも及ぶ。' +
+      'Pierce・Kostova・Dirksが2001年の論文（Academy of Management Review）で組織研究へ体系的に導入した。生起の主要な経路（ルート）は、(1)対象をコントロールすること、(2)対象を深く知ること（親密な知識）、(3)対象に自己を投資すること（時間・労力・アイデアの投入）の3つである。高まると組織コミットメント・職務満足・組織市民行動・責任感・スチュワードシップを促す正の効果がある一方、縄張り意識（テリトリアリティ）・変化への抵抗・情報共有の拒否・喪失時の強い感情といった負の側面（ダークサイド）も生じうる。従業員持株制度（ESOP）・参加型経営・ジョブ・クラフティング・ユーザー・イノベーション（DIY効果／IKEA効果）と関連して論じられる。',
+    keyFigures:
+      'ジョン・L・ピアース（Jon L. Pierce）／タチアナ・カストロ（Tatiana Kostova）／カート・ダークス（Kurt T. Dirks）（2001 Academy of Management Review）／3ルート＝コントロール・親密な知識・自己投資／関連＝IKEA効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378028', type: 'academic', label: 'Pierce, Kostova & Dirks (2001) “Toward a Theory of Psychological Ownership in Organizations,” Academy of Management Review 26(2): 298–310' },
+      { url: 'https://journals.sagepub.com/doi/10.1037/1089-2680.7.1.84', type: 'academic', label: 'Pierce, Kostova & Dirks (2003) “The State of Psychological Ownership,” Review of General Psychology 7(1): 84–107' },
+      { url: 'https://en.wikipedia.org/wiki/Ownership_(psychology)', type: 'reference', label: 'Wikipedia「Ownership (psychology)」— 定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果' },
+      { url: 'https://www.jstage.jst.go.jp/article/jshrm/22/2/22_87/_html/-char/en', type: 'academic', label: '“Psychological Ownership: A 20-Year Review,” Japanese Journal of Human Resource Management（査読・学会誌）' },
+    ],
+  },
+  {
+    id: 'human-defensive-pessimism',
+    discipline: 'human-science',
+    title: '防衛的悲観主義',
+    statement:
+      '防衛的悲観主義（defensive pessimism）は、過去に成功を重ねてきたにもかかわらず、これから臨む課題に対してあえて非現実的に低い期待を設定し、起こりうる失敗の場面を具体的かつ鮮明に思い描く（リフレクション）ことで不安に対処する認知的方略である。心理学者ナンシー・キャンターとジュリー・ノレムが1986年に概念化した。' +
+      '一見ネガティブだが、低い期待と最悪の事態の想像が、不安の高い人にとっては不安を行動への準備・対策へと振り向け、結果的に良いパフォーマンスにつながる適応的方略となる。重要な知見として、防衛的悲観主義者に悲観的思考を禁じてリラックスや無理なポジティブ思考をさせると、かえってパフォーマンスが低下する（Spencer & Norem, 1996）。成功体験を持ちつつ高い期待を設定する「方略的楽観主義（strategic optimism）」と対比され、画一的なポジティブ思考の推奨への反証として知られる。',
+    keyFigures:
+      'ジュリー・K・ノレム（Julie K. Norem）／ナンシー・キャンター（Nancy Cantor）（1986 概念化）／ステイシー・スペンサー（Stacie M. Spencer, 1996 実験）／対比＝方略的楽観主義',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sites.psu.edu/aspsy/2014/04/08/defensive-pessimism/', type: 'academic', label: 'Penn State University, Applied Social Psychology — Defensive Pessimism' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0146167296224003', type: 'academic', label: 'Spencer & Norem (1996), Reflection and Distraction: Defensive Pessimism, Strategic Optimism, and Performance, Personality and Social Psychology Bulletin' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-319-24612-3_1061', type: 'reference', label: 'Encyclopedia of Personality and Individual Differences (Springer) — Defensive Pessimism' },
+      { url: 'https://en.wikipedia.org/wiki/Defensive_pessimism', type: 'reference', label: 'Wikipedia — Defensive pessimism' },
+    ],
+  },
+  {
+    id: 'bizlaw-creditor-delay',
+    discipline: 'business-law',
+    title: '受領遅滞（民法413条）',
+    statement:
+      '受領遅滞（債権者遅滞）とは、債務者が債務の本旨に従った履行の提供（弁済の提供）をしたにもかかわらず、債権者がその受領を拒み、または受領できないために履行が完了しない状態をいう（民法413条）。債務者は弁済の提供をすれば債務不履行責任を免れる（492条）が、413条はこれに加え受領遅滞の効果を定める。' +
+      '2017年改正（2020年4月施行）で効果が明文化され、(1)特定物引渡債務における債務者の保存義務が善管注意義務から「自己の財産に対するのと同一の注意」へ軽減され（413条1項）、(2)受領遅滞で増加した履行費用は債権者の負担となる（413条2項）。さらに413条の2第2項は、受領遅滞中に当事者双方の責めに帰せない事由で履行不能となったとき、その履行不能を債権者の責めに帰すべき事由によるものとみなす（危険の移転）。法的性質には学説の対立があるが、改正は効果を整理した。',
+    keyFigures:
+      '根拠条文＝民法413条（受領遅滞・債権者遅滞）／要件＝弁済の提供あり＋債権者の受領拒絶または受領不能／効果＝特定物保存義務の軽減（1項）・増加費用の債権者負担（2項）・受領遅滞中の双方無責の履行不能は債権者の帰責とみなす危険移転（413条の2第2項）／2020年4月施行で明文化／法定責任説と債務不履行責任説の対立',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第413条・第413条の2・第492条・第493条' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0413-00/', type: 'media', label: 'クレアール司法書士講座 民法第413条【受領遅滞】解説' },
+      { url: 'https://tek-law.jp/civil-code/claims/general-provisions/effects-of-claims/liability-for-non-performance/article-413-2/', type: 'reference', label: 'tek-law 民法第413条の2（履行遅滞中又は受領遅滞中の履行不能と帰責事由）' },
+    ],
+  },
+  {
+    id: 'bizlaw-deposit-kyotaku',
+    discipline: 'business-law',
+    title: '弁済供託（民法494条）',
+    statement:
+      '弁済供託とは、債務者が弁済の目的物を供託所（法務局等）に寄託することによって債務を消滅させ、債務から解放される制度（民法494条）。本来、債務は債権者への弁済によって消滅するが、債権者側の事情で弁済できない場合に備え、債務者が一方的に債務を免れる手段を与える。' +
+      '供託原因は、(1)受領拒否（弁済の提供をしたのに債権者が受領を拒んだとき）、(2)受領不能（債権者が弁済を受領できないとき）〔以上1項〕、(3)債権者不確知（弁済者の過失なく債権者を確知できないとき。例：債権者死亡で相続人不明、債権譲渡の有効性に争いがある等）〔2項〕の3つ。供託をした時に債務は消滅し、債権者は供託物の還付請求権を取得する。家賃の受領を拒否された借家人が賃料を供託して契約解除を免れる場面など実務上重要で、弁済の提供（492・493条）・受領遅滞（413条）と密接に関連する。',
+    keyFigures:
+      '根拠条文＝民法494条／供託原因3類型＝受領拒否・受領不能（1項）／債権者不確知（2項、過失なき場合）／効果＝供託した時に債務消滅・債権者は還付請求権を取得／供託先＝供託所（法務局等）／供託の5類型のうち弁済供託（他は担保・執行・没取・保管供託）／2020年4月施行で文言整理／関連＝弁済の提供(492・493条)・受領遅滞(413条)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第494条 供託' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07.html', type: 'government', label: '法務省 供託制度の概要（弁済供託・担保(保証)供託・執行供託・没取供託・保管供託の5類型）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_00055.html', type: 'government', label: '法務省 供託Q&A' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0494-00/', type: 'media', label: 'クレアール司法書士講座 民法第494条【供託】解説' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-accountability',
+    discipline: 'information-sociology',
+    title: 'アルゴリズムの説明責任',
+    statement:
+      'アルゴリズムの説明責任（algorithmic accountability）とは、自動意思決定システムや機械学習がもたらす結果について責任の所在を割り当て、その設計・運用主体が偏り・危害・不当な帰結に答責し、影響を受ける人々・市民・規制当局に対して動作や判断を説明・追跡・正当化し、異議申立てと是正・救済の手段を提供すべきだとする規範である。' +
+      '背景には、信用スコア・採用・量刑（再犯予測COMPAS、ProPublicaが2016年にバイアスを指摘）・福祉給付など重要決定が不透明なブラックボックス型アルゴリズムに委ねられ、誤りや差別が生じても答責主体が不明確だという問題意識がある。調査報道のN.ディアコポロスが概念を広め、単なる技術的「説明可能性（XAI）」より広く、透明性・第三者監査・影響評価・是正・ガバナンス構造を含む点が強調される。GDPR22条やEU AI規制法の高リスク要件とも接続する。',
+    keyFigures:
+      'ニコラス・ディアコポロス（Nicholas Diakopoulos, 概念を普及）／マイケル・コリスカ（Michael Koliska）／ProPublica（COMPAS報道, 2016）／ACM USACM（2017 七原則）／説明可能性(XAI)より広く是正・答責を含む',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Algorithmic_accountability', type: 'reference', label: 'Wikipedia「Algorithmic accountability」（定義・責任の割り当て・Diakopoulos）' },
+      { url: 'https://www.acm.org/binaries/content/assets/public-policy/2017_usacm_statement_algorithms.pdf', type: 'government', label: 'ACM USACM「Statement on Algorithmic Transparency and Accountability」(2017) 七原則' },
+      { url: 'https://www.cjr.org/tow_center_reports/algorithmic_accountability_on_the_investigation_of_black_boxes.php', type: 'media', label: 'N. Diakopoulos「Algorithmic Accountability: On the Investigation of Black Boxes」Columbia Journalism Review / Tow Center' },
+      { url: 'https://www.cambridge.org/core/journals/social-philosophy-and-policy/article/algorithmic-accountability-in-the-making/6F3CE994EC96C65392C5374B3CDE3C51', type: 'academic', label: '“Algorithmic Accountability in the Making,” Social Philosophy and Policy (Cambridge Core, 査読誌)' },
+    ],
+  },
 ];
 // Stryker restore all
