@@ -8621,5 +8621,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Center_for_Humane_Technology', type: 'reference', label: 'Wikipedia — “Center for Humane Technology” (Tristan Harris, 2018 Digital Wellbeing/Screen Time)' },
     ],
   },
+  {
+    id: 'econ-strategic-complementarity',
+    discipline: 'economics',
+    title: '戦略的補完性',
+    statement:
+      'あるプレイヤーが自らの行動（戦略）の水準を高めると、他のプレイヤーにとってもその行動の水準を高めることが最適となる（限界利得が増す）戦略間の関係。最適反応が相手の行動について非減少（スーパーモジュラー）になる。' +
+      '逆に一方の行動増が他方の行動減を招く関係は戦略的代替性と呼ばれる。Bulow・Geanakoplos・Klemperer (1985, Journal of Political Economy) が寡占分析で導入し、Cooper・John (1988, Quarterly Journal of Economics) がマクロ経済学に応用した。補完性があると複数均衡が生じやすく、個々の最適行動が外部性を通じて増幅され（乗数効果に似た正のフィードバック）、皆が活動を控える低位均衡（協調の失敗）と皆が活発な高位均衡のいずれにも陥りうる。悲観的予想が自己実現的に不況を招くケインズ的現象や銀行取り付け・標準採用を説明する、ニュー・ケインジアン協調失敗モデルの中核概念。',
+    keyFigures:
+      'ジェレミー・バロー（Jeremy Bulow）＆ジョン・ギーナコプロス（John Geanakoplos）＆ポール・クレンペラー（Paul Klemperer）（1985, JPE, 寡占で導入）／ラッセル・クーパー（Russell Cooper）＆アンドリュー・ジョン（Andrew John）（1988, QJE, マクロ応用）／対概念＝戦略的代替性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Strategic_complements', type: 'reference', label: 'Wikipedia「Strategic complements」— 戦略的補完性/代替性の定義と限界利得・最適反応' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v93y1985i3p488-511.html', type: 'academic', label: 'Bulow, Geanakoplos & Klemperer (1985) “Multimarket Oligopoly: Strategic Substitutes and Complements,” Journal of Political Economy 93(3):488-511（用語の初出）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/103/3/441/1904690', type: 'academic', label: 'Cooper & John (1988) “Coordinating Coordination Failures in Keynesian Models,” Quarterly Journal of Economics 103(3):441-463（マクロ応用・複数均衡）' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/coordination-failure', type: 'reference', label: 'Encyclopedia.com「Coordination Failure」— 戦略的補完性による協調失敗・複数均衡' },
+    ],
+  },
+  {
+    id: 'mgmt-boundary-spanning',
+    discipline: 'management',
+    title: '境界連結（バウンダリー・スパニング）',
+    statement:
+      '境界連結（boundary spanning）とは、組織やチーム・部門が自らの境界を越え、外部環境や他集団との間で情報・資源・関係を仲介し橋渡しする活動、およびそれを担う役割（境界連結者 boundary spanner）を指す。組織は環境から情報・資源を取り入れ、また環境へ働きかける必要があり、境界連結者は組織の窓口・翻訳者・ゲートキーパーとして機能する。' +
+      'オルドリッチとハーカー（1977, Academy of Management Review）はこの役割を体系化し、二大機能として(1)情報処理＝外部情報の探索・選別・翻訳と内部への伝達、(2)外部代表＝組織を外部に代表し資源獲得・正統性確保・影響力行使を行うこと、を区別した。研究開発の技術情報を橋渡しする「ゲートキーパー」（Allen, MIT）、組織間連携・知識移転・チーム外活動などの文脈で重要で、資源依存理論やオープン・イノベーションとも関連する。',
+    keyFigures:
+      'ハワード・オルドリッチ（Howard Aldrich）＆ダイアン・ハーカー（Diane Herker）（1977 AMR）／トーマス・J・アレン（Thomas J. Allen, MIT, 技術的ゲートキーパー）／マイケル・タッシュマン（Michael Tushman, 1981）／二機能＝情報処理・外部代表',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1977.4409044', type: 'academic', label: 'Aldrich & Herker (1977) “Boundary Spanning Roles and Organization Structure,” Academy of Management Review 2(2):217-230' },
+      { url: 'https://journals.aom.org/doi/10.5465/255842', type: 'academic', label: 'Tushman & Scanlan (1981) “Boundary Spanning Individuals,” Academy of Management Journal 24(2):289-305' },
+      { url: 'https://mitpress.mit.edu/9780262510271/managing-the-flow-of-technology/', type: 'reference', label: 'Thomas J. Allen, Managing the Flow of Technology (MIT Press) — “gatekeeper” 概念の起源' },
+      { url: 'https://en.wikipedia.org/wiki/Boundary_spanning', type: 'reference', label: 'Wikipedia: Boundary spanning（情報処理・外部代表の二機能の概説）' },
+    ],
+  },
+  {
+    id: 'human-role-conflict',
+    discipline: 'human-science',
+    title: '役割葛藤（役割理論）',
+    statement:
+      '役割理論（role theory）は、人々が社会的地位（status）に結びついた「役割」＝その地位に対し他者から寄せられる役割期待（role expectations）に沿った行動様式を演じることで社会生活が秩序づけられるとする社会学・社会心理学の枠組みである。' +
+      'その中で役割葛藤（role conflict）とは、個人が両立しがたい複数の役割期待に同時に直面し、すべてを満たせない状態を指す。主要類型に、異なる役割（地位）間で生じる役割間葛藤（inter-role conflict、例：仕事と家庭）と、同一役割について役割群の各送り手が矛盾した期待を寄せる役割内葛藤（intra-role conflict）がある。関連概念に役割過重（role overload）、役割曖昧性（role ambiguity）、単一地位内の緊張である役割緊張（role strain、Goode 1960）、Merton の役割群（role-set, 1957）がある。Kahn ら（1964）は役割葛藤・役割曖昧性を職務ストレスの主要因として実証した。',
+    keyFigures:
+      'ロバート・K・マートン（Robert K. Merton, role-set 1957）／ウィリアム・J・グード（William J. Goode, role strain 1960）／ロバート・L・カーンら（Kahn et al. 1964, 組織ストレス）／ジョージ・H・ミード（George H. Mead, 役割概念の系譜）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences-and-law/sociology-and-social-reform/sociology-general-terms-and-concepts/role-conflict', type: 'reference', label: 'Encyclopedia.com「Role Conflict」（定義・役割間／役割内葛藤の類型）' },
+      { url: 'https://en.wikipedia.org/wiki/Role_theory', type: 'reference', label: 'Wikipedia「Role theory」（役割・地位・役割期待・Mead 1934 の系譜）' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=395529', type: 'academic', label: 'Goode, W. J. (1960) “A Theory of Role Strain,” American Sociological Review 25:483-496（査読論文）' },
+      { url: 'https://academic.oup.com/sf/article-abstract/43/4/591/2227932', type: 'academic', label: 'Kahn, Wolfe, Quinn & Snoek (1964) Organizational Stress（Social Forces 誌書評：役割葛藤・役割曖昧性と職務ストレス）' },
+    ],
+  },
+  {
+    id: 'bizlaw-assumption-of-debt',
+    discipline: 'business-law',
+    title: '債務引受（民法470条）',
+    statement:
+      '債務引受とは、債務をその同一性を保ったまま第三者（引受人）が引き受ける制度で、2017年改正民法（2020年4月施行）により470条以下に明文化された。' +
+      '併存的債務引受（470条・471条）は、引受人が従来の債務者と連帯して同一内容の債務を負担するもので、元の債務者は債務を免れない。免責的債務引受（472条〜472条の4）は、引受人が債務者に代わって債務を負担し、元の債務者が自己の債務を免れるもので、債務者が交替する。免責的債務引受では元の担保・保証を引受人の債務に移すには担保提供者・保証人の承諾が必要（472条の4）。債権の同一性を保つ点で、旧債務を消滅させる更改（513条）と区別され、債務者側が替わる点で、債権者側が替わる債権譲渡（466条）と対をなす。',
+    keyFigures:
+      '併存的債務引受＝470条・471条（引受人が従来の債務者と連帯、元債務者は免責されない）／免責的債務引受＝472条〜472条の4（債務者の交替、元債務者は免責）／担保・保証の移転には担保提供者・保証人の承諾が必要（472条の4）／更改(513条)＝同一性なしで区別・債権譲渡(466条)と対をなす／2017年改正で明文化（e-Gov law id 129AC0000000089）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第470条〜第472条の4' },
+      { url: 'https://www.nta.go.jp/law/shitsugi/inshi/18/03.htm', type: 'government', label: '国税庁 印紙税質疑応答事例「債務引受けの意義」' },
+      { url: 'https://www.zenginkyo.or.jp/fileadmin/res/abstract/affiliate/kinpo/kinpo2016_2_4.pdf', type: 'academic', label: '中田裕康「債務引受の明文化の意義と課題」全国銀行協会 金融法務研究会報告書' },
+      { url: 'https://ja.wikipedia.org/wiki/債務引受', type: 'reference', label: 'Wikipedia「債務引受」' },
+    ],
+  },
+  {
+    id: 'bizlaw-third-party-performance',
+    discipline: 'business-law',
+    title: '第三者の弁済（民法474条）',
+    statement:
+      '第三者の弁済とは、債務者以外の第三者が債務を弁済すること（民法474条）。原則として債務は第三者も弁済でき、有効な弁済となれば債務は消滅する（474条1項）。' +
+      'もっとも制限があり、弁済をするについて正当な利益を有する者でない第三者は、原則として債務者の意思に反して弁済できず（474条2項。ただし債務者の意思に反することを債権者が知らなかったときは有効）、債権者の意思に反して弁済することもできない（474条3項。ただし債務者の委託を受け債権者がそれを知っていたときは可）。また債務の性質が第三者弁済を許さないとき、又は当事者が禁止・制限する旨の意思表示をしたときは第三者弁済はできない（474条4項）。物上保証人・第三取得者等の正当な利益を有する第三者は債務者の意思に反しても弁済でき、弁済した第三者は債務者への求償権を取得し、弁済による代位（499条以下）により債権者の権利を行使しうる。',
+    keyFigures:
+      '474条1項＝第三者も弁済可（原則）／2項＝正当な利益なき第三者は債務者の意思に反して弁済不可（債権者善意なら有効）／3項＝同じく債権者の意思に反して弁済不可（債務者の委託＋債権者の認識で可）／4項＝債務の性質・当事者の禁止/制限で排除／正当な利益を有する第三者（物上保証人・第三取得者等）は債務者の意思に反しても弁済可／効果＝求償権＋弁済による代位(499条以下)（e-Gov law id 129AC0000000089）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第474条' },
+      { url: 'https://www.moj.go.jp/content/001255632.pdf', type: 'government', label: '法務省 民法（債権関係）改正 新法の内容（第三者の弁済・474条関係）' },
+      { url: 'https://www.businesslawyers.jp/practices/1209', type: 'media', label: 'BUSINESS LAWYERS「民法改正で『債権の準占有者への弁済』等はどう変わった？」' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0474-00/', type: 'media', label: 'クレアール司法書士講座 民法第474条【第三者の弁済】逐条解説' },
+    ],
+  },
+  {
+    id: 'infosoc-social-bots',
+    discipline: 'information-sociology',
+    title: 'ソーシャルボット',
+    statement:
+      'ソーシャルボット（social bots）とは、ソーシャルメディア上で自動的にコンテンツを生成し人間と相互作用するアルゴリズム的アカウントで、人間らしいプロフィールや振る舞いを模倣して投稿・拡散・フォロー・返信などを行う。Ferraraら（2016, Communications of the ACM）は「自動でコンテンツを生成し人間と相互作用する計算アルゴリズム」と概観した。' +
+      '災害情報の自動配信など中立・有益な用途もある一方、世論操作・トレンド工作・誤情報やプロパガンダの増幅・フォロワー水増し・スパムに用いられうる。協調的に動く集団はボットネット、人間が一部介入する半自動アカウントはサイボーグ（Chuら2012）と呼ばれる。検出研究が発展し代表ツールにインディアナ大学のBotometer（旧BotOrNot, 2014）がある。2016年米大統領選・Brexit等での計算プロパガンダ利用、影響力推定や検出の困難（敵対的進化・いたちごっこ）、「ボット」というレッテルの政治的悪用が論点で、LLMの普及でより人間らしいボットの脅威が増す。',
+    keyFigures:
+      'エミリオ・フェラーラ（Emilio Ferrara）／フィリッポ・メンツァー（Filippo Menczer）／Onur Varol・Clayton Davis（Botometer, インディアナ大学OSoMe）／Zi Chu ら（cyborg, 2012）／Philip N. Howard・Samuel Woolley（計算プロパガンダ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/2818717', type: 'academic', label: 'Ferrara, Varol, Davis, Menczer & Flammini, “The Rise of Social Bots,” Communications of the ACM 59(7):96-104 (2016)' },
+      { url: 'https://ieeexplore.ieee.org/document/6280553/', type: 'academic', label: 'Chu, Gianvecchio, Wang & Jajodia, “Detecting Automation of Twitter Accounts: Are You a Human, Bot, or Cyborg?,” IEEE TDSC (2012) — cyborg/半自動の定義' },
+      { url: 'https://www.oii.ox.ac.uk/blog/bots-strongerin-and-brexit-computational-propaganda-during-the-uk-eu-referendum', type: 'academic', label: 'Oxford Internet Institute (Howard & Kollanyi) — Brexit/計算プロパガンダにおける政治ボット' },
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/download/13185/11042', type: 'academic', label: 'Ferrara, “Social bot detection in the age of ChatGPT,” First Monday (2023) — LLM時代の検出課題' },
+    ],
+  },
 ];
 // Stryker restore all
