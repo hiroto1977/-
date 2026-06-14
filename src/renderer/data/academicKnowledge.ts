@@ -9303,5 +9303,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/full/10.1177/14614448211031908', type: 'academic', label: 'Simon & Camargo (2021) “Autopsy of a metaphor: ... the ‘infodemic’”, New Media & Society（査読論文）' },
     ],
   },
+  {
+    id: 'econ-ellsberg-paradox',
+    discipline: 'economics',
+    title: 'エルズバーグのパラドックス（曖昧性回避）',
+    statement:
+      'エルズバーグのパラドックスは、人々が確率の既知なリスクを、確率の不明な「曖昧性（ambiguity）」よりも好む傾向（曖昧性回避）を示し、サベージの主観的期待効用理論の確実性原理（sure-thing principle）と矛盾することを示す思考実験である。' +
+      '典型例の2色壺では、赤球30個と黒・黄合計60個（内訳不明）が入った壺から1球引く。多くの人は確率が既知（1/3）の「赤」を確率不明の「黒」より好み、同時に既知（2/3）の「黒か黄」を不明の「赤か黄」より好む。この選好の組は黒に割り当てるいかなる主観確率でも整合せず、期待効用理論で合理化できない。ダニエル・エルズバーグが1961年の論文（QJE）で提示し、ナイトのリスク/不確実性の区別と結びつき、マックスミン期待効用やショケ期待効用など曖昧性下の意思決定モデルの出発点となった。',
+    keyFigures:
+      'ダニエル・エルズバーグ（Daniel Ellsberg, 1961）／レナード・サベージ（確実性原理）／フランク・ナイト（リスクと不確実性）／ギルボア＝シュマイドラー（曖昧性下モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/75/4/643/1913802', type: 'academic', label: 'Daniel Ellsberg, “Risk, Ambiguity, and the Savage Axioms,” The Quarterly Journal of Economics 75(4), 1961, 643–669（原典, Oxford Academic）' },
+      { url: 'https://en.wikipedia.org/wiki/Ellsberg_paradox', type: 'reference', label: 'Ellsberg paradox（Wikipedia：2色壺の定式化と確実性原理違反）' },
+      { url: 'https://link.springer.com/article/10.1007/s11238-023-09935-x', type: 'academic', label: 'On the Ellsberg and Machina paradoxes, Theory and Decision（査読誌：曖昧性回避とGilboa–Schmeidlerモデル）' },
+    ],
+  },
+  {
+    id: 'mgmt-kotter-8-steps',
+    discipline: 'management',
+    title: 'コッターの変革8段階モデル',
+    statement:
+      'ハーバード・ビジネス・スクールのジョン・P・コッターが提唱した、組織変革を成功させるための8段階のプロセスモデル。1995年のHarvard Business Review論文「Leading Change: Why Transformation Efforts Fail」で多くの変革が失敗する8つの誤りを指摘し、1996年の著書『Leading Change（企業変革力）』で対応する8段階として体系化した。' +
+      '8段階は、(1)危機感を高める、(2)変革推進の連帯チーム（guiding coalition）を築く、(3)ビジョンと戦略を生み出す、(4)ビジョンを周知徹底する、(5)幅広い行動を促し障害を取り除く、(6)短期的成果を生む、(7)成果を活かしてさらに変革を進める、(8)新しい方法を企業文化に定着させる、である。レヴィンの3段階モデル（解凍・変革・再凍結）を具体化したものと評され、直線的・トップダウンで反復性を捉えにくいとの批判もある。コッターは2014年の『Accelerate』で8段階を反復的・ネットワーク的な「デュアル・システム」に再構成した。',
+    keyFigures:
+      'ジョン・P・コッター（John P. Kotter, 1995 HBR・1996『Leading Change』）／クルト・レヴィン（先行する3段階モデル）／8段階＝危機感→連帯チーム→ビジョン→周知→行動促進→短期的成果→さらなる変革→文化定着',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'academic', label: 'John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文' },
+      { url: 'https://www.kotterinc.com/methodology/8-steps/', type: 'reference', label: 'Kotter Inc., “The 8-Step Process for Leading Change” — 著者本人の組織による公式解説' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1742715015571393', type: 'academic', label: 'Mark Hughes, “Leading changes: Why transformation explanations fail,” Leadership 13(4), SAGE (2016) — 批判的検討' },
+    ],
+  },
+  {
+    id: 'human-flynn-effect',
+    discipline: 'human-science',
+    title: 'フリン効果',
+    statement:
+      'フリン効果とは、20世紀を通じて世界各国で観察された、知能検査（IQ）の平均得点が世代を追うごとに継続的に上昇してきた現象で、おおむね10年あたり約3ポイント（1世紀で約30ポイント）のペースで上昇したとされる。' +
+      'ニュージーランドの知能研究者ジェームズ・R・フリンが1984年・1987年の論文で多数の国のデータから体系的に示し、後にハーンスタインとマレーが著書『ベルカーブ』（1994）でこれを「フリン効果」と呼んで広めた。流動性知能を測るレーヴン漸進的マトリックスなどで上昇が大きく、語彙・知識など結晶性知能では小さい。原因は栄養・健康の改善、教育の普及、環境の複雑化、家族規模の縮小、検査慣れなど諸説あり確定しておらず、遺伝では説明できず環境要因が重視される。近年は一部の先進国で上昇が停滞・逆転（反フリン効果）したとの報告もある。',
+    keyFigures:
+      'ジェームズ・R・フリン（James R. Flynn, 1934–2020）／リチャード・ハーンスタイン＆チャールズ・マレー（『ベルカーブ』1994で命名）／流動性知能で上昇大・反フリン効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.1718793115', type: 'academic', label: 'Bratsberg & Rogeberg, “Flynn effect and its reversal are both environmentally caused,” PNAS 115(26):6674–6678 (2018)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4152423/', type: 'academic', label: 'Trahan et al., “The Flynn Effect: A Meta-analysis,” Psychological Bulletin（PMC, NCBI）' },
+      { url: 'https://en.wikipedia.org/wiki/Flynn_effect', type: 'reference', label: 'Wikipedia: Flynn effect（命名・上昇率・課題別パターン）' },
+    ],
+  },
+  {
+    id: 'human-inattentional-blindness',
+    discipline: 'human-science',
+    title: '非注意性盲目（不注意盲）',
+    statement:
+      '非注意性盲目（inattentional blindness）とは、視野内にはっきり存在し容易に認識できるはずの予期しない対象や出来事に、別の課題へ注意を集中しているために気づかない現象である。注意の容量には限界があり、注意を向けていない対象は意識的に知覚されにくいことを示す。' +
+      'アリエン・マックとアーヴィン・ロックが1998年の著書『Inattentional Blindness』で概念を確立・命名した。最も有名な実証はダニエル・シモンズとクリストファー・チャブリスの1999年「見えないゴリラ」実験で、バスケのパス回数を数える課題に集中する観察者の約半数が、画面中央をゴリラの着ぐるみが横切っても気づかなかった。「予期しない対象の見落とし」を指す点で、2状態間の変化を見落とす変化盲とは区別される。目撃証言・運転中の携帯電話使用・放射線科医の見落とし・安全管理などに応用される。',
+    keyFigures:
+      'アリエン・マック（Arien Mack）＆アーヴィン・ロック（Irvin Rock, 1998・命名）／ダニエル・シモンズ＆クリストファー・チャブリス（1999「見えないゴリラ」）／変化盲とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/inattentional-blindness', type: 'reference', label: 'APA Dictionary of Psychology — “inattentional blindness”（米国心理学会）' },
+      { url: 'http://www.scholarpedia.org/article/Inattentional_blindness', type: 'reference', label: 'Scholarpedia — “Inattentional blindness”（査読制百科事典；変化盲との区別）' },
+      { url: 'https://journals.sagepub.com/doi/10.1068/p281059', type: 'academic', label: 'Simons & Chabris (1999) “Gorillas in our midst...”, Perception 28(9):1059–1074' },
+    ],
+  },
+  {
+    id: 'bizlaw-tender-of-performance',
+    discipline: 'business-law',
+    title: '弁済の提供（民法492条・493条）',
+    statement:
+      '弁済の提供とは、債務者が債務の本旨に従った履行に必要な準備をして、債権者の協力（受領）を求めることをいう。債務の本旨に従って弁済の提供をすれば、債務者はその提供の時から「債務を履行しないことによって生ずべき責任を免れる」（民法492条）。具体的には履行遅滞を理由とする遅延損害金・違約金の支払義務、契約解除や担保権実行を免れ、また相手方の同時履行の抗弁を封じる効果を持つ。' +
+      '提供の方法（493条）は、原則として「現実の提供」（債務の本旨に従い現実に弁済を提供する。例：持参債務で金銭を持参して受領を求める）であるが、(1)債権者があらかじめ受領を拒んでいるとき、または(2)債務の履行に債権者の行為を要するとき（取立債務等）は、弁済の準備をしたことを通知して受領を催告する「口頭の提供」で足りる。弁済の提供は債務消滅原因そのものではなく、債務者を履行遅滞等の不利益から解放する効果を持つにとどまり、債権者が受領しない場合は受領遅滞（413条）の問題となり、債務消滅には供託（494条）等を要する。',
+    keyFigures:
+      '492条：提供の時から履行遅滞責任・遅延損害金・違約金・解除・担保権実行を免れ同時履行の抗弁を封じる／493条：原則「現実の提供」、例外「口頭の提供」（受領拒絶・取立債務等）／債務消滅原因ではない（供託494条で消滅）／受領遅滞413条と関連／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）492条・493条' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2003_minopu-3_22.pdf', type: 'academic', label: '京都大学OCW 債権総論 第22回講義 弁済の提供・債権者遅滞（松岡久和）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第493条', type: 'reference', label: 'Wikibooks 民法第493条（弁済の提供の方法：現実の提供・口頭の提供）' },
+    ],
+  },
+  {
+    id: 'infosoc-meme',
+    discipline: 'information-sociology',
+    title: 'ミーム（meme）',
+    statement:
+      'ミームとは、模倣（imitation）を通じて人から人（脳から脳）へ伝達・複製され文化の中で広がる文化的情報の単位で、アイデア・習慣・旋律・流行・技術・信念などを指す。進化生物学者リチャード・ドーキンスが1976年の著書『利己的な遺伝子』で、ギリシャ語 mimeme（模倣されるもの）を gene に似せて短縮し造語した。' +
+      '遺伝子が生物進化の自己複製子であるのに対し、ミームは文化進化の自己複製子であり、変異・選択・複製というダーウィン的進化のアナロジーで文化伝播を説明する。スーザン・ブラックモアが『ミーム・マシーンとしての私』(1999)でミーム学（memetics）として発展させた。ただし単位・境界の不明確さ、複製忠実度の低さ、実証可能性への疑問から主流科学としては確立しなかったとされる。現代ではインターネット・ミーム（画像・動画等がSNSで模倣・改変され拡散する現象）として語が一般化したが、これはドーキンスの原義の一応用・派生である。',
+    keyFigures:
+      'リチャード・ドーキンス（Richard Dawkins, 1976『利己的な遺伝子』で造語）／スーザン・ブラックモア（Susan Blackmore, memetics）／リモール・シフマン（Limor Shifman, インターネット・ミーム）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/meme', type: 'reference', label: 'Britannica「Meme」— 定義・語源（Greek mimema）・Dawkins 1976『The Selfish Gene』による造語' },
+      { url: 'https://www.susanblackmore.uk/memetics/about-memes/', type: 'academic', label: 'Susan Blackmore 公式サイト「About Memes」— ミーム＝人から人へコピーされるもの・memetics' },
+      { url: 'https://en.wikipedia.org/wiki/Meme', type: 'reference', label: 'Wikipedia「Meme」— 定義・語源・Dawkins/Blackmore・memetics批判' },
+    ],
+  },
 ];
 // Stryker restore all
