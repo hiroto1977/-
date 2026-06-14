@@ -4099,5 +4099,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Hyperpersonal_model', type: 'reference', label: 'Wikipedia「Hyperpersonal model」— 4要素と cues-filtered-out 対比の概説' },
     ],
   },
+  {
+    id: 'econ-monetarism',
+    discipline: 'economics',
+    title: 'マネタリズム',
+    statement:
+      '経済の名目所得や物価の変動を主に貨幣供給量（マネーサプライ）の動きで説明し、金融政策を重視する経済学の立場・学派。貨幣数量説を現代的に再構築したミルトン・フリードマンが代表的論者で、「インフレーションはいつでもどこでも貨幣的現象である」という言葉で知られる。' +
+      '短期には貨幣供給の変化が産出に影響しうるが、長期的には物価のみを動かす（貨幣の中立性、長期フィリップス曲線は垂直）とし、裁量的な総需要管理（ケインジアン的な財政・金融の微調整）はラグや予測誤差でかえって経済を不安定化させると批判した。そのうえで、中央銀行は経済成長率に見合った一定率（年3〜5%程度）で貨幣供給を増やす「k%ルール」を機械的に守るべきだと主張した。フリードマンとシュウォーツは『アメリカ貨幣史』で、大恐慌は貨幣供給の急減（1930〜33年に約3割減）が深刻化させたと論じた。' +
+      '1970年代のスタグフレーション下で影響力を強めたが、貨幣需要・貨幣の流通速度の不安定化により1980年代以降は純粋な貨幣供給目標は退いた。',
+    keyFigures: '名目所得・物価は主に貨幣供給で決まるとし金融政策を重視／M.フリードマンが代表「インフレは常に貨幣的現象」／長期は貨幣中立・裁量政策を批判／k%ルール(一定率の貨幣供給)／フリードマン&シュウォーツ『アメリカ貨幣史』で大恐慌を貨幣的に説明／1980年代以降は純粋な貨幣目標は後退',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/monetarism', type: 'reference', label: 'Encyclopaedia Britannica — Monetarism' },
+      { url: 'https://www.econlib.org/library/Enc/Monetarism.html', type: 'reference', label: 'Econlib (Library of Economics and Liberty) — Monetarism' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1976/summary/', type: 'reference', label: 'NobelPrize.org — Milton Friedman, 1976年経済学賞' },
+      { url: 'https://www.federalreservehistory.org/essays/great-depression', type: 'government', label: 'Federal Reserve History — The Great Depression（貨幣供給の急減）' },
+    ],
+  },
+  {
+    id: 'econ-creative-destruction',
+    discipline: 'economics',
+    title: '創造的破壊',
+    statement:
+      '資本主義の発展の本質は、新しい技術・製品・生産方法・市場・組織といったイノベーションが、古い技術や既存の企業・産業を絶えず破壊しながら、経済構造を内部から革新し続けるプロセスにある、とする考え方。経済学者ヨーゼフ・シュンペーターが著書『資本主義・社会主義・民主主義』（1942）で「創造的破壊（creative destruction）」と表現し広めた（着想にはマルクス等の影響もある）。' +
+      'シュンペーターは、企業家（アントレプレナー）による新結合（イノベーション）こそが利潤と経済発展の源泉であり、均衡を絶えず壊す動態的な変化が資本主義の活力だと論じた。新しい産業が興れば古い産業は淘汰され、雇用や既得権益の喪失という痛みを伴うが、それが長期的な生産性向上と成長をもたらす。' +
+      'デジタル化やプラットフォーム企業による既存産業の破壊を論じる現代の議論でも広く参照される。',
+    keyFigures: 'イノベーションが古い技術・企業を破壊しつつ経済構造を内部から革新／J.シュンペーター『資本主義・社会主義・民主主義』1942で命名・普及／企業家の新結合(イノベーション)が利潤と発展の源泉／淘汰の痛みを伴うが長期の生産性向上をもたらす／現代のデジタル破壊論でも参照',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/creative-destruction', type: 'reference', label: 'Britannica Money — Creative Destruction: Innovation, Growth, & Examples' },
+      { url: 'https://www.econlib.org/library/Enc/CreativeDestruction.html', type: 'reference', label: 'Econlib (Library of Economics and Liberty) — Creative Destruction' },
+      { url: 'https://www.britannica.com/topic/Capitalism-Socialism-and-Democracy', type: 'reference', label: 'Britannica — Capitalism, Socialism, and Democracy (work by Schumpeter)' },
+    ],
+  },
+  {
+    id: 'mgmt-toyota-production',
+    discipline: 'management',
+    title: 'トヨタ生産方式（リーン生産方式）',
+    statement:
+      '徹底したムダの排除によって品質・コスト・納期を高める、トヨタ自動車が確立した生産管理の体系。大野耐一らが中心となって発展させた。2本の柱からなる：(1)ジャスト・イン・タイム（JIT＝必要なものを、必要なときに、必要なだけ生産・供給し、在庫のムダをなくす。後工程引取り・かんばん方式で実現）、(2)自働化（にんべんのついた自動化＝異常が起きたら機械や人が自ら停止し、不良品を後工程に流さず問題を顕在化させる）。' +
+      '加えて、つくりすぎ・手待ち・運搬・加工・在庫・動作・不良という「7つのムダ」の排除、現地現物（現場で事実を見る）、平準化、継続的改善（カイゼン）を重視する。' +
+      '1990年前後にMITの国際自動車研究プログラムがこれを「リーン生産方式（lean production）」として体系化・命名し、製造業だけでなくサービス業・ソフトウェア開発（リーン・スタートアップ等）にも広く応用されている。',
+    keyFigures: 'トヨタが確立・大野耐一が発展／2本柱：ジャスト・イン・タイム(かんばん方式)と自働化(異常で自動停止)／7つのムダの排除・カイゼン・平準化・現地現物／MITが「リーン生産方式」と命名・体系化(1990頃)／サービス業・ソフト開発にも応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.toyota/en/company/vision-and-philosophy/production-system/', type: 'reference', label: 'Toyota Motor Corporation 公式 — Toyota Production System（JIT・自働化の2本柱）' },
+      { url: 'https://www.lean.org/lexicon-terms/toyota-production-system/', type: 'reference', label: 'Lean Enterprise Institute — Toyota Production System（大野耐一の開発経緯・定義）' },
+      { url: 'https://www.lean.org/lexicon-terms/lean-production/', type: 'reference', label: 'Lean Enterprise Institute — Lean Production（MIT IMVPによる命名・1990年の体系化）' },
+      { url: 'https://en.wikipedia.org/wiki/Toyota_Production_System', type: 'reference', label: 'Wikipedia — Toyota Production System（7つのムダ・かんばん・歴史）' },
+    ],
+  },
+  {
+    id: 'human-schema',
+    discipline: 'human-science',
+    title: 'スキーマ理論',
+    statement:
+      '人が世界についての知識を、過去の経験から作られた構造化された枠組み（スキーマ）として頭の中に蓄え、それを使って新しい情報を理解・解釈・記憶するとする認知心理学の理論。スキーマは知覚や記憶を方向づけ、欠けた情報を既存の知識で補完（推論）させる一方、スキーマに合わない情報は見落とされたり、スキーマに合うように歪めて記憶されたりする。' +
+      'イギリスの心理学者フレデリック・バートレットが『想起（Remembering）』（1932）で、被験者に異文化の物語（「幽霊たちの戦い」）を繰り返し再生させた実験から、人の記憶は録音のような正確な再現ではなく、自分の文化的スキーマに沿って能動的に再構成される（再構成的記憶）ことを示し、スキーマ概念を確立した。' +
+      '後に人工知能のフレーム理論や、特定の出来事の定型的な流れを表す「スクリプト」（シャンク&エイベルソン）などに発展し、学習・読解・ステレオタイプ・目撃証言の研究にも応用される。',
+    keyFigures: '知識の構造化された枠組み(スキーマ)が情報の理解・記憶を方向づける／欠落を補完し、不一致情報は無視/歪曲される／F.バートレット『想起』1932「幽霊たちの戦い」実験で再構成的記憶を実証／スクリプト(シャンク&エイベルソン)・フレーム理論へ発展／学習・ステレオタイプ・目撃証言に応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/schema-cognition', type: 'reference', label: 'Encyclopaedia Britannica — Schema (cognition)' },
+      { url: 'https://www.britannica.com/biography/Frederic-Bartlett-psychologist', type: 'reference', label: 'Encyclopaedia Britannica — Frederic Bartlett (psychologist)' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/schema-theory', type: 'reference', label: 'EBSCO Research Starters (Psychology) — Schema Theory' },
+      { url: 'https://www.ijcai.org/Proceedings/75/Papers/021.pdf', type: 'academic', label: 'Schank & Abelson — Scripts, Plans, and Knowledge (IJCAI proceedings)' },
+    ],
+  },
+  {
+    id: 'bizlaw-tob',
+    discipline: 'business-law',
+    title: '公開買付け（TOB）',
+    statement:
+      '公開買付け（TOB、Take-Over Bid／テンダー・オファー）とは、上場会社等の株券等を、取引所市場外で、買付け期間・価格・株数などの条件を広く公告して、多数の株主から買い集める制度である（金融商品取引法27条の2以下）。主に経営権の取得（M&A）や子会社化、上場廃止（非公開化）を目的に用いられる。' +
+      '市場外で多数の者から株式を取得し、会社支配に影響を及ぼしうる場合に、すべての株主に売却機会と情報を平等に与え、透明・公正な手続を確保することを目的とする。一定割合（現行では原則として議決権の3分の1）を超える株式を市場外で取得する場合などは、原則として公開買付けによることが義務づけられる（強制公開買付け）。買付者は公開買付届出書を提出し、買付価格・期間・目的等を開示する。対象会社の取締役会は、賛同・反対などの意見表明報告書を提出する。' +
+      '買付期間中に他の買付者が現れる（対抗TOB）こともある。投資家保護と市場の公正性のための開示・手続規制であり、金融庁が所管する。',
+    keyFigures: '市場外で多数の株主から条件を公告して株式を買い集める制度(金商法27条の2以下)／M&A・子会社化・非公開化に利用／全株主への平等な売却機会と情報開示・公正な手続の確保／一定割合(原則議決権3分の1)超の市場外取得は強制公開買付け／公開買付届出書・対象会社の意見表明報告書／金融庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000025', type: 'government', label: 'e-Gov法令検索「金融商品取引法」（27条の2以下 公開買付けに関する規定）' },
+      { url: 'https://www.fsa.go.jp/singi/singi_kinyu/tob_wg/shiryou/20230731/01.pdf', type: 'government', label: '金融庁 公開買付制度・大量保有報告制度WG事務局説明資料（公開買付制度の概要・3分の1ルール）' },
+      { url: 'https://lfb.mof.go.jp/kantou/disclo/pagekthp00400042.html', type: 'government', label: '財務省関東財務局「株券等の公開買付け」（公開買付届出書・意見表明報告書等の開示）' },
+    ],
+  },
+  {
+    id: 'infosoc-communicative-action',
+    discipline: 'information-sociology',
+    title: 'コミュニケーション的行為（ハーバーマス）',
+    statement:
+      'ドイツの社会哲学者ユルゲン・ハーバーマスが『コミュニケーション的行為の理論』（Theorie des kommunikativen Handelns, 1981）で展開した概念。彼は人間の社会的行為を、自分の目的達成のために他者や事物を手段として操作する「目的合理的行為（戦略的行為＝成功志向）」と、対話を通じて相互の理解と合意の形成を目指す「コミュニケーション的行為（了解志向）」に区別した。' +
+      'コミュニケーション的行為では、話し手は真理性・正当性・誠実性といった批判可能な「妥当性請求」を掲げ、聞き手はそれを吟味・受容・拒否でき、強制や権力でなく「より良い論拠の力」によって合意に至る（理想的発話状況）。ハーバーマスは、本来このような了解志向の相互行為が営まれる「生活世界」が、貨幣と権力に駆動される経済・行政システムに侵食される「生活世界の植民地化」を近代の病理と診断した。' +
+      'この理論は熟議民主主義（討議倫理）や公共圏論の理論的基盤をなす。',
+    keyFigures: 'J.ハーバーマス『コミュニケーション的行為の理論』(1981)／戦略的行為(成功志向・手段化)と区別したコミュニケーション的行為(了解志向)／妥当性請求(真理性・正当性・誠実性)とより良い論拠の力による合意(理想的発話状況)／生活世界のシステムによる植民地化／熟議民主主義・討議倫理の基盤',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'academic', label: 'Jürgen Habermas — Stanford Encyclopedia of Philosophy（妥当性請求・生活世界・コミュニケーション的合理性）' },
+      { url: 'https://www.britannica.com/biography/Jurgen-Habermas/Philosophy-and-social-theory', type: 'reference', label: 'Jürgen Habermas: Philosophy and social theory — Encyclopaedia Britannica' },
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0065111', type: 'academic', label: 'Communicative versus Strategic Rationality: Habermas\' Theory of Communicative Action and the Social Brain — PLOS ONE（査読論文）' },
+      { url: 'https://www.cambridge.org/core/books/cambridge-habermas-lexicon/colonization-of-the-lifeworld/36E8421628B4E1914F7E675B31977ADC', type: 'academic', label: 'Colonization of the Lifeworld — The Cambridge Habermas Lexicon (Cambridge University Press)' },
+    ],
+  },
 ];
 // Stryker restore all
