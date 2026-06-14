@@ -5518,5 +5518,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/biography/Claude-Shannon', type: 'reference', label: 'Encyclopædia Britannica — Claude Shannon（提唱者・情報理論の創始）' },
     ],
   },
+  {
+    id: 'econ-capability-approach',
+    discipline: 'economics',
+    title: '潜在能力アプローチ（ケイパビリティ・アプローチ）',
+    statement:
+      '人の福祉（well-being）や発展を、所得・財の量や効用（満足）ではなく、その人が実際に選び、なしうること・なりうることの幅で評価すべきだとする規範的枠組み。達成された状態や活動である「機能（functionings、例：栄養が足りている、健康である、教育を受けている、社会参加している）」と、達成可能な機能の組合せの集合＝「潜在能力（capability、実質的な自由・選択肢の幅）」を区別し、後者を評価の中心に置く。' +
+      'これにより善き生の特定の型を押しつけず、各人が価値を見いだす生を選べる自由を重視する。功利主義（効用主義）やロールズの基本財アプローチを、人々の多様性と財を機能へ変換する能力の差を捉えられないとして批判する。国連開発計画（UNDP）の人間開発指数（HDI）の理論的基礎となった。',
+    keyFigures: 'アマルティア・セン（Amartya Sen、提唱者、1979年タナー講義「Equality of What?」が初出、1998年ノーベル経済学賞）／マーサ・ヌスバウム（Martha Nussbaum、中心的な10の潜在能力のリストを示し発展）／マブーブ・ウル・ハク（Mahbub ul Haq、センと共にUNDPのHDIを開発）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/capability-approach/', type: 'reference', label: 'The Capability Approach — Stanford Encyclopedia of Philosophy（スタンフォード大学、査読的リファレンス）' },
+      { url: 'https://iep.utm.edu/sen-cap/', type: 'reference', label: 'Sen’s Capability Approach — Internet Encyclopedia of Philosophy（査読制百科事典）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1998/summary/', type: 'government', label: '1998年スウェーデン国立銀行賞（ノーベル経済学賞）受賞: Amartya Sen — NobelPrize.org（公式）' },
+      { url: 'https://sen.scholars.harvard.edu/publications/equality-what', type: 'academic', label: 'Amartya Sen, “Equality of What?”（1979年タナー講義）— Harvard University' },
+    ],
+  },
+  {
+    id: 'econ-agency-theory',
+    discipline: 'economics',
+    title: 'エージェンシー理論（プリンシパル＝エージェント問題）',
+    statement:
+      'ある主体（プリンシパル＝依頼人、例：株主）が自己の利益のために別の主体（エージェント＝代理人、例：経営者）へ意思決定や行動を委任する関係を分析する理論。両者の利害が一致せず（利益相反）、かつプリンシパルがエージェントの行動を完全には観察・監視できない（情報の非対称性）ために、エージェントが自己利益を優先する問題が生じる。典型的には、契約後に行動を観察できない「モラルハザード（隠れた行動）」と、契約前にエージェントの質を見極められない「逆選択（隠れた情報）」が論点となる。' +
+      'これを抑える監視（モニタリング）や成果連動報酬などのインセンティブ契約の設計、およびそれに伴う「エージェンシー・コスト」（監視コスト＋ボンディング・コスト＋残余損失）が中心テーマであり、所有と経営の分離を扱うコーポレートガバナンス論の理論的基礎をなす。',
+    keyFigures: 'スティーブン・ロス（Stephen A. Ross, 1973「エージェンシーの経済理論」で概念を提示）／マイケル・ジェンセン & ウィリアム・メックリング（Jensen & Meckling, 1976、企業を「契約の束（nexus of contracts）」として定式化）／キャスリーン・アイゼンハート（Eisenhardt, 1989 が経営学的レビューとして整理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://josephmahoney.web.illinois.edu/BA549_Fall%202012/Session%205/5_Jensen_Meckling%20(1976).pdf', type: 'academic', label: 'Jensen & Meckling (1976) “Theory of the Firm: Managerial Behavior, Agency Costs and Ownership Structure”, Journal of Financial Economics 3(4):305-360（原典PDF／イリノイ大学ホスト）' },
+      { url: 'https://www.jstor.org/stable/258191', type: 'academic', label: 'Eisenhardt, K. M. (1989) “Agency Theory: An Assessment and Review,” Academy of Management Review 14(1):57-74（査読論文、JSTOR）' },
+      { url: 'https://en.wikipedia.org/wiki/Principal%E2%80%93agent_problem', type: 'reference', label: 'Wikipedia「Principal–agent problem」— 定義・情報の非対称性・利益相反・解決策' },
+    ],
+  },
+  {
+    id: 'mgmt-situational-leadership',
+    discipline: 'management',
+    title: '状況的リーダーシップ理論',
+    statement:
+      '唯一最善のリーダーシップ・スタイルは存在せず、有効なスタイルは部下（フォロワー）の「発達度（成熟度＝当該課題に対する能力とコミットメント／意欲）」に応じて変えるべきだとする条件適合（コンティンジェンシー系）理論。リーダー行動を「指示的行動（タスク志向）」と「協労的・支援的行動（関係志向）」の2軸で捉え、部下の発達度D1〜D4に応じて、(1)指示型（Directing／Telling）、(2)コーチ型（Coaching／Selling）、(3)援助型（Supporting／Participating）、(4)委任型（Delegating）の4スタイルを使い分ける。能力・意欲が高まるほど指示を減らし権限委譲を増やす。' +
+      '実務・研修で世界的に普及する一方、学術的には実証的支持が一貫せず、概念的曖昧さや理論的根拠の弱さを指摘する批判もあり、評価は中立的に見る必要がある。変革型リーダーシップ・PM理論・フィードラーのコンティンジェンシー理論とは別概念。',
+    keyFigures: 'ポール・ハーシー（Paul Hersey）／ケン・ブランチャード（Ken Blanchard）が1969年に提唱／初出は “Life Cycle Theory of Leadership”（Training & Development Journal, 23, 26–34, 1969）で後に Situational Leadership に改称／後にハーシー版とブランチャード版（SLII）に分岐',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Situational_leadership_theory', type: 'reference', label: 'Wikipedia「Situational leadership theory」' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S104898439790014X', type: 'academic', label: 'Graeff, C. L. (1997) “Evolution of situational leadership theory: A critical review,” The Leadership Quarterly 8(2): 153–170（査読論文）' },
+      { url: 'https://eric.ed.gov/?id=EJ004286', type: 'academic', label: 'Hersey & Blanchard (1969) “Life Cycle Theory of Leadership,” Training & Development Journal 23: 26–34（ERIC 収録の初出論文書誌）' },
+    ],
+  },
+  {
+    id: 'human-kohlberg-moral-development',
+    discipline: 'human-science',
+    title: 'コールバーグの道徳性発達理論',
+    statement:
+      '人間の道徳的判断は、年齢と認知発達に伴って一定の順序で段階的に発達するとする理論。判断の結論（何を選ぶか）ではなく、その「理由づけ＝推論の構造」に着目する点が最大の特徴で、「ハインツのジレンマ」など道徳的ジレンマへの回答を分析して定式化された。発達は3水準6段階から成る。(I)前慣習的水準＝①罰と服従への志向、②道具的・互恵的（道具的相対主義）志向。(II)慣習的水準＝③対人関係の調和「良い子」志向、④法と秩序の維持志向。(III)後慣習的・脱慣習的水準＝⑤社会契約・功利的志向、⑥普遍的な倫理的原理の志向（到達する人は稀とされる）。' +
+      'キャロル・ギリガンは、原標本が男性のみで「正義」を偏重する男性中心的モデルだと批判し、関係性と責任を重視する「ケアの倫理」を対置した。',
+    keyFigures: 'ローレンス・コールバーグ（Lawrence Kohlberg）が提唱（1958年の博士論文で定式化、ジャン・ピアジェの道徳判断・認知発達論を継承・拡張）／批判：キャロル・ギリガン（Carol Gilligan、「ケアの倫理」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Lawrence-Kohlbergs-stages-of-moral-development', type: 'reference', label: 'Encyclopaedia Britannica — Lawrence Kohlberg’s stages of moral development' },
+      { url: 'https://www.britannica.com/biography/Lawrence-Kohlberg', type: 'reference', label: 'Encyclopaedia Britannica — Lawrence Kohlberg (biography)' },
+      { url: 'https://en.wikipedia.org/wiki/Lawrence_Kohlberg%27s_stages_of_moral_development', type: 'reference', label: 'Wikipedia — Lawrence Kohlberg’s stages of moral development' },
+      { url: 'https://courses.lumenlearning.com/suny-lifespandevelopment/chapter/kohlbergs-stages-of-moral-development/', type: 'academic', label: 'Lumen Learning (SUNY) — Kohlberg’s Stages of Moral Development' },
+    ],
+  },
+  {
+    id: 'bizlaw-administrative-execution',
+    discipline: 'business-law',
+    title: '行政代執行（行政代執行法）',
+    statement:
+      '行政代執行とは、法律により直接命じられ、又は法律に基づき行政庁が命じた「代替的作為義務」（他人が代わってなしうる義務。例：違法建築物の除却、土地の原状回復）を義務者が履行しない場合に、行政庁が自ら義務者のなすべき行為をなし、又は第三者にこれをなさしめ、その費用を義務者から徴収する制度であり、行政上の強制執行の一手段である。一般法として行政代執行法（昭和23年法律第43号）が要件・手続を定める。' +
+      '同法2条は代執行の要件として、(1)代替的作為義務の不履行、(2)他の手段によってその履行を確保することが困難であること、(3)その不履行を放置することが著しく公益に反すると認められること、を要求する。手続は、相当の履行期限を定めた文書による戒告（3条1項）→代執行令書による通知（3条2項）→代執行の実施を経て、費用は義務者から徴収でき、徴収は国税滞納処分の例による（5条・6条）。非代替的作為義務（退去義務等）や不作為義務には、特別の法律の定めがない限り用いることができない。',
+    keyFigures: '一般法＝行政代執行法（昭和23年法律第43号／e-Gov law id 323AC0000000043）／2条の3要件：代替的作為義務の不履行・他の手段による履行確保が困難・不履行の放置が著しく公益に反する／対象は「代替的作為義務」のみ（非代替的作為義務・不作為義務は対象外）／手続：戒告（3条1項）→代執行令書（3条2項）→実施／費用は義務者から徴収・国税滞納処分の例による（5条・6条）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000043', type: 'government', label: 'e-Gov法令検索 行政代執行法（昭和23年法律第43号、法令ID 323AC0000000043）' },
+      { url: 'https://www.rilg.or.jp/htdocs/uploads/r4_gyoseidaisikko_01.pdf', type: 'academic', label: '宇那木正寛（鹿児島大学）「行政代執行制度の基本と実務」地方自治研究機構' },
+      { url: 'https://ja.wikipedia.org/wiki/行政代執行法', type: 'reference', label: 'Wikipedia「行政代執行法」' },
+    ],
+  },
+  {
+    id: 'infosoc-media-literacy',
+    discipline: 'information-sociology',
+    title: 'メディア・リテラシー',
+    statement:
+      'テレビ・新聞・広告・インターネット・SNS など各種メディアが伝える情報を、受け身で鵜呑みにせず批判的に分析・評価し、「誰が・何の目的で・どう構成して発信しているか」というメディアの仕組みを理解したうえで、自らも責任をもって情報を発信・活用できる能力を指す。核心には「メディアは現実をそのまま映すのではなく構成（representation）されたものだ」という見方があり、メッセージは非透明（non-transparent）であるという認識に立つ。' +
+      '米国の NAMLE は「アクセス・分析・評価・創造・行動（access, analyze, evaluate, create, act）」の能力として整理する。ユネスコは情報リテラシーと統合した「メディア情報リテラシー（MIL）」として推進し、フェイクニュース・誤情報対策や民主主義参加の基盤としても重視される。',
+    keyFigures: 'レン・マスターマン（Len Masterman）：『Teaching the Media』(1980年代)でメディア教育を体系化、中心概念を「表象/構成（representation）」とした／デイヴィッド・バッキンガム（David Buckingham）：メディア言語・表象・制度・オーディエンスの4つの鍵概念／NAMLE（全米メディアリテラシー教育協会）：「アクセス・分析・評価・創造・行動」の5能力／ユネスコ：メディア情報リテラシー（MIL）として推進',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://namle.org/resources/media-literacy-defined/', type: 'academic', label: 'NAMLE（全米メディアリテラシー教育協会）「Media Literacy Defined」— access/analyze/evaluate/create/act の定義' },
+      { url: 'https://www.unesco.org/en/articles/media-and-information-literacy-critical-approach-literacy-digital-world', type: 'government', label: 'UNESCO「Media and Information Literacy, a critical approach to literacy in the digital world」— MIL の定義と統合的枠組み' },
+      { url: 'https://files.eric.ed.gov/fulltext/EJ1046521.pdf', type: 'academic', label: 'Pungente 他「The Core Concepts: Fundamental to Media Literacy」— マスターマンの representation／non-transparency 概念の解説（ERIC）' },
+      { url: 'https://en.wikipedia.org/wiki/Media_literacy', type: 'reference', label: 'Wikipedia「Media literacy」— 概念・歴史・主要論者の概観' },
+    ],
+  },
 ];
 // Stryker restore all
