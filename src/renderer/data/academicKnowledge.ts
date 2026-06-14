@@ -4960,5 +4960,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/technology/technology-acceptance-model-tam', type: 'reference', label: 'Technology Acceptance Model (TAM) — EBSCO Research Starters' },
     ],
   },
+  {
+    id: 'econ-path-dependence',
+    discipline: 'economics',
+    title: '経路依存',
+    statement:
+      '過去の出来事や偶然の初期条件・選択が、収穫逓増（増加収益）と正のフィードバックという自己強化的メカニズムを通じて固定化し、現在および将来の結果を制約するという考え方。過程は非エルゴード的で、初期に生じた出来事が平均化されて消えず後の経路を方向づけるため、必ずしも効率的でない状態にロックイン（固定）されうる。' +
+      'ポール・デイヴィッドはQWERTY配列を例に、技術的相互関連性・規模の経済・投資の準不可逆性の3条件が転換費用を生み固定化を招くと論じた。ブライアン・アーサーは収穫逓増下で競合技術が小さな歴史的偶然から一方へ固定される機構を示した。「歴史は重要（history matters）」と要約され、技術標準化（VHS対ベータ等）や制度・産業集積の説明に用いられる。制度的同型化とは別概念。',
+    keyFigures: 'ポール・デイヴィッド（Paul A. David, 1985「Clio and the Economics of QWERTY」, American Economic Review 75(2):332–337）／W・ブライアン・アーサー（W. Brian Arthur, 収穫逓増・ロックインの分析, 著書 Increasing Returns and Path Dependence in the Economy）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eh.net/encyclopedia/path-dependence/', type: 'academic', label: 'EH.Net Encyclopedia (Economic History Association), “Path Dependence”' },
+      { url: 'https://www.britannica.com/topic/path-dependence', type: 'reference', label: 'Encyclopaedia Britannica, “Path dependence”' },
+      { url: 'https://sites.santafe.edu/~wbarthur/Books/IR_Book_Preface.pdf', type: 'academic', label: 'Santa Fe Institute — W. Brian Arthur, “Increasing Returns and Path Dependence in the Economy” (Preface)' },
+      { url: 'https://www.cambridge.org/core/books/evolutionary-foundations-of-economics/path-dependence-in-economic-processes-implications-for-policy-analysis-in-dynamical-system-contexts/93AFD05279B914C7FA74B5F9912D45E2', type: 'academic', label: 'Cambridge University Press — P. David, “Path dependence in economic processes”' },
+    ],
+  },
+  {
+    id: 'econ-mundell-fleming',
+    discipline: 'economics',
+    title: 'マンデル＝フレミング・モデル',
+    statement:
+      '閉鎖経済を前提とするIS-LMモデルを、資本移動のある開放経済へ拡張した国際マクロ経済学の基本モデル（IS-LM-BPモデルとも呼ぶ）。財市場の均衡を示すIS曲線、貨幣市場の均衡を示すLM曲線、国際収支の均衡を示すBP曲線の同時均衡を分析し、為替相場制度（固定相場制か変動相場制か）と国際資本移動性の程度に応じて財政・金融政策の有効性が変化することを明らかにする。' +
+      '資本移動が完全な場合、変動相場制では金融政策が有効で財政政策は無効、固定相場制ではその逆となる。これは「国際金融のトリレンマ（不可能の三角形）」――自由な資本移動・固定相場・独立した金融政策の3つは同時に2つまでしか達成できない――の理論的基礎を与える。',
+    keyFigures: 'ロバート・マンデル（Robert A. Mundell, “Capital Mobility and Stabilization Policy under Fixed and Flexible Exchange Rates”, 1963）／マーカス・フレミング（J. Marcus Fleming, IMF Staff Papers, vol.9, 1962, pp.369–380）が1960年代前半に独立に展開／マンデルは1999年ノーベル経済学賞受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'government', label: 'NobelPrize.org — 1999年経済学賞: マンデルの受賞理由（異なる為替相場制度下の金融・財政政策、最適通貨圏）' },
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1962/003/article-A004-en.xml', type: 'government', label: 'IMF eLibrary — Fleming (1962) “Domestic Financial Policies under Fixed and under Floating Exchange Rates”, IMF Staff Papers 9(3)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w2321/w2321.pdf', type: 'academic', label: 'NBER WP No.2321 (Frenkel & Razin) “The Mundell-Fleming Model: A Quarter Century Later”' },
+      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Fleming_model', type: 'reference', label: 'Wikipedia — Mundell–Fleming model（IS-LM-BoP、政策有効性、不可能の三角形）' },
+    ],
+  },
+  {
+    id: 'mgmt-authentic-leadership',
+    discipline: 'management',
+    title: 'オーセンティック・リーダーシップ',
+    statement:
+      'リーダーが自分自身の価値観・信念に忠実（authentic、本物）であり、高い自己認識に基づいて一貫した言動をとることで、フォロワーの信頼と肯定的な発達を促すとするリーダーシップ論。ポジティブ組織行動論の文脈で発展し、他の積極的リーダーシップの基盤をなす「根源的構成概念（root construct）」と位置づけられる。' +
+      'ウォルンブワらは構成要素として、(1)自己認識（self-awareness）、(2)バランスのとれた情報処理（balanced processing）、(3)関係の透明性（relational transparency）、(4)内面化された道徳的視座（internalized moral perspective）の4つを挙げ、測定尺度ALQを開発・検証した。価値観や倫理を重視する点で、目標達成を主眼とする変革型（transformational）リーダーシップとは区別される独立した概念として論じられる。',
+    keyFigures: 'ビル・ジョージ（Bill George, 2003『Authentic Leadership』で実務的に普及）／フレッド・ルーサンス & ブルース・アボリオ（2003、ポジティブ組織行動論として学術的に体系化）／ウィリアム・ガードナー & アボリオ（2005、理論的精緻化）／ウォルンブワ（Walumbwa）ら（2008、4構成要素と測定尺度ALQを開発・検証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206307308913', type: 'academic', label: 'Walumbwa, Avolio, Gardner, Wernsing & Peterson (2008) “Authentic Leadership: Development and Validation of a Theory-Based Measure”, Journal of Management (SAGE)' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/the-sage-encyclopedia-of-leadership-studies/chpt/authentic-leadership.pdf', type: 'reference', label: 'The SAGE Encyclopedia of Leadership Studies — “Authentic Leadership”' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1048984305000263', type: 'academic', label: 'Avolio & Gardner (2005) “Authentic leadership development”, The Leadership Quarterly — 根源的構成概念・変革型との区別' },
+    ],
+  },
+  {
+    id: 'human-elaboration-likelihood',
+    discipline: 'human-science',
+    title: '精緻化見込みモデル（ELM）',
+    statement:
+      '精緻化見込みモデル（Elaboration Likelihood Model, ELM）は、説得による態度変容を説明する二重過程理論である。受け手が説得情報をどれだけ精緻に吟味するか（精緻化の度合い）に応じて、説得は二つの経路に分かれるとする。動機と能力がともに高いときは「中心ルート（central route）」が働き、論拠の質を慎重に吟味して態度が変わるため、生じた態度変化は持続的・行動予測的で、反論への抵抗性が高い。' +
+      '動機や能力が低いときは「周辺ルート（peripheral route）」が働き、論拠の中身ではなく発信者の魅力・権威やメッセージ数などの周辺的手がかりに依存して態度が変わるため、態度変化は一時的で変わりやすい。広告・マーケティングや健康コミュニケーションの研究に広く影響を与えている。計画的行動理論や認知的不協和とは別概念である。',
+    keyFigures: 'リチャード・E・ペティ（Richard E. Petty）／ジョン・T・カシオッポ（John T. Cacioppo）／1980年代に提唱、体系化は Petty & Cacioppo (1986) “Advances in Experimental Social Psychology” 19, 123–205 および著書『Communication and Persuasion: Central and Peripheral Routes to Attitude Change』（Springer, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Elaboration_likelihood_model', type: 'reference', label: 'Elaboration likelihood model — Wikipedia' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/elaboration-likelihood-model', type: 'reference', label: 'Elaboration Likelihood Model — EBSCO Research Starters' },
+      { url: 'https://www.simplypsychology.org/elaboration-likelihood-model.html', type: 'reference', label: 'Elaboration Likelihood Model — SimplyPsychology' },
+    ],
+  },
+  {
+    id: 'bizlaw-fictitious-manifestation',
+    discipline: 'business-law',
+    title: '通謀虚偽表示（民法94条）',
+    statement:
+      '通謀虚偽表示とは、表意者が相手方と通じて行う、真意でない虚偽の意思表示をいう。当事者双方が真意でないと互いに了解したうえで仮装の法律行為（仮装売買・仮装譲渡など）を行う点に特徴がある。民法94条1項により、相手方と通じてした虚偽の意思表示は無効である。例えば、債権者の差押えを免れる目的で、売る意思がないのに友人名義へ不動産を仮装譲渡する場合がこれにあたり、当事者間（仮装譲渡人・譲受人間）ではその行為は無効となる。' +
+      'もっとも同条2項は、この無効を「善意の第三者」に対抗することができないと定める。すなわち、仮装の外観を真実と信じて新たに取引関係に入った第三者は保護され、真の権利者は無効を主張して権利を取り戻すことができない。これは虚偽の外観を作出した者の帰責性に基づき外観を信頼した第三者を保護する権利外観法理の代表例であり、通謀が認められない事案でも判例上94条2項の類推適用が広く論じられる。心裡留保（93条）・錯誤（95条）とは別の意思表示の瑕疵類型。',
+    keyFigures: '民法94条1項：相手方と通じてした虚偽の意思表示は無効／94条2項：その無効は善意の第三者に対抗できない（第三者保護）／典型例：差押え回避のための不動産の仮装譲渡・仮装売買／権利外観法理の代表例（虚偽の外観作出者の帰責性＋第三者の信頼）／判例による94条2項の類推適用／心裡留保（93条）・錯誤（95条）とは別の意思表示の瑕疵類型',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治二十九年法律第八十九号、law id 129AC0000000089）第94条' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/3494', type: 'government', label: '日本法令外国語訳DBシステム（法務省）— 民法 第94条 虚偽表示' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第94条', type: 'reference', label: 'Wikibooks 民法第94条 — 条文・第三者・類推適用の解説' },
+    ],
+  },
+  {
+    id: 'infosoc-society-spectacle',
+    discipline: 'information-sociology',
+    title: 'スペクタクルの社会',
+    statement:
+      'フランスの思想家ギー・ドゥボールが『スペクタクルの社会』(1967)で提示した、高度資本主義社会への批判概念。スペクタクルとは単なる映像・イメージの集積ではなく、「イメージによって媒介された人々の社会関係」そのものを指す。この社会では、直接生きられていたすべてが表象（イメージ・見世物）へと遠ざかり、生は能動的体験から受動的な「見ること」へ置き換えられる。商品・消費・マスメディアのイメージが日常生活を組織・支配し、人々は労働や生から疎外された受動的観客＝消費者となる。' +
+      'ドゥボールはこれをマルクスの商品の物神性・物象化・疎外論を映像／広告／テレビの時代へ展開した最新の疎外形態と位置づけた。彼はシチュアシオニスト・インターナショナルの中心人物であり、本書は1968年五月革命やその後のメディア・消費社会批判の重要な参照点となった。メディアイベントやシミュラークルとは別概念である。',
+    keyFigures: 'ギー・ドゥボール（Guy Debord、提唱者・シチュアシオニスト・インターナショナル中心人物）／初出：著書『スペクタクルの社会（La Société du spectacle）』(1967)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Situationist-International', type: 'reference', label: 'Encyclopædia Britannica — Situationist International（ドゥボールと『スペクタクルの社会』）' },
+      { url: 'https://www.britannica.com/biography/Guy-Debord', type: 'reference', label: 'Encyclopædia Britannica — Guy Debord（伝記・La Société du spectacle 1967）' },
+      { url: 'https://www.marxists.org/reference/archive/debord/society.htm', type: 'reference', label: 'Guy Debord, The Society of the Spectacle（原典テーゼ全文・Marxists Internet Archive）' },
+      { url: 'https://www.historicalmaterialism.org/article/an-introduction-to-guy-debords-the-society-of-the-spectacle/', type: 'academic', label: 'Historical Materialism — An Introduction to Guy Debord’s The Society of the Spectacle（査読系学術誌）' },
+    ],
+  },
 ];
 // Stryker restore all
