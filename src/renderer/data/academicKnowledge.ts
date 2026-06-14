@@ -4772,5 +4772,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Platform_capitalism', type: 'reference', label: 'Wikipedia — Platform capitalism' },
     ],
   },
+  {
+    id: 'econ-revealed-preference',
+    discipline: 'economics',
+    title: '顕示選好',
+    statement:
+      '顕示選好理論は、ポール・サミュエルソンが1938年に提唱した消費者理論の枠組みであり、観察不可能な効用関数や内省的な選好を出発点とせず、消費者が実際に行った購買行動（直面した価格・所得とその下での選択）から選好を逆に「顕示」させて導くアプローチである。ある価格・所得の下でBが購入可能であったのにAが選ばれたなら、「AはBより顕示的に選好される」とみなす。' +
+      '消費者が満たすべき整合性条件として、サミュエルソンの弱公理（WARP：AがBより顕示選好されるなら、別の状況でBがAより顕示選好されることはない）と、これをハウタッカーが1950年に一般化した強公理（SARP：顕示選好関係が非循環的・推移的）があり、これらを満たせば観察された選択から需要理論を再構築できる。基数的効用や心理的内省に依存しない操作主義的な基礎づけであり、選択の効用最大化との整合性を経験的に検証可能にした点に意義がある。',
+    keyFigures: 'ポール・サミュエルソン（提唱者、1938年「A Note on the Pure Theory of Consumer’s Behaviour」Economica 5: 61-71 で初出）／ヘンドリック・ハウタッカー（1950年に強公理SARPを定式化し理論を一般化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/revealed-preference-theory', type: 'reference', label: 'Encyclopaedia Britannica (Money)「Revealed preference theory」— 1938年サミュエルソンによる提唱、観察行動ベースの枠組み' },
+      { url: 'https://en.wikipedia.org/wiki/Revealed_preference', type: 'reference', label: 'Wikipedia「Revealed preference」— WARP（Samuelson 1938）・SARP（Houthakker 1950）の定義' },
+      { url: 'https://www.semanticscholar.org/paper/A-Note-on-the-Pure-Theory-of-Consumer\'s-Behaviour-Samuelson/1de2464829944076ef547f7a4f8b9aaa8dc871a0', type: 'academic', label: 'Samuelson, P. A. (1938) “A Note on the Pure Theory of Consumer’s Behaviour”, Economica 5(17): 61-71 — 原典（Semantic Scholar 書誌）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-94-009-7377-0_2', type: 'academic', label: 'Springer「Samuelson and Consumption Theory」— 顕示選好の操作主義的基礎づけに関する学術解説' },
+    ],
+  },
+  {
+    id: 'mgmt-hofstede-dimensions',
+    discipline: 'management',
+    title: 'ホフステッドの文化次元論',
+    statement:
+      'オランダの社会心理学者ヘールト・ホフステッドが、多国籍企業IBMの社員を対象とした大規模な国際意識調査（1960年代後半〜1970年代初頭、50カ国超・10万件超）の分析から、国民文化を比較する尺度を抽出した枠組み。1980年の『Culture’s Consequences』で当初4次元――(1)権力格差、(2)個人主義対集団主義、(3)男性性対女性性、(4)不確実性回避――を提示した。' +
+      '後にマイケル・ボンドらの中国的価値観調査に由来する(5)長期志向対短期志向、さらにミンコフとの研究で(6)放縦対抑制が加わり6次元となった。各国は次元ごとにスコア化され異文化比較に広く用いられる。一方で、単一企業（IBM）かつ1970年前後の古いデータに依拠する点、国民を均質とみなし国内の地域・世代・階層差を捨象する点、集団レベルの相関を個人に適用する生態学的誤謬（ecological fallacy）の危険など、妥当性への批判も提起されている。',
+    keyFigures: 'ヘールト・ホフステッド（Geert Hofstede、提唱者）／初出『Culture’s Consequences』(1980年、当初4次元)／マイケル・ボンド（長期志向＝中国的価値観調査由来）／ミハイル・ミンコフ（放縦対抑制を共同で追加、2010年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarworks.gvsu.edu/orpc/vol2/iss1/8/', type: 'academic', label: 'Geert Hofstede, “Dimensionalizing Cultures: The Hofstede Model in Context”, Online Readings in Psychology and Culture 2(1), 2011（査読論文）' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/hofstedes-cultural-dimensions-theory', type: 'reference', label: 'EBSCO Research Starters: Hofstede’s cultural dimensions theory（百科事典級レファレンス）' },
+      { url: 'https://geerthofstede.com/culture-geert-hofstede-gert-jan-hofstede/6d-model-of-national-culture/', type: 'reference', label: 'Geert Hofstede 公式サイト「The 6 dimensions model of national culture」' },
+      { url: 'https://en.wikipedia.org/wiki/Hofstede%27s_cultural_dimensions_theory', type: 'reference', label: 'Wikipedia: Hofstede’s cultural dimensions theory' },
+    ],
+  },
+  {
+    id: 'mgmt-psychological-safety',
+    discipline: 'management',
+    title: '心理的安全性',
+    statement:
+      'チームのメンバーが共有する「対人関係上のリスク（質問・懸念の表明・失敗の報告・異議申し立て）をとっても、罰せられたり恥をかかされたりしない」という信念を指す。エイミー・エドモンドソンが1999年の論文で、組織行動論におけるチームレベルの構成概念として定式化した。心理的安全性が高いチームほど学習行動（失敗の共有・支援要請・改善の試み）が促進され、これがチーム業績へとつながる（学習行動が両者を媒介する）。' +
+      'Googleの「プロジェクト・アリストテレス」が効果的なチームの最重要因子として注目したことで広く知られるようになった。「居心地の良さ」や「対立がないこと」とは異なり、率直さ（candor）や建設的な対立・高い基準と両立する点が重要で、甘やかしや責任の免除を意味しない。',
+    keyFigures: 'エイミー・エドモンドソン（Amy C. Edmondson、ハーバード・ビジネス・スクール教授）／初出: Edmondson, A. C. (1999) “Psychological Safety and Learning Behavior in Work Teams”, Administrative Science Quarterly, 44(2), 350–383',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2307/2666999', type: 'academic', label: 'Edmondson, A. C. (1999) “Psychological Safety and Learning Behavior in Work Teams”, Administrative Science Quarterly 44(2), 350–383 (SAGE Journals)' },
+      { url: 'https://dash.harvard.edu/entities/publication/13a7b031-0fdd-45ec-a7e0-2b80e2bc679f', type: 'academic', label: 'Harvard DASH 機関リポジトリ — 同論文の書誌・要旨' },
+      { url: 'https://en.wikipedia.org/wiki/Psychological_safety', type: 'reference', label: 'Wikipedia「Psychological safety」' },
+    ],
+  },
+  {
+    id: 'human-equity-theory',
+    discipline: 'human-science',
+    title: '公平理論（衡平理論）',
+    statement:
+      '人は職務に投じる「インプット（努力・スキル・時間・経験）」と、そこから得る「アウトカム（報酬・承認・昇進）」の比率を、他者（比較対象）の比率と照合し、両者の比が等しいとき公平（equity）と知覚する、とする動機づけの過程理論。自分の比率が他者より低い（過小報酬）または高い（過大報酬）と知覚すると緊張（tension）が生じ、人はこれを低減しようとして、努力量の増減、報酬交渉、比較対象の変更、インプット／アウトカムの認知的な歪曲、あるいは離職といった行動をとる。' +
+      '社会的交換と互恵性の概念に基づき、職場の報酬・公正感・モチベーションを説明する。アウトカムの分配の公正を扱うため分配的公正（distributive justice）の理論に位置づけられ、後の組織的公正（手続き的公正を含む）研究の源流の一つとなった。',
+    keyFigures: 'ジョン・ステイシー・アダムス（John Stacey Adams）／初出: Adams (1963) “Toward an Understanding of Inequity”, Journal of Abnormal and Social Psychology／発展: Adams (1965) “Inequity in Social Exchange”, in Berkowitz (Ed.), Advances in Experimental Social Psychology, Vol. 2, pp. 267–299',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://biz.libretexts.org/Bookshelves/Management/Organizational_Behavior/05:_Theories_of_Motivation/05.3:_Process-Based_Theories', type: 'academic', label: 'Business LibreTexts (Organizational Behavior, 5.3 Process-Based Theories) — equity theory／分配的公正／緊張と反応' },
+      { url: 'https://www.ebsco.com/research-starters/politics-and-government/equity-theory', type: 'reference', label: 'EBSCO Research Starters — Equity theory (Adams 1963/1965、インプット/アウトカム比の比較)' },
+      { url: 'https://courses.lumenlearning.com/wmintrobusiness/chapter/reading-process-based-theories/', type: 'academic', label: 'Lumen Learning — Reading: Equity Theory（過程理論としての公平理論）' },
+    ],
+  },
+  {
+    id: 'bizlaw-fraudulent-rescission',
+    discipline: 'business-law',
+    title: '詐害行為取消権（民法424条）',
+    statement:
+      '詐害行為取消権とは、債務者が債権者を害することを知ってした行為（詐害行為。例えば責任財産を不当に減少させる贈与や廉価売却）について、債権者がその行為の取消しと、逸出した財産の取戻しを裁判所に請求できる権利をいう（民法424条1項）。総債権者の引当てとなる債務者の責任財産を保全するための制度で、財産権を目的としない行為には適用されない（同条2項）。被保全債権は当該行為の前の原因に基づき生じたものに限られる（同条3項）。' +
+      '行使には必ず裁判上の請求（訴え）を要する点が特徴で、債権者が自己の名で債務者の権利を行使する債権者代位権（423条）とは別の制度である。2020年4月1日施行の改正民法で、相当の対価を得てした財産処分行為（424条の2）や特定の債権者への弁済・担保供与＝偏頗行為（424条の3）の取扱い、取消しの効果が債務者にも及ぶこと等の要件・効果が整理・明文化された。',
+    keyFigures: '根拠条文＝民法424条〜426条／要件＝被保全債権の存在・債務者の無資力（詐害行為時および取消権行使時の双方）・詐害行為・債務者の詐害の意思・受益者および転得者の悪意／424条の2＝相当の対価を得た処分行為は隠匿等の意思と受益者の悪意で取消可／424条の3＝偏頗行為は原則非該当だが支払不能時の通謀害意で取消可／行使方法＝必ず裁判上の請求／施行＝2020年4月1日（債権法改正）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、law id 129AC0000000089）第424条 詐害行為取消請求' },
+      { url: 'https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2016/06/tlj-20-kiji01.pdf', type: 'academic', label: '北秀昭「詐害行為取消権の民法改正案の特質」筑波ロー・ジャーナル（筑波大学法科大学院）' },
+      { url: 'https://www.businesslawyers.jp/practices/1183', type: 'media', label: 'BUSINESS LAWYERS 詐害行為と逸出財産の返還・取消権の消滅時効・偏頗行為の要件' },
+    ],
+  },
+  {
+    id: 'infosoc-moral-panic',
+    discipline: 'information-sociology',
+    title: '道徳的パニック（モラル・パニック）',
+    statement:
+      'ある状態・出来事・人物・集団が、社会の価値や利益に対する脅威として（しばしば実害に比して過剰に）定義され、メディアによってセンセーショナルに描かれることで広がる社会現象。報道は明確な悪役＝「フォーク・デビル（folk devils、社会の敵役）」を構築し、道徳的非難・取り締まり強化・立法といった社会的反応を増幅させる。スタンレー・コーエンは1964年のモッズとロッカーズの抗争報道を分析し、実際の被害は軽微だったにもかかわらず新聞が事態を誇張した過程を「逸脱増幅（deviancy amplification、増幅スパイラル）」として描いた。' +
+      '後にゴード＆ベン＝イェフダが、関心（concern）・敵意（hostility）・合意（consensus）・不均衡（disproportionality）・変動性（volatility）という5つの指標で類型化した。沈黙の螺旋や議題設定とは別概念のメディア社会学的現象である。',
+    keyFigures: 'スタンレー・コーエン（Stanley Cohen）― 初出『Folk Devils and Moral Panics』(1972) で定式化／エリック・ゴード（Erich Goode）＆ナフマン・ベン＝イェフダ（Nachman Ben-Yehuda）― 『Moral Panics: The Social Construction of Deviance』(1994/2009) で5指標を整理',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Moral_panic', type: 'reference', label: 'Wikipedia「Moral panic」― コーエンの定義・モッズ＆ロッカーズ・逸脱増幅' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/folk-devil', type: 'reference', label: 'EBSCO Research Starters「Folk devil」― フォーク・デビル概念とコーエン(1972)' },
+      { url: 'https://link.springer.com/chapter/10.1057/9780230274679_2', type: 'academic', label: 'Springer Nature「The Concept of the Moral Panic: An Historico-Sociological Positioning」' },
+      { url: 'https://www.essex.ac.uk/blog/posts/2025/04/04/book-review-folk-devils-and-moral-panics', type: 'academic', label: 'University of Essex ― 書評『Folk Devils and Moral Panics』(1972)' },
+    ],
+  },
 ];
 // Stryker restore all
