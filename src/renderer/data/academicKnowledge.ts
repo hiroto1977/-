@@ -283,21 +283,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-diffusion-of-innovations',
-    discipline: 'information-sociology',
-    title: 'イノベーションの普及理論（Diffusion of Innovations）',
-    statement:
-      'イノベーションの普及理論は、社会学者エベレット・ロジャーズが1962年の著書で体系化した、新しいアイデア・技術が社会システム内に時間をかけて広まる過程の理論である。採用者は採用の早い順にイノベーター(2.5%)・アーリーアダプター(13.5%)・アーリーマジョリティ(34%)・' +
-      'レイトマジョリティ(34%)・ラガード(16%)の5類型に分類され、累積採用率はS字カーブを描く。普及速度は、相対的優位性・両立可能性・複雑性・試行可能性・観察可能性という5つの知覚属性に左右される。なお、ジェフリー・ムーアの「キャズム」（アーリーアダプターとアーリーマジョリティの間の溝）はこの曲線を前提とした関連概念である。',
-    keyFigures: 'エベレット・ロジャーズ（1962）／関連: ジェフリー・ムーア（キャズム）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sphweb.bumc.bu.edu/otlt/mph-modules/sb/behavioralchangetheories/behavioralchangetheories4.html', type: 'academic', label: 'Boston University School of Public Health — Diffusion of Innovation Theory' },
-      { url: 'https://www.britannica.com/topic/diffusion-of-innovations', type: 'reference', label: 'Encyclopaedia Britannica — Diffusion of innovations' },
-      { url: 'https://www.techtarget.com/whatis/feature/Diffusion-of-innovations-theory-Definition-and-examples', type: 'media', label: 'TechTarget — Diffusion of innovations theory' },
-    ],
-  },
-  {
     id: 'econ-keynesian-effective-demand',
     discipline: 'economics',
     title: '有効需要の原理と乗数効果（ケインズ経済学）',
@@ -418,21 +403,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-balanced-scorecard',
-    discipline: 'management',
-    title: 'バランスト・スコアカード（BSC）',
-    statement:
-      'バランスト・スコアカード（BSC）は、ロバート・キャプランとデビッド・ノートンが1992年のHarvard Business Review論文で提唱した業績評価・戦略マネジメントの枠組みである。財務指標に偏った従来の評価では知識・イノベーション時代の企業実態を捉えきれないという問題意識から、(1)財務、(2)顧客、(3)業務プロセス（内部ビジネスプロセス）、(4)学習と成長の4つの視点から、' +
-      '戦略目標・KPI・ターゲット・施策をバランスよく管理する。各視点に財務・非財務の指標を結びつけ、短期的成果と長期的な能力構築を同時に可視化・統制できる点に特徴がある。1996年以降は4視点の戦略目標を因果連鎖（学習と成長→内部プロセス→顧客→財務）として図示する「戦略マップ」を導入し、測定ツールから戦略実行のマネジメント・システムへ拡張した。',
-    keyFigures: 'ロバート・キャプラン／デビッド・ノートン（1992 HBR）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'academic', label: 'Kaplan & Norton, The Balanced Scorecard, Harvard Business Review (1992)' },
-      { url: 'https://online.hbs.edu/blog/post/balanced-scorecard', type: 'academic', label: 'Harvard Business School Online — What Is a Balanced Scorecard?' },
-      { url: 'https://www.mdpi.com/2673-8392/5/1/39', type: 'academic', label: 'Encyclopedia (MDPI) — Balanced Scorecard: History, Implementation, and Impact' },
-    ],
-  },
-  {
     id: 'human-social-loafing',
     discipline: 'human-science',
     title: '社会的手抜き（リンゲルマン効果）',
@@ -463,21 +433,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-divide',
-    discipline: 'information-sociology',
-    title: 'デジタルデバイド（情報格差）',
-    statement:
-      'デジタルデバイド（情報格差）とは、情報通信技術（ICT・インターネット）へのアクセスや利用能力の有無によって生じる、個人・集団・地域・国家間の格差を指す概念である。OECDは「ICTへのアクセス機会及びインターネットの多様な利用に関して、異なる社会経済水準にある個人・世帯・企業・地域間に存在する格差」と定義する。' +
-      '研究上は、機器・回線を持てるかという「アクセス格差（第一のデバイド）」、使いこなすスキル・リテラシーの差である「利用・スキル格差（第二のデバイド）」、利用を経済的・社会的成果へ変換できるかという「活用・成果の格差（第三のデバイド）」に区分して論じられる。格差は地域間・世代間・所得間・国際間に現れ、総務省・OECD・ITU等が解消（デジタル・インクルージョン）を図っている。',
-    keyFigures: '総務省／OECD／ITU／J.ファンダイク（3段階デバイド）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.oecd.org/en/topics/digital-divides.html', type: 'government', label: 'OECD — Digital divides' },
-      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h23/html/nc222310.html', type: 'government', label: '総務省 情報通信白書 — デジタル・ディバイド' },
-      { url: 'https://www.itu.int/itu-d/reports/statistics/facts-figures-2025/', type: 'government', label: 'ITU — Measuring digital development: Facts and Figures 2025' },
-    ],
-  },
-  {
     id: 'econ-inflation-deflation',
     discipline: 'economics',
     title: 'インフレーションとデフレーション（物価変動と金融政策）',
@@ -505,21 +460,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/money/environmental-economics/The-Coase-theorem', type: 'reference', label: 'Encyclopædia Britannica (Money) — The Coase theorem' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/1991/coase/lecture/', type: 'government', label: 'NobelPrize.org — Ronald Coase, 1991 Prize Lecture' },
       { url: 'https://en.wikipedia.org/wiki/Coase_theorem', type: 'reference', label: 'Wikipedia — Coase theorem（定義・スティグラー命名の経緯）' },
-    ],
-  },
-  {
-    id: 'econ-liquidity-trap',
-    discipline: 'economics',
-    title: '流動性の罠（liquidity trap）',
-    statement:
-      '名目金利がゼロ近傍まで低下した結果、貨幣と債券が事実上の完全代替物となり、人々が両者を無差別に保有する（追加供給された貨幣を退蔵する）ため、中央銀行が貨幣供給を増やしても金利をそれ以上下げられず総需要を刺激できなくなる状態。' +
-      'IS-LM分析では貨幣需要曲線（LM曲線の一部）が水平となり、貨幣供給の増加が金利低下を生まないため伝統的金融政策が無効化する。J.M.ケインズが『一般理論』(1936)で示唆し、J.R.ヒックスがIS-LMモデルで概念と政策的含意を定式化、ポール・クルーグマンが1998年の論文で日本のデフレ・ゼロ金利不況を分析して現代的に再評価した。含意として財政政策の有効性、インフレ期待の醸成（負の実質金利の実現）、量的緩和など非伝統的金融政策の役割が論じられる。',
-    keyFigures: 'J.M.ケインズ（1936『一般理論』で示唆）／J.R.ヒックス（IS-LMで定式化）／ポール・クルーグマン（1998 日本の流動性の罠を再評価）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/liquidity-trap', type: 'reference', label: 'Encyclopedia.com — Liquidity Trap（ケインズ示唆／ヒックスIS-LM定式化）' },
-      { url: 'https://www.brookings.edu/articles/its-baaack-japans-slump-and-the-return-of-the-liquidity-trap/', type: 'academic', label: 'Krugman (1998) — It’s Baaack: Japan’s Slump and the Return of the Liquidity Trap（BPEA）' },
-      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2000/06/japan-recession-is-the-liquidity-trap-back/', type: 'government', label: 'San Francisco Fed — Japan’s Recession: Is the Liquidity Trap Back? (2000)' },
     ],
   },
   {
@@ -673,21 +613,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-tragedy-of-commons',
-    discipline: 'economics',
-    title: 'コモンズの悲劇（tragedy of the commons）',
-    statement:
-      '誰でも利用でき排除が困難だが消費が競合的な共有資源（共有地・漁場・水・大気など）について、各個人が自己の利益を最大化しようと利用を増やした結果、資源が過剰利用されて枯渇・劣化し、結局は全員が損をする状況。' +
-      '利用による便益は個人に帰属する一方コストは全利用者で共有されるため、個人にとって合理的な行動が集団全体には不利益をもたらす、個人と集団の合理性の衝突が本質である。米国の生態学者ギャレット・ハーディンが1968年の『Science』論文「The Tragedy of the Commons」で牧草地の例を用いて広く知らしめた。後にエリノア・オストロムが、共同体による自主的なルールや制度設計を通じてコモンズが持続的に管理されうることを実地調査に基づき実証し2009年にノーベル経済学賞を受賞、ハーディンの悲観的結論が普遍的ではなく限定的であることを示した。',
-    keyFigures: 'ギャレット・ハーディン（1968 Science 162:1243-1248）／エリノア・オストロム（自主管理を実証、2009ノーベル経済学賞）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.science.org/doi/10.1126/science.162.3859.1243', type: 'academic', label: 'Garrett Hardin (1968) The Tragedy of the Commons, Science 162(3859):1243-1248（原典）' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/', type: 'government', label: 'NobelPrize.org — Elinor Ostrom 2009（コモンズの分析）' },
-      { url: 'https://www.britannica.com/science/tragedy-of-the-commons', type: 'reference', label: 'Encyclopaedia Britannica — Tragedy of the commons' },
-    ],
-  },
-  {
     id: 'econ-sunk-cost',
     discipline: 'economics',
     title: 'サンクコスト（埋没費用）とサンクコストの誤謬',
@@ -700,21 +625,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/money/sunk-cost', type: 'reference', label: 'Encyclopaedia Britannica Money — Sunk cost' },
       { url: 'https://ideas.repec.org/a/eee/jobhdp/v35y1985i1p124-140.html', type: 'academic', label: 'Arkes & Blumer (1985) The Psychology of Sunk Cost, OBHDP 35(1):124-140（RePEc）' },
       { url: 'https://thedecisionlab.com/biases/the-sunk-cost-fallacy', type: 'reference', label: 'The Decision Lab — Sunk Cost Fallacy（コンコルド効果）' },
-    ],
-  },
-  {
-    id: 'human-dunning-kruger',
-    discipline: 'human-science',
-    title: 'ダニング＝クルーガー効果',
-    statement:
-      '能力の低い人ほど自分の能力を過大評価し、能力の高い人はむしろ過小評価する傾向があるとされる認知バイアス。ある領域で良い成績を出すために必要な能力は自分の成績を正しく評価するために必要な能力でもあるため、能力が欠如している人は同時に自分の不足を認識するメタ認知能力も欠き自己を過大評価してしまうと説明される。' +
-      '心理学者デイヴィッド・ダニングとジャスティン・クルーガーが1999年の論文「Unskilled and Unaware of It」(Journal of Personality and Social Psychology 77(6):1121-1134)で報告し、下位四分位の成績者が自身の順位を大きく過大評価した結果を示した。ただし近年は、観察されたパターンの少なくとも一部は平均への回帰や自己相関といった統計的アーティファクトで説明できるとする批判・再検証がある。',
-    keyFigures: 'デイヴィッド・ダニング & ジャスティン・クルーガー（1999, JPSP 77(6):1121-1134）／批判: Gignac & Zajenkowski（2020）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/science/Dunning-Kruger-effect', type: 'reference', label: 'Encyclopaedia Britannica — Dunning-Kruger effect' },
-      { url: 'https://sites.lsa.umich.edu/sasi/wp-content/uploads/sites/275/2015/11/krugerdunning02.pdf', type: 'academic', label: 'Kruger & Dunning (1999) Unskilled and Unaware of It, JPSP 77(6):1121-1134（原典）' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0160289620300271', type: 'academic', label: 'Gignac & Zajenkowski (2020) Intelligence — 統計的アーティファクト批判' },
     ],
   },
   {
@@ -745,21 +655,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng', type: 'government', label: 'Regulation (EU) 2016/679 — EUR-Lex（EU公式法令データベース原典）' },
       { url: 'https://gdpr-info.eu/art-17-gdpr/', type: 'reference', label: 'Art. 17 GDPR — Right to erasure (right to be forgotten)' },
       { url: 'https://globalfreedomofexpression.columbia.edu/cases/google-spain-sl-v-agencia-espanola-de-proteccion-de-datos-aepd/', type: 'academic', label: 'Columbia Global Freedom of Expression — Google Spain v. AEPD（C-131/12）' },
-    ],
-  },
-  {
-    id: 'mgmt-blue-ocean',
-    discipline: 'management',
-    title: 'ブルー・オーシャン戦略（Blue Ocean Strategy）',
-    statement:
-      '既存の競争が激しく価格・コストの消耗戦に陥った市場＝レッド・オーシャンを避け、競争のない未開拓の市場空間＝ブルー・オーシャンを創造して競争自体を無意味化する経営戦略論。' +
-      '差別化と低コストを同時に追求する「価値革新（バリュー・イノベーション）」を核とし、業界の競争要因を可視化する戦略キャンバスや、競争要因を除去(Eliminate)・削減(Reduce)・増加(Raise)・創造(Create)の4アクションで再構成するERRCグリッドなどのツールを用いる。W・チャン・キムとレネ・モボルニュ（ともにINSEAD教授）が、1880〜2000年の30超の業界における150の戦略的打ち手の研究をもとに2005年の著書『Blue Ocean Strategy』で体系化した。シルク・ドゥ・ソレイユ等が代表的事例とされる。',
-    keyFigures: 'W・チャン・キム & レネ・モボルニュ（2005『Blue Ocean Strategy』、INSEAD）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/money/blue-ocean-strategy-explained', type: 'reference', label: 'Encyclopaedia Britannica (Money) — Blue Ocean Strategy Explained' },
-      { url: 'https://knowledge.insead.edu/series/blue-ocean-strategy', type: 'academic', label: 'INSEAD Knowledge — Blue Ocean Strategy series（著者所属校の一次情報）' },
-      { url: 'https://www.emerald.com/insight/content/doi/10.1108/02756660510608521/full/html', type: 'academic', label: 'Kim & Mauborgne (2005) Value innovation: a leap into the blue ocean, J. of Business Strategy（Emerald 査読誌）' },
     ],
   },
   {
@@ -1003,21 +898,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-cooling-off',
-    discipline: 'business-law',
-    title: 'クーリング・オフ（特定商取引法）',
-    statement:
-      '訪問販売や電話勧誘販売など不意打ち的でトラブルの多い取引類型について、契約後一定期間内であれば消費者が理由を問わず無条件で契約の申込みの撤回・解除をできる制度で、特定商取引法等が定める。' +
-      '期間は取引類型で異なり、訪問販売・電話勧誘販売・特定継続的役務提供・訪問購入は法定書面（申込書面または契約書面）の交付日を1日目として8日間、連鎖販売取引（マルチ商法）・業務提供誘引販売取引は20日間である。通信販売には法律上のクーリング・オフ制度はなく、返品の可否は事業者の返品特約（広告に特約がなければ商品受取日から8日間返品可・送料は消費者負担）による。店舗での自発的な購入も原則対象外。2022年6月1日からは書面に加え電子メール等の電磁的記録による通知も可能になった。消費者庁・国民生活センターが制度の普及啓発を担う。',
-    keyFigures: '特定商取引法のクーリング・オフ（書面交付日起算8日間／20日間）／消費者庁・国民生活センター',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.no-trouble.caa.go.jp/what/', type: 'government', label: '消費者庁 特定商取引法ガイド — 特定商取引法とは（類型別クーリング・オフ期間）' },
-      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター — クーリング・オフ（テーマ別特集）' },
-      { url: 'https://www.no-trouble.caa.go.jp/qa/coolingoff.html', type: 'government', label: '消費者庁 — 電磁的記録によるクーリング・オフに関するQ&A（2022年6月施行）' },
-    ],
-  },
-  {
     id: 'infosoc-spiral-of-silence',
     discipline: 'information-sociology',
     title: '沈黙の螺旋（spiral of silence）',
@@ -1150,21 +1030,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.richmondfed.org/-/media/richmondfedorg/publications/research/economic_review/1974/pdf/er600301.pdf', type: 'government', label: 'Humphrey (1974) The Quantity Theory of Money: Historical Evolution, Richmond Fed Economic Review' },
       { url: 'https://www.ebsco.com/research-starters/business-and-management/quantity-theory-money', type: 'academic', label: 'EBSCO Research Starters — Quantity theory of money' },
       { url: 'https://en.wikipedia.org/wiki/Quantity_theory_of_money', type: 'reference', label: 'Wikipedia — Quantity theory of money' },
-    ],
-  },
-  {
-    id: 'mgmt-lean-startup',
-    discipline: 'management',
-    title: 'リーン・スタートアップ（Lean Startup）',
-    statement:
-      '不確実性の高い新事業・製品開発において、最小限の機能を持つ試作品＝MVP（Minimum Viable Product）を素早く作り、顧客の反応を計測して学習する「構築-計測-学習（Build-Measure-Learn）」のフィードバックループを高速で回すことで、無駄を省きつつ事業仮説を検証していく方法論。' +
-      '検証による学習（validated learning）を重視し、当初の仮説が誤りであれば方向転換＝ピボット（pivot）を行う。エリック・リースが2011年の著書『The Lean Startup』で提唱した。トヨタ生産方式に代表されるリーン生産方式と、スティーブ・ブランクの顧客開発（customer development）モデルに着想を得ている。',
-    keyFigures: 'エリック・リース（2011『The Lean Startup』）／源流: スティーブ・ブランク（顧客開発）・トヨタ生産方式',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://theleanstartup.com/principles', type: 'reference', label: 'エリック・リース公式サイト — The Lean Startup Principles（BMLループ）' },
-      { url: 'https://www.lse.ac.uk/assets/richmedia/channels/publicLecturesAndEvents/slides/20120112_1830_theLeanStartup_sl.pdf', type: 'academic', label: 'London School of Economics — The Lean Startup 公開講義スライド（リース登壇）' },
-      { url: 'https://leanstartup.co/about/principles/', type: 'reference', label: 'Lean Startup Co.（リース主宰）— 中核原則' },
     ],
   },
   {
@@ -1513,21 +1378,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-expectancy-theory',
-    discipline: 'management',
-    title: '期待理論（ブルームのVIE理論, expectancy theory）',
-    statement:
-      '人の動機づけ（モチベーションの強さ）は、努力が成果につながるという「期待（Expectancy）」、成果が報酬をもたらすという「手段性（Instrumentality）」、その報酬がどれだけ魅力的かという「誘意性（Valence）」の3要素の積で決まるとする動機づけ理論。動機づけ＝期待×手段性×誘意性 と定式化され、3つのいずれかがゼロなら動機づけもゼロになる。' +
-      'ビクター・ブルームが1964年の著書『Work and Motivation』で提唱した。報酬の魅力と達成可能性の主観的認知を重視する点が特徴である。後にポーター&ローラーが1968年の著書『Managerial Attitudes and Performance』で、能力・役割認識・報酬の公平性、および業績と満足の関係を加えて拡張した。マズローやハーズバーグの内容理論（人が何を求めるか）に対し、動機づけのプロセス（どう行動を選ぶか）に着目するプロセス理論に分類される。',
-    keyFigures: 'ビクター・ブルーム（1964『Work and Motivation』）／拡張: ポーター&ローラー（1968）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/vrooms-expectancy-theory/', type: 'academic', label: 'University of Cambridge IfM — Vroom’s expectancy theory' },
-      { url: 'https://www.ebsco.com/research-starters/economics/expectancy-theory', type: 'academic', label: 'EBSCO Research Starters — Expectancy theory' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/21582440211021896', type: 'academic', label: 'SAGE Open (2021) — Valence–Instrumentality–Expectancy Model of Motivation' },
-    ],
-  },
-  {
     id: 'human-milgram-obedience',
     discipline: 'human-science',
     title: 'ミルグラムの服従実験（Milgram experiment）',
@@ -1618,21 +1468,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-group-polarization',
-    discipline: 'human-science',
-    title: '集団極化（集団分極化, group polarization）',
-    statement:
-      '集団で討議すると、討議後の集団の意見が、メンバーが当初もっていた意見の平均よりもより極端な方向へ移行する現象。集団がリスキーな方向へ傾く「リスキー・シフト」と、慎重な方向へ傾く「コーシャス・シフト」の双方を含む、より一般的な概念である。' +
-      '機序として、討議中に自分の立場を支持する新たな論拠に接することで態度が強まるとする「説得的論拠説（persuasive arguments theory）」と、集団内で望ましいとされる立場へ自分を位置づけようとする「社会的比較説（social comparison theory）」の二つが主に挙げられ、両者は併存しうる。1961年のストーナーのリスキー・シフト研究を起点とし、モスコビッシとザヴァローニが1969年に「集団極化」と命名（JPSP 12:125-135）、D.マイヤーズらが研究を発展させた。陪審評議、政治的分極化、インターネット上のエコーチェンバーでの意見の過激化などの説明に用いられる。',
-    keyFigures: 'ストーナー（1961 リスキー・シフト）／モスコビッシ & ザヴァローニ（1969 命名）／D.マイヤーズ',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://dictionary.apa.org/group-polarization', type: 'academic', label: 'APA Dictionary of Psychology — Group polarization（米国心理学会）' },
-      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2680487', type: 'academic', label: 'Moscovici & Zavalloni (1969) The Group as a Polarizer of Attitudes, JPSP 12:125-135（原典書誌）' },
-      { url: 'https://en.wikipedia.org/wiki/Group_polarization', type: 'reference', label: 'Wikipedia — Group polarization' },
-    ],
-  },
-  {
     id: 'bizlaw-apparent-agency',
     discipline: 'business-law',
     title: '表見代理',
@@ -1705,21 +1540,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.bcg.com/publications/1968/business-unit-strategy-growth-experience-curve', type: 'reference', label: 'BCG — The Experience Curve（1968 オリジナル/Perspectives, 一次出典）' },
       { url: 'https://en.wikipedia.org/wiki/Experience_curve_effects', type: 'reference', label: 'Wikipedia — Experience curve effects（Wright 1936 / BCG 1960s）' },
       { url: 'https://en.wikipedia.org/wiki/Theodore_Paul_Wright', type: 'reference', label: 'Wikipedia — Theodore Paul Wright（1936論文・Curtiss-Wright）' },
-    ],
-  },
-  {
-    id: 'human-fundamental-attribution-error',
-    discipline: 'human-science',
-    title: '基本的帰属の誤り（対応バイアス, fundamental attribution error）',
-    statement:
-      '他者の行動の原因を説明する際に、状況的要因（外的要因）の影響を過小評価し、その人の性格・能力・態度といった内的・気質的要因を過大評価する傾向。たとえば遅刻した人を見て「渋滞」（状況）より「だらしない性格」（気質）のせいだと考えやすい。' +
-      '社会心理学者リー・ロスが1977年にこの語を提唱した。ジョーンズとハリス（1967）の実験——被験者に、書き手が強制的に書かされたと知らされた意見文でも書き手の本心（態度）だと推測する傾向＝対応バイアス——が古典的根拠とされる。自分の行動は状況のせい、他者の行動は性格のせいと考える「行為者-観察者バイアス」とも関連する。なお西洋（個人主義）文化で強く、東アジア（集団主義）文化では弱いという文化差の指摘もある。',
-    keyFigures: 'リー・ロス（1977 命名）／エドワード・ジョーンズ & ヴィクター・ハリス（1967 対応バイアス実験）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/science/fundamental-attribution-error', type: 'reference', label: 'Encyclopaedia Britannica — Fundamental attribution error' },
-      { url: 'https://en.wikipedia.org/wiki/Fundamental_attribution_error', type: 'reference', label: 'Wikipedia — Fundamental attribution error（ロス1977・ジョーンズ&ハリス1967・文化差）' },
-      { url: 'https://sk.sagepub.com/ency/edvol/download/socialpsychology/chpt/fundamental-attribution-error.pdf', type: 'academic', label: 'SAGE Encyclopedia of Social Psychology — Fundamental Attribution Error' },
     ],
   },
   {
@@ -2038,21 +1858,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-solow-growth-model',
-    discipline: 'economics',
-    title: 'ソロー成長モデル（新古典派成長理論）',
-    statement:
-      '長期の経済成長を、資本蓄積・労働力の増加・技術進歩から説明する新古典派の経済成長モデル。資本には収穫逓減（限界生産力の逓減）が働くため、貯蓄・投資による資本蓄積だけでは成長は次第に鈍化し、経済は資本・産出が一定比率で成長する「定常状態（steady state）」に収束する。' +
-      'したがって一人当たり所得を持続的に成長させる究極の源泉は、モデル内では説明されない外生的な「技術進歩（全要素生産性, TFP）」であると結論づける（成長会計で資本・労働の寄与で説明できない残差を『ソロー残差』と呼ぶ）。初期資本が乏しい国ほど資本の限界生産力が高く速く成長するという『収束仮説』も含意する。ロバート・ソローとトレバー・スワンが1956年にそれぞれ独立に提唱し（ソローは1987年ノーベル経済学賞）、技術進歩を外生変数とする限界が、後の内生的成長理論（ローマー等）を生む契機となった。',
-    keyFigures: 'ロバート・M・ソロー & トレバー・スワン（1956独立提唱）／ソロー残差(TFP)・収束仮説／ソロー1987ノーベル賞／対比: 内生的成長理論(ローマー)',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/money/Robert-Solow', type: 'reference', label: 'Encyclopædia Britannica — Robert Solow / neoclassical growth model' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1987/summary/', type: 'government', label: 'NobelPrize.org — 1987年経済学賞（ソロー、経済成長理論）' },
-      { url: 'https://www.nber.org/system/files/working_papers/w13950/w13950.pdf', type: 'academic', label: 'NBER WP 13950 — Trevor Swan and the Neoclassical Growth Model' },
-    ],
-  },
-  {
     id: 'mgmt-generic-strategies',
     discipline: 'management',
     title: 'ポーターの3つの基本戦略（generic strategies）',
@@ -2113,23 +1918,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-mundell-fleming',
-    discipline: 'economics',
-    title: 'マンデル＝フレミング・モデル',
-    statement:
-      '開放経済（国際的な資本移動がある経済）における IS-LM モデルの拡張で、財市場・貨幣市場に国際収支（為替）の均衡を加え（IS-LM-BoP モデルとも呼ばれる）、三市場の同時均衡を分析し、為替相場制度の違いによる財政・金融政策の有効性を比較する。' +
-      '資本移動が完全な小国開放経済の場合、変動相場制では金融政策が有効で財政政策は（金利上昇→資本流入→為替増価で輸出が減り）無効になり、固定相場制では逆に財政政策が有効で金融政策は無効になる、と示す。' +
-      'これは「国際金融のトリレンマ（不可能の三角形 / impossible trinity）」＝(1)自由な資本移動、(2)固定為替相場、(3)独立した金融政策の3つを同時に達成することはできず2つしか選べない、という命題の基礎をなす。ロバート・マンデルと J. マーカス・フレミングが IMF 調査局で1960年代前半に独立に展開し（フレミング1962年・マンデル1963年の論文）、マンデルは異なる為替相場制度下の金融・財政政策分析と最適通貨圏の理論により1999年ノーベル経済学賞を受賞した。',
-    keyFigures: 'ロバート・マンデル＆J.マーカス・フレミング（ともにIMF調査局、1960年代前半に独立に展開。フレミング1962年・マンデル1963年論文）／国際金融のトリレンマ（不可能の三角形）の基礎／マンデル：1999年ノーベル経済学賞（最適通貨圏の理論を含む）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'reference', label: 'NobelPrize.org — 1999年経済学賞 公式（受賞理由：為替相場制度下の金融・財政政策分析および最適通貨圏の理論）' },
-      { url: 'https://www.imf.org/external/pubs/ft/staffp/2003/01/PDF/Bough.pdf', type: 'government', label: 'IMF Staff Papers — James M. Boughton "On the Origins of the Fleming-Mundell Model"（モデルの起源・1962/1963論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Fleming_model', type: 'reference', label: 'Wikipedia — Mundell–Fleming model（IS-LM-BoP、為替制度別の政策有効性）' },
-      { url: 'https://en.wikipedia.org/wiki/Impossible_trinity', type: 'reference', label: 'Wikipedia — Impossible trinity（トリレンマの3条件と二者択一）' },
-    ],
-  },
-  {
     id: 'mgmt-stp-marketing',
     discipline: 'management',
     title: 'STPマーケティング',
@@ -2180,23 +1968,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-media-literacy',
-    discipline: 'information-sociology',
-    title: 'メディア・リテラシー',
-    statement:
-      '多様な形態のメディアにアクセスし、その内容を批判的に分析・評価し、自ら情報を創造・発信する能力。メディアが現実をそのまま映すのではなく、特定の視点・価値・商業的または政治的な意図のもとに構成（構築）されたものであることを理解し、誰がどんな目的で発信し、何が省かれているのかを問う力を含む。' +
-      '1992年にアスペン研究所が主催した全米メディアリテラシー指導者会議で示された「市民がさまざまな形態のメディアにアクセスし、分析・評価し、発信する能力」という定義が広く参照される（後に access・analyze・evaluate・create の4要素として整理された）。' +
-      'ユネスコは情報リテラシーとメディアリテラシーを統合した「メディア情報リテラシー（MIL）」を提唱し、教師向けカリキュラムや政策ガイドラインを通じて各国の教育政策への組み込みを支援している。フェイクニュース・偽情報・ヘイトスピーチが問題化するデジタル時代において、ユネスコはMILを偽情報に対する「第一の防衛線」と位置づけ、民主主義の基盤としてその重要性が高まっている。',
-    keyFigures: 'アスペン研究所 全米メディアリテラシー指導者会議（1992）— 4要素 access・analyze・evaluate・create／ユネスコ（UNESCO）— メディア情報リテラシー（MIL）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.unesco.org/en/media-information-literacy', type: 'government', label: 'UNESCO — Media and Information Literacy（MILの定義・政策・教育枠組み）' },
-      { url: 'https://www.unesco.org/en/articles/media-and-information-literacy-first-line-defence-against-disinformation', type: 'government', label: 'UNESCO — MIL as the first line of defence against disinformation' },
-      { url: 'https://www.medialit.org/reading-room/aspen-institute-report-national-leadership-conference-media-literacy', type: 'reference', label: 'Center for Media Literacy — Aspen Institute 1992 会議報告（定義の出典）' },
-      { url: 'https://eric.ed.gov/?id=ED365294', type: 'government', label: 'ERIC（米国教育省）ED365294 — Aufderheide, Media Literacy: A Report of the National Leadership Conference (1992/93)' },
-    ],
-  },
-  {
     id: 'econ-ricardian-equivalence',
     discipline: 'economics',
     title: 'リカードの等価定理（リカード=バローの中立命題）',
@@ -2228,23 +1999,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://openstax.org/books/principles-economics-3e/pages/31-4-fiscal-policy-investment-and-economic-growth', type: 'academic', label: 'OpenStax, Principles of Economics 3e §31.4 — Fiscal Policy, Investment, and Crowding Out' },
       { url: 'https://pages.stern.nyu.edu/~nroubini/NOTES/CHAP9.HTM', type: 'academic', label: 'NYU Stern (N. Roubini) — The IS-LM Model（LM曲線の傾きとクラウディングアウト）' },
       { url: 'https://www.pgpf.org/article/the-national-debt-can-crowd-out-investments-in-the-economy-heres-how/', type: 'media', label: 'Peter G. Peterson Foundation（CBO推計：赤字1ドル増→民間投資約33セント減）' },
-    ],
-  },
-  {
-    id: 'mgmt-dynamic-capabilities',
-    discipline: 'management',
-    title: 'ダイナミック・ケイパビリティ',
-    statement:
-      '急速に変化する環境の中で、企業が内外の資源・コンピテンスを統合（integrate）・構築（build）・再構成（reconfigure）して環境変化に対応・適応する高次の能力。' +
-      '資源ベース論（RBV）が企業の静的な資源・能力の保有を競争優位の源泉として重視するのに対し、ダイナミック・ケイパビリティ論はその資源基盤を動的に更新・刷新する上位の能力に注目し、RBVの動的拡張として位置づけられる。デイヴィッド・J・ティース、ゲイリー・ピサノ、エイミー・シューエンが1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal, 18巻7号, pp.509–533）で提唱・体系化した。' +
-      'ティースは後の2007年論文でこの能力を、機会・脅威を感知する「センシング（sensing）」、機会を捕捉し資源を動員する「シージング（seizing）」、資源・組織を再配置・変革する「トランスフォーミング／再構成（transforming）」の三要素に整理した。',
-    keyFigures: 'D.ティース・G.ピサノ・A.シューエン 1997（Strategic Management Journal 18(7):509–533）／三要素センシング・シージング・トランスフォーミング（Teece 2007, SMJ 28(13):1319–1350）／RBVの動的拡張',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) "Dynamic capabilities and strategic management", SMJ 18(7):509–533（Wiley, 出版元）' },
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.640', type: 'academic', label: 'Teece (2007) "Explicating dynamic capabilities", SMJ 28(13):1319–1350 — sensing/seizing/transformingの典拠（Wiley）' },
-      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Dynamic Capabilities Theory — TheoryHub, Newcastle University（RBV拡張と三次元の解説）' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia — Dynamic capabilities（定義と1997年提唱者の概説）' },
     ],
   },
   {
@@ -3411,23 +3165,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-heckscher-ohlin',
-    discipline: 'economics',
-    title: 'ヘクシャー＝オリーンの定理',
-    statement:
-      '各国は、自国に相対的に豊富に存在する生産要素を集約的に用いる財に比較優位をもち、それを輸出するとする国際貿易の理論。たとえば資本が豊富な国は資本集約財を、労働が豊富な国は労働集約財を輸出する。' +
-      'リカードが各国の技術（労働生産性）の差から比較優位を説明したのに対し、本定理は国ごとの生産要素の賦存比率（資本/労働など）の差に貿易パターンの原因を求める点に特色がある。スウェーデンの経済学者エリ・ヘクシャーと弟子のベルティル・オリーンが20世紀前半（ヘクシャー1919年・オリーン1933年）に展開した（新古典派貿易理論の基礎）。' +
-      '関連命題として、自由貿易が各国の生産要素価格を均等化させるとする要素価格均等化定理（サミュエルソン）がある。一方、米国が資本豊富国でありながら労働集約財を輸出していたという「レオンチェフの逆説」など、実証的にうまく当てはまらない例も知られる。',
-    keyFigures: '各国は相対的に豊富な要素を集約的に使う財に比較優位／要素賦存比率の差が貿易パターンを決める(リカードの技術差説明と対比)／E.ヘクシャー&B.オリーン(1919/1933)／要素価格均等化定理(サミュエルソン)／レオンチェフの逆説',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/money/Heckscher-Ohlin-theory', type: 'reference', label: 'Britannica Money — Heckscher-Ohlin theory (Definition, Examples, & Leontief Paradox)' },
-      { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_theorem', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin theorem' },
-      { url: 'https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-09-the-heckscher-ohlin-theorem.html', type: 'academic', label: 'Saylor Academy / International Trade: Theory and Policy — 5.9 The Heckscher-Ohlin Theorem' },
-      { url: 'https://www.econlib.org/library/Enc/bios/Ohlin.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — Bertil Ohlin' },
-    ],
-  },
-  {
     id: 'econ-optimal-currency-area',
     discipline: 'economics',
     title: '最適通貨圏（OCA）',
@@ -3886,23 +3623,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-attention-economy',
-    discipline: 'information-sociology',
-    title: '注意経済（アテンション・エコノミー）',
-    statement:
-      '情報が爆発的に豊富になった社会では、情報そのものではなく、人々の有限な「注意（アテンション）」こそが希少で価値ある資源になるという考え方。経済学者・社会科学者でノーベル賞受賞者のハーバート・サイモンが1971年の論考で「情報の豊かさは注意の貧困を生む（情報の消費は、その受け手の注意を消費する）」と指摘したことが先駆とされる。' +
-      '1990年代後半にはマイケル・ゴールドハーバーらが、経済の重心が物質から人間の注意へと移るとして「アテンション・エコノミー」として明確に論じた。デジタルメディアやプラットフォームの多くは、無料でサービスを提供する代わりに利用者の注意（滞在時間・閲覧）を集めて広告主に販売するビジネスモデルをとり、注意の獲得競争が激化する。' +
-      'これがクリックベイト、通知やレコメンドによる依存的設計、フェイクニュースの拡散、情報過多による集中力低下などの問題を生むと批判され、監視資本主義やプラットフォーム経済の議論とも結びつく。',
-    keyFigures: '情報過多の社会では有限な「注意」が希少資源になる／H.サイモン1971「情報の豊かさは注意の貧困を生む」が先駆／1990年代後半M.ゴールドハーバーらがアテンション・エコノミーとして論じる／無料サービスで注意を集め広告に売るモデル／クリックベイト・依存的設計・情報過多の弊害／監視資本主義と関連',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://link.springer.com/article/10.1007/s12599-020-00631-6', type: 'academic', label: 'Research in the Attention Economy — Business & Information Systems Engineering (Springer Nature, 査読誌)' },
-      { url: 'https://academic.oup.com/iwc/article/37/1/18/7733851', type: 'academic', label: 'Second Wave of Attention Economics — Interacting with Computers (Oxford Academic, 査読誌)' },
-      { url: 'https://people.ischool.berkeley.edu/~hal/pages/sciam.html', type: 'academic', label: 'The Information Economy — Hal Varian, UC Berkeley School of Information' },
-      { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Attention economy — Wikipedia（経緯確認用）' },
-    ],
-  },
-  {
     id: 'econ-engels-law',
     discipline: 'economics',
     title: 'エンゲルの法則',
@@ -3981,23 +3701,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://laws.e-gov.go.jp/law/322AC0000000050', type: 'government', label: 'e-Gov法令検索 労働者災害補償保険法（昭和22年法律第50号）法令本文' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/rousaihoken.html', type: 'government', label: '労災保険制度｜厚生労働省' },
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudouhokenpoint/', type: 'government', label: '労災保険・雇用保険の特徴｜厚生労働省（保険料全額事業主負担）' },
-    ],
-  },
-  {
-    id: 'infosoc-net-neutrality',
-    discipline: 'information-sociology',
-    title: 'ネットワーク中立性',
-    statement:
-      'インターネット・サービス・プロバイダ（ISP）は、ネットワーク上を流れるすべての通信（データ・パケット）を、その内容・送信元・宛先・アプリケーション・利用デバイスなどによって差別せず、平等に扱うべきだとする原則。コロンビア大学の法学者ティム・ウーが2003年の論文で「network neutrality」という用語を提示した。' +
-      'ISPによる特定サービスのブロッキング（遮断）、スロットリング（速度の意図的低下）、対価を払った事業者を優先する「有料優先（ペイド・プライオリタイゼーション）/ファストレーン」などを禁じることを内容とする。これにより、巨大事業者でも新興のスタートアップでも同じ条件でユーザーに到達でき、表現の自由・公正な競争・イノベーションが守られると主張される。' +
-      '一方、ISPによる設備投資のインセンティブを損なう、混雑管理を妨げるなどの反対論もあり、米国（FCCの規則をめぐる二転三転＝2015採択/2017撤廃/2024再導入）やEU、各国で規制のあり方が議論されている。',
-    keyFigures: 'ISPは全通信を内容・送信元・宛先等で差別せず平等に扱うべきとの原則／T.ウー(コロンビア大学)が2003年に用語を提示／禁止対象：ブロッキング・スロットリング・有料優先(ファストレーン)／表現の自由・公正競争・イノベーション保護の論拠／設備投資阻害等の反対論、米FCC等で規制が論争',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://scholarship.law.columbia.edu/faculty_scholarship/1281/', type: 'academic', label: 'Tim Wu, "Network Neutrality, Broadband Discrimination" (2003) — Columbia Law School Scholarship（原論文）' },
-      { url: 'https://www.britannica.com/procon/net-neutrality-debate', type: 'reference', label: 'Encyclopaedia Britannica — Net Neutrality | Pros, Cons, Debate' },
-      { url: 'https://www.fcc.gov/cwjr-archives-net-neutrality', type: 'government', label: 'U.S. Federal Communications Commission (FCC) — Net Neutrality' },
-      { url: 'https://eur-lex.europa.eu/EN/legal-content/summary/the-open-internet-and-net-neutrality.html', type: 'government', label: 'EUR-Lex — The open internet and net neutrality (Regulation (EU) 2015/2120)' },
     ],
   },
   {
@@ -4525,22 +4228,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dynamic-capabilities',
-    discipline: 'management',
-    title: 'ダイナミック・ケイパビリティ',
-    statement:
-      '急速に変化する環境に対応するために、企業が内外の資源・能力・コンピタンスを統合・構築・再構成する能力。David Teece、Gary Pisano、Amy Shuen が1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal）で定式化し、安定した競争優位を前提とする資源ベース理論（RBV）を、変化への適応という動学的観点へ拡張した。' +
-      '後にTeece（2007）が、機会を感知する「センシング（sensing）」、機会を捕捉し資源を動員する「シージング（seizing）」、組織や資産を継続的に再構成する「トランスフォーミング（transforming）」という三つの枠組みを示し、その微視的基盤を体系化した。コアコンピタンスや両利きの経営とは区別される独立した概念である。',
-    keyFigures: 'David J. Teece（提唱者）／Gary Pisano／Amy Shuen／初出: Teece, Pisano & Shuen (1997) “Dynamic Capabilities and Strategic Management”, Strategic Management Journal 18(7): 509-533／sensing/seizing/transforming 枠組みは Teece (2007) で体系化',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Newcastle University — TheoryHub: Dynamic Capabilities Theory（大学の学術理論レビュー）' },
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) Strategic Management Journal — 原典（Wiley Online Library）' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities' },
-      { url: 'https://www.cambridge.org/core/elements/dynamic-capabilities/90101DC1EA1A6AFF9228C3FA4CD31930', type: 'academic', label: 'Cambridge University Press — Elements: Dynamic Capabilities（学術出版）' },
-    ],
-  },
-  {
     id: 'human-just-world',
     discipline: 'human-science',
     title: '公正世界仮説',
@@ -4882,22 +4569,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-open-innovation',
-    discipline: 'management',
-    title: 'オープン・イノベーション',
-    statement:
-      'オープン・イノベーションとは、企業が技術を発展させるうえで、内部のアイデアと外部のアイデア、内部の市場化経路と外部の市場化経路をともに用いることができ、また用いるべきだとするイノベーションのパラダイムである。研究開発を自社内で完結させる「クローズド・イノベーション」と対比され、組織の境界を越えて知識を意図的に流入・流出させる点に特徴がある。' +
-      '外部の知識・技術・アイデアを取り込むインバウンド（outside-in／外から内）と、自社の未活用技術を外部に出して活用させるアウトバウンド（inside-out／内から外）の両方向を含み、その手段としてライセンス、提携・ジョイントベンチャー、スピンオフ、クラウドソーシング等が用いられる。すなわち「企業は内部と外部のアイデア、内部と外部の市場化経路を技術発展のために結合すべき」とする考え方である。',
-    keyFigures: 'ヘンリー・チェスブロウ（Henry Chesbrough、提唱者）／初出：2003年の著書『Open Innovation: The New Imperative for Creating and Profiting from Technology』（Harvard Business School Press）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://corporateinnovation.berkeley.edu/what-is-open-innovation/', type: 'academic', label: 'UC Berkeley Haas, Garwood Center for Corporate Innovation — “What is Open Innovation”（チェスブロウが所属する大学機関）' },
-      { url: 'https://en.wikipedia.org/wiki/Open_innovation', type: 'reference', label: 'Wikipedia — “Open innovation”（定義と概念整理）' },
-      { url: 'https://sloanreview.mit.edu/article/the-era-of-open-innovation/', type: 'academic', label: 'Chesbrough, H. (2003) “The Era of Open Innovation”, MIT Sloan Management Review' },
-      { url: 'https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-38', type: 'reference', label: 'Oxford Research Encyclopedia of Business and Management — “Open Innovation”' },
-    ],
-  },
-  {
     id: 'mgmt-absorptive-capacity',
     discipline: 'management',
     title: '吸収能力',
@@ -5133,21 +4804,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-privacy-paradox',
-    discipline: 'information-sociology',
-    title: 'プライバシー・パラドックス',
-    statement:
-      '人々が調査などで「プライバシーを重視・懸念している」と表明する態度や意図と、実際にはSNS等で個人情報を容易に開示してしまう行動との間に見られる乖離（不一致）を指す概念。スーザン・B・バーンズが2006年に提唱して以降、情報社会学・HCI・情報システム研究で広く論じられてきた。乖離の説明として、便益とリスクを天秤にかける「プライバシー計算」、即時的満足を過大評価する双曲割引、開示結果に関するリスク認知の不確実性、事業者と利用者の情報の非対称性、対抗を諦めるプライバシー・シニシズムなどが挙げられる。' +
-      '一方で近年は、態度測定が一般的・抽象的であるのに対し行動は特定の文脈での選択であり両者は本来比較不能だとする方法論的批判（ソローヴ「The Myth of the Privacy Paradox」、ココラキスらの文献レビュー）が現れ、「パラドックス」の存在自体を疑問視・相対化する立場も有力である。',
-    keyFigures: 'Susan B. Barnes（初出: 2006「A privacy paradox: Social networking in the United States」First Monday 11(9)、用語を広めた）／Spyros Kokolakis（2017 体系的文献レビュー）／Daniel J. Solove（2021「The Myth of the Privacy Paradox」批判的再検討）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/1394', type: 'academic', label: 'Barnes, S. B. (2006) “A privacy paradox: Social networking in the United States”, First Monday 11(9)（初出・査読誌）' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0167404818303031', type: 'academic', label: 'Kokolakis (2017) “Privacy attitudes and privacy behaviour: A review” Computers & Security (Elsevier)（体系的レビュー）' },
-      { url: 'https://www.researchgate.net/publication/339494095_The_Myth_of_the_Privacy_Paradox', type: 'academic', label: 'Solove, D. J. (2021) “The Myth of the Privacy Paradox”, George Washington Law Review（批判的検討）' },
-    ],
-  },
-  {
     id: 'econ-statistical-discrimination',
     discipline: 'economics',
     title: '統計的差別',
@@ -5345,22 +5001,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hart.scholars.harvard.edu/publications/property-rights-and-nature-firm', type: 'academic', label: 'Harvard University — Oliver Hart「Property Rights and the Nature of the Firm」(Hart & Moore 1990, JPE 98:1119–1158)' },
       { url: 'https://ideas.repec.org/a/ucp/jpolec/v94y1986i4p691-719.html', type: 'academic', label: 'IDEAS/RePEc — Grossman & Hart「The Costs and Benefits of Ownership」(JPE 1986, 94:691–719)' },
       { url: 'https://en.wikipedia.org/wiki/Incomplete_contracts', type: 'reference', label: 'Wikipedia「Incomplete contracts」(GHM 所有権アプローチ・残余コントロール権・ホールドアップ)' },
-    ],
-  },
-  {
-    id: 'econ-baumol-cost-disease',
-    discipline: 'economics',
-    title: 'ボーモルのコスト病',
-    statement:
-      '生産性が向上しにくい労働集約的な部門（教育・医療・対人サービス・舞台芸術など、いわゆる「停滞／非進歩」部門）でも、製造業のように生産性が急上昇する「進歩」部門の賃金上昇につられて賃金を引き上げざるを得ず、その結果これらの部門の相対的なコスト（価格）が継続的に上昇していく現象。労働者がより高賃金の部門へ流出するのを防ぐため、生産性が伸びなくても賃金だけが経済全体に追随して上がることが原因（生産性ラグ）。' +
-      '古典的な例は、モーツァルトやベートーヴェンの弦楽四重奏の演奏で、4人で約40分という所要人数・時間は数百年間変わらない（労働生産性が不変）にもかかわらず、演奏者の賃金は経済全体の生産性向上に伴って上昇するため、生演奏のコストが上がり続けるというもの。教育費・医療費・行政サービス費などの長期的な上昇を説明する概念として広く援用される。',
-    keyFigures: '提唱者：ウィリアム・ボーモル（William J. Baumol）／ウィリアム・ボーエン（William G. Bowen）／初出：1966年の舞台芸術研究書『Performing Arts: The Economic Dilemma』（Twentieth Century Fund 刊）／鍵概念：進歩（progressive）部門と停滞（stagnant）部門の生産性格差・生産性ラグ',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nber.org/system/files/working_papers/w12218/w12218.pdf', type: 'academic', label: 'NBER Working Paper No. 12218 “Baumol’s Cost Disease: A Macroeconomic Perspective”' },
-      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_3060-2', type: 'reference', label: 'The New Palgrave Dictionary of Economics “Baumol’s Cost Disease”（Springer/Palgrave 経済学事典）' },
-      { url: 'https://cepr.org/voxeu/columns/how-william-baumol-created-cultural-economics', type: 'academic', label: 'CEPR / VoxEU “How William Baumol created cultural economics”' },
-      { url: 'https://en.wikipedia.org/wiki/Baumol_effect', type: 'reference', label: 'Wikipedia “Baumol effect”（モーツァルト弦楽四重奏の例・定義）' },
     ],
   },
   {
@@ -5689,21 +5329,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-post-truth',
-    discipline: 'information-sociology',
-    title: 'ポスト・トゥルース',
-    statement:
-      '世論の形成において、客観的な事実よりも、感情や個人的信念に訴えるものの方が大きな影響力をもつ状況を指す概念・形容詞。オックスフォード辞書は「客観的事実が、感情や個人的信念への訴えよりも世論形成への影響力をもたなくなる状況に関する/を示す」と定義し、2016年の「Word of the Year（今年の言葉）」に選んだ。英国のEU離脱（ブレグジット）国民投票やトランプ大統領選を背景に使用頻度が前年比約2,000%急増した。' +
-      '哲学者リー・マッキンタイアは単なる虚偽ではなく、事実そのものが政治的従属下に置かれ、自分の信じたい現実に都合よく事実が選別・軽視される点を本質とみる。フェイクニュース・確証バイアス・エコーチェンバー・科学否定（科学的合意の軽視）と密接に関連する、事実より感情・信念が優位になる認識論的状況である。',
-    keyFigures: 'オックスフォード辞書（Oxford Languages、2016年Word of the Yearに選定）／哲学者リー・マッキンタイア（Lee McIntyre、著書『ポストトゥルース（Post-Truth）』2018, MIT Press）／政治的背景＝ブレグジット国民投票・2016年トランプ大統領選',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://languages.oup.com/word-of-the-year/2016/', type: 'reference', label: 'Oxford Languages — Word of the Year 2016: Post-Truth（定義・選定・使用急増）' },
-      { url: 'https://mitpress.mit.edu/9780262535045/post-truth/', type: 'academic', label: 'Lee McIntyre, Post-Truth (MIT Press Essential Knowledge, 2018) — 出版社公式ページ' },
-      { url: 'https://en.wikipedia.org/wiki/Post-truth_politics', type: 'reference', label: 'Wikipedia「Post-truth politics」— 認識論的含意とブレグジット/トランプ関連' },
-    ],
-  },
-  {
     id: 'econ-two-sided-markets',
     discipline: 'economics',
     title: '両面市場（two-sided markets）',
@@ -5779,22 +5404,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://laws.e-gov.go.jp/law/426AC0000000068', type: 'government', label: 'e-Gov法令検索 行政不服審査法（平成26年法律第68号、法令ID 426AC0000000068）' },
       { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/fufuku/gaiyou02.html', type: 'government', label: '総務省 行政不服審査法の概要' },
       { url: 'https://www.soumu.go.jp/main_sosiki/singi/fufukushinsa/index.html', type: 'government', label: '総務省 行政不服審査会' },
-    ],
-  },
-  {
-    id: 'infosoc-computational-propaganda',
-    discipline: 'information-sociology',
-    title: '計算的プロパガンダ',
-    statement:
-      'ソーシャルメディア上で、自動化（ボット）・アルゴリズム・ビッグデータと人間によるキュレーションを組み合わせ、世論を操作・誘導する目的で政治的な誤情報・偽情報を組織的に拡散する活動。提唱者ウーリーとハワードは「アルゴリズム、自動化、人手によるキュレーションを用いて、ソーシャルメディア網上に意図的に誤導的情報を流布すること」と定義する。' +
-      '手法には、ソーシャルボットによる水増し（人気や支持の偽装＝アストロターフィング）、トレンドの人工的な操作・増幅、ヘイトや社会的分断の煽動、特定集団へのマイクロターゲティングなどが含まれ、人間とアルゴリズムの組合せで運用される点が特徴。国家・政党・個人が担い手となり、選挙介入や民主主義への脅威として論じられる。',
-    keyFigures: 'フィリップ・N・ハワード（Philip N. Howard）／サミュエル・C・ウーリー（Samuel C. Woolley）／オックスフォード・インターネット研究所（OII）「Computational Propaganda Project」（DemTech）で研究・概念化（Woolley & Howard 2016の定義が初出）／編著『Computational Propaganda』2018, Oxford University Press',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.oii.ox.ac.uk/research/projects/computational-propaganda/', type: 'academic', label: 'Oxford Internet Institute — Computational Propaganda（プロジェクト公式ページ）' },
-      { url: 'https://global.oup.com/academic/product/computational-propaganda-9780190931407', type: 'academic', label: 'Woolley & Howard (eds.), Computational Propaganda, Oxford University Press, 2018' },
-      { url: 'https://www.cambridge.org/core/books/social-media-and-democracy/bots-and-computational-propaganda-automation-for-communication-and-control/A15EE25C278B442EF00199AA660BFADD', type: 'academic', label: 'Woolley, “Bots and Computational Propaganda”, in Social Media and Democracy, Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Computational_propaganda', type: 'reference', label: 'Wikipedia — Computational propaganda' },
     ],
   },
   {
@@ -6196,22 +5805,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-balanced-scorecard',
-    discipline: 'management',
-    title: 'バランスト・スコアカード（BSC）',
-    statement:
-      '企業の業績を財務的指標だけでなく4つの視点からバランスよく測定・管理する、戦略経営・業績評価のフレームワーク。4つの視点とは、(1)財務の視点（株主から見た成功＝利益・売上・ROI等）、(2)顧客の視点（顧客から見た価値＝満足・維持・市場シェア等）、(3)社内ビジネスプロセスの視点（卓越のために優れるべき業務プロセス）、(4)学習と成長の視点（変革・改善を支える人材・情報システム等の能力）である。' +
-      '過去の結果を示す財務指標（遅行指標）だけに偏らず、将来の業績を生む非財務的な先行指標を組み合わせる点が核心。後に、戦略目標間の因果関係を可視化する「戦略マップ（strategy map）」へ発展し、ビジョン・戦略を具体的な指標・目標・施策へ落とし込む戦略実行ツールとして用いられる。',
-    keyFigures: '提唱者：ロバート・S・キャプラン（Robert S. Kaplan）／デビッド・P・ノートン（David P. Norton）／初出：1992年 Harvard Business Review 論文「The Balanced Scorecard—Measures That Drive Performance」／4つの視点：財務／顧客／社内ビジネスプロセス／学習と成長／発展：戦略マップ（2004年書籍『Strategy Maps』）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'media', label: 'Kaplan & Norton, “The Balanced Scorecard—Measures That Drive Performance,” Harvard Business Review, 1992（初出論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Balanced_scorecard', type: 'reference', label: 'Balanced scorecard — Wikipedia' },
-      { url: 'https://balancedscorecard.org/bsc-basics-overview/', type: 'reference', label: 'Balanced Scorecard Basics — Balanced Scorecard Institute' },
-      { url: 'https://corporatefinanceinstitute.com/resources/management/balanced-scorecard/', type: 'reference', label: 'Balanced Scorecard: Framework for Strategic Success — Corporate Finance Institute (CFI)' },
-    ],
-  },
-  {
     id: 'human-forgetting-curve',
     discipline: 'human-science',
     title: '忘却曲線（エビングハウス）',
@@ -6255,21 +5848,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/diffusion-of-innovations', type: 'reference', label: 'Encyclopaedia Britannica「Diffusion of innovations」' },
       { url: 'https://sphweb.bumc.bu.edu/otlt/mph-modules/sb/behavioralchangetheories/behavioralchangetheories4.html', type: 'academic', label: 'Boston University School of Public Health「Diffusion of Innovation Theory」（大学教材）' },
       { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia「Diffusion of innovations」' },
-    ],
-  },
-  {
-    id: 'econ-ricardian-equivalence',
-    discipline: 'economics',
-    title: 'リカードの等価定理（中立命題）',
-    statement:
-      '政府支出の規模・経路が一定であれば、その財源を現在の課税（増税）で賄うか国債発行（公債）で賄うかは、一定の条件下では民間消費や総需要に影響を与えず等価である、とする命題。合理的で将来を見通す家計は、政府の予算制約を内部化し、公債発行による減税が将来の増税（元利償還のため）を意味すると予見する。そのため減税で増えた可処分所得を消費せず貯蓄して将来の増税に備え、減税は消費を刺激しない。' +
-      '公債は将来世代への負担の先送りではなく現在の家計の貯蓄に吸収され、ケインズ的な減税の乗数効果は理論的に否定される。成立には合理的期待、完全資本市場（借入・流動性制約なし）、世代間の利他的遺産動機による無限の計画期間、一括税などの強い前提が必要であり、現実にはこれらが満たされにくいため厳密には成立しないとする実証研究・批判が多い。世代重複モデルとは別概念。',
-    keyFigures: 'デヴィッド・リカード（David Ricardo、19世紀初頭に論点を提示。ただし自身は実証的妥当性に懐疑的だった）／ロバート・バロー（Robert J. Barro、1974年論文 “Are Government Bonds Net Wealth?” で現代的に定式化、バローの等価定理）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Ricardian_equivalence', type: 'reference', label: 'Ricardian equivalence — Wikipedia（定義・メカニズム・前提・批判を概説）' },
-      { url: 'https://www.jstor.org/stable/1830663', type: 'academic', label: 'Robert J. Barro (1974), “Are Government Bonds Net Wealth?”, Journal of Political Economy, 82(6):1095–1117（査読一次文献）' },
-      { url: 'https://en.wikipedia.org/wiki/Robert_Barro', type: 'reference', label: 'Robert Barro — Wikipedia（1974年論文の位置づけ・ケインズ理論への批判）' },
     ],
   },
   {
@@ -7402,22 +6980,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-capability-approach',
-    discipline: 'economics',
-    title: '潜在能力アプローチ（セン）',
-    statement:
-      '人々の福祉や社会の発展を、所得・財・効用（功利主義的な主観的満足）ではなく、「その人が実際に行うことができ／なることができる状態」の幅で評価すべきだとする規範的枠組み。経済学者・哲学者アマルティア・センが1979年のタナー講演「何の平等か（Equality of What?）」を起点に1980年代に提唱し、著書『商品と潜在能力（Commodities and Capabilities, 1985）』等で体系化した。' +
-      '中心概念は、(1)機能（functionings＝十分な栄養・健康・教育・社会参加など、人が実現する様々な「すること・あること」）と、(2)潜在能力／ケイパビリティ（capabilities＝選択可能な機能の組み合わせの集合＝実質的自由）である。同じ財でも機能へ変換する能力（変換要因）が個人や環境で異なるため、財や所得の量だけでは福祉を測れないと論じる。マーサ・ヌスバウムは中心的ケイパビリティのリストを示し発展させ、国連の人間開発指数（HDI）の理論的基礎ともなった。',
-    keyFigures:
-      'アマルティア・セン（Amartya Sen、1998年ノーベル経済学賞）／マーサ・ヌスバウム（Martha Nussbaum、中心的ケイパビリティのリスト）／中核概念＝機能（functionings）・潜在能力（capabilities）・変換要因／応用＝人間開発指数（HDI）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://plato.stanford.edu/entries/capability-approach/', type: 'reference', label: 'The Capability Approach — Stanford Encyclopedia of Philosophy' },
-      { url: 'https://iep.utm.edu/sen-cap/', type: 'reference', label: "Sen's Capability Approach — Internet Encyclopedia of Philosophy" },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1998/sen/facts/', type: 'government', label: 'NobelPrize.org — Amartya Sen, The Prize in Economic Sciences 1998（厚生経済学への貢献）' },
-    ],
-  },
-  {
     id: 'econ-baumol-cost-disease',
     discipline: 'economics',
     title: 'ボーモルのコスト病',
@@ -7432,23 +6994,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_3060-2', type: 'reference', label: 'The New Palgrave Dictionary of Economics: “Baumol’s Cost Disease”（Springer Nature）' },
       { url: 'https://en.wikipedia.org/wiki/Baumol_effect', type: 'reference', label: 'Wikipedia: “Baumol effect”（ベートーヴェン弦楽四重奏の例を含む）' },
       { url: 'https://www.ebsco.com/research-starters/economics/baumols-cost-disease', type: 'reference', label: 'EBSCO Research Starters (Economics): “Baumol’s cost disease”' },
-    ],
-  },
-  {
-    id: 'mgmt-servant-leadership',
-    discipline: 'management',
-    title: 'サーバント・リーダーシップ',
-    statement:
-      'リーダーがまず「奉仕する者（servant）」であることを出発点とし、フォロワーのニーズを最優先に彼らの成長・幸福・自律を支え、その結果として信頼と組織目標の達成を導くリーダーシップの哲学。ロバート・K・グリーンリーフが1970年のエッセイ「The Servant as Leader」で提唱した造語で、「奉仕したいという自然な感情がまずあり、その後に導きたいという意識的な選択が生まれる」とした。' +
-      'グリーンリーフは最良の判定基準として「奉仕される人々が、より健康で・賢く・自由で・自律的になり、自らも奉仕者になりやすくなるか」を問うた。指揮命令・自己利益優先の伝統的トップダウン型と対照される。後にラリー・スピアーズが傾聴・共感・癒し・気づき・説得・概念化・先見性・執事役・人々の成長への関与・コミュニティ構築の10特性を抽出した。',
-    keyFigures:
-      'ロバート・K・グリーンリーフ（Robert K. Greenleaf、1970「The Servant as Leader」で造語）／ラリー・C・スピアーズ（Larry C. Spears、10特性を抽出）／対比＝伝統的トップダウン型リーダーシップ',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://greenleaf.org/what-is-servant-leadership/', type: 'reference', label: 'Robert K. Greenleaf Center for Servant Leadership — What is Servant Leadership?' },
-      { url: 'https://www.regent.edu/journal/journal-of-virtues-leadership/character-and-servant-leadership-ten-characteristics-of-effective-caring-leaders/', type: 'academic', label: 'Larry C. Spears, “Character and Servant Leadership: Ten Characteristics,” Journal of Virtues & Leadership, Regent University' },
-      { url: 'https://en.wikipedia.org/wiki/Servant_leadership', type: 'reference', label: 'Wikipedia — Servant leadership' },
-      { url: 'https://www.gonzaga.edu/news-events/stories/2023/9/26/robert-greenleaf-servant-leadership', type: 'academic', label: 'Gonzaga University — Robert Greenleaf on Servant-Leadership' },
     ],
   },
   {
@@ -7568,22 +7113,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/biography/Elton-Mayo', type: 'reference', label: 'Encyclopaedia Britannica — Elton Mayo: Hawthorne Studies, Human Relations & Management Theory' },
       { url: 'https://www.simplypsychology.org/hawthorne-effect.html', type: 'reference', label: 'Simply Psychology — Hawthorne Effect (Landsberger 1958 命名, illumination studies)' },
       { url: 'https://www.nber.org/system/files/working_papers/w15016/w15016.pdf', type: 'academic', label: 'NBER Working Paper 15016 — “Was There Really a Hawthorne Effect at the Hawthorne Plant?”（再分析・批判）' },
-    ],
-  },
-  {
-    id: 'bizlaw-suretyship',
-    discipline: 'business-law',
-    title: '保証債務（民法446条）',
-    statement:
-      '保証債務とは、主たる債務者がその債務を履行しないときに、保証人が代わってその履行をする責任を負う債務である（民法446条1項）。保証契約は債権者と保証人との間で締結され、446条2項により書面（またはその内容を記録した電磁的記録）でしなければ効力を生じない要式契約とされる。' +
-      '保証債務には付従性（主債務が存在しなければ成立せず、主債務が消滅すれば消滅し、主債務より重くなれない）、随伴性（主債務が移転すれば保証債務も移転する）、補充性（主債務者が履行しないとき二次的に履行すればよい）がある。補充性の表れとして保証人は催告の抗弁権（452条）・検索の抗弁権（453条）をもつが、連帯保証ではこれらおよび分別の利益を有しない（454条）。2017年改正（2020年4月施行）で個人根保証の極度額の定めの義務化や、事業債務の個人保証に公正証書による保証意思確認が導入された。',
-    keyFigures:
-      '根拠＝民法446条1項（保証人の責任）・446条2項（書面・電磁的記録の要式性）／性質＝付従性・随伴性・補充性／452条 催告の抗弁権・453条 検索の抗弁権／454条 連帯保証は催告・検索の抗弁権・分別の利益なし（通常保証より重い）／弁済した保証人は主債務者に求償可／2017年改正（2020年4月施行）＝個人根保証の極度額義務化・事業債務の個人保証に公正証書（e-Gov law id 129AC0000000089）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、第446条ほか）' },
-      { url: 'https://www.moj.go.jp/content/001399956.pdf', type: 'government', label: '法務省「2020年4月1日から 保証に関する民法のルールが大きく変わります」' },
-      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0446-00/', type: 'media', label: 'クレアール司法書士講座 民法第446条【保証人の責任等】' },
     ],
   },
   {
@@ -7719,22 +7248,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/1977/summary/', type: 'government', label: 'NobelPrize.org — 1977年経済学賞（Ohlin・Meade 共同受賞、公式）' },
       { url: 'https://www.econlib.org/library/Enc/bios/Ohlin.html', type: 'reference', label: 'Econlib（The Concise Encyclopedia of Economics）— Bertil Ohlin 略伝と理論' },
       { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin model（モデル概要・関連定理）' },
-    ],
-  },
-  {
-    id: 'mgmt-lean-startup',
-    discipline: 'management',
-    title: 'リーン・スタートアップ',
-    statement:
-      'リーン・スタートアップは、不確実性の高い環境下で新規事業を、無駄（lean）を省きつつ立ち上げ・成長させるための方法論。エリック・リースが2011年の著書『The Lean Startup』で体系化し、トヨタ生産方式（リーン生産）とスティーブ・ブランクの顧客開発を基礎とする。核心は「構築—計測—学習（Build–Measure–Learn）」のフィードバックループを高速で回し、検証による学び（validated learning）を積み重ねること。' +
-      '実用最小限の製品（MVP）を素早く市場へ出して顧客の反応を計測し、その学びをもとに当初戦略を維持（persevere）するか方向転換（pivot）するかを判断する。事前の精緻な事業計画よりも仮説検証と顧客フィードバックによる反復学習を重視し、革新会計（innovation accounting）などの手法で進捗を測りながら、不確実性下の事業構築リスクを下げることを狙う。',
-    keyFigures:
-      'エリック・リース（Eric Ries、提唱者・2011年著書『The Lean Startup』）／スティーブ・ブランク（Steve Blank、顧客開発の基礎）／大野耐一・新郷重夫（トヨタ生産方式＝リーン生産の源流）／中核概念＝Build–Measure–Learn・MVP・ピボット・革新会計',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://knowledge.wharton.upenn.edu/article/eric-ries-on-the-lean-startup/', type: 'academic', label: 'Knowledge at Wharton（ペンシルベニア大学ウォートン校）— Eric Ries on The Lean Startup' },
-      { url: 'https://en.wikipedia.org/wiki/The_Lean_Startup', type: 'reference', label: 'Wikipedia — The Lean Startup' },
-      { url: 'https://knowledge.wharton.upenn.edu/article/pivot-entrepreneurship/', type: 'academic', label: 'Knowledge at Wharton — What Does It Mean to Pivot in Business?' },
     ],
   },
   {
