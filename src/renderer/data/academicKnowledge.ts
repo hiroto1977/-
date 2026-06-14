@@ -6257,5 +6257,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia「Diffusion of innovations」' },
     ],
   },
+  {
+    id: 'econ-ricardian-equivalence',
+    discipline: 'economics',
+    title: 'リカードの等価定理（中立命題）',
+    statement:
+      '政府支出の規模・経路が一定であれば、その財源を現在の課税（増税）で賄うか国債発行（公債）で賄うかは、一定の条件下では民間消費や総需要に影響を与えず等価である、とする命題。合理的で将来を見通す家計は、政府の予算制約を内部化し、公債発行による減税が将来の増税（元利償還のため）を意味すると予見する。そのため減税で増えた可処分所得を消費せず貯蓄して将来の増税に備え、減税は消費を刺激しない。' +
+      '公債は将来世代への負担の先送りではなく現在の家計の貯蓄に吸収され、ケインズ的な減税の乗数効果は理論的に否定される。成立には合理的期待、完全資本市場（借入・流動性制約なし）、世代間の利他的遺産動機による無限の計画期間、一括税などの強い前提が必要であり、現実にはこれらが満たされにくいため厳密には成立しないとする実証研究・批判が多い。世代重複モデルとは別概念。',
+    keyFigures: 'デヴィッド・リカード（David Ricardo、19世紀初頭に論点を提示。ただし自身は実証的妥当性に懐疑的だった）／ロバート・バロー（Robert J. Barro、1974年論文 “Are Government Bonds Net Wealth?” で現代的に定式化、バローの等価定理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Ricardian_equivalence', type: 'reference', label: 'Ricardian equivalence — Wikipedia（定義・メカニズム・前提・批判を概説）' },
+      { url: 'https://www.jstor.org/stable/1830663', type: 'academic', label: 'Robert J. Barro (1974), “Are Government Bonds Net Wealth?”, Journal of Political Economy, 82(6):1095–1117（査読一次文献）' },
+      { url: 'https://en.wikipedia.org/wiki/Robert_Barro', type: 'reference', label: 'Robert Barro — Wikipedia（1974年論文の位置づけ・ケインズ理論への批判）' },
+    ],
+  },
+  {
+    id: 'econ-optimal-taxation',
+    discipline: 'economics',
+    title: '最適課税論',
+    statement:
+      '一定の税収を確保するという制約のもとで、課税が生む効率の損失（死荷重・超過負担）を最小化し、社会厚生を最大化する税の構造（税率・課税ベース）を設計する公共経済学の理論。中心課題は「効率（超過負担の最小化）」と「公平（再分配）」のトレードオフの最適化にある。代表的成果として、(1)ラムゼイ・ルール（最適物品税）は、需要・供給が非弾力的な財ほど高く課税すれば超過負担が小さくなるとする逆弾力性ルールを示す。' +
+      '(2)最適所得税論では、政府が各人の稼得能力を直接観察できない情報の非対称性のもとで、労働インセンティブを過度に損なわないよう再分配する最適な非線形所得税が分析され、効率と公平のトレードオフから、最高限界税率が意外に低くなりうる・限界税率が逓減的でありうる等の結論が導かれた。情報制約を明示的に組み込んだ点が画期的で、現実の税制改革・税率設計の規範的指針となる。',
+    keyFigures: 'フランク・ラムゼイ（Frank P. Ramsey, 最適物品税の逆弾力性ルール, 初出 “A Contribution to the Theory of Taxation”, Economic Journal, 1927）／ジェームズ・ミルリーズ（James A. Mirrlees, 最適非線形所得税論, 初出 1971, Review of Economic Studies）／ミルリーズは情報の非対称性下の誘因理論への貢献によりヴィックリーと共に1996年ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/summary/', type: 'government', label: 'NobelPrize.org — 1996年経済学賞（Mirrlees・Vickrey、情報の非対称性下の誘因の経済理論）' },
+      { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia「Optimal tax」— ラムゼイ・ルール、逆弾力性、効率・公平のトレードオフ' },
+      { url: 'https://en.wikipedia.org/wiki/Optimal_labor_income_taxation', type: 'reference', label: 'Wikipedia「Optimal labor income taxation」— ミルリーズ最適所得税論と情報の非対称性' },
+      { url: 'https://en.wikipedia.org/wiki/Ramsey_problem', type: 'reference', label: 'Wikipedia「Ramsey problem」— ラムゼイ問題（1927）と逆弾力性ルール' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-hrm',
+    discipline: 'management',
+    title: '戦略的人的資源管理（SHRM）',
+    statement:
+      '採用・育成・評価・報酬・配置などの人的資源管理（HRM）施策を、個別・事後的な管理機能としてではなく、組織の経営戦略と統合し、戦略目標の達成と持続的な競争優位の獲得に体系的に貢献させようとする考え方・研究分野。1980年代以降、人材を単なるコストではなく資源ベース理論にいう競争優位の源泉（人的資本）と捉える視座から発展した。中核概念は二つの適合で、(1)外的適合（vertical fit／HR施策を経営戦略に整合させる）と、(2)内的適合（horizontal fit／HR施策間の一貫性・束＝bundle）からなる。' +
+      '理論的立場には、状況により最適なHRが異なるとするコンティンジェンシー（適合）アプローチと、どの組織でも有効な優れた実践があるとするベストプラクティス（普遍）アプローチ（高業績作業システムHPWS／高関与・高コミットメント型HRM）があり、HR施策と組織業績（生産性・財務）の関係を実証する研究が蓄積されている。',
+    keyFigures: '資源ベース理論を人的資源に応用し人材を競争優位の源泉と捉える視座（J.バーニーら）が理論的基盤／P.ライト＆G.マクマハンらが外的適合・内的適合を軸にSHRMを理論化／J.デラリー＆D.ドティが普遍・コンティンジェンシー・コンフィギュレーショナルの3様式を整理／M.ヒューゼリッド（1995, Academy of Management Journal）がHR-業績リンクを実証',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Human_resource_management', type: 'reference', label: 'Wikipedia「Human resource management」— HRMの戦略的・統合的アプローチ' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_human_resource_planning', type: 'reference', label: 'Wikipedia「Strategic human resource planning」— HRMと全社戦略の結合' },
+      { url: 'https://en.wikipedia.org/wiki/Mark_A._Huselid', type: 'reference', label: 'Wikipedia「Mark A. Huselid」— 1995 AMJ論文（38(3):635–672）でHR慣行と業績の関係を実証' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_fit', type: 'reference', label: 'Wikipedia「Strategic fit」— 適合（fit）と資源ベース理論・競争優位の関係' },
+    ],
+  },
+  {
+    id: 'human-multiple-intelligences',
+    discipline: 'human-science',
+    title: '多重知能理論（ガードナー）',
+    statement:
+      '知能は、IQテストが測る単一・一般的な能力（g因子）ではなく、相互に比較的独立した複数の知能から成るとする理論。ハワード・ガードナーが1983年の著書『Frames of Mind（精神の枠組み）』で提唱した。初版では言語的・論理数学的・音楽的・身体運動的・空間的・対人的・内省（個人内）的の7つを挙げ、後に博物（自然探究）的知能を加えて計8つとした（実存的知能を第9の候補として検討）。各知能は比較的独立し、人ごとに得意・不得意の組合せ（プロファイル）が異なるとされ、教育現場で画一的でない多様な学び方・才能の尊重として大きな影響を与えた。' +
+      '一方で学術的・心理測定的には、各知能が実際には正の相関を示しg因子を支持する点、検証可能性・査読の弱さ、知能と才能・認知スタイルの混同、gを超える予測的妥当性のエビデンス不足などの批判が強く、主流の知能研究（CHC理論など）では支持は限定的である。',
+    keyFigures: 'ハワード・ガードナー（Howard Gardner、提唱者）／初出：著書『Frames of Mind: The Theory of Multiple Intelligences』（1983年、初版7知能・後に博物的を追加）／所属：ハーバード教育大学院・Project Zero',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/multiple-intelligences', type: 'reference', label: 'Encyclopædia Britannica「Multiple intelligences」（8つの知能と定義）' },
+      { url: 'https://pz.harvard.edu/resources/the-theory-of-multiple-intelligences-as-psychology-as-education-as-social-science', type: 'academic', label: 'Harvard Project Zero「The Theory of Multiple Intelligences」（ガードナー所属の研究機関）' },
+      { url: 'https://en.wikipedia.org/wiki/Theory_of_multiple_intelligences', type: 'reference', label: 'Wikipedia「Theory of multiple intelligences」（初版7知能・後の追加、g因子との相関・批判）' },
+    ],
+  },
+  {
+    id: 'bizlaw-negotiorum-gestio',
+    discipline: 'business-law',
+    title: '事務管理（民法697条）',
+    statement:
+      '事務管理とは、法律上の義務がないのに他人のためにその事務の処理を始める行為をいい、不当利得・不法行為と並ぶ法定債権関係（契約によらず法律上当然に債権・債務が生じる関係）の一つである。義務なく他人の事務の管理を始めた者（管理者）は、その事務の性質に従い、最も本人の利益に適合する方法で管理しなければならない（697条1項）。本人の意思を知っているとき又は推知できるときは、その意思に従って管理する（697条2項）。' +
+      '本来は他人の生活領域への干渉だが、相互扶助・社会連帯の観点から一定の要件のもとで適法とされ違法性が阻却される（例：隣人の留守中に台風で壊れた屋根を修理する、迷子を保護する）。管理を始めた以上は本人等が管理できるまで原則として継続する義務があり（700条）、本人のために有益な費用を支出したときは本人に償還を請求できる（702条1項）。一方、報酬は原則として請求できない（委任と異なる）。',
+    keyFigures: '697条1項＝義務なく他人の事務を最も本人の利益に適合する方法で管理する義務／697条2項＝本人の意思を知り又は推知できるときはその意思に従う／700条＝管理継続義務／702条1項＝有益費用の償還請求権／報酬は原則請求できない（委任と異なる）／不当利得・委任とは別概念の法定債権関係／e-Gov民法 law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第三章 事務管理 第697条〜第702条' },
+      { url: 'https://ja.wikipedia.org/wiki/事務管理', type: 'reference', label: 'Wikipedia「事務管理」— 法定債権・継続義務・費用償還の概説' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第697条', type: 'reference', label: 'Wikibooks 民法第697条（条文・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-disinformation',
+    discipline: 'information-sociology',
+    title: '誤情報・偽情報（情報の無秩序）',
+    statement:
+      '事実と異なる、あるいは害をなす情報を、その「真偽」だけでなく発信者の「意図（害意）」によって類型化する概念枠組み。(1)ミスインフォメーション（誤情報）は内容が虚偽・不正確だが、発信者に他者を害する意図がなく、誤解や確認不足によって拡散されるもの。(2)ディスインフォメーション（偽情報）は、他者・組織・国家を害する意図をもって意図的に作成・流布される虚偽情報。(3)マルインフォメーション（悪意ある情報）は、事実に基づくが私的情報の暴露や文脈の剥奪により害を与える目的で用いられるもの。' +
+      'クレア・ウォードルとホセイン・デラクシャンは欧州評議会の2017年報告書でこの三類型を「情報の無秩序（information disorder）」として体系化した。SNSでの拡散、フェイクニュース、ファクトチェック、プラットフォーム規制、選挙やインフォデミック（WHO）への影響が主要論点となる。',
+    keyFigures: 'クレア・ウォードル（Claire Wardle）／ホセイン・デラクシャン（Hossein Derakhshan、「malinformation」の命名者）／初出: 欧州評議会報告書『Information Disorder: Toward an interdisciplinary framework for research and policy making』(Council of Europe, 2017)／関連: WHO「インフォデミック」概念(2020)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://rm.coe.int/information-disorder-toward-an-interdisciplinary-framework-for-researc/168076277c', type: 'government', label: 'Wardle & Derakhshan, “Information Disorder”, Council of Europe (2017)' },
+      { url: 'https://www.cisa.gov/sites/default/files/publications/tactics-of-disinformation_508.pdf', type: 'government', label: 'CISA “Tactics of Disinformation”（mis-/dis-/mal-information の定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Disinformation', type: 'reference', label: 'Wikipedia: Disinformation' },
+    ],
+  },
 ];
 // Stryker restore all
