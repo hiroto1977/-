@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経済学（全150件）
+### 学術概念 / 経済学（全151件）
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]]
 - [[econ-arbitrage-pricing-theory|裁定価格理論（APT）]]
 - [[econ-arrow-impossibility|アローの不可能性定理]]
-- …ほか 144 件 → [[学術概念]]
+- …ほか 145 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全83件）
+### 学術概念 / 経営学（全84件）
 - [[mgmt-absorptive-capacity|吸収能力]]
 - [[mgmt-ambidexterity|両利きの経営（organizational ambidexterity, 知の探索と深化）]]
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]]
 - [[mgmt-authentic-leadership|オーセンティック・リーダーシップ]]
 - [[mgmt-balanced-scorecard|バランスト・スコアカード]]
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]]
-- …ほか 77 件 → [[学術概念]]
+- …ほか 78 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]

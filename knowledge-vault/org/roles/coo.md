@@ -18,50 +18,50 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全86件）
+### 学術概念 / ビジネス法務（全87件）
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-administrative-appeal|行政不服審査（審査請求）]]
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]]
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
-- …ほか 80 件 → [[学術概念]]
+- …ほか 81 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全150件）
+### 学術概念 / 経済学（全151件）
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]]
 - [[econ-arbitrage-pricing-theory|裁定価格理論（APT）]]
 - [[econ-arrow-impossibility|アローの不可能性定理]]
-- …ほか 144 件 → [[学術概念]]
+- …ほか 145 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全92件）
+### 学術概念 / 人間科学（全94件）
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-anchoring|アンカリング効果（係留と調整）]]
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]]
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]
 - [[human-attribution-theory|帰属理論]]
 - [[human-availability-heuristic|利用可能性ヒューリスティック]]
-- …ほか 86 件 → [[学術概念]]
+- …ほか 88 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全80件）
+### 学術概念 / 情報社会学（全81件）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-attention-economy|アテンション・エコノミー（注意経済）]]
 - [[infosoc-collective-memory|集合的記憶]]
 - [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]]
 - [[infosoc-computational-propaganda|計算プロパガンダ]]
 - [[infosoc-computational-social-science|計算社会科学]]
-- …ほか 74 件 → [[学術概念]]
+- …ほか 75 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全83件）
+### 学術概念 / 経営学（全84件）
 - [[mgmt-absorptive-capacity|吸収能力]]
 - [[mgmt-ambidexterity|両利きの経営（organizational ambidexterity, 知の探索と深化）]]
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]]
 - [[mgmt-authentic-leadership|オーセンティック・リーダーシップ]]
 - [[mgmt-balanced-scorecard|バランスト・スコアカード]]
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]]
-- …ほか 77 件 → [[学術概念]]
+- …ほか 78 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
