@@ -2,109 +2,256 @@
 'use strict';
 
 /**
- * 学術知識ベース ⇄ AIオーケストレーション の橋渡し (共有モジュール)。
+ * 確証済み知識ベース ⇄ AIオーケストレーション の橋渡し (共有モジュール)。
  *
- * src/renderer/data/academicKnowledge.ts の VERIFIED_CONCEPTS (型注釈付き TS) を
- * 依存ゼロでロードし、orchestration/knowledge-map.json に基づき
- * 「役員ロール → 関連ディシプリン → 検証済み概念ブリーフ」を解決する。
+ * リポジトリ内の「確証済み (出典つき) 知識」データセットすべてを、TypeScript を
+ * トランスパイルして安全にロードし、共通のノートモデルへ正規化する。これにより
+ * 学術概念だけでなく、法務・税務・労務 / 補助金・助成金 / 相談窓口 / 経済史 を
+ * 横断して Obsidian ヴォルト化し、AIオーケストレーションの各役員ロールへ
+ * コンテキストとして注入できる。
  *
- * 利用側:
- *   - scripts/build-knowledge-vault.cjs   Obsidian ヴォルトの生成
- *   - scripts/orchestrate-context.cjs     役員ロールへの知識ブリーフ出力 (CLI)
- *   - scripts/orchestrate.cjs (dispatch)  ディスパッチ計画への知識注入
+ * 取り込むコレクション (= 単一の真実源):
+ *   academic      src/renderer/data/academicKnowledge.ts   VERIFIED_CONCEPTS
+ *   compliance    src/renderer/data/complianceKnowledge.ts VERIFIED_COMPLIANCE
+ *   subsidy       src/renderer/data/subsidyKnowledge.ts    VERIFIED_SUBSIDIES
+ *   support       src/renderer/data/counselorKnowledge.ts  VERIFIED_SUPPORT_RESOURCES
+ *   econ-history  src/renderer/data/economicHistoryKnowledge.ts ECONOMIC_HISTORY
  *
- * 設計: VERIFIED_CONCEPTS は純粋なデータ (ロジックなし) なので、型宣言を取り除いた
- * 配列リテラルを Function で評価して取り込む。AST パーサ依存を持たない方針 (他の
- * scripts/*.cjs と同じ) に合わせている。
+ * 利用側: scripts/build-knowledge-vault.cjs / scripts/orchestrate-context.cjs /
+ *         scripts/orchestrate.cjs (dispatch)。
+ *
+ * 設計: TS の型を transpileModule で除去して評価するため、配列リテラルの整形や
+ * モジュール内の相互参照 (const 参照) に依存しない。型のみ import は消える。
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
+const ts = require('typescript');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const KNOWLEDGE_TS = path.join(REPO_ROOT, 'src/renderer/data/academicKnowledge.ts');
+const DATA = path.join(REPO_ROOT, 'src/renderer/data');
 const KNOWLEDGE_MAP = path.join(REPO_ROOT, 'orchestration/knowledge-map.json');
 const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
 
-/** VERIFIED_CONCEPTS を academicKnowledge.ts から取り込む (id 昇順で安定ソート)。 */
-function loadConcepts() {
-  const raw = fs.readFileSync(KNOWLEDGE_TS, 'utf8');
-  const start = raw.indexOf('export const VERIFIED_CONCEPTS');
-  if (start === -1) throw new Error('VERIFIED_CONCEPTS の宣言が見つかりません');
-  let body = raw.slice(start).replace(/export const VERIFIED_CONCEPTS\s*:\s*VerifiedConcept\[\]\s*=\s*/, '');
-  // 配列リテラルは末尾の `];` で閉じる。その後ろは `// Stryker restore all` のみ。
-  const end = body.lastIndexOf('];');
-  if (end === -1) throw new Error('VERIFIED_CONCEPTS の配列終端が見つかりません');
-  body = body.slice(0, end + 1); // `[ ... ]`
-  let concepts;
-  try {
-    // 配列リテラル (オブジェクト + 文字列連結のみ。TS 構文・テンプレートリテラルなし)。
-    concepts = new Function(`return ${body};`)();
-  } catch (e) {
-    throw new Error(`VERIFIED_CONCEPTS の評価に失敗: ${e.message}`);
+/** TS データモジュールを型除去して評価し、export を取り出す。 */
+function loadModuleExports(file) {
+  const src = fs.readFileSync(file, 'utf8');
+  const js = ts.transpileModule(src, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const m = { exports: {} };
+  // 型のみ import は transpile で消える。万一の require は無害なスタブへ。
+  new Function('module', 'exports', 'require', js)(m, m.exports, () => ({}));
+  return m.exports;
+}
+
+const DISCIPLINE_LABELS = {
+  economics: '経済学',
+  management: '経営学',
+  'human-science': '人間科学',
+  'business-law': 'ビジネス法務',
+  'information-sociology': '情報社会学',
+};
+const COMPLIANCE_LABELS = { tax: '税務', labor: '労務', legal: '法務' };
+const SUBSIDY_LABELS = { employment: '雇用', business: '事業', welfare: '福祉', 'tax-incentive': '税制優遇' };
+
+const decade = (year) => `${Math.floor(year / 10) * 10}年代`;
+const clean = (s) => String(s == null ? '' : s).trim();
+
+// 各コレクションの設定。adapt は生エントリ → 共通ノートモデルへ正規化する。
+// 共通ノートモデル: { id, title, category, summary, meta:[{label,value}], sources:[{url,type,label}], asOf }
+const COLLECTIONS = [
+  {
+    key: 'academic',
+    label: '学術概念',
+    file: path.join(DATA, 'academicKnowledge.ts'),
+    exportName: 'VERIFIED_CONCEPTS',
+    categoryLabel: (c) => DISCIPLINE_LABELS[c] || c,
+    adapt: (c) => ({
+      id: c.id,
+      title: c.title,
+      category: c.discipline,
+      summary: c.statement,
+      meta: [{ label: '提唱者・初出', value: c.keyFigures }],
+      sources: c.sources,
+      asOf: c.asOf || '',
+    }),
+  },
+  {
+    key: 'compliance',
+    label: '法務・税務・労務',
+    file: path.join(DATA, 'complianceKnowledge.ts'),
+    exportName: 'VERIFIED_COMPLIANCE',
+    categoryLabel: (c) => COMPLIANCE_LABELS[c] || c,
+    adapt: (claim) => {
+      const v = claim.value;
+      return {
+        id: v.id,
+        title: v.title,
+        category: v.domain,
+        summary: v.statement,
+        meta: [{ label: '所管・根拠', value: v.authority }],
+        sources: claim.sources,
+        asOf: v.asOf || '',
+      };
+    },
+  },
+  {
+    key: 'subsidy',
+    label: '補助金・助成金',
+    file: path.join(DATA, 'subsidyKnowledge.ts'),
+    exportName: 'VERIFIED_SUBSIDIES',
+    categoryLabel: (c) => SUBSIDY_LABELS[c] || c,
+    adapt: (s) => ({
+      id: s.id,
+      title: s.name,
+      category: s.domain,
+      summary: s.statement,
+      meta: [
+        { label: '所管・実施機関', value: s.authority },
+        { label: '申請', value: s.application },
+        { label: '区分', value: s.level },
+      ],
+      sources: s.sources,
+      asOf: s.asOf || '',
+    }),
+  },
+  {
+    key: 'support',
+    label: '相談窓口',
+    file: path.join(DATA, 'counselorKnowledge.ts'),
+    exportName: 'VERIFIED_SUPPORT_RESOURCES',
+    categoryLabel: () => '相談窓口',
+    adapt: (claim, i) => ({
+      id: `support-${String(i + 1).padStart(2, '0')}`,
+      title: claim.value.label,
+      category: 'resource',
+      summary: claim.value.detail,
+      meta: [],
+      sources: claim.sources,
+      asOf: '2026-06',
+    }),
+  },
+  {
+    key: 'econ-history',
+    label: '経済史',
+    file: path.join(DATA, 'economicHistoryKnowledge.ts'),
+    exportName: 'ECONOMIC_HISTORY',
+    categoryLabel: (c) => c,
+    adapt: (y) => ({
+      id: `eh-${y.year}`,
+      title: `${y.year}年（${y.era}）`,
+      category: decade(y.year),
+      summary: `【世界】${clean(y.world)}\n\n【日本】${clean(y.japan)}`,
+      meta: [
+        { label: '主な出来事', value: (y.keyEvents || []).join('／') },
+        { label: '伸長セクター', value: (y.risingSectors || []).join('・') },
+        { label: '縮小セクター', value: (y.decliningSectors || []).join('・') },
+        { label: '留意', value: clean(y.caveats) },
+      ],
+      sources: y.sources || [],
+      asOf: '',
+    }),
+  },
+];
+
+const COLLECTION_BY_KEY = Object.fromEntries(COLLECTIONS.map((c) => [c.key, c]));
+
+const AUTHORITATIVE_TYPES = new Set(['academic', 'reference', 'government', 'municipality']);
+const SOURCE_TYPE_LABEL = {
+  academic: '学術',
+  reference: 'リファレンス',
+  government: '公的',
+  municipality: '自治体',
+  operator: '運営団体',
+  media: 'メディア',
+  other: 'その他',
+};
+
+/** 全コレクションを共通ノートモデルへ正規化してロードする。 */
+function loadEntries() {
+  const out = [];
+  for (const col of COLLECTIONS) {
+    const mod = loadModuleExports(col.file);
+    const raw = mod[col.exportName];
+    if (!Array.isArray(raw)) throw new Error(`${col.exportName} が配列ではありません (${col.file})`);
+    raw.forEach((r, i) => {
+      const n = col.adapt(r, i);
+      n.collection = col.key;
+      n.collectionLabel = col.label;
+      n.categoryLabel = col.categoryLabel(n.category);
+      n.sources = (n.sources || []).map((s) => ({ url: s.url, type: s.type, label: s.label }));
+      n.authoritative = n.sources.some((s) => AUTHORITATIVE_TYPES.has(s.type));
+      n.meta = (n.meta || []).filter((m) => clean(m.value).length > 0);
+      out.push(n);
+    });
   }
-  if (!Array.isArray(concepts)) throw new Error('VERIFIED_CONCEPTS が配列ではありません');
-  return concepts.slice().sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // id 昇順で安定ソート (コレクション内で決定論的)。
+  out.sort((a, b) => (a.collection < b.collection ? -1 : a.collection > b.collection ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  return out;
 }
 
 function loadKnowledgeMap() {
   return JSON.parse(fs.readFileSync(KNOWLEDGE_MAP, 'utf8'));
 }
-
 function loadRegistry() {
   return JSON.parse(fs.readFileSync(REGISTRY, 'utf8'));
 }
 
-const DISCIPLINES = ['economics', 'management', 'human-science', 'business-law', 'information-sociology'];
-
-/** statement から 1 文目 (。終端) を抜き、上限で丸めた一行要約を返す。 */
-function oneLiner(statement, max = 120) {
-  const flat = String(statement || '').replace(/\s+/g, '');
+function oneLiner(text, max = 120) {
+  const flat = String(text || '').replace(/\s+/g, '');
   const dot = flat.indexOf('。');
   let s = dot >= 0 ? flat.slice(0, dot + 1) : flat;
   if (s.length > max) s = `${s.slice(0, max - 1)}…`;
   return s;
 }
 
-function conceptsForDiscipline(concepts, discipline) {
-  return concepts.filter((c) => c.discipline === discipline);
-}
-
-/** 役員 id → 担当ディシプリン配列 (knowledge-map.json 由来)。未登録なら空配列。 */
-function disciplinesForExecutive(map, execId) {
-  const entry = (map.executiveDisciplines || {})[execId];
-  return entry ? entry.disciplines.slice() : [];
+/** 役員ロールの知識指定 { collection: '*' | [categories] } に entry が該当するか。 */
+function execWants(spec, entry) {
+  if (!spec) return false;
+  const sel = spec[entry.collection];
+  if (sel === undefined) return false;
+  if (sel === '*' || sel === true) return true;
+  return Array.isArray(sel) && sel.includes(entry.category);
 }
 
 /**
- * 役員ロールへの知識ブリーフを構築する。
- * @returns {{ executive: string, disciplines: Array<{discipline,label,count,concepts:Array<{id,title,oneLiner}>}> }}
+ * 役員ロールへの知識ブリーフ。コレクション→区分でグルーピングして返す。
  */
 function briefForExecutive(execId, opts = {}) {
-  const concepts = opts.concepts || loadConcepts();
+  const entries = opts.entries || loadEntries();
   const map = opts.map || loadKnowledgeMap();
   const limit = Number.isFinite(opts.limit) ? opts.limit : Infinity;
-  const labels = map.disciplineLabels || {};
-  const disciplines = disciplinesForExecutive(map, execId).map((d) => {
-    const list = conceptsForDiscipline(concepts, d);
-    return {
-      discipline: d,
-      label: labels[d] || d,
-      count: list.length,
-      concepts: list.slice(0, limit).map((c) => ({ id: c.id, title: c.title, oneLiner: oneLiner(c.statement) })),
-    };
-  });
-  return { executive: execId, disciplines };
+  const spec = (map.executiveKnowledge || {})[execId];
+  const groups = new Map(); // key: `${collection}␟${category}` -> {collection,collectionLabel,category,categoryLabel,items:[]}
+  for (const e of entries) {
+    if (!execWants(spec, e)) continue;
+    const gk = `${e.collection}␟${e.category}`;
+    if (!groups.has(gk)) groups.set(gk, { collection: e.collection, collectionLabel: e.collectionLabel, category: e.category, categoryLabel: e.categoryLabel, items: [] });
+    groups.get(gk).items.push(e);
+  }
+  const result = [...groups.values()].map((g) => ({
+    collection: g.collection,
+    collectionLabel: g.collectionLabel,
+    category: g.category,
+    categoryLabel: g.categoryLabel,
+    count: g.items.length,
+    items: g.items.slice(0, limit).map((c) => ({ id: c.id, title: c.title, oneLiner: oneLiner(c.summary) })),
+  }));
+  return { executive: execId, groups: result };
 }
 
 module.exports = {
   REPO_ROOT,
-  DISCIPLINES,
-  loadConcepts,
+  COLLECTIONS,
+  COLLECTION_BY_KEY,
+  SOURCE_TYPE_LABEL,
+  AUTHORITATIVE_TYPES,
+  loadModuleExports,
+  loadEntries,
   loadKnowledgeMap,
   loadRegistry,
   oneLiner,
-  conceptsForDiscipline,
-  disciplinesForExecutive,
+  execWants,
   briefForExecutive,
 };

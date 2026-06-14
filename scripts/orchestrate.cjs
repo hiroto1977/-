@@ -108,20 +108,20 @@ function resolveChain(reg, teamId) {
 // パースに失敗しても dispatch 本体は止めない (耐障害設計)。
 let _kctxMod = null;
 let _kctxData = null;
-function knowledgeBrief(execId, perDiscipline = 3, cap = 6) {
+function knowledgeBrief(execId, perGroup = 2, cap = 6) {
   if (!execId) return [];
   if (_kctxMod === null) {
     try {
       _kctxMod = require('../orchestration/knowledge-context.cjs');
-      _kctxData = { concepts: _kctxMod.loadConcepts(), map: _kctxMod.loadKnowledgeMap() };
+      _kctxData = { entries: _kctxMod.loadEntries(), map: _kctxMod.loadKnowledgeMap() };
     } catch {
       _kctxMod = false;
     }
   }
   if (!_kctxMod) return [];
-  const brief = _kctxMod.briefForExecutive(execId, { concepts: _kctxData.concepts, map: _kctxData.map, limit: perDiscipline });
+  const brief = _kctxMod.briefForExecutive(execId, { entries: _kctxData.entries, map: _kctxData.map, limit: perGroup });
   const flat = [];
-  for (const d of brief.disciplines) for (const c of d.concepts) flat.push({ discipline: d.label, title: c.title });
+  for (const g of brief.groups) for (const it of g.items) flat.push({ group: `${g.collectionLabel}/${g.categoryLabel}`, title: it.title });
   return flat.slice(0, cap);
 }
 
@@ -433,34 +433,34 @@ function cmdContext(reg, args) {
   } catch (e) {
     die(`知識ベースを読めません: ${e.message}`);
   }
-  const concepts = mod.loadConcepts();
+  const entries = mod.loadEntries();
   const map = mod.loadKnowledgeMap();
-  const labels = map.disciplineLabels || {};
   const limit = args.limit ? Number(args.limit) : 5;
 
   if (!args.role) {
-    const out = {};
-    for (const [execId, e] of Object.entries(map.executiveDisciplines || {})) {
-      out[execId] = e.disciplines.map((d) => ({ discipline: d, label: labels[d] || d, count: mod.conceptsForDiscipline(concepts, d).length }));
-    }
-    if (args.json) { console.log(JSON.stringify(out, null, 2)); return; }
-    console.log('🧭 役員ロール → 学術ディシプリン（knowledge-map.json）:');
-    for (const [execId, ds] of Object.entries(out)) {
-      console.log(`  • ${execId}: ${ds.map((d) => `${d.label}(${d.count})`).join(' / ')}`);
+    if (args.json) { console.log(JSON.stringify(map.executiveKnowledge || {}, null, 2)); return; }
+    console.log('🧭 役員ロール → 知識コレクション/区分（knowledge-map.json）:');
+    for (const [execId, spec] of Object.entries(map.executiveKnowledge || {})) {
+      const parts = [];
+      for (const [k, v] of Object.entries(spec)) {
+        if (k.startsWith('_')) continue;
+        parts.push(`${k}:${v === '*' ? '全' : (Array.isArray(v) ? v.join('|') : v)}`);
+      }
+      console.log(`  • ${execId}: ${parts.join(' / ')}`);
     }
     console.log('\n  詳細ブリーフ: npm run orchestrate:context -- --role <execId> [--limit N]');
     return;
   }
 
   const execId = String(args.role);
-  if (!(map.executiveDisciplines || {})[execId]) die(`未知の役員ロール "${execId}" (利用可能: ${Object.keys(map.executiveDisciplines || {}).join(', ')})`);
-  const brief = mod.briefForExecutive(execId, { concepts, map, limit });
+  if (!(map.executiveKnowledge || {})[execId]) die(`未知の役員ロール "${execId}" (利用可能: ${Object.keys(map.executiveKnowledge || {}).join(', ')})`);
+  const brief = mod.briefForExecutive(execId, { entries, map, limit });
   if (args.json) { console.log(JSON.stringify(brief, null, 2)); return; }
-  console.log(`🧭 役員 ${execId} への知識ブリーフ — ${(map.executiveDisciplines[execId] || {}).rationale || ''}`);
-  for (const d of brief.disciplines) {
-    console.log(`\n  【${d.label}】（全${d.count}件）`);
-    for (const c of d.concepts) console.log(`   • ${c.title} — ${c.oneLiner}`);
-    if (d.count > d.concepts.length) console.log(`   …ほか ${d.count - d.concepts.length} 件`);
+  console.log(`🧭 役員 ${execId} への知識ブリーフ — ${(map.executiveKnowledge[execId] || {})._rationale || ''}`);
+  for (const g of brief.groups) {
+    console.log(`\n  【${g.collectionLabel} / ${g.categoryLabel}】（全${g.count}件）`);
+    for (const it of g.items) console.log(`   • ${it.title} — ${it.oneLiner}`);
+    if (g.count > g.items.length) console.log(`   …ほか ${g.count - g.items.length} 件`);
   }
 }
 
