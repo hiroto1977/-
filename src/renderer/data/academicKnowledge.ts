@@ -4679,5 +4679,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.imec-int.com/en/what-we-offer/semiconductor-education-and-workforce-development/microchips/moores-law', type: 'academic', label: 'imec「What is Moore’s law? / Is Moore’s law dead?」（半導体研究機関による定義と鈍化論）' },
     ],
   },
+  {
+    id: 'econ-dual-labor-market',
+    discipline: 'economics',
+    title: '二重労働市場論',
+    statement:
+      '労働市場は単一の競争的市場ではなく、相互に分断された二つの部門から成るとする労働経済学の理論。賃金が高く雇用が安定し、昇進機会・良好な労働条件・職場ルールによる公正な処遇を備えた「一次（primary）部門」と、低賃金・雇用が不安定で離職率が高く、昇進機会や訓練機会に乏しい「二次（secondary）部門」に分かれ、両部門間の労働移動は制度的・慣行的に制限されているとされる。' +
+      '背景には、企業内の管理的ルールや慣行が賃金決定と労働配置を支配する「内部労働市場（internal labor market）」の存在がある。同質な資質を持つ労働者でも、就く職の部門特性によって雇用成果が大きく異なる点を強調し、賃金決定と労働配分を競争的市場で説明する新古典派の単一労働市場像（人的資本論・限界生産力説）への批判として展開された。人種・性別・制度といった非市場的要因を分析に取り込む枠組みでもある。',
+    keyFigures: 'ピーター・B・ドーリンガー（Peter B. Doeringer）／マイケル・J・ピオレ（Michael J. Piore）／初出: Doeringer & Piore『Internal Labor Markets and Manpower Analysis』(1971)／関連発展: Edwards・Reich・Gordon らの労働市場分断論（1975）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Dual_labour_market', type: 'reference', label: 'Dual labour market — Wikipedia（一次/二次部門への分断と DLM の定義）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100046432', type: 'reference', label: 'Labour-market segmentation — Oxford Reference（Doeringer & Piore 1971 を初出とする学術リファレンス）' },
+      { url: 'https://www.open.edu/openlearn/society-politics-law/economics/economics-explains-discrimination-the-labour-market/content-section-6.2', type: 'academic', label: 'Dual labour market theory — The Open University OpenLearn（大学教材）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w1666/w1666.pdf', type: 'academic', label: 'A Theory of Dual Labor Markets — NBER Working Paper' },
+    ],
+  },
+  {
+    id: 'mgmt-resource-dependence',
+    discipline: 'management',
+    title: '資源依存理論',
+    statement:
+      '資源依存理論（Resource Dependence Theory, RDT）は、組織を外部環境から切り離せない開放系として捉える組織論の理論である。組織は生存・活動に不可欠な希少資源（資金・原材料・情報・正統性など）を、自前で完結できず外部の他組織に依存する。ある資源が重要で、かつ他から代替調達できないほど、その資源を支配する相手は焦点組織に対して権力をもち、その行動を制約する。' +
+      'この非対称な依存と環境の不確実性は組織にとって脅威となるため、組織は依存と不確実性を低減すべく能動的に環境を管理しようとする。具体的戦略には、合併・買収、合弁・提携などの組織間関係、取締役会への利害関係者の取り込み（役員相互派遣＝interlocking directorates による協調＝co-optation）、政治的働きかけ、経営者の交代などがある。内部資源・能力に着目する資源ベース理論（RBV）とは対照的に、外部環境への依存と権力関係に焦点を当てる点が特徴である。',
+    keyFigures: 'ジェフリー・フェファー（Jeffrey Pfeffer）／ジェラルド・R・サランシック（Gerald R. Salancik）／初出: Pfeffer & Salancik (1978)『The External Control of Organizations: A Resource Dependence Perspective』（Harper & Row; 2003年 Stanford University Press 再版）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Resource_dependence_theory', type: 'reference', label: 'Resource dependence theory — Wikipedia' },
+      { url: 'https://www.ebsco.com/research-starters/economics/resource-dependence-theory-rdt', type: 'reference', label: 'Resource Dependence Theory (RDT) — EBSCO Research Starters（学術リファレンス）' },
+      { url: 'https://webuser.bus.umich.edu/gfdavis/Papers/davis_cobb_09_RSO.pdf', type: 'academic', label: 'Davis & Cobb, “Resource Dependence Theory: Past and Future” — University of Michigan（Research in the Sociology of Organizations 所収）' },
+      { url: 'https://www.sup.org/books/business/external-control-organizations', type: 'academic', label: 'The External Control of Organizations — Stanford University Press（原著の現行版出版元）' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-isomorphism',
+    discipline: 'management',
+    title: '制度的同型化',
+    statement:
+      '制度的同型化とは、同一の組織フィールド（類似の財・サービスを供給し、共通の制度的環境を共有する組織群）に属する組織が、効率性ではなく正統性（legitimacy）を求める制度的圧力によって、互いに似通った構造・慣行へと収斂していく現象を指す。ポール・ディマジオとウォルター・パウエルは、組織が合理的選択を重ねた結果かえって画一化される「鉄の檻」としてこれを捉え、三つの機構を提示した。' +
+      '(1)強制的同型化（coercive）は、法規制・政府の命令や資源を依存する組織からの公式・非公式な圧力に由来する。(2)模倣的同型化（mimetic）は、目標が曖昧で技術が不確実な状況下で、成功・正統とみなされる他組織を手本として模倣することから生じる。(3)規範的同型化（normative）は、専門職化、すなわち大学等の教育・資格認定や専門職ネットワークを通じた規範の浸透に由来する。各機構を通じて組織は制度化された構造に同調し正統性を獲得するが、必ずしも効率の改善を伴わない点が要点である。',
+    keyFigures: 'ポール・ディマジオ（Paul J. DiMaggio）／ウォルター・W・パウエル（Walter W. Powell）／初出: DiMaggio & Powell (1983) “The Iron Cage Revisited: Institutional Isomorphism and Collective Rationality in Organizational Fields”, American Sociological Review, 48(2), 147-160',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/i336536', type: 'academic', label: 'American Sociological Review, Vol. 48, No. 2 (Apr., 1983) — 原論文 DiMaggio & Powell, pp. 147-160 (JSTOR)' },
+      { url: 'https://sk.sagepub.com/ency/edvol/organization/chpt/institutional-isomorphism', type: 'reference', label: 'Sage “International Encyclopedia of Organization Studies” — Institutional Isomorphism 項目' },
+      { url: 'https://patriciathornton.com/wp-content/uploads/2012/02/Palgrave-entry-on-isomorphism3.pdf', type: 'reference', label: 'Patricia H. Thornton, “Isomorphism” — Palgrave Encyclopedia 項目（三機構と正統性の解説）' },
+    ],
+  },
+  {
+    id: 'human-working-memory',
+    discipline: 'human-science',
+    title: 'ワーキングメモリ',
+    statement:
+      'ワーキングメモリ（作業記憶）とは、情報を一時的に保持しながら、同時にそれを処理・操作するための容量に限りのある記憶システムであり、推論・読解・学習などの高次認知の基盤となる。アラン・バドリーとグラハム・ヒッチ（1974）は、従来の受動的・単一的な短期記憶モデルに代わり、複数の構成要素からなるマルチコンポーネント・モデルを提唱した。' +
+      '中核となる中央実行系（central executive）が注意を制御・配分し、二つの従属システム——言語・音声情報を扱う音韻ループ（phonological loop）と、視覚・空間情報を扱う視空間スケッチパッド（visuospatial sketchpad）——を統御する。2000年にはバドリーが、各サブシステムと長期記憶を統合するエピソード・バッファ（episodic buffer）を第四の要素として追加した。系列位置効果やスキーマ理論とは区別される独立した概念である。',
+    keyFigures: 'アラン・バドリー（Alan Baddeley）／グラハム・ヒッチ（Graham Hitch）／初出: Baddeley & Hitch (1974) 三要素モデル／エピソード・バッファ追加: Baddeley (2000)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory', type: 'reference', label: 'Baddeley’s model of working memory — Wikipedia' },
+      { url: 'http://www.scholarpedia.org/article/Working_memory', type: 'academic', label: 'Working memory — Scholarpedia（査読制百科事典級リファレンス）' },
+      { url: 'https://home.csulb.edu/~cwallis/382/readings/482/baddeley.pdf', type: 'academic', label: 'Baddeley A. “Working memory: looking back and looking forward”, Nature Reviews Neuroscience 4, 2003（査読論文・大学ホスト）' },
+    ],
+  },
+  {
+    id: 'bizlaw-director-conflict',
+    discipline: 'business-law',
+    title: '取締役の競業避止義務・利益相反取引（会社法356条）',
+    statement:
+      '取締役はその地位を利用し、会社の利益を犠牲にして自己又は第三者の利益を図ってはならない。会社法356条1項は、取締役が(1)競業取引（自己又は第三者のために会社の事業の部類に属する取引）、又は(2)利益相反取引（直接取引＝自己又は第三者のために会社と取引する／間接取引＝会社が取締役の債務を保証する等、会社と取締役の利益が相反する取引）をしようとする場合には、株主総会において当該取引につき重要な事実を開示し、その承認を受けなければならないと定める。' +
+      '取締役会設置会社では、この承認は取締役会が行い（会社法365条1項）、取引をした取締役は取引後遅滞なくその重要な事実を取締役会に報告しなければならない（同条2項）。本規制は取締役の忠実義務（会社法355条）の具体化であり、違反等により会社に損害が生じたときは任務懈怠による損害賠償責任（会社法423条）を負う（競業取引違反では取締役等が得た利益額を損害額と推定する規定がある）。',
+    keyFigures: '根拠条文＝会社法356条1項（競業・利益相反取引の制限）／取締役会設置会社の承認・報告＝会社法365条1項・2項／対象＝(1)競業取引(2)直接取引(3)間接取引（会社による取締役の債務保証等）／手続＝重要な事実の開示＋事前承認（株主総会・取締役会設置会社では取締役会）／趣旨＝忠実義務（355条）の具体化／違反の効果＝任務懈怠による損害賠償責任（423条）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（平成17年法律第86号、法令ID 417AC0000000086）— 355条・356条・365条・423条' },
+      { url: 'https://ja.wikibooks.org/wiki/会社法第356条', type: 'reference', label: 'Wikibooks「会社法第356条」（条文本文を掲載）' },
+      { url: 'https://www.businesslawyers.jp/practices/30', type: 'media', label: 'BUSINESS LAWYERS「取締役の利益相反取引とは？取締役会の承認が必要な場合は？」' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-capitalism',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム資本主義',
+    statement:
+      'デジタル・プラットフォームを基盤的インフラとする現代資本主義の形態を論じる概念。プラットフォーム企業は、異なる利用者集団（ユーザー・広告主・開発者・販売者など）の相互作用を仲介するインフラを提供し、その過程で生成される膨大なデータを採取・分析・収益化することを核心的ビジネスモデルとする。ニック・スルニチェクは、データを新たな「原材料」とみなし、プラットフォームをそれを処理する装置として位置づけた。' +
+      '彼はプラットフォームを広告（Google・Facebook）／クラウド（AWS・Salesforce）／産業（GE・Siemens）／製品（Spotify・Rolls-Royce）／リーン（Uber・Airbnb）の5類型に整理する。ネットワーク効果が独占傾向（winner-takes-all）を生み、データの囲い込みとプロプライエタリな構造が論点となる。ギグ・エコノミーや注意経済、監視資本主義と関連するが、データ採取を軸とする経済構造の分析として区別される。',
+    keyFigures: 'ニック・スルニチェク（Nick Srnicek）／初出: 著書『Platform Capitalism』（Polity Press, 2017, Theory Redux シリーズ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://blogs.lse.ac.uk/lsereviewofbooks/2017/06/05/book-review-platform-capitalism-by-nick-srnicek/', type: 'academic', label: 'LSE Review of Books — Book Review: Platform Capitalism by Nick Srnicek（ロンドン・スクール・オブ・エコノミクス）' },
+      { url: 'https://mastersofmedia.hum.uva.nl/2018/02/interventions-on-nick-srniceks-platform-capitalism/', type: 'academic', label: 'University of Amsterdam, Media Studies — Interventions on Nick Srnicek’s “Platform Capitalism”' },
+      { url: 'https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862', type: 'media', label: 'Polity Press — Platform Capitalism（原著出版社・書誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Platform_capitalism', type: 'reference', label: 'Wikipedia — Platform capitalism' },
+    ],
+  },
 ];
 // Stryker restore all
