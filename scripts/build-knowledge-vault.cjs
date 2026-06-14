@@ -2,27 +2,24 @@
 'use strict';
 
 /**
- * Obsidian 知識ヴォルト・ジェネレータ。
+ * Obsidian 知識ヴォルト・ジェネレータ（全コレクション対応）。
  *
- * src/renderer/data/academicKnowledge.ts の VERIFIED_CONCEPTS と
- * orchestration/knowledge-map.json から、Obsidian で開けるマークダウン・ヴォルト
- * (knowledge-vault/) を決定論的に生成する。これにより、これまで蓄積した検証済み
- * 学術知識すべてを、frontmatter・[[wikilink]]・#tag 付きのノート群として残し、
+ * リポジトリ内の確証済み知識データセットすべて（学術概念 / 法務・税務・労務 /
+ * 補助金・助成金 / 相談窓口 / 経済史）を単一の真実源とし、Obsidian で開ける
+ * マークダウン・ヴォルト (knowledge-vault/) を決定論的に生成する。これにより、
+ * これまで蓄積した全情報を frontmatter・[[wikilink]]・#tag 付きノートとして残し、
  * AIオーケストレーションのコンテキストとして再利用できる。
  *
  * 生成物 (knowledge-vault/):
- *   Home.md                          ヴォルト入口 (分野MOC・方法論・連携への索引)
- *   MOC/<分野>.md                    分野ごとの Map of Content (概念一覧)
- *   concepts/<discipline>/<id>.md    概念1件 = 1ノート (frontmatter + 本文 + 出典 + 関連)
- *   methodology/*.md                 方法論ノート (研究ディシプリン・運用ループ・出典衛生)
- *   AI_ORCHESTRATION_CONTEXT.md      役員ロールごとの知識ブリーフ索引
+ *   Home.md                            ヴォルト入口（コレクション索引・方法論・連携）
+ *   MOC/<コレクション>.md              コレクション別 Map of Content（区分→概念一覧）
+ *   notes/<collection>/<category>/<id>.md  1エントリ=1ノート
+ *   methodology/*.md                   方法論ノート（確証ディシプリン・運用ループ・出典衛生）
+ *   AI_ORCHESTRATION_CONTEXT.md        役員ロールごとの知識ブリーフ索引
  *
  * 使い方:
  *   node scripts/build-knowledge-vault.cjs            knowledge-vault/ を再生成
  *   node scripts/build-knowledge-vault.cjs --check    再生成して committed と差分検証 (CI用)
- *
- * 設計: 出力は wall-clock を含めず完全に決定論的。--check は一時ディレクトリへ生成し、
- * knowledge-vault/ とファイル集合・バイト内容を突合する (生成物のドリフト検出)。
  */
 
 const fs = require('node:fs');
@@ -30,10 +27,8 @@ const path = require('node:path');
 const os = require('node:os');
 const kc = require('../orchestration/knowledge-context.cjs');
 
-const REPO_ROOT = kc.REPO_ROOT;
-const VAULT_DIR = path.join(REPO_ROOT, 'knowledge-vault');
-
-const DISCIPLINE_ORDER = ['economics', 'management', 'human-science', 'business-law', 'information-sociology'];
+const VAULT_DIR = path.join(kc.REPO_ROOT, 'knowledge-vault');
+const EXEC_ORDER = ['coo', 'cso', 'cfo', 'chro', 'cio', 'cqo'];
 const EXEC_TITLES = {
   coo: 'COO（最高執行責任者・オーケストレーター）',
   cso: 'CSO（最高戦略責任者）',
@@ -42,140 +37,75 @@ const EXEC_TITLES = {
   cio: 'CIO（最高投資責任者）',
   cqo: 'CQO（最高品質責任者）',
 };
-const EXEC_ORDER = ['coo', 'cso', 'cfo', 'chro', 'cio', 'cqo'];
 
 const GENERATED_NOTE =
-  '*このノートは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*';
+  '*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*';
 
-/** YAML スカラを二重引用符で安全に表現する。 */
 function yamlStr(s) {
   return `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }
 
-const TYPE_LABEL = { academic: '学術', reference: 'リファレンス', government: '公的', media: 'メディア' };
-
 // ---------------------------------------------------------------------------
-// ノート本文ビルダー
+// ノート本文
 // ---------------------------------------------------------------------------
+function entryNote(e) {
+  const fm = ['---', `collection: ${e.collection}`, `id: ${e.id}`, `category: ${yamlStr(e.category)}`, `category_ja: ${yamlStr(e.categoryLabel)}`, `title: ${yamlStr(e.title)}`];
+  if (e.asOf) fm.push(`as_of: ${yamlStr(e.asOf)}`);
+  fm.push(`source_count: ${e.sources.length}`, `authoritative: ${e.authoritative}`, 'tags:', `  - collection/${e.collection}`, `  - ${e.collection}/${e.category}`, '  - knowledge/verified', 'aliases:', `  - ${yamlStr(e.title)}`, '---');
 
-function conceptNote(c, labels) {
-  const label = labels[c.discipline] || c.discipline;
-  const authoritative = c.sources.some((s) => s.type === 'academic' || s.type === 'reference' || s.type === 'government');
-  const fm = [
-    '---',
-    `id: ${c.id}`,
-    `discipline: ${c.discipline}`,
-    `discipline_ja: ${label}`,
-    `title: ${yamlStr(c.title)}`,
-    `key_figures: ${yamlStr(c.keyFigures)}`,
-    `as_of: ${yamlStr(c.asOf)}`,
-    `source_count: ${c.sources.length}`,
-    `authoritative: ${authoritative}`,
-    'tags:',
-    `  - discipline/${c.discipline}`,
-    '  - knowledge/verified',
-    'aliases:',
-    `  - ${yamlStr(c.title)}`,
-    '---',
-  ].join('\n');
+  const info = `> [!info] コレクション: [[${e.collectionLabel}]] ・ 区分: ${e.categoryLabel}${e.asOf ? ` ・ asOf: ${e.asOf}` : ''} ・ 出典: ${e.sources.length}件${e.authoritative ? '（うち権威ある出典 ✓）' : ''}`;
+  const sources = e.sources.map((s) => `- [${s.label}](${s.url}) \`${kc.SOURCE_TYPE_LABEL[s.type] || s.type}\``).join('\n');
 
-  const sources = c.sources
-    .map((s) => `- [${s.label}](${s.url}) \`${TYPE_LABEL[s.type] || s.type}\``)
-    .join('\n');
-
-  return [
-    fm,
-    '',
-    `# ${c.title}`,
-    '',
-    `> [!info] 分野: [[${label}]] ・ asOf: ${c.asOf} ・ 出典: ${c.sources.length}件${authoritative ? '（うち権威ある出典 ✓）' : ''}`,
-    '',
-    '## 概要',
-    c.statement,
-    '',
-    '## 提唱者・初出',
-    c.keyFigures,
-    '',
-    '## 出典',
-    sources,
-    '',
-    '## 関連',
-    `- 分野MOC: [[${label}]]`,
-    '- ヴォルト入口: [[Home]]',
-    '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]',
-    '',
-    '---',
-    GENERATED_NOTE,
-    '',
-  ].join('\n');
+  const parts = [fm.join('\n'), '', `# ${e.title}`, '', info, '', '## 概要', e.summary, ''];
+  for (const m of e.meta) parts.push(`## ${m.label}`, m.value, '');
+  parts.push('## 出典', sources, '', '## 関連', `- コレクション: [[${e.collectionLabel}]]`, '- ヴォルト入口: [[Home]]', '- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
 }
 
-function mocNote(discipline, label, list) {
-  const fm = [
-    '---',
-    `title: ${yamlStr(label)}`,
-    'type: MOC',
-    `discipline: ${discipline}`,
-    `concept_count: ${list.length}`,
-    'tags:',
-    `  - discipline/${discipline}`,
-    '  - MOC',
-    '---',
-  ].join('\n');
-  const items = list.map((c) => `- [[${c.id}|${c.title}]] — ${kc.oneLiner(c.statement, 60)}`).join('\n');
-  return [
-    fm,
-    '',
-    `# ${label}（${discipline}） — 分野MOC`,
-    '',
-    `検証済み概念 **${list.length}件** の地図（Map of Content）。各概念は独立2出典以上・うち1件以上は権威ある出典で確認済み。`,
-    '',
-    '## 概念一覧',
-    items,
-    '',
-    '## 関連',
-    '- [[Home]]',
-    '- [[AI_ORCHESTRATION_CONTEXT]]',
-    '',
-    '---',
-    GENERATED_NOTE,
-    '',
-  ].join('\n');
+/** カテゴリ昇順（key 文字列）でグルーピング。 */
+function groupByCategory(entries) {
+  const groups = new Map();
+  for (const e of entries) {
+    if (!groups.has(e.category)) groups.set(e.category, { category: e.category, label: e.categoryLabel, items: [] });
+    groups.get(e.category).items.push(e);
+  }
+  return [...groups.values()].sort((a, b) => (a.category < b.category ? -1 : a.category > b.category ? 1 : 0));
 }
 
-function homeNote(concepts, labels) {
-  const total = concepts.length;
-  const counts = {};
-  for (const c of concepts) counts[c.discipline] = (counts[c.discipline] || 0) + 1;
-  const mocLines = DISCIPLINE_ORDER.map((d) => `- [[${labels[d]}]] — ${counts[d] || 0}件`).join('\n');
-  const fm = [
-    '---',
-    'title: Home',
-    'type: home',
-    `total_concepts: ${total}`,
-    'tags:',
-    '  - home',
-    '  - MOC',
-    '---',
-  ].join('\n');
+function mocNote(col, entries) {
+  const groups = groupByCategory(entries);
+  const fm = ['---', `title: ${yamlStr(col.label)}`, 'type: MOC', `collection: ${col.key}`, `entry_count: ${entries.length}`, 'tags:', `  - collection/${col.key}`, '  - MOC', '---'];
+  const parts = [fm.join('\n'), '', `# ${col.label} — コレクションMOC`, '', `確証済みエントリ **${entries.length}件**（独立2出典以上・うち1件以上は権威ある出典で確認）。`, ''];
+  for (const g of groups) {
+    parts.push(`## ${g.label}（${g.items.length}件）`);
+    for (const e of g.items) parts.push(`- [[${e.id}|${e.title}]] — ${kc.oneLiner(e.summary, 60)}`);
+    parts.push('');
+  }
+  parts.push('## 関連', '- [[Home]]', '- [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function homeNote(byCollection, total) {
+  const fm = ['---', 'title: Home', 'type: home', `total_entries: ${total}`, 'tags:', '  - home', '  - MOC', '---'];
+  const lines = kc.COLLECTIONS.map((c) => `- [[${c.label}]] — ${(byCollection.get(c.key) || []).length}件`).join('\n');
   return [
-    fm,
+    fm.join('\n'),
     '',
-    '# 学術知識ヴォルト — Home',
+    '# 確証済み知識ヴォルト — Home',
     '',
-    `検証済み学術概念 **${total}件**（経済学・経営学・人間科学・ビジネス法務・情報社会学）。`,
-    'いずれも独立2出典以上・うち1件以上は権威ある出典（大学／学会／査読論文／公的機関／百科事典級リファレンス）で確認済み。',
-    '本ヴォルトは `src/renderer/data/academicKnowledge.ts` の `VERIFIED_CONCEPTS` から `npm run vault:build` で生成される。',
+    `リポジトリの確証済み知識データすべてを横断する **${total}件** のノート。`,
+    'いずれも独立2出典以上・うち1件以上は権威ある出典（大学／学会／査読論文／公的機関・自治体／百科事典級リファレンス）で確認済み。',
+    '`src/renderer/data/*Knowledge.ts` ほかを真実源として `npm run vault:build` で生成。',
     '',
-    '## 分野別MOC',
-    mocLines,
+    '## コレクション別MOC',
+    lines,
     '',
     '## AIオーケストレーション連携',
     '- [[AI_ORCHESTRATION_CONTEXT]] — 各役員ロール（COO/CSO/CFO/CHRO/CIO/CQO）への知識ブリーフ索引',
     '- 実行時取得: `npm run orchestrate:context -- --role <execId>`（dispatch に自動注入）',
     '',
     '## 方法論（蓄積した運用知）',
-    '- [[research-discipline|研究ディシプリン（出典検証の規律）]]',
+    '- [[research-discipline|確証ディシプリン（出典検証の規律）]]',
     '- [[orchestration-loop|並列オーケストレーション・ループ]]',
     '- [[source-hygiene|出典衛生（正規化ルール）]]',
     '',
@@ -185,83 +115,68 @@ function homeNote(concepts, labels) {
   ].join('\n');
 }
 
-function orchestrationContextNote(concepts, map) {
-  const labels = map.disciplineLabels || {};
-  const fm = [
-    '---',
-    'title: AI_ORCHESTRATION_CONTEXT',
-    'type: orchestration-context',
-    'tags:',
-    '  - orchestration',
-    '  - context',
-    '---',
-  ].join('\n');
+function orchestrationContextNote(entries, map) {
+  const fm = ['---', 'title: AI_ORCHESTRATION_CONTEXT', 'type: orchestration-context', 'tags:', '  - orchestration', '  - context', '---'];
   const parts = [
-    fm,
+    fm.join('\n'),
     '',
     '# AIオーケストレーション知識コンテキスト',
     '',
     '`orchestration/registry.json` の組織（CEO→COO→役員→管理職→一般職）の各**役員ロール**へ、',
-    '`orchestration/knowledge-map.json` に基づき関連ディシプリンの検証済み概念を対応づけたブリーフ。',
-    'ディスパッチ（`npm run orchestrate:dispatch`）はこの対応を用いて各役職へ知識を注入し、',
+    '`orchestration/knowledge-map.json` に基づき全コレクション横断で確証済み知識を対応づけたブリーフ。',
+    'ディスパッチ（`npm run orchestrate:dispatch`）はこの対応で各役職へ知識を注入し、',
     '`npm run orchestrate:context -- --role <execId>` で実行時に同じブリーフを取得できる。',
     '',
   ];
-  const PER_DISC_CAP = 15;
+  const CAP = 10;
   for (const execId of EXEC_ORDER) {
-    const entry = (map.executiveDisciplines || {})[execId];
-    if (!entry) continue;
+    const spec = (map.executiveKnowledge || {})[execId];
+    if (!spec) continue;
+    const brief = kc.briefForExecutive(execId, { entries, map, limit: CAP });
     parts.push(`## ${EXEC_TITLES[execId] || execId}`);
+    if (spec._rationale) parts.push('', `> ${spec._rationale}`);
     parts.push('');
-    parts.push(`担当ディシプリン: ${entry.disciplines.map((d) => `[[${labels[d] || d}]]`).join(' / ')}`);
-    parts.push('');
-    parts.push(`> ${entry.rationale}`);
-    parts.push('');
-    for (const d of entry.disciplines) {
-      const list = kc.conceptsForDiscipline(concepts, d);
-      parts.push(`### ${labels[d] || d}（${list.length}件）`);
-      for (const c of list.slice(0, PER_DISC_CAP)) {
-        parts.push(`- [[${c.id}|${c.title}]] — ${kc.oneLiner(c.statement, 70)}`);
-      }
-      if (list.length > PER_DISC_CAP) parts.push(`- …ほか ${list.length - PER_DISC_CAP} 件は [[${labels[d] || d}]] を参照`);
+    for (const g of brief.groups) {
+      parts.push(`### ${g.collectionLabel} / ${g.categoryLabel}（${g.count}件）`);
+      for (const it of g.items) parts.push(`- [[${it.id}|${it.title}]] — ${kc.oneLiner(it.oneLiner, 60)}`);
+      if (g.count > g.items.length) parts.push(`- …ほか ${g.count - g.items.length} 件は [[${g.collectionLabel}]] を参照`);
       parts.push('');
     }
   }
-  parts.push('---');
-  parts.push(GENERATED_NOTE);
-  parts.push('');
+  parts.push('---', GENERATED_NOTE, '');
   return parts.join('\n');
 }
 
 // ---------------------------------------------------------------------------
-// 方法論ノート (蓄積した運用知 — 静的テンプレート)
+// 方法論ノート（蓄積した運用知 — 静的テンプレート）
 // ---------------------------------------------------------------------------
-
 const METHODOLOGY = {
   'research-discipline': `---
-title: 研究ディシプリン（出典検証の規律）
+title: 確証ディシプリン（出典検証の規律）
 type: methodology
 tags:
   - methodology
   - verification
 ---
 
-# 研究ディシプリン（出典検証の規律）
+# 確証ディシプリン（出典検証の規律）
 
-本ヴォルトの全概念が従う採録規律。**確認できない情報は採録せず、捏造しない。**
+本ヴォルトの全コレクション（学術概念 / 法務・税務・労務 / 補助金・助成金 / 相談窓口 / 経済史）が
+共通して従う採録規律。**確認できない情報は採録せず、捏造しない。**
 
 ## 採録基準
-- 独立した **2 出典以上** で突合し、うち **1 件以上は権威ある出典**（大学・学会・査読論文・公的機関・原典/一次資料・百科事典級リファレンス）であること。
-- 制度のような「年度で変動する数値」ではなく、確立した概念・理論・古典を対象とする。
-- 学説には批判・異説がありうるため、必要に応じて statement に **限界・批判** も併記して中立性を保つ。
-- 提唱者・初出（年・文献）を keyFigures に明示し、トレーサビリティを確保する。
-- 検証できない事項は採録しない（推測で埋めない）。
+- 独立した **2 出典以上** で突合し、うち **1 件以上は権威ある出典**（大学・学会・査読論文・公的機関・
+  自治体・原典/一次資料・百科事典級リファレンス）であること。安全クリティカルな情報（相談窓口等）は
+  特に公的出典を要する。
+- 制度・補助金のように「年度で変動する数値（金額・率・締切）」は固定値として断定せず、
+  「最新の公募要領・支給要領で要確認」と明記する。
+- 学説には批判・異説がありうるため、必要に応じて要旨に限界・批判を併記して中立性を保つ。
+- 提唱者・初出・所管・確認時点を明示し、トレーサビリティを確保する。
+- 検証できない事項は採録しない（推測で埋めない）。収集は人が行い、取り込みは PR レビューを通す。
 
-## 出典タイプの分類（AcademicSourceType）
-- \`academic\` — 査読論文・大学・学会（例: JSTOR, SAGE, Springer, 大学リポジトリ, NBER, PMC）
-- \`reference\` — 百科事典級リファレンス（例: Britannica, Stanford Encyclopedia of Philosophy, Wikipedia, EBSCO, Oxford Reference）
-- \`government\` — 公的機関・一次法令（例: e-Gov 法令検索, 各省庁, NobelPrize.org, EUR-Lex, WHO）
-- \`media\` — 解説記事・実務メディア（例: HBR, 法律事務所コラム, 専門メディア）
+## 出典タイプ
+- \`academic\` 査読・大学・学会 / \`reference\` 百科事典級 / \`government\` 公的機関・一次法令 /
+  \`municipality\` 自治体 / \`operator\` 運営団体 / \`media\` 解説・報道。
 
 ## 関連
 - [[Home]]
@@ -280,23 +195,22 @@ tags:
 
 知識ベースを拡張する際に確立した、並列調査 → 検証 → 反映の運用ループ。
 
-## バッチ手順（1バッチ＝6概念）
-1. 既存タイトルを grep し、重複しない概念を 5 ディシプリン横断で選定（dedup）。
-2. **6 並列の調査エージェント**を起動（各概念1体）。各エージェントは独立に出典を突合し、確認できた事実のみを返す。
-3. 全6件の確認が揃うまで保留（partial で書かない）。
-4. \`VERIFIED_CONCEPTS\` へ追記（出典タイプを4値へ正規化、URL を正規形へ）。docs の一覧表も更新。
+## バッチ手順
+1. 既存 id／タイトルを照合し、重複しない項目を選定（dedup）。
+2. **並列の調査エージェント**を起動し、各項目を独立に出典突合。確認できた事実のみ返す。
+3. 全件の確認が揃うまで保留（partial で書かない）。
+4. データへ追記（出典タイプを正規化、URL を正準形へ）。
 5. 全ゲート（typecheck / verify:all / lint / build:web / vault:check）green を確認。
-6. コミット → push → ドラフト PR を作成。
-7. CI green を確認後マージ → main 同期 → 次バッチへ。
+6. コミット → push → ドラフト PR → CI green 後マージ → 次バッチ。
 
 ## 役割分担（registry.json の組織）
-- CEO（人間）→ COO（Claude 本体・オーケストレーター）→ 役員（CFO/CHRO/CSO/CIO/CQO）→ 秘書室 → 管理職 → 一般職（並列 Agent）。
-- 調査・設計は **read-only の並列 Agent**、実装は COO が直列で、品質ゲートは CQO 配下が担う（役割分離）。
+- CEO（人間）→ COO（Claude本体・オーケストレーター）→ 役員（CFO/CHRO/CSO/CIO/CQO）→ 秘書室 → 管理職 → 一般職（並列Agent）。
+- 調査・設計は read-only の並列 Agent、実装は COO が直列、品質ゲートは CQO 配下（役割分離）。
+- 各役職には [[AI_ORCHESTRATION_CONTEXT]] の知識ブリーフが注入される。
 
 ## 関連
 - [[Home]]
-- [[AI_ORCHESTRATION_CONTEXT]]
-- [[research-discipline|研究ディシプリン]]
+- [[research-discipline|確証ディシプリン]]
 `,
   'source-hygiene': `---
 title: 出典衛生（正規化ルール）
@@ -311,13 +225,11 @@ tags:
 出典の品質と再現性を保つために適用している正規化ルール。
 
 ## URL 正規化
-- e-Gov 法令検索は正準形 \`https://laws.e-gov.go.jp/law/<LAWID>\` を用いる（API 形式・旧 elaws 形式・hourei.net 等は使わない）。
-  - 例: 民法 \`129AC0000000089\`／会社法 \`417AC0000000086\`／不正競争防止法 \`405AC0000000047\`／著作権法 \`345AC0000000048\`／特定商取引法 \`351AC0000000057\`／意匠法 \`334AC0000000125\`。
-- 低品質なアグリゲータ（例: 引用転載のみのサイト）は採用しない。原典・一次資料・権威ある二次資料を優先。
+- e-Gov 法令検索は正準形 \`https://laws.e-gov.go.jp/law/<LAWID>\` を用いる（API 形式・旧 elaws 形式は使わない）。
+- 補助金・制度は \`.go.jp\` / 公式実施機関を優先。低品質なアグリゲータは採用しない。
 
-## 出典タイプの正規化（4値へ）
-調査エージェントの自由記述ラベルを \`academic | reference | government | media\` のいずれかへ写像する。
-- 査読・大学・学会 → \`academic\`／百科事典・Wikipedia・Britannica・EBSCO → \`reference\`／公的機関・一次法令・NobelPrize.org・EUR-Lex → \`government\`／HBR・法律事務所・解説記事 → \`media\`。
+## 出典タイプの正規化
+- 自由記述ラベルを \`academic | reference | government | municipality | operator | media | other\` のいずれかへ写像する。
 
 ## 自己修正の尊重
 - エージェントの自己修正（年・条番号・版の訂正）はそのまま反映する（捏造しない）。
@@ -325,49 +237,44 @@ tags:
 
 ## 関連
 - [[Home]]
-- [[research-discipline|研究ディシプリン]]
+- [[research-discipline|確証ディシプリン]]
 `,
 };
 
 // ---------------------------------------------------------------------------
 // 生成
 // ---------------------------------------------------------------------------
-
-/** outDir 配下に { 相対パス: 内容 } を全て書き出す。 */
 function buildFiles() {
-  const concepts = kc.loadConcepts();
-  const map = kc.loadKnowledgeMap();
-  const labels = map.disciplineLabels || {};
+  const entries = kc.loadEntries();
 
-  // 重複 id ガード: 同一 id の二重登録は 1 ノートへ上書き衝突し知識を失う。
-  // CI (vault:check) で確実に弾くため、ここで停止する（dedupe-academic-knowledge.cjs で解消）。
-  const counts = {};
-  for (const c of concepts) counts[c.id] = (counts[c.id] || 0) + 1;
-  const dups = Object.entries(counts).filter(([, n]) => n > 1);
+  // id の全域一意ガード（ノート basename = id。wikilink 解決と上書き衝突防止のため）。
+  const seen = new Map();
+  const dups = [];
+  for (const e of entries) {
+    if (seen.has(e.id)) dups.push(`${e.id} (${seen.get(e.id)} / ${e.collection})`);
+    else seen.set(e.id, e.collection);
+  }
   if (dups.length) {
-    throw new Error(
-      `VERIFIED_CONCEPTS に重複 id が ${dups.length} 件あります。` +
-        '`node scripts/dedupe-academic-knowledge.cjs --apply` で統合してください: ' +
-        dups.map(([id, n]) => `${id}(x${n})`).join(', '),
-    );
+    throw new Error(`ノート id が重複しています（${dups.length} 件）。データ側で解消してください: ${dups.slice(0, 20).join(', ')}`);
+  }
+
+  const byCollection = new Map();
+  for (const e of entries) {
+    if (!byCollection.has(e.collection)) byCollection.set(e.collection, []);
+    byCollection.get(e.collection).push(e);
   }
 
   const files = {};
+  files['Home.md'] = homeNote(byCollection, entries.length);
+  files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(entries, kc.loadKnowledgeMap());
 
-  files['Home.md'] = homeNote(concepts, labels);
-  files['AI_ORCHESTRATION_CONTEXT.md'] = orchestrationContextNote(concepts, map);
-
-  for (const d of DISCIPLINE_ORDER) {
-    const list = kc.conceptsForDiscipline(concepts, d);
-    files[path.join('MOC', `${labels[d] || d}.md`)] = mocNote(d, labels[d] || d, list);
-    for (const c of list) {
-      files[path.join('concepts', d, `${c.id}.md`)] = conceptNote(c, labels);
-    }
+  for (const col of kc.COLLECTIONS) {
+    const list = byCollection.get(col.key) || [];
+    files[path.join('MOC', `${col.label}.md`)] = mocNote(col, list);
+    for (const e of list) files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e);
   }
 
-  for (const [name, content] of Object.entries(METHODOLOGY)) {
-    files[path.join('methodology', `${name}.md`)] = content;
-  }
+  for (const [name, content] of Object.entries(METHODOLOGY)) files[path.join('methodology', `${name}.md`)] = content;
 
   return files;
 }
@@ -385,8 +292,7 @@ function walk(dir, base = dir, acc = []) {
   if (!fs.existsSync(dir)) return acc;
   for (const name of fs.readdirSync(dir).sort()) {
     const full = path.join(dir, name);
-    const st = fs.statSync(full);
-    if (st.isDirectory()) walk(full, base, acc);
+    if (fs.statSync(full).isDirectory()) walk(full, base, acc);
     else acc.push(path.relative(base, full));
   }
   return acc;
@@ -401,13 +307,11 @@ function check(files) {
     const problems = [];
     const wantSet = new Set(want);
     const haveSet = new Set(have);
-    for (const f of want) if (!haveSet.has(f)) problems.push(`欠落 (生成されるべき): ${f}`);
-    for (const f of have) if (!wantSet.has(f)) problems.push(`余分 (削除されるべき): ${f}`);
+    for (const f of want) if (!haveSet.has(f)) problems.push(`欠落: ${f}`);
+    for (const f of have) if (!wantSet.has(f)) problems.push(`余分: ${f}`);
     for (const f of want) {
       if (!haveSet.has(f)) continue;
-      const a = fs.readFileSync(path.join(tmp, f), 'utf8');
-      const b = fs.readFileSync(path.join(VAULT_DIR, f), 'utf8');
-      if (a !== b) problems.push(`内容差分: ${f}`);
+      if (fs.readFileSync(path.join(tmp, f), 'utf8') !== fs.readFileSync(path.join(VAULT_DIR, f), 'utf8')) problems.push(`内容差分: ${f}`);
     }
     return problems;
   } finally {

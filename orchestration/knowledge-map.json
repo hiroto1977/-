@@ -1,37 +1,37 @@
 {
-  "version": 1,
-  "description": "学術知識ベース (src/renderer/data/academicKnowledge.ts の VERIFIED_CONCEPTS) の各ディシプリンを、AIオーケストレーション組織 (orchestration/registry.json) の役員ロールへ対応づける写像。dispatch / orchestrate:context が、各役職へ関連ディシプリンの検証済み概念ブリーフを注入するために参照する。registry.json とは独立した設定ファイルで、verify-orchestration の不変条件には影響しない。",
-  "disciplineLabels": {
-    "economics": "経済学",
-    "management": "経営学",
-    "human-science": "人間科学",
-    "business-law": "ビジネス法務",
-    "information-sociology": "情報社会学"
+  "version": 2,
+  "description": "リポジトリ内の確証済み知識コレクション(学術概念/法務税務労務/補助金助成金/相談窓口/経済史)の各区分を、AIオーケストレーション組織(orchestration/registry.json)の役員ロールへ対応づける写像。dispatch / orchestrate:context が各役職へ関連知識ブリーフを注入するために参照する。registry.json とは独立した設定で verify-orchestration の不変条件には影響しない。",
+  "collections": {
+    "academic": { "label": "学術概念", "categories": { "economics": "経済学", "management": "経営学", "human-science": "人間科学", "business-law": "ビジネス法務", "information-sociology": "情報社会学" } },
+    "compliance": { "label": "法務・税務・労務", "categories": { "tax": "税務", "labor": "労務", "legal": "法務" } },
+    "subsidy": { "label": "補助金・助成金", "categories": { "employment": "雇用", "business": "事業", "welfare": "福祉", "tax-incentive": "税制優遇" } },
+    "support": { "label": "相談窓口", "categories": { "resource": "相談窓口" } },
+    "econ-history": { "label": "経済史", "categories": {} }
   },
-  "executiveDisciplines": {
+  "executiveKnowledge": {
     "coo": {
-      "disciplines": ["economics", "management", "human-science", "business-law", "information-sociology"],
-      "rationale": "オーケストレーター (Claude 本体)。全ディシプリンを横断的に参照し、各役員へのブリーフを統合する。"
+      "_rationale": "オーケストレーター(Claude本体)。全コレクションを横断的に参照し各役員へのブリーフを統合する。",
+      "academic": "*", "compliance": "*", "subsidy": "*", "support": "*", "econ-history": "*"
     },
     "cso": {
-      "disciplines": ["management", "economics"],
-      "rationale": "経営戦略・分析・成長・予測 — 経営学 (戦略・組織・マーケティング) と経済学 (ミクロ・マクロ・産業組織) を主軸とする。"
+      "_rationale": "経営戦略・分析・成長・予測 — 経営学・経済学の概念と、事業系補助金、経済史を参照する。",
+      "academic": ["management", "economics"], "subsidy": ["business"], "econ-history": "*"
     },
     "cfo": {
-      "disciplines": ["business-law", "economics"],
-      "rationale": "財務・税務・資金調達 — ビジネス法務 (契約・会社法・担保) と経済学 (情報の経済学・金融) を参照する。"
+      "_rationale": "財務・税務・資金調達 — ビジネス法務・経済学の概念、税務/法務コンプライアンス、税制優遇補助金を参照する。",
+      "academic": ["business-law", "economics"], "compliance": ["tax", "legal"], "subsidy": ["tax-incentive"]
     },
     "chro": {
-      "disciplines": ["human-science", "business-law"],
-      "rationale": "人事・給与・労務 — 人間科学 (動機づけ・組織行動・社会心理) と労働関連の法務を参照する。"
+      "_rationale": "人事・給与・労務 — 人間科学・ビジネス法務の概念、労務コンプライアンス、雇用/福祉補助金、相談窓口を参照する。",
+      "academic": ["human-science", "business-law"], "compliance": ["labor"], "subsidy": ["employment", "welfare"], "support": "*"
     },
     "cio": {
-      "disciplines": ["economics", "information-sociology"],
-      "rationale": "投資・資産運用・為替 — 経済学 (行動ファイナンス・金融・国際) と情報社会学 (プラットフォーム・データ・規制) を参照する。"
+      "_rationale": "投資・資産運用・為替 — 経済学・情報社会学の概念と経済史を参照する。",
+      "academic": ["economics", "information-sociology"], "econ-history": "*"
     },
     "cqo": {
-      "disciplines": ["information-sociology", "business-law"],
-      "rationale": "品質保証・セキュリティ — 情報社会学 (プライバシー・規制・誤情報) とビジネス法務 (知財・データ保護) を参照する。"
+      "_rationale": "品質保証・セキュリティ — 情報社会学・ビジネス法務の概念と法務コンプライアンスを参照する。",
+      "academic": ["information-sociology", "business-law"], "compliance": ["legal"]
     }
   }
 }

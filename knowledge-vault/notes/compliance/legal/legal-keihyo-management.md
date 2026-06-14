@@ -1,0 +1,39 @@
+---
+collection: compliance
+id: legal-keihyo-management
+category: "legal"
+category_ja: "法務"
+title: "景品表示法上の表示等の管理上の措置義務（26条）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/compliance
+  - compliance/legal
+  - knowledge/verified
+aliases:
+  - "景品表示法上の表示等の管理上の措置義務（26条）"
+---
+
+# 景品表示法上の表示等の管理上の措置義務（26条）
+
+> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+景品表示法26条は、事業者に対し、自己の供給する商品・役務の取引について不当な表示や過大な景品類の提供を防止するために必要な体制の整備その他の必要な措置（表示等の管理上の措置）を講じる義務を課している。内閣総理大臣（消費者庁）はこの措置に関する指針を定めており、表示の根拠となる情報の確認、表示に関する社内の確認体制の整備、関係資料の保管等が求められる。
+
+## 所管・根拠
+所管: 消費者庁（景品表示法）
+
+## 出典
+- [消費者庁 景品表示法（26条・管理措置の指針）](https://www.caa.go.jp/policies/policy/representation/fair_labeling) `公的`
+- [消費者庁 表示等の管理上の措置についての指針](https://www.caa.go.jp/policies/policy/representation/fair_labeling/pdf/141114premiums_5.pdf) `公的`
+- [公正取引委員会 景品表示法に関する業務](https://www.jftc.go.jp/info/nenpou/h27/div02/div_02_13.html) `公的`
+
+## 関連
+- コレクション: [[法務・税務・労務]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

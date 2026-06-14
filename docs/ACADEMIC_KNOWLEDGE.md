@@ -9,7 +9,7 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 > 📚 **閲覧・活用**: この検証済み概念群は Obsidian 知識ヴォルト `knowledge-vault/`（`npm run vault:build`）
 > として相互リンク付きで閲覧でき、AIオーケストレーションの各役員ロールへコンテキストとして注入される。
 > 仕組みは [`docs/KNOWLEDGE_VAULT.md`](KNOWLEDGE_VAULT.md) を参照。`VERIFIED_CONCEPTS` を真実源とし、
-> 重複 id は `scripts/dedupe-academic-knowledge.cjs` で統合・`vault:check` で再発防止する（下表は追加順の記録で、
+> 重複 id は `scripts/dedupe-knowledge.cjs` で統合・`vault:check` で再発防止する（下表は追加順の記録で、
 > 重複統合後の正準集合はヴォルト／データ側を参照）。
 
 ## 採録の原則

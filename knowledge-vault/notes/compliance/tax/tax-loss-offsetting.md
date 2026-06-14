@@ -1,0 +1,39 @@
+---
+collection: compliance
+id: tax-loss-offsetting
+category: "tax"
+category_ja: "税務"
+title: "所得税の損益通算"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/compliance
+  - compliance/tax
+  - knowledge/verified
+aliases:
+  - "所得税の損益通算"
+---
+
+# 所得税の損益通算
+
+> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 税務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+所得税では、不動産所得・事業所得・山林所得・譲渡所得の金額の計算上生じた損失（赤字）がある場合、一定の順序で他の各種所得の金額（黒字）から差し引くことができる（損益通算）。これら4種類以外の所得（配当所得・一時所得・雑所得・給与所得等）の損失は、原則として損益通算の対象とならない。
+
+## 所管・根拠
+所管: 国税庁（所得税法）
+
+## 出典
+- [国税庁 No.2250 損益通算](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2250.htm) `公的`
+- [国税庁 No.1391 不動産所得が赤字のときの通算](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1391.htm) `公的`
+- [損益通算 解説](https://biz.moneyforward.com/accounting/basic/18981/) `メディア`
+
+## 関連
+- コレクション: [[法務・税務・労務]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

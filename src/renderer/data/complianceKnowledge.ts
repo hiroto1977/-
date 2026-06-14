@@ -198,23 +198,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'labor-social-insurance-expansion',
-      domain: 'labor',
-      title: '社会保険（健康保険・厚生年金）の適用拡大',
-      statement:
-        '2024年10月から、被保険者数が常時51人以上の事業所（特定適用事業所）では短時間労働者も加入対象。' +
-        '加入要件は、週の所定労働時間20時間以上・月額賃金8.8万円以上・2か月を超える雇用見込み・昼間学生でないこと。',
-      authority: '所管: 厚生労働省・日本年金機構（健康保険法・厚生年金保険法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mhlw.go.jp/tekiyoukakudai/', type: 'government', label: '厚生労働省 社会保険適用拡大特設サイト' },
-      { url: 'https://www.gov-online.go.jp/article/202209/entry-10068.html', type: 'government', label: '政府広報オンライン 社会保険の適用拡大' },
-      { url: 'https://biz.moneyforward.com/payroll/basic/55078/', type: 'media', label: 'マネーフォワード 社会保険の適用拡大' },
-    ],
-  },
-  {
-    value: {
       id: 'legal-esignature-presumption',
       domain: 'legal',
       title: '電子署名の推定効（電子署名法3条）',
@@ -422,23 +405,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'labor-disability-employment-rate',
-      domain: 'labor',
-      title: '障害者の法定雇用率',
-      statement:
-        '2024年4月から民間企業の法定雇用率は2.5%（対象は常用労働者40人以上の事業主）。2026年7月に2.7%' +
-        '（対象37.5人以上）へ引き上げ予定。対象事業主は法定雇用率以上の障害者雇用義務を負う。',
-      authority: '所管: 厚生労働省（障害者雇用促進法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page10.html', type: 'government', label: '厚生労働省 障害者雇用 事業主の方へ' },
-      { url: 'https://www.mhlw.go.jp/content/001064502.pdf', type: 'government', label: '厚生労働省 法定雇用率の引き上げ' },
-      { url: 'https://www.tokai-sr.jp/column/employment-disabilities/', type: 'media', label: '法定雇用率の引き上げ 社労士解説' },
-    ],
-  },
-  {
-    value: {
       id: 'tax-officer-remuneration',
       domain: 'tax',
       title: '役員給与の損金算入（3類型）',
@@ -588,23 +554,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mhlw.go.jp/content/000930914.pdf', type: 'government', label: '厚生労働省 月60時間超の割増賃金率引上げ' },
       { url: 'https://www.mhlw.go.jp/content/11200000/tp1216-1l-02.pdf', type: 'government', label: '厚生労働省 法定割増賃金率の引上げ' },
       { url: 'https://biz.moneyforward.com/payroll/basic/82774/', type: 'media', label: 'マネーフォワード 残業代の割増率' },
-    ],
-  },
-  {
-    value: {
-      id: 'labor-36-agreement',
-      domain: 'labor',
-      title: '36協定の締結・届出義務',
-      statement:
-        '法定労働時間を超える時間外労働・休日労働には、労使で36協定（時間外労働・休日労働に関する協定届）を' +
-        '締結し所轄労働基準監督署へ届け出る義務がある。届出のない時間外・休日労働は労働基準法違反となる。',
-      authority: '所管: 厚生労働省（労働基準法第36条）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.check-roudou.mhlw.go.jp/saburoku/', type: 'government', label: '厚生労働省 確かめよう労働条件 36協定' },
-      { url: 'https://jsite.mhlw.go.jp/tokyo-roudoukyoku/hourei_seido_tetsuzuki/roudoukijun_keiyaku/36_kyoutei.html', type: 'government', label: '東京労働局 36協定届' },
-      { url: 'https://hrnote.jp/contents/roumu-rodokijunho-36jo-20230114/', type: 'media', label: 'HR NOTE 36協定の解説' },
     ],
   },
   {
@@ -3923,24 +3872,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.e-tax.nta.go.jp/hojin/gimuka/index.htm', type: 'government', label: '国税庁 e-Tax 大法人の電子申告の義務化' },
       { url: 'https://www.nta.go.jp/publication/pamph/koho/campaign/r2/Apr/04.htm', type: 'government', label: '国税庁 大法人の電子申告義務化について' },
       { url: 'https://www.pref.saitama.lg.jp/a0209/z-kurashiindex/z-eltax-gimuka.html', type: 'municipality', label: '埼玉県 大法人の電子申告義務化の概要' },
-    ],
-  },
-  {
-    value: {
-      id: 'labor-digital-wage-payment',
-      domain: 'labor',
-      title: '賃金のデジタル払い（資金移動業者口座への賃金支払）',
-      statement:
-        '2023年（令和5年）4月1日施行の労働基準法施行規則改正により、厚生労働大臣の指定を受けた資金移動業者（〇〇Pay等）の口座への' +
-        '賃金支払（賃金のデジタル払い）が解禁された。賃金支払の通貨払い原則の例外として、労働者本人の同意・労使協定の締結が必要であり、' +
-        '指定要件として口座残高上限100万円以下等が定められている。',
-      authority: '所管: 厚生労働省（労働基準法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mhlw.go.jp/stf/newpage_41528.html', type: 'government', label: '厚生労働省 賃金のデジタル払い（資金移動業者の指定）' },
-      { url: 'https://www.jil.go.jp/kokunai/blt/backnumber/2022/12/s_01.html', type: 'media', label: 'JILPT 給与デジタル払いの解禁（本人同意・100万円上限）' },
-      { url: 'https://j-net21.smrj.go.jp/law/20231115.html', type: 'media', label: '中小機構 J-Net21 賃金のデジタル払い' },
     ],
   },
   {

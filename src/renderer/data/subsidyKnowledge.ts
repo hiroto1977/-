@@ -1257,25 +1257,6 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
     ],
   },
   {
-    id: 'subsidy-kumamoto',
-    level: 'municipality',
-    domain: 'business',
-    name: '熊本市創業者チャレンジ支援補助金',
-    authority: '熊本市（経済観光局 起業・新産業支援課）',
-    statement:
-      '熊本市が市内で創業する事業者を対象に、創業に要する経費の一部を補助するとともに専門家派遣等の経営支援を一体的に行う制度（政令指定都市＝市区町村レベルの代表例）。' +
-      '対象経費は人件費・店舗等借入費・設備費・マーケティング費・知的財産権等関連経費などが例示される。補助率・補助上限・対象経費・募集期間は年度ごとに変動するため、' +
-      '最新の募集要項及び熊本市公式で要確認。',
-    application:
-      '募集期間中に熊本市（起業・新産業支援課）へ申請する。年度により募集回・要件・上限が変わるため、最新の公募要領で要確認。',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.city.kumamoto.jp/list03447.html', type: 'municipality', label: '熊本市 起業・新産業支援課' },
-      { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001bx7.html', type: 'government', label: 'J-Net21 熊本市 創業チャレンジ支援' },
-      { url: 'https://hojyokin-portal.jp/subsidies/19611', type: 'media', label: '熊本市創業者チャレンジ支援補助金 概要' },
-    ],
-  },
-  {
     id: 'subsidy-kitakyushu',
     level: 'municipality',
     domain: 'business',
@@ -2464,24 +2445,6 @@ export const VERIFIED_SUBSIDIES: VerifiedSubsidy[] = [
       { url: 'https://www.nedo.go.jp/activities/ZZJP_100091.html', type: 'government', label: 'NEDO 研究開発型スタートアップ支援事業' },
       { url: 'https://www8.cao.go.jp/cstp/ryoshigijutsu/21kai/sanko4.pdf', type: 'government', label: '内閣府 ディープテック・スタートアップ支援事業（経産省資料）' },
       { url: 'https://j-net21.smrj.go.jp/news/l357tf0000001a1j.html', type: 'operator', label: 'J-Net21 NEDO シード期スタートアップ支援' },
-    ],
-  },
-  {
-    id: 'subsidy-childcare-support-grant',
-    level: 'national',
-    domain: 'welfare',
-    name: '子ども・子育て支援交付金（地域子ども・子育て支援事業）',
-    authority: '所管: こども家庭庁／実施主体: 市町村（国・都道府県が費用を負担・交付）',
-    statement:
-      '子ども・子育て支援法に基づき市町村が策定する事業計画に従い、地域の実情に応じて実施する「地域子ども・子育て支援事業」（利用者支援・延長保育・放課後児童健全育成（学童保育）・地域子育て支援拠点・一時預かり・病児保育・' +
-      'ファミリー・サポート・センター等）に要する費用を国・都道府県・市町村が分担（交付金として交付）する仕組み。実施主体は市町村で、こども家庭庁が交付金を所管する。負担割合・対象事業の範囲は年度ごとに変動するため要確認。',
-    application:
-      '市町村が地域のニーズに基づき事業計画を策定・実施し、国（こども家庭庁）へ交付申請を行って交付金を受領する自治体向けの財政支援。住民（保護者）は各事業を市町村・委託事業者を通じて利用する。',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.cfa.go.jp/policies/kokoseido', type: 'government', label: 'こども家庭庁 子ども・子育て支援制度' },
-      { url: 'https://kouseikyoku.mhlw.go.jp/kantoshinetsu/gyomu/bu_ka/kenko_fukushi/kodomo_004.html', type: 'government', label: '関東信越厚生局 子ども・子育て支援交付金について' },
-      { url: 'https://laws.e-gov.go.jp/law/424AC0000000065', type: 'government', label: 'e-Gov法令検索 子ども・子育て支援法' },
     ],
   },
   {

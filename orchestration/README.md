@@ -168,13 +168,14 @@ npm run orchestration:plan
 - 単調増加・最低チーム数・参照整合・teamCount 一致を機械検証するので、人手の記録ミスを検出。
 - 「次に何をすべきか」がコードから算出されるため、サイクルを跨いでも方針がぶれない。
 
-## 学術知識のコンテキスト注入（knowledge-context）
+## 確証済み知識のコンテキスト注入（knowledge-context）
 
-`src/renderer/data/academicKnowledge.ts` の検証済み学術概念（`VERIFIED_CONCEPTS`）を、
-`orchestration/knowledge-map.json` の写像に従って各役員ロールへ対応づけ、ディスパッチ計画へ
-「参照すべき確立概念」のブリーフを注入する。詳細は [`docs/KNOWLEDGE_VAULT.md`](../docs/KNOWLEDGE_VAULT.md)。
+リポジトリ内の確証済み知識コレクション全て（学術概念 / 法務・税務・労務 / 補助金・助成金 /
+相談窓口 / 経済史）を、`orchestration/knowledge-map.json` の写像に従って各役員ロールへ
+横断的に対応づけ、ディスパッチ計画へ「参照すべき確証済み知識」のブリーフを注入する。
+詳細は [`docs/KNOWLEDGE_VAULT.md`](../docs/KNOWLEDGE_VAULT.md)。
 
-- 共有ローダ: `orchestration/knowledge-context.cjs`（型注釈を外して `VERIFIED_CONCEPTS` を評価）。
+- 共有ローダ: `orchestration/knowledge-context.cjs`（TS を transpile しコレクション別アダプタで正規化）。
 - `npm run orchestrate:dispatch` … 各チームの担当役員の知識ブリーフを計画に自動添付（`◇ 知識ブリーフ:`）。
 - `npm run orchestrate:context -- --role <execId>` … 役員ロールへの知識ブリーフを単体取得（dispatch と同じ内容）。
 - `npm run orchestrate -- context [--role <execId>]` … orchestrate サブコマンド版。
