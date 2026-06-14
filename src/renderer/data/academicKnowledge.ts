@@ -5611,5 +5611,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Media_literacy', type: 'reference', label: 'Wikipedia「Media literacy」— 概念・歴史・主要論者の概観' },
     ],
   },
+  {
+    id: 'econ-rawls-justice',
+    discipline: 'economics',
+    title: 'ロールズの正義論（公正としての正義）',
+    statement:
+      'アメリカの哲学者ジョン・ロールズが1971年の著書『正義論（A Theory of Justice）』で展開した、社会の基本構造における分配的正義の理論。「公正としての正義（justice as fairness）」を掲げ、功利主義に代わる社会契約論的な正義原理を導く。人々が自分の地位・才能・価値観を知らない「無知のヴェール（veil of ignorance）」に覆われた「原初状態（original position）」で、合理的な当事者が合意するであろう原理として、(1)平等な基本的自由の原理（各人が他者と両立する最大限の平等な基本的自由をもつ）、(2)社会的・経済的不平等は、公正な機会均等のもとで、かつ最も不遇な人々の最大の便益になる場合にのみ許されるとする格差原理（マキシミン的推論）を提示した。' +
+      '第1原理は第2原理に対し、また公正な機会均等は格差原理に対し辞書式に優先する（自由の優先）。ロバート・ノージックは『アナーキー・国家・ユートピア』（1974）で権原理論・最小国家の立場から格差原理を批判した。厚生・分配を扱う経済学および政治哲学の基礎文献。',
+    keyFigures: 'ジョン・ロールズ（John Rawls, 提唱者）／初出: 『正義論（A Theory of Justice）』1971年／批判: ロバート・ノージック（Robert Nozick）『アナーキー・国家・ユートピア』1974年',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/original-position/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — “Original Position”（原初状態・無知のヴェール・公正としての正義）' },
+      { url: 'https://plato.stanford.edu/entries/rawls/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — “John Rawls”' },
+      { url: 'https://iep.utm.edu/rawls/', type: 'reference', label: 'Internet Encyclopedia of Philosophy — “John Rawls”（1971年刊行・二原理の正確な定式）' },
+      { url: 'https://www.ebsco.com/research-starters/literature-and-writing/theory-justice-john-rawls', type: 'reference', label: 'EBSCO Research Starters — “A Theory of Justice by John Rawls”（二原理・マキシミン・辞書式優先）' },
+    ],
+  },
+  {
+    id: 'econ-emissions-trading',
+    discipline: 'economics',
+    title: '排出権取引（キャップ・アンド・トレード）',
+    statement:
+      '環境汚染物質（とくに温室効果ガスCO2）の排出総量に上限（キャップ）を設定し、その範囲内で排出枠（許可証 allowance、通常1枠＝1トン）を企業・施設に配分したうえで、枠を市場で売買（トレード）できるようにする、市場メカニズムを用いた環境政策手段。削減コストの低い主体は多く削減して余った枠を売り、削減コストの高い主体は枠を買うため、各主体の限界削減費用が市場価格に均等化し、社会全体の削減費用を最小化しつつ排出総量を上限内に抑える。' +
+      '外部性（汚染）に価格を付けるカーボンプライシングの代表的手法で、ピグー税（炭素税）と並ぶ。理論的にはコースの定理（外部性は財産権の設定と取引で内部化できる）やクロッカー(1966)・デイルズ(J. H. Dales, 1968)の譲渡可能排出許可の構想に由来する。EUの排出量取引制度（EU-ETS、2005年開始）が代表例で、世界初の大規模炭素市場とされる。',
+    keyFigures: 'J. H. デイルズ(1968)：譲渡可能排出許可の構想を定式化（先駆としてT. D. クロッカー1966）／R. コース：コースの定理（財産権設定と取引による外部性の内部化）／二要素：排出上限(cap)＋取引可能な排出枠(allowance)／効果：限界削減費用の均等化で総削減費用を最小化／カーボンプライシングの一種・炭素税(ピグー税)と並ぶ／代表例：EU-ETS（2005年開始）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.epa.gov/emissions-trading/what-emissions-trading', type: 'government', label: 'U.S. Environmental Protection Agency (EPA) — What Is Emissions Trading?' },
+      { url: 'https://www.c2es.org/content/cap-and-trade-basics/', type: 'reference', label: 'Center for Climate and Energy Solutions (C2ES) — Cap and Trade Basics' },
+      { url: 'https://economics.mit.edu/sites/default/files/2022-09/Emissions%20Trading%20in%20the%20United%20States.pdf', type: 'academic', label: 'Ellerman & Joskow (MIT) — Emissions Trading in the United States（クロッカー1966・デイルズ1968の構想を解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Emissions_trading', type: 'reference', label: 'Wikipedia — Emissions trading（cap and trade の定義・コースの定理との関係）' },
+    ],
+  },
+  {
+    id: 'mgmt-ocb',
+    discipline: 'management',
+    title: '組織市民行動（OCB）',
+    statement:
+      '組織市民行動（Organizational Citizenship Behavior, OCB）とは、従業員が正式な職務記述書では求められておらず、公式の報酬システムによって直接的・明示的には評価・報酬されないにもかかわらず、自発的（discretionary）に行い、総体として組織の効率的・効果的な機能を促進する行動を指す。Organ（1988）が用いた古典的定義に基づく。代表的に5次元が知られる――同僚を助ける「愛他主義（altruism）」、不平を言わず困難に耐える「スポーツマンシップ」、最低要件を超え誠実に務める「良心性（conscientiousness）」、他者への影響に配慮し問題を未然に防ぐ「礼儀正しさ（courtesy）」、組織活動へ積極的に関与する「市民道徳（civic virtue）」。' +
+      '職務満足・組織コミットメント・組織的公正（公正知覚）と正の関連を持ち、組織の生産性・凝集性を高めるとされる。Borman & Motowidlo の「文脈的パフォーマンス（contextual performance）」とも近接する概念である。',
+    keyFigures: 'デニス・オーガン（Dennis W. Organ）が1980年代に概念化／初出: Bateman & Organ (1983)「Job Satisfaction and the Good Soldier」で “citizenship behavior” を提示／Organ (1988) が5因子モデルとして体系化／測定尺度: Podsakoff et al. (1990)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Organizational_citizenship_behavior', type: 'reference', label: 'Wikipedia — Organizational citizenship behavior' },
+      { url: 'https://journals.aom.org/doi/10.5465/amc.2023.0002', type: 'academic', label: 'Academy of Management Collections — The Origin, Evolution, and Future of Organizational Citizenship Behavior（学会・査読）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/014920630002600307', type: 'academic', label: 'Podsakoff et al. (2000), Journal of Management (SAGE) — OCB: A Critical Review（査読論文）' },
+    ],
+  },
+  {
+    id: 'human-undermining-effect',
+    discipline: 'human-science',
+    title: 'アンダーマイニング効果（過正当化効果）',
+    statement:
+      'それ自体が楽しくて行っていた（内発的に動機づけられていた）活動に対し、金銭などの外的報酬を与えると、かえってその活動への内発的動機づけが低下する現象。エドワード・デシが1971年のパズル課題（SOMA）実験で示し、マーク・レッパーらが1973年の幼児お絵描き実験で実証した。後者では「良い遊び賞（Good Player Award）」を約束された群が、報酬撤去後の自由遊びでの自発的お絵描きを約50%減らした一方、予期せず報酬を受けた群や無報酬群では減少しなかった。' +
+      '機序は、自分の行動の原因を内的興味ではなく外的報酬に帰属させること（自己知覚・帰属理論）や、報酬が統制的に働き自律性（self-determination）の感覚を損なうこと（認知的評価理論）とされる。ただし予期されない報酬や、有能感を伝える情報的フィードバックとしての報酬では生じにくいなどの条件がある。',
+    keyFigures: 'エドワード・デシ（Edward L. Deci, 1971, パズル課題による初出実証）／マーク・レッパー、デヴィッド・グリーン、リチャード・ニスベット（Lepper, Greene & Nisbett, 1973, 幼児お絵描き実験で「過正当化効果」を実証）／理論的基盤＝認知的評価理論（Deci & Ryan）・自己知覚理論（Bem, 1972）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Overjustification_effect', type: 'reference', label: 'Wikipedia「Overjustification effect」（Deci 1971・Lepper et al. 1973、認知的評価理論・自己知覚理論）' },
+      { url: 'https://depts.washington.edu/techdocs/papers/deciExtrinsicRewardsAndIntrinsicMotivation99.pdf', type: 'academic', label: 'Deci, Koestner & Ryan (1999) “A Meta-Analytic Review...”（University of Washington ホスト、Psychological Bulletin）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5386788/', type: 'academic', label: 'PMC収載のレビュー論文（過正当化効果の定量的レビュー、Deci 1971・Lepper et al. 1973を引用）' },
+    ],
+  },
+  {
+    id: 'bizlaw-anonymized-info',
+    discipline: 'business-law',
+    title: '匿名加工情報・仮名加工情報（個人情報保護法）',
+    statement:
+      '個人情報保護法（個人情報の保護に関する法律、e-Gov法令ID 415AC0000000057）は、個人データの利活用と保護のバランスを図るため二類型の加工情報を定める。匿名加工情報（法第2条第6項、2015年改正で導入）は、特定の個人を識別できないように個人情報を加工し、かつ当該個人情報を復元できないようにした情報をいう。所定の加工基準・安全管理措置・公表等を条件に、本人同意なく第三者提供や目的外利用が可能となる。' +
+      '仮名加工情報（法第2条第5項、2020年改正で新設・2022年4月施行）は、他の情報と照合しない限り特定の個人を識別できないように個人情報を加工した情報をいい、内部での分析・利活用を念頭に利用目的の変更制限が適用されない一方、原則として第三者提供は禁止される。両者は加工の程度・識別／非識別の水準・許容される利用範囲が異なる。所管は個人情報保護委員会（PPC）。',
+    keyFigures: '匿名加工情報＝法第2条第6項・2015年改正で導入・特定個人を識別不可かつ復元不可・基準準拠加工と公表を条件に本人同意なく第三者提供／目的外利用が可能／仮名加工情報＝法第2条第5項・2020年改正で新設（2022年4月施行）・他の情報と照合しない限り識別不可・利用目的変更制限が不適用だが原則第三者提供は禁止／違い＝加工水準と許容される利用範囲（匿名＝外部提供向け／仮名＝内部分析向け）／所管＝個人情報保護委員会（PPC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057', type: 'government', label: 'e-Gov法令検索 個人情報の保護に関する法律（平成15年法律第57号、法令ID 415AC0000000057）第2条' },
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_anonymous/', type: 'government', label: '個人情報保護委員会 ガイドライン（仮名加工情報・匿名加工情報編）' },
+      { url: 'https://www.ppc.go.jp/all_faq_index/faq1-q14-17/', type: 'government', label: '個人情報保護委員会 FAQ（仮名加工情報の第三者提供は原則不可）' },
+    ],
+  },
+  {
+    id: 'infosoc-post-truth',
+    discipline: 'information-sociology',
+    title: 'ポスト・トゥルース',
+    statement:
+      '世論の形成において、客観的な事実よりも、感情や個人的信念に訴えるものの方が大きな影響力をもつ状況を指す概念・形容詞。オックスフォード辞書は「客観的事実が、感情や個人的信念への訴えよりも世論形成への影響力をもたなくなる状況に関する/を示す」と定義し、2016年の「Word of the Year（今年の言葉）」に選んだ。英国のEU離脱（ブレグジット）国民投票やトランプ大統領選を背景に使用頻度が前年比約2,000%急増した。' +
+      '哲学者リー・マッキンタイアは単なる虚偽ではなく、事実そのものが政治的従属下に置かれ、自分の信じたい現実に都合よく事実が選別・軽視される点を本質とみる。フェイクニュース・確証バイアス・エコーチェンバー・科学否定（科学的合意の軽視）と密接に関連する、事実より感情・信念が優位になる認識論的状況である。',
+    keyFigures: 'オックスフォード辞書（Oxford Languages、2016年Word of the Yearに選定）／哲学者リー・マッキンタイア（Lee McIntyre、著書『ポストトゥルース（Post-Truth）』2018, MIT Press）／政治的背景＝ブレグジット国民投票・2016年トランプ大統領選',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://languages.oup.com/word-of-the-year/2016/', type: 'reference', label: 'Oxford Languages — Word of the Year 2016: Post-Truth（定義・選定・使用急増）' },
+      { url: 'https://mitpress.mit.edu/9780262535045/post-truth/', type: 'academic', label: 'Lee McIntyre, Post-Truth (MIT Press Essential Knowledge, 2018) — 出版社公式ページ' },
+      { url: 'https://en.wikipedia.org/wiki/Post-truth_politics', type: 'reference', label: 'Wikipedia「Post-truth politics」— 認識論的含意とブレグジット/トランプ関連' },
+    ],
+  },
 ];
 // Stryker restore all
