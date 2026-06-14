@@ -6349,5 +6349,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Disinformation', type: 'reference', label: 'Wikipedia: Disinformation' },
     ],
   },
+  {
+    id: 'econ-modern-portfolio-theory',
+    discipline: 'economics',
+    title: '現代ポートフォリオ理論（MPT）',
+    statement:
+      'リスク資産への投資において、個々の資産の期待リターンとリスク（分散・標準偏差）、および資産間の相関（共分散）を考慮し、複数資産を組み合わせて分散投資することで、与えられた期待リターンに対しリスクを最小化（または与えられたリスクに対し期待リターンを最大化）する最適ポートフォリオを構築する理論。平均-分散分析（mean-variance analysis）とも呼ばれる。投資家はリスク回避的で、リターンと分散のみで判断すると仮定する。' +
+      '核心は、資産のリスク・リターンは単独ではなくポートフォリオ全体への寄与で評価すべきという点であり、ポートフォリオのリスクは各資産の分散だけでなく資産間の共分散にも依存する。相関の低い資産を組み合わせると全体リスクを個別リスクの加重平均より下げられる（分散効果）。達成可能な最良（最小リスク）のポートフォリオ集合を「効率的フロンティア（efficient frontier）」として描く。後の資本資産価格モデル（CAPM）の基礎となった。',
+    keyFigures: 'ハリー・マーコウィッツ（Harry Markowitz）が提唱／初出は論文「Portfolio Selection」（The Journal of Finance, 1952年3月, 7(1):77-91）／効率的フロンティアも1952年に定式化／1990年ノーベル経済学賞（M.ミラー・W.シャープと共同受賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/uploads/2018/06/markowitz-lecture.pdf', type: 'government', label: 'Harry M. Markowitz, “Foundations of Portfolio Theory,” Nobel Lecture, 1990 (NobelPrize.org 公式PDF)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1990/press-release/', type: 'government', label: 'The Sveriges Riksbank Prize in Economic Sciences 1990 — Press Release (NobelPrize.org)' },
+      { url: 'https://en.wikipedia.org/wiki/Modern_portfolio_theory', type: 'reference', label: 'Modern portfolio theory — Wikipedia' },
+      { url: 'https://www.britannica.com/money/modern-portfolio-theory-explained', type: 'reference', label: 'Modern Portfolio Theory — Britannica Money' },
+    ],
+  },
+  {
+    id: 'econ-capm',
+    discipline: 'economics',
+    title: '資本資産価格モデル（CAPM）',
+    statement:
+      '市場が均衡しているとき、ある資産の期待リターンがそのリスクに応じてどう決まるかを説明するモデル。中心式は「期待リターン ＝ リスクフリーレート ＋ β ×（市場ポートフォリオの期待リターン − リスクフリーレート）」で、末項のカッコ内をマーケット・リスクプレミアムと呼ぶ。核心は、分散投資で消去できる個別資産固有の非システマティック・リスクは市場で価格付けされず、分散投資で消去できないシステマティック・リスク（市場全体への連動）のみが、その感応度を表す係数 β を通じてリターンに反映される、という点にある。' +
+      'マーコウィッツの現代ポートフォリオ理論を基礎とし、資本コスト推定や資産評価に広く用いられるが、同質的期待・効率的市場・自由な借入などの前提や、規模・バリュー効果（ファマ＝フレンチ3ファクターモデル）の存在といった実証的妥当性への批判もある。',
+    keyFigures: 'ウィリアム・シャープ（William Sharpe, 1964／1990年ノーベル経済学賞）／ジョン・リントナー（John Lintner, 1965）／ヤン・モッシン（Jan Mossin, 1966）が1960年代に独立に展開／ハリー・マーコウィッツ（現代ポートフォリオ理論の基礎）／批判: ユージン・ファマ＆ケネス・フレンチ（3ファクターモデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mba.tuck.dartmouth.edu/bespeneckbo/default/AFA611-Eckbo%20web%20site/AFA611-S6B-FamaFrench-CAPM-JEP04.pdf', type: 'academic', label: 'Fama & French, “The Capital Asset Pricing Model: Theory and Evidence,” Journal of Economic Perspectives 18(3), 2004（Dartmouth/Tuck ホスト）' },
+      { url: 'https://en.wikipedia.org/wiki/Capital_asset_pricing_model', type: 'reference', label: 'Wikipedia: Capital asset pricing model（Sharpe/Lintner/Mossin 独立展開・β・システマティックリスク）' },
+      { url: 'https://corporatefinanceinstitute.com/resources/valuation/what-is-capm-formula/', type: 'reference', label: 'Corporate Finance Institute: What is CAPM — Formula, Example' },
+      { url: 'https://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model', type: 'reference', label: 'Wikipedia: Fama–French three-factor model（CAPM への実証的批判の典拠）' },
+    ],
+  },
+  {
+    id: 'mgmt-design-thinking',
+    discipline: 'management',
+    title: 'デザイン思考',
+    statement:
+      'デザイナーの思考様式・手法を、製品デザインに限らずビジネスや社会の複雑な問題の解決・イノベーション創出に応用する、人間中心（human-centered）で反復的な問題解決アプローチ。ユーザー（人間）の真のニーズへの深い理解（共感）から出発し、試作（プロトタイプ）と検証を素早く繰り返して解決策を磨く点が特徴で、発散（選択肢を広げる）と収束（選択肢を絞る）を交互に繰り返す。' +
+      'スタンフォード大学のd.school（Hasso Plattner Institute of Design）が広めた代表的な5段階プロセスは、(1)共感（Empathize：観察・対話でユーザーを理解）、(2)問題定義（Define：本質的課題を明確化）、(3)アイデア創出（Ideate：ブレインストーミング等で発想を拡張）、(4)プロトタイプ（Prototype：素早く形にする）、(5)テスト（Test：ユーザーで検証し学ぶ）から成る。実際には非線形で各段階を行き来する。リーン・スタートアップやオープンイノベーションとは別概念。',
+    keyFigures: '普及者：ティム・ブラウン（Tim Brown、IDEO、2008年Harvard Business Review論文「Design Thinking」）／デヴィッド・ケリー（David Kelley、IDEO創業者）がスタンフォードd.schoolを創設し5段階プロセスを広めた／思想的源流：ハーバート・サイモン（『The Sciences of the Artificial』1969）、ロルフ・ファステら／要点：人間中心・反復的・発散と収束の往復',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2008/06/design-thinking', type: 'media', label: 'Tim Brown, “Design Thinking,” Harvard Business Review (June 2008) — 経営文脈での普及の一次資料' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/design-thinking', type: 'reference', label: 'EBSCO Research Starters: Design Thinking — 学術リファレンス（定義・サイモン源流）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/jpim.12594', type: 'academic', label: 'Auernhammer & Roth (2021), Journal of Product Innovation Management — Stanfordにおけるデザイン思考の起源と発展（査読論文）' },
+      { url: 'https://dschool.stanford.edu/', type: 'academic', label: 'Stanford d.school (Hasso Plattner Institute of Design) 公式 — 5段階プロセスの普及元' },
+    ],
+  },
+  {
+    id: 'human-classical-conditioning',
+    discipline: 'human-science',
+    title: '古典的条件づけ（パブロフ）',
+    statement:
+      '生得的に特定の反応（無条件反応 UR、例：唾液分泌）を引き起こす無条件刺激（US、例：食物）と、本来は反応を引き起こさない中性刺激（例：メトロノームやベルの音）を繰り返し対提示することで、やがて中性刺激だけでも同様の反応が生じるようになる連合学習の様式。条件づけが成立すると中性刺激は「条件刺激（CS）」となり、それが引き起こす反応は「条件反応（CR）」と呼ばれる。ロシアの生理学者イワン・パブロフが犬の唾液分泌の研究中に発見・体系化した。' +
+      '関連概念に、CSのみの反復でCRが弱まる「消去」、休止後にCRが一時的に再出現する「自発的回復」、類似刺激へ反応が広がる「般化」、刺激を区別する「分化（弁別）」がある。ワトソンの「アルバート坊やの実験」（恐怖条件づけ）など情動学習の基礎をなし、自発的行動と結果による学習であるスキナーのオペラント条件づけとは区別される。',
+    keyFigures: 'イワン・パブロフ（Ivan Pavlov、ロシアの生理学者、条件反射の概念を確立、1904年ノーベル生理学・医学賞は消化の研究に対して受賞）／ジョン・B・ワトソン（John B. Watson、レイナーとの「アルバート坊やの実験」1920年で恐怖条件づけを実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Ivan-Pavlov', type: 'reference', label: 'Encyclopaedia Britannica — Ivan Pavlov（生涯・条件反射・1904年ノーベル賞）' },
+      { url: 'https://www.nobelprize.org/prizes/medicine/1904/pavlov/lecture/', type: 'government', label: 'The Nobel Prize — Physiology or Medicine 1904, Ivan Pavlov（公式記録）' },
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK470326/', type: 'academic', label: 'StatPearls (NCBI Bookshelf) — Classical Conditioning（US/UR/CS/CR・消去等）' },
+      { url: 'https://www.apa.org/ed/precollege/topss/lessons/activities/classical-conditioning.pdf', type: 'academic', label: 'American Psychological Association (APA) — Classical Conditioning 教材' },
+    ],
+  },
+  {
+    id: 'bizlaw-suretyship',
+    discipline: 'business-law',
+    title: '保証契約・連帯保証（民法446条）',
+    statement:
+      '保証とは、主たる債務者が債務を履行しない場合に保証人がその履行をする責任を負う制度である（民法446条1項）。保証契約は債権者と保証人との間で結ばれ、書面（又は電磁的記録）によらなければ効力を生じない要式契約である（446条2項・3項）。保証債務は主たる債務の存在を前提とし、これに従属する（付従性）。通常の保証人は、まず主たる債務者に請求せよと求める催告の抗弁権（452条）と、主たる債務者に弁済資力がありかつ執行が容易であることを証明して主たる債務者の財産から先に執行せよと求める検索の抗弁権（453条）を持ち、複数保証人がいるときは頭数で債務が分割される分別の利益も有する。' +
+      'これに対し連帯保証は主たる債務者と連帯して債務を負うもので、これら催告・検索の抗弁権および分別の利益がなく（454条）、債権者はいきなり連帯保証人に全額請求できるため実務上多用される。2017年改正・2020年4月施行の現行民法は、個人根保証契約に極度額の定めを要求し（なければ無効、465条の2）、事業に係る債務の個人保証に公正証書による保証意思確認を要する（465条の6）など、安易な保証から保証人を保護する規律を強化した。',
+    keyFigures: '446条1項＝保証人は主債務者が履行しないとき履行責任／446条2項・3項＝書面又は電磁的記録による要式契約／付従性＝主たる債務に従属／452条＝催告の抗弁権／453条＝検索の抗弁権／456条＝分別の利益／454条＝連帯保証は催告・検索の抗弁権および分別の利益なし／2017年改正・2020年4月施行／465条の2＝個人根保証は極度額の定めなければ無効／465条の6＝事業債務の個人保証は公正証書による保証意思確認',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、law id 129AC0000000089）446条以下' },
+      { url: 'https://www.moj.go.jp/content/001399956.pdf', type: 'government', label: '法務省「2020年４月１日から 保証に関する民法のルールが大きく変わります」' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第446条', type: 'reference', label: 'Wikibooks 民法第446条（条文・コンメンタール）' },
+    ],
+  },
+  {
+    id: 'infosoc-gamification',
+    discipline: 'information-sociology',
+    title: 'ゲーミフィケーション',
+    statement:
+      'ゲーミフィケーション（gamification）とは、教育・健康・労働・マーケティング・行動変容などの非ゲーム的文脈に、ゲームに特徴的なデザイン要素（ポイント、バッジ、リーダーボード＝ランキング、レベル、達成目標、即時フィードバック、進捗の可視化、報酬・チャレンジ等）を取り入れ、利用者の動機づけ・エンゲージメント（関与）・行動を促す手法・考え方である。HCI（人間-コンピュータ相互作用）と情報社会学で論じられ、自己決定理論（内発的動機づけ）や行動経済学のナッジと結びつけて分析される。' +
+      '一方、外発的報酬への依存が内発的動機を損なう懸念（アンダーマイニング／過正当化効果）、要素を点数化のみに矮小化する「ポイント化（pointsification）」批判、利用者を操作・搾取する設計への批判も中立に併存する。注意経済や自己決定理論とは別概念。',
+    keyFigures: 'セバスチャン・デターディング（Sebastian Deterding）ら／初出論文「From Game Design Elements to Gamefulness: Defining Gamification」（MindTrek 2011, ACM）で「非ゲーム的文脈におけるゲームデザイン要素の利用」と学術的に定義／用語自体は2000年代後半に普及／関連批判: イアン・ボゴスト（exploitationware）、マーガレット・ロバートソン（pointsification）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Gamification', type: 'reference', label: 'Wikipedia「Gamification」— 非ゲーム的文脈へのゲームデザイン要素の統合、Deterding 2011 の引用、要素・批判' },
+      { url: 'https://en.wikipedia.org/wiki/Sebastian_Deterding', type: 'reference', label: 'Wikipedia「Sebastian Deterding」— 提唱者と2011年定義論文・The Gameful World（MIT Press）' },
+      { url: 'https://www.interaction-design.org/literature/topics/gamification', type: 'academic', label: 'Interaction Design Foundation（IxDF, HCI専門リファレンス）「What is Gamification?」' },
+    ],
+  },
 ];
 // Stryker restore all
