@@ -8723,5 +8723,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://firstmonday.org/ojs/index.php/fm/article/download/13185/11042', type: 'academic', label: 'Ferrara, “Social bot detection in the age of ChatGPT,” First Monday (2023) — LLM時代の検出課題' },
     ],
   },
+  {
+    id: 'econ-kinked-demand-curve',
+    discipline: 'economics',
+    title: '屈折需要曲線（価格の硬直性）',
+    statement:
+      '屈折需要曲線は、寡占市場で価格が変わりにくい「価格の硬直性」を説明するミクロ経済学・産業組織論の理論である。各企業は、自社が値下げすれば競合も追随するため売上があまり増えない（値下げ側の需要は非弾力的で需要曲線は急）が、値上げしても競合は追随せず自社だけ顧客を失う（値上げ側は弾力的で需要曲線は緩やか）と予想する。' +
+      'このため需要曲線は現行価格の点で屈折し、対応する限界収入曲線（MR）は屈折点で不連続な垂直の段差（ギャップ）を持つ。この範囲内では限界費用（MC）が多少変動しても利潤最大化の価格・数量は変わらず、価格が硬直化する。ポール・スウィージーとホール＆ヒッチが1939年に独立に提唱したが、(1)現行価格がどう決まったかは説明できず、(2)スティグラー（1947）の実証では予想された非対称な追随行動が確認されない、との批判がある。',
+    keyFigures:
+      'ポール・スウィージー（Paul M. Sweezy, 1939）／R・L・ホール & C・J・ヒッチ（Hall & Hitch, 1939）／ジョージ・スティグラー（George Stigler, 1947・批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/referenceworkentry/10.1007/978-1-349-58802-2_893', type: 'reference', label: 'The New Palgrave Dictionary of Economics — “Kinked Demand Curve” (Springer)' },
+      { url: 'https://en.wikipedia.org/wiki/Kinked_demand', type: 'reference', label: 'Wikipedia — Kinked demand' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/256581', type: 'academic', label: 'G. J. Stigler, “The Kinky Oligopoly Demand Curve and Rigid Prices,” Journal of Political Economy 55(5), 1947, pp. 432–449 (University of Chicago Press)' },
+      { url: 'https://www.economicsonline.co.uk/definitions/kinked-demand-curve.html/', type: 'reference', label: 'Economics Online — Kinked Demand Curve（弾力/非弾力区間・限界）' },
+    ],
+  },
+  {
+    id: 'mgmt-planned-obsolescence',
+    discipline: 'management',
+    title: '計画的陳腐化（planned obsolescence）',
+    statement:
+      '計画的陳腐化とは、製品の買い替え需要を人為的に生み出すため、企業が製品の寿命をあえて短く設計したり、モデルチェンジや流行で旧型を時代遅れに見せたりして、消費者に早期の買い替えを促す戦略・慣行である。類型として、(1)機能的・物理的陳腐化（部品をすぐ劣化するよう設計し修理を困難にする）、(2)心理的・スタイル的陳腐化（GMのアルフレッド・スローンが1920年代に導入した自動車の年次モデルチェンジが典型）、(3)システム的陳腐化（互換性の打ち切りやソフトウェア更新終了）がある。' +
+      '用語は不動産業者バーナード・ロンドンが1932年の自費出版エッセイで造語し大恐慌対策として政府による「義務的」陳腐化を提唱、1954年に工業デザイナーのブルックス・スティーブンスが「必要以上に少し新しいものを欲しがらせる」と定義して語を普及させ、批評家ヴァンス・パッカードは1960年の『The Waste Makers（浪費をつくり出す人々）』で大量消費社会批判として論じた。古典的事例にポイボス・カルテル（1924年発足、白熱電球の寿命を約1000時間に制限）があり、現代では「修理する権利（right to repair）」運動やサーキュラーエコノミーの文脈で批判的に論じられる。',
+    keyFigures:
+      'バーナード・ロンドン（Bernard London, 1932・造語）／ブルックス・スティーブンス（Brooks Stevens, 1954・普及）／ヴァンス・パッカード（Vance Packard, 1960・批判）／アルフレッド・スローン（A. Sloan, GM・年次モデルチェンジ）／ポイボス・カルテル（1924, 電球寿命を約1000時間に制限）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/planned-obsolescence', type: 'reference', label: 'Encyclopaedia Britannica “planned obsolescence”（定義・機能/欲求の陳腐化の類型）' },
+      { url: 'https://spectrum.ieee.org/the-great-lightbulb-conspiracy', type: 'media', label: 'IEEE Spectrum “The Great Lightbulb Conspiracy”（Phoebus cartel 1924・電球寿命を1000時間に制限）' },
+      { url: 'https://en.wikipedia.org/wiki/Planned_obsolescence', type: 'reference', label: 'Wikipedia “Planned obsolescence”（定義・類型・スローンの年次モデルチェンジ・パッカード・right to repair）' },
+    ],
+  },
+  {
+    id: 'human-executive-function',
+    discipline: 'human-science',
+    title: '実行機能（遂行機能）',
+    statement:
+      '実行機能（executive functions）とは、目標志向的な思考・行動を可能にする高次の認知制御プロセスの総称であり、注意・思考・行動を意識的に制御して計画・問題解決・適応的行動を支える。主に前頭前野が関与する。Diamond（2013）の整理では中核は3つ——抑制制御（衝動や優位反応・注意妨害を抑える自己制御を含む）、ワーキングメモリ（情報を保持・操作する）、認知的柔軟性（視点や課題の切り替え）——で、これらを基盤に推論・計画など高次の実行機能が築かれる。' +
+      'Miyake et al.（2000）は更新・抑制・シフティングが分離可能だが相互に関連する（unity and diversity）ことを因子分析で示した。小児期から成人期に発達し高齢で低下し、ADHDや前頭葉損傷と関連、教育・健康・社会経済的成功の予測因子とされる。代表的測定にウィスコンシン・カード分類課題、ストループ課題、ハノイの塔がある。',
+    keyFigures:
+      'アデル・ダイアモンド（Adele Diamond）／ミヤケ・アキラ（Akira Miyake）／ナオミ・フリードマン（Naomi P. Friedman）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013). Executive Functions. Annual Review of Psychology, 64, 135–168.' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S001002859990734X', type: 'academic', label: 'Miyake, A. et al. (2000). The Unity and Diversity of Executive Functions ... A Latent Variable Analysis. Cognitive Psychology, 41, 49–100.' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6197939/', type: 'academic', label: 'Friedman, N. P. & Miyake, A. (2017). Unity and Diversity of Executive Functions: A Systematic Review and Re-Analysis of Latent Variable Studies. Cortex, 86, 186–204 (PMC).' },
+      { url: 'https://en.wikipedia.org/wiki/Executive_functions', type: 'reference', label: 'Wikipedia: Executive functions（定義・中核要素・測定課題）' },
+    ],
+  },
+  {
+    id: 'human-mind-wandering',
+    discipline: 'human-science',
+    title: 'マインドワンダリング',
+    statement:
+      'マインドワンダリング（mind-wandering、心のさまよい）は、現在従事している課題や外界の刺激から注意がそれ、自発的に過去の回想・将来の計画・空想などの課題と無関係な思考（task-unrelated thought）へとさまよう現象である。覚醒時の思考のかなりの割合（研究により約30〜50%）を占め、脳のデフォルト・モード・ネットワーク（DMN）の活動と関連づけられる。' +
+      'スモールウッドとスクーラーが研究を体系化し（"The restless mind", 2006）、キリングスワース＆ギルバート（2010, Science）は人が起きている時間の約47%で目の前の活動と違うことを考え、その間は概して幸福度が低いと報告した。読解・運転などの課題遂行を妨げ事故やエラーと関連する一方、創造的問題解決・将来計画・自伝的記憶処理といった適応的機能も併せ持つと論じられ、注意・意識・メタ認知研究で重要である。',
+    keyFigures:
+      'ジョナサン・スモールウッド（Jonathan Smallwood）／ジョナサン・スクーラー（Jonathan Schooler）／マシュー・キリングスワース（Matthew Killingsworth）／ダニエル・ギルバート（Daniel Gilbert）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.1192439', type: 'academic', label: 'Killingsworth & Gilbert (2010) “A Wandering Mind Is an Unhappy Mind”, Science 330(6006):932（約47%・幸福度低下）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/17073528/', type: 'academic', label: 'Smallwood & Schooler (2006) “The restless mind”, Psychological Bulletin 132(6):946–958（研究の体系化）' },
+      { url: 'https://academic.oup.com/scan/article/12/7/1047/3574671', type: 'academic', label: 'Soc. Cogn. Affect. Neurosci. (Oxford): マインドワンダリングを支えるDMNの構成過程' },
+      { url: 'https://dictionary.apa.org/mind-wandering', type: 'reference', label: 'APA Dictionary of Psychology: mind wandering（定義）' },
+    ],
+  },
+  {
+    id: 'bizlaw-subrogation-by-payment',
+    discipline: 'business-law',
+    title: '弁済による代位（民法499条）',
+    statement:
+      '弁済による代位（代位弁済）とは、債務者に代わって弁済をした第三者（保証人・物上保証人・連帯債務者・第三取得者など）が、弁済によって本来消滅するはずの債権者の権利—原債権およびその担保権・保証等—を、債務者への求償権を確保するために行使できる制度である（民法499条以下）。' +
+      '2017年改正（2020年4月施行）後の499条は「債務者のために弁済をした者は、債権者に代位する」と定め、改正前に正当な利益のない第三者へ課していた債権者の承諾要件を廃止し、弁済すれば当然に代位することとした。ただし500条により、正当な利益を有しない者の代位には債権譲渡の対抗要件（467条＝通知・承諾）が準用される。501条は、代位者が自己の求償権の範囲内で債権者の一切の権利を行使できるとし、保証人・物上保証人・第三取得者が競合する場合の代位割合・順序を3項で詳細に定める。',
+    keyFigures:
+      '根拠条文＝民法499条〜504条（e-Gov law id 129AC0000000089）／499条：弁済者は当然に債権者に代位（改正で承諾要件廃止）／500条：正当な利益を有しない者の代位は467条の対抗要件を準用／501条：求償権の範囲内で原債権・担保権等を行使可・競合時の代位割合（3項）／第三者の弁済（474条）と密接に関連／2017年債権法改正・2020年4月施行',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、第499条〜第501条）' },
+      { url: 'https://www.moj.go.jp/content/000052602.pdf', type: 'government', label: '法務省 民法（債権関係）部会資料 任意代位・法定代位（499条・500条関係）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第501条', type: 'reference', label: 'Wikibooks 民法第501条（弁済による代位の効果・代位割合）' },
+    ],
+  },
+  {
+    id: 'infosoc-small-world',
+    discipline: 'information-sociology',
+    title: 'スモールワールド現象（六次の隔たり）',
+    statement:
+      'スモールワールド現象とは、社会的ネットワークにおいて任意の2人が、意外に少数の知人の連鎖（中間者）でつながっているという構造的性質で、「六次の隔たり（six degrees of separation）」として知られる。社会心理学者スタンレー・ミルグラムが1960年代に行った連鎖手紙実験（米ネブラスカ州などの出発者から、面識のないボストンの標的人物へ知人の手渡しのみで手紙を届けさせる）で、完了した連鎖の中間者数の中央値が約5〜6であったことから示唆された。ただし完了率が低く（1967年の研究では約296件中64件＝約22%が到達）、方法論的限界も指摘される。' +
+      'ネットワーク科学では、ダンカン・ワッツとスティーヴン・ストロガッツが1998年のNature論文「Collective Dynamics of Small-World Networks」で数理モデル化し、規則的な格子に少数のランダムな近道（ショートカット）を加えるだけで、高いクラスター性を保ったまま平均経路長が劇的に短くなることを示した。マーク・グラノヴェッターの「弱い紐帯の強さ」とも関連し、感染症・情報・流行の伝播や、インターネット・脳・送電網など多様なネットワークに見られる普遍的構造として論じられる。',
+    keyFigures:
+      'スタンレー・ミルグラム（Stanley Milgram）／ダンカン・ワッツ（Duncan Watts）／スティーヴン・ストロガッツ（Steven Strogatz）／マーク・グラノヴェッター（Mark Granovetter）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/30918', type: 'academic', label: 'Watts, D.J. & Strogatz, S.H. (1998) “Collective Dynamics of Small-World Networks”, Nature 393, 440-442（査読論文・原典）' },
+      { url: 'https://psychology.fas.harvard.edu/people/stanley-milgram', type: 'reference', label: 'Harvard University, Department of Psychology — Stanley Milgram（大学公式・人物典拠）' },
+      { url: 'https://en.wikipedia.org/wiki/Small-world_experiment', type: 'reference', label: 'Wikipedia: Small-world experiment（実験概要・中間者数・完了率）' },
+      { url: 'https://news.stanford.edu/stories/2023/07/strength-weak-ties', type: 'reference', label: 'Stanford Report — “The strength of weak ties”（Granovetter弱い紐帯との関連）' },
+    ],
+  },
 ];
 // Stryker restore all
