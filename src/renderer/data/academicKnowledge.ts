@@ -4398,5 +4398,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://guides.loc.gov/gig-economy/overview', type: 'government', label: 'Library of Congress — Gig Economy Research Guide: Overview' },
     ],
   },
+  {
+    id: 'econ-veblen-good',
+    discipline: 'economics',
+    title: 'ヴェブレン財と顕示的消費',
+    statement:
+      '価格が高いほど、その高価さ自体が地位や富の象徴（ステータス）となって需要がかえって増える特殊な財をヴェブレン財という。高級ブランド品・宝飾品・高級車などが例で、値下げするとかえって魅力（見せびらかしの価値）が下がり需要が減ることもある。アメリカの経済学者・社会学者ソースティン・ヴェブレンが著書『有閑階級の理論（The Theory of the Leisure Class）』(1899)で、' +
+      '富裕層が自らの地位・財力を他者に誇示するために高価な財やサービスを浪費的に消費する「顕示的消費（conspicuous consumption）」を分析したことに由来する。需要法則（価格が上がると需要が減る）に反する点はギッフェン財と同じだが、ギッフェン財が貧しい家計の必需品で所得効果によるのに対し、ヴェブレン財は奢侈品で他者への顕示（見せびらかし）という社会的動機による点で異なる。バンドワゴン効果・スノッブ効果と並ぶ社会的消費の例。',
+    keyFigures: '価格が高いほど地位の象徴となり需要が増える奢侈財／T.ヴェブレン『有閑階級の理論』1899の「顕示的消費（conspicuous consumption）」に由来／需要法則に反するがギッフェン財（必需品・所得効果）とは理由が異なり、他者への顕示という社会的動機による／バンドワゴン効果・スノッブ効果と並ぶ社会的消費の例（「ヴェブレン財/効果」の語はH.ライベンシュタイン1950年論文に由来）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/conspicuous-consumption', type: 'reference', label: 'Britannica Money — Conspicuous consumption（ヴェブレンが1899年『有閑階級の理論』で命名した経緯の解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Veblen_good', type: 'reference', label: 'Wikipedia — Veblen good（価格上昇で需要増・ステータス象徴としての定義）' },
+      { url: 'https://theconversation.com/what-are-veblen-and-giffen-goods-241799', type: 'media', label: 'The Conversation（大学研究者寄稿）— ヴェブレン財とギッフェン財の相違（奢侈品/社会的動機 対 必需品/所得効果）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/64/2/183/1931945', type: 'academic', label: 'Leibenstein (1950) “Bandwagon, Snob, and Veblen Effects”, QJE 64(2), Oxford Academic（用語の原典）' },
+    ],
+  },
+  {
+    id: 'econ-free-rider',
+    discipline: 'economics',
+    title: 'フリーライダー問題',
+    statement:
+      '対価を負担しなくても便益を享受できる財（とくに公共財）について、人々が自分はコストを負担せず他人の負担にただ乗り（フリーライド）しようとするため、社会的に望ましい量の供給や協力が実現しにくくなる問題。公共財は、誰かが消費しても他者の消費を妨げない（非競合性）、対価を払わない者を排除できない（非排除性）という性質をもつため、各人は「自分が払わなくても誰かが供給してくれる」と考え、進んで費用を負担しなくなる。' +
+      'その結果、国防・灯台・公共放送・きれいな環境・共同事業への寄付などが過少にしか供給されず（市場の失敗）、政府による税での強制的な供給や、集合行為（オルソン『集合行為論』が分析）の困難さの根拠となる。共有資源の乱獲（コモンズの悲劇は競合的な共有資源の過剰利用であり別概念）や、ワクチン接種・公共インフラの維持・気候変動対策など、協力が必要なあらゆる場面で生じる。',
+    keyFigures: '対価を払わず便益にただ乗り → 公共財が過少供給される／公共財の非競合性・非排除性が原因／市場の失敗の典型で、政府供給や強制（課税）の根拠／M.オルソン『集合行為論（The Logic of Collective Action, 1965）』が集団での協力困難を分析（集団が大きいほど深刻）／コモンズの悲劇・寄付・環境対策等で生じる（コモンズの悲劇は過剰利用で別概念）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/free-riding', type: 'reference', label: 'Encyclopædia Britannica — “Free riding”（集合財の便益にコストを負担せず与ること、Olson 1965に由来）' },
+      { url: 'https://www.econlib.org/library/Enc/PublicGoods.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — “Public Goods”（非競合性・非排除性、フリーライドによる過少供給）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Logic_of_Collective_Action', type: 'reference', label: 'Wikipedia — The Logic of Collective Action（Mancur Olson 1965、群が大きいほど深刻）' },
+    ],
+  },
+  {
+    id: 'mgmt-product-architecture',
+    discipline: 'management',
+    title: '製品アーキテクチャ（モジュラー/インテグラル）',
+    statement:
+      '製品の機能を、それを実現する部品（構成要素）へどのように割り当て、部品間の接続（インターフェース）をどう設計するか、という製品の基本的な設計思想。カール・ウルリッヒが1995年の論文(Research Policy)で、(1)機能要素の配置、(2)機能要素から物理的部品への対応づけ、(3)相互作用する部品間のインターフェースの規定、として概念化した。大きく2類型に分けられる。' +
+      '(1)モジュラー型（modular）＝機能と部品が一対一に近く対応し、インターフェースが標準化・単純化されているため、部品を組み合わせ（寄せ集め）て製品ができる。パソコンが典型で、部品の独立開発・交換・多様な組み合わせが容易。(2)インテグラル型（integral）＝複数の機能が複数の部品にまたがって作り込まれ、部品間を相互に微調整（すり合わせ）しないと全体性能が出ない。自動車が典型で、緊密な調整による最適化が強み。' +
+      '日本の藤本隆宏らはこの概念を用い、すり合わせ（インテグラル）型のものづくりに強い日本企業と、モジュラー化が進む産業での競争力の違いを論じた。製品開発・部品調達・産業構造・国際分業を分析する枠組みとなっている。',
+    keyFigures: '機能の部品への割り当てとインターフェース設計＝製品の設計思想／K.ウルリッヒ1995(Research Policy 24:419-440)が概念化（機能要素の配置／機能→部品の対応づけ／部品間インターフェースの規定）／モジュラー型：一対一対応・標準インターフェース・寄せ集め（PCが典型）／インテグラル型：機能が部品横断・すり合わせによる最適化（自動車が典型）／藤本隆宏らが日本のものづくり論に応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0048733394007753', type: 'academic', label: 'Ulrich, K.T. (1995) “The role of product architecture in the manufacturing firm”, Research Policy 24(3):419-440 (ScienceDirect/Elsevier)' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-642-20617-7_6463', type: 'reference', label: 'Product Architecture — Springer Nature reference work entry' },
+      { url: 'https://econpapers.repec.org/RePEc:eee:respol:v:24:y:1995:i:3:p:419-440', type: 'academic', label: 'EconPapers/RePEc — Ulrich (1995) Research Policy 出典確認' },
+    ],
+  },
+  {
+    id: 'human-attachment',
+    discipline: 'human-science',
+    title: '愛着理論（ボウルビィ／エインズワース）',
+    statement:
+      '乳幼児が養育者（主に母親などの特定の人物）との間に形成する、情緒的な強い結びつき（愛着＝アタッチメント）に関する発達心理学の理論。イギリスの精神科医ジョン・ボウルビィが提唱した。彼は、子が不安や脅威を感じたとき養育者に近接して安全を求める行動（愛着行動）は生得的なもので、生存のために進化したと論じ、養育者が探索の拠点となる「安全基地（secure base）」として機能することを重視した。' +
+      'アメリカ（カナダ系）の心理学者メアリー・エインズワースは「ストレンジ・シチュエーション法（見知らぬ状況法）」という実験観察によって、養育者との分離・再会場面での乳児の反応から愛着のパターンを、安定型（secure）・回避型（avoidant）・両価／抵抗型（ambivalent/resistant）に分類した（後にメイン／ソロモンが無秩序型disorganizedを追加）。乳幼児期の愛着の質が、後の対人関係や情緒的発達（内的作業モデル）に影響するとされ、保育・臨床・発達研究に大きな影響を与えた。',
+    keyFigures: '乳幼児と養育者の情緒的結びつき（愛着）の理論／J.ボウルビィが提唱・愛着行動は生得的で安全基地として機能／M.エインズワースのストレンジ・シチュエーション法で愛着型（安定・回避・両価／抵抗）を分類（後に無秩序型追加）／内的作業モデルが後の対人関係に影響',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/attachment-theory', type: 'reference', label: 'Encyclopaedia Britannica — Attachment theory | Definition, Features, & Types' },
+      { url: 'https://www.britannica.com/biography/Mary-Salter-Ainsworth', type: 'reference', label: 'Encyclopaedia Britannica — Mary Salter Ainsworth（ストレンジ・シチュエーション法の開発者）' },
+      { url: 'https://www.simplypsychology.org/mary-ainsworth.html', type: 'reference', label: 'SimplyPsychology — Mary Ainsworth Strange Situation（安定/回避/両価・抵抗、Main & Solomon 1990の無秩序型）' },
+      { url: 'https://www.simplypsychology.org/bowlby.html', type: 'reference', label: 'SimplyPsychology — John Bowlby’s Attachment Theory（生得的・進化的基盤、安全基地、内的作業モデル）' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-reorganization',
+    discipline: 'business-law',
+    title: '組織再編（合併・会社分割等）',
+    statement:
+      '会社の組織や事業を法的手続によって再構成するための、会社法上の行為の総称。主な類型として、(1)合併（2つ以上の会社が1つになる。新設合併と吸収合併があり、消滅会社の権利義務は存続会社・新設会社に包括的に承継される）、(2)会社分割（会社の事業の全部または一部を、新設会社または既存の他社に承継させる。新設分割と吸収分割がある）、(3)株式交換・株式移転（ある会社を他社の完全子会社にする＝100%の親子関係を作る手法）がある。' +
+      'これらは、事業の譲渡（個々の資産・契約を個別に移転する取引行為）と異なり、権利義務が包括的に移転する点に特色がある。組織再編は会社の基礎に重大な変更をもたらすため、原則として株主総会の特別決議（会社法309条2項）による承認が必要で、反対する株主には会社に公正な価格での買取りを求める「株式買取請求権」が、また会社の債権者には「債権者保護手続（債権者異議手続）」が認められる。M&Aや企業グループの再編に用いられる（公開買付け(TOB)とは別の、会社法上の組織法的な再編行為）。',
+    keyFigures: '会社の組織・事業を再構成する会社法上の行為（会社法 第五編に規定）／類型：合併（吸収/新設）・会社分割（吸収/新設）・株式交換/株式移転（完全子会社化）／権利義務が包括的に承継される（個別移転の事業譲渡と異なる）／原則として株主総会の特別決議（会社法309条2項）が必要／反対株主の株式買取請求権・債権者保護手続（債権者異議手続）／M&A・企業グループ再編に利用される',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: '会社法（平成17年法律第86号）e-Gov法令検索 — 第五編に組織変更・合併・会社分割・株式交換・株式移転を規定' },
+      { url: 'https://ja.wikibooks.org/wiki/会社法第309条', type: 'reference', label: '会社法第309条（株主総会の決議）Wikibooks — 組織再編は同条2項の特別決議事項' },
+      { url: 'https://www.businesslawyers.jp/practices/371', type: 'media', label: 'BUSINESS LAWYERS「組織再編に伴う株主保護手続の概要」— 株式買取請求権・債権者保護手続' },
+    ],
+  },
+  {
+    id: 'infosoc-convergence-culture',
+    discipline: 'information-sociology',
+    title: 'コンバージェンス・カルチャー',
+    statement:
+      '複数のメディア・プラットフォームにまたがってコンテンツが流通し、メディア産業が協働し、オーディエンスが望むコンテンツを求めてメディア間を移動する、現代の文化的状況。メディア研究者ヘンリー・ジェンキンズが著書『コンバージェンス・カルチャー（Convergence Culture: Where Old and New Media Collide）』(2006)で論じた。ジェンキンズは「コンバージェンス（収斂）」を単なる技術的な機器の統合ではなく、文化的・社会的なプロセスとして捉え、収斂は「個々の消費者の頭の中で」起こると述べた。' +
+      '重要な概念として、(1)複数のメディアで物語世界を分散展開する「トランスメディア・ストーリーテリング」、(2)受け手が黙って消費するのでなく、二次創作・拡散・考察などを通じて文化の生産に積極的に関与する「参加型文化（participatory culture）」、(3)個々人の知識が結集して集団的に問題解決する「集合知（collective intelligence、ピエール・レヴィに由来）」がある。ファンによるコンテンツの再創造やソーシャルメディア時代のメディア消費を分析する枠組みとなっている。',
+    keyFigures: 'コンテンツが複数メディアを横断し産業が協働しオーディエンスが移動する文化状況／H.ジェンキンズ『Convergence Culture: Where Old and New Media Collide』2006(NYU Press)／収斂は技術的な機器統合でなく文化的プロセス（収斂は個々の消費者の頭の中で起こる）／トランスメディア・ストーリーテリング／参加型文化（producer/consumerの境界が流動化）／集合知（ピエール・レヴィに由来）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/convergence-culture', type: 'reference', label: 'EBSCO Research Starters — “Convergence culture” (Communication and Mass Media)' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/01614622.2021.1891766', type: 'academic', label: 'Taylor & Francis 査読論文 “Convergence Culture and Transmedia Storytelling in Contemporary Italy”' },
+      { url: 'https://en.wikipedia.org/wiki/Convergence_culture', type: 'reference', label: 'Wikipedia — Convergence culture' },
+      { url: 'http://henryjenkins.org/blog/2006/06/welcome_to_convergence_culture.html', type: 'media', label: 'Henry Jenkins 本人ブログ “Welcome to Convergence Culture” (2006, 著者一次資料)' },
+    ],
+  },
 ];
 // Stryker restore all
