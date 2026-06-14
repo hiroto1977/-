@@ -3707,5 +3707,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://is.theorizeit.org/wiki/Media_richness_theory', type: 'academic', label: 'IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory' },
     ],
   },
+  {
+    id: 'econ-expected-utility',
+    discipline: 'economics',
+    title: '期待効用理論',
+    statement:
+      '不確実性（リスク）下での合理的な意思決定を、各結果から得られる効用にその生起確率を掛けて足し合わせた「期待効用」を最大化する選択として説明する理論。金額そのものの期待値ではなく効用の期待値を用いる点が重要で、これにより少額の保険料を払って大損を避ける（リスク回避）行動などを、効用関数の凹性（限界効用逓減）として説明できる。' +
+      'ダニエル・ベルヌーイによるサンクトペテルブルクのパラドックスの解決（1738年）に起源をもち、ジョン・フォン・ノイマンとオスカー・モルゲンシュテルンが1944年『ゲームの理論と経済行動』で、完備性・推移性・連続性・独立性という公理を満たす選好をもつ主体は期待効用を最大化するように行動する、という形で公理的に基礎づけた（表現定理。効用関数は正の線形変換まで一意）。' +
+      '標準的経済学の合理的選択の中核をなす規範理論である一方、アレのパラドックスやプロスペクト理論など、現実の選択が独立性公理などに反する例も知られる。',
+    keyFigures: '不確実性下で期待効用(効用×確率の和)を最大化する選択／効用関数の凹性でリスク回避を説明／ベルヌーイのサンクトペテルブルクのパラドックス(1738)に起源／フォン・ノイマン&モルゲンシュテルン1944が公理的に基礎づけ(完備性・推移性・連続性・独立性)／アレのパラドックス・プロスペクト理論が反例',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/von-Neumann-Morgenstern-utility-function', type: 'reference', label: 'Britannica「Von Neumann–Morgenstern utility function」（VNM公理・期待効用最大化）' },
+      { url: 'https://plato.stanford.edu/entries/rationality-normative-utility/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy「Normative Theories of Rational Choice: Expected Utility」（VNM表現定理・独立性公理）' },
+      { url: 'https://plato.stanford.edu/entries/paradox-stpetersburg/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy「The St. Petersburg Paradox」（ベルヌーイ1738・限界効用逓減・リスク回避）' },
+    ],
+  },
+  {
+    id: 'econ-allais-paradox',
+    discipline: 'economics',
+    title: 'アレのパラドックス',
+    statement:
+      '期待効用理論の「独立性公理（共通の結果を加減しても2つの選択肢の選好順位は変わらないはず）」に、実際の人々の選択が系統的に反することを示した有名な反例。フランスの経済学者モーリス・アレが1953年に提示した。' +
+      '典型例では、(状況1)確実に得られる賞金と、より高額だがわずかに外れる可能性のあるくじを比べると、多くの人は確実な方を選ぶ。(状況2)両方の選択肢から当選確率を大きく下げて「どうせ当たりにくい」状況にすると、今度は高額側のくじを選ぶ。この2つの選択は期待効用理論（独立性公理）では両立しないが、現実には広く観察される（カーネマン&トベルスキーの実験では一方を約82%、他方を約83%が選んだ）。' +
+      '人が確実性を特別に重んじる「確実性効果」が背景にあり、後のカーネマン&トベルスキーのプロスペクト理論（確率を主観的に重みづけする）の重要な出発点となった。アレは1988年にノーベル経済学賞を受賞した。',
+    keyFigures: 'M.アレ1953提示（"Le Comportement de l\'Homme Rationnel devant le Risque", Econometrica）／期待効用理論の独立性公理に反する系統的反例／確実性効果（確実な結果を過大評価）／プロスペクト理論の出発点／アレ1988ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/decision-theory/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Decision Theory（アレのパラドックス・独立性公理）' },
+      { url: 'https://plato.stanford.edu/entries/rationality-normative-utility/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Normative Theories of Rational Choice: Expected Utility' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1988/allais/facts/', type: 'reference', label: 'NobelPrize.org — Maurice Allais, 1988年経済学賞' },
+      { url: 'https://en.wikipedia.org/wiki/Allais_paradox', type: 'reference', label: 'Wikipedia — Allais paradox（提示年・選択構造・実験比率）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-commitment',
+    discipline: 'management',
+    title: '組織コミットメント',
+    statement:
+      '従業員が自分の所属する組織に対して抱く心理的な結びつき・愛着の強さで、定着（離職の少なさ）や貢献意欲を左右する組織行動論の概念。ジョン・マイヤー（John Meyer）とナタリー・アレン（Natalie Allen）が1991年に提唱した「3成分モデル（three-component model）」が広く用いられる。' +
+      '(1)情緒的コミットメント（affective＝組織への感情的愛着・同一化・関与。組織に居たいから留まる）、(2)継続的コミットメント（continuance＝辞めると失うものが大きい・転職コストゆえに留まる、損得勘定）、(3)規範的コミットメント（normative＝恩義や義務感から留まるべきだと感じる）。3成分は相互に関連しつつ区別可能で、職務満足や職務関与とも区別される。' +
+      '情緒的コミットメントが最も望ましく、出勤・パフォーマンス・組織市民行動と最も強く好ましい正の関係をもつとされる。マイヤー&アレンによる測定尺度（質問票）も開発され、人材定着や組織開発の研究・実務で広く参照されている。',
+    keyFigures: '従業員の組織への心理的結びつき／J.マイヤー&N.アレンの3成分モデル(1991)：情緒的(愛着)・継続的(損得)・規範的(義務感)／情緒的コミットメントが最も望ましい／職務満足・定着・組織市民行動と関連／測定尺度',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/105348229190011Z', type: 'academic', label: 'Meyer & Allen (1991) "A three-component conceptualization of organizational commitment," Human Resource Management Review（原典・査読誌）' },
+      { url: 'https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1081&context=qicwdumbrella', type: 'academic', label: 'University of Nebraska-Lincoln Digital Commons — Organizational Commitment（大学リポジトリ）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/8980084/', type: 'academic', label: 'Meyer, Allen & Smith — Affective, Continuance, and Normative Commitment: Construct Validity（PubMed・査読誌）' },
+    ],
+  },
+  {
+    id: 'human-self-determination',
+    discipline: 'human-science',
+    title: '自己決定理論（SDT）',
+    statement:
+      '人間の動機づけとパーソナリティに関する理論で、エドワード・デシ（Edward L. Deci）とリチャード・ライアン（Richard M. Ryan）がロチェスター大学で提唱した。人は生まれつき成長・自己実現に向かう傾向をもち、その原動力として3つの基本的心理欲求の充足が重要だとする：(1)自律性（autonomy＝自分の行動を自分で選び決めている感覚）、(2)有能感（competence＝効果的に物事をこなせる感覚）、(3)関係性（relatedness＝他者とつながり受け入れられている感覚）。' +
+      'これらが満たされると内発的動機づけ（活動それ自体が楽しいから行う）や心理的well-beingが高まり、満たされないと動機や幸福が損なわれる。報酬や罰などの外的統制はかえって内発的動機を低下させうる（アンダーマイニング効果）とし、外発的動機づけも自律性の程度で連続的に段階づけられる（有機的統合理論）。' +
+      '教育・職場・スポーツ・医療の動機づけ支援に広く応用される。',
+    keyFigures: 'E.デシ&R.ライアンが提唱（ロチェスター大学）／3つの基本的心理欲求：自律性・有能感・関係性／充足で内発的動機づけ・well-beingが高まる／外的報酬が内発的動機を下げるアンダーマイニング効果／有機的統合理論／教育・職場等に応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://selfdeterminationtheory.org/theory/', type: 'academic', label: 'selfdeterminationtheory.org — Theory（デシ&ライアン本人運営の公式理論解説）' },
+      { url: 'https://www.apa.org/research-practice/conduct-research/self-determination-theory.html', type: 'academic', label: 'American Psychological Association — Self-determination theory' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11392867/', type: 'academic', label: 'Ryan & Deci (2000), American Psychologist（査読論文・PubMed索引）' },
+    ],
+  },
+  {
+    id: 'bizlaw-market-manipulation',
+    discipline: 'business-law',
+    title: '相場操縦の禁止',
+    statement:
+      '証券市場の公正な価格形成を歪める人為的な取引を禁止する、金融商品取引法の不公正取引規制の一つ（金商法159条等）。未公表の重要事実を利用するインサイダー取引とは異なり、相場操縦は取引そのものによって相場を人為的に変動させ、他の投資者を誤認させる行為を対象とする。' +
+      '典型的な類型として、(1)仮装取引（権利の移転を目的としない自己取引など実体のない見せかけの売買、159条1項）、(2)馴合取引（あらかじめ通謀した者どうしが同時期・同価格で行う売買、159条1項）、(3)現実取引による相場操縦（取引を誘引する目的で、売買が繁盛であると誤解させ、または相場を変動させるべき一連の売買を行う行為、159条2項）、(4)風説の流布・偽計（虚偽の情報を流して相場を変動させる行為、金商法158条）などがある。' +
+      '違反には課徴金や刑事罰（懲役・罰金）が科され、得た利益は没収・追徴される。調査・摘発は証券取引等監視委員会が担う。',
+    keyFigures: '市場の公正な価格形成を歪める人為的取引を禁止(金商法159条等)／インサイダー取引と異なり取引自体で相場を操作し投資者を誤認させる／類型：仮装取引・馴合取引(159条1項)・現実取引による相場操縦(159条2項、誘引目的が要件)・風説の流布偽計(158条)／課徴金・刑事罰・没収追徴、証券取引等監視委員会が摘発',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000025', type: 'government', label: 'e-Gov法令検索「金融商品取引法」（158条 風説の流布等・159条 相場操縦行為等の禁止）' },
+      { url: 'https://www.fsa.go.jp/sesc/support/hukousei/hukousei.html', type: 'government', label: '証券取引等監視委員会（金融庁）「不公正取引規制違反に係る課徴金制度について」' },
+      { url: 'https://www.jpx.co.jp/regulation/preventing/manipulation/index.html', type: 'reference', label: '日本取引所グループ（JPX）「相場操縦規制」' },
+    ],
+  },
+  {
+    id: 'infosoc-media-dependency',
+    discipline: 'information-sociology',
+    title: 'メディア・システム依存理論',
+    statement:
+      '人々がメディアにどれだけ依存するかによって、メディアが個人や社会に及ぼす影響力の強さが決まるとする理論。サンドラ・ボール=ロキーチとメルヴィン・デフルアが1976年に提唱した。' +
+      '人は自分の目標（理解・志向・遊び＝現実を理解する／行動の指針を得る／娯楽・気晴らしを得る）を達成するためにメディアの情報資源に依存し、依存が強いほどメディアの認知・感情・行動への効果が大きくなる。依存の度合いは、(1)社会が複雑で不安定なほど（戦争・災害・変動期など、自前の情報源では足りないとき）、(2)メディアが社会で果たす情報機能の中心性が高いほど高まる。' +
+      'オーディエンス・メディア・社会システムの三者の相互依存関係に注目する点に特色があり、限定効果論と強力効果論の中間に位置づけられる。災害報道やデジタルメディアへの依存研究にも応用される。',
+    keyFigures: 'S.ボール=ロキーチ&M.デフルア1976提唱／メディアへの依存度が効果の強さを規定／個人の目標(理解・志向・遊び)達成のため情報資源に依存／社会の不安定・変動期ほど依存と効果が増す／オーディエンス・メディア・社会の三者の相互依存／限定効果と強力効果の中間',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/media-dependency', type: 'reference', label: 'Britannica — Media dependency（理解・志向・遊びの3目標、1976年Ball-Rokeach&DeFleur提唱）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/009365027600300101', type: 'academic', label: 'Ball-Rokeach & DeFleur (1976) "A Dependency Model of Mass-Media Effects", Communication Research 3(1):3–21（原典）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781405186407.wbiecm051', type: 'academic', label: 'Ball-Rokeach, "Media System Dependency Theory", International Encyclopedia of Communication (Wiley)' },
+    ],
+  },
 ];
 // Stryker restore all
