@@ -5238,5 +5238,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Collective_memory', type: 'reference', label: 'Collective memory — Wikipedia (Halbwachs, Nora, Assmann)' },
     ],
   },
+  {
+    id: 'econ-endogenous-growth',
+    discipline: 'economics',
+    title: '内生的成長理論',
+    statement:
+      '長期の経済成長率を、ソローモデルのようにモデル外から与えられる外生的な技術進歩（全要素生産性）ではなく、経済システム内部の要因――研究開発（R&D）・知識・人的資本・イノベーション――によって内生的に決定されるものとして説明する成長理論。新成長理論とも呼ばれる。知識や技術には非競合性（同じアイデアを多数が同時に利用できる）とスピルオーバー（波及効果）があり、社会全体で収穫逓増を生む。' +
+      'このため、資本蓄積の収穫逓減によって定常状態に収束し成長が止まるとしたソローモデルと異なり、R&D投資への利潤誘因を通じて持続的な内生的成長が可能になると論じる。教育・研究開発・知識普及を促す政策が長期成長率そのものを高めうる点に政策的含意がある。',
+    keyFigures: 'ポール・ローマー（Paul Romer）／初出 “Increasing Returns and Long-Run Growth” (Journal of Political Economy, 1986)・“Endogenous Technological Change” (JPE, 1990)／ロバート・ルーカス（Robert Lucas）“On the Mechanics of Economic Development” (1988、人的資本)／ローマーは2018年ノーベル経済学賞（ノードハウスと共同）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Endogenous_growth_theory', type: 'reference', label: 'Endogenous growth theory — Wikipedia' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Romer.html', type: 'reference', label: 'Paul M. Romer — The Concise Encyclopedia of Economics (Econlib)' },
+      { url: 'https://www-leland.stanford.edu/~chadj/RomerNobel.pdf', type: 'academic', label: 'Charles I. Jones, “Paul Romer: Ideas, Nonrivalry, and Endogenous Growth” (Stanford University, Nobel解説論文)' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/endogenous-growth-model', type: 'academic', label: 'Endogenous Growth Model — overview, ScienceDirect Topics（Elsevier）' },
+    ],
+  },
+  {
+    id: 'econ-inclusive-institutions',
+    discipline: 'economics',
+    title: '包摂的制度と収奪的制度',
+    statement:
+      '国家間の経済発展の格差を、地理や文化ではなく「政治・経済制度の質」によって説明する枠組み。広範な人々の参加（多元主義）・財産権の保護・公正な競争・法の支配・技術革新へのインセンティブを保障する「包摂的制度（inclusive institutions）」は持続的な成長と繁栄を促す。一方、少数のエリートが富と権力を独占し多数派を経済活動から排除・搾取する「収奪的制度（extractive institutions）」は、創造的破壊を恐れるため長期的成長を阻む。' +
+      '包摂的な政治制度と経済制度は相互に補強し合い、収奪的制度も同様に自己強化的に持続する点が特徴である。ダロン・アセモグルとジェイムズ・ロビンソンが著書『国家はなぜ衰退するのか（Why Nations Fail）』(2012)で展開した。',
+    keyFigures: '提唱者: ダロン・アセモグル（Daron Acemoglu, MIT）／ジェイムズ・A・ロビンソン（James A. Robinson, シカゴ大学）／初出（一般向け）: 『国家はなぜ衰退するのか（Why Nations Fail）』2012／実証的背景: “The Colonial Origins of Comparative Development”, AER 2001／3名は2024年ノーベル経済学賞を受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2024/press-release/', type: 'government', label: 'The Sveriges Riksbank Prize in Economic Sciences 2024 — Press release（制度と繁栄の研究）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.91.5.1369', type: 'academic', label: 'Acemoglu, Johnson & Robinson, “The Colonial Origins of Comparative Development”, AER 91(5):1369–1401 (2001)' },
+      { url: 'https://news.mit.edu/2024/mit-economists-daron-acemoglu-simon-johnson-nobel-prize-economics-1014', type: 'academic', label: 'MIT economists Daron Acemoglu and Simon Johnson share Nobel Prize (2024)' },
+      { url: 'https://www.wcfia.harvard.edu/publications/why-nations-fail', type: 'academic', label: 'Why Nations Fail (Acemoglu & Robinson, 2012) — Harvard WCFIA publication record' },
+    ],
+  },
+  {
+    id: 'mgmt-experiential-learning',
+    discipline: 'management',
+    title: '経験学習（コルブの経験学習サイクル）',
+    statement:
+      'デイビッド・コルブが1984年の著書『Experiential Learning』で体系化した、経験を通じた学習の理論。学習を「経験を変換することを通じて知識が創造される過程」と定義し、4段階の循環サイクルで捉える：(1)具体的経験（Concrete Experience＝新たな経験をする）、(2)内省的観察（Reflective Observation＝経験を多面的に振り返る）、(3)抽象的概念化（Abstract Conceptualization＝教訓・持論など一般原理を引き出す）、(4)能動的実験（Active Experimentation＝得た概念を新しい状況で試す）。' +
+      '学習者は任意の段階から循環に入りうる。デューイ・レヴィン・ピアジェの影響を受ける。コルブはこの4段階の組合せから4つの学習スタイル（拡散・同化・収束・適応）も導いた。企業の人材育成・研修や経験からの学びを支える理論的基盤として広く用いられる。',
+    keyFigures: 'デイビッド・A・コルブ（David A. Kolb）／初出：D. A. Kolb (1984)『Experiential Learning: Experience as the Source of Learning and Development』, Prentice Hall／理論的源流：ジョン・デューイ、クルト・レヴィン、ジャン・ピアジェ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Kolb%27s_experiential_learning', type: 'reference', label: 'Kolb’s experiential learning — Wikipedia（4段階・4スタイル・デューイ/レヴィン/ピアジェの影響）' },
+      { url: 'https://www.torontomu.ca/experiential-learning/faculty-staff/kolbs-el-cycle/', type: 'academic', label: 'Kolb’s Experiential Learning Cycle — Toronto Metropolitan University（大学公式）' },
+      { url: 'https://citt.it.ufl.edu/resources/course-development/the-learning-process/types-of-learners/kolbs-four-stages-of-learning/', type: 'academic', label: 'Kolb’s Four Stages of Learning — University of Florida CITT（大学公式）' },
+    ],
+  },
+  {
+    id: 'human-legitimate-peripheral-participation',
+    discipline: 'human-science',
+    title: '正統的周辺参加と実践共同体',
+    statement:
+      '人類学者ジーン・レイヴと計算機科学者エティエンヌ・ウェンガーが1991年の著書『状況に埋め込まれた学習』で提唱した状況的学習論の中心概念。学習を、個人の頭の中への知識の伝達・蓄積として捉えるのではなく、「実践共同体（community of practice）」への参加の度合いが深まっていく社会的過程として捉える。新参者（newcomer）は、まず共同体の周辺的だが正統な（legitimate）役割で参加し（正統的周辺参加）、単純で低リスクだが共同体の目的に資する仕事を通じて語彙・課題・組織原理を習得する。' +
+      'やがて参加はより中心的になり、十全的参加（full participation）へと移行して熟練した古参（old-timer）となる。この過程は同時に共同体内でのアイデンティティの形成・再構築でもある。仕立屋・助産師・酒断ち中の者などの徒弟的実践の分析がその基礎をなす。',
+    keyFigures: 'ジーン・レイヴ（Jean Lave、人類学者）／エティエンヌ・ウェンガー（Etienne Wenger）／初出: Lave & Wenger (1991)「Situated Learning: Legitimate Peripheral Participation」, Cambridge University Press',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/highereducation/books/situated-learning/6915ABD21C8E4619F750A4D4ACA616CD', type: 'academic', label: 'Lave & Wenger, Situated Learning: Legitimate Peripheral Participation — Cambridge University Press（一次文献）' },
+      { url: 'https://en.wikipedia.org/wiki/Legitimate_peripheral_participation', type: 'reference', label: 'Legitimate peripheral participation — Wikipedia' },
+      { url: 'https://infed.org/dir/welcome/jean-lave-etienne-wenger-and-communities-of-practice/', type: 'reference', label: 'Jean Lave, Etienne Wenger and communities of practice — infed.org（成人教育系の解説リファレンス）' },
+    ],
+  },
+  {
+    id: 'bizlaw-state-liability',
+    discipline: 'business-law',
+    title: '国家賠償（国家賠償法1条・2条）',
+    statement:
+      '国又は公共団体の活動によって私人に生じた損害を、国・公共団体が賠償する責任を定める制度。憲法17条（何人も、公務員の不法行為により損害を受けたときは法律の定めにより国又は公共団体に賠償を求めうる）を受け、昭和22年制定の国家賠償法（昭和22年法律第125号）が具体化する。1条は公権力の行使に当たる公務員が職務を行うについて故意又は過失によって違法に他人に損害を加えた場合の責任（公権力責任）を、2条は道路・河川その他の公の営造物の設置又は管理の瑕疵によって損害を生じた場合の責任（営造物責任）を定める。' +
+      '1条では公務員個人は原則として被害者に直接責任を負わず国・公共団体が責任を負い、公務員に故意又は重大な過失があるとき国等は当該公務員に求償できる（1条2項）。2条の営造物責任は無過失責任とされる。民法上の使用者責任や一般不法行為とは別個の、公法上の賠償制度である。',
+    keyFigures: '憲法17条を受けた実施法＝国家賠償法（昭和22年法律第125号、e-Gov法令ID 322AC0000000125）／1条＝公権力責任（公務員の故意・過失による違法な加害／公務員個人は原則直接責任を負わず国等が負担・故意重過失時に求償＝1条2項）／2条＝営造物責任（公の営造物の設置・管理の瑕疵。無過失責任）／民法の使用者責任・一般不法行為とは別個の公法上の制度',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000125', type: 'government', label: 'e-Gov法令検索「国家賠償法」（昭和22年法律第125号、法令ID 322AC0000000125）' },
+      { url: 'https://ja.wikibooks.org/wiki/国家賠償法第1条', type: 'reference', label: 'Wikibooks「国家賠償法第1条」（条文・公務員個人責任・求償の解説）' },
+      { url: 'https://ja.wikipedia.org/wiki/日本国憲法第17条', type: 'reference', label: 'Wikipedia「日本国憲法第17条」（国家賠償請求権と国家賠償法の制定根拠）' },
+    ],
+  },
+  {
+    id: 'infosoc-self-presentation',
+    discipline: 'information-sociology',
+    title: '自己呈示とドラマトゥルギー（ゴッフマン）',
+    statement:
+      '社会学者アーヴィング・ゴッフマンが『行為と演技―日常生活における自己呈示』（The Presentation of Self in Everyday Life、1956年スコットランド初版／1959年米国版）で展開した、対面的相互行為の分析枠組み。日常の相互行為を演劇になぞらえる「ドラマトゥルギー（演劇論的アプローチ）」を用い、人は他者の前で望ましい印象を与えるよう自己を演出する「役者（performer）」であり、他者はその「観客（audience）」であると捉える。この自己演出の営みを「印象操作（印象管理、impression management）」と呼ぶ。' +
+      'ゴッフマンは、観客に見せる演技の領域である「表舞台（front stage）」と、素の自分に戻り演技を準備・休息できる「舞台裏（back stage）」を区別した。人は相手や状況に応じて異なる役を演じ分ける。今日ではSNS上のプロフィール管理やオンラインでの自己呈示の分析にも広く応用されている。',
+    keyFigures: 'アーヴィング・ゴッフマン（Erving Goffman、提唱者）／初出『行為と演技―日常生活における自己呈示』（The Presentation of Self in Everyday Life、1956年初版・1959年米国版）／関連概念：ドラマトゥルギー・印象操作（impression management）・表舞台/舞台裏（front/back stage）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Erving-Goffman', type: 'reference', label: 'Encyclopædia Britannica「Erving Goffman | Symbolic Interactionism, Dramaturgy & Stigma」' },
+      { url: 'https://en.wikipedia.org/wiki/The_Presentation_of_Self_in_Everyday_Life', type: 'reference', label: 'Wikipedia「The Presentation of Self in Everyday Life」（1956/1959刊行・MacIver賞）' },
+      { url: 'https://open.ncl.ac.uk/theories/17/self-presentation-theory/', type: 'academic', label: 'Newcastle University TheoryHub「Self-Presentation Theory」' },
+      { url: 'https://journals.muni.cz/mujlt/article/view/11836', type: 'academic', label: 'Masaryk University Journal of Law and Technology（査読論文）「Goffman’s Theory as a Framework for Analysis of Self Presentation on Online Social Networks」' },
+    ],
+  },
 ];
 // Stryker restore all
