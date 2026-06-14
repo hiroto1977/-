@@ -5981,5 +5981,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.1186/2193-1801-2-191', type: 'academic', label: 'SpringerPlus (査読論文) — “Zygmunt Bauman. Individual and society in the liquid modernity” (2013)' },
     ],
   },
+  {
+    id: 'econ-quantitative-easing',
+    discipline: 'economics',
+    title: '量的緩和（QE）',
+    statement:
+      '量的緩和（quantitative easing, QE）とは、政策金利が実質ゼロ（実効下限・流動性のわな）に達し伝統的な短期金利操作が効かなくなった状況で、中央銀行が長期国債などの金融資産を大量に買い入れ、市場にマネタリーベースを大量供給する非伝統的金融政策である。短期金利の操作に代えて中央銀行のバランスシートの規模（量）を拡大し、長期金利の低下、資産価格の上昇、ポートフォリオ・リバランス効果、将来の緩和継続を示すシグナリングなどの経路を通じて、景気と物価を刺激することを狙う。' +
+      '日本銀行が2001〜2006年に世界に先駆けて導入し、2008年の世界金融危機後にFRB・イングランド銀行・ECBが大規模に実施した。効果の大きさ、出口（正常化）の難しさ、資産バブルや格差拡大といった副作用をめぐっては議論が続いている。',
+    keyFigures: '非伝統的金融政策（実効下限／流動性のわなで短期金利操作が限界に達した際の代替手段）／手段＝長期国債等の大量買入によるバランスシート（量）拡大とマネタリーベース供給／主な伝達経路＝長期金利低下・資産価格上昇・ポートフォリオ・リバランス・シグナリング／起源＝日本銀行が2001〜2006年に先駆導入／普及＝2008年危機後にFRB・イングランド銀行・ECBが大規模実施',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.boj.or.jp/en/about/press/koen_2017/data/ko171019a1.pdf', type: 'government', label: '日本銀行「Evolving Monetary Policy: The Bank of Japan’s Experience」(2017) — 2001-2006年QEの先駆導入' },
+      { url: 'https://www.bankofengland.co.uk/quarterly-bulletin/2022/2022-q1/qe-at-the-bank-of-england-a-perspective-on-its-functioning-and-effectiveness', type: 'government', label: 'イングランド銀行 Quarterly Bulletin (2022 Q1)「QE at the Bank of England」— 伝達経路と効果' },
+      { url: 'https://www.ecb.europa.eu/press/key/date/2009/html/sp090428.en.html', type: 'government', label: '欧州中央銀行(ECB)「Conventional and unconventional monetary policy」(2009)' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2006/10/did-quantitative-easing-by-the-bank-of-japan-work/', type: 'government', label: 'サンフランシスコ連邦準備銀行 Economic Letter (2006)「Did Quantitative Easing by the Bank of Japan “Work”?」' },
+    ],
+  },
+  {
+    id: 'econ-new-keynesian',
+    discipline: 'economics',
+    title: 'ニュー・ケインジアン経済学',
+    statement:
+      'ケインズ経済学の洞察（市場の不完全性により不況・非自発的失業が生じ、政府・金融政策に安定化の役割がある）を、合理的期待やミクロ的基礎づけ（個々の主体の最適化行動から出発する）という新古典派の方法論と統合したマクロ経済学の学派。1980年代以降、ニュー・クラシカル（合理的期待・市場均衡）の批判（ケインズ経済学はミクロ的基礎を欠くとの指摘）への応答として発展した。' +
+      '中核的主張は、価格・賃金の「名目硬直性（nominal rigidity）」――メニューコスト、長期賃金契約、効率賃金、独占的競争下での価格設定など、ミクロ的根拠のある摩擦――により、貨幣・需要の変動が短期的に産出・雇用へ影響する（貨幣の短期非中立性。長期では貨幣中立）こと。動学的確率的一般均衡（DSGE）モデルやニューケインジアン・フィリップス曲線が代表的な分析道具で、現代の中央銀行の政策分析（テイラー・ルール等）の基礎となっている。',
+    keyFigures: 'グレゴリー・マンキュー（メニューコストによる小さな摩擦が大きな厚生損失を生む）／オリヴィエ・ブランシャール（独占的競争下の総需要外部性）／マイケル・ウッドフォード（『Interest and Prices』2003）／ジョルディ・ガリ（標準的NKモデルの教科書的定式化）／関連：カルボ（staggered price-setting）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc1/NewKeynesianEconomics.html', type: 'reference', label: 'N. G. Mankiw, “New Keynesian Economics,” The Concise Encyclopedia of Economics (Econlib)' },
+      { url: 'https://en.wikipedia.org/wiki/New_Keynesian_economics', type: 'reference', label: 'Wikipedia: New Keynesian economics' },
+      { url: 'https://en.wikipedia.org/wiki/Nominal_rigidity', type: 'reference', label: 'Wikipedia: Nominal rigidity（名目硬直性・メニューコストの整理）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w12965/w12965.pdf', type: 'academic', label: 'NBER Working Paper: Understanding the New-Keynesian Model（IS曲線・NKフィリップス曲線・政策ルール）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-unlearning',
+    discipline: 'management',
+    title: '組織的アンラーニング',
+    statement:
+      '組織的アンラーニング（学習棄却）とは、組織が過去には有効だったが環境変化により陳腐化・不適合となった知識・信念・ルーティン・価値観を、意図的に捨て去り、新しい学習の余地をつくるプロセスである。学習が知識の獲得・追加であるのに対し、アンラーニングは古い知識の意図的な放棄であり、新しい知識を獲得・活用するための前提・補完として位置づけられる。' +
+      '偶発的に知識を失う「組織的忘却（forgetting）」とは異なり、支配的な認知枠組みや既存ルーティンの統制力を意図的に解除する点が特徴である。成功体験への固執が生むコンピテンシー・トラップや中核的硬直性（core rigidity）・認知的慣性を乗り越え、環境変化へ柔軟に適応するために重要とされる。個人レベルと組織レベルの区別、および何を捨て何を残すかの判断の難しさが主要な論点であり、組織学習やダブルループ学習とは別個の概念として議論されてきた。',
+    keyFigures: 'ボー・ヘドバーグ（Bo Hedberg）が提唱者とされ、初出は1981年の論文「How organizations learn and unlearn」（Nystrom・Starbuck 編『Handbook of Organizational Design』所収、Oxford University Press）／同論文で「学習は陳腐化した知識の棄却を伴う」と定式化し概念を組織文脈に明示的に導入した',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.emerald.com/insight/content/doi/10.1108/tlo-07-2019-236/full/html', type: 'academic', label: 'Guest editorial, The Learning Organization (Emerald Publishing) — Hedberg 1981の位置づけと定義' },
+      { url: 'https://link.springer.com/chapter/10.1007/3-540-71011-6_5', type: 'academic', label: '“Can Organizations Really Unlearn?” (Springer Nature) — 意図的棄却としての定義・忘却との区別' },
+      { url: 'https://realkm.com/2021/09/12/an-integrative-framework-of-organizational-unlearning/', type: 'media', label: '“An integrative framework of organizational unlearning” (RealKM) — コンピテンシー・トラップ／硬直性克服の枠組み' },
+    ],
+  },
+  {
+    id: 'human-grit',
+    discipline: 'human-science',
+    title: 'グリット（やり抜く力）',
+    statement:
+      '長期的な目標の達成に向けて、困難・失敗・停滞・退屈に直面しても情熱（passion）と粘り強さ（perseverance）を維持し続ける性格特性。アンジェラ・ダックワースらが2007年の論文（Journal of Personality and Social Psychology）で概念化・尺度化し（Grit Scale、2009年に短縮版Grit-S）、「興味の一貫性（consistency of interest）」と「努力の粘り強さ（perseverance of effort）」の2因子からなる。学業成績、ウェストポイント士官学校での残留、全米スペリング大会の順位などを、才能（IQ）とは独立に予測すると報告された。' +
+      '一方で、予測力は誠実性（ビッグファイブのconscientiousness）と非常に強く相関して増分的妥当性が小さく、特に「興味の一貫性」因子の効果や2因子の高次構造はメタ分析（Credé et al., 2016）で疑問視され、効果が誇張されてきたとの批判もある。ビッグファイブや自己効力感、達成動機理論とは区別される独立概念として位置づけられる。',
+    keyFigures: 'Angela Duckworth（提唱者・グリット概念とGrit Scaleの開発者）／Peterson・Matthews・Kelly（2007年初出論文の共著者）／Patrick D. Quinn（2009年短縮版Grit-S）／批判: Credé・Tynan・Harms（2016年メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/17547490/', type: 'academic', label: 'Duckworth, Peterson, Matthews & Kelly (2007), “Grit: Perseverance and passion for long-term goals,” JPSP 92(6):1087-1101 — PubMed（初出）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/27845531/', type: 'academic', label: 'Credé, Tynan & Harms (2016), “Much ado about grit: A meta-analytic synthesis,” JPSP — PubMed（批判的メタ分析）' },
+      { url: 'https://en.wikipedia.org/wiki/Grit_(personality_trait)', type: 'reference', label: 'Wikipedia: Grit (personality trait)（2因子・批判の概観）' },
+    ],
+  },
+  {
+    id: 'bizlaw-contract-termination',
+    discipline: 'business-law',
+    title: '契約の解除（民法541条・542条）',
+    statement:
+      '契約の解除とは、契約成立後に一方当事者の意思表示により契約を遡及的に解消し、初めから契約がなかったのと同様の状態へ戻す制度である。解除権の発生原因には契約による約定解除と法律の規定による法定解除がある。債務不履行を理由とする法定解除について、2017年改正・2020年4月施行の現行民法は、催告解除（541条：相当の期間を定めて履行を催告し、その期間内に履行がないとき解除でき、ただし不履行が軽微なときを除く）と、無催告解除（542条：履行不能、債務者の明確な履行拒絶、定期行為の時期徒過など、催告しても契約目的を達成できない場合に直ちに解除できる）を定める。' +
+      '改正前と異なり解除に債務者の帰責事由は不要となったが、不履行が債権者の責めに帰すべき事由による場合は解除できない（543条）。解除権は相手方への意思表示により行使し撤回できず（540条）、解除の効果として各当事者は原状回復義務を負う（545条1項本文）が、第三者の権利を害することはできない（同項ただし書）。契約の拘束力からの離脱を認めて債権者を保護する制度である。',
+    keyFigures: '催告解除＝民法541条（相当期間の催告→期間内不履行で解除、軽微な不履行は除外）／無催告解除＝民法542条（履行不能・明確な履行拒絶・定期行為の時期徒過等で直ちに解除）／解除権の行使＝民法540条（意思表示・撤回不可）／債務者の帰責事由は不要（2017年改正で削除）／債権者の帰責事由による不履行は解除不可＝543条／解除の効果＝原状回復義務（545条1項）・第三者保護',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089、540条〜545条）' },
+      { url: 'https://www.moj.go.jp/content/001255637.pdf', type: 'government', label: '法務省「契約解除の要件に関する見直し（債務者の帰責事由の要否）」改正資料' },
+      { url: 'https://keiyaku-watch.jp/media/hourei/minpo202004_kaijyo/', type: 'media', label: '契約ウォッチ「民法改正（2020年4月施行）に対応 契約解除とは」' },
+    ],
+  },
+  {
+    id: 'infosoc-cybernetics',
+    discipline: 'information-sociology',
+    title: 'サイバネティクス',
+    statement:
+      '動物（生物）と機械における「制御（control）」と「通信（communication）」を統一的に扱う学際的な科学。生物・機械・社会など異なるシステムに共通する原理として、出力の一部を入力に戻して自己制御する仕組み（フィードバック feedback）に着目し、それによって目標状態を維持・調整する制御の原理を研究する。とくに負のフィードバックは恒常性（ホメオスタシス homeostasis）を生み、情報・エントロピー概念とも結びつく。語源はギリシア語の kybernetes（舵取り＝船の操舵手）。' +
+      '制御工学・人工知能・認知科学・システム理論・経営（ビアのシステム論）・社会科学へ広く影響し、観察者自身をシステムに含める自己言及的な第二次サイバネティクス（フォン・フェルスター）へも展開した。情報理論（シャノン）とは別概念で、制御とフィードバックの科学として位置づけられる。',
+    keyFigures: '提唱者・命名者：ノーバート・ウィーナー（Norbert Wiener、米国の数学者）／初出：1948年の著書『サイバネティックス――動物と機械における制御と通信』／第二次サイバネティクスの展開：ハインツ・フォン・フェルスター／経営への応用：スタッフォード・ビア（Stafford Beer）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/cybernetics', type: 'reference', label: 'Encyclopaedia Britannica「Cybernetics | Definition & Facts」（定義・語源 kybernetes・フィードバック）' },
+      { url: 'https://mitpress.mit.edu/9780262537841/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/', type: 'academic', label: 'MIT Press: Norbert Wiener, Cybernetics（1948年初版／一次資料の刊行元）' },
+      { url: 'https://en.wikipedia.org/wiki/Second-order_cybernetics', type: 'reference', label: 'Wikipedia「Second-order cybernetics」（フォン・フェルスターによる観察者を含む第二次サイバネティクス）' },
+    ],
+  },
 ];
 // Stryker restore all
