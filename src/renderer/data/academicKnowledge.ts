@@ -8317,5 +8317,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://academic.oup.com/edited-volume/34234/chapter/290273128', type: 'academic', label: '“The Marco Civil da Internet and Digital Constitutionalism,” Oxford Handbook of Online Intermediary Liability (Oxford Academic)' },
     ],
   },
+  {
+    id: 'econ-comparative-institutional-analysis',
+    discipline: 'economics',
+    title: '比較制度分析（青木昌彦）',
+    statement:
+      '比較制度分析（Comparative Institutional Analysis, CIA）は、経済制度をゲーム理論（特に繰り返しゲーム・進化ゲーム）を用いて、プレイヤー間の戦略的相互作用が生み出す自己拘束的（self-enforcing）な均衡として捉える枠組みである。' +
+      '制度を「社会の成員の行動についての安定的で共有された予想（信念）のシステム＝ゲームの均衡」とみなす均衡論的制度観に立ち、制度的補完性（ある領域の制度が他領域の制度と効率を高め合いシステムとして安定する）、経路依存性、多重均衡（同一環境でも複数の安定した制度配置がありうる）を鍵概念とする。これにより日本型・アングロサクソン型など各国経済システムの多様性と持続性を説明する。スタンフォード大学の青木昌彦が主著『Toward a Comparative Institutional Analysis』（2001）で体系化し、A・グライフ（歴史制度分析）やP・ミルグロムも貢献。ノースらの新制度派と関連しつつ、ゲーム理論的・均衡論的アプローチに特徴がある。',
+    keyFigures:
+      '青木昌彦（Masahiko Aoki, 2001『Toward a Comparative Institutional Analysis』）／アブナー・グライフ（Avner Greif, 歴史制度分析）／ポール・ミルグロム（Paul Milgrom）／ダグラス・ノース（Douglass North, 関連）／鍵概念＝均衡論的制度観・制度的補完性・多重均衡',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262550833/toward-a-comparative-institutional-analysis/', type: 'academic', label: "MIT Press — Masahiko Aoki, 'Toward a Comparative Institutional Analysis' (2001)" },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-institutional-economics/article/understanding-masahiko-aokis-comparative-institutional-analysis/B8153640E3B8C0568B71C48E8A42CF01', type: 'academic', label: "Journal of Institutional Economics (Cambridge Core) — 'Understanding Masahiko Aoki's comparative institutional analysis'" },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-5876.1996.tb00031.x', type: 'academic', label: "Japanese Economic Review (Wiley) — Aoki, 'Towards a Comparative Institutional Analysis' (1996)" },
+      { url: 'https://web.stanford.edu/class/polisci210/papers/greif.pdf', type: 'academic', label: "Avner Greif (Stanford) — 'Self-enforcing and Self-reinforcing Economic Institutions'" },
+    ],
+  },
+  {
+    id: 'mgmt-subscription-model',
+    discipline: 'management',
+    title: 'サブスクリプション・モデル',
+    statement:
+      'サブスクリプション・モデルとは、製品・サービスを単発で販売し所有権を移転するのではなく、顧客が定期的（月額・年額等）に料金を支払い、その期間中サービスへのアクセスや継続的な提供を受ける、継続課金（リカーリング）型のビジネスモデルである。新聞・雑誌の定期購読や会員制を古典的起源とし、SaaS（Software as a Service）、動画・音楽配信、定期宅配などデジタル時代に急拡大した。' +
+      '利点は、継続的で予測可能な収益（安定したキャッシュフロー）、顧客との長期的関係、利用データに基づく改善にある。重視される指標は月次／年次経常収益（MRR／ARR）、解約率（チャーン）、顧客生涯価値（LTV）、顧客獲得コスト（CAC）で、LTV>CACかつ低チャーンが持続性の鍵とされる。所有から利用・アクセスへの転換（サブスクリプション・エコノミー、ティエン・ツォが2007年に提唱・普及）の潮流の中で論じられる。',
+    keyFigures:
+      'ティエン・ツォ（Tien Tzuo, Zuora創業者・「サブスクリプション・エコノミー」提唱者, 2007）／指標＝MRR・ARR（経常収益）・チャーン（解約率）・LTV・CAC／所有から利用・アクセスへ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/software-as-a-service', type: 'reference', label: 'Encyclopaedia Britannica — Software as a service (computing)' },
+      { url: 'https://online.hbs.edu/blog/post/ltv-cac', type: 'academic', label: 'Harvard Business School Online — LTV:CAC Ratio' },
+      { url: 'https://en.wikipedia.org/wiki/Churn_rate', type: 'reference', label: 'Wikipedia — Churn rate (recurring-revenue/subscription models)' },
+      { url: 'https://www.indexventures.com/perspectives/this-man-created-the-subscription-economy/', type: 'media', label: 'Index Ventures — Tien Tzuo and the Subscription Economy (coined 2007)' },
+    ],
+  },
+  {
+    id: 'human-status-quo-bias',
+    discipline: 'human-science',
+    title: '現状維持バイアス',
+    statement:
+      '現状維持バイアス（status quo bias）とは、客観的により良い選択肢があっても、現在の状態（既定の選択肢・現状）を維持することを過度に選好する認知バイアスである。経済学者ウィリアム・サミュエルソンとリチャード・ゼックハウザーが1988年の論文「Status Quo Bias in Decision Making」（Journal of Risk and Uncertainty, 1巻7–59頁）で、健康保険・退職年金の選択などの実証実験により示し命名した。' +
+      '背景の心理として、(1)損失回避（変更による損失を利得より重く見積もる）、(2)保有効果（既に持つものを高く評価する）、(3)後悔回避（行動して失敗する後悔を、何もせず失敗する後悔より大きいと予期する）、(4)認知的負担の回避が挙げられる。初期設定が選ばれやすいデフォルト効果と密接に関連し、臓器提供のオプトイン／オプトアウトや年金加入のデフォルト設計、ナッジ政策で重要となる。損失回避・保有効果とは関連するが、現状維持そのものへの選好という点で区別される。',
+    keyFigures:
+      'ウィリアム・サミュエルソン（William Samuelson）／リチャード・ゼックハウザー（Richard Zeckhauser）（1988, Journal of Risk and Uncertainty 1:7–59）／背景＝損失回避・保有効果・後悔回避／デフォルト効果と密接に関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF00055564', type: 'academic', label: 'Samuelson & Zeckhauser (1988) “Status Quo Bias in Decision Making”, Journal of Risk and Uncertainty, 1, 7–59 (Springer Nature 原論文)' },
+      { url: 'https://rzeckhauser.scholars.harvard.edu/publications/status-quo-bias-decision-making', type: 'academic', label: 'Harvard University — Richard Zeckhauser 著者公式出版物ページ' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/status-quo-bias/', type: 'reference', label: 'BehavioralEconomics.com — Mini-Encyclopedia of BE: “Status quo bias”' },
+      { url: 'https://en.wikipedia.org/wiki/Status_quo_bias', type: 'reference', label: 'Wikipedia — “Status quo bias”（定義・関連概念との区別・臓器提供応用）' },
+    ],
+  },
+  {
+    id: 'human-self-fulfilling-prophecy',
+    discipline: 'human-science',
+    title: '自己成就的予言（マートン）',
+    statement:
+      '自己成就的予言（self-fulfilling prophecy）とは、当初は誤った（事実に反する）状況の定義が、人々がそれを真実と信じて行動することで、結果的にその予言を現実化してしまう過程をいう。社会学者ロバート・K・マートンが1948年の論文「The Self-Fulfilling Prophecy」（Antioch Review誌）で命名・概念化し、マートン自身の定義は「ある状況についての誤った定義が、その当初の誤った観念を真実にしてしまう新たな行動を呼び起こす」というもの。' +
+      '基礎にはW.I.トマスの定理「人々が状況を真実だと定義すれば、その状況は結果において真実となる」がある。代表例は銀行の取り付け騒ぎで、健全な銀行でも破綻の噂を信じた預金者が一斉に引き出せば実際に支払い不能に陥る。教育文脈での具体化がピグマリオン効果（教師の期待が生徒の成績を左右する。ローゼンタール）であり、これは一般概念たる自己成就的予言の一事例にあたる。逆に予言ゆえに当初の予測が外れる自己破壊的予言（self-defeating prophecy）も存在する。差別・偏見・スティグマ・金融市場の分析に広く応用される。',
+    keyFigures:
+      'ロバート・K・マートン（Robert K. Merton, 1948「The Self-Fulfilling Prophecy」）／W.I.トマス（トマスの定理）／ロバート・ローゼンタール（ピグマリオン効果＝教育文脈の一事例）／自己破壊的予言（逆作用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/self-fulfilling-prophecy', type: 'reference', label: 'EBSCO Research Starters — Self-fulfilling prophecy（Merton 1948・トマスの定理・取り付け騒ぎ）' },
+      { url: 'https://en.wikipedia.org/wiki/Self-fulfilling_prophecy', type: 'reference', label: 'Wikipedia — Self-fulfilling prophecy（Antioch Review 8:193–210・定義・bank run）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100453214', type: 'reference', label: 'Oxford Reference — Self-defeating prophecy（逆作用＝自己破壊的予言）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-0-387-79061-9_2327', type: 'academic', label: 'Springer — Pygmalion Effect（教育文脈での自己成就的予言の一事例）' },
+    ],
+  },
+  {
+    id: 'bizlaw-dation-in-payment',
+    discipline: 'business-law',
+    title: '代物弁済（民法482条）',
+    statement:
+      '代物弁済とは、弁済をすることができる者（債務者または第三者）が、債権者との契約により、本来負担している給付に代えて他の給付をすることで、その給付に弁済と同一の効力（債務消滅）を生じさせる制度である（民法482条）。例えば100万円の金銭債務を負う者が、債権者との合意のもと自動車を引き渡して債務を消滅させる場合がこれにあたる。' +
+      '2017年改正（2020年4月施行）後の482条は「弁済をすることができる者…が、債権者との間で、債務者の負担した給付に代えて他の給付をすることにより債務を消滅させる旨の契約をした場合において、その弁済者が当該他の給付をしたときは、その給付は、弁済と同一の効力を有する。」と定める。改正により代物弁済が諾成契約（合意のみで成立）であることが明確化された一方、債務消滅の効力は現実に代物の給付がされた時に生じる。担保目的の「代物弁済予約」は譲渡担保等の非典型担保として用いられ、仮登記担保契約に関する法律の規律対象（清算手続を要する）。',
+    keyFigures:
+      '根拠条文＝民法482条（e-Gov law id 129AC0000000089）／成立＝債権者と弁済者の契約（合意）が必要・債務者が一方的に強制できない／法的性質＝諾成契約（2017年改正・2020年4月施行で明文化）／効力発生時＝現実に代物の給付がされた時／担保目的の「代物弁済予約」は仮登記担保契約に関する法律の規律対象',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第482条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第482条', type: 'reference', label: 'Wikibooks 民法第482条（条文と解説）' },
+      { url: 'https://www.oike-law.gr.jp/wp-content/uploads/OL47-12_uesato.pdf', type: 'media', label: 'Oike Library No.47 民法改正解説～弁済～（上里美登利 弁護士）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0482-00/', type: 'media', label: 'クレアール司法書士講座 民法第482条【代物弁済】' },
+    ],
+  },
+  {
+    id: 'infosoc-technofeudalism',
+    discipline: 'information-sociology',
+    title: 'テクノ封建制（デジタル封建制）',
+    statement:
+      'テクノ封建制（technofeudalism）とは、巨大デジタル・プラットフォームの台頭により、経済の支配的様式が資本主義から封建制に類比される新体制へ移行したとする議論。市場競争と利潤に代わり、プラットフォームが所有する「クラウド資本（cloud capital）」への依存と、そこから抽出される「レント（地代）」・独占が経済を支配すると論じる。' +
+      'プラットフォーム所有者は「クラウド領主（cloudalists）」、従来の資本家は彼らに従属する「家臣（vassals）」、無償のデータ労働を担う利用者は「クラウド農奴（cloud serfs）」とされる。元ギリシャ財務相ヤニス・バルファキスが著書『Technofeudalism』（2023）で展開。先駆としてセドリック・デュラン『Techno-féodalisme』（2020）がある。一方、エフゲニー・モロゾフ（New Left Review 2022）らは、巨大IT企業はR&Dに投資する能動的資本家でありレンティアではない、これは依然レンティア資本主義の一形態で「封建制」は分析的に不正確だと批判する。',
+    keyFigures:
+      'ヤニス・バルファキス（Yanis Varoufakis, 2023『Technofeudalism』）／セドリック・デュラン（Cédric Durand, 2020『Techno-féodalisme』）／エフゲニー・モロゾフ（Evgeny Morozov, New Left Review 2022, 批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://newleftreview.org/issues/ii133/articles/evgeny-morozov-critique-of-techno-feudal-reason', type: 'academic', label: 'Evgeny Morozov, “Critique of Techno-Feudal Reason,” New Left Review 133/134 (2022) — 批判的検討' },
+      { url: 'https://www.editionsladecouverte.fr/techno_feodalisme-9782348080159', type: 'reference', label: 'Cédric Durand, Techno-féodalisme: Critique de l’économie numérique (La Découverte, 2020) — 先駆的著作' },
+      { url: 'https://jacobin.com/2023/10/cloud-capitalism-technofeudalism-serfs-cloud-big-data-yanis-varoufakis', type: 'media', label: 'Jacobin (2023) “We’re Still Living Under Capitalism, Not Techno-Feudalism” — 批判' },
+      { url: 'https://www.goodreads.com/book/show/75560036-technofeudalism', type: 'reference', label: 'Yanis Varoufakis, Technofeudalism: What Killed Capitalism (2023) — 概念の主要文献' },
+    ],
+  },
 ];
 // Stryker restore all
