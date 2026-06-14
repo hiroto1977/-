@@ -4492,5 +4492,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'http://henryjenkins.org/blog/2006/06/welcome_to_convergence_culture.html', type: 'media', label: 'Henry Jenkins 本人ブログ “Welcome to Convergence Culture” (2006, 著者一次資料)' },
     ],
   },
+  {
+    id: 'econ-liquidity-trap',
+    discipline: 'economics',
+    title: '流動性のわな',
+    statement:
+      '名目金利が下限（ゼロ近傍）まで低下した結果、中央銀行が貨幣供給を増やしても金利をそれ以上引き下げられず、金融緩和が総需要・実体経済を刺激できなくなる状況。ゼロ金利下では貨幣保有の機会費用がほぼゼロとなり、貨幣と債券がほぼ完全代替になるため、追加供給された貨幣は退蔵され利子率に作用しない（貨幣需要が利子に対しほぼ無限弾力的＝IS-LMではLM曲線が水平）。' +
+      'ケインズが1936年に提唱し、ヒックスがIS-LMで定式化した。限界として、財政政策やインフレ期待への働きかけ（クルーグマンの「信頼できる形で無責任になると約束する」＝将来の高めのインフレを約束し実質金利を下げる策）が代替的処方とされ、純粋な金融数量政策の無効性をめぐっては学説上の論争がある。',
+    keyFigures: 'ジョン・メイナード・ケインズ（提唱・初出『一般理論』1936, 第15章）／ジョン・ヒックス（IS-LMによる定式化, 1937）／ポール・クルーグマン（1998年「It’s Baaack」日本の停滞分析で復活）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.stlouisfed.org/publications/regional-economist/april-2014/the-liquidity-trap-an-alternative-explanation-for-todays-low-inflation', type: 'government', label: 'St. Louis Fed (米連邦準備銀行) — The Liquidity Trap' },
+      { url: 'https://web.mit.edu/krugman/www/bpea_jp.pdf', type: 'academic', label: 'Krugman (1998) It’s Baaack, Brookings Papers on Economic Activity 29:137-206 (MIT hosted PDF)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/liquidity-trap', type: 'reference', label: 'Encyclopedia.com — Liquidity Trap' },
+      { url: 'https://en.wikipedia.org/wiki/Liquidity_trap', type: 'reference', label: 'Wikipedia — Liquidity trap (Keynes 1936 / Hicks IS-LM)' },
+    ],
+  },
+  {
+    id: 'econ-rent-seeking',
+    discipline: 'economics',
+    title: 'レントシーキング',
+    statement:
+      'レントシーキング（rent-seeking）とは、公共選択論における概念で、新たな富や価値を生み出すのではなく、既存の富（レント＝独占的・規制的に保護された超過利益）を自らに移転させることで利得を得ようとする活動を指す。典型例は、補助金・関税・輸入許可・参入規制・独占的地位といった政府が創出する便宜を獲得・防衛するために、企業や利益集団がロビイング・陳情・広報・贈賄等へ資源を投じる行為である。' +
+      'これらの支出はそれ自体は何の財も生まないため社会的に非生産的であり、資源配分を歪めて死荷重（厚生損失）を拡大させる。独占の社会的費用は価格歪みだけでなく、独占権を巡る競争に費やされる資源まで含めて測るべきだ、という点が核心。腐敗・所得格差・競争低下を招く政府の失敗の一形態として論じられる。',
+    keyFigures: 'ゴードン・タロック（Gordon Tullock, 1967「The Welfare Costs of Tariffs, Monopolies, and Theft」で現象を分析、ただし命名はせず）／アン・クルーガー（Anne O. Krueger, 1974「The Political Economy of the Rent-Seeking Society」で “rent-seeking” の語を命名・定着）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/rent-seeking', type: 'reference', label: 'Britannica Money — “Rent seeking | Definition & Facts”' },
+      { url: 'https://www.econlib.org/library/Enc/RentSeeking.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib / Liberty Fund) — “Rent Seeking”' },
+      { url: 'https://link.springer.com/article/10.1007/s11127-019-00646-y', type: 'academic', label: 'Public Choice (Springer, 査読誌) — “Rent seeking at 52: an introduction to a special issue”' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1465-7295.1967.tb01923.x', type: 'academic', label: 'Gordon Tullock (1967) “The Welfare Costs of Tariffs, Monopolies, and Theft”, Economic Inquiry / Western Economic Journal（原典）' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-capabilities',
+    discipline: 'management',
+    title: 'ダイナミック・ケイパビリティ',
+    statement:
+      '急速に変化する環境に対応するために、企業が内外の資源・能力・コンピタンスを統合・構築・再構成する能力。David Teece、Gary Pisano、Amy Shuen が1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal）で定式化し、安定した競争優位を前提とする資源ベース理論（RBV）を、変化への適応という動学的観点へ拡張した。' +
+      '後にTeece（2007）が、機会を感知する「センシング（sensing）」、機会を捕捉し資源を動員する「シージング（seizing）」、組織や資産を継続的に再構成する「トランスフォーミング（transforming）」という三つの枠組みを示し、その微視的基盤を体系化した。コアコンピタンスや両利きの経営とは区別される独立した概念である。',
+    keyFigures: 'David J. Teece（提唱者）／Gary Pisano／Amy Shuen／初出: Teece, Pisano & Shuen (1997) “Dynamic Capabilities and Strategic Management”, Strategic Management Journal 18(7): 509-533／sensing/seizing/transforming 枠組みは Teece (2007) で体系化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Newcastle University — TheoryHub: Dynamic Capabilities Theory（大学の学術理論レビュー）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) Strategic Management Journal — 原典（Wiley Online Library）' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities' },
+      { url: 'https://www.cambridge.org/core/elements/dynamic-capabilities/90101DC1EA1A6AFF9228C3FA4CD31930', type: 'academic', label: 'Cambridge University Press — Elements: Dynamic Capabilities（学術出版）' },
+    ],
+  },
+  {
+    id: 'human-just-world',
+    discipline: 'human-science',
+    title: '公正世界仮説',
+    statement:
+      '公正世界仮説（公正世界信念）とは、人は「世界は基本的に公正であり、人は自分の行いにふさわしい結果を得る（善い行いには善い報い、悪い行いには悪い報いが返る）」と信じたがる傾向がある、とする社会心理学の概念である。社会心理学者メルヴィン・ラーナーが1960年代に提唱した。この信念は世界の秩序や予測可能性への欲求を満たす一方、不当に苦しむ被害者を目にすると認知的な不協和を生む。' +
+      'それを解消するため、観察者は被害者を助けられない場合、しばしば「被害者にも落ち度があったはずだ」と被害者の人格や価値を貶め、苦しみを正当化しようとする。これが被害者非難（victim blaming）を生む心理的機序とされる。基本的帰属の錯誤や認知的不協和とは区別される独立した概念である。',
+    keyFigures: 'メルヴィン・ラーナー（Melvin J. Lerner）が1960年代に提唱／初出実験：Lerner & Simmons (1966) “Observer’s reaction to the innocent victim”, Journal of Personality and Social Psychology／代表著作：Lerner (1980) The Belief in a Just World: A Fundamental Delusion',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/5969146/', type: 'academic', label: 'Lerner & Simmons (1966) “Observer’s reaction to the innocent victim”, J. Personality and Social Psychology（PubMed所収・査読論文）' },
+      { url: 'https://www.scu.edu/ethics/ethics-resources/ethical-decision-making/the-just-world-theory/', type: 'academic', label: 'Markkula Center for Applied Ethics, Santa Clara University — “The Just World Theory”' },
+      { url: 'https://en.wikipedia.org/wiki/Just-world_fallacy', type: 'reference', label: 'Wikipedia — “Just-world fallacy / hypothesis”' },
+    ],
+  },
+  {
+    id: 'bizlaw-property-transfer',
+    discipline: 'business-law',
+    title: '物権変動と対抗要件（民法177条）',
+    statement:
+      '日本の民法では、物権の発生・変更・消滅（物権変動）は当事者の意思表示のみによって効力を生じる（意思主義、民法176条）。すなわち売買等の合意があれば、登記や引渡しといった特別の形式を要せず物権変動それ自体は成立する。もっとも、これを当事者以外の第三者に主張（対抗）するには対抗要件が必要であり、不動産については登記をしなければ第三者に対抗できず（民法177条）、動産についてはその引渡しがなければ第三者に対抗できない（民法178条）。' +
+      'したがって同一不動産が複数人に売却された二重譲渡の場面では、契約の前後ではなく、先に所有権移転登記を備えた譲受人が確定的に所有権を取得する。登記・引渡しは物権変動の成立要件ではなく対抗要件である点が要諦である。',
+    keyFigures: '意思主義＝物権変動は当事者の意思表示のみで効力発生（民法176条）／不動産の対抗要件＝登記（民法177条）／動産の対抗要件＝引渡し・占有改定等を含む（民法178条）／二重譲渡は先に登記を備えた者が優先（対抗関係）／登記・引渡しは成立要件でなく第三者対抗要件',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索『民法』（明治二十九年法律第八十九号、law id 129AC0000000089）— 176条・177条・178条の一次条文' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0177-00/', type: 'media', label: 'クレアール司法書士講座 民法第177条【不動産に関する物権の変動の対抗要件】解説' },
+      { url: 'https://biz.moneyforward.com/contract/basic/20081/', type: 'media', label: 'マネーフォワード クラウド契約『民法177条とは？第三者の範囲や物権変動の対抗要件』' },
+    ],
+  },
+  {
+    id: 'infosoc-metcalfe-law',
+    discipline: 'information-sociology',
+    title: 'メトカーフの法則',
+    statement:
+      '通信ネットワークの価値（または影響力）は、接続された利用者数 n の二乗（n²）に比例する、という経験則。厳密には、ネットワーク内で成立しうる相互接続の総数 n(n−1)/2（三角数）で与えられ、n が大きいとき漸近的に n²/2 に近づく。新規利用者は既存の全利用者との新たな接続をもたらすため、価値は利用者数の増加より速く（線形でなく二乗的に）増大する。ネットワーク効果や正のフィードバックを説明する代表的な定式として、ファクスやSNS等の事例で用いられる。' +
+      '一方で、すべての接続が等価値ではないとして二乗則は価値を過大評価するとの批判があり、Briscoe・Odlyzko・Tilly（2006）はより緩やかな n·log(n) を提案している。',
+    keyFigures: 'ロバート・メトカーフ（Robert Metcalfe、イーサネットの共同発明者・3Com創業者）の1980年頃の観察に由来（当初は利用者でなく「互換性のある通信機器」の数で定式化）／命名は経済評論家ジョージ・ギルダー（George Gilder）が1993年9月のForbes ASAP誌記事で行った／要点：価値 ∝ n²（厳密には n(n−1)/2）／批判：Briscoe・Odlyzko・Tilly が n·log(n) を提唱（IEEE Spectrum, 2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Metcalfe%27s_law', type: 'reference', label: 'Wikipedia「Metcalfe’s law」: n²/三角数 n(n−1)/2、Metcalfe由来、Gilder1993命名' },
+      { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/metcalfes-law', type: 'reference', label: 'Encyclopedia.com「Metcalfe’s Law」（百科事典級リファレンス、独立第二情報源）' },
+      { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'academic', label: 'Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）' },
+      { url: 'https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/', type: 'academic', label: 'University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）' },
+    ],
+  },
 ];
 // Stryker restore all
