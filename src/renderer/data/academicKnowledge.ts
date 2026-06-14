@@ -8016,5 +8016,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/lets-choose-collective-intelligence-over-madness-mobs', type: 'academic', label: 'MIT Sloan / MIT Center for Collective Intelligence — collective intelligence vs. the madness of mobs' },
     ],
   },
+  {
+    id: 'econ-triffin-dilemma',
+    discipline: 'economics',
+    title: 'トリフィンのジレンマ',
+    statement:
+      'トリフィンのジレンマとは、一国の通貨（米ドル）が国際的な基軸通貨（準備通貨）として用いられる体制において、その発行国が直面する短期的な国内金融政策目標と長期的な国際的目標の間の構造的な利益相反である。' +
+      '基軸通貨国は世界の流動性需要（各国の準備・貿易決済）を満たすため、国際収支赤字を通じて自国通貨を国外へ供給し続けねばならないが、その対外債務の累積はやがて通貨価値（金兌換性）への信認を損ない、基軸通貨としての地位を脅かす。経済学者ロバート・トリフィンが1960年の著書『Gold and the Dollar Crisis』でブレトンウッズ体制（金ドル本位制）を分析して提示し、1959年の米議会証言での予見は1971年のニクソン・ショックで現実化した。',
+    keyFigures:
+      'ロバート・トリフィン（Robert Triffin、1911-1993、ベルギー系米国の経済学者）／著書『Gold and the Dollar Crisis』（1960）／1959年10月 米連邦議会・合同経済委員会（Joint Economic Committee）証言／流動性供給と信認維持の両立不能',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ecb.europa.eu/press/key/date/2011/html/sp111003.en.html', type: 'government', label: '欧州中央銀行（ECB）「The Triffin dilemma revisited」(2011) — 中央銀行による講演' },
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1961/001/article-A001-en.xml', type: 'academic', label: 'IMF Staff Papers (1961)「Professor Triffin on International Liquidity and the Role of the Fund」' },
+      { url: 'https://www.nber.org/system/files/working_papers/w24195/w24195.pdf', type: 'academic', label: 'Michael D. Bordo「Triffin: Dilemma or Myth?」NBER Working Paper No.24195' },
+      { url: 'https://www.federalreservehistory.org/essays/gold-convertibility-ends', type: 'government', label: '米連邦準備制度（Federal Reserve History）「Nixon Ends Convertibility of U.S. Dollars to Gold」（1971ニクソン・ショック）' },
+    ],
+  },
+  {
+    id: 'mgmt-amoeba-management',
+    discipline: 'management',
+    title: 'アメーバ経営（稲盛和夫）',
+    statement:
+      'アメーバ経営は、京セラ創業者・稲盛和夫が1960年代初頭に考案・実践した管理会計手法であり、大組織を「アメーバ」と呼ぶ独立採算の小集団（一般に5〜50人、現場では6〜7人規模が中核単位）に細分化し、各アメーバがリーダーを中心に自部門の収支に責任を持ち、市場に直結した中小企業のように自主的な採算管理を行う。' +
+      '中核指標は「時間当たり採算（＝(売上−経費)÷総労働時間）」で、全社員が時間当り採算表をもとにリアルタイムで採算を把握し、収益向上と経費削減に主体的に取り組む。狙いは(1)市場直結の部門別採算管理、(2)経営者意識を持つ人材の育成、(3)全員参加経営であり、京セラフィロソフィと一体で運用される。KDDIや、2010年破綻後の日本航空（JAL）再建にも導入されたことで知られ、管理会計研究の対象ともなっている。',
+    keyFigures:
+      '稲盛和夫（Kazuo Inamori, 京セラ創業者）／京セラ（Kyocera）／KDDI（旧第二電電・DDI）／日本航空（JAL）再建／中核指標＝時間当たり採算',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Amoeba_Management', type: 'reference', label: 'Amoeba Management — Wikipedia（英語版百科事典）' },
+      { url: 'https://link.springer.com/content/pdf/10.1007/978-981-19-3398-1_6', type: 'academic', label: 'Amoeba Management and Hourly Profit System (AMS) — Springer Nature（学術書チャプター）' },
+      { url: 'https://www.fpu.ac.jp/rire/publication/regular/001363_d/fil/file_7.pdf', type: 'academic', label: '「京セラのアメーバ経営」福井県立大学 地域経済研究所 紀要' },
+      { url: 'https://global.kyocera.com/inamori/about/manager/amoeba/', type: 'reference', label: 'Amoeba Management — Official Site of Kazuo Inamori / Kyocera（一次・公式解説）' },
+    ],
+  },
+  {
+    id: 'human-illusion-of-transparency',
+    discipline: 'human-science',
+    title: '透明性の錯覚',
+    statement:
+      '透明性の錯覚（illusion of transparency）とは、人が自分の内的状態（緊張・不安・隠している本心・うそ・好意・嫌悪など）を、実際よりも他者に見透かされている・伝わっていると過大に見積もる社会心理学上の認知バイアスである。自分は自分の内面を強く意識しているため、その内的経験が外部に「漏れて」透けて見えると錯覚するが、実際には他者はそこまで読み取れていない。' +
+      'ギロヴィッチ・サヴィツキー・メドヴェック（1998, JPSP 75:332-346）はうそをついた話者が発覚度を過大評価し、嫌悪を感じた人がそれが顔に出ていると過大視することを実証した。原因は自分の豊かな現象的経験を起点（アンカー）とし他者視点への調整が不十分な「アンカリングと不十分な調整」で、注目を過大視するスポットライト効果と姉妹的な自己中心性バイアスとされる。スピーチ不安の緩和（「緊張は思うほど伝わらない」と知ると不安が減る）への応用も報告される。',
+    keyFigures:
+      'トーマス・ギロヴィッチ（Thomas Gilovich）／ケネス・サヴィツキー（Kenneth Savitsky）／ヴィクトリア・H・メドヴェック（Victoria Husted Medvec）（1998 JPSP 75:332-346）／スポットライト効果と姉妹概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doi/10.1037/0022-3514.75.2.332', type: 'academic', label: "Gilovich, Savitsky & Medvec (1998). The Illusion of Transparency. Journal of Personality and Social Psychology, 75(2), 332-346." },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1111/1467-8721.00039', type: 'academic', label: 'Gilovich & Savitsky (1999). The Spotlight Effect and the Illusion of Transparency. Current Directions in Psychological Science, 8(6), 165-168.' },
+      { url: 'https://en.wikipedia.org/wiki/Illusion_of_transparency', type: 'reference', label: 'Wikipedia — Illusion of transparency' },
+    ],
+  },
+  {
+    id: 'human-cognitive-miser',
+    discipline: 'human-science',
+    title: '認知的倹約家（cognitive miser）',
+    statement:
+      '人間は注意・処理能力・時間といった認知資源に限りがあるため、複雑で網羅的な情報処理を避け、ヒューリスティック・ステレオタイプ・スキーマ・スクリプトといった単純で省力的な思考方略に頼って社会的な知覚・判断・意思決定を行う、とする社会的認知の人間観・メタファーである。' +
+      '社会心理学者スーザン・フィスクとシェリー・テイラーが1984年の著書『社会的認知（Social Cognition）』で命名・普及させた。人は合理的に情報を集め因果を分析するとした従来の「素朴な科学者（naïve scientist、Heider 1958）」観に対し、人は正確さより効率（労力の節約）を優先する「ケチ」だとした。認知バイアスやステレオタイプが生じる基盤を説明し、後に文脈や動機に応じて省力的処理と精緻な処理を使い分ける「動機づけられた戦術家（motivated tactician、1991）」モデルへ発展、二重過程理論の土台ともなった。',
+    keyFigures:
+      'スーザン・T・フィスク（Susan T. Fiske）／シェリー・E・テイラー（Shelley E. Taylor）（1984『Social Cognition』）／フリッツ・ハイダー（Fritz Heider, naïve scientist の先行観）／後継＝動機づけられた戦術家(1991)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/cognitive-miser', type: 'reference', label: 'APA Dictionary of Psychology — “cognitive miser”（米国心理学会）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095622297', type: 'reference', label: 'Oxford Reference — “cognitive miser”（オックスフォード大学出版局）' },
+      { url: 'https://en.wikipedia.org/wiki/Cognitive_miser', type: 'reference', label: 'Wikipedia — “Cognitive miser”（Fiske & Taylor 1984 起源・naïve scientist／motivated tactician 系譜）' },
+    ],
+  },
+  {
+    id: 'bizlaw-real-subrogation',
+    discipline: 'business-law',
+    title: '物上代位（民法304条）',
+    statement:
+      '物上代位とは、担保物権（先取特権・質権・抵当権）の効力が、目的物の売却・賃貸・滅失・損傷等によって目的物の所有者（債務者）が受けるべき金銭その他の物（売却代金・賃料・保険金・損害賠償金等）に対しても及ぶことをいう。担保物権は目的物の「交換価値」を把握する権利であるため、目的物が形を変えて金銭債権等の価値代替物に転化しても、その代替物に効力を及ぼして優先弁済を受けられる。' +
+      '根拠は民法304条で、同条は先取特権について定め、質権は350条、抵当権は372条で準用する。重要な要件として、担保権者はその払渡しまたは引渡しの「前に」代位物たる債権を差し押さえなければならない（304条1項ただし書）。この差押えの趣旨（第三債務者保護・特定性維持・優先権保全）には学説・判例上の議論があり、判例は第三債務者保護を中心に据える。典型例は抵当不動産焼失時の火災保険金請求権、賃貸中の不動産の賃料債権への物上代位（最高裁が肯定）である。',
+    keyFigures:
+      '根拠条文＝先取特権 民法304条／質権は350条で準用・抵当権は372条で準用（e-Gov law id 129AC0000000089）／対象＝売却代金・賃料・保険金・損害賠償金等の価値代替物／要件＝払渡し・引渡しの前の差押え（304条1項ただし書）／差押えの趣旨は第三債務者保護説等で議論／典型例＝火災保険金請求権・賃料債権（最高裁が肯定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第304条・第350条・第372条' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/15-1/005%20ikuma.pdf', type: 'academic', label: '生熊長幸「物上代位における第三債務者保護説および優先権保全説の再構成」立命館法学' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第304条', type: 'reference', label: 'Wikibooks 民法第304条（条文・解説）' },
+      { url: 'https://yuhikaku.com/articles/-/14857', type: 'academic', label: '有斐閣Online「抵当権の物上代位（1）」' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-governance',
+    discipline: 'information-sociology',
+    title: 'アルゴリズムによる統治（アルゴクラシー）',
+    statement:
+      'アルゴリズムによる統治（algorithmic governance）とは、社会秩序の形成・行動の調整・意思決定・公共サービス提供といった「統治」機能が、データ駆動・機械学習システムを含むアルゴリズムによって媒介・自動化・遂行される現象と、それを分析・規範評価する研究枠組みである。行政や司法（再犯予測・与信・福祉給付の自動判定）、プラットフォームの行動規制（コンテンツモデレーション・ランキング）、スマートシティ等で具体化する。' +
+      'ジョン・ダナハーは、アルゴリズムにより構造化された統治体系を「アルゴクラシー（algocracy）」と呼び、それが人間の参加・理解を狭め公的意思決定の正統性を脅かす「正統性の問題」を論じた。論点は不透明性（ブラックボックス）・説明責任・自動化バイアス・差別と公平性・異議申立ての余地・民主的正統性であり、ティム・オライリーの「アルゴリズム規制」やルーヴロワの「アルゴリズム的統治性」（フーコー統治性の応用）も主要な系譜である。',
+    keyFigures:
+      'ジョン・ダナハー（John Danaher、アルゴクラシー・正統性の問題）／ティム・オライリー（Tim O’Reilly、アルゴリズム規制）／アントワネット・ルーヴロワ（Antoinette Rouvroy、アルゴリズム的統治性）／カレン・ユング（Karen Yeung）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/2053951717726554', type: 'academic', label: 'Danaher et al., “Algorithmic governance: Developing a research agenda through the power of collective intelligence,” Big Data & Society (2017)' },
+      { url: 'https://philpapers.org/rec/DANTTO-13', type: 'academic', label: 'John Danaher, “The Threat of Algocracy: Reality, Resistance and Accommodation,” Philosophy & Technology (2016)' },
+      { url: 'https://beyondtransparency.org/chapters/part-5/open-data-and-algorithmic-regulation/', type: 'reference', label: 'Tim O’Reilly, “Open Data and Algorithmic Regulation,” Beyond Transparency (2013)' },
+      { url: 'https://shs.cairn.info/article/E_RES_177_0163?lang=en', type: 'academic', label: 'Antoinette Rouvroy & Thomas Berns, “Algorithmic governmentality and prospects of emancipation,” Réseaux (2013)' },
+    ],
+  },
 ];
 // Stryker restore all
