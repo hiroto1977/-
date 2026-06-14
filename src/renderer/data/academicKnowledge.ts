@@ -7401,5 +7401,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/fake-news', type: 'reference', label: 'Encyclopædia Britannica — “Fake news”' },
     ],
   },
+  {
+    id: 'econ-capability-approach',
+    discipline: 'economics',
+    title: '潜在能力アプローチ（セン）',
+    statement:
+      '人々の福祉や社会の発展を、所得・財・効用（功利主義的な主観的満足）ではなく、「その人が実際に行うことができ／なることができる状態」の幅で評価すべきだとする規範的枠組み。経済学者・哲学者アマルティア・センが1979年のタナー講演「何の平等か（Equality of What?）」を起点に1980年代に提唱し、著書『商品と潜在能力（Commodities and Capabilities, 1985）』等で体系化した。' +
+      '中心概念は、(1)機能（functionings＝十分な栄養・健康・教育・社会参加など、人が実現する様々な「すること・あること」）と、(2)潜在能力／ケイパビリティ（capabilities＝選択可能な機能の組み合わせの集合＝実質的自由）である。同じ財でも機能へ変換する能力（変換要因）が個人や環境で異なるため、財や所得の量だけでは福祉を測れないと論じる。マーサ・ヌスバウムは中心的ケイパビリティのリストを示し発展させ、国連の人間開発指数（HDI）の理論的基礎ともなった。',
+    keyFigures:
+      'アマルティア・セン（Amartya Sen、1998年ノーベル経済学賞）／マーサ・ヌスバウム（Martha Nussbaum、中心的ケイパビリティのリスト）／中核概念＝機能（functionings）・潜在能力（capabilities）・変換要因／応用＝人間開発指数（HDI）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/capability-approach/', type: 'reference', label: 'The Capability Approach — Stanford Encyclopedia of Philosophy' },
+      { url: 'https://iep.utm.edu/sen-cap/', type: 'reference', label: "Sen's Capability Approach — Internet Encyclopedia of Philosophy" },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1998/sen/facts/', type: 'government', label: 'NobelPrize.org — Amartya Sen, The Prize in Economic Sciences 1998（厚生経済学への貢献）' },
+    ],
+  },
+  {
+    id: 'econ-baumol-cost-disease',
+    discipline: 'economics',
+    title: 'ボーモルのコスト病',
+    statement:
+      'ボーモルのコスト病（ボーモル効果）とは、労働生産性の上昇が乏しい労働集約的部門（教育・医療・対人サービス・舞台芸術など、機械化や効率化が難しい部門）において、生産性が向上していないにもかかわらず賃金が上昇し、結果としてその部門の財・サービスの相対価格が継続的に上昇する現象を指す。原因は、製造業など生産性の高い「進歩的」部門の賃金上昇が、労働市場での競合を通じて生産性の低い「停滞的」部門の賃金をも押し上げることにある。' +
+      '古典的な例として、ベートーヴェンの弦楽四重奏の演奏に必要な人数（4人）と時間は19世紀から変わらず労働生産性が上がらないが、演奏者の賃金は経済全体の生産性上昇に伴って上昇するため、生演奏のコストは上がり続ける。ウィリアム・ボーモルとウィリアム・ボーエンが1960年代の舞台芸術の経済分析で示した概念で、医療費・教育費の長期的上昇やサービス経済化に伴う物価動向の説明に用いられる。',
+    keyFigures:
+      'ウィリアム・J・ボーモル（William J. Baumol）／ウィリアム・G・ボーエン（William G. Bowen）／初出 1966『Performing Arts: The Economic Dilemma』・Baumol 1967 American Economic Review「Macroeconomics of Unbalanced Growth」',
+    asOf: '2026-06',
+    sources: [
+      { url: 'http://piketty.pse.ens.fr/files/Baumol1967.pdf', type: 'academic', label: 'Baumol, W. J. (1967) “Macroeconomics of Unbalanced Growth: The Anatomy of Urban Crisis,” American Economic Review 57(3): 415-426（原論文PDF）' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_3060-2', type: 'reference', label: 'The New Palgrave Dictionary of Economics: “Baumol’s Cost Disease”（Springer Nature）' },
+      { url: 'https://en.wikipedia.org/wiki/Baumol_effect', type: 'reference', label: 'Wikipedia: “Baumol effect”（ベートーヴェン弦楽四重奏の例を含む）' },
+      { url: 'https://www.ebsco.com/research-starters/economics/baumols-cost-disease', type: 'reference', label: 'EBSCO Research Starters (Economics): “Baumol’s cost disease”' },
+    ],
+  },
+  {
+    id: 'mgmt-servant-leadership',
+    discipline: 'management',
+    title: 'サーバント・リーダーシップ',
+    statement:
+      'リーダーがまず「奉仕する者（servant）」であることを出発点とし、フォロワーのニーズを最優先に彼らの成長・幸福・自律を支え、その結果として信頼と組織目標の達成を導くリーダーシップの哲学。ロバート・K・グリーンリーフが1970年のエッセイ「The Servant as Leader」で提唱した造語で、「奉仕したいという自然な感情がまずあり、その後に導きたいという意識的な選択が生まれる」とした。' +
+      'グリーンリーフは最良の判定基準として「奉仕される人々が、より健康で・賢く・自由で・自律的になり、自らも奉仕者になりやすくなるか」を問うた。指揮命令・自己利益優先の伝統的トップダウン型と対照される。後にラリー・スピアーズが傾聴・共感・癒し・気づき・説得・概念化・先見性・執事役・人々の成長への関与・コミュニティ構築の10特性を抽出した。',
+    keyFigures:
+      'ロバート・K・グリーンリーフ（Robert K. Greenleaf、1970「The Servant as Leader」で造語）／ラリー・C・スピアーズ（Larry C. Spears、10特性を抽出）／対比＝伝統的トップダウン型リーダーシップ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://greenleaf.org/what-is-servant-leadership/', type: 'reference', label: 'Robert K. Greenleaf Center for Servant Leadership — What is Servant Leadership?' },
+      { url: 'https://www.regent.edu/journal/journal-of-virtues-leadership/character-and-servant-leadership-ten-characteristics-of-effective-caring-leaders/', type: 'academic', label: 'Larry C. Spears, “Character and Servant Leadership: Ten Characteristics,” Journal of Virtues & Leadership, Regent University' },
+      { url: 'https://en.wikipedia.org/wiki/Servant_leadership', type: 'reference', label: 'Wikipedia — Servant leadership' },
+      { url: 'https://www.gonzaga.edu/news-events/stories/2023/9/26/robert-greenleaf-servant-leadership', type: 'academic', label: 'Gonzaga University — Robert Greenleaf on Servant-Leadership' },
+    ],
+  },
+  {
+    id: 'human-marshmallow-test',
+    discipline: 'human-science',
+    title: 'マシュマロ・テスト（満足の遅延）',
+    statement:
+      'マシュマロ・テストは、心理学者ウォルター・ミシェルらがスタンフォード大学で1960年代後半〜70年代初頭に行った、幼児の「満足の遅延（delay of gratification＝より大きな後の報酬のために目先の小さな報酬を我慢する自制心）」を測る一連の実験。就学前児を1人にし、卓上にマシュマロ（やクッキー・プレッツェル等）を1個置いて、実験者が戻るまで約15分待てれば2個、待てずに呼べば1個と告げ、待てる時間や用いる方略（注意をそらす等）を観察した。' +
+      'ミシェルらの追跡研究（Shoda, Mischel & Peake 1990）では、長く待てた子は後年のSATスコアや学業・社会的能力など一部の指標で良好な傾向が報告された。ただし近年の大規模な概念的再現研究（Watts, Duncan & Quan 2018）では、家庭の社会経済的背景等を統制すると後年の成果との相関は大幅に縮小し、解釈には注意が必要とされる。自制心・実行機能・将来志向の研究で重要。',
+    keyFigures:
+      'ウォルター・ミシェル（Walter Mischel、スタンフォード大学）／追跡研究 Shoda, Mischel & Peake (1990)／再現研究 Watts, Duncan & Quan (2018, Psychological Science)／概念＝満足の遅延（delay of gratification）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Walter-Mischel', type: 'reference', label: 'Encyclopaedia Britannica — Walter Mischel（Stanford Marshmallow Experiment / 満足の遅延）' },
+      { url: 'https://www.britannica.com/science/delay-of-gratification', type: 'reference', label: 'Encyclopaedia Britannica — Delay of gratification' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0956797618761661', type: 'academic', label: 'Watts, Duncan & Quan (2018) “Revisiting the Marshmallow Test,” Psychological Science（査読・概念的再現）' },
+      { url: 'https://psychology.columbia.edu/news/memoriam-walter-mischel-psychologist-who-developed-pioneering-marshmallow-test', type: 'academic', label: 'Columbia University 心理学部 — In Memoriam: Walter Mischel（経歴・テスト概要）' },
+    ],
+  },
+  {
+    id: 'bizlaw-structure-liability',
+    discipline: 'business-law',
+    title: '工作物責任（民法717条）',
+    statement:
+      '工作物責任とは、土地の工作物（建物・塀・橋・擁壁・看板・遊具など土地に接着して人工的に設置された物）の設置または保存に瑕疵（欠陥）があり、それによって他人に損害が生じた場合の損害賠償責任をいう（民法717条）。同条1項は、第一次的に「占有者」が責任を負うが、占有者が損害発生防止に必要な注意をしたことを証明したときは免責され、その場合は第二次的に「所有者」が責任を負うと定める。' +
+      '占有者の責任は過失の立証責任が被害者から占有者側に転換された「中間責任（準無過失責任）」であるのに対し、所有者の責任には免責規定がなく、無過失でも責任を負う「無過失責任（厳格責任）」である。これは危険な物を支配する者が責任を負うべきとする危険責任の考え方に基づく。2項は竹木の栽植・支持の瑕疵にも準用され、3項は損害の原因について他に責任を負う者があるとき占有者・所有者はその者に求償できると定める。被害者が加害者の過失を立証する一般の不法行為（709条）の特則である。',
+    keyFigures:
+      '根拠条文＝民法717条（e-Gov law id 129AC0000000089）／1項：占有者が第一次責任（必要な注意の証明で免責）→所有者が第二次責任（免責規定なし）／占有者＝中間責任（立証責任転換・準無過失責任）／所有者＝無過失責任（厳格責任・危険責任）／2項：竹木の栽植・支持の瑕疵に準用／3項：真の責任者への求償権／一般不法行為709条の特則',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第717条' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/08-56/18matumoto.pdf', type: 'academic', label: '松本克美「土地工作物責任における〈第一次的所有者責任・第二次的占有者責任論〉の可能性」立命館法学' },
+      { url: 'https://www.zennichi.or.jp/law_faq/賃貸建物における事故とオーナー責任/', type: 'media', label: '公益社団法人全日本不動産協会「賃貸建物における事故とオーナー責任」' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第717条', type: 'reference', label: 'Wikibooks 民法第717条（条文・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-computational-propaganda',
+    discipline: 'information-sociology',
+    title: '計算プロパガンダ',
+    statement:
+      'ソーシャルメディア上で、アルゴリズム・自動化（ボット）と人間のキュレーション（管理）を組み合わせ、誤導的な情報を意図的に配信して世論を操作しようとする活動を指す。サミュエル・ウーリーとフィリップ・N・ハワードが主導したオックスフォード大学オックスフォード・インターネット研究所（OII）の「Computational Propaganda Project（COMPROP）」で概念化・実証された。ハワードらは「ソーシャルメディア・ネットワーク上で誤情報を配信するためにアルゴリズム、自動化、人間のキュレーションを用いること」と定義する。' +
+      '主な手段は、ソーシャルボットによる投稿の自動大量生成やトレンド操作、政治目的の偽アカウント（sock puppet）、トロール、草の根運動を装うアストロターフィングなど。2016年の米大統領選や英EU離脱（Brexit）国民投票での利用が研究されている。フェイクニュース・ポストトゥルース・フィルターバブル・エコーチェンバー等とは関連するが、配信の自動化・組織化に焦点を当てた別概念である。',
+    keyFigures:
+      'サミュエル・C・ウーリー（Samuel C. Woolley）／フィリップ・N・ハワード（Philip N. Howard）／オックスフォード・インターネット研究所 Computational Propaganda Project（COMPROP／現 DemTech）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oii.ox.ac.uk/research/projects/computational-propaganda/', type: 'academic', label: 'Oxford Internet Institute, University of Oxford — Computational Propaganda (COMPROP) project page' },
+      { url: 'https://global.oup.com/academic/product/computational-propaganda-9780190931407', type: 'academic', label: 'Woolley & Howard (eds.) Computational Propaganda, Oxford University Press, 2018' },
+      { url: 'https://en.wikipedia.org/wiki/Computational_propaganda', type: 'reference', label: 'Wikipedia — Computational propaganda（定義・手段・事例の概観）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/20570473231185996', type: 'academic', label: 'Howard, Lin & Tuzov (2023) “Computational propaganda: Concepts, methods, and challenges,” Communication and the Public（SAGE, 査読誌）' },
+    ],
+  },
 ];
 // Stryker restore all
