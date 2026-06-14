@@ -3804,5 +3804,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781405186407.wbiecm051', type: 'academic', label: 'Ball-Rokeach, "Media System Dependency Theory", International Encyclopedia of Communication (Wiley)' },
     ],
   },
+  {
+    id: 'econ-arrow-impossibility',
+    discipline: 'economics',
+    title: 'アローの不可能性定理',
+    statement:
+      '3つ以上の選択肢があるとき、個人の選好順位を社会全体の選好順位へ集計する「理想的な」方法は存在しないことを示した社会的選択理論の定理。ケネス・アローが1951年の著書『社会的選択と個人的評価』で証明した。' +
+      'アローは、社会的な集計ルールが満たすべき合理的で民主的な複数の条件を示した：(1)広範性（定義域の非限定。どんな個人選好の組み合わせにも適用できる）、(2)パレート原理（全員がxをyより好むなら社会もそうする）、(3)無関係な選択肢からの独立性（xとyの社会的順位は両者への個人の選好だけで決まる）、(4)非独裁性（特定の一個人の選好がつねに社会の選好になることはない）。' +
+      'アローは、これらをすべて同時に満たす集計ルールは独裁制以外に存在しない（推移性を保てない＝多数決の循環などが生じる）ことを証明した。投票・民主主義・厚生経済学の基礎をなし、アローは1972年ノーベル経済学賞を受賞した。',
+    keyFigures: 'K.アロー1951『社会的選択と個人的評価』で証明／個人選好を社会選好へ理想的に集計する方法は存在しない／条件：広範性・パレート原理・無関係選択肢からの独立性・非独裁性／同時充足は独裁制のみ／投票/民主主義/厚生経済学の基礎／アロー1972ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/impossibility-theorem', type: 'reference', label: 'Encyclopaedia Britannica — Impossibility theorem (Arrow\'s Paradox, Voting Theory & Social Choice)' },
+      { url: 'https://plato.stanford.edu/entries/arrows-theorem/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Arrow\'s Theorem' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1972/arrow/facts/', type: 'reference', label: 'NobelPrize.org — Kenneth J. Arrow, 1972年経済学賞' },
+    ],
+  },
+  {
+    id: 'econ-kaldor-hicks',
+    discipline: 'economics',
+    title: 'カルドア＝ヒックス基準（補償原理）',
+    statement:
+      'ある政策や経済状態の変化が社会的に望ましい（効率を高める）かを判定する厚生経済学の基準。誰の効用も下げずに少なくとも一人を改善できる場合のみ改善とみなすパレート基準は厳しすぎて現実の政策評価に適用しにくいため、それを緩めたものである。' +
+      'カルドア＝ヒックス基準では、その変化によって得をする人（勝者）の利益が損をする人（敗者）の損失を上回り、原理的には勝者が敗者に補償してもなお勝者に余りが残る（＝全員が以前より悪くならない状態を作りうる）なら、その変化は効率を改善するとみなす。重要なのは、補償が実際に行われる必要はなく、補償が可能であれば足りる点であり、これを潜在的パレート改善と呼ぶ。そのため一部の人は実際には以前より悪化しうる。' +
+      'ニコラス・カルドアとジョン・ヒックスが1939年に独立に提唱し、便益が費用を上回れば実施するという費用便益分析の理論的基礎となった。ただし所得分配を無視する、補償が現実に行われず敗者が放置されうる、A→BもB→Aも改善と判定される循環（シトフスキーの逆説）が生じうる等の批判がある。',
+    keyFigures: 'N.カルドア&J.ヒックス1939に独立に提唱／勝者の利益>敗者の損失で潜在的に全員改善可能なら効率改善／補償は可能であれば足り実際の補償は不要(潜在的パレート改善)／パレート基準を緩めた基準／費用便益分析の基礎／分配無視・シトフスキーの逆説等の批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Kaldor-Hicks-efficiency', type: 'reference', label: 'Encyclopaedia Britannica — Kaldor-Hicks efficiency' },
+      { url: 'https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency', type: 'reference', label: 'Wikipedia — Kaldor–Hicks efficiency' },
+      { url: 'https://law.duke.edu/sites/default/files/centers/clepp/cost_benefit_analysis_law_and_society.pdf', type: 'academic', label: 'Duke University School of Law — Cost-Benefit Analysis (Encyclopedia of Law & Society)' },
+    ],
+  },
+  {
+    id: 'mgmt-mintzberg-organization',
+    discipline: 'management',
+    title: 'ミンツバーグの組織構造の5類型',
+    statement:
+      '組織を構成する基本要素と調整メカニズムの違いから、組織形態を類型化したヘンリー・ミンツバーグの枠組み。著書『組織の構造化（The Structuring of Organizations）』（1979, Prentice-Hall）等で示した。' +
+      'ミンツバーグは組織を5つの基本部分（戦略尖端＝トップ経営層／中間管理層／作業核＝現場の実務者／技術構造＝標準化を担うスタッフ／支援スタッフ）から成るとし、どの部分が支配的かと、どの調整メカニズム（相互調整・直接監督・作業の標準化・成果の標準化・技能の標準化）が中心かによって、5つの基本的な組織形態を導いた：(1)単純構造（直接監督、起業初期の小組織）、(2)機械的官僚制（作業の標準化、大量生産・行政組織）、(3)専門的官僚制（技能の標準化、病院・大学など専門職組織）、(4)事業部制（成果の標準化、多角化大企業）、(5)アドホクラシー（相互調整、革新的なプロジェクト型組織）。' +
+      '状況に応じて適切な形態が異なるとするコンティンジェンシー的な組織論である。',
+    keyFigures: 'H.ミンツバーグ『組織の構造化』1979／組織の5つの基本部分：戦略尖端・中間管理層・作業核・技術構造・支援スタッフ／調整メカニズム5種／5類型：単純構造・機械的官僚制・専門的官僚制・事業部制・アドホクラシー／状況適合的な組織論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.open.edu/openlearn/money-business/business-strategy-studies/what-are-mintzbergs-five-components-organisation-the-one-minute-guide', type: 'academic', label: 'The Open University (OpenLearn) — Mintzbergの組織の5要素ガイド' },
+      { url: 'https://platform.europeanmoocs.eu/users/8/Lunenburg-Fred-C.-Organizational-Structure-Mintzberg-Framework-IJSAID-V14-N1-2012.pdf', type: 'academic', label: 'Lunenburg, F.C. (2012) "Organizational Structure: Mintzberg\'s Framework", IJSAID' },
+      { url: 'https://www.accaglobal.com/us/en/student/exam-support-resources/fundamentals-exams-study-resources/f1/technical-articles/mintzberg-theory.html', type: 'reference', label: 'ACCA Global — Mintzberg\'s theory on organisations' },
+    ],
+  },
+  {
+    id: 'human-planned-behavior',
+    discipline: 'human-science',
+    title: '計画的行動理論（TPB）',
+    statement:
+      '人の行動は、その行動をとろうとする「意図（behavioral intention）」によって直接予測され、意図は3つの要因によって決まるとする社会心理学の理論。アイゼク（イチェク）・アイゼンが1980年代に提唱した。' +
+      '3要因とは、(1)行動への態度（その行動を良い／悪いと評価する程度）、(2)主観的規範（その行動を周囲の重要な他者が期待していると感じる社会的圧力）、(3)知覚された行動コントロール（その行動を自分が容易に実行できると感じる程度＝バンデューラの自己効力感に近い）である。マーティン・フィッシュバインとアイゼンが1970年代に提唱した「合理的行為理論（theory of reasoned action）」に、本人の意思だけでは統制しきれない行動を説明するため「知覚された行動コントロール」を加えて拡張したもの。' +
+      '健康行動（禁煙・運動・受診）・環境配慮行動・消費行動などの予測・介入に広く用いられる一方、意図と実際の行動のギャップ（意図-行動ギャップ）や感情の軽視などの限界も指摘される。',
+    keyFigures: 'I.アイゼンが1980年代に提唱／行動は意図が予測し、意図は態度・主観的規範・知覚された行動コントロールの3要因で決まる／合理的行為理論(フィッシュバイン&アイゼン1970年代)に知覚された行動コントロールを加えた拡張／健康・環境・消費行動の予測に応用／意図-行動ギャップの限界',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.simplypsychology.org/theory-of-planned-behavior.html', type: 'reference', label: 'SimplyPsychology — Theory of Planned Behavior' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/theory-planned-behavior', type: 'reference', label: 'EBSCO Research Starters — Theory of planned behavior' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7909498/', type: 'academic', label: 'The Theory of Planned Behavior: Selected Recent Advances and Applications (PMC, NCBI)' },
+      { url: 'https://en.wikipedia.org/wiki/Theory_of_planned_behavior', type: 'reference', label: 'Wikipedia — Theory of planned behavior' },
+    ],
+  },
+  {
+    id: 'bizlaw-industrial-safety',
+    discipline: 'business-law',
+    title: '労働安全衛生法',
+    statement:
+      '職場における労働者の安全と健康を確保し、快適な作業環境の形成を促進することを目的とする法律。1972年（昭和47年）に労働基準法から分離・独立する形で制定された。' +
+      '事業者に対し、危険・健康障害を防止するための措置義務を課すとともに、安全衛生管理体制の整備（一定規模以上の事業場での総括安全衛生管理者・安全管理者・衛生管理者・産業医の選任、安全衛生委員会の設置等）、機械・危険物・有害物に関する規制、労働者への安全衛生教育、作業環境測定、医師による健康診断の実施などを義務づける。2015年からは一定規模の事業場に対し、労働者のメンタルヘルス不調を未然に防ぐための「ストレスチェック制度」も義務化された（労働安全衛生法66条の10）。' +
+      '違反には罰則があり、厚生労働省（労働基準監督署）が監督する。労働基準法が労働条件の最低基準を定めるのに対し、本法は安全衛生に特化した取締法規である。',
+    keyFigures: '職場の安全・健康の確保と快適な作業環境の形成／1972年(昭和47年)に労働基準法から分離独立して制定(昭和47年法律57号)／事業者の危険防止措置義務・安全衛生管理体制(総括安全衛生管理者/安全管理者/衛生管理者/産業医・安全衛生委員会)／健康診断・安全衛生教育・作業環境測定／2015年ストレスチェック制度義務化(66条の10)／労基署が監督・罰則あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/347AC0000000057', type: 'government', label: 'e-Gov法令検索「労働安全衛生法」（昭和四十七年法律第五十七号）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=74001000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省「労働安全衛生法（昭和47年6月8日法律第57号）」' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/index.html', type: 'government', label: '厚生労働省「ストレスチェック制度・メンタルヘルス対策」' },
+    ],
+  },
+  {
+    id: 'infosoc-attention-economy',
+    discipline: 'information-sociology',
+    title: '注意経済（アテンション・エコノミー）',
+    statement:
+      '情報が爆発的に豊富になった社会では、情報そのものではなく、人々の有限な「注意（アテンション）」こそが希少で価値ある資源になるという考え方。経済学者・社会科学者でノーベル賞受賞者のハーバート・サイモンが1971年の論考で「情報の豊かさは注意の貧困を生む（情報の消費は、その受け手の注意を消費する）」と指摘したことが先駆とされる。' +
+      '1990年代後半にはマイケル・ゴールドハーバーらが、経済の重心が物質から人間の注意へと移るとして「アテンション・エコノミー」として明確に論じた。デジタルメディアやプラットフォームの多くは、無料でサービスを提供する代わりに利用者の注意（滞在時間・閲覧）を集めて広告主に販売するビジネスモデルをとり、注意の獲得競争が激化する。' +
+      'これがクリックベイト、通知やレコメンドによる依存的設計、フェイクニュースの拡散、情報過多による集中力低下などの問題を生むと批判され、監視資本主義やプラットフォーム経済の議論とも結びつく。',
+    keyFigures: '情報過多の社会では有限な「注意」が希少資源になる／H.サイモン1971「情報の豊かさは注意の貧困を生む」が先駆／1990年代後半M.ゴールドハーバーらがアテンション・エコノミーとして論じる／無料サービスで注意を集め広告に売るモデル／クリックベイト・依存的設計・情報過多の弊害／監視資本主義と関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s12599-020-00631-6', type: 'academic', label: 'Research in the Attention Economy — Business & Information Systems Engineering (Springer Nature, 査読誌)' },
+      { url: 'https://academic.oup.com/iwc/article/37/1/18/7733851', type: 'academic', label: 'Second Wave of Attention Economics — Interacting with Computers (Oxford Academic, 査読誌)' },
+      { url: 'https://people.ischool.berkeley.edu/~hal/pages/sciam.html', type: 'academic', label: 'The Information Economy — Hal Varian, UC Berkeley School of Information' },
+      { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Attention economy — Wikipedia（経緯確認用）' },
+    ],
+  },
 ];
 // Stryker restore all
