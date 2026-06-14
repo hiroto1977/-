@@ -7704,5 +7704,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://islandora-dev.library.cmu.edu/node/45427', type: 'academic', label: 'Carnegie Mellon University Library — H. A. Simon “Designing Organizations for an Information-Rich World” (1971) 原典所蔵記録' },
     ],
   },
+  {
+    id: 'econ-heckscher-ohlin',
+    discipline: 'economics',
+    title: 'ヘクシャー＝オリーン理論',
+    statement:
+      'ヘクシャー＝オリーン理論（要素賦存比率理論）は、各国の比較優位が「生産要素の相対的賦存比率（労働・資本・土地などの相対的な豊富さ）」の違いによって決まると説く国際貿易の理論である。労働生産性の差で比較優位を説明したリカードと異なり、本理論は、国は自国に相対的に豊富な生産要素を集約的に用いる財に比較優位をもち、それを輸出し、相対的に希少な要素を集約的に用いる財を輸入すると主張する' +
+      '（例：資本豊富国は資本集約財を輸出し、労働集約財を輸入する）。スウェーデンの経済学者エリ・ヘクシャーの1919年論文を出発点に、弟子ベルティル・オリーンが1933年の著書『Interregional and International Trade』で展開した。新古典派貿易理論（要素賦存アプローチ）の中核をなし、関連定理に要素価格均等化定理やストルパー＝サミュエルソン定理が、また理論と逆の実証結果としてレオンチェフの逆説がある。',
+    keyFigures:
+      'エリ・ヘクシャー（Eli Heckscher、1919年論文）／ベルティル・オリーン（Bertil Ohlin、1933年『Interregional and International Trade』、1977年ノーベル経済学賞をジェームズ・ミードと共同受賞）／ヴァシリー・レオンチェフ（Leontief paradox、1953年）／ポール・サミュエルソン（要素価格均等化・ストルパー＝サミュエルソン定理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Heckscher-Ohlin-theory', type: 'reference', label: 'Britannica Money — Heckscher-Ohlin theory（定義・例・レオンチェフの逆説）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1977/summary/', type: 'government', label: 'NobelPrize.org — 1977年経済学賞（Ohlin・Meade 共同受賞、公式）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Ohlin.html', type: 'reference', label: 'Econlib（The Concise Encyclopedia of Economics）— Bertil Ohlin 略伝と理論' },
+      { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin model（モデル概要・関連定理）' },
+    ],
+  },
+  {
+    id: 'mgmt-lean-startup',
+    discipline: 'management',
+    title: 'リーン・スタートアップ',
+    statement:
+      'リーン・スタートアップは、不確実性の高い環境下で新規事業を、無駄（lean）を省きつつ立ち上げ・成長させるための方法論。エリック・リースが2011年の著書『The Lean Startup』で体系化し、トヨタ生産方式（リーン生産）とスティーブ・ブランクの顧客開発を基礎とする。核心は「構築—計測—学習（Build–Measure–Learn）」のフィードバックループを高速で回し、検証による学び（validated learning）を積み重ねること。' +
+      '実用最小限の製品（MVP）を素早く市場へ出して顧客の反応を計測し、その学びをもとに当初戦略を維持（persevere）するか方向転換（pivot）するかを判断する。事前の精緻な事業計画よりも仮説検証と顧客フィードバックによる反復学習を重視し、革新会計（innovation accounting）などの手法で進捗を測りながら、不確実性下の事業構築リスクを下げることを狙う。',
+    keyFigures:
+      'エリック・リース（Eric Ries、提唱者・2011年著書『The Lean Startup』）／スティーブ・ブランク（Steve Blank、顧客開発の基礎）／大野耐一・新郷重夫（トヨタ生産方式＝リーン生産の源流）／中核概念＝Build–Measure–Learn・MVP・ピボット・革新会計',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://knowledge.wharton.upenn.edu/article/eric-ries-on-the-lean-startup/', type: 'academic', label: 'Knowledge at Wharton（ペンシルベニア大学ウォートン校）— Eric Ries on The Lean Startup' },
+      { url: 'https://en.wikipedia.org/wiki/The_Lean_Startup', type: 'reference', label: 'Wikipedia — The Lean Startup' },
+      { url: 'https://knowledge.wharton.upenn.edu/article/pivot-entrepreneurship/', type: 'academic', label: 'Knowledge at Wharton — What Does It Mean to Pivot in Business?' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-governance-code',
+    discipline: 'business-law',
+    title: 'コーポレートガバナンス・コード',
+    statement:
+      'コーポレートガバナンス・コードとは、上場会社が実効的なコーポレートガバナンス（企業統治）を実現するために遵守・参照すべき主要な原則を取りまとめた規範（ソフトロー）である。日本では金融庁と東京証券取引所（JPX）が共同で策定し、2015年（平成27年）3月に最終案が公表され、同年6月1日に東証の有価証券上場規程の一部として適用が開始された（その後2018年・2021年に改訂）。' +
+      'OECDコーポレートガバナンス原則を踏まえ、(1)株主の権利・平等性の確保、(2)株主以外のステークホルダーとの適切な協働、(3)適切な情報開示と透明性の確保、(4)取締役会等の責務、(5)株主との対話、という5つの基本原則を柱とする。法的拘束力ではなく「コンプライ・オア・エクスプレイン」を採用し、各社の事情に応じた自律的なガバナンス向上を促す点が最大の特徴である。機関投資家向けのスチュワードシップ・コード（2014）と「車の両輪」をなす。',
+    keyFigures:
+      '策定主体＝金融庁＋東京証券取引所(JPX)の共同策定／適用開始＝2015年6月1日（東証 有価証券上場規程の一部）／改訂＝2018年6月・2021年6月／法的性質＝ソフトロー（「コンプライ・オア・エクスプレイン」）／5つの基本原則＝株主の権利・平等性／ステークホルダーとの協働／情報開示と透明性／取締役会等の責務／株主との対話／関連＝スチュワードシップ・コード(2014)と車の両輪／会社法上の機関設計・内部統制（ハードロー）とは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpx.co.jp/english/equities/listing/cg/', type: 'government', label: '日本取引所グループ(JPX/東証) — Corporate Governance Code' },
+      { url: 'https://www.fsa.go.jp/en/refer/councils/corporategovernance/20150306-1/01.pdf', type: 'government', label: "金融庁 — Japan's Corporate Governance Code [Final Proposal] (2015-03)" },
+      { url: 'https://www.fsa.go.jp/policy/corporategovernencereform/20240115.html', type: 'government', label: '金融庁 — コーポレートガバナンス改革に向けた取組みについて' },
+      { url: 'https://iclg.com/practice-areas/corporate-governance-laws-and-regulations/japan', type: 'reference', label: 'ICLG — Corporate Governance Laws and Regulations: Japan 2025-2026' },
+    ],
+  },
+  {
+    id: 'human-broaden-and-build',
+    discipline: 'human-science',
+    title: '拡張—形成理論（フレドリクソン）',
+    statement:
+      'バーバラ・フレドリクソンが提唱した、ポジティブ感情の機能と進化的意義に関する理論（Review of General Psychology 1998／American Psychologist 2001）。恐怖や怒りなどのネガティブ感情が闘争・逃走のような狭い「特定の行動傾向」を喚起するのに対し、喜び・興味・満足・愛といったポジティブ感情は、その瞬間の「思考—行動レパートリー」を一時的に拡張（broaden）し、注意・認知・行動の幅を広げて探索・遊び・創造・つながりを促す。' +
+      'この拡張された経験は、長期的にはレジリエンス・社会的絆・知識やスキルといった身体的・知的・社会的・心理的な永続的「個人資源（resources）」を持続的に形成・構築（build）する。すなわちポジティブ感情は即時の快だけでなく、将来に役立つ資源を築く適応的機能をもつとされ、「上方スパイラル（upward spiral）」とも関連づけられる。なお関連して提示されたポジティブ／ネガティブ比2.9013の主張は数学的根拠を欠くとして2013年に撤回された。',
+    keyFigures:
+      'バーバラ・フレドリクソン（Barbara L. Fredrickson）／拡張（broaden）＝思考—行動レパートリーの拡大／形成（build）＝永続的な個人資源の構築／2.9013比の主張は2013年に部分撤回',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doiLanding?doi=10.1037%2F0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. L. (2001). The broaden-and-build theory of positive emotions. American Psychologist, 56(3), 218–226（APA PsycNet）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1037/1089-2680.2.3.300', type: 'academic', label: 'Fredrickson, B. L. (1998). What Good Are Positive Emotions? Review of General Psychology, 2(3), 300–319（SAGE Journals）' },
+      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Broaden-and-build — Wikipedia（理論概要のリファレンス）' },
+      { url: 'https://retractionwatch.com/2013/09/19/fredrickson-losada-positivity-ratio-paper-partially-withdrawn/', type: 'media', label: 'Fredrickson–Losada “positivity ratio” paper partially withdrawn — Retraction Watch（2.9013比の部分撤回）' },
+    ],
+  },
+  {
+    id: 'human-mindfulness',
+    discipline: 'human-science',
+    title: 'マインドフルネス（MBSR）',
+    statement:
+      'マインドフルネスとは、今この瞬間の経験に意図的に、評価・判断をせずに注意を向けることで生じる「気づき（awareness）」の状態、およびそれを養う瞑想実践を指す。' +
+      '仏教の瞑想伝統（サティ＝念）に由来するが、これを宗教的文脈から切り離し世俗的・現代的に体系化したのがジョン・カバットジンであり、1979年にマサチューセッツ大学医学部で慢性疾患患者向けの通常8週間プログラム「マインドフルネス・ストレス低減法（MBSR）」を開発した。彼はマインドフルネスを「意図的に、今この瞬間に、価値判断をせず注意を向けることで現れる気づき」と定義した。MBSRをもとに、うつ病の再発予防に有効性が示されたマインドフルネス認知療法（MBCT）などが発展し、慢性疼痛・ストレス・不安・うつへの臨床応用や注意・感情調整・ウェルビーイングへの効果が研究されている（効果量や方法論をめぐる議論もある）。',
+    keyFigures:
+      'ジョン・カバットジン（Jon Kabat-Zinn、MBSR開発者・1979年UMass医学部）／ジンデル・シーガル、マーク・ウィリアムズ、ジョン・ティーズデール（Segal・Williams・Teasdale、MBCT開発者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/topics/mindfulness', type: 'academic', label: 'American Psychological Association (APA) — Mindfulness（学会の概説・MBSR/MBCT等の臨床応用）' },
+      { url: 'https://www.mindful.org/jon-kabat-zinn-defining-mindfulness/', type: 'reference', label: 'Mindful — Jon Kabat-Zinn: Defining Mindfulness（カバットジンの定義・MBSR 1979・UMass）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/10965637/', type: 'academic', label: 'Teasdale et al. (2000), Prevention of relapse/recurrence in major depression by MBCT — PubMed（査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Mindfulness-based_stress_reduction', type: 'reference', label: 'Wikipedia — Mindfulness-based stress reduction（百科事典級リファレンス）' },
+    ],
+  },
+  {
+    id: 'infosoc-data-portability',
+    discipline: 'information-sociology',
+    title: 'データポータビリティの権利（GDPR20条）',
+    statement:
+      'データポータビリティの権利とは、EUの一般データ保護規則（GDPR、2018年5月25日適用）第20条が定めるデータ主体の権利であり、自らが管理者に提供した自己の個人データを「構造化され、一般的に使用され、機械可読な形式」で受け取り、妨げられることなく他の管理者へ移転させる権利をいう。技術的に可能な場合は、ある管理者から別の管理者へ個人データを直接移転させる権利も含む。' +
+      '適用には、(1)処理が本人の同意または契約を法的根拠とすること、(2)処理が自動化された手段で行われることが要件となる。趣旨は、特定サービスへの利用者の囲い込み（ロックイン）を防ぎ、個人のデータに対するコントロールを強化することにあり、副次的にサービス間の移行・競争も促進する。対象は本人が提供したデータに限られ（推論・派生データは対象外）、アクセス権（15条）や消去権（17条）とは別個の権利である。',
+    keyFigures:
+      '根拠条文＝GDPR（規則2016/679）第20条／適用開始＝2018年5月25日／対象形式＝構造化・一般的使用・機械可読な形式／要件＝同意または契約が法的根拠＋自動化処理／技術的に可能な場合は管理者間で直接移転可／対象＝本人が提供したデータに限る／趣旨＝ロックイン防止・個人のコントロール強化（前文68）／アクセス権15条・消去権17条とは別個',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:32016R0679', type: 'government', label: 'EUR-Lex — Regulation (EU) 2016/679 (GDPR) 第20条 原文（EU公式法令データベース）' },
+      { url: 'https://www.edpb.europa.eu/our-work-tools/our-documents/guidelines/guidelines-right-data-portability-under-regulation-2016679_en', type: 'government', label: 'European Data Protection Board — Guidelines on the right to data portability (WP242 rev.01)' },
+      { url: 'https://commission.europa.eu/law/law-topic/data-protection/information-individuals_en', type: 'government', label: 'European Commission — Data protection: Information for individuals' },
+      { url: 'https://gdpr-info.eu/art-20-gdpr/', type: 'reference', label: 'GDPR-Info — Art. 20 GDPR Right to data portability（条文参照リファレンス）' },
+    ],
+  },
 ];
 // Stryker restore all
