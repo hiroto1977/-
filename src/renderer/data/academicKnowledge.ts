@@ -7502,5 +7502,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/20570473231185996', type: 'academic', label: 'Howard, Lin & Tuzov (2023) “Computational propaganda: Concepts, methods, and challenges,” Communication and the Public（SAGE, 査読誌）' },
     ],
   },
+  {
+    id: 'econ-monopolistic-competition',
+    discipline: 'economics',
+    title: '独占的競争',
+    statement:
+      '独占的競争（monopolistic competition）は、完全競争と独占の中間に位置する市場形態である。(1)多数の売り手・買い手が存在し、(2)各企業が製品差別化（ブランド・品質・デザイン・立地等で他社製品と区別）を行うため自社製品について右下がりの需要曲線に直面し、価格を若干上下できる一定の価格支配力をもち、(3)参入・退出が自由である、という特徴をもつ。' +
+      '差別化により短期には超過利潤を得られるが、参入が自由なため長期には新規参入で需要が奪われ超過利潤はゼロとなり、価格＝平均費用となる。ただし長期均衡でも価格＞限界費用であり、平均費用曲線の最低点より左側で操業するため「過剰生産能力（excess capacity）」が生じ、資源配分は完全競争より非効率とされる。エドワード・チェンバリンとジョーン・ロビンソンがほぼ同時期（1933年）に独立に理論化した。',
+    keyFigures:
+      'エドワード・H・チェンバリン（Edward H. Chamberlin、1933『The Theory of Monopolistic Competition』）／ジョーン・ロビンソン（Joan Robinson、1933『The Economics of Imperfect Competition』、ほぼ同時期に独立して理論化）／例＝レストラン・衣料品・小売業／長期均衡で過剰生産能力・P＞MC',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/monopolistic-competition', type: 'reference', label: 'Encyclopaedia Britannica（Britannica Money）— Monopolistic competition' },
+      { url: 'https://www.britannica.com/money/Edward-Hastings-Chamberlin', type: 'reference', label: 'Encyclopaedia Britannica — Edward Hastings Chamberlin（Chamberlin/Robinson 1933 同時独立）' },
+      { url: 'https://uw.pressbooks.pub/microman/chapter/8-1-monopolistic-competition-competition-among-many/', type: 'academic', label: 'University of Washington Pressbooks — Microeconomics for Managers（長期ゼロ利潤・過剰生産能力・P>MC）' },
+      { url: 'https://saylordotorg.github.io/text_principles-of-economics-v2.0/s14-01-monopolistic-competition-compe.html', type: 'academic', label: 'Saylor Academy — Principles of Economics（Monopolistic Competition）' },
+    ],
+  },
+  {
+    id: 'mgmt-job-characteristics-model',
+    discipline: 'management',
+    title: '職務特性モデル（ハックマン＆オルダム）',
+    statement:
+      'J・リチャード・ハックマンとグレッグ・R・オルダムが1970年代に提示した職務設計の理論で、仕事の設計が従業員の内発的動機づけ・満足・業績に与える影響を説明する。中核は5つの職務特性——技能多様性（skill variety）、タスク・アイデンティティ（task identity＝仕事の全体性・完結性）、タスク重要性（task significance＝他者や社会への影響）、自律性（autonomy）、フィードバック（feedback）。' +
+      'これらが3つの重要な心理状態——仕事の有意味感、結果に対する責任感、結果の知識——を生み、高い内発的動機づけ・職務満足・質の高い業績と低い離職/欠勤をもたらす。5特性から動機づけ潜在性指数（MPS＝((技能多様性＋タスク・アイデンティティ＋タスク重要性)/3)×自律性×フィードバック）を算出し、効果の強さは個人の成長欲求の強さ（growth need strength, GNS）によって調整される。',
+    keyFigures:
+      'J・リチャード・ハックマン（J. Richard Hackman）／グレッグ・R・オルダム（Greg R. Oldham）（1975 Journal of Applied Psychology・1976 OBHP・1980『Work Redesign』）／5職務特性・3心理状態・MPS・GNS（モデレーター）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100021207', type: 'reference', label: 'Job Characteristics Model — Oxford Reference' },
+      { url: 'https://scholar.harvard.edu/rhackman/publications/development-job-diagnostic-survey', type: 'academic', label: 'Hackman & Oldham (1975) Development of the Job Diagnostic Survey, Journal of Applied Psychology 60:159-170 — Harvard Scholar' },
+      { url: 'https://www.mindtools.com/axhs5j7/hackman-and-oldhams-job-characteristics/', type: 'media', label: "Hackman and Oldham's Job Characteristics — MindTools" },
+      { url: 'https://www.aihr.com/blog/job-characteristics-model/', type: 'media', label: 'Job Characteristics Model: A Practical Guide — AIHR' },
+    ],
+  },
+  {
+    id: 'human-growth-mindset',
+    discipline: 'human-science',
+    title: 'マインドセット理論（ドゥエック）',
+    statement:
+      'スタンフォード大学の心理学者キャロル・ドゥエックが提唱した、知能や能力の性質に関する暗黙の信念（implicit theories of intelligence）の理論。能力は努力・学習・戦略で伸ばせると信じる「成長マインドセット（growth mindset／増分理論 incremental theory）」と、能力は生まれつき固定的だと信じる「硬直マインドセット（fixed mindset／実体理論 entity theory）」を対比する。' +
+      '成長マインドセットの人は困難や失敗を学習の機会と捉え、努力を価値あるものとみなし、挫折から立ち直りやすく高い達成につながりやすい一方、硬直マインドセットは失敗を能力欠如の証と捉え挑戦を回避させやすい。能力ではなく努力・プロセスを褒めることが子のマインドセットに影響する。2006年の著書『Mindset』で普及。近年は教育介入の効果量や再現性をめぐる議論（National Study of Learning Mindsets 2019 等）もある。',
+    keyFigures:
+      'キャロル・ドゥエック（Carol S. Dweck）／クラウディア・ミューラー（Claudia M. Mueller, 1998年称賛研究の共著者）／デイヴィッド・イェーガー（David S. Yeager, 2019年大規模研究の主導者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6594552/', type: 'academic', label: 'Dweck & Yeager, “Mindsets: A View From Two Eras”, Perspectives on Psychological Science (NIH/PMC 査読論文)' },
+      { url: 'https://www.nature.com/articles/s41586-019-1466-y', type: 'academic', label: 'Yeager et al., “A national experiment reveals where a growth mindset improves achievement”, Nature (2019)' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/9686450/', type: 'academic', label: 'Mueller & Dweck (1998) “Praise for Intelligence Can Undermine Children’s Motivation and Performance”, J. Personality and Social Psychology 75:33–52, PubMed' },
+      { url: 'https://learning-theories.com/mindset-theory-fixed-vs-growth-mindset-dweck.html', type: 'reference', label: 'Mindset Theory – Fixed vs. Growth Mindset (Dweck), Learning Theories' },
+    ],
+  },
+  {
+    id: 'human-hawthorne-effect',
+    discipline: 'human-science',
+    title: 'ホーソン効果',
+    statement:
+      'ホーソン効果とは、人が「自分が観察・注目されている」と意識することで、その行動や作業成績が変化する（多くは一時的に向上する）現象をいう。名称は米ウェスタン・エレクトリック社のホーソン工場（イリノイ州シセロ）で1924〜1932年頃に行われた一連の実験（ホーソン実験）に由来する。当初は照明など物理的作業条件と生産性の関係を調べる目的だったが、照明を明るくしても暗くしても、また休憩や労働時間を変えても生産性が向上する傾向がみられた。' +
+      'このため、物理的条件より「実験対象として注目され観察されている」という社会的・心理的要因が作業者の動機づけに影響すると解釈された。エルトン・メイヨーやフリッツ・レスリスバーガーらハーバード大学の研究者が関与し、職場の人間関係・非公式集団・士気の重要性を示して「人間関係論」学派の出発点となった。なお「ホーソン効果」という用語自体は1958年にH・A・ランズバーガーが命名したもので、後年は当初の解釈に対する方法論的批判や再分析（効果は限定的とする説）もある。',
+    keyFigures:
+      'エルトン・メイヨー（Elton Mayo）／フリッツ・レスリスバーガー（Fritz Roethlisberger）／ヘンリー・A・ランズバーガー（Henry A. Landsberger、1958年に用語命名）／ホーソン実験（1924〜1932、人間関係論の出発点）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Hawthorne-research', type: 'reference', label: 'Encyclopaedia Britannica — Hawthorne research' },
+      { url: 'https://www.britannica.com/biography/Elton-Mayo', type: 'reference', label: 'Encyclopaedia Britannica — Elton Mayo: Hawthorne Studies, Human Relations & Management Theory' },
+      { url: 'https://www.simplypsychology.org/hawthorne-effect.html', type: 'reference', label: 'Simply Psychology — Hawthorne Effect (Landsberger 1958 命名, illumination studies)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w15016/w15016.pdf', type: 'academic', label: 'NBER Working Paper 15016 — “Was There Really a Hawthorne Effect at the Hawthorne Plant?”（再分析・批判）' },
+    ],
+  },
+  {
+    id: 'bizlaw-suretyship',
+    discipline: 'business-law',
+    title: '保証債務（民法446条）',
+    statement:
+      '保証債務とは、主たる債務者がその債務を履行しないときに、保証人が代わってその履行をする責任を負う債務である（民法446条1項）。保証契約は債権者と保証人との間で締結され、446条2項により書面（またはその内容を記録した電磁的記録）でしなければ効力を生じない要式契約とされる。' +
+      '保証債務には付従性（主債務が存在しなければ成立せず、主債務が消滅すれば消滅し、主債務より重くなれない）、随伴性（主債務が移転すれば保証債務も移転する）、補充性（主債務者が履行しないとき二次的に履行すればよい）がある。補充性の表れとして保証人は催告の抗弁権（452条）・検索の抗弁権（453条）をもつが、連帯保証ではこれらおよび分別の利益を有しない（454条）。2017年改正（2020年4月施行）で個人根保証の極度額の定めの義務化や、事業債務の個人保証に公正証書による保証意思確認が導入された。',
+    keyFigures:
+      '根拠＝民法446条1項（保証人の責任）・446条2項（書面・電磁的記録の要式性）／性質＝付従性・随伴性・補充性／452条 催告の抗弁権・453条 検索の抗弁権／454条 連帯保証は催告・検索の抗弁権・分別の利益なし（通常保証より重い）／弁済した保証人は主債務者に求償可／2017年改正（2020年4月施行）＝個人根保証の極度額義務化・事業債務の個人保証に公正証書（e-Gov law id 129AC0000000089）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、第446条ほか）' },
+      { url: 'https://www.moj.go.jp/content/001399956.pdf', type: 'government', label: '法務省「2020年4月1日から 保証に関する民法のルールが大きく変わります」' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0446-00/', type: 'media', label: 'クレアール司法書士講座 民法第446条【保証人の責任等】' },
+    ],
+  },
+  {
+    id: 'infosoc-informational-self-determination',
+    discipline: 'information-sociology',
+    title: '情報自己決定権',
+    statement:
+      '情報自己決定権（informational self-determination／自己情報コントロール権）とは、個人が自己に関する情報の取得・保有・利用・開示を、原則として自ら決定しコントロールする権利をいう。これはプライバシー権を、Warren・Brandeis（1890）以来の「ひとりにしておかれる権利（the right to be let alone）」という消極的理解から、自己情報の流れを能動的に管理する積極的権利へと再構成する考え方の基礎をなす。' +
+      'ドイツ連邦憲法裁判所は1983年の国勢調査判決（Volkszählungsurteil）で、基本法上の一般的人格権（基本法2条1項・1条1項）から導かれる「情報自己決定権（Recht auf informationelle Selbstbestimmung）」を初めて承認し、これがEUデータ保護法制（GDPR）の理論的背景の一つとなった。日本でも佐藤幸治らが自己情報コントロール権説を有力に主張し、個人情報保護法制の理念的基礎として論じられる。',
+    keyFigures:
+      'ドイツ連邦憲法裁判所（1983年国勢調査判決・Volkszählungsurteil）／Samuel D. Warren・Louis D. Brandeis（「ひとりにしておかれる権利」1890）／Alan F. Westin（『Privacy and Freedom』1967）／佐藤幸治（日本における自己情報コントロール権説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bundesverfassungsgericht.de/SharedDocs/Entscheidungen/EN/1983/12/rs19831215_1bvr020983en.html', type: 'government', label: '独・連邦憲法裁判所 1983年12月15日判決（国勢調査判決）英語版（公式）' },
+      { url: 'https://en.wikipedia.org/wiki/Informational_self-determination', type: 'reference', label: 'Wikipedia「Informational self-determination」' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0267364908001660', type: 'academic', label: 'Hornung & Schnabel, “Data protection in Germany I: The population census decision and the right to informational self-determination” (Computer Law & Security Review, 査読誌)' },
+      { url: 'https://www.soumu.go.jp/main_content/000656383.pdf', type: 'government', label: '総務省『情報通信政策研究』（自己情報コントロール権論を扱う論文）' },
+    ],
+  },
 ];
 // Stryker restore all
