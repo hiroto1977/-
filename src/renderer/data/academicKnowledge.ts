@@ -3109,5 +3109,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Cultural_capital', type: 'reference', label: 'Wikipedia: Cultural capital（概念・3形態・文化的再生産の概観）' },
     ],
   },
+  {
+    id: 'econ-interest-rate-parity',
+    discipline: 'economics',
+    title: '金利平価説',
+    statement:
+      '2国間の金利差と為替レート（直物・先物）の関係を、無裁定（裁定取引が利益を生まない）条件から導く国際金融の基礎理論。' +
+      'カバー付き金利平価（CIP）は、為替リスクを先物予約でヘッジした場合、2通貨での運用利回りが等しくなる（高金利通貨は先物で割安＝ディスカウントになる）とし、先物プレミアム／ディスカウントが内外金利差を正確に相殺するため、裁定が働く限りほぼ厳密に成立する純粋な無裁定関係である（ただし2008年の世界金融危機以降は先進国通貨でもCIPからの乖離が観測される）。' +
+      'カバーなし金利平価（UIP）は、ヘッジしない場合、高金利通貨は将来その金利差分だけ減価すると予想される（期待為替変化率＝内外金利差）とするが、実証的には短中期で成立しにくく「フォワード・プレミアム・パズル」（キャリートレードの平均的収益）として知られる。購買力平価が財市場の裁定であるのに対し、金利平価は金融市場（資本取引）の裁定にあたる。',
+    keyFigures: '2国の金利差と直物/先物為替の無裁定関係／カバー付き金利平価(CIP)は厳密に成立(高金利通貨は先物ディスカウント)／カバーなし金利平価(UIP)＝期待為替変化率=内外金利差だが実証で不成立(フォワード・プレミアム・パズル)／購買力平価=財市場・金利平価=金融市場の裁定／GFC以降CIP乖離も',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/pubs/ifdp/2003/752/revision/ifdp752r.pdf', type: 'government', label: 'Board of Governors of the Federal Reserve System — IFDP No.752 "Uncovered Interest Parity: It Works, But Not For Long"' },
+      { url: 'https://www.imf.org/-/media/Files/Publications/WP/2019/wp1914.ashx', type: 'government', label: 'IMF Working Paper WP/19/14 "Covered Interest Parity Deviations: Macrofinancial Determinants"' },
+      { url: 'https://files.stlouisfed.org/files/htdocs/conferences/integration/Thornton.pdf', type: 'government', label: 'Federal Reserve Bank of St. Louis — Thornton "Resolving the Unbiasedness and Forward Premium Puzzles"' },
+      { url: 'https://en.wikipedia.org/wiki/Interest_rate_parity', type: 'reference', label: 'Wikipedia "Interest rate parity"（CIP/UIPの定義・無裁定条件）' },
+    ],
+  },
+  {
+    id: 'econ-inflation-targeting',
+    discipline: 'economics',
+    title: 'インフレ・ターゲティング',
+    statement:
+      '中央銀行が、達成すべきインフレ率の数値目標（例: 前年比2%）を公表し、その達成に向けて金融政策（主に政策金利）を運営する枠組み。目標を明示することで、人々や市場のインフレ期待を安定させ（アンカーし）、政策の透明性と説明責任（アカウンタビリティ）を高める狙いがある。' +
+      '1990年にニュージーランド準備銀行が世界で初めて正式に導入し、カナダ（1991年）・英国（1992年）など多くの国に広がった。日本銀行も2013年に「物価安定の目標」として消費者物価の前年比2%を導入した。多くは中期的な達成を目指す「柔軟なインフレ・ターゲティング」で、短期的な産出・雇用の変動にも配慮する。' +
+      'デフレ・高インフレいずれにも対応する現代の標準的な金融政策枠組みの一つだが、資産価格バブルや供給ショックへの対応の限界も指摘される。',
+    keyFigures: '中央銀行が数値目標(例2%)を公表し金融政策を運営／インフレ期待のアンカー・透明性とアカウンタビリティ／1990年ニュージーランドが初導入(カナダ1991/英国1992が後続)／日銀は2013年に2%目標／柔軟なインフレ・ターゲティング',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/basics/pdf/jahpan-inflation-targeting.pdf', type: 'government', label: 'IMF, "Inflation Targeting: Holding the Line" (Back to Basics, Finance & Development)' },
+      { url: 'https://www.boj.or.jp/en/mopo/outline/target.htm', type: 'government', label: 'Bank of Japan, "Price Stability Target of 2 Percent"' },
+      { url: 'https://www.rba.gov.au/publications/confs/2018/mcdermott-williams.html', type: 'government', label: 'Reserve Bank of Australia, "Inflation Targeting in New Zealand: An Experience in Evolution" (2018)' },
+      { url: 'https://en.wikipedia.org/wiki/Inflation_targeting', type: 'reference', label: 'Wikipedia, "Inflation targeting"' },
+    ],
+  },
+  {
+    id: 'mgmt-six-sigma',
+    discipline: 'management',
+    title: 'シックス・シグマ',
+    statement:
+      '製品・業務プロセスのばらつき（欠陥）を統計的に管理・削減し、品質と効率を高める経営手法。「シックス・シグマ」とは、工程が平均から±6シグマ（標準偏差）の範囲に収まる極めて高い品質水準を指し、（平均が1.5シグマずれることを見込んで）100万回あたりの欠陥が3.4件（3.4 DPMO）以下、すなわち約99.9999966％を良品とする目標で表される。' +
+      '1980年代にモトローラ（技術者ビル・スミス、1986年）が開発・命名し、ゼネラル・エレクトリック（GE）のジャック・ウェルチが1995年に全社展開して有名になった。代表的な改善手順がDMAIC（定義Define→測定Measure→分析Analyze→改善Improve→管理Control）。' +
+      '専門家を空手の段位になぞらえ「ブラックベルト」「グリーンベルト」「マスターブラックベルト」等と呼び育成する。後にトヨタ生産方式のリーン（ムダ取り）と統合した「リーン・シックス・シグマ」も普及した。',
+    keyFigures: '工程のばらつき(欠陥)を統計的に削減／±6シグマ＝100万回あたり欠陥3.4件(3.4 DPMO・約99.9999966%良品、1.5σドリフト見込み)／1980年代モトローラ(ビル・スミス1986)が開発・GEのウェルチが1995年に全社展開／改善手順DMAIC／ブラック/グリーン/マスターブラックベルト／リーン・シックス・シグマ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://asq.org/quality-resources/six-sigma', type: 'reference', label: 'ASQ（米国品質協会）— Six Sigma Definition / What is Lean Six Sigma?（3.4 DPMO・DMAIC・リーンとの統合）' },
+      { url: 'https://asq.org/quality-resources/sixsigma/belts-executives-champions', type: 'reference', label: 'ASQ — Six Sigma Belts, Levels & Roles（グリーン／ブラック／マスターブラックベルト）' },
+      { url: 'https://en.wikipedia.org/wiki/Six_Sigma', type: 'reference', label: 'Wikipedia — Six Sigma（1986年モトローラ／ビル・スミス起源、1.5σシフト、GE/ウェルチ1995年展開）' },
+      { url: 'https://www.lean.org/lexicon-terms/six-sigma/', type: 'reference', label: 'Lean Enterprise Institute — Six Sigma（3.4 DPMO・DMAIC・ばらつき削減）' },
+    ],
+  },
+  {
+    id: 'human-zeigarnik',
+    discipline: 'human-science',
+    title: 'ツァイガルニク効果',
+    statement:
+      '完了した課題よりも、中断された・未完了の課題のほうが記憶に残りやすいという心理現象。リトアニア出身のソビエトの心理学者ブルーマ・ツァイガルニク（Bluma Zeigarnik）が1920年代に実証し、1927年に学術誌『Psychologische Forschung』で報告した。' +
+      '彼女の指導教官であったゲシュタルト心理学者クルト・レヴィンが、ウェイターが未精算の注文はよく覚えているのに会計が済むと忘れてしまうことに気づいた逸話に着想を得て実験を行った。参加者に15〜22の簡単な作業をさせ一部を途中で中断させたところ、完了課題より中断課題のほうを想起しやすいことを見いだした。レヴィンの場理論に基づき、未完了の課題が生む心理的緊張（達成への動機づけ）が記憶を保持させ、完了で緊張が解けると想起が低下すると説明される。' +
+      '学習（分割学習・復習）、目標達成、未完のストーリーへの関心、クリフハンガーやマーケティングの「続きが気になる」手法に応用される一方、後年の追試では結果が一貫せず、再現性をめぐる議論が続いている。',
+    keyFigures: '中断・未完了の課題は完了課題より記憶に残りやすい／B.ツァイガルニクが1920年代に実証・1927年発表(レヴィン門下、ウェイターの逸話)／未完了が生む心理的緊張(レヴィンの場理論)が記憶を保持／学習・クリフハンガー・マーケティングに応用／再現性の議論あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/memory-psychology/Retrieval', type: 'reference', label: 'Encyclopaedia Britannica — Memory (psychology): Retrieval' },
+      { url: 'https://www.simplypsychology.org/zeigarnik-effect.html', type: 'reference', label: 'Simply Psychology — Zeigarnik Effect Examples in Psychology' },
+      { url: 'https://en.wikipedia.org/wiki/Zeigarnik_effect', type: 'reference', label: 'Wikipedia — Zeigarnik effect' },
+      { url: 'https://www.nature.com/articles/s41599-025-05000-w', type: 'academic', label: 'Humanities and Social Sciences Communications (Nature, 2025) — meta-analysis of the Zeigarnik and Ovsiankina effects' },
+    ],
+  },
+  {
+    id: 'bizlaw-unfair-competition',
+    discipline: 'business-law',
+    title: '不正競争防止法',
+    statement:
+      '事業者間の公正な競争を確保するため、「不正競争」に当たる行為を類型化して禁止し、差止請求・損害賠償・刑事罰などの救済・制裁を定める法律（平成五年法律第四十七号）。1934年（昭和9年）に制定され、1993年（平成5年）に全面改正された。' +
+      '規制する不正競争の代表的類型として、(1)周知な商品等表示の混同惹起、(2)著名な商品等表示の冒用、(3)商品形態の模倣（デッドコピー）、(4)営業秘密の不正取得・使用・開示、(5)限定提供データに係る不正行為、(6)技術的制限手段（コピーガード等）を無効化する装置等の提供、(7)ドメイン名の不正取得、(8)原産地・品質等の誤認惹起表示、(9)競争者の信用毀損（虚偽の事実の告知・流布）などがある。' +
+      '特許・商標等の登録された知的財産権とは異なり、登録なしに不正な競争行為そのものを規制する点に特色があり、経済産業省（知的財産政策室）が所管する。',
+    keyFigures: '不正競争を類型化し禁止・差止/損害賠償/刑事罰／1934年制定・1993年全面改正(平成5年法律47号)／営業秘密の保護・周知著名表示の混同/冒用・商品形態模倣(デッドコピー)・限定提供データ・技術的制限手段・ドメイン名不正取得・原産地誤認・信用毀損／登録不要で不正競争行為自体を規制／経産省所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=405AC0000000047_20230606_505AC0000000028', type: 'government', label: 'e-Gov法令検索「不正競争防止法（平成五年法律第四十七号）」' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/unfaircompetition_new.html', type: 'government', label: '経済産業省「不正競争防止法の概要」' },
+      { url: 'https://www.jpo.go.jp/news/shinchaku/event/seminer/document/chizai_setumeikai_jitsumu/30_text.pdf', type: 'government', label: '特許庁／経済産業省知的財産政策室「不正競争防止法の概要」' },
+    ],
+  },
+  {
+    id: 'infosoc-risk-society',
+    discipline: 'information-sociology',
+    title: 'リスク社会（ベック）',
+    statement:
+      'ドイツの社会学者ウルリッヒ・ベックが『リスク社会（Risikogesellschaft）』（1986、英訳1992）で提示した概念。近代化・産業化が成功し富の生産が進んだ結果、近代社会はその副産物（意図せざる帰結）として、原子力事故・環境汚染・化学物質・気候変動・遺伝子技術などの新しい人為的（製造された）リスクを大量に生み出すようになった、と論じる。' +
+      'これらのリスクは目に見えにくく、国境や階級を越えて広がり（誰もが潜在的に被害者となりうる）、科学技術自身が生んだものを科学で評価せざるを得ないという再帰的な性格をもつ。社会の中心的関心が「富（財）の分配」から「リスク（害）の分配」へと移行し、専門家への信頼や政治のあり方が問い直される。' +
+      'アンソニー・ギデンズらの「再帰的近代化（reflexive modernization）」論とも結びつき、現代社会論・環境社会学の重要な枠組みとなっている。',
+    keyFigures: 'U.ベック『リスク社会』1986(英訳1992)／近代化の副産物として人為的リスク(原発・環境汚染・気候変動・遺伝子技術等)が増大／リスクは不可視・脱国境/脱階級・再帰的／関心が富(財)の分配からリスク(害)の分配へ／再帰的近代化(ギデンズ等)と結合',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118430873.est0316', type: 'academic', label: 'Blok, A. "Risk Society", The Wiley-Blackwell Encyclopedia of Social Theory（査読的レファレンス）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100422576', type: 'reference', label: 'Risk society — Oxford Reference (Oxford University Press)' },
+      { url: 'https://www.encyclopedia.com/science/encyclopedias-almanacs-transcripts-and-maps/risk-society', type: 'reference', label: 'Risk Society — Encyclopedia.com' },
+      { url: 'https://en.wikipedia.org/wiki/Risk_society', type: 'reference', label: 'Risk society — Wikipedia（突合・補助）' },
+    ],
+  },
 ];
 // Stryker restore all
