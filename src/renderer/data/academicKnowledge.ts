@@ -8210,5 +8210,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Creative_Commons_license', type: 'reference', label: 'Wikipedia — Creative Commons license（CC0・要素・ライセンス一覧）' },
     ],
   },
+  {
+    id: 'econ-knightian-uncertainty',
+    discipline: 'economics',
+    title: 'ナイトの不確実性（リスクと不確実性）',
+    statement:
+      '経済学者フランク・H・ナイト（Frank H. Knight, 1885–1972）が1921年の著書『リスク、不確実性および利潤（Risk, Uncertainty and Profit）』で確立した、「リスク（risk）」と「（真の）不確実性（uncertainty）」の区別を指す。リスクとは、起こりうる結果とその確率が既知で、客観的・統計的に測定可能な状況（例：サイコロ、保険数理で計算できる事象）であり、保険や分散によってヘッジ・除去できる。' +
+      'これに対しナイト的不確実性とは、確率分布そのものが未知で測定・定量化できない状況（例：全く新しい技術や市場の帰結）を指し、保険で除去できない。ナイトは「測定可能な不確実性は本来の不確実性ではない」と述べ、この除去不能な真の不確実性を企業家（entrepreneur）が引き受けることが、完全競争では説明できない利潤（profit）の源泉だと論じた。この概念は曖昧性回避（ambiguity aversion）やエルズバーグのパラドックス、期待効用理論の限界の議論に連なる。',
+    keyFigures:
+      'フランク・H・ナイト（Frank H. Knight, 1885–1972, 1921『Risk, Uncertainty and Profit』）／関連: ジョン・メイナード・ケインズ（不確実性概念）／ダニエル・エルズバーグ（曖昧性回避）／リスク＝測定可能・不確実性＝測定不能・利潤の源泉',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://news.mit.edu/2010/explained-knightian-0602', type: 'academic', label: 'MIT News, “Explained: Knightian uncertainty”（マサチューセッツ工科大学）' },
+      { url: 'https://www.econlib.org/library/Knight/knRUP.html', type: 'reference', label: 'Frank H. Knight, “Risk, Uncertainty, and Profit” (1921) 原典全文（Econlib / Library of Economics and Liberty）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/full/10.1002/sej.1516', type: 'academic', label: 'Townsend et al. (2024), “What is Knightian uncertainty?”, Strategic Entrepreneurship Journal（Wiley、査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Knightian_uncertainty', type: 'reference', label: 'Wikipedia, “Knightian uncertainty”（百科事典級リファレンス）' },
+    ],
+  },
+  {
+    id: 'mgmt-service-dominant-logic',
+    discipline: 'management',
+    title: 'サービス・ドミナント・ロジック',
+    statement:
+      'マーケティングの基礎的な見方を、有形財（モノ）の交換を中心とする伝統的なグッズ・ドミナント・ロジック（GDロジック）から、サービス——自己や他者の便益のための知識・スキル（オペラント資源）の応用——の交換を中心とする見方へ転換する理論的枠組み。スティーブン・バーゴとロバート・ラッシュが2004年の論文「Evolving to a New Dominant Logic for Marketing」（Journal of Marketing）で提唱した。' +
+      '中心的主張は、(1)サービスがあらゆる交換の基盤であり、モノは知識・スキルを届ける流通メカニズムにすぎず全経済はサービス経済である、(2)価値は企業が一方的に埋め込む交換価値ではなく、顧客が利用する文脈で生じる使用価値・文脈価値（value-in-use / value-in-context）である、(3)価値は受益者を含む複数アクターにより共創され、常に受益者が決定する、という基本的前提（FPs）・公理（axioms）にある。2016年には制度・制度配列とサービス・エコシステムを第5公理として組み込み発展した。',
+    keyFigures:
+      'スティーブン・L・バーゴ（Stephen L. Vargo）／ロバート・F・ラッシュ（Robert F. Lusch）（2004 Journal of Marketing）／対比＝グッズ・ドミナント・ロジック／中核＝オペラント資源・価値共創・使用価値／2016年に制度・サービスエコシステムを追加',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1509/jmkg.68.1.1.24036', type: 'academic', label: 'Vargo & Lusch (2004) “Evolving to a New Dominant Logic for Marketing”, Journal of Marketing 68(1):1–17 (SAGE Journals, 出版元)' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/service-dominant-s-d-logic', type: 'reference', label: 'EBSCO Research Starters: Service-dominant (S-D) logic（百科事典級リファレンス）' },
+      { url: 'https://experts.arizona.edu/en/publications/evolving-to-a-new-dominant-logic-for-marketing/', type: 'academic', label: 'University of Arizona — “Evolving to a New Dominant Logic for Marketing” 出版記録' },
+    ],
+  },
+  {
+    id: 'human-trolley-problem',
+    discipline: 'human-science',
+    title: 'トロッコ問題',
+    statement:
+      'トロッコ問題は倫理学・道徳心理学の思考実験。制御不能のトロッコ（路面電車）が線路上の5人に向かい進み、放置すれば5人が死ぬ。分岐器のそばにいるあなたがレバーを引けば別の側線へ逸らせるが、そこには1人がいてその人が代わりに死ぬ。1人を犠牲に5人を救うべきかを問う。' +
+      'フィリッパ・フットが1967年に原型を提示し、ジュディス・ジャーヴィス・トムソンが1976年・1985年の論文で「トロリー問題」と名づけ、人を突き落として5人を救う「歩道橋（footbridge）」版を加えた。多くの人は分岐器版では許容するが歩道橋版では強く拒む。この直観の非対称性が帰結主義と義務論の対立、二重結果論を浮き彫りにし、グリーンらの神経倫理学はこれを情動的反応と熟慮的反応の二重過程説で説明した。自動運転車の倫理など現代的応用も議論される。',
+    keyFigures:
+      'フィリッパ・フット（Philippa Foot, 1967年に原型を提示）／ジュディス・ジャーヴィス・トムソン（Judith Jarvis Thomson, 1976年・1985年に命名・歩道橋版を展開）／ジョシュア・グリーン（Joshua Greene, 二重過程説・fMRI神経倫理研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/doing-allowing/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy「Doing vs. Allowing Harm」（フット1967起源・トムソン1976命名・二重結果論との関係）' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/trolley-problem', type: 'reference', label: 'EBSCO Research Starters「Trolley problem」（フット1967・トムソン1976/1985・歩道橋＝fat man版）' },
+      { url: 'https://www.science.org/doi/10.1126/science.1062872', type: 'academic', label: 'Greene et al. (2001) “An fMRI Investigation of Emotional Engagement in Moral Judgment”, Science 293:2105（personal/impersonal・二重過程説）' },
+    ],
+  },
+  {
+    id: 'human-misinformation-effect',
+    discipline: 'human-science',
+    title: '誤情報効果（目撃証言）',
+    statement:
+      'ある出来事を目撃した後に、その出来事に関する誤った情報（post-event misinformation）に接すると、本来の記憶が書き換えられ歪み、誤情報を実際に見た記憶として報告してしまう現象。記憶は録画のような正確な再生ではなく再構成的（reconstructive）で可塑的であることを示す。' +
+      'ロフタス＆パーマー（1974）の自動車事故映像実験では、衝突を「激突した（smashed）」と尋ねた群は「接触した（contacted）」群より速度を高く見積もり、1週間後に割れたガラスを（実際にはないのに）見たと誤答する割合が高かった。誘導的質問が記憶を変容させ、未経験の出来事の偽りの記憶も植え付けうること（ロフタス＆ピックレル1995「ショッピングモールで迷子」、約25%が偽記憶を形成）が示され、目撃証言の信頼性と冤罪・取調べ手法に重大な含意を持つ。',
+    keyFigures:
+      'エリザベス・ロフタス（Elizabeth F. Loftus）／ジョン・パーマー（John C. Palmer、1974 自動車事故実験）／ジャクリーン・ピックレル（Jacqueline E. Pickrell、1995「ショッピングモールで迷子」偽記憶研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://bpspsychub.onlinelibrary.wiley.com/doi/10.1111/lcrp.70020', type: 'academic', label: 'Loftus, E. F. “The history of an idea: The misinformation effect.” Legal and Criminological Psychology（査読誌, Wiley / 英国心理学会）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/37017540/', type: 'academic', label: 'Loftus & Pickrell (1995) “lost in the mall” の事前登録追試（Memory 誌, PubMed 収載）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/misinformation-effect', type: 'reference', label: 'EBSCO Research Starters: “Misinformation effect”（リファレンス級概説）' },
+      { url: 'https://en.wikipedia.org/wiki/Misinformation_effect', type: 'reference', label: 'Wikipedia: Misinformation effect（概説・参照用）' },
+    ],
+  },
+  {
+    id: 'bizlaw-work-for-hire',
+    discipline: 'business-law',
+    title: '職務著作（著作権法15条）',
+    statement:
+      '職務著作（法人著作）とは、一定の要件を満たす場合に、実際に創作した従業員ではなく使用者である法人等を「著作者」とする制度（著作権法15条）。' +
+      '通常、著作者は現実に創作した自然人だが、組織の業務として作られる著作物は、権利関係を明確にする趣旨で法人等を著作者とする。15条1項の要件は、(1)法人その他使用者の発意に基づくこと、(2)その法人等の業務に従事する者が職務上作成すること、(3)法人等が自己の著作の名義のもとに公表するものであること、(4)作成時の契約・勤務規則等に別段の定めがないこと。プログラムの著作物は15条2項により公表名義要件が不要。要件を満たすと法人等が著作者となり、著作者人格権・著作（財産）権とも最初から法人等に帰属する。創作者が法人等の指揮監督下にある雇用関係が前提で、外部の請負・委任受託者は原則として職務著作とならず別途の権利譲渡契約が必要となる。',
+    keyFigures:
+      '根拠条文＝著作権法15条（e-Gov law id 345AC0000000048）／1項4要件＝発意・業務従事者の職務上作成・法人等の著作名義で公表・別段の定めなし／プログラムは2項で公表名義要件が不要／効果＝法人等が著作者となり著作者人格権も著作財産権も最初から法人等に帰属／前提＝指揮監督下の雇用関係／外部の請負・委任受託者は原則として職務著作とならず別途の権利譲渡契約が必要',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 著作権法（昭和45年法律第48号）第15条' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/textbook/pdf/94141901_01.pdf', type: 'government', label: '文化庁「著作権テキスト（令和6年度版）」職務著作の解説' },
+      { url: 'https://www.jcea.info/kenpo/15.html', type: 'reference', label: '日本著作権教育研究会 著作権法第15条 条文解説' },
+    ],
+  },
+  {
+    id: 'infosoc-net-neutrality',
+    discipline: 'information-sociology',
+    title: 'ネットワーク中立性',
+    statement:
+      'ネットワーク中立性（net neutrality）とは、インターネット・サービス・プロバイダ（ISP）がネット上を流れる全通信を、送信元・宛先・内容・利用するアプリやサービスの種類によって差別せず平等に扱うべきだとする原則である。具体的には、特定のコンテンツの(1)ブロッキング（遮断）、(2)スロットリング（速度制限）、(3)対価による有料優先（paid prioritization＝ファストレーン）を禁止・制限する。' +
+      '狙いは、インターネットを誰もが平等にアクセスできるオープンな基盤として保ち、ISPがゲートキーパーとして競争・イノベーション・表現の自由を歪めるのを防ぐことにある。語は法学者ティム・ウーが2003年の論文で提唱。米FCCは2015年にブロードバンドをタイトルIIに分類し規則を導入したが2017年に撤廃、2024年に再導入したものの2025年に連邦控訴裁が無効化した。EUは規則2015/2120で、日本は総務省が議論・指針を整備している。',
+    keyFigures:
+      'ティム・ウー（Tim Wu, 提唱者・2003）／米連邦通信委員会（FCC, 2015導入/2017撤廃/2024再導入/2025無効化）／EU規則2015/2120・BEREC／日本：総務省「ネットワーク中立性に関する研究会」／禁止対象＝ブロッキング・スロットリング・有料優先',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.columbia.edu/faculty_scholarship/1281/', type: 'academic', label: 'Tim Wu, “Network Neutrality, Broadband Discrimination,” J. on Telecomm. & High Tech. L., Vol. 2, p. 141 (2003) — Columbia Law School Scholarship（原典・提唱論文）' },
+      { url: 'https://www.fcc.gov/restoring-internet-freedom', type: 'government', label: '米連邦通信委員会（FCC）“Restoring Internet Freedom”（2017年の規則撤廃の公式ページ）' },
+      { url: 'https://www.berec.europa.eu/en/all-you-need-to-know-about-net-neutrality-rules-in-the-eu', type: 'government', label: 'BEREC（欧州電子通信規制者団体）“Net Neutrality rules in the EU” — 規則(EU)2015/2120の公式解説' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/kenkyu/network_churitsu/02kiban04_04000246.html', type: 'government', label: '日本・総務省「ネットワーク中立性に関する研究会」公式ページ' },
+    ],
+  },
 ];
 // Stryker restore all
