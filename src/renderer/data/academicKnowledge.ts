@@ -8116,5 +8116,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://shs.cairn.info/article/E_RES_177_0163?lang=en', type: 'academic', label: 'Antoinette Rouvroy & Thomas Berns, “Algorithmic governmentality and prospects of emancipation,” Réseaux (2013)' },
     ],
   },
+  {
+    id: 'econ-input-output-analysis',
+    discipline: 'economics',
+    title: '産業連関分析（投入産出分析）',
+    statement:
+      '一国（や地域）の経済を構成する諸産業が相互に財・サービスを投入し産出し合う依存関係を、行列形式の産業連関表（投入産出表）で体系的に捉え、ある産業や最終需要の変化が経済全体に波及する効果を定量化する分析手法。経済学者ワシリー・レオンチェフが1930年代に開発し、1941年に米国経済の最初の産業連関表（1919–1929年）を著書で公表した。' +
+      '中核は、各産業の産出が他産業の投入として用いられる構造を表す投入係数行列Aと、最終需要の変化が各産業の生産をどれだけ誘発するかを示すレオンチェフ逆行列(I−A)⁻¹であり、x=(I−A)⁻¹f により生産波及・雇用誘発・経済波及効果を算出できる。規模に関して収穫一定・投入係数一定（線形）を前提とし、一般均衡を実証的・計算可能にした点で画期的。この功績でレオンチェフは1973年にノーベル経済学賞を受賞し、各国の国民経済計算や環境（CO2）・地域経済波及の分析に広く応用される。',
+    keyFigures:
+      'ワシリー・レオンチェフ（Wassily Leontief、1905–1999、投入産出法の開発者、1973年ノーベル経済学賞）／投入係数行列 A・レオンチェフ逆行列 (I−A)⁻¹',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1973/press-release/', type: 'government', label: 'NobelPrize.org — The Prize in Economic Sciences 1973 (Wassily Leontief, 授賞理由・press release)' },
+      { url: 'https://www.britannica.com/money/Wassily-Leontief', type: 'reference', label: 'Encyclopaedia Britannica — Wassily Leontief: Input-Output Analysis' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Leontief.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — Wassily Leontief' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/input-output-model', type: 'academic', label: 'ScienceDirect Topics — Input-Output Model（投入係数・(I−A)⁻¹・収穫一定の前提）' },
+    ],
+  },
+  {
+    id: 'mgmt-service-blueprint',
+    discipline: 'management',
+    title: 'サービス・ブループリント',
+    statement:
+      'サービス・ブループリント（service blueprint、サービス設計図）とは、サービスの提供プロセスを顧客の行動と、それを支える従業員・システムの活動とともに時系列で可視化する設計・分析ツール（図）である。' +
+      '銀行幹部G・リン・ショスタックが1984年のHarvard Business Review論文「Designing Services That Deliver」で提唱した。無形で生産と消費が同時に起こり設計が難しいサービスを、製造業の設計図のように構成要素と相互作用として図示する。標準的には(1)物理的証拠、(2)顧客の行動、(3)フロントステージ（顧客に見える接客従業員の行動）、(4)バックステージ（顧客に見えない従業員の行動）、(5)支援プロセスの5行で構成し、相互作用の境界線・可視の境界線・内部相互作用の境界線で区切る。失敗が起きうる点（fail point）も書き込み、サービスの理解共有・改善・新サービス開発・顧客体験設計に用いる。',
+    keyFigures:
+      'G・リン・ショスタック（G. Lynn Shostack、1984 HBR「Designing Services That Deliver」）／メアリー・ジョー・ビトナー＆エイミー・オストロム＆フェリシア・モーガン（Bitner, Ostrom & Morgan, 2008, 現代型5行モデルの定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1984/01/designing-services-that-deliver', type: 'academic', label: 'G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）' },
+      { url: 'https://www.nngroup.com/articles/service-blueprints-definition/', type: 'reference', label: 'Nielsen Norman Group「Service Blueprints: Definition」（5構成要素と3境界線の定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Service_blueprint', type: 'reference', label: 'Wikipedia「Service blueprint」（起源・構成要素・物理的証拠・fail point）' },
+      { url: 'https://www.researchgate.net/publication/215915405_Service_Blueprinting_A_Practical_Technique_for_Service_Innovation', type: 'academic', label: 'Bitner, Ostrom & Morgan, “Service Blueprinting: A Practical Technique for Service Innovation,” California Management Review 50(4), 2008, pp.66-94' },
+    ],
+  },
+  {
+    id: 'human-ego-depletion',
+    discipline: 'human-science',
+    title: '自我消耗（エゴ・ディプリーション）',
+    statement:
+      '自我消耗とは、自己制御（セルフコントロール）や意志力が筋肉のように「使うと一時的に枯渇する有限の資源」であり、ある課題で自己制御を行使するとその後の別課題での遂行が低下するとする仮説（強さモデル strength model of self-control）。R・バウマイスターらが1998年（JPSP）で提唱し、代表的な二重課題（sequential-task）では、クッキーを我慢してラディッシュを食べた群が後続の難パズルへの忍耐を早く諦めた（持続時間が約21分→約8分）。' +
+      '後にグルコース（血糖）を意志力の資源とする説も示されたが、生物学的妥当性が批判された。さらに2010年代の再現性の危機において、Carter & McCullough（2014）は出版バイアスにより効果（先行メタ分析d=0.62）が過大評価されていると指摘し、Hagger et al.（2016）の23研究室・約2141名による事前登録の多施設追試では効果がほぼゼロ（d=0.04, 95%CI[-0.07, 0.15]）であった。効果の存否・大きさ・機序は現在も論争中である。',
+    keyFigures:
+      'ロイ・バウマイスター（Roy Baumeister）／マーク・ムラベン（Mark Muraven）／ダイアン・タイス（Dianne Tice）（1998 JPSP, 強さモデル）／批判: マーティン・ハガー（Hagger et al. 2016 多施設追試）・エヴァン・カーター（Carter & McCullough 2014 出版バイアス）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'http://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf', type: 'academic', label: 'Baumeister, Bratslavsky, Muraven & Tice (1998) “Ego Depletion: Is the Active Self a Limited Resource?” J. Personality and Social Psychology 74(5), 1252-1265（原典PDF）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1745691616652873', type: 'academic', label: 'Hagger et al. (2016) “A Multilab Preregistered Replication of the Ego-Depletion Effect” Perspectives on Psychological Science 11(4)（効果ほぼゼロ）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/25126083/', type: 'academic', label: 'Carter & McCullough (2014) “Publication bias and the limited strength model of self-control” Frontiers in Psychology' },
+      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia「Ego depletion」（概説・再現性論争の整理）' },
+    ],
+  },
+  {
+    id: 'bizlaw-public-order',
+    discipline: 'business-law',
+    title: '公序良俗（民法90条）',
+    statement:
+      '公序良俗（公の秩序又は善良の風俗）とは、社会の一般的秩序と道徳観念を指し、これに反する法律行為（契約等）を無効とする民法の基本原則である（民法90条）。私的自治の原則に対する一般的・最終的な制約として機能し、強行法規違反に至らない場合でも、社会的妥当性を欠く契約を無効にする受け皿となる。' +
+      '2017年改正（債権法改正）後の90条は「公の秩序又は善良の風俗に反する法律行為は、無効とする。」と定める。改正前は「公ノ秩序又ハ善良ノ風俗ニ反スル事項ヲ目的トスル法律行為ハ無効トス」とされており、改正で「事項を目的とする」の文言が削除され、行為の内容のみならず動機の不法や締結に至る過程・事情も含めて柔軟に判断できることが明確化された。賭博、愛人契約、人身売買的契約、暴利行為（相手の窮迫・無経験等に乗じ著しく過大な利益を得る契約）、著しく射幸的な契約、談合などが公序良俗違反として無効とされてきた。',
+    keyFigures:
+      '根拠条文＝民法90条／現行文言「公の秩序又は善良の風俗に反する法律行為は、無効とする。」／効果＝法律行為の無効／2017年改正で「事項を目的とする」を削除（動機の不法等を含め柔軟に判断）／典型例＝賭博・愛人契約・暴利行為・人身売買的契約・談合／位置づけ＝信義則(1条2項)・権利濫用の禁止(1条3項)と並ぶ一般条項',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、law id 129AC0000000089）第90条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第90条', type: 'reference', label: 'Wikibooks 民法第90条（条文・改正経緯の解説）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0090-00/', type: 'media', label: 'クレアール司法書士講座 民法第90条【公序良俗】' },
+    ],
+  },
+  {
+    id: 'bizlaw-mental-reservation',
+    discipline: 'business-law',
+    title: '心裡留保（民法93条）',
+    statement:
+      '心裡留保とは、表意者が自分の真意（内心の意思）と表示が食い違うことを自分で知りながら（わざと）行う意思表示をいう（民法93条）。たとえば贈与する気がないのに冗談で「この時計をあげる」と言う場合がこれにあたる。原則として、心裡留保による意思表示は、表意者が真意でないことを知ってしたときであっても、そのためにその効力を妨げられない＝有効である（93条1項本文）。これは、わざと真意と異なる表示をした表意者の保護よりも、表示を信頼した相手方の保護と取引の安全を優先する趣旨である。' +
+      'ただし、相手方がその意思表示が表意者の真意ではないことを知り（悪意）、又は知ることができたとき（有過失）は、その意思表示は無効となる（93条1項ただし書）。さらに、このただし書による無効は善意の第三者に対抗することができない（93条2項）。これらは2017年成立・2020年4月1日施行の改正で文言整理および第三者保護規定として明文化された。相手方と通じて行う通謀虚偽表示（94条、当事者間では常に無効）や、真意と表示の食い違いに気づいていない錯誤（95条、改正で取消し事由に変更）と対比される、意思の不存在・瑕疵ある意思表示の一類型である。',
+    keyFigures:
+      '根拠条文＝民法93条（e-Gov law id 129AC0000000089）／原則＝真意でないと知ってしても有効（93条1項本文）／例外＝相手方が悪意または有過失なら無効（同ただし書）／93条2項＝無効は善意の第三者に対抗不可／2017年成立・2020年4月施行で第三者保護を新設／対比＝通謀虚偽表示(94条)・錯誤(95条)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第93条' },
+      { url: 'https://tek-law.jp/civil-code/general-provisions/juridical-acts/manifestations-of-intention/article-93/', type: 'reference', label: '民法第93条（心裡留保）条文・解説（tek-law）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第93条', type: 'reference', label: 'Wikibooks 民法第93条（条文・2017年改正）' },
+    ],
+  },
+  {
+    id: 'infosoc-dark-patterns',
+    discipline: 'information-sociology',
+    title: 'ダークパターン（欺瞞的デザイン）',
+    statement:
+      'ダークパターン（dark patterns）とは、ウェブサイトやアプリのユーザーインターフェース（UI）に意図的に組み込まれ、利用者を欺き・操作・誘導して、本来しないはずの行動（不要な購入、サブスク登録、個人情報の過剰提供、解約の断念など）を取らせる設計上の手口を指す。UXデザイナーのハリー・ブリヌル（Harry Brignull）が2010年に造語し当初の類型を整理した（現在は中立的に「欺瞞的デザイン deceptive design」とも呼ばれる）。' +
+      '代表的類型に、こっそり（sneaking、隠れた費用・無断のカゴ追加）、偽の緊急性・希少性、確認シェイミング（confirmshaming）、妨害（ローチモーテル＝登録は容易だが解約困難）、強制、誘導的初期設定や視覚的干渉（misdirection、プリチェック同意）があり、プライバシー領域でも問題視される。透明で利用者の利益に資する「ナッジ」とは異なり、利用者の自律性を損なう操作である点が本質。OECD・米FTC・EU（DSA第25条が禁止）・日本（消費者庁／特定商取引法のサブスク規制）が規制・報告を進める。',
+    keyFigures:
+      'ハリー・ブリヌル（Harry Brignull、概念の提唱者・2010年造語）／OECD（2022「Dark commercial patterns」報告）／米FTC（2022「Bringing Dark Patterns to Light」報告）／EU（Digital Services Act 第25条で禁止）／日本・消費者庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2022/10/dark-commercial-patterns_9f6169cd/44f5e846-en.pdf', type: 'government', label: 'OECD (2022) “Dark commercial patterns”, OECD Digital Economy Papers No.336' },
+      { url: 'https://www.ftc.gov/reports/bringing-dark-patterns-light', type: 'government', label: 'U.S. Federal Trade Commission (2022) “Bringing Dark Patterns to Light”' },
+      { url: 'https://www.deceptive.design/', type: 'reference', label: 'Harry Brignull, Deceptive Design (旧 darkpatterns.org, 2010〜) 概念の一次情報源' },
+      { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）' },
+    ],
+  },
 ];
 // Stryker restore all
