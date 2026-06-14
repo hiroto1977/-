@@ -6443,5 +6443,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.interaction-design.org/literature/topics/gamification', type: 'academic', label: 'Interaction Design Foundation（IxDF, HCI専門リファレンス）「What is Gamification?」' },
     ],
   },
+  {
+    id: 'econ-modigliani-miller',
+    discipline: 'economics',
+    title: 'モディリアーニ＝ミラーの定理（MM理論）',
+    statement:
+      '完全資本市場、税金・取引費用・倒産費用なし、情報の対称性、同一条件での借入が可能といった理想的条件のもとでは、企業価値はその資本構成（負債と自己資本の比率＝どう資金調達するか）に依存せず、その企業が生み出すキャッシュフロー（事業の収益力）と事業リスクのみで決まる、とする命題（第1命題＝資本構成の無関連性。無借入企業と借入企業の価値は等しい）。第2命題は、負債を増やすと財務リスクの増大に応じて自己資本コスト（株主の期待収益率）が上昇するため、加重平均資本コスト（WACC）は一定に保たれる、とする。' +
+      '現実には法人税（負債利子の損金算入による節税効果＝タックスシールド）、倒産コスト、エージェンシーコスト、情報の非対称性が存在するため資本構成は企業価値に影響し、MM定理はそれらがなぜ・どう重要かを考える理論的ベンチマーク（出発点）となる。',
+    keyFigures: 'フランコ・モディリアーニ（Franco Modigliani、ノーベル経済学賞1985）／マートン・ミラー（Merton Miller、ノーベル経済学賞1990）／初出: Modigliani & Miller “The Cost of Capital, Corporation Finance and the Theory of Investment”, American Economic Review 第48巻 pp.261-297（1958年）／1963年に法人税を組み込む改訂',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Modigliani%E2%80%93Miller_theorem', type: 'reference', label: 'Wikipedia「Modigliani–Miller theorem」（命題I/II・前提条件・税引後改訂）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1990/miller/facts/', type: 'government', label: 'NobelPrize.org — Merton Miller 経済学賞1990（コーポレートファイナンス理論への貢献）' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/modigliani-miller-theorems', type: 'reference', label: 'Encyclopedia.com「Modigliani-Miller Theorems」' },
+    ],
+  },
+  {
+    id: 'econ-black-scholes',
+    discipline: 'economics',
+    title: 'ブラック＝ショールズ・モデル',
+    statement:
+      'ヨーロピアン・オプション（満期にのみ権利行使できるオプション）の理論価格を求める数理モデルおよび偏微分方程式。原資産価格が幾何ブラウン運動（一定のドリフトとボラティリティをもつ対数正規過程）に従うと仮定し、オプションと原資産を適切に組み合わせて無リスクのポートフォリオを構成する（デルタ・ヘッジ）ことで、裁定機会のない（no-arbitrage）状態でオプション価格が満たすべきブラック＝ショールズ方程式を導く。' +
+      '重要な特徴は、オプション価格が原資産価格・行使価格・満期までの期間・無リスク金利・原資産のボラティリティの5つで決まり、投資家のリスク選好や原資産の期待リターン（ドリフト）に依存しない（リスク中立評価）ことである。デリバティブ市場発展の基礎となった一方、一定ボラティリティ・連続取引・正規分布という前提は非現実的で、ボラティリティ・スマイルやファットテールとして限界が指摘される。',
+    keyFigures: 'フィッシャー・ブラック（Fischer Black）／マイロン・ショールズ（Myron Scholes）が1973年の論文 “The Pricing of Options and Corporate Liabilities”（Journal of Political Economy 81巻3号）で発表／ロバート・マートン（Robert Merton）が数学的基礎を拡張・厳密化／ショールズとマートンが1997年ノーベル経済学賞（ブラックは1995年に死去）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1997/advanced-information/', type: 'government', label: 'NobelPrize.org — 1997年経済学賞 学術解説（リスク中立評価・5つの決定要因・受賞者）' },
+      { url: 'https://www.sfu.ca/~kkasa/BlackScholes_73.pdf', type: 'academic', label: 'Black & Scholes (1973) “The Pricing of Options and Corporate Liabilities”, Journal of Political Economy 81(3):637-654（原論文）' },
+      { url: 'https://econpapers.repec.org/RePEc:ucp:jpolec:v:81:y:1973:i:3:p:637-54', type: 'academic', label: 'EconPapers / RePEc — 原論文の書誌情報（掲載誌・巻号・頁）' },
+      { url: 'https://en.wikipedia.org/wiki/Volatility_smile', type: 'reference', label: 'Wikipedia — ボラティリティ・スマイル（一定ボラティリティ・対数正規前提の破綻と限界）' },
+    ],
+  },
+  {
+    id: 'mgmt-lean-startup',
+    discipline: 'management',
+    title: 'リーン・スタートアップ',
+    statement:
+      '新事業・新製品開発のように不確実性が高い状況で、時間と資源の浪費を避けるために、最小限の機能を備えた試作品（MVP＝Minimum Viable Product、実用最小限の製品）を素早く市場に出し、顧客の反応をデータで計測し、その学びに基づいて製品・戦略を改善するか方向転換（ピボット）するかを判断する起業・経営手法。「構築（Build）→計測（Measure）→学習（Learn）」のフィードバックループを高速で回し、仮説を実地で検証する「検証による学習（validated learning）」を目標に据え、市場投入前の完璧主義を避ける点が核心である。' +
+      'トヨタ生産方式（リーン生産）のムダ排除の思想、スティーブ・ブランクの顧客開発（customer development）モデル、アジャイル開発を基盤とし、エリック・リースが体系化・命名した。',
+    keyFigures: 'エリック・リース（Eric Ries／提唱者・命名者、2008年のブログで命名し2011年の著書『The Lean Startup』で体系化）／スティーブ・ブランク（Steve Blank／顧客開発モデルの提唱者、基盤理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2013/05/why-the-lean-start-up-changes-everything', type: 'media', label: 'Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）' },
+      { url: 'https://www.lean.org/lexicon-terms/lean-startup/', type: 'academic', label: 'Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）' },
+      { url: 'https://theleanstartup.com/principles', type: 'media', label: 'Eric Ries, The Lean Startup — Methodology / Principles（提唱者本人による一次情報源）' },
+      { url: 'https://en.wikipedia.org/wiki/Lean_startup', type: 'reference', label: 'Wikipedia: “Lean startup”' },
+    ],
+  },
+  {
+    id: 'human-theory-of-mind',
+    discipline: 'human-science',
+    title: '心の理論',
+    statement:
+      '心の理論（theory of mind, ToM）とは、自己および他者が信念・欲求・意図・知識・感情といった心的状態（mental states）を持つことを理解し、それらが現実とも自分の心的状態とも異なりうることを踏まえて、心的状態が行動の原因になると推論する能力である。心的状態は直接観察できないため、これは他者の行動を予測・説明するための「理論」とみなされる。' +
+      '子どもの発達を測る代表的課題が「誤信念課題（false-belief task）」で、なかでもサリーとアン課題（Sally-Anne test）が有名であり、他者が現実と異なる誤った信念を持ちうることを理解できるかを問う（典型的には4〜5歳頃に通過）。共感・社会的相互作用・欺瞞・教育などの基盤をなし、帰属理論や愛着理論とは区別される別概念である。',
+    keyFigures: 'デイヴィッド・プレマック（David Premack）／ガイ・ウッドラフ（Guy Woodruff）＝1978年論文「Does the chimpanzee have a theory of mind?」（Behavioral and Brain Sciences 1: 515–526）で用語を初出・導入／サイモン・バロン＝コーエン・アラン・レスリー・ウタ・フリス＝1985年にサリーとアン課題を用い自閉スペクトラム症児のToMの障害（マインドブラインドネス仮説）を提唱',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-319-16999-6_3117-1', type: 'reference', label: 'Springer Nature — “Does the Chimpanzee Have Theory of Mind?”（プレマック&ウッドラフ1978の定義・初出）' },
+      { url: 'https://en.wikipedia.org/wiki/Sally%E2%80%93Anne_test', type: 'reference', label: 'Wikipedia — Sally–Anne test（誤信念課題とBaron-Cohen, Leslie & Frith 1985）' },
+      { url: 'https://direct.mit.edu/books/monograph/3890/MindblindnessAn-Essay-on-Autism-and-Theory-of-Mind', type: 'academic', label: 'MIT Press — Baron-Cohen “Mindblindness: An Essay on Autism and Theory of Mind”' },
+    ],
+  },
+  {
+    id: 'bizlaw-unauthorized-agency',
+    discipline: 'business-law',
+    title: '無権代理（民法113条・117条）',
+    statement:
+      '無権代理とは、代理権がないにもかかわらず他人（本人）の代理人として行った法律行為をいう。無権代理行為は、本人が追認しなければ本人に対して効力を生じない（民法113条1項）。本人は追認するか追認を拒絶するかを選べ、追認・拒絶は相手方に対してしなければその相手方に対抗できない（同条2項）。追認があれば、別段の意思表示がない限り契約時にさかのぼって本人に効力が帰属する（116条。ただし第三者の権利を害せない）。' +
+      '相手方の保護として、相手方は本人に相当の期間を定めて追認の有無を催告でき、期間内に確答がなければ追認を拒絶したものとみなされる（114条）。また善意の相手方は本人が追認しない間は契約を取り消すことができる（115条）。本人が追認せず契約が帰属しない場合、無権代理人は、自己の代理権を証明できず本人の追認も得られないときは、相手方の選択に従い契約の履行又は損害賠償の責任を負う（117条1項。ただし相手方が悪意・有過失の場合や無権代理人が制限行為能力者であった場合等は責任を負わない＝117条2項）。表見代理（109条・110条・112条）成立時は別途本人が責任を負いうる。',
+    keyFigures: '民法113条1項：本人の追認なき限り無権代理行為は本人に無効／113条2項：追認・追認拒絶は相手方に対してしなければ対抗不可／114条：相手方は催告でき無確答は追認拒絶とみなす／115条：善意の相手方は本人が追認しない間は契約を取消可／116条：追認は契約時に遡及（第三者の権利を害せない）／117条1項：無権代理人は履行又は損害賠償の責任／117条2項：相手方の悪意・有過失や無権代理人が制限行為能力者の場合は免責／表見代理（109・110・112条）成立時は別途本人が責任',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: '民法 | e-Gov 法令検索（law id 129AC0000000089）113条〜117条' },
+      { url: 'https://tek-law.jp/civil-code/general-provisions/juridical-acts/agency/article-113/', type: 'media', label: '民法第113条（無権代理）｜tek-law.jp（弁護士 金子剛）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0117-00/', type: 'media', label: '民法 第117条【無権代理人の責任】｜クレアール司法書士講座' },
+    ],
+  },
+  {
+    id: 'infosoc-hybrid-media-system',
+    discipline: 'information-sociology',
+    title: 'ハイブリッド・メディア・システム',
+    statement:
+      '現代のメディア環境を、テレビ・新聞・ラジオなどの「古い（オールド）メディア」と、インターネット・ソーシャルメディアなどの「新しい（ニュー）メディア」が単純に置き換わるのではなく、両者のメディア・ロジック（技術・ジャンル・規範・行動・組織形態の束）が相互に絡み合い、対立・競争しながらも適応と相互依存によって共存・融合する複合的システムとして捉える概念。新旧の二分法を退け、論理の交差・ハイブリッド化に注目する。' +
+      '政治的アクター（政治家・ジャーナリスト・活動家・市民）は複数のメディアの論理を戦略的に使い分け・横断して情報フローを生成・操作し、権力やニュースの流れを形成する。ニュースの生成はオンラインとオフラインを往還する循環的な「政治的情報サイクル」として捉えられ、選挙・運動・政治スキャンダルの分析に用いられる。',
+    keyFigures: '提唱者：アンドリュー・チャドウィック（Andrew Chadwick、政治コミュニケーション学者、ラフバラー大学教授）／初出：著書『The Hybrid Media System: Politics and Power』（Oxford University Press、2013年、第2版2017年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/book/8696', type: 'academic', label: 'Oxford Academic（OUP）書誌・本文ページ：The Hybrid Media System: Politics and Power' },
+      { url: 'https://academic.oup.com/sf/article/94/4/e97/2461366', type: 'academic', label: '学術誌 Social Forces（OUP）掲載書評（査読誌、2013年版・OUP刊を明記）' },
+      { url: 'https://www.andrewchadwick.com/hybrid-media-system', type: 'academic', label: '著者アンドリュー・チャドウィック公式サイト：The Hybrid Media System（概要・受賞歴）' },
+    ],
+  },
 ];
 // Stryker restore all
