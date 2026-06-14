@@ -6717,5 +6717,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/The_Third_Wave_(Toffler_book)', type: 'reference', label: 'Wikipedia: The Third Wave (Toffler, 1980) — origin of “prosumer”' },
     ],
   },
+  {
+    id: 'econ-nash-bargaining',
+    discipline: 'economics',
+    title: 'ナッシュ交渉解',
+    statement:
+      '二者が協力すれば余剰（利益）を生み出せるが、その分配をめぐって対立する「交渉問題（bargaining problem）」に対し、望ましい性質を表す公理を満たす一意の合意点を与える協力ゲーム理論の解概念。交渉決裂時の結果である脅威点・現状点（disagreement point）を基準とし、各プレイヤーの効用利得（合意点の効用と決裂点の効用の差）の積＝ナッシュ積を最大化する点が解となる。' +
+      '解が満たす公理は、(1)パレート効率性、(2)対称性、(3)効用の正アフィン変換からの独立（尺度不変性）、(4)無関係な選択肢からの独立（IIA）の四つで、これらを同時に満たす解は一意に定まる。労使交渉・国際交渉・分配問題のモデル化に広く用いられ、ルービンシュタインの交互提案交渉モデルの時間間隔をゼロに近づけた極限がナッシュ交渉解に一致するという非協力ゲームによる基礎づけも与えられている。',
+    keyFigures: 'ジョン・ナッシュ（John F. Nash, Jr.）／初出: 論文「The Bargaining Problem」Econometrica, Vol.18, No.2 (1950), pp.155-162／非協力的基礎づけ: アリエル・ルービンシュタイン（交互提案モデル, 1982）／ナッシュは1994年ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1950/04/01/bargaining-problem', type: 'academic', label: 'John F. Nash, “The Bargaining Problem”, Econometrica 18(2), 1950（Econometric Society 公式）' },
+      { url: 'https://www.haverford.edu/sites/default/files/Nash1950.pdf', type: 'academic', label: 'Nash (1950) “The Bargaining Problem” 原論文 PDF（Haverford College ホスト）' },
+      { url: 'https://en.wikipedia.org/wiki/Rubinstein_bargaining_model', type: 'reference', label: 'Rubinstein bargaining model（非協力的基礎づけと Nash 解への収束）' },
+    ],
+  },
+  {
+    id: 'econ-shapley-value',
+    discipline: 'economics',
+    title: 'シャープレー値',
+    statement:
+      '複数のプレイヤーが協力（提携 coalition）して生み出した総利得を、各プレイヤーの貢献度に応じて公正に分配するための配分方式（解概念）。各プレイヤーのシャープレー値は、そのプレイヤーが提携に加わることで価値を増やす限界貢献（marginal contribution）を、あらゆる参加順序の全並びにわたって平均したものとして定義される。この配分は、(1)効率性（総利得を過不足なく分配）、(2)対称性（あらゆる提携に同じ貢献をするプレイヤーには同じ配分）、(3)ゼロ（ダミー）プレイヤー性（限界貢献ゼロのプレイヤーは配分ゼロ）、(4)加法性、という4公理を同時に満たす唯一の配分である。' +
+      '費用配分、投票力の測定（シャープレー＝シュービック投票力指数）、近年は機械学習の予測に対する各特徴量の寄与度を説明する手法（SHAP）にも応用される。安定マッチングやメカニズムデザインとは別概念の、協力ゲームにおける配分解である。',
+    keyFigures: 'ロイド・シャプレー（Lloyd S. Shapley）が1953年に提唱／初出: L. S. Shapley, “A Value for n-person Games” (1953)／シャプレーは2012年ノーベル経済学賞（A. ロスと共同受賞、安定マッチングと市場設計が受賞理由、シャープレー値も代表業績）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2012/shapley/facts/', type: 'government', label: 'NobelPrize.org — Lloyd S. Shapley, 2012年経済学賞' },
+      { url: 'https://en.wikipedia.org/wiki/Shapley_value', type: 'reference', label: 'Wikipedia — Shapley value（定義・公理・応用）' },
+      { url: 'https://gtl.csa.iisc.ac.in/gametheory/ln/web-cp5-shapley.pdf', type: 'academic', label: 'Indian Institute of Science — The Shapley Value (Game Theory lecture notes)' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/shapley-value', type: 'academic', label: 'ScienceDirect Topics — Shapley Value overview' },
+    ],
+  },
+  {
+    id: 'mgmt-servant-leadership',
+    discipline: 'management',
+    title: 'サーバント・リーダーシップ',
+    statement:
+      'リーダーがまず自らの権力や地位を優先するのではなく、フォロワー（部下・チーム・組織・コミュニティ）に「奉仕する（serve）」ことを第一に据え、その成長・幸福・自律を支援することを通じて、結果的に組織目標の達成やパフォーマンス向上を導くリーダーシップの哲学・スタイル。ロバート・グリーンリーフが1970年のエッセイ「The Servant as Leader」で提唱した。「リーダーが先か奉仕が先か」を問い、奉仕したいという自然な感情が先にあり、その後に導きたいという意識的選択が来るリーダーを真のサーバント・リーダーとする。' +
+      '最良の判定基準は「奉仕された人々が人として成長するか」。傾聴・共感・癒し・気づき・説得・概念化・先見性・執事役（スチュワードシップ）・人々の成長への関与・コミュニティづくり（スピアーズの10特性）が代表的特性で、エンパワーメント・倫理・利他性を重視する点で、目標達成主導の変革型やカリスマ型リーダーシップと対比される。',
+    keyFigures: 'ロバート・K・グリーンリーフ（Robert K. Greenleaf、提唱者）／初出: エッセイ「The Servant as Leader」（1970年）／ラリー・C・スピアーズ（Larry C. Spears、10特性を体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.gonzaga.edu/news-events/stories/2023/9/26/robert-greenleaf-servant-leadership', type: 'academic', label: 'Gonzaga University — Robert Greenleaf on Servant-Leadership' },
+      { url: 'https://www.regent.edu/journal/journal-of-virtues-leadership/character-and-servant-leadership-ten-characteristics-of-effective-caring-leaders/', type: 'academic', label: 'Larry C. Spears, “Character and Servant Leadership: Ten Characteristics…,” Journal of Virtues & Leadership (Regent University)' },
+      { url: 'https://greenleaf.org/what-is-servant-leadership/', type: 'media', label: 'Robert K. Greenleaf Center for Servant Leadership — What is Servant Leadership?' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/servant-leadership', type: 'reference', label: 'EBSCO Research Starters — Servant Leadership' },
+    ],
+  },
+  {
+    id: 'human-stress-coping',
+    discipline: 'human-science',
+    title: 'ストレスとコーピング（ラザルス）',
+    statement:
+      '心理的ストレスを、外部の出来事（ストレッサー）そのものではなく、その出来事と個人との「関係（transaction、交流）」をどう「認知的に評価（cognitive appraisal）」するかによって規定する理論。ラザルスらはストレスを「自分の資源に負担をかけ、あるいはそれを超え、安寧を脅かすものと評価される、人と環境の特定の関係」と定義した。中核過程は二段階の評価から成る。(1)一次評価では、その出来事が自分にとって無関係か・良性か・有害（脅威・挑戦・喪失）かを判断し、(2)二次評価では、それに対処できる資源や能力が自分にあるかを判断する。' +
+      'これらの評価に基づき「コーピング（対処）」が行われ、(a)問題焦点型コーピング（ストレス源そのものを変えようとする）と、(b)情動焦点型コーピング（ストレスに伴う感情を調整しようとする）に大別される。一般に、統制可能と評価された状況では問題焦点型が、統制不能と評価された状況では情動焦点型が優勢になりやすい。ストレスマネジメントや健康行動の基礎理論である。',
+    keyFigures: 'リチャード・ラザルス（Richard S. Lazarus）／スーザン・フォルクマン（Susan Folkman）／初出：共著『Stress, Appraisal, and Coping』（Springer, 1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/psychology/transactional-model-stress-and-coping', type: 'reference', label: 'EBSCO Research Starters — Transactional model of stress and coping' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118993811.ch21', type: 'academic', label: 'Wiley — Lazarus and Folkman’s Psychological Stress and Coping Theory（The Handbook of Stress and Health 査読付き章）' },
+      { url: 'https://courses.lumenlearning.com/waymaker-psychology/chapter/regulation-of-stress/', type: 'academic', label: 'Lumen Learning（Waymaker Psychology）— Regulation of Stress（大学教材）' },
+    ],
+  },
+  {
+    id: 'bizlaw-pledge',
+    discipline: 'business-law',
+    title: '質権（民法342条）',
+    statement:
+      '質権とは、債権者（質権者）が、その債権の担保として債務者または第三者（物上保証人）から受け取った物（質物）を、債務が弁済されるまで占有・留置し、弁済がないときはその物から他の債権者に先立って優先的に弁済を受けることができる約定担保物権である（民法342条）。目的物の占有を債権者に移転（引き渡す）点が、占有を移転しない抵当権との最大の違いであり、この留置によって心理的に弁済を促す（留置的効力）。' +
+      '質権の対象は、動産（動産質）、不動産（不動産質）、債権その他の財産権（権利質）に及び、譲り渡すことのできない物を目的とすることはできない（343条）。動産質では占有の継続が第三者対抗要件となり（352条）、不動産質は例外的に質物の使用・収益が可能（356条）。あらかじめ弁済がないとき質物の所有権を債権者に帰属させる等の「流質契約」は、民事では原則禁止される（349条。ただし商行為では商法515条により許容される）。',
+    keyFigures: '約定担保物権／占有移転が要件＝引渡しで対抗・留置（抵当権との最大の差異）／優先弁済的効力＋留置的効力（民法342条）／目的：動産質・不動産質・権利質／343条＝譲渡不能物は目的にできない／352条＝動産質は占有の継続が第三者対抗要件／356条＝不動産質は使用収益可／349条＝流質契約は民事で原則禁止（商法515条で商行為は許容）／e-Gov民法 law id: 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089／第九章 質権 342条以下）' },
+      { url: 'https://www.lawschool.tsukuba.ac.jp/wp/wp-content/uploads/2019/02/fb4a7dd957f855151662a89cba33b915.pdf', type: 'academic', label: '筑波大学ロースクール 直井義典「明治期における流質禁止をめぐる議論」（流質契約・349条）' },
+      { url: 'https://ja.wikibooks.org/wiki/商法第515条', type: 'reference', label: 'Wikibooks 商法第515条（商行為による質権への民法349条不適用＝流質許容）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-labour',
+    discipline: 'information-sociology',
+    title: 'デジタル労働（digital labour）',
+    statement:
+      'デジタル・プラットフォームやインターネット上で行われ、あるいはデジタル技術によって媒介・統治される労働・活動の総称、およびそれを批判的に分析する研究領域。中心的論点は、ソーシャルメディアのユーザーが投稿・「いいね」・データ生成などの活動を通じ、自覚なく無償でプラットフォーム企業の利潤（広告・データ）を生み出す「フリーレイバー（free labour、無償労働）」「プレイバー（playbour、遊び＋労働）」の問題である。' +
+      'ティツィアーナ・テラノヴァが2000年の論文「Free Labor」でデジタル経済における無償の文化労働を論じ、クリスチャン・フックスがマルクス主義の視座から搾取と価値生産を体系的に論じた。ギグワーク、クラウドワーク、コンテンツ・モデレーション、AI学習データのアノテーション（教師データ作成）など、不可視化されがちな労働の搾取や労働条件も対象となる。ギグエコノミー・プロシューマー・プラットフォーム資本主義と関連しつつ、デジタル環境での労働・搾取・価値の批判的分析として区別される。',
+    keyFigures: 'ティツィアーナ・テラノヴァ（Tiziana Terranova／「Free Labor」2000, Social Text）／クリスチャン・フックス（Christian Fuchs／『Digital Labour and Karl Marx』2014, Routledge）／ジュリアン・キュックリッヒ（Julian Kücklich／「playbour」2005）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716161', type: 'academic', label: 'Christian Fuchs, Digital Labour and Karl Marx (Routledge, 2014) — 出版社書誌ページ' },
+      { url: 'https://link.springer.com/chapter/10.1057/9781137478573_2', type: 'academic', label: 'The Digital Labour Theory of Value and Karl Marx in the Age of Facebook... (Springer Nature)' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Digital labor — Wikipedia（定義・研究領域の概観）' },
+    ],
+  },
 ];
 // Stryker restore all
