@@ -4000,5 +4000,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/EN/legal-content/summary/the-open-internet-and-net-neutrality.html', type: 'government', label: 'EUR-Lex — The open internet and net neutrality (Regulation (EU) 2015/2120)' },
     ],
   },
+  {
+    id: 'econ-rbc',
+    discipline: 'economics',
+    title: '実物的景気循環論（RBC）',
+    statement:
+      '景気変動の主因を、貨幣的・需要的要因ではなく、技術進歩の変動など「実物的（供給側）」のショックに求めるマクロ経済理論。フィン・キドランドとエドワード・プレスコットが1982年の論文「Time to Build and Aggregate Fluctuations」で展開した。' +
+      '価格や賃金は伸縮的で市場は常に均衡しているとし、合理的期待をもつ家計・企業が技術ショックに対して労働供給や投資を最適に調整した結果として、景気の好不況（GDP・雇用の変動）が生じると説明する。この立場では、景気変動は市場の失敗ではなく、ショックへの効率的な反応（＝均衡）であるため、政府の安定化政策はかえって望ましくないと含意される。' +
+      'ケインジアンの価格硬直性・需要管理とは対照的で、ニュー・ケインジアンとの論争を通じて現代マクロ経済学（動学的確率的一般均衡＝DSGEモデル）の発展に寄与した。キドランドとプレスコットは2004年にノーベル経済学賞を受賞した。',
+    keyFigures: 'F.キドランド&E.プレスコット1982「Time to Build and Aggregate Fluctuations」／景気変動の主因は技術等の実物的(供給)ショック／価格伸縮的・市場は常に均衡・合理的期待／景気変動はショックへの効率的反応で安定化政策は不要との含意／ケインジアンと対照、DSGEへ／2004ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/summary/', type: 'reference', label: 'NobelPrize.org — 2004年経済学賞（キドランド&プレスコット）授賞理由' },
+      { url: 'https://www.britannica.com/topic/Time-to-Build-and-Aggregate-Fluctuations', type: 'reference', label: 'Britannica — Time to Build and Aggregate Fluctuations（1982年論文）' },
+      { url: 'https://www.minneapolisfed.org/research/quarterly-review/some-skeptical-observations-on-real-business-cycle-theory', type: 'government', label: 'Federal Reserve Bank of Minneapolis — Real Business Cycle Theory（市場均衡・安定化政策の含意）' },
+    ],
+  },
+  {
+    id: 'econ-asset-bubble',
+    discipline: 'economics',
+    title: '資産価格バブル',
+    statement:
+      '株式・不動産などの資産価格が、配当やファンダメンタルズ（本来の経済的価値＝将来配当の割引現在価値）から大きくかい離して持続的に高騰し、その後急落（崩壊）する現象。価格上昇が「さらに値上がりするだろう」という期待を呼んでさらなる買いを誘い、自己増殖的に膨張する点に特徴がある（投機的側面＝配当目的でなく転売目的の保有）。' +
+      'チューリップ・バブル（17世紀オランダ）、南海泡沫事件（1720年）、1980年代後半の日本の資産バブル、2000年前後のITバブル、2000年代後半の米国住宅バブルなどが歴史的な例。背景として、過剰な信用（レバレッジ）・金融緩和、楽観的な群衆心理（群集行動）、「今回は違う（this time is different）」という思い込みが指摘される。' +
+      'バブル崩壊は不良債権・バランスシート毀損を通じて金融危機や長期停滞（日本の「失われた10年」等）を招きうるため、金融政策・規制で資産価格の行き過ぎにどう対応するかが論点となる。事前（形成時）の識別が難しいことも特徴である。',
+    keyFigures: '資産価格がファンダメンタルズから乖離し高騰→急落／値上がり期待が自己増殖的に買いを呼ぶ(投機的・転売目的)／例：チューリップ・南海泡沫・日本のバブル・ITバブル・米住宅バブル／過剰信用・金融緩和・群衆心理・「今回は違う」が背景／崩壊は金融危機・長期停滞を招く／事前識別が困難',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/what-is-greater-fool-theory', type: 'reference', label: 'Britannica Money — Greater Fool Theory（バブルと投機的フィードバックループ）' },
+      { url: 'https://www.chicagofed.org/publications/chicago-fed-letter/2012/november-304', type: 'government', label: 'Federal Reserve Bank of Chicago — Asset Price Bubbles: Causes, Consequences, and Public Policy Options (2012)' },
+      { url: 'https://www.federalreserve.gov/newsevents/speech/mishkin20080515a.htm', type: 'government', label: 'Federal Reserve Board — F. Mishkin, "How Should We Respond to Asset Price Bubbles?" (2008)' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp1345.pdf', type: 'government', label: 'IMF Working Paper WP/13/45 — A. Scherbina, "Asset Price Bubbles: A Selective Survey"' },
+    ],
+  },
+  {
+    id: 'mgmt-bullwhip-effect',
+    discipline: 'management',
+    title: 'ブルウィップ効果',
+    statement:
+      'サプライチェーン上で、最終消費者の需要のわずかな変動が、小売→卸→メーカー→部品供給者と川上にさかのぼるほど増幅され、各段階の発注量・在庫変動が大きく振れる現象。鞭（むち）の手元のわずかな動きが先端で大きく振れる様子になぞらえて名づけられた。スタンフォード大学のハウ・リー（Hau L. Lee）らが1997年の論文（Management Science誌）で要因を分析した。' +
+      '主な原因として、(1)需要予測の更新（各段階が自分の受注をもとに予測し安全在庫を上乗せ）、(2)発注のバッチ化（まとめ発注）、(3)価格変動・販促による先買い（フォワード・バイイング）、(4)品薄時の水増し発注と割当（配給ゲーム）が挙げられる。結果として過剰在庫・品切れ・コスト増・サービス低下を招く。' +
+      '対策として、実需要情報の共有（POS連携・EDIによる情報の可視化）、リードタイム短縮、EDLP（毎日低価格）による価格安定、VMI（ベンダー主導型在庫管理）などが有効とされる。MITスローン校発祥の「ビールゲーム」でも体験的に示される。',
+    keyFigures: '消費者需要の小変動が川上ほど増幅される／鞭の比喩／スタンフォード H.リーら1997(Management Science 43, 546-558)が要因分析／原因：需要予測更新・発注バッチ化・先買い・配給ゲーム／過剰在庫・品切れを招く／対策：需要情報共有・リードタイム短縮・EDLP・VMI／ビールゲーム',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sloanreview.mit.edu/article/the-bullwhip-effect-in-supply-chains/', type: 'academic', label: 'Lee, Padmanabhan & Whang, "The Bullwhip Effect in Supply Chains", MIT Sloan Management Review (1997)' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/bullwhip-effect', type: 'academic', label: 'ScienceDirect Topics (Elsevier) — Bullwhip Effect overview' },
+      { url: 'https://en.wikipedia.org/wiki/Bullwhip_effect', type: 'reference', label: 'Wikipedia — Bullwhip effect（定義・原因・対策・ビールゲーム）' },
+      { url: 'https://www.gsb.stanford.edu/faculty-research/publications/information-transmission-bullwhip-effect-empirical-investigation', type: 'academic', label: 'Stanford Graduate School of Business — bullwhip effect research（Hau Lee 所属確認）' },
+    ],
+  },
+  {
+    id: 'human-social-facilitation',
+    discipline: 'human-science',
+    title: '社会的促進と社会的抑制',
+    statement:
+      '他者の存在（観察者や共行為者がいること）が、個人の課題遂行に影響を与える現象。単純で習熟した課題では他者がいるとパフォーマンスが向上し（社会的促進）、複雑で不慣れな課題では逆に低下する（社会的抑制）。' +
+      'ノーマン・トリプレットが1898年に、自転車競技者が単独より競争相手がいるときに速いことなどから初期の研究を行ったとされる（社会心理学最初期の実験研究の一つ）。ロバート・ザイアンスが1965年に、他者の存在が覚醒（動因）を高め、その状況で最も出やすい「優勢反応」を強める、と説明する動因理論を示した。優勢反応は、よく習熟した課題では正しい反応（→促進）だが、不慣れな課題では誤った反応（→抑制）であるため、課題の性質によって効果の向きが変わる。' +
+      '評価懸念（他者に評価される不安）や注意の分散も説明として挙げられる。社会的手抜き（集団での努力低下）とは別概念である。',
+    keyFigures: '他者の存在が課題遂行に影響／単純/習熟課題は促進・複雑/不慣れ課題は抑制／トリプレット1898が初期研究／ザイアンス1965の動因理論(覚醒が優勢反応を強める)／評価懸念・注意分散も説明／社会的手抜きとは別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/social-facilitation', type: 'reference', label: 'Encyclopaedia Britannica — Social facilitation' },
+      { url: 'https://www.simplypsychology.org/social-facilitation.html', type: 'reference', label: 'SimplyPsychology — Social Facilitation Theory In Psychology' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095731503', type: 'reference', label: 'Oxford Reference — Drive theory of social facilitation' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/social-facilitation', type: 'reference', label: 'EBSCO Research Starters (Psychology) — Social facilitation' },
+    ],
+  },
+  {
+    id: 'bizlaw-leniency',
+    discipline: 'business-law',
+    title: '課徴金減免制度（リニエンシー）',
+    statement:
+      'カルテルや入札談合（不当な取引制限）に関与した事業者が、その違反内容を自ら公正取引委員会に報告し、必要な資料を提出した場合に、課徴金を減額または免除する独占禁止法上の制度。2005年改正（2006年施行）で日本に導入された。' +
+      '秘密裏に行われ発見・立証が難しいカルテルについて、内部からの自主的な申告を促すことで違反の摘発・抑止を図るのが狙いである。申告の順位が早いほど減免率が高く設定され（最初に単独で申告した者は課徴金が全額免除されるなど）、これにより事業者間に「他社に先んじて申告した方が得だ」という疑心暗鬼（囚人のジレンマ的状況）を生み、カルテルを内部から崩す効果がある。' +
+      '2019年改正（2020年施行）で、申告順位による減免に加え、事業者の調査協力の度合いに応じて減算する「調査協力減算制度」が導入され、減免を受けられる事業者数の上限も見直された。',
+    keyFigures: 'カルテル・談合の自主申告で課徴金を減免する独禁法の制度／2005年改正(2006年施行)で導入／自主申告を促し摘発・抑止／申告順位が早いほど高減免(最先着は全額免除)・囚人のジレンマ的にカルテルを崩す／2019年改正で調査協力減算制度を追加／公正取引委員会が運用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/seido/genmen/index.html', type: 'government', label: '公正取引委員会「課徴金減免制度」' },
+      { url: 'https://www.jftc.go.jp/dk/kaisei/r1kaisei/index.html', type: 'government', label: '公正取引委員会「改正独占禁止法（令和元年）」' },
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000054', type: 'government', label: 'e-Gov法令検索「私的独占の禁止及び公正取引の確保に関する法律」（独占禁止法）' },
+    ],
+  },
+  {
+    id: 'infosoc-hyperpersonal',
+    discipline: 'information-sociology',
+    title: 'ハイパーパーソナル・モデル',
+    statement:
+      'テキスト中心のオンライン上のコミュニケーション（CMC＝コンピュータ媒介コミュニケーション）が、対面よりもかえって親密で社会的に望ましい関係を生むことがある、と説明する理論。ジョセフ・ウォルサーが1996年に提唱した。CMCは非言語的手がかり（表情・声）が乏しく対面に劣るとされてきた（手がかり欠如理論／cues-filtered-out）が、ウォルサーはむしろ手がかりが限られることを利点と捉えた。' +
+      '4つの要素から説明される：(1)送り手は自分を理想的・選択的に自己呈示できる、(2)受け手は限られた手がかりから相手を過大に理想化（ステレオタイプ的に好意的に補完）する、(3)非同期性により、メッセージを推敲し最適なタイミングで発信できる（編集可能性）、(4)これらが相互にフィードバック・ループを形成し期待や行動が増幅される。' +
+      'オンラインデート・SNS・遠隔チームでの急速な親密化や、逆に幻滅を説明する枠組みとして用いられる。',
+    keyFigures: 'テキスト中心CMCが対面以上に親密・好意的になりうる／J.ウォルサー1996提唱／手がかり欠如(cues-filtered-out)をむしろ利点と捉える／4要素：選択的自己呈示・受け手の理想化・非同期/編集可能性・フィードバックループ／オンラインデート・SNS・遠隔チームの親密化を説明',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/009365096023001001', type: 'academic', label: 'Walther, J.B. (1996) "Computer-Mediated Communication: Impersonal, Interpersonal, and Hyperpersonal Interaction." Communication Research 23(1):3-43 (SAGE) — 原典' },
+      { url: 'https://eric.ed.gov/?id=EJ521347', type: 'government', label: 'ERIC (U.S. Department of Education / IES) 原論文の書誌レコード EJ521347' },
+      { url: 'https://en.wikipedia.org/wiki/Hyperpersonal_model', type: 'reference', label: 'Wikipedia「Hyperpersonal model」— 4要素と cues-filtered-out 対比の概説' },
+    ],
+  },
 ];
 // Stryker restore all
