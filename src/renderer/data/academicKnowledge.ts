@@ -6809,5 +6809,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Digital labor — Wikipedia（定義・研究領域の概観）' },
     ],
   },
+  {
+    id: 'econ-condorcet-paradox',
+    discipline: 'economics',
+    title: 'コンドルセのパラドックス（投票の逆理）',
+    statement:
+      '各投票者の選好が個人レベルでは推移的（A＞B かつ B＞C ならば A＞C）であっても、多数決で集計された社会全体の選好が推移的にならず循環してしまう（A＞B、B＞C なのに C＞A となる）ことがある、という逆説。例えば3人の投票者が3つの選択肢A・B・Cに対し (1)A＞B＞C、(2)B＞C＞A、(3)C＞A＞B という選好をもつとき、A対Bでは2対1でAが勝ち、B対Cでは2対1でBが勝つが、C対Aでは2対1でCが勝ち、多数決の結果が循環する。' +
+      'これは、すべての一対比較で勝つ選択肢（コンドルセ勝者）が常には存在しないこと、また議題設定（投票順序）の操作によって結果が左右されうることを意味する。アローの不可能性定理の先駆をなす、社会的選択論の根本問題である。',
+    keyFigures: 'コンドルセ侯爵（Marquis de Condorcet, 1743–1794、フランスの数学者・哲学者）／初出：1785年の著作『多数決による決定の確率への解析の応用に関する試論』',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/social-choice/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Social Choice Theory（多数決の非推移性とコンドルセ勝者不在）' },
+      { url: 'https://www.cambridge.org/core/books/essai-sur-lapplication-de-lanalyse-a-la-probabilite-des-decisions-rendues-a-la-pluralite-des-voix/1D38B9E4EAFF9AFC42313B19DC8C8070', type: 'academic', label: 'Cambridge University Press — Condorcet 1785年原著の解説（アローの逆理の直接の先駆）' },
+      { url: 'https://en.wikipedia.org/wiki/Condorcet_paradox', type: 'reference', label: 'Wikipedia — Condorcet paradox（定義・3者循環例・含意）' },
+    ],
+  },
+  {
+    id: 'econ-random-walk',
+    discipline: 'economics',
+    title: 'ランダムウォーク仮説',
+    statement:
+      '株価などの金融資産価格の変化は過去の値動きとは統計的に独立で予測不可能であり、まるで酔っ払いの歩み（ランダムウォーク）のように無作為に変動するとする仮説。したがって過去の価格や公開情報から将来の価格変動を体系的に予測し、市場平均を継続的に上回ることはできず、テクニカル分析やアクティブ運用の有効性に懐疑的で、インデックス投資の論拠ともされる。市場が情報を即座に価格へ織り込むとする効率的市場仮説、とくにウィーク・フォーム（過去の価格情報の織り込み）の効率性と密接に関連する。' +
+      'ただし価格変動の完全な独立性や正規分布という前提に対しては、系列相関・ファットテール（極端変動の多さ）・モメンタム/バリュー/小型株効果などのアノマリーの存在を示す実証的批判もある。',
+    keyFigures: 'ルイ・バシュリエ（Louis Bachelier, 1900年博士論文『投機の理論』でブラウン運動的な価格変動を先駆けて定式化）／モーリス・ケンドール（Maurice Kendall, 1953、株価系列の系列相関の乏しさを実証）／ポール・サミュエルソン（1965）／ユージン・ファマ（1965, 1970、効率的市場仮説と関連づけ）／バートン・マルキール（『ウォール街のランダム・ウォーカー』1973で普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Random_walk_hypothesis', type: 'reference', label: 'Wikipedia — Random walk hypothesis（定義・歴史・批判）' },
+      { url: 'http://www.cs.ucl.ac.uk/fileadmin/UCL-CS/images/Research_Student_Information/RN_11_04.pdf', type: 'academic', label: 'UCL Computer Science Research Note RN/11/04 “History of the Efficient Market Hypothesis”' },
+      { url: 'https://www.numdam.org/article/ASENS_1900_3_17__21_0.pdf', type: 'academic', label: 'L. Bachelier, “Théorie de la spéculation”, Annales scientifiques de l’É.N.S., 1900（原典）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/efficient-market-hypothesis-emh', type: 'reference', label: 'EBSCO Research Starters — Efficient-market hypothesis（EMH とランダムウォークの関係）' },
+    ],
+  },
+  {
+    id: 'mgmt-lewin-change',
+    discipline: 'management',
+    title: 'レヴィンの変革モデル（解凍・変革・再凍結）',
+    statement:
+      '組織や集団の計画的変革を3つの段階で捉える、組織開発の古典的モデル。(1)解凍（Unfreeze）は、既存のやり方・態度・行動を支える均衡を崩し、変化の必要性を認識させて変化を受け入れる準備をする段階。(2)変革（Change／Move）は、新しい行動・価値観・やり方へ移行する段階。(3)再凍結（Refreeze）は、新しい状態を定着・安定化させ、後戻り（リバウンド）を防ぐ段階。' +
+      'レヴィンは現状を、変化を促す推進力（driving forces）と妨げる抑止力（restraining forces）が拮抗する動的均衡（準均衡）として捉え、両者のバランスを変えることで変革が起きるとする「力の場分析（force field analysis）」も示した。計画的変革・組織開発の出発点とされる。一方、絶え間なく変化する現代環境では「再凍結」という安定化の発想は単純・静的すぎるとの批判もある。',
+    keyFigures: 'クルト・レヴィン（Kurt Lewin, 1890–1947）：ドイツ生まれの米国の社会心理学者、MIT集団力学研究センター創設者。1940年代に提唱とされる／3段階：解凍・変革・再凍結／力の場分析：推進力と抑止力の動的均衡／批判：再凍結は動的環境には静的・単純すぎる（Cummings et al. 2016 ほか）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Kurt-Lewin', type: 'reference', label: 'Encyclopaedia Britannica — Kurt Lewin（社会心理学者、場の理論・集団力学）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0018726715577707', type: 'academic', label: 'Cummings, Bridgman & Brown (2016), “Unfreezing change as three steps…”, Human Relations（SAGE／査読論文・再凍結批判）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/force-field-analysis', type: 'reference', label: 'EBSCO Research Starters — Force-field analysis（推進力・抑止力・準均衡）' },
+    ],
+  },
+  {
+    id: 'human-social-comparison',
+    discipline: 'human-science',
+    title: '社会的比較理論（フェスティンガー）',
+    statement:
+      '人は自分の意見や能力を正確に評価したいという駆動をもち、客観的・物理的な基準が利用できないとき、自分を他者と比較することで自己評価を行う、とする社会心理学の理論。レオン・フェスティンガーが1954年に提唱した。比較の方向により、自分より優れた他者と比べる「上方比較」（向上の動機づけになる一方、脅威となり劣等感も生む）と、自分より劣った他者と比べる「下方比較」（自己評価や気分を守る）に分かれる。とくに能力の評価では、人は自分と類似した他者を比較対象に選びやすい。' +
+      '後にウィルズが下方比較による自己防衛を、テッサーが自己評価維持（SEM）モデルを展開した。SNS時代には、他者の理想化された投稿への上方比較が羨望・抑うつ・自己評価低下につながる現象の説明にも応用される。',
+    keyFigures: 'レオン・フェスティンガー（Leon Festinger）／初出: “A theory of social comparison processes”, Human Relations, 1954, 7巻, 117-140頁／発展: トマス・ウィルズ（Thomas A. Wills, 1981, 下方比較）／エイブラハム・テッサー（Abraham Tesser, 自己評価維持モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/001872675400700202', type: 'academic', label: 'Festinger, L. (1954). A Theory of Social Comparison Processes. Human Relations, 7(2), 117-140（SAGE Journals・原典）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/social-comparison-theory', type: 'reference', label: 'Social comparison theory — EBSCO Research Starters: Psychology' },
+      { url: 'https://nobaproject.com/modules/social-comparison', type: 'academic', label: 'Social Comparison — Noba Project（上方/下方比較・Wills・Tesserを解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Social_comparison_theory', type: 'reference', label: 'Social comparison theory — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-retention-lien',
+    discipline: 'business-law',
+    title: '留置権（民法295条）',
+    statement:
+      '留置権とは、他人の物を占有する者が、その物に関して生じた債権（被担保債権）を有するとき、その債権の弁済を受けるまで、その物を留置（引渡しを拒んで手元に置くこと）できる法定担保物権である（民法295条1項本文）。例えば時計の修理人は、修理代金の支払を受けるまで時計の返還を拒める。抵当権・質権のような約定担保物権と異なり、当事者の合意ではなく法律上当然に発生する点が特徴。' +
+      '成立要件は、(1)他人の物を占有していること、(2)その物に関して生じた債権であること（物と債権の牽連性）、(3)債権が弁済期にあること（295条1項ただし書）、(4)占有が不法行為によって始まったものでないこと（295条2項）。留置権者は債権全部の弁済を受けるまで留置物全部を留置でき（不可分性、296条）、留置物から生じる果実を収取して被担保債権に充当でき（297条）、善管注意義務をもって保管する（298条）。原則として換価による優先弁済的効力はないが、引渡しを拒むことで弁済を促す事実上の優先弁済機能をもつ。',
+    keyFigures: '法定担保物権（合意不要・法律上当然に発生）／根拠条文＝民法295条1項本文／成立要件＝他人の物の占有・物と債権の牽連性・債権の弁済期到来（295条1項ただし書）・占有が不法行為で始まっていないこと（295条2項）／不可分性（296条）・果実収取権（297条）・善管注意義務（298条）／優先弁済権は原則なし（事実上の優先弁済機能あり）／e-Gov民法 law id＝129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（条文の一次出典、law id 129AC0000000089）第295条〜第298条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第295条', type: 'reference', label: 'Wikibooks 民法第295条（条文・解説）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0295-00/', type: 'media', label: 'クレアール司法書士講座 民法第295条【留置権の内容】' },
+    ],
+  },
+  {
+    id: 'infosoc-narrative-paradigm',
+    discipline: 'information-sociology',
+    title: 'ナラティブ・パラダイム',
+    statement:
+      '人間を本質的に「物語る存在（ホモ・ナランス homo narrans）」とみなし、人々のコミュニケーション・意思決定・説得は、抽象的な論理や証拠の積み重ね（合理的世界パラダイム rational world paradigm）よりも、むしろ物語（ナラティブ）を通じて理解・評価されるとするコミュニケーション理論。' +
+      '人は物語の良し悪しを「ナラティブ的合理性（narrative rationality）」、すなわち(1)物語的整合性／蓋然性（narrative coherence／probability＝話の筋が通り首尾一貫しているか）と、(2)物語的忠実性（narrative fidelity＝その物語が聞き手自身の経験や価値観に響き「真実らしい」と感じられるか）によって判断する。専門家でなくとも誰もが物語の妥当性を評価できるため、説得や公共的議論の理解において物語が中心的役割を果たすとされる。',
+    keyFigures: 'ウォルター・R・フィッシャー（Walter R. Fisher）が提唱／初出: “Narration as a Human Communication Paradigm: The Case of Public Moral Argument”, Communication Monographs, Vol. 51, No. 1 (1984), pp. 1–22／著書 Human Communication as Narration（1987）で発展',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/03637758409390180', type: 'academic', label: 'Walter R. Fisher, “Narration as a Human Communication Paradigm,” Communication Monographs 51(1), 1984（Taylor & Francis 原典）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/narrative-paradigm', type: 'reference', label: 'EBSCO Research Starters: “Narrative paradigm”' },
+      { url: 'https://en.wikipedia.org/wiki/Narrative_paradigm', type: 'reference', label: 'Wikipedia: “Narrative paradigm”' },
+    ],
+  },
 ];
 // Stryker restore all
