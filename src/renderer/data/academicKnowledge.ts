@@ -4865,5 +4865,100 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.essex.ac.uk/blog/posts/2025/04/04/book-review-folk-devils-and-moral-panics', type: 'academic', label: 'University of Essex ― 書評『Folk Devils and Moral Panics』(1972)' },
     ],
   },
+  {
+    id: 'econ-median-voter',
+    discipline: 'economics',
+    title: '中位投票者定理',
+    statement:
+      '多数決投票において、争点が一次元の連続体（例：政府支出の多寡、左右イデオロギー）上に並べられ、かつ各投票者の選好が単峰型（single-peaked：自分の最適点から離れるほど効用が単調に低下する）であるとき、中位投票者（投票者の最適点を並べた中央値の位置にいる者）が最も好む案が、他のいかなる案とも一対一の多数決で負けない＝コンドルセ勝者となる、という定理。' +
+      '政治的含意として、二大政党・候補者は得票最大化のため互いに中央（中位投票者の立場）へ収斂すると予測される（ダウンズ的競争）。ただし前提が要で、争点が二次元以上に拡張されたり選好が単峰でない場合、一般にコンドルセ勝者は存在せず、議題操作次第で任意の案が勝ちうる多数決の循環（投票のパラドックス、マッケルヴェイ＝ショフィールドのカオス定理）が生じ、定理は成立しない。',
+    keyFigures: 'ダンカン・ブラック（Duncan Black, 1948「On the Rationale of Group Decision-making」Journal of Political Economy で定式化）／アンソニー・ダウンズ（Anthony Downs, 1957『An Economic Theory of Democracy（経済理論からみた民主主義）』で二大政党の中位収斂という政治的含意を提示）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/256633', type: 'academic', label: 'Black, D. (1948) “On the Rationale of Group Decision-making”, Journal of Political Economy 56(1):23–34（原典／University of Chicago Press）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100146688', type: 'reference', label: 'Oxford Reference — “median voter”（Oxford University Press）' },
+      { url: 'https://en.wikipedia.org/wiki/Median_voter_theorem', type: 'reference', label: 'Wikipedia — Median voter theorem（単峰性・コンドルセ勝者・多次元での不成立）' },
+      { url: 'https://eml.berkeley.edu/~saez/course131/political_ch09.pdf', type: 'academic', label: 'E. Saez, UC Berkeley Econ 131 講義ノート — 前提（一次元・単峰）と多次元での循環' },
+    ],
+  },
+  {
+    id: 'mgmt-open-innovation',
+    discipline: 'management',
+    title: 'オープン・イノベーション',
+    statement:
+      'オープン・イノベーションとは、企業が技術を発展させるうえで、内部のアイデアと外部のアイデア、内部の市場化経路と外部の市場化経路をともに用いることができ、また用いるべきだとするイノベーションのパラダイムである。研究開発を自社内で完結させる「クローズド・イノベーション」と対比され、組織の境界を越えて知識を意図的に流入・流出させる点に特徴がある。' +
+      '外部の知識・技術・アイデアを取り込むインバウンド（outside-in／外から内）と、自社の未活用技術を外部に出して活用させるアウトバウンド（inside-out／内から外）の両方向を含み、その手段としてライセンス、提携・ジョイントベンチャー、スピンオフ、クラウドソーシング等が用いられる。すなわち「企業は内部と外部のアイデア、内部と外部の市場化経路を技術発展のために結合すべき」とする考え方である。',
+    keyFigures: 'ヘンリー・チェスブロウ（Henry Chesbrough、提唱者）／初出：2003年の著書『Open Innovation: The New Imperative for Creating and Profiting from Technology』（Harvard Business School Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corporateinnovation.berkeley.edu/what-is-open-innovation/', type: 'academic', label: 'UC Berkeley Haas, Garwood Center for Corporate Innovation — “What is Open Innovation”（チェスブロウが所属する大学機関）' },
+      { url: 'https://en.wikipedia.org/wiki/Open_innovation', type: 'reference', label: 'Wikipedia — “Open innovation”（定義と概念整理）' },
+      { url: 'https://sloanreview.mit.edu/article/the-era-of-open-innovation/', type: 'academic', label: 'Chesbrough, H. (2003) “The Era of Open Innovation”, MIT Sloan Management Review' },
+      { url: 'https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-38', type: 'reference', label: 'Oxford Research Encyclopedia of Business and Management — “Open Innovation”' },
+    ],
+  },
+  {
+    id: 'mgmt-absorptive-capacity',
+    discipline: 'management',
+    title: '吸収能力',
+    statement:
+      '吸収能力（absorptive capacity）とは、企業が外部の新しい情報・知識の価値を認識し、それを吸収・同化（assimilate）し、商業的目的に応用（apply／exploit）する能力を指す、組織学習・イノベーション論の中核概念である。コーエン＆レビンサール（1990）は、この能力が単なる外部知識への接触ではなく、既存の関連知識（事前知識）の蓄積に大きく依存し、自社のR&D投資の副産物としても高まると論じた。' +
+      'そのため経路依存的・累積的な性質を持ち、過去の知識基盤が将来の学習・革新能力を規定する。のちにザーラ＆ジョージ（2002）は、知識の取得・同化からなる「潜在的吸収能力（potential）」と、変換・活用からなる「実現的吸収能力（realized）」へと再概念化した。知識移転・技術導入・イノベーション能力を説明する鍵概念であり、ダイナミック・ケイパビリティ等とは区別される独立概念である。',
+    keyFigures: 'ウェズリー・M・コーエン／ダニエル・A・レビンサール（提唱者, Cohen & Levinthal, 1990, Administrative Science Quarterly 35(1):128-152）／シャカー・A・ザーラ & ジェラルド・ジョージ（潜在的／実現的吸収能力への再概念化, 2002, Academy of Management Review 27(2):185-203）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=EJ406851', type: 'government', label: 'ERIC（米国教育省 教育資源情報センター）— Cohen & Levinthal (1990) “Absorptive Capacity”, Administrative Science Quarterly 書誌情報' },
+      { url: 'https://en.wikipedia.org/wiki/Absorptive_capacity', type: 'reference', label: 'Wikipedia「Absorptive capacity」— 定義・事前知識依存・Zahra & George (2002) の区分' },
+      { url: 'https://journals.aom.org/doi/10.5465/amc.2021.0008', type: 'academic', label: 'Academy of Management Collections「The Past and Future of Absorptive Capacity」— 概念史と再概念化の学会公式レビュー' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-4419-1428-6_1620', type: 'reference', label: 'Springer「Absorptive Capacity and Organizational Learning」— 経営学リファレンス事典項目' },
+    ],
+  },
+  {
+    id: 'human-mental-accounting',
+    discipline: 'human-science',
+    title: 'メンタル・アカウンティング（心の会計）',
+    statement:
+      '人々がお金を、その出所や使途に応じて心の中で複数の別々の「勘定（mental account）」に分類・管理し、本来は完全に代替可能（fungible）なはずのお金を、あたかも色分けされているかのように扱う認知的傾向。リチャード・セイラーが体系化した枠組みで、お金を符号化・分類・評価する一連の認知操作を指す。例えば、あぶく銭（ボーナスやギャンブルの儲け）は浪費しやすく、同額の給料は慎重に使う、といった行動が生じる。' +
+      '経済学が前提とするお金の代替可能性に反し、勘定ごとの予算管理・評価頻度・選択の括り方（ブラケッティング）を通じて、消費・貯蓄・投資の判断に体系的な歪みをもたらす。プロスペクト理論のS字型価値関数（参照点・損失回避）と結びつき、利得は分離し損失は統合するといった心的符号化を説明する。',
+    keyFigures: '提唱者：リチャード・セイラー（Richard H. Thaler）／主要文献：1985年「Mental Accounting and Consumer Choice」（Marketing Science）、1999年「Mental Accounting Matters」（Journal of Behavioral Decision Making, 12:183-206）／2017年ノーベル経済学賞受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1099-0771(199909)12:3%3C183::AID-BDM318%3E3.0.CO;2-F', type: 'academic', label: 'Thaler, R. H. (1999) “Mental Accounting Matters”, Journal of Behavioral Decision Making 12(3):183-206（Wiley、原典）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mksc.1070.0330', type: 'academic', label: 'Thaler, R. H. “Mental Accounting and Consumer Choice”, Marketing Science（INFORMS）' },
+      { url: 'https://people.bath.ac.uk/mnsrf/Teaching%202011/Thaler-99.pdf', type: 'academic', label: 'University of Bath が公開する Thaler (1999) 全文PDF' },
+      { url: 'https://en.wikipedia.org/wiki/Mental_accounting', type: 'reference', label: 'Wikipedia「Mental accounting」' },
+    ],
+  },
+  {
+    id: 'bizlaw-creditor-subrogation',
+    discipline: 'business-law',
+    title: '債権者代位権（民法423条）',
+    statement:
+      '債権者代位権とは、債権者が自己の債権（被保全債権）を保全するため必要があるときに、債務者に属する権利（被代位権利）を債務者に代わって行使できる権利をいう（民法423条）。典型例は、無資力の債務者が第三者（第三債務者）に対して有する金銭債権を、債務者に代わって取り立てる場面である。行使の主な要件は、(1)被保全債権が存在し原則として履行期が到来していること（ただし保存行為は期限前でも可）、(2)保全の必要性（原則として債務者の無資力）、(3)債務者が自らその権利を行使していないこと、(4)被代位権利が債務者の一身専属権や差押えを禁じられた権利でないこと、である。' +
+      '2017年改正（2020年4月1日施行）で従来の判例法理が条文に明文化され、債権者が直接自己への支払を請求できること（423条の3）や、代位行使後も債務者が処分権限を失わないこと（423条の5）等が整理された。詐害行為取消権（民法424条以下）とは別概念の責任財産保全制度である。',
+    keyFigures: '被保全債権の保全のため債務者の権利を代位行使（民法423条）／要件＝被保全債権の存在（原則履行期到来後・保存行為は例外）・保全の必要性（原則として債務者の無資力）・債務者の不行使・一身専属権/差押禁止権利でないこと／423条の3＝直接自己への支払請求可（判例法理の明文化）／423条の5＝代位後も債務者は処分権限を失わない／2020年4月1日施行の改正民法で明文化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治二十九年法律第八十九号、law id 129AC0000000089、第423条〜423条の7）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0423-00/', type: 'media', label: 'クレアール司法書士講座 — 民法第423条【債権者代位権の要件】解説' },
+      { url: 'https://www.yokohama-roadlaw.com/column/78_4235.html', type: 'media', label: '横浜ロード法律事務所 — 民法（債権法）改正の解説78［民法423条の5］' },
+    ],
+  },
+  {
+    id: 'infosoc-tam',
+    discipline: 'information-sociology',
+    title: '技術受容モデル（TAM）',
+    statement:
+      '技術受容モデル（Technology Acceptance Model, TAM）は、フレッド・デイビスが提唱した、人々が情報技術（IT）を受容・利用するか否かを説明・予測する情報システム論のモデルである。フィッシュバイン＆アイゼンの合理的行為理論（TRA）を情報システム領域へ応用したもので、中核を成すのは二つの信念、すなわち(1)知覚された有用性（perceived usefulness＝その技術を使えば仕事の成果が向上するという認識）と(2)知覚された使いやすさ（perceived ease of use＝努力を要さず使えるという認識）である。' +
+      'これら二つが利用に対する態度・行動意図・実際の利用行動を規定し、さらに使いやすさは有用性にも正の影響を及ぼすと仮定される。後にTAM2や統合理論UTAUTへと拡張された。イノベーションの普及理論や計画的行動理論とは区別される独立した概念である。',
+    keyFigures: 'フレッド・デイビス（Fred D. Davis）が提唱／初出は1986年のMITスローン経営大学院博士論文、および Davis (1989) “Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology”, MIS Quarterly 13(3): 319-340／後継：Venkatesh & Davis (2000) TAM2、Venkatesh et al. (2003) UTAUT',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://misq.umn.edu/misq/article/13/3/319/191/Perceived-Usefulness-Perceived-Ease-of-Use-and', type: 'academic', label: 'Davis, F. D. (1989). Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology. MIS Quarterly 13(3), 319-340（初出論文）' },
+      { url: 'https://open.ncl.ac.uk/theories/1/technology-acceptance-model/', type: 'academic', label: 'Technology Acceptance Model — TheoryHub, Newcastle University（大学運営の学術理論レビュー）' },
+      { url: 'https://en.wikipedia.org/wiki/Technology_acceptance_model', type: 'reference', label: 'Technology acceptance model — Wikipedia' },
+      { url: 'https://www.ebsco.com/research-starters/technology/technology-acceptance-model-tam', type: 'reference', label: 'Technology Acceptance Model (TAM) — EBSCO Research Starters' },
+    ],
+  },
 ];
 // Stryker restore all
