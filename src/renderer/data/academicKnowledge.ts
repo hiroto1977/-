@@ -5331,5 +5331,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.muni.cz/mujlt/article/view/11836', type: 'academic', label: 'Masaryk University Journal of Law and Technology（査読論文）「Goffman’s Theory as a Framework for Analysis of Self Presentation on Online Social Networks」' },
     ],
   },
+  {
+    id: 'econ-incomplete-contracts',
+    discipline: 'economics',
+    title: '不完備契約理論',
+    statement:
+      '現実の契約は、将来起こりうるあらゆる事態をあらかじめ書き尽くすことができない（不完備である）という前提に立つ契約理論。ある状況が契約に明記されていない、または立証不能で裁判所が執行できない場合、事後的な再交渉が必要となり、関係特殊投資をした側が足元を見られて利益を奪われる「ホールドアップ問題」が生じ、その予見から事前の投資が過少になる。' +
+      'グロスマン＝ハート＝ムーア（GHM）の所有権アプローチ（財産権理論）は、契約で全てを規定できないからこそ、契約に書かれていない事態における決定権＝残余コントロール権を誰が持つかが重要になり、それは物的資産の「所有権（誰が企業・資産を保有するか）」によって決まると論じた。所有構造が投資インセンティブを左右するため、所有権の配分が企業の境界（統合か市場取引か）を決定する。取引費用理論やコースの定理とは別概念で、残余コントロール権・資産所有に着目する点が特徴。',
+    keyFigures: 'サンフォード・グロスマン（Sanford Grossman）／オリバー・ハート（Oliver Hart）／ジョン・ムーア（John Moore）／初出：Grossman & Hart (1986) JPE 94: 691–719、Hart & Moore (1990) JPE 98: 1119–1158／ハートは2016年ノーベル経済学賞（ホルムストロームと共同）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2016/popular-information/', type: 'government', label: 'NobelPrize.org「The Prize in Economic Sciences 2016 — Contract Theory」（Hart・Holmström）' },
+      { url: 'https://hart.scholars.harvard.edu/publications/property-rights-and-nature-firm', type: 'academic', label: 'Harvard University — Oliver Hart「Property Rights and the Nature of the Firm」(Hart & Moore 1990, JPE 98:1119–1158)' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v94y1986i4p691-719.html', type: 'academic', label: 'IDEAS/RePEc — Grossman & Hart「The Costs and Benefits of Ownership」(JPE 1986, 94:691–719)' },
+      { url: 'https://en.wikipedia.org/wiki/Incomplete_contracts', type: 'reference', label: 'Wikipedia「Incomplete contracts」(GHM 所有権アプローチ・残余コントロール権・ホールドアップ)' },
+    ],
+  },
+  {
+    id: 'econ-baumol-cost-disease',
+    discipline: 'economics',
+    title: 'ボーモルのコスト病',
+    statement:
+      '生産性が向上しにくい労働集約的な部門（教育・医療・対人サービス・舞台芸術など、いわゆる「停滞／非進歩」部門）でも、製造業のように生産性が急上昇する「進歩」部門の賃金上昇につられて賃金を引き上げざるを得ず、その結果これらの部門の相対的なコスト（価格）が継続的に上昇していく現象。労働者がより高賃金の部門へ流出するのを防ぐため、生産性が伸びなくても賃金だけが経済全体に追随して上がることが原因（生産性ラグ）。' +
+      '古典的な例は、モーツァルトやベートーヴェンの弦楽四重奏の演奏で、4人で約40分という所要人数・時間は数百年間変わらない（労働生産性が不変）にもかかわらず、演奏者の賃金は経済全体の生産性向上に伴って上昇するため、生演奏のコストが上がり続けるというもの。教育費・医療費・行政サービス費などの長期的な上昇を説明する概念として広く援用される。',
+    keyFigures: '提唱者：ウィリアム・ボーモル（William J. Baumol）／ウィリアム・ボーエン（William G. Bowen）／初出：1966年の舞台芸術研究書『Performing Arts: The Economic Dilemma』（Twentieth Century Fund 刊）／鍵概念：進歩（progressive）部門と停滞（stagnant）部門の生産性格差・生産性ラグ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w12218/w12218.pdf', type: 'academic', label: 'NBER Working Paper No. 12218 “Baumol’s Cost Disease: A Macroeconomic Perspective”' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_3060-2', type: 'reference', label: 'The New Palgrave Dictionary of Economics “Baumol’s Cost Disease”（Springer/Palgrave 経済学事典）' },
+      { url: 'https://cepr.org/voxeu/columns/how-william-baumol-created-cultural-economics', type: 'academic', label: 'CEPR / VoxEU “How William Baumol created cultural economics”' },
+      { url: 'https://en.wikipedia.org/wiki/Baumol_effect', type: 'reference', label: 'Wikipedia “Baumol effect”（モーツァルト弦楽四重奏の例・定義）' },
+    ],
+  },
+  {
+    id: 'mgmt-job-crafting',
+    discipline: 'management',
+    title: 'ジョブ・クラフティング',
+    statement:
+      '従業員が与えられた職務を受け身でこなすのではなく、自らの主体性により仕事の境界・内容・人間関係・意味づけを能動的に作り変え、仕事をより自分にとって意義あるもの・やりがいあるものにしていく行動。エイミー・レズネスキーとジェーン・ダットンが2001年の論文（Academy of Management Review）で概念化した。3つの形態があり、(1)タスク・クラフティング（業務の範囲・やり方を変える）、(2)関係性クラフティング（職場の人間関係の質・量を変える）、(3)認知的クラフティング（仕事の意味・捉え方を変える）からなる。' +
+      '後にティムズとバッカーにより、仕事の要求度－資源（JD-R）モデルの枠組みで、従業員が自ら仕事の資源を増やし要求度を調整する行動として再概念化された。ワーク・エンゲージメントや職務満足の向上と関連する。職務特性モデルが組織側の職務設計を扱うのに対し、本概念は従業員自身による個人レベルの職務再設計を扱う別概念である。',
+    keyFigures: 'Amy Wrzesniewski（エイミー・レズネスキー）／Jane E. Dutton（ジェーン・ダットン）／初出: Wrzesniewski & Dutton (2001)「Crafting a Job: Revisioning Employees as Active Crafters of Their Work」, Academy of Management Review／JD-Rでの再概念化: Tims & Bakker',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378011', type: 'academic', label: 'Wrzesniewski & Dutton (2001)「Crafting a Job」, Academy of Management Review（米国経営学会）' },
+      { url: 'https://en.wikipedia.org/wiki/Job_crafting', type: 'reference', label: 'Wikipedia「Job crafting」— 概念定義・3形態・JD-R再概念化' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9441671/', type: 'academic', label: 'JD-R・ジョブ・クラフティング・ワーク・エンゲージメント実証研究（PubMed Central）' },
+    ],
+  },
+  {
+    id: 'human-optimism-bias',
+    discipline: 'human-science',
+    title: '楽観バイアス',
+    statement:
+      '人が、自分にとって望ましい出来事（成功・健康・長寿）は他者より起こりやすく、望ましくない出来事（病気・事故・離婚・依存症）は他者より起こりにくいと、客観的根拠なく見積もる認知的傾向。「非現実的楽観主義」とも呼ばれ、文化・性別・年齢を超えて広く観察され（人口の約8割に見られるが、うつ状態の人では弱い）、本人が自覚しにくい点に特徴がある。' +
+      'リスクの過小評価（喫煙・無防備な行動）を生み、悪い結果につながりうる一方、適度な楽観は動機づけや精神的健康に資する面もある。脳神経科学的には、良い情報で強く信念を更新し悪い情報では更新が乏しいという「更新の非対称性」がその維持を支える。確証バイアスや計画錯誤とは関連するが別概念。',
+    keyFigures: 'ニール・ワインスタイン（Neil D. Weinstein, 1980「Unrealistic optimism about future life events」JPSP 誌で実証的に提唱）／タリ・シャロット（Tali Sharot, Korn & Dolan 2011, Nature Neuroscience：良い情報を選択的に取り込む信念更新の非対称性という脳神経科学的基盤を示す）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/21983684/', type: 'academic', label: 'Sharot, T., Korn, C.W. & Dolan, R.J. (2011) How unrealistic optimism is maintained in the face of reality. Nature Neuroscience 14, 1475-1479（PubMed, PMID 21983684）' },
+      { url: 'https://cancercontrol.cancer.gov/brp/research/constructs/optimistic-bias', type: 'government', label: '“Optimistic Bias” — U.S. National Cancer Institute（NIH/NCI）構成概念解説' },
+      { url: 'https://en.wikipedia.org/wiki/Optimism_bias', type: 'reference', label: 'Optimism bias — Wikipedia（定義・別称・約80%の有病率・神経生理学的基盤）' },
+    ],
+  },
+  {
+    id: 'bizlaw-revocation-litigation',
+    discipline: 'business-law',
+    title: '取消訴訟（行政事件訴訟法）',
+    statement:
+      '取消訴訟は、行政事件訴訟法（昭和37年法律第139号）が定める抗告訴訟（3条1項）の中心的な類型で、行政庁の違法な処分や裁決の取消しを求める訴訟をいう。具体的には、行政庁の公権力の行使に当たる処分の取消しを求める「処分の取消しの訴え」（3条2項）と、審査請求その他の不服申立てに対する裁決等の取消しを求める「裁決の取消しの訴え」（3条3項）からなる。' +
+      '提起には、処分性のある対象、原告適格（取消しを求めるにつき法律上の利益を有する者、9条）、出訴期間（処分があったことを知った日から6か月、処分の日から1年、14条）、被告適格（原則として処分庁の所属する国・公共団体、11条。2004年改正で変更）などの訴訟要件を満たす必要がある。出訴によって処分の効力は当然には止まらず（執行不停止の原則、25条）、取消判決には第三者効（32条）・拘束力（33条）がある。国家賠償（金銭的救済）とは別個の、行政処分そのものを排除する救済手段である。',
+    keyFigures: '根拠法＝行政事件訴訟法（昭和37年法律第139号、e-Gov法令ID 337AC0000000139）／類型＝処分の取消しの訴え（3条2項）＋裁決の取消しの訴え（3条3項）・抗告訴訟（3条1項）の一類型／原告適格＝法律上の利益を有する者（9条）／出訴期間＝知った日から6か月・処分の日から1年（14条）／被告適格＝原則 国・公共団体（11条）／執行不停止の原則（25条）／取消判決の第三者効（32条）・拘束力（33条）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/337AC0000000139', type: 'government', label: 'e-Gov法令検索「行政事件訴訟法（昭和37年法律第139号、法令ID 337AC0000000139）」' },
+      { url: 'https://www.moj.go.jp/content/000103905.pdf', type: 'government', label: '法務省「平成16年改正行政事件訴訟法の概要」（9条・11条・14条の改正点）' },
+      { url: 'https://ja.wikipedia.org/wiki/行政事件訴訟法', type: 'reference', label: 'Wikipedia「行政事件訴訟法」（制度全体の概観）' },
+    ],
+  },
+  {
+    id: 'infosoc-profiling',
+    discipline: 'information-sociology',
+    title: 'プロファイリングと自動意思決定',
+    statement:
+      'プロファイリングとは、個人データを自動的に処理し、その人の経済状況・健康・嗜好・関心・行動・位置・労働遂行能力・信頼性などの個人的側面を評価・予測・分類する営みである。EU一般データ保護規則（GDPR）4条4号はこれを「自然人に関する一定の個人的側面を評価するための個人データの自動処理」と定義し、22条はもっぱら自動化された処理（プロファイリングを含む）のみに基づき法的効果またはそれに準ずる重大な影響を生じさせる決定に服さない権利を定める。' +
+      '論点は、透明性・説明責任、差別やバイアスの再生産、ブラックボックス化、フィルターバブルなどで、信用スコアリングや採用選考が典型例とされる。日本でも改正個人情報保護法のいわゆる3年ごと見直しでプロファイリング規律が継続的に議論されている。',
+    keyFigures: 'GDPR 4条4号＝プロファイリングの定義（評価目的の自動処理）／GDPR 22条＝もっぱら自動化された決定に服さない権利・例外（明示的同意／契約履行に必要／加盟国法の授権）と安全措置（人間の関与・意見表明・異議申立て）／ミレイユ・ヒルデブラント（Mireille Hildebrandt, VUB／Radboud）＝プロファイリングと法の支配・データ駆動社会のガバナンス論／論点＝差別・バイアスの再生産、ブラックボックス、フィルターバブル',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02016R0679-20160504', type: 'government', label: 'Regulation (EU) 2016/679 (GDPR) consolidated text — Art. 4(4) / Art. 22, EUR-Lex' },
+      { url: 'https://www.dataprotection.ie/en/individuals/know-your-rights/your-rights-relation-automated-decision-making-including-profiling', type: 'government', label: 'Your rights in relation to automated decision making, including profiling (Art. 22) — Irish Data Protection Commission' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/2053951716679679', type: 'academic', label: 'Mittelstadt et al. (2016) “The ethics of algorithms: Mapping the debate”, Big Data & Society' },
+      { url: 'https://en.wikipedia.org/wiki/Mireille_Hildebrandt', type: 'reference', label: 'Mireille Hildebrandt — profiling, automated decision-making and the rule of law' },
+    ],
+  },
 ];
 // Stryker restore all
