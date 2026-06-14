@@ -4298,5 +4298,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://iss.ndl.go.jp/books/R000000004-I728841-00', type: 'government', label: '国立国会図書館サーチ — 梅棹忠夫『情報産業論』(1963)' },
     ],
   },
+  {
+    id: 'econ-lucas-critique',
+    discipline: 'economics',
+    title: 'ルーカス批判',
+    statement:
+      '過去のデータから推定した経済の関係（マクロ計量モデルのパラメータ）は、政策が変われば人々の期待や行動も変わるため、政策変更後には不変ではなくなる。したがって、過去のデータに基づくマクロ計量モデルで政策の効果を予測・評価することは信頼できない、とする批判。ロバート・ルーカスが1976年の論文「Econometric Policy Evaluation: A Critique」で提示した。' +
+      '合理的期待を前提とすると、人々はルールやインセンティブの変化を見越して行動を最適化し直すため、政策当局が過去の相関（例：フィリップス曲線の失業とインフレのトレードオフ）をそのまま利用しようとしても、その相関自体が崩れてしまう。' +
+      'この批判は、政策に対して頑健な「深い（構造的）パラメータ」（選好・技術など）に基づくミクロ的基礎づけをもつモデルの構築を促し、合理的期待革命や動学的確率的一般均衡（DSGE）モデルの発展を後押しした。ルーカスは合理的期待理論への貢献で1995年ノーベル経済学賞を受賞した。',
+    keyFigures: '過去データ推定の関係は政策変更で不変でなくなり政策評価に使えない／R.ルーカス1976「Econometric Policy Evaluation」／合理的期待下で人々が政策変化を見越し行動を最適化(フィリップス曲線の相関が崩れる)／ミクロ的基礎・深いパラメータに基づくモデルを促す(DSGEへ)／ルーカス1995ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Lucas-critique', type: 'reference', label: 'Encyclopædia Britannica — "Lucas critique"' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1995/summary/', type: 'reference', label: 'NobelPrize.org — Economic Sciences 1995 (Robert E. Lucas Jr.)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/lucas-critique', type: 'reference', label: 'Encyclopedia.com — "Lucas Critique"' },
+      { url: 'https://www.nber.org/news/robert-e-lucas-jr-won-1995-nobel-prize-rational-expectations-theory', type: 'academic', label: 'NBER — Lucas 1995 Nobel for rational expectations' },
+    ],
+  },
+  {
+    id: 'econ-time-inconsistency',
+    discipline: 'economics',
+    title: '動学的不整合（時間的非整合性）',
+    statement:
+      'ある時点で最適だと宣言した将来の政策が、その将来の時点になると最適でなくなり、政策当局が約束を破る誘因をもつ、という問題。フィン・キドランドとエドワード・プレスコットが1977年の論文「Rules Rather than Discretion（裁量よりルールを）」で示した。' +
+      '代表例が金融政策のインフレ・バイアスである：中央銀行が「物価を安定させる」と約束し、人々がそれを信じて低いインフレ期待を形成すると、当局は事後的に金融緩和で失業を一時的に減らす誘因をもつ。しかし合理的な人々はこの誘因を見越すため約束は信用されず、結果として失業は下がらないのに高いインフレだけが定着する（裁量的政策の罠）。' +
+      'この問題への対処として、当局が裁量でなく事前にコミットした「ルール」に従うこと、中央銀行の独立性、インフレ目標、評判の確立などが有効とされる。キドランドとプレスコットは2004年にノーベル経済学賞を受賞した。',
+    keyFigures: '事前に最適な政策が事後には最適でなくなり約束破りの誘因／キドランド&プレスコット1977「Rules Rather than Discretion」(JPE)／金融政策のインフレ・バイアス(裁量だと高インフレが定着)／対処：ルール・コミットメント・中央銀行の独立性・インフレ目標・評判／2004ノーベル賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/popular-information/', type: 'reference', label: 'NobelPrize.org — 2004年経済学賞 一般向け解説（時間整合性とインフレ）' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2003/04/time-inconsistent-monetary-policies-recent-research/', type: 'government', label: 'サンフランシスコ連銀 Economic Letter — Time-Inconsistent Monetary Policies' },
+      { url: 'https://www.britannica.com/money/Finn-E-Kydland', type: 'reference', label: 'Encyclopaedia Britannica — Finn E. Kydland（1977年論文と動学的不整合の定義）' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/260580', type: 'academic', label: 'Journal of Political Economy (1977) — Rules Rather than Discretion（一次文献）' },
+    ],
+  },
+  {
+    id: 'mgmt-bpr',
+    discipline: 'management',
+    title: 'ビジネスプロセス・リエンジニアリング（BPR）',
+    statement:
+      '既存の業務手順を前提とした部分的な改善ではなく、コスト・品質・サービス・スピードといった重要な業績指標を劇的に向上させるために、業務プロセスを根本から（ゼロベースで）考え直し、抜本的に再設計する経営手法。マイケル・ハマーとジェイムズ・チャンピーが著書『リエンジニアリング革命（Reengineering the Corporation）』（1993）で体系化し、BPRを「根本的（fundamental）・抜本的（radical）・劇的（dramatic）・プロセス（process）」という4つのキーワードで定義した。' +
+      '部門ごとに分断された仕事を、顧客価値を生むプロセス単位で再編し、情報技術（IT）を単なる「自動化」ではなく仕事のやり方そのものを変える手段として活用する点を重視する（ハマー「Don\'t Automate, Obliterate」1990）。トヨタ生産方式の継続的・漸進的なカイゼンとは対照的に、不連続な変革を志向する。' +
+      '1990年代に世界的ブームとなったが、人員削減（リストラ）の口実とされたり、失敗例も多く出たことで批判も受けた。',
+    keyFigures: '業務プロセスをゼロベースで抜本的に再設計し重要指標を劇的に向上／M.ハマー&J.チャンピー『リエンジニアリング革命』1993／定義4語：根本的・抜本的・劇的・プロセス／ITで仕事のやり方を変える(Don\'t Automate, Obliterate)／漸進的なカイゼンと対照的な不連続変革／リストラの口実・失敗例の批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1990/07/reengineering-work-dont-automate-obliterate', type: 'academic', label: 'Michael Hammer, "Reengineering Work: Don\'t Automate, Obliterate," Harvard Business Review (1990)（原典的論文）' },
+      { url: 'https://content.time.com/time/specials/packages/article/0,28804,2086680_2086683_2087684,00.html', type: 'reference', label: 'TIME「The 25 Most Influential Business Management Books」— Reengineering the Corporation (1993)' },
+      { url: 'https://www.ibm.com/think/topics/business-process-reengineering', type: 'reference', label: 'IBM「What is business process reengineering?」— BPRの定義とITの有効化役割' },
+    ],
+  },
+  {
+    id: 'human-big-five',
+    discipline: 'human-science',
+    title: 'ビッグファイブ（5因子性格モデル）',
+    statement:
+      '人間のパーソナリティ（性格）を、互いにおおむね独立した5つの基本的な次元で記述できるとする、現代のパーソナリティ心理学で最も広く受け入れられているモデル。5因子は頭字語OCEANで覚えられる：(1)経験への開放性（Openness＝好奇心・想像力・新奇性への志向）、(2)誠実性（Conscientiousness＝勤勉・計画性・自己統制）、(3)外向性（Extraversion＝社交性・活動性・刺激希求）、(4)協調性（Agreeableness＝思いやり・協力・信頼）、(5)神経症傾向（Neuroticism＝不安・情緒不安定さ。逆は情緒安定性）。' +
+      'これは特定の理論から演繹されたのではなく、人が性格を表すのに使う膨大な語彙（語彙仮説）や性格検査の項目を因子分析した結果、繰り返し抽出された経験的な5次元である（コスタ&マックレーらが体系化）。' +
+      '文化を超えて頑健に見いだされ、職務成績・学業・健康・人間関係などの予測に用いられる一方、なぜ5つなのかの理論的説明や記述にとどまる点への批判もある。',
+    keyFigures: '性格を5つの独立した次元で記述／OCEAN：開放性・誠実性・外向性・協調性・神経症傾向／語彙仮説と因子分析から経験的に抽出(理論からの演繹でない)／コスタ&マックレーが体系化／文化横断的に頑健・職務/学業/健康を予測／記述的との批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/five-factor-model-of-personality', type: 'reference', label: 'Encyclopædia Britannica — Five-factor model of personality（5因子の定義）' },
+      { url: 'https://www.simplypsychology.org/big-five-personality.html', type: 'reference', label: 'Simply Psychology — Big Five Personality Traits（OCEAN・語彙仮説・コスタ&マックレー）' },
+      { url: 'https://psycnet.apa.org/record/2003-06478-000', type: 'academic', label: 'APA PsycNet — The Five-Factor model of personality across cultures（文化横断的頑健性）' },
+      { url: 'https://psycnet.apa.org/record/2000-16508-004', type: 'academic', label: 'APA PsycNet — Personality and job performance: The Big Five revisited（職務成績の予測）' },
+    ],
+  },
+  {
+    id: 'bizlaw-large-shareholding',
+    discipline: 'business-law',
+    title: '大量保有報告制度（5%ルール）',
+    statement:
+      '上場会社等の株券等を発行済株式総数の5%を超えて保有することになった者（大量保有者）に、その保有状況を記載した「大量保有報告書」を内閣総理大臣（金融庁）に提出することを義務づける、金融商品取引法上の制度（金商法27条の23以下）。「5%ルール」とも呼ばれる。' +
+      '市場や他の投資家・発行会社に対し、誰がどれだけの株式を保有しているかという、支配権の異動につながりうる情報を速やかに開示させ、市場の透明性・公正性と投資家保護を図ることを目的とする。原則として、5%超の保有者となった日から5営業日以内に提出し、その後、保有割合が1%以上増減するなど重要な変更があった場合には変更報告書を提出する。提出書類はEDINETで電子的に公衆縦覧される。' +
+      'なお、機関投資家等が短期売買目的等で大量保有する場合には、基準日ベースで報告できるなど報告頻度を緩和する特例報告制度がある。M&A・買収局面で買い集めの動きを把握する手がかりにもなる。',
+    keyFigures: '発行済株式の5%超を保有する者に大量保有報告書の提出を義務づけ(金商法27条の23以下、5%ルール)／支配権異動につながる情報の速やかな開示で市場の透明性・投資家保護／5%超になった日から5営業日以内、1%以上の増減等で変更報告書／EDINETで公衆縦覧／機関投資家の特例報告／M&Aの買い集め把握',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000025', type: 'government', label: 'e-Gov法令検索「金融商品取引法」（27条の23以下 大量保有報告書）' },
+      { url: 'https://lfb.mof.go.jp/kantou/disclo/tairyou/mokuji.htm', type: 'government', label: '財務省関東財務局「株券等の大量保有の状況等に関する開示制度（5％ルール）の概要について」' },
+      { url: 'https://www.fsa.go.jp/common/shinsei/tairyohoyu/index.html', type: 'government', label: '金融庁「大量保有報告書等の提出について」' },
+    ],
+  },
+  {
+    id: 'infosoc-gig-economy',
+    discipline: 'information-sociology',
+    title: 'ギグ・エコノミー',
+    statement:
+      'デジタル・プラットフォーム（アプリ）を介して、単発・短期の仕事（ギグ）を不特定の働き手にその都度割り当てる労働・経済の形態。ライドシェア（Uber等）、料理配達、家事代行、クラウドソーシング（オンラインの請負・タスク）などが代表例で、「ギグ」はもともとミュージシャンの単発の演奏の意。スマートフォンとプラットフォームのマッチング・評価機能が、需要と供給を即時に結びつけることで成立した。' +
+      '働き手は時間や場所を柔軟に選べる利点がある一方、多くは「従業員」ではなく「個人事業主（独立請負人）」として扱われるため、最低賃金・社会保険・有給休暇・団体交渉などの労働法上の保護が及びにくく、アルゴリズムによる管理（評価・配車・アカウント停止）に従属する不安定さが問題視される。' +
+      '各国で就労者の労働者性をめぐる訴訟や、保護を強化する法整備（EUのプラットフォーム労働指令等）が進められている。',
+    keyFigures: 'プラットフォームを介し単発・短期の仕事(ギグ)を割り当てる労働形態／Uber等のライドシェア・配達・クラウドソーシングが例／柔軟性の利点／多くが個人事業主扱いで労働法の保護が及びにくい・アルゴリズム管理への従属／労働者性をめぐる訴訟・各国の法整備(EUプラットフォーム労働指令等)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://webapps.ilo.org/static/english/intserv/working-papers/wp100/index.html', type: 'government', label: 'ILO（国際労働機関）— The platform economy（定義・分類）' },
+      { url: 'https://eur-lex.europa.eu/eli/dir/2024/2831/oj/eng', type: 'government', label: 'EUR-Lex — Directive (EU) 2024/2831（EUプラットフォーム労働指令：雇用関係の法的推定・アルゴリズム管理の透明性）' },
+      { url: 'https://www.britannica.com/money/gig-economy-side-hustle', type: 'reference', label: 'Encyclopaedia Britannica — The Gig Economy（定義・「ギグ」の由来・柔軟性）' },
+      { url: 'https://guides.loc.gov/gig-economy/overview', type: 'government', label: 'Library of Congress — Gig Economy Research Guide: Overview' },
+    ],
+  },
 ];
 // Stryker restore all
