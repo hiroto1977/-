@@ -8216,5 +8216,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）' },
     ],
   },
+  {
+    id: 'econ-slutsky-decomposition',
+    discipline: 'economics',
+    title: 'スルツキー分解（代替効果と所得効果）',
+    statement:
+      'ある財の価格変化による需要量の変化（価格効果・全部効果）を、代替効果と所得効果の2つに分解する分析手法。代替効果は相対価格の変化により相対的に安くなった財へ需要が振り替わる効果で通常財・劣等財を問わず常に価格と逆方向（価格下落で増加）、所得効果は価格変化に伴う実質購買力の変化が需要に及ぼす効果で、正常財では需要を増やし劣等財では減らす。劣等財のうち所得効果が代替効果を上回る特殊例が、価格下落で需要が減るギッフェン財である。' +
+      'ロシアの経済学者・統計学者エフゲニー・スルツキーが1915年の論文「消費者の家計の理論について」（伊・Giornale degli Economisti誌）で定式化した。スルツキー方程式は、マーシャル需要（非補償需要）の価格反応を補償需要の代替項と所得項に分けて数式表現する。補償の基準が異なる点でヒックス分解と対比され、スルツキーは「当初の購入量（元の消費バンドル）を買える購買力」を一定に保つのに対し、ヒックスは効用水準を一定に保つ。需要曲線が右下がりになる理由やギッフェン財・需要法則の例外を理解する基礎。',
+    keyFigures:
+      'エフゲニー・スルツキー（Eugen/Evgeny Slutsky、1915年「Sulla teoria del bilancio del consumatore」で定式化）／ジョン・ヒックス＆R.G.D.アレン（1930年代に効用一定の補償需要に基づくヒックス分解として再発見・普及）／ギッフェン財・劣等財との関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Slutsky_equation', type: 'reference', label: 'Wikipedia — Slutsky equation（価格効果＝代替効果＋所得効果、劣等財・ギッフェン財）' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/Intermediate_Microeconomics_with_Excel_(Barreto)/04:_Compartive_Statics/4.06:_Income_and_Substitution_Effects', type: 'academic', label: 'LibreTexts, Intermediate Microeconomics — Income and Substitution Effects（Slutsky補償＝元のバンドル基準とHicks補償＝効用一定の対比）' },
+      { url: 'https://hal.science/hal-01771851', type: 'academic', label: "Chipman & Lenfant, “Slutsky's 1915 Article”（HAL／History of Political Economy 査読論文：1915年 Giornale degli Economisti 掲載とヒックス＝アレンによる再発見）" },
+      { url: 'https://econ.ucsb.edu/~tedb/Courses/GraduateTheoryUCSB/Slutsky.pdf', type: 'academic', label: 'UC Santa Barbara (T. Bergstrom) — Relating Marshallian and Hicksian Demand（スルツキー方程式の導出）' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-pricing',
+    discipline: 'management',
+    title: 'ダイナミック・プライシング',
+    statement:
+      'ダイナミック・プライシング（動的価格設定）とは、財・サービスの価格を固定せず、需要と供給・時間帯・在庫・競合価格などの変動要因に応じてリアルタイムまたは頻繁に変更する、レベニュー・マネジメントの価格戦略である。' +
+      '通常はピーク需要時に値上げし、需要低下や供給過剰時に値下げすることで収益や設備稼働率の最大化を図る。学術的基礎は1978年の米国航空規制緩和を機に発達したレベニュー・マネジメント（イールド・マネジメント）にあり、需要予測に基づき限られた在庫を異なる価格帯の顧客へ最適配分する。価格差別の一形態とも位置づけられ、航空券・ホテル・ライドシェア（Uberのサージ・プライシング）・チケット・ECのアルゴリズム価格で広く用いられる。一方、同一商品の価格が人や時で異なることへの消費者の公平感を損ない反発を招くリスクも論じられる。',
+    keyFigures:
+      'レベニュー・マネジメント／イールド・マネジメント（航空業界で発達）／サージ・プライシング（Uber）／価格差別の一形態／American Airlines（先駆）／1978年 米国航空規制緩和',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/what-is-dynamic-pricing', type: 'reference', label: 'Britannica Money — Dynamic Pricing & Surge Pricing: How Does It Work?' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/dynamic-pricing-surge-pricing', type: 'academic', label: 'EBSCO Research Starters (Business and Management) — Dynamic pricing (surge pricing)' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_pricing', type: 'reference', label: 'Wikipedia — Dynamic pricing' },
+      { url: 'https://kinder.rice.edu/urbanedge/why-do-consumers-hate-ubers-surge-pricing', type: 'academic', label: 'Rice University, Kinder Institute — Why Do Consumers Hate Uber’s Surge Pricing?（公平感の問題）' },
+    ],
+  },
+  {
+    id: 'mgmt-freemium',
+    discipline: 'management',
+    title: 'フリーミアム',
+    statement:
+      'フリーミアム（freemium）は「free（無料）」と「premium（割増・有料）」を組み合わせた造語で、基本機能を無料で広く提供して大規模なユーザーベースを安価に獲得し、その一部を高度な機能・容量・サポート・広告除去等の有料版へ転換させて収益を得るビジネスモデル。' +
+      'デジタル財は追加配布の限界費用がほぼゼロのため無料配布で多数を集める戦略が成立する一方、有料転換率は一般に数％（多くのSaaSで概ね2〜5％）と低く、無料ユーザーのコストを十分低く抑えつつ有料化への明確な動機を設計することが成功の鍵となる。語はベンチャー投資家フレッド・ウィルソンの2006年のブログ投稿への読者ジャリッド・ルーキンの提案に由来し、クリス・アンダーソン『フリー』（2009）が広めた。Dropbox・Spotify・LinkedInやフリー・トゥ・プレイ型ゲーム等が代表例で、サブスクリプションや広告モデルと併用されることも多い。',
+    keyFigures:
+      'フレッド・ウィルソン（Fred Wilson, 命名を募ったブログ投稿 2006）／ジャリッド・ルーキン（Jarid Lukin, Alacra, 「freemium」を提案）／クリス・アンダーソン（Chris Anderson, 『FREE フリー』2009 で普及）／ニコラ・プジョル（Nicolas Pujol, 学術的整理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/freemium', type: 'reference', label: 'EBSCO Research Starters — Freemium（Business & Management）' },
+      { url: 'https://en.wikipedia.org/wiki/Freemium', type: 'reference', label: 'Wikipedia — Freemium（語源・由来）' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1718663', type: 'academic', label: 'Nicolas Pujol, “Freemium: Attributes of an Emerging Business Model”（SSRN）' },
+      { url: 'https://avc.com/2006/03/the_freemium_bu/', type: 'media', label: 'Fred Wilson, “The Freemium Business Model”（AVC, 2006, 一次資料）' },
+    ],
+  },
+  {
+    id: 'human-illusory-truth-effect',
+    discipline: 'human-science',
+    title: '真理の錯誤効果（真実性の錯覚）',
+    statement:
+      '真理の錯誤効果（illusory truth effect、真実性の錯覚）とは、ある主張に繰り返し接触すると、その内容の真偽にかかわらず、それを真実だと感じやすくなる（真実性の評価が高まる）認知現象である。一度見聞きした主張は再接触時に処理しやすくなり（処理流暢性 processing fluency の上昇）、その流暢さを「真実らしさ」の手がかりと取り違えることが主機序とされる。' +
+      'Hasher・Goldstein・Toppino（1977）が、2週間間隔で反復提示した陳述ほど真実性評価が高まることを示し初めて実証した。重要な知見として、(1)既に正しい知識をもつ事柄でも反復で錯誤が生じうる（knowledge neglect）、(2)明白な虚偽でも反復効果が見られる場合がある、(3)出所の信頼性が低くても生じる、ことが報告される。広告・プロパガンダ・誤情報の反復拡散が効果を持つ理由を説明する心理メカニズムとして誤情報研究で重視される。',
+    keyFigures:
+      'リン・ハッシャー（Lynn Hasher）／デイヴィッド・ゴールドスタイン（David Goldstein）／トーマス・トッピーノ（Thomas Toppino）（1977 原典）／リサ・K・ファツィオ（Lisa K. Fazio, 2015/2020 knowledge neglect）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/pubs/journals/features/xge-0000098.pdf', type: 'academic', label: 'Fazio, Brashier, Payne & Marsh (2015) “Knowledge Does Not Protect Against Illusory Truth,” J. Experimental Psychology: General (APA)' },
+      { url: 'https://online.ucpress.edu/collabra/article/6/1/38/114468/Repetition-Increases-Perceived-Truth-Even-for', type: 'academic', label: 'Fazio et al. (2020) “Repetition Increases Perceived Truth Even for Known Falsehoods,” Collabra: Psychology (UC Press)' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/illusory-truth-effect', type: 'reference', label: 'EBSCO Research Starters — Illusory truth effect' },
+      { url: 'https://en.wikipedia.org/wiki/Illusory_truth_effect', type: 'reference', label: 'Wikipedia — Illusory truth effect（原典 Hasher et al. 1977 の書誌・実験手続）' },
+    ],
+  },
+  {
+    id: 'bizlaw-fraud-duress',
+    discipline: 'business-law',
+    title: '詐欺・強迫による取消し（民法96条）',
+    statement:
+      '民法96条は、詐欺又は強迫による意思表示を「取り消すことができる」と定める（1項）。詐欺とは人を欺いて錯誤に陥らせ意思表示をさせること、強迫とは害悪を告げて畏怖させ意思表示をさせることをいい、いずれも意思決定の自由が侵害された「瑕疵ある意思表示」として、表意者は取り消して契約等の効力を遡及的に失わせることができる。' +
+      '重要な区別として、第三者が詐欺を行った場合（第三者詐欺）は、相手方がその事実を知り（悪意）又は知ることができたとき（有過失）に限り取り消せる（2項。2017年改正で「知ることができたとき」を追加）が、強迫にはこの制限がなく第三者強迫でも常に取り消せる。また詐欺による取消しは善意でかつ過失がない第三者に対抗できない（3項。2017年改正で「過失がない」を追加し善意無過失の第三者を保護）のに対し、強迫による取消しは善意の第三者にも対抗できる。錯誤（95条）・心裡留保（93条）・通謀虚偽表示（94条）と並ぶ意思表示の規律である。',
+    keyFigures:
+      '1項＝詐欺・強迫による意思表示は取消可（瑕疵ある意思表示）／2項＝第三者詐欺は相手方が悪意又は有過失のときに限り取消可（強迫には制限なし）／3項＝詐欺取消しは善意無過失の第三者に対抗不可（強迫取消しは善意の第三者にも対抗可）／2017年改正で2項に「知ることができたとき」・3項に「過失がない」を追加／e-Gov法令id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第96条' },
+      { url: 'https://www.agaroot.jp/shiho/column/fraud-duress/', type: 'media', label: 'アガルート「民法96条の詐欺・強迫とは？」（司法試験講座解説）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0096-00/', type: 'media', label: 'クレアール司法書士講座 民法第96条【詐欺又は強迫】' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-constitutionalism',
+    discipline: 'information-sociology',
+    title: 'デジタル立憲主義',
+    statement:
+      'デジタル立憲主義（digital constitutionalism）とは、立憲主義（権力の制限・基本的権利の保障・法の支配）の発想を、国家のみならず巨大デジタル・プラットフォーム企業が行使する「私的権力」にも及ぼし、デジタル環境において基本的権利を保護し諸権力の均衡を回復しようとする思想・規範枠組みである。' +
+      'エドアルド・チェレステはこれを、デジタル社会で基本的権利保護と権力均衡を志向する規制実践を方向づける「イデオロギー」と定義し、伝統的立憲主義が国家権力を対象としたのに対し私的アクターの権力も射程に含める点に新しさがあるとした。ニコラス・スーザーはプラットフォームの私的統治への法の支配の拡張、ジョヴァンニ・デ・グレゴリオは「アルゴリズム社会」における権利と権力の再構成として理論化した。インターネット権利章典、ブラジルのMarco Civil da Internet、EUのGDPR・DSA・DMA、Metaの監督委員会などが実践例・契機として論じられる。',
+    keyFigures:
+      'ジョヴァンニ・デ・グレゴリオ（Giovanni De Gregorio）／エドアルド・チェレステ（Edoardo Celeste, 2019 概念整理）／ニコラス・スーザー（Nicolas Suzor）／私的権力への立憲主義的規律',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/digital-constitutionalism-in-europe/D0BD64FA26654FABBD8549CE88640A90', type: 'academic', label: 'Giovanni De Gregorio, Digital Constitutionalism in Europe (Cambridge University Press, 2022)' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/13600869.2019.1562604', type: 'academic', label: 'Edoardo Celeste, “Digital constitutionalism: a new systematic theorisation,” International Review of Law, Computers & Technology, 33(1), 2019' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_constitutionalism', type: 'reference', label: 'Wikipedia: Digital constitutionalism（概念・主要論者・実践例）' },
+      { url: 'https://academic.oup.com/edited-volume/34234/chapter/290273128', type: 'academic', label: '“The Marco Civil da Internet and Digital Constitutionalism,” Oxford Handbook of Online Intermediary Liability (Oxford Academic)' },
+    ],
+  },
 ];
 // Stryker restore all
