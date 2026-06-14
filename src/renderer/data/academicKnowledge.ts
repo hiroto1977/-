@@ -3902,5 +3902,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Attention economy — Wikipedia（経緯確認用）' },
     ],
   },
+  {
+    id: 'econ-engels-law',
+    discipline: 'economics',
+    title: 'エンゲルの法則',
+    statement:
+      '所得が増えるにつれて、家計の総支出（消費支出）に占める食料費の割合（エンゲル係数）が低下する、という経験法則。逆に言えば、貧しい家計ほど食料費の割合が高い。' +
+      '食料は生存に不可欠で需要に上限があり、所得が増えても食料支出はそれほど増えないため（食料は必需品で所得弾力性が0と1の間と低い）、所得が増えるとその他（教育・娯楽・サービス等）への支出割合が高まる。ドイツの統計学者エルンスト・エンゲルが1857年にベルギーの労働者家計の調査（家計簿）から見いだした。' +
+      '食料費の割合（エンゲル係数）は生活水準を測る代表的な指標として、国や時代の豊かさの比較に用いられる。ただし家族構成や食料価格、外食・中食の動向などの影響も受けるため、単純な比較には注意が必要とされる。',
+    keyFigures: '所得増→家計の食料費割合(エンゲル係数)が低下／食料は必需品で所得弾力性が低い(0〜1の間)／E.エンゲル1857がベルギー家計調査から発見／エンゲル係数は生活水準の指標／家族構成・価格・外食動向の影響に注意',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Engel-curve', type: 'reference', label: 'Encyclopaedia Britannica — Engel curve / Engel\'s law' },
+      { url: 'https://www.britannica.com/money/Ernst-Engel', type: 'reference', label: 'Encyclopaedia Britannica — Ernst Engel（人物・1857年/ベルギー家計調査）' },
+      { url: 'https://fredblog.stlouisfed.org/2016/10/engels-law-is-still-good-food-for-thought/', type: 'government', label: 'St. Louis Fed（FRED Blog）— Engel\'s law' },
+    ],
+  },
+  {
+    id: 'econ-beveridge-curve',
+    discipline: 'economics',
+    title: 'ベバリッジ曲線（UV曲線）',
+    statement:
+      '失業率（Unemployment）と欠員率・求人率（Vacancy）の関係を表す右下がりの曲線。横軸に失業率、縦軸に欠員率をとると、好況期は欠員が多く失業が少なく（左上）、不況期は欠員が少なく失業が多い（右下）というように、両者は負の相関を示し、景気循環に伴って曲線上を動く。' +
+      'イギリスの経済学者ウィリアム・ベバリッジ（『自由社会における完全雇用』1944年）にちなんで名付けられた。重要なのは曲線の位置（原点からの距離）で、失業も欠員もともに高い（曲線が右上方＝外側へシフトする）状態は、求人と求職がうまく結びつかない労働市場の「マッチング効率の悪化」を示し、構造的失業やミスマッチの拡大を意味する。逆に内側へのシフトはマッチング改善を示す。' +
+      '労働市場の効率性や構造的失業を分析する道具として、中央銀行（各地区連銀）や労働経済学で用いられる。',
+    keyFigures: '失業率と欠員率(求人率)の負の相関を表す右下がり曲線／景気循環で曲線上を移動(好況=低失業高欠員、不況=高失業低欠員)／W.ベバリッジ(Full Employment in a Free Society, 1944)にちなむ／曲線の外側シフト=マッチング効率悪化・構造的失業の拡大／労働市場の効率性分析に利用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.richmondfed.org/publications/research/economic_brief/2021/eb_21-36', type: 'government', label: 'Richmond Fed — Revisiting the Beveridge Curve（外側シフト＝マッチング効率低下）' },
+      { url: 'https://www.stlouisfed.org/on-the-economy/2022/jul/beveridge-curve-labor-market-recovery', type: 'government', label: 'St. Louis Fed — What Does the Beveridge Curve Tell Us about the Labor Market Recovery?' },
+      { url: 'https://en.wikipedia.org/wiki/Beveridge_curve', type: 'reference', label: 'Wikipedia — Beveridge curve（定義・W.ベバリッジ由来・1944年著作）' },
+    ],
+  },
+  {
+    id: 'mgmt-shared-value',
+    discipline: 'management',
+    title: '共有価値の創造（CSV）',
+    statement:
+      '企業が社会的課題の解決を事業の中核に組み込み、社会的価値と経済的価値（利益）を同時に生み出すことを目指す経営の考え方。マイケル・ポーターとマーク・クラマーが2011年のHarvard Business Review論文「Creating Shared Value」で提唱した。' +
+      '利益を上げた後に一部を社会貢献に充てる従来のCSR（企業の社会的責任）が、利益とは切り離された「コスト」「義務」として扱われがちなのに対し、CSVは社会課題への対応そのものを競争力・収益の源泉と捉える点に違いがある。彼らは共有価値を生む方法として、(1)製品と市場の再定義（社会ニーズを満たす製品で新市場を開拓）、(2)バリューチェーンの生産性の再定義（資源効率・労働環境の改善でコスト削減と社会便益を両立）、(3)地域クラスターの形成（立地地域の産業基盤・人材を育てる）の3つを挙げた。' +
+      '一方、CSRの焼き直しにすぎない、トレードオフを過小評価しているとの批判もある（Crane et al. 2014）。',
+    keyFigures: 'M.ポーター&M.クラマー2011 HBR「Creating Shared Value」／社会的価値と経済的価値を同時創造／CSR(利益と分離した義務)との違い＝社会課題を競争力の源泉に／3つの方法：製品市場の再定義・バリューチェーンの再定義・地域クラスター形成／CSRの焼き直し等の批判',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2011/01/the-big-idea-creating-shared-value', type: 'academic', label: 'Porter & Kramer, "The Big Idea: Creating Shared Value," Harvard Business Review, Jan–Feb 2011（一次資料）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=39071', type: 'academic', label: 'Harvard Business School Faculty & Research — "Creating Shared Value"（書誌・要旨）' },
+      { url: 'https://journals.sagepub.com/doi/10.1525/cmr.2014.56.2.130', type: 'academic', label: 'Crane, Palazzo, Spence & Matten, "Contesting the Value of Creating Shared Value," California Management Review 56(2), 2014（査読・批判）' },
+    ],
+  },
+  {
+    id: 'human-achievement-motivation',
+    discipline: 'human-science',
+    title: '達成動機理論（マクレランドの3欲求）',
+    statement:
+      '人の動機づけを後天的に獲得された欲求から説明する理論で、心理学者デイヴィッド・マクレランドが提唱した（「欲求理論」「習得された欲求理論／Acquired Needs Theory」とも呼ばれる）。人は生まれつきではなく文化や経験を通じて3つの欲求をもち、その強さの違いが行動を方向づけるとする：' +
+      '(1)達成欲求（need for achievement＝困難だが現実的な目標を自らの力で成し遂げたい。適度なリスクや具体的・即時的なフィードバック、結果が自分の努力に帰属する課題を好む）、(2)権力欲求（need for power＝他者に影響を与え統制したい）、(3)親和欲求（need for affiliation＝他者と良好な関係を築き受け入れられたい）。' +
+      'マクレランドは特に達成欲求に注目し、達成欲求の高い人は起業家や成果志向の職務で力を発揮する一方、優れた管理者・トップには他者を組織目的に向けて動かす社会的（制度的）権力欲求が重要だと論じた。欲求は研修等で開発可能ともされ、動機づけ・人材配置・リーダーシップ開発に応用される。欲求は投影法であるTAT（主題統覚検査）で測定された。',
+    keyFigures: 'D.マクレランドが提唱（主著『The Achieving Society』1961）／後天的に習得される3欲求：達成・権力・親和／達成欲求の高い人は適度なリスク・具体的FBを好み成果志向／優れた管理者・トップには社会的権力欲求／TAT(投影法)で測定／人材配置・リーダーシップ開発に応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/psychology/need-theory-three-needs-theory', type: 'reference', label: 'EBSCO Research Starters (Psychology) — Need theory (Three Needs Theory)' },
+      { url: 'https://courses.lumenlearning.com/suny-hccc-orgbehavior/chapter/5-2-need-based-theories-of-motivation/', type: 'academic', label: 'SUNY / Lumen Learning, Organizational Behavior 5.2 — Need-Based Theories of Motivation' },
+      { url: 'https://www.newworldencyclopedia.org/entry/David_McClelland', type: 'reference', label: 'New World Encyclopedia — David McClelland' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/31782177/', type: 'academic', label: 'PubMed (History of the Human Sciences) — McClelland, McBer & the business of the TAT, 1962–1985' },
+    ],
+  },
+  {
+    id: 'bizlaw-workers-comp',
+    discipline: 'business-law',
+    title: '労働者災害補償保険法（労災保険）',
+    statement:
+      '労働者が業務上の事由（業務災害）または通勤による負傷・疾病・障害・死亡について、必要な保険給付を行う政府管掌の社会保険制度を定める法律。1947年（昭和22年）に制定された。' +
+      '労働基準法は使用者に労働災害の無過失補償責任を課しているが、使用者の支払能力に関わらず確実に補償するため、国が保険者となる労災保険でこれを担保する仕組みである。保険料は原則として全額事業主が負担し、労働者の負担はない。給付には、療養（補償）給付（治療費）、休業（補償）給付（休業中の所得補償）、障害（補償）給付、遺族（補償）給付、傷病（補償）年金、介護（補償）給付などがある。' +
+      '労働者を一人でも雇う事業は原則として強制適用で、正社員・パートを問わず適用される。1973年改正で通勤災害も給付対象に加えられた。厚生労働省（労働基準監督署）が所管・運営する。',
+    keyFigures: '業務災害・通勤災害による負傷/疾病/障害/死亡を補償する政府管掌の社会保険／1947年(昭和22年)制定／労基法の使用者の無過失補償責任を担保／保険料は原則全額事業主負担(労働者負担なし)／療養・休業・障害・遺族給付等／労働者を雇う事業は原則強制適用／1973年改正で通勤災害も対象／労基署が所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000050', type: 'government', label: 'e-Gov法令検索 労働者災害補償保険法（昭和22年法律第50号）法令本文' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/rousaihoken.html', type: 'government', label: '労災保険制度｜厚生労働省' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/roudouhokenpoint/', type: 'government', label: '労災保険・雇用保険の特徴｜厚生労働省（保険料全額事業主負担）' },
+    ],
+  },
+  {
+    id: 'infosoc-net-neutrality',
+    discipline: 'information-sociology',
+    title: 'ネットワーク中立性',
+    statement:
+      'インターネット・サービス・プロバイダ（ISP）は、ネットワーク上を流れるすべての通信（データ・パケット）を、その内容・送信元・宛先・アプリケーション・利用デバイスなどによって差別せず、平等に扱うべきだとする原則。コロンビア大学の法学者ティム・ウーが2003年の論文で「network neutrality」という用語を提示した。' +
+      'ISPによる特定サービスのブロッキング（遮断）、スロットリング（速度の意図的低下）、対価を払った事業者を優先する「有料優先（ペイド・プライオリタイゼーション）/ファストレーン」などを禁じることを内容とする。これにより、巨大事業者でも新興のスタートアップでも同じ条件でユーザーに到達でき、表現の自由・公正な競争・イノベーションが守られると主張される。' +
+      '一方、ISPによる設備投資のインセンティブを損なう、混雑管理を妨げるなどの反対論もあり、米国（FCCの規則をめぐる二転三転＝2015採択/2017撤廃/2024再導入）やEU、各国で規制のあり方が議論されている。',
+    keyFigures: 'ISPは全通信を内容・送信元・宛先等で差別せず平等に扱うべきとの原則／T.ウー(コロンビア大学)が2003年に用語を提示／禁止対象：ブロッキング・スロットリング・有料優先(ファストレーン)／表現の自由・公正競争・イノベーション保護の論拠／設備投資阻害等の反対論、米FCC等で規制が論争',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.columbia.edu/faculty_scholarship/1281/', type: 'academic', label: 'Tim Wu, "Network Neutrality, Broadband Discrimination" (2003) — Columbia Law School Scholarship（原論文）' },
+      { url: 'https://www.britannica.com/procon/net-neutrality-debate', type: 'reference', label: 'Encyclopaedia Britannica — Net Neutrality | Pros, Cons, Debate' },
+      { url: 'https://www.fcc.gov/cwjr-archives-net-neutrality', type: 'government', label: 'U.S. Federal Communications Commission (FCC) — Net Neutrality' },
+      { url: 'https://eur-lex.europa.eu/EN/legal-content/summary/the-open-internet-and-net-neutrality.html', type: 'government', label: 'EUR-Lex — The open internet and net neutrality (Regulation (EU) 2015/2120)' },
+    ],
+  },
 ];
 // Stryker restore all
