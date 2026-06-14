@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経済学（全165件）
+### 学術概念 / 経済学（全166件）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]]
 - [[econ-arbitrage-pricing-theory|裁定価格理論（APT）]]
-- …ほか 159 件 → [[学術概念]]
+- …ほか 160 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全94件）
+### 学術概念 / 情報社会学（全95件）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]]
 - [[infosoc-attention-economy|アテンション・エコノミー（注意経済）]]
 - [[infosoc-collective-intelligence|集合知（collective intelligence）]]
 - [[infosoc-collective-memory|集合的記憶]]
-- …ほか 88 件 → [[学術概念]]
+- …ほか 89 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]

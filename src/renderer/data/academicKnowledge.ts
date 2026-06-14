@@ -9207,5 +9207,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.3758/s13414-017-1408-4', type: 'academic', label: 'Wiradhany & Nieuwenstein (2017) 追試＋メタ分析, Attention, Perception, & Psychophysics（再現性議論）' },
     ],
   },
+  {
+    id: 'econ-hotelling-law',
+    discipline: 'economics',
+    title: 'ホテリングの法則（最小差別化の原理）',
+    statement:
+      'ホテリングの法則（最小差別化の原理, principle of minimum differentiation）は、競争する売り手が製品特性や立地を互いに似せて市場の中央へ集まる傾向を示す空間競争モデルである。ハロルド・ホテリングが1929年の論文「Stability in Competition」（Economic Journal 39巻41-57頁）で提示した。古典的比喩では、一様に分布する消費者が最近接の売り手から買う線分状のビーチに2人のアイス売りが立地するとき、各自が顧客を奪おうと相手側へ寄り、社会最適の各1/4地点ではなく中央（中位点）に隣接して集中する。' +
+      'この帰結は政治学のダウンズ中位投票者定理（2大政党の中道収斂）や店舗・ガソリンスタンドの集積の説明に用いられる。ただし限界もあり、3者以上では均衡が存在しない場合があるほか、ダスプレモンら（1979, Econometrica）は価格競争を含めると売り手が近すぎる時に価格均衡が存在せず、二次輸送費用の下ではむしろ「最大差別化」が生じることを示し、最小差別化の原理を批判・修正した。',
+    keyFigures:
+      'ハロルド・ホテリング（Harold Hotelling, 1929）／アンソニー・ダウンズ（中位投票者定理）／ダスプレモン・ガブシェヴィッチ・ティス（1979・批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Hotelling%27s_law', type: 'reference', label: 'Wikipedia「Hotelling’s law」（原典書誌・最小差別化・中位均衡・1979年批判）' },
+      { url: 'https://www.math.toronto.edu/mccann/assignments/477/Hotelling29.pdf', type: 'academic', label: 'Harold Hotelling, “Stability in Competition,” Economic Journal 39 (1929): 41-57（トロント大学ホストの原典PDF）' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/browse/1979/09/01/hotellings-stability-competition', type: 'academic', label: 'd’Aspremont, Gabszewicz & Thisse, “On Hotelling’s Stability in Competition,” Econometrica 47(5) (1979): 1145-1150（Econometric Society）' },
+    ],
+  },
+  {
+    id: 'mgmt-tuckman-stages',
+    discipline: 'management',
+    title: 'タックマンのチーム発達段階モデル',
+    statement:
+      'チーム（小集団）が形成から成熟に至るまでに通常たどる発達段階を示したモデル。心理学者ブルース・W・タックマンが1965年の論文「Developmental sequence in small groups」（Psychological Bulletin 誌）で約50件の研究をレビューし4段階を提示した。' +
+      '(1)フォーミング（形成期）＝メンバーが集まり互いに様子を見て依存的・礼儀的で、目標や役割が不明確、(2)ストーミング（混乱期）＝対立・主導権争い・感情的衝突が生じ課題要求への抵抗が現れる、(3)ノーミング（規範形成期）＝抵抗が克服され規範・役割が定まり結束と協力が生まれる、(4)パフォーミング（遂行期）＝対人構造が課題遂行の道具となりチームが一体化して高い成果を出す。1977年にタックマンとメアリー・アン・ジェンセンが第5段階(5)アジャーニング（散会期）＝目標達成後にチームが解散する、を追加した。チームビルディングやプロジェクトマネジメントで広く用いられるが、発達は必ずしも線形・一方向ではなく段階を行き来・退行することもあると指摘される。',
+    keyFigures:
+      'ブルース・W・タックマン（Bruce W. Tuckman, 1965）／メアリー・アン・C・ジェンセン（Mary Ann C. Jensen, 1977・第5段階追加）／forming・storming・norming・performing・adjourning',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/14314073/', type: 'academic', label: 'Tuckman, B.W. (1965) Developmental sequence in small groups. Psychological Bulletin 63(6): 384-399 (PubMed)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/105960117700200404', type: 'academic', label: 'Tuckman, B.W. & Jensen, M.A.C. (1977) Stages of Small-Group Development Revisited. Group and Organization Studies 2(4): 419-427 (SAGE)' },
+      { url: 'https://infed.org/dir/welcome/bruce-w-tuckman-forming-storming-norming-and-performing-in-groups/', type: 'reference', label: 'infed.org — Bruce W. Tuckman: forming, storming, norming and performing（各段階定義・非線形性）' },
+    ],
+  },
+  {
+    id: 'human-cocktail-party-effect',
+    discipline: 'human-science',
+    title: 'カクテルパーティー効果',
+    statement:
+      'カクテルパーティー効果とは、多数の話者が同時に発話する騒がしい環境でも、特定の話者の声や自分に関連する情報（自分の名前など）に選択的に注意を向けて聞き取れる聴覚的選択的注意の現象である。' +
+      'コリン・チェリーが1953年に「カクテルパーティー問題」として研究・命名し、両耳分離聴（dichotic listening）と追唱（shadowing）課題を用いた。注意研究の中心的トピックで、ブロードベントの初期選択説（フィルターが知覚の早い段階で非選択情報を遮断）に対し、非注意の耳の自分の名前に気づくモレイ（1959）の知見が後期選択説やトリーズマンの減衰説（非注意情報は遮断されず減衰し意味処理も一部行われる）を支持した。聴覚情景分析や音源分離（補聴器・音声認識）にも関連する。',
+    keyFigures:
+      'コリン・チェリー（Colin Cherry, 1953・命名）／ドナルド・ブロードベント（初期選択説）／ニール・モレイ（Moray 1959）／アン・トリーズマン（減衰説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubs.aip.org/asa/jasa/article/25/5/975/690150/Some-Experiments-on-the-Recognition-of-Speech-with', type: 'academic', label: 'Cherry, E. C. (1953) Some Experiments on the Recognition of Speech, with One and with Two Ears. J. Acoust. Soc. Am. 25(5):975-979（一次論文）' },
+      { url: 'https://www.audiology.org/the-cocktail-party-effect/', type: 'reference', label: 'The Cocktail Party Effect — American Academy of Audiology（米国聴覚学会）' },
+      { url: 'https://en.wikipedia.org/wiki/Cocktail_party_effect', type: 'reference', label: 'Cocktail party effect — Wikipedia（フィルター説/減衰説の論争）' },
+    ],
+  },
+  {
+    id: 'human-change-blindness',
+    discipline: 'human-science',
+    title: '変化盲（チェンジ・ブラインドネス）',
+    statement:
+      '変化盲（change blindness）とは、視覚的シーンに生じた比較的大きな変化を、観察者がそれと気づかず見落とす現象。とくに変化が視覚的な遮り——サッカード（眼球運動）、まばたき、画面の一瞬の空白（フリッカー）、編集のカット、妨害刺激（mudsplashes）——と同時に起こると、変化を知らせる過渡的信号がかき消され、検出が著しく困難になる。' +
+      'レンシンクら（1997）のフリッカー課題（原画像と変化画像を短い空白を挟んで交互提示）は注意を向けた対象でしか変化が検出されにくいことを示し、シモンズ＆レビン（1998）の「ドア実験」では会話相手が遮蔽中に別人へ入れ替わっても約半数が気づかなかった。注意を向けた情報しか詳細には保持されないことを示唆し、目撃証言・運転・UI設計に応用される。予期しない新規対象を見落とす非注意性盲目（見えないゴリラ）とは区別され、自分の検出能力を過信する「変化盲盲」も知られる。',
+    keyFigures:
+      'ロナルド・レンシンク（Ronald A. Rensink, 1997 フリッカー課題）／ダニエル・シモンズ（Daniel Simons）＆ダニエル・レビン（Daniel Levin, 1998 ドア実験）／非注意性盲目とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www2.psych.ubc.ca/~rensink/publications/download/PsychSci97-RR.pdf', type: 'academic', label: 'Rensink, O’Regan & Clark (1997) “To See or Not to See...,” Psychological Science 8(5):368（UBC）' },
+      { url: 'https://link.springer.com/article/10.3758/BF03208840', type: 'academic', label: 'Simons & Levin (1998) “Failure to detect changes to people during a real-world interaction,” Psychonomic Bulletin & Review（ドア実験）' },
+      { url: 'https://dictionary.apa.org/change-blindness', type: 'reference', label: 'APA Dictionary of Psychology — “change blindness”' },
+    ],
+  },
+  {
+    id: 'bizlaw-benefit-of-time',
+    discipline: 'business-law',
+    title: '期限の利益（民法136条）',
+    statement:
+      '期限の利益とは、法律行為に期限（とくに弁済期などの終期）が付されていることにより当事者が受ける利益をいう。たとえば「1年後に返済すればよい」という金銭債務では、債務者は期限到来まで履行を猶予されるという利益を持つ。民法136条1項は「期限は、債務者の利益のために定めたものと推定する」と定め、これは反証可能な推定規定である。' +
+      '同条2項は「期限の利益は、放棄することができる。ただし、これによって相手方の利益を害することはできない」と定め、債務者は期限前弁済により期限の利益を放棄できるが、相手方（銀行等）の利息の利益を害する場合は調整を要する。民法137条は、債務者が破産手続開始の決定を受けたとき、担保を滅失・損傷・減少させたとき、担保供与義務を履行しないときは、債務者は期限の利益を主張できないと定める。実務では金銭消費貸借契約に「期限の利益喪失条項」が広く置かれる。',
+    keyFigures:
+      '136条1項：期限は債務者の利益と推定（反証可能）／136条2項：放棄可だが相手方の利益を害せない／137条の喪失事由＝破産手続開始の決定・担保の滅失損傷減少・担保供与義務の不履行／喪失は当然の期限到来でなく債権者が直ちに請求可能／実務の期限の利益喪失条項／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089、第136条・第137条）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第136条', type: 'reference', label: 'Wikibooks 民法第136条（期限の利益及びその放棄）' },
+      { url: 'https://tek-law.jp/civil-code/general-provisions/juridical-acts/conditions-and-time-limits/article-137/', type: 'reference', label: '民法第137条（期限の利益の喪失）条文・解説' },
+    ],
+  },
+  {
+    id: 'infosoc-infodemic',
+    discipline: 'information-sociology',
+    title: 'インフォデミック',
+    statement:
+      'インフォデミック（infodemic）とは information（情報）と epidemic（伝染病・流行）の混成語で、感染症の流行など健康危機の際に、正確な情報と不正確な情報・誤情報・偽情報が大量にあふれ、人々が信頼できる情報源や適切な指針を見つけにくくなる状況を指す。' +
+      '語はジャーナリスト／政治アナリストのデイヴィッド・ロスコフが2003年のSARS流行時にワシントン・ポストの論考（2003年5月11日）で用い、世界保健機関（WHO）がCOVID-19パンデミック（2020年）の文脈で「ある問題に関しデジタル・物理環境を含め情報が過剰にあふれること（誤情報・偽情報を含む）」と位置づけ広めた。誤情報（misinformation＝意図せぬ誤り）と偽情報（disinformation＝意図的な虚偽）を含み、SNSによる急速な拡散が増幅要因となる。健康行動・ワクチン忌避・パニック・公衆衛生対策の妨げと関連し、WHOはその対処を「インフォデミック・マネジメント（infodemic management）」と呼んで取り組む。',
+    keyFigures:
+      'デイヴィッド・ロスコフ（David J. Rothkopf, 2003年に造語）／世界保健機関（WHO, COVID-19で概念を普及・対応枠組みを整備）／misinformation（誤情報）とdisinformation（偽情報）を含む',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.who.int/health-topics/infodemic/understanding-the-infodemic-and-misinformation-in-the-fight-against-covid-19', type: 'government', label: 'WHO「Understanding the infodemic and misinformation in the fight against COVID-19」— 定義・誤情報/偽情報の区別' },
+      { url: 'https://en.wikipedia.org/wiki/Infodemic', type: 'reference', label: 'Wikipedia「Infodemic」— 語源（information+epidemic）・ロスコフ2003年造語' },
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/14614448211031908', type: 'academic', label: 'Simon & Camargo (2021) “Autopsy of a metaphor: ... the ‘infodemic’”, New Media & Society（査読論文）' },
+    ],
+  },
 ];
 // Stryker restore all
