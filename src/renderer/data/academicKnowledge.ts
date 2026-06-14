@@ -5147,5 +5147,96 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.researchgate.net/publication/339494095_The_Myth_of_the_Privacy_Paradox', type: 'academic', label: 'Solove, D. J. (2021) “The Myth of the Privacy Paradox”, George Washington Law Review（批判的検討）' },
     ],
   },
+  {
+    id: 'econ-statistical-discrimination',
+    discipline: 'economics',
+    title: '統計的差別',
+    statement:
+      '雇用主などが個人の生産性を直接観察できない情報の不完全性のもとで、その個人が属する集団（人種・性別など）の平均的特性や統計的傾向を手がかりに個人を評価・選別することで生じる差別。利潤最大化を図る合理的主体が不確実性を補う過程で発生する点が特徴で、偏見・嫌悪に基づくゲーリー・ベッカーの「嗜好に基づく差別（taste-based discrimination）」とは区別される。' +
+      'エドマンド・フェルプス（1972）は集団間に外生的な平均生産性の差が（誤って）認識される情報的理由から、ケネス・アロー（1973）は均衡が自己成就する調整失敗（coordination failure）から、差別が生じうることを示した。アローのモデルでは、差別を予期した集団が教育・技能への投資意欲を下げ、その結果生産性が実際に低下してさらに差別が正当化されるという格差の固定・再生産（自己成就的予言）が論じられる。',
+    keyFigures: 'エドマンド・フェルプス（Edmund S. Phelps, 1972「The Statistical Theory of Racism and Sexism」, American Economic Review）／ケネス・アロー（Kenneth J. Arrow, 1973「The Theory of Discrimination」）／対比概念の提唱者ゲーリー・ベッカー（Gary Becker, 1957 嗜好に基づく差別）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Statistical_discrimination_(economics)', type: 'reference', label: 'Wikipedia「Statistical discrimination (economics)」（Arrow=調整失敗／Phelps=情報モデルの区別、taste-basedとの対比）' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v62y1972i4p659-61.html', type: 'academic', label: 'RePEc/IDEAS — Phelps, E.S. (1972) “The Statistical Theory of Racism and Sexism”, American Economic Review 62(4):659-661' },
+      { url: 'https://ocw.mit.edu/courses/14-662-labor-economics-ii-spring-2015/4d0a285f3797277f1d67cf3a9e3416d6_MIT14_662S15_lec_slides19.pdf', type: 'academic', label: 'MIT OpenCourseWare 14.662 Labor Economics II「Discrimination: Theory」（taste-based vs. statistical の講義スライド）' },
+      { url: 'https://academic.oup.com/ej/article/131/637/2018/5899046', type: 'academic', label: 'The Economic Journal (Oxford Academic)「A characterisation of “Phelpsian” statistical discrimination」（査読論文）' },
+    ],
+  },
+  {
+    id: 'econ-life-cycle-hypothesis',
+    discipline: 'economics',
+    title: 'ライフサイクル仮説',
+    statement:
+      '人々は現在の所得だけでなく生涯にわたって得られる所得（生涯所得）を見越して消費・貯蓄を計画し、消費水準を生涯を通じて平準化（consumption smoothing）しようとするとする消費理論。所得の低い若年期には借入を行い、所得の高い勤労期には貯蓄して資産を蓄積し、所得が途絶える引退後にはその資産を取り崩して消費を維持する。この結果、年齢に応じて貯蓄率が山型（hump-shaped）を描く貯蓄行動が説明される。' +
+      '消費は各時点の所得ではなく生涯所得の現在価値を制約条件とする効用最大化計画によって決まると考える点で、現在所得に依存するとしたケインズの絶対所得仮説を批判・発展させたもの。フリードマンの恒常所得仮説と並ぶ消費理論の柱であり、マクロの貯蓄・資産形成や年金・人口動態の分析に応用される。',
+    keyFigures: 'フランコ・モディリアーニ（Franco Modigliani）／リチャード・ブランバーグ（Richard Brumberg）／アルバート・安藤（Albert Ando）／初出：Modigliani & Brumberg (1954)／モディリアーニは1985年ノーベル経済学賞受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1985/modigliani/facts/', type: 'government', label: 'NobelPrize.org — 1985年経済学賞（Franco Modigliani、ライフサイクル仮説に対する公式授賞理由）' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/modigliani-lecture.pdf', type: 'government', label: 'Franco Modigliani, Nobel Lecture “Life Cycle, Individual Thrift and the Wealth of Nations” (1985)' },
+      { url: 'https://www.britannica.com/money/life-cycle-theory-explained', type: 'reference', label: 'Encyclopædia Britannica — “What Is the Life-Cycle Theory in Economics?”（Modigliani & Brumberg 1954、消費平準化、山型）' },
+    ],
+  },
+  {
+    id: 'mgmt-psychological-contract',
+    discipline: 'management',
+    title: '心理的契約',
+    statement:
+      '心理的契約（psychological contract）とは、従業員と組織（雇用者）の間に存在する、明文化されていない相互の義務・期待についての、従業員側の主観的な信念を指す。給与・雇用保障・昇進機会・能力開発などをめぐり「会社はこうしてくれるはず」「自分はこう貢献する」といった、互恵的交換関係に基づく暗黙の約束として認知される。内容に応じて、金銭的・短期的・限定的な義務からなる「取引的契約（transactional）」と、忠誠・長期雇用・情緒的サポートを含む「関係的契約（relational）」に類型化される。' +
+      '従業員がこの契約を組織に破られた（違反された）と認知すると（心理的契約の違反 breach/violation）、信頼の低下、職務満足や組織コミットメントの低下、離職意図の増大といった負の反応が生じる。組織コミットメントや公平理論とは区別される独立した概念である。',
+    keyFigures: 'デニス・M・ルソー（Denise M. Rousseau, 1989年に現代的に再定義・体系化、取引的／関係的の類型化）／初期の概念的言及：クリス・アージリス（1960）／ハリー・レビンソン／エドガー・シャイン／違反研究：Robinson & Morrison (2000)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF01384942', type: 'academic', label: 'Rousseau, D. M. (1989). Psychological and implied contracts in organizations. Employee Responsibilities and Rights Journal, 2, 121–139.（Springer／一次文献）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1744-6570.2007.00087.x', type: 'academic', label: 'Zhao, H. et al. (2007). The Impact of Psychological Contract Breach on Work-Related Outcomes: A Meta-Analysis. Personnel Psychology (Wiley／査読メタ分析)' },
+      { url: 'https://en.wikipedia.org/wiki/Psychological_contract', type: 'reference', label: 'Psychological contract — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-stereotype-threat',
+    discipline: 'human-science',
+    title: 'ステレオタイプ脅威',
+    statement:
+      '人が、自分の属する集団についての否定的なステレオタイプ（例「女性は数学が苦手」「特定人種は学力が低い」）を意識する状況で、それを自ら裏づけてしまうことへの不安・プレッシャーが生じ、本来の能力を発揮できずパフォーマンスが低下する現象。クロード・スティールとジョシュア・アロンソンが1995年（JPSP誌）にアフリカ系アメリカ人学生の難度の高い言語能力テストを用い、「能力診断的」と告げた条件でのみ成績が低下することを実証した。' +
+      '機序としては、不安・自己監視・否定的思考の抑制がワーキングメモリ（実行機能）を占有・消耗させ、課題遂行に必要な認知資源を奪うとされる（Schmader & Johns 2003 ほか）。なお近年は再現性をめぐる議論があり、メタ分析では出版バイアスや効果量の誇張、地域差（欧州誌で大、北米誌で小）が指摘され、効果の頑健性については中立的評価が続いている。',
+    keyFigures: 'Claude M. Steele（クロード・スティール）／Joshua Aronson（ジョシュア・アロンソン）／初出：Steele & Aronson (1995), Journal of Personality and Social Psychology, 69(5), 797-811',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nyuscholars.nyu.edu/en/publications/stereotype-threat-and-the-intellectual-test-performance-of-africa', type: 'academic', label: 'NYU Scholars — Steele & Aronson (1995) 原著の大学公式書誌レコード' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0963721409359292', type: 'academic', label: 'Schmader (2010) “Stereotype Threat Deconstructed”, Current Directions in Psychological Science（WM機序）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11268653/', type: 'academic', label: 'PLOS One／PMC — ステレオタイプ脅威メタ分析（出版バイアス・効果量・再現性議論）' },
+    ],
+  },
+  {
+    id: 'bizlaw-standard-terms',
+    discipline: 'business-law',
+    title: '定型約款（民法548条の2）',
+    statement:
+      '定型約款とは、ある特定の者が不特定多数の者を相手方として行う取引（定型取引）であって、その内容の全部又は一部が画一的であることが双方にとって合理的なものについて、契約の内容とすることを目的としてその者により準備された条項の総体をいう（保険約款・預金規定・通信約款・各種利用規約等）。2020年4月1日施行の平成29年改正民法で新設された制度で、民法548条の2〜548条の4が規律する。' +
+      '定型取引を行う合意があり、かつ定型約款を契約内容とする旨の合意をしたとき、又は定型約款を準備した者があらかじめその定型約款を契約の内容とする旨を相手方に表示していたときは、個別の条項についても合意したものとみなされる（みなし合意、548条の2第1項）。ただし相手方の権利を制限し義務を加重する条項であって、信義則に反して相手方の利益を一方的に害すると認められる不当条項は、合意をしなかったものとみなされる（同条2項）。約款内容の表示（548条の3）・一定要件下での約款変更（548条の4）も定める。',
+    keyFigures: '根拠条文＝民法548条の2〜548条の4（平成29年改正で新設）／施行日＝2020年4月1日／定義＝不特定多数を相手方とする画一的取引が双方に合理的な「定型取引」のために準備された条項の総体／みなし合意（548条の2第1項）／不当条項規制（548条の2第2項）／内容の表示（548条の3）・約款の変更（548条の4）／典型例＝保険約款・預金規定・通信約款・各種利用規約',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、law id 129AC0000000089）第548条の2〜第548条の4' },
+      { url: 'https://www.zenginkyo.or.jp/fileadmin/res/abstract/affiliate/kinpo/kinpo2016_2_5.pdf', type: 'academic', label: '山田誠一「定型約款に関する規定（548条の2、548条の3）について」金融法務研究会（全国銀行協会）' },
+      { url: 'https://www.businesslawyers.jp/practices/1093', type: 'media', label: 'BUSINESS LAWYERS「民法改正により新設された定型約款とは」' },
+    ],
+  },
+  {
+    id: 'infosoc-collective-memory',
+    discipline: 'information-sociology',
+    title: '集合的記憶',
+    statement:
+      '集合的記憶（collective memory／集団的記憶）とは、記憶を個人の脳内だけの営みではなく、家族・宗教集団・社会階級・国民といった集団によって共有され、社会的枠組み（cadres sociaux／social frameworks）の中で構築・想起されるものとして捉える概念である。フランスの社会学者モーリス・アルヴァックスが、デュルケームの集合表象論を継承して1925年『記憶の社会的枠組み』で定式化した。彼は「人は決して独りで想起するのではない」とし、個人の記憶もまた所属集団の枠組みに依存すると論じた。' +
+      '集団は記念・儀礼・記念碑・メディアを通じて過去を再構成し、現在の集団アイデンティティを支える。後にピエール・ノラの「記憶の場（lieux de mémoire）」、ヤン・アスマンの「文化的記憶／コミュニケーション的記憶」へと展開し、デジタル・メディア時代の記憶（コネクティブ・メモリ）研究にもつながっている。メディアイベント・スペクタクル論とは別概念。',
+    keyFigures: 'モーリス・アルヴァックス（Maurice Halbwachs, 1877-1945）が提唱、初出は『記憶の社会的枠組み』（Les cadres sociaux de la mémoire, 1925）／エミール・デュルケーム（集合表象の源流）／『集合的記憶』（La mémoire collective, 1950年遺著）／ピエール・ノラ（記憶の場）／ヤン・アスマン（文化的記憶）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/O/bo3619875.html', type: 'academic', label: 'Maurice Halbwachs, On Collective Memory (ed./tr. Lewis A. Coser), University of Chicago Press' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/collective-memory', type: 'reference', label: 'Collective Memory — EBSCO Research Starters' },
+      { url: 'https://en.wikipedia.org/wiki/Collective_memory', type: 'reference', label: 'Collective memory — Wikipedia (Halbwachs, Nora, Assmann)' },
+    ],
+  },
 ];
 // Stryker restore all
