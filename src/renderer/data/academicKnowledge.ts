@@ -5890,5 +5890,96 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.1007/s40685-018-0069-z', type: 'academic', label: 'Business Research / Springer (2018) 査読レビュー論文 — 情報過多の文献レビューと枠組み' },
     ],
   },
+  {
+    id: 'econ-tiebout-model',
+    discipline: 'economics',
+    title: 'ティブー・モデル（足による投票）',
+    statement:
+      '地方公共財（地域ごとの公共サービスと税の組合せ）の効率的供給を論じるモデル。住民が自分の選好に最も合った税・サービスの組合せを提供する自治体を選んで移住すること（＝「足による投票 voting with one’s feet」）で、あたかも市場のように選好が顕示され、地方公共財が効率的に供給されうるとする。これにより、サミュエルソンらが指摘した「公共財は選好が市場的に顕示されず効率的供給が困難」という問題が、地方レベルでは住民の移動によって部分的に解決されうると主張した。' +
+      'チャールズ・ティブーが1956年論文「A Pure Theory of Local Expenditures」（Journal of Political Economy）で提示。多数の自治体・住民の完全な移動可能性・完全情報・自治体間の外部性（スピルオーバー）なし・各自治体の固定的なサービス水準などの強い前提に依存する。現実には移動費用・住宅市場・雇用や社会的紐帯による移動制約、教育等での経済的・人種的分離（公平性）といった問題があり、現実妥当性への批判も中立的に存在する。',
+    keyFigures: 'チャールズ・ティブー（Charles M. Tiebout、提唱者）／初出: “A Pure Theory of Local Expenditures”, Journal of Political Economy, vol.64 no.5, pp.416–424 (1956)／背景: サミュエルソン・マスグレイブの公共財・選好顕示問題への応答',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Tiebout_model', type: 'reference', label: 'Tiebout model — Wikipedia（概念・「足による投票」・前提・出典書誌）' },
+      { url: 'https://escholarship.org/uc/item/9fq454wm', type: 'academic', label: 'Charles M. Tiebout, A Pure Theory of Local Expenditures, 1956 — CSISS Classics（UC eScholarship）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803104612771', type: 'reference', label: 'Tiebout hypothesis — Oxford Reference（前提・効率性・批判の概説）' },
+      { url: 'https://www.lincolninst.edu/publications/books/tiebout-model-fifty', type: 'academic', label: 'The Tiebout Model at Fifty — Lincoln Institute of Land Policy（モデルの評価・限界）' },
+    ],
+  },
+  {
+    id: 'econ-marginal-revolution',
+    discipline: 'economics',
+    title: '限界革命（限界効用理論）',
+    statement:
+      '1870年代の経済学で起きた理論的転換。財の価値や価格を、生産に投下された労働量で説明する古典派の客観価値説（労働価値説）から、財を追加1単位消費することで得られる満足＝「限界効用（marginal utility）」という主観的・限界的概念で説明する方法へ移行した。価値は財の総効用や有用性ではなく、消費される最後の1単位の効用（限界効用）で決まるとし、消費量の増加とともに限界効用が低下する「限界効用逓減の法則」を導入。' +
+      'これにより、生命に不可欠な水が安価で装飾品のダイヤモンドが高価であるという「水とダイヤモンドのパラドックス（価値の逆説）」を、総効用ではなく限界効用の差として説明した。この主観的・限界的アプローチは、近代の新古典派経済学およびミクロ経済学（需要理論・一般均衡理論）の基礎となった。',
+    keyFigures: 'ウィリアム・スタンレー・ジェヴォンズ（英、『経済学の理論』1871）／カール・メンガー（オーストリア、『国民経済学原理』1871）／レオン・ワルラス（仏／スイス・ローザンヌ学派、『純粋経済学要論』1874）／三者がほぼ同時かつ独立に限界効用原理を提唱（1871〜1874）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Theory-of-Political-Economy', type: 'reference', label: 'Encyclopædia Britannica — The Theory of Political Economy (Jevons, 1871)' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_2237-1', type: 'reference', label: 'The New Palgrave Dictionary of Economics (SpringerLink) — “Marginal Revolution”' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/03017605.2025.2554037', type: 'academic', label: 'The Diamond-Water Paradox revisited: Jevons, Menger and Walras — marginal value theory（査読論文）' },
+    ],
+  },
+  {
+    id: 'mgmt-high-reliability-org',
+    discipline: 'management',
+    title: '高信頼性組織（HRO）',
+    statement:
+      '高信頼性組織（High Reliability Organizations, HRO）とは、原子力発電所、航空管制、航空母艦、緊急医療など、極めて高いリスクと複雑性を抱えながらも、長期間にわたり重大事故をほとんど起こさずに運営される組織、およびその特徴を研究する経営学・安全科学の分野である。カリフォルニア大学バークレー校のグループが1980年代に、複雑系では事故は不可避とするチャールズ・ペローの「ノーマル・アクシデント論（通常事故）」と対比する形で研究を始めた。' +
+      'カール・ワイクとキャスリーン・サトクリフは、HROに共通する「マインドフルネス（注意深い気づき）」の5原則として、(1)失敗へのこだわり、(2)単純化を避ける、(3)現場への敏感さ、(4)レジリエンスへのコミットメント、(5)専門知への敬意（権限でなく知識ある者に判断を委ねる）を整理した。これらが組織的マインドフルネスを生み、予期せぬ事態への対処を可能にする。',
+    keyFigures: 'カリフォルニア大学バークレー校の研究グループ（トッド・ラポート／カーレーン・ロバーツ／ジーン・ロックリン、1984年に研究開始）／K.ロバーツ初期論文 (1989)／カール・ワイク & キャスリーン・サトクリフ著『Managing the Unexpected』(2001) で5原則を定式化／対比理論：チャールズ・ペロー『Normal Accidents』(1984)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/High_reliability_organization', type: 'reference', label: 'Wikipedia「High reliability organization」— バークレー群、3研究対象、ノーマル・アクシデント論との対比' },
+      { url: 'https://ccrm.berkeley.edu/40th-anniversary-high-reliability-organizations-research', type: 'academic', label: 'UC Berkeley CCRM「40th Anniversary of High Reliability Organizations Research」' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/108602668900300202', type: 'academic', label: 'Karlene H. Roberts (1989) “New challenges in organizational research: high reliability organizations”, SAGE（査読誌）' },
+    ],
+  },
+  {
+    id: 'human-erikson-psychosocial',
+    discipline: 'human-science',
+    title: 'エリクソンの心理社会的発達理論',
+    statement:
+      '人間の自我（アイデンティティ）の発達を乳児期から老年期までの生涯にわたる8段階で捉える理論。各段階には固有の心理社会的危機（発達課題）があり、それを建設的に乗り越えることで人格的強み（徳）を獲得するとする。フロイトの心理性的発達論を社会・文化的次元へ拡張して提唱された。8段階は (1)乳児期：基本的信頼 対 不信（徳＝希望）、(2)幼児前期：自律性 対 恥・疑惑（意志）、(3)幼児後期：自発性 対 罪悪感（目的）、(4)児童期：勤勉性 対 劣等感（適格性）、(5)青年期：アイデンティティ 対 役割の混乱（忠誠）、(6)成人前期：親密性 対 孤立（愛）、(7)成人期：生殖性（世代性）対 停滞（世話）、(8)老年期：統合 対 絶望（英知）。' +
+      'とくに青年期のアイデンティティ確立と、その猶予期間としての「心理社会的モラトリアム」概念で知られる。',
+    keyFigures: 'エリク・H・エリクソン（Erik H. Erikson, 1902–1994）／初出：『幼児期と社会』（Childhood and Society, 1950）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK556096/', type: 'academic', label: 'Orenstein & Lewis “Erikson’s Stages of Psychosocial Development.” StatPearls, NCBI Bookshelf（査読制臨床リファレンス）' },
+      { url: 'https://www.britannica.com/topic/Childhood-and-Society', type: 'reference', label: 'Encyclopaedia Britannica — “Childhood and Society”（エリクソンの主著・初出1950）' },
+      { url: 'https://en.wikipedia.org/wiki/Erikson%27s_stages_of_psychosocial_development', type: 'reference', label: 'Wikipedia — “Erikson’s stages of psychosocial development”（8段階・各徳の一覧）' },
+    ],
+  },
+  {
+    id: 'bizlaw-assignment-of-claims',
+    discipline: 'business-law',
+    title: '債権譲渡（民法466条）',
+    statement:
+      '債権譲渡とは、債権をその同一性を保ったまま、譲渡人と譲受人の契約（合意）によって移転することをいう。民法466条1項は「債権は、譲り渡すことができる」と定め、譲渡自由を原則とする（ただし債権の性質がこれを許さないときを除く）。当事者が譲渡を禁止・制限する意思表示（譲渡制限特約）をしても、2017年改正・2020年4月施行の現行民法では債権譲渡の効力は妨げられない（466条2項）。' +
+      'もっとも、その特約につき悪意又は重過失の譲受人その他の第三者に対しては、債務者はその債務の履行を拒むことができる（466条3項）。第三者対抗要件として、譲渡人から債務者への通知又は債務者の承諾を要し（467条1項）、債務者以外の第三者に対抗するにはその通知・承諾が確定日付のある証書によることを要する（467条2項）。債務者は、対抗要件具備時までに譲渡人に対して生じた事由（弁済・相殺等）を譲受人に対抗できる（468条）。売掛債権の流動化・資金調達（ファクタリング等）に活用される。',
+    keyFigures: '民法466条1項＝譲渡自由の原則／466条2項＝譲渡制限特約があっても譲渡は有効／466条3項＝悪意・重過失の譲受人に対し債務者は履行を拒める／467条1項＝対抗要件は債務者への通知又は承諾／467条2項＝第三者対抗には確定日付ある証書を要する／468条＝債務者は対抗要件具備時までの抗弁事由を対抗可／2017年改正・2020年4月1日施行',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索「民法」（law id 129AC0000000089、466〜468条）' },
+      { url: 'https://www.moj.go.jp/content/000052602.pdf', type: 'government', label: '法務省 民法（債権関係）の改正に関する検討事項（債権譲渡）' },
+      { url: 'https://www.businesslawyers.jp/practices/1197', type: 'media', label: 'BUSINESS LAWYERS「民法改正で債権譲渡はどう変わった？譲渡禁止特約の効力は？」' },
+    ],
+  },
+  {
+    id: 'infosoc-liquid-modernity',
+    discipline: 'information-sociology',
+    title: 'リキッド・モダニティ（液状化する近代）',
+    statement:
+      'ポーランド出身の社会学者ジグムント・バウマンが著書『リキッド・モダニティ（Liquid Modernity）』(2000)で提示した、後期近代の社会を捉える概念。仕事・家族・階級・国家・アイデンティティといった固定的で頑健な制度や絆に支えられた「固体的近代（solid modernity）」から、すべてが流動的・一時的・不確実で絶えず変化し続ける「液状的近代（liquid modernity）」へ移行したと論じる。' +
+      '雇用は不安定化（プレカリティ化）し、人間関係や絆は一時的で解消可能なもの（後の著作で「液状の愛 liquid love」）となり、アイデンティティは固定されず絶えず作り直される。消費社会の論理が個人の生を貫き、確実性や恒久性が失われる一方、リスクや不安は個人化される。グローバル化・デジタル化・流動的労働の時代における自己と社会を分析する枠組みであり、ウルリヒ・ベックの「リスク社会」やアンソニー・ギデンズの「再帰的近代」と並ぶ後期近代論の一つ。',
+    keyFigures: '提唱者: ジグムント・バウマン（Zygmunt Bauman, 1925–2017, ポーランド出身の社会学者）／初出: 著書『Liquid Modernity』(Polity Press, 2000)／関連: 「液状の愛」は続編『Liquid Love』(2003)／関連理論家: ウルリヒ・ベック（リスク社会）・アンソニー・ギデンズ（後期/再帰的近代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Liquid-Modernity', type: 'reference', label: 'Encyclopædia Britannica — “Liquid Modernity” (work by Bauman)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100108465', type: 'reference', label: 'Oxford Reference — “Liquid modernity”（グローバル資本主義下の現在的条件を指すバウマンの語）' },
+      { url: 'https://link.springer.com/article/10.1186/2193-1801-2-191', type: 'academic', label: 'SpringerPlus (査読論文) — “Zygmunt Bauman. Individual and society in the liquid modernity” (2013)' },
+    ],
+  },
 ];
 // Stryker restore all
