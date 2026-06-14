@@ -4586,5 +4586,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/', type: 'academic', label: 'University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）' },
     ],
   },
+  {
+    id: 'econ-signaling',
+    discipline: 'economics',
+    title: 'シグナリング',
+    statement:
+      '情報の非対称性がある市場で、私的情報を持つ側（売り手・求職者など）が、自らのタイプ（質・能力）を、観察可能で模倣にコストのかかる行動を通じて、情報を持たない側へ信頼できる形で伝える仕組み。シグナルが信頼できるのは「単一交差（single-crossing）」性、すなわち高いタイプほど同じシグナルを発する限界費用が低く、低いタイプには模倣が割に合わないため。' +
+      '古典例はマイケル・スペンス（1973）の教育シグナル（学歴）で、教育が生産性を高めずとも能力の代理指標として機能し、能力別に行動が分かれる分離均衡が生じうる。情報を持たない側が契約メニュー等で相手を選別するスティグリッツのスクリーニングとは情報伝達の方向が逆で、アカロフのレモン市場（逆選択）とも区別される別概念である。',
+    keyFigures: '提唱者: A・マイケル・スペンス（A. Michael Spence）／初出: “Job Market Signaling”, Quarterly Journal of Economics, 1973, 87(3), 355–374／対概念スクリーニングの提唱者: ジョセフ・E・スティグリッツ／2001年ノーベル経済学賞をアカロフ・スペンス・スティグリッツの3名が「情報の非対称性のある市場の分析」で共同受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'government', label: 'NobelPrize.org「The 2001 Prize in Economic Sciences — Popular information」（シグナリングとスクリーニングの区別）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/87/3/355/1909092', type: 'academic', label: 'Michael Spence, “Job Market Signaling”, The Quarterly Journal of Economics 87(3): 355–374 (1973), Oxford Academic' },
+      { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia「Signalling (economics)」（コストのかかる信頼できるシグナル／スクリーニングとの対比）' },
+      { url: 'https://www.nber.org/news/joseph-e-stiglitz-george-akerlof-and-michael-spence-won-2001-nobel-prize-their-analyses-markets', type: 'academic', label: 'NBER「Stiglitz, Akerlof, and Spence Won 2001 Nobel Prize for Analyses of Markets with Asymmetric Information」' },
+    ],
+  },
+  {
+    id: 'mgmt-blue-ocean',
+    discipline: 'management',
+    title: 'ブルー・オーシャン戦略',
+    statement:
+      'ブルー・オーシャン戦略は、既存市場で競合と血みどろの消耗戦を繰り広げる「レッド・オーシャン」を避け、競争のない新しい市場空間「ブルー・オーシャン」を創造することで高収益成長を狙う経営戦略論である。中核概念は、差別化と低コストを二者択一ではなく同時に追求して買い手価値を飛躍させる「バリュー・イノベーション（価値革新）」であり、効用・価格・コストの全体最適化によって実現される。' +
+      '分析枠組みとして、業界の競争要因を「減らす・取り除く（コスト低減）／増やす・付け加える（価値向上）」で問い直す4つのアクション（ERRCグリッド＝Eliminate-Reduce-Raise-Create）と、自社と競合の価値曲線を可視化する「戦略キャンバス」を用いる。ポーターの競争戦略が既存業界内での競争優位を扱うのに対し、本戦略は競争自体を無意味化する新市場創造を志向する点で対照的である。',
+    keyFigures: 'W・チャン・キム（W. Chan Kim）／レネ・モボルニュ（Renée Mauborgne）／両者ともINSEAD教授／初出は2004年のHarvard Business Review論文、2005年に同名著書（Harvard Business School Press）として刊行',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/W._Chan_Kim', type: 'reference', label: 'Wikipedia「W. Chan Kim」— 提唱者・INSEAD・2005年著書の確認' },
+      { url: 'https://hbr.org/2004/10/blue-ocean-strategy', type: 'media', label: 'Kim & Mauborgne, “Blue Ocean Strategy”, Harvard Business Review (2004) — 初出論文' },
+      { url: 'https://www.blueoceanstrategy.com/tools/errc-grid/', type: 'media', label: '公式 Blue Ocean Strategy（提唱者運営）— ERRCグリッド／4つのアクションの定義' },
+      { url: 'https://www.researchgate.net/publication/235299770_Value_innovation_A_leap_into_the_blue_ocean', type: 'academic', label: 'Kim & Mauborgne, “Value Innovation: A Leap into the Blue Ocean”, Journal of Business Strategy（査読誌）' },
+    ],
+  },
+  {
+    id: 'human-bounded-rationality',
+    discipline: 'human-science',
+    title: '限定合理性',
+    statement:
+      '限定合理性（bounded rationality）とは、人間の合理性が認知能力・利用可能な情報・時間といった制約のもとに置かれているため、理論上の最適解（maximizing）を導く完全合理性は現実には成立しない、とする意思決定論の概念。意思決定者は全選択肢を比較して効用を最大化するのではなく、あらかじめ設定した願望水準（aspiration level）を満たす選択肢が見つかった時点で探索を止め、それで満足する「満足化（satisficing）」を行う。' +
+      'これは、瞬時に費用便益を計算し最適選択を続ける新古典派の「経済人（homo economicus）」像への批判であり、より現実的な「管理人（administrative man）」モデルを対置する。行動経済学・組織論・人工知能研究の基礎概念となった。',
+    keyFigures: 'ハーバート・A・サイモン（Herbert A. Simon）が提唱／初出は『経営行動（Administrative Behavior）』(1947)／1978年ノーベル経済学賞（経済組織内の意思決定過程に関する先駆的研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/bounded-rationality/', type: 'reference', label: 'Bounded Rationality — Stanford Encyclopedia of Philosophy（査読済み哲学百科事典）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1978/press-release/', type: 'government', label: 'The Sveriges Riksbank Prize in Economic Sciences 1978 — Press Release（ノーベル賞公式）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Simon.html', type: 'reference', label: 'Herbert Alexander Simon — The Concise Encyclopedia of Economics (Econlib)' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/simon-lecture.pdf', type: 'government', label: 'Herbert A. Simon — Nobel Prize Lecture（一次資料・本人講演）' },
+    ],
+  },
+  {
+    id: 'bizlaw-default-damages',
+    discipline: 'business-law',
+    title: '債務不履行と損害賠償（民法415条）',
+    statement:
+      '民法415条は、債務者がその債務の本旨に従った履行をしないとき、又は債務の履行が不能であるとき、債権者がこれによって生じた損害の賠償を請求できると定める。債務不履行は一般に履行遅滞・履行不能・不完全履行の三類型に整理される。2020年4月1日施行の改正民法では、その不履行が「契約その他の債務の発生原因及び取引上の社会通念に照らして債務者の責めに帰することができない事由」によるものであることを債務者が立証すれば免責される構成（同条1項ただし書）が明文化された。' +
+      '帰責事由は債務者の過失に限られず、契約の趣旨に照らして判断される。損害賠償の範囲は民法416条が定め、通常生ずべき損害（通常損害）に加え、当事者が予見すべきであった特別の事情による損害（特別損害）に及ぶ。',
+    keyFigures: '根拠条文＝民法415条（損害賠償）／免責要件＝帰責事由がないこと（415条1項ただし書、立証責任は債務者）／不履行の三類型＝履行遅滞・履行不能・不完全履行／賠償範囲＝通常損害＋予見すべき特別損害（民法416条）／改正施行＝2020年4月1日（民法債権法改正）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、法令ID 129AC0000000089）— 415条・416条' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0415-00/', type: 'media', label: 'クレアール司法書士講座 民法第415条【債務不履行による損害賠償】' },
+      { url: 'https://tek-law.jp/civil-code/claims/general-provisions/effects-of-claims/liability-for-non-performance/article-416/', type: 'media', label: '金子総合法律事務所 民法第416条（損害賠償の範囲）' },
+    ],
+  },
+  {
+    id: 'bizlaw-assignment-security',
+    discipline: 'business-law',
+    title: '譲渡担保',
+    statement:
+      '譲渡担保（じょうとたんぽ）は、日本の民法に明文規定のない「非典型担保（変則担保）」の一種で、判例法理・慣習上認められてきた担保手段である。債務の担保のため、目的物（不動産・動産・債権・集合動産・集合債権等）の所有権を形式上債権者に移転し、債務が弁済されれば所有権は設定者（債務者）に復帰し、弁済されなければ債権者が目的物から優先的に債権を回収する。' +
+      '動産では占有改定（観念的引渡し）により設定者が目的物を手元で使用・継続利用したまま担保に供せるため、在庫等の集合動産や売掛債権を活用した資金調達に適する。実行（清算）方法には、目的物を債権者が取得し差額を返す帰属清算型と、第三者へ処分して代金から回収する処分清算型がある。約1世紀にわたり判例で規律されてきたが、2025年に明文化する立法（譲渡担保契約及び所有権留保契約に関する法律）が成立した。',
+    keyFigures: '民法に規定のない非典型担保（判例・慣習法上の担保）／所有権を形式上債権者へ移転し弁済で復帰・不履行で目的物から優先回収／対象は不動産・動産・債権・集合動産・集合債権／占有改定により設定者が目的物を使用したまま担保化（在庫・売掛債権の活用に適する）／実行は帰属清算型と処分清算型・清算義務あり／「譲渡担保契約及び所有権留保契約に関する法律」が2025年5月30日成立・6月6日公布',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00371.html', type: 'government', label: '法務省「譲渡担保契約及び所有権留保契約に関する法律（譲渡担保法）について」' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/honbun/houan/g21709043.htm', type: 'government', label: '衆議院「譲渡担保契約及び所有権留保契約に関する法律案」本文' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-1/003ikuma.pdf', type: 'academic', label: '立命館大学法学（生熊）「動産譲渡担保権・留保所有権の法的構成・優劣および集合動産譲渡担保の対抗力について」' },
+    ],
+  },
+  {
+    id: 'infosoc-moores-law',
+    discipline: 'information-sociology',
+    title: 'ムーアの法則',
+    statement:
+      '集積回路（チップ）上に集積されるトランジスタの数が一定期間ごとに約2倍になる、という半導体産業の経験則。インテル共同創業者ゴードン・ムーアが1965年にElectronics誌の論文「Cramming more components onto integrated circuits」で示したもので、当初は「年に約2倍」、1975年に成長鈍化を受けて「約2年で2倍」へ修正された。これは物理法則ではなく産業界の観測的傾向・開発目標であり、半導体性能の指数関数的向上とITコストの継続的低下を説明する枠組みとして広く用いられてきた。' +
+      '一方、近年は微細化が原子スケールに近づき、量子トンネル効果やリーク電流、EUV露光など製造コストの急騰といった物理的・経済的限界から鈍化が進み、「終焉」か「3D実装・並列化等への進化」かが中立的に議論されている。通信ネットワークの価値を論じる「メトカーフの法則」とは別概念である。',
+    keyFigures: 'ゴードン・ムーア（Gordon Moore、インテル共同創業者）／初出: 1965年 Electronics誌 論文「Cramming more components onto integrated circuits」（当時フェアチャイルドセミコンダクター在籍）／当初「年2倍」→1975年に「約2年で2倍」へ修正／名称「ムーアの法則」はカーバー・ミード（Carver Mead, カリフォルニア工科大学）が命名',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/Moores-law', type: 'reference', label: 'Encyclopaedia Britannica「Moore’s law」（1965年起源・1975年の2年への修正）' },
+      { url: 'https://www.computerhistory.org/revolution/digital-logic/12/267', type: 'reference', label: 'Computer History Museum「Moore’s Law」（コンピュータ史博物館の解説）' },
+      { url: 'https://www.imec-int.com/en/what-we-offer/semiconductor-education-and-workforce-development/microchips/moores-law', type: 'academic', label: 'imec「What is Moore’s law? / Is Moore’s law dead?」（半導体研究機関による定義と鈍化論）' },
+    ],
+  },
 ];
 // Stryker restore all
