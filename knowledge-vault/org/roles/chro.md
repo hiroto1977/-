@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全93件）
+### 学術概念 / ビジネス法務（全95件）
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-administrative-appeal|行政不服審査（審査請求）]]
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]]
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
-- …ほか 87 件 → [[学術概念]]
+- …ほか 89 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全102件）
+### 学術概念 / 人間科学（全103件）
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-anchoring|アンカリング効果（係留と調整）]]
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]]
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]
 - [[human-attribution-theory|帰属理論]]
 - [[human-availability-heuristic|利用可能性ヒューリスティック]]
-- …ほか 96 件 → [[学術概念]]
+- …ほか 97 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
