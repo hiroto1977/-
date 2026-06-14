@@ -5797,5 +5797,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Computational_propaganda', type: 'reference', label: 'Wikipedia — Computational propaganda' },
     ],
   },
+  {
+    id: 'econ-stagflation',
+    discipline: 'economics',
+    title: 'スタグフレーション',
+    statement:
+      '経済の停滞（stagnation＝低成長・高失業）と物価上昇（inflation）が同時に進行する状況を指す合成語。通常、景気後退期には需要が弱まり物価上昇は鈍化する（フィリップス曲線が示す失業とインフレのトレードオフ）と考えられていたため、両者が併存する点で従来のケインズ的理解と矛盾する現象である。' +
+      '1970年代の石油危機（オイルショック）に伴う供給ショック＝コストプッシュ・インフレが代表例で、原油価格急騰が生産コストを押し上げ、短期フィリップス曲線を右上方へシフトさせて物価上昇と景気後退・失業増大を同時にもたらした。この経験はフィリップス曲線の安定性への疑義を生み、フリードマンやフェルプスによる期待の組み込みと自然失業率仮説、マネタリズム・合理的期待の台頭の契機となった。',
+    keyFigures: '語源：stagnation（停滞）＋inflation（物価上昇）の合成語／初出：英政治家イアン・マクラウド（Iain Macleod）が1965年の議会演説で使用／代表事例：1973年オイルショック（OPECの供給制限）による供給ショック・コストプッシュ・インフレ／理論的応答：フリードマン(1968)・フェルプス(1967)の期待を組み込んだ自然失業率仮説、マネタリズムの台頭',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Stagflation', type: 'reference', label: 'Wikipedia「Stagflation」（定義・Macleod 1965年起源・1970年代石油危機）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w24891/w24891.pdf', type: 'academic', label: 'NBER Working Paper No.24891「Friedman and Phelps on the Phillips Curve」' },
+      { url: 'https://www.merriam-webster.com/dictionary/stagflation', type: 'reference', label: 'Merriam-Webster Dictionary「stagflation」（stagnation+inflation 合成語の定義）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w19267/w19267.pdf', type: 'academic', label: 'NBER Working Paper No.19267「The Natural Rate Hypothesis」' },
+    ],
+  },
+  {
+    id: 'econ-auction-theory',
+    discipline: 'economics',
+    title: 'オークション理論',
+    statement:
+      '入札者が各自の評価額という私的情報を持つ状況で、競売が資源をどう配分し価格を決めるか、また売り手の収益や効率性を最大化するにはどのような競売ルールを設計すべきかを分析する、ゲーム理論・市場設計の一分野。基本4形式は(1)競り上げ式（イングリッシュ）、(2)競り下げ式（ダッチ）、(3)第一価格封印入札、(4)第二価格封印入札（ヴィックリー・オークション。最高入札者が2番目の入札額を支払い、正直な評価額入札が支配戦略）。' +
+      '評価が各人固有の「私的価値」か、皆に共通だが事前に不確実な「共通価値」かを区別し、後者では過大入札を避けようとする「勝者の呪い（winner’s curse）」が生じる。リスク中立・独立同分布の私的価値などの条件下では4形式の期待収益が一致する（収益同値定理）。理論は周波数オークション等の実務設計に応用された。',
+    keyFigures: 'William Vickrey（1961年に4形式と第二価格入札を先駆的に分析、1996年ノーベル経済学賞）／Roger Myerson（1981年「Optimal Auction Design」で最適競売・収益同値定理を一般化）／Paul Milgrom・Robert Wilson（共通価値・一般理論と周波数オークション実務設計、2020年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2020/press-release/', type: 'government', label: 'The Nobel Prize — 2020年経済学賞プレスリリース（Milgrom・Wilson、共通価値と勝者の呪い）' },
+      { url: 'https://www.econlib.org/library/Enc/Auctions.html', type: 'reference', label: 'Econlib（Concise Encyclopedia of Economics）“Auctions” — 4形式・私的/共通価値・収益同値' },
+      { url: 'https://www.cs.princeton.edu/courses/archive/spr10/cos444/papers/myerson81.pdf', type: 'academic', label: 'Roger B. Myerson (1981) “Optimal Auction Design”, Mathematics of Operations Research' },
+      { url: 'https://en.wikipedia.org/wiki/Vickrey_auction', type: 'reference', label: 'Wikipedia “Vickrey auction” — 第二価格封印入札と支配戦略・収益同値' },
+    ],
+  },
+  {
+    id: 'mgmt-planned-happenstance',
+    discipline: 'management',
+    title: '計画された偶発性理論',
+    statement:
+      '個人のキャリアは綿密な計画通りに進むものではなく、予期せぬ偶然の出来事によって大きく形成されるとするキャリア・カウンセリングの理論。偶然を漫然と待つのではなく、好奇心や主体的な行動によって意図的に引き寄せ、機会（好機）として活かしていくべきだと説く。クランボルツのキャリア意思決定の社会的学習理論を基盤として発展した。' +
+      '偶然を好機に変えるために重要な5つのスキルとして、(1)好奇心（curiosity）、(2)持続性（persistence）、(3)柔軟性（flexibility）、(4)楽観性（optimism）、(5)冒険心・リスクテイキング（risk-taking）を挙げ、計画されていない出来事を必然かつ望ましいものと捉え、能動的に「構築」していく姿勢を重視する。',
+    keyFigures: 'ジョン・クランボルツ（John D. Krumboltz、スタンフォード大学）ら／初出: Mitchell, Levin & Krumboltz (1999)「Planned Happenstance: Constructing Unexpected Career Opportunities」, Journal of Counseling & Development, 77, 115–124／基盤理論: クランボルツのキャリア意思決定の社会的学習理論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/j.1556-6676.1999.tb02431.x', type: 'academic', label: 'Mitchell, Levin & Krumboltz (1999)「Planned Happenstance」, Journal of Counseling & Development 77, 115–124（Wiley・初出査読論文）' },
+      { url: 'https://ed.stanford.edu/news/stanford-professor-john-d-krumboltz-who-developed-theory-planned-happenstance-dies', type: 'academic', label: 'Stanford Graduate School of Education — 提唱者 John D. Krumboltz と planned happenstance 理論' },
+      { url: 'https://nacada.ksu.edu/Resources/Academic-Advising-Today/View-Articles/Planned-Happenstance-Preparing-Liberal-Arts-and-Social-Science-Students-to-Follow-Their-Hearts-to-Career-Success.aspx', type: 'academic', label: 'NACADA（Kansas State University）— 理論概要と5つのスキルの解説' },
+    ],
+  },
+  {
+    id: 'human-defense-mechanisms',
+    discipline: 'human-science',
+    title: '防衛機制',
+    statement:
+      '人が、不安・葛藤・受け入れがたい衝動や感情から自我（ego）を守るために無意識的に用いる心理的な方略。自我が、イド（id）の欲動・超自我（superego）の規範・現実の要請の間の葛藤を調整し、心的均衡を保つために働く。代表的なものに、受け入れがたい考えや記憶を意識から締め出す「抑圧（repression）」、明白な現実を認めない「否認（denial）」、自分の受け入れがたい感情を他者に帰する「投影（projection）」、もっともらしい理由づけをする「合理化（rationalization）」、欲動をより社会的に承認される形へ振り向ける「昇華（sublimation）」、未熟な発達段階へ戻る「退行（regression）」、加えて反動形成・置き換え・知性化などがある。' +
+      '多くは適応的にも不適応的にも働き、過度・硬直的な使用は不適応につながりうる。認知的不協和や帰属理論とは別概念。',
+    keyFigures: 'ジークムント・フロイト（Sigmund Freud：概念を導入、抑圧を中核と位置づけ）／アンナ・フロイト（Anna Freud：1936年著『自我と防衛機制（The Ego and the Mechanisms of Defence）』で体系化、10の機制を整理）／ジョージ・ヴェイラント（George Vaillant：病的・未熟・神経症的・成熟の4水準に階層化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK559106/', type: 'academic', label: 'Defense Mechanisms — StatPearls, NCBI Bookshelf (NIH／査読臨床リファレンス)' },
+      { url: 'https://en.wikipedia.org/wiki/Defence_mechanism', type: 'reference', label: 'Defence mechanism — Wikipedia（Anna Freudの10機制・Vaillant階層を記載）' },
+      { url: 'https://www.encyclopedia.com/psychology/dictionaries-thesauruses-pictures-and-press-releases/ego-and-mechanisms-defence', type: 'reference', label: 'The Ego and the Mechanisms of Defence — Encyclopedia.com' },
+    ],
+  },
+  {
+    id: 'bizlaw-defamation',
+    discipline: 'business-law',
+    title: '名誉毀損（刑法230条・民法709条/723条）',
+    statement:
+      '名誉毀損とは、公然と事実を摘示するなどして人の社会的評価を低下させる行為をいう。刑事上、刑法230条1項は「公然と事実を摘示し、人の名誉を毀損した者は、その事実の有無にかかわらず」3年以下の懲役・禁錮又は50万円以下の罰金に処すると定め、真実か否かを問わず成立しうる。ただし刑法230条の2は、摘示事実が公共の利害に関し、目的が専ら公益を図ることにあり、かつ真実であることの証明があれば罰しないとする（真実性の抗弁）。' +
+      '民事上は民法709条・710条の不法行為として損害賠償（慰謝料）の対象となり、民法723条は被害者の請求により損害賠償に代えて又はともに「名誉を回復するのに適当な処分」（謝罪広告等）を命じうると定める。判例は公共性・公益目的・真実性（又は真実と信ずる相当の理由）による免責法理を確立している。事実摘示によらない「侮辱」、意見・論評型（公正な論評の法理）とは区別される。',
+    keyFigures: '刑事＝刑法230条1項：公然・事実の摘示が要件、真実か否かを問わず成立／刑法230条の2：公共性＋公益目的＋真実性の証明で不処罰（真実性の抗弁）／民事＝民法709条・710条の不法行為で損害賠償・慰謝料／民法723条：損害賠償に代えて又はともに名誉回復に適当な処分（謝罪広告等）／真実と信ずる相当の理由があれば免責（民事＝最判昭41.6.23／刑事の故意阻却＝最大判昭44.6.25）／e-Gov法令ID＝刑法140AC0000000045・民法129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/140AC0000000045', type: 'government', label: 'e-Gov法令検索 刑法（明治40年法律第45号）— 230条・230条の2の条文' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）— 709条・710条・723条の条文' },
+      { url: 'https://www.courts.go.jp/assets/hanrei/hanrei-pdf-52287.pdf', type: 'government', label: '裁判所 名誉毀損の真実性・真実相当性に関する判決（公開判例PDF）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-overload',
+    discipline: 'information-sociology',
+    title: '情報過多（情報オーバーロード）',
+    statement:
+      '人が処理できる情報処理能力（キャパシティ）を超える量の情報にさらされることで、意思決定の質が低下したり、混乱・ストレス・判断停止が生じたりする状態を指す。情報社会学・情報行動論の中心概念の一つで、受け取る情報量が増えると一定点までは意思決定の質が向上するが、その「過負荷点」を超えると逆に質が低下するという「逆U字（さかさまのU）」の関係で説明されることが多い。' +
+      '過剰な情報は認知的負荷を満杯にし、処理時間の増大・判断への自信低下・意思決定の回避を招き、特に時間的プレッシャー下で悪化する。インターネット・SNS・常時接続により現代では深刻化し、「注意経済」「フィルターバブル」「FOMO（取り残される不安）」などの議論とも密接に関連する。処理能力を超える情報による判断の劣化という点で、注意経済や限定合理性とは区別される独立した概念である。',
+    keyFigures: 'バートラム・グロス（Bertram Gross）が著書『The Managing of Organizations』(1964)で「information overload」の語を造語したとされる／アルビン・トフラー（Alvin Toffler）が『未来の衝撃（Future Shock）』(1970)で同語を広く普及させた／ジョージ・A・ミラーの「マジカルナンバー7±2」など人間の限られた情報処理能力の研究が概念的基盤／要点＝情報量と意思決定の質は「逆U字」関係',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/library-and-information-science/information-overload', type: 'reference', label: 'EBSCO Research Starters（Library and Information Science）「Information overload」' },
+      { url: 'https://en.wikipedia.org/wiki/Information_overload', type: 'reference', label: 'Wikipedia「Information overload」— 造語(Gross 1964)・普及(Toffler 1970)・逆U字' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2023.1122200/full', type: 'academic', label: 'Frontiers in Psychology (2023) 査読論文「Dealing with information overload: a comprehensive review」' },
+      { url: 'https://link.springer.com/article/10.1007/s40685-018-0069-z', type: 'academic', label: 'Business Research / Springer (2018) 査読レビュー論文 — 情報過多の文献レビューと枠組み' },
+    ],
+  },
 ];
 // Stryker restore all
