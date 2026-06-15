@@ -11184,5 +11184,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Onlife', type: 'reference', label: 'Wikipedia: Onlife' },
     ],
   },
+  {
+    id: 'econ-second-best',
+    discipline: 'economics',
+    title: '次善の理論（セカンドベスト）',
+    statement:
+      '次善の理論（セカンドベスト、the theory of the second best）は、R・G・リプシーとK・ランカスターが1956年の論文「The General Theory of Second Best」（Review of Economic Studies）で一般化した厚生経済学の定理である。パレート最適（ファーストベスト）な一般均衡を達成するための諸条件のうち一つが、不可避な歪みなどによって満たせない場合、残りの最適条件を満たすことは一般にもはや望ましいとは限らない、と主張する。' +
+      'すなわち次善の最適は、しばしば他の条件をあえて破ることを要求しうる。重要な含意として、複数の歪みが併存する経済で一つの歪みだけを部分的に除去（piecemeal removal）すると、かえって厚生が低下する場合がある。このため「価格＝限界費用」のような単純な政策指針が現実には妥当しないことを示し、政策評価に大きな影響を与えた。',
+    keyFigures: 'リチャード・リプシー／ケルビン・ランカスター（1956）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/24/1/11/1542458', type: 'academic', label: 'Lipsey & Lancaster, "The General Theory of Second Best," Review of Economic Studies 24(1), 1956, pp.11-32' },
+      { url: 'https://kotobank.jp/word/%E3%81%9B%E3%81%8B%E3%82%93%E3%81%A9%E3%81%B9%E3%81%99%E3%81%A8%E7%90%86%E8%AB%96-1554028', type: 'reference', label: 'コトバンク「セカンド・ベスト理論」' },
+    ],
+  },
+  {
+    id: 'econ-tobin-tax',
+    discipline: 'economics',
+    title: 'トービン税',
+    statement:
+      'トービン税は、外国為替（直物通貨）取引に低率の課税を行うことで、短期的な投機目的の国際資本移動を抑制し、為替相場の変動を安定化させようとする構想である。米経済学者ジェームズ・トービンが1972年に提唱し、1978年の論考で具体化した。トービンはこれを「行き過ぎて効率的な国際金融市場の車輪に砂をまく」（throw sand in the wheels）と表現し、税率は0.5〜1%程度の超低率が想定された。' +
+      '長期的な実需に基づく投資や貿易への影響は小さく抑えつつ、短期売買を割高にして投機を減らす点に特徴がある。後の広範な「金融取引税」構想の先駆と位置づけられるが、税収の使途や、租税回避を防ぐための全世界一律導入という国際協調の実現可能性をめぐっては議論が続いている。',
+    keyFigures: 'ジェームズ・トービン（James Tobin, 1972提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://glossary.hub.hit-u.ac.jp/faq/show/2494/', type: 'academic', label: '一橋大学 ファイナンス用語集「トービン税」' },
+      { url: 'https://dl.ndl.go.jp/view/download/digidepo_7800399_po_074502.pdf', type: 'government', label: '国立国会図書館 レファレンス（2013.2）「トービン税をめぐる内外の動向」' },
+      { url: 'https://en.wikipedia.org/wiki/Tobin_tax', type: 'reference', label: 'Wikipedia: Tobin tax' },
+    ],
+  },
+  {
+    id: 'mgmt-market-orientation',
+    discipline: 'management',
+    title: '市場志向',
+    statement:
+      '市場志向（マーケット・オリエンテーション）は、企業が顧客と競争の状況を起点に意思決定を行う経営姿勢を指す概念で、1990年に二つの研究が並行して提唱した。コーリとジャウォルスキーは行動的に定義し、顧客ニーズに関する市場情報の組織的な生成、その情報の部門間での共有、そして全社的な対応という三つの活動から成るとした。' +
+      'ナーバーとスレイターは文化的に定義し、顧客志向・競争志向・部門間調整の三要素が、買い手にとって優れた価値を継続的に創造するよう組織文化として作用すると論じた。両研究はともに1990年のJournal of Marketing誌に掲載され、市場志向が事業の業績や収益性と正の関連を持つことを実証的に示した点で、その後の研究の礎となっている。',
+    keyFigures: 'アジャイ・コーリ＆バーナード・ジャウォルスキー（1990）／ジョン・ナーバー＆スタンレー・スレイター（1990）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/002224299005400201', type: 'academic', label: 'Kohli & Jaworski (1990), "Market Orientation: The Construct...", Journal of Marketing 54(2):1-18 (SAGE)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/002224299005400403', type: 'academic', label: 'Narver & Slater (1990), "The Effect of a Market Orientation on Business Profitability", Journal of Marketing 54(4):20-35 (SAGE)' },
+      { url: 'https://en.wikipedia.org/wiki/Market_orientation', type: 'reference', label: 'Wikipedia: Market orientation' },
+    ],
+  },
+  {
+    id: 'human-testing-effect',
+    discipline: 'human-science',
+    title: 'テスト効果（検索練習）',
+    statement:
+      'テスト効果（検索練習効果）とは、記憶した情報をテストや自己クイズによって能動的に思い出す（検索する）行為そのものが、同じ時間を再読・再学習に充てる場合よりも長期的な記憶保持を高めるという現象である。Roediger & Karpicke（2006, Psychological Science）の代表的研究では、文章を学習後に再学習した群と検索テストを受けた群を比較し、5分後の即時テストでは再学習が優位だったが、2日後・1週間後の遅延テストでは検索練習群の保持成績が著しく上回った。' +
+      '単に読み返すよりも、思い出そうとする努力（検索）が記憶の定着と統合を促す点が要点である。これは短期的には難しく感じられても長期的な学習を促進する「望ましい困難（desirable difficulty, Bjork）」の一例とされる。なお、学習を時間的に分散させる分散効果（spacing effect）とは区別される独立した現象である。',
+    keyFigures: 'ヘンリー・ローディガー／ジェフリー・カーピキ（2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01693.x', type: 'academic', label: 'Roediger & Karpicke (2006) "Test-Enhanced Learning," Psychological Science 17(3)' },
+      { url: 'https://learninglab.psych.purdue.edu/downloads/2007/2007_Karpicke_Roediger_JML.pdf', type: 'academic', label: 'Karpicke & Roediger (2007) "Repeated retrieval during learning is the key to long-term retention," Journal of Memory and Language (Purdue Learning Lab)' },
+      { url: 'https://en.wikipedia.org/wiki/Testing_effect', type: 'reference', label: 'Wikipedia: Testing effect (retrieval practice)' },
+    ],
+  },
+  {
+    id: 'bizlaw-civil-rehabilitation',
+    discipline: 'business-law',
+    title: '民事再生（民事再生法）',
+    statement:
+      '民事再生は、経済的に窮境にある債務者の事業や経済生活の再建を図る再建型の倒産手続で、平成11年法律第225号として制定され、2000年4月1日に施行され、旧来の和議法に代わるものである。最大の特徴はDIP型（Debtor In Possession）である点で、原則として管財人を選任せず、債務者自身が裁判所選任の監督委員の監督の下で経営権を保持し、事業の継続と財産の管理処分を行いながら再生計画を立案する。' +
+      '再生計画は、債権者集会等で法定多数の再生債権者の同意により可決され、その内容が適法であるかを裁判所が審査して認可することで効力を生じ、債務者は速やかにこれを遂行する義務を負う。利用主体は株式会社に限られず、個人を含むあらゆる法人・自然人が申し立てできる。これに対し会社更生は株式会社のみが対象で、原則として管財人が経営権と財産管理処分権を専有し現経営陣は退く点で、より柔軟で迅速な民事再生と対照をなす。',
+    keyFigures: '民事再生法（平成11年法律第225号、2000年4月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=411AC0000000225', type: 'government', label: 'e-Gov法令検索「民事再生法（平成11年法律第225号）」' },
+      { url: 'https://www.courts.go.jp/nagoya/saiban/tetuzuki/minzi_tujo_mositate01/index.html', type: 'government', label: '裁判所（courts.go.jp）民事（通常）再生の手続' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%BC%9A%E7%A4%BE%E6%9B%B4%E7%94%9F%E6%B3%95', type: 'reference', label: 'ウィキペディア「会社更生法」（会社更生との対比・対象法人）' },
+    ],
+  },
+  {
+    id: 'infosoc-produsage',
+    discipline: 'information-sociology',
+    title: 'プロデュセージ（生産利用）',
+    statement:
+      'プロデュセージ（produsage）は、メディア研究者アクセル・ブランズが2008年の著書『Blogs, Wikipedia, Second Life, and Beyond』で提唱した、「production（生産）」と「usage（利用）」を組み合わせた造語である。ウィキペディア、オープンソースソフトウェア、市民ジャーナリズムなどのオンライン環境で見られる、ユーザー主導の協働的・継続的なコンテンツ生成を指す。' +
+      'ここでは生産者と消費者・利用者の区別が崩壊し、参加者は両者を兼ねる「プロデューサー（produser）」という新たな混成的役割を担う。ブランズは四つの原理（開かれた参加と共同的評価、流動的なヘテラルキーと臨機応変な能力主義、未完の成果物と継続的プロセス、共有財産と個人的報酬）を挙げる。トフラーのプロシューマーが大衆メディア時代の能動的消費者像にとどまるのに対し、プロデュセージは生産と消費が不可分に融合した協働的創造を捉える点で区別される。',
+    keyFigures: 'アクセル・ブランズ（Axel Bruns, 2008）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eprints.qut.edu.au/27370/', type: 'academic', label: 'Bruns, "From Prosumer to Produser" — QUT ePrints（クイーンズランド工科大学リポジトリ）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/13614568.2011.563626', type: 'academic', label: 'Bruns, "Produsage: a closer look at continuing developments" — New Review of Hypermedia and Multimedia (Taylor & Francis, 査読誌)' },
+      { url: 'https://en.wikipedia.org/wiki/Produsage', type: 'reference', label: 'Produsage — Wikipedia（百科事典）' },
+    ],
+  },
 ];
 // Stryker restore all
