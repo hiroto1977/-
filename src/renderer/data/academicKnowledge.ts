@@ -15986,5 +15986,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Structural_holes', type: 'reference', label: 'Wikipedia: Structural holes (Burt 1992; brokerage, non-redundant information, control benefits)' },
     ],
   },
+  {
+    id: 'econ-all-pay-auction',
+    discipline: 'economics',
+    title: 'オールペイ・オークション',
+    statement:
+      'オールペイ・オークション（総支払いオークション）は、全入札者が落札の有無にかかわらず自分の入札額を支払うオークションである。最高入札者が財を得る点は通常のオークションと同じだが、勝者・敗者を問わず全員が入札額を失う点が、落札者のみ支払う標準的オークションと対照的である。そのためコンテストやレント・シーキングのモデルとして広く用いられる。すなわち、複数の主体が賞を得ようと回収不能な資源（努力・資金・ロビイング）を投じ、上位の者だけが勝つが全員の支出は埋没費用となる状況であり、' +
+      '例として政治ロビイング（関連する確率的版がタロックのコンテスト）、研究開発・特許競争、消耗戦（war of attrition）、昇進トーナメント、広告競争が挙げられる。均衡では入札者は混合戦略でランダムに入札し、総支出が賞の価値の多くを散逸させうる（レント散逸）。なお一般的なオークション理論やレント・シーキングの概念そのものとは区別され、ここでは「全員が入札額を支払う」というメカニズムに焦点を当てる。',
+    keyFigures: 'オールペイ・オークション（総支払い型）／タロックのコンテスト・消耗戦（war of attrition）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cs.cornell.edu/home/kleinber/networks-book/networks-book-ch09.pdf', type: 'academic', label: 'Easley & Kleinberg, Networks, Crowds, and Markets (Cornell), Ch.9 Auctions' },
+      { url: 'https://rady.ucsd.edu/_files/faculty-research/uri-gneezy/all-pay-auctions.pdf', type: 'academic', label: 'Gneezy & Smorodinsky, "All-pay auctions—an experimental study" (UCSD)' },
+      { url: 'https://en.wikipedia.org/wiki/All-pay_auction', type: 'reference', label: 'All-pay auction — Wikipedia' },
+    ],
+  },
+  {
+    id: 'econ-limits-to-arbitrage',
+    discipline: 'economics',
+    title: '裁定の限界',
+    statement:
+      'シュライファー＆ヴィシュニー（1997, Journal of Finance）が示した概念。効率的市場仮説は「合理的な裁定者が誤った価格をただちに消す」と想定するが、現実の裁定はリスクが高く限定的で、価格は本源的価値から長期間乖離しうる。現実の裁定は資本制約のある少数の専門家（ヘッジファンド等）が他人の資金で行う点が鍵となる。裁定を制限する主因は、(1)ファンダメンタル・リスク、(2)ノイズトレーダー・リスク（デロング他1990。修正前にむしろ乖離が拡大しうる）、' +
+      '(3)エージェンシー／資金の問題で、損失が出ると投資家が好機にこそ資金を引き揚げ、業績連動型の裁定（performance-based arbitrage）では本来press すべき局面で清算を迫られる。加えて空売り制約・投資期間・同期リスクも効く。結果として、誤価格が極端なときほど裁定は効きにくい。アノマリーやバブルを説明する行動ファイナンスの基礎である。なお裁定取引そのもの・ノイズトレーダー・効率的市場仮説とは区別し、本項は「裁定の限界」に焦点を当てる。',
+    keyFigures: 'アンドレイ・シュライファー／ロバート・ヴィシュニー（Shleifer & Vishny, 1997）／デロング・シュライファー・サマーズ・ウォルドマン（1990, ノイズトレーダー・リスク）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/shleifer/publications/limits-arbitrage', type: 'academic', label: 'Shleifer & Vishny (1997) "The Limits of Arbitrage," Journal of Finance 52(1):35-55 — Harvard faculty page' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v98y1990i4p703-38.html', type: 'academic', label: 'De Long, Shleifer, Summers & Waldmann (1990) "Noise Trader Risk in Financial Markets," JPE 98(4):703-738 — RePEc' },
+      { url: 'https://alphaarchitect.com/introduction-behavioral-finance-part-2-limits-arbitrage/', type: 'reference', label: 'Limits of Arbitrage: Introduction to Behavioral Finance (Part 2) — fundamental/noise-trader risk, agency constraints' },
+    ],
+  },
+  {
+    id: 'mgmt-pims',
+    discipline: 'management',
+    title: 'PIMS研究（市場戦略の利益への影響）',
+    statement:
+      'PIMS（Profit Impact of Market Strategy）は、事業の収益性を左右する要因を探る大規模な実証研究である。1960年代にゼネラル・エレクトリック（GE）社内で経済学者シドニー・シェフラーらが始め、1972年頃にマーケティング・サイエンス研究所/ハーバード大学に移り、その後は非営利の戦略計画研究所（SPI）が運営した。数百社・数千の事業単位（SBU）について、市場シェア・品質・投資集約度などの戦略要因と業績（ROI、キャッシュフロー）を収集し、' +
+      '回帰分析等の統計手法で戦略と収益性を結ぶ一般的な「市場の法則」を探索した。主要な発見は、(1)相対的市場シェアはROIと強い正の相関を持つ（規模・経験効果が一因）、(2)相対的な製品/サービス品質が収益性の主要な決定要因、(3)投資集約度が高いほどROIは低下しやすい、というものである。バゼル＆ゲイルが『The PIMS Principles』(1987)で総括し、市場シェア重視の戦略観に影響したが、因果と相関の混同や生存者バイアス、データベースの自己選択などの批判もある。経験曲線やBCGマトリクスとは区別される。',
+    keyFigures: 'PIMS（GE→マーケティング・サイエンス研究所/ハーバード→戦略計画研究所SPI）／シドニー・シェフラー（創始）／ロバート・バゼル＆ブラッドリー・ゲイル（The PIMS Principles, 1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.macrothink.org/journal/index.php/bms/article/download/21499/16833', type: 'academic', label: 'Business and Management Studies（査読誌）— PIMSにおける市場シェアと収益性、相対品質・因果性をめぐる批判' },
+      { url: 'https://www.encyclopedia.com/entrepreneurs/encyclopedias-almanacs-transcripts-and-maps/profit-impact-market-strategies-pims', type: 'reference', label: 'Encyclopedia.com — PIMSの起源(GE→ハーバード→SPI)、SBUデータベース、ROIと戦略要因' },
+    ],
+  },
+  {
+    id: 'human-above-average-effect',
+    discipline: 'human-science',
+    title: '平均以上効果（優越の錯覚）',
+    statement:
+      '望ましい資質や能力について、自分を他者より優れている＝「平均以上」だと過大評価する頑健な傾向（自己高揚バイアスの一種）。大多数の人が、統計的にありえない割合で自分を上位に位置づける点が特徴である。古典的な例は運転技能で、Svenson（1981）の研究では米国の被験者の約93%・スウェーデンの約69%が、自分の運転技能を上位50%に評価した（安全性でも米88%・スウェーデン77%）。' +
+      '同様の傾向は知能・誠実さ・人気・健康などでも生じ、「すべての子どもが平均以上」という架空の町にちなみ「レイク・ウォビゴン効果」とも呼ばれる。ただしこの効果は課題の難易度に左右され、難しい課題や稀な能力では弱まるか逆転し、自分を平均以下と見積もる「平均以下効果」が現れる。自信過剰やダニング=クルーガー効果、自己奉仕バイアスとは関連するが区別される自己評価の歪みである。',
+    keyFigures: 'オラ・スヴェンソン（Ola Svenson, 1981, 運転技能研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://open.lnu.se/index.php/metapsychology/article/view/2932', type: 'academic', label: 'Meta-Psychology (Linnaeus University): Successful replication and extension of Svenson (1981)' },
+      { url: 'https://en.wikipedia.org/wiki/Illusory_superiority', type: 'reference', label: 'Wikipedia: Illusory superiority (better-than-average effect, Svenson 1981 driving study)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110810105237549', type: 'reference', label: 'Oxford Reference: Lake Wobegon effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-consumer-collective-redress',
+    discipline: 'business-law',
+    title: '消費者裁判手続特例法（消費者団体訴訟制度）',
+    statement:
+      '正式名称は「消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律」（平成25年法律第96号）。2013年に制定され2016年10月1日に施行された、消費者庁が所管する集団的消費者被害回復のための制度。内閣総理大臣の認定を受けた特定適格消費者団体が提起する二段階型の手続をとり、第一段階で事業者が消費者全体に対し共通義務を負うか否かを確認し（共通義務確認訴訟）、' +
+      '第二段階で個々の消費者が加入（オプトイン）して各自の債権を簡易な手続で確定・回収する。適格消費者団体が消費者契約法に基づき行う差止請求とは別個で、これを補完する関係にある。2022年改正（令和4年法律第59号、2023年施行）で慰謝料等を含む対象範囲が拡大された。少額・多数で個人では訴訟提起が困難な消費者被害をまとめて効率的に回復することを狙いとする。消費者契約法そのものとは区別される。',
+    keyFigures: '消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律（消費者裁判手続特例法、平成25年法律第96号、2013年制定・2016年施行）／消費者庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/425AC0000000096', type: 'government', label: 'e-Gov法令検索 — 消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律（平成25年法律第96号）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_court_proceedings/', type: 'government', label: '消費者庁 — 消費者裁判手続特例法' },
+      { url: 'https://www.businesslawyers.jp/articles/1203', type: 'reference', label: 'BUSINESS LAWYERS — 令和4年改正・消費者裁判手続特例法のポイント解説' },
+    ],
+  },
+  {
+    id: 'infosoc-homophily',
+    discipline: 'information-sociology',
+    title: 'ホモフィリー（同類性）',
+    statement:
+      'ホモフィリー（同類性・同類選好）とは、似た者同士の方が異質な者同士よりも高い割合で接触し紐帯を結ぶという原理であり、「類は友を呼ぶ（似た者は引き合う）」と要約される。現代の定式化はマクファーソン、スミス=ロヴィン、クック2001（Annual Review of Sociology「Birds of a Feather: Homophily in Social Networks」）によるが、用語自体はラザースフェルド&マートン1954に遡る。人は人種・民族・年齢・宗教・学歴・性別・階層といった社会人口学的特性に加え、態度・信念・行動などの後天的・内面的特性での類似により結びつきやすい。' +
+      'よく用いられる区別として、利用可能な相手プールの多様性の限界によって生じる基礎的（ベースライン）ホモフィリーと、そのプールから予測される以上の選好を示す内婚的（インブリーディング）ホモフィリーがある。ホモフィリーはネットワークを比較的同質的なクラスターへと構造化し、接触する情報や態度を限定するため、ネットワーク分断や不平等の持続、オンラインのエコーチェンバー／フィルターバブルや推薦駆動の分極化の基盤となる。なお、結果として生じるエコーチェンバーや、橋渡しを担う弱い紐帯とは区別される、紐帯形成そのものの原理である点に注意を要する。',
+    keyFigures: 'マクファーソン／スミス=ロヴィン／クック（McPherson, Smith-Lovin & Cook, 2001）／ラザースフェルド&マートン（1954）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.soc.27.1.415', type: 'academic', label: 'McPherson, Smith-Lovin & Cook (2001) "Birds of a Feather: Homophily in Social Networks," Annual Review of Sociology 27:415-444' },
+      { url: 'https://www.britannica.com/topic/homophily', type: 'reference', label: 'Encyclopædia Britannica — Homophily' },
+      { url: 'https://en.wikipedia.org/wiki/Homophily', type: 'reference', label: 'Wikipedia — Homophily (Lazarsfeld & Merton 1954; baseline vs inbreeding)' },
+    ],
+  },
 ];
 // Stryker restore all
