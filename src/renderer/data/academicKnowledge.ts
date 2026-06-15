@@ -16254,5 +16254,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Social_construction_of_technology', type: 'reference', label: 'Wikipedia — Social construction of technology' },
     ],
   },
+  {
+    id: 'econ-yardstick-competition',
+    discipline: 'economics',
+    title: 'ヤードスティック競争',
+    statement:
+      'アンドレイ・シュライファーが1985年（RAND Journal of Economics「A Theory of Yardstick Competition」）に定式化した規制手法。地理的に分かれて直接競争しない規制独占（地域の電力・鉄道・水道・病院等）に対し、規制当局は各社の許容価格や費用償還を、その会社自身の費用ではなく、比較可能な他社の費用・業績（ヤードスティック＝基準）に基づいて設定する。' +
+      '自社の許容価格が自社の費用から切り離されるため、非効率なままでは許容収入を膨らませられず、各社は基準を上回ろうとコスト削減を行う強い誘因を持つ。互いに競争しない独占者間に擬似的な競争を作り出し、規制当局が真の費用を知らないという費用情報の非対称性（総括原価・レートベース規制の弱点）を緩和する。ベンチマーク型・インセンティブ規制（プライスキャップ等）の基礎であり、ラムゼー価格や自然独占、規制の虜とは区別される。',
+    keyFigures: 'アンドレイ・シュライファー（Andrei Shleifer, 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://shleifer.scholars.harvard.edu/publications/theory-yardstick-competition', type: 'academic', label: 'Andrei Shleifer (Harvard) — "A Theory of Yardstick Competition," RAND J. Econ. 16(3):319–327 (1985)' },
+      { url: 'https://econpapers.repec.org/RePEc:rje:randje:v:16:y:1985:i:autumn:p:319-327', type: 'reference', label: 'EconPapers/RePEc — Shleifer (1985), RAND Journal of Economics 16(3):319–327' },
+      { url: 'https://www.staff.city.ac.uk/~sj355/yardstick.pdf', type: 'academic', label: 'City, University of London — lecture notes on yardstick competition (incentive regulation, benchmarking)' },
+    ],
+  },
+  {
+    id: 'econ-averch-johnson',
+    discipline: 'economics',
+    title: 'アバーチ＝ジョンソン効果',
+    statement:
+      'ハーヴェイ・アバーチとリーランド・ジョンソンが1962年（American Economic Review「Behavior of the Firm Under Regulatory Constraint」）で示した、独占企業への総括原価方式（公正報酬率規制＝レートベースに一定の公正報酬率を認める方式）の下で生じる過剰資本投資の現象。認められる報酬率が企業の実際の資本コストを上回ると、その差は純利潤となり、資本（レートベース）を増やすほど許容利潤が増えるため、' +
+      '企業は費用最小化水準を超えて非効率に資本を拡大し、他の投入を資本で代替する（金メッキ＝ゴールドプレーティング）。結果として資本集約的すぎる生産方法・高コスト・割高な価格・厚生損失を招く。総括原価／レートベース規制への古典的批判であり、プライスキャップ等のインセンティブ規制を支持する論拠となる。自然独占やラムゼー価格、規制の虜、ヤードスティック競争とは区別される。',
+    keyFigures: 'ハーヴェイ・アバーチ／リーランド・ジョンソン（Averch & Johnson, 1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/10.1057/978-1-349-95121-5_388-1', type: 'reference', label: 'The New Palgrave Dictionary of Economics, "Averch–Johnson Effect" (Springer)' },
+      { url: 'https://www.cirje.e.u-tokyo.ac.jp/research/workshops/micro/micropaper04/micro_thesis/maeda.pdf', type: 'academic', label: '日本の電気事業におけるアヴァーチ・ジョンソン効果に関する実証分析（東京大学 CIRJE）' },
+      { url: 'https://en.wikipedia.org/wiki/Averch%E2%80%93Johnson_effect', type: 'reference', label: 'Wikipedia: Averch–Johnson effect' },
+    ],
+  },
+  {
+    id: 'mgmt-marketing-myopia',
+    discipline: 'management',
+    title: 'マーケティング近視眼',
+    statement:
+      'セオドア・レビットが1960年に『ハーバード・ビジネス・レビュー』で発表した「マーケティング近視眼（Marketing Myopia）」の概念。自社の事業を、満たすべき顧客のニーズや便益ではなく、売っている特定の製品で狭く定義してしまう誤りを指す。その結果、進化する顧客ニーズの充足ではなく既存製品の生産・販売に集中し、製品が陳腐化すると衰退する。有名な例が米国の鉄道で、輸送需要が縮んだからではなく、' +
+      '自らを「鉄道事業」と定義して「輸送事業」と捉えなかったため、自動車・トラック・航空機に対応できず衰退した。処方箋は、事業を顧客ニーズに基づいて広く定義し（ハリウッドは「映画」でなく「娯楽」事業）、製品志向・販売志向ではなく顧客志向・マーケティング志向を採ること。成長の停滞は市場の飽和でなく経営の失敗に起因するとした。具体的な手法を扱う4PやSTP、製品ライフサイクルとは区別される、事業定義の視座に関する概念である。',
+    keyFigures: 'セオドア・レビット（Theodore Levitt, 1960）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://faculty.ksu.edu.sa/sites/default/files/levitt_marketingmyopia1.pdf', type: 'academic', label: 'Theodore Levitt, "Marketing Myopia," Harvard Business Review (1960) — King Saud University faculty-hosted primary text' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2066868', type: 'academic', label: 'Levitt, T. (1960) Marketing Myopia. Harvard Business Review, 38, 45-56 (academic citation)' },
+      { url: 'https://www.dhbr.net/articles/-/2987', type: 'media', label: 'DIAMONDハーバード・ビジネス・レビュー 恩藏直人「T.レビットに学ぶ」マーケティング近視眼' },
+    ],
+  },
+  {
+    id: 'human-ostrich-effect',
+    discipline: 'human-science',
+    title: 'ダチョウ効果（情報回避）',
+    statement:
+      'ダチョウ効果（オーストリッチ効果）とは、ネガティブで不快だと予想する情報を、危険から逃れようと砂に頭を埋めるダチョウのように避けたり無視したりする傾向（情報回避）を指す。金融分野での用語はガライ&サーデ（2006）が提唱し、現象はカールソン、ローウェンスタイン&セッピ（2009、Journal of Risk and Uncertainty「選択的注意」）が実証した。' +
+      '彼らはスウェーデンと米国の投資家を分析し、市場指数が上昇しているときよりも下落しているときの方が、ポートフォリオの価値を確認する頻度が低いことを示した。これは損失に直面する心理的苦痛を避けるためである。より広くは、健康診断結果や請求書など望ましくないと予想する情報を意図的に避ける選択的注意の一種であり、認知的不協和の回避や損失回避と関連する。望ましい情報を選好する確証バイアス、危険を過小評価する正常性バイアス、矛盾による不快感そのものを指す認知的不協和とは区別される。',
+    keyFigures: 'ニクラス・カールソン／ジョージ・ローウェンスタイン／デュエイン・セッピ（2009）／ガライ&サーデ（2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s11166-009-9060-6', type: 'academic', label: 'Karlsson, Loewenstein & Seppi (2009) "The ostrich effect: Selective attention to information," Journal of Risk and Uncertainty 38:95–115' },
+      { url: 'https://en.wikipedia.org/wiki/Ostrich_effect', type: 'reference', label: 'Wikipedia: Ostrich effect（ガライ&サーデ2006命名・情報回避・金融での実証）' },
+      { url: 'https://thedecisionlab.com/biases/ostrich-effect', type: 'reference', label: 'The Decision Lab: Ostrich Effect（市場下落時にポートフォリオ確認頻度が低下）' },
+    ],
+  },
+  {
+    id: 'bizlaw-consumer-basic-act',
+    discipline: 'business-law',
+    title: '消費者基本法',
+    statement:
+      '消費者基本法は、消費者政策の基本理念と枠組みを定める日本の基本法である。起源は1968年（昭和43年）制定の消費者保護基本法（昭和43年法律第78号）で、2004年（平成16年）に36年ぶりに大幅改正され消費者基本法へ改称された。この改正は、消費者を単なる「保護」の対象とする立場から、消費者の権利を尊重しその自立を支援する立場（消費者を自立した主体と位置づける）への理念転換を画した。' +
+      '消費者と事業者の間の情報の質・量および交渉力の格差を踏まえ、安全の確保、選択の機会の確保、必要な情報の提供、教育の機会の確保、意見の政策への反映、被害の適切・迅速な救済などの消費者の権利を列挙する。国・地方公共団体の責務と事業者の責務を定め、消費者基本計画の策定を規定する。消費者庁が関係行政を担う。消費者契約法や消費者裁判手続特例法とは区別される、消費者政策の包括的・基本的な法である。',
+    keyFigures: '消費者基本法（消費者保護基本法＝昭和43年法律第78号、1968年制定／2004年改正・改称）／消費者庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/343AC1000000078/', type: 'government', label: 'e-Gov法令検索「消費者基本法」（昭和43年法律第78号）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_policy/basic_plan/', type: 'government', label: '消費者庁「消費者基本計画等」' },
+      { url: 'https://kotobank.jp/word/%E6%B6%88%E8%B2%BB%E8%80%85%E5%9F%BA%E6%9C%AC%E6%B3%95-156335', type: 'reference', label: 'コトバンク「消費者基本法」' },
+    ],
+  },
+  {
+    id: 'infosoc-domestication',
+    discipline: 'information-sociology',
+    title: 'ドメスティケーション理論（技術の家庭化）',
+    statement:
+      'ロジャー・シルバーストーン、エリック・ハーシュ、デヴィッド・モーレイらが1990年代前半（『Consuming Technologies: Media and Information in Domestic Spaces』1992ほか）に展開したメディア・技術研究のアプローチ。人々が新しい技術（当初はテレビ・電話・コンピュータ等のICT）をいかに「飼い慣らし」家庭に取り込み、日常の習慣・価値・意味へ組み込んで、当たり前で見えない存在にしていくかを分析する。' +
+      'ドメスティケーションの諸局面として、専有/獲得（appropriation、対象を家庭へ持ち込む）、客体化/配置（objectification、置き場所や価値・美意識の表示）、編入（incorporation、日常のルーティンや時間への組込み）、転換（conversion、外部への提示と地位の表示）を挙げる。技術の採用は一度きりの購入でなく能動的で交渉的な社会過程であり、利用者が技術の意味・用法を形づくる（相互形成）。家庭は「道徳経済」とされる。イノベーションの普及やSCOTとは区別される。',
+    keyFigures: 'ロジャー・シルバーストーン／エリック・ハーシュ／デヴィッド・モーレイ（Silverstone, Hirsch & Morley, 1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eprints.lse.ac.uk/62128/1/Domestication_analysis_.pdf', type: 'academic', label: 'Berker et al., "Domestication Analysis, Objects of Study, and the Centrality of Technologies in Everyday Life" (LSE Research Online / Canadian Journal of Communication)' },
+      { url: 'https://communication.iresearchnet.com/technology-and-communication/domestication-of-technology/', type: 'reference', label: 'Domestication of Technology — iResearchNet (Communication research reference)' },
+      { url: 'https://en.wikipedia.org/wiki/Domestication_theory', type: 'reference', label: 'Domestication theory — Wikipedia' },
+    ],
+  },
 ];
 // Stryker restore all
