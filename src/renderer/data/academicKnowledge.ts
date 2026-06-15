@@ -14738,5 +14738,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://wiki.p2pfoundation.net/Mass_Self_Communication', type: 'reference', label: 'P2P Foundation Wiki: Mass Self-Communication（自己生成/自己指向/自己選択の定義）' },
     ],
   },
+  {
+    id: 'econ-loanable-funds',
+    discipline: 'economics',
+    title: '貸付資金説（可貸資金市場）',
+    statement:
+      '貸付資金説（可貸資金市場の理論）は、（実質）利子率が「貸付資金（可貸資金）」の需要と供給によって決まるとする利子論である。資金の供給は主に貯蓄（家計・企業・政府の貯蓄）から生じ、貯蓄は利子率の上昇とともに増加する。資金の需要は投資のための借入から生じ、投資は利子率が上がると減少する。均衡実質利子率は、望ましい貯蓄と望ましい投資を一致させる水準に決まる。これはクヌート・ヴィクセル、アーヴィング・フィッシャー、デニス・ロバートソン、ベルティル・オリーンらに連なる古典派・' +
+      '新古典派の利子論であり、財政赤字（公的・国民貯蓄の減少）が実質金利を押し上げて民間投資を締め出す「クラウディングアウト」を分析する標準的枠組みの基礎をなす。利子を貨幣市場で決まる貨幣的現象とみなすケインズの流動性選好説とは対照的で、両説の優劣をめぐる有名な論争が展開された。通常、縦軸に実質利子率・横軸に貸付資金量をとる需給図で表される。',
+    keyFigures: '貸付資金説（クヌート・ヴィクセル／アーヴィング・フィッシャー／デニス・ロバートソン／ベルティル・オリーン）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Loanable_funds', type: 'reference', label: 'Wikipedia — Loanable funds（起源：ヴィクセル／ロバートソン／オリーン、流動性選好説との対比）' },
+      { url: 'https://ecampusontario.pressbooks.pub/principlesofmacroeconomicscdn/chapter/7-5-shifts-in-demand-and-supply-for-loanable-funds/', type: 'academic', label: 'Principles of Macroeconomics (eCampusOntario/Pressbooks) — 貯蓄供給・投資需要と均衡実質金利' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/09672567.2021.1893778', type: 'academic', label: 'European Journal of the History of Economic Thought — 流動性選好説 対 貸付資金説（1936–1956）論争' },
+    ],
+  },
+  {
+    id: 'econ-core',
+    discipline: 'economics',
+    title: 'コア（協力ゲーム理論）',
+    statement:
+      'コアは、移転可能効用をもつ協力（提携）ゲームの解概念で、全体提携が達成する総利得の配分（配分案）のうち、いかなる提携にも改善（離脱してより多くを確保）され得ないものの集合である。形式的には、配分が全体提携にとって実行可能であり、かつ「提携合理性」を満たすこと、すなわち任意の提携Sに対して配分がSの成員に与える合計が、Sが単独で確保できる値v(S)以上であることを要する。' +
+      'これは、どの部分集合も離脱して自力で全員により多くを保証できないという安定性条件にあたる。コアは空のこともあれば大きいこともある。エッジワース（1881年の契約曲線）の着想に始まり、ギリーズとシャプレー（1953年頃）が現代的に定式化した。大経済ではコアが競争均衡に収束するというドブリュー＝スカーフ定理に連なり、交換経済・マッチング・費用分担など協力ゲーム理論の基礎をなす。',
+    keyFigures: 'ドナルド・ギリーズ／ロイド・シャプレー（1953頃）／フランシス・エッジワース',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://economics.brown.edu/sites/default/files/papers/2007-11_paper.pdf', type: 'academic', label: 'R. Serrano, "Cooperative Games: Core and Shapley Value" (Brown University; New Palgrave entry)' },
+      { url: 'https://en.wikipedia.org/wiki/Core_(game_theory)', type: 'reference', label: 'Core (game theory) — Wikipedia' },
+      { url: 'https://en.wikipedia.org/wiki/Edgeworth_conjecture', type: 'reference', label: "Edgeworth's limit theorem / Debreu–Scarf theorem — Wikipedia" },
+    ],
+  },
+  {
+    id: 'mgmt-loosely-coupled-systems',
+    discipline: 'management',
+    title: '緩やかに結合したシステム（疎結合）',
+    statement:
+      'カール・ワイクが1976年（Administrative Science Quarterly、教育組織を例に）に提唱した概念。組織の要素や下位単位は互いに反応し合いつつも、各自が固有のアイデンティティと論理的/物理的な分離性を保つ。すなわち結合が弱く・まれ・遅く・重要でない状態を指し、ある要素の変化が他に急速かつ強く波及する密結合（タイトカップリング）と対比される。' +
+      '利点は、各部分が局所的条件に独立して適応できること、一部の不具合が全体へ広がりにくい緩衝・障害の封じ込め、多様な感知要素や自律性・新規性の余地の保持、そして調整コストの低さである。一方の欠点は、協調的・中央集権的な変革が難しく改善の波及が遅いこと、旧弊な慣行が温存されやすいことである。組織論に広く影響を与え、ペローの『ノーマル・アクシデント』における密結合と疎結合の事故分析にも関連する。',
+    keyFigures: 'カール・ワイク（Karl Weick, 1976）／チャールズ・ペロー（Charles Perrow）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2391875', type: 'academic', label: 'Weick, K. E. (1976) "Educational Organizations as Loosely Coupled Systems," Administrative Science Quarterly 21(1): 1–19' },
+      { url: 'https://eric.ed.gov/?id=EJ134531', type: 'government', label: 'ERIC (U.S. Dept. of Education) — bibliographic record EJ134531, Weick 1976 ASQ' },
+      { url: 'https://en.wikipedia.org/wiki/Normal_Accidents', type: 'reference', label: 'Wikipedia — Normal Accidents (Perrow): tight vs. loose coupling in accident analysis' },
+    ],
+  },
+  {
+    id: 'human-magical-number-seven',
+    discipline: 'human-science',
+    title: 'マジカルナンバー7±2',
+    statement:
+      'ジョージ・A・ミラーが1956年にPsychological Review誌で発表した説で、即時（短期）記憶の範囲や一次元の絶対判断の容量は、およそ7±2（約5〜9）個の項目（チャンク）に限られると論じた。重要なのが「チャンキング」で、個々の項目を意味のあるまとまり（チャンク）に再符号化・グループ化すれば、保持できる情報量を増やせる。' +
+      'すなわち限界は情報量（ビット）ではなく、チャンクの数の側にある。後の研究、特にネルソン・カウアン（2001）の再検討では、真の作動記憶容量は約4±1（3〜5）チャンクとされ、ミラーの「7」は有名だが、論文自体は7という数の再来を半ば戯れに論じた面もある。認知心理学・記憶研究・HCIや情報設計の基礎となっている。',
+    keyFigures: 'ジョージ・A・ミラー（George A. Miller, 1956）／ネルソン・カウアン（Nelson Cowan, 約4チャンク, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two', type: 'reference', label: 'Wikipedia: The Magical Number Seven, Plus or Minus Two（Miller 1956, Psychological Review・7±2・チャンキング）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11259112/', type: 'academic', label: 'Modelling Working Memory Capacity（Cowan 2001 約4チャンクへの再評価, PMC）' },
+      { url: 'https://www.britannica.com/topic/The-Magical-Number-Seven-Plus-or-Minus-Two-Some-Limits-on-Our-Capacity-for-Processing-Information', type: 'reference', label: 'Encyclopædia Britannica: The Magical Number Seven（Miller 1956 論文）' },
+    ],
+  },
+  {
+    id: 'bizlaw-health-insurance',
+    discipline: 'business-law',
+    title: '健康保険法',
+    statement:
+      '健康保険法（大正11年法律第70号、1922年制定・1927年全面施行）は日本初の社会保険立法であり、事業所に使用される被用者とその被扶養者を対象とする被用者保険として、業務外の病気・けが・死亡・出産に対し保険給付を行う（業務上の傷病は労災保険が担う）。' +
+      '国民健康保険・後期高齢者医療制度と並び国民皆保険の一翼を成す。保険者は中小企業向けの全国健康保険協会（協会けんぽ）と大企業等の健康保険組合。給付は原則3割の一部負担金を伴う療養の給付に加え、自己負担に上限を設ける高額療養費、休業中の所得を補う傷病手当金、出産育児一時金・出産手当金などがある。保険料は標準報酬月額を基礎に算定され、事業主と被保険者が原則折半（労使折半）する。所管は厚生労働省である。',
+    keyFigures: '健康保険法（大正11年法律第70号、1922年制定）／全国健康保険協会・健康保険組合・厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/211AC0000000070', type: 'government', label: 'e-Gov法令検索「健康保険法（大正十一年法律第七十号）」第1条（目的・対象・給付）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=84024000&dataType=0', type: 'government', label: '厚生労働省 健康保険法（大正11年4月22日法律第70号）法令本文' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%81%A5%E5%BA%B7%E4%BF%9D%E9%99%BA%E6%B3%95', type: 'reference', label: 'ウィキペディア「健康保険法」（1922年制定・日本初の社会保険・保険者）' },
+    ],
+  },
+  {
+    id: 'infosoc-hot-cool-media',
+    discipline: 'information-sociology',
+    title: 'ホットなメディアとクールなメディア',
+    statement:
+      'マーシャル・マクルーハンが1964年の『メディア論（Understanding Media: The Extensions of Man）』で提示した分類。メディアを「精細度（高精細＝単一の感覚に与える詳細な感覚情報が豊富か）」と、受け手に要求される「参加（補完）」の度合いで二分する。ホットなメディアは高精細で情報が満たされ密度が高いため、受け手の参加・補完を低くしか求めない（例：印刷／写真・ラジオ・映画・講義）。' +
+      'クールなメディアは低精細で与えられる情報がまばらなため、受け手が隙間を埋める高い参加・関与を要求し、複数の感覚を巻き込んで没入を促す（例：会話・電話・漫画・とくにテレビ・セミナー）。この区別は「メディアはメッセージである」というマクルーハンの中心命題の一部をなす。境界は相対的で（テレビは画質向上により「熱く」なったとも言われる）印象論的だと批判もあるが、メディア研究に大きな影響を与えた。',
+    keyFigures: 'マーシャル・マクルーハン（Marshall McLuhan, 1964）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110810105107935', type: 'reference', label: 'Oxford Reference (A Dictionary of Media and Communication, OUP) — Hot and cool media' },
+      { url: 'https://en.wikipedia.org/wiki/Understanding_Media', type: 'reference', label: 'Wikipedia — Understanding Media: The Extensions of Man (hot/cool media)' },
+    ],
+  },
 ];
 // Stryker restore all
