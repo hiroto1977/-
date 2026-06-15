@@ -15808,5 +15808,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/drama-and-theater-arts/dramaturgical-analysis', type: 'reference', label: 'EBSCO Research Starters: Dramaturgical Analysis' },
     ],
   },
+  {
+    id: 'econ-calvo-pricing',
+    discipline: 'economics',
+    title: 'カルボ型価格設定',
+    statement:
+      'ギジェルモ・カルボが1983年に「効用最大化の枠組みにおける段階的価格設定」（Journal of Monetary Economics誌）で提示した、ニューケインジアン経済学で広く使われる名目価格の硬直性（粘着価格）のモデル。各期に企業が価格を改定できるのは一定の確率(1−θ)のみで、前回の改定からの経過時間に依存しない（時間依存型・無記憶の調整で、ハザード率が一定）。' +
+      '言い換えると毎期ランダムな割合の企業だけが価格を変え、残りは据え置くため、価格調整は企業間でずれた（非同期・スタガード）形になる。改定企業の最適な再設定価格の挙動を集計するとニューケインジアン・フィリップス曲線（現在のインフレ率が期待将来インフレ率と産出ギャップ／実質限界費用に依存する関係）が導かれる。分析的な扱いやすさからDSGEモデルの標準的手法となった。メニューコストやニューケインジアン、フィリップス曲線の各概念とは区別される。',
+    keyFigures: 'ギジェルモ・カルボ（Guillermo Calvo, 1983）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/moneco/v12y1983i3p383-398.html', type: 'academic', label: 'Calvo (1983) "Staggered Prices in a Utility-Maximizing Framework," Journal of Monetary Economics 12(3): 383–398 — RePEc/IDEAS bibliographic record' },
+      { url: 'https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts', type: 'reference', label: 'Wikipedia: Calvo (staggered) contracts — constant reset probability, staggering, NKPC, DSGE workhorse' },
+      { url: 'https://www.dynare.org/wp-repo/dynarewp051.pdf', type: 'academic', label: 'Dynare working paper — Calvo pricing and the New Keynesian Phillips Curve' },
+    ],
+  },
+  {
+    id: 'econ-diamond-mirrlees',
+    discipline: 'economics',
+    title: 'ダイヤモンド＝マーリーズの生産効率定理',
+    statement:
+      'ピーター・ダイヤモンドとジェームズ・マーリーズが1971年の論文「Optimal Taxation and Public Production」（American Economic Review）で示した最適課税論の中心的結果。一定の条件下（政府が全ての最終財に課税でき、企業の純利潤は完全に課税されるか存在しない＝規模に関して収穫一定）では、最適な税制は集計的な生産効率を保つべきだと述べる。すなわち経済は生産可能性フロンティア上に留まり、生産者側の意思決定を歪めてはならない。' +
+      'その含意として、中間財（企業が用いる投入物）や企業間取引には課税せず、全ての企業が同一の生産者価格に直面すべきであり、課税は最終消費財に対して行う。これは投入税額控除を伴う付加価値税型の税制を正当化し、中間投入への課税や輸入投入への関税を批判する根拠となる。消費側の歪みを扱うラムゼーの最適課税ルールとは区別される、生産効率に関する命題である。',
+    keyFigures: 'ピーター・ダイヤモンド／ジェームズ・マーリーズ（Diamond & Mirrlees, 1971）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond & Mirrlees (1971) "Optimal Taxation and Public Production I: Production Efficiency," American Economic Review 61:8-27 (AEA)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095715981', type: 'reference', label: 'Oxford Reference — Diamond–Mirrlees production efficiency lemma' },
+      { url: 'https://www.ier.hit-u.ac.jp/~kitamura/lecture/Hit/12Statsys4.pdf', type: 'academic', label: '一橋大学 最適課税の経済理論（最適間接税・最適所得税）講義ノート' },
+    ],
+  },
+  {
+    id: 'mgmt-target-costing',
+    discipline: 'management',
+    title: '原価企画（目標原価計算）',
+    statement:
+      '原価企画（目標原価計算、target costing）は、日本の製造業（特にトヨタ自動車、1960年代〜）に由来し新製品開発で用いる戦略的な原価管理手法である。原価に利益を上乗せして価格を決める原価加算（コストプラス）とは逆に市場から逆算するのが特徴で、市場が許容する目標販売価格と必要な目標利益から、許容原価すなわち目標原価を導く（目標原価＝目標価格−目標利益）。' +
+      'その目標原価で製造できるよう、企画・設計という上流段階で原価を作り込む点に本質がある（原価の大半は設計段階で決まるため）。価値工学（VE）やティアダウン、部門横断チームを駆使し、原価を測定するだけでなく事前に設計段階で作り込む事前的・能動的な管理である。ロビン・クーパーや門田安弘らが海外文献で紹介した。継続生産段階のカイゼン（原価改善）や活動基準原価計算（ABC）とは区別される。',
+    keyFigures: '日本の製造業（トヨタ等、1960年代〜）／門田安弘・ロビン・クーパー（海外への紹介）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.uakron.edu/cba/docs/ins-cen/igb/scm/TCHistory_formatted.pdf', type: 'academic', label: 'University of Akron — Japanese Target Costing: A Historical Perspective' },
+      { url: 'https://en.wikipedia.org/wiki/Target_costing', type: 'reference', label: 'Wikipedia — Target costing' },
+      { url: 'https://www.waseda.jp/fcom/soc/assets/uploads/2018/12/189a7ad3fb2939229c4b21bf6e315ca2.pdf', type: 'academic', label: '早稲田大学 — 原価企画の運用に関する論文（目標原価＝目標売価−目標利益）' },
+    ],
+  },
+  {
+    id: 'human-hot-cold-empathy-gap',
+    discipline: 'human-science',
+    title: 'ホット・コールド共感ギャップ',
+    statement:
+      'ジョージ・ローウェンスタインが提唱した、ある感情的・内臓的状態にあるとき、別の状態での自分や他者の行動・選好・感情を正確に予測または理解できない認知バイアス。空腹・渇き・性的興奮・痛み・薬物への渇望・恐怖や怒りといった「内臓的要因」は、強いとき（ホット状態）には行動を大きく左右し短期的欲求を優先させるが、冷静な（コールド）状態の人はその力を体系的に過小評価し、逆もまた然りである。' +
+      '方向によりホットからコールド（ホット状態が続く強さ・長さを過大評価）と、コールドからホット（冷静な人が興奮時の自分の行動を過小評価し、自制が不十分になる）に分類され、自分自身に向く個人内型と他者に向く個人間型がある。これは衝動性や自制の失敗、依存症の再発、そして投影バイアスを説明する枠組みとして用いられる。',
+    keyFigures: 'ジョージ・ローウェンスタイン（George Loewenstein, 1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2630055/', type: 'academic', label: 'Sayette, Loewenstein, Griffin & Black (2008) "Exploring the Cold-to-Hot Empathy Gap in Smokers," Psychological Science (NIH PMC)' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hot-cold-empathy-gap/', type: 'reference', label: 'BehavioralEconomics.com — Mini-Encyclopedia of BE: (Hot-cold) Empathy gap' },
+      { url: 'https://en.wikipedia.org/wiki/Hot-cold_empathy_gap', type: 'reference', label: 'Wikipedia — Hot-cold empathy gap' },
+    ],
+  },
+  {
+    id: 'bizlaw-worker-cooperative',
+    discipline: 'business-law',
+    title: '労働者協同組合法',
+    statement:
+      '労働者協同組合法（令和2年法律第78号）は2020年12月11日に公布、2022年10月1日に施行された厚生労働省所管の法律で、「労働者協同組合（労協）」という新たな法人制度を創設した。基本原理は、組合員が出資し、それぞれの意見を反映して組合の事業が行われ、組合員自らが事業に従事すること（出資・意見反映・従事の一体）であり、' +
+      '出資額にかかわらず一人一票による民主的運営を採る。設立は国や自治体の許認可を要さず、定款認証と登記のみで成立する準則主義をとる。組合員は組合と労働契約を締結し労働関係法令が適用される。介護・子育て・地域づくり等を通じた多様な就労機会の創出と地域の課題解決・持続可能で活力ある地域社会の実現を目的とし、生協（消費生活協同組合法）や農協とは別の制度である。',
+    keyFigures: '労働者協同組合法（令和2年法律第78号、2020年制定・2022年10月施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.roukyouhou.mhlw.go.jp/about', type: 'government', label: '厚生労働省 特設サイト「知りたい！労働者協同組合法」— 制度概要・基本原理・準則主義・施行日' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73ab7953&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データ 労働者協同組合法（令和02年12月11日法律第78号）— 条文・目的規定' },
+      { url: 'https://www.sn-hoki.co.jp/article/pickup_hourei/pickup_hourei1212577/', type: 'reference', label: '新日本法規 PICKUP法令改正情報 — 公布日・施行日（令和3年政令第252号で令和4年10月1日施行）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-subsidy',
+    discipline: 'information-sociology',
+    title: '情報補助金',
+    statement:
+      'オスカー・H・ガンディ・ジュニアが1982年の著書『Beyond Agenda Setting: Information Subsidies and Public Policy』で提唱した概念。情報源（政府・企業・利益団体・PR担当者など）が、自らの利益に沿った報道を促す目的で、受け手であるジャーナリズムやメディアに対し、低コストまたは無償で提供する情報を指す。プレスリリース、記者会見、用意された声明、ビデオニュースリリース、演出されたイベントなどがその例である。' +
+      '受け手が使える情報を得る際の費用・時間・労力を肩代わりして下げることで、情報源が望むフレーミングや内容が報道で採用されやすくなり、ニュースの議題や世論を形作る。資源豊富な主体ほどメディア内容への影響力を不均衡に強める点を指摘する批判的・政治経済学的視点であり、PR理論やアジェンダ・ビルディング研究の基礎をなす。受け手の選別に注目するゲートキーピングや、争点の重要性認知を扱うアジェンダ設定とは区別される。',
+    keyFigures: 'オスカー・H・ガンディ・ジュニア（Oscar H. Gandy Jr., 1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/scienceandtechnology/chpt/information-subsidies', type: 'reference', label: 'Encyclopedia of Science and Technology Communication (Sage) — "Information Subsidies"' },
+      { url: 'https://en.wikipedia.org/wiki/Information_subsidy', type: 'reference', label: 'Wikipedia — Information subsidy' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=943993', type: 'academic', label: 'Gandy, O. H., Jr. (1982). Beyond Agenda-Setting: Information Subsidies and Public Policy. Ablex (citation record)' },
+    ],
+  },
 ];
 // Stryker restore all
