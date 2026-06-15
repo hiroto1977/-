@@ -14914,5 +14914,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100222905', type: 'reference', label: 'Oxford Reference: narcotization / narcotizing dysfunction' },
     ],
   },
+  {
+    id: 'econ-noise-trader',
+    discipline: 'economics',
+    title: 'ノイズトレーダー',
+    statement:
+      'ノイズトレーダーとは、ファンダメンタルズ（本質的価値に関わる情報）ではなく、ノイズ＝無関係な情報・噂・センチメント・流行に基づいて取引する投資家を指す。「ノイズ取引」という概念はフィッシャー・ブラックが1986年の論文「Noise」（Journal of Finance）で提示した。デロング・シュライファー・サマーズ・ウォルドマン（DSSW）は1990年「Noise Trader Risk in Financial Markets」（Journal of Political Economy）で、' +
+      'ノイズトレーダーの非合理な心理（誤った確率的信念）の予測不能性が「ノイズトレーダー・リスク」を生み、合理的な裁定者が誤価格に十分賭けるのを妨げると示した。価格が割安でも短期にセンチメントがさらに極端化し乖離が拡大しうるため、リスク回避的で投資期間の短い裁定者は誤価格を完全には是正できず損失すら被りうる。これが「裁定の限界」である。結果としてノイズトレーダーは市場で存続し価格に影響し、自ら生むリスクを負って高い期待収益を得る場合があり、価格はファンダメンタルズから系統的に乖離しうる。',
+    keyFigures: 'フィッシャー・ブラック（1986）／デロング・シュライファー・サマーズ・ウォルドマン（DSSW, 1990）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.1986.tb04513.x', type: 'academic', label: 'Fischer Black (1986), "Noise", The Journal of Finance 41(3):529–543' },
+      { url: 'https://ms.mcmaster.ca/~grasselli/DeLongShleiferSummersWaldmann90.pdf', type: 'academic', label: 'De Long, Shleifer, Summers & Waldmann (1990), "Noise Trader Risk in Financial Markets", Journal of Political Economy 98(4):703–738' },
+      { url: 'https://www.nber.org/system/files/working_papers/w2395/w2395.pdf', type: 'academic', label: 'DSSW, "The Economic Consequences of Noise Traders", NBER Working Paper No. 2395' },
+    ],
+  },
+  {
+    id: 'econ-green-paradox',
+    discipline: 'economics',
+    title: 'グリーン・パラドックス',
+    statement:
+      'ハンス=ヴェルナー・ジンが2008年の論文および2012年の著書で提示した逆説で、将来に向けて段階的に強化されると予告される気候政策（将来上昇する炭素税や、将来の化石燃料規制の予想）が、逆説的に現在の化石燃料の採掘を加速し、近い将来の炭素排出をむしろ増やして温暖化を悪化させうるとする。機構は供給側かつ異時点間にある：枯渇性資源の保有者は、将来の政策によって資源の将来価値（将来の価格・収益性）が下がると見越し、' +
+      '規制が本格的に効く前の「今のうち」に多く採掘・販売してしまう誘因を持つため、供給が前倒しされる。この論理はホテリング・ルール（枯渇性資源の異時点間配分理論）に依拠する。含意として、需要側の漸進的政策は裏目に出うるため、気候政策のタイミングと信頼性が決定的に重要であり、源泉課税や資源を地中に残す供給側対策が必要となりうる。',
+    keyFigures: 'ハンス=ヴェルナー・ジン（Hans-Werner Sinn, 2008/2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/full/10.1093/reep/rev010', type: 'academic', label: 'An Introduction to the Green Paradox, Review of Environmental Economics and Policy 9(2)' },
+      { url: 'https://en.wikipedia.org/wiki/The_Green_Paradox', type: 'reference', label: 'Wikipedia: The Green Paradox' },
+      { url: 'https://direct.mit.edu/books/book/3362/The-Green-ParadoxA-Supply-Side-Approach-to-Global', type: 'academic', label: 'Sinn, The Green Paradox: A Supply-Side Approach to Global Warming (MIT Press, 2012)' },
+    ],
+  },
+  {
+    id: 'mgmt-job-demands-resources',
+    discipline: 'management',
+    title: '仕事の要求度－資源モデル（JD-R）',
+    statement:
+      'デマロウティ＆バッカーら（2001, Journal of Applied Psychology／2007）が提唱した産業保健心理学の主要枠組み。あらゆる職場の労働条件を2区分する。仕事の要求度は持続的な努力を要し心身のコストを伴う側面（仕事量・時間的切迫・情緒的負担など）を、仕事の資源は目標達成を助け要求度を減らし成長を促す側面（裁量・フィードバック・社会的支援・上司の支援など）を指す。' +
+      'モデルは比較的独立した2つの過程を想定する。健康障害プロセスでは慢性的に高い要求度がエネルギーを枯渇させバーンアウトや不調を招き、動機づけプロセスでは資源がワーク・エンゲイジメントや良好な成果を高める。さらに資源は要求度の悪影響を緩衝し、要求度が高いときほど資源は特に動機づけ的に働く。カラセクの要求度－統制モデル等を包含・拡張する。',
+    keyFigures: 'エヴァンゲリア・デマロウティ／アーノルド・バッカー（2001/2007）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.isonderhouden.nl/doc/pdf/arnoldbakker/articles/articles_arnold_bakker_245.pdf', type: 'academic', label: 'Bakker & Demerouti, "The Job Demands–Resources model: state of the art", Journal of Managerial Psychology' },
+      { url: 'https://www.jil.go.jp/institute/zassi/backnumber/2019/09/pdf/081-082.pdf', type: 'government', label: '労働政策研究・研修機構（JILPT）「仕事の要求度-資源モデル」' },
+      { url: 'https://www.jstage.jst.go.jp/article/stresskagakukenkyu/25/0/25_0_1/_pdf', type: 'academic', label: '島津明人（東京大学）職業性ストレスとワーク・エンゲイジメント（J-STAGE）' },
+    ],
+  },
+  {
+    id: 'human-rubber-hand-illusion',
+    discipline: 'human-science',
+    title: 'ラバーハンド錯覚（ゴムの手錯覚）',
+    statement:
+      'ボトヴィニックとコーエンが1998年にNature誌「Rubber hands feel touch that eyes see」で報告した身体所有感の錯覚。本人の本物の手を視界から隠し、目の前のもっともらしい位置に精巧なゴムの手を置く。実験者が隠した本物の手と見えているゴムの手を筆で同期して同時に触れると、しばらくしてゴムの手が自分の手のように感じられる所有感が生じ、触覚があたかもゴムの手から生じているように感じられる。' +
+      'さらに本物の手の位置をゴムの手の方へ誤って定位する固有感覚ドリフトが起きる。この錯覚は同期した視触覚刺激ともっともらしい手の位置・向きに依存し、非同期では生じにくい。身体所有感は視覚・触覚・固有感覚の多感覚統合によって構成され、合致する感覚信号の組み合わせで脳が可塑的に身体を構築することを示す。身体的自己意識や身体表象の研究、VR・義肢研究の基礎となっている。',
+    keyFigures: 'マシュー・ボトヴィニック／ジョナサン・コーエン（Botvinick & Cohen, 1998）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/35784', type: 'academic', label: 'Botvinick & Cohen (1998) "Rubber hands feel touch that eyes see," Nature 391:756' },
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021659', type: 'academic', label: 'PLOS ONE: The Rubber Hand Illusion — Feeling of Ownership and Proprioceptive Drift' },
+    ],
+  },
+  {
+    id: 'bizlaw-banking-act',
+    discipline: 'business-law',
+    title: '銀行法',
+    statement:
+      '銀行法（現行法は昭和56年法律第59号、1981年制定・1982年施行で1927年の旧銀行法（昭和2年法律第21号）を全部改正）は、銀行業務の公共性に基づく信用の維持と預金者等の保護を図り、金融の円滑を期しつつ銀行業務の健全かつ適切な運営を確保して、国民経済の健全な発展に資することを目的とする。銀行業（預金の受入れと資金の貸付け又は手形の割引を併せ行う営業、又は為替取引）は内閣総理大臣の免許を要し、実務上は金融庁が運用する。' +
+      '健全性規制として自己資本比率規制、特定先への与信を制限する大口信用供与規制、業務範囲規制、関連当事者とのアームズ・レングス・ルール、ディスクロージャー義務を課し、金融庁が監督・検査・是正措置の権限をもつ。銀行持株会社や銀行代理業も規律し、銀行と事業の分離（5%の議決権保有規制等）を関連原則とする。金融庁の所管。',
+    keyFigures: '銀行法（昭和56年法律第59号、1981年制定・1982年施行）／金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000069621', type: 'government', label: '国立国会図書館 日本法令索引「銀行法 昭和56年6月1日法律第59号」' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/09419810601059.htm', type: 'government', label: '衆議院 法律第五十九号（昭五六・六・一）銀行法' },
+      { url: 'https://kotobank.jp/word/%E9%8A%80%E8%A1%8C%E6%B3%95-54162', type: 'reference', label: 'コトバンク「銀行法」' },
+    ],
+  },
+  {
+    id: 'infosoc-wisdom-of-crowds',
+    discipline: 'information-sociology',
+    title: '群衆の叡智',
+    statement:
+      'ジェームズ・スロウィッキーが2004年の著書『「みんなの意見」は案外正しい（The Wisdom of Crowds）』で広めた考え方で、多様で独立した多数の個人の判断・推定を集約（平均や中央値）すると、しばしば個々の成員や専門家よりも正確になりうるとする。古典的な例はフランシス・ゴルトンが1907年に報告した牛の体重当てで、約800人の参加者の推定の中央値（1207ポンド）が実際の重量（1198ポンド）にほぼ一致した。' +
+      'スロウィッキーは群衆が賢くなる条件として、(1)多様性（各自が私的情報・解釈を持つ）、(2)独立性（互いの意見に左右されない）、(3)分散性（局所的・専門的知識を活かせる）、(4)集約（個々の判断を集団的決定に変える仕組み）の4つを挙げた。これらが崩れて同調・模倣・多様性欠如・感情伝播が起きると、バブルや情報カスケード等で群衆はかえって愚かにもなる。予測市場やクラウドソーシングに応用される。集合知一般とは区別される。',
+    keyFigures: 'ジェームズ・スロウィッキー（James Surowiecki, 2004）／フランシス・ゴルトン（1907）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/075450a0', type: 'academic', label: 'Francis Galton, "Vox Populi", Nature 75 (1907): 450–451' },
+      { url: 'https://link.springer.com/article/10.1186/s41235-021-00273-6', type: 'academic', label: 'Cognitive Research: Principles and Implications (Springer, 2021) — wisdom of crowds 査読論文' },
+      { url: 'https://en.wikipedia.org/wiki/The_Wisdom_of_Crowds', type: 'reference', label: 'Wikipedia "The Wisdom of Crowds"（4条件と失敗要因）' },
+    ],
+  },
 ];
 // Stryker restore all
