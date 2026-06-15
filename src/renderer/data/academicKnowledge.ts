@@ -12779,5 +12779,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'reference', label: 'Oxford Internet Institute (University of Oxford) — The Fifth Estate research project' },
     ],
   },
+  {
+    id: 'econ-harris-todaro',
+    discipline: 'economics',
+    title: 'ハリス＝トダロ・モデル',
+    statement:
+      'ジョン・ハリスとマイケル・トダロが1970年に提示した、農村から都市への労働移動を説明する開発経済学の二部門モデル。移動の意思決定は実際の都市賃金ではなく「期待都市賃金」（都市の公式部門賃金×就業確率＝1−失業率）に基づくと考える。都市の公式部門賃金は最低賃金や制度的要因により市場清算水準より高く維持されるため、' +
+      '期待都市賃金が農村（農業）賃金を上回る限り移動が続き、両者が等しくなるまで（ハリス＝トダロ条件）労働者が流入する。その結果、高い都市失業と非公式部門が併存する均衡が成立しうる。重要な含意が「トダロのパラドックス」で、都市の雇用創出はかえって期待所得を高めて一層の移動を誘発し、都市の総失業を増やしうる。',
+    keyFigures: 'ジョン・ハリス／マイケル・トダロ（1970）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sites.duke.edu/econ567_01_s2013/files/2013/04/HarrisTodaroPaper.pdf', type: 'academic', label: 'Duke University, Econ 567 — Harris-Todaro Model of Urban Unemployment' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/harris-todaro-model', type: 'reference', label: 'Encyclopedia.com — Harris-Todaro Model' },
+      { url: 'https://en.wikipedia.org/wiki/Todaro_paradox', type: 'reference', label: 'Todaro paradox (Wikipedia)' },
+    ],
+  },
+  {
+    id: 'econ-cantillon-effect',
+    discipline: 'economics',
+    title: 'カンティロン効果',
+    statement:
+      'カンティロン効果とは、貨幣供給の変化が全ての価格や全ての人々に一律・同時には及ばないという洞察である。新たに創造された貨幣は経済の特定の地点（注入点）から入り、徐々に波及していく。そのため、新貨幣を早く受け取る者（発行源に近い銀行・大企業・政府契約者など）は物価が上昇する前に支出でき利益を得る一方、遅く受け取る者や固定所得者は物価上昇後に所得が増えるため購買力を失い損をする。' +
+      'すなわち貨幣は短期的に分配の面で中立ではなく、注入点や波及経路に応じて相対価格の歪みと富や実物資源の再分配が生じる。この洞察はリシャール・カンティロンが『商業試論』（Essai sur la nature du commerce en général、1730年頃執筆・1755年刊行）で示し、ミーゼスやハイエクのオーストリア学派景気循環論に継承された。今日では金融政策・インフレ・量的緩和や資産価格への影響の議論にも援用される。',
+    keyFigures: 'リシャール・カンティロン（Richard Cantillon, Essai 1755）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://aier.org/article/cantillon-effects-and-money-neutrality/', type: 'academic', label: 'AIER — Cantillon Effects and Money Neutrality（米国経済研究所）' },
+      { url: 'https://faculty.fortlewis.edu/walker_d/econ_307_-_pre_adam_smith_-_cantillon.htm', type: 'academic', label: 'Fort Lewis College ECON 307 — Cantillon（大学講義資料）' },
+      { url: 'https://www.econlib.org/library/NPDBooks/Cantillon/cntNT.html', type: 'reference', label: 'Econlib — Essai sur la Nature du Commerce en Général（原典・出典1755）' },
+    ],
+  },
+  {
+    id: 'mgmt-three-horizons',
+    discipline: 'management',
+    title: '3つの地平（スリー・ホライズン）',
+    statement:
+      '成長とイノベーションを管理するための枠組みで、企業は3つの「地平（ホライズン）」を同時並行で経営すべきだと説く。ホライズン1は中核となる現在の事業を防衛・拡張し、今日の収益とキャッシュフローを生み出す領域。ホライズン2は既に売上が立ち始め中期に利益化する、新興・高成長の事業を育てる領域。' +
+      'ホライズン3は将来の事業の種（研究プロジェクト・試行・ベンチャー）を創り、長期的にホライズン1へ育てうる選択肢を仕込む領域である。中核だけに集中せず3つすべてに同時に投資することで、短期の業績と長期的な刷新を両立させる点が要諦。マッキンゼーのメルダッド・バガイ、スティーブン・コーリー、デイビッド・ホワイトが2000年の著書『The Alchemy of Growth』で提示した。',
+    keyFigures: 'メルダッド・バガイ／スティーブン・コーリー／デイビッド・ホワイト（McKinsey, 2000『The Alchemy of Growth』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/enduring-ideas-the-three-horizons-of-growth', type: 'reference', label: 'McKinsey & Company — Enduring Ideas: The three horizons of growth' },
+      { url: 'https://www.mindtools.com/aue0yg1/mckinseys-three-horizons-of-growth/', type: 'reference', label: 'Mindtools — McKinsey\'s Three Horizons of Growth' },
+      { url: 'https://strategicmanagementinsight.com/tools/three-horizons-growth-model/', type: 'reference', label: 'Strategic Management Insight — McKinsey\'s Three Horizons of Growth Model Explained' },
+    ],
+  },
+  {
+    id: 'human-tip-of-the-tongue',
+    discipline: 'human-science',
+    title: '舌先現象',
+    statement:
+      'よく知っている語や人名を一時的に思い出せないのに、もうすぐ出てきそうという強い感覚（既知感・想起切迫感）を伴い、頭文字・音節数・強勢位置・似た音や意味の語など部分的情報にはアクセスできることが多い現象で、「のどまで出かかる」状態とも呼ばれる。ロジャー・ブラウンとデイビッド・マクニールは1966年の論文で、低頻度語の定義を読み上げて実験室で多数のTOT状態を誘発し、未想起のまま頭文字・音節数・強勢位置を偶然以上の確率で答えられることを実証した。' +
+      'これは検索失敗と自己の記憶状態のモニタリングが結びついたメタ認知の典型例とされ、語彙アクセスが段階的に進むこと（意味は得られても音韻形が取り出せない）や既知感（feeling-of-knowing）の理論に関わる。英語以外の多くの言語にも同様の慣用表現があり、単言語話者から多言語話者まで広くみられるほぼ普遍的な経験で、その頻度は加齢に伴って増加する。',
+    keyFigures: 'ロジャー・ブラウン／デイビッド・マクニール（Brown & McNeill, 1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://bpb-us-w2.wpmucdn.com/sites.uwm.edu/dist/0/196/files/2016/06/brownmcneill1966-26k7lzc.pdf', type: 'academic', label: 'Brown & McNeill (1966), The \'Tip of the Tongue\' Phenomenon, J. Verbal Learning & Verbal Behavior 5, 325-337' },
+      { url: 'https://dictionary.apa.org/tip-of-the-tongue-phenomenon', type: 'reference', label: 'APA Dictionary of Psychology — tip-of-the-tongue phenomenon (TOT)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4291522/', type: 'academic', label: 'PMC peer-reviewed — TOT as metacognition and age-related increase' },
+    ],
+  },
+  {
+    id: 'bizlaw-money-lending-act',
+    discipline: 'business-law',
+    title: '貸金業法',
+    statement:
+      '貸金業法は、消費者金融・サラ金などの貸金業者を規律する法律で、昭和58年（1983年）に貸金業の規制等に関する法律（貸金業規制法、昭和58年法律第32号）として制定され、2006年に大改正のうえ貸金業法と改称、総量規制などを含む全規定が2010年6月に完全施行された。所管は金融庁。深刻化した多重債務問題やグレーゾーン金利への対応として、貸金業者の登録・業務規制を整備し、' +
+      '個人の借入総額を原則として年収の3分の1までに制限する総量規制を導入した。あわせて、利息制限法の上限（年15〜20％）と旧出資法の上限（年29.2％）との間に存在したグレーゾーン金利を、出資法の上限金利を引き下げて利息制限法へ一本化することで廃止し、返済能力の確認を義務づけた。グレーゾーン金利をめぐっては、2006年の最高裁判決を契機に過払い金返還請求が多発した。',
+    keyFigures: '貸金業法（昭和58年法律第32号、2006年大改正・2010年完全施行）／金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/kashikin/kihon.html', type: 'government', label: '金融庁「貸金業法のキホン」（総量規制・上限金利・多重債務対策）' },
+      { url: 'https://www.fsa.go.jp/policy/kashikin/04.pdf', type: 'government', label: '金融庁「貸金業法改正等の概要」（2006改正・出資法/利息制限法の一本化）' },
+      { url: 'https://kotobank.jp/word/%E8%B2%B8%E9%87%91%E6%A5%AD%E6%B3%95-462012', type: 'reference', label: 'コトバンク「貸金業法」（制定経緯・2006年改正・出資法/利息制限法）' },
+    ],
+  },
+  {
+    id: 'infosoc-banal-nationalism',
+    discipline: 'information-sociology',
+    title: 'バナール・ナショナリズム',
+    statement:
+      'マイケル・ビリッグが1995年の著書『Banal Nationalism』で提唱・確立した概念で、確立した国民国家が日常の習慣的でしばしば意識されない仕方で絶えず再生産され、国民的帰属が日々「掲揚（flagging）」される様態を指す。例として、公共建物に振られずに掲げられた旗、ニュース報道での「我々」「この国」「天気」「経済」といった指示語、硬貨や紙幣の意匠、スポーツ報道、天気図などが挙げられる。' +
+      'ビリッグは、旗を振る分離主義者や過激派の情熱的な「熱い（hot）」ナショナリズムと対比して、こうした平凡で目立たない日常的な想起こそが安定した西欧諸国でナショナリズムを持続させると論じ、主流の社会科学が「ナショナリズム」を他者や周縁にのみ投影してこれを見落としがちだと批判した。アンダーソンの「想像の共同体」と関連しつつ、その日常的・習慣的な再生産の局面を強調する点に特徴がある。',
+    keyFigures: 'マイケル・ビリッグ（Michael Billig, 1995『Banal Nationalism』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/books/download/banal-nationalism/n5.pdf', type: 'academic', label: 'Michael Billig, Banal Nationalism, ch. "Flagging the Homeland Daily" (SAGE)' },
+      { url: 'https://www.ebsco.com/research-starters/political-science/banal-nationalism', type: 'reference', label: 'EBSCO Research Starters: Banal nationalism' },
+      { url: 'https://en.wikipedia.org/wiki/Banal_nationalism', type: 'reference', label: 'Wikipedia: Banal nationalism' },
+    ],
+  },
 ];
 // Stryker restore all
