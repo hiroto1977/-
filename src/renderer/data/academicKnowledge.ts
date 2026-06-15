@@ -11535,5 +11535,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://kotobank.jp/word/%E7%82%8E%E4%B8%8A-447739', type: 'reference', label: 'コトバンク「炎上（エンジョウ）」' },
     ],
   },
+  {
+    id: 'econ-precautionary-saving',
+    discipline: 'economics',
+    title: '予備的貯蓄',
+    statement:
+      '予備的貯蓄とは、将来の所得や支出の不確実性（失業・病気・収入変動などのリスク）に備えて行われる貯蓄を指す。リスク回避的な家計は、将来の所得が不確実で限界効用が凸である場合（効用関数の3階微分が正、すなわち「プルーデンス（慎慮）」）、確実な場合よりも現在の消費を抑えて多く貯蓄し、悪い状態に備えるバッファー（緩衝在庫）を積み増す。' +
+      'この動機はヘイン・リーランド（1968）とアグナー・サンドモ（1970）により分析され、正の予備的貯蓄には限界効用の凸性が必要であることが示された。マイルズ・キンボール（1990）はこれを「プルーデンス」として定式化し、予備的プレミアムや絶対プルーデンス指標を導入した。予備的貯蓄は、現実の消費が恒常所得仮説・ライフサイクル仮説の予測以上に当期所得に追随する（消費の過剰感応性）理由の一つを説明する。',
+    keyFigures: 'ヘイン・リーランド（1968）／アグナー・サンドモ（1970）／マイルズ・キンボール（1990, プルーデンス）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s11150-019-09460-3', type: 'academic', label: 'Baiardi, Magnani & Menegatti, "The theory of precautionary saving: an overview of recent developments," Review of Economics of the Household (Springer, 査読付)' },
+      { url: 'https://www.nber.org/papers/w2336', type: 'academic', label: 'R. J. Caballero, "Risky Income, Life Cycle Consumption, and Precautionary Savings," NBER Working Paper' },
+      { url: 'https://en.wikipedia.org/wiki/Precautionary_savings', type: 'reference', label: 'Wikipedia: Precautionary savings' },
+    ],
+  },
+  {
+    id: 'econ-dornbusch-overshooting',
+    discipline: 'economics',
+    title: 'オーバーシューティング・モデル（ドーンブッシュ）',
+    statement:
+      'ルディガー・ドーンブッシュが1976年の論文「Expectations and Exchange Rate Dynamics」（Journal of Political Economy）で提示した、変動相場制下の為替レート変動を説明するモデル。財・サービスの価格は短期的に硬直的でゆっくりとしか調整されない一方、資産・金融市場と為替レートは情報に即座に反応して瞬時に調整される、という非対称性を前提とする。この想定の下では、金融緩和（貨幣供給の増加）は短期的に自国の名目利子率を低下させる。' +
+      'カバーなし金利平価（自国と外国の金利差は予想為替変化率に等しい）が成立するため、低下した自国金利と整合的であるには将来の為替の増価（戻り）が予想されねばならず、それは為替レートがまず長期均衡水準を超えて大きく減価（オーバーシュート）することによってのみ実現する。その後、財価格が徐々に調整されるにつれて為替レートは長期均衡値へ緩やかに収斂していく。為替の過剰な短期変動（ボラティリティ）を理論的に説明した点で画期的な業績とされる。',
+    keyFigures: 'ルディガー・ドーンブッシュ（Rudiger Dornbusch, 1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w0832/w0832.pdf', type: 'academic', label: 'NBER Working Paper「Exchange Rate Dynamics and the Overshooting Hypothesis」' },
+      { url: 'https://en.wikipedia.org/wiki/Overshooting_model', type: 'reference', label: 'Wikipedia「Overshooting model」' },
+      { url: 'https://kumagaku.repo.nii.ac.jp/record/3553/files/keizai27(1-4)-08.pdf', type: 'academic', label: '熊本学園大学リポジトリ「ドーンブッシュのオーバーシューティング・モデル再考」' },
+    ],
+  },
+  {
+    id: 'mgmt-customer-lifetime-value',
+    discipline: 'management',
+    title: '顧客生涯価値（LTV）',
+    statement:
+      '顧客生涯価値（LTV／CLV）は、一人の顧客が取引を開始してから関係が終了するまでの全期間に企業へもたらす利益（または売上）の総額を予測するマーケティング指標である。一般に購買頻度・平均購買単価・粗利益率・継続率（解約率の裏返し）から算出され、将来キャッシュフローは割引現在価値に換算されることが多い。' +
+      '一度きりの取引価値ではなく長期的な関係全体を評価する点に特徴があり、関係性マーケティングや顧客エクイティ（Rust, Zeithaml & Lemon らの議論）の中核概念である。LTVが高い顧客ほど高い顧客獲得コスト（CAC）や維持コストを正当化でき、企業が獲得・維持にどれだけ投資すべきかの判断基準となる。',
+    keyFigures: '関係性マーケティング／顧客エクイティ（Blattberg, Rust, Zeithaml & Lemon ら）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.anderson.ucla.edu/sites/default/files/documents/areas/fac/marketing/JSR2006(0).pdf', type: 'academic', label: 'UCLA Anderson / Journal of Service Research (2006), "Modeling Customer Lifetime Value"' },
+      { url: 'https://faculty.wharton.upenn.edu/wp-content/uploads/2008/09/Customer-Equity.1.3.pdf', type: 'academic', label: 'Wharton faculty, "Moving from Customer Lifetime Value to Customer Equity"' },
+      { url: 'https://mba.globis.ac.jp/about_mba/glossary/detail-12187.html', type: 'reference', label: 'グロービス経営大学院 MBA用語集「顧客生涯価値」' },
+    ],
+  },
+  {
+    id: 'human-ikea-effect',
+    discipline: 'human-science',
+    title: 'イケア効果',
+    statement:
+      'イケア効果（IKEA effect）とは、人が自分で部分的に組み立て・制作した物に対し、自身が作っていない同等の完成品よりも不当に高い価値を付与してしまう認知バイアスである。組み立て式家具を売るスウェーデンの小売企業イケアにちなんで名付けられた。マイケル・ノートン、ダニエル・モション、ダン・アリエリーが2011/2012年の論文「The IKEA Effect: When Labor Leads to Love」（Journal of Consumer Psychology）で命名・実証し、被験者がイケアの箱・折り紙・レゴを組み立てる一連の実験で自作物への評価が高まることを示した。' +
+      '背景には、費やした労力を正当化しようとする「労力の正当化（effort justification）」や、自分が保有・関与した物を高く見積もる「保有効果（endowment effect）」と関連する心理がある。ただし効果は課題を成功裏に完成させた場合に限られ、途中で失敗したり作った物を壊した場合には消失する点が境界条件として確認されている。',
+    keyFigures: 'マイケル・ノートン／ダニエル・モション／ダン・アリエリー（2011/2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://myscp.onlinelibrary.wiley.com/doi/abs/10.1016/j.jcps.2011.08.002', type: 'academic', label: 'Norton, Mochon & Ariely (2012) "The IKEA Effect: When Labor Leads to Love," Journal of Consumer Psychology 22(3) — Wiley Online Library' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=41121', type: 'academic', label: 'Harvard Business School — Faculty & Research article listing' },
+      { url: 'https://en.wikipedia.org/wiki/IKEA_effect', type: 'reference', label: 'Wikipedia: IKEA effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-antimonopoly-act',
+    discipline: 'business-law',
+    title: '独占禁止法',
+    statement:
+      '独占禁止法（正式名称「私的独占の禁止及び公正取引の確保に関する法律」、昭和22年法律第54号、1947年制定）は、公正かつ自由な競争を促進し、一般消費者の利益を確保することを目的とする日本の競争政策の基本法であり、「経済憲法」とも呼ばれる。' +
+      '主な規制の3本柱は、(1)市場支配を狙う私的独占の禁止、(2)カルテル・入札談合などの不当な取引制限の禁止、(3)優越的地位の濫用や不当廉売等の不公正な取引方法の禁止であり、加えて企業結合（合併等）も規制する。執行機関は公正取引委員会（JFTC）で、違反に対し排除措置命令や課徴金納付命令を行うほか、自主申告を促す課徴金減免制度（リーニエンシー）を設けている。',
+    keyFigures: '公正取引委員会／独占禁止法（昭和22年法律第54号、1947年制定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会「独占禁止法の規制内容」（3本柱）' },
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/gaiyo.html', type: 'government', label: '公正取引委員会「独占禁止法の概要」（目的・企業結合・執行）' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/lawdk.html', type: 'government', label: '公正取引委員会 法令（昭和22年法律第54号、正式名称）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-cocoon',
+    discipline: 'information-sociology',
+    title: '情報の繭（インフォメーション・コクーン）',
+    statement:
+      '法学者キャス・サンスティーンが著書『Infotopia: How Many Minds Produce Knowledge』（2006年）で提示した概念で、人々が自ら選んだ心地よい情報・自分を安心させる声だけに囲まれて生きる「情報の繭（インフォメーション・コクーン）」を指す。各人が自分好みに編集された情報空間（サンスティーンの言う「Daily Me」）に閉じこもり、異論・不快な事実・多様な視点を体系的に排除していく状態である。' +
+      'サンスティーンは、健全な民主主義には異なる価値観への偶発的な接触と熟議が不可欠だと考え、情報の繭が確証バイアスを強め、似た者同士の集団内で意見がより極端化する集団極性化（group polarization）を促し、市民が共有経験を失って民主的熟議や社会的結束を損なうと警告した。エコーチェンバーやフィルターバブルと密接に関連する。',
+    keyFigures: 'キャス・サンスティーン（Cass Sunstein, 2006『Infotopia』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.oup.com/academic/product/infotopia-9780195189285', type: 'academic', label: 'Oxford University Press — Cass R. Sunstein, Infotopia: How Many Minds Produce Knowledge (2006)' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691175515/republic', type: 'academic', label: 'Princeton University Press — Cass R. Sunstein, #Republic: information cocoons, Daily Me, group polarization' },
+      { url: 'https://www.thecrimson.com/article/2014/3/5/harvard-information-cocoon/', type: 'media', label: 'The Harvard Crimson — "The Information Cocoon" (Sunstein definition)' },
+    ],
+  },
 ];
 // Stryker restore all
