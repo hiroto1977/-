@@ -10263,5 +10263,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubmed.ncbi.nlm.nih.gov/39280291/', type: 'academic', label: 'Impacts of digital social media detox for mental health: A systematic review and meta-analysis (2024, PubMed)' },
     ],
   },
+  {
+    id: 'econ-switching-cost',
+    discipline: 'economics',
+    title: 'スイッチングコストとロックイン',
+    statement:
+      'スイッチングコスト（乗り換え費用）とは、顧客がある製品・サービス・供給者から別のものへ乗り換える際に負担する金銭的・時間的・心理的・学習的コストを指す。これが高いと顧客は現在の供給者に固定され、抜け出しにくくなる＝ロックイン（囲い込み）が生じる。' +
+      '主な種類は、(1)学習コスト、(2)取引・解約コスト（違約金や初期設定）、(3)契約上のコスト（長期契約・ポイント失効）、(4)互換性・データ移行コスト、(5)心理的・関係的コストである。経済学的には、企業は既存の固定客を「収穫」して高めの価格を課せる一方、新規顧客獲得には初期割引競争が激化し、参入障壁も高まる。カール・シャピロとハル・ヴァリアンは『Information Rules』(1999)で情報技術産業のロックイン戦略を体系化し、IT調達・クラウドのベンダーロックインや、QWERTY配列に代表される経路依存（ポール・デイヴィッド、ブライアン・アーサー）の議論とも結びつく。相互運用性やデータポータビリティはロックインを緩和する。',
+    keyFigures:
+      'カール・シャピロ（Carl Shapiro）＆ハル・ヴァリアン（Hal R. Varian, 1999『Information Rules』）／ポール・デイヴィッド＆ブライアン・アーサー（経路依存・QWERTY）／ベンダーロックイン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbswk.hbs.edu/archive/information-rules-avoiding-lock-in-in-the-information-economy', type: 'academic', label: 'Harvard Business School Working Knowledge — Information Rules: Avoiding “Lock-In” (Shapiro & Varian)' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-78237-5_12', type: 'academic', label: 'Springer Nature — “Lock-In and Switching Costs”' },
+      { url: 'https://eh.net/encyclopedia/path-dependence/', type: 'reference', label: 'EH.net Encyclopedia (Economic History Association) — Path Dependence (QWERTY; David, Arthur)' },
+    ],
+  },
+  {
+    id: 'mgmt-job-enrichment',
+    discipline: 'management',
+    title: '職務拡大と職務充実',
+    statement:
+      '職務拡大（job enlargement）と職務充実（job enrichment）は、分業・職務細分化による単調で退屈な職務を見直し、働く人の動機づけと満足を高める職務再設計の手法であり、拡大の方向が異なる。職務拡大は水平的拡大（horizontal job loading）で、同程度の難易度・責任のタスクの種類や範囲を増やして仕事の多様性を高め単調さを減らすが、責任や自律性は変えない。' +
+      '職務充実は垂直的拡大（vertical job loading）で、計画・実行・統制などより高い責任・権限・自律性（裁量）と達成・成長・承認の機会を職務に組み込む。職務充実はフレデリック・ハーズバーグの二要因理論（動機づけ要因が満足をもたらす）に基づき1968年に提唱され、後にハックマン＆オルダムの職務特性モデル（技能多様性・タスク完結性・タスク重要性・自律性・フィードバックの5次元）が理論的・実証的に精緻化した。拡大は多様性を増すのみで、責任・裁量を高める充実とは区別される。',
+    keyFigures:
+      'フレデリック・ハーズバーグ（Frederick Herzberg, 1968・職務充実）／J.R.ハックマン＆G.R.オルダム（職務特性モデル）／水平的拡大（拡大）vs 垂直的拡大（充実）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Job_enrichment', type: 'reference', label: 'Job enrichment — Wikipedia（垂直的拡大／Herzberg 二要因理論との関係）' },
+      { url: 'https://en.wikipedia.org/wiki/Job_enlargement', type: 'reference', label: 'Job enlargement — Wikipedia（水平的拡大としての職務拡大）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/12545925/', type: 'academic', label: 'Herzberg, F. (1968) “One More Time: How Do You Motivate Employees?” Harvard Business Review 46:53–62（原典, PubMed）' },
+    ],
+  },
+  {
+    id: 'human-survivorship-bias',
+    discipline: 'human-science',
+    title: '生存者バイアス',
+    statement:
+      '生存者バイアス（survivorship bias）とは、ある選別・淘汰のプロセスを「生き残った（生存した）」対象だけを観察対象とし、脱落・失敗・消滅して見えなくなった対象を見落とすことで生じる、系統的な判断の誤りである。' +
+      '統計学的には選択（標本）バイアスの一種で、成功者や現存するものだけを見て一般化すると、成功要因を過大評価し失敗確率を過小評価する。第二次世界大戦中、コロンビア大の統計研究グループ（SRG）のエイブラハム・ウォルドは、帰還した爆撃機の弾痕が少ない箇所（エンジンや操縦席）こそ致命的部位で、撃たれた機は帰還できず標本から消えたと見抜き、そこを補強すべきと指摘した。確証バイアスや後知恵バイアスとは別概念で、「見えなくなったデータの欠落」に起因する点が特徴。対策は非生存サンプルも含めて分析することである。',
+    keyFigures:
+      'エイブラハム・ウォルド（Abraham Wald・爆撃機の弾痕分析）／コロンビア大 統計研究グループ（SRG）／選択バイアスの一種',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/survivorship-bias', type: 'reference', label: 'Encyclopaedia Britannica — Survivorship bias: Definition, Meaning, & Examples' },
+      { url: 'https://www.ams.org/publicoutreach/feature-column/fc-2016-06', type: 'academic', label: 'American Mathematical Society (AMS) Feature Column — The Legend of Abraham Wald' },
+      { url: 'https://en.wikipedia.org/wiki/Survivorship_bias', type: 'reference', label: 'Wikipedia — Survivorship bias' },
+    ],
+  },
+  {
+    id: 'human-gamblers-fallacy',
+    discipline: 'human-science',
+    title: 'ギャンブラーの誤謬',
+    statement:
+      '互いに独立な偶然事象（コイン投げ・ルーレット等）で、ある結果が続けて起きると次は反対の結果が起きやすい（または起きにくい）と誤って信じる認知バイアス。例：「表が5回続いたから次は裏が出やすい」。実際は各試行は独立で確率は毎回不変（表1/2）であり、過去の結果は次に影響しない。' +
+      '「長期では平準化する（大数の法則）」を短期の少数試行へ誤適用する小数の法則（Tversky & Kahneman 1971）と代表性ヒューリスティックに基づく。名称は1913年モンテカルロのカジノでルーレットが黒26連続となり「次こそ赤」と賭け大損した逸話に由来（モンテカルロの誤謬）。連続成功は続くと見るホットハンドの誤謬と対比される。判事の亡命審査・融資審査・球審の判定が直前と逆に振れる負の自己相関（Chen, Moskowitz & Shue 2016）も関連する。',
+    keyFigures:
+      'エイモス・トヴェルスキー＆ダニエル・カーネマン（1971・小数の法則）／Chen・Moskowitz・Shue（2016 QJE・負の自己相関）／ホットハンドの誤謬と対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Gambler%27s_fallacy', type: 'reference', label: 'Wikipedia: Gambler’s fallacy（定義・独立事象・1913年モンテカルロ・代表性ヒューリスティック）' },
+      { url: 'http://stats.org.uk/statistical-inference/TverskyKahneman1971.pdf', type: 'academic', label: 'Tversky & Kahneman (1971) “Belief in the Law of Small Numbers”, Psychological Bulletin（小数の法則）' },
+      { url: 'https://academic.oup.com/qje/article/131/3/1181/2590011', type: 'academic', label: 'Chen, Moskowitz & Shue (2016) QJE 131(3):1181–1242（負の自己相関の実証）' },
+    ],
+  },
+  {
+    id: 'bizlaw-receivables-security',
+    discipline: 'business-law',
+    title: '集合債権譲渡担保（将来債権譲渡）',
+    statement:
+      '集合債権譲渡担保とは、企業が資金調達のために、現在および将来にわたって継続的取引から取得する多数の金銭債権（売掛金等）を一括して担保のため債権者に譲渡する非典型担保であり、不動産担保に乏しい中小企業が売掛債権を活用して融資を受けるABL（動産・債権担保融資）の中核をなす。' +
+      '将来債権の譲渡可能性は2017年改正で新設された民法466条の6が「債権の譲渡は、その意思表示の時に債権が現に発生していることを要しない」と明文化した（改正前から最判平成11年1月29日が将来債権譲渡を有効と認めていた）。対抗要件は原則として民法467条（債務者への通知・承諾、第三者対抗には確定日付ある証書）だが、法人がする金銭債権譲渡では動産・債権譲渡特例法による債権譲渡登記で第三者対抗要件を備えられる。集合債権譲渡担保の第三者対抗要件は最判平成13年11月22日が467条2項の方法で譲渡債権発生前の通知時に具備されると判示し、譲渡対象は債権者・債務者・発生原因・期間等で他の債権と識別できる程度に特定される必要がある。',
+    keyFigures:
+      '民法466条の6＝将来債権の譲渡性を明文化（2020年4月施行）／467条＝対抗要件／動産・債権譲渡特例法＝債権譲渡登記で第三者対抗要件／最判平11.1.29（将来診療報酬債権）・最判平13.11.22（集合債権譲渡担保の対抗要件）／ABLの中核／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（第466条の6・第467条）' },
+      { url: 'https://www.moj.go.jp/MINJI/saikenjouto-01.html', type: 'government', label: '法務省 債権譲渡登記制度とは（動産・債権譲渡特例法）' },
+      { url: 'https://www.ls.ynu.ac.jp/about/program/financial/PDF/kaisetsu.pdf', type: 'academic', label: '横浜国立大学 法科大学院 集合債権譲渡担保 解説（最判平11・1・29、平13・11・22）' },
+    ],
+  },
+  {
+    id: 'infosoc-clickbait',
+    discipline: 'information-sociology',
+    title: 'クリックベイト（釣り見出し）',
+    statement:
+      'クリックベイト（clickbait）とは、内容の質や正確さよりも読者のクリックを誘発することを主目的とした、扇情的・誇張的で好奇心を煽る見出しやサムネイルを指す。Merriam-Webster は「特にリンク先が疑わしい価値（dubious value）の内容である場合に、読者にハイパーリンクをクリックさせるよう設計されたもの」と定義する。' +
+      'その核心はcuriosity gap（好奇心の隙間）の創出にあり、Loewensteinの情報ギャップ理論に基づき、わざと情報を伏せて「知りたい」という欲求と未知情報との隙間を作りクリックさせる。背景にはページビューで収益化するアテンション・エコノミー（注意経済）があり、2010年代前半にUpworthyやBuzzFeedが多用して注目された。記事の実体は見出しほどの価値を欠き期待を裏切ることが多く、ジャーナリズムの質低下・誤情報拡散・読者の不信を招くため、Facebook等のプラットフォームは抑制のアルゴリズム調整を行ってきた。',
+    keyFigures:
+      'curiosity gap（好奇心の隙間）／Loewenstein情報ギャップ理論／アテンション・エコノミーが背景／Upworthy・BuzzFeedが普及／Facebook等がアルゴリズムで抑制／フェイクニュース・ダークパターンとは別概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.merriam-webster.com/dictionary/clickbait', type: 'reference', label: 'Merriam-Webster Dictionary — “clickbait”（定義: content of dubious value）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0378216621000229', type: 'academic', label: 'Scott, K. (2021) “...Clickbait, relevance and the curiosity gap”, Journal of Pragmatics 175（査読論文）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/14614448211027174', type: 'academic', label: 'Lischka & Garz (2023) “Clickbait news and algorithmic curation”, New Media & Society 25(8)（査読論文）' },
+    ],
+  },
 ];
 // Stryker restore all
