@@ -10916,5 +10916,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia — Datafication' },
     ],
   },
+  {
+    id: 'econ-coase-conjecture',
+    discipline: 'economics',
+    title: 'コースの推測（耐久財独占）',
+    statement:
+      'コースの推測（コース予想）は、ロナルド・コースが1972年に提唱した耐久財独占に関する命題である。財をレンタルではなく販売し、かつ将来の価格を高く維持すると約束（コミット）できない独占企業を考える。独占企業は高価格で高評価の買い手に売った後、残った低評価の買い手を狙って価格を引き下げる誘因を常に持つ。' +
+      '将来を見越した合理的な買い手はこの値下げを予期し、購入を先延ばしにして待機するため、独占企業は当初から価格を引き下げざるを得ない。販売間隔がゼロに近づく極限では、最初の提示価格は限界費用（競争価格）にほぼ等しくなり、独占力はほぼ消滅して取引の大半が即座に成立する。ストーキー、ビューロー、ギュル＝ゾンネンシャイン＝ウィルソンらが厳密に定式化した。',
+    keyFigures: 'ロナルド・コース（Ronald Coase, 1972）／ナンシー・ストーキー（Stokey, 1981）／ジェレミー・ビューロー（Bulow, 1982）／ギュル・ゾンネンシャイン・ウィルソン（Gul–Sonnenschein–Wilson, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.princeton.edu/~fgul/CoaseConjecture.pdf', type: 'academic', label: 'Gul, Sonnenschein & Wilson, "Foundations of Dynamic Monopoly and the Coase Conjecture", Journal of Economic Theory (1986)' },
+      { url: 'https://en.wikipedia.org/wiki/Coase_conjecture', type: 'reference', label: 'Wikipedia: Coase conjecture' },
+    ],
+  },
+  {
+    id: 'econ-pecking-order',
+    discipline: 'economics',
+    title: 'ペッキングオーダー理論（資金調達順位理論）',
+    statement:
+      'ペッキングオーダー理論は、スチュワート・マイヤーズとニコラス・マジュフが1984年に展開した資本構成の理論で、経営者と投資家のあいだの情報の非対称性に着目する。経営者は自社の価値やリスクを外部の投資家より正確に把握しているため、資金調達には明確な優先順位（ペッキングオーダー）が生じる。すなわち、まず内部資金（内部留保）を用い、それが尽きると負債を発行し、新株発行は最後の手段とする。' +
+      '新株発行は、市場に対して経営者が自社株を割高と判断したというシグナルを送り、株価下落（逆選択コスト）を招くため割高な調達手段となる。この理由から、収益性の高い企業ほど内部資金が潤沢で外部負債への依存が小さくなる傾向が説明される。最適な負債比率の存在を前提に節税効果と倒産コストを比較衡量するトレードオフ理論とは対照的に、本理論は明確な目標負債比率を想定せず、調達順位そのものを重視する点に特徴がある。',
+    keyFigures: 'スチュワート・マイヤーズ／ニコラス・マジュフ（1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.1984.tb03646.x', type: 'academic', label: 'Myers, S.C. (1984) "The Capital Structure Puzzle," Journal of Finance' },
+      { url: 'https://glossary.hub.hit-u.ac.jp/faq/show/2436/', type: 'reference', label: '一橋大学 ファイナンス用語集「ペッキングオーダー理論」' },
+      { url: 'https://www.wallstreetprep.com/knowledge/pecking-order-theory/', type: 'reference', label: 'Wall Street Prep — Pecking Order Theory' },
+    ],
+  },
+  {
+    id: 'mgmt-3c-analysis',
+    discipline: 'management',
+    title: '3C分析',
+    statement:
+      '3C分析は、経営コンサルタントの大前研一が著書『The Mind of the Strategist』（1982年）で提示した戦略立案のフレームワークである。事業戦略を成功させるには、顧客（Customer）・競合（Competitor）・自社（Company）という三つの要素を統合的に分析する必要があるとし、大前はこの相互に影響し合う関係を「戦略の三角形（strategic triangle）」と呼んだ。' +
+      '顧客では市場規模やニーズ・購買行動を、競合では競争相手の強み・弱みや市場シェアを、自社では自社の経営資源・強み・弱みを分析する。三つのどれか一つではなく、三者を統合して初めて持続的な競争優位が生まれる点が核心であり、顧客ニーズを競合より自社の強みでうまく満たすことを目指す。マーケティングや経営戦略立案の基本フレームワークとして世界的に普及している。',
+    keyFigures: '大前研一（Kenichi Ohmae, 1982『The Mind of the Strategist』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/3Cs_model', type: 'reference', label: '3Cs model — Wikipedia' },
+      { url: 'https://www.mindtools.com/avi3qka/ohmaes-3cs-model/', type: 'reference', label: 'MindTools — Ohmae\'s 3Cs Model' },
+      { url: 'https://keiei-shinri.or.jp/word/3c/', type: 'reference', label: '一般社団法人日本経営心理士協会 — 3C分析' },
+    ],
+  },
+  {
+    id: 'human-affect-heuristic',
+    discipline: 'human-science',
+    title: '感情ヒューリスティック',
+    statement:
+      '感情ヒューリスティック（affect heuristic）とは、人が判断や意思決定を行う際に、対象に対する即時の「良い／悪い」という感情反応を手がかりとして用い、熟慮的・分析的な計算を省略する心的近道である。ポール・スロヴィックら（フィヌケイン、アルハカミ、ジョンソンら、2000〜2007年）が体系化した。' +
+      'その顕著な帰結が、知覚されるリスクと便益の逆相関である。対象に好ましい感情を抱くとリスクは低く便益は高く評価され、不快な感情を抱くと逆の評価が下される。本来両者は独立または正相関しうるにもかかわらず生じるこの現象は、時間的制約下で分析的思考が制限されると強まり、二重過程理論やリスク認知研究と密接に結びつく。',
+    keyFigures: 'ポール・スロヴィック（Paul Slovic）ら（2000年代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1099-0771(200001/03)13:1%3C1::AID-BDM333%3E3.0.CO;2-S', type: 'academic', label: 'Finucane, Alhakami, Slovic & Johnson (2000), The affect heuristic in judgments of risks and benefits, Journal of Behavioral Decision Making 13(1):1–17' },
+      { url: 'https://doi.org/10.1016/j.ejor.2005.04.006', type: 'academic', label: 'Slovic, Finucane, Peters & MacGregor (2007), The affect heuristic, European Journal of Operational Research 177(3):1333–1352' },
+      { url: 'https://en.wikipedia.org/wiki/Affect_heuristic', type: 'reference', label: 'Wikipedia: Affect heuristic' },
+    ],
+  },
+  {
+    id: 'bizlaw-stewardship-code',
+    discipline: 'business-law',
+    title: '日本版スチュワードシップ・コード',
+    statement:
+      '日本版スチュワードシップ・コード（「責任ある機関投資家」の諸原則）は、2014年2月に金融庁が策定・公表した、機関投資家の責任に関する行動原則である。年金基金や運用機関などの機関投資家が、投資先企業との建設的な「目的を持った対話」（エンゲージメント）や議決権行使を通じて、企業の中長期的な持続的成長と顧客・受益者の利益拡大を促すことを求める。' +
+      '法的拘束力を持たないソフトロー（自主規制）であり、各原則を実施するか、実施しない場合は理由を説明する「コンプライ・オア・エクスプレイン（原則主義）」方式を採り、受入れは任意である。2017年・2020年に改訂された。上場企業向けのコーポレートガバナンス・コードと「車の両輪」をなし、企業と投資家の対話を通じた経済の好循環を目指す。',
+    keyFigures: '金融庁／『責任ある機関投資家』の諸原則（日本版スチュワードシップ・コード、2014年策定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/news/25/singi/20140227-2.html', type: 'government', label: '金融庁「『責任ある機関投資家』の諸原則≪日本版スチュワードシップ・コード≫…の確定について」（2014年2月27日）' },
+      { url: 'https://www.fsa.go.jp/news/r1/singi/20200324/01.pdf', type: 'government', label: '金融庁「『責任ある機関投資家』の諸原則≪日本版スチュワードシップ・コード≫」（2020年改訂版本文）' },
+      { url: 'https://www.nomura.co.jp/terms/japan/ni/A02755.html', type: 'reference', label: '野村證券 証券用語解説集「日本版スチュワードシップ・コード」' },
+    ],
+  },
+  {
+    id: 'infosoc-networked-individualism',
+    discipline: 'information-sociology',
+    title: 'ネットワーク個人主義',
+    statement:
+      'ネットワーク個人主義（networked individualism）は、社会学者バリー・ウェルマンが提唱し、リー・レイニーとの共著『Networked: The New Social Operating System』（2012）で体系化した概念である。社会組織の単位が、世帯・近隣・職場といった場所に根ざした密で境界の明確な集団から、' +
+      '疎で境界が曖昧な断片的パーソナルネットワークへと移行し、世帯や集団ではなく個人がつながりの基本単位となって、複数の部分的ネットワークを使い分ける状態を指す。SNS（ソーシャルネットワーク）・インターネット・モバイルの常時接続という「三重革命（triple revolution）」がこの転換を可能にしたとされる。',
+    keyFigures: 'バリー・ウェルマン（Barry Wellman）／リー・レイニー（Lee Rainie）（2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262526166/networked/', type: 'academic', label: 'MIT Press — Rainie & Wellman, Networked: The New Social Operating System (2012)' },
+      { url: 'https://link.springer.com/chapter/10.1007/3-540-45636-8_2', type: 'academic', label: 'Wellman, "Little Boxes, Glocalization, and Networked Individualism" (Springer, 2002)' },
+      { url: 'https://en.wikipedia.org/wiki/Networked_individualism', type: 'reference', label: 'Wikipedia — Networked individualism' },
+    ],
+  },
 ];
 // Stryker restore all
