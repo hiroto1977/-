@@ -12691,5 +12691,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/1461444810365313', type: 'academic', label: 'Marwick & boyd (2011) "I Tweet Honestly, I Tweet Passionately", New Media & Society 13(1)' },
     ],
   },
+  {
+    id: 'econ-product-cycle-trade',
+    discipline: 'economics',
+    title: 'プロダクト・サイクル理論（貿易）',
+    statement:
+      'レイモンド・ヴァーノンが1966年に提唱した、製品のライフサイクルに沿って生産立地が国際的に移動するとする貿易・対外直接投資（FDI）の理論。①新製品期は技術や高所得市場に近い先進的な革新国（例：米国）で開発・生産し、海外へ輸出する。②成熟期は製品の標準化と海外需要の拡大に伴い、生産が他の先進国へFDIを通じて移転し、革新国の輸出は減少する。' +
+      '③標準化期は生産が低コストの途上国へ移り、当初の革新国はかえって純輸入国になりうる。こうして貿易やFDIのパターンを、イノベーション・標準化・コストという要因の時間的変化で説明する。ヴァーノンは、戦後の米国の貿易・FDIをヘクシャー＝オリーン理論が十分に説明できなかったことを背景にこの理論を展開した。',
+    keyFigures: 'レイモンド・ヴァーノン（Raymond Vernon, 1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/80/2/190/1868595', type: 'academic', label: 'Vernon, R. (1966) "International Investment and International Trade in the Product Cycle," The Quarterly Journal of Economics, 80(2), 190–207 (Oxford Academic)' },
+      { url: 'https://en.wikipedia.org/wiki/Product_life-cycle_theory', type: 'reference', label: 'Product life-cycle theory — Wikipedia' },
+    ],
+  },
+  {
+    id: 'econ-effective-protection-rate',
+    discipline: 'economics',
+    title: '実効保護率',
+    statement:
+      '名目関税率は完成品の価格に対して課されるが、実効保護率（ERP）は国内の生産過程で生み出される付加価値に与えられる保護の度合いを測る指標である。すなわち自由貿易時と比べ、関税構造（最終財への関税と輸入投入財への関税の両方）によって産出物一単位あたりの付加価値がどれだけ増加するかを百分率で表す。' +
+      '完成品への関税は当該産業の付加価値の保護を高める一方、輸入投入財への関税はそれを引き下げる。付加価値は産出価格の一部にすぎないため、実効保護率は名目関税率よりかなり高くなりやすく、投入財への関税が産出への関税を上回れば負にもなりうる。加工段階が進むほど関税が高くなる「関税エスカレーション」もこの枠組みで説明される。理論はハリー・ジョンソンとW・マックス・コーデンにより1960年代に確立された。',
+    keyFigures: 'W・マックス・コーデン／ハリー・ジョンソン（1960年代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-Structure-of-a-Tariff-System-and-the-Effective-Corden/d9007c4652390aa10586c11b74cf97be688a68d6', type: 'academic', label: 'W. M. Corden, "The Structure of a Tariff System and the Effective Protective Rate" (J. Political Economy, 1966)' },
+      { url: 'https://en.wikipedia.org/wiki/Effective_rate_of_protection', type: 'reference', label: 'Wikipedia — Effective rate of protection' },
+      { url: 'https://www.wto.org/english/thewto_e/glossary_e/tariff_escalation_e.htm', type: 'government', label: 'WTO Glossary — tariff escalation' },
+    ],
+  },
+  {
+    id: 'mgmt-tqm',
+    discipline: 'management',
+    title: '総合的品質管理（TQM）',
+    statement:
+      '顧客満足を中心に据え、特定の品質管理部門だけでなく全部門・全員参加で製品・サービス・プロセス・組織文化の品質を継続的に改善する、組織全体の経営手法。源流は第二次大戦後の品質運動にあり、1950年に日本科学技術連盟（日科技連）の招きでデミングが来日して統計的品質管理（SQC）とPDCAを指導、続いてジュランが経営手法としての品質管理を説いた。' +
+      'ファイゲンバウムが「Total Quality Control（TQC）」を命名し、石川馨はこれを全社的品質管理（CWQC）へ発展させ、QCサークルや特性要因図（フィッシュボーン）を普及させた。中核原則は顧客重視・全員参加・継続的改善（カイゼン／PDCA）・事実とデータに基づく管理であり、統計的QC手法を活用する。日本製造業の競争力を支え、後に欧米でTQMとして広まり、デミング賞やISO9000とも関係が深い。',
+    keyFigures: 'W・エドワーズ・デミング／ジョセフ・ジュラン／アーマンド・ファイゲンバウム／石川馨（日本科学技術連盟・TQC/CWQC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://asq.org/quality-resources/total-quality-management', type: 'reference', label: 'ASQ — Total Quality Management (TQM): What is TQM?' },
+      { url: 'https://www.juse.or.jp/upload/files/DP_deming_70th.pdf', type: 'academic', label: 'JUSE 日本科学技術連盟 — 70 years of the Deming Prize' },
+      { url: 'https://www.inc.com/encyclopedia/total-quality-management-tqm.html', type: 'reference', label: 'Inc. Encyclopedia — Total Quality Management (TQM)' },
+    ],
+  },
+  {
+    id: 'human-learned-optimism',
+    discipline: 'human-science',
+    title: '学習性楽観主義',
+    statement:
+      'マーティン・セリグマンが1990年の著書『Learned Optimism（オプティミストはなぜ成功するか）』で提唱した、ポジティブ心理学の中核概念。学習性無力感の研究を発展させ、楽観主義も無力感と同様に、出来事の原因を説明する「説明スタイル（原因帰属の仕方）」を変えることで学習・育成できるとする。' +
+      '人は良い出来事と悪い出来事の原因を、永続性（永続的か一時的か）・普遍性（全般的か特定的か）・個人度（内的か外的か）の三次元で説明する。楽観主義者は悪い出来事を一時的・特定的・外的に、良い出来事を永続的・全般的・内的に説明し、悲観主義者は逆になる。悲観的説明スタイルは無力感・うつ・低い健康や成績と関連し、楽観的スタイルは回復力と良好な結果に結びつく。エリスのREBTに由来するABCDE法（逆境・信念・結果・反論・元気づけ）で訓練可能とされる。',
+    keyFigures: 'マーティン・セリグマン（Martin Seligman, 1990『Learned Optimism』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://positivepsychology.com/learned-optimism/', type: 'academic', label: 'PositivePsychology.com「Learned Optimism: Is Martin Seligman\'s Glass Half Full?」' },
+      { url: 'https://en.wikipedia.org/wiki/Learned_optimism', type: 'reference', label: 'Wikipedia「Learned optimism」' },
+      { url: 'https://positivepsychology.com/explanatory-styles-optimism/', type: 'academic', label: 'PositivePsychology.com「What Are Attributional and Explanatory Styles in Psychology?」' },
+    ],
+  },
+  {
+    id: 'bizlaw-cheque-act',
+    discipline: 'business-law',
+    title: '小切手法',
+    statement:
+      '小切手法（昭和8年法律第57号、1933年制定／1934年施行）は、小切手を規律する法律である。1931年のジュネーヴ統一小切手法条約（小切手法統一条約）を国内法化したもので、それ以前は商法中に手形と共に規定されていたが独立の単行法となり、日本法を国際的な統一規則に適合させた。小切手は、振出人が自己の資金を有する銀行（支払人）に対し、一定金額を一覧払い（常に呈示により直ちに支払う）で受取人・所持人へ支払うことを委託する有価証券であり、' +
+      '信用手段である手形と異なり専ら支払・決済手段である点、支払人が銀行に限られる点、常に一覧払いである点に特色がある。線引小切手（横線小切手）等の制度で支払の安全性を高める。厳格な要式性・無因性、裏書による譲渡、善意取得、人的抗弁の切断といった手形法と共通の法理に立つ。近年は電子決済の普及で紙の小切手の利用は激減し、全国銀行協会は約束手形・小切手の紙利用廃止（2026年度を目途に交換枚数ゼロ）を進めている。',
+    keyFigures: '小切手法（昭和8年法律第57号、1933年制定／ジュネーヴ統一小切手法）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/308AC0000000057', type: 'government', label: 'e-Gov法令検索 小切手法（昭和8年法律第57号）' },
+      { url: 'https://kotobank.jp/word/%E5%B0%8F%E5%88%87%E6%89%8B%E6%B3%95-834862', type: 'reference', label: 'コトバンク「小切手法」' },
+      { url: 'https://www.zenginkyo.or.jp/tegata-kogitte-haishi/', type: 'government', label: '全国銀行協会 紙の手形・小切手利用廃止へ' },
+    ],
+  },
+  {
+    id: 'infosoc-fifth-estate',
+    discipline: 'information-sociology',
+    title: '第五の権力（フィフス・エステート）',
+    statement:
+      'ウィリアム・H・ダットンが2007年のオックスフォード大学就任講演および2009年の論文「ネットワークのネットワークを通じて立ち現れる第五の権力」で提唱した概念。インターネットと関連デジタル技術が、ネットワーク化された個人に既存の制度から独立して情報を入手・共有し、互いをネットワーク化し組織化する手段を与え、政府・政治その他の領域における新たな説明責任と影響力の場＝「第五の権力（Fifth Estate）」を生み出すとする。' +
+      'これは報道機関が担ってきた「第四の権力（Fourth Estate）」に匹敵しつつ区別される存在で、検索・ネットワーク化・協働・情報暴露といった戦略的利用を通じ、政治家・官僚・企業・医師・研究者など他の確立した権力を監視し、代替的な情報源を提供して説明責任を問う。ダットンはこの「ネットワーキング・パワー」が市民のコミュニケーション権力を高め、自由民主主義社会における民主的説明責任を強化しうると論じた。',
+    keyFigures: 'ウィリアム・H・ダットン（William H. Dutton, 2007/2009、オックスフォード・インターネット研究所）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/08109020802657453', type: 'academic', label: 'W. H. Dutton, "The Fifth Estate Emerging through the Network of Networks," Prometheus 27(1):1-15 (2009)' },
+      { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'reference', label: 'Oxford Internet Institute (University of Oxford) — The Fifth Estate research project' },
+    ],
+  },
 ];
 // Stryker restore all
