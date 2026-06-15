@@ -17055,5 +17055,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/The_Californian_Ideology', type: 'reference', label: 'Wikipedia: The Californian Ideology' },
     ],
   },
+  {
+    id: 'econ-tax-smoothing',
+    discipline: 'economics',
+    title: '課税平準化（タックス・スムージング）',
+    statement:
+      'ロバート・バローが1979年に示した最適な公債管理の理論。課税の死荷重（超過負担）は税率の凸（逓増）関数なので、一定の現在価値の歳入を最小の歪みコストで賄うには、税率を時間を通じてできるだけ一定（平滑）に保つのが最適となる。' +
+      'よって政府は財政赤字と黒字（公債）を緩衝として用い、戦争などで歳出が一時的に増える時期や、不況で所得・産出が一時的に減る時期には赤字を出し、平時には黒字で返済して税率変動を抑える。最適な赤字・公債残高はほぼランダムウォークに従う。これはケインズ的需要管理とは別個の、反循環的赤字の規範的根拠であり、消費平準化・恒常所得仮説の政府版に当たる。なお、課税の歪みを前提とする点で、課税方法を無差別とみなすリカードの等価定理とは区別される。',
+    keyFigures: 'ロバート・バロー（Robert Barro, 1979）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/barro/publications/determination-public-debt', type: 'academic', label: 'Robert J. Barro, "On the Determination of the Public Debt," Journal of Political Economy 87(5), 940–971 (1979) — author official page' },
+      { url: 'https://intro.quantecon.org/tax_smooth.html', type: 'reference', label: 'QuantEcon, "Tax Smoothing" — Barro 1979 model: convex tax cost, constant tax rate, debt buffer, random walk' },
+    ],
+  },
+  {
+    id: 'econ-winner-take-all',
+    discipline: 'economics',
+    title: '勝者総取り市場',
+    statement:
+      'ロバート・フランクとフィリップ・クックが1995年の著書『ウィナー・テイク・オール・ソサエティ』で論じた概念。報酬が絶対的な成果ではなく相対的な成果（順位）に強く依存する市場では、頂点付近のわずかな才能や成果の差が報酬の巨大な差へと転化し、少数の「勝者」が報酬の不釣り合いなほど大きな割合を獲得する。' +
+      '技術や通信・輸送の発達で最良の者がより広い世界市場へ供給でき、ネットワーク効果や複製・配信コストの低下も加わって、スポーツや芸能を超えビジネスや法曹など多分野へ拡大したとされる。帰結として所得格差が拡大し、少数の頂点を目指して過剰な人数が競う社会的に無駄な過剰投資・混雑（地位争い）が生じる。ローゼンのスーパースター経済学（才能差と市場規模が報酬差を生む）を相対的成果の報酬構造とその波及・社会的費用の観点から拡張した議論である。',
+    keyFigures: 'ロバート・フランク／フィリップ・クック（Frank & Cook, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/winner-take-all-society', type: 'reference', label: 'Encyclopedia.com — Winner-Take-All Society（相対的成果報酬・報酬集中・多分野への拡大・格差/才能の誤配分）' },
+      { url: 'https://en.wikipedia.org/wiki/Winner-take-all_market', type: 'reference', label: 'Wikipedia — Winner-take-all market（僅差の優位が収益の不釣り合いな大半を獲得・技術/累積的優位）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/2321022213501254', type: 'academic', label: 'Frank & Cook, "Winner-Take-All Markets"（SAGE, 1995年分析の再録）' },
+    ],
+  },
+  {
+    id: 'mgmt-communities-of-practice',
+    discipline: 'management',
+    title: '実践共同体（コミュニティ・オブ・プラクティス）',
+    statement:
+      'レイヴ＆ウェンガー1991『状況に埋め込まれた学習』、ウェンガー1998、ウェンガー/マクダーモット/スナイダー2002による概念。あるテーマ（領域domain）への関心・問題・情熱を共有する人々が、継続的な相互作用（共同体community）を通じて、共有された実践や資源のレパートリー（実践practice）をめぐり知識と熟達を深めていく集団を指す。' +
+      '構成要素は領域・共同体・実践の3つで、学習を個人の頭の中ではなく社会的参加として捉え、新参者は正統的周辺参加からより十全な参加へと移行する点に特徴がある（学習の軌跡を示す正統的周辺参加概念とは区別され、本概念は学習の場となる社会的構造を指す）。経営・ナレッジマネジメントでは、暗黙知の創造・共有・管理を公式組織を補完しつつ組織横断で担う仕組みとされ、組織は実践共同体を意図的に「育成（cultivate）」できると論じられる。',
+    keyFigures: 'ジーン・レイヴ／エティエンヌ・ウェンガー（Lave & Wenger, 1991／Wenger 1998／Wenger, McDermott & Snyder 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://infed.org/dir/welcome/jean-lave-etienne-wenger-and-communities-of-practice/', type: 'reference', label: 'infed — Jean Lave, Etienne Wenger and communities of practice（学習の社会的参加・正統的周辺参加・1991/1998出典）' },
+      { url: 'https://www.wenger-trayner.com/introduction-to-communities-of-practice/', type: 'reference', label: 'Wenger-Trayner — Introduction to communities of practice（領域・共同体・実践の3要素）' },
+      { url: 'https://journals.aom.org/doi/10.5465/amle.2009.41788855', type: 'academic', label: 'Academy of Management Learning & Education — Cultivating Communities of Practice 書評（Wenger, McDermott & Snyder 2002／KM vehicle・cultivate）' },
+    ],
+  },
+  {
+    id: 'human-scarcity-mindset',
+    discipline: 'human-science',
+    title: '欠乏の心理学（スケアシティ）',
+    statement:
+      'センディル・ムッライナタン&エルダー・シャフィールが2013年の著書『いつも「時間がない」あなたに（Scarcity: Why Having Too Little Means So Much）』で提示した理論。お金・時間・食料など「何かが足りない」という主観的な欠乏の経験が心を捉え、思考と行動を変えるとする。欠乏は目前の不足に意識を強く集中させる「集中の配当（focus dividend）」を生み目先の課題の効率を上げる一方で、' +
+      'その集中（トンネリング）はトンネルの外にある重要な物事を無視させる。決定的なのは、欠乏が「処理能力（バンド幅）への税」を課し、流動性知能や自制心といった認知能力・実行機能を低下させ、意思決定を損なう点である。結果として貧困や多忙の人を借入や放置などの悪循環＝欠乏の罠に陥れる。インドのサトウキビ農家が収穫前（貧）に収穫後（富）より認知テストで低得点となる実験（Mani et al. 2013, Science）が裏づけ、貧困を認知負荷の結果としても捉え直す。認知負荷理論やチャルディーニの希少性原理とは区別される。',
+    keyFigures: 'センディル・ムッライナタン／エルダー・シャフィール（Mullainathan & Shafir, 2013）／Mani et al.（2013, Science）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.1238041', type: 'academic', label: 'Mani, Mullainathan, Shafir & Zhao (2013) "Poverty Impedes Cognitive Function", Science 341:976-980' },
+      { url: 'https://www.harvardmagazine.com/social-sciences/the-science-of-scarcity', type: 'reference', label: 'Harvard Magazine "The Science of Scarcity" — Mullainathan & Shafir on scarcity and poverty' },
+      { url: 'https://en.wikipedia.org/wiki/Scarcity:_Why_Having_Too_Little_Means_So_Much', type: 'reference', label: 'Wikipedia: Scarcity: Why Having Too Little Means So Much (2013 book overview)' },
+    ],
+  },
+  {
+    id: 'bizlaw-information-disclosure',
+    discipline: 'business-law',
+    title: '情報公開法',
+    statement:
+      '情報公開法（正式名称＝行政機関の保有する情報の公開に関する法律、平成11年〔1999年〕法律第42号、2001年4月1日施行、総務省所管）は、政府が有するその諸活動を国民に説明する責務（アカウンタビリティ）が全うされ、公正で民主的な行政の推進に資することを目的とする（第1条）。第3条により何人も、国籍や利害関係を問わず、行政機関の長に対し当該機関が保有する行政文書の開示を請求でき、行政機関の長は原則として開示しなければならない。' +
+      '例外として、法定の不開示情報（特定の個人を識別できる個人情報、法人等の正当な利益を害する情報、国の安全・外交、公共の安全と秩序の維持、審議・検討等の内部情報、事務・事業の適正な遂行を害するおそれのある情報）は不開示とされる。一部のみ不開示情報を含む文書は部分開示され、文書の存否を明らかにするだけで不開示情報を開示することになる場合は存否応答拒否ができる。不開示決定等への不服は審査請求でき、行政機関の長は情報公開・個人情報保護審査会に諮問する。行政手続法・行政不服審査法とは区別される。',
+    keyFigures: '行政機関の保有する情報の公開に関する法律（情報公開法、平成11年法律第42号、1999年制定・2001年施行）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/intro/consult/disclosure/data/a010101j.html', type: 'government', label: '経済産業省「情報公開法の概要」（1999年制定・2001年施行、第1条説明責務、不開示情報、審査会諮問）' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/singi/jyouhou/index.html', type: 'government', label: '総務省「情報公開・個人情報保護審査会」（審査請求の審理機関）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E6%A9%9F%E9%96%A2%E3%81%AE%E4%BF%9D%E6%9C%89%E3%81%99%E3%82%8B%E6%83%85%E5%A0%B1%E3%81%AE%E5%85%AC%E9%96%8B%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia「行政機関の保有する情報の公開に関する法律」（平成11年法律第42号、第3条何人も開示請求）' },
+    ],
+  },
+  {
+    id: 'infosoc-splinternet',
+    discipline: 'information-sociology',
+    title: 'スプリンターネット（インターネットの分断）',
+    statement:
+      'スプリンターネットとは、かつて世界規模で統一され開かれていたインターネットが、国家・商業・技術・政治の境界に沿って分断され、複数の閉じたネットワークへ分裂していく現象を指す。「splinter（破片）＋internet」の造語で、2000年代後半以降に普及した（早期の使用例としてClyde Wayne Crews、2001年。Scott Malcomsonの著書『Splinternet』2016年が広めた）。主な要因は、国家による検閲と国内統制（中国の金盾＝グレートファイアウォール、ロシアの主権インターネット／RuNet）、' +
+      'データローカライゼーションや規制の差異（GDPR等）、地政学・貿易制限、商業的なウォールドガーデンやプラットフォームによる囲い込みである。デジタル主権をめぐる議論と密接に結び付き、単一で相互運用可能な世界的インターネットという原初の理念と対照をなす。なお、トラフィックの平等な扱いを論じるネット中立性や、利用者が同質集団へ分かれる社会的なサイバーバルカン化とは区別される。',
+    keyFigures: 'スプリンターネット（splinter + internet）／スコット・マルコムソン（Splinternet, 2016）／クライド・ウェイン・クルーズ（早期使用, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.internetsociety.org/blog/2022/03/what-is-the-splinternet-and-why-you-should-be-paying-attention/', type: 'reference', label: 'Internet Society — What Is a Splinternet?' },
+      { url: 'https://en.wikipedia.org/wiki/Splinternet', type: 'reference', label: 'Wikipedia — Splinternet' },
+      { url: 'https://www.cfr.org/blog/internet-fragmented-what-should-united-states-do-now', type: 'reference', label: 'Council on Foreign Relations — The Internet Is Fragmented' },
+    ],
+  },
 ];
 // Stryker restore all
