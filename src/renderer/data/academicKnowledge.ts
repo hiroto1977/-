@@ -16519,5 +16519,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Tetrad_of_media_effects', type: 'reference', label: 'Wikipedia: Tetrad of media effects' },
     ],
   },
+  {
+    id: 'econ-fair-wage-effort',
+    discipline: 'economics',
+    title: '公正賃金・努力仮説',
+    statement:
+      'ジョージ・アカロフとジャネット・イエレンが1990年に『Quarterly Journal of Economics』論文「The Fair Wage-Effort Hypothesis and Unemployment」で提示した仮説。労働者は「公正な賃金」の観念を持ち、実際の賃金がその公正賃金を下回ると、不足の比率に応じて努力を引き下げる（努力＝min(1, 実際の賃金／公正賃金)）。これは効率賃金が機能する理由を、心理学の公平理論（エクイティ理論）や相対的剥奪・社会的比較に求める行動的・社会学的な基礎づけであり、' +
+      '行動マクロ経済学の礎の一つとされる。失業への含意として、低技能労働者の公正賃金が同一企業内の高技能労働者の賃金を参照点とするため、企業は低技能者にも市場清算賃金を上回る賃金を支払って完全な努力を保とうとし、結果として賃金圧縮と、低技能層に集中する非自発的失業が生じる。同じ効率賃金論でも、勤勉さの監視費用に着目する効率賃金モデルや、互酬性に基づく贈与交換、源流である公平理論そのものとは区別される。',
+    keyFigures: 'ジョージ・アカロフ／ジャネット・イエレン（Akerlof & Yellen, 1990）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/105/2/255/1864771', type: 'academic', label: 'Akerlof & Yellen, "The Fair Wage-Effort Hypothesis and Unemployment," QJE 105(2), 1990 (Oxford Academic)' },
+      { url: 'https://en.wikipedia.org/wiki/Wage_compression', type: 'reference', label: 'Wage compression — fair-wage hypothesis, skilled-wage reference point, low-skill unemployment (Wikipedia)' },
+    ],
+  },
+  {
+    id: 'econ-ftpl',
+    discipline: 'economics',
+    title: '物価水準の財政理論（FTPL）',
+    statement:
+      '1990年代にエリック・リーパー（1991）、クリストファー・シムズ（1994）、マイケル・ウッドフォード（1994/95）、ジョン・コクランらが展開したマクロ経済理論。物価水準は貨幣量（マネタリズムや貨幣数量説）だけでなく財政政策、とりわけ政府の異時点間予算制約によって決まると説く。中心命題は、物価水準が、発行済みの名目政府債務の実質価値を将来の基礎的財政黒字の割引現在価値に等しくするよう調整される、というものである' +
+      '（国債は将来黒字に対する持分のような請求権とみなされる）。将来黒字の見通しが下がれば債務の実質価値は下がらねばならず、それは物価上昇（インフレ）として実現する。財政が黒字で債務を裏打ちし金融政策がインフレを制御するリカード的・受動的財政レジームと、物価が財政で決まる非リカード的・能動的財政レジームを区別する。ゼロ金利下やコロナ後インフレの説明で再注目された。貨幣数量説・マネタリズム・シニョリッジとは区別される。',
+    keyFigures: 'エリック・リーパー／クリストファー・シムズ／マイケル・ウッドフォード／ジョン・コクラン（1990年代〜）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://users.nber.org/~bassetto/research/palgrave/ftheorypost.pdf', type: 'academic', label: 'Marco Bassetto, "Fiscal Theory of the Price Level" (New Palgrave Dictionary of Economics, NBER)' },
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_theory_of_the_price_level', type: 'reference', label: 'Wikipedia — Fiscal theory of the price level' },
+      { url: 'https://www.ecb.europa.eu/events/pdf/conferences/141215/papers/posters/ASCARI.pdf', type: 'academic', label: 'Ascari et al., "Monetary and Fiscal Policy Interactions: Leeper (1991) Redux" (ECB conference)' },
+    ],
+  },
+  {
+    id: 'mgmt-exploration-exploitation',
+    discipline: 'management',
+    title: '知の探索と知の深化（探索と活用）',
+    statement:
+      'ジェームズ・G・マーチが1991年にOrganization Science誌の論文「Exploration and Exploitation in Organizational Learning」で示した、組織学習の基礎をなす概念。組織は希少な資源を奪い合う二つの根本的に異なる活動を均衡させねばならないとする。探索（exploration＝サーチ・多様性・実験・リスクテイク・発見・革新）は新たな知識や可能性を追うが、見返りは不確実で時間的・空間的に遠く、負になりがちである。' +
+      '一方、深化・活用（exploitation＝洗練・効率・選択・実行・信頼性）は既存知識を磨き、より確実で近く正の見返りを生む。中心的な緊張は、活用に偏りすぎると短期的成果は得意でも陳腐化して罠（コンピテンシー・トラップ／次善均衡）に陥り環境変化への適応に失敗し、逆に探索に偏りすぎると実験コストばかりかさみ成果を捕捉できない点にある。持続的成功には両者の適切なバランスが要る。これは後の両利きの経営（組織的アンビデクステリティ）が取り組む根底の緊張であり、両者は区別される。',
+    keyFigures: 'ジェームズ・G・マーチ（James G. March, 1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) "Exploration and Exploitation in Organizational Learning", Organization Science 2(1):71-87（INFORMS, 原典）' },
+      { url: 'https://acawiki.org/Exploration_and_exploitation_in_organizational_learning', type: 'reference', label: 'AcaWiki: Exploration and exploitation in organizational learning（学術要約）' },
+      { url: 'https://dhbr.diamond.jp/articles/-/10194', type: 'media', label: 'DIAMOND ハーバード・ビジネス・レビュー 入山章栄『世界標準の経営理論』知の探索・知の深化' },
+    ],
+  },
+  {
+    id: 'human-effort-justification',
+    discipline: 'human-science',
+    title: '努力の正当化',
+    statement:
+      '認知的不協和理論に由来し、ある目標や成果を得るために多大な努力や不快な経験を費やした人ほど、その対象を高く評価する現象。「これほど苦労した」のに「価値が低い」という不協和を低減するため、対象の価値を高く見積もって自らの努力を正当化すると説明される。' +
+      '古典的実証はアロンソン＆ミルズ1959（Journal of Abnormal and Social Psychology「加入儀礼の厳しさが集団への好意に与える効果」）で、厳しく恥ずかしい加入儀礼を経て退屈な討論集団に入った被験者は、軽いまたは儀礼なしの被験者よりその集団を魅力的だと高く評価した。しごき（ハジング）やイケア効果、サンクコスト的推論と関連するが、認知的不協和・イケア効果・サンクコストとは区別される。',
+    keyFigures: 'エリオット・アロンソン／ジャドソン・ミルズ（Aronson & Mills, 1959）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Motivation/Aronson_Mills_1959_The_effect_of_severity_of_initiation.pdf', type: 'academic', label: 'Aronson & Mills (1959) "The effect of severity of initiation on liking for a group," J. Abnormal and Social Psychology 59:177-181 (full text)' },
+      { url: 'https://dictionary.apa.org/effort-justification', type: 'reference', label: 'APA Dictionary of Psychology — Effort Justification' },
+      { url: 'https://en.wikipedia.org/wiki/Effort_justification', type: 'reference', label: 'Effort justification — overview, IKEA effect and hazing links' },
+    ],
+  },
+  {
+    id: 'bizlaw-pse-act',
+    discipline: 'business-law',
+    title: '電気用品安全法（PSE法）',
+    statement:
+      '電気用品安全法（電安法・PSE法、昭和36年法律第234号）は、1961年制定の電気用品取締法を起源とし、1999年改正・2001年施行で現名称となった、経済産業省所管の法律である。電気用品による火災・感電等の危険及び障害の発生を防止することを目的に、製造・販売等を規制する。製造・輸入事業者は事業開始から30日以内に事業届出を行い、国の定める技術基準に適合させ、適合性検査を実施し、義務を履行したうえでPSEマークを表示してから販売する。' +
+      '電気用品は、危険度の高い特定電気用品（登録検査機関による第三者の技術基準適合性検査を受け、菱形のPSEマークを表示）と、特定電気用品以外の電気用品（事業者の自主検査・自己確認により、丸形のPSEマークを表示）に区分される。適切なPSEマークが付されていない電気用品は原則として販売や販売目的の陳列ができない。事後的に損害賠償責任を定める製造物責任法や、消費者政策の枠組みを示す消費者基本法とは異なり、電気製品の事前的な安全規制である点に特徴がある。',
+    keyFigures: '電気用品安全法（電安法/PSE法、昭和36年法律第234号、1961年制定／1999年改正・2001年施行）／経済産業省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/consumer/seian/denan/act_outline.html', type: 'government', label: '経済産業省「電気用品安全法の概要」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000053331', type: 'government', label: '日本法令索引「電気用品安全法 昭和36年11月16日法律第234号」（国立国会図書館）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E9%9B%BB%E6%B0%97%E7%94%A8%E5%93%81%E5%AE%89%E5%85%A8%E6%B3%95', type: 'reference', label: 'Wikipedia「電気用品安全法」' },
+    ],
+  },
+  {
+    id: 'infosoc-participation-inequality',
+    discipline: 'information-sociology',
+    title: '参加格差（90-9-1の法則）',
+    statement:
+      'オンラインコミュニティやSNSへの参加は著しく不平等で、ごく一部のユーザーが大半のコンテンツを生み出し、大多数は貢献せず閲覧のみ行う（ROM／lurk）という頑健なパターンを指す。有名な定式化はヤコブ・ニールセンの「90-9-1の法則」（2006）で、多くのオンラインコミュニティでは約90%が何も投稿しない閲覧者（lurker）、9%は時折少しだけ貢献し、1%がほぼ全ての貢献・活動を占めるとされる。' +
+      'これはロングテールやべき乗則（ジップ／パレート分布）、集合財のフリーライドと密接に関連する。含意として、声の大きな少数派がネット上の世論を支配・歪めうるため、その意見が一般利用者を代表しないという「代表性の問題」が生じ、また参加障壁を下げるコミュニティ設計の必要が説かれる。「1%の法則」とも呼ばれる。デジタル・デバイドやロングテール、参加型文化とは区別される概念である。',
+    keyFigures: 'ヤコブ・ニールセン（Jakob Nielsen, 2006, 90-9-1の法則）／ウィル・ヒル（Will Hill, 参加格差の初期研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nngroup.com/articles/participation-inequality/', type: 'reference', label: 'Nielsen Norman Group — Participation Inequality: The 90-9-1 Rule for Social Features (Jakob Nielsen, 2006)' },
+      { url: 'https://dl.acm.org/doi/10.1145/3412569.3412582', type: 'academic', label: 'Participation Inequality and the 90-9-1 Principle in Open Source (Proc. 16th Intl. Symposium on Open Collaboration, ACM, 2020)' },
+      { url: 'https://en.wikipedia.org/wiki/1%25_rule', type: 'reference', label: 'Wikipedia — 1% rule (Internet culture)' },
+    ],
+  },
 ];
 // Stryker restore all
