@@ -13673,5 +13673,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Participatory_culture', type: 'reference', label: 'Wikipedia: Participatory culture' },
     ],
   },
+  {
+    id: 'econ-dixit-stiglitz',
+    discipline: 'economics',
+    title: 'ディキシット＝スティグリッツ・モデル（独占的競争）',
+    statement:
+      'アヴィナッシュ・ディキシットとジョセフ・スティグリッツが1977年の論文「独占的競争と最適な製品多様性」（American Economic Review）で提示した、独占的競争の扱いやすい一般均衡モデル。消費者の効用は多様な財に対する選好（多様性愛好、love of variety）を表すCES（一定代替弾力性）型関数で表現され、各企業は差別化された固有の品種を、固定費用と一定の限界費用からなる規模の経済（収穫逓増）の下で生産する。' +
+      '各企業は一定の市場支配力を持ち限界費用に対してマークアップを上乗せして価格を設定するが、自由参入により利潤がゼロに押し下げられ、これが均衡における品種数を決定する。モデルは規模の経済（少数財に有利）と製品多様性（多数財に有利）のトレードオフを明示的に扱う。クルーグマンらの新貿易理論、新経済地理学、内生的成長理論の標準的分析枠組み（ワークホース）となった。',
+    keyFigures: 'アヴィナッシュ・ディキシット／ジョセフ・スティグリッツ（1977）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/aer/top20/67.3.297-308.pdf', type: 'academic', label: 'Dixit & Stiglitz, "Monopolistic Competition and Optimum Product Diversity," American Economic Review 67(3):297–308 (1977), AEA' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v67y1977i3p297-308.html', type: 'academic', label: 'IDEAS/RePEc bibliographic record for Dixit & Stiglitz (1977), AER 67(3)' },
+      { url: 'https://en.wikipedia.org/wiki/New_trade_theory', type: 'reference', label: 'Wikipedia: New trade theory (Dixit–Stiglitz–Krugman model)' },
+    ],
+  },
+  {
+    id: 'econ-melitz-model',
+    discipline: 'economics',
+    title: 'メリッツ・モデル（企業の異質性と貿易）',
+    statement:
+      'マーク・メリッツが2003年にEconometrica誌で示した、生産性が異なる異質な企業を組み込んだ国際貿易の理論。輸出には固定費と可変的な貿易費用がかかるため、最も生産性の高い企業だけが輸出して利益を得られ、生産性の低い企業は国内市場のみに供給し、最も生産性の低い企業は市場から退出する。' +
+      '貿易の自由化は、市場シェアと資源を低生産性企業から高生産性企業へと移す産業内再配分を引き起こし、この選択効果（淘汰）を通じて産業全体の平均生産性を押し上げる。代表的企業を仮定するクルーグマン型の新貿易理論では説明できなかった「一部の企業だけが輸出する」といった企業レベルの事実を説明し、企業の異質性に基づく「新々貿易理論」の出発点となった。',
+    keyFigures: 'マーク・メリッツ（Marc Melitz, 2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/files/melitz/files/aggprod_ecma.pdf', type: 'academic', label: 'Melitz (2003) "The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity," Econometrica 71(6): 1695-1725 (著者公開全文)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w16562/w16562.pdf', type: 'academic', label: 'Melitz & Redding, "Theories of Heterogeneous Firms and Trade," NBER WP 16562' },
+      { url: 'https://en.wikipedia.org/wiki/New_trade_theory', type: 'reference', label: 'Wikipedia — New trade theory / 新々貿易理論の位置づけ' },
+    ],
+  },
+  {
+    id: 'mgmt-mintzberg-roles',
+    discipline: 'management',
+    title: 'ミンツバーグの10の経営者役割',
+    statement:
+      'ヘンリー・ミンツバーグが著書『マネジャーの仕事』（The Nature of Managerial Work, 1973）および1975年のHBR論文「The Manager’s Job: Folklore and Fact」で提示した枠組み。マネジャーが実際に何をしているかの実証観察（CEOの構造的観察）に基づき、その仕事は簡潔性・多様性・断片化を特徴とし、ファヨールの計画・組織・調整・統制という古典像とは異なると論じた。' +
+      'マネジャーの役割は3カテゴリ10役割に整理される。対人的役割（フィギュアヘッド、リーダー、リエゾン）、情報的役割（モニター、伝達者、スポークスマン）、意思決定的役割（企業家、障害処理者、資源配分者、交渉者）である。公式な権限と地位が対人的役割を生み、それが情報へのアクセス（情報的役割）を与え、さらに意思決定（意思決定的役割）を可能にするという連鎖をなす。',
+    keyFigures: 'ヘンリー・ミンツバーグ（Henry Mintzberg, 1973/1975）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1990/03/the-managers-job-folklore-and-fact', type: 'academic', label: 'Henry Mintzberg, "The Manager’s Job: Folklore and Fact," Harvard Business Review (1975/1990 reprint)' },
+      { url: 'https://eric.ed.gov/?id=EJ122544', type: 'academic', label: 'ERIC EJ122544 — The Manager’s Job: Folklore and Fact, Harvard Business Review, 1975' },
+      { url: 'https://study.com/academy/lesson/henry-mintzbergs-managerial-roles.html', type: 'reference', label: 'Study.com — Henry Mintzberg’s Managerial Roles（10役割・3カテゴリ・1973 The Nature of Managerial Work）' },
+    ],
+  },
+  {
+    id: 'human-self-affirmation',
+    discipline: 'human-science',
+    title: '自己肯定化理論',
+    statement:
+      '社会心理学者クロード・スティールが1988年の論文「自己肯定化の心理学」で提唱した理論。人は自分を善良で道徳的かつ適切な存在とみなす全体的な自己統合性（self-integrity）の感覚を維持しようと動機づけられているとする。失敗・健康上の脅威的情報・認知的不協和などでこの自己統合性が脅かされたとき、人は脅威に直接対処するだけでなく、脅威とは無関係でも自分が価値を置く別の領域（家族や信条など重要な価値の想起）を肯定することによっても自己を回復できる。' +
+      'このような自己肯定化は防衛的反応（否認・合理化・偏見など）を弱め、不協和による態度変化を減らし、脅威的な情報を受け入れやすくする。重要なのは特定領域の自己像ではなく全体的な自己価値が守られればよい点にあり、対処が他領域へ転移しうる。なお本理論は、自己の既存の自己観を確証しようとする自己検証理論（スワン）や、態度と行動の矛盾そのものに着目する認知的不協和理論とは区別される。',
+    keyFigures: 'クロード・スティール（Claude Steele, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'http://nwkpsych.rutgers.edu/~kharber/selectedtopicsinsocialpsychology/READINGS/Steele%201988.%20the_psychology_of_self-affirmation.pdf', type: 'academic', label: 'Steele, C. M. (1988) The Psychology of Self-Affirmation, Advances in Experimental Social Psychology, Vol. 21（原典PDF, Rutgers University）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/self-affirmation-theory', type: 'reference', label: 'EBSCO Research Starters: Self-affirmation Theory' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/social-psychology-theories/self-affirmation-theory/', type: 'reference', label: 'iResearchNet: Self-Affirmation Theory in Social Psychology' },
+    ],
+  },
+  {
+    id: 'bizlaw-toushiho',
+    discipline: 'business-law',
+    title: '出資法',
+    statement:
+      '出資法（正式名称＝出資の受入れ、預り金及び金利等の取締りに関する法律、昭和29年法律第195号、1954年制定）は、一般大衆を保護するため、元本保証や高配当をうたって不特定多数から出資金を受け入れる行為を禁止し、銀行等の法律で認められた者以外による預り金の受入れを禁止するとともに、' +
+      '貸金の上限金利を超える契約・受領に刑事罰を科す法律である。制定の契機は保全経済会事件であった。かつて出資法の刑事罰上限（年29.2%）は利息制限法の民事上限（年15〜20%）より高く、その差（グレーゾーン金利）が消費者金融（サラ金）の社会問題となったが、2006年の改正（2010年完全施行）で出資法上限が年20%へ引き下げられ、グレーゾーンはほぼ解消された。利息制限法・貸金業法と一体で運用される。',
+    keyFigures: '出資の受入れ、預り金及び金利等の取締りに関する法律（出資法、昭和29年法律第195号、1954年制定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/kashikin/manual/05.pdf', type: 'government', label: '金融庁 — 出資法上限金利29.2%→20%・利息制限法上限・グレーゾーン金利' },
+      { url: 'https://www.mof.go.jp/application-contact/procedure/disclosure_etc/tuuhou/laws/syussinoukeire.html', type: 'government', label: '財務省 — 出資の受入れ、預り金及び金利等の取締りに関する法律（正式名称）' },
+      { url: 'https://kotobank.jp/word/%E5%87%BA%E8%B3%87%E6%B3%95-528926', type: 'reference', label: 'コトバンク — 出資法（昭和29年/1954年制定・概要）' },
+    ],
+  },
+  {
+    id: 'infosoc-connective-action',
+    discipline: 'information-sociology',
+    title: 'つながりの行為論理（コネクティブ・アクション）',
+    statement:
+      'W・ランス・ベネットとアレクサンドラ・セガーバーグが2012年の論文（Information, Communication & Society誌）および2013年の著書（ケンブリッジ大学出版）で提唱した概念。従来の集合行為論（マンサー・オルソン）が、フォーマルな組織・集合的アイデンティティ・資源動員・ただ乗り問題の克服を前提とするのに対し、デジタル/ソーシャルメディアが可能にする「つながりの行為論理」を対置する。' +
+      'これは、個人化された大規模な技術媒介型の異議申し立てネットワークであり、参加は個別化された「パーソナル・アクション・フレーム」を軸に組織される。個人化されたコンテンツをネットワークで共有する行為そのものが組織化として機能し、コミュニケーション技術（組織が支える／群衆が支えるネットワーク）がフォーマルな組織や集合的アイデンティティを代替しうる。オキュパイ運動、インディグナドス、アラブの春が例とされる。',
+    keyFigures: 'W・ランス・ベネット／アレクサンドラ・セガーバーグ（2012/2013）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/logic-of-connective-action/6B54DBBEAD1625C2778F8D80A17D58E1', type: 'academic', label: 'Bennett & Segerberg, The Logic of Connective Action (Cambridge University Press, 2013)' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012), Information, Communication & Society 15(5)' },
+    ],
+  },
 ];
 // Stryker restore all
