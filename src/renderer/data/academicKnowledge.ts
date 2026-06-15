@@ -13316,5 +13316,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/science/article/pii/S0747563216300899', type: 'academic', label: 'Levordashka & Utz, "Ambient awareness: From random noise to digital closeness in online social networks", Computers in Human Behavior (2016)' },
     ],
   },
+  {
+    id: 'econ-ricardian-rent',
+    discipline: 'economics',
+    title: 'リカードの地代論（差額地代）',
+    statement:
+      'デイヴィッド・リカードが1817年の主著『経済学および課税の原理』で体系化した地代理論。地代は土地の肥沃度（や位置）の差から生じる差額（差額地代）であるとする。人口の増加で食料需要が高まると、耕作はより劣等な土地（限界地）へと拡大していき、穀物の価格は最も条件の悪い最劣等地（地代を生まない限界地）の生産費によって決まる。' +
+      'より肥沃な優等地の所有者は、その低い生産費と市場価格との差額を地代として得る。ゆえに地代は価格を決めるのではなく、価格によって決まる（穀物が高いから地代が払われるのであって、地代が払われるから穀物が高いのではない）。地代は価格決定に入らない剰余であり、限界地の拡大とともに地代と地主の取り分は上昇する。古典派の分配論および経済的レントの概念の基礎をなす。',
+    keyFigures: 'デイヴィッド・リカード（David Ricardo, 1817）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.economics.utoronto.ca/munro5/ECONRENT.pdf', type: 'academic', label: 'University of Toronto, Department of Economics — Ricardo: Economic Rent and Opportunity Cost' },
+      { url: 'https://kotobank.jp/word/%E5%B7%AE%E9%A1%8D%E5%9C%B0%E4%BB%A3%E8%AB%96-1323503', type: 'reference', label: 'コトバンク「差額地代論」（百科事典項目）' },
+    ],
+  },
+  {
+    id: 'econ-walras-law',
+    discipline: 'economics',
+    title: 'ワルラスの法則',
+    statement:
+      'フランスの経済学者レオン・ワルラス（『純粋経済学要論』1874年、一般均衡理論の創始者）にちなむ法則。n個の市場からなる経済において、すべての市場の超過需要の価値を合計すると、価格が均衡値であるか否かにかかわらず、恒等的にゼロになるとする。これは各経済主体の予算制約（計画された支出総額が計画された所得・受取総額に等しいこと）を全主体について集計したことの帰結であり、超過需要の総価値は超過供給の総価値に常に等しい。' +
+      '重要な含意として、n個の市場のうちn−1個が均衡（超過需要ゼロ）にあれば、残りの1市場も必然的に均衡する。したがってn本の市場清算方程式は独立でなく1本が冗長となり、決まるのは相対価格のみである（ニュメレールの設定と整合的）。一般均衡分析の基礎をなす原理であり、総需要が総供給に一致するとするセイの法則とは区別される。',
+    keyFigures: 'レオン・ワルラス（Léon Walras, 1874『純粋経済学要論』）／オスカー・ランゲ（Oskar Lange, 1942年に「ワルラスの法則」の名を付与）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Walras%27s_law', type: 'reference', label: 'Walras\'s law — Wikipedia (定義・予算制約・n−1冗長・ワルラス1874帰属・セイの法則との区別)' },
+      { url: 'https://kotobank.jp/word/%E3%82%8F%E3%82%8B%E3%82%89%E3%81%99%E3%81%AE%E6%B3%95%E5%89%87-3191291', type: 'reference', label: 'コトバンク「ワルラスの法則」（予算制約集計＝需要価値額が供給価値額に等しい、和ゼロ）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%83%AF%E3%83%AB%E3%83%A9%E3%82%B9%E3%81%AE%E6%B3%95%E5%89%87', type: 'reference', label: 'ワルラスの法則 — Wikipedia 日本語版（超過需要総和ゼロ・均衡か否かによらず成立）' },
+    ],
+  },
+  {
+    id: 'mgmt-vroom-yetton',
+    discipline: 'management',
+    title: 'ヴルーム＝イェットン・モデル',
+    statement:
+      'ヴルームとイェットンが1973年（著書『Leadership and Decision-Making』）に提唱し、後にヴルーム＆ヤゴーが1988年に改訂した、リーダーシップの規範的（状況適応・コンティンジェンシー）モデル。状況に応じてリーダーが意思決定に部下をどの程度参加させるべきかを処方する。専制的→相談的→集団的へと連続する5つの決定スタイルを示し、' +
+      'AI・AII＝独断（AIは手元情報で単独決定、AIIは部下から情報収集後に単独決定）、CI・CIIは部下に個別（CI）/集団（CII）で相談したうえでリーダーが決定、GIIは集団で合意形成して共同決定する。決定の質の要件、リーダーの情報量、問題の構造化、部下の受容/コミットメントの重要性、目標一致、対立の可能性などを問うyes/noの決定木で最適スタイルを導き、決定の質・受容・迅速性のバランスを図る。',
+    keyFigures: 'ヴィクター・ヴルーム／フィリップ・イェットン（1973）／アーサー・ヤゴー（Vroom & Jago, 1988改訂）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/leadership/chpt/decision-making-vroomyettonjago-models', type: 'reference', label: 'Sage Reference — Encyclopedia of Leadership: Decision Making: The Vroom-Yetton-Jago Models' },
+      { url: 'https://en.wikipedia.org/wiki/Vroom%E2%80%93Yetton_decision_model', type: 'reference', label: 'Wikipedia — Vroom–Yetton decision model' },
+    ],
+  },
+  {
+    id: 'human-cognitive-appraisal',
+    discipline: 'human-science',
+    title: '認知的評価理論（感情）',
+    statement:
+      '感情は出来事そのものではなく、その出来事が自分の幸福や目標にとって持つ意味をどう認知的に評価（アプレイザル）するかから生じるとする理論。同じ出来事でも評価の仕方が異なれば人によって異なる感情反応が生まれ、感情反応の個人差を説明する。マグダ・アーノルド（1960）が「評価」概念を感情理論に導入し、リチャード・ラザルスがこれを大きく発展させた。' +
+      'ラザルスは、その出来事が自分に関連するか・有益か有害/脅威かを問う一次評価と、自分はそれに対処できるか・どんな対処資源や選択肢があるかを問う二次評価を区別した。ラザルス＆フォルクマン（1984）のストレスの交流（トランザクショナル）モデルでは、要求が自分の資源を超える/負担すると評価されたときにストレスが生じるとされる。なおラザルスは、感情に認知が必要かをめぐりザイアンスと「優位性（プライマシー）論争」を交わしたことでも知られる。',
+    keyFigures: 'マグダ・アーノルド（Magda Arnold, 1960）／リチャード・ラザルス（Richard Lazarus）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/315311200_Appraisal_Theory_of_Emotion', type: 'academic', label: 'Appraisal Theory of Emotion（学術レビュー：アーノルド1960／一次・二次評価）' },
+      { url: 'https://en.wikipedia.org/wiki/Appraisal_theory', type: 'reference', label: 'Appraisal theory（評価による感情・個人差・一次/二次評価）' },
+      { url: 'https://eric.ed.gov/?id=EJ294312', type: 'academic', label: 'Lazarus, On the Primacy of Cognition, American Psychologist (1984)（ザイアンスとの優位性論争）' },
+    ],
+  },
+  {
+    id: 'bizlaw-adr',
+    discipline: 'business-law',
+    title: '裁判外紛争解決手続（ADR）',
+    statement:
+      '裁判外紛争解決手続（ADR）とは、訴訟によらず民事紛争を解決する手続で、中立な第三者が関与する和解・調停・あっせん・仲裁等を指す。私的・柔軟・専門的で、訴訟より迅速かつ低廉なことが多い点に特徴がある。' +
+      'ADR促進法（裁判外紛争解決手続の利用の促進に関する法律、平成16年法律第151号、2004年公布・2007年4月施行、法務省所管）は、法務大臣が民間紛争解決手続を行う事業者を認証する制度（認証ADR事業者＝かいけつサポート）を設け、認証手続の利用に時効の完成猶予や訴訟手続の中止、調停前置の特則などの法的効果を与える。なお仲裁は別途仲裁法（平成15年法律第138号）が規律する。',
+    keyFigures: '裁判外紛争解決手続の利用の促進に関する法律（ADR法、平成16年法律第151号、2004年制定・2007年施行）／法務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.moj.go.jp/KANBOU/ADR/adr02-021.pdf', type: 'government', label: '法務省「ADR法・認証制度の概要」（認証制度と時効の完成猶予・訴訟手続の中止等の法的効果）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000099610', type: 'government', label: '国立国会図書館 日本法令索引（平成16年法律第151号、公布2004年・施行2007年）' },
+      { url: 'https://www.gov-online.go.jp/article/201507/entry-8714.html', type: 'government', label: '政府広報オンライン「法的トラブル解決には、ADR（裁判外紛争解決手続）」' },
+    ],
+  },
+  {
+    id: 'infosoc-umesao-information-industry',
+    discipline: 'information-sociology',
+    title: '情報産業論（梅棹忠夫）',
+    statement:
+      '民族学者・梅棹忠夫が1962年末に執筆し、雑誌『放送朝日』1963年1月号に発表した論考（同年『中央公論』3月号に転載され大反響をよんだ）。日本における情報化社会論の先駆とされ、トフラーら欧米の脱工業化・情報社会論に先んじた。生物の器官の発生段階に類比し、消化器系＝内胚葉、筋肉・運動器系＝中胚葉、神経系・脳＝外胚葉になぞらえて、' +
+      '人類の産業は農業の時代（内胚葉産業）→工業の時代（中胚葉産業）→情報産業の時代（外胚葉産業）へと発展すると説いた。放送・通信・教育など情報や精神に関わる産業が中心となる段階の到来を予見し、「情報産業」という語を広めて、その後の日本の情報化社会論に大きな影響を与えた。',
+    keyFigures: '梅棹忠夫（うめさお ただお, 1920–2010, 民族学者）／『情報産業論』（放送朝日 1963年1月号, 後に『情報の文明学』所収）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E6%83%85%E5%A0%B1%E5%8C%96%E7%A4%BE%E4%BC%9A-185984', type: 'reference', label: 'コトバンク「情報化社会」（梅棹忠夫『情報産業論』1963年・放送朝日／三段階発展説）' },
+      { url: 'https://iss.ndl.go.jp/books/R000000004-I728841-00', type: 'government', label: '国立国会図書館サーチ 書誌『情報産業論』（1963）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%83%85%E5%A0%B1%E7%94%A3%E6%A5%AD', type: 'reference', label: 'Wikipedia「情報産業」（内胚葉=農業／中胚葉=工業／外胚葉=情報の発展段階説）' },
+    ],
+  },
 ];
 // Stryker restore all
