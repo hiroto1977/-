@@ -12068,5 +12068,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h29/html/nc112220.html', type: 'government', label: '総務省 平成29年版 情報通信白書「シェアリング・エコノミー（C to Cサービス）」' },
     ],
   },
+  {
+    id: 'econ-gibrat-law',
+    discipline: 'economics',
+    title: 'ジブラの法則',
+    statement:
+      'ロベール・ジブラが1931年（『Les Inégalités économiques』）に提唱した法則で、「比例効果の法則」とも呼ばれる。企業（や都市）の比例的（％）成長率はその絶対的な規模と独立であり、期待される成長率は小企業でも大企業でも同じで、成長は本質的に確率的（ランダム）な過程（乗法的ランダムウォーク）として扱える、と主張する。' +
+      'この帰結として、規模の分布は対数正規分布に従いやすくなり、歪んだ裾の重い分布（都市規模におけるジップの法則など）の生成とも密接に関連する。ただし実証研究では小企業について棄却されることが多く、小規模な企業ほど速くかつ変動的に成長する傾向が見られる一方、最小効率規模に達した大規模で成熟した存続企業ではよく成り立つとされる。',
+    keyFigures: 'ロベール・ジブラ（Robert Gibrat, 1931）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Gibrat%27s_law', type: 'reference', label: 'Wikipedia: Gibrat\'s law（1931・比例効果・対数正規分布）' },
+      { url: 'https://docs.iza.org/dp2744.pdf', type: 'academic', label: 'Lotti, Santarelli & Vivarelli, "Defending Gibrat\'s Law as a Long-Run Regularity", IZA DP No. 2744（小企業での棄却・大企業での成立）' },
+      { url: 'https://www.rieti.go.jp/jp/publications/dp/19j008.pdf', type: 'academic', label: 'RIETI Discussion Paper 19-J-008（ジブラ法則・対数正規分布・ジップ法則との関連）' },
+    ],
+  },
+  {
+    id: 'econ-real-options',
+    discipline: 'economics',
+    title: 'リアルオプション',
+    statement:
+      'リアルオプション（real option）とは、金融オプションの評価理論を実物資産・事業投資の意思決定に応用する考え方であり、不確実性下で将来の経営行動をとる「権利（義務ではない）」を指す。具体的には投資の延期、拡大、縮小、撤退、投入・産出の切替、段階的投資などのオプションがある。経営者は不確実性が解消するにつれて行動を調整できるため、この経営の柔軟性には価値があるが、' +
+      '今すぐか否かの固定的な確約を前提とする標準的なDCF/NPV分析はこの価値を見落とす。リアルオプション分析は柔軟性の価値を評価し、プロジェクトの真の価値＝静的NPV＋オプション価値と捉えるため、不確実性がかえって価値を高めうる。用語はスチュワート・マイヤーズが1977年に命名し、ブラック=ショールズ等のオプション価格理論の枠組みを応用する。延期・拡大・撤退・成長オプションなどに分類される。',
+    keyFigures: 'スチュワート・マイヤーズ（Stewart Myers, 1977命名）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304405X77900150', type: 'academic', label: 'Myers, S.C. (1977) Determinants of Corporate Borrowing, Journal of Financial Economics 5(2):147-175（リアルオプション命名の原典）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/emre.12324', type: 'academic', label: 'Ipsmiller et al. (2019) 25 Years of Real Option Empirical Research in Management, European Management Review（査読付きレビュー）' },
+      { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia: Real options valuation（権利・経営の柔軟性・NPV超の価値・種類）' },
+    ],
+  },
+  {
+    id: 'mgmt-scientific-management',
+    discipline: 'management',
+    title: '科学的管理法（テイラリズム）',
+    statement:
+      'フレデリック・テイラーが1911年の『科学的管理法の諸原理』で体系化した管理理論。職務遂行を職人の経験則（成り行き管理）に委ねず、課業を要素動作に分解して時間動作研究で測定し、無駄な動作を排して「唯一最善の方法」を科学的に決定する。さらに各作業に最適な労働者を科学的に選抜・訓練し、達成すべき標準課業（ノルマ）を設定して、達成者には高率・未達者には低率を適用する差別出来高賃金で動機づける。' +
+      '加えて、計画は管理者が担い執行は労働者が担うという、計画（管理）と執行（労働）の明確な分業を要点とする。この手法は工場の生産性を飛躍的に高め、フォードの大量生産方式など近代産業に大きな影響を与えた。一方で、労働者を単なる道具とみなし作業を細分化・脱熟練化して非人間化するとの批判を受け、ホーソン実験など人間関係論の台頭を促す契機となった。',
+    keyFigures: 'フレデリック・テイラー（Frederick W. Taylor, 1911）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Frederick-W-Taylor', type: 'reference', label: 'Encyclopaedia Britannica — Frederick W. Taylor（科学的選抜・訓練、時間動作研究、誘因賃金、計画と執行の分業）' },
+      { url: 'https://www.britannica.com/science/Taylorism', type: 'reference', label: 'Encyclopaedia Britannica — Taylorism（1911年『科学的管理法の諸原理』、時間動作研究と唯一最善の方法）' },
+      { url: 'https://resources.saylor.org/wwwresources/archived/site/wp-content/uploads/2011/08/HIST363-7.1.3-Frederick-W-Taylor.pdf', type: 'academic', label: 'Saylor Academy — F.W. Taylor, The Principles of Scientific Management (1911) 原典抜粋' },
+    ],
+  },
+  {
+    id: 'human-overconfidence',
+    discipline: 'human-science',
+    title: '自信過剰（過信バイアス）',
+    statement:
+      '自分の判断・知識・能力に対する主観的な確信が、客観的な正確さを系統的に上回る認知バイアス。とりわけ確信度が高い場面で顕著で、たとえば「90%確実」と答えた問題の正答率が70〜80%にとどまるなど、確信が実際の精度を超える（キャリブレーションのずれ）。ムーア&ヒーリー（2008, Psychological Review）は過信を3類型に整理した。' +
+      '(1)過大評価（overestimation）＝自分の実際の成績や能力・統制力を高く見積もる、(2)過大視／平均以上効果（overplacement）＝他者と比べ自分を過大に位置づける（例：大多数の運転者が自分を平均以上と評価）、(3)過剰精度（overprecision）＝自分の信念の正確さに過度に確信を持つ（信頼区間が狭すぎる）。キャリブレーション研究に基づき、株式の過剰取引や経営・意思決定の失敗を招く要因として知られる。',
+    keyFigures: 'ドン・ムーア／ポール・ヒーリー（Moore & Healy, 2008）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/18426301/', type: 'academic', label: 'Moore & Healy (2008) "The trouble with overconfidence," Psychological Review 115(2):502-517（PubMed）' },
+      { url: 'https://en.wikipedia.org/wiki/Overconfidence_effect', type: 'reference', label: 'Wikipedia: Overconfidence effect（定義・3類型・平均以上効果）' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/overconfidence-effect/', type: 'reference', label: 'BehavioralEconomics.com Mini-Encyclopedia: Overconfidence effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-civil-execution',
+    discipline: 'business-law',
+    title: '民事執行法',
+    statement:
+      '民事執行法（昭和54年法律第4号、1979年制定・1980年施行）は、私法上の金銭債権その他の請求権を、債務者が任意に履行しない場合に、国家の強制力（執行裁判所・執行官）を用いて強制的に実現するための手続を定める法律である。確定判決などの債務名義に基づく強制執行と、抵当権など担保権の実行（競売）を中心に規律する。強制執行の主な方法は、不動産執行（差押え・競売・配当）、' +
+      '動産執行、債権執行（給与や預貯金の差押え＝第三債務者からの取立て）の三類型に大別される。同法は、旧民事訴訟法の強制執行規定と競売法を統合し、執行手続を合理化・近代化した。さらに2003年・2019年の改正で、債務者の財産を把握するための財産開示手続が強化され、登記所・市町村・金融機関など第三者から債務者財産の情報を取得する手続（2020年4月施行）が新設された。',
+    keyFigures: '民事執行法（昭和54年法律第4号、1979年制定・1980年施行）／執行裁判所・執行官',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=354AC0000000004_21171231_505AC0000000016', type: 'government', label: 'e-Gov法令検索 民事執行法（昭和五十四年法律第四号）' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/70', type: 'government', label: '法務省 日本法令外国語訳DB 民事執行法 Civil Execution Act' },
+      { url: 'https://kotobank.jp/word/%E6%B0%91%E4%BA%8B%E5%9F%B7%E8%A1%8C%E6%B3%95-140034', type: 'reference', label: 'コトバンク「民事執行法」' },
+    ],
+  },
+  {
+    id: 'infosoc-cancel-culture',
+    discipline: 'information-sociology',
+    title: 'キャンセルカルチャー',
+    statement:
+      'キャンセルカルチャー（コールアウト・カルチャー）とは、主にSNS上で、個人・集団・企業・組織の差別的・攻撃的・不適切と見なされる言動や価値観に対し、批判が殺到し、支持の撤回・ボイコット・排斥・社会的追放を集団的に行う現象を指す。公開の糾弾・羞恥（パブリック・シェイミング）を伴い、対象は仕事や評判を失うこともある。米国では2018年前後に主要報道に登場し、2010年代後半に台頭した。' +
+      '評価は二分する。肯定論は、立場の弱い人々が権力者に説明責任を負わせ声を上げる手段であり、それ自体が表現の自由の行使だとする。批判論は、表現の自由を萎縮させ、過剰な制裁やモブ的私刑（ネットいじめ）に陥り、デュープロセスを欠くと指摘する。Pew調査でも説明責任か検閲・処罰かで評価が割れた。日本の「炎上」とも関連が深い。',
+    keyFigures: 'キャンセルカルチャー（2010年代後半に台頭／コールアウト・カルチャー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/cancel-culture', type: 'reference', label: 'Encyclopaedia Britannica — Cancel culture（社会的排斥・SNS上の支持撤回の定義）' },
+      { url: 'https://www.merriam-webster.com/dictionary/cancel%20culture', type: 'reference', label: 'Merriam-Webster — cancel culture（マスキャンセル/コールアウト、語の台頭）' },
+      { url: 'https://www.pewresearch.org/internet/2021/05/19/americans-and-cancel-culture-where-some-see-calls-for-accountability-others-see-censorship-punishment/', type: 'academic', label: 'Pew Research Center 2021（説明責任 vs 検閲・処罰の両論）' },
+    ],
+  },
 ];
 // Stryker restore all
