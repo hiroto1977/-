@@ -12335,5 +12335,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.coe.int/en/web/education/dce-concept', type: 'government', label: '欧州評議会 — Digital Citizenship Education Concept（empowerment definition）' },
     ],
   },
+  {
+    id: 'econ-malthusian-trap',
+    discipline: 'economics',
+    title: 'マルサスの罠',
+    statement:
+      'トマス・ロバート・マルサスが1798年の『人口論（人口の原理に関する一論）』で示した理論。人口は妨げがなければ幾何級数的（指数関数的）に増加するのに対し、食料など生活資料は算術級数的（直線的）にしか増えないため、人口増加は食料供給を上回る傾向があるとした。' +
+      'その帰結として、所得や生産性の向上はやがて人口増に吸収され、一人当たり所得は生存水準へと押し戻される（マルサス的停滞）。人口は飢饉・疫病・戦争など死亡率を高める「積極的妨げ」と、道徳的抑制・晩婚など出生率を抑える「予防的妨げ」によって生存水準近くに抑えられる。産業革命と人口転換が、この「マルサスの罠」からの脱出と理解されている。',
+    keyFigures: 'トマス・ロバート・マルサス（Thomas Robert Malthus, 1798『人口論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Malthusianism', type: 'reference', label: 'Encyclopædia Britannica — Malthusianism (1798 attribution, geometric vs arithmetical, positive/preventive checks)' },
+      { url: 'https://kotobank.jp/word/%E3%81%BE%E3%82%8B%E3%81%95%E3%81%99%E3%81%AE%E4%BA%BA%E5%8F%A3%E5%8E%9F%E7%90%86-1420871', type: 'reference', label: 'コトバンク（日本大百科全書ほか）— マルサスの人口原理（食料は算術級数的・人口は幾何級数的）' },
+    ],
+  },
+  {
+    id: 'econ-secular-stagnation',
+    discipline: 'economics',
+    title: '長期停滞論',
+    statement:
+      '成熟した経済が、潜在産出に対し総需要の慢性的な不足に陥り、低成長・投資低迷・不完全雇用が長期化するという仮説。望ましい貯蓄が望ましい投資を恒常的に上回るため、完全雇用の下で貯蓄と投資を均衡させる均衡（自然）実質金利が極めて低いかマイナスとなり、ゼロ金利下限に阻まれて金融政策が届きにくく、完全雇用と物価目標の達成が困難になるとされる。' +
+      'アルヴィン・ハンセンが1938年の米国経済学会会長講演で提起し、人口増加の鈍化・フロンティアの消滅・資本節約的技術革新を要因とした。2013〜14年にローレンス・サマーズが復活させ、高齢化などの人口動態・格差拡大・資本財価格の低下・債務過剰・世界的な貯蓄過剰を背景に挙げた。日本の長期停滞や2008年以降の先進国経済との関連でしばしば論じられる。',
+    keyFigures: 'アルヴィン・ハンセン（Alvin Hansen, 1938）／ローレンス・サマーズ（Lawrence Summers, 2013-14復活）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Secular_stagnation', type: 'reference', label: 'Wikipedia: Secular stagnation（ハンセン1938起源・サマーズ2013復活・自然利子率マイナス）' },
+      { url: 'https://www.brookings.edu/articles/why-are-interest-rates-so-low-part-2-secular-stagnation/', type: 'academic', label: 'Brookings (Ben Bernanke): Secular stagnation（需要不足・低均衡実質金利・ゼロ金利下限）' },
+      { url: 'https://www.esri.cao.go.jp/jp/esri/archive/bun/bun193/bun193b.pdf', type: 'government', label: '内閣府ESRI 福田慎一: 長期停滞懸念下のマクロ経済（サマーズの貯蓄>投資・自然利子率マイナス）' },
+    ],
+  },
+  {
+    id: 'mgmt-poka-yoke',
+    discipline: 'management',
+    title: 'ポカヨケ',
+    statement:
+      'ポカヨケは、工程に組み込んで作業者のうっかりミス（ポカ）を避ける（よけ）ための仕組み・装置を指す、リーン生産方式・品質管理の概念である。新郷重夫がトヨタ生産方式の発展の中で体系化し、当初はフールプルーフと同じ考えから「バカヨケ」と呼ばれたが、作業者を侮辱しない表現として「ポカヨケ」へ改称された（1963年頃）。' +
+      'その狙いは、誤りそのものを未然に防ぐか、誤りが起きても即座に検知・是正して不良へ転化させないことにある。検査や作業者の注意力に頼るのではなく、ヒューマンエラーと不良の連鎖を断ち切り、源流検査や自働化（アンドン）と結びついて不良ゼロを目指す。正しい向きにしか入らない治具・部品、工程の抜けを止めるセンサーやリミットスイッチ、色分けや員数管理などが代表例である。',
+    keyFigures: '新郷重夫（Shigeo Shingo）／トヨタ生産方式',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.itmedia.co.jp/im/articles/0908/24/news087.html', type: 'reference', label: 'ITmedia 情報システム用語事典「ポカヨケ」' },
+      { url: 'https://p2sl.berkeley.edu/mistakeproofing/', type: 'academic', label: 'UC Berkeley Project Production Systems Laboratory — Mistakeproofing' },
+      { url: 'https://en.wikipedia.org/wiki/Poka-yoke', type: 'reference', label: 'Wikipedia: Poka-yoke' },
+    ],
+  },
+  {
+    id: 'human-two-factor-emotion',
+    discipline: 'human-science',
+    title: '情動二要因理論',
+    statement:
+      '情動二要因理論（シャクター＝シンガー理論）は、情動が「生理的喚起」と「その喚起を状況に基づいて解釈する認知的ラベル」という二要因の組み合わせから生じると説く。心拍上昇や発汗などの未分化で非特異的な身体的喚起そのものは情動の種類を決めず、人は周囲の手がかりを探してその喚起の原因を解釈し、恐怖・怒り・高揚など特定の情動として体験する。同じ喚起も解釈次第で異なる情動になりうる。' +
+      '有名なアドレナリン（エピネフリン）実験では、注射の効果を知らされない参加者は、高揚的または怒り的に振る舞うサクラの行動を手がかりにして対応する情動を報告したが、効果を正しく知らされた参加者はそうならなかった。これは身体反応の知覚を情動とするジェームズ=ランゲ説や、喚起と情動を同時的とするキャノン=バード説と対比される、認知的評価を重視する理論であり、覚醒の誤帰属の基盤となった（シャクター&シンガー1962）。',
+    keyFigures: 'スタンレー・シャクター／ジェローム・シンガー（1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Cognitive,-social,-and-physiological-determinants-Schachter-Singer/dadc18cbea42880ec23c03a47b9728546b3d2bd7', type: 'academic', label: 'Schachter & Singer (1962) "Cognitive, social, and physiological determinants of emotional state," Psychological Review 69(5):379 — 原論文索引' },
+      { url: 'https://psu.pb.unizin.org/psych425/chapter/schachter-singer-two-factor-theory/', type: 'academic', label: 'Penn State 大学オープンアクセス教科書 Psychology of Human Emotion — Schachter-Singer Two-Factor Theory' },
+      { url: 'https://en.wikipedia.org/wiki/Two-factor_theory_of_emotion', type: 'reference', label: 'Wikipedia: Two-factor theory of emotion（二要因・エピネフリン実験・誤帰属・他説との対比）' },
+    ],
+  },
+  {
+    id: 'bizlaw-administrative-litigation',
+    discipline: 'business-law',
+    title: '行政事件訴訟法',
+    statement:
+      '行政の公権力の行使に関し裁判所で争い、違法な行政活動に対する救済を国民が求める行政訴訟の手続を定める一般法（昭和37年(1962)制定、法律第139号）。行政事件訴訟を抗告訴訟・当事者訴訟・民衆訴訟・機関訴訟に分類する。中心は行政庁の処分等を争う抗告訴訟で、処分の取消訴訟のほか無効等確認訴訟・不作為の違法確認訴訟があり、' +
+      '2004年（平成16年）の大改正で義務付け訴訟・差止め訴訟が法定の抗告訴訟として加えられ、原告適格の拡大など救済範囲が拡充された（仮の義務付け・仮の差止めも新設、平成17年施行）。行政内部での不服申立てを定める行政不服審査法とは異なり、裁判所による司法審査・権利救済を担う点に特色がある。',
+    keyFigures: '行政事件訴訟法（昭和37年法律第139号、1962年制定、2004年大改正）／裁判所・法務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/337AC0000000139', type: 'government', label: 'e-Gov 法令検索「行政事件訴訟法」（昭和37年法律第139号）' },
+      { url: 'https://www.moj.go.jp/content/000103905.pdf', type: 'government', label: '法務省「平成16年改正行政事件訴訟法の概要」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E4%BA%8B%E4%BB%B6%E8%A8%B4%E8%A8%9F%E6%B3%95', type: 'reference', label: 'ウィキペディア「行政事件訴訟法」' },
+    ],
+  },
+  {
+    id: 'infosoc-metaverse',
+    discipline: 'information-sociology',
+    title: 'メタバース',
+    statement:
+      'メタバースとは、インターネット上に構築された永続的で共有された没入型の3D仮想世界（相互に接続された複数の仮想空間からなる網）であり、ユーザーは自分の分身であるアバターを通じて、他者やコンピュータが生成した環境・オブジェクトとリアルタイムに相互作用する。社会的交流・経済（仮想資産やNFTを含む）・仕事・遊び・創作が一体的に融合し、VR/AR機器のほか通常の画面からも接続できる点が特徴で、相互運用性や' +
+      '「プレゼンス（存在感）」が重要な要素とされる。語源はSF作家ニール・スティーヴンスンが1992年の小説『スノウ・クラッシュ』で用いた造語（meta＋universe）で、Second Lifeなどが先駆例とされる。2021年頃にFacebookがMetaへ社名変更したことなどを契機に再び注目を集めた。一方で、統治（ガバナンス）・プライバシー・アイデンティティをめぐる課題も指摘されている。',
+    keyFigures: 'ニール・スティーヴンスン（Neal Stephenson, 1992『スノウ・クラッシュ』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.merriam-webster.com/dictionary/metaverse', type: 'reference', label: 'Merriam-Webster Dictionary — "metaverse"（永続的な仮想環境・アバター・相互運用性の定義）' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r06/html/nd132100.html', type: 'government', label: '総務省『令和6年版 情報通信白書』仮想空間（メタバース・デジタルツイン）' },
+      { url: 'https://arxiv.org/pdf/2203.02662', type: 'academic', label: 'A Survey on Metaverse: Fundamentals, Security, and Privacy（arXiv）' },
+    ],
+  },
 ];
 // Stryker restore all
