@@ -11891,5 +11891,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/01914537221108467', type: 'academic', label: 'Jovy Chan, "Online astroturfing: A problem beyond disinformation," Philosophy & Social Criticism (SAGE, 2024)' },
     ],
   },
+  {
+    id: 'econ-tinbergen-rule',
+    discipline: 'economics',
+    title: 'ティンバーゲンの定理',
+    statement:
+      'ヤン・ティンバーゲンが『経済政策の理論（On the Theory of Economic Policy, 1952）』で示した、経済政策の理論の基礎をなす命題。複数の政策目標が相互に独立であるとき、それらをすべて同時に達成するには、少なくとも同数の独立かつ有効な政策手段が必要であるとする。すなわち手段の数は目標の数以上（手段の数≧目標の数）でなければならず、N個の独立した目標をN未満の独立した手段で確実に達成することはできない。' +
+      '例えば独立した政策目標が二つあれば、少なくとも二つの独立した政策手段（ポリシー・ミックス）が要る。内外均衡（対内均衡と対外均衡）の同時達成に財政政策と金融・為替政策の双方が必要となる例が典型で、どの手段をどの目標に割り当てるかを論じるマンデルの割り当て問題（マンデルの定理）と密接に関連する、経済政策運営の出発点となる原理である。',
+    keyFigures: 'ヤン・ティンバーゲン（Jan Tinbergen, 1952）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://garfield.library.upenn.edu/classics1986/A1986C401200001.pdf', type: 'academic', label: 'University of Pennsylvania Library, Citation Classics: Tinbergen, On the Theory of Economic Policy (1952)' },
+      { url: 'https://kotobank.jp/word/%E7%B5%8C%E6%B8%88%E6%94%BF%E7%AD%96-58753', type: 'reference', label: 'コトバンク「経済政策」— ティンバーゲンの定理とマンデルの定理' },
+    ],
+  },
+  {
+    id: 'econ-fisher-separation',
+    discipline: 'economics',
+    title: 'フィッシャーの分離定理',
+    statement:
+      'アーヴィング・フィッシャーが『利子論』（The Theory of Interest, 1930）で明確に提示した命題。誰もが単一の市場利子率で自由に借入・貸付できる完全資本市場の下では、企業の投資・生産の決定は、所有者（株主）個々の消費の時間選好やリスク態度から分離（独立）される。' +
+      '企業は自らの現在価値を最大化すること、すなわち収益率が市場利子率を上回る投資案（正味現在価値が正のプロジェクト）をすべて採択するだけでよい。所有者は資本市場で借入・貸付を行うことで、望む消費の時間配分を各自独立に実現できる。ゆえに経営者は株主の個別選好を知らずとも企業価値（富）の最大化を選べ、生産（投資）決定と消費・資金調達決定は分離可能となる。これは正味現在価値（NPV）ルールやコーポレートファイナンスの基礎をなす。',
+    keyFigures: 'アーヴィング・フィッシャー（Irving Fisher, 1930『利子論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jimsmith.host.dartmouth.edu/wp-content/uploads/2022/04/Fisher_Separation_Theorem.pdf', type: 'academic', label: 'James E. Smith (Dartmouth, Tuck School of Business) — Fisher Separation and Project Valuation' },
+      { url: 'https://en.wikipedia.org/wiki/Fisher_separation_theorem', type: 'reference', label: 'Wikipedia — Fisher separation theorem' },
+    ],
+  },
+  {
+    id: 'mgmt-mass-customization',
+    discipline: 'management',
+    title: 'マス・カスタマイゼーション',
+    statement:
+      'マス・カスタマイゼーションは、大量生産による低い単位コストと、個別生産による高い柔軟性とを両立させ、顧客一人ひとりのニーズに合わせた製品・サービスを、量産に近い効率と価格で提供する経営・生産戦略である。従来は、規模の経済で低コストだが多様性に乏しい大量生産か、多様だが少量・高コストの個別生産かという二者択一であったが、本戦略はその両立を狙う。' +
+      '用語は1987年にスタン・デイビスが著書『Future Perfect』で提唱し、1993年にB・ジョセフ・パインIIが『Mass Customization: The New Frontier in Business Competition』（ハーバード・ビジネス・スクール出版）で体系化・普及させた。柔軟な生産システム、製品のモジュール化、情報技術がこれを可能にする。パインとギルモアはこれを顧客との学習関係構築や「経験経済」とも結びつけた。',
+    keyFigures: 'スタン・デイビス（Stan Davis, 1987）／B・ジョセフ・パインII（B. Joseph Pine II, 1993）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/031289629301700206', type: 'academic', label: 'SAGE Journals — Pine II (1993) Mass Customisation 書評（著者・書名・出版社・年を確認）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-4615-1705-4_23', type: 'academic', label: 'Springer Nature — Mass Customization（概念・定義）' },
+      { url: 'https://en.wikipedia.org/wiki/Mass_customization', type: 'reference', label: 'Wikipedia — Mass customization（デイビス1987命名・パイン1993・定義）' },
+    ],
+  },
+  {
+    id: 'human-illusion-of-control',
+    discipline: 'human-science',
+    title: 'コントロールの錯覚',
+    statement:
+      'コントロールの錯覚（illusion of control）とは、実際には偶然に左右される結果に対し、自分が制御・影響できる確率を客観的な確率以上に過大評価する認知バイアスである。米国の心理学者エレン・ランガーが1975年の論文で命名・実証した。彼女は、選択・競争・熟知・能動的関与といった技能状況を連想させる手がかりを、純粋に偶然で決まる課題に持ち込むと、人はあたかも制御できるかのように振る舞い感じることを示した。' +
+      '代表例の宝くじ実験では、自分で選んだ券を渡された人は、割り当てられた券の保有者より高い価格でなければ手放そうとせず（平均約8.67ドル対1.96ドル）、当選を過信した。番号を数日かけて知る高関与群は券を持ち続ける傾向が強かった。この錯覚は過信や、カジノ・ギャンブルにおける制御感の演出と病的賭博行動に深く関連する。',
+    keyFigures: 'エレン・ランガー（Ellen Langer, 1975）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-illusion-of-control.-Langer/136e9cf6b5a4d17dbe8400fa5d7f4bf3ad01f6ac', type: 'academic', label: 'Langer, E. J. (1975). The illusion of control. Journal of Personality and Social Psychology（原著記録）' },
+      { url: 'https://gamblingresearch.sites.olt.ubc.ca/files/2021/09/ClarkWohl_2021_LangersIoC_AAM.pdf', type: 'academic', label: 'Clark & Wohl (2021), Langer\'s Illusion of Control and the Cognitive Model of Disordered Gambling (University of British Columbia)' },
+      { url: 'https://en.wikipedia.org/wiki/Illusion_of_control', type: 'reference', label: 'Illusion of control — Wikipedia（定義・命名・技能手がかりの百科事典的解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-trust-act',
+    discipline: 'business-law',
+    title: '信託法',
+    statement:
+      '信託法は、委託者が受託者に財産を移転し、受託者が受益者の利益のため一定の目的に従って信託財産を管理・処分する法律関係（信託）を規律する法律である。現行の信託法（平成18年法律第108号）は2006年に制定され2007年9月30日に施行されたもので、約84年間実質改正されなかった大正11年（1922年）の旧信託法を全面改正した。' +
+      'この現代化により、委託者が自ら受託者となる自己信託（信託宣言）、受益者の定めのない目的信託、受益証券発行信託、受託者の責任を信託財産に限定する限定責任信託、後継ぎ遺贈型受益者連続信託など柔軟な類型が整備され、事業承継や資産承継・財産管理への活用が広がった。信託会社など受託者の業務規制は信託業法が別途定める。所管は法務省（信託業法は金融庁）。',
+    keyFigures: '信託法（平成18年法律第108号、2006年制定・2007年施行）／大正11年旧信託法を全面改正／法務省（信託業法は金融庁）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/16520061215108.htm', type: 'government', label: '衆議院 — 信託法（平成18年12月15日法律第108号）条文' },
+      { url: 'https://www.shintaku-kyokai.or.jp/trust/history/trusts_modern.html', type: 'reference', label: '信託協会 — 法改正と現在の信託（大正11年法の全面改正・2007年施行・新類型）' },
+      { url: 'https://www.fsa.go.jp/access/19/200708b.html', type: 'government', label: '金融庁 — 信託法改正に伴う信託業法の改正の概要について' },
+    ],
+  },
+  {
+    id: 'infosoc-quantified-self',
+    discipline: 'information-sociology',
+    title: '定量化された自己（クオンティファイド・セルフ）',
+    statement:
+      '定量化された自己（Quantified Self）とは、ウェアラブル端末やスマートフォン、各種センサーを用いて、歩数・心拍・睡眠・食事・気分・生産性など自分の生体・行動・環境データを継続的に記録し数値化することで、自己を理解・改善しようとする実践および運動を指す。2007年に雑誌『Wired』の編集者ゲイリー・ウルフとケヴィン・ケリーが提唱し、「数値による自己認識（self-knowledge through numbers）」を標語とする国際的コミュニティへと発展した。' +
+      '自己追跡（セルフトラッキング）やライフログの潮流、フィットネス系ウェアラブルの普及と密接に結びつく。一方、社会学者デボラ・ラプトンの『The Quantified Self』（Polity、2016年）に代表される監視・データ化（データフィケーション）研究は、身体や自己のデータ化、プライバシー、自己規律や生政治（バイオポリティクス）、データの商品化といった権力の問題を批判的に論じている。',
+    keyFigures: 'ゲイリー・ウルフ／ケヴィン・ケリー（2007, Wired）／デボラ・ラプトン（批判的研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.wiley.com/en-us/The+Quantified+Self-p-9781509500598', type: 'academic', label: 'Deborah Lupton, The Quantified Self: A Sociology of Self-Tracking, Polity/Wiley, 2016（出版社公式ページ）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/1467-9566.12495', type: 'academic', label: '査読誌 Sociology of Health & Illness 書評（Petrakaki, 2017）— ラプトン2016年著作' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8896409/', type: 'academic', label: 'PMC/NIH 査読論文 — ウルフ&ケリーの「self-knowledge through numbers」定義' },
+    ],
+  },
 ];
 // Stryker restore all
