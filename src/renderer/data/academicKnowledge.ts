@@ -16965,5 +16965,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Sherry_Turkle', type: 'reference', label: 'Wikipedia — Sherry Turkle (works, 2011 attribution)' },
     ],
   },
+  {
+    id: 'econ-disposition-effect',
+    discipline: 'economics',
+    title: 'ディスポジション効果',
+    statement:
+      'ディスポジション効果とは、投資家が値上がりした資産（勝ち）を早く売りすぎ、値下がりした資産（負け）を長く持ちすぎる傾向を指す。すなわち利益の実現を急ぎ、損失の実現を嫌う非合理的行動であり、シェフリン&スタットマン（Shefrin & Statman, 1985）が命名した。説明には、参照点（取得価格）に対し利得局面でリスク回避・損失局面でリスク追求となるプロスペクト理論の価値関数、メンタルアカウンティング、' +
+      '後悔回避、自制心が用いられる。オディーン（Odean, 1998）は1万口座の株取引データを分析し、税やリバランスを調整しても勝ち株を負け株より1.5〜2倍売りやすいことを実証した。税務上はむしろ損失を実現する方が有利であり、この行動は最適でない。行動ファイナンスの一現象だが、プロスペクト理論そのものとは区別される具体的バイアスである。',
+    keyFigures: 'ハーシュ・シェフリン／メイア・スタットマン（Shefrin & Statman, 1985）／テランス・オディーン（Odean, 1998）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1985.tb05002.x', type: 'academic', label: 'Shefrin & Statman (1985), The Journal of Finance 40(3), 777-790 — 原論文・命名' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/0022-1082.00072', type: 'academic', label: 'Odean (1998), The Journal of Finance 53(5), 1775-1798 — 株取引データによる実証' },
+      { url: 'https://en.wikipedia.org/wiki/Disposition_effect', type: 'reference', label: 'Wikipedia: Disposition effect — 定義・理論的枠組み' },
+    ],
+  },
+  {
+    id: 'econ-predatory-pricing',
+    discipline: 'economics',
+    title: '略奪的価格設定',
+    statement:
+      '多くは支配的企業が、競争相手を市場から排除し新規参入を阻止する目的で、一定期間あえて極端に低い価格（しばしばコスト割れ）を設定し、ライバル退出後に価格を引き上げて短期的損失を回収（recoupment）し独占力を得ようとする行為をいう。合理的戦略であるためには損失を上回る将来の独占利潤による回収の現実的見込み、すなわち参入障壁の存在が不可欠とされる。' +
+      '古典的な判定基準はアリーダ＝ターナー基準（1975）で、価格が関連費用（典型的には平均可変費用）を下回るか否かをコスト割れの目安とする。シカゴ学派（マッギー1958のスタンダード石油批判）は合理的戦略として稀だと懐疑的で、米ブルック・グループ判決（1993）はコスト割れ価格と回収可能性の双方の立証を要求した。日本では独占禁止法上の不公正な取引方法たる不当廉売として規律される。コスト割れを伴わずに参入を抑止する参入阻止価格とは区別される。',
+    keyFigures: 'アリーダ＆ターナー（Areeda & Turner, 1975）／ジョン・マッギー（McGee, 1958, シカゴ学派）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.upenn.edu/faculty_scholarship/1825/', type: 'academic', label: 'H. Hovenkamp, "Predatory Pricing under the Areeda-Turner Test" (Univ. of Pennsylvania Law School)' },
+      { url: 'https://www.ftc.gov/advice-guidance/competition-guidance/guide-antitrust-laws/single-firm-conduct/predatory-or-below-cost-pricing', type: 'government', label: 'US Federal Trade Commission — Predatory or Below-Cost Pricing' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/futorenbai.html', type: 'government', label: '公正取引委員会「不当廉売に関する独占禁止法上の考え方」' },
+    ],
+  },
+  {
+    id: 'mgmt-bop',
+    discipline: 'management',
+    title: 'BOP（ベース・オブ・ザ・ピラミッド）',
+    statement:
+      'C・K・プラハラードとスチュアート・ハートが2002年論文、続くプラハラードの2004年著書『ネクスト・マーケット（The Fortune at the Bottom of the Pyramid: Eradicating Poverty Through Profits）』で提唱した概念。世界の所得ピラミッドの最下層、低所得（しばしば1日2ドル未満とされる）で暮らす約40億人の最大かつ最貧の層を指す。中核的主張は、この層を単なる援助対象ではなく未開拓の巨大市場かつイノベーションの源泉と捉える点にある。' +
+      '手頃で入手可能な製品・サービスと、貧困層を消費者・生産者・起業家とみなす包摂的ビジネスモデルを通じて、企業が利益を得つつ貧困削減を同時に実現できると説き、インクルーシブビジネスの契機となった。一方でアニール・カルナニらは、市場規模や利益が過大評価されていると批判し、貧困層をむしろ生産者と見て所得向上を図るべきで、脆弱な消費者の搾取・過剰債務を招く危険を警告した。CSRや共通価値（CSV）とは区別される。',
+    keyFigures: 'C・K・プラハラード／スチュアート・ハート（Prahalad & Hart, 2002／Prahalad 2004）／アニール・カルナニ（批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://knowledge.wharton.upenn.edu/article/the-fortune-at-the-bottom-of-the-pyramid-eradicating-poverty-through-profits/', type: 'academic', label: 'Knowledge at Wharton (University of Pennsylvania) — The Fortune at the Bottom of the Pyramid' },
+      { url: 'https://michiganross.umich.edu/about/100-years/our-impact/2007/mirage-marketing-bottom-pyramid', type: 'academic', label: 'University of Michigan Ross — Karnani, The Mirage of Marketing to the Bottom of the Pyramid' },
+      { url: 'https://www.strategy-business.com/article/11518', type: 'reference', label: 'Prahalad & Hart (2002), "The Fortune at the Bottom of the Pyramid," strategy+business' },
+    ],
+  },
+  {
+    id: 'human-implementation-intention',
+    discipline: 'human-science',
+    title: '実行意図',
+    statement:
+      'ピーター・ゴルヴィツァーが1999年（American Psychologist誌）に提唱した概念で、目標に向けて「いつ・どこで・どのように」行動するかを事前に定める、「もし状況Xが生じたら、そのときYをする」という具体的なif-then形式の計画を指す。これは「Zを達成したい」という単なる目標意図とは区別される。' +
+      '予期した状況手がかりに計画した反応を結びつけることで、行動の制御を手がかりに委譲し、その手がかりに直面した際に目標行動がより自動的・容易に開始されるようにする。これにより着手・継続・誘惑への抵抗といった目標追求上の問題の克服を助ける。ゴルヴィツァー&シーラン2006のメタ分析（94研究）では目標意図単独を超える中〜大の効果（d=.65）が示された。なお意図形成の規定因を扱う計画的行動理論とは区別される。',
+    keyFigures: 'ピーター・ゴルヴィツァー（Peter Gollwitzer, 1999）／ゴルヴィツァー&シーラン（2006メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.prospectivepsych.org/sites/default/files/pictures/Gollwitzer_Implementation-intentions-1999.pdf', type: 'academic', label: 'Gollwitzer (1999) Implementation Intentions: Strong Effects of Simple Plans, American Psychologist 54, 493–503' },
+      { url: 'https://cancercontrol.cancer.gov/sites/default/files/2020-06/goal_intent_attain.pdf', type: 'academic', label: 'Gollwitzer & Sheeran (2006) Implementation Intentions and Goal Achievement: A Meta-Analysis (NCI)' },
+      { url: 'https://en.wikipedia.org/wiki/Implementation_intention', type: 'reference', label: 'Wikipedia: Implementation intention' },
+    ],
+  },
+  {
+    id: 'bizlaw-karoshi-prevention',
+    discipline: 'business-law',
+    title: '過労死等防止対策推進法',
+    statement:
+      '過労死・過労自殺への社会的関心の高まりを背景に、平成26年（2014年）に制定され同年11月1日に施行された、厚生労働省所管の法律。「過労死等」を、業務における過重な負荷による脳血管疾患・心臓疾患を原因とする死亡、業務における強い心理的負荷による精神障害を原因とする自殺による死亡、及びこれらの疾患・精神障害そのものと定義する。国の責務として過労死等の防止対策を講じることを掲げ、政府に「過労死等の防止のための対策に関する大綱」の策定、調査研究、' +
+      '国民への啓発（11月を「過労死等防止啓発月間」とする）、相談体制の整備、民間団体の活動支援を求め、毎年国会へ年次報告（過労死等防止対策白書）を提出する。新たな労働時間規制や罰則を直接定める規制法ではなく、防止対策を総合的に推進するための理念・枠組み法であり、労働時間の上限規制等を定める労働基準法や、職場の安全衛生を規律する労働安全衛生法とは性格を異にする。',
+    keyFigures: '過労死等防止対策推進法（平成26年法律第100号、2014年制定・施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/18620140627100.htm', type: 'government', label: '衆議院 — 過労死等防止対策推進法（制定法律本文、平成26年6月27日）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000053725.html', type: 'government', label: '厚生労働省 — 過労死等防止対策（大綱・啓発月間・白書）' },
+      { url: 'https://www.jaish.gr.jp/anzen/hor/hombun/hor1-3/hor1-3-176-1-0.htm', type: 'reference', label: '安全衛生情報センター — 過労死等防止対策推進法 条文（第1章 総則・定義）' },
+    ],
+  },
+  {
+    id: 'infosoc-californian-ideology',
+    discipline: 'information-sociology',
+    title: 'カリフォルニアン・イデオロギー',
+    statement:
+      'リチャード・バーブルックとアンディ・キャメロンが1995年（Mute誌）および1996年（Science as Culture誌）に提示した、シリコンバレー／西海岸テック文化に支配的な技術ユートピア的世界観への批判。彼らはこのイデオロギーを、1960年代対抗文化に由来するニューレフト（ヒッピー的な自由・共同体・反体制）と、自由市場のニューライト（新自由主義・リバタリアニズム・起業家的個人主義）という本来矛盾する両者の' +
+      '奇妙な融合と捉えた。その核心には、新しい情報技術が個人を解放し自由を拡大し国家の力を劇的に縮小するという楽観的な信仰（希望的な技術決定論）がある。だが著者は、この未来像が現実の社会的不平等（他者の労働への依存、人種的分断や奴隷制の遺産、貧困）への盲目の上に成り立つ点を批判した。デジタル文化・インターネット研究に影響を与えた古典的批評である。',
+    keyFigures: 'リチャード・バーブルック／アンディ・キャメロン（Barbrook & Cameron, 1995/96）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/09505439609526455', type: 'academic', label: 'Barbrook & Cameron, "The Californian Ideology", Science as Culture, Vol. 6, No. 1 (1996)' },
+      { url: 'https://ijoc.org/index.php/ijoc/article/viewFile/21355/4235', type: 'academic', label: 'International Journal of Communication 17 (2023): An Interview With Richard Barbrook on the Californian Ideology' },
+      { url: 'https://en.wikipedia.org/wiki/The_Californian_Ideology', type: 'reference', label: 'Wikipedia: The Californian Ideology' },
+    ],
+  },
 ];
 // Stryker restore all
