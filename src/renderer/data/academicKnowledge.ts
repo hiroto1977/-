@@ -12869,5 +12869,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Banal_nationalism', type: 'reference', label: 'Wikipedia: Banal nationalism' },
     ],
   },
+  {
+    id: 'econ-fei-ranis',
+    discipline: 'economics',
+    title: 'フェイ＝ラニス・モデル',
+    statement:
+      'ジョン・C・H・フェイとグスタフ・ラニスが1961年の論文「A Theory of Economic Development」（American Economic Review）および1964年の著書「Development of the Labor Surplus Economy」で提示した開発経済学の二重経済モデルで、W・アーサー・ルイスの二重経済（過剰労働）モデルを拡張・精緻化したもの。低い限界生産力で過剰労働を抱える伝統的農業部門から、労働を近代工業部門へ移転することで発展が進むとする。' +
+      '労働移転を3局面で説明する。第1局面は限界生産力がゼロ（に近い）過剰労働が生存賃金で移転される段階、第2局面は限界生産力が正だが生存賃金を下回る労働が移転され農業産出が不足し始める「不足点」、第3局面は農業が完全に商業化し限界生産力が賃金に等しくなる「商業化点」で、ここで労働過剰が解消する（ルイスの転換点）。ルイスが軽視した農業を重視し、工業労働者を養う農業余剰と生産性向上、農工間の均衡成長が不可欠だと強調した点に特徴がある。',
+    keyFigures: 'ジョン・C・H・フェイ／グスタフ・ラニス（Fei & Ranis, 1961/1964）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/ajae/article-abstract/47/2/480/84419', type: 'academic', label: 'American Journal of Agricultural Economics 書評: Fei & Ranis, Development of the Labor Surplus Economy (Yale Economic Growth Center, 1964)' },
+      { url: 'https://en.wikipedia.org/wiki/Fei%E2%80%93Ranis_model_of_economic_growth', type: 'reference', label: 'Wikipedia: Fei–Ranis model of economic growth（ルイス拡張・3局面・農業余剰）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A7%E3%82%A4%EF%BC%9D%E3%83%A9%E3%83%8B%E3%82%B9%E3%83%BB%E3%83%A2%E3%83%87%E3%83%AB', type: 'reference', label: 'ウィキペディア日本語版: フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）' },
+    ],
+  },
+  {
+    id: 'econ-financial-repression',
+    discipline: 'economics',
+    title: '金融抑圧',
+    statement:
+      '金融抑圧（financial repression）とは、規制のない市場であれば他へ向かうはずの資金を、市場を下回る条件で政府や特定部門へ誘導する一連の政策を指す。実質的には貯蓄者（債権者）から債務者である政府への隠れた税・所得移転として働く。典型的な手段は、預金金利をインフレ率以下に抑える金利上限（マイナスの実質金利）、高い預金準備率、貸出規制や直接的な信用配分、国境を越える資金移動を制限する資本規制、そして銀行や年金基金などの「囚われの投資家」に低利の国債を保有させることである。' +
+      'この概念はスタンフォード大学のロナルド・マッキノンとエドワード・ショーが1973年に命名した。両者は、途上国における金融抑圧が実質金利を下げて貯蓄と金融深化を妨げ、経済成長を阻害すると論じ、金融自由化を提唱した。2008年以降の高公的債務の時代には、ラインハート＆スブランシア「政府債務の清算」のように、低い実質金利で政府が債務負担を圧縮する手段として再び注目された。',
+    keyFigures: 'ロナルド・マッキノン／エドワード・ショー（McKinnon & Shaw, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w16893', type: 'academic', label: 'Reinhart & Sbrancia, "The Liquidation of Government Debt", NBER Working Paper 16893' },
+      { url: 'https://en.wikipedia.org/wiki/Financial_repression', type: 'reference', label: 'Wikipedia: Financial repression（定義・McKinnon & Shaw 1973・典型的手段）' },
+      { url: 'https://www.richmondfed.org/publications/research/econ_focus/2021/q1/economic_history', type: 'government', label: 'Federal Reserve Bank of Richmond, Econ Focus: "A Look Back at Financial Repression"' },
+    ],
+  },
+  {
+    id: 'mgmt-jidoka',
+    discipline: 'management',
+    title: '自働化（ニンベンの付いた自動化）',
+    statement:
+      'トヨタ生産方式（TPS）を支える二本柱の一つで、もう一つのジャストインタイムと並ぶ中核思想。機械やラインに「人の知恵」を組み込み、異常や不良が生じた瞬間に自動で停止する（あるいは作業者が止める）「ニンベンの付いた自動化」を指し、英語ではautonomation（automation with a human touch）と訳される。' +
+      '起源は豊田佐吉の自動織機で、糸が切れると機械が直ちに止まり不良品を織り続けないため、一人で多数の機械を見られるようになった。これにより人の作業と機械の作業を分離し多台持ちを可能にする。不良を後工程へ流さず、停止によって問題を可視化して原因を究明し再発防止を図る点に本質があり、ライン停止を促すアンドンや「品質を工程で造り込む」考え方と結びつく。',
+    keyFigures: '豊田佐吉（自動織機）／トヨタ生産方式（TPSの二本柱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.toyota.co.jp/jpn/company/vision/production_system/jidoka.html', type: 'reference', label: 'トヨタ自動車 公式「トヨタ生産方式：自働化」' },
+      { url: 'https://en.wikipedia.org/wiki/Autonomation', type: 'reference', label: 'Wikipedia: Autonomation (Jidoka)' },
+      { url: 'https://www.lean.org/lexicon-terms/jidoka/', type: 'academic', label: 'Lean Enterprise Institute: Jidoka (Lean Lexicon)' },
+    ],
+  },
+  {
+    id: 'human-james-lange-theory',
+    discipline: 'human-science',
+    title: 'ジェームズ＝ランゲ説',
+    statement:
+      '情動とは、刺激に応じて生じた身体的・生理的変化の知覚そのものであるとする情動理論。情動を引き起こす刺激はまず心拍亢進・震え・発汗などの生理的/内臓反応や逃走などの行動を引き起こし、その身体変化を脳が感じ取ること自体が情動の正体だとする。「悲しいから泣くのではなく泣くから悲しい」「怖いから震えるのではなく震えるから怖い」という有名な定式で、刺激→情動→身体反応という常識的順序を、' +
+      '刺激→身体反応→情動へと逆転させた点に特徴がある。各情動には固有の身体反応パターンが対応すると含意する。アメリカのウィリアム・ジェームズ（1884「情動とは何か」）とデンマークのカール・ランゲ（1885）が独立に提唱した。後にW・キャノンとP・バードは、内臓変化は遅く情動ごとに区別しがたいなどと反論し、情動と身体反応は同時並行的に生じるとするキャノン＝バード説を唱えた。',
+    keyFigures: 'ウィリアム・ジェームズ（1884）／カール・ランゲ（1885）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psu.pb.unizin.org/psych425/chapter/james-lange-theory/', type: 'academic', label: 'Penn State University, Psychology of Human Emotion (open-access textbook) — James–Lange Theory' },
+      { url: 'https://en.wikipedia.org/wiki/James%E2%80%93Lange_theory', type: 'reference', label: 'Wikipedia: James–Lange theory（James 1884 / Lange 1885、"afraid because we tremble"、Cannon–Bard）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100017783', type: 'reference', label: 'Oxford Reference: James–Lange theory' },
+    ],
+  },
+  {
+    id: 'bizlaw-electronic-consumer-contract',
+    discipline: 'business-law',
+    title: '電子消費者契約法',
+    statement:
+      'オンライン等で結ばれる消費者契約に関する民法の特例を定めた法律（平成13年/2001年法律第95号、2001年12月25日施行。正式名称は「電子消費者契約及び電子承諾通知に関する民法の特例に関する法律」、後に「電子消費者契約に関する民法の特例に関する法律」へ改称）。第一に操作ミスの救済を定め、事業者が申込み内容を確認する画面など意思確認の措置を講じていない場合には、消費者の操作ミス（誤クリックや二重注文等）による契約は、' +
+      '重大な過失があっても錯誤による取消しを制限する民法第95条の規定を適用せず取り消せる（事業者が確認措置を講じた場合等は除く）。第二に電子承諾通知による契約成立時期について、隔地者間の契約成立を発信主義から到達主義へ改める特例を置いた（この承諾通知の部分は後の民法改正で同法に統合・整理された）。経済産業省・消費者庁が所管に関与する。',
+    keyFigures: '電子消費者契約法（平成13年法律第95号、2001年制定）／消費者庁・経済産業省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=413AC0000000095_20200401_429AC0000000045', type: 'government', label: 'e-Gov法令検索 電子消費者契約に関する民法の特例に関する法律（平成13年法律第95号）' },
+      { url: 'https://www.meti.go.jp/policy/it_policy/ec/e11225bj.pdf', type: 'government', label: '経済産業省 電子消費者契約及び電子承諾通知に関する民法の特例に関する法律 逐条解説（平成13年12月）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%B6%88%E8%B2%BB%E8%80%85%E5%A5%91%E7%B4%84%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B0%91%E6%B3%95%E3%81%AE%E7%89%B9%E4%BE%8B%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia 電子消費者契約に関する民法の特例に関する法律' },
+    ],
+  },
+  {
+    id: 'infosoc-cyberspace',
+    discipline: 'information-sociology',
+    title: 'サイバースペース',
+    statement:
+      'コンピュータネットワークやデジタル通信が形づくる観念的・仮想的な「空間」を指し、オンラインのコミュニケーションやデータ・相互作用が生じる非物理的な領域として、物理空間とは区別して捉えられる概念。SF作家ウィリアム・ギブスンが1982年の短編「クローム襲撃」（Burning Chrome）で造語し、' +
+      '1984年の長編『ニューロマンサー』で「合意に基づく幻覚（consensual hallucination）」と描写して普及させた。インターネットやオンライン上のアイデンティティ・仮想共同体の捉え方に大きな影響を与え、1996年にはバーロウが「サイバースペース独立宣言」で国家主権の及ばない自治領域として提示した。今日では政策・安全保障（サイバーセキュリティや軍事「領域」）でも広く用いられる一方、物理空間から切り離された別個の「空間」とする隠喩は「デジタル二元論」批判などの対象ともなっている。',
+    keyFigures: 'ウィリアム・ギブスン（William Gibson, 1982/1984『ニューロマンサー』）／ジョン・ペリー・バーロウ（John Perry Barlow, 1996「サイバースペース独立宣言」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/cyberspace', type: 'reference', label: 'Encyclopaedia Britannica — Cyberspace（観念的・仮想的な「空間」としての定義）' },
+      { url: 'https://www.britannica.com/topic/Neuromancer', type: 'reference', label: 'Encyclopaedia Britannica — Neuromancer（ギブスン1984年、サイバーパンクと普及）' },
+      { url: 'https://en.wikipedia.org/wiki/A_Declaration_of_the_Independence_of_Cyberspace', type: 'reference', label: 'A Declaration of the Independence of Cyberspace（バーロウ1996・自治領域）' },
+    ],
+  },
 ];
 // Stryker restore all
