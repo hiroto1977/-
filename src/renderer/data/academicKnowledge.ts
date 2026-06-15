@@ -10455,5 +10455,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Online_disinhibition_effect', type: 'reference', label: 'Wikipedia「Online disinhibition effect」（良性/有害の区別・6要因）' },
     ],
   },
+  {
+    id: 'econ-holdup-problem',
+    discipline: 'economics',
+    title: 'ホールドアップ問題',
+    statement:
+      'ホールドアップ問題とは、取引当事者が、その取引でしか高い価値を生まない関係特殊的投資（資産特殊性）を行った後、契約が不完備で将来のすべての事態を事前に書き切れないため、相手方に事後的な再交渉で足元を見られ（held up）、投資が生む準レント（quasi-rent＝資産の関係内価値と関係外価値の差）を奪われるリスクをいう。' +
+      'このリスクを予見すると当事者は効率的水準の関係特殊投資を控え、過少投資という非効率が生じる。クライン＝クロフォード＝アルチアン（1978）が準レントの専有として定式化し、GMによるフィッシャー・ボディの例を古典例に挙げた。グロスマン＝ハート＝ムーア（GHM、1986/1990）は不完備契約・残余コントロール権としての所有権アプローチで企業の境界（make-or-buy）を説明した。解決策は垂直統合・長期契約・関係的契約（評判）・所有権の適切配分・人質（担保）である。',
+    keyFigures:
+      'ベンジャミン・クライン＝クロフォード＝アルチアン（1978・準レントの専有）／グロスマン＝ハート＝ムーア（GHM・不完備契約/所有権アプローチ）／オリバー・ハート（2016年ノーベル経済学賞）／関係特殊投資・過少投資',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2016/advanced-information/', type: 'reference', label: 'NobelPrize.org — 2016 Economic Sciences, Hart & Holmström: Contract Theory（不完備契約・所有権アプローチ）' },
+      { url: 'https://en.wikipedia.org/wiki/Hold-up_problem', type: 'reference', label: 'Wikipedia — Hold-up problem（関係特殊投資・不完備契約・過少投資・解決策）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/joes.12398', type: 'academic', label: 'Yang (2021) “A Survey of the Hold-up Problem...”, Journal of Economic Surveys（Wiley・査読）' },
+    ],
+  },
+  {
+    id: 'mgmt-heinrich-law',
+    discipline: 'management',
+    title: 'ハインリッヒの法則（1:29:300）',
+    statement:
+      '米国トラベラーズ保険の技師H・W・ハインリッヒが1931年の著書『Industrial Accident Prevention』で示した労働災害の経験則。約7.5万件の事故報告の分析から、1件の重大傷害事故の背後には29件の軽傷事故、さらに300件の無傷害事故（ヒヤリ・ハット）が存在するとした（1:29:300）。' +
+      '重大事故は突然ではなく多数の小さな異常の延長線上に起きるため、ヒヤリハットの段階で原因を除去すれば重大災害を防げる、という含意を持つ。彼は災害原因の約88%を人の不安全行動、10%を不安全状態とし、要因の連鎖を断てば事故を止められるとするドミノ理論も提唱した。労働安全・品質・医療安全で広く引用される一方、個人責任への偏重や原始データ消失、固定比率の妥当性には現代の安全研究から批判があり、バードの1:10:30:600等の後継研究も生まれた。',
+    keyFigures:
+      'ハーバート・W・ハインリッヒ（Herbert William Heinrich, 1886-1962, 1931）／1:29:300・ヒヤリハット・88%不安全行動・ドミノ理論／フランク・バード（後継比率1:10:30:600）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Herbert_William_Heinrich', type: 'reference', label: 'Wikipedia「Herbert William Heinrich」（1931年著書・トラベラーズ保険・88%不安全行動）' },
+      { url: 'https://en.wikipedia.org/wiki/Accident_triangle', type: 'reference', label: 'Wikipedia「Accident triangle」（1:29:300比率・75,000件データ・バード1:10:30:600）' },
+      { url: 'https://www.safetyandhealthmagazine.com/articles/6368-examining-the-foundation', type: 'media', label: 'Safety+Health Magazine（米国安全評議会NSC機関誌）— 88-10-2の方法論批判・原始データ消失' },
+    ],
+  },
+  {
+    id: 'human-broken-windows-theory',
+    discipline: 'human-science',
+    title: '割れ窓理論',
+    statement:
+      '建物の割れた窓が放置されると「誰も気にかけていない・管理されていない」というサインとなり、さらなる破壊・落書き・ゴミの放置を招くという観察を出発点とする犯罪学・都市社会学の理論。軽微な無秩序（disorder＝割れ窓・落書き・無賃乗車・公共の不作法など）を放置すると地域の無秩序感と住民の不安が高まり、やがて重大犯罪を誘発すると主張する。逆に物理的・社会的な軽微無秩序を早期に取り締まり秩序を保てば重大犯罪を抑止できるとする。' +
+      'ジェームズ・Q・ウィルソンとジョージ・L・ケリングが1982年The Atlantic Monthly誌の論文「Broken Windows」で提唱し、ジンバルドーの1969年放置自動車実験を着想源の一つとする。1990年代ニューヨーク市（ジュリアーニ市長、ブラットン警察本部長）のゼロ・トレランス政策の理論的背景とされたが、犯罪減少が同政策によるものかは経済・人口動態・警察官増員等との切り分けをめぐり論争があり、Harcourtらは無秩序と犯罪の相関が貧困・人種・地域安定性を統制すると消失すると批判している。',
+    keyFigures:
+      'ジェームズ・Q・ウィルソン＆ジョージ・L・ケリング（1982 The Atlantic）／フィリップ・ジンバルドー（1969放置自動車実験）／ウィリアム・ブラットン（NY警察）／バーナード・ハーコート（批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/broken-windows-theory', type: 'reference', label: 'Encyclopaedia Britannica — Broken windows theory' },
+      { url: 'https://en.wikipedia.org/wiki/Broken_windows_theory', type: 'reference', label: 'Wikipedia — Broken windows theory（原典 Wilson & Kelling 1982, The Atlantic）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8059646/', type: 'academic', label: 'Broken Windows, Informal Social Control, and Crime: Assessing Causality in Empirical Studies (PMC, 査読論文)' },
+    ],
+  },
+  {
+    id: 'bizlaw-numerus-clausus',
+    discipline: 'business-law',
+    title: '物権法定主義（民法175条）',
+    statement:
+      '物権法定主義とは、物権の種類および内容は民法その他の法律で定めたものに限られ、当事者が契約（私的自治）によって法律にない新たな物権を創設したり、法律と異なる内容の物権を設定したりすることはできないとする原則である。民法175条は「物権は、この法律その他の法律に定めるもののほか、創設することができない」と定め、これを根拠づける（鉱業権・採石権など特別法上の物権を含む）。' +
+      'その趣旨は、物権が特定の物を直接・排他的に支配し万人に主張できる絶対権（対世効）であるため、当事者が自由に種類・内容を作れると第三者が不測の損害を被り取引の安全を害すること、公示（登記・引渡し）に適する権利に限定する必要があること、封建的物権関係を整理し近代的所有権を確立する歴史的要請にある。債権が契約自由の原則で内容を自由に定められる相対権である点と対比される。なお流水利用権や温泉権（湯口権）など慣習法上の物権、譲渡担保・所有権留保等の非典型担保をどこまで認めるかが論点となる。',
+    keyFigures:
+      '民法175条＝種類強制＋内容強制（法定外の物権創設・法定と異なる内容設定の禁止）／趣旨＝取引の安全（絶対権・対世効）・公示適合性・近代的所有権確立／債権の契約自由（相対権）と対比／例外論点＝慣習法上の物権（流水利用権・温泉権）・非典型担保（譲渡担保・所有権留保）／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第175条 物権の創設' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2009_minpou-dai2_12.pdf', type: 'academic', label: '京都大学OpenCourseWare 松岡久和「民法第2部 第12回 物権法定主義と用益物権」' },
+      { url: 'https://kotobank.jp/word/%E7%89%A9%E6%A8%A9%E6%B3%95%E5%AE%9A%E4%B8%BB%E7%BE%A9-125134', type: 'reference', label: 'コトバンク「物権法定主義」（日本大百科全書ほか）' },
+    ],
+  },
+  {
+    id: 'infosoc-hashtag-activism',
+    discipline: 'information-sociology',
+    title: 'ハッシュタグ・アクティビズム',
+    statement:
+      'ハッシュタグ・アクティビズム（hashtag activism）とは、Twitter／X などの SNS で、特定の社会的・政治的主張を表すハッシュタグ（#で始まるキーワード）を共有・拡散することで、問題への注目を集め、連帯を可視化し、動員や社会変革を促そうとするオンラインの社会運動・行動主義である。' +
+      'ハッシュタグは分散した個人の投稿を一つの話題として束ね、検索・集約・トレンド化を可能にし、周縁化された人々に発言とカウンターナラティブの手段を与えて既存メディアのゲートキーピングを迂回し議題設定に影響する。代表例は #MeToo（2006年タラナ・バークが創始、2017年アリッサ・ミラノの呼びかけで拡散）、#BlackLivesMatter（2013年ガーザ・カラーズ・トメティが創始）など。一方でスラックティビズム（低コストで実質的変化を伴わない）、可視性の一時性、商業的・政治的流用、リーダー不在の弱さといった批判もある。',
+    keyFigures:
+      'ジャクソン＝ベイリー＝フォウコー・ウェルズ（『#HashtagActivism』2020 MIT Press）／タラナ・バーク＆アリッサ・ミラノ（#MeToo）／ガーザ・カラーズ・トメティ（#BLM）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://direct.mit.edu/books/book/4597/HashtagActivismNetworks-of-Race-and-Gender-Justice', type: 'academic', label: 'Jackson, Bailey & Foucault Welles, #HashtagActivism: Networks of Race and Gender Justice (MIT Press, 2020)' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/hashtag-activism', type: 'reference', label: 'EBSCO Research Starters — Hashtag Activism' },
+      { url: 'https://time.com/5793789/black-lives-matter-founders-100-women-of-the-year/', type: 'media', label: 'TIME — Black Lives Matter founders Garza, Cullors, Tometi (2013)' },
+    ],
+  },
+  {
+    id: 'mgmt-vuca',
+    discipline: 'management',
+    title: 'VUCA（ブーカ）',
+    statement:
+      'VUCAは、予測困難で不安定な現代の経営・世界環境を表す頭字語で、Volatility（変動性＝変化が速く激しい）、Uncertainty（不確実性＝先が読めず予測困難）、Complexity（複雑性＝多数の要因が相互に絡み合う）、Ambiguity（曖昧性＝因果関係や意味が不明瞭）の4語の頭文字をとる。' +
+      '起源は米国陸軍戦争大学（U.S. Army War College）で、1987年頃の教育課程に導入され、冷戦終結・ソ連崩壊後の多極化した予測困難な安全保障環境を記述する軍事用語として使われた。概念的土台はウォーレン・ベニスとバート・ナナスのリーダーシップ論『Leaders』（1985）に求められる。2000年代以降、ビジネス・経営の文脈に広まり、俊敏性（agility）・適応力・ビジョン・学習を論じる枕詞として多用される一方、内容が曖昧なバズワードだとの批判もある。後継枠組みにBANI（脆弱・不安・非線形・不可解、Jamais Cascio 2020）がある。',
+    keyFigures:
+      '4語＝Volatility/Uncertainty/Complexity/Ambiguity／起源＝米国陸軍戦争大学（1987年頃・冷戦後の軍事用語）／源流＝ベニス&ナナス『Leaders』1985／VUCA Prime（Bob Johansen, IFTF）／後継BANI（Jamais Cascio 2020）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://usawc.libanswers.com/ahec/faq/84869', type: 'reference', label: 'U.S. Army War College Library — Who first originated the term VUCA?' },
+      { url: 'https://www.ebsco.com/research-starters/politics-and-government/volatility-uncertainty-complexity-and-ambiguity-vuca', type: 'reference', label: 'EBSCO Research Starters — Volatility, Uncertainty, Complexity and Ambiguity (VUCA)' },
+      { url: 'https://en.wikipedia.org/wiki/VUCA', type: 'reference', label: 'Wikipedia — VUCA' },
+    ],
+  },
 ];
 // Stryker restore all
