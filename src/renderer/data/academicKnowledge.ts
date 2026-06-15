@@ -15718,5 +15718,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://wiki.p2pfoundation.net/Platform_Cooperativism', type: 'reference', label: 'P2P Foundation Wiki — Platform Cooperativism（定義・歴史・対案性）' },
     ],
   },
+  {
+    id: 'econ-ces-production',
+    discipline: 'economics',
+    title: 'CES生産関数',
+    statement:
+      'CES生産関数（Constant Elasticity of Substitution、固定代替弾力性生産関数）は、資本と労働などの投入要素間の代替の弾力性σが一定だが必ずしも1ではない生産関数である。ケネス・アロー、ホリス・チェネリー、バギチャ・ミナス、ロバート・ソローの1961年論文「資本・労働代替と経済効率」（Review of Economics and Statistics）で定式化され、頭文字からACMS（またはSMAC）関数と呼ばれる。' +
+      '代替パラメータρ（σ=1/(1−ρ)）の値に応じて、コブ＝ダグラス生産関数（弾力性σ=1）、レオンチェフ／固定比率生産関数（σ=0）、線形／完全代替の生産関数（σ→∞）を特殊・極限ケースとして包含する点が特徴である。成長理論や貿易論、マクロ経済学で広く用いられ、ディキシット＝スティグリッツの「多様性愛好」を表すCES効用関数としても応用される。弾力性が常に1に固定されるコブ＝ダグラス生産関数とは区別される。',
+    keyFigures: 'ケネス・アロー／ホリス・チェネリー／バギチャ・ミナス／ロバート・ソロー（1961, ACMS）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution', type: 'reference', label: 'Constant elasticity of substitution — Wikipedia（σ一定・コブ=ダグラス/レオンチェフ/線形の特殊ケース・ACMS 1961）' },
+      { url: 'https://www.cbo.gov/sites/default/files/cbofiles/ftpdocs/94xx/doc9497/2008-05.pdf', type: 'government', label: 'An Assessment of CES and Cobb-Douglas Production Functions — U.S. Congressional Budget Office (Eric Miller, 2008)' },
+      { url: 'https://www.researchgate.net/publication/342612626_The_Origins_of_the_CES_Production_Function', type: 'academic', label: 'The Origins of the CES Production Function（Arrow-Chenery-Minhas-Solow 1961 の出自と特殊ケース）' },
+    ],
+  },
+  {
+    id: 'econ-hotelling-rule',
+    discipline: 'economics',
+    title: 'ホテリングのルール（枯渇性資源）',
+    statement:
+      'ハロルド・ホテリングが1931年に「枯渇性資源の経済学」（Journal of Political Economy）で示した、石油や鉱物のような再生不能な枯渇性資源の最適（効率的）採掘の条件である。競争市場の最適採掘経路では、資源の市場価格から限界採掘費用を引いた「純価格」（希少性レント／ホテリング・レント、地中に残された資源の限界価値）が、（実質）利子率に等しい率で時間とともに上昇しなければならない。' +
+      '直感は無裁定・資産均衡条件にある。資源所有者にとって、今採掘して売り代金を利子率で運用するのと、地中に残して値上がりを待つのが無差別になるのは、純価格が利子率で成長するときだけである。これは価格の上昇と採掘量の減少という経路を含意し、枯渇性資源経済学の基礎となった。立地競争のホテリングの法則（最小差別化）とは別概念である。',
+    keyFigures: 'ハロルド・ホテリング（Harold Hotelling, 1931）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/254195', type: 'academic', label: 'Hotelling, "The Economics of Exhaustible Resources," Journal of Political Economy 39(2), 1931' },
+      { url: 'https://en.wikipedia.org/wiki/Hotelling%27s_rule', type: 'reference', label: "Wikipedia: Hotelling's rule" },
+      { url: 'https://www.minneapolisfed.org/article/2014/the-optimal-extraction-of-exhaustible-resources', type: 'government', label: 'Federal Reserve Bank of Minneapolis: The Optimal Extraction of Exhaustible Resources' },
+    ],
+  },
+  {
+    id: 'mgmt-activity-based-costing',
+    discipline: 'management',
+    title: '活動基準原価計算（ABC）',
+    statement:
+      'ロビン・クーパーとロバート・キャプラン（ハーバード、1980年代後半）が提唱した原価計算手法。製造間接費（オーバーヘッド）を、直接作業時間や機械時間など操業度（生産量）を基準に一律配賦する伝統的方法より正確に、製品やサービスへ割り当てる。手続きは2段階で、まず資源の費用を資源作用因により段取替・受注処理・検査・材料運搬などの「活動」へ跡づけ、' +
+      '次に各活動の費用を、活動の実際の消費量を反映する原価作用因（コストドライバー）により製品・顧客などの原価計算対象へ割り当てる。これにより、大量・単純品を過大に、少量・複雑品を過小に原価計算する伝統的方法の歪み（内部相互補助）を是正する。この活動情報を経営管理に用いる手法を活動基準管理（ABM）と呼び、後の改良版にキャプランとアンダーソンによる時間主導型ABC（TDABC）がある。',
+    keyFigures: 'ロビン・クーパー／ロバート・キャプラン（Cooper & Kaplan, 1980年代後半）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/rwe/10.1007/1-4020-0612-8_16', type: 'academic', label: 'Springer Nature, Encyclopedia entry "ACTIVITY-BASED COSTING"' },
+      { url: 'https://www.encyclopedia.com/finance/finance-and-accounting-magazines/activity-based-management', type: 'reference', label: 'Encyclopedia.com — Activity-Based Management' },
+      { url: 'https://www.hbs.edu/ris/Publication%20Files/04-045_d62528d4-7931-4ea1-a205-d9683c639d6e.pdf', type: 'academic', label: 'Harvard Business School working paper 04-045, R. S. Kaplan — Time-Driven Activity-Based Costing' },
+    ],
+  },
+  {
+    id: 'human-source-monitoring',
+    discipline: 'human-science',
+    title: 'ソース・モニタリング（情報源モニタリング）',
+    statement:
+      'ソース・モニタリングとは、記憶や心的体験をその源泉（自分が見たのか想像したのか、誰が言ったのか、読んだのか聞いたのか）に帰属させる認知過程であり、マーシャ・ジョンソンらが現実モニタリングの研究から発展させ、Johnson, Hashtroudi & Lindsay（1993, Psychological Bulletin）で枠組みとして体系化した。' +
+      'この枠組みによれば、記憶には源泉を明示する「タグ」が付随しておらず、知覚的詳細・文脈的（時空間的）情報・意味的詳細・想起時の認知的操作といった質的特徴を評価する判断過程を通じて源泉が推定される。源泉間の特徴が弱く曖昧なとき帰属が失敗し、想像と現実を混同する現実モニタリングの失敗や、無意識的剽窃（クリプトムネジア）などのソース・モニタリングの誤りが生じる。これは誤情報効果や虚記憶、スリーパー効果といった現象の基盤をなすが、それら個別現象とは区別される一般的枠組みである。',
+    keyFigures: 'マーシャ・ジョンソン／ハシュトルディ／リンゼイ（Johnson, Hashtroudi & Lindsay, 1993）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2859897/', type: 'academic', label: 'Mitchell & Johnson, "Source monitoring 15 years later," Psychological Bulletin (PMC)' },
+      { url: 'https://www.encyclopedia.com/psychology/encyclopedias-almanacs-transcripts-and-maps/source-monitoring', type: 'reference', label: 'Encyclopedia.com — Source Monitoring' },
+      { url: 'https://en.wikipedia.org/wiki/Source-monitoring_error', type: 'reference', label: 'Wikipedia — Source-monitoring error' },
+    ],
+  },
+  {
+    id: 'bizlaw-employment-security',
+    discipline: 'business-law',
+    title: '職業安定法',
+    statement:
+      '職業安定法（昭和22年法律第141号、1947年制定）は、各人にその能力に適した職業に就く機会を与え、産業に必要な労働力を充足し、雇用の安定と経済・社会の発展に寄与することを目的とする職業紹介・職業安定の基本法で、厚生労働省（職業安定局）が所管する。公共職業安定所（ハローワーク）による無料の職業紹介を中核に、民間の有料・無料の職業紹介事業や労働者の募集を許可・届出制で規制する。' +
+      '労働者供給事業は中間搾取・強制労働の防止の観点から原則禁止され、労働組合等が厚生労働大臣の許可を受けて行う場合のみ例外的に認められる。均等待遇や職業選択の自由を基本理念とし、近年の改正（2022年施行等）では求人メディア等の募集情報等提供事業の規律強化と求人情報の的確な表示義務が定められた。労働者派遣法や雇用保険法とは区別される。',
+    keyFigures: '職業安定法（昭和22年法律第141号、1947年制定）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=75001000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データベース「職業安定法（昭和22年11月30日法律第141号）」' },
+      { url: 'https://kotobank.jp/word/%E8%81%B7%E6%A5%AD%E5%AE%89%E5%AE%9A%E6%B3%95-80103', type: 'reference', label: 'コトバンク「職業安定法」' },
+      { url: 'https://kotobank.jp/word/%E5%8A%B4%E5%83%8D%E8%80%85%E4%BE%9B%E7%B5%A6%E4%BA%8B%E6%A5%AD-662794', type: 'reference', label: 'コトバンク「労働者供給事業」' },
+    ],
+  },
+  {
+    id: 'infosoc-dramaturgy',
+    discipline: 'information-sociology',
+    title: 'ドラマトゥルギー（演劇論的アプローチ）',
+    statement:
+      'アーヴィング・ゴッフマンが1959年『行為と演技（日常生活における自己呈示）』で展開した、社会的相互作用を演劇のメタファーで分析する枠組み。人は観客に向けて役を演じる「役者」であり、他者が自分に抱く印象を意識的・無意識的に管理する（印象操作）。場は、社会的脚本に従い望ましい姿を演じる「表舞台（表局域）」と、役を降りて準備しくつろぐ「舞台裏（裏局域）」に分けられ、' +
+      '演技を支える「フロント」（舞台装置・外見・物腰）やチーム・小道具といった要素が用いられる。ここで自己は固定した内面の本質ではなく、上演される場面が生み出す劇的効果として捉えられる。ミクロ社会学・象徴的相互作用論の基礎をなし、SNSプロフィールなどオンラインの自己呈示分析にも広く応用される。象徴的相互作用論や自己呈示一般とは区別され、ゴッフマン特有の表/裏舞台と劇場メタファーに焦点を置く点が特徴である。',
+    keyFigures: 'アーヴィング・ゴッフマン（Erving Goffman, 1959）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://guides.lib.kyushu-u.ac.jp/c.php?g=775084&p=5559255', type: 'academic', label: '九州大学附属図書館 研究ガイド「アーヴィング・ゴフマンの社会学」ドラマトゥルギー（表局域・裏局域）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Presentation_of_Self_in_Everyday_Life', type: 'reference', label: 'Wikipedia: The Presentation of Self in Everyday Life (1956/1959, front/back stage, impression management)' },
+      { url: 'https://www.ebsco.com/research-starters/drama-and-theater-arts/dramaturgical-analysis', type: 'reference', label: 'EBSCO Research Starters: Dramaturgical Analysis' },
+    ],
+  },
 ];
 // Stryker restore all
