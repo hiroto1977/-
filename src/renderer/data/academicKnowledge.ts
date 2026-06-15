@@ -9495,5 +9495,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/S2214804320302895', type: 'academic', label: 'Social preferences across different populations: Meta-analyses on the ultimatum game and dictator game（査読論文）' },
     ],
   },
+  {
+    id: 'econ-schelling-segregation',
+    discipline: 'economics',
+    title: 'シェリングの分居モデル',
+    statement:
+      'トーマス・シェリングが1971年の論文「Dynamic Models of Segregation」（Journal of Mathematical Sociology誌）で提示した、エージェントベースの社会シミュレーション・モデル。格子上に2種類のエージェントを置き、各エージェントは「近隣に同類が一定割合（約3分の1）以上いれば満足してとどまり、下回れば不満で空きマスへ移動する」という単純な規則に従う。' +
+      '各人が「近隣の3分の1が同類なら満足」という穏やかな（弱い）選好しか持たず、むしろ統合された環境を許容していても、移動を繰り返すうちに全体としては高度に分居したパターンが創発する。これは個人のミクロな動機と集団のマクロな帰結の乖離（micromotives and macrobehavior）、複雑系の創発を示す古典的事例であり、人種的住み分けの理解とエージェントベースモデリング（ABM）の草分けとなった。シェリングは2005年ノーベル経済学賞を受賞。',
+    keyFigures:
+      'トーマス・シェリング（Thomas C. Schelling, 1971・2005年ノーベル経済学賞）／弱い同類選好から創発する分居／micromotives and macrobehavior・ABMの草分け',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/0022250X.1971.9989794', type: 'academic', label: 'Schelling, T. C. (1971) “Dynamic Models of Segregation,” Journal of Mathematical Sociology, 1(2), 143-186 (Taylor & Francis)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/', type: 'reference', label: 'NobelPrize.org — Thomas C. Schelling, 2005年ノーベル経済学賞（Aumannと共同受賞）' },
+      { url: 'https://en.wikipedia.org/wiki/Schelling%27s_model_of_segregation', type: 'reference', label: 'Wikipedia — Schelling’s model of segregation（約1/3の選好閾値・創発）' },
+    ],
+  },
+  {
+    id: 'mgmt-managerial-grid',
+    discipline: 'management',
+    title: 'マネジリアル・グリッド',
+    statement:
+      'リーダーシップ・スタイルを「業績（生産）への関心（concern for production）」と「人間への関心（concern for people）」の2次元で捉え、各次元を1〜9の段階で評価して9×9の格子上に位置づける行動アプローチのモデル。ロバート・ブレークとジェーン・ムートンが1964年の著書『The Managerial Grid』で提示した。' +
+      '代表的な5類型は、(1)1・1型＝無関心型/放任型（impoverished、両関心が低い）、(2)1・9型＝カントリークラブ型（country club、人への関心が高く業績への関心が低い）、(3)9・1型＝権威服従型/仕事中心型（authority-compliance、業績重視・人軽視）、(4)5・5型＝中道型（middle-of-the-road、双方そこそこ）、(5)9・9型＝チームマネジメント型（team、双方に高い関心を持つ最も望ましい型）。オハイオ州立大学研究（構造づくり・配慮）やミシガン研究の流れにあり、後に父権主義型・日和見主義型を加えた改訂版もある。リーダー育成・自己診断に用いられる。',
+    keyFigures:
+      'ロバート・ブレーク（Robert R. Blake）／ジェーン・ムートン（Jane S. Mouton, 1964『The Managerial Grid』）／9・9型（チームマネジメント）が理想／業績への関心×人への関心の2次元',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Managerial_grid_model', type: 'reference', label: 'Managerial grid model — Wikipedia' },
+      { url: 'https://us2.sagepub.com/sites/default/files/upm-binaries/67536_Northouse_Chapter_4.pdf', type: 'academic', label: 'Northouse, Leadership: Theory and Practice, Ch.4 (SAGE Publishing)' },
+      { url: 'https://archive.org/details/managerialgridke00blak', type: 'reference', label: 'Blake & Mouton, The Managerial Grid (1964原典) — Internet Archive' },
+    ],
+  },
+  {
+    id: 'human-false-consensus',
+    discipline: 'human-science',
+    title: '偽の合意効果（フォールス・コンセンサス）',
+    statement:
+      '偽の合意効果（false consensus effect）とは、人が自分の意見・信念・好み・行動を実際よりも一般的（多数派）だと過大に見積もり、他者も自分と同じように考え行動するはずだと過度に推測する認知バイアスである。' +
+      'リー・ロス、デヴィッド・グリーン、パメラ・ハウスが1977年に実証・命名した。古典的実験では、学生に広告看板を身につけ街を歩くバイトを尋ね、引き受けた者は「多数も引き受ける」、断った者は「多数も断る」と推測し、自分の選択を多数派とみなした。原因は選択的接触・利用可能性・自尊心維持などとされる。対照的に、望ましい特性を希少と過小評価する「偽の独自性効果」がある。',
+    keyFigures:
+      'リー・ロス（Lee Ross）／デヴィッド・グリーン（David Greene）／パメラ・ハウス（Pamela House, 1977）／対照＝偽の独自性効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/002210317790049X', type: 'academic', label: 'Ross, Greene & House (1977) “The false consensus effect...”, Journal of Experimental Social Psychology 13, 279–301（一次文献）' },
+      { url: 'https://en.wikipedia.org/wiki/False_consensus_effect', type: 'reference', label: 'Wikipedia「False consensus effect」— 定義・実験・原因' },
+      { url: 'https://dictionary.apa.org/false-uniqueness-effect', type: 'reference', label: 'APA Dictionary of Psychology「false-uniqueness effect」— 対照概念' },
+    ],
+  },
+  {
+    id: 'bizlaw-merger-of-obligations',
+    discipline: 'business-law',
+    title: '混同（民法520条）',
+    statement:
+      '混同とは、債権と債務が同一人に帰属したときに、その債権が消滅する債権の消滅原因の一つである（民法520条）。たとえば債権者が債務者を相続した場合や、債権者である会社が債務者である会社を吸収合併した場合など、「請求する人」と「支払う人」が同一になると債権を存続させる意味がないため、原則として債権は消滅する。' +
+      '同条本文は「債権及び債務が同一人に帰属したときは、その債権は、消滅する」と定める。もっとも、ただし書は「その債権が第三者の権利の目的であるときは、この限りでない」とし、たとえばその債権に質権が設定されているなど第三者の権利が及ぶ場合は、第三者保護のため消滅しない。混同は弁済・代物弁済・供託・相殺・更改・免除と並ぶ債権の消滅原因であり、相続・合併の場面で実務上問題となる。なお物権の混同は別条文の民法179条が定める。',
+    keyFigures:
+      '520条本文：債権及び債務が同一人に帰属すると債権は原則消滅／ただし書：第三者の権利の目的（質権設定等）なら消滅しない／典型＝相続・吸収合併・債権譲受け／弁済・代物弁済・供託・相殺・更改・免除と並ぶ債権の消滅原因／物権の混同は179条と区別／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov 法令検索「民法」（明治29年法律第89号, law id 129AC0000000089）第520条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第520条', type: 'reference', label: 'Wikibooks「民法第520条（混同）」条文・解説' },
+      { url: 'https://ja.wikipedia.org/wiki/混同', type: 'reference', label: 'Wikipedia「混同」（物権・債権共通の消滅原因／民法179条・520条）' },
+    ],
+  },
+  {
+    id: 'infosoc-fourth-estate',
+    discipline: 'information-sociology',
+    title: '第四の権力',
+    statement:
+      '第四の権力（the fourth estate、第四階級／第四の身分）とは、報道機関・ジャーナリズム（press／news media）が立法・行政・司法の三権から独立し、それらの権力を監視・批判して世論を形成する社会的・政治的な力をもつとする概念。' +
+      '語源はアンシャン・レジームの三身分（聖職者＝第一身分、貴族＝第二身分、平民＝第三身分）になぞらえ、英国議会の記者席（報道記者）を第四の身分と呼んだことに由来する。トーマス・カーライルが著書『英雄崇拝論』で、エドマンド・バークが「記者席にこそ三身分のいずれより重要な第四階級が座る」と述べたと記したが、バーク帰属の一次的典拠は確実でなくカーライルの記述で広まったとされる。報道の権力監視（番犬＝watchdog）機能や、報道の自由・知る権利・民主主義の前提としての役割を表す。現代ではインターネットや市民ジャーナリズムを第五の権力（fifth estate）と呼び対比する議論や、政治・資本との癒着による機能不全を問う批判もある。',
+    keyFigures:
+      'エドマンド・バーク（Edmund Burke・帰属は不確実）／トーマス・カーライル（Thomas Carlyle・『英雄崇拝論』で普及）／ウィリアム・ダットン（W. H. Dutton・第五の権力論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/the-sage-encyclopedia-of-journalism-2e/chpt/fourth-estate', type: 'reference', label: 'The SAGE Encyclopedia of Journalism (2e), “Fourth Estate”' },
+      { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'academic', label: 'Oxford Internet Institute, University of Oxford — “The Fifth Estate” project (W. H. Dutton)' },
+      { url: 'https://wordhistories.net/2016/08/09/the-fourth-estate/', type: 'reference', label: 'Word Histories — origin of “the fourth estate”（Carlyle/Burke attribution）' },
+    ],
+  },
+  {
+    id: 'econ-public-goods-game',
+    discipline: 'economics',
+    title: '公共財ゲーム',
+    statement:
+      '実験経済学・ゲーム理論で社会的ジレンマ（協力か裏切りか）を研究する標準的な多人数ゲーム。各参加者は手元の元手（トークン）を私的口座に残すか、共通の「公共のポット」に秘密裏に拠出するかを選ぶ。ポットの総額は実験者によって1より大きく参加人数より小さい乗数（例1.6倍）に増やされ、拠出額に関係なく全員に均等再分配される。' +
+      '個人の支配戦略は「拠出ゼロのフリーライド（タダ乗り）」だが、全員がそうすると社会的最適（全員全額拠出）を下回る＝囚人のジレンマの多人数版。実験では理論予測（ゼロ拠出）に反し当初は元手の約4〜5割を拠出するが、繰り返すと拠出は低下する（協力の崩壊）。非協力者に自費で罰を与える「処罰」機会があると利他的処罰が行われ協力が維持・回復する（Fehr & Gächter 2000/2002）。協力の進化や社会規範研究の中核である。',
+    keyFigures:
+      'Ernst Fehr & Simon Gächter（2000/2002・利他的処罰）／R. Mark Isaac & James M. Walker／John O. Ledyard（サーベイ）／囚人のジレンマの多人数版・フリーライダー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Public_goods_game', type: 'reference', label: 'Wikipedia「Public goods game」— 定義・利得構造・繰り返しによる拠出低下と処罰効果' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.90.4.980', type: 'academic', label: 'Fehr & Gächter (2000) “Cooperation and Punishment in Public Goods Experiments,” American Economic Review 90(4):980-994' },
+      { url: 'https://oecs.mit.edu/pub/0i6tb22l/release/1', type: 'reference', label: 'MIT Open Encyclopedia of Cognitive Science「Economic Games」— 公共財ゲームを含む解説' },
+    ],
+  },
 ];
 // Stryker restore all
