@@ -12959,5 +12959,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/A_Declaration_of_the_Independence_of_Cyberspace', type: 'reference', label: 'A Declaration of the Independence of Cyberspace（バーロウ1996・自治領域）' },
     ],
   },
+  {
+    id: 'econ-rational-addiction',
+    discipline: 'economics',
+    title: '合理的依存',
+    statement:
+      'ゲイリー・ベッカーとケビン・マーフィーが1988年（Journal of Political Economy）に提示した理論で、タバコ・アルコール・薬物などの依存的消費を、非合理さの表れではなく、将来を見通す効用最大化という合理的行動の帰結としてモデル化する。過去の消費が現在消費の限界効用を高める「隣接補完性」（強化効果）を、蓄積された「消費資本」のストックとして効用関数に組み込む。' +
+      '消費者は前向きで、将来の依存の進行や帰結まで織り込んで生涯効用を最大化すると仮定される。依存は合理性と両立しうるとされ、依存者は価格に反応する。消費が異時点間で結びつくため、恒久的な価格変化への長期反応は短期反応より大きく、予期された将来の価格変化も現在の消費に影響する。タバコ課税論などに影響を与えた一方、完全な合理性・時間整合性の仮定は行動経済学（時間非整合・双曲割引）から批判されている。',
+    keyFigures: 'ゲイリー・ベッカー／ケビン・マーフィー（Becker & Murphy, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.pdx.edu/~nwallace/EHP/BeckerAddiction.pdf', type: 'academic', label: 'Becker & Murphy, "A Theory of Rational Addiction," Journal of Political Economy 96(4):675-700 (1988) — full PDF (Portland State University)' },
+      { url: 'https://econpapers.repec.org/RePEc:ucp:jpolec:v:96:y:1988:i:4:p:675-700', type: 'academic', label: 'EconPapers/RePEc bibliographic record — Becker & Murphy, JPE 1988' },
+      { url: 'https://en.wikipedia.org/wiki/Rational_addiction', type: 'reference', label: 'Wikipedia: Rational addiction (consumption capital, adjacent complementarity, price response)' },
+    ],
+  },
+  {
+    id: 'econ-paradox-of-thrift',
+    discipline: 'economics',
+    title: '倹約のパラドックス',
+    statement:
+      '皆が同時に貯蓄を増やそう（消費を減らそう）とすると、特に不況期には総需要が縮小し、産出・雇用・所得が減少して、社会全体の貯蓄はむしろ不変か減少しうるという逆説。個人にとって賢明・美徳である貯蓄が、全員が行うと経済全体には有害となりうる「合成の誤謬」の一例で、ある人の支出は別の人の所得であるという関係に基づく。' +
+      'ケインズが『雇用・利子および貨幣の一般理論』（1936）で広めたもので、計画された貯蓄が乗数を通じて実現所得を押し下げる点を強調する。需要不足・不完全雇用の状況下で最も妥当とされる一方、古典派（セイの法則）やハイエクらオーストリア学派は、貯蓄が金利低下を通じて投資へ回り供給を支えると批判し、その妥当性は論争的である。',
+    keyFigures: 'ジョン・メイナード・ケインズ（J. M. Keynes, 1936『一般理論』）／フリードリヒ・ハイエク（批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.stlouisfed.org/publications/page-one-economics/2012/05/01/wait-is-saving-good-or-bad-the-paradox-of-thrift', type: 'government', label: 'Federal Reserve Bank of St. Louis — Page One Economics: "Wait, Is Saving Good or Bad? The Paradox of Thrift"' },
+      { url: 'https://www.tohoku-gakuin.ac.jp/research/journal/bk2013/pdf/no11_02.pdf', type: 'academic', label: '小沼宗一「ケインズの経済思想」東北学院大学（有効需要の原理・貯蓄のパラドックス）' },
+      { url: 'https://en.wikipedia.org/wiki/Paradox_of_thrift', type: 'reference', label: 'Wikipedia — Paradox of thrift（機構・合成の誤謬・ケインズ1936・古典派/オーストリア学派の批判）' },
+    ],
+  },
+  {
+    id: 'mgmt-skunkworks',
+    discipline: 'management',
+    title: 'スカンクワークス',
+    statement:
+      'スカンクワークスとは、大組織の内部に置かれる小規模で半自律的・しばしば秘匿的なチームを指し、通常の官僚的手続や定型的なR&D手続から解放され、高い自律性と集中した権限・資源を与えられて、先進的・急進的なイノベーションを迅速に進める仕組みである。起源は1943年、ロッキードがクラレンス・「ケリー」・ジョンソンの主導で米軍向けジェット戦闘機を秘密裏に開発するために編成した先進開発部門にあり、同部門は後にU-2やSR-71などを生み出した。名称は漫画「Li\'l Abner」に登場する密造酒工場「Skonk Works」に由来する。' +
+      '「Skunk Works」はロッキード・マーティンの登録商標だが、「skunkworks」は組織の通常の制約の外で破壊的・革新的開発を担う自律的部隊を指す一般名詞として定着した。ケリー・ジョンソンが定めた「14のルール」は、少人数チーム・最小限の報告・現場への強い権限委譲を強調し、社内起業（イントラプレナーシップ）や破壊的イノベーションのマネジメントと関連づけて論じられる。',
+    keyFigures: 'ロッキード（クラレンス・「ケリー」・ジョンソン, 1943〜）／Lockheed Martin の登録商標',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.lockheedmartin.com/en-us/who-we-are/business-areas/aeronautics/skunkworks/skunk-works-origin-story.html', type: 'media', label: 'Lockheed Martin — The Skunk Works Legacy / Origin Story (公式)' },
+      { url: 'https://www.merriam-webster.com/dictionary/Skunk%20Works', type: 'reference', label: 'Merriam-Webster Dictionary — "Skunk Works"' },
+      { url: 'https://en.wikipedia.org/wiki/Skunkworks_project', type: 'reference', label: 'Wikipedia — Skunkworks project' },
+    ],
+  },
+  {
+    id: 'human-cannon-bard-theory',
+    discipline: 'human-science',
+    title: 'キャノン＝バード説',
+    statement:
+      'ウォルター・キャノン（1927）が提唱し弟子のフィリップ・バード（1934）が発展させた情動理論で、ジェームズ＝ランゲ説への批判・代替として示された。身体の生理的喚起と主観的な情動体験は、一方が他方を引き起こすのではなく、同時かつ独立に並行して生じると説く。' +
+      '情動を喚起する刺激を知覚すると、視床（のちに視床下部を含む）が大脳皮質へ信号を送って情動の意識的体験を生じさせると同時に、身体・自律神経系へも信号を送り生理的喚起を引き起こす。ジェームズ＝ランゲ説への反論として、内臓の変化は遅く速い情動の源となりえないこと、異なる情動でも内臓反応が似て区別できないことを挙げ、視床説とも呼ばれる。',
+    keyFigures: 'ウォルター・キャノン（Walter Cannon, 1927）／フィリップ・バード（Philip Bard, 1934）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1415404', type: 'academic', label: 'Cannon, W. B. (1927). The James-Lange Theory of Emotions: A Critical Examination and an Alternative Theory. American Journal of Psychology, 39, 106-124 (JSTOR)' },
+      { url: 'https://www.simplypsychology.org/what-is-the-cannon-bard-theory.html', type: 'reference', label: 'Simply Psychology — Cannon-Bard Theory of Emotion: Definition and Examples' },
+      { url: 'https://www.britannica.com/science/Cannon-Bard-theory', type: 'reference', label: 'Encyclopaedia Britannica — Cannon-Bard theory (thalamic theory of emotion)' },
+    ],
+  },
+  {
+    id: 'bizlaw-general-incorporated-associations',
+    discipline: 'business-law',
+    title: '一般社団・財団法人法',
+    statement:
+      '2006年の公益法人制度改革の一環として制定された一般社団法人及び一般財団法人に関する法律（平成18年法律第48号、2008年12月1日施行）。それまでの主務官庁による許可主義を廃し、公益目的を要件とせず、登記のみで法人格を取得できる準則主義を採用した。人（社員）の集まりである一般社団法人と、拠出された財産の集まりである一般財団法人を、' +
+      '誰でも簡便に設立できる。いずれも剰余金や残余財産を社員・設立者に分配できない非営利法人である。公益性と税制優遇を求める場合は、別途、対となる公益認定法に基づき内閣府公益認定等委員会等の公益認定を受け、公益社団法人・公益財団法人となる。これにより「法人の設立」と「公益性の認定」が分離され、設立登記は法務省が所管する。',
+    keyFigures: '一般社団法人及び一般財団法人に関する法律（平成18年法律第48号、2006年制定・2008年施行）／公益法人制度改革',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji153.html', type: 'government', label: '法務省「一般社団法人及び一般財団法人制度Q&A」' },
+      { url: 'https://www.koeki-info.go.jp/regulations/01bpjc0uhx.html', type: 'government', label: '内閣府 公益法人Information「公益法人制度改革の成果」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000106760', type: 'reference', label: '国立国会図書館 日本法令索引（平成18年法律第48号）' },
+    ],
+  },
+  {
+    id: 'infosoc-global-village',
+    discipline: 'information-sociology',
+    title: 'グローバル・ヴィレッジ（地球村）',
+    statement:
+      'マーシャル・マクルーハンが『グーテンベルクの銀河系』（1962）と『メディア論』（1964）で提示した概念で、電信・ラジオ・テレビ、のちにインターネットといった電子メディアが空間と時間の隔たりを縮め、地球全体が一つの「村」へと収縮するさまを指す。電子的な瞬時性により遠隔地の出来事が世界中で同時に体験され、人々は情報を共有して相互接続と関与を高める。マクルーハンは、活字（印刷）が人類を「脱部族化」したのに対し、電子メディアは同時性と聴覚・触覚的感覚を回復させ人類を「再部族化」すると論じた。' +
+      'この洞察は、瞬時性・同時性・相互接続性を実現したインターネット時代を先取りするものとして広く参照される。ただしマクルーハン自身が示したように、地球村は調和的な理想郷とは限らず、距離の消失は緊張や対立、相互誤解、監視や摩擦をも増幅しうる。地球村は望ましい状態の称揚ではなく、電子的な速度と近接がもたらす新たな状況の記述として提示された点に留意が必要である。',
+    keyFigures: 'マーシャル・マクルーハン（Marshall McLuhan, 1962/1964）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/global-village', type: 'reference', label: 'Encyclopædia Britannica — Global village (McLuhan theory, definition)' },
+      { url: 'https://www.cambridge.org/core/books/mcluhans-global-village-today/0CD7154B232AFD638DCD0FFF29E4C3BC', type: 'academic', label: 'Cambridge University Press — McLuhan\'s Global Village Today (Global Immediacy)' },
+      { url: 'https://manifold.umn.edu/read/the-neocolonialism-of-the-global-village/', type: 'academic', label: 'University of Minnesota Press — Re-tribalization & simultaneity' },
+    ],
+  },
 ];
 // Stryker restore all
