@@ -16787,5 +16787,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118541555.wbiepc088', type: 'reference', label: 'Altheide, "Media Logic", The International Encyclopedia of Political Communication (Wiley)' },
     ],
   },
+  {
+    id: 'econ-fear-of-floating',
+    discipline: 'economics',
+    title: '変動相場回避（フィア・オブ・フローティング）',
+    statement:
+      'カルボ&ラインハート（2002, QJE）が提示した概念で、公式（de jure）には変動相場制を掲げる多くの新興国・途上国が、実際（de facto）には為替変動を抑えるため積極的に市場介入し、実態は管理相場や固定的な制度に近いことを指す。実証的には、真の変動相場国に比べ為替レートの変動は著しく小さい一方、外貨準備や政策金利の変動は大きい。これは通貨を安定させるため準備や金利を動員するからである。' +
+      'この「恐れ」の主な理由は、為替変動のインフレへのパススルー、負債のドル化（外貨建て債務）による企業・銀行のバランスシート毀損、為替急変による信認や国際資本市場へのアクセスの喪失、そして貿易への影響への懸念である。宣言上の制度と実際の行動が乖離するため、為替相場制度の分類（de jure対de facto）や国際金融論において鍵となる概念とされる。',
+    keyFigures: 'ギジェルモ・カルボ／カルメン・ラインハート（Calvo & Reinhart, 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/117/2/379/1883887', type: 'academic', label: 'Calvo & Reinhart, "Fear of Floating," Quarterly Journal of Economics 117(2), 2002, pp.379-408 (Oxford)' },
+      { url: 'https://www.nber.org/papers/w7993', type: 'academic', label: 'Calvo & Reinhart, "Fear of Floating," NBER Working Paper 7993' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/2009/12/ghosh.htm', type: 'government', label: 'IMF Finance & Development — Choosing an Exchange Rate Regime (de jure vs de facto)' },
+    ],
+  },
+  {
+    id: 'econ-debt-overhang',
+    discipline: 'economics',
+    title: 'デット・オーバーハング',
+    statement:
+      'スチュワート・マイヤーズが1977年に論じた過少投資問題。過大な既存のリスクある負債を抱えた企業では、新規の正味現在価値（NPV）が正の投資から得られる利益の大半が、追加の費用を負担しない既存の債権者に帰属する。そのため資金を出す株主は十分な取り分を得られず、収益性のある投資さえ合理的に見送られる。重い債務が新規の価値創造投資に「のしかかり」これを妨げるため、これは資本構成における負債のエージェンシーコスト（負債の費用）の一つとされる。' +
+      'マイヤーズは成長機会を「リアル・オプション」と捉え、リスク負債の発行がその価値を毀損すると示した。同じ論理は主権債務にも応用され、重債務国は良好な成果の便益が債権者に流れるため投資を控えるとされる（クルーグマン1988、サックス）。資金調達順序を説くペッキングオーダー理論や、節税便益と倒産コストを比較する資本構成のトレードオフ理論とは区別される概念である。',
+    keyFigures: 'スチュワート・マイヤーズ（Stewart Myers, 1977）／ポール・クルーグマン（主権債務オーバーハング, 1988）／ジェフリー・サックス（Jeffrey Sachs）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304405X77900150', type: 'academic', label: 'Myers, S. C. (1977) "Determinants of Corporate Borrowing," Journal of Financial Economics 5: 147–175' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304387888900442', type: 'academic', label: 'Krugman, P. (1988) "Financing vs. Forgiving a Debt Overhang," Journal of Development Economics 29(3): 253–268' },
+      { url: 'https://en.wikipedia.org/wiki/Debt_overhang', type: 'reference', label: 'Wikipedia: Debt overhang' },
+    ],
+  },
+  {
+    id: 'mgmt-first-mover-advantage',
+    discipline: 'management',
+    title: '先発者優位',
+    statement:
+      '先発者優位（first-mover advantage）とは、ある市場に最初に参入した先発企業が、その早期参入の結果として正の経済利潤（超過収益）を得る能力を指す。リーバーマンとモントゴメリー（Lieberman & Montgomery, 1988, Strategic Management Journal）は、その主要な源泉を三つに整理した。第一に技術的リーダーシップ（学習・経験曲線によるコスト優位や特許・R&D競争での先行）、' +
+      '第二に希少資産の先取り（好立地・投入物・棚スペース等の先行確保）、第三に買い手のスイッチングコストと不確実性下の選択（先発品が基準ブランドとなる効果）である。ただし先発には不利益もあり、後発企業は先発のR&Dや市場開拓にただ乗りでき（フリーライダー／後発優位）、技術・市場の不確実性解消や先発企業の慣性も享受しうるため、優位は保証されず維持する能力に依存する。なお経験曲線・学習効果は本概念の一要素にすぎない点に留意する。',
+    keyFigures: 'マービン・リーバーマン／デイビッド・モントゴメリー（Lieberman & Montgomery, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090706', type: 'academic', label: 'Lieberman & Montgomery (1988) "First-Mover Advantages," Strategic Management Journal 9:41–58 (Wiley / Strategic Management Society)' },
+      { url: 'https://www.gsb.stanford.edu/faculty-research/publications/first-mover-advantages', type: 'academic', label: 'Stanford Graduate School of Business — First-Mover Advantages (faculty publication)' },
+      { url: 'https://www.anderson.ucla.edu/faculty/marvin.lieberman/publications/FMA2-SMH1998.pdf', type: 'academic', label: 'Lieberman & Montgomery (1998) "First-Mover (Dis)advantages," SMJ 19:1111–1125 (UCLA Anderson)' },
+    ],
+  },
+  {
+    id: 'human-hot-hand-fallacy',
+    discipline: 'human-science',
+    title: 'ホットハンドの誤謬',
+    statement:
+      'ギロビッチ、ヴァローン、トヴェルスキー（1985）が提唱した認知バイアス。連続してシュートを決めた選手のように、成功した人は次も成功しやすく、成功が偶然以上に連続する（流れに乗る）という「ホットハンド」信念を指す。彼らはNBAやフリースロー、対照実験のバスケットボール射撃データを分析したが、命中と失敗はほぼ統計的に独立で、連勝の兆候は偶然の水準を超えなかった。' +
+      'よってこの信念は、短い無作為列にも母集団に「代表的」な均衡や連なりを期待する代表性ヒューリスティック（偶然の誤解）に基づく、乱数列の誤認＝広く共有された認知錯覚とされた。負の連続を期待するギャンブラーの誤謬とは逆向きの期待だが、同じ主観的ランダム性の誤りに根ざす点で区別される。なおミラー＆サンジュルジョ（2018）は元の連勝測定に選択バイアスがあると指摘し、論争は継続している。',
+    keyFigures: 'トーマス・ギロビッチ／ロバート・ヴァローン／エイモス・トヴェルスキー（Gilovich, Vallone & Tversky, 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-hot-hand-in-basketball:-On-the-misperception-of-Gilovich-Vallone/94dbdaf9ea1a08c1945a1093a491fe267d99cde2', type: 'academic', label: 'Gilovich, Vallone & Tversky (1985) "The Hot Hand in Basketball: On the Misperception of Random Sequences," Cognitive Psychology' },
+      { url: 'https://en.wikipedia.org/wiki/Hot_hand', type: 'reference', label: 'Wikipedia: Hot hand (fallacy, GVT 1985 study, representativeness, Miller & Sanjurjo 2018)' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/2018/11/01/surprised-hot-hand-fallacy-truth-law-small-numbers', type: 'academic', label: 'Miller & Sanjurjo (2018), Econometrica: streak selection bias reassessment' },
+    ],
+  },
+  {
+    id: 'bizlaw-disability-discrimination',
+    discipline: 'business-law',
+    title: '障害者差別解消法',
+    statement:
+      '正式名称は「障害を理由とする差別の解消の推進に関する法律」（平成25年法律第65号、2013年制定・2016年4月1日施行、内閣府所管）。障害者権利条約の批准に向けた国内法整備の一環として、障害の有無によって分け隔てられない共生社会の実現を目的とする。行政機関等と事業者に対し、障害を理由とする不当な差別的取扱いを禁止し、' +
+      '障害者から社会的障壁の除去を必要とする旨の意思表明があった場合に、過重な負担とならない範囲で合理的配慮を提供することを求める。合理的配慮は当初、行政機関等は法的義務、民間事業者は努力義務だったが、2021年改正（2024年4月1日施行）により民間事業者も法的義務となった。雇用率を定める障害者雇用促進法とは区別される一般的な差別解消法である。',
+    keyFigures: '障害を理由とする差別の解消の推進に関する法律（障害者差別解消法、平成25年法律第65号、2013年制定・2016年施行）／内閣府',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www8.cao.go.jp/shougai/suishin/sabekai.html', type: 'government', label: '内閣府「障害を理由とする差別の解消の推進」' },
+      { url: 'https://www8.cao.go.jp/shougai/suishin/sabekai_chirashi-r05.html', type: 'government', label: '内閣府「障害者差別解消法が改正 事業者にも合理的配慮の提供が義務」' },
+      { url: 'https://keiyaku-watch.jp/media/hourei/goritekihairyo-2024/', type: 'reference', label: '事業者による合理的配慮の提供の義務化（2024年4月施行）解説' },
+    ],
+  },
+  {
+    id: 'infosoc-hostile-media-effect',
+    discipline: 'information-sociology',
+    title: '敵対的メディア認知',
+    statement:
+      'ヴァローン、ロス、レッパー（1985年）が提唱した、ある争点で対立する双方の党派的な人々が、同一の報道を、いずれも自分の側に不利で相手側に有利だと知覚する傾向。古典的研究では、1982年ベイルート（サブラ・シャティーラ）虐殺をめぐる同一のテレビニュース映像を、親イスラエル派と親アラブ派の双方が各々「自分の側に敵対的だ」と評価し、中立層は比較的偏りがないと見た。' +
+      '関与度の高い党派者の動機づけられた選択的知覚（事実の取捨選択への評価の差と、内容の記憶・認知の差という二つの機制）に起因するとされ、自分の意見と同方向に情報を引き寄せて解釈する同化バイアスとは対照的な対比効果として位置づけられる。後続研究では報道の到達範囲の知覚に着目する「相対的敵対的メディア効果」も提起された。自分は影響されにくいと考える第三者効果とは区別される。',
+    keyFigures: 'ロバート・ヴァローン／リー・ロス／マーク・レッパー（Vallone, Ross & Lepper, 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.49.3.577', type: 'academic', label: 'Vallone, Ross & Lepper (1985) "The Hostile Media Phenomenon" J. Pers. Soc. Psychol. 49(3):577-585' },
+      { url: 'https://www.oxfordbibliographies.com/view/document/obo-9780199756841/obo-9780199756841-0079.xml', type: 'reference', label: 'Oxford Bibliographies (Communication) — Hostile Media Effect' },
+      { url: 'https://en.wikipedia.org/wiki/Hostile_media_effect', type: 'reference', label: 'Wikipedia — Hostile media effect' },
+    ],
+  },
 ];
 // Stryker restore all
