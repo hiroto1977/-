@@ -10551,5 +10551,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/VUCA', type: 'reference', label: 'Wikipedia — VUCA' },
     ],
   },
+  {
+    id: 'econ-contestable-markets',
+    discipline: 'economics',
+    title: 'コンテスタブル市場',
+    statement:
+      'コンテスタブル市場（競争可能市場）理論とは、市場に企業が少数（独占・寡占）しか存在しなくても、新規参入が完全に自由で退出時に費用を回収できる（サンクコスト＝埋没費用が存在しない）ならば、既存企業は潜在的な参入の脅威によって規律づけられ、超過利潤を伴う価格をつけられず、結果として競争的（限界費用に近く効率的）な価格・生産が実現するという理論である。' +
+      '重要なのは実際の企業数ではなく参入・退出の自由（コンテスタビリティ）であり、サンクコストの不在が鍵となる。完全にコンテスタブルな市場では、高価格に対し新規企業がさっと参入し利益を得て価格下落時にさっと退出する「ヒット・アンド・ラン参入」が可能なため、既存企業は参入を招かない持続可能な価格に抑えざるをえない。Baumol・Panzar・Willigが1982年に提唱し、独占・寡占でも参入が自由なら規制は必ずしも不要として規制緩和（航空・通信）の理論的支柱となったが、現実にはサンクコストや参入障壁が存在し前提が崩れるとの批判がある。',
+    keyFigures:
+      'William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコスト不在・ヒット・アンド・ラン参入・規制緩和論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v72y1982i1p1-15.html', type: 'academic', label: 'Baumol (1982) “Contestable Markets: An Uprising in the Theory of Industry Structure”, American Economic Review 72(1):1-15' },
+      { url: 'https://read.dukeupress.edu/hope/article/57/3/371/396345/Contestability-Theory-and-the-Deregulation-of-US', type: 'academic', label: '“Contestability Theory and the Deregulation of US Airlines”, History of Political Economy (Duke University Press)' },
+      { url: 'https://www.economicsonline.co.uk/business_economics/contestable_markets.html/', type: 'reference', label: 'Economics Online — Contestable Markets（概説）' },
+    ],
+  },
+  {
+    id: 'econ-tying',
+    discipline: 'economics',
+    title: '抱き合わせ販売（tying）',
+    statement:
+      'ある商品（主たる商品＝tying product、結合財）の販売・供給を条件として、別の商品（従たる商品＝tied product、被結合財）も自己または指定事業者から購入させる商慣行。例：プリンタ本体と専用インク、ゲーム機と専用ソフト、OSとブラウザ（マイクロソフト事件）。' +
+      '競争政策上の核心は、主商品の市場支配力を従商品市場へ梃子として及ぼすレバレッジ（leverage）にあり、(1)反競争効果説＝従商品市場の競争者を排除し独占を拡大・延命する市場閉鎖（foreclosure）と、(2)効率性・正当化説＝品質保証・補完性・取引費用節約や、利用強度を測り従量課金する価格差別（メータリング metering）など正当理由がある、という二つの見方が対立する。シカゴ学派は「独占利潤は一度しか取れない（single monopoly profit theorem）」として懐疑的だったが、ポスト・シカゴ派は動学的・戦略的な排除効果を示した。米国ではシャーマン法・クレイトン法、日本では独占禁止法上の不公正な取引方法（一般指定10項「抱き合わせ販売等」）として規制されうる。',
+    keyFigures:
+      'tying product（結合財）×tied product（被結合財）／レバレッジ・市場閉鎖（foreclosure）／メータリングによる価格差別／single monopoly profit theorem（シカゴ学派）vs ポスト・シカゴ派／米シャーマン法・クレイトン法・日本独禁法一般指定10項',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/tying_arrangement', type: 'reference', label: 'Cornell Law School, Legal Information Institute (Wex): Tying arrangement' },
+      { url: 'https://scholarship.law.upenn.edu/faculty_scholarship/1864/', type: 'academic', label: 'Hovenkamp “Tying and the Rule of Reason: Understanding Leverage, Foreclosure, and Price Discrimination” (Univ. of Pennsylvania Law School)' },
+      { url: 'https://www.jftc.go.jp/dk/guideline/fukousei.html', type: 'government', label: '公正取引委員会「不公正な取引方法」一般指定第10項 抱き合わせ販売等' },
+    ],
+  },
+  {
+    id: 'mgmt-knowledge-transfer',
+    discipline: 'management',
+    title: '知識移転（ナレッジ・トランスファー）',
+    statement:
+      '知識移転とは、組織内（部門間・拠点間・個人間）や組織間で、ノウハウやベストプラクティスを送り手から受け手へ伝達・共有し、受け手が吸収・活用できるようにするプロセスであり、ナレッジマネジメントの中核活動である。アーゴットとイングラム（2000）はこれを「ある社会的単位が別の単位の経験から学び、影響を受けるプロセス」と定義した。' +
+      '鍵となるのは、文書化できる形式知と、言語化しにくい暗黙知（ポランニー「我々は語れる以上のことを知っている」）の区別で、暗黙知の移転にはOJT・徒弟制・対面が要る。シュチマン（1996）は移転を妨げる「知識の粘着性（stickiness）」を、因果関係の曖昧さ、送り手の動機・信頼性、受け手の吸収能力、両者の困難な関係に整理し、受け手の吸収能力と因果関係の曖昧さを最大の障害とした。SECIや吸収能力と関連する。',
+    keyFigures:
+      'マイケル・ポランニー（暗黙知）／ガブリエル・シュチマン（Szulanski 1996・知識の粘着性）／リンダ・アーゴット＆ポール・イングラム（2000・定義）／吸収能力',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.4250171105', type: 'academic', label: 'Szulanski, G. (1996) “Exploring internal stickiness...”, Strategic Management Journal 17, 27-43 (Wiley)' },
+      { url: 'https://econpapers.repec.org/RePEc:eee:jobhdp:v:82:y:2000:i:1:p:150-169', type: 'academic', label: 'Argote & Ingram (2000) “Knowledge Transfer: A Basis for Competitive Advantage in Firms”, OBHDP 82, 150-169' },
+      { url: 'https://en.wikipedia.org/wiki/Tacit_knowledge', type: 'reference', label: 'Tacit knowledge (Wikipedia) — Polanyi『The Tacit Dimension』(1966)' },
+    ],
+  },
+  {
+    id: 'human-ingroup-bias',
+    discipline: 'human-science',
+    title: '内集団バイアス（内集団びいき）',
+    statement:
+      '内集団バイアスとは、人が自分の所属する集団（内集団）のメンバーを、所属しない集団（外集団）のメンバーより好意的に評価し、資源配分・信頼・協力などで優遇する傾向である。ヘンリー・タジフェルが1970年代に開発した「最小条件集団パラダイム」が古典で、好きな画家やくじ引きなど無意味な基準で互いに面識も利害もない最小限の集団に分けただけでも内集団びいきが生じ、しかも内集団の利益最大化より「内集団と外集団の差」を最大化する傾向が見られた。' +
+      'この知見はタジフェルとターナーの社会的アイデンティティ理論の基礎となり、人は集団所属を自己概念の一部（社会的アイデンティティ）とし、内集団を肯定的に区別することで自尊心を高めるとされる。重要なのは、内集団びいき（ingroup favoritism）は必ずしも外集団への敵意（out-group derogation）を伴わず、両者は概念的に区別される点である。偏見・差別・集団間紛争・組織の派閥の理解に用いられる。',
+    keyFigures:
+      'ヘンリー・タジフェル（Henri Tajfel・最小条件集団パラダイム）／ジョン・ターナー（社会的アイデンティティ理論）／ひいき（favoritism）と敵意（derogation）の区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/social-identity-theory', type: 'reference', label: 'Encyclopædia Britannica「Social identity theory」' },
+      { url: 'https://oecs.mit.edu/pub/qlm9zp9e', type: 'academic', label: 'MIT Open Encyclopedia of Cognitive Science「Social Identity」' },
+      { url: 'https://online.ucpress.edu/collabra/article/9/1/90187/198721/Minimal-Group-Procedures-and-Outcomes', type: 'academic', label: 'Collabra: Psychology (UC Press)「Minimal Group Procedures and Outcomes」' },
+    ],
+  },
+  {
+    id: 'bizlaw-forfeiture-of-rights',
+    discipline: 'business-law',
+    title: '権利失効の原則',
+    statement:
+      '権利失効の原則とは、権利者が長期間にわたって権利を行使せず、相手方（義務者）がもはやその権利は行使されないと正当に信頼すべき状況に至った後で、突如その権利を行使することが、信義誠実の原則（民法1条2項）に反して許されない（権利行使が認められなくなる＝失効する）とする法理である。ドイツ法のVerwirkung（フェアヴィルクング）に由来し、日本では民法に明文規定がなく、信義則を根拠に判例・学説上認められてきた。' +
+      '一定期間の経過のみで画一的に権利が消滅する消滅時効とは異なり、(1)権利の長期不行使に加え、(2)相手方が「もはや権利行使されない」と信頼するに足る事情があり、(3)その信頼を裏切る権利行使が信義則上不当と評価される、という要件を要し、時効期間が満了していなくても適用されうる。最高裁は最判昭和30年11月22日（民集9巻12号1781頁）で解除権につきこの原則の存在を認めたが、その適用は限定的・慎重で、安易には認められない。権利濫用禁止（1条3項）・事情変更の原則と並ぶ信義則派生の一般条項である。',
+    keyFigures:
+      '根拠＝信義則（民法1条2項）／由来＝ドイツ法 Verwirkung／明文規定なき判例法理／要件＝長期不行使＋相手方の正当な信頼＋信義則違反／消滅時効と違い時効未満了でも適用可・相手方の信頼が必須／最判昭和30年11月22日（民集9巻12号1781頁・解除権）／適用は限定的・慎重',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cir.nii.ac.jp/crid/1523106605021392896', type: 'academic', label: 'CiNii Research「判例解説 重要判例解説(30)権利失効の原則 最判 昭和30.11.22」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%BF%A1%E7%BE%A9%E8%AA%A0%E5%AE%9F%E3%81%AE%E5%8E%9F%E5%89%87', type: 'reference', label: 'Wikipedia「信義誠実の原則」（権利失効の原則・Verwirkung・消滅時効との区別）' },
+      { url: 'https://jpaa-patent.info/patent/viewPdf/3698', type: 'academic', label: '日本弁理士会 機関誌『パテント』2020「権利の失効」（最判昭30.11.22の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-third-wave',
+    discipline: 'information-sociology',
+    title: '第三の波（トフラー）',
+    statement:
+      '未来学者アルビン・トフラー（Alvin Toffler, 1928–2016）が1980年の著書『The Third Wave（第三の波）』で示した文明史観で、人類社会の発展を三つの大変革の波として捉える。第一の波＝農業革命（狩猟採集から定住農耕へ）、第二の波＝産業革命（工業化・大量生産・大量消費を担い、標準化・専門化・同時化・集中化・極大化・中央集権化を原理とする社会）、第三の波＝情報革命（脱産業社会・情報化社会）である。' +
+      'コンピュータと情報通信技術により脱大量化（demassification）・脱標準化・分散化・在宅勤務（エレクトロニック・コテージ）が進み、第二の波で分離した生産と消費が再融合して、自ら生産にも関わる消費者「プロシューマー（prosumer＝producer + consumer）」が登場すると予見した。情報・知識が富と権力の源泉となる社会を描き後の情報社会論に影響を与えたが、未来予測ゆえ学術的厳密さより啓発的・大衆的な文明論である点に留意。『Future Shock（1970）』『Powershift（1990）』とともに三部作をなす。',
+    keyFigures:
+      'アルビン・トフラー（Alvin Toffler, 1980『The Third Wave』）／3つの波（農業・産業・情報革命）／プロシューマー・エレクトロニック・コテージ・脱大量化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/literature-and-writing/third-wave-alvin-toffler', type: 'reference', label: 'EBSCO Research Starters: The Third Wave by Alvin Toffler（学術レファレンスDB）' },
+      { url: 'https://www.encyclopedia.com/media/encyclopedias-almanacs-transcripts-and-maps/toffler-alvin-1928', type: 'reference', label: 'Encyclopedia.com: Toffler, Alvin（第二の波の6原則・脱大量化）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-531-91998-0_2', type: 'academic', label: 'Springer Nature Link: The Prosumer Movement（プロシューマー概念の学術的位置づけ）' },
+    ],
+  },
 ];
 // Stryker restore all
