@@ -14292,5 +14292,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://press.uchicago.edu/ucp/books/book/distributed/M/bo3618528.html', type: 'reference', label: 'Reeves & Nass, The Media Equation (1996), CSLI / University of Chicago Press' },
     ],
   },
+  {
+    id: 'econ-rubinstein-bargaining',
+    discipline: 'economics',
+    title: 'ルービンシュタイン交渉モデル',
+    statement:
+      'アリエル・ルービンシュタインが1982年にEconometrica誌で発表した「Perfect Equilibrium in a Bargaining Model」に基づく、非協力的・戦略的な交渉モデル。2人のプレイヤーが一定の「パイ」（余剰）の分割を巡り、（無限に続きうる）複数ラウンドにわたって交互にオファーを出し合う。各プレイヤーはせっかちで、将来の利得を割引因子で割り引く（時間コスト/遅延コスト）。' +
+      'この交互オファー・ゲームには一意の部分ゲーム完全均衡が存在し、合意は遅延なく初回（最初の期）に即時成立する。均衡での分け前は両者の割引因子（相対的な辛抱強さ）と先手か後手かに依存し、より辛抱強い（割引因子が1に近い）側ほど大きい取り分を得る。公理的なナッシュ交渉解とは区別され、その戦略的・非協力的基礎を与え、極限で両者は関係づけられる。',
+    keyFigures: 'アリエル・ルービンシュタイン（Ariel Rubinstein, 1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1982/01/01/perfect-equilibrium-bargaining-model', type: 'academic', label: 'Ariel Rubinstein, "Perfect Equilibrium in a Bargaining Model," Econometrica 50(1), 1982 — The Econometric Society' },
+      { url: 'https://ideas.repec.org/a/ecm/emetrp/v50y1982i1p97-109.html', type: 'academic', label: 'RePEc/IDEAS bibliographic record: Econometrica 50(1), pp. 97-109 (1982)' },
+      { url: 'https://en.wikipedia.org/wiki/Rubinstein_bargaining_model', type: 'reference', label: 'Rubinstein bargaining model — Wikipedia (alternating offers, discounting, unique SPE, patience)' },
+    ],
+  },
+  {
+    id: 'econ-tax-incidence',
+    discipline: 'economics',
+    title: '租税の帰着',
+    statement:
+      '租税の帰着とは、税の経済的負担を最終的に誰が負うかを分析する公共経済学の標準的論点である。法律上の納税義務者を指す「法定帰着」と、実際に負担を負う主体を指す「経済的帰着」は区別され、両者は一致するとは限らない。部分均衡分析の中心的な結論として、税の経済的負担は、税を買い手と売り手のどちらに法律上課すか（法定の課税側）には依存しない。負担が買い手と売り手の間でどう配分されるかは、需要と供給の価格弾力性の相対的な大きさによって決まり、' +
+      'より非弾力的な側がより多くの負担を負う。したがって、需要が非弾力的な財への課税は主に消費者が、供給が非弾力的な場合は主に生産者が負担する。極端な場合、需要が完全非弾力的なら負担はすべて消費者に、供給が完全非弾力的ならすべて生産者に帰着する。さらに課税は価格に楔（くさび）を生み、取引量を減少させて死荷重（厚生損失）を発生させる。この考え方は重農主義者など古典派経済学にさかのぼり、現代の公共経済学で標準的に扱われる。',
+    keyFigures: '租税の帰着（法定帰着／経済的帰着・弾力性による負担配分）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/files/stantcheva/files/lecture3.pdf', type: 'academic', label: 'Harvard University — Stantcheva, Lecture 3: Tax Incidence and Efficiency Costs of Taxation' },
+      { url: 'https://www.ipp.hit-u.ac.jp/satom/lecture/pubecon2/2017_pubecon2_note04.pdf', type: 'academic', label: '一橋大学 佐藤主光 公共経済分析II 講義ノート4（租税の帰着）' },
+      { url: 'https://en.wikipedia.org/wiki/Tax_incidence', type: 'reference', label: 'Wikipedia — Tax incidence' },
+    ],
+  },
+  {
+    id: 'mgmt-knowledge-based-view',
+    discipline: 'management',
+    title: '知識ベース理論（ナレッジ・ベースト・ビュー）',
+    statement:
+      '知識ベース理論（KBV）は資源ベース理論（RBV）を拡張した戦略経営の視座で、知識——とくに暗黙知——を企業の最も戦略的に重要な資源とみなす。知識は社会的に複雑で模倣・移転が困難、かつ企業間で異質なため、持続的競争優位の源泉となる。企業は個人に宿る専門知識を統合・適用するための制度（知識統合）として捉えられ、' +
+      '分散した専門知識を生産のために統合する必要と、費用のかかる知識移転を節約する要請から、企業の存在・境界、組織構造、権限配分や調整メカニズムが説明される。代表的にはロバート・M・グラント（1996, Strategic Management Journal）とコグート＆ザンダー（1992, Organization Science）。組織学習・ダイナミックケイパビリティや野中のSECIと関連するが、資源ベース理論やSECI/知識移転の項目とは区別される。',
+    keyFigures: 'ロバート・M・グラント（1996）／コグート＆ザンダー（1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250171110', type: 'academic', label: 'Grant, R. M. (1996) "Toward a Knowledge-Based Theory of the Firm," Strategic Management Journal 17, 109–122 (Wiley Online Library)' },
+      { url: 'https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/knowledge-based-view-firm', type: 'reference', label: 'Encyclopedia.com — "Knowledge-Based View of the Firm"' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.3.3.383', type: 'academic', label: 'Kogut, B. & Zander, U. (1992) "Knowledge of the Firm...," Organization Science 3(3), 383–397 (INFORMS)' },
+    ],
+  },
+  {
+    id: 'human-naive-realism',
+    discipline: 'human-science',
+    title: '素朴実在論（ナイーブ・リアリズム）',
+    statement:
+      '社会心理学でリー・ロスとアンドリュー・ウォードが1996年に整理した概念。人は自分が世界を「あるがまま」客観的に偏りなく知覚していると確信し、同じ情報に触れた理性的で公正な他者は当然自分と同じ見解に至るはずだと考える。ゆえに自分と異なる意見の他者に出会うと、相手は無知・非合理・バイアスがかかっていると結論づけがちで、自分の見方もまた一つの解釈（構築）にすぎないことを見落とす。三つの前提は、(1)自分は対象をありのままに見ている、(2)合理的な他者は同じ結論に達する、' +
+      '(3)同意しない者は情報不足か非合理かバイアスがある、というもの。これは偽の合意効果や敵対的メディア認知、バイアスの盲点、根本的帰属錯誤などの基盤をなし、集団間対立や意見対立の解消が難しい理由を説明する。自分の信念に都合よく情報を集める確証バイアスや、合意を過大視する偽の合意効果とは区別され、本概念は「自分は客観的に知覚している」という錯覚そのものを指す点に特徴がある。',
+    keyFigures: 'リー・ロス／アンドリュー・ウォード（1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Na%C3%AFve_realism_(psychology)', type: 'reference', label: 'Wikipedia: Naïve realism (psychology)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3358840/', type: 'academic', label: 'Profile of Lee D. Ross, PNAS (PMC)' },
+      { url: 'https://www.jumonji-u.ac.jp/sscs/ikeda/cognitive_bias/cate_s/s_15.html', type: 'reference', label: '錯思コレクション100（十文字学園女子大学・池田研究室）「ナイーブ・リアリズム」' },
+    ],
+  },
+  {
+    id: 'bizlaw-utility-model',
+    discipline: 'business-law',
+    title: '実用新案法',
+    statement:
+      '実用新案法（現行法は昭和34年法律第123号、1959年。制度自体は明治38年/1905年に始まる）は、物品の形状・構造又は組合せに係る考案、いわゆる「小発明」を保護し、実用新案権を付与する日本の法律で、特許庁が所管する。' +
+      '特許法と異なり1990年代（平成5年/1993年）の改革以降は無審査登録（早期登録）制度を採り、方式・基礎的要件のみを審査して新規性・進歩性の実体審査を行わない。その代わり存続期間は出願日から10年と特許の20年より短く、求められる進歩性の水準も低い。権利行使には特許庁が作成する実用新案技術評価書の提示が必要で、権利が無効とされた場合は権利者が責任を負う。',
+    keyFigures: '実用新案法（昭和34年法律第123号、1959年／無審査登録制度）／特許庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jpo.go.jp/news/shinchaku/event/seminer/text/document/2025_nyumon/1_2_2.pdf', type: 'government', label: '特許庁「実用新案制度の概要」（無審査主義・技術評価書・存続期間）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000051233&current=-1', type: 'government', label: '日本法令索引（国立国会図書館）実用新案法 昭和34年法律第123号' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%AE%9F%E7%94%A8%E6%96%B0%E6%A1%88%E6%B3%95', type: 'reference', label: 'Wikipedia「実用新案法」（小発明・無審査登録制度・沿革）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-priming',
+    discipline: 'information-sociology',
+    title: 'メディア・プライミング（政治的プライミング）',
+    statement:
+      'アイエンガーとキンダーが1987年の著書『News That Matters: Television and American Opinion』で定式化した政治コミュニケーション理論。報道機関が特定の争点に注目し他を無視することで（アジェンダ設定と密接に結びつく）、人々が政治指導者・政府・候補者を評価する際の基準や尺度そのものを変える過程を指す。ある争点を顕在化させ記憶上アクセスしやすく（accessible）することで、全体的判断の際にその争点が重く扱われる。' +
+      'たとえば報道が経済を強調すれば、人々は大統領を主に経済成果によって判断するようになる。理論的には認知的アクセシビリティ（記憶モデル）に基づき、アジェンダ設定の拡張ないし帰結と位置づけられる。すなわちアジェンダ設定が「何について考えるか」を左右するのに対し、プライミングは「どの基準で評価するか」を左右する点で区別され、また心理学一般の認知的プライミング効果とも対象を異にする。',
+    keyFigures: 'シャント・アイエンガー／ドナルド・キンダー（1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/politicalcommunication/chpt/priming', type: 'reference', label: 'SAGE Encyclopedia of Political Communication — "Priming"（争点が政治指導者評価の基準となる定義・アクセシビリティと基準）' },
+      { url: 'https://fbaum.unc.edu/teaching/articles/J-Communication-2007-1.pdf', type: 'academic', label: 'Scheufele & Tewksbury (2007) "Framing, Agenda Setting, and Priming", Journal of Communication（アジェンダ設定の帰結・アクセシビリティモデル）' },
+      { url: 'https://en.wikipedia.org/wiki/Priming_(media)', type: 'reference', label: 'Wikipedia "Priming (media)"（Iyengar & Kinder 1987 の定義引用・評価基準・記憶アクセシビリティ）' },
+    ],
+  },
 ];
 // Stryker restore all
