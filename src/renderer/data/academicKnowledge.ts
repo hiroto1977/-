@@ -14649,5 +14649,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.mackinac.org/OvertonWindow', type: 'reference', label: 'Mackinac Center for Public Policy — The Overton Window (originating institution; Joseph P. Overton attribution)' },
     ],
   },
+  {
+    id: 'econ-is-lm',
+    discipline: 'economics',
+    title: 'IS-LMモデル',
+    statement:
+      'IS-LMモデル（ヒックス＝ハンセン・モデル）は、ジョン・ヒックスが1937年の論文「ケインズ氏と「古典派」」（Econometrica）でケインズ『一般理論』の解釈として提示し、アルヴィン・ハンセンが発展・普及させた短期マクロ経済モデルである。縦軸に利子率、横軸に実質産出（所得）をとった平面上で、財市場と貨幣市場の同時均衡を2本の曲線で表す。IS曲線は財市場の均衡（投資＝貯蓄）を示し右下がりで、' +
+      '低金利が投資を増やし産出を高めることを表す。LM曲線は貨幣市場の均衡（貨幣供給＝貨幣需要）を示し右上がりで、産出増加が貨幣需要を高め所与の貨幣供給の下で金利を押し上げることを表す。両曲線の交点が均衡利子率と均衡産出を決める。財政政策はIS曲線を、金融政策はLM曲線をシフトさせ、流動性の罠（LMが水平）等の特殊ケースも分析できる。教科書ケインズ経済学の基本だが、ルーカス批判やミクロ的基礎の欠如などの批判もある。',
+    keyFigures: 'ジョン・ヒックス（John Hicks, 1937）／アルヴィン・ハンセン（Hicks–Hansenモデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.economics.utoronto.ca/jfloyd/modules/islm.html', type: 'academic', label: 'University of Toronto — Topic 3: The IS and LM Curves' },
+      { url: 'https://en.wikipedia.org/wiki/IS%E2%80%93LM_model', type: 'reference', label: 'Wikipedia — IS–LM model (Hicks–Hansen model)' },
+    ],
+  },
+  {
+    id: 'econ-ad-as',
+    discipline: 'economics',
+    title: '総需要・総供給モデル（AD-AS）',
+    statement:
+      '総需要・総供給（AD-AS）モデルは、縦軸に物価水準・横軸に実質産出（実質GDP）をとった平面で経済全体の均衡を描く標準的なマクロ経済モデルである。総需要（AD）曲線は右下がりで、物価低下が需要量を増やす理由として資産（実質残高）効果・利子率効果・純輸出効果が挙げられ、財市場と貨幣市場の均衡を要約しIS-LMからも導出できる。総供給は、価格・賃金の硬直性により右上がりとなる短期総供給（SRAS）と、潜在産出（完全雇用産出）で垂直となり古典派の貨幣中立性を反映する長期総供給（LRAS）を区別する。' +
+      'ADとASの交点が均衡物価水準と実質産出を決定する。本モデルは、ADを動かす需要ショックとASを動かす供給ショック、政策効果の短期と長期の違い、インフレや景気後退の分析に用いられる。とりわけ、原油高など不利な供給ショックがSRASを左方シフトさせると、産出低下と物価上昇が同時に生じるスタグフレーションが説明される。教科書マクロ経済学の基礎をなす枠組みである。',
+    keyFigures: '総需要・総供給モデル（AD-AS／短期AS・長期AS）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/AD%E2%80%93AS_model', type: 'reference', label: 'Wikipedia: AD–AS model（モデルの定義・AD/SRAS/LRAS・需要/供給ショック）' },
+      { url: 'https://courses.lumenlearning.com/suny-macroeconomics/chapter/building-a-model/', type: 'academic', label: 'Lumen Learning / OpenStax Macroeconomics: Building a Model of AD and AS' },
+      { url: 'https://www.nber.org/system/files/chapters/c9160/revisions/c9160.rev2.pdf', type: 'academic', label: 'NBER: The Supply-Shock Explanation of the Great Stagflation' },
+    ],
+  },
+  {
+    id: 'mgmt-attention-based-view',
+    discipline: 'management',
+    title: '注意ベース理論（アテンション・ベースト・ビュー）',
+    statement:
+      'ウィリアム・オカシオが1997年に『Strategic Management Journal』誌（第18巻187-206頁）の論文「Towards an Attention-Based View of the Firm」で提示した理論。企業の行動は、希少な資源である意思決定者の「注意（アテンション）」を、企業がどの争点や答えに振り向け配分するかの結果だとする。ハーバート・サイモンの限定合理性と『経営行動』を継承し、注意を限られた認知資源と捉える。' +
+      '3つの原則から成る。(1)注意の焦点＝意思決定者の行動は、彼らが注目する争点と答えに依存する。(2)状況づけられた注意＝何に注目するかは、置かれた具体的な状況や文脈に依存する。(3)注意の構造的配分＝その状況的な注意は、企業のルール・資源・プレイヤー・構造的位置によってパターン化され配分される。これにより組織の適応・慣性・戦略変化を注意の配分という観点から説明する。',
+    keyFigures: 'ウィリアム・オカシオ（William Ocasio, 1997）／ハーバート・サイモン（限定合理性）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0266(199707)18:1+%3C187::AID-SMJ936%3E3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) Towards an Attention-Based View of the Firm, Strategic Management Journal 18: 187-206 (Wiley, 原典)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/ijmr.12306', type: 'academic', label: 'Brielmaier & Friesl (2023) The attention-based view: Review and conceptual extension, International Journal of Management Reviews' },
+      { url: 'https://www.mv.helsinki.fi/home/aula/Top20/ocasio-attention-based-view-of-the-firm.pdf', type: 'reference', label: 'University of Helsinki hosted full text of Ocasio (1997)' },
+    ],
+  },
+  {
+    id: 'human-cheerleader-effect',
+    discipline: 'human-science',
+    title: 'チアリーダー効果（集団魅力効果）',
+    statement:
+      'チアリーダー効果（集団魅力効果）とは、同一人物が単独で見られるときよりも集団の中で見られるときの方が、物理的により魅力的だと知覚される認知バイアスである。ドリュー・ウォーカーとエドワード・ヴルが2014年に学術誌Psychological Scienceで5つの実験により実証し、対象の顔は単独提示時より集団提示時に約1.5〜2.0%魅力的と評価された。' +
+      'その機構は階層的（アンサンブル）符号化で説明される。すなわち（1）視覚系は集団の顔から自動的に平均的な「アンサンブル表象」を計算し、（2）個々の顔の記憶はその集団平均へ引き寄せられ、（3）平均顔は魅力的である（平均性は魅力的）ため、各人が集団内でより魅力的に見える。効果は男女いずれの顔でも3〜16人規模の集団で確認された。なおこの名称はテレビドラマ『How I Met Your Mother』の台詞に由来する。',
+    keyFigures: 'ドリュー・ウォーカー／エドワード・ヴル（Walker & Vul, 2014）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0956797613497969', type: 'academic', label: 'Walker & Vul, "Hierarchical Encoding Makes Individuals in a Group Seem More Attractive," Psychological Science (2014)' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/24163333/', type: 'reference', label: 'PubMed (NLM) — abstract index for Walker & Vul 2014' },
+      { url: 'https://en.wikipedia.org/wiki/Cheerleader_effect', type: 'reference', label: 'Wikipedia: Cheerleader effect (mechanism, findings, HIMYM naming origin)' },
+    ],
+  },
+  {
+    id: 'bizlaw-provider-liability',
+    discipline: 'business-law',
+    title: 'プロバイダ責任制限法',
+    statement:
+      '正式名称は「特定電気通信役務提供者の損害賠償責任の制限及び発信者情報の開示に関する法律」（平成13年法律第137号、2001年制定・2002年施行、総務省所管）。インターネット上の名誉毀損・プライバシー侵害・著作権侵害等の権利侵害情報について、プロバイダやサーバ・サイト管理者等の特定電気通信役務提供者の損害賠償責任を制限し、侵害を知り又は知り得たと認めるに足る相当の理由がある場合等でなければ削除しなくても免責される。' +
+      'あわせて、権利を侵害された被害者が匿名の投稿者を特定するため発信者情報（IPアドレス・氏名等）の開示を請求できる発信者情報開示請求の制度を定める。2021年（令和3年）改正で迅速化のための非訟手続「発信者情報開示命令」を創設（2022年10月施行）し、2024年改正で大規模プラットフォーム事業者の対応義務を強化のうえ法律名を「情報流通プラットフォーム対処法（情プラ法）」へ改称した。',
+    keyFigures: 'プロバイダ責任制限法（平成13年法律第137号、2001年制定／2024年「情報流通プラットフォーム対処法」へ改称）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/ihoyugai.html', type: 'government', label: '総務省「インターネット上の違法・有害情報に対する対応（情報流通プラットフォーム対処法）」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000091166', type: 'government', label: '国立国会図書館 日本法令索引「特定電気通信による情報の流通によって発生する権利侵害等への対処に関する法律（平成13年法律第137号）」' },
+      { url: 'https://www.businesslawyers.jp/articles/975', type: 'reference', label: 'BUSINESS LAWYERS「改正プロバイダ責任制限法とは？」（2021年改正・発信者情報開示命令）' },
+    ],
+  },
+  {
+    id: 'infosoc-mass-self-communication',
+    discipline: 'information-sociology',
+    title: 'マス・セルフ・コミュニケーション',
+    statement:
+      'マニュエル・カステルが2007年論文および2009年『コミュニケーション・パワー』で提示した、インターネットやWeb2.0（ブログ・YouTube・SNS等）上に現れた新しいコミュニケーション形態。マス・コミュニケーションと対人コミュニケーションの特徴を併せ持ち、ピアツーピアのネットワークを通じて潜在的に地球規模の受け手に届く点で「マス」である一方、メッセージが自己生成され（生産）、想定する受け手が自己指向的に定められ（発信）、メッセージの取得が自己選択的である（受信）点で「セルフ」とされる。' +
+      'すなわち、生産・発信・受信が企業や国家のマスメディアではなく個人によって大きく制御される、双方向で水平的なコミュニケーション・ネットワークを基盤とする。政府や企業が統制しにくいこの形態は、カステルのコミュニケーション権力論の中核をなし、対抗権力（counter-power）やネットワーク化された社会運動・非制度的政治の分析と結び付けられている。',
+    keyFigures: 'マニュエル・カステル（Manuel Castells, 2007/2009）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ijoc.org/index.php/ijoc/article/view/46', type: 'academic', label: 'Castells, M. (2007) "Communication, Power and Counter-power in the Network Society", International Journal of Communication 1, 238-266' },
+      { url: 'https://www.semanticscholar.org/paper/Communication-Power:-Mass-Communication,-Mass-and-Castells/e030433a720c7894fd072f7e2718a6d9fc7f11fb', type: 'reference', label: 'Semantic Scholar: Castells, Communication Power (2009)' },
+      { url: 'https://wiki.p2pfoundation.net/Mass_Self_Communication', type: 'reference', label: 'P2P Foundation Wiki: Mass Self-Communication（自己生成/自己指向/自己選択の定義）' },
+    ],
+  },
 ];
 // Stryker restore all
