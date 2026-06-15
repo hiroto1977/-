@@ -9687,5 +9687,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/chapter/10.1007/978-981-99-0321-4_12', type: 'academic', label: 'H. Kümmerle, “More Than a Certification Scheme: Information Banks in Japan...” (Springer, 2023)' },
     ],
   },
+  {
+    id: 'econ-stag-hunt',
+    discipline: 'economics',
+    title: '鹿狩りゲーム（スタグハント）',
+    statement:
+      '社会的協力と信頼のジレンマを表すゲーム理論のモデル。2人の狩人が協力すれば大きな獲物の鹿（stag）を仕留められるが、それには双方の協力が必要で、一方でも離脱すると鹿は獲れない。各人は単独でもウサギ（hare）を確実に得られるため、鹿を狙う（協力）か、確実なウサギを狙う（安全策）かを選ぶ。' +
+      '利得構造上、双方の相互協力（鹿）が最も高い利得でパレート最適だが、相手の協力を確信できないと安全なウサギに流れる誘因がある。重要なのは純粋戦略ナッシュ均衡が2つ存在する点で、(1)双方が鹿を狙う「利得優位（payoff-dominant）」均衡、(2)双方がウサギを狙う「リスク優位（risk-dominant）」均衡である。囚人のジレンマと異なり相互協力それ自体がナッシュ均衡であり、問題は協力か裏切りかではなく信頼と期待によって良い均衡へ協調できるか（均衡選択・協調の失敗）にある。ルソー『人間不平等起源論』の寓話に由来し、社会契約・信頼・制度形成・安全保障のジレンマの説明に用いられる。',
+    keyFigures:
+      'ジャン＝ジャック・ルソー（寓話の由来）／ブライアン・スカームズ（Brian Skyrms, 2004）／ジョン・ハーサニ（利得優位・リスク優位）／囚人のジレンマと区別（相互協力が均衡）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy: Prisoner’s Dilemma（囚人のジレンマとの差異：相互協力がナッシュ均衡）' },
+      { url: 'https://sites.socsci.uci.edu/~bskyrms/bio/papers/StagHunt.pdf', type: 'academic', label: 'Brian Skyrms “The Stag Hunt”（UC Irvine 掲載、2004年著作の基礎論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Stag_hunt', type: 'reference', label: 'Wikipedia: Stag hunt（ルソー起源・利得優位／リスク優位の2均衡）' },
+    ],
+  },
+  {
+    id: 'mgmt-lawrence-lorsch',
+    discipline: 'management',
+    title: '分化と統合（ローレンス＆ローシュ）',
+    statement:
+      '組織が環境の不確実性に適応するには、各部門を直面する下位環境に合わせて専門分化させつつ、それらを全体目標へ統合する必要があるとする組織論。ポール・ローレンスとジェイ・ローシュが1967年の『Organization and Environment（組織の条件適応理論）』で提示した。' +
+      '「分化」とは各部門（研究開発・製造・販売など）の目標志向・時間志向・対人志向・構造の公式性が異なってくること、「統合」とは分化した諸部門を調整・連携させることをいう。プラスチック・食品・容器の3業種を比較し、環境が不確実なほど高い分化が必要で分化が進むほど統合は難しくなるが、高業績企業は環境に見合った高い分化と高い統合の両方を達成していたと示し、「唯一最善の組織はない」という命題を実証的に支えた。バーンズ＆ストーカーやウッドワードと並ぶコンティンジェンシー理論の代表的研究である。',
+    keyFigures:
+      'ポール・R・ローレンス（Paul R. Lawrence）／ジェイ・W・ローシュ（Jay W. Lorsch, 1967）／分化（目標/時間/対人志向・構造）と統合の同時達成／唯一最善はない',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Organization-and-Environment:-Managing-and-Lawrence-Lorsch/f69b8a57dbcd6943e04fe8067f79161751251b93', type: 'academic', label: 'Semantic Scholar — Lawrence & Lorsch, Organization and Environment: Managing Differentiation and Integration (Harvard, 1967)' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2132182', type: 'academic', label: 'Lawrence & Lorsch (1967) “Differentiation and Integration in Complex Organizations”, Administrative Science Quarterly 12, 1-30（書誌）' },
+      { url: 'https://umbrex.com/resources/frameworks/organization-frameworks/lawrence-lorsch-differentiation-integration-model/', type: 'reference', label: 'Umbrex — Lawrence & Lorsch Differentiation–Integration Model（4次元・統合手段）' },
+    ],
+  },
+  {
+    id: 'mgmt-transaction-cost-economics',
+    discipline: 'management',
+    title: '取引コスト理論（取引費用経済学）',
+    statement:
+      '取引コスト理論（取引費用経済学、TCE）は、経済取引を市場で行うか企業組織の内部で行うか（make-or-buy＝内製か外注か、すなわち「企業の境界」）を、取引相手の探索・交渉・契約・監視・履行強制などに要する「取引コスト」の節約という観点から説明する理論である。' +
+      'ロナルド・コースが1937年論文「企業の本質（The Nature of the Firm）」で、価格メカニズム（市場）の利用自体にコストがかかるからこそ権限による調整を行う企業が存在するという問いを立てた。オリバー・E・ウィリアムソン（2009年ノーベル経済学賞）はこれを体系化し、行動仮定として限定合理性と機会主義（自己利益の狡猾な追求）を、取引の属性として資産特殊性・不確実性・頻度を置いた。資産特殊性が高くホールドアップ問題が生じやすい取引ほど市場での契約コストが増すため、企業内統合（ヒエラルキー）が効率的になり、その中間にハイブリッド（長期契約・系列・提携）が位置づく。新制度派経済学の中核理論である。',
+    keyFigures:
+      'ロナルド・コース（Ronald Coase, 1937「企業の本質」）／オリバー・E・ウィリアムソン（Oliver E. Williamson, 2009年ノーベル賞）／限定合理性・機会主義・資産特殊性／企業の境界（make-or-buy）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/williamson/facts/', type: 'reference', label: 'NobelPrize.org — Oliver E. Williamson, 2009年経済学賞「企業の境界の分析」（オストロムと共同受賞）' },
+      { url: 'https://www.sioe.org/field/transaction-cost-economics', type: 'academic', label: 'SIOE（制度・組織経済学会）— Transaction Cost Economics（コースとウィリアムソンの体系化）' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-institutional-economics/article/commemorating-oliver-williamson-a-founding-father-of-transaction-cost-economics/29B6BA2DF80A59ADE12A30108786F3E2', type: 'academic', label: 'Journal of Institutional Economics (Cambridge) — ウィリアムソン追悼論文（査読誌）' },
+    ],
+  },
+  {
+    id: 'human-focusing-illusion',
+    discipline: 'human-science',
+    title: 'フォーカシング・イリュージョン（焦点化の錯覚）',
+    statement:
+      'フォーカシング・イリュージョン（focusing illusion／focalism、焦点化の錯覚）とは、ある事柄を判断・予測する際、その時点で注意を向けている特定の要因の重要性を過大評価し、他の多くの要因を軽視してしまう認知バイアスである。ダニエル・カーネマンの定式化「人生において、あなたが今それについて考えている間ほど、それが重要であるものは何もない」で知られる。' +
+      '古典例として、カーネマンとシュカーデは1998年の論文（Psychological Science）で、中西部とカリフォルニアの住民の生活満足度はほぼ同じなのに、人々は気候の良いカリフォルニアに住めばもっと幸せだと過大予測することを示した。所得と幸福（2006年Science論文）や健康状態の予測などにも現れ、感情予測（affective forecasting）の誤り＝インパクト・バイアスの一因とされ、マーケティングや意思決定の歪みの説明に用いられる。',
+    keyFigures:
+      'ダニエル・カーネマン（Daniel Kahneman）／デイヴィッド・シュカーデ（David Schkade, 1998）／ティモシー・ウィルソン＆ダニエル・ギルバート（focalism）／インパクト・バイアスと関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/biases/9_Psychological_Science_340_(Schkade).pdf', type: 'academic', label: 'Schkade & Kahneman (1998) “Does Living in California Make People Happy? A Focusing Illusion...”, Psychological Science 9, 340–346（MITホスト）' },
+      { url: 'https://www.science.org/doi/abs/10.1126/science.1129688', type: 'academic', label: 'Kahneman et al. (2006) “Would You Be Happier If You Were Richer? A Focusing Illusion”, Science 312(5782):1908–1910' },
+      { url: 'https://en.wikipedia.org/wiki/Focusing_illusion', type: 'reference', label: 'Wikipedia: Focusing illusion（focalism／焦点化の錯覚）' },
+    ],
+  },
+  {
+    id: 'bizlaw-culpa-in-contrahendo',
+    discipline: 'business-law',
+    title: '契約締結上の過失',
+    statement:
+      '契約締結上の過失（culpa in contrahendo）とは、契約の締結に向けた交渉段階において、当事者の一方が信義則上の注意義務に違反して相手方に損害を与えた場合に損害賠償責任を認める法理である。ドイツの法学者イェーリングが1861年の論文で提唱したもので、契約が無効・不成立に終わった場面の責任を捉えた。' +
+      '日本では明文規定がなく、信義則（民法1条2項）を根拠に判例・学説上認められてきた解釈法理である。典型的な類型は、(1)契約交渉の不当破棄（成立確実と信頼させ準備させた後に正当な理由なく一方的に打ち切る）、(2)説明義務・情報提供義務違反、(3)原始的不能の契約である。賠償範囲は原則として、契約の有効成立を信じたために被った損害（交渉・準備費用などの「信頼利益」）にとどまり、履行されていれば得られた「履行利益」には及ばないのが原則とされる。なお2017年改正民法は原始的不能でも契約を当然無効とせず債務不履行（415条・412条の2）として処理する。',
+    keyFigures:
+      'イェーリング（Rudolf von Jhering, 1861提唱）／日本では信義則（民法1条2項）が根拠の解釈法理／3類型＝交渉の不当破棄・説明義務違反・原始的不能／賠償は原則「信頼利益」に限定（履行利益に及ばず）／2017改正で原始的不能は債務不履行（412条の2）構成',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://max-eup2012.mpipriv.de/index.php/Culpa_in_Contrahendo', type: 'academic', label: 'Max Planck Encyclopedia of European Private Law — Culpa in Contrahendo（イェーリング1861年起源・信頼利益）' },
+      { url: 'https://ja.wikipedia.org/wiki/契約締結上の過失', type: 'reference', label: '契約締結上の過失 — Wikipedia（信義則根拠・類型・信頼利益/履行利益）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第412条の2', type: 'reference', label: 'Wikibooks 民法第412条の2（2017年改正・原始的不能と債務不履行構成）' },
+    ],
+  },
+  {
+    id: 'infosoc-cyber-cascade',
+    discipline: 'information-sociology',
+    title: 'サイバーカスケード',
+    statement:
+      'サイバーカスケードとは、インターネット上で同じ意見や関心を持つ人々が強く結びつき、閉鎖的な環境で似た意見ばかりに接触・議論するうちに、集団の意見が一方向へ増幅・先鋭化して極端な方向へ流れていく現象を指す。米国の法学者キャス・サンスティーンが『Republic.com』(2001年)や『#Republic』(2017年)で論じた概念で、「カスケード（滝のように連鎖して流れ落ちること）」と集団極性化（group polarization＝討議後に人々が元々傾いていた方向のより極端な点へ動く現象）の議論に基づく。' +
+      'インターネットの選択的接触やパーソナライズにより、人々は自分向けに編集された情報環境「デイリー・ミー（Daily Me）」に閉じこもり、異なる意見との偶然の出会いを失う。その結果、同種意見の反復による集団極性化、エコーチェンバー、社会の分極化が生じる。サンスティーンは、共有経験と予期せぬ意見への接触を要する民主主義の熟議基盤が損なわれると警告した。フィルターバブルやエコーチェンバーと密接に関連する先行概念である。',
+    keyFigures:
+      'キャス・サンスティーン（Cass Sunstein, 2001『Republic.com』/2017『#Republic』）／ニコラス・ネグロポンテ（“Daily Me”）／集団極性化・選択的接触',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://press.princeton.edu/books/hardcover/9780691175515/republic', type: 'reference', label: 'Princeton University Press — Cass R. Sunstein, #Republic: Divided Democracy in the Age of Social Media' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r01/html/nd114210.html', type: 'government', label: '総務省「令和元年版 情報通信白書」（サイバーカスケード・集団極性化）' },
+      { url: 'https://www.woldww.net/classes/Information_Ethics/Sunstein_on_Group_Polarization_and_Cyber-Cascades.pdf', type: 'academic', label: 'Cass Sunstein, “On Group Polarization and Cyber-Cascades”（Republic.com 抜粋テキスト）' },
+    ],
+  },
 ];
 // Stryker restore all

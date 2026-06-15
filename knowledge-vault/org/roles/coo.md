@@ -18,50 +18,50 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全108件）
+### 学術概念 / ビジネス法務（全109件）
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-administrative-appeal|行政不服審査（審査請求）]]
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]]
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
-- …ほか 102 件 → [[学術概念]]
+- …ほか 103 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全172件）
+### 学術概念 / 経済学（全173件）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]]
 - [[econ-arbitrage-pricing-theory|裁定価格理論（APT）]]
-- …ほか 166 件 → [[学術概念]]
+- …ほか 167 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全121件）
+### 学術概念 / 人間科学（全122件）
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-actor-observer-bias|行為者-観察者バイアス]]
 - [[human-anchoring|アンカリング効果（係留と調整）]]
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]]
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]
 - [[human-attribution-theory|帰属理論]]
-- …ほか 115 件 → [[学術概念]]
+- …ほか 116 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全99件）
+### 学術概念 / 情報社会学（全100件）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]]
 - [[infosoc-attention-economy|アテンション・エコノミー（注意経済）]]
 - [[infosoc-collective-intelligence|集合知（collective intelligence）]]
 - [[infosoc-collective-memory|集合的記憶]]
-- …ほか 93 件 → [[学術概念]]
+- …ほか 94 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全105件）
+### 学術概念 / 経営学（全107件）
 - [[mgmt-absorptive-capacity|吸収能力]]
 - [[mgmt-adhocracy|アドホクラシー]]
 - [[mgmt-ambidexterity|両利きの経営（organizational ambidexterity, 知の探索と深化）]]
 - [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]]
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]]
 - [[mgmt-authentic-leadership|オーセンティック・リーダーシップ]]
-- …ほか 99 件 → [[学術概念]]
+- …ほか 101 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
