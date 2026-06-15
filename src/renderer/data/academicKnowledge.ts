@@ -10167,5 +10167,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Fear_of_missing_out', type: 'reference', label: 'Wikipedia “Fear of missing out”（語源・McGinnis 2004・FOBO/JOMO・Oxford 2013）' },
     ],
   },
+  {
+    id: 'econ-bundling',
+    discipline: 'economics',
+    title: 'バンドリング（束ね売り）',
+    statement:
+      'バンドリングは、複数の異なる財・サービスを一つの束（パッケージ）にまとめ単一価格で販売する戦略で、束のみ販売する純粋バンドリング（pure bundling）と、束と個別販売を併存させ束を割安にする混合バンドリング（mixed bundling）に分かれる。例にMicrosoft Office、ケーブルTVのチャンネルパック、ファストフードのセットがある。' +
+      '経済学的核心は価格差別の一種で、消費者ごとの各財への支払意思額が異なり財間で負の相関を持つとき、束ねると評価のばらつき（分散）が縮小し、企業は単一価格でより多くの消費者余剰を取り込み利潤を高められる。Adams & Yellen（1976）が独占下で定式化した。限界費用が極小の情報財では、多数の財を束ねると大数の法則で束の平均評価が予測可能になり大規模バンドルが特に有効（Bakos & Brynjolfsson 1999）。市場支配力のある財に別の財を強制的に抱き合わせるティング（tying）は反トラスト法上問題となりうる（Microsoft事件）。',
+    keyFigures:
+      'William Adams & Janet Yellen（1976, QJE）／Yannis Bakos & Erik Brynjolfsson（1999・情報財の大規模バンドル）／純粋/混合バンドリング・tyingと区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/90/3/475/1852397', type: 'academic', label: 'Adams & Yellen, “Commodity Bundling and the Burden of Monopoly,” Quarterly Journal of Economics 90(3):475–498 (1976) — Oxford Academic' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.45.12.1613', type: 'academic', label: 'Bakos & Brynjolfsson, “Bundling Information Goods...,” Management Science 45(12):1613–1630 (1999) — INFORMS' },
+      { url: 'https://en.wikipedia.org/wiki/Tying_(commerce)', type: 'reference', label: 'Tying (commerce) — バンドリングと抱き合わせ（tying）・反トラスト法の区別' },
+    ],
+  },
+  {
+    id: 'mgmt-career-anchor',
+    discipline: 'management',
+    title: 'キャリア・アンカー（シャイン）',
+    statement:
+      '個人がキャリア（職業人生）を選択・形成する際に、絶対に手放したくない自己イメージの中核——自己認識された才能・能力、基本的価値観、動機・欲求の組み合わせ。' +
+      '「錨（アンカー）」のようにキャリア上の意思決定を方向づけ安定させる拠り所となり、初期の職業経験を通じて自己発見され、ふつう一人につき支配的なものが1つに定まる。組織心理学者エドガー・シャイン（MIT）が、MITスローン校卒業生を対象とする長期パネル研究（1961年開始、1973-74年追跡）から1970〜80年代に提唱した（Career Dynamics, 1978）。当初の5類型から研究を経て8つに整理：(1)専門・職能別コンピタンス、(2)経営管理コンピタンス、(3)自律・独立、(4)保障・安定、(5)起業家的創造性、(6)奉仕・社会貢献、(7)純粋な挑戦、(8)生活様式。自己診断質問票も開発され、キャリアカウンセリング・人材開発・配置に用いられる。',
+    keyFigures:
+      'エドガー・H・シャイン（Edgar H. Schein, MIT Sloan, Career Dynamics 1978）／8つのアンカー／支配的アンカーは通常1つ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mdpi.com/2673-8392/6/2/44', type: 'reference', label: 'Career Anchors — Encyclopedia (MDPI, peer-reviewed reference entry)' },
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/5-enduring-management-ideas-mit-sloans-edgar-schein', type: 'academic', label: '5 enduring management ideas from MIT Sloan’s Edgar Schein (MIT Sloan School of Management)' },
+      { url: 'https://en.wikipedia.org/wiki/Edgar_Schein', type: 'reference', label: 'Edgar Schein — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-fresh-start-effect',
+    discipline: 'human-science',
+    title: 'フレッシュスタート効果',
+    statement:
+      '時間的な節目・区切り（新年・月初・週初め・新学期・誕生日・祝日・休暇明けなど「時間的ランドマーク temporal landmark」）の直後に、人々が目標達成への意欲を新たにし、ダイエット・運動・貯蓄・禁煙といった自己改善的行動を開始・追求しやすくなる現象。' +
+      'Dai・Milkman・Riis（2014, Management Science）が3つのアーカイブ研究（Googleの"diet"検索、ジム利用、目標コミットメント契約）で実証・命名した。区切りが新たな心理的会計期間を区切り、過去の不完全だった自分を前の期間へ切り離して「新しい章の始まり」と感じさせ、大局的視点と自己効力感を高めることで生じると説明される。ナッジ（健康行動・貯蓄・ワクチン接種促進）の設計に応用される一方、節目が過去の努力をリセットしたり、節目を待つ心理が進行中の目標の意欲を削ぐ逆効果も議論される。',
+    keyFigures:
+      'ヘンチェン・ダイ（Hengchen Dai）／キャサリン・ミルクマン（Katherine L. Milkman）／ジェイソン・リース（Jason Riis）（2014, Management Science）／時間的ランドマーク',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2014.1901', type: 'academic', label: 'Dai, Milkman & Riis (2014) “The Fresh Start Effect...”, Management Science 60(10): 2563-2582 (INFORMS)' },
+      { url: 'https://faculty.wharton.upenn.edu/wp-content/uploads/2014/06/Dai_Fresh_Start_2014_Mgmt_Sci.pdf', type: 'academic', label: 'University of Pennsylvania (Wharton) hosted full-text PDF of Dai, Milkman & Riis (2014)' },
+      { url: 'https://www.nature.com/articles/s41586-021-03843-2', type: 'academic', label: 'Dai et al. (2021) “Behavioural nudges increase COVID-19 vaccinations”, Nature — fresh-start型リマインダー応用' },
+    ],
+  },
+  {
+    id: 'human-gain-loss-effect',
+    discipline: 'human-science',
+    title: 'ゲイン・ロス効果（アロンソン）',
+    statement:
+      '他者からの評価が一貫して好意的であるより、最初は否定的だったのが次第に好意的へ変化した（ゲイン）相手をより強く好きになり、逆に最初は好意的だったのが否定的へ変化した（ロス）相手を、一貫して否定的な相手より強く嫌うようになる、という対人魅力の現象。' +
+      '評価の絶対水準より「変化の方向（増加か減少か）」が好悪を左右する。Aronson と Linder（1965）は、被験者が自分への評価を繰り返し漏れ聞く実験で、好意の強さが「否定→肯定（ゲイン）＞一貫して肯定＞一貫して否定＞肯定→否定（ロス）」の順になることを示した。否定評価が生む不安をその後の肯定評価が和らげる報酬効果、変化が相手の誠実さ・真意を感じさせる帰属、自尊心や対比・強化効果などで説明される。フィードバックや人間関係に応用されるが、再現性・条件依存性の議論もある。',
+    keyFigures:
+      'エリオット・アロンソン（Elliot Aronson）／ダーウィン・リンダー（Darwyn E. Linder, 1965, JESP）／変化の方向が好悪を左右',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/gain-loss-theory', type: 'reference', label: 'APA Dictionary of Psychology — gain–loss theory（米国心理学会）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0022103165900430', type: 'academic', label: 'Aronson & Linder (1965) “Gain and loss of esteem as determinants of interpersonal attractiveness”, J. Exp. Soc. Psychol. 1, 156-171（一次資料）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095840471', type: 'reference', label: 'Oxford Reference — Gain-loss effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-prize-advertisement',
+    discipline: 'business-law',
+    title: '懸賞広告（民法529条）',
+    statement:
+      'ある行為をした者に一定の報酬を与える旨を広告した者（懸賞広告者）は、その行為をした者がその広告を知っていたかどうかにかかわらず、その者に対して報酬を与える義務を負う（民法529条）。例：「迷い犬を見つけた人に謝礼5万円」「指定の標語を作った人に賞金」。指定行為を完了すれば、広告の存在を知らずに行為した者でも報酬請求権を取得する点が特徴で、2017年改正（2020年4月施行）で「知っていたかどうかにかかわらず」が明文化された。' +
+      '撤回については、行為をする期間を定めた懸賞広告は原則撤回できず（529条の2、撤回権を留保した場合を除く）、期間を定めない懸賞広告は完了者が出る前なら同一方法等で撤回できる（529条の3・530条）。報酬請求権は複数人が行為したとき最初にした者のみが取得し、同時なら等分（性質上分割不能等の場合は抽選）する（531条）。応募の中から優等者にのみ報酬を与える優等懸賞広告（532条）は応募期間の定めを要し、判定は広告で定めた者（定めなければ広告者）が行い、応募者は判定に異議を述べられない。法的性質には契約説（申込みと承諾）と単独行為説の対立がある。',
+    keyFigures:
+      '529条＝指定行為完了者への報酬義務（広告を知らない者も対象、2017改正で明文化）／529条の2＝期間を定めた広告は原則撤回不可／529条の3・530条＝期間を定めない広告は完了者前なら撤回可／531条＝最初の者のみ報酬請求権・同時は等分/抽選／532条＝優等懸賞広告（応募期間必須・判定に異議不可）／契約説と単独行為説／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第529条〜第532条' },
+      { url: 'https://ja.wikipedia.org/wiki/懸賞広告', type: 'reference', label: 'ウィキペディア「懸賞広告」（法的性質・契約説／単独行為説）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第529条', type: 'reference', label: 'ウィキブックス 民法第529条・第531条（条文・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-detox',
+    discipline: 'information-sociology',
+    title: 'デジタルデトックス',
+    statement:
+      'デジタルデトックス（digital detox）とは、スマートフォン・SNS・PC・インターネット等のデジタル機器の使用を一定期間、意図的に控える・断つことで、心身の健康やウェルビーイング、現実世界の人間関係・集中力を回復しようとする実践を指す。「解毒（デトックス）」の比喩で語られ、常時接続（always-on）・情報過多・SNS由来のストレス（テクノストレス、FOMO、注意散漫、睡眠障害）への対処として広まった。オックスフォードはこの語を2013年8月にオンライン辞書へ収録した（同年の語の候補の一つだが選出語ではない）。' +
+      'ただし学術的には効果は一様でない。系統的レビュー（Radtke ら 2022 ほか）は、幸福感・人間関係・自制・睡眠などへの効果が研究間でばらつき、好結果・無効果・悪化が混在すると報告する。完全遮断（digital fasting）より使用を意識的に制限・調整する方が現実的とする議論や、依存症の臨床用語として過度に医学化することへの慎重論もある。テクノストレス・FOMO・情報過多・スマホ依存・注意経済とは関連するが、それらが「問題・力学」を指すのに対し本概念は「自発的に接続を絶つ実践」である点で区別される。',
+    keyFigures:
+      '常時接続・情報過多・SNSストレスへの対処としての自発的遮断／Oxford Dictionaries Online が2013年8月に収録（選出語はselfie）／効果は実証研究で混在（Radtkeら2022系統的レビュー）／関連＝JOMO（Anil Dash 2012）・digital fasting・注意経済への抵抗',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordlearnersdictionaries.com/definition/english/digital-detox', type: 'reference', label: 'Oxford Advanced Learner’s Dictionary — “digital detox” 定義' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/20501579211028647', type: 'academic', label: 'Radtke et al. (2022) “Digital detox: ... A systematic literature review”, Mobile Media & Communication 10(2):190-215' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/39280291/', type: 'academic', label: 'Impacts of digital social media detox for mental health: A systematic review and meta-analysis (2024, PubMed)' },
+    ],
+  },
 ];
 // Stryker restore all
