@@ -10359,5 +10359,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/14614448211027174', type: 'academic', label: 'Lischka & Garz (2023) “Clickbait news and algorithmic curation”, New Media & Society 25(8)（査読論文）' },
     ],
   },
+  {
+    id: 'econ-credence-experience-goods',
+    discipline: 'economics',
+    title: '探索財・経験財・信用財',
+    statement:
+      '財・サービスを、消費者が品質をいつ・どの程度評価できるか（品質情報の入手しやすさ＝情報の非対称性の程度）で3つに分類する、情報の経済学・マーケティングの枠組み。' +
+      '(1)探索財（search goods）は購入前の調査・検分で品質を評価できる財（服のサイズや色、家電のスペック、価格など）。(2)経験財（experience goods）は実際に購入・使用して初めて品質がわかる財（レストランの味、映画、ワイン、美容院など）。(3)信用財（credence goods）は購入・使用後でさえ品質の良否や必要性を消費者が判断しにくい財（医療・診断、専門的修理、法律・コンサル、サプリの効果、オーガニック表示など）。探索財と経験財はP.ネルソン（1970）が、信用財はM.ダービーとE.カーニ（1973）が提唱した。経験財・信用財ほど情報の非対称性が大きく、ブランド・評判・広告・保証・資格・口コミ・第三者認証が品質シグナルとして機能する。とくに信用財では、売り手が買い手の無知につけ込む過剰サービスや水増し請求といったモラルハザードが生じやすく、規制・免許・認証が論じられる。',
+    keyFigures:
+      'フィリップ・ネルソン（Phillip Nelson, 1970・探索財/経験財）／マイケル・ダービー＆エディ・カーニ（Darby & Karni, 1973・信用財）／品質シグナル・モラルハザード',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/466756', type: 'academic', label: 'Darby & Karni (1973) “Free Competition and the Optimal Amount of Fraud”, Journal of Law and Economics 16(1):67-88（信用財の原典）' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v78y1970i2p311-29.html', type: 'academic', label: 'Nelson (1970) “Information and Consumer Behavior”, Journal of Political Economy 78(2):311-329（探索財・経験財の原典書誌）' },
+      { url: 'https://academic.oup.com/cesifo/article/63/1/1/2992734', type: 'academic', label: 'Dulleck & Kerschbamer ら “Economics of Credence Goods – a Survey”, CESifo Economic Studies 63(1)（査読サーベイ）' },
+    ],
+  },
+  {
+    id: 'mgmt-diversity-management',
+    discipline: 'management',
+    title: 'ダイバーシティ・マネジメント',
+    statement:
+      '従業員の多様性を組織の資源・競争優位の源泉として積極的に活かし、創造性・問題解決力・業績向上につなげる経営手法。多様性は、性別・年齢・国籍・人種・障害など可視的な「表層的（デモグラフィック）多様性」と、価値観・知識・経験・スキルなど「深層的多様性」に大別される。米国の公民権運動・雇用機会均等（EEO）やアファーマティブ・アクションを背景に、単なる法令遵守・差別是正を超えて多様性を強みと捉える発想へ転換し、1990年代にR.ルーズベルト・トーマスJr.らが提唱した。' +
+      '理論的には多様性の業績への影響に2説がある。(1)情報・意思決定の視点は、多様な視点・知識が革新と問題解決を高めるとするプラス効果を、(2)社会的カテゴリー化（類似性アトラクション）の視点は、対立・コミュニケーション不全・凝集性低下を招くマイナス効果を強調する（両者を統合したのがファン・クニッペンベルクのカテゴリー化・精緻化モデルCEM）。実証では効果は文脈依存的で、成果につなげるには包摂（インクルージョン）の風土や適切なマネジメントが不可欠とされ、近年は公正を加えたDEIや心理的安全性、無意識バイアス研修と結びつく。',
+    keyFigures:
+      'R.ルーズベルト・トーマスJr.（R. Roosevelt Thomas Jr., 1990 HBR）／ダース・ファン・クニッペンベルク（Daan van Knippenberg・CEM）／表層的/深層的多様性・D&I/DEI',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/diversity-equity-and-inclusion-programs', type: 'reference', label: 'Encyclopædia Britannica — Diversity, Equity, and Inclusion Programs' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/15584838/', type: 'academic', label: 'van Knippenberg & Schippers (2007), Work group diversity, Annual Review of Psychology (PubMed)' },
+      { url: 'https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity', type: 'academic', label: 'R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review' },
+    ],
+  },
+  {
+    id: 'human-false-memory',
+    discipline: 'human-science',
+    title: '虚記憶（フォールス・メモリ）',
+    statement:
+      '虚記憶とは、実際には起こらなかった出来事を起こったと記憶したり、出来事を実際とは異なる形で想起したりする誤った記憶の現象である。記憶は録画の正確な再生ではなく、想起のたびに態度・期待・事後情報の影響を受けて再構成される（reconstructive memory）ために生じる。' +
+      'エリザベス・ロフタスらの研究が代表的で、事後の誤情報が記憶を書き換える誤情報効果（Loftus & Palmer 1974の車事故映像実験＝「激突した」と問われた群は速度を高く見積もり、ありもしない割れたガラスを「見た」と答えた）や、暗示で経験していない子供時代の出来事を植え付ける「ショッピングモールで迷子」実験（Loftus & Pickrell 1995＝約25%が偽記憶を形成）が知られる。実験室ではDRMパラダイム（関連語リストの記銘で非提示の関連語＝ルアーを誤再認）が虚記憶を頑健に生む。目撃証言の信頼性や回復記憶論争に重大な問いを投げかけ、記憶の可塑性・再構成性を示す。',
+    keyFigures:
+      'エリザベス・ロフタス（Elizabeth Loftus）／ジャクリン・ピックレル（Pickrell, 1995モール実験）／ローディガー＆マクダーモット＆ディーズ（DRMパラダイム）／誤情報効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/False_memory', type: 'reference', label: 'False memory — Wikipedia（定義・再構成的記憶・誤情報効果）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/09658211.2023.2198327', type: 'academic', label: 'Memory誌「Lost in the mall again: a preregistered replication...Loftus & Pickrell (1995)」（査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Deese%E2%80%93Roediger%E2%80%93McDermott_paradigm', type: 'reference', label: 'Deese–Roediger–McDermott paradigm — Wikipedia（DRMによる虚記憶誘発）' },
+    ],
+  },
+  {
+    id: 'human-context-dependent-memory',
+    discipline: 'human-science',
+    title: '文脈依存記憶',
+    statement:
+      '文脈依存記憶とは、情報を符号化（学習）したときの環境的・状況的文脈と、想起（思い出す）するときの文脈が一致しているほど、想起成績が向上する現象である。学習時に付随していた外的文脈（場所・におい・音・背景など）が想起の手がかり（リトリーバル・キュー）として機能するために生じ、エンデル・タルヴィングらの符号化特定性原理（想起は符号化時の手がかりと想起時の手がかりが一致するほど成功するとする原理）で説明される。' +
+      '古典的実証はゴッデン＆バデリー（1975）のダイバー実験で、スキューバダイバーに単語を陸上または水中で覚えさせ陸上または水中で再生させたところ、学習環境と再生環境が一致した条件のほうが不一致条件より再生成績が良かった。内的・生理的状態の一致による状態依存記憶や、感情状態による気分一致効果とは区別される、外的・環境的文脈の一致による想起促進効果である。なお再認課題では効果が出にくいなどの限界も知られる（Godden & Baddeley 1980）。',
+    keyFigures:
+      'エンデル・タルヴィング（Endel Tulving・符号化特定性原理）／ダンカン・ゴッデン＆アラン・バデリー（1975ダイバー実験）／状態依存・気分一致と区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://royalsocietypublishing.org/doi/10.1098/rsos.200724', type: 'academic', label: 'Royal Society Open Science（2021）：Godden & Baddeley (1975) ダイバー実験の再現研究（査読論文）' },
+      { url: 'https://www.sciencedirect.com/topics/neuroscience/context-dependent-memory', type: 'reference', label: 'ScienceDirect Topics：Context-Dependent Memory 概説' },
+      { url: 'https://en.wikipedia.org/wiki/Context-dependent_memory', type: 'reference', label: 'Wikipedia：Context-dependent memory（状態依存・気分一致との区別・再認での限界）' },
+    ],
+  },
+  {
+    id: 'bizlaw-change-of-circumstances',
+    discipline: 'business-law',
+    title: '事情変更の原則',
+    statement:
+      '事情変更の原則（事情変更の法理）とは、契約締結後に当事者が予見できなかった著しい事情の変更（経済情勢の激変・天災・法令変更など）が生じ、当初の契約内容をそのまま維持・強制することが信義則上著しく不当・不公平となる場合に、当事者が契約の改訂（再交渉・条件変更）や解除を求めうるとする法理である。「契約は守られなければならない（pacta sunt servanda）」の例外であり、信義誠実の原則（民法1条2項）を根拠とする。' +
+      '民法に明文の規定はなく、2017年（平成29年）改正でも明文化は見送られ、判例・学説上の解釈法理として認められてきた。一般に認められる要件は、(1)契約成立後の事情変更、(2)契約当時に当事者が予見不可能、(3)当事者の帰責事由によらない、(4)当初契約の拘束が信義則上著しく不当・衡平を損なうこと、である。最高裁は法理の存在は一般論として認めるが適用に極めて慎重で、実際に適用を肯定した最高裁判例はほとんどない（適用否定例＝最判平成9年7月1日）。ローマ法・中世のclausula rebus sic stantibusやドイツの行為基礎論に由来し、借地借家法32条の賃料増減額請求はこの法理の制度化の一例である。',
+    keyFigures:
+      '根拠＝信義則（民法1条2項）／明文規定なし・2017改正でも明文化見送り／4要件＝事情変更・予見不可能・無帰責・拘束が信義則上著しく不当／pacta sunt servandaの例外／最高裁は適用に極めて慎重（適用否定例＝最判平成9年7月1日）／clausula rebus sic stantibus・ドイツ行為基礎論／借地借家法32条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=54796', type: 'government', label: '裁判所 判例検索システム（最高裁判例データベース）' },
+      { url: 'https://www.moj.go.jp/content/000115628.pdf', type: 'government', label: '法務省 民法（債権関係）部会資料65（事情変更の法理の検討）' },
+      { url: 'https://meiji.repo.nii.ac.jp/record/11387/files/houkadaigakuinronshu_6_113.pdf', type: 'academic', label: '明治大学法科大学院論集「近時の『事情変更の原則』論の変容」' },
+    ],
+  },
+  {
+    id: 'infosoc-online-disinhibition',
+    discipline: 'information-sociology',
+    title: 'オンライン脱抑制効果',
+    statement:
+      'オンライン脱抑制効果（online disinhibition effect）とは、インターネット上のコミュニケーションでは対面のときよりも人々が自己抑制を緩め、現実では言わない・しないようなことを言ったり行ったりするようになる現象である。心理学者ジョン・スーラー（John Suler, Rider大学）が2004年の論文「The Online Disinhibition Effect」（CyberPsychology & Behavior誌）で体系化した。' +
+      '方向は二つある。良性の脱抑制（benign）は内気な人の自己開示や親切・支援・感情共有を促す肯定的側面で、有害な脱抑制（toxic）は攻撃的・侮辱的発言、誹謗中傷、ネットいじめ（フレーミング）、荒らし（トローリング）、犯罪的行為などの否定的側面である。スーラーは脱抑制を生む六つの要因として、解離性匿名性（身元を隠せる）・不可視性（姿が見えない）・非同期性（即時の反応に直面しない）・唯我論的取り込み（相手を頭の中の声として想像）・解離性想像（現実と切り離された架空世界と感じる）・権威の最小化（地位の手がかりが乏しく対等に感じる）を挙げ、ネットいじめや炎上の理解に用いられる。',
+    keyFigures:
+      'ジョン・スーラー（John Suler, Rider大学, 2004, CyberPsychology & Behavior）／良性 vs 有害の脱抑制／6要因（匿名性・不可視性・非同期性・唯我論的取り込み・解離性想像・権威の最小化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1089/1094931041291295', type: 'academic', label: 'John Suler, “The Online Disinhibition Effect,” CyberPsychology & Behavior 7(3):321-326 (2004), 査読誌' },
+      { url: 'https://johnsuler.com/article_pdfs/online_dis_effect.pdf', type: 'academic', label: '著者本人（Rider大学 John Suler教授）公開の原論文PDF' },
+      { url: 'https://en.wikipedia.org/wiki/Online_disinhibition_effect', type: 'reference', label: 'Wikipedia「Online disinhibition effect」（良性/有害の区別・6要因）' },
+    ],
+  },
 ];
 // Stryker restore all
