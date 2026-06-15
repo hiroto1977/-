@@ -13850,5 +13850,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590', type: 'reference', label: 'Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）' },
     ],
   },
+  {
+    id: 'econ-currency-board',
+    discipline: 'economics',
+    title: 'カレンシーボード制（通貨委員会制度）',
+    statement:
+      'カレンシーボード制（通貨委員会制度）は、自国通貨を米ドル等のアンカー通貨に固定相場で結びつけ、流通する自国通貨（マネタリーベース）を同額の外貨準備で完全に裏付けるよう法的に義務づける為替・通貨制度である。通貨当局は要求があれば固定レートで自国通貨を外貨に無制限に交換する責務を負う一方、裁量的な金融政策と最後の貸し手機能を事実上放棄する。' +
+      '通貨供給量は外貨準備の流入・流出に応じて自動的に増減し、金本位制に類似した自動調整機構として働く。これにより高い対外信認と反インフレ規律が得られるが、独立した金融政策はとれず最後の貸し手機能も限定される。香港（1983年〜）が代表例で、アルゼンチンの兌換制（1991〜2002年）は2001〜02年に破綻した。固定相場と自由な資本移動の下で金融政策の自律性を失う「不可能の三角形」の典型例である。',
+    keyFigures: 'カレンシーボード制（香港1983〜／アルゼンチン兌換制1991〜2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/pdp/2000/pdp01.pdf', type: 'government', label: 'IMF — Pros and Cons of Currency Board Arrangements (Policy Discussion Paper)' },
+      { url: 'https://www.hkma.gov.hk/eng/other-information/a-modern-day-currency-board-system/', type: 'government', label: 'Hong Kong Monetary Authority — A Modern Day Currency Board System' },
+      { url: 'https://en.wikipedia.org/wiki/Currency_board', type: 'reference', label: 'Wikipedia — Currency board' },
+    ],
+  },
+  {
+    id: 'econ-difference-in-differences',
+    discipline: 'economics',
+    title: '差の差分析（DID）',
+    statement:
+      '差の差分析（差分の差法、difference-in-differences, DID）は、観察データ（パネルデータ）から因果効果（処置効果）を推定する準実験的手法である。政策や処置を受けた処置群の前後（処置前と処置後）の結果の変化と、処置を受けない対照群の同期間の変化を比較し、その「差の差」をとる。' +
+      'これにより群間の時間不変の差と、両群に共通の時間トレンドや経済全体のショックを同時に除去できる。識別の鍵となるのが平行トレンド（共通トレンド）仮定であり、処置がなかったとすれば両群は平行に推移したと想定する。デイヴィッド・カードとアラン・クルーガー（1994）が、ニュージャージー州とペンシルベニア州のファストフード店を比較して最低賃金引き上げの雇用効果を分析した研究が著名で、実証経済学・政策評価の標準的手法となっている。',
+    keyFigures: '差の差分析（DID）／デイヴィッド・カード＆アラン・クルーガー（1994, 最低賃金研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mixtape.scunning.com/09-difference_in_differences', type: 'academic', label: 'Scott Cunningham, Causal Inference: The Mixtape — Ch.9 Difference-in-Differences' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%B7%AE%E5%88%86%E3%81%AE%E5%B7%AE%E5%88%86%E6%B3%95', type: 'reference', label: 'ウィキペディア日本語版「差分の差分法」' },
+    ],
+  },
+  {
+    id: 'mgmt-competing-values',
+    discipline: 'management',
+    title: '競合価値フレームワーク（CVF）',
+    statement:
+      '組織の有効性や文化を2つの対立軸で整理する枠組み。第1軸は「柔軟性と裁量」対「安定と統制」、第2軸は「内部志向と統合」対「外部志向と差別化」で、これらを交差させると4つの類型が現れる。クラン（協働・家族的でチームワークと人材育成を重視）、アドホクラシー（創造・革新と起業家精神、リスクテイク）、マーケット（競争・成果と目標達成を重視）、ヒエラルキー（統制・規則と効率を重んじる官僚的組織）である。' +
+      '価値が互いに引き合い対立する点が「競合価値」と呼ばれる所以で、最良の単一文化は存在しないとされる。ロバート・クインとジョン・ローバウが1983年に有効性指標の因子分析から提唱し（Management Science誌）、後にキム・キャメロンとロバート・クインが組織文化の診断・変革に応用し、組織文化診断手法OCAI（Organizational Culture Assessment Instrument）として広く普及させた。',
+    keyFigures: 'ロバート・クイン／ジョン・ローバウ（1983）／キム・キャメロン（OCAI）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1462659', type: 'academic', label: 'Quinn & Rohrbaugh (1983), A Spatial Model of Effectiveness Criteria, Management Science 29:363-377（原典の書誌）' },
+      { url: 'https://www.researchgate.net/publication/41891587_A_Review_of_Study_on_the_Competing_Values_Framework', type: 'academic', label: 'A Review of Study on the Competing Values Framework（2軸・4象限と因子分析的起源の学術レビュー）' },
+      { url: 'https://www.ocai-online.com/blog/competing-values-framework-culture-model', type: 'reference', label: 'OCAI Online — Competing Values Framework Culture Model（4文化類型とCameron & QuinnのOCAI応用）' },
+    ],
+  },
+  {
+    id: 'human-belief-perseverance',
+    discipline: 'human-science',
+    title: '信念の保続（信念固執）',
+    statement:
+      '当初その信念を形成した証拠が誤り・捏造であったと完全に否定・撤回された後も、人がその信念を維持し続ける傾向。リー・ロスやクレイグ・アンダーソン、マーク・レッパーらが「デブリーフィング・パラダイム」で実証した。被験者に課題の能力に関する偽のフィードバックや捏造した理論を与え、後でそれが虚偽・無作為だったと十分に明かしても、誘導された自己評価や社会的信念が残存した。' +
+      'この効果は、原証拠が否定されても生き残る因果的な説明やシナリオを当人が形成してしまうこと、および動機づけられた（偏った）帰属推論によって媒介されると説明される。既存の信念に合致する情報を選好・解釈する確証バイアスとは関連するが、証拠が崩れた後にも信念が持続する点で区別される。',
+    keyFigures: 'リー・ロス／クレイグ・アンダーソン／マーク・レッパー（1975/1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Perseverance-in-self-perception-and-social-biased-Ross-Lepper/561546cdf8508e4883317ea09bc48ef6b2499a7b', type: 'academic', label: 'Ross, Lepper & Hubbard (1975) Perseverance in self-perception and social perception: Biased attributional processes in the debriefing paradigm, JPSP' },
+      { url: 'https://www.semanticscholar.org/paper/Perseverance-of-Social-Theories:-The-Role-of-in-the-Anderson-Lepper/8938d9ee5faa0e1ee6ac250e0ee183f60ec774e9', type: 'academic', label: 'Anderson, Lepper & Ross (1980) Perseverance of Social Theories: The Role of Explanation in the Persistence of Discredited Information, JPSP' },
+      { url: 'https://dictionary.apa.org/belief-perseverance', type: 'reference', label: 'APA Dictionary of Psychology — belief perseverance' },
+    ],
+  },
+  {
+    id: 'bizlaw-unauthorized-access',
+    discipline: 'business-law',
+    title: '不正アクセス禁止法',
+    statement:
+      '正式名称は「不正アクセス行為の禁止等に関する法律」（平成11年法律第128号、1999年制定・2000年2月施行）。他人のID・パスワードを無断で用いた「なりすまし」ログインや、セキュリティホールを突くなどしてアクセス制御をネットワーク越しに突破する不正アクセス行為を禁止・処罰する。' +
+      'あわせて他人の識別符号（ID・パスワード）の不正な取得・保管や、無断での第三者への提供（助長行為）も禁じる。2012年改正では、アクセス管理者になりすまして識別符号の入力を不正に要求するフィッシング行為も禁止対象に加えられた。電気通信に関する秩序の維持とコンピュータ犯罪の防止を目的とし、国家公安委員会（警察庁）・総務省・経済産業省が所管・運用する。',
+    keyFigures: '不正アクセス行為の禁止等に関する法律（平成11年法律第128号、1999年制定・2000年施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.npa.go.jp/bureau/cyber/pdf/1_kaisetsu.pdf', type: 'government', label: '警察庁 不正アクセス行為の禁止等に関する法律の解説（法の目的・第7条フィッシング規定）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000085830', type: 'government', label: '国立国会図書館 日本法令索引 不正アクセス行為の禁止等に関する法律（平成11年法律第128号）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%B8%8D%E6%AD%A3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E8%A1%8C%E7%82%BA%E3%81%AE%E7%A6%81%E6%AD%A2%E7%AD%89%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia 不正アクセス行為の禁止等に関する法律（公布・施行日、2012年改正）' },
+    ],
+  },
+  {
+    id: 'infosoc-calculated-publics',
+    discipline: 'information-sociology',
+    title: '算出された公衆（calculated publics）',
+    statement:
+      '検索エンジン・トレンド機能・推薦システムなどのアルゴリズムは、既存の公衆を単に測定・反映しているのではなく、利用者の追跡可能なデータを処理して公衆の表象を算出・構築し、「算出された公衆（calculated publics）」を生み出す、とする概念。「人気」「話題」「おすすめ」といった形で算出された公衆の像は、' +
+      'あたかも本物の公衆であるかのように利用者へ提示され、利用者の自己認識や公衆についての認識を形作る。これはターレトン・ギレスピーが2014年の論文「The Relevance of Algorithms」（Media Technologies, MIT Press 所収）で提起したもので、利用者が形成する「ネットワーク化された公衆」との摩擦や、公衆が知られ統治される仕方を左右するプラットフォーム権力の問題として論じられる。',
+    keyFigures: 'ターレトン・ギレスピー（Tarleton Gillespie, 2014）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.microsoft.com/en-us/research/wp-content/uploads/2014/01/Gillespie_2014_The-Relevance-of-Algorithms.pdf', type: 'academic', label: 'Tarleton Gillespie, "The Relevance of Algorithms," in Media Technologies (MIT Press, 2014) — 全文PDF' },
+      { url: 'https://cmsw.mit.edu/event/tarleton-gillespie-algorithms-and-the-production-of-calculated-publics/', type: 'reference', label: 'MIT Comparative Media Studies/Writing — "Algorithms, and the Production of Calculated Publics"' },
+    ],
+  },
 ];
 // Stryker restore all
