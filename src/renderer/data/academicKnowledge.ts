@@ -16344,5 +16344,91 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Domestication_theory', type: 'reference', label: 'Domestication theory — Wikipedia' },
     ],
   },
+  {
+    id: 'econ-grossman-stiglitz',
+    discipline: 'economics',
+    title: 'グロスマン＝スティグリッツのパラドックス',
+    statement:
+      'サンフォード・グロスマンとジョセフ・スティグリッツが1980年（American Economic Review「On the Impossibility of Informationally Efficient Markets」）で示した、効率的市場仮説（EMH）の核心にあるパラドックス。もし価格が利用可能な全情報を完全に反映するなら、費用をかけて情報を収集しても超過収益は得られず、誰も情報を集める誘因を持たない。しかし誰も情報を集めなければ、価格はそもそもその情報を反映できない。' +
+      'ゆえに完全に情報効率的な市場は不可能であり、現実には価格が情報を部分的・ノイズを伴って反映し、情報収集の費用を補償するだけの利益（情報レント）が残る「均衡的な不均衡（equilibrium degree of disequilibrium）」が成立する。すなわち市場は完全には効率的たりえず、情報収集者に報いるための非効率が必ず残る。価格が全情報を反映すると仮定するEMH、および割安が解消しない裁定の限界とは区別される、情報の費用に着目した論点である。',
+    keyFigures: 'サンフォード・グロスマン／ジョセフ・スティグリッツ（Grossman & Stiglitz, 1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pims.math.ca/files/Grossman_Stiglitz1980.pdf', type: 'academic', label: 'Grossman & Stiglitz (1980) "On the Impossibility of Informationally Efficient Markets," American Economic Review 70(3): 393-408 (原論文PDF)' },
+      { url: 'https://en.wikipedia.org/wiki/Grossman%E2%80%93Stiglitz_paradox', type: 'reference', label: 'Wikipedia — Grossman–Stiglitz paradox' },
+    ],
+  },
+  {
+    id: 'econ-property-rights-theory',
+    discipline: 'economics',
+    title: '財産権アプローチ（企業の所有権理論）',
+    statement:
+      'グロスマン&ハート（1986, JPE）とハート&ムーア（1990, JPE）による、不完備契約に基づく企業の境界・垂直統合の理論。契約は将来のあらゆる事態を規定できない（不完備）ため、資産の所有が重要になる。所有は、契約で定められていない状況下で資産の使い方を決める残余コントロール権を所有者に与える。' +
+      '所有は当事者の事後的な交渉力を左右し、ひいては事前の関係特殊的（契約不可能な）投資の誘因に影響する。資産を所有する側は交渉力が強いため、投資がより重要な側に所有権を与えると全体の投資誘因が改善しホールドアップ問題を緩和する。ただし統合は無償ではなく、統合側の誘因を高める一方で相手側の誘因を弱めるため、最適な所有権配分が存在する。コース／ウィリアムソンの取引費用論を残余コントロール権の観点から発展させた点に特徴があり、取引費用論・不完備契約・ホールドアップ問題とは区別される。',
+    keyFigures: 'サンフォード・グロスマン／オリバー・ハート（1986）／ジョン・ムーア（Hart & Moore, 1990）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hart.scholars.harvard.edu/publications/property-rights-and-nature-firm', type: 'academic', label: 'Hart & Moore (1990) "Property Rights and the Nature of the Firm," JPE 98:1119–1158 (Harvard, Oliver Hart)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2016/press-release/', type: 'reference', label: '2016年ノーベル経済学賞プレスリリース（Hart & Holmström、契約理論・残余コントロール権）' },
+    ],
+  },
+  {
+    id: 'mgmt-profiting-from-innovation',
+    discipline: 'management',
+    title: '技術革新からの利益専有（PFIフレームワーク）',
+    statement:
+      'デイビッド・ティースが1986年にResearch Policy誌の論文「Profiting from technological innovation」で提示した枠組みで、革新者がしばしば自らの技術革新から利益を得られず、模倣者や補完的資産の保有者がその利益を獲得するのはなぜかを論じる。三つの構成要素からなる。(1)専有可能性レジーム＝特許や著作権などIPの強弱や技術の暗黙性により革新をどれだけ守れるか。(2)補完的資産＝製造・流通・マーケティング・サービス・ブランド等、商業化に必要な資産で、汎用的/専用的/共特化に分類される。' +
+      '(3)支配的デザインとタイミング。含意として、専有可能性レジームが弱く（模倣されやすく）補完的資産が重要で他者に握られている場合、革新者は模倣者や補完的資産の保有者に利益を奪われやすく、ゆえにそれら資産を自社統合するか契約/ライセンスで調達するかを検討すべきとする。古典的な例はEMIのCATスキャナ（発明者EMIが模倣者のGE等に敗れた）。同じティースのダイナミック・ケイパビリティや取引費用とは区別される。',
+    keyFigures: 'デイビッド・ティース（David J. Teece, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/respol/v15y1986i6p285-305.html', type: 'academic', label: 'Teece (1986), Research Policy 15(6):285-305 — IDEAS/RePEc 書誌・要旨' },
+      { url: 'https://en.wikipedia.org/wiki/Complementary_assets', type: 'reference', label: 'Wikipedia「Complementary assets」— PFI枠組み・三構成要素・統合/ライセンス' },
+    ],
+  },
+  {
+    id: 'human-affective-forecasting',
+    discipline: 'human-science',
+    title: '感情予測（アフェクティブ・フォーキャスティング）',
+    statement:
+      '感情予測とは、将来の出来事が自分の感情状態をどう左右するかを予測することで、ティモシー・ウィルソンとダニエル・ギルバートらが体系的に研究した。人は将来の感情、特にその強さと持続時間の予測を体系的に誤る。主な誤りがインパクト・バイアスで、将来の感情反応の強さと持続を正負どちらも過大評価する。その一因が免疫の無視であり、悪い出来事を合理化し対処・適応する自分の心理的免疫システムの働きを見落とす。' +
+      'さらに焦点化（フォーカリズム）として当該の出来事に注目しすぎ、気分を左右する他の事柄を無視する。古典例ではテニュア拒否や宝くじ当選、障害を負った場合でも幸福度はやがてベースラインへ戻る（快楽適応）。本概念は快楽心理学と幸福の行動経済学の基礎をなす。なおインパクト・バイアス、フォーカシング・イリュージョン、ホット・コールド共感ギャップ、歴史の終わり錯覚は、この感情予測を成り立たせる構成要素として区別される。',
+    keyFigures: 'ダニエル・ギルバート／ティモシー・ウィルソン（Gilbert & Wilson）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.harvard.edu/files/danielgilbert/files/wilson_et_al_focalism.pdf', type: 'academic', label: 'Wilson, Gilbert et al., "Focalism: A Source of Durability Bias in Affective Forecasting" (Harvard)' },
+      { url: 'https://dictionary.apa.org/affective-forecasting', type: 'reference', label: 'APA Dictionary of Psychology — affective forecasting' },
+    ],
+  },
+  {
+    id: 'bizlaw-radio-act',
+    discipline: 'business-law',
+    title: '電波法',
+    statement:
+      '電波法（昭和25年法律第131号、1950年制定、総務省所管）は、電波の公平かつ能率的な利用を確保することによって公共の福祉を増進することを目的とする、電波（周波数）という有限で共有の公共資源の管理に関する基本法である。電波は国民共有の有限資源であるため、無線局の開設には原則として総務大臣の免許が必要とされ（免許制度）、周波数の割当てが行われる。' +
+      '無線設備を操作する者には無線従事者（総合・海上・航空・陸上・アマチュア等）の資格が求められ、無線設備には技術基準適合（型式検定や技適マーク）が課される。混信の防止・調整や、免許を受けない不法無線局・違法電波の取締り、通信の秘密の保護も規定する。放送（放送法）や携帯電話・Wi-Fi等の無線通信の基盤をなし、放送内容を扱う放送法や電気通信役務を扱う電気通信事業法とは区別され、本法は電波・周波数と無線局そのものを規律する。',
+    keyFigures: '電波法（昭和25年法律第131号、1950年制定）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/soutsu/tohoku/densyo/data/hourei.pdf', type: 'government', label: '総務省 — 電波法（昭和25年5月2日法律第131号）抜粋・第1条 目的' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000042505', type: 'government', label: '国立国会図書館 日本法令索引 — 電波法 昭和25年5月2日法律第131号' },
+      { url: 'https://kotobank.jp/word/%E9%9B%BB%E6%B3%A2%E6%B3%95-102712', type: 'reference', label: 'コトバンク — 電波法（電波利用の基本法、免許・無線従事者・罰則）' },
+    ],
+  },
+  {
+    id: 'infosoc-transmedia-storytelling',
+    discipline: 'information-sociology',
+    title: 'トランスメディア・ストーリーテリング',
+    statement:
+      'ヘンリー・ジェンキンスが広めた概念（2003年Technology Reviewのエッセイ、2006年の著書『コンヴァージェンス・カルチャー』）で、単一の物語や物語世界を、映画・テレビ・小説・漫画・ゲーム・ウェブ等の複数のメディアプラットフォームにまたがって展開し、各メディアがそれぞれ固有で価値ある貢献を全体に加える物語手法・戦略を指す。各テキストは自己完結しつつ新たな次元を物語に付け加え、同じ話の単なる再話や翻案（冗長な反復）ではない点が要点である。' +
+      '理想形では各メディアが最も得意とする役割を担い、分散した断片は統一された一つの物語世界（神話体系）として調整・整合され、観客はメディアを横断して能動的に世界を探索し組み立てる（参加型）。代表例はジェンキンスが挙げる『マトリックス』（実写映画＋アニメ短編「アニマトリックス」＋漫画＋ゲームが各々物語を補完）。コンバージェンス・カルチャーや世界構築、ファン文化、メディアミックスと密接に関連するが、参加型文化やスプレッダブル・メディアとは区別される。',
+    keyFigures: 'ヘンリー・ジェンキンス（Henry Jenkins, 2003/2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0174.xml', type: 'reference', label: 'Oxford Bibliographies (OUP) — Transmedia Storytelling' },
+      { url: 'https://www.technologyreview.com/2003/01/15/234540/transmedia-storytelling/', type: 'academic', label: 'Henry Jenkins, "Transmedia Storytelling", MIT Technology Review (2003)' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/transmedia-storytelling', type: 'reference', label: 'EBSCO Research Starters — Transmedia Storytelling' },
+    ],
+  },
 ];
 // Stryker restore all
