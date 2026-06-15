@@ -14025,5 +14025,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.scirp.org/reference/referencespapers?referenceid=3585967', type: 'reference', label: 'Boyd, D. (2010), in Z. Papacharissi (Ed.), A Networked Self, Routledge — citation record' },
     ],
   },
+  {
+    id: 'econ-leverage-cycle',
+    discipline: 'economics',
+    title: 'レバレッジ・サイクル',
+    statement:
+      'ジョン・ジェナコプロスが提唱した理論で、金利だけでなく担保要件（証拠金・ヘアカット）すなわちレバレッジ（LTV、担保1単位あたりの借入可能額）が、均衡において内生的に決まり景気循環とともに変動すると説く。好況・低ボラティリティ・楽観の局面ではレバレッジが上昇し担保要件が低下するため、楽観的でレバレッジをかけた「自然な買い手」が資産を競り上げ価格が押し上げられる。' +
+      'ところが悪いショックが起きると不確実性とボラティリティが高まり、貸し手が証拠金を急騰させてレバレッジが崩壊する。最も楽観的な借入買い手が損失で退出・投売りを迫られ、資産価格はファンダメンタルズだけで説明できる以上に暴落するという増幅的フィードバックが働く。これはバブル・暴落・金融危機（2007-08年）を説明し、レバレッジの監視・規制や担保面での最後の貸し手機能の論拠を与える。',
+    keyFigures: 'ジョン・ジェナコプロス（John Geanakoplos）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/books-and-chapters/nber-macroeconomics-annual-2009-volume-24/leverage-cycle', type: 'academic', label: 'Geanakoplos, "The Leverage Cycle," NBER Macroeconomics Annual 2009, Vol. 24 (2010)' },
+      { url: 'https://www.newyorkfed.org/medialibrary/media/research/epr/10v16n1/1008gean.pdf', type: 'government', label: 'Geanakoplos, "Solving the Present Crisis and Managing the Leverage Cycle," NY Fed Economic Policy Review (2010)' },
+      { url: 'https://pages.stern.nyu.edu/~dbackus/BFZ/Literature/FostelGeanakoplos_ARE_14.pdf', type: 'academic', label: 'Fostel & Geanakoplos, "Endogenous Collateral Constraints and the Leverage Cycle," Annual Review of Economics (2014)' },
+    ],
+  },
+  {
+    id: 'econ-learning-by-doing',
+    discipline: 'economics',
+    title: '学習効果（ラーニング・バイ・ドゥーイング）',
+    statement:
+      '経験や実践の蓄積とともに労働者や企業の生産性が高まり、累積生産量が増えるほど単位費用が低下する現象。学習は別個の研究開発（R&D）の成果ではなく、生産や投資に伴う副産物として生じる点が核心である。ケネス・アロー（1962）は「The Economic Implications of Learning by Doing」で、技術進歩を経験の関数として内生化し、その経験の代理指標に累積総投資（累積生産量）を用いた。' +
+      'これにより経済全体では収穫逓増が生まれ、後のローマー（1986、知識の波及効果）やルーカス（人的資本の外部性）による内生的成長理論の基礎となった。実証面では学習曲線・経験曲線として知られ、ライト（1936、航空機）以来、累積生産量が倍増するごとに単位費用がほぼ一定率で低下する（例：約20%減＝80%曲線）ことが示されてきた。なお管理会計上の経験曲線や、成長会計としての内生的成長理論とは区別される。',
+    keyFigures: 'ケネス・アロー（Kenneth Arrow, 1962）／セオドア・P・ライト（T. P. Wright, 1936）／ポール・ローマー（Paul Romer）／ロバート・ルーカス（Robert Lucas）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/29/3/155/1539235', type: 'academic', label: 'Kenneth J. Arrow, "The Economic Implications of Learning by Doing," Review of Economic Studies 29(3), 1962 (Oxford Academic)' },
+      { url: 'https://en.wikipedia.org/wiki/Learning-by-doing_(economics)', type: 'reference', label: 'Wikipedia — Learning-by-doing (economics)' },
+      { url: 'https://ourworldindata.org/learning-curve', type: 'reference', label: 'Our World in Data — Learning curves / Wright\'s Law' },
+    ],
+  },
+  {
+    id: 'mgmt-business-ecosystem',
+    discipline: 'management',
+    title: 'ビジネス・エコシステム',
+    statement:
+      'ジェームズ・F・ムーアが1993年のハーバード・ビジネス・レビュー誌「Predators and Prey: A New Ecology of Competition」で提唱した概念。生物の生態系の比喩を用い、企業を単一の業界の一員ではなく、複数の業界にまたがる「ビジネス・エコシステム」の一部として捉える。これは供給者・主要生産者・競合・顧客・補完者など、相互作用する組織と個人からなる経済的共同体であり、' +
+      '構成員は時間をかけて能力と役割を共進化させ、1つ以上の中核（キーストーン）企業が示す方向性に沿って整合していく。各社は新製品の支援や顧客満足、イノベーション取り込みのために競争と協調（コーペティション）を行う。生態系は誕生・拡大・リーダーシップ・自己革新（または死）の段階を経て発展する。本概念はイアンシティらの現代のプラットフォーム生態系・キーストーン戦略論の基礎となった。',
+    keyFigures: 'ジェームズ・F・ムーア（James F. Moore, 1993）／マルコ・イアンシティ／ロイ・レビーン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1993/05/predators-and-prey-a-new-ecology-of-competition', type: 'academic', label: 'James F. Moore, "Predators and Prey: A New Ecology of Competition", Harvard Business Review, May–June 1993' },
+      { url: 'https://en.wikipedia.org/wiki/Business_ecosystem', type: 'reference', label: 'Wikipedia: Business ecosystem（ムーアの定義と発展4段階）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/23311975.2023.2234143', type: 'academic', label: 'Three decades research in the field of business ecosystem, Cogent Business & Management (Taylor & Francis, 2023)' },
+    ],
+  },
+  {
+    id: 'human-implicit-bias',
+    discipline: 'human-science',
+    title: '潜在的バイアス（潜在連合テスト・IAT）',
+    statement:
+      '潜在的バイアス（暗黙の偏見）とは、自動的・無意識的に働き、本人の自覚や意図がないまま判断や行動に影響しうる態度やステレオタイプを指し、意識的（顕在的）に表明する態度と乖離しうる、潜在的社会的認知の一側面である。' +
+      'これを測る潜在連合テスト（IAT）はグリーンワルド・マギー・シュワルツが1998年（JPSP）に導入し、概念（社会集団など）と評価（良い／悪い）の自動的連合の強さを、分類課題で連合の強い組み合わせほど反応時間が速くなるという反応時間差から推定する。Project Implicit を通じ人種・性別等の態度研究に広く用いられるが、再検査信頼性や個人の行動を予測する力は弱いとして議論がある。',
+    keyFigures: 'アンソニー・グリーンワルド／デビー・マギー／ジョーダン・シュワルツ（IAT, 1998）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://faculty.washington.edu/agg/pdf/Gwald_McGh_Schw_JPSP_1998.OCR.pdf', type: 'academic', label: 'Greenwald, McGhee & Schwartz (1998), Measuring Individual Differences in Implicit Cognition: The Implicit Association Test, JPSP 74(6):1464–1480' },
+      { url: 'https://www.apa.org/topics/implicit-bias', type: 'reference', label: 'American Psychological Association — Implicit bias (implicit social cognition; Project Implicit)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6856205/', type: 'academic', label: 'Kurdi et al. (2019), Predicting Behavior With Implicit Measures, Frontiers in Psychology (predictive-validity/reliability debate)' },
+    ],
+  },
+  {
+    id: 'bizlaw-telecom-business',
+    discipline: 'business-law',
+    title: '電気通信事業法',
+    statement:
+      '電気通信事業の運営を規律する日本の法律（昭和59年法律第86号、1984年制定・1985年施行）。日本電信電話公社の民営化（NTT発足）と国内外通信の自由化＝競争導入を柱とする電気通信改革3法の一つとして成立し、電気通信事業者の登録・届出制を設け、新規参入の道を開いた。電気通信役務の円滑な提供と公正な競争を通じ、事業の適正かつ合理的な運営と利用者の利益保護・利便の確保を目的とする。' +
+      '基本原則として検閲の禁止（第3条）、電気通信事業者の取扱中に係る通信の秘密の保護（第4条、憲法21条2項を受ける）、利用の公平（不当な差別の禁止）を定める。近年の改正では、契約前の説明義務・書面交付や初期契約解除制度など消費者保護を強化し、2022年改正では利用者情報の外部送信に関する規律（いわゆるクッキー規制）を追加した。所管は総務省。',
+    keyFigures: '電気通信事業法（昭和59年法律第86号、1984年制定・1985年施行）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000072014', type: 'government', label: '日本法令索引（国立国会図書館）電気通信事業法 昭和59年法律第86号' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/joho_tsusin/d_syohi/th_faq.html', type: 'government', label: '総務省 通信の秘密（電気通信事業法第4条）FAQ' },
+      { url: 'https://kotobank.jp/word/%E9%9B%BB%E6%B0%97%E9%80%9A%E4%BF%A1%E4%BA%8B%E6%A5%AD%E6%B3%95-6484', type: 'reference', label: 'コトバンク 電気通信事業法' },
+    ],
+  },
+  {
+    id: 'infosoc-social-presence',
+    discipline: 'information-sociology',
+    title: '社会的存在感理論（ソーシャル・プレゼンス）',
+    statement:
+      'ジョン・ショート、エデリン・ウィリアムズ、ブルース・クリスティが著書『電気通信の社会心理学』（1976）で提唱した、媒介コミュニケーションに関する理論。社会的存在感（ソーシャル・プレゼンス）とは、相互作用における相手や対人関係がどれだけ顕著に意識されるか、すなわち相手を「実在の人」として感じ、共にいると感じる度合いを指す。' +
+      '各コミュニケーション媒体は、表情・視線・声の調子・姿勢などの社会的／非言語的手がかりを伝える能力が異なるため、社会的存在感の程度も異なる。対面が最も高く、テキスト系のリーンな媒体は低い。人は課題に適した存在感をもつ媒体を選ぶとされる。本理論はコンピュータ媒介コミュニケーション（CMC）研究の基礎で、ダフトとレンゲルのメディア・リッチネス理論の先駆だが、媒体の客観的特性を扱う後者とは区別される。',
+    keyFigures: 'ジョン・ショート／エデリン・ウィリアムズ／ブルース・クリスティ（1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://is.theorizeit.org/wiki/Social_Presence_Theory', type: 'academic', label: 'Information Systems Theories — Social Presence Theory' },
+      { url: 'https://en.wikipedia.org/wiki/Social_presence_theory', type: 'reference', label: 'Wikipedia — Social presence theory' },
+    ],
+  },
 ];
 // Stryker restore all
