@@ -16430,5 +16430,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/transmedia-storytelling', type: 'reference', label: 'EBSCO Research Starters — Transmedia Storytelling' },
     ],
   },
+  {
+    id: 'econ-rothschild-stiglitz',
+    discipline: 'economics',
+    title: 'ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）',
+    statement:
+      'マイケル・ロスチャイルド＆ジョセフ・スティグリッツが1976年（QJE）に示した、逆選択下の競争的保険市場における選別（スクリーニング）の代表的モデル。保険会社は顧客のリスクタイプ（高リスク/低リスク）を観察できないため、価格と補償範囲が異なる契約のメニューを提示し、顧客に自己選択させてタイプを顕示させる（自己選択・誘因両立）。結果として生じうるのは分離均衡で、高リスク者は高い保険料で完全保険を買う一方、低リスク者は免責付きの部分的補償しか買えず歪められ配給される（完全情報下より不利になる）。' +
+      'これは、より厚い補償を許すと高リスク者を引き寄せてしまうためである。全員が同一契約を結ぶプール均衡は競争均衡として存在しえず、高リスク者が少ない場合には（ナッシュ）均衡そのものが存在しないこともある。情報の非対称性が市場の効率を損なうことを示し、情報の経済学の基礎（スティグリッツの2001年ノーベル賞に寄与）となった。逆選択そのもの、より広い選別（スクリーニング）概念、当事者が自ら情報を発信するシグナリングとは区別される。',
+    keyFigures: 'マイケル・ロスチャイルド／ジョセフ・スティグリッツ（Rothschild & Stiglitz, 1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.princeton.edu/~dixitak/Teaching/EconomicsOfUncertainty/Slides&Notes/Slides15.pdf', type: 'academic', label: 'Princeton University (A. Dixit) — Adverse Selection in Insurance Markets 講義ノート' },
+      { url: 'https://dspace.mit.edu/bitstream/handle/1721.1/109484/14-03-fall-2010/contents/lecture-notes/MIT14_03F10_lec16.pdf', type: 'academic', label: 'MIT 14.03 (D. Autor) — Adverse Selection, Risk Aversion and Insurance Markets 講義ノート' },
+      { url: 'https://en.wikipedia.org/wiki/Separating_equilibrium', type: 'reference', label: 'Wikipedia — Separating equilibrium（Rothschild–Stiglitz 1976 QJE の帰結）' },
+    ],
+  },
+  {
+    id: 'econ-limit-pricing',
+    discipline: 'economics',
+    title: '参入阻止価格（リミット・プライシング）',
+    statement:
+      '既存企業（独占企業や支配的企業）が、潜在的参入者に「参入しても採算が合わない」と思わせて参入を阻止するために、短期の独占（利潤最大化）価格より低い価格をあえて設定する戦略。古典的なベイン＝シロス・ラビーニ＝モディリアーニの定式化では、参入者が「既存企業は参入後も現在の生産量を維持する」と想定する「シロスの公準」のもとで、参入を誘発しない最高価格すなわち参入阻止価格を設定する。規模の経済や費用優位などで参入障壁が高いほど、既存企業は高い阻止価格を保ちつつ参入を防げる。既存企業は、独占価格より低く価格を抑えることによる現在の利潤低下と、独占的地位の維持（将来の競争回避）とをトレードオフする。' +
+      'もっとも現代のゲーム理論では、単純なベイン型の参入阻止価格は信憑性に欠けると批判される。参入後には生産量を高く維持する脅しが既存企業の最適反応ではなく部分ゲーム完全均衡にならないからで、信頼できる参入阻止には生産能力や埋没投資といったコミットメントが必要となる。一方で情報非対称下では、価格が既存企業の低費用を参入者に伝えるシグナルとして機能し、参入阻止価格が均衡として正当化されうる（ミルグロム＆ロバーツ1982）。なお、既存ライバルを排除するための原価割れの略奪的価格設定や、コンテスタブル市場・自然独占とは区別される。',
+    keyFigures: 'ジョー・ベイン／パスクァーレ・シロス・ラビーニ／フランコ・モディリアーニ（古典的）／ポール・ミルグロム&ジョン・ロバーツ（1982, シグナリング）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/browse/1982/03/01/limit-pricing-and-entry-under-incomplete-information', type: 'academic', label: 'Milgrom & Roberts, "Limit Pricing and Entry under Incomplete Information", Econometrica 50(2):443-459 (1982) — The Econometric Society' },
+      { url: 'https://web.stanford.edu/~rehall/PotentialCompetition.pdf', type: 'academic', label: 'R. E. Hall, "Potential Competition, Limit Pricing" 講義ノート — Stanford University' },
+      { url: 'https://en.wikipedia.org/wiki/Limit_price', type: 'reference', label: 'Limit price — Wikipedia（信憑性批判・コミットメント・略奪的価格との区別）' },
+    ],
+  },
+  {
+    id: 'mgmt-lead-user',
+    discipline: 'management',
+    title: 'リードユーザー法',
+    statement:
+      'エリック・フォン・ヒッペルが1986年（Management Science「Lead Users: A Source of Novel Product Concepts」）で提唱。リードユーザーとは、(1)やがて市場全体に広がるニーズに大多数より数か月〜数年先んじて直面し（市場トレンドの先端に立ち）、(2)その解決から大きな便益を得られる立場にあるため強く動機づけられ、しばしば自ら解決策を開発するユーザーを指す。' +
+      '典型的・現在のユーザーへの質問に頼る通常の市場調査は、機能的固着など既存経験の制約により新規製品では機能しない。そこで企業はリードユーザーを体系的に特定し（しばしば類似・隣接分野で）、共同で画期的な製品コンセプトを開発すべきだとする＝リードユーザー法／プロセスである。ユーザーイノベーション、オープンイノベーション、イノベーションの民主化の基礎であり3M等が応用したが、オープンイノベーションや普及理論とは区別される。',
+    keyFigures: 'エリック・フォン・ヒッペル（Eric von Hippel, 1986）／グレン・アーバン（Glen Urban）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/evhippel/www-old/papers/Lead%20Users%20Paper%20-1986.pdf', type: 'academic', label: 'von Hippel, E. (1986) "Lead Users: A Source of Novel Product Concepts," Management Science 32(7): 791-805 — MIT 全文PDF' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.32.7.791', type: 'academic', label: 'INFORMS / Management Science 公式書誌 (doi:10.1287/mnsc.32.7.791)' },
+      { url: 'https://en.wikipedia.org/wiki/Lead_user', type: 'reference', label: 'Wikipedia「Lead user」— 定義とリードユーザー法' },
+    ],
+  },
+  {
+    id: 'human-conservatism-bias',
+    discipline: 'human-science',
+    title: '保守性バイアス（信念更新）',
+    statement:
+      '信念更新における認知バイアスで、ウォード・エドワーズ（1968）が研究した。人は新しい証拠を得て確率推定（信念）を改訂する際、ベイズの定理が規定する規範的な改訂量に比べて更新が不十分で、新情報に過小反応し、事前の信念に固執しすぎる。エドワーズの古典的実験では、ベイズの定理が約0.97を導く場面で被験者の推定は約0.70にとどまった。' +
+      'つまり人は「保守的なベイジアン」であり、推定を正しい方向へ動かすが十分には動かさず、新証拠を事前確率に比べて過小評価し、過小反応現象を説明する。行動ファイナンスではバーベリス＝シュライファー＝ヴィシュニー（1998）が代表性ヒューリスティックとともに、株価のニュースへの過小反応（決算発表後のドリフト等）の説明に用いた。アンカリング、確証バイアス、信念の保続、現状維持バイアス、また会計や思想上の「保守主義」とは区別される。',
+    keyFigures: 'ウォード・エドワーズ（Ward Edwards, 1968）／バーベリス・シュライファー・ヴィシュニー（1998, 行動ファイナンス）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nicholasbarberis.github.io/bsv_nonac.pdf', type: 'academic', label: 'Barberis, Shleifer & Vishny (1998) "A Model of Investor Sentiment"（Yale・著者公開PDF：保守性＋代表性で株価の過小/過剰反応を説明）' },
+      { url: 'https://en.wikipedia.org/wiki/Conservatism_(belief_revision)', type: 'reference', label: 'Conservatism (belief revision) — Wikipedia（エドワーズ1968、ベイズ未満の不十分な信念更新）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304405X98000270', type: 'academic', label: 'A model of investor sentiment, Journal of Financial Economics 49(3), 307–343（決算発表へのアンダーリアクション）' },
+    ],
+  },
+  {
+    id: 'bizlaw-arbitration-act',
+    discipline: 'business-law',
+    title: '仲裁法',
+    statement:
+      '仲裁法（平成15年法律第138号、2003年制定・2004年3月施行、法務省関係）は、裁判外紛争解決手続（ADR）の一つである仲裁を包括的に規律する法律である。仲裁とは、当事者が仲裁合意により、紛争の解決を裁判所ではなく私人である仲裁人に委ね、その仲裁判断に服する制度をいう。本法はUNCITRAL国際商事仲裁モデル法に準拠し、旧来の規定を現代化した。' +
+      '有効な仲裁合意があるとき、その対象たる紛争につき提起された訴えは却下され（妨訴抗弁）、仲裁廷は自らの管轄の有無を判断できる（自己管轄）。仲裁判断は確定判決と同一の効力を有し、その取消し・執行拒絶の事由は限定的である。裁判所は執行や証拠調べ等で仲裁を支援・監督する。外国仲裁判断の承認・執行はニューヨーク条約と関連し、国際商事紛争解決を支える。なお一般のADR促進法や労働審判法とは区別される（2023年改正で暫定保全措置等を整備）。',
+    keyFigures: '仲裁法（平成15年法律第138号、2003年制定・2004年施行）／UNCITRAL国際商事仲裁モデル法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000138/', type: 'government', label: 'e-Gov法令検索 仲裁法（平成15年法律第138号）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00328.html', type: 'government', label: '法務省 仲裁法の一部を改正する法律等について' },
+      { url: 'https://kotobank.jp/word/%E5%A4%96%E5%9B%BD%E4%BB%B2%E8%A3%81%E5%88%A4%E6%96%AD-1521474', type: 'reference', label: 'コトバンク 外国仲裁判断（ニューヨーク条約との関連）' },
+    ],
+  },
+  {
+    id: 'infosoc-mcluhan-tetrad',
+    discipline: 'information-sociology',
+    title: 'メディアの四法則（テトラッド）',
+    statement:
+      'マーシャル・マクルーハンと息子エリック・マクルーハンが遺著『メディアの法則（Laws of Media: The New Science）』（1988、没後刊行）で示した、あらゆるメディア・技術（人工物）の効果を4つの同時的な問いで検討する道具で、しばしば四象限の図で表される。(1)強化／拡張＝何を強め、加速し、可能にするか（どの人間機能を増幅するか）、(2)衰退／廃用＝何を押しのけ陳腐化・置換するか、(3)回復＝かつて廃れた何を取り戻し再現するか、(4)反転＝限界まで押し進めると何へ反転・はね返るか（過熱効果）。' +
+      'この四法則は全メディアに適用でき、順次的・時系列ではなく同時に働くとされる。最初の三つは図（figure）、反転は地（ground）を露わにする。「メディアはメッセージである」を発展させ、メディアの効果を観察・予測可能にするヒューリスティックである。例えばラジオは音声・報道を強化し、印刷を廃用へ追いやり、口承的な部族社会を回復し、視聴覚（テレビ）へと反転する。「メディアはメッセージである」やグローバル・ヴィレッジ、ホット／クールなメディアとは区別される。',
+    keyFigures: 'マーシャル・マクルーハン／エリック・マクルーハン（Laws of Media, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://social-epistemology.com/wp-content/uploads/2012/11/sandstrom_mcluhan.pdf', type: 'academic', label: 'G. Sandstrom, "Laws of media – The four effects," Social Epistemology Review and Reply Collective (2012)' },
+      { url: 'https://en.wikipedia.org/wiki/Tetrad_of_media_effects', type: 'reference', label: 'Wikipedia: Tetrad of media effects' },
+    ],
+  },
 ];
 // Stryker restore all
