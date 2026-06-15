@@ -11273,5 +11273,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Produsage', type: 'reference', label: 'Produsage — Wikipedia（百科事典）' },
     ],
   },
+  {
+    id: 'econ-cobweb-model',
+    discipline: 'economics',
+    title: 'クモの巣理論',
+    statement:
+      'クモの巣理論（蜘蛛の巣の定理）は、生産に時間（タイム・ラグ）を要する市場における価格と数量の動的調整を説明するモデルである。生産者は今期の生産量を観測できない今期価格ではなく、前期の価格に基づいて決定する（素朴・適応的期待）ため、価格と数量は均衡へ向けて時間をかけて調整される。' +
+      'その挙動は需要曲線と供給曲線の傾き（弾力性）の相対関係に依存し、需要が供給より弾力的（需要曲線の傾きが急）なら均衡へ収束し安定的、逆なら振幅が拡大して発散（爆発的）、両者が等しければ一定振幅で振動する。需給曲線上に調整経路を描くと蜘蛛の巣状の軌跡を描くためこの名がある。モルデカイ・エゼキエルが1938年に定式化した（クモの巣定理）。',
+    keyFigures: 'モルデカイ・エゼキエル（Mordecai Ezekiel, 1938）／ニコラス・カルドア（Nicholas Kaldor）／ヘンリー・シュルツ（Henry Schultz）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E3%81%8F%E3%82%82%E3%81%AE%E5%B7%A3%E7%90%86%E8%AB%96-831121', type: 'reference', label: 'コトバンク「くもの巣理論」' },
+      { url: 'https://academic.oup.com/qje/article/52/2/255/1862362', type: 'academic', label: 'Mordecai Ezekiel, "The Cobweb Theorem," QJE 52(2), 1938' },
+    ],
+  },
+  {
+    id: 'econ-marshall-lerner',
+    discipline: 'economics',
+    title: 'マーシャル＝ラーナー条件',
+    statement:
+      '自国通貨の減価（平価切下げ）が貿易収支を改善するための条件で、輸出需要の価格弾力性と輸入需要の価格弾力性の絶対値の和が1を超えること（|η_x|＋|η_m|＞1）を指す。通貨が減価すると輸出量は増え輸入量は減る一方、輸入財の自国通貨建て価格は上昇するため、' +
+      '数量調整による改善効果が価格上昇効果を上回って初めて貿易収支が改善する。アルフレッド・マーシャルとアバ・ラーナーにちなむ。短期は契約の固定や消費者の調整の遅れで弾力性が小さく和が1に満たないため貿易収支は一時的に悪化し、長期に弾力性が高まって条件を満たすと改善へ転じる。この時間的経路はJカーブ効果と呼ばれる。',
+    keyFigures: 'アルフレッド・マーシャル／アバ・ラーナー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E3%83%9E%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%AB=%E3%83%A9%E3%83%BC%E3%83%8A%E3%83%BC%E3%81%AE%E6%9D%A1%E4%BB%B6-164228', type: 'reference', label: 'コトバンク「マーシャル＝ラーナーの条件」' },
+      { url: 'https://glossary.hub.hit-u.ac.jp/faq/show/2484/', type: 'reference', label: '一橋大学 ファイナンス用語集「マーシャル＝ラーナー条件」' },
+      { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia: Marshall–Lerner condition' },
+    ],
+  },
+  {
+    id: 'mgmt-competency',
+    discipline: 'management',
+    title: 'コンピテンシー',
+    statement:
+      'コンピテンシーとは、高業績者に共通して見られる行動特性であり、職務上の優れた成果と因果的に結びつく個人の根源的特性を指す。心理学者デイビッド・マクレランドは1973年の論文「知能ではなくコンピテンシーを測定せよ」で、従来の知能検査や学歴・適性検査は実際の職務遂行をうまく予測できないと批判し、動機・特性・自己概念・知識・技能といった特性こそが高業績を予測すると主張した。' +
+      'これを発展させたライル＆シグネ・スペンサーは1993年の著書『コンピテンシー・アット・ワーク』で氷山モデルを示し、水面上の見えやすい知識・技能と、水面下に隠れた自己概念・特性・動機を区別した。今日では採用・コンピテンシー評価・人材育成など、コンピテンシーに基づく人事管理として広く活用されている。',
+    keyFigures: 'デイビッド・マクレランド（David McClelland, 1973）／ライル＆シグネ・スペンサー（1993）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=ej075582', type: 'academic', label: 'McClelland, D. C. (1973). Testing for Competence Rather than for "Intelligence". American Psychologist, 28, 1-14 (ERIC)' },
+      { url: 'https://en.wikipedia.org/wiki/Competence_(human_resources)', type: 'reference', label: 'Competence (human resources) — Wikipedia (McClelland 1973 起源・Spencer & Spencer 1993・氷山モデル)' },
+    ],
+  },
+  {
+    id: 'human-base-rate-fallacy',
+    discipline: 'human-science',
+    title: '基準率の無視',
+    statement:
+      '基準率の無視（基礎率の誤謬）とは、ある事象が属するカテゴリーの一般的な事前確率（基準率・母集団における出現頻度）を軽視し、個別具体的で目立つ情報に偏って確率を判断してしまう認知的傾向をいう。ダニエル・カーネマンとエイモス・トヴェルスキーが1973年の研究（技師か弁護士かを推測させる課題など）で示し、人々は人物描写の代表性に基づいて判断し、職業の構成比という基準率を無視した。' +
+      '代表的な例がタクシー問題で、街の車85%が緑・15%が青、目撃者の識別精度が80%のとき、多くの人は事故車を青と答える確率を約80%と見積もるが、基準率を組み込んだベイズの定理による正答は約41%である。同様に医療検査の偽陽性問題でも誤りが生じる。この現象は、対象を典型例との類似度で判断する代表性ヒューリスティックに由来すると説明され、ベイズ推論との乖離を示す古典的事例とされる。',
+    keyFigures: 'ダニエル・カーネマン／エイモス・トヴェルスキー（1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://faculty.ucmerced.edu/jvevea/classes/Spark/readings/tversky%20and%20kahneman.pdf', type: 'academic', label: 'Tversky & Kahneman, "Evidential Impact of Base Rates" (Judgment Under Uncertainty, 1982)' },
+      { url: 'https://en.wikipedia.org/wiki/Base_rate_fallacy', type: 'reference', label: 'Wikipedia: Base rate fallacy' },
+    ],
+  },
+  {
+    id: 'bizlaw-installment-sales-act',
+    discipline: 'business-law',
+    title: '割賦販売法',
+    statement:
+      '割賦販売法（昭和36年法律第159号、1961年制定）は、割賦販売やクレジットカード等を用いた信用購入あっせん（包括信用購入あっせん・個別信用購入あっせん）などの後払い取引を規制し、取引の公正を確保するとともに購入者等（消費者）の利益を保護することを目的とする、経済産業省（消費者庁と連携）所管の法律である。' +
+      '事業者には取引条件の表示義務や契約内容を明らかにする書面交付義務が課され、個別信用購入あっせんには一定期間内に無条件解約できるクーリング・オフが認められる。過剰与信を防ぐため、与信時に消費者の年収等から返済能力を算定する支払可能見込額調査義務を課し、近年の改正ではクレジットカード番号等の適切な管理・不正利用防止などのセキュリティ対策義務も加えられた。',
+    keyFigures: '経済産業省・消費者庁／割賦販売法（昭和36年法律第159号、1961年制定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/11kappuhanbaihou.html', type: 'government', label: '経済産業省「割賦販売法」（所管・制度概要）' },
+      { url: 'https://www.meti.go.jp/policy/economy/consumer/credit/2509atobaraikantokunokihonhousin.pdf', type: 'government', label: '経済産業省「割賦販売法（後払分野）に基づく監督の基本方針」（支払可能見込額調査・信用購入あっせん）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000053053&current=-1', type: 'government', label: '国立国会図書館 日本法令索引「割賦販売法 昭和36年法律第159号」' },
+    ],
+  },
+  {
+    id: 'infosoc-mediatization',
+    discipline: 'information-sociology',
+    title: 'メディア化（メディアティゼーション）',
+    statement:
+      'メディア化（mediatization）とは、メディアが政治・宗教・家族などの他の社会制度や文化全体に長期的・構造的に浸透し、それらを形成していくメタ過程を指すメディア研究の概念である。グローバル化や個人化と並ぶ大規模な社会変動として捉えられ、諸制度が次第に「メディアロジック」を取り込む点に特徴がある。単一の媒体を通じて伝達する行為を指す「mediation（媒介）」とは区別され、社会と文化そのものの長期的変容を捉える。' +
+      '理論には二つの系譜がある。スティグ・ヤーバードに代表される制度論的系譜は、メディアを独自の論理をもつ独立した制度とみなし、他制度がそれに適応すると論じる。フリードリヒ・クロッツやアンドレアス・ヘップに代表される社会構成主義的系譜は、コミュニケーションを通じた日常的な意味構築と社会的現実の変容を重視する。ヘップは近年、ソフトウェア基盤の遍在的メディアを念頭に「深いメディア化（deep mediatization）」を提起している。',
+    keyFigures: 'スティグ・ヤーバード（Stig Hjarvard）／アンドレアス・ヘップ（Andreas Hepp）／フリードリヒ・クロッツ（Friedrich Krotz）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1057/9781137300355_8', type: 'academic', label: 'Hjarvard, "From Mediation to Mediatization: The Institutionalization of New Media" (Palgrave Macmillan / Springer)' },
+      { url: 'https://www.jstage.jst.go.jp/article/jamsmedia/101/0/101_23/_pdf/-char/ja', type: 'academic', label: '日本マス・コミュニケーション学会（J-STAGE 査読論文）メディア化に関する論考' },
+      { url: 'https://en.wikipedia.org/wiki/Mediatization_(media)', type: 'reference', label: 'Wikipedia: Mediatization (media)' },
+    ],
+  },
 ];
 // Stryker restore all
