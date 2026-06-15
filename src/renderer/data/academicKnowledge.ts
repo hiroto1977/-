@@ -9879,5 +9879,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Political_polarization', type: 'reference', label: 'Wikipedia: Political polarization（概念全体・二類型・原因と帰結）' },
     ],
   },
+  {
+    id: 'econ-battle-of-sexes',
+    discipline: 'economics',
+    title: '両性の闘い（battle of the sexes）',
+    statement:
+      '両性の闘い（battle of the sexes、BoS）はゲーム理論の協調ゲームの一種で、2人のプレイヤーが別々に行動するより一緒に行動（協調）したい点では一致するが、どの選択肢で協調するかについては好みが対立する状況を表す。' +
+      '古典例は、一緒に出かけたいカップルが、一方はボクシング（プライズファイト）観戦を、他方はバレエ（オペラ）鑑賞を望むケースで、両者とも別行動より一緒を優先するが行き先の好みは異なる。利得構造の特徴として、2つの純粋戦略ナッシュ均衡（両者がボクシング／両者がバレエ）が存在し、それぞれ一方のプレイヤーに有利となる。加えて1つの混合戦略均衡もある。両者の好みが完全に一致する純粋協調ゲームと異なり、複数均衡間でプレイヤーの選好が対立する（分配的対立を含む協調）点が本質で、どちらの均衡に落ち着くかという均衡選択の問題が生じ、フォーカルポイント・コミットメント・先手・交渉・慣習が選択を左右する。ルース＆ライファ（1957）の『Games and Decisions』で広く知られる。',
+    keyFigures:
+      'R・ダンカン・ルース（R. Duncan Luce）／ハワード・ライファ（Howard Raiffa, 1957）／純粋協調ゲームと区別（好む均衡が対立）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Battle_of_the_sexes_(game_theory)', type: 'reference', label: 'Wikipedia — Battle of the sexes (game theory)' },
+      { url: 'https://plato.stanford.edu/entries/game-ethics/notes.html', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Game Theory and Ethics (Notes)' },
+      { url: 'https://iilj.org/wp-content/uploads/2016/08/Serrano-etal-Game-Theory-2010.pdf', type: 'academic', label: 'Serrano et al., “Game Theory”（academic survey, IILJ/NYU）— PD と Battle of the Sexes' },
+    ],
+  },
+  {
+    id: 'econ-bertrand-paradox',
+    discipline: 'economics',
+    title: 'ベルトランのパラドックス',
+    statement:
+      'ベルトランのパラドックスとは、同質財を生産する企業が価格を戦略変数として競争する寡占（ベルトラン競争）において、わずか2社であっても価格が限界費用まで下がり利潤がゼロになる、完全競争と同一の帰結を指す逆説である。フランスの数学者ジョセフ・ベルトランが1883年、数量を戦略変数とするクールノー・モデルへの書評で提示した。' +
+      '論理は、同質財では消費者が安い方から買うため、限界費用を上回る価格がある限り各企業は相手を僅かに下回る値下げ（アンダーカット）の誘因を持ち、結果として両社とも価格＝限界費用・利潤ゼロの均衡に至る、というもの。現実には2社でも正の利潤を上げる寡占が多く観察されるため逆説と呼ばれる。クールノーの数量競争では少数企業でも正の利潤が残る点と対照的で、解消要因として製品差別化、生産能力制約（エッジワースが指摘したベルトラン＝エッジワース・モデル）、繰り返し取引による暗黙の共謀、探索費用などが挙げられる。',
+    keyFigures:
+      'ジョセフ・ベルトラン（Joseph Bertrand, 1883）／オーギュスタン・クールノー（数量競争と対比）／フランシス・エッジワース（生産能力制約・Bertrand–Edgeworth）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Bertrand_paradox_(economics)', type: 'reference', label: 'Wikipedia「Bertrand paradox (economics)」' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-349-58802-2_129', type: 'academic', label: 'The New Palgrave Dictionary of Economics「Bertrand competition」(Springer Nature)' },
+      { url: 'https://en.wikipedia.org/wiki/Bertrand%E2%80%93Edgeworth_model', type: 'reference', label: 'Wikipedia「Bertrand–Edgeworth model」（生産能力制約による解消）' },
+    ],
+  },
+  {
+    id: 'mgmt-woodward-technology',
+    discipline: 'management',
+    title: 'ウッドワードの技術類型',
+    statement:
+      'ウッドワードの技術類型は、製造技術の違いが組織の適切な構造を規定するとした技術決定論的なコンティンジェンシー理論である。英国の産業社会学者ジョーン・ウッドワード（Joan Woodward）は、サウス・イースト・エセックス地方の約100社の製造業を実証研究し、論文（1958）と著書『Industrial Organization: Theory and Practice』（1965）で、生産技術を技術的複雑性の低い順に3類型化した。' +
+      '(1)単品・小バッチ生産（注文に応じた個別受注、技能依存）、(2)大量・大バッチ生産（組立ライン・機械化された大量生産）、(3)装置・連続生産（化学プラント・製油所のような連続自動化）である。複雑性が増すほど管理階層は深まり第一線監督者の統制範囲は狭まる。大量生産は機械的構造、単品・連続生産は有機的構造に適合し、技術と構造が適合した企業ほど業績が高かった。これは「唯一最善の組織はない」とする技術的命法（technological imperative）の代表的実証研究である。',
+    keyFigures:
+      'ジョーン・ウッドワード（Joan Woodward, 1958/1965）／3類型＝単品小バッチ・大量大バッチ・装置連続生産／技術と構造の適合・技術的命法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Industrial-Organization-Theory-and-Practice', type: 'reference', label: 'Encyclopædia Britannica — Industrial Organization: Theory and Practice (Joan Woodward)' },
+      { url: 'https://en.wikipedia.org/wiki/Joan_Woodward', type: 'reference', label: 'Wikipedia — Joan Woodward（生産技術3類型と組織構造研究）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1986.tb00417.x', type: 'academic', label: 'Collins & Hull, “Technology and Span of Control: Woodward Revisited”, Journal of Management Studies (1986, 査読論文)' },
+    ],
+  },
+  {
+    id: 'human-compromise-effect',
+    discipline: 'human-science',
+    title: '妥協効果（極端回避性）',
+    statement:
+      '妥協効果（compromise effect）とは、3つ以上の選択肢があるとき、人々が両極端を避けて中間の「妥協的」な選択肢を選びやすくなる傾向で、極端回避性（extremeness aversion）に基づく。「松竹梅」の真ん中の竹、価格帯で最高でも最安でもない中間グレードが選ばれやすい現象がこれにあたる。' +
+      'イタマール・シモンソンが1989年の論文「Choice Based on Reasons」（Journal of Consumer Research）で実証し、シモンソン＆トヴェルスキー（1992）が極端回避性として理論化した。中間に位置する選択肢は「極端でなくバランスが取れている」と正当化（justification）しやすく批判されにくいため選ばれやすい。これは無関係な選択肢からの独立性（IIA）に反する文脈効果であり、選好が選択肢集合の構成に依存することを示す。おとり効果（非対称的に支配されたおとりで特定選択肢を押し上げる）とは異なり、妥協効果は支配関係ではなく「中間性」によって生じる点で区別され、松竹梅・3段階価格メニューで中間商品を売る設計に広く応用される。',
+    keyFigures:
+      'イタマール・シモンソン（Itamar Simonson, 1989）／エイモス・トヴェルスキー（Amos Tversky, 1992・極端回避性）／おとり効果と区別（中間性 vs 支配関係）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/002224379202900301', type: 'academic', label: 'Simonson & Tversky (1992) “Choice in Context: Tradeoff Contrast and Extremeness Aversion”, Journal of Marketing Research 29(3)' },
+      { url: 'https://www.frontiersin.org/articles/10.3389/fpsyg.2020.01352/full', type: 'academic', label: 'Frontiers in Psychology (2020) — 文脈効果としての妥協効果の定義' },
+      { url: 'https://www.cambridge.org/core/journals/judgment-and-decision-making/article/attraction-comes-from-many-sources-attentional-and-comparative-processes-in-decoy-effects/982A45C46061621F39D26800D32AF997', type: 'academic', label: 'Judgment and Decision Making (Cambridge) — おとり効果と妥協効果の構造的区別' },
+    ],
+  },
+  {
+    id: 'bizlaw-fault-liability',
+    discipline: 'business-law',
+    title: '過失責任の原則と無過失責任',
+    statement:
+      '過失責任の原則（過失責任主義）とは、人は故意または過失によって他人に損害を与えた場合にのみ損害賠償責任を負い、過失がなければ責任を負わないとする近代私法の基本原則である。民法709条「故意又は過失によって他人の権利又は法律上保護される利益を侵害した者は、これによって生じた損害を賠償する責任を負う」がこれを体現し、所有権絶対の原則・契約自由の原則と並ぶ近代民法の三大原則の一つとして、私的自治・自己責任の原則と結びつき、人々が自由に活動できること（行動の自由の保障）を支える。' +
+      'しかし公害・労働災害・製造物事故など、加害者の過失立証が困難で、危険な事業活動から利益を得る者に被害者救済の負担を負わせるべき場面では、過失責任主義の修正として「無過失責任」（過失がなくても責任を負う）が特別法で導入された。その根拠が、危険な物・活動を支配する者はそこから生じた損害に責任を負うとする危険責任、利益を上げる者はそれに伴う損失も負担すべきとする報償責任（利益の存するところに損失も帰する）である。製造物責任法（欠陥責任）、自動車損害賠償保障法（運行供用者責任・立証責任の転換）、大気汚染防止法・原子力損害賠償法等が例で、民法上も714条・715条・717条に中間責任的規定がある。',
+    keyFigures:
+      '民法709条＝過失責任主義の一般条項（故意・過失で責任）／近代民法三大原則＝所有権絶対・契約自由・過失責任／無過失責任＝特別法による修正／根拠は危険責任と報償責任／例＝製造物責任法・自賠法3条・大気汚染防止法・原子力損害賠償法／民法714・715・717条は中間責任的／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索「民法」（明治29年法律第89号、709条ほか）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第709条', type: 'reference', label: 'Wikibooks「民法第709条」（不法行為による損害賠償・条文と解説）' },
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/mono/automobile/jido_soko/pdf/sanko_01.pdf', type: 'government', label: '経済産業省「交通事故時の法的責任および根拠法」（自賠法・無過失責任の整理）' },
+    ],
+  },
+  {
+    id: 'infosoc-surveillance-society',
+    discipline: 'information-sociology',
+    title: '監視社会',
+    statement:
+      '監視社会（surveillance society）とは、政府や企業が情報通信技術を用いて人々の行動・移動・通信・消費などの個人情報を日常的・組織的・遍在的に収集・記録・分析し、人々が広範に監視される社会である。社会学者デイヴィッド・ライアン（David Lyon、クイーンズ大学・監視研究センター所長）が監視研究（surveillance studies）を体系化し、著書『Surveillance Society』(2001)などで論じた。' +
+      'ライアンは監視を「個人データへの、影響・管理・保護・指示の目的での、焦点化され体系的でルーティン化された注目」と定義する。監視は犯罪防止・行政効率・利便性（ケア）と、自由・プライバシー侵害や差別的選別（コントロール）という両義性を持つ。中核概念が「社会的選別（social sorting）」＝監視データで人々をカテゴリ分けし機会やリスクを差別的に振り分けることである。理論的にはフーコーのパノプティコンを超え、ドゥルーズの「管理社会」やHaggerty・Ericsonの「監視アッサンブラージュ（surveillant assemblage）」によるデータベース・アルゴリズム駆動の分散的・流動的監視（ポスト・パノプティコン）へと展開した。',
+    keyFigures:
+      'デイヴィッド・ライアン（David Lyon, 2001『Surveillance Society』）／ケヴィン・ハガティ＆リチャード・エリクソン（surveillant assemblage）／ジル・ドゥルーズ（管理社会）／社会的選別（social sorting）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.queensu.ca/gazette/stories/surveilling-surveillance', type: 'academic', label: 'Queen’s Gazette（クイーンズ大学公式）— David Lyon と監視研究・社会的選別・監視の定義' },
+      { url: 'https://en.wikipedia.org/wiki/David_Lyon_(sociologist)', type: 'reference', label: 'Wikipedia — David Lyon (sociologist): 監視研究の体系化と Surveillance Studies Centre' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1080/00071310020015280', type: 'academic', label: 'Haggerty & Ericson, “The surveillant assemblage”, British Journal of Sociology (2000, 査読論文)' },
+    ],
+  },
 ];
 // Stryker restore all
