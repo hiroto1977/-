@@ -10737,5 +10737,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://quod.lib.umich.edu/j/jahc/3310410.0005.111/', type: 'academic', label: 'Journal of the Association for History and Computing（ミシガン大学）書評' },
     ],
   },
+  {
+    id: 'econ-baumol-tobin',
+    discipline: 'economics',
+    title: 'ボーモル＝トービンの貨幣需要モデル',
+    statement:
+      'ボーモル＝トービンの貨幣需要モデルは、貨幣の取引需要を在庫管理問題として捉える在庫理論アプローチである。ウィリアム・ボーモル（1952）とジェームズ・トービン（1956）が独立に導いた。利子を生まない貨幣保有の機会費用と、預金引き出しごとに生じる取引コストとのトレードオフを考え、' +
+      '両者を最小化する最適な平均貨幣保有残高を求める。最適残高は取引量（所得）と取引コストの積を金利で割った値の平方根に比例し、これが「平方根法則」と呼ばれる。貨幣需要は所得や取引コストの増加で増え、金利の上昇で減少する。',
+    keyFigures: 'ウィリアム・ボーモル（1952）／ジェームズ・トービン（1956）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Baumol%E2%80%93Tobin_model', type: 'reference', label: 'Wikipedia: Baumol–Tobin model（取引需要・平方根法則・Baumol 1952 / Tobin 1956）' },
+      { url: 'https://homepage.ntu.edu.tw/~nankuang/Baumol-Tobin%20Model.pdf', type: 'academic', label: '国立台湾大学 講義ノート: Baumol-Tobin Model（最適貨幣残高 √(2bY/r) の導出）' },
+      { url: 'https://hub-mhsc.com/research_notes/research_notes-987/', type: 'academic', label: '一橋大学大学院経営管理研究科 みずほ証券寄附講義「在庫理論アプローチ」（所得・金利・取引コスト依存）' },
+    ],
+  },
+  {
+    id: 'econ-dutch-disease',
+    discipline: 'economics',
+    title: 'オランダ病',
+    statement:
+      'オランダ病とは、天然資源の輸出ブームや大規模な資本流入によって実質為替レートが増価し、製造業など他の貿易（輸出）部門が国際競争力を失って衰退する現象を指す。名称は、1960年代に北海で天然ガスを発見し輸出を拡大したオランダで製造業が衰退した事例にちなみ、1977年に英誌The Economistが命名した。' +
+      'メカニズムは2つに整理される。資源部門の好況が労働などの生産要素を製造業から引き抜く「資源移動効果」と、資源収入の増加が非貿易財への需要を高め実質為替レートを押し上げる「支出効果」であり、いずれも製造業の脱工業化を招く。この理論は1982年のW・マックス・コーデンとJ・ピーター・ニアリーのモデルによって定式化され、資源の呪いを論じる際の中心的枠組みとなっている。',
+    keyFigures: 'The Economist（1977命名）／W・マックス・コーデン／J・ピーター・ニアリー（1982モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E3%82%AA%E3%83%A9%E3%83%B3%E3%83%80%E7%97%85-688209', type: 'reference', label: 'コトバンク（知恵蔵ほか）「オランダ病」' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8609513/', type: 'academic', label: '40 Years of Dutch Disease Literature (NCBI/PMC, 査読論文)' },
+      { url: 'https://link.springer.com/article/10.1007/s10640-023-00827-w', type: 'academic', label: 'The Dutch disease revisited (SpringerLink, Environ. Resour. Econ.)' },
+    ],
+  },
+  {
+    id: 'mgmt-ge-mckinsey-matrix',
+    discipline: 'management',
+    title: 'GE・マッキンゼー・マトリクス（ビジネス・スクリーン）',
+    statement:
+      'GE・マッキンゼー・マトリクス（ビジネス・スクリーン）は、マッキンゼー・アンド・カンパニーが1970年頃にゼネラル・エレクトリック（GE）の多角化した事業ポートフォリオの資源配分を支援するために開発した戦略分析フレームワークである。縦軸に「業界の魅力度」、横軸に「事業の競争力（強み）」をとり、それぞれを高・中・低の3段階に分けた3×3の9象限グリッド上に各事業単位を配置する。' +
+      '各軸は市場規模・成長率・収益性・競争状況や、相対的市場シェア・技術・品質・コストなど複数の要因を総合して評価する多要因指標であり、2軸2要因のBCGマトリクスをより精緻化した発展版と位置づけられる。配置に応じて、投資・成長、選択的維持・収益確保、収穫・撤退といった投資判断の方針を導く。',
+    keyFigures: 'マッキンゼー・アンド・カンパニー／ゼネラル・エレクトリック（GE、1970年頃）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/enduring-ideas-the-ge-and-mckinsey-nine-box-matrix', type: 'reference', label: 'McKinsey & Company — Enduring Ideas: The GE–McKinsey nine-box matrix' },
+      { url: 'https://www.esade.edu/beyond/en/mckinsey-matrix/', type: 'academic', label: 'Esade Business School — The McKinsey matrix: concept and application' },
+      { url: 'https://strategicmanagementinsight.com/tools/ge-mckinsey-matrix/', type: 'reference', label: 'Strategic Management Insight — GE-McKinsey Matrix: The Ultimate Guide' },
+    ],
+  },
+  {
+    id: 'human-construal-level-theory',
+    discipline: 'human-science',
+    title: '解釈レベル理論',
+    statement:
+      'ヤコブ・トロープとニラ・リーバーマンが提唱した社会心理学の理論で、対象との心理的距離が心的表象の抽象度を体系的に左右すると説く。心理的距離には時間・空間・社会（自他）・仮想性（実現可能性）の四次元があり、「いま・ここ・自分」を基点とする自己中心的なものである。対象が心理的に遠いほど、人はそれを本質的・抽象的・脱文脈的にとらえる高次解釈を用い、' +
+      '近いほど具体的・付随的・文脈依存的にとらえる低次解釈を用いる。高次解釈は全体像や目的（なぜ）に、低次解釈は手段や細部（どのように）に焦点を当てる。両者は双方向に対応し、心理的距離は予測・評価・選択といった判断や行動に影響を及ぼす。',
+    keyFigures: 'ヤコブ・トロープ（Yaacov Trope）／ニラ・リーバーマン（Nira Liberman）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doiLanding?doi=10.1037/a0018963', type: 'academic', label: 'Trope & Liberman (2010) Construal-level theory of psychological distance, Psychological Review 117(2):440-463 (APA PsycNET)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3150814/', type: 'academic', label: 'Construal Levels and Psychological Distance（NCBI PMC, 査読）' },
+      { url: 'https://www.jstage.jst.go.jp/article/acs/20/2/20_2_65/_pdf', type: 'academic', label: '解釈レベル理論を用いた消費者行動研究の系譜と課題（J-STAGE）' },
+    ],
+  },
+  {
+    id: 'bizlaw-fixed-term-conversion',
+    discipline: 'business-law',
+    title: '無期転換ルール（労働契約法18条）',
+    statement:
+      '無期転換ルールとは、労働契約法第18条に基づき、同一の使用者との間で有期労働契約が反復更新され、通算の契約期間が5年を超えた有期契約労働者が、使用者に対し無期労働契約への転換を申し込む権利（無期転換申込権）を取得する制度である。労働者が申込みをすると、使用者は承諾したものとみなされ、現に締結している有期契約の期間満了日の翌日から無期労働契約が成立する。' +
+      'この制度は有期契約の濫用的な反復更新を抑制し雇用の安定を図る趣旨で、2012年（平成24年）の改正労働契約法により導入され、2013年（平成25年）4月1日に施行された。通算5年に算入されるのは施行日以後に開始する契約であり、最初の無期転換申込権は2018年4月頃から発生した。なお、契約のない期間が原則6か月以上あるとそれ以前の期間は通算されない「クーリング期間」が定められている。',
+    keyFigures: '厚生労働省／労働契約法 第18条（2012年改正・2013年4月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://muki.mhlw.go.jp/', type: 'government', label: '厚生労働省 有期契約労働者の無期転換ポータルサイト' },
+      { url: 'https://www.mhlw.go.jp/stf/newpage_21917.html', type: 'government', label: '厚生労働省「無期転換ルールについて」' },
+      { url: 'https://laws.e-gov.go.jp/law/419AC0000000128/', type: 'government', label: 'e-Gov法令検索 労働契約法 第18条' },
+    ],
+  },
+  {
+    id: 'infosoc-actor-network-theory',
+    discipline: 'information-sociology',
+    title: 'アクターネットワーク理論',
+    statement:
+      'アクターネットワーク理論（ANT）は、ブルーノ・ラトゥール、ミシェル・カロン、ジョン・ローらが1980年代の科学技術社会論（STS）の中で展開した理論枠組みである。人間と非人間（道具・機械・自然物・制度など）をひとしく「アクタン（actant）」として対称的に扱い、行為主体性をあらかじめ人間に帰属させず、両者が混在する異種混交的ネットワークの関係から立ち上がる効果としてとらえる点に特徴がある。' +
+      'その中核には、社会的なものと技術的・自然的なものとを先験的に区別しない「一般化された対称性」の原則と、諸アクターが互いの利害を読み替え結びつけながらネットワークを編成していく「翻訳（translation）」の概念がある。ANTは社会／技術、自然／文化といった二分法を出発点から退け、科学知や技術の生成を異質な要素の連関として記述しようとする。',
+    keyFigures: 'ブルーノ・ラトゥール／ミシェル・カロン／ジョン・ロー（1980年代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oxfordre.com/education/display/10.1093/acrefore/9780190264093.001.0001/acrefore-9780190264093-e-526', type: 'academic', label: 'Oxford Research Encyclopedia of Education — Actor–Network Theory' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/acref/9780191843273.001.0001/acref-9780191843273-e-3', type: 'reference', label: 'Oxford Reference — Actor-network theory' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E7%90%86%E8%AB%96', type: 'reference', label: 'アクターネットワーク理論 — Wikipedia（日本語）' },
+    ],
+  },
 ];
 // Stryker restore all
