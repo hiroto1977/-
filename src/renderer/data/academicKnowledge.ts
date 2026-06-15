@@ -10071,5 +10071,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://archive.org/details/technostresshuma0000brod', type: 'reference', label: 'Brod, C. (1984) Technostress: The Human Cost of the Computer Revolution, Addison-Wesley（原典・Internet Archive）' },
     ],
   },
+  {
+    id: 'econ-revenue-equivalence',
+    discipline: 'economics',
+    title: '収入同値定理',
+    statement:
+      '収入同値定理（revenue equivalence theorem）は、オークション理論の基本定理で、一定の条件の下では見かけ上ルールの異なる様々なオークション形式が売り手にとっての期待収入で等しくなるとする結果である。' +
+      '前提条件は、(1)入札者がリスク中立、(2)各入札者の評価額が共通の連続分布から独立同分布で引かれる私的情報（対称的な独立私的価値）、(3)落札者は最も高く評価する者（効率的配分）、(4)評価額が最低の入札者の期待利得がゼロ、の4点である。この下で第一価格封印入札・第二価格封印入札（ヴィックリー）・イングリッシュ（競り上げ）・ダッチ（競り下げ）の各形式は同一の期待収入をもたらす。直観的には、第一価格では評価額より控えめに入札し第二価格では正直に入札するなど最適戦略は形式ごとに異なるが、その差が期待値上で相殺される。Vickrey(1961)が先駆け、Myerson(1981)とRiley & Samuelson(1981)が一般化した。リスク回避・価値の相関・非対称といった条件が崩れると同値性は成立しない。',
+    keyFigures:
+      'William Vickrey（1961, 先駆）／Roger Myerson（1981「Optimal Auction Design」）／John Riley & William Samuelson（1981「Optimal Auctions」）／成立条件と破綻（リスク回避・相関・非対称）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Revenue_equivalence', type: 'reference', label: 'Revenue equivalence — Wikipedia（定理の定義・条件・破綻ケース）' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'academic', label: 'Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）' },
+      { url: 'https://cpb-us-w2.wpmucdn.com/sites.wustl.edu/dist/3/2139/files/2019/11/BasicAuctionRevEq.pdf', type: 'academic', label: 'The Revenue Equivalence Theorem for Basic Auctions — Washington University in St. Louis 講義資料' },
+    ],
+  },
+  {
+    id: 'econ-double-marginalization',
+    discipline: 'economics',
+    title: '二重マージン（二重限界化）',
+    statement:
+      '垂直的取引で上流（メーカー等）と下流（小売等）の双方が市場支配力を持つとき、各社が独立に限界費用を上回るマージン（マークアップ）を上乗せすると、上流の卸売価格が下流の限界費用となり下流がさらにマージンを乗せるため、最終価格は垂直統合した単一独占企業の独占価格よりも高くなり、販売量・合計利潤・消費者余剰・社会的総余剰がいずれも低下する非効率を指す。' +
+      '各社が相手の価格決定が需要へ及ぼす影響（垂直的外部性）を無視して個別最適化することが原因。クールノー（1838、銅と亜鉛から真鍮を作る連続独占の例）が起源で、スペングラー（1950）が定式化した。解消策は垂直統合・再販売価格維持（RPM）・二部料金制（限界費用に等しい卸売価格＋定額料金）・数量割引／数量固定などで、合計利潤を独占水準へ回復しつつ消費者価格も下げうるため、垂直的制限が必ずしも反競争的でない一例とされる。',
+    keyFigures:
+      'オーギュスタン・クールノー（Augustin Cournot, 1838・連続/補完独占）／ジョセフ・スペングラー（Joseph J. Spengler, 1950）／垂直的外部性／解消策＝垂直統合・RPM・二部料金',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Double_marginalization', type: 'reference', label: 'Wikipedia: Double marginalization（定義・垂直的外部性・解消策）' },
+      { url: 'https://link.springer.com/article/10.1007/s11151-022-09872-z', type: 'academic', label: 'Linnemer, “Doubling Back on Double Marginalization”, Review of Industrial Organization (Springer, 査読)' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v58y1950p347.html', type: 'academic', label: 'Spengler, “Vertical Integration and Antitrust Policy”, Journal of Political Economy 58:347–352 (1950)（IDEAS/RePEc）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-justice',
+    discipline: 'management',
+    title: '組織的公正',
+    statement:
+      '従業員が組織内の意思決定や処遇をどれだけ公正・公平だと知覚するか（公正知覚）に関する組織行動論の概念。ジェラルド・グリーンバーグが1987年に論文「組織的公正理論の分類」で用語を提唱・整理した。通常3〜4の次元に分けられる：(1)分配的公正（distributive＝報酬・昇進・評価など結果や配分が公正か。アダムスの公平理論やエクイティに基づく）、(2)手続き的公正（procedural＝結果を決めるプロセスが公正か。ティボー&ウォーカーの過程／決定コントロール、レーヴェンタールの一貫性・偏りのなさ・正確性・修正可能性・代表性・倫理性の基準）、(3)相互作用的公正（interactional＝決定の伝達で人々が尊厳と敬意をもって扱われるか）。' +
+      '相互作用的公正はさらに対人的公正（interpersonal＝礼儀・尊重）と情報的公正（informational＝決定理由の十分な説明）に分けられ、コルキット（2001）が分配・手続き・対人・情報の4次元モデルを実証した。組織的公正の知覚は職務満足・組織コミットメント・組織市民行動（OCB）・信頼・職務遂行を高め、離職意図や反生産的行動（窃盗・サボタージュ）を減らすことが多くの研究で示される。重要な発見として、人々は結果が不利でも手続きが公正だと受け入れやすい（公正な手続きの効果）。',
+    keyFigures:
+      'ジェラルド・グリーンバーグ（Jerald Greenberg, 1987・用語提唱）／分配的・手続き的・相互作用的公正（コルキット2001が4次元実証）／アダムス公平理論・ティボー&ウォーカー・レーヴェンタール6基準／公正な手続きの効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1987.4306437', type: 'academic', label: 'Greenberg, J. (1987) “A Taxonomy of Organizational Justice Theories,” Academy of Management Review 12(1):9-22（原典）' },
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Justice/Colquitt_Dimensionality_of_Organizational_Justice.pdf', type: 'academic', label: 'Colquitt, J.A. (2001) “On the Dimensionality of Organizational Justice,” Journal of Applied Psychology（4次元モデル実証・MIT配布PDF）' },
+      { url: 'https://uwaterloo.ca/fairness-at-work-lab/sites/default/files/uploads/files/procedural_justice_an_historical_review_and_critical_analysis.pdf', type: 'academic', label: 'University of Waterloo, Fairness at Work Lab — Procedural Justice（ティボー&ウォーカー・レーヴェンタール6基準）' },
+    ],
+  },
+  {
+    id: 'human-goal-gradient',
+    discipline: 'human-science',
+    title: '目標勾配効果',
+    statement:
+      '目標勾配効果（goal-gradient effect / 目標勾配仮説）とは、目標（ゴール）に近づくほど、それを達成しようとする努力・動機づけ・行動の速度や強度が増大する現象。' +
+      '行動主義心理学者クラーク・ハル（Clark Hull）が1932年に提唱し、1934年の実験で直線路を走るネズミが餌に近づくほど走る速度を上げることを観察して定式化した。ラン・キベツらは2006年の論文（Journal of Marketing Research）で人間の消費行動に拡張し、コーヒー店のポイントカードで報酬に近づくほど購入間隔が短くなること、さらに「見せかけの進捗」（あらかじめ2個押された12個カードは白紙の10個カードより速く完了＝完了日数中央値10日対15日）を実証した。ロイヤルティ・プログラム、ゲーミフィケーションの進捗バー、募金キャンペーンの達成度表示に応用される。目標が遠いと努力が鈍る先延ばしの裏面もある。',
+    keyFigures:
+      'クラーク・ハル（Clark Hull, 1932/1934・goal-gradient hypothesis）／ラン・キベツ＆オーレグ・アーミンスキー＆ユーハン・ジェン（2006・消費行動への拡張・見せかけの進捗）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://home.uchicago.edu/ourminsky/Goal-Gradient_Illusionary_Goal_Progress.pdf', type: 'academic', label: 'Kivetz, Urminsky & Zheng (2006) “The Goal-Gradient Hypothesis Resurrected” Journal of Marketing Research 43(1):39–58（シカゴ大学ホスト全文PDF）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1509/jmkr.43.1.39', type: 'academic', label: 'SAGE Journals — Journal of Marketing Research 43(1):39–58（査読論文書誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Clark_L._Hull', type: 'reference', label: 'Wikipedia — Clark L. Hull（1932年 goal-gradient hypothesis の起源）' },
+    ],
+  },
+  {
+    id: 'bizlaw-offer-acceptance',
+    discipline: 'business-law',
+    title: '契約の成立（申込みと承諾・民法522条）',
+    statement:
+      '契約の成立とは、契約が当事者の意思表示の合致（合意）によって成立する仕組みで、民法522条以下が定める。522条1項は「契約は、契約の内容を示してその締結を申し入れる意思表示（申込み）に対して相手方が承諾をしたときに成立する」とし、申込みと承諾という対立する意思表示の合致によって契約が成立することを明らかにする。' +
+      '522条2項は「契約の成立には、法令に特別の定めがある場合を除き、書面の作成その他の方式を具備することを要しない」と定め、契約方式の自由（原則として諾成・不要式）を採る。2017年改正（2020年4月施行）では、隔地者間の承諾につき発信主義を採っていた旧526条1項を削除し、意思表示は相手方への到達時に効力を生ずるという97条1項の到達主義に統一した（承諾も到達時に契約成立）。なお523条は承諾期間を定めた申込みを原則撤回不可とし、528条は変更を加えた承諾を申込みの拒絶＋新たな申込みとみなす。',
+    keyFigures:
+      '522条1項＝申込みと承諾の合致で成立／522条2項＝契約方式の自由（原則諾成不要式）／2017改正で旧526条1項の発信主義を削除し97条1項の到達主義に統一（承諾も到達時に成立）／523条＝承諾期間を定めた申込みは原則撤回不可／528条＝変更を加えた承諾は拒絶＋新申込み／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、law id 129AC0000000089）第522条〜第528条' },
+      { url: 'https://www.moj.go.jp/content/001255635.pdf', type: 'government', label: '法務省 民法（債権関係）改正 申込みの撤回・承諾期間に関する新旧対照資料' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第522条', type: 'reference', label: 'Wikibooks 民法第522条・第528条（条文逐語）' },
+    ],
+  },
+  {
+    id: 'infosoc-fomo',
+    discipline: 'information-sociology',
+    title: 'FOMO（取り残されることへの恐れ）',
+    statement:
+      'FOMO（fear of missing out）とは、他者が自分の知らないところで報酬的・充実した経験をしているかもしれないという、取り残される・見逃すことへの広汎で持続的な不安であり、常に他者の動向を把握していたいという欲求と、それに伴うソーシャルメディアへの強迫的な接続・確認行動を特徴とする。' +
+      '学術的定義と尺度はAndrew Przybylskiらが2013年の論文「Motivational, emotional, and behavioral correlates of fear of missing out」（Computers in Human Behavior）で確立し、10項目のFoMO Scaleを開発した。自己決定理論（self-determination theory）の枠組みで、関係性・有能感・自律性という基本的心理欲求の充足が低い人ほどFOMOが高く、FOMOが高いほどSNS利用や問題的利用が多く気分・生活満足度の低下と関連すると示した。語は2004年にPatrick McGinnisがハーバードの学生紙The Harbusで用い（同記事でFOBOも提唱）、2013年にオックスフォード辞典へ収録された。SNSの常時接続と他者のハイライト投稿による上方比較が増幅要因で、関連語にFOBO・JOMO（joy of missing out）がある。',
+    keyFigures:
+      'Andrew K. Przybylski／Kou Murayama（2013・FoMO Scale）／Patrick J. McGinnis（2004・FOMO/FOBO命名）／自己決定理論・上方比較',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://selfdeterminationtheory.org/wp-content/uploads/2014/04/2013_PrzybylskiMurayamaDeHaanGladwell_CIHB.pdf', type: 'academic', label: 'Przybylski, Murayama, DeHaan & Gladwell (2013) “...fear of missing out”, Computers in Human Behavior（FoMO Scale原典）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/9781119011071.iemp0185', type: 'reference', label: 'Wiley Online Library, Major Reference Works “Fear of Missing Out”（査読リファレンス事典）' },
+      { url: 'https://en.wikipedia.org/wiki/Fear_of_missing_out', type: 'reference', label: 'Wikipedia “Fear of missing out”（語源・McGinnis 2004・FOBO/JOMO・Oxford 2013）' },
+    ],
+  },
 ];
 // Stryker restore all
