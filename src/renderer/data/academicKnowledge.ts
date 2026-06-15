@@ -14471,5 +14471,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://media-studies.com/reception-theory/', type: 'academic', label: "Media-Studies.com — Stuart Hall's Reception Theory: Encoding and Decoding the Media" },
     ],
   },
+  {
+    id: 'econ-logrolling',
+    discipline: 'economics',
+    title: 'ログローリング（票の取引）',
+    statement:
+      'ログローリング（投票取引）は公共選択論で分析される、議員や投票者が互いに票を交換する慣行である。自分が強く望む案件への賛成と引き換えに、関心の薄い相手の案件に賛成する。単純多数決は賛否の有無しか数えず選好の強度を表現できないが、ログローリングは互恵性を通じてこの強度を反映でき、強く望む少数派の意思を通す手段となりうる。' +
+      '総便益が総費用を上回る案件が成立すれば厚生改善的だが、便益が一部の地元・支持層に集中し費用が全納税者に分散する無駄な利益誘導（ポークバレル）型支出を通過させ、政府支出の膨張を招いて厚生低下的にもなりうる。ジェームズ・ブキャナンとゴードン・タロックが1962年『公共選択の理論（The Calculus of Consent）』で体系的に分析した。',
+    keyFigures: 'ジェームズ・ブキャナン／ゴードン・タロック（1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF01718818', type: 'academic', label: 'Public Choice (Springer) — Logrolling, Vote Trading, and the Paradox of Voting' },
+      { url: 'https://www.econlib.org/library/Enc/PublicChoice.html', type: 'reference', label: 'Econlib — Concise Encyclopedia of Economics: Public Choice (logrolling, intensity of preferences)' },
+      { url: 'https://en.wikipedia.org/wiki/Logrolling', type: 'reference', label: 'Wikipedia — Logrolling (vote trading, pork barrel, Calculus of Consent)' },
+    ],
+  },
+  {
+    id: 'econ-tournament-theory',
+    discipline: 'economics',
+    title: 'トーナメント理論（昇進トーナメント）',
+    statement:
+      'レイジア＆ローゼン（1981, JPE）が提唱した人事経済学の理論で、報酬を各自の絶対的な産出量ではなく、組織内での相対的な順位（ランク）に基づいて決める雇用・昇進の仕組みを指す。労働者は「トーナメント」で互いに競い、勝者に昇進などの賞が与えられる。' +
+      '絶対産出の測定が高コストでノイズが大きく、順位付けの方が容易な場合、リスク中立的な労働者に対し出来高給と同等の効率的なインセンティブを与えうる（共通ショックを相対評価で除去できる）。最上位昇進時の大きな賃金の跳躍が賞となって階層全体の努力を促し、経営者報酬が高く凸になることや上位ほど賃金格差が広がることを説明する一方、協力低下や妨害、過度のリスクテイクという弊害も伴う。',
+    keyFigures: 'エドワード・レイジア／シャーウィン・ローゼン（1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w0401', type: 'academic', label: 'Lazear & Rosen, "Rank-Order Tournaments as Optimum Labor Contracts," NBER Working Paper (JPE 1981)' },
+      { url: 'https://en.wikipedia.org/wiki/Tournament_theory', type: 'reference', label: 'Tournament theory — Wikipedia' },
+      { url: 'https://wol.iza.org/articles/pros-and-cons-of-workplace-tournaments/long', type: 'academic', label: 'IZA World of Labor: The pros and cons of workplace tournaments' },
+    ],
+  },
+  {
+    id: 'mgmt-escalation-of-commitment',
+    discipline: 'management',
+    title: 'コミットメントのエスカレーション',
+    statement:
+      'バリー・スタウ（1976）が提唱した、個人・集団・組織が失敗しつつある行動方針に対し、損切りせずに資金・時間・労力といった資源をさらに投入し続け、過去の決定や投資を正当化しようとする傾向。いわば「悪い金に良い金を追う」行動である。サンクコストの誤謬と密接に関連するが、単なる経済的な埋没費用の論理にとどまらず、自己正当化の動機、一貫性や合理性があるように見せたい欲求、初期決定への個人的責任、社会的・組織的圧力を強調する点で区別される。' +
+      'スタウの古典的実験では、ある事業への初期投資を自分自身が決定した場合、他者が決定した場合に比べて、その事業が不振でも追加投資を増やすことが示され、個人的責任が高いほどエスカレートしやすいことが裏付けられた。資金・時間・評判が累積するほど撤退は難しくなる。採算が立たないコンコルドの開発を継続した「コンコルド効果」や、「大きすぎて潰せない」状況もこの一例である。',
+    keyFigures: 'バリー・スタウ（Barry Staw, 1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://strategy.sjsu.edu/www.stable/B290/reading/Staw,%20B%20M,%201976,%20Organizational%20Behavior%20and%20Human%20Performance.%2016%20pp%2027-44.pdf', type: 'academic', label: 'Staw, B. M. (1976) "Knee-deep in the Big Muddy," Organizational Behavior and Human Performance 16, 27–44（原論文PDF, San José State University）' },
+      { url: 'https://en.wikipedia.org/wiki/Escalation_of_commitment', type: 'reference', label: 'Escalation of commitment — Wikipedia' },
+      { url: 'https://psycnet.apa.org/record/1976-27199-001', type: 'reference', label: 'APA PsycNet — Staw (1976) 書誌レコード' },
+    ],
+  },
+  {
+    id: 'human-ultimate-attribution-error',
+    discipline: 'human-science',
+    title: '究極的帰属錯誤',
+    statement:
+      'トマス・ペティグルーが1979年に提唱した社会心理学の概念で、根本的帰属錯誤（行為者・観察者の非対称性）を集団間関係、とくに偏見の文脈へ拡張したもの。人は外集団成員の否定的行動をその気質や内的・生得的な集団特性に帰属しがちな一方、同じ否定的行動でも内集団成員のものは状況や外的要因に帰属する。' +
+      '逆に外集団成員の肯定的行動は、気質ではなく状況・幸運・努力、あるいは「例外が規則を証明する」式の例外的事例として説明される。この集団に都合のよい非対称な帰属がステレオタイプと偏見を維持・正当化する。オルポートの偏見の認知分析を発展させた枠組みであり、個人を対象とする根本的帰属錯誤や、評価そのものの偏りを指す内集団バイアスとは区別される。',
+    keyFigures: 'トマス・ペティグルー（Thomas Pettigrew, 1979）／ゴードン・オルポート',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/014616727900500407', type: 'academic', label: 'Pettigrew (1979) The Ultimate Attribution Error, Personality and Social Psychology Bulletin 5(4)' },
+      { url: 'https://sk.sagepub.com/reference/processes/n292.xml', type: 'reference', label: 'SAGE Encyclopedia of Group Processes & Intergroup Relations: Ultimate Attribution Error' },
+      { url: 'https://en.wikipedia.org/wiki/Ultimate_attribution_error', type: 'reference', label: 'Wikipedia: Ultimate attribution error' },
+    ],
+  },
+  {
+    id: 'bizlaw-elderly-employment',
+    discipline: 'business-law',
+    title: '高年齢者雇用安定法',
+    statement:
+      '正式名称は「高年齢者等の雇用の安定等に関する法律」（昭和46年法律第68号、1971年制定）で、高年齢者の雇用の安定と継続雇用の促進を目的とする、厚生労働省所管の法律である。事業主に対し、定年を定める場合に60歳を下回って設定することを禁止する（60歳未満定年の禁止）。さらに65歳未満の定年を定める事業主には、65歳までの雇用確保措置として、' +
+      '①定年の65歳への引上げ、②継続雇用制度（再雇用等）の導入、③定年の定めの廃止のいずれかを講じることを義務づけている。2020年改正（令和2年改正、令和3年＝2021年4月施行）では、70歳までの就業確保措置が新たに努力義務として追加され、70歳までの継続雇用や定年廃止に加え、業務委託契約や社会貢献事業への従事といった措置も選択肢として認められている。',
+    keyFigures: '高年齢者等の雇用の安定等に関する法律（昭和46年法律第68号、1971年）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html', type: 'government', label: '厚生労働省「高年齢者雇用安定法の概要」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000061607', type: 'government', label: '日本法令索引（国立国会図書館）高年齢者等の雇用の安定等に関する法律 昭和46年法律第68号' },
+    ],
+  },
+  {
+    id: 'infosoc-affordance',
+    discipline: 'information-sociology',
+    title: 'アフォーダンス',
+    statement:
+      '生態心理学者ジェームズ・J・ギブソンが1979年の著書『生態学的視覚論』で造語した概念で、環境が動物に与える・提供する行為の可能性を指し、物や環境と行為者の能力・意図との関係のうちに存在する（面は支持や歩行を、取っ手は把持をアフォードする）。デザイン研究者ドナルド・ノーマンが1988年の『誰のためのデザイン?（元題The Psychology of Everyday Things）』でこの語をデザイン/HCIに導入し、' +
+      '物の知覚可能な行為可能性すなわち使い方の手がかりの意で用いた。彼は後に実在のアフォーダンス・知覚されたアフォーダンス・シグニファイア（使い方を示す手がかり）を区別した。さらにメディア/技術論やSTSではイアン・ハッチビーが2001年に、技術の物質的特性が特定の利用を可能にしつつ同時に制約すると論じ、技術決定論と社会構築主義の中間の立場を示した。この発想はSNSの分析にも応用されている。',
+    keyFigures: 'ジェームズ・J・ギブソン（James J. Gibson, 1979）／ドナルド・ノーマン（Donald Norman, 1988）／イアン・ハッチビー（2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/S0038038501000219', type: 'academic', label: 'Ian Hutchby, "Technologies, Texts and Affordances," Sociology 35(2): 441–456 (2001)' },
+      { url: 'https://www.interaction-design.org/literature/book/the-encyclopedia-of-human-computer-interaction-2nd-ed/affordances', type: 'reference', label: 'Interaction Design Foundation, Encyclopedia of HCI 2nd Ed. "Affordances"' },
+      { url: 'https://en.wikipedia.org/wiki/Affordance', type: 'reference', label: 'Wikipedia "Affordance"（Gibson 1979の定義・関係的性質）' },
+    ],
+  },
 ];
 // Stryker restore all
