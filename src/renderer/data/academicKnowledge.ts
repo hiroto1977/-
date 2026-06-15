@@ -17321,5 +17321,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Thomas_P._Hughes_(historian)', type: 'reference', label: 'Wikipedia: Thomas P. Hughes (historian) — Networks of Power (1983), large technical systems' },
     ],
   },
+  {
+    id: 'econ-prices-vs-quantities',
+    discipline: 'economics',
+    title: '価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）',
+    statement:
+      'マーティン・ワイツマンが1974年の論文「Prices vs. Quantities」（Review of Economic Studies 41巻477〜491頁）で示した、規制手段選択の理論。費用（および便益）に不確実性がある下で、外部性（公害・排出等）を規制する際、価格手段（単位当たりの課税や排出課徴金などピグー税型）と数量手段（数量割当や排出枠キャップ・取引可能な許可証）のどちらが期待厚生を高めるかを分析する。' +
+      '確実性下では両手段は同等の結果をもたらすが、費用が不確実な下では期待厚生が異なる。ワイツマンの結論は、優劣が限界便益曲線と限界費用曲線の相対的な傾きで決まるというもの。限界便益曲線が限界費用曲線に比べ急（数量に敏感で、閾値や破局的損害を伴う）なら数量規制が望ましく、限界便益曲線が相対的に緩やか（価格・費用を正しく設定する方が重要）なら価格規制が望ましい。これは炭素税対キャップ＆トレードの論拠となる。個別税率を論じるピグー税や、制度そのものを指す排出量取引とは区別される。',
+    keyFigures: 'マーティン・ワイツマン（Martin L. Weitzman, 1974）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/41/4/477/1543334', type: 'academic', label: 'Weitzman, M. L. (1974) "Prices vs. Quantities", The Review of Economic Studies 41(4): 477–491 (Oxford Academic)' },
+      { url: 'https://scholar.harvard.edu/weitzman/publications/prices-vs-quantities', type: 'academic', label: 'Martin Weitzman publication page, Harvard University' },
+      { url: 'https://www.nber.org/system/files/working_papers/w9283/w9283.pdf', type: 'academic', label: 'NBER Working Paper "Prices vs. Quantities vs. Tradable Quantities"' },
+    ],
+  },
+  {
+    id: 'econ-policy-ineffectiveness',
+    discipline: 'economics',
+    title: '政策無効命題',
+    statement:
+      'トマス・サージェントとニール・ウォレスが1975/76年に提示した、新しい古典派マクロ経済学の命題。合理的期待と市場の連続的均衡（期待で補強されたフィリップス曲線）を前提とすると、体系的＝予期される金融（および財政）政策は実質産出や雇用に影響を与えず、物価水準だけが動く。合理的な人々が政策ルールを予期し、インフレ予想等の期待を調整して効果を相殺するためである。' +
+      '実質的な効果を持つのは、予期されない（ランダムな）政策のサプライズのみだが、それは定義上、体系的な安定化政策には利用できない。したがって予測可能なフィードバックルールは産出を体系的に安定化できず、ケインズ的な裁量的安定化政策への根本的な挑戦となった。なお、前提となる合理的期待仮説や、政策変更が構造パラメータを変えうると説くルーカス批判とは区別される。',
+    keyFigures: 'トマス・サージェント／ニール・ウォレス（Sargent & Wallace, 1975/76）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/260321', type: 'academic', label: 'Sargent & Wallace, "Rational Expectations, the Optimal Monetary Instrument, and the Optimal Money Supply Rule," Journal of Political Economy 83(2), 1975' },
+      { url: 'https://www.econlib.org/library/Enc/NewClassicalMacroeconomics.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — New Classical Macroeconomics' },
+    ],
+  },
+  {
+    id: 'mgmt-level-5-leadership',
+    discipline: 'management',
+    title: 'レベル5リーダーシップ',
+    statement:
+      'ジム・コリンズが2001年の著書『ビジョナリーカンパニー2 飛躍の法則（Good to Great）』および同名のHBR論文「Level 5 Leadership: The Triumph of Humility and Fierce Resolve」で提示した、「良い」企業から「偉大」な企業へ持続的に飛躍した企業の実証研究から見出された逆説的なリーダー類型。レベル5のリーダーは、極度の個人的謙虚さ（personal humility）と職業人としての強烈な意志（professional will＝不屈の決意）という相反する性質を併せ持つ。控えめで自己を誇示せず、野心を自分自身ではなく会社の成功へ向け、永続的な偉大さを築く。' +
+      '成功は他者や幸運など外部要因に帰し（窓の外を見る）、失敗は自分の責任として直視する（鏡を見る）点が特徴。これは能力の5段階（1有能な個人、2組織に寄与する個人、3有能な管理者、4有能な経営者、5レベル5の経営者）の頂点に位置づけられる。野心を組織へ向け奉仕するサーバント・リーダーシップ、ビジョンで変革を促す変革型リーダーシップ、自己認識の真正性を核とするオーセンティック・リーダーシップとは区別され、謙虚さと意志の両立という独自の点に焦点がある。',
+    keyFigures: 'ジム・コリンズ（Jim Collins, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jimcollins.com/concepts/level-five-leadership.html', type: 'reference', label: 'Jim Collins — Concepts: Level 5 Leadership（著者本人による解説）' },
+      { url: 'https://hbr.org/2001/01/level-5-leadership-the-triumph-of-humility-and-fierce-resolve-2', type: 'academic', label: 'Harvard Business Review (2001), Jim Collins, "Level 5 Leadership: The Triumph of Humility and Fierce Resolve"' },
+      { url: 'https://www.mindtools.com/atqwpnm/level-5-leadership/', type: 'reference', label: 'MindTools — Level 5 Leadership（5段階階層・窓と鏡）' },
+    ],
+  },
+  {
+    id: 'human-piaget-cognitive-development',
+    discipline: 'human-science',
+    title: 'ピアジェの認知発達段階説',
+    statement:
+      'スイスの心理学者ジャン・ピアジェが提唱した、子どもの思考は普遍的で不変の順序を持つ質的に異なる4段階を経て発達するとする理論。(1)感覚運動期(約0〜2歳)は感覚と運動を通じて学び、隠れた物も存在し続けるという対象の永続性を獲得する。(2)前操作期(約2〜7歳)は象徴的思考と言語が発達するが、自己中心的で見かけに左右され保存の概念を欠く。' +
+      '(3)具体的操作期(約7〜11歳)は具体物について論理的操作を行い、保存・可逆性・分類を獲得する。(4)形式的操作期(約11歳〜)は抽象的・仮説演繹的推論が可能になる。中核機構はシェマ(認知構造)であり、既存の枠組みに取り込む同化と、枠組みを修正する調節による適応、両者の均衡を図る均衡化が段階移行を駆動する。心理社会的発達のエリクソンや道徳性発達のコールバーグとは区別される。',
+    keyFigures: 'ジャン・ピアジェ（Jean Piaget）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK537095/', type: 'academic', label: 'StatPearls (NCBI Bookshelf): Cognitive Development' },
+      { url: 'https://www.simplypsychology.org/piaget.html', type: 'reference', label: "Simply Psychology: Piaget's Theory and Stages of Cognitive Development" },
+      { url: "https://en.wikipedia.org/wiki/Piaget's_theory_of_cognitive_development", type: 'reference', label: "Wikipedia: Piaget's theory of cognitive development" },
+    ],
+  },
+  {
+    id: 'bizlaw-income-tax-act',
+    discipline: 'business-law',
+    title: '所得税法',
+    statement:
+      '所得税法は、個人の所得に課される国税である所得税の課税要件・計算方法・手続を定める基本法である。所得税自体は1887年（明治20年）に創設されたが、現行法は1965年（昭和40年法律第33号）の全部改正によるもので、財務省の外局である国税庁が所管する。所得を利子・配当・不動産・事業・給与・退職・山林・譲渡・一時・雑の10種類に区分し、それぞれ所得金額を計算する。' +
+      'これらを合算等したうえで、基礎控除・配偶者控除・扶養控除・社会保険料控除などの所得控除を差し引いた課税所得に、現行5％〜45％の超過累進税率を適用して税額を算出する。納税は確定申告による申告納税制度を基本とするが、給与所得については源泉徴収と年末調整により徴収される。居住者は原則として全世界所得に課税される。法人の所得に課す法人税法とは区別される。',
+    keyFigures: '所得税法（昭和40年法律第33号、1965年全部改正の現行法）／国税庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/340AC0000000033/', type: 'government', label: 'e-Gov法令検索「所得税法（昭和40年法律第33号）」' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2011.htm', type: 'government', label: '国税庁 No.2011 課税される所得と非課税所得（10種類の所得区分）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm', type: 'government', label: '国税庁 No.2260 所得税の税率（5%〜45%超過累進税率）' },
+    ],
+  },
+  {
+    id: 'infosoc-appadurai-scapes',
+    discipline: 'information-sociology',
+    title: 'アパデュライのスケープ（グローバルな文化フローの5次元）',
+    statement:
+      'アルジュン・アパデュライが1990年論文「Disjuncture and Difference in the Global Cultural Economy」および1996年著書『さまよえる近代（Modernity at Large）』で提示した、電子メディアと移民の時代のグローバルな文化フローを分析する枠組み。グローバルな文化の流れを5つの次元に分け、それぞれを接尾辞「-scape（スケープ＝景）」で表す。これは客観的な所与ではなく、見る者の歴史的・言語的・政治的な位置に応じて変わる流動的で不規則な眺め（パースペクティブ的構築物）である。' +
+      '5つとは、(1)エスノスケープ（移動する人々＝観光客・移民・難民・亡命者・出稼ぎ労働者）、(2)メディアスケープ（情報やイメージを生産・流通させる能力と、それが生み出す世界像）、(3)テクノスケープ（技術の地球規模の配置と流動）、(4)ファイナンススケープ（資本・通貨の地球的な流れ）、(5)イデオスケープ（イデオロギーや政治的観念・キーワードの流れ）。これらの流れは非同型（non-isomorphic）で互いに独立し不均等に動くため「ディスジャンクチャー（乖離）」を生む。脱領土化と想像力を鍵とする点で、アンダーソンの想像の共同体やグローカリゼーションとは区別される。',
+    keyFigures: 'アルジュン・アパデュライ（Arjun Appadurai, 1990/1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/026327690007002017', type: 'academic', label: 'Arjun Appadurai, "Disjuncture and Difference in the Global Cultural Economy", Theory, Culture & Society (1990) — 一次文献（査読誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Global_cultural_flows', type: 'reference', label: 'Wikipedia: Global cultural flows（5つのスケープ・パースペクティブ的構築物・非同型/ディスジャンクチャー）' },
+    ],
+  },
 ];
 // Stryker restore all
