@@ -11005,5 +11005,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Networked_individualism', type: 'reference', label: 'Wikipedia — Networked individualism' },
     ],
   },
+  {
+    id: 'econ-winners-curse',
+    discipline: 'economics',
+    title: '勝者の呪い',
+    statement:
+      '勝者の呪い（winner\'s curse）とは、共通価値オークション、すなわち入札対象の真の価値がすべての入札者にとって本質的に同じだが事前には不確実で各自が推定するしかない競売において、落札者が結果的に過大な価格を支払いがちになる現象である。最も高い（最も楽観的な）推定をした者が落札するため、その推定は真の共通価値を上回っている公算が大きく、勝つこと自体が過大評価の証左となる。' +
+      'この逆選択を考慮せず素朴に推定額どおり入札すると損失を被るため、合理的な入札者は勝者の呪いを見越して入札額を真の推定より引き下げる「シェーディング（入札の控えめ化）」を行うべきだとされる。1971年にCapen, Clapp & Campbellが米国の石油採掘権オークションで石油会社の収益が想定外に低い事実から実証的に指摘し、後にリチャード・セイラーらが行動経済学のアノマリーとして広く分析した。',
+    keyFigures: 'ケイペン・クラップ・キャンベル（Capen, Clapp & Campbell, 1971）／リチャード・セイラー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubs.aeaweb.org/doi/pdf/10.1257/jep.2.1.191', type: 'academic', label: 'Richard H. Thaler, "Anomalies: The Winner\'s Curse," Journal of Economic Perspectives 2(1), 1988 (AEA)' },
+      { url: 'https://mba.kobe-u.ac.jp/business_keyword/7992/', type: 'reference', label: '神戸大学MBA ビジネス・キーワード「勝者の呪い（Winner\'s curse）」' },
+      { url: 'https://en.wikipedia.org/wiki/Winner%27s_curse', type: 'reference', label: 'Wikipedia: Winner\'s curse' },
+    ],
+  },
+  {
+    id: 'econ-lucas-paradox',
+    discipline: 'economics',
+    title: 'ルーカスのパラドックス',
+    statement:
+      '新古典派の成長理論は、資本が希少な貧国では資本の限界生産性が高いため、資本は富国（資本豊富で限界生産性が低い国）から貧国へ大量に流れると予測する。しかしロバート・ルーカスは1990年の論文「なぜ資本は富国から貧国へ流れないのか」（American Economic Review）で、現実にはそのような大規模な資本移動は観察されないと指摘した。' +
+      'ルーカスは1988年の米国とインドの比較で、新古典派モデル通りならインドの資本収益率は米国の約58倍となり全資本が流出するはずだと示した。この乖離の説明として、各国の人的資本の質の差、制度の質や政治リスク、さらに情報の非対称性や主権リスクといった資本市場の不完全性が挙げられる。これがルーカスのパラドックスである。',
+    keyFigures: 'ロバート・ルーカス（Robert E. Lucas Jr., 1990）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v80y1990i2p92-96.html', type: 'academic', label: 'Lucas (1990) "Why Doesn\'t Capital Flow from Rich to Poor Countries?", American Economic Review 80(2):92-96 — RePEc/AEA record' },
+      { url: 'https://www.nber.org/system/files/working_papers/w11901/w11901.pdf', type: 'academic', label: 'NBER Working Paper 11901 — Alfaro, Kalemli-Ozcan & Volosovych on the Lucas paradox' },
+      { url: 'https://en.wikipedia.org/wiki/Lucas_paradox', type: 'reference', label: 'Lucas paradox — English Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-stage-gate',
+    discipline: 'management',
+    title: 'ステージゲート法',
+    statement:
+      'ステージゲート法は、ロバート・G・クーパーが1980〜90年代に体系化した新製品開発（NPD）のマネジメント手法で、不確実なイノベーション過程を「ステージ（段階）」と「ゲート（関門）」の連なりに分解する。各ステージ（探索・調査・事業仮説構築・開発・検証・上市など）では部門横断のチームが情報収集と作業を進め、' +
+      'その前後に置かれたゲートで経営層が継続（go）・中止（kill）・保留（hold）・差戻し（recycle）を判断する。あらかじめ定めた基準に照らして評価し、有望な案件のみに資源を段階的に投入することで、弱い案件を早期に絞り込み、開発リスクと失敗率を低減する。製品イノベーションのポートフォリオ管理で広く採用されている。',
+    keyFigures: 'ロバート・G・クーパー（Robert G. Cooper）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/bushor/v33y1990i3p44-54.html', type: 'academic', label: 'Cooper, R.G. (1990) "Stage-Gate Systems: A New Tool for Managing New Products", Business Horizons 33(3):44-54' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/9781444316568.wiem05014', type: 'reference', label: 'Cooper, "The Stage-Gate Idea-to-Launch System", Wiley International Encyclopedia of Marketing' },
+    ],
+  },
+  {
+    id: 'human-illusory-correlation',
+    discipline: 'human-science',
+    title: '錯誤相関',
+    statement:
+      '錯誤相関（illusory correlation）とは、二つの変数（事象・集団・行動など）の間に、実際には存在しない関係を知覚したり、実在する関係を過大に見積もったりする認知バイアスを指す。チャップマン夫妻（Chapman & Chapman, 1967）が、ロールシャッハ検査の解釈などを通じて命名・実証した。' +
+      '主要な発生機構として、希少で目立つ（distinctive）事象同士の共起が注意を引きやすく過大に符号化されるため、その共起頻度が過大視される点が挙げられる。ハミルトンとギフォード（Hamilton & Gifford, 1976）は、少数派集団と相対的にまれな否定的行動がともに目立つことで両者の結びつきが過大評価され、これがマイノリティに対するステレオタイプ形成の認知的基盤となりうることを実験的に示した。',
+    keyFigures: 'チャップマン夫妻（Chapman & Chapman, 1967）／デヴィッド・ハミルトン／ロバート・ギフォード（1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0022103176800066', type: 'academic', label: 'Hamilton & Gifford (1976), Journal of Experimental Social Psychology — distinctiveness-based illusory correlation and stereotyping' },
+      { url: 'https://dictionary.apa.org/illusory-correlation', type: 'reference', label: 'APA Dictionary of Psychology — illusory correlation 定義' },
+      { url: 'https://en.wikipedia.org/wiki/Illusory_correlation', type: 'reference', label: 'Wikipedia: Illusory correlation — Chapman (1967) 命名・Hamilton & Gifford distinctiveness 理論' },
+    ],
+  },
+  {
+    id: 'bizlaw-my-number',
+    discipline: 'business-law',
+    title: 'マイナンバー制度（社会保障・税番号制度）',
+    statement:
+      'マイナンバー制度は、「行政手続における特定の個人を識別するための番号の利用等に関する法律」（番号法／マイナンバー法）に基づき、住民票を有するすべての住民に対し重複のない12桁の個人番号を付番する仕組みである。2015年10月から順次番号が通知され、2016年1月に利用が開始された。番号は法令で定められた社会保障・税・災害対策の3分野に限って行政手続に利用され、複数機関が保有する個人情報を同一人のものとして確認する社会基盤となる。' +
+      '番号を含む情報は特定個人情報として収集・利用・提供が厳格に制限され、独立性の高い個人情報保護委員会が事業者・行政機関を通じてその適正な取扱いを監視・監督する。物理的なICカードであるマイナンバーカード（個人番号カード）は本人確認や各種オンライン手続に用いられる。制度は2021年9月よりデジタル庁が所管している。',
+    keyFigures: 'デジタル庁／番号法（行政手続における特定の個人を識別するための番号の利用等に関する法律、2013年成立・2016年利用開始）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/tetsuzuki/mynumberinfo/gaiyo.htm', type: 'government', label: '国税庁「社会保障・税番号制度（マイナンバー制度）の概要」（12桁・3分野）' },
+      { url: 'https://www.soumu.go.jp/kojinbango_card/01.html', type: 'government', label: '総務省「マイナンバー制度」（個人番号・通知開始）' },
+      { url: 'https://www.cao.go.jp/bangouseido/index.html', type: 'government', label: '内閣府「マイナンバー（社会保障・税番号制度）」（番号法・制度概要）' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-society',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム社会',
+    statement:
+      'ホセ・ファン・ダイク、トーマス・ポエル、マルタイン・デ・ワールが2018年の著書『The Platform Society』で提示した概念。オンライン・プラットフォームは中立的な仲介者ではなく、社会的相互作用を能動的に形成し、報道・交通・医療・教育などの公共部門にまで浸透・再編成すると論じる。' +
+      'プラットフォームはデータ化（datafication）、商品化（commodification）、選別（アルゴリズムによる選択）という三つの機構を通じて作動し、これらが相互に強化し合う。著者らはGoogle・Apple・Facebook・Amazon・Microsoftなどのインフラ的プラットフォームと、特定領域に特化したセクター別プラットフォームを区別し、公共的価値（public values）をいかに統治するかという問題を提起した。',
+    keyFigures: 'ホセ・ファン・ダイク／トーマス・ポエル／マルタイン・デ・ワール（2018）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/book/12378', type: 'academic', label: 'Oxford Academic（OUP）— The Platform Society (2018) 公式書誌' },
+      { url: 'https://c4dt.epfl.ch/article/digital-governance-book-review-the-platform-society-public-values-in-a-connective-world-2018/', type: 'reference', label: 'EPFL C4DT — 書評（三機構・インフラ/セクター別の区別を解説）' },
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/1461444820940293', type: 'academic', label: 'van Dijck (2021) New Media & Society — プラットフォーム化と統治' },
+    ],
+  },
 ];
 // Stryker restore all
