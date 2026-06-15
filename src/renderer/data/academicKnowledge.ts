@@ -12513,5 +12513,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/Web-20', type: 'reference', label: 'Encyclopaedia Britannica — "Web 2.0"' },
     ],
   },
+  {
+    id: 'econ-gravity-trade',
+    discipline: 'economics',
+    title: '貿易の重力モデル',
+    statement:
+      'ニュートンの万有引力の法則に類比して国際貿易を説明する実証モデルで、2国間の貿易量は両国の経済規模（GDP・GNP）の積に比例し、両国間の距離（および関税・国境などの貿易コスト）に反比例すると予測する。ヤン・ティンバーゲンが1962年に導入し、距離や経済規模との関係は時代・国・手法を超えて安定的で、経済学で最も実証的に頑健な関係の一つとされる。' +
+      '当初は確たる理論的基礎を欠くと批判されたが、後にアンダーソン（1979）やアンダーソン＆ヴァン・ウィンクープ（2003）が、各国の相対的な貿易障壁を表す「多角的抵抗（multilateral resistance）」の概念を導入してミクロ経済学的基礎づけを与えた。今日では国境効果・通貨同盟・貿易協定など貿易政策の効果推定に広く用いられている。',
+    keyFigures: 'ヤン・ティンバーゲン（Jan Tinbergen, 1962）／アンダーソン＆ヴァン・ウィンクープ（James Anderson & Eric van Wincoop, 2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop (2003) "Gravity with Gravitas", American Economic Review 93(1) — 多角的抵抗による理論的基礎づけ' },
+      { url: 'https://www.nber.org/system/files/working_papers/w19285/w19285.pdf', type: 'academic', label: 'Head & Mayer, "The Gravity Equation in International Trade", NBER Working Paper — ティンバーゲン1962導入・実証的頑健性' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-34529-7_4', type: 'reference', label: 'Springer "The Gravity Model of Trade" — ニュートン万有引力との類比・GDP積比例/距離反比例' },
+    ],
+  },
+  {
+    id: 'econ-environmental-kuznets-curve',
+    discipline: 'economics',
+    title: '環境クズネッツ曲線',
+    statement:
+      '環境クズネッツ曲線（EKC）は、環境汚染や環境負荷と一人当たり所得との間に逆U字型の関係があるとする仮説である。経済発展の初期には所得の上昇とともに環境悪化が進むが、所得が一定の転換点を超えると環境の質はむしろ改善に向かうとされる。所得不平等が成長に伴い拡大後に縮小するというサイモン・クズネッツ（1955）の逆U字仮説との類比からこの名がある。' +
+      'グロスマンとクルーガー（1991/1995、NAFTAやSO2等の大気汚染データ）や世界銀行の「世界開発報告1992」を通じて広まった。改善の説明には規模・構成・技術の各効果や所得上昇に伴う環境質需要の変化が挙げられる。ただしSO2や粉塵など局所的汚染では成り立つ一方、CO2など温室効果ガスでは必ずしも成立せず、関数形・変数の欠落・汚染の海外移転などをめぐり批判も多い。',
+    keyFigures: 'ジーン・グロスマン／アラン・クルーガー（1991/1995）／世界銀行（1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oxfordre.com/environmentalscience/display/10.1093/acrefore/9780199389414.001.0001/acrefore-9780199389414-e-401', type: 'reference', label: 'Oxford Research Encyclopedia of Environmental Science — Environmental Kuznets Curve' },
+      { url: 'https://www.nber.org/system/files/working_papers/w8001/w8001.pdf', type: 'academic', label: 'NBER Working Paper — The Environmental Kuznets Curve: Exploring a Fresh Specification' },
+      { url: 'https://link.springer.com/article/10.1007/s41247-022-00099-w', type: 'academic', label: 'Biophysical Economics and Sustainability (Springer) — Is There a Kuznets Curve for CO2-Emissions?' },
+    ],
+  },
+  {
+    id: 'mgmt-customer-journey',
+    discipline: 'management',
+    title: 'カスタマージャーニー',
+    statement:
+      '顧客がブランドや製品・サービスと関わる一連の体験の全体を指し、認知→検討→購入→利用→ロイヤルティ/推奨という全段階・全チャネルにわたるタッチポイント（接点）の累積として捉える概念。Lemon & Verhoef（Journal of Marketing, 2016）は顧客体験をブランド所有・パートナー所有・顧客所有の接点が段階ごとに重みを変えながら積み重なるものと整理した。' +
+      'カスタマージャーニーマップは、この過程を顧客視点で可視化する図で、各段階の行動・思考・感情・ペインポイントとタッチポイントを描き、CX（顧客体験）の理解と改善に用いる。AIDA等の直線的なファネルから、デジタル化・SNS化で多チャネル・非線形・反復的な経路へ移行したことを背景とし、マッキンゼーの「消費者意思決定ジャーニー」（2009、ロイヤルティループを含む循環モデル）がその代表である。',
+    keyFigures: 'カスタマージャーニーマップ／マッキンゼー「消費者意思決定ジャーニー」（2009）／Lemon & Verhoef（2016）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1509/jm.15.0420', type: 'academic', label: 'Lemon & Verhoef, "Understanding Customer Experience Throughout the Customer Journey," Journal of Marketing 80(6), 2016' },
+      { url: 'https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-consumer-decision-journey', type: 'media', label: 'Court, Elzinga, Mulder & Vetvik, "The consumer decision journey," McKinsey Quarterly, 2009' },
+      { url: 'https://online.hbs.edu/blog/post/customer-journey-map', type: 'reference', label: 'Harvard Business School Online — What Is a Customer Journey Map?' },
+    ],
+  },
+  {
+    id: 'human-tend-and-befriend',
+    discipline: 'human-science',
+    title: '思いやり・絆形成反応（テンド・アンド・ビフレンド）',
+    statement:
+      'シェリー・テイラーらが2000年に米心理学会の学術誌『Psychological Review』で提唱したストレス反応モデル。古典的な「闘争・逃走反応（fight-or-flight）」に加え、ヒト（特に女性）はストレスや脅威に直面した際、子を守り世話する「tend（養育・保護）」と、相互の保護や支援のために社会的つながりや仲間を求め築く「befriend（親和・絆形成）」によって応じると論じる。' +
+      'この反応は愛着・養育システムに根ざし、神経内分泌学的にはオキシトシンが女性の生殖ホルモン（エストロゲン）や内因性オピオイドと連動して中心的役割を果たすとされる。初期のストレス研究が男性被験者中心だったためこのパターンは見落とされてきたと指摘した。生理的な闘争・逃走反応を置き換えるのではなく補完する枠組みとして位置づけられる。',
+    keyFigures: 'シェリー・テイラー（Shelley Taylor）ら（2000）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/10941275/', type: 'academic', label: 'Taylor SE et al. (2000) Biobehavioral responses to stress in females: tend-and-befriend, not fight-or-flight. Psychological Review 107(3):411-429 (PubMed)' },
+      { url: 'https://www.apa.org/monitor/jan04/habit', type: 'reference', label: 'American Psychological Association, Monitor on Psychology — tending and befriending during stress' },
+    ],
+  },
+  {
+    id: 'bizlaw-equal-pay-equal-work',
+    discipline: 'business-law',
+    title: '同一労働同一賃金（パートタイム・有期雇用労働法）',
+    statement:
+      '働き方改革の柱の一つで、同一企業内の正社員（無期フルタイム）と非正規労働者（パートタイム・有期雇用）との間の不合理な待遇差を是正する制度。中心となるパートタイム・有期雇用労働法は、基本給・賞与・各種手当・福利厚生などあらゆる待遇について、合理性のない格差を禁じる。第8条の均衡待遇は、職務の内容、職務内容・配置の変更範囲、その他の事情に照らして不合理な待遇差を禁止し、' +
+      '第9条の均等待遇は、職務の内容と変更範囲が正社員と同一の場合に差別的取扱いを禁止する。あわせて、労働者から求めがあれば事業主が待遇差の内容・理由を説明する義務も強化された。大企業は2020年4月1日、中小企業は2021年4月1日から施行。派遣労働者については労働者派遣法の改正で同様の措置が手当てされ、制度全体は厚生労働省が所管する。',
+    keyFigures: 'パートタイム・有期雇用労働法（働き方改革関連法、大企業2020年4月・中小2021年4月施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html', type: 'government', label: '厚生労働省「同一労働同一賃金特集ページ」' },
+      { url: 'https://part-tanjikan.mhlw.go.jp/reform/', type: 'government', label: '厚生労働省「パートタイム・有期雇用労働法とは」' },
+      { url: 'https://cs-lawyer.tokyo/column/2023/03/02.html', type: 'reference', label: '東京弁護士会 中小企業法律支援センター「パート有期法8条・9条の解説」' },
+    ],
+  },
+  {
+    id: 'infosoc-web3',
+    discipline: 'information-sociology',
+    title: 'Web3',
+    statement:
+      'Web3（ウェブ3）は、ブロックチェーンやトークン経済・暗号資産を基盤とする分散型ウェブの構想・運動を指す。少数の巨大プラットフォームが利用者のデータや価値を集中管理するWeb2.0と対比され、非中央集権化、利用者によるデータやデジタル資産（トークンやNFT）の所有、信頼を前提としない（トラストレス／パーミッションレス）プロトコル、スマートコントラクト、分散型アプリ（dApps）や自律分散型組織（DAO）を重視する。' +
+      'この語はイーサリアム共同創設者ギャビン・ウッドが2014年に造語し、2021〜22年に暗号資産の盛り上がりとともに広く注目を集めた。一方で批判も多く、ジャック・ドーシーらは「分散」を掲げながら実際にはベンチャーキャピタルなど少数の仲介者に所有と支配が再集中すると指摘し、誇大宣伝、拡張性、セキュリティや詐欺、エネルギー消費、投機性への懸念も論じられている。',
+    keyFigures: 'ギャビン・ウッド（Gavin Wood, 2014造語）／イーサリアム',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/what-is-web3', type: 'reference', label: 'Encyclopædia Britannica — What is Web3?' },
+      { url: 'https://arxiv.org/pdf/2206.08821', type: 'academic', label: 'Exploring Web3 From the View of Blockchain (arXiv 2206.08821)' },
+      { url: 'https://en.wikipedia.org/wiki/Web3', type: 'reference', label: 'Wikipedia — Web3 (Gavin Wood 2014 coinage, criticism)' },
+    ],
+  },
 ];
 // Stryker restore all
