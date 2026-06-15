@@ -16608,5 +16608,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/1%25_rule', type: 'reference', label: 'Wikipedia — 1% rule (Internet culture)' },
     ],
   },
+  {
+    id: 'econ-shapiro-stiglitz',
+    discipline: 'economics',
+    title: 'シャピロ=スティグリッツの効率賃金モデル（怠業モデル）',
+    statement:
+      'カール・シャピロとジョセフ・スティグリッツが1984年の論文「労働者規律装置としての均衡失業」（American Economic Review）で示した効率賃金モデル。企業は労働者の努力を完全には監視できないため（怠業＝モラルハザード）、労働者は怠ける誘因を持つ。もし完全雇用かつ賃金が市場清算水準なら、解雇されてもすぐ同条件の別の職に就けるため解雇に罰がなく、全員が怠業してしまう。' +
+      'そこで企業は怠業を防ぐべく市場清算水準を上回る賃金（不怠業条件＝NSCを満たす賃金）を支払う。だが全企業が同様に高賃金を払うと労働需要が減少し、均衡として非自発的失業が生じる。この失業こそが、職を失う費用を生んで解雇の脅しを信頼あるものにする「労働者規律装置」として機能する。生産性が賃金に依存するという一般の効率賃金論のうち、監視不能下の怠業抑止に焦点を当てた代表的モデルである。',
+    keyFigures: 'カール・シャピロ／ジョセフ・スティグリッツ（Shapiro & Stiglitz, 1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v74y1984i3p433-44.html', type: 'academic', label: 'Shapiro & Stiglitz (1984) "Equilibrium Unemployment as a Worker Discipline Device", American Economic Review 74(3):433-444 (RePEc/AEA)' },
+      { url: 'https://en.wikipedia.org/wiki/Shapiro%E2%80%93Stiglitz_theory', type: 'reference', label: 'Shapiro–Stiglitz theory（怠業・不怠業条件NSC・労働者規律装置としての失業）' },
+      { url: 'http://coin.wne.uw.edu.pl/wincenciak/docs/makro_zaawansowana/lecture_3.pdf', type: 'academic', label: 'University of Warsaw 講義ノート: Shapiro-Stiglitz Model of Efficiency Wages' },
+    ],
+  },
+  {
+    id: 'econ-sticky-information',
+    discipline: 'economics',
+    title: '粘着情報モデル',
+    statement:
+      'グレゴリー・マンキューとリカルド・ライスが2002年のQuarterly Journal of Economics論文で提唱した、粘着価格（カルボ）モデルに代わる物価調整の枠組み。マクロ経済に関する情報は人々の間をゆっくりと伝播すると仮定し、各期にはランダムに選ばれた一部の主体（企業・価格設定者）だけが情報集合を更新して最適計画を再計算し、残りの主体は価格を継続的に変えうるものの古い情報に基づく計画のまま行動する。この想定から導かれる「粘着情報フィリップス曲線」では、インフレ率は現在の経済状況に対する過去の期待（古い予測）に依存する。' +
+      '帰結として、予告され信頼されたディスインフレでも不況を伴って常に縮小的であり（予期せぬ場合より程度は小さい）、金融政策ショックの効果は大きな時間差をもって遅れて緩やかに最大化し、観測されるインフレ動学（遅行的・こぶ型の反応）に整合的とされる点が粘着価格モデルと異なる。価格改定の摩擦そのものを問う粘着価格・メニューコストとは区別され、本モデルは情報更新の遅れに着目する。',
+    keyFigures: 'グレゴリー・マンキュー／リカルド・ライス（Mankiw & Reis, 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/117/4/1295/1875955', type: 'academic', label: 'Mankiw & Reis (2002), "Sticky Information versus Sticky Prices," Quarterly Journal of Economics 117(4):1295–1328 (Oxford Academic)' },
+      { url: 'https://www.nber.org/papers/w8290', type: 'academic', label: 'NBER Working Paper No. 8290 — Mankiw & Reis, "Sticky Information Versus Sticky Prices"' },
+      { url: 'https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp930.pdf', type: 'academic', label: 'European Central Bank Working Paper, "Sticky information Phillips curves"' },
+    ],
+  },
+  {
+    id: 'mgmt-modularity',
+    discipline: 'management',
+    title: 'モジュール化',
+    statement:
+      'モジュール化は、複雑なシステムを標準化された「デザイン・ルール」（どのモジュールが存在するかを定めるアーキテクチャ、モジュール間の接続を定めるインターフェース、適合を検証する標準・テスト）によって、独立に設計可能なサブシステム（モジュール）へ分割する設計原理である。各モジュール内部の「隠れた」設計パラメータは、可視のインターフェースを守る限り他モジュールに影響せず自由に変更でき、独立・並行開発や組み合わせによる製品多様性を生む。' +
+      'ボールドウィン&クラークは『デザイン・ルール 第1巻 モジュール化の力』（2000, MIT出版）で、モジュールが設計の選択肢（リアル・オプション）の価値を増やし、モジュラー・クラスタとして産業構造（例：コンピュータ産業）を再編すると論じた。先駆としてサイモンの「準分解可能システム」（1962）がある。構成要素が相互依存し擦り合わせを要するインテグラル型アーキテクチャと対比される。',
+    keyFigures: 'カーリス・ボールドウィン／キム・クラーク（Baldwin & Clark, 2000）／ハーバート・サイモン（1962, 準分解可能システム）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/icc/article/32/1/1/6972656', type: 'academic', label: 'The power of modularity today: 20 years of "Design Rules" — Industrial and Corporate Change (Oxford)' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=12114', type: 'academic', label: 'Baldwin & Clark, The Option Value of Modularity in Design — Harvard Business School' },
+      { url: 'https://faculty.sites.iastate.edu/tesfatsi/archive/tesfatsi/ArchitectureOfComplexity.HSimon1962.pdf', type: 'academic', label: 'Herbert A. Simon, The Architecture of Complexity (1962), Proc. American Philosophical Society' },
+    ],
+  },
+  {
+    id: 'human-encoding-specificity',
+    discipline: 'human-science',
+    title: '符号化特定性原理',
+    statement:
+      'タルヴィングとトムソン（1973, Psychological Review）が提唱した記憶理論で、記憶の想起は、想起時に存在する手がかりや状況が、符号化（記銘）時に存在したものと一致するほど効果的になるとする原理である。すなわち、ある検索手がかりは、それが記銘対象とともに符号化された情報を提供する度合いに応じて有効となる。良い手がかりであるか否かは、既存の意味的連合の強さだけでなく、その項目が当初どのように符号化されたかに依存する。' +
+      'この原理は、学習時と想起時の物理的環境が一致するほど再生が良くなる文脈依存記憶（ゴッデンとバドリー1975の陸上／水中ダイビング実験など）や、内的状態の一致が想起を助ける状態依存記憶を統一的に説明する。なお、特定の現象としての文脈依存記憶とは区別され、本原理はそれらを包含するより一般的な符号化と検索の枠組みを示すものである。',
+    keyFigures: 'エンデル・タルヴィング／ドナルド・トムソン（Tulving & Thomson, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1984115', type: 'academic', label: 'Tulving & Thomson (1973), Psychological Review, 80, 352–373（原典の書誌情報）' },
+      { url: 'https://dictionary.apa.org/encoding-specificity', type: 'reference', label: 'APA Dictionary of Psychology「encoding specificity」' },
+      { url: 'https://en.wikipedia.org/wiki/Encoding_specificity_principle', type: 'reference', label: 'Wikipedia: Encoding specificity principle' },
+    ],
+  },
+  {
+    id: 'bizlaw-long-term-care-insurance',
+    discipline: 'business-law',
+    title: '介護保険法',
+    statement:
+      '介護保険法（平成9年法律第123号、1997年制定・2000年4月施行、厚生労働省所管）は、高齢化や核家族化を背景に、加齢に伴い介護を要する状態となった者を国民の共同連帯のもと社会全体で支える社会保険制度を定める。保険者は市町村及び特別区で、被保険者は65歳以上の第1号被保険者と、医療保険加入者で40〜64歳の第2号被保険者（加齢に伴う特定疾病が原因の場合に限り給付対象）に分かれる。' +
+      'サービスを受けるには要介護認定（要支援1〜2・要介護1〜5）が必要で、給付は介護サービスの現物給付を原則とし、利用者は原則1〜3割を自己負担する。介護支援専門員（ケアマネジャー）がケアプランを作成し、利用者本位の選択を支える。財源は保険料と公費（税）でほぼ折半される。行政が決定する従来の措置制度から、契約・選択に基づく仕組みへ転換した点に特徴がある。',
+    keyFigures: '介護保険法（平成9年法律第123号、1997年制定・2000年4月施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=82998034&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 介護保険法（平成9年法律第123号）法令本文' },
+      { url: 'https://www.kaigokensaku.mhlw.go.jp/commentary/about.html', type: 'government', label: '厚生労働省 介護サービス情報公表システム「介護保険とは」' },
+      { url: 'https://kotobank.jp/word/%E4%BB%8B%E8%AD%B7%E4%BF%9D%E9%99%BA%E6%B3%95-224690', type: 'reference', label: 'コトバンク 介護保険法' },
+    ],
+  },
+  {
+    id: 'infosoc-sousveillance',
+    discipline: 'information-sociology',
+    title: 'スーヴェイランス（逆監視）',
+    statement:
+      'スティーブ・マンがジェイソン・ノーラン、バリー・ウェルマンとともに2003年（学術誌Surveillance & Society）で提唱した概念。surveillance（監視）が仏語のsur（上から）＋veiller（見る）であるのに対し、接頭辞をsous（下から）に置き換えた造語で、「下からの監視」を意味する。観察の手段を人間の高さへ引き下げ、建物ではなく人にカメラを装着し、上位の権威ではなく一般の人々が観察する点に特徴がある。すなわち活動の参加者がウェアラブル/携帯機器を用いて記録することであり、' +
+      'しばしば一般市民が警察など権力の側を撮影して、制度的監視の「上からのまなざし」を反転させる。これは逆監視（inverse surveillance）や市民によるアカウンタビリティの追及と結びつき、スマートフォン時代の傍観者動画（例：1991年ロドニー・キング事件の市民撮影映像）にも連なる。少数が多数を見るパノプティコン、多数が少数を見るシノプティコン、監視社会・監視資本主義の議論とは区別され、観察の方向を権力の下から上へ向け直す点に独自性がある。',
+    keyFigures: 'スティーブ・マン（Steve Mann, 2003）／ジェイソン・ノーラン／バリー・ウェルマン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/3344', type: 'academic', label: 'Mann, Nolan & Wellman, "Sousveillance," Surveillance & Society 1(3): 331–355 (2003)' },
+      { url: 'https://en.wikipedia.org/wiki/Sousveillance', type: 'reference', label: 'Wikipedia: Sousveillance（語源 sur/sous・下からの監視・市民が警察を撮影）' },
+    ],
+  },
 ];
 // Stryker restore all
