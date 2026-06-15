@@ -11094,5 +11094,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/full/10.1177/1461444820940293', type: 'academic', label: 'van Dijck (2021) New Media & Society — プラットフォーム化と統治' },
     ],
   },
+  {
+    id: 'econ-rybczynski',
+    discipline: 'economics',
+    title: 'リブチンスキー定理',
+    statement:
+      'ヘクシャー＝オリーンの2財2要素貿易モデルにおいて、財の相対価格（産出価格）が一定に保たれるという前提の下で、ある生産要素の賦存量が増加すると、その要素を集約的に用いて生産される財の産出量は賦存量の増加率を上回って比例以上に拡大し、他方の財の産出量は絶対的に減少する、という命題である。' +
+      'これは要素の部門間再配分を通じて生じる「拡大効果（magnification effect）」を表し、ストルパー＝サミュエルソン定理と双対の関係にある。ポーランド生まれのイギリスの経済学者タデウシュ・リブチンスキーが1955年の論文「Factor Endowment and Relative Commodity Prices」で明らかにし、標準的ヘクシャー＝オリーンモデルの4命題の一つとして位置づけられる。',
+    keyFigures: 'タデウシュ・リブチンスキー（Tadeusz Rybczynski, 1955）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E3%82%8A%E3%81%B7%E3%81%A1%E3%82%93%E3%81%99%E3%81%8D%E3%83%BC%E5%AE%9A%E7%90%86-1606855', type: 'reference', label: 'コトバンク「リプチンスキー定理」' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/International_Trade_-_Theory_and_Policy/05%3A_The_Heckscher-Ohlin_(Factor_Proportions)_Model/5.04%3A_The_Rybczynski_Theorem', type: 'academic', label: 'LibreTexts: International Trade — The Rybczynski Theorem' },
+      { url: 'https://en.wikipedia.org/wiki/Rybczynski_theorem', type: 'reference', label: 'Wikipedia: Rybczynski theorem' },
+    ],
+  },
+  {
+    id: 'econ-stolper-samuelson',
+    discipline: 'economics',
+    title: 'ストルパー＝サミュエルソン定理',
+    statement:
+      'ヘクシャー＝オリーン型の貿易モデルにおいて、ある財の相対価格が上昇すると、その財の生産に集約的に用いられる生産要素の実質報酬が上昇し、もう一方の生産要素の実質報酬は低下する、とする定理。ヴォルフガング・ストルパーとポール・サミュエルソンが1941年の論文「Protection and Real Wages」で示した。' +
+      'この帰結として、輸入競合財の価格を引き上げる関税などの保護貿易はその国で希少な生産要素の実質報酬を高め、逆に自由貿易は豊富な生産要素に利益をもたらす。すなわち貿易政策が所得分配に与える影響を明らかにし、自由貿易をめぐる利害対立（分配上の勝者と敗者）が生じる理由を説明する。',
+    keyFigures: 'ヴォルフガング・ストルパー／ポール・サミュエルソン（1941）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/9/1/58/1588589', type: 'academic', label: 'Stolper & Samuelson, "Protection and Real Wages," Review of Economic Studies 9(1), 1941, pp.58-73 (Oxford Academic)' },
+      { url: 'https://www.rieti.go.jp/users/tanaka-ayumu/serial/010.html', type: 'government', label: 'RIETI 第10回「ストルパー&サミュエルソン定理」（経済産業研究所）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%88%E3%83%AB%E3%83%91%E3%83%BC%EF%BC%9D%E3%82%B5%E3%83%9F%E3%83%A5%E3%82%A8%E3%83%AB%E3%82%BD%E3%83%B3%E3%81%AE%E5%AE%9A%E7%90%86', type: 'reference', label: 'ストルパー＝サミュエルソンの定理 - Wikipedia（日本語）' },
+    ],
+  },
+  {
+    id: 'mgmt-hoshin-kanri',
+    discipline: 'management',
+    title: '方針管理',
+    statement:
+      '方針管理は、トップマネジメントが定めた経営方針（中長期ビジョンや年度方針）を、目標とそれを達成するための方策の形で組織の全部門・全階層に展開し、ベクトルを合わせて重点指向で達成していく活動である。上位方針を各部門の方策へ落とし込む際は、上位と下位・関連部門の間で「キャッチボール」と呼ばれる双方向のすり合わせを行い、垂直・水平の両方向で整合を図る。' +
+      '策定・展開・実施と管理・期末レビューを中核とし、PDCAサイクルを回して実施状況と結果を点検し、次期の方針に反映する。第二次大戦後の日本の品質管理（TQM／TQC）運動の中で1960〜70年代に生まれ、日本科学技術連盟やデミング賞と深く結び付いて発展した。英語では hoshin kanri ないし policy deployment と呼ばれ、JIS Q 9023や日本品質管理学会の規格として体系化されている。',
+    keyFigures: '日本の品質管理（TQM）運動／赤尾洋二ら',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kikakurui.com/q/Q9023-2018-01.html', type: 'reference', label: 'JIS Q 9023:2018 マネジメントシステムのパフォーマンス改善―方針管理の指針（日本規格協会）' },
+      { url: 'https://jsqc.org/koushukai_reportage_20230316/', type: 'academic', label: '日本品質管理学会（JSQC）規格「方針管理の指針」' },
+      { url: 'https://www.juse.jp/houshin_kanri/', type: 'academic', label: '日本科学技術連盟（JUSE）方針管理研究会' },
+    ],
+  },
+  {
+    id: 'human-ironic-process',
+    discipline: 'human-science',
+    title: '皮肉過程理論（思考抑制）',
+    statement:
+      'ある思考を意図的に抑制しようとすると、かえってその思考が頻繁に浮かんでしまう現象を説明する理論で、ダニエル・ウェグナーが提唱した。1987年の「白熊（シロクマ）実験」では、被験者に5分間「白熊を考えないように」と求めると、抑制を指示された群はそうでない群より白熊を多く想起し、抑制後にはむしろ想起が増えるリバウンド効果が観察された。' +
+      'ウェグナーは1994年の論文（Psychological Review）で、心の制御には二つの過程が働くとした。意図した状態に合う内容を探す「遂行過程（operating process）」と、抑制すべき不適切な内容が出ていないかを探す「監視過程（monitoring process）」である。ストレスや時間圧など認知的負荷が高まり処理資源が低下すると、監視過程が遂行過程を上回り、抑制したい対象への感受性が高まって皮肉な逆効果（リバウンド）が生じる。',
+    keyFigures: 'ダニエル・ウェグナー（Daniel Wegner, 1987/1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/8121959/', type: 'academic', label: 'Wegner, D.M. (1994). Ironic processes of mental control. Psychological Review, 101(1), 34–52 (PubMed)' },
+      { url: 'https://scholar.harvard.edu/dwegner/publications/ironic-processes-mental-control', type: 'academic', label: 'Harvard – Daniel Wegner publication page: Ironic processes of mental control' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%9A%AE%E8%82%89%E9%81%8E%E7%A8%8B%E7%90%86%E8%AB%96', type: 'reference', label: 'Wikipedia（日本語）「皮肉過程理論」' },
+    ],
+  },
+  {
+    id: 'bizlaw-invoice-system',
+    discipline: 'business-law',
+    title: 'インボイス制度（適格請求書等保存方式）',
+    statement:
+      'インボイス制度（適格請求書等保存方式）は、複数税率に対応した消費税の仕入税額控除の方式として、国税庁の所管のもと2023年10月1日（令和5年10月1日）に開始された。買手が仕入税額控除を受けるには、原則として一定事項を記載した帳簿と、適格請求書発行事業者が交付する適格請求書（インボイス）の保存が要件となる。' +
+      '適格請求書には、発行事業者の登録番号、適用税率、税率ごとに区分した消費税額等の記載が必要である。発行事業者となるには税務署長への登録申請が必要で、登録番号が通知・公表される。登録できるのは課税事業者に限られるため、免税事業者は取引維持と納税負担の間で登録の是非を迫られる影響を受けた。',
+    keyFigures: '国税庁／適格請求書等保存方式（インボイス制度、2023年10月1日開始）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6498.htm', type: 'government', label: '国税庁 タックスアンサー No.6498 適格請求書等保存方式（インボイス制度）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について（登録番号・仕入税額控除）' },
+      { url: 'https://www.tokyo-cci.or.jp/soudan/invoice/', type: 'reference', label: '東京商工会議所 インボイス制度（中小企業向け解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-onlife',
+    discipline: 'information-sociology',
+    title: 'オンライフ',
+    statement:
+      'オンライフ（onlife）は、哲学者ルチアーノ・フロリディが提唱した概念で、ICT（情報通信技術）の遍在と常時接続（ハイパーコネクティビティ）により、オンラインとオフラインの区別が融解し、人々がそのどちらでもない「オンライフ」として生きるようになった状況を指す。欧州委員会の助成を受けた「Onlife Initiative」（2013）と『The Onlife Manifesto』が中核文献である。' +
+      'この変容のもとで、人間は周囲のスマートな応答的環境と一体化して「インフォスフィア（情報圏）」に統合され、現実と仮想、人間・機械・自然の境界が曖昧になる。フロリディは人間を社会的に接続された情報有機体（inforg／インフォーグ）として捉え直し、情報の希少から潤沢への反転、実体から相互作用への重心移動を主要な変化として論じた。',
+    keyFigures: 'ルチアーノ・フロリディ（Luciano Floridi）／Onlife Initiative（2013）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/book/10.1007/978-3-319-04093-6', type: 'academic', label: 'L. Floridi (ed.), The Onlife Manifesto: Being Human in a Hyperconnected Era, Springer, 2015 (open access)' },
+      { url: 'https://link.springer.com/article/10.1007/s13347-015-0189-8', type: 'academic', label: 'The ONLIFE Initiative—a Concept Reengineering Exercise, Philosophy & Technology, Springer, 2015' },
+      { url: 'https://en.wikipedia.org/wiki/Onlife', type: 'reference', label: 'Wikipedia: Onlife' },
+    ],
+  },
 ];
 // Stryker restore all
