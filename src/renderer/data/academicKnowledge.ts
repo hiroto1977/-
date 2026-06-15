@@ -9591,5 +9591,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://oecs.mit.edu/pub/0i6tb22l/release/1', type: 'reference', label: 'MIT Open Encyclopedia of Cognitive Science「Economic Games」— 公共財ゲームを含む解説' },
     ],
   },
+  {
+    id: 'econ-chicken-game',
+    discipline: 'economics',
+    title: 'チキンゲーム（タカ・ハト・ゲーム）',
+    statement:
+      'チキンゲームは、2人のプレイヤーがいずれも強硬（タカ的）戦略を取り続けると双方が衝突＝最悪の結末に至るが、一方が譲歩（ハト的に回避）すれば譲歩した側だけが「チキン（臆病者）」の汚名を負い、譲歩しなかった側が最大の利益を得る対称ゲームである。名称は2台の車が正面から突進し先によけた方をチキンと呼ぶ度胸試し（1955年の映画『理由なき反抗』で普及）に由来する。' +
+      '利得は「自分だけ強硬＞双方譲歩＞自分だけ譲歩＞双方衝突（T>R>S>P）」の順で、純粋戦略ナッシュ均衡は「一方が強硬・他方が譲歩」の非対称な2つ、加えて混合戦略均衡が存在する。生物学ではタカ・ハト・ゲーム、譲り合いの比喩ではスノードリフト（吹きだまり）ゲームとも呼ばれる。相互非協力（衝突）が最悪である点が、相互非協力が次悪にとどまる囚人のジレンマと異なる。あえて後に引けない姿勢を示すコミットメントが優位を生むという瀬戸際戦略（brinkmanship）の含意を持ち、軍拡競争・キューバ危機・労使交渉の分析に用いられる。',
+    keyFigures:
+      'ジョン・メイナード・スミス＆ジョージ・プライス（タカ・ハト・ゲーム・進化的安定戦略）／トーマス・シェリング（瀬戸際戦略）／反協調（anti-coordination）ゲーム・囚人のジレンマと区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/game-evolutionary/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy「Evolutionary Game Theory」— hawk–dove と ESS、Maynard Smith & Price 1973' },
+      { url: 'https://en.wikipedia.org/wiki/Chicken_(game)', type: 'reference', label: 'Wikipedia「Chicken (game)」— 利得順序 T>R>S>P・反協調ゲーム・混合戦略均衡・名称由来・囚人のジレンマとの差異' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095924919', type: 'reference', label: 'Oxford Reference「Hawk–Dove game」— チキンゲームの別名・生物学的定式化' },
+    ],
+  },
+  {
+    id: 'mgmt-mechanistic-organic',
+    discipline: 'management',
+    title: '機械的組織と有機的組織（バーンズ＆ストーカー）',
+    statement:
+      '機械的組織（mechanistic）と有機的組織（organic）とは、組織構造を環境適合の観点から2つの理念型に分類したもの。トム・バーンズとG.M.ストーカーが1961年の著書『The Management of Innovation（イノベーションの管理）』で、スコットランドのエレクトロニクス企業の研究から提示した。' +
+      '機械的組織は安定した環境に適し、高度な専門分化と明確な職務、厳格な階層・集権的意思決定、公式規則と垂直的な指揮命令・コミュニケーションを特徴とする官僚制的な型である。有機的組織は変化が激しく不確実な環境に適し、職務の柔軟な再定義、分権的・ネットワーク型の水平調整、規則より相互調整と専門知識に基づく権限、水平的コミュニケーションを特徴とする。両者に優劣はなく、直面する環境の安定性・不確実性に応じて適合する型が異なるとした、コンティンジェンシー理論（条件適合理論）の先駆的研究である。',
+    keyFigures:
+      'トム・バーンズ（Tom Burns）／G.M.ストーカー（G. M. Stalker, 1961『The Management of Innovation』）／環境適合・コンティンジェンシー理論の先駆',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.oup.com/academic/product/the-management-of-innovation-9780198288787', type: 'academic', label: 'Oxford University Press — The Management of Innovation (Burns & Stalker)' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/mechanistic-and-organic-organizations', type: 'reference', label: 'EBSCO Research Starters — Mechanistic and Organic Organizations' },
+      { url: 'https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/mechanistic-organizations', type: 'reference', label: 'Encyclopedia.com — Mechanistic Organizations' },
+    ],
+  },
+  {
+    id: 'mgmt-likert-systems',
+    discipline: 'management',
+    title: 'リッカートのシステム4',
+    statement:
+      '社会心理学者レンシス・リッカート（ミシガン大学）が1961年『New Patterns of Management』および1967年『The Human Organization』で提示した、組織の管理（リーダーシップ）スタイルを意思決定への参加度・信頼・コミュニケーションの方向などから4類型に分ける理論。システム1＝独善的専制型（搾取的権威主義、恐怖・罰で統制し部下を信頼せず決定は最上層に集中）、システム2＝温情的専制型（主従的だが恩情的で限定的に権限委譲）、システム3＝相談型（部下に相談するが最終決定は上層）、システム4＝参加型（集団参加型、信頼に基づき部下が意思決定・目標設定・統制へ広く参加し双方向のコミュニケーションをとる）。' +
+      'リッカートは企業・行政の調査から、システム4に近い組織ほど高い生産性・満足・低い離職を示すと論じ、参加型を最も有効とした。組織を重なり合う作業集団の連鎖とみなし、管理者が上位集団の一員かつ下位集団のリーダーとして両者をつなぐ「連結ピン（linking pin）」モデルも彼の概念である。彼はリッカート尺度（Likert scale）の考案者でもある。',
+    keyFigures:
+      'レンシス・リッカート（Rensis Likert, 1903–1981・ミシガン大学）／システム1〜4（搾取的/温情的権威主義・相談型・参加型）／連結ピン（linking pin）モデル／リッカート尺度',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Rensis-Likert', type: 'reference', label: 'Encyclopaedia Britannica — Rensis Likert（生涯・4リーダーシップ類型・参加型の優位）' },
+      { url: 'https://en.wikipedia.org/wiki/Likert%27s_management_systems', type: 'reference', label: 'Wikipedia — Likert’s management systems（システム1〜4の定義）' },
+      { url: 'https://www.science.org/doi/10.1126/science.162.3859.1260', type: 'academic', label: 'Science誌 書評 — The Human Organization (1967, McGraw-Hill) の出版確認' },
+    ],
+  },
+  {
+    id: 'human-actor-observer-bias',
+    discipline: 'human-science',
+    title: '行為者-観察者バイアス',
+    statement:
+      '行為者-観察者バイアス（actor–observer asymmetry）とは、ある行動の原因を帰属する際、自分（行為者）の行動は状況・外的要因に帰属しやすい一方、他者（観察者）の同じ行動は性格・気質など内的要因に帰属しやすいという、自己と他者の間の帰属の非対称性をいう。例えば自分の遅刻は「渋滞のせい」、他人の遅刻は「だらしないから」と考える傾向である。ジョーンズとニスベットが1971年に提唱し、説明として(1)知覚的顕著性（行為者は状況に、観察者は行為者に注意が向く）、(2)行為者と観察者で持つ情報の違いが挙げられる。' +
+      '他者の行動を過度に内的要因へ帰属する「基本的帰属の誤り」と関連するが、本概念は自己と他者で帰属が非対称になる点に焦点がある点で区別される。ただしマル（Malle, 2006, Psychological Bulletin）の173研究メタ分析は、この非対称性が一般には頑健でなく平均効果量がほぼゼロで、出版バイアス等を補正すると0に収束すると報告し、古典的知見の再評価を促した。否定的事象など特定条件では出現し、肯定的事象では逆方向の非対称も見られる。',
+    keyFigures:
+      'エドワード・E・ジョーンズ（Edward E. Jones）＆リチャード・E・ニスベット（Richard E. Nisbett, 1971）／バートラム・マル（Bertram F. Malle, 2006メタ分析で再評価）／基本的帰属の誤りと区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://research.clps.brown.edu/SocCogSci/Publications/Pubs/Malle_(2006)_ActObs_meta.pdf', type: 'academic', label: 'Malle, B. F. (2006). The Actor–Observer Asymmetry in Attribution: A (Surprising) Meta-Analysis. Psychological Bulletin, 132(6), 895–919 (Brown University)' },
+      { url: 'https://en.wikipedia.org/wiki/Actor%E2%80%93observer_asymmetry', type: 'reference', label: 'Wikipedia: Actor–observer asymmetry' },
+      { url: 'https://www.ovid.com/journals/plbul/abstract/00006823-200611000-00004~the-actorobserver-asymmetry-in-attribution-a-surprising', type: 'academic', label: 'Psychological Bulletin abstract (Ovid): The Actor–Observer Asymmetry in Attribution' },
+    ],
+  },
+  {
+    id: 'bizlaw-release-of-debt',
+    discipline: 'business-law',
+    title: '免除（民法519条）',
+    statement:
+      '免除とは、債権者が債務者に対して一方的な意思表示によりその債権を無償で消滅させること（債務を免じること）をいう。民法519条は「債権者が債務者に対して債務を免除する意思を表示したときは、その債権は、消滅する」と定める。免除は債権者の単独行為（一方的意思表示）であり、債務者の承諾を要しない。これは、債権者も自己の債権を自由に処分しうるためであり、債務者にとって利益にこそなれ不利益にならないことによる。' +
+      '免除により債権は消滅し、全部免除の場合は担保権・保証債務など従たる権利義務も消滅する（一部免除はその限度）。ただし債権が差押えを受けている場合や質権が設定されている場合など、債権が第三者の利益の目的となっているときは免除できない。免除は弁済・代物弁済・供託・相殺・更改・混同と並ぶ債権消滅原因の一つで、これらが対価や債務の移転を伴うのに対し、免除は債権者の一方的意思表示による無償の債権消滅である点で区別される。なお連帯債務者の一人に対する免除は2017年改正（令和2年4月施行）で絶対効から相対効へ変更された（441条）。',
+    keyFigures:
+      '民法519条：債権者の一方的意思表示で債権消滅（債務者の承諾不要）／全部免除は担保権・保証等従たる権利も消滅／第三者の利益の目的（差押え・質権）となった債権は免除不可／弁済・代物弁済・供託・相殺・更改・混同と並ぶ債権消滅原因／連帯債務者の一人への免除は2017改正で相対効（441条）／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、第519条 免除）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第519条', type: 'reference', label: 'Wikibooks 民法第519条（条文・解説）' },
+      { url: 'https://www.businesslawyers.jp/practices/1196', type: 'reference', label: 'BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-bank',
+    discipline: 'information-sociology',
+    title: '情報銀行（情報利用信用銀行）',
+    statement:
+      '情報銀行（情報利用信用銀行、information bank）とは、個人が自らのパーソナルデータ（購買・移動・健康・SNS等の履歴）の管理を信頼できる事業者に委ね、本人の同意やあらかじめ指定した条件に基づき、その事業者が本人に代わってデータの第三者提供の妥当性を判断・実行し、その対価（便益や金銭）を本人に還元する仕組み・事業者をいう。' +
+      'データの利活用とプライバシー保護・自己情報コントロール権の両立を狙い、個人が自分のデータを蓄積・管理するPDS（Personal Data Store）やデータ取引市場と関連する。日本では総務省・経済産業省が主導し2018年6月に「情報信託機能の認定に係る指針Ver1.0」を策定、一般社団法人日本IT団体連盟による任意の認定制度が2018年〜運用される。背景にプラットフォーマーのデータ寡占への対抗、GDPRやデータポータビリティ権の議論があり、MITのA.ペントランドの「New Deal on Data」など国際的議論とも連なる。',
+    keyFigures:
+      'アレックス・“サンディ”・ペントランド（Alex “Sandy” Pentland, New Deal on Data）／総務省・経済産業省（情報信託機能の認定指針2018）／一般社団法人日本IT団体連盟（認定制度）／PDS・データポータビリティと関連',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h30/html/nd112110.html', type: 'government', label: '総務省 平成30年版 情報通信白書「PDS・情報銀行・データ取引市場」' },
+      { url: 'https://www.meti.go.jp/press/2018/06/20180626002/20180626002.html', type: 'government', label: '経済産業省「情報信託機能の認定に係る指針ver1.0を取りまとめました」(2018年6月26日)' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-981-99-0321-4_12', type: 'academic', label: 'H. Kümmerle, “More Than a Certification Scheme: Information Banks in Japan...” (Springer, 2023)' },
+    ],
+  },
 ];
 // Stryker restore all
