@@ -11802,5 +11802,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Spreadability', type: 'reference', label: 'Wikipedia — Spreadability（"If it doesn\'t spread, it\'s dead"／spreadability vs stickiness の定義）' },
     ],
   },
+  {
+    id: 'econ-balanced-budget-multiplier',
+    discipline: 'economics',
+    title: '均衡予算乗数',
+    statement:
+      '均衡予算乗数（ハーヴェルモ定理）とは、基本的なケインズ型の所得＝支出モデルにおいて、政府支出と租税を同額だけ増やし財政均衡（ΔG＝ΔT）を保った場合でも均衡国民所得が増加し、その乗数がちょうど1（ΔY＝ΔG）になるという結果である。直観的には、政府支出は需要を全額ΔGだけ押し上げる一方、増税は限界消費性向（c）倍の cΔT だけしか消費を減らさない。' +
+      '増税分の一部は貯蓄の取り崩しで吸収され消費に回らないため、両効果の差し引き（支出乗数1/(1−c)と租税乗数−c/(1−c)の合計）がちょうど1となり、純効果はΔGに等しくなる。この結論はノルウェーの経済学者トリグヴェ・ハーヴェルモが1945年の論文「Multiplier Effects of a Balanced Budget」（Econometrica誌）で示した。ただし定額税・閉鎖経済・一定の限界消費性向・金利や金融面の打ち消しがないといった単純化の前提のもとで成立する。',
+    keyFigures: 'トリグヴェ・ハーヴェルモ（Trygve Haavelmo, 1945）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1945/10/01/multiplier-effects-balanced-budget', type: 'academic', label: 'Haavelmo, T. (1945) "Multiplier Effects of a Balanced Budget," Econometrica 13(4): 311–318（Econometric Society 公式書誌）' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95189-5_412', type: 'reference', label: 'The New Palgrave Dictionary of Economics, "Balanced Budget Multiplier"（Springer / Palgrave Macmillan）' },
+      { url: 'https://ocw.nagoya-u.jp/files/41/yanagihara06.pdf', type: 'academic', label: '名古屋大学 OpenCourseWare 経済理論I（マクロ経済学）第6回 講義資料（均衡予算乗数=1 の導出）' },
+    ],
+  },
+  {
+    id: 'econ-bandwagon-snob',
+    discipline: 'economics',
+    title: 'バンドワゴン効果・スノッブ効果',
+    statement:
+      'ハーヴェイ・ライベンシュタインが1950年の論文「Bandwagon, Snob, and Veblen Effects in the Theory of Consumers\' Demand」（Quarterly Journal of Economics）で定式化した、他者の消費量が自分の効用・需要に影響する相互依存的（消費の外部性を伴う）需要の理論である。' +
+      'バンドワゴン効果は、他者が消費するほどその財への需要が増える現象で、流行に乗り遅れたくない・皆と同じものを持ちたいという同調心理が働き、需要曲線はより弾力的になる。スノッブ効果は逆に、他者が消費するほど需要が減る現象で、人と違うものや希少なものを求める差別化心理が働き需要は非弾力的になる。なお同論文は、高価格そのものが効用を高めるヴェブレン効果も論じている。',
+    keyFigures: 'ハーヴェイ・ライベンシュタイン（Harvey Leibenstein, 1950）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article/64/2/183/1931945', type: 'academic', label: 'Leibenstein, "Bandwagon, Snob, and Veblen Effects in the Theory of Consumers\' Demand," QJE 64(2), 1950 (Oxford Academic)' },
+      { url: 'https://www.jmrlsi.co.jp/knowledge/yougo/my10/my1033.html', type: 'reference', label: 'JMR生活総合研究所 マーケティング用語集「バンドワゴン効果、スノッブ効果、ヴェブレン効果」' },
+      { url: 'https://www.sanosemi.com/biztech/document/bandwagon2011.pdf', type: 'academic', label: '佐野正博(2010)「ライベンシュタインおよびロルフスのバンドワゴン効果論」明治大学' },
+    ],
+  },
+  {
+    id: 'mgmt-emergent-strategy',
+    discipline: 'management',
+    title: '創発戦略',
+    statement:
+      'ヘンリー・ミンツバーグとジェームズ・ウォーターズが1985年の論文「Of Strategies, Deliberate and Emergent」（Strategic Management Journal）で提示した概念。彼は事前に計画された「意図された戦略」と、実際に組織で生じる「実現された戦略」を区別する。意図された戦略のうち計画どおり実現したものを「計画的戦略（deliberate）」、実現しなかったものを「未実現戦略」と呼ぶ。' +
+      '一方、実現された戦略には、事前の明確な意図がない（あるいは意図に反する）にもかかわらず、現場での学習と環境への適応を通じて、行動や意思決定の一貫したパターンとして事後的に形成される「創発戦略（emergent）」が含まれる。現実に有効な戦略は計画的要素と創発的要素の混合であり、純粋に計画偏重なトップダウン観への批判となっている。',
+    keyFigures: 'ヘンリー・ミンツバーグ／ジェームズ・ウォーターズ（1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250060306', type: 'academic', label: 'Mintzberg & Waters (1985) "Of Strategies, Deliberate and Emergent," Strategic Management Journal 6(3):257-272 (Wiley)' },
+      { url: 'https://open.oregonstate.education/strategicmanagement/chapter/1-intended-and-realized-strategies/', type: 'reference', label: 'Oregon State University — Strategic Management (OER): Intended and Realized Strategies' },
+      { url: 'https://pressbooks.lib.vt.edu/strategicmanagement/chapter/1-3-intended-emergent-and-realized-strategies/', type: 'reference', label: 'Virginia Tech — Strategic Management (OER): Intended, Emergent, and Realized Strategies' },
+    ],
+  },
+  {
+    id: 'human-flashbulb-memory',
+    discipline: 'human-science',
+    title: 'フラッシュバルブ記憶',
+    statement:
+      'フラッシュバルブ記憶とは、衝撃的で感情を強く揺さぶる重大な出来事（例：要人暗殺や同時多発テロ）を最初に知った瞬間の状況についての、鮮明で詳細かつ長期に持続する自伝的記憶を指す。どこにいて何をしていたか、誰から聞いたか、どう感じたかなどが、まるで写真のように焼き付くと感じられる。ロジャー・ブラウンと' +
+      'ジェームズ・クリックが1977年に命名し、特別な記憶メカニズムの存在を仮定した。しかし主観的な鮮明さや確信の高さは正確さを保証せず、後年の研究（ナイサー＆ハーシュによるチャレンジャー号爆発事故の調査など）では、確信が高いまま記憶が通常の記憶と同様に時間とともに変容・低下することが示され、確信と正確さの乖離が指摘されている。',
+    keyFigures: 'ロジャー・ブラウン／ジェームズ・クリック（1977）／ナイサー&ハーシュ（1992, 反証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/32552340/', type: 'academic', label: 'Tinti et al., "Flashbulb memory: referring back to Brown and Kulik\'s definition," Memory (2020) — PubMed' },
+      { url: 'https://dictionary.apa.org/flashbulb-memory', type: 'reference', label: 'APA Dictionary of Psychology — flashbulb memory' },
+      { url: 'https://en.wikipedia.org/wiki/Flashbulb_memory', type: 'reference', label: 'Wikipedia — Flashbulb memory (Brown & Kulik 1977, Cognition)' },
+    ],
+  },
+  {
+    id: 'bizlaw-bankruptcy',
+    discipline: 'business-law',
+    title: '破産法',
+    statement:
+      '破産法は、支払不能や（法人では）債務超過に陥った債務者の財産を清算する清算型の倒産手続を定める法律である。裁判所が破産手続開始決定を行い、選任された破産管財人が破産者の財産（破産財団）の管理処分権を専属的に掌握し、これを換価して、法定の優先順位に従い債権者へ配当する。誠実な個人債務者については免責の制度により残債務の支払義務を免れさせ、経済生活の再生の機会を確保する。' +
+      '現行法は大正11年法律第71号の旧破産法を全面改正した平成16年法律第75号で、2004年に制定され2005年1月1日に施行された。再建（再生）型の倒産手続である民事再生（債務者が再生計画で事業・生活を立て直す）や会社更生（更生管財人の下で株式会社を再建する）とは異なり、破産は債務者財産を清算・消滅させる点に特徴がある。所管は法務省、運用は裁判所が担う。',
+    keyFigures: '破産法（平成16年法律第75号、2004年制定・2005年施行）／法務省・裁判所',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.courts.go.jp/saiban/syurui/hasan/index.html', type: 'government', label: '裁判所「破産・再生」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000098296', type: 'government', label: '日本法令索引 破産法（平成16年法律第75号）' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/15920040602076.htm', type: 'government', label: '衆議院 破産法の施行に伴う関係法律の整備等に関する法律' },
+    ],
+  },
+  {
+    id: 'infosoc-astroturfing',
+    discipline: 'information-sociology',
+    title: 'アストロターフィング',
+    statement:
+      'アストロターフィングとは、企業・政治団体・PR会社・宗教団体などの真の発信者の存在を隠し、ある主張や運動が一般市民の自発的な草の根（grassroots）から生じ支持されているかのように偽装する世論操作の手法である。名称は本物の草の根運動と、人工芝の商標「AstroTurf（アストロターフ）」を皮肉に対比させた言葉遊びで、いわば「偽の草の根」を意味する。' +
+      '米上院議員ロイド・ベンツェンが1985年、保険業界が動員した大量の陳情はがきを「テキサスの人間なら本物の草の根と人工芝の違いが分かる」と評したことに由来するとされる。オンラインではサクラ（複数アカウントを操るソックパペット）、雇われた書き込み要員、やらせレビュー、ボットネットなどの形をとり、自発的な賛否の声を装って世論を操作し、健全な公共的議論と社会的信頼を毀損する点が問題視される。',
+    keyFigures: 'アストロターフィング（AstroTurf＝人工芝／偽の草の根、ロイド・ベンツェン1985に由来）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.merriam-webster.com/dictionary/astroturfing', type: 'reference', label: 'Merriam-Webster Dictionary — "astroturfing"（定義・AstroTurf語源・ベンツェン1985）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/01914537221108467', type: 'academic', label: 'Jovy Chan, "Online astroturfing: A problem beyond disinformation," Philosophy & Social Criticism (SAGE, 2024)' },
+    ],
+  },
 ];
 // Stryker restore all
