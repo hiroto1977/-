@@ -14114,5 +14114,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Social_presence_theory', type: 'reference', label: 'Wikipedia — Social presence theory' },
     ],
   },
+  {
+    id: 'econ-expectations-hypothesis',
+    discipline: 'economics',
+    title: '金利の期間構造の期待仮説',
+    statement:
+      '利回り曲線（金利の期間構造）の形状は、将来の短期金利に対する市場の予想によって決まるとする理論。純粋期待仮説では、長期金利は現在の短期金利と予想される将来の短期金利の（幾何）平均に等しい。これは、投資家が満期の異なる債券を完全代替物とみなし、裁定取引が一定の保有期間にわたる期待収益を均等化させるためである。' +
+      '含意として、順イールド（右上がり）は短期金利の上昇予想を、逆イールド（右下がり）は短期金利の低下予想（しばしば景気後退の予想）を示す。純粋期待仮説はリスク・期間プレミアムを無視するが、より一般的な期待理論は（ほぼ一定の）期間・流動性プレミアムを許容する（ヒックスの流動性プレミアム説）。実証的には時変的な期間プレミアムの存在により純粋形はおおむね棄却されるが、基礎的な基準仮説として残る。アーヴィング・フィッシャーやフリードリヒ・ルッツに歴史的に関連づけられる。',
+    keyFigures: '金利の期間構造の期待仮説（アーヴィング・フィッシャー／フリードリヒ・ルッツ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.richmondfed.org/~/media/richmondfedorg/publications/research/economic_quarterly/2002/fall/pdf/king.pdf', type: 'academic', label: 'King & Kurmann, "Expectations and the Term Structure of Interest Rates: Evidence and Implications," FRB Richmond Economic Quarterly (2002)' },
+      { url: 'https://en.wikipedia.org/wiki/Expectations_hypothesis', type: 'reference', label: 'Wikipedia — Expectations hypothesis' },
+    ],
+  },
+  {
+    id: 'econ-j-curve',
+    discipline: 'economics',
+    title: 'Jカーブ効果',
+    statement:
+      '自国通貨の減価（平価切下げ）の後、貿易収支（経常収支）はまず悪化してから改善し、時間軸上でアルファベットのJの字を描く現象。短期には輸出入数量が硬直的で（取引の多くが長期契約済みであり、輸入代替財を国内で見つけたり生産を切り替えたりするのに時間がかかる）数量がすぐには動かないため、減価直後は輸入品の自国通貨建て価格上昇という価格効果が勝り、収支はかえって悪化する。' +
+      'やがて時間が経つと相対価格の変化に応じて数量が調整され、輸出が増え輸入が減って収支は改善し、最終的には出発点の水準を上回る。これは、減価が貿易収支を改善させるには輸出入の需要の価格弾力性の絶対値の和が1を超える必要があるというマーシャル＝ラーナー条件が、短期には満たされず（和<1）長期には満たされる（和>1）ために生じる。',
+    keyFigures: 'Jカーブ効果／マーシャル＝ラーナー条件',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2004/wp0465.pdf', type: 'government', label: 'IMF Working Paper WP/04/65 — Exchange Rate Change and the Trade Balance (J-curve)' },
+      { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia — Marshall–Lerner condition and the J-curve effect' },
+      { url: 'https://ja.wikipedia.org/wiki/J%E3%82%AB%E3%83%BC%E3%83%96%E5%8A%B9%E6%9E%9C_(%E7%B5%8C%E6%B8%88%E5%AD%A6)', type: 'reference', label: 'ウィキペディア — Jカーブ効果（経済学）' },
+    ],
+  },
+  {
+    id: 'mgmt-upper-echelons',
+    discipline: 'management',
+    title: 'アッパー・エシュロン理論（経営上層部理論）',
+    statement:
+      '組織の戦略的選択や業績は、経営上層部（トップマネジメントチーム）の特性を部分的に反映するとする理論。経営者は複雑な状況を完全かつ客観的には把握できず、自らの認知基盤と価値観によって形作られた個人的な解釈（構築）に基づいて行動する。' +
+      'そのため、年齢・職能経歴・学歴・出自・在任期間などの観察可能な特性が認知基盤や価値観の代理変数となり、戦略決定や組織成果を部分的に予測しうるとされる。ハンブリック&メイソンが1984年にAcademy of Management Reviewで提唱し、ハンブリック（2007）は経営者の裁量や職務要求を調整要因として精緻化した。',
+    keyFigures: 'ドナルド・ハンブリック／フィリス・メイソン（1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, "Upper Echelons Theory: An Update," Academy of Management Review (2007)' },
+      { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Wikipedia: Upper echelons theory' },
+      { url: 'https://open.ncl.ac.uk/theories/13/pdf/upper-echelons-theory/', type: 'academic', label: 'Newcastle University (Open Lab): Upper Echelons Theory' },
+    ],
+  },
+  {
+    id: 'human-pratfall-effect',
+    discipline: 'human-science',
+    title: '失態効果（プラットフォール効果）',
+    statement:
+      '失態効果（プラットフォール効果）とは、有能で優秀と見なされている人物が小さな失敗（失態）を犯すと、かえって好感度や対人的魅力が高まる一方、平凡・凡庸と見なされた人物が同じ失敗をすると好感度が下がる現象を指す。社会心理学者エリオット・アロンソンらが1966年に行った実験では、参加者にクイズ番組形式の録音を聞かせ、正答率の高い優秀な人物と平凡な人物を提示し、一部の版では終盤に当人が不器用にコーヒーをこぼす音声を加えた。結果、コーヒーをこぼした優秀な人物が最も魅力的と評価された。' +
+      'これは、完璧で近寄りがたい有能な人物が失敗によって人間味を帯び、親しみやすく相手に近い存在に見えるためと説明される。逆に平凡な人物の失態は否定的印象を強める。後続研究では、観察者自身の自尊心の高さや性別、失敗の深刻さなどが効果を左右する調整要因として報告されている。原典はエリオット・アロンソン、ベン・ウィラーマン、ジョアン・フロイドによる1966年の論文「失態が対人的魅力を高める効果」（Psychonomic Science誌）である。',
+    keyFigures: 'エリオット・アロンソン／ベン・ウィラーマン／ジョアン・フロイド（1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.3758/BF03342263', type: 'academic', label: 'Aronson, Willerman & Floyd (1966), "The effect of a pratfall on increasing interpersonal attractiveness," Psychonomic Science 4:227–228 (Springer Nature)' },
+      { url: 'https://en.wikipedia.org/wiki/Pratfall_effect', type: 'reference', label: 'Wikipedia — Pratfall effect（概要・コーヒーこぼし実験・調整要因）' },
+      { url: 'https://www.brescia.edu/2017/06/pratfall-effect/', type: 'academic', label: 'Brescia University — Interesting Psychological Phenomena: The Pratfall Effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-insurance-act',
+    discipline: 'business-law',
+    title: '保険法',
+    statement:
+      '保険法（平成20年法律第56号、2008年6月6日公布）は、保険契約に関する基本法。1899年の商法制定以来ほぼ実質改正されず片仮名・文語体のままだった商法中の保険契約規定を全面的に見直し、現代語化したうえで独立した法典として制定し、2010年4月1日に施行された。損害保険と生命保険に加え、普及した傷害疾病保険（傷害・疾病に関する保険）の規定を新設。' +
+      '告知義務を、契約者が自発的に重要事項を申告する方式から、保険者の質問に応答する「質問応答義務」へ変更し、保険金受取人の変更や損害保険の被保険利益等についても整備した。多くの規定を片面的強行規定とし、法の定めより保険契約者・被保険者に不利な約款を無効として契約者保護を強化。保険と同等の内容をもつ共済契約にも適用される。所管は法務省で、保険業の監督は金融庁が担う。',
+    keyFigures: '保険法（平成20年法律第56号、2008年制定・2010年施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00114.html', type: 'government', label: '法務省 — 保険法の概要について' },
+      { url: 'https://www.jili.or.jp/knows_learns/law/', type: 'reference', label: '生命保険文化センター — 保険法の概要' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%BF%9D%E9%99%BA%E6%B3%95', type: 'reference', label: 'Wikipedia — 保険法' },
+    ],
+  },
+  {
+    id: 'infosoc-side-model',
+    discipline: 'information-sociology',
+    title: 'SIDEモデル（脱個人化の社会的アイデンティティ効果）',
+    statement:
+      'スピアーズ、リー、ポストメス、ライカーらが1990年代に展開した理論で（包括的な定式化はライカー・スピアーズ・ポストメス1995）、当初はコンピュータ媒介コミュニケーション（CMC）や匿名集団における行動を説明するために提唱された。群衆の中で自己を失い統制を喪失するという古典的な「没個性化」を、社会的アイデンティティ理論・自己カテゴリー化理論の枠組みで再解釈する。' +
+      '匿名性や集団への没入は単純な自己喪失ではなく、共有された社会的アイデンティティが顕在化している状況では、視覚的・個人的な匿名性が自己を個人的アイデンティティから社会的アイデンティティへ移行させ、顕在的な集団規範への同調をむしろ強める（認知的次元）。さらに識別不能性は、内集団・外集団への自己呈示や強力な外集団への抵抗といった戦略的次元も持つ。オンライン集団行動・匿名性・極性化・炎上を理解する基礎理論である。',
+    keyFigures: 'ラッセル・スピアーズ／マーティン・リー／トム・ポストメス／スティーブン・ライカー（1990年代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118783764.wbieme0091', type: 'reference', label: 'Spears, "Social Identity Model of Deindividuation Effects", Wiley International Encyclopedia of Media Effects' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2192573', type: 'academic', label: 'Reicher, Spears & Postmes (1995) A Social Identity Model of Deindividuation Phenomena, European Review of Social Psychology 6, 161–198' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/01461672012710001', type: 'academic', label: 'Postmes, Spears, Sakhel & de Groot (2001) Social Influence in Computer-Mediated Communication, PSPB' },
+    ],
+  },
 ];
 // Stryker restore all
