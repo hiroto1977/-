@@ -17857,5 +17857,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.un.org/en/development/desa/policy/untaskteam_undf/groupb_unesco_knowledge_societies.pdf', type: 'government', label: 'UNESCO, Towards Knowledge Societies: 複数形の知識社会と情報社会の区別' },
     ],
   },
+  {
+    id: 'econ-mundell-tobin-effect',
+    discipline: 'economics',
+    title: 'マンデル＝トービン効果',
+    statement:
+      'ロバート・マンデル（1963）とジェームズ・トービン（1965）にちなむ命題で、名目金利は期待インフレ率に対し1対1未満でしか上昇しない＝期待インフレの上昇が実質金利を低下させると説く。名目金利が期待インフレと1対1で動き実質金利が不変となる完全なフィッシャー効果とは対照的である。' +
+      '機構は、期待インフレの上昇が貨幣保有の実質収益を下げるため、人々は貨幣残高を節約し利付資産・実物資本へポートフォリオを移すというもの。資本需要の増加（実質貨幣需要の減少）が資本蓄積を高め、資本の限界生産力を押し下げて均衡実質金利を低下させる。よって貨幣は超中立的ではなく、予想インフレは実質変数（実質金利・資本ストック）に影響し投資・資本深化を促しうる。1対1未満の反応を含める点でフィッシャー効果（完全版）と区別される。',
+    keyFigures: 'ロバート・マンデル（Robert Mundell, 1963）／ジェームズ・トービン（James Tobin, 1965）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Tobin_effect', type: 'reference', label: 'Mundell–Tobin effect — Wikipedia' },
+      { url: 'https://link.springer.com/article/10.1007/BF00141041', type: 'academic', label: 'Private information, money, and growth: ...and the Mundell-Tobin effect — Journal of Economic Growth (Springer)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/jmcb.12994', type: 'academic', label: 'Liquidity, the Mundell–Tobin Effect, and the Friedman Rule — Journal of Money, Credit and Banking (Wiley, 2024)' },
+    ],
+  },
+  {
+    id: 'econ-double-auction',
+    discipline: 'economics',
+    title: '連続ダブルオークション',
+    statement:
+      '実験経済学の中心的な市場制度で、ヴァーノン・スミス1962「競争市場行動の実験的研究」（Journal of Political Economy、2002年ノーベル経済学賞「実験室実験を実証的経済分析の手段として確立した功績」）に連なる。複数の買い手が買い気配（bid）を、複数の売り手が売り気配（ask）を同時／連続的に提示し、買い気配と売り気配が交差（合致）すると取引が成立する両面オークションであり、英国式やオランダ式などの片面オークションと対照をなす。' +
+      'スミスの実験は、少数の参加者が自分の評価額や費用についての私的情報しか持たなくても、連続ダブルオークションが競争均衡の価格と数量へ著しく速く確実に収束し高い配分効率を示すことを明らかにし、教科書的な多数者／完全情報よりはるかに弱い条件で競争市場理論を実験的に支持した。現代の株式・商品取引所（連続的な指値注文板＝リミットオーダーブック）の基礎をなす機構であり、オークション理論やヴィックリー・オークションとは区別される。',
+    keyFigures: 'ヴァーノン・スミス（Vernon Smith, 1962／2002年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v70y1962p322.html', type: 'academic', label: 'Vernon L. Smith, "An Experimental Study of Competitive Market Behavior," Journal of Political Economy 70 (1962): 322（書誌レコード）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2002/smith/facts/', type: 'reference', label: 'NobelPrize.org — Vernon L. Smith, 2002年ノーベル経済学賞（実験室実験の確立）' },
+      { url: 'https://www.econlib.org/library/Enc/bios/SmithV.html', type: 'reference', label: 'Econlib — Vernon L. Smith（連続ダブルオークションと競争均衡への急速な収束）' },
+    ],
+  },
+  {
+    id: 'mgmt-belbin-team-roles',
+    discipline: 'management',
+    title: 'ベルビンのチームロール',
+    statement:
+      'メレディス・ベルビンがヘンリー経営大学（旧Administrative Staff College）で1960年代末から約9年にわたり行った経営チームの実験的研究（ビジネスゲームによる観察）に基づく理論で、1981年の古典『Management Teams: Why They Succeed or Fail』にまとめられた。チームの有効性は個々のメンバーの能力だけでなく、各人が担う行動上の「チームロール（役割）」のバランスに依存し、高業績チームには相補的な役割の組み合わせが必要であると説く。優秀な頭脳ばかりを集めた同質チーム（アポロ・チーム）は議論が紛糾し意思決定に難があり、しばしば低業績に陥る。' +
+      'ベルビンは9つの役割を3カテゴリに分類した。行動指向（シェイパー、実行者、完成者）、対人/社会指向（まとめ役、チームワーカー、リソース調査役）、思考指向（プラント＝創造的発想者、監視評価者、専門家）である。各役割は特有の強みと、それと表裏一体の「許容される弱み（allowable weakness）」を持ち、人は通常いくつかの得意な役割を持つ。役割は自己認識インベントリ（Self-Perception Inventory）で測定される。時間的な発達局面を扱うタックマンの段階説とは異なり、本理論はチームの役割構成（組み合わせ）に着目する。',
+    keyFigures: 'メレディス・ベルビン（Meredith Belbin, 1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dmg/tools-and-techniques/belbins-team-roles/', type: 'academic', label: "University of Cambridge, Institute for Manufacturing — Belbin's team roles" },
+      { url: 'https://www.belbin.com/resources/articles-directory/thinking-social-action', type: 'reference', label: 'Belbin — Thinking, social, action: the nine Belbin Team Roles' },
+      { url: 'https://en.wikipedia.org/wiki/Meredith_Belbin', type: 'reference', label: 'Wikipedia — Meredith Belbin (Henley research, Management Teams 1981, Self-Perception Inventory)' },
+    ],
+  },
+  {
+    id: 'human-levels-of-processing',
+    discipline: 'human-science',
+    title: '処理水準説',
+    statement:
+      'ファーガス・クレイク&ロバート・ロックハートが1972年「Levels of Processing: A Framework for Memory Research」（Journal of Verbal Learning and Verbal Behavior誌）で提唱した、記憶の保持は別個の短期・長期貯蔵庫間の転送ではなく、符号化時に情報がどれだけ深く処理されたか（処理の深さ）に依存するとする枠組みである。当時主流だったアトキンソン=シフリンの多重貯蔵モデルへの挑戦であった。' +
+      '処理は浅い水準（表層・構造的特徴＝大文字か否か、音韻的特徴＝韻を踏むか）から深い水準（意味的・semanticな処理＝語の意味や自己と関連づける）まで連続し、深く意味的で精緻な処理ほど永続的で想起しやすい記憶痕跡を生む。古典的実証として、意味処理が音韻・構造処理より再生/再認を高める偶発学習実験がある（クレイク&タルヴィング1975）。精緻化・自己参照効果・顕著性と関連する一方、「深さ」の定義の循環性や、符号化と検索の一致を重視する転移適切性処理（モリスら1977）からの批判がある。多重貯蔵モデルや符号化特定性原理とは区別される。',
+    keyFigures: 'ファーガス・クレイク／ロバート・ロックハート（Craik & Lockhart, 1972）／クレイク&タルヴィング（1975）／モリス・ブランスフォード&フランクス（1977）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S002253717280001X', type: 'academic', label: 'Craik & Lockhart (1972) "Levels of Processing: A Framework for Memory Research," J. of Verbal Learning and Verbal Behavior 11:671–684' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/levels-processing-effect', type: 'reference', label: 'EBSCO Research Starters — Levels-of-processing effect (Craik & Tulving 1975 demonstration)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0022537177800169', type: 'academic', label: 'Morris, Bransford & Franks (1977) "Levels of processing versus transfer appropriate processing," JVLVB 16:519–533' },
+    ],
+  },
+  {
+    id: 'bizlaw-npo-act',
+    discipline: 'business-law',
+    title: 'NPO法（特定非営利活動促進法）',
+    statement:
+      '特定非営利活動促進法（NPO法、平成10年/1998年制定・同年12月施行）は、1995年阪神・淡路大震災後のボランティアの高まりを契機に、市民の非営利活動団体に法人格取得の容易な道を開いた法律で、内閣府および所轄庁（都道府県知事・指定都市市長）が所管する。これにより、団体名義で財産を保有し契約できる「特定非営利活動法人（NPO法人）」が創設された。' +
+      'NPO法人は、保健・福祉、まちづくり、環境保全、災害救援など法定の特定非営利活動の分野（現在20分野）のいずれかに該当し、不特定かつ多数のものの利益（公益）の増進に寄与する活動を主目的とし、利益を構成員に分配しない（非営利）。所轄庁の認証（認証主義）を経て設立登記し、情報公開義務を負う。厳格な公益基準を満たす認定NPO法人は寄附への税優遇を受ける。一般社団法人・財団法人法とは制度が区別される。',
+    keyFigures: '特定非営利活動促進法（NPO法、平成10年法律第7号、1998年制定・施行）／内閣府',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.npo-homepage.go.jp/about/npo-kisochishiki/nposeido-gaiyou', type: 'government', label: '内閣府 NPOホームページ「特定非営利活動法人(NPO法人)制度の概要」' },
+      { url: 'https://www.cao.go.jp/others/koeki_npo/index.html', type: 'government', label: '内閣府「公益法人と特定非営利活動法人(NPO法人)」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000083899&current=1', type: 'government', label: '日本法令索引「特定非営利活動促進法 平成10年3月25日法律第7号」' },
+    ],
+  },
+  {
+    id: 'infosoc-cultural-imperialism',
+    discipline: 'information-sociology',
+    title: '文化帝国主義（メディア帝国主義）',
+    statement:
+      '文化帝国主義（メディア帝国主義）とは、ハーバート・シラー（『マス・コミュニケーションとアメリカ帝国』1969、『コミュニケーションと文化支配』1976）に代表される命題で、強国（西洋、とりわけアメリカ）とそのメディア・文化産業が、映画・テレビ・ニュース・音楽・広告・ブランドといったコンテンツや通信技術の一方向的な流れを通じて、弱小国・途上国の文化を支配・再編し、支配文化の価値観や消費主義・世界観を広めて現地の土着文化を侵食・周縁化する（文化的同質化＝「アメリカナイゼーション」「コカ・コロニゼーション」）とする見方である。' +
+      '1970〜80年代に隆盛し、ユネスコの新世界情報通信秩序（NWICO）やマクブライド報告書『多くの声、一つの世界』（1980）の情報流通不均衡是正論と結びついた。タンストール『メディアはアメリカン』1977も論を補強した。後に、能動的オーディエンス論、現地化・受容研究、逆流（テレノベラやK-POP、アルジャジーラ）、ハイブリディティ論から単純な支配命題は批判・修正された。なおグローカリゼーションや文化資本とは区別される。',
+    keyFigures: 'ハーバート・シラー（Herbert Schiller, 1969/1976）／ジェレミー・タンストール（1977）／NWICO・マクブライド報告書（1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0209.xml', type: 'reference', label: 'Oxford Bibliographies — Cultural Imperialism Theories (Communication)' },
+      { url: 'https://summit.sfu.ca/_flysystem/fedora/sfu_migrate/16257/etd9424_YZhang.pdf', type: 'academic', label: 'Simon Fraser University thesis — Re-examining Herbert Schiller’s Cultural Imperialism Thesis' },
+      { url: 'https://communication.iresearchnet.com/international-communication/cultural-imperialism-theories/', type: 'reference', label: 'iResearchNet (Communication) — Cultural Imperialism Theories' },
+    ],
+  },
 ];
 // Stryker restore all
