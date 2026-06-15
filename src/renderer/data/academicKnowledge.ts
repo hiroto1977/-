@@ -11979,5 +11979,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8896409/', type: 'academic', label: 'PMC/NIH 査読論文 — ウルフ&ケリーの「self-knowledge through numbers」定義' },
     ],
   },
+  {
+    id: 'econ-mincer-earnings',
+    discipline: 'economics',
+    title: 'ミンサー方程式（賃金関数）',
+    statement:
+      'ヤコブ・ミンサーが1974年の著書『Schooling, Experience, and Earnings』（NBER／コロンビア大学出版）で体系化した、労働経済学・人的資本論の実証分析における標準的な賃金推定式。個人の賃金（所得）の自然対数を、就学年数（教育年数）の線形項と、潜在的な労働市場経験年数の2次関数（経験と経験の2乗）で説明する。' +
+      '形は ln w = ln w0 + ρ・S + β1・X + β2・X²（＋誤差項）で表される。就学年数の係数ρは追加的な教育1年あたりの（私的）収益率と解釈され、経験の2次項は経験とともに賃金が逓減的に上昇する凹型の年齢賃金プロファイルを捉える。教育の収益率を推定するための基礎的な枠組みとして、人的資本論の実証研究で最も広く用いられている。',
+    keyFigures: 'ヤコブ・ミンサー（Jacob Mincer, 1974）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w9732/w9732.pdf', type: 'academic', label: 'NBER WP 9732 "Fifty Years of Mincer Earnings Regressions"' },
+      { url: 'https://docs.iza.org/dp3181.pdf', type: 'academic', label: 'IZA DP 3181 "The Mincer Earnings Function and Its Applications"' },
+      { url: 'https://en.wikipedia.org/wiki/Mincer_earnings_function', type: 'reference', label: 'Wikipedia: Mincer earnings function' },
+    ],
+  },
+  {
+    id: 'econ-becker-crime',
+    discipline: 'economics',
+    title: '犯罪の経済学',
+    statement:
+      'ゲイリー・ベッカーが1968年の論文「Crime and Punishment: An Economic Approach」（Journal of Political Economy）で提示した枠組みで、犯罪を非合理な逸脱ではなく合理的選択として捉える。潜在的加害者は、犯罪から得られる期待便益と、その期待費用すなわち「検挙・有罪となる確率×刑罰の重さ」を比較し、合法的な代替行動より期待利得が上回る場合に犯罪を犯すと考える。' +
+      'この見方から、検挙確率を高めるか刑罰を重くするかのいずれかによって犯罪を抑止できるという抑止理論が導かれる。さらにベッカーは、犯罪による社会的損失と取締り・処罰の費用の合計を最小化する「最適な法執行水準」が存在し、確率と刑罰の最適な組み合わせで達成されると論じた。この分析は法と経済学および抑止研究の基礎をなしている。',
+    keyFigures: 'ゲイリー・ベッカー（Gary Becker, 1968）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/chapters/c3625/c3625.pdf', type: 'academic', label: 'Becker, G. S. (1968) "Crime and Punishment: An Economic Approach," Journal of Political Economy 76 (NBER)' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-4614-7883-6_17-1', type: 'reference', label: 'Encyclopedia of Law and Economics: "Crime and Punishment (Becker 1968)" (Springer)' },
+      { url: 'https://sk.sagepub.com/ency/edvol/download/criminologicaltheory/chpt/becker-gary-s-punishment-human-capital-crime.pdf', type: 'reference', label: 'Encyclopedia of Criminological Theory: "Becker, Gary S.: Punishment, Human Capital, and Crime" (SAGE)' },
+    ],
+  },
+  {
+    id: 'mgmt-ooda-loop',
+    discipline: 'management',
+    title: 'OODAループ',
+    statement:
+      'OODAループは、米空軍大佐で軍事戦略家のジョン・ボイドが提唱した意思決定サイクルで、観察(Observe)・情勢判断／方向づけ(Orient)・意思決定(Decide)・行動(Act)の4段階を繰り返す。競争的で不確実かつ変化の速い状況では、相手より速く正確にこのループを回す側が決定的優位を得るとされ、相手の意思決定サイクルの「内側に入る」ことで相手を混乱させ反応不能に陥らせる。' +
+      '4段階のうち最も重要なのはOrient(情勢判断)で、文化・過去の経験・分析と総合によって形成され、その良否が後続の判断と行動を左右する。元来は戦闘機パイロットの経験に基づく軍事理論だが、現在は経営戦略やアジャイルな意思決定にも広く応用される。計画に基づく継続的改善を志向するPDCAサイクルと対比され、OODAは不確実性下での速度と適応を重視する点に特徴がある。',
+    keyFigures: 'ジョン・ボイド（John Boyd, 米空軍大佐）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/military-history-and-science/ooda-loop', type: 'reference', label: 'EBSCO Research Starters — OODA loop (Military History and Science)' },
+      { url: 'https://en.wikipedia.org/wiki/OODA_loop', type: 'reference', label: 'Wikipedia — OODA loop' },
+    ],
+  },
+  {
+    id: 'human-loss-aversion',
+    discipline: 'human-science',
+    title: '損失回避',
+    statement:
+      '損失回避（loss aversion）は、同じ金額でも損失がもたらす心理的な痛みが、利得がもたらす喜びより大きく感じられるという傾向を指す。人は結果を絶対的な富の水準ではなく、ある参照点からの利得か損失かで評価し、価値関数は利得側より損失側のほうが急な勾配をもつ。実証的には損失は同額の利得のおよそ2倍重く感じられる（損失回避係数λはおよそ2）とされ、' +
+      'カーネマンとトヴェルスキーが1979年のプロスペクト理論（Econometrica）で中核的要素として提示し、1991年の「Loss Aversion in Riskless Choice」（QJE）でリスクのない選択にも拡張した。この非対称性は、保有するものを手放したがらない保有効果や、変化より現状を好む現状維持バイアス、含み益を早く確定し含み損を抱え続けるディスポジション効果を説明する基盤となっている。',
+    keyFigures: 'ダニエル・カーネマン／エイモス・トヴェルスキー（1979/1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article/106/4/1039/1873382', type: 'academic', label: 'Tversky & Kahneman (1991) Loss Aversion in Riskless Choice: A Reference-Dependent Model, QJE 106(4)' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/loss-aversion', type: 'reference', label: 'EBSCO Research Starters: Loss Aversion' },
+      { url: 'https://en.wikipedia.org/wiki/Loss_aversion', type: 'reference', label: 'Wikipedia: Loss aversion' },
+    ],
+  },
+  {
+    id: 'bizlaw-electronically-recorded-claims',
+    discipline: 'business-law',
+    title: '電子記録債権（電子記録債権法）',
+    statement:
+      '電子記録債権とは、電子債権記録機関の記録原簿への電子記録をその発生・譲渡等の要件とする、指名債権や手形債権とは異なる新たな金銭債権である。電子記録債権法（平成19年(2007)制定・2008年12月1日施行）により創設され、紙の手形や売掛債権が抱える紛失・盗難・偽造のリスク、発行コストや印紙税、債権の分割譲渡の困難といった難点の克服を目的とする。' +
+      '債権の発生・譲渡は電子記録によって効力を生じ、金額を分割して一部のみを譲渡することも可能である。さらに善意取得の保護や人的抗弁の切断といった取引安全の措置が講じられ、中小企業の資金調達の円滑化に資する。全国銀行協会が運営する全銀電子債権ネットワーク（でんさいネット）等の電子債権記録機関がこの仕組みを担っている。',
+    keyFigures: '電子記録債権法（平成19年法律第102号、2007年制定・2008年施行）／電子債権記録機関（でんさいネット等）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000110475', type: 'government', label: '国立国会図書館 日本法令索引「電子記録債権法 平成19年法律第102号」' },
+      { url: 'https://www.fsa.go.jp/ordinary/densi02.pdf', type: 'government', label: '金融庁・法務省「電子記録債権 事業資金を調達するためのあたらしい金融手段」' },
+      { url: 'https://www.densai.net/pdf/pamphlet_A002_02.pdf', type: 'reference', label: 'でんさいネット（全銀電子債権ネットワーク）パンフレット' },
+    ],
+  },
+  {
+    id: 'infosoc-sharing-economy',
+    discipline: 'information-sociology',
+    title: 'シェアリングエコノミー',
+    statement:
+      'デジタルプラットフォーム（アプリ・ウェブ）と評価やレビューなどの信頼の仕組みを介し、個人が保有する遊休資産・モノ・サービス・スキル・空間・時間を、所有するのではなく主に個人間（C2C／P2P）で共有・貸借・交換する社会経済システム。貸主は遊休資産の活用で収入を得、借主は所有せず利用でき、所有よりアクセスを重視し遊休資源を有効活用する点が特徴である。' +
+      '配車（Uber）や民泊（Airbnb）のほか、空間・モノ・スキル・お金の共有が代表例で、ボツマンとロジャースが2010年に提唱した「協働的消費（コラボ消費）」の概念と結びつく。プラットフォーム／ギグ・エコノミーとも関連する一方、既存業界との規制・法整備、労働者保護、利用者間の信頼・安全性の担保といった課題も指摘されている。',
+    keyFigures: 'レイチェル・ボツマン／ルー・ロジャース（協働的消費, 2010）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h27/html/nc242110.html', type: 'government', label: '総務省 平成27年版 情報通信白書「シェアリング・エコノミーとは」' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/sharing-economy', type: 'reference', label: 'EBSCO Research Starters — Sharing economy (collaborative consumption)' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h29/html/nc112220.html', type: 'government', label: '総務省 平成29年版 情報通信白書「シェアリング・エコノミー（C to Cサービス）」' },
+    ],
+  },
 ];
 // Stryker restore all
