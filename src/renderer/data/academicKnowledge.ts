@@ -13139,5 +13139,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://criticallegalthinking.com/2016/11/06/nancy-fraser-subaltern-counterpublics/', type: 'reference', label: 'Critical Legal Thinking: "Nancy Fraser: Subaltern Counterpublics"' },
     ],
   },
+  {
+    id: 'econ-balance-sheet-recession',
+    discipline: 'economics',
+    title: 'バランスシート不況',
+    statement:
+      'リチャード・クー（辜朝明）が、日本のバブル崩壊後の長期停滞を説明するために提唱した概念。債務で膨らんだ資産バブルが崩壊すると、不動産や株式などの資産価格は急落する一方で負債は名目額のまま残るため、企業や家計のバランスシートが実質的な債務超過に陥る。その結果、民間部門は利潤最大化から債務最小化（借金返済・バランスシート修復）へと行動を転じ、' +
+      'ゼロ金利でも借入需要が生まれず金融政策が効きにくくなる。皆が同時に貯蓄・債務返済を行うため総需要が崩壊し（合成の誤謬）、経済はデフレに陥りやすい。クーは、民間の貯蓄超過を相殺する持続的な財政出動（政府の借入・支出）こそが、バランスシートが修復されるまでの適切な処方箋だと主張した。',
+    keyFigures: 'リチャード・クー（辜朝明／Richard Koo, 野村総合研究所）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.elgaronline.com/view/journals/ejeep/10/2/article-p136.xml', type: 'academic', label: 'Richard C. Koo (2013) "Balance sheet recession as the other half of macroeconomics", European Journal of Economics and Economic Policies 10(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Balance_sheet_recession', type: 'reference', label: 'Wikipedia: Balance sheet recession' },
+      { url: 'https://premium.toyokeizai.net/articles/-/21100', type: 'media', label: '東洋経済オンライン リチャード・クー氏インタビュー（バランスシート不況論）' },
+    ],
+  },
+  {
+    id: 'econ-helicopter-money',
+    discipline: 'economics',
+    title: 'ヘリコプターマネー',
+    statement:
+      '新たに創造した中央銀行の貨幣を、利付き国債の増発を伴わずに直接国民へ配布し、または政府の支出増・減税の財源に充てる貨幣的・財政的刺激策（貨幣による財政ファイナンス、すなわちmoney-financed fiscal stimulus）を指す。語源はミルトン・フリードマンが1969年の論考で示した、ヘリコプターから現金をばらまき貨幣供給を恒久的に増やすという思考実験にある。' +
+      'ベン・バーナンキが2002年の講演で「貨幣で賄う減税はフリードマンのヘリコプター散布に等しい」と再提起し、「ヘリコプター・ベン」と呼ばれた。買い入れた資産を売り戻せる可逆的・債務ベースの量的緩和（QE）と異なり、ヘリコプターマネーは恒久的で家計の購買力を直接増やす点に特徴がある。一方で、インフレ高進や中央銀行の独立性喪失、後戻りの困難さといった批判も根強い。',
+    keyFigures: 'ミルトン・フリードマン（Milton Friedman, 1969）／ベン・バーナンキ（Ben Bernanke, 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cepr.org/voxeu/columns/primer-helicopter-money', type: 'academic', label: 'CEPR / VoxEU — A primer on helicopter money' },
+      { url: 'https://en.wikipedia.org/wiki/Helicopter_money', type: 'reference', label: 'Wikipedia — Helicopter money' },
+      { url: 'https://www.richmondfed.org/publications/research/econ_focus/2016/q2/jargon_alert', type: 'government', label: 'Federal Reserve Bank of Richmond — Helicopter Money (Jargon Alert)' },
+    ],
+  },
+  {
+    id: 'mgmt-ringi',
+    discipline: 'management',
+    title: '稟議制',
+    statement:
+      '稟議制（稟議制度）は、日本企業に特徴的な意思決定の仕組みである。決裁権を持たない中間・下位の起案者が提案の背景・目的・効果・必要資源を「稟議書」という文書にまとめ、関係する管理者や部署へ上方・横断的に回覧し、各人が内容を確認して押印（承認）していく。トップの正式な決裁の前に中間・下位からボトムアップで合意を形成する点が核心で、' +
+      '事前に非公式な調整を行う「根回し」と密接に関連する。長所は、関係者が広く参加して情報と理解を共有でき、決定後の実行が円滑になることである。短所は、多数の決裁者を経るため時間がかかること、そして誰が決定者かが不明確になり責任の所在が曖昧になりやすいことである。日本的経営の研究で広く論じられてきた。',
+    keyFigures: '稟議制（稟議書・押印・根回し／日本的経営）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E7%A8%9F%E8%AD%B0%E5%88%B6-878224', type: 'reference', label: 'コトバンク「稟議制」（日本大百科全書ほか）' },
+      { url: 'https://oshika.u-shizuoka-ken.ac.jp/media/10_10.pdf', type: 'academic', label: '中村健壽「オフィス環境の変化と稟議制度に関する一考察」静岡県立大学' },
+      { url: 'https://kotobank.jp/word/%E7%A8%9F%E8%AD%B0%E5%88%B6%E5%BA%A6-150285', type: 'reference', label: 'コトバンク「稟議制度」' },
+    ],
+  },
+  {
+    id: 'human-misattribution-arousal',
+    discipline: 'human-science',
+    title: '覚醒の誤帰属（吊り橋効果）',
+    statement:
+      'シャクター=シンガーの二要因理論（情動は生理的喚起とその認知的ラベリングの組み合わせで成立する）に基づき、ある原因で生じた生理的喚起を別の誤った原因に帰属させ、その結果として情動の解釈が変わる現象を覚醒の誤帰属と呼ぶ。代表例がダットンとアロン（Dutton & Aron, 1974）の古典的研究である。カナダの高く揺れる吊り橋（カピラノ橋）を渡った男性は、低く安定した橋を渡った群より、面接した魅力的な女性に後で電話をかける割合が高く（吊り橋群9/18に対し対照群2/16）、回答した物語に性的連想も多かった。' +
+      'これは恐怖に由来する動悸など喚起を、目の前の女性への魅力と取り違えた（誤帰属した）結果と解釈された。すなわち情動経験は喚起そのものより喚起の認知的ラベリングに依存し、喚起の源は容易に取り違えられうることを示す。この知見は対人魅力や恋愛感情の喚起にとどまらず、説得・態度変容など幅広い社会心理学的場面に応用されている。',
+    keyFigures: 'ドナルド・ダットン／アーサー・アロン（Dutton & Aron, 1974）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Misattribution_of_arousal', type: 'reference', label: 'Wikipedia: Misattribution of arousal（Dutton & Aron 1974, JPSP 30(4):510-517 を引用）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-031-08956-5_2147-1', type: 'academic', label: 'Springer Reference Work: Misattribution of Arousal' },
+      { url: 'https://sk.sagepub.com/ency/edvol/socialpsychology/chpt/misattribution-arousal', type: 'reference', label: 'SAGE Encyclopedia of Social Psychology: Misattribution of Arousal' },
+    ],
+  },
+  {
+    id: 'bizlaw-digital-platform-transparency',
+    discipline: 'business-law',
+    title: 'デジタルプラットフォーム取引透明化法',
+    statement:
+      'デジタルプラットフォーム取引透明化法（特定デジタルプラットフォームの透明性及び公正性の向上に関する法律、令和2年/2020年法律第38号、2021年2月1日施行、経済産業省所管）は、大規模なオンラインモールやアプリストア（のちデジタル広告分野も追加）の運営者を「特定デジタルプラットフォーム提供者」に指定し、運営者と利用事業者（出店者・アプリ開発者等）との交渉力格差の是正を' +
+      '通じて取引の透明性・公正性を高めることを目的とする。指定された運営者には、取引条件等の開示、取引条件の変更や取引拒絶・アカウント停止の事前通知、苦情・紛争処理のための手続・体制整備が義務づけられる。また毎年度、運営状況の自己評価報告書を経済産業省に提出し、同省が利用事業者等の意見も踏まえて評価し結果を公表する。詳細な規律ではなく共同規制（モニタリング・レビュー）型の枠組みを採る。',
+    keyFigures: '特定デジタルプラットフォームの透明性及び公正性の向上に関する法律（令和2年法律第38号、2020年制定・2021年施行）／経済産業省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/policy/mono_info_service/digitalplatform/transparency.html', type: 'government', label: '経済産業省「法律のポイント」（デジタルプラットフォーム取引透明化法）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000151745', type: 'government', label: '国立国会図書館 日本法令索引（令和2年法律第38号）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%89%B9%E5%AE%9A%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%81%AE%E9%80%8F%E6%98%8E%E6%80%A7%E5%8F%8A%E3%81%B3%E5%85%AC%E6%AD%A3%E6%80%A7%E3%81%AE%E5%90%91%E4%B8%8A%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia（日本語）特定デジタルプラットフォームの透明性及び公正性の向上に関する法律' },
+    ],
+  },
+  {
+    id: 'infosoc-doomscrolling',
+    discipline: 'information-sociology',
+    title: 'ドゥームスクローリング',
+    statement:
+      'ドゥームスクローリング（doomscrolling）は、悲しく不安をかき立てるとわかっていながら、SNSやニュースフィードで大量のネガティブな情報や悪いニュースを強迫的・過剰に読み続け、やめられなくなる行動を指す。2018年頃に生まれた語だが、2020年の新型コロナウイルス感染症（COVID-19）禍をはじめ相次ぐ危機を背景に一気に広まり、Merriam-Webster辞典が収録した。' +
+      '背景には、人間が脅威的・否定的な情報に注意を向けやすいネガティビティ・バイアスがあり、さらに無限スクロールやエンゲージメント最大化を狙うアルゴリズム（注目経済）がこの行動を助長するとされる。各国の研究では、不安・抑うつ・ストレスの増大や睡眠の悪化との関連が報告され、「問題あるニュース消費」として実証的検討が進んでいる。',
+    keyFigures: 'ドゥームスクローリング（doomscrolling／doomsurfing、2020年頃に普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.merriam-webster.com/dictionary/doomscroll', type: 'reference', label: 'Merriam-Webster Dictionary — doomscroll' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9580444/', type: 'academic', label: 'Sharma et al., Doomscrolling Scale (PMC)' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/1461670X.2021.1952475', type: 'academic', label: 'Journalism Studies — Doomscrolling, Monitoring and Avoiding (COVID-19)' },
+    ],
+  },
 ];
 // Stryker restore all
