@@ -14382,5 +14382,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Priming_(media)', type: 'reference', label: 'Wikipedia "Priming (media)"（Iyengar & Kinder 1987 の定義引用・評価基準・記憶アクセシビリティ）' },
     ],
   },
+  {
+    id: 'econ-salop-model',
+    discipline: 'economics',
+    title: 'サロップの円環都市モデル',
+    statement:
+      'スティーブン・サロップが1979年の論文「Monopolistic Competition with Outside Goods」で提示した、空間的・水平的製品差別化と独占的競争を分析するモデル。企業（および消費者の理想点）が円環（円環都市）上に位置すると想定し、ホテリングの線形都市モデルを円環へ拡張することで、線分の端点に伴う問題を回避し、多数企業の競争と自由参入を扱えるようにした点が特徴である。' +
+      '消費者は円周上に一様分布し、自分の理想点と購入先企業との距離に比例した輸送費（不効用）を負担する。対称的な自由参入均衡では、参入企業は固定費を支払い円環上に等間隔で配置され、企業数すなわち製品多様性は固定費と輸送費のトレードオフによって決まる。この均衡における企業数や多様性は、顧客奪い合いの外部性などにより社会的最適水準から乖離しうる。',
+    keyFigures: 'スティーブン・サロップ（Steven Salop, 1979）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eclass.aueb.gr/modules/document/file.php/OIK214/Lecture5-6.pdf', type: 'academic', label: 'Athens University of Economics and Business — Lecture notes: Circular city model Salop (Bell, 1979)' },
+      { url: 'https://policonomics.com/salops-circular-city/', type: 'reference', label: "Policonomics — Salop's circular city" },
+    ],
+  },
+  {
+    id: 'econ-sacrifice-ratio',
+    discipline: 'economics',
+    title: '犠牲率（サクリファイス・レシオ）',
+    statement:
+      '犠牲率（サクリファイス・レシオ）とは、インフレ率を1％ポイント引き下げるために失われる実質GDP（産出）の累積的な割合を表し、ディスインフレ（インフレ抑制）のコストを測る指標である。オークン法則を介して、累積的な超過失業率として表すこともある。金融引き締めによるインフレ抑制は、短期的には景気後退や産出ギャップの拡大・失業の増加を招く（短期フィリップス曲線が示すインフレと失業のトレードオフ）ため、インフレ低下には痛みが伴う。' +
+      '犠牲率が高いほどディスインフレの痛みは大きい。その大きさは、中央銀行の信認や人々の期待形成の速さ（信頼できる事前公表によって低下しうる＝「痛みなきディスインフレ」論争）、および名目賃金・価格の硬直性の程度に依存する。実証研究としてはローレンス・ボール（Ball, 1994）の国際比較が知られ、1979年以降のボルカー・ディスインフレは比較的低コストだったと評価される。',
+    keyFigures: '犠牲率（ローレンス・ボール（Ball, 1994）の実証／ボルカー・ディスインフレ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/econres/feds/files/2022079pap.pdf', type: 'academic', label: 'Federal Reserve Board FEDS, "How Large is the Output Cost of Disinflation?"' },
+      { url: 'https://www.imes.boj.or.jp/research/papers/japanese/kk20-1-7.pdf', type: 'government', label: '日本銀行金融研究所『金融研究』白塚重典（2001）望ましい物価上昇率とは何か' },
+      { url: 'https://www.frbsf.org/wp-content/uploads/wp98-01.pdf', type: 'academic', label: 'FRBSF Working Paper, Expectations, Credibility, and Disinflation' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-groups',
+    discipline: 'management',
+    title: '戦略グループ',
+    statement:
+      '戦略グループとは、同一業界内で類似の戦略をとる企業の集団を指す。企業は垂直統合度・製品の品質ポジショニング・製品ラインの幅・価格・流通チャネル・R&D集約度・地理的範囲などの戦略次元によって複数のグループに分類でき、同じグループの企業は互いに似通い、業界の出来事に同様に影響され同様に反応する。' +
+      'この概念は移動障壁（他のグループからの参入を防ぐ、参入障壁に類比される業界内の障壁）と結びつき、同一業界内で生じる持続的な業績差を説明する。マイケル・ハントが1972年のアメリカ家電産業の博士論文で提唱し、マイケル・ポーターが1979年の論文および1980年の『競争の戦略』で発展・普及させた。業界構造分析と企業戦略を橋渡しし、戦略グループ・マッピングに用いられる。',
+    keyFigures: 'マイケル・ハント（1972）／マイケル・ポーター（1979/1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/tpr/restat/v61y1979i2p214-27.html', type: 'academic', label: "Porter, 'The Structure within Industries and Companies' Performance', Review of Economics and Statistics 61(2), 1979 (RePEc)" },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_group', type: 'reference', label: 'Strategic group — Wikipedia（ハント1972・ポーターの移動障壁・業界内業績差）' },
+      { url: 'https://journals.aom.org/doi/10.5465/256040', type: 'academic', label: "Porter's (1980) Generic Strategies as Determinants of Strategic Group Membership — Academy of Management Journal" },
+    ],
+  },
+  {
+    id: 'human-stereotype-content-model',
+    discipline: 'human-science',
+    title: 'ステレオタイプ内容モデル（SCM）',
+    statement:
+      'フィスク・カディ・グリック・シュー（2002）が提唱した社会心理学モデル。集団へのステレオタイプは「温かさ（warmth）」と「有能さ（competence）」という2つの基本次元で変動するとする。温かさは知覚された競合の有無から推論され（自集団と競合する集団は低い温かさと見なされる）、有能さは知覚された地位から推論される（高地位の集団は有能と見なされる）。' +
+      '2次元を交差させると4類型が生じ、多くのステレオタイプは一方が高く他方が低い「混合的・両価的」なものになる。すなわち高温かさ/低有能（温情的、例：高齢者・障害者→哀れみ）と低温かさ/高有能（妬み的、例：富裕層→妬み）であり、高温かさ/高有能は称賛（内集団・味方）、低温かさ/低有能は侮蔑を喚起する。カディら（2007）はこれをBIASマップとして感情と行動へ拡張した。',
+    keyFigures: 'スーザン・フィスク／エイミー・カディ／ピーター・グリック／ジュン・シュー（2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1341877', type: 'academic', label: 'Fiske, Cuddy, Glick & Xu (2002), Journal of Personality and Social Psychology, 82, 878–902（原典の書誌情報）' },
+      { url: 'https://en.wikipedia.org/wiki/Stereotype_content_model', type: 'reference', label: 'Wikipedia: Stereotype content model（2次元・4類型・感情の概説）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/17469949/', type: 'academic', label: 'Cuddy, Fiske & Glick (2007) The BIAS map（感情・行動への拡張、PubMed）' },
+    ],
+  },
+  {
+    id: 'bizlaw-plant-variety',
+    discipline: 'business-law',
+    title: '種苗法',
+    statement:
+      '種苗法は植物の新品種を保護する法律で、特許に類する知的財産権である育成者権を育成者に付与する。区別性・均一性・安定性・未譲渡性などの要件を満たす新品種を農林水産省に品種登録すると、育成者はその登録品種の種苗の生産・販売等を業として独占できる。制度は植物の新品種の保護に関する国際条約（UPOV条約）に整合し、現行法は平成10年法律第83号（1998年）である。' +
+      '2020年改正（令和2年改正、令和3〜4年施行）では保護が強化され、育成者が登録品種の種苗の海外への持出し先国や国内の栽培地域を指定して制限できるようにし、優良品種の海外流出を抑制した。あわせて登録品種の自家増殖には育成者権者の許諾を要するよう変更され、指定種苗の表示も規制する。所管は農林水産省。',
+    keyFigures: '種苗法（平成10年法律第83号、1998年／2020年改正）／農林水産省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.maff.go.jp/j/shokusan/syubyouhou/', type: 'government', label: '農林水産省「種苗法の改正について」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000084232', type: 'government', label: '国立国会図書館 日本法令索引「種苗法（平成10年法律第83号）」' },
+      { url: 'https://www.jpaa.or.jp/nousui-ip/newvarieties.html', type: 'reference', label: '日本弁理士会「植物新品種の保護」' },
+    ],
+  },
+  {
+    id: 'infosoc-encoding-decoding',
+    discipline: 'information-sociology',
+    title: 'エンコーディング／デコーディング・モデル',
+    statement:
+      'スチュアート・ホールが1973年の論文「テレビ言説におけるエンコーディングとデコーディング」（1980年に「エンコーディング／デコーディング」として広く再録）で提示した、カルチュラル・スタディーズのマスコミュニケーション・モデル。送り手→メッセージ→受け手という線形的な伝達観を退け、制作者は制度的/イデオロギー的枠組みの中で意味を「エンコード（符号化）」し優先的（支配的）な読みを込めるが、' +
+      '受け手は能動的に「デコード（解読）」するため、解読された意味が符号化された意味と一致するとは限らないとした。ホールは仮説的に3つの解読位置を提示した。すなわち、優先的意味を受容する「支配的-ヘゲモニー的」位置、大筋では受容しつつ自分の状況に合わせて修正する「交渉的」位置、優先的読みを理解しつつ拒否し対立的枠組みで解読する「対抗的」位置である。受け手の能動性とテクストの多義性を強調し、受容理論・オーディエンス研究の基礎となった。',
+    keyFigures: 'スチュアート・ホール（Stuart Hall, 1973/1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ia801304.us.archive.org/6/items/ktoub2/02CHallEncodingDecoding.pdf', type: 'academic', label: 'Stuart Hall, "Encoding/Decoding" (1973) — primary text (archived full PDF)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095928288', type: 'reference', label: 'Oxford Reference — "hegemonic reading" / Hall の解読位置' },
+      { url: 'https://media-studies.com/reception-theory/', type: 'academic', label: "Media-Studies.com — Stuart Hall's Reception Theory: Encoding and Decoding the Media" },
+    ],
+  },
 ];
 // Stryker restore all
