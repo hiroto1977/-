@@ -14560,5 +14560,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Affordance', type: 'reference', label: 'Wikipedia "Affordance"（Gibson 1979の定義・関係的性質）' },
     ],
   },
+  {
+    id: 'econ-equity-premium-puzzle',
+    discipline: 'economics',
+    title: '株式プレミアム・パズル',
+    statement:
+      'ラジニッシュ・メーラとエドワード・プレスコットが1985年の論文「The Equity Premium: A Puzzle」（Journal of Monetary Economics）で提示した、金融経済学を代表するアノマリー。歴史的に観察される株式（エクイティ）の安全資産（短期国債等）に対する超過収益は、米国の長期データで年約6%にのぼるが、これは標準的な消費ベースの資産価格モデルにおいて妥当なリスク回避度の下では説明できないほど大きい、という謎である。' +
+      '標準理論はせいぜい年1%程度の上乗せしか説明できず、観察値を整合させるには相対的リスク回避係数が30〜40以上という非現実的に高い水準を要する一方、妥当な値は1〜3程度（高くとも10以下）にとどまる。安全資産の収益率が低すぎる「無リスク金利パズル」とも表裏一体で関連する。解決案として習慣形成、まれな災害（リーツ／バロー）、損失回避・近視眼的損失回避（ベナルチ＆セイラー）、エプスタイン＝ジン型選好、借入制約などが提案されてきた。',
+    keyFigures: 'ラジニッシュ・メーラ／エドワード・プレスコット（1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/moneco/v15y1985i2p145-161.html', type: 'academic', label: 'Mehra & Prescott (1985) "The Equity Premium: A Puzzle", Journal of Monetary Economics 15(2):145-161 (RePEc)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w9512/w9512.pdf', type: 'academic', label: 'Mehra, "The Equity Premium: Why Is It a Puzzle?", NBER Working Paper' },
+      { url: 'https://en.wikipedia.org/wiki/Equity_premium_puzzle', type: 'reference', label: 'Wikipedia: Equity premium puzzle' },
+    ],
+  },
+  {
+    id: 'econ-roundabout-production',
+    discipline: 'economics',
+    title: '迂回生産',
+    statement:
+      '迂回生産は、オーストリア学派の資本理論、とくにオイゲン・フォン・ベーム=バヴェルクの学説の中核をなす概念である。消費財を直接生産するのではなく、まず資本財（道具・機械・網など）を作り、それを用いて最終財を生産する間接的な生産方法を指す。より迂回的な（生産期間が長い）方法ほど物理的により生産的で産出が大きいとされ、素手では一日3匹しか捕れない漁が、網や舟を作って臨めば30匹捕れるという例で説明される。' +
+      'ただしこの利益を得るには、資本財を作る間の待忍（時間の経過への忍耐）と、事前の貯蓄・資本の蓄積を要する。ベーム=バヴェルクはこの生産の時間構造を資本・利子と結びつけ、迂回度が高いほど生産的だが待忍を要し、人々に時間選好があるため、資本は利子を生むと論じた。これは搾取説によらない資本利子論として、彼の主著『資本と利子』（1889年）に体系化されている。',
+    keyFigures: 'オイゲン・フォン・ベーム=バヴェルク（Eugen von Böhm-Bawerk, 1889）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/bios/BohmBawerk.html', type: 'reference', label: 'Econlib — Eugen von Böhm-Bawerk（迂回生産・生産期間・資本と利子）' },
+      { url: 'https://www.britannica.com/money/Eugen-von-Bohm-Bawerk', type: 'reference', label: 'Britannica — Eugen von Böhm-Bawerk（資本・利子論とオーストリア学派資本理論）' },
+      { url: 'https://kotobank.jp/word/%E8%BF%82%E5%9B%9E%E7%94%9F%E7%94%A3-34316', type: 'reference', label: 'コトバンク「迂回生産」（間接的生産・産出増・漁師の例・資本蓄積）' },
+    ],
+  },
+  {
+    id: 'mgmt-leavitt-diamond',
+    discipline: 'management',
+    title: 'リービットのダイヤモンド',
+    statement:
+      'ハロルド・J・リービットが1965年（J.G.マーチ編『Handbook of Organizations』所収論文）で示した、組織を相互に作用する4つの変数からなる多変数システムとみなすモデル。4要素とは課題（task）・構造（structure）・技術（technology）・人（people／アクター）で、ひし形（ダイヤモンド）状に結ばれて相互依存する。' +
+      'このため、どれか1つの変数を変えると他の要素にも波及し、対応した調整が必要になる。組織変革は構造的・技術的・人的（humanistic）のいずれの切り口からも着手できるが、4要素の相互依存を無視すると不整合や問題が生じる。組織変革論・組織開発やソシオテクニカル思考の基礎をなす枠組みとして位置づけられる。',
+    keyFigures: 'ハロルド・J・リービット（Harold J. Leavitt, 1965）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=951522', type: 'academic', label: 'Leavitt, H. J. (1965) Applied Organizational Change in Industry, in March (Ed.) Handbook of Organizations（文献情報）' },
+      { url: 'https://www.mindtools.com/ac3k6vj/leavitts-diamond-2/', type: 'reference', label: "MindTools — Leavitt's Diamond（4変数と相互依存・変革手法）" },
+      { url: "https://cio-wiki.org/wiki/Leavitt's_Alignment_Model", type: 'reference', label: "CIO Wiki — Leavitt's Alignment Model（task/people/structure/technologyの相互依存）" },
+    ],
+  },
+  {
+    id: 'human-spontaneous-trait-inference',
+    discipline: 'human-science',
+    title: '自発的特性推論',
+    statement:
+      '人が他者の行動を観察・読解する際、印象を形成せよという明示的な目標や指示がなくても、その人物の性格特性を自動的・無意図的に、しかも推論したという自覚なしに推論してしまう現象。ウィンター&ユルマン（1984）は手がかり再生課題でこれを実証し、文中に提示されていない特性語が、その特性を含意する行動文の効果的な検索手がかりとなることを示した。' +
+      'これは特性が符号化段階で自発的に推論されていたことを意味する。推論された特性は行動を行った行為者に結びつく点が特徴で、他者を描写した伝達者自身に特性が結びつく「自発的特性転移」とは区別される。STIは、特性推論が熟慮的・意図的な帰属過程だけでなく、社会的事象の理解の一部として自動的・暗黙的にも生じうることを示し、二重過程的な対人認知観を支持する。',
+    keyFigures: 'ジェームズ・ユルマン／ローラ・ウィンター（Winter & Uleman, 1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/6481615/', type: 'academic', label: 'Winter & Uleman (1984), When are social judgments made? Evidence for the spontaneousness of trait inferences, JPSP — PubMed' },
+      { url: 'https://en.wikipedia.org/wiki/Spontaneous_trait_inference', type: 'reference', label: 'Wikipedia: Spontaneous trait inference' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/social-cognition/spontaneous-trait-inferences/', type: 'reference', label: 'iResearchNet Social Psychology: Spontaneous Trait Inferences' },
+    ],
+  },
+  {
+    id: 'bizlaw-employment-insurance',
+    discipline: 'business-law',
+    title: '雇用保険法',
+    statement:
+      '雇用保険法（昭和49年法律第116号、1974年制定）は、政府が管掌する強制加入の社会保険である雇用保険制度を定める日本の法律で、1947年の失業保険法を継承して1975年に施行された。労働者が失業した場合や雇用の継続が困難となった場合、また自ら教育訓練を受けた場合に必要な給付を行い、生活と雇用の安定を図るとともに再就職・求職活動を促進することを目的とする。' +
+      '中心となる給付は求職者給付の基本手当（失業給付）で、ほかに育児休業給付、教育訓練給付、高年齢雇用継続給付や介護休業給付などの雇用継続給付がある。あわせて失業の予防や雇用構造の改善、労働者の能力開発を図る雇用安定事業・能力開発事業の二事業を運営する。保険料は事業主と労働者が分担し、二事業分は事業主のみが負担する。厚生労働省が所管し、公共職業安定所（ハローワーク）が窓口となる。',
+    keyFigures: '雇用保険法（昭和49年法律第116号、1974年制定）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/349AC0000000116', type: 'government', label: 'e-Gov法令検索 雇用保険法（昭和49年法律第116号）' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=75161000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 雇用保険法 法令本文' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000064796', type: 'government', label: '国立国会図書館 日本法令索引 雇用保険法' },
+    ],
+  },
+  {
+    id: 'infosoc-overton-window',
+    discipline: 'information-sociology',
+    title: 'オーバートンの窓',
+    statement:
+      'オーバートンの窓は、ジョセフ・P・オーバートン（マッキナック公共政策センター）が1990年代に提唱した、ある時点で主流の世論にとって政治的に受容可能な政策や考えの範囲、すなわち政治的に実行可能な言説の「窓」を指す。政治家は概してこの窓の内側の政策しか唱えられず、窓の外の考えを主張すれば過激・当選不能とみなされる。窓は固定ではなく時とともに移動・伸縮し、考えは「考えられない→過激→受容可能→分別ある→人気→政策」という段階を移っていく。' +
+      'さらに重要なのは、窓の外にある（極端な）考えをあえて唱えることで、従来は周縁的だった考えが相対的に穏当に見え、窓をその方向へ意図的に動かせる点である。この概念はメディア報道やフレーミング、世論形成、政治的分極化、そして活動家による争点設定や言説の枠組みの誘導を論じる文脈で広く用いられている。',
+    keyFigures: 'ジョセフ・P・オーバートン（Joseph P. Overton／マッキナック公共政策センター）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Overton-window', type: 'reference', label: 'Encyclopædia Britannica — Overton window (definition, origin, six-category spectrum, shifts)' },
+      { url: 'https://www.mackinac.org/OvertonWindow', type: 'reference', label: 'Mackinac Center for Public Policy — The Overton Window (originating institution; Joseph P. Overton attribution)' },
+    ],
+  },
 ];
 // Stryker restore all
