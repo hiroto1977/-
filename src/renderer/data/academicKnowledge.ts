@@ -17677,5 +17677,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Information_foraging', type: 'reference', label: 'Wikipedia — Information foraging (Pirolli & Card, Xerox PARC)' },
     ],
   },
+  {
+    id: 'econ-dependency-theory',
+    discipline: 'economics',
+    title: '従属理論',
+    statement:
+      'プレビッシュと国連ラテンアメリカ経済委員会(ECLA/CEPAL)、とりわけアンドレ・グンダー・フランク（「低開発の発展」1966/67）、カルドーゾ＆ファレット（1969）、ドス・サントス、サミール・アミンに連なる開発理論で、1950〜70年代に主にラテンアメリカで近代化論（ロストウの発展段階説等）への批判として登場した。中核主張は、貧しい「周辺（periphery）」諸国の低開発は追いつくべき本来の後進状態ではなく、世界資本主義システムの構造によって能動的に生み出され再生産されるというものである。' +
+      '周辺は不平等な条件で組み込まれ、余剰・資源が豊かな「中心（core/center）」へ流出することで従属が永続する（植民地的遺産、不等価交換や一次産品の交易条件悪化＝プレビッシュ＝シンガー、外資依存、外国利害と結ぶ現地エリート）。政策含意は輸入代替工業化（ISI）やデリンキングであり、ウォーラーステインの世界システム論の先駆と位置づけられる。プレビッシュ＝シンガー命題やロストウの発展段階説とは区別される広義の中心＝周辺枠組みである。',
+    keyFigures: 'アンドレ・グンダー・フランク（A. G. Frank）／F・H・カルドーゾ&E・ファレット（1969）／ラウル・プレビッシュ（ECLA）／テオトニオ・ドス・サントス',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/dependency-theory', type: 'reference', label: 'Encyclopædia Britannica — Dependency theory: Definition & Facts' },
+      { url: 'https://www.globalsouthstudies.org/keyword-essay/latin-american-dependency-theory/', type: 'academic', label: 'Global South Studies (UNC) — Latin American Dependency Theory' },
+      { url: 'https://www.encyclopedia.com/history/dictionaries-thesauruses-pictures-and-press-releases/world-systems-theory-latin-america', type: 'reference', label: 'Encyclopedia.com — World Systems Theory, Latin America' },
+    ],
+  },
+  {
+    id: 'econ-flying-geese',
+    discipline: 'economics',
+    title: '雁行形態論',
+    statement:
+      '日本の経済学者・赤松要が1930年代に提唱し（英語での展開は1960年代、特に1962年論文）、後発（途上）国の経済発展と東アジアの地域的分業を説明するモデル。基本型では、ある製品産業が時間を通じて、まず輸入→国内生産（輸入代替）→輸出、やがて産業の成熟・海外移転に伴い再輸入という順序をたどり、輸入・生産・輸出の時系列曲線がそれぞれ逆V字を描き、雁の群れの編隊飛行に似た形をなす。' +
+      '派生型として、消費財から資本財へ、単純財から高度財へという産業構造の多様化・高度化があり、さらに先頭の経済（日本）から後続経済（NIEs→ASEAN→中国）へ、比較優位の変化に応じて産業が順次移転し、各国が発展段階順に雁行隊形をなす国際的伝播を含む。東アジアの高成長や地域的分業の理解に大きな影響を与え、ヴァーノンのプロダクト・サイクル論とも関連づけて論じられる。',
+    keyFigures: '赤松要（Kaname Akamatsu, 1930年代／英語1960年代）／小島清（発展）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://unctad.org/system/files/official-document/osgdp20043_en.pdf', type: 'government', label: 'UNCTAD G-24 Discussion Paper "The Flying Geese Paradigm"' },
+      { url: 'https://www.ide.go.jp/library/English/Publish/Reports/InterimReport/2007/pdf/Ch2_Kumagai.pdf', type: 'academic', label: 'IDE-JETRO, Kumagai "History of the Flying Geese Model"' },
+      { url: 'https://kotobank.jp/word/%E9%9B%81%E8%A1%8C%E5%BD%A2%E6%85%8B%E8%AB%96-48707', type: 'reference', label: 'コトバンク（日本大百科全書ほか）「雁行形態論」' },
+    ],
+  },
+  {
+    id: 'mgmt-transient-advantage',
+    discipline: 'management',
+    title: '一時的競争優位（トランジェント・アドバンテージ）',
+    statement:
+      'リタ・ガンター・マグレイス2013年（HBR論文「Transient Advantage」・著書『競争優位の終焉』）は、変化の速い高速度産業では長く保たれる持続的競争優位の達成という従来の戦略目標が非現実的になり、優位は一時的（transient）で素早く享受・侵食され、絶えず置き換えねばならないと論じた。企業は単一の優位に固執せず多数の一時的優位の「ポートフォリオ」を管理し、各優位は' +
+      '立ち上げ→拡大→活用→再構成（資産を次の優位へ移す）→撤退（円滑な退出）のライフサイクルをたどる。含意は継続的な再構成、衰える優位を手放す「健全な撤退」、既存優位に縛られない資源配分で、ポーターの持続的競争優位と対比される。ダベニのハイパーコンペティションと関連するが、本概念はその処方箋たるポートフォリオ／ライフサイクル管理を示す。',
+    keyFigures: 'リタ・ガンター・マグレイス（Rita Gunther McGrath, 2013）／マイケル・ポーター（対比）／リチャード・ダベニ（関連）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2013/06/transient-advantage', type: 'academic', label: 'Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013' },
+      { url: 'https://www.ritamcgrath.com/book/the-end-of-competitive-advantage/', type: 'reference', label: 'Rita McGrath — The End of Competitive Advantage (HBR Press, 2013)' },
+      { url: 'https://www.strategy-business.com/article/00239', type: 'media', label: 'strategy+business: Rita Gunther McGrath on the End of Competitive Advantage (lifecycle stages)' },
+    ],
+  },
+  {
+    id: 'human-procrastination',
+    discipline: 'human-science',
+    title: '先延ばしと時間的動機づけ理論（TMT）',
+    statement:
+      '先延ばし（プロクラスティネーション）とは、後で不利益を被ると予期しながら、意図した行動を自発的に遅らせることを指す（ピアズ・スティールの定義）。時間的動機づけ理論（TMT）は、スティールとコルネリウス・ケーニッヒ2006年（Academy of Management Review）やスティール2007年のメタ分析（Psychological Bulletin）で定式化された。課題遂行の動機づけ＝（期待×価値）÷（1＋衝動性×遅延）と表され、成功の期待と結果の価値が高いほど動機は上がり、' +
+      '報酬までの遅延と本人の衝動性（遅延への感応性）が大きいほど下がる。期待理論・（双曲）割引や時間選好・欲求理論・累積プロスペクト理論を統合した枠組みである。締切が遠いと割引によって現在の動機が低くなり先延ばしが生じ、締切が迫ると完了の割引価値が高まって着手する仕組みを説明する。メタ分析では先延ばしは低い誠実性・自己効力感や高い衝動性、課題嫌悪と強く相関した。なお双曲割引や実行意図とは区別される概念である。',
+    keyFigures: 'ピアズ・スティール／コルネリウス・ケーニッヒ（Steel & König, 2006）／ピアズ・スティール（2007メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=EJ751135', type: 'academic', label: 'Steel, P. (2007). The Nature of Procrastination, Psychological Bulletin, 133(1), 65–94 (ERIC EJ751135)' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1288513', type: 'academic', label: 'Steel, P., & König, C. J. (2006). Integrating Theories of Motivation, Academy of Management Review, 31, 889–913' },
+      { url: 'https://en.wikipedia.org/wiki/Temporal_motivation_theory', type: 'reference', label: 'Temporal motivation theory — Wikipedia（TMTの公式・統合理論・先延ばし説明）' },
+    ],
+  },
+  {
+    id: 'bizlaw-inheritance-tax',
+    discipline: 'business-law',
+    title: '相続税法',
+    statement:
+      '相続税法（昭和25年法律第73号、1950年の現行法でシャウプ勧告を反映）は、名称は相続税法だが相続税と贈与税の双方を定める基本法であり、贈与税は生前贈与による相続税回避を防ぐ補完税として機能する。国税庁が所管する国税で、相続税は相続や遺贈による財産の取得に課される。日本は法定相続分課税方式を採り、課税価格の合計が基礎控除（3000万円＋600万円×法定相続人数）を超える場合に課税し、税率は超過累進で最高55%。' +
+      '贈与税は1年間に贈与で取得した財産に課され、暦年課税では年110万円の基礎控除と最高55%の累進税率、別に相続時精算課税の選択肢がある。納付は申告納税方式により、相続税は原則として死亡を知った日の翌日から10か月以内に申告する。富の再分配と世代間における富の集中抑制を目的とする。所得税法・法人税法・消費税法・地方税法とは区別される。',
+    keyFigures: '相続税法（昭和25年法律第73号、1950年現行法／シャウプ勧告）／国税庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/325AC0000000073', type: 'government', label: 'e-Gov法令検索 相続税法（昭和25年法律第73号）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/sozoku-zoyo.htm', type: 'government', label: '国税庁 相続税・贈与税' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4102.htm', type: 'government', label: '国税庁 No.4102 相続税がかかる場合（基礎控除）' },
+    ],
+  },
+  {
+    id: 'infosoc-space-of-flows',
+    discipline: 'information-sociology',
+    title: 'フローの空間（スペース・オブ・フローズ）',
+    statement:
+      'マニュエル・カステル『ネットワーク社会の到来（The Rise of the Network Society）』（1996）が提示した概念で、ネットワーク社会において、資本・情報・技術・組織的相互作用・イメージ・音・シンボルといった「フロー」を通じて作動する社会的実践の物質的編成を指す。地理的近接なしに社会的実践の同時性を可能にし、遠隔地がリアルタイムで結ばれて作動するため、意味と権力は物理的な「場所」ではなくフローを軸に組織される。' +
+      '伝統的な近接性と生活経験に根ざす「場所の空間（space of places）」と対比される。カステルはフローの空間を3層で説明する。(1)電子的交換の回路（通信・コンピュータ・ネットワーク等の技術的基盤）、(2)ノードとハブ（ネットに結ばれた重要な場所＝グローバル都市・金融センター等）、(3)フローを統御する支配的経営エリートの空間的編成。さらに「タイムレスな時間（timeless time）」と関連づけられる。ネットワーク社会の空間理論として、これと区別される。',
+    keyFigures: 'マニュエル・カステル（Manuel Castells, 1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781405165518.wbeos1217', type: 'reference', label: 'Wiley-Blackwell Encyclopedia of Sociology — Spaces of Flows/Spaces of Places (Bush & Oosterveer)' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-68824-0_24', type: 'academic', label: 'Springer — Space of Flows and Space of Places: Manuel Castells and the Information Age' },
+      { url: 'https://www.radicalphilosophy.com/article/the-space-of-flows-and-timeless-time', type: 'academic', label: 'Radical Philosophy — The space of flows and timeless time: Castells’s The Information Age' },
+    ],
+  },
 ];
 // Stryker restore all
