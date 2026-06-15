@@ -12246,5 +12246,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nature.com/articles/s41599-025-06216-6', type: 'academic', label: 'Humanities and Social Sciences Communications (Nature, peer-reviewed) — credibility, bias and verification of citizen journalism' },
     ],
   },
+  {
+    id: 'econ-rotten-kid-theorem',
+    discipline: 'economics',
+    title: '腐った子定理',
+    statement:
+      '家族に全員の厚生を気にかける利他的な家長（親）がいて、各成員へ正の移転（贈与）を行っているなら、たとえ純粋に利己的な「腐った」子であっても、自己利益の観点から家族全体の所得・厚生を最大化するように行動する、というゲイリー・ベッカーが1974年の論文「社会的相互作用の理論」（Journal of Political Economy）および『家族の経済学』で示した定理である。' +
+      '仕組みは、利己的な子が他の成員を害すると、家長が被害者へ移転を増やし加害者への将来の移転を減らすため、家長の移転調整が外部性を内部化し、利己的成員もあたかも利他的であるかのように振る舞うよう誘導される点にある。成立には、移転が正のまま機能し続けること、効用が移転可能であることなど条件が必要で、多くの現実的状況では前提が満たされず成り立たないという限界が知られている。',
+    keyFigures: 'ゲイリー・ベッカー（Gary Becker, 1974）／セオドア・バーグストローム（Theodore C. Bergstrom）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://escholarship.org/uc/item/8z525458', type: 'academic', label: 'T. C. Bergstrom, "A Fresh Look at the Rotten Kid Theorem," JPE 97(5), 1989' },
+      { url: 'https://www.economicshelp.org/blog/26072/concepts/rotten-kid-theorem/', type: 'reference', label: 'Economics Help — Rotten Kid Theorem (Becker 1974 / Treatise on the Family)' },
+      { url: 'https://en.wikipedia.org/wiki/Rotten_kid_theorem', type: 'reference', label: 'Wikipedia — Rotten kid theorem (Becker 1974, JPE vol. 82)' },
+    ],
+  },
+  {
+    id: 'econ-prebisch-singer',
+    discipline: 'economics',
+    title: 'プレビッシュ＝シンガー命題',
+    statement:
+      'ラウル・プレビッシュとハンス・シンガーが1950年頃に各々独立に提唱した命題で、長期的には一次産品（原材料・農産物）の工業製品に対する相対価格が低下し、一次産品を主に輸出する国の交易条件が悪化する傾向があると説く。結果として一次産品輸出に依存する途上国（周辺）から工業国（中心）へ所得が移転する。' +
+      '要因として、一次産品は需要の所得弾力性が低い（エンゲルの法則）一方で工業製品は高いこと、加えて市場構造・労働の非対称性（工業部門の生産性上昇は市場支配力や労組を通じ高賃金・利潤として保持される反面、一次産品部門の生産性上昇は価格低下に転嫁される）が挙げられる。本命題は構造主義・従属理論の基礎となり、輸入代替工業化（ISI）戦略を正当化した。',
+    keyFigures: 'ラウル・プレビッシュ／ハンス・シンガー（1950年頃）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp13180.pdf', type: 'academic', label: 'IMF Working Paper — Testing the Prebisch-Singer Hypothesis since 1650' },
+      { url: 'https://kotobank.jp/word/%E3%83%97%E3%83%AC%E3%83%93%E3%83%83%E3%82%B7%E3%83%A5%E7%90%86%E8%AB%96-867009', type: 'reference', label: 'コトバンク — プレビッシュ理論' },
+      { url: 'https://www.usitc.gov/publications/332/EC0206A.pdf', type: 'government', label: 'USITC — Prebisch-Singer Redux' },
+    ],
+  },
+  {
+    id: 'mgmt-kanban',
+    discipline: 'management',
+    title: 'かんばん方式',
+    statement:
+      'かんばん方式は、大野耐一がトヨタ自動車で体系化したトヨタ生産方式（TPS）の中核をなす生産管理の仕組みである。「かんばん」と呼ぶ現品票（カード）に、どの部品を・いつ・どれだけ使うかを記し、これを道具としてジャストインタイム生産を実現する。基本は後工程引取りで、後工程が必要なものを必要な時に必要なだけ前工程へ引き取りに行き、前工程は引き取られた分だけを補充生産する。' +
+      'これにより、見込みで押し出すプッシュ方式ではなく、実需要に引かれて生産が進むプル方式となり、作りすぎのムダと仕掛在庫を抑制し、問題を可視化する。大野は米国スーパーマーケットの、棚から客が必要な分だけ取り、減った分だけ補充する販売・補充方式から着想を得たとされる。なお、現代ソフトウェア開発のかんばんボードはこれを源流とする派生概念である。',
+    keyFigures: '大野耐一（Taiichi Ohno）／トヨタ生産方式',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.toyota-global.com/company/history_of_toyota/75years/text/entering_the_automotive_business/chapter1/section4/item4.html', type: 'reference', label: 'トヨタ自動車 公式企業史「75 Years of TOYOTA」— TPSとかんばん・JIT・スーパーマーケット方式' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80', type: 'reference', label: 'ウィキペディア「大野耐一」— TPS体系化・後工程引取り・かんばん' },
+      { url: 'https://en.wikipedia.org/wiki/Kanban', type: 'reference', label: 'Wikipedia "Kanban" — Ohno/Toyota origin, pull system, supermarket inspiration, overproduction reduction' },
+    ],
+  },
+  {
+    id: 'human-frustration-aggression',
+    discipline: 'human-science',
+    title: 'フラストレーション＝攻撃仮説',
+    statement:
+      'フラストレーション＝攻撃仮説は、目標追求行動が阻害されて生じる欲求不満（フラストレーション）が攻撃行動を生むとする心理学理論である。ダラード、ミラー、ドゥーブ、マウラー、シアーズらイェール大学の研究集団が1939年の著書『欲求不満と攻撃』で提唱した。当初の強い形では、攻撃は常にフラストレーションに先行され、フラストレーションは常に何らかの攻撃を導くと主張した。' +
+      'フラストレーションの源が強力または不在で直接攻撃できない場合、攻撃はより安全な代替対象へ向け換えられる（置換攻撃）。これは少数派集団を標的とするスケープゴート（身代わり）理論や偏見の説明に応用された。ミラーは1941年に、攻撃はフラストレーションが引き起こす複数の反応の一つにすぎないと修正した。さらにバーコウィッツは1989年、フラストレーションは負の感情を喚起する程度に応じて攻撃傾向を生むとする認知的新連合モデルとして再定式化した。',
+    keyFigures: 'ジョン・ダラード／ニール・ミラー／レナード・ドゥーブ／O・H・マウラー／ロバート・シアーズ（1939, イェール集団）／レナード・バーコウィッツ（1989改訂）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/frustration-aggression-hypothesis', type: 'reference', label: 'Britannica — Frustration-aggression hypothesis (1939 Yale attribution, displacement/scapegoating, 1941 revision)' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/2667009/', type: 'academic', label: 'Berkowitz L. (1989) Frustration-aggression hypothesis: examination and reformulation, Psychological Bulletin (PubMed)' },
+      { url: 'https://psychclassics.yorku.ca/FrustAgg/miller.htm', type: 'academic', label: 'Miller N.E. et al. (1941) The frustration-aggression hypothesis — Classics in the History of Psychology, York University' },
+    ],
+  },
+  {
+    id: 'bizlaw-administrative-procedure-act',
+    discipline: 'business-law',
+    title: '行政手続法',
+    statement:
+      '行政手続法（平成5年法律第88号、1993年制定・1994年施行）は、処分・行政指導・届出に関する手続の共通事項を定め、行政運営における公正の確保と透明性の向上を図り、もって国民の権利利益の保護に資することを目的とする一般法である。' +
+      '主な内容は、申請に対する処分（審査基準の設定・公表、標準処理期間、拒否時の理由の提示）、不利益処分（聴聞又は弁明の機会の付与、処分基準、理由の提示）、行政指導（所掌事務の範囲内で相手方の任意の協力により実現し、不利益取扱いを禁止）、届出、命令等の制定に係る意見公募手続（パブリックコメント）である。所管は総務省。',
+    keyFigures: '行政手続法（平成5年法律第88号、1993年制定・1994年施行）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/tetsuzukihou/gaiyou.html', type: 'government', label: '総務省 行政管理局「行政手続法の概要」' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/12819931112088.htm', type: 'government', label: '衆議院 法律第八十八号（平成5年11月12日）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%A1%8C%E6%94%BF%E6%89%8B%E7%B6%9A%E6%B3%95', type: 'reference', label: 'ウィキペディア「行政手続法」' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-citizenship',
+    discipline: 'information-sociology',
+    title: 'デジタル・シティズンシップ',
+    statement:
+      'デジタル・シティズンシップとは、デジタル社会に責任を持って参加するための規範・能力・倫理的行動を指し、情報通信技術（ICT）を安全・批判的・責任を持って活用する力を意味する。マイク・リブルとISTEは「適切で責任ある、力を与えられた技術利用の継続的に発展する規範」と定義し、アクセス、コミュニケーション、リテラシー、エチケット、法、権利と責任、健康、セキュリティ等の要素を挙げる。' +
+      '対象領域はデジタル/メディアリテラシー、オンラインの安全・セキュリティ・プライバシー、礼儀、デジタルな権利と責任、デジタルフットプリント（足跡）の管理、誤情報に対抗する情報の批判的評価、オンラインでの市民的・政治的参加に及ぶ。教育では、単に制限・管理する「安全対策」ではなく、市民として関与し貢献するためのエンパワメント（力の付与）志向の枠組みとして推進され、欧州評議会のデジタル・シティズンシップ教育もこの立場を採る。',
+    keyFigures: 'マイク・リブル（Mike Ribble）／ISTE／欧州評議会（Council of Europe）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://iste.org/news/third-edition-of-digital-citizenship-in-schools-provides-framework-for-preparing-productive-responsible-technology-users', type: 'reference', label: 'ISTE — Digital Citizenship in Schools (Mike Ribble, 9 elements / definition)' },
+      { url: 'https://www.coe.int/en/web/education/dce-concept', type: 'government', label: '欧州評議会 — Digital Citizenship Education Concept（empowerment definition）' },
+    ],
+  },
 ];
 // Stryker restore all
