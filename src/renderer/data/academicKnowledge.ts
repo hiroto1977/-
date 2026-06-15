@@ -13938,5 +13938,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://cmsw.mit.edu/event/tarleton-gillespie-algorithms-and-the-production-of-calculated-publics/', type: 'reference', label: 'MIT Comparative Media Studies/Writing — "Algorithms, and the Production of Calculated Publics"' },
     ],
   },
+  {
+    id: 'econ-sunspot-equilibrium',
+    discipline: 'economics',
+    title: 'サンスポット均衡',
+    statement:
+      'サンスポット（黒点）とは、経済のファンダメンタルズ（選好・賦存・技術）には一切影響しない外生的なランダム変数（外生的不確実性）を指す。サンスポット均衡とは、人々がこの外生変数について抱く信念が自己実現的となり、ファンダメンタルズが不変であるにもかかわらず資源配分がサンスポットの実現値に依存して決まる、合理的期待の競争均衡である。' +
+      'これは複数均衡や均衡の不決定性と結びつき、ケインズのアニマルスピリットや自己成就的予言のように、信念だけが景気変動を生みうること、また市場がこの信念主導の変動を保険しきれない可能性を示す。名称はジェヴォンズが太陽黒点と景気循環を結びつけた古い説に由来するが、ここでは本質的に無関係な外生信号を意味する。デヴィッド・キャスとカール・シェルが1983年の論文「Do Sunspots Matter?」（Journal of Political Economy）で定式化した。',
+    keyFigures: 'デヴィッド・キャス／カール・シェル（David Cass & Karl Shell, 1983）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/261139', type: 'academic', label: 'Cass & Shell, "Do Sunspots Matter?", Journal of Political Economy 91(2), 1983' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_1362-2', type: 'reference', label: 'Karl Shell, "Sunspot Equilibrium", The New Palgrave Dictionary of Economics, 2nd ed.' },
+      { url: 'https://en.wikipedia.org/wiki/Sunspots_(economics)', type: 'reference', label: 'Sunspots (economics) — Wikipedia' },
+    ],
+  },
+  {
+    id: 'econ-ramsey-cass-koopmans',
+    discipline: 'economics',
+    title: 'ラムゼー＝キャス＝クープマンス・モデル（最適成長）',
+    statement:
+      'フランク・ラムゼー（1928）が考案し、デヴィッド・キャス（1965）とチャリング・クープマンス（1965）が完成させた新古典派の最適成長モデル。貯蓄率を外生で一定と仮定するソロー＝スワン・モデルと異なり、無限期間生きる代表的家計（または社会計画者）が、資本蓄積（資源）制約のもとで消費から得られる割引効用の総和を最大化する最適化行動を行い、その結果として消費・貯蓄経路が内生的に決定される点が核心である。' +
+      '最適経路は消費の成長を支配するオイラー方程式（ケインズ＝ラムゼー・ルール）で特徴づけられ、消費成長率は資本の限界生産物から減耗を引いた収益と時間選好（割引）率との差に依存する。経済は資本の限界生産物が割引率・減耗・成長率の和に等しくなる「修正黄金律」の定常状態へ収束し、横断性条件により定常資本ストックは黄金律水準を超えず、ソローで起こりうる過剰資本蓄積（動学的非効率）が生じない。現代マクロ経済学・成長理論の基礎的枠組みである。',
+    keyFigures: 'フランク・ラムゼー（1928）／デヴィッド・キャス（1965）／チャリング・クープマンス（1965）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eml.berkeley.edu/~webfac/gourinchas/e202a_f14/Notes_Ramsey_Cass_Koopmans_pog.pdf', type: 'academic', label: 'UC Berkeley Econ 202A 講義ノート（Gourinchas）— RCKモデル・オイラー方程式・修正黄金律' },
+      { url: 'https://en.wikipedia.org/wiki/Ramsey%E2%80%93Cass%E2%80%93Koopmans_model', type: 'reference', label: 'Wikipedia: Ramsey–Cass–Koopmans model — 内生的貯蓄率・ラムゼー1928/キャス&クープマンス1965・動学的非効率なし' },
+    ],
+  },
+  {
+    id: 'mgmt-garbage-can',
+    discipline: 'management',
+    title: 'ゴミ箱モデル',
+    statement:
+      'コーエン・マーチ・オルセンが1972年に Administrative Science Quarterly 誌で提唱した、「組織化された無秩序（organized anarchy）」における意思決定モデル。組織化された無秩序とは、目標が一貫しない曖昧な選好、成員が過程を十分理解していない不明確な技術、参加者が時間や労力に応じて入れ替わる流動的な参加を特徴とする組織（大学等）を指す。' +
+      'ここでの決定は問題→解という秩序立った過程ではない。選択機会という「ゴミ箱」に、問題・解・参加者・選択機会という独立した4つの流れが投げ込まれ、それらが偶然に結びついたときに決定が生じる。ゆえに解が問題を探す事態も起こり、結果はタイミングや運に大きく左右される。決定は問題を実際に解く resolution、問題に注意を払わぬまま下す oversight、問題が離れて成立する flight のいずれかで生じる。',
+    keyFigures: 'マイケル・コーエン／ジェームズ・マーチ／ヨハン・オルセン（1972）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://perguntasaopo.files.wordpress.com/2012/02/cohen_olsen_1972_a-garbage-can-model-of-organizational-choice.pdf', type: 'academic', label: 'Cohen, March & Olsen, "A Garbage Can Model of Organizational Choice," Administrative Science Quarterly 17 (1972), 1-25 (原典PDF)' },
+      { url: 'https://en.wikipedia.org/wiki/Garbage_can_model', type: 'reference', label: 'Wikipedia: Garbage can model（組織化された無秩序・4つの流れ・原典の帰属）' },
+    ],
+  },
+  {
+    id: 'human-moral-licensing',
+    discipline: 'human-science',
+    title: 'モラル・ライセンシング（道徳的自己許可）',
+    statement:
+      'モラル・ライセンシング（道徳的自己許可）とは、過去の善行や道徳的な自己呈示によって、その後に非道徳的・自己満足的・倫理的に疑わしい行動を取りやすくなる現象を指す。先行する善い行いが本人の道徳的自己イメージを保証・確証するため、後の逸脱を行っても自分や他者から「悪い人間」と見なされる不安が和らぎ、その逸脱が心理的に「許可（ライセンス）」される。' +
+      'モニン＆ミラー（2001, J. Pers. Soc. Psychol.）は、あらかじめ偏見のない「道徳的クレデンシャル（信用）」を確立した人ほど、後に偏見的な判断や政治的に不適切な意見を表明しやすくなることを示した。カーン＆ダー（2006, J. Marketing Res.）は、先行して有徳な行為を意図・選択すると、その後に贅沢・自己満足的な選択肢を選びやすくなる消費者選択のライセンシング効果を実証した。向社会行動・環境配慮（グリーン）行動・偏見など幅広い領域に応用される。',
+    keyFigures: 'ベノワ・モニン＆デール・ミラー（2001）／ウーマ・カーン＆ラヴィ・ダー（2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://gsb-faculty.stanford.edu/benoit-monin/publications/moral-credentials-and-the-expression-of-prejudice/', type: 'academic', label: 'Monin & Miller (2001) Moral Credentials and the Expression of Prejudice, JPSP 81(1):33–43（スタンフォードGSB著者ページ）' },
+      { url: 'https://journals.sagepub.com/doi/10.1509/jmkr.43.2.259', type: 'academic', label: 'Khan & Dhar (2006) Licensing Effect in Consumer Choice, Journal of Marketing Research 43(2):259–266' },
+      { url: 'https://en.wikipedia.org/wiki/Self-licensing', type: 'reference', label: 'Self-licensing（モラル・ライセンシングの定義・自己イメージ機構・応用領域）' },
+    ],
+  },
+  {
+    id: 'bizlaw-commercial-code',
+    discipline: 'business-law',
+    title: '商法',
+    statement:
+      '商法（明治32年法律第48号、1899年制定）は、商人の営業・商行為その他の商事を規律する日本の基本的な事業法である。商人・商行為のほか、商号、商業登記、商業帳簿、海商などについて定め、商事に関しては一般法である民法に優先して適用される特別私法（特別法は一般法に優先）として位置づけられる。' +
+      'うち商行為に関する規定は、商事売買・代理・仲立・問屋・倉庫・運送など営業上の取引について民法の原則を修正する特則を置く。制定当初は総則・会社・商行為・海商等から成ったが、2005年に会社に関する規定が独立の会社法として分離され、現在は総則・商行為・海商の三編構成となり、運送・海商部分は2018年改正で大幅に現代化された。',
+    keyFigures: '商法（明治32年法律第48号、1899年制定／2005年に会社法を分離／2018年運送・海商改正）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000005222', type: 'government', label: '国立国会図書館 日本法令索引「商法 明治32年法律第48号」' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00219.html', type: 'government', label: '法務省「商法及び国際海上物品運送法の一部を改正する法律について」（平成30年改正）' },
+      { url: 'https://kotobank.jp/word/%E5%95%86%E6%B3%95-79819', type: 'reference', label: 'コトバンク「商法」' },
+    ],
+  },
+  {
+    id: 'infosoc-networked-publics',
+    discipline: 'information-sociology',
+    title: 'ネットワーク化された公衆',
+    statement:
+      'ダナ・ボイド（danah boyd, 2010/2011）が提唱した、ネットワーク技術によって再構成された公衆の概念。それは同時に(1)ネットワーク技術が構築する空間と、(2)人・技術・実践の交差から立ち現れる想像上の共同体の両方を指す。ボイドはネットワーク技術が持続性（投稿が記録・保存される）、複製可能性（内容を複製できる）、スケーラビリティ（潜在的可視性が大きい）、' +
+      '検索可能性（内容が検索で到達できる）という4つのアフォーダンスを導入すると論じる。これらは、見えない観客（不可視の受け手）、コンテクストの崩壊（文脈の混在）、公私の境界の曖昧化といった新たな社会的力学を生み、参加者とりわけ若者がそれを乗りこなす必要に迫られる。ウェルマンらのネットワーク個人主義や、ハーバーマス的な公共圏とは区別される。',
+    keyFigures: 'ダナ・ボイド（danah boyd, 2010/2011）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.danah.org/papers/2010/SNSasNetworkedPublics.pdf', type: 'academic', label: 'danah boyd, "Social Network Sites as Networked Publics: Affordances, Dynamics, and Implications" (2010/2011)' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=3585967', type: 'reference', label: 'Boyd, D. (2010), in Z. Papacharissi (Ed.), A Networked Self, Routledge — citation record' },
+    ],
+  },
 ];
 // Stryker restore all
