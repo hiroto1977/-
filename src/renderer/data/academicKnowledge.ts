@@ -15359,5 +15359,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://revisesociology.com/2017/07/02/news-values/', type: 'reference', label: 'News Values — ReviseSociology' },
     ],
   },
+  {
+    id: 'econ-rational-bubble',
+    discipline: 'economics',
+    title: '合理的バブル',
+    statement:
+      '資産価格理論において、すべての投資家が合理的（合理的期待を持つ）であっても、資産価格がファンダメンタルズ価値（将来キャッシュフロー/配当の割引現在価値）を超えうる状況。価格はファンダメンタルズ価値に「バブル」項を加えたものに等しく、各投資家が価格の上昇を合理的に予想し、より高値で転売できると期待するためバブルは持続・成長しうる。無裁定条件より、バブル項は利子率（要求収益率）と同率で成長する必要がある。' +
+      'これは合理的期待の枠組みにおける「より大きな愚か者」論理の定式化である。バブルは横断性条件やノンポンジ条件などにより制約され、ティロル（1982,1985）は動学的に非効率な世代重複（OLG）経済（利子率が成長率を下回る場合）でバブルが発生しうることを示した。ブランシャール&ワトソン（1982）は、ある確率で成長を続け残りの確率で暴落する確率的バブルを定式化した。',
+    keyFigures: 'オリヴィエ・ブランシャール＆マーク・ワトソン（1982）／ジャン・ティロル（1982, 1985）／ディーバ＆グロスマン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w1059/w1059.pdf', type: 'academic', label: 'Diba & Grossman, "Rational Asset Price Bubbles," NBER Working Paper No. 1059' },
+      { url: 'http://www.econ2.jhu.edu/people/ccarroll/public/lecturenotes/assetpricing/bubbles/', type: 'academic', label: 'Johns Hopkins University — Canonical Asset Pricing and Rational Bubbles (lecture notes)' },
+      { url: 'https://www.chicagofed.org/publications/economic-perspectives/2025/3', type: 'government', label: 'Federal Reserve Bank of Chicago, Economic Perspectives — Why Bubbles Occur (Blanchard-Watson, Tirole)' },
+    ],
+  },
+  {
+    id: 'econ-gift-exchange',
+    discipline: 'economics',
+    title: '贈与交換（労働の部分的贈与交換）',
+    statement:
+      'ジョージ・アカロフが1982年の論文「部分的贈与交換としての労働契約」（Quarterly Journal of Economics）で提示した考え方で、雇用関係を互恵的な「贈与交換」とみなす。企業は市場清算（最低受諾）水準を上回る賃金を「贈り物」として支払い、労働者はそれに応えて最低限を上回る努力を「贈り物」として返す。' +
+      'この互恵は純粋な労働契約（スポット契約）ではなく、公平・忠誠・「公正な一日の仕事」をめぐる集団規範といった社会的規範や感情に支配される。効率賃金の社会学的基礎を与え、企業が自発的に高い賃金を払うのは高賃金が努力・生産性・士気を高めるためで、賃金硬直性や非自発的失業を説明する。互恵性や公正、フェーアらの贈与交換実験、アカロフ＝イエレン（1990）の公正賃金努力仮説に連なる。なお既存の効率賃金概念とは、互恵・規範という基礎づけの点で区別される。',
+    keyFigures: 'ジョージ・アカロフ（George Akerlof, 1982）／ジャネット・イエレン（Janet Yellen, 1990）／エルンスト・フェーア（Ernst Fehr）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/97/4/543/1846076', type: 'academic', label: 'Akerlof, "Labor Contracts as Partial Gift Exchange," QJE 97(4), 1982, pp.543-569 (Oxford Academic)' },
+      { url: 'https://academic.oup.com/qje/article-abstract/105/2/255/1864771', type: 'academic', label: 'Akerlof & Yellen, "The Fair Wage-Effort Hypothesis and Unemployment," QJE 105(2), 1990 (Oxford Academic)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w12063/w12063.pdf', type: 'academic', label: 'Gneezy & List, "Testing for Gift Exchange in Labor Markets Using Field Experiments," NBER WP 12063' },
+    ],
+  },
+  {
+    id: 'mgmt-stakeholder-salience',
+    discipline: 'management',
+    title: 'ステークホルダー・サリエンス・モデル',
+    statement:
+      'ミッチェル、アグル、ウッドが1997年に学術誌Academy of Management Reviewで提唱した、経営者がどのステークホルダーに注意を払うべきか（顕著性＝サリエンス）を説明する枠組み。顕著性は3つの属性の保有によって決まる。すなわち権力（自らの意思を企業に押し付ける力）、正当性（その要求や関係が規範上適切とみなされるか）、緊急性（即時の対応を要する度合いで、時間的切迫性と重大性を併せ持つ）である。' +
+      'ステークホルダーは属性を多く持つほど顕著性が高い。3属性の組合せから7類型が導かれる。1属性のみの潜在的ステークホルダー（休眠／裁量的／要求型）、2属性を持つ期待的ステークホルダー（支配的／危険／従属的）、3属性すべてを持つ最も顕著な確定的ステークホルダー、いずれの属性も持たない非ステークホルダーである。顕著性は固定的でなく動的・社会的に構成される。フリーマンのステークホルダー理論を拡張したもので、誰を重視すべきかを論じる点で同理論とは区別される。',
+    keyFigures: 'ロナルド・ミッチェル／ブラッドリー・アグル／ドナ・ウッド（1997）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10297821/', type: 'academic', label: 'Salient stakeholders: Using the salience stakeholder model in healthcare priority setting (PMC / ScienceDirect, peer-reviewed)' },
+      { url: 'https://umbrex.com/resources/frameworks/organization-frameworks/stakeholder-salience-model-mitchell-agle-wood/', type: 'reference', label: 'Umbrex — Mitchell-Agle-Wood Stakeholder Salience Model Guide' },
+      { url: 'https://www.stakeholdermap.com/stakeholder-analysis/stakeholder-salience.php', type: 'reference', label: 'StakeholderMap — Stakeholder Salience' },
+    ],
+  },
+  {
+    id: 'human-attentional-blink',
+    discipline: 'human-science',
+    title: '注意の瞬き（アテンショナル・ブリンク）',
+    statement:
+      'レイモンド・シャピロ・アーネル（1992）が報告した、注意と意識の時間的限界を示す現象。毎秒約10項目の高速逐次視覚提示（RSVP）の流れに2つの標的T1・T2を埋め込むと、T1はほぼ正確に報告できるのに、T2がT1の約200〜500ミリ秒後（特に200〜300ms付近）に現れる場合、人はT2をしばしば検出・報告できない。' +
+      'まるで注意が一瞬「瞬く」かのように、この短い時間窓でT2の処理が阻害され、T2がもっと後に現れれば成績は回復する。ただしT1の直後（ラグ1）では阻害されない「ラグ1スペアリング」も生じる。T1を作動記憶へ統合・固定する処理が限られた注意資源を一時的に消費しT2処理を抑制すると説明され、注意の時間的ボトルネックと意識の閾を探る重要パラダイムとなっている。',
+    keyFigures: 'ジェーン・レイモンド／キムロン・シャピロ／カレン・アーネル（Raymond, Shapiro & Arnell, 1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/1500880/', type: 'academic', label: 'Raymond, Shapiro & Arnell (1992), J. Exp. Psychol. Hum. Percept. Perform., 18(3), 849–860（PubMed）' },
+      { url: 'http://www.scholarpedia.org/article/Attentional_blink', type: 'reference', label: 'Attentional blink — Scholarpedia（査読付き百科事典）' },
+      { url: 'https://www.sciencedirect.com/topics/medicine-and-dentistry/attentional-blink', type: 'reference', label: 'Attentional Blink — an overview, ScienceDirect Topics' },
+    ],
+  },
+  {
+    id: 'bizlaw-deposit-insurance-act',
+    discipline: 'business-law',
+    title: '預金保険法',
+    statement:
+      '預金保険法（昭和46年法律第34号、1971年制定）は、金融機関の破綻時に預金者を保護し、信用秩序および金融システムの安定を図る預金保険制度を定める法律である。同法に基づき1971年に預金保険機構（DICJ）が設立された。銀行・信用金庫・信用組合等の金融機関は強制加入し、保険料を納付する。制度の中核はペイオフで、金融機関が破綻した場合、1金融機関・預金者ごとに合算され、定期預金や利息付き普通預金等の一般預金は元本1,000万円とその利息までが保護される。' +
+      '一方、無利息・要求払い・決済サービスを提供する決済用預金（当座預金等）は全額保護される。1990年代の金融危機後の全額保護措置を経て、2005年（平成17年）4月に定額保護（ペイオフ）が完全に解禁され、現行の決済用預金の区別が整った。預金保険機構は保険金支払のほか、破綻金融機関の処理（資金援助、承継銀行＝ブリッジバンク等）も担い、金融庁と連携して運営される。',
+    keyFigures: '預金保険法（昭和46年法律第34号、1971年制定）／預金保険機構（DICJ）・金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/payoff/', type: 'government', label: '金融庁 — 預金保険制度（ペイオフ・保護範囲）' },
+      { url: 'https://www.dic.go.jp/yokinsha/page_000016.html', type: 'government', label: '預金保険機構 — 保護の範囲（一般預金1,000万円＋利息／決済用預金全額）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000061485', type: 'government', label: '日本法令索引（国立国会図書館）— 預金保険法 昭和46年法律第34号' },
+    ],
+  },
+  {
+    id: 'infosoc-cyborg-manifesto',
+    discipline: 'information-sociology',
+    title: 'サイボーグ宣言',
+    statement:
+      'ダナ・ハラウェイが1985年に発表した「サイボーグ宣言」（Socialist Review誌、原題「A Manifesto for Cyborgs」、後に1991年の著書『猿と女とサイボーグ』に所収）は、フェミニスト科学技術論の重要論考である。彼女は機械と有機体の混成である「サイボーグ」を皮肉な政治的神話／メタファーとして用い、20世紀後半に人間／動物・有機体／機械・物理的／非物理的という諸境界が崩壊したと論じた。' +
+      '固定的な二元論や、自然な「女」を前提とする本質主義的フェミニズムを含む本質主義・アイデンティティ政治を退け、サイボーグを部分性と混成性を引き受ける越境的形象として提示する。そして固定的アイデンティティでなく「親和（アフィニティ）」による連帯を志向した。「女神よりサイボーグになりたい」の一節で知られ、サイバーフェミニズム・ポストヒューマニズム・STSの基礎となった。',
+    keyFigures: 'ダナ・ハラウェイ（Donna Haraway, 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/Simians-Cyborgs-and-Women-The-Reinvention-of-Nature/Haraway/p/book/9780415903875', type: 'academic', label: 'Routledge — Donna Haraway, Simians, Cyborgs, and Women (1991, 「サイボーグ宣言」所収)' },
+      { url: 'https://en.wikipedia.org/wiki/A_Cyborg_Manifesto', type: 'reference', label: 'Wikipedia — A Cyborg Manifesto (1985, Socialist Review)' },
+      { url: 'https://yalereview.org/article/meghan-o-gieblyn-donna-haraway-utopian-promise', type: 'media', label: 'The Yale Review — Donna Haraway’s Cyborg Manifesto in the Age of AI' },
+    ],
+  },
 ];
 // Stryker restore all
