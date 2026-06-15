@@ -12158,5 +12158,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.pewresearch.org/internet/2021/05/19/americans-and-cancel-culture-where-some-see-calls-for-accountability-others-see-censorship-punishment/', type: 'academic', label: 'Pew Research Center 2021（説明責任 vs 検閲・処罰の両論）' },
     ],
   },
+  {
+    id: 'econ-superstar-economics',
+    discipline: 'economics',
+    title: 'スーパースターの経済学',
+    statement:
+      'シャーウィン・ローゼンが1981年の論文「The Economics of Superstars」（American Economic Review）で示した理論。一部の市場では、ごく少数のトップ実演者が市場を支配し桁外れの報酬を得る一方、その才能は次点の競争相手よりわずかに優れているにすぎない。この現象は二つの条件から生じる。第一は不完全代替で、消費者は最高のものを強く選好し、劣る才能を質の悪い代替としか見なさない（凡庸な歌手を何人聴いても傑出した一人の公演には及ばない）ため、需要が頂点に集中する。' +
+      '第二は規模の経済で、録音・放送・出版など共同消費（joint consumption）の技術により複製の限界費用がほぼゼロとなり、最高の実演者が低コストで市場全体に大規模配信できる。両者が結びつくと、才能のわずかな差が報酬の巨大な差へと拡大され、報酬関数は凸（convex）となって、所得は上方に強く偏った歪んだ分布をとる。後にモシェ・アドラーらが代替的な説明も提示した。',
+    keyFigures: 'シャーウィン・ローゼン（Sherwin Rosen, 1981）／モシェ・アドラー（Moshe Adler）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pdodds.w3.uvm.edu/files/papers/others/1981/rosen1981a.pdf', type: 'academic', label: 'Rosen, S. (1981) "The Economics of Superstars," American Economic Review 71(5): 845–858 (原論文全文)' },
+      { url: 'https://www.minneapolisfed.org/article/2002/perfectly-competitive-superstars', type: 'government', label: 'Federal Reserve Bank of Minneapolis — Perfectly Competitive Superstars' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v71y1981i5p845-58.html', type: 'reference', label: 'IDEAS/RePEc — The Economics of Superstars 書誌情報' },
+    ],
+  },
+  {
+    id: 'econ-diamond-dybvig',
+    discipline: 'economics',
+    title: 'ダイアモンド＝ディビッグ・モデル',
+    statement:
+      'ダグラス・ダイアモンドとフィリップ・ディビッグが1983年（Journal of Political Economy「Bank Runs, Deposit Insurance, and Liquidity」）で示した銀行取り付けの理論。銀行は満期・流動性変換を行い、流動性の低い長期貸出を、いつでも引き出せる要求払預金で賄うため、本質的に取り付けに対して脆弱である。預金者の流動性需要は不確実で、要求払預金契約は流動性保険を提供する。' +
+      'モデルには複数均衡が存在し、真に資金を必要とする者だけが早期に引き出す正常均衡と、他者の引出しを予想すると皆が一斉に引き出すのが各自にとって合理的になる取り付け均衡（自己実現的パニック）がある。後者では銀行は健全（支払能力あり）でも資産を投げ売りして破綻しうる。預金保険や中央銀行による最後の貸し手機能は、この取り付け均衡を排除できる。ダイアモンドとディビッグはバーナンキとともに2022年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ダグラス・ダイアモンド／フィリップ・ディビッグ（1983、2022年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v91y1983i3p401-19.html', type: 'academic', label: 'Diamond & Dybvig (1983) "Bank Runs, Deposit Insurance, and Liquidity," Journal of Political Economy 91(3):401-419' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2022/press-release/', type: 'reference', label: 'NobelPrize.org — 2022 Sveriges Riksbank Prize in Economic Sciences (Bernanke, Diamond, Dybvig) press release' },
+    ],
+  },
+  {
+    id: 'mgmt-intrapreneurship',
+    discipline: 'management',
+    title: '社内起業（イントラプレナーシップ）',
+    statement:
+      '社内起業（イントラプレナーシップ）とは、既存の大企業の中で従業員（イントラプレナー、社内起業家）が、会社の資源・資金・信用・安定という安全網を活かしながら、自ら主体性とリスクをとって新製品・新サービス・新事業を生み出す企業家活動を指す。ギフォード・ピンチョー3世とエリザベス・ピンチョーが1978年の論文「Intra-Corporate Entrepreneurship」で用い、1985年の著書『Intrapreneuring』で広く普及させ、彼らはイントラプレナーを「夢を実行する者（dreamers who do）」と定義した。' +
+      'その狙いは、官僚的な硬直や大組織の慣性を打破し、社内にイノベーションと企業家精神を促すことにあり、社内ベンチャー部門・スカンクワークス・15%/20%ルールのような裁量（スラック）時間や失敗の許容といった仕組みで実現される。自己資本を投じ独立して興す独立起業とは異なり、また外部資源を取り込むオープンイノベーションとも区別され、組織内部で機会を捉え経済的価値を創出する点に特徴がある。',
+    keyFigures: 'ギフォード・ピンチョー3世（Gifford Pinchot III, 1985『Intrapreneuring』）／エリザベス・ピンチョー（Elizabeth Pinchot）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/intrapreneurship-explained', type: 'academic', label: 'MIT Sloan School of Management — Intrapreneurship, explained' },
+      { url: 'https://link.springer.com/chapter/10.1057/9781137373809_6', type: 'academic', label: 'Springer (Palgrave Macmillan) — Entrepreneurship and the Human Capital of Organizational Innovation: The Intrapreneur' },
+      { url: 'https://en.wikipedia.org/wiki/Intrapreneurship', type: 'reference', label: 'Wikipedia — Intrapreneurship' },
+    ],
+  },
+  {
+    id: 'human-self-perception-theory',
+    discipline: 'human-science',
+    title: '自己知覚理論',
+    statement:
+      '自己知覚理論（self-perception theory）は、ダリル・ベムが1967年（Psychological Review）に提唱し1972年（Advances in Experimental Social Psychology）に体系化した社会心理学の理論で、人は自分の態度・感情・内的状態を、自らの外的な行動とそれが生じた状況を観察することによって、あたかも外部の観察者が他者を推論するのと同じように推論して知る、と説く。' +
+      'この自己推論は、内的な手がかりが弱い・曖昧・解釈困難なときに特に強く働く（例「私は黒パンを食べる、ゆえに黒パンが好きなのだろう」）。ベムはこれを、フェスティンガーの認知的不協和理論が扱う態度変化現象への代替説明として提示し、嫌悪的な喚起状態の低減を仮定せずとも行動からの推論で説明できると論じた。外的報酬が内発的興味の低さの推論を導く過正当化効果とも関連する。',
+    keyFigures: 'ダリル・ベム（Daryl Bem, 1967/1972）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Motivation/Bem_1967_Self_perception.pdf', type: 'academic', label: 'Bem, D. J. (1967) Self-perception: An alternative interpretation of cognitive dissonance phenomena. Psychological Review 74(3), 183–200 (PDF via MIT)' },
+      { url: 'https://doi.org/10.1016/S0065-2601(08)60024-6', type: 'academic', label: 'Bem, D. J. (1972) Self-Perception Theory. Advances in Experimental Social Psychology, Vol. 6, 1–62' },
+      { url: 'https://en.wikipedia.org/wiki/Overjustification_effect', type: 'reference', label: 'Overjustification effect (self-perception account of extrinsic reward) — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-civil-procedure',
+    discipline: 'business-law',
+    title: '民事訴訟法',
+    statement:
+      '民事訴訟法は、私法上の権利義務をめぐる紛争を裁判所が裁き、原告と被告の主張・立証を経て判決により解決する民事訴訟の手続を定める手続法である。管轄・当事者・訴状による訴えの提起・口頭弁論・証拠調べ・判決を規律し、判決が確定すると同一事項の蒸し返しを封じる既判力が生じる。判決の基礎となる事実と証拠の収集・提出を当事者の権能・責任とする弁論主義、手続の開始や審判対象の設定を当事者に委ねる処分権主義といった当事者主義を基本原理とする。判決に対しては控訴・上告で不服を申し立てられ、' +
+      '少額訴訟などの特則も置く。現行法は明治23年(1890)制定・大正15年(1926)改正の旧法を全面改正した平成8年(1996)法律第109号で、1998年1月1日に施行され手続の迅速化・利用しやすさを図った。令和4年(2022)改正は訴訟手続のIT化・デジタル化(オンライン申立て、ウェブ会議による口頭弁論、訴訟記録の電子化)を導入した。所管は法務省、手続は裁判所で行われる。',
+    keyFigures: '民事訴訟法（平成8年法律第109号、1996年制定・1998年施行）／法務省・裁判所',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/408AC0000000109/', type: 'government', label: 'e-Gov法令検索 民事訴訟法（平成8年法律第109号）' },
+      { url: 'https://www.courts.go.jp/saiban/minjidejitaruka/minso_gaiyou/index.html', type: 'government', label: '裁判所 改正民訴法等で変わる民事訴訟手続の概要（IT化）' },
+      { url: 'https://kotobank.jp/word/%E6%B0%91%E4%BA%8B%E8%A8%B4%E8%A8%9F%E6%B3%95-140038', type: 'reference', label: 'コトバンク 民事訴訟法' },
+    ],
+  },
+  {
+    id: 'infosoc-citizen-journalism',
+    discipline: 'information-sociology',
+    title: '市民ジャーナリズム',
+    statement:
+      '市民ジャーナリズム（シチズン・ジャーナリズム、参加型・草の根ジャーナリズムとも）は、専門的な訓練を受けていない一般市民が、スマートフォン・ブログ・SNSなどの安価で遍在するデジタルツールを用いて、ニュースや情報の収集・報道・分析・発信に能動的に関与する実践を指す。ダン・ギルモアは2004年の著書『We the Media（草の根ジャーナリズム）』でこの潮流を理論化し、韓国のオーマイニュースは「市民みなが記者」を掲げて2000年に創刊した。' +
+      '災害・事件や抗議行動における目撃者報道（ユーザー生成コンテンツ）で存在感を増し、従来メディアによるゲートキーピング（情報選別）機能の相対的低下と、生産者と消費者の境界の融解を象徴する。一方で、正確性・事実検証・説明責任・信頼性の欠如が中心的な課題として指摘され、専門ジャーナリズムや「第四の権力」との関係をめぐり議論が続いている。',
+    keyFigures: 'ダン・ギルモア（Dan Gillmor, 2004『We the Media』）／オーマイニュース（OhmyNews, オ・ヨンホ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/citizen-journalism', type: 'reference', label: 'Encyclopaedia Britannica — Citizen journalism (Gillmor 2004 / OhmyNews lineage, definition)' },
+      { url: 'https://www.nature.com/articles/s41599-025-06216-6', type: 'academic', label: 'Humanities and Social Sciences Communications (Nature, peer-reviewed) — credibility, bias and verification of citizen journalism' },
+    ],
+  },
 ];
 // Stryker restore all
