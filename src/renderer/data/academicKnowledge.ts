@@ -17498,5 +17498,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-15-agenda-setting-theory/', type: 'reference', label: 'Montgomery College, Introduction to Communication Inquiry & Theory — Agenda Setting Theory (first/second level, substantive & affective dimensions)' },
     ],
   },
+  {
+    id: 'econ-bootleggers-baptists',
+    discipline: 'economics',
+    title: '密造者と聖職者（ブートレガーとバプテスト）',
+    statement:
+      '経済学者ブルース・ヤンドルが1983年に提示した規制の公共選択論。ある規制が成立し長く存続するのは、動機が相反する二つの連合がともにそれを支えるからだと説く。「バプテスト（聖職者）」は道徳的大義から、公共の利益のためだと公に規制を擁護する道徳派であり、「ブートレガー（密造者）」は同じ規制から私的利益を得るが自己利益は決して語らない。' +
+      '名称は日曜の酒類販売を禁じた米国のブルー・ロー（安息日法）に由来し、道徳的に支持する聖職者と、日曜に違法販売して儲ける密造者の双方が禁止から利益を得た。規制は公共の利益という大義（バプテスト）が私的利益（ブートレガー）に政治的隠れ蓑を与えるとき最も強固に持続し、両者は協調する必要すらない。環境・健康・経済規制に広く応用される。私的利益の追求を扱うレントシーキングや、規制機関が業界に取り込まれる規制の虜とは区別され、本概念は道徳的大義と私的利益の連合・隠れ蓑の力学を説く点に特徴がある。',
+    keyFigures: 'ブルース・ヤンドル（Bruce Yandle, 1983）／アダム・スミス（Adam Smith, 2014年共著）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cato.org/policy-report/september/october-2014/revisiting-bootleggers-baptists', type: 'reference', label: 'Cato Institute — Revisiting Bootleggers and Baptists' },
+      { url: 'https://en.wikipedia.org/wiki/Bootleggers_and_Baptists', type: 'reference', label: 'Wikipedia — Bootleggers and Baptists' },
+      { url: 'https://www.aei.org/articles/viewpoint-bootleggers-and-baptists-the-education-of-a-regulatory-economist/', type: 'academic', label: 'AEI — Yandle, Bootleggers and Baptists (1983 essay, republished)' },
+    ],
+  },
+  {
+    id: 'econ-olivera-tanzi-effect',
+    discipline: 'economics',
+    title: 'オリベラ＝タンジ効果',
+    statement:
+      'フリオ・オリベラ（1967）とヴィト・タンジ（1977、IMF Staff Papers）にちなむ、高インフレが徴収のタイムラグを通じて政府の税収の実質価値を低下させる現象。税は前年所得など過去の課税ベースに基づいて算定され、また納税義務の発生から実際の徴収までに時間差があるため、その間にインフレが進行し、政府が受け取る名目税額の実質的な購買力を目減りさせる。' +
+      '徴収ラグが長く、インフレ率が高いほど実質税収の損失は大きくなる（例：徴収ラグ2か月・月10％のインフレで実質税収は約20％減）。これは、財政赤字を貨幣発行で賄う→インフレ→タンジ効果で実質税収が減少→赤字が一段と拡大→更なる貨幣発行という悪循環を生みうる。ラテンアメリカ等の高インフレ経済を説明する文脈で重視される。なお、貨幣発行益（インフレ税・シニョリッジ）とは区別される概念である。',
+    keyFigures: 'フリオ・オリベラ（Julio Olivera, 1967）／ヴィト・タンジ（Vito Tanzi, 1977, IMF）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1977/001/article-A007-en.xml', type: 'academic', label: 'Vito Tanzi, "Inflation, Lags in Collection, and the Real Value of Tax Revenue," IMF Staff Papers Vol. 24 (1977)' },
+      { url: 'https://en.wikipedia.org/wiki/Tanzi_effect', type: 'reference', label: 'Tanzi effect — Wikipedia（Olivera 1967 / Tanzi 1977・徴収ラグ機構・赤字動学）' },
+      { url: 'https://www.elibrary.imf.org/view/journals/001/1990/048/article-A001-en.xml', type: 'academic', label: 'IMF Working Paper 1990/048, "Fiscal Revenue and Inflationary Finance"（赤字＝インフレの悪循環）' },
+    ],
+  },
+  {
+    id: 'mgmt-schein-culture-levels',
+    discipline: 'management',
+    title: 'シャインの組織文化の3レベル',
+    statement:
+      'エドガー・H・シャインが1985年『組織文化とリーダーシップ』で提示した枠組み。組織文化を、集団が外部適応と内部統合の問題を解決する過程で学習し、有効と認められたため新メンバーに正しい知覚・思考・感じ方として教えられる、共有された基本的前提のパターンと定義する。文化を可視性により3レベルに分析する：' +
+      '(1)人工物（artifacts＝目に見える表層。建物・服装・儀礼・言語・観察可能な行動で、観察は容易だが解釈は困難）(2)標榜される価値観（espoused values＝集団が公言する戦略・目標・理念・規範）(3)基本的前提認識（basic underlying assumptions＝無意識で当然視される信念であり文化の本質・源泉。最も把握・変革が難しい）。深層が表層を規定するため、文化の理解には基本的前提の解読が要る。組織文化一般や競合価値フレームワークとは区別される、シャイン固有の3層モデルである。',
+    keyFigures: 'エドガー・H・シャイン（Edgar H. Schein, 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sloanreview.mit.edu/article/coming-to-a-new-awareness-of-organizational-culture/', type: 'academic', label: 'Schein, "Coming to a New Awareness of Organizational Culture", MIT Sloan Management Review (1984)' },
+      { url: 'https://courses.lumenlearning.com/wm-organizationalbehavior/chapter/levels-of-organizational-culture/', type: 'academic', label: 'Lumen Learning, Organizational Behavior — Levels of Organizational Culture' },
+      { url: 'https://en.wikipedia.org/wiki/Edgar_Schein', type: 'reference', label: 'Wikipedia: Edgar Schein — Organizational culture model' },
+    ],
+  },
+  {
+    id: 'human-signal-detection-theory',
+    discipline: 'human-science',
+    title: '信号検出理論（SDT）',
+    statement:
+      'デヴィッド・グリーンとジョン・スウェッツが1966年の著書『Signal Detection Theory and Psychophysics』で体系化した、不確実性下の意思決定の枠組み（タナー&スウェッツ1954に起源し、レーダー工学・電気工学に由来する）。背景の「雑音（ノイズ）」の中から微弱な「信号」を検出する状況を扱い、各試行は信号＋雑音か雑音のみのいずれかで、観察者は信号の有無を判断する。結果は4つに分かれる＝ヒット（あり信号を正しく検出）/ミス（あり信号を見逃す）/' +
+      'フォールスアラーム（なしを「あり」と誤報）/正棄却（なしを正しくなしと判断）。SDTは独立した二成分を分離する＝感度・弁別力（d′＝バイアスと独立に信号と雑音をどれだけ区別できるか）と、反応バイアス・判断基準（βやc＝「あり」と答える閾値で、利得やコスト・事前確率によって変動する）。ゆえに同じ感度でも基準が異なれば反応は異なる。固定的な感覚閾を否定し感度とバイアスを切り分ける点が核心で、ROC曲線と結びつき医療診断・再認記憶などに広く応用される。',
+    keyFigures: 'デヴィッド・グリーン／ジョン・スウェッツ（Green & Swets, 1966）／タナー&スウェッツ（1954）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cns.nyu.edu/~david/courses/perception/lecturenotes/sdt/sdt.html', type: 'academic', label: 'NYU Center for Neural Science (D. Heeger) — Signal Detection Theory 講義ノート' },
+      { url: 'https://en.wikipedia.org/wiki/Detection_theory', type: 'reference', label: 'Wikipedia — Detection theory（四結果・d′・ROC・Green & Swets/Tanner & Swets）' },
+    ],
+  },
+  {
+    id: 'bizlaw-consumption-tax',
+    discipline: 'business-law',
+    title: '消費税法',
+    statement:
+      '消費税法（昭和63年法律第108号、1988年制定）は、財・サービスの国内取引と輸入に広く課す付加価値税型の間接税である消費税の基本法で、国税庁が所管する。1989年4月1日に税率3%で導入され、物品税等の個別間接税を整理した。納税義務者は各取引段階の事業者だが、税は価格への転嫁を通じ最終的に消費者が負担する。各段階で課税しつつ、売上に係る税から仕入に係る税を差し引く仕入税額控除により税の累積（カスケード）を回避する。' +
+      '標準税率は3%→5%（1997、地方消費税を含む）→8%（2014）→10%（2019）と引き上げられ、2019年からは酒類・外食を除く飲食料品や一定の新聞に軽減税率8%が適用される。基準期間の課税売上高が1000万円以下の小規模事業者は免税事業者となりうる。2023年10月からは仕入税額控除に適格請求書等保存方式（インボイス）が用いられる。社会保障の主要財源であり、仕入税額控除の書類方式であるインボイス制度や、所得税法・法人税法とは区別される。',
+    keyFigures: '消費税法（昭和63年法律第108号、1988年制定・1989年導入）／国税庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mof.go.jp/tax_policy/summary/consumption/d04.htm', type: 'government', label: '財務省 消費税に関する基本的な資料（間接税・納税義務者・転嫁・仕入税額控除）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000075295', type: 'government', label: '国立国会図書館 日本法令索引 消費税法（昭和63年法律第108号）' },
+      { url: 'https://www.nta.go.jp/about/organization/ntc/kohon/syouhi/pdf/all.pdf', type: 'government', label: '国税庁 税務大学校 消費税法（基礎編）' },
+    ],
+  },
+  {
+    id: 'infosoc-second-level-digital-divide',
+    discipline: 'information-sociology',
+    title: '第二のデジタル・デバイド（スキル・利用の格差）',
+    statement:
+      'エスター・ハーギタイが2002年に「Second-Level Digital Divide」（First Monday）で提唱した概念。第一の（一次的）デジタル・デバイドがICT/インターネットへの物理的アクセスの有無の格差（持つ者と持たざる者）を指すのに対し、第二のデジタル・デバイドはアクセスを既に持つ者の間の格差、すなわちデジタルスキル・能力・利用の自律性や、行う活動の種類や質（資本増強的な利用か娯楽的な利用か）の差を指す。' +
+      'ハーギタイは、アクセスがあっても情報を効率的に探す能力には大差があり、それが社会経済的地位・学歴・年齢などと相関することを実証し、研究の焦点をアクセスの有無から利用やスキルへと転換させた。後にファンドゥールセン＆ファンダイクは、スキルや利用が結びつく成果・便益（雇用・教育・経済的利益等）の差を第三のデバイドとして拡張した。単なるアクセス格差を扱うデジタル・デバイドとは区別される。',
+    keyFigures: 'エスター・ハーギタイ（Eszter Hargittai, 2002）／ファンドゥールセン&ファンダイク（第三レベル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/942', type: 'academic', label: 'Hargittai, E. (2002) "Second-Level Digital Divide: Differences in People\'s Online Skills", First Monday 7(4)' },
+      { url: 'https://research.utwente.nl/en/publications/determinants-of-internet-skills-use-and-outcomes-a-systematic-rev/', type: 'academic', label: 'Scheerder, van Deursen & van Dijk (2017) 第二・第三レベルのデジタル格差の系統的レビュー, Telematics and Informatics (Univ. of Twente)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11308174/', type: 'reference', label: 'Examining First- and Second-Level Digital Divide（NIH/PMC 査読）' },
+    ],
+  },
 ];
 // Stryker restore all
