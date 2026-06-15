@@ -13494,5 +13494,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://socialsci.libretexts.org/Bookshelves/Sociology/Introduction_to_Sociology/Sociology_(Boundless)/06:_Social_Groups_and_Organization/6.04:_Bureaucracy/6.4C:_The_McDonaldization_of_Society', type: 'academic', label: 'LibreTexts (Boundless Sociology) — The McDonaldization of Society' },
     ],
   },
+  {
+    id: 'econ-regulatory-capture',
+    discipline: 'economics',
+    title: '規制の虜',
+    statement:
+      '規制の虜とは、公共の利益のために設けられた規制当局が、本来規制対象であるはずの産業や特定利益集団の商業的・政治的利益を逆に促進するようになる現象を指す。集中した産業は規制者へ働きかける強い誘因と豊富な資源（ロビー活動、情報の非対称性、官民の回転ドア人事、政治献金）を持つ一方、利害が拡散した一般公衆は合理的無知やフリーライダー問題のため組織化の誘因が弱い。' +
+      'この非対称性ゆえに、規制はしばしば産業に「獲得」され、産業の利益のために設計・運用されがちとなり、消費者保護よりも参入障壁や価格維持といった産業保護的な帰結を生む。ジョージ・スティグラーは1971年の論文「経済規制の理論」（Bell Journal of Economics）でこの捕囚理論を検証可能な経済モデルとして定式化し、シカゴ学派の規制の経済理論として確立した。',
+    keyFigures: 'ジョージ・スティグラー（George Stigler, 1971）／マーヴァー・バーンスタイン（Marver Bernstein, 1955）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://bfi.uchicago.edu/wp-content/uploads/2023/02/3003160.pdf', type: 'academic', label: 'George J. Stigler, "The Theory of Economic Regulation," Bell Journal of Economics (1971) — U. Chicago BFI' },
+      { url: 'https://regulatorystudies.columbian.gwu.edu/lets-not-forget-george-stiglers-lessons-about-regulatory-capture', type: 'academic', label: 'GWU Regulatory Studies Center — Stigler\'s Lessons about Regulatory Capture' },
+      { url: 'https://en.wikipedia.org/wiki/Regulatory_capture', type: 'reference', label: 'Regulatory capture — Wikipedia' },
+    ],
+  },
+  {
+    id: 'econ-gibbard-satterthwaite',
+    discipline: 'economics',
+    title: 'ギバード＝サタースウェイトの定理',
+    statement:
+      'アラン・ギバード（1973）とマーク・サタースウェイト（1975）が独立に証明した社会的選択理論の定理。3つ以上の選択肢から1つの勝者を選ぶ決定的な投票ルール（社会選択関数）について、(a)あらゆる選好順序を許す（定義域非限定）、(b)独裁的でない、(c)すべての選択肢が何らかの選好の組で勝ちうる（onto・全射）、という条件をすべて満たすルールは、必ず戦略的操作（戦略的投票）の余地を持ち、耐戦略性（strategyproofness）を満たせないと主張する。' +
+      'すなわち、ある状況では投票者が自分の正直な選好に照らしてより望ましい結果を、選好を偽って申告することで得られる。逆に、3つ以上の選択肢上でこれらの条件を満たす耐戦略的なルールは独裁制のみである。本定理はアローの不可能性定理と密接に関連し（相互に導出可能）、メカニズムデザインの基礎をなす重要な結果である。',
+    keyFigures: 'アラン・ギバード（Allan Gibbard, 1973）／マーク・サタースウェイト（Mark Satterthwaite, 1975）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://people.cs.pitt.edu/~kirk/CS1699Fall2014/gibbard-sat.pdf', type: 'academic', label: 'University of Pittsburgh — "The Gibbard–Satterthwaite theorem: a simple proof" (講義ノート)' },
+      { url: 'https://gtl.csa.iisc.ac.in/gametheory/ln/web-md5-gst.pdf', type: 'academic', label: 'Indian Institute of Science — Game Theory lecture notes: Gibbard-Satterthwaite Theorem and Arrow' },
+      { url: 'https://en.wikipedia.org/wiki/Gibbard%E2%80%93Satterthwaite_theorem', type: 'reference', label: 'Wikipedia — Gibbard–Satterthwaite theorem' },
+    ],
+  },
+  {
+    id: 'mgmt-tannenbaum-schmidt',
+    discipline: 'management',
+    title: 'タンネンバウム＝シュミットのリーダーシップ連続体',
+    statement:
+      'ロバート・タンネンバウムとウォーレン・シュミットが1958年のハーバード・ビジネス・レビュー論文「How to Choose a Leadership Pattern」で示した枠組み。リーダーシップ行動を、上司中心（権威主義的）から部下中心（民主的）へと連続する一本の連続体として捉える。管理者が用いる権限の大きさと部下に与える自由の領域の度合いに応じ、約7段階——(1)決定し告げる、(2)決定を売り込む、(3)案を示し質問を受ける、' +
+      '(4)変更可能な暫定案を示す、(5)問題を示し示唆を得て自ら決める、(6)限界を定め集団に委ねる、(7)定めた範囲内で部下を自由に行動させる/委任する——に整理される。連続体上の最適な位置は、管理者自身の力（価値観・信頼・許容度）、部下の力（自律性・能力・期待）、状況の力（組織・課題・時間的圧力）という3つの力で決まるとした。単一の最善のスタイルを前提とせず状況に応じて使い分ける、初期の状況適応（コンティンジェンシー）理論に位置づけられる。',
+    keyFigures: 'ロバート・タンネンバウム／ウォーレン・シュミット（Tannenbaum & Schmidt, 1958 HBR）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1425085', type: 'academic', label: 'Tannenbaum, R. & Schmidt, W.H. (1958) How to Choose a Leadership Pattern, Harvard Business Review, 36, 95-101（書誌）' },
+      { url: 'https://hbr.org/1973/05/how-to-choose-a-leadership-pattern', type: 'reference', label: 'Harvard Business Review「How to Choose a Leadership Pattern」（原典出版社、1958年初出/1973年再録）' },
+    ],
+  },
+  {
+    id: 'human-negativity-bias',
+    discipline: 'human-science',
+    title: 'ネガティビティ・バイアス',
+    statement:
+      'ネガティビティ・バイアス（否定性バイアス）とは、同程度の強さであっても、否定的な出来事・情報・感情・刺激が、中立的または肯定的なものより心理状態や情報処理に大きな影響を及ぼす傾向をいう。「悪いことは良いことより強い（bad is stronger than good）」と表現され、ネガティブな事象はより重く扱われ、注意を引き、記憶に残りやすく、印象形成・意思決定・学習をより強く左右する。' +
+      'バウマイスターら（2001「Bad Is Stronger Than Good」）は日常・人間関係・学習・フィードバックなど広範な領域でこの非対称性を総説し、ローズィン＆ロイズマン（2001）は否定性優位など4つの現れ方を整理した。脅威への注意が生存価を持ったとする進化的・適応的基盤が想定され、印象形成・損失回避・リスク認知・ニュース消費などに現れる。',
+    keyFigures: 'ロイ・バウマイスターら（Baumeister et al., 2001「Bad Is Stronger Than Good」）／ポール・ローズィン＆エドワード・ロイズマン（Rozin & Royzman, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1037/1089-2680.5.4.323', type: 'academic', label: 'Baumeister, Bratslavsky, Finkenauer & Vohs (2001) "Bad Is Stronger Than Good," Review of General Psychology 5(4), 323-370' },
+      { url: 'https://journals.sagepub.com/doi/10.1207/S15327957PSPR0504_2', type: 'academic', label: 'Rozin & Royzman (2001) "Negativity Bias, Negativity Dominance, and Contagion," Personality and Social Psychology Review 5(4), 296-320' },
+      { url: 'https://dictionary.apa.org/negativity-bias', type: 'reference', label: 'APA Dictionary of Psychology — negativity bias' },
+    ],
+  },
+  {
+    id: 'bizlaw-women-empowerment-act',
+    discipline: 'business-law',
+    title: '女性活躍推進法',
+    statement:
+      '女性活躍推進法（女性の職業生活における活躍の推進に関する法律、平成27年/2015年法律第64号、2016年4月本格施行、厚生労働省所管）は、女性が職業生活においてその希望に応じ十分に能力を発揮し活躍できる環境を整備することを目的とする法律である。一定規模以上の事業主に対し、採用比率・勤続年数の男女差・労働時間・管理職比率など女性の活躍状況の把握と課題分析、数値目標を含む一般事業主行動計画の策定・届出・公表、' +
+      'および女性活躍に関する情報公表を義務づける。当初は常時雇用する労働者301人以上の事業主が対象だったが、2019年改正により101人以上の事業主へ対象が拡大された（2022年4月1日施行、100人以下は努力義務）。女性活躍の状況が優良な企業には厚生労働大臣による「えるぼし」「プラチナえるぼし」認定がある。当初は2026年までの10年間の時限立法であったが、2025年改正で10年延長された。',
+    keyFigures: '女性の職業生活における活躍の推進に関する法律（平成27年法律第64号、2015年制定・2016年施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000091025.html', type: 'government', label: '厚生労働省「女性活躍推進法特集ページ」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000136773', type: 'government', label: '国立国会図書館 日本法令索引（平成27年法律第64号）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%A5%B3%E6%80%A7%E3%81%AE%E8%81%B7%E6%A5%AD%E7%94%9F%E6%B4%BB%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E6%B4%BB%E8%BA%8D%E3%81%AE%E6%8E%A8%E9%80%B2%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia「女性の職業生活における活躍の推進に関する法律」' },
+    ],
+  },
+  {
+    id: 'infosoc-glocalization',
+    discipline: 'information-sociology',
+    title: 'グローカリゼーション',
+    statement:
+      'グローバルな製品・サービス・観念や慣行を、各地域の文化・嗜好・条件に適応させること、より広くは普遍化（グローバル化）と個別化（ローカル化）という二つの傾向が同時に併存し相互浸透する過程を指す。社会学者ローランド・ロバートソンが1990年代に理論化し（1995年の論考「グローカリゼーション―時空間と均質性‐異質性」が代表）、グローバルとローカルは対立物ではなく相互構成的だとして、これを「普遍主義の個別化と個別主義の普遍化」と定式化した。' +
+      '語源は日本のビジネス用語「土着化（dochakuka）」で、グローバルな手法を現地の状況に合わせる発想を日本のマーケティングが取り入れたものとされる。多国籍企業が国ごとに商品を現地化する例（マクドナルドのメニューが国により異なる等）がこれにあたり、世界が一様化に向かうとする単純な均質化テーゼ（素朴なグローバル・ヴィレッジ論や文化帝国主義的見解）への対抗概念として用いられる。',
+    keyFigures: 'ローランド・ロバートソン（Roland Robertson, 1990年代）／土着化（dochakuka）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://warwick.ac.uk/fac/arts/history/students/modules/hi31v/syllabus/week18/robertson-1995.pdf', type: 'academic', label: 'Roland Robertson, "Glocalization: Time–Space and Homogeneity–Heterogeneity", Global Modernities (Sage, 1995) — University of Warwick' },
+      { url: 'https://www.britannica.com/money/glocalization', type: 'reference', label: 'Encyclopaedia Britannica — Glocalization' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-319-74319-6_572', type: 'reference', label: 'Springer reference work — Glocalization (dochakuka origin, Robertson)' },
+    ],
+  },
 ];
 // Stryker restore all
