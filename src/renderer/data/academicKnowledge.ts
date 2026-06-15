@@ -14827,5 +14827,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Understanding_Media', type: 'reference', label: 'Wikipedia — Understanding Media: The Extensions of Man (hot/cool media)' },
     ],
   },
+  {
+    id: 'econ-friedman-rule',
+    discipline: 'economics',
+    title: 'フリードマン・ルール（最適貨幣量）',
+    statement:
+      'ミルトン・フリードマンが1969年『最適貨幣量』で提示した金融政策の処方で、名目利子率がゼロになるとき最適な資源配分が達成されるとする。理由は、不換貨幣を生産する社会的限界費用はほぼゼロなので、効率のためには貨幣保有の私的な機会費用＝名目利子率（利息を放棄するコスト）もゼロまで下げるべきだという点にある。' +
+      'これにより貨幣需要が飽和し（最適貨幣量）、人々が実質貨幣残高を過度に節約することから生じる死荷重・非効率が消える。フィッシャー方程式（名目＝実質＋期待インフレ）より、名目ゼロは実質利子率の分だけのマイルドなデフレを最適インフレ率として含意する。正のインフレ目標や、インフレ税を他の歪み税と並べて最適化するフェルプスの公共財政アプローチとは対照的な、貨幣経済学の基礎的命題である。',
+    keyFigures: 'ミルトン・フリードマン（Milton Friedman, 1969）／エドマンド・フェルプス（Edmund Phelps, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.philadelphiafed.org/-/media/FRBP/Assets/Economy/Articles/business-review/2012/q4/brq412_optimum-quantity-of-money.pdf', type: 'government', label: 'Federal Reserve Bank of Philadelphia — The Optimum Quantity of Money (Business Review, 2012)' },
+      { url: 'https://en.wikipedia.org/wiki/Friedman_rule', type: 'reference', label: 'Wikipedia — Friedman rule' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/1997/09/what-is-the-optimal-rate-of-inflation/', type: 'government', label: 'Federal Reserve Bank of San Francisco — What is the Optimal Rate of Inflation? (1997)' },
+    ],
+  },
+  {
+    id: 'econ-envelope-theorem',
+    discipline: 'economics',
+    title: '包絡線定理',
+    statement:
+      '包絡線定理（エンベロープ・セオレム）は、パラメータ付き最適化問題の最適値関数が、パラメータの変化に対してどう変わるかを示す数理最適化・経済学の定理である。最適値関数のパラメータに関する微分は、最適点で評価した目的関数の当該パラメータに関する偏微分に等しい。' +
+      'すなわち選択変数の最適調整を通じた間接効果は無視でき、内点最適では一階条件によりその項が消える。これにより比較静学が大幅に簡単化される。ロワの恒等式・シェパードの補題・ホテリングの補題や、長期費用曲線が短期費用曲線の包絡線となる関係（名称の由来）の基礎をなす。古典的定式化はサミュエルソン（1947）、非微分可能な一般化はミルグロム&シーガル（2002）による。',
+    keyFigures: '包絡線定理（ポール・サミュエルソン1947／ミルグロム&シーガル2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/uploads/members-only/18119-3.pdf', type: 'academic', label: 'Sinander, "The Converse Envelope Theorem," Econometrica (2022) — 歴史的系譜（Hotelling/Roy/Shephard、Samuelson 1947、Milgrom-Segal 2002）' },
+      { url: 'https://en.wikipedia.org/wiki/Envelope_theorem', type: 'reference', label: 'Wikipedia: Envelope theorem — 最適値関数の微分=最適点での目的関数の偏微分、比較静学、Milgrom-Segal 2002' },
+    ],
+  },
+  {
+    id: 'mgmt-trompenaars-dimensions',
+    discipline: 'management',
+    title: 'トロンペナールスの文化の7次元',
+    statement:
+      'フォンス・トロンペナールスとチャールズ・ハムデン=ターナーが1997年の著書『Riding the Waves of Culture（文化の波を乗りこなす）』で提示した異文化マネジメント・モデルで、約40か国・46,000人超の管理職への調査をもとに文化差を7つの次元で捉える。対人関係に関する5次元として、(1)普遍主義vs個別主義（ルールを優先するか関係・状況を優先するか）、(2)個人主義vs共同体主義、(3)中立vs感情表出、(4)関与特定的vs拡散的（関与が生活領域へどこまで広がるか）、(5)達成vs属性（地位は獲得するものか生得のものか）を挙げる。' +
+      'さらに(6)時間に対する態度（逐次的vs同期的、および過去・現在・未来志向）、(7)環境に対する態度（内的統制vs外的統制）を加える。前5次元はタルコット・パーソンズのパターン変数に由来する。国際ビジネスにおいてホフステードの文化次元の代替・補完として広く参照される主要な枠組みであるが、調査対象や次元構成が異なるため、ホフステードの文化次元とは区別される。',
+    keyFigures: 'フォンス・トロンペナールス／チャールズ・ハムデン=ターナー（1997）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Trompenaars%27s_model_of_national_culture_differences', type: 'reference', label: "Wikipedia: Trompenaars's model of national culture differences（7次元・出典・帰属）" },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/014717679600003X', type: 'academic', label: "Int. J. of Intercultural Relations: Riding the waves of commerce — A test of Trompenaars' model" },
+    ],
+  },
+  {
+    id: 'human-mcgurk-effect',
+    discipline: 'human-science',
+    title: 'マガーク効果',
+    statement:
+      'マガーク効果（マガーク・マクドナルド効果）は、ハリー・マガークとジョン・マクドナルドが1976年に学術誌Natureの論文「Hearing lips and seeing voices」で報告した知覚現象で、音声（言語音）の知覚が聴覚だけでなく視覚も統合した多感覚的（視聴覚的）なものであることを示す錯覚である。ある音声（聴覚刺激）を、別の音を発音する話者の口の動きの映像にかぶせて提示すると、聞き手は両者のいずれとも異なる第三の音を知覚することがある。' +
+      '古典的な例では、音声として/ba/を聞きながら口が/ga/と動く映像を見ると、多くの人が中間的な/da/と知覚する（融合）。この効果は、錯覚であると知っていても、また視覚が聴覚に影響していると自覚していなくても生じ、頑健でほぼ自動的に働く（ただしその強さは言語・年齢・個人によって異なる）。マガーク効果は、音声知覚における多感覚統合を示す基礎的な証拠とされている。',
+    keyFigures: 'ハリー・マガーク／ジョン・マクドナルド（McGurk & MacDonald, 1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/264746a0', type: 'academic', label: 'McGurk H. & MacDonald J. (1976) "Hearing lips and seeing voices", Nature 264, 746–748' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4091305/', type: 'academic', label: 'Tiippana K. (2014) "What is the McGurk effect?", Frontiers in Psychology (PMC)' },
+      { url: 'https://en.wikipedia.org/wiki/McGurk_effect', type: 'reference', label: 'Wikipedia: McGurk effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-national-pension',
+    discipline: 'business-law',
+    title: '国民年金法',
+    statement:
+      '国民年金法（昭和34年法律第141号、1959年制定）は、公的年金制度の1階部分である国民年金（基礎年金）を定める法律で、1961年に保険料拠出が始まり国民皆年金が実現した。日本国内に住む20歳以上60歳未満の者は原則として強制加入し、被保険者は3区分に分けられる。第1号被保険者（自営業者・学生等で自ら定額保険料を納付）、' +
+      '第2号被保険者（厚生年金に加入する被用者）、第3号被保険者（第2号の被扶養配偶者）である。給付には受給資格期間を満たした者へ原則65歳から支給される老齢基礎年金のほか、障害基礎年金・遺族基礎年金がある。被用者は上に厚生年金が乗る2階建て構造をとり、制度は厚生労働省および日本年金機構が所管・運営する。',
+    keyFigures: '国民年金法（昭和34年法律第141号、1959年制定・1961年国民皆年金）／厚生労働省・日本年金機構',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=85001000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データ 国民年金法（昭和34年法律第141号）' },
+      { url: 'https://www.nenkin.go.jp/section/faq/kokunen/seido/kanyu/seidosetsumei/20140602-01.html', type: 'government', label: '日本年金機構 国民年金の被保険者区分（第1号・第2号・第3号）' },
+      { url: 'https://www.mhlw.go.jp/stf/nenkin_shikumi_002.html', type: 'government', label: '厚生労働省 公的年金制度の体系（基礎年金・2階建て）' },
+    ],
+  },
+  {
+    id: 'infosoc-narcotizing-dysfunction',
+    discipline: 'information-sociology',
+    title: '麻酔的逆機能',
+    statement:
+      'ラザースフェルドとマートンが1948年の論文「マスコミュニケーション・大衆の趣味・組織された社会的行動」で提示した概念で、マスメディアが公共的問題について大量の情報を浴びせることで、人々を行動に駆り立てるどころか逆に無関心・受動的にしてしまうという逆説を指す。' +
+      '人は問題について「知っていること」を、それに「取り組んでいること」と取り違えやすい。情報に通じ、読み、視聴し、語り合うことは参加しているという心地よい感覚を与えるが、実際にはそうしたメディア消費が組織的な社会的・政治的行動の代わりになってしまう。すなわち情報量の増大は人々を活気づけるのではなく麻酔し、能動的関与を受動的知識へと置き換える。無関心な市民の増加は望ましくないとの前提から、彼らはこれを地位付与機能や社会規範の強制機能と並ぶメディアの「逆機能（ディスファンクション）」と呼んだ。',
+    keyFigures: 'ポール・ラザースフェルド／ロバート・マートン（1948）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Mass-communication-popular-taste-and-organized-Lazarsfeld-Merton/50c6e01e5e345853eab8bebec12b5d95b398f16a', type: 'academic', label: 'Lazarsfeld & Merton (1948) "Mass Communication, Popular Taste and Organized Social Action" (Semantic Scholar)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803100222905', type: 'reference', label: 'Oxford Reference: narcotization / narcotizing dysfunction' },
+    ],
+  },
 ];
 // Stryker restore all
