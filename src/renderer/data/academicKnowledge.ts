@@ -10647,5 +10647,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/chapter/10.1007/978-3-531-91998-0_2', type: 'academic', label: 'Springer Nature Link: The Prosumer Movement（プロシューマー概念の学術的位置づけ）' },
     ],
   },
+  {
+    id: 'econ-wagner-law',
+    discipline: 'economics',
+    title: 'ワグナーの法則',
+    statement:
+      'ワグナーの法則（経費膨張の法則、国家活動拡大の法則）は、経済が発展し一人当たり所得が増大するにつれて、公共支出が絶対額でも国民総生産（GNP）に占める割合でも増大していく傾向を指す経験的法則である。19世紀末にドイツの財政学者アドルフ・ワーグナーが各国の統計分析に基づき定式化した。' +
+      '工業化の進展に伴い、市場確保のための軍事費、階級的緊張を緩和する社会政策費（社会保障費）、産業助成などの経済費といった国家活動が拡大することがメカニズムとされる。現代では公共サービス需要の所得弾力性が1を超えると解釈され、福祉国家の財政膨張を説明する古典的命題として参照される一方、厳密な意味での「法則」かには批判もある。',
+    keyFigures: 'アドルフ・ワーグナー（Adolph Wagner、1835–1917）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E7%B5%8C%E8%B2%BB%E8%86%A8%E5%BC%B5%E3%81%AE%E6%B3%95%E5%89%87-59128', type: 'reference', label: 'コトバンク「経費膨張の法則」（日本大百科全書ほか）' },
+      { url: 'https://meiji.repo.nii.ac.jp/record/3219/files/seikeironso_32_3_61.pdf', type: 'academic', label: '「公共経費膨脹の法則—A・ワグナー法則の検討—」明治大学政治経済研究所' },
+      { url: 'https://en.wikipedia.org/wiki/Wagner%27s_law', type: 'reference', label: 'Wikipedia "Wagner\'s law"' },
+    ],
+  },
+  {
+    id: 'econ-leontief-paradox',
+    discipline: 'economics',
+    title: 'レオンチェフの逆説',
+    statement:
+      'ヘクシャー＝オリーン定理によれば、資本が相対的に豊富な国は資本集約的な財を輸出し、労働集約的な財を輸入するはずである。' +
+      'しかしワシリー・レオンチェフが1953年に発表した投入産出分析（1947年の米国貿易データ）では、世界有数の資本豊富国であるはずのアメリカが、実際には労働集約的な財を輸出し資本集約的な財を輸入していた。具体的には輸出品100万ドルの生産には労働約182人分・資本約255万ドルを要したのに対し、同額の輸入代替品の国内生産には労働約170人・資本約309万ドルを要し、輸出産業のほうが労働集約的だった。この理論と実証の食い違いをレオンチェフの逆説と呼ぶ。レオンチェフ自身は、米国の労働者の生産性が外国の数倍高く実質的には労働豊富国だと説明した。',
+    keyFigures: 'ワシリー・レオンチェフ（1906–1999、投入産出分析でノーベル経済学賞）／エリ・ヘクシャー／ベルティル・オリーン（ヘクシャー＝オリーン定理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E3%82%8C%E3%81%8A%E3%82%93%E3%81%A6%E3%81%84%E3%81%88%E3%81%B5%E3%81%AE%E9%80%86%E8%AA%AC-151474', type: 'reference', label: 'コトバンク（日本大百科全書ニッポニカ）「レオンティエフの逆説」' },
+      { url: 'https://www.britannica.com/money/Heckscher-Ohlin-theory', type: 'reference', label: 'Encyclopaedia Britannica「Heckscher-Ohlin theory / Leontief Paradox」' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1257-1', type: 'academic', label: 'The New Palgrave Dictionary of Economics「Leontief Paradox」(SpringerLink)' },
+    ],
+  },
+  {
+    id: 'mgmt-kano-model',
+    discipline: 'management',
+    title: '狩野モデル（魅力的品質と当たり前品質）',
+    statement:
+      '狩野モデルは、狩野紀昭らが1984年の論文「魅力的品質と当り前品質」で提唱した品質と顧客満足の理論である。製品・サービスの品質要素を、物理的充足度（横軸）と顧客満足度（縦軸）の非線形な対応関係に着目して分類する点が特徴で、両者は単純な比例関係にないとした。' +
+      '品質要素は、満たされても満足は上がらず欠けると強い不満を生む「当たり前品質」、充足度に比例して満足度が増減する「一元的品質」、なくても不満はないが備わると大きな満足や驚きを生む「魅力的品質」、満足に影響しない「無関心品質」、あると逆に不満を招く「逆品質」の5つに分けられる。製品開発や顧客ニーズの優先順位づけに広く用いられる。',
+    keyFigures: '狩野紀昭（1940–）／瀬楽信彦／高橋文夫／辻新一',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstage.jst.go.jp/article/quality/14/2/14_KJ00002952366/_article/-char/en', type: 'academic', label: 'Kano et al. 「Attractive Quality and Must-Be Quality」品質（日本品質管理学会誌）Vol.14 No.2, 1984（J-STAGE）' },
+      { url: 'https://cir.nii.ac.jp/crid/1390001204501872256?lang=en', type: 'academic', label: 'CiNii Research（国立情報学研究所）原論文書誌レコード' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%8B%A9%E9%87%8E%E3%83%A2%E3%83%87%E3%83%AB', type: 'reference', label: '狩野モデル — ウィキペディア日本語版' },
+    ],
+  },
+  {
+    id: 'human-spacing-effect',
+    discipline: 'human-science',
+    title: '分散効果（間隔学習）',
+    statement:
+      '分散効果（spacing effect、間隔効果）とは、同じ総学習量であっても、学習を時間的に分散して複数回に分けたほうが、一度にまとめて詰め込む集中学習（massed practice）よりも長期的な記憶定着が優れるという現象である。1885年にヘルマン・エビングハウスが、3日間に分散した38回の反復が68回の集中反復と同等の記憶成績を生むことを観察したのが端緒とされる。' +
+      'その後の研究で、適切な学習間隔を用いた分散学習は集中学習の2倍以上効率的になりうること、最適な学習間隔は保持期間（テストまでの時間）が長いほど広がることが示された。無意味綴り・単語・文法規則・科学概念から運動技能まで幅広い材料で、また無脊椎動物からヒトに至る多様な種で再現される、記憶研究で最も頑健な知見の一つである。',
+    keyFigures: 'ヘルマン・エビングハウス（1850–1909）／ニコラス・セペダ（Nicholas J. Cepeda）／ハロルド・パシュラー（Harold Pashler）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.yorku.ca/ncepeda/publications/CPVWR2006.html', type: 'academic', label: 'York University — Cepeda, Pashler, Vul, Wixted & Rohrer (2006), Distributed practice in verbal recall tasks, Psychological Bulletin 132:354–380' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3323864/', type: 'academic', label: 'NIH/PMC — Molecular Determinants of the Spacing Effect（エビングハウス1885年起源・頑健性のレビュー）' },
+      { url: 'https://dictionary.apa.org/spacing-effect', type: 'reference', label: 'APA Dictionary of Psychology — spacing effect' },
+    ],
+  },
+  {
+    id: 'bizlaw-power-harassment',
+    discipline: 'business-law',
+    title: 'パワーハラスメント防止（労働施策総合推進法）',
+    statement:
+      '職場のパワーハラスメントは、2019年改正の労働施策総合推進法（パワハラ防止法）により防止措置が事業主に義務づけられた。' +
+      '厚生労働省は、①優越的な関係を背景とした言動、②業務上必要かつ相当な範囲を超えたもの、③労働者の就業環境が害されるもの、の三要素をすべて満たす行為と定義し、身体的な攻撃・精神的な攻撃・人間関係からの切り離し・過大な要求・過小な要求・個の侵害の六類型を代表例として示す。事業主は相談体制の整備や事後の迅速・適切な対応、相談者への不利益取扱いの禁止など雇用管理上の措置を講じる義務を負う。施行は大企業が2020年6月1日、中小企業が2022年4月1日からである。',
+    keyFigures: '厚生労働省／労働施策総合推進法（2019年改正・2020年6月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.no-harassment.mhlw.go.jp/foundation/definition/about', type: 'government', label: '厚生労働省 あかるい職場応援団「パワーハラスメントの定義（三要素）」' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=341AC0000000132', type: 'government', label: 'e-Gov法令検索 労働施策総合推進法 第30条の2（雇用管理上の措置等）' },
+      { url: 'https://www.mhlw.go.jp/file/06-Seisakujouhou-11900000-Koyoukintoujidoukateikyoku/0000189292.pdf', type: 'government', label: '厚生労働省「パワハラ 6類型」' },
+    ],
+  },
+  {
+    id: 'infosoc-remediation',
+    discipline: 'information-sociology',
+    title: 'リメディエーション',
+    statement:
+      'ジェイ・デイヴィッド・ボルターとリチャード・グルーシンが『Remediation: Understanding New Media』（1999, MIT Press）で示したメディア論の鍵概念。新しいメディアは無から生まれるのではなく、絵画・写真・映画・テレビなど先行するメディアの形式を取り込み、模倣し、改作（リファッション）することで文化的意味を獲得すると説く。マクルーハン以来の「メディアの内容は別のメディアである」という洞察を継承し拡張したものである。' +
+      'その作動は二重の論理として捉えられる。第一は「透明な即時性（immediacy）」で、媒介の存在を消し去り、利用者がメディアを意識せず内容そのものに直接向き合っているかのように感じさせようとする論理である。第二は「ハイパーメディア（hypermediacy）」で、複数の表象行為を前景化し、インターフェースや媒体そのものへの意識を喚起する論理である。両者は対立しつつも相互依存し、現代文化はメディアを増殖させながら同時に媒介の痕跡を消去しようとする、とされる。',
+    keyFigures: 'ジェイ・デイヴィッド・ボルター／リチャード・グルーシン（1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262024525/remediation/', type: 'reference', label: 'MIT Press — Remediation: Understanding New Media（出版社による書誌・概要）' },
+      { url: 'https://www.cdfr.design.kyushu-u.ac.jp/lexicon/130/', type: 'academic', label: '九州大学 Center for Design Fundamentals Research「メディア論」レキシコン（リメディエーション解説）' },
+      { url: 'https://quod.lib.umich.edu/j/jahc/3310410.0005.111/', type: 'academic', label: 'Journal of the Association for History and Computing（ミシガン大学）書評' },
+    ],
+  },
 ];
 // Stryker restore all
