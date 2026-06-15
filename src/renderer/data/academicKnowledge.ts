@@ -15182,5 +15182,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Synopticon', type: 'reference', label: 'Synopticon — Wikipedia' },
     ],
   },
+  {
+    id: 'econ-conditional-convergence',
+    discipline: 'economics',
+    title: '条件付き収束',
+    statement:
+      '新古典派成長理論（ソロー＝スワン・モデル）における仮説で、各経済は自国の定常状態の一人当たり所得へ収束する。したがって定常状態を決める要因（貯蓄/投資率・人口成長率・人的資本・技術や制度）を一定とすれば（条件づければ）、自国の定常状態より下にある貧しい経済ほど速く成長して追いつく。これは資本の収穫逓減を機構とし、資本が乏しい国ほど資本の限界生産物が高いため成長が速い。' +
+      '特性によらず全経済が同一の所得水準へ収束するという絶対（無条件）収束とは対比され、世界全体では実証的に棄却される一方、OECD創設国や米国の州・日本の都道府県など類似した経済の集団内では成立する。バロおよびマンキュー＝ローマー＝ワイル1992が実証的に支持し、定常状態への格差は年約2%の速度で縮まる（収束速度約2%）とされる。',
+    keyFigures: '条件付き収束（ソロー＝スワン・モデル／ロバート・バロ／マンキュー＝ローマー＝ワイル1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/EmpiricsofEconomicGrowth.html', type: 'reference', label: 'Econlib (Concise Encyclopedia of Economics): Empirics of Economic Growth — MRW1992 & Barro ~2% conditional convergence' },
+      { url: 'http://piketty.pse.ens.fr/files/BarroSalaIMartin2004Chap1-2.pdf', type: 'academic', label: 'Barro & Sala-i-Martin, Economic Growth (2nd ed., MIT Press) — absolute vs conditional β-convergence, ~2% speed' },
+    ],
+  },
+  {
+    id: 'econ-tradeoff-theory',
+    discipline: 'economics',
+    title: '資本構成のトレードオフ理論',
+    statement:
+      '企業は負債の便益と費用を比較衡量して、最適な資本構成（負債比率）を選ぶとする理論。主な便益は負債利子の節税効果で、支払利息は損金算入でき課税所得を圧縮するため企業価値を高める（法人税ありのモジリアーニ＝ミラー）。主な費用は財務的困難・倒産コストと負債のエージェンシーコストであり、レバレッジの上昇とともに増大する。' +
+      'したがって、追加負債の限界的な節税便益と限界的な困難費用とが等しくなる点で、企業価値を最大化する内点最適（目標負債比率）が定まり、企業はその目標へ向けて資本構成を調整すると考える。明確な目標比率を持たず、内部資金→負債→新株発行の順で資金調達するとみるペッキングオーダー理論と対比される。MM理論を理論的基礎とする。',
+    keyFigures: '資本構成のトレードオフ理論（モジリアーニ＝ミラー1958／1963を基礎）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-031-85459-0_2', type: 'academic', label: 'Springer Nature「Modigliani–Miller Proposition and Trade-off Theory」' },
+      { url: 'https://glossary.mizuho-sc.com/faq/show/1158', type: 'reference', label: 'みずほ証券 ファイナンス用語集「トレードオフ理論」' },
+      { url: 'https://efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2005-Milan/papers/250-swinnen_paper.pdf', type: 'academic', label: 'EFMA「Trade-off versus Pecking Order Theory」' },
+    ],
+  },
+  {
+    id: 'mgmt-mintzberg-5p',
+    discipline: 'management',
+    title: 'ミンツバーグの戦略の5P',
+    statement:
+      'ヘンリー・ミンツバーグが1987年の論文「The Strategy Concept I: Five Ps for Strategy」（California Management Review, Vol.30, No.1）で示した枠組み。「戦略」には複数の意味があるとして、頭文字がPの5つの定義を提示した。Plan（計画＝事前に意図して立てる、状況に対処するための行動指針）、Ploy（策略＝競合相手を出し抜くための具体的な手・駆け引き）、Pattern（パターン＝意図の有無を問わず行動の流れに一貫して現れる型であり、実現された戦略にあたり、創発戦略の考え方に通じる）、' +
+      'Position（ポジション＝環境の中で組織が占める位置、製品と市場が出会う製品市場上の位置取り）、Perspective（パースペクティブ＝世界の捉え方そのもので、組織の性格や根づいた集合的なものの見方）の5つである。とりわけPlanとPatternの対比を通じて、意図された（計画的・deliberate）戦略と、実際の行動から実現された（創発的・emergent）戦略は異なりうることを強調する点に特徴がある。戦略経営論で広く教えられている。',
+    keyFigures: 'ヘンリー・ミンツバーグ（Henry Mintzberg, 1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cmr.berkeley.edu/1987/11/30-1-the-strategy-concept-i-five-ps-for-strategy/', type: 'academic', label: 'Mintzberg, H. (1987) "The Strategy Concept I: Five Ps for Strategy", California Management Review 30(1): 11-24 (UC Berkeley)' },
+      { url: 'https://www.ifm.eng.cam.ac.uk/research/dstools/mintzbergs-5-ps-for-strategy/', type: 'reference', label: "University of Cambridge, Institute for Manufacturing — Mintzberg's 5 Ps for Strategy" },
+    ],
+  },
+  {
+    id: 'human-generation-effect',
+    discipline: 'human-science',
+    title: '生成効果',
+    statement:
+      '生成効果（ジェネレーション・エフェクト）は、情報を単に読む（受動的に提示される）よりも、手がかりや規則から自分で能動的に生成・産出した方がよく記憶されるという頑健な記憶現象である。ノーマン・スラメカとピーター・グラフ（Slamecka & Graf, 1978）が5つの実験で体系化し、生成条件は読み条件より再認・再生・確信度のいずれでも成績が優れることを示した。' +
+      '例えば「反意語」という規則と手がかり「hot–c???」から「cold」を自分で生成する方が、完全な対「hot–cold」をただ読むより後の記憶が良い。自己生成がより深く努力的な処理を促し符号化を強めるためと説明され、望ましい困難や精緻化と関連する。学習時に標的を産出する点で、想起を鍛えるテスト効果（検索練習）や学習を分散させる分散効果とは区別される。単語や数で実証され、教育・学習設計に広く応用されている。',
+    keyFigures: 'ノーマン・スラメカ／ピーター・グラフ（Slamecka & Graf, 1978）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.3758/s13423-020-01762-3', type: 'academic', label: 'Psychonomic Bulletin & Review: Theories of the generation effect — a meta-analytic review' },
+      { url: 'https://en.wikipedia.org/wiki/Generation_effect', type: 'reference', label: 'Wikipedia: Generation effect（Slamecka & Graf 1978・generate vs read）' },
+      { url: 'https://www.semanticscholar.org/paper/The-Generation-Effect:-Delineation-of-a-Phenomenon-Slamecka-Graf/bfda02b547504f0ccac817f9076674a7c2c0c91b', type: 'academic', label: 'Slamecka & Graf (1978) The generation effect, JEP:HLM 4(6), 592–604' },
+    ],
+  },
+  {
+    id: 'bizlaw-financial-services-act',
+    discipline: 'business-law',
+    title: '金融サービス提供法',
+    statement:
+      '旧・金融商品販売法（金融商品の販売等に関する法律、平成12年／2000年法律第101号）を改称・拡充した法律。旧法は金融商品の販売業者に対し、元本割れリスク等の重要事項の説明義務を課し、違反時の損害賠償責任や勧誘方針の策定・公表を定めて利用者保護を図った。' +
+      '2020年改正（2021年11月施行）で金融サービス提供法に改称し、銀行・証券・保険を分野横断で1つの登録により仲介できる金融サービス仲介業を創設した。その後2024年施行の改正で顧客本位の業務運営や資産形成促進等を拡充し、現名称「金融サービスの提供及び利用環境の整備等に関する法律」となった。金融庁所管で、金融商品取引法とは別の法律である。',
+    keyFigures: '金融サービス提供法（旧・金融商品販売法、平成12年法律第101号／2020年改称・金融サービス仲介業創設）／金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/common/diet/201/01/setsumei.pdf', type: 'government', label: '金融庁「金融商品の販売等に関する法律等の一部を改正する法律案 説明資料」（2020年3月）' },
+      { url: 'https://www.japaneselawtranslation.go.jp/ja/laws/view/2059', type: 'government', label: '日本法令外国語訳DBシステム「金融商品の販売等に関する法律（平成12年法律第101号）」' },
+      { url: 'https://www.businesslawyers.jp/articles/808', type: 'reference', label: 'BUSINESS LAWYERS「金融サービス仲介業の概要とビジネスへの影響」' },
+    ],
+  },
+  {
+    id: 'infosoc-status-conferral',
+    discipline: 'information-sociology',
+    title: '地位付与機能',
+    statement:
+      'ラザースフェルドとマートンが1948年の「マス・コミュニケーション、大衆の趣味、組織された社会的行動」で挙げたマスメディアの社会的機能の一つ。メディアは公共的争点・人物・組織・社会運動を取り上げ注目するだけで、それらに地位や威信を付与する。報道されることは個人や集団を匿名の大衆から際立たせ、公的注目に値するほど重要だと示す。受け手は「本当に重要なら大衆の注目の的になり、注目の的なら本当に重要に違いない」という循環的信念を共有する。' +
+      'これゆえ著名人の推薦（テスティモニアル）が広告価値を持ち、報道は大義を正当化し公的人物の権威を高め押し上げる。彼らが同時に挙げた規範強制機能（逸脱を公にさらし社会規範を強化する）や、情報過多が政治的無関心を招く麻酔的逆機能と並ぶ機能類型である。ただし地位付与機能はメディアの注目が地位・正当性を与える順機能であり、人々を行動から遠ざける麻酔的逆機能とは区別される。',
+    keyFigures: 'ポール・ラザースフェルド／ロバート・マートン（1948）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.unisalento.it/documents/20152/223726/SOME+SOCIAL+FUNCTIONS+OF+THE+MASS+MEDIA.pdf', type: 'academic', label: 'Lazarsfeld & Merton, "Some Social Functions of the Mass Media" (1948 primary text, University of Salento)' },
+      { url: 'https://sk.sagepub.com/dict/edvol/behavioralsciences/chpt/status-conferral', type: 'reference', label: 'SAGE Glossary of the Social and Behavioral Sciences — "Status Conferral"' },
+      { url: 'https://en.wikipedia.org/wiki/Narcotizing_dysfunction', type: 'reference', label: 'Wikipedia — Narcotizing dysfunction（3機能の並置：地位付与/規範強制/麻酔的逆機能）' },
+    ],
+  },
 ];
 // Stryker restore all
