@@ -9783,5 +9783,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.woldww.net/classes/Information_Ethics/Sunstein_on_Group_Polarization_and_Cyber-Cascades.pdf', type: 'academic', label: 'Cass Sunstein, “On Group Polarization and Cyber-Cascades”（Republic.com 抜粋テキスト）' },
     ],
   },
+  {
+    id: 'econ-zero-sum-game',
+    discipline: 'economics',
+    title: 'ゼロサムゲーム（ミニマックス定理）',
+    statement:
+      'ゼロサムゲームとは、全プレイヤーの利得の合計が常にゼロ（一般化すると一定＝定和）になり、一方の得が他方の損と完全に相殺される純粋対立的なゲームで、チェス・ポーカー・じゃんけんや先物取引が例。' +
+      '重要な結果がジョン・フォン・ノイマンが1928年に証明したミニマックス定理で、2人有限ゼロサムゲームでは混合戦略において「最大損失を最小化する＝最悪時の利得を最大化する」評価が両者で一致し、一意のゲームの値Vと最適戦略の組（鞍点）が存在する。これは同時手番ではナッシュ均衡の特殊ケースに当たり、フォン・ノイマンとモルゲンシュテルン『ゲームの理論と経済行動』(1944)の出発点でもある。協力で全員が利益を得る非ゼロサム（プラスサム/ウィンウィン）とは区別され、現実の多くは非ゼロサムであるため「すべてが固定パイの奪い合い」という見方（固定パイの誤謬, fixed-pie bias）は交渉研究で誤りとされる。',
+    keyFigures:
+      'ジョン・フォン・ノイマン（John von Neumann, 1928 ミニマックス定理）／オスカー・モルゲンシュテルン（Oskar Morgenstern, 1944共著）／鞍点・ゲームの値・非ゼロサムと区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Zero-sum_game', type: 'reference', label: 'Zero-sum game — Wikipedia（百科事典級リファレンス）' },
+      { url: 'https://mathworld.wolfram.com/MinimaxTheorem.html', type: 'reference', label: 'Minimax Theorem — Wolfram MathWorld（von Neumann 1928）' },
+      { url: 'https://www.cis.upenn.edu/~aaroth/courses/slides/agt17/lect06.pdf', type: 'academic', label: 'Zero Sum Games and the MinMax Theorem — University of Pennsylvania 講義資料' },
+    ],
+  },
+  {
+    id: 'econ-coordination-game',
+    discipline: 'economics',
+    title: 'コーディネーションゲーム（協調ゲーム）',
+    statement:
+      'コーディネーションゲーム（協調ゲーム／調整ゲーム）とは、ゲーム理論において、プレイヤーが互いに同じ（または整合する）行動を選んだときに全員が高い利得を得る、純粋な利害対立ではないゲームを指す。' +
+      '利得構造の特徴は、複数の純粋戦略ナッシュ均衡が存在することにあり（例：全員が右側通行、または全員が左側通行という2つがともに均衡で、互いに食い違うと損失が生じる）、問題は協力か裏切りかではなく、複数ある良い均衡のどれに互いに調整して到達するかという「均衡選択（equilibrium selection）」にある。トーマス・シェリングが提唱したフォーカルポイント（focal point／Schelling point＝際立った特徴ゆえ人々が自然に選ぶ均衡）が選択を助けると論じられる。すべての均衡が等しく好まれる純粋協調のほか、協調は望むが好む均衡が異なる「両性の闘い（battle of the sexes）」もこの一種であり、慣習・社会規範・言語・通貨・技術標準（ネットワーク効果）の形成と維持の説明に用いられる。',
+    keyFigures:
+      'トーマス・シェリング（Thomas Schelling, フォーカルポイント, 1960）／均衡選択・両性の闘い／ナッシュ均衡が複数存在',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://iep.utm.edu/game-th/', type: 'reference', label: 'Internet Encyclopedia of Philosophy「Game Theory」（coordination game・焦点均衡・左右通行例）' },
+      { url: 'https://www.mdpi.com/2073-4336/1/4/551', type: 'academic', label: 'Games (MDPI査読誌)「Coordination Games and Local Interactions: A Survey」（慣習・社会規範・均衡選択）' },
+      { url: 'https://en.wikipedia.org/wiki/Coordination_game', type: 'reference', label: 'Wikipedia「Coordination game」（純粋協調／両性の闘い・複数純粋戦略ナッシュ均衡）' },
+    ],
+  },
+  {
+    id: 'mgmt-population-ecology',
+    discipline: 'management',
+    title: '組織エコロジー（個体群生態学モデル）',
+    statement:
+      '個々の組織の適応行動ではなく、同一形態をもつ組織の「個体群（population：例＝レストラン業界・労働組合・新聞社）」を分析単位とし、生物の個体群生態学の概念（淘汰・適応・ニッチ・個体群動態）を組織の誕生・存続・消滅の分析に応用する組織理論。マイケル・ハナンとジョン・フリーマンが1977年の論文「The Population Ecology of Organizations」（American Journal of Sociology, 82巻, 929-964頁）で提唱した。' +
+      '中心的主張は、組織は信頼性と説明責任のために構造を容易に変えられない「構造的慣性（structural inertia）」をもつため、環境変化への対応は個々の組織の戦略的変身よりも環境による「淘汰（selection：適合した組織が生き残り不適合な組織は消える）」を通じて個体群レベルで起こる、とする点で、経営者の主体的適応を重視する戦略論と対照的である。重要概念にニッチ、密度依存（密度が低いうちは正当性で創設率が上がり、高まると競争で消滅率が上がる）、新しさの不利益（若い組織ほど消滅しやすい）がある。組織社会学の主要パラダイムの一つ。',
+    keyFigures:
+      'マイケル・T・ハナン（Michael T. Hannan）／ジョン・フリーマン（John Freeman, 1977）／構造的慣性・淘汰・密度依存・新しさの不利益（Stinchcombe）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Organizational ecology — Wikipedia（個体群＝組織形態・ニッチ・淘汰の概説）' },
+      { url: 'http://www.iot.ntnu.no/innovation/norsi-pims-courses/harrison/Hannan%20&%20Freeman%20(1977).PDF', type: 'academic', label: 'Hannan & Freeman (1977) “The Population Ecology of Organizations”, American Journal of Sociology 82(5): 929-964（原典PDF）' },
+      { url: 'https://global.oup.com/academic/product/dynamics-of-organizational-populations-9780195071917', type: 'academic', label: 'Hannan & Carroll (1992) Dynamics of Organizational Populations, Oxford University Press（密度依存理論）' },
+    ],
+  },
+  {
+    id: 'human-decoy-effect',
+    discipline: 'human-science',
+    title: 'おとり効果（非対称的優位性効果）',
+    statement:
+      '2つの選択肢で迷う消費者に、3つ目の「おとり」を加えると特定選択肢の選好（選ばれる割合）が高まる文脈効果。魅力効果・非対称的優位性効果とも呼ぶ。おとりは一方（ターゲット）には全属性で劣り完全に支配されるが、他方（競合）には一部属性でしか劣らない（非対称的に支配される）よう設計され、おとりに完全に勝るターゲットが相対的に魅力的に見え選ばれやすくなる。' +
+      'Huber・Payne・Puto（1982, Journal of Consumer Research）が、非対称的に支配されたおとりが正則性（選択肢追加で既存選択肢のシェアは増えないという公理）に反すると実証した。無関係な選択肢からの独立性（IIA）違反例として合理的選択理論上重要で、選好の文脈依存性を示す。古典例はエコノミスト誌の定期購読（おとりの印刷版のみ$125を加えると印刷＋Web$125が選ばれやすくなる）。価格設定の松竹梅で「竹」を選ばせる応用がある。妥協効果とは区別される。',
+    keyFigures:
+      'ジョエル・フーバー（Joel Huber）／ジョン・ペイン（John W. Payne）／クリストファー・プット（Christopher Puto, 1982）／ダン・アリエリー（エコノミスト例）／正則性・IIA違反',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/jcr/article/9/1/90/1839380', type: 'academic', label: 'Huber, Payne & Puto (1982) “Adding Asymmetrically Dominated Alternatives...”, Journal of Consumer Research 9(1):90-98（Oxford Academic, 査読原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Decoy_effect', type: 'reference', label: 'Wikipedia「Decoy effect」（定義・非対称的支配・正則性/IIA違反・エコノミスト例）' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/decoy-effect/', type: 'reference', label: 'BehavioralEconomics.com Mini-Encyclopedia of BE「Decoy effect」' },
+    ],
+  },
+  {
+    id: 'bizlaw-scope-of-damages',
+    discipline: 'business-law',
+    title: '損害賠償の範囲（民法416条）',
+    statement:
+      '損害賠償の範囲とは、債務不履行（や不法行為）によって賠償すべき損害がどこまで及ぶかを画する基準で、民法416条が定める。同条1項は「債務の不履行に対する損害賠償の請求は、これによって通常生ずべき損害の賠償をさせることをその目的とする」と規定し（通常損害）、2項は「特別の事情によって生じた損害であっても、当事者がその事情を予見すべきであったときは、債権者は、その賠償を請求することができる」と定める（特別損害）。' +
+      'すなわち通常損害は予見可能性を問わず当然に賠償範囲に含まれ、特別損害は当事者（債務者）がその特別の事情を予見すべきであった場合に限り含まれる。判例・通説は416条を相当因果関係を定めた規定と理解してきた（学説に異論あり）。2017年改正で2項の「予見し、又は予見することができたとき」が「予見すべきであったとき」という規範的表現へ改められた。予見可能性の基準時は債務不履行時とされる。不法行為（709条）の損害賠償範囲にも416条が類推適用されると解されている（判例）。',
+    keyFigures:
+      '416条1項＝通常損害（予見可能性を問わず賠償）／2項＝特別損害（特別事情の予見可能性ある場合のみ）／通説判例は相当因果関係規定と理解／2017改正で「予見すべきであったとき」へ規範化／予見の基準時は債務不履行時／不法行為709条へ類推適用（最判昭和48・6・7富喜丸事件）／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索「民法」（第416条 損害賠償の範囲、law id 129AC0000000089）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第416条', type: 'reference', label: 'Wikibooks「民法第416条」（通常損害／特別損害・709条への類推適用）' },
+      { url: 'https://www.crear-ac.co.jp/shoshi/takuitsu_minpou/minpou_0416-00/', type: 'reference', label: 'クレアール司法書士講座「民法 第416条【損害賠償の範囲】」' },
+    ],
+  },
+  {
+    id: 'infosoc-political-polarization',
+    discipline: 'information-sociology',
+    title: '政治的分極化',
+    statement:
+      '政治的分極化（political polarization）とは、人々や政党の政治的態度・立場が中道から離れ、対立する両極へと分かれて溝が深まる現象である。' +
+      '区別すべき二種類があり、(1)イデオロギー的分極化は政策争点をめぐる立場が左右の極へ拡散することを、(2)感情的分極化（affective polarization）は自党（内集団）を好み対立党（外集団）を嫌悪・敵視する感情的隔たりを指す。後者は「政策の違い」以上に「相手陣営が嫌い」という対立で、近年とくに注目され、アイエンガーらが体系化した。米国では1970年代以降、両党支持者間の感情温度計（feeling thermometer）の好感度差が拡大した。原因に党派的再編成、党派メディア・SNS・エコーチェンバー、党派が人種・宗教等と重なるメガ・アイデンティティ化が、帰結に妥協困難・立法停滞・社会的分断が挙げられる。',
+    keyFigures:
+      'シャント・アイエンガー（Shanto Iyengar, 感情的分極化）／リリアナ・メイソン（Lilliana Mason, メガ・アイデンティティ）／イデオロギー的分極化と感情的分極化の区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-polisci-051117-073034', type: 'academic', label: 'Iyengar et al. (2019) “The Origins and Consequences of Affective Polarization in the United States,” Annual Review of Political Science 22:129-146' },
+      { url: 'https://www.ebsco.com/research-starters/political-science/political-polarization', type: 'reference', label: 'EBSCO Research Starters: Political polarization（イデオロギー的/感情的分極化の区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Political_polarization', type: 'reference', label: 'Wikipedia: Political polarization（概念全体・二類型・原因と帰結）' },
+    ],
+  },
 ];
 // Stryker restore all
