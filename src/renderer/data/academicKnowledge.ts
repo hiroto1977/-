@@ -17587,5 +17587,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11308174/', type: 'reference', label: 'Examining First- and Second-Level Digital Divide（NIH/PMC 査読）' },
     ],
   },
+  {
+    id: 'econ-thirlwall-law',
+    discipline: 'economics',
+    title: 'サールウォールの法則（国際収支制約成長）',
+    statement:
+      'アンソニー・P・サールウォールが1979年に提示した、需要主導のポストケインジアン成長論。長期には、国の成長率は経常収支の均衡と整合的な率を持続的には超えられない（永遠に拡大し続ける貿易赤字や対外債務は不可能）とする。法則は、長期のGDP成長率yが、輸出の成長率xを輸入の所得弾力性πで割った値にほぼ等しい（y≈x/π）と述べる。相対価格が長期に' +
+      'ほぼ一定なら、y≈(ε/π)·zとも書ける（εは輸出の所得弾力性、zは世界所得の成長率）。含意として、自国の輸出に対する所得弾力性が高く（ハイテクや工業製品など）、輸入の所得弾力性が低い国は、国際収支制約に当たらずより速く成長できる。これは生産・輸出構造と成長を結びつけ、各国の成長率格差を説明する。比較優位論や単なる国際収支論とは区別され、動学的ハロッド外国貿易乗数とも呼ばれる。',
+    keyFigures: 'アンソニー・P・サールウォール（A. P. Thirlwall, 1979）／ロイ・ハロッド（Roy Harrod, 外国貿易乗数）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.kent.ac.uk/economics/repec/1111.pdf', type: 'academic', label: 'A. P. Thirlwall, "Balance of Payments Constrained Growth Models: History and Overview" (University of Kent)' },
+      { url: 'https://ideas.repec.org/a/psl/bnlaqr/197901.html', type: 'academic', label: 'A. P. Thirlwall (1979), "The Balance of Payments Constraint as an Explanation of International Growth Rate Differences," BNL Quarterly Review (RePEc/IDEAS)' },
+      { url: 'https://en.wikipedia.org/wiki/Thirlwall%27s_Law', type: 'reference', label: "Wikipedia: Thirlwall's Law" },
+    ],
+  },
+  {
+    id: 'econ-verdoorn-law',
+    discipline: 'economics',
+    title: 'フェルドーンの法則（カルドア＝フェルドーンの法則）',
+    statement:
+      'P・J・フェルドーンが1949年の論文で見出し、ニコラス・カルドアが1966年のケンブリッジ就任講演で復活・普及させ「法則」へ高めた経験法則。特に製造業において、産出（生産）の成長率と労働生産性の成長率の間に正の関係があり、産出の成長が速いほど生産性の成長も速くなるとする。その機構は、生産規模の拡大に伴って実現する規模に関する収穫逓増であり、静的・動的な規模の経済、学習効果や産出成長に誘発される技術進歩・資本深化を含む。' +
+      'いわゆる「フェルドーン係数」（産出成長に対する生産性成長の弾力性）は経験的におよそ0.5とされ、産出成長が1%速いと生産性成長は約0.5%速くなり、残りは雇用の増加として現れる。カルドアはこれを成長法則の柱とし、製造業を「成長のエンジン」とみなす累積的因果（速い製造業成長→速い生産性成長→競争力向上→さらに速い成長という好循環）の根拠とした。なお、学習効果や規模の経済そのものとは区別され、産出成長→生産性成長という製造業特有の経験的関係を指す。',
+    keyFigures: 'P・J・フェルドーン（P. J. Verdoorn, 1949）／ニコラス・カルドア（Nicholas Kaldor, 1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s40888-023-00294-y', type: 'academic', label: 'Economia Politica (Springer, 査読論文): Kaldor–Verdoorn law（誘発される技術進歩・累積的因果）' },
+      { url: 'https://en.wikipedia.org/wiki/Verdoorn%27s_law', type: 'reference', label: "Wikipedia: Verdoorn's law（1949論文・カルドア1966・係数0.5・収穫逓増）" },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/verdoorns-law', type: 'reference', label: "Encyclopedia.com: Verdoorn's Law（経験法則・カルドア成長法則）" },
+    ],
+  },
+  {
+    id: 'mgmt-strategy-as-practice',
+    discipline: 'management',
+    title: '実践としての戦略（ストラテジー・アズ・プラクティス）',
+    statement:
+      'リチャード・ウィッティントンが1996年の論文「Strategy as Practice」で端緒を開き、ヤルザブコウスキ、バログン、ザイドルらが2000年代に発展させた戦略研究のアプローチ。組織が「持つ」もの（地位や内容といったマクロな性質）として戦略を捉える従来の見方から、人々が日々「行う」こと、すなわち状況に埋め込まれた社会的実践やミクロな活動（ストラテジャイジング）へと焦点を移す。' +
+      '社会学の実践理論（ブルデュー、ギデンズ、ド・セルトー、シャツキ）に依拠し、三つの相互に結びついた要素で分析する。プラクシス（会議・ワークショップ・対話・分析など実際の活動の流れ）、プラクティス（SWOTや戦略合宿など用いるルーティン・道具・規範・枠組み）、プラクティショナー（トップだけでなくミドルやコンサルも含む戦略の担い手）である。ミドルや道具の役割を重視し日常業務を戦略成果に結ぶ点で、創発戦略やセンスメイキングとは区別される。',
+    keyFigures: 'リチャード・ウィッティントン（Richard Whittington, 1996）／パウラ・ヤルザブコウスキ（Paula Jarzabkowski）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://openaccess.city.ac.uk/id/eprint/16786/1/Jarzabkowski_&_Spee,_2009,_International_Journal_of_Management_Reviews.pdf', type: 'academic', label: 'Jarzabkowski & Spee (2009) "Strategy-as-Practice: A Review and Future Directions for the Field", International Journal of Management Reviews（City, University of London）' },
+      { url: 'https://warwick.ac.uk/fac/soc/wbs/subjects/sib/people/sotirios_profile/01_Paroutis_Ch-01.pdf', type: 'academic', label: 'Paroutis, Heracleous & Angwin "Practicing Strategy" Ch.1（Warwick Business School）' },
+      { url: 'https://www.cambridge.org/core/books/abs/cambridge-handbook-of-strategy-as-practice/introduction-what-is-strategy-as-practice/81608CB91F778F74692E80260D980C82', type: 'reference', label: 'Cambridge Handbook of Strategy as Practice「Introduction: What is strategy as practice?」' },
+    ],
+  },
+  {
+    id: 'human-bias-blind-spot',
+    discipline: 'human-science',
+    title: 'バイアスの盲点',
+    statement:
+      'エミリー・プローニン、ダニエル・リン、リー・ロス（2002, Personality and Social Psychology Bulletin）が報告した認知バイアス。他者の判断に及ぶ認知的・動機的バイアスの影響は認識する一方、自分自身の判断へのバイアスの影響には気づけず、人は自分を平均的な他者（平均的アメリカ人や同級生など）より偏っていないと評価する（「自分はバイアスが少ない」）。素朴実在論や平均以上効果と関連するが、それらとは区別される独立した現象とされる。' +
+      '主要な機構は「内観の錯覚」で、自分のバイアスは内観によって判定するが、バイアスは多く無意識に働くため内観では何も見えず、自分は偏っていないと結論する。これに対し他者は行動によって判断する。ほぼ誰もがこの傾向を示し、知能や認知能力が高くても防げず（むしろ正の相関を示す場合もある）、自らのバイアスの可能性を割り引いてしまう。',
+    keyFigures: 'エミリー・プローニン／ダニエル・リン／リー・ロス（Pronin, Lin & Ross, 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0146167202286008', type: 'academic', label: 'Pronin, Lin & Ross (2002) The Bias Blind Spot, Personality and Social Psychology Bulletin (SAGE)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0022103106000916', type: 'academic', label: 'Pronin & Kugler (2007) Introspection illusion as a source of the bias blind spot, J. Experimental Social Psychology' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.2014.2096', type: 'academic', label: 'Scopelliti et al. (2015) Bias Blind Spot: Structure, Measurement, and Consequences, Management Science' },
+    ],
+  },
+  {
+    id: 'bizlaw-local-tax-act',
+    discipline: 'business-law',
+    title: '地方税法',
+    statement:
+      '地方税法は、地方公共団体（都道府県・市町村）が課す地方税の基本法であり、昭和25年（1950年）にシャウプ勧告に基づいて制定された（昭和25年法律第226号）。総務省の所管で、賦課徴収は各地方団体が行う。税目・納税義務者・課税標準・標準税率とその制限・徴収手続などを定めるが、実際の課税は各団体が制定する条例による（地方税条例主義＝租税法律主義と地方自治の反映）。' +
+      '主な地方税には、住民税（道府県民税・市町村民税、個人・法人に課税）、固定資産税、事業税、地方消費税、自動車税などがあり、使途を特定しない普通税と特定の目的税に区分される。地方公共団体の組織・運営を定める地方自治法とは規律対象が異なり、また所得税法・法人税法・消費税法などが定める国税とも区別される。',
+    keyFigures: '地方税法（昭和25年法律第226号、1950年制定／シャウプ勧告）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/document?lawid=325AC0000000226', type: 'government', label: 'e-Gov法令検索「地方税法（昭和25年法律第226号）」' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/150790_03.html', type: 'government', label: '総務省「地方税制度｜地方税の仕組み」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000042780', type: 'reference', label: '国立国会図書館 日本法令索引 地方税法（昭和25年法律第226号）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-foraging',
+    discipline: 'information-sociology',
+    title: '情報採餌理論（インフォメーション・フォージング）',
+    statement:
+      'ピーター・ピロリとスチュアート・カードがゼロックスPARCで提唱した理論（1995/1999、Psychological Review, 106(4), 643–675）。生態学の最適採餌理論（動物がいかに餌を探すかの戦略）を、人が情報を探す行動の比喩として応用する。動物が採餌で単位コスト当たりのエネルギー獲得を最大化するように、人も時間や労力当たりの有用な情報の獲得率を最大化するよう情報探索戦略を適応させると考える。' +
+      '鍵概念は三つ。(1)情報の匂い＝リンク文言・抜粋・アイコン等の近接手がかりから遠位の情報源の価値と所在を推定し匂いをたどる、匂いが強ければ効率的に進み、切れると別へ移る。(2)情報パッチ＝情報は文書・サイト・検索結果といったパッチに存在し、収穫逓減のもとで滞在を続けるか移るかを決める（チャーノフの限界価値定理）。(3)選択＝どの情報を追うか。HCIやウェブ検索・情報設計に広く影響した。情報過多とは区別される最適探索・匂いの枠組みである。',
+    keyFigures: 'ピーター・ピロリ／スチュアート・カード（Pirolli & Card, 1999, Xerox PARC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0033-295X.106.4.643', type: 'academic', label: 'Pirolli & Card (1999), "Information Foraging," Psychological Review 106(4):643–675' },
+      { url: 'https://www.nngroup.com/articles/information-foraging/', type: 'reference', label: 'Nielsen Norman Group — Information Foraging: A Theory of How People Navigate on the Web' },
+      { url: 'https://en.wikipedia.org/wiki/Information_foraging', type: 'reference', label: 'Wikipedia — Information foraging (Pirolli & Card, Xerox PARC)' },
+    ],
+  },
 ];
 // Stryker restore all
