@@ -11625,5 +11625,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.thecrimson.com/article/2014/3/5/harvard-information-cocoon/', type: 'media', label: 'The Harvard Crimson — "The Information Cocoon" (Sunstein definition)' },
     ],
   },
+  {
+    id: 'econ-monopsony',
+    discipline: 'economics',
+    title: '買い手独占（需要独占）',
+    statement:
+      '買い手独占（需要独占、monopsony）とは、多数の売り手に対して買い手がただ一人（または支配的な一社）しか存在しない市場構造で、売り手独占（monopoly）の裏返しにあたる。買い手は右上がりの供給曲線に直面するため、購入量を増やすと支払価格そのものが上昇し、追加一単位を購入する際の限界要素費用（限界支出）が価格を上回る。利潤を最大化する買い手は、限界収入生産物が限界要素費用に等しくなる点で購入量を決めるため、完全競争のときよりも購入量が少なく、支払価格も低くなる。' +
+      'この概念はジョーン・ロビンソンが1933年の著書『不完全競争の経済学』で命名した。とりわけ労働市場への応用が重要で、唯一または有力な雇い手が買い手独占力を持つと、賃金を労働の限界生産物価値より低い水準に抑え、雇用量も競争時より少なくできると説明される。',
+    keyFigures: 'ジョーン・ロビンソン（Joan Robinson, 1933命名）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/monopsony', type: 'reference', label: 'Britannica Money — Monopsony（唯一の買い手、競争時より低い賃金）' },
+      { url: 'https://kotobank.jp/word/%E8%B2%B7%E6%89%8B%E7%8B%AC%E5%8D%A0-1286702', type: 'reference', label: 'コトバンク「買手独占（需要独占）」— 売り手独占の裏返し' },
+      { url: 'https://en.wikipedia.org/wiki/Monopsony', type: 'reference', label: 'Wikipedia: Monopsony — ロビンソン1933命名・限界要素費用が価格を上回る' },
+    ],
+  },
+  {
+    id: 'econ-edgeworth-box',
+    discipline: 'economics',
+    title: 'エッジワース・ボックス',
+    statement:
+      'エッジワース・ボックスは、2人の消費者と2財からなる純粋交換経済における配分を図示する、一般均衡・厚生経済学の基本的な分析道具である。長方形の縦横の長さは2財の総初期保有量に等しく、箱の内部の各点が両者への完全な配分を表す。各消費者の無差別曲線をそれぞれの対角の隅を原点として描き、両者の無差別曲線が接する点の軌跡を契約曲線と呼ぶ。' +
+      '契約曲線上の配分では両者の限界代替率が一致し、誰かの効用を下げずに他者の効用を高めることができないパレート効率的な状態が達成される。競争均衡もこの契約曲線上の一点として現れる。フランシス・エッジワースが『数理心理学』（1881年）で導入した分析に由来し、現在の箱型の図はパレートやボーリーによる定式化とされる。',
+    keyFigures: 'フランシス・エッジワース（Francis Ysidro Edgeworth, 1881）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Edgeworth_box', type: 'reference', label: 'Edgeworth box — Wikipedia' },
+      { url: 'https://www.richmondfed.org/~/media/richmondfedorg/publications/research/economic_quarterly/1996/winter/pdf/history.pdf', type: 'academic', label: 'Thomas M. Humphrey, "The Early History of the Box Diagram," Federal Reserve Bank of Richmond Economic Quarterly (1996)' },
+      { url: 'https://saylordotorg.github.io/text_introduction-to-economic-analysis/s15-01-edgeworth-box.html', type: 'academic', label: 'Saylor Academy, Introduction to Economic Analysis — Edgeworth Box' },
+    ],
+  },
+  {
+    id: 'mgmt-net-promoter-score',
+    discipline: 'management',
+    title: 'ネット・プロモーター・スコア（NPS）',
+    statement:
+      'ネット・プロモーター・スコア（NPS）は、フレッド・ライクヘルドがベイン・アンド・カンパニーおよびサトメトリックスとともに開発し、2003年のハーバード・ビジネス・レビュー誌の論文「The One Number You Need to Grow（成長のために必要なたった一つの数字）」で提唱した顧客ロイヤルティの指標である。' +
+      '「この企業・製品を友人や同僚に薦める可能性はどのくらいか」という推奨意向に関する単一の質問を0〜10の11段階で尋ね、回答者を推奨者（9〜10）・中立者（7〜8）・批判者（0〜6）の三つに分類する。NPSは「推奨者の割合（%）−批判者の割合（%）」で算出され、−100から+100の範囲をとる。ライクヘルドはこの値が企業の成長率と相関すると主張した。',
+    keyFigures: 'フレッド・ライクヘルド（Fred Reichheld, 2003 / Bain & Company）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2003/12/the-one-number-you-need-to-grow', type: 'academic', label: 'Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review' },
+      { url: 'https://en.wikipedia.org/wiki/Net_promoter_score', type: 'reference', label: 'Wikipedia: Net promoter score' },
+    ],
+  },
+  {
+    id: 'human-priming',
+    discipline: 'human-science',
+    title: 'プライミング効果',
+    statement:
+      'プライミング効果とは、先行して呈示された刺激（プライム）が、その後の刺激に対する反応を、多くの場合本人が意識しないまま促進または抑制する現象であり、記憶内の関連表象が活性化されることで生じる。代表例が意味的プライミングで、「医者（doctor）」は直前に意味的に関連する「看護師（nurse）」が呈示されると、無関連語の場合より速く語と判断される。' +
+      'この効果はマイヤーとシュヴァネヴェルト（1971）が語彙判断課題で初めて実証し、記憶ネットワーク内を活性化が広がる「活性化拡散」理論の根拠とされ、潜在記憶とも深く関わる。一方、バージら（1996）の「高齢者を連想させる語を読むと歩行が遅くなる」といった社会的・行動的プライミングは、追試での再現に失敗する例が相次ぎ、再現性をめぐる論争の対象となっている。',
+    keyFigures: 'マイヤー＆シュヴァネヴェルト（意味的プライミング, 1971）／ジョン・バージ（社会的プライミング）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/semantic-priming', type: 'reference', label: 'APA Dictionary of Psychology — semantic priming（定義・活性化拡散）' },
+      { url: 'https://en.wikipedia.org/wiki/Lexical_decision_task', type: 'reference', label: 'Lexical decision task — Meyer & Schvaneveldt (1971) と意味的プライミング' },
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0029081', type: 'academic', label: 'Doyen et al. (2012) PLOS One — 行動的プライミングの再現失敗（Bargh 1996 論争）' },
+    ],
+  },
+  {
+    id: 'bizlaw-companies-act',
+    discipline: 'business-law',
+    title: '会社法',
+    statement:
+      '会社法（平成17年法律第86号）は、会社の設立・組織・運営・管理などを定める日本の基本法。2005年に制定され、2006年5月1日に施行された。それまで商法第二編・有限会社法・商法特例法などに分散していた会社関連規定を統合・再編して一本化した。会社の種類を株式会社と持分会社（合名会社・合資会社・合同会社）の4類型に整理し、' +
+      '社員全員が有限責任で内部関係に組合的ルールを用いる合同会社（日本版LLC）を新たに創設した。最低資本金制度を撤廃して資本金1円での起業を可能とし、有限会社は廃止して既存の会社は特例有限会社として存続するものとした。さらに設立・株式・機関設計（株主総会・取締役・取締役会・監査役等）・資金調達・組織再編（合併・会社分割等）を規律する。法務省が所管する。',
+    keyFigures: '会社法（平成17年法律第86号、2005年制定・2006年5月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov 法令検索「会社法」（平成17年法律第86号）' },
+      { url: 'https://houmukyoku.moj.go.jp/homu/houjin2.html', type: 'government', label: '法務省 法務局「持分会社（合同会社・合名会社・合資会社）」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%BC%9A%E7%A4%BE%E6%B3%95', type: 'reference', label: 'Wikipedia「会社法」' },
+    ],
+  },
+  {
+    id: 'infosoc-deepfake',
+    discipline: 'information-sociology',
+    title: 'ディープフェイク',
+    statement:
+      'ディープフェイクとは、深層学習（特に敵対的生成ネットワークGANやオートエンコーダなどの生成モデル）を用いて、実在する人物の顔や声を合成・改変し、本人が実際には言っていない・していない言動をあたかも本物のように見せかける偽の映像・画像・音声（合成メディア）を指す。名称は「deep learning（深層学習）」と「fake（偽物）」を組み合わせた造語で、' +
+      '2017年頃に動画投稿サイトRedditの利用者を起点に広まった。偽情報の拡散、詐欺・なりすまし、合意なき性的合成コンテンツ（ポルノ）、選挙など政治的操作に悪用される恐れが大きく、映像・音声という証拠への信頼を揺るがす。そのため検出技術の研究が進み、各国・日本（総務省等）でも規制や対策の検討が進められている。',
+    keyFigures: 'ディープフェイク（deep learning + fake、2017年頃）／敵対的生成ネットワーク（GAN）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/deepfake', type: 'reference', label: 'Encyclopædia Britannica — Deepfake' },
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r06/html/nd141210.html', type: 'government', label: '総務省 令和6年版 情報通信白書 — 偽・誤情報の流通・拡散等の課題及び対策' },
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained', type: 'academic', label: 'MIT Sloan — Deepfakes, explained' },
+    ],
+  },
 ];
 // Stryker restore all
