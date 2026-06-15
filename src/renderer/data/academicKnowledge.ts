@@ -13229,5 +13229,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.tandfonline.com/doi/full/10.1080/1461670X.2021.1952475', type: 'academic', label: 'Journalism Studies — Doomscrolling, Monitoring and Avoiding (COVID-19)' },
     ],
   },
+  {
+    id: 'econ-invisible-hand',
+    discipline: 'economics',
+    title: '見えざる手',
+    statement:
+      '「見えざる手」（invisible hand）は、アダム・スミスが用いた比喩で、各人が競争市場で自己の利益を追求すると、あたかも見えざる手に導かれるように、本人が意図していなかった社会全体の利益（資源の効率的配分・公益）が結果として促進される、という考えを表す。『道徳感情論』（1759）と『国富論』（1776）にそれぞれ1回ずつ登場し、国富論では、自国産業へ資本を向け自己の利益を図る個人が「意図していなかった目的（公共の利益）を促進するよう見えざる手に導かれる」と述べられる。' +
+      '古典派・自由主義経済学の基礎的な観念であり、後に競争均衡の効率性を示す厚生経済学の基本定理（アロー＝ドブリュー）と結び付けて理解されることが多い。ただしこの結び付けはしばしば誇張・誤解されており、外部性・独占・情報の非対称性などが存在する場合には成立せず、スミス自身も自己利益の追求が常に社会の利益になるとは述べておらず留保を付していた点に注意を要する。',
+    keyFigures: 'アダム・スミス（Adam Smith, 1759『道徳感情論』／1776『国富論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w3641/w3641.pdf', type: 'academic', label: 'NBER Working Paper No. 3641「The Invisible Hand and Modern Welfare Economics」（厚生経済学の基本定理との関連と留保）' },
+      { url: 'https://kotobank.jp/word/%E8%A6%8B%E3%81%88%E3%81%96%E3%82%8B%E6%89%8B-138237', type: 'reference', label: 'コトバンク「見えざる手」（スミス／道徳感情論1759・国富論1776に各1回、予定調和と自由競争市場）' },
+      { url: 'https://www.britannica.com/money/invisible-hand', type: 'reference', label: 'Encyclopædia Britannica「invisible hand」（自己利益と意図せぬ公益・スミス帰属・留保）' },
+    ],
+  },
+  {
+    id: 'econ-division-of-labour',
+    discipline: 'economics',
+    title: '分業',
+    statement:
+      'アダム・スミスが『国富論』（1776年）冒頭のピン工場の例で論じた概念。一人がすべての工程を行えば1日に数本しか作れないが、ピン製造を約18の異なる工程に分け、専門化した労働者が分担すると、少人数で1日に数万本（10人で約4万8000本）を生産でき、労働生産性が飛躍的に高まるとした。スミスは生産性向上の要因を三つに整理した。すなわち（1）反復による各労働者の熟練・技能の向上、（2）作業を切り替える際に失われる時間の節約、（3）専門化が促す機械の発明・導入である。さらに分業は交換性向に由来し、その範囲は' +
+      '市場の大きさによって制限される（分業は市場の大きさによって制限される）と説き、市場拡大の重要性を主張した。一方で、単調な反復作業が労働者の能力を退化させ疎外をもたらすという負の側面も、後にスミス自身やマルクス、デュルケームらによって指摘された。',
+    keyFigures: 'アダム・スミス（Adam Smith, 1776『国富論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.gla.ac.uk/explore/adamsmith300/lifeworkandlegacy/keyworks/wealthofnations', type: 'academic', label: 'University of Glasgow — The Wealth of Nations (1776) と分業' },
+      { url: 'https://www.britannica.com/money/market', type: 'reference', label: 'Britannica — 分業は市場の大きさによって制限される' },
+      { url: 'https://www.marxists.org/reference/archive/smith-adam/works/wealth-of-nations/book01/ch01.htm', type: 'reference', label: 'Adam Smith, Wealth of Nations Bk.1 Ch.1 — ピン工場と生産性向上の三要因（原典）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-slack',
+    discipline: 'management',
+    title: '組織スラック',
+    statement:
+      'サイアートとマーチの『企業行動理論』（1963）の中核概念で、一定の産出を生むのに厳密に必要な水準を超えて組織が保有する余剰・余裕の資源を指す。具体的には、組織が利用可能な総資源と、構成員の連合体（コアリション）を維持するために必要な支払の差として定義され、効率的運営に要する以上の高配当・低めの価格設定・割増賃金などの形をとる。' +
+      '機能は三つある。第一に環境変動や資源不足を吸収する緩衝として組織を安定化させ、第二に構成員間の潜在的な目標対立を過剰な配分（スラック・ペイメント）で緩和し、第三にイノベーションや実験の原資（スラック・サーチ）となりリスクある探索を可能にする。一方で過剰なスラックは非効率（X非効率）や経営者が私的目的を追うエージェンシー問題を招く。業績との関係は逆U字とされ、過小でも過大でも不利となる。',
+    keyFigures: 'リチャード・サイアート／ジェームズ・マーチ（Cyert & March, 1963『企業行動理論』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s11301-025-00502-y', type: 'academic', label: 'Management Review Quarterly (Springer): An integrative review and research agenda on organizational slack' },
+      { url: 'https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm', type: 'reference', label: 'Wikipedia: A Behavioral Theory of the Firm (Cyert & March, 1963)' },
+    ],
+  },
+  {
+    id: 'human-spreading-activation',
+    discipline: 'human-science',
+    title: '活性化拡散',
+    statement:
+      '活性化拡散（拡散的活性化、spreading activation）は、人間の意味記憶の探索・検索を説明する認知心理学の理論で、コリンズとロフタス（Collins & Loftus, 1975, Psychological Review）がコリンズ&キリアン（1969）のモデルを発展させて定式化した。意味記憶は概念を表すノードがリンクで結ばれたネットワークとして表現され、リンクの長さ／強さが概念間の意味的関連や連想の度合いを反映する。' +
+      'ある概念が活性化されると（語を読む・思い浮かべるなど）、活性化がリンクを伝って関連する概念ノードへと拡散し、それらを部分的に活性化（プライミング）する。この拡散は、もとのノードから距離が遠いほど、また時間の経過とともに減衰する。関連語が先行提示されると標的語の認識が速まる意味的プライミング現象を説明し、記憶検索やファン効果、概念処理のモデルの基礎となっている。',
+    keyFigures: 'アラン・コリンズ／エリザベス・ロフタス（Collins & Loftus, 1975）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1976-07276-001', type: 'academic', label: 'Collins & Loftus (1975), "A Spreading-Activation Theory of Semantic Processing," Psychological Review, 82, 407–428' },
+      { url: 'https://dictionary.apa.org/spreading-activation', type: 'reference', label: 'APA Dictionary of Psychology — "spreading activation"' },
+    ],
+  },
+  {
+    id: 'bizlaw-anti-spam-act',
+    discipline: 'business-law',
+    title: '特定電子メール法',
+    statement:
+      '特定電子メール法（特定電子メールの送信の適正化等に関する法律、平成14年法律第26号、2002年制定、2008年に大改正）は、広告・宣伝を目的とする電子メール（特定電子メール）の送信を規律し、迷惑メールを抑制する法律で、総務省と消費者庁が所管する。' +
+      '2008年改正で従来のオプトアウトからオプトイン方式へ転換し、原則として事前に送信の同意を得た者にのみ広告メールを送信でき、送信者は同意の記録を保存しなければならない。さらに送信者の氏名・名称や受信拒否（オプトアウト）の通知先の表示を義務づけ、送信者情報を偽った送信を禁止し、違反には措置命令や罰則が科される。通信販売の広告メールを規律する特定商取引法とも連携して運用される。',
+    keyFigures: '特定電子メールの送信の適正化等に関する法律（平成14年法律第26号、2002年制定・2008年改正でオプトイン）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/main_sosiki/cybersecurity/kokumin/basic/legal/08/', type: 'government', label: '総務省 — 特定電子メールの送信の適正化等に関する法律（オプトイン・2008年改正）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_transaction/specifed_email/', type: 'government', label: '消費者庁 — 特定電子メール法（特定商取引法との連携）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000092408&current=-1', type: 'government', label: '日本法令索引（国立国会図書館）— 平成14年4月17日法律第26号' },
+    ],
+  },
+  {
+    id: 'infosoc-ambient-awareness',
+    discipline: 'information-sociology',
+    title: 'アンビエント・アウェアネス',
+    statement:
+      'アンビエント・アウェアネス（ambient awareness）とは、SNS上で絶え間なく流れる小さく断片的な更新（ステータス投稿・つぶやき・チェックイン・写真・「いいね」など）の受信を通じて生じる、他者についての周辺的（peripheral）で漸進的な社会的気づきを指す。個々の更新は些末で平凡な「ノイズ」に見えるが、' +
+      'それらが集積し時間を経るにつれ、他者の生活・気分・活動についての一貫した親密で環境的（ambient）な感覚が形成され、物理的に近くにいて些細な仕草から相手を察する感覚に似るとされる。テクノロジージャーナリストのクライブ・トンプソンが2008年のNYTマガジン記事「Brave New World of Digital Intimacy」で広め、Twitter等のマイクロブログやCSCWの「awareness」研究と関連づけられる。一対一の直接対話がなくとも閲覧だけで成立する点が特徴で、一見無意味な近況更新が持つ社会的価値を説明する。',
+    keyFigures: 'クライブ・トンプソン（Clive Thompson, 2008 NYT Magazine）／レヴォルダシュカ＆ウッツ（Levordashka & Utz, 2016）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Ambient_awareness', type: 'reference', label: 'Wikipedia「Ambient awareness」— クライブ・トンプソンによる2008年NYT記事での普及と周辺的・断片的な定義' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0747563216300899', type: 'academic', label: 'Levordashka & Utz, "Ambient awareness: From random noise to digital closeness in online social networks", Computers in Human Behavior (2016)' },
+    ],
+  },
 ];
 // Stryker restore all
