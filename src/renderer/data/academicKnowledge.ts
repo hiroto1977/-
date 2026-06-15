@@ -15270,5 +15270,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Narcotizing_dysfunction', type: 'reference', label: 'Wikipedia — Narcotizing dysfunction（3機能の並置：地位付与/規範強制/麻酔的逆機能）' },
     ],
   },
+  {
+    id: 'econ-insider-outsider',
+    discipline: 'economics',
+    title: 'インサイダー・アウトサイダー理論',
+    statement:
+      'リンドベックとスノワー（1980年代〜、1988年の著書『雇用と失業のインサイダー・アウトサイダー理論』）が体系化した労働経済学の理論で、賃金の硬直性と持続的（非自発的）失業を、職を守られた既存就業者「インサイダー」と、失業者など彼らの職を望む「アウトサイダー」の区別によって説明する。インサイダーは、企業が負う労働の入替コスト（採用・解雇・退職金、訓練、熟練者を置き換えるコスト）ゆえに市場支配力を持ち、' +
+      '労働組合や、新規に安く雇われた者への非協力・妨害などを通じてその力を行使し、賃金を市場清算水準より高く保って入替レントの一部を取り込む。このためアウトサイダーは安く働く意思があっても賃下げで職に就くことができず、賃金は硬直化して失業が持続する。これは一時的ショックの後も高失業が残るヒステリシス（失業の持続性、1980年代の欧州など）を説明する論拠ともなる。',
+    keyFigures: 'アサール・リンドベック／デニス・スノワー（Lindbeck & Snower, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.15.1.165', type: 'academic', label: 'Lindbeck & Snower, "Insiders versus Outsiders", Journal of Economic Perspectives 15(1), 2001 (AEA)' },
+      { url: 'https://docs.iza.org/dp534.pdf', type: 'academic', label: 'Lindbeck & Snower, "The Insider-Outsider Theory: A Survey", IZA Discussion Paper No. 534' },
+      { url: 'https://mitpress.mit.edu/9780262121392/the-insider-outsider-theory-of-employment-and-unemployment/', type: 'reference', label: 'MIT Press — The Insider-Outsider Theory of Employment and Unemployment (1988)' },
+    ],
+  },
+  {
+    id: 'econ-bilateral-monopoly',
+    discipline: 'economics',
+    title: '双方独占',
+    statement:
+      '双方独占とは、単一の売り手（供給側の独占）が単一の買い手（需要側の買い手独占＝買い手独占／monopsony）と向き合う市場構造を指し、供給側の独占と需要側の買い手独占が同時に成立する状態をいう。双方が市場支配力を持つため、価格と数量は通常の需給均衡では一意に定まらず、ある範囲内で不確定（indeterminate）となり、両者の交渉によって決まる。結果は相対的な交渉力・戦略・情報に依存し、取引量は競争水準より少なくなりやすく、' +
+      '価格は独占者が望む高値と買い手独占者が望む安値の間に落ち着く。代表例は、単一の労働組合（労働の唯一の売り手）が単一の支配的雇用主（企業城下町など）と賃金を交渉する場合や、中間財の唯一の供給者が唯一の製造業者へ販売する場合である。クールノー、エッジワース、アーサー・ボーリーらが論じ、価格の不確定性をどう解くかは交渉理論（ナッシュ交渉解やルービンシュタインの交互提案ゲーム）と結びつけて分析される。',
+    keyFigures: '双方独占（クールノー／エッジワース／アーサー・ボーリー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Bilateral_monopoly', type: 'reference', label: 'Wikipedia — Bilateral monopoly' },
+      { url: 'https://courses.lumenlearning.com/suny-fmcc-microeconomics/chapter/bilateral-monopoly/', type: 'academic', label: 'SUNY / Lumen Learning — Bilateral Monopoly (Microeconomics)' },
+      { url: 'https://link.springer.com/content/pdf/10.1007/978-1-349-20181-5_4.pdf', type: 'academic', label: 'Springer / Palgrave — Bilateral Monopoly' },
+    ],
+  },
+  {
+    id: 'mgmt-service-profit-chain',
+    discipline: 'management',
+    title: 'サービス・プロフィット・チェーン',
+    statement:
+      'ジェームズ・ヘスケット、アール・サッサー、レナード・シュレシンジャーらが1994年のHarvard Business Review論文「Putting the Service-Profit Chain to Work」、および1997年の著書『The Service Profit Chain』で提示した、サービス業の収益性を説明する因果連鎖の枠組み。連鎖は内部サービス品質→従業員満足→従業員の定着と生産性→外部サービス価値→顧客満足→顧客ロイヤルティ→売上成長と収益性、という順に結ばれる。' +
+      'すなわち満足し定着した生産的な従業員が顧客への価値を生み、それが顧客満足とロイヤルティを高め、最終的に成長と利益を生む。起点となる内部サービス品質（職場・職務設計、従業員の選抜と育成、報酬と評価、顧客対応のためのツール）が従業員満足を高める。従業員すなわち内部サービスへの投資が、顧客を介して最終的に財務面で報われることを示し、サービス・マーケティングと人的資源管理（HRM）の基礎理論となっている。',
+    keyFigures: 'ジェームズ・ヘスケット／アール・サッサー／レナード・シュレシンジャーら（1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://online.hbs.edu/blog/post/service-profit-chain', type: 'academic', label: 'Harvard Business School Online — Explaining the Service-Profit Chain' },
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/10946705211052410', type: 'academic', label: 'Journal of Service Research (SAGE) — The Service-Profit Chain: Reflections, Revisions, and Reimaginations (2022)' },
+      { url: 'https://en.wikipedia.org/wiki/Service%E2%80%93profit_chain', type: 'reference', label: 'Wikipedia — Service–profit chain' },
+    ],
+  },
+  {
+    id: 'human-weber-fechner-law',
+    discipline: 'human-science',
+    title: 'ウェーバー・フェヒナーの法則',
+    statement:
+      '精神物理学の基礎をなす法則で、物理的な刺激の強さと、それによって知覚される感覚の大きさとの関係を定量的に記述する。(1)ウェーバーの法則（E.H.ウェーバー、1830年代頃）＝丁度可知差異（JND、識別できる最小の刺激変化）は元の刺激強度に対して一定の割合となる（ΔI／I＝一定、ウェーバー比が一定）。例えば100gと110gは区別できても、200gでは220gでないと' +
+      '違いに気づけず、一定量ではなく一定の割合の増加を要する。(2)フェヒナーの法則（グスタフ・フェヒナー、1860『精神物理学要綱』）＝ウェーバーの法則を積分し、感覚の大きさは刺激強度の対数に比例すると定式化した（S＝k・log I）。これにより知覚は広い範囲の物理量を対数的に圧縮する（重さ・明るさ・音の大きさ等、デシベル尺度もその例）。ただし近似であり、後にスティーヴンスのべき法則による精緻化が示された。',
+    keyFigures: 'エルンスト・ハインリヒ・ウェーバー（1830年代）／グスタフ・フェヒナー（Gustav Fechner, 1860）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Weber%E2%80%93Fechner_law', type: 'reference', label: 'Weber–Fechner law（ウェーバー比一定・対数法則・人物帰属・スティーヴンス法則）' },
+      { url: 'https://psychclassics.yorku.ca/Fechner/wozniak.htm', type: 'academic', label: 'Classics in the History of Psychology, York University — Fechner『精神物理学要綱』(1860) 解説' },
+    ],
+  },
+  {
+    id: 'bizlaw-broadcast-act',
+    discipline: 'business-law',
+    title: '放送法',
+    statement:
+      '放送法（昭和25年法律第132号、1950年制定）は、放送が健全な民主主義の発達と公共の福祉に資するよう放送を規律する法律である。放送の不偏不党・真実及び自律を保障して表現の自由を確保することを原則とし、第4条の番組編集準則は、公安及び善良な風俗を害しないこと、政治的に公平であること、報道は事実をまげないですること、意見が対立する問題は多角的に論点を明らかにすることを定める。' +
+      'また放送番組編集の自由（みだりな干渉の排除）を保障し、放送事業者に番組基準の策定と放送番組審議機関の設置を義務づける。受信料で運営され公共的使命を負う日本放送協会（NHK）の根拠法であると同時に、民間放送（一般放送事業者）も規律し、基幹放送と一般放送を対象とする。電波の免許を定める電波法と一体をなし、総務省が所管する。',
+    keyFigures: '放送法（昭和25年法律第132号、1950年制定）／総務省・NHK',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tele.soumu.go.jp/horei/law_honbun/72490000.html', type: 'government', label: '総務省（電波利用ホームページ）— 放送法 本文' },
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/00719500502132.htm', type: 'government', label: '衆議院 — 放送法（昭和25年法律第132号）' },
+      { url: 'https://kotobank.jp/word/%E6%B0%91%E9%96%93%E6%94%BE%E9%80%81-140015', type: 'reference', label: 'コトバンク — 民間放送・放送法' },
+    ],
+  },
+  {
+    id: 'infosoc-news-values',
+    discipline: 'information-sociology',
+    title: 'ニュース・バリュー（ニュースの価値）',
+    statement:
+      'ニュース・バリュー（報道価値）とは、記者や報道機関がどの出来事をニュースとして選び優先するかを決める基準・要因群である。先駆的研究はガルトゥング&ルーゲ1965「外国ニュースの構造」（Journal of Peace Research）で、ニュースになりやすくする要因として頻度（出来事の時間尺度が報道サイクルに合う）、閾値（規模・強度）、明瞭性、有意味性・文化的近接性、予期との一致（共鳴）、意外性、継続性、構成、' +
+      'エリート国家やエリート人物への言及、人物化、否定性（悪いニュース）などを挙げた。満たす要因が多いほどニュースになりやすいとし、ニュースの系統的な選択・歪み（否定的・エリート的・劇的・近接的な出来事への偏り）を説明する。ハーカップ&オニール2001/2017が現代的に改訂した。情報の流れを管理するゲートキーピングや、争点の重要度認知に影響するアジェンダ設定とは区別される概念である。',
+    keyFigures: 'ヨハン・ガルトゥング／マリ・ホルムボー・ルーゲ（1965）／ハーカップ＆オニール（改訂）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/002234336500200104', type: 'academic', label: 'Galtung & Ruge (1965) "The Structure of Foreign News", Journal of Peace Research (SAGE)' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/1461670X.2016.1150193', type: 'academic', label: "Harcup & O'Neill, \"What is News? News values revisited (again)\", Journalism Studies (Taylor & Francis)" },
+      { url: 'https://revisesociology.com/2017/07/02/news-values/', type: 'reference', label: 'News Values — ReviseSociology' },
+    ],
+  },
 ];
 // Stryker restore all
