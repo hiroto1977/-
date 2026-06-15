@@ -15449,5 +15449,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://yalereview.org/article/meghan-o-gieblyn-donna-haraway-utopian-promise', type: 'media', label: 'The Yale Review — Donna Haraway’s Cyborg Manifesto in the Age of AI' },
     ],
   },
+  {
+    id: 'econ-revelation-principle',
+    discipline: 'economics',
+    title: '顕示原理（メカニズムデザイン）',
+    statement:
+      '顕示原理（表明原理, revelation principle）は、メカニズムデザインの基礎定理である。任意のメカニズム（ゲーム）の任意の均衡で実現される結果は、各主体が自分の私的情報（タイプ）を仲介者に直接報告する「直接メカニズム」であって、正直な報告が均衡となる誘因両立的（incentive compatible）なものによって、同じ結果として再現できる。' +
+      'ゆえに設計者は実現可能な結果を探す際、一般性を失わずに正直申告の直接メカニズムだけを考えればよい。支配戦略で実装する版（ギバード1973, DSIC）とベイジアン・ナッシュ均衡で実装する版（マイヤーソン1979/1981ほか, BNIC）がある。オークションや最適契約の分析を大幅に簡単化する。メカニズムの集合全体を扱う点で、設計問題そのものを論じるメカニズムデザインや、選択行動から選好を推定する顕示選好とは区別される。',
+    keyFigures: 'ロジャー・マイヤーソン（Roger Myerson, 1979/1981）／アラン・ギバード（Allan Gibbard, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Revelation_principle', type: 'reference', label: 'Wikipedia — Revelation principle（DSIC/BNIC、ギバード／マイヤーソン他の帰属）' },
+      { url: 'https://dspace.mit.edu/bitstream/handle/1721.1/73647/6-972-spring-2005/contents/lecture-notes/lec20.pdf', type: 'academic', label: 'MIT 6.972 講義ノート — Mechanism Design and the Revelation Principle' },
+      { url: 'https://www.ias.ac.in/article/fulltext/sadh/033/02/0083-0130', type: 'academic', label: 'Sādhanā（インド科学アカデミー）— Foundations of mechanism design: A tutorial Part 1' },
+    ],
+  },
+  {
+    id: 'econ-factor-price-equalization',
+    discipline: 'economics',
+    title: '要素価格均等化定理',
+    statement:
+      '要素価格均等化定理は、ヘクシャー=オリーン・モデルの第4の基本定理であり、ポール・サミュエルソンが1948年・1949年に厳密に証明したことからヘクシャー=オリーン=サミュエルソン（H-O-S）定理とも呼ばれる。2国・2財・2生産要素、同一の生産技術、規模に関して収穫一定、完全競争、要素の国際間移動なし、不完全特化、要素集約度の仮定という標準的な仮定の下で、財の自由貿易が財の価格を均等化させるだけでなく、各国の生産要素価格（労働の賃金率と資本のレンタル率）までも均等化させると主張する。' +
+      'すなわち、労働や資本そのものが国境を越えて移動できなくても、財の貿易が要素の国際移動の間接的な代替として働き、各国の要素報酬を一致させる。これは、生産要素の賦存比率の違いが貿易パターンを決めるとするヘクシャー=オリーン定理、財の相対価格上昇がその財に集約的に用いられる要素の報酬を高めるとするストルパー=サミュエルソン定理とは区別される、貿易の要素価格への帰結に関する定理である。',
+    keyFigures: 'ポール・サミュエルソン（Paul Samuelson, 1948/1949）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-14-factor-price-equalization.html', type: 'academic', label: 'Suranovic, International Trade Theory and Policy (Saylor) — Factor-Price Equalization' },
+      { url: 'https://www.ier.hit-u.ac.jp/Common/publication/DP/DPS-A622Rivision.pdf', type: 'academic', label: '黒瀬一弘「ヘクシャー=オリーン=サミュエルソン貿易理論と資本理論」一橋大学経済研究所 Discussion Paper' },
+      { url: 'https://en.wikipedia.org/wiki/Factor_price_equalization', type: 'reference', label: 'Factor price equalization — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-aaker-brand-identity',
+    discipline: 'management',
+    title: 'アーカーのブランド・アイデンティティ',
+    statement:
+      'デイビッド・A・アーカーが1996年『Building Strong Brands（ブランド優位の戦略）』で体系化した枠組み。ブランド・アイデンティティとは、ブランド戦略家が創造・維持を目指す独自のブランド連想の集合であり、組織がブランドに「何を表してほしいか」という志向を示す。現状どう知覚されているかを表すブランドイメージとは区別され、戦略の方向性と意味を与える。' +
+      'ブランドを4つの視点から捉える。製品としてのブランド（製品分野・属性・品質/価値・用途・ユーザー・原産国）、組織としてのブランド（組織属性・ローカル対グローバル）、人としてのブランド（ブランド・パーソナリティ・顧客との関係）、シンボルとしてのブランド（視覚イメージ/メタファーと伝統）で、計12の次元から成る。さらに不変の本質であるコア・アイデンティティと拡張アイデンティティを区別し、機能的・情緒的・自己表現的便益から成る価値提案を通じて顧客との関係を築く。アーカーのブランド・エクイティ概念とは区別される。',
+    keyFigures: 'デイビッド・A・アーカー（David A. Aaker, 1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095524498', type: 'reference', label: 'Oxford Reference — Brand identity model (Aaker)' },
+      { url: 'https://www.researchgate.net/publication/256015218', type: 'academic', label: 'An Application of David A. Aaker\'s Brand Identity Planning Model（査読付ケーススタディ）' },
+      { url: 'https://www.alexmurrell.co.uk/summaries/david-a-aaker-building-strong-brands', type: 'media', label: 'Summary of Aaker (1996) Building Strong Brands' },
+    ],
+  },
+  {
+    id: 'human-reminiscence-bump',
+    discipline: 'human-science',
+    title: 'レミニセンス・バンプ',
+    statement:
+      'レミニセンス・バンプ（追憶の隆起）とは、中高年（およそ40歳以上）が生涯にわたる自伝的記憶を想起すると、青年期から成人期初期（およそ10〜30歳、特に15〜25歳前後にピーク）の出来事を、その前後の時期に比べて不釣り合いに多く思い出す現象をいう。直近の出来事が想起されやすい新近性効果とは別個に現れる隆起であり、ルービン・ウェッツラー・ニーバス（Rubin, Wetzler & Nebes, 1986）が生涯想起曲線の分析で体系的に示して以降、頑健な知見として繰り返し確認されている。' +
+      '主な説明として、(1)この時期に初体験や新奇な出来事が集中し符号化が促進されるとする認知的・新奇性説、(2)安定した自己や人生物語が形成される時期だとする自己同一性・人生物語説、(3)認知能力がピークに達するとする認知能力説、(4)卒業・就職・結婚など文化的に期待される人生上の大事件がこの時期に集中するとする文化的ライフスクリプト説がある。実証的には人生物語説とライフスクリプト説の支持が厚い。忘却曲線やフラッシュバルブ記憶とは区別される。',
+    keyFigures: 'デイヴィッド・ルービン／ウェッツラー／ニーバス（Rubin, Wetzler & Nebes, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0208595', type: 'academic', label: 'Munawar et al. (2018) "Understanding the reminiscence bump: A systematic review", PLOS ONE' },
+      { url: 'https://link.springer.com/article/10.3758/s13421-019-00994-6', type: 'academic', label: 'Koppel & Berntsen (2019) "What characterizes the reminiscence bump...", Memory & Cognition' },
+      { url: 'https://link.springer.com/article/10.3758/s13421-011-0082-3', type: 'academic', label: 'Koppel & Berntsen (2011) "The reminiscence bump for salient personal memories...", Memory & Cognition' },
+    ],
+  },
+  {
+    id: 'bizlaw-food-labeling',
+    discipline: 'business-law',
+    title: '食品表示法',
+    statement:
+      '食品表示法（平成25年法律第70号、2013年制定・2015年4月1日施行、消費者庁所管）は、それまでJAS法・食品衛生法・健康増進法の三法に分かれていた食品表示に係る規定を一元化した包括的な法律である。販売される食品の表示の適正を確保し、消費者が食品を安全に摂取し自主的かつ合理的に選択する機会を保障することで、一般消費者の利益の増進を図ることを目的とする。' +
+      '具体的な表示ルールは内閣府令である食品表示基準に定められ、名称・原材料・添加物・アレルゲン・栄養成分表示・原産地・消費期限／賞味期限などの表示を求める。栄養成分表示は経過措置期間を経て義務化され、特定原材料に係るアレルギー表示も義務付けられるなど、消費者の安全確保と選択の保護を中核とする制度である。',
+    keyFigures: '食品表示法（平成25年法律第70号、2013年制定・2015年4月施行）／消費者庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/food_labeling/food_labeling_act/', type: 'government', label: '消費者庁「食品表示法等（法令及び一元化情報）」' },
+      { url: 'https://www.caa.go.jp/policies/policy/food_labeling/food_labeling_act/pdf/130621_gaiyo.pdf', type: 'government', label: '消費者庁「食品表示法の概要」（平成25年6月）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E9%A3%9F%E5%93%81%E8%A1%A8%E7%A4%BA%E6%B3%95', type: 'reference', label: 'Wikipedia「食品表示法」' },
+    ],
+  },
+  {
+    id: 'infosoc-colonization-lifeworld',
+    discipline: 'information-sociology',
+    title: '生活世界の植民地化',
+    statement:
+      'ユルゲン・ハーバーマスが『コミュニケイション的行為の理論』（1981）で示した概念。相互了解を志向するコミュニケーション的行為によって意味・規範・文化が再生産される共有の地平を「生活世界」と呼び、貨幣と権力という制御媒体（道具的・戦略的合理性）によって調整される経済と国家の領域を「システム」と呼んで両者を区別する。' +
+      '後期資本主義ではシステムの命法、すなわち市場と官僚制的行政の論理が、本来コミュニケーション的な相互了解で調整されるべき家族・文化・教育・公共的コミュニケーションの領域へ侵入し乗っ取っていく。この病理的過程が「生活世界の植民地化」であり、コミュニケーション的合理性が駆逐され、意味喪失やアノミー、公共圏の浸食といった社会的病理を生む。コミュニケーション的行為や公共圏の概念とは区別される。',
+    keyFigures: 'ユルゲン・ハーバーマス（Jürgen Habermas, 1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Jürgen Habermas（生活世界の植民地化・制御媒体・病理）' },
+      { url: 'https://academic.oup.com/ct/article/33/2-3/153/7223415', type: 'academic', label: 'Communication Theory (Oxford Academic) — 生活世界とシステム・植民地化テーゼ' },
+      { url: 'https://philarchive.org/archive/JTTTCT', type: 'academic', label: 'The Colonization Thesis: Habermas on Reification（PhilArchive）' },
+    ],
+  },
 ];
 // Stryker restore all

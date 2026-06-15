@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経済学（全295件）
+### 学術概念 / 経済学（全297件）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-allais-paradox|アレのパラドックス]]
 - [[econ-anticommons|アンチコモンズの悲劇]]
-- …ほか 289 件 → [[学術概念]]
+- …ほか 291 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全171件）
+### 学術概念 / 経営学（全172件）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
+- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-absorptive-capacity|吸収能力]]
 - [[mgmt-adhocracy|アドホクラシー]]
 - [[mgmt-adkar|ADKARモデル]]
-- [[mgmt-aida|AIDAモデル（購買行動モデル）]]
-- …ほか 165 件 → [[学術概念]]
+- …ほか 166 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]
