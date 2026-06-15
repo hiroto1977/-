@@ -13049,5 +13049,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://manifold.umn.edu/read/the-neocolonialism-of-the-global-village/', type: 'academic', label: 'University of Minnesota Press — Re-tribalization & simultaneity' },
     ],
   },
+  {
+    id: 'econ-anticommons',
+    discipline: 'economics',
+    title: 'アンチコモンズの悲劇',
+    statement:
+      'マイケル・ヘラーが1998年にハーバード・ロー・レビュー誌で提示した概念で、ハーディンの「コモンズの悲劇」の鏡像をなす。コモンズでは多数の人が資源を「利用する権利」を持つため過剰利用・枯渇が生じるのに対し、アンチコモンズでは希少な資源に対して「他者を排除する権利」を持つ者が多すぎ（所有権や特許が細分化・重複し）、各人が利用を阻止できるため、誰も有効に使えず資源が過少利用に陥る（行き詰まり/グリッドロック）。' +
+      'ヘラーの原型例は、旧社会主義モスクワで多数の主体の同意が必要なため空き店舗が放置される一方、歩道の露店（キオスク）が繁盛した現象である。ヘラーはレベッカ・アイゼンバーグと1998年のサイエンス誌で、上流の特許が細分化した「特許の藪」が下流のバイオ医療研究や創薬を阻害しうると論じた。後にヘラーはこれを「グリッドロック経済」として広く普及させた。',
+    keyFigures: 'マイケル・ヘラー（Michael Heller, 1998）／レベッカ・アイゼンバーグ（Rebecca Eisenberg, 1998）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.280.5364.698', type: 'academic', label: 'Heller & Eisenberg, "Can Patents Deter Innovation? The Anticommons in Biomedical Research," Science 280(5364):698 (1998)' },
+      { url: 'https://repository.law.umich.edu/cgi/viewcontent.cgi?article=1395&context=book_chapters', type: 'academic', label: 'Michael Heller, "Empty Moscow Stores: A Cautionary Tale for Property Theory" (University of Michigan Law)' },
+      { url: 'https://en.wikipedia.org/wiki/Tragedy_of_the_anticommons', type: 'reference', label: 'Tragedy of the anticommons — Wikipedia (Heller 1998, Harvard Law Review 111:621-688)' },
+    ],
+  },
+  {
+    id: 'econ-too-big-to-fail',
+    discipline: 'economics',
+    title: '大きすぎて潰せない',
+    statement:
+      '大きすぎて潰せない（too big to fail, TBTF）とは、特定の金融機関や企業が、規模・相互連関性・システム上の重要性ゆえに、破綻すれば金融システムと経済全体に深刻な打撃（連鎖的な信用収縮）を及ぼすため、政府や中央銀行が破綻させず救済（ベイルアウト）せざるをえないという考え方である。1984年の米コンチネンタル・イリノイ銀行救済の際にマッキニー下院議員が用いて広まり、2007〜08年の世界金融危機（ベア・スターンズやAIGの救済と、リーマン・ブラザーズ破綻との対比）で中心的論点となった。' +
+      '中核の問題はモラルハザードであり、救済の期待が過大なリスクテイクを促し（利益は私有化し損失は社会化する）、資金調達コスト面でも優位を与える。危機後の政策対応として、システム上重要な金融機関（SIFI/G-SIB）の指定、より高い自己資本規制、ストレステスト、破綻処理制度や「リビング・ウィル（破綻処理計画）」が導入され、米国のドッド・フランク法や国際的には金融安定理事会（FSB）がTBTFの終結を目指している。',
+    keyFigures: '大きすぎて潰せない（TBTF）／システム上重要な金融機関（SIFI/G-SIB）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreservehistory.org/essays/continental-illinois', type: 'government', label: 'Federal Reserve History — Continental Illinois: A Bank That Was Too Big to Fail（1984年起源・マッキニー議員）' },
+      { url: 'https://www.brookings.edu/articles/too-big-to-fail-systemic-importance-and-moral-hazard/', type: 'academic', label: 'Brookings — Too Big to Fail: Systemic Importance and Moral Hazard' },
+      { url: 'https://www.fsb.org/work-of-the-fsb/market-and-institutional-resilience/post-2008-financial-crisis-reforms/ending-too-big-to-fail/', type: 'government', label: 'Financial Stability Board — Ending Too-Big-To-Fail（G-SIB・破綻処理改革）' },
+    ],
+  },
+  {
+    id: 'mgmt-flywheel',
+    discipline: 'management',
+    title: 'フライホイール効果（弾み車の法則）',
+    statement:
+      '良い企業から偉大な企業への飛躍は、単一の決定的な施策・壮大なプログラム・一つの画期的イノベーション・幸運な「奇跡の瞬間」によって生じるのではなく、一貫した方向への地道で多数の押しの累積によってもたらされる、とジム・コリンズは『ビジョナリー・カンパニー2（Good to Great, 2001）』で論じた。巨大で重い弾み車を回すように、各回転が前の蓄積の上に積み上がり、勢い（モメンタム）が複利的に高まり、やがて自律的に回り続けるブレークスルーへ至る。' +
+      'これは、戦略を場当たり的に揺れ動かしモメンタムを築けない「悪循環（doom loop）」と対比される。鍵は、相互に強化し合う活動の自己強化ループを規律をもって一貫して回し続けることにある。アマゾンのジェフ・ベゾスはこの概念を成長モデルに応用し、低価格→顧客増加→出品者（サードパーティ）増加→規模の経済→さらなる低価格という好循環（バーチャス・サイクル）を構築した。',
+    keyFigures: 'ジム・コリンズ（Jim Collins, 2001『Good to Great』）／ジェフ・ベゾス（Jeff Bezos, Amazon）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jimcollins.com/article_topics/articles/the-flywheel-effect.html', type: 'reference', label: 'Jim Collins（公式サイト）— The Flywheel Effect' },
+      { url: 'https://marketbrief.edweek.org/strategy-operations/good-to-great-author-jim-collins-shares-how-to-drive-flywheel-momentum-in-your-company/2019/05', type: 'media', label: 'Education Week — Jim Collins on Driving Flywheel Momentum (2019)' },
+      { url: 'https://feedvisor.com/resources/amazon-trends/amazon-flywheel-explained/', type: 'media', label: 'Feedvisor — The Amazon Flywheel Explained (Bezos/Collins)' },
+    ],
+  },
+  {
+    id: 'human-weapon-focus',
+    discipline: 'human-science',
+    title: '凶器注目効果',
+    statement:
+      '凶器注目効果（武器注目効果）とは、犯罪場面に銃やナイフなどの武器が存在すると、目撃者の視覚的注意が凶器に強く引きつけられ、加害者の顔や容貌・服装といった他の細部に対する記憶や同定能力が損なわれる現象をいう。ロフタスら（Loftus, Loftus & Messo, 1987）は視線計測を用い、統制条件（小切手）に比べ凶器条件で対象への注視回数と注視時間が増え、加害者の記憶が低下することを実証した。' +
+      'ステブレイ（Steblay, 1992）のメタ分析も、武器の存在が加害者特徴の再生やラインナップ同定の正確さを下げることを支持している。説明は二説あり、(1)武器の脅威による高い覚醒が注意の範囲を狭めるとする覚醒・手がかり利用説（イースターブルック）、(2)予期せぬ新奇な物体が脅威の有無にかかわらず注意を引くとする新奇性説である。本効果は目撃証言の信頼性や法的・科学捜査の文脈で重要な含意をもつ。',
+    keyFigures: 'エリザベス・ロフタス（Elizabeth Loftus, 1987）／ナンシー・ステブレイ（Nancy Steblay, 1992メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF01062971', type: 'academic', label: 'Loftus, Loftus & Messo (1987) "Some facts about weapon focus", Law and Human Behavior' },
+      { url: 'https://link.springer.com/article/10.1007/BF02352267', type: 'academic', label: 'Steblay (1992) "A meta-analytic review of the weapon focus effect", Law and Human Behavior' },
+      { url: 'https://en.wikipedia.org/wiki/Weapon_focus', type: 'reference', label: 'Wikipedia: Weapon focus (definition, arousal vs unusualness accounts)' },
+    ],
+  },
+  {
+    id: 'bizlaw-act-on-prevention-of-criminal-proceeds',
+    discipline: 'business-law',
+    title: '犯罪収益移転防止法',
+    statement:
+      '犯罪収益移転防止法（犯罪による収益の移転防止に関する法律、平成19年法律第22号、2007年制定・2008年3月全面施行）は、マネーロンダリング（資金洗浄）およびテロ資金供与の防止を目的とする日本の中核的なAML/CFT法である。従来の金融機関等本人確認法や組織的犯罪処罰法の規定を統合・強化し、FATF（金融活動作業部会）勧告への対応を図った。' +
+      '銀行などの金融機関、暗号資産交換業者、不動産業者、貴金属等取扱事業者、一定の取引を行う弁護士・司法書士等の士業を含む「特定事業者」に対し、取引時確認（氏名等の本人特定事項・取引目的・実質的支配者の確認）、確認記録・取引記録の作成と保存、疑わしい取引の届出（STR）を義務づける。所管は国家公安委員会・警察庁（JAFIC）で、金融庁等の各監督官庁が業態ごとに監督を担う。',
+    keyFigures: '犯罪による収益の移転防止に関する法律（平成19年法律第22号、2007年制定・2008年施行）／警察庁（JAFIC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.npa.go.jp/sosikihanzai/jafic/', type: 'government', label: '警察庁 JAFIC（Japan Financial Intelligence Center）' },
+      { url: 'https://www.fsa.go.jp/news/19/sonota/20080213-1.html', type: 'government', label: '金融庁 — 犯罪による収益の移転防止に関する法律' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000109687', type: 'government', label: '国立国会図書館 日本法令索引（平成19年法律第22号）' },
+    ],
+  },
+  {
+    id: 'infosoc-counterpublic',
+    discipline: 'information-sociology',
+    title: '対抗的公共圏（カウンターパブリック）',
+    statement:
+      'ナンシー・フレイザーが1990年の論文「公共圏の再考」で提唱した概念。ユルゲン・ハーバーマスの単一で包括的な（ブルジョア的）公共圏という理想が、女性・労働者・人種的少数者などの組織的な排除を覆い隠していると批判し、その代替として「サバルタン対抗的公共圏（subaltern counterpublics）」を導入した。これは、従属・周縁化された社会集団が、自らのアイデンティティ・利害・要求についての対抗的言説（counter-discourse）を生み出し循環させる、公式の公共圏と並行する言説空間を指す。' +
+      'フレイザーは20世紀後半の米国フェミニスト運動（雑誌・書店・出版社・会議など）を典型例として挙げる。対抗的公共圏は、撤退と再結集の場であると同時に、より広い公衆へ働きかける扇動的活動の拠点という二重の機能を持つ。これは単一の公共圏という見方を退け、民主的コミュニケーションにおける複数性・対立・権力を強調する。マイケル・ウォーナーも2002年の著作で発展させ、SNSやオンライン運動の分析にも用いられる。',
+    keyFigures: 'ナンシー・フレイザー（Nancy Fraser, 1990）／マイケル・ウォーナー（Michael Warner, 2002）／ユルゲン・ハーバーマス（批判対象）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/248927352_Publics_and_Counterpublics_abbreviated_version', type: 'academic', label: 'Michael Warner, "Publics and Counterpublics" (2002)' },
+      { url: 'https://www.femres.org/en/papers/rethinking-public-sphere', type: 'reference', label: 'Nancy Fraser, "Rethinking the Public Sphere" (1990, Social Text) — 概要・全文' },
+      { url: 'https://criticallegalthinking.com/2016/11/06/nancy-fraser-subaltern-counterpublics/', type: 'reference', label: 'Critical Legal Thinking: "Nancy Fraser: Subaltern Counterpublics"' },
+    ],
+  },
 ];
 // Stryker restore all
