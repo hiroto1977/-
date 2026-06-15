@@ -13583,5 +13583,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/rwe/10.1007/978-3-319-74319-6_572', type: 'reference', label: 'Springer reference work — Glocalization (dochakuka origin, Robertson)' },
     ],
   },
+  {
+    id: 'econ-fiscal-drag',
+    discipline: 'economics',
+    title: '財政ドラッグ（ブラケットクリープ）',
+    statement:
+      '財政ドラッグとは、累進所得税制の下で、インフレや実質所得の上昇が名目所得をより高い税率区分へ押し上げ、または固定的な控除・基礎控除の実質価値を目減りさせることで、税法や税率を変えなくても平均税負担と税収が自動的に増える現象をいう。とりわけインフレが人々を上位ブラケットへ押し上げ、実質所得が増えていなくても税負担が重くなる効果を「ブラケットクリープ」と呼ぶ。' +
+      'この仕組みは、好況やインフレ局面で税収を増やし総需要を自動的に抑える自動安定化装置として働く一方、立法を経ない「隠れた増税」として家計の実質可処分所得を圧縮し、納税者から政府への再分配をもたらす側面がある。対策としては、税率区分や各種控除を消費者物価指数などにスライドさせるインデクセーション（物価調整）が用いられる。',
+    keyFigures: '財政ドラッグ／ブラケットクリープ（累進課税＋インフレ・自動安定化装置）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_drag', type: 'reference', label: 'Wikipedia: Fiscal drag（定義・累進課税・自動安定化装置）' },
+      { url: 'https://taxfoundation.org/taxedu/glossary/bracket-creep/', type: 'academic', label: 'Tax Foundation TaxEDU: Bracket Creep（隠れた増税の定義）' },
+      { url: 'https://itep.org/indexing-income-taxes-for-inflation-why-it-matters-1/', type: 'academic', label: 'ITEP: Indexing Income Taxes for Inflation（インデクセーション対策）' },
+    ],
+  },
+  {
+    id: 'econ-wage-price-spiral',
+    discipline: 'economics',
+    title: '賃金・物価スパイラル',
+    statement:
+      '賃金と物価が相互に押し上げ合う自己増幅的なフィードバックにより、インフレが持続・加速し得るとされる機構。コスト・ショック等で物価が上がると、労働者は実質購買力を維持するため賃上げを要求し、それが企業の人件費を押し上げ、企業はこれを価格に転嫁する。すると物価上昇が再び実質賃金を侵食し、さらなる賃上げ要求を招く――こうして賃金→物価→賃金が上方へ螺旋を描く。' +
+      'インフレ期待（およびその脱アンカー）や、賃金を物価に連動させる物価スライド（インデクセーション、COLA・スカラモビレ等）が増幅に関与し、1970年代のスタグフレーションと結び付けて語られる。フィリップス曲線とも関連する。ただしIMF等の研究は、過去の事例の多くで賃金・物価は安定化し実質賃金はほぼ不変で、持続的に加速したスパイラルは歴史的にまれだと指摘し、その実在は議論されている。期待の安定と信頼ある金融政策が予防策とされる。',
+    keyFigures: '賃金・物価スパイラル／コストプッシュ／インフレ期待（脱アンカー）／物価スライド（インデクセーション）／1970年代スタグフレーション',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/en/publications/wp/issues/2022/11/11/wage-price-spirals-what-is-the-historical-evidence-525073', type: 'academic', label: 'IMF Working Paper 22/221 "Wage-Price Spirals: What is the Historical Evidence?" (2022)' },
+      { url: 'https://en.wikipedia.org/wiki/Wage-price_spiral', type: 'reference', label: 'Wikipedia: Wage–price spiral（定義・自己増幅ループ・インフレ期待）' },
+      { url: 'https://www5.cao.go.jp/keizai3/sekaikeizaiwp/wp-we79/wp-we79-00303.html', type: 'government', label: '内閣府 昭和54年 年次世界経済報告 第3章（1970年代の物価・賃金スパイラルと物価スライド制）' },
+    ],
+  },
+  {
+    id: 'mgmt-360-feedback',
+    discipline: 'management',
+    title: '360度フィードバック（多面評価）',
+    statement:
+      '360度フィードバック（多面評価・多面観察）は、対象者の行動や能力について、上司だけでなく同僚・部下・本人（自己評価）、時に顧客など周囲の複数の立場から匿名・機密のフィードバックを集める人事／リーダーシップ開発の手法である。「360度」は対象者の全方位から視点を集めることを指し、単一の上司による従来型の' +
+      'トップダウン評価と対比される。主に自己認識の向上や強み・盲点の把握といった能力開発目的で用いられ、報酬や昇進などの人事考課に利用することには賛否がある。利点は多面的でバランスのとれた視点が得られ盲点を可視化できる点、課題は評価者バイアスや匿名性・報復の懸念、信頼性・妥当性の問題である。1990年代に企業で広く普及した。',
+    keyFigures: '360度フィードバック（多面評価・多面観察、1990年代に普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/360-degree_feedback', type: 'reference', label: 'Wikipedia: 360-degree feedback（定義・多面評価・能力開発と考課・評価者バイアス・1990年代普及）' },
+      { url: 'https://www.apa.org/pubs/journals/features/cpb-64-3-157.pdf', type: 'academic', label: 'Consulting Psychology Journal (APA): Evidence-Based Answers to 15 Questions About Leveraging 360-Degree Feedback' },
+      { url: 'https://www.kaonavi.jp/dictionary/360-degree-evaluation/', type: 'reference', label: 'カオナビ人事用語集: 360度評価（多面評価）上司・同僚・部下・自己評価／従来型との対比' },
+    ],
+  },
+  {
+    id: 'human-processing-fluency',
+    discipline: 'human-science',
+    title: '処理流暢性',
+    statement:
+      '処理流暢性とは、情報を知覚・読解・理解・想起する際に経験される主観的な容易さ／困難さを指す。流暢に（容易に）処理できる刺激ほど肯定的に体験され、より真実らしい・好ましい・なじみがある・頻繁である・確信できると判断され、美的にも好まれる。流暢性は「快」としてマークされており（hedonically marked）、人はこの流暢さの感覚を刺激そのものの性質に誤帰属しがちである。' +
+      'この構成概念は、反復が流暢性と好意を高める単純接触効果や、流暢な（反復された）言明が真実らしく見える錯誤的真実効果の基盤をなし、読みやすいフォント・高コントラスト・韻を踏む格言・発音しやすい名前といった知覚的特徴が判断に及ぼす影響をも説明する、メタ認知的手がかりとして機能する。レーバー／シュワルツ／ウィンキルマン（2004）やアルター&オッペンハイマー（2009）が体系化した。',
+    keyFigures: 'ロルフ・レーバー／ノルベルト・シュワルツ／ピオトル・ウィンキルマン（Reber, Schwarz & Winkielman, 2004）／アルター&オッペンハイマー（2009）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1207/s15327957pspr0804_3', type: 'academic', label: 'Reber, Schwarz & Winkielman (2004), Processing Fluency and Aesthetic Pleasure, Personality and Social Psychology Review' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1088868309341564', type: 'academic', label: 'Alter & Oppenheimer (2009), Uniting the Tribes of Fluency to Form a Metacognitive Nation, PSPR' },
+      { url: 'https://en.wikipedia.org/wiki/Processing_fluency', type: 'reference', label: 'Wikipedia: Processing fluency' },
+    ],
+  },
+  {
+    id: 'bizlaw-auto-liability-act',
+    discipline: 'business-law',
+    title: '自動車損害賠償保障法（自賠法）',
+    statement:
+      '自動車事故の被害者を保護するため、人身損害の賠償を確保することを目的とする法律（昭和30年／1955年法律第97号、国土交通省所管）。自賠責保険（強制保険）への加入を義務づけ、未加入での運行を禁止する。第3条は「自己のために自動車を運行の用に供する者（運行供用者）」に責任を負わせ、' +
+      '自己および運転者が運行に関し注意を怠らなかったこと、被害者または運転者以外の第三者に故意過失があったこと、自動車に構造上の欠陥や機能の障害がなかったことの3点を立証しない限り賠償責任を免れないとし、立証責任を被害者から運行供用者へ転換した実質無過失に近い責任を定める。対象は人身損害のみで物損は対象外。ひき逃げや無保険車の被害者を救済する政府保障事業も含む。',
+    keyFigures: '自動車損害賠償保障法（自賠法、昭和30年法律第97号、1955年制定）／国土交通省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/330AC0000000097', type: 'government', label: 'e-Gov法令検索「自動車損害賠償保障法」（昭和30年法律第97号、第3条 運行供用者責任）' },
+      { url: 'https://www.mlit.go.jp/jidosha/jibaiseki/about/overview/index.html', type: 'government', label: '国土交通省「自賠責保険・共済ってどんなもの？」（強制加入・被害者保護）' },
+      { url: 'https://www.mlit.go.jp/jidosha/jibaiseki/public_payment/index.html', type: 'government', label: '国土交通省「政府保障事業」（ひき逃げ・無保険車被害者の救済、人身損害のみ）' },
+    ],
+  },
+  {
+    id: 'infosoc-participatory-culture',
+    discipline: 'information-sociology',
+    title: '参加型文化',
+    statement:
+      'メディア研究者ヘンリー・ジェンキンスが提唱した概念で、2006年のマッカーサー財団白書『参加型文化の課題に立ち向かう（Confronting the Challenges of Participatory Culture）』や『コンヴァージェンス・カルチャー』で論じられた。人々（公衆）が単なる消費者ではなく、貢献者・生産者（プロシューマー）としても関与する文化を指し、従来の受動的な観客像と対比される。ジェンキンスは参加型文化を次の5つの特徴で定義した。すなわち' +
+      '(1)芸術表現や市民参加への障壁が比較的低い、(2)創作物を作り共有することへの強い支援がある、(3)経験豊富な成員の知識が初心者へ伝えられる非公式の指導（メンターシップ）がある、(4)成員が自分の貢献に意味があると信じている、(5)成員が互いに社会的なつながりを感じている（少なくとも自分の創作を他者がどう思うかを気にする）。ファン文化・二次創作、フォーラム、wiki、リミックスや動画投稿などが例。Web2.0や市民メディア、つながりの学習の議論の基盤だが、参加機会の不平等（参加格差）の指摘も伴う。',
+    keyFigures: 'ヘンリー・ジェンキンス（Henry Jenkins, 2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.macfound.org/media/article_pdfs/jenkins_white_paper.pdf', type: 'academic', label: 'Jenkins et al., Confronting the Challenges of Participatory Culture (MacArthur Foundation White Paper, 2006)' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/participatory-culture', type: 'reference', label: 'EBSCO Research Starters: Participatory Culture' },
+      { url: 'https://en.wikipedia.org/wiki/Participatory_culture', type: 'reference', label: 'Wikipedia: Participatory culture' },
+    ],
+  },
 ];
 // Stryker restore all
