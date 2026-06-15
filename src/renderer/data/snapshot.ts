@@ -1407,7 +1407,7 @@ export const SNAPSHOT = {
         updatedAt: 1774314452,
         pageCount: 1,
         thumbnailUrl: 'https://design.canva.ai/Zbgju-da6LVUe0P',
-        viewUrl: 'https://www.canva.com/d/4YOUQJwiec4AWBX',
+        viewUrl: 'https://www.canva.com/design/DAG2yKvS8Os',
       },
       {
         id: 'DAHDtNxb1bw',
@@ -1415,7 +1415,7 @@ export const SNAPSHOT = {
         updatedAt: 1773289908,
         pageCount: 1,
         thumbnailUrl: 'https://design.canva.ai/w2-Bcvz7hCt130e',
-        viewUrl: 'https://www.canva.com/d/I9DmEpdX-v6CIZC',
+        viewUrl: 'https://www.canva.com/design/DAHDtNxb1bw',
       },
       {
         id: 'DAG9PRY1zjY',
@@ -1423,7 +1423,7 @@ export const SNAPSHOT = {
         updatedAt: 1769305850,
         pageCount: 2,
         thumbnailUrl: 'https://design.canva.ai/4zaspuCbOqdzoLy',
-        viewUrl: 'https://www.canva.com/d/OZ4_ut4GinvX9na',
+        viewUrl: 'https://www.canva.com/design/DAG9PRY1zjY',
       },
       {
         id: 'DAG_Yaj8LqQ',
@@ -1431,7 +1431,7 @@ export const SNAPSHOT = {
         updatedAt: 1769305945,
         pageCount: 4,
         thumbnailUrl: 'https://design.canva.ai/r53kVHEyjOn19_y',
-        viewUrl: 'https://www.canva.com/d/OeXIv-KMM3i3ftp',
+        viewUrl: 'https://www.canva.com/design/DAG_Yaj8LqQ',
       },
       {
         id: 'DAGWm1FKPBw',
@@ -1439,7 +1439,7 @@ export const SNAPSHOT = {
         updatedAt: 1731729931,
         pageCount: 1,
         thumbnailUrl: 'https://design.canva.ai/TX38mlBwpwdmX6Y',
-        viewUrl: 'https://www.canva.com/d/xFA4S1j9zacJdCS',
+        viewUrl: 'https://www.canva.com/design/DAGWm1FKPBw',
       },
       {
         id: 'DAF-6u3Ei-E',
@@ -1447,7 +1447,7 @@ export const SNAPSHOT = {
         updatedAt: 1709893109,
         pageCount: 20,
         thumbnailUrl: 'https://design.canva.ai/CRcf5KDfLiHuc0H',
-        viewUrl: 'https://www.canva.com/d/4crF0MynXkvoknT',
+        viewUrl: 'https://www.canva.com/design/DAF-6u3Ei-E',
       },
     ],
   },
