@@ -15092,5 +15092,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Gemeinschaft_and_Gesellschaft', type: 'reference', label: 'Wikipedia — Gemeinschaft and Gesellschaft (Wesenwille/Kürwille)' },
     ],
   },
+  {
+    id: 'econ-debt-deflation',
+    discipline: 'economics',
+    title: '負債デフレ（債務デフレ理論）',
+    statement:
+      'アーヴィング・フィッシャーが1933年「大恐慌の負債デフレ理論」（Econometrica誌）で示した、過剰債務に陥った経済が恐慌へ転落する悪循環の理論。出発点は過剰債務で、債務返済のための投売りと債務清算が貨幣供給（信用）を縮小させ、一般物価を下落（デフレ）させる。ところが名目債務は固定されているため、物価下落はかえって債務の実質負担を増やす。' +
+      'すなわち債務者が返済に努めるほど実質債務は膨らむ（「債務者が返済するほど一層多く負う」）。これがさらなる投売り、資産価格と純資産の下落、倒産、産出・雇用・信認の低下、いっそうのデフレを呼ぶ悪循環となり恐慌を深める。フィッシャーはこれで大恐慌を説明した。ミンスキーやバーナンキ、バランスシート不況論へ連なる礎であり、デフレを反転させるリフレ政策が循環を断つという含意を持つ。',
+    keyFigures: 'アーヴィング・フィッシャー（Irving Fisher, 1933）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1933/10/01/debt-deflation-theory-great-depressions', type: 'academic', label: 'The Econometric Society — Fisher (1933), "The Debt-Deflation Theory of Great Depressions," Econometrica vol.1' },
+      { url: 'https://fraser.stlouisfed.org/files/docs/meltzer/fisdeb33.pdf', type: 'government', label: 'FRASER (Federal Reserve Bank of St. Louis) — original 1933 paper (Econometrica pp.337-357)' },
+      { url: 'https://www.bis.org/publ/work176.pdf', type: 'government', label: 'BIS Working Paper No.176 — "Debt-deflation: concepts and a stylised model"' },
+    ],
+  },
+  {
+    id: 'econ-wicksell-cumulative-process',
+    discipline: 'economics',
+    title: 'ヴィクセルの累積過程',
+    statement:
+      'クヌート・ヴィクセルが1898年『利子と物価』（独語原題Geldzins und Güterpreise）で提示した貨幣的不均衡の理論。彼は二つの利子率を区別した。自然利子率は貯蓄と投資を均衡させ資本の限界生産力に等しく物価安定と整合する率であり、市場（貨幣）利子率は銀行が設定する実際の貸出金利である。' +
+      '市場利子率が自然利子率を下回ると投資が貯蓄を上回って総需要が増え、物価が累積的に上昇する自己強化的なインフレの累積過程が生じ、逆に上回ると累積的デフレが進行する。銀行の信用創造により両者の乖離は持続し、物価は新たな均衡へ収束せず累積的に動き続ける。利子率差と物価水準を結ぶこの理論はテイラールール・インフレ目標・自然利子率の現代理論を先取りし、ストックホルム学派・ハイエク・ケインズに影響を与えた。',
+    keyFigures: 'クヌート・ヴィクセル（Knut Wicksell, 1898）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://qjae.mises.org/article/124590-the-natural-rate-of-interest-selected-conceptual-differences-among-wicksell-mises-and-woodford-and-implications-for-estimation-and-monetary-policy', type: 'academic', label: 'Quarterly Journal of Austrian Economics — The Natural Rate of Interest: Wicksell, Mises, and Woodford' },
+      { url: 'https://en.wikipedia.org/wiki/Cumulative_process', type: 'reference', label: 'Wikipedia — Cumulative process (Wicksell)' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Wicksell.html', type: 'reference', label: 'Library of Economics and Liberty (Econlib) — Knut Wicksell' },
+    ],
+  },
+  {
+    id: 'mgmt-penrose-growth',
+    discipline: 'management',
+    title: 'ペンローズの企業成長理論',
+    statement:
+      'エディス・ペンローズ1959『企業成長の理論』は、企業を単なる生産関数ではなく、一つの管理の枠組みの下に調整された「生産資源の束（集合）」と捉える。重要なのは資源そのものではなく、資源が提供しうる「サービス」であり、同じ資源も使い方次第で異なるサービスを生む（資源の異質性）。' +
+      '企業の成長は主に内部から、とくに未利用（過剰）の生産資源や経営者サービスの存在が拡張・関連分野への多角化への誘因と能力を生むことで駆動される。ただし各期の成長率は、既存の経営陣が新規経営者を吸収し拡大を計画・遂行できる能力に制約される（ペンローズ効果＝成長率への経営的制約。規模そのものに限界はない）。本理論は資源ベース理論（RBV）やナレッジ・ベースト・ビュー、ダイナミック・ケイパビリティ論の知的基礎となった。',
+    keyFigures: 'エディス・ペンローズ（Edith Penrose, 1959）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.2004.00427.x', type: 'academic', label: 'Kor & Mahoney, "Edith Penrose\'s (1959) Contributions to the Resource-based View", Journal of Management Studies (2004)' },
+      { url: 'https://www.elgaronline.com/display/book/9781800884045/ch82.xml', type: 'reference', label: 'Encyclopedia of International Strategic Management, ch.82 "The Penrose effect" (Edward Elgar)' },
+      { url: 'https://www.sangiin.go.jp/japanese/annai/chousa/keizai_prism/backnumber/h25pdf/201311902.pdf', type: 'government', label: '参議院『経済のプリズム』No.119 — エディス・ペンローズ『企業成長の理論』' },
+    ],
+  },
+  {
+    id: 'human-von-restorff-effect',
+    discipline: 'human-science',
+    title: 'フォン・レストルフ効果（孤立効果）',
+    statement:
+      'ヘートヴィヒ・フォン・レストルフが1933年の研究で示した記憶現象で、周囲の項目から際立つ異質な（孤立した）項目は、均質な周囲の項目よりずっと記憶されやすいというもの。例えば黒い単語の列に1つだけ赤い単語があるとき、あるいは単語の列に1つだけ数字が混じるときなど、目立つ項目の再生成績が他より優れる。' +
+      'これは記憶の符号化における際立ち（顕著性・独自性）と、孤立項目への注意の差次的配分の役割を反映するとされる。広告・デザイン・教育・UIにおいて重要情報を強調・差異化すると記憶に残りやすい根拠となる。なお本効果は項目自体の独自性に由来する点で、リスト内の位置（先頭・末尾）による初頭効果・新近効果を扱う系列位置効果とは区別される。',
+    keyFigures: 'ヘートヴィヒ・フォン・レストルフ（Hedwig von Restorff, 1933）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF02409636', type: 'academic', label: 'von Restorff, H. (1933) Über die Wirkung von Bereichsbildungen im Spurenfeld, Psychologische Forschung 18:299-342（原典）' },
+      { url: 'https://link.springer.com/article/10.3758/BF03214414', type: 'academic', label: 'The subtlety of distinctiveness: What von Restorff really did, Psychonomic Bulletin & Review（査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Von_Restorff_effect', type: 'reference', label: 'Von Restorff effect — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-insurance-business-act',
+    discipline: 'business-law',
+    title: '保険業法',
+    statement:
+      '保険業法（現行法は平成7年法律第105号、1995年制定・1996年施行で1939年の旧法を全面改正）は、保険会社・保険業を規律する監督・業法であり、保険契約当事者間のルールを定める私法の保険法（平成20年法律第56号）とは区別される。保険業を行う者の健全かつ適切な運営と保険募集の公正を確保して保険契約者等を保護し、もって国民生活の安定と国民経済の健全な発展に資することを目的とする。' +
+      '保険業は内閣総理大臣の免許を要し、金融庁が監督・検査を担う。生命保険業と損害保険業を区分し兼営を禁止する原則を採り、ソルベンシー・マージン比率等の健全性規制、募集規制・募集人や代理店・仲立人の規律、責任準備金・資産運用ルール、ディスクロージャーを課す。1995年改正以降は少額短期保険業者（2005年導入）や保険会社破綻に備える保険契約者保護機構の枠組みも整備され、いずれも金融庁の所管である。',
+    keyFigures: '保険業法（平成7年法律第105号、1995年制定・1996年施行）／金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/13219950607105.htm', type: 'government', label: '衆議院 — 保険業法（平成7年6月7日法律第105号）' },
+      { url: 'https://www.fsa.go.jp/common/law/guide/syougaku/01.html', type: 'government', label: '金融庁 — 少額短期保険業者向けの監督指針' },
+      { url: 'https://kotobank.jp/word/%E4%BF%9D%E9%99%BA%E6%A5%AD%E6%B3%95-132856', type: 'reference', label: 'コトバンク — 保険業法' },
+    ],
+  },
+  {
+    id: 'infosoc-synopticon',
+    discipline: 'information-sociology',
+    title: 'シノプティコン',
+    statement:
+      'シノプティコン（synopticon）は、ノルウェーの犯罪社会学者トマス・マシーセンが1997年の論文「視聴者社会：フーコーのパノプティコン再考」（Theoretical Criminology誌）で、フーコーのパノプティコンへの対概念として造語した。パノプティコンが少数が多数を監視する構造であるのに対し、シノプティコンは逆に多数が少数を見る構造を指す。' +
+      'その典型がマスメディア、とくにテレビであり、巨大な視聴者が著名人・政治家・エリートら少数を見て賞賛する。マシーセンは、マスメディアの台頭によりパノプティシズムとシノプティシズムは並行・相互に絡み合って発展し（同一過程の両面）、共に近代の社会統制・規律のシステムを生むと論じた。監視研究やメディア論で影響が大きく、SNSやリアリティ番組とも関連づけて論じられる。',
+    keyFigures: 'トマス・マシーセン（Thomas Mathiesen, 1997）／ミシェル・フーコー（対概念のパノプティコン）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1362480697001002003', type: 'academic', label: "Thomas Mathiesen, 'The Viewer Society: Michel Foucault's Panopticon Revisited', Theoretical Criminology 1(2), 1997 (SAGE)" },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1362480610396645', type: 'academic', label: "Aaron Doyle, 'Revisiting the synopticon', Theoretical Criminology, 2011 (SAGE)" },
+      { url: 'https://en.wikipedia.org/wiki/Synopticon', type: 'reference', label: 'Synopticon — Wikipedia' },
+    ],
+  },
 ];
 // Stryker restore all
