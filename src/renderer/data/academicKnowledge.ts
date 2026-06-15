@@ -15539,5 +15539,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://philarchive.org/archive/JTTTCT', type: 'academic', label: 'The Colonization Thesis: Habermas on Reification（PhilArchive）' },
     ],
   },
+  {
+    id: 'econ-double-dividend',
+    discipline: 'economics',
+    title: '二重の配当（環境税）',
+    statement:
+      '二重の配当仮説は、税収中立的な環境税（炭素税やピグー税）が同時に2つの便益（配当）をもたらしうるという考えで、デイビッド・ピアース（1991）が提唱した。第一の配当は、汚染や外部性を抑制して環境を改善すること。第二の配当は、得られた税収で労働・所得・資本など既存の歪みのある（超過負担を生む）税を引き下げ、税制全体の死荷重を減らして経済効率を高めること（雇用を増やす「雇用の二重配当」を含む）である。' +
+      'ローレンス・ゴルダー（1995）は、税収を一括還付するより歪み税の減税に充てる方が低費用となる「弱い形」と、環境便益を別にしても純粋に効率が改善し総費用がゼロ以下になる「強い形」を区別した。強い形は、環境税が要素市場の既存の歪みをかえって悪化させる「税の相互作用効果」（ボーフェンベルフ＝デ・モーイ）のため論争的で、数値シミュレーションでも成立は疑わしいとされる。なお外部費用を価格に内部化するピグー税や、排出枠を取引する排出量取引とは区別される概念である。',
+    keyFigures: 'デイビッド・ピアース（David Pearce, 1991）／ローレンス・ゴルダー（Lawrence Goulder, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w4896', type: 'academic', label: 'Goulder, "Environmental Taxation and the Double Dividend: A Reader\'s Guide" (NBER WP 4896, 1994/1995)' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0161893817301205', type: 'academic', label: 'Environmental taxation and the double dividend hypothesis in CGE modelling literature: A critical review (Energy Economics)' },
+      { url: 'https://www.wiwiss.fu-berlin.de/fachbereich/vwl/schoeb/forschung/forschung_dateien/taxation02.pdf', type: 'reference', label: 'Schöb, "The Double Dividend Hypothesis of Environmental Taxes: A Survey" (Freie Universität Berlin)' },
+    ],
+  },
+  {
+    id: 'econ-political-business-cycle',
+    discipline: 'economics',
+    title: '政治的景気循環',
+    statement:
+      '現職政府が選挙での得票を狙い財政・金融政策を操作することで、選挙日程に連動した景気変動が生じるとする理論。選挙前は拡張的政策で失業を下げ成長を高め（短期フィリップス曲線の失業・インフレ間トレードオフと、過去を強く割り引く有権者の近視眼を利用）、選挙後は引き締めで先送りしたインフレを抑えるため、政治起因の好況・不況サイクルが現れる。' +
+      'ウィリアム・ノードハウスが1975年の論文で定式化した機会主義モデルが原型で、政治家は再選のみを動機とし政策目標に差がないと仮定する。これに対し、左派は失業抑制・右派はインフレ抑制を重視するというヒッブス（1977）の党派性理論や、合理的期待下でも有効性を示したローゴフ=シーベルト（1988）の合理的版が対比される。景気の内生的変動を扱う景気循環論や、政治の経済分析一般である公共選択論とは区別される。',
+    keyFigures: 'ウィリアム・ノードハウス（William Nordhaus, 1975）／ダグラス・ヒッブス（党派性理論, 1977）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/42/2/169/1580972', type: 'academic', label: 'W. Nordhaus, "The Political Business Cycle," Review of Economic Studies 42(2), 1975, pp.169-190 (Oxford Academic)' },
+      { url: 'https://www.nber.org/system/files/chapters/c11055/c11055.pdf', type: 'academic', label: 'A. Drazen, "The Political Business Cycle After 25 Years" (NBER)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/business-cycles-political', type: 'reference', label: 'Business Cycles, Political (Encyclopedia.com)' },
+    ],
+  },
+  {
+    id: 'mgmt-servitization',
+    discipline: 'management',
+    title: 'サービタイゼーション（サービス化）',
+    statement:
+      'ヴァンダーメルヴェとラダが1988年の論文「Servitization of Business」で提唱した概念で、製造業が製品単体の販売から、製品とサービスを統合した「束」（製品サービスシステム＝PSS）を提供し、顧客に使用価値や成果を届けるビジネスモデルへ転換することを指す。代表例はロールスロイスの「Power by the Hour（TotalCare）」で、エンジンそのものではなく稼働時間や可用性を販売し、保守とリスクは自社が負う。' +
+      '推進要因は差別化、顧客の囲い込み、安定的な収益、持続可能性などで、最も高度な形態は成果ベース契約とされる。一方、サービスへ投資しても収益に結びつかない「サービス化のパラドックス」が指摘され、ニーリーらケンブリッジの研究が発展させた。価値共創を扱うサービス・ドミナント・ロジックや、サービス・プロフィット・チェーン、サービス・ブループリントとは区別される。',
+    keyFigures: 'サンドラ・ヴァンダーメルヴェ／ジュアン・ラダ（Vandermerwe & Rada, 1988）／アンディ・ニーリー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0263237388900333', type: 'academic', label: 'Vandermerwe & Rada (1988) Servitization of Business, European Management Journal 6(4):314-324' },
+      { url: 'http://andyneely.blogspot.com/2013/11/what-is-servitization.html', type: 'academic', label: 'Andy Neely (Cambridge) What is Servitization? — PSS定義・サービス化のパラドックス' },
+    ],
+  },
+  {
+    id: 'human-functional-fixedness',
+    discipline: 'human-science',
+    title: '機能的固着',
+    statement:
+      '機能的固着（functional fixedness）とは、物体をその通常・慣習的な機能でしか捉えられず、問題解決に必要な新しい使い方を思いつけなくなる認知バイアスである。ゲシュタルト心理学の流れをくむカール・ドゥンカーが1945年の著作で定式化し、対象が強い慣習的機能を持つほど別の機能を見いだしにくいと指摘した。' +
+      '代表例がドゥンカーの「ロウソク問題」で、ロウソク・画鋲の箱・マッチを与え、ロウが机に垂れないよう壁に固定させると、多くの人は箱を「画鋲の容器」としか見ず、箱を空にして燭台（棚）として壁に画鋲で留める解に至れない。マイヤーの2本の紐問題（ペンチを振り子の錘に使う）も同種で、創造性や洞察の障壁とされる一方、幼児ではこの固着が弱いことも知られる。',
+    keyFigures: 'カール・ドゥンカー（Karl Duncker, 1945）／ノーマン・マイヤー（Norman R. F. Maier, 1931）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/functional-fixedness', type: 'reference', label: 'APA Dictionary of Psychology — functional fixedness' },
+      { url: 'https://en.wikipedia.org/wiki/Functional_fixedness', type: 'reference', label: 'Wikipedia — Functional fixedness (Duncker 1945, candle problem, Gestalt)' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.2466/pr0.1990.67.3f.1079', type: 'academic', label: "Landrum (1990), Psychological Reports — Maier's (1931) two-string problem revisited" },
+    ],
+  },
+  {
+    id: 'bizlaw-part-time-labor',
+    discipline: 'business-law',
+    title: 'パートタイム・有期雇用労働法',
+    statement:
+      '正式名称は「短時間労働者及び有期雇用労働者の雇用管理の改善等に関する法律」で、厚生労働省が所管する労働法。1993年制定のパートタイム労働法（短時間労働者の雇用管理の改善等に関する法律）を働き方改革の一環で改正し、新たに有期雇用労働者も対象に拡大、大企業は2020年4月1日、中小企業は2021年4月1日に施行された。核心は同一労働同一賃金で、' +
+      '通常の労働者（正社員）と短時間・有期雇用労働者との間の不合理な待遇差を禁止する。具体的には、職務内容・変更範囲・その他の事情を考慮した不合理な待遇差を禁じる均衡待遇（第8条）と、職務内容と変更範囲が通常の労働者と同一の者への差別的取扱いを禁じる均等待遇（第9条）を定める。さらに事業主には、労働者からの求めに応じて待遇差の内容と理由を説明する義務が課されている。',
+    keyFigures: '短時間労働者及び有期雇用労働者の雇用管理の改善等に関する法律（パートタイム・有期雇用労働法、1993年制定・2020年改正施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/content/11650000/000815524.pdf', type: 'government', label: '厚生労働省「パートタイム・有期雇用労働法の概要」（2021年4月1日全面施行）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000144972.html', type: 'government', label: '厚生労働省「同一労働同一賃金特集ページ」' },
+      { url: 'https://jinjibu.jp/keyword/detl/1391/', type: 'reference', label: '日本の人事部「パートタイム・有期雇用労働法とは」（第8条・第9条・説明義務の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-third-place',
+    discipline: 'information-sociology',
+    title: 'サードプレイス',
+    statement:
+      'サードプレイス（第三の場所）は、社会学者レイ・オルデンバーグが1989年の著書『The Great Good Place』で提唱した概念で、家庭（第一の場）でも職場（第二の場）でもない、カフェ・パブ・理髪店・書店・コミュニティセンター等のインフォーマルで自発的な公共の集いの場を指す。オルデンバーグは、こうした場が地域コミュニティ・市民的関与・民主主義・帰属感を支える基盤として不可欠だと論じた。' +
+      '特徴として、中立的な場であること、平等化の場（社会的地位を問わず誰もが対等）であること、会話が主たる活動であること、アクセスしやすく居心地がよいこと、常連の存在、目立たない質素な佇まい、遊び心ある雰囲気、そして「第二の我が家」であること、を挙げた。都市計画やカフェ・小売（スターバックスのマーケティング等）に広く応用され、近年はオンライン/仮想の第三の場をめぐる議論もある。なお、ハーバーマスの公共圏とは異なる概念である点に留意を要する。',
+    keyFigures: 'レイ・オルデンバーグ（Ray Oldenburg, 1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://esl.uchicago.edu/2023/11/01/third-places-what-are-they-and-why-are-they-important-to-american-culture/', type: 'academic', label: 'University of Chicago English Language Institute — Third Places: What Are They and Why Are They Important' },
+      { url: 'https://en.wikipedia.org/wiki/Third_place', type: 'reference', label: 'Wikipedia — Third place (Oldenburg, definition, eight characteristics)' },
+      { url: 'https://www.brookings.edu/articles/third-places-as-community-builders/', type: 'media', label: 'Brookings Institution — "Third places" as community builders' },
+    ],
+  },
 ];
 // Stryker restore all
