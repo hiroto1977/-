@@ -9975,5 +9975,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1080/00071310020015280', type: 'academic', label: 'Haggerty & Ericson, “The surveillant assemblage”, British Journal of Sociology (2000, 査読論文)' },
     ],
   },
+  {
+    id: 'econ-ramsey-pricing',
+    discipline: 'economics',
+    title: 'ラムゼイ価格（逆弾力性ルール）',
+    statement:
+      'ラムゼイ価格（Ramsey–Boiteux価格）とは、規模の経済が大きく限界費用価格づけでは赤字になる自然独占企業や複数財を供給する公益事業・政府が、収支均衡（独立採算）という制約の下で、社会的厚生（消費者余剰＋生産者余剰）の損失＝死荷重を最小化するように各財の価格を設定する次善（second-best）の最適価格づけ理論である。' +
+      '核心は「逆弾力性ルール」で、限界費用からの価格上乗せ（マークアップ）率を各財の需要の価格弾力性に反比例させる。すなわち需要が非弾力的な財ほど大きく値上げし、弾力的な財は限界費用に近づけることで、収支を均衡させつつ需要量の歪みを全体で最小化する。元はフランク・ラムゼイが1927年に最適課税問題として論じ（A.C.ピグーの問いに端を発する）、後にマルセル・ボワトゥー（1956）が費用逓減下の公益事業料金へ応用した。電気・ガス・水道・鉄道・通信の料金規制や最適間接税の設計に用いられるが、非弾力的な生活必需品ほど高くなり逆進的になりうる点で公平性の観点から批判もある。',
+    keyFigures:
+      'フランク・ラムゼイ（Frank P. Ramsey, 1927・最適課税）／マルセル・ボワトゥー（Marcel Boiteux, 1956・公益事業へ応用）／A.C.ピグー（課税問題を提起）／逆弾力性ルール',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Ramsey_problem', type: 'reference', label: 'Ramsey problem — Wikipedia（定義・逆弾力性ルール・1927 Ramsey/1956 Boiteux）' },
+      { url: 'https://academic.oup.com/ej/article/125/583/235/5076989', type: 'academic', label: 'Stiglitz, “In Praise of Frank Ramsey’s Contribution to the Theory of Taxation”, The Economic Journal 125(583), 2015' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/ramsey-pricing', type: 'academic', label: 'Ramsey Pricing — ScienceDirect Topics（マークアップと需要弾力性の反比例）' },
+    ],
+  },
+  {
+    id: 'econ-peak-load-pricing',
+    discipline: 'economics',
+    title: 'ピーク・ロード・プライシング（時間帯別料金）',
+    statement:
+      'ピーク・ロード・プライシングとは、需要が時間帯・季節で系統的に変動し、かつ財・サービスを貯蔵できない（電力・交通・通信・宿泊等）状況で、容量制約と容量（設備）費用を反映してピーク時に高くオフピーク時に低い価格を設定する効率的価格づけである。' +
+      '効率性の論理は、オフピーク時は容量に余裕があり追加供給費用は運転限界費用のみのため価格を限界費用に等しくし、ピーク時は容量制約が効くため価格に運転限界費用へ容量費用を上乗せする点にある。設備はピーク需要に合わせて用意されるため容量コストはピーク利用者が負担すべきとされ、これによりピーク需要の抑制（ピークシフト・混雑緩和）と過剰設備投資の回避、容量の効率的利用が図られる。スタイナー（1957）やボワトゥーが理論化し、電気の時間帯別料金・ダイナミックプライシング、道路の混雑課金、鉄道・航空のオフピーク割引等に応用される。限界費用価格形成やラムゼイ価格と関連するが、時間帯別の需要変動と容量制約に対応する点で区別される。',
+    keyFigures:
+      'ピーター・O・スタイナー（Peter O. Steiner, 1957, QJE）／マルセル・ボワトゥー（Marcel Boiteux・EDF「緑の料金」）／容量制約・ピークシフト・混雑課金',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/71/4/585/1845719', type: 'academic', label: 'Peter O. Steiner, “Peak Loads and Efficient Pricing”, The Quarterly Journal of Economics 71(4), 1957 (Oxford Academic)' },
+      { url: 'https://link.springer.com/article/10.1007/BF01070807', type: 'academic', label: 'The theory of peak-load pricing: A survey, Journal of Regulatory Economics (Springer)' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/Introduction_to_Economic_Analysis/15:_Monopoly/15.07:_Peak-load_Pricing', type: 'reference', label: 'Introduction to Economic Analysis §15.7 Peak-load Pricing (LibreTexts)' },
+    ],
+  },
+  {
+    id: 'mgmt-lmx-theory',
+    discipline: 'management',
+    title: 'LMX理論（リーダー・メンバー交換理論）',
+    statement:
+      'LMX理論（leader–member exchange theory）は、リーダーシップを、リーダーが部下全員に画一的に接するものとしてではなく、リーダーと個々の部下との二者間（ダイアド）関係の質に着目して捉える理論である。リーダーは限られた時間・資源の中で部下ごとに異なる質の交換関係を築き、信頼・敬意・相互義務に基づく質の高い「内集団（in-group）」と、公式の雇用契約に基づく形式的・経済的な質の低い「外集団（out-group）」が役割形成を通じて形成される。' +
+      '内集団のメンバーはより多くの情報・裁量・支援・キャリア機会を得て、高い職務満足・業績・組織コミットメント・低い離職を示す傾向がある。社会的交換理論を基盤とし、ジョージ・グラエンらが1970年代に提唱、初期は垂直二者間連結（VDL）モデルと呼ばれ後にLMXへ発展した。関係発展段階（見知らぬ→知り合い→成熟したパートナーシップ）や尺度LMX-7も開発され、リーダーは全部下と質の高い関係を築くべきとされる。',
+    keyFigures:
+      'ジョージ・グラエン（George B. Graen）／メアリー・アル＝ビエン（Mary Uhl-Bien）／Dansereau・Haga（VDL, 1975）／内集団・外集団・LMX-7',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/leader-member-exchange-lmx-theory', type: 'reference', label: 'EBSCO Research Starters: Leader–member exchange (LMX) theory' },
+      { url: 'https://digitalcommons.unl.edu/managementfacpub/57/', type: 'academic', label: 'Graen & Uhl-Bien (1995) “Relationship-Based Approach to Leadership: Development of LMX Theory over 25 Years,” The Leadership Quarterly 6(2):219-247（UNL）' },
+      { url: 'https://us.sagepub.com/sites/default/files/chapter_7._leader-member_exchange_theory.pdf', type: 'academic', label: 'Northouse, Leadership: Theory and Practice, Ch.7 Leader–Member Exchange Theory (SAGE)' },
+    ],
+  },
+  {
+    id: 'human-default-effect',
+    discipline: 'human-science',
+    title: 'デフォルト効果（初期設定効果）',
+    statement:
+      '選択を求められる際、あらかじめ設定された初期選択肢（デフォルト・オプション＝何もしなければ自動的に適用される選択）が最終的な決定を大きく左右し、人々がデフォルトのまま受け入れやすくなる現象。' +
+      '背景には選択変更の手間・先延ばし・現状維持バイアス・損失回避、さらにデフォルトを「暗黙の推奨（implied endorsement）」と受け取る心理がある。セイラーとサンスティーンの『Nudge』(2008)で選択アーキテクチャ（choice architecture）の中核手段として論じられた。最も有名な実証は臓器提供で、ジョンソン＆ゴールドスタイン（2003, Science）は、提供を明示同意者のみとするオプトイン国（ドイツ約12%）と、拒否しない限り提供者とするオプトアウト国（オーストリアほぼ100%）で同意率が劇的に異なることを示した。退職年金の自動加入やサブスク自動更新などに応用され、強制せず選択の自由を残すリバタリアン・パターナリズムの代表例だが、操作との境界という倫理的論点もある。',
+    keyFigures:
+      'リチャード・セイラー（Richard Thaler）＆キャス・サンスティーン（Cass Sunstein, 2008『Nudge』）／エリック・ジョンソン＆ダニエル・ゴールドスタイン（2003, Science・臓器提供）／オプトイン/オプトアウト',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.1091721', type: 'academic', label: 'Johnson & Goldstein, “Do Defaults Save Lives?” Science 302:1338–1339 (2003)' },
+      { url: 'https://en.wikipedia.org/wiki/Default_effect', type: 'reference', label: 'Wikipedia — Default effect（メカニズム：effort / implied endorsement / loss aversion）' },
+      { url: 'https://www.kellogg.northwestern.edu/news/blog/2015/01/22/do-defaults-save-lives/', type: 'academic', label: 'Kellogg School of Management（Northwestern Univ.）— Do defaults save lives?' },
+    ],
+  },
+  {
+    id: 'bizlaw-offsetting-benefits',
+    discipline: 'business-law',
+    title: '損益相殺',
+    statement:
+      '損益相殺とは、債務不履行や不法行為によって被害者（債権者）が損害を受けると同時に、同一の原因によって利益をも得た場合に、損害賠償額の算定にあたりその利益を損害額から控除する法理である。民法に明文の規定はないが、損害賠償は被害者に生じた現実の損害の填補を目的とし被害者を損害発生前より有利にすべきでない（利得禁止）との考えから、判例・学説上認められてきた。' +
+      '最高裁大法廷平成5年3月24日判決は、損害と利益との間に同質性がある限り公平の見地から損益相殺的調整を図るとし、控除には損害賠償原因との相当因果関係（同質性）を要する。例として死亡逸失利益からの生活費控除、解雇期間中賃金からの中間収入控除（ただし労基法12条の平均賃金6割までは控除不可）がある。生命保険金は保険料の対価であり原則非控除（最判昭39.9.25）だが、労災・遺族年金等の社会保険給付は損益相殺的調整の対象とされ、利益の性質ごとに扱いが分かれる。被害者の過失を考慮して賠償額を減ずる過失相殺とは全く異なる制度である。',
+    keyFigures:
+      '民法に明文なき判例・学説上の法理／趣旨＝損害の現実填補・利得禁止・公平／要件＝同一原因による利益かつ同質性（相当因果関係）／代表例＝死亡逸失利益の生活費控除・解雇期間中賃金の中間収入控除（労基法12条6割は控除不可）／生命保険金は原則非控除（最判昭39.9.25）・社会保険給付は調整対象／最大判平成5年3月24日／過失相殺とは別制度',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E6%90%8D%E7%9B%8A%E7%9B%B8%E6%AE%BA-1181489', type: 'reference', label: 'コトバンク「損益相殺」（法律用語事典）' },
+      { url: 'https://www.zennichi.or.jp/law_faq/%E6%90%8D%E7%9B%8A%E7%9B%B8%E6%AE%BA/', type: 'reference', label: '公益社団法人 全日本不動産協会 法律用語集「損益相殺」' },
+      { url: 'https://www.jcia.or.jp/publication/pdf/hanrei_56.pdf', type: 'academic', label: '日本共済協会 判例研究（最高裁平成27年3月4日大法廷判決・損益相殺的調整の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-technostress',
+    discipline: 'information-sociology',
+    title: 'テクノストレス',
+    statement:
+      'テクノストレスとは、情報通信技術（ICT・コンピュータ・スマートフォン等のデジタルツール）の利用や、それにうまく適応できないことから生じる心理的・身体的ストレスを指す。臨床心理学者クレイグ・ブロードが1984年の著書『Technostress: The Human Cost of the Computer Revolution』で命名し、新技術に健全に適応できないことから生じる「現代病」と定義した。ブロードはその現れ方として、新技術に不安・抵抗を抱くテクノ不安（technoanxiety）と、逆に技術へ過度に同一化・依存するテクノ依存（technodependency）を挙げた。' +
+      'その後の情報システム研究では、ラガ＝ナサンやタラフダールらが職場のテクノストレスを実証的に概念化し、ストレス要因（technostress creators）を5つに整理した：(1)テクノ過負荷（仕事の量と速度が増す）、(2)テクノ侵害（仕事が私生活へ侵入し常時つながる）、(3)テクノ複雑性（習得に労力を要し無能感を抱く）、(4)テクノ不安定性（技術や他者に職を奪われる不安）、(5)テクノ不確実性（技術の絶え間ない変化・更新）。帰結として職務満足・生産性の低下、燃え尽き、離職意図の増加が報告され、リモートワーク・SNS・AI普及で関心が高まっている。情報過多・FOMO・燃え尽きとは関連するが、ICT利用そのものに起因するストレスとして区別される。',
+    keyFigures:
+      'クレイグ・ブロード（Craig Brod, 1984・命名／テクノ不安・テクノ依存）／Ragu-Nathan・Tarafdar ら（2008・5つのtechnostress creators）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/technostress', type: 'reference', label: 'APA Dictionary of Psychology — “technostress”（1984年にCraig Brodが造語と明記）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/isre.1070.0165', type: 'academic', label: 'Ragu-Nathan, Tarafdar, Ragu-Nathan & Tu (2008) “The Consequences of Technostress...”, Information Systems Research 19(4):417–433（5つのcreators）' },
+      { url: 'https://archive.org/details/technostresshuma0000brod', type: 'reference', label: 'Brod, C. (1984) Technostress: The Human Cost of the Computer Revolution, Addison-Wesley（原典・Internet Archive）' },
+    ],
+  },
 ];
 // Stryker restore all
