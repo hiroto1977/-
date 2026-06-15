@@ -13404,5 +13404,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ja.wikipedia.org/wiki/%E6%83%85%E5%A0%B1%E7%94%A3%E6%A5%AD', type: 'reference', label: 'Wikipedia「情報産業」（内胚葉=農業／中胚葉=工業／外胚葉=情報の発展段階説）' },
     ],
   },
+  {
+    id: 'econ-time-preference',
+    discipline: 'economics',
+    title: '時間選好',
+    statement:
+      '時間選好（time preference）とは、人が一般に将来より現在の財・満足を高く評価し、同じものならより早く得ることを選好する性質をいう。将来の効用や消費を現在より低く見積もる度合いを「時間選好率（主観的割引率）」と呼び、これが正であることは将来を割り引くことを意味する。オイゲン・フォン・ベーム=バヴェルクは1889年の『資本及び資本利子』で将来財に対する現在財の優位という時間選好の理由を論じ、' +
+      'アーヴィング・フィッシャーは1930年の『利子論』で無差別曲線を用いてこれを定式化し、利子率と結びつけた。時間選好（せっかち）と投資の生産性（投資機会）が均衡実質利子率を決定し、利子は時間選好の市場価格とみなせる。時間選好は異時点間選択や割引の概念と密接に関連し、行動経済学では一定の指数割引からの逸脱として現在バイアスや双曲割引も論じられる。',
+    keyFigures: 'オイゲン・フォン・ベーム=バヴェルク（Böhm-Bawerk, 1889）／アーヴィング・フィッシャー（Irving Fisher, 1930）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/bios/Fisher.html', type: 'reference', label: 'Econlib (The Concise Encyclopedia of Economics): Irving Fisher — impatience-and-opportunity theory of interest' },
+      { url: 'https://www.jstage.jst.go.jp/article/jshet1963/35/35/35_35_84/_pdf', type: 'academic', label: '中路敬「アーヴィング・フィッシャーの利子率決定理論」経済学史学会年報（J-STAGE）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%99%82%E9%96%93%E9%81%B8%E5%A5%BD', type: 'reference', label: 'ウィキペディア日本語版「時間選好」— 時間選好率の定義・異時点間選択・割引' },
+    ],
+  },
+  {
+    id: 'econ-marginal-productivity-distribution',
+    discipline: 'economics',
+    title: '限界生産力説',
+    statement:
+      '新古典派の要素価格・所得分配の理論。完全競争市場では、各生産要素（労働・資本・土地）は、その限界生産物の価値（限界生産物×産出価格）に等しい価格（賃金・利子・地代）を受け取るとする。利潤最大化を図る企業は、限界生産物の価値が要素価格に等しくなる点まで各要素を雇用するため、賃金は労働の限界生産力に等しくなる。' +
+      '規模に関して収穫一定（一次同次の生産関数）と完全競争の下では、各要素への限界生産物に応じた支払の合計が総生産物をちょうど使い尽くす（加算定理・生産物完全分配定理。ウィクスティードが定式化し、オイラーの定理の応用とされる）。J.B.クラークは1899年『富の分配』で展開し、各要素は自らが生み出した分を受け取るという規範的・倫理的解釈も与えたが、これは各要素の固有の貢献を分離できないとして批判され、後のケンブリッジ資本論争にもつながった。',
+    keyFigures: 'ジョン・ベイツ・クラーク（John Bates Clark, 1899）／フィリップ・ウィクスティード／クヌート・ヴィクセル',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hetwebsite.net/het/essays/margrev/distrib.htm', type: 'academic', label: 'History of Economic Thought — The Neoclassical Theory of Distribution（Clark 1899・Wicksteed・生産物完全分配/オイラーの定理）' },
+      { url: 'https://kotobank.jp/word/%E9%99%90%E7%95%8C%E7%94%9F%E7%94%A3%E5%8A%9B%E8%AA%AC-60306', type: 'reference', label: 'コトバンク「限界生産力説」（要素は限界生産力に応じて分配・労働の価値限界生産力＝賃金）' },
+      { url: 'https://read.dukeupress.edu/hope/article/55/2/353/320797/On-John-Bates-Clark-s-Naive-Productivity-Ethics-A', type: 'academic', label: 'History of Political Economy (Duke UP) — Clarkの「素朴な生産力倫理」とその批判' },
+    ],
+  },
+  {
+    id: 'mgmt-cynefin',
+    discipline: 'management',
+    title: 'クネビン・フレームワーク',
+    statement:
+      'デイヴ・スノーデンが1999年に考案し、2007年のメアリー・ブーンとのHBR論文「A Leader\'s Framework for Decision Making」で広く普及した、意思決定・センスメイキングの枠組み。「クネビン」はウェールズ語で生息域・帰属の場を意味する。直面する状況を5つの領域に分類し、各々で異なる対応を取る。' +
+      '(1)明白（単純）＝因果が自明な既知の既知で、感知・分類・対応によりベストプラクティスを適用、(2)煩雑＝専門的分析を要する既知の未知で、感知・分析・対応、(3)複雑＝因果が事後にしか分からない未知の未知で、安全に失敗できる実験により創発を促す探索・感知・対応、(4)混沌＝因果が不明で、行動・感知・対応により秩序を作る、(5)無秩序＝どの領域か不明な中心状態。管理・意思決定スタイルを文脈に合わせること、特に煩雑と複雑の区別が要諦である。',
+    keyFigures: 'デイヴ・スノーデン（Dave Snowden, 1999）／メアリー・ブーン（Snowden & Boone, 2007 HBR）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2007/11/a-leaders-framework-for-decision-making', type: 'academic', label: 'Snowden & Boone, "A Leader\'s Framework for Decision Making", Harvard Business Review (2007年11月)' },
+      { url: 'https://en.wikipedia.org/wiki/Cynefin_framework', type: 'reference', label: 'Cynefin framework — Wikipedia' },
+      { url: 'https://www.praxisframework.org/en/library/cynefin-framework', type: 'reference', label: 'Cynefin framework — Praxis Framework' },
+    ],
+  },
+  {
+    id: 'human-system-justification',
+    discipline: 'human-science',
+    title: 'システム正当化理論',
+    statement:
+      'ジョン・ジョストとマーザリン・バナジが1994年に提唱した社会心理学理論。人々は既存の社会的・経済的・政治的なシステムや現状を、たとえ自分や自集団の利益に反する場合であっても、公正で正当・自然・望ましく不可避なものと見なして防衛・支持・正当化する動機を持つとする。' +
+      '含意として、低地位で不利な立場の集団の成員が自らの従属を内面化し、自集団を否定的に見て高地位集団に好意的態度を示す「外集団びいき」が生じうる。この動機は認識的（確実性・意味）・実存的（安全・不安低減）・関係的（共有された現実）な欲求に基づき、自我正当化や集団正当化の動機と並んで働き、不平等や現状を合理化するステレオタイプの存続と社会変革への支持の低下を説明する。',
+    keyFigures: 'ジョン・ジョスト／マーザリン・バナジ（Jost & Banaji, 1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://bpspsychub.onlinelibrary.wiley.com/doi/abs/10.1111/bjso.12297', type: 'academic', label: 'Jost (2019) "A quarter century of system justification theory", British Journal of Social Psychology' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/systems-justification-theory', type: 'reference', label: 'ScienceDirect Topics: System Justification Theory overview (Elsevier)' },
+      { url: 'https://en.wikipedia.org/wiki/Outgroup_favoritism', type: 'reference', label: 'Wikipedia: Outgroup favoritism (Jost & Banaji 1994 attribution)' },
+    ],
+  },
+  {
+    id: 'bizlaw-pmd-act',
+    discipline: 'business-law',
+    title: '薬機法（医薬品医療機器等法）',
+    statement:
+      '正式名称は「医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律」で、医薬品医療機器等法・薬機法と略す。旧薬事法（昭和35年法律第145号）を2013年に改称・大改正し、2014年11月25日に施行された。厚生労働省が所管し、承認審査や安全性評価は独立行政法人医薬品医療機器総合機構（PMDA）が担う。' +
+      '医薬品・医薬部外品・化粧品・医療機器・再生医療等製品の品質・有効性・安全性を確保し、保健衛生上の危害発生・拡大の防止を目的とする。製造販売の承認や製造販売業等の許可、市販後の副作用報告など安全対策を定め、第66条で虚偽・誇大広告等を禁止し、未承認品の広告や効能効果の誇大・虚偽表示も規制する。2013年改正では再生医療等製品の区分が新設された。',
+    keyFigures: '医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律（旧薬事法・昭和35年、2013年改称改正・2014年施行）／厚生労働省・PMDA',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=81004000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データベース 医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律（昭和35年法律第145号）' },
+      { url: 'https://www.mipro.or.jp/Document/hti0re0000000vi2-att/pdf_publications_0098ngb.pdf', type: 'government', label: 'MIPRO（対日貿易投資交流促進協会）医薬品医療機器等法（薬機法）規制対象解説' },
+      { url: 'https://en.wikipedia.org/wiki/Pharmaceuticals_and_Medical_Devices_Agency', type: 'reference', label: 'Wikipedia: Pharmaceuticals and Medical Devices Agency (PMDA)' },
+    ],
+  },
+  {
+    id: 'infosoc-mcdonaldization',
+    discipline: 'information-sociology',
+    title: 'マクドナルド化',
+    statement:
+      'マクドナルド化（McDonaldization）は社会学者ジョージ・リッツァが1993年『マクドナルド化する社会』で提唱した概念で、ファストフード店の運営原理が社会の多くの領域や世界全体を支配するようになる過程を指す。マックス・ウェーバーの合理化論（官僚制の「鉄の檻」）を拡張したもので、' +
+      '四つの次元から成る。(1)効率性＝課題達成のための最適な手段、(2)計算可能性＝量や速さなど数量化できるものの重視、(3)予測可能性＝製品やサービスの標準化・均一化、(4)制御＝非人間的技術による人間労働の置換と従業員・顧客の統制である。中心的逆説は「合理性の非合理性」で、合理的システムが非人間化や均質化などの非合理な帰結を生むとされ、教育や医療など広範な領域に適用される。',
+    keyFigures: 'ジョージ・リッツァ（George Ritzer, 1993『マクドナルド化する社会』）／マックス・ウェーバー（合理化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/mcdonaldization', type: 'reference', label: 'EBSCO Research Starters — McDonaldization (Ritzer 1993, four dimensions, Weber rationalization)' },
+      { url: 'https://en.wikipedia.org/wiki/McDonaldization', type: 'reference', label: 'Wikipedia — McDonaldization (definition, four dimensions, irrationality of rationality)' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Sociology/Introduction_to_Sociology/Sociology_(Boundless)/06:_Social_Groups_and_Organization/6.04:_Bureaucracy/6.4C:_The_McDonaldization_of_Society', type: 'academic', label: 'LibreTexts (Boundless Sociology) — The McDonaldization of Society' },
+    ],
+  },
 ];
 // Stryker restore all
