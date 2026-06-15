@@ -15898,5 +15898,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.scirp.org/reference/referencespapers?referenceid=943993', type: 'academic', label: 'Gandy, O. H., Jr. (1982). Beyond Agenda-Setting: Information Subsidies and Public Policy. Ablex (citation record)' },
     ],
   },
+  {
+    id: 'econ-vcg-mechanism',
+    discipline: 'economics',
+    title: 'VCGメカニズム',
+    statement:
+      'VCG（ヴィックリー＝クラーク＝グローブス）メカニズムは、私的な評価値を持つ複数の主体間で財の配分や集団的決定を行う際に、正直な評価値の申告が支配戦略となる（耐戦略的・支配戦略誘因両立）メカニズムの一群であり、ヴィックリー（1961）、クラーク（1971）、グローブス（1973）に由来する。報告された評価値に基づく社会的厚生（総余剰）の合計を最大化する効率的な配分を選び、' +
+      '各主体には、その主体の参加が他者の厚生に与える損失に等しい「外部性」分の支払いを課す（クラークのピボット・ルール）。これにより正直申告が支配戦略となり効率的配分が実現する。単一財の場合は2位価格（ヴィックリー）オークションに帰着し、組合せオークションや周波数・広告オークションの基礎をなす。限界として談合・見せかけ（シル）入札への脆弱性、低額・ゼロ収入、予算非均衡があり、ヴィックリー・オークションやメカニズムデザイン、顕示原理とは区別される。',
+    keyFigures: 'ウィリアム・ヴィックリー（1961）／エドワード・クラーク（1971）／セオドア・グローブス（1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cs.brown.edu/courses/cs1951k/lectures/2020/vcg_mechanism.pdf', type: 'academic', label: 'Brown University CS — The Vickrey-Clarke-Groves Mechanism (lecture notes)' },
+      { url: 'https://gtl.csa.iisc.ac.in/gametheory/ln/web-md7-vcg.pdf', type: 'academic', label: 'Indian Institute of Science — Vickrey-Clarke-Groves Mechanisms (Game Theory lecture notes)' },
+      { url: 'https://link.springer.com/article/10.1007/s00199-010-0566-6', type: 'academic', label: 'Economic Theory (Springer) — Optimal shill bidding in the VCG mechanism' },
+    ],
+  },
+  {
+    id: 'econ-hysteresis',
+    discipline: 'economics',
+    title: 'ヒステリシス（履歴効果）',
+    statement:
+      'ヒステリシス（履歴効果）とは、一時的・循環的なショックが均衡変数に恒久的または非常に持続的な影響を残し、均衡そのものが辿った経路に依存する（履歴依存性）という考え方で、物理学の用語を借りたものである。失業のヒステリシスでは、不況で上昇した実際の失業率が自然失業率（NAIRU）自体を押し上げ、ショックが去っても失業は不況前の水準に戻らない。' +
+      '主な機構は、長期失業者の技能・人的資本の劣化や意欲喪失（労働市場への愛着の低下で再就職しにくくなる）と、インサイダー・アウトサイダー動学（就業者が自らの賃金を交渉し失業者を無視するため賃金が十分下がらない）である。ブランシャール＆サマーズ（1986）が定式化し、1980年代の欧州の高失業の説明に用いられた。経路依存・恒久性に焦点を当てる点で、自然失業率やインサイダー・アウトサイダー理論の項目とは区別される。',
+    keyFigures: 'オリヴィエ・ブランシャール／ローレンス・サマーズ（Blanchard & Summers, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w1950', type: 'academic', label: 'Blanchard & Summers, "Hysteresis and the European Unemployment Problem," NBER Working Paper 1950 (1986)' },
+      { url: 'https://www.ecb.europa.eu/pub/pdf/scpwps/ecb.wp2625~f013b1096b.en.pdf', type: 'government', label: 'European Central Bank Working Paper 2625 — Hysteresis in unemployment: evidence from OECD estimates' },
+      { url: 'https://en.wikipedia.org/wiki/Hysteresis_(economics)', type: 'reference', label: 'Wikipedia: Hysteresis (economics)' },
+    ],
+  },
+  {
+    id: 'mgmt-resource-orchestration',
+    discipline: 'management',
+    title: 'リソース・オーケストレーション',
+    statement:
+      'デイビッド・シルモン、マイケル・ヒット、R・デュエイン・アイルランドらが提唱した戦略経営の枠組み（Sirmon, Hitt & Ireland 2007 AMR、Sirmon, Hitt, Ireland & Gilbert 2011 Journal of Management）。資源ベース理論（RBV）の空隙——価値ある資源を保有するだけでは競争優位に十分でなく、経営者が能動的に資源を管理・展開せねばならない——を埋める。' +
+      '「資源管理」（資源ポートフォリオの構築＝取得・蓄積・手放し、能力構築のためのバンドリング＝安定化・強化・開拓、能力の活用＝動員・調整・展開）と、ダイナミック・ケイパビリティ由来の「資産オーケストレーション」（探索・選択と構成・展開）を統合する。経営者の行為（オーケストレーター）こそが資源と能力を価値と競争優位へ転換すると説き、RBVやダイナミック・ケイパビリティとは経営者の能動的展開を重視する点で区別される。',
+    keyFigures: 'デイビッド・シルモン／マイケル・ヒット／R・デュエイン・アイルランド（Sirmon, Hitt & Ireland, 2007/2011）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206310385695', type: 'academic', label: 'Sirmon, Hitt, Ireland & Gilbert (2011) "Resource Orchestration to Create Competitive Advantage", Journal of Management 37(5):1390-1412' },
+      { url: 'https://istheory.miraheze.org/wiki/Resource_Orchestration_Theory', type: 'reference', label: 'IS Theory — Resource Orchestration Theory (encyclopedia entry)' },
+    ],
+  },
+  {
+    id: 'human-end-of-history-illusion',
+    discipline: 'human-science',
+    title: '歴史の終わり錯覚',
+    statement:
+      'ジョルディ・クオイドバック、ダニエル・ギルバート、ティモシー・ウィルソンが2013年にScience誌で報告した心理的バイアス。あらゆる年齢の人が、自分は過去に大きく変化したが、これから先はあまり変化しないと信じる傾向を指す。現在までの性格・価値観・好みの変化はよく認識するのに、将来の変化は過小評価し、今の自分が「最終版」、すなわち自分の歴史の終わりであるかのように振る舞う。' +
+      '18〜68歳の約1万9千人を対象とした研究では、報告された過去10年の変化が、予測された将来10年の変化を全ての年齢層で上回った。この錯覚は、将来の選好を誤って予測させ、今好きな対象（例えば現在のお気に入りバンドの将来の公演）に過剰に支払うなどの実害を生む。現在の好みを未来に投影する投影バイアスや、一側面に注目しすぎるフォーカシング・イリュージョンとは区別される。',
+    keyFigures: 'ジョルディ・クオイドバック／ダニエル・ギルバート／ティモシー・ウィルソン（Quoidbach, Gilbert & Wilson, 2013）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/abs/10.1126/science.1229294', type: 'academic', label: 'Quoidbach, Gilbert & Wilson, "The End of History Illusion," Science 339:96–98 (2013)' },
+      { url: 'https://psychology.fas.harvard.edu/publications/end-history-illusion', type: 'academic', label: 'Harvard University Department of Psychology — publication record' },
+      { url: 'https://en.wikipedia.org/wiki/End-of-history_illusion', type: 'reference', label: 'Wikipedia: End-of-history illusion' },
+    ],
+  },
+  {
+    id: 'bizlaw-labor-tribunal',
+    discipline: 'business-law',
+    title: '労働審判法（労働審判制度）',
+    statement:
+      '労働審判法（平成16年法律第45号、2004年制定、2006年4月施行）が定める労働審判制度は、裁判所が運営し、解雇や未払賃金など個人の労働者と事業主との間の個別労働関係民事紛争を、迅速・柔軟・適正に解決するための手続である。事件は、裁判官である労働審判官1名と、労働関係に関する専門的知識経験を持つ労働審判員2名（労使各側）で構成される労働審判委員会が扱い、' +
+      '原則3回以内の期日で審理する。まず話合いによる調停を試み、調停が成立しない場合は委員会が事案の実情に即した労働審判を行う。当事者が審判の告知後2週間以内に異議を申し立てると、労働審判は効力を失い、申立て時に地方裁判所へ訴えの提起があったものとみなされて通常の民事訴訟へ移行する。通常訴訟より迅速かつ安価で、集団的紛争や不当労働行為を扱う労働委員会とは別の制度である。',
+    keyFigures: '労働審判法（平成16年法律第45号、2004年制定・2006年4月制度開始）／裁判所',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.courts.go.jp/saiban/syurui/syurui_minzi/roudousinpan/index.html', type: 'government', label: '裁判所（最高裁判所）— 労働審判手続' },
+      { url: 'https://www.moj.go.jp/MINJI/roushin.html', type: 'government', label: '法務省 — 労働審判法の施行期日を定める政令について' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%8A%B4%E5%83%8D%E5%AF%A9%E5%88%A4%E6%B3%95', type: 'reference', label: 'Wikipedia — 労働審判法' },
+    ],
+  },
+  {
+    id: 'infosoc-structural-holes',
+    discipline: 'information-sociology',
+    title: '構造的空隙（ストラクチュラル・ホール）',
+    statement:
+      'ロナルド・バートが1992年の著書『Structural Holes（競争の社会的構造）』で体系化した概念。構造的空隙とは、社会ネットワーク上で互いに直接つながっていない二者または二集団の間に存在する隙間（直接の紐帯の不在）を指す。' +
+      'この隙間を橋渡しし、分断された集団同士を結ぶブローカー（仲介者）の位置にある者は、多様で重複しない新規情報への早いアクセスと、両者間の情報の流れを制御する便益を得る。こうしたブローカレッジは、良いアイデア・早期昇進・高い業績評価といった競争優位をもたらす社会関係資本の一形態である。閉じた冗長な紐帯に富むネットワーク（コールマンの閉鎖性）とは対照的であり、グラノヴェターの「弱い紐帯の強さ」を継承しつつ、紐帯の強さではなく隙間を渡る橋というネットワーク構造そのものを重視する点で、弱い紐帯論や社会関係資本論一般とは区別される。',
+    keyFigures: 'ロナルド・バート（Ronald S. Burt, 1992）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://snap.stanford.edu/class/cs224w-readings/burt00capital.pdf', type: 'academic', label: 'Burt, R. S. "Structural Holes versus Network Closure as Social Capital" (Stanford SNAP course reading)' },
+      { url: 'https://en.wikipedia.org/wiki/Structural_holes', type: 'reference', label: 'Wikipedia: Structural holes (Burt 1992; brokerage, non-redundant information, control benefits)' },
+    ],
+  },
 ];
 // Stryker restore all
