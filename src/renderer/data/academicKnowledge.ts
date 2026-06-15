@@ -11714,5 +11714,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained', type: 'academic', label: 'MIT Sloan — Deepfakes, explained' },
     ],
   },
+  {
+    id: 'econ-cobweb',
+    discipline: 'economics',
+    title: 'クモの巣理論',
+    statement:
+      'クモの巣理論（クモの巣モデル）は、生産に時間がかかる市場で価格と生産量がどう変動するかを示す動学モデルである。需要はその期の価格で決まる一方、供給は生産計画時に観測した一期前の価格に基づいて決定される（一期のタイムラグと素朴・適応的期待）。このため需給ショック後、価格と数量は時間とともに振動し、供給・需要曲線図上にクモの巣状（螺旋）の軌跡を描く。均衡へ収束するか発散するかは両曲線の傾き（価格弾力性）の相対関係で決まり、' +
+      '供給が需要より非弾力的（急）なら振動は減衰して収束し、より弾力的（緩やか）なら発散、傾きが等しければ一定振幅で循環する。農産物市場（豚循環＝ハナウの研究など）の周期的価格変動の説明に応用される。1930年ごろリッチ・ティンバーゲン・シュルツらが独立に定式化し、エゼキエルが整理、ニコラス・カルドアが1934年の論文で分析し「クモの巣の定理」という名称を与えた。',
+    keyFigures: 'ニコラス・カルドア（Nicholas Kaldor, 1934命名）／モーデカイ・エゼキエル（Mordecai Ezekiel, 1938整理）／ウンベルト・リッチ／ヤン・ティンバーゲン／ヘンリー・シュルツ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/journals/journal-of-the-history-of-economic-thought/article/cobweb-theory-market-stability-and-price-expectations/EF014F2F0378CB5CE259E12E5CDD5C2D', type: 'academic', label: 'Poitras, "Cobweb Theory, Market Stability, and Price Expectations", Journal of the History of Economic Thought (Cambridge UP)' },
+      { url: 'https://kotobank.jp/word/%E3%81%8F%E3%82%82%E3%81%AE%E5%B7%A3%E7%90%86%E8%AB%96-831121', type: 'reference', label: 'コトバンク「くもの巣理論」（平凡社 世界大百科事典ほか）' },
+      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model（傾き／弾力性による収束・発散条件）' },
+    ],
+  },
+  {
+    id: 'econ-financial-accelerator',
+    discipline: 'economics',
+    title: '金融加速度効果（フィナンシャル・アクセラレータ）',
+    statement:
+      '金融加速度効果は、ベン・バーナンキ、マーク・ガートラー、サイモン・ギルクリスト（1996年「The Financial Accelerator and the Flight to Quality」、1999年のハンドブック章）が体系化した、信用市場の摩擦を通じて経済への当初のショックが増幅・伝播するメカニズムである。情報の非対称性とエージェンシーコストにより、外部資金調達は内部資金より割高となり、その上乗せ分を「外部資金プレミアム」と呼ぶ。' +
+      'このプレミアムは借り手の純資産・バランスシートの状態に依存する。資産価格や純資産が下落すると外部資金プレミアムが上昇し、投資・支出が減少して産出が一段と落ち込み、それが再び資産価格と純資産を押し下げるという自己増幅的なフィードバック・ループが生じる。原型はバーナンキ＝ガートラー（1989年「Agency Costs, Net Worth, and Business Fluctuations」）にあり、景気循環の振幅拡大を説明する枠組みとして広く用いられている。',
+    keyFigures: 'ベン・バーナンキ／マーク・ガートラー／サイモン・ギルクリスト（1996/1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Federal Reserve Board — Bernanke, "The Financial Accelerator and the Credit Channel" (2007)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w4789/w4789.pdf', type: 'academic', label: 'Bernanke, Gertler & Gilchrist, "The Financial Accelerator and the Flight to Quality" (NBER WP 4789, 1996)' },
+      { url: 'https://faculty.wcas.northwestern.edu/lchrist/course/Czech/BGG%201999%20Handbook%20chapter.pdf', type: 'academic', label: 'Bernanke, Gertler & Gilchrist, "The Financial Accelerator in a Quantitative Business Cycle Framework" (Handbook of Macroeconomics, 1999)' },
+    ],
+  },
+  {
+    id: 'mgmt-servqual',
+    discipline: 'management',
+    title: 'SERVQUAL（サービス品質モデル）',
+    statement:
+      'SERVQUAL（サーブクオル）は、A・パラスラマン、ヴァラリー・ツァイタムル、レナード・ベリーが提唱したサービス品質の測定モデルである。1985年のJournal of Marketing論文で概念モデル（ギャップ・モデル）を示し、1988年のJournal of Retailing論文で22項目の測定尺度として体系化した。サービス品質を、顧客が抱く事前期待と、実際に受けたサービスへの知覚評価との「ギャップ（期待−知覚）」として捉える点が核心で、' +
+      '期待不一致アプローチと呼ばれる。当初の10次元を整理し、信頼性（reliability）、反応性／即応性（responsiveness）、確実性／安心感（assurance）、共感性（empathy）、有形性（tangibles）の5次元（頭文字からRATERと略称）で評価する。提供側の問題を5つのギャップで分析する「サービス品質のギャップ・モデル」とも結び付き、特にギャップ5（顧客ギャップ）が期待と知覚の差にあたる。',
+    keyFigures: 'A・パラスラマン／ヴァラリー・ツァイタムル／レナード・ベリー（1985/1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/002224298504900403', type: 'academic', label: 'Parasuraman, Zeithaml & Berry (1985) "A Conceptual Model of Service Quality and Its Implications for Future Research", Journal of Marketing 49: 41-50 (SAGE)' },
+      { url: 'https://www.semanticscholar.org/paper/SERVQUAL:-A-multiple-item-scale-for-measuring-of-Parasuraman-Zeithaml/d26a2423f00ca372b424a029ae22521299f00ede', type: 'academic', label: 'Parasuraman, Zeithaml & Berry (1988) "SERVQUAL: A Multiple-Item Scale...", Journal of Retailing 64: 12-40 (Semantic Scholar)' },
+      { url: 'https://open.ncl.ac.uk/academic-theories/24/servqual/', type: 'reference', label: 'Newcastle University — SERVQUAL academic theory reference' },
+    ],
+  },
+  {
+    id: 'human-recognition-heuristic',
+    discipline: 'human-science',
+    title: '再認ヒューリスティック',
+    statement:
+      '2つの対象をある基準（例：どちらの都市の人口が多いか）で比較する際、一方だけを再認（知っている）でき他方を知らない場合に、再認できる対象のほうが基準値が高いと推論する高速倹約型の意思決定方略。直接の知識ではなく「系統的な無知のパターン」を手がかりとして利用する点に特徴があり、再認の有無が環境を介して基準値と相関するときに機能する。' +
+      'ドイツとアメリカの学生に米独の都市の大小を判断させた研究では、自国外の都市をあまり知らない側がかえって正確に当てられることがあった。再認は部分的なときにのみ有効なため、より少ない対象しか再認できない人がより多く再認する人より正確になりうる「少ないほど良い効果（less-is-more効果）」が生じる。ゴールドスタイン&ギーゲレンツァー（2002, Psychological Review）が定式化した。',
+    keyFigures: 'ダニエル・ゴールドスタイン／ゲルト・ギーゲレンツァー（2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11863042/', type: 'academic', label: 'Goldstein & Gigerenzer (2002) Models of ecological rationality: the recognition heuristic, Psychological Review 109(1):75-90 — PubMed' },
+      { url: 'https://en.wikipedia.org/wiki/Recognition_heuristic', type: 'reference', label: 'Recognition heuristic — Wikipedia（定義・都市の大きさの例・less-is-more効果）' },
+    ],
+  },
+  {
+    id: 'bizlaw-financial-instruments-act',
+    discipline: 'business-law',
+    title: '金融商品取引法',
+    statement:
+      '金融商品取引法（昭和23年法律第25号）は、有価証券の発行・売買その他の取引を公正にし、価格形成の公正と投資者の保護を図り、国民経済の健全な発展に資することを目的とする資本市場の基本法である。1948年制定の証券取引法を、2006年に「証券取引法等の一部を改正する法律」で改組・改称し、2007年9月30日に施行された。' +
+      '従来は法律ごとに縦割りだった金融商品を横断的に規制し、有価証券届出書・有価証券報告書や四半期報告・内部統制報告などの開示制度、金融商品取引業者の登録と行為規制（適合性の原則を含む）、公開買付け（TOB）・大量保有（5%ルール）の報告制度、インサイダー取引や相場操縦などの不公正取引の禁止を柱とする。所管は金融庁。',
+    keyFigures: '金融庁／金融商品取引法（昭和23年法律第25号、2006年改組改称・2007年施行、旧・証券取引法）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsa.go.jp/policy/kinyusyohin/index.html', type: 'government', label: '金融庁「金融商品取引法について」' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000039991', type: 'government', label: '国立国会図書館 日本法令索引「金融商品取引法 昭和23年法律第25号」' },
+      { url: 'https://money-bu-jpx.com/news/article053103/', type: 'reference', label: '東証マネ部！（JPX）金融商品取引法 解説' },
+    ],
+  },
+  {
+    id: 'infosoc-spreadable-media',
+    discipline: 'information-sociology',
+    title: 'スプレッダブル・メディア',
+    statement:
+      'ヘンリー・ジェンキンス、サム・フォード、ジョシュア・グリーンが2013年の著書『スプレッダブル・メディア』で提唱した概念。ネットワーク化された参加型文化では、メディア・コンテンツは送り手による上意下達の配信ではなく、受け手が自らの目的のために能動的・社会的に共有/拡散する営みを通じて流通し価値を獲得すると説く。象徴的な標語は「広がらなければ死ぬ（If it doesn\'t spread, it\'s dead）」。' +
+      'ここで言うスプレッダビリティ（受け手がコンテンツを共有しうる技術的・文化的な潜在力）は、注目を一カ所に集めて引き留めようとする中央集権的なスティッキネス（粘着性）モデルと対比される。彼らは「ウイルス」やミームといった生物学的比喩を、受け手の主体性を否定するものとして批判し、参加型の受け手による意図的・草の根的な循環という見方を重視した。',
+    keyFigures: 'ヘンリー・ジェンキンス／サム・フォード／ジョシュア・グリーン（2013）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nyupress.org/9780814743508/spreadable-media/', type: 'academic', label: 'NYU Press — Spreadable Media: Creating Value and Meaning in a Networked Culture (Jenkins, Ford, Green, 2013)' },
+      { url: 'https://en.wikipedia.org/wiki/Spreadability', type: 'reference', label: 'Wikipedia — Spreadability（"If it doesn\'t spread, it\'s dead"／spreadability vs stickiness の定義）' },
+    ],
+  },
 ];
 // Stryker restore all
