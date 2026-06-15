@@ -12602,5 +12602,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Web3', type: 'reference', label: 'Wikipedia — Web3 (Gavin Wood 2014 coinage, criticism)' },
     ],
   },
+  {
+    id: 'econ-immiserizing-growth',
+    discipline: 'economics',
+    title: '窮乏化成長',
+    statement:
+      '経済成長、特に輸出部門に偏った成長が、かえって自国の厚生（経済的福祉）を低下させうるという逆説的な状況を指す。大国の成長が輸出財に偏ると、その増産が世界市場での供給を増やし、輸出財の世界価格を押し下げて交易条件を大幅に悪化させる。' +
+      'この交易条件の損失が増産による直接的な利益を上回ると、国民厚生はむしろ低下する。成立には、自国が世界価格に影響を与えるほど大国であること、輸出への外国需要が価格非弾力的であることなどの条件を要する。一次産品の輸出に依存する途上国に関連し、ジャグディシュ・バグワティが1958年に幾何学的に定式化した。',
+    keyFigures: 'ジャグディシュ・バグワティ（Jagdish Bhagwati, 1958）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/25/3/201/1552362', type: 'academic', label: 'Bhagwati, J.N. "Immiserizing Growth: A Geometrical Note," Review of Economic Studies 25(3), 1958, pp.201-205 (Oxford Academic)' },
+      { url: 'https://en.wikipedia.org/wiki/Immiserizing_growth', type: 'reference', label: 'Immiserizing growth — Wikipedia' },
+      { url: 'https://ecampusontario.pressbooks.pub/internationaltradefinancepart1/chapter/ch03-5/', type: 'academic', label: 'International Trade and Finance (eCampusOntario open textbook), 3.5 Economic Growth and Its Implications for Trade' },
+    ],
+  },
+  {
+    id: 'econ-linder-hypothesis',
+    discipline: 'economics',
+    title: 'リンダー仮説（重複需要理論）',
+    statement:
+      'リンダー仮説（重複需要理論）は、スタファン・バーレンスタム・リンダーが1961年の著書『An Essay on Trade and Transformation』で提唱した、需要側から国際貿易（特に工業製品の貿易）を説明する理論である。要素賦存の差に基づく供給側のヘクシャー=オリーン理論とは対照的に、リンダーは、ある国はまず自国の代表的な所得水準と嗜好を反映した国内市場向けに製品を生産し、その後にはじめて輸出が行われると考えた。' +
+      '消費者の選好は所得水準に依存するため、一人当たり所得が近い国どうしは需要構造や嗜好が似通い、重複する需要（重複需要）を持つ。その結果、所得水準の似た国どうしほど互いに活発に貿易し、貿易の多くが類似した豊かな先進国間の産業内貿易となる。これは、世界貿易の大部分が大きく異なる国の間ではなく類似した先進国間で生じるという事実を説明し、古典的な比較優位理論では説明しにくい点を補う。',
+    keyFigures: 'スタファン・バーレンスタム・リンダー（Staffan Burenstam Linder, 1961）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sites.nd.edu/jeffrey-bergstrand/files/2020/04/The-Heckscher-Ohlin-Samuelson-Model-the-Linder-Hypothesis-and-the-Determinants-of-Bilateral-Intra-Industry-Trade.pdf', type: 'academic', label: 'Bergstrand, "The Heckscher-Ohlin-Samuelson Model, The Linder Hypothesis and the Determinants of Bilateral Intra-Industry Trade" (University of Notre Dame)' },
+      { url: 'https://en.wikipedia.org/wiki/Linder_hypothesis', type: 'reference', label: 'Wikipedia: Linder hypothesis' },
+    ],
+  },
+  {
+    id: 'mgmt-value-proposition',
+    discipline: 'management',
+    title: 'バリュープロポジション',
+    statement:
+      'バリュープロポジション（価値提案）とは、特定の顧客セグメントに提供すると約束する独自の価値・便益を明確に表明したもので、なぜ顧客が競合ではなく自社の製品・サービスを選ぶべきかを示す。顧客が片付けたい「用事（ジョブ）」を満たし、その過程で生じる「悩み（ペイン）」を取り除き、期待する「利得（ゲイン）」を生み出すことで価値を届ける。' +
+      '用語はマッキンゼーのマイケル・ランニングとエドワード・マイケルズが1988年の社内論文「A Business is a Value Delivery System（事業とは価値提供システムである）」で提示し、各顧客セグメント向けの便益と価格の明快な表明と定義した。アレックス・オスターワルダーらは2014年「バリュー・プロポジション・デザイン」で価値提案キャンバスを示し、製品・ペインリリーバー・ゲインクリエーターから成るバリューマップを、ジョブ・ペイン・ゲインから成る顧客プロフィールに適合（フィット）させる。差別化され、標的顧客にとって関連性が高いことが要件となる。',
+    keyFigures: 'マイケル・ランニング＆エドワード・マイケルズ（1988, McKinsey）／アレックス・オスターワルダー（Value Proposition Canvas, 2014）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/delivering-value-to-customers', type: 'academic', label: 'McKinsey — Delivering value to customers（価値提供システム／バリュープロポジションの起源）' },
+      { url: 'https://www.strategyzer.com/library/value-proposition-design-book-summary', type: 'reference', label: 'Strategyzer — Value Proposition Design 要約（価値提案キャンバス：バリューマップと顧客プロフィールの適合）' },
+      { url: 'https://en.wikipedia.org/wiki/Value_proposition', type: 'reference', label: 'Wikipedia — Value proposition（定義・ランニング&マイケルズ1988起源）' },
+    ],
+  },
+  {
+    id: 'human-rumination',
+    discipline: 'human-science',
+    title: '反芻思考',
+    statement:
+      '反芻思考（rumination）とは、自分のネガティブな感情や苦痛、およびその原因・意味・結果に対して、能動的な問題解決へ進まないまま反復的・受動的に注意を向け続ける不適応的な思考様式を指す。スーザン・ノレン=ホークセマが1991年に提唱した反応スタイル理論（Response Styles Theory）の中核概念であり、抑うつ気分を長引かせ悪化させるとともに、うつ病エピソードや不安の発症・重症度・持続を予測するとされる。' +
+      '反芻は、洞察を得ようとする適応的な内省（reflection）や、より未来志向の心配（worry）とは区別される。測定には反芻反応尺度（Ruminative Responses Scale, RRS）が広く用いられ、ブルーディング（brooding）と内省の二成分が区別される。女性は男性より反芻しやすく、この傾向がうつ病有病率の性差の一因になりうると指摘されている。',
+    keyFigures: 'スーザン・ノレン=ホークセマ（Susan Nolen-Hoeksema, 1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.1745-6924.2008.00088.x', type: 'academic', label: 'Nolen-Hoeksema, Wisco & Lyubomirsky (2008) "Rethinking Rumination", Perspectives on Psychological Science' },
+      { url: 'https://dictionary.apa.org/rumination', type: 'reference', label: 'APA Dictionary of Psychology — "rumination"' },
+      { url: 'https://websites.umich.edu/~gonzo/papers/treynor-rumination.pdf', type: 'academic', label: 'Treynor, Gonzalez & Nolen-Hoeksema (2003) "Rumination Reconsidered: A Psychometric Analysis" (RRS / brooding vs. reflection)' },
+    ],
+  },
+  {
+    id: 'bizlaw-bills-act',
+    discipline: 'business-law',
+    title: '手形法',
+    statement:
+      '手形法（昭和7年法律第20号、1932年制定・1934年施行）は、約束手形および為替手形を規律する法律で、1930年のジュネーヴ統一手形法を国内法化し、国際的な統一規則に適合させたものである。手形は一定の金額の無条件の支払約束・支払委託を表章する有価証券で、厳格な手形要件を備える必要があり、' +
+      '権利内容が証券の文言で定まる文言証券性や、原因関係から切り離される無因性を特色とする。譲渡は裏書により行われ、善意取得や人的抗弁の切断によって取引の安全と流通性が強く保護される。小切手は別途、小切手法（昭和8年法律第57号）が規律する。近年は電子記録債権（でんさい）への移行が進み、政府方針により紙の約束手形は2026年度末を目途に廃止される流れにある。',
+    keyFigures: '手形法（昭和7年法律第20号、1932年制定／ジュネーヴ統一手形法）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000023291&current=-1', type: 'government', label: '国立国会図書館 日本法令索引「手形法（昭和7年7月15日法律第20号）」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%89%8B%E5%BD%A2%E6%B3%95', type: 'reference', label: 'Wikipedia「手形法」（ジュネーヴ統一手形法の国内法化・1932制定）' },
+      { url: 'https://kotobank.jp/word/%E6%89%8B%E5%BD%A2%E6%8A%97%E5%BC%81-100728', type: 'reference', label: 'コトバンク「手形抗弁」（人的抗弁の切断・善意取得）' },
+    ],
+  },
+  {
+    id: 'infosoc-microcelebrity',
+    discipline: 'information-sociology',
+    title: 'マイクロセレブリティ',
+    statement:
+      'テレサ・センフトが2008年の著書『Camgirls』で提唱し、アリス・マーウィックが発展させた概念。自分自身を観客（フォロワー）に消費される公的ペルソナ／ブランドとして扱い、動画・ブログ・SNSを用いて注目を「増幅」し、フォロワーとの親密さの感覚を構築・維持する自己呈示の様式を指す。' +
+      '重要なのは、名声の「水準」ではなく一連の実践・技法として捉えられる点である。すなわち、私的・舞台裏に見える情報の戦略的な自己開示、入念に演出されつつ「本物らしさ」を装った自己の呈示、そしてフォロワーを単なる友人ではなくファンとして扱い継続的な交流を通じて育成することである。注目経済や自己ブランド化、インフルエンサー文化、パラソーシャルな関係、公私やアマ／プロの境界の融解と密接に結びつく。マーウィックとボイドはこれをTwitter上の有名性の実践として分析した。',
+    keyFigures: 'テレサ・センフト（Theresa Senft, 2008）／アリス・マーウィック（Alice Marwick）／ダナ・ボイド（danah boyd）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1354856510394539', type: 'academic', label: 'Marwick & boyd (2011) "To See and Be Seen: Celebrity Practice on Twitter", Convergence 17(2) — SAGE peer-reviewed' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118321607.ch22', type: 'reference', label: 'Senft, T. M. "Microcelebrity and the Branded Self", A Companion to New Media Dynamics, Wiley-Blackwell' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444810365313', type: 'academic', label: 'Marwick & boyd (2011) "I Tweet Honestly, I Tweet Passionately", New Media & Society 13(1)' },
+    ],
+  },
 ];
 // Stryker restore all
