@@ -17144,5 +17144,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cfr.org/blog/internet-fragmented-what-should-united-states-do-now', type: 'reference', label: 'Council on Foreign Relations — The Internet Is Fragmented' },
     ],
   },
+  {
+    id: 'econ-sen-paradox',
+    discipline: 'economics',
+    title: 'センのリベラル・パラドックス（パレート派リベラルの不可能性）',
+    statement:
+      'アマルティア・セン1970年「パレート派リベラルの不可能性」（Journal of Political Economy）が示した社会的選択の不可能性定理。個人選好を社会的順序に集計するルールは、次の3つの穏当な条件を同時には満たせない。(1)定義域の非限定（U）＝論理的に可能なあらゆる個人選好の組に対応する。(2)（弱）パレート原理（P）＝全員がxをyより好めば社会もxをyより上位に順序づける。' +
+      '(3)最小限の自由主義（L）＝少なくとも2人の各個人が、自分の私的事項に関する少なくとも1つの選択対について社会的に決定的（その人の選好を社会が尊重する）。これら3条件は両立せず、社会的選好に循環が生じる。『チャタレイ夫人の恋人』を誰が読むか（堅物と好色家）の例で知られる。個人の権利・自由とパレート原理（厚生主義）の根本的緊張を示す点で、独裁者を導くアローの不可能性定理とは区別される。',
+    keyFigures: 'アマルティア・セン（Amartya Sen, 1970）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/259614', type: 'academic', label: 'Amartya Sen, "The Impossibility of a Paretian Liberal," Journal of Political Economy 78(1), 1970, pp. 152–157' },
+      { url: 'https://plato.stanford.edu/entries/social-choice/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Social Choice Theory (Sen\'s liberal paradox / Lady Chatterley illustration)' },
+    ],
+  },
+  {
+    id: 'econ-compensating-differentials',
+    discipline: 'economics',
+    title: '補償賃金格差',
+    statement:
+      'アダム・スミスが1776年『国富論』第1編第10章で論じた均等化格差の考えに遡り、シャーウィン・ローゼン（1974年）がヘドニック賃金理論として定式化した労働経済学の概念。競争的な労働市場では、職業間の賃金差が、仕事の非金銭的特性（快適さや不快さ＝アメニティ／ディスアメニティ）への補償を部分的に反映するとされる。' +
+      '不快・危険・不衛生・不安定など望ましくない仕事ほど、人を集めるためには他の条件が等しければ高い賃金（補償的＝均等化格差）を払う必要があり、快適で望ましい仕事はより低い賃金でよい。その結果、限界では諸職業の純便益（net advantages）が均等化へ向かう。統計的生命価値（VSL）は、致死的労働災害リスクの受容に労働者が要する賃金プレミアムから推計され、本理論の代表的応用である。職業の特性・アメニティに着目する点で、技能や教育への投資を扱う人的資本とは区別される。',
+    keyFigures: 'アダム・スミス（Adam Smith, 1776）／シャーウィン・ローゼン（Sherwin Rosen, 1974/1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ocw.mit.edu/courses/14-662-labor-economics-ii-spring-2015/a6e8b7d9c784307c3b7950297221f2d5_MIT14_662S15_lecnotes16.pdf', type: 'academic', label: 'MIT OpenCourseWare, Labor Economics II — Equalizing Wage Differentials (lecture notes)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w9487/w9487.pdf', type: 'academic', label: 'Viscusi & Aldy (2003), The Value of a Statistical Life: A Critical Review of Market Estimates, NBER WP 9487' },
+      { url: 'https://en.wikipedia.org/wiki/Compensating_differential', type: 'reference', label: 'Wikipedia — Compensating differential (Adam Smith 1776; Rosen 1974)' },
+    ],
+  },
+  {
+    id: 'mgmt-star-model',
+    discipline: 'management',
+    title: 'スター・モデル（ガルブレイス）',
+    statement:
+      'ジェイ・ガルブレイス（Jay R. Galbraith）が提唱した組織デザインの枠組み。組織の有効性は、経営者が制御できる5つの設計方針の整合（フィット）に依存するとし、星の5つの頂点として描かれる。すなわち(1)戦略（方向性＝目標・価値・使命を定め、組織形態を選ぶ基準となる）、(2)構造（意思決定の権限の配置＝分業・部門化・権限分配で、機能別・事業部制・マトリクス等）、' +
+      '(3)プロセス（情報と意思決定の流れ＝横断的・垂直的で、情報技術に応答する）、(4)報酬（報酬・インセンティブにより動機づけ、従業員を目標と整合させる）、(5)人材（採用・選抜・育成等のHR施策で必要な能力と志向を築く）。これら5要素は相互に整合し戦略から導かれねばならず、不整合は業績問題を生む。組織設計で広く用いられ、構造のみを論じるマッキンゼー7Sやミンツバーグの分類とは区別される。',
+    keyFigures: 'ジェイ・ガルブレイス（Jay R. Galbraith）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jaygalbraith.com/wp-content/uploads/2024/03/StarModel.pdf', type: 'reference', label: 'Galbraith Management Consultants — THE STAR MODEL™（提唱者本人の機関による一次資料）' },
+      { url: 'https://strategicmanagementinsight.com/tools/galbraiths-star-model-explained/', type: 'reference', label: "Strategic Management Insight — Galbraith's Star Model Explained" },
+      { url: 'https://www.toolshero.com/management/jay-galbraiths-star-model/', type: 'reference', label: "Toolshero — Jay Galbraith's Star Model" },
+    ],
+  },
+  {
+    id: 'human-availability-cascade',
+    discipline: 'human-science',
+    title: '利用可能性カスケード',
+    statement:
+      'ティムール・クラン&キャス・サンスティーンが1999年「Availability Cascades and Risk Regulation」（Stanford Law Review）で論じた、集合的信念形成の自己強化的過程。ある信念や考えが公的言説で繰り返し語られ「利用可能性」を増すほど、もっともらしく見え、人々がそれを信じて更に拡散し、増幅されていく連鎖反応を指す。トヴェルスキー&カーネマンの利用可能性ヒューリスティックと結びつく。' +
+      '駆動機構は二つの結合である。多くの人が信じているのだから真だろうと他者の見解から推論する「情報的カスケード」と、社会的承認を得て非難を避けるため同調・沈黙する「評判的カスケード」が重なる。活動家やメディアなど「利用可能性アントレプレナー」が自らの目的のためカスケードを誘発・操作しうる。結果として特定リスクへの過大な不安や注目が生じ、他リスクは軽視され、リスク規制や政策が歪む。利用可能性ヒューリスティックや情報カスケード単独とは区別される、リスク認知に適用された結合的社会機構である。',
+    keyFigures: 'ティムール・クラン／キャス・サンスティーン（Kuran & Sunstein, 1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=138144', type: 'academic', label: 'Kuran & Sunstein, "Availability Cascades and Risk Regulation," Stanford Law Review 51(4), 1999 (SSRN)' },
+      { url: 'https://en.wikipedia.org/wiki/Availability_cascade', type: 'reference', label: 'Wikipedia: Availability cascade' },
+    ],
+  },
+  {
+    id: 'bizlaw-local-autonomy',
+    discipline: 'business-law',
+    title: '地方自治法',
+    statement:
+      '地方自治法は昭和22年（1947年）に制定され、日本国憲法と同日の1947年5月3日に施行された、地方自治に関する基本法である。憲法第8章を受けて「地方自治の本旨」、すなわち国から独立した団体自治と住民による住民自治を具体化し、地方公共団体の組織と運営の大綱を定める。' +
+      '地方公共団体は、都道府県と市町村からなる普通地方公共団体と、特別区や一部事務組合等の特別地方公共団体に区分される。住民が直接選ぶ長（知事・市町村長）と議会による二元代表制を採り、不信任決議と議会解散権で抑制均衡を図る。条例制定権を認め、条例の制定改廃・監査・議会解散・解職（リコール）など住民の直接請求を保障する。2000年施行の地方分権一括法で機関委任事務を廃止した。総務省所管。',
+    keyFigures: '地方自治法（昭和22年法律第67号、1947年制定・施行）／総務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000067/', type: 'government', label: 'e-Gov法令検索 地方自治法（昭和二十二年法律第六十七号）' },
+      { url: 'https://www.archives.go.jp/ayumi/kobetsu/s22_1947_04.html', type: 'government', label: '国立公文書館 日本のあゆみ「地方自治法が制定される」' },
+      { url: 'https://www.soumu.go.jp/main_content/000032768.pdf', type: 'government', label: '総務省 地方分権一括法による地方自治法改正（機関委任事務の廃止）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-dualism',
+    discipline: 'information-sociology',
+    title: 'デジタル・デュアリズム',
+    statement:
+      '社会学者ネイサン・ユルゲンソンが2011年にCyborgologyブログで提示した概念。デジタル・デュアリズムとは、オンライン／仮想とオフライン／物理を別個に切り離された現実とみなす見方、すなわち「デジタルは仮想で物理こそが現実」と捉え、サイバースペースを「リアルな生活（IRL）」とは異なる空間として扱う考え方を指す。ユルゲンソンはこれを誤った二元論として批判し、' +
+      '代わりにデジタルと物理が相互に浸透し一つに織り合わさる「拡張現実（augmented reality）」を主張した。オンラインとオフラインの生は同じ一つの現実を構成し合い、互いを形づくる。彼はまた、オフラインこそ本物・本来的だと美化する「IRLフェティッシュ」を批判した。情報哲学者フロリディの「オンライフ」と問題意識を共有するが、両者は区別される。',
+    keyFigures: 'ネイサン・ユルゲンソン（Nathan Jurgenson, 2011, Cyborgology）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mdpi.com/1999-5903/4/1/83', type: 'academic', label: 'Jurgenson, "When Atoms Meet Bits", Future Internet (MDPI, 査読論文, 2012)' },
+      { url: 'https://thesocietypages.org/cyborgology/2011/02/24/digital-dualism-versus-augmented-reality/', type: 'reference', label: 'Jurgenson, "Digital Dualism versus Augmented Reality", Cyborgology (一次資料, 2011)' },
+      { url: 'https://thenewinquiry.com/the-irl-fetish/', type: 'media', label: 'Jurgenson, "The IRL Fetish", The New Inquiry (2012)' },
+    ],
+  },
 ];
 // Stryker restore all
