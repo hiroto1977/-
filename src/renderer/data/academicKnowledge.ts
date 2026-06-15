@@ -13762,5 +13762,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012), Information, Communication & Society 15(5)' },
     ],
   },
+  {
+    id: 'econ-sudden-stop',
+    discipline: 'economics',
+    title: 'サドンストップ（資本流入の急停止）',
+    statement:
+      '新興国などへの民間純資本流入が突然かつ大幅に反転・停止する現象を指す。国内ファンダメンタルズの悪化よりも、投資家の信認喪失や他国からの伝染（コンテイジョン）が引き金になることが多い。流入の急停止は経常収支の急反転（赤字から黒字へ）、通貨の急減価、内需・生産・民間信用の急収縮、資産価格の暴落や金融危機を強いる。この概念はギジェルモ・カルボの1998年論文「資本フローと資本市場危機：サドンストップの単純な経済学」で理論的に展開された。' +
+      '名称は、メキシコ危機に関するルディガー・ドーンブッシュらの研究へのある銀行家の評「人を殺すのは速度ではなく急停止だ（It is not speed that kills, it is the sudden stop）」に由来する。メキシコ通貨危機（1994年）やアジア通貨危機（1997年）など、新興国の金融危機を理解する上で中心的な概念となっている。',
+    keyFigures: 'ギジェルモ・カルボ（Guillermo Calvo, 1998）／ルディガー・ドーンブッシュ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ucema.edu.ar/publicaciones/download/volume1/calvo.pdf', type: 'academic', label: 'Calvo, G. A. (1998) "Capital Flows and Capital-Market Crises: The Simple Economics of Sudden Stops", Journal of Applied Economics 1(1): 35–54 (UCEMA)' },
+      { url: 'https://en.wikipedia.org/wiki/Sudden_stop_(economics)', type: 'reference', label: 'Wikipedia: Sudden stop (economics)' },
+      { url: 'https://www.nber.org/papers/w11170', type: 'academic', label: 'NBER WP 11170: Capital Controls, Sudden Stops and Current Account Reversals' },
+    ],
+  },
+  {
+    id: 'econ-original-sin',
+    discipline: 'economics',
+    title: '原罪仮説（国際金融）',
+    statement:
+      '原罪（オリジナル・シン）仮説は、バリー・アイケングリーンとリカルド・ハウスマンが1999年に提唱した国際金融の概念で、新興国・途上国の多くが自国通貨建てで対外借入できない（さらに長期では国内ですら自国通貨建て借入が難しい）状況を指す。対外債務がドルなど外貨建てである一方、資産や収入は自国通貨建てのため、国民経済のバランスシートに通貨ミスマッチが生じる。' +
+      'そのため自国通貨が減価すると、債務の自国通貨換算額が膨らんでバランスシートを悪化させ、金融を脆弱化させる。結果として通貨減価が収縮的（コントラクショナリー）に作用し、危機を深刻化させやすい。これは新興国が変動相場を避けようとする「フィア・オブ・フローティング（変動相場への恐れ）」や、その対外的脆弱性を説明する。後にウーゴ・パニッツァを加えた研究で実証・精緻化された。',
+    keyFigures: 'バリー・アイケングリーン／リカルド・ハウスマン（1999）／ウーゴ・パニッツァ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w10036/w10036.pdf', type: 'academic', label: 'Eichengreen, Hausmann & Panizza, "Currency Mismatches, Debt Intolerance and Original Sin" (NBER Working Paper 10036)' },
+      { url: 'https://en.wikipedia.org/wiki/Original_sin_(economics)', type: 'reference', label: 'Wikipedia: Original sin (economics)' },
+    ],
+  },
+  {
+    id: 'mgmt-value-co-creation',
+    discipline: 'management',
+    title: '価値共創',
+    statement:
+      '価値共創（value co-creation）は、価値を企業が製品に埋め込み受動的な消費者へ交換するという従来の企業中心の見方を退け、価値は企業と顧客（さらに他のアクター）の相互作用を通じて共同で創造されるとする考え方である。C・K・プラハラードとベンカト・ラマスワミは2004年の著書および論文「Co-creation experiences」で、価値の源泉が製品から個別化された「共創経験」へ移ると論じ、' +
+      '情報武装し能動化した顧客が企業とともに価値を生むとした。彼らは相互作用の構成要素として、対話（Dialogue）・アクセス（Access）・リスク評価（Risk assessment）・透明性（Transparency）から成るDARTモデルを提唱した。同年にバーゴとラッシュが提示したサービス・ドミナント・ロジック（顧客は常に価値の共創者である）と密接に関連するが、起源を異にする独立した概念である。',
+    keyFigures: 'C・K・プラハラード／ベンカト・ラマスワミ（2004）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/dir.20015', type: 'academic', label: 'Prahalad & Ramaswamy (2004) "Co-creation experiences: The next practice in value creation", Journal of Interactive Marketing 18(3):5-14 (Wiley)' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/10696679.2022.2120013', type: 'academic', label: 'Taylor & Francis 査読論文: co-creation (DART) の4要素 Dialogue/Access/Risk-assessment/Transparency を Prahalad & Ramaswamy に帰属' },
+      { url: 'https://iss.ndl.go.jp/books/R100000002-I000007561849-00', type: 'government', label: '国立国会図書館サーチ：邦訳『価値共創の未来へ―顧客と企業のco-creation』(2004)' },
+    ],
+  },
+  {
+    id: 'human-terror-management',
+    discipline: 'human-science',
+    title: '存在脅威管理理論（恐怖管理理論）',
+    statement:
+      '人間は象徴的思考により自らの死の不可避性を自覚しうるため、生存本能とこの死の自覚との葛藤から、潜在的に圧倒的な実存的恐怖が生じうるとする社会心理学の理論。この恐怖は、意味・秩序・文字どおりまたは象徴的な不死の約束を与える「文化的世界観」と、その世界観の基準に見合って生きることで得られる「自尊心」という二つの不安緩衝装置によって管理・軽減されるとされる。' +
+      '中核的な実験パラダイムが「死の顕在性（モータリティ・セイリエンス）仮説」で、人に死を意識させると、自らの文化的世界観の防衛や内集団びいきが強まり、価値観を脅かす外集団や違反者への侮蔑・処罰が増大し、自尊心の追求も高まると予測する。グリーンバーグ、ピシュチンスキー、ソロモンが1973年の文化人類学者アーネスト・ベッカー『死の拒絶』に依拠して1986年に定式化した。',
+    keyFigures: 'ジェフ・グリーンバーグ／トム・ピシュチンスキー／シェルドン・ソロモン（1986）／アーネスト・ベッカー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.csueastbay.edu/psychology/files/docs/articles/terror-management-theory.pdf', type: 'academic', label: 'Rosenblatt, Greenberg, Solomon, Pyszczynski & Lyon, "Evidence For Terror Management Theory: I," J. Personality and Social Psychology (CSU East Bay)' },
+      { url: 'https://www.ernestbecker.org/terror-management-theory', type: 'reference', label: 'Ernest Becker Foundation — Terror Management Theory' },
+      { url: 'https://en.wikipedia.org/wiki/Terror_management_theory', type: 'reference', label: 'Wikipedia — Terror management theory' },
+    ],
+  },
+  {
+    id: 'bizlaw-civil-preservation',
+    discipline: 'business-law',
+    title: '民事保全法',
+    statement:
+      '民事保全法（平成元年法律第91号、1989年公布・1991年1月1日施行）は、訴訟提起前または係属中に、将来の強制執行の確保や現状維持のため裁判所が命じる暫定的な保全措置（民事保全）を定める法律。従来は旧民事訴訟法（仮差押え・仮処分命令）と民事執行法（保全執行）に分散していた規定を、民事執行法とともに独立した法典として分離・統合した。保全命令は3類型に分かれる。' +
+      '①仮差押えは金銭債権を保全するため債務者の財産処分を禁じ、②係争物に関する仮処分は特定物の処分禁止・占有移転禁止等で将来の執行を保全し、③仮の地位を定める仮処分は争いある権利関係につき著しい損害・急迫な危険を避ける暫定的地位（従業員の仮の地位確認等）を定める。手続は暫定性・緊急性を備え、特に係争物の仮処分等では債務者に事前告知せず行う密行性が要請される。被保全権利と保全の必要性は疎明で足り、原則として申立人は担保（保証金）の供託を要する。',
+    keyFigures: '民事保全法（平成元年法律第91号、1989年公布・1991年施行）／仮差押え／係争物に関する仮処分／仮の地位を定める仮処分',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.courts.go.jp/saiban/syurui/syurui_minzi/minzi_25_15/index.html', type: 'government', label: '裁判所（日本国裁判所）民事保全 解説' },
+      { url: 'https://www.moj.go.jp/content/000032474.pdf', type: 'government', label: '法務省「民事保全に関する頻出質問集」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%B0%91%E4%BA%8B%E4%BF%9D%E5%85%A8%E6%B3%95', type: 'reference', label: 'ウィキペディア「民事保全法」' },
+    ],
+  },
+  {
+    id: 'infosoc-dataveillance',
+    discipline: 'information-sociology',
+    title: 'データヴェイランス（データ監視）',
+    statement:
+      'データヴェイランスとは、ロジャー・クラークが1988年の論文「Information Technology and Dataveillance」（Communications of the ACM, 31巻5号, 498–512頁）で確立した概念で、「data（データ）」と「surveillance（監視）」を合成した造語である。個人データや情報システム（記録）を体系的に用いて、一人または複数の人々の行動や通信を調査・監視することを指し、従来の物理的・視覚的な監視と対比される。' +
+      'クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。',
+    keyFigures: 'ロジャー・クラーク（Roger Clarke, 1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/42411.42413', type: 'academic', label: 'Roger A. Clarke, "Information Technology and Dataveillance," Communications of the ACM 31(5):498–512 (1988)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590', type: 'reference', label: 'Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）' },
+    ],
+  },
 ];
 // Stryker restore all
