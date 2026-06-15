@@ -8919,5 +8919,677 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context collapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）' },
     ],
   },
+  {
+    id: 'econ-vickrey-auction',
+    discipline: 'economics',
+    title: 'ヴィックリー・オークション（第二価格入札）',
+    statement:
+      'ヴィックリー・オークションは、各入札者が他者の入札を見ずに札を投じる封印入札（sealed-bid）で、最高額を付けた者が落札するが、支払額は2番目に高い入札額（second price）となる方式である。ウィリアム・ヴィックリーが1961年の論文「Counterspeculation, Auctions, and Competitive Sealed Tenders」で分析し、彼は非対称情報下の誘因理論への貢献等で1996年ノーベル経済学賞を受賞した。' +
+      '最大の特徴は、支払いが自分の入札ではなく他者の入札で決まるため、真の評価額をそのまま入れる正直入札が（弱）支配戦略となる耐戦略性（strategy-proof）にある。独立私的価値の対称環境では、期待収入が第一価格・イングリッシュ・ダッチ各オークションと等しくなる（収入同値定理）。競り上げ式イングリッシュ・オークションと戦略的に同値で、複数財への一般化がVCG（Vickrey–Clarke–Groves）メカニズムである。',
+    keyFigures:
+      'ウィリアム・ヴィックリー（William Vickrey, 1914–1996, 1996年ノーベル経済学賞）／エドワード・クラーク（Edward Clarke）／セオドア・グローブス（Theodore Groves）／正直入札が支配戦略・収入同値定理・VCGへの一般化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.1961.tb02789.x', type: 'academic', label: 'Vickrey, W. (1961) “Counterspeculation, Auctions, and Competitive Sealed Tenders”, The Journal of Finance 16(1): 8–37 (Wiley)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/vickrey/facts/', type: 'reference', label: 'NobelPrize.org — Sveriges Riksbank Prize in Economic Sciences 1996 (William Vickrey)' },
+      { url: 'https://en.wikipedia.org/wiki/Vickrey_auction', type: 'reference', label: 'Wikipedia — Vickrey auction（メカニズム・支配戦略・英国式との戦略的同値・収入同値）' },
+    ],
+  },
+  {
+    id: 'mgmt-path-goal-theory',
+    discipline: 'management',
+    title: 'パス・ゴール理論（リーダーシップ）',
+    statement:
+      'リーダーの役割を、部下が目標（ゴール）を達成するための経路（パス）を明確にし、障害を除去し、必要な支援や報酬を与えて部下の動機づけ・満足・業績を高めることと捉える、リーダーシップの条件適合（コンティンジェンシー）理論。ロバート・ハウスが1971年に提唱し（"A Path-Goal Theory of Leader Effectiveness", Administrative Science Quarterly）、1996年に再定式化した。動機づけの期待理論（expectancy theory）に基礎を置く。' +
+      'リーダーは状況に応じて4つの行動——指示型（directive）・支援型（supportive）・参加型（participative）・達成志向型（achievement-oriented）——を使い分けるべきとする。リーダー行動が部下の動機づけに与える効果は、部下の特性（統制の所在・経験・能力）と環境要因（課題構造・公式権限体系・作業集団）が調整（モデレート）する。フィードラーのコンティンジェンシーモデルやハーシー＆ブランチャードのSL理論と並ぶ状況適合理論である。',
+    keyFigures:
+      'ロバート・ハウス（Robert J. House, 1971提唱・1996再定式化）／ヴィクター・ブルーム（Victor H. Vroom, 期待理論の基礎）／4行動：指示型・支援型・参加型・達成志向型',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=EJ045452', type: 'academic', label: 'House, R. J. (1971) “A Path Goal Theory of Leader Effectiveness”, Administrative Science Quarterly 16, 321-338（ERIC EJ045452）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1048984396900247', type: 'academic', label: 'House, R. J. (1996) “Path-goal theory of leadership: Lessons, legacy, and a reformulated theory”, The Leadership Quarterly 7(3), 323-352' },
+      { url: 'https://en.wikipedia.org/wiki/Path%E2%80%93goal_theory', type: 'reference', label: 'Wikipedia「Path–goal theory」（1971提唱・1996改訂、期待理論基礎、コンティンジェンシー変数）' },
+    ],
+  },
+  {
+    id: 'human-door-in-the-face',
+    discipline: 'human-science',
+    title: 'ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）',
+    statement:
+      'まず相手がほぼ確実に断る過大な要請を提示し、拒否された後に本命のより小さな要請を出すと、最初から小さな要請を単独で出すより承諾されやすくなる説得技法・現象である。' +
+      'ロバート・チャルディーニらが1975年の論文（Journal of Personality and Social Psychology）で実証し、学生に2年間の非行少年カウンセリングのボランティアを依頼して断られた後に一日の動物園引率を依頼すると承諾率が約50%に達し、後者を単独で頼んだ統制群（約17%）を大きく上回った。説明原理は、要求引き下げを譲歩とみなし応じる義務を感じる返報性（譲歩の返報性）、大要求の後で小要求が相対的に小さく見える知覚的コントラスト、拒否による罪悪感・自己呈示である。小→大と段階を踏むフット・イン・ザ・ドア（一貫性に基づく）とは対照的な大→小の技法である点が重要。',
+    keyFigures:
+      'ロバート・B・チャルディーニ（Robert B. Cialdini, 1975, JPSP）／譲歩の返報性・知覚的コントラスト・罪悪感／フット・イン・ザ・ドア（段階的要請法）とは対照（大→小 vs 小→大）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Influence_Compliance/Cialdini.et.al.Reciprocal.Concessions.Procedure.1975.article.pdf', type: 'academic', label: 'Cialdini et al. (1975) “Reciprocal Concessions Procedure for Inducing Compliance: The Door-in-the-Face Technique”, JPSP 31(2), 206-215（原典・MITホスト全文）' },
+      { url: 'https://www.ebsco.com/research-starters/psychology/door-face-technique', type: 'reference', label: 'EBSCO Research Starters: Psychology — Door-in-the-face technique（説明原理・FITDとの区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Door-in-the-face_technique', type: 'reference', label: 'Wikipedia — Door-in-the-face technique（実験数値）' },
+    ],
+  },
+  {
+    id: 'human-decision-fatigue',
+    discipline: 'human-science',
+    title: '決定疲労（decision fatigue）',
+    statement:
+      '決定疲労とは、人が次々と意思決定を重ねるうちに判断の質が低下し、決定そのものを避けて現状維持やデフォルト選択に流れたり、衝動的・短絡的な選択に傾いたりするとされる現象である。ロイ・バウマイスターらの自我消耗（ego depletion）研究の文脈で論じられ、意志力・自己制御を使うほど枯渇する有限の資源とみなす自己制御資源モデルと関連づけられる。' +
+      '代表例として、ダンジガーらの2011年PNAS論文は、イスラエルの仮釈放審査で休憩・食事直後に許可率が高く、審理が進むと低下して却下（デフォルト）に流れたと報告した。ただし同研究には案件順序の交絡など方法論的批判があり、また自我消耗効果自体も大規模事前登録再現研究（Hagger et al. 2016）で効果が確認されず、効果量や再現性をめぐる議論が続いている点に留意が必要である。応用として、重要な決定を午前に行う・選択肢を絞る・デフォルト設計（ナッジ）などが挙げられる。',
+    keyFigures:
+      'ロイ・バウマイスター（Roy Baumeister, 自我消耗）／Shai Danziger・Jonathan Levav・Liora Avnaim-Pesso（2011 PNAS 仮釈放研究）／Martin Hagger（2016 再現研究）／再現性論争あり',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Decision_fatigue', type: 'reference', label: 'Wikipedia「Decision fatigue」— 定義・自我消耗との関係・Danziger研究' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.1018033108', type: 'academic', label: 'Danziger, Levav & Avnaim-Pesso (2011) “Extraneous factors in judicial decisions”, PNAS 108(15):6889–6892' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1745691616652873', type: 'academic', label: 'Hagger et al. (2016) “A Multilab Preregistered Replication of the Ego-Depletion Effect”, Perspectives on Psychological Science（再現性論争）' },
+    ],
+  },
+  {
+    id: 'bizlaw-earnest-money',
+    discipline: 'business-law',
+    title: '手付（民法557条）',
+    statement:
+      '手付とは、売買等の契約締結に際し当事者の一方から相手方へ交付される金銭その他の有価物であり、機能により証約手付（契約成立の証拠）・解約手付（解除権を留保する手付）・違約手付（債務不履行時の違約罰または損害賠償の予定）に分かれる。' +
+      '民法557条が定めるのは解約手付の効果で、相手方が契約の履行に着手するまでは、買主は手付を放棄し（手付流し）、売主はその倍額を現実に提供して（手付倍返し）、契約を解除できる。2017年改正（2020年施行）で「償還」が「現実に提供して」に改められ判例法理が明文化された。「履行の着手」は相手方の着手を基準とし（自己が着手していても相手方が未着手なら解除可とするのが判例・通説）、解除に債務不履行は不要で、557条2項が545条4項を排除するため別途の損害賠償は生じない。実務では不動産売買で代金の5〜10%程度の手付が広く用いられる。',
+    keyFigures:
+      '民法557条1項：相手方の履行着手前は買主は手付放棄・売主は倍額の現実の提供で解除可（債務不履行・帰責事由不要）／557条2項：545条4項を排除し手付解除では損害賠償不可／「履行の着手」は相手方基準（判例・通説）／2017年改正で「償還」→「現実に提供」明文化／三種＝証約・解約・違約手付（557条は解約手付）／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）第557条 手付' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第557条', type: 'reference', label: 'Wikibooks 民法第557条（手付の種類・解約手付・履行の着手・545条4項排除）' },
+      { url: 'https://tek-law.jp/civil-code/claims/contracts/sale/article-557/', type: 'media', label: '弁護士解説 民法第557条（手付）— 解約手付・現実の提供・損害賠償不発生' },
+    ],
+  },
+  {
+    id: 'infosoc-slacktivism',
+    discipline: 'information-sociology',
+    title: 'スラックティビズム',
+    statement:
+      'スラックティビズム（slacktivism、slacker＝怠け者＋activism の混成語。clicktivism とも）とは、SNSの「いいね」・シェア・ハッシュタグ拡散・オンライン署名・プロフィール画像変更など、ごく低コスト・低リスクで行える象徴的な社会的・政治的支援行動を指す概念で、しばしば批判的に用いられる。' +
+      '本人は社会貢献したと感じる（feel-good）一方、現実の政治的・社会的インパクトは乏しく、寄付・デモ・投票といった本格的関与の代替になる（置換効果・モラルライセンシング）と批判される。Kristofferson, White & Peloza（2014, Journal of Consumer Research）は、公的に観察されるトークン的支援は後続の意味ある支援につながりにくいが、私的な支援は後続関与を高めうると報告した。Morozov が『The Net Delusion』で批判的に論じ普及させた。一方、低コスト参加が動員の入口や規範変化となる肯定論もある（例：アイス・バケツ・チャレンジ、#BlackLivesMatter・#MeToo）。',
+    keyFigures:
+      'Kirk Kristofferson／Katherine White／John Peloza（2014, JCR）／Evgeny Morozov（『The Net Delusion』批判）／clicktivism・モラルライセンシング・置換効果 vs 動員の入口',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/jcr/article-abstract/40/6/1149/2907521', type: 'academic', label: 'Kristofferson, White & Peloza (2014) “The Nature of Slacktivism”, Journal of Consumer Research 40(6):1149' },
+      { url: 'https://link.springer.com/10.1007/978-3-031-32257-0_50-1', type: 'reference', label: 'Springer Nature, Encyclopedia of Diversity, Equity, Inclusion and Spirituality — “Slacktivism”' },
+      { url: 'https://en.wikipedia.org/wiki/Slacktivism', type: 'reference', label: 'Wikipedia — Slacktivism（定義・語源・批判と擁護の両論）' },
+    ],
+  },
+  {
+    id: 'econ-stackelberg-competition',
+    discipline: 'economics',
+    title: 'シュタッケルベルク競争（先導者・追随者モデル）',
+    statement:
+      'シュタッケルベルク競争は、寡占市場で企業が生産「数量」を戦略変数とし、意思決定に時間的な先後（逐次手番）がある寡占モデルである。先導者（リーダー）が先に生産量を決定し、追随者（フォロワー）はそれを観察したうえで自らの最適生産量を選ぶ。ドイツの経済学者ハインリヒ・フォン・シュタッケルベルクが1934年の著書『Marktform und Gleichgewicht（市場形態と均衡）』で示した。' +
+      '同時手番のクールノー競争と異なり、先導者は自社の数量が追随者の反応関数に与える影響をバックワード・インダクションで織り込んで行動する。結果として先導者はクールノー均衡より多く生産し利潤も増やす「先行者の利益」を得る一方、追随者の生産量・利潤は減る。市場全体の総生産量はクールノー均衡より多く価格は低い。生産能力への先行投資などコミットメントが優位を生む、部分ゲーム完全均衡の応用例である。',
+    keyFigures:
+      'ハインリヒ・フォン・シュタッケルベルク（Heinrich von Stackelberg, 1934）／アントワーヌ・クールノー（比較対象の同時手番モデル）／先行者の利益・反応関数・部分ゲーム完全均衡',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Stackelberg_competition', type: 'reference', label: 'Wikipedia — Stackelberg competition（定義・1934年Stackelberg著作・逐次手番・反応関数・先行者利益）' },
+      { url: 'https://people.bath.ac.uk/sm2446/Oligopoly.pdf', type: 'academic', label: 'University of Bath 講義ノート Oligopoly — クールノーとの比較・先導者の高生産/高利潤' },
+      { url: 'https://open.oregonstate.education/intermediatemicroeconomics/chapter/module-18/', type: 'academic', label: 'Oregon State University 公開教科書 Intermediate Microeconomics — Cournot/Bertrand/Stackelberg・バックワード・インダクション解' },
+    ],
+  },
+  {
+    id: 'mgmt-adhocracy',
+    discipline: 'management',
+    title: 'アドホクラシー',
+    statement:
+      'アドホクラシー（adhocracy）とは、官僚制（bureaucracy）と対比される、柔軟・適応的・分権的で非公式な組織形態・組織文化を指す。ラテン語「ad hoc（特定目的の・その場限りの）」と「-cracy（支配）」の合成語で、ウォーレン・ベニスが1968年『The Temporary Society』で用い、アルビン・トフラーが1970年『Future Shock（未来の衝撃）』で広めた。' +
+      '固定的階層・標準化手続き・明確な職務分掌に依らず、変化する状況に応じて専門家がプロジェクトやチーム単位で柔軟に編成され、相互調整（mutual adjustment）で協働する。ヘンリー・ミンツバーグは組織構成の一類型として理論化し、複雑で動態的な環境やイノベーションに適すとした（運営型/管理型の区別あり）。キャメロン＆クインの競合価値フレームワークでは柔軟性×外部志向＝創造性重視の文化型とされる。一方で曖昧さ・対立・効率性の低さといった欠点もある。',
+    keyFigures:
+      'アルビン・トフラー（Alvin Toffler, 1970『Future Shock』で普及）／ヘンリー・ミンツバーグ（Henry Mintzberg, 組織類型として理論化）／ウォーレン・ベニス（Warren Bennis, 1968造語）／キャメロン＆クイン（競合価値フレームワーク）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Adhocracy', type: 'reference', label: 'Adhocracy — Wikipedia（語源・Bennis造語/Toffler普及・Mintzbergの定義と運営型/管理型）' },
+      { url: 'https://link.springer.com/article/10.1186/s41469-019-0062-9', type: 'academic', label: 'Lee & Edmondson (2019) “What makes self-managing organizations novel?” Journal of Organization Design (Springer)' },
+      { url: 'https://www.ebsco.com/research-starters/literature-and-writing/future-shock-explores-impact-change', type: 'reference', label: 'EBSCO Research Starter — Toffler『Future Shock』とアドホクラシー概念' },
+    ],
+  },
+  {
+    id: 'mgmt-matrix-organization',
+    discipline: 'management',
+    title: 'マトリックス組織',
+    statement:
+      'マトリックス組織とは、組織を職能（機能：開発・製造・営業・財務など）と製品／プロジェクト／地域という2つ以上の次元で同時に編成し、従業員が各軸の管理者の双方に報告する「二重の指揮系統（two-boss system）」をもつ組織構造である。典型的には職能マネジャーが業務・技術面の遂行責任を、プロジェクト／製品マネジャーがチーム全体の成果責任を負う。' +
+      '1960〜70年代に米国航空宇宙産業でプロジェクト管理の必要から発展した（古典は Davis & Lawrence『Matrix』1977、HBR論文「Problems of Matrix Organizations」1978）。職能の専門性とプロジェクトの機動性の両立・人的資源の柔軟な共有・部門横断的な調整の促進・環境変化への対応を利点とする一方、命令一元性（unity of command）の原則に反するため権限の対立やあいまいさ、二人の上司による役割葛藤、調整コストと会議の増加、責任所在の不明確化、権力闘争を欠点とする。強さによりPMBOKは弱／バランス型／強マトリックスに分類する。',
+    keyFigures:
+      '二次元同時編成（職能×製品/プロジェクト/地域）・二重指揮系統（two-boss）／起源は1960年代米国航空宇宙産業／古典＝Davis & Lawrence『Matrix』1977・HBR「Problems of Matrix Organizations」1978／命令一元性違反・役割葛藤・権力闘争／PMBOK：弱・バランス型・強マトリックス',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/matrix-organization', type: 'reference', label: 'Encyclopaedia Britannica (Money) — “Matrix organization: Advantages & Disadvantages”（定義・二重報告・利点欠点）' },
+      { url: 'https://hbr.org/1978/05/problems-of-matrix-organizations', type: 'academic', label: 'Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）' },
+      { url: 'https://www.pmi.org/learning/library/matrix-organization-structure-reason-evolution-1837', type: 'academic', label: 'Project Management Institute (PMI) — “The Matrix Organization”（航空宇宙起源・構造の進化）' },
+    ],
+  },
+  {
+    id: 'human-regulatory-focus',
+    discipline: 'human-science',
+    title: '制御焦点理論（促進焦点・予防焦点）',
+    statement:
+      '人が目標を追求する際の自己制御には、性質の異なる2つの動機づけ志向があるとする社会心理学の理論。E・トーリー・ヒギンズが1997年論文「Beyond Pleasure and Pain」（American Psychologist）等で提唱した。' +
+      '促進焦点は理想・願望・成長・獲得（gains）に関心を向け、ポジティブな結果の有無に敏感で熱望（eagerness）方略を採り、利益を逃さないことを重視する。予防焦点は義務・責任・安全・損失回避に関心を向け、ネガティブな結果に敏感で警戒（vigilance）方略を採り、誤りを避けることを重視する。焦点は慢性的気質としても状況的に誘導される一時的状態としても生じる。方略が自分の焦点と合致するとき動機づけや説得効果が高まる「制御適合（regulatory fit、正しいと感じる）」が重要概念で、マーケティング・意思決定・健康行動に広く応用される。',
+    keyFigures:
+      'E・トーリー・ヒギンズ（E. Tory Higgins, 1997）／促進焦点（eagerness・獲得）・予防焦点（vigilance・損失回避）／制御適合（regulatory fit）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118900772.etrds0279', type: 'reference', label: 'E. Tory Higgins「Regulatory Focus Theory」Wiley Online Library 学術参照工具' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/15008644/', type: 'academic', label: 'Cesario, Grant & Higgins「Regulatory Fit and Persuasion: Transfer From Feeling Right」PubMed（査読論文）' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.531147/full', type: 'academic', label: 'Frontiers in Psychology 査読論文（促進／予防の自己制御と方略を解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-mistake',
+    discipline: 'business-law',
+    title: '錯誤（民法95条）',
+    statement:
+      '錯誤とは、表意者の認識（内心の意思）と表示または前提が一致せず、本人がその不一致に気づかないまま意思表示をすることをいう（民法95条）。2017年改正（平成29年法律第44号、2020年4月施行）で効果が「無効」から「取消し」に整理された。' +
+      '1項は、①意思表示に対応する意思を欠く錯誤（表示錯誤）、または②表意者が法律行為の基礎とした事情についての認識が真実に反する錯誤（基礎事情の錯誤＝動機の錯誤）で、その錯誤が法律行為の目的及び取引上の社会通念に照らして重要なものであるとき、意思表示を取り消せると定める。2項は、基礎事情の錯誤による取消しはその事情が法律行為の基礎とされていることが表示されていたときに限り認める。3項は、表意者に重大な過失がある場合は原則取消しを認めないが、相手方が悪意・重過失のとき、又は共通錯誤のときは例外として取消し可とする。4項は、錯誤による取消しを善意でかつ過失がない第三者に対抗できないとする。詐欺・強迫（96条）と並ぶ意思表示の瑕疵の制度である。',
+    keyFigures:
+      '効果は「無効」→「取消し」に改正（2020年4月施行）／2類型＝表示錯誤＋基礎事情の錯誤（動機の錯誤）／要件＝法律行為の目的・取引上の社会通念に照らして重要／動機の錯誤は基礎事情が「表示」されていたときに限り取消し可（2項）／重過失で原則取消し不可・例外は相手方の悪意重過失/共通錯誤（3項）／善意無過失の第三者に対抗不可（4項）／平成29年法律第44号',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号）第95条' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 民法の一部を改正する法律（債権法改正）について' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第95条', type: 'reference', label: 'Wikibooks 民法第95条（錯誤の2類型・取消し・重過失の例外・第三者保護）' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-determinism',
+    discipline: 'information-sociology',
+    title: '技術決定論',
+    statement:
+      '技術決定論（technological determinism）とは、技術—とりわけ新しいメディアや生産技術—が社会の構造・文化・歴史の変化を規定する第一の自律的な原動力であるとみなす立場である。技術はそれ自体の論理で発展し社会はそれに従って変化する（技術→社会の一方向因果）と捉え、技術が社会を不可避に決定するとみる「ハード（強い）決定論」と、技術は重要な要因だが社会的文脈と相互作用するとみる「ソフト（弱い）決定論」に区別される。' +
+      'この語はソースタイン・ヴェブレンが用いたとされ、カール・マルクスの「手挽き臼は封建領主の社会を、蒸気臼は産業資本家の社会を与える」（『哲学の貧困』1847）に決定論的傾向が読み取られ、メディア研究ではマクルーハンの「メディアはメッセージである」が強い例とされる。これに対し技術の社会的構成（SCOT）や社会形成論は、技術を社会から切り離し人間の主体性を軽視すると批判し、レイモンド・ウィリアムズの批判が著名である。',
+    keyFigures:
+      'ソースタイン・ヴェブレン（Thorstein Veblen）／カール・マルクス（Karl Marx）／マーシャル・マクルーハン（Marshall McLuhan）／レイモンド・ウィリアムズ（Raymond Williams・批判）／ピンチ＆バイカー（SCOT）／マッケンジー＆ワイクマン（社会形成論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803102813253', type: 'reference', label: 'Oxford Reference (Chandler & Munday, A Dictionary of Media and Communication, OUP) — “technological determinism”（定義・自律性・ハード/ソフト）' },
+      { url: 'https://en.wikipedia.org/wiki/Technological_determinism', type: 'reference', label: 'Wikipedia “Technological determinism” — ヴェブレンによる語の起源・マルクス・ハード/ソフト区別' },
+      { url: 'https://www.marxists.org/archive/marx/works/1847/poverty-philosophy/ch02.htm', type: 'reference', label: 'Karl Marx, The Poverty of Philosophy (1847), Ch.2（marxists.org 一次資料）— 手挽き臼/蒸気臼の一節' },
+    ],
+  },
+  {
+    id: 'econ-lindahl-equilibrium',
+    discipline: 'economics',
+    title: 'リンダール均衡（リンダール価格）',
+    statement:
+      'リンダール均衡とは、公共財の効率的供給と費用負担を同時に説明する公共経済学の概念で、各個人がその公共財から得る限界便益（限界評価）に応じて異なる個別価格（リンダール価格／リンダール税）を支払い、全員がその価格の下で同一の公共財供給量を需要する状態をいう。' +
+      'スウェーデンのエリク・リンダールが1919年に（師ヴィクセルの影響下で）提示した。重要な性質は、均衡での供給量が各人の限界便益の総和＝限界費用というサミュエルソン条件を満たすパレート効率的水準になる点で、私的財の競争均衡が効率的なのと類比的に、個別価格による公共財の効率均衡を与える。最大の難点はフリーライダー（ただ乗り）＝選好顕示問題で、各人は真の限界便益を過少申告する誘因を持つため分権的に実現しにくい。理論上の効率性ベンチマーク・規範的基準として、誘因両立的な公共財供給を扱うメカニズムデザインの出発点となっている。',
+    keyFigures:
+      'エリク・リンダール（Erik Lindahl, 1919）／クヌート・ヴィクセル（師・先駆）／ポール・サミュエルソン（効率条件）／個別価格・サミュエルソン条件・フリーライダー問題',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Lindahl_tax', type: 'reference', label: 'Wikipedia「Lindahl tax」— 個別の限界便益に応じた負担・サミュエルソン条件・効率性' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-349-19802-3_21', type: 'academic', label: 'The New Palgrave (Springer) “Lindahl Equilibrium” — 個別価格と限界効用に等しい税率・公共経済学の標準定義' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S004727271730169X', type: 'academic', label: 'Journal of Public Economics「The Samuelson condition and the Lindahl scheme in networks」（査読論文）' },
+    ],
+  },
+  {
+    id: 'mgmt-coopetition',
+    discipline: 'management',
+    title: 'コーペティション（協調的競争）',
+    statement:
+      'コーペティション（coopetition）とは、cooperation（協調）とcompetition（競争）の混成語で、企業が競合他社と同時に競争しつつ協調もする関係・戦略を指す。標準化・研究開発・サプライチェーン・市場創造などの領域では協力して「パイを大きくする」価値創造を行い、市場シェア獲得などの領域では競争して「パイを分け合う」価値獲得を行う。' +
+      'アダム・ブランデンバーガーとバリー・ネイルバフが1996年の著書『Co-opetition』でゲーム理論を応用して広めた（語自体は1992年にノベル社CEOレイ・ノーダが用いたとされる）。彼らは顧客・供給者・競争相手・補完的生産者（complementors）から成る「価値相関図（Value Net）」を示し補完財の重要性を強調した。利点はリスク・コスト分担と標準獲得、リスクは技術漏洩や、協調と競争の緊張のバランスの難しさにある。',
+    keyFigures:
+      'アダム・ブランデンバーガー（Adam Brandenburger）／バリー・ネイルバフ（Barry Nalebuff）／レイ・ノーダ（Ray Noorda, 1992造語）／Value Net・補完財（complementors）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-9', type: 'reference', label: 'Coopetition — Oxford Research Encyclopedia of Business and Management' },
+      { url: 'https://en.wikipedia.org/wiki/Coopetition', type: 'reference', label: 'Coopetition — Wikipedia（混成語・Noorda造語・Value Net）' },
+      { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/co-opetition', type: 'reference', label: 'Co-Opetition — Encyclopedia.com' },
+    ],
+  },
+  {
+    id: 'human-self-evaluation-maintenance',
+    discipline: 'human-science',
+    title: '自己評価維持モデル（SEM）',
+    statement:
+      '自己評価維持（self-evaluation maintenance, SEM）モデルは、人が自己評価を高く維持・増進しようと動機づけられ、その自己評価が心理的に近い他者の遂行に左右されると説く社会心理学のモデルである。エイブラハム・テッサーが1988年に体系化した。' +
+      '二つの過程が働く。反映過程では、自己定義への関連性が低い領域で近しい他者が優れた成果をあげると、その栄光を共有して（栄光浴）自己評価が高まる。比較過程では、関連性が高く自己定義に重要な領域で近しい他者が自分を上回ると、上方比較により自己評価が脅かされる。どちらが優勢かは関連性・近さ・遂行の質の3要因の相互作用で決まる。脅威時には関連性の低減、他者との距離化、遂行への介入といった方略で対処する。きょうだい・友人関係や嫉妬の研究に応用される。',
+    keyFigures:
+      'エイブラハム・テッサー（Abraham Tesser, 1988）／反映過程（栄光浴）・比較過程（上方比較）／関連性・近さ・遂行の3要因',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0065260108602270', type: 'academic', label: 'Tesser, A. (1988). Toward a Self-Evaluation Maintenance Model of Social Behavior. Advances in Experimental Social Psychology, 21, 181–227' },
+      { url: 'https://psychology.iresearchnet.com/social-psychology/self/self-evaluation-maintenance-model/', type: 'reference', label: 'Self-Evaluation Maintenance Model — Social Psychology (iResearchNet)' },
+      { url: 'https://en.wikipedia.org/wiki/Self-evaluation_maintenance_theory', type: 'reference', label: 'Self-evaluation maintenance theory — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-impact-bias',
+    discipline: 'human-science',
+    title: 'インパクト・バイアス（感情予測の偏り）',
+    statement:
+      'インパクト・バイアスとは、感情予測（affective forecasting＝将来の出来事が自分の感情にどう影響するかを予測すること）における系統的な誤りで、人は将来の感情反応の「強さ（intensity）」と「持続時間（duration）」を過大評価する傾向を指す。' +
+      '良い出来事はそれほど長く強く幸福をもたらさず、悪い出来事もそれほど長く強く不幸をもたらさないのに、人はその影響を過大に見積もる。当初は持続時間の過大評価を指す「持続性バイアス（durability bias）」と呼ばれたが、初期反応の強度も誤予測されるため上位概念として impact bias に拡張された。原因として焦点化（focalism）や免疫無視（immune neglect＝逆境に適応・合理化する心理的免疫システムを予測時に考慮し損ね、回復の速さを過小評価する）がある。ウィルソンとギルバートが体系化し、テニュア取得の成否・選挙の勝敗・恋愛の破局などで実証され、意思決定・幸福研究・医療意思決定に示唆を持つ。',
+    keyFigures:
+      'ティモシー・ウィルソン（Timothy D. Wilson）／ダニエル・ギルバート（Daniel T. Gilbert）／durability bias・focalism・immune neglect',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dtg.sites.fas.harvard.edu/Gilbert%20et%20al%20(IMMUNE%20NEGLECT).pdf', type: 'academic', label: 'Gilbert, Pinel, Wilson, Blumberg & Wheatley (1998) “Immune Neglect: A Source of Durability Bias in Affective Forecasting”, JPSP（Harvard・Gilbert研究室）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1111/j.0963-7214.2005.00355.x', type: 'academic', label: 'Wilson & Gilbert (2005) “Affective Forecasting”, Current Directions in Psychological Science（Sage・査読誌）' },
+      { url: 'https://en.wikipedia.org/wiki/Impact_bias', type: 'reference', label: 'Wikipedia「Impact bias」' },
+    ],
+  },
+  {
+    id: 'bizlaw-agency',
+    discipline: 'business-law',
+    title: '代理（民法99条）',
+    statement:
+      '代理とは、本人に代わって代理人が第三者（相手方）に対して意思表示をし、又は意思表示を受けることにより、その法律効果が直接本人に帰属する制度である（民法99条以下）。99条1項は、代理人がその権限内において本人のためにすることを示してした意思表示（顕名）が直接本人に対して効力を生ずると定め、2項で相手方が代理人に対してした意思表示にも準用する（受働代理）。代理には本人の意思に基づく任意代理（委任による代理）と、法律の規定による法定代理（親権者・後見人など）がある。' +
+      '本人・代理人・相手方の三面関係を特徴とし、本人の意思を伝達するだけの使者とは区別される。関連規定として、顕名を欠く意思表示は原則代理人自身のためにしたものとみなすが相手方が悪意・有過失なら本人に帰属する100条、意思の不存在・詐欺・強迫等の瑕疵を原則代理人を基準に判断する101条、制限行為能力者が代理人としてした行為を原則取り消せないとする102条、自己契約・双方代理・利益相反行為を禁ずる108条がある。代理権を欠く無権代理（113〜117条）や表見代理（109・110・112条）とは区別される代理制度の基本である。',
+    keyFigures:
+      '99条：顕名・効果の本人帰属（2項＝受働代理）／任意代理（委任）vs 法定代理（親権者・後見人）／100条（顕名欠如）・101条（瑕疵は代理人基準）・102条（代理人の行為能力）・108条（自己契約・双方代理の禁止）／使者との区別／無権代理・表見代理とは別概念／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号、第99条〜第118条 代理）' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2005_minpou-1_14.pdf', type: 'academic', label: '京都大学OCW 民法第1部 第14回 — 代理(1) 代理総説・有権代理（松岡久和教授）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第99条', type: 'reference', label: 'Wikibooks 民法第99条（代理行為の要件及び効果・顕名）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-multitasking',
+    discipline: 'information-sociology',
+    title: 'メディア・マルチタスキング',
+    statement:
+      'メディア・マルチタスキングとは、複数のメディアを同時に、または短時間で切り替えながら利用する行動を指し（例：テレビ視聴中のスマホ操作、勉強中のSNS・音楽・動画の並行利用）、人間は真の並行処理ではなく高速のタスクスイッチングを行うため切替には時間・エラーの増大というスイッチングコストが伴う。' +
+      'Ophir, Nass & Wagner（2009, PNAS）は、日常的に多くのメディアを併用するヘビー・メディア・マルチタスカー（HMM）が軽度の人（LMM）に比べ、無関連刺激のフィルタリングや記憶内の不要情報の抑制、課題切替の効率で劣る傾向を報告した。ただしこれは相関研究で因果の向きは不明であり、2017年の追試や2021年の大規模メタ分析では効果量が小さく測定法に依存して一貫せず、再現性が今も議論されている点に注意を要する。教育（ながら勉強）や運転、生産性、若年層のメディア利用研究で重要である。',
+    keyFigures:
+      'Eyal Ophir／Clifford Nass／Anthony D. Wagner（2009 PNAS）／HMM（ヘビー）vs LMM（ライト）／タスクスイッチングとスイッチングコスト／相関研究・再現性議論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0903620106', type: 'academic', label: 'Ophir, Nass & Wagner (2009) “Cognitive control in media multitaskers”, PNAS 106(37):15583–15587' },
+      { url: 'https://en.wikipedia.org/wiki/Media_multitasking', type: 'reference', label: 'Wikipedia「Media multitasking」（定義・HMM/LMM・タスクスイッチング・因果未確立）' },
+      { url: 'https://link.springer.com/article/10.3758/s13414-017-1408-4', type: 'academic', label: 'Wiradhany & Nieuwenstein (2017) 追試＋メタ分析, Attention, Perception, & Psychophysics（再現性議論）' },
+    ],
+  },
+  {
+    id: 'econ-hotelling-law',
+    discipline: 'economics',
+    title: 'ホテリングの法則（最小差別化の原理）',
+    statement:
+      'ホテリングの法則（最小差別化の原理, principle of minimum differentiation）は、競争する売り手が製品特性や立地を互いに似せて市場の中央へ集まる傾向を示す空間競争モデルである。ハロルド・ホテリングが1929年の論文「Stability in Competition」（Economic Journal 39巻41-57頁）で提示した。古典的比喩では、一様に分布する消費者が最近接の売り手から買う線分状のビーチに2人のアイス売りが立地するとき、各自が顧客を奪おうと相手側へ寄り、社会最適の各1/4地点ではなく中央（中位点）に隣接して集中する。' +
+      'この帰結は政治学のダウンズ中位投票者定理（2大政党の中道収斂）や店舗・ガソリンスタンドの集積の説明に用いられる。ただし限界もあり、3者以上では均衡が存在しない場合があるほか、ダスプレモンら（1979, Econometrica）は価格競争を含めると売り手が近すぎる時に価格均衡が存在せず、二次輸送費用の下ではむしろ「最大差別化」が生じることを示し、最小差別化の原理を批判・修正した。',
+    keyFigures:
+      'ハロルド・ホテリング（Harold Hotelling, 1929）／アンソニー・ダウンズ（中位投票者定理）／ダスプレモン・ガブシェヴィッチ・ティス（1979・批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Hotelling%27s_law', type: 'reference', label: 'Wikipedia「Hotelling’s law」（原典書誌・最小差別化・中位均衡・1979年批判）' },
+      { url: 'https://www.math.toronto.edu/mccann/assignments/477/Hotelling29.pdf', type: 'academic', label: 'Harold Hotelling, “Stability in Competition,” Economic Journal 39 (1929): 41-57（トロント大学ホストの原典PDF）' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/browse/1979/09/01/hotellings-stability-competition', type: 'academic', label: 'd’Aspremont, Gabszewicz & Thisse, “On Hotelling’s Stability in Competition,” Econometrica 47(5) (1979): 1145-1150（Econometric Society）' },
+    ],
+  },
+  {
+    id: 'mgmt-tuckman-stages',
+    discipline: 'management',
+    title: 'タックマンのチーム発達段階モデル',
+    statement:
+      'チーム（小集団）が形成から成熟に至るまでに通常たどる発達段階を示したモデル。心理学者ブルース・W・タックマンが1965年の論文「Developmental sequence in small groups」（Psychological Bulletin 誌）で約50件の研究をレビューし4段階を提示した。' +
+      '(1)フォーミング（形成期）＝メンバーが集まり互いに様子を見て依存的・礼儀的で、目標や役割が不明確、(2)ストーミング（混乱期）＝対立・主導権争い・感情的衝突が生じ課題要求への抵抗が現れる、(3)ノーミング（規範形成期）＝抵抗が克服され規範・役割が定まり結束と協力が生まれる、(4)パフォーミング（遂行期）＝対人構造が課題遂行の道具となりチームが一体化して高い成果を出す。1977年にタックマンとメアリー・アン・ジェンセンが第5段階(5)アジャーニング（散会期）＝目標達成後にチームが解散する、を追加した。チームビルディングやプロジェクトマネジメントで広く用いられるが、発達は必ずしも線形・一方向ではなく段階を行き来・退行することもあると指摘される。',
+    keyFigures:
+      'ブルース・W・タックマン（Bruce W. Tuckman, 1965）／メアリー・アン・C・ジェンセン（Mary Ann C. Jensen, 1977・第5段階追加）／forming・storming・norming・performing・adjourning',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/14314073/', type: 'academic', label: 'Tuckman, B.W. (1965) Developmental sequence in small groups. Psychological Bulletin 63(6): 384-399 (PubMed)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/105960117700200404', type: 'academic', label: 'Tuckman, B.W. & Jensen, M.A.C. (1977) Stages of Small-Group Development Revisited. Group and Organization Studies 2(4): 419-427 (SAGE)' },
+      { url: 'https://infed.org/dir/welcome/bruce-w-tuckman-forming-storming-norming-and-performing-in-groups/', type: 'reference', label: 'infed.org — Bruce W. Tuckman: forming, storming, norming and performing（各段階定義・非線形性）' },
+    ],
+  },
+  {
+    id: 'human-cocktail-party-effect',
+    discipline: 'human-science',
+    title: 'カクテルパーティー効果',
+    statement:
+      'カクテルパーティー効果とは、多数の話者が同時に発話する騒がしい環境でも、特定の話者の声や自分に関連する情報（自分の名前など）に選択的に注意を向けて聞き取れる聴覚的選択的注意の現象である。' +
+      'コリン・チェリーが1953年に「カクテルパーティー問題」として研究・命名し、両耳分離聴（dichotic listening）と追唱（shadowing）課題を用いた。注意研究の中心的トピックで、ブロードベントの初期選択説（フィルターが知覚の早い段階で非選択情報を遮断）に対し、非注意の耳の自分の名前に気づくモレイ（1959）の知見が後期選択説やトリーズマンの減衰説（非注意情報は遮断されず減衰し意味処理も一部行われる）を支持した。聴覚情景分析や音源分離（補聴器・音声認識）にも関連する。',
+    keyFigures:
+      'コリン・チェリー（Colin Cherry, 1953・命名）／ドナルド・ブロードベント（初期選択説）／ニール・モレイ（Moray 1959）／アン・トリーズマン（減衰説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubs.aip.org/asa/jasa/article/25/5/975/690150/Some-Experiments-on-the-Recognition-of-Speech-with', type: 'academic', label: 'Cherry, E. C. (1953) Some Experiments on the Recognition of Speech, with One and with Two Ears. J. Acoust. Soc. Am. 25(5):975-979（一次論文）' },
+      { url: 'https://www.audiology.org/the-cocktail-party-effect/', type: 'reference', label: 'The Cocktail Party Effect — American Academy of Audiology（米国聴覚学会）' },
+      { url: 'https://en.wikipedia.org/wiki/Cocktail_party_effect', type: 'reference', label: 'Cocktail party effect — Wikipedia（フィルター説/減衰説の論争）' },
+    ],
+  },
+  {
+    id: 'human-change-blindness',
+    discipline: 'human-science',
+    title: '変化盲（チェンジ・ブラインドネス）',
+    statement:
+      '変化盲（change blindness）とは、視覚的シーンに生じた比較的大きな変化を、観察者がそれと気づかず見落とす現象。とくに変化が視覚的な遮り——サッカード（眼球運動）、まばたき、画面の一瞬の空白（フリッカー）、編集のカット、妨害刺激（mudsplashes）——と同時に起こると、変化を知らせる過渡的信号がかき消され、検出が著しく困難になる。' +
+      'レンシンクら（1997）のフリッカー課題（原画像と変化画像を短い空白を挟んで交互提示）は注意を向けた対象でしか変化が検出されにくいことを示し、シモンズ＆レビン（1998）の「ドア実験」では会話相手が遮蔽中に別人へ入れ替わっても約半数が気づかなかった。注意を向けた情報しか詳細には保持されないことを示唆し、目撃証言・運転・UI設計に応用される。予期しない新規対象を見落とす非注意性盲目（見えないゴリラ）とは区別され、自分の検出能力を過信する「変化盲盲」も知られる。',
+    keyFigures:
+      'ロナルド・レンシンク（Ronald A. Rensink, 1997 フリッカー課題）／ダニエル・シモンズ（Daniel Simons）＆ダニエル・レビン（Daniel Levin, 1998 ドア実験）／非注意性盲目とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www2.psych.ubc.ca/~rensink/publications/download/PsychSci97-RR.pdf', type: 'academic', label: 'Rensink, O’Regan & Clark (1997) “To See or Not to See...,” Psychological Science 8(5):368（UBC）' },
+      { url: 'https://link.springer.com/article/10.3758/BF03208840', type: 'academic', label: 'Simons & Levin (1998) “Failure to detect changes to people during a real-world interaction,” Psychonomic Bulletin & Review（ドア実験）' },
+      { url: 'https://dictionary.apa.org/change-blindness', type: 'reference', label: 'APA Dictionary of Psychology — “change blindness”' },
+    ],
+  },
+  {
+    id: 'bizlaw-benefit-of-time',
+    discipline: 'business-law',
+    title: '期限の利益（民法136条）',
+    statement:
+      '期限の利益とは、法律行為に期限（とくに弁済期などの終期）が付されていることにより当事者が受ける利益をいう。たとえば「1年後に返済すればよい」という金銭債務では、債務者は期限到来まで履行を猶予されるという利益を持つ。民法136条1項は「期限は、債務者の利益のために定めたものと推定する」と定め、これは反証可能な推定規定である。' +
+      '同条2項は「期限の利益は、放棄することができる。ただし、これによって相手方の利益を害することはできない」と定め、債務者は期限前弁済により期限の利益を放棄できるが、相手方（銀行等）の利息の利益を害する場合は調整を要する。民法137条は、債務者が破産手続開始の決定を受けたとき、担保を滅失・損傷・減少させたとき、担保供与義務を履行しないときは、債務者は期限の利益を主張できないと定める。実務では金銭消費貸借契約に「期限の利益喪失条項」が広く置かれる。',
+    keyFigures:
+      '136条1項：期限は債務者の利益と推定（反証可能）／136条2項：放棄可だが相手方の利益を害せない／137条の喪失事由＝破産手続開始の決定・担保の滅失損傷減少・担保供与義務の不履行／喪失は当然の期限到来でなく債権者が直ちに請求可能／実務の期限の利益喪失条項／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089、第136条・第137条）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第136条', type: 'reference', label: 'Wikibooks 民法第136条（期限の利益及びその放棄）' },
+      { url: 'https://tek-law.jp/civil-code/general-provisions/juridical-acts/conditions-and-time-limits/article-137/', type: 'reference', label: '民法第137条（期限の利益の喪失）条文・解説' },
+    ],
+  },
+  {
+    id: 'infosoc-infodemic',
+    discipline: 'information-sociology',
+    title: 'インフォデミック',
+    statement:
+      'インフォデミック（infodemic）とは information（情報）と epidemic（伝染病・流行）の混成語で、感染症の流行など健康危機の際に、正確な情報と不正確な情報・誤情報・偽情報が大量にあふれ、人々が信頼できる情報源や適切な指針を見つけにくくなる状況を指す。' +
+      '語はジャーナリスト／政治アナリストのデイヴィッド・ロスコフが2003年のSARS流行時にワシントン・ポストの論考（2003年5月11日）で用い、世界保健機関（WHO）がCOVID-19パンデミック（2020年）の文脈で「ある問題に関しデジタル・物理環境を含め情報が過剰にあふれること（誤情報・偽情報を含む）」と位置づけ広めた。誤情報（misinformation＝意図せぬ誤り）と偽情報（disinformation＝意図的な虚偽）を含み、SNSによる急速な拡散が増幅要因となる。健康行動・ワクチン忌避・パニック・公衆衛生対策の妨げと関連し、WHOはその対処を「インフォデミック・マネジメント（infodemic management）」と呼んで取り組む。',
+    keyFigures:
+      'デイヴィッド・ロスコフ（David J. Rothkopf, 2003年に造語）／世界保健機関（WHO, COVID-19で概念を普及・対応枠組みを整備）／misinformation（誤情報）とdisinformation（偽情報）を含む',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.who.int/health-topics/infodemic/understanding-the-infodemic-and-misinformation-in-the-fight-against-covid-19', type: 'government', label: 'WHO「Understanding the infodemic and misinformation in the fight against COVID-19」— 定義・誤情報/偽情報の区別' },
+      { url: 'https://en.wikipedia.org/wiki/Infodemic', type: 'reference', label: 'Wikipedia「Infodemic」— 語源（information+epidemic）・ロスコフ2003年造語' },
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/14614448211031908', type: 'academic', label: 'Simon & Camargo (2021) “Autopsy of a metaphor: ... the ‘infodemic’”, New Media & Society（査読論文）' },
+    ],
+  },
+  {
+    id: 'econ-ellsberg-paradox',
+    discipline: 'economics',
+    title: 'エルズバーグのパラドックス（曖昧性回避）',
+    statement:
+      'エルズバーグのパラドックスは、人々が確率の既知なリスクを、確率の不明な「曖昧性（ambiguity）」よりも好む傾向（曖昧性回避）を示し、サベージの主観的期待効用理論の確実性原理（sure-thing principle）と矛盾することを示す思考実験である。' +
+      '典型例の2色壺では、赤球30個と黒・黄合計60個（内訳不明）が入った壺から1球引く。多くの人は確率が既知（1/3）の「赤」を確率不明の「黒」より好み、同時に既知（2/3）の「黒か黄」を不明の「赤か黄」より好む。この選好の組は黒に割り当てるいかなる主観確率でも整合せず、期待効用理論で合理化できない。ダニエル・エルズバーグが1961年の論文（QJE）で提示し、ナイトのリスク/不確実性の区別と結びつき、マックスミン期待効用やショケ期待効用など曖昧性下の意思決定モデルの出発点となった。',
+    keyFigures:
+      'ダニエル・エルズバーグ（Daniel Ellsberg, 1961）／レナード・サベージ（確実性原理）／フランク・ナイト（リスクと不確実性）／ギルボア＝シュマイドラー（曖昧性下モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/75/4/643/1913802', type: 'academic', label: 'Daniel Ellsberg, “Risk, Ambiguity, and the Savage Axioms,” The Quarterly Journal of Economics 75(4), 1961, 643–669（原典, Oxford Academic）' },
+      { url: 'https://en.wikipedia.org/wiki/Ellsberg_paradox', type: 'reference', label: 'Ellsberg paradox（Wikipedia：2色壺の定式化と確実性原理違反）' },
+      { url: 'https://link.springer.com/article/10.1007/s11238-023-09935-x', type: 'academic', label: 'On the Ellsberg and Machina paradoxes, Theory and Decision（査読誌：曖昧性回避とGilboa–Schmeidlerモデル）' },
+    ],
+  },
+  {
+    id: 'mgmt-kotter-8-steps',
+    discipline: 'management',
+    title: 'コッターの変革8段階モデル',
+    statement:
+      'ハーバード・ビジネス・スクールのジョン・P・コッターが提唱した、組織変革を成功させるための8段階のプロセスモデル。1995年のHarvard Business Review論文「Leading Change: Why Transformation Efforts Fail」で多くの変革が失敗する8つの誤りを指摘し、1996年の著書『Leading Change（企業変革力）』で対応する8段階として体系化した。' +
+      '8段階は、(1)危機感を高める、(2)変革推進の連帯チーム（guiding coalition）を築く、(3)ビジョンと戦略を生み出す、(4)ビジョンを周知徹底する、(5)幅広い行動を促し障害を取り除く、(6)短期的成果を生む、(7)成果を活かしてさらに変革を進める、(8)新しい方法を企業文化に定着させる、である。レヴィンの3段階モデル（解凍・変革・再凍結）を具体化したものと評され、直線的・トップダウンで反復性を捉えにくいとの批判もある。コッターは2014年の『Accelerate』で8段階を反復的・ネットワーク的な「デュアル・システム」に再構成した。',
+    keyFigures:
+      'ジョン・P・コッター（John P. Kotter, 1995 HBR・1996『Leading Change』）／クルト・レヴィン（先行する3段階モデル）／8段階＝危機感→連帯チーム→ビジョン→周知→行動促進→短期的成果→さらなる変革→文化定着',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'academic', label: 'John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文' },
+      { url: 'https://www.kotterinc.com/methodology/8-steps/', type: 'reference', label: 'Kotter Inc., “The 8-Step Process for Leading Change” — 著者本人の組織による公式解説' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1742715015571393', type: 'academic', label: 'Mark Hughes, “Leading changes: Why transformation explanations fail,” Leadership 13(4), SAGE (2016) — 批判的検討' },
+    ],
+  },
+  {
+    id: 'human-flynn-effect',
+    discipline: 'human-science',
+    title: 'フリン効果',
+    statement:
+      'フリン効果とは、20世紀を通じて世界各国で観察された、知能検査（IQ）の平均得点が世代を追うごとに継続的に上昇してきた現象で、おおむね10年あたり約3ポイント（1世紀で約30ポイント）のペースで上昇したとされる。' +
+      'ニュージーランドの知能研究者ジェームズ・R・フリンが1984年・1987年の論文で多数の国のデータから体系的に示し、後にハーンスタインとマレーが著書『ベルカーブ』（1994）でこれを「フリン効果」と呼んで広めた。流動性知能を測るレーヴン漸進的マトリックスなどで上昇が大きく、語彙・知識など結晶性知能では小さい。原因は栄養・健康の改善、教育の普及、環境の複雑化、家族規模の縮小、検査慣れなど諸説あり確定しておらず、遺伝では説明できず環境要因が重視される。近年は一部の先進国で上昇が停滞・逆転（反フリン効果）したとの報告もある。',
+    keyFigures:
+      'ジェームズ・R・フリン（James R. Flynn, 1934–2020）／リチャード・ハーンスタイン＆チャールズ・マレー（『ベルカーブ』1994で命名）／流動性知能で上昇大・反フリン効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.1718793115', type: 'academic', label: 'Bratsberg & Rogeberg, “Flynn effect and its reversal are both environmentally caused,” PNAS 115(26):6674–6678 (2018)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4152423/', type: 'academic', label: 'Trahan et al., “The Flynn Effect: A Meta-analysis,” Psychological Bulletin（PMC, NCBI）' },
+      { url: 'https://en.wikipedia.org/wiki/Flynn_effect', type: 'reference', label: 'Wikipedia: Flynn effect（命名・上昇率・課題別パターン）' },
+    ],
+  },
+  {
+    id: 'human-inattentional-blindness',
+    discipline: 'human-science',
+    title: '非注意性盲目（不注意盲）',
+    statement:
+      '非注意性盲目（inattentional blindness）とは、視野内にはっきり存在し容易に認識できるはずの予期しない対象や出来事に、別の課題へ注意を集中しているために気づかない現象である。注意の容量には限界があり、注意を向けていない対象は意識的に知覚されにくいことを示す。' +
+      'アリエン・マックとアーヴィン・ロックが1998年の著書『Inattentional Blindness』で概念を確立・命名した。最も有名な実証はダニエル・シモンズとクリストファー・チャブリスの1999年「見えないゴリラ」実験で、バスケのパス回数を数える課題に集中する観察者の約半数が、画面中央をゴリラの着ぐるみが横切っても気づかなかった。「予期しない対象の見落とし」を指す点で、2状態間の変化を見落とす変化盲とは区別される。目撃証言・運転中の携帯電話使用・放射線科医の見落とし・安全管理などに応用される。',
+    keyFigures:
+      'アリエン・マック（Arien Mack）＆アーヴィン・ロック（Irvin Rock, 1998・命名）／ダニエル・シモンズ＆クリストファー・チャブリス（1999「見えないゴリラ」）／変化盲とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/inattentional-blindness', type: 'reference', label: 'APA Dictionary of Psychology — “inattentional blindness”（米国心理学会）' },
+      { url: 'http://www.scholarpedia.org/article/Inattentional_blindness', type: 'reference', label: 'Scholarpedia — “Inattentional blindness”（査読制百科事典；変化盲との区別）' },
+      { url: 'https://journals.sagepub.com/doi/10.1068/p281059', type: 'academic', label: 'Simons & Chabris (1999) “Gorillas in our midst...”, Perception 28(9):1059–1074' },
+    ],
+  },
+  {
+    id: 'bizlaw-tender-of-performance',
+    discipline: 'business-law',
+    title: '弁済の提供（民法492条・493条）',
+    statement:
+      '弁済の提供とは、債務者が債務の本旨に従った履行に必要な準備をして、債権者の協力（受領）を求めることをいう。債務の本旨に従って弁済の提供をすれば、債務者はその提供の時から「債務を履行しないことによって生ずべき責任を免れる」（民法492条）。具体的には履行遅滞を理由とする遅延損害金・違約金の支払義務、契約解除や担保権実行を免れ、また相手方の同時履行の抗弁を封じる効果を持つ。' +
+      '提供の方法（493条）は、原則として「現実の提供」（債務の本旨に従い現実に弁済を提供する。例：持参債務で金銭を持参して受領を求める）であるが、(1)債権者があらかじめ受領を拒んでいるとき、または(2)債務の履行に債権者の行為を要するとき（取立債務等）は、弁済の準備をしたことを通知して受領を催告する「口頭の提供」で足りる。弁済の提供は債務消滅原因そのものではなく、債務者を履行遅滞等の不利益から解放する効果を持つにとどまり、債権者が受領しない場合は受領遅滞（413条）の問題となり、債務消滅には供託（494条）等を要する。',
+    keyFigures:
+      '492条：提供の時から履行遅滞責任・遅延損害金・違約金・解除・担保権実行を免れ同時履行の抗弁を封じる／493条：原則「現実の提供」、例外「口頭の提供」（受領拒絶・取立債務等）／債務消滅原因ではない（供託494条で消滅）／受領遅滞413条と関連／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治29年法律第89号）492条・493条' },
+      { url: 'https://ocw.kyoto-u.ac.jp/wp-content/uploads/2021/04/2003_minopu-3_22.pdf', type: 'academic', label: '京都大学OCW 債権総論 第22回講義 弁済の提供・債権者遅滞（松岡久和）' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第493条', type: 'reference', label: 'Wikibooks 民法第493条（弁済の提供の方法：現実の提供・口頭の提供）' },
+    ],
+  },
+  {
+    id: 'infosoc-meme',
+    discipline: 'information-sociology',
+    title: 'ミーム（meme）',
+    statement:
+      'ミームとは、模倣（imitation）を通じて人から人（脳から脳）へ伝達・複製され文化の中で広がる文化的情報の単位で、アイデア・習慣・旋律・流行・技術・信念などを指す。進化生物学者リチャード・ドーキンスが1976年の著書『利己的な遺伝子』で、ギリシャ語 mimeme（模倣されるもの）を gene に似せて短縮し造語した。' +
+      '遺伝子が生物進化の自己複製子であるのに対し、ミームは文化進化の自己複製子であり、変異・選択・複製というダーウィン的進化のアナロジーで文化伝播を説明する。スーザン・ブラックモアが『ミーム・マシーンとしての私』(1999)でミーム学（memetics）として発展させた。ただし単位・境界の不明確さ、複製忠実度の低さ、実証可能性への疑問から主流科学としては確立しなかったとされる。現代ではインターネット・ミーム（画像・動画等がSNSで模倣・改変され拡散する現象）として語が一般化したが、これはドーキンスの原義の一応用・派生である。',
+    keyFigures:
+      'リチャード・ドーキンス（Richard Dawkins, 1976『利己的な遺伝子』で造語）／スーザン・ブラックモア（Susan Blackmore, memetics）／リモール・シフマン（Limor Shifman, インターネット・ミーム）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/meme', type: 'reference', label: 'Britannica「Meme」— 定義・語源（Greek mimema）・Dawkins 1976『The Selfish Gene』による造語' },
+      { url: 'https://www.susanblackmore.uk/memetics/about-memes/', type: 'academic', label: 'Susan Blackmore 公式サイト「About Memes」— ミーム＝人から人へコピーされるもの・memetics' },
+      { url: 'https://en.wikipedia.org/wiki/Meme', type: 'reference', label: 'Wikipedia「Meme」— 定義・語源・Dawkins/Blackmore・memetics批判' },
+    ],
+  },
+  {
+    id: 'econ-folk-theorem',
+    discipline: 'economics',
+    title: 'フォーク定理（繰り返しゲーム）',
+    statement:
+      'フォーク定理は、繰り返しゲーム（repeated game）において膨大な数のナッシュ均衡利得が存在することを示す定理群である。' +
+      'プレイヤーが十分に忍耐強く将来を重視する（割引因子が1に十分近い）場合、各プレイヤーが個別合理性（マックスミン値以上）を満たす実現可能（feasible）な利得の組は、ほぼすべて（部分ゲーム完全）均衡として達成されうる。一回限りでは協力しない囚人のジレンマでも、逸脱を将来罰するトリガー戦略の脅しにより協力が均衡として支持される。「フォーク（民間伝承）」の名は、1950年代に誰も公刊しないまま研究者間で広く知られていたことに由来する。フリードマン（1971）が部分ゲーム完全版を、ファッデンバーグ＆マスキン（1986）が割引付き完全版を示した。均衡の多重性ゆえ予測が難しい反面、カルテルや暗黙の共謀の説明に用いられる。',
+    keyFigures:
+      'James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric Maskin（1986・割引付き完全フォーク定理）／トリガー戦略・個別合理性・均衡の多重性',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1986/05/01/folk-theorem-repeated-games-discounting-or-incomplete', type: 'academic', label: 'Fudenberg & Maskin, “The Folk Theorem in Repeated Games with Discounting or with Incomplete Information,” Econometrica 54(3), 1986' },
+      { url: 'https://en.wikipedia.org/wiki/Folk_theorem_(game_theory)', type: 'reference', label: 'Wikipedia「Folk theorem (game theory)」（定義・Friedman 1971・名称の由来）' },
+      { url: 'https://www.cs.cornell.edu/home/halpern/papers/itcs.pdf', type: 'academic', label: 'Halpern & Pass, “The Truth Behind the Myth of the Folk Theorem”（Cornell・個別合理性とミニマックス）' },
+    ],
+  },
+  {
+    id: 'mgmt-greiner-growth-model',
+    discipline: 'management',
+    title: 'グレイナーの企業成長モデル',
+    statement:
+      'グレイナーの企業成長モデルは、組織が年齢と規模を増すにつれて経る発展段階を示した理論で、ラリー・E・グレイナー（USCマーシャル経営大学院教授）が1972年のHarvard Business Review論文「Evolution and Revolution as Organizations Grow」で提示した。' +
+      '各段階は、比較的安定した成長期（evolution＝進化）と、その成長が招く管理上の危機（revolution＝革命）が交互に訪れ、危機を克服することで次段階へ移行する。当初の5段階と終結危機は、(1)創造性による成長→リーダーシップの危機、(2)指揮による成長→自主性の危機、(3)権限委譲による成長→統制の危機、(4)調整による成長→形式主義（レッドテープ）の危機、(5)協働による成長→内部成長の危機（1998年改訂で(6)提携による成長→アイデンティティの危機を追加）。核心は、ある段階で成功した管理方式が次段階では機能不全を起こし、各進化局面自体が次の危機の種を生む点にあり、経営者は発展段階に応じた組織変革を行う必要があると説く。',
+    keyFigures:
+      'ラリー・E・グレイナー（Larry E. Greiner, 1972 HBR・USCマーシャル）／進化（evolution）と革命（revolution）の交替／5段階＋1998年に第6段階（提携→アイデンティティの危機）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.marshall.usc.edu/personnel/larry-e-greiner', type: 'academic', label: 'USC Marshall School of Business — Larry E. Greiner 教員紹介（著者所属大学）' },
+      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'reference', label: 'Harvard Business Review (1998改訂版) — Evolution and Revolution as Organizations Grow（原典）' },
+      { url: 'https://ils.unc.edu/daniel/131/cco4/Greiner.pdf', type: 'academic', label: 'University of North Carolina 配布の原論文PDF（1972年, HBR Vol.50 No.4）' },
+    ],
+  },
+  {
+    id: 'human-mood-congruent-memory',
+    discipline: 'human-science',
+    title: '気分一致効果（気分一致記憶）',
+    statement:
+      '気分一致効果（mood-congruent memory）とは、現在の気分（感情状態）とその感情的調子（valence）が一致する情報の方が、一致しない情報よりも記憶の符号化・想起において促進される現象である。たとえば楽しい気分のときはポジティブな出来事を、悲しい気分のときはネガティブな出来事をよく覚え・思い出しやすい。' +
+      'ゴードン・バウアーが1981年の論文「Mood and Memory」（American Psychologist）で体系的に論じ、感情の連合ネットワークモデルで説明した。符号化時と想起時の気分が一致すると想起が良くなる「気分状態依存記憶（state-dependent retrieval）」とは区別される——気分一致効果は情報の感情価と現在の気分の一致が鍵であるのに対し、状態依存記憶は学習時と想起時の内的状態の一致が鍵である。うつ病の否定的記憶バイアスの理解にも応用されるが、効果の頑健性や非対称性（健常者では気分修復により弱まる等）には議論もある。',
+    keyFigures:
+      'ゴードン・H・バウアー（Gordon H. Bower, 1981「Mood and Memory」）／連合ネットワークモデル／気分状態依存記憶とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/mood-congruent-memory', type: 'reference', label: 'APA Dictionary of Psychology — “mood-congruent memory”（米国心理学会）' },
+      { url: 'https://dibs-web01.vm.duke.edu/labar/pdfs/Faul_and_LaBar_2022.pdf', type: 'academic', label: 'Faul & LaBar (2022) “Mood-Congruent Memory Revisited”, Psychological Review（査読論文、Duke University）' },
+      { url: 'https://en.wikipedia.org/wiki/Mood_congruence', type: 'reference', label: 'Wikipedia — “Mood congruence”（バウアー連合ネットワーク理論・状態依存との区別）' },
+    ],
+  },
+  {
+    id: 'bizlaw-guarantee-obligation',
+    discipline: 'business-law',
+    title: '保証債務（民法446条）',
+    statement:
+      '保証債務とは、主たる債務者がその債務を履行しないときに、保証人が主たる債務者に代わってその履行をする責任を負う債務をいう（民法446条1項）。保証契約は債権者と保証人との間で締結され、書面（電磁的記録を含む）でしなければその効力を生じない（446条2項・3項）。これは軽率な保証を防ぎ保証人を保護するための要式性である。保証債務には、(1)付従性（主たる債務が無効・消滅すれば保証債務も消滅し、内容も主たる債務より重くなれない）、(2)随伴性（主たる債務に対する債権が移転すれば保証債務も移転する）、(3)補充性という性質がある。' +
+      '補充性の現れとして、普通保証の保証人は催告の抗弁権（452条＝まず主たる債務者に催告せよと求める権利）と検索の抗弁権（453条＝主たる債務者に弁済資力がありかつ執行が容易なことを証明して拒む権利）を有する。これに対し連帯保証（454条）の保証人は催告・検索の抗弁権をもたず、債権者は連帯保証人に直ちに全額請求でき実務で広く用いられる。2017年改正民法（2020年4月施行）は個人保証人の保護を強化し、事業用融資の個人保証につき公正証書による保証意思の確認（465条の6）、保証人への情報提供義務（458条の2・465条の10）等を新設した。保証人が弁済すれば主たる債務者に求償権を取得する。',
+    keyFigures:
+      '446条1項：主債務者が履行しないとき代わって履行／446条2項・3項：書面（電磁的記録含む）でなければ無効／付従性・随伴性・補充性／催告の抗弁権（452条）・検索の抗弁権（453条）／連帯保証（454条）は補充性なし／2017改正＝公正証書による保証意思確認（465条の6）・情報提供義務（458条の2/465条の10）／求償権／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（law id 129AC0000000089、第446条〜465条の10）' },
+      { url: 'https://www.moj.go.jp/content/001254262.pdf', type: 'government', label: '法務省「保証に関する民法のルールが大きく変わります」（2020年4月1日施行）' },
+      { url: 'https://kslaw.jp/column/detail/6451/', type: 'reference', label: '栗林総合法律事務所「保証契約」（付従性・随伴性・補充性の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-smart-mob',
+    discipline: 'information-sociology',
+    title: 'スマートモブ',
+    statement:
+      'スマートモブ（smart mobs）とは、携帯電話・SMS・インターネット・SNSなどの情報通信技術を用い、互いに見知らぬ人々が緩やかに調整し合い、明確な指導者や中央組織なしに即座に協調的な集合行動をとる集団・現象を指す。' +
+      '米国のメディア批評家ハワード・ラインゴールドが2002年の著書『Smart Mobs: The Next Social Revolution（次なる社会革命）』で提唱・命名し、「通信と計算の能力を備えた端末を携帯するため、互いを知らなくても協調して行動できる人々」と定義した。技術が人間の協力する力を増幅し、政治的動員・抗議・市場・協働に新たな力を与えると論じた。代表例は2001年フィリピンのSMSによる大規模動員（ピープルパワー2）でのエストラダ大統領退陣であり、後のフラッシュモブやアラブの春、ハッシュタグ・アクティビズムの先駆的概念と位置づけられる。',
+    keyFigures:
+      'ハワード・ラインゴールド（Howard Rheingold, 2002『Smart Mobs』）／2001年フィリピン（ピープルパワー2）のSMS動員／フラッシュモブ・アラブの春の先駆概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.5555/579424', type: 'academic', label: 'ACM Digital Library — Rheingold, Smart Mobs: The Next Social Revolution (書誌)' },
+      { url: 'https://nvdatabase.swarthmore.edu/content/philippine-citizens-overthrow-president-joseph-estrada-people-power-ii-2001', type: 'reference', label: 'Global Nonviolent Action Database (Swarthmore College) — People Power II, 2001' },
+      { url: 'https://en.wikipedia.org/wiki/Smart_mob', type: 'reference', label: 'Wikipedia — Smart mob（定義・由来）' },
+    ],
+  },
+  {
+    id: 'econ-dictator-game',
+    discipline: 'economics',
+    title: '独裁者ゲーム',
+    statement:
+      '独裁者ゲーム（dictator game）は実験経済学・行動経済学で用いられる単純なゲームで、一方のプレイヤー（独裁者・配分者）が一定額の金銭を自分と相手（受け手）の間でどう分けるかを一方的に決め、受け手は受動的で拒否できず結果を受け入れるしかない。' +
+      '標準的な利己的・合理的予測では独裁者は全額を自分のものにする（受け手にゼロ）はずだが、実際の実験では多くの独裁者が正の金額（平均しておよそパイの2割程度、全額保持は約4割にとどまる）を分け与え、人間の利他性・公平性・社会的選好の存在を示すとされる。受け手が拒否権を持つ最後通牒ゲームと異なり拒否を恐れた戦略的配慮が働かないため、分配はより直接的な利他性・規範の指標とされる。ただし配分は実験設定（二重盲検など厳格な匿名性では分配が大きく減少）に敏感で、純粋利他性の解釈には留保も要する（Forsythe ら1994、Hoffman ら1996）。',
+    keyFigures:
+      'Forsythe・Horowitz・Savin・Sefton（1994・標準実験）／Hoffman ら（1996・二重盲検で分配減少）／最後通牒ゲーム（受け手に拒否権）とは区別',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Dictator_game', type: 'reference', label: 'Dictator game — Wikipedia（定義・最後通牒ゲームとの対比・実証結果）' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-3-319-28099-8_652-1', type: 'reference', label: 'Dictator Game — Encyclopedia of Law and Economics (Springer Nature)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S2214804320302895', type: 'academic', label: 'Social preferences across different populations: Meta-analyses on the ultimatum game and dictator game（査読論文）' },
+    ],
+  },
+  {
+    id: 'econ-schelling-segregation',
+    discipline: 'economics',
+    title: 'シェリングの分居モデル',
+    statement:
+      'トーマス・シェリングが1971年の論文「Dynamic Models of Segregation」（Journal of Mathematical Sociology誌）で提示した、エージェントベースの社会シミュレーション・モデル。格子上に2種類のエージェントを置き、各エージェントは「近隣に同類が一定割合（約3分の1）以上いれば満足してとどまり、下回れば不満で空きマスへ移動する」という単純な規則に従う。' +
+      '各人が「近隣の3分の1が同類なら満足」という穏やかな（弱い）選好しか持たず、むしろ統合された環境を許容していても、移動を繰り返すうちに全体としては高度に分居したパターンが創発する。これは個人のミクロな動機と集団のマクロな帰結の乖離（micromotives and macrobehavior）、複雑系の創発を示す古典的事例であり、人種的住み分けの理解とエージェントベースモデリング（ABM）の草分けとなった。シェリングは2005年ノーベル経済学賞を受賞。',
+    keyFigures:
+      'トーマス・シェリング（Thomas C. Schelling, 1971・2005年ノーベル経済学賞）／弱い同類選好から創発する分居／micromotives and macrobehavior・ABMの草分け',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/0022250X.1971.9989794', type: 'academic', label: 'Schelling, T. C. (1971) “Dynamic Models of Segregation,” Journal of Mathematical Sociology, 1(2), 143-186 (Taylor & Francis)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/', type: 'reference', label: 'NobelPrize.org — Thomas C. Schelling, 2005年ノーベル経済学賞（Aumannと共同受賞）' },
+      { url: 'https://en.wikipedia.org/wiki/Schelling%27s_model_of_segregation', type: 'reference', label: 'Wikipedia — Schelling’s model of segregation（約1/3の選好閾値・創発）' },
+    ],
+  },
+  {
+    id: 'mgmt-managerial-grid',
+    discipline: 'management',
+    title: 'マネジリアル・グリッド',
+    statement:
+      'リーダーシップ・スタイルを「業績（生産）への関心（concern for production）」と「人間への関心（concern for people）」の2次元で捉え、各次元を1〜9の段階で評価して9×9の格子上に位置づける行動アプローチのモデル。ロバート・ブレークとジェーン・ムートンが1964年の著書『The Managerial Grid』で提示した。' +
+      '代表的な5類型は、(1)1・1型＝無関心型/放任型（impoverished、両関心が低い）、(2)1・9型＝カントリークラブ型（country club、人への関心が高く業績への関心が低い）、(3)9・1型＝権威服従型/仕事中心型（authority-compliance、業績重視・人軽視）、(4)5・5型＝中道型（middle-of-the-road、双方そこそこ）、(5)9・9型＝チームマネジメント型（team、双方に高い関心を持つ最も望ましい型）。オハイオ州立大学研究（構造づくり・配慮）やミシガン研究の流れにあり、後に父権主義型・日和見主義型を加えた改訂版もある。リーダー育成・自己診断に用いられる。',
+    keyFigures:
+      'ロバート・ブレーク（Robert R. Blake）／ジェーン・ムートン（Jane S. Mouton, 1964『The Managerial Grid』）／9・9型（チームマネジメント）が理想／業績への関心×人への関心の2次元',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Managerial_grid_model', type: 'reference', label: 'Managerial grid model — Wikipedia' },
+      { url: 'https://us2.sagepub.com/sites/default/files/upm-binaries/67536_Northouse_Chapter_4.pdf', type: 'academic', label: 'Northouse, Leadership: Theory and Practice, Ch.4 (SAGE Publishing)' },
+      { url: 'https://archive.org/details/managerialgridke00blak', type: 'reference', label: 'Blake & Mouton, The Managerial Grid (1964原典) — Internet Archive' },
+    ],
+  },
+  {
+    id: 'human-false-consensus',
+    discipline: 'human-science',
+    title: '偽の合意効果（フォールス・コンセンサス）',
+    statement:
+      '偽の合意効果（false consensus effect）とは、人が自分の意見・信念・好み・行動を実際よりも一般的（多数派）だと過大に見積もり、他者も自分と同じように考え行動するはずだと過度に推測する認知バイアスである。' +
+      'リー・ロス、デヴィッド・グリーン、パメラ・ハウスが1977年に実証・命名した。古典的実験では、学生に広告看板を身につけ街を歩くバイトを尋ね、引き受けた者は「多数も引き受ける」、断った者は「多数も断る」と推測し、自分の選択を多数派とみなした。原因は選択的接触・利用可能性・自尊心維持などとされる。対照的に、望ましい特性を希少と過小評価する「偽の独自性効果」がある。',
+    keyFigures:
+      'リー・ロス（Lee Ross）／デヴィッド・グリーン（David Greene）／パメラ・ハウス（Pamela House, 1977）／対照＝偽の独自性効果',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/002210317790049X', type: 'academic', label: 'Ross, Greene & House (1977) “The false consensus effect...”, Journal of Experimental Social Psychology 13, 279–301（一次文献）' },
+      { url: 'https://en.wikipedia.org/wiki/False_consensus_effect', type: 'reference', label: 'Wikipedia「False consensus effect」— 定義・実験・原因' },
+      { url: 'https://dictionary.apa.org/false-uniqueness-effect', type: 'reference', label: 'APA Dictionary of Psychology「false-uniqueness effect」— 対照概念' },
+    ],
+  },
+  {
+    id: 'bizlaw-merger-of-obligations',
+    discipline: 'business-law',
+    title: '混同（民法520条）',
+    statement:
+      '混同とは、債権と債務が同一人に帰属したときに、その債権が消滅する債権の消滅原因の一つである（民法520条）。たとえば債権者が債務者を相続した場合や、債権者である会社が債務者である会社を吸収合併した場合など、「請求する人」と「支払う人」が同一になると債権を存続させる意味がないため、原則として債権は消滅する。' +
+      '同条本文は「債権及び債務が同一人に帰属したときは、その債権は、消滅する」と定める。もっとも、ただし書は「その債権が第三者の権利の目的であるときは、この限りでない」とし、たとえばその債権に質権が設定されているなど第三者の権利が及ぶ場合は、第三者保護のため消滅しない。混同は弁済・代物弁済・供託・相殺・更改・免除と並ぶ債権の消滅原因であり、相続・合併の場面で実務上問題となる。なお物権の混同は別条文の民法179条が定める。',
+    keyFigures:
+      '520条本文：債権及び債務が同一人に帰属すると債権は原則消滅／ただし書：第三者の権利の目的（質権設定等）なら消滅しない／典型＝相続・吸収合併・債権譲受け／弁済・代物弁済・供託・相殺・更改・免除と並ぶ債権の消滅原因／物権の混同は179条と区別／e-Gov law id 129AC0000000089',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov 法令検索「民法」（明治29年法律第89号, law id 129AC0000000089）第520条' },
+      { url: 'https://ja.wikibooks.org/wiki/民法第520条', type: 'reference', label: 'Wikibooks「民法第520条（混同）」条文・解説' },
+      { url: 'https://ja.wikipedia.org/wiki/混同', type: 'reference', label: 'Wikipedia「混同」（物権・債権共通の消滅原因／民法179条・520条）' },
+    ],
+  },
+  {
+    id: 'infosoc-fourth-estate',
+    discipline: 'information-sociology',
+    title: '第四の権力',
+    statement:
+      '第四の権力（the fourth estate、第四階級／第四の身分）とは、報道機関・ジャーナリズム（press／news media）が立法・行政・司法の三権から独立し、それらの権力を監視・批判して世論を形成する社会的・政治的な力をもつとする概念。' +
+      '語源はアンシャン・レジームの三身分（聖職者＝第一身分、貴族＝第二身分、平民＝第三身分）になぞらえ、英国議会の記者席（報道記者）を第四の身分と呼んだことに由来する。トーマス・カーライルが著書『英雄崇拝論』で、エドマンド・バークが「記者席にこそ三身分のいずれより重要な第四階級が座る」と述べたと記したが、バーク帰属の一次的典拠は確実でなくカーライルの記述で広まったとされる。報道の権力監視（番犬＝watchdog）機能や、報道の自由・知る権利・民主主義の前提としての役割を表す。現代ではインターネットや市民ジャーナリズムを第五の権力（fifth estate）と呼び対比する議論や、政治・資本との癒着による機能不全を問う批判もある。',
+    keyFigures:
+      'エドマンド・バーク（Edmund Burke・帰属は不確実）／トーマス・カーライル（Thomas Carlyle・『英雄崇拝論』で普及）／ウィリアム・ダットン（W. H. Dutton・第五の権力論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/the-sage-encyclopedia-of-journalism-2e/chpt/fourth-estate', type: 'reference', label: 'The SAGE Encyclopedia of Journalism (2e), “Fourth Estate”' },
+      { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'academic', label: 'Oxford Internet Institute, University of Oxford — “The Fifth Estate” project (W. H. Dutton)' },
+      { url: 'https://wordhistories.net/2016/08/09/the-fourth-estate/', type: 'reference', label: 'Word Histories — origin of “the fourth estate”（Carlyle/Burke attribution）' },
+    ],
+  },
+  {
+    id: 'econ-public-goods-game',
+    discipline: 'economics',
+    title: '公共財ゲーム',
+    statement:
+      '実験経済学・ゲーム理論で社会的ジレンマ（協力か裏切りか）を研究する標準的な多人数ゲーム。各参加者は手元の元手（トークン）を私的口座に残すか、共通の「公共のポット」に秘密裏に拠出するかを選ぶ。ポットの総額は実験者によって1より大きく参加人数より小さい乗数（例1.6倍）に増やされ、拠出額に関係なく全員に均等再分配される。' +
+      '個人の支配戦略は「拠出ゼロのフリーライド（タダ乗り）」だが、全員がそうすると社会的最適（全員全額拠出）を下回る＝囚人のジレンマの多人数版。実験では理論予測（ゼロ拠出）に反し当初は元手の約4〜5割を拠出するが、繰り返すと拠出は低下する（協力の崩壊）。非協力者に自費で罰を与える「処罰」機会があると利他的処罰が行われ協力が維持・回復する（Fehr & Gächter 2000/2002）。協力の進化や社会規範研究の中核である。',
+    keyFigures:
+      'Ernst Fehr & Simon Gächter（2000/2002・利他的処罰）／R. Mark Isaac & James M. Walker／John O. Ledyard（サーベイ）／囚人のジレンマの多人数版・フリーライダー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Public_goods_game', type: 'reference', label: 'Wikipedia「Public goods game」— 定義・利得構造・繰り返しによる拠出低下と処罰効果' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.90.4.980', type: 'academic', label: 'Fehr & Gächter (2000) “Cooperation and Punishment in Public Goods Experiments,” American Economic Review 90(4):980-994' },
+      { url: 'https://oecs.mit.edu/pub/0i6tb22l/release/1', type: 'reference', label: 'MIT Open Encyclopedia of Cognitive Science「Economic Games」— 公共財ゲームを含む解説' },
+    ],
+  },
 ];
 // Stryker restore all
