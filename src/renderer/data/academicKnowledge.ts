@@ -16165,5 +16165,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Preferential_attachment', type: 'reference', label: 'Wikipedia: Preferential attachment（累積的優位・マタイ効果・ユール／プライス系譜）' },
     ],
   },
+  {
+    id: 'econ-optimal-tariff',
+    discipline: 'economics',
+    title: '最適関税論',
+    statement:
+      '世界価格に影響を与えうる「大国」（貿易で市場支配力＝独占・買占力を持つ国）は、輸入への正の関税により自由貿易よりも自国の経済厚生を高めうるという命題。関税で輸入需要を減らすと輸入財の世界価格が下がり交易条件が改善する（交易条件効果）。最適関税率は、この交易条件の利得と、関税が生む生産・消費の死荷重（効率損失）とを均衡させる点で決まり、外国の輸出供給弾力性に反比例する（供給が非弾力的なほど最適関税は高く、' +
+      '小国は供給が完全弾力的なため交易条件利得がなく最適関税はゼロ）。だがこの利得は貿易相手の犠牲の上に成り立つ「近隣窮乏化」であり、相手が報復関税で応じれば双方が自由貿易より悪化しうる（囚人のジレンマ的な関税戦争）。自由貿易最善論への古典的な理論的例外で、トレンズ・エッジワース・ビッカーダイクに遡り、ハリー・ジョンソンが関税報復として定式化した。関税・比較優位や幼稚産業保護論とは区別される。',
+    keyFigures: 'ビッカーダイク／エッジワース／ハリー・ジョンソン（Harry Johnson, 1953-54, 関税報復）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/International_Trade_-_Theory_and_Policy/07:_Trade_Policy_Effects_with_Perfectly_Competitive_Markets/7.06:_The_Optimal_Tariff', type: 'academic', label: 'LibreTexts (Suranovic), International Trade Theory and Policy — The Optimal Tariff' },
+      { url: 'https://academic.oup.com/restud/article-abstract/21/2/142/1555371', type: 'academic', label: 'Harry G. Johnson, "Optimum Tariffs and Retaliation," Review of Economic Studies (1953-54)' },
+      { url: 'https://www.richmondfed.org/~/media/richmondfedorg/publications/research/economic_review/1987/pdf/er730402.pdf', type: 'academic', label: 'Richmond Fed Economic Review (1987) — Classical and Neoclassical Roots of the Theory of Optimum Tariffs' },
+    ],
+  },
+  {
+    id: 'econ-trust-game',
+    discipline: 'economics',
+    title: '信頼ゲーム（投資ゲーム）',
+    statement:
+      'バーグ、ディックハウト、マッケイブ（1995, Games and Economic Behavior「Trust, Reciprocity, and Social History」）が導入した2人の逐次手番の実験ゲーム。プレイヤー1（投資家／信頼する側）は元手の一部を匿名のプレイヤー2に送ることができ、送った額は実験者が（通常3倍に）増やしてプレイヤー2（受託者）に渡る。受託者は受け取った増額分のうちいくらを返すかを決める。' +
+      '純粋な自己利益に基づく部分ゲーム完全均衡では、受託者は何も返さず、それを見越した投資家も何も送らないため余剰は生まれないと予測される。しかし実際の実験では投資家は相当額を送り、受託者も報いる額を返すことが多く、標準的な合理性では説明できない信頼と互恵性を示す。送った額が信頼、返した額が信頼に値する性（互恵性）の指標とされ、社会的選好の測定やオキシトシン研究など神経経済学の基盤となっている。最後通牒・独裁者・公共財ゲームとは区別される。',
+    keyFigures: 'ジョイス・バーグ／ジョン・ディックハウト／ケビン・マッケイブ（Berg, Dickhaut & McCabe, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/gamebe/v10y1995i1p122-142.html', type: 'academic', label: 'Berg, Dickhaut & McCabe (1995), Games and Economic Behavior 10(1):122–142 (RePEc/IDEAS)' },
+      { url: 'https://web.stanford.edu/~niederle/trust.pdf', type: 'academic', label: 'Stanford University course notes — Berg, Dickhaut & McCabe trust game (structure, trust/trustworthiness measures)' },
+      { url: 'https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00887/full', type: 'academic', label: 'Tzieropoulos, "Trust Games and Beyond," Frontiers in Neuroscience (2019)' },
+    ],
+  },
+  {
+    id: 'mgmt-technology-s-curve',
+    discipline: 'management',
+    title: '技術のSカーブ',
+    statement:
+      'リチャード・フォスターが1986年の著書『イノベーション—限界突破の経営戦略（Innovation: The Attacker\'s Advantage）』で広めた概念で、ある技術の改良に投じた累積的な努力・投資（または時間）を横軸、その技術の性能を縦軸にとると、両者の関係がS字（シグモイド）を描くとする。初期は理解が浅く進歩が遅いが、成長期に急速に性能が向上し、物理的・自然的な限界に近づくと収穫逓減して頭打ち（成熟）になる。' +
+      '戦略的含意として、技術がSカーブ上端の限界に近づくと追加投資の効果は乏しく、より低い位置だが急峻な別のSカーブで始まる新技術（技術的不連続＝ディスコンティニュイティ）がやがて旧技術を追い越しうる。ゆえに成熟技術へ過剰投資する既存リーダーが新技術を採る攻撃者に逆転される「攻撃者の優位」が生じる。クリステンセンの破壊的イノベーションと関連するが、普及のS字曲線（イノベーションの普及）や製品ライフサイクルとは区別される、性能対努力の技術曲線である。',
+    keyFigures: 'リチャード・フォスター（Richard N. Foster, 1986, McKinsey）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/mamd/www/tech_strat/courseMaterial/topics/topic3/readings/Exploring_the_Limits_of_the_Technology_S-Curve/Exploring_the_Limits_of_the_Technology_S-Curve.pdf', type: 'academic', label: 'Sood & Tellis, "Exploring the Limits of the Technology S-Curve," Production and Operations Management (MIT-hosted)' },
+      { url: 'https://www.open.edu/openlearn/nature-environment/organisations-environmental-management-and-innovation/content-section-1.7', type: 'academic', label: 'The Open University (OpenLearn): Innovation and the S-curve' },
+      { url: 'https://e-words.jp/w/%E6%8A%80%E8%A1%93%E3%81%AES%E3%82%AB%E3%83%BC%E3%83%96.html', type: 'reference', label: 'IT用語辞典 e-Words「技術のSカーブ」' },
+    ],
+  },
+  {
+    id: 'human-action-bias',
+    discipline: 'human-science',
+    title: '行動バイアス（アクション・バイアス）',
+    statement:
+      '何もしない方が同等以上に良い結果を生む場合でも、行動（何かをすること）を不作為より好む傾向。特に不確実性やプレッシャー下、悪い出来事の後に「何かせねば」と駆られやすく、行動した方が自他から好意的に評価されやすい。代表的実証はバルエリら2007（Journal of Economic Psychology「エリートサッカーGKの行動バイアス：PKの事例」、286本のPKを分析）。' +
+      'キックは中央を含めほぼ均等に分布するため、GKは中央に留まる方が多くを止められるのに、ほぼ必ず左右へ跳ぶ。これは「跳ぶのが規範」であり、不作為で失点する方が行動して失点するより後悔が大きいためと説明される。これは不作為バイアス（inaction選好）の裏返しで、金融の過剰取引や医療の過剰治療とも関連する。何もしない選択を選びやすい不作為バイアスや、変化を避ける現状維持バイアスとは区別される。',
+    keyFigures: 'マイケル・バルエリ（Bar-Eli）ら（2007, PKのGK研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0167487006001048', type: 'academic', label: 'Bar-Eli et al. (2007) "Action bias among elite soccer goalkeepers: The case of penalty kicks", Journal of Economic Psychology 28(5):606-621 (ScienceDirect)' },
+      { url: 'https://thedecisionlab.com/biases/action-bias', type: 'reference', label: 'The Decision Lab — Action Bias (definition, norm theory, goalkeeper case, relation to omission bias)' },
+    ],
+  },
+  {
+    id: 'bizlaw-geographical-indication',
+    discipline: 'business-law',
+    title: '地理的表示法（GI法）',
+    statement:
+      '地理的表示法（正式名称「特定農林水産物等の名称の保護に関する法律」、平成26年法律第84号）は、2014年に制定され2015年6月1日に施行された農林水産省所管の法律で、地理的表示（GI）保護制度を定める。産地と結びついた特定の品質・社会的評価その他の確立した特性を持つ農林水産物・食品の名称を地理的表示として登録し、神戸ビーフ・夕張メロン・但馬牛などがその例である。' +
+      '登録産品は地理的表示と併せて公式のGIマーク（登録標章）を表示でき、登録名称やマークの不正使用・誤認を招く表示に対しては、国（農林水産大臣）が措置命令などにより行政的に直接保護する。権利者個人の訴訟を要する点が異なる商標とは別の仕組みで、地域団体商標を含む商標法（特許庁所管）とは区別される。生産者のブランド価値・公正競争を守り、消費者に真正性を保証し、地域ブランドの国際的保護も支える。',
+    keyFigures: '特定農林水産物等の名称の保護に関する法律（地理的表示法、平成26年法律第84号、2014年制定・2015年施行）／農林水産省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=426AC0000000084', type: 'government', label: 'e-Gov法令検索「特定農林水産物等の名称の保護に関する法律」（平成26年法律第84号）' },
+      { url: 'https://www.maff.go.jp/j/shokusan/gi_act/index.html', type: 'government', label: '農林水産省「地理的表示（GI）保護制度」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E7%89%B9%E5%AE%9A%E8%BE%B2%E6%9E%97%E6%B0%B4%E7%94%A3%E7%89%A9%E7%AD%89%E3%81%AE%E5%90%8D%E7%A7%B0%E3%81%AE%E4%BF%9D%E8%AD%B7%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia「特定農林水産物等の名称の保護に関する法律」' },
+    ],
+  },
+  {
+    id: 'infosoc-scot',
+    discipline: 'information-sociology',
+    title: '技術の社会的構成（SCOT）',
+    statement:
+      'トレヴァー・ピンチとヴィーベ・バイカーが1984年（Social Studies of Science誌「The Social Construction of Facts and Artefacts」）に示した科学技術社会論（STS）の理論・アプローチ。技術が人間の行為を一方的に決めるとする技術決定論を否定し、人間・社会の行為こそが技術を形づくると捉える。技術の形は社会的過程と諸集団間の交渉の産物であるとする。' +
+      '鍵概念は、人工物に異なる意味を付与する「関連社会集団」、同じ人工物が集団ごとに異なって解釈・設計され技術的効率のみでは決まらないとする「解釈の柔軟性」、時間とともに柔軟性が減じ修辞的収束などを経て支配的な意味・設計へ収斂する「収束・安定化」である。古典的事例は自転車（ハイホイール車と安全型自転車をめぐる、女性や有閑男性ら集団ごとの見方の違い）。技術決定論やアクターネットワーク理論、現実の社会構成主義一般とは区別される。',
+    keyFigures: 'トレヴァー・ピンチ／ヴィーベ・バイカー（Pinch & Bijker, 1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/030631284014003004', type: 'academic', label: 'Pinch & Bijker, "The Social Construction of Facts and Artefacts," Social Studies of Science (1984)' },
+      { url: 'https://www.encyclopedia.com/science/encyclopedias-almanacs-transcripts-and-maps/social-construction-technology', type: 'reference', label: 'Encyclopedia.com — Social Construction of Technology' },
+      { url: 'https://en.wikipedia.org/wiki/Social_construction_of_technology', type: 'reference', label: 'Wikipedia — Social construction of technology' },
+    ],
+  },
 ];
 // Stryker restore all
