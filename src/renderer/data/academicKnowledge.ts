@@ -15628,5 +15628,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.brookings.edu/articles/third-places-as-community-builders/', type: 'media', label: 'Brookings Institution — "Third places" as community builders' },
     ],
   },
+  {
+    id: 'econ-fiscal-illusion',
+    discipline: 'economics',
+    title: '財政錯覚',
+    statement:
+      '財政錯覚（fiscal illusion）とは、納税者・有権者が政府活動の真の費用や便益を体系的に誤認し、その結果として公共支出がしばしば過大に偏る現象を指す公共選択論・財政学の概念である。イタリアの経済学者アミルカレ・プヴィアーニが1903年の著作で起源を示し、ジェームズ・ブキャナンやリチャード・ワグナーら公共選択論の伝統で発展した。' +
+      '機構としては、複雑・断片的な税構造や間接税・源泉徴収が真の租税負担を隠して過小評価させること、赤字・公債による費用の先送り（公債錯覚＝借入は現在の課税より安く感じられる）、補助金が同額の所得増より地方支出を増やすフライペーパー効果などがある。結果として公共財の知覚される「租税価格」が真の価格より低くなり、政府支出への需要が上方に偏る。なお意思決定一般を扱う公共選択論とは区別され、財政費用の誤認に焦点を置く点に特徴がある。',
+    keyFigures: 'アミルカレ・プヴィアーニ（Amilcare Puviani, 1903）／ジェームズ・ブキャナン／リチャード・ワグナー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s11127-024-01187-9', type: 'academic', label: 'Public Choice (Springer): Fiscal illusion at the individual level' },
+      { url: 'https://www.nottingham.ac.uk/economics/documents/discussion-papers/98-10.pdf', type: 'academic', label: 'University of Nottingham: Taxation, Fiscal Illusion and the Demand for Government' },
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_illusion', type: 'reference', label: 'Fiscal illusion (Wikipedia) — Puviani 1903 origin, Buchanan & Wagner' },
+    ],
+  },
+  {
+    id: 'econ-absorption-approach',
+    discipline: 'economics',
+    title: 'アブソープション・アプローチ',
+    statement:
+      'シドニー・アレクサンダーが1952年（IMF Staff Papers「Effects of a Devaluation on a Trade Balance」）で示した国際収支の分析枠組み。国民所得恒等式から、貿易収支（経常収支）は国民所得・産出Yと国内アブソープション（吸収）A＝消費＋投資＋政府支出の差に等しい（CA＝Y−A）。貿易赤字とは、自国が生産する以上に支出（吸収）している状態を意味する。' +
+      'この見方によれば、平価切下げが収支を改善するのは、所得Yを吸収Aより相対的に増やす場合に限られる。すなわち産出を吸収以上に増やすか、実質残高効果や所得再分配などで吸収を削減する必要がある。完全雇用下では産出に余力がなくYを増やせないため、収支改善には必ずアブソープションの削減を要する。相対価格に着目する弾力性アプローチ（マーシャル＝ラーナー条件）を所得・マクロ面から補完するもので、Jカーブ効果とも区別される。',
+    keyFigures: 'シドニー・アレクサンダー（Sidney Alexander, 1952）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1952/001/article-A003-en.xml', type: 'academic', label: 'Alexander, S. (1952) "Effects of a Devaluation on a Trade Balance," IMF Staff Papers — IMF eLibrary' },
+      { url: 'https://kotobank.jp/word/%E3%82%A2%E3%83%96%E3%82%BD%E3%83%BC%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%82%A2%E3%83%97%E3%83%AD%E3%83%BC%E3%83%81-158554', type: 'reference', label: 'コトバンク「アブソープション・アプローチ」' },
+      { url: 'https://www.economicsdiscussion.net/balance-of-payment/the-modern-theory-of-balance-of-payment-adjustment/6597', type: 'reference', label: 'The Modern Theory of Balance of Payment Adjustment — Economics Discussion' },
+    ],
+  },
+  {
+    id: 'mgmt-kraljic-matrix',
+    discipline: 'management',
+    title: 'クラルジック・マトリクス（購買ポートフォリオ）',
+    statement:
+      'ピーター・クラルジックが1983年のHBR論文「Purchasing Must Become Supply Management」で提示した、戦略的購買のためのポートフォリオ・モデル。企業が購入する品目を「利益への影響度（購買の重要性＝購入量・総コストに占める割合・品質や事業へのインパクト）」と「供給リスク（供給市場の複雑さ＝希少性・供給者数・代替可能性・物流）」の2軸で評価し、各軸の高低で2×2の4類型に分類する。' +
+      '4類型は、戦略品目（高影響・高リスク）／レバレッジ品目（高影響・低リスク）／ボトルネック品目（低影響・高リスク）／非重要品目（低影響・低リスク）であり、各々に異なる調達戦略を割り当てる。戦略品目はパートナーシップ構築、レバレッジ品目は購買力の行使、ボトルネック品目は供給確保・在庫、非重要品目は手続きの簡素化・自動化が基本となる。購買に初めて適用されたポートフォリオ手法で戦略的調達の基礎をなし、BCGマトリクスやGE・マッキンゼー・マトリクスとは区別される購買固有のモデルである。',
+    keyFigures: 'ピーター・クラルジック（Peter Kraljic, 1983）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1478409205000737', type: 'academic', label: 'Journal of Purchasing & Supply Management — Purchasing strategies in the Kraljic matrix (peer-reviewed)' },
+      { url: 'https://en.wikipedia.org/wiki/Kraljic_matrix', type: 'reference', label: 'Wikipedia — Kraljic matrix' },
+      { url: 'https://hbr.org/1983/09/purchasing-must-become-supply-management', type: 'media', label: 'Harvard Business Review (1983) — Purchasing Must Become Supply Management (原典)' },
+    ],
+  },
+  {
+    id: 'human-choice-overload',
+    discipline: 'human-science',
+    title: '選択過多（選択のオーバーロード）',
+    statement:
+      'ある程度の選択肢は望ましいが、選択肢が多すぎると意思決定を妨げ、選ぶ意欲や選択後の満足度をかえって低下させうるという知見。アイエンガーとレッパー（2000「When Choice is Demotivating」）の高級食料品店でのジャム実験では、24種類の陳列は6種類より多くの客の関心を引いたが、実際に購入したのは約3%にとどまり、6種類では約30%が購入した。「オーバーチョイス」の語はトフラー『未来の衝撃』（1970）が広め、' +
+      'シュワルツ『選択の科学（選択のパラドックス、2004）』が一般に普及させた。想定される機構は、選択に伴う認知的負担の増大、予期される後悔、期待水準の上昇である。ただしシャイベヘンネら（2010）のメタ分析は、50の実験を統合した全体の効果量がほぼゼロで、効果は普遍的ではなく、決定の難しさや選好の不確実性などの調整変数に依存する可能性を示し、現在も論争的である点に注意を要する。',
+    keyFigures: 'シーナ・アイエンガー／マーク・レッパー（Iyengar & Lepper, 2000）／アルビン・トフラー（overchoice, 1970）／バリー・シュワルツ（2004）／シャイベヘンネら（Scheibehenne et al., 2010）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://business.columbia.edu/faculty/research/when-choice-demotivating-can-one-desire-too-much-good-thing', type: 'academic', label: 'Columbia Business School — Iyengar & Lepper (2000), "When Choice Is Demotivating," JPSP' },
+      { url: 'https://www.semanticscholar.org/paper/Can-There-Ever-Be-Too-Many-Options-A-Meta-Analytic-Scheibehenne-Greifeneder/07775d812c00a97aaa57b55596b39e26b8baaa0b', type: 'academic', label: 'Scheibehenne, Greifeneder & Todd (2010), meta-analytic review of choice overload, Journal of Consumer Research' },
+      { url: 'https://en.wikipedia.org/wiki/Overchoice', type: 'reference', label: 'Wikipedia — Overchoice (Toffler, Future Shock 1970; Schwartz, Paradox of Choice 2004)' },
+    ],
+  },
+  {
+    id: 'bizlaw-disability-employment',
+    discipline: 'business-law',
+    title: '障害者雇用促進法',
+    statement:
+      '正式名称は「障害者の雇用の促進等に関する法律」（昭和35年法律第123号、当初は身体障害者雇用促進法として制定）で、厚生労働省が所管する。柱の一つが法定雇用率制度で、一定規模以上の民間企業や公的機関に障害者の雇用を義務付け、率は段階的に引き上げられている（民間企業は近年2.5%程度で、さらなる引上げが予定）。' +
+      'また障害者雇用納付金制度により、法定雇用率の未達成企業は不足数に応じて納付金を負担し、超過達成した企業には調整金や助成金が支給される。2013年改正（2016年施行）で雇用分野における障害者差別の禁止と合理的配慮の提供義務が定められた。身体・知的に加え2018年から精神障害者も雇用率の算定対象となり、障害者の職業的自立の促進を目的とする。',
+    keyFigures: '障害者の雇用の促進等に関する法律（障害者雇用促進法、昭和35年法律第123号）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=335AC0000000123_20251215_504AC0000000104', type: 'government', label: 'e-Gov法令検索「障害者の雇用の促進等に関する法律」（昭和35年法律第123号）' },
+      { url: 'https://www.mhlw.go.jp/stf/houdou/0000078980.html', type: 'government', label: '厚生労働省「改正障害者雇用促進法に基づく障害者差別禁止指針・合理的配慮指針」' },
+      { url: 'https://www.jeed.go.jp/disability/about_levy_grant_system.html', type: 'government', label: 'JEED（高齢・障害・求職者雇用支援機構）「障害者雇用納付金制度の概要」' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-cooperativism',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム協同組合主義',
+    statement:
+      'プラットフォーム協同組合主義は、トレボー・ショルツが2014年の論考「Platform Cooperativism vs. the Sharing Economy」で提唱し（ネイサン・シュナイダーらと展開した）、ウーバーやエアビーアンドビーに代表される抽出的でベンチャー資本に支えられた「シェアリングエコノミー」型プラットフォームへの対案である。アプリ・ウェブサイト・マーケットプレイスなどのデジタルプラットフォームを、それに依存する労働者や利用者が共同で所有し民主的に統治することを目指す。' +
+      '協同組合運動の原則、すなわち組合員による所有、一人一票の民主的管理、生み出された価値・利益の共有を、ギグ/プラットフォーム経済に適用する点に特徴がある。狙いはギグ労働者に所有権と公正な報酬と発言権を与え、外部株主に吸い上げられる価値を参加者の間に還流させることにある。運転手所有の配車協同組合や写真家所有のStocksyなどが例。利益最大化を前提とするプラットフォーム資本主義、ギグエコノミー、シェアリングエコノミーとは区別される協同組合的オルタナティブである。',
+    keyFigures: 'トレボー・ショルツ（Trebor Scholz, 2014）／ネイサン・シュナイダー（Nathan Schneider）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.newschool.edu/pressroom/pressreleases/2015/platformcooperativism.htm', type: 'academic', label: 'The New School — Platform Cooperativism（提唱者ショルツ所属大学の公式発表）' },
+      { url: 'https://en.wikipedia.org/wiki/Platform_cooperative', type: 'reference', label: 'Wikipedia — Platform cooperative（2014年ショルツ提唱・共同所有/民主的統治・シュナイダー）' },
+      { url: 'https://wiki.p2pfoundation.net/Platform_Cooperativism', type: 'reference', label: 'P2P Foundation Wiki — Platform Cooperativism（定義・歴史・対案性）' },
+    ],
+  },
 ];
 // Stryker restore all
