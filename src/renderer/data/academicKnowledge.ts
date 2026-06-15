@@ -16075,5 +16075,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Homophily', type: 'reference', label: 'Wikipedia — Homophily (Lazarsfeld & Merton 1954; baseline vs inbreeding)' },
     ],
   },
+  {
+    id: 'econ-forward-premium-puzzle',
+    discipline: 'economics',
+    title: 'フォワード・プレミアム・パズル',
+    statement:
+      'フォワード・プレミアム・パズル（フォワード・プレミアム・アノマリー）は為替市場の実証的アノマリーである。カバーなし金利平価UIPと合理的期待の下では、フォワード・ディスカウントにある（自国金利が相手国より高い）通貨は金利差の分だけ平均的に減価し、フォワードレートは将来スポットレートの不偏予測子になるはずである。' +
+      'しかし実際の為替変化率をフォワード・プレミアム（金利差）に回帰すると、傾き係数は理論値の+1ではなくゼロ近傍、しばしば負になる（ファマ回帰、Fama 1984）。すなわち高金利通貨はUIPの予測どおり減価せず、むしろ増価しがちで、これが低金利通貨で借り高金利通貨で運用するキャリートレードの利益の源泉となる。主な説明は時変リスクプレミアム、ペソ問題、期待誤差などで、金利平価そのものとは区別される。',
+    keyFigures: 'ユージン・ファマ（Eugene Fama, 1984, Fama回帰）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/moneco/v14y1984i3p319-338.html', type: 'academic', label: 'Fama, E. F. (1984) "Forward and Spot Exchange Rates," Journal of Monetary Economics 14(3):319-338 (RePEc)' },
+      { url: 'https://www.bis.org/publ/work396.pdf', type: 'academic', label: 'BIS Working Paper No. 396 — Fama regression, negative slope, time-varying risk premium' },
+      { url: 'https://en.wikipedia.org/wiki/Forward_premium_anomaly', type: 'reference', label: 'Forward premium anomaly (encyclopedia overview)' },
+    ],
+  },
+  {
+    id: 'econ-home-bias',
+    discipline: 'economics',
+    title: 'ホームバイアス（自国バイアス・パズル）',
+    statement:
+      '投資家がポートフォリオに占める自国（ホーム）資産の割合を、国際分散投資の理論が予測するよりはるかに大きく保有する実証的事実。国際CAPMでは、十分に分散した投資家は世界の時価総額シェアに応じて各国を組み入れたグローバル市場ポートフォリオを保有すべきだが、現実にはどの国の投資家も自国株を大幅にオーバーウェイトする。フレンチ&ポテルバ（1991, AER）が初めて学術的に示し、テサー&ワーナー（1995）も裏付けた。' +
+      '国際分散によるリスク低減の利益を放棄してしまう点で「パズル」とされ、オブズフェルド&ロゴフは国際マクロの主要パズルの一つに挙げる。主な説明は、自国リスクのヘッジ（実質為替・非貿易財・人的資本・インフレ）、情報の非対称性（自国企業をよく知る）、取引・規制障壁や資本規制、行動的な親近性バイアス。なお、フェルドシュタイン=ホリオカのパズル（貯蓄・投資相関）や株式プレミアム・パズルとは区別される。',
+    keyFigures: 'ケネス・フレンチ／ジェームズ・ポテルバ（French & Poterba, 1991）／テサー&ワーナー（1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w17691', type: 'academic', label: 'Coeurdacier & Rey, "Home Bias in Open Economy Financial Macroeconomics," NBER WP 17691 / JEL 2013' },
+      { url: 'https://en.wikipedia.org/wiki/Equity_home_bias_puzzle', type: 'reference', label: 'Equity home bias puzzle — Wikipedia (French & Poterba 1991 attribution, country shares, Obstfeld–Rogoff puzzle)' },
+      { url: 'https://www.nber.org/papers/w13366', type: 'academic', label: 'Van Nieuwerburgh & Veldkamp, "Information Immobility and the Home Bias Puzzle," NBER WP 13366 / Journal of Finance 2009' },
+    ],
+  },
+  {
+    id: 'mgmt-amo-model',
+    discipline: 'management',
+    title: 'AMOモデル（能力・動機づけ・機会）',
+    statement:
+      'AMOモデル（AMOフレームワーク）は人的資源管理における業績の枠組みで、アペルバウム、ベイリー、バーグ、カレバーグ2000『Manufacturing Advantage（高業績作業システムはなぜ報われるか）』が代表的とされる。個人や組織の業績は3要素の関数とみなす＝能力Ability（知識・技能。採用・選抜・訓練/能力開発で高める）、動機づけMotivation（遂行する意欲・誘因。報酬・評価・雇用保障で高める）、機会Opportunity（貢献し能力を発揮する機会。職務設計・参加・自律・情報共有で高める）。' +
+      '人事施策の束（バンドル）がこれら3つをそれぞれ高めることで業績を向上させると説き、しばしばPerformance=f(A,M,O)と表される。戦略的人的資源管理では高業績作業システムHPWSと企業業績を結ぶ論理の中核をなす。源流はブルームの業績=f(能力×動機づけ)やベイリー1993にある。なお意欲の認知過程を扱う期待理論や、職務設計を扱う職務特性モデルとは区別される。',
+    keyFigures: 'アペルバウム／ベイリー／バーグ／カレバーグ（Appelbaum, Bailey, Berg & Kalleberg, 2000）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/ijmr.12332', type: 'academic', label: 'Bos-Nehles et al. (2023) Examining the AMO framework in HRM research, International Journal of Management Reviews (Wiley, peer-reviewed)' },
+      { url: 'https://www.intangiblecapital.org/index.php/ic/article/view/838/574', type: 'academic', label: 'Marin-Garcia & Tomas, Deconstructing AMO framework: a systematic review, Intangible Capital' },
+      { url: 'https://www.researchgate.net/publication/265380870_Manufacturing_Advantage_Why_High-Performance_Work_Systems_Pay_Off', type: 'reference', label: 'Appelbaum, Bailey, Berg & Kalleberg (2000) Manufacturing Advantage (Cornell University Press) record' },
+    ],
+  },
+  {
+    id: 'human-fading-affect-bias',
+    discipline: 'human-science',
+    title: '感情消失バイアス',
+    statement:
+      '感情消失バイアス（フェイディング・アフェクト・バイアス、FAB）とは、自伝的記憶に伴う感情の強さが時間とともに薄れ、特に不快な出来事に伴うネガティブ感情の方が、快い出来事に伴うポジティブ感情よりも速く・大きく減衰する現象を指す。その結果、時間が経つほど自伝的記憶は感情的により肯定的な色合いを帯びる。早くはCason（1932）が感情の減衰を観察し、' +
+      'Walker, Skowronski & Thompson（2003）が「FAB」と命名・体系化した。測定法・保持間隔・文化を超えて頑健（Ritchieら2014の汎文化的検証）だが、抑うつ・不安など気分の落ち込み（ディスフォリア）傾向の人では弱まり、時に逆転する。心理的レジリエンスや肯定的な自己像、感情制御を支える適応的機能と考えられる。なお、特定年代の記憶が増える「レミニセンス・バンプ」や、体験のピークと終了時で評価が決まる「ピーク・エンドの法則」とは区別される。',
+    keyFigures: 'W・リチャード・ウォーカー／ジョン・J・スコウロンスキー（Walker & Skowronski, 2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.niu.edu/jskowronski/publications/walkerskowronski2009.pdf', type: 'academic', label: 'Walker & Skowronski (2009), The Fading Affect Bias: But What the Hell Is It For?, Applied Cognitive Psychology (NIU)' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1608751/full', type: 'academic', label: 'Frontiers in Psychology (2025), Evidence for a fading affect bias in subjectively assessed affect changes in autobiographical memory' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/02699930302287', type: 'academic', label: 'Walker et al. (2003), Dysphoria disrupts the fading affect bias, Cognition and Emotion' },
+    ],
+  },
+  {
+    id: 'bizlaw-labor-relations-adjustment',
+    discipline: 'business-law',
+    title: '労働関係調整法',
+    statement:
+      '労働関係調整法（昭和21年法律第25号、1946年制定・施行）は、労働基準法・労働組合法と並ぶ労働三法の一つ。労働争議（労働組合と使用者の間の集団的紛争）の予防・解決により産業平和を維持し経済の発展に寄与することを目的とし、労働組合法を補完する。' +
+      '労働委員会が行う調整手続は三種あり、あっせん（あっせん員が当事者の主張を確かめ交渉を援助）、調停（労使・公益の三者構成の調停委員会が調停案を提示するが拘束力はない）、仲裁（公益委員から成る仲裁委員会が仲裁裁定を下し、労働協約と同一の効力をもって当事者を拘束）である。さらに運輸・郵便・電気・ガス・医療等の公益事業では争議行為の事前予告を義務づけ、内閣総理大臣は国民経済や日常生活を著しく害する争議に緊急調整を決定できる。労働組合法・労働審判法とは区別される。',
+    keyFigures: '労働関係調整法（昭和21年法律第25号、1946年制定）／労働委員会／中央労働委員会',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73012000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令本文「労働関係調整法（昭和21年09月27日法律第25号）」' },
+      { url: 'https://kotobank.jp/word/%E5%8A%B4%E5%83%8D%E9%96%A2%E4%BF%82%E8%AA%BF%E6%95%B4%E6%B3%95-152444', type: 'reference', label: 'コトバンク「労働関係調整法」（百科事典）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%8A%B4%E5%83%8D%E9%96%A2%E4%BF%82%E8%AA%BF%E6%95%B4%E6%B3%95', type: 'reference', label: 'Wikipedia「労働関係調整法」' },
+    ],
+  },
+  {
+    id: 'infosoc-preferential-attachment',
+    discipline: 'information-sociology',
+    title: '優先的選択（スケールフリー・ネットワーク）',
+    statement:
+      'バラバシとアルバートが1999年にScience誌「Emergence of Scaling in Random Networks」で示した優先的選択（優先的選択結合）とは、ネットワークが成長する際、新しいノードが既に多くの接続を持つノードほど高い確率でつながる過程を指し、「金持ちはより金持ちに」という累積的優位を表す。' +
+      'この「成長」と「優先的選択」という二つの機構により、次数分布がべき乗則P(k)∼k^−γ（指数は概ね2〜3）に従う「スケールフリー」ネットワーク、すなわち少数の高次数ハブと多数の低次数ノードを持つ構造が生まれる。これはエルデシュ＝レーニのランダムグラフが示す釣鐘型／ポアソン分布の均質な次数とは対照的である。WWWやインターネット、引用・社会・タンパク質相互作用網のハブ構造を説明し、ユール過程やサイモンのモデル、マートンのマタイ効果（累積的優位）、プライスの引用網研究の系譜に連なる。スモールワールド、メトカーフの法則、ネットワーク効果とは区別される。',
+    keyFigures: 'アルバート=ラズロ・バラバシ／レーカ・アルバート（Barabási & Albert, 1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.286.5439.509', type: 'academic', label: 'Barabási & Albert, "Emergence of Scaling in Random Networks," Science 286, 509–512 (1999)' },
+      { url: 'http://www.scholarpedia.org/article/Scale-free_networks', type: 'reference', label: 'Scholarpedia: Scale-free networks（BAモデル・べき乗則・ハブ・ER比較）' },
+      { url: 'https://en.wikipedia.org/wiki/Preferential_attachment', type: 'reference', label: 'Wikipedia: Preferential attachment（累積的優位・マタイ効果・ユール／プライス系譜）' },
+    ],
+  },
 ];
 // Stryker restore all
