@@ -11360,5 +11360,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Mediatization_(media)', type: 'reference', label: 'Wikipedia: Mediatization (media)' },
     ],
   },
+  {
+    id: 'econ-feldstein-horioka',
+    discipline: 'economics',
+    title: 'フェルドシュタイン＝ホリオカのパズル',
+    statement:
+      'マーティン・フェルドシュタインとチャールズ・ホリオカが1980年に『エコノミック・ジャーナル』誌で示した、国際マクロ経済学上の代表的なパズル（逆説）。OECD諸国のデータを分析すると、各国の国内貯蓄率と国内投資率との間にきわめて高い相関が観察される。これは逆説的な事実である。なぜなら、もし国際的に資本が完全に移動できるのであれば、ある国の投資は世界全体の貯蓄プールから資金調達されうるため、その国自身の国内貯蓄とはほぼ独立になるはずだからである。' +
+      'すなわち資本移動が自由なら両者の相関は低いと予測されるのに、現実には強い正の相関が見られる。この高い相関は、国際的な資本移動が理論の想定よりはるかに小さい（資本移動度が低い）ことを示唆する。オブストフェルドとロゴフは本問題を国際マクロ経済学の主要なパズルの一つに挙げており、その後も多くの研究が行われている。',
+    keyFigures: 'マーティン・フェルドシュタイン／チャールズ・ホリオカ（堀岡、1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/ej/article-abstract/90/358/314/5220006', type: 'academic', label: 'Feldstein & Horioka, "Domestic Saving and International Capital Flows," The Economic Journal 90(358), 1980（Oxford Academic）' },
+      { url: 'https://www.nber.org/papers/w0310', type: 'academic', label: 'NBER Working Paper — Domestic Savings and International Capital Flows（Feldstein & Horioka）' },
+      { url: 'https://en.wikipedia.org/wiki/Feldstein%E2%80%93Horioka_puzzle', type: 'reference', label: 'Feldstein–Horioka puzzle（English Wikipedia）' },
+    ],
+  },
+  {
+    id: 'econ-seigniorage',
+    discipline: 'economics',
+    title: 'シニョリッジ（通貨発行益）',
+    statement:
+      'シニョリッジ（通貨発行益）とは、政府や中央銀行が通貨を発行することで得る収益で、貨幣の額面金額とその製造・発行に要するコストとの差額を指す。不換紙幣の場合、発行体は事実上ほぼ無償で資源を取得でき、中央銀行では発行した銀行券の見合いで保有する国債などの利子収入として実現する。' +
+      'これは「インフレ税」とも密接に関連する。新たな通貨発行が物価上昇を招くと、公衆が保有する貨幣の実質価値が目減りし、その購買力が発行体（政府・中央銀行）へ移転するためで、明示的な課税や借入と並ぶ財源の一形態とされる。歴史的には君主が貨幣を鋳造する特権に由来し、語源は中世の領主（seigneur）である。',
+    keyFigures: '中央銀行・政府（通貨発行益／インフレ税）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/seigniorage/', type: 'academic', label: 'Econlib — The Concise Encyclopedia of Economics: Seigniorage' },
+      { url: 'https://glossary.mizuho-sc.com/faq/show/2294', type: 'reference', label: 'みずほ証券 ファイナンス用語集「通貨発行益」' },
+    ],
+  },
+  {
+    id: 'mgmt-kaizen',
+    discipline: 'management',
+    title: 'カイゼン（改善）',
+    statement:
+      'カイゼン（改善）は、経営トップから現場の作業員まで全員が参加し、日々の業務を絶えず見直して小さな改善を積み重ねる、継続的・漸進的な改善の経営哲学である。多額の投資を伴う一回限りの大規模な革新（イノベーション）とは対照的に、低コストで継続的な努力と献身により、累積的な効果として品質・効率・生産性の向上を目指す。' +
+      '価値が生まれる実際の現場（ゲンバ）を重視し、ムダ（無駄）の排除と作業の標準化、現場からのボトムアップな提案・参画を柱とする。トヨタ生産方式やリーン生産方式の中核思想であり、今井正明が1986年の著書『Kaizen: The Key to Japan\'s Competitive Success』を通じて国際的に広め、日本的経営の最重要概念の一つとして世界に定着させた。',
+    keyFigures: '今井正明（Masaaki Imai, 1986『Kaizen: The Key to Japan\'s Competitive Success』／カイゼン・インスティテュート創設者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E6%94%B9%E5%96%84-457779', type: 'reference', label: 'コトバンク「改善（カイゼン）」' },
+      { url: 'https://en.wikipedia.org/wiki/Kaizen', type: 'reference', label: 'Wikipedia: Kaizen' },
+      { url: 'https://en.wikipedia.org/wiki/Masaaki_Imai', type: 'reference', label: 'Wikipedia: Masaaki Imai' },
+    ],
+  },
+  {
+    id: 'human-conjunction-fallacy',
+    discipline: 'human-science',
+    title: '連言錯誤',
+    statement:
+      '連言錯誤（合接の誤謬、conjunction fallacy）とは、二つの事象AとBがともに成り立つ連言（A∧B）の確率を、構成要素である単独の事象（A）の確率より高いと誤って判断する論理的誤りである。確率論ではP(A∧B)≤P(A)が必ず成り立つため、連言が単独より起こりやすいことは原理的に不可能であり、この判断は確率論的に矛盾している。' +
+      'エイモス・トヴェルスキーとダニエル・カーネマンが1983年の論文「Extensional Versus Intuitive Reasoning」（Psychological Review）で示した「リンダ問題」が有名で、人物描写に合致するため約85%の被験者がリンダを「銀行員」より「銀行員でフェミニスト運動家」のほうが確からしいと答えた。これは記述との類似性で確率を見積もる代表性ヒューリスティックに起因すると説明される。',
+    keyFigures: 'エイモス・トヴェルスキー／ダニエル・カーネマン（1983）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pages.ucsd.edu/~cmckenzie/TverskyKahneman1983PsychRev.pdf', type: 'academic', label: 'Tversky & Kahneman (1983) "Extensional Versus Intuitive Reasoning: The Conjunction Fallacy in Probability Judgment," Psychological Review 90(4), 293–315' },
+      { url: 'https://eric.ed.gov/?id=EJ304963', type: 'government', label: 'ERIC (U.S. Dept. of Education) record: Tversky & Kahneman 1983, Psychological Review 90, 293–315' },
+      { url: 'https://en.wikipedia.org/wiki/Conjunction_fallacy', type: 'reference', label: 'Wikipedia: Conjunction fallacy (Linda problem, conjunction rule, representativeness)' },
+    ],
+  },
+  {
+    id: 'bizlaw-equal-employment-opportunity',
+    discipline: 'business-law',
+    title: '男女雇用機会均等法',
+    statement:
+      '正式名称は「雇用の分野における男女の均等な機会及び待遇の確保等に関する法律」。1972年の勤労婦人福祉法を全面改正する形で1985年（昭和60年）に制定され、1986年4月1日に施行された。女性差別撤廃条約の批准に向けた国内法整備の一環である。募集・採用、配置・昇進、教育訓練、福利厚生、定年・退職・解雇等における性別を理由とする差別を禁止し、' +
+      '身長・体重・転勤要件など合理的理由のない間接差別も禁止する。1997年改正で差別禁止が努力義務から禁止規定へ強化され、2006年改正で男女双方への差別禁止と間接差別禁止が新設された。事業主にはセクシュアルハラスメントおよび妊娠・出産等に関するハラスメント（マタニティハラスメント）の防止措置義務、妊娠・出産等を理由とする不利益取扱いの禁止、母性健康管理措置が課される。所管は厚生労働省。',
+    keyFigures: '厚生労働省／男女雇用機会均等法（1985年制定・1986年4月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=347AC0000000113_20250601_504AC0000000068', type: 'government', label: 'e-Gov法令検索「雇用の分野における男女の均等な機会及び待遇の確保等に関する法律」' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/danjokintou/index.html', type: 'government', label: '厚生労働省「雇用における男女の均等な機会と待遇の確保のために」' },
+    ],
+  },
+  {
+    id: 'infosoc-cyberbalkanization',
+    discipline: 'information-sociology',
+    title: 'サイバーバルカン化',
+    statement:
+      'マーシャル・ヴァン・アルスタインとエリック・ブリニョルフソンが1996年の論文「電子コミュニティ——地球村かサイバーバルカンか」で提起した概念で、情報技術の発達によりネット社会が同質的で孤立した小集団へと分断される現象を指す。「バルカン化」は歴史的に細かく分裂したバルカン半島の政治的断片化になぞらえた表現である。' +
+      '人々は膨大な情報をフィルタリングし、自らの関心や価値観を共有する相手とだけ選択的に接触できるため、異なる立場や多様な視点への接触が減少し、重なり合わない情報圏が生じうると論じた。後に普及するエコーチェンバーやフィルターバブルの議論を先取りし枠づける先駆的概念とされ、技術が地球村による統合と集団の断片化のいずれをも招きうる二面性を指摘した点に意義がある。',
+    keyFigures: 'マーシャル・ヴァン・アルスタイン／エリック・ブリニョルフソン（1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf', type: 'academic', label: 'Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.1050.0363', type: 'academic', label: 'Van Alstyne & Brynjolfsson (2005), Management Science 51(6):851-868 (INFORMS)' },
+    ],
+  },
 ];
 // Stryker restore all
