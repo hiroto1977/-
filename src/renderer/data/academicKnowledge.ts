@@ -17767,5 +17767,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.radicalphilosophy.com/article/the-space-of-flows-and-timeless-time', type: 'academic', label: 'Radical Philosophy — The space of flows and timeless time: Castells’s The Information Age' },
     ],
   },
+  {
+    id: 'econ-zero-lower-bound',
+    discipline: 'economics',
+    title: 'ゼロ金利下限（実効下限制約）',
+    statement:
+      'ゼロ金利下限（ZLB）とは、名目金利は概ねゼロを大きく下回れないという中央銀行が直面する制約をいう。人々は名目利回りがほぼゼロの現金を保有できるため、著しくマイナスの名目利回りの資産を持つ誘因が乏しく、金利がゼロ近傍に達すると政策金利の引下げという伝統的金融政策は効力を失う。追加刺激が必要でも政策金利が既にゼロだと、中銀は制約され通常の利下げで緩和できず、これはケインズの流動性の罠と密接に関連する。' +
+      'この制約への対応として中銀は非伝統的金融政策に踏み切る。量的緩和（QE、大規模資産購入）、フォワードガイダンス、イールドカーブ・コントロール、控えめなマイナス金利政策などである。現金の保管・輸送コストゆえ実際の下限はゼロをわずかに下回り、近年は「実効下限（ELB）」と呼ばれる。ZLBはデフレスパイラルの危険を伴い、より高いインフレ目標を支持する論拠ともなる。日本は1990年代末以降、米欧は2008年金融危機後にこの下限に直面した（流動性の罠とは区別される名目政策金利への制約である）。',
+    keyFigures: 'ゼロ金利下限（ZLB）／実効下限（ELB）／日本銀行・FRB・ECBの非伝統的政策',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.newyorkfed.org/newsevents/speeches/2013/dud130521', type: 'government', label: 'Federal Reserve Bank of New York — Lessons at the Zero Bound: The Japanese and U.S. Experience' },
+      { url: 'https://www.ecb.europa.eu/press/key/date/2015/html/sp150519.en.html', type: 'government', label: 'European Central Bank — How binding is the zero lower bound?' },
+      { url: 'https://en.wikipedia.org/wiki/Zero_lower_bound', type: 'reference', label: 'Wikipedia — Zero lower bound' },
+    ],
+  },
+  {
+    id: 'econ-forward-guidance',
+    discipline: 'economics',
+    title: 'フォワードガイダンス（時間軸政策）',
+    statement:
+      '中央銀行が将来の政策金利（等）の予想経路について情報発信し、現在の金融環境や期待に働きかける非伝統的金融政策の手段。金利を長く（例：一定の条件を満たすまで）低位に保つと信頼的に示すことで、予想される将来の短期金利を下げ、それが現在の長期金利低下やインフレ・景気期待の形成につながる。政策金利の引下げ余地が尽きるゼロ金利下限（ZLB）で特に有用とされる。' +
+      '類型は、見通しに基づく予測の提示であるデルフィック型と、中銀の手を縛るコミットメント（回復後も低金利を約束しインフレ期待を高める。クルーグマン1998の「無責任になると信頼的に約束」や時間非整合性に関連）であるオデュッセウス的に分かれ、条件づけはカレンダー型・状態（閾値）型（FRBのエバンズ・ルール等）・オープンエンド／定性型がある。日銀の1990年代末以降の「時間軸効果」が早期例で、FRBやECBが2008年以降に多用した。量的緩和や流動性の罠／ZLBとは概念的に区別される。',
+    keyFigures: 'フォワードガイダンス／時間軸効果（日本銀行）／FRB・ECB（2008年以降）／クルーグマン（1998, 信頼的コミットメント）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bis.org/publ/qtrpdf/r_qt1403f.htm', type: 'government', label: 'BIS Quarterly Review — Forward guidance at the zero lower bound（カレンダー型・閾値型、ZLBでの利用）' },
+      { url: 'https://www.boj.or.jp/en/mopo/outline/bpreview/ref.htm', type: 'government', label: '日本銀行 — 1990年代末以降の非伝統的金融政策（ゼロ金利コミットメント＝時間軸効果）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304393220300787', type: 'academic', label: 'Journal of Monetary Economics — Delphic and odyssean monetary policy shocks: euro area' },
+    ],
+  },
+  {
+    id: 'mgmt-double-diamond',
+    discipline: 'management',
+    title: 'ダブルダイヤモンド（デザインプロセス）',
+    statement:
+      '英国デザインカウンシル（UK Design Council）が2004年に作成し2005年に普及させた、デザインおよびイノベーションのプロセスモデル。発散（diverge）と収束（converge）の思考を表す2つのダイヤモンドと4段階で過程を描く。(1)Discover（発見＝発散）は調査して問題を理解し、洞察を集めて広く探索する。(2)Define（定義＝収束）は洞察を統合して正しい問題や明確なブリーフを枠づける。' +
+      '(3)Develop（展開＝発散）は複数の解決策を生み出し試作する。(4)Deliver（提供＝収束）は機能する解を検証・改良・実装する。第一のダイヤは「正しいものをデザインする」（問題空間）、第二は「ものを正しくデザインする」（解空間）を担い、選択肢の拡大と意思決定への収束を交互に行い、問題の枠づけ自体を過程に含む点が要点である。2019年に「イノベーションの枠組み（Framework for Innovation）」へ更新された。デザイン思考とは区別される、デザインカウンシル発の具体的な発散・収束プロセス図である。',
+    keyFigures: '英国デザインカウンシル（UK Design Council, 2004／2019更新）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.designcouncil.org.uk/resources/the-double-diamond/', type: 'reference', label: 'UK Design Council — The Double Diamond' },
+      { url: 'https://en.wikipedia.org/wiki/Double_Diamond_(design_process_model)', type: 'reference', label: 'Wikipedia — Double Diamond (design process model)' },
+      { url: 'https://www.designcouncil.org.uk/resources/framework-for-innovation/', type: 'reference', label: 'UK Design Council — Framework for Innovation (2019)' },
+    ],
+  },
+  {
+    id: 'human-chunking',
+    discipline: 'human-science',
+    title: 'チャンク化（チャンキング）',
+    statement:
+      'ジョージ・A・ミラーが1956年の論文「マジカルナンバー7±2」（Psychological Review）で中心的に論じ、ハーバート・サイモンやチェイス&サイモンの1973年チェス研究で発展した記憶の概念。「チャンク」とは、記憶上ひとつの項目として扱われる意味のあるまとまりを指す。チャンク化とは、個々の情報をより大きな意味あるまとまり（チャンク）へグループ化・再符号化する認知過程であり、' +
+      '短期記憶・作業記憶（およそ7±2項目、後のカウアン2001等の推計では約4チャンク）の実効容量を高める。容量の限界はビット数ではなくチャンク数にあるため、長い数字列を電話番号のパターンに、文字を語にまとめるなど、少数の大きな意味あるチャンクへ再符号化すれば、より多くの総情報を保持できる。熟達は大きなチャンクの形成を伴い（チェスの達人が盤面パターンを1チャンクとして認識）、記憶術の基礎ともなる。なお、容量の限界そのものを示すマジカルナンバー7±2とは区別される。',
+    keyFigures: 'ジョージ・A・ミラー（George A. Miller, 1956）／ハーバート・サイモン／チェイス&サイモン（1973）／ネルソン・カウアン（2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://andymatuschak.org/prompts/Chase1973.pdf', type: 'academic', label: 'Chase & Simon (1973) "Perception in Chess," Cognitive Psychology 4, 55–81' },
+      { url: 'https://en.wikipedia.org/wiki/Chunking_(psychology)', type: 'reference', label: 'Wikipedia: Chunking (psychology)' },
+      { url: 'https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two', type: 'reference', label: 'Wikipedia: The Magical Number Seven, Plus or Minus Two (Miller 1956)' },
+    ],
+  },
+  {
+    id: 'bizlaw-real-estate-registration',
+    discipline: 'business-law',
+    title: '不動産登記法',
+    statement:
+      '不動産登記法は、土地・建物に関する不動産登記制度を定める法律で、現行法は平成16年（2004年）法律第123号（明治32年の旧法を全部改正し、オンライン登記申請に対応）であり、法務省（法務局）が所管する。登記簿は、物理的状況を記録する表示に関する登記（表題部＝所在・地積・構造等）と、権利に関する登記（権利部＝甲区は所有権、乙区は抵当権等の権利）から成る。' +
+      '登記は不動産の物権変動の対抗要件であり（民法177条＝未登記の権利変動は第三者に対抗できない）、登記をして初めて権利を第三者に主張できる。ただし日本の不動産登記には原則として公信力がなく、誤った登記を信じた善意の第三者は当然には保護されない。表示登記（新築建物は1か月以内など申請義務あり）と権利登記は区別され、2021年改正により相続登記は2024年4月1日から義務化された（所有者不明土地対策）。なお物権変動・対抗要件一般の論点とは区別する。',
+    keyFigures: '不動産登記法（平成16年法律第123号、2004年全部改正の現行法）／法務省・法務局',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/416AC0000000123/', type: 'government', label: 'e-Gov法令検索「不動産登記法（平成十六年法律第百二十三号）」' },
+      { url: 'https://www.moj.go.jp/MINJI/fudousantouki.html', type: 'government', label: '法務省「登記 -不動産登記-」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%B8%8D%E5%8B%95%E7%94%A3%E7%99%BB%E8%A8%98%E6%B3%95', type: 'reference', label: 'Wikipedia「不動産登記法」（全部改正・相続登記義務化）' },
+    ],
+  },
+  {
+    id: 'infosoc-knowledge-society',
+    discipline: 'information-sociology',
+    title: '知識社会（ナレッジ・ソサエティ）',
+    statement:
+      'ピーター・ドラッカー（「知識労働者」1959『現代の経営／明日への道標』、『断絶の時代』1969、『ポスト資本主義社会』1993）が普及させ、ニコ・シュテア『知識社会（Knowledge Societies）』1994が論じた、知識の創造・流通・応用が経済的生産性・富・社会組織・権力の主要な源泉となり、土地・労働・資本に代わる決定的な生産要素となる社会。' +
+      'ドラッカーはポスト資本主義社会の基本的資源は知識であり、自らの生産手段（知識）を所有する「知識労働者」が支配的集団になると論じた。脱工業社会（ベル）や情報社会・知識経済と重なるが、単なる情報でなく知識そのものを構造化原理とし、教育・生涯学習・知識制度の変容を強調する点に特徴がある。ユネスコは人権・包摂・多様性を重視する複数形の「知識社会（knowledge societies）」を狭義の情報社会と区別する。脱工業社会やネットワーク社会とは区別される。',
+    keyFigures: 'ピーター・ドラッカー（Peter Drucker, 1969/1993）／ニコ・シュテア（Nico Stehr, 1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Post-Capitalist_Society', type: 'reference', label: 'Peter Drucker, Post-Capitalist Society (1993): 知識を基本的資源とし知識労働者を支配集団とする論' },
+      { url: 'https://philpapers.org/rec/STEKS', type: 'academic', label: 'Nico Stehr, Knowledge Societies (Sage, 1994): 経済の決定的資源としての知識' },
+      { url: 'https://www.un.org/en/development/desa/policy/untaskteam_undf/groupb_unesco_knowledge_societies.pdf', type: 'government', label: 'UNESCO, Towards Knowledge Societies: 複数形の知識社会と情報社会の区別' },
+    ],
+  },
 ];
 // Stryker restore all
