@@ -16877,5 +16877,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Hostile_media_effect', type: 'reference', label: 'Wikipedia — Hostile media effect' },
     ],
   },
+  {
+    id: 'econ-golden-rule-saving',
+    discipline: 'economics',
+    title: '資本蓄積の黄金律',
+    statement:
+      'エドマンド・フェルプスが1961年の論文「The Golden Rule of Accumulation: A Fable for Growthmen」で提示した概念で、新古典派（ソロー）成長モデルにおいて定常状態の1人当たり消費を最大化する資本水準（およびそれを実現する貯蓄率）を「黄金律」と呼ぶ。その条件は、資本の限界生産物が人口成長率と資本減耗率の和に等しいこと（労働増大型の技術進歩がある場合は MPK ＝ n＋g＋δ）である。' +
+      '黄金律より多く資本を蓄積する（過剰貯蓄する）経済は「動学的非効率」の状態にあり、貯蓄率を引き下げれば現在から将来まで全期間にわたって消費を増やせる過剰蓄積に陥っている。名称は「己の欲する所を人に施せ」という倫理上の黄金律に由来する。ソロー成長モデルそのものの記述ではなく、その定常状態のうち消費を最大化する最適点を特定する規範的基準である点で区別される。',
+    keyFigures: 'エドマンド・フェルプス（Edmund Phelps, 1961）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2006.pdf', type: 'academic', label: 'Nobel Prize – Edmund Phelps’s Contributions to Macroeconomics (scientific background)' },
+      { url: 'https://en.wikipedia.org/wiki/Golden_Rule_savings_rate', type: 'reference', label: 'Wikipedia – Golden Rule savings rate' },
+      { url: 'https://personal.lse.ac.uk/vernazza/_private/The%20Golden%20Rule%20of%20Capital%20Accumulation%20in%20the%20Solow%20Model.pdf', type: 'academic', label: 'LSE – The Golden Rule of Capital Accumulation in the Solow Model' },
+    ],
+  },
+  {
+    id: 'econ-regression-discontinuity',
+    discipline: 'economics',
+    title: '回帰不連続デザイン（RDD）',
+    statement:
+      '因果推論のための準実験デザインで、処置が連続的な「割当変数（running/forcing variable）」が既知の閾値（カットオフ）を超えるか否かで決定的に決まる場合に適用される（例：試験点が合格点以上、所得が基準以下、得票率が50%超）。閾値のすぐ上と下の対象は処置の有無以外ほぼ同質とみなせるため、両側の僅差の対象の結果を比較すれば、閾値における局所的な因果効果が識別できる――いわば閾値近傍での局所的な無作為実験である。' +
+      '処置が閾値超えの決定的な階段関数となるシャープRDDと、閾値超えで処置を受ける確率が不連続に変化する（0→1とは限らない）ファジーRDDの二類型がある。推定されるのは閾値における局所平均処置効果（LATE）であり、閾値から離れた領域への外的妥当性は限定的である。シスルスウェイト＆キャンベル（1960）に起源を持ち、近年の計量経済学（Imbens & Lemieux、Lee & Lemieux ほか）で発展した。処置前後で並行トレンドを仮定する差の差分析とは区別される。',
+    keyFigures: 'ドナルド・シスルスウェイト／ドナルド・キャンベル（Thistlethwaite & Campbell, 1960）／Imbens & Lemieux／Lee & Lemieux',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.princeton.edu/~davidlee/wp/w14723.pdf', type: 'academic', label: 'Lee & Lemieux (2010), Regression Discontinuity Designs in Economics, NBER Working Paper No. 14723' },
+      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/regression-discontinuity-design', type: 'reference', label: 'ScienceDirect Topics — Regression Discontinuity Design (overview)' },
+    ],
+  },
+  {
+    id: 'mgmt-theory-z',
+    discipline: 'management',
+    title: 'セオリーZ',
+    statement:
+      'ウィリアム・オオウチが1981年の著書『セオリーZ』で提唱した経営理論。マグレガーのX理論・Y理論の命名を踏まえ、米国型(A型)と日本型(J型)の長所を折衷したハイブリッドな「Z型組織」を提示した。' +
+      '特徴は、長期(終身的)雇用、遅い評価と昇進、特定領域に偏らない幅広いキャリアパス(配置転換)、暗黙的・非公式な統制と明示的・公式な管理手段の併用、合意に基づく集団的意思決定だが責任は個人が負う点、家族や生活全体を含めた従業員への全人的関心である。これらが高い信頼・忠誠心・生産性を生むとされ、人を管理対象とみなすX理論やY理論そのものとは区別される。',
+    keyFigures: 'ウィリアム・オオウチ（William Ouchi, 1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/download/organization/chpt/theory-z.pdf', type: 'academic', label: 'Sage International Encyclopedia of Organization Studies — Theory Z' },
+      { url: 'https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/theory-z', type: 'reference', label: 'Encyclopedia of Management (Encyclopedia.com) — Theory Z' },
+      { url: 'https://en.wikipedia.org/wiki/Theory_Z_of_Ouchi', type: 'reference', label: 'Wikipedia — Theory Z of Ouchi' },
+    ],
+  },
+  {
+    id: 'human-cognitive-reflection-test',
+    discipline: 'human-science',
+    title: '認知反映テスト（CRT）',
+    statement:
+      'シェイン・フレデリックが2005年に提唱した、直感的に即座に浮かぶ（が誤った）「システム1」の答えを抑制し、熟慮（システム2）を働かせて正答に至る傾向・能力を測る短いテスト（原版は3問）。代表例がバットとボール問題で、「バットとボールは合計1.10ドル、バットはボールより1ドル高い。ボールはいくらか」に対し、直感的な答えは10セントだが正答は5セントである。' +
+      'CRTは二重過程理論（システム1＝直感／システム2＝熟慮）と密接に結びつき、テスト自体は具体的な測定用具である点で理論そのものとは区別される。フレデリック2005によれば、CRTの得点は合理的・分析的思考の指標や時間選好（高得点者ほど忍耐強い）、リスク選好（利得領域でより賭けを選ぶ）と相関し、意思決定研究の予測因子となる。',
+    keyFigures: 'シェイン・フレデリック（Shane Frederick, 2005）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2F089533005775196732', type: 'academic', label: 'Frederick (2005) "Cognitive Reflection and Decision Making," Journal of Economic Perspectives 19(4):25–42（American Economic Association）' },
+      { url: 'https://en.wikipedia.org/wiki/Cognitive_reflection_test', type: 'reference', label: 'Wikipedia: Cognitive reflection test（CRTの定義・バットとボール問題・システム1/2・相関）' },
+    ],
+  },
+  {
+    id: 'bizlaw-employees-pension',
+    discipline: 'business-law',
+    title: '厚生年金保険法',
+    statement:
+      '厚生年金保険法（昭和29年法律第115号、1954年の現行法。前身は1941年労働者年金保険法→1944年厚生年金保険法）は、会社員等の被用者を対象とする公的年金（被用者年金）を定める法律で、厚生労働省が所管し日本年金機構が運営する。全国民共通の国民年金（基礎年金、1階部分）の上に上乗せされる2階部分にあたり、適用事業所に使用される従業員が加入する。' +
+      '2015年（平成27年）10月の被用者年金一元化により、公務員等の共済年金も厚生年金に統合された。保険料は標準報酬月額および賞与に定率を乗じて算定し、事業主と被保険者が折半（労使折半）して負担する。給付は老齢厚生年金・障害厚生年金・遺族厚生年金からなり、いずれも報酬比例で、定額の基礎年金に上乗せして支給される。全居住者が加入する国民年金法とは区別される。',
+    keyFigures: '厚生年金保険法（昭和29年法律第115号、1954年現行法）／厚生労働省・日本年金機構',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=329AC0000000115', type: 'government', label: 'e-Gov法令検索 厚生年金保険法（昭和29年法律第115号）' },
+      { url: 'https://www.nenkin.go.jp/service/kounen/hokenryo/nofu/20121026.html', type: 'government', label: '日本年金機構 保険料の計算方法（標準報酬・労使折半）' },
+      { url: 'https://www.nenkin.go.jp/service/jukyu/seido/kyotsu/joho/ichigenka/20150917.html', type: 'government', label: '日本年金機構 被用者年金制度の一元化（2015年10月）' },
+    ],
+  },
+  {
+    id: 'infosoc-alone-together',
+    discipline: 'information-sociology',
+    title: 'つながっていても孤独（アローン・トゥギャザー）',
+    statement:
+      'シェリー・タークル（MIT教授、臨床心理学者）が2011年の著書『Alone Together（一緒にいてもひとり）』で示した逆説。スマートフォン・SNS・メッセージング・ソーシャブルロボットなどネットワーク技術への依存が進むほど、人はより多くつながりながら、かえって孤独になると説く。技術は親密な関係が求める負担を伴わない「つながりの幻想（仲間がいるという錯覚）」を与え、私たちは「技術により多くを、互いにより少なくを期待」するようになる。' +
+      '人々は対面の会話より、編集し制御できる媒介コミュニケーション（テキスト等で自己を演出・推敲）を好み、常時接続が孤独に耐える力（ソリチュード）や他者への共感を蝕むと警告する。本書はタークルの前著『接続された自己 The Second Self』（1984）や『接続された心 Life on the Screen』（1995）での技術と自己をめぐる研究の延長線上にあり、当初の楽観から警鐘へと転じた到達点を示す。',
+    keyFigures: 'シェリー・タークル（Sherry Turkle, MIT, 2011）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://escholarship.org/uc/item/35k2p4b6', type: 'academic', label: 'eScholarship (Univ. of California) — Review: Alone Together: Why We Expect More from Technology and Less from Each Other' },
+      { url: 'https://sts-program.mit.edu/people/sts-faculty/sherry-turkle', type: 'reference', label: 'MIT Program in Science, Technology & Society — Sherry Turkle (faculty profile, bibliography)' },
+      { url: 'https://en.wikipedia.org/wiki/Sherry_Turkle', type: 'reference', label: 'Wikipedia — Sherry Turkle (works, 2011 attribution)' },
+    ],
+  },
 ];
 // Stryker restore all
