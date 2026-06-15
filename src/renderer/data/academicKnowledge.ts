@@ -12424,5 +12424,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://arxiv.org/pdf/2203.02662', type: 'academic', label: 'A Survey on Metaverse: Fundamentals, Security, and Privacy（arXiv）' },
     ],
   },
+  {
+    id: 'econ-rostow-stages',
+    discipline: 'economics',
+    title: 'ロストウの経済成長段階説',
+    statement:
+      'アメリカの経済学者W・W・ロストウが1960年の著書『経済成長の諸段階—一つの非共産主義宣言』で提唱した発展段階論。すべての社会は単線的に五つの段階を経て発展するとし、(1)伝統的社会、(2)離陸の先行条件期、(3)離陸（テイクオフ）、(4)成熟への前進、(5)高度大衆消費時代に区分する。中核は離陸期で、投資率が国民所得の5％未満から10％超へ上昇し、先導部門が他部門の成長を誘発し、成長を支える政治的・社会的・制度的枠組みが成立して、成長が自己持続的（self-sustaining）になる決定的局面とされる。' +
+      'この理論は近代化論の基本的枠組みとなり、冷戦下では共産主義に対抗する「非共産主義宣言」として開発戦略に影響を与えた。一方で、全ての国が欧米と同じ経路をたどると仮定する単線的・欧米中心的なモデルであること、歴史的実証性に乏しく植民地支配や国際的従属関係を軽視している点などから、従属理論などの立場から強く批判されている。',
+    keyFigures: 'ウォルト・ホイットマン・ロストウ（Walt W. Rostow, 1960）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Stages-of-Economic-Growth-A-Non-Communist-Manifesto', type: 'reference', label: 'Britannica — The Stages of Economic Growth: A Non-Communist Manifesto (Rostow, 1960)' },
+      { url: 'https://kotobank.jp/word/%E3%82%8D%E3%81%99%E3%81%A8%E3%81%86-3176313', type: 'reference', label: 'コトバンク — ロストウ（五段階説・テイクオフの特徴・1960年著書）' },
+      { url: 'https://cir.nii.ac.jp/crid/1051130853490142208', type: 'academic', label: 'CiNii Research — ロストウ『経済成長の諸段階』' },
+    ],
+  },
+  {
+    id: 'econ-big-push',
+    discipline: 'economics',
+    title: 'ビッグプッシュ理論',
+    statement:
+      '途上国は、需要や所得が相互に低い水準で釣り合う低位均衡（貧困の罠）に陥りうる。単一産業への小規模・漸進的な投資は、市場の需要が不足するため単独では採算が取れず失敗しやすい。なぜなら各産業の生産物への需要は、他産業が生み出す所得や雇用に依存しているからである（需要の補完性）。' +
+      'そこで多数の補完的な部門へ大規模かつ協調的・同時的に投資する「ビッグプッシュ」を行えば、各産業が互いの需要を生み出し合い、罠を脱して自律的な工業化が可能になる。これは収穫逓増・金銭的外部性により複数均衡が生じることに基づき、低位均衡から高位均衡へ移行させる政府の調整役を正当化する。ローゼンシュタイン＝ロダン（1943）が提唱し、Murphy・Shleifer・Vishny（1989）が定式化した。',
+    keyFigures: 'パウル・ローゼンシュタイン＝ロダン（Paul Rosenstein-Rodan, 1943）／マーフィー・シュライファー・ヴィシュニー（1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/261641', type: 'academic', label: 'Murphy, Shleifer & Vishny, "Industrialization and the Big Push", Journal of Political Economy 97(5), 1989' },
+      { url: 'https://documents1.worldbank.org/curated/en/530381468780582780/pdf/28725.pdf', type: 'academic', label: 'Karla Hoff, "Beyond Rosenstein-Rodan: The Modern Theory of Underdevelopment Traps", World Bank' },
+      { url: 'https://en.wikipedia.org/wiki/Big_push_model', type: 'reference', label: 'Big push model — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-corporate-parenting',
+    discipline: 'management',
+    title: 'ペアレンティング戦略',
+    statement:
+      'ペアレンティング戦略は、多角化した複数事業企業において本社（コーポレート・ペアレント）が事業ポートフォリオ全体にどのように価値を加える、あるいは壊すかを問う全社戦略の枠組みである。中核概念は「ペアレンティング・アドバンテージ」で、親会社が競合する他の親会社よりも上手に各事業を親役（ペアレンティング）できる場合にのみ価値が創造される、と説く。' +
+      'その鍵は、親の特性・スキル・経営資源と、各事業がもつ親役機会（ニーズ）との適合（ペアレンティング・フィット）であり、自社が当該事業にとって「最良の親（best parent）」かを問い、ハートランド事業などを識別するペアレンティング・フィット・マトリクスを用いる。親は単独影響・連結影響・中央機能・事業開発を通じて価値を加える一方、価値破壊もありうると指摘する。グールド／キャンベル／アレクサンダー（1994）に基づく。',
+    keyFigures: 'マイケル・グールド／アンドリュー・キャンベル／マーカス・アレクサンダー（1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1995/03/corporate-strategy-the-quest-for-parenting-advantage', type: 'academic', label: 'Campbell, Goold & Alexander, "Corporate Strategy: The Quest for Parenting Advantage," Harvard Business Review' },
+      { url: 'https://archive.org/details/corporatelevelst0000gool_l3w7', type: 'reference', label: 'Goold, Campbell & Alexander, Corporate-Level Strategy: Creating Value in the Multibusiness Company (1994) — Internet Archive' },
+      { url: 'https://www.adlittle.com/sites/default/files/prism/1995_q2_08-12.pdf', type: 'reference', label: 'Arthur D. Little Prism, "Parenting Advantage: The Key to Corporate-Level Strategy"' },
+    ],
+  },
+  {
+    id: 'human-yerkes-dodson',
+    discipline: 'human-science',
+    title: 'ヤーキーズ＝ドッドソンの法則',
+    statement:
+      '覚醒（緊張・ストレス・動機づけ）と遂行成績の関係を逆U字曲線で説明する法則。覚醒水準が高まるにつれて成績は向上するが、最適点を超えてさらに覚醒が高まると、過度の緊張や不安によって成績はかえって低下する。さらに最適な覚醒水準は課題の難易度に依存し、' +
+      '難しく複雑な課題では低めの覚醒が最適である一方、易しい・十分に習熟した課題では高い覚醒でも成績は向上しやすい。ロバート・ヤーキーズとジョン・ドッドソンが1908年にネズミの弁別学習実験から導いたもので、試験・スポーツ・職務遂行など、ストレスや不安と成績の関係を理解する枠組みとして広く応用されている。',
+    keyFigures: 'ロバート・ヤーキーズ／ジョン・ドッドソン（1908）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psychclassics.yorku.ca/Yerkes/Law/', type: 'academic', label: 'Yerkes & Dodson (1908) "The Relation of Strength of Stimulus to Rapidity of Habit-Formation"（York University, Classics in the History of Psychology）' },
+      { url: 'https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(24)00078-0', type: 'academic', label: 'Trends in Cognitive Sciences「Arousal and performance: revisiting the famous inverted-U-shaped curve」' },
+      { url: 'https://www.simplypsychology.org/what-is-the-yerkes-dodson-law.html', type: 'reference', label: 'SimplyPsychology「Yerkes-Dodson Law of Arousal and Performance」' },
+    ],
+  },
+  {
+    id: 'bizlaw-payment-services-act',
+    discipline: 'business-law',
+    title: '資金決済法',
+    statement:
+      '資金決済法（資金決済に関する法律、平成21年法律第59号）は、2009年に制定され2010年4月1日に施行された、資金決済サービスを規律する金融庁所管の法律である。利用者保護と決済サービスの適正な運営を確保し、国民経済の健全な発展に資することを目的とする。商品券・プリペイドカードや電子マネー等の「前払式支払手段」、銀行以外の登録業者が為替取引（送金）を行える「資金移動業」を整備し、' +
+      'それまで銀行が独占していた為替取引を非銀行業者にも開放した。さらに2016年・2019年の改正で「暗号資産（仮想通貨）交換業」の登録制と利用者保護・マネーロンダリング対策の規定が加えられた。これらを通じてフィンテックやキャッシュレス決済の発展を支える基盤的法制度となっており、前払式支払手段の発行保証金供託や資金移動業者の資産保全など、利用者資金の保護措置を中核に据えている。',
+    keyFigures: '資金決済に関する法律（平成21年法律第59号、2009年制定・2010年施行）／金融庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000117809&current=-1', type: 'government', label: '国立国会図書館 日本法令索引「資金決済に関する法律（平成21年6月24日法律第59号）」' },
+      { url: 'https://www.fsa.go.jp/news/21/kinyu/20100223-1.html', type: 'government', label: '金融庁「資金決済に関する法律の施行に伴う政令案・内閣府令案等に対するパブリックコメントの結果等について」' },
+      { url: 'https://kotobank.jp/word/%E8%B3%87%E9%87%91%E6%B1%BA%E6%B8%88%E6%B3%95-518149', type: 'reference', label: 'コトバンク「資金決済法」' },
+    ],
+  },
+  {
+    id: 'infosoc-web2',
+    discipline: 'information-sociology',
+    title: 'Web 2.0',
+    statement:
+      'ウェブ2.0は、静的で読むだけの「Web1.0」のページから、ユーザー自身が内容を生成・共有し相互に作用する参加型（読み書き可能）なウェブへの移行を指す概念である。ティム・オライリーとデイル・ドハティが2004年の会議で用い、オライリーが2005年の論考「What Is Web 2.0」で広く普及させた。' +
+      '主な特徴は「プラットフォームとしてのウェブ」「集合知の活用」、ユーザー生成コンテンツ（UGC）、ネットワーク効果、AJAXによる豊かな双方向体験、永続的ベータ、ロングテールなどである。ブログ・ウィキ（ウィキペディア）・SNS・フォークソノミー（タグ付け）・マッシュアップを生み、ソーシャルメディアと参加型文化を可能にした。後に参加の理想とプラットフォーム・データ集中の現実をめぐり批判も受けた。',
+    keyFigures: 'ティム・オライリー（Tim O\'Reilly, 2005「What Is Web 2.0」）／デイル・ドハティ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oreilly.com/pub/a/web2/archive/what-is-web-20.html', type: 'academic', label: 'Tim O\'Reilly, "What Is Web 2.0" (2005, O\'Reilly Media) — 原典' },
+      { url: 'https://www.britannica.com/topic/Web-20', type: 'reference', label: 'Encyclopaedia Britannica — "Web 2.0"' },
+    ],
+  },
 ];
 // Stryker restore all
