@@ -10827,5 +10827,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E7%90%86%E8%AB%96', type: 'reference', label: 'アクターネットワーク理論 — Wikipedia（日本語）' },
     ],
   },
+  {
+    id: 'econ-balassa-samuelson',
+    discipline: 'economics',
+    title: 'バラッサ＝サミュエルソン効果',
+    statement:
+      'バラッサ＝サミュエルソン効果は、ベラ・バラッサとポール・サミュエルソンが1964年に独立して提示した、貿易財部門の生産性上昇率の国際的格差が物価水準と実質為替レートに体系的な影響を与えるとする理論である。高成長国では生産性上昇が製造業など貿易財部門に集中し、貿易財価格は一物一価の法則により大きく動かない一方、賃金上昇が国内の統合された労働市場を通じて非貿易財（サービス）部門にも波及する。' +
+      '生産性上昇の小さい非貿易財部門は採算を保つため価格を引き上げ、その相対価格が上昇する。結果として貿易財生産性の高い国ほど経済全体の物価水準が高くなり、実質為替レートが増価する。これにより、生産性が高く豊かな（または急成長する）国の物価水準が高くなる傾向が説明され、購買力平価（PPP）からの体系的な乖離の主要因として位置づけられる。',
+    keyFigures: 'ベラ・バラッサ／ポール・サミュエルソン（ともに1964）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.boj.or.jp/research/wps_rev/wps_2024/data/wp24j24.pdf', type: 'academic', label: '日本銀行ワーキングペーパー「わが国におけるバラッサ・サミュエルソン効果について」（2024）' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2004/wp04188.pdf', type: 'academic', label: 'IMF Working Paper WP/04/188 — Balassa-Samuelson and real exchange rates' },
+      { url: 'https://www5.cao.go.jp/j-j/sekai_chouryuu/sh05-01/sh05-02-fuchu.html', type: 'government', label: '内閣府「バラッサ＝サミュエルソン効果」用語解説' },
+    ],
+  },
+  {
+    id: 'econ-lerner-index',
+    discipline: 'economics',
+    title: 'ラーナーの独占度（ラーナー指数）',
+    statement:
+      'ラーナーの独占度（ラーナー指数）は、企業が持つ独占力・市場支配力の大きさを測る指標で、英国の経済学者アバ・ラーナーが1934年の論文「独占の概念と独占力の測定」で提唱した。価格をP、限界費用をMCとして、(P−MC)/P、すなわち価格に対する限界費用からの上乗せ幅（マークアップ）の割合として定義される。' +
+      'その値は0から1の範囲をとり、価格と限界費用が一致する完全競争では0となり、限界費用を超えて高い価格を設定できるほど（市場支配力が強いほど）1に近づく。さらに利潤を最大化する企業では、ラーナーの独占度はその企業が直面する需要の価格弾力性の絶対値の逆数に等しくなり、弾力性が小さいほど独占度が高いことを意味する。',
+    keyFigures: 'アバ・ラーナー（Abba Lerner, 1934）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Lerner-index', type: 'reference', label: 'Britannica Money — Lerner index' },
+      { url: 'https://kotobank.jp/word/%E7%8B%AC%E5%8D%A0%E5%BA%A6-104803', type: 'reference', label: 'コトバンク — 独占度（ラーナー指数）' },
+      { url: 'https://www.aeaweb.org/conference/2011/retrieve.php?pdfid=222', type: 'academic', label: 'AEA — The Lerner Index of Monopoly Power: Origins and Uses' },
+    ],
+  },
+  {
+    id: 'mgmt-hypercompetition',
+    discipline: 'management',
+    title: 'ハイパーコンペティション',
+    statement:
+      'リチャード・ダベニが1994年の著書『Hypercompetition』で提唱した概念で、製品ライフサイクルの短縮・技術革新の加速・規制緩和・グローバル化などにより、競争優位が急速に創出されては競合に模倣・侵食され、短命化する激烈な競争状態を指す。' +
+      '従来の持続的競争優位の前提を否定し、企業は現状を絶えず破壊しながら一時的優位を次々と連鎖的に生み出し続けることでしか優位を保てないとする。ダベニはコスト・品質、タイミング・ノウハウ、拠点（要塞）、資金力という四つの競争領域と、新7Sの行動原則を枠組みとして示した。',
+    keyFigures: 'リチャード・ダベニ（Richard A. D\'Aveni, 1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.897', type: 'academic', label: 'D\'Aveni, Dagnino & Smith「The age of temporary advantage」Strategic Management Journal 31(13), 2010' },
+      { url: 'https://en.wikipedia.org/wiki/Hypercompetition', type: 'reference', label: 'Wikipedia「Hypercompetition」（D\'Aveni 1994・四つの競争領域・一時的優位の連鎖）' },
+      { url: 'https://globis.jp/article/5551/', type: 'reference', label: 'GLOBIS学び放題×知見録「一時的競争優位」（ダベニ1994・ハイパーコンペティション解説）' },
+    ],
+  },
+  {
+    id: 'human-need-for-cognition',
+    discipline: 'human-science',
+    title: '認知欲求',
+    statement:
+      '認知欲求（Need for Cognition, NFC）は、ジョン・カシオポとリチャード・ペティが1982年に提唱した、努力を要する思考そのものに従事し、それを楽しもうとする個人の傾向を指すパーソナリティ（個人差）概念である。これは「能力」ではなく「動機づけ・志向性」を表す。認知欲求が高い人は、情報を自ら探索・吟味し、論理や根拠を深く検討して態度を形成する一方、' +
+      '認知欲求が低い人は、ヒューリスティック（簡便な手がかり）や他者の意見、話し手の魅力・権威といった周辺的手がかりに依拠しやすい。測定には認知欲求尺度（Need for Cognition Scale）が用いられる。本概念は同じ研究者らによる説得の精緻化見込みモデル（ELM）と密接に関連し、高認知欲求者は中心ルート、低認知欲求者は周辺ルートで情報処理しやすいとされる。',
+    keyFigures: 'ジョン・カシオポ（John Cacioppo）／リチャード・ペティ（Richard Petty）（1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/2009-12071-021', type: 'academic', label: 'Cacioppo & Petty (1982), The need for cognition, Journal of Personality and Social Psychology 42(1), 116–131 (APA PsycNet)' },
+      { url: 'https://dictionary.apa.org/need-for-cognition', type: 'reference', label: 'APA Dictionary of Psychology — need for cognition' },
+    ],
+  },
+  {
+    id: 'bizlaw-freelance-protection',
+    discipline: 'business-law',
+    title: 'フリーランス保護新法（特定受託事業者取引適正化等法）',
+    statement:
+      '「特定受託事業者に係る取引の適正化等に関する法律」（フリーランス・事業者間取引適正化等法、令和5年法律第25号）は、個人として業務委託を受けるフリーランス（特定受託事業者）と発注事業者間の取引適正化と就業環境整備を目的とし、2024年11月1日に施行された。発注事業者には、業務の内容・報酬額・支払期日等の取引条件を書面又は電磁的方法により明示する義務を課す。' +
+      'また特定業務委託事業者は、給付を受領した日から起算して60日以内のできる限り短い期間内に報酬を支払わなければならない。受領拒否・報酬の減額・返品・買いたたき等の不当行為を禁止し、育児介護との両立配慮やハラスメント対策の体制整備も求める。取引適正化・支払規制は公正取引委員会と中小企業庁、就業環境整備は厚生労働省が所管する。',
+    keyFigures: '公正取引委員会・中小企業庁・厚生労働省／特定受託事業者取引適正化等法（2023年成立・2024年11月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/freelancelaw_2024/', type: 'government', label: '公正取引委員会 フリーランス法特設サイト（2024年施行）' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/download/freelance/law_02.pdf', type: 'government', label: '公正取引委員会・中小企業庁 説明資料（令和6年11月1日施行・60日支払・明示義務）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000160208', type: 'reference', label: '日本法令索引 令和5年5月12日法律第25号' },
+    ],
+  },
+  {
+    id: 'infosoc-datafication',
+    discipline: 'information-sociology',
+    title: 'データ化（データ化現象）',
+    statement:
+      'データ化（datafication）は、ビクター・マイヤー＝ショーンベルガーとケネス・クキエが2013年の著書『ビッグデータの正体』で広めた概念で、位置情報（GPS）、人間関係（ソーシャルグラフ）、感情（テキスト分析）など、これまで定量化されてこなかった社会生活や人間行動の側面を、計算・分析可能な機械可読データへと変換する過程を指す。' +
+      'これはアナログ情報をデジタル形式に変換するデジタル化（digitization）とは区別され、現象を構造化・定量化して追跡・分析・予測を可能にする点に特徴がある。ビッグデータを支える基盤的営みであり、ホセ・ファン・ダイク（2014）は、データの客観性を無批判に信奉しデータ収集と解釈を新たなパラダイムとみなす態度を「データイズム（dataism）」と呼び、監視やデータ植民地主義との関連から批判的に論じた。',
+    keyFigures: 'ビクター・マイヤー＝ショーンベルガー／ケネス・クキエ（2013）／ホセ・ファン・ダイク（2014, dataism）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ojs.library.queensu.ca/index.php/surveillance-and-society/article/view/datafication', type: 'academic', label: 'José van Dijck (2014) "Datafication, dataism and dataveillance," Surveillance & Society 12(2)' },
+      { url: 'https://policyreview.info/concepts/datafication', type: 'reference', label: 'Internet Policy Review — concept entry "Datafication"' },
+      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia — Datafication' },
+    ],
+  },
 ];
 // Stryker restore all
