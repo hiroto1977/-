@@ -16697,5 +16697,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Sousveillance', type: 'reference', label: 'Wikipedia: Sousveillance（語源 sur/sous・下からの監視・市民が警察を撮影）' },
     ],
   },
+  {
+    id: 'econ-deaton-paradox',
+    discipline: 'economics',
+    title: 'ディートンのパラドックス（消費の過剰平滑性）',
+    statement:
+      'アンガス・ディートンが1987年に指摘した、合理的期待と恒常所得仮説の整合性に関するパズル。所得がほぼランダムウォークのように持続的なショックを受ける場合、現在所得への正のショックは将来も続くと予想されるため恒常所得をそれ以上に押し上げる。したがって理論上、消費は所得ショックに1対1を超えて反応し、消費の変動は所得の変動より大きくなるはずである。' +
+      'ところが現実の集計データでは、消費は所得より滑らか（変動が小さい）であり、消費の分散は恒常所得の分散を下回る。この理論の予測と観察事実の矛盾が「過剰平滑性パズル」であり、所得を平滑化して消費に回すという恒常所得仮説の標準的説明とはむしろ逆の事実を示す。キャンベル＆ディートン1989はこれを消費が所得変化に遅れて反応するためと論じた。フレイヴィン1981の過剰感応性とは区別される。',
+    keyFigures: 'アンガス・ディートン（Angus Deaton, 1987）／ジョン・キャンベル（Campbell & Deaton, 1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/56/3/357/1632418', type: 'academic', label: 'Campbell & Deaton (1989) "Why is Consumption So Smooth?" Review of Economic Studies 56(3):357-373' },
+      { url: 'https://www.princeton.edu/~deaton/downloads/Why_is_Consumption_So_Smooth.pdf', type: 'academic', label: 'Angus Deaton (Princeton) — full text of Campbell & Deaton (1989)' },
+      { url: 'https://dash.harvard.edu/handle/1/3221494', type: 'reference', label: 'Harvard DASH repository record — Campbell & Deaton, excess smoothness of consumption' },
+    ],
+  },
+  {
+    id: 'econ-savings-glut',
+    discipline: 'economics',
+    title: '世界的貯蓄過剰（グローバル・セービング・グラット）',
+    statement:
+      'ベン・バーナンキが2005年のサンドリッジ講演で提唱した仮説で、米国の巨額な経常赤字と世界的な長期実質金利の低下を、米国の国内政策だけでなく世界の貯蓄供給の増加という「貯蓄側」から説明する。1997-98年のアジア通貨危機後、中国や東アジア諸国は純借入国から大幅な純貯蓄国・資本輸出国へ転じて外貨準備を積み上げ、産油国や高齢化した先進国も貯蓄を増やした結果、' +
+      '世界全体で望ましい貯蓄が望ましい投資を上回る状態が生じた。これら余剰貯蓄は安全資産を求めて米国へ大量に流入し、世界の長期実質金利を押し下げるとともに米国の経常赤字（資本流入）をファイナンスした。この資金流入による信用拡大は、2000年代の低金利や住宅・信用ブームを生んだ一因としてしばしば指摘されている。',
+    keyFigures: 'ベン・バーナンキ（Ben Bernanke, 2005）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/', type: 'government', label: 'Federal Reserve Board — Bernanke, "The Global Saving Glut and the U.S. Current Account Deficit" (Sandridge Lecture, 2005)' },
+      { url: 'https://www.chicagofed.org/publications/economic-perspectives/2021/1', type: 'government', label: 'Federal Reserve Bank of Chicago — "The Global Saving Glut and the Fall in U.S. Real Interest Rates: A 15-Year Retrospective" (2021)' },
+      { url: 'https://en.wikipedia.org/wiki/Global_saving_glut', type: 'reference', label: 'Wikipedia — Global saving glut' },
+    ],
+  },
+  {
+    id: 'mgmt-discovery-driven-planning',
+    discipline: 'management',
+    title: '発見志向計画法（ディスカバリー・ドリブン・プランニング）',
+    statement:
+      'リタ・マグレイスとイアン・マクミランが1995年のハーバード・ビジネス・レビューで提唱した計画手法。既知の基盤から外挿する従来計画と異なり、前提の大半が未知である新規事業や高不確実性の取り組みを対象とする。まず「逆算損益計算書」で必要な利益や成果を先に定め、そこから必要な売上と許容コストを逆算する。次に想定オペレーションを記述し、' +
+      'すべての仮定を「前提のチェックリスト」で明示し、「マイルストーン」（仮定を検証し追加投資を行う前に計画を見直す節目）を設定する。資金は節目の達成に応じて段階的に投じる。根底にあるのは「学習するための計画」という思想で、仮定を安価に知識へと変換し、証拠が得られ次第、方向転換や中止を行って失敗コストを最小化する。リーン・スタートアップの先駆かつ補完であり、リーン・スタートアップやエフェクチュエーションとは区別される。',
+    keyFigures: 'リタ・マグレイス／イアン・マクミラン（McGrath & MacMillan, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1995/07/discovery-driven-planning', type: 'academic', label: 'McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)' },
+      { url: 'https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning', type: 'academic', label: 'Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)' },
+      { url: 'https://link.springer.com/article/10.1007/s11187-019-00153-w', type: 'academic', label: 'Small Business Economics (Springer): comparing effectuation, DDP, lean startup, design thinking (2019)' },
+    ],
+  },
+  {
+    id: 'human-emotional-contagion',
+    discipline: 'human-science',
+    title: '情動感染',
+    statement:
+      'エレイン・ハットフィールド、ジョン・カシオッポ、リチャード・ラプソンが1993年の論文および1994年の著書『Emotional Contagion』で体系化した概念で、他者の表情・発声・姿勢・動作を自動的に模倣（ミミクリー）して同調させ、その結果として感情が互いに収束する＝他者の感情が「伝染」する傾向を指す。' +
+      'その機構は2段階で説明される。第一に、相手の表情や声、姿勢を無意識のうちに模倣・同調させ、第二に、その模倣がもたらす表情・身体からの求心性フィードバック（顔面フィードバックなど）が、自分の中に対応する感情体験を生む。この過程は原始的・自動的で多くは無意識的に生じ、集団や対人関係における気分の収束や共感を説明する。スマホやSNSを介した大規模研究（Kramerら2014）も行われた。意図的に他者の心情を推し量る共感や、神経基盤としてのミラーニューロンとは区別される。',
+    keyFigures: 'エレイン・ハットフィールド／ジョン・カシオッポ／リチャード・ラプソン（Hatfield, Cacioppo & Rapson, 1993/1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1111/1467-8721.ep10770953', type: 'academic', label: 'Hatfield, Cacioppo & Rapson (1993), Current Directions in Psychological Science' },
+      { url: 'https://dictionary.apa.org/emotional-contagion', type: 'reference', label: 'APA Dictionary of Psychology — emotional contagion' },
+      { url: 'https://www.pnas.org/doi/abs/10.1073/pnas.1320040111', type: 'academic', label: 'Kramer, Guillory & Hancock (2014), PNAS — large-scale emotional contagion via social networks' },
+    ],
+  },
+  {
+    id: 'bizlaw-defined-contribution-pension',
+    discipline: 'business-law',
+    title: '確定拠出年金法',
+    statement:
+      '確定拠出年金法（平成13年法律第88号、2001年制定・同年10月施行、厚生労働省所管）は、公的年金（国民年金・厚生年金）に上乗せする私的年金（いわゆる3階部分）として確定拠出年金（DC）を導入した法律である。DCは掛金が定額で個人ごとの口座に積み立てられ、加入者自身が提示された運用商品の中から運用指図を行い、将来の給付額は運用成績に応じて変動する。' +
+      'すなわち投資リスクは加入者個人が負担する点で、給付額が約束され事業主がリスクを負う確定給付企業年金（DB）と対比される。事業主が実施する企業型DCと、国民年金基金連合会が運営する個人型DC（iDeCo）の2類型があり、掛金の所得控除・運用益非課税などの税制優遇、転職時に資産を移換できるポータビリティを備え、給付は原則60歳から受給する。',
+    keyFigures: '確定拠出年金法（平成13年法律第88号、2001年制定・施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=85aa2545&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データ 確定拠出年金法（平成13年6月29日法律第88号）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000090431', type: 'government', label: '国立国会図書館 日本法令索引 確定拠出年金法 平成13年法律第88号' },
+      { url: 'https://www.pfa.or.jp/qa/kyoshutsu/kyoshutsu01.html', type: 'reference', label: '企業年金連合会 年金Q&A 確定拠出年金のしくみ（企業型・個人型iDeCo）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-logic',
+    discipline: 'information-sociology',
+    title: 'メディア・ロジック',
+    statement:
+      'メディア・ロジック（media logic）は、D・オルタイドとR・スノーが1979年の著書『Media Logic』で提唱した概念で、メディアが情報を提示・伝達する際の前提・フォーマット・過程の総体を指し、社会的事象を捉える特有の「見方／解釈の仕方」をなす。中核となるメディア・フォーマットとは、素材の編成、提示の様式、焦点・強調の置き方、メディア独自の文法であり、ドラマ性・視覚性・対立の強調などを含む。' +
+      'このロジックが制度化され自明のものとなると、政治・宗教・スポーツなど他の社会制度は可視性を得るためにメディアのフォーマットや基準を取り入れ、自らの活動をそれに適合させていく。オルタイドらは「メディアは他の諸制度が従う支配的な力である」と論じた。本概念は、ヤルヴァードやマッツォレーニ＆シュルツによる政治のメディア化など、メディア化（メディアティゼーション）論の基礎となった。なお、社会全体の変容過程を指すメディア化そのものとは区別される。',
+    keyFigures: 'デイヴィッド・オルタイド／ロバート・スノー（Altheide & Snow, 1979）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://communication.iresearchnet.com/political-communication/media-logic/', type: 'reference', label: 'iResearchNet (Communication), "Media Logic" — Altheide & Snow 1979, formats and mediatization of politics' },
+      { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0166.xml', type: 'academic', label: 'Mazzoleni & Splendore, "Media Logic and Mediatization", Oxford Bibliographies in Communication (OUP)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118541555.wbiepc088', type: 'reference', label: 'Altheide, "Media Logic", The International Encyclopedia of Political Communication (Wiley)' },
+    ],
+  },
 ];
 // Stryker restore all
