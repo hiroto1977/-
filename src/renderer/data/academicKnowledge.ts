@@ -17947,5 +17947,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://communication.iresearchnet.com/international-communication/cultural-imperialism-theories/', type: 'reference', label: 'iResearchNet (Communication) — Cultural Imperialism Theories' },
     ],
   },
+  {
+    id: 'econ-samuelson-condition',
+    discipline: 'economics',
+    title: '公共財供給のサミュエルソン条件',
+    statement:
+      '公共財供給のサミュエルソン条件（Samuelson condition）とは、ポール・サミュエルソンが「公共支出の純粋理論」（The Pure Theory of Public Expenditure, 1954）で定式化した、純粋公共財の最適（パレート効率的）供給水準を与える条件である。私的財では各個人の限界代替率（限界便益）が価格＝限界変形率に一致するのに対し、非排除性・非競合性をもつ公共財では同一量を全員が同時に消費するため、各個人の限界代替率（限界便益）の総和が限界変形率（限界費用）に等しくなる点で最適供給が達成される（ΣMRS＝MRT、ΣMB＝MC）。' +
+      'すなわち私的財が「限界便益を各人で等しくし数量を足し合わせる」水平和であるのに対し、公共財は「数量を共通とし限界便益を足し合わせる」垂直和で需要を集計する点が核心である。現実には各人が便益を過少申告するフリーライダー問題のため市場や自発的拠出では過少供給となり、政府による供給・課税の根拠とされる。リンダール均衡やクラーク＝グローブズ機構など需要表明メカニズムの理論的基礎をなす。',
+    keyFigures: 'ポール・サミュエルソン（Paul A. Samuelson, 1954）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Samuelson_condition', type: 'reference', label: 'Wikipedia — Samuelson condition' },
+      { url: 'https://www.jstor.org/stable/1925895', type: 'academic', label: 'P. A. Samuelson, “The Pure Theory of Public Expenditure”, Review of Economics and Statistics 36(4), 1954' },
+      { url: 'https://eml.berkeley.edu/~saez/course131/public-goods.pdf', type: 'academic', label: 'UC Berkeley (E. Saez) Economics 131 lecture notes — Public Goods' },
+    ],
+  },
+  {
+    id: 'econ-ak-model',
+    discipline: 'economics',
+    title: 'AKモデル（内生的成長の基本モデル）',
+    statement:
+      'AKモデルとは、生産関数を Y＝AK（A は正の定数、K は物的・人的資本を含む広義の資本）と単純化した内生的成長理論の基本モデルである。新古典派のソロー・モデルが資本の限界生産力逓減を仮定し、技術進歩なしでは一人当たり成長が止まる（収束する）と結論づけたのに対し、AKモデルは資本に対する収穫一定（限界生産力が A で一定）を仮定することで、外生的な技術進歩を仮定せずとも貯蓄率の上昇が恒久的に成長率を高め、長期の経済成長が内生的に持続することを示す。' +
+      'ポール・ローマー（1986、収穫逓増・知識の外部性）やロバート・ルーカス（1988、人的資本）の議論を背景に、セルジオ・レベロ（1991）らが定式化した。資本概念を知識・人的資本まで広げれば外部性により社会的な収穫が逓減しないと考える点が要諦で、貯蓄・投資・教育・研究開発を促す政策が長期成長率そのものを左右しうると含意する。経済が条件付き収束せず初期条件の差が持続しうる点でもソロー・モデルと対照的である。',
+    keyFigures: 'ポール・ローマー（Paul Romer, 1986）／ロバート・ルーカス（1988）／セルジオ・レベロ（Sergio Rebelo, 1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/AK_model', type: 'reference', label: 'Wikipedia — AK model' },
+      { url: 'https://www.jstor.org/stable/2937905', type: 'academic', label: 'S. Rebelo, “Long-Run Policy Analysis and Long-Run Growth”, Journal of Political Economy 99(3), 1991' },
+      { url: 'https://lhendricks.org/econ720/ip2/Romer_AK_notes.pdf', type: 'academic', label: 'University of North Carolina (L. Hendricks) lecture notes — The AK model' },
+    ],
+  },
+  {
+    id: 'mgmt-rfm-analysis',
+    discipline: 'management',
+    title: 'RFM分析',
+    statement:
+      'RFM分析とは、顧客を Recency（最終購入日からの経過、直近性）・Frequency（購入頻度）・Monetary（購入金額）の3指標で評価し、各指標をランク付け・組み合わせて顧客を分類する顧客分析・データベースマーケティングの手法である。直近に・頻繁に・多く購入している顧客ほど将来も購買・反応する可能性が高いという経験則に基づき、優良顧客や離反兆候のある顧客、休眠顧客を識別して、ダイレクトメールやキャンペーンの対象選定・予算配分・One to Oneの施策を最適化する。' +
+      '通信販売・カタログ販売の分野で発展し、各指標を5段階等に分けて555〜111のようなセグメント（セル）を作るのが典型である。少数の指標で実装が容易・解釈しやすい反面、購入間隔の規則性や商品内容、顧客の生涯価値（LTV）を捉えにくいといった限界があり、デシル分析やLTV分析、機械学習による購買予測と併用・発展して用いられる。',
+    keyFigures: 'RFM分析（Recency／Frequency／Monetary）／データベースマーケティング',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.techtarget.com/searchcustomerexperience/definition/RFM-analysis', type: 'reference', label: 'TechTarget — RFM analysis (recency, frequency, monetary) 定義' },
+      { url: 'https://en.wikipedia.org/wiki/RFM_(market_research)', type: 'reference', label: 'Wikipedia — RFM (market research)' },
+      { url: 'https://www.synergy-marketing.co.jp/glossary/rfm-analysis/', type: 'reference', label: 'シナジーマーケティング マーケティング用語集 — RFM分析' },
+    ],
+  },
+  {
+    id: 'human-premack-principle',
+    discipline: 'human-science',
+    title: 'プレマックの原理',
+    statement:
+      'プレマックの原理（Premack principle）とは、デヴィッド・プレマックが提唱した強化に関する原理で、ある時点で生起頻度（生起確率）の高い行動は、それより頻度の低い行動に対する強化子として機能する、というものである（「より起こりやすい行動が、より起こりにくい行動を強化する」）。たとえば子どもにとって遊ぶ頻度が学習より高ければ、「勉強したら遊べる」と高頻度行動を随伴させることで低頻度の勉強行動が増える。強化子を特定の刺激ではなく相対的な行動の生起確率として捉える点に特徴があり、「おばあちゃんの原理（Grandma’s rule）」とも呼ばれる。' +
+      'プレマックは1959年以降の一連の研究で実証し、伝統的に固定的なものとされた強化子を、行動間の相対的確率という枠組みで再定義した。のちにティンバーレイクとアリソン（1974）の反応剥奪仮説（response deprivation hypothesis）へと拡張・修正され、応用行動分析や教育・行動療法における動機づけ操作やトークンエコノミーの基礎理論として広く用いられている。',
+    keyFigures: 'デヴィッド・プレマック（David Premack, 1959/1965）／ティンバーレイク＆アリソン（1974, 反応剥奪仮説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Premack%27s_principle', type: 'reference', label: 'Wikipedia — Premack’s principle' },
+      { url: 'https://link.springer.com/article/10.1007/s40614-019-00226-x', type: 'academic', label: 'Perspectives on Behavior Science (Springer) — 強化・反応剥奪に関する論考' },
+      { url: 'https://www.britannica.com/biography/David-Premack', type: 'reference', label: 'Encyclopaedia Britannica — David Premack' },
+    ],
+  },
+  {
+    id: 'bizlaw-national-health-insurance',
+    discipline: 'business-law',
+    title: '国民健康保険法',
+    statement:
+      '国民健康保険法とは、被用者保険（健康保険・共済等）に加入しない自営業者・農林漁業者・無職者などを対象に、市町村（特別区を含む）および都道府県、または国民健康保険組合が保険者となって医療給付等を行う公的医療保険を定める法律である。現行法は1958年（昭和33年法律第192号）に全面改正・制定され、1961年の施行により全国の市町村に国保の実施を義務づけて国民皆保険を完成させた。被保険者は地域住民を単位とし、保険料（または国民健康保険税）を負担して、療養の給付・高額療養費・出産育児一時金等の給付を受ける。' +
+      '被用者保険のような事業主負担がなく所得水準が相対的に低い加入者が多いため、国・都道府県・市町村の公費が投入される点に特徴がある。2018年（平成30年）度からは財政運営の責任主体が市町村から都道府県へ移り、都道府県が財政運営を担い市町村が資格管理・保険給付・保険料賦課徴収を行う「都道府県単位化」が実施された。後期高齢者は別途、高齢者医療確保法に基づく後期高齢者医療制度の対象となる。',
+    keyFigures: '国民健康保険法（昭和33年法律第192号、1958年制定・1961年皆保険）／厚生労働省・都道府県・市町村',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/333AC0000000192', type: 'government', label: 'e-Gov法令検索 — 国民健康保険法（昭和33年法律第192号）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/iryouhoken01/index.html', type: 'government', label: '厚生労働省 — 国民健康保険制度' },
+      { url: 'https://kotobank.jp/word/国民健康保険法-63681', type: 'reference', label: 'コトバンク（日本大百科全書ほか）— 国民健康保険法' },
+    ],
+  },
+  {
+    id: 'infosoc-triple-helix',
+    discipline: 'information-sociology',
+    title: 'トリプルヘリックス（三重らせんモデル）',
+    statement:
+      'トリプルヘリックス（Triple Helix、三重らせんモデル）とは、ヘンリー・エツコウィッツとロエト・ライデスドルフが1990年代に提唱した、知識基盤社会におけるイノベーション創出の枠組みで、大学（学）・産業（産）・政府（官）の三者が、それぞれの役割を保ちつつ相互に重なり合い役割を一部交換しながららせん状に協働することで、新たな知識・技術・制度（ハイブリッド組織）が生み出されるとするモデルである。生物のDNAの二重らせんになぞらえつつ、従来の国家主導（統制型）や産学が分離した自由放任型に対し、三者の動的な相互作用を重視する。' +
+      '大学が教育・研究に加えて経済発展に直接寄与する「起業家的大学（entrepreneurial university）」へと第三の使命を担い、技術移転機関・インキュベーター・産学連携・スピンオフ企業などが三者の重なりから生まれると説く。後に市民社会・メディアや環境を加えたクアドラプル／クインタプルヘリックスへ拡張され、地域イノベーションシステムや科学技術政策、産学官連携の分析・設計の枠組みとして広く参照される。',
+    keyFigures: 'ヘンリー・エツコウィッツ／ロエト・ライデスドルフ（Etzkowitz & Leydesdorff, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Triple_helix_model_of_innovation', type: 'reference', label: 'Wikipedia — Triple helix model of innovation' },
+      { url: 'https://innovation-entrepreneurship.springeropen.com/articles/10.1186/s13731-017-0066-z', type: 'academic', label: 'Journal of Innovation and Entrepreneurship (Springer) — The Triple Helix model 論考' },
+      { url: 'https://www.leydesdorff.net/th2/', type: 'academic', label: 'L. Leydesdorff — The Triple Helix of University-Industry-Government Relations' },
+    ],
+  },
 ];
 // Stryker restore all
