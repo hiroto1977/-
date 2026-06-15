@@ -14203,5 +14203,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/01461672012710001', type: 'academic', label: 'Postmes, Spears, Sakhel & de Groot (2001) Social Influence in Computer-Mediated Communication, PSPB' },
     ],
   },
+  {
+    id: 'econ-credit-rationing',
+    discipline: 'economics',
+    title: '信用割当',
+    statement:
+      '信用割当（クレジット・レーショニング）とは、貸し手が金利を引き上げて貸出資金の需給を均衡させるのではなく信用供給そのものを制限し、より高い金利を払う意思があっても借りられない、あるいは希望額に満たない借り手が生じる状況をいう。ジョセフ・スティグリッツとアンドリュー・ワイスは1981年の論文で、情報の非対称性のもとでは金利水準そのものが借り手プールのリスクを変えると示した。' +
+      'すなわち金利上昇は、逆選択（安全な借り手が借入を諦めて去り、危険な借り手が残る）と、モラルハザード／誘因効果（借り手がより危険な事業を選ぶ）を通じて貸出の質を悪化させる。このため銀行の期待収益は金利に対し単調増加せず、期待収益を最大化する「銀行最適金利」が存在し、それを超えて金利を上げると期待収益はむしろ低下する。したがって銀行は金利を市場均衡水準より低く据え置き、均衡においても貸出需要の超過を残したまま信用を割り当てる。',
+    keyFigures: 'ジョセフ・スティグリッツ／アンドリュー・ワイス（1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v71y1981i3p393-410.html', type: 'academic', label: 'Stiglitz & Weiss, "Credit Rationing in Markets with Imperfect Information," American Economic Review 71(3), 393-410 (1981) — RePEc/IDEAS record' },
+      { url: 'https://web.econ.keio.ac.jp/staff/masaya/ja/class07/SW_model.pdf', type: 'academic', label: '慶應義塾大学 講義資料「Stiglitz and Weiss の均衡信用割当の理論」' },
+      { url: 'https://epub.uni-regensburg.de/15577/1/sw.pdf', type: 'academic', label: 'Univ. of Regensburg, "On the Possibility of Credit Rationing in the Stiglitz-Weiss Model"' },
+    ],
+  },
+  {
+    id: 'econ-club-goods',
+    discipline: 'economics',
+    title: 'クラブ財',
+    statement:
+      'クラブ財（club goods）とは、排除可能だが（混雑が起きるまでは）非競合的な財をいう。料金を払わない非会員を排除できる一方、ある会員の消費は、混雑が生じるまで他の会員の利用可能性を減らさない。例として会員制プールやゴルフクラブ、有料ケーブルTV、混雑のない有料道路が挙げられる。財を競合性と排除可能性の2×2類型で分けると、' +
+      'クラブ財は純粋公共財（非排除・非競合）と私的財（排除・競合）の中間に位置し、競合的だが排除不能なコモンプール資源と対をなす。ジェームズ・M・ブキャナンの1965年論文「クラブの経済理論（An Economic Theory of Clubs）」が起源で、会員を増やすほど一人当たり費用は下がるが混雑費用は増すため、追加会員の限界便益と限界混雑費用が等しくなる点で最適クラブ規模が決まる、という会員規模と混雑費用のトレードオフを分析した。',
+    keyFigures: 'ジェームズ・M・ブキャナン（James M. Buchanan, 1965）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s10602-013-9148-5', type: 'academic', label: 'Constitutional Political Economy (Springer) — Buchanan clubs' },
+      { url: 'https://en.wikipedia.org/wiki/Club_good', type: 'reference', label: 'Wikipedia — Club good' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-routines',
+    discipline: 'management',
+    title: '組織ルーチン',
+    statement:
+      '組織ルーチンとは、複数の主体が担う、反復的で認識可能な相互依存的行動のパターンであり、企業の規則的で予測可能な行動様式を指す。リチャード・ネルソンとシドニー・ウィンターは『経済変動の進化理論』（1982）で、ルーチンを組織の業務知識（その多くは暗黙知）の主要な貯蔵庫と位置づけた。' +
+      'ルーチンは生物の遺伝子の組織版であり、継承・複製され、変異-選択-保持の進化プロセスにおける選択の単位として機能する。ルーチンは安定と調整をもたらし意思決定を節約する一方、慣性も生む。後にフェルドマンとペントランドは、ルーチンを構造を表すオステンシブ（ostensive）側面と、具体的な実演であるパフォーマティブ（performative）側面に区別し、変化の源泉でもあると論じた。',
+    keyFigures: 'リチャード・ネルソン／シドニー・ウィンター（1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2307/3556620', type: 'academic', label: 'Feldman & Pentland (2003), Administrative Science Quarterly: Reconceptualizing Organizational Routines as a Source of Flexibility and Change' },
+      { url: 'https://en.wikipedia.org/wiki/Organisational_routines', type: 'reference', label: 'Wikipedia: Organisational routines (definition, Nelson & Winter, ostensive/performative)' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1496211', type: 'academic', label: 'Nelson & Winter (1982), An Evolutionary Theory of Economic Change (SSRN)' },
+    ],
+  },
+  {
+    id: 'human-counterfactual-thinking',
+    discipline: 'human-science',
+    title: '反実仮想思考（反事実的思考）',
+    statement:
+      '反実仮想思考（counterfactual thinking）とは、過去の出来事に対して「もし〜だったら」「あの時こうしていれば」といった、実際に起きた現実とは異なる代替的な結果を心の中でシミュレートする思考である。ダニエル・カーネマンとデール・ミラーが1986年に提唱したノルム理論（Psychological Review）が理論的基礎で、人は正常な出来事より異常・例外的な出来事の後に代替案を想起しやすく（作為は不作為より変更されやすい）、それが感情反応の強さを左右するとされる。' +
+      '反実仮想には、実際よりも良い結果を想像する上方反実仮想（後悔や失望を生むが、将来への改善・準備機能を持つ）と、より悪い結果を想像する下方反実仮想（安堵や満足を生む）の区別がある。後悔・非難・幸運の判断の基盤をなし、メドヴェック・マディ・ギロヴィッチ（1995）の研究では、銀メダリストは「金を逃した」と上方比較し、銅メダリストは「メダルを逃さずに済んだ」と下方比較するため、銅メダリストの方が幸福に見えることが示された。',
+    keyFigures: 'ダニエル・カーネマン＆デール・ミラー（ノルム理論, 1986）／ニール・ローズ／メドヴェック・マディ・ギロヴィッチ（1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oecs.mit.edu/pub/hunngznm/release/1', type: 'reference', label: 'Open Encyclopedia of Cognitive Science (MIT) — Counterfactual Thinking' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/7473022/', type: 'academic', label: 'Medvec, Madey & Gilovich (1995) When Less Is More, J. Pers. Soc. Psychol. 69:603-610' },
+      { url: 'https://eric.ed.gov/?id=EJ333757', type: 'academic', label: 'Kahneman & Miller (1986) Norm Theory, Psychological Review' },
+    ],
+  },
+  {
+    id: 'bizlaw-minimum-wage-act',
+    discipline: 'business-law',
+    title: '最低賃金法',
+    statement:
+      '最低賃金法（昭和34年法律第137号、1959年制定）は、賃金の低廉な労働者について賃金の最低額を保障し、労働条件の改善・労働者の生活の安定・労働力の質的向上・事業の公正な競争の確保を図るとともに、国民経済の健全な発展に資することを目的とする、厚生労働省所管の法律である。最低賃金には、各都道府県のほぼ全ての労働者・使用者に適用される地域別最低賃金と、特定（産業別）最低賃金がある。' +
+      '最低賃金は、公益・労働者・使用者の三者で構成される最低賃金審議会の調査審議に基づき、厚生労働大臣または都道府県労働局長が決定し、労働者の生計費・賃金・通常の事業の賃金支払能力を考慮し、生計費考慮にあたっては生活保護施策との整合性に配慮する。最低賃金額に達しない賃金を定める労働契約はその部分が無効となり最低賃金額が適用され、最低賃金未満で支払う使用者には罰則（罰金）が科される。',
+    keyFigures: '最低賃金法（昭和34年法律第137号、1959年制定）／厚生労働省・最低賃金審議会',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=73053000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令データ「最低賃金法（昭和34年4月15日法律第137号）」全文' },
+      { url: 'https://www.mhlw.go.jp/www2/topics/seido/kijunkyoku/minimum/minimum-10.htm', type: 'government', label: '厚生労働省「最低賃金制度とは」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%9C%80%E4%BD%8E%E8%B3%83%E9%87%91%E6%B3%95', type: 'reference', label: 'ウィキペディア「最低賃金法」' },
+    ],
+  },
+  {
+    id: 'infosoc-media-equation',
+    discipline: 'information-sociology',
+    title: 'メディアの等式（メディア・イクエーション）',
+    statement:
+      'バイロン・リーブスとクリフォード・ナスが著書『The Media Equation』（1996）で示した命題で、「メディア＝現実生活」と要約される。人はコンピュータ・テレビ・新しいメディアを、それが人間ではないと知っており、そうした反応を馬鹿げていると述べる場合でさえ、あたかも実在の人や場所であるかのように無意識かつ自動的に扱う。礼儀、返報性、お世辞への反応、性別ステレオタイプ、内集団／外集団といった社会的規則や規範を、学習済みの社会的脚本の無自覚な適用として機械にも当てはめてしまう。' +
+      'この知見は、古典的な社会心理学の実験で人間を相手とする役割をコンピュータやテレビに置き換えて再現する一連の研究から得られた。例えば人はコンピュータに礼儀正しく振る舞い、女性音声と男性音声を区別して扱う。本理論は「コンピュータは社会的存在である（CASA：Computers Are Social Actors）」パラダイムの基盤となり、ヒューマン・コンピュータ・インタラクション（HCI）、人間とロボットの相互作用、AI・エージェント設計に大きな影響を与えている。',
+    keyFigures: 'バイロン・リーブス／クリフォード・ナス（1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781119011071.iemp0158', type: 'reference', label: 'Lee‐Won, "Media Equation," The International Encyclopedia of Media Psychology (Wiley)' },
+      { url: 'https://stars.library.ucf.edu/cgi/viewcontent.cgi?article=1020&context=hmc', type: 'academic', label: 'Gambino, Fox & Ratan, "Building a Stronger CASA," Human-Machine Communication (Univ. of Central Florida)' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/distributed/M/bo3618528.html', type: 'reference', label: 'Reeves & Nass, The Media Equation (1996), CSLI / University of Chicago Press' },
+    ],
+  },
 ];
 // Stryker restore all
