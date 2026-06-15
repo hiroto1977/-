@@ -17232,5 +17232,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://thenewinquiry.com/the-irl-fetish/', type: 'media', label: 'Jurgenson, "The IRL Fetish", The New Inquiry (2012)' },
     ],
   },
+  {
+    id: 'econ-real-bills-doctrine',
+    discipline: 'economics',
+    title: '真正手形主義（リアルビルズ・ドクトリン）',
+    statement:
+      'アダム・スミスの『国富論』（1776）に遡り、英国の銀行学派や初期FRBの思想に見られる中央銀行・通貨供給の教義。銀行が生産・販売の過程にある実物の商品を裏づけとする短期で自己償却的な「真正手形（商業手形）」の割引によってのみ通貨を発行・信用供与すれば、通貨量は「商業の必要（needs of trade）」に応じて自動的に伸縮し、新通貨は実物の取引に見合うのでインフレを生まないと主張する（商業の正当な需要を受動的に満たすべきとする商業貸付理論）。' +
+      'しかし手形の需要量自体が物価水準や名目金利に依存するため、名目アンカーを欠き、物価水準が不決定となってインフレ／デフレのスパイラルを招くと批判された。ロイド・ミンツ（命名者）、ヘンリー・ソーントン、ミルトン・フリードマン、トーマス・ハンフリー（リッチモンド連銀）らが論理的誤謬と論じ、1920〜30年代のFRBの政策誤りに寄与したとされる。現代金融論では誤りとみなされている。',
+    keyFigures: 'アダム・スミス（Adam Smith, 1776）／英国銀行学派／批判：ロイド・ミンツ（Lloyd Mints）／ヘンリー・ソーントン（Henry Thornton）／ミルトン・フリードマン（Milton Friedman）／トーマス・ハンフリー（Thomas Humphrey, リッチモンド連銀）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.richmondfed.org/-/media/RichmondFedOrg/publications/research/working_papers/2000/pdf/wp00-7.pdf', type: 'academic', label: 'Thomas M. Humphrey, "The Real Bills Doctrine," Federal Reserve Bank of Richmond Working Paper 00-7' },
+      { url: 'https://www.minneapolisfed.org/article/2003/real-bills-and-the-federal-reserve', type: 'government', label: 'Federal Reserve Bank of Minneapolis — "Real Bills and the Federal Reserve"' },
+      { url: 'https://en.wikipedia.org/wiki/Real_bills_doctrine', type: 'reference', label: 'Wikipedia — Real bills doctrine' },
+    ],
+  },
+  {
+    id: 'econ-gibson-paradox',
+    discipline: 'economics',
+    title: 'ギブソンのパラドックス',
+    statement:
+      'ケインズが『貨幣論』（1930）で英国の統計家・経済学者A・H・ギブソン（1923年に記録）にちなんで命名した経験的観察。金本位制期（特に19世紀英国）において、名目金利の「水準」が（卸売）物価の「水準」と正の相関を示す一方、インフレ「率」（物価変化率）とはほとんど相関しなかった、という現象を指す。標準理論であるフィッシャー効果は名目金利が期待インフレ率とともに動くと予測するため、金利が物価変化率ではなく物価「水準」を追ったこと自体が「逆説」とされた。ケインズはこれを' +
+      '量的経済学の全分野で最も完全に確立された経験的事実の一つと評した。説明としては、ケインズ自身の金利の硬直性論、ヴィクセルの累積過程（市場利子率と自然利子率の乖離が物価水準を動かす）、フリードマン&シュウォーツ（理論的説明を欠く経験的事実と評価）、さらにバースキー&サマーズ（1988）の金本位制説（実質利子率の変動が金の相対価格を通じて物価水準を動かす）などがある。フィッシャー効果やヴィクセルの累積過程とは区別され、物価水準と金利の相関という経験的パズルそのものを指す。',
+    keyFigures: 'A・H・ギブソン（A. H. Gibson, 1923）／ジョン・メイナード・ケインズ（命名, 1930）／ロバート・バースキー&ローレンス・サマーズ（1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w1680', type: 'academic', label: 'Barsky & Summers, "Gibson\'s Paradox and the Gold Standard," NBER WP 1680 (JPE, 1988)' },
+      { url: 'https://en.wikipedia.org/wiki/Gibson%27s_paradox', type: 'reference', label: "Wikipedia: Gibson's paradox" },
+      { url: 'https://www.cambridge.org/core/journals/financial-history-review/article/abs/was-the-gibson-paradox-for-real-a-wicksellian-study-of-the-relationship-between-interest-rates-and-prices/B89547FF54A622D264204B538372981D', type: 'academic', label: 'Financial History Review: A Wicksellian study of the Gibson Paradox' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-intent',
+    discipline: 'management',
+    title: '戦略的意図（ストラテジック・インテント）',
+    statement:
+      'ゲイリー・ハメルとC・K・プラハラードが1989年のハーバード・ビジネス・レビュー論文「ストラテジック・インテント」（マッキンゼー賞受賞）で提示した概念。現有の経営資源や能力に不釣り合いなほど野心的で長期的な大望、すなわち「勝利への執念」を指す。これは資源と野心の間に意図的な不適合（ギャップ）を生み出すが、企業は大望を縮小して手持ちの資源に合わせるのではなく、創造性・資源のレバレッジ・加速された組織学習によって長期にわたりそのギャップを埋めていく。' +
+      'コマツの「キャタピラーを包囲せよ」、キヤノンの「打倒ゼロックス」、ホンダの自動車での野心などが例で、何十年も志を持続させ組織全体を動機づけた。戦略的意図は方向性・発見・運命感という情緒的な勝利への信念を組織に与える。資源を機会に合わせる資源ベースの「戦略適合（フィット）」学派と対比される、ストレッチ志向の戦略観であり、同著者のコア・コンピタンス概念の先駆をなすが、それとは区別される。',
+    keyFigures: 'ゲイリー・ハメル／C・K・プラハラード（Hamel & Prahalad, 1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=218066', type: 'academic', label: 'Hamel & Prahalad, "Strategic Intent," Harvard Business Review, May–June 1989, pp. 63–76（学術引用索引）' },
+      { url: 'https://dhbr.diamond.jp/articles/-/485', type: 'reference', label: 'DIAMOND ハーバード・ビジネス・レビュー「ストラテジック・インテント【1989年度マッキンゼー賞受賞論文】」' },
+    ],
+  },
+  {
+    id: 'human-deindividuation',
+    discipline: 'human-science',
+    title: '没個性化',
+    statement:
+      '没個性化（ディインディヴィデュエーション）は、フェスティンガー、ペピトーン、ニューカムが1952年に命名し、ジンバルドー（1969）やディーナーが発展させた社会心理学の概念である。集団や群衆の中で、匿名性・責任の分散・高い覚醒などの条件下において、個人が自己への注目（自己意識）や個人的アイデンティティ・自己評価の感覚を失う心理状態を指す。' +
+      'この状態では自己制御や社会的評価への関心が低下し、衝動的で普段はしないような反規範的・脱抑制的・反社会的/攻撃的な行動を取りやすくなる。仮面・制服・暗闇・大群衆・オンラインの匿名性などが主要な引き金となり、群衆暴力や略奪、ネット上の脱抑制・炎上、ジンバルドーの研究の説明に用いられる。なお後年のSIDEモデルは、匿名性が個人的アイデンティティから社会的アイデンティティへ顕現性を移すと再解釈する点で、古典的な没個性化とは区別される。',
+    keyFigures: 'レオン・フェスティンガー／アルバート・ペピトーン／セオドア・ニューカム（1952命名）／フィリップ・ジンバルドー（1969）／エド・ディーナー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/deindividuation', type: 'reference', label: 'Encyclopaedia Britannica — Deindividuation' },
+      { url: 'https://www.simplypsychology.org/what-is-deindividuation.html', type: 'academic', label: 'Simply Psychology — Deindividuation (Festinger 1952 / Zimbardo 1969 / Diener)' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/deindividuation', type: 'academic', label: 'ScienceDirect Topics — Deindividuation' },
+    ],
+  },
+  {
+    id: 'bizlaw-public-records-management',
+    discipline: 'business-law',
+    title: '公文書管理法',
+    statement:
+      '正式名称は「公文書等の管理に関する法律」（平成21年法律第66号）。年金記録問題や文書の不適切な管理等を背景に2009年に制定され、2011年4月1日に施行された、内閣府所管の公文書管理の基本法である。第1条は、公文書等を健全な民主主義の根幹を支える国民共有の知的資源と位置づけ、行政が現在及び将来の国民に説明する責務を全うすることを目的に掲げる。' +
+      '行政文書・法人文書のライフサイクル（作成・整理・保存・移管・廃棄）を規律し、意思決定過程や事務事業の実績を合理的に跡付け・検証できるよう各行政機関に文書作成を義務づける。保存期間満了後は、歴史的に重要な特定歴史公文書等を国立公文書館へ移管して永久保存・一般利用に供する。請求に応じた開示を定める情報公開法とは区別され、本法は記録の管理・保存のライフサイクル全体を規律して相互に補完する。',
+    keyFigures: '公文書等の管理に関する法律（公文書管理法、平成21年法律第66号、2009年制定・2011年施行）／内閣府',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/housei/17120090701066.htm', type: 'government', label: '衆議院 法令データ「公文書等の管理に関する法律」（平成21年法律第66号、第1条目的）' },
+      { url: 'https://data.e-gov.go.jp/data/dataset/cao_20150903_0100', type: 'government', label: 'e-Gov データポータル／内閣府「公文書管理制度及び関係法令」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%85%AC%E6%96%87%E6%9B%B8%E7%AD%89%E3%81%AE%E7%AE%A1%E7%90%86%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%95%E5%BE%8B', type: 'reference', label: 'Wikipedia「公文書等の管理に関する法律」（制定・施行・対象・情報公開法との関係）' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-momentum',
+    discipline: 'information-sociology',
+    title: '技術的モメンタム',
+    statement:
+      '技術史家トーマス・P・ヒューズが『電力の歴史 Networks of Power』（1983）や論文「Technological Momentum」（1994）で提示した概念で、技術が社会を一方的に規定するとみる技術決定論と、社会が技術を規定するとみる技術の社会的構成（SCOT）の中間に立つ、時間依存的な総合理論である。' +
+      'ヒューズによれば、若く新興の技術システムほど社会的に構成され可塑的で制御しやすいが、大規模技術システム（LTS）が成熟し、質量・インフラ・投下資本・熟練者・組織、そして既得権を持つ利用者を獲得すると、運動量（モメンタム）を帯びて方向転換や停止が困難になり、社会へより決定論的に作用する。すなわちモメンタムはシステムの年齢と規模の関数であり、技術決定論やSCOTそのものとは区別される時間依存の統合視点をなす。',
+    keyFigures: 'トーマス・P・ヒューズ（Thomas P. Hughes, 1983/1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ieeexplore.ieee.org/document/9592026', type: 'academic', label: 'Thomas P. Hughes, "Technological Momentum," in Technology and Society: Building Our Sociotechnical Future (MIT Press; orig. 1994)' },
+      { url: 'https://en.wikipedia.org/wiki/Technological_momentum', type: 'reference', label: 'Wikipedia: Technological momentum' },
+      { url: 'https://en.wikipedia.org/wiki/Thomas_P._Hughes_(historian)', type: 'reference', label: 'Wikipedia: Thomas P. Hughes (historian) — Networks of Power (1983), large technical systems' },
+    ],
+  },
 ];
 // Stryker restore all
