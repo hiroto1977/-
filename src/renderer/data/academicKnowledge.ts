@@ -11447,5 +11447,93 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.1050.0363', type: 'academic', label: 'Van Alstyne & Brynjolfsson (2005), Management Science 51(6):851-868 (INFORMS)' },
     ],
   },
+  {
+    id: 'econ-diamond-water-paradox',
+    discipline: 'economics',
+    title: '価値の逆説（ダイヤモンドと水のパラドックス）',
+    statement:
+      '価値の逆説とは、生存に不可欠で有用な水の市場価格が極めて低い一方、生活に必須でないダイヤモンドが高価で取引されるという、有用性と価格の乖離を指す経済学上の難問である。アダム・スミスは1776年の『国富論』で、財の価値を使用価値（使うことで得られる便益）と交換価値（他財と交換できる力）に区別し、水は使用価値が高いのに交換価値が低く、ダイヤモンドはその逆だと指摘した。' +
+      'スミス自身や労働価値説・費用説ではこの逆説を十分に説明できなかったが、1870年代の限界革命でジェヴォンズ・メンガー・ワルラスが独立に確立した限界効用理論により解決された。財の価格は総効用ではなく追加1単位がもたらす限界効用で決まる。水は豊富で希少性が低いため限界効用と価格が低く、ダイヤモンドは希少で限界効用が高いため高価になる、と説明される。',
+    keyFigures: 'アダム・スミス（1776提起）／限界革命（ジェヴォンズ・メンガー・ワルラス、1870年代）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E4%BE%A1%E5%80%A4%E3%81%AE%E3%83%91%E3%83%A9%E3%83%89%E3%83%83%E3%82%AF%E3%82%B9-1290467', type: 'reference', label: 'コトバンク「価値のパラドックス」（百科事典級リファレンス）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/03017605.2025.2554037', type: 'academic', label: 'Taylor & Francis 査読論文「The Diamond-Water Paradox revisited: Jevons, Menger and Walras」' },
+    ],
+  },
+  {
+    id: 'econ-twin-deficits',
+    discipline: 'economics',
+    title: '双子の赤字',
+    statement:
+      '双子の赤字とは、政府の財政赤字と経常収支（貿易収支）赤字が同時に発生し、連動して動く傾向があるとする観察・仮説である。国民所得勘定の恒等式（経常収支＝民間貯蓄−投資＋財政収支、すなわちCA＝(S−I)＋(T−G)）に根ざし、他の条件が一定なら財政赤字の拡大は経常収支赤字を拡大させると説く。' +
+      '波及経路としては、政府の大量借入が金利を押し上げ、海外資本を呼び込んで通貨高を招き、輸出を不利に・輸入を有利にして貿易赤字を広げると説明される。1980年代の米国レーガン政権下で、減税と軍事費拡大による財政赤字、高金利によるドル高と貿易赤字が並存した状況を指す語として広まった。マンデル＝フレミング理論と関連する一方、リカード等価の立場（バロー）は、民間貯蓄が財政赤字を相殺するとして両赤字の連関を否定する。',
+    keyFigures: '米国の財政赤字・経常赤字（1980年代）／国民所得勘定の恒等式',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://kotobank.jp/word/%E5%8F%8C%E5%AD%90%E3%81%AE%E8%B5%A4%E5%AD%97-169395', type: 'reference', label: 'コトバンク「双子の赤字」' },
+      { url: 'https://link.springer.com/article/10.1007/s40847-015-0013-4', type: 'academic', label: 'Springer: Ricardian equivalence and twin deficits hypotheses in the euro area' },
+    ],
+  },
+  {
+    id: 'mgmt-aida',
+    discipline: 'management',
+    title: 'AIDAモデル（購買行動モデル）',
+    statement:
+      'AIDA（アイダ）モデルは、消費者が広告に接してから購買に至るまでの心理過程を「Attention（注意）→Interest（関心）→Desire（欲求）→Action（行動・購買）」の段階で示す古典的な購買行動モデルである。認知→感情→行動と順に進むとする「効果階層モデル（hierarchy of effects）」の代表例で、E・セント・エルモ・ルイス（E. St. Elmo Lewis）が1898年頃に提唱したとされ、E・K・ストロングの1925年の著作を通じて広く知られた。' +
+      '日本では、DesireとActionの間にMemory（記憶）を加えた5段階の「AIDMA（アイドマ）」が普及した。さらにインターネット時代の消費行動を反映し、電通がSearch（検索）とShare（共有）を組み込んだ「AISAS（アイサス）」を2000年代に提唱した。なおAIDAの起源については近年、ルイス以外の人物に帰すべきとする学術的再検討も行われている。',
+    keyFigures: 'E・セント・エルモ・ルイス（E. St. Elmo Lewis, 1898頃）／AIDMA・AISAS（電通）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/AIDA_(marketing)', type: 'reference', label: 'Wikipedia — AIDA (marketing): 段階・効果階層モデル・ルイス起源' },
+      { url: 'https://ojs.library.carleton.ca/index.php/pcharm/article/view/4340/3310', type: 'academic', label: 'Iwamoto (2023) "The Origin of AIDA" — Carleton University library journal' },
+      { url: 'https://www.kaonavi.jp/dictionary/aidma/', type: 'reference', label: 'カオナビ人事用語集 — AIDMA（記憶段階を含む）とAISASとの違い' },
+    ],
+  },
+  {
+    id: 'human-curse-of-knowledge',
+    discipline: 'human-science',
+    title: '知識の呪縛',
+    statement:
+      '知識の呪縛（知識の呪い）は、よく知っている者が、知らない者の視点に立って物事を考えることが極めて難しくなる認知バイアスである。いったん何かを知ると、それを知らない状態を想像できなくなり、結果として相手が自分の説明をどれだけ理解しているかを過大評価してしまう。' +
+      'この用語は経済学者コリン・カメラー、ジョージ・ローウェンスタイン、マーティン・ウェーバーが1989年に学術誌『Journal of Political Economy』で提唱した。エリザベス・ニュートンの1990年「タッパーとリスナー」実験が有名で、曲のリズムを叩く側は約半数が伝わると予想したが、聞き手が当てられたのは120曲中わずか3曲だった。後知恵バイアスや心の理論と関連する。',
+    keyFigures: 'コリン・カメラー／ジョージ・ローウェンスタイン／マーティン・ウェーバー（1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/261651', type: 'academic', label: 'Camerer, Loewenstein & Weber, "The Curse of Knowledge in Economic Settings," Journal of Political Economy 97(5), 1989' },
+      { url: 'https://ucatt.arizona.edu/news/curse-knowledge', type: 'reference', label: 'University of Arizona, UCATT — "The Curse of Knowledge"' },
+      { url: 'https://en.wikipedia.org/wiki/Curse_of_knowledge', type: 'reference', label: 'Wikipedia — Curse of knowledge (Newton 1990 tappers-and-listeners; Heath "Made to Stick")' },
+    ],
+  },
+  {
+    id: 'bizlaw-childcare-leave',
+    discipline: 'business-law',
+    title: '育児・介護休業法',
+    statement:
+      '育児・介護休業法（正式名称「育児休業、介護休業等育児又は家族介護を行う労働者の福祉に関する法律」）は、厚生労働省が所管する労働者の仕事と育児・介護の両立支援を目的とする法律。労働者は子が原則1歳になるまで育児休業を取得でき、保育所に入れない等の事情があれば最長2歳まで延長できる。' +
+      '介護休業は、要介護状態の対象家族1人につき通算93日まで（3回まで分割）取得可能で、ほかに子の看護休暇・介護休暇、所定外・深夜労働の制限などを定め、休業取得を理由とする不利益取扱いを禁止する。沿革は1991年制定（1992年施行）の育児休業法に、1995年改正で介護休業を加えて現行法へと発展し、2022年には産後パパ育休（出生時育児休業）が創設された。',
+    keyFigures: '厚生労働省／育児・介護休業法（1991年育児休業法・1995年介護休業を追加）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/ikuji/point.html', type: 'government', label: '厚生労働省 育児休業制度 特設サイト（育児休業・介護休業93日・産後パパ育休）' },
+      { url: 'https://www.mhlw.go.jp/content/11900000/001407488.pdf', type: 'government', label: '厚生労働省 育児・介護休業法 改正内容の解説' },
+      { url: 'https://japanknowledge.com/contents/nipponica/sample_koumoku.html?entryid=2239', type: 'reference', label: '日本大百科全書（ニッポニカ）育児・介護休業法 — 1991年制定・1995年介護追加の沿革' },
+    ],
+  },
+  {
+    id: 'infosoc-online-firestorm',
+    discipline: 'information-sociology',
+    title: '炎上（オンライン・ファイヤーストーム）',
+    statement:
+      'SNS・ブログ・電子掲示板上で、ある個人・企業・団体に対し短期間のうちに大量の批判・非難・侮辱が殺到し、ネットワークを通じて急速に拡散・増幅していく現象。日本では「炎上」（えんじょう）と呼ばれ、著名人の発言やマスコミ報道などをきっかけに、批判コメントが集中して収拾がつかなくなる状態を火災にたとえる。' +
+      'Pfeffer, Zorbach & Carley（2014）は「オンライン・ファイヤーストーム」として、わずか数時間で巨大な怒りの波が形成される負の口コミ（ネガティブWOM）の伝播力学を分析した。日本では田中辰雄・山口真一が計量経済学的に実証研究を行い、炎上に積極関与するのはごく一部のユーザーにすぎないことなどを明らかにした。',
+    keyFigures: 'ユルゲン・プフェファーら（Pfeffer, Zorbach & Carley, 2014）／田中辰雄・山口真一（日本の炎上研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/13527266.2013.797778', type: 'academic', label: 'Pfeffer, Zorbach & Carley (2014) "Understanding online firestorms," Journal of Marketing Communications 20(1-2):117-128' },
+      { url: 'https://www.keisoshobo.co.jp/book/b220024.html', type: 'academic', label: '田中辰雄・山口真一『ネット炎上の研究』勁草書房' },
+      { url: 'https://kotobank.jp/word/%E7%82%8E%E4%B8%8A-447739', type: 'reference', label: 'コトバンク「炎上（エンジョウ）」' },
+    ],
+  },
 ];
 // Stryker restore all
