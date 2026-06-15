@@ -17409,5 +17409,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Global_cultural_flows', type: 'reference', label: 'Wikipedia: Global cultural flows（5つのスケープ・パースペクティブ的構築物・非同型/ディスジャンクチャー）' },
     ],
   },
+  {
+    id: 'econ-free-cash-flow-hypothesis',
+    discipline: 'economics',
+    title: 'フリーキャッシュフロー仮説',
+    statement:
+      'マイケル・ジェンセンが1986年の論文「Agency Costs of Free Cash Flow, Corporate Finance, and Takeovers」（American Economic Review）で提示した仮説。フリーキャッシュフローとは、正味現在価値（NPV）が正のすべての投資を賄った後に残る余剰現金をいう。経営者は権力・名声・報酬が企業規模や支配下資産とともに増す傾向があるため、この余剰現金を株主へ配分せず、NPVが負の事業や帝国建設（過剰投資・価値破壊的な買収や多角化）、役得に浪費する誘因を持つ（経営者と株主のエージェンシー問題）。' +
+      'よって経営者が自由に使える現金を減らす仕組み、すなわち配当による還元、とりわけ負債が企業価値を高める。負債は元利払いが現金を拘束し、不履行なら破綻に追い込まれるため経営者に効率化を迫る（「負債の規律」＝コントロール仮説）。これはLBOや負債による買収が生む価値増を説明する。なお本仮説は経営者と株主の利害対立を扱う一般的なエージェンシー理論や、資本構成を論じるペッキングオーダー理論・トレードオフ理論とは区別され、余剰現金の規律づけに焦点を当てる点に特徴がある。',
+    keyFigures: 'マイケル・ジェンセン（Michael C. Jensen, 1986）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v76y1986i2p323-29.html', type: 'academic', label: 'Jensen, M.C. (1986) "Agency Costs of Free Cash Flow, Corporate Finance, and Takeovers," American Economic Review 76(2):323-329 (RePEc/AEA)' },
+      { url: 'https://mba.kobe-u.ac.jp/business_keyword/7979/', type: 'reference', label: '神戸大学MBA ビジネスキーワード（フリー・キャッシュフロー仮説の解説）' },
+      { url: 'https://www.boj.or.jp/research/wps_rev/wps_2005/data/wp05j06.pdf', type: 'government', label: '日本銀行ワーキングペーパー No.05-J-6（株主還元とエージェンシーコスト）' },
+    ],
+  },
+  {
+    id: 'econ-credit-channel',
+    discipline: 'economics',
+    title: '信用経路（クレジット・チャネル）',
+    statement:
+      'バーナンキとガートラーが1995年「Inside the Black Box: The Credit Channel of Monetary Policy Transmission」（Journal of Economic Perspectives 9巻4号）で体系化した、金融政策が信用の利用可能性やコストへの影響を通じて実体経済に波及する枠組み。金融市場の摩擦や情報の非対称性ゆえに内部資金と外部資金の費用差（外部資金調達プレミアム）が生じ、金融引締め時にこの摩擦が悪化することで、従来の金利（貨幣）経路を増幅する。' +
+      '下位経路は二つある。(1)バランスシート経路（広義の信用経路）は、政策が借り手の純資産・担保価値やキャッシュフローを左右して外部資金調達プレミアムを変化させ、金融加速度効果に連なる。引締めは資産価格と純資産を下げプレミアムを高め投資・支出を抑制する。(2)銀行貸出経路（狭義）は、準備・預金・自己資本を通じ銀行の貸出供給を左右し、銀行に依存する中小企業の支出を変える。摩擦に基づく波及機構である点で金融加速度効果と密接だが、信用割当とは区別される。',
+    keyFigures: 'ベン・バーナンキ／マーク・ガートラー（Bernanke & Gertler, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995), "Inside the Black Box: The Credit Channel of Monetary Policy Transmission," Journal of Economic Perspectives 9(4): 27–48 (American Economic Association)' },
+      { url: 'https://www.nber.org/papers/w5146', type: 'academic', label: 'NBER Working Paper No. 5146 — Bernanke & Gertler, "Inside the Black Box"' },
+      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Ben Bernanke, "The Financial Accelerator and the Credit Channel," Federal Reserve Board (2007)' },
+    ],
+  },
+  {
+    id: 'mgmt-hype-cycle',
+    discipline: 'management',
+    title: 'ハイプ・サイクル（ガートナー）',
+    statement:
+      '調査・助言会社ガートナーが1995年頃に作成（アナリストのジャッキー・フェンに帰属）した、新興技術の成熟・採用・社会的適用の典型的な推移を、期待度・可視性（縦軸）と時間/成熟度（横軸）で描くグラフ表現である。技術は通常5つの局面をたどるとされる。' +
+      '(1)黎明期/技術の引き金（Innovation Trigger、ブレークスルーや発表が関心を生む）(2)「過度な期待」のピーク期（Peak of Inflated Expectations、初期の宣伝で誇大な期待が高まり実体が伴わない）(3)幻滅期（Trough of Disillusionment、期待外れで関心が薄れ撤退者が出る）(4)回復期/啓蒙活動期（Slope of Enlightenment、理解が進み第二・第三世代の製品が現れ実用が見え始める）(5)生産性の安定期（Plateau of Productivity、主流採用が進み実際の価値が定着する）。ただし経験的に検証された普遍法則ではなくヒューリスティックな（マーケティング的）枠組みで、全技術がこの曲線をたどるわけではないとの批判がある点に留意する。',
+    keyFigures: 'ガートナー（Gartner）／ジャッキー・フェン（Jackie Fenn, 1995頃）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.gartner.com/en/research/methodologies/gartner-hype-cycle', type: 'reference', label: 'Gartner — Gartner Hype Cycle Research Methodology（提唱者による定義・5局面）' },
+      { url: 'https://en.wikipedia.org/wiki/Gartner_hype_cycle', type: 'reference', label: 'Wikipedia — Gartner hype cycle（フェン1995帰属・5局面・批判）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-031-72490-9_33', type: 'academic', label: 'Springer — Does Gartner’s Hype Cycle Theory Match Practice?（実証検証の不足を論じる学術文献）' },
+    ],
+  },
+  {
+    id: 'human-zone-of-proximal-development',
+    discipline: 'human-science',
+    title: '発達の最近接領域（ZPD）',
+    statement:
+      'レフ・ヴィゴツキーが1930年代に提唱し（『精神発達の理論』、英訳『Mind in Society』1978で没後刊行）、学習者が自力での問題解決で示す「現下の発達水準」と、大人の指導やより有能な仲間との協働といった他者の援助のもとで示す「潜在的な発達水準」との間の隔たりを指す。すなわち、まだ独力ではできないが援助があれば達成できる課題の範囲であり、' +
+      'この領域でこそ学習と認知発達が最も効果的に促されるとされる。教育上は、能力の伸びに応じて段階的に取り外される一時的な支援である「足場かけ（スキャフォールディング、ウッド／ブルーナー／ロス1976）」の理論的基礎をなす。学習が社会的に媒介され発達に先行するとみるヴィゴツキーの社会文化的理論を反映し、より個人構成主義的な発達段階を説いたピアジェの理論とは区別される。',
+    keyFigures: 'レフ・ヴィゴツキー（Lev Vygotsky, 1930年代/1978）／ウッド・ブルーナー・ロス（Wood, Bruner & Ross, 1976）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/topics/psychology/zone-of-proximal-development', type: 'academic', label: 'ScienceDirect Topics — Zone of Proximal Development（ヴィゴツキーの定義：現下/潜在的発達水準の隔たり）' },
+      { url: 'https://www.simplypsychology.org/zone-of-proximal-development.html', type: 'reference', label: 'Simply Psychology — Zone of Proximal Development（MKO・足場かけ・学習が促進される領域）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/10749039.2019.1574306', type: 'academic', label: 'Mind, Culture, and Activity（査読誌）— scaffolding metaphor（ウッド／ブルーナー／ロス1976とZPDの関係）' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporation-tax',
+    discipline: 'business-law',
+    title: '法人税法',
+    statement:
+      '法人税法（昭和40年法律第34号、1965年）は、法人の所得に対して課される国税である法人税の基本法・現行法であり、国税庁（財務省の外局）が所管する。課税標準は各事業年度の所得の金額で、その期の益金の額から損金の額を差し引いて算定する。実務上は会社の確定決算に基づく会計上の利益を基礎とし、これに同法の定める税務調整（加算・減算）を加えて課税所得を導く確定決算主義をとる。' +
+      '税率は比例税率で、普通法人は原則23.2％の基本税率が適用されるが、中小法人については所得のうち年800万円以下の部分に15％の軽減税率がある。納付は申告納税制度により、原則として各事業年度終了の日の翌日から2か月以内に確定申告書を提出して納税する。内国法人は国内外で得た全世界所得に課税される点で、個人を対象とする所得税法とは区別される。',
+    keyFigures: '法人税法（昭和40年法律第34号、1965年全部改正の現行法）／国税庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000056445', type: 'government', label: '日本法令索引（国立国会図書館）— 法人税法 昭和40年3月31日法律第34号' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5759.htm', type: 'government', label: '国税庁 タックスアンサー No.5759 法人税の税率（基本税率23.2%・中小法人軽減税率15%）' },
+      { url: 'https://www.jcb.co.jp/corporate/special/corp_tax.html', type: 'reference', label: 'JCB — 法人税法とは（課税対象・益金損金・申告納付の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-attribute-agenda-setting',
+    discipline: 'information-sociology',
+    title: '第二レベルの議題設定（属性アジェンダ設定）',
+    statement:
+      'マックスウェル・マコームズらが1990〜2000年代に、1972年のマコームズ&ショーによる議題設定理論を拡張して提唱した枠組み。原初の「第一レベル」の議題設定は、ニュースメディアが特定の争点や対象を強調することで、どの争点を重要と見なすか＝対象（オブジェクト）の顕著性を公衆に転移させ、「何について考えるか」を方向づけると説く。' +
+      'これに対し「第二レベル（属性）」の議題設定は、対象が持つ諸属性のうちどの側面を強調しどう特徴づけるか＝属性の顕著性も転移させ、「どのように考えるか」を形づくると主張する。属性には実質的（認知的＝候補者の政策・資質など）と感情的（評価的＝肯定/否定/中立のトーン）の二つの次元がある。フレーミングを第二レベルの一種と見る立場もあるが両者を区別する立場もあり、対象の顕著性を扱う第一レベルの議題設定とも区別される。',
+    keyFigures: 'マックスウェル・マコームズ（Maxwell McCombs）ら／エステバン・ロペス＝エスコバル（Esteban López-Escobar）／第一レベルはMcCombs & Shaw（1972）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.2000.tb02842.x', type: 'academic', label: 'McCombs, López-Escobar & Llamas, "Setting the Agenda of Attributes in the 1996 Spanish General Election," Journal of Communication 50(2), 2000' },
+      { url: 'https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-15-agenda-setting-theory/', type: 'reference', label: 'Montgomery College, Introduction to Communication Inquiry & Theory — Agenda Setting Theory (first/second level, substantive & affective dimensions)' },
+    ],
+  },
 ];
 // Stryker restore all
