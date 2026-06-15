@@ -15003,5 +15003,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/The_Wisdom_of_Crowds', type: 'reference', label: 'Wikipedia "The Wisdom of Crowds"（4条件と失敗要因）' },
     ],
   },
+  {
+    id: 'econ-user-cost-of-capital',
+    discipline: 'economics',
+    title: '資本の使用者費用',
+    statement:
+      'デール・ジョルゲンソンが1963年（およびロバート・ホールとの1967年の共同研究、ホール=ジョルゲンソン）に確立した概念で、資本1単位を1期間使用することの暗黙のレンタル価格（期当たり費用）を指す。たとえ資産を自社で保有していても生じる、資本を所有し使用することの実質的なコストであり、リース市場がない資本にも帰属計算で適用される。' +
+      '基本形は、資本財価格×（実質利子率すなわち資金の機会費用＋減耗率−予想資本利得率）に等しく、さらに法人税率・減価償却（の節税効果）・投資税額控除などの税制に強く影響される。新古典派投資理論では、望ましい（最適な）資本ストックは資本の限界生産物＝使用者費用となる点で決まり、投資は使用者費用すなわち金利や税制の変化に反応する。これは金融政策や税制が設備投資に及ぼす影響を分析する基礎をなしている。',
+    keyFigures: 'デール・ジョルゲンソン／ロバート・ホール（Hall–Jorgenson, 1963/1967）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/user-cost', type: 'reference', label: 'User Cost — Encyclopedia.com（ホール=ジョルゲンソン枠組み・定義・構成要素）' },
+      { url: 'https://www.bostonfed.org/-/media/Documents/Workingpapers/PDF/wp013.pdf', type: 'government', label: 'Federal Reserve Bank of Boston, "State User Costs of Capital"（公式・税・投資への役割）' },
+      { url: 'https://www.researchgate.net/publication/243675049_Capital_Theory_and_Investment_Behavior', type: 'academic', label: 'Jorgenson, "Capital Theory and Investment Behavior," American Economic Review (1963)' },
+    ],
+  },
+  {
+    id: 'econ-specific-factors-model',
+    discipline: 'economics',
+    title: '特殊要素モデル（リカード＝ヴァイナー・モデル）',
+    statement:
+      'サミュエルソン（1971）とジョーンズ（1971）がジェイコブ・ヴァイナーに依拠して展開した国際貿易モデルで、ヘクシャー＝オリーン枠組みの短中期版。一部の生産要素は特定部門に固有で部門間を移動できない（特殊要素、例：各産業の資本や土地）が、少なくとも1要素（通常は労働）は部門間を自由に移動すると想定する。' +
+      '貿易開放やある財の相対価格上昇の所得分配効果として、価格が上がる輸出部門に固有の要素は利得し、価格が下がる輸入競合部門に固有の要素は損失を被る一方、移動可能な要素（労働）への影響は消費パターン次第で不確定となる。これにより短期には部門の線に沿って勝者と敗者が生じる（全要素が移動可能な長期に要素の線で生じるストルパー＝サミュエルソン定理と対比される）。貿易保護の政治経済学の基礎をなす。',
+    keyFigures: 'ポール・サミュエルソン／ロナルド・ジョーンズ（1971）／ジェイコブ・ヴァイナー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-15-the-specific-factor-model-over.html', type: 'academic', label: 'International Trade: Theory and Policy (Suranovic) — The Specific Factor Model: Overview' },
+      { url: 'https://en.wikipedia.org/wiki/Ricardo%E2%80%93Viner_model', type: 'reference', label: 'Wikipedia — Ricardo–Viner model (specific factors model)' },
+    ],
+  },
+  {
+    id: 'mgmt-adkar',
+    discipline: 'management',
+    title: 'ADKARモデル',
+    statement:
+      'プロサイ（Prosci）創設者ジェフ・ハイアットが開発した（2006年の著書『ADKAR: A Model for Change in Business, Government and our Community』で体系化）、個人レベルに焦点を当てた目標志向の変革管理モデル。成功する変革には、影響を受ける各人が5つの連続する構成要素を順に経る必要があるとする。頭文字ADKARは、Awareness（変革の必要性の認識）、Desire（変革に参加・支援したいという意欲）、Knowledge（どう変わるか・変革後の知識）、Ability（必要なスキルや行動を実行できる能力）、Reinforcement（変革を定着・持続させる強化）を表す。' +
+      '組織が変わるのではなく個人の行動が変わって初めて組織変革は成功するという前提に立ち、各人がどの要素で詰まっているか（最初に十分到達できていない段階＝障壁点）を診断し、その要素に的を絞って対処する。コッターの8段階やレヴィンの変革モデルといった組織レベルのアプローチを、人・個人の側面から補完する位置づけにある。',
+    keyFigures: 'ジェフ・ハイアット（Jeff Hiatt／Prosci, 2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.prosci.com/methodology/adkar', type: 'reference', label: 'Prosci — The Prosci ADKAR Model（提唱元・公式）' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/adkar-change-management-model', type: 'reference', label: 'EBSCO Research Starters — ADKAR Change Management Model' },
+      { url: 'https://www.prosci.com/blog/individual-barriers-to-change-and-what-to-do-about-them', type: 'reference', label: 'Prosci — Individual Barriers to Change（障壁点の説明）' },
+    ],
+  },
+  {
+    id: 'human-frequency-illusion',
+    discipline: 'human-science',
+    title: '頻度錯覚（バーダー・マインホフ現象）',
+    statement:
+      'ある語・名前・物・考えに初めて気づいた（注意を向け始めた）直後から、それを「至る所で」見かけるようになり、急にあり得ないほど高い頻度で出現していると感じる認知バイアス。実際には現実世界での出現頻度は変わっておらず、単に最近観測したことで顕著（サリエント）になっただけである。スタンフォード大学の言語学者アーノルド・ズウィッキーが2005年に「頻度錯覚（frequency illusion）」と命名した。' +
+      'この錯覚は協働する2つの認知過程で説明される。第一は選択的注意で、一度プライム（先行刺激）されると、以前なら無視していた事例にも無意識に気づくようになる。第二は確証バイアスで、新たな目撃のたびに「今やどこにでもある」という印象が強化される自己強化的なループが生じる。俗称「バーダー・マインホフ現象」は、ドイツの過激派集団バーダー・マインホフの名を繰り返し見かけたという1994年の新聞投稿に由来する。なお本概念は、構成要素である確証バイアスそのものや、利用可能性ヒューリスティックとは区別される。',
+    keyFigures: 'アーノルド・ズウィッキー（Arnold Zwicky, 2005「頻度錯覚」命名）／テリー・マレン（1994「バーダー・マインホフ現象」の俗称由来）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.psychologytoday.com/us/basics/frequency-illusion', type: 'reference', label: 'Psychology Today — Frequency Illusion（定義・ズウィッキー2005命名・選択的注意＋確証バイアス）' },
+      { url: 'https://en.wikipedia.org/wiki/Frequency_illusion', type: 'reference', label: 'Wikipedia — Frequency illusion（定義・ズウィッキー命名・1994年バーダー・マインホフ投稿由来）' },
+      { url: 'https://languagelog.ldc.upenn.edu/nll/?p=42180', type: 'reference', label: 'Language Log — "Frequency illusion" in the OED（命名と2過程の説明）' },
+    ],
+  },
+  {
+    id: 'bizlaw-interest-restriction',
+    discipline: 'business-law',
+    title: '利息制限法',
+    statement:
+      '利息制限法（昭和29年法律第100号、1954年制定）は、金銭を目的とする消費貸借における利息の民事上の上限を元本額に応じて定める法律で、元本10万円未満は年20％、10万円以上100万円未満は年18％、100万円以上は年15％とし、これを超える部分の利息の契約は私法上無効とする。' +
+      '無効な制限超過利息は元本への充当や返還の対象となり、これがいわゆる過払い金問題の根拠となる。礼金・手数料等を利息とみなす「みなし利息」や遅延損害金も規律する。刑事罰の上限を定める出資法や貸金業法と一体で運用され、かつて利息制限法の民事上限と高い出資法の上限との差が「グレーゾーン金利」と呼ばれたが、2006年の改正（2010年完全施行）でほぼ解消された。金融庁が関連法制を所管する。',
+    keyFigures: '利息制限法（昭和29年法律第100号、1954年制定）／民事上限15・18・20%・過払い金・出資法（刑事上限）との関係',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.shugiin.go.jp/internet/itdb_housei.nsf/html/houritsu/01919540515100.htm', type: 'government', label: '衆議院 法律第百号（昭和29年5月15日）利息制限法 公布原文' },
+      { url: 'https://www.fsa.go.jp/singi/tajusaimu/siryou/20070129/01.pdf', type: 'government', label: '金融庁 多重債務問題 資料（利息制限法・出資法・グレーゾーン金利と2006年改正）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000046978&current=-1', type: 'government', label: '国立国会図書館 日本法令索引「利息制限法 昭和29年5月15日法律第100号」' },
+    ],
+  },
+  {
+    id: 'infosoc-gemeinschaft-gesellschaft',
+    discipline: 'information-sociology',
+    title: 'ゲマインシャフトとゲゼルシャフト',
+    statement:
+      'ドイツの社会学者フェルディナント・テンニースが1887年の著作『ゲマインシャフトとゲゼルシャフト』で体系化した、社会的結合の二つの理念型。ゲマインシャフト（共同社会）は、家族・親族・村落・近隣・友情・民族など、感情・伝統・本質意志（Wesenwille）に根ざした親密で人格的な結びつきを指し、成員は互いをそれ自体目的とし、習俗や共有された価値、帰属感によって結ばれる。' +
+      'これに対しゲゼルシャフト（利益社会）は、近代の都市・市場・国家・会社などに見られ、打算・契約・形式的規則と選択意志（Kürwille）に根ざした非人格的・道具的・合理的な結びつきを指し、関係は個人の目的を達成する手段となる。テンニースは近代化が共同社会から利益社会への歴史的移行を伴うとした。社会学の基礎概念であり、ウェーバーやデュルケーム（機械的/有機的連帯）、都市社会学に影響を与えた。',
+    keyFigures: 'フェルディナント・テンニース（Ferdinand Tönnies, 1887）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Gemeinschaft-and-Gesellschaft', type: 'reference', label: 'Encyclopaedia Britannica — Gemeinschaft and Gesellschaft' },
+      { url: 'https://www.britannica.com/biography/Ferdinand-Tonnies', type: 'reference', label: 'Encyclopaedia Britannica — Ferdinand Tönnies' },
+      { url: 'https://en.wikipedia.org/wiki/Gemeinschaft_and_Gesellschaft', type: 'reference', label: 'Wikipedia — Gemeinschaft and Gesellschaft (Wesenwille/Kürwille)' },
+    ],
+  },
 ];
 // Stryker restore all
