@@ -18037,5 +18037,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.leydesdorff.net/th2/', type: 'academic', label: 'L. Leydesdorff — The Triple Helix of University-Industry-Government Relations' },
     ],
   },
+  {
+    id: 'econ-okun-law',
+    discipline: 'economics',
+    title: 'オークンの法則',
+    statement:
+      'オークンの法則は、米国の経済学者アーサー・オークンが1962年の論文「Potential GNP: Its Measurement and Significance」（米国統計学会proceedings所収）で示した、失業率と実質産出（GDP/GNP）の間に観察される負の経験的関係である。オークンは1947〜1960年の四半期データを分析し、失業率が4%を1ポイント上回るごとに実質GNPが約3%下振れする（オークン係数≒3）という経験則を見出した。' +
+      '定式化には主に2形態があり、潜在産出からの乖離を扱う「乖離形式」と、実質成長率と失業率の変化を結ぶ「差分形式」がある。係数は推計手法・対象期間・国により異なり、後年の分析ではより小さい値も報告される。安定性や予測利用には議論があるものの、Mankiwらの主要教科書で「頑健な経験的規則性」として扱われ、潜在GDPやマクロ政策評価の基礎概念であり続けている。',
+    keyFigures: 'アーサー・オークン（Arthur Okun, 1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Okun%27s_law', type: 'reference', label: 'Okun’s law — Wikipedia (English)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w18668/w18668.pdf', type: 'academic', label: 'Laurence M. Ball, “Okun’s Law: Fit at Fifty?” NBER Working Paper No. 18668' },
+      { url: 'https://kotobank.jp/word/オークンの法則-1818728', type: 'reference', label: 'オークンの法則 — コトバンク' },
+    ],
+  },
+  {
+    id: 'econ-engel-law',
+    discipline: 'economics',
+    title: 'エンゲルの法則（エンゲル係数）',
+    statement:
+      'ドイツの社会統計学者エルンスト・エンゲルが1857年の論文『ザクセン王国における生産及び消費事情』で示した経験則で、家計所得が増加するほど消費支出に占める食料費の割合（エンゲル係数＝食料費÷消費支出×100）が低下するという関係を指す。' +
+      '食料の支出は所得増に伴い絶対額では増えるものの増加率は所得増を下回り、食料の所得弾力性は0と1の間（非弾力的）に収まる。所得が低い世帯ほど係数が高くなるため、エンゲル係数は生活水準・経済発展度や貧困層の規模を測る指標として現代でも広く用いられている。',
+    keyFigures: 'エルンスト・エンゲル（Ernst Engel, 1857）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://peri.umass.edu/wp-content/uploads/joomla/images/publication/WP247.pdf', type: 'academic', label: 'PERI (UMass Amherst) Working Paper “Engel’s Law Around the World 150 Years Later”' },
+      { url: 'https://www.stat.go.jp/training/2kenkyu/pdf/rn/2-rn-005.pdf', type: 'government', label: '総務省統計局 統計リサーチノート No.5「明治から続く統計指標：エンゲル係数」' },
+      { url: 'https://en.wikipedia.org/wiki/Engel%27s_law', type: 'reference', label: 'Wikipedia — Engel’s law' },
+    ],
+  },
+  {
+    id: 'mgmt-greiner-growth',
+    discipline: 'management',
+    title: 'グレイナーの企業成長モデル',
+    statement:
+      'ラリー・グレイナーが1972年のHarvard Business Review論文「Evolution and Revolution as Organizations Grow」で提示した組織成長モデル。組織は規模と年齢の拡大に伴い、比較的安定した「進化（evolution）」の局面と、それを終わらせる「危機（revolution）」の局面を交互に経て発展すると説く。当初は5段階で、各段階の成長エンジンと末尾の危機は、(1)創造性→リーダーシップの危機、(2)指揮→自律性の危機、(3)委譲→統制の危機、(4)調整→形式主義（レッドテープ）の危機、(5)協働→（内的）成長の危機、と対応する。' +
+      'ある段階で有効だった経営手法が次段階の危機を招くため、経営者は危機ごとに新たな組織慣行へ移行する必要があるとした。グレイナーは1998年の同誌改訂版で第6段階「提携・組織外解決（alliances）」を追加し、合併・アウトソーシング・ネットワーク等の外部連携による成長と、それに伴うアイデンティティの危機を示した。各段階の長さは業界の成長率にも左右されるとされる。',
+    keyFigures: 'ラリー・グレイナー（Larry E. Greiner, 1972）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'academic', label: 'Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)' },
+      { url: 'https://ils.unc.edu/daniel/131/cco4/Greiner.pdf', type: 'academic', label: 'Greiner (1972) 原論文 PDF（ノースカロライナ大学チャペルヒル校 配布）' },
+      { url: 'https://en.wikipedia.org/wiki/Larry_E._Greiner', type: 'reference', label: 'Wikipedia — Larry E. Greiner（経歴・モデル6段階の解説）' },
+    ],
+  },
+  {
+    id: 'human-zeigarnik-effect',
+    discipline: 'human-science',
+    title: 'ツァイガルニク効果',
+    statement:
+      'ツァイガルニク効果とは、完了した課題よりも中断され未完了のままになった課題の方がよく記憶されるとされる現象である。リトアニア出身の心理学者ブルーマ・ツァイガルニクが、ゲシュタルト心理学者クルト・レヴィンの示唆（給仕が未会計の注文をよく覚えているという観察）を背景に研究し、1927年に学術誌 Psychologische Forschung で発表した。レヴィンの場の理論では、課題開始時に生じた緊張が完了で解消されず、中断時には残存して記憶の想起可能性を高めると説明される。' +
+      'もっとも本効果は再現性に課題があり、Van Bergen（1968）など多くの追試が有意差を確認できなかった。Ghibellini & Meier（2025）の系統的レビュー・メタ分析は、未完了課題の記憶優位性を支持せず、一方で課題を再開しようとする傾向（オフシアンキナ効果）には一般性を認めた。記憶優位は実験者の権威や課題関与度など状況・個人差要因に依存する可能性が指摘されている。',
+    keyFigures: 'ブルーマ・ツァイガルニク（Bluma Zeigarnik, 1927）／クルト・レヴィン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/s41599-025-05000-w', type: 'academic', label: 'Ghibellini & Meier (2025) Interruption, recall and resumption: a meta-analysis of the Zeigarnik and Ovsiankina effects, Humanities and Social Sciences Communications' },
+      { url: 'https://link.springer.com/article/10.3758/s13421-020-01033-5', type: 'academic', label: 'Zeigarnik and von Restorff: The memory effects and the stories behind them, Memory & Cognition (Springer)' },
+      { url: 'https://en.wikipedia.org/wiki/Zeigarnik_effect', type: 'reference', label: 'Zeigarnik effect — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-interest-rate-restriction',
+    discipline: 'business-law',
+    title: '利息制限法',
+    statement:
+      '利息制限法（昭和29年法律第100号、1954年公布・施行）は、金銭消費貸借上の利息契約のうち、元本10万円未満は年20％、10万円以上100万円未満は年18％、100万円以上は年15％を超える部分を無効とし（第1条）、経済的弱者たる債務者の保護を図る。' +
+      'かつては出資法の上限（旧29.2％）との間に、罰則を伴わず旧貸金業規制法43条の「みなし弁済」規定を抜け道として利息制限法超過利息が事実上許容される「グレーゾーン金利」が存在した。最高裁は2006年1月の判決でみなし弁済の成立を厳格に限定し、超過利息は過払い金返還の対象とされた。2006年改正貸金業法（2010年6月18日完全施行）は出資法上限を利息制限法水準（年20％）へ引き下げてグレーゾーン金利を撤廃し、年収3分の1の総量規制を導入した。',
+    keyFigures: '利息制限法（昭和29年法律第100号、1954年）／出資法・貸金業法との関係',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/329AC0000000100', type: 'government', label: 'e-Gov法令検索 — 利息制限法（昭和29年法律第100号）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000046978', type: 'government', label: '国立国会図書館 日本法令索引 — 利息制限法（昭和29年5月15日法律第100号）' },
+      { url: 'https://www.fsa.go.jp/policy/kashikin/04.pdf', type: 'government', label: '金融庁「貸金業法改正等の概要」（グレーゾーン金利撤廃・総量規制）' },
+    ],
+  },
+  {
+    id: 'infosoc-social-construction-technology',
+    discipline: 'information-sociology',
+    title: '技術の社会的構成（SCOT）',
+    statement:
+      'トレヴァー・ピンチとウィービー・バイカーが論文「The Social Construction of Facts and Artefacts」（Social Studies of Science誌, 1984年）で体系化した科学技術社会論（STS）の中心理論。技術の発展は技術的合理性のみで一義的に決まるのではなく、関連する社会集団（relevant social groups）が同一の人工物に異なる意味を付与する解釈的柔軟性（interpretive flexibility）を出発点とすると説く。' +
+      '集団間の対立や問題が交渉・再定義を通じて解消されると、設計は安定化（stabilization）し閉鎖（closure）に至る。技術が人間を規定するとする技術決定論を批判し、人間の行為が技術を形づくると主張する点に特徴があり、高速の大型前輪車（ハイホイーラー）から安全性を重視した安全型自転車（safety bicycle）への収束過程の分析で広く知られる。',
+    keyFigures: 'トレヴァー・ピンチ／ウィービー・バイカー（Pinch & Bijker, 1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/030631284014003004', type: 'academic', label: 'Pinch & Bijker (1984) The Social Construction of Facts and Artefacts, Social Studies of Science 14(3)' },
+      { url: 'https://www.encyclopedia.com/science/encyclopedias-almanacs-transcripts-and-maps/social-construction-technology', type: 'reference', label: 'Encyclopedia.com — Social Construction of Technology' },
+      { url: 'https://en.wikipedia.org/wiki/Social_construction_of_technology', type: 'reference', label: 'Wikipedia — Social construction of technology' },
+    ],
+  },
 ];
 // Stryker restore all
