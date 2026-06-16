@@ -18127,5 +18127,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Social_construction_of_technology', type: 'reference', label: 'Wikipedia — Social construction of technology' },
     ],
   },
+  {
+    id: 'econ-quantity-theory-money',
+    discipline: 'economics',
+    title: '貨幣数量説',
+    statement:
+      '貨幣供給量と物価水準のあいだに比例的な関係を説く理論。アーヴィング・フィッシャーが1911年に定式化した交換方程式 MV=PT（M:貨幣量、V:流通速度、P:物価水準、T:取引量）はその代表で、VとTを一定とみなせば貨幣量Mの増加は物価Pの上昇に直結する。' +
+      'マーシャルやピグーらケンブリッジ学派は貨幣需要に着目した現金残高方程式 M=kPY（k:保有比率、Y:実質所得）を提示した。古典派では貨幣供給の変化は名目変数のみを動かし産出・雇用など実質変数に影響しない「貨幣の中立性」が前提される。20世紀後半にはミルトン・フリードマンが貨幣需要理論として再定式化し、マネタリズムの中核となった。',
+    keyFigures: 'アーヴィング・フィッシャー／アルフレッド・マーシャル／アーサー・ピグー／ミルトン・フリードマン 等',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-05177-8_3', type: 'academic', label: 'Springer Nature Link — Revitalizing the Quantity Theory of Money: From the Fisher Relation to the Fisher Equation' },
+      { url: 'https://en.wikipedia.org/wiki/Quantity_theory_of_money', type: 'reference', label: 'Wikipedia — Quantity theory of money' },
+      { url: 'https://en.wikipedia.org/wiki/Cambridge_equation', type: 'reference', label: 'Wikipedia — Cambridge equation' },
+    ],
+  },
+  {
+    id: 'econ-purchasing-power-parity',
+    discipline: 'economics',
+    title: '購買力平価（PPP）',
+    statement:
+      'スウェーデンの経済学者グスタフ・カッセルが1918年の論文「Abnormal Deviations in International Exchanges」で命名・定式化した、2国間の為替レートは両国の物価水準（通貨の購買力）の比率で決まるとする理論。' +
+      '同一財は世界で同価格になるという一物一価の法則に基づく絶対的購買力平価と、両国の物価変化率（インフレ率）の差から為替変動を説明する相対的購買力平価がある。ビッグマック指数はその簡易な目安。短期では成立しにくいが長期の均衡為替の基準とされ、OECDや世界銀行の国際比較プログラム（ICP）でも各国GDPの実質比較に用いられる。',
+    keyFigures: 'グスタフ・カッセル（Gustav Cassel, 1918）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w10607/w10607.pdf', type: 'academic', label: 'NBER Working Paper, Alan M. Taylor「The Purchasing Power Parity Debate」' },
+      { url: 'https://www.britannica.com/money/Gustav-Cassel', type: 'reference', label: 'Encyclopædia Britannica「Gustav Cassel」' },
+      { url: 'https://www.oecd.org/en/data/indicators/purchasing-power-parities-ppp.html', type: 'government', label: 'OECD「Purchasing power parities (PPP)」' },
+    ],
+  },
+  {
+    id: 'mgmt-pdca',
+    discipline: 'management',
+    title: 'PDCAサイクル',
+    statement:
+      'Plan(計画)→Do(実行)→Check(評価)→Act(改善)を反復し業務やサービスを継続的に改善する管理サイクル。' +
+      '起源はウォルター・シューハートが統計的品質管理として提示した概念で、W・エドワーズ・デミングが1950年に日本科学技術連盟(JUSE)へ紹介、JUSEがこれをPlan-Do-Check-Actとして体系化しPDCAと命名した。デミング自身は後年「シューハート・サイクル」と呼びつつ、1993年にCheckが「検査して止める」と誤解されるとして評価をStudyに改めたPDSA(Plan-Do-Study-Act)を提唱した。TQM・ISO9001・カイゼンの基礎をなす。',
+    keyFigures: 'ウォルター・シューハート／W・エドワーズ・デミング',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://deming.org/wp-content/uploads/2020/06/PDSA_History_Ron_Moen.pdf', type: 'academic', label: 'R. Moen, Foundation and History of the PDSA Cycle (W. Edwards Deming Institute)' },
+      { url: 'https://asq.org/quality-resources/pdca-cycle', type: 'reference', label: 'ASQ (American Society for Quality) — PDCA Cycle' },
+      { url: 'https://en.wikipedia.org/wiki/PDCA', type: 'reference', label: 'Wikipedia — PDCA' },
+    ],
+  },
+  {
+    id: 'human-dual-coding',
+    discipline: 'human-science',
+    title: '二重符号化理論',
+    statement:
+      'アラン・パイビオが1960年代末に提唱した認知・記憶理論。人間は情報を、言語を扱う言語的（verbal）システムと、視覚イメージなど非言語情報を扱う非言語的（imagery）システムという、独立しつつ参照的連結（referential connections）で相互結合した2つの下位システムで符号化・処理するとする。言語的単位はlogogen、心的イメージ単位はimagenと呼ばれる。' +
+      '処理は表象的・参照的・連合的の3種に分けられる。具体語や画像は両システムで二重に符号化されるため、言語のみで符号化されやすい抽象語より想起されやすく、これが画像優位効果（picture superiority effect）や具象性効果として現れる。理論はマルチメディア学習や教育設計に広く応用されている。',
+    keyFigures: 'アラン・パイビオ（Allan Paivio, 1971）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF01320076', type: 'academic', label: 'Clark & Paivio (1991) Dual coding theory and education, Educational Psychology Review 3:149-210' },
+      { url: 'https://en.wikipedia.org/wiki/Dual-coding_theory', type: 'reference', label: 'Wikipedia: Dual-coding theory' },
+      { url: 'https://www.sciencedirect.com/topics/neuroscience/dual-coding-theory', type: 'reference', label: 'ScienceDirect Topics: Dual-Coding Theory' },
+    ],
+  },
+  {
+    id: 'bizlaw-act-against-delay-payment',
+    discipline: 'business-law',
+    title: '下請代金支払遅延等防止法（下請法）',
+    statement:
+      '昭和31年（1956年）法律第120号として制定された、独占禁止法の補完法。親事業者による優越的地位の濫用から下請事業者を保護し、公正な取引と国民経済の健全な発展を目的とする。資本金区分で親事業者・下請事業者を定義し（製造委託・修理委託は3億円超／1千万円超など、情報成果物作成委託・役務提供委託は5千万円超など）、この4類型の委託取引を対象とする。' +
+      '親事業者には4つの義務（書面の交付、書類の作成・保存、受領後60日以内の支払期日設定、遅延利息の支払）と、受領拒否・支払遅延・減額・不当な返品・買いたたきなど11の禁止行為を課す。公正取引委員会と中小企業庁が運用・執行する。',
+    keyFigures: '下請代金支払遅延等防止法（昭和31年法律第120号、1956年）／公正取引委員会・中小企業庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/331AC0000000120', type: 'government', label: 'e-Gov法令検索「下請代金支払遅延等防止法」（昭和31年法律第120号）' },
+      { url: 'https://www.jftc.go.jp/shitauke/legislation/act.html', type: 'government', label: '公正取引委員会「下請代金支払遅延等防止法」' },
+      { url: 'https://ja.wikipedia.org/wiki/下請代金支払遅延等防止法', type: 'reference', label: 'ウィキペディア「下請代金支払遅延等防止法」' },
+    ],
+  },
+  {
+    id: 'infosoc-diffusion-innovations',
+    discipline: 'information-sociology',
+    title: 'イノベーションの普及',
+    statement:
+      '米国の社会学者エベレット・ロジャーズが1962年の著書『イノベーションの普及』で体系化した理論。新しいアイデアや技術が、社会システム内で時間をかけ、コミュニケーション・チャネルを通じて成員に伝わり採用される過程を扱う。' +
+      '採用者は革新性により、イノベーター(2.5%)、アーリーアダプター(13.5%)、アーリーマジョリティ(34%)、レイトマジョリティ(34%)、ラガード(16%)の5類型に分けられ、累積採用はS字曲線を描く。採用速度は相対的優位性・両立可能性・複雑性・試行可能性・観察可能性の5属性に左右される。後にジェフリー・ムーアは、アーリーアダプターとアーリーマジョリティの間に深い溝（キャズム）があると論じた。',
+    keyFigures: 'エベレット・ロジャーズ（Everett M. Rogers, 1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/diffusion-of-innovations', type: 'reference', label: 'Encyclopaedia Britannica — Diffusion of innovations' },
+      { url: 'https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0334616', type: 'academic', label: 'PLOS One — A diffusion of innovations measurement scale' },
+      { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia — Diffusion of innovations' },
+    ],
+  },
 ];
 // Stryker restore all
