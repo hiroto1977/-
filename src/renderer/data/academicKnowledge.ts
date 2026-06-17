@@ -18307,5 +18307,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Network_effect', type: 'reference', label: 'Wikipedia: Network effect（定義・直接/間接・クリティカルマス・ロックイン・winner-take-all）' },
     ],
   },
+  {
+    id: 'econ-real-business-cycle',
+    discipline: 'economics',
+    title: 'リアル・ビジネス・サイクル理論（RBC）',
+    statement:
+      'フィン・キドランドとエドワード・プレスコットの論文「Time to Build and Aggregate Fluctuations」（Econometrica, 1982）を基礎とする新古典派マクロ経済学の理論。景気変動を、貨幣的要因や需要ショックではなく、技術ショック（全要素生産性=TFPの変動）など実物の供給側ショックに対して、合理的期待をもつ経済主体が行う労働・消費・投資の最適な異時点間代替の結果として説明する。' +
+      '価格の硬直性を仮定せず市場は常に均衡し、ルーカス批判に応えるミクロ的基礎づけを備え、後の動学的確率的一般均衡（DSGE）モデルの源流となった。両者は2004年にノーベル経済学賞を受賞。一方で、景気後退を説明する負の技術ショックの解釈や、貨幣・金融政策の役割の軽視に対する批判もある。',
+    keyFigures: 'フィン・キドランド／エドワード・プレスコット（Kydland & Prescott, 1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/summary/', type: 'academic', label: 'The Sveriges Riksbank Prize in Economic Sciences in Memory of Alfred Nobel 2004 (Kydland & Prescott)' },
+      { url: 'https://www.britannica.com/topic/Time-to-Build-and-Aggregate-Fluctuations', type: 'reference', label: 'Encyclopaedia Britannica — Time to Build and Aggregate Fluctuations' },
+      { url: 'https://en.wikipedia.org/wiki/Real_business-cycle_theory', type: 'reference', label: 'Wikipedia — Real business-cycle theory' },
+    ],
+  },
+  {
+    id: 'econ-deposit-insurance',
+    discipline: 'economics',
+    title: '預金保険制度（ペイオフ）',
+    statement:
+      '金融機関が破綻した際に預金者を保護し、取り付け騒ぎ（bank run）や信用秩序の崩壊を防ぐ制度。日本では預金保険法（1971年制定）に基づき預金保険機構（DIC）が運営し、金融機関が預金保険料を納付する。利息のつく一般預金は1金融機関・1預金者あたり元本1,000万円とその利息までが保護され（いわゆるペイオフ）、当座預金など無利息・要求払い・決済サービスを満たす決済用預金は全額保護される。' +
+      '世界初の本格的制度は1933年に大恐慌下の取り付けに対応して創設された米FDIC（グラス・スティーガル法）で、預金者を破綻による損失から保護する仕組みである。預金保険は信用を高め金融安定を促す一方、銀行のリスクテイクを助長するモラルハザードの論点を伴う。日本の全額保護は段階的に縮小され、ペイオフ全面解禁は2005年4月に実施された。',
+    keyFigures: '預金保険法（1971年）／預金保険機構（DIC）／米FDIC（1933年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.dic.go.jp/yokinsha/page_000016.html', type: 'government', label: '預金保険機構「保護の範囲」' },
+      { url: 'https://www.fdic.gov/90years', type: 'government', label: 'FDIC Historical Timeline（1933年創設）' },
+      { url: 'https://www.britannica.com/money/deposit-insurance', type: 'reference', label: 'Encyclopaedia Britannica「Deposit insurance」' },
+    ],
+  },
+  {
+    id: 'mgmt-x-efficiency',
+    discipline: 'management',
+    title: 'X非効率',
+    statement:
+      'ハーヴェイ・ライベンシュタインが論文「Allocative Efficiency vs. "X-Efficiency"」（American Economic Review 56巻, 1966, pp.392-415）で提唱した概念。企業や組織が、独占など競争圧力の欠如により、技術的に達成可能な最小費用で生産できず、投入資源を最大限活用できていない非効率を指す。原因が動機づけ不足・努力水準の低下・組織内部の弛緩（slack）・経営の質など特定しにくい残差的要因にあるため、未知を意味する「X」と名付けられた。' +
+      '新古典派が重視する資源配分上の非効率（配分効率の喪失＝独占による死荷重）とは区別される。ライベンシュタインは、配分非効率による厚生損失は小さく、組織内部のX非効率による損失の方がはるかに大きいと論じ、効率改善の焦点はX非効率の削減に置くべきだと主張した。',
+    keyFigures: 'ハーヴェイ・ライベンシュタイン（Harvey Leibenstein, 1966）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://msuweb.montclair.edu/~lebelp/leibensteinxeffaer1966.pdf', type: 'academic', label: 'Leibenstein, H. (1966) "Allocative Efficiency vs. X-Efficiency", American Economic Review 56, 392-415（原論文PDF）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.25.4.211', type: 'academic', label: 'American Economic Association, Journal of Economic Perspectives「Retrospectives: X-Efficiency」(2011)' },
+      { url: 'https://en.wikipedia.org/wiki/X-inefficiency', type: 'reference', label: 'Wikipedia「X-inefficiency」' },
+    ],
+  },
+  {
+    id: 'human-self-categorization',
+    discipline: 'human-science',
+    title: '自己カテゴリー化理論',
+    statement:
+      '社会的アイデンティティ理論（タジフェル&ターナー）から発展し、ジョン・ターナーらが1987年の著書『社会集団の再発見：自己カテゴリー化理論（Rediscovering the Social Group）』で提唱した理論。人が自己を、上位（人間）・中位（内集団/外集団）・下位（個人）の各レベルでカテゴリー化し、ある社会的カテゴリーが顕在化すると自己を「私」から「我々」へ脱個人化（depersonalization）する過程を扱う。' +
+      '脱個人化は自己の喪失ではなく集団成員性による自己の再定義であり、内集団の典型（プロトタイプ）への自己同一視を通じて同調・ステレオタイプ化・集団凝集性・集団行動が生じると説明する。プロトタイプはメタコントラスト原理（カテゴリー内の類似とカテゴリー間の差異の比を最大化）に基づき選定される。集団間関係を扱う社会的アイデンティティ理論を集団内過程へ拡張した点で区別される。',
+    keyFigures: 'ジョン・ターナー（John C. Turner, 1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sk.sagepub.com/ency/edvol/processes/chpt/selfcategorization-theory', type: 'academic', label: 'SAGE Encyclopedia of Group Processes & Intergroup Relations: Self-Categorization Theory' },
+      { url: 'https://en.wikipedia.org/wiki/Self-categorization_theory', type: 'reference', label: 'Wikipedia: Self-categorization theory' },
+      { url: 'https://ci.nii.ac.jp/ncid/BN13054198', type: 'reference', label: 'CiNii Research: 社会集団の再発見 — 自己カテゴリー化理論（邦訳書誌）' },
+    ],
+  },
+  {
+    id: 'bizlaw-whistleblower',
+    discipline: 'business-law',
+    title: '公益通報者保護法',
+    statement:
+      '公益通報者保護法（平成16年＝2004年法律第122号、2006年4月1日施行、消費者庁所管）は、労働者等が勤務先の犯罪行為・法令違反などを公益のために通報したことを理由とする解雇・降格・減給等の不利益な取扱いから通報者を保護する法律である。通報先は(1)事業者内部(2)権限を有する行政機関(3)報道機関等その他の3類型で、外部の通報先ほど保護される要件が厳しく定められている。' +
+      '2020年改正（令和2年法律第51号、2022年6月1日施行）では、常時使用する労働者が301人以上の事業者に内部通報体制の整備義務（公益通報対応業務従事者の指定等）を課し、保護対象の通報者に退職後1年以内の退職者および役員を追加した。さらに従事者に対し通報者を特定させる情報の守秘義務（違反には刑事罰）を課し、保護される通報の範囲を行政罰の対象事実にも拡大するなど、制度を大幅に強化した。',
+    keyFigures: '公益通報者保護法（平成16年法律第122号、2004年制定・2006年施行）／消費者庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/416AC0000000122', type: 'government', label: 'e-Gov法令検索「公益通報者保護法（平成十六年法律第百二十二号）」' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/overview', type: 'government', label: '消費者庁「公益通報者保護法と制度の概要」' },
+      { url: 'https://ja.wikipedia.org/wiki/公益通報者保護法', type: 'reference', label: 'ウィキペディア「公益通報者保護法」' },
+    ],
+  },
+  {
+    id: 'infosoc-seci',
+    discipline: 'information-sociology',
+    title: 'SECIモデル（知識創造理論）',
+    statement:
+      '野中郁次郎と竹内弘高が1995年の著書『The Knowledge-Creating Company（知識創造企業）』で体系化した組織的知識創造の理論。マイケル・ポランニーの暗黙知（個人的・経験的で言語化しにくい知）と形式知（文書化・共有可能な知）の区別を基礎に、両者が相互変換されながら個人→集団→組織へとスパイラル状に増幅・創造されると説く。' +
+      '変換は4モードからなる：共同化（Socialization、暗黙知→暗黙知。経験共有や観察）、表出化（Externalization、暗黙知→形式知。メタファーや概念化による言語化）、連結化（Combination、形式知→形式知。文書等の体系化）、内面化（Internalization、形式知→暗黙知。実践による体得）。野中は知識創造の場である「Ba（場）」概念も提唱し、ナレッジマネジメント論の中核となった。',
+    keyFigures: '野中郁次郎／竹内弘高（Nonaka & Takeuchi, 1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02730/full', type: 'academic', label: 'Frontiers in Psychology（査読論文）: Managing Knowledge in Organizations — Nonaka’s SECI Model Operationalization' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1392655', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation. Organization Science, 5, 14-37（書誌）' },
+      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia: SECI model of knowledge dimensions' },
+    ],
+  },
 ];
 // Stryker restore all
