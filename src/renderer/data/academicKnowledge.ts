@@ -18577,5 +18577,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ja.wikipedia.org/wiki/メディア効果論', type: 'reference', label: 'ウィキペディア「メディア効果論」' },
     ],
   },
+  {
+    id: 'econ-permanent-income',
+    discipline: 'economics',
+    title: '恒常所得仮説',
+    statement:
+      'ミルトン・フリードマンが1957年の著書『消費の経済理論（A Theory of the Consumption Function）』で提唱した消費理論。消費は当期の実際の所得ではなく、生涯にわたり見込まれる平均的・恒常的な所得（恒常所得）に基づいて決まるとする。実際の所得は恒常所得と一時所得（臨時収入や変動分）に分けられ、一時所得の限界消費性向はほぼゼロでその大部分は貯蓄に回る。' +
+      'これによりケインズの絶対所得仮説（消費は当期所得の関数）を修正し、短期と長期で限界消費性向が異なる「消費のパズル」を説明した。一時的な減税が消費をあまり刺激しないという政策含意を持ち、モディリアーニのライフサイクル仮説と親近する。後にホールが合理的期待を加え、消費は予測不能なランダムウォークに従うとする仮説へ発展させた。フリードマンは1976年にノーベル経済学賞を受賞した。',
+    keyFigures: 'ミルトン・フリードマン（Milton Friedman, 1957）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/books-and-chapters/theory-consumption-function/permanent-income-hypothesis', type: 'academic', label: 'NBER: The Permanent Income Hypothesis (Friedman, A Theory of the Consumption Function)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1976/summary/', type: 'reference', label: 'NobelPrize.org: Economic Sciences 1976 (Milton Friedman)' },
+      { url: 'https://en.wikipedia.org/wiki/Permanent_income_hypothesis', type: 'reference', label: 'Wikipedia: Permanent income hypothesis' },
+    ],
+  },
+  {
+    id: 'mgmt-emotional-intelligence',
+    discipline: 'management',
+    title: '感情知性（EQ）',
+    statement:
+      '感情知性（EI／EQ）とは、自他の感情を知覚・識別し、その情報を思考や行動の指針として用いる能力を指す。ピーター・サロベイとジョン・メイヤーが1990年の論文で学術概念として定義し、のちに感情の知覚・利用・理解・調整という4枝からなる能力モデルへ発展させた。' +
+      'ダニエル・ゴールマンは1995年の著書『EQ こころの知能指数』で、自己認識・自己制御・動機づけ・共感・社会的スキルという枠組み（混合モデル）を示し、ビジネスや教育の文脈で広く普及させた。リーダーシップや職務成果との関連が論じられる一方、自己報告式と能力テストの測定法の差、予測妥当性、混合モデルの構成概念をめぐる学術的論争も続いている。',
+    keyFigures: 'サロベイ&メイヤー（1990）／ダニエル・ゴールマン（1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2190/DUGG-P24E-52WK-6CDG', type: 'academic', label: 'Salovey & Mayer (1990) "Emotional Intelligence", Imagination, Cognition and Personality（査読誌・原著論文）' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.01116/full', type: 'academic', label: 'Frontiers in Psychology (2019) 感情知性の測定法に関する批判的レビュー' },
+      { url: 'https://nobaproject.com/modules/emotional-intelligence', type: 'reference', label: 'Noba Project: Emotional Intelligence（能力モデル・4枝の解説）' },
+    ],
+  },
+  {
+    id: 'human-social-learning',
+    discipline: 'human-science',
+    title: '社会的学習理論（観察学習）',
+    statement:
+      'カナダ出身の心理学者アルバート・バンデューラが提唱した理論で、人は直接の強化を受けなくても、他者（モデル）の行動とその結果を観察するだけで学習できる（観察学習・モデリング）とする。1961年の「ボボ人形実験」では、攻撃的なモデルを見た就学前児童がその攻撃行動を模倣することを実証し、行動主義と認知の橋渡しとなった。' +
+      '観察学習は注意・保持・運動再生（再現）・動機づけの4過程から成り、他者が報酬や罰を受けるのを見て行動が変わる代理強化も重視される。バンデューラは後に自己効力感や相互決定論など認知的要素を加え、1986年の著書で理論を「社会的認知理論（Social Cognitive Theory）」へ発展・改称した。',
+    keyFigures: 'アルバート・バンデューラ（Albert Bandura, 1961/1977）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/event/Bobo-doll-experiment', type: 'reference', label: 'Encyclopaedia Britannica「Bobo doll experiment」' },
+      { url: 'https://www.britannica.com/biography/Albert-Bandura', type: 'reference', label: 'Encyclopaedia Britannica「Albert Bandura」' },
+      { url: 'https://www.simplypsychology.org/bandura.html', type: 'reference', label: 'SimplyPsychology「Bandura — Social Learning Theory」' },
+    ],
+  },
+  {
+    id: 'bizlaw-copyright',
+    discipline: 'business-law',
+    title: '著作権法',
+    statement:
+      '現行著作権法は昭和45年（1970年）法律第48号で、文化庁が所管する。思想又は感情を創作的に表現した著作物を保護し、著作者人格権（公表権・氏名表示権・同一性保持権）と財産権たる著作権（複製権・公衆送信権・翻案権等）、さらに実演家・レコード製作者・放送事業者等の著作隣接権を定め、文化の発展に寄与することを目的とする。' +
+      '権利は登録不要で創作時に発生する無方式主義（ベルヌ条約）を採り、保護期間は原則として著作者の死後70年（2018年のTPP整備法で50年から延長）。私的使用のための複製・引用・学校教育等の権利制限規定を置く。2020年改正では侵害コンテンツのダウンロード違法化の拡大とリーチサイト規制が導入された。',
+    keyFigures: '著作権法（昭和45年法律第48号、1970年）／文化庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000048', type: 'government', label: 'e-Gov法令検索 — 著作権法（昭和四十五年法律第四十八号）' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/hokaisei/kantaiheiyo_chosakuken/1411890.html', type: 'government', label: '文化庁 — 著作物等の保護期間の延長に関するQ&A（死後70年化）' },
+      { url: 'https://ja.wikipedia.org/wiki/著作権法', type: 'reference', label: 'Wikipedia — 著作権法' },
+    ],
+  },
+  {
+    id: 'infosoc-weak-ties',
+    discipline: 'information-sociology',
+    title: '弱い紐帯の強さ',
+    statement:
+      '社会学者マーク・グラノヴェッターが1973年にAmerican Journal of Sociology誌(第78巻6号)で提唱した命題。家族や親友など接触頻度が高く感情的に密な「強い紐帯」よりも、知人など接触の少ない「弱い紐帯」の方が、自分が属する密な集団の外部にある新しい情報をもたらす点で価値が高いとする。' +
+      '強い紐帯で結ばれた者同士は交友関係が重なり情報が冗長になりやすい一方、弱い紐帯は異なるクラスターを結ぶ唯一の経路「橋(bridge)」として機能し、非冗長な情報の流入路となる。著書『Getting a Job』(1974)の求職調査でこの効果を実証し、後のバートの構造的空隙論にも影響を与えた。',
+    keyFigures: 'マーク・グラノヴェッター（Mark Granovetter, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/225469', type: 'academic', label: 'Granovetter, M. S. (1973) "The Strength of Weak Ties", American Journal of Sociology 78(6): 1360-1380 (University of Chicago Press)' },
+      { url: 'https://news.stanford.edu/stories/2023/07/strength-weak-ties', type: 'reference', label: 'Stanford University — Stanford Report "The strength of weak ties"' },
+      { url: 'https://acawiki.org/The_strength_of_weak_ties', type: 'reference', label: 'AcaWiki — "The strength of weak ties" (査読論文サマリー)' },
+    ],
+  },
+  {
+    id: 'bizlaw-act-on-worker-dispatch',
+    discipline: 'business-law',
+    title: '労働者派遣法',
+    statement:
+      '労働者派遣法（正式名称「労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律」）は、昭和60年（1985年）法律第88号として制定され1986年に施行された厚生労働省所管の法律で、派遣元事業主が雇用する労働者を派遣先の指揮命令下で働かせる労働者派遣事業の適正運営の確保と、派遣労働者の保護・雇用安定・福祉増進を目的とする。' +
+      '当初は専門的13（のち26）業務に限定されたが、1999年改正で禁止業務を列挙するネガティブリスト方式へ転換し原則自由化（港湾運送・建設・警備・医療等は除外）、2004年改正で製造業派遣を解禁した。2012年改正で日雇い派遣を原則禁止、2015年改正で許可制に一本化し同一組織単位での受入れを原則3年とする期間制限（3年ルール）を導入、2020年施行の改正で派遣先正社員との同一労働同一賃金を義務化した。偽装請負が長く問題とされる。',
+    keyFigures: '労働者派遣法（昭和60年法律第88号、1985年制定・1986年施行）／厚生労働省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/360AC0000000088', type: 'government', label: 'e-Gov法令検索 — 労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律' },
+      { url: 'https://www.mhlw.go.jp/web/t_doc?dataId=75021000&dataType=0&pageNo=1', type: 'government', label: '厚生労働省 法令等データベース — 労働者派遣法（昭和60年7月5日法律第88号）' },
+      { url: 'https://ja.wikipedia.org/wiki/労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律', type: 'reference', label: 'Wikipedia（日本語）— 労働者派遣法' },
+    ],
+  },
 ];
 // Stryker restore all
