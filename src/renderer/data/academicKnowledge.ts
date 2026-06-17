@@ -18217,5 +18217,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Diffusion_of_innovations', type: 'reference', label: 'Wikipedia — Diffusion of innovations' },
     ],
   },
+  {
+    id: 'econ-menu-cost',
+    discipline: 'economics',
+    title: 'メニューコスト',
+    statement:
+      'メニューコスト（menu cost）とは、企業が価格を変更する際にかかる費用を指す。名称はレストランがメニューの価格を刷り直す費用に由来し、価格表の刷新・値札の付け替え・看板やシステムの更新・顧客への通知・新価格を決める意思決定コスト等を含む。' +
+      'たとえ小さなメニューコストでも、企業が価格改定を控える結果として名目価格が硬直的（粘着的）になり、貨幣の非中立性や景気変動を生む根拠とされる。シェシンスキー&ワイス（1977）が先駆けで、N・グレゴリー・マンキューの「Small Menu Costs and Large Business Cycles」（1985, QJE）やアケロフ&イエレンらがニューケインジアン経済学の名目硬直性理論として確立した。',
+    keyFigures: 'グレゴリー・マンキュー（N. Gregory Mankiw, 1985）／シェシンスキー&ワイス 等',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/100/2/529/1844809', type: 'academic', label: 'Mankiw, "Small Menu Costs and Large Business Cycles," QJE 100(2), 1985 (Oxford Academic)' },
+      { url: 'https://scholar.harvard.edu/mankiw/publications/small-menu-costs-and-large-business-cycles-macroeconomic-model-monopoly', type: 'academic', label: 'N. Gregory Mankiw (Harvard) 論文ページ' },
+      { url: 'https://en.wikipedia.org/wiki/Menu_cost', type: 'reference', label: 'Menu cost — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-theory',
+    discipline: 'management',
+    title: '制度理論（制度的同型化）',
+    statement:
+      '新制度派組織論によれば、組織は効率性だけでなく、制度的環境の規範・規則・価値に同調することで社会的な正統性（legitimacy）と存続資源を獲得する。マイヤー&ローワン（1977）は、組織が正当化された「神話」を儀礼的に採用し、実際の活動とは切り離す（decoupling）と論じた先駆である。' +
+      'ディマジオ&パウエル「The Iron Cage Revisited」（American Sociological Review, 1983, 48:147-160）は、同一組織フィールド内の組織が似通っていく同型化を、強制的（coercive）・模倣的（mimetic）・規範的（normative）の3メカニズムで説明した。W・リチャード・スコットは制度を規制的・規範的・文化認知的の3本柱として整理した。',
+    keyFigures: 'ポール・ディマジオ&ウォルター・パウエル（DiMaggio & Powell, 1983）／マイヤー&ローワン（1977）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1504516', type: 'academic', label: 'DiMaggio & Powell, The Iron Cage Revisited, American Sociological Review 48 (1983): 147-160 (SSRN)' },
+      { url: 'http://www.iot.ntnu.no/innovation/norsi-pims-courses/harrison/Meyer%20&%20Rowan%20(1977).PDF', type: 'academic', label: 'Meyer & Rowan, Institutionalized Organizations: Formal Structure as Myth and Ceremony, American Journal of Sociology 83 (1977): 340-363' },
+      { url: 'https://sk.sagepub.com/ency/edvol/organization/chpt/institutional-isomorphism', type: 'reference', label: 'SAGE International Encyclopedia of Organization Studies「Institutional Isomorphism」' },
+    ],
+  },
+  {
+    id: 'human-attachment-theory',
+    discipline: 'human-science',
+    title: '愛着理論（アタッチメント理論）',
+    statement:
+      'イギリスの精神科医ジョン・ボウルビィが1950〜60年代に提唱した、乳児が養育者（主に母親）との間に形成する情緒的な絆（愛着）が生存と社会・情緒発達の基盤になるとする理論。進化論的視点に立ち、泣く・しがみつく等の愛着行動は養育者との近接を保ち危険から身を守るために進化したと考える。乳児は養育者の応答を通じて自己と他者についての心的表象（内的作業モデル）を形成する。' +
+      'メアリー・エインズワースは1970年代に実験観察法「ストレンジ・シチュエーション法」を考案し、養育者との分離・再会場面から愛着パターンを安全型・回避型・アンビバレント型に分類した。のちにメイン＆ソロモンが無秩序型を加えた。養育者は探索の拠点となる「安全基地（secure base）」として機能する。',
+    keyFigures: 'ジョン・ボウルビィ（John Bowlby）／メアリー・エインズワース（Mary Ainsworth）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/attachment-theory', type: 'reference', label: 'Encyclopædia Britannica — Attachment theory: Definition, Features, & Types' },
+      { url: 'https://en.wikipedia.org/wiki/Attachment_theory', type: 'reference', label: 'Wikipedia — Attachment theory' },
+      { url: 'https://en.wikipedia.org/wiki/Strange_situation', type: 'reference', label: 'Wikipedia — Strange situation (Mary Ainsworth)' },
+    ],
+  },
+  {
+    id: 'bizlaw-personal-information-protection',
+    discipline: 'business-law',
+    title: '個人情報保護法',
+    statement:
+      '個人情報の保護に関する法律（平成15年＝2003年法律第57号、2005年全面施行）は、個人情報の有用性に配慮しつつ個人の権利利益を保護することを目的とする。個人情報・個人データ・保有個人データを定義し、個人情報取扱事業者に利用目的の特定と通知・公表、適正な取得、安全管理措置、第三者提供の制限、本人からの開示・訂正・利用停止請求への対応などの義務を課す。' +
+      '2015年改正で要配慮個人情報・匿名加工情報を新設し、保有件数5000件以下の事業者を除外する要件を撤廃、監督機関として個人情報保護委員会（PPC）を設置した。2020年・2021年改正では、デジタル社会形成整備法により官民・国・地方公共団体の規律を一本化し所管をPPCに一元化、2022年4月に全面施行された。',
+    keyFigures: '個人情報の保護に関する法律（平成15年法律第57号、2003年）／個人情報保護委員会（PPC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057', type: 'government', label: 'e-Gov法令検索「個人情報の保護に関する法律」（平成15年法律第57号）' },
+      { url: 'https://www.ppc.go.jp/personalinfo/minaoshi/', type: 'government', label: '個人情報保護委員会「令和3年 改正個人情報保護法について」' },
+      { url: 'https://ja.wikipedia.org/wiki/個人情報の保護に関する法律', type: 'reference', label: 'Wikipedia「個人情報の保護に関する法律」' },
+    ],
+  },
+  {
+    id: 'bizlaw-unfair-competition-prevention',
+    discipline: 'business-law',
+    title: '不正競争防止法',
+    statement:
+      '不正競争防止法（平成5年法律第47号、現行法1993年制定／源流は旧法1934年）は、事業者間の公正な競争と国際約束の的確な実施を確保し、もって国民経済の健全な発展に寄与することを目的とする法律で、経済産業省（知的財産政策室）が所管する。' +
+      '同法は「不正競争」として、周知表示混同惹起・著名表示冒用・商品形態模倣・営業秘密の不正取得や使用・限定提供データの不正取得・技術的制限手段の無効化・ドメイン名の不正取得・原産地等誤認惹起・信用毀損・代理人等の商標冒用などを列挙し、被害事業者による差止請求・損害賠償請求や刑事罰を定める。営業秘密として保護されるには秘密管理性・有用性・非公知性の3要件を満たす必要がある。',
+    keyFigures: '不正競争防止法（平成5年法律第47号、現行法1993年／旧法1934年）／経済産業省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/405AC0000000047', type: 'government', label: 'e-Gov法令検索 — 不正競争防止法（平成5年法律第47号）' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html', type: 'government', label: '経済産業省 — 営業秘密〜営業秘密を守り活用する〜' },
+      { url: 'https://ja.wikipedia.org/wiki/不正競争防止法', type: 'reference', label: 'Wikipedia — 不正競争防止法' },
+    ],
+  },
+  {
+    id: 'infosoc-network-externality',
+    discipline: 'information-sociology',
+    title: 'ネットワーク外部性',
+    statement:
+      'ネットワーク外部性（ネットワーク効果）とは、ある財・サービスから各利用者が得る効用が、その財と互換な製品の利用者数に依存して増大する現象を指す。電話・ファックス・SNS・プラットフォームが典型例で、利用者数の増加が価値を高める正のフィードバックを生む。利用者数そのものが価値を高める直接的効果と、補完財（例：プリンターに対するトナー）が充実・低価格化することで価値が高まる間接的効果に分けられる。' +
+      'ジェフリー・ロルフス（1974）が通信サービスの相互依存需要として定式化し、マイケル・カッツとカール・シャピロ（1985, American Economic Review「Network Externalities, Competition, and Compatibility」）が競争と互換性の理論を確立した。普及にはクリティカルマスの到達が鍵で、ロックインや勝者総取り（winner-take-all）、規格競争を生みやすい。ネットワークの価値が利用者数nの二乗に比例するとするメトカーフの法則とも関連づけられる。',
+    keyFigures: 'マイケル・カッツ&カール・シャピロ（Katz & Shapiro, 1985）／ジェフリー・ロルフス（1974）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v75y1985i3p424-40.html', type: 'academic', label: 'Katz & Shapiro (1985) "Network Externalities, Competition, and Compatibility", American Economic Review 75(3): 424-440 — IDEAS/RePEc' },
+      { url: 'https://econpapers.repec.org/RePEc:rje:bellje:v:5:y:1974:i:spring:p:16-37', type: 'academic', label: 'Rohlfs (1974) "A Theory of Interdependent Demand for a Communications Service", Bell Journal of Economics 5: 16-37 — EconPapers/RePEc' },
+      { url: 'https://en.wikipedia.org/wiki/Network_effect', type: 'reference', label: 'Wikipedia: Network effect（定義・直接/間接・クリティカルマス・ロックイン・winner-take-all）' },
+    ],
+  },
 ];
 // Stryker restore all

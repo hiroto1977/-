@@ -18,18 +18,18 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 68 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 69 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 11 | `src/main/main.ts:99-251` |
-| client モジュール (fetcher + actions) | 68 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 69 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 5 (drive / calendar / gmail / freee / microsoft-365) | `src/main/oauth.ts:54-85` |
 | 外部接続先ホスト | 12 + ローカル 1 | §4.3 |
-| ユニットテスト | **5410** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5495) |
+| ユニットテスト | **5444** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時は 5529) |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities | `package-lock.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 175 | 自己検証 |
+| `file:line` 参照数 | 178 | 自己検証 |
 
 ### 統合フロー図
 
@@ -422,7 +422,7 @@ OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bear
 
 ## 3. サービスレジストリ
 
-### 3.1 68 services の認証スタイル
+### 3.1 69 services の認証スタイル
 
 `src/shared/serviceId.ts:9-33` の `SERVICE_IDS` が **single source of truth**。
 Renderer (`services.ts`) / Main (`clients/index.ts`) / Preload (`bridge.d.ts`) が同じ
@@ -498,6 +498,7 @@ union を参照する。
 | `compliance` | コンプライアンス — 法務/税務/労務の確証済み制度知識 (出典付き) | none | ✅ | | (read-only — 実データは renderer の complianceKnowledge。確証規律で集計) |
 | `obsidian` | Obsidian — ローカル知識ベース (Vault) を GitHub 連携・暗号化し業務効率化を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.obsidian。実 Vault は fs で読む Phase 6) |
 | `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
+| `assistant` | AI アシスタント — Claude を頭脳に確証済みナレッジ + 全サービスを統合した専用チャット | Bearer (Anthropic, chat のみ) | ✅ | | `chat` (RAG 文脈は renderer の `data/assistantContext.ts` で構築。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバック) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:145-183`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:54-85`)。`GOOGLE_OAUTH_CLIENT_ID` 環境変数で有効化。

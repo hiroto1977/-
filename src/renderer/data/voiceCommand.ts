@@ -198,6 +198,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   compliance: ['こんぷらいあんす', 'compliance', '法令', 'ほうれい', '確証', 'かくしょう', 'コンプラ', 'こんぷら'],
   obsidian: ['obsidian', 'おぶしじあん', 'おぶしでぃあん', 'vault', 'ばると', 'のーと', 'note', '知識べーす'],
   docker: ['docker', 'どっかー', 'こんてな', 'container', 'いめーじ', 'image', 'こんてなー'],
+  assistant: ['assistant', 'あしすたんと', 'えーあい', 'ai', 'ちゃっと', 'chat', 'ちゃっとぼっと', 'こんしぇるじゅ'],
 };
 // Stryker restore all
 
