@@ -18397,5 +18397,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia: SECI model of knowledge dimensions' },
     ],
   },
+  {
+    id: 'econ-tragedy-commons',
+    discipline: 'economics',
+    title: 'コモンズの悲劇（共有地の悲劇）',
+    statement:
+      '生態学者ギャレット・ハーディンが1968年にScience誌（Vol.162, pp.1243-1248）に発表した論文で広く知られる概念。誰もが自由に使える共有資源（牧草地・漁場・森林・大気など）は、各人が自己利益を最大化して利用すると過剰利用され枯渇・荒廃する。' +
+      '利用を1単位増やす便益は個人に帰属する一方コストは全員で分担されるため、合理的個人の行動の総和が全体の破滅を招く（フリーライダー・外部性・非排除性）。私有化や政府規制が解決策として論じられたが、エリノア・オストロム（2009年ノーベル経済学賞）は共同体による自主的なルール形成・管理で悲劇を回避できる事例を実証的に示した。',
+    keyFigures: 'ギャレット・ハーディン（Garrett Hardin, 1968）／エリノア・オストロム',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.162.3859.1243', type: 'academic', label: 'Garrett Hardin, "The Tragedy of the Commons", Science 162(3859), 1243-1248 (1968), AAAS' },
+      { url: 'https://www.britannica.com/science/tragedy-of-the-commons', type: 'reference', label: 'Encyclopaedia Britannica — Tragedy of the commons' },
+      { url: 'https://creativecommons.org/2009/10/12/nobel-prize-in-economics-to-elinor-ostrom-for-her-analysis-of-economic-governance-especially-the-commons/', type: 'reference', label: 'Nobel Prize in Economics 2009 to Elinor Ostrom — economic governance of the commons' },
+    ],
+  },
+  {
+    id: 'econ-lemons-market',
+    discipline: 'economics',
+    title: 'レモン市場（逆選択）',
+    statement:
+      'ジョージ・アカロフが1970年にQuarterly Journal of Economics誌（vol.84, pp.488-500）に発表した「The Market for Lemons」が示す現象。「レモン」は米俗語で質の悪い中古車を指す。売り手と買い手の間に品質に関する情報の非対称性があると、買い手は平均的品質しか想定できず平均価格しか払わないため、良質な財（peaches）は割に合わず市場から退出し、質の低い財（lemons）ばかりが残る。' +
+      'この悪循環が進むと品質はさらに下がり、極端には市場そのものが成立しなくなる。これが逆選択（adverse selection）である。対策として、売り手が品質を示すシグナリング（スペンス）、買い手が契約メニューで選別するスクリーニング（スティグリッツ）、保証・認証などがある。アカロフ・スペンス・スティグリッツは情報の非対称性の分析で2001年ノーベル経済学賞を共同受賞した。',
+    keyFigures: 'ジョージ・アカロフ（George Akerlof, 1970）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/84/3/488/1896241', type: 'academic', label: 'Akerlof (1970) "The Market for Lemons", QJE 84(3): 488-500 (Oxford Academic)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/summary/', type: 'reference', label: '2001年ノーベル経済学賞 公式概要（NobelPrize.org）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Market_for_Lemons', type: 'reference', label: 'The Market for Lemons（Wikipedia 百科事典項目）' },
+    ],
+  },
+  {
+    id: 'mgmt-kotter-change',
+    discipline: 'management',
+    title: 'コッターの変革の8段階プロセス',
+    statement:
+      'ハーバード・ビジネス・スクールのジョン・コッターが1995年のHBR論文「Leading Change」と1996年の同名著書で示した組織変革の枠組み。100社超の変革事例研究から、約70%の変革が失敗すると指摘し、(1)危機意識を高める(2)変革推進連合を築く(3)ビジョンと戦略を生む(4)ビジョンを周知する' +
+      '(5)障害を取り除き自発的行動を促す(6)短期的成果を実現する(7)成果を活かしさらに変革を進める(8)変革を企業文化に定着させる、の8段階を順に踏むべきとした。各段階を飛ばすと速さの幻想を生むだけで満足な成果は得られず、変革失敗への処方箋として広く用いられる。',
+    keyFigures: 'ジョン・コッター（John P. Kotter, 1995/1996）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'academic', label: 'Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail' },
+      { url: 'https://www.kotterinc.com/methodology/8-steps/', type: 'reference', label: 'Kotter Inc. — The 8-Step Process for Leading Change' },
+      { url: 'https://www.mindtools.com/a8nu5v5/kotters-8-step-change-model/', type: 'reference', label: 'MindTools — Kotter’s 8-Step Change Model' },
+    ],
+  },
+  {
+    id: 'human-fixed-action-pattern',
+    discipline: 'human-science',
+    title: '固定的動作パターン（FAP）',
+    statement:
+      '古典的動物行動学の中心概念で、コンラート・ローレンツが提唱しニコ・ティンバーゲンが体系化した（両者は1973年ノーベル生理学・医学賞）。特定の鍵刺激（解発刺激／releaser）が中枢の生得的解発機構（IRM）を介して引き起こす、生得的で種に固有の定型的な一連の行動を指す。' +
+      '一旦始まると外部フィードバックなしに最後まで自動的に遂行されるのが特徴で、ハイイロガンは巣外の卵を嘴で転がし戻す途中に卵を除いても動作を続け、イトヨ雄は赤い腹を持つ対象を攻撃する。超正常刺激でより強く解発される。現代では「modal action pattern」とも呼ばれ、完全には不変でないと修正されている。',
+    keyFigures: 'コンラート・ローレンツ／ニコ・ティンバーゲン',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-4684-8306-2_10', type: 'academic', label: 'Schleidt, The Fixed Action Pattern: Empirical Properties and Theoretical Implications (Springer)' },
+      { url: 'https://www.sciencedirect.com/topics/medicine-and-dentistry/fixed-action-pattern', type: 'reference', label: 'Fixed Action Pattern — ScienceDirect Topics (Elsevier)' },
+      { url: 'https://en.wikipedia.org/wiki/Fixed_action_pattern', type: 'reference', label: 'Fixed action pattern — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-antimonopoly',
+    discipline: 'business-law',
+    title: '独占禁止法',
+    statement:
+      '「私的独占の禁止及び公正取引の確保に関する法律」（昭和22年＝1947年法律第54号）の通称。GHQ占領下の経済民主化（財閥解体）政策を恒久化するため米国の反トラスト法を範に制定され、公正かつ自由な競争を促進し、消費者の利益確保と国民経済の健全な発達を目的とする「経済憲法」とも呼ばれる。' +
+      '規制の柱は(1)私的独占の禁止(2)不当な取引制限の禁止（カルテル・入札談合等）(3)不公正な取引方法の禁止の3つ。運用・執行は他の行政機関から独立した公正取引委員会（内閣府の外局）が担い、違反には排除措置命令・課徴金納付命令・刑事告発（専属告発）で臨み、企業結合（合併等）の事前審査も行う。下請法・景品表示法は補完する特別法。',
+    keyFigures: '私的独占の禁止及び公正取引の確保に関する法律（昭和22年法律第54号、1947年）／公正取引委員会',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/322AC0000000054', type: 'government', label: 'e-Gov法令検索「私的独占の禁止及び公正取引の確保に関する法律」（昭和22年法律第54号）' },
+      { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会「独占禁止法の規制内容」' },
+      { url: 'https://kotobank.jp/word/独占禁止法-6659', type: 'reference', label: 'コトバンク「独占禁止法」（日本大百科全書・世界大百科事典ほか）' },
+    ],
+  },
+  {
+    id: 'infosoc-gift-economy',
+    discipline: 'information-sociology',
+    title: '贈与経済（贈与論）',
+    statement:
+      'フランスの社会学者・人類学者マルセル・モースが1925年の論文『贈与論（Essai sur le don）』で提唱した概念。市場交換（等価・即時・非人格的）と対照的に、財やサービスが明示的な対価なく贈られる社会様式を指す。モースはメラネシア・ポリネシア・北米北西海岸の事例から、贈与には「与える義務・受け取る義務・お返しをする義務」の三義務が伴い、' +
+      'これが互酬性（reciprocity）の連鎖を生んで社会的紐帯・地位・連帯を維持すると論じた。代表例は北米先住民の競覇的贈与ポトラッチ、メラネシアのクラ交易（マリノフスキー）で、財には人格や霊（マオリの「ハウ hau」）が宿り返礼を促すとされる。贈与は経済・法・宗教・政治を横断する「全体的社会的事実」であり、現代ではオープンソースや献血などにも援用される。',
+    keyFigures: 'マルセル・モース（Marcel Mauss, 1925）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.anthroencyclopedia.com/entry/gifts', type: 'academic', label: 'Open Encyclopedia of Anthropology — "Gifts"（Yunxiang Yan, UCLA, 査読済み）' },
+      { url: 'https://www.britannica.com/topic/The-Gift-by-Mauss', type: 'reference', label: 'Encyclopaedia Britannica — "The Gift" (work by Mauss)' },
+      { url: 'https://en.wikipedia.org/wiki/Gift_economy', type: 'reference', label: 'Wikipedia — "Gift economy"' },
+    ],
+  },
 ];
 // Stryker restore all
