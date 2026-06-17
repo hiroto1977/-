@@ -18487,5 +18487,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Gift_economy', type: 'reference', label: 'Wikipedia — "Gift economy"' },
     ],
   },
+  {
+    id: 'econ-gresham-law',
+    discipline: 'economics',
+    title: 'グレシャムの法則',
+    statement:
+      '名目価値が等しいが素材価値（含有金属量）の異なる2種の貨幣が、法定で同価値として強制通用させられると、人々は素材価値の高い良貨を退蔵・溶解・輸出し、素材価値の低い悪貨ばかりが流通する現象で、「悪貨は良貨を駆逐する」と要約される。' +
+      '16世紀イングランドの財政家トーマス・グレシャムに因み、19世紀（1857年）にヘンリー・マクロードが命名したが、同趣旨はコペルニクス・オレーム・アリストファネスらが先に指摘しており彼の独創ではない。法定の固定交換比率（強制通用力）が前提で、自由市場で価値が変動できる場合は逆（良貨が悪貨を駆逐＝ティアーズの法則）も起こりうる。',
+    keyFigures: 'トーマス・グレシャム／ヘンリー・マクロード（命名, 19世紀）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Greshams-law', type: 'reference', label: 'Encyclopædia Britannica — Gresham’s law' },
+      { url: 'https://en.wikipedia.org/wiki/Gresham%27s_law', type: 'reference', label: 'Wikipedia — Gresham’s law' },
+      { url: 'https://eh.net/encyclopedia/greshams-law/', type: 'academic', label: 'EH.net (Economic History Association) — Gresham’s Law' },
+    ],
+  },
+  {
+    id: 'econ-say-law',
+    discipline: 'economics',
+    title: 'セイの法則',
+    statement:
+      'フランスの経済学者ジャン＝バティスト・セイが1803年の『経済学概論（Traité d’économie politique）』で示した古典派経済学の命題。後にケインズが「供給はそれ自身の需要を創り出す（Supply creates its own demand）」と要約した。財の生産・供給はそれと等価の所得（賃金・利潤等）を生み、その所得が他の財への需要となるため、' +
+      '経済全体では総供給と総需要が一致し、全般的な過剰生産（一般的供給過剰）は起こらないとする。貨幣は交換の媒介にすぎず退蔵されない前提に立つ。リカードやJ.S.ミルが支持した。ジョン・メイナード・ケインズは『一般理論』（1936）で、有効需要の不足により不況・失業が生じうるとしてこれを批判・否定した。',
+    keyFigures: 'ジャン＝バティスト・セイ（Jean-Baptiste Say, 1803）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/J-B-Say', type: 'reference', label: 'Encyclopaedia Britannica — J.-B. Say (Law of Markets)' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Say.html', type: 'reference', label: 'Econlib (Library of Economics and Liberty) — Jean-Baptiste Say' },
+      { url: 'https://academic.oup.com/cpe/article/39/1/23/5840816', type: 'academic', label: 'Contributions to Political Economy (Oxford Academic) — Say’s Law and Commodity Money' },
+    ],
+  },
+  {
+    id: 'mgmt-management-by-objectives',
+    discipline: 'management',
+    title: '目標管理（MBO）',
+    statement:
+      'ピーター・ドラッカーが1954年の著書『現代の経営（The Practice of Management）』で提唱・命名した経営手法。組織全体の目標を上位から下位へ連鎖させ、上司と部下が協働して各人が達成すべき具体的目標を設定し、その達成度で業績を評価・管理する。' +
+      '正式には「目標と自己統制によるマネジメント（Management by Objectives and Self-Control）」と呼ばれ、命令の押し付けでなく本人の参加とコミットメントを通じて動機づけと自律を高める点が核心。ジョージ・オディオーン（1965）らが普及させ、後にロックの目標設定理論やSMART目標と結びついた。数値偏重・短期志向・目標のゲーミングへの批判はデミング等から提起された。',
+    keyFigures: 'ピーター・ドラッカー（Peter Drucker, 1954）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Management_by_objectives', type: 'reference', label: 'Wikipedia: Management by objectives' },
+      { url: 'https://www.sciencedirect.com/topics/social-sciences/management-by-objectives', type: 'reference', label: 'ScienceDirect Topics: Management by Objectives — an overview' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0007681367900845', type: 'academic', label: 'A fresh look at management by objectives, Business Horizons (1967)' },
+    ],
+  },
+  {
+    id: 'human-operant-conditioning',
+    discipline: 'human-science',
+    title: 'オペラント条件づけ',
+    statement:
+      'B.F.スキナーが体系化した学習理論で、ソーンダイクの「効果の法則」を基礎に、自発的行動（オペラント）の生起頻度が、その結果である強化・罰によって変化するとする。随伴性は正の強化（好子提示）・負の強化（嫌子除去）・正の罰・負の罰の4種に整理される。' +
+      'スキナーはスキナー箱（オペラント実験箱）でラットやハトのレバー押しを研究した。連続強化と間欠強化（固定比率・変動比率・固定間隔・変動間隔）の強化スケジュールが反応率と消去抵抗を左右し、変動比率が最も消去に強い。刺激と反応を連合するパブロフの古典的（レスポンデント）条件づけと区別され、応用行動分析（ABA）や行動療法、トークンエコノミーの基礎となる。',
+    keyFigures: 'B.F.スキナー（B. F. Skinner）／エドワード・ソーンダイク（効果の法則）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/operant-conditioning', type: 'reference', label: 'Encyclopaedia Britannica — Operant conditioning' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/operant-conditioning', type: 'reference', label: 'EBSCO Research Starters — Operant conditioning' },
+      { url: 'https://courses.lumenlearning.com/suny-hvcc-psychology-1/chapter/reading-operant-conditioning/', type: 'academic', label: 'Lumen Learning (SUNY HVCC) — Introduction to Psychology: Operant Conditioning' },
+    ],
+  },
+  {
+    id: 'bizlaw-act-on-electronic-contract',
+    discipline: 'business-law',
+    title: '電子契約法（電子消費者契約に関する民法の特例法）',
+    statement:
+      '正式名称「電子消費者契約及び電子承諾通知に関する民法の特例に関する法律」（平成13年法律第95号、2001年12月施行）は、インターネット通販等の電子消費者契約について民法の特例を定めた。主な内容は二点。(1)操作ミス（錯誤）の救済=数量の入力間違いや意図しないクリック等の消費者の操作ミスについて、事業者が申込内容を確認する措置（確認画面）を講じていない場合は、民法95条但書（重過失があると取消不可）を適用せず、消費者は錯誤による取消し（旧法では無効）を主張できる。(2)契約成立時期=隔地者間の電子承諾通知は、発信主義ではなく到達主義による。' +
+      '2017年の民法（債権法）改正により、(2)の到達主義は改正民法97条で到達主義に統一され民法本体へ取り込まれたため、本法の電子承諾通知に関する規定は削除された。あわせて錯誤規定の整備に伴い題名も改正され、現在は「電子消費者契約に関する民法の特例に関する法律」となっている（2020年4月1日施行）。',
+    keyFigures: '電子消費者契約に関する民法の特例に関する法律（平成13年法律第95号、2001年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/413AC0000000095', type: 'government', label: 'e-Gov法令検索「電子消費者契約に関する民法の特例に関する法律」' },
+      { url: 'https://www.meti.go.jp/policy/it_policy/ec/e11225bj.pdf', type: 'government', label: '経済産業省 電子契約法 逐条解説（平成13年12月）' },
+      { url: 'https://ja.wikipedia.org/wiki/電子消費者契約に関する民法の特例に関する法律', type: 'reference', label: 'Wikipedia「電子消費者契約に関する民法の特例に関する法律」' },
+    ],
+  },
+  {
+    id: 'infosoc-limited-effects',
+    discipline: 'information-sociology',
+    title: '限定効果論',
+    statement:
+      'マスメディアが受け手に直接・一様で強力な影響を及ぼすとする「皮下注射モデル（弾丸理論）」への反証として、1940〜60年代に登場したマスコミュニケーション効果研究の立場。ラザースフェルドらの『ピープルズ・チョイス』（1944、1940年大統領選のエリー調査）は、投票態度を変えた人は約5%にとどまり、メディアの効果は主に既存態度の「補強」で「改変」は稀だと示し、メディア→オピニオンリーダー→大衆という「二段の流れ」や選択的接触・対人的影響の媒介を重視した。' +
+      'ジョセフ・クラッパー『マス・コミュニケーションの効果』（1960）は多数の実証研究を総括し、メディアを既存傾向を補強する補助的・媒介的要因と位置づけて限定効果パラダイムを確立した。のちにマコームズとショーの議題設定理論や培養理論など「新しい強力効果論」へと再修正された。',
+    keyFigures: 'ポール・ラザースフェルド（1944）／ジョセフ・クラッパー（1960）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/two-step-flow-model-of-communication', type: 'reference', label: 'Encyclopaedia Britannica — Two-step flow model of communication' },
+      { url: 'https://sk.sagepub.com/ency/edvol/politicalcommunication/chpt/twostep-flow-model-communication', type: 'academic', label: 'SAGE Encyclopedia of Political Communication — Two-Step Flow Model' },
+      { url: 'https://ja.wikipedia.org/wiki/メディア効果論', type: 'reference', label: 'ウィキペディア「メディア効果論」' },
+    ],
+  },
 ];
 // Stryker restore all
