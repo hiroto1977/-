@@ -66,6 +66,7 @@ import { fetchLinuxSnapshot } from './linux';
 import { fetchComplianceSnapshot } from './compliance';
 import { fetchObsidianSnapshot } from './obsidian';
 import { fetchDockerSnapshot } from './docker';
+import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import type { ServiceId } from '../../shared/serviceId';
@@ -141,6 +142,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   compliance: fetchComplianceSnapshot,
   obsidian: fetchObsidianSnapshot,
   docker: fetchDockerSnapshot,
+  assistant: fetchAssistantSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -229,6 +231,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'obsidian',
   // Docker: ローカル Docker Engine の可視化。実 Engine は socket で読む。認証不要。
   'docker',
+  // AI アシスタント: ページ表示は認証不要 (会話は Anthropic キー設定時のみ)。
+  'assistant',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -258,6 +262,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
   shopify: SHOPIFY_ACTIONS,
   'microsoft-365': MICROSOFT365_ACTIONS,
+  assistant: ASSISTANT_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

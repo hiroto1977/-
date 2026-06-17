@@ -525,6 +525,87 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   return ok(entry);
 }
 
+// --- Anthropic AI アシスタント (browser-direct) -----------------------
+// assistant/chat: renderer が組み立てた system プロンプト + 会話履歴を、Vault の
+// 'assistant'（無ければ共有の 'anthropic'）キーで直接 Anthropic へ中継する。
+const ASSISTANT_MODEL_WEB = 'claude-sonnet-4-6';
+
+interface AssistantTurnWeb {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+/** payload.messages を user/assistant の非空文字列発話だけに整形する。 */
+function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
+  if (!Array.isArray(raw)) return [];
+  const out: AssistantTurnWeb[] = [];
+  for (const item of raw) {
+    if (item === null || typeof item !== 'object') continue;
+    const r = (item as { role?: unknown }).role;
+    const c = (item as { content?: unknown }).content;
+    if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
+    const content = c.trim().slice(0, 8000);
+    if (content.length > 0) out.push({ role: r, content });
+  }
+  return out.slice(-40);
+}
+
+async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  const turns = sanitizeAssistantTurns(payload['messages']);
+  if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
+    return err('action_failed', '最後の発話は user である必要があります');
+  }
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+
+  let apiKey: string | null = null;
+  try {
+    apiKey = (await vault.getToken('assistant')) ?? (await vault.getToken('anthropic'));
+  } catch {
+    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
+  }
+  if (!apiKey) {
+    return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+  }
+
+  let res: Response;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: ASSISTANT_MODEL_WEB,
+        max_tokens: 2048,
+        ...(system ? { system } : {}),
+        messages: turns,
+      }),
+    });
+  } catch (e) {
+    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+  }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+  }
+  let parsed: { content?: { type: string; text?: string }[] };
+  try {
+    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+  } catch {
+    return err('action_failed', 'API 応答が JSON ではありません');
+  }
+  const text = (parsed.content ?? [])
+    .filter((b) => b.type === 'text' && typeof b.text === 'string')
+    .map((b) => b.text as string)
+    .join('')
+    .trim();
+  if (text.length === 0) return err('action_failed', 'API 応答にテキストブロックがありません');
+  return ok({ text, model: ASSISTANT_MODEL_WEB });
+}
+
 interface SnapshotBusinessUnit {
   id: string;
   label: string;
@@ -930,6 +1011,11 @@ const shim = {
         return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
       }
       return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
+    }
+
+    // AI アシスタント (Anthropic) — direct browser call with Vault-stored key.
+    if (serviceId === 'assistant' && action === 'chat') {
+      return (await callAssistantChat(payload)) as ActionResult<T>;
     }
 
     // Business advisor (Anthropic) — direct browser call with Vault-stored key.

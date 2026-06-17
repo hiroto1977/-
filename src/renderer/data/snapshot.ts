@@ -20,6 +20,16 @@ export const SNAPSHOT = {
     fetchedAt: '',
     isMock: true,
   },
+  assistant: {
+    note: 'AI アシスタントは Claude を頭脳に、確証済みナレッジと全サービスを統合して応答します',
+    capabilities: [
+      '質問への的確な回答',
+      '経営・法務・労務・税務のアドバイス (確証済みナレッジに基づく)',
+      '表・箇条書き・計画などの成果物の生成',
+      '関連サービスへの案内・操作',
+    ] as readonly string[],
+    keyConfigured: false,
+  },
 
   fetchedAt: '2026-05-11T09:30:00Z',
 

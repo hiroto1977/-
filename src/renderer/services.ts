@@ -64,6 +64,7 @@ import { LinuxPage } from './pages/LinuxPage';
 import { CompliancePage } from './pages/CompliancePage';
 import { ObsidianPage } from './pages/ObsidianPage';
 import { DockerPage } from './pages/DockerPage';
+import { AssistantPage } from './pages/AssistantPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -621,6 +622,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化',
     page: DockerPage,
     category: 'tools',
+  },
+  {
+    id: 'assistant',
+    label: 'AI アシスタント',
+    icon: 'AI',
+    description: 'Claude を頭脳に確証済みナレッジと全サービスを統合 — 質問・助言・表/成果物の生成',
+    page: AssistantPage,
+    category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

@@ -75,6 +75,7 @@ export const SERVICE_IDS = [
   'compliance',
   'obsidian',
   'docker',
+  'assistant',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 
