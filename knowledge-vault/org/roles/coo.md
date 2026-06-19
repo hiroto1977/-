@@ -27,41 +27,41 @@ aliases:
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
 - …ほか 243 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全239件）
+### 学術概念 / 経営学（全242件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 233 件 → [[学術概念]]
+- …ほか 236 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全262件）
+### 学術概念 / 人間科学（全263件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 256 件 → [[学術概念]]
+- …ほか 257 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全234件）
+### 学術概念 / 情報社会学（全235件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]]
-- …ほか 228 件 → [[学術概念]]
+- …ほか 229 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全407件）
+### 学術概念 / 経済学（全408件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-agency-theory|エージェンシー理論（プリンシパル＝エージェント問題）]]
 - [[econ-agglomeration-economies|集積の経済]]
-- …ほか 401 件 → [[学術概念]]
+- …ほか 402 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

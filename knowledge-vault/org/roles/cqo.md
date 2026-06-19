@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
 - …ほか 243 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全234件）
+### 学術概念 / 情報社会学（全235件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]]
-- …ほか 228 件 → [[学術概念]]
+- …ほか 229 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全140件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
