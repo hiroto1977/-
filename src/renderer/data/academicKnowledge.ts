@@ -20179,5 +20179,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/pdf/sakusei_62.pdf', type: 'government', label: '総務省行政管理研修所 — 行政法の基礎テキスト（比例原則を含む行政法の一般原則）' },
     ],
   },
+  {
+    id: 'infosoc-digital-twin',
+    discipline: 'information-sociology',
+    title: 'デジタル・ツイン',
+    statement:
+      'デジタル・ツインとは、物理的な実体（製品・設備・都市・人体など）のリアルタイムデータを収集し、サイバー空間に精密な仮想複製を構築する技術・概念である。IoTセンサーが現実世界の状態を絶えず送信し、仮想モデルが物理実体の挙動を高精度に再現することで、故障予測・プロセス最適化・設計検証をシミュレーション上で行う。' +
+      '概念の起源はNASAのアポロ計画（1960年代）における宇宙船の地上複製モデルにあり、2002年にミシガン大学のマイケル・グリーブスが製品ライフサイクル管理（PLM）の文脈で体系化した。製造業（スマートファクトリー）・都市計画（スマートシティ）・医療・サプライチェーンへの応用が広がり、インダストリー4.0の中核技術とされる。',
+    keyFigures: 'マイケル・グリーブス（Michael Grieves, 2002体系化）／NASAのアポロ計画（起源）／インダストリー4.0（第4次産業革命との関連）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/digital-twin', type: 'reference', label: 'Encyclopaedia Britannica — Digital twin（定義・NASAの起源・製造業・スマートシティ・IoT応用）' },
+      { url: 'https://www.meti.go.jp/policy/digital_transformation/digital_twin.html', type: 'government', label: '経済産業省 — デジタルツイン（製造業DX・スマートシティへの活用・政策的位置付け）' },
+    ],
+  },
+  {
+    id: 'mgmt-csr',
+    discipline: 'management',
+    title: '企業の社会的責任（CSR）',
+    statement:
+      '企業の社会的責任（CSR）とは、企業が利益追求にとどまらず、環境・社会・ガバナンスに配慮した経営を行い、ステークホルダー（従業員・地域社会・顧客・環境）に対して説明責任を果たすべきとする経営理念・実践の総体である。ハワード・ボウンが1953年に体系的に論じ、フリードマンの株主利益最大化論に対抗して発展した。' +
+      'ISO 26000（2010年）が国際規格として社会的責任の7原則（説明責任・透明性・倫理的行動・ステークホルダー尊重・法の支配尊重・国際的行動規範尊重・人権尊重）と7つのコア主題（組織統治・人権・労働慣行・環境・公正な事業慣行・消費者課題・コミュニティ参画）を定義した。ESG投資やSDGsの企業対応とも密接に連動する。',
+    keyFigures: 'ハワード・R・ボウン（Howard R. Bowen, 1953『Social Responsibilities of the Businessman』）／ISO 26000（2010）／対比: ミルトン・フリードマン（株主利益最大化論1970）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.iso.org/iso-26000-social-responsibility.html', type: 'reference', label: 'ISO — ISO 26000 Social Responsibility（国際規格による定義・7原則・7コア主題）' },
+      { url: 'https://www.meti.go.jp/policy/economy/keiei_innovation/kigyoukaikei/csr.html', type: 'government', label: '経済産業省 — CSR（企業の社会的責任）政策・関連ガイドラインの概要' },
+    ],
+  },
+  {
+    id: 'econ-esg-investing',
+    discipline: 'economics',
+    title: 'ESG投資（環境・社会・ガバナンス投資）',
+    statement:
+      'ESG投資とは、企業への投資判断に財務指標だけでなく環境（Environment）・社会（Social）・ガバナンス（Governance）に関する非財務情報を組み込む投資手法・思想である。2006年に国連のコフィー・アナン事務総長が機関投資家向けに提唱した「責任投資原則（PRI）」が普及の起点となった。' +
+      'ESGファクターが長期的な財務リスク・リターンに影響するという認識が広まり、国連PRIの署名機関は2024年時点で5,000超に達する。日本では年金積立金管理運用独立行政法人（GPIF）が2015年にPRIに署名し、ESG指数連動運用を拡充したことで国内機関投資家への波及が加速した。',
+    keyFigures: 'コフィー・アナン（Kofi Annan, PRI提唱2006）／国連責任投資原則（UN PRI, 2006）／GPIF（2015年PRI署名）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.unpri.org/about-us/what-are-the-principles-for-responsible-investment', type: 'academic', label: 'UN PRI — What are the Principles for Responsible Investment（責任投資原則の定義・6原則・署名機関の義務）' },
+      { url: 'https://www.gpif.go.jp/investment/esg/', type: 'government', label: '年金積立金管理運用独立行政法人（GPIF） — ESG投資（ESG指数・運用実績・取り組みの詳細）' },
+    ],
+  },
+  {
+    id: 'bizlaw-compliance',
+    discipline: 'business-law',
+    title: 'コンプライアンス（法令遵守と企業倫理）',
+    statement:
+      'コンプライアンスとは、企業・組織が法令・規則・社内規程・倫理的規範を遵守し、社会的規範に沿った行動を確保する仕組みと実践の総体である。狭義には法令遵守を指すが、広義には社会規範・企業倫理・自主基準への適合まで含み、不正・不祥事の未然防止と組織の持続的信頼確保を目的とする。' +
+      '米国では1991年連邦量刑ガイドライン（FSGO）が実効的コンプライアンス・プログラムの要件を定め、日本では2002年以降の大企業不祥事を契機に会社法・金融商品取引法の内部統制規定（J-SOX）と連動した制度整備が進んだ。リスクベース・アプローチによる優先順位付けと経営幹部からの「トーン・アット・ザ・トップ」の確立が実効性の鍵とされる。',
+    keyFigures: '米国連邦量刑ガイドライン（FSGO, 1991・2004改定）／会社法362条（内部統制システム整備義務）／金融商品取引法（J-SOX）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ussc.gov/guidelines/2023-guidelines-manual/2023-chapter-8', type: 'government', label: 'U.S. Sentencing Commission — Chapter 8, Federal Sentencing Guidelines for Organizations（実効的コンプライアンス・プログラムの要件）' },
+      { url: 'https://www.meti.go.jp/policy/economy/keiei_innovation/kigyoukaikei/compliance.html', type: 'government', label: '経済産業省 — コンプライアンス（企業行動・内部統制・リスク管理との連動・関連ガイドライン）' },
+    ],
+  },
+  {
+    id: 'human-self-regulated-learning',
+    discipline: 'human-science',
+    title: '自己調整学習（Self-Regulated Learning）',
+    statement:
+      '自己調整学習（SRL）とは、学習者が自らの学習過程を計画・モニタリング・評価・修正しながら目標に向けて能動的に学ぶ認知的・動機的・行動的プロセスの総体である。バリー・ジマーマンが1980年代に体系化し、「予見（目標設定・方略計画）→遂行（自己観察・制御）→自己省察（自己評価・反応）」の3フェーズ循環モデルで記述される。' +
+      'SRLは認知戦略（精緻化・体制化・リハーサル）・メタ認知戦略（計画・モニタリング・評価）・資源管理戦略（時間管理・援助要請）の3層から構成される。ピントリッチが開発したMSLQ（動機づけ方略学習質問紙）が研究ツールとして広く使われ、形成的評価・eラーニング設計の基盤理論として教育実践に幅広く応用されている。',
+    keyFigures: 'バリー・ジマーマン（Barry J. Zimmerman, 1986体系化）／ポール・ピントリッチ（Paul Pintrich, MSLQ開発1991）／アルバート・バンデューラ（自己効力感の理論的基盤）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/self-regulated-learning', type: 'reference', label: 'Encyclopaedia Britannica — Self-regulated learning（定義・3フェーズモデル・認知・メタ認知・動機づけの統合）' },
+      { url: 'https://psycnet.apa.org/record/1990-97278-004', type: 'academic', label: 'Zimmerman (1990) "Self-Regulated Learning and Academic Achievement: An Overview," Educational Psychologist 25(1):3–17（APA PsycNet）' },
+    ],
+  },
+  {
+    id: 'econ-circular-economy',
+    discipline: 'economics',
+    title: 'サーキュラーエコノミー（循環型経済）',
+    statement:
+      'サーキュラーエコノミー（循環型経済）とは、「採取→製造→廃棄」の直線型経済（リニアエコノミー）に代わり、製品・素材・資源を再利用・修理・リファービッシュ・リサイクルによって循環させ、廃棄物と資源投入を最小化する経済システムである。エレン・マッカーサー財団が2012年報告書で概念を体系化し、国際的に普及させた。' +
+      '理論的基礎はワルター・シュタールのパーフォーマンス経済・マクドノウ＆ブラウンガートの「ゆりかごからゆりかごへ（Cradle to Cradle, 2002）」・産業生態学・生体模倣に求められる。EUは2020年「新循環型経済行動計画」を採択し、日本では循環型社会形成推進基本法（2000年）が3R（リデュース・リユース・リサイクル）を法制化している。',
+    keyFigures: 'エレン・マッカーサー財団（Ellen MacArthur Foundation, 2012報告書）／ワルター・シュタール（Walter Stahel, パーフォーマンス経済）／マクドノウ＆ブラウンガート（Cradle to Cradle, 2002）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview', type: 'academic', label: 'Ellen MacArthur Foundation — What is a Circular Economy?（定義・バタフライ図・リニアvs.サーキュラー・経済的根拠）' },
+      { url: 'https://www.env.go.jp/recycle/circulareconomy/', type: 'government', label: '環境省 — サーキュラーエコノミー（循環型社会形成推進基本法・循環経済ビジョン2020・政策の全体像）' },
+    ],
+  },
 ];
 // Stryker restore all
