@@ -20347,5 +20347,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/science/embodied-cognition', type: 'reference', label: 'Encyclopaedia Britannica — Embodied cognition（身体化認知の定義・バレーラ・レイコフらの貢献）' },
     ],
   },
+  {
+    id: 'econ-duesenberry-ratchet',
+    discipline: 'economics',
+    title: 'ラチェット効果（デューゼンベリーの相対所得仮説）',
+    statement:
+      'ラチェット効果とは、所得が増加した際には消費水準も上昇するが、その後所得が減少しても消費はかつての高水準に近い水準にとどまり、元の水準には容易に下がらない非対称な消費行動を指す。歯止め（ラチェット）のように一方向にしか動かない特性から命名された。' +
+      'ジェームズ・デューゼンベリーが1949年の著書で提唱した相対所得仮説に基づく。人々は自らの過去の最高所得水準および周囲（準拠集団）の消費水準を基準に消費を決定するため、所得低下時にも従前の生活水準を維持しようとするデモンストレーション効果と複合し、消費の下方硬直性が生じる。',
+    keyFigures: 'ジェームズ・デューゼンベリー（James S. Duesenberry, 1918–2009）／1949年"Income, Saving, and the Theory of Consumer Behavior"（ハーバード大学出版）で相対所得仮説を提唱',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/ratchet-effect', type: 'reference', label: 'Encyclopaedia Britannica Money — Ratchet effect（消費の下方硬直性・デューゼンベリーの相対所得仮説）' },
+      { url: 'https://www.econlib.org/library/Enc/RelativeIncome.html', type: 'reference', label: 'Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（デューゼンベリーの仮説・ラチェット効果の理論的根拠）' },
+    ],
+  },
+  {
+    id: 'econ-demonstration-effect',
+    discipline: 'economics',
+    title: 'デモンストレーション効果',
+    statement:
+      'デモンストレーション効果とは、人々が自らの絶対的所得水準ではなく、より高い生活水準を持つ周囲（準拠集団）の消費パターンを見習い・模倣しようとする傾向を指す。ジェームズ・デューゼンベリーが相対所得仮説の一環として定式化し、国際的文脈ではラグナー・ヌルクセが発展途上国における問題として論じた。' +
+      '高所得者や先進国の消費様式が低所得者・途上国に伝播し、貯蓄率を押し下げ消費性向を高める。マスメディアや広告・SNSの普及によりこの効果は増幅され、過剰消費・所得不相応な支出・家計貯蓄の減少といった問題につながると指摘される。ヴェブレン財の誇示的消費とも密接に関連する。',
+    keyFigures: 'ジェームズ・デューゼンベリー（James S. Duesenberry, 1918–2009、1949年）／ラグナー・ヌルクセ（Ragnar Nurkse, 1907–1959、発展途上国への応用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/demonstration-effect', type: 'reference', label: 'Encyclopaedia Britannica Money — Demonstration effect（デューゼンベリーの相対所得仮説・ヌルクセの発展途上国論）' },
+      { url: 'https://www.econlib.org/library/Enc/RelativeIncome.html', type: 'reference', label: 'Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（相対所得・デモンストレーション効果の理論的背景）' },
+    ],
+  },
+  {
+    id: 'human-circadian-rhythm',
+    discipline: 'human-science',
+    title: '概日リズム（サーカディアンリズム）',
+    statement:
+      '概日リズム（circadian rhythm）とは、ほぼ24時間周期で繰り返す生体の内因性リズムであり、睡眠・覚醒、体温、ホルモン分泌（コルチゾール・メラトニン等）、代謝などの生理機能を調節する。「概日」は"circa dies"（ラテン語：おおよそ一日）に由来し、外部環境の光周期（明暗サイクル）が主要なツァイトゲーバー（同期因子）として機能する。' +
+      '哺乳類では視床下部の視交叉上核（SCN）が主時計として機能し、末梢臓器の時計遺伝子（CLOCK・BMAL1・Period・Cryptochrome等）と協調してリズムを刻む。概日リズムの分子機構の研究はホール、ロスバッシュ、ヤングが2017年ノーベル生理学・医学賞を受賞。乱れは睡眠障害・代謝疾患・精神疾患のリスクと関連する。',
+    keyFigures: 'ジェフリー・ホール（Jeffrey C. Hall）／マイケル・ロスバッシュ（Michael Rosbash）／マイケル・ヤング（Michael W. Young）／2017年ノーベル生理学・医学賞共同受賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/medicine/2017/summary/', type: 'reference', label: 'NobelPrize.org — 2017年ノーベル生理学・医学賞（概日リズムを制御する分子メカニズムの発見）' },
+      { url: 'https://www.nigms.nih.gov/education/fact-sheets/Pages/circadian-rhythms.aspx', type: 'government', label: 'NIH National Institute of General Medical Sciences — Circadian Rhythms（概日リズムの基礎・健康影響・研究の意義）' },
+    ],
+  },
+  {
+    id: 'econ-trickle-down',
+    discipline: 'economics',
+    title: 'トリクルダウン理論（サプライサイド経済学）',
+    statement:
+      'トリクルダウン理論（trickle-down economics）とは、富裕層・大企業・投資家への減税や規制緩和など上位層を優遇する経済政策が、投資・雇用・賃金の増加を通じて経済成長を促し、その恩恵が最終的に中低所得層にも「したたり落ちる（trickle down）」という考え方を指す。サプライサイド経済学の政策的帰結として1980年代に注目された。' +
+      '1980年代の米国レーガン政権（レーガノミクス）および英国サッチャー政権はこの考え方に基づく大規模減税・規制緩和を実施した。しかしIMFや学術研究は格差拡大と恩恵の波及の限定性を指摘しており、「トリクルダウン」という名称自体は批判的文脈で使われることが多く、支持者は「サプライサイド経済学」の用語を好む。',
+    keyFigures: 'アーサー・ラッファー（Arthur Laffer、ラッファー曲線）／ロバート・マンデル（Robert Mundell）／ロナルド・レーガン（レーガノミクス）／マーガレット・サッチャー',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/en/Publications/Staff-Discussion-Notes/Issues/2016/12/31/Causes-and-Consequences-of-Income-Inequality-A-Global-Perspective-42986', type: 'government', label: 'IMF Staff Discussion Note — Causes and Consequences of Income Inequality（トリクルダウン的政策と格差拡大の実証分析）' },
+      { url: 'https://www.britannica.com/money/trickle-down-economics', type: 'reference', label: 'Encyclopaedia Britannica Money — Trickle-down economics（サプライサイド経済学・レーガノミクス・批判的議論の概説）' },
+    ],
+  },
+  {
+    id: 'infosoc-social-exchange-theory',
+    discipline: 'information-sociology',
+    title: '社会交換理論',
+    statement:
+      '社会交換理論（social exchange theory）とは、人間の社会的相互作用を報酬（利益）とコスト（費用）の交換として捉える社会学・社会心理学の理論的枠組みである。ジョージ・ホーマンズが1958年の論文で行動主義的観点から定式化し、ピーター・ブラウが1964年に『社会的交換と権力（Exchange and Power in Social Life）』で組織・集団レベルへ拡張した。' +
+      'アルヴィン・グールドナーが指摘した「互恵性の規範」（reciprocity norm）はこの理論の中核をなし、人々は報酬が費用を上回ると期待する関係を維持・継続し、逆の場合は関係を解消しようとするとされる。SNSにおける情報共有・フォロー行動、組織内の協力行動（OCB）、オンライン上のコンテンツ投稿の動機付けの説明に広く応用される。',
+    keyFigures: 'ジョージ・ホーマンズ（George C. Homans, 1910–1989、1958年"Social Behavior as Exchange"）／ピーター・ブラウ（Peter M. Blau, 1918–2002、1964年）／アルヴィン・グールドナー（互恵性の規範）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/222355', type: 'academic', label: 'Homans (1958) "Social Behavior as Exchange," American Journal of Sociology 63(6):597–606（原典、University of Chicago Press）' },
+      { url: 'https://www.britannica.com/topic/social-exchange-theory', type: 'reference', label: 'Encyclopaedia Britannica — Social exchange theory（報酬・コスト・互恵性の規範・ホーマンズとブラウの貢献）' },
+    ],
+  },
+  {
+    id: 'mgmt-reverse-mentoring',
+    discipline: 'management',
+    title: 'リバース・メンタリング',
+    statement:
+      'リバース・メンタリング（reverse mentoring）とは、若年・下位職位の従業員が年長・上位職位の従業員やシニアリーダーに対してメンターとして指導を行う学習・知識共有の実践である。従来のメンタリング（上位者→下位者）の方向性を逆転させ、デジタル技術・SNS・新しいトレンドに精通した若手世代の知識・視点をシニア層に伝える手段として機能する。' +
+      'GEのジャック・ウェルチが1999年にインターネット技術習得のため約500名のシニア幹部に若手社員をメンターとして割り当てたことで広く注目された。世代間の相互学習・多様性推進・包括的職場文化の形成に寄与するとされ、デジタルトランスフォーメーション（DX）推進やZ世代・ミレニアル世代の活躍推進の文脈で再び注目を集めている。',
+    keyFigures: 'ジャック・ウェルチ（Jack Welch, GE CEO、1999年に組織的導入を先駆け）／Harvard Business Review・SHRM等による現代的実践の体系化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2019/10/why-reverse-mentoring-works-and-how-to-do-it-right', type: 'media', label: 'Harvard Business Review — "Why Reverse Mentoring Works and How to Do It Right"（2019年、実践ガイドと効果の解説）' },
+      { url: 'https://www.shrm.org/topics-tools/news/employee-relations/reverse-mentoring-what-it-is-and-how-to-make-it-work', type: 'reference', label: 'SHRM (Society for Human Resource Management) — Reverse Mentoring: What It Is and How to Make It Work（人事管理専門団体による定義・実践指針）' },
+    ],
+  },
 ];
 // Stryker restore all
