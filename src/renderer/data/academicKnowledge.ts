@@ -18835,5 +18835,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/', type: 'government', label: '消費者庁 — 消費者契約法（逐条解説・改正経緯）' },
     ],
   },
+  {
+    id: 'is-lm-model',
+    discipline: 'economics',
+    title: 'IS-LM分析',
+    statement:
+      'IS-LM分析は、ジョン・ヒックスが1937年の論文「ケインズ氏と古典派（Mr. Keynes and the "Classics"）」でケインズの一般理論を数学的に定式化したマクロ経済モデルである。IS曲線は財市場の均衡（投資＝貯蓄）を、LM曲線は貨幣市場の均衡（流動性選好＝貨幣供給）を表し、両曲線の交点が均衡利子率と国民所得を同時決定する。' +
+      'アルヴィン・ハンセンがこのモデルを教科書で普及させたため、ヒックス＝ハンセン・モデルとも呼ばれる。財政政策（政府支出・税制変更）はIS曲線を、金融政策（貨幣供給量の変更）はLM曲線をシフトさせ、両政策の効果と相互作用の分析に広く用いられる。流動性の罠やクラウディングアウトの議論の基礎となった標準的マクロ経済学の枠組みである。',
+    keyFigures: 'ジョン・ヒックス（John R. Hicks, 1904–1989、1972年ノーベル経済学賞）／アルヴィン・ハンセン（Alvin Hansen, 1887–1975、普及者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1907242', type: 'academic', label: 'Hicks, J. R. (1937) "Mr. Keynes and the \'Classics\': A Suggested Interpretation", Econometrica 5(2), 147–159（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/IS%E2%80%93LM_model', type: 'reference', label: 'Wikipedia — IS–LM model（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'lean-manufacturing',
+    discipline: 'management',
+    title: 'リーン生産方式（トヨタ生産方式）',
+    statement:
+      'リーン生産方式（トヨタ生産方式/TPS）は、大野耐一と新郷重夫がトヨタ自動車で体系化した生産管理手法である。ムダ（無駄）の徹底的排除を基本理念とし、ジャストインタイム（JIT：必要なものを必要な時に必要な量だけ生産）と自働化（にんべんのついた自動化：異常時に自動停止し品質を作り込む）を二本柱とする。' +
+      'カイゼン（継続的改善）により現場主導で品質・効率を高める。1988年にジョン・クラフシックがMIT Sloan Management Reviewで「Lean」と命名し、1990年にウォマック、ジョーンズ、ルースが『The Machine That Changed the World』で世界に普及させた。今日では製造業にとどまらずIT・医療・サービス業など幅広い分野に応用されている。',
+    keyFigures: '大野耐一（Taiichi Ohno, 1912–1990）／新郷重夫（Shigeo Shingo, 1909–1990）／ジョン・クラフシック（1988年「Lean」命名）／ウォマック&ジョーンズ&ルース（1990年普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.toyota/jp/company/vision-and-philosophy/production-system/', type: 'academic', label: 'トヨタ自動車 — トヨタ生産方式（公式解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Lean_manufacturing', type: 'reference', label: 'Wikipedia — Lean manufacturing（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'learned-helplessness',
+    discipline: 'human-science',
+    title: '学習性無力感',
+    statement:
+      '学習性無力感とは、回避不可能な嫌悪刺激に繰り返し曝された個体が、その後逃避可能な状況においても行動を起こさなくなる現象である。1967年にマーティン・セリグマンとスティーブン・マイヤーが犬を用いた電撃実験で発見した。' +
+      'セリグマンは後にエイブラムソン、ティーズデールと共に帰属スタイル理論を組み込んだ改訂モデル（1978年）を提唱し、うつ病の認知理論の基礎を築いた。統制不可能性の知覚が動機づけ・認知・情動の欠損を引き起こすとされ、組織行動論・PTSD研究・教育心理学にも広く応用されている。セリグマンは後にポジティブ心理学の創始者としても知られる。',
+    keyFigures: 'マーティン・セリグマン（Martin E. P. Seligman, 1942–）／スティーブン・マイヤー（Steven F. Maier, 1945–）（1967年共同発見）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0024514', type: 'academic', label: 'Seligman & Maier (1967) "Failure to escape traumatic shock", Journal of Experimental Psychology 74(1), 1–9（原著論文）' },
+      { url: 'https://www.apa.org/topics/learned-helplessness', type: 'academic', label: 'American Psychological Association — Learned Helplessness（心理学専門学会）' },
+    ],
+  },
+  {
+    id: 'personal-information-protection-act',
+    discipline: 'business-law',
+    title: '個人情報保護法',
+    statement:
+      '個人情報保護法（平成15年法律第57号）は、個人情報の適正な取扱いに関する基本法である。2003年5月30日に公布され、2005年4月1日に全面施行された。個人情報取扱事業者による個人情報の取得・利用・第三者提供等に関する義務を定め、利用目的の特定・通知、安全管理措置、本人の開示・訂正・利用停止請求権等を規定する。' +
+      '2015年改正で独立した監督機関として個人情報保護委員会が設置され、2020年改正では仮名加工情報制度の創設や個人の権利強化（利用停止・消去請求権の拡充、漏えい報告義務化）が行われた。2021年改正により国の行政機関・独立行政法人・地方公共団体の個人情報保護制度が一元化され、官民一体の保護体制が構築された。',
+    keyFigures: '個人情報保護法（平成15年法律第57号、2003年公布・2005年全面施行）／個人情報保護委員会（2015年設置）／2020年・2021年改正',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/', type: 'government', label: '個人情報保護委員会 — 法令・ガイドライン等' },
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057', type: 'government', label: 'e-Gov法令検索 — 個人情報の保護に関する法律（平成15年法律第57号）' },
+    ],
+  },
+  {
+    id: 'spiral-of-silence',
+    discipline: 'information-sociology',
+    title: '沈黙の螺旋理論',
+    statement:
+      '沈黙の螺旋理論は、エリーザベト・ノエル＝ノイマンが1974年にJournal of Communication誌で提唱した世論形成モデルである。人々は自らの意見が少数派であると知覚すると社会的孤立への恐怖から沈黙し、多数派と感じる者が積極的に発言することで、支配的意見がさらに増幅される螺旋的過程が生じるとした。' +
+      '個人は「準統計的感覚（quasi-statistical sense）」により周囲の意見分布を直感的に把握するとされる。マスメディアは意見気候の知覚に影響を与え、螺旋を加速させる役割を果たす。集団主義社会と個人主義社会での適用差異や、SNS時代における理論の妥当性が批判的に検討されており、現代のフィルターバブルやエコーチェンバー研究とも接続する。',
+    keyFigures: 'エリーザベト・ノエル＝ノイマン（Elisabeth Noelle-Neumann, 1916–2010）（1974年提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1460-2466.1974.tb00367.x', type: 'academic', label: 'Noelle-Neumann, E. (1974) "The Spiral of Silence: A Theory of Public Opinion", Journal of Communication 24(2), 43–51（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Spiral_of_silence', type: 'reference', label: 'Wikipedia — Spiral of silence（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'unfair-competition-prevention-act',
+    discipline: 'business-law',
+    title: '不正競争防止法',
+    statement:
+      '不正競争防止法（平成5年法律第47号）は、事業者間の公正な競争を確保するための法律である。1934年（昭和9年）に旧法が制定され、1993年（平成5年）に全面改正された。周知・著名な商品等表示の冒用、商品形態の模倣、営業秘密の侵害等を不正競争行為として規制する。' +
+      '2001年改正でドメイン名の不正取得が追加され、2018年改正では限定提供データ（ID・パスワード等で管理され業として提供されるデータ）の不正取得・使用・開示が新たに不正競争行為に加えられた。経済産業省が所管し、差止請求・損害賠償請求・刑事罰により実効性を担保している。国際的にはパリ条約・TRIPS協定と整合する。',
+    keyFigures: '不正競争防止法（平成5年法律第47号、1993年全面改正／旧法1934年制定）／経済産業省所管／2001年・2018年改正',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=405AC0000000047', type: 'government', label: 'e-Gov法令検索 — 不正競争防止法（平成5年法律第47号）' },
+      { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/unfair-competition.html', type: 'government', label: '経済産業省 — 不正競争防止法' },
+    ],
+  },
 ];
 // Stryker restore all
