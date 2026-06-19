@@ -18751,5 +18751,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/minimumichiran/', type: 'government', label: '厚生労働省 — 最低賃金制度の概要' },
     ],
   },
+  {
+    id: 'phillips-curve',
+    discipline: 'economics',
+    title: 'フィリップス曲線',
+    statement:
+      'フィリップス曲線とは、失業率と賃金（または物価）上昇率の間に存在する負の相関関係を示す経済学の概念である。1958年にA.W.フィリップスが英国の約100年間（1861–1957年）のデータを分析し、失業率が低いほど名目賃金上昇率が高くなる傾向を実証した。1960年にサミュエルソンとソローがこの関係を物価上昇率と失業率のトレードオフとして再定式化した。' +
+      'しかし1960年代後半にフリードマン（1968）とフェルプス（1967）が自然失業率仮説を提唱し、長期的にはこのトレードオフは成立せず短期的な現象にすぎないと主張した。1970年代のスタグフレーション（高インフレと高失業の併存）の発生により、長期フィリップス曲線は垂直であるとの見方が主流となり、短期と長期の区別が標準的マクロ経済学の基礎となった。',
+    keyFigures: 'A.W.フィリップス（A.W. Phillips, 1914–1975）／ポール・サミュエルソン（1915–2009）&ロバート・ソロー（1924–2023）（1960年再定式化）／ミルトン・フリードマン（1912–2006）&エドマンド・フェルプス（1933–）（自然失業率仮説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1468-0335.1958.tb00003.x', type: 'academic', label: 'Phillips, A.W. (1958) "The Relation between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom, 1861–1957", Economica 25(100), 283–299（原著論文）' },
+      { url: 'https://www.jstor.org/stable/1831652', type: 'academic', label: 'Friedman, M. (1968) "The Role of Monetary Policy", American Economic Review 58(1), 1–17（自然失業率仮説）' },
+    ],
+  },
+  {
+    id: 'six-sigma',
+    discipline: 'management',
+    title: 'シックス・シグマ',
+    statement:
+      'シックス・シグマとは、1986年にモトローラ社のビル・スミスが開発し、1990年代にGE社のジャック・ウェルチが全社的に導入して広めたデータ駆動型の品質管理手法である。統計的手法を用いてプロセスのばらつきを低減し、100万機会あたりの欠陥数（DPMO）を3.4以下に抑えることを目標とする。' +
+      'DMAIC（Define：定義、Measure：測定、Analyze：分析、Improve：改善、Control：管理）の5段階プロセスで既存業務の改善を体系的に推進する。新製品・プロセス設計にはDMADV（Define, Measure, Analyze, Design, Verify）を用いる。製造業から始まりサービス業・医療・金融など幅広い分野に応用され、ブラックベルト・グリーンベルト等の認定制度による人材育成と、顧客満足度向上・コスト削減の同時実現を特徴とする。',
+    keyFigures: 'ビル・スミス（Bill Smith, 1929–1993、モトローラ社「シックス・シグマの父」）／ジャック・ウェルチ（Jack Welch, 1935–2020、GE社CEO、1995年全社導入）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://asq.org/quality-resources/six-sigma', type: 'academic', label: 'ASQ (American Society for Quality) — Six Sigma（品質管理の専門学会）' },
+      { url: 'https://en.wikipedia.org/wiki/Six_Sigma', type: 'reference', label: 'Wikipedia — Six Sigma（包括的な参考文献付き）' },
+    ],
+  },
+  {
+    id: 'cognitive-dissonance',
+    discipline: 'human-science',
+    title: '認知的不協和理論',
+    statement:
+      '認知的不協和理論とは、1957年にレオン・フェスティンガーが著書『A Theory of Cognitive Dissonance』で提唱した社会心理学の理論である。個人が矛盾する二つ以上の認知（信念・態度・行動についての知識）を同時に抱えると、不協和と呼ばれる心理的不快感が生じる。' +
+      'この不快感を低減するため、人は(1)既存の信念や態度を変更する、(2)矛盾を正当化する新たな認知を追加する、(3)矛盾する認知の重要性を低下させる、といった方略を用いる。フェスティンガーとカールスミスの古典的実験（1ドル/20ドル実験、1959年）では、不十分な報酬条件の被験者ほど態度変容が大きいことが示され、理論の中核的予測が実証された。消費者行動・意思決定・説得研究に広く応用されている。',
+    keyFigures: 'レオン・フェスティンガー（Leon Festinger, 1919–1989）（1957年提唱）／エリオット・アロンソン（Elliot Aronson, 1932–、自己概念との関連で理論拡張）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/topics/cognitive-dissonance', type: 'academic', label: 'American Psychological Association — Cognitive Dissonance（心理学専門学会）' },
+      { url: 'https://plato.stanford.edu/entries/cognition-belief/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Cognition and Belief（査読済み学術百科事典）' },
+    ],
+  },
+  {
+    id: 'antimonopoly-surcharge',
+    discipline: 'business-law',
+    title: '課徴金制度（独占禁止法）',
+    statement:
+      '課徴金制度は、1977年（昭和52年）の独占禁止法改正により導入された行政上の制裁措置である。事業者がカルテル・入札談合等の不当な取引制限を行った場合、公正取引委員会が違反行為期間中の売上額に所定の算定率を乗じた金額の納付を命じる。' +
+      '2005年（平成17年）改正で算定率の引上げと課徴金減免制度（リニエンシー制度）が導入され、違反事業者が自主的に申告すれば課徴金が減免される仕組みが加わった。2019年（令和元年）改正では、事業者の調査協力の度合いに応じた裁量的な算定率の適用（協力減算制度）が可能となり、制度の実効性が一層強化された。刑事罰や損害賠償とは別に機能する行政制裁として、カルテル抑止の中核的手段である。',
+    keyFigures: '課徴金制度（1977年独占禁止法改正で導入）／公正取引委員会（JFTC）所管／2005年リニエンシー制度導入／2019年協力減算制度導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/seido/katyokin.html', type: 'government', label: '公正取引委員会 — 課徴金制度' },
+      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/hosei-5/asoda.pdf', type: 'academic', label: '立命館大学 — 独禁法における課徴金制度の見直しについて（学術論文）' },
+    ],
+  },
+  {
+    id: 'network-externality',
+    discipline: 'information-sociology',
+    title: 'ネットワーク外部性（ネットワーク効果）',
+    statement:
+      'ネットワーク外部性（ネットワーク効果）とは、ある財・サービスの利用者数が増加するほど、各利用者が得る便益が増大する現象を指す。電話・SNS・決済プラットフォーム等が典型例である。直接的外部性（同一ネットワーク内の利用者増加による便益向上）と間接的外部性（補完財の充実による便益向上）に大別される。' +
+      'カッツ＝シャピロ（1985）とファレル＝サロナー（1985）が理論的枠組みを確立した。プラットフォーム経済学、ロックイン効果、勝者総取り（winner-take-all）市場の分析において中核的概念であり、メトカーフの法則（ネットワークの価値はノード数の二乗に比例する）とも密接に関連する。標準化競争やスイッチングコストの経済分析にも応用される。',
+    keyFigures: 'マイケル・カッツ&カール・シャピロ（Katz & Shapiro, 1985年AER論文）／ジョセフ・ファレル&ガース・サロナー（Farrell & Saloner, 1985年RAND論文）／ロバート・メトカーフ（メトカーフの法則）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1818794', type: 'academic', label: 'Katz & Shapiro (1985) "Network Externalities, Competition, and Compatibility", American Economic Review（査読論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Network_effect', type: 'reference', label: 'Wikipedia — Network effect（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'consumer-contract-act',
+    discipline: 'business-law',
+    title: '消費者契約法',
+    statement:
+      '消費者契約法（平成12年法律第61号）は、消費者と事業者との間の情報の質・量および交渉力の格差を踏まえ、消費者の利益擁護を目的とする法律である。事業者の不実告知・断定的判断の提供・不利益事実の不告知等により消費者が誤認した場合、または退去妨害・不退去等により困惑させられた場合に、契約の取消しを認める。' +
+      'また、事業者の損害賠償責任を全部免除する条項や、消費者の利益を一方的に害する条項を無効とする。2000年制定、2001年4月1日施行。2016年（平成28年）改正で過量契約の取消権が追加され、2022年（令和4年）改正ではつけ込み型勧誘による取消権の拡充や契約条項の無効範囲の拡大等が行われた。消費者庁が所管する。',
+    keyFigures: '消費者契約法（平成12年法律第61号、2000年制定・2001年4月1日施行）／消費者庁所管／2016年・2022年改正',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=412AC0000000061', type: 'government', label: 'e-Gov法令検索 — 消費者契約法（平成12年法律第61号）' },
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_system/consumer_contract_act/', type: 'government', label: '消費者庁 — 消費者契約法（逐条解説・改正経緯）' },
+    ],
+  },
 ];
 // Stryker restore all

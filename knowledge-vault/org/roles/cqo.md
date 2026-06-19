@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全212件）
+### 学術概念 / ビジネス法務（全214件）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
 - [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]]
-- [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]]
-- …ほか 206 件 → [[学術概念]]
+- …ほか 208 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全200件）
+### 学術概念 / 情報社会学（全201件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]]
-- …ほか 194 件 → [[学術概念]]
+- …ほか 195 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全140件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
