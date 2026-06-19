@@ -21355,5 +21355,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://cmpf.eui.eu/media-pluralism-monitor/', type: 'academic', label: 'Centre for Media Pluralism and Media Freedom, European University Institute — Media Pluralism Monitor（EU委託によるメディア所有集中の定量評価枠組み）' },
     ],
   },
+  {
+    id: 'econ-implicit-contract-theory',
+    discipline: 'economics',
+    title: '暗黙的契約理論',
+    statement:
+      '暗黙的契約理論とは、雇用関係において労働者と企業の間に明文化されない暗黙の合意（契約）が存在し、それが賃金の硬直性と雇用安定を同時に説明する労働経済学の理論枠組みである。労働者はリスク回避的、企業はリスク中立的であるとの前提のもと、企業が賃金の変動リスクを引き受けて労働者に保険を提供し、その見返りとして景気後退期にも相対的に安定した雇用水準を維持するという均衡が成立する。' +
+      'コスタス・アザリアディスが1975年の論文「Implicit Contracts and Underemployment Equilibria」（Journal of Political Economy 83(6)）で、マーティン・N・ベイリーが1974年の論文（Review of Economic Studies 41(1)）で独立に理論化した。名目賃金の下方硬直性・景気連動的な雇用変動を情報の非対称性とリスク分担の観点から解明し、ニュー・ケインジアン経済学の基礎文献の一つとなった。',
+    keyFigures: 'コスタス・アザリアディス（Costas Azariadis, 1943–）／マーティン・N・ベイリー（Martin Neil Baily）／初出：Azariadis (1975) JPE 83(6)・Baily (1974) Review of Economic Studies 41(1)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/260388', type: 'academic', label: 'Azariadis, C. (1975) "Implicit Contracts and Underemployment Equilibria," Journal of Political Economy 83(6):1183–1202（University of Chicago Press）' },
+      { url: 'https://plato.stanford.edu/entries/economics/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Philosophy of Economics（名目硬直性・契約理論を含む労働市場分析の文脈）' },
+    ],
+  },
+  {
+    id: 'econ-bergson-welfare-function',
+    discipline: 'economics',
+    title: 'バーグソン＝サムエルソン社会厚生関数',
+    statement:
+      'バーグソン＝サムエルソン社会厚生関数とは、社会全体の厚生水準を個人の効用水準の関数として表現する規範的経済学の道具概念である。W＝W(U₁, U₂, …, Uₙ）と表され、アブラム・バーグソンが1938年の論文「A Reformulation of Certain Aspects of Welfare Economics」（Quarterly Journal of Economics 52(2)）で提唱し、ポール・サムエルソンが1947年の著書『経済分析の基礎』で数学的に精緻化した。' +
+      'この関数は、誰の効用をどの程度重視するかという価値判断（倫理的前提）を明示的に組み込み、功利主義・ロールズの格差原理・平等主義など異なる社会哲学が異なる関数形に対応する。社会的最適配分はこの関数を最大化する点として定義され、パレート最適集合上に存在するが、どの点を選ぶかは価値判断に依存する。アローの不可能性定理による個人選好集計の困難の指摘とあわせて厚生経済学の中核概念である。',
+    keyFigures: 'アブラム・バーグソン（Abram Bergson, 1914–2003）／ポール・A・サムエルソン（Paul A. Samuelson, 1915–2009、1970年ノーベル経済学賞）／初出：Bergson (1938) QJE・Samuelson (1947) Foundations',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1881737', type: 'academic', label: 'Bergson, A. (1938) "A Reformulation of Certain Aspects of Welfare Economics," Quarterly Journal of Economics 52(2):310–334（JSTOR）' },
+      { url: 'https://plato.stanford.edu/entries/social-choice/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Social Choice Theory（バーグソン厚生関数・アロー不可能性定理・パレート効率性の文脈）' },
+    ],
+  },
+  {
+    id: 'bizlaw-fiduciary-duty',
+    discipline: 'business-law',
+    title: '信認義務（受託者責任）',
+    statement:
+      '信認義務（fiduciary duty、受託者責任）とは、信認関係にある受託者（fiduciary）が委託者・受益者（beneficiary）の利益を最優先に行動しなければならない義務の総称であり、英米衡平法（equity）に起源をもつ法理である。典型的な信認関係には取締役と会社（株主）、弁護士と依頼人、信託の受託者と受益者、後見人と被後見人などがある。信認義務の核心は「忠実義務（duty of loyalty）」と「注意義務（duty of care）」の二本柱から成る。' +
+      '忠実義務は受託者が自己や第三者の利益を委託者の利益に優先させてはならず利益相反を回避・開示することを要求し、注意義務は合理的に慎重な者として期待される水準の注意・技能・勤勉をもって職務に当たることを要求する。日本法では会社法355条（取締役の忠実義務）・330条・民法644条（善管注意義務）がこれに対応する。金融商品取引業者の顧客本位義務・信託法29条以下でも中核概念として機能し、ESG投資や受益者利益優先のガバナンス論とも関連する。',
+    keyFigures: '忠実義務（duty of loyalty）・注意義務（duty of care）の二本柱／日本法：会社法355条（忠実義務）・民法644条（善管注意義務）・信託法29条以下',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/fiduciary-duty/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Fiduciary Duty（忠実義務・注意義務・信認関係の哲学的・法学的分析）' },
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 — 会社法（平成17年法律第86号）第355条（忠実義務）・第330条（委任の準用）' },
+    ],
+  },
+  {
+    id: 'infosoc-semantic-web',
+    discipline: 'information-sociology',
+    title: 'セマンティック・ウェブ',
+    statement:
+      'セマンティック・ウェブ（Semantic Web）とは、ウェブ上のデータに機械が解釈できる意味（セマンティクス）を付与し、コンピュータがデータの意味を自律的に処理・統合・推論できるようにするための技術的・概念的枠組みである。ティム・バーナーズ＝リー、ジェームズ・ヘンドラー、オラ・ラシラが2001年にScientific American誌に発表した論文「The Semantic Web」で構想を提示し、W3CがRDF・OWL・SPARQLを標準として策定した。' +
+      'セマンティック・ウェブは人間が読むためのHTMLウェブと対比される「機械が読めるウェブ」であり、Linked Dataとしてのオープンデータ公開運動（DBpedia・Wikidata・政府データの機械可読化）へと発展した。情報社会論の観点からは、知識の表現・共有・分散というウェブ本来の理念を体現する一方、データのサイロ化・プラットフォーム独占が進む現実との乖離が批判的に論じられる。Web 3.0・知識グラフ・AIの自然言語理解の文脈でも再注目される。',
+    keyFigures: 'ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／ジェームズ・ヘンドラー（James Hendler）／オラ・ラシラ（Ora Lassila）／初出：Berners-Lee, Hendler & Lassila (2001) Scientific American 284(5)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.w3.org/2001/sw/', type: 'reference', label: 'W3C — Semantic Web（標準化主体による公式概要・RDF/OWL/SPARQL等の規格一覧）' },
+      { url: 'https://www.britannica.com/topic/Semantic-Web', type: 'reference', label: 'Encyclopaedia Britannica — Semantic Web（概念・技術・Linked Dataとの関連の解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-bricolage',
+    discipline: 'information-sociology',
+    title: 'ブリコラージュ（文化人類学・メディア文化論）',
+    statement:
+      'ブリコラージュ（bricolage）とは、フランスの文化人類学者クロード・レヴィ＝ストロースが著書『野生の思考』（La Pensée sauvage, 1962）で提唱した概念で、「その場にある限られた材料や道具を手当たり次第に組み合わせて課題を解決する実践」を指す。目的に沿って設計・調達から始めるエンジニアの論理と対比され、手元の「既成の断片」を新たな問題へ組み替えるこの方法論は神話的思考の論理として定式化され、人間の認知と創造性の根源的様式とされた。' +
+      'メディア文化論ではディック・ヘブディジが著書『サブカルチャー：スタイルの意味するもの』（1979）でこの概念を援用し、パンク等のサブカルチャーにおける若者が大量消費商品・記号を流用・再文脈化して支配文化に対抗的な意味を付与するスタイル実践として再定式化した。デジタル・ネットワーク社会では、ユーザーがウェブ上の素材・ミーム・APIを再混合（remix）して文化的創造物を生む参加型文化と接続され、情報社会における創造・流用・著作権をめぐる議論の理論的資源となっている。',
+    keyFigures: 'クロード・レヴィ＝ストロース（Claude Lévi-Strauss, 1908–2009）『野生の思考』1962／ディック・ヘブディジ（Dick Hebdige）『サブカルチャー』1979',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/levi-strauss/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Claude Lévi-Strauss（ブリコラージュ・『野生の思考』・神話論の分析）' },
+      { url: 'https://www.britannica.com/biography/Claude-Levi-Strauss', type: 'reference', label: 'Encyclopaedia Britannica — Claude Lévi-Strauss（ブリコラージュ概念の位置づけ・著作解説）' },
+    ],
+  },
+  {
+    id: 'mgmt-stretch-goal',
+    discipline: 'management',
+    title: 'ストレッチ目標（超高難度目標）',
+    statement:
+      'ストレッチ目標（stretch goals）とは、現状の能力・資源から見て極端に困難で、達成方法が自明でないほど高く設定された目標をいう。適度に困難な目標が動機づけと業績を高めるとする目標設定理論（ロック＆レイサム）の延長に位置づけられるが、ストレッチ目標は「ほぼ不可能」に近い水準である点で質的に異なり、抜本的なイノベーションや非連続な変革を促す手段として用いられる。' +
+      'シトキンらは2011年の論文「The Paradox of Stretch Goals」（Academy of Management Review）で、ストレッチ目標は最近の業績が好調で余剰資源を持つ組織では奮起と学習を促す一方、業績不振で資源に乏しい組織ではかえって過度なリスクテイク・不正・士気低下を招くという逆説を指摘した。成功と失敗の両極端な帰結をもたらしやすく、適用文脈の見極めが重要とされる。',
+    keyFigures: 'シム・シトキン（Sim B. Sitkin）ら「The Paradox of Stretch Goals」Academy of Management Review 36(3), 2011／目標設定理論（ロック＆レイサム）の延長／GE等の経営実践で普及',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2011.61031811', type: 'academic', label: 'Sitkin et al. (2011) "The Paradox of Stretch Goals: Organizations in Pursuit of the Seemingly Impossible," Academy of Management Review 36(3):544–566' },
+      { url: 'https://hbr.org/2017/01/the-stretch-goal-paradox', type: 'media', label: 'Harvard Business Review (2017) "The Stretch Goal Paradox"（ストレッチ目標が有効な条件・逆効果となる条件の実務解説）' },
+    ],
+  },
 ];
 // Stryker restore all
