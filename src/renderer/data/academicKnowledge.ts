@@ -21019,5 +21019,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.legislation.gov.uk/ukpga/1967/7', type: 'government', label: 'UK Legislation — Misrepresentation Act 1967（英国不実表示法の条文・救済の根拠法）' },
     ],
   },
+  {
+    id: 'mgmt-substitutes-leadership',
+    discipline: 'management',
+    title: 'リーダーシップの代替要因理論',
+    statement:
+      'リーダーシップの代替要因理論（substitutes for leadership）とは、部下の特性・課題の性質・組織の構造といった状況変数が、リーダーの行動の効果を無効化（代替）したり阻害（中和）したりする場合があるとする理論である。スティーブン・カーとジョン・ジャーミアが1978年の論文「Substitutes for Leadership: Their Meaning and Measurement」で提唱した。' +
+      '「代替要因（substitute）」はリーダーシップをそもそも不要にする変数（例：高度に専門化された技能を持つ部下、フィードバックが内在した課題）を指し、「中和要因（neutralizer）」はリーダーの影響力を減殺するが代替機能は果たさない変数（例：部下がリーダー報酬に無関心）を指す。リーダー行動が万能でないことを指摘し、コンティンジェンシー理論を補完する枠組みとして知られる。',
+    keyFigures: 'スティーブン・カー（Steven Kerr）／ジョン・M・ジャーミア（John M. Jermier）／初出: 1978 Organizational Behavior and Human Performance 22(3):375–403',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0030507378900235', type: 'academic', label: 'Kerr & Jermier (1978) "Substitutes for Leadership: Their Meaning and Measurement," Organizational Behavior and Human Performance 22(3)（原論文・ScienceDirect）' },
+      { url: 'https://www.britannica.com/topic/leadership', type: 'reference', label: 'Encyclopaedia Britannica — Leadership（コンティンジェンシー理論・状況要因とリーダーシップ研究の文脈）' },
+    ],
+  },
+  {
+    id: 'human-gestalt-principles',
+    discipline: 'human-science',
+    title: 'ゲシュタルト知覚の法則',
+    statement:
+      'ゲシュタルト知覚の法則とは、人間の知覚系が個々の要素ではなく全体的なパターンや構造（ゲシュタルト＝形態）としてまとまりを捉えようとする傾向を記述した諸原則の総称である。20世紀初頭のドイツでマックス・ヴェルトハイマー・ヴォルフガング・ケーラー・クルト・コフカらゲシュタルト心理学者が確立した。中核的な主張は「全体は部分の総和以上」であり、知覚は受動的な要素の集積ではなく能動的な組織化であるとする。' +
+      '主要な法則として、類似した要素がまとまって見える「類似の法則」、近接した要素が一群として知覚される「近接の法則」、途切れていても閉じた図形として認識される「閉合の法則」、最も単純・安定した形として知覚される「プレグナンツの法則（良い形の法則）」、同一方向に動く要素がまとまる「共通運命の法則」などがある。広告・UXデザイン・タイポグラフィ等に応用され、認知科学でも研究が続く。',
+    keyFigures: 'マックス・ヴェルトハイマー（Max Wertheimer, 1880–1943, 1923年に知覚の諸法則を定式化）／ヴォルフガング・ケーラー（Wolfgang Köhler）／クルト・コフカ（Kurt Koffka）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/Gestalt-psychology', type: 'reference', label: 'Encyclopaedia Britannica — Gestalt psychology（ゲシュタルト心理学の起源・知覚法則・主要人物）' },
+      { url: 'https://www.britannica.com/biography/Max-Wertheimer', type: 'reference', label: 'Encyclopaedia Britannica — Max Wertheimer（ゲシュタルト知覚法則の定式化者の業績）' },
+    ],
+  },
+  {
+    id: 'bizlaw-two-stage-presumption',
+    discipline: 'business-law',
+    title: '二段の推定（文書の真正成立）',
+    statement:
+      '二段の推定とは、私文書の証拠力を認定する際に民事訴訟法228条4項が定める推定の構造を指す。同条項は「私文書は、本人又はその代理人の署名又は押印があるときは、真正に成立したものと推定する」と規定する。この「真正に成立」（作成名義人の意思に基づき作成された）を証明するため、実務上は印影の同一性から二段階の推定が働く。' +
+      '第一段階として、文書上の印影が作成名義人の印鑑と同一であれば、その印影はその者の意思に基づく押印と事実上推定される（最高裁昭和39年5月12日判決が確立）。第二段階として、そのような押印があれば民訴法228条4項による「真正な成立」の法律上の推定が及ぶ。この二重の推定で文書の証拠力が担保される一方、印鑑の盗用・冒用等を反証すれば推定を覆せる。電子署名法3条は電子文書に同趣旨の推定規定を置く。',
+    keyFigures: '民事訴訟法228条4項（押印による真正成立の推定）／最高裁昭和39年5月12日判決（第一段階・事実上の推定の確立）／電子署名法3条（電子文書への対応）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/408AC0000000109', type: 'government', label: 'e-Gov法令検索 — 民事訴訟法（平成8年法律第109号）第228条4項（私文書の真正成立の推定）' },
+      { url: 'https://laws.e-gov.go.jp/law/412AC0000000102', type: 'government', label: 'e-Gov法令検索 — 電子署名及び認証業務に関する法律（平成12年法律第102号）第3条（電子文書の真正成立の推定）' },
+    ],
+  },
+  {
+    id: 'infosoc-slow-journalism',
+    discipline: 'information-sociology',
+    title: 'スロー・ジャーナリズム',
+    statement:
+      'スロー・ジャーナリズムとは、速報・クリック数・PV至上主義に代表される現代デジタルメディアの速度競争に対するオルタナティブとして、時間をかけた深い取材・文脈の提供・長文の調査報道・読者との長期的関係を重視するジャーナリズムの潮流を指す。「スロー・フード」運動（1989年、カルロ・ペトリーニ創設）の理念をジャーナリズムに転用した概念であり、2010年代に研究者・実践者の間で活発に議論された。' +
+      'メディア研究者メーガン・ル・マズリエが2015年の論文「What is Slow Journalism?」（Journalism Practice）で概念を整理し、速報主義の弊害（誤報リスク・浅さ・読者疲弊）に対し質と深度を重視する規範的方向性を論じた。実践例として英国の長文ジャーナリズム誌Delayed Gratification（2011年創刊、「最後に報道する」をモットーに四半期ごとの検証報道を行う）が知られる。情報の洪水の中で「意味」と「信頼」の再構築を担う役割が期待される。',
+    keyFigures: 'カルロ・ペトリーニ（Carlo Petrini, スロー・フード運動創設1989、概念の転用元）／メーガン・ル・マズリエ（Megan Le Masurier, シドニー大学, "What is Slow Journalism?" 2015）／Delayed Gratification誌（英国, 2011創刊）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/17512786.2014.916471', type: 'academic', label: 'Le Masurier, M. (2015) "What is Slow Journalism?" Journalism Practice 9(2)（Taylor & Francis・概念整理の主要論文）' },
+      { url: 'https://www.slow-journalism.com/', type: 'media', label: 'The Slow Journalism Company / Delayed Gratification — スロー・ジャーナリズムを標榜する英国の長文ジャーナリズム誌（実践例）' },
+    ],
+  },
+  {
+    id: 'econ-sterilized-intervention',
+    discipline: 'economics',
+    title: '不胎化介入（外国為替市場介入）',
+    statement:
+      '不胎化介入とは、中央銀行が外国為替市場で自国通貨の売買を行った際、その結果として生じる国内マネタリーベースの変動を、逆方向の公開市場操作（国債売買等）で相殺することにより、国内の貨幣供給量を変化させないようにする政策手法をいう。' +
+      '対照的に、介入の国内流動性効果をそのまま容認する「非不胎化介入」は金融政策としての効果を伴う。不胎化介入の為替レートへの有効性については、ポートフォリオ・バランス・チャネル（資産構成変化による経路）とシグナリング・チャネル（将来の政策意図の伝達）の2経路が理論的に提唱されるが、実証結果は限定的・非一貫とされる。',
+    keyFigures: 'モーリス・オブズフェルド（Maurice Obstfeld, 1982「Can We Sterilize? Theory and Evidence」）／サルノ＆テイラー（Sarno & Taylor, 2001, Journal of Economic Literature）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2011/wp11191.pdf', type: 'government', label: 'IMF Working Paper WP/11/191 "Foreign Exchange Intervention: A Shield Against Appreciation Winds?"（不胎化・非不胎化介入の効果の実証分析）' },
+      { url: 'https://www.bis.org/publ/work73.pdf', type: 'government', label: 'BIS Working Papers No.73 (Neely 2000) "The Practice of Central Bank Intervention"（主要中央銀行の不胎化介入実態と有効性）' },
+    ],
+  },
+  {
+    id: 'econ-target-zone',
+    discipline: 'economics',
+    title: 'ターゲット・ゾーン（為替レート目標帯モデル）',
+    statement:
+      'ターゲット・ゾーン（為替レート目標帯）モデルは、ポール・クルーグマンが1991年の論文「Target Zones and Exchange Rate Dynamics」（Quarterly Journal of Economics）で定式化した、為替レートの帯（バンド）管理に関する理論である。当局が為替レートをある範囲（帯）内に維持すると信認されているとき、合理的期待を持つ市場参加者は帯の端に近づくにつれ通貨が逆方向に戻ると予測するため、境界に達する前から均衡レートが中央へ引き付けられる「ハネムーン効果」が生じることを示した。' +
+      'モデルの核心は、為替レートのブラウン運動（ランダムウォーク）に当局の反射的介入（境界到達時の限界介入）を組み合わせた確率過程の分析であり、帯の信認が保たれている限り為替レートの分布が帯の中央部に集中（S字型）することが導かれる。欧州通貨制度（EMS）等の管理変動制の分析に広く応用されたが、EMS危機（1992〜93年）はその前提となる「完全信認」の脆弱性も明らかにした。',
+    keyFigures: 'ポール・クルーグマン（Paul Krugman, 1991, Quarterly Journal of Economics 106(3):669–682）／フルート＆オブズフェルド（Froot & Obstfeld, 1991）／ラース・スヴェンソン（Lars Svensson, サーベイ研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/106/3/669/1873020', type: 'academic', label: 'Krugman, P. (1991) "Target Zones and Exchange Rate Dynamics," Quarterly Journal of Economics 106(3):669–682（原典）' },
+      { url: 'https://www.bis.org/publ/work22.pdf', type: 'government', label: 'BIS Working Papers No.22 (Svensson 1992) "An Interpretation of Recent Research on Exchange Rate Target Zones"（理論の体系的サーベイ）' },
+    ],
+  },
 ];
 // Stryker restore all
