@@ -20599,5 +20599,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://gdpr-info.eu/art-25-gdpr/', type: 'reference', label: 'GDPR Art. 25 — Data protection by design and by default（EUのプライバシー・バイ・デザイン法制化条文）' },
     ],
   },
+  {
+    id: 'econ-technological-unemployment',
+    discipline: 'economics',
+    title: '技術的失業',
+    statement:
+      '技術的失業（technological unemployment）とは、労働節約的な技術革新（機械化・自動化・AIの導入）が労働需要を恒久的に減少させ、置き換えられた労働者が他の雇用機会に再吸収されない形で失業が発生することを指す。ケインズが1930年の論考「孫の世代の経済的可能性」でこの用語を用いたことで広く知られる。' +
+      'しかし現実には、技術変化は同時に新たな財・サービス・職種に対する需要も生み出すとする「補償理論」との論争が続く。21世紀にはAI・ロボット工学の進展を背景にブリニョルフソンとマカフィーが再び「機械との競争」として問題提起し、ルーティン偏向型技術変化（RBTC）による中間技能職の空洞化（雇用の二極化）が実証されている。',
+    keyFigures: 'ジョン・メイナード・ケインズ（1930「孫の世代の経済的可能性」）／エリック・ブリニョルフソン＆アンドリュー・マカフィー（2011『Race Against The Machine』）／デイヴィッド・オーター（雇用の二極化の実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.29.3.3', type: 'academic', label: 'Autor, D. H. (2015) "Why Are There Still So Many Jobs? The History and Future of Workplace Automation," Journal of Economic Perspectives 29(3):3-30（AEA）' },
+      { url: 'https://www.imf.org/en/Publications/WP/Issues/2018/01/31/Robotics-Automation-Employment-and-the-Economy-What-Do-We-Know-45571', type: 'government', label: 'IMF Working Paper (2018) "Robotics, Automation, Employment and the Economy"（国際通貨基金）' },
+    ],
+  },
+  {
+    id: 'human-durkheim-suicide',
+    discipline: 'human-science',
+    title: 'デュルケームの自殺論（社会的統合と自殺）',
+    statement:
+      'エミール・デュルケームが1897年の著書『自殺論（Le Suicide）』で展開した、自殺を個人的な行為ではなく社会的事実として統計的・実証的に分析した社会学的研究。個人を社会集団に結びつける「社会的統合」と、行動の規範・規制の程度を示す「道徳的規制」という2軸から、自殺を4類型に分類した。' +
+      '類型は、社会的統合が弱すぎる利己的自殺、強すぎる利他的自殺、道徳的規制が弱すぎるアノミー的自殺、強すぎる宿命的自殺の4つである。宗教・職業・婚姻状況別の自殺率の差異を統計で示し、社会構造が個人の行動を規定するという社会学の基本命題を実証した先駆的研究で、現代の自殺予防・精神保健政策の社会的決定要因研究の源流をなす。',
+    keyFigures: 'エミール・デュルケーム（Émile Durkheim, 1858–1917）／『Le Suicide』（1897）／4類型：利己的・利他的・アノミー的・宿命的自殺',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/S/bo3625434.html', type: 'academic', label: 'Durkheim, É. "Suicide: A Study in Sociology," trans. Spaulding & Simpson, University of Chicago Press（原著1897年、英訳標準版）' },
+      { url: 'https://www.britannica.com/topic/Suicide-by-Emile-Durkheim', type: 'reference', label: 'Encyclopaedia Britannica — "Suicide" by Émile Durkheim（著作解説・4類型・社会的統合の概要）' },
+    ],
+  },
+  {
+    id: 'infosoc-cognitive-capitalism',
+    discipline: 'information-sociology',
+    title: '認知資本主義',
+    statement:
+      '認知資本主義（cognitive capitalism）とは、知識・情報・創造性・文化・情動といった非物質的・認知的な生産物が、資本主義的蓄積の主要な源泉となった現代の資本主義の段階を指す概念である。カルロ・ヴェルチェローネらパリ学派の経済学者が2000年代に体系化し、商業資本主義・産業資本主義に続く第3段階として位置づけた。' +
+      'この段階では、マルクスのいう「一般的知性（general intellect）」——社会全体に蓄積された知識・科学・技術——が生産の主要な力となり、知識は情報財と同じく非競合的・累積的な性質を帯びる。特許・著作権・ブランドなどの知的財産権がレントの主要形態となる一方で、共有知識・オープンソースに代表される「コモンズ」がこれに抗する動態を生み出すとされる。',
+    keyFigures: 'カルロ・ヴェルチェローネ（Carlo Vercellone）／イヴ・ムリエ＝ブータン（Yann Moulier-Boutang『Cognitive Capitalism』2011英訳）／源流：マルクス『経済学批判要綱』の「一般的知性」概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.polity.co.uk/book.asp?ref=9780745647326', type: 'academic', label: 'Moulier-Boutang, Y. (2011) "Cognitive Capitalism," Polity Press（認知資本主義の主要英語文献）' },
+      { url: 'https://www.oecd.org/en/publications/knowledge-based-economy_230700m2nik7.html', type: 'government', label: 'OECD (1996) "The Knowledge-Based Economy"（知識・認知が経済の中心となる変容を分析した先駆的報告書）' },
+    ],
+  },
+  {
+    id: 'infosoc-immaterial-labor',
+    discipline: 'information-sociology',
+    title: '非物質的労働（immaterial labor）',
+    statement:
+      '非物質的労働（immaterial labor）とは、情報・知識・コミュニケーション・情動・社会関係・記号といった非物質的な生産物や効果を生み出す労働形態を指す概念である。マウリッツィオ・ラザラートが1996年の論文で定式化し、知的・言語的な「知識型労働」と、人間関係・感情・ネットワークを生み出す「情動的労働（affective labor）」の2種に区分した。' +
+      'アントニオ・ネグリとマイケル・ハートは著書『帝国』（2000）・『マルチチュード』（2004）において非物質的労働をポスト・フォーディズム時代の主要な生産様式として論じ、コミュニケーション・ケア・情動・創造性の生産が協働の新たな形態を構成し、搾取と抵抗の新たな場となると主張した。デジタル労働やプラットフォーム上の無償の文化的営みとも連続する概念である。',
+    keyFigures: 'マウリッツィオ・ラザラート（Maurizio Lazzarato, 1996論文「Immaterial Labor」）／アントニオ・ネグリ（Antonio Negri）／マイケル・ハート（Michael Hardt）共著『帝国』(2000)・『マルチチュード』(2004)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.upress.umn.edu/9780816631179/radical-thought-in-italy/', type: 'academic', label: 'Virno, P. & Hardt, M. eds. (1996) "Radical Thought in Italy: A Potential Politics," University of Minnesota Press（ラザラート「Immaterial Labor」収録論集）' },
+      { url: 'https://plato.stanford.edu/entries/exploitation/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — "Exploitation"（搾取論の哲学的文脈・非物質的労働と関連する議論）' },
+    ],
+  },
+  {
+    id: 'mgmt-digital-transformation',
+    discipline: 'management',
+    title: 'デジタルトランスフォーメーション（DX）',
+    statement:
+      'デジタルトランスフォーメーション（DX）とは、デジタル技術の浸透が人々の生活あらゆる側面に影響を与え、社会・組織・ビジネスモデルを根本から変革するプロセスを指す。スウェーデン・ウメオ大学のエリック・ストルターマンが2004年の論文「Information Technology and the Good Life」で提唱した概念で、単なるIT化やデジタル化を超え、価値創造・組織文化・顧客体験の全面的変革を含む。' +
+      '経営戦略の観点からMITスローン経営大学院のウェスターマンらは、DXをデジタル能力と変革のリーダーシップの組み合わせと定式化し、「デジタル後進企業」から「デジタル成熟企業」への移行モデルを提示した。日本では経済産業省が2018年に「DXレポート」を発表し、2025年の崖（レガシーシステムへの過度な依存による損失）への警鐘を鳴らすとともにDX推進指標を策定した。',
+    keyFigures: 'エリック・ストルターマン（Erik Stolterman, ウメオ大学、2004年DX概念の提唱）／ジョージ・ウェスターマン（George Westerman, MITスローン）『Leading Digital』（2014）／経済産業省「DXレポート」（2018）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.meti.go.jp/shingikai/mono_info_service/digi_transformation/20180907_report.html', type: 'government', label: '経済産業省「DXレポート ～ITシステム『2025年の崖』克服とDXの本格的な展開～」（2018年9月）' },
+      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/what-is-digital-transformation', type: 'academic', label: 'MIT Sloan — "What is digital transformation?"（MITスローン経営大学院、ウェスターマンら研究グループによる解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-franchise-contract',
+    discipline: 'business-law',
+    title: 'フランチャイズ契約',
+    statement:
+      'フランチャイズ契約とは、フランチャイザー（本部）が加盟者（フランチャイジー）に対し、商標・商号・経営ノウハウ・システムを使用して同一の事業を行う権利を付与し、フランチャイジーがその対価としてロイヤリティを支払うことを骨子とする継続的商事契約である。日本に独立した成文法典はなく、民法・商法・独占禁止法・中小小売商業振興法・特定商取引法が複合的に適用される。' +
+      '公正取引委員会の「フランチャイズ・システムに関する独占禁止法上の考え方について」（1983年策定・2021年改訂）は、加盟店募集時の情報開示義務、コンビニ等における24時間営業強制の問題、ドミナント出店による売上侵食など本部と加盟店間の優越的地位の濫用を論点として扱う。中小小売商業振興法（1973年）は一定の本部に法定開示書面の事前交付と説明義務を課す。',
+    keyFigures: '日本に独立成文法典なし／中小小売商業振興法（1973年）の法定開示書面交付・説明義務／公正取引委員会「フランチャイズ・システムに関する独占禁止法上の考え方」（1983年策定・2021年改訂）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/franchise.html', type: 'government', label: '公正取引委員会「フランチャイズ・システムに関する独占禁止法上の考え方について」（2021年改訂版、優越的地位の濫用の規律）' },
+      { url: 'https://www.chusho.meti.go.jp/shogyo/fc/index.html', type: 'government', label: '中小企業庁「フランチャイズ関連情報」（中小小売商業振興法に基づく法定開示の概要）' },
+    ],
+  },
 ];
 // Stryker restore all
