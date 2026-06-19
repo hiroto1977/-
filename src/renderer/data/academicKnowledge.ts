@@ -19339,5 +19339,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Reciprocal_altruism', type: 'reference', label: 'Wikipedia — Reciprocal altruism' },
     ],
   },
+  {
+    id: 'econ-elasticity-pessimism',
+    discipline: 'economics',
+    title: '弾力性ペシミズム',
+    statement:
+      '弾力性ペシミズムとは、1940〜50年代に貿易経済学者の間で広まった見解で、輸出入の価格弾力性が低いため為替レートの切り下げ（減価）では貿易収支を改善できないとする悲観論である。マーシャル＝ラーナー条件（輸出入の価格弾力性の絶対値の和が1を超えれば切り下げが貿易収支を改善する）が満たされないと主張した。' +
+      'オーカット（1950）は推計手法の集計バイアスにより弾力性が過小推定されていると批判し、後の実証研究で多くの国の弾力性がマーシャル＝ラーナー条件を満たすことが示され、弾力性ペシミズムは克服された。この論争は国際収支調整の弾力性アプローチの発展に寄与した。',
+    keyFigures: 'フリッツ・マハループ（Fritz Machlup, 1902–1983）／ガイ・H・オーカット（Guy H. Orcutt, 1917–2006）／アバ・ラーナー（Abba P. Lerner, 1903–1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1927418', type: 'academic', label: 'Orcutt, G. H. (1950) "Measurement of Price Elasticities in International Trade" Review of Economics and Statistics 32(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia — Marshall–Lerner condition' },
+    ],
+  },
+  {
+    id: 'mgmt-peter-principle',
+    discipline: 'management',
+    title: 'ピーターの法則',
+    statement:
+      'ピーターの法則は、1969年にローレンス・J・ピーターとレイモンド・ハルが著書『The Peter Principle: Why Things Always Go Wrong』で提唱した組織論の概念で、階層組織において有能な構成員は現職での業績に基づき昇進を繰り返し、やがて能力の限界に達する地位（無能レベル）に到達すると説く。' +
+      '当初は風刺として受容されたが、ベンソン、リー、シューが2019年にQuarterly Journal of Economicsで131社のデータを分析し、企業が管理職適性よりも現職の業績を昇進基準とする傾向を実証的に裏付け、本法則の学術的妥当性を確認した。',
+    keyFigures: 'ローレンス・J・ピーター（Laurence J. Peter, 1919–1990）／レイモンド・ハル（Raymond Hull, 1919–1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Laurence-J-Peter', type: 'reference', label: 'Britannica — Laurence J. Peter' },
+      { url: 'https://academic.oup.com/qje/article/134/4/2085/5550760', type: 'academic', label: 'Benson, Li & Shue (2019) "Promotions and the Peter Principle" Quarterly Journal of Economics 134(4)' },
+    ],
+  },
+  {
+    id: 'human-place-attachment',
+    discipline: 'human-science',
+    title: 'プレイス・アタッチメント（場所愛着）',
+    statement:
+      'プレイス・アタッチメントとは、人と特定の場所の間に形成される感情的・認知的・行動的な絆を指す環境心理学の概念である。1992年にアーウィン・アルトマンとセサ・ロウが編著『Place Attachment』（Human Behavior and Environment叢書第12巻）で学術的枠組みを確立し、住居・近隣・都市・景観への愛着を多分野横断的に体系化した。' +
+      'スキャネルとギフォードは2010年にJournal of Environmental Psychology誌で「人（Person）・過程（Process）・場所（Place）」の三部構成モデル（PPPモデル）を提唱し、愛着の主体・心理的メカニズム・対象場所の特性を統合的に整理した。',
+    keyFigures: 'アーウィン・アルトマン（Irwin Altman, 1930–）／セサ・M・ロウ（Setha M. Low, 1948–）／レイラ・スキャネル（Leila Scannell）／ロバート・ギフォード（Robert Gifford, 1950–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/book/9781468487558', type: 'academic', label: 'Altman, I. & Low, S. M. (Eds.) (1992) Place Attachment, Plenum Press (Human Behavior and Environment Vol. 12)' },
+      { url: 'https://www.semanticscholar.org/paper/Defining-place-attachment:-A-tripartite-organizing-Scannell-Gifford/b765851702712cb21ad140bbcf0deb1a17f051dd', type: 'academic', label: 'Scannell, L. & Gifford, R. (2010) "Defining place attachment: A tripartite organizing framework" Journal of Environmental Psychology 30(1)' },
+    ],
+  },
+  {
+    id: 'human-wernicke-aphasia',
+    discipline: 'human-science',
+    title: 'ウェルニッケ失語',
+    statement:
+      'ウェルニッケ失語は、左側頭葉後部の上側頭回（ブロードマン22野）に位置するウェルニッケ野の損傷により生じる流暢性失語で、発話は流暢だが内容が支離滅裂となり聴覚的言語理解が著しく障害される。1874年にドイツの神経学者カール・ウェルニッケが著書『Der aphasische Symptomencomplex』で初めて記述した。' +
+      'ブローカが1861年に報告した運動性失語（非流暢性失語）と対比され、後にノーマン・ゲシュヴィントがウェルニッケ野・弓状束・ブローカ野を結ぶ言語処理回路モデル（ウェルニッケ＝ゲシュヴィントモデル）として体系化し、神経言語学の基盤を確立した。',
+    keyFigures: 'カール・ウェルニッケ（Carl Wernicke, 1848–1905）／ポール・ブローカ（Paul Broca, 1824–1880）／ノーマン・ゲシュヴィント（Norman Geschwind, 1926–1984）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK441951/', type: 'academic', label: 'StatPearls — Wernicke Aphasia (NCBI/NIH peer-reviewed medical reference)' },
+      { url: 'https://www.britannica.com/biography/Carl-Wernicke', type: 'reference', label: 'Britannica — Carl Wernicke' },
+    ],
+  },
+  {
+    id: 'infosoc-cultural-lag',
+    discipline: 'information-sociology',
+    title: 'カルチュラル・ラグ（文化遅滞）',
+    statement:
+      'カルチュラル・ラグ（文化遅滞）とは、技術・機械などの物質的文化が急速に変化するのに対し、制度・価値観・法律などの非物質的（適応的）文化の変化が遅れることで社会的不適応が生じるという理論である。W・F・オグバーンが1922年の著書『Social Change with Respect to Culture and Original Nature』で提唱した。' +
+      'オグバーンはコロンビア大学およびシカゴ大学で教鞭をとり、1929年にはアメリカ社会学会会長を務めた。現代ではAI・SNSなど技術進歩が法規制や倫理規範の整備を追い越す現象の分析枠組みとして情報社会学でも広く援用されている。',
+    keyFigures: 'ウィリアム・フィールディング・オグバーン（William Fielding Ogburn, 1886–1959）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/William-Fielding-Ogburn', type: 'reference', label: 'Britannica — William Fielding Ogburn' },
+      { url: 'https://www.asanet.org/william-f-ogburn/', type: 'academic', label: 'American Sociological Association — William F. Ogburn (ASA Past Presidents)' },
+    ],
+  },
+  {
+    id: 'bizlaw-waste-management-act',
+    discipline: 'business-law',
+    title: '廃棄物処理法（廃棄物の処理及び清掃に関する法律）',
+    statement:
+      '廃棄物処理法（昭和45年法律第137号）は、廃棄物の排出抑制・適正処理・生活環境の保全を目的とする日本の基本法であり、1970年に旧清掃法（1954年）を全面改正して制定された。廃棄物を一般廃棄物と産業廃棄物に区分し、産業廃棄物については排出事業者責任の原則のもと処理業の許可制度およびマニフェスト（産業廃棄物管理票）制度を規定する。' +
+      '1991年改正でリサイクル促進の理念を導入し、2003年改正で不法投棄の罰則を大幅に強化（法人に対し1億円以下の罰金）するなど、環境規制の厳格化に伴い累次の改正が行われている。企業のコンプライアンスにおいて廃棄物の適正管理は重要な法的義務である。',
+    keyFigures: '環境省（所管官庁）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/345AC0000000137', type: 'government', label: 'e-Gov法令検索 — 廃棄物の処理及び清掃に関する法律（昭和45年法律第137号）' },
+      { url: 'https://www.env.go.jp/recycle/waste/laws.html', type: 'government', label: '環境省 — 廃棄物処理法の概要' },
+    ],
+  },
 ];
 // Stryker restore all
