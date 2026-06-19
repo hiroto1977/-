@@ -19087,5 +19087,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/index.html', type: 'government', label: '厚生労働省 — 労働基準法の基礎知識' },
     ],
   },
+  {
+    id: 'okuns-law',
+    discipline: 'economics',
+    title: 'オークンの法則',
+    statement:
+      'オークンの法則とは、失業率とGDPギャップの間に観察される経験的な負の相関関係である。1962年にアーサー・オークンが提唱し、失業率が自然失業率を1%上回るごとに、実質GDPが潜在GDPを約2〜3%下回るとされる（ギャップ版）。' +
+      '構造的な経済法則ではなく統計的規則性であり、オークン係数は国や時代により変動する。日本では係数が米国より小さい傾向があり、労働市場の制度的差異（終身雇用慣行・雇用調整助成金等）を反映している。マクロ経済政策の評価や産出量ギャップの推定に広く活用される基本的な経験則である。',
+    keyFigures: 'アーサー・オークン（Arthur M. Okun, 1928–1980、イェール大学教授・米国経済諮問委員会委員長）（1962年提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/01onal621.1962.10480648', type: 'academic', label: 'Okun, A.M. (1962) "Potential GNP: Its Measurement and Significance", Proceedings of the Business and Economics Statistics Section, ASA（原著論文）' },
+      { url: 'https://doi.org/10.1111/jmcb.12420', type: 'academic', label: 'Ball, Leigh & Loungani (2017) "Okun\'s Law: Fit at 50?", Journal of Money, Credit and Banking 49(7), 1413–1441（国際比較査読論文）' },
+    ],
+  },
+  {
+    id: 'design-thinking',
+    discipline: 'management',
+    title: 'デザイン思考',
+    statement:
+      'デザイン思考とは、ハーバート・サイモンが『The Sciences of the Artificial』（1969年）で設計を科学的に体系化した概念を起点とし、IDEOおよびスタンフォード大学d.school（2004年設立）が実践手法として確立した人間中心の反復的問題解決方法論である。' +
+      '共感（Empathize）・問題定義（Define）・創造（Ideate）・試作（Prototype）・検証（Test）の5段階から成り、利用者の潜在ニーズを深く理解し、技術的実現可能性と事業戦略的妥当性を両立させながら革新的な解決策を生み出すことを目的とする。ティム・ブラウンが2008年のHarvard Business Review論文で経営手法として広く普及させた。',
+    keyFigures: 'ハーバート・サイモン（Herbert Simon, 1916–2001、1969年理論的基礎）／デヴィッド・ケリー（David Kelley、IDEO創業・2004年d.school設立）／ティム・ブラウン（Tim Brown、2008年HBR論文で普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/2008/06/design-thinking', type: 'academic', label: 'Brown, T. (2008) "Design Thinking", Harvard Business Review 86, 84–92（普及論文）' },
+      { url: 'https://dschool.stanford.edu/', type: 'academic', label: 'Stanford d.school — Hasso Plattner Institute of Design（公式サイト）' },
+    ],
+  },
+  {
+    id: 'milgram-obedience',
+    discipline: 'human-science',
+    title: 'ミルグラム実験（服従の心理）',
+    statement:
+      'ミルグラム実験（服従の心理）は、1961〜1962年にスタンレー・ミルグラムがイェール大学で実施した社会心理学実験である。被験者は権威者（実験者）の指示に従い、別室の協力者（サクラ）に対して段階的に強い電気ショックを与えるよう求められた。最大450ボルトまで到達した被験者は約65%に上った。' +
+      '権威への服従が個人の道徳的判断を容易に凌駕しうることを実証し、状況要因が人間行動に及ぼす力の大きさを示した。ホロコーストにおける「平凡な悪」（ハンナ・アーレント）の心理的メカニズムへの理解にも寄与した。研究倫理の議論を喚起し、インフォームド・コンセント等の倫理基準整備の契機ともなった。',
+    keyFigures: 'スタンレー・ミルグラム（Stanley Milgram, 1933–1984）（1963年発表）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0040525', type: 'academic', label: 'Milgram, S. (1963) "Behavioral Study of Obedience", Journal of Abnormal and Social Psychology 67(4), 371–378（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Milgram_experiment', type: 'reference', label: 'Wikipedia — Milgram experiment（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'companies-act',
+    discipline: 'business-law',
+    title: '会社法',
+    statement:
+      '会社法（平成17年法律第86号）は、2005年に制定され2006年5月1日に施行された、会社の設立・組織・運営および管理について定める日本の基本法である。従来、商法第二編・有限会社法・商法特例法等に分散していた会社関連規定を一本化し、現代の企業活動に適合する統一的な法体系を構築した。' +
+      '株式会社・合同会社等の設立手続、取締役会・監査役・指名委員会等設置会社などの機関設計、株式・社債の発行、合併・会社分割・株式交換等の組織再編、および解散・清算を包括的に規律する。2014年（平成26年）改正では社外取締役の機能強化等コーポレート・ガバナンス改革が推進された。法務省が所管する。',
+    keyFigures: '会社法（平成17年法律第86号、2005年制定・2006年5月1日施行）／商法等を一本化／法務省所管／2014年改正（ガバナンス強化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=417AC0000000086', type: 'government', label: 'e-Gov法令検索 — 会社法（平成17年法律第86号）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji12_00043.html', type: 'government', label: '法務省 — 会社法の概要' },
+    ],
+  },
+  {
+    id: 'knowledge-gap-hypothesis',
+    discipline: 'information-sociology',
+    title: '知識格差仮説',
+    statement:
+      '知識格差仮説（Knowledge Gap Hypothesis）は、1970年にティチェナー、ドノヒュー、オリエンが提唱したマスコミュニケーション理論である。社会におけるマスメディア情報の流入量が増加すると、社会経済的地位（SES）の高い層は低い層よりも速く知識を獲得するため、両者の知識格差は縮小するのではなくむしろ拡大するという仮説である。' +
+      '教育水準が知識獲得速度を左右する主要変数とされ、情報へのアクセス能力・処理能力・既有知識・社会的接触の差異がメカニズムとして指摘される。現代ではデジタル・ディバイド研究の理論的基盤としても重要視され、インターネットやSNSの普及が格差を縮小するか拡大するかが議論されている。',
+    keyFigures: 'フィリップ・ティチェナー（Philip J. Tichenor, 1930–2014）／ジョージ・ドノヒュー（George A. Donohue, 1928–2008）／クラリス・オリエン（Clarice N. Olien, 1929–2011）（1970年提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/267786', type: 'academic', label: 'Tichenor, Donohue & Olien (1970) "Mass Media Flow and Differential Growth in Knowledge", Public Opinion Quarterly 34(2), 159–170（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia — Knowledge gap hypothesis（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'industrial-safety-health-act',
+    discipline: 'business-law',
+    title: '労働安全衛生法',
+    statement:
+      '労働安全衛生法（昭和47年法律第57号）は、1972年に労働基準法から分離独立して制定された、職場における労働者の安全と健康を確保し快適な職場環境の形成を促進することを目的とする法律である。事業者に対し、安全管理者・衛生管理者・産業医の選任、リスクアセスメントの実施、定期健康診断の実施、危険有害業務への措置を義務付ける。' +
+      '2014年改正（平成26年法律第82号）により、従業員50人以上の事業場にストレスチェック制度（2015年12月1日施行）が導入され、労働者のメンタルヘルス対策が強化された。化学物質管理・機械安全・建設現場安全など多岐にわたる安全衛生規則を傘下に持つ。厚生労働省が所管する。',
+    keyFigures: '労働安全衛生法（昭和47年法律第57号、1972年制定）／労働基準法から分離独立／2014年改正でストレスチェック制度導入／厚生労働省所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=347AC0000000057', type: 'government', label: 'e-Gov法令検索 — 労働安全衛生法（昭和47年法律第57号）' },
+      { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/', type: 'government', label: '厚生労働省 — ストレスチェック制度について' },
+    ],
+  },
 ];
 // Stryker restore all
