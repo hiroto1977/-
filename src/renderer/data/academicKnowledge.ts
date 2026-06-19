@@ -19507,5 +19507,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/mentoring', type: 'reference', label: 'Britannica — Mentoring' },
     ],
   },
+  {
+    id: 'econ-kalecki-profit',
+    discipline: 'economics',
+    title: 'カレツキの利潤理論',
+    statement:
+      'カレツキの利潤理論はポーランドの経済学者ミハウ・カレツキが1933年の著書『景気循環理論の試み（Próba teorii koniunktury）』で提唱したマクロ経済理論であり、ケインズの一般理論（1936年）に先立ち有効需要の原理を独自に確立した。' +
+      '利潤方程式P＝I＋Ckは「労働者は稼いだものを消費し、資本家は支出したものを稼ぐ」という命題を定式化し、投資と資本家消費が総利潤を決定するという因果の方向を逆転させた。拡張形では財政赤字・貿易黒字も利潤の決定要因に含まれ、ポスト・ケインズ派分配理論の基礎となっている。',
+    keyFigures: 'ミハウ・カレツキ（Michał Kalecki, 1899–1970）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://wiiw.ac.at/kalecki-s-profit-equation-after-80-years-dlp-3020.pdf', type: 'academic', label: 'wiiw Working Paper — Kalecki\'s Profit Equation after 80 Years' },
+      { url: 'https://en.wikipedia.org/wiki/Micha%C5%82_Kalecki', type: 'reference', label: 'Wikipedia — Michał Kalecki' },
+    ],
+  },
+  {
+    id: 'mgmt-action-learning',
+    discipline: 'management',
+    title: 'アクションラーニング',
+    statement:
+      'アクションラーニングとは、少人数チーム（セット）が現実の経営課題に取り組み、行動と振り返り（リフレクション）を繰り返しながら個人・組織の学習力を高めるチーム学習法である。レグ・レバンスが1940年代に考案しL＝P＋Q（学習＝既存知識＋質問による洞察）の公式で体系化した。' +
+      '1971年の著書『Developing Effective Managers』で理論的基盤を整え、1983年の『ABC of Action Learning』で方法論を簡潔に提示した。日本でも1990年代後半からリーダーシップ開発・組織開発の手法として広く導入されている。',
+    keyFigures: 'レグ・レバンス（Reg Revans, 1907–2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jial.or.jp/about/detail/', type: 'academic', label: '日本アクションラーニング協会（JIAL）— アクションラーニングとは' },
+      { url: 'https://en.wikipedia.org/wiki/Reg_Revans', type: 'reference', label: 'Wikipedia — Reg Revans' },
+    ],
+  },
+  {
+    id: 'human-somatic-marker',
+    discipline: 'human-science',
+    title: 'ソマティック・マーカー仮説',
+    statement:
+      'ソマティック・マーカー仮説は、ポルトガル系アメリカ人の神経科学者アントニオ・ダマシオが1994年の著書『デカルトの誤り（Descartes\' Error）』で提唱した理論で、意思決定において心拍変化・発汗などの身体的感情反応が無意識の「マーカー」として機能し合理的判断を導くと主張する。' +
+      'アイオワ・ギャンブリング課題（Bechara et al. 1994）や腹内側前頭前野損傷患者の研究により、感情と認知は分離不可能であり感情なき純粋理性による適切な意思決定は困難であることが実証された。デカルト的心身二元論への根本的批判として神経科学に大きな影響を与えた。',
+    keyFigures: 'アントニオ・ダマシオ（Antonio Damasio, 1944–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://bsd.neuroinf.jp/wiki/%E3%82%BD%E3%83%9E%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E3%83%BB%E3%83%9E%E3%83%BC%E3%82%AB%E3%83%BC%E4%BB%AE%E8%AA%AC', type: 'academic', label: '脳科学辞典 — ソマティック・マーカー仮説' },
+      { url: 'https://en.wikipedia.org/wiki/Somatic_marker_hypothesis', type: 'reference', label: 'Wikipedia — Somatic marker hypothesis' },
+    ],
+  },
+  {
+    id: 'human-synesthesia',
+    discipline: 'human-science',
+    title: '共感覚（シナスタジア）',
+    statement:
+      '共感覚とは、ある感覚刺激が自動的に別の感覚体験を引き起こす神経学的現象であり、文字に色を感じる色字共感覚や音に色を感じる色聴など60〜80の亜型が存在し、人口の約2〜4%に見られる。フランシス・ゴルトンが1880年にNature誌で初の体系的研究を発表した。' +
+      'リチャード・サイトウィックが1989年の著書『Synesthesia: A Union of the Senses』で科学的関心を復活させ、V・S・ラマチャンドランとE・M・ハバードが2001年に脳の交差活性化モデルを提唱し、文字処理領域と色覚領域（V4野）の直接的な神経結合による共感覚の神経基盤を解明した。',
+    keyFigures: 'フランシス・ゴルトン（Francis Galton, 1822–1911）／リチャード・サイトウィック（Richard E. Cytowic, 1952–）／V・S・ラマチャンドラン（V. S. Ramachandran, 1951–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://oecs.mit.edu/pub/rma3jjdk/release/1', type: 'academic', label: 'MIT Open Encyclopedia of Cognitive Science — Synesthesia' },
+      { url: 'https://link.springer.com/book/10.1007/978-1-4612-3542-2', type: 'academic', label: 'Cytowic, R. E. (1989) Synesthesia: A Union of the Senses, Springer' },
+    ],
+  },
+  {
+    id: 'bizlaw-lay-judge-act',
+    discipline: 'business-law',
+    title: '裁判員法（裁判員の参加する刑事裁判に関する法律）',
+    statement:
+      '裁判員の参加する刑事裁判に関する法律（平成16年法律第63号）は、2004年5月成立・2009年5月21日施行の法律で、選挙人名簿から無作為に選ばれた裁判員6人が裁判官3人と共に重大刑事事件（死刑又は無期の懲役・禁錮に当たる罪等）の審理・判決に参加する制度を定める。' +
+      '評決は多数決で行われるが有罪判決には裁判官1人以上の賛成が必要であり、裁判員は事実認定と量刑の双方に関与する。2001年の司法制度改革審議会意見書に基づく司法制度改革の柱として制定され、国民の司法参加を通じ司法への理解と信頼の向上を目的とする。',
+    keyFigures: '司法制度改革審議会（2001年意見書）／最高裁判所（制度運営）／法務省',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/416AC0000000063', type: 'government', label: 'e-Gov法令検索 — 裁判員の参加する刑事裁判に関する法律（平成16年法律第63号）' },
+      { url: 'https://www.courts.go.jp/saibanin/introduction/index.html', type: 'government', label: '裁判所 — 裁判員制度の概要' },
+    ],
+  },
+  {
+    id: 'infosoc-automated-journalism',
+    discipline: 'information-sociology',
+    title: '自動ジャーナリズム（ロボットジャーナリズム）',
+    statement:
+      '自動ジャーナリズムとは、構造化データ（スポーツ結果・企業決算・地震速報等）からアルゴリズムにより自動的にニュース記事を生成する技術である。2014年にAP通信がAutomated Insights社のWordsmithを導入し四半期決算記事を約300本から約3000本へ増産した事例が転換点となった。' +
+      'Graefeは2016年にコロンビア大学Tow Centerから刊行した『Guide to Automated Journalism』で透明性・説明責任・雇用への影響等の論点を体系的に整理し、Clerwall（2014）の実験では読者がアルゴリズム生成記事と人間記者の記事を明確に区別できないことが示された。',
+    keyFigures: 'アンドレアス・グレーフェ（Andreas Graefe）／クリステル・クレルヴァル（Christer Clerwall）／クリスティアン・ハモンド（Kristian Hammond, Narrative Science共同創設者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cjr.org/tow_center_reports/guide_to_automated_journalism.php', type: 'academic', label: 'Graefe, A. (2016) "Guide to Automated Journalism" Columbia Journalism Review / Tow Center' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/17512786.2014.883116', type: 'academic', label: 'Clerwall, C. (2014) "Enter the Robot Journalist" Journalism Practice 8(5)' },
+    ],
+  },
 ];
 // Stryker restore all
