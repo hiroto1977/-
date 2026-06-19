@@ -20851,5 +20851,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://competition-policy.ec.europa.eu/mergers/overview_en', type: 'government', label: 'European Commission — Mergers overview（EU合併規則・市場画定・競争評価・条件付き承認）' },
     ],
   },
+  {
+    id: 'econ-hyperinflation',
+    discipline: 'economics',
+    title: 'ハイパーインフレーション（超インフレ）',
+    statement:
+      'ハイパーインフレーションとは、物価水準が極端に急激な速度で上昇し続ける経済現象を指す。経済学者フィリップ・ケーガンは1956年の論文で「月率50%超の物価上昇が始まった翌月から、月率50%を下回った後1ヶ月が経過するまでの期間」と定義した。' +
+      '主要な原因は、財政赤字を補填するための中央銀行による貨幣の大量発行（マネタイゼーション）とされ、通貨への信頼喪失が物価上昇を加速させる自己強化的な悪循環をもたらす。代表例に1923年ドイツ（ワイマール共和国）、1946年ハンガリー、2008年ジンバブエの事例がある。',
+    keyFigures: 'フィリップ・ケーガン（Phillip D. Cagan, 1928–2012）「The Monetary Dynamics of Hyperinflation」(1956, Friedman編『Studies in the Quantity Theory of Money』収録)／月率50%超という定義を提示',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2007/wp0758.pdf', type: 'government', label: 'IMF Working Paper — Hanke & Kwok "On the Measurement of Zimbabwe\'s Hyperinflation"（ジンバブエ超インフレの計測・ケーガン定義の適用）' },
+      { url: 'https://www.britannica.com/money/hyperinflation', type: 'reference', label: 'Encyclopaedia Britannica Money — Hyperinflation（定義・原因・歴史的事例の概説）' },
+    ],
+  },
+  {
+    id: 'econ-varieties-of-capitalism',
+    discipline: 'economics',
+    title: '資本主義の多様性（VoC）論',
+    statement:
+      '資本主義の多様性（Varieties of Capitalism, VoC）論とは、ピーター・ホールとデイヴィッド・ソスキスが2001年の著書『Varieties of Capitalism』で提示した比較資本主義論の枠組みである。先進諸国の経済システムを「自由市場経済（LME: Liberal Market Economy）」と「調整市場経済（CME: Coordinated Market Economy）」の2類型に整理し、制度的補完性に基づく国際競争優位の差異を説明する。' +
+      'LME（米英など）では市場と価格メカニズムを通じた調整が支配的で、労働市場の流動性・短期株主重視・急進的イノベーションに特徴がある。CME（ドイツ・日本・北欧など）では企業・労働・金融・教育などの制度間の非市場的調整が機能し、長期雇用・銀行融資・漸進的イノベーションが優位となる。各体制には固有の比較制度優位があり、収斂を否定し多様性の持続を説く。',
+    keyFigures: 'ピーター・A・ホール（Peter A. Hall, ハーバード大学）／デイヴィッド・ソスキス（David Soskice, LSE）／共著『Varieties of Capitalism』2001年, Oxford University Press',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/book/771', type: 'academic', label: 'Oxford University Press — Hall & Soskice eds.『Varieties of Capitalism: The Institutional Foundations of Comparative Advantage』(2001) 原著' },
+      { url: 'https://www.britannica.com/topic/capitalism', type: 'reference', label: 'Encyclopaedia Britannica — Capitalism（資本主義の制度的多様性・比較資本主義論の文脈）' },
+    ],
+  },
+  {
+    id: 'mgmt-platform-leadership',
+    discipline: 'management',
+    title: 'プラットフォーム・リーダーシップ',
+    statement:
+      'プラットフォーム・リーダーシップとは、アナベル・ガワーとマイケル・クサマノが2002年の著書『Platform Leadership』で提唱した、企業が自社製品をプラットフォームとして位置づけ、補完業者のエコシステムを育成・統合することで業界全体のイノベーションを主導する戦略的リーダーシップの概念である。' +
+      '同概念では、プラットフォームを「共通の技術基盤の上に構築される補完製品・サービスの生態系」と定義し、リーダー企業が直面する「4つのレバー」として、(1)スコープ（コアか補完か）、(2)外部関係（協力か競争か）、(3)知的財産の公開度（オープンかクローズか）、(4)内部組織の構造を挙げる。ネットワーク効果と補完性を活かして持続的競争優位を構築する論理を説く。',
+    keyFigures: 'アナベル・ガワー（Annabelle Gawer, サリー大学）／マイケル・クサマノ（Michael A. Cusumano, MITスローン）／共著『Platform Leadership』2002, Harvard Business School Press',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitsloan.mit.edu/faculty/directory/michael-a-cusumano', type: 'academic', label: 'MITスローン経営大学院 — Michael A. Cusumano 教授プロフィール（Platform Leadership共著者・プラットフォーム戦略研究）' },
+      { url: 'https://hbsp.harvard.edu/product/2264-HTM-ENG', type: 'academic', label: 'Harvard Business School Publishing — Gawer & Cusumano『Platform Leadership』(2002) 原著' },
+    ],
+  },
+  {
+    id: 'human-automation-bias',
+    discipline: 'human-science',
+    title: 'オートメーション・バイアス（自動化バイアス）',
+    statement:
+      'オートメーション・バイアス（automation bias）とは、自動化されたシステムやアルゴリズムが出力した情報・勧告を、人間が批判的吟味なく過度に信頼・追随してしまう認知バイアスである。キャスリーン・モージャーとリンダ・スキトカらが1990年代の実験研究で概念を定式化した。' +
+      '自動化バイアスの発現形態は二種類に区別される。一つは「見落としエラー（omission error）」で、自動システムが問題を検出しなかったため人間も問題を見過ごす失敗である。もう一つは「遂行エラー（commission error）」で、自動システムの誤った勧告に従って誤った行動をとる失敗である。航空機パイロット・医療診断・軍事オペレーターなど高リスク領域での研究で繰り返し確認され、AI普及に伴いAI生成情報への過信という現代的文脈でも注目される。',
+    keyFigures: 'キャスリーン・モージャー（Kathleen L. Mosier）＆リンダ・スキトカ（Linda J. Skitka）／Skitka, Mosier & Burdick (1999) "Does automation bias decision-making?" International Journal of Human-Computer Studies 51(5)／関連: パラスラマン&ライリーの自動化の使用・誤用論（1997）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/pii/S1071581999902456', type: 'academic', label: 'Skitka, Mosier & Burdick (1999) "Does automation bias decision-making?" International Journal of Human-Computer Studies 51(5)（ScienceDirect・主要実証論文）' },
+      { url: 'https://www.apa.org/monitor/2023/01/trends-trusting-algorithms', type: 'reference', label: 'APA Monitor on Psychology (2023) — "Trusting algorithms"（AIへの過信とオートメーション・バイアスの現代的議論）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-minimalism',
+    discipline: 'information-sociology',
+    title: 'デジタル・ミニマリズム',
+    statement:
+      'デジタル・ミニマリズム（digital minimalism）とは、コンピュータ科学者・著述家のカル・ニューポートが2019年の著書『Digital Minimalism: Choosing a Focused Life in a Noisy World』（邦題『デジタル・ミニマリスト』）で体系化した、テクノロジー利用に関する哲学的アプローチである。「価値観に基づいてオンラインでの活動を厳選し、最も重要なことのみを選び残りを喜んで手放す実践」と定義される。' +
+      'ニューポートはデジタル・クラター（多数のアプリ・SNS・通知）が認知的注意を断片化し深い集中（ディープワーク）を妨げると論じ、30日間のデジタル「片付け（declutter）」実践を処方箋として提示した。背景には、プラットフォーム企業が人間の注意（attention）を搾取するよう設計されているというアテンション・エコノミー批判があり、ソローの「生活の簡素化」という思想的系譜にも連なる。',
+    keyFigures: 'カル・ニューポート（Cal Newport, 1982–, ジョージタウン大学コンピュータ科学教授）／著書『Digital Minimalism』2019, Portfolio/Penguin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cs.georgetown.edu/people/cal-newport/', type: 'academic', label: 'ジョージタウン大学コンピュータ科学科 — Cal Newport 教授プロフィール（デジタル・ミニマリズム提唱者の所属機関）' },
+      { url: 'https://www.newyorker.com/contributors/cal-newport', type: 'media', label: 'The New Yorker — Cal Newport 寄稿者ページ（注意・テクノロジーと集中をめぐる論考の継続的発表）' },
+    ],
+  },
+  {
+    id: 'bizlaw-patent-pool',
+    discipline: 'business-law',
+    title: 'パテント・プール（特許プール）',
+    statement:
+      'パテント・プール（patent pool）とは、複数の特許権者が各自の特許を集積し、参加者あるいは第三者がその集積された特許群を一括してライセンス供与を受けられるよう設けられる取極め・組織体制をいう。標準化されたセグメント（DVD、MPEG、無線通信規格等）で、相互に必須の特許が複数企業に分散する場合に、利用者がライセンス交渉を個別に行わなくて済み取引費用を大幅に削減できる点に経済的意義がある。' +
+      '法的には競争法上の論点を内包し、価格協定や市場分割に用いられるプールは独占禁止法違反となりうるが、必須（標準必須）特許のみを対象とし競合製品の開発を妨げない合理的なプールは競争促進的と評価される。日本では公正取引委員会が「知的財産の利用に関する独占禁止法上の指針」でその適法性基準を示す。FRAND条件（公正・合理的かつ非差別的）によるライセンスと並ぶ技術標準分野の重要な知的財産管理手法である。',
+    keyFigures: 'MPEG LA（MPEG・H.264等の主要パテント・プール管理機関）／DVD6C・DVD3Cプール（1990年代に形成された初期の大規模プール）／FRAND条件／公正取引委員会「知的財産の利用に関する独占禁止法上の指針」（平成19年、令和3年改定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/chizai.html', type: 'government', label: '公正取引委員会 — 「知的財産の利用に関する独占禁止法上の指針」（パテント・プールの競争法的評価基準）' },
+      { url: 'https://www.wipo.int/wipo_magazine/en/2014/01/article_0006.html', type: 'reference', label: 'WIPO Magazine (2014) — "Patent Pools and Antitrust"（パテント・プールの定義・機能・競争法上の評価をWIPOが概説）' },
+    ],
+  },
 ];
 // Stryker restore all
