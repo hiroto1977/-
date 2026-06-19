@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
 - …ほか 230 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全249件）
+### 学術概念 / 人間科学（全251件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 243 件 → [[学術概念]]
+- …ほか 245 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
