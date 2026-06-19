@@ -19591,5 +19591,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.tandfonline.com/doi/abs/10.1080/17512786.2014.883116', type: 'academic', label: 'Clerwall, C. (2014) "Enter the Robot Journalist" Journalism Practice 8(5)' },
     ],
   },
+  {
+    id: 'econ-goodhart-law',
+    discipline: 'economics',
+    title: 'グッドハートの法則',
+    statement:
+      'グッドハートの法則は英国の経済学者チャールズ・グッドハートが1975年の論文「Problems of Monetary Management: The UK Experience」で提唱した金融政策に関する法則であり、「制御目的で利用されると、観測された統計的規則性は崩壊する傾向がある」と述べた。中央銀行がマネーサプライを政策目標にした途端その指標としての信頼性が失われる現象を指摘した。' +
+      '1997年に人類学者マリリン・ストラサーンが「指標が目標になると良い指標ではなくなる」と一般化し広く知られるようになった。キャンベルの法則やルーカス批判とも密接に関連し、政策目標化による指標の歪みという共通の洞察を異なる学問分野から示している。',
+    keyFigures: 'チャールズ・グッドハート（Charles Goodhart, 1936–）／マリリン・ストラサーン（Marilyn Strathern, 1941–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Goodhart%27s_law', type: 'reference', label: 'Wikipedia — Goodhart\'s law' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7901608/', type: 'academic', label: 'PMC/NIH — Goodhart\'s Law and scientific measurement' },
+    ],
+  },
+  {
+    id: 'mgmt-johari-window',
+    discipline: 'management',
+    title: 'ジョハリの窓',
+    statement:
+      'ジョハリの窓は、自己認識と対人関係を理解するための心理学モデルであり、「開放」「盲点」「秘密」「未知」の4象限で構成される。自己開示とフィードバックにより「開放の窓」を広げることが円滑なコミュニケーションと信頼関係の構築に有効とされる。' +
+      '1955年にジョセフ・ルフトとハリントン・インガムがUCLA西部グループ発達研修で発表し、「ジョハリ」は二人の名（Joe＋Harry）に由来する。1969年の著書『Of Human Interaction』で体系化され、組織開発・チームビルディング・キャリアコンサルティング等で広く活用されている。',
+    keyFigures: 'ジョセフ・ルフト（Joseph Luft, 1916–2014）／ハリントン・インガム（Harrington Ingham, 1916–1995）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Johari_window', type: 'reference', label: 'Wikipedia — Johari window' },
+      { url: 'https://archive.org/details/ofhumaninteracti00jose', type: 'academic', label: 'Luft, J. (1969) Of Human Interaction, National Press Books — Internet Archive' },
+    ],
+  },
+  {
+    id: 'human-phantom-limb',
+    discipline: 'human-science',
+    title: '幻肢（ファントムリム）',
+    statement:
+      '幻肢とは切断・欠損した四肢がまだ存在し動かせるように感じる神経現象であり、幻肢痛はその疼痛性の変異型である。1552年に仏軍医アンブロワーズ・パレが初めて記述し、1871年に米神経科医サイラス・ウィアー・ミッチェルが「phantom limb」と命名した。' +
+      '1996年にV・S・ラマチャンドランが鏡箱療法を考案し、健側肢の鏡像による視覚フィードバックで幻肢痛を軽減できることを示した。1998年のBrain誌論文では体性感覚野の皮質再編成（脳可塑性）が幻肢の神経基盤であると報告され、神経リハビリテーションの基礎理論となった。',
+    keyFigures: 'アンブロワーズ・パレ（Ambroise Paré, 1510–1590）／サイラス・ウィアー・ミッチェル（Silas Weir Mitchell, 1829–1914）／V・S・ラマチャンドラン（V. S. Ramachandran, 1951–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/phantom-limb-syndrome', type: 'reference', label: 'Britannica — Phantom limb syndrome' },
+      { url: 'https://academic.oup.com/brain/article/121/9/1603/283360', type: 'academic', label: 'Ramachandran & Hirstein (1998) "The perception of phantom limbs" Brain 121(9)' },
+    ],
+  },
+  {
+    id: 'bizlaw-judicial-scrivener-act',
+    discipline: 'business-law',
+    title: '司法書士法',
+    statement:
+      '司法書士法（昭和25年法律第197号）は、不動産登記・商業登記等の登記申請手続の代理、裁判所提出書類の作成等を業務とする司法書士の資格・業務範囲・懲戒制度を定める法律である。1919年制定の司法代書人法（1935年に司法書士法へ改称）を前身とし1950年に全面改正された。' +
+      '2002年改正（2003年施行）により、法務大臣の認定を受けた司法書士（認定司法書士）に簡易裁判所における訴訟代理権（訴額140万円以下）が付与され、法律相談・裁判外紛争解決手続の代理も可能となった。所管は法務省である。',
+    keyFigures: '法務省（所管官庁）／日本司法書士会連合会',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/325AC0000000197', type: 'government', label: 'e-Gov法令検索 — 司法書士法（昭和25年法律第197号）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji68.html', type: 'government', label: '法務省 — 司法書士の業務' },
+    ],
+  },
+  {
+    id: 'infosoc-liquid-surveillance',
+    discipline: 'information-sociology',
+    title: 'リキッド・サーベイランス（液状監視）',
+    statement:
+      'リキッド・サーベイランスはバウマンの「リキッド・モダニティ」概念を監視研究に応用し、フーコーのパノプティコン型固定監視を超えた「ポスト・パノプティコン」的状況を論じる理論である。SNSや消費者データを通じ監視が社会に遍在的に浸透し、人々が自発的にデータを提供することで自らの監視に加担する構造を指摘する。' +
+      'バウマンとリヨンの共著『Liquid Surveillance: A Conversation』（2013年、Polity Press）は両者の2011年のメール対話を基に構成され、流動的監視の社会学的分析として情報社会学の基礎文献となっている。',
+    keyFigures: 'ジグムント・バウマン（Zygmunt Bauman, 1925–2017）／デイヴィッド・リヨン（David Lyon, 1948–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/David_Lyon_(sociologist)', type: 'reference', label: 'Wikipedia — David Lyon (sociologist)' },
+      { url: 'https://www.cigionline.org/people/david-lyon/', type: 'academic', label: 'Centre for International Governance Innovation — David Lyon' },
+    ],
+  },
+  {
+    id: 'human-impostor-syndrome',
+    discipline: 'human-science',
+    title: 'インポスター症候群（インポスター現象）',
+    statement:
+      'インポスター症候群は、客観的な実績があるにもかかわらず自分の能力を内面的に疑い「詐欺師」として暴かれることを恐れる心理パターンである。1978年にポーリン・ローズ・クランスとスザンヌ・アイムズが高業績女性150名を対象とした研究で提唱し、Psychotherapy: Theory, Research & Practice誌に発表した。' +
+      '後に性別・職業・民族を問わず広く確認され、有病率は調査手法により9〜82%と幅がある。クランスが開発したインポスター現象尺度（CIPS）は20項目・5件法の自己報告式測定ツールである。DSM-5には未収載であり正式な精神疾患としては分類されていない。',
+    keyFigures: 'ポーリン・ローズ・クランス（Pauline Rose Clance, 1938–）／スザンヌ・アイムズ（Suzanne Imes）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK585058/', type: 'academic', label: 'StatPearls — Imposter Phenomenon (NCBI/NIH peer-reviewed)' },
+      { url: 'https://paulineroseclance.com/pdf/ip_high_achieving_women.pdf', type: 'academic', label: 'Clance & Imes (1978) "The Imposter Phenomenon in High Achieving Women" Psychotherapy 15(3)' },
+    ],
+  },
 ];
 // Stryker restore all
