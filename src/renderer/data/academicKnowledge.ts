@@ -21103,5 +21103,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.bis.org/publ/work22.pdf', type: 'government', label: 'BIS Working Papers No.22 (Svensson 1992) "An Interpretation of Recent Research on Exchange Rate Target Zones"（理論の体系的サーベイ）' },
     ],
   },
+  {
+    id: 'econ-double-coincidence-of-wants',
+    discipline: 'economics',
+    title: '欲望の二重の一致',
+    statement:
+      '貨幣の存在理由を説明する概念。物々交換経済（バーター経済）が機能するためには、取引当事者の双方が互いに相手の持つ財を欲しており、かつ相手が自分の持つ財を欲していなければならない（欲望の二重の一致）。この条件が満たされる確率は参加者・財の種類が多いほど急激に低下し、効率的な交換を著しく阻害する。' +
+      '経済学者ウィリアム・スタンレー・ジェヴォンズが1875年の著作『貨幣と交換のメカニズム（Money and the Mechanism of Exchange）』で定式化した。この問題の解決策として貨幣（一般的交換媒介）が自然発生したとされ、貨幣の交換媒介機能の根拠をなす。サーチ理論（貨幣サーチ・モデル）でも核心的前提として用いられる。',
+    keyFigures: 'ウィリアム・スタンレー・ジェヴォンズ（William Stanley Jevons, 1835–1882）／1875年 "Money and the Mechanism of Exchange"（Ch.1）で定式化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/Money.html', type: 'reference', label: 'EconLib Concise Encyclopedia of Economics — Money（double coincidence of wants・交換媒介機能の根拠）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/2012/09/basics.htm', type: 'government', label: 'IMF Finance & Development "Back to Basics: What Is Money?"（欲望の二重の一致と貨幣の起源）' },
+    ],
+  },
+  {
+    id: 'econ-tatonnement',
+    discipline: 'economics',
+    title: 'タトヌマン（模索過程）',
+    statement:
+      'レオン・ワルラスが一般均衡理論（『純粋経済学要論』1874/1877年）で示した、市場が均衡価格へ収束する仮想的な調整過程。フランス語で「手探り」を意味するtâtonnementを名称とする。オークショニア（競売人）が試験的な価格を提示し、各主体がその価格のもとでの需給を申告し、超過需要があれば価格を引き上げ、超過供給があれば引き下げる操作を繰り返す。' +
+      '実際の取引は均衡価格が確定するまで行われないと想定される。この過程が収束するか否か（大域的安定性）は一般には保証されず、グロス代替財の仮定やワルラス安定条件を要する。現実市場の価格形成メカニズムの理論的モデルとして、一般均衡論・均衡安定性分析の礎をなす。',
+    keyFigures: 'レオン・ワルラス（Léon Walras, 1834–1910）／『純粋経済学要論（Éléments d\'économie politique pure）』第1版1874年・第2版1877年',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/bios/Walras.html', type: 'reference', label: 'EconLib — Léon Walras（タトヌマン・一般均衡・超過需要関数）' },
+      { url: 'https://plato.stanford.edu/entries/economics/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Philosophy of Economics（ワルラス的均衡調整・タトヌマン過程の位置づけ）' },
+    ],
+  },
+  {
+    id: 'bizlaw-haishin-akuisha',
+    discipline: 'business-law',
+    title: '背信的悪意者（不動産登記の第三者対抗）',
+    statement:
+      '不動産の二重譲渡等において、民法177条の「第三者」として登記の欠缺（けんけつ）を主張できる者の範囲を画する概念。判例は177条の第三者を「登記の欠缺を主張する正当な利益を有する者」に限定し、登記がないことを知っていること（単純悪意）だけでは第三者から除外されないとする（悪意者保護の原則）。' +
+      'しかし、単なる悪意を超えて、第一譲受人の登記取得を積極的に妨害したり、第一譲受人を害する目的で譲り受けたりするなど、取引行為が信義則（民法1条2項）に反すると評価される者は「背信的悪意者」として177条の第三者から除外され、登記なしに対抗できる。背信性の判断は取引の動機・目的・態様を総合考慮する（最判昭和43年8月2日）。',
+    keyFigures: '民法177条（物権変動の対抗要件）／最判昭和43年8月2日（背信的悪意者排除論を採用）／根拠：信義則（民法1条2項）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治29年法律第89号）第177条（不動産物権変動の対抗要件・登記）' },
+      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=54580', type: 'government', label: '最高裁判所判例集 — 最判昭和43年8月2日（背信的悪意者は民法177条の第三者に当たらない）' },
+    ],
+  },
+  {
+    id: 'mgmt-grow-model',
+    discipline: 'management',
+    title: 'GROWモデル（コーチング）',
+    statement:
+      'コーチングの代表的な会話構造フレームワーク。Goal（目標：何を達成したいか）→ Reality（現状：現在の状況はどうか）→ Options（選択肢：何ができるか）→ Will（意志／次のステップ：何をするか）の4段階の問いかけで構成される。コーチが指示・助言ではなく質問を通じて相手の内発的動機と自己解決能力を引き出すことを意図している。' +
+      'ジョン・ウィットモアが1992年の著作『Coaching for Performance』で体系化・普及させた。起源はティモシー・ガルウェイの「インナーゲーム」理論に影響を受ける。組織内コーチング・エグゼクティブコーチング・ライフコーチングで世界的に標準的なフレームワークとして採用されている。',
+    keyFigures: 'ジョン・ウィットモア（Sir John Whitmore, 1937–2017）／1992年 "Coaching for Performance" で体系化／基盤: ティモシー・ガルウェイ「インナーゲーム」理論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.performanceconsultants.com/grow-model', type: 'reference', label: 'Performance Consultants（ウィットモア創設）— The GROW Model（Goal・Reality・Options・Will の公式解説）' },
+      { url: 'https://coachingfederation.org/credentials-and-standards/core-competencies', type: 'reference', label: 'ICF（国際コーチング連盟）— Core Competencies（GROWモデルが組み込まれるコーチング能力基準）' },
+    ],
+  },
+  {
+    id: 'human-self-reference-effect',
+    discipline: 'human-science',
+    title: '自己参照効果',
+    statement:
+      '処理水準理論（クレイク＆ロックハート1972）を拡張した記憶効果で、情報を「自己に関連づけて（自己参照的に）」処理すると、構造的・音韻的・意味的処理と比べて記憶保持が格段に優れるとする現象。ロジャース・カイパー・カークによる1977年の実験（Journal of Personality and Social Psychology）で体系的に実証された。自己スキーマ（自己に関する認知的表象）が豊富な精緻化符号化を促進すると説明される。' +
+      '実験では「この形容詞は自分に当てはまるか？」という自己参照条件が、構造・音韻・意味の各処理条件より有意に高い再認・再生成績を示した。自己が特別な認知的足場として機能する根拠として、(1)自己スキーマによる精緻化、(2)関連情報の組織化（クラスタリング）、(3)自己関連性による注意資源の増加、が挙げられる。',
+    keyFigures: 'Thomas B. Rogers・Nicholas L. Kuiper・Walter S. Kirk（1977）「Self-reference and the encoding of personal information」Journal of Personality and Social Psychology 35(9):677–688',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1978-10678-001', type: 'academic', label: 'APA PsycNet — Rogers, Kuiper & Kirk (1977) "Self-reference and the encoding of personal information"（原著論文）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0028393218303452', type: 'academic', label: 'Neuropsychologia (2019) "The self-reference effect on memory: A quantitative review"（自己参照効果のメタ分析・神経基盤）' },
+    ],
+  },
+  {
+    id: 'infosoc-technopoly',
+    discipline: 'information-sociology',
+    title: 'テクノポリ（技術独占）',
+    statement:
+      'ニール・ポストマンが1992年の著作『Technopoly: The Surrender of Culture to Technology』で提唱した概念。文化が技術に全面的に従属した社会・思想状態を指す。技術が単なる道具（tool-using culture）でも技術文化（technocracy）でもなく、技術が文化の正当性の唯一の源泉となり、社会制度・宗教・芸術・教育など文化の諸領域が技術的合理性・効率性の論理によって再編・支配される状態を意味する。' +
+      'ポストマンは情報過剰を管理するはずの制度（宗教・家族・学校・政治など）が技術による情報の洪水で機能を失い、「技術の神話（技術は中立であり常に進歩をもたらす）」が支配的イデオロギーとなると論じた。科学的管理法・IQ検査・統計的思考が文化的権威を獲得する過程を例示し、技術の副作用への批判的意識と人文的教育の必要性を訴えた。メディア生態学の系譜に位置づけられる。',
+    keyFigures: 'ニール・ポストマン（Neil Postman, 1931–2003, ニューヨーク大学）／1992年 "Technopoly: The Surrender of Culture to Technology"（Knopf刊）／3段階: tool-using culture → technocracy → technopoly',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Neil-Postman', type: 'reference', label: 'Encyclopaedia Britannica — Neil Postman（メディア生態学者・Technopoly等の業績）' },
+      { url: 'https://www.media-ecology.org/Neil-Postman', type: 'academic', label: 'Media Ecology Association — Neil Postman（テクノポリ・メディア生態学における業績、ポストマンが共同創設した学会）' },
+    ],
+  },
 ];
 // Stryker restore all
