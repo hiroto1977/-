@@ -20263,5 +20263,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.env.go.jp/recycle/circulareconomy/', type: 'government', label: '環境省 — サーキュラーエコノミー（循環型社会形成推進基本法・循環経済ビジョン2020・政策の全体像）' },
     ],
   },
+  {
+    id: 'econ-solow-paradox',
+    discipline: 'economics',
+    title: 'ソロー・パラドックス（IT生産性パラドックス）',
+    statement:
+      'ソロー・パラドックスとは、1987年にノーベル経済学賞受賞者ロバート・ソローが「コンピューターはどこにでもあるが、生産性の統計には現れていない」と述べたことに由来する現象で、情報技術（IT）投資が急拡大したにもかかわらず生産性上昇が測定上認められない事態を指す。' +
+      '1990年代後半の米国の生産性加速を機に「パラドックスは解消された」との議論も生まれたが、計測問題・普及ラグ・組織変革の遅延・品質向上の過小計上などが原因として論じられ、ICT投資の経済効果をめぐる論争は現在のAI時代にも引き継がれている。',
+    keyFigures: 'ロバート・ソロー（Robert M. Solow, 1924–2023, ノーベル経済学賞1987）／エリック・ブリニョルフソン（Erik Brynjolfsson, MIT Sloan, 原因分析・実証研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/productivity-paradox', type: 'reference', label: 'Encyclopaedia Britannica Money — Productivity paradox（IT生産性パラドックスの定義・原因・歴史的経緯）' },
+      { url: 'https://www.nber.org/papers/w3891', type: 'academic', label: 'Brynjolfsson (1993) "The Productivity Paradox of Information Technology," NBER Working Paper 3891' },
+    ],
+  },
+  {
+    id: 'econ-fiscal-sustainability-domar',
+    discipline: 'economics',
+    title: '財政の持続可能性とドーマー条件',
+    statement:
+      '財政の持続可能性とは、政府が長期にわたって財政赤字と公債残高をGDP比で安定・収束させ得る状態を指し、エブセイ・ドーマーが1944年の論文で示した条件が理論的基礎となる。ドーマー条件は「経済成長率（g）が国債の実質利子率（r）を上回る（r < g）ならば、財政赤字が続いてもGDP比公債残高は発散せず持続可能」と示す。' +
+      'r > gの状況では基礎的財政収支（プライマリーバランス）黒字化なしに公債残高対GDP比は発散し財政破綻リスクが高まる。IMFや財務省による財政持続可能性分析（DSA: Debt Sustainability Analysis）はこの枠組みを応用し、EU安定成長協定など財政ルールの設計根拠となっている。ピケティが『21世紀の資本』でr > gを格差の文脈で論じたことでも広く知られる。',
+    keyFigures: 'エブセイ・ドーマー（Evsey Domar, 1914–1997, 1944論文）／トマ・ピケティ（Thomas Piketty, r>g論議）／IMF財政局（DSA手法の標準化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/basics/finsust.htm', type: 'government', label: 'IMF Finance & Development — Fiscal Sustainability（財政持続可能性の定義・ドーマー条件・DSA・政策含意）' },
+      { url: 'https://www.mof.go.jp/policy/budget/fiscal_condition/related_data/202406_01.pdf', type: 'government', label: '財務省 — 日本の財政関係資料（2024年6月）（プライマリーバランスの現状・国債残高・財政持続可能性）' },
+    ],
+  },
+  {
+    id: 'mgmt-social-impact-bond',
+    discipline: 'management',
+    title: '社会的インパクト・ボンド（SIB）',
+    statement:
+      '社会的インパクト・ボンド（Social Impact Bond, SIB）とは、民間投資家が社会サービス提供者（NPO・社会的企業）に事前に資金を拠出し、行政が設定した社会的成果（再犯率低下・就労率向上など）の達成を第三者評価機関が確認した場合に行政が投資家に元利償還する、成果連動型の社会的ファイナンスの仕組みである。2010年に英国ピーターバラ刑務所の再犯防止プログラムで世界初のSIBが実施された。' +
+      '民間資本とノウハウを活用しながら成果が出なければ行政は支払いを行わない点でリスク移転の手段となる一方、成果指標の設定困難・計測コスト・クリームスキミング（易しいケースの選択）などの課題も指摘される。日本では2017年から内閣府が成果連動型民間委託契約方式（PFS: Pay For Success）モデルとして国内普及を推進している。',
+    keyFigures: 'ソーシャル・ファイナンス社（Social Finance Ltd, 英国, 2010年ピーターバラSIBを設計・組成）／内閣府（日本版PFS・SIB推進, 2017）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.gov.uk/guidance/social-impact-bonds', type: 'government', label: 'UK Government — Social Impact Bonds（定義・仕組み・ピーターバラ事例・政府ガイダンス）' },
+      { url: 'https://www5.cao.go.jp/keizai2/wvs/sib/index.html', type: 'government', label: '内閣府 — 成果連動型民間委託契約方式（PFS）・社会的インパクト・ボンド（SIB）の推進' },
+    ],
+  },
+  {
+    id: 'human-sapir-whorf',
+    discipline: 'human-science',
+    title: 'サピア・ウォーフ仮説（言語相対性仮説）',
+    statement:
+      '言語相対性仮説（linguistic relativity hypothesis）とは、人が話す言語の構造がその話者の思考・知覚・世界観を形成・制約するとする仮説。人類学者エドワード・サピアと弟子のベンジャミン・リー・ウォーフが20世紀前半に提唱した。強い形（言語が思考を決定する言語決定論）と、弱い形（言語が思考に影響を与える言語相対性）に区別され、現代の言語科学では弱い形が広く支持される。' +
+      'ウォーフによるホピ語の時間概念の分析（後に批判を受けた）が有名な事例だが、近年の実証研究では色知覚・空間認識・数量表現など複数の認知領域で言語の影響が確認されている（ボロジツキー、レヴィンソンらの実験研究）。言語が思考を完全に決定するという強い版は否定されているが、言語習慣が文化的に特有の思考パターンを促進するという弱い版は認知科学・言語人類学の主流的知見となっている。',
+    keyFigures: 'エドワード・サピア（Edward Sapir, 1884–1939）／ベンジャミン・リー・ウォーフ（Benjamin Lee Whorf, 1897–1941）／レラ・ボロジツキー（Lera Boroditsky, Stanford、実証研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/linguistics/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Language and Thought（言語相対性仮説の哲学的位置づけと現代的評価）' },
+      { url: 'https://www.britannica.com/topic/Sapir-Whorf-hypothesis', type: 'reference', label: 'Encyclopaedia Britannica — Sapir-Whorf hypothesis（定義・強弱の区別・ウォーフのホピ語分析・現代評価）' },
+    ],
+  },
+  {
+    id: 'infosoc-inoculation-theory',
+    discipline: 'information-sociology',
+    title: '接種理論（inoculation theory）',
+    statement:
+      '接種理論（inoculation theory）とは、医学上のワクチン接種に着想を得た説得・態度変容の理論で、弱められた反論（反駁）に事前にさらすことで、その後の強力な説得的攻撃（プロパガンダや誤情報）に対する態度の抵抗力を高めるという理論。社会心理学者ウィリアム・マクガイア（William McGuire）が1961〜64年の研究で体系化した。' +
+      'デジタルメディア時代には、フェイクニュースや誤情報への対抗手段として再注目されており、「大量接種（prebunking）」と呼ばれる介入研究が進んでいる。ケンブリッジ大学のサンダー・ファン・デル・リンデンらによるオンライン実験では、操作技術のパターン（感情操作・人格攻撃・虚偽二項対立など）に関する弱い反論を事前提示することで、誤情報への信念がターゲットを問わず低下することが示された。',
+    keyFigures: 'ウィリアム・マクガイア（William J. McGuire, 1925–2007、コロンビア大・イェール大）／サンダー・ファン・デル・リンデン（Sander van der Linden, Cambridge、prebunking研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2786372', type: 'academic', label: 'McGuire (1964) "Inducing Resistance to Persuasion," Advances in Experimental Social Psychology, Vol.1（接種理論の原典）' },
+      { url: 'https://www.nature.com/articles/s41562-021-01070-z', type: 'academic', label: 'van der Linden et al. (2021) "Inoculating the public against misinformation about climate change," Nature Human Behaviour（誤情報接種の実証）' },
+    ],
+  },
+  {
+    id: 'human-embodied-cognition',
+    discipline: 'human-science',
+    title: '身体化認知（embodied cognition）',
+    statement:
+      '身体化認知（embodied cognition）とは、人間の認知・思考・概念理解が脳内の抽象的シンボル操作に限定されるのではなく、身体と環境との物理的相互作用によって本質的に形成・制約されるとする認知科学のパラダイム。神経生物学者フランシスコ・バレーラ、エヴァン・トンプソン、エレナ・ロッシュが1991年の共著『The Embodied Mind』で本格的に理論化した。' +
+      '認知言語学者ジョージ・レイコフとマーク・ジョンソンは、概念メタファー理論（1980・1999）を通じて、「論争は戦争」「時間は資源」などの抽象概念が身体的経験（方向・力・容器など）に根ざしていることを示した。近年の実験社会心理学では、温かいコーヒーを持つと他者を温かく評価する（Williams & Bargh, 2008）など、身体状態が高次の認知・判断に影響することが実証されている。',
+    keyFigures: 'フランシスコ・バレーラ（Francisco Varela, 1946–2001）／エレナ・ロッシュ（Eleanor Rosch）／ジョージ・レイコフ（George Lakoff）／マーク・ジョンソン（Mark Johnson）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/embodied-cognition/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Embodied Cognition（定義・主要理論・実証研究の批判的概観）' },
+      { url: 'https://www.britannica.com/science/embodied-cognition', type: 'reference', label: 'Encyclopaedia Britannica — Embodied cognition（身体化認知の定義・バレーラ・レイコフらの貢献）' },
+    ],
+  },
 ];
 // Stryker restore all
