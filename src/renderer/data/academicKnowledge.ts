@@ -20515,5 +20515,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/emotion-regulation', type: 'reference', label: 'Encyclopaedia Britannica — Emotion regulation（定義・グロスのプロセスモデル・認知的再評価と表現抑制）' },
     ],
   },
+  {
+    id: 'human-cognitive-apprenticeship',
+    discipline: 'human-science',
+    title: '認知的徒弟制',
+    statement:
+      '認知的徒弟制（cognitive apprenticeship）は、コリンズ・ブラウン・ニューマンが1989年に提唱した学習・教授理論で、伝統的な職人の徒弟制をモデルに、通常は不可視な認知的・メタ認知的プロセスを可視化しながら複雑なスキルを習得させる枠組みである。' +
+      '教授法の主要要素は、教師が思考過程を声に出して示すモデリング、学習者の遂行を支援するコーチングとスキャフォールディング（支援の漸次撤退）、知識の般化を促すアーティキュレーション・リフレクション・エクスプロレーションの6段階で構成される。',
+    keyFigures: 'アラン・コリンズ（Allan Collins）／ジョン・シーリー・ブラウン（John Seely Brown）／スーザン・ニューマン（Susan E. Newman）／1989年論文「Cognitive Apprenticeship」',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ideals.illinois.edu/items/11936', type: 'academic', label: 'Collins, A., Brown, J. S., & Newman, S. E. (1989) "Cognitive apprenticeship: Teaching the crafts of reading, writing, and mathematics," in Knowing, Learning, and Instruction（IDEALS, University of Illinois）' },
+      { url: 'https://journals.sagepub.com/doi/10.3102/0013189X018001032', type: 'academic', label: 'Brown, Collins & Duguid (1989) "Situated Cognition and the Culture of Learning," Educational Researcher 18(1):32–42（SAGE・関連基礎論文）' },
+    ],
+  },
+  {
+    id: 'human-boreout',
+    discipline: 'human-science',
+    title: 'ボアアウト（退屈燃え尽き症候群）',
+    statement:
+      'ボアアウト（boreout）は、職場における慢性的な退屈・過少負荷・無意味感が引き起こす心理的消耗状態を指し、スイスのコンサルタント、フィリップ・ロスリンとペーター・ヴェルダーが2007年の著書『Boreout! Overcoming Workplace Demotivation』で命名・体系化した。' +
+      '過大負荷・情緒的疲弊・脱人格化を特徴とするバーンアウト（燃え尽き症候群）と対照的に、ボアアウトは慢性的な刺激不足・能力の未活用・職務の意義欠如から生じ、同様に抑うつ・集中困難・身体的不調・離職意図をもたらす職業性ストレス状態として研究が進んでいる。',
+    keyFigures: 'フィリップ・ロスリン（Philippe Rothlin）／ペーター・ヴェルダー（Peter R. Werder）／2007年著書『Boreout!』／バーンアウトとの対比',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02681/full', type: 'academic', label: 'Reijseger, G. et al. (2019) "Boredom at work: Proximal and distal consequences of affective work-related boredom," Frontiers in Psychology 10:2681' },
+      { url: 'https://dictionary.apa.org/boredom', type: 'reference', label: 'APA Dictionary of Psychology — boredom（米国心理学会による退屈・関連概念の公式定義）' },
+    ],
+  },
+  {
+    id: 'econ-petty-clark-law',
+    discipline: 'economics',
+    title: 'ペティ＝クラークの法則',
+    statement:
+      'ペティ＝クラークの法則とは、経済発展に伴い就業人口および国民所得の構成が一次産業（農業・漁業・林業）から二次産業（製造業・建設業）へ、さらに三次産業（サービス業）へと順次シフトするという産業構造の高次化法則である。' +
+      '17世紀英国の経済学者ウィリアム・ペティが所得水準と産業別付加価値の差異を示唆した観察を起点に、コリン・クラークが1940年の著書『The Conditions of Economic Progress』で統計的に体系化した。所得弾力性の差異と労働生産性上昇率の産業間格差が、この構造変化を駆動するメカニズムとして理論化されている。',
+    keyFigures: 'ウィリアム・ペティ（Sir William Petty, 1623–1687）／コリン・クラーク（Colin Clark, 1905–1989）／『The Conditions of Economic Progress』（1940）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/Colin-Clark-economist', type: 'reference', label: 'Encyclopaedia Britannica — Colin Clark（ペティの観察とクラークによる三部門分類の体系化）' },
+      { url: 'https://www.oecd.org/en/topics/structural-transformation.html', type: 'government', label: 'OECD — Structural Transformation（産業構造の高次化・三部門シフトを扱う国際機関ページ）' },
+    ],
+  },
+  {
+    id: 'bizlaw-pipa-optout-third-party',
+    discipline: 'business-law',
+    title: '個人情報保護法のオプトアウト第三者提供',
+    statement:
+      '個人情報保護法（令和3年改正・2022年4月全面施行）第27条3項は、個人データの第三者提供に際して原則として本人の同意を要求するが、一定の条件を満たすことで、本人が拒否（オプトアウト）の意思を表示するまでは同意なく第三者に提供できる「オプトアウト方式」を定める。' +
+      'オプトアウト方式の利用には、提供する個人データの項目・提供方法・本人の求めに応じた停止措置・個人情報保護委員会（PPC）への届出と同委員会ウェブサイトへの公表が必要条件となる。要配慮個人情報・不正取得データ・他社オプトアウトで取得したデータへの再適用は2017年・2022年改正で禁止された。',
+    keyFigures: '個人情報の保護に関する法律 第27条3項（旧23条3項）／個人情報保護委員会（PPC）届出・公表義務／2017年改正で再提供禁止・2022年改正で適用対象を精緻化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/', type: 'government', label: '個人情報保護委員会 — 個人情報の保護に関する法律についてのガイドライン（通則編）（第27条オプトアウト規定を含む公式解説）' },
+      { url: 'https://laws.e-gov.go.jp/law/415AC0000000057', type: 'government', label: 'e-Gov法令検索 — 個人情報の保護に関する法律（平成15年法律第57号、第27条 オプトアウト規定）' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-governance',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム・ガバナンス',
+    statement:
+      'プラットフォーム・ガバナンスとは、デジタル・プラットフォーム企業がコンテンツ・データ・アルゴリズム・利用規約を通じて利用者の行動・言論・経済的機会を規律するルール体系と権力構造、および国家・国際機関・市民社会によるその民主的統制・規制のあり方を研究する学際的領域である。' +
+      'プラットフォームが事実上の「私的立法者」として機能する中、コンテンツ・モデレーション、透明性・説明責任、競争政策（EUのDSA/DMA等）、越境データ流通規制、自主規律機関（Meta監督委員会等）の設計をめぐる規範論争と実証研究が蓄積されており、情報法・政治学・経済学・社会学の交差点をなす。',
+    keyFigures: 'ターレトン・ギレスピー（Tarleton Gillespie『Custodians of the Internet』2018）／ロバート・ゴーワ（Robert Gorwa, "What is platform governance?" 2019）／EUデジタルサービス法（DSA, 2022）・デジタル市場法（DMA, 2022）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.europarl.europa.eu/topics/en/article/20220526STO31014/the-digital-services-act-ensuring-a-safe-and-accountable-online-environment', type: 'government', label: '欧州議会 — The Digital Services Act: ensuring a safe and accountable online environment（EUのプラットフォーム・ガバナンス立法の公式解説）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444820946592', type: 'academic', label: 'Gorwa, R. (2019) "What is platform governance?" Information, Communication & Society 22(6):854–871（SAGE・概念の学術的定義論文）' },
+    ],
+  },
+  {
+    id: 'infosoc-privacy-by-design',
+    discipline: 'information-sociology',
+    title: 'プライバシー・バイ・デザイン',
+    statement:
+      'プライバシー・バイ・デザイン（Privacy by Design, PbD）とは、カナダのオンタリオ州情報・プライバシーコミッショナー、アン・カブーキアンが1990年代に提唱した枠組みで、プライバシー保護を製品・サービス・システムの設計段階から事後的対応や規制遵守ではなく「組み込み（built-in）」として実現する理念と手法である。' +
+      '7つの基本原則（事前的・予防的、デフォルトでのプライバシー保護、設計への組み込み、全機能性の確保、エンドツーエンドのセキュリティ、可視性・透明性、利用者中心主義）を核とし、2010年に国際プライバシー会議（ICDPPC）が国際標準として決議採択した。EUのGDPR第25条（データ保護バイデザイン・バイデフォルト）として法的義務化された。',
+    keyFigures: 'アン・カブーキアン（Ann Cavoukian, 1947–）オンタリオ州情報・プライバシーコミッショナー／7原則（2009年体系化）／2010年 ICDPPC 国際標準決議／GDPR第25条への法制化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ipc.on.ca/en/resources-and-decisions/privacy-by-design', type: 'government', label: 'Information and Privacy Commissioner of Ontario — Privacy by Design（カブーキアン本人の機関による7原則の公式解説）' },
+      { url: 'https://gdpr-info.eu/art-25-gdpr/', type: 'reference', label: 'GDPR Art. 25 — Data protection by design and by default（EUのプライバシー・バイ・デザイン法制化条文）' },
+    ],
+  },
 ];
 // Stryker restore all
