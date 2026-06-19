@@ -20095,5 +20095,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.princeton.edu/~pkrugman/aag.pdf', type: 'academic', label: 'Krugman, P. "The New Economic Geography, Now Middle-Aged"（プリンストン大学ホスト・AAG講演論文）' },
     ],
   },
+  {
+    id: 'econ-cross-price-income-elasticity',
+    discipline: 'economics',
+    title: 'クロス価格弾力性と所得弾力性',
+    statement:
+      'クロス価格弾力性は財Aの価格変化が財Bの需要量に与える影響の度合い（財Bの需要量変化率÷財Aの価格変化率）で、正値は代替財、負値は補完財を示し、価格政策やマーケティング戦略の分析に用いられる。' +
+      '所得弾力性は所得変化に対する需要量の感応度（需要量変化率÷所得変化率）で、0〜1の財を必需品、1超を奢侈品（ぜいたく品）、負を劣等財と分類し、エンゲルの法則（食料費の所得弾力性は1未満）の理論的根拠をなす。',
+    keyFigures: 'アルフレッド・マーシャル（Alfred Marshall, 1842–1924）が『経済学原理』（1890）で弾力性概念を体系化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/cross-price-elasticity-of-demand', type: 'reference', label: 'Encyclopaedia Britannica Money — Cross-Price Elasticity of Demand（代替財・補完財の判定・計算式・事例）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/basics/34-elasticity.htm', type: 'government', label: 'IMF Finance & Development "Back to Basics: Elasticity"（需要の弾力性・所得弾力性・クロス弾力性の基礎解説）' },
+    ],
+  },
+  {
+    id: 'human-intersectionality',
+    discipline: 'human-science',
+    title: 'インターセクショナリティ（交差性）',
+    statement:
+      'インターセクショナリティ（交差性）とは、人種・ジェンダー・階級・性的指向・障害など複数の社会的カテゴリーが交差することで生じる複合的な差別・抑圧の経験を分析する概念で、法学者キンバリー・クレンショーが1989年に提唱した。' +
+      '単一属性の差別として見ると不可視化される黒人女性固有の経験（職場差別・DV保護での排除等）を示すことで生まれた理論で、フェミニズム研究・批判的人種理論・社会学・公共政策に広く影響を与え、国連の委員会報告でも参照される。',
+    keyFigures: 'キンバリー・W・クレンショー（Kimberlé Williams Crenshaw, 1959–）／初出: Crenshaw (1989) University of Chicago Legal Forum 1989(1):139-167',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://chicagounbound.uchicago.edu/uclf/vol1989/iss1/8/', type: 'academic', label: 'Crenshaw, K. (1989) "Demarginalizing the Intersection of Race and Sex," University of Chicago Legal Forum 1989(1):139-167（Chicago Unbound・原典）' },
+      { url: 'https://www.britannica.com/topic/intersectionality', type: 'reference', label: 'Encyclopaedia Britannica — Intersectionality（定義・クレンショー・フェミニズム・批判的人種理論への影響）' },
+    ],
+  },
+  {
+    id: 'bizlaw-stealth-marketing-regulation',
+    discipline: 'business-law',
+    title: 'ステルスマーケティング規制（景品表示法のステマ告示）',
+    statement:
+      '2023年10月1日施行の消費者庁告示（景品表示法5条3号に基づく「一般消費者が事業者の表示であることを判別することが困難である表示」）は、事業者が対価を提供するなど関与した第三者の投稿・口コミが広告であることを明示しない場合を不当表示と規制する、日本初のステルスマーケティング規制である。' +
+      'SNS・ブログ・動画サイトでの宣伝投稿が規制対象で、事業者が表示内容に「関与」していれば第三者の表示でも景表法の責任を負う。違反には措置命令・課徴金（売上高3%相当）が科され、インフルエンサーマーケティングにおける広告表示の義務付けが実質的に求められる。',
+    keyFigures: '消費者庁（2023年3月28日告示・2023年10月1日施行）／景品表示法5条3号の指定告示として日本初のステマ規制を導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/', type: 'government', label: '消費者庁 — ステルスマーケティング規制（告示の詳細・適用範囲・ガイドライン・Q&A）' },
+      { url: 'https://www.caa.go.jp/notice/assets/representation_cms216_230328_01.pdf', type: 'government', label: '消費者庁 — ステマ告示本文PDF（2023年3月28日公表）' },
+    ],
+  },
+  {
+    id: 'infosoc-orientalism-said',
+    discipline: 'information-sociology',
+    title: 'オリエンタリズム（エドワード・サイード）',
+    statement:
+      'エドワード・サイードが1978年の著書『オリエンタリズム』で論じた、西洋が「東洋（オリエント）」について構築した知識体系・言説・表象を批判する概念。東洋を未開・非合理・官能的とみなす言説が学術・文学・メディアを通じて植民地支配を正当化する権力装置として機能したと主張した。' +
+      'サイードはフーコーの言説論と権力/知の概念を応用し、「東洋」は客観的実体ではなく西洋が生産したテクスト的構築物であると論じた。ポストコロニアル研究・文化研究・国際関係論・グローバルメディア批評の基礎枠組みとなり、表象の政治学と知識生産の権力性を問う理論として影響を与え続けている。',
+    keyFigures: 'エドワード・W・サイード（Edward W. Said, 1935–2003）／『オリエンタリズム』（Orientalism, Pantheon Books, 1978）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Orientalism-cultural-attitude', type: 'reference', label: 'Encyclopaedia Britannica — Orientalism（サイードの定義・植民地的言説・ポストコロニアル理論への影響）' },
+      { url: 'https://plato.stanford.edu/entries/orientalism/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Orientalism（サイードの理論的枠組み・批判・継承・ポストコロニアル研究）' },
+    ],
+  },
+  {
+    id: 'human-double-bind',
+    discipline: 'human-science',
+    title: 'ダブルバインド（二重拘束）',
+    statement:
+      'ダブルバインドとは、相互に矛盾する命令・期待を同時に受け、どちらを選択しても批判・罰せられるという逃げ場のない状況を指す概念で、グレゴリー・ベイトソンらが1956年の論文「Toward a Theory of Schizophrenia」で統合失調症の発症メカニズムとして提唱した。' +
+      '典型例は言語では「近づいて」と求めながら身体的に拒絶する親子コミュニケーションで、矛盾する第一・第二命令に「この場を去ってはならない」という第三の禁止が重なる。パロアルト学派の家族療法、システム論的コミュニケーション理論、組織行動論における逆説的指示の研究に発展した。',
+    keyFigures: 'グレゴリー・ベイトソン（Gregory Bateson, 1904–1980）／ドン・ジャクソン／ジェイ・ヘイリー／ジョン・H・ウィークランド／Bateson et al. (1956) Behavioral Science 1(4):251-264',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/double-bind', type: 'reference', label: 'Encyclopaedia Britannica — Double bind（ベイトソン1956・矛盾コミュニケーション・統合失調症仮説・家族療法への応用）' },
+      { url: 'https://psycnet.apa.org/record/1958-00045-001', type: 'academic', label: 'Bateson, Jackson, Haley & Weakland (1956) "Toward a Theory of Schizophrenia," Behavioral Science 1(4):251-264（APA PsycNet）' },
+    ],
+  },
+  {
+    id: 'bizlaw-proportionality-principle',
+    discipline: 'business-law',
+    title: '比例原則（行政法・EU法）',
+    statement:
+      '比例原則とは、公権力（立法・行政）の行使にあたり目的達成のための手段が当該目的に照らして必要最小限であることを求める法原則で、適合性（目的達成に適した手段か）・必要性（より制限的でない手段が存在しないか）・相当性（利益と不利益のバランスが取れているか）の3段階で審査される。' +
+      'ドイツ行政法・憲法判例（過剰禁止の原則 Übermaßverbot）で発展し、EU法（EU条約5条4項）に明文化された。日本行政法でも通説・判例が確立した一般原則とし、警察比例の原則・行政代執行の要件・規制立法の憲法審査に用いられる。',
+    keyFigures: 'ドイツ連邦憲法裁判所判例で体系化（過剰禁止の原則）／EU条約5条4項に明文化（リスボン条約2009）／日本：行政法の一般原則として確立',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.europarl.europa.eu/factsheets/en/sheet/7/the-principle-of-proportionality', type: 'government', label: 'European Parliament Factsheets — The Principle of Proportionality（EU条約5条4項・適合性・必要性・相当性の3段階）' },
+      { url: 'https://www.soumu.go.jp/main_sosiki/gyoukan/kanri/pdf/sakusei_62.pdf', type: 'government', label: '総務省行政管理研修所 — 行政法の基礎テキスト（比例原則を含む行政法の一般原則）' },
+    ],
+  },
 ];
 // Stryker restore all

@@ -1,0 +1,38 @@
+---
+collection: academic
+id: econ-cross-price-income-elasticity
+category: "economics"
+category_ja: "経済学"
+title: "クロス価格弾力性と所得弾力性"
+as_of: "2026-06"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "クロス価格弾力性と所得弾力性"
+---
+
+# クロス価格弾力性と所得弾力性
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+クロス価格弾力性は財Aの価格変化が財Bの需要量に与える影響の度合い（財Bの需要量変化率÷財Aの価格変化率）で、正値は代替財、負値は補完財を示し、価格政策やマーケティング戦略の分析に用いられる。所得弾力性は所得変化に対する需要量の感応度（需要量変化率÷所得変化率）で、0〜1の財を必需品、1超を奢侈品（ぜいたく品）、負を劣等財と分類し、エンゲルの法則（食料費の所得弾力性は1未満）の理論的根拠をなす。
+
+## 提唱者・初出
+アルフレッド・マーシャル（Alfred Marshall, 1842–1924）が『経済学原理』（1890）で弾力性概念を体系化
+
+## 出典
+- [Encyclopaedia Britannica Money — Cross-Price Elasticity of Demand（代替財・補完財の判定・計算式・事例）](https://www.britannica.com/money/cross-price-elasticity-of-demand) `リファレンス`
+- [IMF Finance & Development "Back to Basics: Elasticity"（需要の弾力性・所得弾力性・クロス弾力性の基礎解説）](https://www.imf.org/external/pubs/ft/fandd/basics/34-elasticity.htm) `公的`
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
