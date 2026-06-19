@@ -19759,5 +19759,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.goodtherapy.org/famous-psychologists/michael-white.html', type: 'reference', label: 'GoodTherapy — Michael White biography' },
     ],
   },
+  {
+    id: 'econ-herfindahl-hirschman-index',
+    discipline: 'economics',
+    title: 'ハーフィンダール・ハーシュマン指数（HHI）',
+    statement:
+      'ハーフィンダール・ハーシュマン指数（HHI）は、市場における各企業の市場占有率（%）を二乗して合計することで算出される市場集中度の指標である。アルバート・ハーシュマンが1945年に、オリス・ハーフィンダールが1950年のコロンビア大学博士論文で独立に考案した。' +
+      '米国司法省・連邦取引委員会は1982年の水平合併ガイドラインで公式採用し、HHI 1,500未満を非集中、1,500〜2,500を中程度、2,500超を高度集中と分類する。独占市場では最大値10,000となり、日本の公正取引委員会も企業結合審査でHHIを用いている。',
+    keyFigures: 'オリス・C・ハーフィンダール（Orris C. Herfindahl, 1918–1972）／アルバート・O・ハーシュマン（Albert O. Hirschman, 1915–2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.justice.gov/atr/herfindahl-hirschman-index', type: 'government', label: 'U.S. Department of Justice Antitrust Division — Herfindahl-Hirschman Index（公式定義・閾値）' },
+      { url: 'https://www.britannica.com/biography/Orris-C-Herfindahl', type: 'reference', label: 'Encyclopaedia Britannica — Orris C. Herfindahl（1918–1972、コロンビア大博士論文1950）' },
+    ],
+  },
+  {
+    id: 'mgmt-succession-planning',
+    discipline: 'management',
+    title: 'サクセッション・プランニング（後継者育成計画）',
+    statement:
+      'サクセッション・プランニングとは、組織の重要な指導的ポジションについて将来の空席に備え内部候補者を計画的に特定・育成・準備する体系的な人材マネジメントのプロセスである。ウォルター・マーラーが1970年代にGEで体系化し、ドラッカーは「後継者なくして成功なし」と経営者の最重要責務の一つと位置づけた。' +
+      'ウィリアム・ロスウェルの著書『Effective Succession Planning』（初版2001年）が学術的な標準テキストとされ、単なる後任指名ではなくリーダーシップ・パイプライン全体の継続的な開発と組織のレジリエンス確保を目的とする。',
+    keyFigures: 'ピーター・ドラッカー（Peter Drucker, 1909–2005）／ウィリアム・ロスウェル（William Rothwell）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/ambpp.2015.42', type: 'academic', label: 'Academy of Management Proceedings — Board Processes and CEO Succession Planning（査読付き学会報告）' },
+      { url: 'https://www.britannica.com/money/succession-planning', type: 'reference', label: 'Encyclopaedia Britannica Money — Succession Planning（定義・プロセス・歴史）' },
+    ],
+  },
+  {
+    id: 'human-stockholm-syndrome',
+    discipline: 'human-science',
+    title: 'ストックホルム症候群',
+    statement:
+      'ストックホルム症候群とは、誘拐・人質事件などにおいて被害者が加害者に対して心理的な絆や好意的感情を抱く逆説的な心理現象である。1973年8月にストックホルムのノルマルム広場で発生した銀行強盗・人質事件において6日間監禁された4名の人質が犯人に共感し警察に非協力的となった事例を受け、顧問精神科医ニルス・ベジェロートが命名した。' +
+      '生存のための適応的防衛メカニズムと解釈されることが多く、DSM-5には独立した診断名として収録されていないが、臨床心理学・犯罪学において広く認知された概念であり、家庭内暴力やカルト研究にも応用される。',
+    keyFigures: 'ニルス・ベジェロート（Nils Bejerot, 1921–1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dictionary.apa.org/stockholm-syndrome', type: 'reference', label: 'APA Dictionary of Psychology — Stockholm syndrome（アメリカ心理学会公式用語辞典）' },
+      { url: 'https://www.britannica.com/science/Stockholm-syndrome', type: 'reference', label: 'Encyclopaedia Britannica — Stockholm syndrome（定義・1973年事件・Bejerot命名）' },
+    ],
+  },
+  {
+    id: 'bizlaw-economic-security-promotion-act',
+    discipline: 'business-law',
+    title: '経済安全保障推進法',
+    statement:
+      '経済安全保障推進法（令和4年法律第43号）は、国際情勢の複雑化に伴い安全保障の確保を経済施策と一体的に推進するための基本法であり、2022年5月11日に成立・同月18日に公布された。4つの柱として特定重要物資の安定供給確保、基幹インフラ役務の安定提供確保（電力・通信等14分野）、特定重要技術の開発支援、特許出願の非公開を制度化した。' +
+      '2022年9月から順次施行され2024年5月までに全制度が運用開始された。半導体・レアアース等のサプライチェーン強靱化や安全保障上機微な発明の公開留保など、経済と安全保障の交錯する領域を包括的に規律する日本初の立法である。',
+    keyFigures: '内閣府（所管府省）／経済安全保障推進会議（2021年設置）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cao.go.jp/keizai_anzen_hosho/suishinhou/suishinhou.html', type: 'government', label: '内閣府 — 経済安全保障推進法（所管府省の公式制度紹介ページ）' },
+      { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000157096&current=1', type: 'government', label: '国立国会図書館 日本法令索引 — 経済施策を一体的に講ずることによる安全保障の確保の推進に関する法律（令和4年法律第43号）' },
+    ],
+  },
+  {
+    id: 'infosoc-technical-debt',
+    discipline: 'information-sociology',
+    title: '技術的負債',
+    statement:
+      '技術的負債とは、ソフトウェア開発において短期的な速度を優先し最適でない設計やコードで出荷することを金融における「借入」に喩えたメタファーである。ウォード・カニンガムが1992年のOOPSLA経験報告「The WyCash Portfolio Management System」で提唱した。' +
+      '適時にリファクタリングで返済すれば開発は加速するが、返済を怠ると「利子」として保守コストが累積的に増大する。マーティン・ファウラーは2009年に意図的／無謀の2軸で4象限を提示し概念を精緻化した。現在ではソフトウェア工学・情報システム管理の基本概念として定着している。',
+    keyFigures: 'ウォード・カニンガム（Ward Cunningham, 1949–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://martinfowler.com/bliki/TechnicalDebt.html', type: 'reference', label: 'Martin Fowler — Technical Debt（Cunningham 1992原典引用・4象限の解説）' },
+      { url: 'https://ieeexplore.ieee.org/document/10109339', type: 'academic', label: 'IEEE Xplore — Technical Debt に関する査読付き学術論文（IEEE / ACM）' },
+    ],
+  },
+  {
+    id: 'infosoc-data-sovereignty',
+    discipline: 'information-sociology',
+    title: 'データ主権',
+    statement:
+      'データ主権とは、データの収集・保管・処理・移転に関して国家・組織・個人が意味のある統制権・管轄権を有するべきであるという概念・原則である。クラウドコンピューティングとビッグデータの普及に伴い2010年代に学術的・政策的議論が本格化し、EUのGDPR（2018年施行）がその代表的制度的枠組みとなった。' +
+      '個人レベルでは自己情報コントロール権と結びつき、先住民コミュニティによるデータ主権運動（CARE原則、2018年）は植民地主義的なデータ搾取への対抗として注目されている。情報システム研究では統制・所有権・信頼の複合概念として学術的整理が進んでいる。',
+    keyFigures: 'ルチアーノ・フロリディ（Luciano Floridi, 1964–）／オープン・ナレッジ・ファウンデーション（CARE原則策定に貢献）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s12525-024-00693-4', type: 'academic', label: 'Electronic Markets (Springer) — Data Sovereignty in Information Systems: 体系的文献レビュー（査読誌）' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10155150/', type: 'academic', label: 'PMC (NIH) — Data, Big Tech, and the New Concept of Sovereignty（査読付き）' },
+    ],
+  },
 ];
 // Stryker restore all
