@@ -19843,5 +19843,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10155150/', type: 'academic', label: 'PMC (NIH) — Data, Big Tech, and the New Concept of Sovereignty（査読付き）' },
     ],
   },
+  {
+    id: 'econ-identity-economics',
+    discipline: 'economics',
+    title: 'アイデンティティ経済学',
+    statement:
+      'アイデンティティ経済学は、社会的アイデンティティ（人種・性別・職業・社会階層など自己を定義するカテゴリー）を個人の効用関数に組み込み経済行動への影響を分析する理論枠組みである。アカロフとクラントンが2000年のQuarterly Journal of Economics論文「Economics and Identity」で提唱した。' +
+      '個人は自分の属するカテゴリーの規範に沿って行動し規範から逸脱すると効用が低下するため、アイデンティティが労働供給・賃金・教育投資・消費行動に体系的に影響を与えると論じた。2010年にPrinceton University Pressから同名の著書が刊行され、新古典派モデルに社会心理学的要素を統合する試みとして評価されている。',
+    keyFigures: 'ジョージ・アカロフ（George A. Akerlof, 1940–）／レイチェル・クラントン（Rachel E. Kranton）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/115/3/715/1828151', type: 'academic', label: 'Akerlof & Kranton (2000) "Economics and Identity", Quarterly Journal of Economics 115(3), 715-753' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691152554/identity-economics', type: 'academic', label: 'Princeton University Press — Identity Economics (Akerlof & Kranton, 2010)' },
+    ],
+  },
+  {
+    id: 'mgmt-reverse-innovation',
+    discipline: 'management',
+    title: 'リバース・イノベーション',
+    statement:
+      'リバース・イノベーションとは、先進国の多国籍企業が新興国・途上国市場向けに開発した製品・サービス・ビジネスモデルを、その後先進国市場へ逆流させて展開するイノベーションの流れを指す。ゴビンダラジャンとトリンブルが2009年のHarvard Business Review論文で提唱し、2012年の著書で体系化した。' +
+      '従来の「グローカリゼーション」（先進国で開発し途上国に適応）と逆の方向であり、GEヘルスケアのポータブル心電図装置などが実例として挙げられる。新興国の制約条件がイノベーションの源泉となることを示し、グローバル経営戦略論に新たな視座を加えた。',
+    keyFigures: 'ビジャイ・ゴビンダラジャン（Vijay Govindarajan, 1949–）／クリス・トリンブル（Chris Trimble）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://tuck.dartmouth.edu/faculty/faculty-directory/vijay-govindarajan', type: 'academic', label: 'Dartmouth College Tuck School of Business — Vijay Govindarajan Faculty Page（大学公式）' },
+      { url: 'https://knowledge.wharton.upenn.edu/article/vijay-govindarajan-how-reverse-innovation-can-change-the-world/', type: 'academic', label: 'Knowledge at Wharton — "How Reverse Innovation Can Change the World"（ウォートン校）' },
+    ],
+  },
+  {
+    id: 'human-microaggression',
+    discipline: 'human-science',
+    title: 'マイクロアグレッション',
+    statement:
+      'マイクロアグレッションとは、日常的な言動・環境のなかに表れる、意図的または無意図的な、人種・民族・性別・性的指向などのマイノリティ集団に対する軽蔑的・侮辱的メッセージを含む短い交流を指す概念である。ハーバード大学精神科医チェスター・ピアースが1970年に黒人に対する日常的侮辱を記述するため造語した。' +
+      'デラルド・ウィング・スーらは2007年のAmerican Psychologist論文で、マイクロアサルト（意図的攻撃）・マイクロインサルト（無意識的な無礼）・マイクロインバリデーション（経験の否定）の三類型に体系化し、臨床心理学・教育・組織行動への影響を論じた。',
+    keyFigures: 'チェスター・M・ピアース（Chester M. Pierce, 1927–2016）／デラルド・ウィング・スー（Derald Wing Sue, 1942–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.62.4.271', type: 'academic', label: 'Sue et al. (2007) "Racial Microaggressions in Everyday Life", American Psychologist 62(4), 271-286' },
+      { url: 'https://sk.sagepub.com/ency/edvol/counseling/chpt/sue-derald-wing-1942', type: 'reference', label: 'SAGE Encyclopedia of Counseling — Sue, Derald Wing (1942–)' },
+    ],
+  },
+  {
+    id: 'bizlaw-private-international-law',
+    discipline: 'business-law',
+    title: '国際私法（法の適用に関する通則法）',
+    statement:
+      '国際私法は、渉外的な法律関係（当事者・目的物・行為地などに外国的要素を含む私法上の法律関係）についていずれの国の法律を適用すべきかを定める法分野である。日本では「法の適用に関する通則法」（平成18年法律第78号、2006年制定・2007年施行）が一般法にあたり、明治31年制定の法例を全面改正した。' +
+      'サヴィニーが『現代ローマ法の体系』（1849年）で法律関係ごとの客観的「本拠」を探求する方法論を確立し近代国際私法の基礎を築いた。契約については当事者自治を原則とし、不法行為・物権・親族・相続など領域ごとに連結点が定められている。',
+    keyFigures: 'フリードリヒ・カール・フォン・サヴィニー（Friedrich Carl von Savigny, 1779–1861）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/418AC0000000078', type: 'government', label: 'e-Gov法令検索「法の適用に関する通則法（平成18年法律第78号）」' },
+      { url: 'http://www.pilaj.jp/', type: 'academic', label: '国際私法学会（Private International Law Association of Japan）公式サイト' },
+    ],
+  },
+  {
+    id: 'infosoc-connectivism',
+    discipline: 'information-sociology',
+    title: 'コネクティビズム',
+    statement:
+      'コネクティビズムは、デジタルネットワーク時代における学習をノード間の接続の形成・維持・活用として捉える学習理論である。ジョージ・シーメンズが2004年の論文「Connectivism: A Learning Theory for the Digital Age」で提唱した。知識は個人の内部だけでなく人・組織・データベース・ウェブなどのネットワーク上に分散して存在するとする。' +
+      'シーメンズとダウンズは2008年にマニトバ大学で「CCK08」を開講し、これが世界初のMOOC（大規模公開オンライン講座）とされる。行動主義・認知主義・構成主義に続く第四の学習理論として位置づけられるが、独立理論としての地位については学術的議論が続いている。',
+    keyFigures: 'ジョージ・シーメンズ（George Siemens, 1970–）／スティーヴン・ダウンズ（Stephen Downes, 1959–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.itdl.org/Journal/Jan_05/article01.htm', type: 'academic', label: 'Siemens (2005) "Connectivism: A Learning Theory for the Digital Age", IJTDL 2(1)（原著論文）' },
+      { url: 'https://uark.pressbooks.pub/edtech/chapter/elearnspace-connectivism-a-learning-theory-for-the-digital-age/', type: 'academic', label: 'University of Arkansas Open Textbook — Connectivism（大学教科書）' },
+    ],
+  },
+  {
+    id: 'econ-informal-economy',
+    discipline: 'economics',
+    title: 'インフォーマル経済',
+    statement:
+      'インフォーマル経済とは、政府の規制・課税・統計把握の外で行われる経済活動の総体を指す概念である。英国の人類学者キース・ハートが1973年のJournal of Modern African Studies論文でガーナ・アクラにおける都市移住民の生計活動を分析し「インフォーマル・セクター」の語を学術的に導入した。' +
+      '同時期にILOの1972年ケニア雇用調査団報告書も同概念を用い開発政策上の注目を集めた。エルナンド・デ・ソトは1986年の著書でペルーの非公式経済を分析し過剰な規制が合法的経済参加を阻害すると論じた。ILOは2015年に非公式経済からの移行に関する勧告（第204号）を採択している。',
+    keyFigures: 'キース・ハート（Keith Hart, 1943–2025）／エルナンド・デ・ソト（Hernando de Soto, 1941–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ilo.org/resource/other/informal-economy', type: 'government', label: 'International Labour Organization — Informal Economy（国際労働機関公式ページ）' },
+      { url: 'https://www.wiego.org/informal-economy/history-debates/', type: 'academic', label: 'WIEGO — Informal Economy: History & Debates（学術研究機関による概念史）' },
+    ],
+  },
 ];
 // Stryker restore all
