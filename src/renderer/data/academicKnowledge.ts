@@ -19171,5 +19171,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/', type: 'government', label: '厚生労働省 — ストレスチェック制度について' },
     ],
   },
+  {
+    id: 'econ-granger-causality',
+    discipline: 'economics',
+    title: 'グレンジャー因果性',
+    statement:
+      'グレンジャー因果性とは、クライヴ・グレンジャーが1969年にEconometrica誌で提唱した時系列分析における予測的因果関係の検定手法である。時系列Xの過去の値がY自身の過去の値のみによる予測を超えてYの予測に統計的に有意な情報を含む場合、「XはYをグレンジャー因果する」と定義される。' +
+      'F検定を用いて帰無仮説（Xの過去がYの予測に寄与しない）を棄却するか否かで判定する。真の因果関係ではなく予測的因果性を示す概念であり、経済学・金融・神経科学等で広く応用されている。グレンジャーは共和分の研究と合わせ2003年にノーベル経済学賞を受賞した。',
+    keyFigures: 'クライヴ・グレンジャー（Clive W. J. Granger, 1934–2009）／2003年ノーベル経済学賞（ロバート・エンゲルと共同受賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1912791', type: 'academic', label: 'Granger, C. W. J. (1969) "Investigating Causal Relations by Econometric Models and Cross-spectral Methods," Econometrica 37(3), 424–438' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2003/granger/facts/', type: 'reference', label: 'NobelPrize.org — Clive W. J. Granger, Prize in Economic Sciences 2003' },
+    ],
+  },
+  {
+    id: 'mgmt-appreciative-inquiry',
+    discipline: 'management',
+    title: 'アプリシエイティブ・インクワイアリー（AI）',
+    statement:
+      'アプリシエイティブ・インクワイアリー（AI）は、1986年にケース・ウェスタン・リザーブ大学のデイヴィッド・クーパーライダーとスレッシュ・スリヴァストヴァが提唱した組織開発手法である。問題や欠陥に焦点を当てる従来型アプローチとは対照的に、組織の強みや肯定的側面を起点とする。' +
+      '発見（Discovery）・夢（Dream）・設計（Design）・運命（Destiny）の4Dサイクルを通じて組織変革を推進する。ポジティブ心理学や強みに基づく経営論の先駆的理論であり、戦略立案・地域開発など幅広い分野で応用されている。',
+    keyFigures: 'デイヴィッド・クーパーライダー（David Cooperrider, 1954–）／スレッシュ・スリヴァストヴァ（Suresh Srivastva, 1932–2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.emerald.com/insight/content/doi/10.1108/S1475-9152(2013)0000004001/full/html', type: 'academic', label: 'Cooperrider & Srivastva, "Appreciative Inquiry in Organizational Life" (1987), Research in Organizational Change and Development, Vol. 1' },
+      { url: 'https://weatherhead.case.edu/centers/fowler/about/appreciative-inquiry', type: 'academic', label: 'Case Western Reserve University, Fowler Center — Appreciative Inquiry（提唱者所属大学公式ページ）' },
+    ],
+  },
+  {
+    id: 'human-stanford-prison-experiment',
+    discipline: 'human-science',
+    title: 'スタンフォード監獄実験',
+    statement:
+      'スタンフォード監獄実験（1971年）は、フィリップ・ジンバルドーがスタンフォード大学で実施した社会心理学実験である。大学生被験者を無作為に看守役と囚人役に割り当て、大学地下に模擬刑務所を設置した。看守役は次第に権威的・虐待的行動を強め、囚人役には深刻な心理的ストレス反応が観察された。' +
+      '当初2週間の予定であったが倫理的懸念から6日間で中止された。本実験は状況的・制度的要因が個人の行動に及ぼす強力な影響を示したが、後年、需要特性や方法論的問題（実験者の介入・被験者の演技）について批判を受けている。',
+    keyFigures: 'フィリップ・ジンバルドー（Philip Zimbardo, 1933–2024）／クレイグ・ハニー（Craig Haney, 1947–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1974-28840-001', type: 'academic', label: 'Haney, Banks & Zimbardo (1973) "Interpersonal dynamics in a simulated prison," International Journal of Criminology and Penology 1, 69–97（APA PsycNet）' },
+      { url: 'https://www.britannica.com/event/Stanford-Prison-Experiment', type: 'reference', label: 'Encyclopaedia Britannica — Stanford Prison Experiment' },
+    ],
+  },
+  {
+    id: 'bizlaw-immigration-control',
+    discipline: 'business-law',
+    title: '出入国管理及び難民認定法（入管法）',
+    statement:
+      '出入国管理及び難民認定法（昭和26年政令第319号、通称「入管法」）は、日本における外国人の入国・在留・出国および難民の認定手続を規律する法律である。1951年にポツダム政令として公布され、後に法律としての効力を付与された。在留資格制度により外国人の活動範囲を定める。' +
+      '2018年改正で特定技能1号・2号の在留資格が創設され、一定の専門性・技能を有する外国人労働者の受入れが拡大された。2019年4月に法務省の外局として出入国在留管理庁が設置され、入国管理局の業務を承継した。2023年改正では難民認定制度の見直しと送還忌避問題への対応が図られた。',
+    keyFigures: '出入国管理及び難民認定法（昭和26年政令第319号）／出入国在留管理庁（2019年4月設置）／2018年改正（特定技能）・2023年改正（送還制度見直し）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=326CO0000000319', type: 'government', label: 'e-Gov法令検索 — 出入国管理及び難民認定法（昭和26年政令第319号）' },
+      { url: 'https://www.moj.go.jp/isa/laws/h30_kaisei.html', type: 'government', label: '出入国在留管理庁 — 新たな外国人材の受入れ（2018年改正の概要）' },
+    ],
+  },
+  {
+    id: 'infosoc-selective-exposure',
+    discipline: 'information-sociology',
+    title: '選択的接触理論',
+    statement:
+      '選択的接触理論とは、人々が自身の既存の信念・態度・意見と一致する情報を積極的に選好し、矛盾する情報を回避する傾向を説明する理論である。レオン・フェスティンガーの認知的不協和理論（1957年）を理論的基盤とし、ラザースフェルドらの1940年代の選挙メディア研究を経て発展した。' +
+      'ドルフ・ジルマンとジェニングス・ブライアントが1985年の著書『Selective Exposure to Communication』で体系化した。現代ではフィルターバブルやエコーチェンバー、党派的メディア消費、デジタル時代の確証バイアスとの関連で重要性が増している。',
+    keyFigures: 'ドルフ・ジルマン（Dolf Zillmann, 1935–2018）／ジェニングス・ブライアント（Jennings Bryant, 1944–2012）／レオン・フェスティンガー（Leon Festinger, 1919–1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/Selective-Exposure-to-Communication/Zillmann-Bryant/p/book/9780898595567', type: 'academic', label: 'Zillmann, D. & Bryant, J. (1985) Selective Exposure to Communication, Lawrence Erlbaum Associates (Routledge)' },
+      { url: 'https://www.oxfordhandbooks.com/view/10.1093/oxfordhb/9780199793471.001.0001/oxfordhb-9780199793471-e-009', type: 'academic', label: 'Oxford Handbook of Political Communication — Selective Exposure（査読ハンドブック）' },
+    ],
+  },
+  {
+    id: 'infosoc-speech-act-theory',
+    discipline: 'information-sociology',
+    title: '言語行為論',
+    statement:
+      '言語行為論（Speech Act Theory）は、J・L・オースティンが1955年のウィリアム・ジェイムズ講義で提唱し、遺著『言語と行為（How to Do Things with Words）』（1962年）で体系化した言語哲学の理論である。発話を発語行為（locutionary act）・発語内行為（illocutionary act）・発語媒介行為（perlocutionary act）の三層に分析し、事実確認的発話と行為遂行的発話を区別した。' +
+      'ジョン・サールは『言語行為（Speech Acts）』（1969年）で発語内行為を断言型・指令型・行為拘束型・表出型・宣言型の五類型に分類し理論を発展させた。語用論・コミュニケーション研究の基盤的理論である。',
+    keyFigures: 'J・L・オースティン（J. L. Austin, 1911–1960）／ジョン・サール（John Searle, 1932–2022）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.oup.com/academic/product/how-to-do-things-with-words-9780198245537', type: 'academic', label: 'Austin, J. L. (1962) How to Do Things with Words, Oxford University Press（原典）' },
+      { url: 'https://www.cambridge.org/core/books/speech-acts/D2D7B03E472C8A390ED60B3A9F65387E', type: 'academic', label: 'Searle, J. R. (1969) Speech Acts: An Essay in the Philosophy of Language, Cambridge University Press' },
+    ],
+  },
 ];
 // Stryker restore all
