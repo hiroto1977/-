@@ -19675,5 +19675,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://paulineroseclance.com/pdf/ip_high_achieving_women.pdf', type: 'academic', label: 'Clance & Imes (1978) "The Imposter Phenomenon in High Achieving Women" Psychotherapy 15(3)' },
     ],
   },
+  {
+    id: 'econ-lancaster-characteristics',
+    discipline: 'economics',
+    title: 'ランカスターの特性アプローチ',
+    statement:
+      'ランカスターの特性アプローチは、消費者が財そのものからではなく財が持つ諸特性（属性）から効用を得ると主張する理論である。コロンビア大学教授ケルビン・ランカスターが1966年にJournal of Political Economy誌に発表した論文「A New Approach to Consumer Theory」で提唱した。' +
+      'この理論はローゼン（1974）のヘドニック価格モデル、マクファデンの離散選択モデルの基礎を築き、財を特性の束として分析する枠組みを消費者理論に確立した。製品差別化・品質評価・マーケティング分析など幅広い応用を持つ。',
+    keyFigures: 'ケルビン・ランカスター（Kelvin Lancaster, 1924–1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://econ.columbia.edu/faculty/in-memoriam/kelvin-john-lancaster-1924-1999/', type: 'academic', label: 'Columbia University Economics — Kelvin John Lancaster (1924-1999) Memorial' },
+      { url: 'https://www.semanticscholar.org/paper/A-New-Approach-to-Consumer-Theory-Lancaster/78915db8cbb8ee3b24f43d168438fe79edc7bb2b', type: 'academic', label: 'Lancaster (1966) "A New Approach to Consumer Theory" Journal of Political Economy 74' },
+    ],
+  },
+  {
+    id: 'mgmt-feedforward',
+    discipline: 'management',
+    title: 'フィードフォワード',
+    statement:
+      'フィードフォワードとは、過去の行動を批評するフィードバックとは対照的に、未来に焦点を当て「これから何ができるか」を建設的に提案するコミュニケーション手法である。I・A・リチャーズが1951年のメイシー・サイバネティクス会議でサイバネティクスの文脈から用語を提唱した。' +
+      'マーシャル・ゴールドスミスが2002年のLeader to Leader誌論文「Try Feedforward Instead of Feedback」で経営・リーダーシップ領域に普及させ、過去の失敗ではなく将来の成功に向けた具体的提案を行うアプローチとして人材開発に広く導入されている。',
+    keyFigures: 'I・A・リチャーズ（I. A. Richards, 1893–1979）／マーシャル・ゴールドスミス（Marshall Goldsmith, 1949–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.marshallgoldsmith.com/post/try-feedforward-instead-of-feedback', type: 'academic', label: 'Goldsmith, M. (2002) "Try Feedforward Instead of Feedback" Leader to Leader' },
+      { url: 'https://en.wikipedia.org/wiki/Marshall_Goldsmith', type: 'reference', label: 'Wikipedia — Marshall Goldsmith' },
+    ],
+  },
+  {
+    id: 'human-polyvagal-theory',
+    discipline: 'human-science',
+    title: 'ポリヴェーガル理論（多重迷走神経理論）',
+    statement:
+      'ポリヴェーガル理論は、1994年にスティーヴン・ポージェスが心理生理学会会長講演で提唱した自律神経系の進化的階層モデルであり、腹側迷走神経複合体（社会的関与・安全）、交感神経系（闘争・逃走）、背側迷走神経複合体（凍結・シャットダウン）の三つの神経回路を区別する。意識下の脅威検出メカニズム「ニューロセプション」を中核概念とする。' +
+      'トラウマ治療・愛着理論・感情調整の臨床領域で広く応用される一方、進化的主張や迷走神経の解剖学的区分の妥当性について神経科学者から批判があり、科学的論争が継続している。',
+    keyFigures: 'スティーヴン・ポージェス（Stephen W. Porges, 1945–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Polyvagal_theory', type: 'reference', label: 'Wikipedia — Polyvagal theory' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12302812/', type: 'academic', label: 'PMC/NIH — Polyvagal Theory: Current Status, Clinical Applications, and Future Directions' },
+    ],
+  },
+  {
+    id: 'bizlaw-juvenile-act',
+    discipline: 'business-law',
+    title: '少年法',
+    statement:
+      '少年法（昭和23年法律第168号）は、少年の健全育成を期し非行少年に対する保護処分等を定める法律であり、1948年に制定された。20歳未満の者を対象とし、家庭裁判所が調査・審判を行い、保護観察・児童自立支援施設送致・少年院送致等の保護処分を決定する。刑罰よりも教育的措置・更生を重視する理念に立つ。' +
+      '2022年4月施行の改正（令和3年法律第47号）により、民法上の成年年齢引下げに伴い18・19歳を「特定少年」と位置づけ、家庭裁判所の管轄を維持しつつ原則逆送対象事件の拡大や起訴後の実名報道解禁等の特例が設けられた。',
+    keyFigures: '法務省（所管官庁）／家庭裁判所（審判機関）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/323AC0000000168', type: 'government', label: 'e-Gov法令検索 — 少年法（昭和23年法律第168号）' },
+      { url: 'https://www.moj.go.jp/keiji1/keiji14_00015.html', type: 'government', label: '法務省 — 少年法の一部を改正する法律（令和3年法律第47号）の概要' },
+    ],
+  },
+  {
+    id: 'infosoc-open-data',
+    discipline: 'information-sociology',
+    title: 'オープンデータ',
+    statement:
+      'オープンデータとは、誰でも自由に利用・再配布できる形で公開されたデータを指し、機械可読性・オープンフォーマット・自由なライセンスを原則とする。2009年のオバマ大統領オープンガバメント指令や英国data.gov.ukの開設を契機に国際的に普及し、ティム・バーナーズ＝リーは2010年に5スターオープンデータ・スキームを提唱した。' +
+      '日本では2012年の「電子行政オープンデータ戦略」により政府データの公開が推進され、data.go.jpが開設された。行政の透明性向上・イノベーション促進・市民参加の基盤として情報社会学における重要な政策概念となっている。',
+    keyFigures: 'ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／オープン・ナレッジ・ファウンデーション（2004年設立）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://opendefinition.org/', type: 'academic', label: 'Open Knowledge Foundation — Open Definition' },
+      { url: 'https://www.data.go.jp/', type: 'government', label: 'データカタログサイト DATA.GO.JP（日本政府オープンデータポータル）' },
+    ],
+  },
+  {
+    id: 'human-narrative-therapy',
+    discipline: 'human-science',
+    title: 'ナラティブ・セラピー',
+    statement:
+      'ナラティブ・セラピーは、マイケル・ホワイトとデイヴィッド・エプストンが1990年の著書『Narrative Means to Therapeutic Ends』で体系化した心理療法であり、問題を人から切り離す「外在化」を通じてクライエントが自らの人生の物語を「再著述（リ・オーサリング）」することを支援する。' +
+      'フーコーの権力／知の概念と社会構成主義に理論的基盤を置き、主要技法として外在化・ユニークな結果・再著述・定義的セレモニーがある。ホワイトは1983年にアデレードにダルウィッチ・センターを設立し、ナラティブ実践の国際的拠点とした。',
+    keyFigures: 'マイケル・ホワイト（Michael White, 1948–2008）／デイヴィッド・エプストン（David Epston, 1944–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/', type: 'academic', label: 'White, M. & Epston, D. (1990) Narrative Means to Therapeutic Ends, W.W. Norton' },
+      { url: 'https://www.goodtherapy.org/famous-psychologists/michael-white.html', type: 'reference', label: 'GoodTherapy — Michael White biography' },
+    ],
+  },
 ];
 // Stryker restore all
