@@ -20683,5 +20683,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.chusho.meti.go.jp/shogyo/fc/index.html', type: 'government', label: '中小企業庁「フランチャイズ関連情報」（中小小売商業振興法に基づく法定開示の概要）' },
     ],
   },
+  {
+    id: 'econ-gordon-growth-model',
+    discipline: 'economics',
+    title: '配当割引モデル（ゴードン成長モデル）',
+    statement:
+      '配当割引モデル（DDM: Dividend Discount Model）は、株式の内在価値を将来支払われる配当の現在価値の総和として算定する株式評価理論である。ジョン・バー・ウィリアムズが1938年の著書『The Theory of Investment Value』で基礎を確立し、マイロン・J・ゴードンが1956年・1962年に定率成長の特殊ケースを定式化してゴードン成長モデルと呼ばれる。' +
+      'ゴードン成長モデルでは株式価値 P₀ = D₁/(r − g)（D₁：次期配当、r：必要収益率、g：配当の一定成長率）と表される。前提として g < r が必要であり、成熟した安定配当企業の評価や資本コスト推定（r = D₁/P₀ + g）に広く使われる一方、成長率の推定感度が高い点が実務上の課題として指摘される。',
+    keyFigures: 'ジョン・バー・ウィリアムズ（John Burr Williams, 1900–1989）『The Theory of Investment Value』1938／マイロン・J・ゴードン（Myron J. Gordon, 1920–2010）・エーライ・シャピロ 1956・1962',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pages.stern.nyu.edu/~adamodar/pdfiles/valn2ed/ch13.pdf', type: 'academic', label: 'Aswath Damodaran (NYU Stern School of Business) — Investment Valuation Ch.13: Dividend Discount Models（DDM/ゴードン成長モデルの学術的解説）' },
+      { url: 'https://www.investopedia.com/terms/g/gordongrowthmodel.asp', type: 'reference', label: 'Investopedia — Gordon Growth Model（定義・数式・仮定・限界の参照）' },
+    ],
+  },
+  {
+    id: 'mgmt-evidence-based-management',
+    discipline: 'management',
+    title: '証拠に基づく経営（エビデンスに基づく経営）',
+    statement:
+      '証拠に基づく経営（Evidence-Based Management, EBMgt）とは、経営上の意思決定において、現在入手可能な最善の科学的証拠・組織内データ・実務経験・ステークホルダーの視点の四つのエビデンス源を批判的に統合して判断を下す実践的アプローチである。医学のEvidence-Based Medicine（EBM）の思想を経営学・組織論に応用したものとして位置づけられる。' +
+      'ジェフリー・フェファーとロバート・サットンが2006年の著書『Hard Facts, Dangerous Half-Truths, and Total Nonsense』でこの概念を広め、Briner・Denyer・Rousseau（2009）が定義を精緻化した。流行や直感・カリスマ経営者の逸話的成功談に依存した「流行り経営」や疑似科学的主張への批判的代案として注目される。',
+    keyFigures: 'ジェフリー・フェファー（Jeffrey Pfeffer, Stanford）＆ロバート・サットン（Robert Sutton）2006／デニス・M・ルソー（Denise M. Rousseau, Carnegie Mellon）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cmr.berkeley.edu/2006/01/48-3-evidence-based-management/', type: 'academic', label: 'Pfeffer & Sutton (2006) "Evidence-Based Management," California Management Review 48(3)（査読学術誌・分野確立論文）' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2009.35713336', type: 'academic', label: 'Briner, Denyer & Rousseau (2009) "Evidence-Based Management: Concept Cleanup Time?", Academy of Management Perspectives（定義精緻化・査読誌）' },
+    ],
+  },
+  {
+    id: 'human-outgroup-homogeneity-effect',
+    discipline: 'human-science',
+    title: '外集団均質性効果',
+    statement:
+      '外集団均質性効果（Out-Group Homogeneity Effect）とは、人々が自分の所属集団（内集団）のメンバーは多様・個性的であると知覚する一方、外集団のメンバーは互いに似通った均質な存在として知覚する傾向をいう。「彼らはみんな同じだが、私たちはそれぞれ違う」という非対称な認知バイアスとして現れる。' +
+      'パークとロスバートの1982年の研究やジャッドとパークの1988年の実験が現象を実証し、多数の追試で確認された。知覚の偏りは、内集団メンバーとの接触頻度の高さによる個別化された情報処理と、外集団に対するカテゴリーベースの簡略化処理という非対称な認知から生じるとされる。偏見・ステレオタイプ・集団間差別の認知的メカニズムの一つである。',
+    keyFigures: 'バーナデット・パーク（Bernadette Park）＆マイロン・ロスバート（Myron Rothbart）1982／チャールズ・ジャッド（Charles Judd）＆パーク 1988／社会的アイデンティティ理論・自己カテゴリー化理論との接続',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doi/10.1037/0022-3514.42.6.1051', type: 'academic', label: 'Park, B. & Rothbart, M. (1982) "Perception of Out-Group Homogeneity and Levels of Social Categorization," Journal of Personality and Social Psychology 42(6)（実証的先行研究）' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/outgroup-homogeneity', type: 'reference', label: 'ScienceDirect Topics — Outgroup Homogeneity（Elsevier参照項目・定義・研究の流れ）' },
+    ],
+  },
+  {
+    id: 'bizlaw-kyodou-shinken',
+    discipline: 'business-law',
+    title: '共同親権（2024年民法改正）',
+    statement:
+      '離婚後の親権をめぐる日本の民法は従来、父母の一方のみが子の親権を持つ「単独親権」を唯一の制度としてきた（旧民法819条）。2024年（令和6年）5月の民法等一部改正法（令和6年法律第49号）により、裁判所が子の利益のために適切と判断する場合、または父母が協議で合意した場合に離婚後も共同親権を選択できる仕組みが導入され、公布後2年内（2026年）の施行が予定されている。' +
+      '改正後の民法819条は、父母の協議が整わない場合は家庭裁判所が父母の一方または双方を親権者と定めるとし、単独親権・共同親権いずれも選択しうる枠組みとした。共同親権の場合でも「急迫の事情」や「日常の行為」については単独行使が認められる。ハーグ条約（国際的な子の奪取の民事上の側面に関する条約）の履行確保との整合性確保も改正の背景の一つである。',
+    keyFigures: '令和6年法律第49号（民法等一部改正法, 2024年5月17日公布）／民法819条（改正後）／法制審議会家族法制部会（2022〜2024年）／施行：公布後2年内（2026年頃）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00311.html', type: 'government', label: '法務省 — 民法等の一部を改正する法律（令和6年法律第49号）の概要（共同親権導入の政府解説）' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（第819条 離婚後の親権、改正後条文）' },
+    ],
+  },
+  {
+    id: 'infosoc-cyberbullying',
+    discipline: 'information-sociology',
+    title: 'ネットいじめ（サイバーバリング）',
+    statement:
+      'ネットいじめ（サイバーバリング, cyberbullying）とは、スマートフォン・SNS・オンラインゲーム・電子メールなどデジタル技術を介して行われる、特定個人への意図的かつ繰り返しの攻撃的行為を指す。侮辱的メッセージの送信、個人情報や恥ずかしい画像の拡散、なりすまし、集団からの排除・無視、追い回し（サイバーストーキング）などが含まれる。' +
+      '研究者ナンシー・ウィラードが2000年代初頭に概念を整理し、ロビン・コワルスキらが大規模調査で実態を示した。伝統的いじめと異なり24時間・場所を問わず被害が及ぶ「逃げ場のなさ」、観衆の爆発的拡大、匿名性による加害の敷居低下が特徴として指摘される。日本では2013年のいじめ防止対策推進法がいじめの定義に「インターネットを通じた」行為を明示的に含める。',
+    keyFigures: 'ナンシー・ウィラード（Nancy Willard）／ロビン・コワルスキ（Robin Kowalski）＆スーザン・リンバー（Susan Limber）2007／いじめ防止対策推進法（平成25年法律第71号）2条1項',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.stopbullying.gov/cyberbullying/what-is-it', type: 'government', label: 'StopBullying.gov（米国保健福祉省）— "What is Cyberbullying"（政府の定義・特徴・法律の概要）' },
+      { url: 'https://www.pewresearch.org/internet/2022/12/15/teens-and-cyberbullying-2022/', type: 'reference', label: 'Pew Research Center — "Teens and Cyberbullying 2022"（全国調査・実態データ・定義整理）' },
+    ],
+  },
+  {
+    id: 'econ-compensating-equivalent-variation',
+    discipline: 'economics',
+    title: '補償変分と等価変分（ヒックスの厚生変化測度）',
+    statement:
+      '補償変分（CV: Compensating Variation）と等価変分（EV: Equivalent Variation）は、価格変化が消費者の厚生に与える影響を貨幣額で測定するための指標で、ジョン・ヒックスが消費者余剰の理論的曖昧さを克服するために導入した。補償変分は、価格変化後に消費者を変化前の効用水準に戻すために必要な所得の増減額として定義される。' +
+      '等価変分は、価格変化を起こさずに変化後と同じ効用水準を達成させるために必要な所得の増減額である。両者はヒックス補償需要曲線の下の面積として表され、価格変化が小さい場合はマーシャル需要に基づく消費者余剰と近似する。費用便益分析・税制改革・環境価値評価における厚生効果の厳密な測定に用いられる。',
+    keyFigures: 'ジョン・ヒックス（John R. Hicks, 1904–1989, 1969年ノーベル経済学賞）／補償需要曲線・消費者余剰との関係／費用便益分析への応用',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/consumer-surplus', type: 'reference', label: 'Encyclopaedia Britannica Money — Consumer surplus（消費者余剰とヒックスの補償変分・等価変分の関係）' },
+      { url: 'https://www.oecd.org/en/publications/cost-benefit-analysis-and-the-environment_9789264085169-en.html', type: 'government', label: 'OECD — Cost-Benefit Analysis and the Environment（CV/EVによる厚生変化測定・環境価値評価への応用）' },
+    ],
+  },
 ];
 // Stryker restore all
