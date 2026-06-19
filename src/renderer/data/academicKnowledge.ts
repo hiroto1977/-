@@ -19255,5 +19255,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/books/speech-acts/D2D7B03E472C8A390ED60B3A9F65387E', type: 'academic', label: 'Searle, J. R. (1969) Speech Acts: An Essay in the Philosophy of Language, Cambridge University Press' },
     ],
   },
+  {
+    id: 'econ-transfer-problem',
+    discipline: 'economics',
+    title: '移転問題（トランスファー・プロブレム）',
+    statement:
+      '移転問題とは、一方的な国際資金移転（賠償金・援助等）が支払国の交易条件を二次的に悪化させるか否かをめぐる国際経済学上の論争である。ケインズは1929年のEconomic Journal論文でドイツ賠償金問題を取り上げ、移転に伴い支払国の輸出財価格が下落し交易条件が悪化する「二次的負担」が生じると主張した。' +
+      'これに対しベルティル・オリーンは同誌で、所得効果により受取国の輸入需要が増加するため交易条件悪化は必然ではないと反論した。この論争はサミュエルソンらにより一般均衡モデルで精緻化され、国際貿易論における移転のパラドックスや援助の効果分析の基礎理論となっている。',
+    keyFigures: 'ジョン・メイナード・ケインズ（J. M. Keynes, 1883–1946）／ベルティル・オリーン（Bertil Ohlin, 1899–1979, 1977年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2224211', type: 'academic', label: 'Keynes, J. M. (1929) "The German Transfer Problem" Economic Journal 39(153)' },
+      { url: 'https://en.wikipedia.org/wiki/Transfer_problem', type: 'reference', label: 'Wikipedia — Transfer problem' },
+    ],
+  },
+  {
+    id: 'mgmt-followership',
+    discipline: 'management',
+    title: 'フォロワーシップ論',
+    statement:
+      'フォロワーシップ論は、ロバート・ケリーが1988年にHarvard Business Reviewに発表した論文「In Praise of Followers」で体系化した、組織におけるフォロワー（部下・追随者）の能動的役割に関する理論である。独立的・批判的思考（independent critical thinking）と積極的関与（active engagement）の二軸により、模範的フォロワー・孤立型・順応型・消極型・実務型の五類型を提示した。' +
+      'リーダーシップ偏重の組織論に対し、組織成果の80〜90%はフォロワーの質に依存すると主張し、フォロワーを受動的存在ではなく自律的な組織貢献者として再定義した。1992年の著書『The Power of Followership』で理論を拡充し、リーダー・フォロワー相互作用研究の基盤となった。',
+    keyFigures: 'ロバート・ケリー（Robert E. Kelley）／初出：1988年 Harvard Business Review "In Praise of Followers"',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1988/11/in-praise-of-followers', type: 'academic', label: 'Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)' },
+      { url: 'https://en.wikipedia.org/wiki/Followership', type: 'reference', label: 'Wikipedia — Followership' },
+    ],
+  },
+  {
+    id: 'human-total-institution',
+    discipline: 'human-science',
+    title: '全制的施設（トータル・インスティテューション）',
+    statement:
+      '全制的施設とは、アーヴィング・ゴフマンが1961年の著書『アサイラム（Asylums）』で提示した社会学的概念で、居住者の生活のあらゆる側面（睡眠・労働・余暇）が単一の権威のもと同一の場所で、同様の境遇にある他者の集団とともに厳格に管理される施設を指す。精神病院・刑務所・軍営・修道院・寄宿学校などを類型として挙げた。' +
+      '全制的施設では入所時に「市民的死」としての自己剥奪（mortification of self）が行われ、私物没収・制服着用・番号呼称などにより既存のアイデンティティが解体される。ゴフマンは施設内での被収容者の適応戦略も分析し、組織社会学・逸脱社会学・精神医療改革に大きな影響を与えた。',
+    keyFigures: 'アーヴィング・ゴフマン（Erving Goffman, 1922–1982）／初出：Asylums (1961, Anchor Books)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.penguinrandomhouse.com/books/575380/asylums-by-erving-goffman/', type: 'academic', label: 'Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients and Other Inmates' },
+      { url: 'https://en.wikipedia.org/wiki/Total_institution', type: 'reference', label: 'Wikipedia — Total institution' },
+    ],
+  },
+  {
+    id: 'bizlaw-building-standards',
+    discipline: 'business-law',
+    title: '建築基準法',
+    statement:
+      '建築基準法は、国民の生命・健康及び財産の保護を目的に建築物の敷地・構造・設備及び用途に関する最低基準を定めた法律である（昭和25年法律第201号、1950年制定）。建築確認制度・構造耐力基準・防火規定・日影規制などの単体規定と、用途地域・容積率・建ぺい率などの集団規定から構成される。' +
+      '1981年の改正で新耐震基準が導入され、震度6強〜7程度の地震でも倒壊しない構造設計が義務化された。2000年改正では仕様規定に加え性能規定（性能評価型設計）が導入された。国土交通省が所管し、建築主事又は指定確認検査機関が建築確認を行う。都市計画法と一体的に運用される基幹的建築規制法である。',
+    keyFigures: '昭和25年法律第201号（1950年制定）／国土交通省所管／1981年新耐震基準導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/325AC0000000201', type: 'government', label: 'e-Gov法令検索 — 建築基準法（昭和二十五年法律第二百一号）' },
+      { url: 'https://www.mlit.go.jp/jutakukentiku/build/jutakukentiku_house_tk_000043.html', type: 'government', label: '国土交通省 — 建築基準法の概要' },
+    ],
+  },
+  {
+    id: 'infosoc-code-switching',
+    discipline: 'information-sociology',
+    title: 'コードスイッチング',
+    statement:
+      'コードスイッチングとは、話者が一つの会話や状況の中で二つ以上の言語・方言・レジスターを交替的に使用する現象を指す社会言語学の概念である。ヤン＝ペッテル・ブロムとジョン・ガンパーズが1972年の共同研究「Social Meaning in Linguistic Structure」で状況的コードスイッチング（場面・相手に応じた切替）と比喩的コードスイッチング（修辞的効果のための切替）を区別し理論的枠組みを確立した。' +
+      'キャロル・マイヤーズ＝スコットンは1993年のMatrix Language Frameモデルで、文法構造を提供する主言語（matrix language）と語彙を埋め込む副言語（embedded language）の関係を定式化した。多言語社会・移民コミュニティ・SNS上のコミュニケーション分析に広く応用されている。',
+    keyFigures: 'ジョン・ガンパーズ（John J. Gumperz, 1922–2013）／キャロル・マイヤーズ＝スコットン（Carol Myers-Scotton）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/discourse-strategies/1A14A6D2E00D06EB5EC76B8D4DB09B0F', type: 'academic', label: 'Gumperz, J. J. (1982) Discourse Strategies, Cambridge University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Code-switching', type: 'reference', label: 'Wikipedia — Code-switching' },
+    ],
+  },
+  {
+    id: 'human-reciprocal-altruism',
+    discipline: 'human-science',
+    title: '互恵的利他主義',
+    statement:
+      '互恵的利他主義とは、ロバート・トリヴァースが1971年にThe Quarterly Review of Biology誌に発表した論文「The Evolution of Reciprocal Altruism」で提唱した進化生物学の理論である。血縁関係のない個体間においても、利他行為のコストが受益者の利益より小さく、将来の互恵が期待できる場合に利他的行動が自然選択で進化しうると説明した。' +
+      'ハミルトンの血縁選択説（1964年）では説明できない非血縁者間の協力行動の進化機構を理論化した。アクセルロッドとハミルトンが1981年に反復囚人のジレンマにおけるしっぺ返し戦略（tit-for-tat）の優位性を示し、互恵的利他主義のゲーム理論的基盤を確立した。',
+    keyFigures: 'ロバート・トリヴァース（Robert L. Trivers, 1943–2026）／ロバート・アクセルロッド（Robert Axelrod）／W・D・ハミルトン（W. D. Hamilton, 1936–2000）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2822435', type: 'academic', label: 'Trivers, R. L. (1971) "The Evolution of Reciprocal Altruism" The Quarterly Review of Biology 46(1)' },
+      { url: 'https://en.wikipedia.org/wiki/Reciprocal_altruism', type: 'reference', label: 'Wikipedia — Reciprocal altruism' },
+    ],
+  },
 ];
 // Stryker restore all
