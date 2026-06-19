@@ -18919,5 +18919,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.meti.go.jp/policy/economy/chizai/chiteki/unfair-competition.html', type: 'government', label: '経済産業省 — 不正競争防止法' },
     ],
   },
+  {
+    id: 'real-business-cycle',
+    discipline: 'economics',
+    title: 'リアルビジネスサイクル理論（RBC）',
+    statement:
+      'リアルビジネスサイクル（RBC）理論は、景気循環が主に技術ショックなどの実物的（供給側）要因によって引き起こされると主張する新古典派マクロ経済学の理論である。フィン・キドランドとエドワード・プレスコットが1982年の論文「Time to Build and Aggregate Fluctuations」で提唱した。' +
+      '動学的確率的一般均衡（DSGE）モデルとカリブレーション手法を用いて、貨幣的要因ではなく生産性ショックが経済変動の主因であることを示し、景気循環をパレート最適な均衡現象として捉えた。ケインジアンの需要側説明に対する理論的挑戦となり、両氏は2004年にノーベル経済学賞を受賞した。現代の中央銀行で標準的に用いられるDSGE手法の基礎を築いた。',
+    keyFigures: 'フィン・キドランド（Finn E. Kydland, 1943–）／エドワード・プレスコット（Edward C. Prescott, 1940–2022）（1982年提唱、2004年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1913386', type: 'academic', label: 'Kydland & Prescott (1982) "Time to Build and Aggregate Fluctuations", Econometrica 50(6), 1345–1370（原著論文）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/summary/', type: 'government', label: 'NobelPrize.org — 2004年経済学賞（キドランド&プレスコット）' },
+    ],
+  },
+  {
+    id: 'theory-of-constraints',
+    discipline: 'management',
+    title: '制約理論（TOC）',
+    statement:
+      '制約理論（Theory of Constraints, TOC）は、エリヤフ・ゴールドラットが1984年の著書『ザ・ゴール（The Goal）』で提唱した経営管理手法である。システム全体のパフォーマンスは最も弱い環（制約・ボトルネック）によって決定されるという原理に基づく。' +
+      '改善の5ステップ（制約の特定→徹底活用→他プロセスの従属→制約能力の向上→慣性を避け反復）を中核とし、生産スケジューリング手法DBR（ドラム・バッファ・ロープ）、問題解決の思考プロセス（TP）、クリティカルチェーン・プロジェクトマネジメント（CCPM）を包含する体系的理論である。製造業から始まりサプライチェーン管理・プロジェクト管理・サービス業へと適用範囲を拡大した。',
+    keyFigures: 'エリヤフ・ゴールドラット（Eliyahu M. Goldratt, 1947–2011）（1984年『ザ・ゴール』で提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Theory_of_constraints', type: 'reference', label: 'Wikipedia — Theory of Constraints（包括的参考文献付き）' },
+      { url: 'https://doi.org/10.1108/01443579810199720', type: 'academic', label: 'Rahman, S. (1998) "Theory of constraints: A review", International Journal of Operations & Production Management 18(4), 336–355（査読論文）' },
+    ],
+  },
+  {
+    id: 'fundamental-attribution-error',
+    discipline: 'human-science',
+    title: '根本的な帰属の誤り（対応バイアス）',
+    statement:
+      '根本的な帰属の誤り（対応バイアス）とは、他者の行動の原因を説明する際に、状況的要因（環境・文脈・社会的圧力など）を過小評価し、行為者の内的・性格的要因（性格・態度・意図など）を過大評価する認知バイアスである。1967年にエドワード・ジョーンズとヴィクター・ハリスがエッセイ帰属実験により本効果を実証した。' +
+      '1977年にリー・ロスが「根本的な帰属の誤り」と命名した。行為者-観察者バイアスと密接に関連し、自己の行動には状況要因を重視する一方、他者の行動には性格要因を帰属させる非対称性が生じる。異文化研究では、集団主義文化圏（東アジア等）において本バイアスが個人主義文化圏より弱いことが示されている。',
+    keyFigures: 'リー・ロス（Lee Ross, 1942–2021、1977年命名）／エドワード・ジョーンズ（Edward E. Jones, 1927–1993）&ヴィクター・ハリス（1967年実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/S0065-2601(08)60357-3', type: 'academic', label: 'Ross, L. (1977) "The intuitive psychologist and his shortcomings", Advances in Experimental Social Psychology 10, 173–220（命名論文）' },
+      { url: 'https://doi.org/10.1016/0022-1031(67)90034-0', type: 'academic', label: 'Jones & Harris (1967) "The attribution of attitudes", Journal of Experimental Social Psychology 3(1), 1–24（原著実験）' },
+    ],
+  },
+  {
+    id: 'financial-instruments-exchange-act',
+    discipline: 'business-law',
+    title: '金融商品取引法',
+    statement:
+      '金融商品取引法（平成18年法律第65号）は、2006年に証券取引法を全面改正し制定された法律で、2007年9月30日に施行された。有価証券・デリバティブ等の幅広い金融商品を横断的に規制し、投資者保護の強化と公正な価格形成・市場の信頼性確保を目的とする。' +
+      '内部統制報告制度（J-SOX：経営者による財務報告の内部統制評価と監査人による監査）の導入、開示規制の拡充（四半期報告・確認書制度）、金融商品取引業者の統一的登録・規制等を柱とする。インサイダー取引規制・相場操縦禁止・公開買付規制など市場の公正性を確保する規定を備え、金融庁が所管する日本の金融規制の基幹法である。',
+    keyFigures: '金融商品取引法（平成18年法律第65号、2006年制定・2007年9月30日施行）／証券取引法（1948年）を全面改正／金融庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=323AC0000000025', type: 'government', label: 'e-Gov法令検索 — 金融商品取引法' },
+      { url: 'https://www.fsa.go.jp/policy/kinyusyouhin/index.html', type: 'government', label: '金融庁 — 金融商品取引法等について' },
+    ],
+  },
+  {
+    id: 'technological-determinism',
+    discipline: 'information-sociology',
+    title: '技術決定論',
+    statement:
+      '技術決定論とは、技術革新が社会変化の主要な駆動力であり、技術が人間の行動・社会構造・文化を根本的に規定するという理論的立場である。ハード決定論は技術が社会を一方的に決定すると主張し、ソフト決定論は技術が社会変化に強い影響を与えるが唯一の要因ではないとする。' +
+      'ソースティン・ヴェブレンが技術と制度変化の関連を論じ、マーシャル・マクルーハンが「メディアはメッセージである」という命題で技術がコミュニケーション様式を規定すると主張した。ジャック・エリュールは技術が自律的体系（la technique）を形成すると論じた。技術の社会的構成論（SCOT）やアクターネットワーク理論（ANT）とは対照的な立場をとる。',
+    keyFigures: 'ソースティン・ヴェブレン（Thorstein Veblen, 1857–1929）／マーシャル・マクルーハン（Marshall McLuhan, 1911–1980）／ジャック・エリュール（Jacques Ellul, 1912–1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Technological_determinism', type: 'reference', label: 'Wikipedia — Technological determinism（包括的参考文献付き）' },
+      { url: 'https://mitpress.mit.edu/9780262691673/does-technology-drive-history/', type: 'academic', label: 'Smith & Marx (eds.) (1994) "Does Technology Drive History?", MIT Press（学術書）' },
+    ],
+  },
+  {
+    id: 'whistleblower-protection-act',
+    discipline: 'business-law',
+    title: '公益通報者保護法',
+    statement:
+      '公益通報者保護法（平成16年法律第122号）は、企業の法令違反行為を通報した労働者を解雇その他の不利益な取扱いから保護する法律である。2004年に制定され、2006年4月1日に施行された。通報先は事業者内部・行政機関・報道機関等の外部の三段階に分かれ、それぞれ保護要件が異なる。' +
+      '2020年改正（令和2年法律第51号、2022年6月1日施行）により、保護対象が退職者（退職後1年以内）及び役員に拡大され、従業員300人超の事業者に内部通報体制の整備が義務化された。通報対象事実は刑罰規定違反から行政罰規定違反にまで拡充された。消費者庁が所管し、企業コンプライアンスの基盤法として機能している。',
+    keyFigures: '公益通報者保護法（平成16年法律第122号、2004年制定・2006年4月1日施行）／2020年改正（令和2年法律第51号、2022年6月1日施行）／消費者庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_partnerships/whisleblower_protection_system/', type: 'government', label: '消費者庁 — 公益通報者保護制度' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=416AC0000000122', type: 'government', label: 'e-Gov法令検索 — 公益通報者保護法（平成16年法律第122号）' },
+    ],
+  },
 ];
 // Stryker restore all
