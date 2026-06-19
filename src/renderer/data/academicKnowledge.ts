@@ -21271,5 +21271,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.meti.go.jp/press/2023/08/20230831004/20230831004.html', type: 'government', label: '経済産業省（2023年8月）「企業買収における行動指針」公表（買収防衛措置の適正化に関する政府指針）' },
     ],
   },
+  {
+    id: 'mgmt-stockdale-paradox',
+    discipline: 'management',
+    title: 'ストックデールの逆説',
+    statement:
+      'ジム・コリンズが2001年の著書『Good to Great（ビジョナリー・カンパニー2）』第4章で提示した概念。ベトナム戦争で捕虜となり7年以上のハノイ収容所生活を生き延びたジェームズ・B・ストックデール提督の体験に基づき、「最終的には必ず勝利するという揺るぎない確信を持ちながら、同時に現在の現実の最も残酷な事実を直視する」という一見矛盾する二つの態度を同時に保つことが、長期的困難の克服に不可欠であるとした。' +
+      '「クリスマスまでに解放されると信じた楽観主義者が最初に死んだ。期待の裏切りが積み重なって精神を折ってしまう」というストックデールの証言が核心をなす。根拠のない楽観論と無批判な悲観論の双方を排し、希望と現実認識を統合することが真のレジリエンスの源泉とされる。企業変革・危機対応・リーダーシップ開発の文脈で広く参照される。',
+    keyFigures: 'ジム・コリンズ（Jim Collins, 2001『Good to Great』著者）／ジェームズ・B・ストックデール提督（James B. Stockdale, 1923–2005、米海軍中将・名誉勲章受章者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jimcollins.com/concepts/the-stockdale-paradox.html', type: 'reference', label: 'Jim Collins — The Stockdale Paradox（著者本人によるコンセプト公式解説ページ）' },
+      { url: 'https://hbr.org/2001/07/good-to-great', type: 'media', label: 'Harvard Business Review — Jim Collins "Good to Great" (July 2001)（著者によるビジョナリー・カンパニー2研究の要約）' },
+    ],
+  },
+  {
+    id: 'mgmt-eisenhower-matrix',
+    discipline: 'management',
+    title: 'アイゼンハワーマトリクス（緊急・重要マトリクス）',
+    statement:
+      '「緊急性（Urgency）」と「重要性（Importance）」の2軸でタスクを第1象限（緊急かつ重要＝即対応）・第2象限（重要だが緊急でない＝計画・予防）・第3象限（緊急だが重要でない＝委任）・第4象限（緊急でも重要でもない＝削除）に分類する時間管理・優先順位付けの枠組み。第34代米国大統領アイゼンハワーが1954年の演説で述べた「重要な事は緊急でなく、緊急な事は重要でない」という言葉に由来し、スティーブン・R・コヴィーが1989年の著書『7つの習慣』の第3の習慣（最優先事項を優先する）として世界的に体系化・普及させた。' +
+      'フレームワークの核心は第2象限（重要だが緊急でない活動＝戦略立案・人材育成・関係構築・予防保全・自己啓発）への積極的な時間投資にある。コヴィーは緊急事項のみへの反応的対応を「緊急の罠（urgency trap）」と呼び、成果を上げる人ほど第2象限に意図的に時間を充てると指摘した。プロジェクト管理・個人の生産性向上・組織のタスク優先化に広く応用される。',
+    keyFigures: 'ドワイト・D・アイゼンハワー（Dwight D. Eisenhower, 1890–1969、第34代米国大統領・1954年演説）／スティーブン・R・コヴィー（Stephen R. Covey, 1932–2012、1989年『The 7 Habits of Highly Effective People』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.eisenhowerlibrary.gov/eisenhower/eisenhower-quotes', type: 'government', label: 'Eisenhower Presidential Library and Museum — Eisenhower Quotes（大統領図書館による引用の一次資料）' },
+      { url: 'https://www.franklincovey.com/the-7-habits/', type: 'reference', label: 'FranklinCovey — The 7 Habits of Highly Effective People（コヴィーによる第3の習慣・緊急/重要マトリクスの公式解説）' },
+    ],
+  },
+  {
+    id: 'mgmt-brand-personality',
+    discipline: 'management',
+    title: 'ブランドパーソナリティ（アーカーの5次元モデル）',
+    statement:
+      'ブランドパーソナリティとは、消費者がブランドに帰属させる人間的な性格特性の集合体をいう。スタンフォード大学経営大学院のジェニファー・アーカー（Jennifer Aaker）が1997年にJournal of Marketing Research誌に発表した論文「Dimensions of Brand Personality」において、因子分析により英語圏消費者のブランド認知を「誠実（Sincerity）」「興奮（Excitement）」「有能（Competence）」「洗練（Sophistication）」「たくましさ（Ruggedness）」の5次元として抽出・体系化した。' +
+      '5次元モデルはブランドの擬人化傾向を理論的に裏付け、ブランド・アイデンティティの構築・測定・差別化の枠組みとして実務・学術双方で広く参照される。消費者はブランド個性を媒介として感情的・象徴的なブランド関係を形成し、自己表現や社会的シグナリングの手段とする。なお父デイヴィッド・アーカーのブランド・エクイティ論とは区別され、後続研究ではラテン文化・アジア市場で次元構造が部分的に異なることが示されている。',
+    keyFigures: 'ジェニファー・アーカー（Jennifer Aaker, Stanford GSB）／初出：Aaker, J. L. (1997) "Dimensions of Brand Personality," Journal of Marketing Research 34(3):347–356',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.ama.org/doi/10.1509/jmkr.34.3.347', type: 'academic', label: 'American Marketing Association — Aaker (1997) "Dimensions of Brand Personality," Journal of Marketing Research 34(3):347–356（原典査読論文）' },
+      { url: 'https://www.britannica.com/money/brand-identity', type: 'reference', label: 'Encyclopaedia Britannica Money — Brand Identity（ブランドパーソナリティを含むブランド・アイデンティティの参照記事）' },
+    ],
+  },
+  {
+    id: 'econ-washington-consensus',
+    discipline: 'economics',
+    title: 'ワシントン・コンセンサス',
+    statement:
+      '経済学者ジョン・ウィリアムソンが1989年の論文「What Washington Means by Policy Reform」で定式化した政策処方箋の総称。1980年代の中南米債務危機への対応として、IMF・世界銀行・米財務省（いずれもワシントンDCに所在）が途上国に共通して推奨した10項目の政策を体系化したもので、財政規律・公的支出の優先順位付け・税制改革・金融自由化・競争的為替レート・貿易自由化・外国直接投資の開放・民営化・規制緩和・財産権の法的保護からなる。' +
+      '1990年代の市場自由化・構造調整プログラムの理論的支柱となったが、アルゼンチン経済崩壊（2001年）やアジア通貨危機後の格差拡大を受けて批判が高まった。スティグリッツら経済学者は一律の市場化政策が貧困・格差を深刻化させたと論じ、ウィリアムソン本人も資本勘定自由化は含めておらず概念が誤用されていると主張した。制度・ガバナンス・社会政策を重視する「ポスト・ワシントン・コンセンサス」が後継概念として議論されている。',
+    keyFigures: 'ジョン・ウィリアムソン（John Williamson, 1937–2021、Peterson Institute for International Economics〈PIIE〉）／初出：Williamson (1989) "What Washington Means by Policy Reform"',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.piie.com/publications/papers/williamson0904-2.pdf', type: 'academic', label: 'Peterson Institute for International Economics（PIIE）— John Williamson "A Short History of the Washington Consensus"（著者による回顧論文）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/', type: 'government', label: 'IMF Finance & Development（ワシントン・コンセンサスの政策的評価・批判的検討を収録する国際通貨基金の政策解説誌）' },
+    ],
+  },
+  {
+    id: 'human-emerging-adulthood',
+    discipline: 'human-science',
+    title: '新興成人期（エマージング・アダルトフッド）',
+    statement:
+      '発達心理学者ジェフリー・アーネットが2000年にAmerican Psychologist誌に発表した論文「Emerging Adulthood: A Theory of Development from the Late Teens Through the Twenties」で提唱した発達段階の概念。10代後半から20代（おおむね18〜25歳）を、思春期（adolescence）とも成人期（young adulthood）とも異なる固有の発達段階として定義し、「アイデンティティ探索」「不安定さ」「自己焦点的」「中間的存在感」「可能性の時期」の5特性を挙げた。' +
+      '本概念は、高等教育の大衆化・晩婚化・初職年齢上昇・経済的自立の遅延など先進国の社会変容を背景に、かつて10代後半で達成されていた就労・結婚・育児等の成人役割への移行が先送りされた現代特有の発達段階を記述する。文化的普遍性には論争があり伝統社会・低所得国では観察されにくいとの批判がある一方、日本・韓国・欧州でも類似現象が確認されている。キャリア発達・若者のメンタルヘルス・移行期支援政策の研究枠組みとして参照される。',
+    keyFigures: 'ジェフリー・J・アーネット（Jeffrey J. Arnett）／初出：Arnett, J. J. (2000) "Emerging adulthood," American Psychologist 55(5):469–480',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/2000-13925-006', type: 'academic', label: 'APA PsycNet — Arnett (2000) "Emerging Adulthood: A Theory of Development from the Late Teens Through the Twenties," American Psychologist 55(5)（原典）' },
+      { url: 'https://www.britannica.com/science/emerging-adulthood', type: 'reference', label: 'Encyclopaedia Britannica — Emerging Adulthood（発達段階の定義・5特性・文化的検討の概説）' },
+    ],
+  },
+  {
+    id: 'infosoc-media-ownership-concentration',
+    discipline: 'information-sociology',
+    title: 'メディア所有の集中（メディア独占論）',
+    statement:
+      'メディア所有の集中（media ownership concentration）とは、新聞・テレビ・ラジオ・オンラインメディア等の多様なメディア事業体が少数の企業・財閥・個人の手に集積していく構造的傾向をいう。ベン・バグディキャンは1983年の著書『The Media Monopoly』で、米国の主要メディアを実質的に支配する企業数が初版時の50社から2004年改訂第7版では5社へと急減した実態を示し、少数企業による報道内容の統制が民主主義的言論の多元性を侵食すると警告した。' +
+      '所有集中は放送・映画・新聞・デジタルを跨ぐコングロマリット化（垂直・水平統合）として進行し、コンテンツの画一化・独立ジャーナリズムの萎縮・地方報道の空洞化・アジェンダ設定の商業的歪曲をもたらすとされる。EUでは欧州大学院（EUI）附設のメディア多元性・メディア自由センター（CMPF）が各国のメディア集中リスクを定量評価するMedia Pluralism Monitorを運営する。デジタル時代にはプラットフォーム企業による新たな集中も論じられ、ハーマン＆チョムスキーのプロパガンダ・モデルとも接続される。',
+    keyFigures: 'ベン・バグディキャン（Ben Bagdikian, 1920–2016、UCバークレー新聞大学院学部長、『The Media Monopoly』初版1983年）／エドワード・ハーマン＆ノーム・チョムスキー（『Manufacturing Consent』1988）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journalism.berkeley.edu/person/bagdikian-ben/', type: 'academic', label: 'UC Berkeley Graduate School of Journalism — Ben Bagdikian（著者所属機関・学部長として在職、The Media Monopoly著者の来歴）' },
+      { url: 'https://cmpf.eui.eu/media-pluralism-monitor/', type: 'academic', label: 'Centre for Media Pluralism and Media Freedom, European University Institute — Media Pluralism Monitor（EU委託によるメディア所有集中の定量評価枠組み）' },
+    ],
+  },
 ];
 // Stryker restore all
