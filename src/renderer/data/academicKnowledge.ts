@@ -20935,5 +20935,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.wipo.int/wipo_magazine/en/2014/01/article_0006.html', type: 'reference', label: 'WIPO Magazine (2014) — "Patent Pools and Antitrust"（パテント・プールの定義・機能・競争法上の評価をWIPOが概説）' },
     ],
   },
+  {
+    id: 'mgmt-delphi-method',
+    discipline: 'management',
+    title: 'デルファイ法',
+    statement:
+      'デルファイ法とは、将来予測や意思決定において、複数の専門家の判断を匿名のアンケートにより繰り返し収集し、各回の集計結果（中央値・分布・異論の要約）をフィードバックして再回答させることで意見を収斂させる構造化グループ意思決定手法である。1950年代にランド・コーポレーションのオルフ・ヘルマーとノーマン・ダルキーが米国防総省向けの軍事予測プロジェクトで開発した。' +
+      '匿名性により権威や声の大きさによる同調圧力（集団思考）を排除し、フィードバックを通じて極端な意見を緩やかに修正しながら専門知識を集約できる点が特長である。技術予測・政策評価・医療ガイドライン策定など広範な領域で活用され、日本では文部科学省（科学技術・学術政策研究所）が科学技術予測調査に組織的に採用してきた。単一の専門家予測やブレインストーミングとは区別されるシステマティックなコンセンサス形成プロセスである。',
+    keyFigures: 'オルフ・ヘルマー（Olaf Helmer, 1910–2011）／ノーマン・ダルキー（Norman Dalkey）／ランド・コーポレーション（1950年代、米国防総省委託プロジェクトで開発）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.rand.org/topics/delphi-method.html', type: 'reference', label: 'RAND Corporation — The Delphi Method（開発機関による定義・歴史・適用領域の解説）' },
+      { url: 'https://www.nistep.go.jp/research/science-and-technology-foresight/delphi-survey', type: 'government', label: '文部科学省科学技術・学術政策研究所（NISTEP）— 科学技術予測調査（デルファイ調査の長期実施機関による方法論説明）' },
+    ],
+  },
+  {
+    id: 'mgmt-bcg-advantage-matrix',
+    discipline: 'management',
+    title: 'BCGアドバンテージ・マトリクス',
+    statement:
+      'BCGアドバンテージ・マトリクスは、ボストン・コンサルティング・グループ（BCG）が開発した、事業環境と競争優位の性質を「競争優位の源泉の数」（多い〜少ない）と「優位性の大きさ」（大〜小）の2軸で分類する4象限の戦略フレームワークである。4類型は分散型産業（多くの小さな優位源泉）、特化型産業（少数だが大きな優位源泉）、手詰まり型産業（多くの源泉があるが差別化が困難）、規模型産業（少ない源泉だが規模が決定的）に区分される。' +
+      'BCGが成長率・シェアのPPM（プロダクト・ポートフォリオ・マネジメント）に続いて提示したこのマトリクスは、産業構造の性質を踏まえてどの競争戦略が適切かを判断する診断ツールとして機能する。分散型産業では差別化、規模型産業ではコストリーダーシップ、特化型産業ではニッチ集中が有効とされ、手詰まり型産業では戦略的投資より利益回収が合理的となる。マイケル・ポーターの競争優位論とも補完的に用いられる。',
+    keyFigures: 'ボストン・コンサルティング・グループ（BCG）／PPM（成長率・シェア・マトリクス）に続く第2の代表的フレームワーク',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.bcg.com/capabilities/strategy/advantage-matrix', type: 'reference', label: 'Boston Consulting Group 公式サイト — The Advantage Matrix（フレームワークの概念・4象限・戦略含意）' },
+      { url: 'https://www.isc.hbs.edu/strategy/business-strategy/Pages/default.aspx', type: 'academic', label: 'Harvard Business School Institute for Strategy and Competitiveness — Business Strategy（競争優位とポートフォリオ戦略ツールの学術的文脈）' },
+    ],
+  },
+  {
+    id: 'econ-transfer-pricing',
+    discipline: 'economics',
+    title: '移転価格税制',
+    statement:
+      '移転価格税制とは、多国籍企業グループ内の関連会社間での商品・サービス・知的財産等の取引（内部取引）に用いられる価格（移転価格）が、独立した第三者間で通常成立するであろう価格（独立企業間価格, arm\'s length price）と異なる場合に、税務当局がその価格を独立企業間価格に引き直して課税所得を計算し直すことを認める制度である。' +
+      'グループ内取引の価格を意図的に操作することで税率の高い国の利益を低税率国（タックスヘイブン）に移転し、グループ全体の税負担を最小化する租税回避に対応する。OECDが1979年に移転価格ガイドラインを策定し累次改訂、アーム・レングス原則（独立企業原則）を国際標準として確立した。日本では租税特別措置法66条の4以下が規律し、BEPS（税源浸食と利益移転）プロジェクト行動計画8〜10でも中核的テーマとして論じられる。',
+    keyFigures: 'OECD移転価格ガイドライン（初版1979年、累次改訂）／アーム・レングス原則（独立企業間原則）／BEPSプロジェクト行動計画8〜10／日本: 租税特別措置法66条の4',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/tax/transfer-pricing/oecd-transfer-pricing-guidelines-for-multinational-enterprises-and-tax-administrations-20769717.htm', type: 'government', label: 'OECD — Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations（アーム・レングス原則・国際標準ガイドライン）' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/kokusai/ibenkikaku/01.htm', type: 'government', label: '国税庁 — 移転価格税制の概要（租税特別措置法66条の4・独立企業間価格の算定方法）' },
+    ],
+  },
+  {
+    id: 'bizlaw-promissory-estoppel',
+    discipline: 'business-law',
+    title: '約束的禁反言（プロミッサリー・エストッペル）',
+    statement:
+      '約束的禁反言（promissory estoppel）とは、英米法上の法理であり、ある者（約束者）が他者（被約束者）に対して明確な約束をし、被約束者がその約束を合理的に信頼して行動し、その信頼に基づく行動により損害を被った場合に、約束者が約款の対価（約因）の不存在を理由に当該約束に拘束されないと主張することを、禁反言（エストッペル）の法理によって禁ずるものである。' +
+      '英国衡平法の判例（デニング卿による1947年Central London Property Trust v High Trees House判決が現代的な定式化の起点とされる）に由来し、米国では第2次契約法リステイトメント90条が明文化した。日本民法には明文規定はないが、信義則（民法1条2項）および契約締結上の過失の法理を通じて類似の機能が果たされる場面がある。覚書・LOI段階の誠実交渉義務との関係でも論じられる実践的概念である。',
+    keyFigures: 'アルフレッド・デニング卿（Lord Denning, Central London Property Trust v High Trees House [1947]）／米国リステイトメント（第2次）契約90条（1981）／日本法では信義則（民法1条2項）が類似機能',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/promissory_estoppel', type: 'reference', label: 'Cornell Law School Legal Information Institute (LII) — Promissory Estoppel（定義・要件・High Trees案件・Restatement 90条）' },
+      { url: 'https://www.britannica.com/topic/contract-law', type: 'reference', label: 'Encyclopaedia Britannica — Contract law（約因・禁反言・信頼利益保護を含む契約法の概観）' },
+    ],
+  },
+  {
+    id: 'infosoc-explainable-ai',
+    discipline: 'information-sociology',
+    title: '説明可能なAI（XAI）',
+    statement:
+      '説明可能なAI（Explainable AI, XAI）とは、機械学習モデル（特に深層学習等の「ブラックボックス」モデル）の予測・判断の根拠を、人間が理解・検証できる形で提示する技術・研究領域である。米国国防高等研究計画局（DARPA）が2016年に開始したXAIプログラムが概念普及の起点の一つとされ、モデルの精度と説明可能性のトレードオフへの対処を目指す。' +
+      '米国国立標準技術研究所（NIST）は「説明可能なAIの4原則（説明・意味のある説明・説明の正確性・知識限界）」を提示した。アルゴリズムの公正性・アカウンタビリティ・透明性（FAT）やGDPRの「説明を受ける権利」をめぐる議論、医療・与信・司法など高リスク領域でのAI実装の社会的受容性確保と密接に結びつき、AI倫理・AI規制（EU AI法等）の中核的論点となっている。',
+    keyFigures: '米国国防高等研究計画局（DARPA）XAIプログラム（2016開始）／米国国立標準技術研究所（NIST）「説明可能なAIの4原則」（NISTIR 8312）／FAT（公正性・アカウンタビリティ・透明性）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.darpa.mil/program/explainable-artificial-intelligence', type: 'government', label: 'DARPA — Explainable Artificial Intelligence (XAI) program（概念の定義・精度と説明可能性のトレードオフ）' },
+      { url: 'https://www.nist.gov/publications/four-principles-explainable-artificial-intelligence', type: 'government', label: 'NIST — "Four Principles of Explainable Artificial Intelligence"（NISTIR 8312、説明可能性の4原則）' },
+    ],
+  },
+  {
+    id: 'bizlaw-misrepresentation',
+    discipline: 'business-law',
+    title: '不実表示（misrepresentation、英米契約法）',
+    statement:
+      '不実表示（misrepresentation）とは、英米契約法において、契約締結に先立ち一方当事者が相手方に対し事実に反する陳述を行い、相手方がそれを信頼して契約を締結した場合に、契約の取消し（rescission）や損害賠償の根拠となる法理である。故意による詐欺的不実表示（fraudulent）、過失による不実表示（negligent）、無過失の不実表示（innocent）の3類型に区分される。' +
+      '英国では1967年不実表示法（Misrepresentation Act 1967）が救済を整理し、米国では契約法リステイトメントや判例法が規律する。重要な事実に関する陳述であること・相手方が現実に信頼したことが要件となり、単なる意見表明やセールストークとは区別される。日本法では消費者契約法の不実告知による取消しや、民法の詐欺・錯誤がおおむね対応する機能を担う。',
+    keyFigures: '英国「不実表示法（Misrepresentation Act 1967）」／3類型: 詐欺的・過失・無過失の不実表示／対応する日本法: 消費者契約法（不実告知）・民法の詐欺/錯誤',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/misrepresentation', type: 'reference', label: 'Cornell Law School Legal Information Institute (LII) — Misrepresentation（定義・3類型・契約取消しと損害賠償の要件）' },
+      { url: 'https://www.legislation.gov.uk/ukpga/1967/7', type: 'government', label: 'UK Legislation — Misrepresentation Act 1967（英国不実表示法の条文・救済の根拠法）' },
+    ],
+  },
 ];
 // Stryker restore all
