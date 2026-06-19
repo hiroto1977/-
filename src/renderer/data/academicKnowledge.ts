@@ -20011,5 +20011,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/biography/C-Northcote-Parkinson', type: 'reference', label: 'Encyclopaedia Britannica — C. Northcote Parkinson (1909–1993)' },
     ],
   },
+  {
+    id: 'human-stroop-effect',
+    discipline: 'human-science',
+    title: 'ストループ効果',
+    statement:
+      'ストループ効果とは、文字の意味と文字色が不一致な場合（例：「赤」という語が青インクで印刷されている場合）にインク色の命名が遅延・誤答する干渉現象である。ジョン・リドリー・ストループが1935年にJournal of Experimental Psychology誌に発表した3つの実験で実証した。' +
+      '色命名と語読みの自動性の差（自動的処理と制御的処理の競合）が干渉の主因とされ、認知心理学・神経心理学における注意・実行機能の代表的パラダイムとして広く用いられている。臨床場面では前頭葉機能の評価指標としても利用される。',
+    keyFigures: 'ジョン・リドリー・ストループ（John Ridley Stroop, 1897–1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psychclassics.yorku.ca/Stroop/', type: 'academic', label: 'York University Classics in the History of Psychology — Stroop (1935) "Studies of Interference in Serial Verbal Reactions" 原典全文' },
+      { url: 'https://psycnet.apa.org/record/1936-01863-001', type: 'academic', label: 'APA PsycNet — Stroop, J.R. (1935) Studies of interference in serial verbal reactions, Journal of Experimental Psychology, 18(6), 643-662' },
+    ],
+  },
+  {
+    id: 'infosoc-internet-governance',
+    discipline: 'information-sociology',
+    title: 'インターネット・ガバナンス',
+    statement:
+      'インターネット・ガバナンスとは、インターネットの技術的標準・資源配分・利用ルールを誰がどのような手続きで決定するかに関する制度・規範・プロセスの総体を指す概念である。2005年の国連「インターネット・ガバナンスに関する作業部会（WGIG）」は「政府・民間部門・市民社会が各自の役割を果たすマルチステークホルダー・モデル」と定義した。' +
+      '同年のチュニス・アジェンダに基づき2006年に設立されたインターネット・ガバナンス・フォーラム（IGF）が年次対話の場を提供する一方、ドメイン名・IPアドレスを管理するICANNの権限正統性や、プラットフォーム規制・スプリンターネット・サイバー主権をめぐる国家間対立が現在も続いている。',
+    keyFigures: 'ミルトン・ミュラー（Milton Mueller, 2010『Networks and States』MIT Press）／WGIG報告書（2005）／ICANN（1998創設）・IGF（2006創設）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.itu.int/net/wsis/docs/geneva/official/dop.html', type: 'government', label: 'ITU／UN WSIS「ジュネーブ原則宣言」（2003）— インターネット・ガバナンスの国際的政策議論の出発点' },
+      { url: 'https://www.intgovforum.org/en/content/about-igf', type: 'government', label: 'インターネット・ガバナンス・フォーラム（IGF）公式サイト「About IGF」— マルチステークホルダー・モデルの制度的根拠' },
+    ],
+  },
+  {
+    id: 'econ-microfinance',
+    discipline: 'economics',
+    title: 'マイクロファイナンス',
+    statement:
+      'マイクロファイナンスとは、従来の銀行融資を受けられない貧困層・低所得層に対し小口融資（マイクロクレジット）・貯蓄・保険等の金融サービスを提供する仕組みである。経済学者ムハマド・ユヌスが1974年のバングラデシュ飢饉を契機に貧困層向け小口貸付を開始し、1983年にグラミン銀行として制度化した。' +
+      '無担保・連帯保証グループ方式により高い返済率を達成し、貧困削減の手段として途上国を中心に拡大した。ユヌスとグラミン銀行は2006年ノーベル平和賞を受賞。一方、過剰貸付や高金利の問題（2010年インド・アンドラプラデシュ州危機等）も指摘されている。',
+    keyFigures: 'ムハマド・ユヌス（Muhammad Yunus, 1940–）／グラミン銀行（1983設立）／2006年ノーベル平和賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/peace/2006/yunus/facts/', type: 'reference', label: 'NobelPrize.org — Muhammad Yunus Facts（2006年ノーベル平和賞）' },
+      { url: 'https://www.worldbank.org/en/news/feature/2015/03/30/does-microfinance-still-hold-promise-for-reaching-the-poor', type: 'government', label: 'World Bank — "Does Microfinance Still Hold Promise for Reaching the Poor?"（世界銀行）' },
+    ],
+  },
+  {
+    id: 'bizlaw-ungps-business-human-rights',
+    discipline: 'business-law',
+    title: 'ビジネスと人権に関する指導原則（UNGPs）',
+    statement:
+      'ビジネスと人権に関する指導原則（UNGPs）は、国連人権理事会が2011年6月に全会一致で承認した企業活動と人権に関する初の国際的枠組みである。ハーバード大学教授ジョン・ラギーが国連事務総長特別代表として6年間の研究・協議を経て策定した。' +
+      '「保護・尊重・救済」の3本柱から成り、第1柱は国家の人権保護義務、第2柱は企業の人権尊重責任（人権デュー・ディリジェンスの実施）、第3柱は被害者の救済へのアクセスを規定する。法的拘束力はないが事実上の国際標準として各国の国別行動計画（NAP）やEU企業持続可能性デューディリジェンス指令等の立法に影響を与えている。',
+    keyFigures: 'ジョン・ジェラルド・ラギー（John Gerard Ruggie, 1944–2021）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ohchr.org/en/publications/reference-publications/guiding-principles-business-and-human-rights', type: 'government', label: 'OHCHR — Guiding Principles on Business and Human Rights（国連人権高等弁務官事務所公式）' },
+      { url: 'https://www.wcfia.harvard.edu/news/memoriam-john-ruggie-1944%E2%80%932021', type: 'academic', label: 'Harvard Weatherhead Center — In Memoriam: John Ruggie, 1944-2021（ハーバード大学公式）' },
+    ],
+  },
+  {
+    id: 'mgmt-job-based-employment',
+    discipline: 'management',
+    title: 'ジョブ型雇用',
+    statement:
+      'ジョブ型雇用とは、職務内容（ジョブ）を明確に定義した雇用契約に基づく雇用システムであり、欧米諸国の標準的な雇用形態を指す概念である。労働政策研究者の濱口桂一郎が2009年の著書『新しい労働社会』で日本固有の「メンバーシップ型」雇用と対比する分析枠組みとして提唱した。' +
+      'ジョブ型では採用・賃金・解雇がジョブ・ディスクリプションに基づくのに対し、メンバーシップ型では企業共同体への帰属が基軸となる。日本企業の人事制度改革論議で広く参照されるが、濱口自身は安易な「ジョブ型導入」論を批判している。',
+    keyFigures: '濱口桂一郎（1958–）／『新しい労働社会』岩波新書（2009）／『ジョブ型雇用社会とは何か』岩波新書（2021）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jil.go.jp/profile/khama.html', type: 'government', label: '労働政策研究・研修機構（JILPT）研究員プロフィール — 濱口桂一郎' },
+      { url: 'https://www.iwanami.co.jp/book/b589310.html', type: 'media', label: '岩波書店 — 濱口桂一郎『ジョブ型雇用社会とは何か――正社員体制の矛盾と転機』岩波新書（2021年）' },
+    ],
+  },
+  {
+    id: 'econ-agglomeration-economies',
+    discipline: 'economics',
+    title: '集積の経済',
+    statement:
+      '集積の経済（agglomeration economies）とは、企業や労働者が地理的に近接して立地することで生じる外部経済の総称である。マーシャル（1890）が『経済学原理』で産業集積の利益として（1）熟練労働者のプール、（2）専門的中間投入財の供給者の集積、（3）知識・技術のスピルオーバーの3要因を指摘した。' +
+      'クルーグマン（1991）はこれを収穫逓増と輸送費用の一般均衡モデル（コア・ペリフェリ・モデル）として定式化し新経済地理学を確立した。都市の形成・産業クラスター・地域間格差の分析枠組みとして都市経済学・地域経済学の基礎概念となっている。',
+    keyFigures: 'アルフレッド・マーシャル（Alfred Marshall, 1842–1924）／ポール・クルーグマン（Paul Krugman, 1953–）2008年ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2008/krugman/facts/', type: 'reference', label: 'NobelPrize.org — Paul Krugman Facts, 2008 Sveriges Riksbank Prize（貿易パターンと経済活動の立地に関する分析）' },
+      { url: 'https://www.princeton.edu/~pkrugman/aag.pdf', type: 'academic', label: 'Krugman, P. "The New Economic Geography, Now Middle-Aged"（プリンストン大学ホスト・AAG講演論文）' },
+    ],
+  },
 ];
 // Stryker restore all
