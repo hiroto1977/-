@@ -20431,5 +20431,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.shrm.org/topics-tools/news/employee-relations/reverse-mentoring-what-it-is-and-how-to-make-it-work', type: 'reference', label: 'SHRM (Society for Human Resource Management) — Reverse Mentoring: What It Is and How to Make It Work（人事管理専門団体による定義・実践指針）' },
     ],
   },
+  {
+    id: 'bizlaw-real-estate-transactions-act',
+    discipline: 'business-law',
+    title: '宅地建物取引業法（宅建業法）',
+    statement:
+      '宅地建物取引業法（昭和27年法律第176号）は、宅地・建物の売買・交換・賃貸の媒介等を業として行う者（宅地建物取引業者）を免許制とし、取引の公正確保と購入者等の保護を図る法律である。国土交通大臣又は都道府県知事から免許を受けた業者のみが宅建業を営め、5年ごとの免許更新が必要である。' +
+      '業者には宅地建物取引士を設置する義務があり、宅建士は契約前に重要事項（物件の権利関係・法令上の制限・代金・取引条件等）を記名押印した書面（35条書面）で説明する義務を負う。また媒介報酬の上限規制・手付金の保全・クーリングオフ等の消費者保護規定が置かれている。',
+    keyFigures: '宅地建物取引業法（昭和27年法律第176号・1952年制定）／国土交通省所管／宅地建物取引士による重要事項説明義務（35条）・37条書面交付義務',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mlit.go.jp/totikensangyo/const/sosei_const_tk3_000021.html', type: 'government', label: '国土交通省 — 宅地建物取引業法の概要（免許制度・宅建士・取引の規制）' },
+      { url: 'https://laws.e-gov.go.jp/law/327AC0000000176', type: 'government', label: 'e-Gov法令検索 — 宅地建物取引業法（昭和二十七年法律第百七十六号）条文' },
+    ],
+  },
+  {
+    id: 'bizlaw-tcfd',
+    discipline: 'business-law',
+    title: '気候関連財務情報開示タスクフォース（TCFD）',
+    statement:
+      '気候関連財務情報開示タスクフォース（TCFD: Task Force on Climate-related Financial Disclosures）は、2015年に金融安定理事会（FSB）が設置し、2017年に最終提言を公表した民間主導のフレームワークである。企業に対して「ガバナンス・戦略・リスク管理・指標と目標」の4つの柱に沿って気候関連リスクと機会を財務情報として開示することを求める。' +
+      '物理的リスク（洪水・干ばつ等の気候変動の直接影響）と移行リスク（脱炭素政策・技術革新・市場変化に伴う影響）を区別してシナリオ分析することが特徴である。日本では2022年の企業内容等の開示に関する内閣府令改正により、プライム上場企業へのTCFD等に基づく開示が実質義務化された。',
+    keyFigures: 'FSB（金融安定理事会）設置／マイケル・ブルームバーグ（議長）／2017年最終提言公表／4柱フレームワーク／2022年日本でプライム上場企業に実質義務化',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsb-tcfd.org/recommendations/', type: 'government', label: 'TCFD（Task Force on Climate-related Financial Disclosures）公式サイト — Recommendations（2017最終提言）' },
+      { url: 'https://www.fsa.go.jp/singi/singi_kinyu/tosin/20220706.html', type: 'government', label: '金融庁 — サステナブルファイナンス有識者会議（気候変動開示・TCFD対応の国内政策）' },
+    ],
+  },
+  {
+    id: 'econ-allison-models',
+    discipline: 'economics',
+    title: 'アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）',
+    statement:
+      'グレアム・アリソンが1971年の著書『決定の本質（Essence of Decision）』でキューバ危機を事例に提示した、政策決定を分析する3つの概念モデル。モデルI「合理的行為者モデル」は国家を単一の合理的行為者として捉え、費用便益計算に基づく最適手段を選択するとする古典的仮定である。' +
+      'モデルII「組織過程モデル」は政府を複数の官僚組織の連合体として捉え、標準作業手続（SOP）に従って出力される行動として政策を説明する。モデルIII「政府政治モデル」（官僚政治モデル）は政策を異なる利害・権力を持つアクター間の交渉・妥協の結果として捉える。意思決定論・政策科学・組織論の基礎概念となっている。',
+    keyFigures: 'グレアム・アリソン（Graham T. Allison）1971年『Essence of Decision』／フィリップ・ゼリコウ（Philip Zelikow）と共著で1999年第2版／キューバ危機（1962）を分析事例',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hks.harvard.edu/publications/essence-decision-explaining-cuban-missile-crisis', type: 'academic', label: 'Harvard Kennedy School — Essence of Decision: Explaining the Cuban Missile Crisis（アリソン著書の公式紹介）' },
+      { url: 'https://www.britannica.com/topic/Essence-of-Decision', type: 'reference', label: 'Encyclopaedia Britannica — Essence of Decision（3モデルの解説・政策科学への影響）' },
+    ],
+  },
+  {
+    id: 'mgmt-supply-chain-resilience',
+    discipline: 'management',
+    title: 'サプライチェーン強靭化（supply chain resilience）',
+    statement:
+      'サプライチェーン強靭化（SCR）とは、自然災害・パンデミック・地政学的リスク・サイバー攻撃など予測困難な混乱に直面しても、サプライチェーンが迅速に回復し顧客へ製品・サービスを供給し続ける能力を指す。2000年代のSARSや2011年東日本大震災・タイ洪水を契機に学術・実務で本格的に議論が深まった。' +
+      '強靭化の戦略要素として「冗長性（在庫・複数サプライヤー・代替生産拠点の確保）」「フレキシビリティ（需要変動への対応能力）」「可視性（サプライチェーン全体のリアルタイム把握）」「コラボレーション（取引先との情報共有・連携）」が挙げられる。効率性重視のリーン化と耐障害性のトレードオフが中核的な管理課題である。',
+    keyFigures: 'ヨッシ・シェフィ（Yossi Sheffi, MIT）『The Resilient Enterprise』2005で体系化／マーティン・クリストファー（Martin Christopher）／東日本大震災（2011）・COVID-19（2020）が重要性を加速',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dspace.mit.edu/handle/1721.1/7951', type: 'academic', label: 'MIT DSpace — Sheffi, Y. (2001) "Supply Chain Management under the Threat of International Terrorism"（SCRの基礎論文）' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/13675560500405985', type: 'academic', label: 'International Journal of Logistics, Christopher & Peck (2004) "Building the Resilient Supply Chain"（冗長性・フレキシビリティ・可視性の3要素枠組み）' },
+    ],
+  },
+  {
+    id: 'bizlaw-greenwashing',
+    discipline: 'business-law',
+    title: 'グリーンウォッシング（虚偽・誇大な環境訴求）',
+    statement:
+      'グリーンウォッシングとは、企業・製品・サービスの実際の環境負荷や持続可能性を実態よりも環境配慮的であるように誤認させる虚偽または誇大な表示・マーケティング行為を指す。1986年に環境活動家ジェイ・ウェスターベルドが提唱した造語とされ、消費者の「グリーン購買」意欲に乗じて環境配慮の外観だけを演出する行為への批判として用いられる。' +
+      '法的には景品表示法の優良誤認表示（5条1号）、金融商品取引法の開示規制、EU「グリーンクレーム指令案」（2023年提案）等で規制される。EU欧州証券市場監督機構（ESMA）や金融庁はESG投資分野でのグリーンウォッシング防止を優先課題と位置づけ、開示の正確性・根拠の検証可能性が問われるようになっている。',
+    keyFigures: 'ジェイ・ウェスターベルド（Jay Westerveld）1986年に造語／EU「グリーンクレーム指令」（2023）／日本：景品表示法5条1号・金融商品取引法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.esma.europa.eu/press-news/esma-news/esma-publishes-final-report-greenwashing', type: 'government', label: 'ESMA（欧州証券市場監督機構）— Final Report on Greenwashing（定義・監督・防止措置の国際基準文書）' },
+      { url: 'https://www.caa.go.jp/policies/policy/representation/fair_labeling/', type: 'government', label: '消費者庁 — 景品表示法（優良誤認表示規制・環境訴求広告への適用）' },
+    ],
+  },
+  {
+    id: 'human-emotion-regulation',
+    discipline: 'human-science',
+    title: '感情調整（グロスのプロセスモデル）',
+    statement:
+      '感情調整（emotion regulation）とは、感情がいつ・どのように経験され、表現され、行動に影響するかを個人が調整しようとする過程全体を指す心理学の中核概念である。ジェームズ・グロス（James J. Gross）がスタンフォード大学で1998年のPsychological Review論文でプロセスモデルを確立し、感情生成の各段階に対応した5ファミリーの方略を体系化した。' +
+      '5方略ファミリーとは、①状況選択、②状況修正、③注意配置（注意そらし・集中）、④認知的変化（認知的再評価）、⑤反応調整（表現抑制など）である。先行焦点型の認知的再評価は後続焦点型の表現抑制より適応的であることが実証されており、うつ・不安・PTSD・感情労働・感情知性研究と密接に連関する。',
+    keyFigures: 'ジェームズ・J・グロス（James J. Gross, スタンフォード大学）が体系化／1998年 Psychological Review／認知的再評価 vs 表現抑制の対比が実証研究の中心',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/pubs/journals/rev/', type: 'academic', label: 'APA Psychological Review — Gross (1998) "The Emerging Field of Emotion Regulation" 掲載誌（査読誌、感情調整プロセスモデルの原典誌）' },
+      { url: 'https://www.britannica.com/topic/emotion-regulation', type: 'reference', label: 'Encyclopaedia Britannica — Emotion regulation（定義・グロスのプロセスモデル・認知的再評価と表現抑制）' },
+    ],
+  },
 ];
 // Stryker restore all
