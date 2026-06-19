@@ -23,7 +23,7 @@ aliases:
 互恵的利他主義とは、ロバート・トリヴァースが1971年にThe Quarterly Review of Biology誌に発表した論文「The Evolution of Reciprocal Altruism」で提唱した進化生物学の理論である。血縁関係のない個体間においても、利他行為のコストが受益者の利益より小さく、将来の互恵が期待できる場合に利他的行動が自然選択で進化しうると説明した。ハミルトンの血縁選択説（1964年）では説明できない非血縁者間の協力行動の進化機構を理論化した。アクセルロッドとハミルトンが1981年に反復囚人のジレンマにおけるしっぺ返し戦略（tit-for-tat）の優位性を示し、互恵的利他主義のゲーム理論的基盤を確立した。
 
 ## 提唱者・初出
-ロバート・トリヴァース（Robert L. Trivers, 1943–）／ロバート・アクセルロッド（Robert Axelrod）／W・D・ハミルトン（W. D. Hamilton）
+ロバート・トリヴァース（Robert L. Trivers, 1943–2026）／ロバート・アクセルロッド（Robert Axelrod）／W・D・ハミルトン（W. D. Hamilton, 1936–2000）
 
 ## 出典
 - [Trivers, R. L. (1971) "The Evolution of Reciprocal Altruism" The Quarterly Review of Biology 46(1)](https://www.jstor.org/stable/2822435) `学術`
