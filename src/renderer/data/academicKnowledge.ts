@@ -19003,5 +19003,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://elaws.e-gov.go.jp/document?lawid=416AC0000000122', type: 'government', label: 'e-Gov法令検索 — 公益通報者保護法（平成16年法律第122号）' },
     ],
   },
+  {
+    id: 'mundell-fleming-model',
+    discipline: 'economics',
+    title: 'マンデル＝フレミング・モデル',
+    statement:
+      'マンデル＝フレミング・モデルは、1960年代初頭にロバート・マンデルとJ・マーカス・フレミングが独立に提唱した開放経済マクロ経済学の基本モデルである。IS-LMモデルを開放経済に拡張し、国際資本移動と為替レート制度が財政・金融政策の有効性に与える影響を分析する。' +
+      '資本移動が完全な場合、固定為替レート制度下では財政政策が有効で金融政策は無効となり、変動為替レート制度下では金融政策が有効で財政政策は無効となる。この「政策割当の非対称性」は国際金融論の中核的命題であり、現代の為替制度選択や国際政策協調の議論に不可欠な理論的枠組みを提供している。',
+    keyFigures: 'ロバート・マンデル（Robert A. Mundell, 1932–2021、1999年ノーベル経済学賞）／J・マーカス・フレミング（J. Marcus Fleming, 1911–1976、IMF調査局）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/139336', type: 'academic', label: 'Mundell, R.A. (1963) "Capital Mobility and Stabilization Policy under Fixed and Flexible Exchange Rates", Canadian Journal of Economics 29(4), 475–485（原著論文）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/mundell/facts/', type: 'government', label: 'NobelPrize.org — 1999年経済学賞 Robert A. Mundell' },
+    ],
+  },
+  {
+    id: 'agile-development',
+    discipline: 'management',
+    title: 'アジャイルソフトウェア開発',
+    statement:
+      'アジャイルソフトウェア開発は、2001年2月に米国ユタ州スノーバードで17名のソフトウェア実践者が「アジャイルソフトウェア開発宣言」を策定したことに始まる。個人と対話、動くソフトウェア、顧客との協調、変化への対応を重視する4つの価値と12の原則を掲げ、反復的・漸進的な開発を推進する。' +
+      '代表的手法にスクラム（シュウェイバー&サザーランド、1995年公式発表）、エクストリーム・プログラミング（ベック、1999年）、カンバンがある。従来のウォーターフォール型開発に対し、短い反復サイクル（スプリント）で顧客フィードバックを取り込みながら段階的に価値を提供する。ソフトウェア開発にとどまらず経営管理や組織運営にも応用が広がっている。',
+    keyFigures: 'ケント・ベック（Kent Beck、XP提唱・宣言署名者）／ケン・シュウェイバー&ジェフ・サザーランド（Scrum共同考案）／ロバート・C・マーティン、マーティン・ファウラー等（2001年宣言署名者17名）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://agilemanifesto.org/', type: 'academic', label: 'Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）' },
+      { url: 'https://scrumguides.org/', type: 'academic', label: 'The Scrum Guide — Schwaber & Sutherland（Scrum公式定義）' },
+    ],
+  },
+  {
+    id: 'bystander-effect',
+    discipline: 'human-science',
+    title: '傍観者効果',
+    statement:
+      '傍観者効果とは、緊急事態において周囲に他者が多く存在するほど、個人が援助行動を起こしにくくなる社会心理学的現象である。1964年のキティ・ジェノヴィーズ事件を契機に、ジョン・ダーリーとビブ・ラタネが1968年に実験的に実証した。' +
+      '主要なメカニズムとして、責任の分散（他者も助けるだろうという想定）、多元的無知（他者の無反応を手がかりに緊急性を過小評価）、評価懸念（介入による否定的評価への恐れ）の三つが挙げられる。傍観者の数が増加するほど援助行動の確率と速度が低下することが繰り返し確認されている。災害時の避難行動や組織内の不正通報行動の分析にも応用される。',
+    keyFigures: 'ジョン・ダーリー（John M. Darley, 1938–2018）／ビブ・ラタネ（Bibb Latané, 1937–）（1968年実験で実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0025589', type: 'academic', label: 'Darley & Latané (1968) "Bystander intervention in emergencies: Diffusion of responsibility", Journal of Personality and Social Psychology 8(4), 377–383（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Bystander_effect', type: 'reference', label: 'Wikipedia — Bystander effect（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'act-on-electronic-records',
+    discipline: 'business-law',
+    title: '電子帳簿保存法',
+    statement:
+      '電子帳簿保存法（平成10年法律第25号、正式名称「電子計算機を使用して作成する国税関係帳簿書類の保存方法等の特例に関する法律」）は、国税関係の帳簿書類を電子データで保存することを認める法律である。1998年に制定され、国税庁が所管する。' +
+      '2021年度税制改正（令和3年改正）により、事前承認制度が廃止され、スキャナ保存の要件が大幅に緩和された。電子取引データの電子保存が義務化され、2024年1月から完全義務化となった。タイムスタンプ要件の緩和や検索要件の簡素化を含み、中小企業を含む事業者のデジタル化推進と税務手続の効率化を目的としている。',
+    keyFigures: '電子帳簿保存法（平成10年法律第25号、1998年制定）／国税庁所管／2021年改正（2024年1月電子取引データ保存完全義務化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/index.htm', type: 'government', label: '国税庁 — 電子帳簿保存法関係' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=410AC0000000025', type: 'government', label: 'e-Gov法令検索 — 電子帳簿保存法（平成10年法律第25号）' },
+    ],
+  },
+  {
+    id: 'uses-and-gratifications',
+    discipline: 'information-sociology',
+    title: '利用と満足理論',
+    statement:
+      '利用と満足理論は、1970年代にエリフ・カッツ、ジェイ・ブラムラー、マイケル・グレヴィッチによって体系化されたメディア研究の理論である。従来の「メディアが人々に何をするか」という効果研究の視点を転換し、「人々がメディアをどう利用するか」を問う。' +
+      '受け手は能動的にメディアを選択し、認知的欲求（情報獲得）、感情的欲求（娯楽・美的体験）、個人的統合欲求（自信・地位の確認）、社会的統合欲求（家族・友人との結合）、緊張解消欲求（逃避・気晴らし）という五つのカテゴリーの充足を求めるとされる。デジタルメディア時代においてもSNS利用行動の分析枠組みとして広く応用されている。',
+    keyFigures: 'エリフ・カッツ（Elihu Katz, 1926–2021）／ジェイ・ブラムラー（Jay Blumler, 1924–2024）／マイケル・グレヴィッチ（Michael Gurevitch, 1930–2008）（1974年体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/268109', type: 'academic', label: 'Katz, Blumler & Gurevitch (1974) "Uses and Gratifications Research", Public Opinion Quarterly 37(4), 509–523（原著論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Uses_and_gratifications_theory', type: 'reference', label: 'Wikipedia — Uses and gratifications theory（包括的参考文献付き）' },
+    ],
+  },
+  {
+    id: 'labor-standards-act',
+    discipline: 'business-law',
+    title: '労働基準法',
+    statement:
+      '労働基準法（昭和22年法律第49号）は、1947年に制定された日本の労働条件の最低基準を定める基本法である。労働時間（週40時間・1日8時間）、時間外労働の規制、休日・年次有給休暇、解雇規制（30日前予告）、賃金支払の四原則（通貨払・直接払・全額払・毎月一回以上定期払）、児童労働の禁止、母性保護等を規定する。' +
+      '労働基準監督署が事業場への臨検・是正勧告等により履行を確保する。2018年の働き方改革関連法により、時間外労働の罰則付き上限規制（原則月45時間・年360時間、特別条項でも年720時間以内）が導入され、労働者の健康確保と長時間労働の是正が図られている。',
+    keyFigures: '労働基準法（昭和22年法律第49号、1947年制定）／厚生労働省所管・労働基準監督署が執行／2018年働き方改革関連法で時間外上限規制導入',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=322AC0000000049', type: 'government', label: 'e-Gov法令検索 — 労働基準法（昭和22年法律第49号）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/index.html', type: 'government', label: '厚生労働省 — 労働基準法の基礎知識' },
+    ],
+  },
 ];
 // Stryker restore all
