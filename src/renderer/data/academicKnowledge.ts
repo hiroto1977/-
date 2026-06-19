@@ -18667,5 +18667,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ja.wikipedia.org/wiki/労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律', type: 'reference', label: 'Wikipedia（日本語）— 労働者派遣法' },
     ],
   },
+  {
+    id: 'purchasing-power-parity',
+    discipline: 'economics',
+    title: '購買力平価説（PPP）',
+    statement:
+      '購買力平価説（Purchasing Power Parity, PPP）は、スウェーデンの経済学者グスタフ・カッセルが1918年に体系化した為替レート決定理論である。同一の財・サービスは各国で同一価格になるべきという「一物一価の法則」を基礎とし、二国間の為替レートは両国の物価水準の比率により決定されると主張する。' +
+      '絶対的購買力平価（為替レート＝自国物価÷外国物価）と、相対的購買力平価（為替レート変動率＝自国インフレ率－外国インフレ率）の二形態がある。短期では輸送費・関税・非貿易財の存在により大幅な乖離が生じるが、長期的にはPPPに収束する傾向が実証されている。世界銀行やOECDが各国GDPの国際比較にPPPベースを用いる。',
+    keyFigures: 'グスタフ・カッセル（Gustav Cassel, 1866–1945）／一物一価の法則に基づく為替レート理論（1918年体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.boj.or.jp/about/education/oshiete/intl/g18.htm', type: 'government', label: '日本銀行 金融用語集「購買力平価説」' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%B3%BC%E8%B2%B7%E5%8A%9B%E5%B9%B3%E4%BE%A1%E8%AA%AC', type: 'reference', label: 'Wikipedia（日本語）— 購買力平価説' },
+    ],
+  },
+  {
+    id: 'balanced-scorecard',
+    discipline: 'management',
+    title: 'バランスト・スコアカード（BSC）',
+    statement:
+      'バランスト・スコアカード（BSC）は、ロバート・S・キャプランとデビッド・P・ノートンが1992年にHarvard Business Reviewに発表した戦略的業績管理フレームワークである。財務指標のみに偏った従来の経営評価を超え、(1)財務の視点、(2)顧客の視点、(3)内部ビジネスプロセスの視点、(4)学習と成長の視点の4つの視点からバランスよく業績を測定する。' +
+      '各視点に目標・指標・ターゲット・施策を設定し、戦略マップで因果関係を可視化することで、戦略を日常業務に落とし込む。1996年の著書『The Balanced Scorecard: Translating Strategy into Action』で体系化され、単なる業績測定ツールから戦略マネジメントシステムへと発展した。世界中の企業・公共機関・非営利組織で広く採用されている。',
+    keyFigures: 'ロバート・S・キャプラン（Robert S. Kaplan, 1940–）／デビッド・P・ノートン（David P. Norton, 1941–2023）（1992年HBR論文で発表）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1992/01/the-balanced-scorecard-measures-that-drive-performance-2', type: 'academic', label: 'Harvard Business Review — "The Balanced Scorecard: Measures That Drive Performance"（1992年原著論文）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=9161', type: 'academic', label: 'Harvard Business School Faculty & Research — Kaplan & Norton BSC論文' },
+    ],
+  },
+  {
+    id: 'maslow-hierarchy',
+    discipline: 'human-science',
+    title: 'マズローの欲求階層説',
+    statement:
+      'マズローの欲求階層説は、アブラハム・マズローが1943年の論文「A Theory of Human Motivation」（Psychological Review, 50(4), 370–396）で提唱した動機づけ理論である。人間の欲求を(1)生理的欲求、(2)安全の欲求、(3)社会的欲求（所属と愛）、(4)承認の欲求、(5)自己実現の欲求の5段階に分類し、低次の欲求が充足されると高次の欲求が動機づけとして顕在化するとした。' +
+      '1954年の著書『Motivation and Personality』で体系化し、晩年には自己超越（self-transcendence）を加えた6段階モデルも提案された。ピラミッド型の図示はマズロー自身によるものではなく後世の解釈であるが、教育学・経営学・看護学・マーケティングなど幅広い分野で応用される。実証研究では欲求の階層順序は文化によって異なるとの批判もある。',
+    keyFigures: 'アブラハム・マズロー（Abraham Maslow, 1908–1970）（1943年Psychological Review誌で発表）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/maslow/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Abraham Maslow' },
+      { url: 'https://www.simplypsychology.org/maslow.html', type: 'reference', label: 'Simply Psychology — Maslow\'s Hierarchy of Needs（査読済み教育心理学リファレンス）' },
+    ],
+  },
+  {
+    id: 'product-liability-law',
+    discipline: 'business-law',
+    title: '製造物責任法（PL法）',
+    statement:
+      '製造物責任法（PL法、平成6年法律第85号）は、製造物の欠陥により人の生命・身体または財産に損害が生じた場合、被害者が製造業者等に対し損害賠償を請求できることを定めた法律である。民法の不法行為（過失責任）と異なり、製造業者の過失の立証を不要とし、製品の欠陥・損害・因果関係の三要件を被害者が証明すれば足りる無過失責任（厳格責任）を採用した。' +
+      '第129回国会で成立し、平成7年（1995年）7月1日に施行された。対象は「製造又は加工された動産」であり、不動産・未加工農林水産物・ソフトウェア単体は対象外とされる。開発危険の抗弁（製造時の科学技術水準では欠陥を認識できなかった場合の免責）が認められている点が特徴である。消費者保護と製品安全の向上に寄与している。',
+    keyFigures: '製造物責任法（平成6年法律第85号、1994年制定・1995年7月1日施行）／第129回国会で成立／消費者庁所管',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/pl_qa.html', type: 'government', label: '消費者庁 — 製造物責任法の概要Q&A' },
+      { url: 'https://laws.e-gov.go.jp/document?lawid=406AC0000000085', type: 'government', label: 'e-Gov法令検索 — 製造物責任法（平成6年法律第85号）' },
+    ],
+  },
+  {
+    id: 'digital-divide',
+    discipline: 'information-sociology',
+    title: 'デジタル・デバイド（情報格差）',
+    statement:
+      'デジタル・デバイド（情報格差）とは、インターネットやコンピュータ等の情報通信技術（ICT）へのアクセスや利活用能力において、社会経済的地位・地理的条件・年齢・教育水準・障害の有無等によって生じる格差を指す概念である。米国商務省電気通信情報局（NTIA）が1995年に発表した報告書「Falling Through the Net」で広く認知され政策課題となった。' +
+      '第一次デジタル・デバイド（物理的アクセスの格差）に加え、リテラシーや活用能力の格差（第二次）、情報活用による成果の格差（第三次）へと議論が深化している。日本では総務省が情報通信白書で毎年実態を報告し、高齢者・障害者・過疎地域への対策を推進している。コロナ禍でのオンライン教育・遠隔医療の拡大により格差が再び顕在化し注目を集めた。',
+    keyFigures: 'NTIA「Falling Through the Net」（1995年）で概念普及／日本では総務省が情報通信白書で実態報告',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/', type: 'government', label: '総務省 — 情報通信白書（デジタル・デバイドの実態と対策を毎年報告）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%83%85%E5%A0%B1%E6%A0%BC%E5%B7%AE', type: 'reference', label: 'Wikipedia（日本語）— 情報格差（デジタル・デバイド）' },
+    ],
+  },
+  {
+    id: 'minimum-wage-law',
+    discipline: 'business-law',
+    title: '最低賃金法',
+    statement:
+      '最低賃金法（昭和34年法律第137号）は、賃金の最低額を保障することにより、労働者の生活の安定、労働力の質的向上および事業の公正な競争の確保を目的とする法律である。最低賃金には、各都道府県ごとに定められる地域別最低賃金と、特定の産業に適用される特定最低賃金の二種類がある。' +
+      '厚生労働大臣または都道府県労働局長が、公益代表・労働者代表・使用者代表の三者構成による最低賃金審議会の調査審議を経て決定・改定を行う。使用者は最低賃金額以上の賃金を支払う義務を負い、違反には罰則（50万円以下の罰金）が科される。地域別最低賃金は毎年改定され、中央最低賃金審議会が目安額を示し各地方審議会が地域の実情を踏まえて決定する。',
+    keyFigures: '最低賃金法（昭和34年法律第137号、1959年制定）／厚生労働省所管／最低賃金審議会（三者構成）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=334AC0000000137', type: 'government', label: 'e-Gov法令検索 — 最低賃金法（昭和34年法律第137号）' },
+      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/minimumichiran/', type: 'government', label: '厚生労働省 — 最低賃金制度の概要' },
+    ],
+  },
 ];
 // Stryker restore all
