@@ -19423,5 +19423,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.env.go.jp/recycle/waste/laws.html', type: 'government', label: '環境省 — 廃棄物処理法の概要' },
     ],
   },
+  {
+    id: 'econ-greenspan-put',
+    discipline: 'economics',
+    title: 'グリーンスパン・プット',
+    statement:
+      'グリーンスパン・プットとは、1987年ブラックマンデー後にFRB議長アラン・グリーンスパンが迅速に流動性供給・利下げを行ったことから生じた市場の期待で、資産価格下落時にFRBが金融緩和で介入するという暗黙の保険（プットオプション）を意味する。投資家の過度なリスクテイクを誘発するモラルハザードの源泉として批判された。' +
+      'Miller, Weller, Zhang（2002）はEconomic Journal誌で株式リスクプレミアムの低下をこの暗黙保険によるモラルハザードで説明した。概念はその後バーナンキ・プット、Fedプットへと拡張され、中央銀行と金融市場の関係を分析する金融経済学の重要な枠組みとなっている。',
+    keyFigures: 'アラン・グリーンスパン（Alan Greenspan, 1926–）／マーカス・ミラー（Marcus H. Miller）／ポール・ウェラー（Paul A. Weller）／レイ・ジャン（Lei Zhang）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=287438', type: 'academic', label: 'Miller, Weller & Zhang (2002) "Moral Hazard and the US Stock Market: Analysing the Greenspan Put" Economic Journal 112(478)' },
+      { url: 'https://en.wikipedia.org/wiki/Greenspan_put', type: 'reference', label: 'Wikipedia — Greenspan put' },
+    ],
+  },
+  {
+    id: 'mgmt-glass-ceiling',
+    discipline: 'management',
+    title: 'ガラスの天井（グラス・シーリング）',
+    statement:
+      'ガラスの天井とは、女性やマイノリティが能力・実績にかかわらず組織上層部への昇進を阻まれる見えない障壁を指す比喩で、1978年にマリリン・ローデンがニューヨーク女性博覧会のパネル討論で初めて使用した。1986年ウォール・ストリート・ジャーナル紙の特集記事で広く認知された。' +
+      '1991年公民権法Title IIにより連邦ガラスの天井委員会が設置され、1995年報告書はFortune 1000上級管理職の97%が白人男性であると記録し組織的差別の実態を実証した。Cotter, Hermsen, Ovadia & Vanneman（2001）はSocial Forces誌でガラスの天井効果の4基準を定式化した。',
+    keyFigures: 'マリリン・ローデン（Marilyn Loden, 1946–2022）／ロバート・B・ライシュ（Robert B. Reich, 連邦ガラスの天井委員会委員長）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/sf/article-abstract/80/2/655/2234418', type: 'academic', label: 'Cotter et al. (2001) "The Glass Ceiling Effect" Social Forces 80(2)' },
+      { url: 'https://ecommons.cornell.edu/items/db3feed5-34f1-49ab-8f23-f779befb1164', type: 'academic', label: 'Federal Glass Ceiling Commission (1995) "Good for Business" Report — Cornell University eCommons' },
+    ],
+  },
+  {
+    id: 'human-sensory-deprivation',
+    discipline: 'human-science',
+    title: '感覚遮断（感覚剥奪）',
+    statement:
+      '感覚遮断とは視覚・聴覚・触覚などへの外部刺激を意図的に減少・除去する実験手法であり、1950年代にドナルド・ヘッブらがマギル大学で行った実験では、被験者に幻覚・不安・認知障害が生じることが示された。Bexton, Heron & Scott（1954）がCanadian Journal of Psychologyで発表した論文が嚆矢である。' +
+      '1954年にジョン・C・リリーが米国国立精神衛生研究所で最初のアイソレーションタンクを開発し、現代ではREST（制限環境刺激療法）としてフローティング療法に応用され、不安軽減・慢性疼痛緩和・睡眠改善などの効果が報告されている。',
+    keyFigures: 'ドナルド・O・ヘッブ（Donald O. Hebb, 1904–1985）／ジョン・C・リリー（John C. Lilly, 1915–2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/13160864/', type: 'academic', label: 'Bexton, Heron & Scott (1954) "Effects of decreased variation in the sensory environment" Canadian Journal of Psychology 8(2)' },
+      { url: 'https://www.thecanadianencyclopedia.ca/en/article/donald-olding-hebb', type: 'reference', label: 'The Canadian Encyclopedia — Donald Olding Hebb' },
+    ],
+  },
+  {
+    id: 'bizlaw-private-detective-act',
+    discipline: 'business-law',
+    title: '探偵業法（探偵業の業務の適正化に関する法律）',
+    statement:
+      '探偵業法（平成18年法律第60号）は、探偵業務の適正な運営と個人の権利利益の保護を目的として2006年に制定され2007年6月1日に施行された。探偵業を「他人の依頼を受けて特定人の所在又は行動についての情報を収集することを目的として面接による聞込み、尾行、張込みその他これらに類する方法により実地の調査を行い、その結果を報告する業務」と定義する。' +
+      '探偵業の開始には公安委員会への届出が必要であり、欠格事由に該当する者の営業を禁止する。依頼者への重要事項説明義務、調査結果が違法行為に用いられないことの確認義務、秘密保持義務を定め、違反者には懲役・罰金の刑事罰が科される。所管は警察庁である。',
+    keyFigures: '警察庁（所管官庁）／各都道府県公安委員会（届出先）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/418AC0000000060', type: 'government', label: 'e-Gov法令検索 — 探偵業の業務の適正化に関する法律（平成18年法律第60号）' },
+      { url: 'https://www.npa.go.jp/bureau/safetylife/tantei/index.html', type: 'government', label: '警察庁 — 探偵業の業務の適正化に関する法律' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-bias',
+    discipline: 'information-sociology',
+    title: 'アルゴリズムバイアス',
+    statement:
+      'アルゴリズムバイアスとは、コンピュータシステムにおける体系的かつ反復可能な偏りであり、人種・性別等に基づく不公正な結果を生む現象である。Friedman & Nissenbaum（1996）がACM Transactions on Information Systems誌で既存的・技術的・創発的バイアスの3類型を提唱し、2010年代の機械学習普及とともに社会的関心が高まった。' +
+      '2018年にBuolamwini & Gebruの「Gender Shades」研究が商用顔認識AIの肌色・性別による精度格差を実証し、Nobleが著書『Algorithms of Oppression』で検索エンジンの人種的偏りを告発した。同年ACM FAccT会議が発足し、公平性・説明責任・透明性の学際的研究が制度化された。',
+    keyFigures: 'バティア・フリードマン（Batya Friedman）／ジョイ・ブオラムウィニ（Joy Buolamwini, 1990–）／ティムニット・ゲブル（Timnit Gebru, 1982–）／サフィヤ・ウモジャ・ノーブル（Safiya Umoja Noble）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/algorithmic-fairness/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Algorithmic Fairness' },
+      { url: 'https://proceedings.mlr.press/v81/buolamwini18a.html', type: 'academic', label: 'Buolamwini & Gebru (2018) "Gender Shades" Proceedings of Machine Learning Research 81' },
+    ],
+  },
+  {
+    id: 'mgmt-mentoring',
+    discipline: 'management',
+    title: 'メンタリング',
+    statement:
+      'メンタリングとは、経験豊富な先輩（メンター）が後輩（プロテジェ）を指導・支援する発達的関係であり、キャシー・クラムが1983年のAcademy of Management Journal論文と1985年の著書『Mentoring at Work』で体系化した。メンターの機能をキャリア機能（スポンサーシップ、コーチング、保護等）と心理社会的機能（ロールモデル、カウンセリング等）の二つに分類した。' +
+      'クラムはまたメンタリング関係が開始・育成・分離・再定義の4段階を経て発展すると定式化し、公式的プログラムと自然発生的な非公式的メンタリングの区別も示した。組織行動論・人材開発論において広く援用される基盤的概念である。',
+    keyFigures: 'キャシー・E・クラム（Kathy E. Kram, 1950–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK552775/', type: 'academic', label: 'National Academies of Sciences — The Science of Mentoring Relationships (NCBI Bookshelf)' },
+      { url: 'https://www.britannica.com/topic/mentoring', type: 'reference', label: 'Britannica — Mentoring' },
+    ],
+  },
 ];
 // Stryker restore all
