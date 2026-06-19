@@ -19927,5 +19927,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.wiego.org/informal-economy/history-debates/', type: 'academic', label: 'WIEGO — Informal Economy: History & Debates（学術研究機関による概念史）' },
     ],
   },
+  {
+    id: 'econ-global-value-chain',
+    discipline: 'economics',
+    title: 'グローバル・バリューチェーン（GVC）',
+    statement:
+      'グローバル・バリューチェーン（GVC）とは、製品やサービスの構想・原材料調達から製造・流通・最終消費に至るまでの価値付加活動が国境を越えて複数国に分散・連結される国際的生産ネットワークを分析する枠組みである。ジェレフィらは2005年の論文でGVCのガバナンス類型を市場型・モジュラー型・関係型・キャプティブ型・ヒエラルキー型の5つに整理した。' +
+      '取引の複雑性・知識の体系化可能性・供給者の能力の3変数で類型が決定されるとし、ポーターの単一企業内バリューチェーン概念とは区別される。世界銀行やWTO等の国際機関もGVC分析を貿易政策立案の基礎として採用している。',
+    keyFigures: 'ゲイリー・ジェレフィ（Gary Gereffi, 1948–）／ジョン・ハンフリー（John Humphrey）／ティモシー・スタージョン（Timothy Sturgeon）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/09692290500049805', type: 'academic', label: 'Gereffi, Humphrey & Sturgeon (2005) "The governance of global value chains," Review of International Political Economy 12(1): 78-104' },
+      { url: 'https://www.worldbank.org/en/topic/global-value-chains', type: 'reference', label: 'World Bank — Global Value Chains Topic Page' },
+    ],
+  },
+  {
+    id: 'mgmt-abilene-paradox',
+    discipline: 'management',
+    title: 'アビリーンのパラドックス',
+    statement:
+      'アビリーンのパラドックスとは、集団の各成員が内心では反対であるにもかかわらず「自分だけが反対だろう」と誤認し、誰も異議を唱えないまま集団全体が誰も望まない決定を下してしまう現象をいう。ハーヴィーが1974年のOrganizational Dynamics誌論文でテキサス州コールマンからアビリーンへの不本意な家族旅行の逸話を通じて提唱した。' +
+      '集団思考（グループシンク）が合意圧力による問題であるのに対し、本概念は「合意の管理の失敗」すなわち既に存在する合意を表明できない点に焦点を当てる。組織における意思決定の病理を説明する経営学の古典的概念として広く引用される。',
+    keyFigures: 'ジェリー・B・ハーヴィー（Jerry B. Harvey, 1935–2015）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0090261674900059', type: 'academic', label: 'Harvey, J. B. (1974) "The Abilene Paradox: The Management of Agreement," Organizational Dynamics 3(1): 63-80' },
+      { url: 'https://en.wikipedia.org/wiki/Abilene_paradox', type: 'reference', label: 'Wikipedia — Abilene paradox' },
+    ],
+  },
+  {
+    id: 'human-moral-disengagement',
+    discipline: 'human-science',
+    title: '道徳的離脱（モラル・ディスエンゲージメント）',
+    statement:
+      '道徳的離脱とは、バンデューラが社会的認知理論の枠組みで提唱した、人が自らの道徳基準から選択的に離脱し有害行為を正当化する8つの認知メカニズムの総称である。道徳的正当化・婉曲的命名・有利な比較・責任の転嫁・責任の分散・結果の無視や歪曲・非人間化・被害者への帰責の8機構が、行為・行為者・結果・被害者の各段階で道徳的自己制御を不活性化させる。' +
+      '1999年のPersonality and Social Psychology Review論文で体系的に整理され、2016年の著書『Moral Disengagement』で集大成された。企業不正・戦争犯罪・いじめ等の説明に広く応用されている。',
+    keyFigures: 'アルバート・バンデューラ（Albert Bandura, 1925–2021）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1207/s15327957pspr0303_3', type: 'academic', label: 'Bandura (1999) "Moral Disengagement in the Perpetration of Inhumanities," Personality and Social Psychology Review 3(3): 193-209' },
+      { url: 'https://albertbandura.com/albert-bandura-moral-disengagement.html', type: 'reference', label: 'Albert Bandura Official Site — Moral Disengagement（著作・論文一覧）' },
+    ],
+  },
+  {
+    id: 'bizlaw-squeeze-out',
+    discipline: 'business-law',
+    title: 'スクイーズアウト（特別支配株主の株式等売渡請求）',
+    statement:
+      'スクイーズアウトとは、支配株主が少数株主の保有株式を強制的に取得し完全子会社化等を実現する手法の総称である。2014年会社法改正（2015年施行）により、総議決権の90%以上を保有する特別支配株主が対象会社の承認を得て他の全株主に株式売渡請求を行える制度（会社法179条）が新設された。' +
+      '従来の全部取得条項付種類株式や株式併合による手法に比べ株主総会決議が不要で迅速な完全子会社化が可能となった。少数株主保護として価格決定申立（179条の8）・差止請求（179条の7）が用意されている。',
+    keyFigures: '法務省（所管官庁）／平成26年会社法改正（法律第90号、2015年5月1日施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（第179条〜179条の10 特別支配株主の株式等売渡請求）' },
+      { url: 'https://www.businesslawyers.jp/articles/6', type: 'reference', label: 'BUSINESS LAWYERS — 株式等売渡請求とは？法改正や実務の動向を踏まえて解説' },
+    ],
+  },
+  {
+    id: 'infosoc-critical-discourse-analysis',
+    discipline: 'information-sociology',
+    title: '批判的談話分析（CDA）',
+    statement:
+      '批判的談話分析（CDA）は、言語使用（談話・ディスコース）が社会的権力関係・不平等・イデオロギーをいかに再生産・変容させるかを批判的に分析する学際的アプローチである。フェアクラフは1992年の著書『Discourse and Social Change』でテクスト記述・談話実践の解釈・社会的実践の説明という三次元モデルを提示した。' +
+      '単なる言語分析と異なり社会変革への志向性を明示する点が特徴であり、ヴァン・ダイクの社会認知的アプローチやヴォダックの談話史的アプローチなど複数の理論的立場を包含する。メディア報道・政治演説・企業コミュニケーション等における権力の言説的構築の解明に広く用いられる。',
+    keyFigures: 'ノーマン・フェアクラフ（Norman Fairclough, 1941–）／テウン・ヴァン・ダイク（Teun van Dijk, 1943–）／ルート・ヴォダック（Ruth Wodak, 1950–）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oxfordreference.com/view/10.1093/oi/authority.20110803095648450', type: 'reference', label: 'Oxford Reference — Critical Discourse Analysis' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0957926592003002004', type: 'academic', label: 'Fairclough (1992) "Discourse and Text: Linguistic and Intertextual Analysis within Discourse Analysis," Discourse & Society 3(2)' },
+    ],
+  },
+  {
+    id: 'mgmt-parkinsons-law',
+    discipline: 'management',
+    title: 'パーキンソンの法則',
+    statement:
+      'パーキンソンの法則とは、英国の歴史学者C・N・パーキンソンが1955年に『エコノミスト』誌で発表した「仕事は、その完成のために利用可能な時間を満たすように膨張する」という経験則である。英国海軍省や植民地省の官僚数が業務量と無関係に年率5〜7%増加した事実を根拠とした。' +
+      '管理者が部下を増やして自らの地位を高める傾向と、官僚同士が相互に仕事を作り出す傾向の2要因を指摘した。1958年の著書『Parkinson\'s Law: The Pursuit of Progress』で体系化され、官僚制の肥大化を説明する組織論の古典として広く引用される。',
+    keyFigures: 'C・ノースコート・パーキンソン（C. Northcote Parkinson, 1909–1993）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Parkinsons-Law-or-The-Pursuit-of-Progress', type: 'reference', label: 'Encyclopaedia Britannica — Parkinson\'s Law, or The Pursuit of Progress' },
+      { url: 'https://www.britannica.com/biography/C-Northcote-Parkinson', type: 'reference', label: 'Encyclopaedia Britannica — C. Northcote Parkinson (1909–1993)' },
+    ],
+  },
 ];
 // Stryker restore all
