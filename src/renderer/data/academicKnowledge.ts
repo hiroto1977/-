@@ -20767,5 +20767,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oecd.org/en/publications/cost-benefit-analysis-and-the-environment_9789264085169-en.html', type: 'government', label: 'OECD — Cost-Benefit Analysis and the Environment（CV/EVによる厚生変化測定・環境価値評価への応用）' },
     ],
   },
+  {
+    id: 'infosoc-fourth-industrial-revolution',
+    discipline: 'information-sociology',
+    title: '第四次産業革命',
+    statement:
+      '第四次産業革命とは、AI・IoT・ロボット・ビッグデータ・バイオテクノロジーの融合によってデジタル・物理・生物圏の境界を解体する新段階の産業変革を指す。世界経済フォーラム（WEF）会長クラウス・シュワブが2016年のダボス会議および著書で概念を提示した。' +
+      '蒸気機関（第一次）・電力と大量生産（第二次）・ITと自動化（第三次）に続く変革とされ、速度・規模・影響のシステム的な広がりにおいて従来と質的に異なると論じられる。雇用の大規模自動化、デジタル格差、プラットフォーム独占、データ主権をめぐる社会的緊張が主要論点として指摘される。',
+    keyFigures: 'クラウス・シュワブ（Klaus Schwab、WEF会長、2016年著書『The Fourth Industrial Revolution』）／World Economic Forum ダボス会議2016／関連: ドイツのインダストリー4.0政策（2011年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/technology/Industry-4-0', type: 'reference', label: 'Encyclopaedia Britannica — "Industry 4.0"（第四次産業革命・AI・IoT・スマートファクトリーの定義と社会的影響）' },
+      { url: 'https://www.weforum.org/agenda/2016/01/the-fourth-industrial-revolution-what-it-means-and-how-to-respond/', type: 'media', label: 'World Economic Forum — Klaus Schwab "The Fourth Industrial Revolution: what it means, how to respond"（2016年1月、概念の一次提示）' },
+    ],
+  },
+  {
+    id: 'mgmt-t-shaped-skills',
+    discipline: 'management',
+    title: 'T字型人材（T型スキル）',
+    statement:
+      'T字型人材（T-shaped professional）とは、ある特定分野に深い専門知識・技能（Tの縦棒）を持ちながら、隣接する複数領域を横断する幅広い理解・協働能力（Tの横棒）も併せ持つ人材類型を指す。デザインコンサルタントのティム・ブラウン（IDEO CEO）が実務から広めた概念で、原型はマッキンゼー社内で1980年代末から用いられていたとされる。' +
+      'IT・コンサルティング・デザイン思考・イノベーション経営において、専門性の「深さ」と分野横断の「広さ」の組み合わせが創造的問題解決とチーム内の知識統合を促すと論じられる。複数専門をもつ「π型人材」などの発展概念も提唱され、多様な専門家が協働する組織での採用・育成・チーム設計の指針として広く参照される。',
+    keyFigures: 'ティム・ブラウン（Tim Brown、IDEO CEO、T字型人材の普及に貢献）／マッキンゼー&カンパニー（1980年代末の原型モデル）／関連: デザイン思考・π型人材',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sloanreview.mit.edu/article/the-versatility-of-t-shaped-managers/', type: 'academic', label: 'MIT Sloan Management Review — "The Versatility of T-Shaped Managers"（T字型マネジャーの組織内役割と知識統合機能）' },
+      { url: 'https://hbr.org/2010/07/the-next-step-in-business-building', type: 'media', label: 'Harvard Business Review — Tim Brown "The Next Step in Business Building"（T字型人材とIDEOの実践、2010年7月）' },
+    ],
+  },
+  {
+    id: 'human-golem-effect',
+    discipline: 'human-science',
+    title: 'ゴーレム効果',
+    statement:
+      'ゴーレム効果とは、指導者・教師・上司が部下や学習者に低い期待を抱き否定的に扱うことで、当人の実際のパフォーマンスが低下する現象である。ユダヤ伝承の「ゴーレム（泥で作られた人形）」に由来し、ドヴ・エデンとアブラハム・B・シャーニがイスラエル国防軍の訓練実験で1982年に実証した。' +
+      '指導者の期待がフィードバックの量・指示の明確さ・感情的サポートを通じて学習者の自己効力感と動機づけを変容させ、低期待が成果を引き下げる自己成就的予言のメカニズムで説明される。高期待が成績を伸ばすピグマリオン効果（ローゼンタール＆ジェイコブソン、1968）の逆作用として対をなし、教育・管理職育成・組織開発における期待管理の重要性を示す概念である。',
+    keyFigures: 'ドヴ・エデン（Dov Eden）／アブラハム・B・シャーニ（Abraham B. Shani）1982年 Journal of Applied Psychology 67(2)／対概念: ピグマリオン効果（Rosenthal & Jacobson, 1968）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doi/10.1037/0021-9010.67.2.194', type: 'academic', label: 'Eden & Shani (1982) "Pygmalion Goes to Boot Camp: Expectancy, Leadership, and Trainee Performance," Journal of Applied Psychology 67(2):194–199（ゴーレム効果の実証原典）' },
+      { url: 'https://www.britannica.com/topic/Pygmalion-effect', type: 'reference', label: 'Encyclopaedia Britannica — "Pygmalion effect"（ピグマリオン効果・ゴーレム効果・自己成就的予言との関係）' },
+    ],
+  },
+  {
+    id: 'econ-skill-biased-tech',
+    discipline: 'economics',
+    title: 'スキルバイアス型技術変化（SBTC）',
+    statement:
+      'スキルバイアス型技術変化（skill-biased technological change, SBTC）とは、技術進歩が高技能労働者への需要を不均衡に高め、低技能労働者の相対需要を低下させる現象を指す。コンピュータ・ICTの普及に伴い米国で1970〜80年代以降に高まった大学教育プレミアム（college premium）の上昇を説明する概念としてカッツとマーフィが1992年に体系化した。' +
+      'ICTは補完的な認知・創造的タスクを担う高技能労働の生産性を高める一方、ルーティン的・反復的なタスクを自動化し中程度技能労働を代替する（オーターらの「タスク理論」とも関連）。所得格差・賃金格差の拡大を技術側から説明するため、教育政策・産業政策・再分配政策の理論的根拠として広く参照される。',
+    keyFigures: 'ローレンス・カッツ（Lawrence F. Katz）／ケビン・マーフィ（Kevin M. Murphy）1992年 Quarterly Journal of Economics／デヴィッド・オーター（David Autor、タスク理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://economics.mit.edu/sites/default/files/publications/changes-relative-wages.pdf', type: 'academic', label: 'Katz & Murphy (1992) "Changes in the Wage Structure 1963–87: Supply and Demand Factors," Quarterly Journal of Economics（SBTC概念の原典・MIT経済学部公開版）' },
+      { url: 'https://www.oecd.org/en/publications/technology-productivity-and-job-creation_9789264065529-en.html', type: 'government', label: 'OECD (1998) "Technology, Productivity and Job Creation"（スキルバイアス型技術変化と雇用・賃金格差への政策的含意）' },
+    ],
+  },
+  {
+    id: 'infosoc-smart-city-governance',
+    discipline: 'information-sociology',
+    title: 'スマートシティのガバナンス',
+    statement:
+      'スマートシティのガバナンスとは、IoT・AI・ビッグデータを都市インフラ（交通・エネルギー・行政・防犯等）に統合するスマートシティの構想・設計・運営において、意思決定の主体、市民参加・透明性・説明責任・データ主権の確保、特定プラットフォーム企業への依存（ベンダーロックイン）のリスク管理をどう制度化するかを問う政治的・社会的・法的な諸課題の総体を指す。' +
+      '監視資本主義との親和性・アルゴリズムによる差別・プライバシー侵害・デジタル格差の再生産が批判的課題として指摘される。GDPRに基づくデータ保護と市民参加型の共同設計（co-design）を組み合わせ公共コントロールを維持する「人間中心の都市」アプローチが国際的に模索されており、EUの「スマートシティ欧州イノベーションパートナーシップ（EIP-SCC）」が代表的な政策枠組みである。',
+    keyFigures: 'ロブ・キッチン（Rob Kitchin、スマートシティとデータ政治の批判的分析、2014）／EU EIP-SCC（European Innovation Partnership on Smart Cities and Communities）／関連: 監視資本主義・データ主権',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ec.europa.eu/info/eu-regional-and-urban-development/topics/cities-and-urban-development/city-initiatives/smart-cities_en', type: 'government', label: 'European Commission — Smart Cities（EU都市政策・EIP-SCC・市民参加・ガバナンス枠組みの公式説明）' },
+      { url: 'https://www.oecd.org/cfe/cities/smart-cities-and-inclusive-growth-d96ae5d4-en.htm', type: 'government', label: 'OECD — "Smart Cities and Inclusive Growth"（スマートシティの包括的ガバナンス・格差・市民関与の政策分析）' },
+    ],
+  },
+  {
+    id: 'bizlaw-enterprise-combination',
+    discipline: 'business-law',
+    title: '企業結合規制（独占禁止法）',
+    statement:
+      '企業結合規制とは、合併・株式取得・事業譲受けなどにより事業者間の結合関係が形成・強化される行為について、一定の取引分野における競争を実質的に制限することとなる場合に禁止する独占禁止法上の規制をいう（独禁法4章、15〜18条）。公正取引委員会（公取委）が事前届出を受け審査し、問題がある場合は排除措置命令を発する。' +
+      '審査では関連市場の画定（需要の代替性・供給の代替性に基づく製品・地理的市場の定義）、競争への影響（HHI等の集中度指標、単独行動・協調行動への影響）、競争促進効果との比較衡量を行い、必要に応じて事業売却等の行動的・構造的コミットメントを条件として承認する。グローバルな大型M&Aでは日本・EU・米国等の各国当局が並行審査するため、多国間競争法の調整が重要課題となる。',
+    keyFigures: '独占禁止法4章（15〜18条）／公正取引委員会「企業結合審査に関する独占禁止法の運用指針」（2011年公表・累次改定）／EU合併規則（EC No 139/2004）／米国HSR法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jftc.go.jp/dk/kigyouketsugou/guideline.html', type: 'government', label: '公正取引委員会 — 企業結合審査に関する独占禁止法の運用指針（市場画定・競争分析・コミットメントの公式基準）' },
+      { url: 'https://competition-policy.ec.europa.eu/mergers/overview_en', type: 'government', label: 'European Commission — Mergers overview（EU合併規則・市場画定・競争評価・条件付き承認）' },
+    ],
+  },
 ];
 // Stryker restore all
