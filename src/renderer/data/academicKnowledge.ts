@@ -21187,5 +21187,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.media-ecology.org/Neil-Postman', type: 'academic', label: 'Media Ecology Association — Neil Postman（テクノポリ・メディア生態学における業績、ポストマンが共同創設した学会）' },
     ],
   },
+  {
+    id: 'infosoc-granovetter-threshold',
+    discipline: 'information-sociology',
+    title: 'グラノヴェッターの閾値モデル（集合行動と社会変動）',
+    statement:
+      'マーク・グラノヴェッターが1978年にAmerican Journal of Sociology誌(第83巻6号)で提唱した集合行動モデル。集会・暴動・デモ・流行への参加など社会的行動の採否は固定した選好ではなく「閾値（しきいち）」によって決まる。閾値とは、ある行動に参加している他者の数（または割合）が自分の閾値を超えたときに自分も参加するという個人レベルの条件で、人によって異なる。' +
+      '閾値が異なる個人が集まると、最初の少数（閾値0の人）が行動を開始し、それが次の閾値を持つ人の参加を引き起こす連鎖（カスケード）が生じる。この連鎖の分布によって、集合行動が爆発的に拡大する場合と途中で失速する場合が生まれる。閾値分布のわずかな違いで最終的な集合行動の規模が大きく異なりうることを示し、「社会的ティッピング」「情報カスケード」の理論的先駆となった。',
+    keyFigures: 'マーク・グラノヴェッター（Mark Granovetter, 1943–）／"Threshold Models of Collective Behavior", American Journal of Sociology 83(6), 1978',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/226707', type: 'academic', label: 'Granovetter, M. (1978) "Threshold Models of Collective Behavior," American Journal of Sociology 83(6):1420-1443（University of Chicago Press）' },
+      { url: 'https://plato.stanford.edu/entries/social-institutions/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Social Institutions（集合行動・閾値・カスケードの文脈）' },
+    ],
+  },
+  {
+    id: 'econ-zero-price-effect',
+    discipline: 'economics',
+    title: 'ゼロ価格効果（Zero-Price Effect）',
+    statement:
+      'シャンパニエ・マザール・アリエリーが2007年にMarketing Science誌で発表した実験研究「Zero as a Special Price」が体系化した行動経済学の概念。通常の価格低下（例：20円→10円）と「0円への引き下げ」（例：10円→0円）を比較したとき、価格差が同じでも後者は需要を不釣り合いなほど大きく増加させる現象。標準的な費用便益計算では説明できない。' +
+      '「無料」という選択肢は支払いに伴う損失リスクが完全に消滅するため、プロスペクト理論でいう損失回避が作動せず、対象の実際の価値を超えた誘引力を生むと説明される。チョコレート（リンツとハーシーズの選択）実験などで実証された。フリーミアムモデル・試供品・デジタルサービスの無料公開がなぜ極めて強い需要喚起効果をもつかを説明し、マーケティング・デジタル経済の実務に広く応用されている。',
+    keyFigures: 'クリスティーナ・シャンパニエ（Kristina Shampanier）／ニーナ・マザール（Nina Mazar）／ダン・アリエリー（Dan Ariely, 1967–）／(2007) Marketing Science 26(6):742–757',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mksc.1060.0254', type: 'academic', label: 'Shampanier, Mazar & Ariely (2007) "Zero as a Special Price: The True Value of Free Products," Marketing Science 26(6)（INFORMS）' },
+      { url: 'https://www.britannica.com/topic/behavioral-economics', type: 'reference', label: 'Encyclopaedia Britannica — Behavioral economics（損失回避・無料の心理・行動経済学の文脈）' },
+    ],
+  },
+  {
+    id: 'econ-nirvana-fallacy',
+    discipline: 'economics',
+    title: 'ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）',
+    statement:
+      '経済学者ハロルド・デムセッツが1969年の論文「Information and Efficiency: Another Viewpoint」(Journal of Law and Economics誌)で批判した政策分析上の誤りを指す概念。現実の市場制度を評価する際、それを「理想的かつ欠陥のない」仮想的な代替制度と比較し、現実に欠陥があるからといって代替に移行すべきとの結論を導く論法を「ニルヴァーナ・アプローチ」と呼んだ。' +
+      '適切な比較は「実行可能な代替案」どうしの比較であり、実現不可能な完全市場や完全政府を基準とすることは経済分析を誤らせる。市場の失敗を根拠とした政府介入の正当化や、政府の失敗を無視した規制批判の双方に当てはまる。この批判は「次善（second best）」での政策評価、規制の費用便益分析、比較制度分析の方法論の基礎となっている。',
+    keyFigures: 'ハロルド・デムセッツ（Harold Demsetz, 1930–2019）／"Information and Efficiency: Another Viewpoint", Journal of Law and Economics 12(1), 1969',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/466945', type: 'academic', label: 'Demsetz, H. (1969) "Information and Efficiency: Another Viewpoint," Journal of Law and Economics 12(1):1-22（University of Chicago Press）' },
+      { url: 'https://www.econlib.org/library/Enc/GovernmentFailure.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib) — Government Failure（ニルヴァーナ・アプローチと比較制度分析の文脈）' },
+    ],
+  },
+  {
+    id: 'human-hostile-attribution-bias',
+    discipline: 'human-science',
+    title: '敵意的帰属バイアス',
+    statement:
+      '社会認知研究者ケネス・ドッジが1980年代に体系化した認知バイアス。他者の行動や意図が曖昧な状況（例：偶然ぶつかられた、メッセージの返信がない）において、相手の意図を敵意的・攻撃的なものとして解釈する傾向。ドッジの社会情報処理モデルの中核概念として位置づけられ、とくに攻撃的な行動特性を示す子どもや成人において顕著に観察された。' +
+      '敵意的帰属バイアスは怒り・攻撃行動の連鎖を生み出し、いじめ加害・反社会的行動・対人暴力のリスクを高める。成人においても職場の対人摩擦・パラノイア傾向との関連が示されている。認知行動療法（CBT）による帰属の再評価や社会的問題解決訓練が介入手段として用いられ、学校における攻撃行動予防プログラムの理論的基盤となっている。',
+    keyFigures: 'ケネス・A・ドッジ（Kenneth A. Dodge, 1950–）／Crick & Dodge (1994) 社会情報処理モデルの再定式化（Psychological Bulletin）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1986-22738-001', type: 'academic', label: 'Dodge, K. A. (1986) "A social information processing model of social competence in children," Minnesota Symposia on Child Psychology（APA PsycNet）' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3811087/', type: 'academic', label: 'Crick & Dodge (1994) "A review and reformulation of social information-processing mechanisms in children\'s social adjustment," Psychological Bulletin（PMC）' },
+    ],
+  },
+  {
+    id: 'mgmt-fogg-behavior-model',
+    discipline: 'management',
+    title: 'フォッグ行動モデル（FBM）',
+    statement:
+      'スタンフォード大学行動デザイン研究所（旧 Persuasive Technology Lab）の創設者B・J・フォッグが提唱した行動変容の理論的枠組み。「行動は、動機（Motivation）・能力（Ability）・プロンプト（Prompt）の三要素が同時に成立したときにのみ生起する」という命題を核とし、動機が高く能力（容易さ）も高いときにプロンプトが与えられると行動が起きるとする。' +
+      '動機は快楽・希望・社会的受容の3軸、能力は時間・費用・身体的負荷・精神的負荷・社会的逸脱・習慣との合致の6要因から評価する。プロンプト（旧称トリガー）がなければ動機・能力が揃っていても行動は生じないとし、介入設計では「行動を難しくする要因の除去」を優先する。UIデザイン・ヘルスケアアプリ・ウェルネス介入など広範なデジタル行動変容設計の実務で参照される。',
+    keyFigures: 'B・J・フォッグ（B. J. Fogg, Brian Jeffrey Fogg）／スタンフォード大学・行動デザイン研究所創設者／著書『Tiny Habits』（2019）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://behaviormodel.org/', type: 'reference', label: 'B. J. Fogg — BehaviorModel.org（フォッグ行動モデルの公式解説サイト、提唱者本人による）' },
+      { url: 'https://captology.stanford.edu/', type: 'academic', label: 'Stanford University Persuasive Technology Lab（Captology）— フォッグが創設した説得技術研究機関の公式サイト' },
+    ],
+  },
+  {
+    id: 'bizlaw-greenmail',
+    discipline: 'business-law',
+    title: 'グリーンメール（敵対的買収防衛の株式買戻し）',
+    statement:
+      '敵対的買収者が標的企業の株式を大量取得して買収を脅かし、企業側が被害を避けるために市場価格を大幅に上回るプレミアム付きで当該株式を買い戻す行為をいう。英語のgreenback（ドル紙幣）とblackmail（恐喝）を合成した造語で、1980年代の米国でLBOブーム・コーポレートレイダーの台頭とともに横行した。日本では「高値引取り」と表現されることもある。' +
+      'グリーンメールは一般株主を犠牲にして特定の買収者に不当な利益を与えるとして批判された。米国では1987年の税制改正でグリーンメールによる利得への課税が導入されコスト増となり抑制が進んだ。日本では取締役の善管注意義務・忠実義務（会社法330条・355条）違反や株主平等原則との関係で違法性が問題とされ、経済産業省「企業買収における行動指針」（2023年）の文脈でも論じられる。',
+    keyFigures: '1980年代の米国コーポレートレイダー期に多発／日本: 経済産業省「企業買収における行動指針」（2023年）／会社法330条・355条（取締役の義務）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/money/greenmail', type: 'reference', label: 'Encyclopaedia Britannica Money — Greenmail（定義・歴史・規制の概要）' },
+      { url: 'https://www.meti.go.jp/press/2023/08/20230831004/20230831004.html', type: 'government', label: '経済産業省（2023年8月）「企業買収における行動指針」公表（買収防衛措置の適正化に関する政府指針）' },
+    ],
+  },
 ];
 // Stryker restore all
