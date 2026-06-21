@@ -23035,5 +23035,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'academic', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism — NYU Press' },
     ],
   },
+  {
+    id: 'econ-overborrowing-externality',
+    discipline: 'economics',
+    title: '過剰借入の外部性（Overborrowing Externality）',
+    statement:
+      '過剰借入の外部性（Overborrowing Externality）とは、マクロ金融経済学における概念で、民間主体が自らの借入決定が集計的に資産価格に及ぼす影響を内部化せず、その結果金融危機の発生確率と深刻度が社会的最適水準を超えて増大する金銭的外部性（pecuniary externality）を指す。グイド・ロレンツォーニ（Guido Lorenzoni, 2008, "Inefficient Credit Booms," Review of Economic Studies, Vol.75, No.3, pp.809-833, DOI: 10.1111/j.1467-937X.2008.00494.x）は、限定コミットメントとスポット市場資産価格決定の組合せが私的契約で内部化されない金銭的外部性を生成し、競争均衡が制約付き効率的配分と比較して過剰な借入と過剰なボラティリティを示すことを証明した。' +
+      'ハビエル・ビアンチ（Javier Bianchi, 2011, "Overborrowing and Systemic Externalities in the Business Cycle," American Economic Review, Vol.101, No.7, pp.3400-3426, DOI: 10.1257/aer.101.7.3400）は小国開放経済モデルにおいて、借入能力が非貿易財の相対価格に連動する担保制約下で、家計が自らの借入決定が相対価格ひいては集計的借入能力に与える影響を内部化しないことを示した。定量的に、この外部性は金融危機の長期的発生確率を制約付き効率的配分の0.4%から競争均衡の5.5%へ上昇させる。過剰借入の外部性はマクロプルーデンシャル政策の中核的理論的正当化を提供し、最適矯正手段は好況期に課される事前的債務税（マクロプルーデンシャル税）であり、危機の発生確率と深刻度を低減する予防的（治療的ではない）政策である。',
+    keyFigures: 'Guido Lorenzoni（Review of Economic Studies 75(3), 2008 — 非効率的信用ブームモデル）／Javier Bianchi（American Economic Review 101(7), 2011 — 過剰借入とシステミック外部性の定量分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/75/3/809/1554574', type: 'academic', label: 'Lorenzoni (2008) Inefficient Credit Booms — Review of Economic Studies 75(3), pp.809-833' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.101.7.3400', type: 'academic', label: 'Bianchi (2011) Overborrowing and Systemic Externalities in the Business Cycle — AER 101(7), pp.3400-3426' },
+    ],
+  },
+  {
+    id: 'human-interoception',
+    discipline: 'human-science',
+    title: 'インテロセプション（内受容感覚）',
+    statement:
+      'インテロセプション（Interoception）とは、神経科学における概念で、身体の内的生理的状態——温度・痛み・痒み・内臓感覚・空腹・渇き・呼吸困難・筋緊張等のホメオスタシス求心性信号——の感覚を指す。A・D・（バド）クレイグ（A.D. (Bud) Craig, 2002, "How do you feel? Interoception: the sense of the physiological condition of the body," Nature Reviews Neuroscience, Vol.3, No.8, pp.655-666, DOI: 10.1038/nrn894, PMID: 12154366）は、ラミナI脊髄視床皮質経路（lamina I spinothalamocortical pathway）が脳幹傍腕核と視床後腹内側核（VMpo）を経て後顆粒島皮質（primary interoceptive cortex）に投射する専用求心性経路を同定し、この経路が「物質的自己（the material me）」の表象を提供すると主張した。' +
+      'クレイグは外受容（exteroception＝外部環境の体性感覚受容器による感知・体性運動系と関連・体性感覚野に投射）および固有受容（proprioception＝四肢・身体の位置と運動の感知）と対比して、インテロセプションを自律神経運動制御と関連し島皮質に投射する機能的・解剖学的に独立した感覚系として位置づけた。2009年の論文「How do you feel — now? The anterior insula and human awareness」（Nature Reviews Neuroscience, Vol.10, No.1, pp.59-70, DOI: 10.1038/nrn2555）では、前島皮質（anterior insular cortex, AIC）が後島からの一次インテロセプション活動を情動・認知・動機づけ信号と統合して再表象（meta-representation）し、感じる存在としての主観的自己像の神経基盤——すなわち情動的気づき（emotional awareness）——を提供すると提唱した。',
+    keyFigures: 'A.D. (Bud) Craig（Nature Reviews Neuroscience 3(8), 2002 / 10(1), 2009 — インテロセプション概念の体系化・前島皮質と意識の関連提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/nrn894', type: 'academic', label: 'Craig (2002) How do you feel? Interoception — Nature Reviews Neuroscience 3(8), pp.655-666' },
+      { url: 'https://www.nature.com/articles/nrn2555', type: 'academic', label: 'Craig (2009) How do you feel — now? The anterior insula and human awareness — Nat Rev Neurosci 10(1), pp.59-70' },
+    ],
+  },
+  {
+    id: 'human-place-cells',
+    discipline: 'human-science',
+    title: '場所細胞（Place Cells）',
+    statement:
+      '場所細胞（Place Cells）とは、神経科学における概念で、海馬（主にCA1・CA3亜領域）の錐体ニューロンが動物が環境内の特定の限定された位置——その「場所フィールド（place field）」——を占めるときに選択的に発火する空間表象細胞である。ジョン・オキーフ（John O\'Keefe）とジョナサン・ドストロフスキー（Jonathan Dostrovsky）は1971年の論文「The hippocampus as a spatial map. Preliminary evidence from unit activity in the freely-moving rat」（Brain Research, Vol.34, No.1, pp.171-175, DOI: 10.1016/0006-8993(71)90358-1, PMID: 5124915）において、自由行動ラットの海馬単一ユニット記録から、特定の細胞がラットがテスト台の特定位置にいるときのみ活動することを報告し、海馬が空間地図として機能する証拠を初めて提示した。' +
+      'オキーフ＝ネイデル（John O\'Keefe & Lynn Nadel, 1978, The Hippocampus as a Cognitive Map, Oxford University Press, ISBN: 0198572069, 570pp.）は海馬が環境のアロセントリック（自己中心でない）認知地図を構成するという包括的理論を展開した。場所細胞の空間選択的発火は時間的に安定し、環境文脈が一定であれば動物の頭の向きや進行中の行動からは概ね独立する。2014年ノーベル生理学・医学賞はジョン・オキーフ（場所細胞の発見）とメイ＝ブリット・モーセル＝エドヴァルド・I・モーセル（格子細胞の発見、2005年）に対し「脳内の測位系を構成する細胞の発見」として授与された。場所細胞はエピソード記憶・空間ナビゲーション・認知地図理論の神経基盤として中心的位置を占める。',
+    keyFigures: 'John O\'Keefe & Jonathan Dostrovsky（Brain Research 34(1), 1971 — 場所細胞の発見）／John O\'Keefe & Lynn Nadel（OUP, 1978, The Hippocampus as a Cognitive Map — 認知地図理論）／2014年ノーベル生理学・医学賞（O\'Keefe, May-Britt Moser, Edvard I. Moser）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0006899371903581', type: 'academic', label: 'O\'Keefe & Dostrovsky (1971) The hippocampus as a spatial map — Brain Research 34(1), pp.171-175' },
+      { url: 'https://www.nobelprize.org/prizes/medicine/2014/press-release/', type: 'reference', label: '2014 Nobel Prize in Physiology or Medicine — press release' },
+    ],
+  },
+  {
+    id: 'bizlaw-letters-rogatory',
+    discipline: 'business-law',
+    title: '嘱託書（Letters Rogatory）',
+    statement:
+      '嘱託書（Letters Rogatory / Letters of Request）とは、国際私法・国際司法共助における概念で、一国の裁判所から他国の司法府に対し、送達（service of process）・証拠収集（taking of evidence）・判決執行等の司法共助を求める正式な要請文書である。「rogatory」はラテン語rogare（尋ねる・求める）に由来し、対等な主権を有する裁判所間の礼譲的要請を体現する。伝統的に外交経路を通じて送付されるため処理に1年以上を要することもある。米国法上の根拠は28 U.S.C. § 1781（1948年制定、1964年改正）であり、国務省が嘱託書の送受信・伝達を行う権限を規定する。' +
+      '1965年ハーグ送達条約（Convention on the Service Abroad of Judicial and Extrajudicial Documents in Civil or Commercial Matters）は各締約国に中央当局（Central Authority）を設置させ、外交経路を迂回する直接的送達手続きを確立し（84カ国締約、処理期間2-4ヶ月に短縮）、1970年ハーグ証拠収集条約（Convention on the Taking of Evidence Abroad in Civil or Commercial Matters）は証拠収集について同様の簡素化を達成し、多くの場合で伝統的嘱託書手続きに代替する。Societe Nationale Industrielle Aerospatiale v. United States District Court, 482 U.S. 522 (1987)（スティーブンス裁判官執筆）において合衆国最高裁判所は、ハーグ証拠収集条約は外国当事者からの証拠収集の排他的手段ではなく、連邦民事訴訟規則に基づくディスカバリーと並存するが、裁判所は国際礼譲に配慮し外国当事者保護のため「特別な警戒（special vigilance）」を行使すべきとした。',
+    keyFigures: 'US Supreme Court（Aerospatiale v. US District Court, 482 U.S. 522, 1987 — ハーグ条約の非排他性判示）／Hague Conference on Private International Law（1965年送達条約・1970年証拠収集条約 — 嘱託書手続きの近代化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/uscode/text/28/1781', type: 'government', label: '28 U.S.C. § 1781 — Transmittal of letter rogatory or request (Cornell LII)' },
+      { url: 'https://supreme.justia.com/cases/federal/us/482/522/', type: 'government', label: 'Aerospatiale v. US District Court, 482 U.S. 522 (1987) — Justia' },
+    ],
+  },
+  {
+    id: 'mgmt-bricolage',
+    discipline: 'management',
+    title: 'アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）',
+    statement:
+      'アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）とは、アントレプレナーシップ研究における概念で、手元にある資源の組合せを新たな問題や機会に適用することで「無から有を創出する」資源構築プロセスを指す。テッド・ベイカー＝リード・E・ネルソン（Ted Baker & Reed E. Nelson, 2005, "Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage," Administrative Science Quarterly, Vol.50, No.3, pp.329-366, DOI: 10.2189/asqu.2005.50.3.329）は資源制約下の29企業のフィールドスタディに基づき、ブリコラージュを「手元にある資源の組合せを新たな問題や機会に適用してやりくりすること（making do by applying combinations of the resources at hand to new problems and opportunities）」と定義した。' +
+      '三つの中核的次元として、(1)やりくり（making do）——実行可能な成果を創出できるかの問い掛けに留まらず行動と能動的関与への偏向、(2)手元資源の組合せ・再利用（combination/reuse of resources at hand）——他者が無用と見なすものを潜在的資源として扱う、(3)制約の拒絶（refusal to enact limitations）——素材投入・実践・定義・基準の一般的に受容された限界を無視し解決策を試行する、を識別した。5つの資源領域（物理的投入・労働・技能・顧客/市場・制度/規制環境）にわたるブリコラージュが観察され、選択的ブリコラージュ（focused, temporary）は企業成長に関連する一方、並行的ブリコラージュ（multiple ongoing projects）は相互強化的性質により企業を罠に陥れ成長を阻害しうる。本概念はレヴィ＝ストロース（Claude Lévi-Strauss, 1966, The Savage Mind, University of Chicago Press, 原著1962年 La Pensée sauvage）のブリコルール概念——理論的計画から作業する技師と対比される、手元にあるもので逸脱的方法を用い新たな組合せを行う実践者——を経営学に適用したものである。',
+    keyFigures: 'Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブリコラージュ概念の提唱）／Claude Lévi-Strauss（1962/1966, The Savage Mind — ブリコラージュ概念の人類学的源泉）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker & Nelson (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — ASQ 50(3), pp.329-366' },
+      { url: 'https://www.jstor.org/stable/30037207', type: 'academic', label: 'JSTOR: Baker & Nelson (2005) — stable URL' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-frames',
+    discipline: 'information-sociology',
+    title: 'テクノロジカル・フレーム（Technological Frames）',
+    statement:
+      'テクノロジカル・フレーム（Technological Frames）とは、情報システム研究における概念で、組織成員が情報技術を理解するために用いる前提・期待・知識の部分集合を指す。ワンダ・J・オーリコウスキー＝デブラ・C・ガッシュ（Wanda J. Orlikowski & Debra C. Gash, 1994, "Technological Frames: Making Sense of Information Technology in Organizations," ACM Transactions on Information Systems (TOIS), Vol.12, No.2, pp.174-207, DOI: 10.1145/196734.196745）は、テクノロジカル・フレームを3つの領域——(1)技術の本質（Nature of Technology）：技術が何であり何ができるかについてのイメージ・能力・有効性の認識、(2)技術戦略（Technology Strategy）：組織がなぜ技術を導入したかの動機・望ましい成果・組織目標との関連、(3)使用中の技術（Technology in Use）：技術が日常的にどのように使用されるかの条件・帰結・労働者の相互作用パターン——に体系化した。' +
+      'オーリコウスキー＝ガッシュはプロフェッショナル・コンサルティングファームにおけるLotus Notes導入の経験的研究に基づき、組織内の主要グループ（経営者・技術者・エンドユーザー）のテクノロジカル・フレームが著しく異なる場合（フレーム不一致＝frame incongruence）、技術の開発・使用・変更をめぐる困難と紛争が生じることを実証した。コンサルタントとIT担当者は3領域すべてにおいて実質的に異なるフレームを保持しており、この不一致が導入効果を低下させた。テクノロジカル・フレーム概念は技術導入の成功のためにフレーム不一致の克服が前提条件であることを示し、情報システムの社会的構成・CSCW・技術変革管理研究において広く応用されている。',
+    keyFigures: 'Wanda J. Orlikowski & Debra C. Gash（ACM TOIS 12(2), 1994 — テクノロジカル・フレーム概念の提唱・フレーム不一致の実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/196734.196745', type: 'academic', label: 'Orlikowski & Gash (1994) Technological Frames: Making Sense of IT in Organizations — ACM TOIS 12(2), pp.174-207' },
+      { url: 'https://www.semanticscholar.org/paper/Technological-frames-Orlikowski-Gash/dcfb1f7bb415b1a4259457237a8881ab053aea2e', type: 'academic', label: 'Semantic Scholar: Orlikowski & Gash (1994)' },
+    ],
+  },
 ];
 // Stryker restore all
