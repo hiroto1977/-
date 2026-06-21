@@ -22111,5 +22111,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://iep.utm.edu/epistemic-injustice/', type: 'reference', label: 'Internet Encyclopedia of Philosophy — Epistemic Injustice（概念の定義・類型・批判・発展の包括的解説）' },
     ],
   },
+  {
+    id: 'bizlaw-cy-pres',
+    discipline: 'business-law',
+    title: 'サイプレ原則（近接原則／Cy-près doctrine）',
+    statement:
+      'サイプレ原則（cy-près doctrine）とは、ノルマン・フレンチ（法律フランス語）の "cy pres comme possible"（＝as near as possible、「可能な限り近く」）に由来する英米法上の衡平法理であり、公益信託（charitable trust）の当初目的が不能・非実際的となった場合に、裁判所が当初目的に最も近い代替目的へ信託財産の適用を変更する権限を認めるものである。中世の教会法に起源をもち、Charitable Uses Act 1601（43 Eliz. I, c.4）以降、大法官裁判所（Court of Chancery）が衡平法管轄として体系化した。' +
+      '米国では Jackson v. Phillips, 96 Mass. (14 Allen) 539 (1867) が代表的先例であり、奴隷制廃止により目的不能となった公益信託を解放奴隷の教育・支援へ転用することをcy-prèsにより認めた。In re Neher\'s Will, 279 N.Y. 370, 18 N.E.2d 625 (1939) は、病院設立が非実際的となった遺贈について一般的公益意図（general charitable intent）の存在を認め目的変更を許容した。英国では Charities Act 2011（旧 Charities Act 1993 s.13）の第62条が適用場面を列挙し、第67条がcy-prèsスキーム策定権限を規定する。現代の米国ではクラスアクション和解における未請求残余金の配分手法としてもcy-prèsが用いられ、Frank v. Gaos, 586 U.S. 485 (2019) で合衆国最高裁が審理した。',
+    keyFigures: 'Jackson v. Phillips, 96 Mass. (14 Allen) 539 (1867)／In re Neher\'s Will, 279 N.Y. 370 (1939)／UK Charities Act 2011 ss.62, 67／Frank v. Gaos, 586 U.S. 485 (2019)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/2011/25/section/67', type: 'government', label: 'UK Legislation — Charities Act 2011, Section 67: Cy-près schemes（英国制定法におけるcy-prèsスキーム策定権限）' },
+      { url: 'https://doi.org/10.2307/j.ctt1w1vkhb', type: 'academic', label: 'Sherman, C.R. (2018) The Uses of the Dead: The Early Modern Development of Cy-Pres Doctrine, Catholic University of America Press' },
+    ],
+  },
+  {
+    id: 'bizlaw-champerty',
+    discipline: 'business-law',
+    title: 'シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）',
+    statement:
+      'シャンパティ（champerty）とメインテナンス（maintenance）は、中世イングランドのコモン・ローに起源を持つ法理。メインテナンスとは、訴訟の結果に正当な利害関係を持たない第三者が、他人の訴訟を資金面その他で援助する行為をいい、シャンパティはメインテナンスの加重類型で、援助の見返りに訴訟の成果（勝訴判決・和解金等）の一部を分配する合意を伴うものをいう。封建領主による司法の私物化・訴訟投機を防ぐ目的で、Statute of Conspirators（1305年）やMaintenance and Embracery Act 1540（32 Hen. 8 c. 9）等の制定法で繰り返し禁じられた。' +
+      'イングランドでは1967年刑事法（Criminal Law Act 1967）第13条・第14条により犯罪および不法行為としては廃止されたが、第14条(2)の留保規定によりシャンパティ的な合意は依然として公序（public policy）違反として契約の効力を否定される余地がある。現代では第三者訴訟資金提供（third-party litigation funding）産業の急成長に伴い、Arkin v Borchard Lines Ltd [2005] EWCA Civ 655で控訴院が資金提供者の敗訴費用負担を提供額に限定する「Arkin cap」原則を示す等、公序の境界線が判例で再画定されつつある。米国では州ごとに扱いが異なり、多くの州では法理が実質的に廃止または大幅に緩和されている。',
+    keyFigures: 'Statute of Conspirators (1305)／Maintenance and Embracery Act 1540 (32 Hen. 8 c. 9)／Criminal Law Act 1967 §13–14／Arkin v Borchard Lines Ltd [2005] EWCA Civ 655（Arkin cap）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/1967/58/section/14', type: 'government', label: 'UK Legislation — Criminal Law Act 1967, Section 14（champerty & maintenance の不法行為としての廃止・公序留保規定）' },
+      { url: 'https://www.encyclopedia.com/law/encyclopedias-almanacs-transcripts-and-maps/champerty-and-maintenance', type: 'reference', label: 'Encyclopedia.com — Champerty and Maintenance (West\'s Encyclopedia of American Law)' },
+    ],
+  },
+  {
+    id: 'human-sorites-paradox',
+    discipline: 'human-science',
+    title: '砂山のパラドックス（ソリテス・パラドックス）',
+    statement:
+      '砂山のパラドックス（ソリテス・パラドックス）は、古代ギリシアのメガラ学派エウブリデス（紀元前4世紀、ミレトス出身）に帰せられる論理的パラドックスである。名称はギリシア語の σωρός（soros＝砂山・堆積）に由来する。古典的定式化は次の通り：(1) 100万粒の砂は「砂山」である、(2) 砂山から砂を1粒取り除いても、それは依然として砂山である（寛容原理）、(3) この推論を繰り返すと、1粒の砂も「砂山」であるという矛盾した結論に至る。このパラドックスは、自然言語の述語（「砂山」「禿げている」「背が高い」等）が明確な境界を欠く「曖昧性（vagueness）」の問題を鮮明に示す。' +
+      '主要な哲学的応答として、(a) 認識論主義（エピステミシズム）：ティモシー・ウィリアムソンが『Vagueness』(1994, Routledge)で主張した立場で、曖昧な述語にも鋭い境界が存在するが我々にはそれを知ることができないとする、(b) スーパー真理論（スーパーバリュエーショニズム）：キット・ファインが「Vagueness, Truth and Logic」(1975, Synthese 30: 265–300)で定式化した枠組みで、全ての許容可能な精密化において真である文のみを「真」と認める、(c) 程度理論：ファジィ論理（ザデー 1965）の枠組みで真理値を[0,1]の連続体に拡張する、(d) 文脈主義：曖昧な述語の外延は会話的文脈に依存して変動するとする立場、がある。現代では言語哲学にとどまらず、AI・自然言語処理における曖昧なカテゴリの扱いや、法的推論における境界線の問題にも関連し、学際的な議論が続いている。',
+    keyFigures: 'エウブリデス（紀元前4世紀、メガラ学派）／ティモシー・ウィリアムソン（1994『Vagueness』Routledge）／キット・ファイン（1975「Vagueness, Truth and Logic」Synthese 30: 265–300）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/sorites-paradox/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Sorites Paradox' },
+      { url: 'https://doi.org/10.1007/BF00485047', type: 'academic', label: 'Fine, K. (1975) "Vagueness, Truth and Logic", Synthese 30, 265–300' },
+    ],
+  },
+  {
+    id: 'mgmt-red-queen-effect',
+    discipline: 'management',
+    title: '赤の女王効果（Red Queen Effect）',
+    statement:
+      '赤の女王効果とは、進化生物学者リー・ヴァン・ヴァーレンが1973年の論文「A New Evolutionary Law」(Evolutionary Theory, 1:1–30)で提唱した進化的法則に由来する概念である。名称はルイス・キャロルの『鏡の国のアリス』(1871)で赤の女王が述べる「同じ場所にとどまるためには、全力で走り続けなければならない」という台詞に因む。生物学では、種は共進化する競争相手・捕食者・寄生者に対して相対的適応度を維持するために絶えず進化し続けなければならないとする。' +
+      '経営学では、ウィリアム・P・バーネットとモーテン・T・ハンセンが1996年のStrategic Management Journal論文「The Red Queen in Organizational Evolution」(17(S1):139–157)で組織間競争に応用し、激しい競争に直面した企業はより強い能力を発達させるが、競合も同時に強化されるため、競争優位は一時的であり「走り続ける」ことでようやく現在の地位を維持できるという動態を示した。バーネットは2008年の著書『The Red Queen among Organizations: How Competitiveness Evolves』(Princeton University Press)でこの理論を体系化し、競争経験が組織学習を促すが競合の学習も加速するため均衡的な優位が生じにくいことを実証的に論じた。',
+    keyFigures: 'リー・ヴァン・ヴァーレン（1973 "A New Evolutionary Law"）／W.P.バーネット & M.T.ハンセン（1996 Strategic Management Journal）／バーネット（2008 Princeton UP）／着想: ルイス・キャロル『鏡の国のアリス』(1871)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/smj.4250171010', type: 'academic', label: 'Barnett & Hansen (1996) "The Red Queen in Organizational Evolution", Strategic Management Journal 17(S1), 139–157' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691173689/the-red-queen-among-organizations', type: 'academic', label: 'Barnett (2008) The Red Queen among Organizations: How Competitiveness Evolves, Princeton University Press' },
+    ],
+  },
+  {
+    id: 'mgmt-icarus-paradox',
+    discipline: 'management',
+    title: 'イカロスのパラドックス（Icarus Paradox）',
+    statement:
+      'イカロスのパラドックスとは、カナダの経営学者ダニー・ミラーが1990年の著書『The Icarus Paradox: How Exceptional Companies Bring About Their Own Downfall』(HarperBusiness)で提唱した概念で、企業を卓越した成功に導いた強み・戦略そのものが、やがてその企業の衰退と没落の種子となるという逆説である。成功は自信を生み、自信は成功要因への過度な特化を促し、特化は硬直性をもたらし、環境変化への適応力を失わせる。' +
+      'ミラーは200社以上の事例研究から、衰退の4つの軌道（trajectory）を析出した：(1) 集中化（Focusing）軌道——品質追求型の「職人（Craftsmen）」が細部に固執する「修繕屋（Tinkerers）」へ変質する、(2) 拡張（Venturing）軌道——成長志向の「建設者（Builders）」が無秩序に多角化する「帝国主義者（Imperialists）」へ堕する、(3) 発明（Inventing）軌道——先端的R&Dを誇る「先駆者（Pioneers）」が現実離れした「逃避者（Escapists）」に変わる、(4) 分離（Decoupling）軌道——卓越したマーケティング力を持つ「営業の達人（Salesmen）」がブランドに安住する「漂流者（Drifters）」と化する。この概念はレナード＝バートン（1992）が論じた「コア・リジディティ」——コア・ケイパビリティの裏面としての硬直性——と理論的に通底し、組織における成功の逆機能を説明する一群の研究に位置づけられる。',
+    keyFigures: 'ダニー・ミラー（1990著書／1992 Business Horizons 35(1), 24–35）／関連: D.レナード＝バートン（1992 コア・リジディティ, Strategic Management Journal 13, 111–125）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0007-6813(92)90112-M', type: 'academic', label: 'Miller, D. (1992) "The Icarus Paradox", Business Horizons 35(1), 24–35（著者自身による書籍の要約論文）' },
+      { url: 'https://doi.org/10.1002/smj.4250131009', type: 'academic', label: 'Leonard-Barton, D. (1992) "Core Capabilities and Core Rigidities", Strategic Management Journal 13, 111–125' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-commons',
+    discipline: 'information-sociology',
+    title: 'デジタル・コモンズ（Digital Commons）',
+    statement:
+      'デジタル・コモンズとは、オープンソースソフトウェア、ウィキペディア、クリエイティブ・コモンズ・ライセンスで公開されたコンテンツ、オープンデータなど、純粋な市場取引にも国家管理にも依らず、コミュニティによって集合的に生産・管理・共有されるデジタル情報資源の総体を指す。理論的基盤はエリノア・オストロム（Elinor Ostrom, 1933–2012）のコモンズ・ガバナンス研究にある。オストロムは1990年の著書『Governing the Commons』で、共有資源は必ず過剰利用される（「コモンズの悲劇」、ハーディン1968）という通説に反し、利用者コミュニティが自主的に制度を構築して持続的管理に成功する事例を実証し、2009年にノーベル経済学賞を受賞した。' +
+      'デジタル財は非競合的（non-rivalrous）——複製しても元の財が減耗しない——であるため、物理的コモンズとは異なり「コモンズの悲劇」が構造的に生じにくく、むしろ利用者が増えるほど価値が高まるネットワーク効果を持つ。この特性に着目したヨハイ・ベンクラー（Yochai Benkler）は2006年の『The Wealth of Networks』で「コモンズに基づくピア生産（commons-based peer production）」概念を提唱し、分散した個人が市場的インセンティブや企業の指揮命令なく大規模に協働して情報財を生産するモデルを理論化した。シャーロット・ヘスとオストロムは2007年の編著『Understanding Knowledge as a Commons』で、学術知識・デジタル情報の囲い込み（enclosure）に対抗するガバナンス枠組みを提示した。課題として、DRMや特許による囲い込み、プラットフォーム企業による独占・集中化、ボランティア労働の持続可能性が指摘されている。',
+    keyFigures: 'エリノア・オストロム（1990『Governing the Commons』, 2009年ノーベル経済学賞）／ヨハイ・ベンクラー（2006『The Wealth of Networks』）／シャーロット・ヘス & オストロム（2007『Understanding Knowledge as a Commons』）／ローレンス・レッシグ（2001年クリエイティブ・コモンズ設立）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/governing-the-commons/7AB7AE11BADA84409C34815CC288CD79', type: 'academic', label: 'Ostrom, E. (1990) "Governing the Commons", Cambridge University Press（コモンズ・ガバナンスの原典）' },
+      { url: 'https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to', type: 'academic', label: 'Hess, C. & Ostrom, E. eds. (2007) "Understanding Knowledge as a Commons", MIT Press' },
+    ],
+  },
 ];
 // Stryker restore all

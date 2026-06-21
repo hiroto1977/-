@@ -19,14 +19,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 情報社会学（全250件）
+### 学術概念 / 情報社会学（全251件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]]
-- …ほか 244 件 → [[学術概念]]
+- …ほか 245 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全423件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
