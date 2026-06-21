@@ -22951,5 +22951,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.routledge.com/Participatory-Design-Principles-and-Practices/Schuler-Namioka/p/book/9780805809510', type: 'academic', label: 'Schuler & Namioka (1993) Participatory Design: Principles and Practices — Routledge (orig. Lawrence Erlbaum)' },
     ],
   },
+  {
+    id: 'econ-sonnenschein-mantel-debreu-theorem',
+    discipline: 'economics',
+    title: 'ゾンネンシャイン＝マンテル＝ドブリュー定理（SMD定理）',
+    statement:
+      'ゾンネンシャイン＝マンテル＝ドブリュー定理（Sonnenschein-Mantel-Debreu Theorem, SMD定理）とは、一般均衡理論における集計問題に関する根本的不可能性定理であり、連続性・零次同次性・ワルラス法則・境界条件を満たす任意の関数が、合理的（効用最大化）個人から構成される経済の集計超過需要関数として実現可能であることを示す。すなわち、個人の合理性は集計的市場行動にほとんど制約を課さない。ヒューゴ・ゾンネンシャイン（Hugo Sonnenschein, 1972, "Market Excess Demand Functions," Econometrica, Vol.40, No.3, pp.549-563, DOI: 10.2307/1913184）がこの問題を提起し、ロルフ・マンテル（Rolf Mantel, 1974, "On the Characterization of Aggregate Excess Demand," Journal of Economic Theory, Vol.7, No.3, pp.348-353, DOI: 10.1016/0022-0531(74)90100-8）が一般化し、ジェラール・ドブリュー（Gérard Debreu, 1974, "Excess Demand Functions," Journal of Mathematical Economics, Vol.1, No.1, pp.15-21, DOI: 10.1016/0304-4068(74)90032-9）が最小仮定条件での完全な証明を与えた。' +
+      'SMD定理の含意は一般均衡理論の基盤を揺るがすものである。第一に、ワルラス均衡の一意性が保証されない（集計超過需要は任意の形状を取りうるため複数均衡が一般的に可能）。第二に、タトヌマン過程等の価格調整メカニズムの大域的安定性が保証されない（顕示選好の弱公理は個人から集計へ継承されない）。第三に、比較静学が集計レベルでは符号確定しない。第四に、集計データのみからの合理的個人行動の計量経済学的識別が不可能である。これらの結果は、ミクロ経済学的合理性仮定がマクロ経済学的含意を持たないことを示し、代表的個人モデルの理論的基礎を根底から問い直す「集計問題（aggregation problem）」の決定的表現である。',
+    keyFigures: 'Hugo Sonnenschein（Econometrica 40(3), 1972 — 問題提起）／Rolf Mantel（Journal of Economic Theory 7(3), 1974 — 一般化）／Gérard Debreu（Journal of Mathematical Economics 1(1), 1974 — 完全証明）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1913184', type: 'academic', label: 'Sonnenschein (1972) Market Excess Demand Functions — Econometrica 40(3), pp.549-563' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304406874900329', type: 'academic', label: 'Debreu (1974) Excess Demand Functions — Journal of Mathematical Economics 1(1), pp.15-21' },
+    ],
+  },
+  {
+    id: 'human-corollary-discharge',
+    discipline: 'human-science',
+    title: '遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）',
+    statement:
+      '遠心性コピー（Efference Copy）／随伴発射（Corollary Discharge）とは、神経科学における概念で、中枢神経系が運動指令の内部コピーを感覚処理領域に送り、自己生成運動の感覚的帰結を予測・相殺することで、自己起因刺激と外部起因刺激の区別を可能にするメカニズムである。エーリヒ・フォン・ホルスト（Erich von Holst）とホルスト・ミッテルシュテット（Horst Mittelstaedt）は1950年の論文「Das Reafferenzprinzip: Wechselwirkungen zwischen Zentralnervensystem und Peripherie」（Naturwissenschaften, Vol.37, pp.464-476, DOI: 10.1007/BF00622503）において「再求心性原理（Reafferenzprinzip）」を提唱し、遠心性コピー（Efferenzkopie）が入力感覚信号と比較され、予測と一致する入力は再求心性（Reafferenz＝自己運動起因）として抑制され、不一致は外求心性（Exafferenz＝外部起因）として応答を要する真の環境変化を示すとした。' +
+      '同年独立にロジャー・W・スペリー（Roger W. Sperry, 1950, "Neural basis of the spontaneous optokinetic response produced by visual inversion," Journal of Comparative and Physiological Psychology, Vol.43, No.6, pp.482-489, DOI: 10.1037/h0055479）が「随伴発射（corollary discharge）」の概念を提唱し、運動指令の「折返し写し」が視覚中枢に送られ眼球運動時の視覚安定性を説明するとした。現代神経科学ではゾマー＝ウルツ（Marc A. Sommer & Robert H. Wurtz, 2008, "Brain Circuits for the Internal Monitoring of Movements," Annual Review of Neuroscience, Vol.31, pp.317-338, DOI: 10.1146/annurev.neuro.31.060407.125627）が上丘から視床内側背側核を経て前頭眼野に至る随伴発射経路を同定し、サッケード時の視覚安定性維持における具体的神経回路を実証した。',
+    keyFigures: 'Erich von Holst & Horst Mittelstaedt（Naturwissenschaften 37, 1950 — 再求心性原理・遠心性コピー概念の提唱）／Roger W. Sperry（J Comp Physiol Psychol 43(6), 1950 — 随伴発射概念の独立提唱）／Marc A. Sommer & Robert H. Wurtz（Annu Rev Neurosci 31, 2008 — 随伴発射神経回路の同定）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF00622503', type: 'academic', label: 'von Holst & Mittelstaedt (1950) Das Reafferenzprinzip — Naturwissenschaften 37, pp.464-476' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.31.060407.125627', type: 'academic', label: 'Sommer & Wurtz (2008) Brain Circuits for the Internal Monitoring of Movements — Annu Rev Neurosci 31, pp.317-338' },
+    ],
+  },
+  {
+    id: 'bizlaw-comity-of-nations',
+    discipline: 'business-law',
+    title: '国際礼譲（Comity of Nations）',
+    statement:
+      '国際礼譲（Comity of Nations / International Comity）とは、国際法・国際私法における原則で、一国が自国領域内において他国の立法・行政・司法行為に与える承認であり、法的義務でも単なる好意でもない中間的地位を占める。合衆国最高裁判所はHilton v. Guyot, 159 U.S. 113 (1895)（グレイ裁判官執筆）において「Comityとは法的意味において、一方で絶対的義務の問題でもなく、他方で単なる礼儀・好意の問題でもない。それは一国が自国領域内において他国の立法・行政・司法行為に対し与える承認であり、国際的義務と便宜、および自国市民ないし自国法の保護下にある者の権利への十分な配慮を伴うものである」と定義した。この定義はジョセフ・ストーリー（Joseph Story, 1834, Commentaries on the Conflict of Laws, Foreign and Domestic）のオランダ法学者ウルリヒ・フーバーのcomitas gentium理論に基づく体系化を継承する。' +
+      'Hartford Fire Insurance Co. v. California, 509 U.S. 764 (1993)のスカリア裁判官反対意見は、立法管轄権の自制としての「規範的礼譲（prescriptive comity）」——自国法の域外適用を外国の規制権限と抵触する場合に抑制する解釈原則——と、管轄権行使の裁量的辞退としての「裁判管轄権的礼譲（adjudicative comity）」——より適切な法廷で裁かれるべき事項への関与を控える裁判所の裁量——を区別した。礼譲は互恵性に基づき（Hilton判決自体がフランスの互恵性欠如を理由に判決承認を拒否）、条約上の義務や法的確信を伴う慣習国際法規範とは異なり、外国当事者に法的権原を生じさせない任意的・柔軟な原則である。ジョエル・R・ポール（Joel R. Paul, 1991, "Comity in International Law," Harvard International Law Journal, Vol.32, No.1, pp.1-79）は礼譲概念の歴史的変遷と現代米国法における機能を包括的に分析した。',
+    keyFigures: 'Justice Horace Gray（Hilton v. Guyot, 159 U.S. 113, 1895 — 礼譲の古典的定義）／Joseph Story（1834, Commentaries on the Conflict of Laws — 米国抵触法における礼譲の体系化）／Justice Antonin Scalia（Hartford Fire, 509 U.S. 764, 1993 dissent — prescriptive/adjudicative comity 区別）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/159/113/', type: 'government', label: 'Hilton v. Guyot, 159 U.S. 113 (1895) — US Supreme Court' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/509/764', type: 'government', label: 'Hartford Fire Insurance Co. v. California, 509 U.S. 764 (1993) — Cornell LII' },
+    ],
+  },
+  {
+    id: 'mgmt-vicarious-learning',
+    discipline: 'management',
+    title: '代理学習（Vicarious Learning in Organizations）',
+    statement:
+      '代理学習（Vicarious Learning）とは、組織学習論における概念で、焦点組織が他組織の経験（成功・失敗・ニアミス）を観察することにより、直接的コスト・リスクを負担せずに新たな知識を獲得し行動・ルーティンを修正するプロセスである。キム＝マイナー（Ji-Yub (Jay) Kim & Anne S. Miner, 2007, "Vicarious Learning from the Failures and Near-Failures of Others: Evidence from the U.S. Commercial Banking Industry," Academy of Management Journal, Vol.50, No.3, pp.687-714, DOI: 10.5465/AMJ.2007.25529755）は米国商業銀行産業のデータを用い、他行の失敗およびニアミス（near-failure）からの代理学習が焦点組織の生存率を向上させることを実証し、学習効果が地理的近接性と産業起源に依存することを示した。' +
+      'バンデューラの個人レベル観察学習（Bandura, 1977, Social Learning Theory）と異なり、組織レベルの代理学習は個人の記憶ではなく組織ルーティン・規則・手続きにコード化される（Levitt & March, 1988, "Organizational Learning," Annual Review of Sociology, 14: 319-338）。マーチ（James G. March, 1991, "Exploration and Exploitation in Organizational Learning," Organization Science 2(1): 71-87, DOI: 10.1287/orsc.2.1.71）の探索＝活用トレードオフ枠組みにおいて、代理学習は直接的実験の全コストを負担せずに新アプローチを探索する低リスク型探索学習として位置づけられる。マドセン＝デサイ（Peter M. Madsen & Vinit Desai, 2010, "Failing to Learn? The Effects of Failure and Success on Organizational Learning in the Global Orbital Launch Vehicle Industry," Academy of Management Journal 53(3): 451-476, DOI: 10.5465/amj.2010.51467631）は組織が成功よりも失敗からより効果的に学習し、失敗からの知識は成功からの知識より減価が遅いことを示した。',
+    keyFigures: 'Ji-Yub (Jay) Kim & Anne S. Miner（AMJ 50(3), 2007 — 他組織の失敗・ニアミスからの代理学習の実証）／Barbara Levitt & James G. March（Annual Review of Sociology 14, 1988 — 組織学習理論の基盤）／Peter M. Madsen & Vinit Desai（AMJ 53(3), 2010 — 失敗vs成功からの学習効果の非対称性）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/AMJ.2007.25529755', type: 'academic', label: 'Kim & Miner (2007) Vicarious Learning from the Failures and Near-Failures of Others — AMJ 50(3), pp.687-714' },
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2010.51467631', type: 'academic', label: 'Madsen & Desai (2010) Failing to Learn? — AMJ 53(3), pp.451-476' },
+    ],
+  },
+  {
+    id: 'infosoc-boundary-objects',
+    discipline: 'information-sociology',
+    title: '境界オブジェクト（Boundary Objects）',
+    statement:
+      '境界オブジェクト（Boundary Objects）とは、科学技術社会論（STS）・情報学における概念で、複数の交差する社会的世界に同時に存在し、各サイトの局所的必要に適応しうる可塑性を持ちながら、サイト間で共通のアイデンティティを維持するのに十分な堅牢性を有するオブジェクトを指す。スーザン・リー・スター（Susan Leigh Star, 1954-2010）とジェームズ・R・グリーズマー（James R. Griesemer）は1989年の論文「Institutional Ecology, \'Translations\' and Boundary Objects: Amateurs and Professionals in Berkeley\'s Museum of Vertebrate Zoology, 1907-39」（Social Studies of Science, Vol.19, No.3, pp.387-420, DOI: 10.1177/030631289019003001）において、カリフォルニア大学バークレー校脊椎動物学博物館の事例研究に基づき、異なる社会的世界の参加者がコンセンサスなしに協働を達成するメカニズムとして境界オブジェクト概念を提唱した。' +
+      'スター＝グリーズマーは4類型を識別した：(1)リポジトリ（repositories）——標準化された方法でインデックスされたオブジェクトの秩序だった集積（博物館・図書館）、(2)理想型（ideal types）——特定の地域を正確に記述しないが全当事者の象徴的コミュニケーションに十分な抽象的記述（図表・地図帳）、(3)一致する境界（coincident boundaries）——同じ境界を持つが内部内容が異なる共通オブジェクト、(4)標準化されたフォーム（standardized forms）——分散した作業グループ間の共通コミュニケーション方法。本論文はミシェル・カロン＝ブルーノ・ラトゥールのアクターネットワーク理論（ANT）における「翻訳（translation）」概念を拡張しつつ、ANTが単一の「obligatory passage point」を特権化する傾向を批判し、複数の翻訳を同時に収容する対称的説明を提供する。境界オブジェクトは情報システム設計・CSCW・組織間協働・知識管理研究において広く応用されている。',
+    keyFigures: 'Susan Leigh Star & James R. Griesemer（Social Studies of Science 19(3), 1989 — 境界オブジェクト概念の提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/030631289019003001', type: 'academic', label: 'Star & Griesemer (1989) Institutional Ecology, Translations and Boundary Objects — Social Studies of Science 19(3), pp.387-420' },
+      { url: 'http://www.jstor.org/stable/285080', type: 'academic', label: 'JSTOR: Star & Griesemer (1989) — stable URL' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-redlining',
+    discipline: 'information-sociology',
+    title: 'デジタル・レッドライニング（Digital Redlining）',
+    statement:
+      'デジタル・レッドライニング（Digital Redlining）とは、情報社会学・批判的インターネット研究における概念で、デジタルプラットフォーム・ISP・教育機関・アルゴリズムシステムが階級・人種的境界を技術的政策・実践・投資決定を通じて創出・維持・強化する能動的プロセスを指す。クリス・ジリアード＝ヒュー・クリック（Chris Gilliard & Hugh Culik, 2016, "Digital Redlining, Access, and Privacy," Common Sense Education）はこの概念を「階級的境界を強制し特定グループを差別する技術的政策・実践・教育法・投資決定の創出と維持」と定義した。「デジタル・ディバイド」が格差の存在を記述するのに対し、デジタル・レッドライニングはその格差を生産・維持する能動的実践——動詞としての差別行為——を名指す点で区別される。' +
+      '歴史的レッドライニング（1930年代FHA/HOLC住宅差別地図）のデジタル的類似として、ISPによる低所得・マイノリティ地域でのインフラ整備拒否・低速度サービスの高額提供、教育機関の制限的IT政策、アルゴリズム的プロファイリングが含まれる。サフィヤ・ウモジャ・ノーブル（Safiya Umoja Noble, 2018, Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press, ISBN: 9781479837243）は検索エンジンアルゴリズムが人種・ジェンダーバイアスを商業的広告利益と独占的市場構造の組合せにより永続化する「技術的レッドライニング」を実証した。ヴァージニア・ユーバンクス（Virginia Eubanks, 2018, Automating Inequality: How High-Tech Tools Profile, Police, and Punish the Poor, St. Martin\'s Press）は福祉・住宅・児童保護サービスにおける自動化意思決定システムが貧困層を不均衡に監視・処罰する「デジタル貧民院」を文書化し、レッドライニングの論理が行政システムを通じて作動することを示した。',
+    keyFigures: 'Chris Gilliard & Hugh Culik（Common Sense Education, 2016 — デジタル・レッドライニング概念の定立）／Safiya Umoja Noble（NYU Press, 2018 — アルゴリズム的抑圧・技術的レッドライニング）／Virginia Eubanks（St. Martin\'s Press, 2018 — 不平等の自動化・デジタル貧民院）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.commonsense.org/education/articles/digital-redlining-access-and-privacy', type: 'media', label: 'Gilliard & Culik (2016) Digital Redlining, Access, and Privacy — Common Sense Education' },
+      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'academic', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism — NYU Press' },
+    ],
+  },
 ];
 // Stryker restore all
