@@ -21775,5 +21775,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.presencing.org/theoryu', type: 'academic', label: 'Presencing Institute — Theory U（著者自身の研究機関による概念解説）' },
     ],
   },
+  {
+    id: 'econ-universal-basic-income',
+    discipline: 'economics',
+    title: 'ユニバーサル・ベーシックインカム（UBI）',
+    statement:
+      'ユニバーサル・ベーシックインカム（Universal Basic Income, UBI）とは、政府がすべての市民・居住者に対して、就労状況・資力・行動条件を問わず定期的に無条件で現金を給付する所得保障政策の理念および制度モデルである。' +
+      '支持論拠には貧困の撲滅・行政コストの削減・技術的失業への対応・人的資本投資の促進があり、批判論拠には財源問題・労働供給の低下・既存社会保障との代替問題がある。2017年フィンランドの実験やケニアでのGiveDirectly研究など各国で実証実験が進む。ミルトン・フリードマンの負の所得税とも理論的に連関する。',
+    keyFigures: 'トーマス・ペイン（Thomas Paine, "Agrarian Justice" 1797・先駆的提案）／フィリップ・ヴァン・パレース（Philippe Van Parijs, "Real Freedom for All" 1995）／ミルトン・フリードマン（負の所得税）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/els/soc/Basic-Income-Policy-Option-2017.pdf', type: 'government', label: 'OECD (2017) "Basic Income as a Policy Option: Can it Add Up?"（制度類型・財政影響・労働供給効果の国際比較）' },
+      { url: 'https://basicincome.org/basic-income/', type: 'reference', label: 'BIEN（Basic Income Earth Network）— UBIの定義・歴史・国際研究動向（1986年設立の学術ネットワーク）' },
+    ],
+  },
+  {
+    id: 'econ-fiscal-federalism',
+    discipline: 'economics',
+    title: '財政連邦主義（オーツの分権化定理）',
+    statement:
+      '財政連邦主義（Fiscal Federalism）とは、中央政府・地方政府間の歳入・歳出権限の最適な配分を分析する公共経済学の分野である。ウォレス・オーツが1972年の著書"Fiscal Federalism"で体系化し、「分権化定理」を提示した。' +
+      '分権化定理の核心は「地域ごとに選好が異なる公共財は、国全体に一律供給するより各地方政府が供給する方が（スピルオーバーがなく費用が同じならば）パレート効率的」という命題である。マスグレイブの配分・分配・安定化の三機能論とあわせ、中央集権と地方分権の役割分担を規定する規範理論として機能する。',
+    keyFigures: 'ウォレス・オーツ（Wallace E. Oates, 1936–2015）／主著: "Fiscal Federalism"（1972）／リチャード・マスグレイブ（財政三機能論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/1999/06/tanzi.htm', type: 'government', label: 'IMF Finance & Development (1999) — Fiscal Federalism（定義・分権化定理・各国政策応用の概説）' },
+      { url: 'https://www.oecd.org/regional/fiscal-federalism-20786533.htm', type: 'government', label: 'OECD Fiscal Federalism Network — 財政連邦主義の理論・各国実践・政策指針' },
+    ],
+  },
+  {
+    id: 'bizlaw-hate-speech-elimination',
+    discipline: 'business-law',
+    title: 'ヘイトスピーチ解消法',
+    statement:
+      '2016年6月施行の「本邦外出身者に対する不当な差別的言動の解消に向けた取組の推進に関する法律」（ヘイトスピーチ解消法）は、本邦外出身者に対する不当な差別的言動を許さないとする理念を宣言し、国・地方公共団体の責務と教育・啓発活動の推進を定める。' +
+      '同法は罰則規定を持たない理念法であるが、大阪市・川崎市などがその後に条例を制定し、行政上の措置・勧告・氏名公表等を設けた（川崎市2019年条例は初の刑事罰付き）。人種差別撤廃条約（ICERD）第4条との関係や、表現の自由との緊張のもとで、理念先行・罰則なしという日本法の特徴が論じられる。',
+    keyFigures: '平成28年法律第68号（2016年施行）／法務省所管／川崎市差別のない人権尊重のまちづくり条例（2019年・初の刑事罰付き）／ICERD第4条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/428AC1000000068', type: 'government', label: 'e-Gov法令検索 — 本邦外出身者に対する不当な差別的言動の解消に向けた取組の推進に関する法律（平成28年法律第68号）' },
+      { url: 'https://www.moj.go.jp/JINKEN/jinken04_00108.html', type: 'government', label: '法務省人権擁護局 — ヘイトスピーチ、許さない。（法律の概要・相談窓口・啓発）' },
+    ],
+  },
+  {
+    id: 'bizlaw-carbon-border-adjustment',
+    discipline: 'business-law',
+    title: '炭素国境調整メカニズム（CBAM）',
+    statement:
+      '炭素国境調整メカニズム（Carbon Border Adjustment Mechanism, CBAM）とは、EUが2023年に導入した制度で、炭素排出コストが低い国からの輸入品に対し、EU域内生産品と同等の炭素価格負担を求める国境調整措置である。鉄鋼・セメント・アルミニウム・肥料・電力・水素等が対象品目となる。' +
+      '導入の目的は「炭素リーケージ」（排出規制の厳しい地域から緩い地域への生産移転）の防止と、EU排出量取引制度（EU ETS）の実効性確保にある。2023〜2025年は移行期間（報告義務のみ）、2026年から本格課金が始まる。WTO協定との整合性（内外無差別原則・最恵国待遇）については国際的に法的論争が継続している。',
+    keyFigures: 'EU規則（Regulation (EU) 2023/956, 2023年発効）／欧州委員会提案（2021年7月）／WTO整合性をめぐる通商法的議論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_en', type: 'government', label: 'European Commission — Carbon Border Adjustment Mechanism（制度概要・対象品目・スケジュール・根拠規則）' },
+      { url: 'https://www.oecd.org/en/topics/carbon-border-adjustment-mechanisms.html', type: 'government', label: 'OECD — Carbon Border Adjustment Mechanisms（各国動向・WTO整合性・炭素リーケージ防止効果の政策分析）' },
+    ],
+  },
+  {
+    id: 'infosoc-online-radicalization',
+    discipline: 'information-sociology',
+    title: 'オンライン過激化（ラジカリゼーション）',
+    statement:
+      'オンライン過激化とは、インターネット・SNS・動画プラットフォーム・暗号化メッセージアプリを通じて、個人が暴力的過激主義（テロリズム・ヘイトグループ・陰謀論）のイデオロギーに接触・没入し、過激な信念や暴力的行動へ向かうプロセスを指す情報社会学的概念である。' +
+      'アルゴリズムによるレコメンデーション（ラビットホール効果）、エコーチェンバー、プロパガンダの拡散速度、孤立した若者へのリクルートメントが主要メカニズムとして研究される。EU・英国・米国はテロ対策として違法コンテンツの迅速削除義務（EU TERREG規則2022年）やプラットフォーム責任を強化しており、表現の自由との緊張が論点となる。',
+    keyFigures: 'EU TERREG（テロリストコンテンツ規則 Regulation 2021/784, 2022年施行）／ISD（Institute for Strategic Dialogue）等の研究機関／マーク・セイジマン（Marc Sageman）のネットワーク過激化論',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://home-affairs.ec.europa.eu/policies/internal-security/terrorism-and-radicalisation_en', type: 'government', label: 'European Commission — Terrorism and radicalisation（EUのオンライン過激化対策・TERREG規則の公式解説）' },
+      { url: 'https://www.rand.org/pubs/research_reports/RRA1071-1.html', type: 'academic', label: 'RAND Corporation — "Online Extremism and the Communities That Help It Grow"（メカニズム・プラットフォームの役割）' },
+    ],
+  },
+  {
+    id: 'human-disenfranchised-grief',
+    discipline: 'human-science',
+    title: '剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）',
+    statement:
+      '剥奪された悲嘆（Disenfranchised Grief）とは、社会的に認められない・支持されない・公然と悼まれない喪失（例：元恋人の死、ペットの死、流産、認知症による「生きながらの喪失」、非公認の関係）に対して経験される悲嘆を指す。' +
+      'ケネス・ドカが1989年の著書"Disenfranchised Grief: Recognizing Hidden Sorrow"で提唱した。悲嘆の権利が社会的に付与されないとき、当事者は悲嘆を抑圧・孤立させられ、複雑性悲嘆（Complicated Grief）に発展するリスクが高まる。グリーフカウンセリングや緩和ケアの実践に重要な含意を持つ。',
+    keyFigures: 'ケネス・J・ドカ（Kenneth J. Doka）／主著: "Disenfranchised Grief: Recognizing Hidden Sorrow"（Lexington Books, 1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/monitor/2023/06/grief-without-recognition', type: 'reference', label: 'APA Monitor on Psychology — 認められない悲嘆（disenfranchised grief）の臨床的意義の解説' },
+      { url: 'https://www.britannica.com/science/grief', type: 'reference', label: 'Encyclopaedia Britannica — Grief（悲嘆の定義・類型・剥奪された悲嘆を含む学術的解説）' },
+    ],
+  },
 ];
 // Stryker restore all
