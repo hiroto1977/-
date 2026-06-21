@@ -22699,5 +22699,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/a0036090', type: 'academic', label: 'Shay (2014) Moral Injury — Psychoanalytic Psychology 31(2), pp.182-191' },
     ],
   },
+  {
+    id: 'econ-harberger-triangle',
+    discipline: 'economics',
+    title: 'ハーバーガーの三角形（独占の死荷重損失計測）',
+    statement:
+      'ハーバーガーの三角形（Harberger Triangle）とは、独占による資源配分の歪みがもたらす死荷重損失（deadweight loss）を需要曲線下の三角形面積として幾何学的に表現する分析手法であり、アーノルド・C・ハーバーガー（Arnold C. Harberger, 1924-2024）が1954年のアメリカ経済学会報告論文「Monopoly and Resource Allocation」（American Economic Review, Vol.44, No.2, pp.77-87）において提示した。ハーバーガーは米国製造業73産業の1924-1928年データを用いて独占による厚生損失を推計し、その総額がGNPの約0.1%（国民一人当たり約1.50ドル）に過ぎないという驚くべき小ささを報告した。' +
+      'この推計結果は「ハーバーガー予想」として知られ、独占の社会的費用が従来想定されてきたほど深刻ではない可能性を示唆したが、その後の研究者から方法論的批判を受けた。ハーヴェイ・ライベンシュタイン（Harvey Leibenstein）は1966年の論文「Allocative Efficiency vs. X-Efficiency」（AER 56(3), pp.392-415）においてX非効率性（企業内部の組織的浪費）の概念を提唱し、競争圧力から保護された独占企業の内部非効率が配分的非効率を桁違いに上回ると論じた。ゴードン・タロック（Gordon Tullock）は1967年の論文「The Welfare Costs of Tariffs, Monopolies, and Theft」（Western Economic Journal 5(3), pp.224-232, DOI: 10.1111/j.1465-7295.1967.tb01923.x）において、独占レントが争奪可能である場合に企業がレント獲得のために実資源を浪費する「タロックの長方形」を三角形に加算すべきことを指摘し、レントシーキング理論の基礎を築いた。キース・カウリング＝デニス・ミューラー（Cowling & Mueller, 1978, Economic Journal 88(352), pp.727-748）は推計手法を修正し独占の社会的費用をGNPの4-13%と再推計した。',
+    keyFigures: 'Arnold C. Harberger（AER 44(2), 1954, 死荷重の三角形計測）／Harvey Leibenstein（AER 56(3), 1966, X非効率性）／Gordon Tullock（WEJ 5(3), 1967, レントシーキングの長方形）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1818325', type: 'academic', label: 'Harberger (1954) Monopoly and Resource Allocation — American Economic Review 44(2), pp.77-87' },
+      { url: 'https://doi.org/10.1111/j.1465-7295.1967.tb01923.x', type: 'academic', label: 'Tullock (1967) The Welfare Costs of Tariffs, Monopolies, and Theft — Western Economic Journal 5(3), pp.224-232' },
+    ],
+  },
+  {
+    id: 'human-prosopagnosia',
+    discipline: 'human-science',
+    title: '相貌失認（プロソパグノシア / Prosopagnosia）',
+    statement:
+      '相貌失認（prosopagnosia）とは、視覚処理能力自体は保たれているにもかかわらず、顔の同定（identification）が選択的に障害される神経心理学的症候である。この用語はドイツの神経学者ヨアヒム・ボダマー（Joachim Bodamer）が1947年の論文「Die Prosop-Agnosie」（Archiv für Psychiatrie und Nervenkrankheiten, Bd.179, Heft 1-2, S.6-53, DOI: 10.1007/BF00352849）において造語し、後頭葉損傷後に顔の認識が選択的に失われた2症例を詳細に記述した。語源はギリシア語のπρόσωπον（prosōpon＝顔）とἀγνωσία（agnōsia＝認知不能）に由来する。' +
+      '相貌失認の神経基盤については、ダマシオ・ダマシオ＝ヴァン・フーゼン（Damasio, Damasio & Van Hoesen, 1982, Neurology 32(4), pp.331-341, DOI: 10.1212/WNL.32.4.331）がCTおよび剖検データの分析から両側内側後頭側頭領域の損傷が原因であることを同定した。ナンシー・カンウィッシャー（Nancy Kanwisher）らは1997年の画期的fMRI研究「The Fusiform Face Area: A Module in Human Extrastriate Cortex Specialized for Face Perception」（Journal of Neuroscience, 17(11), pp.4302-4311, DOI: 10.1523/JNEUROSCI.17-11-04302.1997）において紡錘状回顔領域（Fusiform Face Area, FFA）を顔知覚に特化したモジュールとして同定した。相貌失認は後天性（脳卒中・外傷・手術による損傷後に発症）と発達性（先天性、識別可能な脳損傷なし、一般人口の約2-2.5%に存在）に大別され、発達性相貌失認には遺伝的要因が示唆されている（Kennerknecht et al., 2006, AJMG 140A, pp.1617-1622）。',
+    keyFigures: 'Joachim Bodamer（Archiv für Psychiatrie 179, 1947, 用語の造語と初期症例記述）／Nancy Kanwisher（J Neurosci 17(11), 1997, 紡錘状回顔領域の発見）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1007/BF00352849', type: 'academic', label: 'Bodamer (1947) Die Prosop-Agnosie — Archiv für Psychiatrie und Nervenkrankheiten 179(1-2), S.6-53' },
+      { url: 'https://doi.org/10.1523/JNEUROSCI.17-11-04302.1997', type: 'academic', label: 'Kanwisher, McDermott & Chun (1997) The Fusiform Face Area — Journal of Neuroscience 17(11), pp.4302-4311' },
+    ],
+  },
+  {
+    id: 'bizlaw-contra-proferentem',
+    discipline: 'business-law',
+    title: '不利解釈の原則（コントラ・プロフェレンテム / Contra Proferentem）',
+    statement:
+      'コントラ・プロフェレンテム（contra proferentem）とは、契約条項に曖昧性（ambiguity）が存在する場合にその条項を起草者（proferens）に不利に解釈するという契約解釈の法原則である。ラテン語の法格言「Verba chartarum fortius accipiuntur contra proferentem（証書の文言はその提出者に対しより強く受け取られる）」に由来し、ローマ法のユスティニアヌス法典学説彙纂（Digest）に起源を持つ。この原則の正当化根拠は、起草者が曖昧さを回避し得た以上その不利益を負担すべきという衡平の要請、および情報の非対称性を是正するという政策的考慮にある。' +
+      '英米法においてはリステイトメント（第二次）契約法（Restatement (Second) of Contracts）第206条が「言語を選択した当事者に対する解釈が優先される（In choosing among the reasonable meanings of a promise or agreement or a term thereof, that meaning is generally preferred which operates against the party who supplies the words）」と明文化している。保険契約法の領域では、約款が保険者により一方的に起草されるという性質上、コントラ・プロフェレンテム原則が最も頻繁かつ強力に適用される。国際商取引においてはUNIDROIT国際商事契約原則（UNIDROIT Principles of International Commercial Contracts）第4.6条が「一方当事者が提供した条項に含まれる曖昧さがある場合、その当事者に不利な解釈が優先される」と規定している。日本法においても消費者契約法第3条第2項（2022年改正追加）が「消費者契約の条項が不明確である場合には消費者に有利に解釈されるものとする」旨を規定し、同様の法理を実定法化している。',
+    keyFigures: 'ユスティニアヌス法典学説彙纂（Digest, 6世紀, ローマ法上の起源）／Restatement (Second) of Contracts §206（1981, 米国法における明文化）／UNIDROIT Principles Art.4.6（2016, 国際商取引における適用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/restatement/contracts/206', type: 'reference', label: 'Cornell LII — Restatement (Second) of Contracts §206: Interpretation Against the Draftsman' },
+      { url: 'https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/', type: 'reference', label: 'UNIDROIT Principles of International Commercial Contracts 2016 — Art.4.6 Contra proferentem rule' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-theory-firm',
+    discipline: 'management',
+    title: '企業の行動理論（A Behavioral Theory of the Firm）',
+    statement:
+      '企業の行動理論（A Behavioral Theory of the Firm）とは、リチャード・M・サイアート（Richard M. Cyert, 1921-1998）とジェームズ・G・マーチ（James G. March, 1928-2018）が1963年の同名著書（Prentice-Hall刊, ix+332頁）において提示した、新古典派経済学の利潤最大化仮定に代わる組織意思決定の理論的枠組みである。ハーバート・A・サイモン（Herbert A. Simon）の限定合理性（bounded rationality）概念を組織レベルに拡張し、企業を利害が異なる個人・集団の連合体（coalition）として捉え、その意思決定過程を4つの中核的関係概念によって説明する。' +
+      '第一に「紛争の準解決（quasi-resolution of conflict）」：組織は矛盾する目標間の完全な解決を追求せず、局所的合理性・満足化基準・目標への逐次的注意によって運営される。第二に「不確実性の回避（uncertainty avoidance）」：組織は長期予測よりも短期フィードバックに基づく意思決定ルールと環境との交渉（長期契約・業界慣行の形成）を通じて不確実性に対処する。第三に「問題主導型探索（problemistic search）」：探索は業績と目標水準の乖離によって誘発され、症状の近傍から開始される近視眼的・偏向的探索であり、満足解の発見とともに停止する。第四に「組織学習（organizational learning）」：組織は経験を通じて目標水準・注意配分規則・探索規則を適応的に変化させる。本書はカーネギー学派（Carnegie School）の中核的業績として組織論・経営戦略論・進化経済学に広範な影響を与えた。',
+    keyFigures: 'Richard M. Cyert & James G. March（Prentice-Hall, 1963, 企業の行動理論の提示）／Herbert A. Simon（限定合理性の理論的基礎）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.1070.0280', type: 'academic', label: 'Argote & Greve (2007) A Behavioral Theory of the Firm — 40 Years and Counting — Organization Science 18(3), pp.337-349' },
+      { url: 'https://doi.org/10.1007/s11301-023-00369-x', type: 'academic', label: 'Klingenberg & Sardana (2023) 60th birthday of A Behavioral Theory of the Firm — Management Review Quarterly' },
+    ],
+  },
+  {
+    id: 'mgmt-microfoundations-movement',
+    discipline: 'management',
+    title: 'ミクロ基礎運動（Microfoundations Movement）',
+    statement:
+      'ミクロ基礎運動（Microfoundations Movement）とは、経営戦略論・組織理論における集合的マクロ構成概念（ルーティン・ケイパビリティ・制度）を個人レベルの行為・相互作用・メカニズムに還元して因果的に説明すべきとする理論的立場・研究プログラムである。テッポ・フェリン（Teppo Felin）とニコライ・J・フォス（Nicolai J. Foss）が2005年の論文「Strategic organization: A field in search of micro-foundations」（Strategic Organization, Vol.3, No.4, pp.441-455, DOI: 10.1177/1476127005055796）において、組織能力・ルーティンの研究が個人の意図・選択・異質性を看過した集合レベルの記述に留まっていると批判し、ミクロ基礎の探求を呼びかけた。' +
+      'フェリン・フォス＝プロイハート（Felin, Foss & Ployhart, 2015, Academy of Management Annals, Vol.9, No.1, pp.575-632, DOI: 10.5465/19416520.2015.1007651）は包括的レビューにおいて、マクロ組織現象の基礎をなすミクロレベル要素を（a）個人（認知・人的資本・動機付け）、（b）社会的プロセス（相互作用・創発）、（c）構造・設計（組織アーキテクチャ）の3範疇に整理し、ジェームズ・コールマン（James Coleman）のマクロ-ミクロ-マクロ図式（Coleman\'s bathtub）を標準的説明テンプレートとして採用した。この運動はルーティン研究者（シドニー・ウィンター、ブライアン・ペントランド）や制度理論者から、方法論的個人主義・創発の否定という批判を受けたが、フェリン＝フォス（2012, Journal of Institutional Economics 8, pp.271-288）は創発自体にもミクロレベルの説明が必要であると応答し、還元主義ではなく「開梱（unpacking）」であると明確化した。',
+    keyFigures: 'Teppo Felin & Nicolai J. Foss（Strategic Organization 3(4), 2005, ミクロ基礎の探求提唱）／Felin, Foss & Ployhart（Academy of Management Annals 9(1), 2015, 包括的レビューと体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/1476127005055796', type: 'academic', label: 'Felin & Foss (2005) Strategic organization: A field in search of micro-foundations — Strategic Organization 3(4), pp.441-455' },
+      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals 9(1), pp.575-632' },
+    ],
+  },
+  {
+    id: 'infosoc-critical-making',
+    discipline: 'information-sociology',
+    title: 'クリティカル・メイキング（Critical Making）',
+    statement:
+      'クリティカル・メイキング（Critical Making）とは、批判的思考（critical thinking）と実践的製作活動（hands-on making）を統合し、技術と社会生活の関係についての概念的探究を物質的プロトタイピングを通じて遂行する研究方法論・実践様式である。トロント大学情報学部（Faculty of Information, University of Toronto）教授マット・ラトー（Matt Ratto）が2011年の論文「Critical Making: Conceptual and Material Studies in Technology and Social Life」（The Information Society, Vol.27, No.4, pp.252-260, DOI: 10.1080/01972243.2011.583819）において体系化した。' +
+      'ラトーはクリティカル・メイキングを「技術との物質的関与を用いて批判的省察を補完・拡張し、技術との生活経験を社会的・概念的批評に再接続する方法」と定義した。この方法論の核心的特徴は、完成した人工物（artifact）ではなく製作過程（process）自体を分析の場とすることにあり、参加者は関連する学術文献のレビューを経て概念を物質的プロトタイプに比喩的に写像し、製作を通じて探究する。クリティカル・デザイン（Dunne & Raby流の物体指向的批判的実践）とは、学術文献との明示的接続と過程重視の点で区別される。またフィリップ・エイグリ（Philip Agre）のcritical technical practice（批判的技術的実践）を知的先駆としつつ、ソフトウェア/AI開発に限定されない物理的製作を包含する点で射程を拡張している。ラトー＝ボーラー（Ratto & Boler, eds., 2014, DIY Citizenship: Critical Making and Social Media, MIT Press）は、この方法論をDIY市民活動とソーシャルメディアの文脈に展開した。',
+    keyFigures: 'Matt Ratto（The Information Society 27(4), 2011, クリティカル・メイキングの体系化）／Matt Ratto & Megan Boler（MIT Press, 2014, DIY Citizenshipへの展開）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/01972243.2011.583819', type: 'academic', label: 'Ratto (2011) Critical Making: Conceptual and Material Studies in Technology and Social Life — The Information Society 27(4), pp.252-260' },
+      { url: 'https://mitpress.mit.edu/9780262525527/diy-citizenship/', type: 'academic', label: 'Ratto & Boler eds. (2014) DIY Citizenship: Critical Making and Social Media — MIT Press' },
+    ],
+  },
 ];
 // Stryker restore all
