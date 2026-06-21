@@ -23119,5 +23119,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.semanticscholar.org/paper/Technological-frames-Orlikowski-Gash/dcfb1f7bb415b1a4259457237a8881ab053aea2e', type: 'academic', label: 'Semantic Scholar: Orlikowski & Gash (1994)' },
     ],
   },
+  {
+    id: 'econ-peso-problem',
+    discipline: 'economics',
+    title: 'ペソ問題（Peso Problem）',
+    statement:
+      'ペソ問題（Peso Problem）とは、稀ではあるが市場参加者が合理的に予期している事象（例：通貨の大幅切下げ・政権交代・金融危機）が、観察対象の標本期間中に実現しなかったために、事後的に観測される市場価格が合理的期待仮説と矛盾するかのように見える現象を指す。ミルトン・フリードマン（Milton Friedman）が1970年代初頭にメキシコ・ペソの先物ディスカウントを例に非公式に指摘し、ウィリアム・S・クラスカー（William S. Krasker, 1980, "The \'Peso Problem\' in Testing the Efficiency of Forward Exchange Markets," Journal of Monetary Economics, Vol.6, No.2, pp.269-276, DOI: 10.1016/0304-3932(80)90031-8）が先物為替市場の効率性検定の文脈で初めて学術的に定式化した。' +
+      'クラスカーは、合理的予測誤差が有限標本においては現在の情報と相関し非ゼロの平均を持ちうることを示し、これは市場が非合理的であるためではなく、予期された事象が標本に含まれていないことによる統計的帰結であると論じた。ケネス・ロゴフ（Kenneth Rogoff, 1980, MIT博士論文）は実証的にペソ問題を同定し、カレン・K・ルイス（Karen K. Lewis, 1995, "Puzzles in International Financial Markets," Handbook of International Economics, Vol.3, Ch.37, pp.1913-1971, Elsevier）は国際金融市場のパズル群（フォワード・プレミアム・パズル、国際分散投資の自国バイアスなど）を包括的に検討し、ペソ問題が合理的期待モデルの棄却を見かけ上もたらしうる主要な統計的要因であることを体系的に示した。',
+    keyFigures: 'Milton Friedman（1970年代 — ペソ先物ディスカウントの非公式な指摘）／William S. Krasker（JME 6(2), 1980 — ペソ問題の学術的定式化）／Karen K. Lewis（Handbook of International Economics, 1995 — 国際金融パズルの包括的検討）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/moneco/v6y1980i2p269-276.html', type: 'academic', label: 'Krasker (1980) The "Peso Problem" in Testing the Efficiency of Forward Exchange Markets — JME 6(2), pp.269-276' },
+      { url: 'https://www.nber.org/papers/w4951', type: 'academic', label: 'Lewis (1995) Puzzles in International Financial Markets — NBER Working Paper 4951' },
+    ],
+  },
+  {
+    id: 'human-allostasis',
+    discipline: 'human-science',
+    title: 'アロスタシス（Allostasis）',
+    statement:
+      'アロスタシス（Allostasis）とは、恒常性（ホメオスタシス）が固定的な設定値への回帰による安定維持を想定するのに対し、脳を中枢的な予測的調節器として位置づけ、環境需要に応じて複数の生理系の設定値を能動的に変動させることで安定を達成する過程を指す。ピーター・スターリング＝ジョセフ・アイヤー（Peter Sterling & Joseph Eyer, 1988, "Allostasis: A New Paradigm to Explain Arousal Pathology," in S. Fisher & J. Reason (Eds.), Handbook of Life Stress, Cognition and Health, Wiley, pp.629-649）が提唱し、ウォルター・B・キャノン（Walter B. Cannon, 1932, The Wisdom of the Body）のホメオスタシス概念を批判的に発展させた。' +
+      'ブルース・S・マキューアン（Bruce S. McEwen, 1998, "Protective and Damaging Effects of Stress Mediators," New England Journal of Medicine, Vol.338, No.3, pp.171-179, DOI: 10.1056/NEJM199801153380307）は、アロスタシス系が慢性的に過剰活性化された場合に蓄積される累積的摩耗——アロスタティック・ロード（allostatic load）——の概念を導入し、心血管疾患・メタボリックシンドローム・免疫機能障害・海馬萎縮などの病理的帰結との関連を実証的に示した。アロスタシス概念はストレス研究・神経内分泌学・公衆衛生・健康格差研究において広く応用され、社会的逆境の生物学的埋め込み（biological embedding）を説明する理論的基盤を提供している。',
+    keyFigures: 'Peter Sterling & Joseph Eyer（1988, Handbook of Life Stress — アロスタシス概念の提唱）／Bruce S. McEwen（NEJM 338(3), 1998 — アロスタティック・ロード概念の導入）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/9428819/', type: 'academic', label: 'McEwen (1998) Protective and Damaging Effects of Stress Mediators — NEJM 338(3), pp.171-179' },
+      { url: 'https://www.semanticscholar.org/paper/Allostasis:-A-new-paradigm-to-explain-arousal-Sterling-Eyer/26009c73354023e6c1c3b81fbd200706e9972c34', type: 'academic', label: 'Sterling & Eyer (1988) Allostasis: A New Paradigm to Explain Arousal Pathology — Semantic Scholar' },
+      { url: 'https://search.worldcat.org/title/17234042', type: 'reference', label: 'Fisher & Reason (Eds.) (1988) Handbook of Life Stress, Cognition and Health — WorldCat' },
+    ],
+  },
+  {
+    id: 'bizlaw-exequatur',
+    discipline: 'business-law',
+    title: 'エクセクアトゥル（Exequatur）',
+    statement:
+      'エクセクアトゥル（Exequatur、ラテン語 exsequatur「執行せしめよ」）とは、一国の裁判所が外国裁判所の判決または外国仲裁判断を承認し、自国領域内での強制執行を許可する司法手続を指す。受理裁判所は本案の再審理（révision au fond）を行わず、国内法が定める要件——管轄権の適正・公序良俗への適合・手続的正規性・詐欺の不存在——を審査する。フランス法においてはMunzer判決（破毀院1964年1月7日）が近代的エクセクアトゥル要件を確立し、Cornelissen判決（破毀院2007年2月20日）が要件を3条件に簡素化した。' +
+      '米国ではHilton v. Guyot, 159 U.S. 113 (1895) が礼譲（comity）に基づく承認原則を確立した。1958年外国仲裁判断の承認及び執行に関する条約（ニューヨーク条約）は仲裁判断についての二重エクセクアトゥル（仲裁地国での執行許可を承認国が再度要求すること）を廃止した。EU域内ではブリュッセルI規則改正（Regulation (EU) No 1215/2012、2015年発効）がEU加盟国間の民事・商事判決についてエクセクアトゥル手続自体を廃止し、判決の自動的承認・執行を実現した。アルベルト・ヤン・ファンデンベルク（Albert Jan van den Berg, 1981, The New York Arbitration Convention of 1958, Kluwer）はニューヨーク条約の解釈に関する基礎的体系書を提供した。',
+    keyFigures: 'Munzer判決（破毀院1964年 — 近代的エクセクアトゥル要件の確立）／Cornelissen判決（破毀院2007年 — 3条件への簡素化）／Hilton v. Guyot, 159 U.S. 113（1895年 — 米国礼譲原則）／Albert Jan van den Berg（1981 — ニューヨーク条約解釈の体系書）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://uncitral.un.org/en/texts/arbitration/conventions/foreign_arbitral_awards', type: 'government', label: 'UNCITRAL — 1958年外国仲裁判断の承認及び執行に関する条約（ニューヨーク条約）' },
+      { url: 'https://e-justice.europa.eu/topics/taking-legal-action/european-judicial-atlas-civil-matters/brussels-i-regulation-recast_en', type: 'government', label: 'EU e-Justice — Brussels I Regulation Recast (EU No 1215/2012)' },
+    ],
+  },
+  {
+    id: 'bizlaw-nemo-dat-quod-non-habet',
+    discipline: 'business-law',
+    title: 'ネモ・ダット原則（Nemo Dat Quod Non Habet）',
+    statement:
+      'ネモ・ダット原則（Nemo Dat Quod Non Habet、ラテン語「何人も自己が有さざるものを与えることを得ず」）とは、譲渡人が自ら保有する以上の権利を譲受人に移転することはできないという財産法の基本原則である。より完全なローマ法の定式はnemo plus iuris ad alium transferre potest quam ipse haberet（ユスティニアヌス法学提要 D.50.17.54、ウルピアヌスに帰属）である。英国法では1893年物品売買法（Sale of Goods Act 1893）第21条（現行1979年法第21条第1項）に法典化され、米国では統一商事法典（Uniform Commercial Code）第2-403条に規定される。' +
+      '本原則の重要判例としてCundy v Lindsay [1878] UKHL 1, 3 App Cas 459が挙げられ、貴族院は詐欺師が取得した所有権は無効（void）であり善意の第三者にも移転しえないと判示した。ただし本原則には重要な例外が存在し、禁反言（estoppel）、取消可能な権原からの善意取得（SGA第23条）、商事代理人による処分（Factors Act 1889第2条）、UCC第2-403条における善意有償購入者（good faith purchaser for value）への取消可能権原の移転、および市場公開の法理（market overt、1994年物品売買（改正）法により英国で廃止）が認められる。本原則は所有権の安全（security of ownership）と取引の安全（security of transaction）の緊張関係を体現する。',
+    keyFigures: 'Ulpian（D.50.17.54 — ローマ法における原則の定式化）／Cundy v Lindsay [1878] UKHL 1（貴族院 — void title の確認）／Sale of Goods Act 1893 s.21（英国法典化）／UCC § 2-403（米国法典化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-403', type: 'reference', label: 'UCC § 2-403 Power to Transfer; Good Faith Purchase of Goods — Cornell Law Institute' },
+      { url: 'https://www.legislation.gov.uk/ukpga/1994/32', type: 'government', label: 'Sale of Goods (Amendment) Act 1994 — legislation.gov.uk' },
+    ],
+  },
+  {
+    id: 'mgmt-paradox-of-organizing',
+    discipline: 'management',
+    title: '組織化のパラドックス（Paradox of Organizing）',
+    statement:
+      '組織化のパラドックス（Paradox of Organizing）とは、カール・E・ワイク（Karl E. Weick, 1979, The Social Psychology of Organizing, 2nd ed., McGraw-Hill）が提唱した組織プロセス理論の中核的矛盾を指す。ワイクは静的実体としての「組織」（organization）を退け、動詞的過程としての「組織化」（organizing）に焦点を置き、組織化を「条件的に関連づけられたプロセスに埋め込まれた連動行動によって、制定された環境における多義性を縮減すること」と定義した。パラドックスは複数の水準で作用する：(1)イナクトメント（enactment）のパラドックス——行為者は環境を受動的に受容するのではなく能動的に創造するが、その行為自体が縮減すべき多義性を新たに生成する、(2)必要多様性のパラドックス——W・ロス・アシュビーの必要多様性の法則を援用し「多義性を除去するには多義性が必要」（Weick 1979, p.40）とされ、単純で硬直的な手続きでは複雑な曖昧性に対処できない、(3)構造の二面性——イナクトメント＝選択＝保持（ESR）サイクルにおいて保持された因果地図は将来のセンスメイキングを効率化する一方で狭隘化する。' +
+      'ワイクは後のセンスメイキング理論（Karl E. Weick, 1995, Sensemaking in Organizations, Sage Publications）において、組織化とセンスメイキングを不可分の過程として統合し、センスメイキングの7特性——(1)アイデンティティ構成に根ざす、(2)回顧的、(3)環境を制定する、(4)社会的、(5)進行中、(6)抽出された手がかりに焦点づけられる、(7)正確性よりも妥当性に駆動される——のうち特に(3)制定性が1979年のイナクトメント・パラドックスを再述することを示した。危機状況におけるセンスメイキング（Weick, 1988）では「危機を理解するための行為がしばしば危機を深刻化させる」という自己言及的パラドックスが実証された。本概念は組織論・戦略経営・危機管理研究において組織と環境の共構成的関係を理解する基盤を提供している。',
+    keyFigures: 'Karl E. Weick（1979, The Social Psychology of Organizing — 組織化のパラドックス・ESRサイクル・イナクトメント概念の提唱）／Karl E. Weick（1995, Sensemaking in Organizations — センスメイキング理論との統合）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Karl-E.-WEICK-(1979),-The-Social-Psychology-of-Weick/08a0a64799f08428cf1f90a74b9e52c1be1d1754', type: 'academic', label: 'Weick (1979) The Social Psychology of Organizing, 2nd ed. — Semantic Scholar' },
+      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick (1995) Sensemaking in Organizations — Sage Publications' },
+    ],
+  },
+  {
+    id: 'infosoc-repair-work',
+    discipline: 'information-sociology',
+    title: '修繕の労働（Repair Work）',
+    statement:
+      '修繕の労働（Repair Work）とは、社会技術システムの機能を維持するために継続的に遂行される、大部分が不可視でありながら不可欠な保守・修繕の実践を指す概念である。スティーブン・グレアム＝ナイジェル・スリフト（Stephen Graham & Nigel Thrift, 2007, "Out of Order: Understanding Repair and Maintenance," Theory, Culture & Society, Vol.24, No.3, pp.1-25, DOI: 10.1177/0263276407075954）は、故障・失敗・劣化が例外ではなく常態であると論じ、保守と修繕が社会理論における「欠落した環」（missing link）——都市・技術・ネットワークの機能可能性を構成的に支えながら日常的に看過される実践——であることを指摘した。' +
+      'スティーヴン・J・ジャクソン（Steven J. Jackson, 2014, "Rethinking Repair," in T. Gillespie, P.J. Boczkowski & K.A. Foot (Eds.), Media Technologies: Essays on Communication, Materiality, and Society, MIT Press, pp.221-239, DOI: 10.7551/mitpress/9780262525374.003.0011）は「壊れた世界の思考」（broken-world thinking）を提唱し、新奇性（novelty）ではなく侵食と崩壊（erosion and decay）を技術理解の出発点とする認識論的転換を主張した。ジャクソンは修繕を、単なる機能回復ではなく、世界を持続させる創造的実践（creative, world-sustaining practice）として再概念化した。修繕の労働概念はSTS（科学技術社会論）・インフラストラクチャー研究・情報システム研究において、可視的なイノベーションの背後にある不可視の維持労働への注目を促す理論的枠組みを提供している。',
+    keyFigures: 'Stephen Graham & Nigel Thrift（Theory, Culture & Society 24(3), 2007 — 保守・修繕の社会理論的分析）／Steven J. Jackson（MIT Press, 2014 — 壊れた世界の思考・修繕の再概念化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0263276407075954', type: 'academic', label: 'Graham & Thrift (2007) Out of Order: Understanding Repair and Maintenance — Theory, Culture & Society 24(3)' },
+      { url: 'https://direct.mit.edu/books/edited-volume/3021/chapter/82557/Rethinking-Repair', type: 'academic', label: 'Jackson (2014) Rethinking Repair — Media Technologies, MIT Press, pp.221-239' },
+    ],
+  },
 ];
 // Stryker restore all
