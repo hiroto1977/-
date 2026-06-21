@@ -22279,5 +22279,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1111/j.1468-0297.2006.01045.x', type: 'academic', label: 'Mehlum, Moene & Torvik (2006) "Institutions and the Resource Curse", The Economic Journal 116(508), 1–20' },
     ],
   },
+  {
+    id: 'econ-sraffa-commodities',
+    discipline: 'economics',
+    title: 'スラッファの商品による商品の生産（ケンブリッジ資本論争）',
+    statement:
+      'ピエロ・スラッファが1960年にケンブリッジ大学出版局から刊行した『Production of Commodities by Means of Commodities: Prelude to a Critique of Economic Theory』は、異質的資本財を物的投入ベクトルとして表現し、新古典派の限界生産力理論における資本集計の循環論法を数学的に暴露した。具体的には「技術の再転換（reswitching）」と「資本逆転（capital reversal）」が理論的に生じうることを示し、利潤率の低下が必ずしもより資本集約的な技術の採用に対応しないことを証明した。' +
+      'この著作はジョーン・ロビンソンが1953年のReview of Economic Studies掲載論文 "The Production Function and the Theory of Capital" で提起した資本集計問題の数学的定式化であり、ケンブリッジ資本論争（Cambridge capital controversy）の核心的文献となった。ルイジ・パシネッティは1966年にQJE誌上で再転換の拡張分析を発表した。ポール・サミュエルソンは同年同誌の "A Summing Up"（QJE 80(4), pp.568–583）において「ジェヴォンズ、ベーム＝バヴェルク、ヴィクセルらの新古典派的な単純な物語は普遍的に妥当たりえない」と理論的に譲歩した。スラッファはリカードとマルクスに連なる古典的剰余アプローチを復権させ、ポスト・ケインジアンおよびネオ・リカーディアン経済学の基盤を形成した。',
+    keyFigures: 'ピエロ・スラッファ（1960『Production of Commodities by Means of Commodities』Cambridge UP）／ジョーン・ロビンソン（1953 "The Production Function and the Theory of Capital"）／ポール・サミュエルソン（1966 "A Summing Up" QJE 80(4)）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2296002', type: 'academic', label: 'Robinson (1953) "The Production Function and the Theory of Capital", Review of Economic Studies 21(2), 81–106' },
+      { url: 'https://doi.org/10.2307/1882916', type: 'academic', label: 'Samuelson (1966) "A Summing Up", Quarterly Journal of Economics 80(4), 568–583' },
+    ],
+  },
+  {
+    id: 'human-diderot-effect',
+    discipline: 'human-science',
+    title: 'ディドロ効果（Diderot Effect）',
+    statement:
+      'ディドロ効果とは、新たな所有物の獲得が既存の所有物への不満を生み出し、文化的に統一された消費財の集合（ディドロ統一体）を回復するために連鎖的な追加購買を引き起こす消費心理現象である。フランスの思想家ドゥニ・ディドロ（1713–1784）が1768年に執筆したエッセイ "Regrets sur ma vieille robe de chambre, ou Avis à ceux qui ont plus de goût que de fortune"（旧いガウンとの別れの後悔）に端を発する。ディドロは友人から贈られた緋色の新しいガウンを着たところ、書斎の他の家具・調度品が急にみすぼらしく感じられ、次々と買い替えを余儀なくされた体験を述懐した。' +
+      'カナダの人類学者グラント・マクラッケンが1988年の著書『Culture and Consumption: New Approaches to the Symbolic Character of Consumer Goods and Activities』（Indiana University Press）で「ディドロ効果」および「ディドロ統一体（Diderot Unity）」の用語を学術的に定式化した。ディドロ統一体とは、所有者のアイデンティティと社会的地位を一貫して表現する文化的に補完的な製品群の総体を指す。新たな財がこの統一体から逸脱するとき、認知的不協和が生じ、統一体全体の更新衝動が発動する。ローレンツェンは2017年のBlackwell Encyclopedia of Sociologyにおいて本概念の包括的レビューを提供した。近年はJournal of Marketing Analytics（2024）でデータ駆動型の実証的検証も行われている。',
+    keyFigures: 'ドゥニ・ディドロ（1768 "Regrets sur ma vieille robe de chambre"）／グラント・マクラッケン（1988『Culture and Consumption』Indiana University Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/9781405165518.wbeosd046.pub2', type: 'academic', label: 'Lorenzen (2017) "Diderot Effect", The Blackwell Encyclopedia of Sociology (Wiley)' },
+      { url: 'https://doi.org/10.1057/s41270-024-00371-6', type: 'academic', label: '"The Diderot effect: a data-driven validation" (2024), Journal of Marketing Analytics' },
+    ],
+  },
+  {
+    id: 'bizlaw-doctrine-of-laches',
+    discipline: 'business-law',
+    title: 'ラッチェスの法理（懈怠の抗弁）',
+    statement:
+      'ラッチェスの法理（doctrine of laches）とは、権利者が既知の又は発見可能な権利の主張を不合理に遅延し、かつその遅延が相手方に不利益（prejudice）を生じさせた場合に、衡平法上の救済を否定するエクイティ上の抗弁である。古フランス語 laschesse（怠慢）に由来し、「エクイティは権利の上に眠る者ではなく警戒する者を助ける（vigilantibus non dormientibus aequitas subvenit）」という衡平法の格率を法的に具現化したものである。' +
+      '英国法における基礎判例はSmith v Clay (1767) 3 Brown\'s Chancery Cases 639であり、ロード・カムデン大法官は「衡平法裁判所は常に古くなった請求への救済を拒んできた」と判示した。米国連邦最高裁はPetrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014)において、ギンズバーグ裁判官執筆の法廷意見で、連邦著作権法の3年の出訴期限内に提起された損害賠償請求に対してはラッチェスの抗弁を適用できないと判示し、制定法上の出訴期限が衡平法上の抗弁に優先する場合を明確にした。ラッチェスは制定法上の出訴期限（statute of limitations）と異なり、固定的な時間制限ではなく裁判所の裁量に基づく衡平的判断であり、遅延の不合理性と相手方への不利益の双方が要件となる。',
+    keyFigures: 'Lord Camden（Smith v Clay (1767) 3 Bro CC 639）／Ruth Bader Ginsburg（Petrella v. MGM, 572 U.S. 663 (2014)）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/572/663/', type: 'government', label: 'Petrella v. Metro-Goldwyn-Mayer, Inc., 572 U.S. 663 (2014) — Justia US Supreme Court' },
+      { url: 'https://www.law.cornell.edu/wex/laches', type: 'reference', label: 'Cornell Law School LII — Laches (Wex legal encyclopedia)' },
+    ],
+  },
+  {
+    id: 'mgmt-tempered-radical',
+    discipline: 'management',
+    title: '穏健な急進主義者（Tempered Radicals）',
+    statement:
+      '穏健な急進主義者（Tempered Radicals）とは、組織への帰属意識とインサイダーとしての信頼性を維持しながら、同時に組織の支配的文化と根本的に相容れない大義・コミュニティ・イデオロギーを推進する個人を指す概念である。デブラ・E・マイヤーソン（ミシガン大学、後にスタンフォード大学）とモーリーン・A・スカリー（MITスローン経営大学院）が1995年にOrganization Science 6巻5号（pp.585–600）に発表した論文 "Tempered Radicalism and the Politics of Ambivalence and Change" で提唱した。' +
+      'マイヤーソンは2001年にハーバード・ビジネス・スクール・プレスから『Tempered Radicals: How People Use Difference to Inspire Change at Work』を刊行し、概念を体系化した。「tempered」は二重の意味を持ち、(1)怒りや急進性が節制（temper）されていること、(2)鍛錬によって強靱にされた（tempered steel）ことを含意する。穏健な急進主義者は革命的ではなく漸進的な変革戦術を採用し、(a)小さな勝利（small wins）の積み重ね、(b)個人的なアイデンティティの差異を組織変革の触媒として活用、(c)組織内の非公式な関係を通じた草の根連合構築、(d)個人への脅威を制度的機会に転換する戦略を用いる。この概念は組織内部からの制度変革、ダイバーシティ推進、社会正義アドボカシーの分析枠組みとして組織行動論で広く援用されている。',
+    keyFigures: 'デブラ・E・マイヤーソン & モーリーン・A・スカリー（1995 Organization Science 6(5), 585–600）／マイヤーソン（2001『Tempered Radicals』Harvard Business School Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson & Scully (1995) "Tempered Radicalism and the Politics of Ambivalence and Change", Organization Science 6(5), 585–600' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=6410', type: 'reference', label: 'Harvard Business School — Tempered Radicals: How People Use Difference to Inspire Change at Work (2001)' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-sublime',
+    discipline: 'information-sociology',
+    title: 'テクノロジカル・サブライム（技術的崇高）',
+    statement:
+      'テクノロジカル・サブライム（technological sublime）とは、大規模な技術的達成物に対して人々が経験する畏怖・驚嘆・恐怖の混合した美的感情体験を指す概念である。用語はペリー・ミラーが1965年の遺著『The Life of the Mind in America: From the Revolution to the Civil War』（Harcourt, Brace & World、1966年ピューリッツァー賞歴史部門受賞）で造語した。ミラーは19世紀アメリカの意識において崇高の対象が自然からテクノロジーへと移行し、技術的偉業に対する準宗教的な崇敬が生まれた過程を追跡した。' +
+      'デイヴィッド・E・ナイ（南デンマーク大学アメリカ史教授）は1994年にMIT Pressから刊行した『American Technological Sublime』において、エリー運河・大陸横断鉄道・ブルックリン橋・摩天楼群・電化都市・フーバーダム・原爆・アポロ月面着陸に至る200年間の技術的崇高の系譜を体系化した。ナイの分析はエドマンド・バーク（1756『崇高と美の起源』、崇高を「快適な恐怖」と定義）とイマヌエル・カント（1790『判断力批判』、数学的崇高と力学的崇高の二類型）の18世紀美学理論を技術的人工物に適用するものである。レオ・マルクスの1964年の著書『The Machine in the Garden: Technology and the Pastoral Ideal in America』（Oxford UP）が牧歌的理想と技術的破壊の緊張を文学的に分析した先駆的研究であり、ナイはこの知的系譜の上に美学的分析を構築した。',
+    keyFigures: 'ペリー・ミラー（1965『The Life of the Mind in America』造語）／デイヴィッド・E・ナイ（1994『American Technological Sublime』MIT Press）／レオ・マルクス（1964『The Machine in the Garden』Oxford UP）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262640343/american-technological-sublime/', type: 'reference', label: 'MIT Press — American Technological Sublime (David E. Nye, 1994)' },
+      { url: 'https://doi.org/10.1353/tech.1995.0025', type: 'academic', label: 'Technology and Culture 36(4), 1995, pp.1021–1022（American Technological Sublime 書評）' },
+    ],
+  },
+  {
+    id: 'bizlaw-unconscionability',
+    discipline: 'business-law',
+    title: '非良心性の法理（Unconscionability）',
+    statement:
+      '非良心性の法理（unconscionability）とは、契約又は契約条項が著しく不公正である場合に裁判所がその履行を拒否しうるとする衡平法上の原則であり、手続的非良心性（procedural unconscionability：意味のある選択の欠如、交渉力の著しい不均衡）と実体的非良心性（substantive unconscionability：一方に不合理に有利な条項）の二要素から構成される。英国法における起源はEarl of Chesterfield v Janssen (1751) 28 Eng Rep 82においてロード・ハードウィック大法官が「正気の者であれば誰もしないような、かつ誠実で公正な者であれば受け入れないような取引」と定式化したことに遡る。' +
+      '米国法ではWilliams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965)においてJ・スケリー・ライト判事が「一方当事者の意味のある選択の欠如と他方に不合理に有利な契約条項」の二要件テストを確立し、現代アメリカ契約法における非良心性法理の基礎判例となった。統一商事法典（UCC）§2-302はカール・ルウェリンを主任起草者として非良心性を明文化し、裁判所は契約締結時点で非良心的と認定した契約の全部又は一部の履行を拒否できると規定する。ルウェリンはこの条項を「法典全体で最も価値ある条項」と評し、意図的に定義を開放的に保つことで裁判所の文脈的判断を可能にした。多くの法域では手続的・実体的非良心性の「スライディング・スケール」アプローチが採用され、一方の要素が強ければ他方の立証は軽減される。',
+    keyFigures: 'Lord Hardwicke（Earl of Chesterfield v Janssen (1751)）／J. Skelly Wright（Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (1965)）／Karl Llewellyn（UCC §2-302 主任起草者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-302', type: 'government', label: 'Cornell LII — UCC §2-302 Unconscionable Contract or Clause' },
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/350/445/74531/', type: 'government', label: 'Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965) — Justia' },
+    ],
+  },
 ];
 // Stryker restore all
