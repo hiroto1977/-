@@ -22615,5 +22615,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Data_Feminism', type: 'reference', label: 'Data Feminism — Wikipedia（7原則・理論的基盤・影響の概要）' },
     ],
   },
+  {
+    id: 'econ-stranded-assets',
+    discipline: 'economics',
+    title: '座礁資産（Stranded Assets）',
+    statement:
+      '座礁資産（stranded assets）とは、予期せぬ規制変更・技術革新・市場構造の転換・社会的規範の変化によって、当初の経済的耐用年数を全うする前に予定外の減損（write-down）、切り下げ（devaluation）、または負債への転化（conversion to liabilities）を余儀なくされる資産を指す概念である。この用語を気候変動と金融リスクの接点において体系的に定式化したのは、オックスフォード大学スミス企業環境大学院のベン・コールドコット（Ben Caldecott）が2013年に設立したStranded Assets Programme（現Sustainable Finance Programme）である。Caldecott, Howarth, and McSharry (2013)「Stranded Assets in Agriculture: Protecting Value from Environment-Related Risks」（Smith School of Enterprise and the Environment, University of Oxford）は、環境関連リスクによる資産座礁のメカニズムを農業セクターで分析した初期の体系的研究であり、座礁の原因を環境規制リスク・物理的リスク・訴訟リスク・技術リスク・社会的リスクの五類型に分類した。' +
+      'Carbon Tracker Initiative (2013)「Unburnable Carbon 2013: Wasted Capital and Stranded Assets」は、国際エネルギー機関（IEA）の2℃目標シナリオ（450 Scenario）に基づき、世界の化石燃料確認埋蔵量のうち2012年から2050年までに燃焼可能な量が全体の約3分の1に制限されることを試算し、残余の埋蔵量に紐づく上流資産（採掘権・探鉱投資・生産設備）が座礁する可能性を定量的に示した報告書であり、「カーボン・バジェット（carbon budget）」の概念とともに化石燃料投資のシステミック・リスクとしての座礁資産問題を国際的な政策議論の俎上に載せた。マーク・カーニー（Mark Carney）は2015年9月29日のロイズ・オブ・ロンドンでの講演「Breaking the Tragedy of the Horizon」において、イングランド銀行総裁として気候変動リスクを物理的リスク・賠償責任リスク・移行リスク（transition risk）の三類型に分類し、化石燃料関連資産の座礁が金融システムの安定性に対する脅威となりうることを中央銀行として初めて公式に警告した。これを契機として2017年に設立されたTCFD（気候関連財務情報開示タスクフォース）は、座礁資産リスクを含む気候関連財務リスクの開示フレームワークを策定し、後継のISSB（国際サステナビリティ基準審議会）のIFRS S2（2023年）へと制度化が進展している。',
+    keyFigures: 'Ben Caldecott（Oxford Smith School, 2013, Stranded Assets Programme設立）／Carbon Tracker Initiative（2013, Unburnable Carbon）／Mark Carney（2015, Breaking the Tragedy of the Horizon講演）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.smithschool.ox.ac.uk/research/sustainable-finance', type: 'academic', label: 'Oxford Smith School Sustainable Finance Programme（旧Stranded Assets Programme）— 座礁資産研究の学術拠点' },
+      { url: 'https://www.bankofengland.co.uk/speech/2015/breaking-the-tragedy-of-the-horizon-climate-change-and-financial-stability', type: 'government', label: 'Carney (2015) Breaking the Tragedy of the Horizon — Bank of England, Lloyd\'s of London講演（気候変動と金融安定性、座礁資産リスクの中央銀行による公式警告）' },
+    ],
+  },
+  {
+    id: 'bizlaw-parens-patriae',
+    discipline: 'business-law',
+    title: 'パレンス・パトリエ法理（Parens Patriae Doctrine）',
+    statement:
+      'パレンス・パトリエ（parens patriae、ラテン語で「国の親」）法理とは、国家が自己の利益を保護する能力を欠く者（未成年者・禁治産者・精神障害者等）および一般公衆の福祉を保護するために、主権者としての後見的権限（sovereign guardianship）を行使する法理である。この法理の起源は中世イングランド法における国王大権（royal prerogative）に遡り、国王が「王国のすべての幼児、白痴、および精神錯乱者の保護者」として行動する権限を有するとされた（Blackstone, Commentaries on the Laws of England, 1765, Vol.1, Ch.17）。ウィリアム・ブラックストン（William Blackstone, 1723-1780）の同書は英米法の基礎文献として、国王大権に基づく後見的管轄がどのように衡平法裁判所（Court of Chancery）を通じて行使されるかを体系的に論じた。' +
+      '米国法においてパレンス・パトリエ法理は、州政府が連邦反トラスト法（Sherman Act / Clayton Act）の下で独占的行為により損害を受けた州民を代表して民事訴訟を提起する権限の法的根拠として重要な機能を果たしている。合衆国最高裁判所はHawaii v. Standard Oil Co., 405 U.S. 251 (1972) においてパレンス・パトリエに基づく州の反トラスト訴権を制限的に解釈したが、議会は1976年のHart-Scott-Rodino Antitrust Improvements Act（15 U.S.C. §15c）により州司法長官がパレンス・パトリエ訴訟を通じて州民のために三倍賠償（treble damages）を請求する明文の権限を付与した。この権限は近年のデジタル市場における独占規制において活発に行使されており、複数州の司法長官がGAFA（Google / Apple / Facebook / Amazon）に対してパレンス・パトリエ訴訟を提起している。日本法にはパレンス・パトリエに直接対応する法理は存在しないが、児童福祉法28条に基づく家庭裁判所の承認による児童の施設入所措置や、民法7条以下の後見制度（成年後見・保佐・補助）が機能的に類似する国家後見的介入を規定している。',
+    keyFigures: 'William Blackstone（Commentaries on the Laws of England, 1765, 理論的基礎）／Hawaii v. Standard Oil Co., 405 U.S. 251 (1972)（連邦最高裁による射程限定）／Hart-Scott-Rodino Act §301 (1976)（州のパレンス・パトリエ反トラスト訴権の明文化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/parens-patriae', type: 'reference', label: 'Encyclopaedia Britannica — Parens patriae（定義・英国法起源・米国法における展開）' },
+      { url: 'https://www.law.cornell.edu/uscode/text/15/15c', type: 'government', label: '15 U.S.C. §15c — Antitrust parens patriae actions by state attorneys general（Hart-Scott-Rodino Act §301による州のパレンス・パトリエ反トラスト訴権）' },
+    ],
+  },
+  {
+    id: 'econ-buycott',
+    discipline: 'economics',
+    title: 'バイコット（Buycott / 政治的消費行動）',
+    statement:
+      'バイコット（buycott）とは、特定の企業・ブランド・製品を、その倫理的・社会的・環境的・政治的な方針や実践を積極的に支持する目的で意図的に購入する消費者行動を指す。ボイコット（boycott＝排除的不買運動）の対概念として位置づけられ、消費者が市場における購買力を政治的・道徳的意思表明の手段として行使する「政治的消費主義（political consumerism）」の一形態である。政治的消費主義の体系的な学術研究を主導したのはスウェーデンの政治学者ミシェル・ミッシェレッティ（Michele Micheletti）であり、2003年の著書『Political Virtue and Shopping: Individuals, Consumerism, and Collective Action』（Palgrave Macmillan, ISBN: 978-1-4039-6176-7）において、バイコットをボイコットと並ぶ市場ベースの政治参加形態として理論化した。ミッシェレッティは政治的消費主義を「消費者が市場を政治的アリーナとして利用し、製品・サービスの選択を通じて倫理的・政治的目標の達成を追求する行為」と定義し、伝統的な政治参加（投票・政党活動）の衰退を補完する新しい市民参加の形態として位置づけた。' +
+      'Neilson (2010)「Boycotting and Buycotting: Consumer Power, Political Influence and Creative Destruction」（Annals of the American Academy of Political and Social Science, Vol.629, No.1, pp.67-76, DOI: 10.1177/0002716209357445）は、ボイコットとバイコットの政治的有効性を比較分析し、バイコットがボイコットよりも参加障壁が低く（購入は不買より心理的コストが小さい）、正のインセンティブ（reward）による行動変容を促す点で企業行動への影響力が持続的であることを実証した。フェアトレード製品・オーガニック食品・地産地消運動・企業のESG対応を支持する意図的購買は、現代のバイコットの典型例として位置づけられる。Stolle, Hooghe, and Micheletti (2005)「Politics in the Supermarket: Political Consumerism as a Form of Political Participation」（International Political Science Review, Vol.26, No.3, pp.245-269, DOI: 10.1177/0192512105053784）は、スウェーデン・ベルギー・カナダの大規模調査データを用いて、政治的消費行動（バイコット・ボイコット）への参加が教育水準・政治的関心・社会的信頼と正の相関を持ち、若年層・女性において特に顕著であることを示した。',
+    keyFigures: 'Michele Micheletti（Palgrave Macmillan, 2003, 政治的消費主義の体系化）／Lisa A. Neilson（AAPSS Annals 629(1), 2010, ボイコット/バイコット比較分析）／Stolle, Hooghe & Micheletti（IPSR 26(3), 2005, 政治参加としての消費行動）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/0002716209357445', type: 'academic', label: 'Neilson (2010) Boycotting and Buycotting: Consumer Power, Political Influence and Creative Destruction — Annals of the AAPSS 629(1), pp.67-76' },
+      { url: 'https://doi.org/10.1177/0192512105053784', type: 'academic', label: 'Stolle, Hooghe & Micheletti (2005) Politics in the Supermarket: Political Consumerism as a Form of Political Participation — IPSR 26(3), pp.245-269' },
+    ],
+  },
+  {
+    id: 'infosoc-techno-nationalism',
+    discipline: 'information-sociology',
+    title: 'テクノナショナリズム（Techno-nationalism）',
+    statement:
+      'テクノナショナリズム（techno-nationalism）とは、先端技術の開発・製造・支配を国家の安全保障・経済的覇権・国家的アイデンティティと不可分に結びつけ、技術的優位の維持または獲得を国家戦略の中核目標に位置づける思想・政策的傾向を指す概念である。この概念を体系的に定式化したのはリチャード・J・サミュエルズ（Richard J. Samuels）の1994年の著書『Rich Nation, Strong Army: National Security and the Technological Transformation of Japan』（Cornell University Press, ISBN: 978-0-8014-8130-7）であり、戦後日本が民間・軍事双方の技術内製化（indigenization）と国産化（kokusanka）を通じて「育成（nurturing）」と「スピンオン（spin-on）」の循環的サイクルを構築してきたことを、明治期の「富国強兵」政策からの歴史的連続性の中で分析した。' +
+      '2010年代後半以降、米中貿易・技術摩擦の激化とともにテクノナショナリズムは半導体・人工知能・量子コンピューティング・5G通信インフラ・希少金属等の戦略的技術領域をめぐる国家競争の文脈で再浮上した。米国は2022年の「CHIPS and Science Act」（Public Law 117-167）による半導体国内製造への巨額補助金供与と、先端半導体技術の対中輸出規制によりテクノナショナリズム的政策を明確化した。中国の「中国製造2025」戦略（2015年）は先端技術の国産化比率目標を政策として掲げる代表例である。テクノグローバリズム（techno-globalism）は技術の自由な国際流通・グローバルサプライチェーン統合を重視する対抗的立場であり、両者の緊張がデジタル地政学（geopolitics of technology）の核心的論点を形成する。日本では2022年施行の経済安全保障推進法（令和4年法律第43号）が半導体・電池・医薬品等の「特定重要物資」の国内供給確保を法定し、テクノナショナリズム的政策の制度化が進展している。',
+    keyFigures: 'Richard J. Samuels（Cornell University Press, 1994, Rich Nation Strong Army — 概念体系化）／CHIPS and Science Act (2022)（米国の半導体国内製造支援立法）／経済安全保障推進法（令和4年法律第43号、日本）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cornellpress.cornell.edu/book/9780801481307/rich-nation-strong-army/', type: 'academic', label: 'Samuels (1994) Rich Nation, Strong Army: National Security and the Technological Transformation of Japan — Cornell University Press' },
+      { url: 'https://www.congress.gov/bill/117th-congress/house-bill/4346', type: 'government', label: 'CHIPS and Science Act of 2022 (H.R.4346, Public Law 117-167) — U.S. Congress.gov（米国議会公式法案テキスト）' },
+    ],
+  },
+  {
+    id: 'bizlaw-ordre-public',
+    discipline: 'business-law',
+    title: '国際公序（Ordre Public / Public Policy Exception）',
+    statement:
+      '国際公序（ordre public international）とは、国際私法・国際仲裁法において、外国法を準拠法として適用した結果が法廷地の根本的な法的・道徳的秩序に反する場合に、その外国法の適用を排除して自国の強行法規を優先させることを認める原則である。日本法では「法の適用に関する通則法」（平成18年法律第78号）第42条が「外国法によるべき場合において、その規定の適用が公の秩序又は善良の風俗に反するときは、これを適用しない」と規定し、この例外を明文化している。国際公序条項は、外国法の内容自体の公序違反と、外国裁判所判決・外国仲裁判断の承認執行における公序違反の二場面で機能する。国際私法の父と称されるフリードリヒ・カール・フォン・サヴィニー（Friedrich Carl von Savigny, 1779-1861）は主著『現代ローマ法の体系』第8巻（System des heutigen Römischen Rechts, Bd. VIII, 1849）において、外国法適用の例外としての「厳格に義務的な法律（streng zwingende Gesetze）」の概念を提示し、国際公序論の理論的基礎を築いた。' +
+      '国際仲裁の文脈では、ニューヨーク条約（外国仲裁判断の承認及び執行に関する条約、1958年）第V条(2)(b)が「仲裁判断の承認又は執行がその国の公の秩序に反するものであること」を承認・執行拒否事由として明示し、国際公序が国際商事仲裁の最終的な安全弁として機能している。学説上は、単なる国内公序（domestic public policy）と区別された「国際的公序（international public policy / transnational public policy）」の概念が発展しており、ピエール・レルイ（Pierre Lalive）が1986年のハーグ国際法アカデミー講義「Ordre public transnational（ou réellement international）et arbitrage international」（Recueil des Cours, Vol.192, pp.199-270）において体系化した超国家的公序は、腐敗防止・強制労働禁止・基本的人権保護といった普遍的強行規範（jus cogens）を核とする最低基準として理解されている。日本の裁判実務では、民事訴訟法第118条第3号（外国判決承認の公序要件）および仲裁法第45条第2項第9号（外国仲裁判断の執行拒否事由）において公序条項が適用されている。',
+    keyFigures: 'Friedrich Carl von Savigny（System des heutigen Römischen Rechts Bd.VIII, 1849, 理論的基礎）／Pierre Lalive（Recueil des Cours 192, 1986, 超国家的公序の体系化）／ニューヨーク条約第V条(2)(b)（1958年, 国際仲裁における公序例外）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/418AC0000000078', type: 'government', label: 'e-Gov法令検索 — 法の適用に関する通則法（平成18年法律第78号）第42条（外国法適用の公序条項）' },
+      { url: 'https://www.newyorkconvention.org/11165/web/files/original/1/5/15189.pdf', type: 'government', label: 'Convention on the Recognition and Enforcement of Foreign Arbitral Awards (New York, 1958) — UNCITRAL公式テキスト, Article V(2)(b)' },
+    ],
+  },
+  {
+    id: 'human-moral-injury',
+    discipline: 'human-science',
+    title: '道徳的損傷（Moral Injury）',
+    statement:
+      '道徳的損傷（moral injury）とは、個人が自身の深く保持する道徳的信念・倫理的規範に反する行為を行う・目撃する・防止できない経験によって生じる持続的な心理的・社会的・精神的苦痛を指す概念である。この概念を軍事心理学の文脈において体系的に定式化したのは、精神科医ジョナサン・シェイ（Jonathan Shay）の1994年の著書『Achilles in Vietnam: Combat Trauma and the Undoing of Character』（Atheneum / Simon & Schuster, ISBN: 978-0-689-12182-7）である。シェイはベトナム帰還兵の心理療法の臨床経験とホメロスの『イリアス』のテクスト分析を統合し、道徳的損傷を「権威ある立場にある者が高い利害状況において正しいこと（what\'s right）を裏切ること」として定義した。シェイはこの概念をPTSD（心的外傷後ストレス障害）とは区別し、PTSDが恐怖条件付け（fear conditioning）に基づく脅威反応の障害であるのに対し、道徳的損傷は道徳的裏切り（moral betrayal）に起因する信頼・意味・人格の統合性の崩壊であると位置づけた。' +
+      'Brett T. Litz, Nathan Stein, Eileen Delaney, Leslie Lebowitz, William P. Nash, Caroline Silva, and Shira Maguen (2009)「Moral injury and moral repair in war veterans: A preliminary model and intervention」（Clinical Psychology Review, Vol.29, No.8, pp.695-706, DOI: 10.1016/j.cpr.2009.07.003）は、道徳的損傷の操作的定義と予備的な因果モデルを提示した画期的論文である。リッツらは道徳的損傷を「道徳的に越境する行為（potentially morally injurious events, PMIEs）への曝露から生じる持続的な罪悪感・恥辱感・怒り・嫌悪感」と操作的に定義し、道徳的感情（moral emotions）から認知的不協和、自己帰属的判断を経て社会的引きこもり・自己破壊的行動に至る因果経路を提示した。この概念は軍事心理学の領域から、医療従事者の道徳的苦悩（moral distress）、組織的不正の目撃者（whistleblower）の心理的被害、COVID-19パンデミック下の医療トリアージ従事者の経験へと拡張されている。Shay (2014)「Moral Injury」（Psychoanalytic Psychology, Vol.31, No.2, pp.182-191, DOI: 10.1037/a0036090）は20年間の臨床経験を踏まえた概念の再定式化であり、道徳的損傷の予防には部隊の凝集性（unit cohesion）と道徳的リーダーシップ（moral leadership）が不可欠であることを論じた。',
+    keyFigures: 'Jonathan Shay（Atheneum, 1994, Achilles in Vietnam — 概念の初期定式化）／Brett T. Litz et al.（Clinical Psychology Review 29(8), 2009, 操作的定義と予備モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/j.cpr.2009.07.003', type: 'academic', label: 'Litz et al. (2009) Moral injury and moral repair in war veterans: A preliminary model and intervention — Clinical Psychology Review 29(8), pp.695-706' },
+      { url: 'https://doi.org/10.1037/a0036090', type: 'academic', label: 'Shay (2014) Moral Injury — Psychoanalytic Psychology 31(2), pp.182-191' },
+    ],
+  },
 ];
 // Stryker restore all
