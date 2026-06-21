@@ -22867,5 +22867,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1287/isre.7.1.111', type: 'academic', label: 'Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — Information Systems Research 7(1), pp.111-134' },
     ],
   },
+  {
+    id: 'econ-henry-george-theorem',
+    discipline: 'economics',
+    title: 'ヘンリー・ジョージ定理（Henry George Theorem）',
+    statement:
+      'ヘンリー・ジョージ定理（Henry George Theorem, HGT）とは、都市経済学・地方公共財政学における定理で、最適都市規模において集計地代（aggregate land rent）が公共財支出と等しくなることを示す。リチャード・アーノット（Richard J. Arnott）とジョセフ・E・スティグリッツ（Joseph E. Stiglitz）は1979年の論文「Aggregate Land Rents, Expenditure on Public Goods, and Optimal City Size」（Quarterly Journal of Economics, Vol.93, No.4, pp.471-500, DOI: 10.2307/1884466）において、同質的個人・自由移住・純粋地方公共財を唯一の集積力とする経済モデルにおいて、一人当たり効用を最大化する最適人口規模では100%の差額地代税が公共財の完全な財源となり、他の課税が不要であることを証明した。' +
+      'この定理は「地方公共財政の黄金律（Golden Rule of Local Public Finance）」とも呼ばれ、フラッタース＝ヘンダーソン＝ミェシュコフスキ（Flatters, Henderson & Mieszkowski, 1974, "Public Goods, Efficiency, and Regional Fiscal Equalization," Journal of Public Economics 3(2): 99-112, DOI: 10.1016/0047-2727(74)90028-0）が独立に導出した結果と関連する。スティグリッツ（1977, "The Theory of Local Public Goods," in The Economics of Public Services, Palgrave Macmillan, pp.274-333）はさらに早期にこの結果を定式化しており、ヘンリー・ジョージが1879年の著書『Progress and Poverty』で提唱した「単一税（Single Tax）」構想——土地価値は個人の努力ではなくコミュニティの活動から生じるため、土地価値税のみで公共サービスを賄えるという主張——を数学的に正当化する結果としてHGTと命名された。アーノット（2004, "Does the Henry George Theorem Provide a Practical Guide to Optimal City Size?" American Journal of Economics and Sociology 63(5): 1057-1090, DOI: 10.1111/j.1536-7150.2004.00334.x）は実践的適用可能性を検討し、ベーレンス＝金本＝村田（2015, Journal of Urban Economics 85: 34-51）はセカンドベスト世界への拡張を行った。',
+    keyFigures: 'Richard J. Arnott & Joseph E. Stiglitz（QJE 93(4), 1979 — HGT の定式化）／Joseph E. Stiglitz（1977, The Theory of Local Public Goods — 早期定式化）／Frank Flatters, Vernon Henderson & Peter Mieszkowski（Journal of Public Economics 3(2), 1974 — 独立導出・黄金律命名）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/93/4/471/1932537', type: 'academic', label: 'Arnott & Stiglitz (1979) Aggregate Land Rents, Expenditure on Public Goods, and Optimal City Size — QJE 93(4), pp.471-500' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1536-7150.2004.00334.x', type: 'academic', label: 'Arnott (2004) Does the Henry George Theorem Provide a Practical Guide to Optimal City Size? — AJES 63(5), pp.1057-1090' },
+    ],
+  },
+  {
+    id: 'human-blindsight',
+    discipline: 'human-science',
+    title: 'ブラインドサイト（Blindsight）',
+    statement:
+      'ブラインドサイト（Blindsight）とは、一次視覚野（V1/有線皮質）の損傷により皮質盲となった視野領域において、主観的視覚経験の報告なしに視覚弁別（検出・定位・方位・運動・色彩・単純形状）がチャンスレベルを超えて遂行される現象である。ローレンス・ワイスクランツ（Lawrence Weiskrantz, 1926-2018）らは1974年の論文「Visual Capacity in the Hemianopic Field Following a Restricted Occipital Ablation」（Brain, Vol.97, No.1, pp.709-728, DOI: 10.1093/brain/97.1.709, PMID: 4434190）において、右後頭葉切除後に左半盲を呈した患者DB（1940年生、1973年手術）を対象とした強制選択課題で、盲視野内での手動定位・サッケード定位・方位弁別・運動検出能力を系統的に実証した。' +
+      'ワイスクランツは1986年の著書『Blindsight: A Case Study and Implications』（Oxford University Press, Oxford Psychology Series No.12, ISBN: 0198521294）でブラインドサイト研究を体系化し、1998年の『Consciousness Lost and Found』（OUP）においてType 1（主観的気づきの完全な不在——古典的ブラインドサイト）とType 2（事象発生の漠然とした「感覚」や「知っている」感が伴う——リドック症候群とも関連）の区別を導入した。残存視覚能力の神経基盤は、網膜から上丘・視床枕核を経て線条体外視覚領域（V2, V4, V5/MT）へ至る皮質下経路——損傷V1をバイパスする——によって媒介されると考えられている。ブラインドサイトは意識の神経相関（NCC）研究において、知覚処理と意識的経験の解離を示す決定的証拠として位置づけられる。',
+    keyFigures: 'Lawrence Weiskrantz（Oxford, 1974/1986/1998 — ブラインドサイト概念の確立・Type 1/2 分類）／Elizabeth K. Warrington, M.D. Sanders & J. Marshall（Brain 97(1), 1974 — 患者DB の原報告共著者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/brain/article-abstract/97/1/709/315495', type: 'academic', label: 'Weiskrantz, Warrington, Sanders & Marshall (1974) Visual Capacity in the Hemianopic Field — Brain 97(1), pp.709-728' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/4434190/', type: 'academic', label: 'PubMed: Weiskrantz et al. (1974) PMID 4434190' },
+    ],
+  },
+  {
+    id: 'bizlaw-anti-suit-injunction',
+    discipline: 'business-law',
+    title: 'アンチスーツ・インジャンクション（Anti-Suit Injunction）',
+    statement:
+      'アンチスーツ・インジャンクション（Anti-Suit Injunction, ASI）とは、当事者に対して対人的（in personam）に発令される裁判所命令であり、外国裁判所における訴訟の提起または継続を差し止めるものである。外国裁判所そのものに向けられるのではなく（主権侵害回避）、発令裁判所の管轄に服する当事者に対して衡平法上の管轄権に基づき発せられる。英国法では、Societe Nationale Industrielle Aerospatiale v Lee Kui Jak [1987] AC 871（枢密院）においてゴフ卿（Lord Goff）が「外国訴訟の追行がvexatious or oppressiveである場合」にASIを認める基準を確立し、Airbus Industrie GIE v Patel [1999] 1 AC 119（貴族院）で英国が当該紛争と「十分な利害または関連性（sufficient interest or connection）」を有することを追加要件とした。' +
+      'EU法域では、Turner v Grovit (Case C-159/02) [2004] ECR I-3565（ECJ大法廷）がブリュッセル条約下でASIは加盟国裁判所間の「相互信頼（mutual trust）」原則と両立しないと判示し、Allianz SpA v West Tankers (Case C-185/07) [2009] ECR I-663で仲裁条項支援ASIにも禁止を拡大した。米国では回路裁判所間で分岐があり、リベラル・アプローチ（第5・第9巡回区——forum policy frustration等4要件）と保守的アプローチ（第1・2・3・6・8・DC巡回区——Laker Airways v Sabena, 731 F.2d 909 (D.C. Cir. 1984)に代表される管轄権脅威・公共政策要件＋国際礼譲の衡量）に二分される。Brexit後、英国はTurner/West Tankers制約から解放され、QBE Europe v Generali [2022] EWHC 2062 (Comm)で初のpost-Brexit対EU ASIが認容、UniCredit v RusChemAlliance [2024] UKSC 30で英国最高裁が外国仲裁地支援ASIの権限を確認した。',
+    keyFigures: 'Lord Goff of Chieveley（Aerospatiale [1987] / Airbus [1999] — ASI の現代的法理確立）／ECJ Grand Chamber（Turner v Grovit [2004] / West Tankers [2009] — EU法域でのASI禁止）／D.C. Circuit（Laker Airways v Sabena, 1984 — 米国保守的アプローチの先例）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://publications.parliament.uk/pa/ld199798/ldjudgmt/jd980402/patel01.htm', type: 'government', label: 'Airbus Industrie GIE v Patel [1999] 1 AC 119 — House of Lords judgment' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX%3A62007CJ0185', type: 'government', label: 'Allianz SpA v West Tankers (Case C-185/07) [2009] ECR I-663 — EUR-Lex' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-entrepreneurship',
+    discipline: 'management',
+    title: '制度的アントレプレナーシップ（Institutional Entrepreneurship）',
+    statement:
+      '制度的アントレプレナーシップ（Institutional Entrepreneurship）とは、組織制度論における概念で、十分な資源を活用して新たな制度を創出するか既存制度を変革するアクターの戦略的行為を指す。ポール・J・ディマジオ（Paul J. DiMaggio）は1988年の論文「Interest and Agency in Institutional Theory」（in L.G. Zucker (Ed.), Institutional Patterns and Organizations: Culture and Environment, Ballinger, pp.3-22）において「十分な資源を持つ組織化されたアクターが、高く評価する利益の実現機会を新たな制度に見出すとき、新制度が出現する」（p.14）と述べ、新制度派組織論にエージェンシー・利害・権力を再導入した。' +
+      'バティラーナ＝レカ＝ボクセンバウム（Julie Battilana, Bernard Leca & Eva Boxenbaum, 2009, "How Actors Change Institutions: Towards a Theory of Institutional Entrepreneurship," Academy of Management Annals, Vol.3, No.1, pp.65-107, DOI: 10.5465/19416520903053598）は制度的アントレプレナーシップの包括的理論化を行い、制度変革の条件（フィールドレベル要因＋アクターの社会的位置）・実践プロセス（ビジョン構築・動員・制度化）を統合的に整理した（2019年Academy of Management Annals Decade Award受賞）。この概念には「埋め込まれたエージェンシーのパラドックス（Paradox of Embedded Agency）」——制度がアクターの認知と行為を条件づけるなら、いかにしてアクターが制度変革を構想・遂行しうるか——が内在し、ソ＝クリード（Seo & Creed, 2002, "Institutional Contradictions, Praxis, and Institutional Change," Academy of Management Review, 27(2): 222-247, DOI: 10.5465/amr.2002.6588004）は制度的矛盾が反省的プラクシスの条件を生成するという弁証法的枠組みで応答した。',
+    keyFigures: 'Paul J. DiMaggio（1988, Institutional Patterns and Organizations — 制度的アントレプレナーシップ概念の起源）／Julie Battilana, Bernard Leca & Eva Boxenbaum（Academy of Management Annals 3(1), 2009 — 包括的理論化）／Myeong-Gu Seo & W.E. Douglas Creed（AMR 27(2), 2002 — 埋め込まれたエージェンシーのパラドックスへの弁証法的応答）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/19416520903053598', type: 'academic', label: 'Battilana, Leca & Boxenbaum (2009) How Actors Change Institutions — Academy of Management Annals 3(1), pp.65-107' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2002.6588004', type: 'academic', label: 'Seo & Creed (2002) Institutional Contradictions, Praxis, and Institutional Change — AMR 27(2), pp.222-247' },
+    ],
+  },
+  {
+    id: 'mgmt-paradox-of-embeddedness',
+    discipline: 'management',
+    title: '埋め込みのパラドックス（Paradox of Embeddedness）',
+    statement:
+      '埋め込みのパラドックス（Paradox of Embeddedness）とは、経済社会学・組織論における概念で、社会的埋め込み（embeddedness）と組織パフォーマンスの間に逆U字型の関係が存在し、競争優位をもたらすまさにそのメカニズムが閾値を超えると負債に転化することを指す。ブライアン・ウッツィ（Brian Uzzi）は1997年の論文「Social Structure and Competition in Interfirm Networks: The Paradox of Embeddedness」（Administrative Science Quarterly, Vol.42, No.1, pp.35-67, DOI: 10.2307/2393808）において、ニューヨーク市婦人服アパレル産業23社のエスノグラフィック調査に基づき、埋め込み型交換関係が信頼（trust）・精緻な情報移転（fine-grained information transfer）・共同問題解決（joint problem-solving）という3つのメカニズムを通じて便益を生む一方、過度の埋め込み（over-embeddedness）は外生的ショックへの脆弱性・ネットワーク外情報からの隔絶・適応性の制約をもたらすことを実証した。' +
+      'ウッツィの研究はグラノヴェッター（Mark Granovetter, 1985, "Economic Action and Social Structure: The Problem of Embeddedness," American Journal of Sociology, 91(3): 481-510, DOI: 10.1086/228311）が確立した埋め込み概念——経済行為は社会関係の構造に埋め込まれており、原子化された過少社会化モデルでは捕捉できない——を経験的に拡張し、埋め込みの便益と限界の双方を統合的に示した。最適パフォーマンスは埋め込み型紐帯（embedded ties）とアームズレングス型紐帯（arm\'s-length ties）のバランスのとれた統合から生じ、ネットワーク構造の単一メカニズムへの過度の依存は適応的失敗を招く。この逆U字型仮説は組織間ネットワーク・サプライチェーン・アライアンス研究において広く検証されている。',
+    keyFigures: 'Brian Uzzi（Administrative Science Quarterly 42(1), 1997 — 埋め込みのパラドックス概念の提唱）／Mark Granovetter（American Journal of Sociology 91(3), 1985 — 埋め込み概念の確立）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2393808', type: 'academic', label: 'Uzzi (1997) Social Structure and Competition in Interfirm Networks: The Paradox of Embeddedness — ASQ 42(1), pp.35-67' },
+      { url: 'https://www.scholars.northwestern.edu/en/publications/social-structure-and-competition-in-interfirm-networks-the-parado-2', type: 'academic', label: 'Northwestern Scholars: Uzzi (1997) — publication record' },
+    ],
+  },
+  {
+    id: 'infosoc-participatory-design',
+    discipline: 'information-sociology',
+    title: '参加型デザイン（Participatory Design）',
+    statement:
+      '参加型デザイン（Participatory Design, PD）とは、情報システム・HCI研究におけるデザインアプローチで、エンドユーザー——特に労働者——を単なる情報提供者やテスト被験者ではなく、デザインプロセスにおける完全な参加者（full participants）として積極的に巻き込み、彼らが成果に影響を与え現実のニーズに対応することを可能にする協働的設計手法である。PDは1970年代スカンディナヴィアの職場民主主義運動に起源を持ち、労働組合がトップダウン自動化に対抗して労働者の技能強化型ツール開発を推進した。UTOPIAプロジェクト（1981-1985、北欧グラフィック労働者組合とスウェーデン・デンマークの研究者の協働）はその代表例であり、ペレ・エーン（Pelle Ehn, 1988, Work-Oriented Design of Computer Artifacts, Arbetslivscentrum, Stockholm, ISBN: 91-86158-45-7）は「ツール視点（tool perspective）」——新しいコンピュータ・ツールは職業的実践理解の拡張として設計されるべき——を理論化した。' +
+      'ダグラス・シューラー＝アキ・ナミオカ（Douglas Schuler & Aki Namioka (Eds.), 1993, Participatory Design: Principles and Practices, Lawrence Erlbaum Associates, Hillsdale, NJ, ISBN: 0-8058-0951-1, 334pp.）はPDの原則と実践を体系的に整理した主要テキストである。マラー＝クーン（Michael J. Muller & Sarah Kuhn, 1993, "Participatory Design," Communications of the ACM, 36(6): 24-28, DOI: 10.1145/153571.255960）はPDC\'92（Participatory Design Conference 1992）採択論文の特集号を編集し、PDの学術コミュニティ形成に貢献した。PDCは1990年にComputer Professionals for Social Responsibility (CPSR)により創設され、以降隔年開催で欧州参加型アプローチと米国HCI研究の架橋を果たしている。PDは技術決定論への批判、労働者の民主的権利の認識、デザイン知識の多元性の承認を基盤とする。',
+    keyFigures: 'Pelle Ehn（1988, Work-Oriented Design of Computer Artifacts — ツール視点とUTOPIAプロジェクト）／Douglas Schuler & Aki Namioka（1993, Participatory Design: Principles and Practices — 体系的テキスト）／Michael J. Muller & Sarah Kuhn（CACM 36(6), 1993 — PDC特集号編集）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/153571.255960', type: 'academic', label: 'Muller & Kuhn (1993) Participatory Design — Communications of the ACM 36(6), pp.24-28' },
+      { url: 'https://www.routledge.com/Participatory-Design-Principles-and-Practices/Schuler-Namioka/p/book/9780805809510', type: 'academic', label: 'Schuler & Namioka (1993) Participatory Design: Principles and Practices — Routledge (orig. Lawrence Erlbaum)' },
+    ],
+  },
 ];
 // Stryker restore all
