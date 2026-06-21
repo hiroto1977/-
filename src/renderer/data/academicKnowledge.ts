@@ -21523,5 +21523,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://unesdoc.unesco.org/ark:/48223/pf0000232555', type: 'government', label: 'UNESCO "Rethinking Education: Towards a Global Common Good?"（非形式・自律的学習をめぐる国際政策論。イリイチの学習観の系譜）' },
     ],
   },
+  {
+    id: 'bizlaw-property-liability-rules',
+    discipline: 'business-law',
+    title: '財産ルール・責任ルール・譲渡不能性（カラブレシ＝メラメッドの大聖堂）',
+    statement:
+      'グイド・カラブレシとダグラス・メラメッドが1972年の論文「Property Rules, Liability Rules, and Inalienability: One View of the Cathedral」（Harvard Law Review, Vol. 85, 1089頁）で提示した法と経済学の基礎的枠組み。法的権利（エンタイトルメント）の保護様式を三類型に分類する：①財産ルール（property rule）は権利者の同意なき移転を禁じ、差止命令（injunction）で保護する。②責任ルール（liability rule）は客観的に定められた補償を支払えば第三者が権利を取得できるとし、損害賠償で保護する。' +
+      '③譲渡不能性（inalienability）は当事者間合意によっても移転・放棄を認めない。どの保護様式を選択すべきかは、取引費用（交渉コスト）・情報の非対称性・外部効果の性質に依存する。取引費用が低い場合は財産ルールが効率的だが、取引費用が高い場合は責任ルールが望ましい（コース定理との関係）。知的財産・不法行為・環境規制・特許ライセンスなど広範な法分野に応用され、法と経済学の中核的分析ツールとなっている。批判として、交渉結果の分配的帰結が考慮されないとの指摘がある。',
+    keyFigures: 'グイド・カラブレシ（Guido Calabresi、1932–、イェール大学法科大学院教授・同学部長・第2巡回区控訴裁判所判事）／ダグラス・メラメッド（A. Douglas Melamed）／初出：Calabresi & Melamed (1972) "Property Rules, Liability Rules, and Inalienability: One View of the Cathedral," Harvard Law Review, Vol. 85, No. 6, pp. 1089–1128',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.stanford.edu/publications/property-rules-liability-rules-and-inalienability-one-view-of-the-cathedral/', type: 'academic', label: 'Stanford Law School — Property Rules, Liability Rules and Inalienability: One View of the Cathedral（Calabresi & Melamed 1972）' },
+      { url: 'https://laweconcenter.org/resources/property-rules-liability-rules-and-inalienability-one-view-of-the-cathedral-by-guido-calabresi-a-douglas-melamed/', type: 'academic', label: 'International Center for Law & Economics — Property Rules, Liability Rules, and Inalienability（解説）' },
+    ],
+  },
+  {
+    id: 'econ-nominal-gdp-targeting',
+    discipline: 'economics',
+    title: '名目GDP目標（マーケット・マネタリズム）',
+    statement:
+      '名目GDP目標（Nominal GDP Targeting / NGDPT）とは、中央銀行がインフレ率や失業率ではなく名目GDP（実質GDP成長率＋インフレ率の合計）の水準または成長率を政策目標とする金融政策ルールである。スコット・サムナーが2009年のブログ「The Money Illusion」で精力的に論じて注目を集め、その後2012年のMercatus研究所論文「The Case for Nominal GDP Targeting」で体系化した。サムナーはリーマン・ショック後の大不況の主因を「連邦準備が名目GDPの急落を容認したこと」に求め、水準目標（level targeting）による対応を主張した。' +
+      '名目GDP目標の核心は、不況期には実質成長で補うため許容インフレが高まり、好況期には逆になるため、純粋なインフレ目標よりも需要の安定化と供給ショックへの対応において柔軟性を持つ点にある。主な支持者にはクリスティーナ・ローマー、マイケル・ウッドフォード、ベン・バーナンキらが含まれる。批判としては、名目GDPのリアルタイム測定の困難・統計改訂の遅れ・公衆への説明責任の難しさが挙げられる。サムナーはこの立場を「マーケット・マネタリズム」と総称し、2021年の著書『The Money Illusion』（シカゴ大学出版）で包括的に論じている。',
+    keyFigures: 'スコット・サムナー（Scott B. Sumner、1955–、ベントレー大学名誉教授・ジョージ・メイソン大学マーキュータス・センター教授）／ブログ「The Money Illusion」2009年2月開設／主著: Sumner (2012) "The Case for Nominal GDP Targeting," Mercatus Research; Sumner (2021) The Money Illusion, University of Chicago Press',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mercatus.org/research/research-papers/case-nominal-gdp-targeting', type: 'academic', label: 'Mercatus Center — The Case for Nominal GDP Targeting（Scott Sumner、2012）' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/M/bo85902197.html', type: 'academic', label: 'University of Chicago Press — The Money Illusion: Market Monetarism, the Great Recession, and the Future of Monetary Policy（Sumner、2021）' },
+    ],
+  },
+  {
+    id: 'infosoc-information-fiduciary',
+    discipline: 'information-sociology',
+    title: '情報受託義務者（インフォメーション・フィデューシャリー）',
+    statement:
+      '「情報受託義務者（information fiduciary）」とはイェール大学法科大学院のジャック・バルキンが2016年の論文「Information Fiduciaries and the First Amendment」（UC Davis Law Review, Vol. 49, No. 4, pp. 1183–1234）で提唱した概念で、Google・Facebook等の大規模デジタルプラットフォーム企業を、利用者に対して医師・弁護士・会計士と同等の法的義務—ケアの義務（duty of care）・秘密保持義務（duty of confidentiality）・忠実義務（duty of loyalty）—を負う「信認的受託者」として位置づけることを論じる。' +
+      'プラットフォームはユーザーの膨大な個人データを取得・解析・商用利用する一方、ユーザーはその仕組みを知らず搾取されやすい情報非対称の関係にある。バルキンはこの非対称を従来の受託者関係（信頼を寄せる者がより脆弱）と同型とみなす。忠実義務は自己取引・利益相反・感情的依存の搾取を禁じ、ケアの義務はシステムが実際に行う機能に応じた能力水準を要求する。ジョナサン・ジットレインも類似の論を展開し、EU DSA（デジタルサービス法）等の規制アーキテクチャに影響を与えているが、「現行の受託者法の厳格な適用は困難」との批判的見解も有力である。',
+    keyFigures: 'ジャック・バルキン（Jack M. Balkin、イェール大学法科大学院ナイト憲法・表現の自由学教授）／初出: Balkin (2016) "Information Fiduciaries and the First Amendment," UC Davis Law Review, Vol. 49, No. 4, pp. 1183–1234／共鳴: ジョナサン・ジットレイン（Jonathan Zittrain、2018）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://lawreview.law.ucdavis.edu/archives/49/4/information-fiduciaries-and-first-amendment', type: 'academic', label: 'UC Davis Law Review — Information Fiduciaries and the First Amendment（Balkin、2016、Vol. 49, No. 4）' },
+      { url: 'https://harvardlawreview.org/print/vol-133/a-skeptical-view-of-information-fiduciaries/', type: 'academic', label: 'Harvard Law Review — A Skeptical View of Information Fiduciaries（批判的検討、Vol. 133）' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-envelopment',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）',
+    statement:
+      'プラットフォーム・エンベロープメント（platform envelopment）とは、あるプラットフォーム市場のプロバイダーが隣接する別のプラットフォーム市場へ参入し、自社機能と標的プラットフォームの機能を束ねた「マルチプラットフォーム・バンドル」を提供することで、既存プレイヤーのユーザーへのアクセスを遮断して市場シェアを奪取する競争戦略である。トーマス・アイゼンマン（ハーバード・ビジネス・スクール）、ジェフリー・パーカー（ダートマス大学）、マーシャル・ヴァン・アルスタイン（ボストン大学）の共著論文（Strategic Management Journal, 2011）で体系化された。' +
+      'エンベロープメントの特徴は、シュンペーター的イノベーションに依存せず、既存ネットワーク効果を「武器として転用」する点にある。攻撃類型は①補完的プラットフォーム（機能的に補完し合うペア）、②弱い代替プラットフォーム（部分的に重複）、③機能的に無関係なプラットフォームへの参入に分類される。侵食される側は、かつてのネットワーク効果が自社を守る「堀」にならず、攻撃者の参入後に集客力を失う。実例として、Microsoftのメディアプレイヤー・ブラウザ同梱、AppleのiPhoneへのPodcast統合、GoogleのAndroidによるナビゲーション統合などが挙げられる。規制上はバンドリングの反競争性の評価が争点となる。',
+    keyFigures: 'トーマス・アイゼンマン（Thomas Eisenmann、ハーバード・ビジネス・スクール）、ジェフリー・パーカー（Geoffrey Parker、ダートマス大学）、マーシャル・ヴァン・アルスタイン（Marshall W. Van Alstyne、ボストン大学）／初出: Eisenmann, Parker & Van Alstyne (2011) "Platform Envelopment," Strategic Management Journal, Vol. 32, pp. 1270–1285',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.935', type: 'academic', label: 'Strategic Management Journal — Platform Envelopment（Eisenmann, Parker & Van Alstyne、2011、Vol. 32、pp. 1270–1285）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=38631', type: 'academic', label: 'Harvard Business School Faculty Research — Platform Envelopment（Thomas Eisenmann）' },
+    ],
+  },
+  {
+    id: 'bizlaw-regulatory-sandbox',
+    discipline: 'business-law',
+    title: '規制サンドボックス（フィンテック・イノベーション実証制度）',
+    statement:
+      '規制サンドボックス（regulatory sandbox）とは、新技術・新サービスを有する企業が、通常の規制の全面的な適用を一時的に免除または緩和された「安全な実験空間」において事業を試験的に実施できる制度的枠組みである。世界初の規制サンドボックスは英国金融行動監視機構（FCA）が「Project Innovate」の一環として2015年に構想し、2016年11月に第1コホートを受け入れて正式に運用を開始した。' +
+      'FCAの定義では、サンドボックスは「通常の規制上の結果を直ちに招くことなく、革新的な製品・サービス・ビジネスモデル・提供手段をテストできる空間」とされる。イノベーションの促進と消費者保護・金融安定の確保のバランスを目的とする。BIS研究（Working Paper No. 901）はサンドボックス参加企業が参加後に資金調達額を約15%増加させ、資金調達確率が50%上昇したことを実証した。その後世界60か国以上に波及し、日本でも2018年の生産性向上特別措置法を端緒として「新技術等実証制度」が導入された。法的確実性の欠如や大企業優遇との批判もある。',
+    keyFigures: '英国金融行動監視機構（FCA）／概念の起源: FCA Project Innovate（2014年）→サンドボックス（2016年第1コホート）／実証研究: Cornelli et al. (2020) BIS Working Paper No. 901 "Regulatory Sandboxes and Fintech Funding"',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fca.org.uk/firms/innovation/regulatory-sandbox', type: 'government', label: 'Financial Conduct Authority（FCA）— Regulatory Sandbox（公式ページ）' },
+      { url: 'https://www.bis.org/publ/work901.pdf', type: 'academic', label: 'BIS Working Paper No. 901 — Regulatory Sandboxes and Fintech Funding（Cornelli et al.、2020）' },
+    ],
+  },
+  {
+    id: 'econ-entrepreneurial-state',
+    discipline: 'economics',
+    title: '起業家国家（マッツカートの公共イノベーション論）',
+    statement:
+      '「起業家国家（The Entrepreneurial State）」とは、マリアナ・マッツカート（ユニバーシティ・カレッジ・ロンドン〈UCL〉イノベーション・公共目的研究所〈IIPP〉所長）が2013年に同名の著書（Anthem Press）で提唱した概念で、政府を「市場の失敗を事後的に修正するだけの受動的存在」ではなく、リスクの高い初期段階の研究開発に先行投資し、民間が商業化できないフロンティアを切り拓く「能動的なイノベーターかつリスクテイカー」として再定義する。' +
+      'マッツカートはインターネット・GPS・タッチスクリーン・SIRI等のiPhone中核技術がいずれも米国政府（DARPA・NIH等）の公的資金によって開発されたことを実証し、「民間ベンチャーが革新し、国家は規制する」という通念を覆す。「市場の失敗を修正（market fixing）」から「市場を創造（market creating）」へという政府の役割転換を論じ、公的投資のリターン（リスク・リワードの社会化）の設計を主張する。批判としては、政府の「選択眼」（pick winners）の正当性・失敗の隠蔽・民間インセンティブの軽視が挙げられる。2021年の著書『Mission Economy』ではこれをさらに発展させ「使命指向型」政策へと展開した。',
+    keyFigures: 'マリアナ・マッツカート（Mariana Mazzucato、1968–、UCL IIPP所長・経済学教授）／主著: Mazzucato (2013) The Entrepreneurial State: Debunking Public vs. Private Sector Myths, Anthem Press; 邦訳『企業家としての国家』（2015年）／続著: Mazzucato (2021) Mission Economy, Allen Lane',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ucl.ac.uk/bartlett/public-purpose/people/institute-director-mariana-mazzucato', type: 'academic', label: 'UCL Institute for Innovation & Public Purpose — Mariana Mazzucato（著者・機関プロフィール）' },
+      { url: 'https://www.ineteconomics.org/uploads/papers/Mazzucato-Value-Creation-and-the-Entrepreneurial-State-INET-version.pdf', type: 'academic', label: 'Institute for New Economic Thinking — Value Creation and the Entrepreneurial State（Mazzucato）' },
+    ],
+  },
 ];
 // Stryker restore all
