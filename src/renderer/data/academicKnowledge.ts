@@ -22531,5 +22531,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1080/19416520802211644', type: 'academic', label: 'Orlikowski & Scott (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — AMA Annals 2(1), pp.433-474' },
     ],
   },
+  {
+    id: 'econ-lerner-symmetry',
+    discipline: 'economics',
+    title: 'ラーナー対称性定理（Lerner Symmetry Theorem）',
+    statement:
+      'ラーナー対称性定理（Lerner symmetry theorem）とは、ロシア帝国ベッサラビア出身の英国経済学者アバ・P・ラーナー（Abba P. Lerner, 1903-1982）が1936年の論文「The Symmetry between Import and Export Taxes」（Economica, New Series, Vol.3, No.11, pp.306-313）において証明した国際貿易理論の基本定理であり、従価関税（ad valorem tariff）による輸入課税と同率の輸出課税が、相対価格・資源配分・実質所得分配・経済厚生において同一の効果を持つことを一般均衡論的に示したものである。ラーナーの証明は以下の論理に基づく。二財・二国の競争的一般均衡モデルにおいて、輸入関税は輸入財の国内相対価格を引き上げるが、ワルラス法則（Walras\' law）により貿易収支は均衡しなければならず、輸入財の相対価格上昇は自動的に輸出財の相対価格低下を意味する。これは輸出税が輸出財の国内相対価格を引き下げるのと同一の相対価格変化であるため、両政策は実質的に等価となる。重要な点は、国際貿易において意味を持つのは絶対価格ではなく相対価格のみであり、超過需要関数の零次同次性（homogeneity of degree zero）により、輸入側と輸出側のどちらに課税しても相対価格への効果は対称的になることである。' +
+      'ラーナー対称性定理の成立には、(1) 貿易収支の均衡（balanced trade）、(2) 完全競争市場、(3) 関税収入の一括還付（lump-sum redistribution）、(4) 二財モデル（または同等の純粋交換経済）、(5) 非貿易財の不在、という厳格な前提条件が必要である。ロナルド・I・マッキノン（Ronald I. McKinnon, 1935-2014, スタンフォード大学）は1966年の論文「Intermediate Products and Differential Tariffs: A Generalization of Lerner\'s Symmetry Theorem」（Quarterly Journal of Economics, Vol.80, No.4, pp.584-615）において、中間財が存在する多財モデルへの一般化を行い、全ての輸入財に均一関税を課す場合にのみ対称性が維持されることを示した。W・マックス・コーデン（W. Max Corden, 1927-2018, オーストラリア国立大学・オックスフォード大学）は『Trade Policy and Economic Welfare』（1974, 第2版1997, Oxford University Press）において、貿易不均衡・資本移動・非貿易財の存在下での対称性の崩壊を体系的に分析した。現代の政策的文脈では、ラーナー対称性定理はWTOの関税交渉における輸入関税と輸出補助金の等価性の理論的根拠として、また仕向地主義付加価値税（destination-based VAT）の国境調整が貿易中立的であることの理論的基盤として参照される。',
+    keyFigures: 'Abba P. Lerner（Economica, New Series, 3(11), 1936, 原証明）／Ronald I. McKinnon（QJE 80(4), 1966, 中間財への一般化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Lerner_symmetry_theorem', type: 'reference', label: 'Lerner symmetry theorem — Wikipedia（定理の概要・前提条件・政策的含意）' },
+      { url: 'https://doi.org/10.2307/1884325', type: 'academic', label: 'McKinnon (1966) Intermediate Products and Differential Tariffs: A Generalization of Lerner\'s Symmetry Theorem — QJE 80(4), pp.584-615' },
+    ],
+  },
+  {
+    id: 'human-anosognosia',
+    discipline: 'human-science',
+    title: '病態失認（アノソグノシア / Anosognosia）',
+    statement:
+      '病態失認（アノソグノシア、anosognosia）とは、自己の神経学的障害や疾病の存在を認識する能力が損なわれた状態を指す神経心理学的症候であり、心理的防衛機制としての否認（denial）とは異なり、脳の器質的損傷に起因する自己モニタリング機能の障害である。フランス系ポーランド人の神経学者ジョゼフ・バビンスキー（Joseph Babinski, 1857-1932）が1914年6月11日のパリ神経学会（Société de Neurologie de Paris）における発表を経て、同年『Revue Neurologique』誌（Vol.27, pp.845-848）に発表した論文「Contribution à l\'Étude des Troubles Mentaux dans l\'Hémiplégie Organique Cérébrale (Anosognosie)」において、右大脳半球の脳卒中による左片麻痺を呈しながら自己の麻痺を全く認識しない2名の患者を記述し、ギリシャ語のa-（無）+ nosos（病）+ gnosis（認識）から「anosognosie」の造語を行った。バビンスキーはこの論文の結論部で、病態失認が右半球病変に特異的である可能性を推測しており、この仮説はその後の研究で広く支持されている。' +
+      'V・S・ラマチャンドラン（V. S. Ramachandran, 1951-, カリフォルニア大学サンディエゴ校）はRogers-Ramachandranとの共著論文「Denial of disabilities in anosognosia」（Nature, Vol.382, 1996, p.501, DOI: 10.1038/382501a0）および1995年の「Anosognosia in parietal lobe syndrome」（Consciousness and Cognition, Vol.4, No.1, pp.22-51）において、冷水前庭カロリック刺激（caloric vestibular stimulation）による病態失認の一時的寛解実験、両手課題選択実験、仮想現実箱実験を報告し、大脳半球機能分化モデルを提唱した。このモデルでは、左半球が一貫した行動計画を維持し矛盾を合理化・平滑化する「物語作成者」として機能する一方、右半球が不整合を検出し信念の更新を強制する「悪魔の代弁者」（devil\'s advocate）として機能し、右半球損傷でこの監視機能が失われると左半球の否認戦略が制御不能となり病態失認が生じると説明した。Orfei et al. (2007)「Anosognosia for hemiplegia after stroke is a multifaceted phenomenon」（Brain, Vol.130, No.12, pp.3075-3090, DOI: 10.1093/brain/awm106）は系統的レビューにより、脳卒中後の病態失認の発生率が評価方法・時期により7-77%と大きく変動すること、右頭頂葉・島皮質・前帯状皮質・側頭頭頂接合部の損傷またはネットワーク断絶が関与することを示した。臨床的には脳卒中のほかアルツハイマー病（有病率23-75%）・統合失調症（推定50-98%）で重要であり、服薬拒否・治療遅延・介護者負担増大の主要因となる。',
+    keyFigures: 'Joseph Babinski（Revue Neurologique 27, 1914, 造語・原記載）／V. S. Ramachandran & D. Rogers-Ramachandran（Nature 382, 1996, 大脳半球モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1093/brain/awm106', type: 'academic', label: 'Orfei et al. (2007) Anosognosia for hemiplegia after stroke — systematic review, Brain 130(12), pp.3075-3090' },
+      { url: 'https://doi.org/10.1038/382501a0', type: 'academic', label: 'Ramachandran & Rogers-Ramachandran (1996) Denial of disabilities in anosognosia — Nature 382, p.501' },
+    ],
+  },
+  {
+    id: 'bizlaw-tortious-interference',
+    discipline: 'business-law',
+    title: '契約関係への不法干渉（Tortious Interference with Contract）',
+    statement:
+      '契約関係への不法干渉（tortious interference with contractual relations / intentional interference with contract）とは、第三者が既存の契約関係に意図的に介入し、一方当事者に契約違反を誘発することによって他方当事者に損害を与える不法行為（tort）であり、コモン・ロー法体系における経済的不法行為（economic torts）の中核的類型である。この不法行為の起源は、英国の先例的判決 Lumley v Gye [1853] 2 El & Bl 216, 118 ER 749（女王座裁判所）に遡る。本件では、オペラ興行主ベンジャミン・ラムリー（Benjamin Lumley）がハー・マジェスティーズ劇場でのオペラ公演のためにソプラノ歌手ジョアンナ・ワーグナー（Johanna Wagner）と独占出演契約を締結していたところ、競合する興行主フレデリック・ガイ（Frederick Gye）がワーグナーを説得して契約を破棄させ自身のコヴェント・ガーデン王立歌劇場での公演に出演させた。裁判所はクロンプトン判事（Crompton J.）の主導により、従来の主従関係（master-servant relationship）に限定されていた使用人引き抜きの不法行為法理を一般的な契約関係に拡張し、第三者が契約の存在を知りながら意図的に契約違反を誘発した場合に不法行為責任が成立するとの原則を確立した。' +
+      '米国法においては、米国法律協会（American Law Institute）の『第二次不法行為法リステイトメント』（Restatement (Second) of Torts, 1979）が契約関係への意図的干渉の法理を§766（既存契約への干渉）、§766A（契約履行への干渉）、§766B（将来の事業関係への干渉）の三類型に体系化した。§766の成立要件は、(1) 有効な契約関係の存在、(2) 被告の契約の認識（knowledge）、(3) 契約違反を誘発する意図的行為（intentional inducement）、(4) 実際の契約違反の発生、(5) 原告の損害である。重要な抗弁として正当化特権（justification / privilege）が認められ、競争特権（competition privilege）・助言特権（advisor\'s privilege）・自己利益の保護が含まれる。Texaco, Inc. v. Pennzoil Co., 729 S.W.2d 768 (Tex. App. 1987) では、テキサコがペンゾイルとゲティ・オイルの合併合意に干渉したとして約105億ドルの損害賠償（うち懲罰的損害賠償30億ドル）が認容され、契約干渉の不法行為における史上最大の賠償額を記録した。英国法では2014年のOBG Ltd v Allan [2007] UKHL 21において貴族院が本法理を再整理し、契約違反の誘発（inducing breach of contract）と不法手段による干渉（causing loss by unlawful means）を明確に区別した。',
+    keyFigures: 'Crompton J.（Lumley v Gye [1853] 2 El & Bl 216, 原理確立）／American Law Institute（Restatement (Second) of Torts §766-766B, 1979, 体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Tortious_interference', type: 'reference', label: 'Tortious interference — Wikipedia（Lumley v Gye・Restatement §766・要件と抗弁の包括的解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Lumley_v_Gye', type: 'reference', label: 'Lumley v Gye [1853] — Wikipedia（契約干渉の不法行為法理の起源判決）' },
+    ],
+  },
+  {
+    id: 'mgmt-dominant-logic',
+    discipline: 'management',
+    title: 'ドミナント・ロジック（Dominant Logic）',
+    statement:
+      'ドミナント・ロジック（dominant logic / dominant general management logic）とは、インド出身の経営学者C・K・プラハラード（C. K. Prahalad, 1941-2010, ミシガン大学ロス経営大学院）とリチャード・A・ベティス（Richard A. Bettis, ノースカロライナ大学キーナン＝フラグラー経営大学院）が1986年の論文「The Dominant Logic: A New Linkage Between Diversity and Performance」（Strategic Management Journal, Vol.7, No.6, pp.485-501, DOI: 10.1002/smj.4250070602）において提唱した概念であり、トップマネジメント・チームが事業環境を概念化し重要な資源配分決定を行う際の支配的な認知枠組み（cognitive map / mental model）を指す。プラハラードとベティスは、多角化企業のパフォーマンスが事業ポートフォリオの「戦略的多様性」（strategic variety）ではなく、経営者が多様な事業を統括するために用いる認知的スキーマの適合性によって規定されるという命題を提示した。具体的には、トップマネジメントは過去の成功体験から形成されたドミナント・ロジックを通じて環境情報をフィルタリングし、注意配分（attention allocation）・情報処理・意思決定を行うため、中核事業と「支配的論理」が適合する関連多角化は高業績をもたらすが、異なるロジックを要求する非関連多角化では認知的不適合が生じ業績が低下する。' +
+      'ベティスとプラハラードは1995年の論文「The Dominant Logic: Retrospective and Extension」（Strategic Management Journal, Vol.16, No.1, pp.5-14, DOI: 10.1002/smj.4250160104）において、ドミナント・ロジックの概念を回顧的に再検討し、情報フィルター・スキーマ・認知バイアスの観点から理論的精緻化を行った。彼らはドミナント・ロジックを「組織内で情報がフィルタリングされ、戦略的に関連する情報のみが抽出される情報漏斗（information funnel）」として再定式化し、組織学習（organizational learning）との接点を強調した。この概念はハーバート・サイモン（Herbert Simon）の限定合理性（bounded rationality）、認知科学におけるスキーマ理論、カーネマン（Kahneman）の注意の二重過程理論と理論的に接続し、戦略的認知（strategic cognition / managerial cognition）研究の基盤的概念として定着している。なお、ヴァーゴ＝ラッシュ（Vargo & Lusch, 2004）のサービス・ドミナント・ロジック（service-dominant logic）はマーケティング・パラダイムに関する全く異なる概念であり、本概念とは無関係である。',
+    keyFigures: 'C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Prahalad（SMJ 16(1), 1995, 回顧と拡張）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/smj.4250070602', type: 'academic', label: 'Prahalad & Bettis (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — SMJ 7(6), pp.485-501' },
+      { url: 'https://doi.org/10.1002/smj.4250160104', type: 'academic', label: 'Bettis & Prahalad (1995) The Dominant Logic: Retrospective and Extension — SMJ 16(1), pp.5-14' },
+    ],
+  },
+  {
+    id: 'mgmt-sensegiving',
+    discipline: 'management',
+    title: 'センスギビング（Sensegiving）',
+    statement:
+      'センスギビング（sensegiving）とは、組織のリーダーやステークホルダーが、他者のセンスメイキング（意味形成）過程に影響を与え、組織的現実の望ましい再定義に向けて意味の方向づけを試みるコミュニケーション的プロセスを指す概念であり、米国の経営学者デニス・A・ジオイア（Dennis A. Gioia, ペンシルベニア州立大学スミール経営大学院）とクマール・チッティペディ（Kumar Chittipeddi）が1991年の論文「Sensemaking and Sensegiving in Strategic Change Initiation」（Strategic Management Journal, Vol.12, No.6, pp.433-448, DOI: 10.1002/smj.4250120604）において提唱した。ジオイアとチッティペディは、ある大規模公立大学における新学長就任後の戦略的変革開始過程を12か月間にわたる参与観察と半構造化インタビューによって研究し、戦略的変革がCEO（学長）による「センスメイキング」（環境と組織の現状を理解し認知的枠組みを構築する過程）と「センスギビング」（構築した意味枠組みをステークホルダーに伝達し、彼らの意味形成に影響を与える過程）の二つの相互連関的プロセスの反復的循環として展開されることを発見した。' +
+      'この論文の理論的意義は、カール・E・ワイク（Karl E. Weick）が1979年の『The Social Psychology of Organizing』および1995年の『Sensemaking in Organizations』で確立したセンスメイキング概念を補完する能動的・方向づけ的過程としてセンスギビングを概念化し、戦略的変革研究における認知的・解釈的アプローチの基盤を提供した点にある。サリー・メイトリス（Sally Maitlis, ブリティッシュコロンビア大学）とトーマス・B・ローレンス（Thomas B. Lawrence, オックスフォード大学サイード経営大学院）は2007年の論文「Triggers and Enablers of Sensegiving in Organizations」（Academy of Management Journal, Vol.50, No.1, pp.57-84, DOI: 10.5465/amj.2007.24160971）において、英国の3つのオーケストラ組織における縦断的比較事例研究を通じて、センスギビングの発動条件（triggers）と促進条件（enablers）を体系化した。メイトリスとローレンスは、リーダーのセンスギビングが生起するには (1) 解釈の不確実性または既存の意味枠組みへの脅威というトリガーと、(2) 予測能力（expertise）・正統性（legitimacy）・組織的プロセスへのアクセスというイネーブラーが必要であることを示し、センスギビングが組織内の政治的プロセスと不可分であることを明らかにした。',
+    keyFigures: 'Dennis A. Gioia & Kumar Chittipeddi（SMJ 12(6), 1991, 概念提唱）／Sally Maitlis & Thomas B. Lawrence（AMJ 50(1), 2007, トリガーとイネーブラー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia & Chittipeddi (1991) Sensemaking and Sensegiving in Strategic Change Initiation — SMJ 12(6), pp.433-448' },
+      { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis & Lawrence (2007) Triggers and Enablers of Sensegiving in Organizations — AMJ 50(1), pp.57-84' },
+    ],
+  },
+  {
+    id: 'infosoc-data-feminism',
+    discipline: 'information-sociology',
+    title: 'データフェミニズム（Data Feminism）',
+    statement:
+      'データフェミニズム（data feminism）とは、米国の情報学者キャサリン・ディグナツィオ（Catherine D\'Ignazio, マサチューセッツ工科大学都市研究計画学科）とローレン・F・クライン（Lauren F. Klein, エモリー大学デジタル人文学研究所）が2020年の著書『Data Feminism』（MIT Press, ISBN: 978-0-262-04400-4, Creative Commonsライセンスによるオープンアクセス公開）において体系化した、交差的フェミニズム（intersectional feminism）の原理をデータサイエンスの全過程に適用し、データの収集・分析・可視化・コミュニケーションに内在する権力構造を批判的に検討する理論的・実践的枠組みである。ディグナツィオとクラインは、キンバリー・クレンショー（Kimberlé Crenshaw, 1989）の交差性理論（intersectionality）、パトリシア・ヒル・コリンズ（Patricia Hill Collins）の支配のマトリクス（matrix of domination）、サンドラ・ハーディング（Sandra Harding）のフェミニスト立場認識論（feminist standpoint epistemology）を理論的基盤として、データサイエンスの実践が既存の人種・ジェンダー・階級の不平等構造を再生産するメカニズムを分析した。' +
+      '本書は7つの原則を提示する。(1) 権力を検証する（Examine Power）：データサイエンスが誰に利益をもたらし誰を害するかを問う。(2) 権力に挑戦する（Challenge Power）：不公正なデータ実践・システムに対抗する。(3) 感情と具体性を高める（Elevate Emotion and Embodiment）：データの背後にある人間の経験を可視化する。(4) 二項対立を再考する（Rethink Binaries and Hierarchies）：ジェンダー・人種等の分類体系の恣意性を認識する。(5) 多元性を受容する（Embrace Pluralism）：単一の「客観的」視点への批判と多様な知の統合。(6) 文脈を考慮する（Consider Context）：データが生成・収集された社会的文脈の重要性。(7) 労働を可視化する（Make Labor Visible）：データ作業に関わる不可視の労働を認知し評価する。本書はMIT Pressからオープンアクセスで全文公開されており、データ倫理教育・批判的データ研究（critical data studies）・アルゴリズム公正性研究において教科書的テキストとして広く参照されている。',
+    keyFigures: 'Catherine D\'Ignazio（MIT）& Lauren F. Klein（Emory University）（MIT Press, 2020, 体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.7551/mitpress/11805.001.0001', type: 'academic', label: 'D\'Ignazio & Klein (2020) Data Feminism — MIT Press（オープンアクセス全文）' },
+      { url: 'https://en.wikipedia.org/wiki/Data_Feminism', type: 'reference', label: 'Data Feminism — Wikipedia（7原則・理論的基盤・影響の概要）' },
+    ],
+  },
 ];
 // Stryker restore all
