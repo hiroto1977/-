@@ -21607,5 +21607,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ineteconomics.org/uploads/papers/Mazzucato-Value-Creation-and-the-Entrepreneurial-State-INET-version.pdf', type: 'academic', label: 'Institute for New Economic Thinking — Value Creation and the Entrepreneurial State（Mazzucato）' },
     ],
   },
+  {
+    id: 'econ-soft-budget-constraint',
+    discipline: 'economics',
+    title: 'ソフトな予算制約（コルナイ）',
+    statement:
+      'ソフトな予算制約（soft budget constraint）とは、ハンガリーの経済学者ヤーノシュ・コルナイが1979年・1980年の研究で体系化した概念で、企業や組織が予算超過や損失を出しても国家・銀行・親組織などの外部主体が救済（補助金・融資・債務免除）を繰り返す状況を指す。' +
+      '救済が期待できる組織は財務規律を緩め、投資の採算計算が甘くなり、非効率な生産を続けやすい。旧社会主義経済の国営企業分析が出発点だが、金融危機時の金融機関救済（Too Big to Fail）や地方政府の債務補填など市場経済でも広く適用される。対概念の「ハードな予算制約」と並び、企業の財務規律の理論的基礎をなす。',
+    keyFigures: 'ヤーノシュ・コルナイ（János Kornai, 1928–2021）／初出: "Resource-Constrained versus Demand-Constrained Systems," Econometrica 47(4), 1979／著書『不足の経済学（Economics of Shortage）』1980',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Enc/SoftBudgetConstraint.html', type: 'reference', label: 'Library of Economics and Liberty (Econlib) — Soft Budget Constraint（コルナイの定義・社会主義および市場経済への応用）' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/1999/wp9913.pdf', type: 'government', label: 'IMF Working Paper WP/99/13 — "Soft Budget Constraint"（Kornai, Maskin & Roland）' },
+    ],
+  },
+  {
+    id: 'bizlaw-hoteijichijoken',
+    discipline: 'business-law',
+    title: '法定地上権（民法388条）',
+    statement:
+      '法定地上権とは、土地とその地上建物が同一所有者に属する場合に、当該土地または建物に抵当権が設定され、その実行（競売）によって土地と建物の所有者が異なることとなったときに、建物のために法律上当然に成立する地上権をいう（民法388条）。' +
+      '当事者の合意なく法律の規定により発生するため「法定」地上権と呼ばれ、建物の取壊しを防ぎ建物所有者の利用権を保護する。成立要件は、(1)抵当権設定時に土地上に建物が存在すること、(2)設定時に土地と建物が同一所有者であること、(3)土地または建物の一方または双方に抵当権が設定されたこと、(4)競売により土地と建物の所有者が分離したことの四点である。',
+    keyFigures: '民法388条（明治29年法律第89号）／存続期間は地上権の規定を準用／地代は当事者の協議または裁判所が定める（388条但書）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089/', type: 'government', label: 'e-Gov法令検索 — 民法（明治29年法律第89号）第388条（法定地上権）' },
+      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=52497', type: 'government', label: '最高裁判所判例検索 — 法定地上権の成立要件に関する判例' },
+    ],
+  },
+  {
+    id: 'bizlaw-shozoken-publicity',
+    discipline: 'business-law',
+    title: '肖像権・パブリシティ権',
+    statement:
+      '肖像権とは、みだりに自己の容姿・肖像を撮影・公表・使用されない権利で、憲法13条の幸福追求権を根拠とする人格権の一つとして判例上確立されている（最高裁昭和44年12月24日判決「京都府学連事件」等）。' +
+      'パブリシティ権は、著名人が自己の氏名・肖像の顧客吸引力（commercial value）を排他的に利用する権利であり、最高裁平成24年2月2日判決（「ピンク・レディー事件」）で人格権に由来するものとして初めて明示的に承認された。侵害となるのは、(1)肖像等を広告に使用、(2)商品の形態に商品化、(3)肖像等を商品等として販売する場合に限られ、報道・批評・研究目的は侵害に当たらない。',
+    keyFigures: '肖像権: 最大判昭和44年12月24日（京都府学連事件）／パブリシティ権: 最三小判平成24年2月2日（ピンク・レディー事件, 民集66巻2号89頁）／根拠: 憲法13条・人格権',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=81920', type: 'government', label: '最高裁判所 — 平成24年2月2日判決（ピンク・レディー事件、パブリシティ権の最高裁初承認）' },
+      { url: 'https://www.bunka.go.jp/seisaku/chosakuken/seidokaisetsu/hajimete_chosaku/', type: 'government', label: '文化庁 — 著作権制度の解説（肖像権・パブリシティ権を含む人格的利益の保護）' },
+    ],
+  },
+  {
+    id: 'human-sociometer-theory',
+    discipline: 'human-science',
+    title: 'ソシオメーター理論',
+    statement:
+      'ソシオメーター理論（sociometer theory）とは、マーク・R・リアリーらが1995年に提唱した自尊心の機能に関する社会心理学理論である。自尊心（self-esteem）は、個人が社会集団から受け入れられている程度（社会的包摂・排除の状態）を監視・測定する内的な「ゲージ（計器）」として機能するとする。' +
+      '排除や拒絶の手がかりを検知すると自尊心が低下し、それが動機となって社会的受容を高める行動を促す。この理論は、自尊心が自己の能力や価値の客観的評価ではなく他者からの受け入れられ感を反映するモニターだと位置づけ、なぜ人が社会的評価を過剰に気にするかを進化的・機能的に説明する。承認欲求・排除不安・集団行動の研究に広く応用される。',
+    keyFigures: 'マーク・R・リアリー（Mark R. Leary）／初出: Leary, Tambor, Terdal & Downs (1995) "Self-esteem as an interpersonal monitor: The sociometer hypothesis," Journal of Personality and Social Psychology 68(3):518–530',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/doi/10.1037/0022-3514.68.3.518', type: 'academic', label: 'APA PsycNet — Leary et al. (1995) "Self-esteem as an interpersonal monitor: The sociometer hypothesis," JPSP 68(3):518–530（原典）' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.psych.58.110405.085712', type: 'academic', label: 'Annual Review of Psychology — Leary & Baumeister "The nature and function of self-esteem: Sociometer theory"（査読サーベイ）' },
+    ],
+  },
+  {
+    id: 'infosoc-code-is-law',
+    discipline: 'information-sociology',
+    title: 'コードは法である（レッシグのアーキテクチャ規制論）',
+    statement:
+      'ローレンス・レッシグが著書『Code and Other Laws of Cyberspace』（1999年）で提唱した情報社会の規制理論。社会における行動を制約・規制する力として、(1)法（law）、(2)社会規範（norms）、(3)市場（market）、(4)アーキテクチャ（architecture）の四つのモダリティがあるとし、サイバースペースではとくに「アーキテクチャ（コード）」が強力な規制力を持つと論じた。' +
+      'ソフトウェアのコード・プロトコル・プラットフォームの設計そのものが、法律と同等かそれ以上に人々の行動を制限・許容する（例：暗号化により検閲を不可能にする、実名登録の強制で匿名表現を制限する）。「Code is Law」のテーゼは、立法者ではなくエンジニアやプラットフォーム企業が事実上のルール形成者となる情報社会の権力構造を問い、インターネット・ガバナンス論の基礎となった。',
+    keyFigures: 'ローレンス・レッシグ（Lawrence Lessig, ハーバード大学ロースクール教授）／『Code and Other Laws of Cyberspace』(1999)・改訂版『Code: Version 2.0』(2006)／4モダリティ: 法・規範・市場・アーキテクチャ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://cyber.harvard.edu/works/lessig/codev2.pdf', type: 'academic', label: 'Harvard Berkman Klein Center — Lawrence Lessig "Code: Version 2.0"（2006年改訂版PDF、著者がCC公開した原典）' },
+      { url: 'https://plato.stanford.edu/entries/ethics-internet-research/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Internet Research Ethics（レッシグの4モダリティ規制論・アーキテクチャによる規制を参照）' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-identity',
+    discipline: 'information-sociology',
+    title: 'デジタルアイデンティティ',
+    statement:
+      'デジタルアイデンティティとは、インターネットやデジタルシステム上で個人・組織・デバイスを識別・認証するために用いられる一連の属性・資格情報・識別子の総体を指す。ユーザー名・パスワード・メールアドレスから生体認証・公開鍵証明書まで、「あなたは誰か」を電子的に証明する仕組み全般を含む。' +
+      'デジタルアイデンティティの管理方式は歴史的に、サービスごとに独立した「サイロ型」、OAuthで他サービスへログインする「フェデレーテッド型」、個人が制御する分散型識別子（DID: Decentralized Identifier、W3C勧告2022年）に基づく「自己主権型アイデンティティ（SSI）」へと発展してきた。EUのeIDAS規則（2014年・2024年改正）や日本のデジタル庁の標準化は、行政DXの重要課題となっている。',
+    keyFigures: 'W3C勧告「Decentralized Identifiers (DIDs) v1.0」(2022年7月)／EU eIDAS規則（Regulation (EU) No 910/2014、2024年改正でEUデジタルIDウォレットを規定）／日本: デジタル庁',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.w3.org/TR/did-core/', type: 'academic', label: 'W3C — "Decentralized Identifiers (DIDs) v1.0" W3C勧告（2022年7月19日、DIDの定義・仕様）' },
+      { url: 'https://www.digital.go.jp/policies/digital_identity', type: 'government', label: 'デジタル庁 — デジタルアイデンティティ政策（日本の標準化・行政DXの取組）' },
+    ],
+  },
 ];
 // Stryker restore all
