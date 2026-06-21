@@ -19,14 +19,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全267件）
+### 学術概念 / 経営学（全268件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 261 件 → [[学術概念]]
+- …ほか 262 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全438件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
