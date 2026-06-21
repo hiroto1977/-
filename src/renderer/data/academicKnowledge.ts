@@ -21859,5 +21859,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/science/grief', type: 'reference', label: 'Encyclopaedia Britannica — Grief（悲嘆の定義・類型・剥奪された悲嘆を含む学術的解説）' },
     ],
   },
+  {
+    id: 'econ-production-fragmentation',
+    discipline: 'economics',
+    title: '生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）',
+    statement:
+      '生産のフラグメンテーション理論とは、財の製造工程を地理的に分割された複数の「生産ブロック」に分解し、それらを「サービス・リンク」（輸送・通信・調整コスト）で結合することで国際分業が生じると説く国際貿易理論の枠組みである。' +
+      'ロナルド・ジョーンズとヘンリク・キエルジャコウスキーが1990年代初頭に定式化し、従来の比較優位や産業内貿易論では捉えにくかった工程間貿易・中間財貿易・アウトソーシングの急増を説明する。サービス・リンク費用の低下が生産の国際的断片化を促進し、グローバル・サプライチェーン形成の理論的基礎をなす。',
+    keyFigures: 'ロナルド・W・ジョーンズ（Ronald W. Jones, 1931–2021）／ヘンリク・キエルジャコウスキー（Henryk Kierzkowski, 1943–2012）／初出: Jones & Kierzkowski (1990)・拡張: Arndt & Kierzkowski eds. "Fragmentation"（Oxford UP, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w14299', type: 'academic', label: 'Grossman & Rossi-Hansberg (2008) "Trading Tasks: A Simple Theory of Offshoring," NBER WP 14299（フラグメンテーション理論の系譜を整理）' },
+      { url: 'https://academic.oup.com/book/6523', type: 'academic', label: 'Arndt & Kierzkowski eds. (2001) "Fragmentation: New Production Patterns in the World Economy," Oxford University Press' },
+    ],
+  },
+  {
+    id: 'econ-economic-complexity',
+    discipline: 'economics',
+    title: '経済的複雑性指数（ECI）',
+    statement:
+      '経済的複雑性指数（Economic Complexity Index, ECI）とは、セサル・ヒダルゴとリカルド・ハウスマンが2009年に提唱した、国・地域の輸出する製品の多様性と希少性から「潜在的な生産知識の蓄積量」を定量化する指標である。' +
+      '各国が輸出できる製品の広さと、その製品を輸出できる国の少なさ（ubiquityの低さ）を反射法（Method of Reflections）で反復計算する。ECIは一人当たり所得の予測力でGDPを上回ることが実証され、長期経済成長の予測やイノベーション政策評価に用いられる。ハーバード成長研究所の「製品空間」研究と連動し、国際機関の産業政策立案にも採用されている。',
+    keyFigures: 'セサル・A・ヒダルゴ（César A. Hidalgo）／リカルド・ハウスマン（Ricardo Hausmann, ハーバード）／初出: Hidalgo & Hausmann (2009) PNAS 106(26):10570–10575／The Atlas of Economic Complexity (Harvard CID)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0900943106', type: 'academic', label: 'Hidalgo & Hausmann (2009) "The Building Blocks of Economic Complexity," PNAS 106(26):10570–10575（ECI提唱論文）' },
+      { url: 'https://atlas.cid.harvard.edu', type: 'academic', label: 'The Atlas of Economic Complexity — Harvard Center for International Development（ECI・製品空間の公式データベース・解説）' },
+    ],
+  },
+  {
+    id: 'infosoc-social-network-analysis',
+    discipline: 'information-sociology',
+    title: '社会ネットワーク分析（SNA）',
+    statement:
+      '社会ネットワーク分析（Social Network Analysis, SNA）とは、社会的行為者（個人・組織・国家等）をノード、行為者間の関係（友人関係・情報共有・権力等）をエッジとしてグラフ構造で表現し、ネットワークの構造的特性（中心性・クラスター係数・橋・構造的空隙等）から社会現象を説明する研究方法論・理論枠組みである。' +
+      'モレノのソシオメトリー（1934年）、グラノヴェッターの「弱い紐帯の強さ」（1973年）、バートの「構造的空隙」（1992年）などが基盤理論を形成し、リントン・フリーマンが中心性指標の定式化（1978年）などで方法論を体系化した。インターネット・SNS時代に普及し、情報拡散・社会運動・組織行動・公衆衛生研究などに広く応用される。',
+    keyFigures: 'ヤコブ・L・モレノ（Jacob L. Moreno, ソシオメトリー）／マーク・グラノヴェッター（1973「弱い紐帯の強さ」）／ロナルド・バート（1992 構造的空隙）／リントン・フリーマン（1978 中心性）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://snap.stanford.edu/class/cs224w-readings/freeman78sociometric.pdf', type: 'academic', label: 'Freeman (1978) "Centrality in Social Networks: Conceptual Clarification," Social Networks 1(3)（中心性指標の定式化）' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/225469', type: 'academic', label: 'Granovetter (1973) "The Strength of Weak Ties," American Journal of Sociology 78(6)（SNAの基盤理論）' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-singularity',
+    discipline: 'information-sociology',
+    title: '技術的特異点（シンギュラリティ）',
+    statement:
+      '技術的特異点（Technological Singularity）とは、人工知能が人間の知性全般を超える「超知性」が出現した場合、技術進歩が制御不能な速度で自己加速し、社会変化が人間の予測・理解を根本的に超える転換点が到来するとする仮説的概念である。' +
+      'ヴァーナー・ヴィンジが1993年のNASA主催シンポジウム論文で現代的に定式化し、レイ・カーツワイルが2005年の著書『シンギュラリティは近い』でムーアの法則の加速的延長として2045年頃の到来を予測し普及させた。源流にはI・J・グッドの「知能爆発」（1965年）がある。AIリスク研究・超知性の安全性・実存的リスク論と連動する。',
+    keyFigures: 'ヴァーナー・ヴィンジ（Vernor Vinge, 1944–2024, 1993「The Coming Technological Singularity」）／レイ・カーツワイル（Ray Kurzweil, 2005）／I・J・グッド（I. J. Good, 1965 知能爆発）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.frc.ri.cmu.edu/~hpm/book98/com.ch1/vinge.singularity.html', type: 'academic', label: 'Vinge (1993) "The Coming Technological Singularity"（NASA VISION-21 シンポジウム原論文、CMU Robotics Institute 掲載）' },
+      { url: 'https://plato.stanford.edu/entries/artificial-intelligence/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Artificial Intelligence（超知性・シンギュラリティの哲学的位置づけ）' },
+    ],
+  },
+  {
+    id: 'bizlaw-iryubun',
+    discipline: 'business-law',
+    title: '遺留分（民法1042条）',
+    statement:
+      '遺留分とは、被相続人の財産処分の自由（遺言・贈与）を一定限度で制限し、配偶者・子・直系尊属などの近親相続人に法律上保障される最低限度の財産取得分をいう（民法1042条）。遺言や贈与によって遺留分を侵害された相続人は、遺留分侵害額請求権（1046条）を行使できる。' +
+      '2018年（平成30年）改正前は「遺留分減殺請求権」として物権的効果（共有持分の発生）を生じさせたが、改正後は「遺留分侵害額請求権」として金銭債権に純化された（2019年7月1日施行）。遺留分の割合は、直系尊属のみが相続人の場合は相続財産の3分の1、それ以外は2分の1である（1042条1項）。事業承継・相続実務の最重要論点の一つである。',
+    keyFigures: '民法第8編（相続）第3章 遺留分（1042条〜1049条）／2018年改正（平成30年法律第72号）で遺留分減殺請求権→遺留分侵害額請求権（金銭債権化）・2019年7月施行',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治29年法律第89号）第1042条〜1049条（遺留分）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji07_00222.html', type: 'government', label: '法務省 — 相続法の改正（遺留分制度の見直し・金銭債権化の概要）' },
+    ],
+  },
+  {
+    id: 'human-neuroplasticity',
+    discipline: 'human-science',
+    title: '神経可塑性（ニューロプラスティシティ）',
+    statement:
+      '神経可塑性（neuroplasticity）とは、脳・脊髄・末梢神経系が経験・学習・損傷などに応じてその構造や機能的結合（シナプス強度・神経回路・皮質地図）を生涯にわたって変化させる能力をいう。ヘッブ則「共に発火するニューロンは共に結びつく」がその細胞レベルの基盤を簡潔に表す。' +
+      'ドナルド・ヘッブが1949年に理論化し、長期増強（LTP）・樹状突起スパイン変化・皮質再編成の実験的発見が実証的基盤を与えた。脳卒中リハビリ・楽器習得・語学学習・認知行動療法の神経基盤として応用され、「成人の脳は変化しない」という通念を覆した。教育・発達・精神医学の現代理論に不可欠な概念である。',
+    keyFigures: 'ドナルド・O・ヘッブ（Donald O. Hebb, 1904–1985, 1949『The Organization of Behavior』）／長期増強（LTP）の発見（Bliss & Lømo, 1973）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/neuroplasticity', type: 'reference', label: 'Encyclopaedia Britannica — Neuroplasticity（定義・シナプス可塑性・皮質再編成・ヘッブ則の解説）' },
+      { url: 'https://www.apa.org/topics/brain-nervous-system', type: 'reference', label: 'American Psychological Association — Brain and Nervous System（神経可塑性を含む脳科学の概説）' },
+    ],
+  },
 ];
 // Stryker restore all
