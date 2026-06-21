@@ -22195,5 +22195,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to', type: 'academic', label: 'Hess, C. & Ostrom, E. eds. (2007) "Understanding Knowledge as a Commons", MIT Press' },
     ],
   },
+  {
+    id: 'econ-kaldor-verdoorn',
+    discipline: 'economics',
+    title: 'ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）',
+    statement:
+      'ヴェルドゥーンの法則とは、製造業における労働生産性の成長率が産出量の成長率と正の相関を持つという経験的規則性であり、その弾力性（ヴェルドゥーン係数）はおよそ0.5とされる。オランダの経済学者ペトルス・ヨハネス・ヴェルドゥーンが1949年にイタリアの学術誌 L\'Industria に発表した論文 "Fattori che regolano lo sviluppo della produttività del lavoro" で初めて定式化した。' +
+      'この法則を広く知らしめたのはニコラス・カルドアであり、1966年にケンブリッジ大学経済学教授就任講演 "Causes of the Slow Rate of Economic Growth of the United Kingdom" においてヴェルドゥーンの知見を「カルドアの第二成長法則」として体系化した。カルドアの三法則は、(1)製造業が経済成長の牽引役である、(2)製造業の成長が収穫逓増を通じて生産性上昇を誘発する（ヴェルドゥーンの法則）、(3)製造業の拡大が非製造業の低生産性労働を吸収し経済全体の生産性を高める、という構成である。背後のメカニズムとして、静的・動的な規模に関する収穫逓増、ラーニング・バイ・ドゥーイング、およびアダム・スミス以来の分業の深化が挙げられる。この法則は「累積的因果関係」の理論と結びつき、産出成長→生産性上昇→競争力強化→さらなる産出成長という好循環が地域間の経済格差の拡大・固定化を説明する枠組みとして、開発経済学・地域経済学で広く援用されている。',
+    keyFigures: 'P.J.ヴェルドゥーン（1949 "Fattori che regolano lo sviluppo della produttività del lavoro", L\'Industria）／N.カルドア（1966 ケンブリッジ就任講演 "Causes of the Slow Rate of Economic Growth of the United Kingdom"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Verdoorn%27s_law', type: 'reference', label: 'Wikipedia — Verdoorn\'s law' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1493-1', type: 'academic', label: 'The New Palgrave Dictionary of Economics — Verdoorn\'s Law' },
+    ],
+  },
+  {
+    id: 'human-identifiable-victim',
+    discipline: 'human-science',
+    title: '特定可能な被害者効果（Identifiable Victim Effect）',
+    statement:
+      '特定可能な被害者効果とは、匿名の統計的被害者（statistical victims）よりも、顔・名前・物語が特定できる個人に対して、人々がはるかに強い共感を示し援助行動をとりやすくなる心理傾向をいう。経済学者トーマス・シェリングが1968年のエッセイ "The Life You Save May Be Your Own"（Samuel B. Chase Jr. 編『Problems in Public Expenditure Analysis』Brookings Institution 所収, pp.127–176）で「特定された命」と「統計的な命」の区別を提示したことが概念の起点とされる。' +
+      'デボラ・スモールとジョージ・ローウェンスタインは実験的検証を進め、被害者が特定されただけで援助意欲が高まることを示した（Small & Loewenstein 2003, Journal of Risk and Uncertainty）。さらに Small, Loewenstein & Slovic (2007, Organizational Behavior and Human Decision Processes) は、分析的思考を促すと特定被害者への寄付がかえって減少するという逆説的結果を報告した。ポール・スロヴィックは「心理的麻痺（psychic numbing）」の概念を提唱し（Slovic 2007 "If I Look at the Mass I Will Never Act", Judgment and Decision Making）、被害者数の増加に伴い感情的反応が鈍化するため大規模災害への対応が不十分になる構造を論じた。本効果は公共政策における「統計的生命の価値」議論、慈善寄付のマーケティング、災害報道の枠組み設計に実践的含意をもつ。',
+    keyFigures: 'Thomas Schelling（1968 "The Life You Save May Be Your Own"）／Deborah Small & George Loewenstein（2003）／Small, Loewenstein & Slovic（2007）／Paul Slovic（2007 "psychic numbing"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1023/A:1022299422219', type: 'academic', label: 'Small & Loewenstein (2003) "Helping a Victim or Helping the Victim", Journal of Risk and Uncertainty 26(1)' },
+      { url: 'https://doi.org/10.1017/S1930297500000061', type: 'academic', label: 'Slovic (2007) "If I Look at the Mass I Will Never Act: Psychic Numbing and Genocide", Judgment and Decision Making 2(2)' },
+    ],
+  },
+  {
+    id: 'bizlaw-forum-non-conveniens',
+    discipline: 'business-law',
+    title: 'フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）',
+    statement:
+      'フォーラム・ノン・コンヴィニエンス（forum non conveniens）とは、ラテン語で「便宜的でない法廷地」を意味し、裁判所が管轄権を有する場合であっても、より適切な代替的法廷地が存在するときに裁判所の裁量で訴えの審理を却下又は停止しうるとするコモン・ロー上の法理である。起源はスコットランド法にあり、Sim v Robinow (1892) 19 R 665 がその初期の代表判例とされる。' +
+      '米国では Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947) が連邦最高裁として初めてこの法理を採用し、「私的利益要素」（証拠・証人への近接性、執行可能性等）と「公的利益要素」（法廷地の訴訟負担、準拠法の適用困難さ等）の二類型を提示した。Piper Aircraft Co. v. Reyno, 454 U.S. 235 (1981) では、代替的法廷地の実体法が原告に不利であるだけでは却下を妨げないとされた。英国法では Spiliada Maritime Corp v Cansulex Ltd [1987] AC 460 において Lord Goff が「自然な法廷地（natural forum）」テストを定式化した。一方EU法ではブリュッセル規則が管轄を義務的に配分するため、Owusu v Jackson [2005] ECR I-1383 でこの法理の援用は許されないと判示された。日本法では2011年改正民事訴訟法3条の9が「特別の事情による訴えの却下」を規定し、機能的に類似する制度が明文化されている。',
+    keyFigures: 'Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947)／Piper Aircraft Co. v. Reyno, 454 U.S. 235 (1981)／Spiliada [1987] AC 460（Lord Goff）／Owusu v Jackson [2005] ECR I-1383／日本民事訴訟法3条の9（平成23年改正）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/forum_non_conveniens', type: 'reference', label: 'Cornell Law School LII — Forum Non Conveniens (Wex legal encyclopedia)' },
+      { url: 'https://laws.e-gov.go.jp/law/408AC0000000109', type: 'government', label: 'e-Gov法令検索 民事訴訟法（3条の9・特別の事情による訴えの却下）' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-inflection',
+    discipline: 'management',
+    title: '戦略的転換点（Strategic Inflection Point）',
+    statement:
+      '戦略的転換点とは、ある産業において競争の基盤を規定する力の均衡が旧来の構造から新しい構造へと根本的に移行する時点を指す概念である。Intel CEOのアンドリュー・S・グローヴ（1936–2016）が1996年の著書『Only the Paranoid Survive』（Currency Doubleday刊）で体系化した。グローヴはポーターの5つの競争要因に「補完的企業（complementors）」を加えた6つの力のいずれかに「10X変化」（従来の10倍規模の変化）が生じたとき、戦略的転換点が引き起こされると定義した。' +
+      '転換点を越える過程では、旧戦略がもはや機能せず新戦略もまだ明確でない移行期が生じ、グローヴはこれを「死の谷（valley of death）」と呼んだ。グローヴ自身がIntelで経験した事例が原型であり、1985年に日本の半導体メーカーとのDRAMメモリ価格競争で窮地に立った際、ゴードン・ムーアに「もし我々が追い出されて新しいCEOが来たら何をするか」と問い、「メモリから撤退する」との答えを得てマイクロプロセッサへの戦略転換を決断した。クリステンセンの破壊的イノベーション理論（1997）がローエンドからの技術的破壊メカニズムに焦点を当てるのに対し、グローヴの概念は技術変化に限らず規制変更・競争構造の激変など広範な10X変化を対象とし、経営者のリーダーシップに重点を置く。',
+    keyFigures: 'アンドリュー・S・グローヴ（Intel CEO, 1996『Only the Paranoid Survive』Currency Doubleday）／R.バーゲルマンとの共著 "Strategic Dissonance" (California Management Review 38(2), 1996)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.2307/41165830', type: 'academic', label: 'Burgelman & Grove (1996) "Strategic Dissonance", California Management Review 38(2), 8–28' },
+      { url: 'https://www.britannica.com/money/Andrew-S-Grove', type: 'reference', label: 'Encyclopaedia Britannica Money — Andrew S. Grove（経歴・戦略的転換点の概要）' },
+    ],
+  },
+  {
+    id: 'infosoc-solutionism',
+    discipline: 'information-sociology',
+    title: 'テクノロジカル・ソリューショニズム（技術的解決主義）',
+    statement:
+      'テクノロジカル・ソリューショニズムとは、あらゆる社会問題にはテクノロジーによる解決策が存在するという信念であり、複雑な政治的・社会的・道徳的問題を明確に定義可能で計算可能な工学的問題へと矮小化する思考様式を指す。エフゲニー・モロゾフ（Evgeny Morozov）が2013年の著書『To Save Everything, Click Here: The Folly of Technological Solutionism』（PublicAffairs刊）で体系化した。' +
+      '具体的な批判対象として、市民参加のゲーミフィケーション、アルゴリズム予測型警察活動、テクノロジー主導の教育改革などを挙げた。この批判は先行研究の系譜に位置づけられる。ニール・ポストマン『Technopoly』（Knopf, 1992）は技術が文化の支配的権威となる社会を警告し、ラングドン・ウィナー「Do Artifacts Have Politics?」（Daedalus 109(1), 1980, pp.121–136）は技術設計に埋め込まれた権力構造を論じ、ジャック・エリュール『La Technique』（1954; 英訳 The Technological Society, Knopf, 1964）は技術が自律的論理で社会を支配する過程を分析した。モロゾフは、複雑な政策課題がアルゴリズムとデータに委ねられることで市民の熟議・政治的主体性が空洞化し、効率性の名のもとに社会正義の問題が脱政治化される危険を指摘している。',
+    keyFigures: 'エフゲニー・モロゾフ（2013『To Save Everything, Click Here』PublicAffairs）／ニール・ポストマン（1992『Technopoly』）／ラングドン・ウィナー（1980 "Do Artifacts Have Politics?"）／ジャック・エリュール（1954/1964『The Technological Society』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s11948-024-00524-x', type: 'academic', label: 'Springer — "Technological Remedies for Social Problems", Science and Engineering Ethics (2024)' },
+      { url: 'https://www.publicbooks.org/the-folly-of-technological-solutionism-an-interview-with-evgeny-morozov/', type: 'reference', label: 'Public Books — "The Folly of Technological Solutionism: An Interview with Evgeny Morozov"' },
+    ],
+  },
+  {
+    id: 'econ-resource-curse',
+    discipline: 'economics',
+    title: '資源の呪い（Resource Curse）',
+    statement:
+      '資源の呪いとは、天然資源が豊富な国がかえって経済成長の停滞・制度劣化・政治的不安定に陥りやすいという逆説的な現象を指す。リチャード・オーティが1993年の著書『Sustaining Development in Mineral Economies: The Resource Curse Thesis』（Routledge）で用語を造語した。ジェフリー・サックスとアンドリュー・ワーナーが1995年のNBER Working Paper（No. 5398）で1970年代の資源輸出依存度とその後の経済成長率の間に有意な負の相関を示し、本仮説を広く知らしめた。' +
+      '資源の呪いのメカニズムとしては、オランダ病（為替増価による製造業衰退）に加え、(1)資源レントをめぐるレントシーキングと汚職、(2)マイケル・ロスが2001年のWorld Politics掲載論文 "Does Oil Hinder Democracy?" で示した石油輸出国における権威主義体制の持続、(3)ロスが2004年のJournal of Peace Research掲載論文で示した資源と武力紛争の関連、(4)一次産品価格のボラティリティによる財政不安定化、が挙げられる。一方、ノルウェー（政府年金基金による長期運用）やボツワナ（ダイヤモンド収入の教育・インフラ投資）は資源の呪いを回避した反例として知られる。メルム、モーネ、トルヴィクは2006年のThe Economic Journal掲載論文 "Institutions and the Resource Curse" で、制度の質が決定的な媒介要因であり、「生産者親和型」制度では資源が成長を促進し、「略奪者親和型」制度でのみ呪いが発現すると論じた。',
+    keyFigures: 'リチャード・オーティ（1993造語）／サックス & ワーナー（NBER WP 5398, 1995）／マイケル・ロス（World Politics 2001; Journal of Peace Research 2004）／メルム・モーネ・トルヴィク（The Economic Journal 2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w5398', type: 'academic', label: 'Sachs & Warner (1995) "Natural Resource Abundance and Economic Growth", NBER Working Paper 5398' },
+      { url: 'https://doi.org/10.1111/j.1468-0297.2006.01045.x', type: 'academic', label: 'Mehlum, Moene & Torvik (2006) "Institutions and the Resource Curse", The Economic Journal 116(508), 1–20' },
+    ],
+  },
 ];
 // Stryker restore all
