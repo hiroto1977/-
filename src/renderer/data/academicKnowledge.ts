@@ -21691,5 +21691,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.digital.go.jp/policies/digital_identity', type: 'government', label: 'デジタル庁 — デジタルアイデンティティ政策（日本の標準化・行政DXの取組）' },
     ],
   },
+  {
+    id: 'econ-macroprudential-policy',
+    discipline: 'economics',
+    title: 'マクロプルーデンス政策',
+    statement:
+      'マクロプルーデンス政策とは、個別金融機関の健全性を監督するミクロプルーデンスとは異なり、金融システム全体に内在するリスク（システミックリスク）を把握・抑制することで金融安定を図る政策アプローチである。' +
+      'BIS・IMF・FSBが共同で整理する主要ツールには、景気循環に逆行して自己資本を積み増すカウンターシクリカル資本バッファー、融資比率規制（LTV上限・DTI上限）、システム上重要な金融機関（G-SIB）への資本賦課などがある。2008年の世界金融危機を契機に各国で制度化が進んだ。',
+    keyFigures: 'BIS（国際決済銀行）・IMF・FSB（金融安定理事会）が2010年代に共同フレームワークを整備／クラウディオ・ボリオ（Claudio Borio, BIS）らが理論面に貢献',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/basics/macropru.htm', type: 'government', label: 'IMF Finance & Development — "Macroprudential Policy: Protecting the Whole"（定義・システミックリスク・ツール）' },
+      { url: 'https://www.bis.org/publ/arpdf/ar2010e7.pdf', type: 'government', label: 'BIS 第80次年次報告書（2010）第VII章 "Macroprudential policy and addressing procyclicality"' },
+    ],
+  },
+  {
+    id: 'econ-gerschenkron-backwardness',
+    discipline: 'economics',
+    title: 'ゲルシェンクロンの後発性利益',
+    statement:
+      'アレクサンダー・ゲルシェンクロンが提唱した、経済的後進国が工業化に着手する際に先進国の技術・制度を模倣・導入することで急速なキャッチアップ成長を実現できるという仮説。後発であること自体が優位性となる「後発性の利益」を示した。' +
+      '後進度が高い国ほど、国家主導の投資銀行や政府介入など代替的制度装置を用いて工業化が推進されるという「制度代替」の議論も展開し、ドイツやロシアの工業化比較分析をもとに定式化された。後発工業化論やキャッチアップ成長理論の礎となった。',
+    keyFigures: 'アレクサンダー・ゲルシェンクロン（Alexander Gerschenkron, 1904–1978）／主著: "Economic Backwardness in Historical Perspective"（Harvard University Press, 1962）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674226005', type: 'academic', label: 'Harvard University Press — "Economic Backwardness in Historical Perspective"（Gerschenkron 1962）書誌' },
+      { url: 'https://www.britannica.com/money/economic-history', type: 'reference', label: 'Encyclopaedia Britannica Money — Economic history（ゲルシェンクロンの工業化比較研究を経済史の中心的貢献として位置づけ）' },
+    ],
+  },
+  {
+    id: 'bizlaw-condition-suspensive',
+    discipline: 'business-law',
+    title: '停止条件・解除条件',
+    statement:
+      '停止条件とは、将来の不確実な事実の成就を法律行為の効力発生要件とする条件をいい（民法127条1項）、条件成就まで法律行為の効力は停止（未発効）となる。解除条件は条件成就によって既発生の法律行為の効力を消滅させるものをいう（同条2項）。' +
+      '不能条件が付された場合、停止条件付法律行為は無効とされ（民法133条1項）、解除条件付法律行為は無条件となる（同条2項）。これらは法律行為の付款として期限とともに民法総則の中核をなし、契約・遺言・贈与など広範な法律関係を規律する。',
+    keyFigures: '根拠条文: 民法127条〜137条（条件及び期限）／2017年改正民法（2020年4月1日施行）でも条件の規律は維持',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治29年法律第89号）第127条〜133条（条件及び期限）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 — 民法（債権関係）改正に関する説明（条件・期限を含む民法総則の規律）' },
+    ],
+  },
+  {
+    id: 'bizlaw-mortgage-pursuit',
+    discipline: 'business-law',
+    title: '抵当権の追及効',
+    statement:
+      '抵当権の追及効とは、抵当不動産が第三者に譲渡されても抵当権はその不動産に付着したまま存続し、抵当権者は新所有者（第三取得者）に対してもその不動産から優先弁済を受けることができるという物権の効力をいう。' +
+      '第三取得者は抵当権消滅請求（民法379条）または代価弁済（民法378条）によって抵当権を消滅させることができる。追及効は抵当権の物権的性質から当然に導かれ、登記を備えた抵当権は目的物の所有権移転にかかわらず効力を維持する点で担保物権の中核的機能を担う。',
+    keyFigures: '根拠条文: 民法369条（抵当権の内容）・378条（代価弁済）・379条（抵当権消滅請求）／対抗要件としての登記: 民法177条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法（明治29年法律第89号）第369条・378条・379条（抵当権・代価弁済・消滅請求）' },
+      { url: 'https://www.britannica.com/topic/mortgage', type: 'reference', label: 'Encyclopaedia Britannica — Mortgage（抵当権の物権的効力・第三取得者に対する追及力の一般法理）' },
+    ],
+  },
+  {
+    id: 'infosoc-hacktivism',
+    discipline: 'information-sociology',
+    title: 'ハクティビズム',
+    statement:
+      'ハクティビズムとは、ハッキング（hacking）と活動主義（activism）を組み合わせた造語で、政治的・社会的目的を達成するためにコンピュータ技術を用いる行為を指す。DDoS攻撃・ウェブ改ざん・情報暴露（ドキシング）などの手法が含まれる。' +
+      '1990年代後半のザパティスタ運動支持者によるオンライン抗議に起源を持ち、Anonymousなど分散型グループが2000年代以降に国際的注目を集めた。市民的不服従のデジタル拡張として位置づける論者と、違法なサイバー攻撃として批判する論者の間で学術的議論が続いている。',
+    keyFigures: '1990年代後半のザパティスタ連帯運動のデジタル抗議を起源とし、2003年頃からAnonymousが象徴的存在に／市民的不服従論との接続',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/hacktivism', type: 'reference', label: 'Encyclopaedia Britannica — Hacktivism（定義・歴史・主要事例の百科事典的解説）' },
+      { url: 'https://plato.stanford.edu/entries/civil-disobedience/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Civil Disobedience（デジタル市民的不服従としてのハクティビズムの位置づけ）' },
+    ],
+  },
+  {
+    id: 'mgmt-theory-u',
+    discipline: 'management',
+    title: 'セオリーU（プレゼンシング）',
+    statement:
+      'セオリーUとは、MITスローン経営大学院のオットー・シャーマーが2007年に提唱した変革的リーダーシップ論で、「出現しつつある未来から学ぶ」というプレゼンシング（presencing＝presence＋sensing の造語）の概念を核心に置く。' +
+      '変化のプロセスをU字型の旅（感知→プレゼンシング→実現化）として描き、過去の成功パターンの「ダウンロード」から脱して、個人・組織・社会の深い変革を促す。MITのオンラインコース「u-lab」を通じて世界中に普及し、持続可能な社会変革のフレームワークとして応用されている。',
+    keyFigures: 'C・オットー・シャーマー（C. Otto Scharmer, MIT上級講師）／主著: "Theory U: Leading from the Future as It Emerges"（2007）／プレゼンシング研究所（Presencing Institute）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitsloan.mit.edu/faculty/directory/otto-scharmer', type: 'academic', label: 'MIT Sloan School of Management — Otto Scharmer 教員紹介（著者所属・職位の一次情報）' },
+      { url: 'https://www.presencing.org/theoryu', type: 'academic', label: 'Presencing Institute — Theory U（著者自身の研究機関による概念解説）' },
+    ],
+  },
 ];
 // Stryker restore all
