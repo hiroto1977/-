@@ -21439,5 +21439,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hbr.org/2017/01/the-stretch-goal-paradox', type: 'media', label: 'Harvard Business Review (2017) "The Stretch Goal Paradox"（ストレッチ目標が有効な条件・逆効果となる条件の実務解説）' },
     ],
   },
+  {
+    id: 'econ-bop-stages',
+    discipline: 'economics',
+    title: '国際収支の発展段階説',
+    statement:
+      '国際収支の発展段階説とは、一国が経済発展の段階を経るにつれて国際収支（経常収支・資本収支）の構造が系統的に変化するという理論であり、典型的に「未成熟債務国→成熟債務国→未成熟債権国→成熟債権国→債権取崩国」という五段階を経ると整理される。' +
+      'イギリスの経済学者ジェフリー・クラウザーが1957年の論文「Balances and Imbalances of Payments」で定式化し、チャールズ・P・キンドルバーガーが1963年の著書『国際経済学（International Economics）』で発展させた。日本は高度成長期を経て1980年代以降に成熟債権国へ移行した典型例とされ、新興国の経常赤字容認論の理論的根拠にも援用される。',
+    keyFigures: 'ジェフリー・クラウザー（Geoffrey Crowther, 1957「Balances and Imbalances of Payments」）／チャールズ・P・キンドルバーガー（Charles P. Kindleberger, 1963『International Economics』）／五段階モデル',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.imf.org/external/pubs/ft/bop/2007/pdf/bpm6.pdf', type: 'government', label: 'IMF "Balance of Payments and International Investment Position Manual, Sixth Edition (BPM6)"（国際収支の概念的枠組みの公式国際標準）' },
+      { url: 'https://www.boj.or.jp/research/wps_rev/rev_1997/rev97j13.htm', type: 'government', label: '日本銀行調査統計局「国際収支の発展段階説と日本の経常収支」（日銀レビュー 1997年）— 段階説の定義・五段階・日本の事例' },
+    ],
+  },
+  {
+    id: 'bizlaw-slapp',
+    discipline: 'business-law',
+    title: 'SLAPP訴訟（戦略的言論封殺訴訟）',
+    statement:
+      'SLAPP訴訟（Strategic Lawsuit Against Public Participation）とは、企業や権力者が批判的な市民・ジャーナリスト・NPO等を名誉毀損・不法行為等で訴えることで、訴訟コストと心理的負担を課し、正当な公的言論・告発・請願活動を封殺・萎縮させることを主目的とした訴訟類型をいう。' +
+      'コロラド大学のジョージ・W・プリングとペニー・キャナンが1988年以降の研究で命名・体系化し、著書『SLAPPs: Getting Sued for Speaking Out』（Temple University Press, 1996）で定義を確立した。米国多数州ではanti-SLAPP statute（迅速棄却・弁護士費用回収を認める対抗立法）が整備され、EUも2024年に同趣旨の指令を導入した。日本では開発業者による住民訴訟や企業による消費者・内部告発者への提訴が同概念で論じられている。',
+    keyFigures: 'ジョージ・W・プリング（George W. Pring, コロラド大学）／ペニー・キャナン（Penelope Canan）／著書『SLAPPs: Getting Sued for Speaking Out』（Temple University Press, 1996）／EU anti-SLAPP指令（2024）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.article19.org/resources/the-chilling-effect-of-slapps/', type: 'reference', label: 'ARTICLE 19（国際表現の自由機関）"The Chilling Effect of SLAPPs"（SLAPPの定義・言論萎縮効果・各国の立法対応）' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024L1069', type: 'government', label: 'EUR-Lex — Directive (EU) 2024/1069（公的参加を行う者を濫用的訴訟から保護する指令、いわゆるanti-SLAPP指令）' },
+    ],
+  },
+  {
+    id: 'infosoc-polanyi-great-transformation',
+    discipline: 'information-sociology',
+    title: 'ポランニーの大転換（市場の埋め込みと脱埋め込み）',
+    statement:
+      'カール・ポランニーが1944年の著書『大転換（The Great Transformation）』で展開した概念。本来、市場は社会的関係・制度・文化の中に「埋め込まれ（embedded）」た補助的な交換手段に過ぎなかったが、19世紀の自己調整的市場体制の成立とともに、土地・労働・貨幣という「擬制商品（fictitious commodities）」が商品化され、市場が社会から「脱埋め込み（disembedded）」されたと論じた。' +
+      'この脱埋め込みは社会的紐帯を破壊する「悪魔の挽き臼」と形容され、社会の自己保護として労働保護・協同組合・社会保険等が台頭するという「二重運動（double movement）」を提示した。マーク・グラノヴェッターは1985年の論文でポランニーの埋め込み概念を社会ネットワーク論として発展させた。現代では新自由主義・プラットフォーム資本主義・情報資本主義批判の枠組みとしても援用される。',
+    keyFigures: 'カール・ポランニー（Karl Polanyi, 1886–1964）／『The Great Transformation』(1944)／発展: マーク・グラノヴェッター（1985「Economic Action and Social Structure: The Problem of Embeddedness」AJS）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/The-Great-Transformation', type: 'reference', label: 'Encyclopaedia Britannica — The Great Transformation（work by Polanyi）（埋め込み・擬制商品・二重運動の概説）' },
+      { url: 'https://plato.stanford.edu/entries/polanyi-karl/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Karl Polanyi（擬制商品・二重運動・市場社会批判の思想的位置づけ）' },
+    ],
+  },
+  {
+    id: 'human-merton-strain',
+    discipline: 'human-science',
+    title: 'マートンの緊張理論（社会構造とアノミー）',
+    statement:
+      'ロバート・K・マートンが1938年の論文「社会構造とアノミー（Social Structure and Anomie）」（American Sociological Review 3(5):672–682）で展開した逸脱行動の理論。社会が文化的に規定する「目標（富・成功など）」と、それを達成するための「制度的手段（教育・雇用など）」の間の乖離（緊張・ストレイン）がアノミーを生み出し逸脱行動を引き起こすと主張した。' +
+      '個人の適応様式を五類型で分類した：(1)同調（目標・手段ともに受容）、(2)革新（目標は受容・手段を違法行為で代替）、(3)儀礼主義（目標を諦め手段のみ遵守）、(4)逃避主義（目標も手段も拒否）、(5)反乱（既存体系を代替体系で置換）。「革新」類型が犯罪・非行を説明し、A・コーエンの非行副次文化論、クロワード＆オーリンの差異的機会理論へと発展した。',
+    keyFigures: 'ロバート・K・マートン（Robert K. Merton, 1910–2003）／"Social Structure and Anomie," American Sociological Review 3(5):672–682 (1938)／発展: コーエン(1955)・クロワード＆オーリン(1960)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/anomie', type: 'reference', label: 'Encyclopaedia Britannica — Anomie（マートンのストレイン理論・五類型・デュルケームとの関係）' },
+      { url: 'https://plato.stanford.edu/entries/social-norms/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Social Norms（規範・アノミー・逸脱の学術的位置づけ）' },
+    ],
+  },
+  {
+    id: 'infosoc-goffman-stigma',
+    discipline: 'information-sociology',
+    title: 'スティグマ論（ゴッフマン）',
+    statement:
+      'アーヴィング・ゴッフマンが1963年の著書『スティグマ――烙印を押されたアイデンティティ（Stigma: Notes on the Management of Spoiled Identity）』で展開した社会学的概念。スティグマとは、ある属性が深く面目を汚す「烙印」として社会的に構築され、その保有者に「傷ついたアイデンティティ（spoiled identity）」を付与し、完全な社会的受容から排除する機制を指す。' +
+      'ゴッフマンはスティグマを三類型に分けた：(1)身体的欠損、(2)意志の弱さ・情念などの性格的欠点、(3)人種・民族・宗教などの集合的スティグマ。スティグマが既知の者（discredited）と未知の者（discreditable）を区別し、後者によるパッシング・カバーリングなどのスティグマ管理戦略を分析した。精神疾患・障害・HIVに関する差別研究や、リンク＆フェランの修正ラベリング理論の基礎となっている。',
+    keyFigures: 'アーヴィング・ゴッフマン（Erving Goffman, 1922–1982）／『Stigma: Notes on the Management of Spoiled Identity』（1963）／発展: ブルース・リンク＆ジョー・フェラン（2001「Conceptualizing Stigma」Annual Review of Sociology）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Erving-Goffman', type: 'reference', label: 'Encyclopaedia Britannica — Erving Goffman（スティグマ論の著書・三類型・象徴的相互作用論の概説）' },
+      { url: 'https://www.annualreviews.org/doi/10.1146/annurev.soc.27.1.363', type: 'academic', label: 'Link & Phelan (2001) "Conceptualizing Stigma," Annual Review of Sociology 27:363–385（ゴッフマンの定義を批判的に発展させた代表的後続研究）' },
+    ],
+  },
+  {
+    id: 'infosoc-illich-deschooling',
+    discipline: 'information-sociology',
+    title: '脱学校化社会（イリイチ）',
+    statement:
+      'イヴァン・イリイチが1971年の著書『脱学校化社会（Deschooling Society）』で展開した制度批判。イリイチは、学校制度が学習の場であるどころか、人々に「学習とは制度的サービスの消費である」という受動的な依存を内面化させる「隠れたカリキュラム（hidden curriculum）」の装置となっており、自律的な学びとコンヴィヴィアリティ（自立共生）を逆に破壊していると論じた。' +
+      'イリイチは真の学習を可能にするために「学習ネットワーク（learning webs）」として、(1)参照資源へのアクセス、(2)技能交換の仕組み、(3)仲間選びの場、(4)広い教育者へのアクセスという四要素を提案した。後の学習社会論・エドテック批判・ホームスクーリング・非形式学習・インターネットによる自律的学習の議論に影響を与え、パウロ・フレイレの批判的教育学と並ぶ制度批判の古典とされる。',
+    keyFigures: 'イヴァン・イリイチ（Ivan Illich, 1926–2002）／『Deschooling Society』(1971)・『Tools for Conviviality』(1973)／同時代の批判的教育学者: パウロ・フレイレ（『被抑圧者の教育学』1968）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Ivan-Illich', type: 'reference', label: 'Encyclopaedia Britannica — Ivan Illich（脱学校化社会・隠れたカリキュラム・コンヴィヴィアリティの概説）' },
+      { url: 'https://unesdoc.unesco.org/ark:/48223/pf0000232555', type: 'government', label: 'UNESCO "Rethinking Education: Towards a Global Common Good?"（非形式・自律的学習をめぐる国際政策論。イリイチの学習観の系譜）' },
+    ],
+  },
 ];
 // Stryker restore all
