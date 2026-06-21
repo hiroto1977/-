@@ -1530,5 +1530,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 穏健な急進主義者（Tempered Radicals） | 組織への帰属を維持しつつ支配的文化と相容れない大義を漸進的に推進する個人（マイヤーソン&スカリー1995） |
 | 情報社会学 | テクノロジカル・サブライム（技術的崇高） | 大規模技術的達成物への畏怖・驚嘆・恐怖の美的体験（ミラー1965造語・ナイ1994『American Technological Sublime』） |
 | ビジネス法務 | 非良心性の法理（Unconscionability） | 手続的・実体的不公正を理由に契約履行を拒否するエクイティ原則（Chesterfield v Janssen 1751・UCC §2-302・Williams 1965） |
+| 経済学 | エプスタイン＝ジン再帰的効用（Epstein-Zin Recursive Utility） | 異時点間代替弾力性とリスク回避度を独立パラメータとして分離する再帰的効用関数（Epstein & Zin 1989 Econometrica 57(4)・Bansal & Yaron 2004長期リスクモデル） |
+| 人間科学 | カプグラ妄想（Capgras Delusion） | 親しい人物が偽者に入れ替わったとする妄想的誤同定症候群（Capgras & Reboul-Lachaux 1923・Ellis & Young 1990鏡像仮説・Ramachandran 1997切断仮説） |
+| ビジネス法務 | 既判力（Res Judicata） | 確定判決による同一請求・同一争点の再訴遮断原則（Cromwell v County of Sac 1876・請求遮断効と争点遮断効の二分法） |
+| 経営学 | 組織エコロジー（Organizational Ecology） | 環境淘汰による組織個体群レベルの変化を説明する理論（Hannan & Freeman 1977 AJS・構造的慣性・密度依存・新しさの不利益） |
+| 情報社会学 | エンシティフィケーション（Enshittification） | プラットフォームが利用者→ビジネス顧客→所有者へ価値を段階的移転しサービス品質が劣化する過程（Doctorow 2022-2023・ADS 2023年Word of the Year） |
+| 経済学 | ピークオイルとハバート曲線（Peak Oil） | 石油採掘量がロジスティック曲線に従いピーク後減少するとする仮説（Hubbert 1956・米国1970年的中・シェール革命による予測失敗） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
