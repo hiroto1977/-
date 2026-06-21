@@ -22783,5 +22783,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitpress.mit.edu/9780262525527/diy-citizenship/', type: 'academic', label: 'Ratto & Boler eds. (2014) DIY Citizenship: Critical Making and Social Media — MIT Press' },
     ],
   },
+  {
+    id: 'econ-atkinson-inequality-index',
+    discipline: 'economics',
+    title: 'アトキンソン不等式指数（不等式測定指数）',
+    statement:
+      'アトキンソン不等式指数（Atkinson Inequality Index）とは、アンソニー・B・アトキンソン（Anthony Barnes Atkinson, 1933-2017）が1970年の論文「On the Measurement of Inequality」（Journal of Economic Theory, Vol.2, No.3, pp.244-263, DOI: 10.1016/0022-0531(70)90039-6）において提示した、社会厚生関数に基礎付けられた規範的な不等式測定指標である。ジニ係数などの統計的不等式指数とは異なり、アトキンソン指数は明示的な不等式回避パラメータ（inequality aversion parameter）εを組み込み、異なる分配的価値観に基づいた不等式評価を可能にしている。' +
+      'アトキンソン指数は A(ε) = 1 - EDE(ε)/μ という形式で定義される。ここで EDE(ε)（均等分配同等所得）は ε の値に応じた社会厚生水準と一致する所得値であり、μ は平均所得である。パラメータ ε の解釈は以下の通りである：ε=0（不等式回避なし、功利主義的）から ε→∞（ロールズ的マキシミン原理）までの連続体を構成し、0と∞の間の任意のε値について、社会は所得分配の改善に対して異なる評価（社会厚生の喪失）を行う。この指数はダルトンの移転原理（Pigou-Dalton Principle of Transfers）を満たし、平均を保つ再分配により指数値が減少する。すなわち、不平等が減少することを保証する。1970年論文はヒュー・ダルトン（Hugh Dalton, 1920）の社会厚生と不等式に関する先駆的研究を発展させ、不等式測定に規範的・倫理的基礎を与えた最初の体系的試論である。',
+    keyFigures: 'Anthony B. Atkinson（Journal of Economic Theory 2(3), 1970, アトキンソン指数の開発）／Hugh Dalton（1920, 社会厚生と不等式の先駆的研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-0531(70)90039-6', type: 'academic', label: 'Atkinson (1970) On the Measurement of Inequality — Journal of Economic Theory 2(3), pp.244-263' },
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v2y1970i3p244-263.html', type: 'academic', label: 'IDEAS/RePEc entry — On the Measurement of Inequality' },
+    ],
+  },
+  {
+    id: 'human-hemispatial-neglect',
+    discipline: 'human-science',
+    title: '半側空間無視（ユニラテラル・ネグレクト / Hemispatial Neglect）',
+    statement:
+      '半側空間無視（hemispatial neglect / unilateral spatial neglect）とは、脳の片側半球（典型的には右後頭頂皮質）への損傷に続いて、患者が対側空間に提示された刺激に対して反応・指向することに選択的に失敗する神経心理学的症候である。一次感覚・運動経路は保たれているにもかかわらず、注意・意識の障害として現れる。ハインルヒ・ヘイルマン（Heinrich M. Heilman）とエドワード・ヴァレンスタイン（Edward Valenstein）は1979年の論文「Mechanisms Underlying Hemispatial Neglect」（Annals of Neurology, Vol.5, No.2, pp.166-170, DOI: 10.1002/ana.410050210）において、この症候の神経基盤と認知メカニズムを詳細に記述した。その後、ヘイルマン・ワトソン＝ヴァレンスタイン（Heilman, Watson & Valenstein, 1985）は『臨床神経心理学』第2版の章「Neglect and Related Disorders」においてこの症候の包括的な理論的枠組みと臨床評価法を体系化した。' +
+      '半側空間無視は右側頭頭頂接合部（temporoparietal junction, TPJ）を含む右後頭頂皮質のほか、右背外側前頭皮質、右上側頭回、視床や基底核などの皮質下構造への損傷によって生じる。左側の空間無視（右半球損傷による）は右側の空間無視（左半球損傷による）よりも一般的かつ重篤である。マリアン・メズラム（Marvin M. Mesulam）は1981年の論文「A Cortical Network for Directed Attention and Unilateral Neglect」（Annals of Neurology, Vol.10, No.4, pp.309-325, DOI: 10.1002/ana.410100402）において、指向的注意は単一脳領域に局在するのではなく、後頭頂皮質（空間表現）・前頭眼野/前運動皮質（運動プログラム）・帯状回（動機付け価値）・網様体形成体（覚醒）を含む大規模ネットワークに依存するという仮説を提唱した。臨床評価は線分二等分テスト（line bisection test）・抹消テスト（cancellation test）・描画課題により行われる。',
+    keyFigures: 'Heinrich M. Heilman & Edward Valenstein（Annals of Neurology 5(2), 1979, メカニズムの解明）／Marvin M. Mesulam（Annals of Neurology 10(4), 1981, ネットワーク仮説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/ana.410050210', type: 'academic', label: 'Heilman & Valenstein (1979) Mechanisms Underlying Hemispatial Neglect — Annals of Neurology 5(2), pp.166-170' },
+      { url: 'https://doi.org/10.1002/ana.410100402', type: 'academic', label: 'Mesulam (1981) A Cortical Network for Directed Attention and Unilateral Neglect — Annals of Neurology 10(4), pp.309-325' },
+    ],
+  },
+  {
+    id: 'bizlaw-forum-shopping',
+    discipline: 'business-law',
+    title: 'フォーラム・ショッピング（訴訟地戦略的選択）',
+    statement:
+      'フォーラム・ショッピング（forum shopping）とは、当事者が自己に有利と判断される法廷・管轄権を戦略的に選択する訴訟戦略である。実体法の違い、訴訟手続の相違、陪審員構成、または判事の傾向の相違が複数管轄権間に存在する場合、被告は当該選択を「スキャンダラスな」濫用と見なすことがあるが、多くの法制度はこれを許容する。フォーラム・ショッピングはオーバーラップする管轄権システムの自然な帰結であり、米国法における管轄権の裁量的却下（forum non conveniens）の法理がこれに対抗する主要な手段である。' +
+      '米国最高裁の Gulf Oil Corp. v. Gilbert 事件（330 U.S. 501, 67 S. Ct. 839 (1947)）は、連邦地方裁判所が管轄権を有していても、衡平の見地からより適切な別の法廷（foreign forum）が存在する場合、管轄権の放棄（dismissal）の裁量を有することを確立した。同判決は二段階テストを設定した：（1）私的利益衡量要因—証拠へのアクセス、証人召喚、出廷費用、現場視察の可能性等、（2）公的利益要因—連邦地方裁判所の過密状況、無関係な市民の陪審員義務、地域的利益の有無、不要な準拠法問題の回避等。英国法では Atlantic Star 事件（[1974] AC 436）が判例法上の転機となり、フォーラム・ノン・コンヴィニエンス法理の一般化と国際的配慮の推進をもたらした。EU法はブリュッセルI規則（EC 44/2001）および改正規則（1215/2012）により、「イタリアン・トルピード」と呼ばれるフォーラム・ショッピングの弊害に対処している。フリードリッヒ・K・ユエンガー（Friedrich K. Juenger）は1989年の論文「Forum Shopping, Domestic and International」（Tulane Law Review, Vol.63, No.3）において、フォーラム・ショッピングの規制努力は実際には当事者の合理的行為に対する過度な干渉であり、管轄権の多元性がもたらす不可避的現象であると主張した。',
+    keyFigures: 'Gulf Oil Corp. v. Gilbert（1947, 米国法上の管轄権放棄法理の確立）／Friedrich K. Juenger（Tulane Law Review 63(3), 1989, フォーラム・ショッピングの防御）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/330/501/', type: 'reference', label: 'Gulf Oil Corp. v. Gilbert, 330 U.S. 501 (1947) — US Supreme Court Opinion' },
+      { url: 'https://www.tulanelawreview.org/pub/volume63/issue3/forum-shopping-domestic-and-international', type: 'academic', label: 'Juenger (1989) Forum Shopping, Domestic and International — Tulane Law Review 63(3)' },
+    ],
+  },
+  {
+    id: 'mgmt-threat-rigidity-effect',
+    discipline: 'management',
+    title: '脅威による硬直化効果（Threat-Rigidity Effect）',
+    statement:
+      '脅威による硬直化効果（Threat-Rigidity Effect）とは、組織が存立的脅威に直面したとき、情報処理の制限・統制の縮小・資源の保全を伴う組織的硬直化が生じるというマルチレベルの理論的命題である。バリー・M・スター（Barry M. Staw）、ランス・E・サンデランズ（Lance E. Sandelands）、ジェーン・E・ダットン（Jane E. Dutton）は1981年の論文「Threat-Rigidity Effects in Organizational Behavior: A Multilevel Analysis」（Administrative Science Quarterly, Vol.26, No.4, pp.501-524, DOI: 10.2307/2392337）において、個人・集団・組織の三レベルにおいて脅威が同一の硬直化パターンを引き起こすことを実証した。' +
+      '脅威下での硬直化の核心的メカニズムは、第一に情報処理の制限—注意の狭窄（attentional narrowing）、優勢的手がかりへの過度な依存、周辺的・新規の入力の無視—である。第二に統制の縮小（constriction of control）—権限の中央集権化、既習的・習慣的行動への支配、異端的・代替的行為の抑制。個人レベルではストレス誘発的な認知制限と優勢反応への依存が観察されるが、集団レベルではグループシンク的均一化圧力と異議の自己検閲が、組織レベルでは機械的構造への転換（形式化・標準化・権限の中央集権化）がもたらされる。この理論の最大の貢献は、存立的脅威に直面した組織がしばしば過去の成功戦略に執着し、革新的適応を厳に制限することの組織心理学的説明にある。結果として、環境激変時にもっとも適応が求められるときに、組織はもっとも適応が困難な硬直化状態に陥るというパラドックスが生じる。',
+    keyFigures: 'Barry M. Staw, Lance E. Sandelands & Jane E. Dutton（Administrative Science Quarterly 26(4), 1981, マルチレベル分析による脅威－硬直化の実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2392337', type: 'academic', label: 'Staw, Sandelands & Dutton (1981) Threat-Rigidity Effects in Organizational Behavior — Administrative Science Quarterly 26(4), pp.501-524' },
+      { url: 'https://www.researchgate.net/publication/242540547_Threat_Rigidity_Effects_in_Organizational_Behavior_A_Multilevel_Analysis', type: 'academic', label: 'ResearchGate full-text repository — Threat-Rigidity Effects in Organizational Behavior' },
+    ],
+  },
+  {
+    id: 'mgmt-punctuated-equilibrium',
+    discipline: 'management',
+    title: 'パンクチュエイテッド・エクイリブリアム（組織の断続平衡）',
+    statement:
+      'パンクチュエイテッド・エクイリブリアム（Punctuated Equilibrium）とは、組織変化が段階的・漸進的でなく、長期の収束期（equilibrium period）が革命的・フレーム破壊的変化（revolutionary reorientation）の短期集中期によって断続的に遮断される非連続的パターンに従うという理論的命題である。マイケル・L・タッシュマン（Michael L. Tushman）とエレナ・ロマネリ（Elenna Romanelli）は1985年の著作『Organizational Evolution: A Metamorphosis Model of Convergence and Reorientation』（Research in Organizational Behavior, Vol.7, pp.171-222）において、組織進化が生物進化のパンクチュエイテッド・エクイリブリアム（Eldredge & Gould 1972）と同型の構造を持つことを論じた。' +
+      '収束期（convergence period）では、組織は既存の戦略的志向・構造・権力分布との一貫性を保持するマイナーな増分調整を行い、深層構造（deep structure）は不変である。他方、革命的再志向期（reorientation period）では、戦略・構造・人事・統制システムがほぼ同時にフレーム破壊的に変換される。コンティア・ジェルシック（Connie J. G. Gersick）は1991年の論文「Revolutionary Change Theories: A Multilevel Exploration of the Punctuated Equilibrium Paradigm」（Academy of Management Review, Vol.16, No.1, pp.10-36, DOI: 10.5465/AMR.1991.4278988）において、この非連続性パターンが個人の成人発達・グループ発達・組織発達・科学史（クーンのパラダイム転換）・生物進化・物理学（プリゴジンの散逸構造）の6つのレベルで一般的に観察されることを実証した。タッシュマン＝ロマネリ（1994）の実証研究は、小さな増分変化は累積しても根本的フレーム転換をもたらさず、根本的変化には全体的・急速な変換が必須であることを確認した。',
+    keyFigures: 'Michael L. Tushman & Elenna Romanelli（Research in Organizational Behavior 7, 1985, パンクチュエイテッド・エクイリブリアムの提唱）／Connie J. G. Gersick（Academy of Management Review 16(1), 1991, マルチレベル実証と般化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1991.4278988', type: 'academic', label: 'Gersick (1991) Revolutionary Change Theories — Academy of Management Review 16(1), pp.10-36' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/256669', type: 'academic', label: 'Romanelli & Tushman (1994) Organizational Transformation as Punctuated Equilibrium — Academy of Management Journal 37(5), pp.1141-1166' },
+    ],
+  },
+  {
+    id: 'infosoc-infrastructural-inversion',
+    discipline: 'information-sociology',
+    title: 'インフラストラクチャル・インヴァージョン（基盤構造の可視化）',
+    statement:
+      'インフラストラクチャル・インヴァージョン（Infrastructural Inversion）とは、科学技術と社会（STS）の研究領域における方法論的戦略で、通常は非可視的・取り当たり前視されているインフラストラクチャの相互依存性・社会的次元・政治的含意を前景化・顕在化させるアナリティカルな試みである。ジェフリー・C・バウカー（Geoffrey C. Bowker）とスーザン・リー・スター（Susan Leigh Star）は1999年の著書『Sorting Things Out: Classification and Its Consequences』（MIT Press, Inside Technology series, pp.34）において、インフラストラクチャル・インヴァージョンを「技術ネットワークと標準化の深い相互依存性と、政治的知識生産の実践との間の相互依存性を認識すること」と定義した。この方法論的移動は「設計と習慣により背景に消えるインフラストラクチャ（故障時にのみ可視化）に対する闘争」と特徴付けられている。' +
+      'スター＝ルーラー（Star & Ruhleder, 1996, "Steps Toward an Ecology of Infrastructure," Information Systems Research 7(1): 111-134, DOI: 10.1287/isre.7.1.111）はインフラストラクチャを物理的事物でなく、有機的実践に関連的に出現する特性として再定義した。彼らは「インフラストラクチャとは何か」から「いつがインフラストラクチャなのか」への分析的転換を提唱し、インフラストラクチャの関係的・生態学的性質を示唆した。インフラストラクチャル・インヴァージョンはこの関係的存在論に対応する方法論であり、通常は不可視な（しかし関係的枠組みでは明らかに）基盤構造を分析的に表面化させ、その社会的・政治的側面を露呈させる意図的努力である。スターは1999年の論文「The Ethnography of Infrastructure」（American Behavioral Scientist 43(3): 377-391, DOI: 10.1177/00027649921955326）において、インフラストラクチャの9つの特質—埋め込み性・透明性・到達域・成員学習・慣行との結合・標準化の具現化・既存基盤への依存・故障時の可視化・モジュール的段階的構築—を提示し、インフラストラクチャ研究の分析的基盤を確立した。',
+    keyFigures: 'Geoffrey C. Bowker & Susan Leigh Star（MIT Press, 1999, Sorting Things Out — インフラストラクチャル・インヴァージョン概念の導入）／Susan Leigh Star & Karen Ruhleder（Information Systems Research 7(1), 1996, インフラストラクチャ研究の関係的転換）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press' },
+      { url: 'https://doi.org/10.1287/isre.7.1.111', type: 'academic', label: 'Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — Information Systems Research 7(1), pp.111-134' },
+    ],
+  },
 ];
 // Stryker restore all
