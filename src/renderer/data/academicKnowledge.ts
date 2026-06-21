@@ -22027,5 +22027,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt & March (1988) "Organizational Learning," Annual Review of Sociology 14, 319–340 — コンピテンシー・トラップの原典' },
     ],
   },
+  {
+    id: 'econ-minsky-moment',
+    discipline: 'economics',
+    title: 'ミンスキー・モーメント（金融不安定性仮説）',
+    statement:
+      'ミンスキー・モーメントとは、長期にわたる経済的安定と資産価格上昇が過剰なリスクテイクと信用膨張を招き、やがて投機的・ポンツィ型借り手が借り換え不能に陥って資産価格が急落する転換点を指す。ポスト・ケインズ派経済学者ハイマン・P・ミンスキーが1986年の著書『Stabilizing an Unstable Economy』（Yale University Press）で体系化し、1992年のレヴィ経済研究所ワーキングペーパーNo.74「The Financial Instability Hypothesis」で定式化した金融不安定性仮説に基づく。ミンスキーは借り手を3類型に分類した：①ヘッジ金融（元利払いを営業収入で賄える）、②投機的金融（利払いは可能だが元本返済には借り換えが必要）、③ポンツィ金融（利払いすら資産値上がり益や追加借入に依存）。' +
+      '安定期にはヘッジ金融から投機的・ポンツィ金融への移行が進み、信用構造が脆弱化する。「ミンスキー・モーメント」の語はPIMCOのポール・マカリーが1998年のロシア危機・LTCM破綻を論じた際に命名した。2007–08年の世界金融危機はミンスキー・モーメントの典型例と広く認識され、ミンスキーの再評価が進んだ。ドッド＝フランク法によるシステミック・リスク規制、シャドーバンキング規制、暗号資産市場の急落（2022年テラ・ルナ崩壊等）にも理論が適用されている。',
+    keyFigures: 'ハイマン・P・ミンスキー（Hyman P. Minsky, 1919–1996）／著書: Stabilizing an Unstable Economy（1986, Yale UP）／WP No.74 "The Financial Instability Hypothesis"（1992, Levy Economics Institute）／「ミンスキー・モーメント」命名: ポール・マカリー（Paul McCulley, PIMCO, 1998年）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.levyinstitute.org/pubs/wp74.pdf', type: 'academic', label: 'Levy Economics Institute — Minsky (1992) "The Financial Instability Hypothesis," Working Paper No. 74（金融不安定性仮説の定式化）' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/2008/12/whalen.htm', type: 'government', label: 'IMF Finance & Development — "The Credit Crunch: A Minsky Moment"（2008年12月号、ミンスキー理論と世界金融危機の解説）' },
+    ],
+  },
+  {
+    id: 'econ-k-percent-rule',
+    discipline: 'economics',
+    title: 'フリードマンのk%ルール（貨幣供給量固定成長率準則）',
+    statement:
+      'k%ルールとは、ミルトン・フリードマンが1960年の著書『A Program for Monetary Stability』（Fordham University Press）で提唱した金融政策準則であり、中央銀行は景気循環に関わらず貨幣供給量（マネーサプライ）を毎年一定の割合（k%）で増加させるべきとする。フリードマンは金融政策には「長く変動するラグ」があり、裁量的政策は景気変動をかえって増幅させるため、ルールに基づく機械的な貨幣供給が望ましいと論じた。Anna Schwartzとの共著『A Monetary History of the United States, 1867–1960』（1963, Princeton UP / NBER）で大恐慌の主因をFRBの貨幣供給収縮に帰し、理論的基礎を固めた。' +
+      '1979年10月のボルカー・ショック以降、FRBはマネタリー・ターゲティング（非借入準備目標）を実験的に採用したが、1980年代の金融革新（NOW口座・MMF・スウィープ口座の普及）により貨幣の流通速度（velocity）が不安定化し、マネーサプライと名目GDPの安定的関係が崩壊した。1982年秋にM1目標を事実上放棄、1993年にグリーンスパン議長が議会証言で金融政策指針としての貨幣集計量の使用停止を表明した。後継的ルールとしてはジョン・テイラーの「テイラー・ルール」（1993年）が台頭し、政策金利をインフレ率とGDPギャップの関数として設定する枠組みが主流となった。',
+    keyFigures: 'ミルトン・フリードマン（Milton Friedman, 1912–2006）／著書: A Program for Monetary Stability（1960, Fordham UP）／共著: A Monetary History of the United States（1963, Princeton UP、アンナ・シュワルツとの共著）／後継ルール: ジョン・テイラー（John B. Taylor, 1993 "Discretion versus Policy Rules in Practice"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20061110a.htm', type: 'government', label: 'Federal Reserve Board — Bernanke (2006) "Monetary Aggregates and Monetary Policy at the Federal Reserve: A Historical Perspective"（金融政策史とマネタリー・ターゲティングの放棄）' },
+      { url: 'https://en.wikipedia.org/wiki/Friedman%27s_k-percent_rule', type: 'reference', label: 'Wikipedia — Friedman\'s k-percent rule（k%ルールの定義・批判・テイラー・ルールへの移行）' },
+    ],
+  },
+  {
+    id: 'human-hedonic-treadmill',
+    discipline: 'human-science',
+    title: '快楽の踏み車（快楽適応）',
+    statement:
+      '快楽の踏み車（hedonic treadmill）とは、人間は重大な人生の出来事—宝くじ当選や重度の事故—を経験しても、比較的短期間のうちに主観的幸福感が以前の基準水準（セットポイント）に回帰する傾向を指す心理学的概念である。フィリップ・ブリックマンとドナルド・T・キャンベルが1971年の論文「Hedonic Relativism and Planning the Good Society」（M.H. Appley編『Adaptation-Level Theory: A Symposium』所収、Academic Press）で「快楽の踏み車」の比喩を導入した。ブリックマン、コーツ、ジャノフ＝バルマンの1978年の画期的研究（JPSP, Vol. 36, No. 8, pp. 917–927）は、宝くじ当選者22名・脊髄損傷事故被害者29名・対照群22名を比較し、当選者の幸福度が対照群と有意差がないことを実証した。' +
+      'ディーナーらは2006年のAmerican Psychologist誌論文「Beyond the Hedonic Treadmill」で、セットポイントは完全に固定的ではなく個人差があること、異なる幸福の構成要素（生活満足度・ポジティブ感情・ネガティブ感情）が異なる適応速度を持つこと、長期失業や重度障害など適応が不完全な事象が存在することを示し、原理論を5つの改訂点で修正した。現代のポジティブ心理学では、意図的活動（感謝・親切行為・マインドフルネス）による持続的な幸福向上の可能性が検討されている。',
+    keyFigures: 'フィリップ・ブリックマン＆ドナルド・T・キャンベル（1971 "Hedonic Relativism and Planning the Good Society"）／ブリックマン・コーツ・ジャノフ＝バルマン（1978, JPSP 36(8):917–927, 宝くじ当選者研究）／エド・ディーナーほか（2006 "Beyond the Hedonic Treadmill," American Psychologist 61(4):305–314）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.61.4.305', type: 'academic', label: 'Diener, Lucas & Scollon (2006) "Beyond the Hedonic Treadmill: Revising the Adaptation Theory of Well-Being," American Psychologist 61(4), 305–314' },
+      { url: 'https://doi.org/10.1037/0022-3514.36.8.917', type: 'academic', label: 'Brickman, Coates & Janoff-Bulman (1978) "Lottery Winners and Accident Victims: Is Happiness Relative?" JPSP 36(8), 917–927（宝くじ当選者・事故被害者の幸福度比較研究）' },
+    ],
+  },
+  {
+    id: 'bizlaw-ultra-vires',
+    discipline: 'business-law',
+    title: 'ウルトラ・ヴァイリーズの法理（権限踰越の法理）',
+    statement:
+      'ウルトラ・ヴァイリーズ（Ultra Vires）の法理とは、法人が定款・設立証書に定められた目的（objects）の範囲を超えてなした行為は無効であり、たとえ全株主の追認があっても有効とならないとする会社法上の原則である。1875年のAshbury Railway Carriage & Iron Co v Riche事件（[1875] LR 7 HL 653）で英国貴族院が確立し、定款の目的条項を超える鉄道建設契約は無効であって株主総会の承認によっても追認し得ないと判示した。' +
+      '第三者保護の観点からは、Royal British Bank v Turquand（1856年）で確立された「内部管理の原則（indoor management rule）」が対置され、取引相手は会社内部の手続遵守を調査する義務を負わないとされた。現代では大半の法域がこの法理を立法的に克服しており、英国会社法2006年第39条は「会社の行為の有効性は定款上の能力制限を理由に争うことができない」と規定し、日本の会社法（2005年制定）も株式会社に一般的権利能力を認める。ただし公法上の地方自治体・慈善団体（charity）には依然として適用があり、行政法における権限踰越審査の基礎法理として残存する。',
+    keyFigures: 'Ashbury Railway Carriage & Iron Co v Riche [1875] LR 7 HL 653（英国貴族院）／Royal British Bank v Turquand (1856) 6 E&B 327（内部管理の原則）／英国会社法2006年第39条・第40条／日本民法34条・会社法',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/2006/46/section/39', type: 'government', label: 'UK Legislation — Companies Act 2006, Section 39: A Company\'s Capacity（ultra vires廃止規定の原典）' },
+      { url: 'https://cir.nii.ac.jp/crid/1390853649757221888', type: 'academic', label: 'CiNii Research — 山田創一「Ultra Vires法理の機能と課題」専修ロージャーナル4号（2009年）' },
+    ],
+  },
+  {
+    id: 'mgmt-iron-law-oligarchy',
+    discipline: 'management',
+    title: '寡頭制の鉄則（Iron Law of Oligarchy）',
+    statement:
+      '寡頭制の鉄則とは、ロベルト・ミヒェルスが1911年の著書『Zur Soziologie des Parteiwesens in der modernen Demokratie』（英訳: Political Parties, 1915）で提唱した組織論の古典的命題で、あらゆる組織は民主的理念を掲げていても、指導者層が情報・資源・組織機構の統制を通じて権力を集中させ、不可避的に寡頭制的傾向を発展させると説く。ミヒェルスはドイツ社会民主党の内部観察から、組織の規模拡大に伴う分業・専門化が官僚制を生み、指導者が組織運営の不可欠な知識と技能を独占することで一般構成員の民主的統制が形骸化する過程を分析した。' +
+      'この命題に対し、S.M.リプセットらは1956年の『Union Democracy』で国際印刷工組合（ITU）が内部民主制を維持した事例を示し、寡頭制化は不可避ではなく制度設計により抑制可能と論じた。パネビアンコは1988年の英訳書『Political Parties: Organization and Power』で、組織のジレンマとして目的達成と組織維持の緊張関係を再定式化した。現代ではデジタルプラットフォーム企業のデータ独占やアルゴリズム支配がネットワーク効果と結合して新たな寡頭制的構造を生むと指摘され、プリンシパル＝エージェント問題との理論的接合も論じられている。',
+    keyFigures: 'ロベルト・ミヒェルス（Robert Michels, 1876–1936）／著書: Zur Soziologie des Parteiwesens（1911）／批判: S.M.リプセット他（1956『Union Democracy』ITU研究）／A.パネビアンコ（1982伊語原著／1988英訳『Political Parties: Organization and Power』Cambridge UP）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/iron-law-of-oligarchy', type: 'reference', label: 'Encyclopaedia Britannica — Iron law of oligarchy（ミヒェルスの寡頭制の鉄則の定義と背景）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/1467-8675.12494', type: 'academic', label: 'Drochon (2020) "Robert Michels, the iron law of oligarchy and dynamic democracy," Constellations (Wiley)' },
+    ],
+  },
+  {
+    id: 'infosoc-epistemic-injustice',
+    discipline: 'information-sociology',
+    title: '認識的不正義（epistemic injustice）',
+    statement:
+      '認識的不正義（epistemic injustice）とは、知識の伝達・共有・解釈の過程において、話し手の社会的アイデンティティに対する偏見が原因で認識主体としての能力が不当に貶められる構造的な不正義を指す。ミランダ・フリッカーが2007年の著書『Epistemic Injustice: Power and the Ethics of Knowing』（Oxford University Press）で体系化し、2類型を提示した。「証言的不正義（testimonial injustice）」は、人種・性別・階層等への偏見により聞き手が話し手の証言に不当に低い信頼性を付与する現象であり、「解釈的不正義（hermeneutical injustice）」は、社会の集合的解釈資源に構造的な空白があるため、被抑圧者が自身の経験を適切に意味づけ・伝達できない状態を指す。' +
+      '情報社会論の文脈では、アルゴリズムによるプロファイリング・コンテンツモデレーション・生成AIが認識的不正義を再生産・増幅する回路として注目される。検索エンジンの表示順位やSNSの可視性アルゴリズムが特定の集団の声を構造的に周縁化する「アルゴリズム的証言的不正義」、またAI学習データの偏りがマイノリティの経験概念を欠落させる「アルゴリズム的解釈的不正義」が論じられている。ホセ・メディナは『The Epistemology of Resistance』（2013, Oxford University Press）で抵抗的想像力による是正を論じ、フリッカーの枠組みを社会的抑圧の交差性へ拡張した。',
+    keyFigures: 'ミランダ・フリッカー（Miranda Fricker、2007年『Epistemic Injustice: Power and the Ethics of Knowing』Oxford University Press、証言的不正義・解釈的不正義の2類型を体系化）／ホセ・メディナ（José Medina、2013年『The Epistemology of Resistance』Oxford University Press、抵抗的認識論・交差性への拡張）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/book/32817', type: 'academic', label: 'Fricker (2007) "Epistemic Injustice: Power and the Ethics of Knowing," Oxford University Press（認識的不正義の原典）' },
+      { url: 'https://iep.utm.edu/epistemic-injustice/', type: 'reference', label: 'Internet Encyclopedia of Philosophy — Epistemic Injustice（概念の定義・類型・批判・発展の包括的解説）' },
+    ],
+  },
 ];
 // Stryker restore all
