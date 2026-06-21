@@ -21943,5 +21943,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.apa.org/topics/brain-nervous-system', type: 'reference', label: 'American Psychological Association — Brain and Nervous System（神経可塑性を含む脳科学の概説）' },
     ],
   },
+  {
+    id: 'econ-cobra-effect',
+    discipline: 'economics',
+    title: 'コブラ効果（意図せざる結果の法則）',
+    statement:
+      'コブラ効果（Cobra Effect）とは、ある問題を解決するために導入された施策が、かえってその問題を悪化させる意図せざる結果を生む現象をいう。インセンティブ設計が行動主体の戦略的反応を考慮しない場合に生じ、報酬や罰則が裏目に出るメカニズムを指す。' +
+      '名称は英領インドにおけるコブラ駆除報奨金の逸話に由来する。総督がコブラの死骸1匹につき報奨金を設定したところ、住民が報奨金目的でコブラを養殖し始め、制度廃止後に養殖コブラが野に放たれ個体数がかえって増加した。ドイツの経済学者ホルスト・ジーベルトが2001年の著書で概念化し、補助金設計・規制政策・KPI管理の失敗分析に広く援用される。',
+    keyFigures: 'ホルスト・ジーベルト（Horst Siebert, 1938–2009）／著書: "Der Kobra-Effekt: Wie man Irrwege der Wirtschaftspolitik vermeidet"（Deutsche Verlags-Anstalt, 2001）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econlib.org/library/Columns/y2003/Lomasky.html', type: 'reference', label: 'Library of Economics and Liberty — 意図せざる結果とインセンティブの逆効果に関する経済学的解説' },
+      { url: 'https://academic.oup.com/book/5511', type: 'academic', label: 'Siebert (2001) "Der Kobra-Effekt"のコンセプトを国際経済政策論の文脈で展開したOxford学術文献' },
+    ],
+  },
+  {
+    id: 'mgmt-conways-law',
+    discipline: 'management',
+    title: 'コンウェイの法則（組織構造とシステム設計の同型性）',
+    statement:
+      'コンウェイの法則（Conway\'s Law）とは、「システムを設計する組織は、その組織のコミュニケーション構造を反映した設計を生み出す」という経験則である。ソフトウェア・製品・業務プロセスのアーキテクチャは、それを作るチームの組織構造・情報伝達経路と不可避的に同型になる。' +
+      'メルヴィン・コンウェイが1967年にDatamation誌の論文"How Do Committees Invent?"で提唱した。ハーバード・ビジネス・スクールのアラン・マクコーマックらが2012年の実証研究で、オープンソースと商用ソフトウェアのモジュール構造が開発組織の結合度と相関することを示し、理論的妥当性が確認された。マイクロサービス化・逆コンウェイ戦略など、現代のソフトウェア組織設計の基盤概念である。',
+    keyFigures: 'メルヴィン・E・コンウェイ（Melvin E. Conway）／初出: "How Do Committees Invent?" Datamation, 1968年4月号／実証: MacCormack, Baldwin & Rusnak (2012) Harvard Business School',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.melconway.com/Home/Committees_Paper.html', type: 'academic', label: 'Conway (1968) "How Do Committees Invent?" — コンウェイの法則の原典論文（著者公式サイト）' },
+      { url: 'https://www.hbs.edu/ris/Publication%20Files/08-039_1861e507-1dc1-4602-85b8-90d71f07571e.pdf', type: 'academic', label: 'MacCormack, Baldwin & Rusnak (2012) "Exploring the Duality between Product and Organizational Architectures" — HBS実証研究' },
+    ],
+  },
+  {
+    id: 'human-catharsis-hypothesis',
+    discipline: 'human-science',
+    title: 'カタルシス仮説（攻撃性の浄化理論）',
+    statement:
+      'カタルシス仮説（Catharsis Hypothesis）とは、攻撃的衝動や怒りの感情を代替的手段（スポーツ・暴力的メディア視聴・言語的発散など）で表出・放出すれば、その後の攻撃行動が減少するという心理学的仮説である。「感情の蒸気圧」モデルとも呼ばれる。' +
+      'アリストテレスの『詩学』における悲劇の浄化効果（カタルシス）に起源を持ち、フロイトの精神分析における抑圧解放理論が近代心理学に持ち込んだ。しかし、ブッシュマンらの2002年の実験研究をはじめとする多数の実証研究により、攻撃的行動の発散はむしろ攻撃性を増大させることが示され、現代心理学では仮説は概ね否定されている。怒りのマネジメント研修や暴力メディア規制議論の理論的背景として重要である。',
+    keyFigures: 'アリストテレス（紀元前335年頃『詩学』）／ジークムント・フロイト（カタルシス法, 1893）／反証: ブラッド・J・ブッシュマン（Brad J. Bushman, 2002 "Does Venting Anger Feed or Extinguish the Flame?"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/0146167202289002', type: 'academic', label: 'Bushman (2002) "Does Venting Anger Feed or Extinguish the Flame?" Personality and Social Psychology Bulletin, 28(6), 724–731' },
+      { url: 'https://www.apa.org/topics/anger', type: 'reference', label: 'American Psychological Association — Anger（カタルシス仮説の否定と怒りの適応的管理に関する解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-nachfrist',
+    discipline: 'business-law',
+    title: 'ナッハフリスト制度（付加期間催告による解除）',
+    statement:
+      'ナッハフリスト（Nachfrist）制度とは、契約の一方当事者が相手方の履行遅滞に際し、合理的な付加期間（追加の履行期限）を催告として設定し、その期間内に履行がなされない場合に契約を解除できるとする法的メカニズムである。催告なき即時解除を原則としない、段階的救済手段を提供する。' +
+      'ドイツ民法典（BGB）§323に由来し、国際物品売買契約に関する国連条約（CISG）第47条・第63条にも採用された。日本の民法541条（催告解除）も同様の構造を持つ。2017年（平成29年）民法改正では催告解除の要件が明確化された（541条但書追加）。国際取引実務・契約書ドラフティングにおいて、解除権行使の適法性を担保する重要な概念である。',
+    keyFigures: 'ドイツ民法典（BGB, 1900年施行）§323／CISG（国際動産売買条約, 1980年採択）第47条・第63条／日本民法541条（2017年改正・2020年4月施行）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.uncitral.org/pdf/english/texts/sales/cisg/V1056997-CISG-e-book.pdf', type: 'government', label: 'UNCITRAL — CISG条文テキスト（第47条・第63条のNachfrist規定を含む国際統一売買法）' },
+      { url: 'https://www.moj.go.jp/MINJI/minji06_001070000.html', type: 'government', label: '法務省 — 民法（債権関係）改正の概要（541条催告解除の改正を含む）' },
+    ],
+  },
+  {
+    id: 'infosoc-collingridge-dilemma',
+    discipline: 'information-sociology',
+    title: 'コリングリッジのジレンマ（技術制御の二重拘束）',
+    statement:
+      'コリングリッジのジレンマ（Collingridge Dilemma）とは、技術の社会的影響の制御に関する本質的困難を指す概念である。技術の発展初期段階では社会的影響の予測が困難なため制御の必要性が認識されず（情報の問題）、影響が顕在化する成熟段階では技術が社会に深く組み込まれているため制御コストが過大になる（権力の問題）。' +
+      'デイヴィッド・コリングリッジが1980年の著書"The Social Control of Technology"で提唱した。AI規制・遺伝子技術・プラットフォーム規制などの現代的課題に直接適用される。EUのAI規制法（EU AI Act, 2024年）や予防原則（Precautionary Principle）の理論的正当化の一根拠ともなっており、科学技術社会論（STS）の基礎概念の一つである。',
+    keyFigures: 'デイヴィッド・コリングリッジ（David Collingridge, 1945–?）／著書: "The Social Control of Technology"（Frances Pinter / St. Martin\'s Press, 1980）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/spp/article-abstract/9/1/47/1667087', type: 'academic', label: 'Collingridge (1982) "Hedging and Flexing: Two Ways of Choosing Under Ignorance," Science and Public Policy 9(1)' },
+      { url: 'https://www.europarl.europa.eu/thinktank/en/document/EPRS_BRI(2021)698792', type: 'government', label: 'European Parliament Think Tank — AI規制におけるコリングリッジのジレンマの政策的含意' },
+    ],
+  },
+  {
+    id: 'mgmt-competency-trap',
+    discipline: 'management',
+    title: 'コンピテンシー・トラップ（能力の罠）',
+    statement:
+      'コンピテンシー・トラップ（Competency Trap）とは、組織が既存の技術・ルーティン・事業領域に習熟するほど、その活用（exploitation）への依存を深め、新たな技術や市場機会の探索（exploration）を怠る結果、環境変化に対して脆弱になる現象をいう。成功が学習の方向性を固定し、自己強化的に硬直化する経路依存的メカニズムである。' +
+      'バーバラ・レヴィットとジェームズ・マーチが1988年のAnnual Review of Sociology論文"Organizational Learning"で概念化した。マーチが1991年のOrganization Science論文で展開した探索と活用のトレードオフ理論の中核概念であり、コダック・ノキア等の事例で実証的に検証されている。両利き経営（ambidexterity）の理論的前提をなす概念である。',
+    keyFigures: 'バーバラ・レヴィット & ジェームズ・G・マーチ（Levitt & March, 1988 "Organizational Learning"）／ジェームズ・G・マーチ（James G. March, 1991 "Exploration and Exploitation in Organizational Learning"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) "Exploration and Exploitation in Organizational Learning," Organization Science 2(1), 71–87 — 探索と活用の理論的枠組み' },
+      { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt & March (1988) "Organizational Learning," Annual Review of Sociology 14, 319–340 — コンピテンシー・トラップの原典' },
+    ],
+  },
 ];
 // Stryker restore all
