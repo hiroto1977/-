@@ -22363,5 +22363,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/350/445/74531/', type: 'government', label: 'Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965) — Justia' },
     ],
   },
+  {
+    id: 'econ-epstein-zin',
+    discipline: 'economics',
+    title: 'エプスタイン＝ジン再帰的効用（Epstein-Zin Recursive Utility）',
+    statement:
+      'エプスタイン＝ジン選好（Epstein-Zin preferences）とは、ラリー・G・エプスタインとスタンレー・E・ジンが1989年の論文「Substitution, Risk Aversion, and the Temporal Behavior of Consumption and Asset Returns: A Theoretical Framework」（Econometrica, Vol.57, No.4, pp.937-969）において提示した再帰的効用関数であり、標準的な時間加法的期待効用理論では不可分に結合されていた異時点間の代替弾力性（elasticity of intertemporal substitution, EIS）と相対的リスク回避度（relative risk aversion, RRA）を独立のパラメータとして分離することを可能にした。具体的には、時点tにおける効用Vtを V_t = [(1-β)C_t^ρ + β(E_t[V_{t+1}^α])^{ρ/α}]^{1/ρ} の形式で再帰的に定義し、ρが異時点間代替を、αがリスク回避を各々支配する。' +
+      'この枠組みはMehra and Prescott (1985) が提起した株式プレミアム・パズル（equity premium puzzle）およびWeil (1989) のリスクフリー・レート・パズル（risk-free rate puzzle）の解消に向けた理論的基盤を提供した。標準モデルではRRA＝1/EISという制約があるため、観測される高い株式プレミアム（年率約6%）を説明するには非現実的に高いリスク回避度（RRA≈50以上）が必要となり、同時にリスクフリー金利が過大に予測されるという矛盾が生じる。エプスタイン＝ジン選好は両パラメータを独立化することでこのトレードオフを解消し、RRA＞1/EISの場合に投資家が「早期解消選好」（preference for early resolution of uncertainty）を持つことを示した。Bansal and Yaron (2004) の長期リスク・モデル（long-run risks model）はこの枠組みを用いて資産価格パズルの定量的説明に成功し、現代資産価格理論の標準的道具立てとなっている。',
+    keyFigures: 'Larry G. Epstein（Econometrica 57(4), 1989）／Stanley E. Zin（Econometrica 57(4), 1989）／Ravi Bansal・Amir Yaron（Journal of Finance 59(4), 2004, 長期リスク・モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1913778', type: 'academic', label: 'Epstein & Zin (1989) Substitution, Risk Aversion, and the Temporal Behavior — Econometrica 57(4)' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2004.00670.x', type: 'academic', label: 'Bansal & Yaron (2004) Risks for the Long Run — Journal of Finance 59(4)' },
+    ],
+  },
+  {
+    id: 'human-capgras',
+    discipline: 'human-science',
+    title: 'カプグラ妄想（Capgras Delusion）',
+    statement:
+      'カプグラ妄想（Capgras delusion）とは、親しい人物が外見上同一の偽者・替え玉（impostor）に入れ替わったという確信的信念を特徴とする妄想的誤同定症候群（delusional misidentification syndrome）であり、1923年にジョゼフ・カプグラとジャン・ルブール＝ラショーが「L\'illusion des \'sosies\' dans un délire systématisé chronique」（Bulletin de la Société Clinique de Médecine Mentale, Vol.11, pp.6-16）において53歳の女性患者マダムMの症例を報告し、「ソジーの錯覚」（l\'illusion des sosies）と命名したことに始まる。当初は精神分析的解釈（親密な対象への両価感情の投影）が主流であったが、1990年にハディン・エリスとアンドリュー・ヤングが「Accounting for Delusional Misidentifications」（British Journal of Psychiatry, Vol.157, pp.239-248）において顔認知の二重解離モデルを提唱し、相貌失認（prosopagnosia）の「鏡像」仮説を提示した。' +
+      '1997年にウィリアム・ハーシュタインとV・S・ラマチャンドランが「Capgras Syndrome: A Novel Probe for Understanding the Neural Representation of the Identity and Familiarity of Persons」（Proceedings of the Royal Society of London. Series B, Vol.264, No.1380, pp.437-444）において皮膚電気反応（SCR）実験を実施し、カプグラ患者では既知の顔に対する自律神経系の情動的覚醒反応が消失していることを実証した。この知見は、側頭葉の顔認知領域（紡錘状回顔領域, FFA）から扁桃体・辺縁系への情動的経路の切断がカプグラ妄想の神経基盤であるとする「切断仮説」（disconnection hypothesis）を確立した。相貌失認が顔の視覚的同定（ventral stream）の障害であるのに対し、カプグラ妄想は情動的親密性の処理（dorsal/limbic pathway）の障害であり、両者は顔認知の認知的経路と情動的経路の二重解離を構成する。現代の二因子理論（two-factor theory）では、第一因子としての情動的切断に加え、第二因子として信念評価システム（右前頭葉）の機能不全が妄想の固定化に必要とされる。',
+    keyFigures: 'Joseph Capgras・Jean Reboul-Lachaux（Bulletin de la Société Clinique de Médecine Mentale, 1923）／Hadyn D. Ellis・Andrew W. Young（British Journal of Psychiatry, 1990）／William Hirstein・V.S. Ramachandran（Proceedings of the Royal Society B, 1997）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Capgras_delusion', type: 'reference', label: 'Capgras delusion — Wikipedia（原論文・Ellis & Young 1990・Ramachandran 1997 を包括的に引用）' },
+      { url: 'https://royalsocietypublishing.org/doi/10.1098/rspb.1997.0062', type: 'academic', label: 'Hirstein & Ramachandran (1997) Capgras Syndrome: A Novel Probe — Proc. R. Soc. Lond. B 264(1380)' },
+    ],
+  },
+  {
+    id: 'bizlaw-res-judicata',
+    discipline: 'business-law',
+    title: '既判力（Res Judicata）',
+    statement:
+      '既判力（res judicata, ラテン語で「判決済みの事項」）とは、管轄権を有する裁判所が本案について下した確定判決が、同一当事者間における同一請求原因の再訴訟を遮断するという訴訟法上の基本原則であり、請求遮断効（claim preclusion）と争点遮断効（issue preclusion / collateral estoppel）の二つの法理から構成される。請求遮断効は、確定判決の既判力が同一の訴訟物（cause of action）に属するすべての主張に及び、前訴で主張し得たが主張しなかった事項をも遮断する。争点遮断効は、前訴において実際に争われ（actually litigated）かつ判決に必要な争点として決定された（necessarily decided）個別の事実上・法律上の争点について、後訴での再争を禁じる。' +
+      '米国法における既判力法理の基礎判例はCromwell v. County of Sac, 94 U.S. 351 (1876) であり、合衆国最高裁判所のサミュエル・ミラー判事（Justice Samuel Freeman Miller）が請求遮断効と争点遮断効の区別を明確化した。同判決は、前訴と後訴の訴訟物が同一である場合には確定判決が「すべての事項」を遮断するが、訴訟物が異なる場合には前訴で「実際に争われかつ決定された」争点のみが遮断されると判示し、現代の二分法的枠組みを確立した。日本法では民事訴訟法第114条第1項が「確定判決は、主文に包含するものに限り、既判力を有する」と規定し、既判力の客観的範囲を判決主文（訴訟物に対する判断）に限定する。大陸法系では一般にne bis in idem（二重の危険の禁止）の民事的適用として位置づけられ、ドイツ法ではRechtskraft、フランス法ではautorité de la chose jugéeとして知られる。',
+    keyFigures: 'Justice Samuel Freeman Miller（Cromwell v. County of Sac, 94 U.S. 351 (1876)）／Restatement (Second) of Judgments (1982)（ALI, 現代的定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/94/351/', type: 'government', label: 'Cromwell v. County of Sac, 94 U.S. 351 (1876) — Justia US Supreme Court' },
+      { url: 'https://www.law.cornell.edu/wex/res_judicata', type: 'government', label: 'Res Judicata — Cornell Law Institute Legal Information Institute (Wex)' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-ecology',
+    discipline: 'management',
+    title: '組織エコロジー（Organizational Ecology）',
+    statement:
+      '組織エコロジー（organizational ecology）とは、マイケル・T・ハナンとジョン・フリーマンが1977年の論文「The Population Ecology of Organizations」（American Journal of Sociology, Vol.82, No.5, pp.929-964, DOI: 10.1086/226424）において提唱した組織理論の研究プログラムであり、個別組織の合理的適応（rational adaptation）ではなく、組織個体群（organizational population）レベルでの環境淘汰（environmental selection）が組織形態の多様性と変化を説明する主要メカニズムであると主張する。この理論は三つの中核概念を持つ。第一に構造的慣性（structural inertia）：組織は信頼性（reliability）と説明責任（accountability）を確保するために公式化・標準化された構造を発達させるが、これが環境変化への迅速な適応を阻害する（Hannan & Freeman 1984, American Sociological Review, Vol.49, No.2, pp.149-164, DOI: 10.2307/2095567）。' +
+      '第二に密度依存（density dependence）：組織個体群における創設率と消滅率は個体群密度の非単調関数であり、低密度期には正当性効果（legitimation effect）が支配して創設率が上昇し、高密度期には競争効果（competition effect）が支配して創設率が低下し消滅率が上昇する逆U字型の関係を示す。Carroll and Swaminathan (1991) は1633年から1988年までの米国醸造業7,709社のデータで密度依存の逆U字パターンを実証した。第三に新しさの不利益（liability of newness）：Stinchcombe (1965) が「Social Structure and Organizations」において提唱した概念で、新設組織は確立されたルーティン・社会的正当性・外部関係ネットワークを欠くため、既存組織より体系的に高い消滅率を示す。Freeman, Carroll and Hannan (1983) は労働組合・半導体メーカー・新聞社の三つの個体群でこのパターンを実証した。Hannan and Freeman (1989) の著書『Organizational Ecology』（Harvard University Press, ISBN: 978-0-674-64348-2）はこれらの知見を体系化した。',
+    keyFigures: 'Michael T. Hannan・John H. Freeman（AJS 82(5), 1977; ASR 49(2), 1984）／Arthur L. Stinchcombe（Handbook of Organizations, 1965, 新しさの不利益）／Glenn R. Carroll・Anand Swaminathan（醸造業密度依存実証, 1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977) The Population Ecology of Organizations — AJS 82(5), pp.929-964' },
+      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan & Freeman (1984) Structural Inertia and Organizational Change — ASR 49(2), pp.149-164' },
+    ],
+  },
+  {
+    id: 'infosoc-enshittification',
+    discipline: 'information-sociology',
+    title: 'エンシティフィケーション（Enshittification）',
+    statement:
+      'エンシティフィケーション（enshittification）とは、カナダ系英国人の作家・デジタル権利活動家コリー・ドクトロウ（Cory Doctorow）が2022年11月にブログ「Pluralistic」への投稿で初めて使用し、2023年1月のWired誌寄稿「The \'Enshittification\' of TikTok」で広く知られるようになった造語であり、デジタルプラットフォームが利用者・ビジネス顧客・プラットフォーム所有者の間で価値配分を段階的にシフトさせ、最終的にサービス品質が体系的に劣化する過程を記述する概念である。ドクトロウが定式化した三段階モデルでは、第一段階でプラットフォームはエンドユーザーに最大限の価値を提供して利用者基盤を構築し（ユーザー獲得期）、第二段階で蓄積されたユーザー基盤をテコにビジネス顧客（広告主・出店者）に価値を移転し（マネタイゼーション期）、第三段階でプラットフォーム所有者（株主）への利益最大化のために利用者とビジネス顧客の双方から価値を収奪する（レント抽出期）。' +
+      'この概念はアメリカ方言学会（American Dialect Society, ADS）が2024年1月の年次総会において2023年の「今年の言葉」（Word of the Year）に選出したことで学術的・社会的認知を獲得した。ドクトロウはエンシティフィケーションの構造的原因として、プラットフォームの両面市場（two-sided market）における支配的地位、スイッチングコスト（switching costs）の意図的増大、相互運用性（interoperability）の制限、およびデジタルミレニアム著作権法（DMCA）第1201条等による技術的保護手段の法的保護を挙げる。この分析は、Jean Tirole のプラットフォーム経済学における両面市場理論、Tim Wu のネット中立性と「注意の商人」（attention merchants）論、Shoshana Zuboff の監視資本主義（surveillance capitalism）論と理論的に接続し、プラットフォーム資本主義批判の現代的語彙として定着しつつある。',
+    keyFigures: 'Cory Doctorow（Pluralistic / Wired, 2022-2023, 造語者）／American Dialect Society（2023年Word of the Year選出, 2024年1月）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Enshittification', type: 'reference', label: 'Enshittification — Wikipedia（ドクトロウ原典・ADS選出・プラットフォーム劣化三段階モデルの包括的解説）' },
+      { url: 'https://www.wired.com/story/tiktok-platforms-cory-doctorow/', type: 'media', label: 'Doctorow (2023) The "Enshittification" of TikTok — Wired' },
+    ],
+  },
+  {
+    id: 'econ-peak-oil',
+    discipline: 'economics',
+    title: 'ピークオイル（Peak Oil）とハバート曲線',
+    statement:
+      'ピークオイル（peak oil）とは、有限な石油資源の採掘量が最大値（ピーク）に達した後に不可逆的に減少するという仮説であり、その理論的基盤はM・キング・ハバート（Marion King Hubbert）が1956年にシェル開発会社の主任地質コンサルタントとして米国石油協会（API）春季大会（テキサス州サンアントニオ、プラザホテル）で発表した論文「Nuclear Energy and the Fossil Fuels」（Drilling and Production Practice, Vol.95, pp.1-57）に遡る。ハバートはロジスティック関数 P(t) = rQ_t/4 · sech²(r(t-t₀)/2) を石油生産に適用し、究極可採埋蔵量（Ultimate Recoverable Resources, URR）が1,500億バレルの場合に米国の石油生産が1965-1970年頃にピークに達すると予測した。実際に米国下部48州の原油生産は1970年に日量約1,020万バレルでピークに達し、予測から14年後に上限シナリオが的中した。' +
+      'しかし、ハバート曲線のグローバル適用は重大な予測失敗に終わった。Campbell and Laherrère (1998) は「The End of Cheap Oil」（Scientific American, Vol.278, No.3, pp.78-83）で世界の在来型原油生産が2004-2005年頃にピークに達すると予測したが、2008年以降の水圧破砕（hydraulic fracturing）と水平掘削（horizontal drilling）の商業化によるシェール革命が全く予見されていなかった。米国の原油生産は2015年以降に逆転上昇し、2019年には日量1,200万バレルに達してハバートの予測した絶対的上限を超過した。この失敗の根本原因は、ハバートのモデルがURRを固定的な地質学的定数として扱い、技術革新・価格弾力性・経済的フィードバックを無視した点にある。IEA (2026) は現在、地質学的制約による供給ピーク（peak supply）ではなく、電気自動車普及・再生可能エネルギー転換・気候政策による需要ピーク（peak demand）を2030年頃と予測しており、ピークオイル論は「いつ石油が枯渇するか」から「いつ需要が減退するか」へとパラダイム転換を遂げている。',
+    keyFigures: 'M. King Hubbert（Shell Development Company, Drilling and Production Practice, 1956）／Colin J. Campbell・Jean H. Laherrère（Scientific American 278(3), 1998）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://aspofrance.org/wp-content/uploads/2024/04/king_hubbert_1956_ocr.pdf', type: 'academic', label: 'Hubbert (1956) Nuclear Energy and the Fossil Fuels — Drilling and Production Practice, Vol.95, pp.1-57（原論文PDF）' },
+      { url: 'https://www.scientificamerican.com/article/the-end-of-cheap-oil/', type: 'media', label: 'Campbell & Laherrère (1998) The End of Cheap Oil — Scientific American 278(3), pp.78-83' },
+    ],
+  },
 ];
 // Stryker restore all
