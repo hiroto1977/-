@@ -22447,5 +22447,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.scientificamerican.com/article/the-end-of-cheap-oil/', type: 'media', label: 'Campbell & Laherrère (1998) The End of Cheap Oil — Scientific American 278(3), pp.78-83' },
     ],
   },
+  {
+    id: 'econ-peacock-wiseman-displacement',
+    discipline: 'economics',
+    title: 'ピーコック＝ワイズマン転位効果（Peacock-Wiseman Displacement Effect）',
+    statement:
+      'ピーコック＝ワイズマン転位効果（displacement effect）とは、英国の財政学者アラン・T・ピーコック（Alan T. Peacock）とジャック・ワイズマン（Jack Wiseman）が1961年の全米経済研究所（NBER）研究報告書『The Growth of Public Expenditure in the United Kingdom』（Princeton University Press, NBER Studies in Fiscal Policy No.72）において提唱した財政膨張メカニズムであり、戦争・大規模自然災害・深刻な経済危機といった社会的擾乱（social disturbance）が納税者の租税負担に対する心理的許容水準（tolerable burden of taxation）を不可逆的に引き上げ、危機終息後も公共支出の絶対水準が危機前の水準に復帰せず恒久的に高い新しい基準線（plateau）に定着する現象を記述する。この理論はアドルフ・ワグナー（Adolph Wagner）の「経費膨張の法則」（Wagner\'s Law, 1883）が所得弾力性による漸進的・連続的な政府支出増大を予測したのに対し、公共支出の成長が平時の漸増と危機時の不連続な跳躍（displacement）の二つの異なるメカニズムの複合として生じることを実証的に示した点で財政学における重要な理論的貢献である。' +
+      'ピーコックとワイズマンは英国の1890年から1955年までの中央政府支出と地方政府支出の時系列データを分析し、第一次世界大戦（1914-1918）と第二次世界大戦（1939-1945）の各時期にGDP比での公共支出が急激に上昇し、戦後に部分的に低下するものの戦前水準には戻らないことを統計的に確認した。彼らはこの現象を三つの効果に分解した。第一に転位効果（displacement effect）として、危機が租税許容水準を引き上げ公共支出の新しい均衡水準を創出する。第二に検査効果（inspection effect）として、危機時に政府と市民が従来見過ごしていた社会的ニーズ（貧困・住宅・医療・社会保障）を「発見」し新たな支出プログラムが恒久化する。第三に集中効果（concentration effect）として、危機対応のために中央政府が地方政府の権限と財源を吸収し、財政権限の中央集権化が進行する。Diamond (1977) は開発途上国への適用を検討し、Peacock and Wiseman の枠組みが先進国の歴史的経験に基づく限界を指摘しつつも、発展途上国における独立・内戦等の社会的擾乱が同様の転位効果を生む可能性を示した。現代財政学では、2008年世界金融危機およびCOVID-19パンデミック（2020-2021）後の各国財政拡大が古典的転位効果の再現として広く参照されている。',
+    keyFigures: 'Alan T. Peacock・Jack Wiseman（NBER / Princeton University Press, 1961, The Growth of Public Expenditure in the United Kingdom）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/books-and-chapters/growth-public-expenditure-united-kingdom', type: 'academic', label: 'Peacock & Wiseman (1961) The Growth of Public Expenditure in the United Kingdom — NBER Studies in Fiscal Policy No.72, Princeton University Press' },
+      { url: 'https://doi.org/10.4324/9781003503484', type: 'academic', label: 'Peacock & Wiseman (2023 Routledge Revivals) The Growth of Public Expenditure in the United Kingdom — DOI: 10.4324/9781003503484' },
+    ],
+  },
+  {
+    id: 'human-cotard-syndrome',
+    discipline: 'human-science',
+    title: 'コタール症候群（Cotard Syndrome）',
+    statement:
+      'コタール症候群（Cotard syndrome / Cotard delusion）とは、フランスの神経学者ジュール・コタール（Jules Cotard, 1840-1889）が1880年6月28日のパリ医学心理学会（Société Médico-Psychologique）での発表「Du délire hypocondriaque dans une forme grave de la mélancolie anxieuse」を経て、1882年に『Archives de Neurologie』誌（第4巻、pp.152-170, 282-296）に発表した論文「Du délire des négations」において体系的に記述した、自己の身体・臓器・生命の存在を否定する虚無的妄想（nihilistic delusion）を中核症状とする精神医学的症候群である。コタールは重症不安性メランコリーの43歳女性患者（Mademoiselle X）の症例を報告し、患者が「自分には脳も神経も胸も胃も腸もない」「もはや魂も肉体もない」と主張し、自分が永遠に死ぬことができないという不死妄想（délire d\'immortalité）を併発した症状を「否定の妄想（délire des négations）」と名付けた。' +
+      'Berrios and Luque (1995) は「Cotard\'s syndrome: analysis of 100 cases」（Acta Psychiatrica Scandinavica, Vol.91, No.3, pp.185-188, DOI: 10.1111/j.1600-0447.1995.tb09764.x）において100症例のメタ分析を実施し、コタール症候群の臨床的特徴として身体虚無妄想（89%）、存在の否定（69%）、不安（65%）、罪業妄想（63%）、不死妄想（55%）を報告し、独立した疾患単位ではなく重度うつ病・精神病性障害・器質性脳疾患に随伴する症候群として位置づけた。神経科学的メカニズムについては、Ramachandran (1997) が顔認識における情動的応答の断絶（腹側経路の離断）という仮説を提起し、カプグラ妄想の鏡像的メカニズムとして理論化した。Charland-Verville et al. (2013)（「The neural correlates of subjective experience of Cotard delusion」, Cortex, Vol.49, No.7, pp.2012-2013, DOI: 10.1016/j.cortex.2013.03.003）はfMRI研究により内側前頭前皮質（mPFC）および島皮質（insula）の広範な低活動を確認し、自己参照処理ネットワークの機能不全が主観的非存在感覚の神経基盤であることを示唆した。DSM-5およびICD-11ではコタール症候群は独立した診断カテゴリとしては収載されておらず、精神病性特徴を伴う大うつ病性障害や妄想性障害の症状記述子として扱われている。',
+    keyFigures: 'Jules Cotard（Archives de Neurologie 4, 1882, 原記載）／German E. Berrios・Rogelio Luque（Acta Psychiatrica Scandinavica 91(3), 1995, 100症例メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1600-0447.1995.tb09764.x', type: 'academic', label: 'Berrios & Luque (1995) Cotard\'s syndrome: analysis of 100 cases — Acta Psychiatrica Scandinavica 91(3), pp.185-188' },
+      { url: 'https://doi.org/10.1016/j.cortex.2013.03.003', type: 'academic', label: 'Charland-Verville et al. (2013) The neural correlates of subjective experience of Cotard delusion — Cortex 49(7)' },
+    ],
+  },
+  {
+    id: 'bizlaw-lex-mercatoria',
+    discipline: 'business-law',
+    title: 'レックス・メルカトーリア（Lex Mercatoria）',
+    statement:
+      'レックス・メルカトーリア（lex mercatoria、商人法）とは、国家法から自律した国際商取引固有の法秩序として、商人共同体の慣行・国際商事仲裁の判断・統一規則の集積から形成されるトランスナショナルな法体系を指す概念である。フランスの法学者ベルトルド・ゴールドマン（Berthold Goldman）が1964年の論文「Frontières du droit et lex mercatoria」（Archives de Philosophie du Droit, Vol.9, pp.177-192）において現代的な理論的定式化を行い、国際商取引が国家法の境界を超えた自律的法秩序（ordre juridique autonome）を形成しうるという命題を提示した。この理論的基盤の上に、クライヴ・M・シュミットホフ（Clive M. Schmitthoff）が1961年の論文「International Business Law: A New Law Merchant」（Current Law and Social Problems, Vol.2, pp.129-153, DOI: 10.3138/9781487575892-004）において「新しい商人法」（new law merchant）の概念を提唱し、UNCITRAL・ICC・UNIDROIT等の国際機関を通じた統一法形成の実務的展望を示した。' +
+      'レックス・メルカトーリアの法的性質をめぐっては、ゴールドマンに代表される自律主義（autonomist）陣営と、フランシス・A・マン（Francis A. Mann）やアントワーヌ・カシス（Antoine Kassis）に代表される実証主義（positivist）陣営の間で根本的な論争が展開されてきた。自律主義者はレックス・メルカトーリアが国家法から独立した第三の法秩序として存在し、国際商事仲裁において準拠法として直接適用可能であると主張する。これに対し実証主義者は、法は国家の主権的行為にのみ由来するとの前提から、国家法の授権なしにトランスナショナルな規範が法的拘束力を持つことを否定する。Ole Lando (1985)「The Lex Mercatoria in International Commercial Arbitration」（International and Comparative Law Quarterly, Vol.34, No.4, pp.747-768, DOI: 10.1093/iclqaj/34.4.747）はこの論争を整理し、国際商事仲裁の実務においてレックス・メルカトーリアが事実上の準拠法として機能している実態を分析した。UNIDROIT国際商事契約原則（PICC, 初版1994年、最新版2016年）およびICC国際商業会議所の統一規則（Incoterms・UCP600等）は、現代レックス・メルカトーリアの具体的制度化として位置づけられる。',
+    keyFigures: 'Berthold Goldman（Archives de Philosophie du Droit 9, 1964, 現代的定式化）／Clive M. Schmitthoff（Current Law and Social Problems 2, 1961, 新商人法）／Ole Lando（ICLQ 34(4), 1985, 仲裁実務分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.3138/9781487575892-004', type: 'academic', label: 'Schmitthoff (1961) International Business Law: A New Law Merchant — Current Law and Social Problems, Vol.2, pp.129-153' },
+      { url: 'https://doi.org/10.1093/iclqaj/34.4.747', type: 'academic', label: 'Lando (1985) The Lex Mercatoria in International Commercial Arbitration — ICLQ 34(4), pp.747-768' },
+    ],
+  },
+  {
+    id: 'mgmt-idiosyncratic-deals',
+    discipline: 'management',
+    title: 'アイディール（Idiosyncratic Deals / I-deals）',
+    statement:
+      'アイディール（idiosyncratic deals, i-deals）とは、米国の組織心理学者デニス・M・ルソー（Denise M. Rousseau）が2005年の著書『I-Deals: Idiosyncratic Deals Employees Bargain for Themselves』（M.E. Sharpe, ISBN: 978-0-7656-1043-0）において体系化した概念であり、個々の従業員が自身の固有のニーズ・選好・能力に基づいて雇用主と個別に交渉し、標準的な雇用条件とは異なる特別な取り決め（勤務時間の柔軟化、職務内容の調整、特別な能力開発機会、業績連動型の追加報酬等）を獲得する非標準的・個別的な雇用合意を指す。ルソーはアイディールの成立要件として、(1) 個別交渉性（individually negotiated）：従業員と雇用主の間で直接交渉されること、(2) 異質性（heterogeneous）：同一職場の他の従業員とは異なる条件であること、(3) 双方便益性（benefiting both parties）：従業員と組織の双方に利益をもたらすこと、(4) 範囲の多様性（varied in scope）：職務内容・勤務条件・報酬等の多様な領域に及びうること、の四つを定義した。' +
+      'Rousseau, Ho, and Greenberg (2006)「I-Deals: Idiosyncratic Terms in Employment Relationships」（Academy of Management Review, Vol.31, No.4, pp.977-994, DOI: 10.5465/amr.2006.22527470）は、アイディールの理論的枠組みをさらに精緻化し、心理的契約（psychological contract）理論、社会的交換理論（social exchange theory）、公平理論（equity theory）との理論的接続を明示した。特に、アイディールが同僚の公平感（coworker fairness perceptions）に与える影響について、手続き的公正（procedural justice）と情報的公正（informational justice）が担保されている場合にはアイディールの受容度が高まることを理論的に導出した。Liao, Wayne, and Rousseau (2016)「Idiosyncratic deals in contemporary organizations: A qualitative and meta-analytical review」（Journal of Organizational Behavior, Vol.37, No.S1, pp.S9-S29, DOI: 10.1002/job.1959）は質的レビューとメタ分析を統合し、アイディールが職務満足・組織コミットメント・離職意思低減と有意な正の関係を持つことを確認するとともに、文化的コンテクスト（権力格差・個人主義の程度）がアイディール交渉の頻度と有効性に影響を与えることを示した。',
+    keyFigures: 'Denise M. Rousseau（M.E. Sharpe, 2005, 体系化）／Rousseau, Ho & Greenberg（AMR 31(4), 2006, 理論精緻化）／Liao, Wayne & Rousseau（JOB 37(S1), 2016, メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.2006.22527470', type: 'academic', label: 'Rousseau, Ho & Greenberg (2006) I-Deals: Idiosyncratic Terms in Employment Relationships — Academy of Management Review 31(4), pp.977-994' },
+      { url: 'https://doi.org/10.1002/job.1959', type: 'academic', label: 'Liao, Wayne & Rousseau (2016) Idiosyncratic deals in contemporary organizations — Journal of Organizational Behavior 37(S1), pp.S9-S29' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-paradox-theory',
+    discipline: 'management',
+    title: '組織パラドックス理論（Organizational Paradox Theory）',
+    statement:
+      '組織パラドックス理論（organizational paradox theory）とは、組織が直面する矛盾する要求・緊張（tensions）を排除すべき問題としてではなく、持続的に共存させ活用すべき本質的特性として捉える経営理論の研究領域である。この領域の現代的基盤を確立したのはマリアンヌ・W・ルイス（Marianne W. Lewis）の2000年の論文「Exploring Paradox: Toward a More Comprehensive Guide」（Academy of Management Review, Vol.25, No.4, pp.760-776, DOI: 10.5465/AMR.2000.3707712）であり、ルイスは既存の矛盾・ジレンマ・弁証法研究を統合し、パラドックスを「相互に関連する矛盾要素が同時的かつ持続的に存在する状態」として概念化した。ルイスは組織パラドックスを学習のパラドックス（paradoxes of learning）、組織化のパラドックス（paradoxes of organizing）、帰属のパラドックス（paradoxes of belonging）の三類型に分類し、防衛的反応（splitting, projection, regression）と能動的対処（acceptance, confrontation, transcendence）の対比を提示した。' +
+      'ウェンディ・K・スミス（Wendy K. Smith）とマリアンヌ・W・ルイスは2011年の論文「Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing」（Academy of Management Review, Vol.36, No.2, pp.381-403, DOI: 10.5465/amr.2009.0223）において動態的均衡モデル（dynamic equilibrium model）を提唱し、パラドックス理論の統合的枠組みを構築した。このモデルでは、環境の多元性（plurality）、変化（change）、希少性（scarcity）がパラドックス的緊張を顕在化させる先行要因として作用し、アクターの認知的複雑性（cognitive complexity）と行動的複雑性（behavioral complexity）が「受容（acceptance）」を通じてパラドックスの動態的均衡を可能にすることを理論化した。Smith and Lewis はパラドックスの四つの基本類型として、学習（learning: 知識の更新と既存知識の活用）、帰属（belonging: 個人的アイデンティティと集団的アイデンティティ）、組織化（organizing: 統制と柔軟性）、遂行（performing: 多元的ステークホルダーの矛盾する要求）を提示した。Smith, Lewis, Jarzabkowski, and Langley 編『The Oxford Handbook of Organizational Paradox』（Oxford University Press, 2017, DOI: 10.1093/oxfordhb/9780198754428.001.0001）は、この領域の包括的レビューとして30章にわたりパラドックス理論の存在論的・認識論的基盤、方法論、実証研究、実践的含意を体系化している。',
+    keyFigures: 'Marianne W. Lewis（AMR 25(4), 2000, 概念的基盤）／Wendy K. Smith & Marianne W. Lewis（AMR 36(2), 2011, 動態的均衡モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — AMR 36(2), pp.381-403' },
+      { url: 'https://doi.org/10.1093/oxfordhb/9780198754428.001.0001', type: 'academic', label: 'Smith, Lewis, Jarzabkowski & Langley eds. (2017) The Oxford Handbook of Organizational Paradox — Oxford University Press' },
+    ],
+  },
+  {
+    id: 'infosoc-sociomateriality',
+    discipline: 'information-sociology',
+    title: 'ソシオマテリアリティ（Sociomateriality）',
+    statement:
+      'ソシオマテリアリティ（sociomateriality）とは、社会的なもの（the social）と物質的・技術的なもの（the material）が本質的に絡み合い（entangled）、相互に構成し合う（mutually constitutive）不可分の関係にあるとする存在論的立場であり、情報システム研究および組織研究における技術と組織の関係の理論化に根本的な転換をもたらした概念である。この概念を情報システム研究において体系的に定式化したのはワンダ・J・オーリコウスキー（Wanda J. Orlikowski）の2007年の論文「Sociomaterial Practices: Exploring Technology at Work」（Organization Studies, Vol.28, No.9, pp.1435-1448, DOI: 10.1177/0170840607081138）である。オーリコウスキーはカレン・バラド（Karen Barad）の行為的実在論（agential realism）およびアンドリュー・ピカリング（Andrew Pickering）の実践の交錯（mangle of practice）を理論的基盤として援用し、技術と人間の組織実践が事前に独立した実体として存在するのではなく、実践の遂行（performativity）を通じて相互に構成されることを主張した。' +
+      'Orlikowski and Scott (2008)「Sociomateriality: Challenging the Separation of Technology, Work and Organization」（Academy of Management Annals, Vol.2, No.1, pp.433-474, DOI: 10.1080/19416520802211644）は、情報システム研究における技術決定論（technological determinism）と社会構成主義（social constructivism）の二項対立を批判的に検討し、ソシオマテリアリティの存在論的基盤を精緻化した包括的レビュー論文である。彼女らは従来の研究が技術と社会を分析的に分離可能な独立実体として扱ってきた「分離の存在論」（ontology of separateness）を批判し、技術と社会が実践において不可分に絡み合う「構成的絡み合い」（constitutive entanglement）の存在論を提唱した。これに対し、Paul M. Leonardi (2013)「Theoretical foundations for the study of sociomateriality」（Information and Organization, Vol.23, No.2, pp.59-76, DOI: 10.1016/j.infoandorg.2013.02.002）は、オーリコウスキーの強い絡み合い（strong entanglement）の立場に対して、技術の物質性（materiality）と人間の行為主体性（human agency）を分析的に区別可能な独立した実体として維持しつつ、両者の相互作用の経験的分析を可能にする「弱いソシオマテリアリティ」（weak/critical realist sociomateriality）を対置し、imbrication（重ね合わせ）メタファーによる代替的理論化を提示した。',
+    keyFigures: 'Wanda J. Orlikowski（Organization Studies 28(9), 2007, 概念定式化）／Orlikowski & Susan V. Scott（AMA Annals 2(1), 2008, 包括的レビュー）／Paul M. Leonardi（I&O 23(2), 2013, 弱いソシオマテリアリティ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/0170840607081138', type: 'academic', label: 'Orlikowski (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), pp.1435-1448' },
+      { url: 'https://doi.org/10.1080/19416520802211644', type: 'academic', label: 'Orlikowski & Scott (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — AMA Annals 2(1), pp.433-474' },
+    ],
+  },
 ];
 // Stryker restore all
