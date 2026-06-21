@@ -7,6 +7,22 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 🔴 進行中タスク（最優先・新セッションはまず確認）
+
+**学術知識ループ（標準 `/loop`）** — `src/renderer/data/academicKnowledge.ts` に検証済み学術概念を
+1 バッチ 6 件ずつ追加し続ける常設タスク。**ユーザーが「OK」と言うまで継続**。
+
+- **完全な運用仕様 → [`docs/ACADEMIC_KNOWLEDGE_LOOP.md`](ACADEMIC_KNOWLEDGE_LOOP.md)**（必読）。
+- 現状: **1409 概念 / 235 バッチ完了**（economics 411・human-science 264・business-law 251・
+  management 243・information-sociology 240）。Vault も 1409 ノートで同期済み。
+- 開発ブランチ: `claude/modest-noether-knlmJ`（force-push 許諾済み）。コミット著者は
+  `Claude <noreply@anthropic.com>`。モデル識別子は成果物に入れない。
+- 1 バッチ = 調査(背景 Agent) → **重複 3 チェック(id/title/意味)** → 追記 → ゲート全 green →
+  stash build → commit → push → Draft PR → ready → CI green → squash merge → ブランチ同期。
+- 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
+  アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検。
+- ゲート: `vault:build && typecheck && verify:all && lint && test && build:web`（詳細は仕様書 §9）。
+
 ## 現状サマリ (63 services)
 
 | 区分 | サービス |
