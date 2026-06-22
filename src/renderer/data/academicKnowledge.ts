@@ -24010,5 +24010,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2014/tirole/facts/', type: 'reference', label: 'Jean Tirole — Nobel Prize 2014 Facts' },
     ],
   },
+  {
+    id: 'bizlaw-bilateral-investment',
+    discipline: 'business-law',
+    title: '二国間投資協定（Bilateral Investment Treaty / BIT）',
+    statement:
+      '二国間投資協定（Bilateral Investment Treaty / BIT）とは、二国間で締結される条約であり、一方の締約国の投資家が他方の締約国で行う投資の保護条件・基準を規定する国際投資法の基本的法的枠組みである。19世紀の友好通商航海条約（FCN）を前身とし、第二次世界大戦後に開発途上国における投資保護への要請から発展した。' +
+      '典型的なBITは公正衡平待遇（fair and equitable treatment）、収用からの保護、資金の自由移転、最恵国待遇および内国民待遇を保障し、投資家が投資受入国に対して投資紛争解決国際センター（ICSID、1965年ワシントン条約）等での国際仲裁を提起する投資家対国家紛争解決（ISDS）手続を規定する。2024年時点で世界に約2,800のBITが存在する。',
+    keyFigures: 'ICSID条約（1965）／独パキスタンBIT（1959、世界初のBIT）／UNCTAD投資政策フレームワーク',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://icsid.worldbank.org/resources/databases/bilateral-investment-treaties', type: 'government', label: 'ICSID — Database of Bilateral Investment Treaties' },
+      { url: 'https://guides.ll.georgetown.edu/c.php?g=371540&p=4187393', type: 'reference', label: 'Georgetown Law Library — Bilateral Investment Treaties Research Guide' },
+      { url: 'https://en.wikipedia.org/wiki/Bilateral_investment_treaty', type: 'reference', label: 'Wikipedia: Bilateral Investment Treaty' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-issue-selling',
+    discipline: 'management',
+    title: '戦略的イシュー・セリング（Strategic Issue Selling）',
+    statement:
+      '戦略的イシュー・セリング（Strategic Issue Selling）とは、組織成員がトップマネジメントの注意と理解に影響を与え、特定の事象・動向・課題を組織の意思決定アジェンダに載せようとする上方影響プロセスである。ジェーン・ダットン（Jane E. Dutton）とスーザン・アシュフォード（Susan J. Ashford）が1993年にAcademy of Management Review（Vol.18, No.3, pp.397-428）で提唱した。' +
+      '上方影響（upward influence）、クレイミング行動（claiming behaviors）、印象管理（impression management）の三つの理論的視座を統合し、イシューの戦略的重要性の提示、経営陣の対応能力、組織への見返りがセリング成功の鍵であるとした。後続研究（Dutton et al. 2001）ではセリングの具体的戦術（パッケージング・関与・タイミング・チャネル選択）を精緻化した。',
+    keyFigures: 'ジェーン・ダットン＆スーザン・アシュフォード（1993 Academy of Management Review 18(3):397-428）／ダットンら（2001 AMR「Moves That Matter」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1993-47426-001', type: 'academic', label: 'Dutton & Ashford (1993) Selling Issues to Top Management — APA PsycNet / AMR 18(3)' },
+      { url: 'https://www.researchgate.net/publication/234021482_Selling_Issues_to_Top_Management', type: 'academic', label: 'Dutton & Ashford (1993) Selling Issues to Top Management — ResearchGate' },
+      { url: 'https://www.researchgate.net/publication/237828497_Moves_That_Matter_Issue_Selling_and_Organizational_Change', type: 'academic', label: 'Dutton et al. (2001) Moves That Matter: Issue Selling and Organizational Change — ResearchGate' },
+    ],
+  },
+  {
+    id: 'bizlaw-lex-loci-delicti',
+    discipline: 'business-law',
+    title: '不法行為地法主義（Lex Loci Delicti）',
+    statement:
+      '不法行為地法主義（Lex Loci Delicti Commissi）とは、国際私法（抵触法）における伝統的な連結原則であり、不法行為から生じる実体的権利義務は当該不法行為が行われた地の法律に準拠するとする選択規則である。ラテン語で「不法行為が行われた地の法」を意味する。' +
+      '米国では第一次リステイトメント（Restatement (First) of Conflict of Laws, 1934）がこの原則を採用し、20世紀前半の支配的ルールであったが、バブコック対ジャクソン事件（Babcock v. Jackson, 1963 NY）を契機に最も重要な関係（most significant relationship）テスト、政府利益分析（governmental interest analysis）、比較損害分析（comparative impairment）等の現代的アプローチへの転換が進んだ。2020年代時点で米国の約9州がなお本原則を維持する。',
+    keyFigures: '第一次リステイトメント（1934 Beale）／Babcock v. Jackson（1963 NY Court of Appeals）／第二次リステイトメント（1971 Reese）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Conflict_of_tort_laws', type: 'reference', label: 'Wikipedia: Conflict of Tort Laws' },
+      { url: 'https://conflictoflaws.uslegal.com/laws-applicable-to-torts/lex-loci-delicti/', type: 'reference', label: 'USLegal — Lex Loci Delicti' },
+      { url: 'https://repository.uclawsf.edu/cgi/viewcontent.cgi?article=2002&context=hastings_law_journal', type: 'academic', label: 'California Choice of Law in Tort: Demise of Lex Loci Delicti — Hastings Law Journal' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-imaginary',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的想像界（Algorithmic Imaginary）',
+    statement:
+      'アルゴリズム的想像界（Algorithmic Imaginary）とは、プラットフォーム利用者がアルゴリズムの存在・機能・影響について抱く想像・感情・認識の総体を指す概念である。タイナ・ブッヒャー（Taina Bucher）が2017年にInformation, Communication & Society（Vol.20, No.1, pp.30-44）で提唱した。' +
+      'Facebookアルゴリズムに関するツイートと25名の一般利用者へのインタビューを分析し、利用者がアルゴリズムの正確な仕組みを知らずともその作動を想像し、この想像が感情（多くは否定的）とオンライン行動の変容を生み出すことを示した。利用者の行動変容がアルゴリズム自体にフィードバックされる人間─アルゴリズム相互作用の循環構造を解明し、アルゴリズム研究を技術的分析から日常的情動体験の分析へと拡張した。',
+    keyFigures: 'タイナ・ブッヒャー（2017 Information, Communication & Society 20(1):30-44）／ブッヒャー（2018 If...Then: Algorithmic Power and Politics, Oxford UP）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-algorithmic-imaginary:-exploring-the-ordinary-Bucher/e3cf090e9ab06846bf7b0581ccd71fa1d7e570dc', type: 'academic', label: 'Bucher (2017) The Algorithmic Imaginary — Semantic Scholar' },
+      { url: 'https://researchprofiles.ku.dk/en/publications/the-algorithmic-imaginary-exploring-the-ordinary-affects-of-faceb/', type: 'academic', label: 'Bucher (2017) — University of Copenhagen Research Portal' },
+      { url: 'https://www.researchgate.net/publication/297736928_The_algorithmic_imaginary_exploring_the_ordinary_affects_of_Facebook_algorithms', type: 'academic', label: 'Bucher (2017) Algorithmic Imaginary — ResearchGate' },
+    ],
+  },
+  {
+    id: 'human-cortical-magnification',
+    discipline: 'human-science',
+    title: '皮質拡大係数（Cortical Magnification Factor）',
+    statement:
+      '皮質拡大係数（Cortical Magnification Factor / CMF）とは、視覚野において視野の単位角度あたりに割り当てられる皮質表面積（mm²/deg）を表す神経解剖学的指標であり、中心視野（中心窩対応領域）に不釣り合いに大きな皮質領域が配分される「中心窩過剰表象」を定量化する。デヴィッド・ヒューベル（David H. Hubel）とトルステン・ヴィーゼル（Torsten N. Wiesel）が1974年にJournal of Comparative Neurologyでマカクザル一次視覚野（V1）の受容野サイズと皮質拡大係数の体系的関係を報告した。' +
+      '中心窩から周辺視野に向かってCMFは約30〜90倍減少し、受容野サイズは増大するが、両者の積（ポイントイメージサイズ）はほぼ一定であることが示された。ダウ（Dow）らは1981年に中心窩表象をさらに精密に測定した。ヒューベルとヴィーゼルは視覚情報処理の研究で1981年ノーベル生理学・医学賞を受賞した。',
+    keyFigures: 'デヴィッド・ヒューベル＆トルステン・ヴィーゼル（1974 J Comp Neurol）／ダウら（1981）／ヒューベル＆ヴィーゼル（1981年ノーベル生理学・医学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Cortical_magnification', type: 'reference', label: 'Wikipedia: Cortical Magnification' },
+      { url: 'https://www.cell.com/neuron/fulltext/S0896-6273(03)00265-4', type: 'academic', label: 'Duncan & Boynton (2003) Cortical Magnification Correlates with Acuity Thresholds — Neuron' },
+      { url: 'https://www.jneurosci.org/content/31/38/13604', type: 'academic', label: 'Harvey & Dumoulin (2011) CMF and Population Receptive Field Size — J Neuroscience' },
+    ],
+  },
+  {
+    id: 'econ-tobin-separation',
+    discipline: 'economics',
+    title: 'トービンの分離定理（Tobin Separation Theorem）',
+    statement:
+      'トービンの分離定理（Tobin Separation Theorem）とは、平均分散選好を持つ投資家が安全資産（リスクフリー資産）とリスク資産の双方にアクセスできる場合、最適ポートフォリオ選択が二段階に分離されることを示す金融経済学の基本定理である。ジェームズ・トービン（James Tobin）が1958年にReview of Economic Studies（Vol.25, No.2, pp.65-86）で発表した「Liquidity Preference as Behavior Towards Risk」において証明した。' +
+      '第一段階ではリスク資産間の最適配分（シャープ比を最大化する接線ポートフォリオの特定）が決定され、第二段階では個人のリスク回避度に応じて接線ポートフォリオと安全資産の間の配分が決定される。リスク回避度の異なる全投資家が同一のリスク資産ポートフォリオを保有する「一基金分離」を帰結する。マーコウィッツ（1952）の平均分散分析を拡張し、CAPMの理論的基礎となった。トービンは1981年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ジェームズ・トービン（1958 Review of Economic Studies 25(2):65-86）／トービン（1981年ノーベル経済学賞）／マーコウィッツ（1952 Portfolio Selection）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=3617892', type: 'academic', label: 'Tobin (1958) Liquidity Preference as Behavior towards Risk — Review of Economic Studies 25(2)' },
+      { url: 'https://www.bogleheads.org/blog/2015/11/21/tobins-separation-theorem-the-dilution-of-risk/', type: 'reference', label: 'Bogleheads — Tobin\'s Separation Theorem: The Dilution of Risk' },
+      { url: 'https://grokipedia.com/page/Mutual_fund_separation_theorem', type: 'reference', label: 'Grokipedia: Mutual Fund Separation Theorem' },
+    ],
+  },
 ];
 // Stryker restore all
