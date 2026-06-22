@@ -26782,5 +26782,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
     ],
   },
+  // ── Batch 293 ─────────────────────────────────────────────
+  // econ-real-options-theory, econ-endogenous-money-theory,
+  // human-relational-frame-theory, mgmt-organizational-justice-theory,
+  // bizlaw-entire-fairness-standard, infosoc-information-ecology
+  {
+    id: 'econ-real-options-theory',
+    discipline: 'economics',
+    title: 'リアル・オプション理論',
+    statement:
+      'リアル・オプション理論は、金融オプション価格理論を実物資産の投資意思決定に応用し、事業の延期・拡張・縮小・撤退といった経営上の柔軟性（フレキシビリティ）に定量的な価値を付与する理論である。' +
+      '不確実性が高い環境下での段階的投資判断において、従来のNPV法では捉えきれない戦略的オプション価値を評価できる。',
+    keyFigures: 'Stewart C. Myers（1977 coined "real options"）／Avinash K. Dixit／Robert S. Pindyck',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0304-405X(77)90015-0', type: 'academic', label: 'Myers, S.C. (1977) Determinants of Corporate Borrowing, JFE 5(2):147-175' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691034102/investment-under-uncertainty', type: 'academic', label: 'Dixit & Pindyck (1994) Investment Under Uncertainty, Princeton University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia — Real options valuation' },
+    ],
+  },
+  {
+    id: 'econ-endogenous-money-theory',
+    discipline: 'economics',
+    title: '内生的貨幣供給理論',
+    statement:
+      '内生的貨幣供給理論は、貨幣供給量が中央銀行の外生的コントロールではなく、民間銀行の信用創造活動を通じて経済内部から内生的に決定されるとするポスト・ケインズ派の理論である。' +
+      '「貸出が預金を創造する（loans create deposits）」というメカニズムを強調し、マネタリストの貨幣乗数モデルに対する根本的批判を展開した。',
+    keyFigures: 'Basil J. Moore／Nicholas Kaldor／Marc Lavoie',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Endogenous_money', type: 'reference', label: 'Wikipedia — Endogenous money' },
+      { url: 'https://doi.org/10.1057/978-1-349-95121-5_595-2', type: 'academic', label: 'New Palgrave Dictionary of Economics — Endogenous Money' },
+      { url: 'https://www.bankofengland.co.uk/quarterly-bulletin/2014/q1/money-creation-in-the-modern-economy', type: 'government', label: 'Bank of England (2014) Money creation in the modern economy, Quarterly Bulletin Q1' },
+    ],
+  },
+  {
+    id: 'human-relational-frame-theory',
+    discipline: 'human-science',
+    title: '関係フレーム理論（RFT）',
+    statement:
+      '関係フレーム理論は、人間の言語と認知の基盤を「恣意的に適用可能な関係反応（AARR）」として捉え、刺激間の関係（同等・比較・因果・時間的順序等）を文脈依存的に導出する能力が言語行動の本質であるとするポスト・スキナー派の行動分析理論である。' +
+      'ヘイズらが2001年に体系化し、アクセプタンス＆コミットメント・セラピー（ACT）の理論的基盤となった。',
+    keyFigures: 'Steven C. Hayes／Dermot Barnes-Holmes／Bryan Roche',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Relational_frame_theory', type: 'reference', label: 'Wikipedia — Relational frame theory' },
+      { url: 'https://doi.org/10.1007/978-1-4757-3357-4', type: 'academic', label: 'Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer' },
+      { url: 'https://contextualscience.org/relational_frame_theory', type: 'reference', label: 'Association for Contextual Behavioral Science — RFT' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-justice-theory',
+    discipline: 'management',
+    title: '組織的公正理論',
+    statement:
+      '組織的公正理論は、職場における公正さの知覚を分配的公正（結果の公正さ）・手続き的公正（意思決定プロセスの公正さ）・対人的公正（対人的処遇の質）・情報的公正（説明の適切さ）の4次元で捉え、従業員の態度・行動・業績への影響を体系的に分析する理論枠組みである。' +
+      'コルキットが2001年にメタ分析を通じて4次元モデルを実証的に確立した。',
+    keyFigures: 'Jason A. Colquitt／Jerald Greenberg／Robert J. Bies／John W. Thibaut／Laurens Walker',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0021-9010.86.3.386', type: 'academic', label: 'Colquitt, J.A. (2001) On the Dimensionality of Organizational Justice, JAP 86(3):386-400' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_justice', type: 'reference', label: 'Wikipedia — Organizational justice' },
+      { url: 'https://doi.org/10.1146/annurev-orgpsych-032414-111457', type: 'academic', label: 'Colquitt & Zipay (2015) Justice, Fairness, and Employee Reactions, AROP 2:75-99' },
+    ],
+  },
+  {
+    id: 'bizlaw-entire-fairness-standard',
+    discipline: 'business-law',
+    title: '完全公正基準（デラウェア州会社法）',
+    statement:
+      '完全公正基準（Entire Fairness Standard）は、デラウェア州会社法において経営判断原則の推定が覆された場合（利益相反取引・支配株主取引等）に適用される最も厳格な司法審査基準であり、取締役は公正な取引過程（fair dealing）と公正な価格（fair price）の双方を立証しなければならない。' +
+      'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983) において確立された。',
+    keyFigures: 'William T. Allen／Jack B. Jacobs／Leo E. Strine Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corplaw.delaware.gov/delaware-way-business-judgment/', type: 'government', label: 'Delaware Corporate Law — The Delaware Way: Business Judgment Rule' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3331097', type: 'academic', label: 'Licht, A.N. (2019) Farewell to Fairness, ECGI Law Working Paper No. 439' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1983/457-a-2d-701-4.html', type: 'reference', label: 'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983) — Justia' },
+    ],
+  },
+  {
+    id: 'infosoc-information-ecology',
+    discipline: 'information-sociology',
+    title: '情報エコロジー',
+    statement:
+      '情報エコロジーは、人間・実践・価値観・技術が局所的環境において相互に構成し合うシステムとして情報環境を捉える枠組みであり、ナルディとオデイが1999年の『Information Ecologies』で体系化した。' +
+      '技術決定論を退け、技術の導入・利用が地域固有の社会文化的文脈に深く埋め込まれていることを生態学的メタファーで分析し、情報システムの持続可能な設計・運用への含意を提供する。',
+    keyFigures: 'Bonnie A. Nardi／Vicki L. O\'Day',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262640428/information-ecologies/', type: 'academic', label: 'Nardi & O\'Day (1999) Information Ecologies: Using Technology with Heart, MIT Press' },
+      { url: 'https://en.wikipedia.org/wiki/Information_ecology', type: 'reference', label: 'Wikipedia — Information ecology' },
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/672', type: 'academic', label: 'Nardi & O\'Day (1999) Information Ecologies: Using Technology with Heart (First Monday excerpt)' },
+    ],
+  },
 ];
 // Stryker restore all

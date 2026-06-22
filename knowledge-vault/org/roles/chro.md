@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全320件）
+### 学術概念 / ビジネス法務（全321件）
 - [[act-on-electronic-records|電子帳簿保存法]]
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
-- …ほか 314 件 → [[学術概念]]
+- …ほか 315 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全337件）
+### 学術概念 / 人間科学（全338件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 331 件 → [[学術概念]]
+- …ほか 332 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
