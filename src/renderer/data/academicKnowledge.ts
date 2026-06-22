@@ -27291,5 +27291,113 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://press.uchicago.edu/ucp/books/book/chicago/F/bo3773600.html', type: 'academic', label: 'Turner (2006) From Counterculture to Cyberculture, University of Chicago Press' },
     ],
   },
+
+  // ── Batch 298 ─────────────────────────────────────────────
+  // econ-kaldor-verdoorn-law, econ-optimal-taxation-theory,
+  // human-minority-stress-theory, mgmt-resource-orchestration-theory,
+  // bizlaw-corporate-veil-piercing, infosoc-digital-labor-theory
+
+  {
+    id: 'econ-kaldor-verdoorn-law',
+    discipline: 'economics',
+    title: 'カルドア＝ヴェルドーン法則（第二カルドア法則）',
+    statement:
+      'カルドア＝ヴェルドーン法則とは、製造業における労働生産性の成長率と産出量の成長率の間に有意な正の相関が存在するという経験則であり、製造業に静態的・動態的な規模の収益逓増が内在することを示す。' +
+      'P.J. ヴェルドーン（1949）がイタリア語論文「Fattori che regolano lo sviluppo della produttività del lavoro」（L\'Industria, vol.1, pp.3–10）で初めて提示し、' +
+      'ニコラス・カルドア（1966）がケンブリッジ大学就任講演『英国経済成長の低さの原因』で先進国横断データの回帰分析からヴェルドーン係数を約0.5と推計し、この法則を累積的因果連鎖モデルの中核に位置づけた。' +
+      'マクコンビー・プーニョ・ソーロ編（2002）などの包括的研究が国際的実証研究を集成し、製造業における需要主導の生産性上昇メカニズムとして広く検証されている。',
+    keyFigures: 'Petrus Johannes Verdoorn／Nicholas Kaldor／John McCombie／Anthony P. Thirlwall',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1057/9780230504233_3', type: 'academic', label: 'Verdoorn (1949/2002) Fattori che regolano lo sviluppo della produttività del lavoro — English translation in McCombie et al. (eds.), Palgrave Macmillan' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/01603477.2021.1872030', type: 'academic', label: 'Chandra & Sandilands (2021) Nicholas Kaldor, increasing returns and Verdoorn\'s Law, Journal of Post Keynesian Economics 44(2):315-339' },
+      { url: 'https://search.worldcat.org/title/248897411', type: 'reference', label: 'McCombie, Pugno & Soro (eds.) (2002) Productivity Growth and Economic Performance: Essays on Verdoorn\'s Law, Palgrave Macmillan' },
+    ],
+  },
+  {
+    id: 'econ-optimal-taxation-theory',
+    discipline: 'economics',
+    title: '最適課税理論',
+    statement:
+      '最適課税理論は、政府が一定の歳入を確保しつつ社会厚生を最大化する税制設計を研究する公共経済学の中核分野である。' +
+      'Ramsey（1927）は逆弾力性ルールによる最適間接税の基礎を築き、Diamond & Mirrlees（1971）は生産効率性定理を導いて最適税制下では公的部門も生産効率性を満たすべきことを示した。' +
+      'Mirrlees（1971）は情報の非対称性のもとで最適非線形所得税の理論を構築し、Atkinson & Stiglitz（1976）は所得課税が最適化されている場合には均一な財税率が望ましいことを証明した。' +
+      'Saez（2001）は補償・非補償弾力性を用いて最適限界税率の明示的公式を導出し、実証的な政策応用への道を開いた。',
+    keyFigures: 'Frank P. Ramsey／James A. Mirrlees／Peter A. Diamond／Anthony B. Atkinson／Joseph E. Stiglitz／Emmanuel Saez',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees (1971) An Exploration in the Theory of Optimum Income Taxation, Review of Economic Studies 38(2):175-208' },
+      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production I: Production Efficiency, AER 61(1):8-27' },
+      { url: 'https://www.nber.org/papers/w7628', type: 'academic', label: 'Saez (2001) Using Elasticities to Derive Optimal Income Tax Rates, Review of Economic Studies 68(1):205-229' },
+    ],
+  },
+  {
+    id: 'human-minority-stress-theory',
+    discipline: 'human-science',
+    title: 'マイノリティ・ストレス理論',
+    statement:
+      'マイノリティ・ストレス理論は、スティグマ・偏見・差別が性的少数者に対して敵対的な社会環境を生み出し、過剰なストレス負荷をもたらすことで精神的健康格差を説明する理論的枠組みであり、' +
+      'Brooks（1981）の先駆的研究を基盤にMeyer（2003）が体系化した。' +
+      'Meyerは遠位ストレッサー（差別・暴力などの外的経験）と近位ストレッサー（内面化されたホモネガティビティ・拒絶予期・アイデンティティ秘匿）を区別し、後者が前者の社会的条件から派生した内的過程であることを示した。' +
+      'Hatzenbuehler（2009）はさらに心理的媒介フレームワークを提唱し、感情調節・社会的・認知的プロセスがマイノリティ・ストレッサーと精神病理を媒介する機序を統合的に説明した。',
+    keyFigures: 'Virginia R. Brooks／Ilan H. Meyer／Mark L. Hatzenbuehler',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0033-2909.129.5.674', type: 'academic', label: 'Meyer (2003) Prejudice, social stress, and mental health in LGB populations, Psychological Bulletin 129(5):674-697' },
+      { url: 'https://archive.org/details/minoritystressle0000broo', type: 'academic', label: 'Brooks (1981) Minority Stress and Lesbian Women, Lexington Books' },
+      { url: 'https://doi.org/10.1037/a0016441', type: 'academic', label: 'Hatzenbuehler (2009) How does sexual minority stigma get under the skin? Psychological Bulletin 135(5):707-730' },
+    ],
+  },
+  {
+    id: 'mgmt-resource-orchestration-theory',
+    discipline: 'management',
+    title: '資源オーケストレーション理論',
+    statement:
+      '資源オーケストレーション理論（Sirmon, Hitt, Ireland & Gilbert, 2011）は、資源ベース理論（RBV）が未解決のままにしてきた「いかにして資源から価値を創造するか」という問いに答えるべく提唱された経営戦略理論である。' +
+      '同理論は、競争優位の創出を①資源ポートフォリオを形成する「構造化（structuring）」—取得・蓄積・売却—、②能力を構築する「バンドル化（bundling）」—安定化・深化・先駆的結合—、③顧客価値を実現する「レバレッジ（leveraging）」—動員・調整・展開—という三段階の経営行動プロセスとして定式化した。' +
+      'Sirmon, Hitt & Ireland（2007）が「ブラックボックスを開く」枠組みとして先行的に提示した資源管理モデルを精緻化し、' +
+      'Helfat et al.（2007）のダイナミック・ケイパビリティ論と統合することで、環境変化に応じた資源の幅（breadth）・深度（depth）・ライフサイクル（life cycle）の三次元にわたるオーケストレーション効果を体系化している。',
+    keyFigures: 'David G. Sirmon／Michael A. Hitt／R. Duane Ireland／Brett A. Gilbert',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206310385695', type: 'academic', label: 'Sirmon et al. (2011) Resource Orchestration to Create Competitive Advantage, Journal of Management 37(5):1390-1412' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2007.23466005', type: 'academic', label: 'Sirmon, Hitt & Ireland (2007) Managing Firm Resources in Dynamic Environments, Academy of Management Review 32(1):273-292' },
+      { url: 'https://www.wiley.com/en-us/Dynamic+Capabilities:+Understanding+Strategic+Change+in+Organizations-p-9781405135757', type: 'academic', label: 'Helfat et al. (2007) Dynamic Capabilities: Understanding Strategic Change in Organizations, Blackwell' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-veil-piercing',
+    discipline: 'business-law',
+    title: '法人格否認の法理（コーポレート・ヴェール・ピアシング）',
+    statement:
+      '法人格否認の法理とは、会社の独立した法人格を裁判所が否認し、株主に会社債務の個人的責任を負わせる衡平法上の救済原則である。' +
+      'Salomon v A Salomon & Co Ltd [1897] AC 22（英国貴族院）が確立した法人格独立の原則に対し、米国法ではアルター・エゴ法理・手段理論（instrumentality rule）・過少資本化を根拠として例外が発展した。' +
+      'Thompson（1991）の実証研究は1,600件超の判例を分析し、契約事件での否認率が不法行為事件を上回ることを示した。' +
+      'Easterbrook & Fischel（1985）は有限責任の経済的合理性を論証し、Hansmann & Kraakman（1991）は不法行為損害に対する株主の無限連帯責任を提唱した。',
+    keyFigures: 'Robert B. Thompson／Frank H. Easterbrook／Daniel R. Fischel／Henry Hansmann／Reinier Kraakman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.cornell.edu/clr/vol76/iss5/2/', type: 'academic', label: 'Thompson (1991) Piercing the Corporate Veil: An Empirical Study, 76 Cornell L. Rev. 1036' },
+      { url: 'https://chicagounbound.uchicago.edu/uclrev/vol52/iss1/3/', type: 'academic', label: 'Easterbrook & Fischel (1985) Limited Liability and the Corporation, 52 U. Chi. L. Rev. 89' },
+      { url: 'https://openyls.law.yale.edu/handle/20.500.13051/8625', type: 'academic', label: 'Hansmann & Kraakman (1991) Toward Unlimited Shareholder Liability for Corporate Torts, 100 Yale L.J. 1879' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-labor-theory',
+    discipline: 'information-sociology',
+    title: 'デジタル労働理論',
+    statement:
+      'デジタル労働理論とは、デジタルプラットフォーム上でのユーザーの活動（閲覧・クリック・コンテンツ生成・データ提供）を資本が価値を搾取する労働形態として分析する批判的理論的枠組みである。' +
+      'Terranova（2000）は「フリー・レイバー」概念を提唱し、インターネット経済においてユーザーの無償文化的労働が経済価値の源泉をなすと論じた。' +
+      'Fuchs（2014）はマルクスの労働価値論をデジタル領域に適用し、ソーシャルメディア利用者の活動が広告収益として資本蓄積に組み込まれる構造を体系的に解明した。' +
+      'Scholz（2013）はこの現象を「プレイバー（遊び＋労働）」と概念化し、プラットフォーム資本主義が余暇と生産の境界を解体することでデジタル労働の搾取を不可視化するメカニズムを明らかにした。',
+    keyFigures: 'Tiziana Terranova／Christian Fuchs／Trebor Scholz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy, Social Text 18(2/63):33-58' },
+      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716161', type: 'academic', label: 'Fuchs (2014) Digital Labour and Karl Marx, Routledge' },
+      { url: 'https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955', type: 'academic', label: 'Scholz (ed.) (2013) Digital Labor: The Internet as Playground and Factory, Routledge' },
+    ],
+  },
 ];
 // Stryker restore all
