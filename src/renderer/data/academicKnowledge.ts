@@ -24190,5 +24190,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.3758/BF03211160', type: 'academic', label: 'Baddeley (1986/1992) Articulatory Rehearsal and Phonological Storage — Memory & Cognition (Springer)' },
     ],
   },
+  {
+    id: 'human-opponent-process',
+    discipline: 'human-science',
+    title: '対抗過程理論（Opponent-Process Theory of Acquired Motivation）',
+    statement:
+      '対抗過程理論（Opponent-Process Theory of Acquired Motivation）とは、情動・動機づけ状態が初期反応（a過程）とそれに拮抗する対抗反応（b過程）の二過程から構成され、反復経験によりb過程が強化されることで情動体験が質的に変容するメカニズムを説明する理論である。リチャード・ソロモン（Richard L. Solomon）とジョン・コービット（John D. Corbit）が1974年にPsychological Reviewで初出し、ソロモンが1980年にAmerican Psychologistで「The Opponent-Process Theory of Acquired Motivation: The Costs of Pleasure and the Benefits of Pain」として体系化した。' +
+      '中枢神経系が快・不快の両極端を自動的に緩和する恒常性維持メカニズムを仮定し、a過程の強度は反復で変化しないがb過程は使用により強化され不使用により弱化する。薬物依存における耐性と離脱症状、スカイダイビング等の恐怖から快感への情動転換、愛着と喪失の動態を統一的に説明した。',
+    keyFigures: 'リチャード・ソロモン＆ジョン・コービット（1974 Psychological Review）／ソロモン（1980 American Psychologist 35(8):691-712）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/7416563/', type: 'academic', label: 'Solomon (1980) The Opponent-Process Theory of Acquired Motivation — PubMed / American Psychologist' },
+      { url: 'https://www.semanticscholar.org/paper/An-opponent-process-theory-of-motivation.-I.-of-Solomon-Corbit/9d60db72214f9375b00021ee91c83a23d5cccdf2', type: 'academic', label: 'Solomon & Corbit (1974) An Opponent-Process Theory of Motivation — Semantic Scholar' },
+      { url: 'https://www.simplypsychology.org/opponent-process-theory.html', type: 'reference', label: 'Simply Psychology: Opponent Process Theory of Emotion' },
+    ],
+  },
+  {
+    id: 'bizlaw-forum-selection',
+    discipline: 'business-law',
+    title: '裁判管轄合意条項（Forum Selection Clause）',
+    statement:
+      '裁判管轄合意条項（Forum Selection Clause）とは、契約当事者が将来の紛争を特定の裁判所・法域で解決することを事前に合意する契約条項である。米国法においてはM/S Bremen v. Zapata Off-Shore Co.事件（407 U.S. 1, 1972）が画期的先例となった。' +
+      '同事件でドイツ曳航会社とテキサス掘削会社の契約にロンドン高等法院を管轄とする条項が含まれ、連邦最高裁判所は7対1でフォーラム選択条項は不合理・不当であること、または詐欺・優越的地位の濫用により無効であることが明確に立証されない限り執行されるべきであるとの推定的有効性の法理を確立した。国際商取引の現代的実態と拡大する貿易を踏まえ、契約上の確実性と予見可能性を重視した。Carnival Cruise Lines v. Shute（1991）で消費者契約への拡張が認められた。',
+    keyFigures: 'M/S Bremen v. Zapata Off-Shore Co.（407 U.S. 1, 1972）／Carnival Cruise Lines v. Shute（499 U.S. 585, 1991）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/407/1/', type: 'government', label: 'The Bremen v. Zapata Off-Shore Co. 407 U.S. 1 (1972) — Justia US Supreme Court' },
+      { url: 'https://caselaw.findlaw.com/court/us-supreme-court/407/1.html', type: 'reference', label: 'The Bremen v. Zapata Off-Shore Co. — FindLaw' },
+      { url: 'https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=2617&context=vjtl', type: 'academic', label: 'The Bremen and the Model Choice of Forum Act — Vanderbilt Journal of Transnational Law' },
+    ],
+  },
+  {
+    id: 'infosoc-communicative-capitalism',
+    discipline: 'information-sociology',
+    title: 'コミュニカティブ・キャピタリズム（Communicative Capitalism）',
+    statement:
+      'コミュニカティブ・キャピタリズム（Communicative Capitalism）とは、民主主義の中核的価値（参加・包摂・討議）がネットワーク化された通信技術を通じて物質化される政治経済体制において、まさにその通信技術が政治的エネルギーを脱政治化するメカニズムを分析する批判理論的概念である。ジョディ・ディーン（Jodi Dean）が2005年にCultural Politics（Vol.1, No.1, pp.51-74）で発表した「Communicative Capitalism: Circulation and the Foreclosure of Politics」で提唱した。' +
+      'ネットワーク化されたコミュニケーション・メディアが政治的エネルギーを意見の登録と感情の伝送に還元し、論理的討議を感情的表出に置換することで、大衆の民主的衝動を転覆する。政治的メッセージがコンテンツとして無限に循環するが、政治的行為としての有効性を喪失する「閉鎖（foreclosure）」のメカニズムを解明した。',
+    keyFigures: 'ジョディ・ディーン（2005 Cultural Politics 1(1):51-74）／ディーン（2009 Democracy and Other Neoliberal Fantasies, Duke UP）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://read.dukeupress.edu/cultural-politics/article-abstract/1/1/51/34262/Communicative-Capitalism-Circulation-and-the', type: 'academic', label: 'Dean (2005) Communicative Capitalism — Cultural Politics 1(1) / Duke UP' },
+      { url: 'https://www.researchgate.net/publication/240798916_Communicative_Capitalism_Circulation_and_the_Foreclosure_of_Politics', type: 'academic', label: 'Dean (2005) Communicative Capitalism — ResearchGate' },
+      { url: 'https://read.dukeupress.edu/books/book/1283/Democracy-and-Other-Neoliberal', type: 'academic', label: 'Dean (2009) Democracy and Other Neoliberal Fantasies — Duke UP' },
+    ],
+  },
+  {
+    id: 'mgmt-high-performance-work',
+    discipline: 'management',
+    title: '高業績労働システム（High-Performance Work Systems / HPWS）',
+    statement:
+      '高業績労働システム（High-Performance Work Systems / HPWS）とは、厳格な採用・選抜手続、業績連動報酬、戦略的研修・能力開発、従業員参画などの人的資源管理施策を統合的システムとして構成し、企業業績を向上させる戦略的HRMのアプローチである。マーク・ヒューゼリッド（Mark A. Huselid）が1995年にAcademy of Management Journal（Vol.38, No.3, pp.635-672）で発表した「The Impact of Human Resource Management Practices on Turnover, Productivity, and Corporate Financial Performance」で実証的基盤を確立した。' +
+      '約1,000社の全米サンプルを用いて、HPWSが離職率・生産性の中間的成果指標と短期・長期の企業財務業績の双方に経済的・統計的に有意な影響を及ぼすことを示した。個別施策の加算的効果ではなくシステムとしての相補性（complementarity）を強調し、戦略的HRM研究の実証的パラダイムを確立した。',
+    keyFigures: 'マーク・ヒューゼリッド（1995 Academy of Management Journal 38(3):635-672）／ベッカー＆ヒューゼリッド（1998 HPWS and Firm Performance）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-Impact-of-Human-Resource-Management-Practices-Huselid/c0c9f7a7f7ba15868cd2be4903957fe6aded1824', type: 'academic', label: 'Huselid (1995) Impact of HRM Practices — Semantic Scholar' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1803666', type: 'academic', label: 'Huselid (1995) Impact of HRM Practices — SSRN' },
+      { url: 'https://www.researchgate.net/publication/312973190_The_Impact_Of_Human_Resource_Management_Practices_On_Turnover_Productivity_And_Corporate_Financial_Performance', type: 'academic', label: 'Huselid (1995) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'econ-price-puzzle',
+    discipline: 'economics',
+    title: 'プライス・パズル（Price Puzzle）',
+    statement:
+      'プライス・パズル（Price Puzzle）とは、構造VARモデルにおいて金融引締めショック（典型的にはフェデラル・ファンド金利の正のショック）に対して物価水準が理論予測に反して持続的に上昇する実証的異常現象である。クリストファー・シムズ（Christopher A. Sims）が1992年のブルッキングス論文で発見し、マーティン・アイケンバウム（Martin Eichenbaum）が同年のコメントで「プライス・パズル」と命名した。' +
+      'シムズは金融当局がインフレ圧力の到来を予見して引締めを行うが、VARモデルが期待インフレを捕捉する変数を欠くために引締めと物価上昇が見かけ上正の相関を示すという情報欠落仮説を提示した。コモディティ価格指数の追加により緩和されることが確認され、VAR識別戦略における情報集合の適切性が金融政策分析の中心的課題となった。',
+    keyFigures: 'クリストファー・シムズ（1992 Brookings Papers on Economic Activity）／マーティン・アイケンバウム（1992 コメント「プライス・パズル」命名）／シムズ（2011年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/p/pad/wpaper/0101.html', type: 'academic', label: 'Castelnuovo (2010) Monetary Policy, Inflation Expectations and The Price Puzzle — IDEAS/RePEc' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0164070408000669', type: 'academic', label: 'Rabanal (2007) The Price Puzzle Revisited: Can the Cost Channel Explain? — ScienceDirect' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-0297.2010.02368.x', type: 'academic', label: 'Castelnuovo (2010) Monetary Policy, Inflation Expectations and The Price Puzzle — Economic Journal (Wiley)' },
+    ],
+  },
+  {
+    id: 'econ-neutrality-of-money',
+    discipline: 'economics',
+    title: '貨幣の中立性（Neutrality of Money）',
+    statement:
+      '貨幣の中立性（Neutrality of Money）とは、貨幣供給量の変化が物価水準・名目賃金・為替レート等の名目変数のみに影響し、産出量・雇用・実質賃金・実質消費等の実質変数には影響を及ぼさないとする古典派経済学の基本命題である。デヴィッド・ヒューム（David Hume）が1752年の政治論集（Political Discourses）所収の「貨幣について（Of Money）」で貨幣量の増加が価格を比例的に上昇させるが産業の実質量を変えないと主張し、貨幣数量説の初期的定式化として理論的基礎を築いた。' +
+      '古典派の二分法（classical dichotomy）として実質変数と名目変数の独立性が主張されたが、ヒュームとフィッシャーは長期的中立性と短期的非中立性の共存を認識していた。ケインズ経済学は短期的非中立性を強調し、新古典派マクロ経済学は合理的期待の下での長期的中立性を理論化した（ルーカス1972 中立性命題）。超中立性（superneutrality）は貨幣成長率の変化に対する実質変数の不変性を指す。',
+    keyFigures: 'デヴィッド・ヒューム（1752 Political Discourses「Of Money」）／アーヴィング・フィッシャー（貨幣数量説）／ロバート・ルーカス（1972 中立性命題）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Neutrality_of_money', type: 'reference', label: 'Wikipedia: Neutrality of Money' },
+      { url: 'https://corporatefinanceinstitute.com/resources/economics/money-neutrality/', type: 'reference', label: 'Corporate Finance Institute: Neutrality of Money Theory' },
+      { url: 'https://hope.econ.duke.edu/sites/hope.econ.duke.edu/files/Hume%20and%20Fisher%20on%20the%20Quantity%20Theory1.pdf', type: 'academic', label: 'David Hume and Irving Fisher on the Quantity Theory — Duke HOPE' },
+    ],
+  },
 ];
 // Stryker restore all
