@@ -28365,5 +28365,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://classic.austlii.edu.au/au/journals/JlLawInfoSci/2017/6.html', type: 'reference', label: 'Clarke & Greenleaf (2017) Dataveillance Regulation: A Research Framework — Journal of Law, Information and Science' },
     ],
   },
+  {
+    id: 'econ-saving-glut-hypothesis',
+    discipline: 'economics',
+    title: '過剰貯蓄仮説',
+    statement:
+      '過剰貯蓄仮説とは、アジア新興国（特に1997年危機後の東アジア）と産油国における貯蓄超過が国際資本市場を通じて米国へ流入し、世界的な実質長期金利の低下と米国経常収支赤字の拡大をもたらしたとする説である（Bernanke, 2005）。' +
+      'Caballero・Farhi・Gourinchas（2008）はこれを均衡モデルに拡張し、安全資産を生産する能力の地域格差が資本フローと低金利を内生的に説明できることを示した。',
+    keyFigures: 'Ben Shalom Bernanke ／ Ricardo J. Caballero ／ Emmanuel Farhi ／ Pierre-Olivier Gourinchas',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/', type: 'academic', label: 'Bernanke (2005) The Global Saving Glut and the U.S. Current Account Deficit — Federal Reserve Board' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.98.1.358', type: 'academic', label: 'Caballero, Farhi & Gourinchas (2008) An Equilibrium Model of Global Imbalances and Low Interest Rates — American Economic Review' },
+      { url: 'https://en.wikipedia.org/wiki/Global_saving_glut', type: 'reference', label: 'Wikipedia — Global saving glut' },
+    ],
+  },
+  {
+    id: 'econ-lemons-problem-akerlof',
+    discipline: 'economics',
+    title: 'レモン市場',
+    statement:
+      'Akerlof（1970）は中古車市場を例に、売り手のみが品質を知る情報の非対称性のもとでは買い手が平均的価格しか提示できず、高品質財（ピーチ）が市場から退出して低品質財（レモン）だけが残る逆選択（adverse selection）が生じることを示した。' +
+      'この悪循環が進むと市場そのものが崩壊しうるという洞察は、保険・金融・労働など広範な市場分析に応用され、Spence（1973）のシグナリング理論やRothschild & Stiglitz（1976）の均衡分析とともに情報経済学の礎を築いた。Akerlof・Spence・Stiglitzはこの貢献により2001年ノーベル経済学賞を共同受賞した。',
+    keyFigures: 'George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof (1970) The Market for Lemons: Quality Uncertainty and the Market Mechanism — QJE' },
+      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence (1973) Job Market Signaling — QJE' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/summary/', type: 'reference', label: '2001年ノーベル経済学賞 公式概要（NobelPrize.org）' },
+    ],
+  },
+  {
+    id: 'human-emotional-regulation-process-model',
+    discipline: 'human-science',
+    title: '感情調整のプロセスモデル',
+    statement:
+      'Gross（1998）が提唱した感情調整のプロセスモデルは、感情生成の時系列に沿って「状況選択」「状況修正」「注意配置」「認知的変化」「反応調整」という5つの調整ファミリーが介入できると仮定する。このモデルでは、先行焦点型の認知的再評価は反応焦点型の抑制よりも感情体験を効果的に低減し、かつ交感神経活動を増大させないことが実証された（Gross, 1998）。' +
+      'Sheppes et al.（2011）はさらにこの枠組みを拡張し、感情強度に応じた調整方略選択（関与型 vs. 離脱型）を説明する感情調整選択モデルを提唱した。',
+    keyFigures: 'James J. Gross ／ Gal Sheppes',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1037/1089-2680.2.3.271', type: 'academic', label: 'Gross (1998) The Emerging Field of Emotion Regulation: An Integrative Review — Review of General Psychology' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0956797611418350', type: 'academic', label: 'Sheppes et al. (2011) Emotion-Regulation Choice — Psychological Science' },
+      { url: 'https://dictionary.apa.org/emotion-regulation', type: 'reference', label: 'Emotion Regulation — APA Dictionary of Psychology' },
+    ],
+  },
+  {
+    id: 'mgmt-real-options-strategy',
+    discipline: 'management',
+    title: 'リアル・オプション戦略論',
+    statement:
+      'リアル・オプション戦略論は、不確実性の高い環境下での戦略的投資をオプション理論で捉え直し、意思決定の柔軟性そのものに価値があると主張する。Bowman & Hurry（1993）は「オプション・レンズ」を通じた資源配分の段階的選択プロセスを提唱し、企業が将来の選択肢を保持することで不確実性を競争優位に転換できると論じた。' +
+      'McGrath（1997）はさらに技術ポジショニング投資へこの論理を拡張し、不確実性の境界条件を企業固有の方法でシフトさせる「増幅的事前投資」がオプション価値を高めることを示した。',
+    keyFigures: 'Edward H. Bowman ／ Dileep Hurry ／ Rita Gunther McGrath ／ Lenos Trigeorgis',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Strategy-through-the-Option-Lens:-An-Integrated-of-Bowman-Hurry/37fc549cfeae28a843c5555c21bd5ed04f26639e', type: 'academic', label: 'Bowman & Hurry (1993) Strategy through the Option Lens — Academy of Management Review' },
+      { url: 'https://www.semanticscholar.org/paper/A-Real-Options-Logic-for-Initiating-Technology-McGrath/bf72148c8b36d0e1951937b045b5bf682a7a7345', type: 'academic', label: 'McGrath (1997) A Real Options Logic for Initiating Technology Positioning Investments — Academy of Management Review' },
+      { url: 'https://giesbusiness.illinois.edu/josephm/BA549_Fall%202018/Session%207/Trigeorgis%20and%20Reuer%20(2017).pdf', type: 'reference', label: 'Trigeorgis & Reuer (2017) Real Options Theory in Strategic Management — Strategic Management Journal' },
+    ],
+  },
+  {
+    id: 'bizlaw-anticipatory-breach',
+    discipline: 'business-law',
+    title: '履行期前の契約違反',
+    statement:
+      '履行期前の契約違反（Anticipatory Repudiation）とは、契約上の給付期日が到来する前に一方当事者が履行しない意思を明確に示す行為であり、1853年のHochster v. De La Tour判決によって確立された英米契約法上の重要法理である（Rowley 2007）。' +
+      '無過失当事者は相手方の明示的・黙示的な履行拒絶を受けた時点で即座に損害賠償を請求する権利を取得し、履行期の到来を待つ必要はないとされる。米国ではUniform Commercial Code § 2-610およびRestatement (Second) of Contracts § 250がこの法理を成文化しており、ビジネス取引における契約安全の保護に寄与している。',
+    keyFigures: 'Keith A. Rowley ／ Samuel Williston ／ Arthur Linton Corbin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholars.law.unlv.edu/facpub/557/', type: 'academic', label: 'Rowley (2007) A Brief History of Anticipatory Repudiation in American Contract Law — UNLV Boyd Law' },
+      { url: 'https://scholarship.law.cornell.edu/cgi/viewcontent.cgi?article=1228&context=clr', type: 'academic', label: 'Anticipatory Repudiation of Contracts — Cornell Law Review' },
+      { url: 'https://en.wikipedia.org/wiki/Anticipatory_repudiation', type: 'reference', label: 'Wikipedia — Anticipatory repudiation' },
+    ],
+  },
+  {
+    id: 'infosoc-knowledge-commons',
+    discipline: 'information-sociology',
+    title: '知識コモンズ理論',
+    statement:
+      '知識コモンズ理論は、学術情報・デジタルデータ・文化的資源を「共有財（コモンズ）」として捉え、排他的私有化でも国家管理でもなく、コミュニティによる制度的自治ガバナンスによって持続的に管理できると主張する。Hess & Ostrom（2007）は自然資源コモンズの制度分析・開発（IAD）フレームワークを知識領域に拡張し、デジタル情報が非競合的・非枯渇的な性質を持ちながらも過剰な知的財産規制によって「囲い込み」される危機に直面していることを示した。' +
+      'Frischmann, Madison & Strandburg（2014）はこの枠組みをさらに発展させ、オープンアクセス、市民科学、ゲノムデータ共有など多様な知識コモンズを比較分析する「ガバニング・ナレッジ・コモンズ（GKC）」フレームワークを提唱した。',
+    keyFigures: 'Charlotte Hess ／ Elinor Ostrom ／ Brett M. Frischmann ／ Michael J. Madison ／ Katherine J. Strandburg',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262516037/understanding-knowledge-as-a-commons/', type: 'academic', label: 'Hess & Ostrom (eds.) Understanding Knowledge as a Commons — MIT Press (2007)' },
+      { url: 'https://global.oup.com/academic/product/governing-knowledge-commons-9780199972036', type: 'academic', label: 'Frischmann, Madison & Strandburg (eds.) Governing Knowledge Commons — Oxford University Press (2014)' },
+      { url: 'https://en.wikipedia.org/wiki/Knowledge_commons', type: 'reference', label: 'Wikipedia — Knowledge commons' },
+    ],
+  },
 ];
 // Stryker restore all
