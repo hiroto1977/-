@@ -2081,5 +2081,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | ドミナント・ロジック理論 | 多角化企業トップの認知的枠組みが戦略的意思決定フィルターとなる理論（Prahalad & Bettis / Von Krogh & Roos） |
 | 経営学 | ステークホルダー顕出性理論 | パワー・正当性・緊急性の3属性による7類型分類と経営者注意優先度（Mitchell / Agle / Wood） |
 | 情報社会学 | 情報コモンズ理論 | Ostrom IADフレームワークの知識財応用・ピア生産・Creative Commons（Hess & Ostrom / Benkler / Lessig） |
+| 経済学 | 窮乏化成長理論 | 輸出偏向型成長による交易条件悪化と国民厚生低下の逆説（Bhagwati / Johnson / Edgeworth） |
+| 人間科学 | 時間生物学理論 | 概日リズム分子機構・period遺伝子・SCN体内時計・社会的時差ぼけ（Halberg / Hall / Rosbash / Young / Roenneberg） |
+| 経営法学 | 不法干渉法理 | 契約関係・将来的取引機会への故意の干渉に対するコモンロー不法行為（Prosser / Dobbs / James） |
+| 経営学 | 戦略的再生理論 | 経路依存的戦略の根本刷新・複数階層役割葛藤・組織学習連結（Floyd & Lane / Agarwal & Helfat / Volberda） |
+| 経営学 | 経営者認知理論 | メンタルモデル・認知マップによる戦略的意思決定形成（Walsh / Huff / Barr / Kaplan / Hambrick） |
+| 情報社会学 | ネットワーク・ゲートキーピング理論 | ネット環境のゲートキーパー権力非対称と情報管理メカニズム（Lewin / White / Shoemaker & Vos / Barzilai-Nahon） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
