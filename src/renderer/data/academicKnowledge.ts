@@ -25595,5 +25595,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Attention#Executive_attention', type: 'reference', label: 'Executive Attention — Wikipedia' },
     ],
   },
+  // ── Batch 281 ─────────────────────────────────────────────
+  {
+    id: 'econ-engel-curve',
+    discipline: 'economics',
+    title: 'エンゲル曲線とエンゲルの法則（Engel Curve & Engel\'s Law）',
+    statement:
+      '家計所得と特定財への支出の関係を描く曲線。エルンスト・エンゲル（1857）は所得上昇に伴い食料支出の割合が低下する経験則（エンゲルの法則）を発見し、消費需要理論と福祉経済学の基礎を築いた。所得弾力性が1未満の必需財と1超の奢侈財の分類にも用いられる。',
+    keyFigures: 'エルンスト・エンゲル（1857 Die Lebenskosten belgischer Arbeiterfamilien）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1907024', type: 'academic', label: 'Houthakker (1957) An International Comparison of Household Expenditure Patterns — Econometrica / JSTOR' },
+      { url: 'https://www.investopedia.com/terms/e/engelslawofconsumption.asp', type: 'reference', label: "Engel's Law — Investopedia" },
+      { url: 'https://en.wikipedia.org/wiki/Engel_curve', type: 'reference', label: 'Engel Curve — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-flash-lag',
+    discipline: 'human-science',
+    title: 'フラッシュラグ効果（Flash-Lag Effect）',
+    statement:
+      '運動する対象と同一位置に瞬間提示された静止刺激が、運動対象よりも後方に知覚される視覚錯覚。ニジャワン（1994）は運動外挿仮説で説明し、イーグルマン＆セジュノスキー（2000）は遅延差仮説（postdiction）を提唱して論争を生んだ。視覚系の神経伝達遅延への補償メカニズムを示唆する。',
+    keyFigures: 'ランジット・ニジャワン（1994 Nature）／デイヴィッド・イーグルマン＆テレンス・セジュノスキー（2000 Science）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/370256a0', type: 'academic', label: 'Nijhawan (1994) Motion Extrapolation in Catching — Nature' },
+      { url: 'https://www.science.org/doi/10.1126/science.287.5460.2036', type: 'academic', label: 'Eagleman & Sejnowski (2000) Motion Integration and Postdiction — Science' },
+      { url: 'https://en.wikipedia.org/wiki/Flash_lag_illusion', type: 'reference', label: 'Flash Lag Illusion — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-fork-in-the-road',
+    discipline: 'business-law',
+    title: '分岐条項（Fork-in-the-Road Clause）',
+    statement:
+      '二国間投資協定（BIT）において投資家が紛争解決の場として国内裁判所と国際仲裁のいずれかを不可逆的に選択すべきことを定める条項。一方の紛争処理機関への付託後は他方が排除され、並行手続を防止する。契約上の請求と条約上の請求が「同一の紛争」か否かの解釈が仲裁実務上の争点となる。',
+    keyFigures: 'Pantechniki v. Albania ICSID仲裁廷（2009）／Toto Costruzioni v. Lebanon（2012）／UNCTAD投資協定条項シリーズ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://unctad.org/system/files/official-document/iteiit200410v2_en.pdf', type: 'government', label: 'UNCTAD (2004) International Investment Agreements: Key Issues, Vol. II' },
+      { url: 'https://www.italaw.com/cases/813', type: 'academic', label: 'Pantechniki v. Albania ICSID Case No. ARB/07/21 — italaw' },
+      { url: 'https://jusmundi.com/en/document/publication/en-fork-in-the-road', type: 'reference', label: 'Fork-in-the-Road — Jus Mundi' },
+    ],
+  },
+  {
+    id: 'mgmt-structural-inertia',
+    discipline: 'management',
+    title: '構造的慣性（Structural Inertia）',
+    statement:
+      '組織が埋没費用・政治的連合・規範的合意・正当性障壁などの内外制約により構造変革に抵抗する傾向。ハナン＆フリーマン（1984）は淘汰圧が信頼性と説明責任を持つ（=慣性の強い）組織を選好すると論じ、根本的再編は「新しさの負債」を再設定して死亡リスクを高めると主張した。',
+    keyFigures: 'マイケル・T・ハナン＆ジョン・フリーマン（1984 American Sociological Review）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan & Freeman (1984) Structural Inertia and Organizational Change — ASR / JSTOR' },
+      { url: 'https://www.semanticscholar.org/paper/Structural-Inertia-and-Organizational-Change-Hannan-Freeman/44c3c5de35c79e5bd1d93e3ae0cff7cf45443e5b', type: 'academic', label: 'Hannan & Freeman (1984) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Organizational Ecology — Wikipedia' },
+    ],
+  },
+  {
+    id: 'infosoc-domestication-theory',
+    discipline: 'information-sociology',
+    title: '家庭化理論（Domestication Theory）',
+    statement:
+      '世帯が新技術を日常生活に取り込む過程を、領有（appropriation）・対象化（objectification）・編入（incorporation）・転換（conversion）の四段階で把握する理論的枠組み。シルバーストーン、ハーシュ＆モーリー（1992）が技術決定論的な普及モデルへの代替として提唱し、利用者の主体性と家庭的文脈を強調した。',
+    keyFigures: 'ロジャー・シルバーストーン、エリック・ハーシュ＆デイヴィッド・モーリー（1992 Consuming Technologies）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Information-and-communication-technologies-and-the-Silverstone-Hirsch/dc906d12c5abe3c06d55b5b5e9c1b2f03854e620', type: 'academic', label: 'Silverstone, Hirsch & Morley (1992) ICTs and the Moral Economy of the Household — Semantic Scholar' },
+      { url: 'https://link.springer.com/chapter/10.1057/9780230508538_2', type: 'academic', label: 'Silverstone & Haddon (1996) Design and the Domestication of ICTs — Springer' },
+      { url: 'https://en.wikipedia.org/wiki/Domestication_theory', type: 'reference', label: 'Domestication Theory — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-binocular-rivalry',
+    discipline: 'human-science',
+    title: '両眼視野闘争（Binocular Rivalry）',
+    statement:
+      '左右の眼に異なる像を同時提示すると、知覚が二つの像の間で数秒周期で交替し融合しない現象。ポルタ（1593）以来知られ、ウィートストン（1838）が体系的に記述した。物理的刺激が一定でも知覚が変動するため、視覚的意識の神経基盤を探る実験パラダイムとして神経科学で広く用いられる。',
+    keyFigures: 'ランドルフ・ブレイク＆ニコス・ロゴセティス（2002 Nature Reviews Neuroscience レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/nrn701', type: 'academic', label: 'Blake & Logothetis (2002) Visual Competition — Nature Reviews Neuroscience' },
+      { url: 'https://www.semanticscholar.org/paper/Visual-competition.-Blake-Logothetis/8af82bd96e2ba8d32c61a93b70c0b4fb21ac1f9e', type: 'academic', label: 'Blake & Logothetis (2002) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Binocular_rivalry', type: 'reference', label: 'Binocular Rivalry — Wikipedia' },
+    ],
+  },
 ];
 // Stryker restore all
