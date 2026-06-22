@@ -24370,5 +24370,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3422', type: 'academic', label: 'Barro (1996) Determinants of Economic Growth — SSRN' },
     ],
   },
+  {
+    id: 'human-prosodic-bootstrapping',
+    discipline: 'human-science',
+    title: '韻律的ブートストラッピング（Prosodic Bootstrapping）',
+    statement:
+      '韻律的ブートストラッピング（Prosodic Bootstrapping）とは、乳児が音声信号の韻律的手がかり（リズム・ストレス・イントネーション・ポーズ）を利用して語彙分節・句構造・統語範疇の獲得を開始するという言語獲得の仮説である。ジェームズ・モーガン（James L. Morgan）とキャサリン・デムース（Katherine Demuth）が1996年に編著『Signal to Syntax: Bootstrapping From Speech To Grammar in Early Acquisition』（Lawrence Erlbaum Associates）で体系化した。' +
+      '音声の純粋に音韻的な分析が母語の語彙と統語の獲得開始を可能にするという仮説であり、乳児が韻律情報に初期的にチューニングされた入力処理メカニズムを備えていることを前提とする。語レベルのストレスパターンが語の分節を、句レベルの韻律境界が統語的句の分節を促進することが実験的に示された。',
+    keyFigures: 'ジェームズ・モーガン＆キャサリン・デムース編（1996 Signal to Syntax, LEA）／アン・クリストフ（音韻的ブートストラッピング実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/Signal-to-Syntax-Bootstrapping-From-Speech-To-Grammar-in-Early-Acquisition/Morgan-Demuth/p/book/9780805812664', type: 'academic', label: 'Morgan & Demuth eds. (1996) Signal to Syntax — Routledge (LEA)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/00238309080510010501', type: 'academic', label: 'Christophe et al. (2008) Bootstrapping Lexical and Syntactic Acquisition — Language and Speech' },
+      { url: 'https://www.researchgate.net/publication/239653441_Reflections_on_Phonological_Bootstrapping_Its_Role_for_Lexical_and_Syntactic_Acquisition', type: 'academic', label: 'Christophe et al. (1997) Reflections on Phonological Bootstrapping — Language & Cognitive Processes' },
+    ],
+  },
+  {
+    id: 'mgmt-temporal-leadership',
+    discipline: 'management',
+    title: 'テンポラル・リーダーシップ（Temporal Leadership）',
+    statement:
+      'テンポラル・リーダーシップ（Temporal Leadership）とは、チーム内のタスク遂行のペーシングを構造化・調整・管理するリーダー行動を指す概念である。スーザン・モハメッド（Susan Mohammed）とスリネ・ナドカルニ（Sucheta Nadkarni）が2011年にAcademy of Management Journal（Vol.54, No.3, pp.489-508）で「Temporal Diversity and Team Performance: The Moderating Role of Team Temporal Leadership」として提唱した。' +
+      'スケジューリング（活動完了の明確なタイムラインの設定）、テンポラル・シンクロナイゼーション（チームメンバーの活動の時間的同期）、テンポラル・リソースの配分（時間資源の戦略的割当て）の三つの相互関連する活動から構成される。インドのBPO企業71チームを対象とした研究で、時間的緊迫性の多様性とペーシング・スタイルの多様性がチーム業績に及ぼす影響をテンポラル・リーダーシップが正に調整することを示した。',
+    keyFigures: 'スーザン・モハメッド＆スリネ・ナドカルニ（2011 Academy of Management Journal 54(3):489-508）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2011.61967991', type: 'academic', label: 'Mohammed & Nadkarni (2011) Temporal Diversity and Team Performance — AMJ 54(3)' },
+      { url: 'https://pure.tue.nl/ws/files/46933488/844973-1.pdf', type: 'academic', label: 'Increasing Team Performance through Temporal Leadership — TU Eindhoven' },
+      { url: 'https://www.researchgate.net/publication/280077033_Temporal_Diversity_and_Team_Performance_The_Moderating_Role_of_Team_Temporal_Leadership', type: 'academic', label: 'Mohammed & Nadkarni (2011) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'bizlaw-sovereign-equality',
+    discipline: 'business-law',
+    title: '主権平等原則（Principle of Sovereign Equality）',
+    statement:
+      '主権平等原則（Principle of Sovereign Equality of States）とは、すべての国家がその人口・経済力・領土・軍事力に関わらず国際法上同等の法的地位を有し、同等の権利能力と義務負担能力を持つとする国際法の根本原則である。国際連合憲章（1945年）第2条第1項に「機構は、そのすべての加盟国の主権平等の原則に基礎をおいている」と明記されている。' +
+      'ウェストファリア体制（1648年ウェストファリア条約に起源）における領土主権を基盤とし、法的平等・自律性・不干渉の系原則を含む。各国は他国の立法・行政・司法行為に対する管轄権を持たない（主権免除）。友好関係原則宣言（1970年国連総会決議2625）で権利の平等・領土保全・政治的独立の内容が精緻化された。現実の非対称的パワー構造（安保理常任理事国の拒否権等）との緊張関係が国際法学の中心的論点である。',
+    keyFigures: '国連憲章第2条第1項（1945）／ウェストファリア条約（1648）／友好関係原則宣言（1970 GA Res. 2625）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.un.org/en/about-us/un-charter/chapter-1', type: 'government', label: 'UN Charter Chapter I: Purposes and Principles — Article 2(1)' },
+      { url: 'https://legal.un.org/repertory/art2.shtml', type: 'government', label: 'UN Repertory of Practice — Article 2(1)-(5)' },
+      { url: 'https://academic.oup.com/book/58198/chapter/481341184', type: 'academic', label: 'Article 2(1) — The Charter of the United Nations: A Commentary (Oxford)' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-labor',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム労働（Platform Labor / Digital Labor）',
+    statement:
+      'プラットフォーム労働（Platform Labor）とは、デジタル・プラットフォーム上でタスク化・データ化された労働が自動システムの訓練に使用される新しい労働形態の総体を分析する概念枠組みである。アントニオ・カシッリ（Antonio A. Casilli）が2019年の著書『En attendant les robots: Enquête sur le travail du clic』（Éditions du Seuil）で体系化した。' +
+      'オンデマンド労働（Uberドライバー等がデータベースを充実しアルゴリズムを精緻化する労働）、マイクロワーク（画像分類等の単純反復的クリック作業）、ソーシャルネットワーク労働（SNS利用者の無償参加とクリックファーム等による人為的バイラリティ創出）の三類型に分類した。人工知能のイデオロギー的言説を脱構築し、デジタル労働の隠蔽と地理的再配置の二重運動を分析した。',
+    keyFigures: 'アントニオ・カシッリ（2019 En attendant les robots, Seuil）／テラノヴァ（2000 Free Labor）／フックス（2014 Digital Labour and Karl Marx）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cairn.info/en-attendant-les-robots-enquete-sur-le-travail-du---9782021401882.html', type: 'academic', label: 'Casilli (2019) En attendant les robots — Cairn.info / Seuil' },
+      { url: 'https://journals.openedition.org/sdt/30398?lang=fr', type: 'academic', label: 'Casilli (2019) Book Review — Sociologie du travail / OpenEdition' },
+      { url: 'https://www.casilli.fr/publications-2/', type: 'reference', label: 'Antonio Casilli — Publications Page' },
+    ],
+  },
+  {
+    id: 'econ-backus-smith',
+    discipline: 'economics',
+    title: 'バッカス＝スミス・パズル（Backus-Smith Puzzle）',
+    statement:
+      'バッカス＝スミス・パズル（Backus-Smith Puzzle）とは、完備資産市場を前提とする国際リスク共有モデルが相対消費と実質為替レートの正の相関を予測するのに対し、実証データでは相関がゼロまたは負であるという国際マクロ経済学の異常現象である。デヴィッド・バッカス（David K. Backus）とグレゴール・スミス（Gregor W. Smith）が1993年にJournal of International Economicsで報告した。' +
+      '効率的リスク共有の下では消費が相対的に安価な国へ移転が行われるため、実質為替レートの減価（消費の相対価格低下）と相対消費成長は正に相関するはずであるが、OECD諸国データでこの予測は棄却される。国際金融市場の不完備性、非貿易財の存在、名目為替レートの変動がパズルの説明候補として研究されている。',
+    keyFigures: 'デヴィッド・バッカス＆グレゴール・スミス（1993 Journal of International Economics）／コラチェロ＆クロチェ（名目為替レート説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Backus%E2%80%93Smith_puzzle', type: 'reference', label: 'Wikipedia: Backus–Smith Puzzle' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0261560609000795', type: 'academic', label: 'Corsetti et al. (2008) Understanding the Backus-Smith Puzzle — J Intl Money & Finance / ScienceDirect' },
+      { url: 'https://www.federalreserve.gov/pubs/ifdp/2005/826/ifdp826.htm', type: 'government', label: 'Corsetti, Dedola, Leduc (2005) International Risk-Sharing — FRB IFDP 826' },
+    ],
+  },
+  {
+    id: 'econ-new-keynesian-phillips',
+    discipline: 'economics',
+    title: 'ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）',
+    statement:
+      'ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve / NKPC）とは、現在のインフレ率を期待将来インフレ率と企業の実質限界費用の関数として表す構造的インフレ動学モデルである。ジョルディ・ガリ（Jordi Galí）とマーク・ガートラー（Mark Gertler）が1999年にJournal of Monetary Economicsで「Inflation Dynamics: A Structural Econometric Analysis」として実証的基盤を確立した。' +
+      'カルヴォ型価格硬直性モデルから導出され、産出ギャップではなく所得に占める労働分配率を実質限界費用の代理変数として使用するという革新を導入した。前向き要素の重み約0.65と後ろ向き要素の重み約0.35を持つハイブリッドNKPCを定式化し、経験則的（rule-of-thumb）価格設定企業の存在を許容した。現代の金融政策分析とDSGEモデルの中核的構成要素である。',
+    keyFigures: 'ジョルディ・ガリ＆マーク・ガートラー（1999 Journal of Monetary Economics 44(2):195-222）／カルヴォ（1983 価格硬直性モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://maseconomics.com/new-keynesian-phillips-curve-sticky-prices-and-inflation-dynamics/', type: 'reference', label: 'New Keynesian Phillips Curve: Sticky Prices and Inflation Dynamics — MAS Economics' },
+      { url: 'https://www.frbsf.org/wp-content/uploads/nkpcnn.pdf', type: 'government', label: 'Sbordone (2002) Inflation Dynamics, Marginal Cost, and the Output Gap — FRBSF' },
+      { url: 'https://link.springer.com/article/10.1007/s00199-006-0100-z', type: 'academic', label: 'Bentolila et al. (2006) NKPC and Inflation Expectations — Economic Theory (Springer)' },
+    ],
+  },
 ];
 // Stryker restore all
