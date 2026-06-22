@@ -28275,5 +28275,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Prosumer', type: 'reference', label: 'Wikipedia — Prosumer' },
     ],
   },
+  {
+    id: 'econ-twin-deficits-hypothesis',
+    discipline: 'economics',
+    title: '双子の赤字仮説',
+    statement:
+      '双子の赤字仮説とは、政府の財政赤字が拡大すると経常収支赤字も同時に悪化するという命題であり、Feldstein（1986）はマンデル＝フレミング・モデルに基づき、財政赤字が金利上昇→資本流入→為替高騰→輸入拡大という連鎖を通じて貿易収支を悪化させると論じた。' +
+      'Bernheim（1988）は米国と主要貿易相手国の実証分析を通じて財政赤字が経常収支の悪化に有意に寄与するという証拠を示した。',
+    keyFigures: 'Martin Feldstein ／ B. Douglas Bernheim ／ Robert Alexander Mundell ／ John Marcus Fleming',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w1898', type: 'academic', label: 'Feldstein (1986) The Budget Deficit and the Dollar — NBER Working Paper 1898' },
+      { url: 'https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-2', type: 'academic', label: 'Bernheim (1988) Budget Deficits and the Balance of Trade — Tax Policy and the Economy, Vol. 2, NBER' },
+      { url: 'https://en.wikipedia.org/wiki/Twin_deficits_hypothesis', type: 'reference', label: 'Wikipedia — Twin deficits hypothesis' },
+    ],
+  },
+  {
+    id: 'econ-kuznets-curve-inequality',
+    discipline: 'economics',
+    title: 'クズネッツ曲線',
+    statement:
+      '経済発展の初期段階では農村から都市への労働移動と産業構造の転換により所得不平等が拡大し、一人当たり所得がある転換点を超えると再分配・教育普及・産業成熟とともに不平等が縮小するという逆U字型の関係を、Kuznets（1955）が実証的に示した。' +
+      'その後、Deininger & Squire（1996）による大規模なクロスカントリー分析など多くの実証研究が再検証を行い、逆U字型が必ずしも普遍的に成立しないこと、特に先進国における近年の不平等再拡大などの反証が積み重なっており、仮説の一般性には依然として議論がある。',
+    keyFigures: 'Simon Kuznets ／ Klaus Deininger ／ Lyn Squire',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1811581', type: 'academic', label: 'Kuznets (1955) Economic Growth and Income Inequality — American Economic Review' },
+      { url: 'https://www.worldbank.org/en/research/publication/new-ways-of-looking-at-old-issues-inequality-and-growth', type: 'academic', label: 'Deininger & Squire (1998) New Ways of Looking at Old Issues: Inequality and Growth — World Bank / Journal of Development Economics' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1971/kuznets/facts/', type: 'reference', label: 'NobelPrize.org — Simon Kuznets, Prize in Economic Sciences 1971' },
+    ],
+  },
+  {
+    id: 'human-differential-susceptibility',
+    discipline: 'human-science',
+    title: '差次感受性仮説',
+    statement:
+      '差次感受性仮説（Belsky, 1997; Ellis et al., 2011）は、個人によって環境の影響を受けやすい程度が異なり、感受性の高い個人はネガティブな環境ではより悪い結果を示す一方、ポジティブな環境ではより大きな恩恵を受けるという「よくも悪くも（for better and for worse）」の原則を提唱する。' +
+      '従来のdiathesis-stressモデルがリスク環境への脆弱性のみに注目するのに対し、Belsky（2007）らはこの非対称性を超え、感受性の高さが進化的な賭けヘッジ戦略として生じたと論じている。',
+    keyFigures: 'Jay Belsky ／ Bruce J. Ellis ／ W. Thomas Boyce',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/21262036/', type: 'academic', label: 'Ellis, Boyce, Belsky et al. (2011) Differential susceptibility to the environment — Development and Psychopathology' },
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.1467-8721.2007.00525.x', type: 'academic', label: 'Belsky, Bakermans-Kranenburg & van IJzendoorn (2007) For Better and For Worse — Current Directions in Psychological Science' },
+      { url: 'https://en.wikipedia.org/wiki/Differential_susceptibility', type: 'reference', label: 'Wikipedia — Differential susceptibility' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-integration-tmt',
+    discipline: 'management',
+    title: 'トップ・マネジメント・チームの行動統合',
+    statement:
+      'トップ・マネジメント・チーム（TMT）の行動統合とは、チームメンバー間で情報交換・協働行動・共同意思決定が一体的に行われる程度を指すメタ構成概念であり、Hambrick（1994）が「チーム」というラベルの再考察を通じて概念化した。' +
+      'Simsek, Veiga, Lubatkin & Dino（2005）はこの概念をCEO・チーム・企業レベルの多層的決定因モデルに発展させ、402社の実証データにより信頼性の高い測定尺度を確立した。',
+    keyFigures: 'Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2005.15993139', type: 'academic', label: 'Simsek, Veiga, Lubatkin & Dino (2005) Modeling the Multilevel Determinants of TMT Behavioral Integration — Academy of Management Journal' },
+      { url: 'https://cmr.berkeley.edu/1995/05/37-3-fragmentation-and-the-other-problems-ceos-have-with-their-top-management-teams/', type: 'academic', label: 'Hambrick (1995) Fragmentation and the Other Problems CEOs Have with Their TMTs — California Management Review' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118785317.weom110276', type: 'reference', label: 'Hambrick — Top Management Teams, Wiley Encyclopedia of Management' },
+    ],
+  },
+  {
+    id: 'bizlaw-discharge-for-breach',
+    discipline: 'business-law',
+    title: '契約違反による債務免除',
+    statement:
+      '契約違反による債務免除とは、一方当事者の重大な義務違反を受けた相手方が契約を解除することにより、自らの将来の給付義務から解放される一方、違反当事者への損害賠償請求権は存続するという契約法の原則をいう（Treitel 1988）。' +
+      '日本法では2020年4月施行の改正民法が解除制度を抜本的に再編し、民法541条が催告後の解除を、542条が催告を要しない即時解除を規定するとともに、解除は損害賠償請求を妨げないと明示した（民法545条4項）。Farnsworth（1970）が比較法的に論じたように、解除による義務免除と損害賠償は両立し、違反を受けた当事者の損害回復を実質的に担保する。',
+    keyFigures: 'Guenter Treitel ／ E. Allan Farnsworth',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://global.oup.com/academic/product/remedies-for-breach-of-contract-9780198258193', type: 'academic', label: 'Treitel (1988) Remedies for Breach of Contract: A Comparative Account — Clarendon Press, Oxford' },
+      { url: 'https://www.jstor.org/stable/1116042', type: 'academic', label: 'Farnsworth (1970) Legal Remedies for Breach of Contract — Columbia Law Review' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'reference', label: 'e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）' },
+    ],
+  },
+  {
+    id: 'infosoc-dataveillance-theory',
+    discipline: 'information-sociology',
+    title: 'データ監視理論',
+    statement:
+      'データ監視理論（データベイランス）は、Clarke（1988）が提唱した概念であり、個人データシステムを通じた個人または集団の行動・通信の組織的な調査・監視として定義される。Clarkeは個人データ監視（特定個人への適用）と大衆データ監視（集団への適用）を区別し、物理的監視ではなくトランザクション上の「デジタル的影」を追跡する点を強調した。' +
+      'Lyon（2001）はこれを情報社会論として発展させ、データによる人々の社会的・経済的カテゴリへの「ソーシャルソーティング（社会的選別）」が、現代の権力構造と不平等を再生産すると論じた。',
+    keyFigures: 'Roger Clarke ／ David Lyon',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/42411.42413', type: 'academic', label: 'Clarke (1988) Information Technology and Dataveillance — Communications of the ACM' },
+      { url: 'https://archive.org/details/surveillancesoci0000lyon', type: 'academic', label: 'Lyon (2001) Surveillance Society: Monitoring Everyday Life — Open University Press' },
+      { url: 'https://classic.austlii.edu.au/au/journals/JlLawInfoSci/2017/6.html', type: 'reference', label: 'Clarke & Greenleaf (2017) Dataveillance Regulation: A Research Framework — Journal of Law, Information and Science' },
+    ],
+  },
 ];
 // Stryker restore all
