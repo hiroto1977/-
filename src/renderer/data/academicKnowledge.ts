@@ -23650,5 +23650,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/abs/10.1177/0149206320908640', type: 'academic', label: 'Neely et al. (2020) Metacritiques of Upper Echelons Theory — Journal of Management 46(6)' },
     ],
   },
+  {
+    id: 'econ-capital-asset-pricing-model',
+    discipline: 'economics',
+    title: '資本資産価格モデル（Capital Asset Pricing Model, CAPM）',
+    statement:
+      '資本資産価格モデル（CAPM）は、金融資産の期待収益率が無リスク収益率とシステマティック・リスク（ベータ係数）に市場リスク・プレミアムを乗じた値の和として決定されるとする均衡モデルである。E(Ri) = Rf + βi[E(Rm) − Rf] の式で表され、個別リスクは分散投資で消去可能なため市場全体との共変動のみが価格付けされる。' +
+      'ウィリアム・シャープ（William F. Sharpe）が1964年にJournal of Finance（Vol.19, No.3, pp.425-442）で、ジョン・リントナー（John Lintner）が1965年にReview of Economics and Statistics（Vol.47, No.1, pp.13-37）で、ヤン・モシン（Jan Mossin）が1966年にEconometrica（Vol.34, No.4, pp.768-783）でそれぞれ独立に導出した。ハリー・マーコヴィッツの平均分散ポートフォリオ理論を均衡価格理論に拡張したものであり、シャープは1990年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ウィリアム・シャープ（1964 Journal of Finance 19(3):425-442）／ジョン・リントナー（1965 Review of Economics and Statistics 47(1):13-37）／ヤン・モシン（1966 Econometrica 34(4):768-783）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.1964.tb02865.x', type: 'academic', label: 'Sharpe (1964) Capital Asset Prices — Journal of Finance 19(3)' },
+      { url: 'https://ideas.repec.org/a/bla/jfinan/v19y1964i3p425-442.html', type: 'academic', label: 'Sharpe (1964) CAPM — IDEAS/RePEc' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1990/sharpe/facts/', type: 'reference', label: 'William F. Sharpe — Nobel Prize 1990' },
+    ],
+  },
+  {
+    id: 'human-temporal-discounting',
+    discipline: 'human-science',
+    title: '時間割引（Temporal Discounting / 遅延割引）',
+    statement:
+      '時間割引（temporal discounting）とは、将来の報酬の主観的価値が時間的遅延に伴い系統的に減少する現象であり、より小さな即時報酬がより大きな遅延報酬よりも選好される傾向を説明する行動科学の中核概念である。ジョージ・エインズリー（George Ainslie）が1975年にPsychological Bulletin（Vol.82, No.4, pp.463-496）で、ハトの選好逆転実験に基づき双曲割引関数 V(D) = V(0)/(1+kD) を提唱した。' +
+      '古典的経済学が想定する指数割引では時間選好は一貫するが、双曲割引では選択時点が近づくにつれ小報酬への選好が逆転する「選好逆転」が生じ、衝動性・自己制御失敗・依存症の理論的基盤となる。ハワード・ラクリン（Howard Rachlin, 1989）は著書Judgment, Decision, and Choice（W.H. Freeman）で認知的・行動的統合の観点から双曲割引モデルを体系化した。',
+    keyFigures: 'ジョージ・エインズリー（1975 Psychological Bulletin 82(4):463-496 — 双曲割引と選好逆転）／ハワード・ラクリン（1989 Judgment, Decision, and Choice — W.H. Freeman）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Specious-reward:-a-behavioral-theory-of-and-impulse-Ainslie/8cf0dba265275d8233b2d78c543269fedd6ff833', type: 'academic', label: 'Ainslie (1975) Specious Reward — Psychological Bulletin 82(4)' },
+      { url: 'https://en.wikipedia.org/wiki/Hyperbolic_discounting', type: 'reference', label: 'Hyperbolic Discounting — Wikipedia' },
+      { url: 'https://www.cambridge.org/core/journals/science-in-context/article/abs/models-of-temporal-discounting-19372000-an-interdisciplinary-exchange-between-economics-and-psychology/993C3C0EF0ED87BB493C966B3F6C012B', type: 'academic', label: 'Models of Temporal Discounting 1937-2000 — Cambridge Core' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-issue-diagnosis',
+    discipline: 'management',
+    title: '戦略的争点の診断（Strategic Issue Diagnosis）',
+    statement:
+      '戦略的争点の診断（Strategic Issue Diagnosis）とは、意思決定者が曖昧な環境事象を「脅威」または「機会」として認知的にカテゴリ化し、その分類が組織の情報処理過程および対応行動を系統的に規定するメカニズムを解明する理論枠組みである。ジェーン・ダットン（Jane E. Dutton）とスーザン・ジャクソン（Susan E. Jackson）が1987年にAcademy of Management Review（Vol.12, No.1, pp.76-90）で提示した。' +
+      '脅威フレーミングは緊急性認知を高め損失回避的行動を促進する一方、機会フレーミングは実現可能性認知を高め接近動機に基づくプロアクティブな戦略的対応を誘発する。後続研究としてダットン＆アシュフォード（1993 AMR）の「イシュー・セリング」概念が、中間管理職がトップへ戦略的争点を売り込む過程として理論を拡張した。',
+    keyFigures: 'ジェーン・ダットン＆スーザン・ジャクソン（1987 Academy of Management Review 12(1):76-90）／ダットン＆アシュフォード（1993 AMR 18(3):397-428 — イシュー・セリング）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1987.4306483', type: 'academic', label: 'Dutton & Jackson (1987) Categorizing Strategic Issues — AMR 12(1)' },
+      { url: 'https://www.semanticscholar.org/paper/Categorizing-Strategic-Issues:-Links-to-Action-Dutton-Jackson/af92da04b72b2dc00ccad690da12c90f2720c214', type: 'academic', label: 'Dutton & Jackson (1987) — Semantic Scholar' },
+      { url: 'https://scholar.google.com/scholar_lookup?doi=10.5465/amr.1987.4306483', type: 'reference', label: 'Dutton & Jackson (1987) — Google Scholar' },
+    ],
+  },
+  {
+    id: 'bizlaw-act-of-state-doctrine',
+    discipline: 'business-law',
+    title: '国家行為の法理（Act of State Doctrine）',
+    statement:
+      '国家行為の法理（Act of State Doctrine）とは、一国の裁判所が外国主権国家の政府行為の適法性・有効性について、当該行為が自国領域内で行われたものである限り司法審査を行わないとする国際法・国内法の原則である。合衆国最高裁はUnderhill v. Hernandez事件（168 U.S. 250, 1897）において「一国の裁判所は他国政府がその領域内で行った行為について裁判を行わない」と判示し、本法理を確立した。' +
+      'Banco Nacional de Cuba v. Sabbatino事件（376 U.S. 398, 1964）では、外国国有化措置が国際法に違反する場合であっても本法理が適用されることを再確認し、司法府と行政府の権力分立原則を根拠とした。例外として、議会が制定したヒッケンルーパー修正条項（22 U.S.C. § 2370(e)(2)）により国際法違反の収用については一部適用が制限される。',
+    keyFigures: 'Underhill v. Hernandez（168 U.S. 250, 1897 — 法理確立判例）／Banco Nacional de Cuba v. Sabbatino（376 U.S. 398, 1964 — 主要再確認判例）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/168/250/', type: 'reference', label: 'Underhill v. Hernandez, 168 U.S. 250 (1897) — Justia' },
+      { url: 'https://supreme.justia.com/cases/federal/us/376/398/', type: 'reference', label: 'Banco Nacional de Cuba v. Sabbatino, 376 U.S. 398 (1964) — Justia' },
+      { url: 'https://en.wikipedia.org/wiki/Act_of_state_doctrine', type: 'reference', label: 'Act of State Doctrine — Wikipedia' },
+    ],
+  },
+  {
+    id: 'infosoc-communicative-figurations',
+    discipline: 'information-sociology',
+    title: 'コミュニカティブ・フィギュレーション（Communicative Figurations）',
+    statement:
+      'コミュニカティブ・フィギュレーション（Communicative Figurations）とは、ノルベルト・エリアスの社会学的「フィギュレーション」概念をメディア・コミュニケーション研究に拡張した理論枠組みであり、行為者の星座（actor constellation）・関連フレーム（frames of relevance）・コミュニケーション実践・メディア・アンサンブルの4要素の相互関係的パターンとして社会領域を分析する。アンドレアス・ヘップ（Andreas Hepp）とウヴェ・ハーゼブリンク（Uwe Hasebrink）が2018年の編著Communicative Figurations（Palgrave Macmillan/Springer, ISBN 978-3-319-65584-0）第2章で体系化した。' +
+      '深いメディア化（deep mediatization）の時代において、デジタル・インフラストラクチャとアルゴリズム・システムが社会的諸領域をいかに変容させるかを、個別メディアではなくメディア・アンサンブル全体と社会的相互依存関係の共構成として研究する総合的アプローチである。ヘップ（2020）Deep Mediatization（Routledge）でさらに発展させた。',
+    keyFigures: 'アンドレアス・ヘップ＆ウヴェ・ハーゼブリンク（2018 Communicative Figurations — Palgrave Macmillan/Springer 第2章）／ヘップ（2020 Deep Mediatization — Routledge）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/book/10.1007/978-3-319-65584-0', type: 'academic', label: 'Hepp, Breiter & Hasebrink eds. (2018) Communicative Figurations — Springer' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-319-65584-0_2', type: 'academic', label: 'Hepp & Hasebrink (2018) A Figurational Approach — Springer Chapter 2' },
+      { url: 'https://www.routledge.com/Deep-Mediatization/Hepp/p/book/9781138024991', type: 'academic', label: 'Hepp (2020) Deep Mediatization — Routledge' },
+    ],
+  },
+  {
+    id: 'econ-backus-kehoe-kydland-puzzle',
+    discipline: 'economics',
+    title: 'バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）',
+    statement:
+      'バックス＝ケホー＝カイランド・パズル（BKK Puzzle）とは、標準的な国際実物的景気循環（RBC）モデルが完全な国際資本市場を仮定した場合に各国間の消費相関が産出相関よりも高くなると予測するのに対し、実際のOECDデータでは産出相関（平均0.31）が消費相関（平均0.19）を大幅に上回るという理論と実証の乖離現象である。デイヴィッド・バックス（David K. Backus）、パトリック・ケホー（Patrick J. Kehoe）、フィン・カイランド（Finn E. Kydland）が1992年にJournal of Political Economy（Vol.100, No.4, pp.745-775）で初めて体系的に記録した。' +
+      '「数量異常」とも呼ばれるこの謎は、国際的リスク分散が理論的予測ほど完全でないことを示唆し、不完全資本市場・非貿易財・情報の非対称性等による解決が試みられてきた。後続論文としてBackus, Kehoe & Kydland（1994 American Economic Review, Vol.84, No.1, pp.84-103）がJ曲線効果と交易条件の動学を分析した。',
+    keyFigures: 'デイヴィッド・バックス、パトリック・ケホー＆フィン・カイランド（1992 Journal of Political Economy 100(4):745-775）／同著者（1994 AER 84(1):84-103）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v100y1992i4p745-75.html', type: 'academic', label: 'Backus, Kehoe & Kydland (1992) International Real Business Cycles — IDEAS/RePEc' },
+      { url: 'https://www.nber.org/papers/w4493', type: 'academic', label: 'Backus, Kehoe & Kydland (1993) International Business Cycles — NBER WP 4493' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v84y1994i1p84-103.html', type: 'academic', label: 'Backus, Kehoe & Kydland (1994) J-Curve — AER 84(1) IDEAS/RePEc' },
+    ],
+  },
 ];
 // Stryker restore all
