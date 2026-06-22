@@ -29244,5 +29244,109 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11604274/', type: 'academic', label: 'Frost — The Impoverished Publicness of Algorithmic Decision Making, Oxford Journal of Legal Studies (2024)' },
     ],
   },
+  {
+    id: 'econ-keynesian-liquidity-trap',
+    discipline: 'economics',
+    title: '流動性の罠',
+    statement:
+      'Keynes（1936）は『雇用・利子および貨幣の一般理論』において、利子率が極めて低い水準に達すると貨幣需要が無限に弾力的となり、金融政策が有効性を失う状態を「流動性の罠」として概念化した。' +
+      'Hicks（1937）はこれをIS-LMモデルのLM曲線の水平部分として定式化し、財政政策の有効性と金融政策の無力性を理論的に示した。' +
+      'Krugman（1998）は日本の長期停滞を分析し、ゼロ金利下では将来のインフレ期待へのコミットメントが唯一有効な脱出策であると主張して流動性の罠論を現代的に復活させた。' +
+      'Svensson（2001）はインフレ目標と為替レート目標を組み合わせた脱却戦略を提唱し、流動性の罠からの具体的な政策手段を理論化した。' +
+      'この概念は2008年の世界金融危機後に再び注目を集め、量的緩和・フォワードガイダンスといった非伝統的金融政策の理論的根拠となっている。',
+    keyFigures: 'John Maynard Keynes ／ John Hicks ／ Paul Krugman ／ Lars Svensson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/bin/bpeajo/v29y1998i1998-2p137-206.html', type: 'academic', label: "Krugman, P. (1998) It's Baaack: Japan's Slump & the Return of the Liquidity Trap — Brookings Papers on Economic Activity, IDEAS/RePEC" },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2000/06/japan-recession-is-the-liquidity-trap-back/', type: 'government', label: "Japan's Recession: Is the Liquidity Trap Back? — Federal Reserve Bank of San Francisco Economic Letter (2000-18)" },
+      { url: 'https://www.econlib.org/library/Columns/y2011/Jasayliquidity.html', type: 'reference', label: 'What Became of the Liquidity Trap? — Library of Economics & Liberty (Econlib)' },
+    ],
+  },
+  {
+    id: 'human-embodied-cognition-theory',
+    discipline: 'human-science',
+    title: '身体化された認知',
+    statement:
+      'Varela、Thompson、Rosch（1991）は著書 *The Embodied Mind* において、認知とはあらかじめ与えられた世界の表象ではなく、身体的行為の歴史を通じて世界と心が共に「制定（enaction）」されるプロセスであると論じた。' +
+      'Lakoff and Johnson（1999）は *Philosophy in the Flesh* で、心は本質的に身体化されており、抽象概念の大半が感覚運動的経験に根ざしたメタファーによって構成されていることを示した。' +
+      'Gibson（1979）が提唱した「アフォーダンス」概念は、知覚を脳内表象ではなく生物と環境の関係性として捉える基盤を提供し、身体化認知論の生態学的枠組みを形成した。' +
+      'Dreyfus（1972, 1979）はハイデガー現象学を援用しながら、記号操作モデルに基づく古典的AIを批判し、熟練した身体的技能が命題的知識に還元できないことを主張した。' +
+      'Clark（1997）はさらに、認知が脳・身体・環境にまたがる動的結合システムとして成立するという「拡張された心（extended mind）」仮説を提唱し、身体化認知論の射程を道具・空間へと広げた。',
+    keyFigures: 'Francisco J. Varela ／ Evan Thompson ／ Eleanor Rosch ／ George Lakoff ／ Mark Johnson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/embodied-cognition/', type: 'reference', label: 'Embodied Cognition — Stanford Encyclopedia of Philosophy (Shapiro & Spaulding, 2021)' },
+      { url: 'https://direct.mit.edu/books/monograph/3956/The-Embodied-MindCognitive-Science-and-Human', type: 'academic', label: 'Varela, Thompson & Rosch — The Embodied Mind: Cognitive Science and Human Experience (MIT Press, 1991)' },
+      { url: 'https://philpapers.org/rec/VARTEM', type: 'reference', label: 'PhilPapers — Varela, Thompson & Rosch: The Embodied Mind (canonical record)' },
+    ],
+  },
+  {
+    id: 'bizlaw-successor-liability-doctrine',
+    discipline: 'business-law',
+    title: '承継人責任の法理',
+    statement:
+      '承継人責任の法理とは、事業資産の取得者が被取得者の債務を原則として承継しないという一般原則に対する例外法理の総称であり、米国コモンローでは明示的・黙示的引受、事実上の合併、単なる継続、詐害的譲渡の四つの伝統的例外が認められている。' +
+      'カリフォルニア州最高裁のRay v. Alad Corp.（1977）は第五の例外として「製品ライン例外」を創設し、製造事業を取得して同一の製品ラインの生産を継続する承継者は、被承継者が製造した欠陥製品について厳格責任を負うとした。' +
+      'Kuney（2007）はこれらの例外を体系的に分類し、各例外の適用要件と政策的根拠を包括的に整理した。' +
+      '日本法においては、会社法第22条が商号続用による事業譲受人の弁済責任を規定し、2014年改正で新設された第23条の2が詐害的事業譲渡における残存債権者の直接請求権を認めており、外観法理と詐害防止の双方が承継人責任の理論的基盤を形成している。',
+    keyFigures: 'George W. Kuney ／ John H. Matheson ／ Marie T. Reilly ／ Richard L. Cupp Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2307190', type: 'academic', label: 'Kuney, G.W. "A Taxonomy and Evaluation of Successor Liability (Revisited)" — SSRN (2013)' },
+      { url: 'https://law.justia.com/cases/california/supreme-court/3d/19/22.html', type: 'reference', label: 'Ray v. Alad Corp., 19 Cal.3d 22 (Cal. 1977) — Justia' },
+      { url: 'https://www.japaneselawtranslation.go.jp/en/laws/view/3206/en', type: 'government', label: '会社法（英訳）第22条・第23条の2 — 事業譲受人の責任 (Japanese Companies Act, Ministry of Justice)' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-improvisation',
+    discipline: 'management',
+    title: '組織的即興',
+    statement:
+      '組織的即興とは、行動の構想（計画・設計）と実行が時間的に収束する度合いを指す概念であり、Weick（1998）はジャズ即興を比喩に用いて、組織分析における即興をマインドセットとして捉える枠組みを提唱した。' +
+      'Moorman and Miner（1998）は「行動の構想と実行が時間的に一致する程度」と定義し、組織記憶（手続き的記憶・宣言的記憶）が即興の効果や革新性を調整することを理論化した。' +
+      'Pina e Cunha, Vieira da Cunha, and Kamoche（1999）はこれらの先行研究を統合し、即興の「何を・いつ・いかに・なぜ」を体系化する包括的レビューを提示した。' +
+      '組織的即興は不確実性の高い環境下で計画外の適応的行動を可能にし、製品開発・危機対応・組織変革など多様な文脈で生起するが、組織記憶の蓄積水準・環境の乱流度・チームの熟練度などが成否を左右するとされる。',
+    keyFigures: 'Karl E. Weick ／ Christine Moorman ／ Anne S. Miner ／ Miguel Pina e Cunha ／ Ken Kamoche',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/inm/ororsc/v9y1998i5p543-555.html', type: 'academic', label: 'Weick, K.E. (1998) Improvisation as a Mindset for Organizational Analysis, Organization Science 9(5) 543–555 — RePEC' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1998.1255634', type: 'academic', label: 'Moorman, C. & Miner, A.S. (1998) Organizational Improvisation and Organizational Memory, Academy of Management Review 23(4) 698–723' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/1468-2370.00017', type: 'academic', label: 'Pina e Cunha, Vieira da Cunha & Kamoche (1999) Organizational Improvisation: What, When, How and Why, IJMR 1(3) 299–341' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-imprinting-theory',
+    discipline: 'management',
+    title: '組織的刻印理論',
+    statement:
+      'Stinchcombe（1965）は、組織の構造や戦略は設立時の社会的・経済的環境条件に強く形成され、その後の環境変化にもかかわらず長期にわたって持続するという命題を提唱し、これが組織的刻印論の出発点となった。' +
+      'Johnson（2007）はパリ・オペラ座の設立事例を通じて、この「組織的刻印仮説」を文化的企業家精神の観点から理論化し、設立期の環境要素が選択・埋め込まれることで数十年・数百年にわたる組織特性として定着することを示した。' +
+      'Marquis and Tilcsik（2013）は多水準理論へと発展させ、刻印を「感受性期間中に焦点エンティティが環境の顕著な特徴を反映し、その特徴が以後の環境変化にもかかわらず持続する過程」と定義した。' +
+      'この理論は、産業・組織・サブユニット・個人という複数の分析レベルに適用でき、組織生態学・制度理論・キャリア研究など幅広い分野に応用されている。',
+    keyFigures: 'Arthur L. Stinchcombe ／ Christopher Marquis ／ András Tilcsik ／ Victoria Johnson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Imprinting_(organizational_theory)', type: 'reference', label: 'Imprinting (organizational theory) — Wikipedia' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2198954', type: 'academic', label: 'Marquis & Tilcsik (2013) Imprinting: Toward A Multilevel Theory — SSRN' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/517899', type: 'academic', label: 'Johnson (2007) What Is Organizational Imprinting? — American Journal of Sociology' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-labor-theory',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム労働論',
+    statement:
+      'Srnicek（2017）は、デジタル・プラットフォームをデータを主要資源として価値を抽出する新たな資本主義形態「プラットフォーム資本主義」として定式化し、ギグワークを支える「リーン・プラットフォーム」モデルが労働者・顧客・企業の三角関係に基づくことを示した。' +
+      'Scholz（2016）は、プラットフォーム企業がユーザーの日常的活動を無償または低賃金の「デジタル・レイバー」に変換していると批判し、労働者所有型の「プラットフォーム・コーペラティビズム」を対抗モデルとして提唱した。' +
+      'De Stefano（2016）は、オンデマンド就労とクラウドワークが「ジャスト・イン・タイム労働力」を形成し、雇用者性の曖昧化によって労働法上の保護を空洞化させると論じた。' +
+      'Rosenblat（2018）はUberドライバーの民族誌調査を通じ、アルゴリズムが賃金・配車・評価を不透明に制御することで「独立業務委託者」という法的フィクションの下に実質的な管理支配が埋め込まれていることを実証した。',
+    keyFigures: 'Nick Srnicek ／ Trebor Scholz ／ Valerio De Stefano ／ Alex Rosenblat ／ Jamie Woodcock',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ilo.org/publications/rise-just-time-workforce-demand-work-crowdwork-and-labour-protection-gig', type: 'government', label: 'De Stefano, V. (2016). The Rise of the "Just-in-Time Workforce" — ILO Conditions of Work and Employment Series No. 71' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9141816/', type: 'academic', label: 'Taming Proteus: Challenges for Risk Regulation of Powerful Digital Labor Platforms — PMC (2022)' },
+      { url: 'https://en.wikipedia.org/wiki/Platform_economy', type: 'reference', label: 'Platform economy — Wikipedia' },
+    ],
+  },
 ];
 // Stryker restore all
