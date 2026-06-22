@@ -23380,5 +23380,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/14773708211072415', type: 'academic', label: 'Abramovaite et al. (2022) Classical Deterrence Theory Revisited — Sage Journals' },
     ],
   },
+  {
+    id: 'econ-rct-development',
+    discipline: 'economics',
+    title: '開発経済学におけるランダム化比較試験（RCT in Development Economics）',
+    statement:
+      '開発経済学におけるランダム化比較試験（Randomized Controlled Trials, RCT）とは、開発途上国の貧困削減策・教育・保健・マイクロファイナンス等の政策介入効果を、処置群と対照群への無作為割当により因果推定する実験的手法である。アビジット・バネルジー（Abhijit Banerjee）、エステル・デュフロ（Esther Duflo）、マイケル・クレマー（Michael Kremer）は2019年ノーベル経済学賞を「世界的貧困を軽減するための実験的アプローチ」により受賞した。クレマーは1990年代にケニアで駆虫薬投与の大規模RCTを実施し、低コストの介入が就学率と健康に大きな効果をもたらすことを実証した。' +
+      'バネルジーとデュフロは2003年にMITでJ-PAL（Abdul Latif Jameel Poverty Action Lab）を設立し、RCTを開発政策評価の標準手法として制度化した。RCTの核心は、無作為割当により選択バイアスを排除し、介入の平均処置効果（Average Treatment Effect, ATE）を偏りなく推定できる点にある。ただし外的妥当性（実験結果の他国・他文脈への一般化可能性）への批判（Deaton & Cartwright 2018）、倫理的問題（対照群への処置保留）、構造的・マクロ経済的問題への適用限界が指摘されている。',
+    keyFigures: 'マイケル・クレマー（1990年代ケニアRCT）／アビジット・バネルジー＆エステル・デュフロ（2003 J-PAL設立・MIT）／2019年ノーベル経済学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2019/press-release/', type: 'reference', label: 'Nobel Prize — 2019 Sveriges Riksbank Prize in Economic Sciences Press Release' },
+      { url: 'https://www.povertyactionlab.org/blog/12-10-19/2019-nobel-prize-winning-scientific-movement-can-transform-us-policymaking', type: 'academic', label: 'J-PAL — The 2019 Nobel Prize-Winning Scientific Movement' },
+      { url: 'https://news.mit.edu/2019/esther-duflo-abhijit-banerjee-win-2019-nobel-prize-economics-1014', type: 'academic', label: 'MIT News — Duflo and Banerjee Win 2019 Nobel Prize' },
+    ],
+  },
+  {
+    id: 'mgmt-sociotechnical-systems',
+    discipline: 'management',
+    title: '社会技術システム論（Sociotechnical Systems Theory）',
+    statement:
+      '社会技術システム論（Sociotechnical Systems Theory）とは、組織は技術的サブシステム（道具・技法・課業構造）と社会的サブシステム（人間関係・態度・規範）の相互依存的な複合体であり、一方のみを最適化しても組織全体の成果は最適化されないという組織理論である。エリック・トリスト（Eric Trist）とケン・バンフォース（Ken Bamforth）が1951年にタヴィストック人間関係研究所（Tavistock Institute of Human Relations）で実施した英国炭鉱のロングウォール採掘法の研究「長壁式採炭法の社会的・心理的帰結」（Human Relations誌）で理論的基礎を確立した。' +
+      '本理論の中核原則は以下の通り：（1）共同最適化（joint optimization）：技術と社会の両サブシステムを同時に設計・改善すること；（2）責任ある自律性（responsible autonomy）：作業グループに課業遂行の自律的判断権を委譲すること；（3）最小限の限定的仕様（minimal critical specification）：必要最低限のルールのみを規定し、現場の適応余地を確保すること。フレッド・エメリー（Fred Emery）はトリストと共同でフレームワークを拡張し、自律的作業グループ（autonomous work groups）の概念を発展させた。本理論はテイラー主義的な機械的組織観への批判として位置づけられ、現代のアジャイル開発手法やデジタルトランスフォーメーション設計にも影響を与えている。',
+    keyFigures: 'エリック・トリスト＆ケン・バンフォース（1951 Human Relations — 英国炭鉱のロングウォール研究・タヴィストック研究所）／フレッド・エメリー（自律的作業グループの発展）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/001872675100400101', type: 'academic', label: 'Trist & Bamforth (1951) Some Social and Psychological Consequences of the Longwall Method — Human Relations 4(1)' },
+      { url: 'https://en.wikipedia.org/wiki/Sociotechnical_system', type: 'reference', label: 'Wikipedia — Sociotechnical System' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/14697017.2018.1553761', type: 'academic', label: 'Reflections: Sociotechnical Systems Design and Organization Change — Journal of Change Management (2018)' },
+    ],
+  },
+  {
+    id: 'human-epigenetics',
+    discipline: 'human-science',
+    title: 'エピジェネティクス（Epigenetics）',
+    statement:
+      'エピジェネティクス（Epigenetics）とは、DNA塩基配列の変化を伴わずに遺伝子発現を制御する機構、およびその遺伝可能な変化を研究する学問領域である。英国の発生学者コンラッド・H・ワディントン（Conrad H. Waddington）が1942年に「エピジェネティクス」の語を造語し、遺伝子型から表現型が生じる過程を「エピジェネティック・ランドスケープ」の比喩で説明した。現代の分子生物学的定義では、エイドリアン・バード（Adrian Bird, 2007）が「DNA配列の変化によらない、有糸分裂または減数分裂を通じて遺伝可能な遺伝子機能の構造的適応」と再定義した。' +
+      '主要な分子機構は以下の三つである：（1）DNAメチル化：CpGアイランドへのメチル基付加による遺伝子サイレンシング；（2）ヒストン修飾：アセチル化・メチル化・リン酸化等によるクロマチン構造の変化；（3）非コードRNA：マイクロRNAや長鎖非コードRNAによる転写後制御。神経科学においてはストレス応答、記憶形成、脳の可塑性にエピジェネティック制御が関与することが示されている（Sweatt 2009）。世代間エピジェネティック継承（transgenerational epigenetic inheritance）の存在と範囲については議論が続いている。本概念はがん生物学、発達障害研究、環境健康学で広く応用されている。',
+    keyFigures: 'コンラッド・H・ワディントン（1942 造語・エピジェネティック・ランドスケープ）／エイドリアン・バード（2007 現代的再定義・Nature）／J.デイヴィッド・スウェット（2009 神経エピジェネティクス）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Epigenetics', type: 'reference', label: 'Wikipedia — Epigenetics' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2791696/', type: 'academic', label: 'Epigenetics: Definition, Mechanisms and Clinical Perspective — PMC / Genes & Development' },
+      { url: 'https://www.frontiersin.org/journals/epigenetics-and-epigenomics/articles/10.3389/freae.2023.1176449/full', type: 'academic', label: 'The Epigenetic Landscape: An Evolving Concept — Frontiers in Epigenetics (2023)' },
+    ],
+  },
+  {
+    id: 'bizlaw-essential-facilities',
+    discipline: 'business-law',
+    title: '不可欠施設の法理（Essential Facilities Doctrine）',
+    statement:
+      '不可欠施設の法理（Essential Facilities Doctrine）とは、独占的地位にある事業者が競争に不可欠なインフラストラクチャー施設を支配している場合、合理的条件での競争者へのアクセス提供義務を課す反トラスト法（競争法）上の法理である。米国では1983年のMCI Communications Corp. v. AT&T Co.事件（第7巡回区控訴裁判所）で四要件テストが定式化された：（1）独占者による不可欠施設の支配、（2）競争者による施設の合理的複製不可能性、（3）競争者へのアクセス拒否、（4）アクセス提供の実行可能性。' +
+      'EU競争法では、Magill事件（1995年欧州司法裁判所）およびBronner事件（1998年）でより厳格な適用基準が確立された。ただし米国連邦最高裁判所はVerizon Communications v. Law Offices of Curtis V. Trinko事件（2004年）で本法理に懐疑的見解を示し、規制当局によるアクセス強制が存在する場合には反トラスト法上の義務は不要としたため、米国での適用範囲は縮小している。近年はデジタルプラットフォーム（Google、Apple、Amazon等）への適用可能性が議論されており、EUのデジタル市場法（DMA, 2022年）は本法理の精神を立法化した側面がある。本法理の曖昧性と規制的過剰介入のリスクについての批判も存在する。',
+    keyFigures: 'MCI Communications v. AT&T（1983 第7巡回区・四要件テスト定式化）／EU Magill事件（1995）・Bronner事件（1998）／Trinko事件（2004 米最高裁の懐疑的見解）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Essential_facilities_doctrine', type: 'reference', label: 'Wikipedia — Essential Facilities Doctrine' },
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/708/1081/330445/', type: 'government', label: 'Justia — MCI Communications Corp. v. AT&T Co., 708 F.2d 1081 (7th Cir. 1983)' },
+      { url: 'https://www.justice.gov/archives/atr/refusals-deal-and-essential-facilities-r-hewitt-pate-statement', type: 'government', label: 'DOJ Antitrust Division — Refusals to Deal and Essential Facilities (Pate Statement)' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-gatekeeping',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）',
+    statement:
+      'アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）とは、デジタルプラットフォーム上でアルゴリズムが情報の選択・排除・優先順位付けを自動的に行うことにより、従来の人間的編集判断に代わる新たなゲートキーパー機能を果たす現象を指す情報社会学の概念である。ナターシャ・ユスト（Natascha Just）とミヒャエル・ラッツァー（Michael Latzer）は2017年の論文「アルゴリズムによるガバナンス：インターネット上のアルゴリズム的選択によるリアリティ構築」（Media, Culture & Society 39(2)）で、アルゴリズムが伝統的マスメディアと同様に社会的現実を構築する機能を有することを体系的に論じた。' +
+      'フィリップ・ナポリ（Philip Napoli, 2014）は「自動化されたメディア」の概念を提唱し、ニュースキュレーション・コンテンツモデレーション・推薦システムにおけるアルゴリズムの編集的役割を分析した。アルゴリズム的ゲートキーピングは、古典的ゲートキーピング理論（レヴィン1947・ホワイト1950）からの発展であるが、不透明性（opacity）、大規模性（scale）、個人化（personalization）、フィードバックループという固有の特徴を持つ。本概念はフィルターバブル、アカウンタビリティの欠如、民主主義的懸念と結びつき、プラットフォームガバナンスと情報規制の中心的議題となっている。',
+    keyFigures: 'ナターシャ・ユスト＆ミヒャエル・ラッツァー（2017 Media, Culture & Society — アルゴリズムによるガバナンス）／フィリップ・ナポリ（2014 自動化されたメディア）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0163443716643157', type: 'academic', label: 'Just & Latzer (2017) Governance by Algorithms — Media, Culture & Society 39(2)' },
+      { url: 'https://policyreview.info/concepts/algorithmic-governance', type: 'academic', label: 'Internet Policy Review — Algorithmic Governance (Concept Review)' },
+      { url: 'https://www.researchgate.net/publication/299747377_Governance_by_Algorithms_Reality_Construction_by_Algorithmic_Selection_on_the_Internet', type: 'academic', label: 'Just & Latzer (2017) Full-Text — ResearchGate' },
+    ],
+  },
+  {
+    id: 'mgmt-economic-order-quantity',
+    discipline: 'management',
+    title: '経済的発注量モデル（Economic Order Quantity / EOQ）',
+    statement:
+      '経済的発注量（Economic Order Quantity, EOQ）モデルとは、在庫管理において発注コストと在庫保管コストの合計を最小化する最適な1回当たりの発注量を求める数理モデルである。フォード・ウィットマン・ハリス（Ford Whitman Harris）が1913年の論文「一度にいくつの部品を作るべきか」（Factory, The Magazine of Management, Vol.10, No.2, pp.135-136, 152）で初めて定式化した。最適発注量の公式は Q* = √(2DS/H) であり、D=年間需要量、S=1回当たりの発注（段取）費用、H=単位当たり年間保管費用である。' +
+      'R.H.ウィルソン（R.H. Wilson）が1934年にHarvard Business Reviewで実務的適用法を発表し普及させたため「ウィルソン公式」とも呼ばれるが、原著者はハリスである（Erlenkotter 1990による再発見）。EOQモデルの前提条件は：需要率が一定かつ既知、発注費用が一定、保管費用が一定、即時補充（リードタイムゼロ）、数量割引なし、品切れ不許容の6つである。総費用曲線は最適点近傍で平坦であるため、最適値から20-30%の乖離でも総費用増加は数%に留まるという頑健性を持つ。拡張モデルには数量割引付きEOQ、経済的生産量（EPQ）、確率的需要モデル等がある。本モデルはオペレーションズ・リサーチおよびサプライチェーン管理の基礎的概念である。',
+    keyFigures: 'フォード・W・ハリス（1913 Factory誌 — EOQ公式の初出）／R.H.ウィルソン（1934 HBR — 実務的普及）／ドナルド・アーレンコッター（1990 Operations Research — ハリスの優先権再発見）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Economic_order_quantity', type: 'reference', label: 'Wikipedia — Economic Order Quantity' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/opre.38.6.937', type: 'academic', label: 'Erlenkotter (1990) Ford Whitman Harris and the EOQ Model — Operations Research 38(6)' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/opre.38.6.947', type: 'academic', label: 'Harris (1913/1990 reprint) How Many Parts to Make at Once — Operations Research 38(6)' },
+    ],
+  },
 ];
 // Stryker restore all
