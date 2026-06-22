@@ -18,41 +18,41 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全281件）
+### 学術概念 / ビジネス法務（全282件）
 - [[act-on-electronic-records|電子帳簿保存法]]
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-act-against-delay-payment|下請代金支払遅延等防止法（下請法）]]
-- …ほか 275 件 → [[学術概念]]
+- …ほか 276 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全267件）
+### 学術概念 / 経営学（全268件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 261 件 → [[学術概念]]
+- …ほか 262 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全284件）
+### 学術概念 / 人間科学（全287件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 278 件 → [[学術概念]]
+- …ほか 281 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全265件）
+### 学術概念 / 情報社会学（全266件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]]
-- …ほか 259 件 → [[学術概念]]
+- …ほか 260 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全438件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]

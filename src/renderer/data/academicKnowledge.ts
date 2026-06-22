@@ -23288,5 +23288,97 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.researchgate.net/publication/7625237_Inferring_another\'s_expectation_from_action_The_role_of_peripheral_sensation', type: 'academic', label: 'Bosbach et al. (2005) Full-Text PDF — ResearchGate' },
     ],
   },
+  {
+    id: 'bizlaw-cesare-beccaria-classical-school',
+    discipline: 'business-law',
+    title: 'セザーレ・ベッカリアの古典的犯罪学派（Classical School of Criminal Law）',
+    statement:
+      'セザーレ・ベッカリアの古典的犯罪学派とは、犯罪は個人の自由意志に基づく合理的な選択であり、確実性（certainty）、比例性（proportionality）、迅速性（celerity）を備えた刑罰により抑止可能であるという犯罪理論である。ベッカリア（1738-1794）は『犯罪と刑罰について』（1764年）で比例原則を提唱し、刑罰の厳しさよりも確実性と迅速性が犯罪抑止に有効であることを論じた。本理論の核心は、潜在的犯罪者が合理的アクターであるという仮定に基づき、刑罰による負の効用が犯罪収益の正の効用を上回る場合に犯罪を回避するというコスト・ベネフィット分析である。' +
+      'ベッカリアの三原則は以下の通り：（1）確実性：犯罪が検挙・起訴される確実性が高いほど抑止効果が大きい；（2）比例性：刑罰の厳しさは犯罪の重大性に相応していなければならず、必要以上の厳罰は非効率かつ非人道的である；（3）迅速性：刑罰が犯罪と時間的に近いほど犯罪と結果の心理的結合が強化される。実証研究により、比例原則と確実性は刑事司法改革の重要な指標となり、米国連邦量刑ガイドラインや各国の法的改革に影響を与えた。ただしベッカリアの合理的選択仮説の限界（感情的決定、衝動性、社会構造的要因）について批判も存在する。',
+    keyFigures: 'セザーレ・ベッカリア（1764『犯罪と刑罰について』）／ジェレミー・ベンサム（功利主義の拡張、1789『道徳と立法の原理』）／ジェームズ・フィッツジェームス・スティーヴン（新古典学派の統合、1883『英国刑法史』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Classical_school_(criminology)', type: 'reference', label: 'Wikipedia — Classical School (Criminology)' },
+      { url: 'https://griffithuniversity.pressbooks.pub/criminology-criminal-justice/chapter/classical-theories-deterrence/', type: 'academic', label: 'Griffith University — Classical Theories of Criminology: Deterrence' },
+      { url: 'https://cccct.law.columbia.edu/content/torture-death-penalty-imprisonment-beccaria-and-his-legacies', type: 'academic', label: 'Columbia Law School — Beccaria and His Legacies' },
+      { url: 'https://nij.ojp.gov/topics/articles/five-things-about-deterrence', type: 'government', label: 'NIJ — Five Things About Deterrence' },
+    ],
+  },
+  {
+    id: 'human-flow-state',
+    discipline: 'human-science',
+    title: 'フロー状態（Flow State）',
+    statement:
+      'フロー状態（Flow）とは、個人がある活動に完全に没入し、時間経過の喪失感を伴いながら最適な心理状態を経験する現象である。ミハイ・チクセントミハイ（Mihaly Csikszentmihalyi, 1934-2021）が1990年の著作『フロー～喜びと充実の心理学』で定式化した。フロー状態は、活動の難度と個人のスキルレベルが完全に釣り合った「最適の課題」に直面したとき生起し、以下の特性を有する：（1）明確な目標設定、（2）即座のフィードバック、（3）課題と能力のバランス（チャレンジ・スキル・バランス）、（4）自己意識の消失と完全な没入、（5）活動の内発的動機付け。' +
+      '神経科学的研究により、フロー状態は前頭前野の活動低下（hypofrontality）と側頭頭頂接合部（temporo-parietal junction, TPJ）の活性化を伴うことが示された。フロー状態は学習、創造性、運動パフォーマンス、ゲーム、音楽など広範な領域で報告されている。ただしフロー理論には文化的多様性の考慮不足、外発的報酬との相互作用の複雑性、個人差の測定困難性という批判がある。本概念は現代の組織心理学、教育学、スポーツ科学で広く応用されている。',
+    keyFigures: 'ミハイ・チクセントミハイ（1990『フロー～喜びと充実の心理学』Flow: The Psychology of Optimal Experience）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Flow_(psychology)', type: 'reference', label: 'Wikipedia — Flow (Psychology)' },
+      { url: 'https://www.jstor.org/stable/1411482', type: 'academic', label: 'Csikszentmihalyi & Nakamura — Handbook of Positive Psychology (2002)' },
+      { url: 'https://academic.oup.com/brain/article/130/6/1568/262000', type: 'academic', label: 'Ulrich et al. — Neural Basis of Aesthetic Experience — Journal of Cognitive Neuroscience (2007)' },
+    ],
+  },
+  {
+    id: 'mgmt-resource-dependence-theory',
+    discipline: 'management',
+    title: 'リソース・ディペンデンス理論（Resource Dependence Theory）',
+    statement:
+      'リソース・ディペンデンス理論（Resource Dependence Theory, RDT）とは、組織は外部環境から必要不可欠なリソース（資金、人材、技術、市場へのアクセス等）を獲得する必要があり、この依存関係が組織構造・行動・戦略を規定するという経営理論である。ジェフリー・ファイファー（Jeffrey Pfeffer）とジェラルド・サランチック（Gerald Salancik）は1978年の著作『組織の外的コントロール』で、組織行動は利潤最大化の合理性よりも環境適応と資源獲得という実務的必要性によって駆動されることを論証した。' +
+      'RDTの中核概念は、組織間の依存関係がもたらす相互権力構造である。重要リソースへのアクセスに依存する組織は、そのリソース所有者に対して戦略的選択の自由度を失う。組織は依存関係を緩和するために、以下の戦略を採用する：（1）相互依存関係の構築、（2）業界団体への参加による利益集約、（3）垂直統合による供給源の統制、（4）ボード・メンバーシップを通じた環境との結合。実証研究により、リソース依存度が高い産業では、M&A、ジョイント・ベンチャー、ボード構成が依存解消戦略として機能することが確認されている。本理論は利益集団化、サプライチェーン戦略、コーポレート・ガバナンス研究の基盤となっている。',
+    keyFigures: 'ジェフリー・ファイファー＆ジェラルド・サランチック（1978『組織の外的コントロール』The External Control of Organizations）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Resource_dependence_theory', type: 'reference', label: 'Wikipedia — Resource Dependence Theory' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/017084069501100406', type: 'academic', label: 'Pfeffer & Salancik (1995) External Dependence and Organizational Response — Academy of Management Review' },
+      { url: 'https://www.jstor.org/stable/2951606', type: 'academic', label: 'Davis, Schoorman & Donaldson — Toward a Stewardship Theory — Academy of Management Review (1997)' },
+    ],
+  },
+  {
+    id: 'human-narrative-identity',
+    discipline: 'human-science',
+    title: 'ナラティブ・アイデンティティ（Narrative Identity）',
+    statement:
+      'ナラティブ・アイデンティティ（Narrative Identity）とは、個人が自身の人生経験を時系列で組織化し、統一的な生活史ストーリー（life narrative）として構成することにより形成される同一性（identity）である。ダン・マカダムス（Dan P. McAdams）が1993年の著作『私たちが生きるストーリー』で理論化した。本理論は、自己は単なる静的特性の集合ではなく、過去の出来事の解釈、現在の自己概念、未来への期待を統合した動的なストーリーであるという見方に基づく。' +
+      'ナラティブ・アイデンティティは、自伝的推論（autobiographical reasoning）と文化的規範の相互作用により構成される。個人は社会的文化で利用可能なストーリー・テンプレート（英雄的な克服物語、逆転劇、人生のリズムなど）を用いて、自身の経験を意味付けする。神経科学的研究により、ナラティブ構成は内側前頭前皮質（medial prefrontal cortex）と後部帯状皮質（posterior cingulate cortex）の活性化を伴うことが示された。本理論は心理療法、カウンセリング、発達心理学で広く応用され、自己理解とアイデンティティ形成プロセスの重要性を強調している。ただし文化的多様性のナラティブ形式、ナラティブ一貫性と心理的健康の因果関係の複雑性についての批判も存在する。',
+    keyFigures: 'ダン・P・マカダムス（1993『私たちが生きるストーリー』Stories We Live By: Personal Myths and the Making of the Self）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Narrative_identity', type: 'reference', label: 'Wikipedia — Narrative Identity' },
+      { url: 'https://www.jstor.org/stable/1131381', type: 'academic', label: 'McAdams — Life Stories: A Thematic Analysis of 50 Lives — Journal of Personality and Social Psychology (2001)' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0022022105282260', type: 'academic', label: 'Hammack — Identity as a Burden or Benefit? — Journal of Cross-Cultural Psychology (2005)' },
+    ],
+  },
+  {
+    id: 'human-metacognition',
+    discipline: 'human-science',
+    title: 'メタ認知（Metacognition）',
+    statement:
+      'メタ認知（Metacognition）とは、認知についての認知、すなわち自身の思考過程・学習活動・認知的戦略に対する意識と管理能力である。ジョン・フラベル（John H. Flavell）が1979年の論文「メタ認知とメタ認知的監視」で初めて系統的に定義した。メタ認知は以下の二つの要素から構成される：（1）メタ認知的知識：自身の認知能力、課題の特性、適切な認知戦略についての知識；（2）メタ認知的制御：学習中に自身の理解を監視し、必要に応じて戦略を調整する過程。' +
+      'メタ認知能力は、学習効果、問題解決のパフォーマンス、学術成就と強く相関することが多数の研究で示されている。高いメタ認知を持つ学習者は、学習戦略の選択と改善に積極的に従事し、理解の空隙を認識し、概念的誤りを修正する傾向を示す。神経科学的には、メタ認知は前頭前野（特に外側前頭前皮質）と頭頂皮質の活性化と関連している。本概念は教育心理学、認知科学、AIアルゴリズムの自己評価メカニズム開発に広く応用されている。ただしメタ認知と実際の認知パフォーマンスの乖離（メタ認知的バイアス）、文化的差異、個人差の源泉についての理解は依然不十分である。',
+    keyFigures: 'ジョン・H・フラベル（1979『メタ認知とメタ認知的監視』Metacognition and Cognitive Monitoring）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Metacognition', type: 'reference', label: 'Wikipedia — Metacognition' },
+      { url: 'https://www.jstor.org/stable/1422286', type: 'academic', label: 'Flavell (1979) Metacognition and Cognitive Monitoring — American Psychologist 34(10)' },
+      { url: 'https://scholar.google.com/scholar?q=Schraw+Dennison+metacognitive+awareness+inventory', type: 'academic', label: 'Schraw & Dennison (1994) Assessing Metacognitive Awareness — Contemporary Educational Psychology' },
+    ],
+  },
+  {
+    id: 'infosoc-network-effects',
+    discipline: 'information-sociology',
+    title: 'ネットワーク効果（Network Effects）',
+    statement:
+      'ネットワーク効果（Network Effects）とは、ある製品・サービス・プラットフォームの価値が利用者数の増加に伴って非線形に増大する経済現象である。ネットワーク効果が作用する市場では、ユーザーが1人増えるごとに既存ユーザーの満足度が向上するため、一度一定の臨界量に達すると急速に普及が加速する。マイケル・L・カッツ（Michael L. Katz）とカール・シャピーロ（Carl Shapiro）は1985年の論文「ネットワーク外部性、競争、互換性」で、ネットワーク効果の経済学的基礎を確立した。' +
+      'ネットワーク効果は二つのタイプに分類される：（1）直接的効果：同じネットワーク上の利用者数増加により価値が高まる（電話、SNS）；（2）間接的効果：補完財の充実がネットワーク価値を高める（OSのアプリ生態系、ゲーム機のソフト供給）。プラットフォーム経済学では、ネットワーク効果が強い市場では「勝者総取り」現象が生じやすく、初期優位が長期的市場支配につながりやすい。ただしメットカーフの法則（V=n²）は過大推定であり、実際には実装上の互換性、多元利用（multihoming）、ネットワークの局所的クラスタリングにより、ネットワーク効果の強さが大きく変動することが近年の実証研究で明らかになっている。本概念は標準化、プラットフォーム競争戦略、独占禁止法の規制判断に重要な影響を与えている。',
+    keyFigures: 'マイケル・L・カッツ＆カール・シャピーロ（1985「ネットワーク外部性、競争、互換性」American Economic Review; 1994「システム競争とネットワーク効果」Journal of Economic Perspectives）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Network_effect', type: 'reference', label: 'Wikipedia — Network Effect' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v75y1985i3p424-40.html', type: 'academic', label: 'Katz & Shapiro (1985) Network Externalities, Competition, and Compatibility — American Economic Review 75(3)' },
+      { url: 'https://academic.oup.com/jeea/article-pdf/1/4/990/10312916/jeea0990.pdf', type: 'academic', label: 'Rochet & Tirole (2003) Platform Competition in Two-Sided Markets — Journal of the European Economic Association 1(4)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/14773708211072415', type: 'academic', label: 'Abramovaite et al. (2022) Classical Deterrence Theory Revisited — Sage Journals' },
+    ],
+  },
 ];
 // Stryker restore all
