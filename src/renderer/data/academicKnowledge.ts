@@ -25342,5 +25342,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/topics/neuroscience/prospective-memory', type: 'reference', label: 'Prospective Memory — ScienceDirect Topics' },
     ],
   },
+  {
+    id: 'econ-lump-of-labour-fallacy',
+    discipline: 'economics',
+    title: '労働塊の誤謬（Lump of Labour Fallacy）',
+    statement:
+      '経済における労働の総量が固定されているという誤った前提に基づく推論。移民・女性の労働参加・技術革新が既存労働者の雇用を奪うとする主張の論拠となるが、実際には労働需要は内生的に変動し、生産性向上と消費拡大を通じて新たな雇用が創出される。',
+    keyFigures: 'D・F・シュロス（1891 労働塊の誤謬の命名）／セントルイス連銀（2020 簡易モデルによる反駁の体系的説明）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Lump_of_labour_fallacy', type: 'reference', label: 'Lump of Labour Fallacy — Wikipedia' },
+      { url: 'https://www.stlouisfed.org/publications/page-one-economics/2020/11/02/examining-the-lump-of-labor-fallacy-using-a-simple-economic-model', type: 'government', label: 'Examining the Lump of Labor Fallacy — Federal Reserve Bank of St. Louis' },
+      { url: 'https://www.economicshelp.org/blog/21819/concepts/lump-of-labour-fallacy-immigration/', type: 'reference', label: 'Lump of Labour Fallacy — Economics Help' },
+    ],
+  },
+  {
+    id: 'human-neonatal-perception',
+    discipline: 'human-science',
+    title: '新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）',
+    statement:
+      '言語報告不能な乳児の知覚能力を測定するためファンツ（1961）が開発した選好注視法パラダイム。乳児を「注視チャンバー」に置き二刺激を同時提示して注視時間の差異から弁別能力を推定する。パターン刺激への選好注視等の発見により、新生児の知覚能力が従来想定より洗練されていることを実証した。',
+    keyFigures: 'ロバート・ファンツ（1961 選好注視法の開発・パターン知覚の実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Preferential_looking', type: 'reference', label: 'Preferential Looking — Wikipedia' },
+      { url: 'https://nsuworks.nova.edu/cgi/viewcontent.cgi?article=1115&context=edp', type: 'academic', label: 'The Looking Chamber Experiment, Robert Fantz, 1961 — NSUWorks' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2758574/', type: 'academic', label: 'Infant Visual Habituation — PMC' },
+    ],
+  },
+  {
+    id: 'bizlaw-expropriation-compensation',
+    discipline: 'business-law',
+    title: '収用と補償・ハル公式（Expropriation & Hull Formula）',
+    statement:
+      '国際投資法において国家が外国投資を収用する際に求められる「迅速・十分・実効的（prompt, adequate and effective）」な補償基準。1938年メキシコ土地改革に際し米国務長官ハルが定式化し、現在2,500以上の投資条約に採用される標準的補償規範となっている。',
+    keyFigures: 'コーデル・ハル（1938 ハル公式の定式化）／世界銀行ICSID（収用補償基準の仲裁実務での発展）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jusmundi.com/en/document/publication/en-prompt-adequate-and-effective-compensation', type: 'reference', label: 'Prompt, Adequate and Effective Compensation — Jus Mundi Wiki' },
+      { url: 'https://www.acerislaw.com/expropriation-in-investment-arbitration/', type: 'reference', label: 'Expropriation in Investment Arbitration — Aceris Law' },
+      { url: 'https://www.academia.edu/5671141/Expropriation_According_to_the_Hull_formula', type: 'academic', label: 'Expropriation According to the Hull Formula — Academia.edu' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-entrepreneurship',
+    discipline: 'management',
+    title: '戦略的起業家精神（Strategic Entrepreneurship）',
+    statement:
+      '機会探索（アントレプレナーシップ）と優位性追求（戦略的マネジメント）を統合し、起業家的行動に戦略的視座を組み合わせることで富の創出を最大化する概念。資源・組織学習、イノベーション、アライアンス、国際化、戦略的リーダーシップ、成長の六領域を包括する。',
+    keyFigures: 'マイケル・ヒット＝アイルランド＝キャンプ＝セクストン（2001 Strategic Management Journal 特集号での概念提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.196', type: 'academic', label: 'Hitt et al. (2001) Strategic Entrepreneurship — Strategic Management Journal / Wiley' },
+      { url: 'https://www.jstor.org/stable/3094317', type: 'academic', label: 'Strategic Entrepreneurship: Entrepreneurial Strategies for Wealth Creation — JSTOR' },
+      { url: 'https://www.researchgate.net/publication/227722738_Strategic_Entrepreneurship_Entrepreneurial_Strategies_for_Wealth_Creation', type: 'academic', label: 'Hitt et al. (2001) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'infosoc-attention-ecology',
+    discipline: 'information-sociology',
+    title: '注意のエコロジー（Ecology of Attention）',
+    statement:
+      '注意を希少資源として個人が取引する「アテンション・エコノミー」を超え、注意が集合的・共同的・個体化的に社会環境から条件づけられる生態系として把握する枠組み。忠誠・覚醒・投影・没入の四つの注意レジームを識別し、メディア環境が注意を構造化する様態を分析する。',
+    keyFigures: 'イヴ・シトン（2014仏語原著／2017英訳 The Ecology of Attention）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.wiley.com/en-us/The+Ecology+of+Attention-p-9781509503735', type: 'reference', label: 'The Ecology of Attention — Wiley' },
+      { url: 'https://www.bsls.ac.uk/reviews/general-and-theory/yves-citton-the-ecology-of-attention/', type: 'reference', label: 'Citton, The Ecology of Attention — British Society for Literature and Science Review' },
+      { url: 'https://link.springer.com/article/10.1007/s00146-025-02405-8', type: 'academic', label: 'Beyond the Attention Economy, Towards an Ecology of Attending — AI & Society / Springer' },
+    ],
+  },
+  {
+    id: 'human-category-formation',
+    discipline: 'human-science',
+    title: '乳児カテゴリ形成（Infant Category Formation）',
+    statement:
+      '生後3か月以降の乳児が知覚的類似性に基づき複雑刺激の基本カテゴリ（動物 vs. 家具、猫 vs. 犬等）を形成する能力。選好注視法と馴化パラダイムにより実証され、カテゴリ水準（包括的 vs. 基本 vs. 下位）は事例間の知覚的類似度に依存する。',
+    keyFigures: 'ポール・クイン＆ピーター・エイマス（1996 乳児の知覚的カテゴリ化の体系的研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/abs/cambridge-handbook-of-cognitive-development/infant-categorization/9D67B09A16207ADB92546FE3E27FC38E', type: 'academic', label: 'Infant Categorization — Cambridge Handbook of Cognitive Development' },
+      { url: 'https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(00)01752-6', type: 'academic', label: 'Categorization in Infancy — Trends in Cognitive Sciences' },
+      { url: 'https://www.cmu.edu/dietrich/psychology/infant-cognition-lab/publications/Quinn%20et%20al.%20(2000).pdf', type: 'academic', label: 'Quinn et al. (2000) Understanding Early Categorization — CMU' },
+    ],
+  },
 ];
 // Stryker restore all
