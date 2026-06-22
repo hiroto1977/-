@@ -24460,5 +24460,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/article/10.1007/s00199-006-0100-z', type: 'academic', label: 'Bentolila et al. (2006) NKPC and Inflation Expectations — Economic Theory (Springer)' },
     ],
   },
+  {
+    id: 'econ-fiscal-theory-price',
+    discipline: 'economics',
+    title: '物価水準の財政理論（Fiscal Theory of the Price Level）',
+    statement:
+      '物価水準の財政理論（Fiscal Theory of the Price Level / FTPL）とは、物価水準が貨幣供給量ではなく政府債務の実質価値と将来の基礎的財政黒字の現在割引価値との均衡条件によって決定されるとする理論である。クリストファー・シムズ（Christopher Sims）が1994年にEconomic Theoryで「A Simple Model for Study of the Determination of the Price Level and the Interaction of Monetary and Fiscal Policy」として、マイケル・ウッドフォード（Michael Woodford）が1995年に非リカーディアン財政政策を定式化して基礎を確立した。' +
+      '名目政府債務を企業株式に類比し、債務の実質価値＝将来の基礎的財政黒字の割引合計という評価式から物価水準を導出する。金利釘付け政策のもとでも一意で安定的な物価水準が決定され得ることを示し、従来の貨幣数量説に対する代替パラダイムを提供した。ジョン・コクラン（John Cochrane）が同理論の体系的展開に貢献した。',
+    keyFigures: 'クリストファー・シムズ（1994 Economic Theory）／マイケル・ウッドフォード（1995 非リカーディアン財政政策）／ジョン・コクラン（FTPL体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/BF01215378', type: 'academic', label: 'Sims (1994) A Simple Model for Study of the Determination of the Price Level — Economic Theory (Springer)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w7668/w7668.pdf', type: 'academic', label: 'Christiano & Fitzgerald (2000) Understanding the Fiscal Theory of the Price Level — NBER WP 7668' },
+      { url: 'https://www.richmondfed.org/publications/research/economic_brief/2022/eb_22-39', type: 'government', label: 'Inflation and the Fiscal Theory of the Price Level — Richmond Fed Economic Brief 2022' },
+    ],
+  },
+  {
+    id: 'human-perceptual-narrowing',
+    discipline: 'human-science',
+    title: '知覚的狭窄化（Perceptual Narrowing）',
+    statement:
+      '知覚的狭窄化（Perceptual Narrowing）とは、乳児が生後6〜12か月の間に環境中で頻繁に経験する刺激カテゴリへの知覚弁別能力を向上させる一方、経験しない刺激カテゴリへの弁別能力を低下させる経験依存的な発達パターンである。ジャネット・ワーカー（Janet Werker）とリチャード・テース（Richard Tees）が1984年の研究で、英語環境の乳児が生後6〜8か月ではヒンディー語の音素対立を弁別できるが、10〜12か月までにその能力が消失することを実証した。' +
+      '非母語の母音弁別は約6か月、子音弁別は約10〜12か月、語ストレスは10か月、声調対立は6〜9か月に低下する。顔知覚領域でも同様のパターンが観察され、他人種の顔弁別能力が生後9か月前後に低下する。この現象は知覚系が最も頻繁に接触する環境刺激に最適化するチューニング過程と解釈される。',
+    keyFigures: 'ジャネット・ワーカー＆リチャード・テース（1984 音声知覚研究）／デイヴィッド・モーラー＆ワーカー（2013 言語と顔の比較レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0163638321000813', type: 'academic', label: 'Xiao et al. (2021) Perceptual Narrowing in Face- and Speech-Perception Domains — Infant Behavior & Development (ScienceDirect)' },
+      { url: 'https://infantstudies-psych.sites.olt.ubc.ca/files/2015/07/Maurer-Werker-2013-Perceptual-Narrowing.pdf', type: 'academic', label: 'Maurer & Werker (2013) Perceptual Narrowing During Infancy: Language and Faces — UBC' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0904134106', type: 'academic', label: 'Pons et al. (2009) Narrowing of Intersensory Speech Perception in Infancy — PNAS' },
+    ],
+  },
+  {
+    id: 'bizlaw-calvo-clause',
+    discipline: 'business-law',
+    title: 'カルヴォ条項（Calvo Clause）',
+    statement:
+      'カルヴォ条項（Calvo Clause）とは、アルゼンチンの外交官・法学者カルロス・カルヴォ（Carlos Calvo）が1868年に提唱した国際投資法上の原則で、外国投資紛争の管轄権は投資先国の国内裁判所に属し、外国人投資家は内国民と同等の待遇のみを享受するとする条項である。主権平等と内政不干渉の二原則を基礎とする。' +
+      'ラテンアメリカ諸国が1970年代まで国際投資仲裁に対する基本姿勢として採用したが、1980年代の新自由主義的転換とともにBIT（二国間投資条約）やICSID条約の受入れにより後退した。しかし2000年代以降、ラテンアメリカが国際投資仲裁で不均衡に多くの請求を受けたことを契機に、国内救済手段の尽くし（exhaustion of local remedies）を重視する同原則の再評価が進んでいる。',
+    keyFigures: 'カルロス・カルヴォ（1868 Le droit international théorique et pratique）／ドラゴ主義との連関（1902）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e689', type: 'reference', label: 'Calvo Doctrine / Calvo Clause — Oxford Public International Law (MPEPIL)' },
+      { url: 'https://en.wikipedia.org/wiki/Calvo_Doctrine', type: 'reference', label: 'Wikipedia: Calvo Doctrine' },
+      { url: 'https://www.law.georgetown.edu/international-law-journal/wp-content/uploads/sites/21/2023/02/GT-GJIL230004.pdf', type: 'academic', label: 'Colombian Cases and the Current Position of Latin American States — Georgetown J Intl Law (2023)' },
+    ],
+  },
+  {
+    id: 'mgmt-microfoundations-strategy',
+    discipline: 'management',
+    title: '戦略のミクロ的基礎（Microfoundations of Strategy）',
+    statement:
+      '戦略のミクロ的基礎（Microfoundations of Strategy）とは、企業レベルの戦略的成果（競争優位・ケイパビリティ・イノベーション等）を個人レベルの行為・相互作用・異質性から説明しようとする研究プログラムである。テッペン・フェリン（Teppo Felin）とニコライ・フォス（Nicolai Foss）が2005年に、戦略・組織理論が企業レベルの説明に偏重し個人と相互作用への注意が不十分であると批判して体系化を開始した。' +
+      '中核的主張は、組織レベルのケイパビリティ・知識・学習・アイデンティティといった集合的概念を完全に説明するには、構成要素である個人の性質・選択・能力・動機・異質性と、個人間の相互作用が集合的・創発的な組織成果をいかに生み出すかの解明が不可欠であるという点にある。管理者はケイパビリティに直接介入できないが、採用や人事政策の変更というミクロレベルの操作を通じて間接的に影響を及ぼしうる。',
+    keyFigures: 'テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
+      { url: 'https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001', type: 'academic', label: 'Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)' },
+      { url: 'https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1', type: 'academic', label: 'Felin et al. (eds.) Microfoundations — Cambridge University Press' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-governmentality',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的統治性（Algorithmic Governmentality）',
+    statement:
+      'アルゴリズム的統治性（Algorithmic Governmentality）とは、ビッグデータの自動収集・集約・分析によって可能な行動をモデル化・予測・先制的に影響を及ぼす、政治・法・社会規範に基づかない（非）規範的統治合理性を指す概念である。アントワネット・ルヴロワ（Antoinette Rouvroy）とトマ・ベルンス（Thomas Berns）が2013年に体系化した。' +
+      'デジタル以前の統計的社会分析・予測手法からの質的転換として、AIと機械学習の発展に駆動されるリアルタイムの自動プロセスの展開を特徴づける。既存の行動を判断・処罰・統制する統治から、不確実性の飼い慣らしへの転換を意味する。個人のコンテクストを捨象した統計的分身（statistical doubles）の生成によるプライバシーの侵食と、自動プロファイリングによる自律性の毀損という権力非対称を批判的に分析する。',
+    keyFigures: 'アントワネット・ルヴロワ＆トマ・ベルンス（2013 体系化）／ルヴロワ（2020 Digital Sovereignty論考）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.academia.edu/10481275/Algorithmic_governmentality_a_passion_for_the_real_and_the_exhaustion_of_the_virtual', type: 'academic', label: 'Rouvroy (2013) Algorithmic Governmentality: A Passion for the Real and the Exhaustion of the Virtual — Academia.edu' },
+      { url: 'https://ojs.weizenbaum-institut.de/index.php/wjds/article/view/87/80', type: 'academic', label: 'Algorithmic Governmentality, Digital Sovereignty — Weizenbaum Journal of the Digital Society' },
+      { url: 'https://www.cambridge.org/core/journals/european-journal-of-risk-regulation/article/big-data-algorithmic-governmentality-and-the-regulation-of-pandemic-risk/416F40B302B67C6C598D3BCEDFBD6286', type: 'academic', label: 'Big Data, Algorithmic Governmentality and Pandemic Risk — European J Risk Regulation (Cambridge)' },
+    ],
+  },
+  {
+    id: 'human-fast-mapping',
+    discipline: 'human-science',
+    title: '高速マッピング（Fast Mapping）',
+    statement:
+      '高速マッピング（Fast Mapping）とは、幼児がわずか1回の露出で新しい語とその指示対象との間に初期的な対応関係を形成する語彙獲得能力を指す。スーザン・ケアリー（Susan Carey）とエルザ・バートレット（Elsa Bartlett）が1978年に用語を造語し実証した。' +
+      '古典的な「クロミウム実験」では、就学前児に教師が青とオリーブグリーンの2つのトレイを示し「クロミウムのトレイを取って」と指示したところ、1週間後でもクロミウムとオリーブグリーン色の対応を保持していた。高速マッピングには（1）言語ラベルと指示対象の初期対応形成、（2）初期表現の保持・精緻化である拡張マッピング（extended mapping）の二段階がある。18か月から6歳まで1日平均約9語を習得するとされ、語彙爆発を支える中核メカニズムと位置づけられている。',
+    keyFigures: 'スーザン・ケアリー＆エルザ・バートレット（1978 用語造語・クロミウム実験）／ダニエル・スウィングリー（2010 slow mapping対比論考）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Fast_mapping', type: 'reference', label: 'Wikipedia: Fast Mapping' },
+      { url: 'https://www.sas.upenn.edu/~swingley/papers/swingley_LLD10_fastmap.pdf', type: 'academic', label: 'Swingley (2010) Fast Mapping and Slow Mapping in Children\'s Word Learning — Language Learning & Development (UPenn)' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2012.00046/full', type: 'academic', label: 'Vlach & Sandhofer (2012) Fast Mapping Across Time: Memory Processes — Frontiers in Psychology' },
+    ],
+  },
 ];
 // Stryker restore all
