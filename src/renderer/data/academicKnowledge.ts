@@ -23740,5 +23740,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ideas.repec.org/a/aea/aecrev/v84y1994i1p84-103.html', type: 'academic', label: 'Backus, Kehoe & Kydland (1994) J-Curve — AER 84(1) IDEAS/RePEc' },
     ],
   },
+  {
+    id: 'econ-harberger-triangle-incidence',
+    discipline: 'economics',
+    title: 'ハーバーガーの法人税帰着モデル（Harberger Tax Incidence Model）',
+    statement:
+      'ハーバーガーの法人税帰着モデルは、法人所得税の負担が課税部門のみならず非課税部門を含む経済全体の資本所有者に転嫁されることを一般均衡分析で示した税帰着理論の古典的モデルである。アーノルド・ハーバーガー（Arnold C. Harberger）が1962年にJournal of Political Economy（Vol.70, No.3, pp.215-240）で発表した。' +
+      '二部門（法人部門・非法人部門）二要素（資本・労働）の一般均衡モデルにおいて、法人税は法人部門から資本を流出させ非法人部門へ再配分を引き起こし、結果として経済全体の資本収益率が低下する。部分均衡分析では課税部門のみが負担を負うように見えるが、要素の部門間移動を考慮すると資本所有者全体が税負担を引き受けるという結論は、その後の租税帰着研究の基盤となった。',
+    keyFigures: 'アーノルド・C・ハーバーガー（1962 Journal of Political Economy 70(3):215-240 — 法人税帰着の一般均衡分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1828856', type: 'academic', label: 'Harberger (1962) The Incidence of the Corporation Income Tax — JSTOR' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v70y1962p215.html', type: 'academic', label: 'Harberger (1962) Corporation Income Tax Incidence — IDEAS/RePEc' },
+      { url: 'https://www.cbo.gov/sites/default/files/111th-congress-2009-2010/workingpaper/05-2010-working_paper-corp_tax_incidence-review_of_gen_eq_estimates_0.pdf', type: 'government', label: 'CBO (2010) Corporate Tax Incidence: Review of General Equilibrium Estimates' },
+    ],
+  },
+  {
+    id: 'human-place-identity',
+    discipline: 'human-science',
+    title: '場所アイデンティティ（Place Identity）',
+    statement:
+      '場所アイデンティティ（Place Identity）とは、日常的な物理的環境との相互作用を通じて形成される自己アイデンティティの下位構造であり、場所に関連する記憶・思考・感情・態度・価値観・選好・意味・行動概念から構成される環境心理学の中核概念である。ハロルド・プロシャンスキー（Harold M. Proshansky）、アビー・ファビアン（Abbe K. Fabian）、ロバート・カミノフ（Robert Kaminoff）が1983年にJournal of Environmental Psychology（Vol.3, No.1, pp.57-83）で提唱した。' +
+      'エリク・エリクソンのアイデンティティ理論を物理的環境の次元に拡張し、人間が「どこに属するか」という感覚が自己概念の不可欠な構成要素であることを理論化した。場所愛着（place attachment）とは区別され、場所アイデンティティは認知的構造としての自己と環境の関係を強調する。',
+    keyFigures: 'ハロルド・プロシャンスキー、アビー・ファビアン＆ロバート・カミノフ（1983 Journal of Environmental Psychology 3(1):57-83）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0272494483800218', type: 'academic', label: 'Proshansky, Fabian & Kaminoff (1983) Place-identity — Journal of Environmental Psychology' },
+      { url: 'https://www.semanticscholar.org/paper/Place-identity:-Physical-world-socialization-of-the-Proshansky-Fabian/d37286bdeefeb9e1968a968530a3c50c020887c2', type: 'academic', label: 'Proshansky et al. (1983) Place-identity — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Place_identity', type: 'reference', label: 'Place Identity — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-paradox-mindset',
+    discipline: 'management',
+    title: 'パラドックス・マインドセット（Paradox Mindset）',
+    statement:
+      'パラドックス・マインドセット（Paradox Mindset）とは、対立する複数の要求間の緊張を拒絶するのではなく受容し、そこからエネルギーを引き出す個人の認知的枠組みである。エラ・ミロン＝シュペクター（Ella Miron-Spektor）、エイミー・イングラム（Amy Ingram）、ジョシュア・ケラー（Joshua Keller）、ウェンディ・スミス（Wendy K. Smith）、マリアンヌ・ルイス（Marianne W. Lewis）が2018年にAcademy of Management Journal（Vol.61, No.1, pp.26-45）で提示した。' +
+      '組織パラドックスのミクロ基礎として、パラドックス・マインドセットは経験される緊張と行動的帰結（革新・業績）の関係をモデレートする。9項目7点リッカート尺度で測定され、米国・英国・イスラエル・中国の国際サンプルで妥当性が検証された。理論的基盤としてスミス＆ルイス（2011 AMR 36(3):381-403）の動的均衡モデルを発展させている。',
+    keyFigures: 'ミロン＝シュペクター、イングラム、ケラー、スミス＆ルイス（2018 Academy of Management Journal 61(1):26-45）／スミス＆ルイス（2011 AMR 36(3):381-403 — パラドックスの動的均衡モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2016.0594', type: 'academic', label: 'Miron-Spektor et al. (2018) Microfoundations of Organizational Paradox — AMJ 61(1)' },
+      { url: 'https://www.semanticscholar.org/paper/Microfoundations-of-Organizational-Paradox:-The-Is-Miron-Spektor-Ingram/d77ebbb5f7ebd353661c36328a5662a6203e2cba', type: 'academic', label: 'Miron-Spektor et al. (2018) — Semantic Scholar' },
+      { url: 'https://openaccess.city.ac.uk/id/eprint/17049/', type: 'academic', label: 'Miron-Spektor et al. (2018) — City Research Online (Open Access)' },
+    ],
+  },
+  {
+    id: 'bizlaw-hickenlooper-amendment',
+    discipline: 'business-law',
+    title: 'ヒッケンルーパー修正条項（Hickenlooper Amendment）',
+    statement:
+      'ヒッケンルーパー修正条項（Hickenlooper Amendment, 22 U.S.C. § 2370(e)(2)）は、1964年に外国援助法（Foreign Assistance Act of 1961）の改正として制定された、国家行為の法理（Act of State Doctrine）に対する法定例外規定である。国際法に違反する財産収用に関する請求について、米国裁判所が国家行為の法理を適用して審理を拒否することを禁止する。' +
+      'アイオワ州選出のバーク・ヒッケンルーパー（Bourke B. Hickenlooper）上院議員が提案し、最高裁がBanco Nacional de Cuba v. Sabbatino事件（376 U.S. 398, 1964）で国際法違反の収用にも国家行為の法理が適用されると判示したことへの直接的な立法的対抗措置として成立した。ただし一部の裁判所は、収用財産またはその代金が米国内に所在する場合にのみ適用されると限定的に解釈している。',
+    keyFigures: 'バーク・ヒッケンルーパー上院議員（1964年制定 22 U.S.C. § 2370(e)(2)）／Banco Nacional de Cuba v. Sabbatino（376 U.S. 398, 1964 — 本修正の契機となった判例）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Act_of_state_doctrine', type: 'reference', label: 'Act of State Doctrine (Hickenlooper Amendment section) — Wikipedia' },
+      { url: 'https://www.cambridge.org/core/journals/american-journal-of-international-law/article/requiem-for-hickenlooper/E5A3F389F4D51EFAC3F83BAF332B41D1', type: 'academic', label: 'Requiem for Hickenlooper — American Journal of International Law (Cambridge Core)' },
+      { url: 'https://documents.law.yale.edu/sabbatino-amendment-see-hickenlooper-amendment', type: 'reference', label: 'Sabbatino Amendment (Hickenlooper) — Yale Law Library' },
+    ],
+  },
+  {
+    id: 'infosoc-infrastructural-globalism',
+    discipline: 'information-sociology',
+    title: 'インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）',
+    statement:
+      'インフラストラクチャーとプラットフォームの収斂は、グローバルなデジタルプラットフォーム（Google、Facebook等）が事実上の情報インフラストラクチャーとして機能するようになり、従来のインフラストラクチャー研究とプラットフォーム研究の境界が融解する現象を分析する学際的概念枠組みである。ジャン＝クリストフ・プランタン（Jean-Christophe Plantin）、カール・ラゴーゼ（Carl Lagoze）、ポール・エドワーズ（Paul N. Edwards）、クリスチャン・サンドヴィグ（Christian Sandvig）が2018年にNew Media & Society（Vol.20, No.1, pp.293-310）で提示した。' +
+      'プラットフォームのインフラストラクチャー化（platformsがessentialで遍在的なシステムへ変容）とインフラストラクチャーのプラットフォーム化（既存インフラがプラットフォーム的論理を取り込む）という双方向プロセスを明らかにし、デジタル主権・規制ガバナンスの構造的ジレンマを提起する。STS（科学技術社会論）・メディア研究・国際関係論を架橋する枠組みである。',
+    keyFigures: 'プランタン、ラゴーゼ、エドワーズ＆サンドヴィグ（2018 New Media & Society 20(1):293-310, DOI:10.1177/1461444816661553）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1461444816661553', type: 'academic', label: 'Plantin et al. (2018) Infrastructure studies meet platform studies — New Media & Society' },
+      { url: 'https://eprints.lse.ac.uk/67571/', type: 'academic', label: 'Plantin et al. (2018) — LSE Research Online' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444809342738', type: 'academic', label: 'Gillespie (2010) The Politics of Platforms — New Media & Society (foundational)' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-strategy',
+    discipline: 'management',
+    title: '行動戦略（Behavioral Strategy）',
+    statement:
+      '行動戦略（Behavioral Strategy）とは、認知心理学および社会心理学の知見を戦略経営理論・実践に統合する学際的研究領域であり、認知バイアス・ヒューリスティクス・感情・社会的力学が戦略的意思決定にいかに体系的に影響するかを解明する。トーマス・パウエル（Thomas C. Powell）、ダン・ロヴァロ（Dan Lovallo）、クレイグ・フォックス（Craig R. Fox）が2011年にStrategic Management Journal（Vol.32, No.13, pp.1369-1386）の特集号「Psychological Foundations of Strategic Management」で体系化した。' +
+      '従来の完全合理性を前提とする経済学的戦略論とは異なり、限定合理性（bounded rationality）に基づく現実的な人間行動の理解を戦略管理論に組み込む。行動経済学とは区別され、戦略経営に固有の意思決定問題（競争判断・資源配分・M&A評価等）に焦点を当てる。パウエルはStrategic Management Societyの行動戦略Interest Groupの創設議長を務めた。',
+    keyFigures: 'トーマス・パウエル、ダン・ロヴァロ＆クレイグ・フォックス（2011 Strategic Management Journal 32(13):1369-1386 — 行動戦略特集号）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.968', type: 'academic', label: 'Powell, Lovallo & Fox (2011) Behavioral Strategy — SMJ 32(13)' },
+      { url: 'https://encyclopedia.pub/entry/29359', type: 'reference', label: 'Behavioral Strategy — MDPI Encyclopedia' },
+      { url: 'https://www.cambridge.org/core/elements/behavioral-strategy/9F53A14AF285B0A3F6C95ACE64CDE8AA', type: 'academic', label: 'Behavioral Strategy — Cambridge University Press Elements' },
+    ],
+  },
 ];
 // Stryker restore all
