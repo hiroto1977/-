@@ -26394,5 +26394,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ilo.org/publications/flagship-reports/role-digital-labour-platforms-transforming-world-work', type: 'government', label: 'ILO (2021) World Employment and Social Outlook: The Role of Digital Labour Platforms' },
     ],
   },
+  // ── Batch 289 ─────────────────────────────────────────────
+  // econ-gravity-model-of-trade, human-place-cells-and-grid-cells,
+  // mgmt-paradox-of-embedded-agency, mgmt-strategic-issue-management,
+  // bizlaw-entire-fairness-doctrine, infosoc-algorithmic-experience
+  {
+    id: 'econ-gravity-model-of-trade',
+    discipline: 'economics',
+    title: '貿易の重力モデル',
+    statement:
+      '貿易の重力モデルは、二国間の貿易量がそれぞれのGDPに比例し両国間の距離に反比例するという、ニュートンの万有引力に類似した経験的法則である。' +
+      'Tinbergen（1962）とPöyhönen（1963）が最初に実証分析に応用し、Anderson（1979）が理論的基礎を与えた後、Anderson & van Wincoop（2003）が多角的抵抗項を組み込んだ構造的重力モデルを提示した。' +
+      '現在では国際貿易の実証分析における標準的なワークホースモデルとなり、関税・貿易協定・国境効果など貿易障壁の影響を定量的に評価する際に広く用いられる。',
+    keyFigures: 'Jan Tinbergen／James E. Anderson／Eric van Wincoop／Keith Head／Thierry Mayer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1928193', type: 'academic', label: 'Anderson, J.E. (1979) A Theoretical Foundation for the Gravity Equation, AER 69(1):106-116' },
+      { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson, J.E. & van Wincoop, E. (2003) Gravity with Gravitas, AER 93(1):170-192' },
+      { url: 'https://doi.org/10.1257/jel.49.4.1141', type: 'academic', label: 'Head, K. & Mayer, T. (2014) Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics Vol.4' },
+      { url: 'https://www.wto.org/english/res_e/publications_e/advancedguide2016_e.htm', type: 'reference', label: 'WTO (2016) An Advanced Guide to Trade Policy Analysis: The Structural Gravity Model' },
+    ],
+  },
+  {
+    id: 'human-place-cells-and-grid-cells',
+    discipline: 'human-science',
+    title: '場所細胞とグリッド細胞',
+    statement:
+      '場所細胞は海馬に存在し特定の空間位置で発火するニューロンであり、O\'Keefe & Dostrovsky（1971）によって発見された。' +
+      'グリッド細胞は嗅内皮質に存在し六角形の規則的パターンで発火するニューロンであり、Hafting, Fyhn, Molden, Moser & Moser（2005）によって発見された。' +
+      'これら二種の細胞は脳内GPSとして空間認知の神経基盤を形成し、John O\'KeefeとMay-Britt Moser・Edvard Moserは2014年ノーベル生理学・医学賞を共同受賞した。',
+    keyFigures: 'John O\'Keefe／May-Britt Moser／Edvard I. Moser／Jonathan Dostrovsky',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0006-8993(71)90358-1', type: 'academic', label: 'O\'Keefe, J. & Dostrovsky, J. (1971) The hippocampus as a spatial map, Brain Research 34(1):171-175' },
+      { url: 'https://doi.org/10.1038/nature03721', type: 'academic', label: 'Hafting, T. et al. (2005) Microstructure of a spatial map in the entorhinal cortex, Nature 436:801-806' },
+      { url: 'https://www.nobelprize.org/prizes/medicine/2014/summary/', type: 'reference', label: 'Nobel Prize 2014 — The brain\'s positioning system (O\'Keefe, Moser & Moser)' },
+    ],
+  },
+  {
+    id: 'mgmt-paradox-of-embedded-agency',
+    discipline: 'management',
+    title: '埋め込まれたエージェンシーのパラドクス',
+    statement:
+      '埋め込まれたエージェンシーのパラドクスとは、行為者の行動・意図・合理性がすべて制度によって条件づけられているにもかかわらず、その制度をいかにして変革しうるかという制度理論上の根本的問題である。' +
+      'DiMaggio（1988）が制度的企業家概念を通じて提起し、Seo & Creed（2002, AMR）が制度的矛盾とプラクシスの弁証法的関係から理論化した。' +
+      'Garud, Hardy & Maguire（2007）は制度的企業家を埋め込まれたエージェンシーとして再概念化し、組織制度論における構造とエージェンシーの二重性を解明する中心的議論となっている。',
+    keyFigures: 'Paul DiMaggio／Myeong-Gu Seo／W.E. Douglas Creed／Raghu Garud／Cynthia Hardy／Steve Maguire',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/259247', type: 'academic', label: 'Seo, M.-G. & Creed, W.E.D. (2002) Institutional contradictions, praxis, and institutional change, AMR 27(2):222-247' },
+      { url: 'https://doi.org/10.1177/0170840607078958', type: 'academic', label: 'Battilana, J., Leca, B. & Boxenbaum, E. (2009) How Actors Change Institutions, Academy of Management Annals 3(1):65-107' },
+      { url: 'https://en.wikipedia.org/wiki/Institutional_entrepreneur', type: 'reference', label: 'Wikipedia — Institutional entrepreneur（制度的企業家の概要）' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-issue-management',
+    discipline: 'management',
+    title: '戦略的イシュー・マネジメント',
+    statement:
+      '戦略的イシュー・マネジメント（SIM）とは、組織の業績に重大な影響を及ぼしうる戦略的課題を体系的に識別・評価・対応するマネジメント手法である。' +
+      'Igor Ansoffが1980年にStrategic Management Journalで提唱し、従来の長期戦略計画が環境変化に対応しきれない問題を克服するため、リアルタイムで弱いシグナルを捉え組織的対応を行う仕組みを構築することを目的とする。' +
+      'Dutton & Ashford（1993）のイシュー・セリング研究やDutton & Duncan（1987）の戦略的イシュー診断により、組織における注意配分と課題認識のプロセスが精緻化された。',
+    keyFigures: 'Igor Ansoff／Jane Dutton／Susan Ashford／Robert Duncan',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/smj.4250010204', type: 'academic', label: 'Ansoff, H.I. (1980) Strategic Issue Management, SMJ 1(2):131-148' },
+      { url: 'https://doi.org/10.2307/258788', type: 'academic', label: 'Dutton, J.E. & Ashford, S.J. (1993) Selling Issues to Top Management, AMR 18(3):397-428' },
+      { url: 'https://doi.org/10.2307/258616', type: 'academic', label: 'Dutton, J.E. & Duncan, R.B. (1987) The Creation of Momentum for Change Through Strategic Issue Diagnosis, SMJ 8(3):279-295' },
+    ],
+  },
+  {
+    id: 'bizlaw-entire-fairness-doctrine',
+    discipline: 'business-law',
+    title: '完全公正基準',
+    statement:
+      '完全公正基準（Entire Fairness Doctrine）とは、米国デラウェア州会社法における司法審査基準のうち最も厳格なものであり、取締役が利益相反取引に関与した場合に適用される。' +
+      '裁判所は「公正な取引過程（fair dealing）」と「公正な価格（fair price）」の二要素を統一的に審査し、被告取締役側が取引の完全な公正性を立証する責任を負う。' +
+      'Weinberger v. UOP, Inc.（1983年）で確立され、Kahn v. M&F Worldwide Corp.（2014年）により独立取締役委員会の承認と少数株主過半数の賛成を事前に具備した場合には経営判断原則への引下げが認められた。',
+    keyFigures: 'William T. Allen／Leo E. Strine Jr.／Reinier Kraakman／John C. Coffee Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1983/457-a-2d-701-4.html', type: 'reference', label: 'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)' },
+      { url: 'https://corpgov.law.harvard.edu/2014/03/29/kahn-v-mf-worldwide-corp/', type: 'academic', label: 'Kahn v. M&F Worldwide Corp. 解説 — Harvard Law School Forum on Corporate Governance' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-experience',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム経験',
+    statement:
+      'アルゴリズム経験とは、日常的なデジタル生活においてユーザーがアルゴリズムシステムをどのように知覚・解釈・対応するかを包括的に捉える概念である。' +
+      'Bucher（2017）が提唱した「アルゴリズム的想像力」を中心に、Eslami et al.（2015）によるFacebookニュースフィードアルゴリズムへのユーザー認知研究やRader & Gray（2015）のアルゴリズムキュレーション理解の研究が理論的基盤を形成している。' +
+      'HCI・メディア研究・情報社会学を横断し、アルゴリズムに対する素朴理論、アルゴリズム的気づき、推薦システムとの生活経験を分析対象とする学際的研究領域である。',
+    keyFigures: 'Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The algorithmic imaginary, Information, Communication & Society 20(1):30-44' },
+      { url: 'https://doi.org/10.1145/2702123.2702556', type: 'academic', label: 'Eslami, M. et al. (2015) Reasoning about Invisible Algorithms in News Feeds, CHI \'15:153-162' },
+      { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
+    ],
+  },
 ];
 // Stryker restore all
