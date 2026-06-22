@@ -2069,5 +2069,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 戦略グループ理論 | 産業内類似戦略企業群・移動障壁・業績差異（Hunt / Porter / Caves & Porter / Cool & Schendel） |
 | 経営学 | 組織両利き理論 | 探索と活用の同時追求・構造的/文脈的両利き（March / Tushman & O'Reilly / Gibson & Birkinshaw） |
 | 情報社会学 | テクノフェミニスト理論 | ジェンダーと技術の相互形成・サイボーグフェミニズム（Wajcman / Haraway / Cockburn） |
+| 経済学 | ハーバーガーの三角形理論 | 独占・課税による死荷重の幾何学的測定・厚生損失推計（Harberger / Tullock / Cowling & Mueller） |
+| 人間科学 | 自己決定ミニ理論群 | 自律性・有能感・関係性の基本的心理欲求と6つのミニ理論（Deci & Ryan / Vansteenkiste / Gagné） |
+| 経営法学 | クラムダウン法理 | 倒産手続における反対債権者への再建計画強制認可・絶対優先原則（Douglas / Markell / Baird & Bernstein） |
+| 経営学 | 行動戦略理論 | 認知バイアス・ヒューリスティクスの戦略的意思決定への影響（Powell / Lovallo & Sibony / Gavetti） |
+| 経営学 | 組織衰退理論 | 組織縮小・硬直化・脅威硬直反応の段階的衰退モデル（Weitzel & Jonsson / Cameron / D'Aveni / Staw） |
+| 情報社会学 | プラットフォーム情報非対称性理論 | デジタルプラットフォームにおける売り手・買い手間情報格差とアルゴリズム的情報統制（Akerlof / Zuboff / Srnicek / Gillespie） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
