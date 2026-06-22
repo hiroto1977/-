@@ -24550,5 +24550,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2012.00046/full', type: 'academic', label: 'Vlach & Sandhofer (2012) Fast Mapping Across Time: Memory Processes — Frontiers in Psychology' },
     ],
   },
+  {
+    id: 'econ-uncovered-interest-parity',
+    discipline: 'economics',
+    title: 'カバーなし金利平価（Uncovered Interest Parity）',
+    statement:
+      'カバーなし金利平価（Uncovered Interest Parity / UIP）とは、2国間の名目金利差が為替レートの期待変化率に等しくなるという国際金融の基本的均衡条件である。高金利通貨は将来減価するため、為替リスクを考慮した期待収益率が各国で等しくなることを含意する。' +
+      'しかしユージン・ファーマ（Eugene Fama）が1984年に実証的に示した「ファーマ・パズル」では、事後的な為替減価率と金利差の回帰係数がUIPの予測する1ではなく負の値をとり、高金利通貨がむしろ増価する傾向（フォワードプレミアム・パズル）が繰り返し確認された。1970年代の変動相場制移行以来、最も頑健に文書化された国際金融の異常現象の一つであり、リスクプレミアム、ペソ問題、学習モデル等による説明が試みられている。',
+    keyFigures: 'ユージン・ファーマ（1984 フォワードプレミアム・パズルの実証）／ブシエール＆チン（2018 New Fama Puzzle — NBER WP 24342）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w24342/w24342.pdf', type: 'academic', label: 'Bussière, Chinn et al. (2018) The New Fama Puzzle — NBER Working Paper 24342' },
+      { url: 'https://www.federalreserve.gov/pubs/ifdp/2003/752/revision/ifdp752r.pdf', type: 'government', label: 'Chinn (2003) Uncovered Interest Parity: It Works, But Not For Long — FRB IFDP 752' },
+      { url: 'https://link.springer.com/article/10.1057/s41308-022-00161-z', type: 'academic', label: 'Bussière et al. (2022) The New Fama Puzzle — IMF Economic Review (Springer)' },
+    ],
+  },
+  {
+    id: 'human-childhood-amnesia',
+    discipline: 'human-science',
+    title: '幼児期健忘（Childhood Amnesia）',
+    statement:
+      '幼児期健忘（Childhood Amnesia / Infantile Amnesia）とは、成人が概ね3〜4歳以前のエピソード記憶を想起できず、3歳半〜7歳頃の記憶も断片的・希薄である現象を指す。ジークムント・フロイト（Sigmund Freud）が1905年の「性に関する三篇」で「幼児期健忘」の用語を導入し、患者が6〜8歳以前の出来事を想起困難であることを報告した。' +
+      'フロイトは抑圧メカニズムを原因と考えたが、現代の説明は就学前期における言語発達・自伝的記憶システムの成熟・自己概念の発達といった認知的・社会的発達過程に焦点を当てる。デイヴィッド・ピレマー（David Pillemer）は初期記憶の質的特性と機能を体系的に研究した。海馬の神経新生（neurogenesis）が初期記憶の不安定化に寄与するという神経科学的仮説も提唱されている。',
+    keyFigures: 'ジークムント・フロイト（1905 用語導入）／デイヴィッド・ピレマー（初期記憶研究）／パトリシア・バウアー（2007 発達的補完プロセス説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Childhood_amnesia', type: 'reference', label: 'Wikipedia: Childhood Amnesia' },
+      { url: 'https://www.apa.org/pubs/journals/features/rev-a0038939.pdf', type: 'academic', label: 'Bauer (2015) A Complementary Processes Account of Childhood Amnesia — Psychological Review (APA)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4025992/', type: 'academic', label: 'Bauer & Larkina (2014) The Onset of Childhood Amnesia in Childhood — PMC / Memory' },
+    ],
+  },
+  {
+    id: 'bizlaw-force-majeure-clause',
+    discipline: 'business-law',
+    title: '不可抗力条項（Force Majeure Clause）',
+    statement:
+      '不可抗力条項（Force Majeure Clause）とは、当事者の支配を超えた予見不能な事象（天災・戦争・疫病・政府行為等）の発生により契約上の義務の履行が不可能または著しく困難となった場合に、当該義務の不履行について免責を認める契約条項である。フランス民法（Code civil）に起源を持つ大陸法概念であり、英米法では契約に明示条項がない場合、履行不能（impossibility）・実行不能（impracticability）の法理が類似の機能を果たす。' +
+      'コモンロー法域では不可抗力条項が契約に存在しなければ履行義務は絶対的であり、免責は認められない。国際商事契約ではICC不可抗力条項（2020年改訂）が標準的参照モデルとして広く採用される。条項の適用範囲は契約文言によって個別に画定されるため、列挙される事象・通知義務・軽減義務の規定が実務上の争点となる。',
+    keyFigures: 'フランス民法典（不可抗力概念の法源）／ICC（2020年不可抗力条項改訂モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Force_majeure', type: 'reference', label: 'Wikipedia: Force Majeure' },
+      { url: 'https://www.joneswalker.com/en/insights/force-majeure-and-impossibility-of-performance-guide.html', type: 'reference', label: 'Force Majeure and Impossibility of Performance Guide — Jones Walker LLP' },
+      { url: 'https://natlawreview.com/article/origins-force-majeure-clause-and-impossibility-contractual-performance-defense', type: 'media', label: 'Origins of the Force Majeure Clause and Impossibility Defense — National Law Review' },
+    ],
+  },
+  {
+    id: 'mgmt-team-mental-models',
+    discipline: 'management',
+    title: 'チーム・メンタルモデル（Team Mental Models）',
+    statement:
+      'チーム・メンタルモデル（Team Mental Models / Shared Mental Models）とは、チームメンバーがタスク要件・手順・役割責任について共通または重複する認知的表象を保持することで、明示的なコミュニケーションなしにも行動の調整・互換的な意思決定・適切な行為の遂行を可能にするチーム認知の理論である。ジャニス・キャノン＝バウアーズ（Janis Cannon-Bowers）とエドゥアルド・サラス（Eduardo Salas）が1993年に体系化した。' +
+      'チームメンバーが知識を共有すると、手がかりの類似的解釈、両立可能な意思決定、将来のメンバー行動とタスク状態の正確な予測、効率的な意味伝達が可能となる。内容領域としてタスク焦点型TSMM（業務目標・遂行要件）とチーム焦点型TSMM（対人相互作用）に大別される。メタ分析により共有メンタルモデルとチーム業績・プロセスの正の関連が確認されている。',
+    keyFigures: 'ジャニス・キャノン＝バウアーズ＆エドゥアルド・サラス（1993 共有メンタルモデル体系化）／デチャーチ＆メスマー＝マグナス（2010 メタ分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/154193129103501917', type: 'academic', label: 'Converse, Cannon-Bowers & Salas (1991) Team Member Shared Mental Models — Human Factors Society (SAGE)' },
+      { url: 'https://atlas.northwestern.edu/papers/sharedTeam.pdf', type: 'academic', label: 'DeChurch & Mesmer-Magnus (2010) Measuring Shared Team Mental Models: A Meta-Analysis — Northwestern' },
+      { url: 'https://psychiatry.ucsd.edu/research/programs-centers/instep/tools-resource/definitions/emergent-states/cognitive-emergent-states/shared-mental-model.html', type: 'reference', label: 'Shared Mental Model — UCSD INSTEP Resource' },
+    ],
+  },
+  {
+    id: 'infosoc-mediatization-theory',
+    discipline: 'information-sociology',
+    title: 'メディアタイゼーション理論（Mediatization Theory）',
+    statement:
+      'メディアタイゼーション理論（Mediatization Theory）とは、メディアが独自の制度的論理（メディアロジック）を持つ自律的制度として台頭し、政治・宗教・家族・労働など他の社会制度がメディアの論理に適応を強いられると同時に、メディアがそれら制度の活動の不可分な構成要素となる二重過程を分析する理論枠組みである。スティグ・ヤーヴァド（Stig Hjarvard）が2008年に制度的アプローチとして体系化した。' +
+      'フリードリヒ・クロッツ（Friedrich Krotz）は2007年にメディアタイゼーションを個別のメディア化されたコミュニケーションの水準を超えたメタプロセスと定義し、行動主義的・機能的アプローチと社会的・文化的パースペクティブを区別した。メディアロジックとは、メディアが物質的・象徴的資源を配分し、公式・非公式のルールを運用する制度的・技術的作動様式を指す。',
+    keyFigures: 'スティグ・ヤーヴァド（2008 制度的メディアタイゼーション論）／フリードリヒ・クロッツ（2007 メタプロセス定義）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nordicom.gu.se/sites/default/files/kapitel-pdf/269_hjarvard.pdf', type: 'academic', label: 'Hjarvard (2008) The Mediatization of Society: A Theory of the Media as Agents of Social and Cultural Change — Nordicom Review' },
+      { url: 'https://en.wikipedia.org/wiki/Mediatization_(media)', type: 'reference', label: 'Wikipedia: Mediatization (media)' },
+      { url: 'https://www.academia.edu/61040968/Mediatization_theorizing_the_interplay_between_media_culture_and_society', type: 'academic', label: 'Hepp et al. (2015) Mediatization: Theorizing the Interplay Between Media, Culture and Society — Media, Culture & Society' },
+    ],
+  },
+  {
+    id: 'econ-habit-formation-asset',
+    discipline: 'economics',
+    title: '習慣形成資産価格モデル（Habit Formation in Asset Pricing）',
+    statement:
+      '習慣形成資産価格モデル（Habit Formation in Asset Pricing）とは、消費者の効用が現在の消費水準のみならず過去の消費によって形成される習慣的基準水準（habit level）にも依存するとする選好仕様を資産価格モデルに導入し、株式プレミアム・パズル等の資産価格の異常現象を説明する理論枠組みである。ジョン・キャンベル（John Campbell）とジョン・コクラン（John Cochrane）が1999年にJournal of Political Economyで「By Force of Habit」として決定的モデルを提示した。' +
+      '標準的べき効用関数に時変的な生存水準（subsistence level）を付加し、消費から習慣への非線形マッピングにより景気変動に応じたリスク回避度の内生的変動を生み出す。メーラ＝プレスコット（1985）の株式プレミアム・パズルを解消するとともに、株式収益率のボラティリティ・予測可能性・無リスク金利の安定性を同時に再現した。ただし定常均衡で相対的リスク回避度が約35と非常に高い値を要する点が批判されている。',
+    keyFigures: 'ジョン・キャンベル＆ジョン・コクラン（1999 Journal of Political Economy「By Force of Habit」）／メーラ＆プレスコット（1985 株式プレミアム・パズル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304393202001472', type: 'academic', label: 'Otrok et al. (2002) Habit Formation: A Resolution of the Equity Premium Puzzle? — J Monetary Economics (ScienceDirect)' },
+      { url: 'https://www.nber.org/system/files/working_papers/w7237/w7237.pdf', type: 'academic', label: 'Campbell & Cochrane (1999) Explaining the Poor Performance of Consumption-Based Asset Pricing — NBER WP 7237' },
+      { url: 'https://papers.ssrn.com/sol3/Delivery.cfm/f70e358e-7fb1-4777-8099-f6e0cbe291a0-MECA.pdf?abstractid=5162999&mirid=1', type: 'academic', label: 'Dang et al. (2025) Campbell and Cochrane Habit Formation Model with Liquidity Risk — SSRN' },
+    ],
+  },
 ];
 // Stryker restore all
