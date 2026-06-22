@@ -1,0 +1,39 @@
+---
+collection: academic
+id: mgmt-network-organization
+category: "management"
+category_ja: "経営学"
+title: "ネットワーク組織（Network Forms of Organization）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/management
+  - knowledge/verified
+aliases:
+  - "ネットワーク組織（Network Forms of Organization）"
+---
+
+# ネットワーク組織（Network Forms of Organization）
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+市場取引でもヒエラルキーでもない第三の組織間調整形態として、相互義務・信頼・評判に基づくネットワーク型組織の固有論理を提示。暗黙知が重要でイノベーションが不確実な産業で優位性を発揮するとし、ウィリアムソンの取引コスト理論による市場／ヒエラルキー二分法を超克した。
+
+## 提唱者・初出
+ウォルター・パウエル（1990 Neither Market Nor Hierarchy — ASA Max Weber賞受賞論文）
+
+## 出典
+- [Powell (1990) Neither Market Nor Hierarchy: Network Forms of Organization — ResearchGate](https://www.researchgate.net/publication/301840604_Neither_Market_Nor_Hierarchy_Network_Forms_of_Organization) `学術`
+- [Powell (1990): Neither Market nor Hierarchy — Springer](https://link.springer.com/chapter/10.1007/978-3-658-21742-6_108) `学術`
+- [Neither Market nor Hierarchy — Academia.edu](https://www.academia.edu/41966981/Neither_market_nor_hierarchy_Network_Forms_of_Organization) `学術`
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
