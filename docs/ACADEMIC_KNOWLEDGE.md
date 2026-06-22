@@ -2093,5 +2093,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 戦略的アントレプレナーシップ理論 | 機会探索と競争優位構築の同時追求による持続的価値創造（Hitt / Ireland / Camp / Sexton / Kuratko） |
 | 経営学 | 上層部理論精緻化 | 経営裁量・職務要求の調整変数導入と人口統計から心理測定への方法論転換（Hambrick / Mason / Carpenter / Geletkanycz / Finkelstein） |
 | 情報社会学 | 参加型文化理論 | 参加障壁の低い文化形態とデジタル環境でのメディア消費・生産（Jenkins / Ford / Green / Terranova） |
+| 経済学 | グリーンスパン・プット理論 | FRB議長の市場下落時金融緩和パターンによる暗黙の下値保証期待とモラルハザード（Miller / Weller / Zhang / Rajan） |
+| 人間科学 | アロスタティック負荷理論 | 慢性ストレスによる累積的生理的摩耗と疾患リスク増大（McEwen / Stellar / Seeman / Juster） |
+| 経営法学 | MAC条項法理 | M&A契約における重大な悪影響条項・期間的重大性テスト（Strine / Gilson / Schwartz） |
+| 経営学 | コミットメント・エスカレーション理論 | 失敗行動方針への資源投入継続・自己正当化と埋没費用（Staw / Ross / Brockner / Sleesman） |
+| 経営学 | 職務要求−資源理論 | 職務要求→バーンアウト・職務資源→エンゲージメントの二重過程モデル（Bakker / Demerouti / Schaufeli） |
+| 情報社会学 | 接続的行為理論 | デジタルメディアによる個人化コンテンツ共有の大規模政治動員（Bennett / Segerberg） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
