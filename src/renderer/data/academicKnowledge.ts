@@ -27495,5 +27495,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1007/s13347-020-00423-6', type: 'academic', label: 'Floridi (2020) The Fight for Digital Sovereignty, Philosophy & Technology 33(3):369-378' },
     ],
   },
+  {
+    id: 'econ-new-new-trade-theory-melitz',
+    discipline: 'economics',
+    title: '「新」新貿易理論（メリッツ・モデル）',
+    statement:
+      'Melitz（2003）は、企業間の生産性格差を明示的に導入したモデルを構築し、貿易自由化が産業内資源配分を通じて集計的生産性を向上させるメカニズムを理論化した。' +
+      '同モデルでは、輸出に際して固定参入費用が存在するため、生産性の高い企業のみが輸出市場に参入し、低生産性企業は退出を余儀なくされることが示される。' +
+      'Helpman, Melitz and Yeaple（2004）はこの枠組みを多国籍企業の水平的FDIにも拡張し、輸出・FDI・国内販売の間の企業選択を分析した。' +
+      'Bernard, Jensen, Redding and Schott（2007）らによる実証研究は、輸出企業が非輸出企業よりも大規模かつ高生産性であるという事実と理論の整合性を確認している。',
+    keyFigures: 'Marc J. Melitz／Elhanan Helpman／Andrew B. Bernard／Thierry Mayer／Marc-Andreas Muendler',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity, Econometrica 71(6):1695-1725' },
+      { url: 'https://doi.org/10.1162/0033553041382139', type: 'academic', label: 'Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316' },
+      { url: 'https://doi.org/10.1257/jel.45.1.39', type: 'academic', label: 'Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130' },
+    ],
+  },
+  {
+    id: 'econ-heckscher-ohlin-vanek',
+    discipline: 'economics',
+    title: 'ヘクシャー＝オリーン＝ヴァネク定理（貿易の要素含有量）',
+    statement:
+      'Vanek（1968）は、ヘクシャー＝オリーン・モデルをN財・N要素に拡張し、各国が輸出する財に体化された要素サービスの純輸出量はその国の要素賦存量と世界平均の差に等しいことを示した。' +
+      'すなわち、要素豊富な国はその要素を間接的に輸出し、要素希少な国はそれを輸入するという「貿易の要素含有量（factor content of trade）」命題が成立する。' +
+      'しかし、Trefler（1995）は実証分析において多くの国で予測される要素含有量と実測値が大幅に乖離する「missing trade」現象を発見し、技術差異や要素品質の違いが定理の予測精度を損なうことを示した。' +
+      'その後、Zhu & Trefler（2005）らはリカード的技術格差を組み込んだ改良版によってHOV定理の実証的妥当性を大幅に向上させた。',
+    keyFigures: 'Eli Heckscher／Bertil Ohlin／Jaroslav Vanek／Daniel Trefler／Susan Chun Zhu',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1467-6435.1968.tb00141.x', type: 'academic', label: 'Vanek (1968) The Factor Proportions Theory: The N-Factor Case, Kyklos 21(4):749-756' },
+      { url: 'https://www.jstor.org/stable/2950973', type: 'academic', label: 'Trefler (1995) The Case of the Missing Trade and Other Mysteries, American Economic Review 85(5):1029-1046' },
+      { url: 'https://doi.org/10.1016/j.jinteco.2005.01.003', type: 'academic', label: 'Zhu & Trefler (2005) Trade and Inequality in Developing Countries: A General Equilibrium Analysis, Journal of International Economics 65(1):21-48' },
+    ],
+  },
+  {
+    id: 'human-theory-of-constructed-emotion',
+    discipline: 'human-science',
+    title: '情動の構成理論',
+    statement:
+      '情動の構成理論は、怒りや恐怖などの感情が脳に生得的に組み込まれた回路から生じるのではなく、脳が身体感覚・記憶・文脈を統合することで能動的に構成されるという理論である。' +
+      'Barrett（2017）は、感情は普遍的な「基本感情」ではなく、概念的知識と予測的符号化によって状況ごとに生成されると主張した。' +
+      'Russell（2003）の感情の中核感情モデルや、Lindquist（2012）の神経画像メタ分析もこの構成主義的立場を支持しており、感情は文化・経験・言語によって形成されると示している。' +
+      'Mesquita（2020）はさらに文化的差異の観点からこの理論を拡張し、感情が社会的文脈の中で共同構成されることを強調した。',
+    keyFigures: 'Lisa Feldman Barrett／James A. Russell／Kristen A. Lindquist／Eliza Bliss-Moreau／Batja Mesquita',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/j.neubiorev.2017.05.015', type: 'academic', label: 'Barrett (2017) The theory of constructed emotion, Neuroscience & Biobehavioral Reviews 76:3-14' },
+      { url: 'https://doi.org/10.1037/0033-295X.110.1.145', type: 'academic', label: 'Russell (2003) Core affect and the psychological construction of emotion, Psychological Review 110(1):145-172' },
+      { url: 'https://doi.org/10.1037/a0029485', type: 'academic', label: 'Lindquist et al. (2012) The brain basis of emotion: A meta-analytic review, Behavioral and Brain Sciences 35(3):121-143' },
+    ],
+  },
+  {
+    id: 'mgmt-absorptive-capacity-realization',
+    discipline: 'management',
+    title: '吸収能力の実現化モデル：潜在的能力と実現的能力',
+    statement:
+      'Cohen & Levinthal（1990）は、組織が外部知識を認識・同化・活用する能力として「吸収能力（absorptive capacity）」を提唱し、先行知識の蓄積が技術革新の源泉となることを示した。' +
+      'Zahra & George（2002）はこの概念を再構築し、吸収能力を「潜在的吸収能力（Potential AC）」——外部知識の獲得・同化——と「実現的吸収能力（Realized AC）」——知識の変換・活用——の二次元に分類し、両者の比率（効率性）が競争優位に直結すると論じた。' +
+      'Volberda, Foss & Lyles（2010）はさらにこの枠組みをマルチレベル視点から拡張し、個人・グループ・組織の各層における吸収能力の先行要因と組織間ダイナミクスを包括的に検討した。',
+    keyFigures: 'Shaker A. Zahra／Gerard George／Wesley M. Cohen／Daniel A. Levinthal／Henk W. Volberda',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) Absorptive Capacity: A New Perspective on Learning and Innovation, ASQ 35(1):128-152' },
+      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra & George (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension, AMR 27(2):185-203' },
+      { url: 'https://doi.org/10.1287/orsc.1090.0503', type: 'academic', label: 'Volberda, Foss & Lyles (2010) Absorbing the Concept of Absorptive Capacity, Organization Science 21(4):931-951' },
+    ],
+  },
+  {
+    id: 'bizlaw-derivative-suit-shareholder',
+    discipline: 'business-law',
+    title: '株主代表訴訟',
+    statement:
+      '株主代表訴訟とは、株主が会社に代わって取締役等の義務違反に対して訴訟を提起する法的メカニズムであり、回収金は会社に帰属する点で個人の株主訴訟と本質的に異なる。' +
+      'Coffee（1986）は、弁護士報酬インセンティブの構造が「企業家的訴訟」を生み出し、株主の真の利益とは乖離した代表訴訟を誘発する可能性を理論的に示した。' +
+      'Thompson & Thomas（2004）の実証研究は、代表訴訟の大半が企業買収関連事件に集中し、実際の株主への経済的便益が限定的であることを明らかにした。' +
+      'Erickson（2020）はさらに、現代の代表訴訟の実態を分析し、原告適格要件や需要拒絶ルールが実務上いかに機能し、訴訟の抑止と促進のバランスに影響しているかを検討した。',
+    keyFigures: 'John C. Coffee Jr.／Robert B. Thompson／Jessica Erickson／Roberta Romano／Arad Reisberg',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1122397', type: 'academic', label: 'Coffee (1986) Understanding the Plaintiff\'s Attorney, Columbia Law Review 86(4):669-727' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=431480', type: 'academic', label: 'Thompson & Thomas (2004) The New Look of Shareholder Litigation, Vanderbilt Law Review 57(1):133-209' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-1.html', type: 'reference', label: 'Aronson v. Lewis, 473 A.2d 805 (Del. 1984) — landmark demand futility standard for derivative suits' },
+    ],
+  },
+  {
+    id: 'infosoc-information-justice',
+    discipline: 'information-sociology',
+    title: '情報正義',
+    statement:
+      '情報正義とは、情報システムおよび実践における公平なアクセス、代表性、および権力の分配を問う規範的概念である。' +
+      'Duff（2011）は、情報の公正な社会的配分をロールズとタウニーの正義論から論じ、デジタル格差を構造的不平等の問題として再定式化した。' +
+      'Noble（2018）は、検索エンジンのアルゴリズムが人種・ジェンダー差別を再生産・強化する仕組みを実証し、情報権力の非対称性を告発した。' +
+      'Eubanks（2018）はさらに、行政向け自動化システムが貧困層をプロファイリングし制裁する過程を分析し、情報インフラが既存の社会的不平等を技術的に固定化する危険性を示した。',
+    keyFigures: 'Alistair S. Duff／Safiya Umoja Noble／Virginia Eubanks／Tressie McMillan Cottom／Jeffrey T. Reitz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1002/asi.21470', type: 'academic', label: 'Duff (2011) The Rawls-Tawney theorem and the digital divide in postindustrial society, JASIST 62(3):604-612' },
+      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'reference', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press' },
+      { url: 'https://lthj.qut.edu.au/article/view/1386', type: 'academic', label: 'Gordon (2019) Review of Eubanks (2018) Automating Inequality, Law Technology and Humans 1(1):162-164' },
+    ],
+  },
 ];
 // Stryker restore all
