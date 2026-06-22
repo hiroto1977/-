@@ -29036,5 +29036,108 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Network_society', type: 'reference', label: 'Wikipedia — Network society' },
     ],
   },
+  {
+    id: 'econ-fiscal-theory-price-level',
+    discipline: 'economics',
+    title: '物価水準の財政理論',
+    statement:
+      '物価水準の財政理論（FTPL）は、物価水準が貨幣量だけでなく政府の財政政策——政府債務と将来の財政黒字の現在価値——によって決定されるとする理論である。' +
+      'Leeper（1991）は能動的財政政策と受動的財政政策の均衡条件を定式化し、能動的財政のもとでは物価水準が政府の通時的予算制約式を均衡させる内生変数となることを示した。' +
+      'Sims（1994）はこの枠組みを発展させ、財政的裏付けを欠く貨幣政策が物価安定を達成できない条件を明確にした。' +
+      'Woodford（1995）は最適化ベースの一般均衡モデルにFTPLを組み込み、財政政策が物価決定に果たす役割を厳密に理論化した。' +
+      'Cochrane（2023）は著書 *The Fiscal Theory of the Price Level* においてFTPLを包括的に体系化し、政府債務の実質価値が将来の基礎的財政収支の現在割引価値に等しくなるという政府の通時的予算制約式を中心に据え、インフレは財政的現象でもあるという見方を提示した。',
+    keyFigures: 'Eric Leeper ／ Christopher Sims ／ Michael Woodford ／ John Cochrane',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_theory_of_the_price_level', type: 'reference', label: 'Fiscal Theory of the Price Level — Wikipedia' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691242248/the-fiscal-theory-of-the-price-level', type: 'academic', label: 'The Fiscal Theory of the Price Level — Princeton University Press (Cochrane, 2023)' },
+      { url: 'https://ideas.repec.org/a/eee/moneco/v27y1991i1p129-147.html', type: 'academic', label: "Equilibria under 'Active' and 'Passive' Monetary and Fiscal Policies — Leeper (1991)" },
+    ],
+  },
+  {
+    id: 'econ-credit-channel-theory',
+    discipline: 'economics',
+    title: '信用チャネル理論',
+    statement:
+      '信用チャネル理論は、金融政策が利子率を通じるだけでなく、銀行貸出チャネルとバランスシートチャネルという2つの経路で実体経済に影響を与えるという理論である。' +
+      'Bernanke and Blinder（1988）は銀行貸出チャネルを理論化し、金融引締めが銀行の準備預金を減少させることで貸出供給を制約するメカニズムを示した。' +
+      'Bernanke, Gertler and Gilchrist（1999）はバランスシートチャネルを「金融アクセラレータ」として定式化し、借り手の純資産の変動が外部資金調達プレミアムを通じて投資と産出の変動を増幅する過程を明らかにした。' +
+      'これらの研究により、情報の非対称性が存在する信用市場では、金融政策の効果が伝統的な金利経路だけでは説明できないほど大きくなることが理論的・実証的に示された。',
+    keyFigures: 'Ben Bernanke ／ Mark Gertler ／ Simon Gilchrist ／ Alan Blinder',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.federalreserve.gov/newsevents/speech/Bernanke20070615a.htm', type: 'government', label: 'Bernanke, B. "The Financial Accelerator and the Credit Channel," Federal Reserve Board Speech' },
+      { url: 'https://www.nber.org/papers/w6455', type: 'academic', label: 'Bernanke, Gertler, & Gilchrist "The Financial Accelerator..." NBER Working Paper 6455, 1998' },
+      { url: 'https://glossary.mizuho-sc.com/faq/show/1217?site_domain=default', type: 'reference', label: '信用経路 — みずほ証券ファイナンス用語集' },
+    ],
+  },
+  {
+    id: 'human-attachment-theory-bowlby',
+    discipline: 'human-science',
+    title: 'アタッチメント理論',
+    statement:
+      'アタッチメント理論は、乳幼児が主要な養育者との間に形成する情緒的絆（アタッチメント）が、個体の心理的発達・対人関係パターン・精神的健康に生涯にわたる影響を及ぼすとする発達心理学の理論である。' +
+      'Bowlby（1958, 1969）は精神分析と動物行動学を統合し、乳児のアタッチメント行動を生存価値をもつ進化的適応として位置づけ、「内的作業モデル」が自己と他者に関する期待を組織化する認知的枠組みとなることを提唱した。' +
+      'Ainsworth（1978）は「ストレンジ・シチュエーション法」を開発し、安定型（B型）・回避型（A型）・アンビバレント型（C型）の三つのアタッチメント・パターンを実証的に同定した。' +
+      'Main and Solomon（1986）は無秩序・無方向型（D型）を第四のパターンとして追加し、虐待やトラウマを経験した乳児に特徴的な矛盾した接近・回避行動を体系的に記述した。',
+    keyFigures: 'John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/science/attachment-theory', type: 'reference', label: 'Attachment Theory | Britannica' },
+      { url: 'https://www.simplypsychology.org/bowlby.html', type: 'academic', label: "John Bowlby's Attachment Theory — Simply Psychology" },
+      { url: 'https://www.simplypsychology.org/mary-ainsworth.html', type: 'academic', label: 'Mary Ainsworth Strange Situation Experiment — Simply Psychology' },
+    ],
+  },
+  {
+    id: 'bizlaw-duty-of-care-standard',
+    discipline: 'business-law',
+    title: '注意義務の基準',
+    statement:
+      '取締役の注意義務の基準とは、合理的に思慮分別のある人物が同様の立場・状況において通常払うであろう注意・勤勉さをもって職務を遂行する義務を指し、コーポレート・ガバナンスにおける受託者責任の中核をなす。' +
+      '1985年のSmith v. Van Gorkomにおいてデラウェア州最高裁判所はこの基準を厳格に適用し、十分な情報収集なしに合併承認を行った取締役会に重大な過失（gross negligence）があると判断したが、その後デラウェア州は§102(b)(7)を制定し、会社は定款によって取締役の注意義務違反に基づく個人損害賠償責任を免除する条項を設けることができるようになった。' +
+      'ビジネス・ジャッジメント・ルールのもとでは、誠実かつ十分な情報に基づく判断を下した取締役は司法審査から保護されるが、重大な過失がある場合にはこの保護は失われる。' +
+      '学者たちはこの行為基準（standard of conduct）と審査基準（standard of review）の乖離が米国会社法に固有の特徴であると論じている。',
+    keyFigures: 'William T. Allen ／ Melvin A. Eisenberg ／ Bernard S. Black',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/duty_of_care', type: 'reference', label: 'Duty of Care — Wex Legal Dictionary, Cornell Law School LII' },
+      { url: 'https://en.wikipedia.org/wiki/Smith_v._Van_Gorkom', type: 'reference', label: 'Smith v. Van Gorkom (Del. 1985) — Wikipedia' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=894921', type: 'academic', label: 'Outside Director Liability — Bernard S. Black, Brian R. Cheffins & Michael Klausner, Stanford Law Review (2006), SSRN' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-ambivalence',
+    discipline: 'management',
+    title: '組織的アンビバレンス',
+    statement:
+      '組織的アンビバレンスとは、組織成員が特定の対象（目標・アイデンティティ・変化・関係性など）に対して、肯定的・否定的な態度・感情・認知を同時に抱く状態を指す。' +
+      'Merton（1976）の社会学的アンビバレンス論を基盤として、組織における役割の矛盾した規範が個人と集合レベルで交差するメカニズムが理論化された。' +
+      'Ashforth, Rogers, Pratt and Pradies（2014）はこれを「組織内アンビバレンスの多層的アプローチ」として体系化し、回避・支配・妥協・全体主義という四つの対処パターンを提示した。' +
+      'Rothman, Pratt, Rees and Vogus（2017）はアンビバレンスの二面性を整理し、適切に活用されれば信頼・適応・創造性の向上をもたらすことを明らかにした。',
+    keyFigures: 'Robert K. Merton ／ Blake E. Ashforth ／ Naomi B. Rothman ／ Michael G. Pratt',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2014.0909', type: 'academic', label: 'Ashforth, Rogers, Pratt & Pradies — "Ambivalence in Organizations: A Multilevel Approach," Organization Science, Vol. 25 No. 5 (2014)' },
+      { url: 'https://journals.aom.org/doi/10.5465/annals.2014.0066', type: 'academic', label: 'Rothman, Pratt, Rees & Vogus — "Understanding the Dual Nature of Ambivalence," Academy of Management Annals, Vol. 11 No. 1 (2017)' },
+      { url: 'https://archive.org/details/sociologicalambi0000mert', type: 'reference', label: 'Robert K. Merton — Sociological Ambivalence and Other Essays (Free Press, 1976)' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-commons-theory',
+    discipline: 'information-sociology',
+    title: 'デジタル・コモンズ理論',
+    statement:
+      'デジタル・コモンズ理論は、オープンソースソフトウェア・Wikipedia・クリエイティブ・コモンズ・コンテンツなどの共有デジタル資源を、私的所有権や国家規制ではなくコミュニティの規範によって統治される「コモンズ」として分析する理論的枠組みである。' +
+      'Ostrom and Hess（2007）は共著 *Understanding Knowledge as a Commons* において、Ostromが自然資源共有地で確立した制度分析の設計原則を知識・情報財へ拡張し、知的財産制度の過剰規制がもたらす「知識の囲い込み」に対抗する統治設計を提示した。' +
+      'Benkler（2006）は「コモンズに基づくピア生産（commons-based peer production）」概念により、市場シグナルも管理命令も用いない分散協調的な情報生産が既存の市場・国家モデルと並立する第三の生産様式を形成すると論じた。' +
+      'これらの議論は、デジタル公共財のガバナンス設計・オープンデータ政策・プラットフォーム規制の理論的基盤として広く参照されている。',
+    keyFigures: 'Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to', type: 'academic', label: 'Hess & Ostrom (eds.) "Understanding Knowledge as a Commons: From Theory to Practice" — MIT Press (2007)' },
+      { url: 'https://en.wikipedia.org/wiki/Commons-based_peer_production', type: 'reference', label: 'Wikipedia: Commons-based peer production (Yochai Benkler)' },
+      { url: 'https://policyreview.info/concepts/digital-commons', type: 'academic', label: 'Internet Policy Review: "Digital commons" — institutional analysis & governance design principles' },
+    ],
+  },
 ];
 // Stryker restore all
