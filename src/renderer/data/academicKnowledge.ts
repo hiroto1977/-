@@ -28834,5 +28834,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Information_foraging', type: 'reference', label: 'Wikipedia: Information foraging' },
     ],
   },
+  {
+    id: 'econ-heckscher-ohlin-model',
+    discipline: 'economics',
+    title: 'ヘクシャー＝オリーンモデル',
+    statement:
+      'ヘクシャー＝オリーンモデルは、国際貿易のパターンを生産要素の賦存量の差異によって説明する理論であり、各国は自国に豊富に存在する生産要素（労働・資本・土地）を集約的に使用する財を輸出し、希少な要素を集約的に使用する財を輸入すると予測する。' +
+      'Heckscher が1919年に原型を提示し、Ohlin が1933年に著書『地域間貿易と国際貿易』において体系化した。' +
+      'Samuelson は1948年に要素価格均等化定理を証明し、自由貿易のもとでは貿易当事国間の生産要素の報酬が均等化する条件を厳密に示した。' +
+      'Leontief は1953年の実証分析でアメリカの輸出が輸入代替品より労働集約的であるという「レオンチェフの逆説」を発見し、このモデルの検証と精緻化に大きく貢献した。',
+    keyFigures: 'Eli Heckscher ／ Bertil Ohlin ／ Paul Samuelson ／ Wassily Leontief',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/3149288', type: 'academic', label: 'Leontief, W. (1953). Domestic Production and Foreign Trade: The American Capital Position Re-Examined. Proceedings of the American Philosophical Society, 97, 332–349.' },
+      { url: 'https://academic.oup.com/ej/article-abstract/58/230/163/5259961', type: 'academic', label: 'Samuelson, P. A. (1948). International Trade and the Equalisation of Factor Prices. The Economic Journal, 58(230), 163–184.' },
+      { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin model' },
+    ],
+  },
+  {
+    id: 'econ-resource-curse-thesis',
+    discipline: 'economics',
+    title: '資源の呪いテーゼ',
+    statement:
+      '「資源の呪い（Resource Curse）」とは、豊富な天然資源を持つ国が、資源の乏しい国と比較して経済成長が低く、民主主義の定着が妨げられ、開発成果が劣る傾向を示すパラドックスである。' +
+      'Auty が1993年に命名し、Sachs & Warner（1995／2001）は1971〜89年のクロスカントリーデータを用いてこの負の相関を実証した。' +
+      'Ross（2001）はさらに113カ国のパネルデータ分析により、石油輸出が権威主義体制を強化し民主化を阻害することを示した。' +
+      'この現象の主なメカニズムとして、レントの政治経済学（レンティア国家効果）、製造業・農業競争力の喪失（オランダ病）、および天然資源収入を巡る政治的腐敗・内紛の助長が挙げられる。',
+    keyFigures: 'Richard M. Auty ／ Jeffrey D. Sachs ／ Andrew M. Warner ／ Michael L. Ross',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w5398', type: 'academic', label: 'Sachs & Warner (1995) "Natural Resource Abundance and Economic Growth," NBER Working Paper 5398' },
+      { url: 'https://www.cambridge.org/core/journals/world-politics/article/abs/does-oil-hinder-democracy/67665D8D240C8F43CD4A2DCB35894071', type: 'academic', label: 'Ross (2001) "Does Oil Hinder Democracy?," World Politics 53: 325–361' },
+      { url: 'https://en.wikipedia.org/wiki/Resource_curse', type: 'reference', label: 'Wikipedia: Resource curse' },
+    ],
+  },
+  {
+    id: 'human-affordance-theory',
+    discipline: 'human-science',
+    title: 'アフォーダンス理論',
+    statement:
+      'アフォーダンス理論は、生態心理学者Gibson が1979年の著書 The Ecological Approach to Visual Perception で提唱した知覚論であり、環境が動物に提供する「行為可能性（アフォーダンス）」は認知的媒介なしに直接知覚されると論じる。' +
+      'Gibson は有機体と環境の相補的関係を重視し、知覚は感覚データの内部処理ではなく、動物が生態学的情報を直接拾い上げる能動的プロセスであると主張した。' +
+      'Norman は1988年の著書 The Design of Everyday Things でこの概念をデザイン・HCI 領域に応用し、ユーザーが知覚する「知覚されたアフォーダンス（perceived affordance）」の重要性を強調した。' +
+      'Chemero（2003）が「アフォーダンスとは動物の能力と環境の特徴との間の関係である」と再定式化し、知覚理論の哲学的精緻化に寄与した。',
+    keyFigures: 'James J. Gibson ／ Donald A. Norman ／ Eleanor J. Gibson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/The-Ecological-Approach-to-Visual-Perception-Classic-Edition/Gibson/p/book/9781848725782', type: 'academic', label: 'James J. Gibson, The Ecological Approach to Visual Perception, Houghton Mifflin (1979); Classic Edition: Routledge (2014)' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1207/S15326969ECO1502_5', type: 'academic', label: 'Chemero, "An Outline of a Theory of Affordances," Ecological Psychology 15(2): 181-195 (2003)' },
+      { url: 'https://en.wikipedia.org/wiki/Affordance', type: 'reference', label: 'Wikipedia — Affordance' },
+    ],
+  },
+  {
+    id: 'bizlaw-appraisal-remedy',
+    discipline: 'business-law',
+    title: '株式買取請求権',
+    statement:
+      '株式買取請求権（アプレイザル・リメディ）とは、合併・定款変更等の重大な組織変更に反対した株主が、会社に対して保有株式を「公正価値（fair value）」で買い取るよう請求できる法定救済制度である。' +
+      '米国ではデラウェア州一般会社法（DGCL）§262に体系的に規定され、Manning が1962年の論文でこの救済の民主的正当性とその限界を批判的に論じたことが議論の出発点となった。' +
+      'Kanda と Levmore は1985年の論文でアプレイザル救済の目的を「インフラマージナリティ（内部評価の多様性）」「再確認機能」「情報発見機能」の三点から理論化し、少数株主保護と多数決原則の均衡を図る制度的根拠を提示した。' +
+      '日本でも会社法第785条・第797条・第806条等に反対株主の株式買取請求権が明文化されており、組織再編に際して少数株主が多数決の圧力に対抗する中核的手段となっている。',
+    keyFigures: 'Bayless Manning ／ Hideki Kanda ／ Saul Levmore',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://openyls.law.yale.edu/handle/20.500.13051/14819', type: 'academic', label: 'Manning, "The Shareholder\'s Appraisal Remedy: An Essay for Frank Coker," 72 Yale L.J. 223 (1962)' },
+      { url: 'https://law.justia.com/codes/delaware/title-8/chapter-1/subchapter-ix/section-262/', type: 'government', label: 'Delaware General Corporation Law § 262 — Appraisal rights (Justia, 2025)' },
+      { url: 'https://en.wikipedia.org/wiki/Appraisal_rights', type: 'reference', label: 'Wikipedia — Appraisal rights' },
+    ],
+  },
+  {
+    id: 'mgmt-psychological-capital',
+    discipline: 'management',
+    title: '心理的資本',
+    statement:
+      '心理的資本（PsyCap）とは、自己効力感・楽観性・希望・レジリエンスという四つの心理的資源から成る個人の肯定的な発達状態であり、ポジティブ組織行動論（POB）の中核概念としてLuthans らが提唱した。' +
+      'これらの資源は「HERO」の頭字語で表され、各単独要素よりも統合された高次因子として業績・満足度・ウェルビーイングへの予測力が高いことが実証されている。' +
+      'Luthans らは24項目の心理的資本質問票（PCQ）を開発し、PsyCap が状態的特性を持ち介入によって開発可能であることを示した。',
+    keyFigures: 'Fred Luthans ／ Carolyn M. Youssef-Morgan ／ Bruce J. Avolio',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/book/26255', type: 'academic', label: 'Luthans, Youssef & Avolio — Psychological Capital: Developing the Human Competitive Edge (Oxford University Press, 2007)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/hrdq.20070', type: 'academic', label: 'Avey, Reichard, Luthans & Mhatre — Meta-Analysis of the Impact of Positive Psychological Capital on Employee Attitudes, Behaviors, and Performance, HRDQ (2011)' },
+      { url: 'https://en.wikipedia.org/wiki/Positive_psychological_capital', type: 'reference', label: 'Wikipedia — Positive psychological capital' },
+    ],
+  },
+  {
+    id: 'infosoc-spreadable-media-theory',
+    discipline: 'information-sociology',
+    title: 'スプレッダブル・メディア理論',
+    statement:
+      'Jenkins, Ford & Green が2013年に提唱した理論で、メディアコンテンツは受動的な「感染」によってバイラル拡散するのではなく、オーディエンスが能動的に共有・再文脈化することで伝播するという立場をとる。' +
+      '「スティッキネス（粘着性）」——ユーザーを単一プラットフォームに引き留めて注目を集中させる戦略——と「スプレッダビリティ（拡散可能性）」——コンテンツをソーシャルネットワーク全体に分散させる特性——を対置させ、後者を現代のネットワーク文化における価値創造の鍵とする。' +
+      'コンテンツの拡散性は、オーディエンスが自らの社会的文脈に合わせてメッセージを改変・流通させる参加型文化と不可分であり、著作権者の意図を超えた「非公式」な流通も含む。' +
+      'この枠組みは、デジタル時代のメディア研究においてバイラル・マーケティング論や参加型文化論に代わる分析視座を提供している。',
+    keyFigures: 'Henry Jenkins ／ Sam Ford ／ Joshua Green',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nyupress.org/9780814743508/spreadable-media/', type: 'academic', label: 'Jenkins, Ford & Green — Spreadable Media: Creating Value and Meaning in a Networked Culture (NYU Press, 2013)' },
+      { url: 'https://ijoc.org/index.php/ijoc/article/view/2340', type: 'academic', label: 'Book review of Spreadable Media — International Journal of Communication, Vol. 7 (2013), pp. 1504–1506' },
+      { url: 'https://en.wikipedia.org/wiki/Spreadability', type: 'reference', label: 'Wikipedia — Spreadability' },
+    ],
+  },
 ];
 // Stryker restore all
