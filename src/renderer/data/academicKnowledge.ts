@@ -26689,5 +26689,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Digital_commons_(economics)', type: 'reference', label: 'Wikipedia — Digital commons (economics)' },
     ],
   },
+  // ── Batch 292 ─────────────────────────────────────────────
+  // econ-sraffa-reswitching, econ-diamond-dybvig-bank-run,
+  // human-social-identity-complexity, mgmt-organizational-slack-theory,
+  // bizlaw-business-judgment-rule-delaware, infosoc-knowledge-management-spiral
+  {
+    id: 'econ-sraffa-reswitching',
+    discipline: 'economics',
+    title: 'ケンブリッジ資本論争（再転換／リスイッチング）',
+    statement:
+      'スラッファが1960年の『商品による商品の生産』で示した再転換（リスイッチング）とは、同一の生産技術が高い利子率と低い利子率の両方で最も利潤率の高い技術となりうるが中間の利子率ではそうならない現象をいう。' +
+      'これは資本集約度と利潤率の間の単調な逆関係を想定する新古典派資本理論を根底から覆し、1960年代のケンブリッジ資本論争の核心的論点となった。',
+    keyFigures: 'Piero Sraffa／Joan Robinson／Luigi L. Pasinetti／Paul A. Samuelson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Cambridge_capital_controversy', type: 'reference', label: 'Wikipedia — Cambridge capital controversy' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1405-1', type: 'academic', label: 'New Palgrave Dictionary of Economics — Reswitching of Technique (Scazzieri)' },
+      { url: 'https://academic.oup.com/qje/article-abstract/80/4/568/1885095', type: 'academic', label: 'Samuelson, P.A. (1966) A Summing Up, QJE 80(4):568-583' },
+    ],
+  },
+  {
+    id: 'econ-diamond-dybvig-bank-run',
+    discipline: 'economics',
+    title: 'ダイアモンド＝ディブビグ銀行取付モデル',
+    statement:
+      'ダイアモンドとディブビグ（1983）は、銀行が非流動的な長期資産を流動性の高い要求払預金に転換する流動性変換機能を提供する際、預金者の自己実現的な期待により銀行取付（バンクラン）が均衡として発生しうることを理論的に示した。' +
+      '預金保険制度の導入により取付の悪い均衡を排除できることも証明し、2022年ノーベル経済学賞（バーナンキと共同受賞）の対象となった。',
+    keyFigures: 'Douglas W. Diamond／Philip H. Dybvig',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/261155', type: 'academic', label: 'Diamond & Dybvig (1983) Bank Runs, Deposit Insurance, and Liquidity, JPE 91(3):401-419' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2022/summary/', type: 'reference', label: '2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）' },
+    ],
+  },
+  {
+    id: 'human-social-identity-complexity',
+    discipline: 'human-science',
+    title: '社会的アイデンティティ複雑性理論',
+    statement:
+      '社会的アイデンティティ複雑性とは、個人が保持する複数の内集団メンバーシップ間の関係をどのように主観的に表象するかを指す概念で、ロッカスとブリュワーが2002年に提唱した。' +
+      '複雑性が高い個人は自らの複数の集団帰属が大部分重複しないと認知し、内集団の境界をより包括的に捉えるため、外集団への寛容性や包摂的態度が高まる傾向がある。',
+    keyFigures: 'Sonia Roccas／Marilynn B. Brewer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1207/S15327957PSPR0602_01', type: 'academic', label: 'Roccas & Brewer (2002) Social Identity Complexity, PSPR 6(2):88-106' },
+      { url: 'https://en.wikipedia.org/wiki/Social_identity_complexity', type: 'reference', label: 'Wikipedia — Social identity complexity' },
+      { url: 'https://doi.org/10.1177/0146167204271710', type: 'academic', label: 'Brewer & Pierce (2005) Social Identity Complexity and Outgroup Tolerance, PSPB 31(3):428-437' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-slack-theory',
+    discipline: 'management',
+    title: '組織スラック理論',
+    statement:
+      '組織スラックとは、所与の水準の組織成果を産出するために最低限必要な資源を超えて保有される余剰資源のプールを指し、サイアートとマーチが1963年の『企業の行動理論』で概念化した。' +
+      'スラックは環境の不確実性に対する緩衝材として機能し、イノベーションや実験を可能にする一方、過剰なスラックは非効率を招くという両義的効果を持つ。',
+    keyFigures: 'Richard M. Cyert／James G. March／L. Jay Bourgeois III',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm', type: 'reference', label: 'Wikipedia — A Behavioral Theory of the Firm (Cyert & March, 1963)' },
+      { url: 'https://doi.org/10.2307/258564', type: 'academic', label: 'Bourgeois, L.J. (1981) On the Measurement of Organizational Slack, AMR 6(1):29-39' },
+      { url: 'https://doi.org/10.1002/smj.4250110505', type: 'academic', label: 'Nohria, N. & Gulati, R. (1996) Is Slack Good or Bad for Innovation?, AMJ 39(5):1245-1264' },
+    ],
+  },
+  {
+    id: 'bizlaw-business-judgment-rule-delaware',
+    discipline: 'business-law',
+    title: '経営判断の原則（デラウェア州法）',
+    statement:
+      '経営判断の原則（Business Judgment Rule）とは、米国デラウェア州の判例法上確立された司法審査基準であり、取締役が十分な情報に基づき誠実に会社の最善の利益のために行動したと信じてなされた判断には、裁判所は自らの判断を代置しないという推定を与える法理である。' +
+      'Aronson v. Lewis事件（Del. 1984）で定式化され、Smith v. Van Gorkom事件（Del. 1985）では重大な過失により十分な情報を得ずに判断した場合にはこの推定が覆されることが示された。',
+    keyFigures: 'William T. Allen（元デラウェア衡平法裁判所長官）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/business_judgment_rule', type: 'reference', label: 'Cornell LII Wex — Business Judgment Rule' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-4.html', type: 'reference', label: 'Justia — Aronson v. Lewis, 473 A.2d 805 (Del. 1984)' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1105591', type: 'academic', label: 'Allen, W.T. Modern Corporate Governance and the Erosion of the BJR in Delaware (SSRN)' },
+    ],
+  },
+  {
+    id: 'infosoc-knowledge-management-spiral',
+    discipline: 'information-sociology',
+    title: '知識創造理論（SECIモデル）',
+    statement:
+      '野中郁次郎と竹内弘高が1995年の『知識創造企業』で提唱した組織的知識創造の理論であり、暗黙知と形式知の相互変換を共同化（Socialization）・表出化（Externalization）・連結化（Combination）・内面化（Internalization）の4モードから成るSECIスパイラルとして概念化した。' +
+      '知識は個人から集団・組織・組織間へと螺旋的に拡大し、イノベーションの源泉となるとする経営学・情報社会学の代表的枠組みである。',
+    keyFigures: '野中郁次郎／竹内弘高',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia — SECI model of knowledge dimensions' },
+      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'academic', label: 'Nonaka & Takeuchi (1995) The Knowledge-Creating Company, Oxford University Press' },
+      { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
+    ],
+  },
 ];
 // Stryker restore all
