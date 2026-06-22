@@ -2117,5 +2117,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 組織ルーティンの生成文法モデル | 表象的・遂行的側面の区分による動的ルーティン再概念化（Feldman / Pentland / Rueter） |
 | 経営学 | 市場カテゴリー理論 | 複数カテゴリーにまたがる企業のカテゴリー命令による正当性割引（Zuckerman / Hsu / Hannan / Negro） |
 | 情報社会学 | データフィケーション理論 | 社会的行為の定量データ変換・追跡可能化とデータ植民地主義批判（Mayer-Schönberger / van Dijck / Couldry） |
+| 経済学 | 国際金融のトリレンマ | 資本移動自由・固定為替・独立金融政策の同時維持不可能性（Mundell / Fleming / Obstfeld / Taylor） |
+| 人間科学 | デフォルト・モード・ネットワーク理論 | 安静時活性化・課題遂行中不活性化の脳領域群と自己参照的思考（Raichle / Buckner / Andrews-Hanna） |
+| 経営法学 | 約束的禁反言法理 | 不利益信頼行為を予見しうる約束は約因なく拘束力をもつ（Fuller / Perdue / Fried） |
+| 経営学 | 競争ダイナミクス理論 | 認識・動機・能力のAMCフレームワークによる企業間競争行動分析（Chen / Miller / Smith） |
+| 経営学 | 戦略的認知理論 | 経営者のメンタルモデルと認知マップが戦略的意思決定を規定（Walsh / Porac / Thomas / Huff） |
+| 情報社会学 | 情報障害フレームワーク | 誤情報・偽情報・悪意情報の三類型分類（Wardle / Derakhshan） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
