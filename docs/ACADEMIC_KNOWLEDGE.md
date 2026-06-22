@@ -2165,5 +2165,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | マネジリアル・グリッド（Blake-Mouton） | 人と業績への関心2軸によるリーダーシップスタイル分類（Blake / Mouton） |
 | 経営学 | 組織市民行動（OCB） | 職務要件を超えた自発的行動の5次元と組織効果性（Organ / Podsakoff / MacKenzie） |
 | 情報社会学 | 議題設定理論（デジタル時代の展開） | メディアによる公衆議題の顕著性形成とデジタル拡張（McCombs / Shaw / Golan） |
+| 経済学 | 保有効果（エンダウメント効果） | 所有物を同等の非所有物より高く評価する傾向とWTP/WTA非対称性（Thaler / Kahneman / Knetsch） |
+| 人間科学 | 分離脳研究 | 脳梁切断患者で左右半球の独立した意識・機能を実証（Sperry / Gazzaniga / Bogen） |
+| 経営法学 | クリーンハンズ法理（不正行為の抗弁） | 不正行為をとった原告の衡平法上の救済を拒否する法理（Pomeroy / Chafee / McClintock） |
+| 経営学 | 総合的品質管理（TQM） | PDCA・14原則・Zero Defectsに基づく継続的品質改善（Deming / Juran / Crosby） |
+| 経営学 | サーバント・リーダーシップ | 奉仕者としてのリーダーが従業員成長を支援する哲学（Greenleaf / Spears / van Dierendonck） |
+| 情報社会学 | イノベーション普及理論（デジタル拡張） | 採用者5類型とS字曲線のデジタル時代加速（Rogers / Moore / Bass） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
