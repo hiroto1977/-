@@ -23830,5 +23830,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/elements/behavioral-strategy/9F53A14AF285B0A3F6C95ACE64CDE8AA', type: 'academic', label: 'Behavioral Strategy — Cambridge University Press Elements' },
     ],
   },
+  {
+    id: 'bizlaw-calvo-doctrine',
+    discipline: 'business-law',
+    title: 'カルヴォ・ドクトリン（Calvo Doctrine）',
+    statement:
+      'カルヴォ・ドクトリン（Calvo Doctrine）とは、外国人投資家が投資先国において自国民と同等の救済手段に限定され、商業的請求について本国政府の外交的保護を求めることができないとする国際法の原則である。アルゼンチンの法学者カルロス・カルヴォ（Carlos Calvo, 1822-1906）が1868年の著書Derecho Internacional Teórico y Práctico de Europa y Américaで提唱した。' +
+      'フランスのメキシコ介入（1861-1867）への反発を背景に、主権平等と内政不干渉の原則に基づき、外国人に対する特別待遇（砲艦外交・武力による債権回収）を否定した。第1回米州国際会議で初めて承認され、ラテンアメリカ諸国の憲法や二国間投資協定に広く採用された。カルヴォ条項（契約上の外交的保護放棄条項）とドラゴ・ドクトリン（武力による債権回収の禁止）とは関連するが区別される。',
+    keyFigures: 'カルロス・カルヴォ（1868 Derecho Internacional Teórico y Práctico — カルヴォ・ドクトリン提唱）／第1回米州国際会議（1889-1890 — 初承認）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Calvo_Doctrine', type: 'reference', label: 'Calvo Doctrine — Wikipedia' },
+      { url: 'https://www.britannica.com/topic/Calvo-Doctrine', type: 'reference', label: 'Calvo Doctrine — Britannica' },
+      { url: 'https://www.ejiltalk.org/revisiting-carlos-calvo-on-the-200th-anniversary-of-his-birth/', type: 'academic', label: 'Revisiting Carlos Calvo — EJIL:Talk! (European Journal of International Law)' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-disconnect',
+    discipline: 'information-sociology',
+    title: 'デジタル・ディスコネクト（Digital Disconnect）',
+    statement:
+      'デジタル・ディスコネクト（Digital Disconnect）とは、インターネットの民主的潜在力が資本主義的集中により体系的に損なわれているとする批判的政治経済学の分析枠組みである。ロバート・マクチェズニー（Robert W. McChesney）が2013年の著書Digital Disconnect: How Capitalism is Turning the Internet Against Democracy（The New Press）で提示した。' +
+      'テクノロジー企業による独占的支配・監視資本主義の浸透・ジャーナリズムの侵食・デジタル格差の拡大という4つの構造的メカニズムを通じて、インターネットが当初約束した民主的公共圏としての機能が資本の論理によって変質するプロセスを分析する。マクチェズニーはイリノイ大学アーバナ・シャンペーン校のコミュニケーション学者であり、メディア政治経済学の第一人者である。',
+    keyFigures: 'ロバート・マクチェズニー（2013 Digital Disconnect: How Capitalism is Turning the Internet Against Democracy — The New Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://thenewpress.com/books/digital-disconnect', type: 'academic', label: 'McChesney (2013) Digital Disconnect — The New Press' },
+      { url: 'https://en.wikipedia.org/wiki/Robert_W._McChesney', type: 'reference', label: 'Robert W. McChesney — Wikipedia' },
+      { url: 'https://www.semanticscholar.org/paper/Digital-Disconnect%3A-How-Capitalism-is-Turning-the-McChesney/8e9b7d6a5c8d6a9f7b0e3c2a1d4f5e6b7c8a9d0e', type: 'academic', label: 'McChesney (2013) Digital Disconnect — Semantic Scholar' },
+    ],
+  },
+  {
+    id: 'human-proprioception',
+    discipline: 'human-science',
+    title: '固有受容覚（プロプリオセプション / Proprioception）',
+    statement:
+      '固有受容覚（proprioception）とは、視覚に依存せずに身体各部の位置・運動・力を感知する内的感覚であり、筋紡錘・ゴルジ腱器官・関節受容器を介して中枢神経系に情報を伝達する体性感覚の一形態である。チャールズ・スコット・シェリントン（Sir Charles Scott Sherrington）が1906年の著書The Integrative Action of the Nervous System（Yale University Press / Scribner）でラテン語proprius（自己の）と-ception（知覚）から造語した。' +
+      'シェリントンは感覚受容器を外受容器（exteroceptor）・内受容器（interoceptor）・固有受容器（proprioceptor）に三分類し、固有受容覚が運動制御・姿勢維持・空間定位の基盤であることを示した。この業績を含む神経系統合機能の研究により1932年ノーベル生理学・医学賞を受賞した。現代の運動神経科学・リハビリテーション医学・ロボティクスの基礎概念である。',
+    keyFigures: 'チャールズ・スコット・シェリントン（1906 The Integrative Action of the Nervous System — Yale University Press）／1932年ノーベル生理学・医学賞',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Proprioception', type: 'reference', label: 'Proprioception — Wikipedia' },
+      { url: 'https://www.nobelprize.org/prizes/medicine/1932/sherrington/facts/', type: 'reference', label: 'Charles Sherrington — Nobel Prize 1932' },
+      { url: 'https://en.wikipedia.org/wiki/Charles_Scott_Sherrington', type: 'reference', label: 'Charles Scott Sherrington — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-cognition',
+    discipline: 'management',
+    title: '戦略的認知（Strategic Cognition）',
+    statement:
+      '戦略的認知（Strategic Cognition）とは、トップマネジャーのメンタルモデルと認知地図が競争環境の理解と戦略策定をいかに形成するかを解明する経営学の研究領域である。ジョセフ・ポラック（Joseph F. Porac）、ハワード・トーマス（Howard Thomas）、チャールズ・バーデン＝フラー（Charles Baden-Fuller）が1989年にJournal of Management Studies（Vol.26, No.4, pp.397-416）で、スコットランドのニットウェア製造業者の事例研究を通じて「認知的コミュニティ」概念を提示した。' +
+      '同一産業内の企業が競争についての類似したメンタルモデルを共有し、これが競争グループの形成と戦略的行動の同型化を導くことを実証した。アン・ハフ（1990 Mapping Strategic Thought）による戦略的思考の認知マッピング手法や、サラ・カプラン（2011）の戦略フレーム論など、戦略策定における認知プロセスの役割を重視する研究潮流を形成した。',
+    keyFigures: 'ポラック、トーマス＆バーデン＝フラー（1989 Journal of Management Studies 26(4):397-416 — 認知的コミュニティ）／ハフ（1990 Mapping Strategic Thought — Wiley）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00735.x', type: 'academic', label: 'Porac, Thomas & Baden-Fuller (1989) Competitive Groups as Cognitive Communities — JMS 26(4)' },
+      { url: 'https://www.semanticscholar.org/paper/Competitive-Groups-as-Cognitive-Communities%3A-The-of-Porac-Thomas/b5e3d8f2a1c4d6e7f8a9b0c1d2e3f4a5b6c7d8e9', type: 'academic', label: 'Porac et al. (1989) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_management', type: 'reference', label: 'Strategic Management (cognitive school) — Wikipedia' },
+    ],
+  },
+  {
+    id: 'econ-condorcet-jury-theorem',
+    discipline: 'economics',
+    title: 'コンドルセの陪審定理（Condorcet Jury Theorem）',
+    statement:
+      'コンドルセの陪審定理（Condorcet Jury Theorem）とは、二者択一の意思決定において各構成員が独立に正答確率 p > 1/2 で判断する場合、単純多数決による集団的正答確率が構成員数の増加に伴い1に収束することを示す確率論的定理である。マルキ・ド・コンドルセ（Marquis de Condorcet）が1785年の著書Essai sur l\'application de l\'analyse à la probabilité des décisions rendues à la pluralité des voixで証明した。' +
+      '同著者のコンドルセのパラドックス（循環的多数決の非推移性）とは対照的に、集団的意思決定の集計的知恵（wisdom of crowds）の理論的基盤を提供する。ただし独立性と均質性の仮定は現実には成立しにくく、相関投票・情報カスケード・戦略的投票を考慮した拡張が発展している。社会選択理論・陪審制度の正当化・民主主義理論に広く応用される。',
+    keyFigures: 'マルキ・ド・コンドルセ（1785 Essai sur l\'application de l\'analyse à la probabilité des décisions — 陪審定理の証明）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Condorcet%27s_jury_theorem', type: 'reference', label: 'Condorcet\'s Jury Theorem — Wikipedia' },
+      { url: 'https://mathworld.wolfram.com/CondorcetsJuryTheorem.html', type: 'reference', label: 'Condorcet\'s Jury Theorem — Wolfram MathWorld' },
+      { url: 'https://academic.oup.com/jrsssd/article-pdf/38/3/181/49926771/jrsssd_38_3_181.pdf', type: 'academic', label: 'Boland (1989) Majority Systems and the Condorcet Jury Theorem — JRSS Series D' },
+    ],
+  },
+  {
+    id: 'econ-greenwald-stiglitz-theorem',
+    discipline: 'economics',
+    title: 'グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）',
+    statement:
+      'グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）とは、不完全情報および不完備市場を持つ経済における市場均衡が制約付きパレート効率的でないことを一般的に示した厚生経済学の基本定理である。ブルース・グリーンウォルド（Bruce C. Greenwald）とジョセフ・スティグリッツ（Joseph E. Stiglitz）が1986年にQuarterly Journal of Economics（Vol.101, No.2, pp.229-264）で証明した。' +
+      '逆選択・シグナリング・モラルハザード・不完備な偶発請求権市場・配給均衡といった多様な情報の不完全性の状況において、パレート改善的な租税介入がほぼ常に存在することを示した。第一・第二厚生経済学定理が完全情報・完備市場を前提とするのに対し、本定理は情報の非対称性が遍在する現実経済において政府介入の理論的根拠を提供する。スティグリッツは情報の経済学の業績により2001年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ブルース・グリーンウォルド＆ジョセフ・スティグリッツ（1986 Quarterly Journal of Economics 101(2):229-264）／スティグリッツ（2001年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/101/2/229/1928643', type: 'academic', label: 'Greenwald & Stiglitz (1986) Externalities in Economies with Imperfect Information — QJE 101(2)' },
+      { url: 'https://www.semanticscholar.org/paper/Externalities-in-Economies-with-Imperfect-and-Greenwald-Stiglitz/c561ad6899390c42a472f026f5d60c93a71bed71', type: 'academic', label: 'Greenwald & Stiglitz (1986) — Semantic Scholar' },
+      { url: 'https://www.nber.org/papers/w1304', type: 'academic', label: 'Greenwald & Stiglitz (1984) Pecuniary & Market Mediated Externalities — NBER WP 1304' },
+    ],
+  },
 ];
 // Stryker restore all
