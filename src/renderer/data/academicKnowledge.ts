@@ -28935,5 +28935,106 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Spreadability', type: 'reference', label: 'Wikipedia — Spreadability' },
     ],
   },
+  {
+    id: 'econ-infant-industry-argument',
+    discipline: 'economics',
+    title: '幼稚産業保護論',
+    statement:
+      'Hamilton（1791）が初めて提唱し、List（1841）が体系化した幼稚産業保護論は、発展途上の産業が国際競争に耐えうる規模の経済と技術力を獲得するまで、関税や補助金による一時的保護が正当化されるという通商政策論である。' +
+      'Mill（1848）はこの論を条件付きで承認し、保護は一時的かつ産業が自立可能となった後は撤廃されるべきだと論じたが、後に補助金の方が関税より効率的な手段であると修正した。' +
+      'Baldwin（1969）は幼稚産業保護の理論的根拠を批判的に検討し、規模の経済を達成するための最適政策手段は関税ではなく直接補助金であると主張した。' +
+      '実証面ではKrueger & Tuncer（1982）がトルコの保護産業を分析し、保護を受けた産業が必ずしも生産性向上を達成しないことを示した。',
+    keyFigures: 'Alexander Hamilton ／ Friedrich List ／ John Stuart Mill ／ Robert E. Baldwin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/259517', type: 'academic', label: 'Baldwin (1969) The Case against Infant-Industry Tariff Protection, Journal of Political Economy 77(3):295-305' },
+      { url: 'https://en.wikipedia.org/wiki/Infant_industry_argument', type: 'reference', label: 'Wikipedia — Infant industry argument' },
+      { url: 'https://www.britannica.com/topic/infant-industry', type: 'reference', label: 'Encyclopaedia Britannica — Infant industry' },
+    ],
+  },
+  {
+    id: 'human-cognitive-dissonance-reduction',
+    discipline: 'human-science',
+    title: '認知的不協和低減',
+    statement:
+      'Festinger（1957）が提唱した認知的不協和理論は、個人が矛盾する二つ以上の認知を同時に保持すると心理的不快感（不協和）を経験し、態度変更・協和的認知の追加・不協和要素の重要性低減のいずれかによって不協和を低減しようと動機づけられると主張する。' +
+      'Festinger & Carlsmith（1959）は強制承諾パラダイムにより、わずか1ドルの報酬で退屈な課題を「楽しかった」と伝えるよう求められた被験者が、20ドル群より課題への態度を肯定的に変化させることを実証した。' +
+      'Aronson（1969）は自己一貫性の観点から理論を精緻化し、Cooper & Fazio（1984）は不協和の生起に望まない帰結の自覚と個人的責任が必要であるとする「ニュールック・モデル」を提唱した。',
+    keyFigures: 'Leon Festinger ／ James M. Carlsmith ／ Elliot Aronson ／ Joel Cooper ／ Russell H. Fazio',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/13640824/', type: 'academic', label: 'Festinger & Carlsmith (1959) Cognitive Consequences of Forced Compliance. Journal of Abnormal and Social Psychology 58:203-210.' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0065260108601215', type: 'academic', label: 'Cooper & Fazio (1984) A New Look at Dissonance Theory. Advances in Experimental Social Psychology 17:229-266.' },
+      { url: 'https://en.wikipedia.org/wiki/Cognitive_dissonance', type: 'reference', label: 'Wikipedia — Cognitive dissonance' },
+    ],
+  },
+  {
+    id: 'bizlaw-business-judgment-rule-enhanced',
+    discipline: 'business-law',
+    title: '経営判断原則の拡張理論',
+    statement:
+      'デラウェア州会社法における「拡張された経営判断原則」とは、取締役会が会社支配権の変動を伴う取引を承認する局面で適用される中間的（強化）審査基準（enhanced scrutiny）である。' +
+      '通常の経営判断原則が取締役の判断を広く尊重するのに対し、1985年のUnocal判決は敵対的買収への防衛措置につき「合理的根拠のある脅威の認識」と「対応措置の均衡性」の二段階審査を要求した。' +
+      '続くRevlon判決（1986）は、会社売却が不可避となった時点で取締役の義務が「企業の存続保護」から「株主価値の最大化」へと質的に転換し、強化審査に服するとした。' +
+      'Gilson & Kraakman（1990）はRevlon義務の発動要件を分析し、Bainbridge（2013）は利益相反の有無を基準とすべきとする批判的立場を提示した。',
+    keyFigures: 'Ronald J. Gilson ／ Reinier Kraakman ／ Stephen M. Bainbridge ／ William T. Allen',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.columbia.edu/faculty_scholarship/892/', type: 'academic', label: 'Gilson & Kraakman — "What Triggers Revlon?", 25 Wake Forest L. Rev. 37 (1990)' },
+      { url: 'https://ir.lawnet.fordham.edu/flr/vol81/iss6/8/', type: 'academic', label: 'Bainbridge — "The Geography of Revlon-Land", 81 Fordham L. Rev. 3277 (2013)' },
+      { url: 'https://en.wikipedia.org/wiki/Revlon,_Inc._v._MacAndrews_%26_Forbes_Holdings,_Inc.', type: 'reference', label: 'Wikipedia — Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc. (1986)' },
+    ],
+  },
+  {
+    id: 'mgmt-knowledge-creation-theory',
+    discipline: 'management',
+    title: '組織的知識創造理論',
+    statement:
+      'Nonaka（1994）が提唱し、Nonaka & Takeuchi（1995）が体系化した組織的知識創造理論は、組織が新たな知識を生み出すプロセスを解明する経営学理論である。' +
+      '言語化できない「暗黙知」と形式化された「形式知」の2種類の知識が、共同化（Socialization）・表出化（Externalization）・連結化（Combination）・内面化（Internalization）の4モードを通じて相互に変換・増幅されるとするSECIモデルを中核とする。' +
+      'これらが個人・集団・組織の各レベルで螺旋的に循環する「知識スパイラル」が革新の源泉とされ、知識創造が生起する共有された文脈としての「場（Ba）」の概念が後に補完された。' +
+      '暗黙知と形式知の対立はPolanyi（1966）の知識論を基盤とし、日本企業の革新プロセスを説明する枠組みとして国際的に広く援用されている。',
+    keyFigures: 'Ikujiro Nonaka ／ Hirotaka Takeuchi',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka (1994) A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
+      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'academic', label: 'Nonaka & Takeuchi (1995) The Knowledge-Creating Company, Oxford University Press' },
+      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia — SECI model of knowledge dimensions' },
+    ],
+  },
+  {
+    id: 'mgmt-population-ecology-organization',
+    discipline: 'management',
+    title: '組織の個体群生態学',
+    statement:
+      '組織の個体群生態学（ポピュレーション・エコロジー）は、生物学の個体群生態学の知見を組織研究に応用した理論的枠組みであり、Hannan & Freeman（1977）が創始した。' +
+      '組織の変化は個々の組織による戦略的適応よりも、環境による選択（自然淘汰）によって主に説明されると主張し、分析単位を個別組織ではなく「組織個体群」に置く。' +
+      '組織は一度確立されると構造的慣性によって変革が困難となり、環境変化への適応が遅れるため、組織形態の多様性は新設・存続・消滅というポピュレーションレベルの選択プロセスから生じる。' +
+      'Hannan & Freeman（1984）は構造的慣性論をさらに発展させ、信頼性・説明可能性の高い組織ほど変革に抵抗し、その慣性自体が選択の産物であることを論じた。',
+    keyFigures: 'Michael T. Hannan ／ John Freeman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977). The Population Ecology of Organizations. American Journal of Sociology, 82(5), 929–964.' },
+      { url: 'https://www.semanticscholar.org/paper/Structural-Inertia-and-Organizational-Change-Hannan/ef6388bd6e27ae56054e3a2aa58cda91842ef729', type: 'academic', label: 'Hannan & Freeman (1984). Structural Inertia and Organizational Change. American Sociological Review, 49(2), 149–164.' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Wikipedia — Organizational ecology' },
+    ],
+  },
+  {
+    id: 'infosoc-network-society-theory',
+    discipline: 'information-sociology',
+    title: 'ネットワーク社会論',
+    statement:
+      'ネットワーク社会論とは、情報通信技術の高度化を背景に、産業社会から「情報時代」へと移行する現代社会を、ネットワークを基本的組織原理として分析する社会理論の総称である。' +
+      'Castells（1996）は三部作『情報の時代』第1巻でこの理論を体系化し、資本・情報・技術が電子回路を通じて循環する「フローの空間」が「場所の空間」に対し構造的に優位に立つと論じた。' +
+      'van Dijk（2006）はCastellsと異なり、社会の基本単位を依然として個人・集団・組織に置き、ネットワークはそれらを結ぶ組織形態にすぎないと主張し、ネットワーク社会論と「情報社会論」を区別した。' +
+      '両者の共通点は、ネットワーク構造への移行が権力・アイデンティティ・格差のあり方を根本から変えるという認識にある。',
+    keyFigures: 'Manuel Castells ／ Jan van Dijk',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781444319514', type: 'academic', label: 'Castells, M. (1996/2010) The Rise of the Network Society — Wiley Online Library (The Information Age Vol.1, 2nd ed.)' },
+      { url: 'https://books.google.com/books/about/The_Network_Society.html?id=b7ktTPViIYMC', type: 'academic', label: 'van Dijk, J. (2006) The Network Society: Social Aspects of New Media (2nd ed.) — Sage Publications' },
+      { url: 'https://en.wikipedia.org/wiki/Network_society', type: 'reference', label: 'Wikipedia — Network society' },
+    ],
+  },
 ];
 // Stryker restore all
