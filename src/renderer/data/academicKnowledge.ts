@@ -27399,5 +27399,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955', type: 'academic', label: 'Scholz (ed.) (2013) Digital Labor: The Internet as Playground and Factory, Routledge' },
     ],
   },
+  {
+    id: 'econ-chartalism-modern-monetary-theory',
+    discipline: 'economics',
+    title: 'チャータリズムと現代貨幣理論（MMT）',
+    statement:
+      'チャータリズムは、貨幣の価値は金属的裏付けではなく国家権力（とりわけ租税義務）に由来するという理論であり、Knapp が1905年の『貨幣国定学説（Staatliche Theorie des Geldes）』で体系化した。' +
+      '現代貨幣理論（MMT）はこれを継承し、自国通貨を発行する主権国家は財政的制約を持たず、制約となるのは労働・資源・設備などの実物資源のみであると主張する。' +
+      'Wray（1998）は租税が通貨需要を創出するメカニズムを中心に理論を再構成し、Tcherneva（2006）は租税駆動型の貨幣アプローチを体系的に整理してMMTの学術的基盤を強化した。',
+    keyFigures: 'Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pavlina R. Tcherneva',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/b/elg/eebook/1668.html', type: 'academic', label: 'Wray (1998) Understanding Modern Money: The Key to Full Employment and Price Stability, Edward Elgar' },
+      { url: 'https://econpapers.repec.org/bookchap/elgeechap/3506_5f5.htm', type: 'academic', label: 'Tcherneva (2006) Chartalism and the Tax-Driven Approach to Money, in Handbook of Alternative Monetary Economics, pp. 69-86' },
+      { url: 'https://www.cambridge.org/core/journals/economics-and-philosophy/article/abs/deficit-myth-modern-monetary-theory-and-the-birth-of-the-peoples-economy-stephanie-kelton-public-affairs-2020-325-pages/7CF88986E1DF34B0E3DA8112E0CC7AAB', type: 'academic', label: 'Kelton (2020) The Deficit Myth: Modern Monetary Theory, PublicAffairs [Cambridge Core review]' },
+    ],
+  },
+  {
+    id: 'econ-immiserizing-growth-bhagwati',
+    discipline: 'economics',
+    title: '窮乏化成長',
+    statement:
+      '窮乏化成長とは、経済成長が国民厚生を悪化させる逆説的現象を指す。' +
+      'Bhagwati（1958）は、成長が輸出部門に強く偏り、かつ当該国が交易条件に影響を与えうる大国である場合、輸出拡大が外国需要の非弾力性と相まって交易条件を著しく悪化させ、成長による直接的利得を上回る厚生損失をもたらすことを幾何学的手法で証明した。' +
+      'この理論はEdgeworth（1894）の申し出曲線分析を先駆として持ち、Johnson（1967）によって関税歪曲が存在する小国においても同様の窮乏化が生じうることへと拡張された。',
+    keyFigures: 'Jagdish N. Bhagwati／Harry G. Johnson／Francis Y. Edgeworth',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article/25/3/201/1552362', type: 'academic', label: 'Bhagwati (1958) Immiserizing Growth: A Geometrical Note, Review of Economic Studies 25(3):201-205' },
+      { url: 'https://academic.oup.com/ej/article-abstract/77/305/151/5235683', type: 'academic', label: 'Johnson (1967) Income Losses from Increased Efficiency in the Presence of Tariffs, Economic Journal 77(305):151-154' },
+      { url: 'https://academic.oup.com/ej/article-abstract/4/13/35/5302230', type: 'academic', label: 'Edgeworth (1894) The Theory of International Values, Economic Journal 4(13):35-50' },
+    ],
+  },
+  {
+    id: 'human-cognitive-appraisal-theory',
+    discipline: 'human-science',
+    title: '認知的評価理論（ストレスと情動の認知的評価理論）',
+    statement:
+      '認知的評価理論は、ストレスや情動的反応が出来事そのものではなく、個人がその出来事をどのように評価（appraisal）するかによって決まるとする心理学理論である。' +
+      'Lazarus & Folkman（1984）は、一次的評価（脅威・挑戦・害の判断）と二次的評価（対処資源の見積もり）の二段階プロセスが感情の質と強度を規定し、コーピング戦略の選択にも直結すると論じた。' +
+      'Smith & Ellsworth（1985）はこの枠組みを発展させ、快・確実性・努力・責任の帰属など複数の評価次元が異なる感情を体系的に弁別することを実証した。',
+    keyFigures: 'Richard S. Lazarus／Susan Folkman／Craig A. Smith',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.amazon.com/Stress-Appraisal-Coping-Richard-Lazarus/dp/0826141919', type: 'academic', label: 'Lazarus & Folkman (1984) Stress, Appraisal, and Coping, Springer Publishing' },
+      { url: 'https://www.amazon.com/Emotion-Adaptation-Richard-S-Lazarus/dp/0195069943', type: 'academic', label: 'Lazarus (1991) Emotion and Adaptation, Oxford University Press' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/3886875/', type: 'academic', label: 'Smith & Ellsworth (1985) Patterns of Cognitive Appraisal in Emotion, J. Personality and Social Psychology 48(4):813-838' },
+    ],
+  },
+  {
+    id: 'mgmt-paradox-of-success',
+    discipline: 'management',
+    title: '成功のパラドクス',
+    statement:
+      '成功のパラドクスとは、成功した組織が過去の成功パターンへの過剰なコミットメントによって将来の失敗の条件を自ら生み出す現象を指す。' +
+      'March（1991）の探索と活用の二律背反が示すように、成功企業は実績ある活用に資源を集中させ変化への適応に必要な探索を怠る傾向を持つ。' +
+      'Leonard-Barton（1992）は中核的能力がやがて中核的硬直性（コア・リジディティ）へと転化するメカニズムを解明し、Levitt & March（1988）は組織学習における有能性の罠（コンピテンシー・トラップ）を理論化した。',
+    keyFigures: 'James G. March／Dorothy Leonard-Barton／Danny Miller',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) Exploration and Exploitation in Organizational Learning, Organization Science 2(1):71-87' },
+      { url: 'https://doi.org/10.1002/smj.4250131009', type: 'academic', label: 'Leonard-Barton (1992) Core Capabilities and Core Rigidities, Strategic Management Journal 13(S):111-125' },
+      { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt & March (1988) Organizational Learning, Annual Review of Sociology 14:319-338' },
+    ],
+  },
+  {
+    id: 'bizlaw-materiality-securities-law',
+    discipline: 'business-law',
+    title: '証券法における重要性基準',
+    statement:
+      '重要性基準とは、投資家に開示すべき情報の範囲を画する法的基準であり、米国最高裁はTSC Industries, Inc. v. Northway, Inc.（426 U.S. 438, 1976年）において「合理的な株主が議決権行使の判断において重要と考える相当な可能性がある」情報を重要と定義し、情報の「総体（total mix）」を有意に変化させるか否かを判断基準とした。' +
+      'Basic Inc. v. Levinson（485 U.S. 224, 1988年）はこれをRule 10b-5の文脈に拡張し、合併協議の重要性を確率と規模の積として評価するテストを採用するとともに、効率的市場仮説に基づくfraud-on-the-market法理を確立した。' +
+      'この基準はSEC規則10b-5に基づく民事訴訟・行政執行双方の中核要件であり、各国の証券規制における開示義務の解釈にも比較法的影響を与えている。',
+    keyFigures: 'James D. Cox／Donald C. Langevoort／Robert W. Hillman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.loc.gov/item/usrep426438/', type: 'government', label: 'TSC Industries, Inc. v. Northway, Inc., 426 U.S. 438 (1976) — Library of Congress' },
+      { url: 'https://supreme.justia.com/cases/federal/us/485/224/', type: 'reference', label: 'Basic Inc. v. Levinson, 485 U.S. 224 (1988) — Justia U.S. Supreme Court' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1026316', type: 'academic', label: 'Langevoort (2009) Basic at Twenty: Rethinking Fraud-on-the-Market, 2009 Wis. L. Rev. 151' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-sovereignty',
+    discipline: 'information-sociology',
+    title: 'デジタル主権',
+    statement:
+      'デジタル主権とは、国家・コミュニティ・個人がデジタルインフラ、データ、および技術ガバナンスに対して自律的な制御を行使する能力を指す。' +
+      'Pohle & Thiel（2020）はこの概念を法的・組織的概念というよりも政策言説における争点として体系化し、Couture & Toupin（2019）は国家主権からコミュニティの技術的自己決定まで多義的な規範的主張を包含することを明らかにした。' +
+      'Floridi（2020）はEUにとってのデジタル主権の意義を論じ、GAIA-XイニシアチブやEUデジタル市場法（DMA）など具体的政策展開の理論的基礎を提供した。',
+    keyFigures: 'Luciano Floridi／Julia Pohle／Thorsten Thiel／Stéphane Couture／Sophie Toupin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.14763/2020.4.1532', type: 'academic', label: 'Pohle & Thiel (2020) Digital sovereignty, Internet Policy Review 9(4)' },
+      { url: 'https://doi.org/10.1177/1461444819865984', type: 'academic', label: 'Couture & Toupin (2019) What does the notion of sovereignty mean when referring to the digital?, New Media & Society 21(10):2305-2322' },
+      { url: 'https://doi.org/10.1007/s13347-020-00423-6', type: 'academic', label: 'Floridi (2020) The Fight for Digital Sovereignty, Philosophy & Technology 33(3):369-378' },
+    ],
+  },
 ];
 // Stryker restore all
