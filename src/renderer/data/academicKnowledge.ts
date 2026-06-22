@@ -29348,5 +29348,111 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Platform_economy', type: 'reference', label: 'Platform economy — Wikipedia' },
     ],
   },
+  {
+    id: 'econ-real-business-cycle-theory',
+    discipline: 'economics',
+    title: '実物景気循環理論',
+    statement:
+      'Kydland and Prescott（1982）は、景気循環を貨幣的ショックではなく技術進歩率の確率的変動（全要素生産性ショック）によって説明する実物景気循環理論（RBC理論）を提唱した。' +
+      '同理論は、合理的期待・市場清算・異時点間最適化を前提とする新古典派成長モデルを基盤とし、家計と企業の最適行動から産出・消費・投資・労働供給の共変動を内生的に導く。' +
+      'Long and Plosser（1983）はマルチセクター・モデルを用いて同様の景気循環的共変動を再現し、RBCアプローチの一般性を示した。' +
+      'Prescottが主導したカリブレーション手法により、パラメータをマクロ・ミクロのスタイライズド・ファクトから設定してモデルの定量的含意を検証する手法が確立された。' +
+      'RBC理論は景気変動を効率的な均衡として解釈するため、需要管理的な安定化政策の有効性を否定し、Mankiw・Summersらニューケインジアンからは技術ショックの現実性や労働供給弾力性の誇張について批判を受けた。',
+    keyFigures: 'Finn E. Kydland ／ Edward C. Prescott ／ John B. Long ／ Charles I. Plosser ／ Sergio Rebelo',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/summary/', type: 'reference', label: 'The Sveriges Riksbank Prize in Economic Sciences 2004 — Nobel Prize Summary (Kydland & Prescott)' },
+      { url: 'https://mpra.ub.uni-muenchen.de/17932/', type: 'academic', label: 'Real Business Cycle Theory — A Systematic Review, Munich Personal RePEC Archive (MPRA)' },
+      { url: 'https://ideas.repec.org/a/ecm/emetrp/v50y1982i6p1345-70.html', type: 'academic', label: 'Kydland & Prescott (1982): Time to Build and Aggregate Fluctuations — Econometrica, IDEAS/RePEC' },
+    ],
+  },
+  {
+    id: 'human-mirror-neuron-theory',
+    discipline: 'human-science',
+    title: 'ミラーニューロン理論',
+    statement:
+      'Rizzolatti（1996）らはマカクザルの腹側運動前野（F5野）において、行為の実行時と観察時の双方に発火するニューロン（ミラーニューロン）を発見し、Gallese・Fadiga・Fogassiらとともにその神経生理学的特性を記述した。' +
+      'この理論の核心的主張は、他者の行為を観察する際に観察者自身の運動系が内的シミュレーションを行うことで行為理解が成立するという「直接照合仮説」である。' +
+      'Rizzolatti and Craighero（2004）はヒトにも類似のミラーニューロンシステムが存在し、模倣・意図理解・感情共鳴（共感）・言語の神経基盤となりうると総説した。' +
+      'Gallese（2001）は「具現化シミュレーション（Embodied Simulation）」概念を提唱し、ミラーニューロン系が社会的認知の統合的基盤を構成すると論じた。' +
+      'Ramachandran（2006）はミラーニューロン機能不全が自閉スペクトラム症の中核症状を説明しうるとする「壊れた鏡」仮説を提示したが、同仮説の実証的根拠については現在も議論が続いている。',
+    keyFigures: 'Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni ／ Vilayanur S. Ramachandran',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero (2004) — The Mirror-Neuron System, Annual Review of Neuroscience 27: 169–192' },
+      { url: 'https://academic.oup.com/brain/article/119/2/593/284429', type: 'academic', label: 'Gallese, Fadiga, Fogassi & Rizzolatti (1996) — Action recognition in the premotor cortex, Brain 119: 593–609' },
+      { url: 'https://www.scientificamerican.com/article/broken-mirrors-a-theory-of-autism-2007-06/', type: 'media', label: 'Ramachandran & Oberman (2007) — Broken Mirrors: A Theory of Autism, Scientific American' },
+    ],
+  },
+  {
+    id: 'bizlaw-deep-rock-doctrine',
+    discipline: 'business-law',
+    title: 'ディープ・ロック法理',
+    statement:
+      'ディープ・ロック法理（Deep Rock doctrine）とは、連邦最高裁が Taylor v. Standard Gas & Electric Co.（1939）において Roberts 裁判官の法廷意見で確立した衡平法上の原則であり、親会社が子会社を支配しつつ不当に管理した場合、当該子会社の破産手続において親会社の債権請求を他の債権者・優先株主の請求に劣後させることを認めるものである。' +
+      'Herzog and Zweibel（1962）はこの法理を体系的に分析し、劣後処理の根拠を「親会社による子会社資産の収奪・不正管理・忠実義務違反」という三類型に整理した。' +
+      '現代の破産裁判所は In re Mobile Steel Co.（1977）で定式化された三要件テスト（不公正行為、他の債権者への損害または申立人への不当な利益、破産法との整合性）を適用している。' +
+      'この法理は1978年の破産法改正により 11 U.S.C. § 510(c) として明文化された。' +
+      'Schwarcz（2022）は、近年の裁判所が過失なき場合にも劣後を認める傾向を批判し、故意・不正行為を要件とする統一基準への改正を提唱している。',
+    keyFigures: 'Owen Roberts ／ Asa S. Herzog ／ Joel B. Zweibel ／ Rafael I. Pardo ／ Steven L. Schwarcz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/306/307/', type: 'reference', label: 'Taylor v. Standard Gas & Electric Co., 306 U.S. 307 (1939) — Justia US Supreme Court' },
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol15/iss1/4/', type: 'academic', label: 'Herzog & Zweibel, "The Equitable Subordination of Claims in Bankruptcy," 15 Vand. L. Rev. 83 (1961)' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3899472', type: 'academic', label: 'Schwarcz, "The Inequities of Equitable Subordination," 96 Am. Bankr. L.J. 1 (2022) — SSRN' },
+    ],
+  },
+  {
+    id: 'mgmt-social-exchange-theory',
+    discipline: 'management',
+    title: '社会的交換理論',
+    statement:
+      'Homans（1958）は社会的交換理論の基礎を行動主義心理学に求め、人々が報酬を最大化しコストを最小化するよう合理的に行動するという前提のもと、社会的相互作用を「交換」として定式化した。' +
+      'Blau（1964）はこの枠組みを組織社会学へ拡張し、経済的交換とは異なり社会的交換は互酬性の規範（Gouldner, 1960）に基づく「拡散した義務感」を生み出すと論じた。' +
+      'Emerson（1972）は権力・依存関係の分析を通じて交換ネットワーク理論を体系化し、組織内の権力構造を説明する概念的基盤を提供した。' +
+      'Cropanzano and Mitchell（2005）は組織行動論における社会的交換理論の応用を包括的にレビューし、交換規則・資源の性質・交換関係の形成という三つの概念的課題を整理した上で、組織市民行動・組織コミットメント・知覚された組織サポート・上司との交換関係（LMX）等の研究を統合する分析枠組みとして理論的意義を明確化した。',
+    keyFigures: 'George C. Homans ／ Peter M. Blau ／ Richard M. Emerson ／ Alvin W. Gouldner ／ Russell Cropanzano',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206305279602', type: 'academic', label: 'Cropanzano & Mitchell — Social Exchange Theory: An Interdisciplinary Review, Journal of Management 31 (2005)' },
+      { url: 'https://journals.aom.org/doi/10.5465/annals.2015.0099', type: 'academic', label: 'Cropanzano, Anthony, Daniels & Hall — Social Exchange Theory: A Critical Review with Theoretical Remedies, Academy of Management Annals 11 (2017)' },
+      { url: 'https://en.wikipedia.org/wiki/Social_exchange_theory', type: 'reference', label: 'Wikipedia — Social exchange theory (Homans, Blau, Emerson overview)' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-hypocrisy-theory',
+    discipline: 'management',
+    title: '組織的偽善理論',
+    statement:
+      'Brunsson（1989）は、組織が「トーク（言説）」「意思決定（公式の選択）」「行動（実際の活動）」という三つの出力を体系的に分離することで、矛盾する利害関係者の要求を同時に管理できると主張した。' +
+      'この三者の「逆結合（counter-coupling）」により、組織は口頭では環境・社会への責任を約束しながら、実際の行動では相反する方針をとることが可能になり、正統性（legitimacy）を維持できる。' +
+      'Brunsson の理論は Meyer and Rowan（1977）の制度的脱連結（decoupling）論および Cohen・March・Olsen（1972）のゴミ箱モデルを継承しつつ、組織的偽善を逸脱ではなく適応的な制度的応答として積極的に位置づける点で新制度論を発展させた。' +
+      'Christensen, Morsing, and Thyssen（2013）は組織的偽善をさらに発展させ、「志望的トーク（aspirational talk）」が組織内の自己変革を触発する潜在的機能を持つと論じた。',
+    keyFigures: 'Nils Brunsson ／ John W. Meyer ／ Brian Rowan ／ Kerstin Sahlin-Andersson ／ Michael D. Cohen',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Nils_Brunsson', type: 'reference', label: 'Wikipedia — Nils Brunsson' },
+      { url: 'https://doi.org/10.1177/017084069201300211', type: 'academic', label: 'Carter (1992) Book Review: The Organization of Hypocrisy — Organization Studies, SAGE' },
+      { url: 'https://doi.org/10.1093/oso/9780199206285.003.0007', type: 'academic', label: 'Brunsson — Organized Hypocrisy, in The Consequences of Decision-Making — Oxford University Press' },
+    ],
+  },
+  {
+    id: 'infosoc-data-colonialism-theory',
+    discipline: 'information-sociology',
+    title: 'データ植民地主義論',
+    statement:
+      'Couldry and Mejias（2019）は、デジタル資本主義の時代において、人間の日常生活からデータを絶え間なく収奪する新たな植民地主義的秩序が出現しつつあると論じた。' +
+      '彼らの提唱する「データ関係（data relations）」とは、日常生活をデータの流れへと「自然に」変換し、持続的な追跡と行動への影響を可能にする新しい社会関係の形態である。' +
+      '歴史的植民地主義が土地・資源・労働を収奪したのと同様に、データ植民地主義は人間の生そのものをビッグテック企業の資本蓄積のための原材料として横領し、新たな社会秩序を形成する。' +
+      'Thatcher et al.（2016）はハーヴェイの「剥奪による蓄積」概念をデータ領域に応用し、日常的なデジタル活動の収奪的性格を理論化した。' +
+      'Couldry and Mejias（2024）の "Data Grab" では、この分析枠組みをAI産業とグローバルサウスへの収奪まで拡張し、データ植民地主義への抵抗戦略を提示している。',
+    keyFigures: 'Nick Couldry ／ Ulises A. Mejias ／ Jim Thatcher ／ Paola Ricaurte',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias, "Data Colonialism: Rethinking Big Data\'s Relation to the Contemporary Subject", Television & New Media, 2019' },
+      { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'reference', label: 'Couldry & Mejias, "The Costs of Connection: How Data Is Colonizing Human Life and Appropriating It for Capitalism", Stanford University Press, 2019' },
+      { url: 'https://en.wikipedia.org/wiki/Data_colonialism', type: 'reference', label: 'Wikipedia, "Data colonialism" — overview of the theory and key scholarly contributions' },
+    ],
+  },
 ];
 // Stryker restore all
