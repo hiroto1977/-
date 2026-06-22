@@ -27796,5 +27796,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.interaction-design.org/literature/topics/participatory-design', type: 'reference', label: 'Interaction Design Foundation — Participatory Design overview' },
     ],
   },
+  {
+    id: 'econ-endogenous-money-supply',
+    discipline: 'economics',
+    title: '内生的貨幣供給論',
+    statement:
+      '内生的貨幣供給論とは、貨幣量は中央銀行によって外生的に決定されるのではなく、民間部門の信用需要に応じて銀行が貸出を行う過程で内生的に創出されるという見解である。' +
+      'Moore（1988）は著書 Horizontalists and Verticalists において、銀行は準備金を事後的に調達するため貸付が先行し預金が後続すると論じ、ポスト・ケインズ派経済学の基礎を確立した。' +
+      'Kaldor（1982）もまたマネタリズムの外生的貨幣観を批判し、信用貨幣の内生性を強調した。' +
+      'Lavoie やChick らはこの理論をさらに発展させ、Minsky は金融不安定性仮説において内生的信用膨張が景気循環と金融危機を引き起こすメカニズムを解明した。',
+    keyFigures: 'Basil J. Moore／Nicholas Kaldor／Marc Lavoie／Victoria Chick／Hyman P. Minsky',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1017/S0022050700027601', type: 'academic', label: 'Moore (1988) Horizontalists and Verticalists review, Journal of Economic History' },
+      { url: 'https://doi.org/10.1093/cje/bep054', type: 'academic', label: 'Lavoie (2010) Changes in central bank procedures and the post-Keynesian model of endogenous money, Cambridge Journal of Economics' },
+      { url: 'https://www.bankofengland.co.uk/quarterly-bulletin/2014/q1/money-creation-in-the-modern-economy', type: 'reference', label: 'Bank of England Quarterly Bulletin (2014) Money creation in the modern economy' },
+    ],
+  },
+  {
+    id: 'econ-market-for-lemons',
+    discipline: 'economics',
+    title: 'レモン市場（逆選択の理論）',
+    statement:
+      'Akerlof（1970）は、中古車市場を例に、売り手と買い手の間に情報の非対称性が存在する場合、低品質財（レモン）が市場を駆逐し市場が崩壊しうることを示した。' +
+      '買い手は品質を事前に識別できないため平均的な価格しか提示できず、高品質財の売り手が市場から撤退する逆選択が生じる。' +
+      'Spence（1973）はシグナリング、Rothschild & Stiglitz（1976）は保険市場における均衡概念を定式化し、情報の非対称性が資源配分に広範な非効率をもたらすことを明らかにした。',
+    keyFigures: 'George A. Akerlof／Michael Spence／Joseph E. Stiglitz／Michael Rothschild',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof (1970) The Market for Lemons: Quality Uncertainty and the Market Mechanism, QJE 84(3):488-500' },
+      { url: 'https://doi.org/10.2307/1885326', type: 'academic', label: 'Rothschild & Stiglitz (1976) Equilibrium in Competitive Insurance Markets, QJE 90(4):629-649' },
+      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence (1973) Job Market Signaling, QJE 87(3):355-374' },
+    ],
+  },
+  {
+    id: 'human-self-determination-theory-mini-theories',
+    discipline: 'human-science',
+    title: '自己決定理論のミニ理論群',
+    statement:
+      '自己決定理論（SDT）は、Ryan & Deci（2017）が体系化した動機づけと人格発達の巨視的理論であり、六つのミニ理論によって構成される。' +
+      '認知的評価理論（CET）は外的報酬が内発的動機づけに与える影響を、有機的統合理論（OIT）は外発的動機づけの内面化と統合の段階を説明する。' +
+      '因果志向性理論（COT）は個人差における自律・統制・非個人志向を、基本的心理欲求理論（BPNT）は自律性・有能性・関係性という三欲求の普遍的役割を論じる。' +
+      '目標内容理論（GCT）は内発的目標と外発的目標の違いを、関係動機づけ理論（RMT）は対人関係における欲求充足を扱う。',
+    keyFigures: 'Edward L. Deci／Richard M. Ryan／Maarten Vansteenkiste／Bart Soenens',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1521/978.14625.28806', type: 'academic', label: 'Ryan & Deci (2017) Self-Determination Theory: Basic Psychological Needs in Motivation, Development, and Wellness, Guilford Press' },
+      { url: 'https://doi.org/10.1037/0033-295X.107.6.1026', type: 'academic', label: 'Ryan & Deci (2000) Self-determination theory and the facilitation of intrinsic motivation, American Psychologist 55(1):68-78' },
+      { url: 'https://doi.org/10.1023/A:1018806431435', type: 'academic', label: 'Deci & Ryan (2000) The what and why of goal pursuits, Psychological Inquiry 11(4):227-268' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-leadership-theory',
+    discipline: 'management',
+    title: '戦略的リーダーシップ理論',
+    statement:
+      '戦略的リーダーシップ理論は、最高経営者をはじめとするトップ・マネジメント・チームの特性・価値観・認知が戦略選択を通じて組織成果を規定するという考え方であり、Hambrick & Mason（1984）の「上位梯子（Upper Echelons）」論文がその礎を築いた。' +
+      '同理論は、客観的な環境よりも経営者の認知フィルターを経た「認識された環境」が戦略行動に影響すると主張する。' +
+      'Finkelstein, Hambrick & Cannella（2009）は半世紀の研究を体系化し、最高経営責任者の在任期間・権力・後継計画・ガバナンスとの相互作用を包括的に論じた。' +
+      'Carpenter, Geletkanycz & Sanders（2004）は後続研究で国際的文脈やネットワーク構造を加え、理論の適用範囲を拡張している。',
+    keyFigures: 'Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carpenter／Phyllis A. Mason',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/258434', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers, AMR 9(2):193-206' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780195162073.001.0001', type: 'academic', label: 'Finkelstein, Hambrick & Cannella (2009) Strategic Leadership: Theory and Research on Executives, Oxford UP' },
+      { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Carpenter, Geletkanycz & Sanders (2004) Upper Echelons Research Revisited, Journal of Management 30(6):749-778' },
+    ],
+  },
+  {
+    id: 'bizlaw-tortious-interference-contract',
+    discipline: 'business-law',
+    title: '契約関係への不法干渉',
+    statement:
+      '契約関係への不法干渉とは、第三者が既存の契約関係に故意に介入し、契約当事者の一方に契約違反を誘引することによって生じる不法行為責任の法理である。' +
+      'この法理はLumley v. Gye（1853）判決に端を発し、原告が有効な契約を保有していること、被告がその契約の存在を知りながら故意に干渉したこと、および実際の損害が生じたことを要件とする。' +
+      'Perlman（1982）は経済的期待利益への干渉と契約干渉を体系的に分析し、競争促進的行為との境界画定を論じた。' +
+      'Dobbs は不法行為法の体系書において、本法理の要件・抗弁・救済手段を整理し、経済的不法行為の中核に位置づけている。',
+    keyFigures: 'Harvey S. Perlman／Dan B. Dobbs／Saul Levmore／Gary T. Schwartz／Jeremiah Smith',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1599524', type: 'academic', label: 'Perlman (1982) Interference with Contract and Other Economic Expectancies, University of Chicago Law Review 49:61-129' },
+      { url: 'https://www.law.cornell.edu/wex/tortious_interference', type: 'reference', label: 'Cornell Law School LII — Tortious Interference (Wex Definition)' },
+      { url: 'https://www.restatement.law/torts/', type: 'reference', label: 'ALI Restatement (Second) of Torts §§ 766-774A — Interference with Contract and Prospective Relations' },
+    ],
+  },
+  {
+    id: 'infosoc-information-overload-theory',
+    discipline: 'information-sociology',
+    title: '情報過負荷理論',
+    statement:
+      'Eppler & Mengis（2004）は、過剰な情報が認知・組織の両レベルで意思決定の質を損なうことを体系的に整理し、「情報過負荷」の概念を五つの研究流派に渡る統合的枠組みとして提示した。' +
+      'Simon（1971）は注意力が希少資源であるという「注意の貧困」論を提唱し、情報の豊富さが必然的に注意の欠乏をもたらすと論じたが、これは後の過負荷研究の認知経済学的基盤となった。' +
+      'Toffler（1970）は著作 Future Shock において情報爆発による社会的ストレスを警告し過負荷概念を広く普及させた一方、Bawden & Robinson（2009）は情報洪水・情報疲弊・情報不安といった関連概念を整理し、現代の知識環境における過負荷の多面性を明らかにした。',
+    keyFigures: 'Martin J. Eppler／Jeannette Mengis／Herbert A. Simon／Alvin Toffler／David Bawden',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/01972240490483894', type: 'academic', label: 'Eppler & Mengis (2004) The Concept of Information Overload, The Information Society 20(5):325-344' },
+      { url: 'https://doi.org/10.1108/00220410910984577', type: 'academic', label: 'Bawden & Robinson (2009) The dark side of information, Journal of Information Science 35(2):180-191' },
+      { url: 'https://www.britannica.com/topic/information-theory', type: 'reference', label: 'Encyclopaedia Britannica — Information theory (Simon attention scarcity context)' },
+    ],
+  },
 ];
 // Stryker restore all
