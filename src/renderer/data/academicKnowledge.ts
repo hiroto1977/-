@@ -27996,5 +27996,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1287/mnsc.1120.1541', type: 'academic', label: 'Shaw & Hill (2014) Laboratories of Oligarchy? How Wikipedia Bureaucratizes, Journal of Communication 64(2):215-238' },
     ],
   },
+  {
+    id: 'econ-impossible-trinity-trilemma',
+    discipline: 'economics',
+    title: '不可能の三位一体（マンデル＝フレミングのトリレンマ）',
+    statement:
+      '不可能の三位一体（トリレンマ）とは、固定為替レートの維持・資本移動の自由化・独立した金融政策の三つを同時に達成することはできず、いずれか一つを犠牲にしなければならないという国際マクロ経済学の命題である。' +
+      'Mundell（1963）およびFleming（1962）の開放経済モデルを理論的基礎とし、Obstfeld, Shambaugh & Taylor（2005）は歴史的データで三頂点の二項選択パターンを実証した。' +
+      'Rey（2013）はグローバル金融サイクルの存在を指摘し、資本移動が自由な限り独立した金融政策は実質的に制約されると論じ、二項対立（ダイレンマ）への再解釈を提唱している。',
+    keyFigures: 'Robert A. Mundell／J. Marcus Fleming／Maurice Obstfeld／Alan M. Taylor／Hélène Rey',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/139336', type: 'academic', label: 'Mundell (1963) Capital Mobility and Stabilization Policy under Fixed and Flexible Exchange Rates, Canadian Journal of Economics and Political Science' },
+      { url: 'https://direct.mit.edu/rest/article-abstract/87/3/423/57586', type: 'academic', label: 'Obstfeld, Shambaugh & Taylor (2005) The Trilemma in History, Review of Economics and Statistics 87(3):423-438' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/2010/09/basics.htm', type: 'government', label: 'IMF Finance & Development — Back to Basics: The Impossible Trinity' },
+    ],
+  },
+  {
+    id: 'econ-credit-channel-monetary-transmission',
+    discipline: 'economics',
+    title: '金融政策伝達の信用チャネル',
+    statement:
+      '信用チャネルとは、金融政策が銀行貸出と借り手のバランスシートを通じて実体経済に波及するメカニズムを指す。' +
+      '銀行貸出チャネルでは、政策金利の引き上げが銀行の預金調達コストを高め貸出供給を抑制することで投資・消費を冷やすとBernanke & Gertler（1995）は論じた。' +
+      'バランスシートチャネルでは、資産価格や純資産の変化が情報の非対称性を拡大し、外部資金プレミアムを通じて借り手の資金調達を制約するとBernanke, Gertler & Gilchrist（1999）が定式化した。' +
+      'Kashyap & Stein（2000）は百万件を超える銀行データを用いて、流動性の低い銀行ほど金融引き締めに対し貸出を大きく削減することを実証した。',
+    keyFigures: 'Ben S. Bernanke／Mark Gertler／Simon Gilchrist／Anil K. Kashyap／Jeremy C. Stein',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission, JEP 9(4):27-48' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.90.3.407', type: 'academic', label: 'Kashyap & Stein (2000) What Do a Million Observations on Banks Say about the Transmission of Monetary Policy? AER 90(3):407-428' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S1574004899100182', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework, Handbook of Macroeconomics' },
+    ],
+  },
+  {
+    id: 'human-intersectionality-theory',
+    discipline: 'human-science',
+    title: 'インターセクショナリティ理論（交差性理論）',
+    statement:
+      '人種・ジェンダー・階級・性的指向・障害など複数の社会的アイデンティティが交差することで、単一属性の分析では捉えられない固有の抑圧経験が生じるとする理論であり、法学者Crenshaw（1989）が黒人女性に対する職場・司法上の排除事例を通じて提唱した。' +
+      'Collins（2000）は「支配のマトリクス」という概念を導入し、階級・ジェンダー・人種・セクシュアリティが相互強化する権力構造を体系化した。' +
+      'McCall（2005）は研究方法論の観点から複雑性の分類を整理し、Yuval-Davis（2006）は国民国家・ナショナリズム・ジェンダーの交差を国際的文脈へ拡張した。',
+    keyFigures: 'Kimberlé Williams Crenshaw／Patricia Hill Collins／bell hooks／Leslie McCall／Nira Yuval-Davis',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://chicagounbound.uchicago.edu/uclf/vol1989/iss1/8/', type: 'academic', label: 'Crenshaw (1989) Demarginalizing the Intersection of Race and Sex, University of Chicago Legal Forum 1989(1):139-167' },
+      { url: 'https://www.britannica.com/topic/intersectionality', type: 'reference', label: 'Encyclopaedia Britannica — Intersectionality' },
+      { url: 'https://www.un.org/womenwatch/daw/cedaw/cedaw25years/content/english/CONCEPT_NOTE_Platform_for_Action_and_CEDAW.pdf', type: 'government', label: 'UN Women / CEDAW — Concept Note on Intersectionality' },
+    ],
+  },
+  {
+    id: 'mgmt-middle-management-strategy',
+    discipline: 'management',
+    title: '中間管理職の戦略的役割',
+    statement:
+      '中間管理職は経営トップと現場オペレーションを媒介する存在として、戦略の策定・実行の双方で重要な役割を担う。' +
+      'Floyd & Wooldridge（1992）はミドルの戦略関与を「シャンピオニング」「統合」「ファシリテーション」「実装」の4類型に整理し、関与度が戦略タイプと連動することを実証した。' +
+      'Huy（2002）は急進的変革期においてミドルが感情的均衡（emotional balancing）を通じて組織の継続性と変革を同時に支えることを示した。' +
+      'Nonaka（1994）はミドルが暗黙知を組織知識に転換する「知識ブローカー」として革新の核心を担うと論じ、SECIモデルにおいてミドルを知識の触媒として位置づけた。',
+    keyFigures: 'Steven W. Floyd／Bill Wooldridge／Quy Nguyen Huy／Ikujiro Nonaka／Peter J. Lane',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/smj.4250131003', type: 'academic', label: 'Floyd & Wooldridge (1992) Middle Management Involvement in Strategy, Strategic Management Journal 13(S1):153-167' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/3084434', type: 'academic', label: 'Huy (2002) Emotional Balancing of Organizational Continuity and Radical Change, ASQ 47(1):31-69' },
+      { url: 'https://www.britannica.com/money/middle-management', type: 'reference', label: 'Encyclopaedia Britannica Money — Middle management' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-opportunity-doctrine',
+    discipline: 'business-law',
+    title: '会社機会の流用禁止原則',
+    statement:
+      '会社機会の流用禁止原則（コーポレート・オポチュニティ・ドクトリン）とは、会社の役員・取締役が、会社に帰属すべきビジネス機会を個人的に横領・流用することを禁じる衡平法上の原則であり、信認義務（忠実義務）の中核をなす。' +
+      'デラウェア州最高裁判所のGuth v. Loft, Inc.（1939）において、機会の帰属判断基準（会社の事業ライン・財政能力・合理的期待等）が確立され、米国会社法における先例として広く参照される。' +
+      'Chew（1998）は同原則が会社利益・個人利益・株主利益という競合する利益構造を内包することを示し、Brudney & Clark（1981）は機会の開示・承認手続きを通じた利益相反規律のあり方を論じた。',
+    keyFigures: 'Pat K. Chew／Victor Brudney／Robert C. Clark／Eric Talley／Gabriel Rauterberg',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.pitt.edu/cgi/viewcontent.cgi?article=1270&context=lawreview', type: 'academic', label: 'Chew (1998) Competing Interests in the Corporate Opportunity Doctrine, North Carolina Law Review' },
+      { url: 'https://www.law.cornell.edu/wex/corporate_opportunity_doctrine', type: 'reference', label: 'Cornell LII — Corporate Opportunity Doctrine' },
+      { url: 'https://courts.delaware.gov/opinions/download.aspx?ID=4540', type: 'reference', label: 'Delaware Courts — Guth v. Loft, Inc., 5 A.2d 503 (Del. 1939)' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-mediation-theory',
+    discipline: 'information-sociology',
+    title: '技術的媒介理論（ポスト現象学）',
+    statement:
+      '技術的媒介理論とは、技術が人間と世界との関係をいかに媒介・変容させるかを問うポスト現象学的アプローチであり、技術を中立的な道具ではなく人間の知覚・行為・意味形成を積極的に再構成するアクターとして捉える。' +
+      'Ihde（1990）は、技術と人間の関係を「体化関係」「解釈関係」「他者関係」「背景関係」の四類型に分類し、人間-技術-世界の多様な絡み合いを体系化した。' +
+      'Verbeek（2005）はこの枠組みを「技術はモラル的アクターとして行為者性を持つ」という設計倫理へと展開し、人工物の道徳的仲介という概念を提示した。' +
+      'Latour のアクター・ネットワーク理論やFeenberg（1999）の批判的技術論も、技術が社会的価値を埋め込んだ政治的な媒介物であることを強調する。',
+    keyFigures: 'Peter-Paul Verbeek／Don Ihde／Bruno Latour／Andrew Feenberg／Albert Borgmann',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.psupress.org/books/titles/978-0-271-02539-4.html', type: 'academic', label: 'Verbeek (2005) What Things Do: Philosophical Reflections on Technology, Agency, and Design, Penn State UP' },
+      { url: 'https://plato.stanford.edu/entries/technology/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Philosophy of Technology' },
+      { url: 'https://en.wikipedia.org/wiki/Postphenomenology', type: 'reference', label: 'Wikipedia — Postphenomenology' },
+    ],
+  },
 ];
 // Stryker restore all
