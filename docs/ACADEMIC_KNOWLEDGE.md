@@ -2045,5 +2045,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 心理的資本理論 | HERO四次元（希望・効力感・レジリエンス・楽観）とPCQ測定（Luthans / Youssef-Morgan / Avolio） |
 | 経営学 | 組織即興理論 | 計画と実行の時間的収束とジャズメタファー（Moorman & Miner 1998 / Weick / Cunha） |
 | 情報社会学 | デジタル著作権管理理論 | DRMの社会技術的分析・「コードは法」とDMCA批判（Lessig / Samuelson / Gillespie） |
+| 経済学 | ギッフェン財理論 | 価格上昇で需要増加する下級財と所得効果優位メカニズム（Giffen / Marshall / Jensen & Miller 2008） |
+| 人間科学 | 場所愛着理論 | 場所への感情的絆・場所アイデンティティ・場所依存性の三次元モデル（Altman & Low / Proshansky / Lewicka） |
+| 商法 | 最善努力義務 | Best Efforts条項の解釈・UCC§2-306・Bloor v. Falstaff判例とM&A文脈（Goetz & Scott / Kostritsky / Burton） |
+| 経営学 | 戦略的人的資本理論 | VRIOフレームワーク適用・専有可能性ジレンマ・人的資本創発モデル（Coff / Ployhart & Moliterno / Wright） |
+| 経営学 | 組織における認知マッピング理論 | 意思決定者の信念体系を有向グラフで視覚化・SODA手法（Axelrod / Eden / Huff） |
+| 情報社会学 | デジタル表現型理論 | スマートフォンセンサーデータによる行動・精神的健康状態推定（Torous / Onnela / Barnett） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
