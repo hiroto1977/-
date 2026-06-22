@@ -25771,5 +25771,114 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://trade.ec.europa.eu/access-to-markets/en/content/ratchet-clause', type: 'reference', label: 'EU Access2Markets Glossary — Ratchet Clause（定義・具体例・ネガティブリストとの関係）' },
     ],
   },
+
+  // ── Batch 283 ─────────────────────────────────────────────
+  // econ-rybczynski-theorem, human-lexical-access, mgmt-garbage-can-model,
+  // mgmt-strategic-drift, bizlaw-poison-pill, infosoc-polymedia
+
+  {
+    id: 'econ-rybczynski-theorem',
+    discipline: 'economics',
+    title: 'リプチンスキーの定理（Rybczynski Theorem）',
+    statement:
+      'リプチンスキーの定理は、ポーランド生まれの英国経済学者タデウシュ・リプチンスキーが1955年の論文「Factor Endowment and Relative Commodity Prices」（Economica, 22(88), pp.336-341）で証明した国際貿易理論の基本命題である。' +
+      '2財2要素の一般均衡モデルにおいて、相対財価格が一定の下で一方の生産要素の賦存量が増加すると、その要素を集約的に使用する財の産出量が要素増加率以上に拡大（拡大効果／magnification effect）し、他方の財の産出量は絶対的に減少すると主張する。' +
+      'メカニズムは、財価格一定により要素価格も一定（要素価格均等化定理経由）となるため両部門の資本労働比率が変わらず、増加要素を吸収する部門が他部門から両要素を引き抜く形で拡大することによる。' +
+      'ストルパー＝サミュエルソン定理（財価格→要素価格の写像）と双対（dual）関係にあり、ロナルド・W・ジョーンズ（1965）がサミュエルソン相反関係を通じてこの対称性を定式化した。' +
+      'ヘクシャー＝オリーン・モデルの4大定理（HO定理・SS定理・リプチンスキー定理・要素価格均等化定理）の一つとして国際貿易論の中核を成し、オランダ病や移民の産業構成への影響分析にも応用される。',
+    keyFigures: 'タデウシュ・リプチンスキー（1955 Economica 22(88):336-341）／ロナルド・W・ジョーンズ（1965 拡大効果の定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Rybczynski_theorem', type: 'reference', label: 'Wikipedia — Rybczynski theorem（定義・証明・HO体系内の位置づけ）' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/rybczynski-theorem', type: 'reference', label: 'Encyclopedia.com — Rybczynski Theorem（学術百科事典による解説）' },
+      { url: 'https://saylordotorg.github.io/text_international-trade-theory-and-policy/s08-04-the-rybczynski-theorem.html', type: 'academic', label: 'Saylor Academy, International Trade Theory and Policy Ch.5.4 — The Rybczynski Theorem' },
+    ],
+  },
+  {
+    id: 'human-lexical-access',
+    discipline: 'human-science',
+    title: '語彙アクセス（Lexical Access）',
+    statement:
+      '語彙アクセスとは、聞き手・読み手が言語入力（音声・文字）から心内辞書（メンタルレキシコン）に蓄えられた語の意味・音韻・綴り・文法情報を検索・取り出す認知過程を指す心理言語学の中核概念である。' +
+      'モートンのロゴジェン・モデル（1969, Psychological Review 76(2):165-178）は各語に対応する認識ユニット（logogen）が感覚・文脈情報を並列的に蓄積し閾値超過で発火する並列活性化モデルを提唱し、語頻度効果（高頻度語ほど閾値が低い）と文脈効果を統一的に説明した。' +
+      'フォスターの自律的探索モデル（1976）は頻度順に編成されたアクセスファイルを逐次探索する系列処理モデルを提案し、語彙アクセスは上位の意味・統語情報に影響されない自律的モジュールであると主張した。' +
+      'マクレランド＆ルメルハート（1981, Psychological Review 88(5):375-407）の相互活性化モデルは特徴・文字・単語の3層間で興奮性・抑制性結合を双方向に伝播させるコネクショニスト・アーキテクチャにより、語優位効果を含む多くの実験的知見を再現し、後のPDP（並列分散処理）革命の端緒となった。',
+    keyFigures: 'ジョン・モートン（1969 ロゴジェン・モデル）／ケネス・I・フォスター（1976 自律的探索モデル）／マクレランド＆ルメルハート（1981 相互活性化モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/topics/psychology/lexical-access', type: 'academic', label: 'ScienceDirect Topics — Lexical Access（定義・理論モデル・処理段階の学術概説）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118829516.ch11', type: 'academic', label: 'Milin, Smolka & Feldman, Models of Lexical Access and Morphological Processing, Handbook of Psycholinguistics (Wiley, 2018)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3843812/', type: 'academic', label: 'PMC — Models of visual word recognition: 相互活性化モデル系譜のレビュー (Trends in Cognitive Sciences, 2013)' },
+    ],
+  },
+  {
+    id: 'mgmt-garbage-can-model',
+    discipline: 'management',
+    title: 'ゴミ箱モデル（Garbage Can Model of Organizational Choice）',
+    statement:
+      'ゴミ箱モデルは、マイケル・D・コーエン、ジェームズ・G・マーチ、ヨハン・P・オルセンが1972年の論文「A Garbage Can Model of Organizational Choice」(Administrative Science Quarterly, 17(1), pp.1-25)で提唱した、組織における意思決定の理論モデルである。' +
+      '目標が不明確（problematic preferences）・因果関係が曖昧（unclear technology）・参加者が流動的（fluid participation）という3条件を満たす「組織化された無秩序（organized anarchy）」において、意思決定は合理的・逐次的に行われるのではなく、' +
+      '問題（problems）・解（solutions）・参加者（participants）・選択機会（choice opportunities）の4つの流れ（ストリーム）がそれぞれ独立に生成され、偶発的に合流することで決定が生じると説く。' +
+      '選択機会を「ゴミ箱」に、問題・解・参加者を「ゴミ」に見立て、ゴミ箱に投げ込まれるゴミの組み合わせによって意思決定の内容が左右されるという比喩が名称の由来である。' +
+      '合理的選択モデルでは説明困難な大学・政府機関等の曖昧な状況下での意思決定を記述するモデルとして、組織論・公共政策論（キングダンの政策の窓モデル等）に広く影響を与えた。',
+    keyFigures: 'マイケル・D・コーエン／ジェームズ・G・マーチ／ヨハン・P・オルセン（1972, Administrative Science Quarterly 17(1):1-25）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2392088', type: 'academic', label: 'JSTOR — Cohen, March & Olsen (1972) A Garbage Can Model of Organizational Choice（原論文）' },
+      { url: 'https://kotobank.jp/word/%E3%81%94%E3%81%BF%E7%AE%B1%E3%82%82%E3%81%A7%E3%82%8B-160472', type: 'reference', label: 'コトバンク — ゴミ箱モデル（日本語百科事典的解説）' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1007/978-3-030-66252-3_62', type: 'reference', label: 'Springer, Global Encyclopedia of Public Administration — Garbage-Can Model of Organizations' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-drift',
+    discipline: 'management',
+    title: '戦略的漂流（Strategic Drift）',
+    statement:
+      '戦略的漂流（Strategic Drift）とは、組織の戦略が外部環境の変化に対して徐々に適合性を失い、競争力が漸進的に低下していく現象である。ジェリー・ジョンソンが1988年のStrategic Management Journal論文「Rethinking Incrementalism」で提唱し、' +
+      '戦略変化が歴史的・文化的前提に基づく漸進的調整（incremental change）にとどまり、環境変化の速度に追いつけなくなる過程を4段階（漸進的変化→戦略的漂流→混迷→変革的変化 or 消滅）で説明した。' +
+      'ジョンソンはまた1992年にスコールズと共に「文化の網（Cultural Web）」を提唱し、物語・儀式・権力構造・組織構造・統制システム・シンボルの6要素と中心のパラダイムが組織の暗黙の前提を形成し、環境変化のシグナルを遮断して漂流を引き起こすメカニズムを示した。' +
+      '戦略的漂流の理論は、漸進的変化と変革的変化の関係を組織文化の観点から統合的に説明する枠組みとして戦略経営論の中核的概念の一つに位置づけられている。',
+    keyFigures: 'ジェリー・ジョンソン（1988「Rethinking Incrementalism」Strategic Management Journal）／ジョンソン＆スコールズ（1992 Cultural Web）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107', type: 'academic', label: 'Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118785317.weom120213', type: 'reference', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)' },
+      { url: 'https://www.tutor2u.net/business/reference/strategic-drift', type: 'media', label: 'tutor2u — Strategic Drift 解説（英国教育メディア）' },
+    ],
+  },
+  {
+    id: 'bizlaw-poison-pill',
+    discipline: 'business-law',
+    title: 'ポイズンピル（Poison Pill ／ライツプラン）',
+    statement:
+      'ポイズンピル（株主権利プラン）とは、敵対的買収者の持株比率が一定の閾値（通常15〜20%）を超えた場合に、買収者以外の既存株主に対して新株を大幅な割引価格で取得できる権利（新株予約権）を発動させ、買収者の議決権比率を希釈化することで買収を阻止する防衛策をいう。' +
+      '1982年にWachtell, Lipton, Rosen & Katzの弁護士Martin Liptonが、T. Boone Pickensらによる公開買付型の敵対的買収に対抗する手段として考案した。' +
+      '1985年のMoran v. Household International事件（500 A.2d 1346）において、デラウェア州最高裁判所が取締役会による事前導入型ライツプランの合法性を経営判断の原則の下で支持し、米国における防衛策の法的基盤が確立された。' +
+      '日本では2005年に経済産業省の企業価値研究会（座長：神田秀樹東京大学教授）が「企業価値報告書」を公表し、同年5月27日に経済産業省・法務省が「買収防衛策に関する指針」を策定して、企業価値・株主共同の利益の確保又は向上を目的とする合理的な防衛策の導入枠組みを整備した。',
+    keyFigures: 'Martin Lipton（1982年考案）／Moran v. Household International, 500 A.2d 1346（Del. 1985）／企業価値研究会・神田秀樹座長（2005年報告書）／経済産業省・法務省 買収防衛策指針（2005/5/27）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corpgov.law.harvard.edu/2020/04/24/the-rise-of-the-aggressive-poison-pill/', type: 'academic', label: 'ハーバード・ロースクール コーポレートガバナンス・フォーラム — ポイズンピルの積極的活用' },
+      { url: 'https://www.meti.go.jp/policy/economy/keiei_innovation/keizaihousei/pdf/3-shishinn-honntai-set.pdf', type: 'government', label: '経済産業省・法務省 買収防衛策に関する指針（2005年）' },
+      { url: 'https://en.wikipedia.org/wiki/Shareholder_rights_plan', type: 'reference', label: 'Wikipedia — 株主権利プラン（ポイズンピル）概説' },
+    ],
+  },
+  {
+    id: 'infosoc-polymedia',
+    discipline: 'information-sociology',
+    title: 'ポリメディア（Polymedia）',
+    statement:
+      'ポリメディアとは、複数のコミュニケーション・メディアが統合的環境として機能し、個々のメディアが他のすべてのメディアとの関係性のなかで定義される状況を指す、メディア人類学の理論概念である。ミルカ・マディアヌーとダニエル・ミラーがフィリピン人トランスナショナル家族の比較エスノグラフィに基づき2012年に提唱した。' +
+      'ポリメディア環境の成立には（1）多様なメディアへのアクセス、（2）通信コストの実質無料化（個別通信からインフラへの費用移転）、（3）十分なメディア・リテラシーの三前提が必要とされる。' +
+      'これらが満たされると、メディア選択はもはや技術的・経済的制約に規定されず、なぜ特定のメディアを選んだか（例：対面ではなくテキストで関係を断つ）が道徳的・感情的に問われるようになり、利用者はメディア選択に対する道徳的説明責任（moral accountability）を負う。' +
+      'この理論は技術決定論を退け、メディアが関係性を媒介すると同時に関係性がメディアを媒介するという双方向性を示した点で、メディア人類学およびデジタル・コミュニケーション研究に重要な貢献をなした。',
+    keyFigures: 'ミルカ・マディアヌー（Goldsmiths, University of London）& ダニエル・ミラー（UCL）（2012著書 Routledge／2013 International Journal of Cultural Studies 16(2):169-187）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1367877912452486', type: 'academic', label: 'Madianou & Miller (2013) Polymedia: Towards a new theory of digital media in interpersonal communication, International Journal of Cultural Studies 16(2)' },
+      { url: 'https://www.routledge.com/Migration-and-New-Media-Transnational-Families-and-Polymedia/Madianou-Miller/p/book/9780415679299', type: 'academic', label: 'Madianou & Miller, Migration and New Media: Transnational Families and Polymedia (Routledge, 2012)' },
+      { url: 'https://en.wikipedia.org/wiki/Polymedia', type: 'reference', label: 'Wikipedia — Polymedia（三前提・道徳的説明責任・エスノグラフィ概要）' },
+    ],
+  },
 ];
 // Stryker restore all
