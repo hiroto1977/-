@@ -2177,5 +2177,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | ミンツバーグの組織構造5類型 | 5基本部分と調整メカニズムによる組織形態分類（Mintzberg / Miller / Pugh） |
 | 経営学 | 知識経営とSECIモデル | 暗黙知・形式知の相互変換による知識スパイラル（Nonaka / Takeuchi） |
 | 情報社会学 | フレーミング理論（メディア・政治コミュニケーション） | 現実の選択的強調による問題定義・原因解釈の促進（Entman / Goffman / Iyengar） |
+| 経済学 | ヴェブレン財と顕示的消費 | 高価格が地位シグナルとなり需要が増加する財と顕示的消費行動（Veblen / Leibenstein / Frank） |
+| 人間科学 | 場所細胞と認知地図 | 海馬の場所細胞が空間地図として機能する神経学的証拠（O'Keefe / Moser / Moser） |
+| 経営法学 | 法人格否認の法理 | 法人の道具的利用時に株主個人責任を追及する法理（Thompson / Easterbrook / Fischel） |
+| 経営学 | 期待理論（動機づけ） | 期待・手段性・誘意性の積による動機づけ定式化（Vroom / Porter / Lawler） |
+| 経営学 | 職務要求-資源モデル（JD-R） | 職務要求と資源の二重過程による燃え尽きとエンゲージメント説明（Bakker / Demerouti / Schaufeli） |
+| 情報社会学 | アンビエント・アウェアネス（SNS） | SNS断片的更新による他者日常の周辺的把握と弱い紐帯強化（Thompson / Forte / Granovetter） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
