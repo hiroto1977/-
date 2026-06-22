@@ -26292,5 +26292,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'academic', label: 'Noble, S.U. (2018) Algorithms of Oppression, NYU Press' },
     ],
   },
+  // ── Batch 288 ─────────────────────────────────────────────
+  // econ-lerner-symmetry-theorem, human-memory-reconsolidation,
+  // mgmt-effectuation-theory, mgmt-organizational-resilience,
+  // bizlaw-commercial-impracticability, infosoc-platform-labor-politics
+  {
+    id: 'econ-lerner-symmetry-theorem',
+    discipline: 'economics',
+    title: 'ラーナーの対称性定理',
+    statement:
+      'ラーナーの対称性定理とは、輸入関税と同率の輸出税が相対価格および資源配分に対して同一の効果をもたらすことを示した定理である。' +
+      '1936年にアバ・ラーナーがEconomica誌で証明し、関税が輸入を抑制するのと同様に輸出税も輸出を抑制し、両者は保護効果・歳入効果において等価であることを明らかにした。' +
+      'McKinnon（1966）が中間財・差別関税への一般化を行い、貿易政策分析の基礎的定理として広く参照されている。',
+    keyFigures: 'Abba P. Lerner／Ronald I. McKinnon／William H. Kaempfer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2549454', type: 'academic', label: 'Lerner, A.P. (1936) The Symmetry Between Import and Export Taxes, Economica 3(11):306-313' },
+      { url: 'https://doi.org/10.2307/1927539', type: 'academic', label: 'McKinnon, R.I. (1966) Intermediate Products and Differential Tariffs, QJE 80(4):584-615' },
+      { url: 'https://www.jstor.org/stable/2553685', type: 'academic', label: 'Kaempfer, W.H. (1989) A Note on the Symmetry Between Import and Export Taxes, Economica 56(223):383-387' },
+      { url: 'https://en.wikipedia.org/wiki/Lerner_symmetry_theorem', type: 'reference', label: 'Wikipedia — Lerner symmetry theorem' },
+    ],
+  },
+  {
+    id: 'human-memory-reconsolidation',
+    discipline: 'human-science',
+    title: '記憶の再固定化',
+    statement:
+      '記憶の再固定化とは、一度固定化された長期記憶が想起・再活性化されると不安定な状態（ラビール状態）に戻り、再び安定化されなければ消失しうるという現象である。' +
+      '2000年にNader, Schafe & LeDouxが恐怖記憶の再活性化直後にタンパク質合成阻害剤を扁桃体に注入すると記憶が消失することをNature誌で報告し、「固定化された記憶は永続的で変更不可能」という従来の定説を覆した。' +
+      'この発見はPTSD・依存症・恐怖症の治療に臨床的応用の道を開き、再固定化の時間窓内に介入することで既存の恐怖記憶を書き換えられる可能性が示されている。',
+    keyFigures: 'Karim Nader／Joseph E. LeDoux／Daniela Schiller／Cristina M. Alberini',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/35021052', type: 'academic', label: 'Nader, Schafe & LeDoux (2000) Fear memories require protein synthesis in the amygdala for reconsolidation after retrieval, Nature 406:722-726' },
+      { url: 'https://www.nature.com/articles/nature08637', type: 'academic', label: 'Schiller et al. (2010) Preventing the return of fear in humans using reconsolidation update mechanisms, Nature 463:49-53' },
+      { url: 'https://www.nature.com/articles/nrn2590', type: 'academic', label: 'Nader & Hardt (2009) A single standard for memory: the case for reconsolidation, Nature Reviews Neuroscience 10:224-234' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/24028957/', type: 'reference', label: 'Alberini & LeDoux (2013) Memory reconsolidation, Current Biology 23(17):R746-R750' },
+    ],
+  },
+  {
+    id: 'mgmt-effectuation-theory',
+    discipline: 'management',
+    title: 'エフェクチュエーション理論',
+    statement:
+      'エフェクチュエーション理論は、Saras Sarasvathy（2001）が提唱した起業家の意思決定理論であり、熟練した起業家が不確実性下で既存の手段を起点に行動する「手段駆動型」の論理を体系化したものである。' +
+      '従来の因果論的アプローチが目標から逆算するのに対し、「手中の鳥」「許容可能な損失」「クレイジーキルト」「レモネード」「飛行機のパイロット」の5原則に基づき、予測不能な未来を形成していくプロセスを説明する。' +
+      'アントレプレナーシップ研究の主要パラダイムの一つとなり、不確実性下の意思決定・新市場創造・社会起業に広く応用されている。',
+    keyFigures: 'Saras D. Sarasvathy／Stuart Read／Nicholas Dew／Robert Wiltbank',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S.D. (2001) Causation and Effectuation, Academy of Management Review 26(2):243-263' },
+      { url: 'https://doi.org/10.1016/j.jbusvent.2008.04.007', type: 'academic', label: 'Dew, N. et al. (2009) Effectual versus Predictive Logics in Entrepreneurial Decision-making, JBV 24(4):287-309' },
+      { url: 'https://www.effectuation.org/', type: 'reference', label: 'The Society for Effectual Action — エフェクチュエーション理論公式サイト' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-resilience',
+    discipline: 'management',
+    title: '組織レジリエンス',
+    statement:
+      '組織レジリエンスとは、漸進的な変化や突発的な混乱に対して予測・準備・対応・適応する組織の能力を指す概念である。' +
+      'Sutcliffe & Vogus（2003）が肯定的組織学の文脈で概念を提唱し、Lengnick-Hallら（2011）が戦略的人的資源管理を通じたレジリエンス構築モデルを提示した。' +
+      'Duchek（2020）はレジリエンスを予期・対処・適応の三段階から成る組織ケイパビリティとして体系化し、不確実性下での組織存続と繁栄の理論的基盤を形成している。',
+    keyFigures: 'Kathleen M. Sutcliffe／Timothy Vogus／Cynthia A. Lengnick-Hall／Stephanie Duchek／Karl E. Weick',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/j.hrmr.2010.07.001', type: 'academic', label: 'Lengnick-Hall, C.A. et al. (2011) Developing a capacity for organizational resilience, HRMR 21(3):243-255' },
+      { url: 'https://doi.org/10.1007/s40685-019-0085-7', type: 'academic', label: 'Duchek, S. (2020) Organizational resilience: a capability-based conceptualization, Business Research 13:215-246' },
+      { url: 'https://www.iso.org/standard/65694.html', type: 'reference', label: 'ISO 22316:2017 — Organizational resilience — Principles and attributes' },
+    ],
+  },
+  {
+    id: 'bizlaw-commercial-impracticability',
+    discipline: 'business-law',
+    title: '商業的実行不能の法理',
+    statement:
+      '商業的実行不能（Commercial Impracticability）とは、契約締結後に予見不能な事態が発生し履行が著しく困難となった場合に債務者の履行義務を免除する米国統一商事法典（UCC）§ 2-615の法理である。' +
+      'コモンロー上の履行不能（impossibility）の厳格な要件を緩和し、Restatement (Second) of Contracts § 261にも採用された。' +
+      'Transatlantic Financing Corp. v. United States（1966）でJ. Skelly Wright判事が定立した三段階テストが分析枠組みとして広く用いられ、単なるコスト増加では免責されず履行の本質的性質を変容させる予見不能な事態の発生が要件とされる。',
+    keyFigures: 'Karl Llewellyn（UCC起草主任）／E. Allan Farnsworth（Restatement報告者）／J. Skelly Wright判事',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-615', type: 'reference', label: 'Cornell LII — UCC § 2-615 Excuse by Failure of Presupposed Conditions' },
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/363/312/264117/', type: 'reference', label: 'Transatlantic Financing Corp. v. United States, 363 F.2d 312 (D.C. Cir. 1966)' },
+      { url: 'https://scholars.unh.edu/unh_lr/vol13/iss1/2/', type: 'academic', label: 'Camero (2015) Mission Impracticable: The Impossibility of Commercial Impracticability, 13 U.N.H. L. Rev.' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-labor-politics',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム労働の政治学',
+    statement:
+      'プラットフォーム労働の政治学とは、デジタルプラットフォームが労働関係・労働者の法的分類・集団的行動をいかに再編しているかを分析する研究領域である。' +
+      'アルゴリズム経営による労働過程の不可視化、ギグワーカーの「個人事業主」分類がもたらす社会保障の空白、プラットフォーム企業と労働者・規制当局の間の権力非対称性が中心的論点となる。' +
+      'Vallas & Schor（2020）はプラットフォームを「寛容な専制君主」と特徴づけ、リスクと責任を労働者に外部化しつつ集中的権力を保持する構造を明らかにした。',
+    keyFigures: 'Steven Vallas／Juliet Schor／Alex Rosenblat／Jamie Woodcock／Mark Graham',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/doi/abs/10.1146/annurev-soc-121919-054857', type: 'academic', label: 'Vallas & Schor (2020) What Do Platforms Do? Annual Review of Sociology 46:273-294' },
+      { url: 'https://www.ucpress.edu/books/uberland', type: 'academic', label: 'Rosenblat (2018) Uberland: How Algorithms Are Rewriting the Rules of Work, UC Press' },
+      { url: 'https://www.ilo.org/publications/flagship-reports/role-digital-labour-platforms-transforming-world-work', type: 'government', label: 'ILO (2021) World Employment and Social Outlook: The Role of Digital Labour Platforms' },
+    ],
+  },
 ];
 // Stryker restore all
