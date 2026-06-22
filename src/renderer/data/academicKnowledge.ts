@@ -26970,5 +26970,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Critical_data_studies', type: 'reference', label: 'Wikipedia — Critical data studies' },
     ],
   },
+
+  // ── Batch 295 ─────────────────────────────────────────────
+  // econ-harrod-domar-growth-model, econ-fiscal-multiplier-theory,
+  // human-self-determination-theory, mgmt-strategic-alignment-model,
+  // bizlaw-appraisal-rights-remedy, infosoc-techno-feminism
+  {
+    id: 'econ-harrod-domar-growth-model',
+    discipline: 'economics',
+    title: 'ハロッド＝ドーマー成長モデル',
+    statement:
+      'ハロッド＝ドーマー成長モデルは、経済成長率が貯蓄率（s）を資本係数（k）で除した値（g = s/k）に等しいと定式化する初期ケインズ派成長理論であり、ロイ・F・ハロッドが1939年に Economic Journal 誌で発表した「An Essay in Dynamic Theory」とエフシー・D・ドーマーが1946年に Econometrica 誌で独立して発表した論文を統合したものである。' +
+      '同モデルは経済成長を初めて体系的に数式化した先駆的業績であるが、保証成長率・自然成長率・現実成長率の三者が一致しなければ均衡から乖離し続ける「ナイフの刃の不安定性」を内包し、この問題はソロー＝スワン・モデルによる批判と超克の出発点となった。',
+    keyFigures: 'Roy F. Harrod／Evsey D. Domar',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2225181', type: 'academic', label: 'Harrod (1939) An Essay in Dynamic Theory, Economic Journal 49(193):14-33' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1946/04/01/capital-expansion-rate-growth-and-employment', type: 'academic', label: 'Domar (1946) Capital Expansion, Rate of Growth, and Employment, Econometrica 14(2):137-147' },
+      { url: 'https://en.wikipedia.org/wiki/Harrod%E2%80%93Domar_model', type: 'reference', label: 'Wikipedia — Harrod–Domar model' },
+    ],
+  },
+  {
+    id: 'econ-fiscal-multiplier-theory',
+    discipline: 'economics',
+    title: '財政乗数理論',
+    statement:
+      '財政乗数理論とは、政府支出の増加が限界消費性向に基づく再消費の連鎖を通じて総需要に対し初期支出の数倍に及ぶ波及効果（乗数 = 1/(1−MPC)）をもたらすとする経済理論である。' +
+      'リチャード・カーンが1931年に Economic Journal 誌で雇用乗数の概念を示し、ケインズが1936年の『一般理論』で投資乗数として定式化した。' +
+      '乗数の実証的大きさには論争があり、ブランシャールとレイは2013年のIMFワーキングペーパー（WP/13/1）でユーロ圏緊縮期の乗数が従来想定（約0.5）を大幅に上回る1.5前後であったことを示した。',
+    keyFigures: 'Richard F. Kahn／John Maynard Keynes／Olivier Blanchard／Daniel Leigh',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2223697', type: 'academic', label: 'Kahn (1931) The Relation of Home Investment to Unemployment, Economic Journal 41(162):173-198' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp1301.pdf', type: 'government', label: 'Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers, IMF WP/13/1' },
+      { url: 'https://ja.wikipedia.org/wiki/%E4%B9%97%E6%95%B0%E5%8A%B9%E6%9E%9C', type: 'reference', label: 'Wikipedia 日本語版 — 乗数効果' },
+    ],
+  },
+  {
+    id: 'human-self-determination-theory',
+    discipline: 'human-science',
+    title: '自己決定理論',
+    statement:
+      '自己決定理論（SDT）は、人間には自律性・有能性・関係性という3つの基本的心理欲求が生得的に備わっており、環境がこれらを支援するほど内発的動機づけとウェルビーイングが高まるとする動機づけの巨視的理論である。' +
+      'Edward L. Deci と Richard M. Ryan が1985年の著書で体系化し、2000年の American Psychologist 論文で広く普及させた。' +
+      '動機づけは「無動機」から外的調整・取り入れ的調整・同一化的調整・統合的調整を経て内発的動機づけへ至る連続体として捉えられ、教育・職場・医療など多様な領域で応用されている。',
+    keyFigures: 'Edward L. Deci／Richard M. Ryan',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://selfdeterminationtheory.org/theory/', type: 'reference', label: 'Self-Determination Theory 公式サイト — Theory Overview' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11392867/', type: 'academic', label: 'Ryan & Deci (2000) Self-determination theory and the facilitation of intrinsic motivation, American Psychologist 55:68-78' },
+      { url: 'https://en.wikipedia.org/wiki/Self-determination_theory', type: 'reference', label: 'Wikipedia — Self-determination theory' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-alignment-model',
+    discipline: 'management',
+    title: '戦略的アラインメント・モデル',
+    statement:
+      '戦略的アラインメント・モデル（SAM）は、ビジネス戦略・IT戦略・組織インフラ・ITインフラという4ドメイン間の整合性を「戦略的適合」と「機能的統合」の2軸で分析する統合フレームワークであり、ヘンダーソンとベンカトラマンが1993年に IBM Systems Journal 誌で発表した。' +
+      '同モデルは戦略実行・技術変革・競争優位・サービスレベルという4つのアラインメント視点を定義し、企業がITを戦略的資源として活用するための理論的基盤を提供した。ITガバナンスおよびビジネス・ITアラインメント研究の基礎理論として30年以上にわたり広く引用されている。',
+    keyFigures: 'John C. Henderson／N. Venkatraman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1147/sj.381.0472', type: 'academic', label: 'Henderson & Venkatraman (1993) Strategic alignment: Leveraging IT for transforming organizations, IBM Systems Journal' },
+      { url: 'https://ieeexplore.ieee.org/document/5387370', type: 'academic', label: 'IBM Systems Journal Vol.32 No.1 — IEEE Xplore (Henderson & Venkatraman 1993)' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_alignment', type: 'reference', label: 'Wikipedia — Strategic alignment' },
+    ],
+  },
+  {
+    id: 'bizlaw-appraisal-rights-remedy',
+    discipline: 'business-law',
+    title: '株式買取請求権（反対株主の公正価値救済）',
+    statement:
+      '株式買取請求権（アプレイザル・ライツ）とは、合併等の重大な企業変更に反対した株主が保有株式の「公正価値」による買取りを請求し、裁判所がその価値を司法的に確定する法定救済制度である。' +
+      '米国ではデラウェア州一般会社法（DGCL）§262が主な根拠規定であり、Weinberger v. UOP（457 A.2d 701, Del. 1983）で全関連要因を考慮する現代的公正価値基準が確立され、Dell v. Magnetar（177 A.3d 1, Del. 2017）では適正な取引プロセスにおける合併対価自体が公正価値の最有力証拠となりうると判示された。' +
+      'この制度は多数決による組織再編を妨げることなく少数株主に経済的保護を与える政策的機能を持つ。',
+    keyFigures: 'Bayless Manning／Lawrence A. Hamermesh／Michael Wachter',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://delcode.delaware.gov/title8/c001/sc13/index.html', type: 'government', label: 'Delaware Code Online — Title 8, Chapter 1, Subchapter XIII (DGCL §262 Appraisal rights)' },
+      { url: 'https://en.wikipedia.org/wiki/Appraisal_rights', type: 'reference', label: 'Wikipedia — Appraisal rights' },
+      { url: 'https://scholarship.law.upenn.edu/cgi/viewcontent.cgi?article=1050&context=faculty_scholarship', type: 'academic', label: 'Hamermesh & Wachter, The Short and Puzzling Life of the "Implicit Minority Discount", U. Pa. L. Rev. (2007)' },
+    ],
+  },
+  {
+    id: 'infosoc-techno-feminism',
+    discipline: 'information-sociology',
+    title: 'テクノフェミニズム',
+    statement:
+      'テクノフェミニズムは、ジェンダーとテクノロジーが相互に構成し合う（mutual shaping）関係を分析するフェミニスト理論の枠組みであり、テクノフォビアとテクノ・ユートピア主義の双方を批判する立場をとる。' +
+      'ドナ・ハラウェイが1985年に発表した「サイボーグ宣言」がその先駆的文献とされ、ジュディ・ワジュマンが2004年の著書 TechnoFeminism（Polity Press）においてこの概念を体系化し、テクノロジーはジェンダー関係の産物であると同時にその再生産装置でもあることを論じた。' +
+      '今日ではアルゴリズムに潜む性差別的バイアスやAI・プラットフォーム設計における女性排除の構造的問題を検討するための重要な分析視角となっている。',
+    keyFigures: 'Judy Wajcman／Donna Haraway／Wendy Faulkner',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Technofeminism', type: 'reference', label: 'Wikipedia — Technofeminism' },
+      { url: 'https://www.routledge.com/Simians-Cyborgs-and-Women-The-Reinvention-of-Nature/Haraway/p/book/9780415903875', type: 'academic', label: 'Haraway, Simians, Cyborgs, and Women (Routledge, 1991)' },
+      { url: 'https://academic.oup.com/book/55103/chapter/423909956', type: 'academic', label: 'Wajcman & Young (2023) Feminism Confronts AI, Oxford University Press' },
+    ],
+  },
 ];
 // Stryker restore all
