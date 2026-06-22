@@ -28735,5 +28735,104 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Digital_divide', type: 'reference', label: 'Wikipedia — Digital divide' },
     ],
   },
+  {
+    id: 'econ-fama-french-factor-model',
+    discipline: 'economics',
+    title: 'ファーマ＝フレンチ・ファクターモデル',
+    statement:
+      'ファーマ＝フレンチ・ファクターモデルは、CAPMの市場リスクファクターに加え、規模（SMB：小型株マイナス大型株）と割安性（HML：高 B/P マイナス低 B/P）を追加した三因子モデルとして Fama & French（1993）が提唱した資産価格モデルである。' +
+      '同モデルは株式および債券の横断的リターン変動の大部分を説明し、その後の実証ファイナンス研究の基盤となった。' +
+      'さらに Fama & French（2015）は収益性（RMW：高収益性マイナス低収益性）と投資（CMA：保守的投資マイナス積極的投資）を加えた五因子モデルへと拡張し、説明力を一段と高めた。' +
+      'これらのファクターは「リスクへの補償」として解釈される一方、行動ファイナンス的観点からは市場の非効率性として捉える見方もある。',
+    keyFigures: 'Eugene F. Fama ／ Kenneth R. French',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304405X93900235', type: 'academic', label: 'Fama & French (1993) "Common risk factors in the returns on stocks and bonds" — Journal of Financial Economics, 33, 3–56' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304405X14002323', type: 'academic', label: 'Fama & French (2015) "A five-factor asset pricing model" — Journal of Financial Economics, 116, 1–22' },
+      { url: 'https://en.wikipedia.org/wiki/Fama%E2%80%93French_three-factor_model', type: 'reference', label: 'Wikipedia — Fama–French three-factor model' },
+    ],
+  },
+  {
+    id: 'econ-fiscal-multiplier-debate',
+    discipline: 'economics',
+    title: '財政乗数論争',
+    statement:
+      'Barro（1974）はリカードの等価定理を再定式化し、政府支出の拡大が民間貯蓄の増加によって相殺されるため財政乗数はゼロに近いと論じた。' +
+      '一方、Ramey（2011）は文献を総括し乗数を0.8〜1.5と推計し、Blanchard & Leigh（2013）はIMFの予測誤差分析により大不況期に乗数が1.0を大幅に上回ると実証してアウステリティ政策の過小評価を示した。' +
+      'Romerらは税制変更の外生的同定手法を開発し、財政ショックの識別問題が論争の核心であることを明らかにした。',
+    keyFigures: 'Robert J. Barro ／ Olivier Blanchard ／ Valerie A. Ramey ／ Christina Romer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.103.3.117', type: 'academic', label: 'Blanchard & Leigh (2013) "Growth Forecast Errors and Fiscal Multipliers" AER 103(3)' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjel.49.3.673', type: 'academic', label: 'Ramey (2011) "Can Government Purchases Stimulate the Economy?" Journal of Economic Literature 49(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_multiplier', type: 'reference', label: 'Wikipedia: Fiscal multiplier' },
+    ],
+  },
+  {
+    id: 'human-diathesis-stress-model',
+    discipline: 'human-science',
+    title: '素因ストレスモデル',
+    statement:
+      '素因ストレスモデルは、精神障害が素因（脆弱性）と環境的ストレッサーの相互作用によって生じるという枠組みであり、Meehl（1962）の統合失調症病因論に端を発する。' +
+      'Zubin & Spring（1977）はこの考えを「脆弱性——統合失調症の新たな見方」として体系化し、脆弱性はエピソード間も持続する特性である一方、発症はストレス状態との相互作用によって初めて生起すると論じた。' +
+      'Monroe & Simons（1991）はうつ病領域においてライフストレス研究との接合を図り、素因とストレスの相互作用を精密に検証する枠組みを整備した。' +
+      'このモデルは統合失調症・うつ病・不安障害など広範な精神疾患の研究と臨床実践の理論的基盤となっている。',
+    keyFigures: 'Paul E. Meehl ／ Joseph Zubin ／ Bonnie Spring ／ Scott M. Monroe ／ Andrew D. Simons',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/858828/', type: 'academic', label: 'Zubin J & Spring B (1977) Vulnerability--a new view of schizophrenia. Journal of Abnormal Psychology, 86(2), 103-126.' },
+      { url: 'https://psycnet.apa.org/record/1992-05606-001', type: 'academic', label: 'Monroe SM & Simons AD (1991) Diathesis-stress theories in the context of life stress research. Psychological Bulletin, 110(3), 406-425.' },
+      { url: 'https://dictionary.apa.org/diathesis-stress-model', type: 'reference', label: 'APA Dictionary of Psychology — Diathesis-Stress Model' },
+    ],
+  },
+  {
+    id: 'bizlaw-efficient-breach-theory',
+    discipline: 'business-law',
+    title: '効率的契約違反論',
+    statement:
+      '効率的契約違反論とは、契約の履行よりも違反して損害賠償を支払う方が経済的に効率的である場合、当事者はむしろ契約を違反すべきであるとする法と経済学の理論である。' +
+      'Birminghamが1970年に初めて定式化し、GoetzおよびScottが1977年に「効率的違反」と命名したこの理論は、Posnerによって広く普及された。' +
+      '期待利益賠償（expectation damages）は非違反当事者を契約履行と同等の地位に置くため、違反当事者が余剰利益を得つつ社会全体の厚生を最大化できると主張する。' +
+      'これに対しFriedmannは、損害賠償は権利の代替ではなく権利の実現であるとして、この理論を「効率的違反の誤謬」（The Efficient Breach Fallacy）と批判した。',
+    keyFigures: 'Robert L. Birmingham ／ Richard A. Posner ／ Charles J. Goetz ／ Robert E. Scott ／ Daniel Friedmann',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.repository.law.indiana.edu/facpub/1705/', type: 'academic', label: 'Birmingham, Robert L. "Breach of Contract, Damage Measures, and Economic Efficiency." Rutgers Law Review 24 (1970): 273–292.' },
+      { url: 'https://chicagounbound.uchicago.edu/jls/vol18/iss1/2/', type: 'academic', label: 'Friedmann, Daniel. "The Efficient Breach Fallacy." Journal of Legal Studies 18, no. 1 (1989): 1–24.' },
+      { url: 'https://en.wikipedia.org/wiki/Efficient_breach', type: 'reference', label: 'Wikipedia: Efficient Breach' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-aesthetics',
+    discipline: 'management',
+    title: '組織美学',
+    statement:
+      '組織美学（Organizational Aesthetics）は、美・感覚・身体的経験といった審美的知識が組織生活・実践・理論をいかに形成するかを探究する学際的領域である。' +
+      'Stratiは1999年の著書 "Organization and Aesthetics" において、論理合理主義的パラダイムが看過してきた感情・象徴・文化の審美的次元を前景化し、組織分析の新たな認識論的基盤を提示した。' +
+      'LinsteadとHöpflは2000年の編著でポストモダン思想を援用しつつ方法論的課題を整理し、TaylorとHansenは2005年のレビュー論文で研究領域を体系的に分類・整備した。',
+    keyFigures: 'Antonio Strati ／ Stephen Linstead ／ Heather Höpfl',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://philpapers.org/rec/STROAA', type: 'academic', label: 'Strati, A. (1999). Organization and Aesthetics. SAGE Publications.' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.2005.00539.x', type: 'academic', label: 'Taylor, S. S. & Hansen, H. (2005). Finding Form: Looking at the Field of Organizational Aesthetics. Journal of Management Studies, 42(6), 1211–1232.' },
+      { url: 'https://sk.sagepub.com/reference/organization/n13.xml', type: 'reference', label: 'Strati, A. (2008). Aesthetics of Organization. In Clegg, S. R. & Bailey, J. R. (eds.), International Encyclopedia of Organization Studies. SAGE Publications.' },
+    ],
+  },
+  {
+    id: 'infosoc-information-foraging-theory',
+    discipline: 'information-sociology',
+    title: '情報採餌理論',
+    statement:
+      '情報採餌理論（Information Foraging Theory）は、行動生態学の最適採餌理論を人間の情報探索行動に応用した認知・情報科学理論であり、PirolliとCardが1999年に定式化した。' +
+      '人々は「情報の匂い（information scent）」と呼ばれる手がかりを利用して情報パッチ間を移動し、単位時間あたりに獲得できる有益情報量を最大化するよう行動や環境を適応的に修正するとPirolliは主張する。' +
+      'Pirolliは2007年の著書でこの枠組みをウェブナビゲーションや文書クラスタリングなど広範な情報インタラクションに拡張し、Chiらは情報の匂いを定量化するモデルを用いてウェブ上のユーザ行動を実証的に検証した。',
+    keyFigures: 'Peter Pirolli ／ Stuart Card',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0033-295X.106.4.643', type: 'academic', label: 'Pirolli, P. & Card, S. (1999). Information foraging. Psychological Review, 106(4), 643–675.' },
+      { url: 'https://dl.acm.org/doi/10.1145/365024.365325', type: 'academic', label: 'Chi, E., Pirolli, P., Chen, K. & Pitkow, J. (2001). Using information scent to model user information needs and actions on the Web. CHI \'01, pp. 490–497.' },
+      { url: 'https://en.wikipedia.org/wiki/Information_foraging', type: 'reference', label: 'Wikipedia: Information foraging' },
+    ],
+  },
 ];
 // Stryker restore all
