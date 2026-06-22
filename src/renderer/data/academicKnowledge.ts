@@ -24910,5 +24910,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'academic', label: 'The Taylor Rule: A Benchmark for Monetary Policy — Brookings Institution' },
     ],
   },
+  {
+    id: 'econ-asset-pricing-anomalies',
+    discipline: 'economics',
+    title: '資産価格アノマリー（Asset Pricing Anomalies）',
+    statement:
+      '資産価格アノマリー（Asset Pricing Anomalies）とは、資本資産価格モデル（CAPM）では説明できない株式収益率の系統的パターンを指す。ユージン・ファーマ（Eugene Fama）とケネス・フレンチ（Kenneth French）が1993年に三因子モデルで規模効果（小型株プレミアム）とバリュー効果（高簿価時価比率株プレミアム）をリスク因子として定式化し、1996年に「Multifactor Explanations of Asset Pricing Anomalies」で体系的に分析した。' +
+      'マーク・カーハート（Mark Carhart）が1997年にモメンタム因子を加えた四因子モデルを構築した。ファーマとフレンチは2015年に収益性因子と投資因子を追加した五因子モデル、2018年にモメンタムを組み込んだ六因子モデルへと拡張した。北米・欧州・日本・アジア太平洋の各地域でバリュープレミアムが確認され、日本を除く地域でモメンタムプレミアムが観察されている。',
+    keyFigures: 'ユージン・ファーマ＆ケネス・フレンチ（1993 三因子モデル／1996 アノマリー分析／2015 五因子モデル）／マーク・カーハート（1997 四因子モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scientificportfolio.com/external-research-anthology/eugene-f-fama-kenneth-r-french-1996/multifactor-explanations-of-asset-pricing-anomalies/', type: 'academic', label: 'Fama & French (1996) Multifactor Explanations of Asset Pricing Anomalies — Scientific Portfolio' },
+      { url: 'https://ideas.repec.org/a/eee/jfinec/v105y2012i3p457-472.html', type: 'academic', label: 'Fama & French (2012) Size, Value, and Momentum in International Stock Returns — J Financial Economics (RePEc)' },
+      { url: 'https://www.robeco.com/en-int/insights/2024/10/fama-french-5-factor-model-five-major-concerns', type: 'reference', label: 'Fama-French 5-Factor Model: Five Major Concerns — Robeco' },
+    ],
+  },
+  {
+    id: 'human-neonatal-imitation',
+    discipline: 'human-science',
+    title: '新生児模倣（Neonatal Imitation）',
+    statement:
+      '新生児模倣（Neonatal Imitation）とは、生後数週間以内の新生児が成人の顔面ジェスチャー（舌突出・口開け・口すぼめ等）を模倣する能力を指す。アンドリュー・メルツォフ（Andrew Meltzoff）とM・キース・ムーア（M. Keith Moore）が1977年にScience誌で、生後12〜21日の新生児が成人の顔面・手のジェスチャーを模倣できることを初めて実証した。' +
+      'メルツォフとムーアは新生児模倣を弁別的模倣（differential imitation）として操作的に定義し、特定行動のモデリング提示時にその行動が代替行動のモデリング時に比べて統計的に有意に増加することを基準とした。この現象は条件付けや生得的解発メカニズムでは説明できないとされ、生得的なミラーニューロンシステムの証拠として広く引用される。ただし再現性が議論されており、ManyBabiesプロジェクトによる大規模多施設再現研究が進行中である。',
+    keyFigures: 'アンドリュー・メルツォフ＆M・キース・ムーア（1977 Science／1983 Child Development）／ManyBabies 6（多施設再現研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5543082/', type: 'academic', label: 'Meltzoff et al. (2018) Neonatal Imitation: Theory, Experimental Design, and Significance — PMC' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4137790/', type: 'academic', label: 'Meltzoff & Marshall (2018) Early Imitation Within a Functional Framework — PMC' },
+      { url: 'https://manybabies.org/MB6/', type: 'academic', label: 'ManyBabies 6: Neonatal Imitation Multi-Lab Replication — ManyBabies.org' },
+    ],
+  },
+  {
+    id: 'bizlaw-indirect-expropriation',
+    discipline: 'business-law',
+    title: '間接収用（Indirect Expropriation）',
+    statement:
+      '間接収用（Indirect Expropriation）とは、投資先国政府が外国投資家の財産権の正式な移転・直接的没収を行わないものの、規制措置・許認可拒否等の隠蔽的または付随的な干渉により投資の経済的価値を実質的に剥奪する行為を指す国際投資法上の概念である。' +
+      'Metalclad v. メキシコ事件（2000年ICSID/NAFTA）において仲裁廷は、NAFTA上の収用が公然かつ意図的な財産取得のみならず「隠蔽的または付随的な干渉」を含むと判示し、メキシコの地方自治体による建設許可拒否が連邦政府の保証と相まって間接収用に該当すると認定した。この判断は投資家が環境・土地利用規制を間接収用として争う道を開いたが、各仲裁廷のアプローチの相違が国際投資法における大きな不確実性の源泉となっている。',
+    keyFigures: 'Metalclad v. メキシコ事件（2000 ICSID/NAFTA 画期的判断）／規制的収用（regulatory takings）概念との交差',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.bu.edu/cgi/viewcontent.cgi?article=1555&context=faculty_scholarship', type: 'academic', label: 'Indirect Expropriation and Its Valuation in the BIT Generation — Boston University School of Law' },
+      { url: 'https://www.iisd.org/itn/2018/10/18/metalclad-v-mexico/', type: 'academic', label: 'Metalclad v. Mexico — IISD Investment Treaty News' },
+      { url: 'https://scholarlycommons.law.case.edu/cgi/viewcontent.cgi?article=2709&context=jil', type: 'academic', label: 'Launching a Universal Standard for Indirect Expropriation — Case Western Reserve J Intl Law' },
+    ],
+  },
+  {
+    id: 'mgmt-imprinting-theory',
+    discipline: 'management',
+    title: '組織インプリンティング理論（Imprinting Theory）',
+    statement:
+      '組織インプリンティング理論（Imprinting Theory）とは、組織・サブユニット・個人が環境的影響への感受性が高い短い移行期（sensitive period）に、その時代の経済的・技術的・制度的・社会的文脈の特徴を刻印（imprint）として獲得し、その特性が創設期を超えて長期的に持続するとする理論である。アーサー・スティンチコム（Arthur Stinchcombe）が1965年に「Social Structure and Organizations」で基礎を確立した。' +
+      'スティンチコムは、創設時に利用可能な社会的技術と資源が組織の実行可能な構造を規定し、その構造が長期にわたり安定的に再生産されると論じた。インプリンティングの概念は（1）創設時の文脈による組織的特徴の形成と（2）それら特徴の創設期を超えた再生産という二つの過程からなる。制度理論・組織生態学・ネットワーク分析等の諸分野で広く応用されている。',
+    keyFigures: 'アーサー・スティンチコム（1965「Social Structure and Organizations」）／マーキス＆ティルクシック（2013 Academy of Management Annals レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Imprinting_(organizational_theory)', type: 'reference', label: 'Wikipedia: Imprinting (Organizational Theory)' },
+      { url: 'https://www.hbs.edu/ris/Publication%20Files/13-061_fa850975-750a-49b2-a6b6-f1008ce21502.pdf', type: 'academic', label: 'Marquis & Tilcsik (2013) Imprinting: Toward a Multilevel Theory — Harvard Business School WP' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/517899', type: 'academic', label: 'Johnson (2007) What Is Organizational Imprinting? — American Journal of Sociology (UChicago)' },
+    ],
+  },
+  {
+    id: 'infosoc-deep-mediatization',
+    discipline: 'information-sociology',
+    title: '深層メディアタイゼーション（Deep Mediatization）',
+    statement:
+      '深層メディアタイゼーション（Deep Mediatization）とは、デジタルメディアとそのインフラストラクチャが社会過程と社会生活のあらゆる要素に浸透し、コミュニケーションのチャネルを超えて文化的実践・社会的インフラ・制度的パラメータを構成的に形成する段階に到達したとする理論概念である。アンドレアス・ヘップ（Andreas Hepp）が2020年に『Deep Mediatization』（Routledge）として体系化した。' +
+      'ニック・クルドリー（Nick Couldry）とヘップは『The Mediated Construction of Reality』（2017）で、デジタルメディアの普及が社会的なものの再概念化を要請するとした。データフィケーション（datafication）は深層メディアタイゼーションのトレンドの一つとして位置づけられ、デジタル化の帰結として理解される。「メディア・マニフォールド」概念は現代メディアチャネルの多元性と相互連関性、およびそこから生じる多次元的秩序を指す。',
+    keyFigures: 'アンドレアス・ヘップ（2020 Deep Mediatization, Routledge）／ニック・クルドリー＆ヘップ（2017 The Mediated Construction of Reality）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.routledge.com/Deep-Mediatization/Hepp/p/book/9781138024991', type: 'academic', label: 'Hepp (2020) Deep Mediatization — Routledge' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-319-65584-0_2', type: 'academic', label: 'Hepp (2018) Researching Transforming Communications in Times of Deep Mediatization — Springer' },
+      { url: 'https://sociologica.unibo.it/article/view/15793', type: 'academic', label: 'Necessary Entanglements: Materialist Phenomenology in Researching Deep Mediatization — Sociologica (UniBo)' },
+    ],
+  },
+  {
+    id: 'human-joint-attention',
+    discipline: 'human-science',
+    title: '共同注意（Joint Attention）',
+    statement:
+      '共同注意（Joint Attention）とは、二者（典型的には乳児と養育者）が同一の外部対象に注意を共有し、かつ双方がその注意の共有を認識している社会認知的状態を指す。マイケル・トマセロ（Michael Tomasello）が1995年以降の一連の研究で体系化し、カーペンター（Malinda Carpenter）、ナゲル、トマセロが1998年にDevelopmental Psychologyで「Social Cognition, Joint Attention, and Communicative Competence from 9 to 15 Months of Age」として包括的実証研究を発表した。' +
+      'トマセロ（2019）は共同注意を三角測量（triangulation：子どもと大人が同一の外部指示対象に注意する）と再帰性（recursiveness：双方が注意を共有していることを認識する）の二側面から定義した。共同注意は生後9〜12か月に顕著な発達的転換を示し、社会認知・言語獲得・心の理論の発達において基盤的役割を果たすとされる。',
+    keyFigures: 'マイケル・トマセロ（1995- 共同注意の理論化）／カーペンター・ナゲル・トマセロ（1998 Developmental Psychology 実証研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9507.1995.tb00063.x', type: 'academic', label: 'Carpenter, Tomasello & Savage-Rumbaugh (1995) Joint Attention and Imitative Learning — Social Development (Wiley)' },
+      { url: 'https://link.springer.com/article/10.1007/s11245-023-09961-y', type: 'academic', label: 'What We Do and Don\'t Know About Joint Attention — Topoi (Springer)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2654237/', type: 'academic', label: 'Mundy et al. (2007) Individual Differences and the Development of Joint Attention — PMC' },
+    ],
+  },
 ];
 // Stryker restore all
