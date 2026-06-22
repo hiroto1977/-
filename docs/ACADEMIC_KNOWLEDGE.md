@@ -2039,5 +2039,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 高業績ワークシステム | HRバンドル・AMO理論・ブラックボックス問題（Huselid 1995 / Appelbaum 2000） |
 | 経営学 | 組織文化理論 | Scheinの三層モデルとHofstedeの文化次元、Martinの三視点批判 |
 | 情報社会学 | 知識コモンズ理論 | 知的資源のコモンズ管理・IADフレームワーク適用（Hess & Ostrom 2007） |
+| 経済学 | 後屈労働供給曲線 | 代替効果と所得効果の逆転による労働供給曲線の後屈（Robbins 1930 / Killingsworth 1983） |
+| 人間科学 | 社会的学習理論 | 観察学習・モデリング・代理強化とボボ人形実験（Bandura 1961/1977 / Rotter 1954） |
+| 商法 | 不可抗力の法理 | 異常事態による契約免責とCISG第79条・UCC第2-615条（McKendrick / Treitel） |
+| 経営学 | 心理的資本理論 | HERO四次元（希望・効力感・レジリエンス・楽観）とPCQ測定（Luthans / Youssef-Morgan / Avolio） |
+| 経営学 | 組織即興理論 | 計画と実行の時間的収束とジャズメタファー（Moorman & Miner 1998 / Weick / Cunha） |
+| 情報社会学 | デジタル著作権管理理論 | DRMの社会技術的分析・「コードは法」とDMCA批判（Lessig / Samuelson / Gillespie） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
