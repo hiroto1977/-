@@ -23470,5 +23470,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubsonline.informs.org/doi/10.1287/opre.38.6.947', type: 'academic', label: 'Harris (1913/1990 reprint) How Many Parts to Make at Once — Operations Research 38(6)' },
     ],
   },
+  {
+    id: 'econ-mundell-fleming-model',
+    discipline: 'economics',
+    title: 'マンデル＝フレミング・モデル（Mundell-Fleming Model）',
+    statement:
+      'マンデル＝フレミング・モデル（Mundell-Fleming Model）とは、閉鎖経済のIS-LMモデルを開放経済に拡張し、為替レート制度と資本移動性の下での財政政策・金融政策の有効性を分析するマクロ経済モデルである。ロバート・マンデル（Robert Mundell）が1963年にCanadian Journal of Economics and Political Scienceで、J・マーカス・フレミング（J. Marcus Fleming）が1962年にIMF Staff Papersで、それぞれ独立に発表した。' +
+      '完全資本移動性の下では、固定為替レート制度では財政政策が有効で金融政策が無効、変動為替レート制度では金融政策が有効で財政政策が無効となる対称的結論を導く。本モデルの中心的含意は「国際金融のトリレンマ（不可能の三角形）」であり、固定為替レート・自由な資本移動・独立した金融政策の三つを同時に達成することは不可能であるとする。マンデルは1999年にノーベル経済学賞を「異なる為替レート制度下での金融・財政政策の分析および最適通貨圏理論」により受賞した。ドーンブッシュ（1976）のオーバーシューティング・モデルや新開放経済マクロ経済学（Obstfeld & Rogoff 1995）により動学的・ミクロ基礎的に拡張されている。',
+    keyFigures: 'ロバート・マンデル（1963 CJEPS — 資本移動と安定化政策・1999年ノーベル経済学賞）／J・マーカス・フレミング（1962 IMF Staff Papers）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/mundell/facts/', type: 'reference', label: 'Nobel Prize — Robert A. Mundell Facts (1999)' },
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1962/003/article-A004-en.xml', type: 'academic', label: 'Fleming (1962) Domestic Financial Policies under Fixed and Floating Exchange Rates — IMF Staff Papers' },
+      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Fleming_model', type: 'reference', label: 'Wikipedia — Mundell–Fleming Model' },
+    ],
+  },
+  {
+    id: 'human-mirror-neuron-system',
+    discipline: 'human-science',
+    title: 'ミラーニューロンシステム（Mirror Neuron System）',
+    statement:
+      'ミラーニューロンシステム（Mirror Neuron System）とは、個体が特定の運動行為を実行する際と、他個体が同じ行為を実行するのを観察する際の双方で発火する視覚運動ニューロン群およびその脳内ネットワークを指す神経科学概念である。ディ・ペレグリーノ（di Pellegrino）ら（1992）がマカクザルの腹側運動前野（F5野）で初めて報告し、ガレーゼ（Gallese）、リゾラッティ（Rizzolatti）ら（1996, Brain誌）が532ニューロンから92個のミラーニューロンを同定して体系的に特性を確立した。' +
+      'ヒトではfMRIによる下前頭回・腹側運動前野・下頭頂小葉の活性化、μ律動（8-13Hz）抑制、およびムカメル（Mukamel）ら（2010）のてんかん患者における直接単一ニューロン記録が証拠を提供している。行為理解（直接マッチング仮説）、共感、言語進化への関与が提唱されているが、ヒコック（Hickok 2009）は「ミラーニューロン理論の8つの問題」で行為理解への必要性に疑問を呈した。自閉症の「壊れた鏡」仮説（ラマチャンドラン＆オーバーマン2006）も提唱されたが、追試結果は一貫せず議論が続いている。',
+    keyFigures: 'ジャコモ・リゾラッティほか（1992/1996 マカクザルF5野でのミラーニューロン発見・パルマ大学）／グレゴリー・ヒコック（2009 8つの問題・批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/brain/article-abstract/119/2/593/382476', type: 'academic', label: 'Gallese et al. (1996) Action Recognition in the Premotor Cortex — Brain 119(2)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/', type: 'academic', label: 'Hickok (2009) Eight Problems for the Mirror Neuron Theory — PMC / J Cognitive Neuroscience' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero (2004) The Mirror-Neuron System — Annual Review of Neuroscience' },
+    ],
+  },
+  {
+    id: 'mgmt-ambidextrous-organization',
+    discipline: 'management',
+    title: '両利き経営（Ambidextrous Organization）',
+    statement:
+      '両利き経営（Ambidextrous Organization）とは、組織が「活用（exploitation）」（効率化・精緻化・実行）と「探索（exploration）」（実験・革新・発見）を同時に追求する能力を指す経営学概念である。ダンカン（Robert Duncan, 1976）が「両利き組織」の用語を造語し、イノベーション・プロジェクトの開始段階と実施段階で異なる組織構造が必要であることを論じた。マーチ（James March, 1991, Organization Science）が探索と活用のトレードオフを定式化し、活用偏重は短期的に適応的だが長期的には自壊的であると示した。' +
+      'オライリー＆タッシュマン（O\'Reilly & Tushman, 2004, HBR）は「構造的両利き（structural ambidexterity）」を提唱し、探索部門と活用部門を組織的に分離しつつ上位経営チームで統合する設計を実証した（35件の革新的試みで両利き構造の成功率90%超）。ギブソン＆バーキンショー（Gibson & Birkinshaw, 2004, AMJ）は「文脈的両利き（contextual ambidexterity）」を提唱し、同一部門内で個人が活用と探索を切り替えられる組織文脈（ストレッチ・規律・支援・信頼）の重要性を41事業部4,195名のデータで実証した。メタ分析（Junni et al. 2013）は両利き性と業績の正の関係（r≈0.19）を確認している。',
+    keyFigures: 'ロバート・ダンカン（1976 造語）／ジェームズ・マーチ（1991 探索と活用のトレードオフ）／オライリー＆タッシュマン（2004 構造的両利き・HBR）／ギブソン＆バーキンショー（2004 文脈的両利き・AMJ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1)' },
+      { url: 'https://hbr.org/2004/04/the-ambidextrous-organization', type: 'academic', label: 'O\'Reilly & Tushman (2004) The Ambidextrous Organization — Harvard Business Review' },
+      { url: 'https://journals.aom.org/doi/10.5465/20159573', type: 'academic', label: 'Gibson & Birkinshaw (2004) Organizational Ambidexterity — Academy of Management Journal 47(2)' },
+    ],
+  },
+  {
+    id: 'bizlaw-cy-pres-doctrine',
+    discipline: 'business-law',
+    title: 'サイプレ法理（Cy Pres Doctrine）',
+    statement:
+      'サイプレ法理（Cy Pres Doctrine）とは、ノルマン・フランス語の「cy pres comme possible（可能な限り近く）」に由来する衡平法上の原則であり、法的手段の本来の目的が不可能・非現実的・違法となった場合に、裁判所が原意に最も近い代替目的へ資金・目的を転用する権限を認める法理である。（1）信託法上の適用：公益信託の特定目的が達成不能となった場合、設立者の一般的公益意思が認められれば、裁判所が類似の公益目的へ信託財産を転用する（Restatement (Third) of Trusts §67、Uniform Trust Code §413）。' +
+      '（2）集団訴訟和解における適用：クラスアクション和解金をクラスメンバーに個別配分することが非現実的な場合（特定不能・少額・未請求残余）、裁判所がクラスの利益に関連する第三者団体へ残余資金を配分する。Jackson v. Phillips事件（1867年マサチューセッツ州最高裁）が米国における公益信託サイプレの先例的判決である。Frank v. Gaos事件（2019年連邦最高裁）ではクラスメンバーへの直接支払いゼロのサイプレ限定和解の合憲性が争点となったが、最高裁はArticle III standing問題で差戻し、実体判断を回避した。利益相反、クラスメンバーの補償欠如、憲法上の適格性に関する批判が存在する。',
+    keyFigures: 'Jackson v. Phillips（1867 マサチューセッツ州最高裁・公益信託サイプレの先例）／Frank v. Gaos（2019 連邦最高裁・サイプレ限定和解の合憲性争点）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/cy_pres_doctrine', type: 'reference', label: 'Cornell LII — Cy Pres Doctrine (Wex)' },
+      { url: 'https://supreme.justia.com/cases/federal/us/586/17-961/', type: 'government', label: 'Justia — Frank v. Gaos, 586 U.S. ___ (2019)' },
+      { url: 'https://scholarship.law.ufl.edu/flr/vol62/iss3/2/', type: 'academic', label: 'Redish et al. (2010) Cy Pres Relief and the Pathologies of the Modern Class Action — Florida Law Review' },
+    ],
+  },
+  {
+    id: 'infosoc-data-justice',
+    discipline: 'information-sociology',
+    title: 'データ正義（Data Justice）',
+    statement:
+      'データ正義（Data Justice）とは、デジタルデータの収集・処理・統治における公正性と衡平性を問う概念的枠組みであり、データ実践と社会正義の交差点に位置する情報社会学の概念である。リネット・テイラー（Linnet Taylor, 2017, Big Data & Society）が三つの柱からなる枠組みを提唱した：（1）（不）可視性（(in)visibility）：プライバシー権と表象される権利の二重性、（2）技術への（不）関与（(dis)engagement）：データ駆動技術への参加・拒否の自由、（3）反差別（antidiscrimination）：データ駆動型意思決定におけるバイアスの識別と異議申立ての権利。' +
+      'デンチック（Lina Dencik）、ヒンツ（Arne Hintz）、ケーブル（Jonathan Cable）は2016年にBig Data & Society誌で監視抵抗と社会正義を結合するデータ正義の枠組みを提唱し、カーディフ大学データ正義ラボ（2017年設立）で研究を推進した。本概念はフィルターバブル・アルゴリズム差別・監視研究と接続し、クドリー＆メヒアス（Couldry & Mejias, 2019）の「データ植民地主義」論（データ抽出が歴史的植民地主義と構造的に並行する新たな収奪形態であるとする議論）とも関連する。プラットフォームガバナンスとデータ規制の規範的基盤を提供する。',
+    keyFigures: 'リネット・テイラー（2017 Big Data & Society — 三柱枠組み・ティルブルフ大学）／リナ・デンチック＆アーネ・ヒンツ（2016 データ正義の枠組み・カーディフ大学データ正義ラボ）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/2053951717736335', type: 'academic', label: 'Taylor (2017) What Is Data Justice? — Big Data & Society' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/2053951716679678', type: 'academic', label: 'Dencik, Hintz & Cable (2016) Towards Data Justice? — Big Data & Society' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2019) Data Colonialism — Television & New Media 20(4)' },
+    ],
+  },
+  {
+    id: 'mgmt-high-reliability-organizations',
+    discipline: 'management',
+    title: '高信頼性組織（High Reliability Organizations / HRO）',
+    statement:
+      '高信頼性組織（High Reliability Organizations, HRO）とは、複雑かつ高リスクな環境で長期間にわたり重大事故を統計的期待値よりも大幅に少なく抑えることに成功している組織を指す組織理論概念である。カリフォルニア大学バークレー校のトッド・ラポート（Todd LaPorte）、ジーン・ロックリン（Gene Rochlin）、カーリーン・ロバーツ（Karlene Roberts）が1984年にHRO研究プロジェクトを発足し、米海軍原子力空母・FAA航空管制・原子力発電所を対象とした現場調査で概念を確立した。' +
+      'カール・ワイク（Karl Weick）とキャスリーン・サトクリフ（Kathleen Sutcliffe）は著書"Managing the Unexpected"（2001年初版）でHROの5原則を体系化した：（1）失敗への執着（preoccupation with failure）、（2）単純化への抵抗（reluctance to simplify）、（3）オペレーションへの感受性（sensitivity to operations）、（4）レジリエンスへのコミットメント（commitment to resilience）、（5）専門知識への敬意（deference to expertise）。チャールズ・ペロー（Charles Perrow, 1984 "Normal Accidents"）の「通常事故理論」はHRO理論と対照的に、相互作用的複雑性と密結合を持つシステムでは事故は構造的に不可避であると主張し、安全科学における中心的論争を形成している。医療安全運動（IOM 1999 "To Err Is Human"）にHRO原則が広く応用されている。',
+    keyFigures: 'ラポート・ロックリン・ロバーツ（1984 UCバークレーHROプロジェクト）／ワイク＆サトクリフ（2001 Managing the Unexpected — 5原則）／ペロー（1984 Normal Accidents — 対照的理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psnet.ahrq.gov/primer/high-reliability', type: 'government', label: 'AHRQ PSNet — High Reliability Primer' },
+      { url: 'https://ccrm.berkeley.edu/40th-anniversary-high-reliability-organizations-research', type: 'academic', label: 'Berkeley CCRM — 40th Anniversary of HRO Research' },
+      { url: 'https://en.wikipedia.org/wiki/High_reliability_organization', type: 'reference', label: 'Wikipedia — High Reliability Organization' },
+    ],
+  },
 ];
 // Stryker restore all
