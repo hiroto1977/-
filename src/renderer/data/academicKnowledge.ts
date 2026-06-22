@@ -27696,5 +27696,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/acprof:oso/9780195398601.001.0001', type: 'academic', label: 'Jamieson & Cappella (2008) Echo Chamber: Rush Limbaugh and the Conservative Media Establishment, Oxford UP' },
     ],
   },
+  {
+    id: 'econ-optimum-tariff-argument',
+    discipline: 'economics',
+    title: '最適関税論',
+    statement:
+      'Bickerdike（1906）は、大国が輸入関税を課すことで交易条件を自国に有利に動かし、国民厚生を改善できることを初めて体系的に示した。' +
+      'Johnson（1953-54）は「最適関税と報復」において、最適関税率は輸出国の輸出供給弾力性の逆数に等しいことを定式化し、相手国の報復を考慮した均衡分析を展開した。' +
+      'Kaldor（1940）やScitovsky（1942）も貿易利得の分配と交易条件操作の厚生効果を理論的に深化させ、Baldwin（1948）は最適関税が自由貿易均衡からの乖離をもたらす条件を明確化した。' +
+      '現実には報復の連鎖が双方の厚生を損なうため、多国間自由化交渉の理論的根拠ともなっている。',
+    keyFigures: 'Charles F. Bickerdike／Harry G. Johnson／Nicholas Kaldor／Tibor Scitovsky／Robert E. Baldwin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2296186', type: 'academic', label: 'Johnson (1953-54) Optimum Tariffs and Retaliation, Review of Economic Studies 21(2):142-153' },
+      { url: 'https://doi.org/10.2307/2549770', type: 'academic', label: 'Bickerdike (1906) The Theory of Incipient Taxes, Economic Journal 16(64):529-535' },
+      { url: 'https://www.econlib.org/library/Enc/Tariffs.html', type: 'reference', label: 'Library of Economics and Liberty — Tariffs entry covering optimum tariff theory' },
+    ],
+  },
+  {
+    id: 'econ-new-institutional-economics',
+    discipline: 'economics',
+    title: '新制度派経済学',
+    statement:
+      '制度（フォーマルなルール・インフォーマルな規範・執行メカニズム）が経済主体の行動と資源配分に与える影響を分析する経済学の潮流。' +
+      'Coase（1937）は企業の存在を取引費用の節約という観点から解明し、市場か組織かの選択を取引費用の大小で説明する枠組みを提示した。' +
+      'Williamson（1985）はこれを発展させ、資産特殊性・不確実性・取引頻度を軸に取引費用経済学を体系化し、垂直統合や長期契約といったガバナンス構造の選択を分析した。' +
+      'North（1990）は制度を「ゲームのルール」として定義し、制度変化が経済パフォーマンスの長期的格差を生む経路依存的メカニズムを歴史的に論証した。',
+    keyFigures: 'Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Daron Acemoglu',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1468-0335.1937.tb00002.x', type: 'academic', label: 'Coase (1937) The Nature of the Firm, Economica 4(16):386-405' },
+      { url: 'https://doi.org/10.1017/CBO9780511805387', type: 'academic', label: 'North (1990) Institutions, Institutional Change and Economic Performance, Cambridge UP' },
+      { url: 'https://www.econlib.org/library/Enc/NewInstitutionalEconomics.html', type: 'reference', label: 'Econlib Encyclopedia — New Institutional Economics (overview)' },
+    ],
+  },
+  {
+    id: 'human-cultural-dimensions-hofstede',
+    discipline: 'human-science',
+    title: 'ホフステッドの文化次元理論',
+    statement:
+      'Hofstede（1980）はIBMの多国籍従業員調査（50か国以上）を分析し、国・社会の文化的差異を数値化する比較文化論の枠組みを提唱した。' +
+      '当初は権力格差・個人主義・男性性・不確実性の回避の4次元で構成されたが、Bond（1988）による中国版価値観調査の知見を取り込んで長期志向が追加され、さらにMinkov（2010）の世界価値観調査再分析を基に耽溺対抑制が加えられ、現在は6次元モデルが標準となっている。' +
+      '本理論は経営・教育・医療・交渉など幅広い分野の異文化研究に応用される一方、国民文化を単一スコアで代表させることへの過度な単純化の批判（McSweeney 2002等）やサンプルの代表性の問題も指摘されている。',
+    keyFigures: 'Geert Hofstede／Michael H. Bond／Michael Minkov／Gert Jan Hofstede',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/002102838001100301', type: 'academic', label: 'Hofstede (1980) Culture\'s Consequences — original journal introduction, Cross-Cultural Research' },
+      { url: 'https://doi.org/10.1177/0170840602232155', type: 'academic', label: 'McSweeney (2002) Hofstede\'s model of national cultural differences — critique, Human Relations' },
+      { url: 'https://www.britannica.com/topic/Hofstedes-cultural-dimensions-theory', type: 'reference', label: 'Encyclopaedia Britannica — Hofstede\'s Cultural Dimensions Theory' },
+    ],
+  },
+  {
+    id: 'mgmt-slack-resources-theory',
+    discipline: 'management',
+    title: '組織スラック資源理論',
+    statement:
+      'Cyert & March（1963）は『企業の行動理論』において、組織が蓄積する余剰資源——スラック——を、実際の支払いと最低限必要な支払いとの差分と定義し、これが組織の安定性維持と変革への緩衝材として機能すると論じた。' +
+      'Bourgeois（1981）は組織スラックをさらに概念化し、利用可能なスラック・回収可能なスラック・潜在的スラックの三類型に分類するとともに、スラックが戦略的柔軟性および組織適応能力を高めることを示した。' +
+      'Nohria & Gulati（1996）は実証研究において、スラックと革新性の関係が逆U字型をなすことを明らかにし、資源の不足は実験投資を妨げる一方、過剰なスラックは規律の弛緩と浪費をもたらすと論じた。',
+    keyFigures: 'Richard M. Cyert／James G. March／L. J. Bourgeois III／Nitin Nohria／Ranjay Gulati',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2392995', type: 'academic', label: 'Bourgeois (1981) On the Measurement of Organizational Slack, Academy of Management Review 6(1):29-39' },
+      { url: 'https://doi.org/10.2307/256998', type: 'academic', label: 'Nohria & Gulati (1996) Is Slack Good or Bad for Innovation? Academy of Management Journal 39(5):1245-1264' },
+      { url: 'https://doi.org/10.2307/258557', type: 'academic', label: 'Barney (1991) Firm Resources and Sustained Competitive Advantage, Journal of Management 17(1):99-120' },
+    ],
+  },
+  {
+    id: 'bizlaw-equitable-subordination',
+    discipline: 'business-law',
+    title: '衡平法上の劣後化（エクイタブル・サボーディネーション）',
+    statement:
+      '衡平法上の劣後化とは、内部者または支配的債権者が不公正な行為を行った場合に、裁判所がその者の債権を他の債権者の債権に劣後させる衡平法上の救済措置をいう。' +
+      '第5巡回区控訴裁判所はBenjamin v. Diamond（In re Mobile Steel Co.）, 563 F.2d 692（5th Cir. 1977）において、①被申立人の不公正行為、②その行為が他の債権者または当該破産財団に損害を与えたこと、③劣後化が連邦破産政策に反しないこと、という三段階テスト（Mobile Steelテスト）を確立した。' +
+      'DeNatale & Abram（1985）は、この法理が株式保有者・取締役・会社間の内部的財務操作に広く適用されると論じ、内部者融資を通じた濫用的行為に対する主要な抑止機能を指摘した。' +
+      '米国破産法典第510条(c)は、この判例法理を明文化し、衡平法上の根拠があるときに裁判所が債権の劣後化を命じることを明示的に認めている。',
+    keyFigures: 'Andrew DeNatale／Prudence B. Abram／David G. Epstein／Jonathan Landers／Lawrence P. King',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1288497', type: 'academic', label: 'DeNatale & Abram (1985) The Doctrine of Equitable Subordination as Applied to Nonmanagement Creditors, Business Lawyer' },
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/563/692/360445/', type: 'reference', label: 'Justia — Benjamin v. Diamond (In re Mobile Steel Co.), 563 F.2d 692 (5th Cir. 1977)' },
+      { url: 'https://www.law.cornell.edu/uscode/text/11/510', type: 'government', label: 'LII Cornell — 11 U.S.C. § 510: Subordination (Bankruptcy Code Section 510(c))' },
+    ],
+  },
+  {
+    id: 'infosoc-participatory-design-information-systems',
+    discipline: 'information-sociology',
+    title: '情報システムにおける参加型デザイン',
+    statement:
+      '参加型デザイン（Participatory Design）とは、情報システムや技術的成果物の設計プロセスに、実際にそのシステムを使用するエンドユーザーを共同設計者として積極的に関与させるアプローチである。' +
+      'スカンジナビア諸国の職場民主主義運動を思想的背景とし、Ehn（1988）は著書 Work-Oriented Design of Computer Artifacts において、労働者が技術設計の主体となることの重要性を論じた。' +
+      'Schuler & Namioka（1993）が編集した Participatory Design: Principles and Practices はこの分野のランドマーク的論集であり、設計者と利用者の協働実践の諸原則を体系化した。' +
+      '参加型デザインは利用者の暗黙知・文脈知識を設計に反映させることで使いやすさと受容性を高める一方、組織的・制度的制約から参加の深度や代表性が限られるという批判もある。',
+    keyFigures: 'Pelle Ehn／Douglas Schuler／Aki Namioka／Morten Kyng／Joan Greenbaum',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1145/142750.142754', type: 'academic', label: 'Schuler & Namioka (1993) Participatory Design: Principles and Practices, ACM DL reference' },
+      { url: 'https://dl.acm.org/doi/10.1145/1978942.1979275', type: 'academic', label: 'Simonsen & Robertson (2012) Routledge International Handbook of Participatory Design, ACM entry' },
+      { url: 'https://www.interaction-design.org/literature/topics/participatory-design', type: 'reference', label: 'Interaction Design Foundation — Participatory Design overview' },
+    ],
+  },
 ];
 // Stryker restore all
