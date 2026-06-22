@@ -2057,5 +2057,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 戦略的柔軟性理論 | 環境変化への迅速適応能力・三層柔軟性フレームワーク（Sanchez / Volberda / Shimizu & Hitt） |
 | 経営学 | 組織神経科学 | fMRI・EEG等の神経科学手法による組織行動解明（Becker & Cropanzano / Senior & Lee / Camerer） |
 | 情報社会学 | プラットフォーム協同組合主義理論 | 労働者所有デジタルプラットフォームによるプラットフォーム資本主義代替（Scholz / Schneider / Bauwens / Srnicek） |
+| 経済学 | オランダ病理論 | 天然資源ブームによる実質為替レート上昇と製造業衰退（Corden & Neary / Sachs & Warner） |
+| 人間科学 | 神経可塑性理論 | 経験依存的神経回路再編成・Hebb則・皮質地図再組織化（Hebb / Merzenich / Pascual-Leone / Kandel） |
+| 経営法学 | ドラッグ・アロング権 | 多数派株主による少数派への持分売却強制権・VC出口条項（Gilson / Broughman & Fried / Smith） |
+| 経営学 | 構造的慣性理論 | 組織生態学における変化抵抗・選択vs適応・年齢依存死亡率（Hannan & Freeman / Carroll） |
+| 経営学 | 組織注意理論 | 注意配分・規制による戦略的行動決定・カーネギー学派継承（Ocasio / Simon / Cho & Hambrick） |
+| 情報社会学 | アルゴリズムキュレーション理論 | プラットフォームアルゴリズムによるコンテンツ選別・フィルターバブル（Gillespie / Bucher / Pariser） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
