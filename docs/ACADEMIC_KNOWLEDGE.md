@@ -2063,5 +2063,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 構造的慣性理論 | 組織生態学における変化抵抗・選択vs適応・年齢依存死亡率（Hannan & Freeman / Carroll） |
 | 経営学 | 組織注意理論 | 注意配分・規制による戦略的行動決定・カーネギー学派継承（Ocasio / Simon / Cho & Hambrick） |
 | 情報社会学 | アルゴリズムキュレーション理論 | プラットフォームアルゴリズムによるコンテンツ選別・フィルターバブル（Gillespie / Bucher / Pariser） |
+| 経済学 | 金融政策のトリレンマ | 固定為替・資本移動自由・金融政策独立の不可能三角形（Mundell / Fleming / Obstfeld & Taylor / Rey） |
+| 人間科学 | 愛着スタイル理論 | 成人ロマンティック関係への愛着理論拡張・4カテゴリーモデル（Hazan & Shaver / Bartholomew & Horowitz） |
+| 経営法学 | 詐害行為取消法理 | 債権者害意的財産移転の取消・UFTA/UVTA・債権者交渉理論（Baird & Jackson / Clark / Warren） |
+| 経営学 | 戦略グループ理論 | 産業内類似戦略企業群・移動障壁・業績差異（Hunt / Porter / Caves & Porter / Cool & Schendel） |
+| 経営学 | 組織両利き理論 | 探索と活用の同時追求・構造的/文脈的両利き（March / Tushman & O'Reilly / Gibson & Birkinshaw） |
+| 情報社会学 | テクノフェミニスト理論 | ジェンダーと技術の相互形成・サイボーグフェミニズム（Wajcman / Haraway / Cockburn） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
