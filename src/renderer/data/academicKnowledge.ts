@@ -28095,5 +28095,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Postphenomenology', type: 'reference', label: 'Wikipedia — Postphenomenology' },
     ],
   },
+  {
+    id: 'econ-hyperbolic-discounting',
+    discipline: 'economics',
+    title: '双曲割引理論',
+    statement:
+      '双曲割引理論とは、人々が将来の報酬を割り引く際に、近い将来ほど急激に割り引き、遠い将来ほど緩やかに割り引くという時間非整合的な選好パターンを記述する理論である。Laibson（1997）はβ-δモデルを用いて、この現在バイアスが流動性の低い資産への「コミットメント需要」を生むことを示し、消費行動の実証的謎を説明した。' +
+      'O\'Donoghue & Rabin（1999）はさらに「今やるか後でやるか」の枠組みで、現在バイアスが先延ばし行動（procrastination）や過早着手（preproperation）を引き起こすメカニズムを解明した。',
+    keyFigures: 'David Laibson ／ Ted O\'Donoghue ／ Matthew Rabin ／ George Ainslie',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1162/003355397555253', type: 'academic', label: 'Laibson (1997) Golden Eggs and Hyperbolic Discounting — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.1257/aer.89.1.103', type: 'academic', label: 'O\'Donoghue & Rabin (1999) Doing It Now or Later — American Economic Review' },
+      { url: 'https://en.wikipedia.org/wiki/Hyperbolic_discounting', type: 'reference', label: 'Wikipedia — Hyperbolic discounting' },
+    ],
+  },
+  {
+    id: 'econ-harris-todaro-migration',
+    discipline: 'economics',
+    title: 'ハリス＝トダロ・モデル',
+    statement:
+      'Harris & Todaro（1970）が提唱した農村－都市労働移動モデルは、移動の意思決定が実際の都市賃金ではなく「期待都市賃金」（公式部門賃金×就業確率）によって規定されると主張する。都市の公式部門賃金が制度的要因で市場均衡水準を上回るため、期待都市賃金が農村賃金と等しくなる（ハリス＝トダロ条件）まで移動が続き、高い都市失業と非公式部門が並存する均衡が成立する。' +
+      '重要な政策含意として「トダロのパラドックス」があり、Todaro（1969）が示したように都市での雇用創出は期待所得を高めてかえって一層の農村から都市への移動を誘発し、都市の総失業を増加させうる。',
+    keyFigures: 'John R. Harris ／ Michael P. Todaro',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1912956', type: 'academic', label: 'Harris & Todaro (1970) Migration, Unemployment and Development — American Economic Review' },
+      { url: 'https://doi.org/10.2307/1970540', type: 'academic', label: 'Todaro (1969) A Model of Labor Migration and Urban Unemployment — American Economic Review' },
+      { url: 'https://en.wikipedia.org/wiki/Harris%E2%80%93Todaro_model', type: 'reference', label: 'Harris–Todaro model (Wikipedia)' },
+    ],
+  },
+  {
+    id: 'human-biopsychosocial-model',
+    discipline: 'human-science',
+    title: '生物心理社会モデル',
+    statement:
+      'Engel（1977）が提唱した生物心理社会モデルは、疾病と健康が生物学的・心理的・社会的要因の相互作用によって規定されるとする統合的枠組みであり、従来の生物医学モデルの還元主義的限界を克服するために登場した。Engel（1980）はこのモデルの臨床応用を論じ、患者の主観的経験・感情・社会的文脈を医療面接と治療計画に組み込む方法論を発展させた。' +
+      'このモデルは精神医学・臨床心理学・プライマリケア・リハビリテーション医学など幅広い医療分野において、疾病理解と患者中心ケアの基盤的枠組みとして広く採用されている。',
+    keyFigures: 'George Libman Engel ／ John Romano ／ Adolph Meyer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1126/science.847460', type: 'academic', label: 'Engel (1977) The Need for a New Medical Model — Science' },
+      { url: 'https://doi.org/10.1176/ajp.137.5.535', type: 'academic', label: 'Engel (1980) The Clinical Application of the Biopsychosocial Model — Am J Psychiatry' },
+      { url: 'https://en.wikipedia.org/wiki/Biopsychosocial_model', type: 'reference', label: 'Biopsychosocial model — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-managerial-cognition',
+    discipline: 'management',
+    title: '経営者認知理論',
+    statement:
+      '経営者認知理論は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデルを通じて環境を解釈・構築するという前提に立つ。Walsh（1995）は、注意・符号化・貯蔵・推論という四つの次元から知識構造が意思決定を規定すると体系的に論じた。' +
+      'Porac・Thomas・Baden-Fuller（1989）は、同一産業の経営者が共有する「競合認知コミュニティ」が競争構造そのものを形成することを実証し、認知が個人と集団の両レベルで戦略行動を媒介することを示した。',
+    keyFigures: 'James P. Walsh ／ Karl E. Weick ／ Anne Sigismund Huff ／ Joseph F. Porac ／ Howard Thomas',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh (1995) Managerial and Organizational Cognition — Organization Science' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00736.x', type: 'academic', label: 'Porac, Thomas & Baden-Fuller (1989) Competitive Groups as Cognitive Communities — Journal of Management Studies' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00665.x', type: 'reference', label: 'Fiol & Huff (1992) Maps for Managers — Journal of Management Studies' },
+    ],
+  },
+  {
+    id: 'bizlaw-constructive-trust',
+    discipline: 'business-law',
+    title: '擬制信託',
+    statement:
+      '擬制信託（Constructive Trust）とは、法の作用によって当然に成立する衡平法上の救済手段であり、法的所有権者が受益的利益を保持することが衡平の良心に反するとき、裁判所がその者を受託者とみなすものである。Cardozo（1919年）は「衡平の良心が表現される公式」と定義し、Scott（1955年）はその不当利得防止機能と受託者義務違反への適用を体系化した。' +
+      'Etherton（2008年）は従来の制度的擬制信託（institutional constructive trust）と救済的擬制信託（remedial constructive trust）の区別を再検討し、不当利得法との統合的モデルを提唱した。',
+    keyFigures: 'Benjamin Nathan Cardozo ／ Austin Wakeman Scott ／ George Gleason Bogert ／ Terence Etherton',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1017/S0008197308000342', type: 'academic', label: 'Etherton (2008) Constructive Trusts: A New Model for Equity and Unjust Enrichment — Cambridge Law Journal' },
+      { url: 'https://ir.lawnet.fordham.edu/cgi/viewcontent.cgi?article=1118&context=flr', type: 'academic', label: 'Scott (1955) Some Reflections on the Restatement of the Law of Trusts — Fordham Law Review' },
+      { url: 'https://www.law.cornell.edu/wex/constructive_trust', type: 'reference', label: 'Legal Information Institute — Constructive Trust (Cornell Law School Wex)' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-economy-theory',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム経済論',
+    statement:
+      'プラットフォーム経済論は、デジタルプラットフォームが生産者と消費者を媒介する多面的市場を形成し、ネットワーク外部性を通じて経済的価値を創出するメカニズムを分析する理論的枠組みである。Rochet・Tirole（2003）の二面的市場理論はその経済学的基礎を与え、Srnicek（2017）はプラットフォーム資本主義の概念のもとにデータの商品化と新たな資本蓄積様式を論じた。' +
+      'Parker・Van Alstyne・Choudary（2016）は、プラットフォームが伝統的なパイプライン型企業に代わる支配的ビジネスモデルとして情報産業を再編することを示した。',
+    keyFigures: 'Jean-Charles Rochet ／ Jean Tirole ／ Nick Srnicek ／ Geoffrey Parker ／ Marshall Van Alstyne ／ Sangeet Paul Choudary',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1162/154247603322493212', type: 'academic', label: 'Rochet & Tirole (2003) Platform Competition in Two-Sided Markets — Journal of the European Economic Association' },
+      { url: 'https://doi.org/10.1287/mnsc.1050.0400', type: 'academic', label: 'Parker & Van Alstyne (2005) Two-Sided Network Effects — Management Science' },
+      { url: 'https://doi.org/10.1787/53e5f593-en', type: 'reference', label: 'OECD — An Introduction to Online Platforms and Their Role in the Digital Transformation (2019)' },
+    ],
+  },
 ];
 // Stryker restore all
