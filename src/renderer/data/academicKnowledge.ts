@@ -25880,5 +25880,115 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Polymedia', type: 'reference', label: 'Wikipedia — Polymedia（三前提・道徳的説明責任・エスノグラフィ概要）' },
     ],
   },
+
+  // ── Batch 284 ─────────────────────────────────────────────
+  // econ-giffen-paradox, econ-solow-residual, human-categorical-perception,
+  // mgmt-institutional-void, bizlaw-entire-fairness, infosoc-technological-affordance
+
+  {
+    id: 'econ-giffen-paradox',
+    discipline: 'economics',
+    title: 'ギッフェン財（Giffen Good / Giffen Paradox）',
+    statement:
+      'ギッフェン財とは、価格が上昇すると需要量が増加するという需要法則の例外を示す劣等財であり、アルフレッド・マーシャルが1895年の『経済学原理』第3版においてロバート・ギッフェンの観察に帰したとされる逆説的な財の類型である。' +
+      'そのメカニズムは、劣等財の価格上昇が実質所得を低下させる所得効果が、通常の代替効果を圧倒する場合に生じる——すなわち、家計の予算の大部分を占める必需的劣等財の価格上昇により他財への支出余裕が失われ、かえって当該劣等財の消費量が増加する。' +
+      '長らく純粋な理論的可能性として扱われてきたが、Jensen & Miller（2008, American Economic Review 98(4):1553-1577）が中国湖南省・甘粛省における米・小麦への補助金付与実験を通じて、主食への価格補助金の減少が消費量を減少させるギッフェン行動の初の厳密な実証的証拠を提示した。' +
+      'ギッフェン財の概念はミクロ経済学における消費者理論の精緻さを示すとともに、所得効果と代替効果の分解（スルツキー分解）の理論的重要性を実証する事例として教育・研究の双方で広く参照される。',
+    keyFigures: 'ロバート・ギッフェン（1837–1910、マーシャルによる帰属）／アルフレッド・マーシャル（1895 Principles of Economics 第3版）／R.T. Jensen & N.H. Miller（2008 AER 98(4):1553-1577、初の厳密な実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.98.4.1553', type: 'academic', label: 'Jensen & Miller (2008) Giffen Behavior and Subsistence Consumption, American Economic Review 98(4)' },
+      { url: 'https://en.wikipedia.org/wiki/Giffen_good', type: 'reference', label: 'Wikipedia — Giffen good（定義・歴史・所得効果メカニズム）' },
+      { url: 'https://www.econlib.org/library/Enc/GiffenGoods.html', type: 'reference', label: 'Econlib — Giffen Goods（経済学百科事典）' },
+    ],
+  },
+  {
+    id: 'econ-solow-residual',
+    discipline: 'economics',
+    title: 'ソロー残差（Solow Residual / 全要素生産性）',
+    statement:
+      'ソロー残差とは、経済成長のうち資本投入と労働投入の増加では説明できない残余部分を指し、全要素生産性（Total Factor Productivity, TFP）と実質的に同義である。' +
+      'ロバート・ソローが1957年の論文「Technical Change and the Aggregate Production Function」（The Review of Economics and Statistics, Vol.39, No.3, pp.312-320）で提示した成長会計（growth accounting）の手法に基づき、集計的生産関数 Y = A·F(K, L) における技術水準パラメータ A の変化率として計測される。' +
+      'ソローは1909-1949年の米国データを分析し、産出成長の約半分が資本・労働の増加では説明できず技術進歩に帰すべきことを示した。' +
+      'この残差は技術革新だけでなく、経営効率・制度改革・人的資本の質的向上など多様な要因を包含するため「我々の無知の尺度（measure of our ignorance）」とも呼ばれ、その精緻な分解が成長経済学の中心的課題であり続けている。',
+    keyFigures: 'ロバート・ソロー（1957年論文、1987年ノーベル経済学賞）／モーゼス・アブラモヴィッツ（1956年、残差の実証的重要性を指摘）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1926047', type: 'academic', label: 'R.M. Solow, Technical Change and the Aggregate Production Function, The Review of Economics and Statistics (1957)' },
+      { url: 'https://www.econlib.org/library/Enc/bios/Solow.html', type: 'reference', label: 'Econlib — Robert Merton Solow（経歴・業績解説）' },
+      { url: 'https://www5.cao.go.jp/j-j/wp/wp-je23/h03-01.html', type: 'government', label: '内閣府 経済財政白書 — 生産性の動向と課題（TFP成長会計）' },
+    ],
+  },
+  {
+    id: 'human-categorical-perception',
+    discipline: 'human-science',
+    title: 'カテゴリー知覚（Categorical Perception）',
+    statement:
+      'カテゴリー知覚とは、物理的に連続的な刺激が離散的なカテゴリーとして知覚され、カテゴリー境界付近で弁別能力が急激に高まる現象をいう。' +
+      'Libermanら（1957）がHaskins研究所で合成音声の/b/-/d/-/g/連続体を用い、音素境界を跨ぐ刺激対の弁別成績がカテゴリー内の対より有意に高いことを示したのが端緒であり、カテゴリー内圧縮（within-category compression）とカテゴリー間拡大（between-category expansion）という二つの知覚歪みとして定式化された。' +
+      'その後、色彩知覚（言語のカラーカテゴリーが弁別閾に影響するWhorfian効果）、表情認知（怒り-恐怖等の連続モーフィング刺激での段階的知覚）、音楽音程（短3度-長3度-完全4度の連続体での訓練依存的カテゴリー化）など多領域へ拡張された。' +
+      'カテゴリー知覚は、生得的制約と学習による可塑性の相互作用を示す重要な現象として認知科学・言語学・神経科学を横断する研究テーマであり続けている。',
+    keyFigures: 'A.M. Liberman・K.S. Harris・H.S. Hoffman・B.C. Griffith（1957 音声カテゴリー知覚の発見）／R.L. Goldstone & A.T. Hendrickson（2010 総説）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1959-02908-001', type: 'academic', label: 'APA PsycNet — Liberman et al. (1957) The discrimination of speech sounds within and across phoneme boundaries' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/26272840/', type: 'academic', label: 'PubMed — Goldstone & Hendrickson (2010) Categorical perception, WIREs Cognitive Science' },
+      { url: 'https://en.wikipedia.org/wiki/Categorical_perception', type: 'reference', label: 'Wikipedia — Categorical perception（カテゴリー知覚の概説）' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-void',
+    discipline: 'management',
+    title: '制度的空白（Institutional Voids）',
+    statement:
+      '制度的空白（Institutional Voids）とは、新興国市場において取引を成立させるために必要な専門的仲介機関（信用格付機関・市場調査会社・ベンチャーキャピタル・人材紹介会社・知的財産裁定機関等）が欠如または機能不全にある状態を指す、国際経営戦略論の中核概念である。' +
+      'タルン・カンナとクリシュナ・パレプが1997年のHarvard Business Review論文「Why Focused Strategies May Be Wrong for Emerging Markets」（75(4), pp.41-51）で提唱し、先進国で有効な「選択と集中」戦略が新興国では必ずしも適切でない理由を制度的空白の存在から説明した。' +
+      '2005年のHBSバックグラウンドノートでは製品市場・資本市場・労働市場・政治社会制度・開放度の5つの文脈で空白を診断する「Five Contexts Framework」を提示し、2010年の著書 Winning in Emerging Markets で体系化した。' +
+      '中核的洞察は、多角化ビジネスグループ（財閥・チェボル等）が内部資本市場・人材プール・ブランド信用を通じて制度的空白を代替的に充填するため、新興国では非関連多角化が価値創造的になりうるという点にある。' +
+      'Khanna & Palepu (2000, Journal of Finance 55(2):867-891) はインドのデータで高度多角化グループの系列企業が独立企業を上回ることを実証し、制度的空白仮説を支持した。',
+    keyFigures: 'タルン・カンナ & クリシュナ・パレプ（1997 HBR／2000 Journal of Finance／2005 Five Contexts Framework／2010 Winning in Emerging Markets）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets', type: 'academic', label: 'Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=32645', type: 'academic', label: 'Khanna & Palepu (2005) Spotting Institutional Voids in Emerging Markets, HBS Background Note' },
+      { url: 'https://link.springer.com/article/10.1057/s41267-017-0074-z', type: 'academic', label: 'Springer JIBS — International business responses to institutional voids（制度的空白への企業対応の体系的レビュー）' },
+    ],
+  },
+  {
+    id: 'bizlaw-entire-fairness',
+    discipline: 'business-law',
+    title: '完全公正基準（Entire Fairness Doctrine）',
+    statement:
+      '完全公正基準（Entire Fairness Doctrine）とは、米国デラウェア州会社法における司法審査基準のうち最も厳格なもので、支配株主の自己取引（self-dealing）や利益相反取引に適用される。' +
+      '1983年のWeinberger v. UOP, Inc.（457 A.2d 701）判決でデラウェア州最高裁が確立し、取引の手続的側面を問う「公正な取扱い（fair dealing）」と経済条件を問う「公正な価格（fair price）」の二要件テストを課す。' +
+      '公正な取扱いでは取引の発意・交渉過程・開示・承認手続の適正さが、公正な価格では関連する財務的要素を総合した対価の相当性が審査される。' +
+      '本基準が適用される場合、被告側が取引の完全な公正性を立証する責任を負うが、独立した特別委員会の承認または少数株主の過半数による承認があれば立証責任が原告側に転換され（Kahn v. Lynch, 1994）、両条件を同時に充足すれば審査基準自体がより寛容な経営判断原則に引き下げられる（Kahn v. M&F Worldwide, 2014）。' +
+      '本法理はコーポレート・ガバナンスにおける少数株主保護の中核をなし、世界の会社法に影響を与えている。',
+    keyFigures: 'デラウェア州最高裁 Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)／Kahn v. Lynch Communication Systems, Inc. (Del. 1994)／Kahn v. M&F Worldwide Corp. (Del. 2014)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corpgov.law.harvard.edu/2019/03/14/farewell-to-fairness-towards-retiring-delawares-entire-fairness-review/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance — Farewell to Fairness: Towards Retiring Entire Fairness Review (2019)' },
+      { url: 'https://www.law.upenn.edu/live/news/7001-weinberger-v-uop-inc-457-a2d-701-del-1983', type: 'academic', label: 'Penn Carey Law — Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)' },
+      { url: 'https://en.wikipedia.org/wiki/Weinberger_v._UOP,_Inc.', type: 'reference', label: 'Wikipedia — Weinberger v. UOP, Inc.（完全公正基準の先例）' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-affordance',
+    discipline: 'information-sociology',
+    title: 'テクノロジカル・アフォーダンス（Technological Affordance）',
+    statement:
+      'アフォーダンス（affordance）とは、環境が行為者に提供する行為の可能性を指す概念であり、生態心理学者ジェームズ・J・ギブソンが1979年の著書 The Ecological Approach to Visual Perception で提唱した。' +
+      'ドナルド・ノーマンが1988年の著書 The Design of Everyday Things でこの概念をデザイン領域に応用し、利用者が知覚する「知覚されたアフォーダンス（perceived affordance）」の重要性を強調したことで、HCI・デザイン分野に広く浸透した。' +
+      'デジタル技術・ソーシャルメディア領域への拡張として、Treem & Leonardi（2013, Annals of the International Communication Association 36(1):143-189）は組織内ソーシャルメディアの4つのアフォーダンス――可視性（visibility）・持続性（persistence）・編集可能性（editability）・関連性（association）――を提示し、コミュニケーション研究に大きな影響を与えた。' +
+      'テクノロジカル・アフォーダンスの核心は、それがテクノロジー単独の属性ではなく、テクノロジーの物質的特性と利用者の目的・能力との間に生じる関係的（relational）概念である点にあり、同一の技術でも利用者や文脈によって異なる行為可能性を開く。' +
+      'この関係的視座は情報システム研究やコミュニケーション研究において、技術決定論を超えた人間-技術相互作用の理論枠組みとして広く採用されている。',
+    keyFigures: 'J.J. ギブソン（1979 The Ecological Approach to Visual Perception）／D. ノーマン（1988 The Design of Everyday Things）／J.W. Treem & P.M. Leonardi（2013 Annals of the International Communication Association 36(1):143-189）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/23808985.2013.11679130', type: 'academic', label: 'Treem & Leonardi (2013) Social Media Use in Organizations, Annals of the International Communication Association 36(1)' },
+      { url: 'https://www.interaction-design.org/literature/book/the-encyclopedia-of-human-computer-interaction-2nd-ed/affordances', type: 'reference', label: 'IxDF Encyclopedia of Human-Computer Interaction 第2版 — Affordances（Gibson・Norman概説）' },
+      { url: 'https://doi.org/10.1111/jcc4.12180', type: 'academic', label: 'Evans, Pearce, Vitak & Treem (2017) Explicating Affordances, JCMC 22(1):35-52' },
+    ],
+  },
 ];
 // Stryker restore all
