@@ -29139,5 +29139,110 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://policyreview.info/concepts/digital-commons', type: 'academic', label: 'Internet Policy Review: "Digital commons" — institutional analysis & governance design principles' },
     ],
   },
+  {
+    id: 'econ-optimal-currency-area-theory',
+    discipline: 'economics',
+    title: '最適通貨圏理論',
+    statement:
+      '最適通貨圏理論（Optimum Currency Area理論）は、どの地域が共通通貨や固定為替相場制度を採用することで最大の経済便益を得られるかを分析する国際通貨経済学の理論体系である。' +
+      'Mundell（1961）は、労働・資本などの生産要素が域内を自由に移動できる地域こそが最適な共通通貨圏を形成しうると論じ、為替調整に代わる非対称ショック吸収メカニズムとして要素移動性の重要性を示した。' +
+      'McKinnon（1963）は貿易開放度を基準として加え、対外貿易への依存度が高い小国ほど固定相場から得る安定便益が大きく、変動相場の調整機能が低下することを示した。' +
+      'Kenen（1969）は生産の多様化と財政統合を第三の基準として提示し、産業構造が多様な経済圏では特定セクターへの非対称ショックが分散されるため、共通通貨が機能しやすいと主張した。' +
+      '1990年代以降の「新最適通貨圏理論」では、通貨統合への参加自体が貿易統合と景気循環の同調化を促進するという内生性が強調され、ユーロ圏の経験はこの理論の意義と限界を実証する重要な事例となっている。',
+    keyFigures: 'Robert Alexander Mundell ／ Ronald Ian McKinnon ／ Peter Bain Kenen',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp138.pdf', type: 'academic', label: 'Francesco Paolo Mongelli, "New" Views on the Optimum Currency Area Theory: What is EMU Telling Us?, ECB Working Paper No. 138 (2002)' },
+      { url: 'https://en.wikipedia.org/wiki/Optimum_currency_area', type: 'reference', label: 'Wikipedia — Optimum currency area' },
+      { url: 'https://www.imes.boj.or.jp/research/papers/english/me20-s1-5.pdf', type: 'government', label: 'Hiroshi Fujiki & Akira Otani, Do Currency Regimes Matter in the 21st Century? An Overview, Bank of Japan IMES, Monetary and Economic Studies Vol.20 S-1 (2002)' },
+    ],
+  },
+  {
+    id: 'human-dual-process-cognition',
+    discipline: 'human-science',
+    title: '二重過程理論',
+    statement:
+      'Stanovich と West（2000）は、人間の認知を「タイプ1処理」と「タイプ2処理」という二つのシステムに分類し、前者を速く自動的・連想的な処理、後者を遅く意識的・ルール依存的な処理として定式化した。' +
+      'Kahneman（2011）はこの枠組みを「システム1（速い思考）」と「システム2（遅い思考）」として広く一般に普及させ、直感的判断がどのようにして認知バイアスを生み出すかを体系的に論じた。' +
+      'Evans（2003）はヒューリスティック・分析的理論を通じて、システム1が生成するデフォルト反応をシステム2がいかに介入・修正するかという「デフォルト介入モデル」を提唱した。' +
+      'Evans と Stanovich（2013）はさらに議論を深め、タイプ1処理は自律的に生起する一方、タイプ2処理は作業記憶を必要とし、高次の認知的合理性と密接に関わることを示した。' +
+      'Tversky と Kahneman（1974）による代表性・利用可能性・係留ヒューリスティックの研究は、この理論の実証的基盤を形成する先駆的業績である。',
+    keyFigures: 'Daniel Kahneman ／ Amos Tversky ／ Keith E. Stanovich ／ Richard F. West ／ Jonathan St. B. T. Evans',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Dual_process_theory', type: 'reference', label: 'Dual process theory — Wikipedia' },
+      { url: 'https://doi.org/10.1177/1745691612460685', type: 'academic', label: 'Evans & Stanovich (2013) Dual-Process Theories of Higher Cognition: Advancing the Debate — Perspectives on Psychological Science' },
+      { url: 'https://doi.org/10.1017/S0140525X00003435', type: 'academic', label: 'Stanovich & West (2000) Individual Differences in Reasoning: Implications for the Rationality Debate — Behavioral and Brain Sciences' },
+    ],
+  },
+  {
+    id: 'human-predictive-processing-theory',
+    discipline: 'human-science',
+    title: '予測処理理論',
+    statement:
+      '予測処理理論とは、脳が絶えず感覚入力を予測し、その予測誤差を最小化することによって知覚・行動・認知を実現するという統一的な神経科学・認知科学の枠組みである。' +
+      'Friston（2010）は自由エネルギー原理を提唱し、生物システムは変分自由エネルギーを最小化することで内部モデルを更新し続けると数理的に定式化した。' +
+      'Clark（2013）は「予測する脳」という観点からこの枠組みを哲学的・認知科学的に展開し、脳を階層的な仮説検証機械として描写した。' +
+      'Hohwy（2013）は予測符号化の観点から知覚・注意・意識の統一的説明を試み、予測誤差最小化がいかに豊かな意識的経験を生み出すかを論じた。' +
+      'これら三者の貢献により、予測処理理論は現代の認知神経科学における主要なパラダイムとして確立されている。',
+    keyFigures: 'Karl Friston ／ Andy Clark ／ Jakob Hohwy',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/nrn2787', type: 'academic', label: 'Friston, K. (2010). The free-energy principle: a unified brain theory? Nature Reviews Neuroscience, 11, 127–138' },
+      { url: 'https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/whatever-next-predictive-brains-situated-agents-and-the-future-of-cognitive-science/33542C736E17E3D1D44E8D03BE5F4CD9', type: 'academic', label: 'Clark, A. (2013). Whatever next? Predictive brains, situated agents, and the future of cognitive science. Behavioral and Brain Sciences, 36(3), 181–204' },
+      { url: 'https://global.oup.com/academic/product/the-predictive-mind-9780199682737', type: 'reference', label: 'Hohwy, J. (2013). The Predictive Mind. Oxford University Press' },
+    ],
+  },
+  {
+    id: 'bizlaw-appraisal-rights-doctrine',
+    discipline: 'business-law',
+    title: '株式買取請求権の法理',
+    statement:
+      'Manning（1962）は72 Yale L.J. 223において買取請求権（appraisal remedy）を批判的に検討し、反対株主が公正な価格を司法により決定させる権利は実務上機能不全に陥っていると論じた。' +
+      'Gilson and Black（1995）はこれを受けて、買取請求権は合併対価の過少評価に対する経営者の事前抑止（ex ante deterrence）装置として機能し得ると再評価した。' +
+      '米国デラウェア州では、Weinberger v. UOP, Inc., 457 A.2d 701（Del. 1983）において最高裁が「デラウェア・ブロック法」を廃棄し、公正な価格の算定に金融実務で一般的に用いられるあらゆる手法を許容する「全体的公正性（entire fairness）」基準——公正な取引過程と公正な価格の双方——を確立した。' +
+      '日本法においては、会社法第785条・第786条が組織再編に反対する株主に「公正な価格」での株式買取請求権を付与しており、2005年改正によりシナジー価値を公正な価格に含める余地が明示的に認められた点でデラウェア法との制度的対話が進んだ。',
+    keyFigures: 'Bayless Manning ／ Ronald J. Gilson ／ Bernard S. Black ／ Hideki Kanda',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://openyls.law.yale.edu/handle/20.500.13051/14819', type: 'academic', label: "Manning, \"The Shareholder's Appraisal Remedy: An Essay for Frank Coker,\" 72 Yale L.J. 223 (1962)" },
+      { url: 'https://www.japaneselawtranslation.go.jp/en/laws/view/3207/en', type: 'government', label: '会社法（英訳）第785条・第786条 — 反対株主の株式買取請求 (Japanese Companies Act, Arts. 785-786, Ministry of Justice)' },
+      { url: 'https://www.cambridge.org/core/journals/asian-journal-of-comparative-law/article/how-does-the-appraisal-right-with-the-concept-of-the-fair-value-including-synergies-work-lessons-from-japan/33F191336253DDEBACB8310C697E1BEE', type: 'academic', label: '"How does the Appraisal Right with the Concept of the Fair Value Including Synergies Work?: Lessons from Japan," Asian Journal of Comparative Law 18(3) (2023)' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-entropy',
+    discipline: 'management',
+    title: '組織エントロピー',
+    statement:
+      'Wiener（1948）は著書 *Cybernetics* において情報をネガティブ・エントロピー（負エントロピー）として定式化し、フィードバックによる制御が組織の無秩序化傾向を抑制する機構であることを示した。' +
+      'Ashby（1956）はその「必要多様度の法則」で、組織が環境の複雑性に対して十分な内部多様性を持たなければエントロピー的崩壊に至ると論じ、Beer（1972）はこれをマネジメント・サイバネティクスに展開して組織の生存可能性を再帰的なエントロピー制御として定式化した。' +
+      'Prigogine（1977年ノーベル化学賞）の散逸構造論は、平衡から遠い開放系がエネルギーを取り込み高エントロピーを外部へ排出することで内部秩序を維持できることを示し、組織が閉鎖化すると必然的に無秩序へ向かうことの熱力学的根拠を与えた。' +
+      'Weick（1995）はセンスメイキング論において、組織内の多義性をリアルタイムに解釈し意味付けする行為を継続的な反エントロピー実践として捉え、この機能が麻痺した組織が崩壊へと向かうことを記述した。',
+    keyFigures: 'Norbert Wiener ／ W. Ross Ashby ／ Anthony Stafford Beer ／ Ilya Prigogine ／ Karl E. Weick',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.mdpi.com/1099-4300/21/9/901', type: 'academic', label: 'Zingg et al., What Is the Entropy of a Social Organization?, Entropy (MDPI) 21(9):901, 2019' },
+      { url: 'https://www.mdpi.com/2076-328X/14/1/54', type: 'academic', label: 'Jia & Wang, Introducing Entropy into Organizational Psychology: An Entropy-Based Proactive Control Model, Behavioral Sciences (MDPI) 14(1):54, 2024' },
+      { url: 'https://ubp.uni-bamberg.de/ojs/index.php/cgn/article/view/26', type: 'academic', label: 'Chappell & Dewey, Defining the Entropy of Hierarchical Organizations, Complexity, Governance & Networks, 2014, DOI:10.7564/14-CGN17' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-governance-theory',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム・ガバナンス理論',
+    statement:
+      'アルゴリズム・ガバナンス理論は、デジタルアルゴリズムが社会的秩序の形成・維持において果たす統治的役割を分析する情報社会学の理論枠組みである。' +
+      'Rouvroy and Berns（2013）は「アルゴリズム的統治性（algorithmic governmentality）」概念を提唱し、ビッグデータに基づく行動モデル化が個人の主体化を迂回しながら社会規範を再編する様態を批判的に論じた。' +
+      'Katzenbach and Ulbricht（2019）は、アルゴリズムが公共部門・労働管理・デジタルコミュニケーションにまたがる統治装置として機能し、権力関係を再配分することを示した。' +
+      'Gillespie（2014）はプラットフォームのアルゴリズムによるコンテンツモデレーションが公共表現の輪郭を不可視のまま決定するという「プラットフォーム権力」論を展開し、Pasquale（2015）はアルゴリズムのブラックボックスがいかにして金融・情報分野における説明責任の空白を生むかを明らかにした。',
+    keyFigures: 'Antoinette Rouvroy ／ Thomas Berns ／ Tarleton Gillespie ／ Frank Pasquale ／ Christian Katzenbach',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://policyreview.info/concepts/algorithmic-governance', type: 'academic', label: 'Katzenbach & Ulbricht — Algorithmic Governance, Internet Policy Review (2019)' },
+      { url: 'https://www.cairn-int.info/abstract-E_RES_177_0163--algorithmic-governmentality-and.htm', type: 'academic', label: 'Rouvroy & Berns — Algorithmic Governmentality and Prospects of Emancipation, Réseaux (2013)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11604274/', type: 'academic', label: 'Frost — The Impoverished Publicness of Algorithmic Decision Making, Oxford Journal of Legal Studies (2024)' },
+    ],
+  },
 ];
 // Stryker restore all
