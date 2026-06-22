@@ -28545,5 +28545,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Algorithmic_culture', type: 'reference', label: 'Wikipedia — Algorithmic culture' },
     ],
   },
+  {
+    id: 'econ-greenfield-paradox',
+    discipline: 'economics',
+    title: 'グリーンフィールド・パラドックス',
+    statement:
+      '環境政策が将来にわたって段階的に強化されると予告されると、化石燃料の資源保有者は将来の収益低下を見越して現在の採掘を加速させ、結果として短期的な炭素排出量が増加するという逆説をSinn（2008）が指摘した。' +
+      'このグリーン・パラドックスはHotelling（1931）の枯渇資源理論を応用しつつ、気候政策の時間整合性問題を浮き彫りにし、Gerlagh・van der Werf・Di Maria らが定量モデルや実証分析を通じて議論を発展させている。',
+    keyFigures: 'Hans-Werner Sinn ／ Reyer Gerlagh ／ Edwin van der Werf ／ Corrado Di Maria',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s10640-007-9181-8', type: 'academic', label: 'Sinn, H.-W. (2008). Public policies against global warming: a supply side approach. International Tax and Public Finance, 15, 360–394.' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2037694', type: 'academic', label: 'Gerlagh, R., & van der Werf, E. (2012). Carbon Leakage and the Green Paradox. SSRN Working Paper.' },
+      { url: 'https://en.wikipedia.org/wiki/Green_paradox', type: 'reference', label: 'Wikipedia — Green paradox' },
+    ],
+  },
+  {
+    id: 'econ-trilemma-financial-regulation',
+    discipline: 'economics',
+    title: '金融規制のトリレンマ',
+    statement:
+      'Schoenmaker（2011）が提唱した金融規制のトリレンマとは、「金融安定」「金融統合（国際的な金融市場の一体化）」「国家的な金融政策の自律性」という三つの目標を同時に達成することは不可能であり、そのうちの二つしか両立できないという命題である。' +
+      'このトリレンマは、国境を越えて活動する大規模銀行の監督・破綻処理において、各国が単独で行動する限り国際的な金融安定という公共財を提供できないことを示し、Goodhart と Schoenmaker が主張したように、超国家的な監督・負担分担の枠組みが必要であることを含意する。',
+    keyFigures: 'Dirk Schoenmaker ／ Charles Goodhart',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/j.econlet.2011.01.010', type: 'academic', label: 'Schoenmaker, D. "The financial trilemma." Economics Letters 111(1): 57–59, 2011.' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2243105', type: 'academic', label: 'Schoenmaker, D. Governance of International Banking: The Financial Trilemma, Chapter 1. Oxford University Press, 2013.' },
+      { url: 'https://econpapers.repec.org/RePEc:eee:ecolet:v:111:y:2011:i:1:p:57-59', type: 'reference', label: 'EconPapers / RePEc — "The financial trilemma," Economics Letters v.111 y.2011 i.1 p.57-59.' },
+    ],
+  },
+  {
+    id: 'human-place-identity-theory',
+    discipline: 'human-science',
+    title: '場所アイデンティティ理論',
+    statement:
+      '場所アイデンティティ理論とは、個人の自己同一性（セルフ・アイデンティティ）の一部として、特定の物理的環境に関する意識的・無意識的な認知・記憶・感情・価値観・行動傾向が複雑なパターンをなして組み込まれているという理論である（Proshansky（1978））。' +
+      'Proshansky・Fabian・Kaminoff（1983）はこれを「自己の物理世界による社会化」として定式化し、人は成長の過程で場所を自己概念の基盤として内面化すると論じた。この理論は、場所の喪失や強制移転が自己アイデンティティの危機につながる現象を説明する枠組みとして環境心理学に広く援用されている。',
+    keyFigures: 'Harold M. Proshansky ／ Abbe K. Fabian ／ Robert Kaminoff',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0013916578102002', type: 'academic', label: 'Proshansky (1978) "The City and Self-Identity" — Environment and Behavior' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0272494483800218', type: 'academic', label: 'Proshansky, Fabian & Kaminoff (1983) "Place-identity: Physical world socialization of the self" — Journal of Environmental Psychology' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.00294/full', type: 'reference', label: 'Droseltis & Vignoles (2020) "Place Identity: How Far Have We Come in Exploring Its Meanings?" — Frontiers in Psychology' },
+    ],
+  },
+  {
+    id: 'mgmt-tempered-radicalism',
+    discipline: 'management',
+    title: '穏健な急進主義',
+    statement:
+      '穏健な急進主義（Tempered Radicalism）とは、組織の支配的文化に同一化しながらも、それと相容れない変革の信念を持つ個人が、ドラマチックな対立を避けつつ漸進的手段で根本的変化を追求する戦略を指す（Meyerson & Scully（1995））。' +
+      'こうした「穏健な急進主義者」は、小さな勝利の積み重ね・境界の問い直し・情報の再チャンネル化といった日常的行為を通じて組織文化を静かに変容させる。' +
+      'Meyerson（2001）はこれを「ドラマや英雄的行動ではなく漸進的手段で変革的目的を追求すること」と定式化し、組織変革における実践的リーダーシップ論として発展させた。',
+    keyFigures: 'Debra E. Meyerson ／ Maureen A. Scully',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson & Scully (1995) — "Crossroads Tempered Radicalism and the Politics of Ambivalence and Change," Organization Science, 6(5), 585-600' },
+      { url: 'https://www.semanticscholar.org/paper/Crossroads-Tempered-Radicalism-and-the-Politics-of-Meyerson-Scully/ecbe2f4057fbb7e514104d7593aae3f60ef0ba56', type: 'academic', label: 'Semantic Scholar — Meyerson & Scully (1995) citation record with abstract' },
+      { url: 'https://www.amazon.com/Tempered-Radicals-People-Difference-Inspire/dp/0875849059', type: 'reference', label: 'Meyerson (2001) — Tempered Radicals: How People Use Difference to Inspire Change at Work, Harvard Business School Press' },
+    ],
+  },
+  {
+    id: 'bizlaw-material-adverse-change',
+    discipline: 'business-law',
+    title: '重大な悪影響条項（MAC条項）',
+    statement:
+      'MAC条項（Material Adverse Change条項）はM&A契約において、署名から決済完了までの間に対象会社に重大な悪影響をもたらす事由が生じた場合、買主が取引を解除できる権利を付与するリスク配分メカニズムである（Gilson & Schwartz 2005）。' +
+      '同条項はターゲット企業にシナジー投資を促すモラルハザード抑制機能を有し、同時に市場全体に及ぶ系統的リスクは例外として買主負担とすることで契約当事者間のリスクを精緻に配分する（Miller 2021）。' +
+      'デラウェア州衡平法裁判所は2018年のAkorn v. Fresenius判決において初めてMAC条項による解除を認め、定量的・定性的な両面からMACの成立要件を示した。',
+    keyFigures: 'Ronald J. Gilson ／ Alan Schwartz ／ Robert T. Miller',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/oup/jleorg/v21y2005i2p330-358.html', type: 'academic', label: 'Gilson & Schwartz, "Understanding MACs: Moral Hazard in Acquisitions," 21 J. Law Econ. & Org. 330 (2005)' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3826378', type: 'academic', label: 'Miller, "Pandemic Risk and the Interpretation of Exceptions in MAE Clauses," J. Corp. L. (2021)' },
+      { url: 'https://natlawreview.com/article/ma-update-akorn-falls-far-tree-delaware-chancery-court-finds-material-adverse-effect', type: 'reference', label: 'National Law Review, "Akorn, Inc. v. Fresenius Kabi AG: Delaware Chancery Court Finds a Material Adverse Effect for the First Time" (2018)' },
+    ],
+  },
+  {
+    id: 'infosoc-platformization-theory',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム化理論',
+    statement:
+      'プラットフォーム化理論とは、FacebookやUberなどのプラットフォーム企業がウェブおよび社会の基盤的・経済的モデルとして台頭し、外部のデータを「プラットフォーム対応」へと変換しながら他領域へ拡張するプロセスを指す（Helmond（2015））。' +
+      'van Dijck et al.（2018）はさらに、データ化・商品化・選別という三つのメカニズムがプラットフォーム化を駆動し、ニュース・交通・医療・教育など社会の主要セクターに浸透すると論じた。' +
+      'この理論は情報社会学において、デジタル権力の集中とパブリックバリューの再編を分析する枠組みとして広く援用されている。',
+    keyFigures: 'Anne Helmond ／ José van Dijck ／ Thomas Poell ／ Martijn de Waal ／ David Nieborg',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/2056305115603080', type: 'academic', label: 'Helmond, A. (2015). The Platformization of the Web: Making Web Data Platform Ready. Social Media + Society, 1(2).' },
+      { url: 'https://policyreview.info/concepts/platformisation', type: 'academic', label: 'Poell, T., Nieborg, D., & van Dijck, J. (2019). Platformisation. Internet Policy Review, 8(4). DOI: 10.14763/2019.4.1425.' },
+      { url: 'https://www.amazon.com/Platform-Society-Public-Values-Connective/dp/0190889772', type: 'reference', label: 'van Dijck, J., Poell, T., & de Waal, M. (2018). The Platform Society: Public Values in a Connective World. Oxford University Press.' },
+    ],
+  },
 ];
 // Stryker restore all
