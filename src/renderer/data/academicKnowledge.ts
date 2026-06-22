@@ -25090,5 +25090,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.bps.org.uk/psychologist/deferred-imitation-children-and-apes', type: 'reference', label: 'Deferred Imitation in Children and Apes — British Psychological Society' },
     ],
   },
+  {
+    id: 'econ-turnpike-theorem',
+    discipline: 'economics',
+    title: 'ターンパイク定理（Turnpike Theorem）',
+    statement:
+      '長期最適成長経路において、計画期間が十分に長ければ最適蓄積経路は期間の大部分をフォン・ノイマン均斉成長経路（ターンパイク）近傍で過ごすという定理。高速道路が遠距離の二点間で最速経路となる類推に由来し、最適計画理論の基礎命題となった。',
+    keyFigures: 'ドルフマン＝サミュエルソン＝ソロー（1958 命名・新古典的定式化）／ジョン・フォン・ノイマン（1945 均斉成長モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Turnpike_theory', type: 'reference', label: 'Turnpike Theory — Wikipedia' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_1628-2', type: 'reference', label: 'Turnpike Theory — The New Palgrave Dictionary of Economics / Springer' },
+      { url: 'https://www.jstor.org/stable/2525453', type: 'academic', label: 'McKenzie — The Dorfman-Samuelson-Solow Turnpike Theorem — JSTOR' },
+    ],
+  },
+  {
+    id: 'human-mirror-self-recognition',
+    discipline: 'human-science',
+    title: '鏡像自己認知（Mirror Self-Recognition）',
+    statement:
+      '鏡に映った像を自己と認識する能力を測定するマークテスト（ルージュテスト）のパラダイム。ギャラップ（1970）がチンパンジーで初めて実証し、ルイス＆ブルックス＝ガン（1979）がヒト乳児に適用、典型的には生後18〜24か月で通過し自己意識の発達的指標とされる。',
+    keyFigures: 'ゴードン・ギャラップJr.（1970 チンパンジーでのマークテスト考案）／マイケル・ルイス＆ジャンヌ・ブルックス＝ガン（1979 ヒト乳児への適用）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Mirror_test', type: 'reference', label: 'Mirror Test — Wikipedia' },
+      { url: 'https://www.rep.routledge.com/articles/thematic/mirror-self-recognition/v-1', type: 'reference', label: 'Mirror Self-Recognition — Routledge Encyclopedia of Philosophy' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6001620/', type: 'academic', label: 'Corkum & Moore — Just Before I Recognize Myself — PMC' },
+    ],
+  },
+  {
+    id: 'bizlaw-fair-and-equitable-treatment',
+    discipline: 'business-law',
+    title: '公正衡平待遇基準（Fair and Equitable Treatment）',
+    statement:
+      '二国間投資条約（BIT）等に規定される投資家保護の中核的基準で、ホスト国に対し外国投資家への公正かつ衡平な待遇を義務付ける。1948年ハバナ憲章に淵源を持ち、2,500以上の投資条約に採用されるが、その内容の曖昧さからISDS仲裁における最頻援用条項となっている。',
+    keyFigures: 'OECD（2004 FET基準の体系的分析）／クリストフ・シュロイアー（FET解釈の学術的整理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/ejil/article/20/1/236/444778', type: 'academic', label: 'Tudor — Fair and Equitable Treatment Standard — European Journal of International Law / Oxford Academic' },
+      { url: 'https://jusmundi.com/en/document/publication/en-fair-and-equitable-treatment', type: 'reference', label: 'Fair and Equitable Treatment — Jus Mundi Wiki' },
+      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2004/09/fair-and-equitable-treatment-standard-in-international-investment-law_g17a166b/675702255435.pdf', type: 'reference', label: 'OECD — Fair and Equitable Treatment Standard in International Investment Law (2004)' },
+    ],
+  },
+  {
+    id: 'mgmt-relational-view',
+    discipline: 'management',
+    title: '関係的視座（Relational View）',
+    statement:
+      '企業間関係が関係特殊的資産・知識共有ルーティン・補完的資源・効果的ガバナンスを通じて関係レントと組織間競争優位の源泉となるとする理論。資源ベース理論が企業内資源に焦点を置くのに対し、企業境界を越えた関係に埋め込まれた資源の重要性を主張する。',
+    keyFigures: 'ジェフリー・ダイアー＆ハービンダー・シン（1998 Academy of Management Review 原著論文）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-Relational-View:-Cooperative-Strategy-and-of-Dyer-Singh/066282e6f06777d616d3efc86714cec816f6cc2a', type: 'academic', label: 'Dyer & Singh (1998) The Relational View: Cooperative Strategy and Sources of Interorganizational Competitive Advantage — Semantic Scholar' },
+      { url: 'https://research.cbs.dk/en/publications/the-relational-view/', type: 'academic', label: 'The Relational View — CBS Research Portal' },
+      { url: 'https://futureofsourcing.com/dyer-and-singh-the-relational-view-for-alliances-and-alignment/', type: 'reference', label: 'Dyer and Singh: The Relational View — Future of Sourcing' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-imaginaries',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的想像界（Algorithmic Imaginaries）',
+    statement:
+      'ソーシャルメディア利用者がプラットフォームのアルゴリズムをどのように知覚・想像し、それが感情や行動にいかなる影響を及ぼすかを概念化した枠組み。ジャサノフ＆キム（2015）の社会技術的想像界を援用し、不透明なアルゴリズムに対する日常的経験から形成される認知と情動の連関を分析する。',
+    keyFigures: 'タイナ・ブッシャー（2017 アルゴリズム的想像界の概念提唱・Facebook事例研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/297736928_The_algorithmic_imaginary_exploring_the_ordinary_affects_of_Facebook_algorithms', type: 'academic', label: 'Bucher (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — ResearchGate' },
+      { url: 'https://link.springer.com/article/10.1057/s41286-023-00171-w', type: 'academic', label: 'Subjectivity and Algorithmic Imaginaries: The Algorithmic Other — Subjectivity / Springer' },
+      { url: 'https://www.morgan-klaus.com/readings/algorithmic-imaginary.html', type: 'reference', label: 'The Algorithmic Imaginary — Morgan Klaus Scheuerman Reading Notes' },
+    ],
+  },
+  {
+    id: 'human-false-belief-task',
+    discipline: 'human-science',
+    title: '誤信念課題（False Belief Task）',
+    statement:
+      '他者が現実と異なる誤った信念を保持しうることの理解を測定する心の理論の実験パラダイム。ヴィマー＆パーナー（1983）が「マクシとチョコレート」課題で初めて実証し、バロン＝コーエンら（1985）がサリー＝アン課題に発展させた。定型発達児は4〜5歳頃に通過し、自己中心的認知から表象的推論への移行を示す。',
+    keyFigures: 'ハンス・ヴィマー＆ヨーゼフ・パーナー（1983 誤信念課題の初実証）／バロン＝コーエン＝レスリー＝フリス（1985 サリー＝アン課題）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Sally%E2%80%93Anne_test', type: 'reference', label: 'Sally–Anne Test — Wikipedia' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6153757/', type: 'academic', label: 'Assessing False-Belief Understanding in Children with Autism Using a Computer Application — PMC' },
+      { url: 'https://db.arabpsychology.com/sally-anne-test/', type: 'reference', label: 'Sally Anne Test: Understanding False Belief in Children — Arab Psychology Database' },
+    ],
+  },
 ];
 // Stryker restore all
