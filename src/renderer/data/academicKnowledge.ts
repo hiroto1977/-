@@ -26190,5 +26190,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/41703461', type: 'academic', label: 'Dimoka, A., Hong, Y. & Pavlou, P.A. (2012) On Product Uncertainty in Online Markets, MISQ 36(2):395-426' },
     ],
   },
+  // ── Batch 287 ─────────────────────────────────────────────
+  // econ-elasticity-of-substitution, econ-goodharts-law,
+  // human-emotional-granularity, mgmt-bricolage-theory,
+  // bizlaw-marshalling-doctrine, infosoc-critical-algorithm-studies
+  {
+    id: 'econ-elasticity-of-substitution',
+    discipline: 'economics',
+    title: '代替の弾力性',
+    statement:
+      '代替の弾力性とは、生産要素間の相対価格が変化した際に、要素投入比率がどの程度変化するかを測る指標である。' +
+      '1932年にJ.R.ヒックスが『賃金の理論』で、1933年にジョーン・ロビンソンが独立に導入した概念であり、Arrow, Chenery, Minhas & Solow（1961）のCES生産関数によって一般化された。' +
+      '経済成長理論・国際貿易理論・所得分配分析において中心的な役割を果たし、資本と労働の代替可能性を定量的に評価する上で不可欠な概念である。',
+    keyFigures: 'John R. Hicks／Joan Robinson／Kenneth J. Arrow／Robert M. Solow',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Elasticity_of_substitution', type: 'reference', label: 'Wikipedia — Elasticity of substitution' },
+      { url: 'https://www.jstor.org/stable/1910256', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency, Review of Economics and Statistics' },
+      { url: 'https://www.investopedia.com/terms/e/elasticity-of-substitution.asp', type: 'reference', label: 'Investopedia — Elasticity of Substitution' },
+      { url: 'https://www.nber.org/papers/w13351', type: 'academic', label: 'Chirinko (2008) σ: The Long and Short of It, NBER Working Paper' },
+    ],
+  },
+  {
+    id: 'econ-goodharts-law',
+    discipline: 'economics',
+    title: 'グッドハートの法則',
+    statement:
+      'グッドハートの法則とは、「ある指標が政策目標として用いられると、その指標としての信頼性が失われる」という命題である。' +
+      '英国の経済学者チャールズ・グッドハートが1975年に「制御目的で利用された統計的規則性は崩壊する傾向がある」と述べたのが原型であり、1997年に人類学者マリリン・ストラザーンが「ある測定値が目標になると、それは良い測定値でなくなる」と一般化した。' +
+      '金融政策にとどまらず、教育評価・公共政策のKPI設計・AI/機械学習の報酬設計など広範な分野で、数値目標への最適化が本来の目的を歪める危険性を警告する基本原理として参照される。',
+    keyFigures: 'Charles Goodhart／Marilyn Strathern／Donald T. Campbell',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Goodhart%27s_law', type: 'reference', label: 'Wikipedia — Goodhart\'s law' },
+      { url: 'https://www.cambridge.org/core/journals/european-review/article/abs/improving-ratings-audit-in-the-british-university-system/FC2EE640C0C44E3DB87C29FB666E9AAB', type: 'academic', label: 'Strathern, M. (1997) Improving ratings: audit in the British University system, European Review 5(3):305-321' },
+      { url: 'https://www.semanticscholar.org/paper/0062a8e2981230185c88819776e600419ed1426d', type: 'academic', label: 'Chrystal & Mizen (2003) Goodhart\'s Law: Its Origins, Meaning and Implications for Monetary Policy' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7901608/', type: 'academic', label: 'PMC — When a Measure Becomes a Target, It Ceases to be a Good Measure (2021)' },
+    ],
+  },
+  {
+    id: 'human-emotional-granularity',
+    discipline: 'human-science',
+    title: '感情粒度',
+    statement:
+      '感情粒度（Emotional Granularity）とは、類似した感情状態を細かく区別し正確にラベル付けする能力を指す心理学的概念である。' +
+      'Lisa Feldman Barrettらの研究により、感情粒度が高い人ほど感情語を精密に使い分け、感情調整能力が優れていることが示されている。' +
+      'この概念はBarrettの構成主義的感情理論（Theory of Constructed Emotion）の中核をなし、精神的健康や適応的行動との関連が臨床心理学・感情科学の両領域で注目されている。',
+    keyFigures: 'Lisa Feldman Barrett／Todd B. Kashdan／Michele M. Tugade／Barbara L. Fredrickson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.87.2.157', type: 'academic', label: 'Barrett, L.F. (2004) Feelings or words? JPSP 87(2):157-171' },
+      { url: 'https://doi.org/10.1037/0022-3514.86.2.320', type: 'academic', label: 'Tugade, M.M., Fredrickson, B.L. & Barrett, L.F. (2004) Psychological resilience and positive emotional granularity' },
+      { url: 'https://doi.org/10.1177/0963721415580294', type: 'academic', label: 'Kashdan, T.B., Barrett, L.F. & McKnight, P.E. (2015) Unpacking emotion differentiation, Current Directions in Psychological Science' },
+    ],
+  },
+  {
+    id: 'mgmt-bricolage-theory',
+    discipline: 'management',
+    title: 'ブリコラージュ理論',
+    statement:
+      'ブリコラージュ理論とは、既存の手持ち資源を創造的に再結合・転用することで新たな価値を生み出すプロセスを説明する理論である。' +
+      '文化人類学者レヴィ＝ストロースが『野生の思考』（1962年）で提唱した概念を経営学に応用し、Baker & Nelson（2005年, ASQ 50(3):329-366）が起業家的ブリコラージュとして体系化した。' +
+      '特に資源制約下の起業やソーシャル・アントレプレナーシップにおいて、「あり合わせのもので何とかする」行動原理として重要な説明力を持つ。',
+    keyFigures: 'Claude Lévi-Strauss／Ted Baker／Reed E. Nelson／Karl E. Weick',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing, ASQ 50(3):329-366' },
+      { url: 'https://doi.org/10.1016/j.respol.2013.10.004', type: 'academic', label: 'Desa, G. & Basu, S. (2013) Optimization or Bricolage? Strategic Entrepreneurship Journal' },
+      { url: 'https://en.wikipedia.org/wiki/Bricolage#In_business_and_management', type: 'reference', label: 'Wikipedia — Bricolage in business and management' },
+    ],
+  },
+  {
+    id: 'bizlaw-marshalling-doctrine',
+    discipline: 'business-law',
+    title: 'マーシャリングの法理',
+    statement:
+      'マーシャリングの法理（Marshalling Doctrine）とは、複数の担保財産に対して優先権を有する上位債権者が、下位債権者が利用できない財産からまず弁済を受けるべきとする衡平法上の原則である。' +
+      '英国衡平法裁判所に起源を持ち、Aldrich v. Cooper（1803）を先例とする「二重基金の法理」と「譲渡逆順序の法理」の二つの下位原則から構成される。' +
+      '破産法・担保取引法・不動産法において後順位債権者の保護と債権者間の公平を図るために適用され、UCC第9編の文脈でも参照される重要な法理である。',
+    keyFigures: 'Lord Eldon（Aldrich v. Cooper判決）／Samuel Williston／Grant Gilmore',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/marshaling', type: 'reference', label: 'Cornell Law Institute — Wex Legal Encyclopedia: Marshaling' },
+      { url: 'https://www.law.cornell.edu/ucc/9', type: 'reference', label: 'Cornell Law Institute — UCC Article 9: Secured Transactions' },
+      { url: 'https://en.wikipedia.org/wiki/Marshalling_(law)', type: 'reference', label: 'Wikipedia — Marshalling (law)' },
+    ],
+  },
+  {
+    id: 'infosoc-critical-algorithm-studies',
+    discipline: 'information-sociology',
+    title: '批判的アルゴリズム研究',
+    statement:
+      '批判的アルゴリズム研究とは、アルゴリズムが社会においていかに権力を行使し、偏見を内包し、社会的帰結を形成するかを学際的に検討する研究領域である。' +
+      '科学技術社会論（STS）・メディア研究・社会学の知見を統合し、アルゴリズムによるガバナンス・公平性・透明性・説明責任の問題を批判的に分析する。' +
+      'プラットフォーム経済やAI意思決定の普及に伴い、アルゴリズムの社会的影響を可視化し民主的統制の可能性を探る点で現代情報社会学の中核的課題となっている。',
+    keyFigures: 'Tarleton Gillespie／Safiya Umoja Noble／Nick Seaver／Taina Bucher',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms, in Media Technologies, MIT Press' },
+      { url: 'https://doi.org/10.1177/2053951717738104', type: 'academic', label: 'Seaver, N. (2017) Algorithms as culture, Big Data & Society 4(2)' },
+      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'academic', label: 'Noble, S.U. (2018) Algorithms of Oppression, NYU Press' },
+    ],
+  },
 ];
 // Stryker restore all
