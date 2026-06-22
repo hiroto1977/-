@@ -28638,5 +28638,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.amazon.com/Platform-Society-Public-Values-Connective/dp/0190889772', type: 'reference', label: 'van Dijck, J., Poell, T., & de Waal, M. (2018). The Platform Society: Public Values in a Connective World. Oxford University Press.' },
     ],
   },
+  {
+    id: 'econ-productivity-paradox',
+    discipline: 'economics',
+    title: '生産性パラドックス',
+    statement:
+      'Solow（1987）は「コンピュータ時代はいたるところで目にできるが、生産性統計には現れない」と指摘し、ITへの大規模投資にもかかわらず国民経済の生産性向上が統計上確認できないという逆説を提起した。' +
+      'Brynjolfsson（1993）はこの逆説を体系的に検討し、アウトプットの計測誤差・習得ラグ・利益の再配分・ITの管理不全という四つの仮説的説明を整理した。' +
+      'その後 Oliner & Sichel（2000）は1990年代後半の成長再加速を分析し、IT資本の生産性寄与が急増したことを示すことで、逆説は部分的に解消されたと論じた。',
+    keyFigures: 'Robert M. Solow ／ Erik Brynjolfsson ／ Daniel E. Sichel ／ Stephen D. Oliner',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/163298.163309', type: 'academic', label: 'Brynjolfsson, E. (1993). The Productivity Paradox of Information Technology. Communications of the ACM, 36(12), 67–77.' },
+      { url: 'https://www.frbsf.org/wp-content/uploads/resurgence.pdf', type: 'academic', label: 'Oliner, S. D. & Sichel, D. E. (2000). The Resurgence of Growth in the Late 1990s: Is Information Technology the Story? Journal of Economic Perspectives, 14(4), 3–22.' },
+      { url: 'https://en.wikipedia.org/wiki/Productivity_paradox', type: 'reference', label: 'Productivity paradox — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-intent-theory',
+    discipline: 'management',
+    title: '戦略的意図論',
+    statement:
+      'Hamel & Prahalad（1989）は、企業の競争優位は段階的な計画ではなく、リソースと野望の間に意図的なギャップを生み出す「戦略的意図」——長期的かつ野心的なビジョン——によって形成されると主張した。' +
+      'キャノンのゼロックスへの挑戦やコマツのキャタピラー包囲戦略を事例として、西洋企業が模倣・効率化に注力する一方で、日本企業はストレッチ目標を組織全体の動員原理として活用し競争優位を獲得したと論じた。' +
+      'Hamel & Prahalad（1994）はさらに、戦略的意図とコアコンピタンスの育成を統合することが「未来のための競争」に不可欠であると強調し、トップダウンではなく全階層を巻き込む戦略対話の重要性を示した。',
+    keyFigures: 'Gary Hamel ／ C. K. Prahalad',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1989/05/strategic-intent-2', type: 'academic', label: 'Hamel, G. & Prahalad, C.K. (1989) "Strategic Intent," Harvard Business Review, May–June, pp. 63–76' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-management-and-organization/article/strategic-intent-the-literature-the-construct-and-its-role-in-predicting-organization-performance/599D1DFBE2BFA4CAD4BB425AEB02352B', type: 'academic', label: 'O\'Shannassy, T.F. (2016) "Strategic intent: The literature, the construct and its role in predicting organization performance," Journal of Management & Organization, 22(5), pp. 583–598' },
+      { url: 'https://www.valuebasedmanagement.net/methods_hamel_prahalad_strategic_intent.html', type: 'reference', label: 'Value Based Management — Summary of Strategic Intent (Hamel & Prahalad)' },
+    ],
+  },
+  {
+    id: 'human-hedonic-adaptation',
+    discipline: 'human-science',
+    title: '快楽順応',
+    statement:
+      '快楽順応（ヘドニック・アダプテーション）とは、宝くじ当選や重大な事故といった大きな正負のライフイベントを経験した後も、人々の幸福感が比較的安定した基準水準へと回帰する心理的傾向である。' +
+      'Brickman & Campbell（1971）はこの現象を「快楽のトレッドミル（hedonic treadmill）」と名付け、Brickman, Coates & Janoff-Bulman（1978）は宝くじ当選者と事故による下半身麻痺者を対照群と比較し、いずれのグループも幸福度が予想ほど乖離しないことを実証した。' +
+      'Frederick & Loewenstein（1999）はさらにこの適応のメカニズムと機能的表現を体系化し、快楽順応が幸福研究の中核概念として確立された。',
+    keyFigures: 'Philip Brickman ／ Donald T. Campbell ／ Ronnie Janoff-Bulman ／ Shane Frederick ／ George Loewenstein ／ Ed Diener',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Lottery-winners-and-accident-victims:-is-happiness-Brickman-Coates/9db47b8ba0d46807b9b7d318617d50faf91c7d04', type: 'academic', label: 'Brickman, Coates & Janoff-Bulman (1978) — Lottery Winners and Accident Victims: Is Happiness Relative? Journal of Personality and Social Psychology, 36, 917–927' },
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1734656', type: 'academic', label: 'Frederick & Loewenstein (1999) — Hedonic Adaptation. In Kahneman, Diener & Schwarz (Eds.), Well-Being: The Foundations of Hedonic Psychology (pp. 302–329). Russell Sage Foundation' },
+      { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hedonic-adaptation/', type: 'reference', label: 'Hedonic Adaptation — BehavioralEconomics.com Mini-Encyclopedia of Behavioral Economics' },
+    ],
+  },
+  {
+    id: 'bizlaw-unconscionability-doctrine',
+    discipline: 'business-law',
+    title: '非良心性の法理',
+    statement:
+      'Leff（1967）は、契約における非良心性（unconscionability）を「手続的非良心性」（交渉過程の不公正）と「実体的非良心性」（契約条項自体の過度な一方性）に区別する分析枠組みを提示し、UCC § 2-302の解釈論に決定的な影響を与えた。' +
+      'UCCの起草者であるLlewellynは、裁判所が付合契約を含む不当な契約条項を無効化できるよう同条項を設計した。' +
+      'Fleming（2014）は、Williams v. Walker-Thomas Furniture Co.（1965年）判決を立法史の文脈に位置づけ、非良心性の法理が消費者保護法制の変遷とともに「貧者の法」として台頭し衰退した過程を実証的に解明した。',
+    keyFigures: 'Arthur Allen Leff ／ Karl Llewellyn ／ Anne Fleming',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.upenn.edu/penn_law_review/vol115/iss4/1/', type: 'academic', label: 'Leff, Arthur Allen — "Unconscionability and the Code: The Emperor\'s New Clause" — 115 U. Pa. L. Rev. 485 (1967)' },
+      { url: 'https://scholarship.law.georgetown.edu/facpub/1369/', type: 'academic', label: 'Fleming, Anne — "The Rise and Fall of Unconscionability as the \'Law of the Poor\'" — 102 Geo. L.J. 1383 (2014)' },
+      { url: 'https://en.wikipedia.org/wiki/Unconscionability', type: 'reference', label: 'Unconscionability — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-red-queen-competition',
+    discipline: 'management',
+    title: '赤の女王競争理論',
+    statement:
+      '赤の女王競争理論とは、Van Valen（1973）の進化生物学における「赤の女王仮説」を経営学に応用した競争理論であり、Barnett & Hansen（1996）が組織進化の文脈で定式化した。' +
+      '競合他社も同様に適応・革新を続けているため、企業は相対的な競争ポジションを維持するだけでも絶えず改善し続けなければならないという逆説的な動態を指す。' +
+      '競争にさらされた組織は学習と改善を促され、それが競合他社のさらなる学習を誘発し、相互強化的なサイクルが持続する。Barnett（2008）はこの競争歴史依存性を詳述し、競合経験の蓄積が組織の競争力そのものを規定することを実証した。',
+    keyFigures: 'William P. Barnett ／ Morten T. Hansen ／ Leigh Van Valen',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250171010', type: 'academic', label: 'Barnett & Hansen (1996) "The Red Queen in Organizational Evolution" Strategic Management Journal' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/4131490', type: 'academic', label: 'Barnett & McKendrick (2004) "Why Are Some Organizations More Competitive Than Others?" Administrative Science Quarterly' },
+      { url: 'https://en.wikipedia.org/wiki/Red_Queen_hypothesis', type: 'reference', label: 'Wikipedia — Red Queen hypothesis' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-divide-theory',
+    discipline: 'information-sociology',
+    title: 'デジタル・ディバイド論',
+    statement:
+      'デジタル・ディバイド論は、情報通信技術（ICT）へのアクセス・利用・成果における社会的格差を分析する理論的枠組みである。' +
+      'van Dijk（2005）は格差を「動機・物理的アクセス・スキル・利用」の四層モデルで把握し、先進社会においてディバイドが深化していることを示した。' +
+      'Hargittai（2002）は、物理的アクセスの格差を超えてオンラインスキルや利用の質に着目する「第二レベルのデジタル・ディバイド」概念を提唱し、Norris（2001）はグローバル・社会・民主主義の三次元的格差を国際比較で実証した。' +
+      'Warschauer（2003）はアクセスの有無という二分法を批判し、社会的包摂の観点から技術・スキル・社会的サポートを統合した「デジタル不平等」論を展開した。',
+    keyFigures: 'Jan van Dijk ／ Eszter Hargittai ／ Pippa Norris ／ Mark Warschauer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Digital-divide-research,-achievements-and-Dijk/db84d71d147c18b68fb675df91baf0c02b4e4f91', type: 'academic', label: 'van Dijk, J.A.G.M. (2006). Digital divide research, achievements and shortcomings. Poetics, 34(4–5), 221–235' },
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/942', type: 'academic', label: 'Hargittai, E. (2002). Second-Level Digital Divide: Differences in People\'s Online Skills. First Monday, 7(4)' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_divide', type: 'reference', label: 'Wikipedia — Digital divide' },
+    ],
+  },
 ];
 // Stryker restore all
