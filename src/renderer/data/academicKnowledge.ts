@@ -28455,5 +28455,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Knowledge_commons', type: 'reference', label: 'Wikipedia — Knowledge commons' },
     ],
   },
+  {
+    id: 'econ-new-trade-theory-krugman',
+    discipline: 'economics',
+    title: '新貿易理論',
+    statement:
+      '新貿易理論は、規模の経済（収穫逓増）と独占的競争を組み込むことで、要素賦存の差が乏しい先進国間に生じる産業内貿易を説明する理論枠組みである（Krugman 1979; 1980）。Krugman（1980）は、各国が特定の差別化製品に特化して規模の利益を享受しながら輸出し、他国の異なる差別化品を輸入するという貿易パターンが均衡として成立することを示した。' +
+      'この理論は比較優位のみに依拠するHeckscher–Ohlin型モデルを補完し、戦略的貿易政策の理論的根拠も提供した。',
+    keyFigures: 'Paul Krugman ／ Avinash Dixit ／ Joseph Stiglitz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1843216', type: 'academic', label: 'Krugman (1980) Scale Economies, Product Differentiation, and the Pattern of Trade — American Economic Review' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/0022199679900175', type: 'academic', label: 'Krugman (1979) Increasing Returns, Monopolistic Competition, and International Trade — Journal of International Economics' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2008/krugman/lecture/', type: 'reference', label: 'NobelPrize.org — Paul Krugman Nobel Lecture (2008)' },
+    ],
+  },
+  {
+    id: 'econ-new-keynesian-phillips-curve',
+    discipline: 'economics',
+    title: 'ニューケインジアン・フィリップス曲線',
+    statement:
+      'ニューケインジアン・フィリップス曲線（NKPC）は、Calvo（1983）の確率的価格改定モデル（粘着価格）から導出される構造的インフレ動学方程式であり、π_t = β·E_t[π_{t+1}] + κ·mc_t と表される（Woodford, 2003）。Roberts（1995）はニュー・ケインジアン・モデルにおいて将来インフレ率への合理的期待が現在インフレを決定することを示し、前向き期待型フィリップス曲線の理論的基礎を確立した。' +
+      'Gali & Gertler（1999）は労働分配率を実質限界費用の代理変数として用いてハイブリッドNKPCを実証し、同モデルは現代のDSGEモデルと金融政策分析の中核的構成要素となっている。',
+    keyFigures: 'Guillermo Calvo ／ Jordi Gali ／ Mark Gertler ／ John M. Roberts ／ Michael Woodford',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0304393299000239', type: 'academic', label: 'Gali & Gertler (1999) Inflation dynamics: A structural econometric analysis — Journal of Monetary Economics' },
+      { url: 'https://www.jstor.org/stable/2077783', type: 'academic', label: 'Roberts (1995) New Keynesian Economics and the Phillips Curve — Journal of Money, Credit and Banking' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691010496/interest-and-prices', type: 'reference', label: 'Woodford (2003) Interest and Prices: Foundations of a Theory of Monetary Policy — Princeton UP' },
+    ],
+  },
+  {
+    id: 'human-possible-selves-theory',
+    discipline: 'human-science',
+    title: '可能自己理論',
+    statement:
+      '可能自己理論とは、人が「なりたい自己」「なれるかもしれない自己」「なりたくない自己」という未来の自己像を自己概念の一部として保持するという理論であり、Markus & Nurius（1986）によって提唱された。これらの可能自己は現在の行動に対する動機づけの基盤となり、自己評価の文脈を提供することで将来に向けた目標追求を方向づける。' +
+      'その後Oyserman（2004）らは、可能自己が実際の学業成果や自己調整行動に与える具体的メカニズムを実証的に明らかにした。',
+    keyFigures: 'Hazel Markus ／ Paula Nurius ／ Daphna Oyserman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/232565363_Possible_Selves', type: 'academic', label: 'Markus & Nurius (1986) Possible Selves — American Psychologist' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4559571/', type: 'academic', label: 'Possible Selves: Implications for Psychotherapy — PMC / NIH' },
+      { url: 'https://dornsife.usc.edu/daphna-oyserman/wp-content/uploads/sites/232/2023/11/lee_and_oyserman_possible_selves_theory___education.pdf', type: 'reference', label: 'Lee & Oyserman — Possible Selves Theory (USC Dornsife)' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-work',
+    discipline: 'management',
+    title: '制度的ワーク',
+    statement:
+      '制度的ワーク（Institutional Work）とは、制度を創造・維持・破壊することを目的とした個人や組織による意図的な実践の総体であり、Lawrence & Suddaby（2006）によって体系化された概念である。従来の制度理論が同型化メカニズムや構造的制約を強調したのに対し、制度的ワーク論はアクターの能動的な役割と戦略的な制度変革の動態を分析の中心に置く。' +
+      'Lawrence, Suddaby & Leca（2009）はさらにこの概念を発展させ、制度的ワークの類型（政治的・規範的・認知的）を精緻化し、組織フィールドにおけるアクターの行為論的視点を確立した。',
+    keyFigures: 'Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.4135/9781848608030.n8', type: 'academic', label: 'Lawrence & Suddaby (2006) Institutions and Institutional Work — SAGE Handbook of Organization Studies' },
+      { url: 'https://doi.org/10.1017/CBO9780511596605', type: 'academic', label: 'Lawrence, Suddaby & Leca (2009) Institutional Work: Actors and Agency — Cambridge UP' },
+      { url: 'https://en.wikipedia.org/wiki/Institutional_theory', type: 'reference', label: 'Wikipedia — Institutional Theory' },
+    ],
+  },
+  {
+    id: 'bizlaw-piercing-corporate-veil-reverse',
+    discipline: 'business-law',
+    title: '法人格否認の法理（逆方向）',
+    statement:
+      '逆方向の法人格否認とは、通常の適用（会社債権者が株主に責任を追及する方向）とは逆に、株主または第三者が自己の債務について会社に責任を負わせるために会社と株主の同一視を主張する法理であり、正義・衡平の観点から逆適用を肯定する学説（Egashira 1980）がある一方、債権者は株式差押えで保護され得るとして実益を否定する見解も有力である。' +
+      '日本では最判昭和44年（1969年）以降の法人格否認法理の展開の中で逆適用の可否が論じられ、Watanabe（2020）による比較法研究は米独韓と日本の逆否認に関するアプローチの差異を明らかにしている。',
+    keyFigures: 'Egashira Kenjiro ／ Hiroyuki Watanabe',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.utp.or.jp/book/b10080996.html', type: 'academic', label: '江頭憲治郎『会社法人格否認の法理（新装版）』東京大学出版会（2024）' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3727522', type: 'academic', label: 'Watanabe (2020) Piercing the Corporate Veil under the Japanese Companies Act — SSRN' },
+      { url: 'https://www.jstage.jst.go.jp/article/takahogaku/6/1/6_KJ00004262048/_article/-char/ja/', type: 'reference', label: '井上「法人格否認の法理の現状と将来」高岡法学 6巻1号（1994年）' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-culture',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム文化論',
+    statement:
+      'アルゴリズム文化論とは、人間が文化的な仕分け・分類・序列化の作業を計算的プロセスへと委譲するようになった現象を指す概念であり、Striphas（2015）はこれを「アルゴリズム文化」と定式化し、情報・群衆・アルゴリズムという三つのキーワードを通じてその意味論的条件を解明した。' +
+      'Gillespie（2014）はさらに、アルゴリズムが何が「関連性」あるかを決定する「可視性のゲートキーパー」として機能し、公共的知識形成において中立的技術ではなく社会的・政治的行為者として作用することを論じた。',
+    keyFigures: 'Ted Striphas ／ Tarleton Gillespie ／ Alexander R. Galloway',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1367549415577392', type: 'academic', label: 'Striphas (2015) Algorithmic culture — European Journal of Cultural Studies' },
+      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie (2014) The Relevance of Algorithms — in Media Technologies, MIT Press' },
+      { url: 'https://en.wikipedia.org/wiki/Algorithmic_culture', type: 'reference', label: 'Wikipedia — Algorithmic culture' },
+    ],
+  },
 ];
 // Stryker restore all
