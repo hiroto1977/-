@@ -25990,5 +25990,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1111/jcc4.12180', type: 'academic', label: 'Evans, Pearce, Vitak & Treem (2017) Explicating Affordances, JCMC 22(1):35-52' },
     ],
   },
+  // ── Batch 285 ─────────────────────────────────────────────
+  // econ-stolper-samuelson-theorem, econ-prebisch-singer-hypothesis,
+  // human-tip-of-tongue-phenomenon, mgmt-absorptive-capacity-reconceptualization,
+  // bizlaw-ultra-vires-doctrine, infosoc-digital-labor
+  {
+    id: 'econ-stolper-samuelson-theorem',
+    discipline: 'economics',
+    title: 'ストルパー＝サミュエルソン定理',
+    statement:
+      'ストルパー＝サミュエルソン定理は、ヘクシャー＝オリーン・モデルの枠組み（2財・2生産要素・完全競争・規模に関する収穫不変）のもとで、ある財の相対価格が上昇すると、その財を集約的に使用する生産要素の実質報酬が上昇し、他方の生産要素の実質報酬は低下することを示す定理である。' +
+      'ウォルフガング・ストルパーとポール・サミュエルソンが1941年の論文「Protection and Real Wages」（Review of Economic Studies 9(1):58-73）で定式化し、貿易自由化が資本豊富国の労働者の実質賃金を引き下げうるという所得分配効果を初めて厳密に証明した。' +
+      '本定理はロナルド・ジョーンズ（1965）による「拡大効果（magnification effect）」に一般化され、貿易政策・賃金格差・グローバル化の経済分析の基礎として国際経済学の中心的成果の一つとなっている。',
+    keyFigures: 'ウォルフガング・F・ストルパー（Wolfgang F. Stolper, 1941 共著者）／ポール・A・サミュエルソン（Paul A. Samuelson, 1941 共著者, 1970年ノーベル経済学賞）／ロナルド・W・ジョーンズ（Ronald W. Jones, 1965 拡大効果への一般化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/9/1/58/1588589', type: 'academic', label: 'Stolper & Samuelson (1941) Protection and Real Wages, Review of Economic Studies 9(1):58-73 [Oxford Academic]' },
+      { url: 'https://www.jstor.org/stable/2967638', type: 'academic', label: 'Stolper & Samuelson (1941) — JSTOR stable/2967638' },
+      { url: 'https://en.wikipedia.org/wiki/Stolper%E2%80%93Samuelson_theorem', type: 'reference', label: 'Wikipedia — Stolper–Samuelson theorem' },
+    ],
+  },
+  {
+    id: 'econ-prebisch-singer-hypothesis',
+    discipline: 'economics',
+    title: 'プレビッシュ＝シンガー仮説',
+    statement:
+      'プレビッシュ＝シンガー仮説とは、一次産品（農産物・鉱物資源など）を輸出する途上国の交易条件が、長期的に工業製品を輸出する先進国に対して継続的に悪化するという経済学上の命題である。' +
+      '1950年にラウル・プレビッシュが国連ラテンアメリカ経済委員会（ECLA）の報告書で、同年にハンス・シンガーが American Economic Review 誌の論文で独立して同様の結論に達したことから両者の名を冠する。' +
+      'この仮説は途上国が一次産品輸出への依存から脱却し輸入代替工業化を推進すべきとする開発経済学の政策論拠となり、自由貿易が必ずしも途上国に有利でないという比較優位論への重要な批判を形成した。',
+    keyFigures: 'ラウル・プレビッシュ（Raúl Prebisch, 1950 ECLA報告書）／ハンス・シンガー（Hans W. Singer, 1950 AER論文「The Distribution of Gains between Investing and Borrowing Countries」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://repositorio.cepal.org/handle/11362/29973', type: 'academic', label: 'Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — ECLAC Repository' },
+      { url: 'https://www.jstor.org/stable/1818064', type: 'academic', label: 'Singer, H.W. (1950) The Distribution of Gains between Investing and Borrowing Countries, AER 40(2):473-485' },
+      { url: 'https://en.wikipedia.org/wiki/Prebisch%E2%80%93Singer_hypothesis', type: 'reference', label: 'Wikipedia — Prebisch–Singer hypothesis' },
+    ],
+  },
+  {
+    id: 'human-tip-of-tongue-phenomenon',
+    discipline: 'human-science',
+    title: '舌先現象（TOT現象）',
+    statement:
+      '舌先現象（Tip-of-the-Tongue現象、TOT現象）とは、ある単語を確実に知っているという確信を持ちながらも一時的に想起できない認知状態を指し、語頭音・音節数などの部分的情報は意識に上るものの完全な音韻表象への到達が阻害されることが特徴である。' +
+      'ロジャー・ブラウンとデイヴィッド・マクニールが1966年の画期的実験研究（Journal of Verbal Learning and Verbal Behavior 5:325-337）で初めて体系的に実証し、語彙アクセスが意味レベルと音韻レベルの少なくとも二段階に分離していることを示す自然実験として位置づけた。' +
+      'バーク＆マッケイの「伝達欠如仮説（Transmission Deficit Hypothesis, 1991）」は、使用頻度の低さや加齢による語彙ノードから音韻ノードへの結合弱体化がTOT状態を引き起こすと説明し、記憶の組織化と語彙検索過程の解明に不可欠な研究対象となっている。',
+    keyFigures: 'ロジャー・ブラウン＆デイヴィッド・マクニール（Roger Brown & David McNeill, 1966 JVLVB 実験的実証）／デボラ・バーク＆ドナルド・マッケイ（Deborah Burke & Donald MacKay, 1991 伝達欠如仮説）／アラン・S・ブラウン（Alan S. Brown, 1991 Psychological Bulletin 包括的レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/S0022-5371(66)80040-3', type: 'academic', label: 'Brown, R. & McNeill, D. (1966) The "tip of the tongue" phenomenon, JVLVB 5:325-337' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/2034750/', type: 'academic', label: 'Brown, A.S. (1991) A review of the tip-of-the-tongue experience, Psychological Bulletin 109(2):204-223' },
+      { url: 'https://en.wikipedia.org/wiki/Tip_of_the_tongue', type: 'reference', label: 'Wikipedia — Tip of the tongue（TOT研究概説）' },
+    ],
+  },
+  {
+    id: 'mgmt-absorptive-capacity-reconceptualization',
+    discipline: 'management',
+    title: '吸収能力の再概念化（ザーラ＆ジョージ 2002）',
+    statement:
+      'ザーラ＆ジョージ（2002, Academy of Management Review 27(2):185-203）は、コーエン＆レビンサール（1990）が提唱した吸収能力概念を発展させ、外部知識の獲得（acquisition）・同化（assimilation）からなる潜在的吸収能力（PACAP）と、知識の変換（transformation）・活用（exploitation）からなる実現的吸収能力（RACAP）という二次元の動態的能力フレームワークへと再概念化した。' +
+      'PACAPは外部知識を取り込み組織内で理解する基盤的能力、RACAPはその知識を既存知識と統合して競争優位に転換する実践的能力を表し、両者の比率を「効率ファクター（efficiency factor）」として組織の知識変換効率を測定する概念を導入した。' +
+      'この枠組みは組織学習・イノベーション・ダイナミック・ケイパビリティ研究の交差点に位置し、企業の知識統合プロセスと競争優位の源泉を解明する主要な理論的基盤を提供している。',
+    keyFigures: 'シャカー・A・ザーラ（Shaker A. Zahra）＆ジェラルド・ジョージ（Gerard George）（2002 PACAP/RACAP二次元モデル, AMR 27(2):185-203）／ウェズリー・M・コーエン＆ダニエル・A・レビンサール（Wesley M. Cohen & Daniel A. Levinthal, 1990 吸収能力の原概念, ASQ 35(1):128-152）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra, S.A. & George, G. (2002) Absorptive capacity: A review, reconceptualization, and extension, AMR 27(2):185-203' },
+      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen, W.M. & Levinthal, D.A. (1990) Absorptive capacity: A new perspective on learning and innovation, ASQ 35(1):128-152' },
+      { url: 'https://www.jstor.org/stable/4134351', type: 'reference', label: 'Zahra & George (2002) — JSTOR全文アーカイブ（AMR Vol. 27 No. 2）' },
+    ],
+  },
+  {
+    id: 'bizlaw-ultra-vires-doctrine',
+    discipline: 'business-law',
+    title: '権限踰越の法理（Ultra Vires）',
+    statement:
+      '権限踰越（ウルトラ・ヴァイリーズ）の法理とは、法人がその設立定款に定められた目的の範囲を超えて行った行為は無効であるとする原則をいう。' +
+      'この法理は、アシュベリー鉄道客車会社対リシュ事件（Ashbury Railway Carriage & Iron Co Ltd v Riche [1875] LR 7 HL 653）においてイギリス貴族院が確立したものであり、会社の権限はその設立目的に厳格に限定されるべきとされた。' +
+      'しかし現代においては多くの法域でこの法理は立法により大幅に緩和され、英国会社法2006年第39条など第三者保護の観点から会社の行為能力に関する制限を対外的に主張することを原則として禁じている。',
+    keyFigures: 'Ashbury Railway Carriage & Iron Co Ltd v Riche [1875] LR 7 HL 653（権限踰越の法理を確立した先例）／Lord Cairns（アシュベリー事件の主要判断を示した貴族院法務貴族）／UK Companies Act 2006 s.39（同法理の実質的廃止条文）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/2006/46/section/39', type: 'government', label: 'UK Companies Act 2006, s.39 — legislation.gov.uk' },
+      { url: 'https://www.law.cornell.edu/wex/ultra_vires', type: 'academic', label: 'Ultra Vires — Cornell Law School Legal Information Institute' },
+      { url: 'https://en.wikipedia.org/wiki/Ashbury_Railway_Carriage_and_Iron_Co_Ltd_v_Riche', type: 'reference', label: 'Wikipedia — Ashbury Railway Carriage and Iron Co Ltd v Riche' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-labor',
+    discipline: 'information-sociology',
+    title: 'デジタル・レイバー（デジタル労働）',
+    statement:
+      'デジタル・レイバーとは、ソーシャルメディアへのコンテンツ投稿、データ生成、オンラインでの社会的交流など、デジタルプラットフォーム上でのユーザー活動が、プラットフォーム所有者のために価値を生み出す無償または低報酬の労働形態であるという概念である。' +
+      'テラノヴァ（2000, Social Text 18(2):33-58）は「フリー・レイバー」においてインターネットユーザーの文化的活動がデジタル資本主義に搾取されていることを論じ、フックス（2014）はマルクス主義的政治経済学の観点からこれを体系化しユーザーデータの商品化を剰余価値の収奪として分析した。' +
+      'この理論的枠組みは情報社会学における中心的議題となり、プラットフォーム経済における労働・搾取・抵抗の問題を批判的に検討する基盤を提供している。',
+    keyFigures: 'ティツィアーナ・テラノヴァ（Tiziana Terranova, 2000「Free Labor: Producing Culture for the Digital Economy」Social Text）／クリスティアン・フックス（Christian Fuchs, 2014 Digital Labour and Karl Marx, Routledge）／ダラス・スマイス（Dallas Smythe, 1977「オーディエンス商品」概念の先駆者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy, Social Text 18(2):33-58' },
+      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716154', type: 'academic', label: 'Fuchs, C. (2014) Digital Labour and Karl Marx — Routledge' },
+      { url: 'https://www.sciencedirect.com/topics/social-sciences/digital-labor', type: 'reference', label: 'Digital Labor — ScienceDirect Topics（Elsevier概説）' },
+    ],
+  },
 ];
 // Stryker restore all
