@@ -24820,5 +24820,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://achology.com/general-interest/depth-perception-insights-from-the-visual-cliff-experiment/', type: 'reference', label: 'Depth Perception: Insights from The Visual Cliff Experiment — Achology' },
     ],
   },
+  {
+    id: 'econ-gravity-model-trade',
+    discipline: 'economics',
+    title: '貿易の重力モデル（Gravity Model of Trade）',
+    statement:
+      '貿易の重力モデル（Gravity Model of Trade）とは、二国間の貿易量がそれぞれの経済規模（GDP）に比例し、両国間の距離に反比例するとするニュートンの万有引力法則に類比された経験的モデルである。ヤン・ティンバーゲン（Jan Tinbergen）が1962年に、ペンッティ・ポイホネン（Pentti Pöyhönen）が1963年に独立に定式化した。' +
+      '相対的な経済規模が貿易相手としての吸引力を決定し、経済的距離（貿易費用）が大きいほど吸引力は弱まる。距離の代理変数として地理的距離に加え、言語・植民地関係・共通通貨・貿易協定等が拡張変数として導入される。異なる国のサンプル・方法論・時期にわたって驚くほど安定的かつ頑健な実証的規則性を示し、経済学における最も成功した経験的モデルの一つとされる。アンダーソン＆ヴァン・ウィンクープ（2003）が理論的基礎付けを精緻化した。',
+    keyFigures: 'ヤン・ティンバーゲン（1962 重力モデル提唱）／ペンッティ・ポイホネン（1963 独立定式化）／アンダーソン＆ヴァン・ウィンクープ（2003 理論的基礎付け）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/working_papers/w19285/w19285.pdf', type: 'academic', label: 'Head & Mayer (2013) The Gravity Equation in International Trade — NBER WP 19285' },
+      { url: 'https://unctad.org/system/files/official-document/gds2012d2_ch3_en.pdf', type: 'academic', label: 'Analyzing Bilateral Trade Using the Gravity Equation — UNCTAD' },
+      { url: 'https://maseconomics.com/the-gravity-model-of-trade-predicting-bilateral-trade-flows-and-why-it-still-rules/', type: 'reference', label: 'The Gravity Model of Trade: Predicting Bilateral Trade Flows — MAS Economics' },
+    ],
+  },
+  {
+    id: 'human-statistical-learning',
+    discipline: 'human-science',
+    title: '統計的学習（Statistical Learning）',
+    statement:
+      '統計的学習（Statistical Learning）とは、乳児が連続的な感覚入力に含まれる統計的規則性（遷移確率等）を暗黙的に検出・抽出することで、音声ストリームの分節化や語彙獲得などを実現する学習メカニズムである。ジェニー・サフラン（Jenny Saffran）、リチャード・アスリン（Richard Aslin）、エリッサ・ニューポート（Elissa Newport）が1996年にScience誌で実証した。' +
+      '8か月齢の乳児に4つの三音節疑似語をランダムに連結した単調な音節ストリームを聴取させたところ、語内の音節間遷移確率（TP=1.0）と語境界をまたぐ遷移確率（低TP）の差異に基づいて語と非語を弁別できることが示された。韻律的手がかりや休止が一切ない条件下で遷移確率のみから語を分節化した点が画期的であった。視覚領域・音楽領域・新生児にも統計的学習能力が確認されている。',
+    keyFigures: 'ジェニー・サフラン＆リチャード・アスリン＆エリッサ・ニューポート（1996 Science 遷移確率による語分節化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Statistical_learning_in_language_acquisition', type: 'reference', label: 'Wikipedia: Statistical Learning in Language Acquisition' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8078161/', type: 'academic', label: 'Saffran (2020) Statistical Language Learning in Infancy — PMC / Annual Review of Psychology' },
+      { url: 'https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00598/full', type: 'academic', label: 'Krogh et al. (2013) Statistical Learning Across Development: Flexible Yet Constrained — Frontiers in Psychology' },
+    ],
+  },
+  {
+    id: 'bizlaw-umbrella-clause',
+    discipline: 'business-law',
+    title: 'アンブレラ条項（Umbrella Clause）',
+    statement:
+      'アンブレラ条項（Umbrella Clause）とは、二国間投資条約（BIT）に規定される条項で、締約国が投資家との間で締結した投資契約上のすべての義務を遵守する義務を国際法上の条約義務に「格上げ」（elevate）する効果を持つ条項である。典型的には「Each Contracting Party shall observe any obligation it has assumed with regard to specific investments」と規定される。' +
+      'SGS v. パキスタン事件（2003年ICSID）では仲裁廷がアンブレラ条項を制限的に解釈し、契約違反は条約違反を構成しないとしたのに対し、SGS v. フィリピン事件（2004年ICSID）では仲裁廷が条項の文言通りの解釈を採用し、投資先国が投資家に対して負うあらゆる法的義務を条約上の義務として取り込むと判示した。この相反する判断は国際投資法における最も論争的な解釈問題の一つとなっている。',
+    keyFigures: 'SGS v. パキスタン事件（2003 ICSID 制限的解釈）／SGS v. フィリピン事件（2004 ICSID 広範的解釈）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarlycommons.pacific.edu/cgi/viewcontent.cgi?httpsredir=1&article=1171&context=facultyarticles', type: 'academic', label: 'Umbrella Clauses in Bilateral Investment Treaties — Pacific McGeorge School of Law' },
+      { url: 'https://academic.oup.com/arbitration/article-abstract/29/4/607/177001', type: 'academic', label: 'Umbrella Clauses Since SGS v. Pakistan and SGS v. Philippines — Arbitration International (Oxford)' },
+      { url: 'https://www.charlesrussellspeechlys.com/en/insights/expert-insights/dispute-resolution/2025/umbrella-clauses-in-investment-treaty-arbitration/', type: 'reference', label: 'Umbrella Clauses in Investment Treaty Arbitration — Charles Russell Speechlys' },
+    ],
+  },
+  {
+    id: 'mgmt-collective-genius',
+    discipline: 'management',
+    title: '集合的天才（Collective Genius）',
+    statement:
+      '集合的天才（Collective Genius）とは、イノベーションのリーダーシップは従来型のビジョン提示・方向指示ではなく、組織内の多様な人材が自発的にイノベーションに取り組む文脈（context）を創出することにあるとするリーダーシップ理論である。リンダ・ヒル（Linda A. Hill）、グレッグ・ブランドー（Greg Brandeau）、エミリー・トゥルーラヴ（Emily Truelove）、ケント・ラインバック（Kent Lineback）が2014年にHarvard Business Review Pressから『Collective Genius: The Art and Practice of Leading Innovation』として体系化した。' +
+      '米国・欧州・インド・アジアのイノベーティブ企業（Pixar・Google・Volkswagen・HCL Technologies・IBM等）のリーダーを10年間研究した成果に基づく。イノベーションの偉大なリーダーはビジョナリーではなく、メンバーの創造的摩擦（creative abrasion）・創造的敏捷性（creative agility）・創造的解決（creative resolution）を可能にする組織的条件の設計者であるとする。',
+    keyFigures: 'リンダ・ヒル（HBS教授）＆グレッグ・ブランドー＆エミリー・トゥルーラヴ＆ケント・ラインバック（2014 HBR Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=47530', type: 'academic', label: 'Hill et al. (2014) Collective Genius: The Art and Practice of Leading Innovation — Harvard Business School' },
+      { url: 'https://collectivegeniusbook.com/', type: 'reference', label: 'Collective Genius — Official Book Website' },
+      { url: 'https://www.amazon.com/Collective-Genius-Practice-Leading-Innovation/dp/1422130029', type: 'reference', label: 'Collective Genius — Amazon' },
+    ],
+  },
+  {
+    id: 'infosoc-techno-feudalism',
+    discipline: 'information-sociology',
+    title: 'テクノ封建主義（Techno-Feudalism）',
+    statement:
+      'テクノ封建主義（Techno-Feudalism）とは、デジタルプラットフォーム独占企業（Amazon・Google・Apple等）がクラウドインフラの私的所有を通じて中世の封建領主のように経済活動を支配し、利潤ではなくデジタルレント（地代）を抽出する新たな経済秩序が資本主義を超克したとする批判的概念である。ヤニス・ヴァルファキス（Yanis Varoufakis）が2023年に『Technofeudalism: What Killed Capitalism』として体系化した。' +
+      'ヴァルファキスはプラットフォームが「クラウド資本」を通じてレントを抽出し、市場と利潤という資本主義社会の二つの中心的特徴を廃止するデジタル封建領地を形成すると論じた。セドリック・デュラン（Cédric Durand）はBig Tech企業が検索・クラウド・物流・決済という社会的に不可欠なインフラの所有・管理を通じて価値を抽出する構造を分析した。批判者はこの現象を封建制ではなくなお資本主義の変種と見なす。',
+    keyFigures: 'ヤニス・ヴァルファキス（2023 Technofeudalism）／セドリック・デュラン（How Silicon Valley Unleashed Techno-Feudalism）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://developingeconomics.org/2025/05/05/digital-lords-or-capitalist-titans-critiquing-the-techno-feudalism-narrative/', type: 'academic', label: 'Digital Lords or Capitalist Titans? Critiquing the Techno-Feudalism Narrative — Developing Economics' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1468795X241269293', type: 'academic', label: 'Gane (2025) Capitalism Is Capitalism, Not Technofeudalism — Sociology (SAGE)' },
+      { url: 'https://americanaffairsjournal.org/2025/08/technofeudalism-versus-total-capitalism/', type: 'media', label: 'Technofeudalism Versus Total Capitalism — American Affairs Journal' },
+    ],
+  },
+  {
+    id: 'econ-taylor-principle',
+    discipline: 'economics',
+    title: 'テイラー原理（Taylor Principle）',
+    statement:
+      'テイラー原理（Taylor Principle）とは、中央銀行がインフレ率の上昇に対して名目金利をインフレ率の上昇幅以上に引き上げる（すなわち実質金利を上昇させる）べきであるとする金融政策の基本原則である。ジョン・テイラー（John B. Taylor）が1993年にカーネギー・ロチェスター会議で「Discretion versus Policy Rules in Practice」として提示したテイラー・ルールの核心的特徴である。' +
+      'テイラー・ルールは、目標名目短期金利＝インフレ率＋0.5×インフレギャップ＋0.5×産出ギャップ＋均衡実質金利という数式で定式化された。1993年の原論文ではインフレ反応係数0.5（＝名目金利のインフレ反応は1.5）、目標インフレ率2%、均衡実質金利2%を設定した。経済モデルのシミュレーションにおいて、このルールに従う金融政策がインフレ率を2%近傍に安定化し、失業率を長期持続可能な水準に近づける良好な成績を示した。',
+    keyFigures: 'ジョン・テイラー（1993 Carnegie-Rochester Conference「Discretion versus Policy Rules in Practice」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor Rule' },
+      { url: 'https://www.federalreserve.gov/monetarypolicy/principles-for-the-conduct-of-monetary-policy.htm', type: 'government', label: 'Principles for the Conduct of Monetary Policy — Federal Reserve Board' },
+      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'academic', label: 'The Taylor Rule: A Benchmark for Monetary Policy — Brookings Institution' },
+    ],
+  },
 ];
 // Stryker restore all
