@@ -28185,5 +28185,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1787/53e5f593-en', type: 'reference', label: 'OECD — An Introduction to Online Platforms and Their Role in the Digital Transformation (2019)' },
     ],
   },
+  {
+    id: 'econ-feldstein-horioka-puzzle',
+    discipline: 'economics',
+    title: 'フェルドシュタイン＝ホリオカ・パズル',
+    statement:
+      'Feldstein & Horioka（1980）は、OECD16か国の1960〜1974年データを回帰分析し、国内貯蓄率と国内投資率の間に0.87〜0.91という非常に高い相関（貯蓄保留係数）を発見した。完全な資本移動が実現していれば両者の相関は低くなるはずであり、この高相関は標準的な国際金融理論と矛盾するため「パズル」と呼ばれる。' +
+      '以来40年以上にわたり多くの研究者が解明を試みているが、Felipe et al.（2024）をはじめ依然として未解決の国際マクロ経済学上の重要問題とされている。',
+    keyFigures: 'Martin Feldstein ／ Charles Horioka',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2231790', type: 'academic', label: 'Feldstein & Horioka (1980) Domestic Saving and International Capital Flows — Economic Journal' },
+      { url: 'https://doi.org/10.1111/boer.12466', type: 'academic', label: 'Felipe, Fullwiler & Yusoph (2024) Why the Feldstein–Horioka puzzle remains unsolved — Bulletin of Economic Research' },
+      { url: 'https://www.nber.org/papers/w0310', type: 'reference', label: 'NBER Working Paper No. 310 — Feldstein & Horioka (1979) pre-publication version' },
+    ],
+  },
+  {
+    id: 'econ-elasticity-substitution-production',
+    discipline: 'economics',
+    title: '生産要素代替弾力性',
+    statement:
+      '生産要素代替弾力性とは、生産技術において資本と労働（または任意の二要素）の間で、相対価格が1％変化したときに要素投入比率が何％変化するかを表す指標であり、Hicks（1932）が『賃金の理論』で定式化した。Arrow et al.（1961）はこの概念を基礎に、代替弾力性が定数σをとる定常代替弾力性（CES）生産関数を導出し、コブ＝ダグラス関数（σ＝1）やレオンティエフ関数（σ＝0）を特殊ケースとして統一的に包含する枠組みを提示した。' +
+      '生産要素代替弾力性の推計値は、技術進歩・所得分配・経済成長の分析において中心的役割を担い、資本分配率の長期変動を説明するうえで不可欠な概念として広く参照される。',
+    keyFigures: 'John R. Hicks ／ Kenneth J. Arrow ／ Hollis B. Chenery ／ Bagicha S. Minhas ／ Robert M. Solow',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics' },
+      { url: 'https://doi.org/10.1016/j.jinteco.2003.10.005', type: 'academic', label: 'Antras (2004) Is the U.S. Aggregate Production Function Cobb-Douglas? — Contributions to Macroeconomics' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1', type: 'reference', label: 'Elasticity of Substitution — The New Palgrave Dictionary of Economics' },
+    ],
+  },
+  {
+    id: 'human-self-discrepancy-theory',
+    discipline: 'human-science',
+    title: '自己不一致理論',
+    statement:
+      'Higgins（1987）が提唱した自己不一致理論は、人が「現実自己」「理想自己」「当為自己」という三つの自己表象をもち、それらの間の乖離が特定の感情的脆弱性を生み出すと説明する。現実自己と理想自己の不一致は悲しみや失望などのうつ的感情を引き起こし、現実自己と当為自己の不一致は不安や罪悪感などの焦燥感情を誘発する。' +
+      'Strauman & Higgins（1987）の実証研究により、この感情特異性の予測は独立したサンプルで繰り返し支持されている。',
+    keyFigures: 'Edward Tory Higgins ／ Timothy J. Strauman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0033-295X.94.3.319', type: 'academic', label: 'Higgins (1987) Self-discrepancy: A theory relating self and affect — Psychological Review' },
+      { url: 'https://doi.org/10.1177/0146167299025007002', type: 'academic', label: 'Carver, Lawrence & Scheier (1999) Self-discrepancies and affect — Personality and Social Psychology Bulletin' },
+      { url: 'https://en.wikipedia.org/wiki/Self-discrepancy_theory', type: 'reference', label: 'Wikipedia — Self-discrepancy theory' },
+    ],
+  },
+  {
+    id: 'mgmt-corporate-social-performance',
+    discipline: 'management',
+    title: '企業社会的パフォーマンスモデル',
+    statement:
+      'Carroll（1979）は企業の社会的責任を経済的・法的・倫理的・裁量的責任の四層ピラミッドとして体系化し、企業が社会問題にどう応答するかを統合するモデルを提唱した。Wood（1991）はこれを発展させ、CSPを「原則・プロセス・成果」の三次元フレームワークとして再定式化し、組織レベルの正当性原則、制度レベルの公共責任原則、個人レベルの管理裁量原則を組み合わせた包括的モデルを構築した。' +
+      'このモデルは企業が社会に対してどのような価値を創造・破壊するかを測定・評価するための理論的基盤として、経営学における社会的責任研究の中心的枠組みとなっている。',
+    keyFigures: 'Archie B. Carroll ／ Donna J. Wood',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/257850', type: 'academic', label: 'Carroll (1979) A Three-Dimensional Conceptual Model of Corporate Performance — Academy of Management Review' },
+      { url: 'https://doi.org/10.5465/amr.1991.4279495', type: 'academic', label: 'Wood (1991) Corporate Social Performance Revisited — Academy of Management Review' },
+      { url: 'https://en.wikipedia.org/wiki/Corporate_social_responsibility', type: 'reference', label: 'Wikipedia — Corporate social responsibility' },
+    ],
+  },
+  {
+    id: 'bizlaw-holder-in-due-course',
+    discipline: 'business-law',
+    title: '善意の正当所持人の法理',
+    statement:
+      '善意の正当所持人の法理（Holder in Due Course Doctrine）とは、流通証券（約束手形・為替手形・小切手）を対価をもって取得し、善意かつ無重過失である所持人は、振出人等が前主に対して有する人的抗弁の切断を享受し、証券上の権利を完全な形で行使できるという商業証券法の基本原則である（Llewellyn 1938; Gilmore 1954）。' +
+      'この法理はアメリカ統一商事法典第3編§3-302に明文化されており、日本法においても手形法第17条ただし書に対応規定が設けられ、流通証券の換金性の確保と取引安全の調和を図る機能を担う（Maeda 1984; Suzuki 1960）。',
+    keyFigures: 'Karl Llewellyn ／ Grant Gilmore ／ Isao Maeda ／ Takeo Suzuki',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/796536', type: 'academic', label: 'Gilmore (1954) The Good Faith Purchase Idea and the Uniform Commercial Code — Yale Law Journal' },
+      { url: 'https://doi.org/10.2307/1121258', type: 'academic', label: 'Rosenthal (1971) Negotiability—Who Needs It? — Columbia Law Review' },
+      { url: 'https://www.law.cornell.edu/ucc/3/3-302', type: 'reference', label: 'UCC § 3-302: Holder in Due Course (Cornell Legal Information Institute)' },
+    ],
+  },
+  {
+    id: 'infosoc-prosumption-theory',
+    discipline: 'information-sociology',
+    title: 'プロシューマー理論',
+    statement:
+      'プロシューマー理論（Prosumption Theory）は、生産（production）と消費（consumption）を歴史的に統合された単一の社会的過程として捉え直す理論的枠組みであり、Toffler（1980）が予見し、Ritzer（2010）が「プロシュンプション（prosumption）」概念として社会学的に定式化した。' +
+      'Ritzer & Jurgenson（2010）は、20世紀における生産と消費の人為的分離こそが例外であり、デジタル資本主義においてWeb 2.0プラットフォームが無償の利用者労働を収奪することでプロシュンプションが再び資本蓄積の中核機能を担うと論じた。',
+    keyFigures: 'Alvin Toffler ／ George Ritzer ／ Nathan Jurgenson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1469540509354673', type: 'academic', label: 'Ritzer & Jurgenson (2010) Production, Consumption, Prosumption — Journal of Consumer Culture' },
+      { url: 'https://doi.org/10.1177/0038038513479755', type: 'academic', label: 'Ritzer (2014) Prosumption: Evolution, Revolution, or Eternal Return of the Same? — Sociology' },
+      { url: 'https://en.wikipedia.org/wiki/Prosumer', type: 'reference', label: 'Wikipedia — Prosumer' },
+    ],
+  },
 ];
 // Stryker restore all
