@@ -26090,5 +26090,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/topics/social-sciences/digital-labor', type: 'reference', label: 'Digital Labor — ScienceDirect Topics（Elsevier概説）' },
     ],
   },
+  // ── Batch 286 ─────────────────────────────────────────────
+  // econ-endogenous-growth-theory, econ-balassa-samuelson-effect,
+  // human-serial-position-effect, mgmt-real-options-theory,
+  // bizlaw-respondeat-superior, infosoc-information-asymmetry-online
+  {
+    id: 'econ-endogenous-growth-theory',
+    discipline: 'economics',
+    title: '内生的成長理論',
+    statement:
+      '内生的成長理論とは、経済成長の原動力を技術進歩の外生的な仮定に頼らず、人的資本蓄積・研究開発・知識のスピルオーバーといったモデル内部の意思決定プロセスから説明する一連の成長理論である。' +
+      'ポール・ローマーが1986年の論文（JPE 94(5):1002-1037）で知識の外部性による収穫逓増を導入し、1990年の論文（JPE 98(5):S71-S102）で研究開発セクターを明示的にモデル化した「アイデアの経済学」を確立した。' +
+      'ロバート・ルーカスが1988年の論文（JME 22(1):3-42）で人的資本の蓄積を成長の内生的源泉として定式化し、両者の貢献により新古典派成長理論の限界を超える新たなパラダイムが構築された。',
+    keyFigures: 'ポール・M・ローマー（Paul M. Romer, 1986 JPE 知識外部性モデル, 1990 JPE R&Dモデル, 2018年ノーベル経済学賞）／ロバート・E・ルーカス（Robert E. Lucas Jr., 1988 JME 人的資本蓄積モデル, 1995年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/261420', type: 'academic', label: 'Romer, P.M. (1986) Increasing Returns and Long-Run Growth, JPE 94(5):1002-1037' },
+      { url: 'https://doi.org/10.1086/261725', type: 'academic', label: 'Romer, P.M. (1990) Endogenous Technological Change, JPE 98(5):S71-S102' },
+      { url: 'https://en.wikipedia.org/wiki/Endogenous_growth_theory', type: 'reference', label: 'Wikipedia — Endogenous growth theory' },
+    ],
+  },
+  {
+    id: 'econ-balassa-samuelson-effect',
+    discipline: 'economics',
+    title: 'バラッサ＝サミュエルソン効果',
+    statement:
+      'バラッサ＝サミュエルソン効果とは、貿易財部門の生産性上昇が高い国では非貿易財部門の賃金も同水準に引き上げられ、非貿易財の価格が上昇することで物価水準が全般的に高くなるという仮説であり、購買力平価（PPP）からの系統的な乖離と実質為替レートの増価を説明する。' +
+      'ベーラ・バラッサ（1964年 JPE 72(6):584-596）とポール・サミュエルソン（1964年 REStat 46(2):145-154）が独立に定式化し、一人当たり所得が高い国ほど物価水準が高い傾向（いわゆる「ペン効果」）の理論的基盤を提供した。' +
+      'この効果はEU拡大時の物価収束、新興国の実質為替レート増価、および日本の高度成長期における円の実質増価を説明する枠組みとして広く応用されている。',
+    keyFigures: 'ベーラ・バラッサ（Béla Balassa, 1964 JPE — 生産性格差と実質為替レートの関係を実証・定式化）／ポール・A・サミュエルソン（Paul A. Samuelson, 1964 REStat — 同効果を独立に理論化, 1970年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1829464', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine: A Reappraisal, JPE 72(6):584-596' },
+      { url: 'https://www.jstor.org/stable/1928178', type: 'academic', label: 'Samuelson, P.A. (1964) Theoretical Notes on Trade Problems, REStat 46(2):145-154' },
+      { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia — Balassa–Samuelson effect' },
+    ],
+  },
+  {
+    id: 'human-serial-position-effect',
+    discipline: 'human-science',
+    title: '系列位置効果',
+    statement:
+      '系列位置効果とは、リストの項目を記憶・再生する際に、先頭付近の項目（初頭効果 primacy effect）と末尾付近の項目（新近効果 recency effect）の再生率が中間の項目より有意に高くなる現象であり、U字型の系列位置曲線として表れる。' +
+      'ヘルマン・エビングハウスが1885年の記憶研究で最初に観察し、ベネット・マードック（1962, Journal of Experimental Psychology 64(5):482-488）がリスト長・呈示速度を系統的に操作して系列位置曲線を精密に記述した。' +
+      'アトキンソン＆シフリン（1968）の二重貯蔵モデルでは、初頭効果は長期記憶へのリハーサルによる転送、新近効果は短期記憶の残存として説明され、記憶の多重貯蔵構造を支持する主要な証拠とされている。',
+    keyFigures: 'ヘルマン・エビングハウス（Hermann Ebbinghaus, 1885 記憶の実験的研究の創始者）／ベネット・B・マードック（Bennet B. Murdock Jr., 1962 JEP 系列位置曲線の精密化）／リチャード・C・アトキンソン＆リチャード・M・シフリン（Atkinson & Shiffrin, 1968 二重貯蔵モデルによる理論的説明）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0045106', type: 'academic', label: 'Murdock, B.B. Jr. (1962) The serial position effect of free recall, JEP 64(5):482-488' },
+      { url: 'https://doi.org/10.1016/S0079-7421(08)60422-3', type: 'academic', label: 'Atkinson, R.C. & Shiffrin, R.M. (1968) Human Memory: A Proposed System, in Psychology of Learning and Motivation Vol.2' },
+      { url: 'https://en.wikipedia.org/wiki/Serial-position_effect', type: 'reference', label: 'Wikipedia — Serial-position effect' },
+    ],
+  },
+  {
+    id: 'mgmt-real-options-theory',
+    discipline: 'management',
+    title: 'リアル・オプション理論',
+    statement:
+      'リアル・オプション理論とは、金融オプション価格理論の枠組みを実物（非金融）投資意思決定に適用し、経営者が持つ柔軟性——投資の延期・拡大・縮小・撤退の選択権——に定量的な価値を認める戦略的投資評価アプローチである。' +
+      'スチュワート・マイヤーズ（1977, Journal of Financial Economics 5(2):147-175）が「成長機会は企業価値の中でリアル・オプションとして機能する」と初めて概念化し、アビナッシュ・ディキシット＆ロバート・ピンダイク（1994, Investment under Uncertainty, Princeton UP）が不確実性下の投資理論として体系化した。' +
+      '従来のNPV（正味現在価値）法が投資を「今すぐ実行か否か」の静的判断に限定するのに対し、リアル・オプション理論は不確実性が高いほど「待つ価値」が高まることを示し、ベンチャー投資・R&D・資源開発などの段階的投資意思決定に広く応用されている。',
+    keyFigures: 'スチュワート・C・マイヤーズ（Stewart C. Myers, 1977 JFE — 「リアル・オプション」概念の提唱）／アビナッシュ・K・ディキシット＆ロバート・S・ピンダイク（Avinash K. Dixit & Robert S. Pindyck, 1994 Investment under Uncertainty — 理論の体系化）／フィッシャー・ブラック＆マイロン・ショールズ（Black & Scholes, 1973 — 基礎となるオプション価格理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0304-405X(77)90015-0', type: 'academic', label: 'Myers, S.C. (1977) Determinants of Corporate Borrowing, JFE 5(2):147-175' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691034102/investment-under-uncertainty', type: 'academic', label: 'Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia — Real options valuation' },
+    ],
+  },
+  {
+    id: 'bizlaw-respondeat-superior',
+    discipline: 'business-law',
+    title: '使用者責任の法理（Respondeat Superior）',
+    statement:
+      'Respondeat Superior（ラテン語で「主人は答えよ」）とは、被用者または代理人が雇用の範囲内で行った不法行為について使用者または本人が代位責任を負うとするコモン・ロー上の法理である。' +
+      '英国では1698年のJones v. Hart判決においてホルト首席裁判官が初めて明確に定式化し、現代ではRestatement (Third) of Agency § 2.04（ALI, 2006）が「被用者が雇用の範囲内で行動中に犯した不法行為について使用者は責任を負う」と明文化している。' +
+      'Faragher v. City of Boca Raton（524 U.S. 775, 1998）を通じて企業のハラスメント責任にも適用が拡大され、New York Central & Hudson River Railroad v. United States（212 U.S. 481, 1909）以降は企業の刑事責任の根拠法理としても機能している。',
+    keyFigures: 'Lord Chief Justice Sir John Holt（Jones v. Hart, 1698 — 使用者責任の司法的定式化）／Judge Henry Friendly（Ira S. Bushey & Sons v. United States, 398 F.2d 167, 2d Cir. 1968 — 客観的予見可能性基準の確立）／Restatement (Third) of Agency § 2.04（ALI, 2006 — 現代的条文化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/respondeat_superior', type: 'reference', label: 'Cornell LII — Respondeat Superior (Wex)' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/524/775', type: 'reference', label: 'Faragher v. City of Boca Raton, 524 U.S. 775 (1998) — Cornell LII' },
+      { url: 'https://supreme.justia.com/cases/federal/us/212/481/', type: 'reference', label: 'New York Central & Hudson River Railroad v. United States, 212 U.S. 481 (1909) — Justia' },
+    ],
+  },
+  {
+    id: 'infosoc-information-asymmetry-online',
+    discipline: 'information-sociology',
+    title: 'オンライン市場における情報の非対称性',
+    statement:
+      'オンライン市場では売り手と買い手の間に構造的な情報格差が存在し、Akerlof（1970）が提唱した「レモン市場」現象——低品質財が高品質財を駆逐する逆選択——がeコマース・プラットフォーム上で再現される。' +
+      'Ba & Pavlou（2002, MIS Quarterly 26(3):243-268）はeBayの評判フィードバック機構が情報の非対称性に起因するリスク認知を低下させ信頼できる売り手に有意な価格プレミアムを生み出すことを実証し、Dimoka, Hong & Pavlou（2012, MIS Quarterly 36(2):395-426）は「製品不確実性」を概念化してプラットフォームのシグナリング設計が逆選択を緩和することを示した。' +
+      'この研究領域はユーザーレビュー・格付けシステム・サードパーティ認証といったプラットフォーム設計が市場効率と社会的厚生を高める鍵であることを明らかにしている。',
+    keyFigures: 'ジョージ・A・アカロフ（George A. Akerlof, 1970 QJE「レモン市場」, 2001年ノーベル経済学賞）／スーリン・バ＆ポール・A・パヴロウ（Sulin Ba & Paul A. Pavlou, 2002 MISQ — 電子市場における信頼構築と価格プレミアム）／アンジェリカ・ディモカ, イーリ・ホン＆パヴロウ（Dimoka, Hong & Pavlou, 2012 MISQ — 製品不確実性の二次元理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G.A. (1970) The Market for "Lemons", QJE 84(3):488-500' },
+      { url: 'https://doi.org/10.2307/4132332', type: 'academic', label: 'Ba, S. & Pavlou, P.A. (2002) Evidence of the Effect of Trust Building Technology in Electronic Markets, MISQ 26(3):243-268' },
+      { url: 'https://doi.org/10.2307/41703461', type: 'academic', label: 'Dimoka, A., Hong, Y. & Pavlou, P.A. (2012) On Product Uncertainty in Online Markets, MISQ 36(2):395-426' },
+    ],
+  },
 ];
 // Stryker restore all
