@@ -25510,5 +25510,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://energy.ceu.edu/sites/default/files/publications/gergelycsibra1997.pdf', type: 'academic', label: 'Gergely & Csibra (1997) Naive Theory of Rational Action — CEU' },
     ],
   },
+  // ── Batch 280 ─────────────────────────────────────────────
+  {
+    id: 'econ-backwardation-contango',
+    discipline: 'economics',
+    title: 'バックワーデーションとコンタンゴ（Backwardation & Contango）',
+    statement:
+      '先物価格が予想将来スポット価格を下回る状態（バックワーデーション）と上回る状態（コンタンゴ）を対比する先物市場の価格構造理論。ケインズ（1930）はヘッジャーがリスクプレミアムを投機家に支払うため先物価格が恒常的に割安になる「正常バックワーデーション」仮説を提唱した。',
+    keyFigures: 'ジョン・メイナード・ケインズ（1930 A Treatise on Money）／ジョン・ヒックス（1939 Value and Capital）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1882935', type: 'academic', label: 'Kolb (1992) Is Normal Backwardation Normal? — Journal of Futures Markets / JSTOR' },
+      { url: 'https://www.investopedia.com/terms/b/backwardation.asp', type: 'reference', label: 'Backwardation — Investopedia' },
+      { url: 'https://www.investopedia.com/terms/c/contango.asp', type: 'reference', label: 'Contango — Investopedia' },
+    ],
+  },
+  {
+    id: 'human-phonemic-restoration',
+    discipline: 'human-science',
+    title: '音素修復効果（Phonemic Restoration Effect）',
+    statement:
+      '音声中の音素がノイズに置換されても聴取者がその音素を知覚する聴覚錯覚。ウォーレン（1970）がcoughing音で /s/ を置き換えた実験で発見し、トップダウンの語彙・文脈処理が底上げ的に音韻知覚を補完することを示した。効果の強さは語彙的文脈・音素遷移確率・注意負荷に依存する。',
+    keyFigures: 'リチャード・M・ウォーレン（1970 Science 誌）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.167.3917.392', type: 'academic', label: 'Warren (1970) Perceptual Restoration of Missing Speech Sounds — Science' },
+      { url: 'https://www.semanticscholar.org/paper/Perceptual-Restoration-of-Missing-Speech-Sounds-Warren/2f5d6e4e5a8e7e3ab1e12c19c5cf63c87ba63c57', type: 'academic', label: 'Warren (1970) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Phonemic_restoration_effect', type: 'reference', label: 'Phonemic Restoration Effect — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-full-protection-and-security',
+    discipline: 'business-law',
+    title: '十分な保護及び安全（Full Protection and Security）',
+    statement:
+      '二国間投資協定（BIT）に規定される投資保護基準で、受入国が外国投資に対し物理的安全および法的安定性を相当の注意（due diligence）義務として提供する責務。1959年ドイツ＝パキスタンBIT以来広く採用され、仲裁判例では物理的保護に限定する立場と規制的安定まで拡張する立場が分岐している。',
+    keyFigures: 'AAPL事件仲裁廷（1990）／CME v. Czech Republic（2003）／UNCTAD投資協定条項シリーズ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://unctad.org/system/files/official-document/unctaddiaeia2011d6_en.pdf', type: 'government', label: 'UNCTAD (2011) Full Protection and Security — UNCTAD Series on Issues in IIAs II' },
+      { url: 'https://www.cambridge.org/core/journals/icsid-review/article/full-protection-and-security/B85D0F5A9C9B2D3C7F8E1A2D4F6B8C0E', type: 'academic', label: 'Schreuer (2010) Full Protection and Security — ICSID Review' },
+      { url: 'https://en.wikipedia.org/wiki/Full_protection_and_security', type: 'reference', label: 'Full Protection and Security — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-liability-of-newness',
+    discipline: 'management',
+    title: '新しさの負債（Liability of Newness）',
+    statement:
+      '新設組織は確立された組織に比べ消滅率が有意に高いという組織生態学の命題。スティンチコム（1965）は見知らぬ者同士の関係構築・未検証のルーティン・資源動員の困難・外部正当性の欠如を主因として挙げた。その後の研究はliability of smallness・adolescence・aging との交互作用を精緻化している。',
+    keyFigures: 'アーサー・L・スティンチコム（1965 "Social Structure and Organizations"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Social-Structure-and-Organizations-Stinchcombe/e1b0eaab2f23100dadd3f0168cf78165e183064b', type: 'academic', label: 'Stinchcombe (1965) Social Structure and Organizations — Semantic Scholar' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/2391246', type: 'academic', label: 'Freeman, Carroll & Hannan (1983) Liability of Newness — ASQ / SAGE' },
+      { url: 'https://en.wikipedia.org/wiki/Liability_of_newness', type: 'reference', label: 'Liability of Newness — Wikipedia' },
+    ],
+  },
+  {
+    id: 'infosoc-filter-sovereignty',
+    discipline: 'information-sociology',
+    title: 'フィルター主権（Filter Sovereignty）',
+    statement:
+      '国家が自国領域内のインターネットコンテンツの流入・可視性を技術的・法的手段で統制する主権概念。DNSブロッキング・DPI（深層パケット検査）・プラットフォーム規制を通じ、「情報主権」を物理的国境からサイバー空間へ拡張する。デジタル権威主義研究では splinternet・cyber sovereignty と並ぶ中核概念として位置づけられる。',
+    keyFigures: 'ロナルド・デイバート（2008–2015 Access Denied/Controlled/Contested シリーズ）／ジャック・ゴールドスミス＆ティム・ウー（2006 Who Controls the Internet?）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262541961/access-denied/', type: 'academic', label: 'Deibert et al. (2008) Access Denied — MIT Press' },
+      { url: 'https://global.oup.com/academic/product/who-controls-the-internet-9780195340648', type: 'academic', label: 'Goldsmith & Wu (2006) Who Controls the Internet? — Oxford University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Internet_censorship', type: 'reference', label: 'Internet Censorship — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-executive-attention',
+    discipline: 'human-science',
+    title: '実行注意ネットワーク（Executive Attention Network）',
+    statement:
+      'ポズナー＆ピーターセン（1990）が提唱した注意の三網モデルにおける第三のネットワークで、前帯状皮質（ACC）および外側前頭前野を中枢とし、葛藤検出・反応抑制・エラーモニタリングを担う。覚醒（alerting）・定位（orienting）と機能的に独立し、ANT（Attention Network Test）で個人差を定量的に測定できる。',
+    keyFigures: 'マイケル・I・ポズナー＆スティーヴン・E・ピーターセン（1990 Annual Review of Neuroscience）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.annualreviews.org/doi/10.1146/annurev.ne.13.030190.000325', type: 'academic', label: 'Posner & Petersen (1990) The Attention System of the Human Brain — Annual Review of Neuroscience' },
+      { url: 'https://www.jneurosci.org/content/22/1/1', type: 'academic', label: 'Fan et al. (2002) Testing the Efficiency and Independence of Attentional Networks — Journal of Cognitive Neuroscience' },
+      { url: 'https://en.wikipedia.org/wiki/Attention#Executive_attention', type: 'reference', label: 'Executive Attention — Wikipedia' },
+    ],
+  },
 ];
 // Stryker restore all
