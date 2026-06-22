@@ -2087,5 +2087,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 戦略的再生理論 | 経路依存的戦略の根本刷新・複数階層役割葛藤・組織学習連結（Floyd & Lane / Agarwal & Helfat / Volberda） |
 | 経営学 | 経営者認知理論 | メンタルモデル・認知マップによる戦略的意思決定形成（Walsh / Huff / Barr / Kaplan / Hambrick） |
 | 情報社会学 | ネットワーク・ゲートキーピング理論 | ネット環境のゲートキーパー権力非対称と情報管理メカニズム（Lewin / White / Shoemaker & Vos / Barzilai-Nahon） |
+| 経済学 | ヒステリシス失業理論 | 一時的需要ショックの失業率自然水準への永続的影響・インサイダー・アウトサイダー機構（Blanchard / Summers / Lindbeck / Snower / Ball） |
+| 人間科学 | サルトジェネシス理論 | 健康生成論・首尾一貫感覚（SOC）と汎抵抗資源による健康の起源（Antonovsky / Eriksson / Lindström / Mittelmark） |
+| 経営法学 | ラッチェス法理 | 権利行使遅延による衡平法上の請求遮断・知的財産権侵害訴訟（Lord Camden / Ginsburg / Merryman） |
+| 経営学 | 戦略的アントレプレナーシップ理論 | 機会探索と競争優位構築の同時追求による持続的価値創造（Hitt / Ireland / Camp / Sexton / Kuratko） |
+| 経営学 | 上層部理論精緻化 | 経営裁量・職務要求の調整変数導入と人口統計から心理測定への方法論転換（Hambrick / Mason / Carpenter / Geletkanycz / Finkelstein） |
+| 情報社会学 | 参加型文化理論 | 参加障壁の低い文化形態とデジタル環境でのメディア消費・生産（Jenkins / Ford / Green / Terranova） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
