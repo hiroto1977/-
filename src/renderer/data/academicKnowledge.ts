@@ -25258,5 +25258,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.semanticscholar.org/paper/The-construction-of-autobiographical-memories-in-Conway-Pleydell-Pearce/13241a844c714549c173e239714ae020386172e3', type: 'academic', label: 'Conway & Pleydell-Pearce (2000) — Semantic Scholar' },
     ],
   },
+  {
+    id: 'econ-marxian-exploitation',
+    discipline: 'economics',
+    title: 'マルクス搾取理論（Marxian Exploitation Theory）',
+    statement:
+      '労働者が労働力の価値（賃金）を超えて生産する剰余価値を資本家が無償で取得する過程を搾取と定義する理論。搾取率（剰余価値率）は剰余価値と可変資本の比率で表され、労働日延長・生産性向上・労働強化等が抽出メカニズムとなる。',
+    keyFigures: 'カール・マルクス（1867 『資本論』第1巻での体系的定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/exploitation/', type: 'reference', label: 'Exploitation — Stanford Encyclopedia of Philosophy' },
+      { url: 'https://www.marxists.org/archive/marx/works/1867-c1/ch09.htm', type: 'reference', label: 'Capital Vol. I — Chapter Nine: The Rate of Surplus-Value — Marxists.org' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/rate-exploitation', type: 'reference', label: 'Rate of Exploitation — Encyclopedia.com' },
+    ],
+  },
+  {
+    id: 'human-social-referencing',
+    discipline: 'human-science',
+    title: '社会的参照（Social Referencing）',
+    statement:
+      '生後9〜12か月の乳児が不確実・曖昧な状況で養育者の表情・声・身振りから情動的情報を読み取り、自らの行動を調整する過程。視覚的断崖実験では母親の恐怖表情で接近を回避し、喜び表情で接近するなど、対人コミュニケーションと環境認知の統合を示す。',
+    keyFigures: 'ジョセフ・カンポス＆クレイグ・ステンバーグ（1981 社会的参照の概念提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/rwe/10.1007/978-0-387-79061-9_2704', type: 'reference', label: 'Social Referencing — Springer Encyclopedia of Child Behavior and Development' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/social-referencing', type: 'reference', label: 'Social Referencing — ScienceDirect Topics' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3297351/', type: 'academic', label: 'Acquisition of Social Referencing via Discrimination Training in Infants — PMC' },
+    ],
+  },
+  {
+    id: 'bizlaw-denial-of-justice',
+    discipline: 'business-law',
+    title: '裁判拒否（Denial of Justice）',
+    statement:
+      '国際慣習法上、ホスト国の司法制度が外国投資家に対し司法アクセスの拒絶・差別的扱い・判決の不執行等の司法運営の不全を行うことを禁止する原則。公正衡平待遇（FET）基準に包摂されるとする解釈が投資仲裁で一般化している。',
+    keyFigures: 'ヤン・パウリソン（裁判拒否の体系的分析）／エルシ事件（ICJ 1989）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.acerislaw.com/denial-of-justice-in-international-investment-law/', type: 'reference', label: 'Denial of Justice in International Investment Law — Aceris Law' },
+      { url: 'https://academic.oup.com/ejil/article/20/3/729/402477', type: 'academic', label: 'Access to Justice, Denial of Justice and International Investment Law — European Journal of International Law / Oxford' },
+      { url: 'https://academic.oup.com/bybil/advance-article/doi/10.1093/bybil/brad013/7319194', type: 'academic', label: 'Investment Tribunals as Courts of Appeal? Denial of Justice — British Yearbook of International Law / Oxford' },
+    ],
+  },
+  {
+    id: 'mgmt-bricolage-entrepreneurship',
+    discipline: 'management',
+    title: '起業家的ブリコラージュ（Entrepreneurial Bricolage）',
+    statement:
+      '資源制約下の企業家が「手持ちの資源の組み合わせで間に合わせる」ことで、他の企業が無視・拒絶する物的・社会的・制度的インプットから新たな価値を創出する過程。レヴィ＝ストロースのブリコラージュ概念を経営学に援用し、行動への偏向と制度的限界の拒否を特徴とする。',
+    keyFigures: 'テッド・ベイカー＆リード・ネルソン（2005 Creating Something from Nothing — Administrative Science Quarterly）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker & Nelson (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — ASQ / SAGE' },
+      { url: 'https://www.semanticscholar.org/paper/Creating-Something-from-Nothing:-Resource-through-Baker-Nelson/4fa67c6925cdf6954e53d2b6f0fd455829080157', type: 'academic', label: 'Baker & Nelson (2005) — Semantic Scholar' },
+      { url: 'https://www.academia.edu/41334717/Baker_T_and_Nelson_R_E_2005_', type: 'academic', label: 'Baker & Nelson (2005) — Academia.edu' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-affordance',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム・アフォーダンス（Platform Affordances）',
+    statement:
+      'デジタルプラットフォームの技術的設計が利用者に提供する行為可能性の概念。ギブソンの生態学的アフォーダンス論をソーシャルメディア研究に適用し、プラットフォームの機能・構造がユーザー行動を可能にし制約する関係性を分析する枠組み。',
+    keyFigures: 'タイナ・ブッシャー＆アンネ・ヘルモント（2018 プラットフォーム・アフォーダンスの体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/The-Affordances-of-Social-Media-Platforms-Bucher-Helmond/6b5714d746919a2d80d0d818d7e2dd67e55ee12d', type: 'academic', label: 'Bucher & Helmond (2018) The Affordances of Social Media Platforms — Semantic Scholar' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6454336/', type: 'academic', label: 'Social Media Intervention Design: Applying an Affordances Framework — PMC' },
+      { url: 'https://www.annehelmond.nl/2016/08/01/the-affordances-of-social-media-platforms/', type: 'reference', label: 'The Affordances of Social Media Platforms — Anne Helmond' },
+    ],
+  },
+  {
+    id: 'human-prospective-memory',
+    discipline: 'human-science',
+    title: '展望的記憶（Prospective Memory）',
+    statement:
+      '将来の特定時点（時間ベース）または特定事象の発生時（事象ベース）に実行すべき意図を記憶し想起する認知機能。「覚えていることを覚えている」能力であり、何を行うかの回顧的成分と、いつ行うかの展望的成分から構成される。',
+    keyFigures: 'ジルス・アインシュタイン＆マーク・マクダニエル（1990 展望的記憶の実験的研究の確立 — JEPLMC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Prospective_memory', type: 'reference', label: 'Prospective Memory — Wikipedia' },
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.0963-7214.2005.00382.x', type: 'academic', label: 'Einstein & McDaniel (2005) Prospective Memory — Current Directions in Psychological Science / SAGE' },
+      { url: 'https://www.sciencedirect.com/topics/neuroscience/prospective-memory', type: 'reference', label: 'Prospective Memory — ScienceDirect Topics' },
+    ],
+  },
 ];
 // Stryker restore all
