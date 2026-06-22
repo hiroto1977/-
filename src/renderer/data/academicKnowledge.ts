@@ -23560,5 +23560,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/High_reliability_organization', type: 'reference', label: 'Wikipedia — High Reliability Organization' },
     ],
   },
+  {
+    id: 'econ-hysteresis-unemployment',
+    discipline: 'economics',
+    title: '失業のヒステリシス（Hysteresis in Unemployment）',
+    statement:
+      '失業のヒステリシス（Hysteresis in Unemployment）とは、一時的な景気後退や需要ショックが均衡失業率（NAIRU）を恒久的に引き上げる現象を指すマクロ経済学概念である。物理学における磁気ヒステリシス（Ewing 1881）からの借用語で、一時的な外的衝撃が除去された後もシステムが元の状態に復帰しないことを意味する。オリヴィエ・ブランシャール（Olivier Blanchard）とローレンス・サマーズ（Lawrence Summers）が1986年にNBER Macroeconomics Annualで「ヒステリシスとヨーロッパの失業問題」を発表し、1970-80年代の欧州における高失業の持続を本概念で説明した。' +
+      '主要な伝達メカニズムは三つある：（1）インサイダー＝アウトサイダー理論（Lindbeck & Snower）：既存雇用者（インサイダー）が賃金交渉力を持ち、失業者（アウトサイダー）の再雇用を阻害する；（2）人的資本の減価：長期失業により職業技能・労働習慣が劣化し再就職が困難になる；（3）期間依存性（duration dependence）：失業期間が長いほど就職確率が低下するスティグマ効果。本概念はCOVID-19パンデミック後の労働市場分析でも注目を集め、一時的ショックが構造的失業に転化するリスクが改めて認識されている。',
+    keyFigures: 'オリヴィエ・ブランシャール＆ローレンス・サマーズ（1986 NBER Macroeconomics Annual — ヒステリシスとヨーロッパの失業問題）／リンドベック＆スノーワー（インサイダー＝アウトサイダー理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/chapters/c4245/c4245.pdf', type: 'academic', label: 'Blanchard & Summers (1986) Hysteresis and the European Unemployment Problem — NBER Macroeconomics Annual' },
+      { url: 'https://en.wikipedia.org/wiki/Hysteresis_(economics)', type: 'reference', label: 'Wikipedia — Hysteresis (Economics)' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2012/wp1265.pdf', type: 'academic', label: 'IMF Working Paper — Hysteresis in Unemployment (Survey)' },
+    ],
+  },
+  {
+    id: 'human-somatic-marker-hypothesis',
+    discipline: 'human-science',
+    title: 'ソマティック・マーカー仮説（Somatic Marker Hypothesis）',
+    statement:
+      'ソマティック・マーカー仮説（Somatic Marker Hypothesis）とは、感情が身体的（ソマティック）信号を通じて意思決定を導くとする神経科学仮説である。アントニオ・ダマシオ（Antonio Damasio）が1994年の著書"Descartes\' Error"で提唱し、1996年にPhilosophical Transactions of the Royal Society B誌で形式化した。過去の経験で特定の選択肢と結びついた身体状態（心拍変化・発汗・内臓感覚等）が「ソマティック・マーカー」として機能し、意思決定の選択肢を有利・不利に標識して認知をバイアスする。' +
+      '伝達経路は二つある：（1）ボディ・ループ（実際の身体変化が感覚皮質へ中継される経路）、（2）アズ・イフ・ボディ・ループ（腹内側前頭前皮質vmPFCが身体を介さず体性感覚皮質を直接活性化する経路）。ベカラ（Bechara）らが1994年に開発したアイオワ・ギャンブリング課題（IGT）は、vmPFC損傷患者が不利なデッキから選択し続ける一方、健常者は意識的認識に先立って不利デッキ選択前に予期的皮膚電気反応を示すことを実証した。ダン（Dunn et al. 2006）は身体ループの因果的証拠の不足、IGTの解釈問題、仮説の反証可能性に関する批判的検討を提示している。',
+    keyFigures: 'アントニオ・ダマシオ（1994 Descartes\' Error・1996 形式化）／アントワーヌ・ベカラ（1994 アイオワ・ギャンブリング課題）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://royalsocietypublishing.org/doi/10.1098/rstb.1996.0125', type: 'academic', label: 'Damasio (1996) The Somatic Marker Hypothesis — Phil. Trans. R. Soc. B 351(1346)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0899825604001034', type: 'academic', label: 'Bechara & Damasio (2005) The Somatic Marker Hypothesis: A Neural Theory of Economic Decision — Games and Economic Behavior' },
+      { url: 'https://www.mrc-cbu.cam.ac.uk/personal/tim.dalgleish/dunnsmhreview.pdf', type: 'academic', label: 'Dunn et al. (2006) The Somatic Marker Hypothesis: A Critical Evaluation — Neuroscience & Biobehavioral Reviews' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-managerial-capabilities',
+    discipline: 'management',
+    title: '動的経営者能力（Dynamic Managerial Capabilities）',
+    statement:
+      '動的経営者能力（Dynamic Managerial Capabilities, DMC）とは、経営者が組織の資源と能力を構築・統合・再構成する経営者固有の能力を指す戦略経営論の概念である。アドナー＆ヘルファット（Ron Adner & Constance Helfat, 2003, Strategic Management Journal）が概念を導入し、同一産業内でも経営者の意思決定の異質性が企業効果の時間変動を説明することを実証した。ヘルファット＆マーティン（Helfat & Martin, 2015, Journal of Management）は定義を「経営者が企業の生計手段を創造・拡張・修正する能力」と精緻化した。' +
+      'DMCの三つの基盤は：（1）経営者人的資本（managerial human capital）：教育・訓練・経験を通じて獲得された技能と知識；（2）経営者社会関係資本（managerial social capital）：公式・非公式ネットワークから得られる善意と資源；（3）経営者認知（managerial cognition）：情報の認識・解釈・処理に関わる精神的活動・信念・メンタルモデル。本概念はティース（Teece 1997/2007）の組織レベルのダイナミック・ケイパビリティ枠組みを経営者個人レベルに具体化するものであり、感知（sensing）・捕捉（seizing）・変容（transforming）のミクロ基礎と対応する。',
+    keyFigures: 'アドナー＆ヘルファット（2003 SMJ — DMC概念の導入）／ヘルファット＆マーティン（2015 Journal of Management — レビューと評価）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.331', type: 'academic', label: 'Adner & Helfat (2003) Corporate Effects and Dynamic Managerial Capabilities — SMJ 24(10)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206314561301', type: 'academic', label: 'Helfat & Martin (2015) Dynamic Managerial Capabilities: Review and Assessment — Journal of Management 41(5)' },
+      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-20', type: 'reference', label: 'Oxford Research Encyclopedia — Dynamic Managerial Capabilities' },
+    ],
+  },
+  {
+    id: 'bizlaw-margin-of-appreciation',
+    discipline: 'business-law',
+    title: '評価の余地の法理（Margin of Appreciation）',
+    statement:
+      '評価の余地の法理（Margin of Appreciation）とは、欧州人権裁判所（ECtHR）が欧州人権条約（ECHR）の権利を制限する締約国の措置を審査する際に、国内当局に認める裁量の幅を指す国際人権法上の法理である。Handyside v. United Kingdom事件（1976年、申立番号5493/72）で初めて明示的に定式化され、「国内当局は国際的裁判官よりも、自国の実情に直接かつ継続的に接触しているため、必要性の判断においてより良い立場にある」と判示された。' +
+      '評価の余地の幅は（a）問題となる権利の性質、（b）締約国間の欧州コンセンサスの有無、（c）制限の目的により変動する。コンセンサスが存在しない場合は広い余地が認められ、強いコンセンサスがある場合は狭まる。2013年採択・2021年発効の第15議定書は前文に「締約国が補完性原則に基づき条約上の権利を確保する第一義的責任を有し、その際に評価の余地を享受する」と明記し、本法理を条約文に初めて成文化した。比例性原則および補完性原則と連動して機能するが、予測可能性の欠如・人権の普遍性との緊張・適用の不整合性について批判がある。',
+    keyFigures: 'Handyside v. United Kingdom（1976 ECtHR — 法理の初の明示的定式化）／第15議定書（2013年採択・2021年発効 — ECHR前文への成文化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hudoc.echr.coe.int/eng?i=001-57499', type: 'government', label: 'HUDOC — Handyside v. United Kingdom (1976) Judgment' },
+      { url: 'https://www.echr.coe.int/documents/d/echr/Protocol_15_ENG', type: 'government', label: 'Council of Europe — Protocol No. 15 to the ECHR' },
+      { url: 'https://academic.oup.com/hrlr/article/18/3/495/5068636', type: 'academic', label: 'Margin of Appreciation and Incrementalism in ECtHR Case Law — Human Rights Law Review (2018)' },
+    ],
+  },
+  {
+    id: 'infosoc-platformization',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム化（Platformization）',
+    statement:
+      'プラットフォーム化（Platformization）とは、デジタルプラットフォームのインフラストラクチャー・経済プロセス・統治フレームワークが多様な経済セクターと生活領域に浸透し、文化的実践と想像力がプラットフォームを中心に再編成される現象を指す情報社会学概念である。アン・ヘルモンド（Anne Helmond, 2015, Social Media + Society）が用語を造語し、プラットフォーム機能の外部への分散化（API・ウィジェット展開）と「プラットフォーム対応」データの再集権化という二重論理を提示した。' +
+      'ポエル・ニーバーグ・ファンダイク（Poell, Nieborg & van Dijck, 2019, Internet Policy Review）は三つの制度的次元を体系化した：（1）インフラストラクチャー的プラットフォーム化（API・SDKによる技術的依存構造の形成）、（2）経済的プラットフォーム化（多面市場としてのプラットフォームによる価値抽出・ネットワーク効果による独占傾向）、（3）統治的プラットフォーム化（利用規約・アルゴリズム・コンテンツモデレーションによる私的規制体制の形成）。ファンダイク・ポエル・デ・ワール（2018 "The Platform Society"）はデータ化（datafication）・商品化（commodification）・選別（selection）の三機構を特定した。スルニチェク（Srnicek 2017 "Platform Capitalism"）はプラットフォームを資本主義の最新表出形態として位置づけている。',
+    keyFigures: 'アン・ヘルモンド（2015 Social Media + Society — 造語・二重論理）／ポエル・ニーバーグ・ファンダイク（2019 Internet Policy Review — 三次元の体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/2056305115603080', type: 'academic', label: 'Helmond (2015) The Platformization of the Web — Social Media + Society 1(2)' },
+      { url: 'https://policyreview.info/concepts/platformisation', type: 'academic', label: 'Poell, Nieborg & van Dijck (2019) Platformisation — Internet Policy Review 8(4)' },
+      { url: 'https://global.oup.com/academic/product/the-platform-society-9780190889760', type: 'academic', label: 'van Dijck, Poell & de Waal (2018) The Platform Society — Oxford University Press' },
+    ],
+  },
+  {
+    id: 'mgmt-upper-echelons-theory',
+    discipline: 'management',
+    title: 'アッパー・エシュロン理論（Upper Echelons Theory）',
+    statement:
+      'アッパー・エシュロン理論（Upper Echelons Theory）とは、組織の戦略的選択と業績がトップマネジメントチーム（TMT）の経歴・特性によって部分的に予測されるとする戦略経営理論である。ドナルド・ハンブリック（Donald Hambrick）とフィリス・メイソン（Phyllis Mason）が1984年にAcademy of Management Review（Vol.9, No.2, pp.193-206）で「組織はそのトップマネジャーの反映である」という命題を提示した。限定合理性（bounded rationality）の下で、経営者は年齢・在職期間・職能的バックグラウンド・教育水準等の個人特性に基づく認知フィルターを通じて環境を解釈し、戦略を形成する。' +
+      '本理論の重要な精緻化として二つのモデレータがある：（1）経営者裁量（managerial discretion, Hambrick & Finkelstein 1987）：産業構造・組織要因・個人特性により決まる行動の余地が大きいほど、経営者特性が戦略・業績に強く反映される；（2）経営者職務要求（executive job demands, Hambrick et al. 2005）：時間圧力や複雑性が高いほど、経営者はヒューリスティクスに依存し特性の影響が増大する。最大の批判は「ブラックボックス問題」であり、人口統計学的特性は実際の認知プロセスの不正確な代理変数にすぎないとされる（Neely et al. 2020, Journal of Management）。',
+    keyFigures: 'ドナルド・ハンブリック＆フィリス・メイソン（1984 AMR — Upper Echelons命題）／ハンブリック（2007 AMR — 理論の更新と回顧）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons — Academy of Management Review 9(2)' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick (2007) Upper Echelons Theory: An Update — Academy of Management Review 32(2)' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0149206320908640', type: 'academic', label: 'Neely et al. (2020) Metacritiques of Upper Echelons Theory — Journal of Management 46(6)' },
+    ],
+  },
 ];
 // Stryker restore all
