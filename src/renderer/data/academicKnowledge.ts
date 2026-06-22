@@ -27069,5 +27069,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://academic.oup.com/book/55103/chapter/423909956', type: 'academic', label: 'Wajcman & Young (2023) Feminism Confronts AI, Oxford University Press' },
     ],
   },
+
+  // ── Batch 296 ─────────────────────────────────────────────
+  // econ-secular-stagnation-hypothesis, econ-transfer-pricing-arms-length,
+  // human-regulatory-focus-theory, mgmt-real-options-reasoning,
+  // bizlaw-shareholder-primacy-doctrine, infosoc-platform-governance-theory
+  {
+    id: 'econ-secular-stagnation-hypothesis',
+    discipline: 'economics',
+    title: '長期停滞仮説',
+    statement:
+      '長期停滞仮説とは、慢性的な総需要不足と均衡実質利子率のゼロ以下への低下により経済が持続的な産出ギャップに陥り、従来の金融政策のみでは完全雇用を回復できないとする理論である。' +
+      'アルヴィン・ハンセンが1938年の米国経済学会会長講演で人口増加の鈍化と投資機会の枯渇を警告して提唱し、2013年にラリー・サマーズがIMF年次研究会議で同仮説を現代に蘇らせ、積極的な財政出動と構造改革の必要性を論じた。',
+    keyFigures: 'Alvin Hansen／Lawrence H. Summers／Paul Krugman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1806983', type: 'academic', label: 'Hansen (1939) Economic Progress and Declining Population Growth, AER 29(1):1-15' },
+      { url: 'https://www.foreignaffairs.com/articles/united-states/2016-02-15/age-secular-stagnation', type: 'media', label: 'Summers (2016) The Age of Secular Stagnation, Foreign Affairs' },
+      { url: 'https://www.nber.org/papers/w20574', type: 'academic', label: 'Eggertsson & Mehrotra (2014) A Model of Secular Stagnation, NBER WP 20574' },
+    ],
+  },
+  {
+    id: 'econ-transfer-pricing-arms-length',
+    discipline: 'economics',
+    title: '移転価格税制と独立企業間原則',
+    statement:
+      '独立企業間原則（アームズ・レングス原則）とは、多国籍企業グループ内の関連者間取引の価格を独立した第三者間で成立する価格と一致させることを求める国際的な移転価格税制の基本原則であり、OECDが1979年に初版の移転価格ガイドラインで確立し、1995年・2017年・2022年の改訂を経て精緻化した。' +
+      '独立価格比準法（CUP）・再販売価格基準法・原価基準法・取引単位営業利益法（TNMM）・利益分割法の5つの算定手法が規定され、BEPS行動計画8-10（2015年）では価値創造との整合性とDEMPE分析（無形資産の開発・改良・維持・保護・活用）が強化された。',
+    keyFigures: 'OECD租税委員会／Stanley S. Surrey／Reuven S. Avi-Yonah',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.oecd.org/en/topics/sub-issues/transfer-pricing.html', type: 'government', label: 'OECD — Transfer Pricing（移転価格税制トピックページ）' },
+      { url: 'https://www.oecd.org/en/publications/aligning-transfer-pricing-outcomes-with-value-creation-actions-8-10-2015-final-reports_9789264241244-en.html', type: 'government', label: 'OECD BEPS Actions 8-10 Final Reports (2015)' },
+      { url: 'https://en.wikipedia.org/wiki/Transfer_pricing', type: 'reference', label: 'Wikipedia — Transfer pricing' },
+    ],
+  },
+  {
+    id: 'human-regulatory-focus-theory',
+    discipline: 'human-science',
+    title: '制御焦点理論',
+    statement:
+      '制御焦点理論は、E・トーリー・ヒギンズが1997年の American Psychologist 論文「Beyond Pleasure and Pain」で提唱した自己制御の理論であり、人間の動機づけを理想自己・利得追求を志向する「促進焦点」と義務自己・損失回避を志向する「予防焦点」という二つの独立したシステムで説明する。' +
+      '制御適合（regulatory fit）の概念は、個人の焦点と目標追求の方略が一致するとき動機づけ強度と意思決定の確信感が高まることを示し、説得・消費者行動・組織行動など広範な領域で応用されている。',
+    keyFigures: 'E. Tory Higgins／Nira Liberman／Jens Förster',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.52.12.1280', type: 'academic', label: 'Higgins (1997) Beyond Pleasure and Pain, American Psychologist 52(12):1280-1300' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118900772.etrds0279', type: 'reference', label: 'Higgins (2015) Regulatory Focus Theory, Emerging Trends in the Social and Behavioral Sciences, Wiley' },
+      { url: 'https://en.wikipedia.org/wiki/Regulatory_focus_theory', type: 'reference', label: 'Wikipedia — Regulatory focus theory' },
+    ],
+  },
+  {
+    id: 'mgmt-real-options-reasoning',
+    discipline: 'management',
+    title: 'リアル・オプション推論（経営戦略への応用）',
+    statement:
+      'リアル・オプション推論（ROR）は、金融オプション理論の洞察を経営戦略の意思決定に応用し、不確実性下で段階的投資・柔軟性の保持・適時の撤退によって戦略的価値を創出する思考枠組みである。' +
+      'ボウマンとハリーが1993年にAcademy of Management Reviewで「オプション・レンズを通じた戦略」を提唱し、マクグラスが1999年の「前方への転倒」論文で起業家的失敗をオプション消滅として再定義、コグートとクラティラカが2001年に組織能力をリアル・オプションとして枠組みした。' +
+      'アドナーとレヴィンタールは2004年に財務的オプション価格付けの前提が戦略的文脈では成立しない限界を指摘し、推論と定量的評価の区分が確立された。',
+    keyFigures: 'Edward H. Bowman／Rita Gunther McGrath／Bruce Kogut／Nalin Kulatilaka／Lenos Trigeorgis',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1993.9402210157', type: 'academic', label: 'Bowman & Hurry (1993) Strategy through the Option Lens, Academy of Management Review 18(4):760-782' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1999.1580438', type: 'academic', label: 'McGrath (1999) Falling Forward: Real Options Reasoning and Entrepreneurial Failure, AMR 24(1):13-30' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.2593', type: 'academic', label: 'Trigeorgis & Reuer (2017) Real Options Theory in Strategic Management, SMJ 38(1):42-63' },
+    ],
+  },
+  {
+    id: 'bizlaw-shareholder-primacy-doctrine',
+    discipline: 'business-law',
+    title: '株主優先主義（シェアホルダー・プライマシー）',
+    statement:
+      '株主優先主義とは、会社取締役の第一義的義務は株主価値の最大化にあるとする規範的学説であり、フリードマンが1970年のニューヨーク・タイムズ・マガジン論文で「企業の社会的責任は利益を増大させること」と体系的に論じた。' +
+      '法的先例としてはDodge v. Ford Motor Co.（ミシガン州最高裁、1919年）の傍論が株主利益優先を定式化したとされるが、2019年に米国ビジネス・ラウンドテーブルが181社CEOの署名でステークホルダー優先への転換を宣言し、フリーマンのステークホルダー理論やスタウトの批判的企業法学との論争が続いている。',
+    keyFigures: 'Milton Friedman／Michael C. Jensen／R. Edward Freeman／Lynn A. Stout',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nytimes.com/1970/09/13/archives/a-friedman-doctrine-the-social-responsibility-of-business-is-to.html', type: 'media', label: 'Friedman (1970) The Social Responsibility of Business Is to Increase Its Profits, NYT Magazine' },
+      { url: 'https://law.justia.com/cases/michigan/supreme-court/1919/204-mich-459-170-n-w-668-1919.html', type: 'reference', label: 'Dodge v. Ford Motor Co., 204 Mich. 459, 170 N.W. 668 (1919)' },
+      { url: 'https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans', type: 'reference', label: 'Business Roundtable (2019) Statement on the Purpose of a Corporation' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-governance-theory',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム・ガバナンス理論',
+    statement:
+      'プラットフォーム・ガバナンス理論は、デジタル・プラットフォームが利用規約・アーキテクチャ・コンテンツモデレーションの三層を通じて私的規制権力を行使する構造とその公的規制との緊張関係を分析する枠組みである。' +
+      'ゴルワが2019年の Information, Communication & Society 論文で概念を体系化し、ギルスピーの「インターネットの管理人」（2018）やシュゾーの「ローレス」（2019）がプラットフォームの規範的仲介者としての役割と不透明なルール形成を批判的に論じた。' +
+      'EUデジタルサービス法（2022年）の施行を背景に、情報社会における権力・責任・民主的正統性を分析する中核的枠組みとして確立されている。',
+    keyFigures: 'Robert Gorwa／Tarleton Gillespie／Nicolas Suzor／Kate Klonick',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/1369118X.2019.1573914', type: 'academic', label: 'Gorwa (2019) What is platform governance? Information, Communication & Society' },
+      { url: 'https://yalebooks.yale.edu/book/9780300235081/custodians-of-the-internet/', type: 'academic', label: 'Gillespie (2018) Custodians of the Internet, Yale University Press' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022R2065', type: 'government', label: 'EU Digital Services Act, Regulation (EU) 2022/2065' },
+    ],
+  },
 ];
 // Stryker restore all
