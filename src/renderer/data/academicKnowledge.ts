@@ -26495,5 +26495,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-dornbusch-overshooting-model, econ-auction-theory-revenue-equivalence,
+  // human-executive-function-model, mgmt-competing-values-framework,
+  // bizlaw-derivative-suit-demand-futility, infosoc-digital-divide-second-level
+  {
+    id: 'econ-dornbusch-overshooting-model',
+    discipline: 'economics',
+    title: 'ドーンブッシュ・オーバーシューティング・モデル',
+    statement:
+      'ドーンブッシュ・オーバーシューティング・モデルは、金融市場が即座に調整される一方で財市場の価格は粘着的であるという非対称性から、為替レートが金融ショックに対して長期均衡水準を一時的に超過（オーバーシュート）することを示したモデルである。' +
+      'Rudiger Dornbusch（1976, JPE）が「Expectations and Exchange Rate Dynamics」で提示し、変動相場制下の為替レートの高いボラティリティに対する最初の厳密な理論的説明を与えた。' +
+      '国際マクロ経済学における最も影響力のある論文の一つとされ、マンデル＝フレミング・モデルを動学的に拡張した新開放経済マクロ経済学の基礎となっている。',
+    keyFigures: 'Rudiger Dornbusch／Kenneth Rogoff／Maurice Obstfeld',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/260506', type: 'academic', label: 'Dornbusch, R. (1976) Expectations and Exchange Rate Dynamics, JPE 84(6):1161-1176' },
+      { url: 'https://doi.org/10.1257/jep.16.2.3', type: 'academic', label: 'Rogoff, K. (2002) Dornbusch\'s Overshooting Model After Twenty-Five Years, JEP 16(2):3-24' },
+      { url: 'https://en.wikipedia.org/wiki/Overshooting_model', type: 'reference', label: 'Wikipedia — Overshooting model' },
+    ],
+  },
+  {
+    id: 'econ-auction-theory-revenue-equivalence',
+    discipline: 'economics',
+    title: 'オークション理論：収入等価定理',
+    statement:
+      '収入等価定理（Revenue Equivalence Theorem）は、リスク中立的な入札者・独立私的価値・同数の入札者という条件の下で、英国式・オランダ式・第一価格封印入札・第二価格（ヴィックリー）入札のいずれの標準的オークション形式も売り手に同一の期待収入をもたらすことを示した定理である。' +
+      'William Vickrey（1961）が最初に確立し、Roger Myerson（1981）が一般化した。' +
+      'Vickreyは1996年ノーベル経済学賞を、Paul MilgromとRobert Wilsonは2020年ノーベル経済学賞をオークション理論への貢献で受賞し、周波数帯オークション等の制度設計に広く応用されている。',
+    keyFigures: 'William Vickrey／Roger Myerson／Paul Milgrom／Robert Wilson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2977633', type: 'academic', label: 'Vickrey, W. (1961) Counterspeculation, Auctions, and Competitive Sealed Tenders, Journal of Finance 16(1):8-37' },
+      { url: 'https://doi.org/10.1287/moor.6.1.58', type: 'academic', label: 'Myerson, R.B. (1981) Optimal Auction Design, Mathematics of Operations Research 6(1):58-73' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2020/summary/', type: 'reference', label: 'Nobel Prize 2020 — Milgrom & Wilson: Improvements to auction theory and inventions of new auction formats' },
+    ],
+  },
+  {
+    id: 'human-executive-function-model',
+    discipline: 'human-science',
+    title: '実行機能モデル',
+    statement:
+      '実行機能とは、目標指向的な行動を制御するトップダウン型の高次認知プロセス群であり、ワーキングメモリ・抑制制御・認知的柔軟性の3つの中核要素から構成される。' +
+      'Miyake et al.（2000, Cognitive Psychology）は確認的因子分析を用いてこれら3要素が相互に関連しつつも分離可能であること（unity and diversity）を実証し、実行機能研究の理論的枠組みを確立した。' +
+      'Luriaの前頭葉機能研究を基盤としDiamond（2013）が発達的観点を統合した包括的レビューを行い、ADHD・加齢・教育成果の理解に不可欠な概念となっている。',
+    keyFigures: 'Akira Miyake／Adele Diamond／Alexander Luria／Naomi P. Friedman',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/S0010-0285(99)00734-9', type: 'academic', label: 'Miyake et al. (2000) The Unity and Diversity of Executive Functions, Cognitive Psychology 41(1):49-100' },
+      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013) Executive Functions, Annual Review of Psychology 64:135-168' },
+      { url: 'https://doi.org/10.1177/0963721411429458', type: 'academic', label: 'Miyake, A. & Friedman, N.P. (2012) The Nature and Organization of Individual Differences in Executive Functions, CDPS 21(1):8-14' },
+    ],
+  },
+  {
+    id: 'mgmt-competing-values-framework',
+    discipline: 'management',
+    title: '競合価値観フレームワーク',
+    statement:
+      '競合価値観フレームワーク（CVF）は、Quinn & Rohrbaugh（1983）が組織の有効性指標に関する実証研究から開発した組織文化の分析モデルである。' +
+      '内部志向／外部志向と柔軟性／安定性の2軸により、クラン（協調）・アドホクラシー（創造）・マーケット（競争）・ヒエラルキー（統制）の4象限に組織文化を類型化する。' +
+      'Cameron & Quinn（2011）がOCAI（Organizational Culture Assessment Instrument）を開発し、最も広く活用される組織文化診断フレームワークの一つとなっている。',
+    keyFigures: 'Robert E. Quinn／John Rohrbaugh／Kim S. Cameron',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/mnsc.29.3.363', type: 'academic', label: 'Quinn, R.E. & Rohrbaugh, J. (1983) A Spatial Model of Effectiveness Criteria, Management Science 29(3):363-377' },
+      { url: 'https://doi.org/10.1002/job.4030140403', type: 'academic', label: 'Quinn, R.E. & Spreitzer, G.M. (1991) Psychometrics of the Competing Values Culture Instrument, JOB 14(4):335-352' },
+      { url: 'https://www.wiley.com/en-us/Diagnosing+and+Changing+Organizational+Culture%2C+3rd+Edition-p-9780470650264', type: 'reference', label: 'Cameron, K.S. & Quinn, R.E. (2011) Diagnosing and Changing Organizational Culture, 3rd ed., Jossey-Bass' },
+    ],
+  },
+  {
+    id: 'bizlaw-derivative-suit-demand-futility',
+    discipline: 'business-law',
+    title: '株主代表訴訟における提訴請求免除法理',
+    statement:
+      '株主代表訴訟において株主は原則として取締役会に対し訴訟提起の請求（demand）を行う必要があるが、当該請求が無益（futile）である場合にはこれを免除される。' +
+      'デラウェア州法ではAronson v. Lewis（1984）の二段階テストとRales v. Blasband（1993）テストが長年併用されてきたが、2021年のUnited Food & Commercial Workers Union v. Zuckerberg判決により統一的な三要件テスト（Zuckerbergテスト）が確立された。' +
+      '同テストでは訴訟提起時点の取締役会の過半数について、重要な個人的利益・独立性の欠如・経営判断原則の保護を受けられない行為の各要件を個別に審査する。',
+    keyFigures: 'William T. Allen／Kathaleen St. J. McCormick／Robert B. Thompson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://courts.delaware.gov/Opinions/Download.aspx?id=322010', type: 'government', label: 'United Food & Commercial Workers Union v. Zuckerberg, C.A. No. 2018-0671-AGB (Del. Ch. 2021)' },
+      { url: 'https://corpgov.law.harvard.edu/2021/10/07/delaware-court-of-chancery-adopts-universal-demand-futility-test/', type: 'reference', label: 'Harvard Law School Forum — Zuckerberg判決による統一Demand Futilityテストの解説' },
+      { url: 'https://scholarship.law.georgetown.edu/facpub/373/', type: 'academic', label: 'Thompson, R.B. & Thomas, R.S. (2004) The Public and Private Faces of Derivative Lawsuits, 57 Vand. L. Rev. 1747' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-divide-second-level',
+    discipline: 'information-sociology',
+    title: '第二次デジタル・ディバイド',
+    statement:
+      '第二次デジタル・ディバイドとは、インターネットへの物理的アクセスの有無（第一次）を超えて、デジタル技術の利用スキルや活用パターンの格差に焦点を当てた概念である。' +
+      'Hargittai（2002, First Monday）が提唱し、同じ接続環境を持つ人々の間でも情報リテラシーの差異によりオンライン活動の質と成果に大きな格差が生じることを実証的に示した。' +
+      'van Dijk（2005）は動機的・物質的・スキル的・利用アクセスの4段階モデルとして体系化し、デジタル包摂政策の理論的基盤を提供した。',
+    keyFigures: 'Eszter Hargittai／Jan A.G.M. van Dijk／Paul DiMaggio／Lu Wei',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/942', type: 'academic', label: 'Hargittai, E. (2002) Second-Level Digital Divide, First Monday 7(4)' },
+      { url: 'https://doi.org/10.4135/9781446262634', type: 'academic', label: 'van Dijk, J.A.G.M. (2005) The Deepening Divide: Inequality in the Information Society, Sage' },
+      { url: 'https://doi.org/10.1177/0894439311410734', type: 'academic', label: 'Wei, L. et al. (2011) Conceptualizing and Measuring the Third-Level Digital Divide, SSCR 29(4):523-536' },
+    ],
+  },
 ];
 // Stryker restore all
