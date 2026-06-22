@@ -27896,5 +27896,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/information-theory', type: 'reference', label: 'Encyclopaedia Britannica — Information theory (Simon attention scarcity context)' },
     ],
   },
+  {
+    id: 'econ-fiscal-theory-of-price-level',
+    discipline: 'economics',
+    title: '物価水準の財政理論（FTPL）',
+    statement:
+      '物価水準の財政理論（Fiscal Theory of the Price Level, FTPL）とは、物価水準は中央銀行の金融政策ではなく、政府の財政的地位——将来の財政黒字の現在割引価値と名目国債残高の比率——によって決定されるとする理論をいう。' +
+      'Leeper（1991）は金融政策・財政政策それぞれの「アクティブ／パッシブ」の組み合わせが物価決定に決定的であることを示し、Sims（1994）およびWoodford（1995）はFTPLの理論的基礎を体系化した。' +
+      'Cochrane（2023）はその包括的な著書でFTPLを再整理し、政府の予算制約の均衡条件が名目価格を一意に決定するメカニズムを詳述した。',
+    keyFigures: 'Eric M. Leeper／Christopher A. Sims／Michael Woodford／John H. Cochrane／Marco Bassetto',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://press.princeton.edu/books/hardcover/9780691242248/the-fiscal-theory-of-the-price-level', type: 'academic', label: 'Cochrane (2023) The Fiscal Theory of the Price Level, Princeton UP' },
+      { url: 'https://www.nber.org/papers/w30727', type: 'academic', label: 'Cochrane (2022) Fiscal Histories, NBER Working Paper w30727' },
+      { url: 'https://www.britannica.com/money/fiscal-policy', type: 'reference', label: 'Encyclopaedia Britannica Money — Fiscal Policy' },
+    ],
+  },
+  {
+    id: 'econ-time-inconsistency-monetary-policy',
+    discipline: 'economics',
+    title: '金融政策の時間的非整合性（裁量 vs. ルール）',
+    statement:
+      '時間的非整合性とは、事前に最適と判断された政策が時間の経過後に最適でなくなる問題であり、Kydland & Prescott（1977）が「ルールか裁量か」論文においてマクロ経済政策の文脈で定式化した。' +
+      '中央銀行が低インフレを約束しても、民間が期待を形成した後に政府は雇用拡大のためインフレを起こす誘因を持つため、合理的な民間主体は最初からインフレを織り込み、均衡として高インフレが生じうる。' +
+      'Barro & Gordon（1983）はこのインフレ・バイアスを動学ゲームとして精緻化し、評判や制度的コミットメントによる解決策を示した。' +
+      'Rogoff（1985）は独立した保守的な中央銀行総裁の任命が時間的非整合性を緩和できることを論じ、中央銀行独立性の理論的根拠となった。',
+    keyFigures: 'Finn E. Kydland／Edward C. Prescott／Robert J. Barro／David B. Gordon／Kenneth Rogoff',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1830193', type: 'academic', label: 'Kydland & Prescott (1977) Rules Rather than Discretion: The Inconsistency of Optimal Plans, JPE 85(3):473-491' },
+      { url: 'https://www.jstor.org/stable/1831069', type: 'academic', label: 'Barro & Gordon (1983) Rules, Discretion and Reputation in a Model of Monetary Policy, Journal of Monetary Economics 12(1):101-121' },
+      { url: 'https://www.jstor.org/stable/1885506', type: 'academic', label: 'Rogoff (1985) The Optimal Degree of Commitment to an Intermediate Monetary Target, QJE 100(4):1169-1189' },
+    ],
+  },
+  {
+    id: 'human-relational-cultural-theory',
+    discipline: 'human-science',
+    title: '関係文化理論（RCT）',
+    statement:
+      '関係文化理論（Relational-Cultural Theory）は、Miller（1976）が著作 Toward a New Psychology of Women で提唱した枠組みを基盤とし、心理的成長は自律・分離ではなく、相互的で共感に満ちた「成長促進的関係（growth-fostering relationships）」を通じて実現されるという理論である。' +
+      'Jordan（2010）らStone Centerグループは「相互エンパシー」と「相互エンパワーメント」を核概念として理論を発展させ、孤立こそが心理的苦痛の根本要因であると主張した。' +
+      '臨床実践では、セラピストと来談者が相互に影響し合う真正な関係を重視し、従来の距離を置く中立性モデルとは一線を画す。',
+    keyFigures: 'Jean Baker Miller／Judith V. Jordan／Irene P. Stiver／Janet L. Surrey／Alexandra G. Kaplan',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.apa.org/pubs/books/4317279', type: 'academic', label: 'Jordan (2010) Relational-Cultural Therapy, APA Psychotherapy Video Series' },
+      { url: 'https://www.counseling.org/docs/default-source/vistas/relational-cultural-theory.pdf', type: 'academic', label: 'ACA VISTAS — Relational-Cultural Theory: A Framework for Bridging Relational, Multicultural, and Social Justice Competencies' },
+      { url: 'https://en.wikipedia.org/wiki/Relational%E2%80%93cultural_theory', type: 'reference', label: 'Wikipedia — Relational-cultural theory' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-theory-of-firm-search',
+    discipline: 'management',
+    title: '企業行動理論における問題探索（プロブレミスティック・サーチ）',
+    statement:
+      '企業行動理論の問題探索とは、組織がパフォーマンスが期待水準（アスピレーション・レベル）を下回ったときに初めて問題解決のための探索行動を起こすという命題であり、Cyert & March（1963）が A Behavioral Theory of the Firm で定式化した。' +
+      '探索は問題の近傍から局所的に始まり、状況が切迫するほど遠方の代替案へと拡大する傾向がある。' +
+      'アスピレーション・レベルは過去の自社業績や他社業績との社会的比較によって更新され、組織の意思決定に継続的に影響する（Simon 1955）。' +
+      'Greve（2003）は豊富なパネルデータを用いた実証研究でこの命題を支持しつつ、業績フィードバックの参照点が複数存在する場合の動態を精緻化した。',
+    keyFigures: 'Richard M. Cyert／James G. March／Herbert A. Simon／Henrich R. Greve／Daniel Levinthal',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=3105', type: 'academic', label: 'Cyert & March (1963) A Behavioral Theory of the Firm, Prentice-Hall' },
+      { url: 'https://www.cambridge.org/core/books/organizational-learning-from-performance-feedback/9780521800648', type: 'academic', label: 'Greve (2003) Organizational Learning from Performance Feedback, Cambridge UP' },
+      { url: 'https://www.britannica.com/money/Herbert-A-Simon', type: 'reference', label: 'Encyclopaedia Britannica — Herbert A. Simon' },
+    ],
+  },
+  {
+    id: 'bizlaw-implied-covenant-good-faith',
+    discipline: 'business-law',
+    title: '誠実義務・公正取引の黙示的誓約',
+    statement:
+      '誠実義務・公正取引の黙示的誓約とは、すべての契約において相手方が契約上の利益を受領する権利を損なわないよう誠実かつ公正に行動する義務が黙示的に含まれるとする法理であり、アメリカ契約法・統一商事法典（UCC）において判例・学説の双方で確立している。' +
+      'Summers（1968）はUCCの誠実義務条項を横断的に分析し、善意（good faith）を「悪意の行為の排除基準」として機能的に定義する影響力のある論文を発表した。' +
+      'Burton（1980）は誠実義務を「当事者が契約締結時に放棄した裁量権を取り戻す試みの排除」と位置づけ、その履行判定基準を精緻化した。' +
+      'Farnsworth（1984）はこの黙示誓約の適用範囲・限界を比較法的観点から論じ、UCC及びリステイトメント（第二次）第205条に法典化された本法理が英米法系諸国に広く受容されていることを示した。',
+    keyFigures: 'Robert S. Summers／Steven J. Burton／E. Allan Farnsworth／Harold Dubroff／Emily M.S. Houh',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=2722&context=lcp', type: 'academic', label: 'Summers (1968) Good Faith in General Contract Law and the Sales Provisions of the UCC, Virginia Law Review 54(2)' },
+      { url: 'https://www.law.cornell.edu/ucc/1/1-304', type: 'reference', label: 'Cornell LII — UCC § 1-304: Obligation of Good Faith' },
+      { url: 'https://www.ali.org/publications/show/restatement-law-contracts/', type: 'reference', label: 'ALI — Restatement (Second) of Contracts § 205: Duty of Good Faith and Fair Dealing' },
+    ],
+  },
+  {
+    id: 'infosoc-commons-based-peer-production',
+    discipline: 'information-sociology',
+    title: 'コモンズに基づくピア生産',
+    statement:
+      'コモンズに基づくピア生産（Commons-Based Peer Production, CBPP）とは、分散した多数の個人が、市場価格シグナルや企業の命令系統によらず、共有資源（デジタルコモンズ）を基盤として自律的に協働し、情報財・知識・ソフトウェアを生産する経済組織モデルである。' +
+      'Benkler（2002）はLinux開発を「Coaseの企業理論」に照らして分析し、財の粒度・労働の粒度・統合コストが低い情報財領域ではピア生産が企業・市場よりも効率的になりうると論じた。' +
+      'Benkler（2006）は同論理を拡張し、ネットワーク化された個人の協働がメディア・教育・政治参加を含む広範な富をもたらすと主張した。' +
+      'Shaw & Hill（2014）は参加者のガバナンス・品質管理の実証研究を重ね、WikipediaやOSSが代表例として定着している。',
+    keyFigures: 'Yochai Benkler／Aaron Shaw／Benjamin Mako Hill／Clay Shirky／Siobhan O\'Mahony',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.yalelawjournal.org/article/coases-penguin-or-linux-and-the-nature-of-the-firm', type: 'academic', label: 'Benkler (2002) Coase\'s Penguin, or, Linux and The Nature of the Firm, Yale Law Journal 112(3):369-446' },
+      { url: 'https://cyber.harvard.edu/wealth_of_networks/Main_Page', type: 'reference', label: 'Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom, Yale UP' },
+      { url: 'https://doi.org/10.1287/mnsc.1120.1541', type: 'academic', label: 'Shaw & Hill (2014) Laboratories of Oligarchy? How Wikipedia Bureaucratizes, Journal of Communication 64(2):215-238' },
+    ],
+  },
 ];
 // Stryker restore all
