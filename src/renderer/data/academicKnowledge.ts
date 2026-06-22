@@ -26876,5 +26876,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/672', type: 'academic', label: 'Nardi & O\'Day (1999) Information Ecologies: Using Technology with Heart (First Monday excerpt)' },
     ],
   },
+  // ── Batch 294 ─────────────────────────────────────────────
+  // econ-credit-rationing-stiglitz-weiss, econ-optimal-currency-area-mundell,
+  // human-cognitive-load-theory, mgmt-open-innovation-paradigm,
+  // bizlaw-revlon-duties, infosoc-critical-data-studies
+  {
+    id: 'econ-credit-rationing-stiglitz-weiss',
+    discipline: 'economics',
+    title: 'スティグリッツ＝ワイス信用割当モデル',
+    statement:
+      '情報の非対称性がある信用市場では、利子率の上昇が逆選択効果（リスクの高い借り手ほど高金利を受容）とモラルハザード効果（借り手がより危険なプロジェクトに転換）を通じて銀行の期待収益を低下させるため、超過需要が存在しても均衡で信用割当が生じることを示した理論である。' +
+      'スティグリッツとワイスが1981年のAmerican Economic Review論文で確立し、信用市場が清算されない合理的根拠を提示した。',
+    keyFigures: 'Joseph E. Stiglitz／Andrew Weiss',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1802787', type: 'academic', label: 'Stiglitz & Weiss (1981) Credit Rationing in Markets with Imperfect Information, AER 71(3):393-410' },
+      { url: 'https://en.wikipedia.org/wiki/Credit_rationing', type: 'reference', label: 'Wikipedia — Credit rationing' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — 2001年経済学賞（非対称情報下の市場分析）' },
+    ],
+  },
+  {
+    id: 'econ-optimal-currency-area-mundell',
+    discipline: 'economics',
+    title: '最適通貨圏理論',
+    statement:
+      '共通通貨の最適な適用範囲は生産要素（特に労働力）の移動性、経済の開放度、および経済ショックの対称性によって決定されるとする理論で、マンデルが1961年に提唱した。' +
+      'マッキノン（1963）の経済開放度基準とケネン（1969）の生産多様化基準により拡張され、欧州通貨統合の理論的基盤となった。',
+    keyFigures: 'Robert A. Mundell／Ronald I. McKinnon／Peter B. Kenen',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1812792', type: 'academic', label: 'Mundell (1961) A Theory of Optimum Currency Areas, AER 51(4):657-665' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/mundell/facts/', type: 'reference', label: 'NobelPrize.org — 1999年経済学賞 Robert A. Mundell' },
+      { url: 'https://en.wikipedia.org/wiki/Optimum_currency_area', type: 'reference', label: 'Wikipedia — Optimum currency area' },
+    ],
+  },
+  {
+    id: 'human-cognitive-load-theory',
+    discipline: 'human-science',
+    title: '認知負荷理論',
+    statement:
+      '認知負荷理論は、作動記憶の容量制限を考慮した教授設計により学習効果が最適化されるとする理論であり、内在的負荷（学習内容の複雑さ）・外在的負荷（不適切な教授設計）・関連的負荷（スキーマ構築）の3種類の認知負荷を区別する。' +
+      '外在的負荷を最小化し関連的負荷に作動記憶の容量を振り向けることが効果的な学習設計の基本原則とされる。',
+    keyFigures: 'John Sweller／Fred Paas／Jeroen van Merriënboer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://educational-innovation.sydney.edu.au/teaching@sydney/cognitive-load-theory-informing-teaching/', type: 'academic', label: 'University of Sydney — Cognitive Load Theory' },
+      { url: 'https://en.wikipedia.org/wiki/Cognitive_load', type: 'reference', label: 'Wikipedia — Cognitive load' },
+      { url: 'https://www.instructionaldesign.org/theories/cognitive-load/', type: 'reference', label: 'InstructionalDesign.org — Cognitive Load Theory' },
+    ],
+  },
+  {
+    id: 'mgmt-open-innovation-paradigm',
+    discipline: 'management',
+    title: 'オープン・イノベーション・パラダイム',
+    statement:
+      'オープン・イノベーションとは、企業は自社内部のアイデアだけでなく外部のアイデアや市場経路も活用して技術革新を推進すべきとする戦略パラダイムで、チェスブロウが2003年に提唱した。' +
+      'インバウンド（外部知識の取込み）・アウトバウンド（未活用IPの外部供与）・カップルド（提携・共創）の3モードを通じ、従来のクローズド・イノベーション（自前主義）を超える企業境界を越えた知識流通を促進する。',
+    keyFigures: 'Henry W. Chesbrough／Wim Vanhaverbeke／Joel West',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://sloanreview.mit.edu/article/the-era-of-open-innovation/', type: 'academic', label: 'Chesbrough (2003) The Era of Open Innovation, MIT Sloan Management Review 44(3):35-41' },
+      { url: 'https://doi.org/10.1093/acrefore/9780190224851.013.38', type: 'reference', label: 'Oxford Research Encyclopedia — Open Innovation' },
+      { url: 'https://en.wikipedia.org/wiki/Open_innovation', type: 'reference', label: 'Wikipedia — Open innovation' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン義務（会社売却時の取締役義務）',
+    statement:
+      'レブロン義務とは、会社の売却または解体が不可避となった局面において、取締役会の信認義務が企業防衛から株主のために合理的に入手可能な最高価格の実現へと転換しなければならないとするデラウェア州判例法理である。' +
+      '1986年のRevlon, Inc. v. MacAndrews & Forbes Holdings事件（506 A.2d 173）でデラウェア州最高裁が確立し、競売過程を妨げる防衛策を無効とした。',
+    keyFigures: 'Andrew G.T. Moore II（意見執筆判事）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-1.html', type: 'reference', label: 'Justia — Revlon, Inc. v. MacAndrews & Forbes Holdings, 506 A.2d 173 (Del. 1986)' },
+      { url: 'https://corpgov.law.harvard.edu/2024/01/04/the-impact-of-the-duty-to-maximize-short-term-value-in-mergers-and-acquisitions-an-analysis-of-revlon/', type: 'academic', label: 'Harvard Law Forum — Analysis of Revlon Duty (2024)' },
+      { url: 'https://scholarship.law.upenn.edu/jbl/vol11/iss3/1/', type: 'academic', label: 'Furlow, C.W. (2009) Reflections on the Revlon Doctrine, 11 U. Pa. J. Bus. L. 519' },
+    ],
+  },
+  {
+    id: 'infosoc-critical-data-studies',
+    discipline: 'information-sociology',
+    title: '批判的データ研究',
+    statement:
+      '批判的データ研究は、データの客観性・中立性という前提に異議を唱え、データの生成・統治・利用に埋め込まれた社会的・文化的・政治的権力関係を批判的に分析する学際的研究領域である。' +
+      'キッチン（2014）の『The Data Revolution』やボイド＆クロフォード（2012）の「ビッグデータへの批判的問い」が基盤的業績とされる。',
+    keyFigures: 'Rob Kitchin／danah boyd／Kate Crawford／Craig Dalton／Jim Thatcher',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.4135/9781473909472', type: 'academic', label: 'Kitchin (2014) The Data Revolution: Big Data, Open Data, Data Infrastructures & Their Consequences, Sage' },
+      { url: 'https://doi.org/10.1080/1369118X.2012.678878', type: 'academic', label: 'boyd & Crawford (2012) Critical Questions for Big Data, Information, Communication & Society 15(5)' },
+      { url: 'https://en.wikipedia.org/wiki/Critical_data_studies', type: 'reference', label: 'Wikipedia — Critical data studies' },
+    ],
+  },
 ];
 // Stryker restore all
