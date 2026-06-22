@@ -26595,5 +26595,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1177/0894439311410734', type: 'academic', label: 'Wei, L. et al. (2011) Conceptualizing and Measuring the Third-Level Digital Divide, SSCR 29(4):523-536' },
     ],
   },
+  // ── Batch 291 ─────────────────────────────────────────────
+  // econ-duopoly-stackelberg-model, econ-sargent-wallace-unpleasant-arithmetic,
+  // human-broaden-and-build-theory, mgmt-high-reliability-organization,
+  // bizlaw-alter-ego-doctrine, infosoc-digital-commons-governance
+  {
+    id: 'econ-duopoly-stackelberg-model',
+    discipline: 'economics',
+    title: 'シュタッケルベルク複占モデル',
+    statement:
+      'シュタッケルベルク複占モデルは、先導者（リーダー）企業がまず生産量を決定し、追随者（フォロワー）企業がその生産量を観察した上で自らの最適生産量を選択する逐次手番の寡占モデルである。' +
+      'クールノー均衡とは異なり、先導者は追随企業の最適反応関数を織り込んで意思決定するため非対称な均衡が生じ、先行者利益が発生する。',
+    keyFigures: 'Heinrich von Stackelberg',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Stackelberg_competition', type: 'reference', label: 'Wikipedia — Stackelberg competition' },
+      { url: 'https://www.econlib.org/library/Enc/GameTheory.html', type: 'reference', label: 'EconLib — Game Theory (Library of Economics and Liberty)' },
+      { url: 'https://www.jstor.org/stable/1819460', type: 'academic', label: 'Gal-Or, E. (1985) First Mover and Second Mover Advantages, Review of Economic Studies 52(4)' },
+    ],
+  },
+  {
+    id: 'econ-sargent-wallace-unpleasant-arithmetic',
+    discipline: 'economics',
+    title: 'サージェント＝ウォレスの不愉快な貨幣主義の算術',
+    statement:
+      '財政支配（フィスカル・ドミナンス）の下では、中央銀行が現在引き締め的な金融政策を採っても、政府債務の貨幣化が将来不可避となるためかえって長期的にはより高いインフレーションを招くことを示した命題。' +
+      '財政規律なき金融引き締めは物価安定に逆効果となりうるという、マネタリストにとって「不愉快な」帰結を理論的に導出した1981年の論文に基づく。',
+    keyFigures: 'Thomas J. Sargent／Neil Wallace',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic, FRB Minneapolis Quarterly Review 5(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Unpleasant_monetarist_arithmetic', type: 'reference', label: 'Wikipedia — Unpleasant monetarist arithmetic' },
+    ],
+  },
+  {
+    id: 'human-broaden-and-build-theory',
+    discipline: 'human-science',
+    title: '拡張−形成理論',
+    statement:
+      '拡張−形成理論は、喜び・感謝・安らぎ・興味などのポジティブ感情が人の一時的な思考−行動レパートリーを拡張（broaden）し、その拡張された認知・行動が知的・身体的・社会的・心理的な持続的個人資源を形成（build）するとする理論である。' +
+      'バーバラ・フレドリクソンが1998年に原型を発表し2001年に体系化した。ネガティブ感情が特定行動傾向を狭めるのに対し、ポジティブ感情は思考と行動の幅を広げ上向きスパイラルを生むとされる。',
+    keyFigures: 'Barbara L. Fredrickson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson (2001) The Role of Positive Emotions in Positive Psychology, American Psychologist 56(3):218-226' },
+      { url: 'https://doi.org/10.1098/rstb.2004.1512', type: 'academic', label: 'Fredrickson (2004) The Broaden-and-Build Theory of Positive Emotions, Phil. Trans. R. Soc. B 359(1449):1367-1378' },
+      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia — Broaden-and-build' },
+    ],
+  },
+  {
+    id: 'mgmt-high-reliability-organization',
+    discipline: 'management',
+    title: '高信頼性組織理論（HRO理論）',
+    statement:
+      '高信頼性組織理論は、原子力発電・航空管制・空母運用など事故リスクが極めて高い環境下で活動しながらも、期待される水準を大きく下回る事故率を維持する組織の特性と運営メカニズムを解明する理論である。' +
+      '「失敗へのこだわり」「単純化への抵抗」「オペレーションへの敏感さ」「レジリエンスの追求」「専門知への服従」という5つの集団的マインドフルネス原則を中核とする。',
+    keyFigures: 'Karl E. Weick／Kathleen M. Sutcliffe／Todd R. LaPorte／Gene I. Rochlin／Karlene H. Roberts',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/High_reliability_organization', type: 'reference', label: 'Wikipedia — High reliability organization' },
+      { url: 'https://psnet.ahrq.gov/primer/high-reliability', type: 'government', label: 'AHRQ PSNet — High Reliability（米国医療品質研究調査機構）' },
+      { url: 'https://www.wiley.com/en-us/Managing+the+Unexpected:+Sustained+Performance+in+a+Complex+World,+3rd+Edition-p-9781118862414', type: 'academic', label: 'Weick & Sutcliffe (2015) Managing the Unexpected 3rd ed., Wiley' },
+    ],
+  },
+  {
+    id: 'bizlaw-alter-ego-doctrine',
+    discipline: 'business-law',
+    title: '法人格否認の法理（分身理論）',
+    statement:
+      '法人格否認の法理（Alter Ego Doctrine）は、株主と法人の間に利益と所有の一体性が存在し、両者の独立した人格がもはや実質的に存在しない場合に、法人格の壁を突破（pierce the corporate veil）して株主に個人責任を追及することを認める法理である。' +
+      '法人形態の維持が詐欺の容認または不正義の助長につながるときに適用され、米国判例法上最も頻繁に援用される法人格否認類型の一つである。',
+    keyFigures: 'Frederick J. Powell／Robert B. Thompson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Piercing_the_corporate_veil', type: 'reference', label: 'Wikipedia — Piercing the corporate veil' },
+      { url: 'https://doi.org/10.2307/796110', type: 'academic', label: 'Thompson, R.B. (1991) Piercing the Corporate Veil, Cornell Law Review 76:1036' },
+      { url: 'https://www.law.cornell.edu/wex/piercing_the_corporate_veil', type: 'reference', label: 'Cornell LII — Piercing the Corporate Veil' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-commons-governance',
+    discipline: 'information-sociology',
+    title: 'デジタル・コモンズのガバナンス',
+    statement:
+      'デジタル・コモンズのガバナンスは、エリノア・オストロムのコモンズ理論をオープンソースソフトウェア・Wikipedia・オープンデータ等のデジタル知識資源に拡張し、' +
+      'コミュニティが私的所有権にも国家統制にも依存せず共有資源を自治的に管理する制度設計の原則と条件を解明する研究領域である。' +
+      'ヘスとオストロム（2007）が体系化し、ベンクラーのコモンズ・ベース・ピア生産論とともにデジタル時代の知識共有制度の理論的基盤を形成した。',
+    keyFigures: 'Charlotte Hess／Elinor Ostrom／Yochai Benkler／Brett M. Frischmann',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to', type: 'academic', label: 'Hess & Ostrom eds. (2007) Understanding Knowledge as a Commons, MIT Press' },
+      { url: 'https://policyreview.info/concepts/digital-commons', type: 'academic', label: 'Internet Policy Review — Digital commons (peer-reviewed concept article)' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_commons_(economics)', type: 'reference', label: 'Wikipedia — Digital commons (economics)' },
+    ],
+  },
 ];
 // Stryker restore all
