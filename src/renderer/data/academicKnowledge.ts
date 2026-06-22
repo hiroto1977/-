@@ -25680,5 +25680,96 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Binocular_rivalry', type: 'reference', label: 'Binocular Rivalry — Wikipedia' },
     ],
   },
+  // ── Batch 282 ─────────────────────────────────────────────
+  {
+    id: 'econ-cambridge-capital',
+    discipline: 'economics',
+    title: 'ケンブリッジ資本論争（Cambridge Capital Controversy）',
+    statement:
+      '資本を単一の集計量として生産関数に投入できるかを巡るケンブリッジ大学（ロビンソン、スラッファ、パシネッティ）とMIT（サミュエルソン、ソロー）間の論争。スラッファ（1960）は「再転換（reswitching）」——同一技術が異なる利子率で最も利潤的となる現象——を示し、限界生産力に基づく分配理論の一般性を否定した。サミュエルソン（1966）は理論的にこの批判を受容した。',
+    keyFigures: 'ジョアン・ロビンソン（1953-54）／ピエロ・スラッファ（1960 Production of Commodities by Means of Commodities）／ポール・サミュエルソン（1966 QJE "A Summing Up"）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1882916', type: 'academic', label: 'Samuelson (1966) A Summing Up — Quarterly Journal of Economics / JSTOR' },
+      { url: 'https://www.semanticscholar.org/paper/Production-of-Commodities-by-Means-of-Commodities-Sraffa/afb1e50a24e5c74e28c0e8a478637c9a0f1c55cb', type: 'academic', label: 'Sraffa (1960) Production of Commodities — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Cambridge_capital_controversy', type: 'reference', label: 'Cambridge Capital Controversy — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-tip-of-tongue',
+    discipline: 'human-science',
+    title: '舌先現象（Tip-of-the-Tongue Phenomenon）',
+    statement:
+      'ある語を確実に知っているという強い感覚がありながら即座に想起できないメタ認知的状態。ブラウン＆マクニール（1966）は定義文を用いてTOT状態を実験的に誘発し、目標語の頭文字・音節数・韻律といった部分情報が想起可能であることを見出した。語彙アクセスの二段階モデルを支持し、再認と想起の解離を示す。',
+    keyFigures: 'ロジャー・ブラウン＆デイヴィッド・マクニール（1966 Journal of Verbal Learning and Verbal Behavior）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/S0022-5371(66)80040-3', type: 'academic', label: 'Brown & McNeill (1966) The "Tip of the Tongue" Phenomenon — JVLVB / Elsevier' },
+      { url: 'https://www.semanticscholar.org/paper/The-%22tip-of-the-tongue%22-phenomenon.-Brown-McNeill/d54b9e3ac4fbb64a59a60dfd8bd5e15ddb72fadc', type: 'academic', label: 'Brown & McNeill (1966) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Tip_of_the_tongue', type: 'reference', label: 'Tip of the Tongue — Wikipedia' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-decline',
+    discipline: 'management',
+    title: '組織衰退論（Organizational Decline）',
+    statement:
+      '組織が業績・資源基盤・適応能力の持続的悪化を経験する過程の理論。ウェイツェル＆ジョンソン（1989）は盲目（衰退の不認識）→不作為→誤った行動→危機→解散の五段階モデルを提唱し、各段階で逆転がより困難になることを示した。キャメロン＆ウェッテン（1987）は衰退と環境乱流を実証的に区別し、組織の自己認識能力の重要性を強調した。',
+    keyFigures: 'ウィリアム・ウェイツェル＆エレン・ジョンソン（1989 Academy of Management Review）／キム・S・キャメロン＆デイヴィッド・A・ウェッテン（1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/258039', type: 'academic', label: 'Weitzel & Jonsson (1989) Decline in Organizations — Academy of Management Review / JSTOR' },
+      { url: 'https://www.semanticscholar.org/paper/Decline-in-Organizations%3A-A-Literature-Integration-Weitzel-Jonsson/9cfb40cf00d98b0ea9ec3c8e7b2e4ae87c1faabc', type: 'academic', label: 'Weitzel & Jonsson (1989) — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_life_cycle', type: 'reference', label: 'Organizational Life Cycle — Wikipedia' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-urbanism',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム都市主義（Platform Urbanism）',
+    statement:
+      'デジタルプラットフォーム（Uber、Airbnb、Deliveroo、Google Maps等）が都市ガバナンス・インフラ・労働・空間実践をいかに再編するかを分析する学際的枠組み。バーンズ（2020）はプラットフォームのデータ化・仲介・アルゴリズム管理の論理が都市サービスと公共空間を再構成する過程を「プラットフォーム都市主義」と名づけた。',
+    keyFigures: 'サラ・バーンズ（2020 Platform Urbanism — Palgrave Macmillan）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/book/10.1007/978-981-32-9725-8', type: 'academic', label: 'Barns (2020) Platform Urbanism: Negotiating Platform Ecosystems in Connected Cities — Palgrave Macmillan / Springer' },
+      { url: 'https://www.semanticscholar.org/paper/Platform-Urbanism%3A-Negotiating-Platform-Ecosystems-Barns/a97f8aa1a82c41a27e4f4b3b9ff5c2bba87b36b2', type: 'academic', label: 'Barns (2020) Platform Urbanism — Semantic Scholar' },
+      { url: 'https://en.wikipedia.org/wiki/Platform_economy', type: 'reference', label: 'Platform Economy — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-perceptual-fluency',
+    discipline: 'human-science',
+    title: '知覚的流暢性（Perceptual Fluency）',
+    statement:
+      '刺激が処理される主観的な容易さが、真実性・親近性・選好・美的価値の判断に影響を及ぼす認知メカニズム。レーバー、シュワルツ＆ヴィンキールマン（2004）は流暢に処理された刺激が美しい・真実・馴染みがあると判断されやすいことを体系化した。ジャコビー＆ダラス（1981）は先行曝露が知覚的流暢性を高め他の属性に誤帰属されることを実証し、単純接触効果や真実の錯覚の基盤メカニズムを提示した。',
+    keyFigures: 'ロルフ・レーバー、ノルベルト・シュワルツ＆ピオトル・ヴィンキールマン（2004 Personality and Social Psychology Review）／ラリー・ジャコビー＆マーク・ダラス（1981）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1207/s15327957pspr0804_3', type: 'academic', label: 'Reber, Schwarz & Winkielman (2004) Processing Fluency and Aesthetic Pleasure — PSPR' },
+      { url: 'https://doi.org/10.1037/0096-3445.110.3.306', type: 'academic', label: 'Jacoby & Dallas (1981) On the Relationship Between Autobiographical Memory and Perceptual Learning — JEP:General' },
+      { url: 'https://en.wikipedia.org/wiki/Processing_fluency', type: 'reference', label: 'Processing Fluency — Wikipedia' },
+    ],
+  },
+  {
+    id: 'bizlaw-ratchet-clause',
+    discipline: 'business-law',
+    title: 'ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）',
+    statement:
+      'ラチェット条項とは、貿易・投資協定（特にネガティブリスト方式を採用するFTA・BIT）において、締約国が一方的に実施した自由化措置を自動的に固定（ロックイン）し、' +
+      '将来より制限的な水準へ後退することを禁止する規定。一方向にしか回転しない歯止め（ratchet）に由来する名称で、一度スケジュール上の約束を超えて自由化された措置は、' +
+      'その新たな水準が拘束力のある下限（binding floor）となる。典型的な条文は「既存の不適合措置の改正が、改正前の時点における当該措置の適合性を低下させない限りにおいて」' +
+      '義務の適用除外を認める形をとる（NAFTA第1108条(1)(c)、CPTPP第9.12条・第10.7条(1)(c)）。スタンドスティル条項（協定発効時の規制水準を凍結し新たな規制強化を禁止）と' +
+      '対で用いられることが多く、両者を合わせて「standstill-and-ratchet」と呼ぶ。NAFTA/USMCA、TPP/CPTPP、韓米FTA、多くの二国間FTA・BITで採用されている。' +
+      'WTO/GATSはポジティブリスト方式のためラチェット条項を直接含まないが、約束の一方向性（ratchet effect）が内在し、第XXI条による約束撤回手続を除き後退は想定されていない。' +
+      '批判的立場からは、ラチェット条項は途上国の政策空間（policy space）を過度に制約し、将来の公共政策上の必要に応じた規制強化の余地を奪うと指摘される（UNCTAD等）。',
+    keyFigures: 'NAFTA第1108条(1)(c)（1994、ラチェット条項の先駆）／CPTPP第9.12条・第10.7条(1)(c)／WTO GATS（ratchet effect内在）／UNCTAD（政策空間への影響分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://unctad.org/system/files/official-document/iteiit20058_en.pdf', type: 'government', label: 'UNCTAD (2005) Preserving Flexibility in IIAs: The Use of Reservations (UNCTAD/ITE/IIT/2005/8) — ネガティブリスト方式IIAにおけるラチェット効果を分析' },
+      { url: 'https://www.wto.org/english/res_e/reser_e/ersd202213_e.htm', type: 'academic', label: 'R. Zhang & C. Sasanabanchakul (2022) Means of Liberalization and Beyond: Understanding Scheduling Approaches in Services Trade Agreements, WTO Staff Working Paper ERSD-2022-13 — 187のRTAにおけるスケジューリング方式・ラチェット・スタンドスティルを比較分析' },
+      { url: 'https://trade.ec.europa.eu/access-to-markets/en/content/ratchet-clause', type: 'reference', label: 'EU Access2Markets Glossary — Ratchet Clause（定義・具体例・ネガティブリストとの関係）' },
+    ],
+  },
 ];
 // Stryker restore all
