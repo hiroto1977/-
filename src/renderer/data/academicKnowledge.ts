@@ -25426,5 +25426,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cmu.edu/dietrich/psychology/infant-cognition-lab/publications/Quinn%20et%20al.%20(2000).pdf', type: 'academic', label: 'Quinn et al. (2000) Understanding Early Categorization — CMU' },
     ],
   },
+  {
+    id: 'econ-ratchet-effect',
+    discipline: 'economics',
+    title: 'ラチェット効果（Ratchet Effect）',
+    statement:
+      '所得が低下しても消費水準は過去の最高水準から容易に下がらないという消費の非対称的硬直性。デューゼンベリーの相対所得仮説の一要素であり、消費者が近隣の生活水準を参照する社会的相互依存性と習慣形成により、消費関係の時間的不可逆性が生じるとする。',
+    keyFigures: 'ジェームズ・デューゼンベリー（1949 Income, Saving and the Theory of Consumer Behaviour での定式化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://spureconomics.com/relative-income-hypothesis/', type: 'reference', label: 'Relative Income Hypothesis — Spur Economics' },
+      { url: 'https://link.springer.com/article/10.1007/s13132-025-02824-4', type: 'academic', label: 'Keeping Up with the Joneses: Duesenberry Demonstration and Ratchet Effects — Journal of the Knowledge Economy / Springer' },
+      { url: 'https://www.economicsdiscussion.net/theory-of-income/absolute-relative-and-permanent-income-hypothesis-with-diagram/6298', type: 'reference', label: 'Absolute, Relative and Permanent Income Hypothesis — Economics Discussion' },
+    ],
+  },
+  {
+    id: 'human-joint-action',
+    discipline: 'human-science',
+    title: '共同行為（Joint Action）',
+    statement:
+      '二者以上が空間と時間において行為を協調させ環境に変化をもたらす社会的相互作用。共有表象・行為予測・自他の行為効果の統合を基盤とし、共同注意・行為観察・課題共有・行為調整・主体感の諸メカニズムが支える認知神経過程として研究される。',
+    keyFigures: 'ナターシャ・セバンツ＝ハロルド・ベッカリング＝ギュンター・クノーブリッヒ（2006 Trends in Cognitive Sciences レビュー論文）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Joint-action:-bodies-and-minds-moving-together-Sebanz-Bekkering/9e2adb51f289a816dbc99a9910f21ed2f89113ff', type: 'academic', label: 'Sebanz, Bekkering & Knoblich (2006) Joint Action: Bodies and Minds Moving Together — Semantic Scholar' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0001691821000354', type: 'academic', label: 'Understanding Joint Action: Current Theoretical and Empirical Approaches — Acta Psychologica / ScienceDirect' },
+      { url: 'https://www.butterfill.com/writing/psychological_research_on_joint_action/', type: 'academic', label: 'Psychological Research on Joint Action: Theory and Data — Butterfill' },
+    ],
+  },
+  {
+    id: 'bizlaw-exhaustion-of-local-remedies',
+    discipline: 'business-law',
+    title: '国内救済手段の尽尽原則（Exhaustion of Local Remedies）',
+    statement:
+      '個人が国家の国際違法行為を国際的に追及する前に、当該国の国内裁判所等で利用可能な救済手段を尽くすべきとする国際慣習法上の原則。ICSID条約26条は投資仲裁において本原則を原則不要とし、条約が明示的に要求する場合にのみ適用されるとする逆転規定を設けた。',
+    keyFigures: 'ICSID条約（1965 第26条での逆転規定）／国際法委員会（ILC外交保護条文2006での法典化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://jusmundi.com/en/document/publication/en-exhaustion-of-local-remedies', type: 'reference', label: 'Exhaustion of Local Remedies — Jus Mundi Wiki' },
+      { url: 'https://yjil.yale.edu/posts/2016-09-07-exhaustion-of-local-remedies-in-investor-state-dispute-settlement-an-idea-whose', type: 'academic', label: 'Exhaustion of Local Remedies in ISDS — Yale Journal of International Law' },
+      { url: 'https://opil.ouplaw.com/display/10.1093/law-mpeipro/e3332.013.3332/law-mpeipro-e3332', type: 'reference', label: 'Previous Exhaustion of Local Remedies: Investment Arbitration — Oxford Public International Law' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-alliance',
+    discipline: 'management',
+    title: '戦略的提携理論（Strategic Alliance Theory）',
+    statement:
+      '製品・技術・サービスの共有または共同開発を含む企業間の自発的協力取決めを分析する理論。提携の協調（共同目標への整合）と調整（活動の時間的・空間的統合）の二側面を区別し、信頼・反復取引・ガバナンス構造が提携成果に及ぼす影響を解明する。',
+    keyFigures: 'ランジェイ・グラティ（1998 Alliances and Networks — Strategic Management Journal での体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291097-0266%28199804%2919%3A4%3C293%3A%3AAID-SMJ982%3E3.0.CO%3B2-M', type: 'academic', label: 'Gulati (1998) Alliances and Networks — Strategic Management Journal / Wiley' },
+      { url: 'https://journals.aom.org/doi/10.5465/19416520.2012.691646', type: 'academic', label: 'The Two Facets of Collaboration: Cooperation and Coordination in Strategic Alliances — Academy of Management Annals' },
+      { url: 'https://www.researchgate.net/publication/228158906_Strategic_Alliances', type: 'academic', label: 'Strategic Alliances — ResearchGate' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-imaginaries',
+    discipline: 'information-sociology',
+    title: 'プラットフォームの政治学（Politics of Platforms）',
+    statement:
+      'デジタルプラットフォームが「プラットフォーム」という語の計算論的・建築的・比喩的・政治的な多義性を戦略的に活用し、利用者・広告主・政策立案者に対する自己の位置づけを構築する言説政治を分析する枠組み。平坦で開放的な基盤という隠喩がビジネスモデルと権力構造を不可視化する。',
+    keyFigures: 'タールトン・ギレスピー（2010 The Politics of "Platforms" — New Media & Society）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1461444809342738', type: 'academic', label: 'Gillespie (2010) The Politics of "Platforms" — New Media & Society / SAGE' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1601487', type: 'academic', label: 'Gillespie (2010) The Politics of "Platforms" — SSRN' },
+      { url: 'https://www.researchgate.net/publication/258173728_The_politics_of_\'platforms\'', type: 'academic', label: 'Gillespie (2010) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'human-teleological-reasoning',
+    discipline: 'human-science',
+    title: '目的論的推論（Teleological Reasoning in Infancy）',
+    statement:
+      '乳児が生後12か月までに行為を目標・手段・物理的制約の三項関係で解釈し、合理的行為の原理に基づき最効率な手段を期待する非心的な前心の理論的解釈システム。発達的にはのちに信念・欲求による因果的心的説明（心の理論）へと変換される。',
+    keyFigures: 'ジェルジ・ゲルゲイ＆ジェルジ・チブラ（1995実験／2003 Trends in Cognitive Sciences レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1364661303001281', type: 'academic', label: 'Gergely & Csibra (2003) Teleological Reasoning in Infancy — Trends in Cognitive Sciences / ScienceDirect' },
+      { url: 'https://www.semanticscholar.org/paper/Teleological-reasoning-in-infancy:-the-na%C4%B1%CC%88ve-of-Gergely-Csibra/0b0f8ce4b34a5db2185e70688f0620ffd4b28436', type: 'academic', label: 'Gergely & Csibra (2003) — Semantic Scholar' },
+      { url: 'https://energy.ceu.edu/sites/default/files/publications/gergelycsibra1997.pdf', type: 'academic', label: 'Gergely & Csibra (1997) Naive Theory of Rational Action — CEU' },
+    ],
+  },
 ];
 // Stryker restore all
