@@ -27166,5 +27166,130 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022R2065', type: 'government', label: 'EU Digital Services Act, Regulation (EU) 2022/2065' },
     ],
   },
+
+  // ── Batch 297 ─────────────────────────────────────────────
+  // econ-tinbergen-gravity-model, econ-prebisch-singer-thesis,
+  // human-terror-management-theory, mgmt-behavioral-theory-of-firm,
+  // bizlaw-de-facto-merger-doctrine, infosoc-techno-utopianism-critique
+
+  {
+    id: 'econ-tinbergen-gravity-model',
+    discipline: 'economics',
+    title: 'ティンバーゲン重力モデル（国際貿易の重力方程式）',
+    statement:
+      'ティンバーゲン重力モデルとは、2国間の貿易フローが両国のGDP（経済規模）に比例し、地理的距離に反比例するという経験則であり、' +
+      'Jan Tinbergen（1962）が著書 Shaping the World Economy（Twentieth Century Fund）の付録IVで初めて計量的に定式化した。' +
+      '同モデルはニュートンの万有引力の法則に類比されるが、長らく理論的基礎を欠くとされていた。' +
+      'Anderson（1979, American Economic Review, Vol. 69, pp. 106–116）がアーミントン型の財差別化需要を前提に初めて厳密な導出を示し、' +
+      'Anderson & van Wincoop（2003, American Economic Review, Vol. 93, pp. 170–192）は「多角的抵抗指数（multilateral resistance）」を導入して' +
+      'バイラテラル貿易障壁の計測バイアスを是正し、国境効果パズルを解決した。' +
+      'Head & Mayer（2014）はその後の理論・推計手法の発展を体系的に整理したサーベイ論文として標準的な参照文献となっている。',
+    keyFigures: 'Jan Tinbergen／James E. Anderson／Eric van Wincoop／Keith Head／Thierry Mayer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop (2003) Gravity with Gravitas, AER Vol.93 pp.170-192' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/B9780444543141000033', type: 'academic', label: 'Head & Mayer (2014) Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics Vol.4 pp.131-195' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/tie.5060050113', type: 'academic', label: 'Tinbergen (1962) Shaping the World Economy — Wiley record' },
+    ],
+  },
+  {
+    id: 'econ-prebisch-singer-thesis',
+    discipline: 'economics',
+    title: 'プレビッシュ＝シンガー命題',
+    statement:
+      'プレビッシュ＝シンガー命題とは、一次産品輸出国（主に途上国）と工業製品輸出国（先進国）の間の交易条件が長期的に前者に不利な方向へ世俗的に悪化するという仮説であり、' +
+      'プレビッシュ（Prebisch, 1950）とシンガー（Singer, 1950）が独立に提唱した。' +
+      'その理論的根拠として、工業品需要の所得弾力性が一次産品を上回ること、先進国では生産性上昇が賃金・利潤として内部化される一方、途上国では価格低下として現れる非対称な市場構造が挙げられる。' +
+      'グリリ＝ヤン（Grilli & Yang, 1988）は1900年から1986年の商品価格指数を用いて長期的な交易条件悪化を実証し、' +
+      'ハーベイら（Harvey et al., 2010）は17世紀以降の4世紀にわたるデータで緩やかな下落トレンドの存在を確認した。' +
+      'この命題は輸入代替工業化政策の理論的支柱となり、国連ラテンアメリカ経済委員会（CEPAL/ECLA）の開発戦略に大きな影響を与えた。',
+    keyFigures: 'Raúl Prebisch／Hans W. Singer／Enzo Grilli／Maw Cheng Yang／David Harvey',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://repositorio.cepal.org/handle/11362/29973', type: 'academic', label: 'Prebisch (1950) The Economic Development of Latin America and its Principal Problems, ECLA/CEPAL' },
+      { url: 'https://doi.org/10.1093/wber/2.1.1', type: 'academic', label: 'Grilli & Yang (1988) Primary Commodity Prices, Manufactured Goods Prices, and the Terms of Trade, World Bank Economic Review 2(1):1-47' },
+      { url: 'https://doi.org/10.1162/rest.2010.12184', type: 'academic', label: 'Harvey et al. (2010) The Prebisch-Singer Hypothesis: Four Centuries of Evidence, Review of Economics and Statistics 92(2):367-377' },
+    ],
+  },
+  {
+    id: 'human-terror-management-theory',
+    discipline: 'human-science',
+    title: '恐怖管理理論',
+    statement:
+      '恐怖管理理論（TMT）は、Greenberg・Solomon・Pyszczynski（1986）がBecker（1973）の『死の否定』を社会心理学的に定式化した理論であり、' +
+      '死の不可避性への認識が根源的な実存的恐怖を生じさせると主張する。' +
+      '人はこの恐怖を、文化的世界観（意味と秩序の象徴体系）への信奉と自尊心の維持によって緩和するとされる。' +
+      '死亡顕現性仮説は、死を想起させる手がかりが文化的規範への防衛反応と自己評価の追求を強化することを予測し、' +
+      'Rosenblatt et al.（1989）の裁判官実験で初めて実証された。' +
+      'Burke et al.（2010）のメタ分析（277研究・k=345）は、この死亡顕現性効果の強固な再現性を確認している。',
+    keyFigures: 'Jeff Greenberg／Sheldon Solomon／Tom Pyszczynski',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-4613-9564-5_10', type: 'academic', label: 'Greenberg, Pyszczynski & Solomon (1986) The Causes and Consequences of a Need for Self-Esteem: A Terror Management Theory, in Baumeister (Ed.) Public Self and Private Self pp.189-212' },
+      { url: 'https://doi.org/10.1037/0022-3514.57.4.681', type: 'academic', label: 'Rosenblatt et al. (1989) Evidence for Terror Management Theory I, JPSP 57(4):681-690' },
+      { url: 'https://doi.org/10.1177/1088868309352321', type: 'academic', label: 'Burke, Martens & Faucher (2010) Two Decades of TMT: A Meta-Analysis, Personality and Social Psychology Review 14(2):155-195' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-theory-of-firm',
+    discipline: 'management',
+    title: '企業の行動理論',
+    statement:
+      'Cyert & March（1963）の『企業の行動理論』は、新古典派経済学が前提とする利潤最大化主体としての企業像を否定し、' +
+      '相互に矛盾する目標を持つ個人の連合体（coalition）として組織を捉え、「満足化（satisficing）」行動原理を中核に据えた。' +
+      '同理論は、組織的スラック（organizational slack）・問題志向型探索（problematic search）・不確実性回避・' +
+      '準解決的対立処理（quasi-resolution of conflict）・組織学習という五つのプロセスを通じて、企業行動の動態的メカニズムを説明する。' +
+      'March & Simon（1958）の限定合理性概念を組織レベルへ拡張した本理論は、戦略経営・組織学習・進化経済学の基礎的準拠枠となっており、' +
+      'Gavetti et al.（2012）および Argote & Greve（2007）による包括的レビューがその理論的射程と後継研究を体系化している。',
+    keyFigures: 'Richard M. Cyert／James G. March／Herbert A. Simon',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.cambridge.org/core/journals/american-political-science-review/article/abs/behavioral-theory-of-the-firm-by-richard-m-cyert-and-james-g-march-englewood-cliffs-n-j-prenticehall-1963-pp-ix-332-900/5F63B021D4463F0C55A3EAE0C1C5A56D', type: 'academic', label: 'Cyert & March (1963) A Behavioral Theory of the Firm — Cambridge Core review record' },
+      { url: 'https://pubsonline.informs.org/doi/abs/10.1287/orsc.1070.0280', type: 'academic', label: 'Argote & Greve (2007) A Behavioral Theory of the Firm — 40 Years and Counting, Organization Science 18(3):337-349' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2012.656841', type: 'academic', label: 'Gavetti et al. (2012) The Behavioral Theory of the Firm: Assessment and Prospects, Academy of Management Annals 6(1):1-40' },
+    ],
+  },
+  {
+    id: 'bizlaw-de-facto-merger-doctrine',
+    discipline: 'business-law',
+    title: '事実上の合併の法理（デ・ファクト・マージャー法理）',
+    statement:
+      '事実上の合併の法理（de facto merger doctrine）とは、会社法上の合併手続を回避するために資産譲渡の形式が用いられた場合でも、' +
+      '裁判所が取引の実質に着目してその効果を合併と同視し、反対株主に対して株式買取請求権（appraisal rights）および議決権を付与する衡平法上の原則である。' +
+      '本法理はFarris v. Glen Alden Corp.（393 Pa. 427, 1958）においてペンシルバニア州最高裁が確立し、' +
+      'Deutsch（1974）はその理論的根拠を形式と実質の対立として分析した。' +
+      'これに対してデラウェア州最高裁はHariton v. Arco Electronics, Inc.（188 A.2d 123, 1963）において「対等効力原則（equal dignity rule）」を採用し、' +
+      '資産譲渡法と合併法は立法者が対等の効力を認めた別個の手続であるとして本法理を明示的に否定した。' +
+      'さらに本法理は後継者責任（successor liability）の文脈にも展開され、' +
+      '所有の継続性・事業継続性・経営の継続性・解散の迅速性という四要素テストによって事実上の合併の成否が判定される（Davis, 2008）。',
+    keyFigures: 'Jan G. Deutsch／Walter Rand III／W. B. Davis',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://digitalcommons.law.villanova.edu/vlr/vol20/iss1/3/', type: 'academic', label: 'Deutsch (1974) The Form and Substance of a Merger: A Reading of Farris v. Glen Alden Corp., 20 Vill. L. Rev. 80' },
+      { url: 'https://journals.library.columbia.edu/index.php/CBLR/article/view/2957', type: 'academic', label: 'Davis (2008) De Facto Merger, Federal Common Law, and Erie, Colum. Bus. L. Rev. 2008(2)' },
+      { url: 'https://scholarship.law.unc.edu/nclr/vol42/iss2/14', type: 'academic', label: 'Rand (1964) Corporations — De Facto Merger — Minority Shareholder Appraisal Rights, 42 N.C. L. Rev. 436' },
+    ],
+  },
+  {
+    id: 'infosoc-techno-utopianism-critique',
+    discipline: 'information-sociology',
+    title: 'テクノ・ユートピアニズム批判',
+    statement:
+      'テクノ・ユートピアニズム批判とは、技術的進歩が必然的に社会的改善をもたらすという楽観主義的前提に対する批判的学術潮流であり、' +
+      'STS（科学技術社会論）の中心的問題系をなす。' +
+      'ラングドン・ウィナー（1980）は「人工物に政治はあるか」において技術的アーティファクトが権力関係を体現しうることを論証し、技術決定論的中立性神話を解体した。' +
+      'エフゲニー・モロゾフは『ネット幻想』（2011）および『すべてをクリックで救え』（2013）において「テクノロジカル・ソリューショニズム」概念を提唱し、' +
+      '社会問題を技術的手段のみで解決しようとする志向が政治的脱文脈化と権力の不可視化を招くと批判した。' +
+      'バーブルックとキャメロン（1996）の「カリフォルニアン・イデオロギー」論文、および' +
+      'フレッド・ターナー（2006）のカウンターカルチャーとサイバーカルチャーの系譜研究は、' +
+      'デジタル・ユートピア主義がいかにしてシリコンバレー型新自由主義と結びついたかを歴史的・批判的に解明した。',
+    keyFigures: 'Langdon Winner／Evgeny Morozov／Richard Barbrook／Andy Cameron／Fred Turner',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/20024652', type: 'academic', label: 'Winner (1980) Do Artifacts Have Politics? Daedalus 109(1):121-136' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/09505439609526455', type: 'academic', label: 'Barbrook & Cameron (1996) The Californian Ideology, Science as Culture 6(1):44-72' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/F/bo3773600.html', type: 'academic', label: 'Turner (2006) From Counterculture to Cyberculture, University of Chicago Press' },
+    ],
+  },
 ];
 // Stryker restore all
