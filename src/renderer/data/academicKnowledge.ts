@@ -25174,5 +25174,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://db.arabpsychology.com/sally-anne-test/', type: 'reference', label: 'Sally Anne Test: Understanding False Belief in Children — Arab Psychology Database' },
     ],
   },
+  {
+    id: 'econ-contract-curve',
+    discipline: 'economics',
+    title: '契約曲線（Contract Curve）',
+    statement:
+      'エッジワースボックス内で二者の無差別曲線が接する点の軌跡であり、パレート最適な配分の集合を表す。初期賦存点からの自発的交換はこの曲線上に収束し、交換経済における効率的配分の幾何学的表現として一般均衡理論の基礎をなす。',
+    keyFigures: 'フランシス・エッジワース（1881 Mathematical Psychics での概念導入）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Contract_curve', type: 'reference', label: 'Contract Curve — Wikipedia' },
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Economics/Intermediate_Microeconomics_with_Excel_(Barreto)/18:_General_Equilibrium/18.03:_Pareto_Optimality', type: 'reference', label: 'Pareto Optimality — Social Sci LibreTexts' },
+      { url: 'https://economics.town/microeconomic-analysis/competitive-equilibrium-pareto-efficiency-edgeworth/', type: 'reference', label: 'Competitive Equilibrium and Pareto Efficiency in the Edgeworth Box — Economics.Town' },
+    ],
+  },
+  {
+    id: 'human-core-knowledge',
+    discipline: 'human-science',
+    title: 'コア知識理論（Core Knowledge Theory）',
+    statement:
+      '乳児が対象・行為・数・空間・社会的パートナーに関する領域固有の生得的知識システムを備えて生まれるとする理論。ピアジェの段階説と異なり、経験以前に存在する表象的基盤を仮定し、後の複雑な認知的達成の土台となるとする。',
+    keyFigures: 'エリザベス・スペルキ（2000 Core Knowledge 論文／2007 Spelke & Kinzler 5領域の体系化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://socialsci.libretexts.org/Bookshelves/Early_Childhood_Education/Infant_and_Toddler_Care_and_Development_(Taintor_and_LaMarr)/09%3A_Theories_of_Cognitive_development/9.05%3A_Theory_of_Core_Knowledge', type: 'reference', label: 'Theory of Core Knowledge — Social Sci LibreTexts' },
+      { url: 'https://www.harvardlds.org/wp-content/uploads/2017/01/SpelkeKinzler07-1.pdf', type: 'academic', label: 'Spelke & Kinzler (2007) Core Knowledge — Harvard Laboratory for Developmental Studies' },
+      { url: 'https://www.semanticscholar.org/paper/Core-knowledge.-Spelke-Kinzler/1207aa55c8a2b47a25fc17c18328910daf3feb71', type: 'academic', label: 'Core Knowledge — Semantic Scholar' },
+    ],
+  },
+  {
+    id: 'bizlaw-national-treatment',
+    discipline: 'business-law',
+    title: '内国民待遇原則（National Treatment）',
+    statement:
+      'GATT第3条に規定される内外無差別原則で、輸入品に対し国内産品と同等の課税・規制上の待遇を義務付ける。最恵国待遇（MFN）と並ぶWTO多角的貿易体制の二大無差別原則であり、GATS・TRIPS・TRIMsにも拡張されている。',
+    keyFigures: 'GATT（1947 第3条での原則確立）／WTO上級委員会（Japan–Alcoholic Beverages 1996等での解釈発展）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e1540', type: 'reference', label: 'National Treatment, Principle — Oxford Public International Law' },
+      { url: 'https://www.lakshmisri.com/insights/articles/national-treatment-principle-analysis-of-gatt-article-iii/', type: 'reference', label: 'National Treatment Principle — Analysis of GATT Article III — Lakshmikumaran & Sridharan' },
+      { url: 'https://www.wto.org/english/tratop_e/dispu_e/repertory_e/n1_e.htm', type: 'government', label: 'National Treatment — WTO Appellate Body Repertory' },
+    ],
+  },
+  {
+    id: 'mgmt-network-organization',
+    discipline: 'management',
+    title: 'ネットワーク組織（Network Forms of Organization）',
+    statement:
+      '市場取引でもヒエラルキーでもない第三の組織間調整形態として、相互義務・信頼・評判に基づくネットワーク型組織の固有論理を提示。暗黙知が重要でイノベーションが不確実な産業で優位性を発揮するとし、ウィリアムソンの取引コスト理論による市場／ヒエラルキー二分法を超克した。',
+    keyFigures: 'ウォルター・パウエル（1990 Neither Market Nor Hierarchy — ASA Max Weber賞受賞論文）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/301840604_Neither_Market_Nor_Hierarchy_Network_Forms_of_Organization', type: 'academic', label: 'Powell (1990) Neither Market Nor Hierarchy: Network Forms of Organization — ResearchGate' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-658-21742-6_108', type: 'academic', label: 'Powell (1990): Neither Market nor Hierarchy — Springer' },
+      { url: 'https://www.academia.edu/41966981/Neither_market_nor_hierarchy_Network_Forms_of_Organization', type: 'academic', label: 'Neither Market nor Hierarchy — Academia.edu' },
+    ],
+  },
+  {
+    id: 'infosoc-surveillance-realism',
+    discipline: 'information-sociology',
+    title: '監視リアリズム（Surveillance Realism）',
+    statement:
+      'スノーデン暴露後の大衆監視に対する市民の不安と諦念が併存する状態を概念化した枠組み。日常的デジタル技術への依存がデータ収集への抵抗を困難にし、監視の正常化が代替的想像力を制約する「監視のイデオロギー」として機能するとする。',
+    keyFigures: 'リナ・デンチク＆ジョナサン・ケーブル（2017 Surveillance Realism 概念提唱・International Journal of Communication）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ijoc.org/index.php/ijoc/article/view/5524', type: 'academic', label: 'Dencik & Cable (2017) The Advent of Surveillance Realism — International Journal of Communication' },
+      { url: 'https://eprints-gro.gold.ac.uk/id/eprint/37295/7/Krisis-2018-1-Dencik.pdf', type: 'academic', label: 'Dencik (2018) Surveillance Realism and the Politics of Imagination — Krisis' },
+      { url: 'https://orca.cardiff.ac.uk/id/eprint/97855/', type: 'academic', label: 'The Advent of Surveillance Realism — Cardiff University ORCA' },
+    ],
+  },
+  {
+    id: 'human-autobiographical-memory',
+    discipline: 'human-science',
+    title: '自伝的記憶（Autobiographical Memory）',
+    statement:
+      '自己に関する個人的経験の記憶であり、コンウェイ＆プレイデル＝ピアース（2000）の自己記憶システム（SMS）モデルでは、自伝的知識ベースと作業自己の相互作用により構成される一過性の精神的構築物として定式化された。生涯時期・一般的出来事・出来事固有知識の三層構造を持つ。',
+    keyFigures: 'マーティン・コンウェイ＆クリストファー・プレイデル＝ピアース（2000 自己記憶システムモデル — Psychological Review）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/12528554_The_Construction_of_Autobiographical_Memories_in_the_Self-Memory_System', type: 'academic', label: 'Conway & Pleydell-Pearce (2000) The Construction of Autobiographical Memories in the Self-Memory System — ResearchGate' },
+      { url: 'https://en.wikipedia.org/wiki/Autobiographical_memory', type: 'reference', label: 'Autobiographical Memory — Wikipedia' },
+      { url: 'https://www.semanticscholar.org/paper/The-construction-of-autobiographical-memories-in-Conway-Pleydell-Pearce/13241a844c714549c173e239714ae020386172e3', type: 'academic', label: 'Conway & Pleydell-Pearce (2000) — Semantic Scholar' },
+    ],
+  },
 ];
 // Stryker restore all
