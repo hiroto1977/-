@@ -30078,5 +30078,190 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/6847', type: 'academic', label: 'Information in the ecosystem: Against the "information ecosystem" — First Monday' },
     ],
   },
+  {
+    id: 'econ-overlapping-generations-model',
+    discipline: 'economics',
+    title: '世代重複モデル',
+    statement: '世代重複モデル（Overlapping Generations Model）は、異なる世代が同時に経済活動に参加するという現実を定式化した動学的一般均衡モデルであり、各期に生まれた経済主体が有限の生涯にわたって消費・貯蓄決定を行う構造を持つ。Samuelson（1958）はこのモデルの先駆的な定式化を行い、世代間の取引を仲介する制度（貨幣・社会保障など）が存在しない場合には市場均衡が非効率となりうることを示し、貨幣の正の価値を内生的に説明する枠組みを提供した。Diamond（1965）はSamuelsonの枠組みに資本蓄積を組み込み、競争均衡において過剰資本蓄積（動学的非効率性）が生じる可能性を示すとともに、公債が資本ストックをクラウディングアウトすることで厚生を改善しうる条件を明らかにした。同モデルは公的年金・財政赤字・世代間所得再分配・租税政策などの分析に広く応用されており、現代マクロ経済学・財政学における基礎的枠組みとして確立されている。Tirole（1985）はこの枠組みを拡張して投機的バブルの発生条件を分析し、OLG構造が資産価格の非基本価値的な評価を支えうることを示した。',
+    keyFigures: 'Paul A. Samuelson ／ Peter A. Diamond ／ Jean Tirole',
+    asOf: '2026-06',
+    sources: [
+      {
+        url: 'https://doi.org/10.1086/258100',
+        type: 'academic',
+        label: 'Samuelson, P. A. (1958). An Exact Consumption-Loan Model of Interest with or without the Social Contrivance of Money. Journal of Political Economy, 66(6), 467–482.',
+      },
+      {
+        url: 'https://www.jstor.org/stable/1809231',
+        type: 'academic',
+        label: 'Diamond, P. A. (1965). National Debt in a Neoclassical Growth Model. American Economic Review, 55(5), 1126–1150.',
+      },
+      {
+        url: 'https://doi.org/10.2307/1913232',
+        type: 'academic',
+        label: 'Tirole, J. (1985). Asset Bubbles and Overlapping Generations. Econometrica, 53(5), 1071–1100.',
+      },
+      {
+        url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_1065',
+        type: 'reference',
+        label: 'Geanakoplos, J. (2008). Overlapping Generations Models of General Equilibrium. The New Palgrave Dictionary of Economics (2nd ed.).',
+      },
+    ],
+  },
+  {
+    id: 'human-gate-control-theory',
+    discipline: 'human-science',
+    title: 'ゲートコントロール理論',
+    statement: 'Melzack and Wall（1965）は、痛みの知覚が末梢から中枢へ単純に伝達されるものではなく、脊髄後角において「ゲート」機構によって調節されるという革新的な理論を提唱した。このゲートは、脊髄後角の膠様質（substantia gelatinosa）に存在する抑制性介在ニューロンを介して機能し、太い有髄線維（Aβ線維）の活動がゲートを「閉じ」て痛み信号の上行伝達を抑制する一方、細い無髄線維（C線維・Aδ線維）の活動がゲートを「開き」て痛みの伝達を促進する。また、脳からの下行性制御もゲートの開閉に影響を与え、心理的・感情的要因が痛みの知覚を修飾することが示された。この理論は、痛みを単なる感覚ではなく神経系の動的な統合過程として捉え直し、慢性疼痛管理における経皮的電気神経刺激（TENS）や鍼治療など非薬物療法の理論的基盤となった。Melzackはさらに1999年にニューロマトリックス理論へと発展させ、脳の広域神経ネットワークが痛みを生成するという概念を提示した。',
+    keyFigures: 'Ronald Melzack ／ Patrick D. Wall',
+    asOf: '2026-06',
+    sources: [
+      {
+        url: 'https://www.science.org/doi/10.1126/science.150.3699.971',
+        type: 'academic',
+        label: 'Melzack & Wall (1965) Pain mechanisms: A new theory. Science, 150(3699), 971–979.',
+      },
+      {
+        url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304395999001451',
+        type: 'academic',
+        label: 'Melzack (1999) From the gate to the neuromatrix. Pain, Suppl. 6, S121–S126.',
+      },
+      {
+        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4009371/',
+        type: 'academic',
+        label: 'Mendell (2014) Constructing and Deconstructing the Gate Theory of Pain. Pain, 155(2), 210–216.',
+      },
+      {
+        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4676495/',
+        type: 'academic',
+        label: 'Moayedi & Davis (2013) The golden anniversary of Melzack and Wall\'s gate control theory. Pain Research & Management, 18(6), 307–308.',
+      },
+      {
+        url: 'https://www.iasp-pain.org/publications/pain-research-forum/papers-of-the-week/paper/5984-pain-mechanisms-new-theory/',
+        type: 'reference',
+        label: 'IASP — Pain mechanisms: a new theory（ゲートコントロール理論 紹介ページ）',
+      },
+    ],
+  },
+  {
+    id: 'bizlaw-parol-evidence-rule',
+    discipline: 'business-law',
+    title: '口頭証拠排除法則',
+    statement: '口頭証拠排除法則（Parol Evidence Rule）とは、書面契約が当事者の最終的な合意を表すものとして意図された場合、その契約条件を否定・変更する事前または同時期の口頭合意は証拠として排除されるという原則である。Willistonは書面の外観から統合性を判断できるとする形式主義的アプローチを採ったのに対し、Corbinは当事者の実際の意思を探求すべきとする柔軟なアプローチを提唱し、後者はRestatement（Second）of Contracts（§§ 209–217）にも反映されている。例外として、契約条件の曖昧性の解消、詐欺・強迫・錯誤による無効主張、独立した約因に基づく付随的合意（collateral agreement）、および契約後の修正合意がある。UCC § 2-202は物品売買契約において同法則を成文化しており、最終書面と矛盾しない限り、取引慣行・取引経過・履行経過による補足・解釈を許容し、完全統合合意でない限り一貫した追加条件（consistent additional terms）の立証も認める。Posnerはこの法則を経済分析の観点から検討し、情報の非対称性や契約費用を踏まえた「硬い」適用と「軟らかい」適用の類型化を提示した。',
+    keyFigures: 'Arthur L. Corbin ／ Samuel Williston ／ Eric A. Posner',
+    asOf: '2026-06',
+    sources: [
+      {
+        url: 'https://scholarship.law.upenn.edu/penn_law_review/vol146/iss2/3/',
+        type: 'academic',
+        label: 'Posner, E.A. "Parol Evidence Rule, the Plain Meaning Rule, and the Principles of Contractual Interpretation," 146 U. Pa. L. Rev. 533 (1998)',
+      },
+      {
+        url: 'https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=2290&context=dlj',
+        type: 'academic',
+        label: 'Kniffin, M.N. "The Consumer and the Parol Evidence Rule: Section 2-202 of the Uniform Commercial Code," Duke Law Journal (1975)',
+      },
+      {
+        url: 'https://www.law.cornell.edu/ucc/2/2-202',
+        type: 'government',
+        label: 'UCC § 2-202 — Final Written Expression: Parol or Extrinsic Evidence (LII / Cornell Law School)',
+      },
+      {
+        url: 'https://www.law.cornell.edu/wex/parol_evidence_rule',
+        type: 'reference',
+        label: 'Parol Evidence Rule — Wex Legal Dictionary (Cornell Law School LII)',
+      },
+      {
+        url: 'https://en.wikipedia.org/wiki/Parol_evidence_rule',
+        type: 'reference',
+        label: 'Parol Evidence Rule — Wikipedia (overview of common law and UCC treatment)',
+      },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-choice-theory',
+    discipline: 'management',
+    title: '戦略的選択理論',
+    statement: 'Child（1972）は、組織構造・環境・業績の関係を論じた論文において、コンティンジェンシー理論が組織設計を環境や技術などの外部条件によって受動的に決定されるものとして捉える点を批判し、「戦略的選択」の視点を提唱した。この理論の核心は、組織内の支配的連合（dominant coalition）と呼ばれる権力保持者集団が、環境の解釈・構造設計・パフォーマンス基準の選択において意図的かつ政治的な判断を行うという点にある。すなわち、組織構造は環境に一義的に規定されるのではなく、トップマネジメントの意思決定と価値判断を介して形成されるとされる。この視点はCyert & March（1963）の行動理論における連合概念を組織構造論に組み込んだものであり、経営者の能動的エージェンシーを組織分析の中心に据えた点で画期的であった。Child（1997）は後にこの視点を再検討し、行為・構造・環境の相互作用を統合する枠組みとして戦略的選択論の現代的意義を再確認している。',
+    keyFigures: 'John Child ／ Richard M. Cyert ／ James G. March ／ Alfred D. Chandler Jr. ／ Tom Burns ／ George M. Stalker',
+    asOf: '2026-06',
+    sources: [
+      {
+        url: 'https://doi.org/10.1177/003803857200600101',
+        type: 'academic',
+        label: 'Child, J. (1972). Organizational Structure, Environment and Performance: The Role of Strategic Choice. Sociology, 6(1), 2–22.',
+      },
+      {
+        url: 'https://doi.org/10.1177/017084069701800104',
+        type: 'academic',
+        label: 'Child, J. (1997). Strategic Choice in the Analysis of Action, Structure, Organizations and Environment: Retrospect and Prospect. Organization Studies, 18(1), 43–76.',
+      },
+      {
+        url: 'https://www.semanticscholar.org/paper/Organizational-Structure,-Environment-and-The-Role-Child/cd0ee7e614f8f4a1c40ea1de4485e2aea6e2b9cb',
+        type: 'reference',
+        label: 'Semantic Scholar — Child (1972) paper record with citation data',
+      },
+      {
+        url: 'https://grokipedia.com/page/strategic_choice_theory',
+        type: 'reference',
+        label: 'Grokipedia: Strategic Choice Theory — overview of core concepts and key scholars',
+      },
+      {
+        url: 'https://www.elgaronline.com/edcollchap/book/9781035308767/ch40.xml',
+        type: 'academic',
+        label: 'Elgar Online: Strategic Choice Theory — chapter in A Guide to Key Theories for Human Resource Management Research',
+      },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-ambivalence-theory',
+    discipline: 'management',
+    title: '組織的アンビバレンス理論',
+    statement: 'Mertonは社会学的アンビバレンスの概念において、個人が同一の対象に対して矛盾する規範・感情・志向性を同時に抱えることを理論化し、この概念は後に組織研究へ広く応用された。組織的アンビバレンス理論は、組織成員がコミットメントと離脱衝動、協力と競争、服従と抵抗といった相反する志向性を同時に経験する現象を体系的に説明し、その先行要因と組織行動への影響を解明しようとするものである。PrattとAshforthは組織アイデンティフィケーションの文脈においてアンビバレンスを検討し、個人が組織帰属に対して複雑かつ矛盾した感情的・認知的反応を示すメカニズムを明らかにした。Rothmanの研究は、感情的アンビバレンスが創造性・批判的思考を促進する一方で、意思決定の遅延や組織コミットメントの低下をもたらしうるという二面的機能を実証的に示した。このアンビバレンスは役割葛藤、組織変革、職業的アイデンティティ、倫理的意思決定など多様な組織文脈において観察され、組織行動の複雑なダイナミクスを理解する上で不可欠な理論枠組みを提供している。',
+    keyFigures: 'Robert K. Merton ／ Naomi B. Rothman ／ Michael G. Pratt ／ Blake E. Ashforth',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.2014.0909', type: 'academic', label: 'Ashforth, Rogers, Pratt & Pradies (2014) "Ambivalence in Organizations: A Multilevel Approach" — Organization Science, 25(5)' },
+      { url: 'https://doi.org/10.5465/amj.2010.0561', type: 'academic', label: 'Rothman (2011) "Steering Sheep and Herding Cats: The Role of Emotional Ambivalence in Employee Creativity" — Academy of Management Journal' },
+      { url: 'https://doi.org/10.5465/amr.2014.0355', type: 'academic', label: 'Rothman & Melwani (2017) "Feeling Mixed, Ambivalent, and In Flux: The Social Functions of Emotional Complexity for Leaders" — Academy of Management Review' },
+      { url: 'https://www.worldcat.org/oclc/1672010', type: 'reference', label: 'Merton, R.K. (1976) Sociological Ambivalence and Other Essays — Free Press, New York' },
+      { url: 'https://en.wikipedia.org/wiki/Ambivalence', type: 'reference', label: 'Wikipedia: Ambivalence — sociological ambivalence concept and background' },
+    ],
+  },
+  {
+    id: 'infosoc-technostress-theory',
+    discipline: 'information-sociology',
+    title: 'テクノストレス理論',
+    statement: 'Brod（1984）は著書 "Technostress: The Human Cost of the Computer Revolution" において、テクノストレスを「新しいコンピュータ技術への適応不能から生じる現代的な適応障害」と定義し、この概念を初めて学術的に提唱した。Ragu-Nathanら（2008）はその後、情報通信技術（ICT）利用者が経験するストレスを生み出す五つの「テクノストレス要因（technostress creators）」として、テクノ過負荷（techno-overload）・テクノ侵食（techno-invasion）・テクノ複雑性（techno-complexity）・テクノ不安（techno-insecurity）・テクノ不確実性（techno-uncertainty）を概念化・実証した。テクノ過負荷とはICTがより多くかつ速い作業を強いる状況、テクノ侵食とは仕事と私生活の境界がICTによって侵害される状況、テクノ複雑性とは技術習得に対する自己効力感の低下、テクノ不安とは技術に長けた者への職の置き換えへの恐れ、テクノ不確実性とは絶え間ないシステム更新がもたらす不安定感をそれぞれ指す。Tarafdarら（2007）はこれらの要因が役割ストレスの増大と個人生産性の低下を招くことを構造方程式モデリングにより実証し、IS（情報システム）研究における個人レベルの技術利用の負の側面を体系的に扱う基礎理論として位置づけた。テクノストレス理論はその後、ウェルビーイング、組織コミットメント、および技術受容研究と接続されながら急速に発展し、デジタル化が進む現代の組織行動・労働環境研究において中心的な分析枠組みとなっている。',
+    keyFigures: 'Craig Brod ／ Monideepa Tarafdar ／ T. S. Ragu-Nathan ／ Bhanu S. Ragu-Nathan ／ Qiang Tu',
+    asOf: '2026-06',
+    sources: [
+      {
+        url: 'https://dl.acm.org/doi/10.2753/MIS0742-1222240109',
+        type: 'academic',
+        label: 'Tarafdar et al. (2007) — The Impact of Technostress on Role Stress and Productivity, Journal of Management Information Systems, 24(1), 301-328',
+      },
+      {
+        url: 'https://pubsonline.informs.org/doi/10.1287/isre.1070.0165',
+        type: 'academic',
+        label: 'Ragu-Nathan et al. (2008) — The Consequences of Technostress for End Users in Organizations, Information Systems Research, 19(4), 417-433',
+      },
+      {
+        url: 'https://archive.org/details/technostresshuma0000brod',
+        type: 'reference',
+        label: 'Brod, Craig (1984) — Technostress: The Human Cost of the Computer Revolution, Addison-Wesley',
+      },
+      {
+        url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/isj.12042',
+        type: 'academic',
+        label: 'Tarafdar et al. (2015) — Technostress: Negative Effect on Performance and Possible Mitigations, Information Systems Journal, 25(2)',
+      },
+      {
+        url: 'https://en.wikipedia.org/wiki/Technostress',
+        type: 'reference',
+        label: 'Technostress — Wikipedia (概念の概観と文献案内)',
+      },
+    ],
+  },
 ];
 // Stryker restore all
