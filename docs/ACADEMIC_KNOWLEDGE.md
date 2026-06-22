@@ -2051,5 +2051,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 戦略的人的資本理論 | VRIOフレームワーク適用・専有可能性ジレンマ・人的資本創発モデル（Coff / Ployhart & Moliterno / Wright） |
 | 経営学 | 組織における認知マッピング理論 | 意思決定者の信念体系を有向グラフで視覚化・SODA手法（Axelrod / Eden / Huff） |
 | 情報社会学 | デジタル表現型理論 | スマートフォンセンサーデータによる行動・精神的健康状態推定（Torous / Onnela / Barnett） |
+| 経済学 | ラッファー曲線理論 | 税率と税収の逆U字型関係・最適税率推計とサプライサイド経済学（Laffer / Trabandt & Uhlig / Diamond & Saez） |
+| 人間科学 | 現象学的心理学 | 生きられた経験の記述的・解釈学的探究方法（Husserl / Giorgi / van Manen / Moustakas） |
+| 商法 | スタンドスティル契約 | M&A交渉における敵対的行動禁止条項とDon't ask, don't waive（Coates / Subramanian / Gilson） |
+| 経営学 | 戦略的柔軟性理論 | 環境変化への迅速適応能力・三層柔軟性フレームワーク（Sanchez / Volberda / Shimizu & Hitt） |
+| 経営学 | 組織神経科学 | fMRI・EEG等の神経科学手法による組織行動解明（Becker & Cropanzano / Senior & Lee / Camerer） |
+| 情報社会学 | プラットフォーム協同組合主義理論 | 労働者所有デジタルプラットフォームによるプラットフォーム資本主義代替（Scholz / Schneider / Bauwens / Srnicek） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
