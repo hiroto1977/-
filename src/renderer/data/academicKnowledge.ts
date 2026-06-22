@@ -25000,5 +25000,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2654237/', type: 'academic', label: 'Mundy et al. (2007) Individual Differences and the Development of Joint Attention — PMC' },
     ],
   },
+  {
+    id: 'econ-endogenous-money',
+    discipline: 'economics',
+    title: '内生的貨幣供給理論（Endogenous Money Theory）',
+    statement:
+      '内生的貨幣供給理論（Endogenous Money Theory）とは、貨幣供給量が中央銀行による外生的操作ではなく、実体経済の信用需要に応じて銀行の貸出行為を通じて内生的に決定されるとするポスト・ケインズ派の貨幣理論である。バジル・ムーア（Basil Moore）が1970〜80年代に水平主義（Horizontalism）として体系化した。' +
+      '銀行が融資を実行すると借手の口座に新たな預金が創出され、貨幣供給が内生的に拡張する。「融資が預金を創出し、預金が準備を創出する」という因果連鎖は、教科書的な貨幣乗数モデル（預金→準備→融資）を逆転させる。中央銀行はオーバーナイト金利を設定できるのみであり、準備需要を受動的に充足する。水平主義（貸出供給曲線が水平）と構造主義（銀行の流動性選好による上方傾斜）の二学派間の論争が展開されている。',
+    keyFigures: 'バジル・ムーア（1988 Horizontalists and Verticalists）／ニコラス・カルドア（内生的貨幣の先駆的主張）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Endogenous_money', type: 'reference', label: 'Wikipedia: Endogenous Money' },
+      { url: 'https://www.levyinstitute.org/pubs/wp_512.pdf', type: 'academic', label: 'Fontana (2007) Endogenous Money: Structuralist and Horizontalist — Levy Institute WP 512' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S2212567113002177/pdf', type: 'academic', label: 'Post Keynesian Endogeneity of Money Supply — Procedia Economics and Finance (ScienceDirect)' },
+    ],
+  },
+  {
+    id: 'human-object-permanence',
+    discipline: 'human-science',
+    title: '対象の永続性（Object Permanence）',
+    statement:
+      '対象の永続性（Object Permanence）とは、物体が視界から消えても存在し続けるという認知的理解を指す。ジャン・ピアジェ（Jean Piaget）が感覚運動期（出生〜約2歳）の主要な認知的達成として概念化した。' +
+      'ピアジェはA-not-Bエラーを対象の永続性の不完全な獲得の証拠として報告した。乳児が対象を繰り返し場所Aで発見した後、対象が場所Bに移されるのを見ても依然として場所Aを探索するという持続性エラーである。生後10か月以下の乳児にこのエラーが典型的に観察される。ピアジェはこのエラーを未成熟な認知スキーマに帰し、乳児の対象理解がいまだ独立した心的表象ではなく自身の先行行為に結びついていることを示唆するとした。しかし近年の研究は視線計測法等により、より早期の対象永続性の萌芽を示唆している。',
+    keyFigures: 'ジャン・ピアジェ（感覚運動期理論・A-not-Bエラーの報告）／ルネ・バイヤジョン（1987 早期対象永続性の違反期待法）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Object_permanence', type: 'reference', label: 'Wikipedia: Object Permanence' },
+      { url: 'https://www.simplypsychology.org/object-permanence.html', type: 'reference', label: 'Object Permanence — Simply Psychology' },
+      { url: 'https://en.wikipedia.org/wiki/A-not-B_error', type: 'reference', label: 'Wikipedia: A-not-B Error' },
+    ],
+  },
+  {
+    id: 'bizlaw-stabilization-clause',
+    discipline: 'business-law',
+    title: '安定化条項（Stabilization Clause）',
+    statement:
+      '安定化条項（Stabilization Clause）とは、国際投資契約（特に天然資源分野のコンセッション契約・生産分与契約）において、投資先国政府が契約締結後に法律・規制を変更して投資家の利益を不利に変更することを制限または補償する保護条項である。' +
+      '主要な類型として、凍結条項（freezing clause：契約締結時の法律を適用法として固定）、均衡条項（equilibrium clause：法変更による不利益を補償・調整）、およびハイブリッド条項がある。天然資源に対する恒久的主権の原則との根本的緊張関係が存在し、ホスト国の規制権限を制約しうることから人権・環境保護の観点で批判されている。途上国では鉱業・石油ガス分野の長期投資契約において頻繁に使用される。',
+    keyFigures: '天然資源に対する恒久的主権原則（1962 国連総会決議1803）との緊張関係／ICSID仲裁実務での解釈蓄積',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-319-97232-9_3', type: 'academic', label: 'The Implications of Stabilization Clauses on the Host State\'s Regulatory Power — Springer' },
+      { url: 'https://www.academia.edu/8776599/Stabilization_Clauses_In_International_Investment_Contracts', type: 'academic', label: 'Stabilization Clauses In International Investment Contracts — Academia.edu' },
+      { url: 'https://www.ashurst.com/en/insights/quickguide-international-investment-protection-mechanisms-and-dispute-resolution/', type: 'reference', label: 'Quickguide International Investment Protection — Ashurst' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-renewal',
+    discipline: 'management',
+    title: '戦略的刷新（Strategic Renewal）',
+    statement:
+      '戦略的刷新（Strategic Renewal）とは、組織の長期的展望に実質的影響を及ぼしうる属性の再生（refreshment）または置換（replacement）のプロセス・内容・成果を包括する概念である。ラジシュリー・アガーワル（Rajshree Agarwal）とコンスタンス・ヘルファット（Constance Helfat）が2009年にOrganization Scienceで「Strategic Renewal of Organizations」として体系化した。' +
+      '不連続的な戦略転換（strategic transformation）と漸進的刷新（incremental renewal）を区別し、コダックのデジタルカメラ対応等を事例として論じた。戦略的刷新はコンピテンスの定義（competence definition）・展開（deployment）・修正（modification）の三つのサブプロセスからなり、各プロセスにおいてトップ・ミドル・現場管理者の役割が時間軸・情報要件・中核的価値観において異なる。ダイナミック・ケイパビリティが組織刷新の推進力として位置づけられる。',
+    keyFigures: 'ラジシュリー・アガーワル＆コンスタンス・ヘルファット（2009 Organization Science）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://terpconnect.umd.edu/~rajshree/research/32%20Agarwal,%20Helfat%20-%202009.pdf', type: 'academic', label: 'Agarwal & Helfat (2009) Strategic Renewal of Organizations — UMD / Organization Science' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/ijmr.12117', type: 'academic', label: 'Schmitt et al. (2018) Strategic Renewal: Past Research, Theoretical Tensions — Intl J Management Reviews (Wiley)' },
+      { url: 'https://www.emerald.com/insight/content/doi/10.1108/cemj-01-2023-0003/full/html', type: 'academic', label: 'What Do We Talk About When We Talk About Strategic Renewal — Central European Management Journal (Emerald)' },
+    ],
+  },
+  {
+    id: 'infosoc-information-disorder',
+    discipline: 'information-sociology',
+    title: '情報障害（Information Disorder）',
+    statement:
+      '情報障害（Information Disorder）とは、偽情報・誤情報・悪意情報の三類型を包括的に分析するための学際的枠組みである。クレア・ワードル（Claire Wardle）とホセイン・デラクシャン（Hossein Derakhshan）が2017年に欧州評議会（Council of Europe）の報告書「Information Disorder: Toward an Interdisciplinary Framework for Research and Policymaking」として体系化した。' +
+      '三類型は（1）誤情報（misinformation）：虚偽情報が害意なく共有される場合、（2）偽情報（disinformation）：虚偽情報が害意をもって意図的に共有される場合、（3）悪意情報（malinformation）：真正な情報が害意をもって共有される場合（リベンジポルノ・機密漏洩等）である。「フェイクニュース」という単純な用語では偽情報・情報汚染の多面的性質を捉えられないとの問題意識から提唱された。',
+    keyFigures: 'クレア・ワードル＆ホセイン・デラクシャン（2017 欧州評議会報告書）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.researchgate.net/publication/339031969_INFORMATION_DISORDER_Toward_an_interdisciplinary_framework_for_research_and_policy_making_Information_Disorder_Toward_an_interdisciplinary_framework_for_research_and_policymaking', type: 'academic', label: 'Wardle & Derakhshan (2017) Information Disorder — Council of Europe / ResearchGate' },
+      { url: 'https://www.profolus.com/topics/wardle-derakhshan-framework-of-information-disorder/', type: 'reference', label: 'Wardle-Derakhshan Framework of Information Disorder — Profolus' },
+      { url: 'https://www.konsyse.com/articles/misinformation-vs-disinformation-vs-malinformation/', type: 'reference', label: 'Misinformation vs Disinformation vs Malinformation — Konsyse' },
+    ],
+  },
+  {
+    id: 'human-deferred-imitation',
+    discipline: 'human-science',
+    title: '遅延模倣（Deferred Imitation）',
+    statement:
+      '遅延模倣（Deferred Imitation）とは、モデル行動の観察後に時間的遅延を経てその行動を再現する能力であり、行動の内的表象が記憶に符号化・保持されていることを示す。ジャン・ピアジェ（Jean Piaget）が1962年の『遊び・夢・模倣』で心的表象の発達の指標として概念化し、16〜24か月に出現すると理論化した。' +
+      'しかしアンドリュー・メルツォフ（Andrew Meltzoff）が1988年にDevelopmental Psychologyで、14か月齢の乳児が新奇行為を1週間の遅延後に記憶から模倣できることを実証し、ピアジェの年齢推定を大幅に下方修正した。その後の研究で11〜13か月齢の事象系列の保持、9か月齢の24時間遅延での遅延模倣、さらに6か月齢での遅延模倣も報告されており、ピアジェの想定より約1年早い時期に象徴的思考の萌芽が存在することが示された。',
+    keyFigures: 'ジャン・ピアジェ（1962 遅延模倣の概念化）／アンドリュー・メルツォフ（1988 14か月齢での実証）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4137879/', type: 'academic', label: 'Meltzoff (1988) Infant Imitation After a 1-Week Delay: Long-Term Memory for Novel Acts — PMC / Developmental Psychology' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/deferred-imitation', type: 'reference', label: 'Deferred Imitation — ScienceDirect Topics' },
+      { url: 'https://www.bps.org.uk/psychologist/deferred-imitation-children-and-apes', type: 'reference', label: 'Deferred Imitation in Children and Apes — British Psychological Society' },
+    ],
+  },
 ];
 // Stryker restore all
