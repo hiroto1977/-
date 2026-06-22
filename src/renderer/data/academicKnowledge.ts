@@ -27596,5 +27596,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://lthj.qut.edu.au/article/view/1386', type: 'academic', label: 'Gordon (2019) Review of Eubanks (2018) Automating Inequality, Law Technology and Humans 1(1):162-164' },
     ],
   },
+  {
+    id: 'econ-fiscal-multiplier-keynesian',
+    discipline: 'economics',
+    title: '財政乗数（ケインズ派）',
+    statement:
+      'Keynes（1936）の有効需要論を基礎とする財政乗数とは、政府支出の変化に対するGDPの変化の比率であり、乗数が1を超えるとき財政政策は経済を拡大させる。' +
+      'Blanchard & Leigh（2013）はユーロ圏の財政緊縮期における予測誤差を分析し、実際の乗数が政策立案者の想定を大幅に上回ることを示した。' +
+      'Ramey（2011）は既存研究を体系的に整理し、一時的な赤字ファイナンス型政府支出の乗数はおおむね0.8から1.5の範囲にあると結論付けた。' +
+      'Nakamura & Steinsson（2014）は米国州別の軍事調達データを用いて「開放経済相対乗数」を約1.5と推計し、金融政策の裁量が乗数の大きさを左右することを明らかにした。',
+    keyFigures: 'John Maynard Keynes／Olivier Blanchard／Daniel Leigh／Valerie Ramey／Emi Nakamura',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1257/aer.103.3.117', type: 'academic', label: 'Blanchard & Leigh (2013) Growth Forecast Errors and Fiscal Multipliers, AER 103(3):117-120' },
+      { url: 'https://doi.org/10.1257/jel.49.3.673', type: 'academic', label: 'Ramey (2011) Can Government Purchases Stimulate the Economy? JEL 49(3):673-685' },
+      { url: 'https://doi.org/10.1257/aer.104.3.753', type: 'academic', label: 'Nakamura & Steinsson (2014) Fiscal Stimulus in a Monetary Union, AER 104(3):753-792' },
+    ],
+  },
+  {
+    id: 'econ-elasticity-of-substitution-ces',
+    discipline: 'economics',
+    title: '代替の弾力性とCES生産関数',
+    statement:
+      'Hicks（1932）は著書 The Theory of Wages において、資本と労働の間の代替の弾力性（elasticity of substitution）の概念を導入し、要素比率が相対価格の変化にどの程度反応するかを一つの指標で表した。' +
+      'Arrow・Chenery・Minhas・Solow（1961）はこの概念を発展させ、代替の弾力性が定数値σをとる定常代替弾力性（CES）生産関数を定式化した。' +
+      'CES関数はコブ＝ダグラス関数（σ=1）やレオンティエフ関数（σ=0）を特殊ケースとして包含し、実証的にも広く応用されてきた。' +
+      'この枠組みは以後の成長理論・貿易理論・一般均衡分析において標準的な生産技術の記述として定着している。',
+    keyFigures: 'Kenneth J. Arrow／Hollis B. Chenery／Bagicha S. Minhas／Robert M. Solow／John R. Hicks',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency, Review of Economics and Statistics 43(3):225-250' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1', type: 'reference', label: 'Elasticity of Substitution — The New Palgrave Dictionary of Economics (Springer)' },
+      { url: 'https://www.nber.org/system/files/chapters/c1477/c1477.pdf', type: 'academic', label: 'NBER chapter: Recent Empirical Studies of the CES and Related Production Functions' },
+    ],
+  },
+  {
+    id: 'human-social-identity-threat',
+    discipline: 'human-science',
+    title: '社会的アイデンティティ脅威',
+    statement:
+      '社会的アイデンティティ脅威とは、個人が所属する集団に基づく自己概念が否定的評価や偏見によって損なわれる知覚的状態を指す。' +
+      'Steele & Aronson（1995）は、ステレオタイプ脅威として、否定的な集団ステレオタイプが確認されるという懸念がパフォーマンスの低下をもたらすことを実証した。' +
+      'Branscombe et al.（1999）の拒絶—同一化モデルは、外集団からの拒絶が内集団への同一化を強化し、自己尊重感を保護することを示した。' +
+      'Ellemers et al.（2002）は、自己と社会的アイデンティティの関係を包括的に整理し、集団成員性の脅威が認知・感情・行動に広範な影響を及ぼすことを論じた。',
+    keyFigures: 'Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russell Spears',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.69.5.797', type: 'academic', label: 'Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811' },
+      { url: 'https://doi.org/10.1177/0146167299025006006', type: 'academic', label: 'Branscombe et al. (1999) The context and content of social identity threat, PSPB 25(6):723-739' },
+      { url: 'https://doi.org/10.1146/annurev.psych.53.100901.135228', type: 'academic', label: 'Ellemers, Spears & Doosje (2002) Self and social identity, Annual Review of Psychology 53:161-186' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-ambidexterity-context',
+    discipline: 'management',
+    title: '文脈的両利き経営',
+    statement:
+      'Gibson & Birkinshaw（2004）は、探索（exploration）と活用（exploitation）の両立を組織構造の分離によらず、個人の行動的文脈（behavioral context）を通じて実現する「文脈的両利き性」を提唱した。' +
+      'この概念は、二重組織構造によって両利き性を達成するTushman & O\'Reillyの構造的両利き性とは対照的に、一元的な組織の中で個人が自律的に両利き的行動をとれる文脈を整備することに焦点を当てる。' +
+      'Raisch & Birkinshaw（2008）はOrganization Scienceにおけるレビューでこの議論を体系化し、文脈的アプローチと構造的アプローチの統合的理解を示した。',
+    keyFigures: 'Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O\'Reilly III／Sebastian Raisch',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson & Birkinshaw (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity, AMJ 47(2):209-226' },
+      { url: 'https://doi.org/10.1287/orsc.1070.0357', type: 'academic', label: 'Raisch & Birkinshaw (2008) Organizational ambidexterity review, Organization Science 19(3):375-392' },
+      { url: 'https://doi.org/10.2307/41165987', type: 'academic', label: 'Tushman & O\'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29' },
+    ],
+  },
+  {
+    id: 'bizlaw-fraudulent-transfer-avoidance',
+    discipline: 'business-law',
+    title: '詐害行為取消権（詐欺的譲渡回避）',
+    statement:
+      '詐欺的譲渡回避（詐害行為取消権）とは、債務者が債権者を害する目的で財産を移転した場合に当該移転を取り消す権利を債権者に付与する法的原則であり、主観的詐害意図を要件とする「実際的詐欺（actual fraud）」と、支払不能状態にある債務者が不相当な対価で財産を移転した場合に意図の証明を不要とする「擬制的詐欺（constructive fraud）」の二類型から構成される。' +
+      'Baird & Jackson（1985）は本法理の固有の領域を分析し、両類型の機能的差異を整理するとともに、擬制的詐欺が債権者を債務者の機会主義的行動から保護する独自の規範的役割を担うことを論じた。' +
+      '統一詐欺的移転法（UFTA・現UVTA）および連邦破産法第548条はこの二類型を明文化しており、Carlson（2003）はその解釈論を精緻化し、Reilly（2005）は取消権の射程と政策的正当化について批判的検討を加えた。',
+    keyFigures: 'Douglas G. Baird／Thomas H. Jackson／David Gray Carlson／Marie T. Reilly／Emily Sherwin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://heinonline.org/HOL/Page?handle=hein.journals/vanlr38&id=829', type: 'academic', label: 'Baird & Jackson (1985) Fraudulent Conveyance Law and Its Proper Domain, 38 Vand. L. Rev. 829' },
+      { url: 'https://www.uniformlaws.org/committees/community-home?CommunityKey=2e70ab8d-afe2-4428-9f14-3d9e6cc6e1a2', type: 'reference', label: 'Uniform Voidable Transactions Act (UVTA) — Uniform Law Commission' },
+      { url: 'https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title11-section548&num=0&edition=prelim', type: 'government', label: '11 U.S.C. § 548 — Fraudulent Transfers and Obligations, Bankruptcy Code' },
+    ],
+  },
+  {
+    id: 'infosoc-epistemic-bubbles-echo-chambers',
+    discipline: 'information-sociology',
+    title: '認識論的バブルとエコーチェンバー',
+    statement:
+      'Nguyen（2020）は、認識論的バブルとエコーチェンバーを概念的に区別した。' +
+      '認識論的バブルとは、アルゴリズムや個人の選好によって反証情報が受動的に除外される情報フィルタリング構造であり、Pariser（2011）が提唱した「フィルターバブル」と密接に関連する。' +
+      '一方、エコーチェンバーは単なる情報の欠落にとどまらず、外部の情報源や視点を信頼できないものとして能動的に排除する認識論的閉鎖構造であり、Jamieson & Cappella（2008）はその典型例として保守系メディアのエコシステムを分析した。' +
+      'Sunstein（2017）はこれらの現象がデジタルメディア環境において意見の極端化（ポラリゼーション）を加速させると論じ、民主主義的熟議への深刻な脅威として警告した。',
+    keyFigures: 'C. Thi Nguyen／Cass R. Sunstein／Eli Pariser／Kathleen Hall Jamieson／Joseph Cappella',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1017/epi.2019.21', type: 'academic', label: 'Nguyen (2020) Echo Chambers and Epistemic Bubbles, Episteme 17(2):141-161' },
+      { url: 'https://doi.org/10.2307/j.ctv4nczgf', type: 'academic', label: 'Sunstein (2017) #Republic: Divided Democracy in the Age of Social Media, Princeton UP' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780195398601.001.0001', type: 'academic', label: 'Jamieson & Cappella (2008) Echo Chamber: Rush Limbaugh and the Conservative Media Establishment, Oxford UP' },
+    ],
+  },
 ];
 // Stryker restore all
