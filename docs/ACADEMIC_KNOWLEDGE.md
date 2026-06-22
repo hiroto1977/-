@@ -2171,5 +2171,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 総合的品質管理（TQM） | PDCA・14原則・Zero Defectsに基づく継続的品質改善（Deming / Juran / Crosby） |
 | 経営学 | サーバント・リーダーシップ | 奉仕者としてのリーダーが従業員成長を支援する哲学（Greenleaf / Spears / van Dierendonck） |
 | 情報社会学 | イノベーション普及理論（デジタル拡張） | 採用者5類型とS字曲線のデジタル時代加速（Rogers / Moore / Bass） |
+| 経済学 | ホットハンド錯誤 | 連続成功は偶然水準を超えないという実証と選択バイアス再評価（Gilovich / Vallone / Tversky） |
+| 人間科学 | 学習性無力感 | 制御不能な嫌悪刺激による行動抑制学習とうつ病認知モデル（Seligman / Maier） |
+| 経営法学 | 懈怠の抗弁（ラッチズ） | 権利行使の不合理な遅延による衡平法上の救済遮断（Bray / Pomeroy / Dobbs） |
+| 経営学 | ミンツバーグの組織構造5類型 | 5基本部分と調整メカニズムによる組織形態分類（Mintzberg / Miller / Pugh） |
+| 経営学 | 知識経営とSECIモデル | 暗黙知・形式知の相互変換による知識スパイラル（Nonaka / Takeuchi） |
+| 情報社会学 | フレーミング理論（メディア・政治コミュニケーション） | 現実の選択的強調による問題定義・原因解釈の促進（Entman / Goffman / Iyengar） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
