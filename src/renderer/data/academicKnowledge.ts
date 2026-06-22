@@ -24640,5 +24640,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://papers.ssrn.com/sol3/Delivery.cfm/f70e358e-7fb1-4777-8099-f6e0cbe291a0-MECA.pdf?abstractid=5162999&mirid=1', type: 'academic', label: 'Dang et al. (2025) Campbell and Cochrane Habit Formation Model with Liquidity Risk — SSRN' },
     ],
   },
+  {
+    id: 'econ-j-curve-effect',
+    discipline: 'economics',
+    title: 'Jカーブ効果（J-Curve Effect）',
+    statement:
+      'Jカーブ効果（J-Curve Effect）とは、通貨切り下げ・減価後に貿易収支が短期的にはむしろ悪化し、その後時間経過とともに改善に転じるという経路がアルファベットのJの字に類似する現象を指す。スティーブン・マギー（Stephen Magee）が1973年にBrookings Papers on Economic Activityで「Currency Contracts, Pass-Through, and Devaluation」として体系的に実証した。' +
+      '減価直後は輸入価格が即座に上昇する一方、輸出入数量の調整には時間的ラグがあるため、価格効果が数量効果を支配して貿易収支が悪化する。やがて消費者・企業が購買行動を調整し輸出量が増加すると、数量効果が価格効果を上回り貿易収支は改善に向かう。マーシャル＝ラーナー条件（輸出入需要の価格弾力性の合計＞1）が長期的に満たされることが改善の前提条件となる。',
+    keyFigures: 'スティーブン・マギー（1973 Brookings Papers on Economic Activity）／マーシャル＝ラーナー条件との理論的連関',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/0003684042000201794', type: 'academic', label: 'Bahmani-Oskooee & Ratha (2004) The J-Curve: A Literature Review — Applied Economics (Taylor & Francis)' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/j-curve', type: 'reference', label: 'Encyclopedia.com: J-Curve' },
+      { url: 'https://www.economicshelp.org/blog/143448/economics/j-curve-effect/', type: 'reference', label: 'J-Curve Effect — Economics Help' },
+    ],
+  },
+  {
+    id: 'human-own-race-bias',
+    discipline: 'human-science',
+    title: '自人種バイアス（Own-Race Bias / Cross-Race Effect）',
+    statement:
+      '自人種バイアス（Own-Race Bias / Cross-Race Effect / Other-Race Effect）とは、自人種の顔が他人種の顔に比べてより正確に認識・記憶される頑健な認知現象を指す。クリスチャン・マイスナー（Christian Meissner）とジョン・ブリガム（John Brigham）が2001年にPsychology, Public Policy, and Lawでメタ分析レビューを発表し、30年間の研究を体系的に統合した。' +
+      '知覚的専門性仮説（perceptual expertise account）が主要な説明理論であり、日常的に自人種の顔に接触する頻度が高いために自人種の顔に対してより豊かで分化した認知表象が形成され、処理の専門性が向上すると説明する。目撃者記憶の正確性に重大な影響を及ぼすため、法心理学・司法手続きにおいて実務的重要性が認識されている。生後9か月前後の知覚的狭窄化との発達的連関も示されている。',
+    keyFigures: 'クリスチャン・マイスナー＆ジョン・ブリガム（2001 メタ分析レビュー）／マルコン他（異人種効果の実験研究）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarworks.utep.edu/cgi/viewcontent.cgi?article=1004&context=christian_meissner', type: 'academic', label: 'Meissner & Brigham (2001) Thirty Years of Investigating the Own-Race Bias — UTEP ScholarWorks' },
+      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.00208/full', type: 'academic', label: 'Estudillo et al. (2020) The Own-Race Bias for Face Recognition in a Multiracial Society — Frontiers in Psychology' },
+      { url: 'https://www.nature.com/articles/s41598-021-87933-1', type: 'academic', label: 'Other-Race Effect and Holistic Processing Across Racial Groups — Scientific Reports (Nature)' },
+    ],
+  },
+  {
+    id: 'bizlaw-hardship-clause',
+    discipline: 'business-law',
+    title: 'ハードシップ条項（Hardship Clause）',
+    statement:
+      'ハードシップ条項（Hardship Clause）とは、契約締結後の予見不能な事情変更により一方当事者の履行が著しく過重となった場合に、契約の再交渉・改訂・解除を認める契約条項である。ローマ法の「事情変更の原則」（clausula rebus sic stantibus）に淵源を持ち、教会法において不可予見かつ異常な事情変更が契約義務の判断に考慮された。' +
+      'UNIDROIT国際商事契約原則（1994年採択・2016年改訂）が国際商事規範として初めてハードシップ原則を独立的に承認し、契約の拘束力（pacta sunt servanda）の例外として定式化した。不可抗力（force majeure）が履行不能を扱うのに対し、ハードシップは履行可能だが均衡が著しく崩れた状況を対象とする点で区別される。1969年ウィーン条約法条約第62条も条約に関する根本的事情変更の原則を規定している。',
+    keyFigures: 'UNIDROIT（1994年国際商事契約原則でハードシップを独立承認）／ウィーン条約法条約第62条（1969）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Clausula_rebus_sic_stantibus', type: 'reference', label: 'Wikipedia: Clausula Rebus Sic Stantibus' },
+      { url: 'https://www.unidroit.org/english/publications/review/articles/2010-1-veneziano-e.pdf', type: 'academic', label: 'Veneziano (2010) UNIDROIT Principles and CISG: Change of Circumstances — UNIDROIT' },
+      { url: 'https://www.arnoldporter.com/-/media/files/perspectives/publications/2006/04/hardship-and-changed-circumstances-as-grounds-fo__/files/publication/fileattachment/hardship_excuse_article.pdf', type: 'academic', label: 'Hardship and Changed Circumstances as Grounds for Excuse — Arnold & Porter' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-flexibility',
+    discipline: 'management',
+    title: '戦略的柔軟性（Strategic Flexibility）',
+    statement:
+      '戦略的柔軟性（Strategic Flexibility）とは、外部環境の変化を認識し、非効果的な戦略的意思決定を逆転させ、資源を迅速に再配分して対応する組織的準備態勢を指す。清水勝彦（Katsuhiko Shimizu）とマイケル・ヒット（Michael Hitt）が2004年にStrategic Management Journalで「Strategic Flexibility: Organizational Preparedness to Reverse Ineffective Strategic Decisions」として体系化した。' +
+      '戦略的柔軟性は認知的側面（問題認識と方向転換の能力）と資源的側面（迅速な資源再配分能力）を含む。ダイナミック・ケイパビリティ理論と密接に関連し、吸収能力（absorptive capacity）・両利き経営（ambidexterity）・継続的変態（continuous morphing）の3つの動的能力がその基盤とされる。21世紀の組織における競争優位の源泉として広く認識されている。',
+    keyFigures: '清水勝彦＆マイケル・ヒット（2004 Strategic Management Journal）／ヒット他（1998 Academy of Management Executive）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/4166123', type: 'academic', label: 'Shimizu & Hitt (2004) Strategic Flexibility: Organizational Preparedness to Reverse Ineffective Strategic Decisions — JSTOR / Strategic Management Journal' },
+      { url: 'https://journals.aom.org/doi/10.5465/ame.1998.1333922', type: 'academic', label: 'Hitt, Keats & DeMarie (1998) Navigating in the New Competitive Landscape — Academy of Management Executive' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-81-322-1560-8_3', type: 'academic', label: 'Defining Strategic Flexibility — Springer' },
+    ],
+  },
+  {
+    id: 'infosoc-network-gatekeeping',
+    discipline: 'information-sociology',
+    title: 'ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）',
+    statement:
+      'ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）とは、デジタルネットワーク環境における情報統制を、ゲートキーパーの識別（identification）とゲートキーパーの顕著性（salience）の二要素から分析する理論枠組みである。カリーヌ・バルジライ＝ナホン（Karine Barzilai-Nahon）が2008年にJournal of the American Society for Information Science and Technologyで「Toward a Theory of Network Gatekeeping」として提唱した。' +
+      'ネットワーク・ゲートキーピングの識別は、ゲートキーパー・ゲートキーピング行為・ゲートキーピングメカニズムの語彙・命名基盤を構築し、顕著性はゲートキーパー間およびゲートキーパーとゲーテッド（ゲートキーピングプロセスの対象主体）との関係性を分析する。動的環境ではステークホルダーの利害・目的が絶えず変化し、ゲートキーピング役割とゲーテッド役割も流動的に交替する。情報の遮断・ネットワーク外への流出防止・ネットワーク内の情報交換の統制が目的に含まれる。',
+    keyFigures: 'カリーヌ・バルジライ＝ナホン（2008 JASIST論文）／レヴィン（1947 古典的ゲートキーピング概念の起源）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/asi.20857', type: 'academic', label: 'Barzilai-Nahon (2008) Toward a Theory of Network Gatekeeping — JASIST (Wiley)' },
+      { url: 'https://www.researchgate.net/publication/220432928_Toward_a_Theory_of_Network_Gatekeeping_A_Framework_for_Exploring_Information_Control', type: 'academic', label: 'Barzilai-Nahon (2008) Network Gatekeeping Framework — ResearchGate' },
+      { url: 'https://thecommspot.com/communication-basics/communication-theories/gatekeeping-theory/', type: 'reference', label: 'Gatekeeping Theory — The Comm Spot' },
+    ],
+  },
+  {
+    id: 'econ-overshooting-model',
+    discipline: 'economics',
+    title: 'ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）',
+    statement:
+      'ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）とは、金融政策の変更に対して為替レートが短期的に長期均衡値を超えて過剰反応（オーバーシュート）し、その後漸進的に長期均衡に収束するメカニズムを示した為替レート決定モデルである。ルディガー・ドーンブッシュ（Rudiger Dornbusch）が1976年にJournal of Political Economyで「Expectations and Exchange Rate Dynamics」として発表した。' +
+      '資産市場は瞬時に調整されるが財市場の価格と賃金は緩慢に調整されるという非対称的調整速度を核心的仮定とする。予期されない恒久的な貨幣供給量の増加が生じると、外国為替市場は短期的に過剰反応して新たな短期均衡に達し、時間とともに財価格が調整されることで為替市場は過剰反応を解消し全市場で新たな長期均衡に到達する。変動相場制下の為替レートの高いボラティリティを合理的期待のもとで説明した画期的貢献である。',
+    keyFigures: 'ルディガー・ドーンブッシュ（1976 Journal of Political Economy「Expectations and Exchange Rate Dynamics」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Overshooting_model', type: 'reference', label: 'Wikipedia: Overshooting Model' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0022199609000841', type: 'academic', label: 'Bjørnland (2009) Monetary Policy and Exchange Rate Overshooting: Dornbusch Was Right After All — J Intl Economics (ScienceDirect)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S002219962030060X', type: 'academic', label: 'Shifts in Monetary Policy and Exchange Rate Dynamics: Is Dornbusch\'s Overshooting Hypothesis Intact? — J Intl Economics (ScienceDirect)' },
+    ],
+  },
 ];
 // Stryker restore all
