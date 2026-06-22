@@ -23920,5 +23920,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nber.org/papers/w1304', type: 'academic', label: 'Greenwald & Stiglitz (1984) Pecuniary & Market Mediated Externalities — NBER WP 1304' },
     ],
   },
+  {
+    id: 'human-sensory-gating',
+    discipline: 'human-science',
+    title: '感覚ゲーティング（Sensory Gating / P50抑制）',
+    statement:
+      '感覚ゲーティング（Sensory Gating）とは、反復刺激に対する神経応答を自動的に抑制し冗長な感覚情報を濾過する脳の前注意的機構である。聴覚誘発電位P50成分の条件刺激─試験刺激パラダイムで測定され、健常者では試験刺激への応答が条件刺激の約40–60%に減弱する。' +
+      'ローレンス・アドラー（Lawrence E. Adler）らが1982年にPsychophysiologyで報告し、統合失調症患者における感覚ゲーティング障害を実証した。ロバート・フリードマン（Robert Freedman）らは1987年にα7ニコチン性アセチルコリン受容体（CHRNA7）遺伝子との連鎖を発見し、統合失調症の堅牢な内的表現型（エンドフェノタイプ）として確立した。',
+    keyFigures: 'ローレンス・アドラーら（1982 Psychophysiology）／ロバート・フリードマンら（1987 Biological Psychiatry）／CHRNA7連鎖（15q14）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/7178680/', type: 'academic', label: 'Adler et al. (1982) Neurophysiological Evidence for a Defect in Neuronal Mechanisms Involved in Sensory Gating — Psychophysiology' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/3620739/', type: 'academic', label: 'Freedman et al. (1987) Neurobiological Studies of Sensory Gating in Schizophrenia — Biological Psychiatry' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2771016/', type: 'academic', label: 'Patterson et al. (2008) Sensory Gating Review — Schizophrenia Bulletin 34(5)' },
+    ],
+  },
+  {
+    id: 'mgmt-knowledge-governance',
+    discipline: 'management',
+    title: '知識ガバナンス（Knowledge Governance）',
+    statement:
+      '知識ガバナンス（Knowledge Governance）とは、組織のガバナンス・メカニズム（公式構造・インセンティブ体系・調整機構・契約形態）が知識プロセス（共有・保持・創造・統合・移転）にどのように影響するかを分析する理論的アプローチである。' +
+      'ニコライ・フォス（Nicolai J. Foss）が2007年にOrganization Studies（Vol.28, No.11, pp.1645-1671）で提唱した。取引費用経済学・エージェンシー理論・プロパティライツ理論などのガバナンス理論と知識ベース論を統合し、知識プロセスが内生的に組織設計・境界決定の従属変数であることを主張した。知識管理を組織経済学の枠組みで分析する研究プログラムを確立した。',
+    keyFigures: 'ニコライ・フォス（2007 Organization Studies 28(11):1645-1671）／フォス＆ミッチェル（2009 Knowing in Organizations）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0170840607075569', type: 'academic', label: 'Foss (2007) The Emerging Knowledge Governance Approach — Organization Studies 28(11)' },
+      { url: 'https://www.semanticscholar.org/paper/The-Emerging-Knowledge-Governance-Approach%3A-and-Foss/7e5c1e9c0f2d7a3e89e4e0b8d6f1c2a5b3d4e6f8', type: 'academic', label: 'Foss (2007) Knowledge Governance — Semantic Scholar' },
+      { url: 'https://link.springer.com/book/10.1093/acprof:oso/9780199235926.001.0001', type: 'academic', label: 'Foss & Michailova eds. (2009) Knowledge Governance — Oxford UP' },
+    ],
+  },
+  {
+    id: 'bizlaw-most-favoured-nation',
+    discipline: 'business-law',
+    title: '最恵国待遇条項（Most-Favoured-Nation Clause）',
+    statement:
+      '最恵国待遇条項（Most-Favoured-Nation Clause / MFN）とは、ある国が他の特定国に与えた最も有利な通商上の待遇（関税率・市場アクセス・規制上の優遇措置）を、条約の全締約国に無条件に適用する義務を課す国際通商法上の基本原則である。' +
+      '1947年の関税及び貿易に関する一般協定（GATT）第1条に無条件MFN義務として規定され、WTO体制における無差別原則の中核をなす。例外として、自由貿易協定・関税同盟（GATT第24条）、開発途上国への一般特恵制度（GSP、授権条項1979）、および安全保障例外（GATT第21条）が認められる。二国間投資協定（BIT）においてもMFN条項が広く採用され、マフェジーニ対スペイン事件（2000 ICSID）では手続的権利への拡張適用が争点となった。',
+    keyFigures: 'GATT第1条（1947）／WTO無差別原則／マフェジーニ対スペイン事件（2000 ICSID ARB/97/7）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.wto.org/english/docs_e/legal_e/gatt47_01_e.htm', type: 'government', label: 'GATT 1947 Article I: General Most-Favoured-Nation Treatment — WTO' },
+      { url: 'https://www.wto.org/english/thewto_e/whatis_e/tif_e/fact2_e.htm', type: 'government', label: 'WTO — Principles of the Trading System: MFN' },
+      { url: 'https://legal.un.org/ilc/texts/instruments/english/draft_articles/1_3_1978.pdf', type: 'government', label: 'ILC Draft Articles on Most-Favoured-Nation Clauses (1978) — UN' },
+    ],
+  },
+  {
+    id: 'econ-fiscal-dominance',
+    discipline: 'economics',
+    title: '財政支配（Fiscal Dominance）',
+    statement:
+      '財政支配（Fiscal Dominance）とは、政府の財政政策が金融政策に優越し、中央銀行の物価安定目標の達成が財政赤字のファイナンス要請に従属する体制である。トーマス・サージェント（Thomas J. Sargent）とニール・ウォレス（Neil Wallace）が1981年にミネアポリス連邦準備銀行Quarterly Reviewで発表した「Some Unpleasant Monetarist Arithmetic」において定式化した。' +
+      '実質利子率が経済成長率を持続的に上回り財政当局が支出削減を行わない場合、今日の金融引締めが将来のより高いインフレーションを帰結する「不快なマネタリスト算術」を示した。政府の通時的予算制約が財政調整ではなく将来の物価水準調整によって充足されるメカニズムであり、フリードマンのマネタリズムの前提を内在的に批判した。',
+    keyFigures: 'トーマス・サージェント＆ニール・ウォレス（1981 Minneapolis Fed Quarterly Review）／サージェント（2011年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.minneapolisfed.org/research/quarterly-review/some-unpleasant-monetarist-arithmetic', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Minneapolis Fed QR' },
+      { url: 'https://ideas.repec.org/a/fip/fedmqr/y1981ifallnv.5no.3.html', type: 'academic', label: 'Sargent & Wallace (1981) — IDEAS/RePEc' },
+      { url: 'https://www.stlouisfed.org/publications/review/2021/05/26/is-it-time-for-some-unpleasant-monetarist-arithmetic', type: 'academic', label: 'Uribe (2021) Is It Time for Some Unpleasant Monetarist Arithmetic? — St. Louis Fed Review' },
+    ],
+  },
+  {
+    id: 'infosoc-logic-of-connective-action',
+    discipline: 'information-sociology',
+    title: 'コネクティブ・アクションの論理（Logic of Connective Action）',
+    statement:
+      'コネクティブ・アクションの論理（Logic of Connective Action）とは、デジタル・ネットワーク環境において公式組織や集合的アイデンティティの形成を必要とせず、個人化されたコンテンツ共有を通じて大規模な政治的動員が成立するメカニズムを説明する理論である。W・ランス・ベネット（W. Lance Bennett）とアレクサンドラ・セゲルベリ（Alexandra Segerberg）が2012年にInformation, Communication & Society（Vol.15, No.5, pp.739-768）で提唱した。' +
+      'マンサー・オルソンの集合行為論（collective action）がフリーライダー問題・組織的統制・共有アイデンティティの構築を前提とするのに対し、コネクティブ・アクションは流動的ソーシャル・ネットワークを媒介に個人化可能なアクション・フレームが自己組織的に伝播するモデルを提示した。アラブの春、オキュパイ・ウォールストリート、インディグナドスなどの運動を分析事例とした。',
+    keyFigures: 'W・ランス・ベネット＆アレクサンドラ・セゲルベリ（2012 Information, Communication & Society 15(5):739-768）／2013年ケンブリッジ大学出版局書籍版',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett & Segerberg (2012) The Logic of Connective Action — IC&S 15(5)' },
+      { url: 'https://www.cambridge.org/core/books/logic-of-connective-action/6B54DBBEAD1625C2778F8D80A17D58E1', type: 'academic', label: 'Bennett & Segerberg (2013) The Logic of Connective Action — Cambridge UP' },
+      { url: 'https://www.researchgate.net/publication/287393379_The_logic_of_connective_action_Digital_media_and_the_personalization_of_contentious_politics', type: 'academic', label: 'Bennett & Segerberg (2012) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'econ-laffont-tirole',
+    discipline: 'economics',
+    title: 'ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）',
+    statement:
+      'ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation Theory）とは、プリンシパル＝エージェント理論を公的調達・規制設計に適用し、情報の非対称性下で規制当局が被規制企業の費用削減努力を引き出す最適インセンティブ契約を導出する理論体系である。ジャン＝ジャック・ラフォン（Jean-Jacques Laffont）とジャン・ティロール（Jean Tirole）が1993年にMIT Pressから出版した『A Theory of Incentives in Procurement and Regulation』で体系化した。' +
+      '自然独占（軍需企業・公益事業・運輸機関）の規制において、被規制企業が真のコスト構造を私的情報として保有する逆選択問題と、コスト削減努力が観察不能なモラルハザード問題を同時に扱い、情報レントと配分効率性のトレードオフを最適化するメニュー型規制契約を設計した。ティロールは市場支配力と規制の分析により2014年ノーベル経済学賞を受賞した。',
+    keyFigures: 'ジャン＝ジャック・ラフォン＆ジャン・ティロール（1993 MIT Press）／ティロール（2014年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262121743/a-theory-of-incentives-in-procurement-and-regulation/', type: 'academic', label: 'Laffont & Tirole (1993) A Theory of Incentives in Procurement and Regulation — MIT Press' },
+      { url: 'https://www.semanticscholar.org/paper/A-Theory-of-Incentives-in-Procurement-and-Laffont-Tirole/77ad429c09c906217ae469e51c912582a269b4c2', type: 'academic', label: 'Laffont & Tirole (1993) — Semantic Scholar' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2014/tirole/facts/', type: 'reference', label: 'Jean Tirole — Nobel Prize 2014 Facts' },
+    ],
+  },
 ];
 // Stryker restore all
