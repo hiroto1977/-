@@ -24100,5 +24100,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://grokipedia.com/page/Mutual_fund_separation_theorem', type: 'reference', label: 'Grokipedia: Mutual Fund Separation Theorem' },
     ],
   },
+  {
+    id: 'human-ideomotor',
+    discipline: 'human-science',
+    title: '観念運動効果（Ideomotor Effect）',
+    statement:
+      '観念運動効果（Ideomotor Effect）とは、ある行為の観念（心的表象）が意志的決定を経ずに当該行為の遂行を自動的に惹起する心理学的現象である。ウィリアム・ベンジャミン・カーペンター（William Benjamin Carpenter）が1852年の論文「On the Influence of Suggestion in Modifying and Directing Muscular Movement, Independently of Volition」で「観念運動行為（ideomotor action）」の概念を提唱し、ダウジングや心霊テーブル回しの無意識的筋運動メカニズムを科学的に説明した。' +
+      'ウィリアム・ジェームズ（William James）が1890年の『心理学原理（The Principles of Psychology）』で理論を体系化し、行為の観念がその行為の実行に十分であるという「観念運動原理」を定式化した。ミシェル・シュヴルール、マイケル・ファラデー、レイ・ハイマンらが科学的検証を行い、超常現象とされた多くの事象が観念運動作用に帰されることを実証した。',
+    keyFigures: 'ウィリアム・カーペンター（1852）／ウィリアム・ジェームズ（1890 Principles of Psychology）／ミシェル・シュヴルール（振り子実験）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Ideomotor_phenomenon', type: 'reference', label: 'Wikipedia: Ideomotor Phenomenon' },
+      { url: 'https://www.britannica.com/science/ideomotor-effect', type: 'reference', label: 'Britannica: Ideomotor Effect' },
+      { url: 'https://www.researchgate.net/publication/8950368_A_short_history_of_ideo-motor_action', type: 'academic', label: 'Stock & Stock (2004) A Short History of Ideo-Motor Action — ResearchGate' },
+    ],
+  },
+  {
+    id: 'bizlaw-pacta-sunt-servanda',
+    discipline: 'business-law',
+    title: '合意は拘束する（Pacta Sunt Servanda）',
+    statement:
+      '合意は拘束する（Pacta Sunt Servanda）とは、有効に成立した合意・条約は当事者を拘束し誠実に履行されなければならないとする国際法および契約法の根本原則である。ローマ法に起源を持ち、近代国際法においては1969年条約法に関するウィーン条約（Vienna Convention on the Law of Treaties）第26条に「効力を有するすべての条約は、当事者を拘束し、かつ、当事者により誠実に履行されなければならない」と成文化された。' +
+      '本原則は条約法の支柱であり国際協力の基盤をなすが、事情変更の原則（clausula rebus sic stantibus、ウィーン条約第62条）、強行規範（jus cogens、同第53条）への抵触、および国内法を条約不履行の正当化事由とすることの禁止（同第27条）との均衡が図られる。国内法においても契約の拘束力の基礎原則として各法体系に共通する。',
+    keyFigures: '条約法に関するウィーン条約第26条（1969）／国際法委員会（ILC）草案／ヒューゴ・グロティウス（De Jure Belli ac Pacis 1625）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://legal.un.org/ilc/texts/instruments/english/conventions/1_1_1969.pdf', type: 'government', label: 'Vienna Convention on the Law of Treaties (1969) — UN Treaty Collection' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-642-19291-3_29', type: 'academic', label: 'Article 26 Pacta Sunt Servanda — Vienna Convention Commentary (Springer)' },
+      { url: 'https://academic.oup.com/UrlRedirect/FromBookOrChapterDoiAsync?doi=10.1093%2Flaw%2F9780199546640.001.0001%2Flaw-9780199573523-chapter-53', type: 'academic', label: 'Article 26 — The Vienna Conventions on the Law of Treaties: A Commentary (Oxford)' },
+    ],
+  },
+  {
+    id: 'infosoc-infrastructure-studies',
+    discipline: 'information-sociology',
+    title: 'インフラストラクチャー研究（Infrastructure Studies）',
+    statement:
+      'インフラストラクチャー研究（Infrastructure Studies）とは、情報インフラストラクチャーを固定的な技術的基盤ではなく関係的・生態学的現象として捉え、その社会的・政治的・組織的次元を分析する学際的研究領域である。スーザン・リー・スター（Susan Leigh Star）とカレン・ルーレダー（Karen Ruhleder）が1996年にInformation Systems Research（Vol.7, No.1, pp.111-134）で発表した「Steps Toward an Ecology of Infrastructure」において理論的基盤を確立した。' +
+      'インフラストラクチャーは「モノ」ではなく常に「関係」であるとし、埋め込み性（embeddedness）・透明性（transparency）・到達範囲（reach/scope）・規約との連結（links with conventions of practice）・標準への基礎づけ（built on an installed base）・ブレイクダウン時の可視化（becomes visible upon breakdown）・利用者コミュニティとの結合（learned as part of membership）・修正の困難さ（fixed in modular increments）という8つの次元を提示した。',
+    keyFigures: 'スーザン・リー・スター＆カレン・ルーレダー（1996 Information Systems Research 7(1):111-134）／スター（1999 Ethnography of Infrastructure）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/inm/orisre/v7y1996i1p111-134.html', type: 'academic', label: 'Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — ISR 7(1) / IDEAS RePEc' },
+      { url: 'https://www.semanticscholar.org/paper/Steps-Toward-an-Ecology-of-Infrastructure:-Design-Star-Ruhleder/9cfcd2dfe7927451f2c39617e6ac0aa499fd2edb', type: 'academic', label: 'Star & Ruhleder (1996) — Semantic Scholar' },
+      { url: 'https://www.researchgate.net/publication/220079826_Steps_Toward_an_Ecology_of_Infrastructure_Design_and_Access_for_Large_Information_Spaces', type: 'academic', label: 'Star & Ruhleder (1996) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'econ-metzler-paradox',
+    discipline: 'economics',
+    title: 'メッツラーのパラドックス（Metzler Paradox）',
+    statement:
+      'メッツラーのパラドックス（Metzler Paradox）とは、関税の賦課が交易条件の改善を通じて輸入財の国内相対価格をかえって低下させ、関税が保護的に機能しない可能性を示す国際経済学の理論的逆説である。ロイド・メッツラー（Lloyd A. Metzler）が1949年にJournal of Political Economyで発表した。' +
+      'ストルパー＝サミュエルソン定理が関税は希少要素に有利に所得分配を変えると結論したのに対し、メッツラーは輸出国のオファー・カーブが高度に非弾力的な場合、関税による交易条件改善効果が関税そのものの効果を上回り、関税込みの輸入財国内価格が関税賦課前よりも低下しうることを示した。この場合、ヘクシャー＝オーリン・モデルにおける関税の所得分配効果はストルパー＝サミュエルソンの予測と逆転する。',
+    keyFigures: 'ロイド・メッツラー（1949 Journal of Political Economy）／ストルパー＝サミュエルソン定理（1941）との対照',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Metzler_paradox', type: 'reference', label: 'Wikipedia: Metzler Paradox' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-1-349-10911-1_8', type: 'academic', label: 'Metzler\'s Tariff Paradox and the Transfer Problem — Springer' },
+      { url: 'https://handwiki.org/wiki/Finance:Metzler_paradox', type: 'reference', label: 'HandWiki: Metzler Paradox' },
+    ],
+  },
+  {
+    id: 'mgmt-dynamic-delegation',
+    discipline: 'management',
+    title: '公式的権限と実質的権限（Formal and Real Authority）',
+    statement:
+      '公式的権限と実質的権限（Formal and Real Authority in Organizations）とは、組織における意思決定権の配分を公式的権限（決定する権利）と実質的権限（決定に対する実効的統制力）に区別し、その相互関係を分析する組織経済学の理論である。フィリップ・アギオン（Philippe Aghion）とジャン・ティロール（Jean Tirole）が1997年にJournal of Political Economy（Vol.105, No.1, pp.1-29）で発表した。' +
+      '実質的権限は情報構造により決定され、公式的権限の配分が情報構造に影響する。エージェントの実質的権限の増大は主導性（initiative）を促進するがプリンシパルの統制を喪失させるトレードオフが存在する。業務過負荷・寛容な規則・決定の緊急性・評判・業績測定・上司の複数性が公式的に統合された組織構造内で部下の実質的権限を増大させる要因として特定された。',
+    keyFigures: 'フィリップ・アギオン＆ジャン・ティロール（1997 Journal of Political Economy 105(1):1-29）／ティロール（2014年ノーベル経済学賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2138869', type: 'academic', label: 'Aghion & Tirole (1997) Formal and Real Authority in Organizations — JPE 105(1) / JSTOR' },
+      { url: 'https://dash.harvard.edu/handle/1/4554125', type: 'academic', label: 'Aghion & Tirole (1997) — Harvard DASH Repository' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v105y1997i1p1-29.html', type: 'academic', label: 'Aghion & Tirole (1997) — IDEAS/RePEc' },
+    ],
+  },
+  {
+    id: 'human-phonological-loop',
+    discipline: 'human-science',
+    title: '音韻ループ（Phonological Loop）',
+    statement:
+      '音韻ループ（Phonological Loop）とは、バデリー（Alan D. Baddeley）のワーキングメモリモデルにおける言語的・音韻的情報の短期保持を担うサブシステムである。バデリーが1986年の著書『Working Memory』（Oxford University Press）で二成分モデルとして精緻化した。' +
+      '音韻ストア（phonological store）と構音リハーサル過程（articulatory rehearsal process）の二成分から構成される。音韻ストアは音声ベースの情報を約2秒間保持する受動的バッファであり、構音リハーサル過程は内的発声によりストア内の情報を維持・更新する能動的過程である。語長効果（word length effect：長い語の記憶成績低下）、構音抑制効果（articulatory suppression：無関連発声による記憶妨害）、音韻類似性効果が本モデルの主要な実証的根拠である。',
+    keyFigures: 'アラン・バデリー（1986 Working Memory, Oxford UP）／バデリー＆ヒッチ（1974 ワーキングメモリモデル原著）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/topics/psychology/phonological-loop', type: 'academic', label: 'Phonological Loop — ScienceDirect Topics Overview' },
+      { url: 'https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory', type: 'reference', label: 'Wikipedia: Baddeley\'s Model of Working Memory' },
+      { url: 'https://link.springer.com/article/10.3758/BF03211160', type: 'academic', label: 'Baddeley (1986/1992) Articulatory Rehearsal and Phonological Storage — Memory & Cognition (Springer)' },
+    ],
+  },
 ];
 // Stryker restore all
