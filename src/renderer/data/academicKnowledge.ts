@@ -24280,5 +24280,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hope.econ.duke.edu/sites/hope.econ.duke.edu/files/Hume%20and%20Fisher%20on%20the%20Quantity%20Theory1.pdf', type: 'academic', label: 'David Hume and Irving Fisher on the Quantity Theory — Duke HOPE' },
     ],
   },
+  {
+    id: 'mgmt-strategic-consensus',
+    discipline: 'management',
+    title: '戦略的コンセンサス（Strategic Consensus）',
+    statement:
+      '戦略的コンセンサス（Strategic Consensus）とは、組織のトップ・ミドル・現場マネジャー間における戦略的優先事項の共有理解の程度を指す概念であり、戦略実行の成功に不可欠な前提条件として研究される。フロイド・ウォルドリッジ・ケラーマンズ（Floyd W. Kellermanns）、ジェフリー・ウォルター（Jeffrey Walter）、クリストフ・レヒナー（Christoph Lechner）、スティーブン・フロイド（Steven W. Floyd）が2005年にJournal of Management（Vol.31, No.5, pp.719-737）で「The Lack of Consensus about Strategic Consensus」を発表し、概念の理論的整理と統合的枠組みを提示した。' +
+      '戦略的コンセンサスは集団過程ではなく特定時点における合意の程度を指し、サブユニット目標の追求を組織目標に収斂させ、戦略実現に向けたコミュニケーション・協力・調整を促進する。コンセンサスの対象（内容 vs. 優先順位）、測定レベル（TMT内 vs. 階層間）、成果変数との関係が体系化された。',
+    keyFigures: 'ケラーマンズ・ウォルター・レヒナー・フロイド（2005 Journal of Management 31(5):719-737）／フロイド＆ウールドリッジ（1992 Strategic Consensus）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206305279114', type: 'academic', label: 'Kellermanns et al. (2005) The Lack of Consensus about Strategic Consensus — JoM 31(5)' },
+      { url: 'https://pomsmeetings.org/confproceedings/011/FullPapers/011-0401.pdf', type: 'academic', label: 'Assessing Strategic Consensus — POMS Conference Proceedings' },
+      { url: 'https://www.academia.edu/95961714/Strategic_consensus_top_management_teams_and_innovation_performance', type: 'academic', label: 'Strategic Consensus, TMTs, and Innovation Performance — Academia.edu' },
+    ],
+  },
+  {
+    id: 'bizlaw-attractive-nuisance',
+    discipline: 'business-law',
+    title: '誘引的妨害物の法理（Attractive Nuisance Doctrine）',
+    statement:
+      '誘引的妨害物の法理（Attractive Nuisance Doctrine）とは、米国不法行為法において、土地所有者が人工的な危険な状態を維持し、その状態が幼い子供を誘引しうることを知りまたは知りうべき場合に、不法侵入した子供に生じた身体的損害について土地所有者に注意義務を課す法理である。第二次リステイトメント（Restatement (Second) of Torts）§339に成文化されている。' +
+      '責任成立の5要件として、(a)子供の不法侵入の蓋然性の認識、(b)死亡・重大な身体的傷害の不合理な危険の認識、(c)子供が年齢ゆえに危険を認識しないこと、(d)状態維持の効用と危険除去の負担が子供へのリスクに比して僅少であること、(e)危険除去のための合理的注意の懈怠が規定される。不法侵入者に対して注意義務を負わないという伝統的原則の例外であり、子供の判断能力の未成熟を考慮した保護法理である。',
+    keyFigures: 'Restatement (Second) of Torts §339／Sioux City & Pacific Railroad Co. v. Stout（1873 初期判例）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/attractive_nuisance_doctrine', type: 'reference', label: 'Cornell LII — Attractive Nuisance Doctrine' },
+      { url: 'https://en.wikipedia.org/wiki/Attractive_nuisance_doctrine', type: 'reference', label: 'Wikipedia: Attractive Nuisance Doctrine' },
+      { url: 'https://kb.osu.edu/bitstreams/047e2c00-8942-5119-acb4-ebbc2bb6cd49/download', type: 'academic', label: 'Restatement\'s Attractive Nuisance Doctrine — Ohio State Knowledge Bank' },
+    ],
+  },
+  {
+    id: 'infosoc-data-double',
+    discipline: 'information-sociology',
+    title: 'データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）',
+    statement:
+      'データ・ダブル（Data Double）とは、デジタル監視システムが人間の身体を領域的文脈から抽象化し離散的な情報フローに分解した後、別の場所で再構成する仮想的な写像体を指す概念である。ケヴィン・ハガティ（Kevin D. Haggerty）とリチャード・エリクソン（Richard V. Ericson）が2000年にBritish Journal of Sociology（Vol.51, No.4, pp.605-622）で発表した「The Surveillant Assemblage」において提唱した。' +
+      'ジル・ドゥルーズとフェリックス・ガタリのアサンブラージュ概念を監視研究に適用し、かつて離散的であった監視システムがデジタル化により収斂・統合される「監視的アサンブラージュ」の形成を理論化した。フーコーのパノプティコンモデルを超えて、現代の監視システムをネットワーク化された非階層的アサンブラージュとして把握する枠組みを提供した。',
+    keyFigures: 'ケヴィン・ハガティ＆リチャード・エリクソン（2000 British Journal of Sociology 51(4):605-622）／ドゥルーズ＆ガタリ（アサンブラージュ概念）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1080/00071310020015280', type: 'academic', label: 'Haggerty & Ericson (2000) The Surveillant Assemblage — BJS 51(4) / Wiley' },
+      { url: 'https://www.semanticscholar.org/paper/The-surveillant-assemblage.-Haggerty-Ericson/4911a1630b63096f6748fcc5424635c6e5860961', type: 'academic', label: 'Haggerty & Ericson (2000) — Semantic Scholar' },
+      { url: 'https://www.researchgate.net/publication/12188129_The_Surveillant_Assemblage', type: 'academic', label: 'Haggerty & Ericson (2000) — ResearchGate' },
+    ],
+  },
+  {
+    id: 'econ-juglar-cycle',
+    discipline: 'economics',
+    title: 'ジュグラー・サイクル（Juglar Cycle）',
+    statement:
+      'ジュグラー・サイクル（Juglar Cycle）とは、固定資本投資の変動を主因とする約7〜11年の周期性を持つ中期的景気循環である。フランスの医師・統計学者クレマン・ジュグラー（Clément Juglar）が1862年の著書『Des crises commerciales et de leur retour périodique en France, en Angleterre et aux États-Unis』においてフランス・イギリス・アメリカの商業恐慌のデータを体系的に分析し、景気循環の周期性を実証的に確立した。' +
+      '繁栄（prosperity）・恐慌（crisis）・清算（liquidation/depression）の3局面から構成される。キッチン・サイクル（在庫循環、約3〜5年）が固定資本の稼働率変動を反映するのに対し、ジュグラー・サイクルは固定資本投資そのものの変動を反映する。ヨーゼフ・シュンペーターは古典的景気循環をジュグラーにちなんで命名し、近代景気循環理論の創始者として評価した。',
+    keyFigures: 'クレマン・ジュグラー（1862 Des crises commerciales）／ヨーゼフ・シュンペーター（ジュグラーの命名者・Business Cycles 1939）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Juglar_cycle', type: 'reference', label: 'Wikipedia: Juglar Cycle' },
+      { url: 'https://www.researchgate.net/publication/228706798_Business_Cycles_in_Juglar_and_Schumpeter', type: 'academic', label: 'Le Grand & Hagemann — Business Cycles in Juglar and Schumpeter — ResearchGate' },
+      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/juglar-clement', type: 'reference', label: 'Encyclopedia.com: Clément Juglar' },
+    ],
+  },
+  {
+    id: 'human-visual-agnosia',
+    discipline: 'human-science',
+    title: '視覚性失認（Visual Agnosia）',
+    statement:
+      '視覚性失認（Visual Agnosia）とは、基礎的な視覚機能（視力・視野・色覚）が保たれているにもかかわらず、視覚的に提示された物体を認識・同定できない神経心理学的障害である。ハインリヒ・リッサウアー（Heinrich Lissauer）が1890年にArchiv für Psychiatrieで報告し、統覚型失認（apperceptive agnosia）と連合型失認（associative agnosia）の二分類を提唱した。' +
+      '統覚型失認は物体の構造的知覚表象の構成不全により認識が失敗する病態で、図形の模写も不能である。連合型失認は知覚表象は正常に形成されるが意味記憶との連合が断たれることで認識が失敗する病態で、図形の模写は可能だが同定はできない。リッサウアーの二分類は100年以上にわたり臨床的有用性を維持し、視覚認知過程の階層的組織化の理解に貢献した。',
+    keyFigures: 'ハインリヒ・リッサウアー（1890 Archiv für Psychiatrie）／ジークムント・フロイト（1891 Agnosie造語）／マーサ・ファラー（現代的分類）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/brain/article/144/9/2557/6226388', type: 'academic', label: 'Behrmann & Plaut (2021) Visual Agnosia and Imagery after Lissauer — Brain 144(9)' },
+      { url: 'https://www.sciencedirect.com/topics/neuroscience/visual-agnosia', type: 'academic', label: 'Visual Agnosia — ScienceDirect Topics Overview' },
+      { url: 'https://www.medlink.com/articles/visual-agnosias', type: 'reference', label: 'MedLink Neurology: Visual Agnosias' },
+    ],
+  },
+  {
+    id: 'econ-barro-growth',
+    discipline: 'economics',
+    title: 'バロー成長回帰（Barro Growth Regression）',
+    statement:
+      'バロー成長回帰（Barro Growth Regression）とは、1人あたりGDPの初期水準と各種の制度的・政策的・人的資本変数を説明変数として多国間の経済成長率を回帰分析する実証的手法であり、条件付き収束仮説の検証手法として確立された。ロバート・バロー（Robert J. Barro）が1991年にQuarterly Journal of Economics（Vol.106, No.2, pp.407-443）で発表した「Economic Growth in a Cross Section of Countries」で体系化した。' +
+      '約100カ国の1960〜1990年パネルデータを用いて、初期1人あたりGDPを所与とした成長率が初等教育就学率・平均寿命の高さ、出生率・政府消費の低さ、法の支配の遵守、低インフレにより促進されることを示した。条件付き収束は年率約2.3%で進行するという推定を得て、新古典派成長理論の実証的基盤を構築した。',
+    keyFigures: 'ロバート・バロー（1991 Quarterly Journal of Economics 106(2):407-443）／バロー＆サラ＝イ＝マーティン（1992 Convergence）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'http://piketty.pse.ens.fr/files/Barro91.pdf', type: 'academic', label: 'Barro (1991) Economic Growth in a Cross Section of Countries — QJE 106(2) / PSE' },
+      { url: 'https://www.nber.org/papers/w5698', type: 'academic', label: 'Barro (1996) Determinants of Economic Growth — NBER WP 5698' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3422', type: 'academic', label: 'Barro (1996) Determinants of Economic Growth — SSRN' },
+    ],
+  },
 ];
 // Stryker restore all
