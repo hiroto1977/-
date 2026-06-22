@@ -2075,5 +2075,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 行動戦略理論 | 認知バイアス・ヒューリスティクスの戦略的意思決定への影響（Powell / Lovallo & Sibony / Gavetti） |
 | 経営学 | 組織衰退理論 | 組織縮小・硬直化・脅威硬直反応の段階的衰退モデル（Weitzel & Jonsson / Cameron / D'Aveni / Staw） |
 | 情報社会学 | プラットフォーム情報非対称性理論 | デジタルプラットフォームにおける売り手・買い手間情報格差とアルゴリズム的情報統制（Akerlof / Zuboff / Srnicek / Gillespie） |
+| 経済学 | 長期停滞理論 | 慢性的需要不足による自然利子率低下・ゼロ下限制約下の長期低成長（Hansen / Summers / Eggertsson & Mehrotra / Rachel） |
+| 人間科学 | 精神神経免疫学 | 心理過程・神経系・免疫系の相互作用・条件性免疫抑制・ストレス免疫低下（Ader & Cohen / Kiecolt-Glaser / Solomon） |
+| 経営法学 | ブルーペンシル法理 | 過度な競業禁止条項の裁判所による削除・修正と残余有効化（Nordenfelt / Posner / Finkin） |
+| 経営学 | ドミナント・ロジック理論 | 多角化企業トップの認知的枠組みが戦略的意思決定フィルターとなる理論（Prahalad & Bettis / Von Krogh & Roos） |
+| 経営学 | ステークホルダー顕出性理論 | パワー・正当性・緊急性の3属性による7類型分類と経営者注意優先度（Mitchell / Agle / Wood） |
+| 情報社会学 | 情報コモンズ理論 | Ostrom IADフレームワークの知識財応用・ピア生産・Creative Commons（Hess & Ostrom / Benkler / Lessig） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
