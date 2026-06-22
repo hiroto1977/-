@@ -24730,5 +24730,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/S002219962030060X', type: 'academic', label: 'Shifts in Monetary Policy and Exchange Rate Dynamics: Is Dornbusch\'s Overshooting Hypothesis Intact? — J Intl Economics (ScienceDirect)' },
     ],
   },
+  {
+    id: 'econ-sraffian-price',
+    discipline: 'economics',
+    title: 'スラッファ価格理論（Sraffian Price Theory）',
+    statement:
+      'スラッファ価格理論（Sraffian Price Theory）とは、経済を生産された投入財を用いて産出物を生成する相互依存的産業体系としてモデル化し、相対価格と賃金＝利潤関係を効用・限界生産力・資本の集計量に依拠せず、観察可能な生産の技術的条件と分配変数から導出する理論体系である。ピエロ・スラッファ（Piero Sraffa）が1960年に『商品による商品の生産（Production of Commodities by Means of Commodities）』として体系化した。' +
+      '相対価格は生産条件によって決定され、収量と生産量の関数的連関には基づかないという新古典派経済学からの根本的離脱を示す。所得分配（賃金率と利潤率）は線形関係にあり、価格とは独立に与件として取りうる。ケンブリッジ資本論争の焦点となり、技法の再切替（reswitching）現象を通じて新古典派の資本理論に対する内在的批判を提供した。ネオ・リカーディアン学派の基礎理論である。',
+    keyFigures: 'ピエロ・スラッファ（1960 Production of Commodities by Means of Commodities）／ケンブリッジ資本論争への影響',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Piero_Sraffa', type: 'reference', label: 'Wikipedia: Piero Sraffa' },
+      { url: 'https://www.ineteconomics.org/perspectives/blog/sraffas-revolution-in-economic-theory', type: 'reference', label: 'Sraffa\'s Revolution in Economic Theory — Institute for New Economic Thinking' },
+      { url: 'https://www.scielo.br/j/rep/a/6dZtWSHy3J36Ngn8T5fWFYv/?lang=en', type: 'academic', label: 'Sraffa and the Labour Theory of Value — Revista de Economia Política (SciELO)' },
+    ],
+  },
+  {
+    id: 'human-intermodal-matching',
+    discipline: 'human-science',
+    title: '感覚間マッチング（Intermodal Matching）',
+    statement:
+      '感覚間マッチング（Intermodal Matching / Active Intermodal Mapping）とは、乳児が異なる感覚モダリティ（視覚・触覚・聴覚等）からの情報を統合し、ある感覚で知覚した刺激を別の感覚モダリティの刺激と対応づける能力を指す。アンドリュー・メルツォフ（Andrew Meltzoff）とM・キース・ムーア（M. Keith Moore）が1977年にScience誌で、生後12〜21日の新生児が成人の顔面ジェスチャーと手のジェスチャーを模倣できることを実証した。' +
+      'メルツォフとムーアは能動的感覚間マッピング（Active Intermodal Mapping / AIM）仮説を提唱し、新生児模倣がターゲット照合プロセス（matching-to-target process）に基づくとした。生後29日の乳児が触覚的に探索した形状を視覚的に認識できることも示された。この能力は条件付けや生得的解発メカニズムでは説明できず、知覚系の生得的なクロスモーダル統合能力を示唆する。',
+    keyFigures: 'アンドリュー・メルツォフ＆M・キース・ムーア（1977 Science 新生児模倣研究）／メルツォフ＆ボートン（1979 触覚-視覚マッチング）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Intermodal_mapping', type: 'reference', label: 'Wikipedia: Intermodal Mapping' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3953219/', type: 'academic', label: 'Ray & Heyes (2011) Explaining Facial Imitation: A Theoretical Model — PMC' },
+      { url: 'https://ilabs.uw.edu/sites/default/files/93Meltzoff_Moore_%20Why%20Faces%20Special.pdf', type: 'academic', label: 'Meltzoff & Moore (1993) Why Faces Are Special — UW I-LABS' },
+    ],
+  },
+  {
+    id: 'bizlaw-bilateral-investment-treaty',
+    discipline: 'business-law',
+    title: '二国間投資条約（Bilateral Investment Treaty / BIT）',
+    statement:
+      '二国間投資条約（Bilateral Investment Treaty / BIT）とは、二国間で締結される国際協定であり、一方の締約国の国民・企業による他方の締約国領域内での投資に関する条件と保護を設定する。1959年にパキスタンとドイツの間で世界初のBITが締結された。' +
+      'BITは通常、公正衡平待遇（fair and equitable treatment）、収用からの保護、資金の自由移転、十分な保護と安全の保障を投資家に付与する。最も特徴的な規定は投資家対国家紛争解決（Investor-State Dispute Settlement / ISDS）メカニズムであり、投資家がBIT上の権利侵害に対して国際投資仲裁裁判所（通常はICSID）に直接提訴できる。現在世界で2,500件以上のBITが発効しており、国際投資法の基幹的制度インフラとして機能している。',
+    keyFigures: 'パキスタン＝ドイツBIT（1959 世界初）／ICSID条約（1965 仲裁制度の制度化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Bilateral_investment_treaty', type: 'reference', label: 'Wikipedia: Bilateral Investment Treaty' },
+      { url: 'https://www.trade.gov/trade-guide-bilateral-investment-treaties', type: 'government', label: 'Trade Guide: Bilateral Investment Treaties — U.S. International Trade Administration' },
+      { url: 'https://ccsi.columbia.edu/primer-international-investment-treaties-and-investor-state-dispute-settlement/', type: 'academic', label: 'Primer on International Investment Treaties and ISDS — Columbia Center on Sustainable Investment' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-ambidexterity',
+    discipline: 'management',
+    title: '組織的両利き経営（Organizational Ambidexterity）',
+    statement:
+      '組織的両利き経営（Organizational Ambidexterity）とは、組織が既存事業の深化（exploitation）と新規事業の探索（exploration）を同時に追求する能力を指す。ジェームズ・マーチ（James G. March）が1991年にOrganization Scienceで「Exploration and Exploitation in Organizational Learning」として探索と深化のトレードオフを定式化し、マイケル・タッシュマン（Michael Tushman）とチャールズ・オライリー（Charles O\'Reilly）が1996年に両利き組織の概念を提唱した。' +
+      'マーチは探索（変異・リスクテイク・実験・発見）と深化（精緻化・効率化・実行・選択）の間の資源配分バランスが組織の長期的適応にとって決定的であると論じた。タッシュマンとオライリーは構造的両利き経営（structural ambidexterity）として、探索と深化を組織構造的に分離しつつ上位統合する形態を精緻化した。両利き経営と組織業績の正の関連がメタ分析で確認されている。',
+    keyFigures: 'ジェームズ・マーチ（1991 Organization Science 探索＝深化フレームワーク）／タッシュマン＆オライリー（1996 構造的両利き経営）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hbs.edu/ris/Publication%20Files/O\'Reilly%20and%20Tushman%20AMP%20Ms%20051413_c66b0c53-5fcd-46d5-aa16-943eab6aa4a1.pdf', type: 'academic', label: 'O\'Reilly & Tushman (2013) Organizational Ambidexterity: Past, Present, and Future — Harvard Business School' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly & Tushman (2013) Organizational Ambidexterity — Academy of Management Perspectives' },
+      { url: 'https://sciendo.com/2/v2/download/article/10.1515/orga-2015-0006.pdf', type: 'academic', label: 'Organizational Ambidexterity, Exploration, Exploitation — Organizacija (Sciendo)' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-labor-platform',
+    discipline: 'information-sociology',
+    title: 'デジタル労働プラットフォーム論（Digital Labor Platform Theory）',
+    statement:
+      'デジタル労働プラットフォーム論（Digital Labor Platform Theory）とは、デジタルプラットフォームが労働を原子化・データ化し、ギグワーカーを競争的に低賃金タスクに従事させる新たな労働搾取形態を批判的に分析する理論枠組みである。トレバー・ショルツ（Trebor Scholz）が2012年に『Digital Labor: The Internet as Factory and Playground』を編集し、デジタル労働を「有償デジタルワーク」と「無償デジタルワーク」に分類し、「クラウド・フリーシング」（群衆搾取）を新たな労働搾取形態として概念化した。' +
+      'プラットフォームは伝統的な労働活動のみならず社会的協力からも価値を抽出し、親族・友情・性的関係といった社会的紐帯を複雑な収益化スキームに変換する。ショルツはプラットフォーム労働を「規制緩和・組合破壊・失業増大・偶発的労働からなる巨大な新自由主義的槍の光り輝く鋭い先端」と特徴づけた。アントニオ・カシッリ（Antonio Casilli）はプラットフォーム資本主義における移民女性労働の批判的分析に貢献した。',
+    keyFigures: 'トレバー・ショルツ（2012 Digital Labor 編著）／アントニオ・カシッリ（プラットフォーム資本主義批判）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5518998/', type: 'academic', label: 'Graham et al. (2017) Digital Labour and Development: Impacts of Global Digital Labour Platforms — PMC / Transfer' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/08935696.2022.2159718', type: 'academic', label: 'The Machine System of Digital Labor Platforms and the Algorithm — Science & Society (Taylor & Francis)' },
+      { url: 'https://compass.onlinelibrary.wiley.com/doi/10.1111/soc4.70018', type: 'academic', label: 'Faraoun (2024) Theorizing Labor in the Platform Economy — Sociology Compass (Wiley)' },
+    ],
+  },
+  {
+    id: 'human-visual-cliff',
+    discipline: 'human-science',
+    title: '視覚的断崖実験（Visual Cliff Experiment）',
+    statement:
+      '視覚的断崖実験（Visual Cliff Experiment）とは、乳児および新生動物の奥行き知覚能力を検証するために設計された実験パラダイムである。エレノア・ギブソン（Eleanor J. Gibson）とリチャード・ウォーク（Richard D. Walk）が1960年にScientific Americanで発表した。' +
+      '大きなガラス天板テーブルの一方には市松模様がガラス直下に配置され（浅い側）、他方には数フィート下に配置された（深い側）。生後6〜14か月の這い這い可能な乳児36名をガラスの中央に置き、母親が深い側から呼びかけると、ほぼ全員が端を覗き込んだものの深い側への移動を拒否し、深い側に移動したのはわずか3名であった。この結果は奥行き知覚が生得的であり、高さに関連する危険から乳児を保護する機能を持つことを示唆した。多種の新生動物でも同様の回避行動が確認された。',
+    keyFigures: 'エレノア・ギブソン＆リチャード・ウォーク（1960 Scientific American「The Visual Cliff」）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Visual_cliff', type: 'reference', label: 'Wikipedia: Visual Cliff' },
+      { url: 'https://www.simplypsychology.org/visual-cliff-experiment.html', type: 'reference', label: 'Visual Cliff Experiment (Gibson & Walk, 1960) — Simply Psychology' },
+      { url: 'https://achology.com/general-interest/depth-perception-insights-from-the-visual-cliff-experiment/', type: 'reference', label: 'Depth Perception: Insights from The Visual Cliff Experiment — Achology' },
+    ],
+  },
 ];
 // Stryker restore all
