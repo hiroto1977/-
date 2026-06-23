@@ -2,6 +2,10 @@ import { describe, it, expect } from 'vitest';
 import {
   buildCorpus,
   KNOWLEDGE_CORPUS,
+  knowledgeIndex,
+  knowledgeLookup,
+  formatKnowledgeReply,
+  MIN_KNOWLEDGE_SCORE,
   extractTerms,
   retrieve,
   retrieveServices,
@@ -26,6 +30,46 @@ describe('buildCorpus', () => {
 
   it('is exposed as a prebuilt KNOWLEDGE_CORPUS', () => {
     expect(KNOWLEDGE_CORPUS.length).toBe(buildCorpus().length);
+  });
+
+  it('includes economic history (the 5th knowledge collection)', () => {
+    const corpus = buildCorpus();
+    const kinds = new Set(corpus.map((d) => d.kind));
+    expect(kinds).toContain('経済史');
+    expect(corpus.some((d) => d.id.startsWith('econ:'))).toBe(true);
+  });
+});
+
+describe('knowledgeIndex / knowledgeLookup', () => {
+  it('builds an inverted index over the full corpus once (stable identity)', () => {
+    const a = knowledgeIndex();
+    const b = knowledgeIndex();
+    expect(a).toBe(b);
+    expect(a.docs).toBe(KNOWLEDGE_CORPUS);
+    expect(a.postings.size).toBeGreaterThan(0);
+  });
+
+  it('indexed retrieve agrees with the prebuilt index for a known concept', () => {
+    const out = retrieve('オークンの法則 失業率');
+    expect(out.some((d) => d.title.includes('オークン'))).toBe(true);
+  });
+
+  it('knowledgeLookup returns only sufficiently-relevant docs', () => {
+    const out = knowledgeLookup('雇用調整助成金について教えて', 3);
+    expect(out.length).toBeGreaterThan(0);
+    expect(out.length).toBeLessThanOrEqual(3);
+  });
+
+  it('knowledgeLookup suppresses weak / off-topic matches', () => {
+    expect(knowledgeLookup('   ')).toEqual([]);
+    expect(MIN_KNOWLEDGE_SCORE).toBeGreaterThan(0);
+  });
+
+  it('formatKnowledgeReply cites kinds + titles, or returns null for no match', () => {
+    const reply = formatKnowledgeReply('雇用調整助成金について教えて');
+    expect(reply).not.toBeNull();
+    expect(reply).toContain('確証済みナレッジ');
+    expect(formatKnowledgeReply('   ')).toBeNull();
   });
 });
 

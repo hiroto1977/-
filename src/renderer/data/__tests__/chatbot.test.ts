@@ -4,7 +4,9 @@ import {
   findService,
   routeForService,
   replyTo,
+  buildKnowledgeReply,
   type ChatContext,
+  type ChatKnowledgeDoc,
   type ChatService,
 } from '../chatbot';
 import { buildOrgIndex, type RawTeam } from '../chatOrg';
@@ -225,5 +227,51 @@ describe('replyTo', () => {
     expect(r.kind).toBe('fallback');
     expect(r.navigateTo).toBeUndefined();
     expect(r.suggestions.length).toBeGreaterThan(0);
+  });
+});
+
+// --- 確証済みナレッジ回答 (転置インデックス注入) -------------------------------
+
+describe('knowledge replies', () => {
+  const KNOWLEDGE_DOC: ChatKnowledgeDoc = {
+    kind: '学術概念',
+    title: 'オークンの法則',
+    body: '失業率と実質GDP成長率の負の関係を示す経験則。',
+  };
+  // 「経済」を含む問いにだけナレッジを返すフェイク検索 (決定論的)。
+  const knowledge = (query: string): readonly ChatKnowledgeDoc[] =>
+    query.includes('経済') ? [KNOWLEDGE_DOC] : [];
+  const KCTX: ChatContext = { ...CTX, knowledge };
+
+  it('answers with verified knowledge when the lookup finds relevant docs', () => {
+    const r = replyTo('日本経済の成長について教えて', KCTX);
+    expect(r.kind).toBe('knowledge');
+    expect(r.text).toContain('オークンの法則');
+    expect(r.text).toContain('確証済みナレッジ');
+    expect(r.suggestions.length).toBeGreaterThan(0);
+  });
+
+  it('falls back when the lookup finds nothing relevant', () => {
+    const r = replyTo('ぷわぷわぽよん', KCTX);
+    expect(r.kind).toBe('fallback');
+  });
+
+  it('does not attempt knowledge replies when no lookup is injected', () => {
+    // CTX には knowledge 未注入 → 知識回答に入らず fallback。
+    const r = replyTo('日本経済の成長について教えて', CTX);
+    expect(r.kind).toBe('fallback');
+  });
+
+  it('keeps explicit intents ahead of knowledge replies (navigate wins)', () => {
+    // knowledge が常にヒットを返しても、navigate 等の明示意図が先に解決される。
+    const always: ChatContext = { ...CTX, knowledge: () => [KNOWLEDGE_DOC] };
+    const r = replyTo('税務試算を開いて', always);
+    expect(r.kind).toBe('navigate');
+    expect(r.navigateTo).toBe('tax');
+  });
+
+  it('buildKnowledgeReply returns null without an injected lookup or matches', () => {
+    expect(buildKnowledgeReply('経済', CTX)).toBeNull();
+    expect(buildKnowledgeReply('天気', KCTX)).toBeNull();
   });
 });

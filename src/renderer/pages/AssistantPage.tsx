@@ -16,7 +16,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
-import { buildSystemPrompt, retrieveServices, type AssistantService } from '../data/assistantContext';
+import {
+  buildSystemPrompt,
+  knowledgeLookup,
+  retrieveServices,
+  type AssistantService,
+} from '../data/assistantContext';
 import { parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
@@ -216,6 +221,9 @@ export function AssistantPage() {
       })),
       org: ORG_INDEX,
       capabilities: CAPABILITIES,
+      // 確証済みナレッジ検索 (転置インデックス) を注入 → オフラインでも知識回答できる。
+      knowledge: (q: string, k?: number) =>
+        knowledgeLookup(q, k).map((d) => ({ kind: d.kind, title: d.title, body: d.body })),
     }),
     [serviceCatalog],
   );

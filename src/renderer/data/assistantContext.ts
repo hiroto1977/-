@@ -1,28 +1,31 @@
 /**
  * Assistant RAG 文脈ビルダー — 純ロジック・IO なし。
  *
- * 確証済みナレッジ (学術概念 / 税務労務法務コンプライアンス / 補助金 / 相談窓口) と
- * サービスカタログを横断検索し、ユーザーの問いに関連する根拠資料を抽出して
+ * 確証済みナレッジ (学術概念 / 税務労務法務コンプライアンス / 補助金 / 相談窓口 /
+ * 経済史) とサービスカタログを横断検索し、ユーザーの問いに関連する根拠資料を抽出して
  * Claude へ渡す system プロンプトを組み立てる。**単一の真実源**から導出するため、
  * ナレッジやサービスが増えれば自動で文脈に反映される。
  *
- * 検索は外部依存ゼロの軽量スコアリング (語トークン + CJK バイグラム一致)。
- * 形態素解析器を持たない代わりに、2 文字シングルで日本語にも素直に当たる。
+ * 検索は外部依存ゼロの軽量スコアリング (語トークン + CJK バイグラム一致) を
+ * 転置インデックス (`knowledgeIndex.ts`) 経由で行う。形態素解析器を持たない代わりに、
+ * 2 文字シングルで日本語にも素直に当たる。約 2,000 件のコーパスでも索引により高速。
  */
 
 import { VERIFIED_CONCEPTS } from './academicKnowledge';
 import { VERIFIED_COMPLIANCE } from './complianceKnowledge';
 import { VERIFIED_SUBSIDIES } from './subsidyKnowledge';
 import { VERIFIED_SUPPORT_RESOURCES } from './counselorKnowledge';
+import { ECONOMIC_HISTORY } from './economicHistoryKnowledge';
+import {
+  buildInvertedIndex,
+  indexedRetrieve,
+  retrieveScored,
+  type InvertedIndex,
+  type KnowledgeDoc,
+} from './knowledgeIndex';
 
-/** 検索対象の正規化済みドキュメント 1 件。 */
-export interface KnowledgeDoc {
-  readonly id: string;
-  /** 分類ラベル (出典の種別表示用)。 */
-  readonly kind: '学術概念' | 'コンプライアンス' | '補助金・助成金' | '相談窓口';
-  readonly title: string;
-  readonly body: string;
-}
+// 後方互換: 索引エンジンの共通型を従来どおり本モジュールからも公開する。
+export type { KnowledgeDoc };
 
 /** チャットが案内できるサービス 1 件。 */
 export interface AssistantService {
@@ -72,6 +75,15 @@ export function buildCorpus(): KnowledgeDoc[] {
       kind: '相談窓口',
       title: v.label,
       body: cap(v.detail, BODY_CAP),
+    });
+  }
+  for (const y of ECONOMIC_HISTORY) {
+    const events = y.keyEvents.join('／');
+    docs.push({
+      id: `econ:${y.year}`,
+      kind: '経済史',
+      title: `${y.year}年（${y.era}）`,
+      body: cap(`【世界】${y.world} 【日本】${y.japan} 主な出来事: ${events}`, BODY_CAP),
     });
   }
   return docs;
@@ -134,29 +146,58 @@ export interface ScoredDoc {
 }
 
 /**
+ * 既定コーパスの転置インデックス (初回利用時に 1 度だけ構築)。
+ * 約 2,000 件のコーパスをクエリ毎に線形走査せず、語に該当する postings だけを辿る。
+ */
+let DEFAULT_INDEX: InvertedIndex | null = null;
+export function knowledgeIndex(): InvertedIndex {
+  if (DEFAULT_INDEX === null) DEFAULT_INDEX = buildInvertedIndex(KNOWLEDGE_CORPUS);
+  return DEFAULT_INDEX;
+}
+
+/**
  * クエリに関連するドキュメントを上位 k 件返す。
- * スコア = Σ 語ごとの (タイトル一致 × 3 + 本文一致)。一致ゼロは除外。
- * 決定論的 (同点はコーパス順を保つ安定ソート)。
+ * スコア = Σ 語ごとの (タイトル一致 × 3 + 本文一致)。一致ゼロは除外。決定論的。
+ *
+ * 既定コーパスに対しては構築済みの転置インデックスを使う (高速)。テスト等で
+ * 任意の `corpus` を渡した場合はその場で索引を組み立てる (挙動は同一)。
  */
 export function retrieve(
   query: string,
   k = 6,
   corpus: readonly KnowledgeDoc[] = KNOWLEDGE_CORPUS,
 ): KnowledgeDoc[] {
-  const terms = extractTerms(query);
-  if (terms.length === 0) return [];
-  const scored: ScoredDoc[] = [];
-  for (const doc of corpus) {
-    const title = doc.title.normalize('NFKC').toLowerCase();
-    const body = doc.body.normalize('NFKC').toLowerCase();
-    let score = 0;
-    for (const t of terms) {
-      score += countOccurrences(title, t) * 3 + countOccurrences(body, t);
-    }
-    if (score > 0) scored.push({ doc, score });
-  }
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, k).map((s) => s.doc);
+  const index = corpus === KNOWLEDGE_CORPUS ? knowledgeIndex() : buildInvertedIndex(corpus);
+  return indexedRetrieve(query, k, index);
+}
+
+/** チャットボット等が確証済みナレッジを引くための最低スコア (雑音抑制)。 */
+export const MIN_KNOWLEDGE_SCORE = 6;
+
+/**
+ * クエリに「十分に関連する」確証済みナレッジだけを返す (転置インデックス経由)。
+ * 挨拶や雑談のような弱い一致 ({@link MIN_KNOWLEDGE_SCORE} 未満) は除外し、
+ * オフラインのルールエンジンが誤って雑学を返さないようにする。
+ */
+export function knowledgeLookup(query: string, k = 3): KnowledgeDoc[] {
+  return retrieveScored(query, k, knowledgeIndex())
+    .filter((s) => s.score >= MIN_KNOWLEDGE_SCORE)
+    .map((s) => s.doc);
+}
+
+/**
+ * オフライン (LLM 無し) で確証済みナレッジを根拠に答える本文を組み立てる。
+ * 該当が無ければ null (呼び出し側は別のフォールバックへ)。
+ */
+export function formatKnowledgeReply(query: string, k = 3): string | null {
+  const docs = knowledgeLookup(query, k);
+  if (docs.length === 0) return null;
+  const lines = docs.map((d) => `- [${d.kind}] ${d.title}: ${d.body}`);
+  return [
+    '📚 確証済みナレッジ（出典あり）から要点をまとめます。',
+    ...lines,
+    '※ 出典つきデータの要約です。最終判断は一次情報・専門家にご確認ください。',
+  ].join('\n');
 }
 
 /** クエリに関連するサービスを上位 k 件返す (label/description を検索)。 */
