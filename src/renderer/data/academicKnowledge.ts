@@ -26495,5 +26495,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  {
+    id: 'econ-shadow-banking',
+    discipline: 'economics',
+    title: 'シャドーバンキング（影の銀行）',
+    statement:
+      'シャドーバンキング（shadow banking）とは、銀行監督の枠外で行われる信用仲介の総称である。金融安定理事会（FSB）は2011年以降、「規則的銀行システムの外部の主体・活動を介した信用仲介」と定義し、危機後のグローバル監視の中核概念として位置づけた。' +
+      '本質的には満期・流動性の変換やレバレッジを伴い、投資家の取り付け（ラン）など銀行と類似のシステミックリスクを生じうる。FSBは広域モニタリングのうえ「狭義指標」として5つの経済機能に分類し、規制当局はリスク把握と監督強化に取り組んでいる。',
+    keyFigures: '金融安定理事会（FSB, 2011年レポート以降）／ポール・マッカリー（Paul McCulley, PIMCO, 2007年に用語を普及）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.fsb.org/uploads/r_111027a.pdf', type: 'government', label: 'FSB — Shadow Banking: Strengthening Oversight and Regulation（2011年10月）' },
+      { url: 'https://www.fsb.org/uploads/P161225.pdf', type: 'government', label: 'FSB — Global Monitoring Report on Non-Bank Financial Intermediation 2025' },
+      { url: 'https://www.bis.org/publ/arpdf/ar2010e7.pdf', type: 'government', label: 'BIS 第80次年次報告書（2010）第VII章 — Macroprudential policy and addressing procyclicality' },
+    ],
+  },
+  {
+    id: 'econ-polycentric-governance',
+    discipline: 'economics',
+    title: '多中心型ガバナンス（ポリセントリック・ガバナンス）',
+    statement:
+      '多中心型ガバナンス（polycentric governance）とは、複数の意思決定中心が形式上相互に独立しながら、契約・協調・競争・上位的紛争解決を通じて制度を形成・運営する統治の形態を指す。エリノア・オストロムが2009年ノーベル講演で体系化した。' +
+      '国家による単一支配や市場への完全委任という二項対立を超え、大都市圏の公共サービスや共有資源管理で有効性が実証される。オストロムは「複雑さは混沌と同義ではない」とし、画一的パナセアへの依存を戒めた。',
+    keyFigures: 'エリノア・オストロム（2009年12月8日ノーベル経済学賞講演）／V.オストロム・C.タイボー・R.ウォレン（1961年にpolycentric概念を提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/lecture/', type: 'reference', label: 'NobelPrize.org — Elinor Ostrom Prize Lecture「Beyond Markets and States: Polycentric Governance」（2009年12月8日）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.100.3.641', type: 'academic', label: 'Ostrom (2010) Beyond Markets and States: Polycentric Governance of Complex Economic Systems, AER 100(3):641-672' },
+    ],
+  },
+  {
+    id: 'econ-hank-model',
+    discipline: 'economics',
+    title: 'HANKモデル（異質エージェント・ニューケインジアン）',
+    statement:
+      'HANKモデル（Heterogeneous-Agent New Keynesian）は、家計の所得・資産不均等と不完全市場をニューケインジアン（NK）枠組みに統合したマクロモデルである。グレッグ・カプラン・ベンジャミン・モル・ジョヴァンニ・L・ヴィオランテ（2018）が金融政策伝達を再検証した。' +
+      '代表性エージェント型（RANK）と異なり、予期せぬ利下げの消費反応は金利の代替効果より労働需要を通じる間接的所得効果が支配的となり、リッカード等価性も破れる。財政政策の反応がマクロ効果の規模を左右する点が特徴である。',
+    keyFigures: 'グレッグ・カプラン・ベンジャミン・モル・ジョヴァンニ・L・ヴィオランテ（2018, AER）／マイケル・マッケイ＆リカルド・ライス（2016）／ホ・レス（2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.20160042', type: 'academic', label: 'Kaplan, Moll & Violante (2018) Monetary Policy According to HANK, AER 108(3):697-743' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.32.3.167', type: 'academic', label: 'Kaplan & Violante (2018) Microeconomic Heterogeneity and Macroeconomic Shocks, JEP 32(3):167-194' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン義務（支配権売却時の取締役義務）',
+    statement:
+      'レブロン義務とは、米国デラウェア州会社法において支配権の売却や会社分断等の変更支配取引が生じた際、取締役が株主にとって合理的に得られる最高の対価の確保を優先すべきという法理である。レブロン社訴訟（1986）に淵源がある。' +
+      '新たな受託者義務というより忠実義務・善管注意義務の文脈的適用であり、裁判所はenhanced scrutiny（強化審査）で意思決定過程の合理性を審査する。単一入札でも過程が合理的なら認められるが、適格な株主承認があれば審査は緩和されうる。',
+    keyFigures: 'レブロン社対マキャンドルーズ判決（Del. Sup. Ct. 1986, 506 A.2d 173）／パラマウント対QVC（Del. 1994, 637 A.2d 34）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://corpgov.law.harvard.edu/2013/07/09/delaware-court-addresses-revlon-duties-in-single-bidder-sale-of-control-transaction/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance — Delaware Court Addresses Revlon Duties（2013）' },
+      { url: 'https://www.repository.law.indiana.edu/cgi/viewcontent.cgi?article=11400&context=ilj', type: 'academic', label: 'Indiana Law Journal — What\'s the Deal with Revlon?（Revlon審査基準・enhanced scrutinyの解説）' },
+    ],
+  },
+  {
+    id: 'bizlaw-schrems-ii',
+    discipline: 'business-law',
+    title: 'シュレムスII判決（越境データ移転）',
+    statement:
+      'シュレムスII判決（EU司法裁判所 C-311/18, 2020年7月16日）は、EU・米国間のプライバシー・シールドの十分性決定を無効とした画期的判決である。米国の国家安全保障関連法制がEU法と同水準の保護を欠くと認定した。' +
+      '標準契約条項（SCC）そのものの有効性は認めた一方、移転先国の法制を評価し契約外の補完措置を講じることがデータ輸出者の義務となる（移転影響評価）。企業の越境データフロー設計とクラウド契約実務に根本的影響を与えた。',
+    keyFigures: 'EU司法裁判所（C-311/18, 2020年7月16日判決）／マクシミリアン・シュレムス訴フェイスブック・アイルランド事件',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/legal-content/en/TXT/?uri=CELEX%3A62018CJ0311', type: 'government', label: 'EUR-Lex — Judgment of the Court (Grand Chamber) of 16 July 2020, Case C-311/18' },
+      { url: 'https://edpb.europa.eu/sites/default/files/files/file1/20200724_edpb_faqoncjeuc31118.pdf', type: 'government', label: 'European Data Protection Board — FAQ on the judgment in Case C-311/18' },
+    ],
+  },
+  {
+    id: 'infosoc-zero-trust',
+    discipline: 'information-sociology',
+    title: 'ゼロトラスト・アーキテクチャ',
+    statement:
+      'ゼロトラストとは、ネットワーク位置や所有形態に基づく暗黙の信頼を前提とせず、ユーザ・端末・サービス等の個々のリソースを都度検証してアクセスを制御するサイバーセキュリティの設計思想である。NIST SP 800-207（2020）が標準的枠組みを提示した。' +
+      '従来の境界型防御（境界内＝信頼）に代わり、認証・認可をセッション単位で継続的に実施し、ポリシーエンジン・管理者・執行点（PE/PA/PEP）で最小権限アクセスを実現する。リモートワーク・BYOD・クラウドの普及が導入を加速させた。',
+    keyFigures: 'ジョン・キンダーヴァグ（John Kindervag, Forrester Research, 2010年レポートで概念を提唱）／米国国立標準技術研究所（NIST, SP 800-207, 2020年8月）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://csrc.nist.gov/pubs/sp/800/207/final', type: 'government', label: 'NIST — SP 800-207 Zero Trust Architecture' },
+      { url: 'https://www.nist.gov/publications/zero-trust-architecture', type: 'government', label: 'NIST — Zero Trust Architecture publication page（SP 800-207, 2020年8月公表）' },
+    ],
+  },
 ];
 // Stryker restore all
