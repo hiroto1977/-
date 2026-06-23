@@ -16,6 +16,8 @@
 | `registry.schema.json` | registry.json の構造 (JSON Schema) |
 | `../scripts/verify-orchestration.cjs` | 整合検証 (org階層・単調増加・参照整合・cycles構造) + 次ラウンド計画の自動算出 |
 | `../scripts/orchestrate.cjs` | **実行ランタイム (v3)**。status / cycle / dispatch / record で組織を実際に動かす |
+| `registry-utils.cjs` | 共有ユーティリティ (round roster 解決 / knowledge-map 検証 / record 後 verify) |
+| `route-topic.cjs` | スコアリング型 team ルーティング (`chatOrg.ts` と同一採点式) |
 
 ## 実行ランタイム (`orchestrate.cjs`)
 
@@ -26,6 +28,8 @@ npm run orchestrate:import-requests  # チャットボット要望 (chatbot-requ
 node scripts/orchestrate.cjs cycle pdca       # PDCA ステージ定義
 node scripts/orchestrate.cjs cycle ooda       # OODA ステージ定義
 node scripts/orchestrate.cjs dispatch --teams a,b --cycle pdca [--json]
+node scripts/orchestrate.cjs dispatch --propose   # backlog 空でも次手を提案
+node scripts/orchestrate.cjs record --round N --new-teams a --shipped "..." [--mark-shipped id]
 node scripts/orchestrate.cjs record --round N --teams a,b,... --shipped "..." [--note "..."] [--dry-run]
 node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priority N] [--dry-run]
 ```
@@ -39,8 +43,9 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
 - **dispatch** は read-only。各 team を指揮系統 (manager→executive→秘書室→COO→CEO) へ解決し、
   サイクルの **do(設計)** ステージにだけ並列 read-only Agent を割当てた計画を出力する。
   COO (Claude本体) はこの計画に沿って **do=並列Agent起動 → check=直列実装+全ゲート検証 → act=record** を実行する。
-- **record** は round を registry に追記する唯一の書込み口。連番・単調増加・team 実在を強制し、
-  書込み後に `verify:orchestration` で整合を再確認する。
+- **record** は round を registry に追記する唯一の書込み口。`--new-teams` で compact 形式
+  (前 round + 追加分のみ保存) が使え、`--mark-shipped` で backlog を同時更新できる。
+  書込み後は既定で `verify:orchestration` を自動実行 (`--no-verify` でスキップ)。
 - サイクル定義は `registry.json` の `policy.cycles` (PDCA/OODA) に機械可読で持ち、`verify:orchestration` が
   各ステージの `stage/owner/desc/parallel` 構造を検証する。
 
@@ -53,6 +58,17 @@ node scripts/orchestrate.cjs import-requests [--file f.md] [--team id] [--priori
 | 記録 | PDCA:act | COO | 直列 (`record`) |
 
 「設計=並列 / 実装+全ゲート検証=直列」を機構として強制し、共有ファイルの同時書込みを避ける。
+
+## v3.1 最適化 (2026-06)
+
+| 改善 | 効果 |
+|---|---|
+| `registry-utils.cjs` | round roster 解決・knowledge-map 検証・record 後 verify を共通化 |
+| compact `newTeams` 形式 | 将来 round の JSON 肥大化を抑制 (verify がフル/compact 両対応) |
+| `route-topic.cjs` | import-requests の team 解決を `chatOrg.ts` と同じ採点式に統一 |
+| knowledge-context mtime キャッシュ | dispatch/plan/vault 連続実行時の TS transpile を省略 |
+| `dispatch --propose` | backlog 空でも次ラウンドの手順を提案 (exit 0) |
+| `test:orchestration` | Node 組込 test で registry-utils / routing / cache を回帰検証 (`verify:all` 組込) |
 
 ## 組織構造 (registry.json の `org`) — CEO(人間) → COO(Claude) → C-suite → 部 → 一般職
 

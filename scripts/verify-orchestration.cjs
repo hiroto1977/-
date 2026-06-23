@@ -9,8 +9,8 @@
  *   1. JSON は registry.schema.json の必須構造を満たす (簡易チェック)。
  *   2. rounds の teamCount は単調増加 (作業サイクルごとにチームが減らない)。
  *   3. 各 round は policy.minTeamsForRound の最低チーム数を満たす。
- *   4. rounds[].teams と backlog[].team は teams[].id に実在する。
- *   5. round.teamCount は round.teams の要素数と一致する。
+ *   4. rounds[].teams / rounds[].newTeams と backlog[].team は teams[].id に実在する。
+ *   5. round.teamCount は解決済み roster の要素数と一致する (newTeams 形式対応)。
  *   6. backlog の id は一意。
  *
  * さらに「次に何チームで・どの領域を細分化するか」を自動算出して出力する
@@ -24,9 +24,15 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  REGISTRY_PATH,
+  KNOWLEDGE_MAP_PATH,
+  validateRoundEntries,
+  validateKnowledgeMap,
+} = require('../orchestration/registry-utils.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
+const REGISTRY = REGISTRY_PATH;
 
 function fail(messages) {
   console.error(`\n❌ orchestration registry: ${messages.length} 件の問題`);
@@ -166,31 +172,8 @@ function main() {
   const minTeams = new Map();
   for (const e of reg.policy.minTeamsForRound || []) minTeams.set(e.round, e.minTeams);
 
-  // 2/3/4/5. rounds の検証。
-  let prevCount = 0;
-  const seenRounds = new Set();
-  for (const r of reg.rounds) {
-    if (seenRounds.has(r.round)) problems.push(`round ${r.round} が重複`);
-    seenRounds.add(r.round);
-    // 5. teamCount と teams.length の一致。
-    if (r.teamCount !== r.teams.length) {
-      problems.push(`round ${r.round}: teamCount=${r.teamCount} が teams.length=${r.teams.length} と不一致`);
-    }
-    // 2. 単調増加。
-    if (r.teamCount < prevCount) {
-      problems.push(`round ${r.round}: teamCount=${r.teamCount} が前ラウンド(${prevCount})より少ない (単調増加に違反)`);
-    }
-    prevCount = Math.max(prevCount, r.teamCount);
-    // 3. 最低チーム数。
-    const min = minTeams.get(r.round);
-    if (min !== undefined && r.teamCount < min) {
-      problems.push(`round ${r.round}: teamCount=${r.teamCount} が policy の最低(${min})未満`);
-    }
-    // 4. 参照する team が実在。
-    for (const id of r.teams) {
-      if (!teamIds.has(id)) problems.push(`round ${r.round}: 未知の team "${id}"`);
-    }
-  }
+  // 2/3/4/5. rounds の検証 (フル roster / compact newTeams 両対応)。
+  problems.push(...validateRoundEntries(reg));
 
   // 6. backlog の検証。
   const backlogIds = new Set();
@@ -221,6 +204,14 @@ function main() {
         }
       });
     }
+  }
+
+  // 13. knowledge-map.json ↔ registry 役員 id の整合。
+  try {
+    const map = JSON.parse(fs.readFileSync(KNOWLEDGE_MAP_PATH, 'utf8'));
+    problems.push(...validateKnowledgeMap(reg, map));
+  } catch (e) {
+    problems.push(`knowledge-map.json を読めません: ${e.message}`);
   }
 
   if (problems.length) fail(problems);

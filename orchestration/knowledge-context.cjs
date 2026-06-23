@@ -157,6 +157,28 @@ const COLLECTIONS = [
 
 const COLLECTION_BY_KEY = Object.fromEntries(COLLECTIONS.map((c) => [c.key, c]));
 
+/** ファイル mtime ベースのエントリキャッシュ (dispatch/plan/vault 連続実行の高速化)。 */
+const _entryCache = { signature: null, entries: null };
+const _moduleCache = new Map(); // filePath -> { signature, exports }
+
+function fileSignature(filePath) {
+  return fs.statSync(filePath).mtimeMs;
+}
+
+function collectionsSignature() {
+  return COLLECTIONS.map((c) => fileSignature(c.file)).join(':');
+}
+
+/** TS データモジュールを型除去して評価し、export を取り出す (mtime キャッシュ付き)。 */
+function loadModuleExportsCached(file) {
+  const sig = fileSignature(file);
+  const hit = _moduleCache.get(file);
+  if (hit && hit.signature === sig) return hit.exports;
+  const exports = loadModuleExports(file);
+  _moduleCache.set(file, { signature: sig, exports });
+  return exports;
+}
+
 const AUTHORITATIVE_TYPES = new Set(['academic', 'reference', 'government', 'municipality']);
 const SOURCE_TYPE_LABEL = {
   academic: '学術',
@@ -168,11 +190,14 @@ const SOURCE_TYPE_LABEL = {
   other: 'その他',
 };
 
-/** 全コレクションを共通ノートモデルへ正規化してロードする。 */
+/** 全コレクションを共通ノートモデルへ正規化してロードする (mtime キャッシュ付き)。 */
 function loadEntries() {
+  const sig = collectionsSignature();
+  if (_entryCache.signature === sig && _entryCache.entries) return _entryCache.entries;
+
   const out = [];
   for (const col of COLLECTIONS) {
-    const mod = loadModuleExports(col.file);
+    const mod = loadModuleExportsCached(col.file);
     const raw = mod[col.exportName];
     if (!Array.isArray(raw)) throw new Error(`${col.exportName} が配列ではありません (${col.file})`);
     raw.forEach((r, i) => {
@@ -188,6 +213,8 @@ function loadEntries() {
   }
   // id 昇順で安定ソート (コレクション内で決定論的)。
   out.sort((a, b) => (a.collection < b.collection ? -1 : a.collection > b.collection ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  _entryCache.signature = sig;
+  _entryCache.entries = out;
   return out;
 }
 

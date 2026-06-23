@@ -19,11 +19,16 @@
  *   node scripts/orchestrate.cjs dispatch [opts]    次round(or --round N)の実行ディスパッチ計画
  *       --items a,b,c   対象 backlog id (既定: designed を優先度順)
  *       --teams a,b,c   対象 team id を直接指定 (backlog を介さずチームを動かす)
+ *       --propose       designed backlog が空のとき提案を表示 (exit 0)
  *       --cycle pdca|ooda  使用サイクル (既定 pdca)
  *       --json          機械可読 (JSON) 出力
- *   node scripts/orchestrate.cjs record --round N --teams a,b --shipped "..."  round を追記
+ *   node scripts/orchestrate.cjs record --round N --shipped "..."  round を追記
+ *       --teams a,b,c   フル roster (従来形式)
+ *       --new-teams a   前 round roster + 追加分のみ (compact 形式)
+ *       --mark-shipped id1,id2  backlog を shipped に更新
  *       --note "..."    任意の補足
  *       --dry-run       書き込まず差分のみ表示
+ *       --no-verify     書込み後の verify:orchestration をスキップ
  *   node scripts/orchestrate.cjs import-requests [--file chatbot-requests.md]
  *       チャットボット (AI コンシェルジュ) が受け付けた機能要望の Markdown
  *       (`- [ ] <要望> _(受付: YYYY-MM-DD)_` 形式) を読み、backlog へ designed
@@ -41,9 +46,16 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  REGISTRY_PATH,
+  lastRoundInfo,
+  composeTeamRoster,
+  runVerifyOrchestration,
+} = require('../orchestration/registry-utils.cjs');
+const { matchTeamForRequest } = require('../orchestration/route-topic.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
+const REGISTRY = REGISTRY_PATH;
 
 function die(msg) {
   console.error(`❌ orchestrate: ${msg}`);
@@ -125,11 +137,7 @@ function knowledgeBrief(execId, perGroup = 2, cap = 6) {
   return flat.slice(0, cap);
 }
 
-function lastRoundInfo(reg) {
-  const lastRound = reg.rounds.reduce((m, r) => Math.max(m, r.round), 0);
-  const lastCount = reg.rounds.find((r) => r.round === lastRound)?.teamCount ?? 0;
-  return { lastRound, lastCount };
-}
+// lastRoundInfo は registry-utils から import。
 
 // ---------------------------------------------------------------------------
 // status
@@ -213,7 +221,24 @@ function cmdDispatch(reg, args) {
     teamIds = [...new Set(sourceItems.map((b) => b.team))];
   }
   if (teamIds.length === 0) {
-    die('ディスパッチ対象がありません。designed backlog が空です — 新領域の調査チーム/論点を補充するか --teams/--items で明示してください。');
+    if (args.propose) {
+      const nextMin = Math.max(lastCount + 1, 0);
+      const designed = reg.backlog.filter((b) => b.status === 'designed').sort((a, b) => a.priority - b.priority);
+      console.log(`📋 提案モード — round ${round} (designed backlog が空)`);
+      console.log(`  推奨: 新領域 team を teams[] に追加し backlog を designed で補充 (目標 ${nextMin}+ チーム)`);
+      console.log('  候補 (管理職別 team 数 — 細分化の余地):');
+      for (const m of reg.org.managers || []) {
+        const n = (m.teams || []).length;
+        console.log(`    • ${m.title} [${m.id}]: ${n} チーム`);
+      }
+      if (designed.length) {
+        console.log('  着手可能 backlog:');
+        for (const b of designed) console.log(`    [P${b.priority}] ${b.title} (${b.team})`);
+      }
+      console.log('\n  実行例: npm run orchestrate:dispatch -- --teams <team-id>[,...]');
+      return;
+    }
+    die('ディスパッチ対象がありません。designed backlog が空です — --propose で提案を表示、または --teams/--items で明示してください。');
   }
 
   // 各 team を指揮系統へ解決し、割当を構築。
@@ -290,11 +315,20 @@ function cmdDispatch(reg, args) {
 // ---------------------------------------------------------------------------
 function cmdRecord(reg, args) {
   if (args.round === undefined) die('record には --round N が必要です');
-  if (!args.teams) die('record には --teams a,b,c が必要です (round の編成)');
   if (!args.shipped) die('record には --shipped "..." が必要です (成果の記述)');
   const round = Number(args.round);
-  const teams = csv(args.teams);
   const { lastRound, lastCount } = lastRoundInfo(reg);
+
+  let teams;
+  let compactNewTeams;
+  if (args['new-teams']) {
+    compactNewTeams = csv(args['new-teams']);
+    teams = composeTeamRoster(reg, compactNewTeams);
+  } else if (args.teams) {
+    teams = csv(args.teams);
+  } else {
+    die('record には --teams a,b,c (フル roster) または --new-teams a,b (前 round + 追加分) が必要です');
+  }
 
   if (reg.rounds.some((r) => r.round === round)) die(`round ${round} は既に存在します`);
   if (round !== lastRound + 1) die(`round は連番であること (期待: ${lastRound + 1}, 指定: ${round})`);
@@ -304,33 +338,51 @@ function cmdRecord(reg, args) {
     die(`単調増加に違反: teamCount=${teams.length} が前ラウンド(${lastCount})未満です`);
   }
 
-  const entry = { round, teamCount: teams.length, teams, shipped: [args.shipped] };
+  const entry = { round, teamCount: teams.length, shipped: [args.shipped] };
+  if (compactNewTeams && compactNewTeams.length > 0) {
+    entry.newTeams = compactNewTeams;
+  } else {
+    entry.teams = teams;
+  }
   if (args.note) entry.note = args.note;
+
+  const markShipped = args['mark-shipped'] ? csv(args['mark-shipped']) : [];
+  for (const bid of markShipped) {
+    const item = reg.backlog.find((b) => b.id === bid);
+    if (!item) die(`mark-shipped: 未知の backlog id "${bid}"`);
+    item.status = 'shipped';
+  }
 
   if (args['dry-run']) {
     console.log('🔎 dry-run — 追記される round エントリ:');
     console.log(JSON.stringify(entry, null, 2));
+    if (markShipped.length) console.log(`  mark-shipped: ${markShipped.join(', ')}`);
     return;
   }
   reg.rounds.push(entry);
   fs.writeFileSync(REGISTRY, `${JSON.stringify(reg, null, 2)}\n`);
-  console.log(`✅ round ${round} を registry に記録 (teamCount=${teams.length})。`);
-  console.log('   → `npm run verify:orchestration` で整合を確認してください。');
+  console.log(`✅ round ${round} を registry に記録 (teamCount=${teams.length}${compactNewTeams ? ', compact newTeams' : ''})。`);
+  if (markShipped.length) console.log(`   backlog shipped: ${markShipped.join(', ')}`);
+  const skipVerify = args['no-verify'] === true;
+  if (!skipVerify) {
+    try {
+      const out = runVerifyOrchestration();
+      console.log(`   ${out.split('\n').pop()}`);
+    } catch (e) {
+      die(`record 後の verify:orchestration が失敗しました: ${e.message}`);
+    }
+  } else {
+    console.log('   → `npm run verify:orchestration` で整合を確認してください。');
+  }
 }
 
 // ---------------------------------------------------------------------------
 // import-requests — チャットボット要望の backlog 取込み
 // ---------------------------------------------------------------------------
 
-/** 要望テキストへ最も合う team を、domain/focus の語 (2文字以上) 一致で解決する。 */
-function matchTeamForRequest(reg, text) {
-  for (const team of reg.teams) {
-    const tokens = `${team.domain}・${team.focus}`
-      .split(/[・/()（）\s]+/)
-      .filter((w) => w.length >= 2);
-    if (tokens.some((w) => text.includes(w))) return team.id;
-  }
-  return null;
+/** 要望テキストへ最も合う team をスコアリング型ルーティングで解決する。 */
+function resolveTeamForRequest(reg, text) {
+  return matchTeamForRequest(reg, text);
 }
 
 /** `- [ ] <要望> _(受付: YYYY-MM-DD)_` 形式の行を解析する (チェック済み行は無視)。 */
@@ -371,7 +423,7 @@ function cmdImportRequests(reg, args) {
 
   for (const req of requests) {
     if (existingTitles.has(req.text)) continue; // 同名の取込み済み要望はスキップ (重複防止)。
-    const team = matchTeamForRequest(reg, req.text) || fallbackTeam;
+    const team = resolveTeamForRequest(reg, req.text) || fallbackTeam;
     if (!team) {
       unresolved.push(req.text);
       continue;
@@ -419,7 +471,13 @@ function cmdImportRequests(reg, args) {
   reg.backlog.push(...entries);
   fs.writeFileSync(REGISTRY, `${JSON.stringify(reg, null, 2)}\n`);
   console.log(`✅ ${entries.length} 件の要望を backlog (designed) へ取込みました。`);
-  console.log('   → `npm run verify:orchestration` で整合を確認してください。');
+  if (args['no-verify'] !== true) {
+    try {
+      runVerifyOrchestration();
+    } catch (e) {
+      die(`import 後の verify:orchestration が失敗しました: ${e.message}`);
+    }
+  }
   console.log('   → `npm run orchestrate:dispatch` で次ラウンドの実行計画に載ります。');
 }
 
