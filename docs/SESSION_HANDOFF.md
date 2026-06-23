@@ -91,6 +91,27 @@ legalShares 空/合計≠1.0/要素負 は throw。基礎控除式の固定値�
 と境界 (各区分上限ちょうど/+1円) の実値テストで撃墜。許容誤差 1e-9 ちょうど (float 到達不能) のみ next-line pragma
 → mutation 100.00% (`npx stryker run --mutate src/shared/taxInheritance.ts`、72 killed / 0 survived)。新テスト 67 件追加。
 
+## ナレッジ転置インデックス & 知識回答チャットボット
+
+確証済み知識 5 コレクション (学術概念 / 法務税務労務 / 補助金 / 相談窓口 / 経済史) を
+**転置インデックス**化し、AI アシスタントの根拠検索とオフライン回答に活用する。
+
+- `src/renderer/data/knowledgeIndex.ts` — 純ロジックの転置インデックス engine
+  (語 → postings[{i, tfTitle, tfBody}])。スコアは従来の線形 retrieve と等価
+  (タイトル ×3 + 本文)、並び順も一致 (同点はコーパス添字昇順)。
+- `data/assistantContext.ts` — `retrieve` を索引経由に委譲 (既定コーパスは初回 1 度だけ
+  索引構築)。**経済史を 5 番目のコレクションとしてコーパスへ追加** (従来は欠落)。
+  `knowledgeLookup` / `formatKnowledgeReply` はしきい値 `MIN_KNOWLEDGE_SCORE` で雑談を抑制。
+- `data/chatbot.ts` — `ChatContext.knowledge` (任意注入) があれば、fallback の前に出典つきの
+  確証済みナレッジで回答 (`kind: 'knowledge'`)。**LLM 未接続でも知識ベースから回答**できる。
+  `AssistantPage` がオフライン文脈へ `knowledgeLookup` を注入。chatbot.ts は mutation 100% 維持。
+- `scripts/build-knowledge-index.cjs` (`npm run knowledge:index`) — `worker_threads` で
+  コレクション単位に**並列**ロード・トークナイズして索引を構築し、コーパス統計を集計。
+  並列集計の総数と直列ロード (`orchestration/knowledge-context.cjs`) の総数一致を検証する。
+- 罠: assistantContext は約 2,376 件 (academic が成長中) のコーパスを bundle するため、
+  econ 追加で standalone は約 250KB 増。索引は **renderer モジュールでメモリ構築** (コミット
+  artifact なし) なので academic ループの頻繁なバッチ追加と干渉しない (CI ゲート追加なし)。
+
 ## 財務分析システム (経営サマリー / OverviewPage 内, Phase 1–8 完成)
 
 事業別の概算財務を起点に、15指標 → 4チャート → 12財務諸表 → 総合診断 → エクスポート まで
