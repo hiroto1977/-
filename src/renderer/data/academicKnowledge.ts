@@ -26495,5 +26495,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-roy, econ-cheap-talk, bizlaw-revlon,
+  // human-optimal-distinctiveness, infosoc-contextual-integrity,
+  // mgmt-institutional-logics
+  {
+    id: 'econ-roy',
+    discipline: 'economics',
+    title: 'ロイ・モデル（所得分布の自己選択モデル）',
+    statement:
+      'ロイ・モデルは、人々が自らの技能における比較優位に基づいて職業や部門を自己選択する結果として、観測される所得分布が決まることを説明する労働経済学の基礎モデルである。A.D.ロイが1951年の論文「Some Thoughts on the Distribution of Earnings」で、狩猟と漁労という2部門の例を用い、各人が相対的に高い稼得を得られる部門を選ぶため、観測賃金は2部門の技能の分布と相関に依存することを示した。' +
+      '後にヘックマン＆オノレ（1990）がモデルの識別条件（経験的内容）を厳密に定式化し、ボーハス（1987）が送出国と受入国の賃金分散の差から移民の正の選択・負の選択を論じるなど、自己選択バイアスを扱う計量経済学・移民経済学・教育収益率推定の中核的枠組みとなった。観測されるのは選択後の結果のみで反実仮想が欠落するため、選択補正なしに単純比較すると推定が偏る点が要諦である。',
+    keyFigures: 'Andrew Donald Roy（1951, Oxford Economic Papers）／James J. Heckman・Bo E. Honoré（1990）／George J. Borjas（1987）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1093/oxfordjournals.oep.a041827', type: 'academic', label: 'Roy, A.D. (1951) Some Thoughts on the Distribution of Earnings, Oxford Economic Papers 3(2):135-146' },
+      { url: 'https://doi.org/10.2307/2938316', type: 'academic', label: 'Heckman, J.J. & Honoré, B.E. (1990) The Empirical Content of the Roy Model, Econometrica 58(5):1121-1149' },
+      { url: 'https://www.jstor.org/stable/1814529', type: 'academic', label: 'Borjas, G.J. (1987) Self-Selection and the Earnings of Immigrants, American Economic Review 77(4):531-553' },
+    ],
+  },
+  {
+    id: 'econ-cheap-talk',
+    discipline: 'economics',
+    title: 'チープトーク（戦略的情報伝達）',
+    statement:
+      'チープトークとは、ゲーム理論において、それ自体に費用がかからず・拘束力がなく・事後的に検証もされない（costless, non-binding, non-verifiable）メッセージのやり取りを指し、私的情報を持つ送り手が言葉のみで情報を持たない受け手に情報を伝達できるかを分析する枠組みである。クロフォード＆ソベル（1982, Econometrica）が、送り手と受け手の選好の不一致（バイアス）が大きいほど信頼できる情報伝達が困難になり、均衡が粗い「区間分割」になることを示した。' +
+      'スペンスのシグナリングが費用の差で情報を顕示するのに対し、チープトークでは費用がないため、利害が十分に一致する場合にのみ情報が均衡で伝わり、完全に対立すれば情報は伝わらない（無情報均衡が常に存在する）。ファレル＆ラビン（1996, JEP）が概念を整理し、組織内の助言・委員会・専門家の勧告・交渉前のやり取りなど現実の制度設計の分析に広く応用される。',
+    keyFigures: 'Vincent P. Crawford・Joel Sobel（1982, Econometrica）／Joseph Farrell・Matthew Rabin（1996, JEP）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1913390', type: 'academic', label: 'Crawford, V.P. & Sobel, J. (1982) Strategic Information Transmission, Econometrica 50(6):1431-1451' },
+      { url: 'https://doi.org/10.1257/jep.10.3.103', type: 'academic', label: 'Farrell, J. & Rabin, M. (1996) Cheap Talk, Journal of Economic Perspectives 10(3):103-118' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon',
+    discipline: 'business-law',
+    title: 'レブロン基準（会社売却局面での取締役の義務）',
+    statement:
+      'レブロン基準（Revlon duties）とは、米国デラウェア州会社法上、会社の解体または支配権の売却が不可避となった局面で、取締役の役割が「会社という要塞の防衛者」から、株主のために達成可能な最善の価格を引き出す「競売人（auctioneers）」へと転換するという司法審査基準である。Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc.（506 A.2d 173, Del. 1986）で確立された。' +
+      '買収防衛策の相当性を審査するUnocal基準（1985）と対をなし、Paramount v. Time（1989）は独立した長期戦略を遂行している限りレブロン義務は発動しないとし、Paramount v. QVC（1994）は支配権が移転する取引で発動すると整理した。Lyondell v. Ryan（2009）は、その違反の立証には取締役が善意（good faith）を欠いて職務を放棄したことの証明を要するとし、適用のハードルを明確化した。',
+    keyFigures: 'デラウェア州最高裁（1986）／対比: Unocal v. Mesa Petroleum（1985）・Paramount v. QVC（1994）・Lyondell v. Ryan（2009）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/revlon_duties', type: 'reference', label: 'Cornell Law School, Legal Information Institute (Wex) — Revlon duties' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-3.html', type: 'reference', label: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173 (Del. 1986)' },
+    ],
+  },
+  {
+    id: 'human-optimal-distinctiveness',
+    discipline: 'human-science',
+    title: '最適弁別性理論',
+    statement:
+      '最適弁別性理論（Optimal Distinctiveness Theory）とは、人が社会集団との関係において、集団への同化・包摂を求める「所属の欲求」と、他者からの差異化を求める「独自性の欲求」という相反する二つの動機の均衡点を探すとする社会心理学の理論である。マリリン・ブルーアーが1991年に提唱し、両欲求が同時に満たされる「最適に弁別的」な状態のとき、集団への同一視と自尊が最も高まるとした。' +
+      'すなわち人は、包摂感を満たすほど大きく、かつ独自性を保てるほど明確な境界を持つ中規模の集団に最も強く同一視する。集団が大きく拡散しすぎると独自性が脅かされて差異化が、過度に小さいと所属が脅かされて同化が動機づけられる。社会的アイデンティティ理論を拡張し、内集団びいき・少数派集団への帰属・ブランドコミュニティなど集団同一視の動態を説明する枠組みとして用いられる。',
+    keyFigures: 'Marilynn B. Brewer（1991, Personality and Social Psychology Bulletin）／Geoffrey J. Leonardelli・Cynthia L. Pickett（2010, レビュー）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1177/0146167291175001', type: 'academic', label: 'Brewer, M.B. (1991) The Social Self: On Being the Same and Different at the Same Time, Pers. Soc. Psychol. Bull. 17(5):475-482' },
+      { url: 'https://doi.org/10.1016/S0065-2601(10)43002-6', type: 'academic', label: 'Leonardelli, Pickett & Brewer (2010) Optimal Distinctiveness Theory, Advances in Experimental Social Psychology 43:63-113' },
+    ],
+  },
+  {
+    id: 'infosoc-contextual-integrity',
+    discipline: 'information-sociology',
+    title: '文脈的完全性（プライバシー）',
+    statement:
+      '文脈的完全性（contextual integrity）とは、ヘレン・ニッセンバウムが提唱したプライバシーの理論的枠組みで、プライバシーを「秘匿」や「コントロール」ではなく、社会的文脈ごとに固有の規範に沿った個人情報の『適切な流れ』として捉える。医療・金融・教育・友人関係などの各文脈には、情報の送り手・受け手・主体、情報の種類（属性）、そして伝達の原則（transmission principle）からなる文脈相対的な情報規範が存在するとする。' +
+      'プライバシー侵害は、これら文脈固有の規範に反して情報が流れたときに生じると定義され、新技術の是非は当該文脈の規範・価値・目的に照らして評価される。情報の二分法（公／私）や同意万能主義の限界を突き、GDPR等の制度設計やデータ流通・プロファイリングの規範的分析に広く参照される。',
+    keyFigures: 'Helen Nissenbaum（2004「Privacy as Contextual Integrity」／2010『Privacy in Context』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/', type: 'academic', label: 'Nissenbaum, H. (2004) Privacy as Contextual Integrity, Washington Law Review 79(1):119-157' },
+      { url: 'https://www.sup.org/books/title/?id=8862', type: 'reference', label: 'Nissenbaum, H. (2010) Privacy in Context: Technology, Policy, and the Integrity of Social Life, Stanford University Press' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-logics',
+    discipline: 'management',
+    title: '制度ロジック（インスティテューショナル・ロジック）',
+    statement:
+      '制度ロジックとは、個人や組織が自らの活動に意味を与え、時間と空間を組織化する際に依拠する、歴史的に形成された文化的シンボル・物質的実践・前提・価値・信念の社会的パターンを指す。フリードランド＆アルフォード（1991）が、市場・国家・家族・宗教・専門職・企業などの諸制度はそれぞれ固有の組織原理（ロジック）を持ち、社会はこれら複数のロジックからなる「制度間システム」であると論じた。' +
+      'ソーントン＆オカシオ（1999, AJS）が出版業界の実証研究を通じて概念を精緻化し、ソーントン・オカシオ・ラウンズベリー（2012）が体系化した。行為者が相互に矛盾しうる複数のロジックに同時に埋め込まれていることが、制度の安定だけでなく変化やエージェンシー（制度的企業家）の源泉となる点が、新制度派の同型化論（収斂を強調）との対比で重要とされる。',
+    keyFigures: 'Roger Friedland・Robert R. Alford（1991）／Patricia H. Thornton・William Ocasio（1999, AJS）／Michael Lounsbury（2012）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/210361', type: 'academic', label: 'Thornton, P.H. & Ocasio, W. (1999) Institutional Logics and the Historical Contingency of Power in Organizations, American Journal of Sociology 105(3):801-843' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780199601936.001.0001', type: 'reference', label: 'Thornton, Ocasio & Lounsbury (2012) The Institutional Logics Perspective: A New Approach to Culture, Structure and Process, Oxford University Press' },
+    ],
+  },
 ];
 // Stryker restore all
