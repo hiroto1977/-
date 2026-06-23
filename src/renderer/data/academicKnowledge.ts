@@ -26769,5 +26769,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://law.justia.com/cases/delaware/supreme-court/1983/457-a-2d-701-4.html', type: 'reference', label: 'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)（公正価値評価の基準判例）' },
     ],
   },
+  {
+    id: 'econ-aiyagari-model',
+    discipline: 'economics',
+    title: 'アイヤガリ・モデル（無保険個別リスクと貯蓄）',
+    statement:
+      'アイヤガリ・モデルとは、S. Rao Aiyagari が1994年に提示した、保険のかからない個別（特異的）所得リスクと借入制約のもとで多数の異質な家計が貯蓄を選択する一般均衡モデルである。' +
+      '完全保険市場が存在しないため家計は所得変動に備えて予防的に貯蓄し（予防的貯蓄動機）、借入制約に直面する。集計すると、こうした自己保険のための資産需要が経済全体の資本蓄積を完全市場の場合より高め、均衡利子率を時間選好率より低く押し下げる。' +
+      '代表的個人ではなく富の分布をもつ「異質家計（heterogeneous-agent）」マクロ経済学（Bewley–Huggett–Aiyagari 型モデル）の標準的枠組みとなった。',
+    keyFigures: 'S. Rao Aiyagari（1994, Quarterly Journal of Economics 109(3):659-684）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2118417', type: 'academic', label: 'Aiyagari, S.R. (1994) Uninsured Idiosyncratic Risk and Aggregate Saving, Quarterly Journal of Economics 109(3):659-684' },
+      { url: 'https://ideas.repec.org/a/tpr/qjecon/v109y1994i3p659-684.html', type: 'reference', label: 'IDEAS/RePEc — Aiyagari (1994) 書誌情報' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-opportunity',
+    discipline: 'business-law',
+    title: '会社機会の法理（コーポレート・オポチュニティ）',
+    statement:
+      '会社機会の法理（corporate opportunity doctrine）とは、取締役・役員などの受託者が、本来は会社に帰属すべき事業上の機会を、会社に開示してその拒絶を得ることなく個人的に取得・流用してはならないとする、忠実義務（duty of loyalty）の一適用である。' +
+      '米国デラウェア州の Guth v. Loft, Inc.（1939）が基礎を築き、(1)会社が財務的に引き受け可能か、(2)会社の事業と同種・密接か、(3)会社が利害・期待をもつか、(4)取締役の地位と利益相反が生じるか、を総合して判断する。Broz v. Cellular Information Systems（1996）はこの枠組みを再確認した。' +
+      '機会を個人的に得たい受託者は、まず会社へ提示して正式に拒絶を得る「セーフ・ハーバー」を踏むべきとされる。',
+    keyFigures: 'Guth v. Loft, Inc., 5 A.2d 503 (Del. 1939)／Broz v. Cellular Information Systems, Inc., 673 A.2d 148 (Del. 1996)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/corporate_opportunity', type: 'academic', label: 'Cornell Law School LII (Wex) — Corporate opportunity（Broz の総合判断テスト）' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1996/673-a-2d-148-0.html', type: 'reference', label: 'Broz v. Cellular Information Systems, Inc., 673 A.2d 148 (Del. 1996)' },
+    ],
+  },
+  {
+    id: 'infosoc-dark-participation',
+    discipline: 'information-sociology',
+    title: 'ダーク・パーティシペーション（暗い参加）',
+    statement:
+      'ダーク・パーティシペーション（dark participation）とは、ジャーナリズム研究者 Thorsten Quandt が2018年に提示した概念で、参加型ジャーナリズムや市民メディアをめぐる楽観論への反概念として、悪意ある・破壊的・操作的な目的をもったユーザー参加がニュースの生産・流通過程に組み込まれる「暗い参加」を体系化したものである。' +
+      'トロール、ヘイトスピーチ、組織的な偽情報やプロパガンダ、嫌がらせなどを、誰が・なぜ・何を・どのように行うかという次元で類型化し、ユーザー参加が常に民主的・建設的とは限らないことを示す。' +
+      '参加文化（participatory culture）の規範的な前提を批判的に問い直し、計算プロパガンダや偽情報研究を接続する分析枠組みとなっている。',
+    keyFigures: 'Thorsten Quandt（2018, Media and Communication 6(4):36-48）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.17645/mac.v6i4.1519', type: 'academic', label: 'Quandt, T. (2018) Dark Participation, Media and Communication 6(4):36-48' },
+      { url: 'https://www.cogitatiopress.com/mediaandcommunication/article/view/1519', type: 'academic', label: 'Cogitatio Press — Dark Participation（オープンアクセス査読誌）' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-silence',
+    discipline: 'management',
+    title: '組織的沈黙（オーガニゼーショナル・サイレンス）',
+    statement:
+      '組織的沈黙（organizational silence）とは、Elizabeth Wolfe Morrison と Frances Milliken が2000年に提示した概念で、従業員が職場の問題や改善に関わる情報・意見・懸念を表明することを、集団的・体系的に控えてしまう状態を指す。' +
+      '経営層が否定的なフィードバックを恐れて回避する傾向や、従業員を信頼しきれないという暗黙の信念が「沈黙の風土（climate of silence）」を生み、個々人は声を上げても無駄・危険だと学習して口をつぐむ。その結果、組織は誤りの是正・学習・変革に必要な情報を失う。' +
+      '個人の発言行動（voice）を、個人特性ではなく組織レベルの構造と風土の問題として捉え直した点に意義がある。',
+    keyFigures: 'Elizabeth Wolfe Morrison & Frances J. Milliken（2000, Academy of Management Review 25(4):706-725）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/259200', type: 'academic', label: 'Morrison, E.W. & Milliken, F.J. (2000) Organizational Silence: A Barrier to Change and Development in a Pluralistic World, AMR 25(4):706-725' },
+      { url: 'https://doi.org/10.1111/1467-6486.00387', type: 'academic', label: 'Milliken, Morrison & Hewlin (2003) An Exploratory Study of Employee Silence, Journal of Management Studies 40(6):1453-1476' },
+    ],
+  },
+  {
+    id: 'human-need-for-closure',
+    discipline: 'human-science',
+    title: '認知的閉合欲求（need for cognitive closure）',
+    statement:
+      '認知的閉合欲求（need for cognitive closure）とは、Arie Kruglanski らが提唱した、曖昧さや不確実性を嫌い、どのような答えであれ確定的な結論を得て情報処理を早く打ち切りたいという動機づけの個人差・状況差を指す概念である。' +
+      '閉合欲求が高いと、人は手がかりが乏しくても早期に判断を確定し（つかみ取り＝seizing）、いったん得た判断を新しい情報があっても保持し続ける（凍結＝freezing）傾向を示し、ステレオタイプへの依存・最初の情報への固執・少数意見への不寛容などが生じやすい。' +
+      '時間的な切迫や騒音などの状況がこの欲求を高めることが知られ、社会的判断・集団過程・説得の研究に広く応用されている。',
+    keyFigures: 'Arie W. Kruglanski／Donna M. Webster（1994, JPSP 67(6):1049-1062；1996, Psychological Review 103(2):263-283）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.67.6.1049', type: 'academic', label: 'Webster, D.M. & Kruglanski, A.W. (1994) Individual Differences in Need for Cognitive Closure, JPSP 67(6):1049-1062' },
+      { url: 'https://doi.org/10.1037/0033-295X.103.2.263', type: 'academic', label: 'Kruglanski, A.W. & Webster, D.M. (1996) Motivated Closing of the Mind: \'Seizing\' and \'Freezing\', Psychological Review 103(2):263-283' },
+    ],
+  },
+  {
+    id: 'infosoc-predictive-policing',
+    discipline: 'information-sociology',
+    title: '予測的ポリシング（予測的取締り）',
+    statement:
+      '予測的ポリシング（predictive policing）とは、過去の犯罪データや行動データをアルゴリズムで分析し、犯罪が起きやすい場所・時間（ホットスポット）や、関与の可能性が高いとされる人物を事前に予測して、警察資源の配分や介入対象の決定に用いるデータ駆動型の警察戦略を指す。' +
+      '効率化が期待される一方で、過去の偏った逮捕データを学習することで特定の地区や集団への取締りが自己強化的に集中する「フィードバックループ」、無罪推定や適正手続との緊張、透明性・説明責任の欠如といった法的・倫理的な批判が強い。' +
+      '法学者 Andrew Guthrie Ferguson はこれを「ビッグデータ・ポリシング」の中核と位置づけ、規律と人権保障を両立させる枠組みを論じている。',
+    keyFigures: 'Andrew Guthrie Ferguson（2017『The Rise of Big Data Policing』NYU Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://openscholarship.wustl.edu/law_lawreview/vol94/iss5/5/', type: 'academic', label: 'Ferguson, A.G. (2017) Policing Predictive Policing, Washington University Law Review 94(5):1109-1189' },
+      { url: 'https://nyupress.org/9781479892822/the-rise-of-big-data-policing/', type: 'reference', label: 'NYU Press — Ferguson, A.G. (2017) The Rise of Big Data Policing' },
+    ],
+  },
 ];
 // Stryker restore all
