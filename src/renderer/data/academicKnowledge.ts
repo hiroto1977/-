@@ -26675,5 +26675,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1177/0011128788034003005', type: 'academic', label: 'Matsueda (1988) The Current State of Differential Association Theory, Crime & Delinquency 34(3):277-306' },
     ],
   },
+  // ── Batch 292 ─────────────────────────────────────────────
+  // econ-meese-rogoff-exchange-rate-disconnect, bizlaw-unocal-enhanced-scrutiny,
+  // bizlaw-securities-materiality-standard, infosoc-value-sensitive-design,
+  // infosoc-reflective-design, human-minority-influence
+  {
+    id: 'econ-meese-rogoff-exchange-rate-disconnect',
+    discipline: 'economics',
+    title: 'ミース＝ロゴフの為替レート・ディスコネクト・パズル',
+    statement:
+      '為替レートは金利差、マネーサプライ、産出、経常収支などのマクロ・ファンダメンタルズで説明・予測できるはずだという標準的見方に対し、Meese & Rogoffは、主要通貨の短中期予測では構造モデルが単純なランダムウォークを上回れないことを示した。' +
+      'しかも将来の説明変数の実現値を事後的に与えても予測力が乏しい点が衝撃的で、為替レートが基礎的経済変数から切り離されて動く「ディスコネクト」と呼ばれる。PPP、金利平価、ドーンブッシュ・モデルとは別に、実証的予測失敗そのものを捉える概念である。',
+    keyFigures: 'Richard A. Meese／Kenneth Rogoff（1983, Journal of International Economics）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-1996(83)90017-X', type: 'academic', label: 'Meese & Rogoff (1983) Empirical exchange rate models of the seventies, Journal of International Economics 14(1-2):3-24' },
+      { url: 'https://www.nber.org/system/files/chapters/c11377/c11377.pdf', type: 'academic', label: 'Meese & Rogoff (1983) The Out-of-Sample Failure of Empirical Exchange Rate Models, NBER chapter' },
+    ],
+  },
+  {
+    id: 'bizlaw-unocal-enhanced-scrutiny',
+    discipline: 'business-law',
+    title: 'ユノカル基準（買収防衛策の強化審査）',
+    statement:
+      'ユノカル基準とは、敵対的買収に対して取締役会がポイズンピル、自己株式公開買付け等の防衛策を採る場合、通常の経営判断原則より厳しく、その防衛行為を審査するデラウェア会社法上の中間的基準である。' +
+      '取締役には自己保身の構造的利益相反があるため、会社政策への脅威を善意かつ合理的調査に基づき認識したこと、対応がその脅威に比例し強圧的・排除的でないことを示す必要がある。レブロン義務や完全公正基準とは適用局面が異なる。',
+    keyFigures: 'Unocal Corp. v. Mesa Petroleum Co., 493 A.2d 946（Del. 1985）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1985/493-a-2d-946-4.html', type: 'reference', label: 'Unocal Corp. v. Mesa Petroleum Co., Delaware Supreme Court, 493 A.2d 946 (1985)' },
+      { url: 'https://www.law.cornell.edu/wex/enhanced_scrutiny_test', type: 'reference', label: 'Cornell LII Wex — enhanced scrutiny test / Unocal Test' },
+      { url: 'https://ir.law.fsu.edu/cgi/viewcontent.cgi?article=2232&context=lr', type: 'academic', label: 'Florida State University Law Review — note on Unocal Corp. v. Mesa Petroleum Co. (1986)' },
+    ],
+  },
+  {
+    id: 'bizlaw-securities-materiality-standard',
+    discipline: 'business-law',
+    title: '証券開示の重要性基準（materiality / total mix）',
+    statement:
+      '証券開示の重要性基準とは、ある事実の不開示・虚偽表示が、合理的投資家または株主の判断にとって重要かを問う米国証券法上の中心概念である。TSC判決は、開示されれば利用可能な情報の総体を有意に変えた相当の蓋然性を基準とした。' +
+      'Basic判決はこの基準をRule 10b-5の証券詐欺へ広げ、合併交渉など未確定事実では発生確率と会社全体への大きさを比較衡量するとした。SEC SAB 99は、数値的閾値だけでなく質的要因も見るべきだと示す。',
+    keyFigures: 'TSC Industries, Inc. v. Northway, Inc.（1976）／Basic Inc. v. Levinson（1988）／SEC Staff Accounting Bulletin No. 99（1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/supremecourt/text/426/438', type: 'reference', label: 'Cornell LII — TSC Industries, Inc. v. Northway, Inc., 426 U.S. 438 (1976)' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/485/224', type: 'reference', label: 'Cornell LII — Basic Inc. v. Levinson, 485 U.S. 224 (1988)' },
+      { url: 'https://www.sec.gov/interps/account/sab99.htm', type: 'government', label: 'SEC Staff Accounting Bulletin No. 99: Materiality' },
+    ],
+  },
+  {
+    id: 'infosoc-value-sensitive-design',
+    discipline: 'information-sociology',
+    title: '価値敏感設計（Value Sensitive Design）',
+    statement:
+      '価値敏感設計は、プライバシー、公正、説明責任、同意、福祉、民主的参加などの人間的価値を、技術設計の初期から体系的に組み込むHCI・情報倫理の方法論である。価値を後付けのチェック項目ではなく、設計要件そのものとして扱う。' +
+      '方法は、関係者と価値を明確化する概念的調査、実際の利用者・文脈を調べる経験的調査、アーキテクチャやインターフェースへ価値を実装する技術的調査の反復から成る。アルゴリズムバイアスやダークパターン対策とも接続するが、より広い設計方法論である。',
+    keyFigures: 'Batya Friedman／Peter H. Kahn Jr.／Alan Borning（2006, Value Sensitive Design and Information Systems）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.taylorfrancis.com/chapters/edit/10.4324/9781315703619-27/value-sensitive-design-information-systems-batya-friedman-peter-kahn-jr-alan-borning', type: 'academic', label: 'Friedman, Kahn & Borning — Value Sensitive Design and Information Systems, Taylor & Francis' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-94-007-7844-3_4', type: 'academic', label: 'Springer — Value Sensitive Design and Information Systems' },
+    ],
+  },
+  {
+    id: 'infosoc-reflective-design',
+    discipline: 'information-sociology',
+    title: 'リフレクティブ・デザイン（省察的デザイン）',
+    statement:
+      'リフレクティブ・デザインは、技術が暗黙の文化的前提や価値観を反映し、それを利用者の日常へ広げてしまう点に着目し、設計者と利用者の双方に批判的省察を促すHCIの設計枠組みである。' +
+      '単に使いやすい道具を作るのではなく、技術が何を当然視し、何を見えなくしているかを問い、別の生活・関係・行為の可能性を開く人工物を設計・評価する。参加型デザイン、価値敏感設計、批判的技術実践と隣接するが、反省性そのものを設計原理に据える点が特徴である。',
+    keyFigures: 'Phoebe Sengers／Kirsten Boehner／Shay David／Joseph "Jofish" Kaye（2005, Critical Computing）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/1094562.1094569', type: 'academic', label: 'Sengers et al. (2005) Reflective Design, Proceedings of Critical Computing, ACM' },
+      { url: 'https://nissenbaum.tech.cornell.edu/papers/reflectivedesign.pdf', type: 'academic', label: 'Cornell-hosted PDF — Sengers, Boehner, David & Kaye, Reflective Design' },
+    ],
+  },
+  {
+    id: 'human-minority-influence',
+    discipline: 'human-science',
+    title: '少数派影響（マイノリティ・インフルエンス）',
+    statement:
+      '少数派影響とは、数の上では劣勢な個人や集団が、一貫した立場表明や自信ある行動様式を通じて、多数派の判断・態度・規範を変化させる社会心理学の概念である。多数派同調が公的な迎合を生みやすいのに対し、少数派は深い再検討を促す。' +
+      'Moscoviciらの青緑色知覚実験では、少数派が一貫して青い刺激を緑と答えると、多数派参加者の一部も緑と答える頻度が増えた。一貫性、投資、柔軟性が影響力の条件とされ、同調実験・集団極性化・スパイラル・オブ・サイレンスとは区別される。',
+    keyFigures: 'Serge Moscovici／Elisabeth Lage／Martine Naffrechoux（1969, Sociometry）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2786541', type: 'academic', label: 'Moscovici, Lage & Naffrechoux (1969) Influence of a Consistent Minority, Sociometry 32(4):365-380' },
+      { url: 'https://psycnet.apa.org/record/1970-06678-001', type: 'academic', label: 'APA PsycNet — Influence of a consistent minority on a color perception task' },
+    ],
+  },
 ];
 // Stryker restore all
