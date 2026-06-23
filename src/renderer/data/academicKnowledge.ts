@@ -26495,5 +26495,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-myerson-satterthwaite-theorem, econ-aiyagari-model,
+  // human-predictive-processing, bizlaw-caremark-doctrine,
+  // infosoc-contextual-integrity, infosoc-algorithmic-management
+  {
+    id: 'econ-myerson-satterthwaite-theorem',
+    discipline: 'economics',
+    title: 'マイヤーソン＝サタースウェイト定理',
+    statement:
+      'マイヤーソン＝サタースウェイト定理は、売り手と買い手が私的情報として異なる評価額を持つ二者間取引において、配分効率・個別合理性・予算均衡・誘因両立性を同時に満たす制度設計が一般には不可能であることを示す不可能性定理である。' +
+      'Myerson & Satterthwaite（1983, Journal of Economic Theory）が定式化し、情報の非対称性下では外部補助なしに完全効率な取引メカニズムを実現できないことを証明したことで、オークション理論・交渉理論・メカニズムデザインの理論的限界を与える基礎命題となった。',
+    keyFigures: 'Roger B. Myerson／Mark A. Satterthwaite／Leonid Hurwicz',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-0531(83)90048-0', type: 'academic', label: 'Myerson, R.B. & Satterthwaite, M.A. (1983) Efficient Mechanisms for Bilateral Trading, Journal of Economic Theory 29(2):265-281' },
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v29y1983i2p265-281.html', type: 'academic', label: 'RePEc bibliographic record — Efficient mechanisms for bilateral trading (JET 1983)' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'reference', label: 'Nobel Prize 2007 Scientific Background — Mechanism design under asymmetric information' },
+    ],
+  },
+  {
+    id: 'econ-aiyagari-model',
+    discipline: 'economics',
+    title: 'アイヤガリ・モデル',
+    statement:
+      'アイヤガリ・モデルは、不完全市場下で家計が保険不可能な個別ショックと借入制約に直面する異質的主体マクロモデルであり、予備的貯蓄・資産分布・定常均衡利子率を同時に分析する枠組みである。' +
+      'Aiyagari（1994, Quarterly Journal of Economics）が標準的成長モデルを異質性付きに拡張して定量分析を行い、所得リスクが集計貯蓄や富の偏在に与える影響を示したことで、後の不完全市場マクロやHANK系モデルの出発点として位置づけられている。',
+    keyFigures: 'S. Rao Aiyagari／Per Krusell／Anthony A. Smith Jr.／Greg Kaplan',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2118417', type: 'academic', label: 'Aiyagari, S.R. (1994) Uninsured Idiosyncratic Risk and Aggregate Saving, Quarterly Journal of Economics 109(3):659-684' },
+      { url: 'https://www.minneapolisfed.org/research/working-papers/uninsured-idiosyncratic-risk-and-aggregate-saving', type: 'government', label: 'Federal Reserve Bank of Minneapolis — Uninsured Idiosyncratic Risk and Aggregate Saving (WP 502)' },
+      { url: 'https://www.nber.org/papers/w23748', type: 'academic', label: 'Kaplan, Moll & Violante (2018) Monetary Policy According to HANK, NBER Working Paper 23748' },
+    ],
+  },
+  {
+    id: 'human-predictive-processing',
+    discipline: 'human-science',
+    title: '予測処理理論（Predictive Processing）',
+    statement:
+      '予測処理理論は、脳を階層的生成モデルに基づく予測機械として捉え、上位レベルの予測と下位レベルの予測誤差の反復更新によって知覚・行為・学習が実現されると説明する認知神経科学の統合理論である。' +
+      'Friston（2010）が自由エネルギー原理として理論基盤を示し、Clark（2013）が知覚・注意・行為を横断する一般枠組みとして精緻化したことで、認知科学・計算論的精神医学・意識研究にまたがる中核的パラダイムへと発展した。',
+    keyFigures: 'Karl Friston／Andy Clark／Jakob Hohwy／Anil Seth',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1038/nrn2787', type: 'academic', label: 'Friston, K. (2010) The free-energy principle: a unified brain theory?, Nature Reviews Neuroscience 11:127-138' },
+      { url: 'https://doi.org/10.1017/S0140525X12000477', type: 'academic', label: 'Clark, A. (2013) Whatever next? Predictive brains, situated agents, and the future of cognitive science, Behavioral and Brain Sciences 36(3):181-204' },
+      { url: 'https://www.scienceopen.com/document?vid=e8089cb4-2b49-4365-83cc-e022611deecd', type: 'reference', label: 'ScienceOpen metadata — Predictive Processing target article (BBS 2013)' },
+    ],
+  },
+  {
+    id: 'bizlaw-caremark-doctrine',
+    discipline: 'business-law',
+    title: 'ケアマーク法理（Caremark Doctrine）',
+    statement:
+      'ケアマーク法理とは、取締役会の監督義務違反に基づく責任追及基準を示すデラウェア会社法上の判例法理であり、取締役が情報・報告システムを全く整備しない、または重大な警告兆候を意識的に無視する継続的失敗がある場合に限って責任が成立しうるとする。' +
+      'In re Caremark（Del. Ch. 1996）で原型が示され、Stone v. Ritter（Del. 2006）で忠実義務（善意要素）に位置づけられたことで、コンプライアンス監督訴訟の中心基準となった一方、判例上「勝訴が最も難しい請求類型の一つ」とされる高い立証ハードルを持つ。',
+    keyFigures: 'William T. Allen（Caremark判決）／Myron T. Steele（Stone v. Ritter）／Leo E. Strine Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://casetext.com/case/in-re-caremark-intern-inc-deriv-lit', type: 'reference', label: 'In re Caremark Int\'l Inc. Derivative Litigation, 698 A.2d 959 (Del. Ch. 1996)' },
+      { url: 'https://casetext.com/case/stone-v-ritter', type: 'reference', label: 'Stone v. Ritter, 911 A.2d 362 (Del. 2006)' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV (board powers and fiduciary structure)' },
+    ],
+  },
+  {
+    id: 'infosoc-contextual-integrity',
+    discipline: 'information-sociology',
+    title: '文脈的完全性（Contextual Integrity）',
+    statement:
+      '文脈的完全性は、プライバシーを「秘匿」や「自己情報コントロール」そのものではなく、特定の社会的文脈における情報の適切な流れが規範に沿って維持されている状態として捉える理論である。' +
+      'Nissenbaum（2004）が規範を「適切性」と「流通」の二類型に整理して提示し、医療・教育・金融・プラットフォームなど異なる制度文脈ごとの情報フロー逸脱を評価する基準を与えたことで、デジタル時代のプライバシー政策と規制設計の主要枠組みとして定着した。',
+    keyFigures: 'Helen Nissenbaum／Michael Walzer',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/', type: 'academic', label: 'Nissenbaum, H. (2004) Privacy as Contextual Integrity, Washington Law Review 79(1):119-157' },
+      { url: 'https://nissenbaum.tech.cornell.edu/papers/H.%20Nissenbaum,%20_Privacy%20as%20Contextual%20Integrity.pdf', type: 'academic', label: 'Author-hosted PDF — Privacy as Contextual Integrity (Washington Law Review)' },
+      { url: 'https://nissenbaum.tech.cornell.edu/papers/Privacy%20and%20Contextual%20Integrity%20-%20Frameworks%20and%20Applications.pdf', type: 'reference', label: 'Barth et al. (2006) Privacy and Contextual Integrity: Frameworks and Applications' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-management',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的マネジメント',
+    statement:
+      'アルゴリズム的マネジメントは、プラットフォームや企業システムがデータ収集と機械的評価を用いて、業務割当・パフォーマンス測定・報酬調整・規律付けを自動化または半自動化する労務統治様式を指す概念である。' +
+      'Lee et al.（2015, CHI）が配車労働の実証研究で概念化し、監視・評価・インセンティブ設計がコード化されることで管理権限が人間管理者からシステムへ移行する過程を示したことで、ギグワーク研究・労働法政策・デジタル労働社会学の中心テーマとなった。',
+    keyFigures: 'Min Kyung Lee／Antonio A. Casilli／David Stark',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1145/2702123.2702548', type: 'academic', label: 'Lee, M.K. et al. (2015) Working with Machines, CHI \'15:1603-1612' },
+      { url: 'https://www.ilo.org/publications/flagship-reports/role-digital-labour-platforms-transforming-world-work', type: 'government', label: 'ILO (2021) World Employment and Social Outlook: The role of digital labour platforms' },
+      { url: 'https://datasociety.net/wp-content/uploads/2019/02/DS_Algorithmic_Management_Explainer.pdf', type: 'reference', label: 'Data & Society (2019) Algorithmic Management in the Workplace' },
+    ],
+  },
 ];
 // Stryker restore all
