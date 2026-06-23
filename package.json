@@ -31,6 +31,7 @@
     "orchestrate:import-requests": "node scripts/orchestrate.cjs import-requests",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
     "vault:check": "node scripts/build-knowledge-vault.cjs --check",
+    "knowledge:index": "node scripts/build-knowledge-index.cjs",
     "chain:verify": "node scripts/integrity-chain.cjs verify",
     "chain:append": "node scripts/integrity-chain.cjs append",
     "chain:show": "node scripts/integrity-chain.cjs show",
