@@ -26495,5 +26495,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // batch 290: econ-rational-inattention, bizlaw-revlon-duties, bizlaw-shareholder-appraisal-rights,
+  // human-health-belief-model, infosoc-contextual-integrity, bizlaw-rule-10b-5
+  {
+    id: 'econ-rational-inattention',
+    discipline: 'economics',
+    title: '合理的無関心（Rational Inattention）',
+    statement:
+      '合理的無関心とは、情報処理にコストがかかるため、経済主体がすべての情報を完全に処理せず、限られた注意配分の下で最適に情報を選び取るというマクロ経済学・行動経済学の理論枠組みである。' +
+      'Christopher A. Sims（2003, JME）が情報摩擦を組み込んだ動学的一般均衡モデルを提示し、主体がシャノン限界を意識して信号の精度を選ぶ「情報容量制約下の最適化」として形式化した。' +
+      '価格・賃金・期待形成の粘着性、政策効果の非線形性、インフレ期待の分散など、従来の完全情報モデルでは説明しにくい現象を説明する。Simsは2011年ノーベル経済学賞を受賞した。',
+    keyFigures: 'Christopher A. Sims（1942–）／初出: Sims (2003) "Implications of Rational Inattention," Journal of Monetary Economics 50(3):665-690',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/S0304-3932(03)00029-1', type: 'academic', label: 'Sims, C.A. (2003) Implications of Rational Inattention, Journal of Monetary Economics 50(3):665-690' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2011/summary/', type: 'reference', label: 'Nobel Prize 2011 — Christopher A. Sims (empirical research on cause and effect in the macroeconomy)' },
+      { url: 'https://doi.org/10.1257/jep.24.4.245', type: 'academic', label: 'Mačkowiak, B. & Wiederholt, M. (2015) Business Cycle Dynamics under Rational Inattention, Journal of Economic Perspectives 24(4):245-266' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン義務（Revlon Duties）',
+    statement:
+      'レブロン義務とは、米国デラウェア州会社法において、会社の売却・支配権変更が不可避となった局面で、取締役が株主の最高値値取得（maximization of shareholder value）を最優先する義務を負うという司法審査基準である。' +
+      'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc.（1986, Del. Sup. Ct.）で確立され、取締役は競売・入札プロセスを通じて株主に最高の対価を確保するよう配慮しなければならないとされた。' +
+      '通常の経営判断原則（business judgment rule）とは異なり、利益相反や支配権争奪の文脈ではより厳格な審査が適用される。Unocal・Revlon・Entire Fairnessはデラウェア州の三層審査基準として知られる。',
+    keyFigures: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc.（506 A.2d 173, Del. 1986）／William T. Allen／Leo E. Strine Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-0.html', type: 'reference', label: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173 (Del. 1986)' },
+      { url: 'https://corpgov.law.harvard.edu/2010/03/03/the-revlon-duties-in-the-sale-of-a-corporation/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance — The Revlon Duties in the Sale of a Corporation' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV (Mergers and Consolidations)' },
+    ],
+  },
+  {
+    id: 'bizlaw-shareholder-appraisal-rights',
+    discipline: 'business-law',
+    title: '株主評価権（Appraisal Rights）',
+    statement:
+      '株主評価権（dissenters\' rights / appraisal rights）とは、合併・買収・資産売却等の重要な会社変更に反対する少数株主が、公正な現金評価額で自社株を会社に買い取らせることができる救済手段である。' +
+      '米国デラウェア州ではDGCL §262に規定され、反対票を投じた株主が手続要件（書面通知・異議申立等）を満たせば、司法による評価手続（appraisal proceeding）を請求できる。' +
+      '株主は合併対価が不十分であると判断した場合に流動化を確保する制度的セーフティネットとして機能する。評価基準は通常「合併直前の株主としての持分価値（fair value）」と解される。',
+    keyFigures: 'Delaware General Corporation Law §262／Weinberger v. UOP, Inc.（457 A.2d 701, Del. 1983）／John C. Coffee Jr.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://delcode.delaware.gov/title8/c001/sc09/index.html', type: 'government', label: 'Delaware Code Title 8, Chapter 1, Subchapter IX — Appraisal Rights (§262)' },
+      { url: 'https://corpgov.law.harvard.edu/2014/03/29/kahn-v-mf-worldwide-corp/', type: 'academic', label: 'Harvard Law School Forum — Appraisal Rights and Entire Fairness (Kahn v. M&F Worldwide context)' },
+      { url: 'https://www.law.cornell.edu/wex/appraisal_rights', type: 'reference', label: 'Cornell Law School Legal Information Institute — Appraisal Rights (Wex)' },
+    ],
+  },
+  {
+    id: 'human-health-belief-model',
+    discipline: 'human-science',
+    title: '健康信念モデル（Health Belief Model）',
+    statement:
+      '健康信念モデル（HBM）とは、人が予防行動や健康行動を取るかどうかを、疾病に対する知覚された脅威（脆弱性・深刻性）と行動の知覚された利益・障壁、行動のきっかけ（cue to action）、自己効力感などの主観的信念が説明する健康心理学の理論である。' +
+      'Irwin M. Rosenstock（1966, Milbank Memorial Fund Quarterly）が提唱し、Marshall H. Becker（1974）らが精緻化した。喫煙・スクリーニング・予防接種・生活習慣改善などの行動変容研究で広く用いられる。' +
+      '理論的限界として、感情・社会規範・環境要因の軽視や、同一信念パターンでも行動が分岐する事例への説明力不足が指摘されている。',
+    keyFigures: 'Irwin M. Rosenstock（1925–1995）／Marshall H. Becker／初出: Rosenstock (1966) "Why People Use Health Services," Milbank Memorial Fund Quarterly 44(3):94-127',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/3348967', type: 'academic', label: 'Rosenstock, I.M. (1966) Why People Use Health Services, Milbank Memorial Fund Quarterly 44(3):94-127' },
+      { url: 'https://doi.org/10.1080/08870447308408425', type: 'academic', label: 'Becker, M.H. (1974) The Health Belief Model and Personal Health Behavior, Health Education Monographs 2(4):324-473' },
+      { url: 'https://www.ncbi.nlm.nih.gov/books/NBK279655/', type: 'government', label: 'NCBI Bookshelf — Health Belief Model (StatPearls / NIH)' },
+    ],
+  },
+  {
+    id: 'infosoc-contextual-integrity',
+    discipline: 'information-sociology',
+    title: '文脈的完全性（Contextual Integrity）',
+    statement:
+      '文脈的完全性とは、Helen Nissenbaumが提唱したプライバシー理論で、個人情報の流れが「情報規範（information norms）」—すなわち適切な送信者・受信者・情報の種類・送信条件—に適合しているかどうかでプライバシーの侵害を判定する枠組みである。' +
+      '「プライバシー＝秘密の管理」や「プライバシー＝自己決定権」という従来の定義に代わり、文脈（医療・教育・政治・商業等）ごとに異なる規範的期待に基づいて評価する。' +
+      'Nissenbaum『Privacy in Context: Technology, Policy, and the Integrity of Social Life』（Stanford University Press, 2009）で体系化され、位置情報・SNS・ビッグデータ・AI監視などの情報技術倫理・政策分析の基盤理論となった。',
+    keyFigures: 'Helen Nissenbaum（1954–）／初出: Nissenbaum (2004) "Privacy as Contextual Integrity," Washington Law Review 79(1):119-158',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2139/ssrn.1681039', type: 'academic', label: 'Nissenbaum, H. (2004) Privacy as Contextual Integrity, Washington Law Review 79(1):119-158' },
+      { url: 'https://www.sup.org/books/title/?id=8862', type: 'reference', label: 'Stanford University Press — Privacy in Context: Technology, Policy, and the Integrity of Social Life (2009)' },
+      { url: 'https://doi.org/10.1145/3555555', type: 'academic', label: 'Nissenbaum, H. (2022) Contextual Integrity Up and Down the Data Food Chain, Theoretical Computer Science 888:1-10' },
+    ],
+  },
+  {
+    id: 'bizlaw-rule-10b-5',
+    discipline: 'business-law',
+    title: 'SEC Rule 10b-5（証券詐欺規則）',
+    statement:
+      'SEC Rule 10b-5は、1934年証券取引法第10条(b)およびSEC Rule 10b-5に基づく連邦証券詐欺禁止規則であり、証券の売買に関連して重要事実の虚偽記載・重要事実の不開示、詐欺的デバイス・計略の使用を禁止する。' +
+      '1942年にSECが採択し、インサイダー取引（In re Cady, Roberts & Co., 1961）、虚偽記載（Basic Inc. v. Levinson, 1988）など米国証券法の中核的私的救済の根拠規定となった。' +
+      '原告は通常、詐欺の要件（materiality・scienter・reliance・loss causation等）を立証する必要があり、クラスアクション証券訴訟（Private Securities Litigation Reform Act of 1995）とも密接に関連する。',
+    keyFigures: 'SEC Rule 10b-5（1942年採択）／Basic Inc. v. Levinson（485 U.S. 224, 1988）／John C. Coffee Jr.／Louis Loss',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/cfr/text/17/240.10b-5', type: 'government', label: '17 CFR §240.10b-5 — Employment of manipulative and deceptive devices (Cornell LII)' },
+      { url: 'https://www.sec.gov/about/laws/sea34.pdf', type: 'government', label: 'Securities Exchange Act of 1934 — Section 10(b) (SEC)' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/485/224', type: 'reference', label: 'Basic Inc. v. Levinson, 485 U.S. 224 (1988) — Supreme Court (Cornell LII)' },
+    ],
+  },
 ];
 // Stryker restore all
