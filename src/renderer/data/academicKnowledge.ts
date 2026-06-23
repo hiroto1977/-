@@ -26679,5 +26679,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.4159/harvard.9780674736061', type: 'academic', label: 'Pasquale, F. (2015) The Black Box Society, Harvard University Press（書籍 DOI）' },
     ],
   },
+  {
+    id: 'econ-kiyotaki-wright',
+    discipline: 'economics',
+    title: 'キヨタキ＝ライト・モデル（交換媒介としての貨幣）',
+    statement:
+      'キヨタキ＝ライト・モデルとは、清滝信宏（Nobuhiro Kiyotaki）と Randall Wright が1989年に提示した、貨幣の存在を交換過程から内生的に説明する探索（サーチ）理論的な貨幣モデルである。' +
+      '各主体が異なる財を生産・消費する分権的な経済では「欲望の二重の一致（double coincidence of wants）」が成立しにくく物々交換が滞る。主体がランダムに出会って交換を試みる動学のなかで、それ自体は消費しない特定の財（または法定不換紙幣）が広く受け入れられる「交換の媒介＝貨幣」として均衡的に現れる条件を示した。' +
+      '貨幣を制度的前提とせず、人々の戦略的な受領行動の均衡として導出する点で、貨幣の探索理論（search theory of money）の基礎となった。',
+    keyFigures: 'Nobuhiro Kiyotaki（清滝信宏）& Randall Wright（1989, Journal of Political Economy 97(4):927-954）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/261212', type: 'academic', label: 'Kiyotaki, N. & Wright, R. (1989) On Money as a Medium of Exchange, Journal of Political Economy 97(4):927-954' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v97y1989i4p927-54.html', type: 'reference', label: 'IDEAS/RePEc — Kiyotaki & Wright (1989) 書誌情報' },
+    ],
+  },
+  {
+    id: 'bizlaw-williams-act',
+    discipline: 'business-law',
+    title: 'ウィリアムズ法（公開買付け規制）',
+    statement:
+      'ウィリアムズ法（Williams Act）とは、1968年に制定され米国1934年証券取引法に組み込まれた連邦法で、公開買付け（テンダー・オファー）と大量の株式取得を規律する。' +
+      '発行済株式の5%超を取得した者にスケジュール13D等による開示を義務づけ、公開買付けには最低限の受付期間、応募株主への比例配分（按分）購入、価格引上げ時の遡及適用、撤回権などの手続的保護を定める。' +
+      '目的は、敵対的買収の局面で対象会社の株主が情報不足や時間的圧力のもとで拙速な判断を迫られることを防ぎ、買収者・対象会社・株主の間の情報と手続の公正を確保することにある。',
+    keyFigures: 'Williams Act（Pub. L. 90-439, 1968）／15 U.S.C. §§78m(d), 78n',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/uscode/text/15/78n', type: 'government', label: '15 U.S.C. §78n（証券取引法 §14: 公開買付けの待機期間・按分購入等）' },
+      { url: 'https://www.law.cornell.edu/wex/tender_offer', type: 'academic', label: 'Cornell Law School LII (Wex) — Tender offer（5%超取得時の開示・Williams Act 文脈）' },
+    ],
+  },
+  {
+    id: 'infosoc-hypernudge',
+    discipline: 'information-sociology',
+    title: 'ハイパーナッジ（Hypernudge）',
+    statement:
+      'ハイパーナッジ（hypernudge）とは、法学者 Karen Yeung が2017年に提示した概念で、ビッグデータとアルゴリズムを用いて、ネットワーク化され・動的に更新され・個別最適化された「選択アーキテクチャ」を通じて人々の行動を継続的に誘導する、設計による規制（regulation by design）の様式を指す。' +
+      'Thaler と Sunstein の古典的なナッジが比較的静的・一律な選択環境の設計であったのに対し、ハイパーナッジは利用者の反応データをリアルタイムに取り込んで提示内容を絶えず調整するため、規模・速度・不可視性・パーソナライズの点で桁違いに強力かつ捕捉しにくい。' +
+      '透明性・自律性・正当な手続を欠いたまま行動を方向づけうる点で、アルゴリズム統治と法・規制論の主要な論点となっている。',
+    keyFigures: 'Karen Yeung（2017, Information, Communication & Society 20(1):118-136）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/1369118X.2016.1186713', type: 'academic', label: 'Yeung, K. (2017) \'Hypernudge\': Big Data as a mode of regulation by design, Information, Communication & Society 20(1):118-136' },
+      { url: 'https://kclpure.kcl.ac.uk/portal/en/publications/hypernudge-big-data-as-a-mode-of-regulation-by-design', type: 'academic', label: "King's College London 研究リポジトリ — Yeung (2017) Hypernudge" },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-work',
+    discipline: 'management',
+    title: '制度的ワーク（インスティテューショナル・ワーク）',
+    statement:
+      '制度的ワーク（institutional work）とは、Thomas Lawrence と Roy Suddaby が2006年に体系化した概念で、個人や集団が制度（規則・規範・価値体系）を創出・維持・破壊するために行う、意図的・実践的な努力の総体を指す。' +
+      '制度が行為者を一方的に規定するとみる制度決定論と、利害に動かされた英雄的な「制度的企業家」論の双方を超えて、日常的で目立たない実践（擁護・模倣・教育・取り締まり・神話化・分離など）の積み重ねがいかに制度を支え、また変えていくかに分析の焦点を据える。' +
+      '構造と行為主体性（agency）の関係を、能動的だが制度に埋め込まれた実践として捉え直す枠組みである。',
+    keyFigures: 'Thomas B. Lawrence & Roy Suddaby（2006, The SAGE Handbook of Organization Studies, 2nd ed.）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.4135/9781848608030.n7', type: 'academic', label: 'Lawrence, T.B. & Suddaby, R. (2006) Institutions and Institutional Work, The SAGE Handbook of Organization Studies (2nd ed.):215-254' },
+      { url: 'https://doi.org/10.1177/1056492610387222', type: 'academic', label: 'Lawrence, Suddaby & Leca (2011) Institutional Work: Refocusing Institutional Studies of Organization, Journal of Management Inquiry 20(1):52-58' },
+    ],
+  },
+  {
+    id: 'human-choice-blindness',
+    discipline: 'human-science',
+    title: '選択盲（チョイス・ブラインドネス）',
+    statement:
+      '選択盲（choice blindness）とは、Petter Johansson と Lars Hall らが2005年に報告した現象で、人が自分の下した選択とは異なる結果をひそかに提示されても入れ替わりに気づかないことが多く、しかも本来は選んでいない方の選択について、もっともらしい理由をその場で後付けに説明してしまうというものである。' +
+      '実験では2枚の顔写真から好みの一方を選ばせた直後に手品的な操作でカードをすり替え、選ばなかった顔を「あなたが選んだ」として理由を尋ねると、多くの参加者がすり替えに気づかず、選ばなかった顔の魅力を雄弁に語った。' +
+      '内省による選択理由の報告が、実際の選択過程の正確な記録ではなく事後的な作話（confabulation）でありうることを示し、意思決定と自己知覚の研究に影響を与えた。',
+    keyFigures: 'Petter Johansson／Lars Hall／Sverker Sikström／Andreas Olsson（2005, Science 310(5745):116-119）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1126/science.1111709', type: 'academic', label: 'Johansson, P., Hall, L., Sikström, S. & Olsson, A. (2005) Failure to Detect Mismatches Between Intention and Outcome in a Simple Decision Task, Science 310(5745):116-119' },
+      { url: 'https://www.lucs.lu.se/choice-blindness-group/', type: 'academic', label: 'Lund University Cognitive Science — Choice Blindness Group（研究グループ・原論文）' },
+    ],
+  },
+  {
+    id: 'bizlaw-appraisal-rights',
+    discipline: 'business-law',
+    title: '評価権（アプレイザル・ライト／反対株主の株式買取請求）',
+    statement:
+      '評価権（appraisal right、反対株主の株式買取請求権）とは、合併などの基礎的変更に反対する株主が、自らの株式を「公正な価値（fair value）」で会社に現金で買い取らせることを裁判所の手続を通じて請求できる、制定法上の少数株主保護制度である。' +
+      '米国デラウェア州一般会社法§262が代表例で、合併に反対し議決権を賛成に投じなかった株主は、市場株価そのものではなく企業価値に基づく公正価値の司法的評価（appraisal proceeding）を求めうる。Weinberger v. UOP（1983）以降、将来キャッシュフロー等を考慮する柔軟な評価手法が認められた。' +
+      '多数決による組織再編から退出する手段を株主に保障する点で、日本の会社法における反対株主の株式買取請求権（785条等）に対応する。',
+    keyFigures: 'Del. Code tit. 8, §262／Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://delcode.delaware.gov/title8/c001/sc09/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IX（合併と §262 評価権）' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1983/457-a-2d-701-4.html', type: 'reference', label: 'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)（公正価値評価の基準判例）' },
+    ],
+  },
 ];
 // Stryker restore all
