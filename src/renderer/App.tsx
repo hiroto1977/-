@@ -283,7 +283,7 @@ export function App() {
         <span>{service.label}</span>
         <span className="sidebar-item-controls">
           {!unlocked && (
-            <span style={{ fontSize: 11 }} aria-label="locked">
+            <span style={{ fontSize: 11 }} aria-label="ロック中">
               🔒
             </span>
           )}
@@ -421,7 +421,7 @@ export function App() {
             </div>
           )}
           <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-mute)' }}>
-            {version ? `v${version}` : 'v0.1.0'} · build: ALL-ACCESS
+            {version ? `v${version}` : 'v0.1.0'} · ビルド: 全機能
           </div>
         </div>
       </aside>

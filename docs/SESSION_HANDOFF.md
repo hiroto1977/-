@@ -202,7 +202,14 @@ export async function fetchXxxSnapshot(ctx: FetchContext): Promise<XxxSnapshot> 
 - サービス数を増やしたら ARCHITECTURE.md の数字 + §3.1 表に行追加 + CLAUDE.md / USER_GUIDE.md の "N services" も全部
 - IPC handler 追加 / `LIVE_FETCHERS` 行範囲変更時の line ref 追従
 
-### F. AIオーケストレーションの進化基盤 (`orchestration/`)
+### F. UI 表示言語ルール
+ダッシュボード / サイドバー / トップバー / ボタン / フォーム / エラー / 空状態 / `aria-label` は
+**ユーザー向け日本語表示を標準**とする。GitHub / Slack / YouTube 等の正式サービス名、API / KPI /
+URL 等の一般略語、コード識別子・ファイルパス・外部API原文は例外として許容するが、周辺の説明・操作文は日本語で補足する。
+詳細は `docs/UI_COPY_RULES.md`。サイドバー定義 (`src/renderer/services.ts`) は `npm run lint:ui-copy`
+で検査され、`npm run verify:all` に組み込み済み。
+
+### G. AIオーケストレーションの進化基盤 (`orchestration/`)
 精度向上サイクルは `orchestration/registry.json` (組織 / チーム / ラウンド履歴 / バックログ / 進化ルール) を
 単一の真実源として回す。`npm run verify:orchestration` (= `verify:all` の一部 + CI) が
 **チーム数の単調増加・最低チーム数・参照整合・teamCount一致** に加え、**組織階層の整合**を機械検証する。

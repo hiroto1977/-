@@ -120,7 +120,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'atlassian',
     label: 'Atlassian',
     icon: 'AT',
-    description: 'Jira / Confluence / Compass',
+    description: 'Jira / Confluence / Compass の案件・文書・連携状況',
     page: AtlassianPage,
     category: 'integrations',
   },
@@ -174,7 +174,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'skills',
-    label: 'Skills',
+    label: 'スキル',
     icon: 'SK',
     description: '~/.claude/skills 一覧 + Anthropic API 経由で実行',
     page: SkillsPage,
@@ -182,7 +182,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'security',
-    label: 'Security',
+    label: 'セキュリティ',
     icon: 'SC',
     description: 'Norton 360 検出 + HIBP 漏洩照会 + VirusTotal URL スキャン',
     page: SecurityPage,
@@ -198,7 +198,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'emotions',
-    label: 'Emotions',
+    label: '感情ログ',
     icon: 'EM',
     description: '気分ログ + Claude API でテキスト感情分析',
     page: EmotionsPage,
@@ -214,7 +214,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'kpi',
-    label: 'KPI / BEP',
+    label: 'KPI・損益分岐点',
     icon: 'KP',
     description: '損益分岐点 + 8 指標 × 6 事業 (模擬データ — Phase 6 で API 接続)',
     page: KpiPage,
@@ -222,7 +222,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'stocks',
-    label: 'Stocks',
+    label: '株式分析',
     icon: 'ST',
     description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — Phase 7 で broker 接続)',
     page: StocksPage,
