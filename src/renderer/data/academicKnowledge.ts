@@ -26588,5 +26588,96 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0033-295X.102.1.68', type: 'academic', label: 'Anderson, M.C. & Spellman, B.A. (1995) On the status of inhibitory mechanisms in cognition: Memory retrieval as a model case, Psychological Review 102(1):68-100' },
     ],
   },
+  {
+    id: 'econ-eaton-kortum',
+    discipline: 'economics',
+    title: 'イートン＝コータム・モデル',
+    statement:
+      'イートン＝コータム・モデルとは、Jonathan Eaton と Samuel Kortum が2002年に提示した、リカード型の比較優位を多数国・確率的技術の一般均衡として定式化した国際貿易モデルである。' +
+      '各国の財ごとの生産効率はフレシェ分布に従う確率変数とされ、各国は各財を最も安く供給できる国から輸入する。技術水準・地理的な貿易コスト（距離・関税）・賃金が貿易パターンと貿易量を同時に決定し、貿易の重力方程式を理論的に導出できる点に特徴がある。' +
+      '少数のパラメータ（特に貿易弾力性）で貿易フローを定量的に再現し反実仮想分析が可能なため、その後の「定量的貿易モデル（quantitative trade models）」の出発点となった。',
+    keyFigures: 'Jonathan Eaton／Samuel Kortum（2002, Econometrica 70(5):1741-1779）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/1468-0262.00366', type: 'academic', label: 'Eaton, J. & Kortum, S. (2002) Technology, Geography, and Trade, Econometrica 70(5):1741-1779' },
+      { url: 'https://ideas.repec.org/a/ecm/emetrp/v70y2002i5p1741-1779.html', type: 'reference', label: 'IDEAS/RePEc — Eaton & Kortum (2002) 書誌情報・引用統計' },
+    ],
+  },
+  {
+    id: 'bizlaw-unocal-standard',
+    discipline: 'business-law',
+    title: 'ユノカル基準（買収防衛の強化された審査基準）',
+    statement:
+      'ユノカル基準（Unocal standard）とは、米国デラウェア州最高裁の Unocal Corp. v. Mesa Petroleum Co.（1985年）で確立された、取締役会が敵対的買収に対して防衛策を講じた場合に適用される「強化された（enhanced）」司法審査基準である。' +
+      '通常の経営判断原則による保護を受ける前提として、取締役はまず(1)会社の事業方針・存続に対する脅威が存在すると信じる合理的な根拠があったこと、(2)講じた防衛策がその脅威との関係で合理的（均衡的）であったこと、の二要件を立証しなければならない。' +
+      'これは買収局面で取締役が自己保身に走りうる構造的危険に対応するもので、Revlon基準（売却が不可避な局面での価格最大化義務）と並ぶ買収防衛審査の柱をなす。',
+    keyFigures: 'Unocal Corp. v. Mesa Petroleum Co., 493 A.2d 946 (Del. 1985)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1985/493-a-2d-946-7.html', type: 'reference', label: 'Unocal Corp. v. Mesa Petroleum Co., 493 A.2d 946 (Del. 1985)' },
+      { url: 'https://www.law.cornell.edu/wex/business_judgment_rule', type: 'academic', label: 'Cornell Law School LII (Wex) — Business Judgment Rule（強化審査基準との対比）' },
+      { url: 'https://delcode.delaware.gov/title8/', type: 'government', label: 'Delaware General Corporation Law (Title 8)' },
+    ],
+  },
+  {
+    id: 'infosoc-ghost-work',
+    discipline: 'information-sociology',
+    title: 'ゴーストワーク（Ghost Work）',
+    statement:
+      'ゴーストワークとは、人類学者 Mary L. Gray と計算社会科学者 Siddharth Suri が2019年の同名の著書で提示した概念で、AIやオンラインサービスの背後で人間が担う、見えにくい単発・オンデマンドのデジタル労働（データのラベリング、コンテンツのモデレーション、検索結果の確認など）を指す。' +
+      '自動化された「知能」に見える機能の多くが、実際には世界中に分散した労働者の不可視な作業に依存しているにもかかわらず、これらの労働はAPIやプラットフォームの裏に隠され、雇用上の保護・キャリア・可視性を欠いたまま分断的に供給されると批判される。' +
+      '人間が機械の隙間を埋める「自動化の最後の一マイル（automation\'s last mile）のパラドックス」として、プラットフォーム労働論とAI倫理を架橋する概念である。',
+    keyFigures: 'Mary L. Gray／Siddharth Suri（2019『Ghost Work』Houghton Mifflin Harcourt）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.microsoft.com/en-us/research/publication/ghost-work-how-to-stop-silicon-valley-from-building-a-new-global-underclass-co-authored-with-siddharth-suri/', type: 'reference', label: 'Microsoft Research — Gray, M.L. & Suri, S. (2019) Ghost Work（著者紹介・概要）' },
+      { url: 'https://doi.org/10.1145/2818048.2819942', type: 'academic', label: 'Gray, M.L., Suri, S. et al. (2016) The Crowd is a Collaborative Network, CSCW 2016（不可視労働の協働構造）' },
+    ],
+  },
+  {
+    id: 'mgmt-institutional-logics',
+    discipline: 'management',
+    title: '制度論理（インスティテューショナル・ロジックス）',
+    statement:
+      '制度論理とは、Roger Friedland と Robert Alford（1991）が導入し、Patricia Thornton と William Ocasio（1999）が組織研究で体系化した概念で、個人や組織の行動・認知・正当性の判断を方向づける、社会的に構築された歴史的な実践・前提・価値・信念のパターンを指す。' +
+      '市場・国家・家族・宗教・専門職といった社会の諸領域はそれぞれ固有の論理をもち、組織はしばしば複数の論理が競合・併存する場で活動する。支配的論理の交代は、経営者の注意の配分や意思決定（例：後継者の選び方や成長戦略）の規定要因そのものを変えるとされる。' +
+      '制度の同型化を強調した初期の新制度派理論を、行為者の意味づけと複数論理間の緊張へと拡張した枠組みである。',
+    keyFigures: 'Roger Friedland & Robert Alford（1991）／Patricia H. Thornton & William Ocasio（1999, AJS 105(3):801-843）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/210361', type: 'academic', label: 'Thornton, P.H. & Ocasio, W. (1999) Institutional Logics and the Historical Contingency of Power in Organizations, American Journal of Sociology 105(3):801-843' },
+      { url: 'https://global.oup.com/academic/product/the-institutional-logics-perspective-9780199601936', type: 'reference', label: 'Thornton, Ocasio & Lounsbury (2012) The Institutional Logics Perspective, Oxford University Press' },
+    ],
+  },
+  {
+    id: 'human-interleaving-effect',
+    discipline: 'human-science',
+    title: 'インターリービング効果（交互練習）',
+    statement:
+      'インターリービング効果とは、複数の異なる種類の課題や技能を、同種をまとめて連続して練習する（ブロック練習）のではなく、順序を混ぜて交互に練習すると、同じ練習量でも長期的な保持と新しい場面への転移が高まるという学習科学の知見である。' +
+      '数学の問題種別の弁別や運動・知覚学習などで確認されており、学習者は交互練習の最中はかえって難しく感じ成績も伸び悩むため、その効果を過小評価しがちである（「望ましい困難」の一例）。' +
+      '学習を時間的に分散させる分散効果（spacing effect）とは独立した、練習の「配列・順序」に関する効果として区別される。',
+    keyFigures: 'Doug Rohrer & Kelli Taylor（2007, Instructional Science 35(6):481-498）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1007/s11251-007-9015-8', type: 'academic', label: 'Rohrer, D. & Taylor, K. (2007) The shuffling of mathematics problems improves learning, Instructional Science 35(6):481-498' },
+      { url: 'https://doi.org/10.1002/acp.1598', type: 'academic', label: 'Taylor, K. & Rohrer, D. (2010) The effects of interleaved practice, Applied Cognitive Psychology 24(6):837-848' },
+    ],
+  },
+  {
+    id: 'infosoc-black-box-society',
+    discipline: 'information-sociology',
+    title: 'ブラックボックス社会（Black Box Society）',
+    statement:
+      'ブラックボックス社会とは、法学者 Frank Pasquale が2015年の同名の著書で提示した概念で、検索・評判・信用・金融などの領域において、企業が用いる秘密のアルゴリズムが不透明（ブラックボックス）なまま、個人の評価・機会・経済的帰結を大きく左右する社会のあり方を指す。' +
+      '企業は営業秘密を盾に意思決定の根拠を開示しない一方で、個人の情報は徹底的に収集・分析されるという「一方向の透明性（情報の非対称）」が生じ、説明責任・是正可能性・公正さが損なわれると批判される。' +
+      'Pasquale は監督機関による監査や「理解可能な社会（intelligible society）」へ向けた透明性・説明責任の制度設計を求め、アルゴリズム説明責任論の古典の一つとなった。',
+    keyFigures: 'Frank Pasquale（2015『The Black Box Society』Harvard University Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674970847', type: 'reference', label: 'Harvard University Press — Pasquale, F. (2015) The Black Box Society' },
+      { url: 'https://doi.org/10.4159/harvard.9780674736061', type: 'academic', label: 'Pasquale, F. (2015) The Black Box Society, Harvard University Press（書籍 DOI）' },
+    ],
+  },
 ];
 // Stryker restore all
