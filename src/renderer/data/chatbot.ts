@@ -29,6 +29,12 @@ import {
 import { routeTopic, routeTopicScored, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
 import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
 import { counsel, detectCrisis, detectHarmToOthers, detectDestructiveUrge } from './counseling';
+import {
+  formatKnowledgeAnswer,
+  looksLikeKnowledgeQuery,
+  retrieveScored,
+  type KnowledgeDoc,
+} from './knowledgeIndex';
 
 /** チャットボットが知っているサービス 1 件 (SERVICES から注入)。 */
 export interface ChatService {
@@ -52,6 +58,7 @@ export type ChatReplyKind =
   | 'action' // 書き込み操作 (UI が確認のうえ invoke)
   | 'calc' // 手取り計算 (純ロジックで即答)
   | 'counsel' // 感情への寄り添い (カウンセリングエンジン。危機は最優先)
+  | 'knowledge' // 確証済みナレッジ検索 (全 5 コレクション横断)
   | 'navigate' // 画面案内
   | 'service-info' // サービスについての質問
   | 'fallback'; // 解釈不能 (LLM フォールバック余地)
@@ -71,6 +78,8 @@ export interface ChatReply {
   readonly routedThrough: string;
   /** クイック返信の候補。 */
   readonly suggestions: readonly string[];
+  /** ナレッジ検索でヒットした根拠 (kind='knowledge' のとき)。 */
+  readonly knowledgeHits?: readonly KnowledgeDoc[];
 }
 
 // --- 特殊意図の検出辞書 ----------------------------------------------------
@@ -191,6 +200,34 @@ export function findService(
 ): ChatService | undefined {
   // id が undefined のときは何にも一致せず undefined が返る (専用ガード不要)。
   return services.find((s) => s.id === id);
+}
+
+/** ナレッジ種別 → 組織ルーティング用の話題ラベル。 */
+const KNOWLEDGE_KIND_TOPIC: Readonly<Record<KnowledgeDoc['kind'], string>> = {
+  学術概念: '経営戦略',
+  コンプライアンス: '税務',
+  '補助金・助成金': '資金調達',
+  相談窓口: '人事',
+  経済史: '投資',
+};
+
+/** 確証済みナレッジ検索結果をチャット返信へ整形する。 */
+export function buildKnowledgeReply(
+  _query: string,
+  hits: readonly KnowledgeDoc[],
+  ctx: ChatContext,
+): ChatReply {
+  const topKind = hits[0]?.kind ?? '学術概念';
+  const topic = KNOWLEDGE_KIND_TOPIC[topKind];
+  // Stryker disable all — 文面・候補は表現 (kind/routedThrough/knowledgeHits は構造テストで固定)。
+  return {
+    kind: 'knowledge',
+    text: formatKnowledgeAnswer(hits),
+    routedThrough: routeLabel(routeTopic(ctx.org, topic)),
+    knowledgeHits: hits,
+    suggestions: ['AI アシスタントで詳しく聞く', '税務試算を開いて', '何ができる？'],
+  };
+  // Stryker restore all
 }
 
 /** サービスの担当部署ラベルを解決する (label を話題として組織索引を引く)。
@@ -335,6 +372,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `・操作の実行 —「GitHub で issue 作って」「カレンダーに予定を入れて」(破壊的操作は確認します)\n` +
         `・手取り計算 —「額面40万の手取りは？」「手取り30万に必要な額面は？」(その場で概算)\n` +
         `・気持ちの相談 —「疲れた」「不安で眠れない」(寄り添いカウンセリング。つらいときは窓口もご案内)\n` +
+        `・確証済みナレッジ —「インボイス制度とは？」「補助金について教えて」(全 5 コレクション横断検索)\n` +
         `・サービスの説明 —「◯◯って何？」\n` +
         `・組織の状態 —「体制を教えて」\n` +
         `・機能要望の受付 —「◯◯が欲しい」(オーケストレーションのバックログ候補に記録)`,
@@ -366,6 +404,35 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
       suggestions: ['他のサービスも見る', '何ができる？'],
     };
     // Stryker restore all
+  }
+
+  // 音声コマンドとして解釈できたが service 未解決 → ナレッジ検索より fallback を優先。
+  if (
+    routed.kind === 'navigate' ||
+    routed.kind === 'query' ||
+    (routed.kind === 'action' && routed.action !== undefined)
+  ) {
+    // Stryker disable all
+    return {
+      kind: 'fallback',
+      text:
+        `🤔 うまく解釈できませんでした。サービス名 (例: 税務試算 / GitHub / 売上集計) を含めるか、` +
+        `「何ができる？」と聞いてください。Ollama 接続時は自由質問にもお答えします。`,
+      routedThrough: 'COO 直轄',
+      suggestions: DEFAULT_SUGGESTIONS,
+    };
+    // Stryker restore all
+  }
+
+  // 確証済みナレッジ横断検索 (全 5 コレクション)。案内・操作・要望の後、fallback の前。
+  const scored = retrieveScored(text, 4);
+  const topScore = scored[0]?.score ?? 0;
+  if (scored.length > 0 && looksLikeKnowledgeQuery(text, topScore)) {
+    return buildKnowledgeReply(
+      text,
+      scored.map((s) => s.doc),
+      ctx,
+    );
   }
 
   // Stryker disable all

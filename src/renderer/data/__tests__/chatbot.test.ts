@@ -226,4 +226,18 @@ describe('replyTo', () => {
     expect(r.navigateTo).toBeUndefined();
     expect(r.suggestions.length).toBeGreaterThan(0);
   });
+
+  it('answers knowledge queries from the verified corpus', () => {
+    const r = replyTo('インボイス制度とは？', CTX);
+    expect(r.kind).toBe('knowledge');
+    expect(r.text).toContain('📚');
+    expect(r.knowledgeHits?.length).toBeGreaterThan(0);
+    expect(r.knowledgeHits?.some((h) => h.title.includes('インボイス'))).toBe(true);
+  });
+
+  it('answers subsidy knowledge queries with org routing', () => {
+    const r = replyTo('雇用調整助成金について教えて', CTX);
+    expect(r.kind).toBe('knowledge');
+    expect(r.text).toContain('助成金');
+  });
 });

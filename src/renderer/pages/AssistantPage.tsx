@@ -16,7 +16,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
-import { buildSystemPrompt, retrieveServices, type AssistantService } from '../data/assistantContext';
+import { buildSystemPromptParallel, retrieveServices, type AssistantService } from '../data/assistantContext';
 import { parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
@@ -265,7 +265,7 @@ export function AssistantPage() {
       const turns = history
         .slice(-TURN_WINDOW)
         .map((m) => ({ role: m.role, content: m.text }));
-      const system = buildSystemPrompt(text, serviceCatalog);
+      const system = await buildSystemPromptParallel(text, serviceCatalog);
       const res = await hub.invoke<{ text: string; model?: string }>('assistant', 'chat', {
         system,
         messages: turns,

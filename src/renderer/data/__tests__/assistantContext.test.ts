@@ -6,6 +6,7 @@ import {
   retrieve,
   retrieveServices,
   buildSystemPrompt,
+  buildSystemPromptParallel,
   formatKnowledgeSection,
   formatServiceSection,
   ASSISTANT_BASE_INSTRUCTIONS,
@@ -14,7 +15,7 @@ import {
 } from '../assistantContext';
 
 describe('buildCorpus', () => {
-  it('produces a non-empty corpus spanning all four knowledge kinds', () => {
+  it('produces a non-empty corpus spanning all five knowledge kinds', () => {
     const corpus = buildCorpus();
     expect(corpus.length).toBeGreaterThan(100);
     const kinds = new Set(corpus.map((d) => d.kind));
@@ -22,6 +23,7 @@ describe('buildCorpus', () => {
     expect(kinds).toContain('コンプライアンス');
     expect(kinds).toContain('補助金・助成金');
     expect(kinds).toContain('相談窓口');
+    expect(kinds).toContain('経済史');
   });
 
   it('is exposed as a prebuilt KNOWLEDGE_CORPUS', () => {
@@ -111,5 +113,11 @@ describe('prompt assembly', () => {
     const prompt = buildSystemPrompt('補助金について教えて', services);
     expect(prompt).toContain('参考ナレッジ');
     expect(prompt).toContain('資金調達レーダー');
+  });
+
+  it('buildSystemPromptParallel injects knowledge like sync build', async () => {
+    const prompt = await buildSystemPromptParallel('インボイス制度', []);
+    expect(prompt).toContain(ASSISTANT_BASE_INSTRUCTIONS.split('\n')[0]!);
+    expect(prompt).toContain('参考ナレッジ');
   });
 });

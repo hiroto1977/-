@@ -18,6 +18,7 @@ import type { ServiceId } from '../../shared/serviceId';
 import { replyTo, type ChatReply } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
+import { formatKnowledgeSection, retrieve, corpusStats } from '../data/knowledgeIndex';
 import type { VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 
@@ -101,7 +102,7 @@ function navigateTo(serviceId: ServiceId): void {
   window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
-/** Ollama 接続時の自由質問フォールバック (失敗したら null)。 */
+/** Ollama 接続時の自由質問フォールバック (ナレッジ文脈付き)。 */
 async function tryOllama(prompt: string): Promise<string | null> {
   if (!window.serviceHub) return null;
   const model = (() => {
@@ -111,11 +112,16 @@ async function tryOllama(prompt: string): Promise<string | null> {
       return 'llama3.2';
     }
   })();
+  const docs = retrieve(prompt, 4);
+  const context = formatKnowledgeSection(docs);
+  const enriched = context
+    ? `${context}\n\n上記を参考に、次の質問に日本語で簡潔に答えてください:\n${prompt}`
+    : prompt;
   try {
     const res = await window.serviceHub.invoke<{ response?: string; message?: string }>(
       'ollama',
       'chat',
-      { model, prompt },
+      { model, prompt: enriched },
     );
     if (res.ok) {
       const data = res.data;
@@ -168,9 +174,10 @@ export function ChatbotWidget() {
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const suggestions = useMemo(
-    () => ['何ができる？', '額面40万の手取りは？', '組織の体制を教えて'],
+    () => ['何ができる？', 'インボイス制度とは？', '補助金について教えて', '組織の体制を教えて'],
     [],
   );
+  const knowledgeTotal = useMemo(() => corpusStats().total, []);
 
   useEffect(() => {
     saveHistory(messages);
@@ -196,6 +203,18 @@ export function ChatbotWidget() {
     const text = raw.trim();
     if (!text || busy) return;
     setInput('');
+
+    if (text === 'AI アシスタントで詳しく聞く') {
+      append({ role: 'user', text });
+      append({
+        role: 'bot',
+        text: '🧭 AI アシスタントページへご案内します。Claude が確証済みナレッジを根拠に詳しく回答します。',
+        routedThrough: 'COO 直轄',
+      });
+      navigateTo('assistant' as ServiceId);
+      return;
+    }
+
     append({ role: 'user', text });
 
     const reply: ChatReply = replyTo(text, CHAT_CONTEXT);
@@ -266,7 +285,8 @@ export function ChatbotWidget() {
               <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}>
                 AI オーケストレーション組織 (役員 {ORG_INDEX.counts.executives} / 部長{' '}
                 {ORG_INDEX.counts.managers} / チーム {ORG_INDEX.counts.teams}) がご要望を承ります。
-                サービスへの案内・操作・説明・機能要望の受付ができます。
+                確証済みナレッジ {knowledgeTotal} 件を横断検索し、サービスへの案内・操作・
+                説明・機能要望の受付ができます。
               </div>
             ) : null}
             {messages.map((m, i) => (
