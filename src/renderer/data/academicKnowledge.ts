@@ -26495,5 +26495,105 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-no-trade-theorem, econ-global-games,
+  // bizlaw-caremark-oversight, bizlaw-howey-test,
+  // human-predictive-coding, infosoc-contextual-integrity
+  {
+    id: 'econ-no-trade-theorem',
+    discipline: 'economics',
+    title: 'ノートレード定理（ミルグロム＝ストーキー）',
+    statement:
+      'ノートレード定理とは、合理的期待と共通知識の下では、事前に効率的な初期配分を持つリスク回避的な主体同士が、私的情報だけを理由に投機的取引へ合意できないことを示す定理である。' +
+      'Milgrom & Stokey（1982）は、取引提案や価格情報そのものが相手に情報を伝達し、逆選択の推論を生むため、全員が取引から利益を得ると共通知識にならなければ取引が成立しないことを証明した。' +
+      '現実市場の取引量を説明するには流動性需要、ノイズ取引、ヘッジ需要、異質な信念、情報取得費用などを組み込む必要があることを示し、市場微細構造論と情報経済学の基礎命題となっている。',
+    keyFigures: 'Paul Milgrom／Nancy Stokey／Information, Trade and Common Knowledge（1982）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-0531(82)90046-1', type: 'academic', label: 'Milgrom & Stokey (1982) Information, Trade and Common Knowledge, Journal of Economic Theory 26(1):17-27' },
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v26y1982i1p17-27.html', type: 'academic', label: 'RePEc bibliographic record — Information, Trade and Common Knowledge' },
+      { url: 'https://stanford.edu/~milgrom/publishedarticles/Information%20Trade%20and%20Common%20Knowledge.pdf', type: 'academic', label: 'Stanford-hosted author PDF — Milgrom & Stokey (1982)' },
+    ],
+  },
+  {
+    id: 'econ-global-games',
+    discipline: 'economics',
+    title: 'グローバルゲーム（均衡選択理論）',
+    statement:
+      'グローバルゲームとは、主体が基礎条件についてわずかに異なるノイズ付きシグナルを観察する不完全情報ゲームを用い、完全情報下で複数均衡を持つ協調問題の均衡選択を分析する枠組みである。' +
+      'Carlsson & van Damme（1993）は、共通知識を少し緩めるだけで高次の信念構造が変化し、多くの場合にリスク支配的な一意均衡が選ばれることを示した。' +
+      'Morris & Shin（1998）は自己実現的通貨攻撃モデルへ応用し、通貨危機・銀行取付・政策介入の信認など、金融不安定性の多重均衡を精緻に分析する理論基盤を与えた。',
+    keyFigures: 'Hans Carlsson／Eric van Damme／Stephen Morris／Hyun Song Shin',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2951491', type: 'academic', label: 'Carlsson & van Damme (1993) Global Games and Equilibrium Selection, Econometrica 61(5):989-1018' },
+      { url: 'https://doi.org/10.1257/aer.88.3.587', type: 'academic', label: 'Morris & Shin (1998) Unique Equilibrium in a Model of Self-Fulfilling Currency Attacks, AER 88(3):587-597' },
+      { url: 'https://link.springer.com/rwe/10.1007/978-1-349-58802-2_648', type: 'reference', label: 'The New Palgrave Dictionary of Economics — Global Games' },
+    ],
+  },
+  {
+    id: 'bizlaw-caremark-oversight',
+    discipline: 'business-law',
+    title: 'ケアマーク監視義務',
+    statement:
+      'ケアマーク監視義務とは、デラウェア州会社法上、取締役が会社の法令遵守・内部統制リスクを監督する義務を負うとする信認義務法理である。' +
+      'In re Caremark International Inc. Derivative Litigation（1996）でWilliam T. Allen判事が、取締役会は合理的な情報・報告システムを整備し、重大な違法行為リスクを把握できるようにする必要があると述べた。' +
+      'Stone v. Ritter（2006）以後、この責任は忠実義務・誠実義務の問題として整理され、情報システムを全く設けない場合やレッドフラッグを意識的に無視した場合など、悪意に近い不作為が問われる。',
+    keyFigures: 'William T. Allen／In re Caremark International Inc. Derivative Litigation（1996）／Stone v. Ritter（2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://storage.courtlistener.com/harvard_pdf/1968607.pdf', type: 'reference', label: 'CourtListener / Harvard Law Library scan — In re Caremark International Inc. Derivative Litigation, 698 A.2d 959' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/2006/84060.html', type: 'reference', label: 'Justia — Stone v. Ritter, 911 A.2d 362 (Del. 2006)' },
+      { url: 'https://corpgov.law.harvard.edu/2019/06/26/caremark-and-esg-perfect-together-a-practical-approach-to-implementing-an-integrated-efficient-and-effective-caremark-and-eesc-risk-management-program/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance — Caremark oversight and risk management' },
+    ],
+  },
+  {
+    id: 'bizlaw-howey-test',
+    discipline: 'business-law',
+    title: 'ホーウィー・テスト（投資契約の判断基準）',
+    statement:
+      'ホーウィー・テストとは、米国最高裁判決SEC v. W.J. Howey Co.（1946）で確立された、取引が連邦証券法上の「投資契約」に当たるかを判断する基準である。' +
+      '一般に、金銭その他の価値の投資、共通事業、利益への合理的期待、その利益が主として他者の努力から生じること、という要素を通じ、契約名や形式ではなく経済的実態を評価する。' +
+      'この基準は投資家保護を必要とする資金提供関係を広く捉えるために用いられ、近年は暗号資産・トークン販売の有価証券性をめぐるSEC規制と訴訟でも中心的に参照されている。',
+    keyFigures: 'SEC v. W.J. Howey Co., 328 U.S. 293（1946）／United States Supreme Court',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://tile.loc.gov/storage-services/service/ll/usrep/usrep328/usrep328293/usrep328293.pdf', type: 'government', label: 'Library of Congress / U.S. Reports PDF — SEC v. W.J. Howey Co., 328 U.S. 293' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/328/293', type: 'reference', label: 'Cornell LII — SEC v. W.J. Howey Co.' },
+      { url: 'https://www.law.cornell.edu/wex/howey_test', type: 'reference', label: 'Cornell LII Wex — Howey test' },
+    ],
+  },
+  {
+    id: 'human-predictive-coding',
+    discipline: 'human-science',
+    title: '予測符号化・自由エネルギー原理',
+    statement:
+      '予測符号化とは、脳が感覚入力を受動的に処理するのではなく、世界についての階層的な内部モデルから入力を予測し、実際の入力との差である予測誤差によってモデルを更新するという認知神経科学の枠組みである。' +
+      'Rao & Ballard（1999）は視覚皮質の階層的処理を予測誤差最小化としてモデル化し、Friston（2010）の自由エネルギー原理はこの考えを知覚・学習・行動を含む一般原理へ拡張した。' +
+      '生物システムが驚きの上限である変分自由エネルギーを最小化するように能動的推論を行うと捉える点で、知覚、注意、精神医学、身体化認知を横断する理論基盤となっている。',
+    keyFigures: 'Rajesh P.N. Rao／Dana H. Ballard／Karl Friston',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nature.com/articles/nn0199_79', type: 'academic', label: 'Rao & Ballard (1999) Predictive coding in the visual cortex, Nature Neuroscience 2:79-87' },
+      { url: 'https://homes.cs.washington.edu/~rao/Rao-Ballard-NN-1999.pdf', type: 'academic', label: 'University of Washington-hosted PDF — Rao & Ballard (1999)' },
+      { url: 'https://www.nature.com/articles/nrn2787', type: 'academic', label: 'Friston (2010) The free-energy principle: a unified brain theory?, Nature Reviews Neuroscience 11:127-138' },
+    ],
+  },
+  {
+    id: 'infosoc-contextual-integrity',
+    discipline: 'information-sociology',
+    title: '文脈的完全性（プライバシーの規範理論）',
+    statement:
+      '文脈的完全性とは、Helen Nissenbaumが提唱したプライバシー理論であり、プライバシーを秘密保持や個人の完全なコントロールではなく、社会的文脈に適合した情報フローの問題として捉える。' +
+      '情報が誰から誰へ、どの種類の情報として、どの伝達原則に従って流れるかが、その文脈の情報規範に合致するかを問う点に特徴がある。' +
+      '侵害は単なる公開ではなく、医療・教育・雇用・商取引・プラットフォーム利用などの文脈で期待された規範が破られるときに生じ、監視技術やデータ保護制度を評価する規範的枠組みを与える。',
+    keyFigures: 'Helen Nissenbaum／Privacy as Contextual Integrity（2004）／Privacy in Context（2010）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nissenbaum.tech.cornell.edu/papers/H.%20Nissenbaum,%20_Privacy%20as%20Contextual%20Integrity.pdf', type: 'academic', label: 'Nissenbaum (2004) Privacy as Contextual Integrity, Washington Law Review 79(1):119-158' },
+      { url: 'https://plato.stanford.edu/entries/privacy/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Privacy, contextual integrity section' },
+      { url: 'https://nyupress.org/9780814758553/privacy-in-context/', type: 'academic', label: 'NYU Press — Nissenbaum, Privacy in Context (2010)' },
+    ],
+  },
 ];
 // Stryker restore all
