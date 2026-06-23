@@ -37,11 +37,27 @@ export interface ChatService {
   readonly description: string;
 }
 
+/** 確証済みナレッジ 1 件 (検索結果。assistantContext から注入)。 */
+export interface ChatKnowledgeDoc {
+  /** 分類ラベル (学術概念 / コンプライアンス / 補助金・助成金 / 相談窓口 / 経済史)。 */
+  readonly kind: string;
+  readonly title: string;
+  readonly body: string;
+}
+
+/**
+ * 確証済みナレッジを引く関数 (転置インデックス検索を注入)。
+ * 未注入なら知識回答はスキップ (UI 側が `assistantContext.knowledgeLookup` を注入する)。
+ */
+export type KnowledgeLookup = (query: string, k?: number) => readonly ChatKnowledgeDoc[];
+
 /** 応答組み立てに必要な知識一式 (すべて単一の真実源から注入)。 */
 export interface ChatContext {
   readonly services: readonly ChatService[];
   readonly org: OrgIndex;
   readonly capabilities: AvailableCapabilities;
+  /** 確証済みナレッジ検索 (任意。注入時のみ知識回答を行う)。 */
+  readonly knowledge?: KnowledgeLookup;
 }
 
 /** 返答の種別。 */
@@ -54,6 +70,7 @@ export type ChatReplyKind =
   | 'counsel' // 感情への寄り添い (カウンセリングエンジン。危機は最優先)
   | 'navigate' // 画面案内
   | 'service-info' // サービスについての質問
+  | 'knowledge' // 確証済みナレッジに基づく回答 (転置インデックス検索)
   | 'fallback'; // 解釈不能 (LLM フォールバック余地)
 
 /** チャット返答 (構造は logic、text は表現)。 */
@@ -226,6 +243,29 @@ export function buildCounselReply(text: string, ctx: ChatContext): ChatReply {
 }
 
 /**
+ * 確証済みナレッジ (出典つき) を根拠にした回答を組み立てる。
+ * 該当が無ければ null (呼び出し側はフォールバックへ)。話題の担当部署も解決する。
+ */
+export function buildKnowledgeReply(text: string, ctx: ChatContext): ChatReply | null {
+  if (ctx.knowledge === undefined) return null;
+  const docs = ctx.knowledge(text, 3);
+  if (docs.length === 0) return null;
+  const through = routeLabel(routeTopicScored(ctx.org, normalizeUtterance(text)).route);
+  // Stryker disable all — 文面・候補は表現 (kind/routedThrough/件数はテストで固定)。
+  const lines = docs.map((d) => `・[${d.kind}] ${d.title}: ${d.body}`);
+  return {
+    kind: 'knowledge',
+    text:
+      `📚 確証済みナレッジ（出典あり）から要点をまとめます。\n` +
+      `${lines.join('\n')}\n` +
+      `※ 出典つきデータの要約です。最終判断は一次情報・専門家にご確認ください。`,
+    routedThrough: through,
+    suggestions: ['もっと詳しく', '関連サービスを開いて', '何ができる？'],
+  };
+  // Stryker restore all
+}
+
+/**
  * ユーザーの 1 メッセージに対する返答を組み立てる (純粋・決定論的)。
  *
  * 判定順: **危機 (最優先・無条件)** → 具体的な書き込み操作 (action) → 計算 →
@@ -367,6 +407,10 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
     };
     // Stryker restore all
   }
+
+  // 確証済みナレッジに十分一致するなら、出典つきで要点を返す (LLM 無しでも知識回答)。
+  const knowledgeReply = buildKnowledgeReply(text, ctx);
+  if (knowledgeReply !== null) return knowledgeReply;
 
   // Stryker disable all
   return {
