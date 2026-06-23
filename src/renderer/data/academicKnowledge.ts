@@ -26495,5 +26495,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  {
+    id: 'econ-regret-theory',
+    discipline: 'economics',
+    title: '後悔理論',
+    statement:
+      '後悔理論（regret theory）とは、Graham Loomes と Robert Sugden、および David Bell が1982年にそれぞれ独立に提唱した、不確実性下の意思決定に関する期待効用理論の代替モデルである。' +
+      '意思決定者は選んだ結果そのものの効用だけでなく、「他の選択肢を選んでいれば得られたはずの結果」と比較して生じる後悔（regret）や歓喜（rejoicing）を事前に予期し、それを織り込んで選択すると仮定する。' +
+      'この枠組みはアレのパラドックスや確実性効果など期待効用理論の系統的違反を説明でき、選択肢間の結果の相関に依存して選好が変化しうる点でプロスペクト理論とは異なる行動経済学の基礎理論となっている。',
+    keyFigures: 'Graham Loomes／Robert Sugden／David E. Bell（いずれも1982年に独立して提唱）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/2232669', type: 'academic', label: 'Loomes, G. & Sugden, R. (1982) Regret Theory: An Alternative Theory of Rational Choice Under Uncertainty, The Economic Journal 92(368):805-824' },
+      { url: 'https://doi.org/10.1287/opre.30.5.961', type: 'academic', label: 'Bell, D.E. (1982) Regret in Decision Making under Uncertainty, Operations Research 30(5):961-981' },
+      { url: 'https://plato.stanford.edu/entries/decision-theory/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Decision Theory（不確実性下の選択理論と期待効用への批判）' },
+    ],
+  },
+  {
+    id: 'bizlaw-caremark-oversight-duty',
+    discipline: 'business-law',
+    title: 'Caremark基準（取締役の監督義務）',
+    statement:
+      'Caremark基準とは、米国デラウェア州衡平法裁判所の In re Caremark International Inc. Derivative Litigation（1996年、Allen 衡平法裁判官）で示された、取締役が負う「監督（oversight）義務」に関する判断枠組みである。' +
+      '取締役は、会社の法令遵守やリスクに関する情報・報告システム（内部統制）を構築し機能させる合理的な努力を怠った場合に、善意（good faith）の要件を満たさない忠実義務違反として責任を問われうるとした。' +
+      'デラウェア州最高裁は Stone v. Ritter（2006年）でこの基準を承認し、Caremark責任を「監督システムを全く構築しない」または「機能不全を知りつつ放置する」という意図的な義務懈怠に限定したが、Marchand v. Barnhill（2019年）等の近年の判例で実際の責任追及が活性化している。',
+    keyFigures: 'William T. Allen（衡平法裁判官）／In re Caremark, 698 A.2d 959 (Del. Ch. 1996)／Stone v. Ritter, 911 A.2d 362 (Del. 2006)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://casetext.com/case/in-re-caremark-intern-derivative-litigation', type: 'reference', label: 'In re Caremark Int\'l Inc. Derivative Litigation, 698 A.2d 959 (Del. Ch. 1996)' },
+      { url: 'https://www.law.cornell.edu/wex/business_judgment_rule', type: 'academic', label: 'Cornell Law School LII (Wex) — Business Judgment Rule / 取締役の信認義務' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV（取締役会の権限・§141）' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン基準（支配権移転時の取締役義務）',
+    statement:
+      'レブロン基準（Revlon duties）とは、米国デラウェア州最高裁の Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc.（1986年）で確立された、会社の解体や支配権の移転（売却）が不可避となった局面における取締役の行為基準である。' +
+      'いったん会社の売却が確実になると、取締役の役割は会社の長期的存続を守る「防衛者」から、株主のために売却価格を最大化する「競売人（auctioneer）」へと転換し、合理的に得られる最善の価格を確保する義務を負うとされた。' +
+      'この義務は Unocal v. Mesa Petroleum（1985年）の強化された審査基準と並ぶ買収防衛の司法審査の柱であり、Revlonモードが発動するのは Paramount v. QVC（1994年）等で示された支配権の変動を伴う取引に限られると整理されている。',
+    keyFigures: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173 (Del. 1986)／Paramount Communications v. QVC Network, 637 A.2d 34 (Del. 1994)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://casetext.com/case/revlon-inc-v-macandrews-forbes-holdings-inc', type: 'reference', label: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173 (Del. 1986)' },
+      { url: 'https://www.law.cornell.edu/wex/fiduciary_duty', type: 'academic', label: 'Cornell Law School LII (Wex) — Fiduciary Duty（取締役の信認義務）' },
+      { url: 'https://delcode.delaware.gov/title8/', type: 'government', label: 'Delaware General Corporation Law (Title 8)（合併・売却を規律する一般会社法）' },
+    ],
+  },
+  {
+    id: 'infosoc-lateral-surveillance',
+    discipline: 'information-sociology',
+    title: '横方向の監視（ラテラル・サーベイランス）',
+    statement:
+      '横方向の監視（lateral surveillance）とは、メディア研究者 Mark Andrejevic が2005年に提示した概念で、国家や企業が市民を見る「垂直的」な監視に対し、市民が対等な立場の他者（恋人・隣人・友人・取引相手など）を相互に監視する「水平的」な監視を指す。' +
+      'インターネット上の検索・身元調査サービスやSNSの普及により、リスク管理や自己防衛の名のもとで人々が互いを調べ合う実践が日常化し、監視の責任とコストが国家から個人へと転嫁（責任の個人化）される点に特徴がある。' +
+      'これは少数が多数を見るパノプティコンや、市民が権力を見返すスーヴェイランスとは異なり、ピアツーピアの相互監視を通じて監視社会の論理が人々の自発的な実践として内面化されていく過程を捉える。',
+    keyFigures: 'Mark Andrejevic／初出: Andrejevic (2005) Surveillance & Society 2(4):479-497',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.24908/ss.v2i4.3359', type: 'academic', label: 'Andrejevic, M. (2005) The Work of Watching One Another: Lateral Surveillance, Risk, and Governance, Surveillance & Society 2(4):479-497' },
+      { url: 'https://ojs.library.queensu.ca/index.php/surveillance-and-society', type: 'academic', label: 'Surveillance & Society（Queen\'s University 発行のオープンアクセス査読学術誌）' },
+    ],
+  },
+  {
+    id: 'infosoc-function-creep',
+    discipline: 'information-sociology',
+    title: '機能クリープ（ファンクション・クリープ）',
+    statement:
+      '機能クリープ（function creep）とは、ある特定の目的のために導入された技術・制度・個人データが、当初想定されていなかった別の目的へと徐々に・なし崩し的に拡大利用されていく現象を指す、監視研究およびプライバシー・データ保護法の中心概念である。' +
+      '例として、本人確認用の番号制度が汎用IDへ転用される、防犯目的の監視カメラやDNAデータベースが捜査・行政の広範な用途へ拡張される、といった「目的外利用の漸進的な拡大」が挙げられ、明示的な決定を伴わず段階的に進むため統制が難しいとされる。' +
+      'EU一般データ保護規則(GDPR)が定める「目的制限の原則」（収集目的を超える利用の制限）は、こうした機能クリープに対する法的な歯止めとして位置づけられる。',
+    keyFigures: 'Bert-Jaap Koops（概念史を体系化, 2021）／監視研究・データ保護法における鍵概念',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/17579961.2021.1898299', type: 'academic', label: 'Koops, B-J. (2021) The concept of function creep, Law, Innovation and Technology 13(1):29-56' },
+      { url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj', type: 'government', label: 'EU一般データ保護規則 (GDPR, Regulation (EU) 2016/679) 第5条 目的制限の原則' },
+    ],
+  },
+  {
+    id: 'human-retrieval-induced-forgetting',
+    discipline: 'human-science',
+    title: '検索誘導性忘却',
+    statement:
+      '検索誘導性忘却（retrieval-induced forgetting）とは、Michael C. Anderson らが1994年に報告した記憶現象で、ある事柄を想起（検索）する練習を繰り返すと、それと関連するが練習しなかった別の記憶の想起成績が、無関連の記憶よりもかえって低下するというものである。' +
+      '実験では「果物—オレンジ」のようなカテゴリ手がかり語ペアを学習させ一部のみ検索練習させると、練習した項目は強化される一方、同じカテゴリの非練習項目（例:果物—バナナ）の想起が抑制される。' +
+      'この忘却は、目標の記憶を取り出す際に競合する関連記憶が抑制されるという検索の「抑制メカニズム」によって説明され（Anderson & Spellman 1995）、能動的な想起そのものが記憶の取捨選択を形づくることを示す。',
+    keyFigures: 'Michael C. Anderson／Robert A. Bjork／Elizabeth L. Bjork（初出 1994 JEP:LMC）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0278-7393.20.5.1063', type: 'academic', label: 'Anderson, M.C., Bjork, R.A. & Bjork, E.L. (1994) Remembering can cause forgetting: Retrieval dynamics in long-term memory, JEP: Learning, Memory, and Cognition 20(5):1063-1087' },
+      { url: 'https://doi.org/10.1037/0033-295X.102.1.68', type: 'academic', label: 'Anderson, M.C. & Spellman, B.A. (1995) On the status of inhibitory mechanisms in cognition: Memory retrieval as a model case, Psychological Review 102(1):68-100' },
+    ],
+  },
 ];
 // Stryker restore all
