@@ -26495,5 +26495,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-resource-misallocation-hsieh-klenow, econ-narrative-economics,
+  // bizlaw-caremark-oversight-duties, bizlaw-corporate-opportunity-doctrine,
+  // infosoc-digital-enclosure, human-predictive-processing
+  {
+    id: 'econ-resource-misallocation-hsieh-klenow',
+    discipline: 'economics',
+    title: '資源配分の歪み（ミスアロケーション）',
+    statement:
+      '資源配分の歪みとは、生産性の高い企業・事業所へ資本や労働が十分に配分されず、限界生産物が企業間で大きくばらつくため、経済全体の全要素生産性（TFP）が低下する状態をいう。' +
+      'Hsieh & Klenow（2009）は中国・インド・米国の製造業事業所データを比較し、資本・労働の限界生産物格差を米国並みに縮小できれば、中国で30-50%、インドで40-60%の製造業TFP上昇余地があると推計した。政策歪み・金融制約・参入障壁が集計生産性を押し下げる経路を測る代表的枠組みである。',
+    keyFigures: 'Chang-Tai Hsieh／Peter J. Klenow（2009, Quarterly Journal of Economics 124(4):1403-1448）／Diego Restuccia／Richard Rogerson',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1162/qjec.2009.124.4.1403', type: 'academic', label: 'Hsieh & Klenow (2009) Misallocation and Manufacturing TFP in China and India, QJE 124(4):1403-1448' },
+      { url: 'https://doi.org/10.1111/j.1467-937X.2008.00494.x', type: 'academic', label: 'Restuccia & Rogerson (2008) Policy Distortions and Aggregate Productivity with Heterogeneous Establishments, Review of Economic Dynamics 11(4):707-720' },
+      { url: 'https://www.nber.org/papers/w13290', type: 'academic', label: 'NBER Working Paper No.13290 — Misallocation and Manufacturing TFP in China and India' },
+    ],
+  },
+  {
+    id: 'econ-narrative-economics',
+    discipline: 'economics',
+    title: 'ナラティブ経済学',
+    statement:
+      'ナラティブ経済学とは、人々の支出・投資・雇用判断を動かす物語や噂が、感染症のように社会に広がり、景気循環や金融危機などの経済現象を形成する過程を分析する研究領域である。' +
+      'Robert J. Shillerは2017年のAmerican Economic Review会長講演で、金本位制・大恐慌・住宅価格神話・ビットコイン等の物語が期待と集合行動を通じて経済を動かすと論じた。経済モデルだけでなく、新聞・書籍・検索データ等に残る言説の拡散過程を定量分析と歴史叙述で追う点に特徴がある。',
+    keyFigures: 'Robert J. Shiller（2017 American Economic Review会長講演／2019 Princeton University Press著書）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.107.4.967', type: 'academic', label: 'Shiller (2017) Narrative Economics, American Economic Review 107(4):967-1004' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691182292/narrative-economics', type: 'academic', label: 'Shiller (2019) Narrative Economics, Princeton University Press' },
+      { url: 'https://www.nber.org/papers/w23075', type: 'academic', label: 'NBER Working Paper No.23075 — Narrative Economics' },
+    ],
+  },
+  {
+    id: 'bizlaw-caremark-oversight-duties',
+    discipline: 'business-law',
+    title: 'ケアマーク監視義務',
+    statement:
+      'ケアマーク監視義務とは、取締役が会社の法令遵守・業務リスクについて合理的な情報報告システムを誠実に構築し、重大な警告を無視せず監視するべきとするデラウェア会社法上の信認義務である。' +
+      'In re Caremark（1996）は監視責任の理論を示し、Stone v. Ritter（2006）は、情報システムを全く設けない場合または設けた後に意識的に監視しない場合に、悪意・忠実義務違反として責任が生じうると整理した。単なる過失では足りず、既知の義務への意識的無視が問われる点で高い立証ハードルを持つ。',
+    keyFigures: 'Chancellor William T. Allen／In re Caremark Int\'l Inc. Derivative Litigation, 698 A.2d 959 (Del. Ch. 1996)／Stone v. Ritter, 911 A.2d 362 (Del. 2006)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://casetext.com/case/in-re-caremark-intern-inc-deriv-lit', type: 'reference', label: 'In re Caremark International Inc. Derivative Litigation, 698 A.2d 959 (Del. Ch. 1996)' },
+      { url: 'https://casetext.com/case/stone-v-ritter', type: 'reference', label: 'Stone v. Ritter, 911 A.2d 362 (Del. 2006)' },
+      { url: 'https://ir.lawnet.fordham.edu/cgi/viewcontent.cgi?article=4339&context=flr', type: 'academic', label: 'Velasco (2008) Stone v. Ritter and the Expanding Duty of Loyalty, Fordham Law Review 76:1769-1823' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-opportunity-doctrine',
+    discipline: 'business-law',
+    title: '会社機会の法理',
+    statement:
+      '会社機会の法理とは、取締役・役員などの受認者が、会社に帰属すべき事業機会を自己または第三者のために奪ってはならないとする忠実義務の一類型である。' +
+      'Guth v. Loft（1939）は、会社が財務的に実行可能で、事業範囲内にあり、利益・期待を有し、自己利益と衝突する機会を奪うことを禁じた。Broz（1996）は諸要素の総合判断と開示・承認の安全港的機能を整理し、DGCL §122(17)は会社が特定の機会を事前に放棄できる仕組みを置く。',
+    keyFigures: 'Guth v. Loft, Inc., 5 A.2d 503 (Del. 1939)／Broz v. Cellular Information Systems, Inc., 673 A.2d 148 (Del. 1996)／DGCL §122(17)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/corporate_opportunity', type: 'reference', label: 'Cornell LII Wex — corporate opportunity' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1996/208-1995-3.html', type: 'reference', label: 'Broz v. Cellular Information Systems, Inc., 673 A.2d 148 (Del. 1996)' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc02/', type: 'government', label: 'Delaware General Corporation Law §122(17) — renunciation of corporate opportunities' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-enclosure',
+    discipline: 'information-sociology',
+    title: 'デジタル囲い込み',
+    statement:
+      'デジタル囲い込みとは、ネットワーク化された対話的空間へのアクセスが、利用者による詳細な行動データの提供・監視への同意と交換され、相互作用の手段とデータが私的に所有・管理される過程をいう。' +
+      'Andrejevic（2007）は土地の囲い込みになぞらえ、デジタル環境では利用者が便利さや参加と引き換えに「見られる労働」を行い、生成データの所有・管理権はプラットフォーム側に集中すると論じた。プライバシーだけでなく、データの所有・統制・経済的搾取を問う監視研究の重要概念である。',
+    keyFigures: 'Mark Andrejevic（2002 "The Work of Being Watched"／2007 "Surveillance in the Digital Enclosure"／2007 iSpy）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1080/10714420701715365', type: 'academic', label: 'Andrejevic (2007) Surveillance in the Digital Enclosure, The Communication Review 10(4):295-317' },
+      { url: 'https://doi.org/10.1080/07393180216561', type: 'academic', label: 'Andrejevic (2002) The Work of Being Watched, Critical Studies in Media Communication 19(2):230-248' },
+      { url: 'https://doi.org/10.24908/ss.v20i4.16008', type: 'academic', label: 'Andrejevic (2022) Meta-Surveillance in the Digital Enclosure, Surveillance & Society 20(4):375-379' },
+    ],
+  },
+  {
+    id: 'human-predictive-processing',
+    discipline: 'human-science',
+    title: '予測処理（予測符号化と自由エネルギー原理）',
+    statement:
+      '予測処理とは、脳が外界を受動的に写し取るのではなく、階層的な生成モデルに基づき感覚入力を予測し、実入力との差である予測誤差を最小化するよう知覚・注意・行動を調整するという認知神経科学の枠組みである。' +
+      'Rao & Ballard（1999）は視覚皮質の予測符号化モデルを示し、Friston（2010）は自由エネルギー原理として知覚・学習・行為を統一的に説明しようとした。Clark（2013）は「脳は予測機械」という認知科学的含意を整理し、幻覚・注意・身体化認知の解釈にも影響を与えている。',
+    keyFigures: 'Rajesh P. N. Rao／Dana H. Ballard／Karl Friston／Andy Clark',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1038/4580', type: 'academic', label: 'Rao & Ballard (1999) Predictive coding in the visual cortex, Nature Neuroscience 2:79-87' },
+      { url: 'https://doi.org/10.1038/nrn2787', type: 'academic', label: 'Friston (2010) The free-energy principle: a unified brain theory?, Nature Reviews Neuroscience 11:127-138' },
+      { url: 'https://doi.org/10.1017/S0140525X12000477', type: 'academic', label: 'Clark (2013) Whatever next? Predictive brains, Behavioral and Brain Sciences 36(3):181-204' },
+    ],
+  },
 ];
 // Stryker restore all
