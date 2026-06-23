@@ -2309,5 +2309,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 共有メンタルモデル（チーム認知理論） | チームメンバーの類似した知識構造が暗黙的協調を実現する理論（Cannon-Bowers / Salas / Klimoski） |
 | 経営学 | 職場のスピリチュアリティ（意味・目的・共同体意識） | 職場における内なる生・意味ある仕事・共同体意識を扱う領域（Mitroff / Denton / Neal） |
 | 情報社会学 | コミュニケーション・プライバシー管理理論（CPM） | プライバシー境界のルールで私的情報の開示を管理するプロセスの理論（Petronio / Altman / Baxter） |
+| 経済学 | 貸付可能資金理論（ネオクラシカル利子率理論） | Knut Wicksell ／ Dennis Robertson ／ Bertil Ohlin |
+| 人間科学 | フロー状態（最適経験理論） | Mihaly Csikszentmihalyi ／ Martin Seligman ／ Isabella Selega Csikszentmihalyi |
+| ビジネス法務 | 信認義務基準（取締役の善管注意義務と忠実義務） | Melvin A. Eisenberg ／ Frank H. Easterbrook ／ Daniel R. Fischel |
+| 経営学 | 人と環境の適合理論（P-Eフィット） | John R. P. French Jr. ／ Robert D. Caplan ／ Amy L. Kristof-Brown |
+| 経営学 | 感情的コミットメント（情緒的組織コミットメント） | John P. Meyer ／ Natalie J. Allen ／ Zachary A. Mercurio |
+| 情報社会学 | フィルターバブル（情報の個人化と知的孤立） | Eli Pariser ／ Cass R. Sunstein ／ C. Thi Nguyen |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
