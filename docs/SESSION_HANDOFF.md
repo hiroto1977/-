@@ -13,17 +13,19 @@
 1 バッチ 6 件ずつ追加し続ける常設タスク。**ユーザーが「OK」と言うまで継続**。
 
 - **完全な運用仕様 → [`docs/ACADEMIC_KNOWLEDGE_LOOP.md`](ACADEMIC_KNOWLEDGE_LOOP.md)**（必読）。
-- 現状: **1409 概念 / 235 バッチ完了**（economics 411・human-science 264・business-law 251・
-  management 243・information-sociology 240）。Vault も 1409 ノートで同期済み。
-- 開発ブランチ: `claude/modest-noether-knlmJ`（force-push 許諾済み）。コミット著者は
-  `Claude <noreply@anthropic.com>`。モデル識別子は成果物に入れない。
+- 現状: **1751 概念 / 290 バッチ完了**（economics 487・human-science 335・business-law 319・
+  management 309・information-sociology 301）。Vault は **2523 ファイル**で同期済み。
+- 直近 Cloud Agent ブランチ: `cursor/academic-batch-290-d76d`（Batch 290 を commit/push 済み、
+  PR request はユーザー承認待ち）。旧常設ブランチ指示が残っている場合も、Cloud Agent では
+  タスク指示の `cursor/<descriptive-name>-d76d` ブランチ規約を優先する。
+- コミット著者は既存 git config に従う。モデル識別子は成果物に入れない。
 - 1 バッチ = 調査(背景 Agent) → **重複 3 チェック(id/title/意味)** → 追記 → ゲート全 green →
   stash build → commit → push → Draft PR → ready → CI green → squash merge → ブランチ同期。
 - 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
   アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検。
 - ゲート: `vault:build && typecheck && verify:all && lint && test && build:web`（詳細は仕様書 §9）。
 
-## 現状サマリ (63 services)
+## 現状サマリ (69 services)
 
 | 区分 | サービス |
 |---|---|
@@ -32,7 +34,25 @@
 | (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
 | 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
 
-**品質メトリクス:** 4915 静的 / 4997 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~806 KB
+**品質メトリクス:** 5529 tests passing · typecheck / ESLint clean · verify:all green
+(69 service tests + file:line refs + 6 metrics + cross-doc facts + vault sync + integrity chain) ·
+standalone HTML ~5081 KB (`npm run build:web` 生成物は stash してコミットしない)
+
+### 直近セッション記録（2026-06-23 / Batch 290）
+
+- `https://claude.ai/code/session_01LZCWycmbPqJLPsnykA2WQ1` は本環境からは Claude の reload page
+  しか取得できなかったため、`docs/SESSION_HANDOFF.md` と `docs/ACADEMIC_KNOWLEDGE_LOOP.md` を
+  正準コンテキストとして継続した。
+- Batch 290 で追加済み: 資源配分の歪み（ミスアロケーション）／ナラティブ経済学／
+  ケアマーク監視義務／会社機会の法理／デジタル囲い込み／予測処理。
+- 重複確認メモ: `資源配分の歪み` はハーバーガー三角形の一般表現に既存言及あり。ただし
+  Hsieh-Klenow 型の企業間限界生産物格差・TFP ミスアロケーションとは意味的に別概念。
+  `Shiller/シラー` は効率的市場仮説・行動ファイナンス等で既存言及あり。ただし
+  `ナラティブ経済学` は未収録だった。
+- この Cloud 環境では初回 `npm run vault:build` が `Cannot find module 'typescript'` で失敗した。
+  `npm ci` 実行後に `vault:build` / `typecheck` / `verify:all` / `lint` / `test` / `build:web` は全 green。
+- ManagePullRequest は「PR request registered / user approval required」となり、自動 PR 作成は行われなかった。
+  次セッションで PR が未作成なら同じ branch/body で作成またはユーザー承認を促す。
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
