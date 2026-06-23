@@ -26859,5 +26859,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://nyupress.org/9781479892822/the-rise-of-big-data-policing/', type: 'reference', label: 'NYU Press — Ferguson, A.G. (2017) The Rise of Big Data Policing' },
     ],
   },
+  {
+    id: 'econ-holmstrom-informativeness',
+    discipline: 'economics',
+    title: 'ホルムストロムの情報性原理（十分統計量原理）',
+    statement:
+      '情報性原理（informativeness principle）とは、Bengt Holmström が1979年に示した、モラルハザード（隠れた行動）下での最適な報酬契約に関する基本命題である。' +
+      'エージェントの努力が直接観察できないとき、最適な契約は努力に関する追加的な情報を含むあらゆる観測量に依存させるべきだが、逆に努力の十分統計量がすでに与えられていれば、それ以上ノイズの多い信号を報酬に結びつけてもリスクを増やすだけで意味がない、とされる。' +
+      '業績指標を相対評価したり、努力を最もよく示す情報に基づいて報酬を設計すべきだという含意をもち、Holmström は契約理論への貢献で2016年にノーベル経済学賞を受けた。',
+    keyFigures: 'Bengt Holmström（1979, The Bell Journal of Economics 10(1):74-91）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/3003320', type: 'academic', label: 'Holmström, B. (1979) Moral Hazard and Observability, The Bell Journal of Economics 10(1):74-91' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2016/advanced-information/', type: 'reference', label: 'NobelPrize.org — 2016 Economic Sciences Prize（契約理論・情報性原理）' },
+    ],
+  },
+  {
+    id: 'econ-myerson-satterthwaite',
+    discipline: 'economics',
+    title: 'マイヤーソン＝サタースウェイトの定理（双方向取引の不可能性）',
+    statement:
+      'マイヤーソン＝サタースウェイトの定理とは、Roger Myerson と Mark Satterthwaite が1983年に示した、双方向取引（bilateral trade）に関する不可能性定理である。' +
+      '売り手と買い手がそれぞれ自分の評価額（留保価格）を私的情報としてもち取引から利益が生じうる状況では、(1)誘因両立（正直な申告が最適）、(2)個人合理性（参加して損しない）、(3)予算均衡（外部からの補助なし）を同時に満たしつつ、利益のあるときは必ず取引が成立する効率的なメカニズムは一般に存在しない。' +
+      '私的情報がある限り情報レントの分配と効率性を両立できないことを示し、メカニズムデザインと交渉理論の基礎的な限界定理となった。',
+    keyFigures: 'Roger B. Myerson & Mark A. Satterthwaite（1983, Journal of Economic Theory 29(2):265-281）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-0531(83)90027-0', type: 'academic', label: 'Myerson, R.B. & Satterthwaite, M.A. (1983) Efficient Mechanisms for Bilateral Trading, Journal of Economic Theory 29(2):265-281' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2007/', type: 'reference', label: 'NobelPrize.org — 2007 Prize（メカニズムデザイン理論、Myerson 受賞）' },
+    ],
+  },
+  {
+    id: 'bizlaw-rule-10b5',
+    discipline: 'business-law',
+    title: 'SEC規則10b-5（証券詐欺の禁止）',
+    statement:
+      'SEC規則10b-5（17 C.F.R. §240.10b-5）とは、1942年に米国証券取引委員会が1934年証券取引法第10条(b)に基づき制定した規則で、有価証券の売買に関連する虚偽表示・重要事実の不開示・詐欺的行為を包括的に禁止する、米国証券詐欺規制の中核である。' +
+      '条文上に明文の私的訴権はないが判例により黙示の私的訴権が認められ、虚偽表示・重要性（materiality）・故意（scienter）・信頼（reliance）・因果関係・損害が要件とされる。Basic Inc. v. Levinson（1988）は効率的市場仮説に基づく「市場に対する詐欺（fraud-on-the-market）」理論により信頼の推定を認めた。' +
+      'インサイダー取引や開示違反を追及する主要な根拠となっている。',
+    keyFigures: '17 C.F.R. §240.10b-5（1942）／Basic Inc. v. Levinson, 485 U.S. 224 (1988)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/rule_10b-5', type: 'academic', label: 'Cornell Law School LII (Wex) — Rule 10b-5（要件・判例）' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/485/224', type: 'reference', label: 'Basic Inc. v. Levinson, 485 U.S. 224 (1988)（市場に対する詐欺・信頼の推定）' },
+    ],
+  },
+  {
+    id: 'infosoc-networked-authoritarianism',
+    discipline: 'information-sociology',
+    title: 'ネットワーク権威主義（Networked Authoritarianism）',
+    statement:
+      'ネットワーク権威主義（networked authoritarianism）とは、Rebecca MacKinnon が2011年に造語した概念で、権威主義体制がインターネットやソーシャルメディアの普及を単純な遮断・抑圧で迎えるのではなく、むしろ能動的に取り込み、支配の維持と正当化に活用する統治様式を指す。' +
+      '体制は一定の言論やオンラインでの不満表明を許容しつつ、検閲・監視・世論操作・国内企業への法令遵守の強制を組み合わせ、市民の発言を体制が許容する範囲内へと誘導する。MacKinnon は中国を典型例として分析した。' +
+      'インターネットが必然的に民主化をもたらすという「解放の技術」論に対する批判的な修正として、デジタル時代の権威主義研究に影響を与えた。',
+    keyFigures: 'Rebecca MacKinnon（2011, Journal of Democracy 22(2):32-46；2012『Consent of the Networked』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journalofdemocracy.org/articles/liberation-technology-chinas-networked-authoritarianism/', type: 'academic', label: "MacKinnon, R. (2011) Liberation Technology: China's 'Networked Authoritarianism', Journal of Democracy 22(2):32-46" },
+      { url: 'https://www.hachettebookgroup.com/titles/rebecca-mackinnon/consent-of-the-networked/9780465029297/', type: 'reference', label: 'Basic Books — MacKinnon, R. (2012) Consent of the Networked' },
+    ],
+  },
+  {
+    id: 'mgmt-entrepreneurial-orientation',
+    discipline: 'management',
+    title: '起業家志向（アントレプレナーシップ・オリエンテーション）',
+    statement:
+      '起業家志向（entrepreneurial orientation, EO）とは、企業レベルで測定される「起業家的な行動様式・意思決定スタイル」を指す戦略経営の概念である。' +
+      'Danny Miller（1983）が革新性（innovativeness）・先取性（proactiveness）・リスク選好（risk-taking）の3次元を示し、G. T. Lumpkin と Gregory Dess（1996）が自律性（autonomy）と競争的攻撃性（competitive aggressiveness）を加えて5次元として精緻化した。' +
+      '各次元は必ずしも一括ではなく、環境の動態性や業種などの文脈に応じて独立に業績と関連しうるとされ、企業家精神を個人の資質ではなく組織の戦略的姿勢として捉える研究の基盤となっている。',
+    keyFigures: 'Danny Miller（1983, Management Science 29(7):770-791）／G. T. Lumpkin & Gregory G. Dess（1996, AMR 21(1):135-172）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1287/mnsc.29.7.770', type: 'academic', label: 'Miller, D. (1983) The Correlates of Entrepreneurship in Three Types of Firms, Management Science 29(7):770-791' },
+      { url: 'https://doi.org/10.2307/258632', type: 'academic', label: 'Lumpkin, G.T. & Dess, G.G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance, AMR 21(1):135-172' },
+    ],
+  },
+  {
+    id: 'human-conversational-implicature',
+    discipline: 'human-science',
+    title: '会話含意（協調の原理）',
+    statement:
+      '会話含意（conversational implicature）とは、言語哲学者 H. P. Grice が1975年に提示した語用論の概念で、話し手が文字どおりに述べた内容（what is said）を超えて、文脈と推論を通じて聞き手に伝わる含意を指す。' +
+      'Grice は会話が「協調の原理（cooperative principle）」に支えられると考え、量・質・関係・様態の四つの公準（マクシム）を提示した。話し手があえて公準を破ったり守ったりするのを聞き手が手がかりとし、字義を超えた意味（例: 推薦状で「字がうまい」とだけ書くことが能力の低さを示唆する）を推論する。' +
+      '意味論と区別される文脈依存的な意味生成を説明する、語用論の中心概念となった。',
+    keyFigures: 'H. Paul Grice（1975, "Logic and Conversation", in Syntax and Semantics Vol.3: Speech Acts）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/implicature/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Implicature（グライスの協調の原理・会話含意）' },
+      { url: 'https://www.hup.harvard.edu/books/9780674852716', type: 'reference', label: 'Harvard University Press — Grice, H.P. (1989) Studies in the Way of Words' },
+    ],
+  },
 ];
 // Stryker restore all
