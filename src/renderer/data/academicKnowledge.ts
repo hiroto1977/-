@@ -26495,5 +26495,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  {
+    id: 'bizlaw-parol-evidence-rule',
+    discipline: 'business-law',
+    title: '口頭証拠排除原則（パロール・エビデンス・ルール）',
+    statement:
+      '口頭証拠排除原則とは、英米契約法において、当事者が最終的かつ完結的な合意（完全統合 = complete integration）として作成した書面契約について、その作成前または同時になされた口頭・書面の合意（書面外の証拠 = parol evidence）で書面の内容を矛盾・変更することを認めない証拠法則である。' +
+      '米国では統一商事法典（UCC）§2-202 に成文化され、最終的表示と意図された書面は先行・同時の合意で否定できないが、取引慣行・取引経過・履行経過、および書面が完全排他的記載でない限り矛盾しない追加条項によって補充・説明できる。詐欺・強迫・錯誤や、付随的合意・曖昧性などの例外も認められる。',
+    keyFigures: '英米コモンロー上の証拠法則／米国: 統一商事法典 UCC §2-202 に成文化（リステイトメント（第2次）契約法 §§209–216 の統合理論）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/parol_evidence_rule', type: 'reference', label: 'Cornell Law School LII, Wex — Parol Evidence Rule' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-202', type: 'reference', label: 'Cornell Law School LII — U.C.C. § 2-202 Final Written Expression: Parol or Extrinsic Evidence' },
+      { url: 'https://www.law.cornell.edu/wex/integration', type: 'reference', label: 'Cornell Law School LII, Wex — Integration（完全統合・部分統合）' },
+    ],
+  },
+  {
+    id: 'bizlaw-battle-of-the-forms',
+    discipline: 'business-law',
+    title: '書式の闘い（バトル・オブ・ザ・フォームズ／UCC §2-207）',
+    statement:
+      '書式の闘いとは、買主の注文書と売主の注文請書のように、当事者が条項の食い違う定型書式を交換して取引する際に、いずれの条項が契約内容になるかをめぐる問題である。コモンローの鏡像原則（mirror image rule）では承諾は申込みと完全一致を要し、不一致の承諾は反対申込みとなって最後に送られた書式が支配する（ラスト・ショット・ルール）。' +
+      '米国統一商事法典（UCC）§2-207 はこれを修正し、追加・異なる条項を含む明確な承諾や確認書も承諾として契約を成立させる。追加条項は契約への提案とされ、商人間では原則として契約の一部となるが、(a)申込みが条項を限定する、(b)条項が契約を実質的に変更する、(c)異議が述べられた場合は除かれる。矛盾条項はノックアウト・ルールで相殺され、UCC の補充規定で埋められることが多い。',
+    keyFigures: '米国統一商事法典 UCC §2-207（UCC 起草主任 Karl N. Llewellyn ら）／対比: コモンローの鏡像原則・ラスト・ショット・ルール',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-207', type: 'reference', label: 'Cornell Law School LII — U.C.C. § 2-207 Additional Terms in Acceptance or Confirmation' },
+      { url: 'https://www.law.cornell.edu/wex/uniform_commercial_code', type: 'reference', label: 'Cornell Law School LII, Wex — Uniform Commercial Code（UCC 概説）' },
+    ],
+  },
+  {
+    id: 'econ-home-market-effect',
+    discipline: 'economics',
+    title: '自国市場効果（ホーム・マーケット効果）',
+    statement:
+      '自国市場効果とは、規模の経済（収穫逓増）と輸送費が存在する下で、ある差別化財への国内需要が相対的に大きい国が、その財の生産で大きなシェアを占めて純輸出国になりやすいという性質である。生産を一拠点に集中する誘因があるとき、輸送費を最小化するため最大の需要地の近くに立地し、そこから他国へ輸出するという論理に基づく。' +
+      'ポール・クルーグマンが1980年の論文「Scale Economies, Product Differentiation, and the Pattern of Trade」（American Economic Review 70巻5号）でディキシット=スティグリッツ型の独占的競争モデルを用いて定式化した。比較優位ではなく市場規模が貿易パターンを規定しうる点が新貿易理論の核心で、需要構造の類似が貿易を促すというリンダー仮説の一部に形式的根拠を与えた（W.M. コーデンの先行的指摘がある）。',
+    keyFigures: 'ポール・クルーグマン（Paul Krugman, 1980, American Economic Review 70(5):950–959）／先行: W.M. コーデン／関連: リンダー仮説（Staffan Burenstam Linder, 1961）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/aer/top20/70.5.950-959.pdf', type: 'academic', label: 'Krugman, P. (1980) Scale Economies, Product Differentiation, and the Pattern of Trade, American Economic Review 70(5):950-959（AEA）' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/krugman_lecture.pdf', type: 'reference', label: 'Paul Krugman Nobel Prize Lecture（2008）— 自国市場効果とリンダー仮説への言及' },
+    ],
+  },
+  {
+    id: 'mgmt-value-disciplines',
+    discipline: 'management',
+    title: '価値基準（バリュー・ディシプリン）',
+    statement:
+      '価値基準とは、市場リーダーが卓越した顧客価値を提供する三つの異なる経営の規律であり、(1)業務的卓越性（operational excellence: 低価格と手間のかからない便利さ）、(2)製品リーダーシップ（product leadership: 最先端の製品・性能）、(3)顧客との親密性（customer intimacy: 個別顧客に最適化した総合的解決）からなる。' +
+      'マイケル・トレーシーとフレッド・ウィアセーマが1993年の Harvard Business Review 論文「Customer Intimacy and Other Value Disciplines」で提示し、1995年の著書『The Discipline of Market Leaders』で展開した。企業はいずれか一つの規律で業界をリードし他の二つは許容水準を維持すべきで、三つすべてに秀でようとすると焦点を欠き競争優位を築けないと論じた。',
+    keyFigures: 'マイケル・トレーシー（Michael Treacy）／フレッド・ウィアセーマ（Fred Wiersema）（1993, Harvard Business Review; 1995『The Discipline of Market Leaders』）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines', type: 'reference', label: 'Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines, Harvard Business Review（Jan–Feb 1993）' },
+      { url: 'https://store.hbr.org/product/customer-intimacy-and-other-value-disciplines/93107', type: 'reference', label: 'Harvard Business Review Store — Customer Intimacy and Other Value Disciplines (Product #93107)' },
+    ],
+  },
+  {
+    id: 'infosoc-issue-attention-cycle',
+    discipline: 'information-sociology',
+    title: '争点注目サイクル（イシュー・アテンション・サイクル）',
+    statement:
+      '争点注目サイクルとは、ある社会問題に対する世論の関心が、実際の事態の変化よりも、メディアと公衆の心理が織りなす体系的なサイクルによって浮上し減衰するという仮説である。アンソニー・ダウンズが1972年の論文「Up and Down with Ecology—the "Issue-Attention Cycle"」（The Public Interest 誌）で、環境問題を例に提示した。' +
+      'サイクルは(1)前問題段階、(2)警告的発見と熱狂的高揚、(3)大きな進展の費用の自覚、(4)関心の漸減、(5)後問題段階の五段階を経るとされる。問題が未解決でも公衆は退屈し関心が他の新しい争点へ移るが、一巡後の問題は前問題段階より高い制度的関心・政策的取り組みを残す傾向があると論じた。',
+    keyFigures: 'アンソニー・ダウンズ（Anthony Downs, 1930–2021）／初出: 1972「Up and Down with Ecology—the "Issue-Attention Cycle"」The Public Interest, No. 28',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://nationalaffairs.com/public_interest/detail/up-and-down-with-ecologythe-issue-attention-cycle', type: 'reference', label: 'Anthony Downs (1972) Up and Down with Ecology—the “Issue-Attention Cycle”, The Public Interest No. 28（National Affairs アーカイブ）' },
+      { url: 'https://sciencepolicy.colorado.edu/students/envs_5720/downs_1972.pdf', type: 'academic', label: 'Downs (1972) 全文 PDF（University of Colorado Boulder, Center for Science and Technology Policy Research）' },
+    ],
+  },
+  {
+    id: 'bizlaw-quantum-meruit',
+    discipline: 'business-law',
+    title: 'クォンタム・メルイット（合理的役務対価の回復）',
+    statement:
+      'クォンタム・メルイット（quantum meruit）はラテン語で「その者が値するだけ」を意味し、英米法上、提供された役務に対し不当利得を防ぐために合理的対価の回復（restitution）を認める衡平法上の救済である。明示の契約がない準契約（quasi-contract）関係や、契約が無効・不成立・履行途中で終了した場面で、役務提供者が受領者に与えた便益の合理的価値を請求できる。' +
+      '対価額は通常その役務の市場価値を基準に算定されるが、衡平法上の救済として裁判所に裁量が残る。完全に統合され有効に成立した明示契約が同一事項を規律する場合は、契約が対価を定めているため原則としてクォンタム・メルイットの請求は排除される。不当利得法理（unjust enrichment）の典型的な金銭的救済の一つである。',
+    keyFigures: '英米コモンロー／衡平法上の準契約・原状回復（不当利得）法理に由来',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/quantum_meruit', type: 'reference', label: 'Cornell Law School LII, Wex — Quantum Meruit' },
+      { url: 'https://www.law.cornell.edu/wex/unjust_enrichment', type: 'reference', label: 'Cornell Law School LII, Wex — Unjust Enrichment（不当利得）' },
+    ],
+  },
 ];
 // Stryker restore all
