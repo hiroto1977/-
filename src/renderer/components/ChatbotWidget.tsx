@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import { replyTo, type ChatReply } from '../data/chatbot';
+import { buildSystemPromptAsync, type AssistantService } from '../data/assistantContext';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
 import type { VoiceIntent } from '../data/voiceCommand';
@@ -35,8 +36,14 @@ const HISTORY_MAX = 50;
 /** 組織索引はモジュール読込時に 1 度だけ構築 (registry は静的データ)。 */
 const ORG_INDEX = buildOrgIndex(registryOrg as RawOrg, registryTeams as readonly RawTeam[]);
 
+const SERVICE_CATALOG: AssistantService[] = SERVICES.map((s) => ({
+  id: s.id,
+  label: s.label,
+  description: s.description,
+}));
+
 const CHAT_CONTEXT = {
-  services: SERVICES.map((s) => ({ id: s.id, label: s.label, description: s.description })),
+  services: SERVICE_CATALOG.map((s) => ({ id: s.id as ServiceId, label: s.label, description: s.description })),
   org: ORG_INDEX,
   capabilities: CAPABILITIES,
 };
@@ -99,6 +106,32 @@ function downloadRequests(): void {
 
 function navigateTo(serviceId: ServiceId): void {
   window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
+}
+
+/** 確証済みナレッジ RAG + Claude による知識回答 (API 未設定時は null)。 */
+async function tryKnowledgeAssistant(
+  prompt: string,
+  history: readonly ChatMessage[],
+): Promise<string | null> {
+  if (!window.serviceHub) return null;
+  try {
+    const turns = [
+      ...history.map((m) => ({
+        role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        content: m.text,
+      })),
+      { role: 'user' as const, content: prompt },
+    ];
+    const system = await buildSystemPromptAsync(prompt, SERVICE_CATALOG);
+    const res = await window.serviceHub.invoke<{ text: string }>('assistant', 'chat', {
+      system,
+      messages: turns,
+    });
+    if (res.ok && res.data.text.trim().length > 0) return res.data.text;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 /** Ollama 接続時の自由質問フォールバック (失敗したら null)。 */
@@ -204,9 +237,19 @@ export function ChatbotWidget() {
       recordRequest(text);
     }
 
-    // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。
+    // 解釈不能のとき: 並列ナレッジ RAG + Claude → Ollama の順で試す。
     if (reply.kind === 'fallback') {
       setBusy(true);
+      const knowledge = await tryKnowledgeAssistant(text, messages);
+      if (knowledge) {
+        setBusy(false);
+        append({
+          role: 'bot',
+          text: knowledge,
+          routedThrough: '6 役員並列ナレッジ検索 → Claude',
+        });
+        return;
+      }
       const llm = await tryOllama(text);
       setBusy(false);
       if (llm) {

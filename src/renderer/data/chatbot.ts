@@ -373,7 +373,8 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
     kind: 'fallback',
     text:
       `🤔 うまく解釈できませんでした。サービス名 (例: 税務試算 / GitHub / 売上集計) を含めるか、` +
-      `「何ができる？」と聞いてください。Ollama 接続時は自由質問にもお答えします。`,
+      `「何ができる？」と聞いてください。Anthropic API 設定時は全ナレッジを並列検索して回答します。` +
+      `Ollama 接続時はローカル LLM にもフォールバックします。`,
     routedThrough: 'COO 直轄',
     suggestions: DEFAULT_SUGGESTIONS,
   };
