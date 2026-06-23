@@ -26495,5 +26495,96 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-divine-coincidence, econ-no-trade-theorem,
+  // bizlaw-cisg-fundamental-breach, bizlaw-absolute-priority-rule,
+  // infosoc-trace-ethnography, mgmt-job-embeddedness
+  {
+    id: 'econ-divine-coincidence',
+    discipline: 'economics',
+    title: '神の一致（ニューケインジアン・モデル）',
+    statement:
+      '神の一致とは、標準的ニューケインジアン・モデルで、インフレ率を安定化すれば厚生上重要な産出ギャップも同時に安定化するという性質を指す。需要ショックや技術ショックに対して、価格安定と実体経済安定の間に政策トレードオフが生じないように見える点が核心である。' +
+      'Blanchard & Galí（2007）は、この性質が非自明な実質摩擦を欠く特殊な仮定から生じると論じた。実質賃金硬直性などを導入すると神の一致は崩れ、中央銀行はインフレ安定と産出ギャップ安定をどう配分するかという政策問題に直面する。',
+    keyFigures: 'Olivier Blanchard／Jordi Galí（2007, Journal of Money, Credit and Banking）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1538-4616.2007.00015.x', type: 'academic', label: 'Blanchard & Galí (2007) Real Wage Rigidities and the New Keynesian Model, Journal of Money, Credit and Banking 39(s1):35-65' },
+      { url: 'https://www.treasury.govt.nz/sites/default/files/2018-04/rbnz-rev-divinde-coincidence.pdf', type: 'government', label: 'New Zealand Treasury / RBNZ review supplement — The Divine Coincidence in New Keynesian Theory' },
+    ],
+  },
+  {
+    id: 'econ-no-trade-theorem',
+    discipline: 'economics',
+    title: 'ノートレード定理（情報・取引・共通知識）',
+    statement:
+      'ノートレード定理は、共通事前分布を持つ合理的主体が、初期配分でパレート効率的な状態にあり、取引が全員にとって受容可能であることが共通知識なら、私的情報の差だけでは自発的取引が成立しないとする命題である。' +
+      '取引を申し出る行為そのものが情報を伝え、相手は「相手が得をするなら自分は損をするのではないか」と推論する。現実の大量取引を説明するには、異質な事前信念、ノイズトレーダー、流動性需要、ヘッジ需要などの仮定緩和が必要になる。',
+    keyFigures: 'Paul Milgrom／Nancy Stokey（1982, Journal of Economic Theory）／Jean Tirole（1982, Econometrica）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v26y1982i1p17-27.html', type: 'academic', label: 'Milgrom & Stokey (1982) Information, Trade and Common Knowledge, Journal of Economic Theory 26(1):17-27' },
+      { url: 'https://econpapers.repec.org/RePEc:ecm:emetrp:v:50:y:1982:i:5:p:1163-81', type: 'academic', label: 'Tirole (1982) On the Possibility of Speculation under Rational Expectations, Econometrica 50(5):1163-1181' },
+    ],
+  },
+  {
+    id: 'bizlaw-cisg-fundamental-breach',
+    discipline: 'business-law',
+    title: '重大な契約違反（CISG第25条）',
+    statement:
+      'CISG第25条の重大な契約違反とは、違反により相手方が契約上期待するものを実質的に奪われるほどの不利益を受ける場合をいう。ただし、違反当事者も同種の合理人もその結果を予見できなかった場合は重大性が否定される。' +
+      'この概念は、国際物品売買で契約解除や代替品請求など強い救済を認めるかを分ける閾値として機能する。単なる不履行や遅延だけでなく、契約目的、商品の性質、時期の重要性、予見可能性を総合して判断する点が特徴である。',
+    keyFigures: 'UNCITRAL／国際物品売買契約に関する国連条約（CISG, 1980）第25条',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg', type: 'government', label: 'UNCITRAL official CISG page — treaty text and explanatory note' },
+      { url: 'https://uncitral.un.org/sites/default/files/media-documents/uncitral/en/cisg_digest_2016.pdf', type: 'government', label: 'UNCITRAL Digest of Case Law on the CISG (2016) — Article 25 discussion' },
+      { url: 'https://cisg-online.org/cisg-article-by-article/part-3/art.-25-cisg', type: 'reference', label: 'CISG-online — Article 25 text, Secretariat Commentary, and case-law pointers' },
+    ],
+  },
+  {
+    id: 'bizlaw-absolute-priority-rule',
+    discipline: 'business-law',
+    title: '絶対優先原則（Chapter 11再建手続）',
+    statement:
+      '絶対優先原則は、米国Chapter 11の再建計画を反対債権者クラスに対してクラムダウンする際、上位クラスが全額弁済されない限り、劣後クラスや株主が計画上の財産を受け取り、または保持してはならないとする破産法上の原則である。' +
+      '11 U.S.C. §1129(b)(2)の「公正かつ衡平」要件に組み込まれ、再建価値の分配順位を規律する。新価値例外をめぐる議論はあるが、支配株主や劣後利害関係者が上位債権者を犠牲に価値を温存することを防ぐ機能が中心である。',
+    keyFigures: '11 U.S.C. §1129(b)(2)／Case v. Los Angeles Lumber Products Co.（1939）／Bank of America v. 203 North LaSalle Street Partnership（1999）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title11-section1129&num=0&edition=prelim', type: 'government', label: 'U.S. Code, Title 11, §1129 — confirmation of Chapter 11 plan and cramdown standards' },
+      { url: 'https://repository.law.umich.edu/cgi/viewcontent.cgi?article=1415&context=facarticles', type: 'academic', label: 'University of Michigan Law Repository — Absolute Priority and New Value' },
+      { url: 'https://www.law.cornell.edu/wex/absolute_priority', type: 'reference', label: 'Cornell Wex — Absolute priority definition and bankruptcy-law context' },
+    ],
+  },
+  {
+    id: 'infosoc-trace-ethnography',
+    discipline: 'information-sociology',
+    title: 'トレース・エスノグラフィ',
+    statement:
+      'トレース・エスノグラフィは、参加観察の厚い記述と、ログ、編集履歴、メタデータ、バージョン履歴などデジタル痕跡の分析を組み合わせ、分散した社会技術システムの協調実践を再構成する質的研究方法である。' +
+      'Geiger & Ribes（2011）はWikipediaの荒らし対処作業を事例に、薄い機械的記録も、誰がどの文脈で生成し利用するかを追うことで組織化の手がかりになると示した。単なるビッグデータ分析ではなく、痕跡を民族誌的に読む点が特徴である。',
+    keyFigures: 'R. Stuart Geiger／David Ribes（2011, HICSS）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1109/HICSS.2011.455', type: 'academic', label: 'Geiger & Ribes (2011) Trace Ethnography: Following Coordination through Documentary Practices, HICSS 44 proceedings' },
+      { url: 'https://stuartgeiger.com/articles/2011-01-03-hicss-trace-ethnography/', type: 'reference', label: 'Author publication page — abstract and citation for Geiger & Ribes (2011)' },
+      { url: 'https://www.epicpeople.org/ethnographic-lens/', type: 'reference', label: 'EPIC — methodological discussion referencing trace ethnography and log-forensics approaches' },
+    ],
+  },
+  {
+    id: 'mgmt-job-embeddedness',
+    discipline: 'management',
+    title: 'ジョブ・エンベデッドネス（職務埋め込み）',
+    statement:
+      'ジョブ・エンベデッドネスは、従業員がなぜ離職せず組織にとどまるのかを、職務満足や組織コミットメントだけでなく、仕事内外の人間関係・適合感・離職時に失うものの束として説明する組織行動論の概念である。' +
+      'Mitchellら（2001）は、リンク、フィット、サクリファイスの三要素を、組織内と地域・生活環境の双方で測定した。離職意思や自発的離職を追加的に予測するため、人材定着、リテンション施策、地域密着型雇用の分析に用いられる。',
+    keyFigures: 'Terence R. Mitchell／Brooks C. Holtom／Thomas W. Lee／Chris J. Sablynski／Miriam Erez（2001, Academy of Management Journal）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/3069391', type: 'academic', label: 'Mitchell et al. (2001) Why People Stay: Using Job Embeddedness to Predict Voluntary Turnover, Academy of Management Journal 44(6):1102-1121' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/22663557/', type: 'academic', label: 'Jiang et al. (2012) When and how is job embeddedness predictive of turnover? Journal of Applied Psychology 97(5):1077-1096' },
+    ],
+  },
 ];
 // Stryker restore all
