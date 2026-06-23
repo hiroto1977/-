@@ -1,184 +1,46 @@
 /**
  * Assistant RAG 文脈ビルダー — 純ロジック・IO なし。
  *
- * 確証済みナレッジ (学術概念 / 税務労務法務コンプライアンス / 補助金 / 相談窓口) と
- * サービスカタログを横断検索し、ユーザーの問いに関連する根拠資料を抽出して
- * Claude へ渡す system プロンプトを組み立てる。**単一の真実源**から導出するため、
- * ナレッジやサービスが増えれば自動で文脈に反映される。
- *
- * 検索は外部依存ゼロの軽量スコアリング (語トークン + CJK バイグラム一致)。
- * 形態素解析器を持たない代わりに、2 文字シングルで日本語にも素直に当たる。
+ * 確証済みナレッジ (全 5 コレクション) とサービスカタログを横断検索し、
+ * Claude へ渡す system プロンプトを組み立てる。コーパス本体は
+ * `knowledgeCorpus.ts` が単一の真実源。
  */
 
-import { VERIFIED_CONCEPTS } from './academicKnowledge';
-import { VERIFIED_COMPLIANCE } from './complianceKnowledge';
-import { VERIFIED_SUBSIDIES } from './subsidyKnowledge';
-import { VERIFIED_SUPPORT_RESOURCES } from './counselorKnowledge';
+import {
+  buildCorpus,
+  buildCorpusParallel,
+  KNOWLEDGE_CORPUS,
+  corpusStats,
+  extractTerms,
+  retrieve,
+  retrieveScored,
+  retrieveServices,
+  formatKnowledgeSection,
+  formatServiceSection,
+  type KnowledgeDoc,
+  type KnowledgeKind,
+  type AssistantService,
+  type ScoredDoc,
+  type CorpusStats,
+} from './knowledgeCorpus';
 
-/** 検索対象の正規化済みドキュメント 1 件。 */
-export interface KnowledgeDoc {
-  readonly id: string;
-  /** 分類ラベル (出典の種別表示用)。 */
-  readonly kind: '学術概念' | 'コンプライアンス' | '補助金・助成金' | '相談窓口';
-  readonly title: string;
-  readonly body: string;
-}
-
-/** チャットが案内できるサービス 1 件。 */
-export interface AssistantService {
-  readonly id: string;
-  readonly label: string;
-  readonly description: string;
-}
-
-const BODY_CAP = 320; // 1 ドキュメントあたりの本文上限 (プロンプト肥大を防ぐ)
-
-function cap(text: string, n: number): string {
-  return text.length > n ? text.slice(0, n) + '…' : text;
-}
-
-/** すべての確証済みデータを共通スキーマへ写像する (モジュール読込時に 1 度)。 */
-export function buildCorpus(): KnowledgeDoc[] {
-  const docs: KnowledgeDoc[] = [];
-  for (const c of VERIFIED_CONCEPTS) {
-    docs.push({
-      id: `academic:${c.id}`,
-      kind: '学術概念',
-      title: c.title,
-      body: cap(`${c.statement}（${c.keyFigures}）`, BODY_CAP),
-    });
-  }
-  for (const c of VERIFIED_COMPLIANCE) {
-    const v = c.value;
-    docs.push({
-      id: `compliance:${v.id}`,
-      kind: 'コンプライアンス',
-      title: v.title,
-      body: cap(`${v.statement}（所管: ${v.authority}／${v.asOf} 時点）`, BODY_CAP),
-    });
-  }
-  for (const s of VERIFIED_SUBSIDIES) {
-    docs.push({
-      id: `subsidy:${s.id}`,
-      kind: '補助金・助成金',
-      title: s.name,
-      body: cap(`${s.statement} 申請: ${s.application}（所管: ${s.authority}）`, BODY_CAP),
-    });
-  }
-  for (const r of VERIFIED_SUPPORT_RESOURCES) {
-    const v = r.value;
-    docs.push({
-      id: `support:${v.label}`,
-      kind: '相談窓口',
-      title: v.label,
-      body: cap(v.detail, BODY_CAP),
-    });
-  }
-  return docs;
-}
-
-/** モジュール読込時に 1 度だけ構築する既定コーパス。 */
-export const KNOWLEDGE_CORPUS: readonly KnowledgeDoc[] = buildCorpus();
-
-/** CJK 文字か (ひらがな・カタカナ・漢字)。 */
-function isCjk(ch: string): boolean {
-  return /[぀-ヿ㐀-鿿豈-﫿]/.test(ch);
-}
-
-/**
- * クエリから検索語を抽出する。
- *   - 英数字の語 (長さ 2 以上) はそのまま 1 語
- *   - 連続する CJK 文字列からは 2 文字シングル (バイグラム) を生成
- * 返すのは小文字化済みのユニーク語。
- */
-export function extractTerms(query: string): string[] {
-  const norm = query.normalize('NFKC').toLowerCase();
-  const terms = new Set<string>();
-  // 英数語
-  for (const m of norm.matchAll(/[a-z0-9][a-z0-9.+_-]{1,}/g)) terms.add(m[0]);
-  // CJK バイグラム
-  let run = '';
-  const flush = () => {
-    if (run.length === 1) {
-      terms.add(run);
-    } else {
-      for (let i = 0; i < run.length - 1; i++) terms.add(run.slice(i, i + 2));
-    }
-    run = '';
-  };
-  for (const ch of norm) {
-    if (isCjk(ch)) run += ch;
-    else flush();
-  }
-  flush();
-  return [...terms];
-}
-
-/** 文字列中に needle が現れる回数 (重なりは数えない)。 */
-function countOccurrences(haystack: string, needle: string): number {
-  if (needle.length === 0) return 0;
-  let count = 0;
-  let from = 0;
-  for (;;) {
-    const idx = haystack.indexOf(needle, from);
-    if (idx === -1) break;
-    count++;
-    from = idx + needle.length;
-  }
-  return count;
-}
-
-export interface ScoredDoc {
-  readonly doc: KnowledgeDoc;
-  readonly score: number;
-}
-
-/**
- * クエリに関連するドキュメントを上位 k 件返す。
- * スコア = Σ 語ごとの (タイトル一致 × 3 + 本文一致)。一致ゼロは除外。
- * 決定論的 (同点はコーパス順を保つ安定ソート)。
- */
-export function retrieve(
-  query: string,
-  k = 6,
-  corpus: readonly KnowledgeDoc[] = KNOWLEDGE_CORPUS,
-): KnowledgeDoc[] {
-  const terms = extractTerms(query);
-  if (terms.length === 0) return [];
-  const scored: ScoredDoc[] = [];
-  for (const doc of corpus) {
-    const title = doc.title.normalize('NFKC').toLowerCase();
-    const body = doc.body.normalize('NFKC').toLowerCase();
-    let score = 0;
-    for (const t of terms) {
-      score += countOccurrences(title, t) * 3 + countOccurrences(body, t);
-    }
-    if (score > 0) scored.push({ doc, score });
-  }
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, k).map((s) => s.doc);
-}
-
-/** クエリに関連するサービスを上位 k 件返す (label/description を検索)。 */
-export function retrieveServices(
-  query: string,
-  services: readonly AssistantService[],
-  k = 4,
-): AssistantService[] {
-  const terms = extractTerms(query);
-  if (terms.length === 0) return [];
-  const scored = services
-    .map((svc) => {
-      const label = svc.label.normalize('NFKC').toLowerCase();
-      const desc = svc.description.normalize('NFKC').toLowerCase();
-      let score = 0;
-      for (const t of terms) score += countOccurrences(label, t) * 3 + countOccurrences(desc, t);
-      return { svc, score };
-    })
-    .filter((s) => s.score > 0);
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, k).map((s) => s.svc);
-}
+export {
+  buildCorpus,
+  buildCorpusParallel,
+  KNOWLEDGE_CORPUS,
+  corpusStats,
+  extractTerms,
+  retrieve,
+  retrieveScored,
+  retrieveServices,
+  formatKnowledgeSection,
+  formatServiceSection,
+  type KnowledgeDoc,
+  type KnowledgeKind,
+  type AssistantService,
+  type ScoredDoc,
+  type CorpusStats,
+};
 
 /** Claude が遵守すべき基本方針 (RAG 文脈の前段)。 */
 export const ASSISTANT_BASE_INSTRUCTIONS = [
@@ -191,25 +53,6 @@ export const ASSISTANT_BASE_INSTRUCTIONS = [
   '- 税務・法務・労務・投資の最終判断は専門家・一次情報の確認を促す。断定を避け、時点（asOf）に注意する。',
   '- 不確実なことを推測で断定しない。分からないことは「分からない」と述べる。',
 ].join('\n');
-
-/** 参考ナレッジ節を組み立てる (なければ空文字)。 */
-export function formatKnowledgeSection(docs: readonly KnowledgeDoc[]): string {
-  if (docs.length === 0) return '';
-  const lines = docs.map((d) => `- [${d.kind}] ${d.title}: ${d.body}`);
-  return ['', '## 参考ナレッジ（確証済み・出典あり）', ...lines].join('\n');
-}
-
-/** サービスカタログ節を組み立てる。 */
-export function formatServiceSection(services: readonly AssistantService[]): string {
-  if (services.length === 0) return '';
-  const lines = services.map((s) => `- ${s.label}（id: ${s.id}）: ${s.description}`);
-  return [
-    '',
-    '## 関連サービス（このアプリ内で開ける機能）',
-    'ユーザーの目的に合うものがあれば、回答末尾で「『◯◯』を開くと…ができます」と案内する。',
-    ...lines,
-  ].join('\n');
-}
 
 /**
  * 最終的な system プロンプトを組み立てる。

@@ -14,7 +14,7 @@ import {
 } from '../assistantContext';
 
 describe('buildCorpus', () => {
-  it('produces a non-empty corpus spanning all four knowledge kinds', () => {
+  it('produces a non-empty corpus spanning all five knowledge kinds', () => {
     const corpus = buildCorpus();
     expect(corpus.length).toBeGreaterThan(100);
     const kinds = new Set(corpus.map((d) => d.kind));
@@ -22,6 +22,7 @@ describe('buildCorpus', () => {
     expect(kinds).toContain('コンプライアンス');
     expect(kinds).toContain('補助金・助成金');
     expect(kinds).toContain('相談窓口');
+    expect(kinds).toContain('経済史');
   });
 
   it('is exposed as a prebuilt KNOWLEDGE_CORPUS', () => {
@@ -48,9 +49,9 @@ describe('extractTerms', () => {
 
 describe('retrieve', () => {
   const corpus: KnowledgeDoc[] = [
-    { id: 'a', kind: '学術概念', title: 'ネットワーク外部性', body: '利用者が増えるほど効用が増える' },
-    { id: 'b', kind: '学術概念', title: 'メニューコスト', body: '価格変更の費用' },
-    { id: 'c', kind: '補助金・助成金', title: '雇用調整助成金', body: '雇用維持の助成' },
+    { id: 'a', kind: '学術概念', title: 'ネットワーク外部性', category: 'economics', body: '利用者が増えるほど効用が増える' },
+    { id: 'b', kind: '学術概念', title: 'メニューコスト', category: 'economics', body: '価格変更の費用' },
+    { id: 'c', kind: '補助金・助成金', title: '雇用調整助成金', category: 'employment', body: '雇用維持の助成' },
   ];
 
   it('ranks documents matching the query first', () => {

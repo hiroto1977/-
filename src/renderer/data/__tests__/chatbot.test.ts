@@ -226,4 +226,18 @@ describe('replyTo', () => {
     expect(r.navigateTo).toBeUndefined();
     expect(r.suggestions.length).toBeGreaterThan(0);
   });
+
+  it('answers knowledge questions from the verified corpus (RAG)', () => {
+    const r = replyTo('オークンの法則について教えて', CTX);
+    expect(r.kind).toBe('knowledge');
+    expect(r.text).toContain('📚');
+    expect(r.text).toContain('オークン');
+    expect(r.navigateTo).toBeUndefined();
+  });
+
+  it('answers economic history from the verified corpus', () => {
+    const r = replyTo('1990年 平成2年 日経平均', CTX);
+    expect(r.kind).toBe('knowledge');
+    expect(r.text).toContain('1990');
+  });
 });

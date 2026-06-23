@@ -7,7 +7,7 @@
  *   - 画面遷移   → `servicehub:navigate` CustomEvent (App.tsx が listen)
  *   - 操作の実行 → `window.serviceHub.invoke` (破壊的操作は確認ボタンを経由)
  *   - 要望の記録 → localStorage (`chatbot-requests`) + Markdown エクスポート
- *   - 自由質問   → Ollama 接続時のみ `invoke('ollama','chat')` へフォールバック
+ *   - 自由質問   → 確証済みナレッジ RAG → Claude (assistant) → Ollama (RAG 注入) の順で試行
  *
  * 知識はすべて単一の真実源から導出する (SERVICES / orchestration registry /
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import { replyTo, type ChatReply } from '../data/chatbot';
+import { buildSystemPrompt, corpusStats, buildCorpusParallel } from '../data/assistantContext';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
 import type { VoiceIntent } from '../data/voiceCommand';
@@ -101,9 +102,28 @@ function navigateTo(serviceId: ServiceId): void {
   window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: serviceId }));
 }
 
-/** Ollama 接続時の自由質問フォールバック (失敗したら null)。 */
-async function tryOllama(prompt: string): Promise<string | null> {
+/** Ollama / Claude への LLM フォールバック (RAG system 注入。失敗したら null)。 */
+async function tryLlmFallback(
+  prompt: string,
+  services: readonly { id: string; label: string; description: string }[],
+): Promise<{ text: string; routedThrough: string } | null> {
   if (!window.serviceHub) return null;
+  const system = buildSystemPrompt(prompt, services);
+
+  // 1. Claude (assistant) — API キー設定時
+  try {
+    const assistant = await window.serviceHub.invoke<{ text: string }>('assistant', 'chat', {
+      system,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    if (assistant.ok && assistant.data.text) {
+      return { text: assistant.data.text, routedThrough: 'AI アシスタント (Claude + ナレッジ RAG)' };
+    }
+  } catch {
+    /* assistant 未設定 — Ollama へ */
+  }
+
+  // 2. Ollama (ローカル LLM + RAG system)
   const model = (() => {
     try {
       return localStorage.getItem('chatbot-ollama-model') ?? 'llama3.2';
@@ -115,17 +135,20 @@ async function tryOllama(prompt: string): Promise<string | null> {
     const res = await window.serviceHub.invoke<{ response?: string; message?: string }>(
       'ollama',
       'chat',
-      { model, prompt },
+      { model, prompt, system },
     );
     if (res.ok) {
       const data = res.data;
       const text = data.response ?? data.message ?? '';
-      return text || null;
+      if (text) {
+        return { text, routedThrough: 'Ollama (ローカル LLM + ナレッジ RAG)' };
+      }
     }
-    return null;
   } catch {
-    return null;
+    /* Ollama 未接続 */
   }
+
+  return null;
 }
 
 const panelStyle: React.CSSProperties = {
@@ -166,11 +189,24 @@ export function ChatbotWidget() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
+  const [corpusReady, setCorpusReady] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const stats = useMemo(() => corpusStats(), []);
   const suggestions = useMemo(
-    () => ['何ができる？', '額面40万の手取りは？', '組織の体制を教えて'],
+    () => ['何ができる？', 'オークンの法則とは？', '1990年の日本経済は？'],
     [],
   );
+
+  // 起動時に並列ナレッジ化をウォームアップ (バックグラウンド)。
+  useEffect(() => {
+    let cancelled = false;
+    void buildCorpusParallel().then(() => {
+      if (!cancelled) setCorpusReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     saveHistory(messages);
@@ -204,13 +240,13 @@ export function ChatbotWidget() {
       recordRequest(text);
     }
 
-    // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。
+    // 解釈不能のときだけ LLM へ (Claude → Ollama、いずれも RAG 注入)。
     if (reply.kind === 'fallback') {
       setBusy(true);
-      const llm = await tryOllama(text);
+      const llm = await tryLlmFallback(text, CHAT_CONTEXT.services);
       setBusy(false);
       if (llm) {
-        append({ role: 'bot', text: `🧠 ${llm}`, routedThrough: 'Ollama (ローカル LLM)' });
+        append({ role: 'bot', text: `🧠 ${llm.text}`, routedThrough: llm.routedThrough });
         return;
       }
     }
@@ -266,7 +302,9 @@ export function ChatbotWidget() {
               <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}>
                 AI オーケストレーション組織 (役員 {ORG_INDEX.counts.executives} / 部長{' '}
                 {ORG_INDEX.counts.managers} / チーム {ORG_INDEX.counts.teams}) がご要望を承ります。
-                サービスへの案内・操作・説明・機能要望の受付ができます。
+                確証済みナレッジ {stats.total} 件
+                {corpusReady ? ' (並列ロード済)' : ' (ロード中…)'} を横断検索して回答します。
+                サービスへの案内・操作・学術/税務/補助金/経済史の質問・機能要望の受付ができます。
               </div>
             ) : null}
             {messages.map((m, i) => (

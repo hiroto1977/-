@@ -29,6 +29,8 @@ import {
 import { routeTopic, routeTopicScored, routeLabel, orgSummaryLine, type OrgIndex } from './chatOrg';
 import { parseCalcQuery, runCalcQuery, formatCalcAnswer } from './chatCalc';
 import { counsel, detectCrisis, detectHarmToOthers, detectDestructiveUrge } from './counseling';
+import { formatKnowledgeAnswer, knowledgeRouteLabel, matchKnowledge } from './knowledgeChat';
+import { corpusStats } from './knowledgeCorpus';
 
 /** チャットボットが知っているサービス 1 件 (SERVICES から注入)。 */
 export interface ChatService {
@@ -54,6 +56,7 @@ export type ChatReplyKind =
   | 'counsel' // 感情への寄り添い (カウンセリングエンジン。危機は最優先)
   | 'navigate' // 画面案内
   | 'service-info' // サービスについての質問
+  | 'knowledge' // 確証済みナレッジからの RAG 回答
   | 'fallback'; // 解釈不能 (LLM フォールバック余地)
 
 /** チャット返答 (構造は logic、text は表現)。 */
@@ -326,6 +329,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
   if (special === 'help') {
     const count = ctx.services.length;
     const sample = ctx.services.slice(0, 5).map((s) => s.label).join(' / ');
+    const kbTotal = corpusStats().total;
     // Stryker disable all
     return {
       kind: 'help',
@@ -336,6 +340,7 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
         `・手取り計算 —「額面40万の手取りは？」「手取り30万に必要な額面は？」(その場で概算)\n` +
         `・気持ちの相談 —「疲れた」「不安で眠れない」(寄り添いカウンセリング。つらいときは窓口もご案内)\n` +
         `・サービスの説明 —「◯◯って何？」\n` +
+        `・確証済みナレッジ —「オークンの法則とは？」「1990年の日本経済は？」(全 ${kbTotal} 件を横断検索)\n` +
         `・組織の状態 —「体制を教えて」\n` +
         `・機能要望の受付 —「◯◯が欲しい」(オーケストレーションのバックログ候補に記録)`,
       routedThrough: 'COO 直轄',
@@ -364,6 +369,35 @@ export function replyTo(text: string, ctx: ChatContext): ChatReply {
       navigateTo: service.id,
       routedThrough: through,
       suggestions: ['他のサービスも見る', '何ができる？'],
+    };
+    // Stryker restore all
+  }
+
+  // 画面遷移/操作の意図が解釈されたがサービス不在等で実行できない場合は
+  // ナレッジ RAG に回さず fallback へ (「税務試算を開いて」「バックアップ」等)。
+  if (routed.kind === 'navigate' || routed.kind === 'action') {
+    // Stryker disable all
+    return {
+      kind: 'fallback',
+      text:
+        `🤔 うまく解釈できませんでした。サービス名 (例: 税務試算 / GitHub / 売上集計) を含めるか、` +
+        `「何ができる？」と聞いてください。Ollama 接続時は自由質問にもお答えします。`,
+      routedThrough: 'COO 直轄',
+      suggestions: DEFAULT_SUGGESTIONS,
+    };
+    // Stryker restore all
+  }
+
+  // 確証済みナレッジ (全 5 コレクション) から RAG 検索 — LLM 不要の即答。
+  const knowledge = matchKnowledge(text);
+  if (knowledge !== null) {
+    const top = knowledge.docs[0];
+    // Stryker disable all — 文面・候補は表現 (kind/ルートは構造テストで固定)。
+    return {
+      kind: 'knowledge',
+      text: formatKnowledgeAnswer(knowledge.docs),
+      routedThrough: knowledgeRouteLabel(ctx.org, text, top),
+      suggestions: ['もっと詳しく', 'AIアシスタントを開いて', '何ができる？'],
     };
     // Stryker restore all
   }
