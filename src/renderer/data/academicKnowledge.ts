@@ -26495,5 +26495,98 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-lender-last-resort, econ-demographic-dividend, econ-heckscher-ohlin-theorem,
+  // bizlaw-class-action, infosoc-contextual-integrity, human-episodic-memory
+  {
+    id: 'econ-lender-last-resort',
+    discipline: 'economics',
+    title: '最後の貸し手（バジョット原則）',
+    statement:
+      '最後の貸し手（Lender of Last Resort, LOLR）とは、金融危機や流動性危機の際に、支払能力はあるが一時的に流動性が不足した金融機関に対し、中央銀行が最終的な資金供給者として機能する制度的役割をいう。ウォルター・バジョット（Walter Bagehot）が1873年の著書『ロンバード街（Lombard Street）』で定式化し、「バジョット原則」とも称される。' +
+      'その処方箋は「充分な担保に対して、ペナルティ金利で、自由に貸し付けよ（lend freely against good collateral at a penalty rate）」であり、流動性供給とモラルハザード抑制を同時に図る。2008年の世界金融危機では各国中央銀行が緊急流動性支援を実施し、古典的前提の限界と課題が広く再評価された。',
+    keyFigures: 'ウォルター・バジョット（Walter Bagehot, 1826–1877）／ヘンリー・ソーントン（Henry Thornton, 1802）／2008年世界金融危機（各国緊急流動性支援）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/topic/Lombard-Street-by-Bagehot', type: 'reference', label: 'Encyclopaedia Britannica — Lombard Street by Bagehot (1873)' },
+      { url: 'https://www.imf.org/external/pubs/ft/fandd/1999/09/giannini.htm', type: 'government', label: 'IMF Finance & Development (1999) — The Lender-of-Last-Resort Function' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2016/wp1610.pdf', type: 'academic', label: 'Dobler et al. (2016) The Lender of Last Resort Function after the Global Financial Crisis, IMF WP/16/10' },
+    ],
+  },
+  {
+    id: 'econ-demographic-dividend',
+    discipline: 'economics',
+    title: '人口ボーナス（人口動態の配当）',
+    statement:
+      '人口ボーナス（demographic dividend）とは、人口転換の過程で年少人口の割合が低下し生産年齢人口の比率が高まることで、一人当たり経済成長が加速される時期的な現象をいう。デイビッド・ブルーム、デイビッド・カニング、ジェイ・セビリャが2003年のランド研究所モノグラフで包括的に論じた。' +
+      '1960〜90年代の東アジア高度成長の相当部分が人口ボーナスによって説明されると推計される。ただし人口ボーナスの実現は自動的ではなく、適切な雇用政策・教育投資・保健医療・性と生殖に関する権利保障が必要とされる。生産年齢人口比率が再び低下した後も高齢者の貯蓄蓄積が資本深化に寄与する「第二の人口ボーナス」という概念も提唱されている。',
+    keyFigures: 'デイビッド・ブルーム（David E. Bloom）／デイビッド・カニング（David Canning）／ジェイ・セビリャ（Jocelyn Sevilla, 2003）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/papers/w8685', type: 'academic', label: 'Bloom, Canning & Sevilla (2001) The Demographic Dividend, NBER Working Paper No. 8685' },
+      { url: 'https://www.unfpa.org/demographic-dividend', type: 'government', label: 'UNFPA — Demographic Dividend: definition, policy conditions, and case studies' },
+      { url: 'https://doi.org/10.1017/S0022050700021603', type: 'academic', label: 'Bloom & Williamson (1998) Demographic Transitions and Economic Miracles in Emerging Asia, Journal of Economic History 58(3)' },
+    ],
+  },
+  {
+    id: 'econ-heckscher-ohlin-theorem',
+    discipline: 'economics',
+    title: 'ヘクシェル・オリン定理',
+    statement:
+      'ヘクシェル・オリン定理（H-O定理）とは、二国・二財・二要素の貿易モデルにおいて、各国が相対的に豊富な生産要素を多用する財の輸出に特化し、相対的に希少な要素を多用する財を輸入するという比較静学の命題である。エリ・ヘクシェル（Eli Heckscher）が1919年に論じ、ベルティル・オリン（Bertil Ohlin）が1933年の著書『Interregional and International Trade』で体系化した。' +
+      'この定理は要素禀赋（factor endowment）の国際差が貿易パターンを決定するという比較優位の資源基礎説を与え、リッカードの単一要素モデルを一般化する。ストルパー＝サミュエルソン定理や要素価格均等化定理とともに新古典派貿易理論の中核をなし、レオンチェフ・パラドックスを通じて実証検証の対象ともなった。',
+    keyFigures: 'エリ・ヘクシェル（Eli F. Heckscher, 1879–1952）／ベルティル・オリン（Bertil Ohlin, 1899–1979）／ポール・サミュエルソン（Stolper-Samuelson定理）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1017/9781108561005.004', type: 'academic', label: 'Feenstra, R.C. (2015) The Heckscher-Ohlin Model, Handbook of International Economics Vol.4' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1977/ohlin/facts/', type: 'reference', label: 'Nobel Prize 1977 — Bertil Ohlin: facts (Interregional and International Trade)' },
+      { url: 'https://www.oecd.org/en/topics/sub-issues/trade-and-investment.html', type: 'government', label: 'OECD — Trade and investment (factor endowments and trade patterns)' },
+    ],
+  },
+  {
+    id: 'bizlaw-class-action',
+    discipline: 'business-law',
+    title: '集団訴訟（クラスアクション）',
+    statement:
+      '集団訴訟（class action）とは、多数の被害者が共通の事実関係・法的争点に基づき、代表者を通じて一つの訴訟として損害賠償や差止めを求める訴訟制度である。米国連邦民事訴訟規則（Fed. R. Civ. P. 23）が代表的な枠組みを定め、共通性・代表性・優越性・適切性の要件を満たす場合に認められる。' +
+      '消費者被害・証券詐欺・製造物責任・差別等の大量被害救済に用いられ、和解・判決の効力はクラスメンバー全体に及ぶ。日本では消費者裁判手続特例法（2013年）が一定の消費者被害に限定的な集団的紛争解決手続を導入し、2022年改正で損害賠償請求の集団訴訟（opt-in型）が新設された。',
+    keyFigures: '米国 Fed. R. Civ. P. 23（1938年制定・1966年大幅改正）／日本 消費者裁判手続特例法（平成25年法律第96号）／EU 集団的救済指令（Representative Actions Directive 2020/1828）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/rules/frcp/rule_23', type: 'reference', label: 'Cornell LII — Federal Rules of Civil Procedure, Rule 23 (Class Actions)' },
+      { url: 'https://elaws.e-gov.go.jp/document?lawid=425AC0000000096', type: 'government', label: 'e-Gov法令検索 — 消費者裁判手続特例法（平成25年法律第96号）' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32020L1828', type: 'government', label: 'EU Directive 2020/1828 on representative actions for the protection of collective interests' },
+    ],
+  },
+  {
+    id: 'infosoc-contextual-integrity',
+    discipline: 'information-sociology',
+    title: '文脈的完全性（コンテクスチュアル・インテグリティ）',
+    statement:
+      'コンテクスチュアル・インテグリティ（contextual integrity）とは、ヘレン・ニッセンバウムが2004年に提唱したプライバシー理論の枠組みで、情報の流れはその発生した社会的文脈（医療・教育・友人関係等）の規範に適合している場合にのみ「適切」と評価されるとする。秘密性の有無ではなく文脈規範への適合性でプライバシー保護の可否を判断する点が特徴である。' +
+      '例えば医師・患者間の医療情報が医療チーム内で共有されるのは文脈規範に沿い適切だが、保険会社や広告主へ流れることは規範違反でプライバシー侵害となる。同理論はGDPRのデータ最小化・目的外利用禁止規定やAIシステム・SNSのプライバシー設計の規範的基準として政策・法学・情報倫理学で広く参照されている。',
+    keyFigures: 'ヘレン・ニッセンバウム（Helen Nissenbaum, 1948–）／2004 Washington Law Review 79(1)／2010 Privacy in Context（Stanford University Press）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10', type: 'academic', label: 'Nissenbaum, H. (2004) Privacy as Contextual Integrity, Washington Law Review 79(1):119-157' },
+      { url: 'https://plato.stanford.edu/entries/privacy/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Privacy (contextual integrity theory)' },
+      { url: 'https://doi.org/10.1515/9781400827185', type: 'academic', label: 'Nissenbaum, H. (2010) Privacy in Context: Technology, Policy, and the Integrity of Social Life, Stanford University Press' },
+    ],
+  },
+  {
+    id: 'human-episodic-memory',
+    discipline: 'human-science',
+    title: 'エピソード記憶',
+    statement:
+      'エピソード記憶（episodic memory）とは、個人が過去に経験した出来事を、いつ・どこで・どのような文脈で起きたかという時間的・空間的・主観的な文脈とともに想起する記憶システムをいう。エンデル・タルヴィング（Endel Tulving）が1972年に「エピソード記憶と意味記憶」の区別を提唱し、1983年に「自己にとっての意識的な再体験（autonoetic consciousness）」を特徴とする記憶として精緻化した。' +
+      '意味記憶（世界知識）や手続き記憶（技能）と区別され、海馬・内側側頭葉・前頭前野のネットワークがその神経基盤とされる。加齢に伴うエピソード記憶の低下、アルツハイマー病における早期障害、外傷後ストレス障害のフラッシュバック等の臨床現象の理解に中心的役割を果たす。',
+    keyFigures: 'エンデル・タルヴィング（Endel Tulving, 1927–2023）／1972 Organization of Memory／1983 Elements of Episodic Memory',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.40.4.385', type: 'academic', label: 'Tulving, E. (1985) How Many Memory Systems Are There?, American Psychologist 40(4):385-398' },
+      { url: 'https://plato.stanford.edu/entries/memory/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Memory (episodic vs semantic distinction)' },
+      { url: 'https://doi.org/10.1016/0006-8993(71)90358-1', type: 'academic', label: 'O\'Keefe, J. & Dostrovsky, J. (1971) The hippocampus as a spatial map, Brain Research 34(1):171-175 (hippocampal basis)' },
+    ],
+  },
 ];
 // Stryker restore all
