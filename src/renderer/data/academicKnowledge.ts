@@ -26586,5 +26586,94 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubmed.ncbi.nlm.nih.gov/22663557/', type: 'academic', label: 'Jiang et al. (2012) When and how is job embeddedness predictive of turnover? Journal of Applied Psychology 97(5):1077-1096' },
     ],
   },
+  // ── Batch 291 ─────────────────────────────────────────────
+  // econ-cash-in-advance-constraint, econ-kiyotaki-wright-money,
+  // bizlaw-revlon-duties, bizlaw-howey-test,
+  // infosoc-seamful-design, human-differential-association
+  {
+    id: 'econ-cash-in-advance-constraint',
+    discipline: 'economics',
+    title: '現金先払い制約（クローアー制約）',
+    statement:
+      '現金先払い制約とは、財・サービスを購入する前に、家計や企業があらかじめ貨幣を保有していなければならないと仮定する貨幣経済モデル上の制約である。ワルラス型一般均衡では物々交換と貨幣交換の差が消えやすいという問題に対し、Clowerは購買決定と販売決定を分離した。' +
+      'この制約を置くと、貨幣は単なる会計単位ではなく、取引を実行するための不可欠な手段になる。Lucas & Stokeyは一部の財に現金先払い制約を課す動学的一般均衡モデルを構築し、貨幣成長・金利・実物配分の関係を分析した。',
+    keyFigures: 'Robert W. Clower（1967, Western Economic Journal）／Robert E. Lucas Jr. & Nancy L. Stokey（1987, Econometrica）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1465-7295.1967.tb01171.x', type: 'academic', label: 'Clower (1967) A Reconsideration of the Microfoundations of Monetary Theory, Western Economic Journal 6(1):1-8' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1987/05/01/money-and-interest-cash-advance-economy', type: 'academic', label: 'Lucas & Stokey (1987) Money and Interest in a Cash-in-Advance Economy, Econometrica 55(3):491-513' },
+    ],
+  },
+  {
+    id: 'econ-kiyotaki-wright-money',
+    discipline: 'economics',
+    title: 'キヨタキ＝ライト貨幣モデル（探索理論的貨幣）',
+    statement:
+      'キヨタキ＝ライト貨幣モデルは、分権的な取引相手探索と欲望の二重の一致の困難を明示し、貨幣が交換媒体として内生的に成立する条件を分析する貨幣探索理論の基礎モデルである。専門化した主体がランダムに出会うため、物々交換だけでは取引機会が大きく制約される。' +
+      'Kiyotaki & Wrightは、財の保蔵性や受容可能性、また外在的信念によって商品貨幣や不換紙幣が均衡で流通しうることを示した。貨幣はモデル外から仮定される中立的ヴェールではなく、探索摩擦を緩和し厚生を変える制度として扱われる。',
+    keyFigures: 'Nobuhiro Kiyotaki／Randall Wright（1989, Journal of Political Economy; 1993, American Economic Review）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1086/261634', type: 'academic', label: 'Kiyotaki & Wright (1989) On Money as a Medium of Exchange, Journal of Political Economy 97(4):927-954' },
+      { url: 'https://doi.org/10.1257/aer.83.1.63', type: 'academic', label: 'Kiyotaki & Wright (1993) A Search-Theoretic Approach to Monetary Economics, American Economic Review 83(1):63-77' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン義務（支配権売却時の取締役義務）',
+    statement:
+      'レブロン義務とは、デラウェア会社法上、会社の売却や解体、支配権移転が不可避となった局面で、取締役会の役割が会社防衛から株主のために合理的に得られる最高価値を追求することへ転換するという受託者義務の法理である。' +
+      'Revlon事件で、取締役は「企業城砦の防衛者」から「売却で最良価格を得る競売人」になると表現された。ロックアップ、ノーショップ、解約金などの取引保護条項は、買収競争を不当に阻害しないか強化審査の対象となる。',
+    keyFigures: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173（Del. 1986）／Paramount Communications Inc. v. QVC Network Inc.（Del. 1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-5.html', type: 'reference', label: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., Delaware Supreme Court, 506 A.2d 173 (1986)' },
+      { url: 'https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=2858&context=vlr', type: 'academic', label: 'Vanderbilt Law Review — Dissecting Revlon: Severing the Standard of Conduct from the Standard of Review' },
+    ],
+  },
+  {
+    id: 'bizlaw-howey-test',
+    discipline: 'business-law',
+    title: 'ハウィー・テスト（投資契約の証券性判断）',
+    statement:
+      'ハウィー・テストとは、米国連邦証券法上、ある取引が「投資契約」として証券に該当するかを判断するための基準である。SEC v. W.J. Howey Co.で、形式的な契約名ではなく経済的実態に基づき、投資家保護の対象を広く捉える枠組みとして定式化された。' +
+      '要件は、金銭投資、共同事業、利益期待、その利益が主として他者の努力から生じることの組合せである。不動産持分、共同事業、暗号資産など新しい資金調達スキームにも適用され、証券登録・開示・反詐欺規制の入口を画する。',
+    keyFigures: 'SEC v. W.J. Howey Co., 328 U.S. 293（1946）／Justice Frank Murphy／U.S. Securities and Exchange Commission',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/supremecourt/text/328/293', type: 'reference', label: 'Cornell LII — SEC v. W.J. Howey Co., 328 U.S. 293 (1946)' },
+      { url: 'https://www.sec.gov/corpfin/framework-investment-contract-analysis-digital-assets', type: 'government', label: 'U.S. SEC — Framework for Investment Contract Analysis of Digital Assets' },
+      { url: 'https://scholarship.law.wm.edu/wmblr/vol2/iss1/2/', type: 'academic', label: 'Miriam R. Albert (2010) The Howey Test Turns 64, William & Mary Business Law Review 2(1)' },
+    ],
+  },
+  {
+    id: 'infosoc-seamful-design',
+    discipline: 'information-sociology',
+    title: 'シームフル・デザイン（継ぎ目を見せる設計）',
+    statement:
+      'シームフル・デザインとは、ユビキタス・コンピューティングやHCIで、技術間の境界、遅延、接続の不安定さ、制度的差異などの「継ぎ目」を隠して完全に滑らかな体験に見せるのではなく、利用者が理解し活用できる形で可視化する設計思想である。' +
+      'Chalmers & Galaniは、日常実践が複数メディアの異質性を織り合わせる過程で成り立つと論じた。シームレスな不可視化を理想化する発想を批判し、ユーザーがシステムの限界や切替点を読み取り、状況に応じて調整できる相互行為を重視する。',
+    keyFigures: 'Matthew Chalmers／Areti Galani（2004, ACM DIS）／Genevieve Bell／Paul Dourish',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1145/1013115.1013149', type: 'academic', label: 'Chalmers & Galani (2004) Seamful Interweaving, Proceedings of ACM DIS 2004:243-252' },
+      { url: 'https://doi.org/10.1007/s00779-006-0071-x', type: 'academic', label: 'Bell & Dourish (2007) Yesterday’s Tomorrows, Personal and Ubiquitous Computing 11:133-143' },
+    ],
+  },
+  {
+    id: 'human-differential-association',
+    discipline: 'human-science',
+    title: '分化的接触理論（犯罪学習理論）',
+    statement:
+      '分化的接触理論とは、犯罪行動は生得的異常や単純な個人病理ではなく、親密な集団との相互作用を通じて学習されるとする犯罪学・社会心理学の理論である。Sutherlandは、犯罪の技術だけでなく、法違反を正当化する動機・態度・合理化も伝達されるとした。' +
+      '中心命題は、法違反に好意的な定義が不利な定義を上回るとき、人は非行・犯罪に向かいやすくなるという点である。接触の頻度、期間、優先性、強度が学習効果を左右し、ホワイトカラー犯罪や非行研究、後の社会的学習理論に影響した。',
+    keyFigures: 'Edwin H. Sutherland（1883-1950; Principles of Criminology, 1939/1947）／Ross L. Matsueda',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.britannica.com/biography/Edwin-Sutherland', type: 'reference', label: 'Encyclopaedia Britannica — Edwin Sutherland and differential association theory' },
+      { url: 'https://doi.org/10.1177/0011128788034003005', type: 'academic', label: 'Matsueda (1988) The Current State of Differential Association Theory, Crime & Delinquency 34(3):277-306' },
+    ],
+  },
 ];
 // Stryker restore all
