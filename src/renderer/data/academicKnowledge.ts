@@ -26495,5 +26495,99 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
+  // ── Batch 290 ─────────────────────────────────────────────
+  // econ-roy-model, econ-alchian-allen-theorem, bizlaw-revlon-duties,
+  // bizlaw-caremark-oversight, infosoc-cultural-market-experiment,
+  // mgmt-architectural-innovation
+  {
+    id: 'econ-roy-model',
+    discipline: 'economics',
+    title: 'ロイ・モデル（自己選択と所得分布）',
+    statement:
+      'ロイ・モデルは、人々が自らの相対的な技能（比較優位）に基づき複数の職業・部門の中から最も高い報酬を得られるものを選ぶという自己選択（self-selection）の最初期の経済モデルである。A.D.ロイが1951年の論文「所得分布についての考察」（Oxford Economic Papers）で狩猟と漁労の二部門に分かれる例を用いて提示し、観察される所得分布は技能の分布・部門間の技能の相関・自己選択の三要素によって規定されると論じた。' +
+      'ジョージ・ボーハスは1987年の論文（American Economic Review）でこのモデルを数学的に定式化し移民の自己選択へ応用した。出身国より移住先国の技能収益率（所得不平等）が高ければ移民は技能分布の上層から、低ければ下層から選択的に生じると予測し、二国間の技能の相関が選択の符号を左右することを示した。労働経済学・移民研究や、ヘックマンらが展開した計量経済学の選択バイアス分析の基礎をなす。',
+    keyFigures: 'A.D. Roy（アンドルー・ドナルド・ロイ、1951『Some Thoughts on the Distribution of Earnings』Oxford Economic Papers 3(2):135-146）／応用: George J. Borjas（1987, American Economic Review 77(4):531-553）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1093/oxfordjournals.oep.a041827', type: 'academic', label: 'Roy, A.D. (1951) Some Thoughts on the Distribution of Earnings, Oxford Economic Papers 3(2):135-146' },
+      { url: 'https://www.jstor.org/stable/1814529', type: 'academic', label: 'Borjas, G.J. (1987) Self-Selection and the Earnings of Immigrants, American Economic Review 77(4):531-553' },
+      { url: 'https://ocw.mit.edu/courses/14-662-labor-economics-ii-spring-2015/', type: 'academic', label: 'MIT OpenCourseWare 14.662 Labor Economics II — Roy model / Borjas (1987) 講義ノート' },
+    ],
+  },
+  {
+    id: 'econ-alchian-allen-theorem',
+    discipline: 'economics',
+    title: 'アルチアン＝アレンの定理（第三の需要法則）',
+    statement:
+      'アルチアン＝アレンの定理は、品質の異なる二つの代替財（例: 上等品と並等品）の双方に、輸送費や従量税のような同一の固定的な単位当たり費用が上乗せされると、消費が相対的に高品質財へシフトするという命題である。アーメン・アルチアンとウィリアム・アレンが1964年の教科書『University Economics』で示したもので、固定費の付加が高品質財の相対価格を低下させることに起因する。「良いリンゴは外へ運ばれる（shipping the good apples out）」現象や「第三の需要法則」とも呼ばれる。' +
+      'ただしグールドとシーゴル（1968）は、第三の合成財を導入すると三財世界では本命題が需要法則から論理的には導かれないと批判した。これに対しボーチャーディングとシルバーバーグは1978年の論文（Journal of Political Economy）で、ヒックスの第三法則を用い、二財が十分に近い代替であれば直接の代替効果が第三財との相互作用効果を上回ることを示し、本定理は需要法則の直接の帰結ではないが有用な価格理論的構成であると結論づけた。',
+    keyFigures: 'Armen A. Alchian／William R. Allen（1964『University Economics』）／再検討: Thomas E. Borcherding & Eugene Silberberg（1978, JPE 86(1):131-138）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/260651', type: 'academic', label: 'Borcherding, T.E. & Silberberg, E. (1978) Shipping the Good Apples Out: The Alchian and Allen Theorem Reconsidered, JPE 86(1):131-138' },
+      { url: 'https://www.jstor.org/stable/1828763', type: 'academic', label: 'JSTOR — Borcherding & Silberberg (1978) JPE 86(1):131-138（DOI 10.1086/260651）' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v86y1978i1p131-38.html', type: 'academic', label: 'RePEc/IDEAS — Borcherding & Silberberg (1978) Shipping the Good Apples Out, JPE 86(1)' },
+    ],
+  },
+  {
+    id: 'bizlaw-revlon-duties',
+    discipline: 'business-law',
+    title: 'レブロン義務',
+    statement:
+      'レブロン義務（Revlon duties）とは、米国デラウェア州会社法において、会社の売却または解体が不可避となった局面では、取締役の役割が「会社という存在の防衛者」から「株主のために最善の価格を得る競売人（auctioneer）」へと転換し、株主価値の最大化が中心的目的になるという基準である。デラウェア州最高裁がRevlon, Inc. v. MacAndrews & Forbes Holdings, Inc.（506 A.2d 173, Del. 1986）で確立した。' +
+      '本件ではロナルド・ペレルマン率いるパントリー・プライドの敵対的買収に対し、レブロン取締役会が白馬の騎士フォーストマンに資産取得のロックアップ・オプションとノーショップ条項・解約金を付与して進行中の競売を打ち切ったことが、株主への忠実義務に反すると判断された。レブロン義務が発動する局面（会社が「売り」に出された時）や、取締役が単一の最高価格でなく市場確認で足りるか等の射程は、Paramount v. Time（1989）やParamount v. QVC（1994）など後続判例で精緻化されており、適用範囲をめぐる学説上の論争も続いている。',
+    keyFigures: 'デラウェア州最高裁（Andrew G.T. Moore II 裁判官執筆、1986）／関連: Unocal v. Mesa（1985）・Paramount v. QVC（1994）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholar.google.com/scholar_case?case=16019965849248080126', type: 'reference', label: 'Revlon, Inc. v. MacAndrews & Forbes Holdings, Inc., 506 A.2d 173 (Del. 1986) — 判決全文（Google Scholar）' },
+      { url: 'https://scholarlycommons.law.wlu.edu/cgi/viewcontent.cgi?article=4372&context=wlulr', type: 'academic', label: 'Washington and Lee Law Review — Revlon 判例法理の検討（2014）' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV（取締役の権限）' },
+    ],
+  },
+  {
+    id: 'bizlaw-caremark-oversight',
+    discipline: 'business-law',
+    title: 'ケアマーク義務（取締役の監督義務）',
+    statement:
+      'ケアマーク義務とは、米国デラウェア州会社法上、取締役が法令遵守を確保するための情報・報告システム（内部統制）を誠実に構築し監視する義務をいう。デラウェア州衡平法裁判所のウィリアム・T・アレン裁判長がIn re Caremark International Inc. Derivative Litigation（698 A.2d 959, Del. Ch. 1996）で初めて定式化した。' +
+      '責任が認められるのは(1)報告・情報システムや内部統制を全く構築しなかった場合、または(2)構築したシステムの監視を意識的に怠り、注意を要するリスクや「危険信号（red flags）」を看過した場合の二類型に限られ、いずれも単なる過失では足りず悪意（bad faith）の立証を要するため、取締役責任の中でも極めて立証が困難な類型とされる。Stone v. Ritter（911 A.2d 362, Del. 2006）はこの義務を忠実義務・誠実義務に基礎づけ、近年のIn re McDonalds（2023）は同様の監督義務が会社役員（officer）にもその担当領域で及ぶことを認めた。',
+    keyFigures: 'William T. Allen 裁判長（デラウェア州衡平法裁判所、1996）／確認: Stone v. Ritter（911 A.2d 362, Del. 2006）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/court-of-chancery/1996/13670-3.html', type: 'reference', label: 'In re Caremark International Inc. Derivative Litigation, 698 A.2d 959 (Del. Ch. 1996) — 判決全文（Justia）' },
+      { url: 'https://www.skadden.com/-/media/files/publications/2022/10/what_it_means_for_a_board_to_exercise_oversight.pdf', type: 'reference', label: 'Skadden — What It Means for a Board To Exercise Oversight（Caremark 二類型・bad faith 解説、2022）' },
+      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV（取締役・役員）' },
+    ],
+  },
+  {
+    id: 'infosoc-cultural-market-experiment',
+    discipline: 'information-sociology',
+    title: '人工的文化市場の実験（社会的影響と成功の予測不可能性）',
+    statement:
+      '人工的文化市場の実験は、ヒット作（楽曲・書籍・映画）の成功が品質のみでは説明できず、社会的影響によって不平等と予測不可能性がともに増幅されることを示した社会学的オンライン実験である。マシュー・サルガニック、ピーター・ドッズ、ダンカン・ワッツが2006年にScience誌で発表し、14,341名の参加者が無名の楽曲を、他者のダウンロード数を見られる条件と見られない条件でダウンロードした。' +
+      '社会的影響（他者の選択の可視化）が強いほど、楽曲間のダウンロード数の不平等（少数のヒットへの集中）と、どの曲がヒットするかの予測不可能性（並行する複数市場間での順位の食い違い）がともに増大した。品質は成功を部分的にしか決めず、最良の曲が惨敗することは稀・最悪の曲が大成功することも稀だが、その中間ではほぼ任意の結果が起こりえた。累積的優位（マタイ効果）・情報カスケード・成功の事後的合理化を実験的に裏づけ、文化市場・推薦システム・バイラル現象の分析に大きな影響を与えた。',
+    keyFigures: 'Matthew J. Salganik／Peter Sheridan Dodds／Duncan J. Watts（2006, Science 311(5762):854-856）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.1121066', type: 'academic', label: 'Salganik, M.J., Dodds, P.S. & Watts, D.J. (2006) Experimental Study of Inequality and Unpredictability in an Artificial Cultural Market, Science 311(5762):854-856' },
+      { url: 'https://www.princeton.edu/~mjs3/salganik_dodds_watts06_full.pdf', type: 'academic', label: 'Princeton（著者公開版PDF）— Salganik, Dodds & Watts (2006) Science' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/16469928/', type: 'government', label: 'PubMed (NIH/NLM) — Experimental study of inequality and unpredictability in an artificial cultural market (PMID 16469928)' },
+    ],
+  },
+  {
+    id: 'mgmt-architectural-innovation',
+    discipline: 'management',
+    title: 'アーキテクチャル・イノベーション',
+    statement:
+      'アーキテクチャル・イノベーションとは、製品を構成する個々の部品（コンポーネント）の中核設計概念は維持したまま、部品間の連結のしかた（アーキテクチャ）を再構成するタイプのイノベーションである。レベッカ・ヘンダーソンとキム・クラークが1990年の論文（Administrative Science Quarterly）で、イノベーションを「中核概念の強化／転覆」と「部品間連結の不変／変更」の二軸で分類し、漸進的・モジュラー・アーキテクチャル・ラディカルの四類型を提示した中で定式化した。' +
+      'アーキテクチャル・イノベーションは、部品知識が温存されるため軽微に見える一方で確立企業（インカンベント）を失敗させやすい。なぜなら既存企業の組織構造・情報処理の手続き・コミュニケーション経路に旧アーキテクチャの知識が暗黙裏に埋め込まれており、その「アーキテクチャ知識」の陳腐化が認識されにくいからである。半導体のフォトリソグラフィ用露光装置（アライナー）産業の実証研究に基づき、能力破壊型イノベーションや組織の情報フィルターの議論と結びつく。',
+    keyFigures: 'Rebecca M. Henderson／Kim B. Clark（1990, Administrative Science Quarterly 35(1):9-30）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2393549', type: 'academic', label: 'Henderson, R.M. & Clark, K.B. (1990) Architectural Innovation, Administrative Science Quarterly 35(1):9-30（DOI 10.2307/2393549）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=2057', type: 'academic', label: 'Harvard Business School Faculty & Research — Architectural Innovation (Henderson & Clark, ASQ 1990)' },
+      { url: 'https://eric.ed.gov/?id=EJ406847', type: 'government', label: 'ERIC (U.S. Dept. of Education) — EJ406847 Architectural Innovation, ASQ v35 n1 (1990)' },
+    ],
+  },
 ];
 // Stryker restore all
