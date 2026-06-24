@@ -34674,7 +34674,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'David Premack ／ Guy Woodruff ／ Simon Baron-Cohen',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/does-the-chimpanzee-have-a-theory-of-mind/1E96B02CD9850016B7C93BC6D2FBB0A0', type: 'academic', label: 'Premack, D., & Woodruff, G. (1978). Does the chimpanzee have a theory of mind? Behavioral and Brain Sciences, 4(4), 515–526.' },
+      { url: 'https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/does-the-chimpanzee-have-a-theory-of-mind/1E96B02CD9850016B7C93BC6D2FBB0A0', type: 'academic', label: 'Premack, D., & Woodruff, G. (1978). Does the chimpanzee have a theory of mind? Behavioral and Brain Sciences, 1(4), 515–526.' },
       { url: 'https://doi.org/10.1016/0010-0277(85)90022-8', type: 'academic', label: 'Baron-Cohen, S., Leslie, A. M., & Frith, U. (1985). Does the autistic child have a "theory of mind"? Cognition, 21(1), 37–46.' },
       { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3679913/', type: 'reference', label: 'Frith, U., & Frith, C. (2003). Development and neurophysiology of mentalizing. Philosophical Transactions of the Royal Society B, 358(1431), 459–473.' },
     ],
