@@ -34864,5 +34864,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://publications.jrc.ec.europa.eu/repository/handle/JRC128415', type: 'government', label: 'European Commission JRC 2022 — DigComp 2.2: Digital Competence Framework' },
     ],
   },
+  {
+    id: 'econ-principal-agent-problem',
+    discipline: 'economics',
+    title: 'プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析',
+    statement:
+      'マイケル・C・ジェンセンとウィリアム・H・メックリングが 1976 年に確立したプリンシパル＝エージェント理論は、委任者と被委任者の利益相反と情報非対称性から生じる代理費用（監視費用・ボンディング費用・残余損失）を定式化した。スティーブン・A・ロスは情報非対称性の基礎理論を展開し、ユージン・F・ファマとジェンセンは複雑な組織における統治機構と所有権の分離を分析してコーポレートガバナンス・CEO 報酬設計・契約理論の基盤を築いた。',
+    keyFigures: 'マイケル・C・ジェンセン ／ ウィリアム・H・メックリング ／ スティーブン・A・ロス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1016/0304-405X(76)90026-X', type: 'academic', label: 'Jensen & Meckling 1976 — Theory of the Firm: Managerial Behavior, Agency Costs and Ownership Structure, Journal of Financial Economics 3(4):305-360' },
+      { url: 'https://www.jstor.org/stable/1808547', type: 'academic', label: 'Ross 1973 — The Economic Theory of Agency: The Principal Problem, American Economic Review 63(2):134-139' },
+      { url: 'https://doi.org/10.1086/467037', type: 'academic', label: 'Fama & Jensen 1983 — Separation of Ownership and Control, Journal of Law and Economics 26(2):301-325' },
+      { url: 'https://doi.org/10.1086/260866', type: 'academic', label: 'Fama 1980 — Agency Problems and the Theory of the Firm, Journal of Political Economy 88(2):288-307' },
+    ],
+  },
+  {
+    id: 'mgmt-capabilities-dynamic-capabilities',
+    discipline: 'management',
+    title: 'ダイナミック・ケイパビリティ論：変化する環境への適応として組織が感知・機会捕捉・変革する戦略的能力フレームワーク',
+    statement:
+      'デイビッド・J・ティースが創始したダイナミック・ケイパビリティ理論は、急速に変化する環境で持続的競争優位を構築するための感知（Sensing）・機会捕捉（Seizing）・変革（Transforming）の能力を分析する。キャサリン・M・アイゼンハートとショーナ・ブラウンは動的ケイパビリティを「進化しやすいルーティンと組織学習の統合」と精緻化した。資源ベース論を超え、組織の資源再構成能力とイノベーション機会の発見を戦略的競争優位の核心として捉え、組織変革・両利きの経営・デジタル変革の理論的基盤を提供する。',
+    keyFigures: 'デイビッド・J・ティース ／ キャサリン・M・アイゼンハート ／ ショーナ・ブラウン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199708)18:S1<509::AID-SMJ905>3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen 1997 — Dynamic Capabilities and Strategic Management, Strategic Management Journal 18:509-533' },
+      { url: 'https://doi.org/10.1002/1097-0266(200010/11)21:10/11<1105::AID-SMJ133>3.0.CO;2-E', type: 'academic', label: 'Eisenhardt & Martin 2000 — Dynamic Capabilities: What Are They?, Strategic Management Journal 21:1105-1121' },
+      { url: 'https://doi.org/10.1002/smj.640', type: 'academic', label: 'Teece 2007 — Explicating Dynamic Capabilities: The Nature and Microfoundations of Sustainable Enterprise Performance, Strategic Management Journal 28:1319-1350' },
+      { url: 'https://doi.org/10.1002/smj.318', type: 'academic', label: 'Winter 2003 — Understanding Dynamic Capabilities, Strategic Management Journal 24:991-995' },
+    ],
+  },
+  {
+    id: 'human-situational-judgment',
+    discipline: 'human-science',
+    title: '状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択',
+    statement:
+      'ゲーリー・クラインが消防士・看護師・軍事指揮官の現場観察から確立した認識主導型決定モデル（RPD）は、専門家が過去の経験から類似パターンを瞬時に認識して行動選択する機制を説明する。ダニエル・カーネマンとの共同研究「直感的専門性の条件」は、環境の予測可能性と継続的フィードバックの有無が信頼性のある直感形成を規定することを解明し、ヒューリスティクスと偏見研究との統合的枠組みを提示した。',
+    keyFigures: 'ゲーリー・クライン ／ ダニエル・カーネマン ／ ロビン・ホガース',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262611466/', type: 'academic', label: 'Klein 1998 — Sources of Power: How People Make Decisions, MIT Press' },
+      { url: 'https://doi.org/10.1037/a0016755', type: 'academic', label: 'Kahneman & Klein 2009 — Conditions for Intuitive Expertise: A Failure to Disagree, American Psychologist 64(6):515-526' },
+      { url: 'https://doi.org/10.1518/155534310X12844000801203', type: 'academic', label: 'Klein, Calderwood & Clinton-Cirocco 2010 — Rapid Decision Making on the Fire Ground: The Original Study Plus a Postscript, Journal of Cognitive Engineering and Decision Making 4(3):186-209' },
+      { url: 'https://doi.org/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky & Kahneman 1974 — Judgment under Uncertainty: Heuristics and Biases, Science 185(4157):1124-1131' },
+    ],
+  },
+  {
+    id: 'bizlaw-contract-law-unconscionability',
+    discipline: 'business-law',
+    title: '不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限',
+    statement:
+      'カール・ルウェリン起草の統一商法典 UCC §2-302 と Restatement（Second）of Contracts §208 は、手続的不当性（締結過程の不公正・情報格差）と実質的不当性（一方的に不利な条件）の二段テストで不公正契約条項を無効化する法理を確立した。J・スケリー・ライト判事による Williams v. Walker-Thomas Furniture（1965 年）判決が「意味ある選択の欠如」テストを定式化し、アーサー・アレン・レフの分析が手続的・実質的不当性の学術的区別を整備して現代の消費者保護・仲裁条項審査の基準となっている。',
+    keyFigures: 'カール・ルウェリン ／ J・スケリー・ライト ／ アーサー・アレン・レフ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/350/445/74531/', type: 'government', label: 'Williams v. Walker-Thomas Furniture Co. 350 F.2d 445 D.C. Cir. 1965 — Procedural and Substantive Unconscionability Test' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-302', type: 'reference', label: 'Cornell LII 2024 — Uniform Commercial Code §2-302 Unconscionable Contract or Clause with Official Comments' },
+      { url: 'https://scholarship.law.upenn.edu/penn_law_review/vol115/iss4/1/', type: 'academic', label: 'Leff 1967 — Unconscionability and the Code: The Emperor\'s New Clause, University of Pennsylvania Law Review 115:485-559' },
+      { url: 'https://digitalcommons.law.villanova.edu/vlr/vol65/iss4/2/', type: 'academic', label: 'McCall 2020 — Demystifying Unconscionability: A Historical and Empirical Analysis, Villanova Law Review 65:773-846' },
+    ],
+  },
+  {
+    id: 'infosoc-echo-chamber-polarization',
+    discipline: 'information-sociology',
+    title: 'エコーチェンバーと政治的分極化：選択的情報接触とアルゴリズム的フィルタリングが招く自己強化的意見分断',
+    statement:
+      'イーライ・パライザーが提唱したフィルターバブル概念とキャス・R・サンスティーンの集団分極化理論は、個人が自己に都合の良い情報のみに選択的に触れる自己強化的サイクルが既存信念を増幅し社会的分断を拡大する機制を説明する。クリス・ベイルの実証研究はソーシャルメディアのアルゴリズム的キュレーションが分極化を促進することを確認し、バクシーらのフェイスブック実験はニュースフィードが異なる見解への接触機会を制限することを実証した。',
+    keyFigures: 'イーライ・パライザー ／ キャス・R・サンスティーン ／ クリス・ベイル',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1126/science.aaa1160', type: 'academic', label: 'Bakshy, Messing & Adamic 2015 — Exposure to Ideologically Diverse News and Opinion on Facebook, Science 348(6239):1130-1132' },
+      { url: 'https://doi.org/10.1111/1467-9760.00148', type: 'academic', label: 'Sunstein 2002 — The Law of Group Polarization, Journal of Political Philosophy 10(2):175-195' },
+      { url: 'https://doi.org/10.1515/9780691216508', type: 'reference', label: 'Bail 2021 — Breaking the Social Media Prism: How to Make Our Platforms Less Polarizing, Princeton University Press' },
+      { url: 'https://doi.org/10.1111/ajps.12152', type: 'academic', label: 'Iyengar & Westwood 2015 — Fear and Loathing Across Party Lines: New Evidence on Group Polarization, American Journal of Political Science 59(3):690-707' },
+    ],
+  },
+  {
+    id: 'econ-quality-signaling',
+    discipline: 'economics',
+    title: '市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論',
+    statement:
+      'マイケル・スペンスが創始した品質シグナリング理論は、売り手が買い手に観察不可能な製品・人材品質を伝える費用的シグナル（保証・認証・学歴・ブランド）に投資することで、低品質者が採算割れとなる分離均衡が成立する機制を説明する。ジョージ・A・アカロフの「レモン市場」モデルと統合され情報の非対称性下での市場効率性を復元し、アンドリュー・ワイスによる教育シグナリングの実証研究は賃金プレミアムの一部がシグナリング効果に起因することを確認した。',
+    keyFigures: 'マイケル・スペンス ／ ジョージ・A・アカロフ ／ アンドリュー・ワイス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence 1973 — Job Market Signaling, Quarterly Journal of Economics 87(3):355-374' },
+      { url: 'https://www.hup.harvard.edu/books/9780674549906', type: 'academic', label: 'Spence 1974 — Market Signaling: Informational Transfer in Hiring and Related Screening Processes, Harvard University Press' },
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof 1970 — The Market for Lemons: Quality Uncertainty and the Market Mechanism, Quarterly Journal of Economics 84(3):488-500' },
+      { url: 'https://www.jstor.org/stable/2138873', type: 'academic', label: 'Weiss 1995 — Human Capital vs. Signaling Explanations of Wages, Journal of Economic Perspectives 9(4):133-154' },
+    ],
+  },
 ];
 // Stryker restore all
