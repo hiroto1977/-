@@ -35134,5 +35134,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.imprint.co.uk/jcs_8_5-7.html', type: 'reference', label: 'Gallese 2001 — The \'Shared Manifold\' Hypothesis: From Mirror Neurons to Empathy, Journal of Consciousness Studies 8(5-7):33-50' },
     ],
   },
+  {
+    id: 'infosoc-media-agenda-setting',
+    discipline: 'information-sociology',
+    title: 'メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み',
+    statement:
+      'アジェンダ設定理論は、マコームズとショーが1972年の米国大統領選挙に関するチャペルヒル研究において実証した理論であり、マスメディアは受け手に「何を考えるか」ではなく「何について考えるか」を方向付けるという主張を核心とする。コーエンが1963年に先駆的に定式化したこの概念は、第一水準アジェンダ設定（争点顕出性：どの争点が重要かの認識）と第二水準アジェンダ設定（属性顕出性：各争点のどの側面が重要かの認識）に発展した。さらにシュファーレとテウクスバーリーらによってフレーミングとプライミングが理論的拡張として統合され、メディアの認知的・政治的影響を包括的に説明する枠組みを形成している。',
+    keyFigures: 'マコームズ ／ ショー ／ コーエン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1086/267990', type: 'academic', label: 'McCombs & Shaw 1972 — The Agenda-Setting Function of Mass Media, Public Opinion Quarterly 36(2):176-187' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691030036/the-press-and-foreign-policy', type: 'reference', label: 'Cohen 1963 — The Press and Foreign Policy, Princeton University Press' },
+      { url: 'https://www.wiley.com/en-us/Setting+the+Agenda%3A+The+Mass+Media+and+Public+Opinion-p-9780745623474', type: 'reference', label: 'McCombs 2004 — Setting the Agenda: The Mass Media and Public Opinion, Polity Press' },
+      { url: 'https://doi.org/10.1111/j.0021-9916.2007.00326.x', type: 'academic', label: 'Scheufele & Tewksbury 2007 — Framing, Agenda Setting, and Priming: The Evolution of Three Media Effects Models, Journal of Communication 57(1):9-20' },
+    ],
+  },
+  {
+    id: 'bizlaw-arbitration-adr',
+    discipline: 'business-law',
+    title: '仲裁・代替的紛争解決（ADR）――私的裁定・調停・交渉による司法外紛争処理の理論と国際制度',
+    statement:
+      '仲裁（Arbitration）は当事者の合意に基づき中立の第三者（仲裁人）が拘束力ある判断を下す私的裁定手続であり、通常の裁判所外で紛争を終局的に解決する。代替的紛争解決（ADR: Alternative Dispute Resolution）はこれに加え、調停（Mediation）・斡旋（Conciliation）・交渉（Negotiation）など非対審的手続を包含する総称概念である。ゲーリー・ボーン（ボーン）は国際商事仲裁の法的枠組みを体系化し、仲裁合意の自律性・仲裁廷の管轄権自己決定権限（コンペテンス＝コンペテンス原則）を詳述した。フランク・サンダー（サンダー）は1976年パウンド会議において「多扉型裁判所（Multi-Door Courthouse）」構想を提唱し、紛争の性質に応じて最適なADR手続へ誘導する制度設計論を確立した。アラン・ラウ（ラウ）は仲裁手続の当事者自治と公序の緊張関係を分析した。1958年の外国仲裁判断の承認・執行に関するニューヨーク条約は170か国超が締約し、仲裁判断の国際執行力を制度的に保証する。UNCITRALの国際商事仲裁モデル法（1985年採択・2006年改正）は各国立法の調和基準を提供し、投資家対国家間紛争解決（ISDS）へも応用されている。',
+    keyFigures: 'ゲーリー・ボーン ／ フランク・サンダー ／ アラン・ラウ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.kluwerlaw.com/book/international-commercial-arbitration-3rd-edition-2021/', type: 'academic', label: 'Born2021 — International Commercial Arbitration (3rd ed.), Kluwer Law International' },
+      { url: 'https://uncitral.un.org/en/texts/arbitration/modellaw/commercial_arbitration', type: 'government', label: 'UNCITRAL1985 — UNCITRAL Model Law on International Commercial Arbitration (1985, amended 2006), United Nations' },
+      { url: 'https://www.newyorkconvention.org/', type: 'reference', label: 'UN1958 — Convention on the Recognition and Enforcement of Foreign Arbitral Awards (New York Convention), United Nations Treaty Series' },
+      { url: 'https://heinonline.org/HOL/LandingPage?handle=hein.journals/frdrl70&div=11', type: 'academic', label: 'Sander1976 — Varieties of Dispute Processing, Federal Rules Decisions 70:111-134 (Pound Conference)' },
+    ],
+  },
+  {
+    id: 'econ-trade-gravity-model',
+    discipline: 'economics',
+    title: '貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用',
+    statement:
+      '貿易の重力モデルは、二国間の貿易量が両国の経済規模（GDP）に比例し、地理的距離に反比例するという実証的規則性を定式化した国際貿易理論の基盤モデルである。1962年にティンバーゲン（Jan Tinbergen）がニュートンの万有引力の法則に着想を得て提唱し、輸出国・輸入国のGDPを「質量」、両国間の距離を「引力の逆数」として貿易フローを説明した。アンダーソン（James Anderson）は1979年にアーミントン需要仮定に基づく理論的基礎を確立し、さらにアンダーソンとヴァン・ウィンクープ（van Wincoop）は2003年に「多角的抵抗項（multilateral resistance terms）」の概念を導入することで、二国間の貿易障壁が世界全体の相対的コスト構造に依存するという境界効果パズルを解決した。ヘッド（Keith Head）とメイヤー（Mayer）は2014年にポワソン擬似最尤推定（PPML）を含む推定手法を体系化し、FTA評価・通商政策分析・国境効果の計測など実証研究への応用を広げた。現在、重力モデルは国際貿易実証分析の標準的ワークホースとして広く活用されている。',
+    keyFigures: 'ティンバーゲン ／ アンダーソン ／ ヘッド',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1802501', type: 'academic', label: 'Anderson 1979 — A Theoretical Foundation for the Gravity Equation, American Economic Review 69(1):106-116' },
+      { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop 2003 — Gravity with Gravitas: A Solution to the Border Puzzle, American Economic Review 93(1):170-192' },
+      { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head & Mayer 2014 — Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics 4:131-195' },
+      { url: 'https://archive.org/details/shapingworldecon0000tinb', type: 'reference', label: 'Tinbergen 1962 — Shaping the World Economy: Suggestions for an International Economic Policy, Twentieth Century Fund' },
+    ],
+  },
+  {
+    id: 'human-positive-psychology-broaden-build',
+    discipline: 'human-science',
+    title: 'ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム',
+    statement:
+      'ポジティブ心理学は、フレデリクソン（Barbara Fredrickson）が提唱した拡張形成理論（Broaden-and-Build Theory）を中核理論の一つとして位置づける。同理論によれば、喜び・感謝・愛情などのポジティブ感情は、個人の瞬間的な思考・行動レパートリーを拡張（broaden）し、長期的な身体的・知的・社会的・心理的資源の形成（build）を促進する。またフレデリクソンは、ポジティブ感情がストレス後の心血管系活性を迅速に回復させる「取り消し効果（undoing effect）」を実証した。セリグマン（Martin Seligman）とチクセントミハイ（Mihaly Csikszentmihalyi）はポジティブ心理学の創設を宣言し、セリグマンはウェルビーイングの多次元モデルとしてPERMAモデル（Positive emotions・Engagement・Relationships・Meaning・Accomplishment）を提唱した。ピーターソン（Christopher Peterson）はセリグマンとともに人格的強みの分類体系（VIA分類）を構築し、ウェルビーイング研究の理論的基盤を確立した。',
+    keyFigures: 'フレデリクソン ／ セリグマン ／ ピーターソン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson2001 — The Role of Positive Emotions in Positive Psychology: The Broaden-and-Build Theory of Positive Emotions, American Psychologist 56(3):218-226' },
+      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson & Joiner2002 — Positive Emotions Trigger Upward Spirals Toward Emotional Well-Being, Psychological Science 13(2):172-175' },
+      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman & Csikszentmihalyi2000 — Positive Psychology: An Introduction, American Psychologist 55(1):5-14' },
+      { url: 'https://www.simonandschuster.com/books/Flourish/Martin-E-P-Seligman/9781439190760', type: 'reference', label: 'Seligman2011 — Flourish: A Visionary New Understanding of Happiness and Well-being, Free Press ISBN:9781439190760' },
+    ],
+  },
+  {
+    id: 'econ-natural-experiments-rdd',
+    discipline: 'economics',
+    title: '自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価',
+    statement:
+      '自然実験とは、政策変更・地理的境界・無作為抽選など外生的な変動を利用して因果効果を識別する手法である。回帰不連続デザイン（RDD）は閾値ルールを活用し、閾値近傍の個体間で処置の準ランダム割当を実現する。操作変数法・差の差分法とともに計量経済学の主要な識別戦略を構成する。デービッド・カードによる最低賃金研究、ジョシュア・アングリストによる義務教育の収益率推計、グイド・インベンスによるRDDの理論的整備が代表的成果であり、三者は因果推論の方法論的革新により2021年ノーベル経済学賞を共同受賞した。',
+    keyFigures: 'デービッド・カード ／ ジョシュア・アングリスト ／ グイド・インベンス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2118030', type: 'academic', label: 'Card and Krueger 1994 — Minimum Wages and Employment: A Case Study of the Fast-Food Industry in New Jersey and Pennsylvania, American Economic Review 84(4):772-793' },
+      { url: 'https://doi.org/10.2307/2937954', type: 'academic', label: 'Angrist and Krueger 1991 — Does Compulsory School Attendance Affect Schooling and Earnings?, Quarterly Journal of Economics 106(4):979-1014' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691120355/mostly-harmless-econometrics', type: 'reference', label: 'Angrist and Pischke 2009 — Mostly Harmless Econometrics: An Empiricist\'s Companion, Princeton University Press' },
+      { url: 'https://doi.org/10.1016/j.jeconom.2007.05.001', type: 'academic', label: 'Imbens and Lemieux 2008 — Regression Discontinuity Designs: A Guide to Practice, Journal of Econometrics 142(2):615-635' },
+    ],
+  },
+  {
+    id: 'mgmt-configuration-theory',
+    discipline: 'management',
+    title: 'コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ',
+    statement:
+      'コンフィギュレーション理論は、有効な組織が戦略・構造・プロセス・環境の諸要素において内的一貫性を持つ少数のアーキタイプ（形態類型）に収斂するという命題を中心に据える組織論の一潮流である。ミラーは1987年の論文において、組織の諸特性がランダムに組み合わされるのではなく、ゲシュタルト的なまとまりとして共起することを実証的に示し、コンフィギュレーション概念を体系化した。ミンツバーグは機械的官僚制・専門的官僚制・事業部制・アドホクラシーなど五つの基本形態を提唱し、組織設計の類型論的基盤を構築した。ドティとグリックは1994年に、類型論が理想的類型を通じた等結果性（エクイファイナリティ）の説明を可能にする固有の理論形式であることを論じ、コンフィギュレーション研究の方法論的位置づけを確立した。',
+    keyFigures: 'ダニー・ミラー ／ ヘンリー・ミンツバーグ ／ ハロルド・ドティ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.1987.4306720', type: 'academic', label: 'Miller 1987 — The Genesis of Configuration, Academy of Management Review 12(4):686-701' },
+      { url: 'https://doi.org/10.5465/amr.1994.9410210748', type: 'academic', label: 'Doty & Glick 1994 — Typologies as a Unique Form of Theory Building, Academy of Management Review 19(2):230-251' },
+      { url: 'https://www.worldcat.org/isbn/9780138552626', type: 'reference', label: 'Mintzberg 1979 — The Structuring of Organizations, Prentice-Hall' },
+      { url: 'https://www.worldcat.org/isbn/9780136405276', type: 'reference', label: 'Miller & Friesen 1984 — Organizations: A Quantum View, Prentice-Hall' },
+    ],
+  },
 ];
 // Stryker restore all
