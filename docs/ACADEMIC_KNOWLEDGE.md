@@ -2327,5 +2327,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | ビジネス法務 | 代理人関係（エージェンシー関係） | Floyd R. Mechem ／ Warren A. Seavey ／ Harper W. Seavey |
 | 情報社会学 | デジタルデバイド（情報アクセス格差） | Mark Warschauer ／ Jan van Dijk ／ Manuel Castells |
 | 経営学 | サイコロジカル・キャピタル（心理的資本） | Fred Luthans ／ Carolyn Youssef-Morgan ／ Bruce J. Avolio |
+| 経済学 | 行動ファイナンス理論（認知バイアスと意思決定） | Daniel Kahneman ／ Amos Tversky ／ Richard Thaler |
+| 経営学 | 適応的リーダーシップ（変化への適応と組織学習） | Ronald A. Heifetz ／ Marty Linsky ／ Alexander Grashow |
+| 人間科学 | フロー理論（最適体験と自己実現） | Mihaly Csikszentmihalyi ／ Martin E. P. Seligman ／ Jeanne Nakamura |
+| ビジネス法務 | 不法行為責任（営業妨害と契約干渉） | James Fleming ／ William P. Keeton ／ Restatement (Second) of Torts |
+| 情報社会学 | ネットワーク効果（メトカルフの法則） | Robert Metcalfe ／ George Gilder ／ Nicholas Economides |
+| 人間科学 | 心の理論（心理化能力と認知発達） | David Premack ／ Guy Woodruff ／ Simon Baron-Cohen |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
