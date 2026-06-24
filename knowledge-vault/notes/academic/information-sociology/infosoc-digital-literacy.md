@@ -1,0 +1,40 @@
+---
+collection: academic
+id: infosoc-digital-literacy
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。"
+as_of: "2026-06-24"
+source_count: 4
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。"
+---
+
+# デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-24 ・ 出典: 4件（うち権威ある出典 ✓）
+
+## 概要
+デイビッド・バッキンガム、エスター・ハルジッタイらの研究により、デジタル・リテラシーは単なる技術スキルではなく、情報の信頼性判定、メディア理解、批判的思考を含む統合的能力として定義されている。デジタル・デバイドは経済格差、地域差、世代差を反映し、情報社会への包摂的参加を阻害する重要な課題である。
+
+## 提唱者・初出
+デイビッド・バッキンガム ／ エスター・ハルジッタイ ／ アレクサンダー・ヴァン・デューセン
+
+## 出典
+- [Buckingham 2003 — Media Education: Literacy, Learning and Contemporary Culture](https://doi.org/10.4324/9780203864739) `学術`
+- [Hargittai 2016 — Millennials, Digital Media and Education](https://doi.org/10.1080/1369118X.2016.1242909) `学術`
+- [Van Deursen & Van Dijk 2011 — Internet Skills and the Digital Divide](https://doi.org/10.1177/1461444810386774) `学術`
+- [European Commission JRC 2022 — DigComp 2.2: Digital Competence Framework](https://publications.jrc.ec.europa.eu/repository/handle/JRC128415) `公的`
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

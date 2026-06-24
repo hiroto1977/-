@@ -34774,5 +34774,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jpx.co.jp/english/news/1020/20210611-01.html', type: 'reference', label: 'Japan Exchange Group (2021). Japan\'s Corporate Governance Code (2021 Revision). FSA/TSE.' },
     ],
   },
+  {
+    id: 'econ-market-microstructure',
+    discipline: 'economics',
+    title: '市場ミクロ構造（マーケット・マイクロストラクチャー）とは、金融市場における価格形成メカニズム、注文フロー、ビッド・アスク・スプレッド、および情報非対称性が流動性と価格発見にいかに影響するかを研究する理論領域のこと。',
+    statement:
+      'ハリー・デムセッツ、モーリーン・オハラ、アルベルト・カイル、ジョエル・ハスブルックらの研究により、市場ミクロ構造は現代ファイナンス理論の基礎をなす領域として認識されている。特に取引コスト、流動性、価格発見プロセスの理解において重要である。',
+    keyFigures: 'ハリー・デムセッツ ／ モーリーン・オハラ ／ アルベルト・カイル',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1086/466623', type: 'academic', label: 'Demsetz 1968 — The Cost of Transacting' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2003.00616.x', type: 'academic', label: 'O\'Hara 2003 — Liquidity and Price Discovery' },
+      { url: 'https://doi.org/10.2307/1913732', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780195073683.001.0001', type: 'academic', label: 'Hasbrouck 2007 — Empirical Market Microstructure' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-learning',
+    discipline: 'management',
+    title: '組織学習（オーガニゼーショナル・ラーニング）とは、組織全体が過去の経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスのこと。シングルループ学習とダブルループ学習、および知識創造によって特徴づけられる。',
+    statement:
+      'ピーター・センゲ、クリス・アージリス、ドナルド・ショーンらの研究により、組織学習は組織の適応力と競争力を高める根本的なメカニズムとして認識されてきた。特に日本企業では、カイゼンや知識創造（野中郁次郎とタケウチの SECI モデル）として実践化されている。',
+    keyFigures: 'ピーター・センゲ ／ クリス・アージリス ／ ドナルド・ショーン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/bs.3830390308', type: 'academic', label: 'Argyris & Schön 1974 — Theory in Practice' },
+      { url: 'https://archive.org/details/organizationalle00chri', type: 'reference', label: 'Argyris & Schön 1978 — Organizational Learning: Theory of Action' },
+      { url: 'https://hbr.org/1991/05/teaching-smart-people-how-to-learn', type: 'reference', label: 'Argyris 1991 — Teaching Smart People How to Learn' },
+      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'academic', label: 'Nonaka & Takeuchi 1995 — The Knowledge-Creating Company' },
+    ],
+  },
+  {
+    id: 'econ-information-cascades',
+    discipline: 'economics',
+    title: '情報カスケード（インフォメーション・カスケード）とは、個人が他者の行動から推測される情報に基づき、自身の個人的知見を無視して行動する現象のこと。これにより市場全体が集団的に非効率な決定を採択する可能性がある。',
+    statement:
+      'サンジョイ・ビハリ・チャンドニ、デイビッド・ハーシュライファー、イヴォ・ウェルチらの研究により、情報カスケードは金融市場のバブル形成、ハーディング行動、および羊群効果の理論的基礎として認識されている。この現象は個人合理性と集団的非効率性の矛盾を示す重要な事例である。',
+    keyFigures: 'サンジョイ・ビハリ・チャンドニ ／ デイビッド・ハーシュライファー ／ イヴォ・ウェルチ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1093/rfs/5.4.469', type: 'academic', label: 'Bikhchandani, Hirshleifer & Welch 1992 — A Theory of Fads, Fashion, Custom, and Cultural Change' },
+      { url: 'https://doi.org/10.1086/467384', type: 'academic', label: 'Welch 1992 — Sequential Sales, Learning, and Cascades' },
+      { url: 'https://doi.org/10.1006/jeth.2001.2971', type: 'academic', label: 'Bikhchandani & Sharma 2001 — Herd Behavior in Financial Markets' },
+      { url: 'https://doi.org/10.1016/j.jfineco.2003.08.008', type: 'academic', label: 'Hirshleifer & Teoh 2003 — Limited Attention, Information Disclosure, and Financial Reporting' },
+    ],
+  },
+  {
+    id: 'human-obedience',
+    discipline: 'human-science',
+    title: '権威への服従（オベディエンス）とは、権威ある人物や機関の指示に従う個人の傾向のこと。特にスタンリー・ミルグラム、ソロモン・アッシュらの実験により、社会的影響と権威への服従が個人の行動にいかに強い影響を及ぼすかが明らかにされた。',
+    statement:
+      'スタンリー・ミルグラムとソロモン・アッシュの古典的実験により、個人は権威者の命令に従い、また同調圧力の下で不正な行動に至ることが実証された。これらの知見は社会心理学、倫理学、および組織行動の理解に根本的な影響を与えている。ソロモン・モスコヴィチの少数派影響理論も、権威に対する抵抗メカニズムを明らかにしている。',
+    keyFigures: 'スタンリー・ミルグラム ／ ソロモン・アッシュ ／ ソロモン・モスコヴィチ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0040525', type: 'academic', label: 'Milgram 1963 — Behavioral Study of Obedience' },
+      { url: 'https://doi.org/10.2307/2786541', type: 'academic', label: 'Moscovici, Lage & Naffrechoux 1969 — Influence of a Consistent Minority' },
+      { url: 'https://doi.org/10.1371/journal.pone.0093927', type: 'academic', label: 'Haslam, Loughnan & Perry 2014 — Meta-Milgram: An Empirical Synthesis' },
+      { url: 'https://en.wikipedia.org/wiki/Asch_conformity_experiments', type: 'reference', label: 'Asch 1951, 1956 — Effects of Group Pressure upon the Modification of Judgments' },
+    ],
+  },
+  {
+    id: 'bizlaw-intellectual-property',
+    discipline: 'business-law',
+    title: '知的財産権（インテレクチュアル・プロパティ）とは、発明、著作物、商標、意匠などの無体財産に対する法的保護のこと。特に特許権、著作権、商標権、営業秘密による独占的権利と経済成長・イノベーションのバランスが議論される領域である。',
+    statement:
+      'ミケーレ・ボルドリンとデイビッド・レビンの研究により、伝統的な特許制度が必ずしもイノベーションを促進するとは限らず、むしろオープンイノベーションやコモンズモデルが経済成長に貢献する可能性が指摘されている。知的財産の最適な保護水準は、創作インセンティブと社会全体の便益のバランスに依存する。',
+    keyFigures: 'ミケーレ・ボルドリン ／ デイビッド・レビン ／ ウィリアム・ノーダウス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.jstor.org/stable/40344614', type: 'academic', label: 'Boldrin & Levine 2008 — Against Intellectual Monopoly' },
+      { url: 'https://doi.org/10.1017/CBO9780511619991', type: 'academic', label: 'Boldrin & Levine 2013 — The Case Against Patents' },
+      { url: 'https://doi.org/10.3386/w12972', type: 'academic', label: 'Nordhaus 2007 — Two Centuries of Productivity Growth in Computing' },
+      { url: 'https://www.wipo.int/edocs/pubdocs/en/wipo_pub_901_2015.pdf', type: 'reference', label: 'WIPO — World Intellectual Property Report 2015' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-literacy',
+    discipline: 'information-sociology',
+    title: 'デジタル・リテラシー（Digital Literacy）とは、デジタル技術やメディアを効果的に理解・使用・評価・生産し、情報社会において主体的に参加できる能力のこと。読み書き計算に並ぶ現代的な必須スキルである。',
+    statement:
+      'デイビッド・バッキンガム、エスター・ハルジッタイらの研究により、デジタル・リテラシーは単なる技術スキルではなく、情報の信頼性判定、メディア理解、批判的思考を含む統合的能力として定義されている。デジタル・デバイドは経済格差、地域差、世代差を反映し、情報社会への包摂的参加を阻害する重要な課題である。',
+    keyFigures: 'デイビッド・バッキンガム ／ エスター・ハルジッタイ ／ アレクサンダー・ヴァン・デューセン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.4324/9780203864739', type: 'academic', label: 'Buckingham 2003 — Media Education: Literacy, Learning and Contemporary Culture' },
+      { url: 'https://doi.org/10.1080/1369118X.2016.1242909', type: 'academic', label: 'Hargittai 2016 — Millennials, Digital Media and Education' },
+      { url: 'https://doi.org/10.1177/1461444810386774', type: 'academic', label: 'Van Deursen & Van Dijk 2011 — Internet Skills and the Digital Divide' },
+      { url: 'https://publications.jrc.ec.europa.eu/repository/handle/JRC128415', type: 'government', label: 'European Commission JRC 2022 — DigComp 2.2: Digital Competence Framework' },
+    ],
+  },
 ];
 // Stryker restore all
