@@ -2321,5 +2321,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | ビジネス法務 | 契約履行における誠実・公正取引義務（Good Faith and Fair Dealing） | Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth |
 | 情報社会学 | セカンドオーダー・サイバネティクス（二次制御理論） | Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela |
 | 経済学 | シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル） | A. Michael Spence ／ Joseph E. Stiglitz ／ George A. Akerlof |
+| 経済学 | ポートフォリオ理論（現代ポートフォリオ理論） | Harry M. Markowitz ／ William F. Sharpe ／ James Tobin |
+| 経営学 | 意味構築（オーガニゼーショナル・センスメーキング） | Karl E. Weick ／ Kathleen M. Sutcliffe ／ David Obstfeld |
+| 人間科学 | 記憶の固定化（メモリ・コンソリデーション） | Donald O. Hebb ／ James L. McGaugh ／ Alcino M. Silva |
+| ビジネス法務 | 代理人関係（エージェンシー関係） | Floyd R. Mechem ／ Warren A. Seavey ／ Harper W. Seavey |
+| 情報社会学 | デジタルデバイド（情報アクセス格差） | Mark Warschauer ／ Jan van Dijk ／ Manuel Castells |
+| 経営学 | サイコロジカル・キャピタル（心理的資本） | Fred Luthans ／ Carolyn Youssef-Morgan ／ Bruce J. Avolio |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
