@@ -9,12 +9,19 @@
 
 ## 🔴 進行中タスク（最優先・新セッションはまず確認）
 
-**学術知識ループ（標準 `/loop`）** — `src/renderer/data/academicKnowledge.ts` に検証済み学術概念を
-1 バッチ 6 件ずつ追加し続ける常設タスク。**ユーザーが「OK」と言うまで継続**。
+**学術知識ループ（自動パイプライン）** — `src/renderer/data/academicKnowledge.ts` に検証済み学術概念を
+1 バッチ 6 件ずつ追加し続ける常設タスク。**「作業を継続して」の指示で自動実行**。
 
-- **完全な運用仕様 → [`docs/ACADEMIC_KNOWLEDGE_LOOP.md`](ACADEMIC_KNOWLEDGE_LOOP.md)**（必読）。
-- 現状: **1409 概念 / 235 バッチ完了**（economics 411・human-science 264・business-law 251・
-  management 243・information-sociology 240）。Vault も 1409 ノートで同期済み。
+- **完全な運用仕様 → [`docs/BATCH_APPEND_SPECIFICATION.md`](BATCH_APPEND_SPECIFICATION.md)**（機械可読AIエージェント向け）。
+- **概念背景 → [`docs/ACADEMIC_KNOWLEDGE.md`](ACADEMIC_KNOWLEDGE.md)**（学術の枠・検証原則）。
+- 現状: **Batch 376 完了** (2,261 概念, PR #マージ済み) / **Batch 377 進行中** (4/6 エージェント完了、2/6 待機中)
+  - ✅ Agent 2: mgmt-bounded-rationality-simon (JSON 完了)
+  - ✅ Agent 4: bizlaw-good-faith-performance (JSON 完了)
+  - ✅ Agent 5: infosoc-second-order-cybernetics (JSON 完了)
+  - ✅ Agent 6: econ-signaling-screening-spence (JSON 完了)
+  - ⏳ Agent 1: econ-adverse-selection-akerlof (研究中)
+  - ⏳ Agent 3: human-narrative-identity-mcadams (研究中)
+- 次ステップ: 全 6 JSON 収集 → ファイル修正 (academicKnowledge.ts + ACADEMIC_KNOWLEDGE.md) → 品質ゲート実行 → コミット・プッシュ
 - 開発ブランチ: `claude/modest-noether-knlmJ`（force-push 許諾済み）。コミット著者は
   `Claude <noreply@anthropic.com>`。モデル識別子は成果物に入れない。
 - 1 バッチ = 調査(背景 Agent) → **重複 3 チェック(id/title/意味)** → 追記 → ゲート全 green →
