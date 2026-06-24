@@ -34679,5 +34679,24 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3679913/', type: 'reference', label: 'Frith, U., & Frith, C. (2003). Development and neurophysiology of mentalizing. Philosophical Transactions of the Royal Society B, 358(1431), 459–473.' },
     ],
   },
+  {
+    id: 'bizlaw-product-liability-doctrine',
+    discipline: 'business-law',
+    title: '製造物責任法（製品不具合と製造業者の厳格責任）',
+    statement:
+      '製造物責任法は、製品の欠陥（製造上の欠陥・設計上の欠陥・警告不足）による損害について、製造業者らに故意・過失の証明を要求せず、厳格責任（strict liability）を課する法理・法制度である。アメリカでは1963年のGreenman v. Yuba Power Products判決で判例上確立され、1965年のRestatement (Second) of Torts §402Aに成文化された。経済学者たち（Posner, Landes, Shavell, Calabresi）は製造業者が最適なリスク回避者（最安値損害防止者）であることから厳格責任の効率性を論証したが、一方George Priestらは企業責任論の拡大が1980年代の保険危機を招いたと批判する。1998年のRestatement (Third) of Torts: Products Liabilityは設計上の欠陥について「合理的代替設計」テストを導入し、リスク・ユーティリティ・バランシングを求めることで、実質的に過失法理に接近した。日本は1994年に製造物責任法を制定し、EU指令を参考にしながらも開発危険の抗弁を明文化するなど、アメリカの判例法系統とは異なる枠組みを採用している。',
+    keyFigures: 'John W. Wade（リスク・ユーティリティ・テスト開発者） ／ George L. Priest（企業責任論批判・保険危機分析） ／ Richard A. Posner（経済効率分析）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol33/iss3/1/', type: 'academic', label: 'Wade, J.W. (1980). On Product "Design Defects" and Their Actionability. Vanderbilt Law Review, 33(3), 551–580.' },
+      { url: 'https://chicagounbound.uchicago.edu/jls/vol14/iss3/2/', type: 'academic', label: 'Priest, G.L. (1985). The Invention of Enterprise Liability: A Critical History of the Intellectual Foundations of Modern Tort Law. Journal of Legal Studies, 14(3), 461–527.' },
+      { url: 'https://chicagounbound.uchicago.edu/journal_articles/9933/', type: 'academic', label: 'Posner, R.A. (1972). A Theory of Negligence. Journal of Legal Studies, 1(1), 29–96.' },
+      { url: 'https://chicagounbound.uchicago.edu/journal_articles/3368/', type: 'academic', label: 'Landes, W.M., & Posner, R.A. (1985). A Positive Economic Analysis of Products Liability. Journal of Legal Studies, 14(3), 535–567.' },
+      { url: 'https://www.ali.org/publications/show/restatement-third-torts-products-liability/', type: 'reference', label: 'American Law Institute (1998). Restatement (Third) of Torts: Products Liability.' },
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol33/iss3/5/', type: 'academic', label: 'Owen, D.G. (1980). Rethinking the Policies of Strict Products Liability. Vanderbilt Law Review, 33(3), 681–704.' },
+      { url: 'https://openyls.law.yale.edu/bitstream/20.500.13051/16488/2/65_96YaleLJ1521_June1987_.pdf', type: 'academic', label: 'Priest, G.L. (1987). The Current Insurance Crisis and Modern Tort Law. Yale Law Journal, 96(7), 1521–1590.' },
+      { url: 'https://academic.oup.com/ajcl/article-abstract/61/3/617/2572025', type: 'academic', label: 'Ramseyer, J.M. (2013). Liability for Defective Products: Comparative Hypotheses and Evidence from Japan. American Journal of Comparative Law, 61(3), 617–656.' },
+    ],
+  },
 ];
 // Stryker restore all

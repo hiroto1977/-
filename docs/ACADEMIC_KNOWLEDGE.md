@@ -2333,5 +2333,6 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | ビジネス法務 | 不法行為責任（営業妨害と契約干渉） | James Fleming ／ William P. Keeton ／ Restatement (Second) of Torts |
 | 情報社会学 | ネットワーク効果（メトカルフの法則） | Robert Metcalfe ／ George Gilder ／ Nicholas Economides |
 | 人間科学 | 心の理論（心理化能力と認知発達） | David Premack ／ Guy Woodruff ／ Simon Baron-Cohen |
+| ビジネス法務 | 製造物責任法（製品不具合と製造業者の厳格責任） | John W. Wade ／ George L. Priest ／ Richard A. Posner |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
