@@ -34954,5 +34954,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/2138873', type: 'academic', label: 'Weiss 1995 — Human Capital vs. Signaling Explanations of Wages, Journal of Economic Perspectives 9(4):133-154' },
     ],
   },
+  {
+    id: 'econ-new-economic-geography',
+    discipline: 'economics',
+    title: '新経済地理学：収穫逓増・輸送費用・集積経済が生み出す産業と都市の空間的集中メカニズム',
+    statement:
+      '新経済地理学（New Economic Geography）は、クルーグマンが1991年に提示したコア・ペリフェリーモデルを基礎として、収穫逓増・輸送費用・労働移動の三要素が相互作用することで経済活動の地理的集中が内生的に生じることを理論化した分野である。フジタとベナブルズはクルーグマンとの共同研究において、垂直連関産業の均衡立地や都市・地域・国際貿易を統合した空間経済の一般均衡分析を展開し、集積の経済（agglomeration economies）とホームマーケット効果（home market effect）が産業集積の自己強化的プロセスをもたらすことを示した。クルーグマンはこれらの業績により2008年にノーベル経済学賞を受賞した。',
+    keyFigures: 'ポール・クルーグマン ／ マサヒサ・フジタ ／ アンソニー・ベナブルズ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1086/261763', type: 'academic', label: 'Krugman 1991 — Increasing Returns and Economic Geography, Journal of Political Economy 99(3):483-499' },
+      { url: 'https://doi.org/10.2307/2527327', type: 'academic', label: 'Venables 1996 — Equilibrium Locations of Vertically Linked Industries, International Economic Review 37(2):341-359' },
+      { url: 'https://mitpress.mit.edu/9780262062046/the-spatial-economy/', type: 'reference', label: 'Fujita, Krugman & Venables 1999 — The Spatial Economy: Cities, Regions, and International Trade, MIT Press' },
+      { url: 'https://mitpress.mit.edu/9780262111546/geography-and-trade/', type: 'reference', label: 'Krugman 1991 — Geography and Trade, MIT Press' },
+    ],
+  },
+  {
+    id: 'econ-network-externalities',
+    discipline: 'economics',
+    title: 'ネットワーク外部性：利用者数の増加が製品価値を高めるネットワーク効果の経済学的分析',
+    statement:
+      'ネットワーク外部性（ネットワーク効果）とは、ある財・サービスの利用者数が増加するにつれてその財の価値が高まる現象を指す。ロールフスが1974年に通信サービスの需要理論として初めて定式化し、カッツとシャピロが1985年に競争・互換性との関係を体系化した。直接的ネットワーク効果（電話・SNS等、利用者同士が直接つながることで価値が増す）と間接的ネットワーク効果（プラットフォーム上の補完財・アプリが充実することで価値が増す）に分類される。エコノミデスはネットワーク産業の構造を精緻に分析し、利用者基盤の臨界量（クリティカル・マス）を超えると採用が加速し、市場が一社に収斂する「勝者総取り」構造が生じることを示した。シャピロとヴァリアンはスイッチングコストとロックインがネットワーク外部性を強化し、先行者優位と標準規格競争を決定づけると論じた。',
+    keyFigures: 'マイケル・カッツ ／ カール・シャピロ ／ ジェフリー・ロールフス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1814809', type: 'academic', label: 'Katz & Shapiro 1985 — Network Externalities, Competition, and Compatibility, American Economic Review 75(3):424-440' },
+      { url: 'https://doi.org/10.2307/3003090', type: 'academic', label: 'Rohlfs 1974 — A Theory of Interdependent Demand for a Communications Service, Bell Journal of Economics and Management Science 5(1):16-37' },
+      { url: 'https://doi.org/10.1016/0167-7187(96)01015-6', type: 'academic', label: 'Economides 1996 — The Economics of Networks, International Journal of Industrial Organization 14(6):673-699' },
+      { url: 'https://www.hbsp.harvard.edu/product/8069-HBK-ENG', type: 'reference', label: 'Shapiro & Varian 1999 — Information Rules: A Strategic Guide to the Network Economy, Harvard Business School Press' },
+    ],
+  },
+  {
+    id: 'econ-behavioral-game-theory',
+    discipline: 'economics',
+    title: '行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究',
+    statement:
+      '行動ゲーム理論は、古典的ゲーム理論の枠組みに心理学的知見を統合し、現実のプレイヤーがナッシュ均衡予測から体系的に乖離する要因を分析する経済学的研究領域である。カメラーはEWA学習モデルを通じた認知的限定合理性を、フェールは公平性選好と互恵的動機づけを、シュービックはゲーム理論の実験的基盤を確立した。公共財実験・最後通牒ゲームなどの実験手法により、利他的懲罰・不平等回避・社会的選好が意思決定に与える影響が実証されている。',
+    keyFigures: 'コリン・カメラー ／ エルンスト・フェール ／ マーティン・シュービック',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1111/1468-0262.00054', type: 'academic', label: 'Camerer & Ho 1999 — Experience-Weighted Attraction Learning in Normal Form Games, Econometrica 67(4):827-874' },
+      { url: 'https://doi.org/10.1162/003355399556151', type: 'academic', label: 'Fehr & Schmidt 1999 — A Theory of Fairness, Competition, and Cooperation, Quarterly Journal of Economics 114(3):817-868' },
+      { url: 'https://doi.org/10.1257/aer.90.4.980', type: 'academic', label: 'Fehr & Gächter 2000 — Cooperation and Punishment in Public Goods Experiments, American Economic Review 90(4):980-994' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691090399/behavioral-game-theory', type: 'reference', label: 'Camerer 2003 — Behavioral Game Theory: Experiments in Strategic Interaction, Princeton University Press' },
+    ],
+  },
+  {
+    id: 'bizlaw-antitrust-competition-law',
+    discipline: 'business-law',
+    title: '独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開',
+    statement:
+      '独占禁止法（競争法）は、市場における競争を維持し独占的行為を規制する法体系であり、米国では1890年制定のシャーマン法（15 U.S.C. §§ 1–7）を基軸とする。ボークは1978年の著作で、競争法の目的を消費者厚生（consumer welfare）の最大化に一元化すべきと主張し、以後の司法判断に多大な影響を与えた。アリーダとターナーは1975年に略奪的価格設定の判断基準として限界費用との比較テストを提唱し、Section 2適用の分析枠組みを精緻化した。競争制限行為の違法性判断には、当然違法（per se rule）と合理原則（rule of reason）の二元的アプローチが用いられる。2017年にカーンは、デジタル・プラットフォームに対する消費者厚生基準の限界を批判し、市場構造と競争プロセス自体の保護を重視するネオ・ブランダイズ派的再構築を提唱した。',
+    keyFigures: 'ロバート・ボーク ／ フィリップ・アリーダ ／ リナ・カーン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.basicbooks.com/titles/robert-h-bork/the-antitrust-paradox/9780465003679/', type: 'reference', label: 'Bork 1978 — The Antitrust Paradox: A Policy at War with Itself, Basic Books' },
+      { url: 'https://www.jstor.org/stable/1340237', type: 'academic', label: 'Areeda & Turner 1975 — Predatory Pricing and Related Practices under Section 2 of the Sherman Act, Harvard Law Review 88(4):697-733' },
+      { url: 'https://www.yalelawjournal.org/note/amazons-antitrust-paradox', type: 'academic', label: 'Khan 2017 — Amazon\'s Antitrust Paradox, Yale Law Journal 126(3):564-907' },
+      { url: 'https://www.law.cornell.edu/uscode/text/15/1', type: 'government', label: 'US Congress 1890 — Sherman Antitrust Act, 15 U.S.C. §§ 1-7, Cornell LII' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-economy',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム経済：多面市場・ネットワーク効果・デジタル資本主義における価値創造の構造',
+    statement:
+      'プラットフォーム経済とは、二つ以上の異なるユーザー群の相互作用を媒介することで価値を創出するビジネスモデルおよびその経済的論理を指す。ロシェとティロールは多面市場理論において、プラットフォームが複数のユーザー群に対して非対称な価格設定を行うことで均衡を達成することを示した。パーカー・ヴァン・アルスタイン・チョードリーはネットワーク効果が参加者増加に伴い価値を指数関数的に拡大させ、「勝者総取り」の傾向を生む構造的ダイナミクスを体系化した。スルニチェクはマルクス主義的視座からプラットフォーム資本主義を分析し、データを現代の基幹的生産手段と位置づけた。',
+    keyFigures: 'ニック・スルニチェク ／ ジャン・ティロール ／ ジェフリー・パーカー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1162/154247603322493212', type: 'academic', label: 'Rochet & Tirole 2003 — Platform Competition in Two-Sided Markets, Journal of the European Economic Association 1(4):990-1029' },
+      { url: 'https://politybooks.com/bookdetail/?isbn=9781509504879', type: 'reference', label: 'Srnicek 2016 — Platform Capitalism, Polity Press' },
+      { url: 'https://wwnorton.com/books/Platform-Revolution/', type: 'reference', label: 'Parker, Van Alstyne & Choudary 2016 — Platform Revolution, W. W. Norton & Company' },
+      { url: 'https://store.hbr.org/product/matchmakers-the-new-economics-of-multisided-platforms/10536', type: 'reference', label: 'Evans & Schmalensee 2016 — Matchmakers: The New Economics of Multisided Platforms, Harvard Business Review Press' },
+    ],
+  },
+  {
+    id: 'human-dual-coding-theory',
+    discipline: 'human-science',
+    title: '二重符号化理論：言語的・非言語的認知システムの二元的構造が学習・記憶・教育設計に与える理論的基盤',
+    statement:
+      '二重符号化理論（Dual Coding Theory）は、認知心理学者パイビオが1971年に提唱した理論で、人間の認知は互いに独立した「言語システム」と「非言語（イメージ）システム」の二チャンネルで情報を処理するという考え方に基づく。両システムは独立しながらも相互に連結・強化でき、具体語は両方を同時に活性化するが抽象語は主に言語システムのみを活性化するとされる。この二重符号化が記憶・学習を促進する。サドスキはパイビオとともに理論を精緻化し、メイヤーはこれをマルチメディア学習理論に発展させ、視覚・言語チャンネルの適切な活用が教育効果を高めることを示した。',
+    keyFigures: 'アラン・パイビオ ／ マーク・サドスキ ／ リチャード・メイヤー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.worldcat.org/title/imagery-and-verbal-processes/oclc/172476', type: 'reference', label: 'Paivio 1971 — Imagery and Verbal Processes, Holt, Rinehart and Winston' },
+      { url: 'https://www.worldcat.org/isbn/9780195360158', type: 'reference', label: 'Paivio 1986 — Mental Representations: A Dual Coding Approach, Oxford University Press' },
+      { url: 'https://www.worldcat.org/isbn/9780805840049', type: 'academic', label: 'Sadoski & Paivio 2001 — Imagery and Text: A Dual Coding Theory of Reading and Writing, Lawrence Erlbaum Associates' },
+      { url: 'https://doi.org/10.1037/0022-0663.83.4.484', type: 'academic', label: 'Mayer & Anderson 1991 — Animations Need Narrations: An Experimental Test of a Dual-Coding Hypothesis, Journal of Educational Psychology 83(4):484-490' },
+    ],
+  },
 ];
 // Stryker restore all
