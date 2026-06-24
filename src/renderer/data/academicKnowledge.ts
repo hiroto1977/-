@@ -35044,5 +35044,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0022-0663.83.4.484', type: 'academic', label: 'Mayer & Anderson 1991 — Animations Need Narrations: An Experimental Test of a Dual-Coding Hypothesis, Journal of Educational Psychology 83(4):484-490' },
     ],
   },
+  {
+    id: 'bizlaw-securities-regulation',
+    discipline: 'business-law',
+    title: '証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み',
+    statement:
+      '証券規制法は、1933年証券法および1934年証券取引所法を基盤とし、発行市場における強制開示制度と流通市場における継続開示義務を通じて情報の非対称性を解消し、投資家保護と市場の効率性を両立させる法体系である。ルイ・ロスは同法体系の父と称され、セリグマンとの共著による体系的論文集が学術的礎となっている。市場詐欺理論（fraud-on-the-market doctrine）はBasic Inc. v. Levinson（1988年）により確立され、効率的市場仮説を前提として虚偽開示と投資家損害の因果関係を推定する。インサイダー取引規制は不公正な情報優位の抑制を目的とし、信認義務理論および流用理論の二本柱により構成される。ラングボートは行動経済学的観点から開示規制の限界を論じ、フォックスはグローバル化市場における規制管轄権の理論的整序を行った。証券取引委員会（SEC）はルール10b-5等の規則制定権および執行権を通じて資本市場の公正性を担保する中核機関として機能する。',
+    keyFigures: 'ルイ・ロス ／ ジョエル・セリグマン ／ ドナルド・ラングボート',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.2307/1340096', type: 'academic', label: 'Loss & Seligman 2004 — Securities Regulation (4th ed.), Aspen Publishers' },
+      { url: 'https://illinoislawreview.org/print/volume-2009-issue-2/securities-disclosure-in-a-globalizing-market-who-should-regulate-whom/', type: 'academic', label: 'Fox 2009 — Securities Disclosure in a Globalizing Market: Who Should Regulate Whom?, University of Illinois Law Review 2009(2):1009-1062' },
+      { url: 'https://global.oup.com/academic/product/selling-hope-selling-risk-9780199988631', type: 'reference', label: 'Langevoort 2016 — Selling Hope, Selling Risk: Corporations, Wall Street, and the Dilemmas of Investor Protection, Oxford University Press' },
+      { url: 'https://www.sec.gov/about/what-we-do', type: 'government', label: 'SEC 2024 — What We Do: Mission and Regulatory Framework, U.S. Securities and Exchange Commission' },
+    ],
+  },
+  {
+    id: 'mgmt-knowledge-management',
+    discipline: 'management',
+    title: 'ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論',
+    statement:
+      'ナレッジマネジメントとは、組織が競争優位を持続するために知識を戦略的に創造・移転・活用・蓄積するマネジメント論の総称である。ノナカ・イクジロウとタケウチ・ヒロタカは1995年の著書『知識創造企業』で、マイケル・ポランニーの暗黙知（言語化困難な経験・勘・ノウハウ）と形式知（言語・数式・マニュアルで表現可能な知識）の区別を援用し、組織的知識創造を四つのモード——共同化（Socialization）・表出化（Externalization）・連結化（Combination）・内面化（Internalization）——からなるSECIモデルで説明した。さらにノナカとコノは「場（Ba）」の概念を提唱し、知識創造の文脈的基盤を論じた。スヴェイビーは知識ベース資産の測定と無形資産管理の枠組みを示し、知的資本経営論の礎を築いた。',
+    keyFigures: 'ノナカ・イクジロウ ／ タケウチ・ヒロタカ ／ カール=エリック・スヴェイビー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka 1994 — A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
+      { url: 'https://doi.org/10.2307/41165942', type: 'academic', label: 'Nonaka & Konno 1998 — The Concept of \'Ba\': Building a Foundation for Knowledge Creation, California Management Review 40(3):40-54' },
+      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'reference', label: 'Nonaka & Takeuchi 1995 — The Knowledge-Creating Company, Oxford University Press ISBN 9780195092691' },
+      { url: 'https://www.bkconnection.com/books/title/The-New-Organizational-Wealth', type: 'reference', label: 'Sveiby 1997 — The New Organizational Wealth: Managing and Measuring Knowledge-Based Assets, Berrett-Koehler Publishers' },
+    ],
+  },
+  {
+    id: 'econ-poverty-trap',
+    discipline: 'economics',
+    title: '貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析',
+    statement:
+      '貧困の罠（Poverty Trap）とは、低所得が将来の投資能力を制約し、その結果として貧困状態が自己強化的に持続する均衡を指す。生存水準近傍では食料・医療・教育への支出が不可欠であるため貯蓄余力が生まれず、人的・物的資本の蓄積が妨げられる「生存制約（Subsistence Constraint）」が核心にある。サックスは大規模な外部援助による「ビッグ・プッシュ」で低位均衡から高位均衡への移行を促せると論じた。バナジーとデュフロはランダム化比較試験（RCT）を用いて貧困世帯の実態を精緻に分析し、2019年ノーベル経済学賞を受賞した。クレイとマッケンジーは実証研究を総覧し、罠の存在は文脈依存的であり普遍的ではないと指摘している。',
+    keyFigures: 'ジェフリー・サックス ／ アビジット・バナジー ／ エステル・デュフロ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1257/jep.21.1.141', type: 'academic', label: 'Banerjee & Duflo 2007 — The Economic Lives of the Poor, Journal of Economic Perspectives 21(1):141-167' },
+      { url: 'https://doi.org/10.1257/jep.28.3.127', type: 'academic', label: 'Kraay & McKenzie 2014 — Do Poverty Traps Exist? Assessing the Evidence, Journal of Economic Perspectives 28(3):127-148' },
+      { url: 'https://www.penguinrandomhouse.com/books/292403/the-end-of-poverty-by-jeffrey-d-sachs/', type: 'reference', label: 'Sachs 2005 — The End of Poverty: Economic Possibilities for Our Time, Penguin Press' },
+      { url: 'https://www.publicaffairsbooks.com/titles/abhijit-v-banerjee/poor-economics/9781586487980/', type: 'reference', label: 'Banerjee & Duflo 2011 — Poor Economics: A Radical Rethinking of the Way to Fight Global Poverty, PublicAffairs' },
+    ],
+  },
+  {
+    id: 'mgmt-team-cognition',
+    discipline: 'management',
+    title: 'チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造',
+    statement:
+      'チーム認知（Team Cognition）とは、チームメンバーが共有する知識構造・信念・メンタルモデルの総体であり、明示的なコミュニケーションなしに協調行動を可能にする認知的基盤を指す。キャノン=ボワーズ・サラス・コンバースは「共有メンタルモデル（SMM）」を提唱し、チームタスク・設備・メンバーの役割に関する共通理解が動的環境下での適応的協調を促進することを示した。マシューらはSMMがチームプロセスおよびパフォーマンスに直接影響することを実証した。ウェグナーは「交流的記憶システム（TMS）」を提唱し、チーム内で「誰が何を知っているか」という分散した専門知識のメタ認知的地図がチーム効率を高めると論じた。デチャーチとメスマー=マグナスのメタ分析はチーム認知がパフォーマンスに強い正の効果をもつことを確認した。',
+    keyFigures: 'ジャニス・キャノン=ボワーズ ／ エドゥアルド・サラス ／ ジョン・マシュー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1037/0021-9010.85.2.273', type: 'academic', label: 'Mathieu et al. 2000 — The Influence of Shared Mental Models on Team Process and Performance, Journal of Applied Psychology 85(2):273-283' },
+      { url: 'https://doi.org/10.1037/a0017328', type: 'academic', label: 'DeChurch & Mesmer-Magnus 2010 — The Cognitive Underpinnings of Effective Teamwork: A Meta-Analysis, Journal of Applied Psychology 95(1):32-53' },
+      { url: 'https://psycnet.apa.org/record/1993-98262-010', type: 'academic', label: 'Cannon-Bowers, Salas & Converse 1993 — Shared Mental Models in Expert Team Decision Making, in Castellan (ed.) Individual and Group Decision Making pp.221-246' },
+      { url: 'https://psycnet.apa.org/record/1987-98053-009', type: 'reference', label: 'Wegner 1987 — Transactive Memory: A Contemporary Analysis of the Group Mind, in Mullen & Goethals (eds.) Theories of Group Behavior pp.185-208' },
+    ],
+  },
+  {
+    id: 'infosoc-open-government-data',
+    discipline: 'information-sociology',
+    title: 'オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム',
+    statement:
+      'オープンガバメントデータとは、政府・自治体が保有するデータセットを機械可読形式で無償公開し、自由な再利用・再配布を認める政策パラダイムである。2009年のオバマ大統領「透明性とオープンガバメントに関する覚書」が国際的な推進力となり、透明性・説明責任・市民参加の三原則が確立された。バーナーズ=リーは段階的な品質指標として「5スター・オープンデータ」モデルを提唱し、Linked Dataによる相互接続を最高水準と位置づけた。ヤンセン・カララビディス・ザウデルワイクは便益・採用障壁・神話の三軸で開放効果を実証分析し、制度的慣性と品質保証の課題を指摘した。メイヤー・カーティン・ヒレブラントはビジョンと市民の声の乖離問題を論じ、参加型ガバナンスへの接続を強調した。',
+    keyFigures: 'ティム・バーナーズ=リー ／ マリレン・ヤンセン ／ アルバート・メイヤー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1080/10580530.2012.716740', type: 'academic', label: 'Janssen, Charalabidis & Zuiderwijk 2012 — Benefits, Adoption Barriers and Myths of Open Data and Open Government, Information Systems Management 29(4):258-268' },
+      { url: 'https://doi.org/10.1177/0020852311429533', type: 'academic', label: 'Meijer, Curtin & Hillebrandt 2012 — Open Government: Connecting Vision and Voice, International Review of Administrative Sciences 78(1):10-29' },
+      { url: 'https://obamawhitehouse.archives.gov/the-press-office/transparency-and-open-government', type: 'government', label: 'Obama 2009 — Memorandum on Transparency and Open Government, White House Press Office' },
+      { url: 'https://opendefinition.org/', type: 'reference', label: 'Open Knowledge Foundation 2006– — Open Definition, Open Knowledge Foundation' },
+    ],
+  },
+  {
+    id: 'human-embodied-simulation',
+    discipline: 'human-science',
+    title: '身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤',
+    statement:
+      '身体化されたシミュレーション（Embodied Simulation）とは、他者の行為・意図・感情を理解する際に、観察者自身の運動・感覚・情動システムが内部的に活性化されるという神経認知理論である。ガレーゼとリゾラッティらはマカクザルの前頭葉F5野において、他者の行為を観察するだけで発火する「鏡像ニューロン」を発見し、これが人間においても行為理解・模倣・共感の神経基盤を成すと提唱した。ガレーゼとゴールドマンは鏡像ニューロンと心の理論のシミュレーション説を統合し、他者の精神状態の自動的な身体的共鳴として共感を説明した。「共有多様体（Shared Manifold）仮説」はこの枠組みを拡張し、対人間主観性の神経基盤を提示する。自閉スペクトラム症における鏡像ニューロン系機能不全との関連も論じられ、社会的認知障害の理解に貢献している。',
+    keyFigures: 'ヴィットリオ・ガレーゼ ／ ジャコモ・リゾラッティ ／ アルヴィン・ゴールドマン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1016/S1364-6613(98)01262-5', type: 'academic', label: 'Gallese & Goldman 1998 — Mirror Neurons and the Simulation Theory of Mind-Reading, Trends in Cognitive Sciences 2(12):493-501' },
+      { url: 'https://doi.org/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero 2004 — The Mirror-Neuron System, Annual Review of Neuroscience 27:169-192' },
+      { url: 'https://doi.org/10.1016/j.tics.2004.07.002', type: 'academic', label: 'Gallese, Keysers & Rizzolatti 2004 — A Unifying View of the Basis of Social Cognition, Trends in Cognitive Sciences 8(9):396-403' },
+      { url: 'https://www.imprint.co.uk/jcs_8_5-7.html', type: 'reference', label: 'Gallese 2001 — The \'Shared Manifold\' Hypothesis: From Mirror Neurons to Empathy, Journal of Consciousness Studies 8(5-7):33-50' },
+    ],
+  },
 ];
 // Stryker restore all
