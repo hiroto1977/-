@@ -2315,5 +2315,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 人と環境の適合理論（P-Eフィット） | John R. P. French Jr. ／ Robert D. Caplan ／ Amy L. Kristof-Brown |
 | 経営学 | 感情的コミットメント（情緒的組織コミットメント） | John P. Meyer ／ Natalie J. Allen ／ Zachary A. Mercurio |
 | 情報社会学 | フィルターバブル（情報の個人化と知的孤立） | Eli Pariser ／ Cass R. Sunstein ／ C. Thi Nguyen |
+| 経済学 | 逆選択理論（レモンの市場） | George A. Akerlof ／ A. Michael Spence ／ Joseph E. Stiglitz |
+| 経営学 | 限定合理性 | Herbert A. Simon ／ James G. March ／ Daniel Kahneman |
+| 人間科学 | ナラティブ・アイデンティティ（生涯物語による自己同一性） | Dan P. McAdams ／ Kate C. McLean ／ Paul Ricoeur |
+| ビジネス法務 | 契約履行における誠実・公正取引義務（Good Faith and Fair Dealing） | Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth |
+| 情報社会学 | セカンドオーダー・サイバネティクス（二次制御理論） | Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela |
+| 経済学 | シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル） | A. Michael Spence ／ Joseph E. Stiglitz ／ George A. Akerlof |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
