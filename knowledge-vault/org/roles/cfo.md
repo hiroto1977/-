@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
 - …ほか 402 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全601件）
+### 学術概念 / 経済学（全602件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 595 件 → [[学術概念]]
+- …ほか 596 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全140件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
