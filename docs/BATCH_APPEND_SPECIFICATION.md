@@ -529,5 +529,104 @@ npm run vault:check
 
 ---
 
+## 付録B: Batch 377 完了済み JSON（4/6）
+
+### Agent 2: mgmt-bounded-rationality-simon
+
+```json
+{
+  "id": "mgmt-bounded-rationality-simon",
+  "discipline": "management",
+  "title": "限定合理性",
+  "statement": "人間の認知能力・情報・時間には限界があるため、意思決定者は最適解を追求せず満足できる解を選ぶとSimonが提唱した理論。MarchとKahnemanが発展させた。",
+  "keyFigures": "Herbert A. Simon ／ James G. March ／ Daniel Kahneman",
+  "asOf": "2026-06",
+  "sources": [
+    { "url": "https://www.nobelprize.org/prizes/economic-sciences/1978/simon/facts/", "type": "reference", "label": "The Sveriges Riksbank Prize in Economic Sciences 1978 — Herbert A. Simon (NobelPrize.org)" },
+    { "url": "https://plato.stanford.edu/entries/bounded-rationality/", "type": "reference", "label": "Bounded Rationality — Stanford Encyclopedia of Philosophy (Summer 2024 Edition)" },
+    { "url": "https://academic.oup.com/qje/article-abstract/69/1/99/1919737", "type": "academic", "label": "Simon (1955) A Behavioral Model of Rational Choice, QJE 69(1) 99-118" },
+    { "url": "https://link.springer.com/article/10.1007/s10203-024-00436-2", "type": "academic", "label": "Simon's bounded rationality — Decisions in Economics and Finance (Springer 2024)" }
+  ]
+}
+```
+
+### Agent 4: bizlaw-good-faith-performance
+
+```json
+{
+  "id": "bizlaw-good-faith-performance",
+  "discipline": "business-law",
+  "title": "契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）",
+  "statement": "すべての契約は、その履行・執行において誠実かつ公正な取引を行う義務を各当事者に課す（Restatement § 205；UCC § 1-304）。Summersは同義務を「悪意類型の排除規則」として定式化し、Burtonは「契約時に放棄した利益の奪還を禁じる裁量制約」と論じた。",
+  "keyFigures": "Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth",
+  "asOf": "2026-06",
+  "sources": [
+    { "url": "https://scholarship.law.cornell.edu/facpub/1137/", "type": "academic", "label": "Summers, 'Good Faith' in General Contract Law and the Sales Provisions of the UCC, 54 Va. L. Rev. 195 (1968) — Cornell Law" },
+    { "url": "https://chicagounbound.uchicago.edu/uclrev/vol30/iss4/3/", "type": "academic", "label": "Farnsworth, Good Faith Performance and Commercial Reasonableness under the UCC, 30 U. Chi. L. Rev. 666 (1963)" },
+    { "url": "https://www.law.cornell.edu/ucc/1/1-304", "type": "government", "label": "UCC § 1-304 Obligation of Good Faith — Cornell LII" },
+    { "url": "https://www.courtlistener.com/opinion/3612877/kirke-la-shelle-co-v-armstrong-co/", "type": "reference", "label": "Kirke La Shelle Co. v. Paul Armstrong Co., 188 N.E. 163 (N.Y. 1933) — CourtListener" }
+  ]
+}
+```
+
+### Agent 5: infosoc-second-order-cybernetics
+
+```json
+{
+  "id": "infosoc-second-order-cybernetics",
+  "discipline": "information-sociology",
+  "title": "セカンドオーダー・サイバネティクス（二次制御理論）",
+  "statement": "観察者を系に含める自己言及的制御理論。von Foersterが1974年に定式化し、Maturana・Varelaのオートポイエーシス概念と結合して情報社会論の基盤を形成した。",
+  "keyFigures": "Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela",
+  "asOf": "2026-06",
+  "sources": [
+    { "url": "https://www.emerald.com/insight/content/doi/10.1108/03684920410556007/full/html", "type": "academic", "label": "Scott (2004) Second-order cybernetics: an historical introduction, Kybernetes 33(9/10) 1365-1378" },
+    { "url": "https://link.springer.com/book/10.1007/978-94-009-8947-4", "type": "academic", "label": "Maturana & Varela (1980) Autopoiesis and Cognition, Springer" },
+    { "url": "https://www.emerald.com/insight/content/doi/10.1108/03684920410556016/full/html", "type": "academic", "label": "Glanville (2004) The purpose of second-order cybernetics, Kybernetes 33(9/10) 1379-1386" },
+    { "url": "https://en.wikipedia.org/wiki/Second-order_cybernetics", "type": "reference", "label": "Wikipedia — Second-order cybernetics" }
+  ]
+}
+```
+
+### Agent 6: econ-signaling-screening-spence
+
+```json
+{
+  "id": "econ-signaling-screening-spence",
+  "discipline": "economics",
+  "title": "シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）",
+  "statement": "情報非対称下で高能力者が教育等のコストのかかるシグナルを発信し低能力者と自己選別するとSpenceが1973年に定式化。Stiglitzはスクリーニングとして補完的に体系化し、Akerlofのレモンモデルとともに2001年ノーベル経済学賞の基盤となった。",
+  "keyFigures": "A. Michael Spence ／ Joseph E. Stiglitz ／ George A. Akerlof",
+  "asOf": "2026-06",
+  "sources": [
+    { "url": "https://www.jstor.org/stable/1882010", "type": "academic", "label": "Spence (1973) Job Market Signaling, QJE 87(3) 355-374" },
+    { "url": "https://www.nobelprize.org/prizes/economic-sciences/2001/press-release/", "type": "reference", "label": "Nobel Prize press release (2001) — Akerlof, Spence, Stiglitz: markets with asymmetric information" },
+    { "url": "https://www.jstor.org/stable/1829559", "type": "academic", "label": "Akerlof (1970) The Market for Lemons, QJE 84(3) 488-500" }
+  ]
+}
+```
+
+### Agent 1: econ-adverse-selection-akerlof（未完了 — 研究データ取得済み）
+
+研究エージェントの個別サブタスクは全て完了。合成が必要:
+- Akerlof (1970) "The Market for 'Lemons'" QJE 84(3) 488-500
+- 2001年ノーベル経済学賞（Akerlof/Spence/Stiglitz）
+- JSTOR: https://www.jstor.org/stable/1879431
+- Oxford Academic: https://academic.oup.com/qje/article-abstract/84/3/488/1896241
+- NobelPrize.org: https://www.nobelprize.org/prizes/economic-sciences/2001/akerlof/facts/
+- Britannica: https://www.britannica.com/money/adverse-selection
+
+### Agent 3: human-narrative-identity-mcadams（未完了 — 研究データ取得済み）
+
+研究エージェントの個別サブタスクは全て完了。合成が必要:
+- McAdams & McLean (2013) "Narrative Identity" Current Directions in Psychological Science 22(3) 233-238
+- McAdams (2001) "The Psychology of Life Stories" Review of General Psychology 5(2) 100-122
+- Ricoeur (1990) *Oneself as Another* — 哲学的基盤
+- SAGE: https://journals.sagepub.com/doi/abs/10.1177/0963721413475622
+- SEP: https://plato.stanford.edu/entries/ricoeur/
+- Wikipedia: https://en.wikipedia.org/wiki/Narrative_identity
+
+---
+
 **本仕様書は機械可読・AIエージェント実行可能な形式で作成されています。**  
-**更新履歴**: v1.0 (2026-06-24) 初版
+**更新履歴**: v1.0 (2026-06-24) 初版 / v1.1 (2026-06-24) 完了済みJSON・研究データ追記
