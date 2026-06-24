@@ -19,7 +19,8 @@
   - ✅ **Batch 377 完了** (2,267 → 2,273 概念, 6 concepts 追加: Adverse Selection / Bounded Rationality / Narrative Identity / Good Faith / Second-Order Cybernetics / Signaling & Screening)
   - ✅ **Batch 378 完了** (2,273 → 2,279 概念, 6 concepts 追加: Portfolio Theory / Organizational Sensemaking / Memory Consolidation / Agency Relationship / Digital Divide / Psychological Capital)
   - ✅ **Batch 379 完了** (2,279 → 2,285 概念, 6 concepts 追加: Behavioral Finance / Adaptive Leadership / Flow Psychology / Tortious Interference / Network Effects / Theory of Mind)
-  - 🔄 **Batch 380 準備中**: 候補生成 & デデュプ検証中
+  - ✅ **Batch 380 完了** (2,285 → 2,291 概念, 6 concepts 追加: Product Liability / Financialization / Growth Mindset / Mental Time Travel / Corporate Governance / Cognitive Surplus) — Commit 2e50f61, PR #704
+  - 🔄 **Batch 381 準備中**: 次の候補生成 & デデュプ検証待機中
 - 開発ブランチ: **タスクプロンプトで指定されたブランチ**を使用（現在: `claude/eager-brown-7cev3c`）。
 - 1 バッチ = デデュプ → 候補生成 → 6並列エージェント → JSON収集 → ファイル追記 → ゲート全green → コミット → プッシュ。
 - 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
