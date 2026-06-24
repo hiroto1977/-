@@ -35314,5 +35314,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/j.tics.2005.03.010', type: 'academic', label: 'Ochsner & Gross 2005 — The Cognitive Control of Emotion, Trends in Cognitive Sciences 9(5):242-249' },
     ],
   },
+  {
+    id: 'econ-behavioral-nudge',
+    discipline: 'economics',
+    title: 'ナッジ理論：選択アーキテクチャによる行動変容の設計とリバタリアン・パターナリズムの経済学的基盤',
+    statement:
+      'ナッジ理論とは、リチャード・セイラーとキャス・サンスティーンが2008年に提唱した行動経済学の応用概念であり、強制や金銭的インセンティブを用いずに選択肢の提示方法（選択アーキテクチャ）を工夫することで人々の行動を望ましい方向へ誘導する手法である。リバタリアン・パターナリズムの原則に基づき、個人の選択の自由を保ちながら社会的厚生の向上を目指す。ダニエル・カーネマンらの二重過程理論（システム1・システム2）を基盤とし、英国行動インサイトチームが開発したEASTフレームワーク（Easy・Attractive・Social・Timely）が実務展開の指針として広く活用されている。セイラーは2017年にノーベル経済学賞を受賞した。',
+    keyFigures: 'リチャード・セイラー ／ キャス・サンスティーン ／ ダニエル・カーネマン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.7208/chicago/9780226116426.001.0001', type: 'academic', label: 'Thaler & Sunstein 2008 — Nudge: Improving Decisions About Health, Wealth, and Happiness, University of Chicago Press' },
+      { url: 'https://doi.org/10.2307/1600397', type: 'academic', label: 'Thaler & Sunstein 2003 — Libertarian Paternalism, American Economic Review 93(2):175-179' },
+      { url: 'https://doi.org/10.1257/089533003769204371', type: 'academic', label: 'Kahneman 2003 — Maps of Bounded Rationality: Psychology for Behavioral Economics, American Economic Review 93(5):1449-1475' },
+      { url: 'https://www.bi.team/publications/east-four-simple-ways-to-apply-behavioural-insights/', type: 'reference', label: 'Behavioural Insights Team 2014 — EAST: Four Simple Ways to Apply Behavioural Insights' },
+    ],
+  },
+  {
+    id: 'econ-inequality-measurement',
+    discipline: 'economics',
+    title: '不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系',
+    statement:
+      '所得格差と富の集中を数量化する手法の体系。マックス・ローレンツ（1905）が提案したローレンツ曲線は累積所得分布を視覚化し、コッラード・ジーニ（1912）がこれを基にジニ係数（0＝完全平等、1＝完全不平等）を定式化した。アンソニー・アトキンソン（1970）は厚生関数を基にしたアトキンソン指数を開発した。サイモン・クズネッツ（1955）は経済発展と不平等の逆U字型仮説を提唱した。トマ・ピケティ（2014）は資本収益率（r）が経済成長率（g）を上回るとき富の集中が進むr＞gの法則を実証した。世界不平等データベース（WID.world）が長期統計を提供する。',
+    keyFigures: 'アンソニー・アトキンソン ／ トマ・ピケティ ／ コッラード・ジーニ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1016/0022-0531(70)90039-6', type: 'academic', label: 'Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263' },
+      { url: 'https://www.jstor.org/stable/2276207', type: 'academic', label: 'Lorenz 1905 — Methods of Measuring the Concentration of Wealth, Publications of the American Statistical Association 9(70):209-219' },
+      { url: 'https://www.hup.harvard.edu/books/9780674430006', type: 'reference', label: 'Piketty 2014 — Capital in the Twenty-First Century, Harvard University Press' },
+      { url: 'https://wid.world/', type: 'reference', label: 'World Inequality Database (WID.world) — 所得・富の長期不平等統計データベース' },
+    ],
+  },
+  {
+    id: 'bizlaw-data-protection-gdpr',
+    discipline: 'business-law',
+    title: 'データ保護法・GDPR：個人データの権利・忘れられる権利・説明責任原則の国際的法規範',
+    statement:
+      'データ保護法は個人情報の収集・処理・移転に関する法的枠組みであり、1970年のドイツ・ヘッセン州データ保護法（シミティス起草）に起源を持つ。欧州連合は2016年に一般データ保護規則（GDPR、2016/679）を制定し、データ最小化・目的限定・説明責任の三原則と最大グローバル売上高4%の制裁金を規定した。忘れられる権利（第17条）はEU司法裁判所のグーグル・スペイン事件判決（C-131/12、2014年）により確立された。シュワルツとソロブ（2011）は米欧の個人情報保護規制哲学の相違を比較法的に体系化し、マイヤー＝ショーンベルガー（2009）はデジタル記憶の永続性が社会に与える影響を「忘却の美徳」として論じた。',
+    keyFigures: 'スピロス・シミティス ／ パウル・シュワルツ ／ ヴィクトル・マイヤー＝ショーンベルガー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679', type: 'government', label: 'EU 2016 — General Data Protection Regulation (GDPR), Regulation (EU) 2016/679' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:62012CJ0131', type: 'government', label: 'CJEU 2014 — Google Spain v AEPD, Case C-131/12 (Right to be Forgotten), ECLI:EU:C:2014:317' },
+      { url: 'https://ssrn.com/abstract=1747374', type: 'academic', label: 'Schwartz & Solove 2011 — The PII Problem: Privacy and a New Concept of Personally Identifiable Information, New York University Law Review 86(6):1814-1894' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691150369/delete', type: 'reference', label: 'Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press' },
+    ],
+  },
+  {
+    id: 'mgmt-strategic-alliances',
+    discipline: 'management',
+    title: '戦略的提携・アライアンス：企業間協力による競争優位・知識学習・社会ネットワークの組織間関係論',
+    statement:
+      '戦略的提携とは、2社以上の企業が独立性を保ちながら合弁会社・ライセンシング・株式持合い・非株式協定等の形態で協力関係を結ぶ戦略行動である。ブルース・コガット（1988）は合弁企業を競争戦略的観点（交渉力・牽制）と知識移転・学習の観点から理論化した。ヨヴァン・ドーズとゲーリー・ハメル（1998）は「共同獲得・共同特化・学習」の三機能でアライアンス優位を説明した。ラジーブ・グラティ（1998）は社会ネットワーク論を援用し、提携履歴と信頼がパートナー選択と提携成果を規定することを実証した。理論的基盤としてはウィリアムソンの取引コスト論とバーニーの資源ベース理論が対比的に用いられる。',
+    keyFigures: 'ブルース・コガット ／ ヨヴァン・ドーズ ／ ラジーブ・グラティ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1002/smj.4250090403', type: 'academic', label: 'Kogut 1988 — Joint Ventures: Theoretical and Empirical Perspectives, Strategic Management Journal 9(4):319-332' },
+      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199804)19:4<293::AID-SMJ982>3.0.CO;2-M', type: 'academic', label: 'Gulati 1998 — Alliances and Networks, Strategic Management Journal 19(4):293-317' },
+      { url: 'https://www.worldcat.org/isbn/9780875846521', type: 'reference', label: 'Yoshino & Rangan 1995 — Strategic Alliances: An Entrepreneurial Approach to Globalization, Harvard Business School Press' },
+      { url: 'https://www.worldcat.org/isbn/9780875847429', type: 'reference', label: 'Doz & Hamel 1998 — Alliance Advantage: The Art of Creating Value through Partnering, Harvard Business School Press' },
+    ],
+  },
+  {
+    id: 'infosoc-privacy-surveillance',
+    discipline: 'information-sociology',
+    title: 'プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察',
+    statement:
+      '監視研究はフーコーの「監視と処罰」（1975）における一望監視施設（パノプティコン）概念をデジタル空間へ拡張し、デービッド・ライアンは「監視社会」（2001）でデータ収集・処理・共有・対人監視の四つの柱を提示した。ショシャナ・ズボフは「監視資本主義の時代」（2019）で行動データを「行動先物市場」として売買する新たな資本蓄積様式を批判的に分析した。ロジャー・クラークは「データベイランス」概念（1988）でコンピュータによる組織的個人追跡を定式化し、ヘレン・ニッセンバウムは文脈的完全性理論（2004）でプライバシーを社会的文脈規範として再定義した。',
+    keyFigures: 'ショシャナ・ズボフ ／ デービッド・ライアン ／ ヘレン・ニッセンバウム',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.2307/j.ctvzgb8c7', type: 'academic', label: 'Lyon 2001 — Surveillance Society: Monitoring Everyday Life, Open University Press' },
+      { url: 'https://doi.org/10.4159/9780674985957', type: 'academic', label: 'Zuboff 2019 — The Age of Surveillance Capitalism, Harvard Business Review Press' },
+      { url: 'https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/', type: 'academic', label: 'Nissenbaum 2004 — Privacy as Contextual Integrity, Washington Law Review 79(1):119-157' },
+      { url: 'https://doi.org/10.1145/3135.3141', type: 'academic', label: 'Clarke 1988 — Information Technology and Dataveillance, Communications of the ACM 31(5):498-512' },
+    ],
+  },
+  {
+    id: 'human-moral-foundations-theory',
+    discipline: 'human-science',
+    title: '道徳基盤理論：進化と文化が形成する六つの普遍的道徳モジュールと政治的分断の心理的基盤',
+    statement:
+      '道徳基盤理論（Moral Foundations Theory）はジョナサン・ハイトとクレイグ・ジョセフが2004年に提唱し、ジェシー・グラハムらが拡張した道徳心理学の枠組みである。ケア／加害、公正／互恵、忠誠／裏切り、権威／転覆、神聖／堕落、自由／抑圧の六つの道徳基盤が進化的・文化的に形成されると主張する。ハイトは「道徳的唖然（moral dumbfounding）」現象を根拠に道徳的直観が推論に先行するという「社会的直観主義モデル」を提示し、コールバーグの合理主義的発達段階論と対立する。政治心理学への応用では、リベラル派がケアと公正を重視する一方、保守派は六基盤をバランスよく用いることが道徳基盤質問票（MFQ）の研究で示されている。',
+    keyFigures: 'ジョナサン・ハイト ／ クレイグ・ジョセフ ／ ジェシー・グラハム',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1016/B978-0-12-407236-7.00002-4', type: 'academic', label: 'Graham et al. 2013 — Moral Foundations Theory: An Introduction, Advances in Experimental Social Psychology 47' },
+      { url: 'https://doi.org/10.1037/0033-295X.108.4.814', type: 'academic', label: 'Haidt 2001 — The Emotional Dog and Its Rational Tail: A Social Intuitionist Account of Moral Judgment, Psychological Review 108(4):814-834' },
+      { url: 'https://www.moralfoundations.org/', type: 'reference', label: 'MoralFoundations.org — 道徳基盤理論の公式サイト・MFQ・研究資料' },
+      { url: 'https://www.worldcat.org/isbn/9780307377906', type: 'reference', label: 'Haidt 2012 — The Righteous Mind: Why Good People Are Divided by Politics and Religion, Pantheon Books' },
+    ],
+  },
 ];
 // Stryker restore all
