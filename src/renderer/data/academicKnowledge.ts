@@ -35224,5 +35224,95 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.worldcat.org/isbn/9780136405276', type: 'reference', label: 'Miller & Friesen 1984 — Organizations: A Quantum View, Prentice-Hall' },
     ],
   },
+  {
+    id: 'econ-happiness-economics',
+    discipline: 'economics',
+    title: '幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割',
+    statement:
+      '幸福の経済学は、主観的幸福（ウェルビーイング）を経済分析の中心に置き、所得・雇用・不平等・社会関係が生活満足度に及ぼす影響を定量化する学問領域である。イースタリン（1974）は国別横断データを分析し、経済成長が国民の平均的幸福を必ずしも高めないという「イースタリン・パラドックス」を提唱し、相対所得・社会比較の重要性を示した。レイアード（2005）は幸福を政策目標として採用すべきことを論じ、英国のウェルビーイング政策に影響を与えた。カーネマンとディートン（2010）は米国データを分析し、年収7万5000ドルを超えると感情的幸福の増加が鈍化することを実証し、絶対所得の限界効用低下を明示した。スティーブンソンとウォルファーズ（2008）はイースタリン・パラドックスを再検討し、長期時系列では所得と幸福の正相関が維持されることを示した。',
+    keyFigures: 'リチャード・イースタリン ／ リチャード・レイアード ／ アンガス・ディートン',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://www.nber.org/chapters/c8881', type: 'reference', label: 'Easterlin 1974 — Does Economic Growth Improve the Human Lot? Some Empirical Evidence, in Nations and Households in Economic Growth, Academic Press' },
+      { url: 'https://doi.org/10.1353/eca.0.0001', type: 'academic', label: 'Stevenson & Wolfers 2008 — Economic Growth and Subjective Well-Being: Reassessing the Easterlin Paradox, Brookings Papers on Economic Activity 2008(1):1-87' },
+      { url: 'https://doi.org/10.1073/pnas.1011492107', type: 'academic', label: 'Kahneman & Deaton 2010 — High Income Improves Evaluation of Life but Not Emotional Well-Being, PNAS 107(38):16489-16493' },
+      { url: 'https://www.worldcat.org/isbn/9781594200267', type: 'reference', label: 'Layard 2005 — Happiness: Lessons from a New Science, Penguin Press' },
+    ],
+  },
+  {
+    id: 'bizlaw-environmental-law',
+    discipline: 'business-law',
+    title: '環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系',
+    statement:
+      '環境法は、自然環境の保護と人間活動による汚染・破壊の規制を目的とする法律体系であり、行政規制・民事訴訟・市場メカニズムを統合した多層的アプローチをとる。サックス（1970）は公共信託理論を環境資源に適用し、国家は自然資源を将来世代のために信託管理する義務を負うと論じ、市民による環境訴訟の理論的基盤を確立した。ポーターとヴァン・デル・リンデ（1995）は「ポーター仮説」を展開し、厳格な環境規制が長期的には技術革新を促進し産業競争力を高めることを論じた。2015年のパリ協定は気候変動に関する国際法的枠組みとして採択され、各国の「国が決定する貢献（NDC）」提出義務を定め、1.5℃目標の法的基盤を整備した。ラザラス（2004）は米国環境法の発展史を包括的に描き、規制・訴訟・排出取引制度の相互作用を体系化した。',
+    keyFigures: 'ジョセフ・サックス ／ ダニエル・エスティ ／ リチャード・ラザラス',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://repository.law.umich.edu/mlr/vol68/iss3/2/', type: 'academic', label: 'Sax 1970 — The Public Trust Doctrine in Natural Resource Law: Effective Judicial Intervention, Michigan Law Review 68(3):471-566' },
+      { url: 'https://doi.org/10.1257/jep.9.4.97', type: 'academic', label: 'Porter & van der Linde 1995 — Toward a New Conception of the Environment-Competitiveness Relationship, Journal of Economic Perspectives 9(4):97-118' },
+      { url: 'https://unfccc.int/process-and-meetings/the-paris-agreement', type: 'government', label: 'UNFCCC 2015 — The Paris Agreement' },
+      { url: 'https://www.worldcat.org/isbn/9780226469041', type: 'reference', label: 'Lazarus 2004 — The Making of Environmental Law, University of Chicago Press' },
+    ],
+  },
+  {
+    id: 'infosoc-misinformation-disinformation',
+    discipline: 'information-sociology',
+    title: '誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究',
+    statement:
+      '誤情報（ミスインフォメーション）は意図なく共有される虚偽情報を、偽情報（ディスインフォメーション）は意図的に作成・拡散される虚偽情報を指す。ウォードルとデラフシャン（2017）は両者を包含する「インフォメーション・ディスオーダー」の7類型分類体系を提案し、コンテント・エージェント・メッセージの三次元で情報障害を分析する枠組みを構築した。ヴォスーギら（2018年、Science誌）はTwitterの1200万件の連鎖データを分析し、虚偽情報が真実より70%遠くまで、6倍速く、10倍広範に拡散することを実証した。ルワンドウスキーら（2012）は「虚偽の継続影響効果」を体系化し、訂正情報が提供された後も誤情報が行動・信念に影響し続けることを示した。ペニークックとランド（2019）は誤情報への脆弱性が分析的思考能力の欠如と相関することを明らかにした。',
+    keyFigures: 'クレア・ウォードル ／ ホセイン・デラフシャン ／ ケイト・スターバード',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://rm.coe.int/information-disorder-toward-an-interdisciplinary-framework-for-researc/168076277c', type: 'government', label: 'Wardle & Derakhshan 2017 — Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making, Council of Europe' },
+      { url: 'https://doi.org/10.1126/science.aap9559', type: 'academic', label: 'Vosoughi, Roy & Aral 2018 — The Spread of True and False News Online, Science 359(6380):1146-1151' },
+      { url: 'https://doi.org/10.1177/1529100612451018', type: 'academic', label: 'Lewandowsky et al. 2012 — Misinformation and Its Correction: Continued Influence and Successful Debiasing, Psychological Science in the Public Interest 13(3):106-131' },
+      { url: 'https://doi.org/10.1073/pnas.1806781116', type: 'academic', label: 'Pennycook & Rand 2019 — Fighting Misinformation on Social Media Using Crowdsourced Judgments of News Source Quality, PNAS 116(7):2521-2526' },
+    ],
+  },
+  {
+    id: 'econ-financial-contagion',
+    discipline: 'economics',
+    title: '金融コンタジオン：銀行間ネットワークのトポロジーとシステミックリスクの連鎖波及メカニズム',
+    statement:
+      '金融コンタジオン（金融伝染）は、特定の市場・金融機関のショックが相互依存ネットワークを通じて他の無関係な市場・機関へ連鎖的に波及するシステミックリスクの一形態である。アレンとゲール（2000年、JPE）は銀行間流動性ネットワークのトポロジーがショック伝播パターンを決定することを理論化し、完全連結グラフ構造が部分的連結より頑健であるという反直観的命題を証明した。ブルナーマイヤー（2009年、JEP）は2007-08年金融危機において流動性スパイラルと証拠金スパイラルが損失を指数的に増幅させるメカニズムを解明した。アセモグルら（2015年、AER）は金融ネットワーク密度に閾値効果が存在し、低密度ではリスク分散が機能する一方で高密度ではリスク増幅が生じる「位相転移」現象を理論的に示した。',
+    keyFigures: 'フランクリン・アレン ／ ダグラス・ゲール ／ マルクス・ブルナーマイヤー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1086/262109', type: 'academic', label: 'Allen & Gale 2000 — Financial Contagion, Journal of Political Economy 108(1):1-33' },
+      { url: 'https://doi.org/10.1257/jep.23.1.77', type: 'academic', label: 'Brunnermeier 2009 — Deciphering the Liquidity and Credit Crunch 2007-2008, Journal of Economic Perspectives 23(1):77-100' },
+      { url: 'https://doi.org/10.1257/aer.20130456', type: 'academic', label: 'Acemoglu, Ozdaglar & Tahbaz-Salehi 2015 — Systemic Risk and Stability in Financial Networks, American Economic Review 105(2):564-608' },
+      { url: 'https://doi.org/10.1111/jofi.12087', type: 'academic', label: 'Caballero & Simsek 2013 — Fire Sales in a Model of Complexity, Journal of Finance 68(6):2549-2587' },
+    ],
+  },
+  {
+    id: 'mgmt-boundaryspanning-roles',
+    discipline: 'management',
+    title: 'バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系',
+    statement:
+      'バウンダリースパニング（境界連結）役割とは、組織の境界を越えて外部環境と内部システムを結びつける機能的役割であり、情報処理理論の観点から環境不確実性の緩衝・吸収機制として位置づけられる。アルドリッチとハーカー（1977年、AMR）は境界連結機能を「情報処理」と「外部代理」の二機能に分類し、組織が環境からのシグナルを取得・変換するモデルを構築した。タシュマンとスキャンラン（1981年、AMJ）は技術組織内の境界連結者が外部知識のゲートキーパーとして機能し、複雑な情報を内部メンバーが消化できる形で翻訳・フィルタリングすることを実証した。ライファーとデルベク（1978年、AMR）は環境不確実性の高さと境界連結活動の強度が正比例することを示した。アダムズ（1976）は境界連結役割に特有の役割葛藤と役割曖昧性がストレスを生じさせることを体系化した。',
+    keyFigures: 'ハワード・アルドリッチ ／ マイケル・タシュマン ／ J・S・アダムズ',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.1977.4406919', type: 'academic', label: 'Aldrich & Herker 1977 — Boundary Spanning Roles and Organization Structure, Academy of Management Review 2(2):217-230' },
+      { url: 'https://www.jstor.org/stable/255843', type: 'academic', label: 'Tushman & Scanlan 1981 — Boundary Spanning Individuals: Their Role in Information Transfer and Their Antecedents, Academy of Management Journal 24(2):289-305' },
+      { url: 'https://doi.org/10.5465/amr.1978.4294671', type: 'academic', label: 'Leifer & Delbecq 1978 — Organizational/Environmental Interchange: A Model of Boundary Spanning Activity, Academy of Management Review 3(1):40-50' },
+      { url: 'https://www.worldcat.org/isbn/9780528630279', type: 'reference', label: 'Adams 1976 — The Structure and Dynamics of Behavior in Organizational Boundary Roles, in Handbook of Industrial and Organizational Psychology (Dunnette ed.), Rand McNally' },
+    ],
+  },
+  {
+    id: 'human-emotional-regulation',
+    discipline: 'human-science',
+    title: '感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解',
+    statement:
+      '感情制御（感情調整）とは、個人が自らの感情をいつ・どのように経験し、表出するかに影響を及ぼす内的・外的プロセスの総体である（グロス，1998）。グロスのプロセスモデルは、感情生成の上流に作用する先行焦点型方略（状況選択・状況修正・注意配置・認知的再評価）と、感情反応発生後に作用する反応焦点型方略（反応調整・表出抑制）に大別する。メタ分析（アルダオ・ノレン＝ホークセーマ・シュワイツァー，2010）は、再評価が抑制より精神病理との負の関連が弱く適応的であることを示した。神経基盤として、オクスナーとグロス（2005）は前頭前皮質による扁桃体への下方制御機構を特定し、感情制御の認知神経科学的モデルを確立した。',
+    keyFigures: 'ジェームズ・グロス ／ アミラ・アルダオ ／ ケヴィン・オクスナー',
+    asOf: '2026-06-24',
+    sources: [
+      { url: 'https://doi.org/10.1037/1089-2680.2.3.271', type: 'academic', label: 'Gross 1998 — The Emerging Field of Emotion Regulation: An Integrative Review, Review of General Psychology 2(3):271-299' },
+      { url: 'https://doi.org/10.1017/S0048577201393198', type: 'academic', label: 'Gross 2002 — Emotion Regulation: Affective, Cognitive, and Social Consequences, Psychophysiology 39(3):281-291' },
+      { url: 'https://doi.org/10.1016/j.cpr.2009.11.004', type: 'academic', label: 'Aldao, Nolen-Hoeksema & Schweizer 2010 — Emotion-Regulation Strategies Across Psychopathology: A Meta-Analytic Review, Clinical Psychology Review 30(2):217-237' },
+      { url: 'https://doi.org/10.1016/j.tics.2005.03.010', type: 'academic', label: 'Ochsner & Gross 2005 — The Cognitive Control of Emotion, Trends in Cognitive Sciences 9(5):242-249' },
+    ],
+  },
 ];
 // Stryker restore all
