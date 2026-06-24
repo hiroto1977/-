@@ -14,14 +14,11 @@
 
 - **完全な運用仕様 → [`docs/BATCH_APPEND_SPECIFICATION.md`](BATCH_APPEND_SPECIFICATION.md)**（機械可読AIエージェント向け）。
 - **概念背景 → [`docs/ACADEMIC_KNOWLEDGE.md`](ACADEMIC_KNOWLEDGE.md)**（学術の枠・検証原則）。
-- 現状: **Batch 376 完了** (2,261 概念, PR #マージ済み) / **Batch 377 進行中** (4/6 エージェント完了、2/6 待機中)
-  - ✅ Agent 2: mgmt-bounded-rationality-simon (JSON 完了)
-  - ✅ Agent 4: bizlaw-good-faith-performance (JSON 完了)
-  - ✅ Agent 5: infosoc-second-order-cybernetics (JSON 完了)
-  - ✅ Agent 6: econ-signaling-screening-spence (JSON 完了)
-  - ⏳ Agent 1: econ-adverse-selection-akerlof (研究中)
-  - ⏳ Agent 3: human-narrative-identity-mcadams (研究中)
-- 次ステップ: 全 6 JSON 収集 → ファイル修正 (academicKnowledge.ts + ACADEMIC_KNOWLEDGE.md) → 品質ゲート実行 → コミット・プッシュ
+- **進捗状況**:
+  - ✅ **Batch 376 完了** (2,261 → 2,267 概念, PR #マージ済み)
+  - ✅ **Batch 377 完了** (2,267 → 2,273 概念, 6 concepts 追加: Adverse Selection / Bounded Rationality / Narrative Identity / Good Faith / Second-Order Cybernetics / Signaling & Screening)
+  - ✅ **Batch 378 完了** (2,273 → 2,279 概念, 6 concepts 追加: Portfolio Theory / Organizational Sensemaking / Memory Consolidation / Agency Relationship / Digital Divide / Psychological Capital)
+  - 🔄 **Batch 379 待機中**: デデュプ & 候補生成準備状態
 - 開発ブランチ: **タスクプロンプトで指定されたブランチ**を使用（現在: `claude/eager-brown-7cev3c`）。
 - 1 バッチ = デデュプ → 候補生成 → 6並列エージェント → JSON収集 → ファイル追記 → ゲート全green → コミット → プッシュ。
 - 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
@@ -38,7 +35,7 @@
 | (統合) | uber-eats / demae-can 等は SERVICE_IDS・クライアント・snapshot・テストとして残存 |
 | 🔗 integrations (48) | GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva + Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE + 士業7 + EC/仕入/集客 + その他 |
 
-**品質メトリクス:** 5444 静的 / 5529 実行時 tests passing · typecheck / ESLint clean · verify:all green (69 service tests + 178 file:line refs + 6 metrics) · standalone HTML ~5843 KB · knowledge-vault 3039 files
+**品質メトリクス:** 5444 静的 / 5529 実行時 tests passing · typecheck / ESLint clean · verify:all green (69 service tests + 178 file:line refs + 6 metrics) · standalone HTML ~5858 KB · knowledge-vault 3051 files · academicKnowledge.ts 2,279 concepts
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
