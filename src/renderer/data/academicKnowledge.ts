@@ -37023,5 +37023,119 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://archive.org/details/puretheoryoflaw00kels', type: 'reference', label: 'Kelsen, H. (1967). Pure Theory of Law (trans. Max Knight). University of California Press.' },
     ],
   },
+  // --- Batch 408 (2,459 total) ---
+  {
+    id: 'econ-absorption-capacity',
+    discipline: 'economics',
+    title: '吸収能力（Absorptive Capacity）',
+    statement:
+      '吸収能力（Absorptive Capacity）とは、企業が外部の新しい知識を認識（recognize）し、消化・吸収（assimilate）し、' +
+      '商業的目的に応用（apply）する能力を指す概念である。コーエン＆レビンサールが1989年のEconomic Journal論文で導入し、' +
+      '1990年のAdministrative Science Quarterly論文「Absorptive Capacity: A New Perspective on Learning and Innovation」で' +
+      '体系化した。企業の既存知識基盤、とりわけ自社R&D投資が外部知識の吸収能力を規定するとし、R&Dの「二つの顔」' +
+      '（イノベーション創出と学習能力向上）を示した。ザーラ＆ジョージ（2002, Academy of Management Review）は潜在的吸収能力' +
+      '（獲得・消化）と実現的吸収能力（変換・活用）の4次元に再概念化し、理論的精緻化を行った。',
+    keyFigures: 'ウェズリー・コーエン ／ ダニエル・レビンサール ／ シェイカー・ザーラ ／ ジェラード・ジョージ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) Absorptive Capacity: A New Perspective on Learning and Innovation, Administrative Science Quarterly 35(1), 128-152' },
+      { url: 'https://www.jstor.org/stable/2233763', type: 'academic', label: 'Cohen & Levinthal (1989) Innovation and Learning: The Two Faces of R&D, The Economic Journal 99(397), 569-596' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra & George (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension, Academy of Management Review 27(2), 185-203' },
+    ],
+  },
+  {
+    id: 'human-episodic-future-thinking',
+    discipline: 'human-science',
+    title: 'エピソード的未来思考（将来事象の心的シミュレーション）',
+    statement:
+      'エピソード的未来思考（Episodic Future Thinking）とは、個人的な将来の出来事を事前に心的に体験する認知能力であり、' +
+      'Atance & O\'Neill (2001) がTrends in Cognitive Sciences誌で概念を命名・定義した。Schacter & Addis (2007) は' +
+      'Philosophical Transactions of the Royal Society B誌で「構成的エピソード・シミュレーション仮説」を提唱し、過去の' +
+      'エピソード記憶の断片を柔軟に再結合して未来シナリオを構築する神経メカニズムを示した。海馬・内側前頭前皮質を含む' +
+      'デフォルトモードネットワークが記憶想起と未来想像の双方に関与する。Szpunar (2010) はPerspectives on Psychological ' +
+      'Science誌のレビューで、意思決定・感情制御・目標設定における適応的機能を体系的に整理した。',
+    keyFigures: 'クリスティナ・アタンス ／ ダニエル・シャクター ／ ドナ・ローズ・アディス ／ カール・スプナー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1016/S1364-6613(00)01804-0', type: 'academic', label: 'Atance & O\'Neill (2001) Episodic future thinking, Trends in Cognitive Sciences 5(12), 533-539' },
+      { url: 'https://doi.org/10.1098/rstb.2007.2087', type: 'academic', label: 'Schacter & Addis (2007) The cognitive neuroscience of constructive memory, Phil Trans R Soc B 362(1481), 773-786' },
+      { url: 'https://doi.org/10.1177/1745691610362350', type: 'academic', label: 'Szpunar (2010) Episodic future thought: An emerging concept, Perspectives on Psychological Science 5(2), 142-162' },
+    ],
+  },
+  {
+    id: 'mgmt-executive-hubris',
+    discipline: 'management',
+    title: 'ヒューブリス仮説（経営者の過信）',
+    statement:
+      'ヒューブリス仮説は、CEOの過信（overconfidence）が企業価値を毀損する買収や過大なリスクテイクを引き起こすとする理論で' +
+      'ある。Roll（1986）は企業買収における買収プレミアムの過大支払いを経営者の傲慢さで説明し、Hayward & Hambrick（1997）は' +
+      'CEOの過信度と買収プレミアムの正の相関を実証した。Malmendier & Tate（2005）はストックオプション行使パターンからCEOの' +
+      '過信を測定し、過信CEOが内部キャッシュフローに対する投資感応度を高め、非効率な設備投資を行うことを示した。本仮説は' +
+      '行動コーポレートファイナンスの中核概念として、M&A研究・経営者交代・ガバナンス設計に広く応用されている。',
+    keyFigures: 'リチャード・ロール ／ ウルリケ・マルメンディア ／ ジェフリー・テイト ／ マシュー・ヘイワード',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1086/296325', type: 'academic', label: 'Roll, R. (1986). The Hubris Hypothesis of Corporate Takeovers. Journal of Business, 59(2), 197-216.' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2005.00813.x', type: 'academic', label: 'Malmendier, U. & Tate, G. (2005). CEO Overconfidence and Corporate Investment. Journal of Finance, 60(6), 2661-2700.' },
+      { url: 'https://doi.org/10.2307/2393810', type: 'academic', label: 'Hayward, M. L. A. & Hambrick, D. C. (1997). Explaining the Premiums Paid for Large Acquisitions: Evidence of CEO Hubris. Administrative Science Quarterly, 42(1), 103-127.' },
+    ],
+  },
+  {
+    id: 'bizlaw-commercial-frustration',
+    discipline: 'business-law',
+    title: '契約の挫折法理（履行不能による契約解消）',
+    statement:
+      'Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論を起源とし、Krell v. Henry（1903）の戴冠式事件で' +
+      '目的挫折類型へ拡張された。Davis Contractors v. Fareham UDC（1956）でRadcliffe卿は「契約が想定した義務と根本的に異なる' +
+      '（radically different）義務への変質」を判定基準とし、単なる履行困難や不採算では挫折を認めない立場を確立した。後発的' +
+      '事由（物の滅失・違法化・事情の根本的変更）により履行が不能・違法・当初想定と根本的に異なるものとなった場合に契約を' +
+      '将来に向けて自動的に解消する英米コモン・ローの法理である。Treitelはこの法理を体系的に整理し学説上の基盤を固めた。',
+    keyFigures: 'ブラックバーン ／ サイモン ／ ギュンター・トライテル',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1863/J1.html', type: 'academic', label: 'Taylor v Caldwell (1863) 3 B & S 826 — BAILII judgment text' },
+      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'academic', label: 'Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text' },
+      { url: 'https://publications.parliament.uk/pa/ld199596/ldjudgmt/davis.htm', type: 'reference', label: 'Davis Contractors Ltd v Fareham UDC [1956] AC 696 (HL) — Lord Radcliffe\'s radically different test' },
+      { url: 'https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677', type: 'reference', label: 'Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration' },
+    ],
+  },
+  {
+    id: 'infosoc-micro-celebrity',
+    discipline: 'information-sociology',
+    title: 'マイクロセレブリティ（自己呈示によるオンライン名声獲得の実践）',
+    statement:
+      'マイクロセレブリティとは、オンラインで戦略的に自己呈示を行い、オーディエンスをファンベースとして管理することで' +
+      'セレブリティ的な地位を獲得する実践・マインドセットを指す概念。テレサ・センフトがウェブカメラ配信者の民族誌' +
+      '『Camgirls』(2008, Peter Lang)で用語を提唱し、アリス・マーウィックが『Status Update』(2013, Yale UP)および' +
+      'Marwick & boyd (2011, Convergence 17(2):139-158)において、特定の地位ではなく「マインドセットと実践の集合」として' +
+      '再定義した。クリスタル・アビディン『Internet Celebrity』(2018, Emerald)はインフルエンサー文化の国際比較へ概念を拡張した。',
+    keyFigures: 'テレサ・センフト ／ アリス・マーウィック ／ クリスタル・アビディン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/1354856510394539', type: 'academic', label: 'Marwick & boyd (2011) To See and Be Seen: Celebrity Practice on Twitter, Convergence 17(2):139-158' },
+      { url: 'https://yalebooks.yale.edu/book/9780300209082/status-update/', type: 'academic', label: 'Marwick (2013) Status Update: Celebrity, Publicity, and Branding in the Social Media Age, Yale UP' },
+      { url: 'https://www.emerald.com/insight/publication/doi/10.1108/9781787560765', type: 'academic', label: 'Abidin (2018) Internet Celebrity: Understanding Fame Online, Emerald Publishing' },
+    ],
+  },
+  {
+    id: 'infosoc-digital-nomadism',
+    discipline: 'information-sociology',
+    title: 'デジタルノマディズム（場所非依存型ナレッジワーク）',
+    statement:
+      'デジタルノマディズムとは、情報通信技術を活用し特定の拠点に縛られず移動しながら遠隔就労する知識労働者のライフスタイル' +
+      'および労働現象を指す。牧本次生とD.マナーズが著書Digital Nomad(1997)で同概念を提唱し、半導体の小型化とネットワーク普及が' +
+      '場所からの解放をもたらすと予見した。その後、B.Y.トンプソン(2019, International Journal of the Sociology of Leisure)は' +
+      '特権性・余暇と労働の境界曖昧化・構築されたコミュニティの観点から実態を分析し、D.クック(2020, Information Technology & ' +
+      'Tourism)はデジタルノマドが労働と余暇の境界管理に高度な自己規律を要する「自由の罠」を指摘した。ナッシュら(2018, ' +
+      'iConference)はデジタルノマド概念の学術的定義と技術利用の類型化を試みている。',
+    keyFigures: 'ツギオ・マキモト ／ デイヴィッド・マナーズ ／ デイヴ・クック ／ レイチェル・トンプソン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://archive.org/details/digitalnomad0000maki', type: 'reference', label: 'Makimoto & Manners (1997) Digital Nomad, Wiley (Internet Archive)' },
+      { url: 'https://link.springer.com/article/10.1007/s40558-020-00172-4', type: 'academic', label: 'Cook (2020) The freedom trap: digital nomads and disciplining practices, Information Technology & Tourism 22(3):355-390' },
+      { url: 'https://link.springer.com/article/10.1007/s41978-018-00030-y', type: 'academic', label: 'Thompson (2019) The Digital Nomad Lifestyle, International Journal of the Sociology of Leisure 2(1-2):27-42' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-319-78105-1_25', type: 'academic', label: 'Nash et al. (2018) Digital Nomads Beyond the Buzzword, iConference 2018 (LNCS 10766):207-217' },
+    ],
+  },
 ];
 // Stryker restore all
