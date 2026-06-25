@@ -37373,5 +37373,132 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://press.princeton.edu/books/paperback/9780691150369/delete', type: 'academic', label: 'Mayer-Schönberger, V. 2009. Delete: The Virtue of Forgetting in the Digital Age. Princeton University Press.' },
     ],
   },
+  {
+    id: 'econ-kitchin-cycle',
+    discipline: 'economics',
+    title: 'キッチン循環：在庫投資の短期景気循環',
+    statement: 'ジョセフ・キッチンが1923年にReview of Economics and Statisticsで報告した' +
+      '約40ヶ月（3〜4年）周期の短期景気循環である。米英の銀行手形交換高・利子率・' +
+      '物価データから周期的変動を発見し、在庫投資の変動が主要因とされる。メッツラー' +
+      '（1941）は在庫加速度モデルを定式化し、在庫調整が景気変動を増幅するメカニズムを' +
+      '理論化した。シュンペーター（1939）は三重循環スキーマにおいてキッチン循環を' +
+      '最小単位に位置づけ、1ジュグラー循環に3キッチン循環が入れ子構造を成すと論じた。' +
+      'コロタイエフ＆ツィレル（2010）はスペクトル分析により世界GDPにおける約3〜4年' +
+      '周期の存在を確認した。',
+    keyFigures: 'ジョセフ・キッチン ／ ロイド・メッツラー ／ ヨーゼフ・シュンペーター',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1927031', type: 'academic', label: 'Kitchin, J. 1923. Cycles and Trends in Economic Factors. Review of Economics and Statistics, 5(1), 10-16.' },
+      { url: 'https://www.jstor.org/stable/i333262', type: 'academic', label: 'Metzler, L.A. 1941. The Nature and Stability of Inventory Cycles. Review of Economics and Statistics, 23(3), 113-129.' },
+      { url: 'https://archive.org/details/businesscycles0001schu', type: 'academic', label: 'Schumpeter, J.A. 1939. Business Cycles: A Theoretical, Historical, and Statistical Analysis of the Capitalist Process. McGraw-Hill.' },
+      { url: 'https://escholarship.org/uc/item/9jv108xp', type: 'academic', label: 'Korotayev, A.V. & Tsirel, S.V. 2010. A Spectral Analysis of World GDP Dynamics. Structure and Dynamics, 4(1), 3-57.' },
+    ],
+  },
+  {
+    id: 'human-apperceptive-mass',
+    discipline: 'human-science',
+    title: '統覚塊（アペルツェプツィオンスマッセ）',
+    statement: 'ヨハン・フリードリヒ・ヘルバルトが提唱した概念。意識内に既存する表象' +
+      '（Vorstellungen）の集合体を「統覚塊」と呼び、新たな知覚はこの塊と同化' +
+      '（統覚）されることで意味を獲得する。ヘルバルトは表象をニュートン力学に倣う' +
+      '力として数式化し、強い表象は弱い表象を「意識の閾」下に抑圧すると論じた' +
+      '（『科学としての心理学』1824-25年）。この枠組みはヴィルヘルム・ヴントの' +
+      '能動的統覚論に継承され、教育学では「予備・提示・比較・概括・応用」の五段階' +
+      '教授法の心理学的基礎となった。現代の図式（スキーマ）理論における既有知識に' +
+      'よる新情報の同化とも概念的に対応する。',
+    keyFigures: 'ヨハン・フリードリヒ・ヘルバルト ／ ヴィルヘルム・ヴント',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/johann-herbart/', type: 'academic', label: 'Johann Friedrich Herbart — Stanford Encyclopedia of Philosophy.' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11623920/', type: 'academic', label: 'Herbart\'s Mathematical Psychology — History of Psychology (PubMed).' },
+      { url: 'https://link.springer.com/article/10.1007/s41245-020-00117-z', type: 'academic', label: 'Apperzeption — Deutsche Vierteljahrsschrift für Literaturwissenschaft und Geistesgeschichte (Springer).' },
+      { url: 'https://www.britannica.com/topic/Herbartianism', type: 'reference', label: 'Herbartianism — Encyclopaedia Britannica.' },
+    ],
+  },
+  {
+    id: 'mgmt-managerial-discretion-hambrick',
+    discipline: 'management',
+    title: '経営者裁量論（ハンブリック & フィンケルシュタイン）',
+    statement: '経営者裁量とは、トップマネジャーが利用可能な行動の自由度（latitude of ' +
+      'action）を指す。Hambrick & Finkelstein（1987, Research in Organizational ' +
+      'Behavior）は、その規定要因として①タスク環境（産業の成長性・製品差別化可能性' +
+      'など）、②組織的要因（規模・文化・資源など）、③経営者特性（認知複雑性・統制の' +
+      '所在など）の三つを示した。裁量度が高いほどアッパー・エシュロン理論（Hambrick ' +
+      '& Mason 1984）の予測力が高まり、低い場合は経営者特性と成果の関係が弱まるため、' +
+      '裁量は同理論の調整変数として機能する。Hambrick（2007, AMR）はこの枠組みを' +
+      '改めて整理し将来課題を提示した。Finkelstein & Peteraf（2007）は経営者活動の' +
+      '複雑性・観察困難性が裁量を拡大するとして理論を拡張した。',
+    keyFigures: 'ドナルド・ハンブリック ／ シドニー・フィンケルシュタイン ／ マーガレット・ペテラフ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Managerial-discretion:-A-bridge-between-polar-views-Hambrick-Finkelstein/e0e2d6da2b170ef7da390c4979079cc4b32b090b', type: 'academic', label: 'Hambrick, D.C. & Finkelstein, S. 1987. Managerial Discretion: A Bridge between Polar Views of Organizational Outcomes. Research in Organizational Behavior, 9, 369-406.' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, D.C. 2007. Upper Echelons Theory: An Update. Academy of Management Review, 32(2), 334-343.' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1476127007079975', type: 'academic', label: 'Finkelstein, S. & Peteraf, M.A. 2007. Managerial Activities: A Missing Link in Managerial Discretion Theory. Strategic Organization, 5(3), 237-248.' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206314554214', type: 'academic', label: 'Wangrow, D.B., Schepker, D.J. & Barker, V.L. 2015. Managerial Discretion: An Empirical Review. Journal of Management, 41(1).' },
+    ],
+  },
+  {
+    id: 'mgmt-structural-contingency-donaldson',
+    discipline: 'management',
+    title: '構造コンティンジェンシー理論',
+    statement: '構造コンティンジェンシー理論はレックス・ドナルドソンが体系化した組織論' +
+      'である。バーンズ＆ストーカー（1961）のメカニスティック／オーガニック区分、' +
+      'ローレンス＆ローシュ（1967）の分化・統合フレームワーク、ウッドワードの技術と' +
+      '構造の連関を統合する。ドナルドソン（2001）『The Contingency Theory of ' +
+      'Organizations』は、組織の有効性が構造と環境・規模・戦略・技術などの' +
+      'コンティンジェンシー要因との「適合」に依存すると論じた。適合が崩れると業績が' +
+      '低下し構造再調整が生じるSARFITモデルを提唱した。',
+    keyFigures: 'レックス・ドナルドソン ／ トム・バーンズ ／ G・M・ストーカー ／ ポール・ローレンス ／ ジェイ・ローシュ ／ ジョーン・ウッドワード',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://sk.sagepub.com/books/the-contingency-theory-of-organizations', type: 'academic', label: 'Donaldson, L. 2001. The Contingency Theory of Organizations. SAGE Publications.' },
+      { url: 'https://www.jstor.org/stable/2391170', type: 'academic', label: 'Lawrence, P.R. & Lorsch, J.W. 1967. Differentiation and Integration in Complex Organizations. Administrative Science Quarterly, 12(1), 1-47.' },
+      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-150', type: 'reference', label: 'Oxford Research Encyclopedia of Business and Management: Contingency Theory of Organizations.' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1987.4277506', type: 'academic', label: 'Fry, L.W. & Smith, D.A. 1987. Congruence, Contingency, and Theory Building. Academy of Management Review, 12(1), 117-132.' },
+    ],
+  },
+  {
+    id: 'bizlaw-shareholder-oppression-remedy',
+    discipline: 'business-law',
+    title: '少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）',
+    statement: '非公開会社（閉鎖会社）において多数派株主が少数株主の正当な期待を侵害' +
+      'する行為を「株主抑圧」といい、各国法は救済手段を整備する。英国会社法2006年' +
+      '第994条は不公正侵害行為に対する衡平法的救済を認め、O\'Neill v Phillips ' +
+      '[1999]（ホフマン卿）は「正当な期待」概念を確立した。米国MBCA §14.30は' +
+      '解散命令を規定するが裁判所は株式強制買取を優先する。Thompson & Thomasは' +
+      '買取救済の経済分析を行い、Mollは「合理的期待」基準の統一を提唱した。日本法' +
+      'では株主総会決議取消訴訟・代表訴訟が対応するが英米流の包括的不公正侵害救済' +
+      '規定は存在しない。',
+    keyFigures: 'ロバート・トンプソン ／ ランドール・トーマス ／ ダグラス・モル ／ レナード・ホフマン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/2006/46/section/994', type: 'government', label: 'UK Companies Act 2006 s.994 — Petition by company member (legislation.gov.uk).' },
+      { url: 'https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=1159&context=vlr', type: 'academic', label: 'Moll, D.K. 2001. Shareholder Oppression & "Fair Value": Of Discounts, Dates, and Dastardly Deeds in the Close Corporation. Vanderbilt Law Review, 54(3).' },
+      { url: 'https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=1083&context=vlr', type: 'academic', label: 'Thompson, R.B. & Thomas, R.S. 2004. The Public and Private Faces of Derivative Lawsuits. Vanderbilt Law Review, 57(5).' },
+      { url: 'https://www.americanbar.org/groups/business_law/resources/business-law-today/2019-march/shareholder-oppression-in-close-corporations/', type: 'reference', label: 'American Bar Association, Business Law Today — Shareholder Oppression in Close Corporations (2019).' },
+    ],
+  },
+  {
+    id: 'infosoc-protocol-politics-galloway',
+    discipline: 'information-sociology',
+    title: 'プロトコル政治論：分散化後の制御様式',
+    statement: 'アレクサンダー・ギャロウェイは『プロトコル——分散化後にいかにして制御は' +
+      '存在するか』（MIT Press, 2004）において、TCP/IP・DNS・HTTPなどのインター' +
+      'ネットプロトコルが「プロトコル論的制御」という新たな権力形態を構成すると論じた。' +
+      'この制御は中央集権的でも無政府的でもなく、分散的でありながら厳密に規律化されて' +
+      'いる。ギャロウェイはドゥルーズ「管理社会についての覚書」（1990）を援用し、' +
+      'プロトコルを管理社会における統治様式として位置づける。TCP/IPが水平的な情報分散' +
+      'を実現する一方、DNSはその論理を垂直的に階層化する。レッシグ「コードは法である」' +
+      '（1999）との接点では、技術的アーキテクチャが行動可能性を規定するという共通認識' +
+      'がある。現代のプラットフォーム統治論への理論的基盤として再評価されている。',
+    keyFigures: 'アレクサンダー・ギャロウェイ ／ ジル・ドゥルーズ ／ ローレンス・レッシグ ／ ユージン・サッカー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://mitpress.mit.edu/9780262572330/protocol/', type: 'reference', label: 'Galloway, A.R. 2004. Protocol: How Control Exists after Decentralization. MIT Press.' },
+      { url: 'https://direct.mit.edu/grey/article/doi/10.1162/1526381042464572/10432/Protocol-Control-and-Networks', type: 'academic', label: 'Galloway, A.R. & Thacker, E. 2004. Protocol, Control, and Networks. Grey Room, 17, 6-29.' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/026327640602300241', type: 'academic', label: 'Galloway, A.R. 2006. Protocol. Theory, Culture & Society, 23(2-3).' },
+      { url: 'https://hls.harvard.edu/bibliography/code-and-other-laws-of-cyberspace/', type: 'reference', label: 'Lessig, L. 1999. Code and Other Laws of Cyberspace. Basic Books. Harvard Law School bibliography.' },
+    ],
+  },
 ];
 // Stryker restore all
