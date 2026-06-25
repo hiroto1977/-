@@ -37500,5 +37500,128 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hls.harvard.edu/bibliography/code-and-other-laws-of-cyberspace/', type: 'reference', label: 'Lessig, L. 1999. Code and Other Laws of Cyberspace. Basic Books. Harvard Law School bibliography.' },
     ],
   },
+  {
+    id: 'econ-fiscal-multiplier-controversy',
+    discipline: 'economics',
+    title: '財政乗数論争：緊縮財政の実証的帰結をめぐる議論',
+    statement: '財政乗数（fiscal multiplier）の大きさをめぐる論争は、2008年金融危機後の' +
+      '緊縮政策を契機に再燃した。ブランシャール&リー（2013）はIMFワーキングペーパーで、' +
+      '危機時の財政乗数が従来想定の0.5ではなく1.5前後であったことを実証し、緊縮政策の' +
+      '経済的損害が過小評価されていたと結論づけた。ラメイ（2011）はSVAR手法を用いて軍事' +
+      '支出乗数を0.6-1.2と推定し、乗数が1を大幅に超えないとする立場を示した。' +
+      'アウエルバック&ゴロドニチェンコ（2012）は体制転換モデルにより不況期の乗数が好況期' +
+      'の数倍に達することを示し、経済状態による乗数の非対称性を立証した。この論争は財政' +
+      '政策の設計に直接的な影響を与え続けている。',
+    keyFigures: 'オリヴィエ・ブランシャール ／ ダニエル・リー ／ ヴァレリー・ラメイ ／ アラン・アウエルバック ／ ユーリー・ゴロドニチェンコ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.103.3.117', type: 'academic', label: 'Blanchard, O. & Leigh, D. 2013. Growth Forecast Errors and Fiscal Multipliers. American Economic Review, 103(3), 117-120.' },
+      { url: 'https://doi.org/10.1093/qje/qjq008', type: 'academic', label: 'Ramey, V.A. 2011. Identifying Government Spending Shocks: It\'s All in the Timing. Quarterly Journal of Economics, 126(1), 1-50.' },
+      { url: 'https://doi.org/10.1257/pol.4.2.1', type: 'academic', label: 'Auerbach, A.J. & Gorodnichenko, Y. 2012. Measuring the Output Responses to Fiscal Policy. American Economic Journal: Economic Policy, 4(2), 1-27.' },
+    ],
+  },
+  {
+    id: 'human-ecological-systems-bronfenbrenner',
+    discipline: 'human-science',
+    title: 'ブロンフェンブレンナーの生態学的システム理論：入れ子状の環境層と人間発達',
+    statement: 'ユーリー・ブロンフェンブレンナーは1979年の著書『人間発達の生態学』' +
+      '（Harvard University Press）において、人間の発達が入れ子状に配置された環境' +
+      'システム（マイクロ・メゾ・エクソ・マクロシステム）の相互作用によって形成される' +
+      'と提唱した。1986年にはクロノシステム（時間的次元）を追加し5層構造を完成させた。' +
+      '後年モリスと共に生物生態学的モデル（PPCT: Process-Person-Context-Time）へ発展' +
+      'させ、近接過程（proximal processes）を発達の主要な駆動力と位置づけた。米国の' +
+      'ヘッドスタート計画の共同創設者でもあり、理論は発達心理学・教育政策・ソーシャル' +
+      'ワークに広範な影響を及ぼしている。',
+    keyFigures: 'ユーリー・ブロンフェンブレンナー ／ パメラ・モリス',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674224575', type: 'academic', label: 'Bronfenbrenner, U. 1979. The Ecology of Human Development: Experiments by Nature and Design. Harvard University Press.' },
+      { url: 'https://doi.org/10.1002/9780470147658.chpsy0114', type: 'academic', label: 'Bronfenbrenner, U. & Morris, P.A. 2006. The Bioecological Model of Human Development. In Handbook of Child Psychology, Vol. 1 (6th ed., pp. 793-828). Wiley.' },
+      { url: 'https://psycnet.apa.org/record/2005-01926-019', type: 'academic', label: 'Bronfenbrenner, U. & Morris, P.A. 1998. The Ecology of Developmental Processes. In Handbook of Child Psychology, Vol. 1 (5th ed., pp. 993-1028). Wiley.' },
+    ],
+  },
+  {
+    id: 'mgmt-ambidextrous-organization-tushman',
+    discipline: 'management',
+    title: '両利きの組織（Ambidextrous Organization）：探索と活用の同時追求',
+    statement: '両利きの組織とは、既存事業の効率的な活用（exploitation）と新規事業の' +
+      '革新的な探索（exploration）を同時に追求できる組織能力を指す。マーチ（1991）が' +
+      '探索と活用のトレードオフを組織学習の根本的問題として定式化し、ダンカン（1976）が' +
+      '「ambidextrous」の用語を組織設計に最初に適用した。タッシュマン&オライリー' +
+      '（1996）は構造的分離による両利き性を提唱し、探索部門と活用部門を組織的に分離' +
+      'しつつ上位経営層で統合するモデルを示した。ギブソン&バーキンショー（2004）は' +
+      '文脈的両利き性（contextual ambidexterity）の概念を導入し、構造的分離ではなく' +
+      '組織文脈の設計により個人レベルでの探索・活用の切替を可能にする代替経路を実証した。',
+    keyFigures: 'ロバート・ダンカン ／ ジェームズ・マーチ ／ マイケル・タッシュマン ／ チャールズ・オライリー ／ クリスティーナ・ギブソン ／ ジュリアン・バーキンショー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/abs/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J.G. 1991. Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/41165852', type: 'academic', label: 'Tushman, M.L. & O\'Reilly, C.A. 1996. Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amj.2004.14367821', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. 2004. The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0170840608090530', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. 2008. Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.' },
+    ],
+  },
+  {
+    id: 'bizlaw-business-judgment-rule-evolution',
+    discipline: 'business-law',
+    title: '経営判断の原則の歴史的発展（Business Judgment Rule）',
+    statement: '経営判断の原則（BJR）は、取締役の経営判断が誠実・情報収集・合理的信念に' +
+      '基づく限り裁判所が事後的に介入しないという法理である。1829年のPercy v. Millaudon' +
+      '判決に端を発し、デラウェア州のAronson v. Lewis（1984）で現代的定式化を確立した。' +
+      'ベインブリッジはBJRを取締役会の権限保護原則として再構成し、アイゼンバーグは' +
+      '合理的注意基準としての解釈を精緻化した。Smith v. Van Gorkom（1985）はBJRの' +
+      '適用が否定された画期的判例であり、十分な情報収集義務の重要性を示した。日本では' +
+      '会社法330条・355条の善管注意義務・忠実義務の解釈を通じて類似の法理が展開され、' +
+      'アパマンショップ事件最高裁決定（2010年）が経営判断原則の実質的適用を示している。',
+    keyFigures: 'スティーブン・ベインブリッジ ／ メルヴィン・アイゼンバーグ ／ ウィリアム・アレン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol55/iss1/3/', type: 'academic', label: 'Bainbridge, S.M. 2004. The Business Judgment Rule as Abstention Doctrine. Vanderbilt Law Review, 57(1), 83-130.' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1984/473-a-2d-805-4.html', type: 'government', label: 'Aronson v. Lewis, 473 A.2d 805 (Del. 1984). デラウェア州最高裁によるBJR現代的定式化。' },
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: '会社法（平成17年法律第86号）330条・355条。善管注意義務・忠実義務規定。' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-slack-cyert-march',
+    discipline: 'management',
+    title: '組織スラック理論：余剰資源と組織行動',
+    statement: 'サイアート&マーチ（1963）は『企業の行動理論』において組織スラック' +
+      '（organizational slack）を、組織が連合体の構成員を維持するために必要な最低限を' +
+      '超えて保有する余剰資源と定義し、コンフリクト緩衝・環境変動への適応・革新の促進' +
+      'という3機能を提示した。ブルジョワ（1981）はAcademy of Management Reviewで' +
+      'スラックの操作的測定手法を提案し、利用可能スラック・回復可能スラック・潜在的' +
+      'スラックの3類型を体系化した。ノーリア&グラティ（1996）はスラックとイノベーション' +
+      'の関係が逆U字型であることを実証し、適度なスラックが最もイノベーションを促進' +
+      'するが、過剰なスラックは自己満足と非効率を招くことを示した。ジョージ（2005）は' +
+      'スラック研究を包括的にレビューし、吸収済スラックと未吸収スラックの区分を整理した。',
+    keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ ジェイ・ブルジョワ ／ ニティン・ノーリア ／ ランジェイ・グラティ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.5465/amr.1981.4287985', type: 'academic', label: 'Bourgeois, L.J. III. 1981. On the Measurement of Organizational Slack. Academy of Management Review, 6(1), 29-39.' },
+      { url: 'https://doi.org/10.2307/256998', type: 'academic', label: 'Nohria, N. & Gulati, R. 1996. Is Slack Good or Bad for Innovation? Academy of Management Journal, 39(5), 1245-1264.' },
+      { url: 'https://doi.org/10.1016/S0148-2963(02)00439-3', type: 'academic', label: 'George, G. 2005. Slack Resources and the Performance of Privately Held Firms. Academy of Management Journal, 48(4), 661-676.' },
+    ],
+  },
+  {
+    id: 'infosoc-network-gatekeeping-barzilai-nahon',
+    discipline: 'information-sociology',
+    title: 'ネットワーク・ゲートキーピング理論：デジタル時代の情報統制メカニズム',
+    statement: 'カリーヌ・バルジライ＝ナホンはレヴィン（1947）の古典的ゲートキーピング' +
+      '概念をネットワーク社会に適応させ、ネットワーク・ゲートキーピング理論（NGT）を' +
+      '構築した。バルジライ＝ナホン（2008）はJASIST誌で、ゲートキーパーの権力がネット' +
+      'ワーク構造における位置・情報制御能力・ゲーティングメカニズム（選択・追加・保留・' +
+      '表示・チャネリング・操作・削除・反復）の8類型によって規定されると体系化した。' +
+      '2009年にはシューメーカーとの共著でゲートキーピング理論の歴史的系譜を包括的に' +
+      'レビューし、マスメディア時代の一方向的統制からネットワーク時代の多方向的・分散的' +
+      '統制への転換を論じた。プラットフォームのアルゴリズム的キュレーションやコンテンツ' +
+      'モデレーションの分析に理論的基盤を提供している。',
+    keyFigures: 'カリーヌ・バルジライ＝ナホン ／ クルト・レヴィン ／ パメラ・シューメーカー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1002/asi.20857', type: 'academic', label: 'Barzilai-Nahon, K. 2008. Toward a Theory of Network Gatekeeping: A Framework for Exploring Information Control. Journal of the American Society for Information Science and Technology, 59(9), 1493-1512.' },
+      { url: 'https://doi.org/10.1002/aris.2009.1440430117', type: 'academic', label: 'Barzilai-Nahon, K. 2009. Gatekeeping: A Critical Review. Annual Review of Information Science and Technology, 43(1), 1-79.' },
+      { url: 'https://www.taylorfrancis.com/books/mono/10.4324/9780203931653/gatekeeping-theory-pamela-shoemaker-timothy-vos', type: 'academic', label: 'Shoemaker, P.J. & Vos, T.P. 2009. Gatekeeping Theory. Routledge.' },
+    ],
+  },
 ];
 // Stryker restore all
