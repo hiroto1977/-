@@ -37137,5 +37137,121 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/chapter/10.1007/978-3-319-78105-1_25', type: 'academic', label: 'Nash et al. (2018) Digital Nomads Beyond the Buzzword, iConference 2018 (LNCS 10766):207-217' },
     ],
   },
+  // --- Batch 409 (2,465 total) ---
+  {
+    id: 'econ-ricardian-vice',
+    discipline: 'economics',
+    title: 'リカーディアン・ヴァイス（リカードの悪弊）',
+    statement:
+      'リカーディアン・ヴァイスとは、ヨーゼフ・シュンペーターが遺著『経済分析の歴史』(1954, Oxford UP)で命名した、デヴィッド・' +
+      'リカードの方法論に対する批判概念である。リカードが本来は未知数である変数を所与として扱い、過度に単純化されたモデルから' +
+      '論理的に厳密だが非現実的な結論を導き出し、それを複雑な現実の政策問題にそのまま適用する「悪弊」を指す。シュンペーター' +
+      'は「薄弱な理論的基盤の上に実践的結論の重荷を積み上げる習慣」(p.1171)と批判した。マーク・ブローグは『リカード経済学』' +
+      '(1958)および『経済学の方法論』(1980)でこの批判を方法論的に展開し、ハインツ・クルツはIESS第2版(2008)の項目および' +
+      'J. Evol. Econ.論文(2017)で概念を再検討した。',
+    keyFigures: 'ヨーゼフ・シュンペーター ／ デヴィッド・リカード ／ マーク・ブローグ ／ ハインツ・クルツ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s00191-016-0468-2', type: 'academic', label: 'Kurz (2017) Is there a \'Ricardian Vice\'? Journal of Evolutionary Economics 27(1):91-114' },
+      { url: 'https://www.cambridge.org/core/books/methodology-of-economics/A02870A52E4F457D4EFBAA3242BAE541', type: 'academic', label: 'Blaug (1980/1992) The Methodology of Economics, Cambridge UP' },
+      { url: 'https://archive.org/details/ricardianeconomi0000blau', type: 'reference', label: 'Blaug (1958) Ricardian Economics: A Historical Study, Yale UP' },
+      { url: 'https://archive.org/details/dli.ernet.505700', type: 'reference', label: 'Schumpeter (1954) History of Economic Analysis, Oxford UP (ed. E.B. Schumpeter)' },
+    ],
+  },
+  {
+    id: 'human-body-schema',
+    discipline: 'human-science',
+    title: '身体図式（ボディスキーマ）',
+    statement:
+      '身体図式とは、姿勢・運動の制御を支える前反省的・感覚運動的な身体表象であり、意識的な注意を向けずとも空間内での行為を' +
+      '導く神経機能的枠組みをいう。神経学者ヘンリー・ヘッドとゴードン・ホームズが1911年のBrain誌論文「Sensory disturbances ' +
+      'from cerebral lesions」で、大脳皮質が姿勢変化の入力を統合し身体の空間的モデルを維持する機構として提唱した。哲学者' +
+      'ショーン・ギャラガーは1995年のGallagher & Cole論文および2005年の著書『How the Body Shapes the Mind』で、意識的に対象化' +
+      'された身体像（body image）と、行為遂行中に暗黙に機能する身体図式（body schema）を体系的に区別し、両概念の混同を整理した。',
+    keyFigures: 'ヘンリー・ヘッド ／ ゴードン・ホームズ ／ ショーン・ギャラガー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://academic.oup.com/brain/article-abstract/34/2-3/102/331188', type: 'academic', label: 'Head & Holmes (1911) Sensory disturbances from cerebral lesions, Brain 34(2-3):102-254' },
+      { url: 'https://global.oup.com/academic/product/how-the-body-shapes-the-mind-9780199271948', type: 'academic', label: 'Gallagher (2005) How the Body Shapes the Mind, Oxford University Press' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/09515089508573266', type: 'academic', label: 'Gallagher & Cole (1995) Body image and body schema in a deafferented subject, Journal of Mind and Behavior 16(4):369-390' },
+    ],
+  },
+  {
+    id: 'mgmt-attention-based-view-ocasio',
+    discipline: 'management',
+    title: '企業のアテンション・ベースト・ビュー（注意基盤理論）',
+    statement:
+      'ウィリアム・オカシオが1997年にStrategic Management Journal誌で発表した「Towards an Attention-Based View of the Firm」で' +
+      '提唱した理論。企業行動は意思決定者がどの争点（issues）と答え（answers）に注意を向けるかによって決定されるとする。' +
+      'ハーバート・サイモンの限定合理性を基盤とし、ジョセフ・バウワーの資源配分プロセス研究（1970）を先行知見として位置づける。' +
+      '理論は3原則で構成される。(1)注意の焦点——行動は注目する争点と答えに依存する。(2)状況づけられた注意——注目対象は具体的な' +
+      '文脈に依存する。(3)注意の構造的配分——組織のルール・資源・社会的関係が注意パターンを形成する。オカシオは2011年の' +
+      'Organization Science誌論文「Attention to Attention」で理論を拡張し研究プログラムを体系化した。',
+    keyFigures: 'ウィリアム・オカシオ ／ ジョセフ・バウワー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0266(199707)18:1+%3C187::AID-SMJ936%3E3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) Towards an Attention-Based View of the Firm, Strategic Management Journal 18(S1): 187-206' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1100.0602', type: 'academic', label: 'Ocasio, W. (2011) Attention to Attention, Organization Science 22(5): 1286-1296' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=4884', type: 'reference', label: 'Bower, J.L. (1970) Managing the Resource Allocation Process, Harvard Business School' },
+    ],
+  },
+  {
+    id: 'bizlaw-joint-venture-doctrine',
+    discipline: 'business-law',
+    title: 'ジョイント・ベンチャー法理（共同事業の法的枠組み）',
+    statement:
+      'ジョイント・ベンチャー（JV）法理とは、複数の当事者が特定の事業目的のために資本・労務・技術を出し合い共同事業を営む' +
+      '結合形態に適用される法的枠組みをいう。パートナーシップと異なり、JVは限定された目的・期間の事業に限られるが、米国法上は' +
+      'パートナーシップ法（UPA/RUPA）が準用され、構成員間には忠実義務・善管注意義務が課される。Meinhard v. Salmon判決（1928年、' +
+      'カードーゾ判事）は、JV当事者間の信認義務を「最も敏感な名誉の基準」と表現した。反トラスト法上、BMI v. CBS判決（1979年、' +
+      '441 U.S. 1）はJVの共同行為を当然違法とせず合理の原則で分析すべきとし、Texaco Inc. v. Dagher判決（2006年、547 U.S. 1）は' +
+      '適法なJV内部の価格設定はシャーマン法の当然違法に該当しないと判示した。',
+    keyFigures: 'アラン・ブロンバーグ ／ ラリー・リブスタイン ／ ベンジャミン・カードーゾ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/441/1/', type: 'government', label: 'Broadcast Music, Inc. v. CBS, 441 U.S. 1 (1979)' },
+      { url: 'https://supreme.justia.com/cases/federal/us/547/1/', type: 'government', label: 'Texaco Inc. v. Dagher, 547 U.S. 1 (2006)' },
+      { url: 'https://en.wikipedia.org/wiki/Meinhard_v._Salmon', type: 'reference', label: 'Wikipedia — Meinhard v. Salmon, 249 N.Y. 458 (1928)' },
+      { url: 'https://www.americanbar.org/groups/business_law/resources/business-law-today/2020-january/joint-ventures/', type: 'academic', label: 'ABA Business Law Today — Joint Ventures: Key Issues (2020)' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-feudalism',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム封建制（デジタル封建制）',
+    statement:
+      'プラットフォーム封建制（テクノ封建制）とは、巨大デジタルプラットフォームが市場競争を介さず地代的収益（レント）を抽出し、' +
+      '利用者・労働者を領主＝農奴的な従属関係に置くという新封建主義的構造を指す比喩・理論枠組みである。セドリック・デュランは' +
+      '『Techno-féodalisme』(2020)でGAFAMがデジタル領地を囲い込み封建的蓄積を行うと論じた。ヤニス・ヴァルファキスは' +
+      '『Technofeudalism』(2023)で「クラウド資本」が市場資本主義を置換し利用者をクラウド農奴化すると主張した。ジョディ・ディーン' +
+      'はコミュニケーション資本主義論を発展させ新封建制の階級構造を分析している(2021)。',
+    keyFigures: 'ジョディ・ディーン ／ セドリック・デュラン ／ ヤニス・ヴァルファキス',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.editionsladecouverte.fr/technofeodalisme-9782355221156', type: 'academic', label: 'C. Durand, Techno-feodalisme: Critique de l\'economie numerique, La Decouverte (2020)' },
+      { url: 'https://newbooksnetwork.com/technofeudalism', type: 'media', label: 'Y. Varoufakis, Technofeudalism: What Killed Capitalism, Melville House (2023)' },
+      { url: 'https://scholarlypublishingcollective.org/jappc/article-lookup/doi/10.5325/jasiapacipopcult.6.1.0191', type: 'academic', label: 'J. Dean, Communicative Capitalism and Neo-Feudalism, Journal of Asia-Pacific Pop Culture (2021)' },
+    ],
+  },
+  {
+    id: 'infosoc-ghost-work',
+    discipline: 'information-sociology',
+    title: 'ゴーストワーク（AI背後の不可視労働）',
+    statement:
+      'ゴーストワーク（Ghost Work）とは、AIシステムやオンデマンド・プラットフォームの背後で、コンテンツ審査・データラベリング・' +
+      '学習データ作成等を担う不可視の人間労働を指す概念である。メアリー・グレイとシッダールタ・スリが2019年の著書『Ghost Work: ' +
+      'How to Stop Silicon Valley from Building a New Global Underclass』（Houghton Mifflin Harcourt）で体系化し、自動化されて' +
+      'いるかに見えるサービスが実際には大規模なタスク分割型の人間労働に依存している実態を明らかにした。リリー・イラニは2015年の' +
+      'New Media & Society論文でマイクロワークの文化的構築を分析し、またイラニとシルバーマンはCHI 2013でTurkopticonを発表し、' +
+      'Amazon Mechanical Turkにおける労働者の不可視性を技術的に可視化する試みを提示した。',
+    keyFigures: 'メアリー・グレイ ／ シッダールタ・スリ ／ リリー・イラニ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://ghostwork.info/', type: 'reference', label: 'Gray & Suri (2019) Ghost Work — Official Book Site' },
+      { url: 'https://doi.org/10.1177/1461444813511926', type: 'academic', label: 'Irani, L. (2015) The cultural work of microwork, New Media & Society 17(5):720-739' },
+      { url: 'https://doi.org/10.1145/2470654.2470742', type: 'academic', label: 'Irani, L. & Silberman, M.S. (2013) Turkopticon: Interrupting Worker Invisibility in Amazon Mechanical Turk, CHI 2013' },
+      { url: 'https://www.microsoft.com/en-us/research/publication/ghost-work-how-to-stop-silicon-valley-from-building-a-new-global-underclass-co-authored-with-siddharth-suri/', type: 'academic', label: 'Microsoft Research — Ghost Work (Gray & Suri 2019)' },
+    ],
+  },
 ];
 // Stryker restore all
