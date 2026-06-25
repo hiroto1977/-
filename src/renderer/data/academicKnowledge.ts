@@ -37253,5 +37253,125 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.microsoft.com/en-us/research/publication/ghost-work-how-to-stop-silicon-valley-from-building-a-new-global-underclass-co-authored-with-siddharth-suri/', type: 'academic', label: 'Microsoft Research — Ghost Work (Gray & Suri 2019)' },
     ],
   },
+  {
+    id: 'econ-hysteresis-macroeconomics',
+    discipline: 'economics',
+    title: 'マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）',
+    statement: 'マクロ経済学的ヒステリシスとは、一時的な経済ショックが産出量・雇用・' +
+      '成長経路に恒久的な影響を及ぼすという理論である。ブランシャール&サマーズ' +
+      '（1986）はNBER Macroeconomics Annualでインサイダー・アウトサイダー・' +
+      'モデルを用いて欧州の高失業持続を説明し、失業率の単位根検定によりヒステリシス' +
+      '仮説を実証的に示した。サマーズは2014年に長期停滞論を復活させ、ゼロ金利下限' +
+      'での需要不足が潜在成長率を恒久的に低下させると論じた。ボール（2014）はOECD' +
+      '23カ国のデータから平均8.4%の潜在産出量損失を推定し、ヒステリシス効果の' +
+      '規模を実証的に確認した。',
+    keyFigures: 'オリヴィエ・ブランシャール ／ ローレンス・サマーズ ／ ローレンス・ボール',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.nber.org/system/files/chapters/c4245/c4245.pdf', type: 'academic', label: 'Blanchard, O.J. & Summers, L.H. 1986. Hysteresis and the European Unemployment Problem. NBER Macroeconomics Annual, 1, 15-78.' },
+      { url: 'https://ideas.repec.org/a/pal/buseco/v49y2014i2p65-73.html', type: 'academic', label: 'Summers, L.H. 2014. U.S. Economic Prospects: Secular Stagnation, Hysteresis, and the Zero Lower Bound. Business Economics, 49(2), 65-73.' },
+      { url: 'https://doi.org/10.3386/w20185', type: 'academic', label: 'Ball, L. 2014. Long-Term Damage from the Great Recession in OECD Countries. NBER Working Paper 20185.' },
+    ],
+  },
+  {
+    id: 'human-mirror-neuron-controversy',
+    discipline: 'human-science',
+    title: 'ミラーニューロン論争（Mirror Neuron Controversy）',
+    statement: 'ミラーニューロンは他者の行動観察時に自己の運動実行時と同様に発火する' +
+      '神経細胞である。リッツォラッティらが1996年にマカクザルの前運動皮質F5領域で' +
+      '発見し、ガレーゼやイアコボーニは人間の共感・言語・模倣の神経基盤へと拡大解釈' +
+      'した。しかしヒッコクは2009年のJournal of Cognitive Neuroscience論文で' +
+      '8つの問題点を体系的に指摘し、2014年の著書The Myth of Mirror Neuronsで' +
+      '運動系損傷が言語理解を障害しない臨床証拠を示して因果的役割を否定した。ヘイズ' +
+      'は連合学習による代替説明を提唱し、霊長類での発見は確認されるものの人間認知' +
+      'への説明力をめぐり論争が続いている。',
+    keyFigures: 'ジャコモ・リッツォラッティ ／ ヴィットーリオ・ガレーゼ ／ グレゴリー・ヒッコク ／ セシリア・ヘイズ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/8628763/', type: 'academic', label: 'Rizzolatti, G. et al. 1996. Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3(2), 131-141.' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/', type: 'academic', label: 'Hickok, G. 2009. Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans. Journal of Cognitive Neuroscience, 21(7), 1229-1243.' },
+      { url: 'https://wwnorton.com/books/The-Myth-of-Mirror-Neurons/', type: 'academic', label: 'Hickok, G. 2014. The Myth of Mirror Neurons: The Real Neuroscience of Communication and Cognition. W.W. Norton.' },
+    ],
+  },
+  {
+    id: 'mgmt-upper-echelons-theory-hambrick',
+    discipline: 'management',
+    title: '経営幹部層理論（Upper Echelons Theory）',
+    statement: '経営幹部層理論は、組織の戦略的選択と業績がトップマネジメントチーム（TMT）' +
+      'の特性（年齢・在職期間・教育・機能的背景）によって部分的に予測されるとする理論' +
+      'である。ハンブリック&メイソン（1984）がAcademy of Management Reviewで提唱し、' +
+      '経営者の認知的基盤と価値観が戦略的意思決定を形成するフレームワークを構築した。' +
+      'カーペンター・ゲレトカニッチ&サンダース（2004）はJournal of Managementで' +
+      '20年間の実証研究を包括的にレビューした。ハンブリック（2007）の理論更新では' +
+      'マネジメント裁量度と行動的統合が理論の境界条件として重要であることを強調した。',
+    keyFigures: 'ドナルド・ハンブリック ／ フィリス・メイソン ／ メイソン・カーペンター',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick, D.C. & Mason, P.A. 1984. Upper Echelons: The Organization as a Reflection of Its Top Managers. Academy of Management Review, 9(2), 193-206.' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, D.C. 2007. Upper Echelons Theory: An Update. Academy of Management Review, 32(2), 334-343.' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0149206304000625', type: 'academic', label: 'Carpenter, M.A., Geletkanycz, M.A. & Sanders, W.G. 2004. Upper Echelons Research Revisited. Journal of Management, 30(6), 749-778.' },
+    ],
+  },
+  {
+    id: 'bizlaw-ultra-vires-doctrine-modern',
+    discipline: 'business-law',
+    title: '近代企業法における越権行為法理（Ultra Vires Doctrine）',
+    statement: '越権行為法理（ultra vires doctrine）は、企業が定款に定められた目的の' +
+      '範囲内でのみ行為できるとする原則である。1875年のAshbury Railway Carriage & ' +
+      'Iron Co v Riche事件で貴族院が確立し、越権行為は株主の全員一致によっても追認' +
+      '不能とされた。しかし20世紀後半に立法的改革が進み、米国ではモデル事業会社法' +
+      '第3.04条が越権を理由とする契約無効の主張を原則禁止し、英国では2006年会社法' +
+      '第39条・第40条が第三者保護を強化して事実上廃止した。現在、営利企業法では' +
+      'ほぼ形骸化したが、公共団体・地方自治体・非営利法人法では依然として機能して' +
+      'いる。',
+    keyFigures: 'スティーブン・リーコック ／ クリスパス・ニョンビ ／ マーク・エリオット',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/438/234/', type: 'reference', label: 'Ashbury Railway Carriage & Iron Co v Riche (1875) LR 7 HL 653. 越権行為法理を確立した貴族院判決。' },
+      { url: 'https://www.legislation.gov.uk/ukpga/2006/46/part/2/chapter/2', type: 'government', label: 'UK Companies Act 2006, Part 2, Chapter 2 (Sections 39-40). 第三者保護と越権行為法理の事実上の廃止。' },
+      { url: 'https://via.library.depaul.edu/bclj/vol5/iss1/4/', type: 'academic', label: 'Leacock, S. 2006. The Rise and Fall of the Ultra Vires Doctrine. DePaul Business & Commercial Law Journal, 5(1).' },
+      { url: 'https://www.emerald.com/insight/content/doi/10.1108/ijlma-08-2012-0027/full/html', type: 'academic', label: 'Nyombi, C. 2014. The Gradual Erosion of the Ultra Vires Doctrine. International Journal of Law and Management, 56(5).' },
+    ],
+  },
+  {
+    id: 'infosoc-technological-somnambulism',
+    discipline: 'information-sociology',
+    title: '技術的夢遊病（Technological Somnambulism）',
+    statement: '技術的夢遊病とは、ラングドン・ウィナーが1986年の著書The Whale and ' +
+      'the Reactorで提唱した概念で、社会が技術の政治的・社会的帰結を充分に熟議する' +
+      'ことなく無意識のうちに受容している状態を批判する。ウィナーは1980年のDaedalus' +
+      '誌論文「Do Artifacts Have Politics?」で人工物の政治性を論じ、技術設計に権力' +
+      '関係が埋め込まれることを示した。ジョルゲス（1999）はSocial Studies of Science' +
+      '誌でウィナーのモーゼス橋梁事例の事実関係を批判的に検証した。フェーンベルグは' +
+      '技術の批判理論を展開し、技術ガバナンスへの民主的参加の重要性を強調した。',
+    keyFigures: 'ラングドン・ウィナー ／ ベルンヴァルト・ジョルゲス ／ アンドリュー・フェーンベルグ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.jstor.org/stable/20024652', type: 'academic', label: 'Winner, L. 1980. Do Artifacts Have Politics? Daedalus, 109(1), 121-136.' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/W/bo49911830.html', type: 'academic', label: 'Winner, L. 1986. The Whale and the Reactor: A Search for Limits in an Age of High Technology. University of Chicago Press.' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/030631299029003004', type: 'academic', label: 'Joerges, B. 1999. Do Politics Have Artefacts? Social Studies of Science, 29(3), 411-431.' },
+    ],
+  },
+  {
+    id: 'infosoc-information-environmentalism',
+    discipline: 'information-sociology',
+    title: '情報環境主義（Information Environmentalism）',
+    statement: '情報環境主義とは、個人データとデジタル情報環境を物理的環境と同等の保護' +
+      '対象と捉え、環境規制に類似した法的・倫理的枠組みの必要性を主張する理論である。' +
+      'フローリディは「情報生態学」として体系化し、情報プライバシーの保護を情報の' +
+      '生態系維持の問題として再構成した。コーエンはConfiguring the Networked Self' +
+      '（2012）およびBetween Truth and Power（2019）で情報環境が民主的自律性の' +
+      '前提条件であることを論じ、データのコモンズ化を提唱した。マイヤー＝シェーン' +
+      'ベルガーはDelete（2009）で忘却の徳を対置し、データの無制限蓄積がもたらす' +
+      '支配構造を批判した。',
+    keyFigures: 'ルチアーノ・フローリディ ／ ジュリー・コーエン ／ ビクトル・マイヤー＝シェーンベルガー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/information-ethics/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Information Ethics (Floridi).' },
+      { url: 'https://juliecohen.com/configuring-the-networked-self/', type: 'academic', label: 'Cohen, J.E. 2012. Configuring the Networked Self: Law, Code, and the Play of Everyday Practice. Yale University Press.' },
+      { url: 'https://academic.oup.com/book/37371', type: 'academic', label: 'Cohen, J.E. 2019. Between Truth and Power: The Legal Constructions of Informational Capitalism. Oxford University Press.' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691150369/delete', type: 'academic', label: 'Mayer-Schönberger, V. 2009. Delete: The Virtue of Forgetting in the Digital Age. Princeton University Press.' },
+    ],
+  },
 ];
 // Stryker restore all
