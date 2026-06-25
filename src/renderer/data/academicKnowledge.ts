@@ -36825,5 +36825,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitpress.mit.edu/9780262620741/the-insider-outsider-theory-of-employment-and-unemployment/', type: 'academic', label: 'Lindbeck & Snower (1988) The Insider-Outsider Theory of Employment and Unemployment — MIT Press' },
     ],
   },
+  {
+    id: 'econ-monetary-transmission-mechanism',
+    discipline: 'economics',
+    title: '金融政策の波及メカニズム（monetary transmission mechanism）',
+    statement:
+      '中央銀行の金融政策（政策金利の変更・量的緩和等）が実体経済（産出・雇用・物価）に影響を及ぼす経路の総称。フレデリック・ミシュキンが1995年のJournal of Economic Perspectives誌サーベイで体系的に整理した主要チャネルは以下の通り。(1)金利チャネル（ケインズ以来の伝統的経路）: 政策金利引下げ→実質金利低下→投資・耐久消費財需要増→GDP増。(2)信用チャネル（バーナンキ & ブラインダー, 1988）: 銀行貸出チャネル（金融緩和→銀行準備増→貸出増→投資増）とバランスシート・チャネル（企業純資産増→逆選択・モラルハザード軽減→貸出拡大）に分かれる。' +
+      '(3)為替レート・チャネル: 金利低下→自国通貨減価→純輸出増。(4)資産価格チャネル: トービンのq理論（株価上昇→q上昇→設備投資増）および資産効果（家計金融資産増→消費増）。政策運営面ではテイラー（1993）が提唱したテイラー・ルール（インフレ率と産出ギャップに基づく政策金利の体系的調整式）が各国中央銀行のベンチマークとなっている。',
+    keyFigures: 'フレデリック・ミシュキン ／ ベン・バーナンキ ／ アラン・ブラインダー ／ ジョン・テイラー ／ ジェームズ・トービン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.9.4.3', type: 'academic', label: 'Mishkin (1995) Symposium on the Monetary Transmission Mechanism, Journal of Economic Perspectives 9(4)' },
+      { url: 'https://www.nber.org/papers/w2534', type: 'academic', label: 'Bernanke & Blinder (1988) Credit, Money, and Aggregate Demand, NBER Working Paper 2534' },
+      { url: 'https://web.stanford.edu/~johntayl/Onlinepaperscombinedbyyear/1993/Discretion_versus_Policy_Rules_in_Practice.pdf', type: 'academic', label: 'Taylor (1993) Discretion versus Policy Rules in Practice, Carnegie-Rochester Series on Public Policy 39' },
+      { url: 'https://www.nber.org/papers/w8617', type: 'academic', label: 'Mishkin (2001) The Transmission Mechanism and the Role of Asset Prices in Monetary Policy, NBER WP 8617' },
+    ],
+  },
+  {
+    id: 'human-desensitization-systematic',
+    discipline: 'human-science',
+    title: '系統的脱感作法：不安・恐怖症に対する段階的行動療法の基盤理論',
+    statement:
+      '系統的脱感作法は1958年にウォルピが提唱した行動療法技法であり、不安や恐怖症の治療を目的とする。理論的基盤は逆制止の原理に置かれ、不安を喚起する刺激と拮抗する弛緩反応を同時に生起させることで不安反応の低減を図る。治療手続きは三段階から構成される。第一に漸進的筋弛緩法の習得、第二に不安刺激の階層表の作成、第三に弛緩状態において階層表の低位刺激から順次提示し馴化を進める。' +
+      'ウォルピは主著『逆制止による心理療法』において臨床的有効性を報告し、ポールの1969年の統制群比較研究により対照条件に対する優位性が実証された。本技法は現代のエクスポージャー療法および認知行動療法の基礎を形成し、特定恐怖症・社交不安障害・心的外傷後ストレス障害など広範な不安障害の治療体系に組み込まれている。',
+    keyFigures: 'ジョセフ・ウォルピ ／ ゴードン・ポール',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1961-02750-000', type: 'academic', label: 'Wolpe, J. (1958). Psychotherapy by Reciprocal Inhibition — APA PsycNet' },
+      { url: 'https://en.wikipedia.org/wiki/Systematic_desensitization', type: 'reference', label: 'Systematic desensitization — Wikipedia' },
+      { url: 'https://doi.org/10.1037/h0028504', type: 'academic', label: 'Paul, G. L. (1969). Outcome of systematic desensitization — Journal of Consulting and Clinical Psychology' },
+      { url: 'https://en.wikipedia.org/wiki/Joseph_Wolpe', type: 'reference', label: 'Joseph Wolpe — Wikipedia' },
+    ],
+  },
+  {
+    id: 'human-autobiographical-memory-conway',
+    discipline: 'human-science',
+    title: 'コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル',
+    statement:
+      'Martin Conwayが提唱した自己記憶システム（Self-Memory System: SMS）は、自伝的記憶が「ワーキングセルフ（作動自己）」と「自伝的知識ベース」の相互作用によって動的に構成されるとするモデルである。自伝的知識ベースはライフタイム・ピリオド（人生期間）、ジェネラル・イベント（一般的出来事）、イベント固有知識（ESK）の三層階層構造を持ち、上位層から下位層へ手がかりが伝播して具体的記憶が構築される。' +
+      'ワーキングセルフは現在の目標や自己イメージに基づき知識ベースへのアクセスを制御し、目標と矛盾する記憶の検索を抑制する。この双方向的関係により、自伝的記憶は自己の一貫性を維持しつつも状況に応じて再構成される。Conway & Pleydell-Pearce（2000, Psychological Review）で基盤が確立され、Conway（2005）で意識・発達・神経基盤との統合が図られた。',
+    keyFigures: 'マーティン・コンウェイ ／ クリストファー・プレイデル＝ピアス',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1037//0033-295X.107.2.261', type: 'academic', label: 'Conway & Pleydell-Pearce 2000 — Psychological Review' },
+      { url: 'https://doi.org/10.1016/j.jml.2005.08.005', type: 'academic', label: 'Conway 2005 — Journal of Memory & Language' },
+      { url: 'https://en.wikipedia.org/wiki/Autobiographical_memory', type: 'reference', label: 'Wikipedia — Autobiographical memory' },
+      { url: 'https://www.semanticscholar.org/paper/The-construction-of-autobiographical-memories-in-Conway-Pleydell-Pearce/13241a844c714549c173e239714ae020386172e3', type: 'academic', label: 'Semantic Scholar — Conway & Pleydell-Pearce 2000' },
+    ],
+  },
+  {
+    id: 'mgmt-team-effectiveness-hackman',
+    discipline: 'management',
+    title: 'ハックマンのチーム有効性モデル（5つの促進条件）',
+    statement:
+      'J・リチャード・ハックマンが著書『Leading Teams: Setting the Stage for Great Performances』(2002)で体系化した、チームの有効性を左右する5つの促進条件（enabling conditions）のモデル。条件は(1)リアルチーム＝メンバーの境界が明確で構成が安定し課題に相互依存性がある、(2)コンペリング・ディレクション（明確な方向性）＝挑戦的で意義ある目的がメンバーを動機づけ戦略を方向づける、(3)イネーブリング・ストラクチャー（適切な構造）＝課題設計・チーム規模・スキル構成・行動規範が協働を支える、' +
+      '(4)サポーティブ・コンテクスト（支援的な組織環境）＝報酬・情報・教育訓練・資源が提供される、(5)エキスパート・コーチング＝開始時・中間点・終了時に適切なタイミングで介入し努力・戦略・知識を支援する。前3条件が「必須要件」、後2条件が「促進要件」とされる。ハックマンとワゲマンは2005年にコーチング機能の理論を精緻化した。本モデルはIPOパラダイムに根ざし、イルゲンらが2005年にIMOI（Input-Mediator-Output-Input）モデルへと発展させた。',
+    keyFigures: 'J・リチャード・ハックマン ／ ルース・ワゲマン ／ ダニエル・イルゲン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://scholar.harvard.edu/rhackman/publications/leading-teams-setting-stage-great-performances', type: 'academic', label: 'Hackman, J. R. (2002) Leading Teams: Setting the Stage for Great Performances, Harvard Business School Press' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2005.16387885', type: 'academic', label: 'Hackman, J. R. & Wageman, R. (2005) A Theory of Team Coaching, Academy of Management Review 30(2): 269-287' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.psych.56.091103.070250', type: 'academic', label: 'Ilgen, D. R. et al. (2005) Teams in Organizations: From IPO to IMOI Models, Annual Review of Psychology 56: 517-543' },
+      { url: 'https://en.wikipedia.org/wiki/Team_effectiveness', type: 'reference', label: 'Wikipedia — Team effectiveness' },
+    ],
+  },
+  {
+    id: 'bizlaw-doctrine-of-necessities',
+    discipline: 'business-law',
+    title: '必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任',
+    statement:
+      '必需品の法理（Doctrine of Necessaries）とは、配偶者の一方が生活に不可欠な財・サービス（食料・住居・医療等）を第三者から受けた場合、他方配偶者もその費用について連帯して責任を負うとするコモンロー法理である。英国法の夫婦一体原則（coverture）に起源を持ち、ブラックストンが『英法釈義』（1765年）で夫の扶養義務を述べた。先駆的判例Manby v Scott（1663年）は夫の扶養義務の法的根拠を確立した。' +
+      '米国ではSchilling v Bedford County Memorial Hospital（1983年）が夫のみに義務を課す伝統的法理を違憲と判断し、Jersey Shore Medical Center v Estate of Baum（1980年）がジェンダー中立の相互扶養義務へ改正、North Ottawa Community Hospital v Kieft（1998年）は法理自体を廃止した。現在約40州が法理を維持するが大多数はジェンダー中立化している。未成年者の必需品契約能力もこの概念と基盤を共有する。',
+    keyFigures: 'ウィリアム・ブラックストン ／ マンスフィールド卿 ／ ジョン・マーシャル',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://avalon.law.yale.edu/18th_century/blackstone_bk1ch15.asp', type: 'academic', label: 'Yale Avalon Project — Blackstone Commentaries Book I Ch. 15: Of Husband & Wife' },
+      { url: 'https://www.law.cornell.edu/wex/necessaries', type: 'reference', label: 'Cornell LII Wex — Necessaries (legal definition)' },
+      { url: 'https://repository.law.umich.edu/mlr/vol82/iss7/5/', type: 'academic', label: 'Michigan Law Review — The Unnecessary Doctrine of Necessaries (1984)' },
+      { url: 'https://law.justia.com/cases/new-jersey/supreme-court/1980/84-n-j-137-0.html', type: 'reference', label: 'Justia — Jersey Shore Medical Center v Estate of Baum, 84 N.J. 137 (1980)' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-power',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム権力とデジタル支配（デジタル・ドミナンス）',
+    statement:
+      'デジタルプラットフォームがネットワーク効果・データ支配・市場のゲートキーピングを通じて権力を蓄積・行使し、利用者や事業者との間に構造的な権力の非対称性を生み出すメカニズムとその帰結を分析する研究領域。ファン・ダイク、ポエル&デ・ヴァールは『The Platform Society』(2018)で、プラットフォームが市場・労働・市民生活・民主的プロセスの中核に浸透し公共的価値を脅かす構造を提示した。' +
+      'スルニチェクは『Platform Capitalism』(2017)で、プラットフォームが資本蓄積の新たな形態となった過程を分析し広告型・クラウド型・製品型・リーン型・物流型の5類型を示した。ズボフは『The Age of Surveillance Capitalism』(2019)で行動データの一方的収集による予測・改変を「道具主義的権力」と批判した。カーンは「Amazon\'s Antitrust Paradox」(2017, Yale Law Journal 126)で消費者厚生基準では垂直統合型プラットフォームの市場支配力を捕捉できないと論じ反トラスト法の構造的改革を提唱した。',
+    keyFigures: 'ホセ・ファン・ダイク ／ トーマス・ポエル ／ マルタイン・デ・ヴァール ／ ニック・スルニチェク ／ ショシャナ・ズボフ ／ リナ・カーン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://research-portal.uu.nl/en/publications/the-platform-society-public-values-in-an-online-world/', type: 'academic', label: 'Utrecht University Research Portal — Van Dijck, Poell & De Waal, The Platform Society (2018, Oxford UP)' },
+      { url: 'https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862', type: 'academic', label: 'Polity Books — Srnicek, Platform Capitalism (2017)' },
+      { url: 'https://scholarship.law.columbia.edu/faculty_scholarship/2808/', type: 'academic', label: 'Columbia Law School Scholarship Archive — Khan, Amazon\'s Antitrust Paradox, Yale Law Journal 126 (2017)' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=56791', type: 'academic', label: 'Harvard Business School Faculty & Research — Zuboff, The Age of Surveillance Capitalism (2019)' },
+    ],
+  },
 ];
 // Stryker restore all
