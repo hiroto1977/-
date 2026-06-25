@@ -36,23 +36,23 @@ aliases:
 - [[mgmt-3c-analysis|3C分析]]
 - …ほか 471 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全450件）
+### 学術概念 / 人間科学（全455件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
-- …ほか 444 件 → [[学術概念]]
+- …ほか 449 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全407件）
+### 学術概念 / 情報社会学（全408件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-affordance-theory|アフォーダンス理論：技術が可能にする行為とデジタルメディアの社会的利用の分析]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]]
-- …ほか 401 件 → [[学術概念]]
+- …ほか 402 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全627件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
