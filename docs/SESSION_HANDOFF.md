@@ -9,30 +9,35 @@
 
 ## 🔴 進行中タスク（最優先・新セッションはまず確認）
 
-**学術知識ループ（標準 `/loop`）** — `src/renderer/data/academicKnowledge.ts` に検証済み学術概念を
-1 バッチ 6 件ずつ追加し続ける常設タスク。**ユーザーが「OK」と言うまで継続**。
+**学術知識ループ（自動パイプライン）** — `src/renderer/data/academicKnowledge.ts` に検証済み学術概念を
+1 バッチ 6 件ずつ追加し続ける常設タスク。**「作業を継続して」の指示で自動実行**。
 
-- **完全な運用仕様 → [`docs/ACADEMIC_KNOWLEDGE_LOOP.md`](ACADEMIC_KNOWLEDGE_LOOP.md)**（必読）。
-- 現状: **1409 概念 / 235 バッチ完了**（economics 411・human-science 264・business-law 251・
-  management 243・information-sociology 240）。Vault も 1409 ノートで同期済み。
-- 開発ブランチ: `claude/modest-noether-knlmJ`（force-push 許諾済み）。コミット著者は
-  `Claude <noreply@anthropic.com>`。モデル識別子は成果物に入れない。
-- 1 バッチ = 調査(背景 Agent) → **重複 3 チェック(id/title/意味)** → 追記 → ゲート全 green →
-  stash build → commit → push → Draft PR → ready → CI green → squash merge → ブランチ同期。
+- **完全な運用仕様 → [`docs/BATCH_APPEND_SPECIFICATION.md`](BATCH_APPEND_SPECIFICATION.md)**（機械可読AIエージェント向け）。
+- **概念背景 → [`docs/ACADEMIC_KNOWLEDGE.md`](ACADEMIC_KNOWLEDGE.md)**（学術の枠・検証原則）。
+- **進捗状況**:
+  - ✅ **Batch 376 完了** (2,261 → 2,267 概念, PR #マージ済み)
+  - ✅ **Batch 377 完了** (2,267 → 2,273 概念, 6 concepts 追加: Adverse Selection / Bounded Rationality / Narrative Identity / Good Faith / Second-Order Cybernetics / Signaling & Screening)
+  - ✅ **Batch 378 完了** (2,273 → 2,279 概念, 6 concepts 追加: Portfolio Theory / Organizational Sensemaking / Memory Consolidation / Agency Relationship / Digital Divide / Psychological Capital)
+  - ✅ **Batch 379 完了** (2,279 → 2,285 概念, 6 concepts 追加: Behavioral Finance / Adaptive Leadership / Flow Psychology / Tortious Interference / Network Effects / Theory of Mind)
+  - ✅ **Batch 380 完了** (2,285 → 2,291 概念, 6 concepts 追加: Product Liability / Financialization / Growth Mindset / Mental Time Travel / Corporate Governance / Cognitive Surplus) — Commit 2e50f61, PR #704
+  - 🔄 **Batch 381 準備中**: 次の候補生成 & デデュプ検証待機中
+- 開発ブランチ: **タスクプロンプトで指定されたブランチ**を使用（現在: `claude/eager-brown-7cev3c`）。
+- 1 バッチ = デデュプ → 候補生成 → 6並列エージェント → JSON収集 → ファイル追記 → ゲート全green → コミット → プッシュ。
 - 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
-  アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検。
-- ゲート: `vault:build && typecheck && verify:all && lint && test && build:web`（詳細は仕様書 §9）。
+  アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検
+  ④エージェントがファイルを無断修正する→プロンプトで「JSON返却のみ」と明示。
+- ゲート: `vault:build ×2 && typecheck && verify:all && test && build:web`（詳細は仕様書参照）。
 
-## 現状サマリ (63 services)
+## 現状サマリ (69 services)
 
 | 区分 | サービス |
 |---|---|
 | 🌟 featured (9) | home / business / teamradar / templates / library / settings / sales (売上集計) / team (チーム管理) / overview (経営サマリー) |
 | 🔧 tools (12) | skills / security / cloudflare / emotions / ollama / kpi / stocks / real-estate / mutual-funds / quality / storage / tax (税務試算) |
-| (統合) | uber-eats / demae-can は SERVICE_IDS・クライアント・snapshot・テストとして残存しつつ、**サイドバーからは事業ダッシュボード(BusinessPage の FoodDeliverySection)へ統合**。SERVICES 配列からのみ除外 (SERVICE_IDS は不変→service count 63 維持)。 |
-| 🔗 integrations (38) | 既存 9 (GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva) + 連携先 10 (Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE) + 士業 7 (税理士/社労士/弁護士/司法書士/行政書士/中小企業診断士/弁理士) + EC/仕入/集客 10 (BASE/NETSEA/スーパーデリバリー/TopSeller/A8.net/AIブログくん/マネーフォワード/Amazon/Amazon アソシエイト/YouTube) + ココナラ + TikTok |
+| (統合) | uber-eats / demae-can 等は SERVICE_IDS・クライアント・snapshot・テストとして残存 |
+| 🔗 integrations (48) | GitHub/WordPress/Atlassian/Notion/Drive/Calendar/Gmail/Slack/Canva + Microsoft 365/Dropbox/Salesforce/Discord/Asana/Linear/Sentry/Shopify/Stripe/LINE + 士業7 + EC/仕入/集客 + その他 |
 
-**品質メトリクス:** 4915 静的 / 4997 実行時 tests passing · typecheck / ESLint clean · verify:all green (63 service tests + file:line refs + 6 metrics + cross-doc facts) · standalone HTML ~806 KB
+**品質メトリクス:** 5444 静的 / 5529 実行時 tests passing · typecheck / ESLint clean · verify:all green (69 service tests + 178 file:line refs + 6 metrics) · standalone HTML ~5858 KB · knowledge-vault 3051 files · academicKnowledge.ts 2,279 concepts
 
 **税務試算モジュール群 (`src/shared/tax*.ts`, すべて純粋関数・概算/税務助言ではない注記必須):**
 所得税 (`taxCalc`)・控除 (`taxDeductions`)・各種分離課税 (退職 `taxRetirement` / 配当 `taxDividend` /
