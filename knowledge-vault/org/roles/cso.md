@@ -28,14 +28,14 @@ aliases:
 - [[mgmt-3c-analysis|3C分析]]
 - …ほか 471 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全626件）
+### 学術概念 / 経済学（全627件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 620 件 → [[学術概念]]
+- …ほか 621 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]
