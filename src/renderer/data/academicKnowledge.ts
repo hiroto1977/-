@@ -36921,5 +36921,107 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=56791', type: 'academic', label: 'Harvard Business School Faculty & Research — Zuboff, The Age of Surveillance Capitalism (2019)' },
     ],
   },
+  {
+    id: 'econ-evolutionary-economics-nelson-winter',
+    discipline: 'economics',
+    title: '進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論',
+    statement: 'リチャード・ネルソンとシドニー・ウィンターは1982年の著作『An Evolutionary Theory of Economic Change』' +
+      '（Harvard University Press）において、企業行動を遺伝子に相当する「ルーティン（routines）」の束として捉え、' +
+      '市場競争を生物進化的な選択環境と位置づけた。新古典派の合理的最適化仮説を退け、企業は過去の経験から蓄積された' +
+      '暗黙知的ルーティンに従い行動し、ルーティンの変異・選択・保持によって産業ダイナミクスが生じると論じた。' +
+      'シュンペーターの創造的破壊論を理論的起点とし、動的能力（dynamic capabilities）論の基礎を形成した。',
+    keyFigures: 'リチャード・ネルソン ／ シドニー・ウィンター ／ ソースタイン・ヴェブレン ／ ヨーゼフ・シュンペーター',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674272286', type: 'academic', label: 'Nelson, R.R. & Winter, S.G., An Evolutionary Theory of Economic Change, Harvard University Press (1982)' },
+      { url: 'https://doi.org/10.1093/0199248540.001.0001', type: 'academic', label: 'Nelson, R.R., The Sources of Economic Growth, Harvard University Press (1996)' },
+      { url: 'https://plato.stanford.edu/entries/evolutionary-economics/', type: 'reference', label: 'Evolutionary Economics — Stanford Encyclopedia of Philosophy' },
+    ],
+  },
+  {
+    id: 'human-enactivism',
+    discipline: 'human-science',
+    title: 'エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論',
+    statement: 'ウンベルト・マトゥラーナとフランシスコ・ヴァレラは『オートポイエーシスと認知』（1980）で生命システムの' +
+      '自己産出的組織化理論を確立した。1987年の共著『知の樹』では認知と生命の統一的理解を展開し、1991年にヴァレラ、' +
+      'エヴァン・トンプソン、エレノア・ロッシュが著した『身体化された心』において、認知は脳内表象処理ではなく身体と' +
+      '環境の動的相互作用（エナクション）によって生成されると論じた。現象学（フッサール、メルロ＝ポンティ）と' +
+      'ダイナミカルシステム理論を融合するこの枠組みは第二世代認知科学の礎を形成した。',
+    keyFigures: 'フランシスコ・ヴァレラ ／ ウンベルト・マトゥラーナ ／ エヴァン・トンプソン ／ エレノア・ロッシュ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.7551/mitpress/6358.001.0001', type: 'academic', label: 'Varela, F.J., Thompson, E., & Rosch, E. (1991). The Embodied Mind: Cognitive Science and Human Experience. MIT Press.' },
+      { url: 'https://link.springer.com/book/10.1007/978-94-009-8947-4', type: 'academic', label: 'Maturana, H.R., & Varela, F.J. (1980). Autopoiesis and Cognition: The Realization of the Living. D. Reidel.' },
+      { url: 'https://plato.stanford.edu/entries/enactivism/', type: 'reference', label: 'Ward, D., Silverman, D., & Villalobos, M. (2017). Introduction: The Varieties of Enactivism. Topoi, 36(3), 365-375.' },
+    ],
+  },
+  {
+    id: 'mgmt-dominant-design-utterback',
+    discipline: 'management',
+    title: '支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル',
+    statement: 'アバナシーとアターバックが1978年の論文「産業革新のパターン」（Technology Review誌）で提唱した' +
+      '技術革新進化モデル。製品・工程イノベーションの速度変化を「流動期」「移行期」「固有期」の3段階で説明し、' +
+      '移行期に業界標準となる「支配的デザイン」が確立されると論じた。その後は工程革新が主流となり参入障壁が' +
+      '高まることを自動車・ガラス産業等の分析から実証した。アターバックは1994年の著書でも本理論を発展的に論考している。',
+    keyFigures: 'ウィリアム・アバナシー ／ ジェームズ・アターバック',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1016/0305-0483(75)90068-7', type: 'academic', label: 'Utterback, J.M. & Abernathy, W.J. (1975). A Dynamic Model of Process and Product Innovation. Omega, 3(6), 639-656.' },
+      { url: 'https://www.jstor.org/stable/44425655', type: 'academic', label: 'Abernathy, W.J. & Utterback, J.M. (1978). Patterns of Industrial Innovation. Technology Review, 80(7), 40-47.' },
+      { url: 'https://jhupbooks.press.jhu.edu/title/productivity-dilemma', type: 'reference', label: 'Abernathy, W.J. (1978). The Productivity Dilemma: Roadblock to Innovation in the Automobile Industry. Johns Hopkins University Press.' },
+    ],
+  },
+  {
+    id: 'bizlaw-economic-analysis-of-law',
+    discipline: 'business-law',
+    title: '法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派',
+    statement: '法の経済分析とは、経済学の手法——特に価格理論・ミクロ経済学——を法制度の評価と設計に適用する学問分野である。' +
+      'リチャード・ポズナーが1973年の著書『Economic Analysis of Law』で体系化し、法のルールは' +
+      '「効率性（カルドア＝ヒックス基準）」の観点から評価・予測できると主張した。その理論的基盤には' +
+      'ロナルド・コースが1960年論文「The Problem of Social Cost」（Journal of Law & Economics 3巻）で示した' +
+      '「コースの定理」がある。グイド・カラブレイジは1970年『The Cost of Accidents』で不法行為法を事故費用最小化の' +
+      '枠組みで分析し、法と経済学の不法行為法分野を確立した。',
+    keyFigures: 'リチャード・ポズナー ／ ロナルド・コース ／ グイド・カラブレイジ ／ ゲイリー・ベッカー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.jstor.org/stable/724810', type: 'academic', label: 'Coase, R.H., The Problem of Social Cost, Journal of Law & Economics, Vol. 3 (1960), pp. 1-44' },
+      { url: 'https://press.uchicago.edu/ucp/books/book/chicago/C/bo3628683.html', type: 'academic', label: 'Calabresi, G., The Cost of Accidents: A Legal and Economic Analysis, Yale University Press, 1970' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1991/coase/facts/', type: 'reference', label: 'NobelPrize.org — Ronald H. Coase, 1991 Prize in Economic Sciences' },
+    ],
+  },
+  {
+    id: 'infosoc-activity-theory',
+    discipline: 'information-sociology',
+    title: '活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論',
+    statement: '活動理論（Cultural-Historical Activity Theory; CHAT）は、ヴィゴツキーの文化的・歴史的心理学' +
+      '（1978年『Mind in Society』）を起点に、レオンチェフが「活動・行為・操作」の三層構造として体系化した理論である' +
+      '（1975年露語原著、1978年英訳）。エンゲストロームは1987年『Learning by Expanding』で' +
+      '「主体・客体・道具・共同体・規則・分業」の六要素からなる活動システム三角モデルを提唱し、' +
+      '組織学習・職場分析の枠組みとして国際的に普及させた。',
+    keyFigures: 'レフ・ヴィゴツキー ／ アレクセイ・レオンチェフ ／ ユーリャ・エンゲストローム',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.marxists.org/archive/leontev/works/1978/', type: 'reference', label: 'Leontiev, A.N. (1978). Activity, Consciousness, and Personality. Prentice-Hall.' },
+      { url: 'https://www.cambridge.org/core/books/learning-by-expanding/6D0648C3DEDE20157B359E464AFDB8C1', type: 'academic', label: 'Engestrom, Y. (2015). Learning by Expanding: An Activity-Theoretical Approach to Developmental Research (2nd ed.). Cambridge University Press.' },
+      { url: 'https://doi.org/10.1080/13639080020028747', type: 'academic', label: 'Engestrom, Y. (2001). Expansive learning at work: Toward an activity theoretical reconceptualization. Journal of Education and Work, 14(1), 133-156.' },
+    ],
+  },
+  {
+    id: 'bizlaw-kelsen-pure-theory-of-law',
+    discipline: 'business-law',
+    title: '純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論',
+    statement: 'ハンス・ケルゼンは1934年に『純粋法学』（Reine Rechtslehre）初版を刊行し、法学を道徳・政治・社会科学から' +
+      '切り離す純粋科学として構築した。1960年の第2版では理論が拡充され、すべての法規範は上位規範から効力を得るという' +
+      '「法段階論」（Stufenbau）が体系化された。頂点に位置する「根本規範」（Grundnorm）は実定法体系全体の効力根拠を' +
+      'なす仮説的前提である。弟子アドルフ・メルクルが段階構造の着想に寄与し、H・L・A・ハートは1961年の『法の概念』で' +
+      'ケルゼンと対話しつつ英語圏の法実証主義を精緻化した。',
+    keyFigures: 'ハンス・ケルゼン ／ アドルフ・メルクル ／ H・L・A・ハート',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://plato.stanford.edu/entries/kelsen/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy: Hans Kelsen (2020)' },
+      { url: 'https://plato.stanford.edu/entries/legal-positivism/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy: Legal Positivism (2022)' },
+      { url: 'https://archive.org/details/puretheoryoflaw00kels', type: 'reference', label: 'Kelsen, H. (1967). Pure Theory of Law (trans. Max Knight). University of California Press.' },
+    ],
+  },
 ];
 // Stryker restore all
