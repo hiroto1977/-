@@ -37740,5 +37740,120 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/20159804', type: 'academic', label: 'Ravasi, D. & Schultz, M. 2006. Responding to Organizational Identity Threats: Exploring the Role of Organizational Culture. Academy of Management Journal, 49(3), 433-458.' },
     ],
   },
+  {
+    id: 'econ-austrian-business-cycle-theory',
+    discipline: 'economics',
+    title: 'オーストリア学派の景気循環理論（ミーゼス＝ハイエク理論）',
+    statement: 'オーストリア学派の景気循環理論は、ルートヴィヒ・フォン・ミーゼスが' +
+      '『貨幣及び流通手段の理論』(1912)で提唱し、F.A.ハイエクが『物価と生産』(1931)で' +
+      '精緻化した信用循環論である。中央銀行が人為的に市場利子率をヴィクセル的自然利子率' +
+      '以下に引き下げて信用を拡張すると、本来採算の合わない迂回的・資本集約的生産工程への' +
+      '過剰投資（マルインベストメント）が誘発され、持続不可能なブームが生じる。やがて信用' +
+      '拡張が止まると相対価格の歪みが露呈し、不可避的な景気後退（バスト）を通じて資源の' +
+      '再配分が起こる。部分準備銀行制度への批判を含み、2008年金融危機後に再評価が進んだ。',
+    keyFigures: 'ルートヴィヒ・フォン・ミーゼス ／ フリードリヒ・A・ハイエク ／ クヌート・ヴィクセル ／ マレー・ロスバード',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/', type: 'academic', label: 'NobelPrize.org — F.A.Hayek Nobel Lecture \'The Pretence of Knowledge\' (1974)' },
+      { url: 'https://mises.org/library/austrian-theory-trade-cycle-and-other-essays', type: 'academic', label: 'Mises Institute — The Austrian Theory of the Trade Cycle and Other Essays' },
+      { url: 'https://www.britannica.com/topic/Austrian-school-of-economics', type: 'reference', label: 'Encyclopaedia Britannica — Austrian school of economics' },
+    ],
+  },
+  {
+    id: 'human-zone-of-proximal-development-vygotsky',
+    discipline: 'human-science',
+    title: '発達の最近接領域（ヴィゴツキー）',
+    statement: '発達の最近接領域（ZPD）は、レフ・ヴィゴツキーが1934年の遺著『思考と言語』' +
+      'で体系化し、1978年にColeらが編纂した英訳『Mind in Society』（Harvard University ' +
+      'Press）で広く知られるようになった発達心理学の概念である。子どもが独力で問題解決' +
+      'できる「現在の発達水準」と、大人や有能な仲間の援助のもとで到達できる「潜在的発達' +
+      '水準」との間の距離を指す。この領域での学習こそが発達を牽引するという社会文化的' +
+      '理論の核心をなす。Wood, Bruner & Ross（1976, Journal of Child Psychology and ' +
+      'Psychiatry）は、この支援過程を「足場かけ（scaffolding）」と概念化し、教育実践に' +
+      '広く応用された。',
+    keyFigures: 'レフ・ヴィゴツキー ／ デイヴィッド・ウッド ／ ジェローム・ブルーナー ／ ゲイル・ロス',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674576292', type: 'academic', label: 'L.S.Vygotsky, Mind in Society: The Development of Higher Psychological Processes, Harvard University Press (1978)' },
+      { url: 'https://doi.org/10.1111/j.1469-7610.1976.tb00381.x', type: 'academic', label: 'Wood, Bruner & Ross, The role of tutoring in problem solving, Journal of Child Psychology and Psychiatry 17(2), 89-100 (1976)' },
+      { url: 'https://www.simplypsychology.org/zone-of-proximal-development.html', type: 'reference', label: 'Simply Psychology — Zone of Proximal Development and Scaffolding' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-routines-nelson-winter',
+    discipline: 'management',
+    title: '組織ルーティン理論（進化経済学的企業観）',
+    statement: '組織ルーティン理論は、リチャード・ネルソンとシドニー・ウィンターが1982年の' +
+      '著書『An Evolutionary Theory of Economic Change』（Harvard University Press）で提唱した' +
+      '進化経済学の中核概念である。ルーティンは企業行動の規則的・予測可能なパターンであり、' +
+      '組織の記憶・遺伝子に相当し、能力の蓄積と継承を担う。フェルドマン&ペントランドは' +
+      '2003年のAdministrative Science Quarterly論文で、ルーティンの表象的側面（ostensive）と' +
+      '遂行的側面（performative）を区別し、両者の再帰的相互作用がルーティンを安定と変化の' +
+      '双方の源泉とすることを示した。この理論は動的ケイパビリティ論やナレッジマネジメント' +
+      '研究の基盤となっている。',
+    keyFigures: 'リチャード・ネルソン ／ シドニー・ウィンター ／ マーサ・フェルドマン ／ ブライアン・ペントランド ／ マルクス・ベッカー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674272286', type: 'academic', label: 'Nelson & Winter, An Evolutionary Theory of Economic Change, Harvard University Press (1982)' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/3556620', type: 'academic', label: 'Feldman & Pentland, Reconceptualizing Organizational Routines as a Source of Flexibility and Change, ASQ 48(1) 94-118 (2003)' },
+      { url: 'https://academic.oup.com/icc/article-abstract/13/4/643/718495', type: 'academic', label: 'Becker, Organizational Routines: A Review of the Literature, Industrial and Corporate Change 13(4) 643-678 (2004)' },
+    ],
+  },
+  {
+    id: 'bizlaw-derivative-action-foss-harbottle',
+    discipline: 'business-law',
+    title: '株主代表訴訟とフォス対ハーボトル原則',
+    statement: 'Foss v Harbottle (1843) 2 Hare 461は、会社への不正行為を訴追できるのは' +
+      '会社自身のみとする正当原告の原則（proper plaintiff rule）と、多数決で追認可能な事項に' +
+      '少数株主は介入できないとする多数決原則を確立した英国会社法の基本判例である。例外として' +
+      '違法・権限外行為、特別決議事項の侵害、少数派に対する詐欺（fraud on the minority）、個人的' +
+      '権利侵害の4類型が判例上認められた。ウェダバーンが1957年Cambridge Law Journalで例外法理を' +
+      '体系的に分析した。英国2006年会社法Part 11（ss.260-264）は制定法上の代表訴訟を導入し' +
+      'コモンロー上の派生訴訟に代替した。日本では会社法847条の株主代表訴訟が対応する。',
+    keyFigures: 'リチャード・フォス ／ エドワード・ハーボトル ／ ジェームズ・ウィグラム ／ ケネス・ウェダバーン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.legislation.gov.uk/ukpga/2006/46/part/11', type: 'government', label: 'UK Legislation — Companies Act 2006, Part 11: Derivative Claims and Proceedings (ss. 260-264)' },
+      { url: 'https://www.cambridge.org/core/journals/cambridge-law-journal/article/shareholders-rights-and-the-rule-in-foss-v-harbottle/0C5C2B6CA25A77E88E3CE59C64A0B721', type: 'academic', label: 'K.W. Wedderburn, Shareholders\' Rights and the Rule in Foss v. Harbottle, Cambridge Law Journal 15(2), 1957, pp. 194-215' },
+      { url: 'https://laws.e-gov.go.jp/law/417AC0000000086', type: 'government', label: 'e-Gov法令検索 会社法（平成十七年法律第八十六号）第847条 責任追及等の訴え' },
+    ],
+  },
+  {
+    id: 'mgmt-absorptive-capacity-zahra-george',
+    discipline: 'management',
+    title: '吸収能力の再概念化（ザーラ&ジョージ）',
+    statement: 'Cohen & Levinthal（1990, Administrative Science Quarterly）が提唱した吸収能力' +
+      '（外部知識の認識・同化・応用）を、Zahra & George（2002, Academy of Management Review）が' +
+      '動的ケイパビリティとして再概念化した。潜在的吸収能力（PACAP＝獲得＋同化）と実現的吸収能力' +
+      '（RACAP＝変換＋活用）の4次元モデルを提示し、効率係数（η＝RACAP/PACAP）で企業間の競争優位差を' +
+      '説明した。Todorova & Durisin（2007, 同誌）は「価値認識」段階の欠落、同化と変換の並列関係、' +
+      '権力関係・フィードバックループの欠如を批判し修正モデルを提案した。',
+    keyFigures: 'シャケル・ザーラ ／ ジェラード・ジョージ ／ ウェスリー・コーエン ／ ダニエル・レヴィンタール ／ グレゴリナ・トドロヴァ ／ ボリス・デュリシン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.5465/AMR.2002.6587995', type: 'academic', label: 'Zahra & George 2002 — Absorptive Capacity: A Review, Reconceptualization, and Extension (AMR 27(2))' },
+      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal 1990 — Absorptive Capacity: A New Perspective on Learning and Innovation (ASQ 35(1))' },
+      { url: 'https://doi.org/10.5465/amr.2007.25275513', type: 'academic', label: 'Todorova & Durisin 2007 — Absorptive Capacity: Valuing a Reconceptualization (AMR 32(3))' },
+    ],
+  },
+  {
+    id: 'infosoc-platform-cooperativism-scholz',
+    discipline: 'information-sociology',
+    title: 'プラットフォーム協同組合主義（Scholz）',
+    statement: 'プラットフォーム協同組合主義とは、搾取的なギグエコノミーのプラットフォームに対し、' +
+      '労働者・利用者が所有・運営する協同組合型の代替プラットフォームを構築する運動・理論である。' +
+      'トレバー・ショルツが2014年12月のMedium論考「Platform Cooperativism vs. the Sharing Economy」で' +
+      '提唱し、2016年にネイサン・シュナイダーと共編著『Ours to Hack and to Own』（OR Books）を刊行した。' +
+      'シュナイダーは協同組合的所有モデルを、ジュリエット・ショアは『After the Gig』（2020）で共有経済の' +
+      '変質を論じた。写真家協同組合Stocksy（2013年）や家事代行のUp & Go（2017年）が実践例として知られる。',
+    keyFigures: 'トレバー・ショルツ ／ ネイサン・シュナイダー ／ ジュリエット・ショア',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://medium.com/digital-labor/platform-cooperativism-vs-the-sharing-economy-2ea737f1b5ad', type: 'academic', label: 'Scholz, T. (2014) Platform Cooperativism vs. the Sharing Economy — Medium' },
+      { url: 'https://orbooks.com/catalog/ours-to-hack-and-to-own/', type: 'academic', label: 'Scholz, T. & Schneider, N. eds. (2016) Ours to Hack and to Own — OR Books' },
+      { url: 'https://www.amazon.com/After-Gig-Sharing-Economy-Hijacked/dp/0520325052', type: 'academic', label: 'Schor, J. (2020) After the Gig: How the Sharing Economy Got Hijacked and How to Win It Back — UC Press' },
+      { url: 'https://platform.coop/', type: 'reference', label: 'Platform Cooperativism Consortium — The New School' },
+    ],
+  },
 ];
 // Stryker restore all
