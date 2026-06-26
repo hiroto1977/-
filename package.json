@@ -38,6 +38,7 @@
     "orchestrate:status": "node scripts/orchestrate.cjs status",
     "orchestration:plan": "node scripts/verify-orchestration.cjs --plan",
     "preview": "vite preview",
+    "progress": "node scripts/progress.cjs",
     "quality": "npm run typecheck && npm run test && npm run test:cov",
     "quality:report": "node scripts/quality-report.cjs",
     "scaffold": "node scripts/scaffold-service.cjs",
