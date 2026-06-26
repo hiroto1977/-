@@ -1,0 +1,39 @@
+---
+collection: academic
+id: econ-elasticity-substitution-ces-arrow
+category: "economics"
+category_ja: "経済学"
+title: "CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化"
+as_of: "2026-06-26"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化"
+---
+
+# CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+CES（Constant Elasticity of Substitution）生産関数は、ケネス・アロー、ホリス・チェネリー、バハス・ミンハス、ロバート・ソローの4名が1961年に提唱した、資本と労働の代替の弾力性を一定と仮定するマクロ生産関数である。コブ=ダグラス型生産関数が代替の弾力性を1に固定するのに対し、CES関数はパラメータσによって完全補完（σ=0、レオンチェフ型）から完全代替（σ→∞、線形型）までの連続的な代替可能性を表現する。代替の弾力性はマクロ経済学において資本分配率の変動・技術進歩の方向性・所得分配の長期動向を分析する上で中核的なパラメータであり、トマ・ピケティの『21世紀の資本』における資本分配率上昇の議論でもσ>1の推定が論争を呼んだ。オビラルーの推計やクレンアウとシュロット=ロドリゲスのマクロ推計が実証的基盤を提供している。
+
+## 提唱者・初出
+ケネス・アロー ／ ロバート・ソロー ／ ホリス・チェネリー ／ トマ・ピケティ
+
+## 出典
+- [Arrow, K. et al. (1961) Capital-Labor Substitution and Economic Efficiency — REStat](https://doi.org/10.2307/1927286) `学術`
+- [Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica](https://doi.org/10.1257/aer.104.6.1667) `学術`
+- [Wikipedia: CES — CES生産関数の概要](https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution) `リファレンス`
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
