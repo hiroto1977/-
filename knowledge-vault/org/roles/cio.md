@@ -19,14 +19,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 情報社会学（全471件）
+### 学術概念 / 情報社会学（全473件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-affordance-theory|アフォーダンス理論：技術が可能にする行為とデジタルメディアの社会的利用の分析]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 465 件 → [[学術概念]]
+- …ほか 467 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全691件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
