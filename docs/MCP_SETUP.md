@@ -1,166 +1,270 @@
 # MCP サーバー設定ガイド
 
-このプロジェクトの Claude Code ローカル環境で使える MCP サーバーの導入手順。
+このプロジェクトで使える MCP サーバーの完全導入手順。  
+Claude Code ローカル環境で `npm run mcp:check` を実行して設定状態を確認できる。
 
-## 設定ファイル
+## 設定状態の確認
 
-`.claude/settings.json` に `mcpServers` セクションを追加済み。  
-API キーが必要なサーバーは環境変数で注入する（コードに書かない）。
+```bash
+npm run mcp:check
+```
 
-## 導入済みMCPサーバー一覧
+出力例:
+```
+📋 設定済みMCPサーバー: 25個
 
-| サーバー | 用途 | API キー |
+🟢 API不要（即使用可能）: 12個
+🔑 APIキー設定済み: 2個
+⚠️  APIキー未設定: 11個
+```
+
+---
+
+## 全MCPサーバー一覧（25個）
+
+### API不要（すぐ使える）
+
+| サーバー名 | 用途 | 実装 |
 |---|---|---|
-| **filesystem** | プロジェクトのファイル読み書き | 不要 |
-| **fetch** | HTTP リクエスト・API 呼び出し | 不要 |
-| **memory** | セッション間の記憶（メモ保存） | 不要 |
-| **sequential-thinking** | 複雑な推論・段階的思考 | 不要 |
-| **puppeteer** | ブラウザ自動化・スクリーンショット | 不要 |
-| **github** | GitHub リポジトリ操作 | `GITHUB_TOKEN` |
-| **notion** | Notion データベース・ページ操作 | `NOTION_API_KEY` |
-| **slack** | Slack チャンネル・メッセージ操作 | `SLACK_BOT_TOKEN` + `SLACK_TEAM_ID` |
-| **gdrive** | Google Drive ファイル操作 | OAuth 認証ファイル |
-| **brave-search** | Web 検索 | `BRAVE_API_KEY` |
-| **context7** | ライブラリドキュメント参照（@upstash） | 不要 |
-| **mcp-commands** | シェルコマンド実行 | 不要 |
+| `filesystem` | プロジェクトファイル読み書き | uvx |
+| `git` | Gitコマンド操作（log/diff/commit/branch） | uvx |
+| `sqlite` | ローカルDB読み書き（`data/local.db`） | uvx |
+| `time` | 時刻・タイムゾーン変換（日本時間対応） | uvx |
+| `fetch` | HTTPリクエスト・外部APIアクセス | uvx |
+| `memory` | セッション間の記憶・メモ | npx |
+| `sequential-thinking` | 複雑な段階的推論 | npx |
+| `context7` | npm/PyPIライブラリの最新ドキュメント参照 | npx |
+| `playwright` | ブラウザ自動化・E2Eテスト支援 | npx |
+| `docker` | Dockerコンテナ管理 | npx |
+| `obsidian` | `knowledge-vault/` の読み書き（2,501+ノート） | npx |
+| `shopify` | Shopify開発（テーマ/アプリ） | npx |
+
+### APIキーが必要なサーバー
+
+| サーバー名 | 対応サービス | 必要な環境変数 | 取得先 |
+|---|---|---|---|
+| `github` | GitHub | `GITHUB_TOKEN` | [settings/tokens](https://github.com/settings/tokens/new) |
+| `atlassian` | Jira / Confluence | `ATLASSIAN_SITE_URL`, `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN` | [api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens) |
+| `notion` | Notion DB・ページ | `NOTION_API_KEY` | [my-integrations](https://www.notion.so/my-integrations) |
+| `slack` | Slackチャンネル・メッセージ | `SLACK_BOT_TOKEN`, `SLACK_TEAM_ID` | [api.slack.com/apps](https://api.slack.com/apps) |
+| `gdrive` | Google Drive | OAuth認証ファイル | Google Cloud Console |
+| `linear` | Linearチケット・プロジェクト | `LINEAR_API_KEY` | [linear.app/settings/api](https://linear.app/settings/api) |
+| `sentry` | Sentryエラー・イベント | `SENTRY_AUTH_TOKEN` | [sentry.io/api-tokens](https://sentry.io/settings/account/api/auth-tokens/) |
+| `stripe` | Stripe支払い・顧客 | `STRIPE_SECRET_KEY` | [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys) |
+| `cloudflare` | Cloudflare Workers・DNS | `CLOUDFLARE_API_TOKEN` | [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) |
+| `discord` | Discordチャンネル・メッセージ | `DISCORD_BOT_TOKEN` | [discord.com/developers](https://discord.com/developers/applications) |
+| `youtube` | YouTube動画・チャンネル | `YOUTUBE_API_KEY` | [Google Cloud Console](https://console.cloud.google.com/) |
+| `brave-search` | Webリアルタイム検索 | `BRAVE_API_KEY` | [api.search.brave.com](https://api.search.brave.com/register) |
+| `google-maps` | 地図・場所検索 | `GOOGLE_MAPS_API_KEY` | [Google Cloud Console](https://console.cloud.google.com/) |
+
+---
 
 ## セットアップ手順
 
-### 1. 環境変数の設定
+### 1. 環境変数を設定する
 
-`~/.zshrc` または `~/.bash_profile` に追記（ローカル環境）:
+`.env.mcp.example` をテンプレートとして使用:
 
 ```bash
-# GitHub
-export GITHUB_TOKEN="ghp_xxxxxxxxxxxx"
+# テンプレートを確認
+cat .env.mcp.example
 
-# Notion
-export NOTION_API_KEY="secret_xxxxxxxxxxxx"
+# ~/.zshrc に追記（ローカルのmacOS/Linux）
+cat .env.mcp.example >> ~/.zshrc
+# → 各 "xxx..." をリアルなAPIキーに置き換える
 
-# Slack
-export SLACK_BOT_TOKEN="xoxb-xxxxxxxxxxxx"
-export SLACK_TEAM_ID="T00000000"
-
-# Brave Search
-export BRAVE_API_KEY="BSAxxxxxxxxxxxx"
-```
-
-変更を反映:
-```bash
 source ~/.zshrc
 ```
 
-### 2. API キーの取得方法
-
-#### GitHub Token
-1. https://github.com/settings/tokens/new
-2. **Expiration**: No expiration（または任意）
-3. **Scopes**: `repo`, `read:org`, `read:user`, `gist`
-4. 生成されたトークンを `GITHUB_TOKEN` に設定
-
-#### Notion API Key
-1. https://www.notion.so/my-integrations にアクセス
-2. 「+ New integration」→ 名前を入力
-3. 「Submit」→ Internal Integration Token をコピー
-4. 連携したいページ/DBを開き「...」→「Connections」→ 作成したIntegrationを追加
-
-#### Slack Bot Token
-1. https://api.slack.com/apps → 「Create New App」
-2. 「From scratch」→ App Name入力 → Workspace選択
-3. 「OAuth & Permissions」→ Scopes に以下を追加:
-   - `channels:history`, `channels:read`, `chat:write`
-   - `files:read`, `groups:history`, `im:history`, `mpim:history`
-   - `users:read`
-4. 「Install to Workspace」→ Bot User OAuth Token (`xoxb-...`) をコピー
-5. Workspace ID: `https://app.slack.com/client/TXXXXXXXX` の T から始まる部分
-
-#### Brave Search API Key
-1. https://api.search.brave.com/register → 登録
-2. ダッシュボード → API Keys → 新規作成
-3. 無料プラン: 2,000 req/月
-
-### 3. Google Drive 認証（OAuth）
+### 2. 設定を検証する
 
 ```bash
-# credentials ディレクトリを作成
+npm run mcp:check
+```
+
+### 3. Claude Codeを再起動
+
+設定変更後は Claude Code を再起動するとMCPサーバーが自動起動します。
+
+---
+
+## 各サービスのAPIキー取得手順
+
+### GitHub Token
+```
+https://github.com/settings/tokens/new
+→ Expiration: 1 year
+→ Scopes: repo, read:org, read:user, gist
+→ Generate token → GITHUB_TOKEN に設定
+```
+
+### Atlassian (Jira/Confluence)
+```
+https://id.atlassian.com/manage-profile/security/api-tokens
+→ Create API token → 名前を入力
+→ ATLASSIAN_API_TOKEN に設定
+→ ATLASSIAN_SITE_URL = https://yourcompany.atlassian.net
+→ ATLASSIAN_EMAIL = ログインメールアドレス
+```
+
+### Notion
+```
+https://www.notion.so/my-integrations
+→ + New integration → 名前入力 → Submit
+→ Internal Integration Token を NOTION_API_KEY に設定
+→ 連携したいページ: ページを開く → ... → Connections → Integrationを追加
+```
+
+### Slack
+```
+https://api.slack.com/apps → Create New App → From scratch
+→ OAuth & Permissions → Scopes に追加:
+  channels:history, channels:read, chat:write
+  files:read, groups:history, im:history
+  mpim:history, users:read
+→ Install to Workspace → Bot User OAuth Token を SLACK_BOT_TOKEN に設定
+→ SLACK_TEAM_ID: https://app.slack.com/client/TXXXXXXXX の T始まり部分
+```
+
+### Google Drive (OAuth)
+```bash
+# 1. Google Cloud Console でプロジェクト作成
+#    https://console.cloud.google.com/
+# 2. APIs & Services → Enable: Google Drive API
+# 3. Credentials → OAuth 2.0 Client IDs → Desktop app → Download JSON
 mkdir -p ~/.config/mcp
+mv ~/Downloads/client_secret_*.json ~/.config/mcp/gdrive-credentials.json
 
-# OAuth クライアントの作成
-# 1. https://console.cloud.google.com/
-# 2. APIs & Services → Credentials
-# 3. OAuth 2.0 Client IDs → Desktop app → ダウンロード
-# 4. ファイルを ~/.config/mcp/gdrive-credentials.json に配置
-
-# 初回認証（ブラウザが開く）
+# 4. 初回認証（ブラウザが開く）
 npx -y @modelcontextprotocol/server-gdrive
-# → ブラウザで Google ログイン → token が ~/.config/mcp/ に保存される
+# → ブラウザでGoogleログイン → ~/.config/mcp/ にtokenが保存される
 ```
 
-### 4. Claude Code を再起動して確認
+### Stripe
+```
+https://dashboard.stripe.com/apikeys
+→ テスト環境の場合: sk_test_xxx を STRIPE_SECRET_KEY に設定
+→ 本番環境の場合: sk_live_xxx を設定（要注意）
+```
+
+### Cloudflare
+```
+https://dash.cloudflare.com/profile/api-tokens
+→ Create Token → Edit Cloudflare Workers テンプレート
+→ CLOUDFLARE_API_TOKEN に設定
+```
+
+### Linear
+```
+https://linear.app/settings/api
+→ Personal API Keys → + New API key
+→ LINEAR_API_KEY に設定
+```
+
+### Sentry
+```
+https://sentry.io/settings/account/api/auth-tokens/
+→ Create New Token → scopes: project:read, org:read, event:read
+→ SENTRY_AUTH_TOKEN に設定
+```
+
+### Discord
+```
+https://discord.com/developers/applications
+→ New Application → Bot → Reset Token
+→ DISCORD_BOT_TOKEN に設定
+→ Privileged Gateway Intents: Message Content Intent をON
+→ サーバーに招待: OAuth2 → URL Generator (bot, applications.commands)
+```
+
+### YouTube Data API v3
+```
+https://console.cloud.google.com/
+→ APIs & Services → + Enable APIs → YouTube Data API v3
+→ Credentials → + Create Credentials → API Key
+→ YOUTUBE_API_KEY に設定
+```
+
+### Brave Search API
+```
+https://api.search.brave.com/register
+→ 登録 → ダッシュボード → API Keys → New Key
+→ 無料プラン: 2,000 req/月
+→ BRAVE_API_KEY に設定
+```
+
+---
+
+## 他のAI（ChatGPT等）との連携
+
+### mcp-remote でHTTPブリッジを立てる
 
 ```bash
-# MCPサーバーの接続確認
-claude mcp list
-
-# 個別サーバーのテスト
-claude mcp get filesystem
+# MCPサーバーをOpenAI Function Calling互換のHTTP APIとして公開
+npx -y mcp-remote http ./node_modules/.bin/claude-mcp-proxy --port 3100
 ```
 
-## ChatGPT / 他のLLMとのMCP連携
-
-### mcp-remote でリモート接続（OpenAI / ChatGPT向け）
-
-```bash
-# mcp-remoteでMCPサーバーをHTTPエンドポイントとして公開
-npx -y mcp-remote serve --config .claude/settings.json --port 3100
-```
-
-OpenAI Function Calling 形式でアクセス:
-```
-POST http://localhost:3100/v1/functions
-```
-
-### LiteLLM 経由（複数LLMで同じMCPを使う）
+### LiteLLM で複数LLMを一元管理
 
 ```bash
 pip install litellm
+```
 
-# litellm.yaml
+`litellm.yaml`:
+```yaml
 model_list:
-  - model_name: gpt-4o
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: ${OPENAI_API_KEY}
   - model_name: claude-sonnet
     litellm_params:
       model: anthropic/claude-sonnet-4-6
       api_key: ${ANTHROPIC_API_KEY}
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: ${OPENAI_API_KEY}
 
+mcp_servers:
+  - name: filesystem
+    command: uvx
+    args: [mcp-server-filesystem, .]
+```
+
+```bash
 litellm --config litellm.yaml --port 4000
 ```
+
+---
 
 ## トラブルシューティング
 
 ```bash
-# 特定のMCPサーバーのログ確認
+# 現在の設定状態を確認
+npm run mcp:check
+
+# MCP サーバーのデバッグモード
 claude --mcp-debug
 
-# npxキャッシュクリア
+# npxキャッシュクリア（サーバーが古い場合）
 npx clear-npx-cache
 
-# パッケージの手動インストール（npxが遅い場合）
-npm install -g @modelcontextprotocol/server-filesystem
-npm install -g @modelcontextprotocol/server-github
+# uvxキャッシュクリア
+uv cache clean
+
+# 特定サーバーを手動起動してテスト
+npx -y @modelcontextprotocol/server-github
+uvx mcp-server-filesystem .
 ```
 
-## Obsidian Vault との連携
+---
 
-このプロジェクトの `knowledge-vault/` を Obsidian から直接参照可能。  
-`filesystem` MCPサーバーが起動中であれば Claude から vault ノートの読み書きが可能。
+## Obsidian Vault 連携について
+
+`obsidian` MCPサーバーは `knowledge-vault/` に直接アクセスします。
 
 ```
 knowledge-vault/
-├── notes/academic/    ← 2,501件の学術概念
-├── MOC/               ← 目次マップ
-└── org/roles/         ← 役員コンテキスト
+├── notes/academic/       ← 2,501件の学術概念ノート
+├── MOC/                  ← 目次マップ（学術概念・組織）
+└── org/roles/            ← 役員コンテキスト（CFO/CIO/COO等）
 ```
+
+Claude から `@obsidian` ツールでノートを検索・読み書き可能になります。
