@@ -57,7 +57,6 @@ function main() {
   console.log('🟢 API不要（即使用可能）');
   const ready = [];
   const needKey = [];
-  const missing = [];
 
   for (const name of serverNames) {
     if (NO_KEY_SERVERS.includes(name)) {
