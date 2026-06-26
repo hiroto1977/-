@@ -18,50 +18,50 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全451件）
+### 学術概念 / ビジネス法務（全452件）
 - [[act-on-electronic-records|電子帳簿保存法]]
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
-- …ほか 445 件 → [[学術概念]]
+- …ほか 446 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全507件）
+### 学術概念 / 経営学（全508件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 501 件 → [[学術概念]]
+- …ほか 502 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全482件）
+### 学術概念 / 人間科学（全484件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
-- …ほか 476 件 → [[学術概念]]
+- …ほか 478 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全434件）
+### 学術概念 / 情報社会学（全435件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-affordance-theory|アフォーダンス理論：技術が可能にする行為とデジタルメディアの社会的利用の分析]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 428 件 → [[学術概念]]
+- …ほか 429 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全657件）
+### 学術概念 / 経済学（全658件）
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-absorption-capacity|吸収能力（Absorptive Capacity）]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
-- …ほか 651 件 → [[学術概念]]
+- …ほか 652 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
