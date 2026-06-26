@@ -37623,5 +37623,122 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.taylorfrancis.com/books/mono/10.4324/9780203931653/gatekeeping-theory-pamela-shoemaker-timothy-vos', type: 'academic', label: 'Shoemaker, P.J. & Vos, T.P. 2009. Gatekeeping Theory. Routledge.' },
     ],
   },
+  {
+    id: 'econ-general-equilibrium-walras',
+    discipline: 'economics',
+    title: 'ワルラスの一般均衡理論',
+    statement: 'レオン・ワルラスが『純粋経済学要論』（1874年）で体系化した一般均衡理論は、' +
+      '全市場の需給が価格体系を通じて同時に均衡する状態を数学的に定式化した。模索' +
+      '（タトヌマン）過程による価格調整メカニズムと、超過需要の総価値が恒等的にゼロと' +
+      'なるワルラス法則を提示。1954年にアロー&デブリューが不動点定理を用いて均衡の存在' +
+      'を証明した。1972-74年のゾンネンシャイン＝マンテル＝デブリュー定理は、個人の合理' +
+      '性から市場全体の需要関数の形状を特定できないという理論的限界を示した。現代では' +
+      '応用一般均衡（CGE）モデルとして政策分析に広く活用される。',
+    keyFigures: 'レオン・ワルラス ／ ケネス・アロー ／ ジェラール・ドブリュー ／ フーゴー・ゾンネンシャイン ／ ロルフ・マンテル',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1907353', type: 'academic', label: 'Arrow, K.J. & Debreu, G. 1954. Existence of an Equilibrium for a Competitive Economy. Econometrica, 22(3), 265-290.' },
+      { url: 'https://en.wikipedia.org/wiki/General_equilibrium_theory', type: 'reference', label: 'Wikipedia: General equilibrium theory.' },
+      { url: 'https://en.wikipedia.org/wiki/Sonnenschein%E2%80%93Mantel%E2%80%93Debreu_theorem', type: 'reference', label: 'Wikipedia: Sonnenschein-Mantel-Debreu theorem.' },
+    ],
+  },
+  {
+    id: 'human-cognitive-dissonance-festinger',
+    discipline: 'human-science',
+    title: '認知的不協和理論（フェスティンガー）',
+    statement: 'レオン・フェスティンガーが1957年の著書『認知的不協和の理論』（Stanford ' +
+      'University Press）で提唱した社会心理学の基礎理論。個人が矛盾する認知（信念・' +
+      '態度・行動の知識）を同時に保持すると心理的不快感（不協和）が生じ、その低減に' +
+      '向けて態度変容・行動変容・認知の追加や重要性の変更といった方略が動機づけられると' +
+      '説く。1959年のフェスティンガー&カールスミスの実験（1ドル対20ドル条件）は、不十分' +
+      'な正当化が態度変容を促すことを実証した古典的研究である。アロンソンは自己一貫性' +
+      'モデルへと理論を発展させ、クーパー&ファジオは覚醒の役割を精緻化した。',
+    keyFigures: 'レオン・フェスティンガー ／ ジェームズ・カールスミス ／ エリオット・アロンソン ／ ジョエル・クーパー',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1993-97948-000', type: 'academic', label: 'Festinger, L. 1957. A Theory of Cognitive Dissonance. Stanford University Press.' },
+      { url: 'https://psycnet.apa.org/doi/10.1037/h0042519', type: 'academic', label: 'Festinger, L. & Carlsmith, J.M. 1959. Cognitive Consequences of Forced Compliance. Journal of Abnormal and Social Psychology, 58(2), 203-210.' },
+      { url: 'https://doi.org/10.1016/S0065-2601(08)60121-5', type: 'academic', label: 'Cooper, J. & Fazio, R.H. 1984. A New Look at Dissonance Theory. Advances in Experimental Social Psychology, 17, 229-266.' },
+    ],
+  },
+  {
+    id: 'infosoc-algocracy-algorithmic-governance',
+    discipline: 'information-sociology',
+    title: 'アルゴクラシー（アルゴリズム統治）',
+    statement: 'A.アニーシュが2006年の著書『Virtual Migration』（Duke University Press）' +
+      'で提唱した概念で、官僚制や市場と異なりソフトウェアのコード設計自体が労働や行動を' +
+      '統治する体制を指す。ダナハーは2016年のPhilosophy & Technology誌論文「The Threat ' +
+      'of Algocracy」で公共意思決定のアルゴリズム依存が民主的正統性を脅かすと論じ、' +
+      'エストランドのエピストクラシー批判を応用してアルゴクラシーの脅威を体系化した。' +
+      'パスクエーレは2015年の著書『The Black Box Society』で金融・情報領域における不透明' +
+      'なアルゴリズムの説明責任と透明性の欠如を批判した。シトロンは2008年の論文で行政の' +
+      '自動化決定における適正手続の保障を提唱した。',
+    keyFigures: 'A.アニーシュ ／ ジョン・ダナハー ／ フランク・パスクエーレ ／ ダニエル・キーツ・シトロン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s13347-015-0211-1', type: 'academic', label: 'Danaher, J. 2016. The Threat of Algocracy: Reality, Resistance and Accommodation. Philosophy & Technology, 29(3), 245-268.' },
+      { url: 'https://www.hup.harvard.edu/books/9780674970847', type: 'academic', label: 'Pasquale, F. 2015. The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.' },
+      { url: 'https://openscholarship.wustl.edu/law_lawreview/vol85/iss6/2/', type: 'academic', label: 'Citron, D.K. 2008. Technological Due Process. Washington University Law Review, 85, 1249-1314.' },
+    ],
+  },
+  {
+    id: 'bizlaw-implied-warranty-merchantability',
+    discipline: 'business-law',
+    title: '黙示の商品性保証（Implied Warranty of Merchantability）',
+    statement: '統一商事法典（UCC）第2-314条は、商人たる売主による物品売買契約に商品性の' +
+      '黙示保証が自動的に付随すると規定する。カール・ルウェリンが起草主査として1952年に' +
+      'UCCを策定し、英国1893年物品売買法の商品適格性条件を米国法に体系化した。商品性の' +
+      '6基準のうち「通常目的への適合性」（2-314(2)(c)）が最も頻繁に訴訟で争われる。' +
+      'マグナソン＝モス保証法（1975年、15 U.S.C. §2308）は、明示保証を付した場合の' +
+      '黙示保証の排除を禁止し消費者保護を強化した。UCC第2-318条は契約の相対性を緩和し、' +
+      '買主の家族・世帯員・来客にも保証の保護を拡大する3つの選択肢を州に提供している。',
+    keyFigures: 'カール・ルウェリン ／ ウィリアム・プロッサー ／ サミュエル・ウィリストン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-314', type: 'reference', label: 'UCC Section 2-314: Implied Warranty: Merchantability; Usage of Trade. Cornell Law Institute.' },
+      { url: 'https://www.law.cornell.edu/uscode/text/15/2308', type: 'government', label: '15 U.S.C. §2308: Implied warranties (Magnuson-Moss Warranty Act).' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-318', type: 'reference', label: 'UCC Section 2-318: Third Party Beneficiaries of Warranties Express or Implied. Cornell Law Institute.' },
+    ],
+  },
+  {
+    id: 'human-self-determination-theory-deci-ryan',
+    discipline: 'human-science',
+    title: '自己決定理論（SDT）：内発的動機づけと基本的心理欲求',
+    statement: 'エドワード・デシとリチャード・ライアンが1985年の著書『Intrinsic Motivation ' +
+      'and Self-Determination in Human Behavior』（Plenum Press）で体系化した動機づけの' +
+      'メタ理論。人間には自律性（autonomy）・有能感（competence）・関係性（relatedness）' +
+      'の3つの基本的心理欲求があり、これらの充足が内発的動機づけ・自律的な外発的動機づけ' +
+      '・心理的健康を促進すると説く。動機づけを非動機づけから内発的動機づけまでの連続体' +
+      '上に位置づける有機的統合理論（OIT）を含む6つのミニ理論で構成される。教育・医療・' +
+      'スポーツ・職場など広範な応用領域で実証的支持を得ている。',
+    keyFigures: 'エドワード・デシ ／ リチャード・ライアン',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://doi.org/10.1007/978-1-4899-2271-7', type: 'academic', label: 'Deci, E.L. & Ryan, R.M. 1985. Intrinsic Motivation and Self-Determination in Human Behavior. Plenum Press.' },
+      { url: 'https://psycnet.apa.org/doi/10.1037/0003-066X.55.1.68', type: 'academic', label: 'Ryan, R.M. & Deci, E.L. 2000. Self-Determination Theory and the Facilitation of Intrinsic Motivation, Social Development, and Well-Being. American Psychologist, 55(1), 68-78.' },
+      { url: 'https://selfdeterminationtheory.org/', type: 'reference', label: 'Self-Determination Theory — Official website and research database.' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-identity-albert-whetten',
+    discipline: 'management',
+    title: '組織アイデンティティ理論（アルバート&ウェッテン）',
+    statement: 'アルバート&ウェッテン（1985）は組織アイデンティティを「組織の中心的' +
+      '（central）・持続的（enduring）・独自的（distinctive）な特徴」として定義する' +
+      'CEDモデルを提唱した（Research in Organizational Behavior, Vol. 7）。ダットン&' +
+      'デュケリッチ（1991）はニューヨーク港湾局の事例研究を通じ、組織イメージと組織' +
+      'アイデンティティの相互作用が戦略的適応を駆動することを実証した。ジオイア、' +
+      'シュルツ&コーリー（2000）は「持続性」要件に疑義を呈し、アイデンティティは適応的' +
+      '不安定性を持つと主張した。ラヴァシ&シュルツ（2006）は外的脅威に対する組織' +
+      'アイデンティティの動的な再構築プロセスをモデル化した。',
+    keyFigures: 'スチュアート・アルバート ／ デイヴィッド・ウェッテン ／ ジェーン・ダットン ／ ジャネット・デュケリッチ ／ デニス・ジオイア ／ マイケン・シュルツ ／ ダヴィデ・ラヴァシ',
+    asOf: '2026-06-25',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1986-02640-001', type: 'academic', label: 'Albert, S. & Whetten, D.A. 1985. Organizational Identity. Research in Organizational Behavior, 7, 263-295.' },
+      { url: 'https://doi.org/10.2307/2393554', type: 'academic', label: 'Dutton, J.E. & Dukerich, J.M. 1991. Keeping an Eye on the Mirror: Image and Identity in Organizational Adaptation. Academy of Management Journal, 34(3), 517-554.' },
+      { url: 'https://doi.org/10.5465/amr.2000.2791603', type: 'academic', label: 'Gioia, D.A., Schultz, M. & Corley, K.G. 2000. Organizational Identity, Image, and Adaptive Instability. Academy of Management Review, 25(1), 63-81.' },
+      { url: 'https://doi.org/10.2307/20159804', type: 'academic', label: 'Ravasi, D. & Schultz, M. 2006. Responding to Organizational Identity Threats: Exploring the Role of Organizational Culture. Academy of Management Journal, 49(3), 433-458.' },
+    ],
+  },
 ];
 // Stryker restore all
