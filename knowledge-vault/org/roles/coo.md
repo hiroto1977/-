@@ -18,50 +18,50 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / ビジネス法務（全558件）
+### 学術概念 / ビジネス法務（全559件）
 - [[act-on-electronic-records|電子帳簿保存法]]
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
-- …ほか 552 件 → [[学術概念]]
+- …ほか 553 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全635件）
+### 学術概念 / 経営学（全636件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 629 件 → [[学術概念]]
+- …ほか 630 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全588件）
+### 学術概念 / 人間科学（全589件）
 - [[bystander-effect|傍観者効果]]
 - [[cognitive-dissonance|認知的不協和理論]]
 - [[fundamental-attribution-error|根本的な帰属の誤り（対応バイアス）]]
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
-- …ほか 582 件 → [[学術概念]]
+- …ほか 583 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全544件）
+### 学術概念 / 情報社会学（全545件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affordance|アフォーダンス]]
 - [[infosoc-affordance-theory|アフォーダンス理論：技術が可能にする行為とデジタルメディアの社会的利用の分析]]
-- …ほか 538 件 → [[学術概念]]
+- …ほか 539 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全800件）
+### 学術概念 / 経済学（全802件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-absorption-capacity|吸収能力（Absorptive Capacity）]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
-- …ほか 794 件 → [[学術概念]]
+- …ほか 796 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全127件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
