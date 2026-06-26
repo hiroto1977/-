@@ -63,9 +63,10 @@ npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics 
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
 npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
 npm run lint:docs          # cross-document consistency
+npm run lint:ui-copy       # sidebar/topbar visible copy must be Japanese except official names
 npm run lint:test-coverage # every service must have a test + an action registered
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage/shell)
+npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/ui-copy/test-coverage/shell)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 ```
 
@@ -175,6 +176,17 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
 - When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
   `file:line` references and metrics against the real tree.
+
+### UI 表示言語ルール
+
+- ダッシュボード、サイドバー、トップバー、ボタン、フォーム、空状態、エラー、ツールチップ、
+  `aria-label` を含む **ユーザーに見える/読み上げられる表示文言は日本語を標準**とする。
+- GitHub / Slack / YouTube などの正式サービス名、API / KPI / URL などの標準略語、ファイルパスや
+  コード識別子は例外として英字表記を許容する。ただし周辺の説明・操作文・状態文は必ず日本語で補足する。
+- 新しいサービスやページを追加するときは、`SERVICES` の `label` / `description` とページ内見出し・
+  CTA・ステータス文を日本語で書く。英語だけのプレースホルダー (`Dashboard`, `Settings`, `Loading`
+  など) を残さない。
+- サイドバーの表示規約は `npm run lint:ui-copy` で検証され、`npm run verify:all` に組み込まれる。
 
 ## Branching
 
