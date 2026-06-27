@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全786件）
+### 学術概念 / 経営学（全787件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[balanced-scorecard|バランスト・スコアカード（BSC）]]
 - [[design-thinking|デザイン思考]]
 - [[lean-manufacturing|リーン生産方式（トヨタ生産方式）]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
-- …ほか 780 件 → [[学術概念]]
+- …ほか 781 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全1102件）
+### 学術概念 / 経済学（全1104件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-absorption-approach-alexander|アブソープション・アプローチ——国民所得と支出から見た国際収支調整]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-absorption-capacity|吸収能力（Absorptive Capacity）]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
-- …ほか 1096 件 → [[学術概念]]
+- …ほか 1098 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]

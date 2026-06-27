@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 情報社会学（全695件）
+### 学術概念 / 情報社会学（全696件）
 - [[digital-divide|デジタル・デバイド（情報格差）]]
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance|アフォーダンス]]
-- …ほか 689 件 → [[学術概念]]
+- …ほか 690 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全1102件）
+### 学術概念 / 経済学（全1104件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach|アブソープション・アプローチ]]
 - [[econ-absorption-approach-alexander|アブソープション・アプローチ——国民所得と支出から見た国際収支調整]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-absorption-capacity|吸収能力（Absorptive Capacity）]]
 - [[econ-acceleration-principle-investment|加速度原理（投資の加速度モデル）]]
-- …ほか 1096 件 → [[学術概念]]
+- …ほか 1098 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]
