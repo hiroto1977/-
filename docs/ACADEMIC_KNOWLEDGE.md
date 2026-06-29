@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | 合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念 | ブライアン・カプラン ／ アンソニー・ダウンズ ／ ドナルド・ウィットマン ／ イリヤ・ソミン |
+| 経済学 | 確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論 | Assar Lindbeck（アサール・リンドベック） ／ Jörgen W. Weibull（ヨルゲン・ヴァイブル, 1987） ／ Peter J. Coughlin（ピーター・コクリン, 1992） ／ Coughlin & Nitzan（コクリン＝ニッツァン, 1981 / Nash 社会厚生） |
+| 経営学 | 外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト | Srilata Zaheer (ザヒール, 1995) ／ Stephen Hymer (ハイマー, 1960/1976) ／ Eden and Miller (イーデン/ミラー, 2001) ／ Academy of Management Journal 38(2): 341-363 |
+| 人間科学 | 反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス | Lee Ross（リー・ロス, 社会心理学者, スタンフォード大学） ／ Constance Stillinger（コンスタンス・スティリンガー, 共著者, 1991年論文） ／ Stillinger, Epelbaum, Keltner & Ross 1990（核軍縮街頭調査の原実証/未公刊草稿） ／ Maoz, Ward, Katz & Ross 2002（イスラエル/パレスチナ和平案での再現研究） |
+| 商法 | 均等論（Doctrine of Equivalents）——文言侵害を超えて実質的同一に特許の効力を及ぼす法理 | Graver Tank v. Linde Air Products (1950, 339 U.S. 605 / 三要素同一テスト) ／ Warner-Jenkinson v. Hilton Davis (1997, 520 U.S. 17 / 構成要素ごとの均等) ／ Festo v. Shoketsu Kinzoku Kogyo (2002, 535 U.S. 722 / 出願経過禁反言) ／ Ball Spline Case ボールスプライン軸受事件 (最判 1998.2.24 / 五要件テスト) |
+| 情報社会学 | アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働 | Brooke Erin Duffy（アスピレーショナル労働の提唱者、コーネル大学） ／ Angela McRobbie（創造産業とジェンダー化された労働の批判） ／ Tiziana Terranova（フリー労働 free labour 論） ／ Arlie Russell Hochschild（感情労働 emotional labor の理論） |
 | 経済学 | 統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み | オーデッド・ガロア ／ デヴィッド・ワイル ／ オメル・モアブ ／ トマス・マルサス |
 | 経済学 | メイの定理（May's Theorem）——二択では単純多数決を匿名性・中立性・正の反応性で一意に特徴づける定理 | ケネス・オー・メイ（Kenneth O. May, 1915–1977） ／ 初出: May (1952) Econometrica 20(4), 680–684 ／ 三公理＝匿名性 (anonymity)・中立性 (neutrality)・正の反応性 (positive responsiveness/monotonicity) ／ 関連: ケネス・アロウ（Kenneth Arrow）不可能性定理（3選択肢以上）の鏡像的可能性結果 |
 | 経営学 | シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法 | 新郷重夫（Shigeo Shingo, 1909–1990） ／ A Revolution in Manufacturing: The SMED System（1985, Productivity Press） ／ 内段取り/外段取り（IED/OED）の分離と転換 ／ McIntosh et al. (2000) SMED批判 |
