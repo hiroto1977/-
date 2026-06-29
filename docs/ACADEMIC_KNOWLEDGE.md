@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | 消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル | マーク・ルービンシュタイン（Mark Rubinstein, 1976） ／ ロバート・E・ルーカス（Robert E. Lucas Jr., 1978） ／ ダグラス・T・ブリーデン（Douglas T. Breeden, 1979） ／ ロバート・マートン（Robert C. Merton, 多ベータ異時点間CAPMの先行研究） |
+| 経済学 | 栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む | Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ Joseph E. Stiglitz（ジョセフ・スティグリッツ, 1976） ／ Partha Dasgupta（パーサ・ダスグプタ） ／ Debraj Ray（デブラジ・レイ, 1986/1987） |
+| 経営学 | バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル | Frank M. Bass（提唱者, 1969年） ／ Management Science 15(5):215-227（初出論文, DOI 10.1287/mnsc.15.5.215） ／ 革新係数 p・模倣係数 q・潜在採用者数 m（3パラメータ） ／ Everett M. Rogers（普及理論の先行研究, 比較対象） |
+| 人間科学 | ウェスタマーク効果（Westermarck effect／逆性的刷り込み）——幼少期に近接して育った者どうしが成人後に性的魅力を感じにくくなる近親相姦回避の心理機構 | Edvard Westermarck（1862–1939, 1891 提唱） ／ Joseph Shepher（1971 キブツ研究） ／ Arthur P. Wolf（1970 台湾シンプア研究） ／ Eran Shor & Dalit Simchai（2009 批判的再検討） |
+| 商法 | 信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理 | Joseph Story（ジョセフ・ストーリー連邦最高裁判事、巡回裁判官として法理を定立） ／ Wood v. Dummer, 30 F. Cas. 435（C.C.D. Me. 1824, No. 17,944）（信託基金の法理の初出判例） ／ legal capital / capital maintenance（法定資本・資本維持＝同法理が正当化する制度） ／ insolvency test・fraudulent transfer（現代米国会社法における後継的な債権者保護枠組み） |
+| 情報社会学 | 社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み | Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール・ホヴランド） ／ Carolyn Sherif & Roger Nebergall（キャロリン・シェリフ＆ロジャー・ネバーガル, 1965 関与アプローチ） ／ latitude of acceptance / rejection / noncommitment（受容・拒否・中立の幅） |
 | 経済学 | 労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする | Walter Y. Oi（ウォルター・オイ, 1929-2013, 原典1962） ／ firm-specific human capital（企業特殊的人的資本・固定雇用費） ／ labor hoarding（労働退蔵・プロシクリカルな測定生産性） ／ Arthur Okun（アーサー・オーカン・労働退蔵の関連議論） |
 | 経済学 | ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する | Martin L. Weitzman（マーティン・ワイツマン） ／ Dismal Theorem（悲観定理） ／ William Nordhaus（ウィリアム・ノードハウス） ／ Gernot Wagner（ゲルノット・ワーグナー） |
 | 経営学 | 手段-目的連鎖モデル（Means-End Chain／ミーンズ・エンド・チェーンとラダリング法）——製品の属性が結果を介して個人の価値観へとつながる階層を解明する | Jonathan Gutman ／ Thomas J. Reynolds ／ Jerry C. Olson ／ Milton Rokeach |
