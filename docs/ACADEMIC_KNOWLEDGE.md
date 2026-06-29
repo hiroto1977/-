@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論 | Steven C. Salop ／ David T. Scheffman ／ Raising Rivals' Costs (AER 1983) ／ Cost-Raising Strategies (JIE 1987) |
+| 経済学 | 本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む | Paul Krugman（クルーグマン, 1980） ／ Elhanan Helpman（ヘルプマン, 1985 共著） ／ Donald R. Davis（デイヴィス, 1998 批判） ／ Anthony Venables（ベナブルズ, 新経済地理学） |
+| 経営学 | プロフィットプール分析（Profit Pool／利益プール・マッピング）——産業の利益はバリューチェーン上で偏在し、売上シェアと一致しない | Orit Gadiesh ／ James L. Gilbert ／ Harvard Business Review (1998) ／ Anheuser-Busch beer-industry case |
+| 人間科学 | 検索誘導性忘却（Retrieval-Induced Forgetting）——思い出す行為そのものが、関連する競合記憶を一時的に抑制する | Michael C. Anderson ／ Robert A. Bjork ／ Elizabeth L. Bjork ／ Retrieval-Practice Paradigm |
+| 商法 | 内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則 | Restatement (Second) of Conflict of Laws §302（内部事項の選択規則） ／ Edgar v. MITE Corp., 457 U.S. 624 (1982) ／ CTS Corp. v. Dynamics Corp. of America, 481 U.S. 69 (1987) ／ Cary–Winter debate（規制間競争：底辺への競争 対 頂点への競争） |
+| 情報社会学 | メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み | Patti Valkenburg ／ Jochen Peter ／ Journal of Communication 2013 ／ Cognitive-Emotional-Excitative response states |
 | 経済学 | プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる | William Poole（ウィリアム・プール, 1970） ／ Quarterly Journal of Economics（誌, Vol.84, No.2, pp.197-216） ／ IS shock（実物的ショック→貨幣供給量目標） ／ LM shock（貨幣需要ショック→金利目標） |
 | 経済学 | ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに | William Brainard ／ Alan Blinder ／ Ben Bernanke ／ Lars Hansen & Thomas Sargent |
 | 経営学 | 品質工学（タグチメソッド／田口メソッド）——品質を目標値からのずれによる社会的損失の最小化として捉え、ロバスト設計で上流から品質を作り込む | Genichi Taguchi（田口玄一） ／ Raghu N. Kackar ／ Saeed Maghsoodloo ／ George E. P. Box |
