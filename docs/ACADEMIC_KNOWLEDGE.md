@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く | ロバート・ルーカス（Robert E. Lucas Jr.） ／ Expectations and the Neutrality of Money (1972, JET 4:103-124) ／ Some International Evidence on Output-Inflation Tradeoffs (1973, AER 63:326-334) ／ ルーカス供給曲線（Lucas supply / surprise supply function） |
+| 経済学 | ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題 | Stephen Williamson ／ John H. Cochrane ／ Stephanie Schmitt-Grohé ／ Martín Uribe |
+| 経営学 | 品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法 | Akao Yoji（赤尾洋二） ／ Mizuno Shigeru（水野滋） ／ Hauser, John R. ／ Clausing, Don |
+| 人間科学 | 袋小路文（ガーデンパス文／garden-path sentence）——文を逐次解析し誤った構造に誘い込まれ再分析を強いる現象 | Thomas G. Bever（トマス・G・ベヴァー） ／ Lyn Frazier（リン・フレイザー） ／ Keith Rayner（キース・レイナー） ／ Maryellen C. MacDonald（メアリエレン・C・マクドナルド） |
+| 商法 | 開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる | In re Cady, Roberts & Co. (1961) ／ SEC v. Texas Gulf Sulphur Co. (1968) ／ Chiarella v. United States (1980) ／ United States v. O'Hagan (1997) |
+| 情報社会学 | 多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態 | Floyd H. Allport ／ Daniel Katz ／ Hubert J. O'Gorman ／ Deborah A. Prentice & Dale T. Miller |
 | 経済学 | ボーリーの法則——労働分配率はなぜか一定に保たれる | アーサー・ライオン・ボーリー ／ ニコラス・カルドア ／ ジョン・メイナード・ケインズ ／ ルーカス・カラバルブニス |
 | 経済学 | ホシオス条件——サーチ市場が効率的になる分配のルール | アーサー・ホシオス ／ ピーター・ダイヤモンド ／ デール・モーテンセン ／ クリストファー・ピサリデス |
 | 経営学 | リトルの法則——待ち行列を貫くシンプルな等式 | ジョン・D・C・リトル ／ フィリップ・モース ／ アグナー・アーラン ／ イーライ・ゴールドラット |
