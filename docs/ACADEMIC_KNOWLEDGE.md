@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | 労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする | Walter Y. Oi（ウォルター・オイ, 1929-2013, 原典1962） ／ firm-specific human capital（企業特殊的人的資本・固定雇用費） ／ labor hoarding（労働退蔵・プロシクリカルな測定生産性） ／ Arthur Okun（アーサー・オーカン・労働退蔵の関連議論） |
+| 経済学 | ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する | Martin L. Weitzman（マーティン・ワイツマン） ／ Dismal Theorem（悲観定理） ／ William Nordhaus（ウィリアム・ノードハウス） ／ Gernot Wagner（ゲルノット・ワーグナー） |
+| 経営学 | 手段-目的連鎖モデル（Means-End Chain／ミーンズ・エンド・チェーンとラダリング法）——製品の属性が結果を介して個人の価値観へとつながる階層を解明する | Jonathan Gutman ／ Thomas J. Reynolds ／ Jerry C. Olson ／ Milton Rokeach |
+| 人間科学 | バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる | Robert Desimone ／ John Duncan ／ Jeffrey Moran ／ John H. R. Maunsell |
+| 商法 | 投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準 | SEC v. W. J. Howey Co. (328 U.S. 293, 1946) ／ Securities Act of 1933 §2(a)(1) ／ SEC v. Glenn W. Turner Enterprises (474 F.2d 476, 9th Cir. 1973) ／ SEC Framework for Investment Contract Analysis of Digital Assets (2019) |
+| 情報社会学 | バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象 | Herbert A. Simon（ハーバート・サイモン、1954定式化） ／ bandwagon effect（優勢側への同調的支持移動） ／ underdog effect（劣勢側への同情的支持移動） ／ Public Opinion Quarterly 18(3), 1954（初出誌・自己破壊的予測と不動点の議論） |
 | 経済学 | ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論 | Steven C. Salop ／ David T. Scheffman ／ Raising Rivals' Costs (AER 1983) ／ Cost-Raising Strategies (JIE 1987) |
 | 経済学 | 本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む | Paul Krugman（クルーグマン, 1980） ／ Elhanan Helpman（ヘルプマン, 1985 共著） ／ Donald R. Davis（デイヴィス, 1998 批判） ／ Anthony Venables（ベナブルズ, 新経済地理学） |
 | 経営学 | プロフィットプール分析（Profit Pool／利益プール・マッピング）——産業の利益はバリューチェーン上で偏在し、売上シェアと一致しない | Orit Gadiesh ／ James L. Gilbert ／ Harvard Business Review (1998) ／ Anheuser-Busch beer-industry case |
