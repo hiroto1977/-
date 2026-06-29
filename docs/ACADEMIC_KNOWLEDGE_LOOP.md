@@ -5,10 +5,12 @@
 > 本書の手順を 1 バッチ単位で自動的に繰り返します。
 >
 > 関連:
+> - 全体仕様（発見〜確証〜回答）`docs/KNOWLEDGE_PIPELINE_SPEC.md`
 > - データ本体 `src/renderer/data/academicKnowledge.ts`
 > - 概念表 `docs/ACADEMIC_KNOWLEDGE.md`
 > - 機械可読仕様 `docs/BATCH_APPEND_SPECIFICATION.md`
 > - Vault 仕様 `docs/KNOWLEDGE_VAULT.md`
+> - 確証ゲート（コード）`src/renderer/data/knowledgeProvenance.ts` / `npm run verify:knowledge`
 > - セッション引継ぎ `docs/SESSION_HANDOFF.md`
 
 ## 1. 目的とスコープ
