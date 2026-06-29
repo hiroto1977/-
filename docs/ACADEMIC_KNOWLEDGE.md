@@ -2773,6 +2773,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 商法 | ヘッジファンド型株主アクティビズムと企業統治 | アプリル・クライン ／ エマニュエル・ズル ／ ジョン・コーヒー ／ ルシアン・ベブチャック |
 | 情報社会学 | リミックス文化とクリエイティブ・コモンズ（レシッグ） | ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャロル・バーソロミュー |
 | 経営学 | 調整コスト理論と情報経済学（アロー） | ケネス・アロー ／ オリバー・ウィリアムソン ／ ヨラム・バーゼル ／ ハロルド・デムセッツ |
+| 経済学 | プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる | William Poole（ウィリアム・プール, 1970） ／ Quarterly Journal of Economics（誌, Vol.84, No.2, pp.197-216） ／ IS shock（実物的ショック→貨幣供給量目標） ／ LM shock（貨幣需要ショック→金利目標） |
+| 経済学 | ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに | William Brainard ／ Alan Blinder ／ Ben Bernanke ／ Lars Hansen & Thomas Sargent |
+| 経営学 | 品質工学（タグチメソッド／田口メソッド）——品質を目標値からのずれによる社会的損失の最小化として捉え、ロバスト設計で上流から品質を作り込む | Genichi Taguchi（田口玄一） ／ Raghu N. Kackar ／ Saeed Maghsoodloo ／ George E. P. Box |
+| 人間科学 | 音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する | Alvin M. Liberman（アルヴィン・リバーマン） ／ Ignatius G. Mattingly（イグネイシャス・マッティングリー） ／ Franklin S. Cooper（フランクリン・クーパー） ／ Carol A. Fowler（キャロル・フォウラー） |
+| 商法 | バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る | Adolf A. Berle ／ Gardiner C. Means ／ Harold Demsetz ／ The Modern Corporation and Private Property (1932) |
+| 情報社会学 | 争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル | Anthony Downs（アンソニー・ダウンズ, 1930-2021, 米経済学者・ブルッキングス研究所） ／ 初出: Downs, A. (1972) "Up and Down with Ecology: The 'Issue-Attention' Cycle," The Public Interest 28: 38-50 ／ Frank Baumgartner ＆ Bryan Jones（断続均衡モデルへ展開） ／ Michael Howlett（ハウレット, 実証的批判・検証） |
 | 経済学 | ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く | ロバート・ルーカス（Robert E. Lucas Jr.） ／ Expectations and the Neutrality of Money (1972, JET 4:103-124) ／ Some International Evidence on Output-Inflation Tradeoffs (1973, AER 63:326-334) ／ ルーカス供給曲線（Lucas supply / surprise supply function） |
 | 経済学 | ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題 | Stephen Williamson ／ John H. Cochrane ／ Stephanie Schmitt-Grohé ／ Martín Uribe |
 | 経営学 | 品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法 | Akao Yoji（赤尾洋二） ／ Mizuno Shigeru（水野滋） ／ Hauser, John R. ／ Clausing, Don |
