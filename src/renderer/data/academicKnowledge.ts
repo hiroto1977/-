@@ -60398,5 +60398,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.cambridge.org/core/journals/journal-of-public-policy/article/mechanisms-of-imitation-in-eu-regulatory-policy/evidence-and-implications', type: 'academic', label: 'Dunlop, C. A., & Radaelli, C. M. (2013) Mechanisms of Imitation in EU Regulatory Policy: Evidence and Implications, Journal of Public Policy 33(2): 111–127' },
     ],
   },
+  {
+    id: 'econ-school-choice-mechanism-design',
+    discipline: 'economics',
+    title: '学校選択メカニズムデザイン（School Choice Mechanism Design）',
+    statement:
+      '学校選択メカニズムデザイン（school choice mechanism design）は、公立学校への児童・生徒の割当問題をメカニズムデザインの理論的枠組みで分析し、公平かつ耐戦略的な制度を設計する応用ミクロ経済学の一分野である。アティラ・アブドゥルカディログルとタイフン・ソンメズは2003年の論文「School Choice: A Mechanism Design Approach」で、当時ボストンやミネアポリス、コロンバス、シアトルなど多くの学区が採用していた「ボストン方式」を分析した。この方式は、まず児童に第一希望校を申請させ、定員内であれば全員を確定的に受け入れ、超過すれば優先順位（居住地・兄弟姉妹・抽選等）に従って選抜し、残りを第二希望に回すという逐次確定型の手続きである。しかしこの手続きでは、真の選好を正直に申告することが必ずしも最適戦略とならず、学区の定員状況を読んで希望順位を偽る「戦略的操作」に長けた一部の保護者が有利になるという重大な公平性の欠陥を持つ。両者はこれに代わり、ゲール＝シャプレーの安定マッチング理論に基づき、真の選好の申告が支配戦略となる耐戦略性（strategy-proofness）を満たす「学生提案型受入保留（deferred acceptance）」方式と、分割不可能財の交換理論に基づく「トップ・トレーディング・サイクル」方式という二つの代替案を提示した。この研究成果を受け、アブドゥルカディログル、パラグ・パサック、アルヴィン・ロス、ソンメズらは教育委員会と協議を重ね、ボストン教育委員会は2005年に実際に受入保留方式へ制度を切り替え、ニューヨーク市も2003年に同種の改革を行った。マーケットデザイン理論が現実の公共政策として社会実装された代表的成功例として、経済学界で高く評価されている。',
+    keyFigures: 'Abdulkadiroğlu, Atila （2003 School Choice: A Mechanism Design Approach）／Sönmez, Tayfun ／Roth, Alvin E. ／Pathak, Parag A.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2F000282803322157061', type: 'academic', label: 'Abdulkadiroğlu, A. & Sönmez, T. (2003) "School Choice: A Mechanism Design Approach", American Economic Review 93(3): 729-747' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v93y2003i3p729-747.html', type: 'academic', label: 'RePEc/IDEAS — Abdulkadiroğlu & Sönmez (2003) "School Choice: A Mechanism Design Approach", American Economic Review' },
+      { url: 'https://en.wikipedia.org/wiki/School-choice_mechanism', type: 'reference', label: 'Wikipedia — School-choice mechanism (Boston mechanism, deferred acceptance, strategy-proofness)' },
+    ],
+  },
+  {
+    id: 'econ-ben-porath-human-capital-lifecycle',
+    discipline: 'economics',
+    title: 'ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）',
+    statement:
+      'イスラエルの経済学者ヨラム・ベン=ポラトが1967年の論文「The Production of Human Capital and the Life Cycle of Earnings」（Journal of Political Economy誌）で提示した、人的資本投資を生涯にわたる動学的な最適化問題として定式化したモデルである。人的資本の蓄積を、既存の人的資本ストック・購入する市場投入財・本人の時間投入という複数の要素を組み合わせた「人的資本生産関数」として捉え、教育や訓練を単発の消費的意思決定ではなく、労働供給と並行して時間を通じて続く自己投資の過程として描いた点に特徴がある。この生産過程には収穫逓減が働くため、投資は瞬時には完了せず長期にわたって分散して行われる。他方で、投資から得られる将来収益を市場賃金として回収できる残存期間（就労可能年数）は加齢とともに縮小していく。合理的な個人はこの残り時間の減少を見越し、自己投資に充てる時間の割合を若年期に最大化し、加齢とともに徐々に低下させて、代わりに市場労働に充てる時間の割合を増加させる。この最適化の帰結として、就学期に教育投資が集中する現象と、就業後に賃金上昇率が加齢とともに逓減していく凹型の年齢-賃金プロファイルとが、単一の理論枠組みから整合的に導出される。ベッカーやミンサーによる静学的な人的資本論に、最適制御理論を用いた動学的な時間配分の視点を導入した点で労働経済学の基礎理論の一つに位置づけられ、後続の生涯所得・職業訓練・オンザジョブトレーニング研究に広く継承されている。',
+    keyFigures: 'Ben-Porath, Yoram （1967 The Production of Human Capital and the Life Cycle of Earnings, Journal of Political Economy）／Becker, Gary ／Mincer, Jacob ／Kuznets, Simon（ベン=ポラトのハーバード大学博士課程指導教員）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.nber.org/system/files/chapters/c3278/c3278.pdf', type: 'academic', label: 'NBER Chapter — "The Production of Human Capital Over Time" (retrospective analysis of the Ben-Porath model)' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/259291', type: 'academic', label: 'Ben-Porath, Y. (1967) The Production of Human Capital and the Life Cycle of Earnings, Journal of Political Economy 75(4), pp.352-365' },
+      { url: 'https://en.wikipedia.org/wiki/Yoram_Ben-Porat', type: 'reference', label: 'Wikipedia — Yoram Ben-Porat (biography, Harvard PhD under Simon Kuznets, summary of the 1967 model)' },
+    ],
+  },
+  {
+    id: 'mgmt-kanter-tokenism-theory',
+    discipline: 'management',
+    title: 'カンターのトークニズム理論（Tokenism Theory）',
+    statement:
+      'カンターのトークニズム理論（tokenism theory）とは、社会学者ロザベス・モス・カンターが1977年の著書『Men and Women of the Corporation』（Basic Books）および同年の論文「Some Effects of Proportions on Group Life: Skewed Sex Ratios and Responses to Token Women」（American Journal of Sociology, 82巻5号, 965-990頁）で提示した、集団内の社会的属性の相対的人数比率が成員の相互作用・知覚・行動を規定するという組織社会学の理論である。カンターは集団構成を人数比率に応じて均一型・偏在型（85対15前後）・傾斜型（65対35前後）・均衡型（60対40から50対50）の四類型に分類し、偏在型集団において多数派を「支配者（dominants）」、少数を「トークン（tokens）」と呼んだ。トークンは実力や個性に関わらず社会的カテゴリーの象徴的代表として扱われ、可視性（visibility、過度な注目と業績への監視圧力を浴びる）・分極化（polarization、多数派とトークンとの差異が誇張され境界が強化される）・同化（assimilation、既存のステレオタイプに沿って個性や役割が歪められる）という三つの知覚的圧力に構造的にさらされる。カンターはこれらが個人の資質ではなく集団構成という構造的要因の産物であると論じ、産業組織における女性やマイノリティの昇進阻害を説明した。この知見は後続研究によって「クリティカルマス理論」へと発展し、取締役会等における少数派比率が概ね15％を超え女性取締役が三名以上に達すると象徴的地位を脱し実質的な影響力を発揮しうると論じられ、企業統治・ダイバーシティ経営研究の基礎理論として広く応用されている。',
+    keyFigures: 'Kanter, Rosabeth Moss（1977 Men and Women of the Corporation, Basic Books）／Kanter, Rosabeth Moss（1977 Some Effects of Proportions on Group Life, American Journal of Sociology）／Kramer, Vicki W. ／Konrad, Alison M. ／Erkut, Sumru',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/226425', type: 'academic', label: 'Kanter, R.M. (1977) Some Effects of Proportions on Group Life: Skewed Sex Ratios and Responses to Token Women, American Journal of Sociology 82(5), 965-990' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=10807', type: 'academic', label: 'Harvard Business School Faculty & Research — Men and Women of the Corporation (Kanter, 1977, Basic Books)' },
+      { url: 'https://link.springer.com/article/10.1007/s10551-011-0815-z', type: 'academic', label: 'Kramer, Konrad & Erkut et al., Women Directors on Corporate Boards: From Tokenism to Critical Mass, Journal of Business Ethics (Springer)' },
+    ],
+  },
+  {
+    id: 'human-compensatory-control-kay',
+    discipline: 'human-science',
+    title: '補償的制御理論（コンペンサトリー・コントロール理論）',
+    statement:
+      '補償的制御理論（compensatory control theory）は、アーロン・ケイらが2008年から2009年にかけて提唱した社会心理学理論であり、人が世界を秩序立ち予測可能な場だと信じることは、個人が統制感を築くための根源的な心理的土台であるとする。個人的な統制感が状況的あるいは慢性的に脅かされ低下すると、人はその欠落を補うために、代わりに秩序と予測可能性を保証してくれる外的な源泉、すなわち介入し監督する神への信仰や、政府・組織階層といった社会システムへの支持と防衛を強める。2008年の実験研究では、個人的統制の低下を操作すると、統制する神の存在への信念や既存の社会政治システムの擁護が因果的に高まることが示され、67か国の国際比較データでも個人統制感の低い国ほど政府による統制への支持が強いことが確認された。逆に外的システムの有効性そのものが脅かされる条件では、錯覚的であっても個人的統制感の知覚がかえって増すという相補的な結果も得られている。この理論は、統制への根源的動機を、個人的行為主体性の強化・自己を代弁する外部システムへの帰属・行動と結果の随伴性の確認・単純明快で一貫した解釈枠組みの希求という複数の代償的方略によって説明する統一的枠組みを提示し、宗教的信仰や権威主義的態度、社会的階層構造への選好、危機時の買いだめ行動、陰謀論への傾倒などきわめて幅広い現象の心理的基盤を統一的に説明する。システム正当化理論や存在脅威管理理論と並び、秩序と統制を希求する人間心理という共通テーマを扱う理論群の一角として、社会心理学・組織行動論・政治心理学に大きな影響を与えている。',
+    keyFigures: 'Kay, Aaron C.　（2008 God and the Government: Testing a Compensatory Control Mechanism for the Support of External Systems）／Gaucher, Danielle ／Whitson, Jennifer A. ／Galinsky, Adam D.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/18605849/', type: 'academic', label: 'Kay, A.C., Gaucher, D., Napier, J.L., Callan, M.J. & Laurin, K. (2008) God and the Government: Testing a Compensatory Control Mechanism for the Support of External Systems, Journal of Personality and Social Psychology 95(1), 18-35' },
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.1467-8721.2009.01649.x', type: 'academic', label: 'Kay, A.C., Whitson, J.A., Gaucher, D. & Galinsky, A.D. (2009) Compensatory Control: Achieving Order Through the Mind, Our Institutions, and the Heavens, Current Directions in Psychological Science 18(5), 264-268' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/24512510/', type: 'academic', label: 'Friesen, J.P., Kay, A.C., Eibach, R.P. & Galinsky, A.D. (2014) Seeking Structure in Social Organization: Compensatory Control and the Psychological Advantages of Hierarchy, Journal of Personality and Social Psychology 106(4), 590-609' },
+    ],
+  },
+  {
+    id: 'bizlaw-say-on-pay',
+    discipline: 'business-law',
+    title: 'セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度',
+    statement:
+      'セイ・オン・ペイ（Say on Pay）とは、上場企業の取締役・執行役の報酬方針及び支払実績について、株主総会において株主が拘束力のない諮問的投票を行う制度をいう。英国が2002年施行の会社取締役報酬報告書規則（The Directors\' Remuneration Report Regulations 2002）により世界で最初に導入し、報酬報告書に対する年次諮問投票を義務化した。米国では2010年制定のドッド＝フランク・ウォール街改革及び消費者保護法951条が上場企業に対し、委任状規則の開示対象たる役員報酬全般につき少なくとも3年に1度の諮問投票（セイ・オン・ペイ）と、その実施頻度自体を1年・2年・3年のいずれとするか6年に1度問う諮問投票（セイ・オン・フリークエンシー）を義務付け、証券取引委員会（SEC）が2011年1月に施行規則（規則14a-21、リリース33-9178号）を制定して同年1月21日以降の株主総会から適用した。企業買収に伴う役員への高額退職慰労金（ゴールデン・パラシュート）についても個別の諮問投票が求められる。いずれの投票も法的拘束力を欠くが、否決や高い反対率は取締役会・報酬委員会に対する強い規範的圧力として機能し、恣意的な報酬決定や失敗に対する過大な退職給付を是正する実務上の効果を持つ。フェリ＝メイバーの実証研究（2013年）は、英国において株主の否決的投票を受けた企業が過度な退職慰労金条項を撤廃し、業績連動性を高める傾向を示したことを報告している。日本では会社法上、報酬総額枠の事前承認は必要だが、個別の報酬方針や支払実績への諮問的投票制度は制度化されていない。',
+    keyFigures: '英国会社取締役報酬報告書規則（2002年施行）／ドッド＝フランク法951条（2010年）／米国証券取引委員会 規則14a-21（2011年）／Ferri, Fabrizio & Maber, David A.（2013 Review of Finance）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sec.gov/rules/final/2011/33-9178.pdf', type: 'government', label: 'U.S. Securities and Exchange Commission (2011) Final Rule: Shareholder Approval of Executive Compensation and Golden Parachute Compensation, Release No. 33-9178' },
+      { url: 'https://academic.oup.com/rof/article-abstract/17/2/527/1597704', type: 'academic', label: 'Ferri, F. & Maber, D.A. (2013) Say on Pay Votes and CEO Compensation: Evidence from the UK, Review of Finance 17(2):527-563' },
+      { url: 'https://www.legislation.gov.uk/uksi/2002/1986/made', type: 'government', label: 'UK Statutory Instrument 2002 No. 1986 — The Directors\' Remuneration Report Regulations 2002' },
+    ],
+  },
+  {
+    id: 'infosoc-network-agenda-setting',
+    discipline: 'information-sociology',
+    title: 'ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）',
+    statement:
+      'ネットワーク議題設定モデル（Network Agenda Setting、NAS）は、リー・グオとマックスウェル・マコームズが2011年に提唱した、議題設定理論の「第三レベル」と位置づけられる枠組みである。1972年のマコームズ&ショーによる第一レベル（対象＝争点の顕著性の転移）、1990年代以降の第二レベル（属性の顕著性の転移）に続き、NASはニュースメディアが個々の対象や属性を独立した要素としてではなく、相互に関連づけられた「ネットワーク」として提示し、その関係性の顕著性そのものを公衆の心の中へ転移させると主張する。理論的基盤は連想的記憶ネットワークモデルであり、人間の認知表象は階層的・直線的な順位づけではなく、諸要素が結びついた地図状・図式的構造をなすと想定する。ある対象や属性がどれだけ多くの他要素と結びつき、その意味でのネットワーク中心性（centrality）を持つかが、そのまま公衆の心の中での顕著性・想起されやすさを規定するとされる。ホン・ティエン・ヴー、グオ、マコームズは2014年の実証研究で、5年分の全国紙報道と世論調査データを分析し、メディアが複数の争点をひとまとまりの「バンドル」として繰り返し提示することで、公衆の争点間連想構造を強く形成する相関関係を確認した。ビッグデータ解析やソーシャルメディア分析の普及に伴い、政治コミュニケーション研究やイシュー・オーナーシップ研究における主要な分析枠組みとして定着し、2016年には体系的な論文集も刊行されている。',
+    keyFigures: 'Guo, Lei （2011 Network Agenda Setting: A Third Level of Media Effects）／McCombs, Maxwell ／Vu, Hong Tien ／Shaw, Donald（1972年の第一レベル議題設定理論の共同提唱者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1077699014550090', type: 'academic', label: 'Vu, H.T., Guo, L. & McCombs, M. (2014) Exploring "the World Outside and the Pictures in Our Heads": A Network Agenda-Setting Study, Journalism & Mass Communication Quarterly 91(4), 669-686' },
+      { url: 'https://www.routledge.com/The-Power-of-Information-Networks-New-Directions-for-Agenda-Setting/Guo-McCombs/p/book/9781138847750', type: 'academic', label: 'Guo, L. & McCombs, M. (eds.) (2016) The Power of Information Networks: New Directions for Agenda Setting, Routledge' },
+      { url: 'https://www.leiguo.net/research/network-agenda-setting-model/', type: 'reference', label: 'Guo, Lei — Network Agenda Setting Model (research summary, third level of agenda-setting theory)' },
+    ],
+  },
 ];
 // Stryker restore all
