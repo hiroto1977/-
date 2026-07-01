@@ -60650,5 +60650,103 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/i30029505', type: 'academic', label: 'Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）' },
     ],
   },
+  {
+    id: 'econ-eaton-lipsey-local-clustering',
+    discipline: 'economics',
+    title: 'イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey\'s Principle of Local Clustering）',
+    statement:
+      'イートン＝リプシー（B. Curtis Eaton & Richard G. Lipsey）が1975年の論文「The Principle of Minimum Differentiation Reconsidered: Some New Developments in the Theory of Spatial Competition」（Review of Economic Studies 42巻1号27-49頁）で、ホテリング（1929）の立地競争モデルを企業数が任意（n）の場合や有界・非有界の一次元・二次元市場へ拡張し、最小差別化の原理を再検討した研究である。ホテリングの原モデルは売り手2者が市場中央へ集まる帰結を示したが、イートンとリプシーは、価格を固定した純粋立地ゲームにおいて企業数がちょうど3のときは一般に純粋戦略ナッシュ均衡が存在しないことを明らかにし、単純な中央集中という結論が頑健でないことを示した。他方で均衡が存在する配置を調べると、企業は単独で孤立せず近傍の企業と対（ペア）を形成し、そのペア同士は互いに距離を保って市場全体に分散して立地するという規則性が現れ、これを「局所的集塊の原理（principle of local clustering）」と呼んだ。三つ組以上の集団は均衡として現れず、対の内部では顧客をめぐる競争が続く一方、対と対の間には十分な間隔が保たれる。この結果は、商店街やガソリンスタンド、ファストフード店が同業種で数店ずつ寄り添いながらも、その集団自体は都市内の複数地点に分散して立地するという現実の商業集積パターンを説明する理論的基礎として、都市経済学・産業組織論の空間競争研究で広く引用されている。',
+    keyFigures: 'Eaton, B. Curtis （1975 Principle of Minimum Differentiation Reconsidered）／Lipsey, Richard G. （1975 Principle of Minimum Differentiation Reconsidered）／Hotelling, Harold （1929 Stability in Competition・原モデル）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/42/1/27/1538204', type: 'academic', label: 'Eaton, B.C. & Lipsey, R.G. (1975) "The Principle of Minimum Differentiation Reconsidered: Some New Developments in the Theory of Spatial Competition," The Review of Economic Studies 42(1): 27-49 (Oxford Academic)' },
+      { url: 'https://ideas.repec.org/a/oup/restud/v42y1975i1p27-49..html', type: 'reference', label: 'IDEAS/RePEc bibliographic record — Eaton & Lipsey (1975), Review of Economic Studies 42(1):27-49, DOI 10.2307/2296817' },
+      { url: 'https://www.researchgate.net/publication/4782151_The_Principle_of_Minimum_Differentiation_Reconsidered_Some_New_Developments_in_the_Theory_of_Spatial_Competition', type: 'academic', label: 'ResearchGate record of Eaton & Lipsey (1975) — full paper metadata and abstract, principle of local clustering' },
+    ],
+  },
+  {
+    id: 'econ-heckman-selection-model',
+    discipline: 'economics',
+    title: 'ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）',
+    statement:
+      '標本選択バイアス（サンプルセレクション・バイアス）とは、観測されるデータが母集団からの無作為抽出ではなく、当事者自身の行動によって非無作為に選び出された結果であるために生じる統計的偏りをいう。代表例が女性の労働供給・賃金研究である。市場賃金が観測できるのは実際に働いている女性に限られるが、就業するか否かの決定自体が、観測されない賃金決定要因（能力・意欲・留保賃金等）と相関しうるため、就業者だけの賃金データを単純に最小二乗法で回帰しても、誤差項の条件付き期待値がゼロにならず、母集団全体に当てはまる真の賃金関数を一致推定できない。ジェームズ・ヘックマンは1979年の論文「Sample Selection Bias as a Specification Error」（Econometrica誌47巻153-161頁）において、この問題を欠落変数バイアスと同型の「特定化の誤り」として整理し、実行可能な二段階推定法を提示した。第一段階では、就業するか否かをプロビット・モデルで推定し、そこから逆ミルズ比（選択確率の密度関数と累積分布関数の比）を各観測値について算出する。第二段階では、この逆ミルズ比を追加の説明変数として賃金関数に組み込んだ上で最小二乗法により回帰することで、選択による偏りを補正した一致推定量を得る。この手法は「ヘックマン補正」または「ヘッキット」と呼ばれ、労働経済学・保健医療経済学・開発経済学など、観測データが自己選択を伴う幅広い実証研究の標準的手法として定着した。ヘックマンはこの貢献により、離散選択モデルのダニエル・マクファデンとともに2000年のノーベル経済学賞を受賞した。',
+    keyFigures: 'Heckman, James J.（1979 "Sample Selection Bias as a Specification Error", Econometrica）／McFadden, Daniel L.（離散選択モデル、2000年ノーベル経済学賞共同受賞）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.2307/1912352', type: 'academic', label: 'Heckman, J.J. (1979) Sample Selection Bias as a Specification Error — Econometrica 47(1), 153-161' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2000/summary/', type: 'government', label: 'The Sveriges Riksbank Prize in Economic Sciences 2000 — Nobel Prize Summary (Heckman & McFadden)' },
+      { url: 'https://www.nber.org/papers/w0172', type: 'academic', label: 'Heckman, J.J. (1977/1979) Sample Selection Bias As a Specification Error (with an Application to the Estimation of Labor Supply Functions) — NBER Working Paper 172' },
+    ],
+  },
+  {
+    id: 'mgmt-team-member-exchange',
+    discipline: 'management',
+    title: 'チーム・メンバー交換理論（Team-Member Exchange, TMX）',
+    statement:
+      'チーム・メンバー交換理論（team-member exchange theory、TMX）は、アンソン・シアーズが1989年に提唱した組織行動論の構成概念で、リーダー・メンバー交換理論（LMX）が上司と部下の垂直的な二者関係のみに注目し、同僚間の水平的な交換関係を軽視している点を批判する形で発展した。TMXは、個々のメンバーがチームの仲間全体との間に築く互恵的な交換関係の質を表し、アイデア・助言・支援・情報・承認をどれだけ相互に提供し合っているかによって規定される。役割形成理論と社会的交換理論を基盤とし、社会的交換の互恵性規範に基づいて、他者から受けた協力や配慮に対して同等の行動で応じようとする心理的傾向が、チーム内の協働の質を高めると説明される。質の高いTMXを持つメンバーは、同僚を積極的に助け、役割外行動や組織市民行動を自発的に示し、職務満足・チーム結束・生産性の向上につながる一方、質の低いTMXは形式的な役割遂行にとどまりやすい。シアーズは製造業労働者を対象とした実証研究で、自己管理型チームの成員ほどTMXの水準が高く、TMXがLMXとは独立に職務態度の予測力を高めることを示した。後にシアーズ・ペティ・キャッシュマン（1995）が10項目のTMX尺度を開発し、以後の実証研究における標準的な測定手法として広く用いられている。近年はLMXとTMXを組み合わせた社会的交換の多元的枠組みや、チーム内でのTMXのばらつき（差異化）が個人の職務クラフティングや革新行動に及ぼす影響も、重要な研究対象となっている。',
+    keyFigures: 'Seers, Anson （1989 Team-Member Exchange Quality: A New Construct for Role-Making Research）／Petty, M. M. ／Cashman, James F.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0749597889900605', type: 'academic', label: 'Seers, A. (1989) "Team-Member Exchange Quality: A New Construct for Role-Making Research," Organizational Behavior and Human Decision Processes 43(1), 118-135' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1059601195201003', type: 'academic', label: 'Seers, A., Petty, M.M. & Cashman, J.F. (1995) "Team-Member Exchange Under Team and Traditional Management," Group & Organization Management 20(1), 18-38' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7143217/', type: 'government', label: 'A Cross-Level Investigation of Team-Member Exchange on Team and Individual Job Crafting (PMC/NCBI) — TMX theory background and citation of Seers (1989)' },
+    ],
+  },
+  {
+    id: 'mgmt-trust-integrative-model',
+    discipline: 'management',
+    title: '組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）',
+    statement:
+      '組織的信頼統合モデルとは、経営学者ロジャー・メイヤー、ジェームズ・デイビス、F・デイビッド・シューアマンが1995年に「Academy of Management Review」誌に発表した理論であり、組織における信頼が形成される心理的過程を体系的に説明する枠組みである。信頼とは、相手を監視・統制できるか否かにかかわらず、相手が自分にとって重要な行動を実行してくれるという期待に基づき、自らを脆弱な立場に置く意志であると定義される。この意志は、被信頼者（トラスティ）に対する三つの被信頼性評価によって形成されるとされる。第一は能力であり、特定の領域において期待される行動を遂行しうる技能・知識・専門性を指す。第二は仁愛性であり、被信頼者が自己利益を離れて信頼者の利益を親身に配慮しているという評価である。第三は誠実性であり、被信頼者が信頼者にとって受容可能な一連の原則を遵守し、言行が一致しているという評価を意味する。この三要素は互いに独立しており、それぞれが信頼形成に固有の寄与をする。さらに、信頼者自身が生得的・経験的に持つ一般的な信頼しやすさの傾向、すなわち信頼性向が調整変数として働き、被信頼性に関する情報が乏しい初期段階ほど強く影響する一方、情報が蓄積されるにつれてその影響は弱まる。形成された信頼は、信頼者がリスクを引き受ける具体的な行動へとつながり、その結果は事後的に被信頼性評価へ再帰的にフィードバックされる。このモデルは、リーダーシップ、チームワーク、組織間関係、顧客関係、人事評価など幅広い経営学領域における信頼研究の基礎理論として広く引用され続けており、2007年には提唱者ら自身による理論の再検討論文も同誌に発表された。',
+    keyFigures: 'Mayer, Roger C.（1995年 An Integrative Model of Organizational Trust）／Davis, James H.（1995共著者）／Schoorman, F. David（1995共著者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.jstor.org/stable/258792', type: 'academic', label: 'Mayer, R. C., Davis, J. H. & Schoorman, F. D. (1995) "An Integrative Model of Organizational Trust", Academy of Management Review 20(3), 709-734' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2007.24348410', type: 'academic', label: 'Schoorman, F. D., Mayer, R. C. & Davis, J. H. (2007) "An Integrative Model of Organizational Trust: Past, Present, and Future", Academy of Management Review 32(2), 344-354' },
+      { url: 'https://www.researchgate.net/publication/312070306_Organizational_trust_Mayer_Davis_and_Schoorman_model_a_review', type: 'reference', label: 'ResearchGate — "Organizational trust: Mayer, Davis and Schoorman model, a review" (academic literature review summarizing the ability/benevolence/integrity framework)' },
+    ],
+  },
+  {
+    id: 'human-prototype-theory-rosch',
+    discipline: 'human-science',
+    title: 'プロトタイプ理論（カテゴリー化の原型理論）',
+    statement:
+      'プロトタイプ理論とは、認知心理学者エレノア・ロッシュが1973年の論文「Natural Categories」および1975年の論文「Cognitive Representations of Semantic Categories」で提示した、人間がカテゴリー（範疇）を心的にどう表象するかについての理論である。従来の古典的見解は、あるカテゴリーに属するか否かは、全成員が共有する必要十分条件的な定義的特徴によって明確に境界づけられると想定してきた。これに対しロッシュは、鳥・果物・家具といった自然カテゴリーの実験的研究を通じ、日常的な概念はそのようには構造化されていないことを示した。すなわち、カテゴリーは境界の明確な集合ではなく、最も典型的で代表的な成員である「プロトタイプ（原型）」を中心に、そこからの類似度に応じて成員性が段階的に薄れていく、境界の曖昧な構造をなすとされる。たとえば「鳥」というカテゴリーでは、コマドリはペンギンよりも典型的な成員と判断され、コマドリを鳥と確認する反応時間はペンギンの場合より短いことが実証された。この段階的成員性という発想は、必要十分条件による定義を退け、成員同士が部分的に重なり合う類似性の網によって結びついているとするウィトゲンシュタインの「家族的類似性」の概念を実証的に裏づけるものでもある。ロッシュはまた、成員の共通属性が最大化され他カテゴリーとの差異が最大化される認知的に最も効率的な抽象度の水準として「基本レベルカテゴリー」（例：「鳥」は「動物」よりも「コマドリ」よりも基本的）という概念も提唱し、言語学・人工知能・マーケティングにおける概念表現の理解に広範な影響を与えた。',
+    keyFigures: 'Rosch, Eleanor（1973 "Natural Categories"／1975 "Cognitive Representations of Semantic Categories"）／Mervis, Carolyn B.（1975年共著者、家族的類似性の実証）／Wittgenstein, Ludwig（哲学的源流、家族的類似性概念）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://qualquant.org/wp-content/uploads/cda/Rosch%201973%20Natural%20Categories.pdf', type: 'academic', label: 'Rosch, E. (1973) "Natural Categories", Cognitive Psychology 4(3), 328-350' },
+      { url: 'https://www.semanticscholar.org/paper/Cognitive-Representations-of-Semantic-Categories.-Rosch/fcd1453f7dda96718b4092354f2a19069041b3a8', type: 'academic', label: 'Rosch, E. (1975) "Cognitive Representations of Semantic Categories", Journal of Experimental Psychology: General 104(3), 192-233' },
+      { url: 'https://en.wikipedia.org/wiki/Prototype_theory', type: 'reference', label: 'Wikipedia — "Prototype theory" (graded membership, typicality effects, robin/penguin example, basic-level categories overview)' },
+    ],
+  },
+  {
+    id: 'bizlaw-indemnification-clause-duty-to-defend',
+    discipline: 'business-law',
+    title: '補償条項と防御義務・補償義務の区別（Indemnification Clause）',
+    statement:
+      '補償条項（indemnification clause／hold harmless clause）とは、契約の一方当事者（補償者、indemnitor）が、契約の締結・履行に関連して相手方（被補償者、indemnitee）に生じた特定の損失・損害・請求・費用を填補することを約する契約条項であり、当事者間の合意によりリスクを事前に配分する機能を担う。この法理は保険法上の填補概念に由来し、コモンローでは黙示の補償義務（implied indemnity、不当利得的な衡平法上の性質を持つ）と、契約上明示された補償義務（contractual indemnity）とが区別され、後者は当事者自身の過失についてすら補償を及ぼしうる点で前者と異なる。実務上重要な区別として、補償義務（duty to indemnify）は損害が現実に確定した時点で発生するのに対し、防御義務（duty to defend）は請求がなされた時点で直ちに生じ、請求の当否にかかわらず訴訟費用を負担する、より広範な義務とされる。カリフォルニア州の判例は、補償を「攻撃の剣」、免責（hold harmless）を「防御の盾」と性格づけた。また、補償条項が契約当事者間の直接請求（first-party claim）を含むか第三者からの請求（third-party claim）に限定されるかは条項の文言解釈に委ねられ、州により推定規則が異なる。米国の多くの州では、建設契約において元請が下請に自己の単独過失についてまで補償させる条項を無効とする反補償法（anti-indemnity statute）が制定されており、交渉力の不均衡と注意義務の希薄化という政策的懸念に対応している。',
+    keyFigures: 'Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007・カリフォルニア州控訴裁・補償の「剣」対免責の「盾」の性格づけ）／Heppler v. J.M. Peters Co.（1999・カリフォルニア州控訴裁・下請の補償義務と保険者責任の区別）／各州反補償法（anti-indemnity statute・建設契約における単独過失補償の無効化）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/indemnify', type: 'reference', label: 'Cornell Law School Legal Information Institute (LII) — Wex: Indemnify（補償の法的定義・填補義務の概説）' },
+      { url: 'https://en.wikipedia.org/wiki/Indemnity', type: 'reference', label: 'Wikipedia — Indemnity（補償契約の法理・保険法との関係・コモンロー上の位置づけ）' },
+      { url: 'https://www.sdvlaw.com/surveys/construction-anti-indemnity-statutes/', type: 'reference', label: 'Saxe Doernberger & Vita, P.C. — Construction Anti-Indemnity Statutes（50州調査・建設契約における反補償法の概観）' },
+    ],
+  },
+  {
+    id: 'infosoc-circuit-of-culture',
+    discipline: 'information-sociology',
+    title: 'カルチュラル・サーキット（文化の回路／circuit of culture）',
+    statement:
+      'カルチュラル・サーキット（circuit of culture、文化の回路）は、ポール・デュ・ゲイ、スチュアート・ホール、リンダ・ジェインズ、ヒュー・マッケイ、キース・ネイガスが1997年の共著『カルチュラル・スタディーズを実践する——ソニー・ウォークマンの物語』で提示した、文化的人工物や商品の意味がいかに生成・循環するかを分析する方法論的枠組みである。ホール自身の符号化／脱コード化モデルを土台に発展させ、文化を単一の生産点や受容点に還元せず、意味が生成される過程を「表象」「アイデンティティ」「生産」「消費」「規制」という五つの「契機（モーメント）」の連関として捉える。表象はある事物がいかなる記号・言説によって意味づけられるかを、アイデンティティはその意味づけが誰に向けられ誰を主体として構築するかを、生産は作り手がいかに意味を製品に組み込むかを、消費は利用者が製品を使う中でいかに意味を能動的に読み替え取り込むかを、規制は法・制度・社会規範がその流通と使用をいかに枠づけるかを扱う。事例研究として、ソニーのウォークマンが若者文化・可動性・私秘的な聴取体験としてどう表象・消費されたかを分析した。五つの契機は一方向の連鎖ではなく、ホールの「接合（articulation）」概念に依拠して相互に規定し合う円環（サーキット）をなすとされ、いずれの契機の分析も欠くと文化的テクストの理解が不完全になると説く。他方で、契機の区切り方が恣意的である、文化的決定を強調しすぎ商品自体の循環を軽視している、との批判も受けている。それでもなお、単なるテクスト分析やメディア効果論を超え、生産・表象・消費・規制を統合的に扱う分析装置として、メディア研究・消費文化論・マーケティング論に広く応用されている。',
+    keyFigures: 'Du Gay, Paul （1997 Doing Cultural Studies: The Story of the Sony Walkman）／Hall, Stuart （1997／1973 Encoding/Decoding）／Negus, Keith',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Circuit_of_culture', type: 'reference', label: 'Wikipedia: Circuit of culture — du Gay, Hall, Janes, Mackay, Negus (1997), five moments, articulation' },
+      { url: 'https://eric.ed.gov/?id=ED544487', type: 'academic', label: 'ERIC ED544487, "The Circuit of Culture as a Generative Tool of Contemporary Analysis" (AARE, 2012)' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095613171', type: 'reference', label: 'Oxford Reference — "Circuit of culture"' },
+    ],
+  },
 ];
 // Stryker restore all

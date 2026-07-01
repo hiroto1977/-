@@ -4357,5 +4357,12 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論 | アリー・クルグランスキー（1999） ／ エリック・P・トンプソン |
 | 商法 | クラウンジュエル防衛（Crown Jewel Defense） | Mills Acquisition Co. v. MacMillan（1989） ／ Revlon v. MacAndrews & Forbes（1986） |
 | 情報社会学 | コミュニケーション適応理論（Communication Accommodation Theory, CAT） | ハワード・ジャイルズ（1973／1987） ／ ジェシカ・ガシオレク ／ シンシア・ガロワ |
+| 経済学 | イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering） | B・カーティス・イートン（1975） ／ リチャード・G・リプシー ／ ハロルド・ホテリング |
+| 経済学 | ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正） | ジェームズ・ヘックマン（1979、2000ノーベル賞） ／ ダニエル・マクファデン |
+| 経営学 | チーム・メンバー交換理論（Team-Member Exchange, TMX） | アンソン・シアーズ（1989） ／ M・M・ペティ ／ ジェームズ・F・キャッシュマン |
+| 経営学 | 組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル） | ロジャー・C・メイヤー（1995） ／ ジェームズ・H・デイビス ／ F・デイビッド・シューアマン |
+| 人間科学 | プロトタイプ理論（カテゴリー化の原型理論） | エレノア・ロッシュ（1973／1975） ／ キャロリン・B・マービス |
+| 商法 | 補償条項と防御義務・補償義務の区別（Indemnification Clause） | Queen Villas Homeowners Assn v. TCB Prop. Mgmt.（2007） ／ Heppler v. J.M. Peters Co.（1999） |
+| 情報社会学 | カルチュラル・サーキット（文化の回路／circuit of culture） | ポール・デュ・ゲイ（1997） ／ スチュアート・ホール ／ キース・ネイガス |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。
