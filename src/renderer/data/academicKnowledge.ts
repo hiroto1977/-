@@ -60748,5 +60748,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095613171', type: 'reference', label: 'Oxford Reference — "Circuit of culture"' },
     ],
   },
+  {
+    id: 'econ-synthetic-control-method',
+    discipline: 'economics',
+    title: '合成コントロール法（synthetic control method）',
+    statement:
+      '合成コントロール法（synthetic control method）は、単一または少数の処置対象（国・州・地域等）に生じた政策や介入の因果効果を推定するための統計的手法である。処置を受けていない複数の対照ユニットの候補群から、処置前の結果変数や関連する共変量の推移が処置対象に最も近似するように非負かつ合計が1となる加重を最適化して算出し、その加重平均として「合成コントロール」と呼ばれる反実仮想（もし処置が生じなかった場合に実現していたはずの経路）を人工的に構成する。単一の対照群を分析者が主観的・恣意的に選ぶ従来の比較事例研究の問題を排し、加重の決定手続きをデータ駆動的に透明化した点に特色がある。アラン・アバディとハビエル・ガルデアサバルが2003年の論文でスペイン・バスク地方における分離主義テロの経済的損失を推定するために考案し、アバディ、アレクシス・ダイアモンド、イェンス・ハインミュラーが2010年のカリフォルニア州タバコ規制策（提案99号）の分析で加重最適化の推定手続きとプラセボ検定による統計的推論の方法を確立した。差の差分析が処置群と対照群が処置前に平行に推移するという「平行トレンド仮定」に依拠するのに対し、合成コントロール法は処置前の適合度そのものから加重を推定するため識別上の頑健性が高いとされる。比較可能な処置対象が単数または少数しか存在しない自然災害・制度改革・大規模イベント等の政策評価に広く応用され、実証経済学における因果推論の標準的手法の一つとなっている。',
+    keyFigures: 'Abadie, Alberto （2003 "The Economic Costs of Conflict: A Case Study of the Basque Country"）／Gardeazabal, Javier ／Diamond, Alexis ／Hainmueller, Jens （2010 "Synthetic Control Methods for Comparative Case Studies"）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1198/jasa.2009.ap08746', type: 'academic', label: 'Abadie, A., Diamond, A. & Hainmueller, J. (2010) "Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of California\'s Tobacco Control Program", Journal of the American Statistical Association 105(490), 493-505' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jel.20191450', type: 'academic', label: 'Abadie, A. (2021) "Using Synthetic Controls: Feasibility, Data Requirements, and Methodological Aspects", Journal of Economic Literature 59(2), 391-425' },
+      { url: 'https://en.wikipedia.org/wiki/Synthetic_control_method', type: 'reference', label: 'Wikipedia — Synthetic control method (Abadie & Gardeazabal 2003 Basque Country origin, weighted counterfactual construction, applications overview)' },
+    ],
+  },
+  {
+    id: 'econ-retirement-consumption-puzzle',
+    discipline: 'economics',
+    title: '退職消費パズル（Retirement-Consumption Puzzle）',
+    statement:
+      '退職消費パズルとは、モディリアーニ＝ブルンバーグのライフサイクル仮説が予測する生涯にわたる消費平準化に反し、実際には退職時点で家計の消費支出が有意かつ急激に低下するという実証的な異常事象を指す。ライフサイクル仮説によれば、退職は所得の途絶が事前に予見可能な変化であるため、家計は在職中に十分な資産を積み立てておき、退職後はその資産を計画的に取り崩すことで消費水準を滑らかに維持できるはずであり、予見可能な所得変化それ自体が消費を変化させることはないと予測される。ところがジェームズ・バンクス、リチャード・ブランデル、サラ・タナーが1998年に英国の家計データを用いて示したところでは、退職の前後で家計の消費支出は標準的な異時点間の効用最大化モデルが許容する範囲を超えて明確に落ち込み、単純なライフサイクル・恒常所得モデルでは十分に説明できなかった。この発見は、実際の退職が健康ショックなど予期せぬ形で生じる場合が多いこと、年金給付の不確実性、あるいは消費と労働時間の代替性を理論が無視している可能性を示唆するものとして注目され、貯蓄行動研究における代表的な反証事例となった。その後マーク・アギアーとエリック・ハーストは2013年の研究で、支出の落ち込みの大半は通勤・被服費など就労関連支出の減少や、余暇時間の増加に伴う家庭内生産の効率化によって説明でき、真の効用水準としての消費自体は必ずしも減少していないと再解釈し、パズルの一部を解消する説明を提示した。退職消費パズルは、ライフサイクル仮説の理論的整合性を問う代表的な実証研究として、不確実性や生産・消費の代替関係を組み込んだ拡張モデルの発展を促した。',
+    keyFigures: 'Banks, James （1998 Is There a Retirement-Savings Puzzle?）／Blundell, Richard ／Tanner, Sarah ／Aguiar, Mark （2013 Deconstructing Life Cycle Expenditure）／Hurst, Erik',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v88y1998i4p769-88.html', type: 'academic', label: 'Banks, J., Blundell, R. & Tanner, S. (1998) "Is There a Retirement-Savings Puzzle?", American Economic Review 88(4), 769-788' },
+      { url: 'https://doi.org/10.1086/670740', type: 'academic', label: 'Aguiar, M. & Hurst, E. (2013) "Deconstructing Life Cycle Expenditure", Journal of Political Economy 121(3), 437-492' },
+      { url: 'https://cepr.org/voxeu/columns/retirement-consumption-puzzle-new-evidence-personal-finances', type: 'reference', label: 'CEPR VoxEU — "The retirement-consumption puzzle: New evidence from personal finances"' },
+    ],
+  },
+  {
+    id: 'mgmt-organizational-virtuousness',
+    discipline: 'management',
+    title: '組織的美徳性理論（キャメロン）',
+    statement:
+      '組織的美徳性（Organizational Virtuousness）とは、キム・キャメロンらがミシガン大学のポジティブ組織学（POS）の枠組みの中で提唱した概念であり、組織における人間の潜在能力の最善を志向する行為・特性を指す。単に「害を与えない」という従来の倫理規範や規則遵守を超え、道徳的善さ・人間への好影響・利己的利害を超えた社会全体への利益という三要素を同時に満たす点で通常の「良い行い」と区別される。これはアリストテレスのいう「それ自体のために選ばれる第一義の善（goods of first intent）」に近く、幸福（eudaimonia）の追求と結びつく。キャメロン、ブライト、カザは2004年の実証研究（American Behavioral Scientist誌、18組織対象）で、組織的寛容・組織的信頼・組織的高潔性・組織的楽観性・組織的思いやりという五つの美徳クラスターを測定し、知覚業績・客観的収益性・製品品質・革新性・顧客維持との有意な正の関係を示した。この効果は二つの機序で説明される。第一に増幅効果（amplifying effect）であり、美徳的行為はポジティブ感情・社会関係資本・向社会的行動を誘発し、さらなる美徳的行為を生む自己強化的な好循環を形成する。第二に緩衝効果（buffering effect）であり、美徳性はレジリエンス・連帯感・効力感を高めることで、人員削減など組織的トラウマの悪影響を緩和・保護する。両機序はダウンサイジングを経験した組織の分析（2005年、Journal of Business Ethics）でも裏付けられた。',
+    keyFigures: 'Cameron, Kim S. （2004 Exploring the Relationships between Organizational Virtuousness and Performance）／Bright, David S. （2004／2005 共著者）／Caza, Arran （2004／2005 共著者）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/0002764203260209', type: 'academic', label: 'Cameron, K.S., Bright, D. & Caza, A. (2004) "Exploring the Relationships between Organizational Virtuousness and Performance," American Behavioral Scientist, 47(6), 766-790' },
+      { url: 'https://link.springer.com/article/10.1007/s10551-005-5904-4', type: 'academic', label: 'Cameron, K.S., Bright, D. & Caza, A. (2005) "The Amplifying and Buffering Effects of Virtuousness in Downsized Organizations," Journal of Business Ethics, 58(1-3), 249-269' },
+      { url: 'https://positiveorgs.bus.umich.edu/articles/exploring-the-relationships-between-organizational-virtuousness-and-performance/', type: 'reference', label: 'University of Michigan, Center for Positive Organizations — "Exploring the relationships between organizational virtuousness and performance" (research summary)' },
+    ],
+  },
+  {
+    id: 'human-item-response-theory',
+    discipline: 'human-science',
+    title: '項目反応理論（Item Response Theory, IRT）',
+    statement:
+      '項目反応理論（Item Response Theory, IRT）とは、テスト項目への回答パターンから、受検者の潜在特性値（θ、能力や心理的特性の水準）と各項目固有の特性（困難度・識別力・当て推量の程度）を同時に推定する心理測定モデルである。デンマークの数学者ゲオルク・ラッシュが1960年の著書『Probabilistic Models for Some Intelligence and Attainment Tests』で一母数ロジスティックモデル（ラッシュモデル）を提唱し、正答確率が受検者の能力と項目の困難度の差のみに規定されるという「特定的客観性」を主張した。米国ではフレデリック・ロードとメルヴィン・ノヴィックが1968年の共著『Statistical Theories of Mental Test Scores』で二・三母数モデルを含む体系的枠組みへと発展させ、同書に寄稿したアラン・バーンバウムがロジスティック関数による定式化を確立した。各項目の回答確率は、能力軸を横軸、正答確率を縦軸とするS字型の項目特性曲線で表され、曲線の位置が困難度、傾きが識別力を示す。素点をそのまま用いる古典的テスト理論と異なり、項目パラメータは受検者集団の能力分布に依存せず、受検者の能力推定値も使用した項目集合に依存しないという不変性を備える。この性質により、能力水準に応じて出題項目を動的に変えるコンピュータ適応型テストや、複数年度・複数フォームの得点を共通尺度に揃えるテスト等化、集団間で項目の機能が異なるかを検証する異質項目機能分析が可能となり、GRE・ASVAB・PISA・TOEFLなど国内外の大規模アセスメントで標準的手法として採用されている。',
+    keyFigures: 'Rasch, Georg （1960 Probabilistic Models for Some Intelligence and Attainment Tests）／Lord, Frederic M. ／Novick, Melvin R. ／Birnbaum, Allan',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Item_response_theory', type: 'reference', label: 'Wikipedia, "Item response theory" (definition, history, ICC, parameters, invariance, applications)' },
+      { url: 'https://en.wikipedia.org/wiki/Georg_Rasch', type: 'reference', label: 'Wikipedia, "Georg Rasch" (1960 Probabilistic Models for Some Intelligence and Attainment Tests, specific objectivity, one-parameter logistic model)' },
+      { url: 'https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C', type: 'academic', label: 'Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum\'s logistic IRT chapters)' },
+    ],
+  },
+  {
+    id: 'bizlaw-shelter-rule-negotiable-instruments',
+    discipline: 'business-law',
+    title: 'シェルター・ルール（Shelter Rule／遮蔽の法理）',
+    statement:
+      'シェルター・ルール（shelter rule、遮蔽の法理）とは、流通証券の譲受人が、自らは正当所持人（holder in due course）の要件を独立に満たしていなくとも、その直前の譲渡人が正当所持人としての地位を有していた場合には、当該譲渡人が有していた権利をそのまま承継し、正当所持人と同様に人的抗弁の切断という保護を享受できるとする米国統一商事法典（UCC）第3編上の法理である。UCC§3-203(b)は、証券の譲渡は、それが裏書譲渡による流通（negotiation）であるか否かを問わず、譲渡人が有する証券執行権限（正当所持人としての権利を含む）を譲受人に帰属させると定める。この法理の趣旨は、正当所持人が証券を自由に市場で処分できる環境を確保し、正当所持人という地位そのものが後続の譲渡において希釈されず、流通証券の転々流通性が損なわれないようにすることにある。もっとも、この保護には重要な限界があり、当該証券に関する詐欺または違法行為に直接または間接に関与した者は、たとえその後に正当所持人から証券を取得したとしても、シェルター・ルールによる保護を享受できない。公式注釈は、この制限の趣旨について、証券に関する不正に関与した当事者が、いったん証券を正当所持人の手に渡し、その後これを買い戻すことによって自らの不正な地位を「洗浄」（wash）することを防止するためであると説明する。この法理は正当所持人法理を補完するものであり、譲渡の連鎖のたびに各当事者の善意・対価・認識を個別に審査する必要をなくすことで、流通証券取引の安全と市場流動性を制度的に支える機能を担う。',
+    keyFigures: 'Karl Nickerson Llewellyn ／ Grant Gilmore ／ Gregory E. Maggs（1998）／ UCC § 3-203',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/3/3-203', type: 'reference', label: 'Cornell LII — UCC § 3-203: Transfer of Instrument; Rights Acquired by Transfer (Shelter Rule)' },
+      { url: 'https://scholarship.law.gwu.edu/faculty_publications/688/', type: 'academic', label: 'Gregory E. Maggs (1998) The Holder in Due Course Doctrine as a Default Rule — Georgia Law Review, GW Law Faculty Scholarship' },
+      { url: 'https://law.justia.com/codes/colorado/2022/title-4/article-3/part-2/section-4-3-203/', type: 'government', label: 'Colorado Revised Statutes § 4-3-203 — Transfer of Instrument; Rights Acquired by Transfer (UCC Shelter Rule, state codification)' },
+    ],
+  },
+  {
+    id: 'infosoc-native-advertising-persuasion-knowledge',
+    discipline: 'information-sociology',
+    title: 'ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）',
+    statement:
+      'ネイティブ広告とは、掲載媒体の編集記事・ニュース・レビューなど非広告コンテンツと形式・機能・文体が酷似するように意図的に設計された広告形態であり、利用者が広告であることに気づかないまま消費してしまう点に特徴がある。理論的基盤は心理学者マリアン・フリースタッドとピーター・ライトが1994年にJournal of Consumer Research誌で提示した「説得知識モデル（Persuasion Knowledge Model）」であり、消費者は生涯にわたる経験の蓄積を通じて、送り手の説得意図・戦術・動機を認識し対処するための個人的な「説得知識」を発達させると論じた。ネイティブ広告はこの説得知識の発動条件である「広告らしさ」の手がかりを形式的な同化によって隠蔽し、遅延させ、あるいは無効化する点が批判的に問題視されている。バートシュ・ウォイジンスキーとナサニエル・エヴァンズは2016年のJournal of Advertising誌論文「Going Native」において二つの実験を行い、開示文言に「広告（advertising）」「提供（sponsored）」等の明示的な語を用い、見出しの前方・上部に配置するほど利用者の広告認知率が高まる一方、広告だと認知された後は媒体・ブランドへの評価が否定的になりやすいという二律背反を実証した。米国連邦取引委員会（FTC）は2015年に事業者向け執行方針声明を公表し、広告であることが消費者にとって明瞭かつ目立つ形で開示されなければ、不当表示として法執行の対象になりうるとの規制方針を示した。日本でも2023年施行の景品表示法ステルスマーケティング規制と隣接する実務・法学上の論点として位置づけられる。',
+    keyFigures: 'マリアン・フリースタッド ／ ピーター・ライト（1994「Persuasion Knowledge Model」Journal of Consumer Research）／バートシュ・ウォイジンスキー ／ ナサニエル・エヴァンズ（2016「Going Native」Journal of Advertising）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1086/209380', type: 'academic', label: 'Friestad, M. & Wright, P. (1994) The Persuasion Knowledge Model: How People Cope with Persuasion Attempts — Journal of Consumer Research 21(1), pp.1-31' },
+      { url: 'https://doi.org/10.1080/00913367.2015.1115380', type: 'academic', label: 'Wojdynski, B.W. & Evans, N.J. (2016) Going Native: Effects of Disclosure Position and Language on the Recognition and Evaluation of Online Native Advertising — Journal of Advertising 45(2), pp.157-168' },
+      { url: 'https://www.ftc.gov/business-guidance/resources/native-advertising-guide-businesses', type: 'government', label: 'Federal Trade Commission — Native Advertising: A Guide for Businesses (2015 Enforcement Policy Statement)' },
+    ],
+  },
 ];
 // Stryker restore all
