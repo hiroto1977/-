@@ -60566,5 +60566,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Preference_falsification', type: 'reference', label: 'Wikipedia — Preference falsification（定義・私的/公的選好・革命的バンドワゴンの概説）' },
     ],
   },
+  {
+    id: 'econ-baron-myerson-optimal-regulation',
+    discipline: 'economics',
+    title: 'バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）',
+    statement:
+      'バロン＝マイヤーソンの最適規制理論は、デビッド・P・バロンとロジャー・B・マイヤーソンが1982年に『エコノメトリカ』誌に発表した論文「未知の費用を持つ独占企業の規制」で確立した、情報の非対称性下における規制設計の基礎理論である。規制対象の独占企業は自然独占（電力・通信・水道等）を想定し、その真の限界費用の水準を私的情報として保有するが、規制当局はその分布のみを知り、実現値を観察できない。規制当局は、消費者余剰と企業利潤とに重みを付けた線形の社会厚生関数を、企業の自己申告する費用類型に応じた価格と補助金の組を通じて最大化しようとする。ここでマイヤーソンが確立した顕示原理を用いれば、企業が正直に費用類型を申告することが最適反応となるよう誘因両立性を満たす直接メカニズムのみを考えれば十分であることが示される。導かれた最適解では、費用が最も高い非効率タイプの企業は競争的な限界費用価格付けの下で利潤ゼロに置かれる一方、それより効率的な全てのタイプは、高費用を偽って申告する誘因を断つための情報レントを受け取る。同時に価格は、最も効率的なタイプを除く全ての企業について限界費用を上回る水準へ歪められ、最高効率タイプでのみ歪みが生じない「上端での無歪み」という結果が導かれる。この分析枠組みは独占規制理論と契約理論・メカニズムデザイン理論とを結び付け、後のラフォン＝ティロールによるインセンティブ規制理論など、情報の非対称性下での公益事業規制・政府調達研究の礎となった。',
+    keyFigures: 'デビッド・P・バロン（David P. Baron, 1982 Econometrica）／ロジャー・B・マイヤーソン（Roger B. Myerson）／マイヤーソン（2007年ノーベル経済学賞）／ジャン＝ジャック・ラフォン＆ジャン・ティロール（1993 発展形）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1982/07/01/regulating-monopolist-unknown-costs', type: 'academic', label: 'Baron, D.P. & Myerson, R.B. (1982) Regulating a Monopolist with Unknown Costs, Econometrica 50(4), 911-930' },
+      { url: 'https://ideas.repec.org/a/ecm/emetrp/v50y1982i4p911-30.html', type: 'academic', label: 'RePEc/IDEAS — Baron & Myerson (1982) Regulating a Monopolist with Unknown Costs, bibliographic record (DOI 10.2307/1912769)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2007/summary/', type: 'government', label: 'NobelPrize.org — The Sveriges Riksbank Prize in Economic Sciences 2007 (Hurwicz, Maskin, Myerson — mechanism design theory)' },
+    ],
+  },
+  {
+    id: 'econ-peltzman-effect-risk-compensation',
+    discipline: 'economics',
+    title: 'ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺',
+    statement:
+      'ペルツマン効果（リスク補償仮説）とは、安全性を高めることを意図した規制や技術が、人々の危険行動を誘発することで、期待された安全効果の一部または全部を相殺してしまうという経済理論である。シカゴ大学の経済学者サム・ペルツマンが1975年に『ジャーナル・オブ・ポリティカル・エコノミー』誌に発表した論文「自動車安全規制の効果」で提唱した。1960年代の米国では、シートベルト装着義務化やエネルギー吸収式ステアリングコラムなど連邦政府による自動車安全基準が相次いで導入されたが、ペルツマンは、事故時の被害が軽減されると運転者が主観的に感じるリスクが低下し、効用最大化行動として速度超過や車間距離の短縮といったより攻撃的な運転を選択するようになると論じた。この行動変化は「相殺行動（オフセッティング・ビヘイビア）」と呼ばれ、規制がもたらす便益の一部を打ち消すだけでなく、歩行者や自転車利用者など規制の直接的な受益者でない第三者に事故リスクを転嫁しうる点も指摘された。ペルツマン自身は後年、この論理を障害者雇用法制や絶滅危惧種保護法など自動車分野以外の規制にも拡張し、規制が意図せざる代償行動を通じて当初の目的を損なう一般的な構造を示した。この主張は発表当時大きな論争を呼び、規制推進派から統計手法への批判も受けたが、その後の実証研究の蓄積により、相殺効果自体は多くの文脈で確認されるものの、直接効果の半分未満にとどまる場合が多いことが明らかにされている。今日では自動車分野を超え、金融規制・労働安全・環境政策など幅広い領域における政策の意図せざる結果を分析する基礎理論として、規制経済学に定着している。',
+    keyFigures: 'サム・ペルツマン（Sam Peltzman　1975『Journal of Political Economy』「The Effects of Automobile Safety Regulation」）／ジョージ・スティグラー ／ シカゴ学派・規制経済学の系譜 ／ 後続実証研究（相殺効果は直接効果の半分未満と推計）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/260352', type: 'academic', label: 'Peltzman, S. (1975) "The Effects of Automobile Safety Regulation," Journal of Political Economy, Vol. 83, No. 4, pp. 677-725, University of Chicago Press' },
+      { url: 'https://en.wikipedia.org/wiki/Risk_compensation', type: 'reference', label: 'Wikipedia: "Risk compensation" — Peltzman effect, offsetting behavior, seatbelt/automobile safety regulation origin' },
+      { url: 'https://en.wikipedia.org/wiki/Sam_Peltzman', type: 'reference', label: 'Wikipedia: "Sam Peltzman" — University of Chicago Booth School of Business, JPE editorship 1974-1989, career and key contributions' },
+    ],
+  },
+  {
+    id: 'mgmt-event-system-theory',
+    discipline: 'management',
+    title: '出来事システム理論（Event System Theory）',
+    statement:
+      '出来事システム理論は、フレデリック・モーガソン、テレンス・ミッチェル、劉東（リュウ・ドン）が2015年に『Academy of Management Review』誌上で提唱した理論であり、組織現象を静的な変数間の因果関係としてではなく、時間的に区切られた「出来事」の連鎖として捉え直す点に特徴がある。従来の組織科学が構造や属性など比較的安定した要因の分析に偏りがちであったのに対し、本理論は合併・トップ交代・自然災害・技術的ブレークスルーといった、組織環境の定型的・安定的特徴から逸脱する離散的な出来事にこそ変化の起点があると位置づけた。出来事の影響力は「出来事の強さ」によって規定され、強さは、従来のやり方からの逸脱度を示す新奇性、行動変容や情報処理の必要性を示す破壊性、重要性・優先度を示す決定的性という三要素の積として概念化される。加えて出来事は、どの組織階層で発生し空間的にどこまで波及するかという「出来事の空間」、および持続期間・発生タイミング・強度の時間的変化という「出来事の時間」という二つの次元をあわせ持つ。出来事は組織のあらゆる階層で発生しうるものであり、その効果は発生階層にとどまらず上位・下位階層へと伝播し、新たな行動・特性・出来事を連鎖的に誘発する。この枠組みは、危機管理・組織変革・イノベーション研究など動態的現象を扱う後続研究に広く応用され、組織科学における出来事志向アプローチの基盤を築いたと評価されている。',
+    keyFigures: 'Morgeson, Frederick P.（2015 Academy of Management Review）／Mitchell, Terence R. ／Liu, Dong ／event strength（novelty・disruption・criticality）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2012.0099', type: 'academic', label: 'Morgeson, F. P., Mitchell, T. R. & Liu, D. (2015) Event System Theory: An Event-Oriented Approach to the Organizational Sciences, Academy of Management Review 40(4), 515–537' },
+      { url: 'https://www.researchgate.net/publication/272427231_Event_System_Theory_An_Event-Oriented_Approach_to_the_Organizational_Sciences', type: 'academic', label: 'Morgeson, Mitchell & Liu (2015) Event System Theory — ResearchGate full-text record' },
+      { url: 'https://www.econbiz.de/Record/event-system-theory-an-event-oriented-approach-to-the-organizational-sciences-morgeson-frederick/10011391811', type: 'reference', label: 'EconBiz bibliographic record — Event system theory: an event-oriented approach to the organizational sciences' },
+    ],
+  },
+  {
+    id: 'human-unimodel-persuasion-kruglanski-thompson',
+    discipline: 'human-science',
+    title: 'ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論',
+    statement:
+      'ユニモデル（単一過程説得理論）とは、社会心理学者アリー・クルグランスキーと共同研究者エリック・トンプソンが1999年の論文「Persuasion by a Single Route: A View From the Unimodel」（Psychological Inquiry誌）で提唱した説得理論である。従来の説得研究を支配してきた精緻化見込みモデルやヒューリスティック＝システマティックモデルなどの二過程モデルは、論拠を吟味する「中心的・体系的経路」と、発信者の魅力や権威など表面的手がかりに頼る「周辺的・ヒューリスティック経路」という、質的に異なる二つの経路を仮定する。これに対しユニモデルは、その質的区別そのものを否定し、論拠の論理的強さも周辺的手がかりも、受け手にとっては結論を導く「証拠」という点で機能的に等価であると主張する。両者の違いは種類ではなく、処理に要する認知的労力・複雑性という単一の量的連続体上の程度差にすぎず、動機づけと処理能力が高いほど多くの証拠が処理される。この発想はクルグランスキー自身が展開した素朴認識論（レイ・エピステミック理論）における、証拠と結論を「もし～ならば」という推論規則で結びつける知識形成過程の考え方を基盤とする。また実験的には、証拠の長さや論理的複雑性を系統的に操作することで、従来「周辺的手がかり」と分類されてきた情報も、論拠と同様に処理量の増加に伴って説得効果が変化することが示されている。二過程モデル陣営との間で交わされた活発な論争は説得研究全体に理論的刺激を与え、後年はがん予防など公衆衛生分野の健康コミュニケーション設計にも応用が広がった。',
+    keyFigures: 'クルグランスキー, アリー（1999年 Persuasion by a Single Route: A View From the Unimodel）／トンプソン, エリック・P ／ピエロ, アントニオ ／エルブ, ハンス＝ペーター',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1207/S15327965PL100201', type: 'academic', label: 'Kruglanski, A.W. & Thompson, E.P. (1999) Persuasion by a Single Route: A View From the Unimodel — Psychological Inquiry, 10(2), 83-109' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.2006.00285.x', type: 'academic', label: 'Kruglanski, A.W., Pierro, A., Manetti, L., Erb, H.P. & Spiegel, S. (2006) Persuasion According to the Unimodel: Implications for Cancer Communication — Journal of Communication, 56(4)' },
+      { url: 'https://www.nsf.gov/awardsearch/showAward?AWD_ID=9905212', type: 'government', label: 'National Science Foundation Award #9905212 — Collaborative Research: Persuasion by a Single Route: The Unimodel (PI: Arie Kruglanski, University of Maryland)' },
+    ],
+  },
+  {
+    id: 'bizlaw-crown-jewel-defense',
+    discipline: 'business-law',
+    title: 'クラウンジュエル防衛（Crown Jewel Defense）',
+    statement:
+      'クラウンジュエル防衛（crown jewel defense）とは、敵対的買収の対象となった企業が、自社の最も収益性・戦略的価値の高い事業部門や資産——いわゆる「王冠の宝石」——を友好的な第三者（ホワイトナイト）に売却または売却オプションとして付与することで、買収者にとっての対象会社の魅力を意図的に低下させ、買収意欲を削ぐ防衛策である。買収が撤回された場合には、あらかじめ定めた価格で当該資産を買い戻す条項が付されることも多い。買収者が狙う中核資産をあらかじめ切り離すことで、たとえ買収が成立しても取得できる価値を大幅に減じる「焦土作戦」的性格を持ち、ポイズンピルが新株予約権の発動による株式希釈で議決権比率を防衛するのに対し、クラウンジュエル防衛は資産構造そのものを組み替える点で異なる。1980年代の米国M&A実務で普及したが、資産を優先的に取得する権利（ロックアップ・オプション）として友好的入札者に付与される形態は、Unocal基準の比例性審査を経て、デラウェア州裁判所において厳格な審査に服してきた。Revlon, Inc. v. MacAndrews & Forbes Holdings（1986）は会社売却が不可避となった段階での取締役義務の転換を示し、Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261（Del. 1989）は、KKRに付与されたクラウンジュエル型ロックアップ・オプションが公正なオークション過程を歪め買収者選好を固定化したとして無効と判断した。Dann & DeAngelo（1988）は敵対的買収に対する資産・所有構造の防衛的変更が平均して株主価値を毀損することを実証しており、同防衛策は他の防衛策が奏功しない場合の最終手段的性格を持つとされる。',
+    keyFigures: 'Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261（1989年　デラウェア州最高裁判決）／Revlon, Inc. v. MacAndrews & Forbes Holdings, 506 A.2d 173（1986年）／Larry Y. Dann ／ Harry DeAngelo',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304405X88900414', type: 'academic', label: 'Dann, L.Y. & DeAngelo, H. (1988) Corporate Financial Policy and Corporate Control: A Study of Defensive Adjustments in Asset and Ownership Structure, Journal of Financial Economics, 20(1-2), 87-127' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1989/559-a-2d-1261-5.html', type: 'reference', label: 'Justia — Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261 (Del. 1989)' },
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-1.html', type: 'reference', label: 'Justia — Revlon, Inc. v. MacAndrews & Forbes Holdings, 506 A.2d 173 (Del. 1986)' },
+    ],
+  },
+  {
+    id: 'infosoc-communication-accommodation-theory',
+    discipline: 'information-sociology',
+    title: 'コミュニケーション適応理論（Communication Accommodation Theory, CAT）',
+    statement:
+      'コミュニケーション適応理論（Communication Accommodation Theory, CAT）は、対人・異集団間の会話において話者が相手に応じて話し方や非言語行動を調整する心理過程を説明する社会言語学・社会心理学の理論である。社会心理学者ハワード・ジャイルズが1973年の論文「Accent Mobility: A Model and Some Data」（Anthropological Linguistics誌）で面接場面におけるアクセントの収束を実証し「スピーチ適応理論」として提唱した。その後、対象を言語だけでなく非言語行動や態度全般へ拡張し、1987年に現在の名称へ改称した。理論は話者の調整戦略を、相手の話し方に近づけることで共感や承認を得ようとする「収束（convergence）」、あえて自集団の話し方との差異を際立たせる「分岐（divergence）」、自らの話し方を変えない「維持（maintenance）」の三つに類型化する。収束は好意や社会的承認を得たい動機に基づくとされ類似性−魅力理論と結びつく一方、分岐は集団的独自性を誇示し社会的アイデンティティを守る機能を持つとされ、社会的アイデンティティ理論を主要な理論的基盤とする。行き過ぎた収束は「過剰適応（overaccommodation）」と呼ばれ、相手を子供扱いするなど見下した印象を与え、かえってコミュニケーションの障壁となりうる（高齢者への過度に単純化した話し方など）。ジェシカ・ガシオレクやジョーダン・ソリズ、シンシア・ガロワらにより、医療・介護、異文化間コミュニケーション、職場での世代間対話、カスタマーサービスなど幅広い実務的文脈へ応用が進められている。',
+    keyFigures: 'ジャイルズ, ハワード（Howard Giles）（1973年 Accent Mobility 論文でスピーチ適応理論として提唱、1987年にCATへ改称）／ガシオレク, ジェシカ（Jessica Gasiorek）／ソリズ, ジョーダン（Jordan Soliz）／ガロワ, シンシア（Cynthia Gallois）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Communication_accommodation_theory', type: 'reference', label: 'Wikipedia — Communication accommodation theory（収束・分岐・過剰適応の概説）' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat', type: 'academic', label: 'EBSCO Research Starters — Communication accommodation theory (CAT)' },
+      { url: 'https://www.jstor.org/stable/i30029505', type: 'academic', label: 'Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）' },
+    ],
+  },
 ];
 // Stryker restore all
