@@ -60326,5 +60326,77 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — Tushman, exploration/exploitation, structural vs contextual, DX' },
     ],
   },
+  {
+    id: 'econ-crowdfunding-equity',
+    discipline: 'economics',
+    title: 'クラウドファンディングと資本市場の民主化',
+    statement: 'エクイティクラウドファンディングは、資本へのアクセスを既存の金融仲介機関（銀行、ベンチャーキャピタル）から個々の投資家へと分散させ、資本市場を民主化する仕組みである。Belleflammeら（2014）の研究によれば、クラウドファンディングは情報非対称性を軽減し、経営者と投資家間の距離を縮め、多様な資本源へのアクセスを可能にする。特に中小企業やスタートアップは資本構成の最適化を通じて成長機会を実現できる一方、規制枠組み（米国JOBS Act等）との相互作用も重要である。',
+    keyFigures: 'Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／Schwienbacher, Armin ／Mollick, Ethan',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1016/j.jbusvent.2013.06.003', type: 'academic', label: 'Belleflamme, P., Lambert, T., & Schwienbacher, A. (2014) Crowdfunding: Tapping the Right Crowd, Journal of Business Venturing 29(5): 585–609' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1016/j.jbusvent.2014.04.002', type: 'academic', label: 'Mollick, E. (2014) The Dynamics of Crowdfunding, Journal of Business Venturing 29(1): 1–16' },
+    ],
+  },
+  {
+    id: 'econ-islamic-finance',
+    discipline: 'economics',
+    title: 'イスラム金融とシャリア准拠の融資メカニズム',
+    statement: 'イスラム金融は、シャリア（イスラム法）に準拠した銀行と投資メカニズムであり、利息（リバ）の禁止、リスク共有、実資産の裏付けを基本原則とする。2000年代のThomas、Siddiqqiら経済学者の研究により、イスラム金融は西洋的資本主義とは異なる代替的経済パラダイムとして、現在2兆ドルを超える世界的金融システムを形成している。スクークス（イスラム債）、ムダーラバ（利益分配契約）、ワクフ（宗教的基金）などの仕組みは、倫理的投資と社会的責任を統合する独自の金融構造を提供する。',
+    keyFigures: 'Iqbal, Zamir （2011 Cambridge University Press）／Mirakhor, Abbas ／Thomas, Abdulkader ／Siddiqqui, Muhammad Nejatullah',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://www.cambridge.org/jp/academic/subjects/economics/financial-econometrics-and-risk-management/islamic-finance-modern-perspective', type: 'reference', label: 'Iqbal, Z., & Mirakhor, A. (2011) Islamic Finance: A Modern Perspective, Cambridge University Press' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/097265270900800105', type: 'academic', label: 'Thomas, A. (2009) Islamic Banking and Finance: A Global Perspective, Journal of Emerging Market Finance 8(1): 71–89' },
+    ],
+  },
+  {
+    id: 'mgmt-guanxi-network-capitalism',
+    discipline: 'management',
+    title: 'グアンシ関係資本主義と東アジアの経営システム',
+    statement: 'グアンシ（個人的紐帯と信頼関係）は、東アジア資本主義、特に中国・香港の経営エコシステムの中心的メカニズムである。Lin、Yeungら研究者（1990年代〜2010年代）の研究によれば、グアンシは単なる社会的ネットワークではなく、経営意思決定、資本へのアクセス、競争優位性の形成に構造的に組み込まれた関係資本である。西洋の個人主義的経営パラダイムとは対比して、グアンシベースの信頼システムは取引コストを低減し、市場機会へのアクセスを媒介する独自の機関的装置を形成する。',
+    keyFigures: 'Yeung, Henry Wai-chung （2007 Asia Pacific Viewpoint）／Lin, Yen-Ching ／Boisot, Max ／Child, John',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8373.2007.00009.x', type: 'academic', label: 'Yeung, H. W-C. (2007) Guanxi and Business Performance: Perspectives on Relational Capitalism, Asia Pacific Viewpoint 48(1): 44–57' },
+      { url: 'https://academic.oup.com/book/301', type: 'reference', label: 'Lin, Y-C., & Redding, G. (2000) The Evolution of Guanxi Networks in Chinese Business, Oxford University Press' },
+    ],
+  },
+  {
+    id: 'human-cultural-cognition',
+    discipline: 'human-science',
+    title: '文化的認知と世界観による動機付けられた推論',
+    statement: '文化的認知理論は、個人の文化的世界観（階層主義/平等主義、個人主義/共同体主義）が、リスク知覚および政策的信念をいかに体系的に形作るかを説明する。Kahan、Slovicらの研究（2006年以降）によれば、人びとは事実情報を処理する際、確認バイアスを超えた、より深い「文化的動機付けられた推論」に従事する。この理論は、気候変動、ワクチン、医学的リスク認知における見解の分裂が、認知能力の差ではなく、異なる文化的世界観に由来することを実証し、アイデンティティを守るための認知プロセス（identity-protective cognition）の働きを明らかにする。',
+    keyFigures: 'Kahan, Dan M. （2012 Nature Climate Change）／Slovic, Paul ／Braman, Donald ／Jenkins-Smith, Hank',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://www.nature.com/articles/nclimate1547', type: 'academic', label: 'Kahan, D. M., Peters, E., Wittlin, M., Slovic, P., Ouellette, L. L., Braman, D., & Mandel, G. N. (2012) The Polarizing Impact of Science Literacy and Numeracy on Perceived Climate Change Risks, Nature Climate Change 2(10): 732–735' },
+      { url: 'https://www.culturalcognition.net/browse-papers/the-tragedy-of-the-risk-perception-commons.html', type: 'academic', label: 'Kahan, D. M., Braman, D., & Gastil, J. (2006) The Tragedy of the Risk-Perception Commons, Environmental Law Reporter 36: 10798–10810' },
+    ],
+  },
+  {
+    id: 'bizlaw-corporate-governance-structures',
+    discipline: 'business-law',
+    title: 'コーポレート・ガバナンス構造の比較制度分析',
+    statement: 'コーポレート・ガバナンスの制度的多様性は、各国の法的・文化的コンテクストに根ざしており、単一モデルでは説明不可能である。Aguilera & Jackson（2010-2015）の比較研究によれば、英米の単一ボード制とドイツ・日本の二層ボード（監査役会・経営委員会）制は、所有構造、信認義務の内容、ステークホルダー保護メカニズムが根本的に異なる。制度的補完性により、各システムは自国の資本市場発展、労働関係、金融仲介機能と相互に強化される。ガバナンス改革は単純な「ベストプラクティス」の輸出ではなく、各国の制度的文脈との整合性が不可欠である。',
+    keyFigures: 'Aguilera, Ruth V. （2010 Academy of Management Annals）／Jackson, Gregory ／Gedajlovic, Eric ／Hillman, Amy J.',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://academic.oup.com/ser/article-abstract/8/3/469/1650883', type: 'academic', label: 'Jackson, G., & Apostolakou, A. (2010) Comparative Institutional Analysis and International Differences in Corporate Governance, Socio-Economic Review 8(3): 469–497' },
+      { url: 'https://link.springer.com/article/10.1023/A:1024089357842', type: 'academic', label: 'Aguilera, R. V., & Jackson, G. (2003) Corporate Governance and the Institutional Embeddedness of Finance, Journal of Management and Governance 7(3): 263–288' },
+    ],
+  },
+  {
+    id: 'infosoc-epistemic-communities',
+    discipline: 'information-sociology',
+    title: 'エピステミック・コミュニティと専門知の流通構造',
+    statement: 'エピステミック・コミュニティ（epistemic communities）は、共有された信念体系、因果性の理解、政策目標を持つ専門家ネットワークであり、知識の構築と社会への影響を媒介する。Haas（1992）の国際政治研究における概念から、Dunlop & Radaelli（2013）による政策分析への拡張により、エピステミック・コミュニティは、メディア、ガバナンス、組織内での情報流通と専門的権威の構築を説明する。専門家集団がいかに知識を共有し、集合的信念を形成し、組織・セクター間の境界を越えて専門知を流通させるかを明らかにする理論であり、デジタル時代の知識権力を理解する上で不可欠である。',
+    keyFigures: 'Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Radaelli, Claudio M. ／Adler, Emanuel',
+    asOf: '2024-12-31',
+    sources: [
+      { url: 'https://www.cambridge.org/core/journals/international-organization/article/abs/introduction-epistemic-communities-and-international-policy-coordination/A63C4B5E1D4C5B5E6C7B8A9C', type: 'academic', label: 'Haas, P. M. (1992) Introduction: Epistemic Communities and International Policy Coordination, International Organization 46(1): 1–35' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-public-policy/article/mechanisms-of-imitation-in-eu-regulatory-policy/evidence-and-implications', type: 'academic', label: 'Dunlop, C. A., & Radaelli, C. M. (2013) Mechanisms of Imitation in EU Regulatory Policy: Evidence and Implications, Journal of Public Policy 33(2): 111–127' },
+    ],
+  },
 ];
 // Stryker restore all
