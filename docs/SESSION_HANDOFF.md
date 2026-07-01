@@ -14,19 +14,48 @@
 
 - **完全な運用仕様 → [`docs/BATCH_APPEND_SPECIFICATION.md`](BATCH_APPEND_SPECIFICATION.md)**（機械可読AIエージェント向け）。
 - **概念背景 → [`docs/ACADEMIC_KNOWLEDGE.md`](ACADEMIC_KNOWLEDGE.md)**（学術の枠・検証原則）。
-- **進捗状況**:
-  - ✅ **Batch 376 完了** (2,261 → 2,267 概念, PR #マージ済み)
-  - ✅ **Batch 377 完了** (2,267 → 2,273 概念, 6 concepts 追加: Adverse Selection / Bounded Rationality / Narrative Identity / Good Faith / Second-Order Cybernetics / Signaling & Screening)
-  - ✅ **Batch 378 完了** (2,273 → 2,279 概念, 6 concepts 追加: Portfolio Theory / Organizational Sensemaking / Memory Consolidation / Agency Relationship / Digital Divide / Psychological Capital)
-  - ✅ **Batch 379 完了** (2,279 → 2,285 概念, 6 concepts 追加: Behavioral Finance / Adaptive Leadership / Flow Psychology / Tortious Interference / Network Effects / Theory of Mind)
-  - ✅ **Batch 380 完了** (2,285 → 2,291 概念, 6 concepts 追加: Product Liability / Financialization / Growth Mindset / Mental Time Travel / Corporate Governance / Cognitive Surplus) — Commit 2e50f61, PR #704
-  - 🔄 **Batch 381 準備中**: 次の候補生成 & デデュプ検証待機中
-- 開発ブランチ: **タスクプロンプトで指定されたブランチ**を使用（現在: `claude/eager-brown-7cev3c`）。
-- 1 バッチ = デデュプ → 候補生成 → 6並列エージェント → JSON収集 → ファイル追記 → ゲート全green → コミット → プッシュ。
-- 最重要の罠: ①id 衝突は title grep で見抜けない（必ず id を grep）②意味的重複（例: 過剰正当化≒
-  アンダーマイニング）③リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検
-  ④エージェントがファイルを無断修正する→プロンプトで「JSON返却のみ」と明示。
-- ゲート: `vault:build ×2 && typecheck && verify:all && test && build:web`（詳細は仕様書参照）。
+
+### 📊 進捗ダッシュボード（毎バッチ完了時に更新 — 新セッションはここだけ見れば現在地がわかる）
+
+| 項目 | 値 |
+|---|---|
+| **現在の概念総数** | **4,320**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`） |
+| **直近完了バッチ** | Batch 718（2026-07-01） |
+| **Knowledge Vault** | 5,092 files |
+| **開発ブランチ** | `claude/eager-brown-7cev3c` |
+| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチを蓄積、まだ未マージ — マージは都度行わず蓄積する運用に変化） |
+| **次のアクション** | Batch 719 の候補選定 & デデュプ検証（「作業を継続して」で自動着手） |
+
+**直近バッチ履歴**（詳細は PR #707 の説明欄に全件記載）:
+
+| Batch | 概念数(累計) | 追加分野の概要 |
+|---|---|---|
+| 714 | 4,289→4,295 | 学校選択メカニズムデザイン／Ben-Porath／カンター・トークニズム／補償的制御理論／Say on Pay／ネットワーク議題設定 |
+| 715 | 4,295→4,301 | バーゼル測定費用理論／連帯責任型グループ貸付／バーレイ技術構造化／社会情動的選択性／事業目的の法理／選好偽装理論 |
+| 716 | 4,301→4,307 | バロン=マイヤーソン規制理論／ペルツマン効果／出来事システム理論／ユニモデル説得理論／クラウンジュエル防衛／CAT理論 |
+| 717 | 4,307→4,314（7件） | イートン=リプシー／ヘックマン標本選択／TMX理論／組織的信頼統合モデル／プロトタイプ理論／補償条項/防御義務／カルチュラル・サーキット |
+| 718 | 4,314→4,320 | 合成コントロール法／退職消費パズル／組織的美徳性理論／項目反応理論／シェルター・ルール／ネイティブ広告=説得知識モデル |
+
+- 1 バッチ = 候補選定（フレッシュなニッチ複数案+フォールバック） → 6並列リサーチエージェント（各自 grep でデデュプ検証必須） →
+  **自分で独立に再検証（別表現の grep で）** → ファイル追記 → ドキュメント表更新 → ゲート全green → コミット → プッシュ →
+  PR #707 の説明欄を最新バッチ履歴に更新。
+- 最重要の罠（Batch 714-718 で実際に踏んだもの）:
+  1. **id 衝突は title grep で見抜けない**（必ず id を grep）。
+  2. **エージェントの「非重複確認済み」自己申告は信用しない** — Batch 715/716/718 で、エージェントが
+     「grep で確認した」と主張した概念が実は **3件も既存重複していた**（MAC条項・context collapse・
+     holder in due course・equitable subordination 等）。**必ず自分で改めて grep（別の言い回しで）
+     再検証してから挿入する。**
+  3. 意味的重複（例: 過剰正当化≒アンダーマイニング、preference falsification と pluralistic ignorance
+     は近いが別概念——出典が別なら残す）は本文を読んで判断。
+  4. リサーチエージェントの**著者名/出版社/条文番号の捏造**を書き込み前に点検。
+  5. エージェントが返す `statement` に**文字数カウントの注記**（例:「（635文字）」）が混入することがある
+     → 挿入前に除去。
+  6. エージェントがファイルを無断修正する→プロンプトで「JSON/構造化テキスト返却のみ」と明示。
+  7. 分野の取り違え（例: 経営学の概念を human-science 担当エージェントが提出）が起こりうる →
+     出典ジャーナル（AMR/ASQ等は経営学、心理学誌は human-science）で最終判定。
+  8. データベースが密になるほど、エージェントは**5〜30件以上の既出候補を潰してから**やっとクリーンな
+     ものを見つける。1回の依頼で見つからなければ SendMessage でリダイレクト（新ニッチ提示）すればよい。
+- ゲート: `vault:build && typecheck && verify:all && test && build:web`（詳細は仕様書参照）。
 
 ## 現状サマリ (69 services)
 
