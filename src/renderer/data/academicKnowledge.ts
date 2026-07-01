@@ -60482,5 +60482,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.leiguo.net/research/network-agenda-setting-model/', type: 'reference', label: 'Guo, Lei — Network Agenda Setting Model (research summary, third level of agenda-setting theory)' },
     ],
   },
+  {
+    id: 'econ-barzel-measurement-cost-property-rights',
+    discipline: 'economics',
+    title: '財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）',
+    statement:
+      '財産権の測定費用理論（measurement cost theory of property rights）は、ヨラム・バーゼルが1982年の論文「Measurement Cost and the Organization of Markets」（Journal of Law and Economics誌）および1989年の著書『Economic Analysis of Property Rights』（ケンブリッジ大学出版局）で展開した理論である。財・サービスは品質・耐久性・純度・重量など多数の価値ある属性を持つが、それらすべてを正確かつ網羅的に測定し尽くすことは費用がかさみ過ぎて現実には不可能である。契約や所有権によって明示的に取り決められ保護されるのは属性の一部にとどまり、測定されず保護されない残りの属性は「公有地（パブリック・ドメイン）」として放置され、窃盗・怠業（シャーキング）・逆選択・品質の不正表示・目方のごまかしなどを通じて、取引の相手方や第三者が無償で捕捉しうる状態に置かれる。この捕捉可能性は資源の浪費と非効率な取引の縮小を招くため、市場参加者は測定費用を節約し公有地への価値の散逸を減らす制度を自生的に発達させる。ブランド、品質保証、規格・等級付け、検査、フランチャイズのチェーン店方式、計量法などが代表例である。バーゼルの理論は、グロスマン＝ハート＝ムーアの残余コントロール権アプローチやウィリアムソンの取引費用理論とは異なり、所有権を絶対的に確定した権利としてではなく測定費用に応じて連続的に不完全であり続けるものと捉え、経済制度が内生的に発生する理由を説明する独自の視座を提供した。',
+    keyFigures: 'バーゼル, ヨラム （1982年 Measurement Cost and the Organization of Markets, Journal of Law and Economics）／アレン, ダグラス（Allen, Douglas W., 共著者）／アルチアン, アーメン （Alchian, Armen, 隣接研究者）／チャン, スティーブン （Cheung, Steven N. S., 隣接研究者）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/467005', type: 'academic', label: 'Barzel, Y. (1982) Measurement Cost and the Organization of Markets, Journal of Law and Economics 25(1), pp.27-48' },
+      { url: 'https://www.cambridge.org/core/books/economic-analysis-of-property-rights/6D5E9A3AA67284FD9A12379CA3028D50', type: 'academic', label: 'Barzel, Y. (1989/1997) Economic Analysis of Property Rights, Cambridge University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Yoram_Barzel', type: 'reference', label: 'Wikipedia "Yoram Barzel" — biography, measurement cost theory, property rights economics lineage (Alchian, Cheung, Coase)' },
+    ],
+  },
+  {
+    id: 'econ-joint-liability-group-lending',
+    discipline: 'economics',
+    title: '連帯責任型グループ貸付理論（Joint Liability Group Lending）',
+    statement:
+      '連帯責任型グループ貸付理論とは、無担保の貧困層向け融資において、借り手同士に互いの返済を連帯保証させる仕組み（joint liability lending）が、情報の非対称性下での逆選択とモラルハザードをいかに緩和しうるかを説明する開発金融論の理論である。スティグリッツ＝ワイス（1981）が示した通り、担保も信用記録も乏しい市場では貸し手は個々の借り手の危険度を識別できず、金利引き上げが優良な借り手を排除し危険な借り手ばかりを惹きつけてしまうため、需要超過があっても均衡で信用割当が生じうる。これに対しマイトリーシュ・ガタックは、グラミン銀行に代表される連帯保証グループ融資が、借り手自身に近隣住民の中から仲間を選ばせる仕組みにより、危険な借り手ほど高金利・低連帯責任の契約を、安全な借り手ほど低金利・高連帯責任の契約を自ら選好するという分離条件を利用し、同質的な危険度の借り手同士が自発的に組を作る正の同類マッチング（ピア・セレクション効果）を誘発することを理論化した。スティグリッツ自身も1990年の論文で、組員同士の相互監視（ピア・モニタリング）と社会的制裁による事後的な履行強制（ピア・プレッシャー）が貸し手の個別審査・監督費用を借り手集団へ転嫁し、信用割当の制約を緩和しつつ金利を引き下げ、借り手全体の厚生を改善しうることを示した。ベズリー＆コートは連帯責任が高い返済率をもたらす一方、集団全体が同時に不履行に陥る新たなリスクも生むという両義性を指摘している。',
+    keyFigures: 'Ghatak, Maitreesh （2000）Screening by the Company You Keep: Joint Liability Lending and the Peer Selection Effect, Economic Journal 110(465)／Stiglitz, Joseph E.（1990）Peer Monitoring and Credit Markets, World Bank Economic Review 4(3)／Besley, Timothy ／Coate, Stephen（1995）Group Lending, Repayment Incentives and Social Collateral, Journal of Development Economics 46(1)',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://ideas.repec.org/a/ecj/econjl/v110y2000i465p601-31.html', type: 'academic', label: 'Ghatak, M. (2000) "Screening by the Company You Keep: Joint Liability Lending and the Peer Selection Effect," Economic Journal 110(465), 601-631 — RePEc/IDEAS record' },
+      { url: 'https://ideas.repec.org/a/oup/wbecrv/v4y1990i3p351-66.html', type: 'academic', label: 'Stiglitz, J.E. (1990) "Peer Monitoring and Credit Markets," The World Bank Economic Review 4(3), 351-366 — RePEc/IDEAS record' },
+      { url: 'https://ideas.repec.org/a/eee/deveco/v46y1995i1p1-18.html', type: 'academic', label: 'Besley, T. & Coate, S. (1995) "Group Lending, Repayment Incentives and Social Collateral," Journal of Development Economics 46(1), 1-18 — RePEc/IDEAS record' },
+    ],
+  },
+  {
+    id: 'mgmt-barley-technology-occasion-structuring',
+    discipline: 'management',
+    title: '構造化の契機としての技術（バーレイのCTスキャナー研究）',
+    statement:
+      'スティーブン・バーレイが1986年の論文「構造化の契機としての技術」（Administrative Science Quarterly誌31巻1号）で提示した組織論で、アンソニー・ギデンズの構造化理論を新技術導入の実証研究に応用したものである。バーレイは、規模や専門構成が類似した二つの病院の放射線科にCTスキャナーが導入される過程を参与観察し、同一の新技術が導入されたにもかかわらず、一方の病院では放射線科医と技師が対等に協働する構造へ、他方では両者が分離し自律的に働く構造へと、まったく異なる帰結に至ったことを見出した。この分岐を説明するため、彼は技術が組織構造を一義的に決定するのではなく、既存の役割や権限関係を揺るがし、人々が相互作用のなかで新たな行動の型（スクリプト）を即興的に作り出す「機会（occasion）」を提供するにすぎないと論じた。技術がもたらす不確実性に直面した組織成員は、ギデンズのいう解釈図式・資源配分（支配）・規範という三つの様相を媒介として日々の相互作用を積み重ね、その反復を通じて新たな制度化された役割や権力構造を事後的に生成していく。すなわち組織構造とは技術に内在する固定的属性ではなく、人々の行為が繰り返されるなかで絶えず再生産され変容していく動的な過程として捉え直される。同一の技術導入が施設ごとに異なる組織的帰結を生みうることを実証したこの知見は、技術が構造を規定するとする技術決定論への有力な反証となり、情報システム研究・組織社会学・医療社会学において技術と組織構造の関係を理解するための基礎的な理論枠組みとして広く継承されている。',
+    keyFigures: 'Barley, Stephen R.（1986 Technology as an Occasion for Structuring, Administrative Science Quarterly 31(1)）／Giddens, Anthony ／Tolbert, Pamela S. ／Black, Laura J.',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://eric.ed.gov/?id=EJ338774', type: 'government', label: 'ERIC (U.S. Dept. of Education) — Barley (1986) Technology as an Occasion for Structuring, Administrative Science Quarterly, v31 n1 p78-108' },
+      { url: 'https://www.jstor.org/stable/2392767', type: 'academic', label: 'Barley, S.R. (1986) Technology as an Occasion for Structuring: Evidence from Observations of CT Scanners and the Social Order of Radiology Departments, Administrative Science Quarterly 31(1), 78-108 (DOI: 10.2307/2392767)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/017084069701800106', type: 'academic', label: 'Barley, S.R. & Tolbert, P.S. (1997) Institutionalization and Structuration: Studying the Links between Action and Institution, Organization Studies 18(1), 93-117' },
+    ],
+  },
+  {
+    id: 'human-socioemotional-selectivity',
+    discipline: 'human-science',
+    title: '社会情動的選択性理論（Socioemotional Selectivity Theory）',
+    statement:
+      '社会情動的選択性理論（socioemotional selectivity theory, SST）とは、人が残された時間をどう知覚するかによって社会的目標の優先順位が体系的に変化するとする生涯発達心理学の理論である。スタンフォード大学のローラ・L・カーステンセンが1992年の論文で原型を示し、1999年にデレク・イサコウィッツおよびスーザン・チャールズとの共著論文「Taking Time Seriously」（American Psychologist誌54巻165-181頁）で体系化した。理論の核心は、社会的動機を知識獲得に関わる目標と情動制御に関わる目標の二種類に大別する点にある。将来時間が広く開放的だと知覚されるとき、人は新奇な情報・経験・人脈の拡大といった知識関連目標を優先し、社会的ネットワークを広げようとする。反対に時間が限られていると知覚されるときは、現在を味わい既存の親密な関係を深めるといった情動的に意味のある目標を優先し、周辺的な人間関係を意図的に整理する。この時間展望の変化は暦年齢そのものではなく主観的な残り時間の知覚（future time perspective）に規定されるため、高齢者に限らず余命宣告や大規模災害・パンデミックのように将来展望が急に狭まる状況でも同様の選好転換が生じる。理論はさらに、加齢に伴い注意と記憶がネガティブ情報よりポジティブ情報を優先的に処理する「ポジティビティ効果」（マーラ・マーサーらとの共同研究で実証）を導出した。老年学・臨床心理学のみならず、組織における世代間マネジメント・定年前後のキャリア設計・終末期ケアの分野にも応用され、人が人生の残り時間をどう見積もるかが動機づけと意思決定を規定するという知見を提供している。',
+    keyFigures: 'カーステンセン, ローラ・L　（Carstensen, 1992／1999 Taking Time Seriously, American Psychologist）／イサコウィッツ, デレク・M ／チャールズ, スーザン・T ／マーサー, マーラ',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://en.wikipedia.org/wiki/Socioemotional_selectivity_theory', type: 'reference', label: 'Wikipedia — Socioemotional selectivity theory (Carstensen, time horizons, positivity effect)' },
+      { url: 'https://psycnet.apa.org/record/1999-10334-001', type: 'academic', label: 'Carstensen, L. L., Isaacowitz, D. M., & Charles, S. T. (1999) Taking Time Seriously: A Theory of Socioemotional Selectivity, American Psychologist, 54(3), 165-181' },
+      { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3459016/', type: 'academic', label: 'The Theory Behind the Age-Related Positivity Effect — Reed & Carstensen, Frontiers in Psychology (PMC)' },
+    ],
+  },
+  {
+    id: 'bizlaw-business-purpose-doctrine-gregory-helvering',
+    discipline: 'business-law',
+    title: '事業目的の法理——グレゴリー対ヘルベリング事件と租税回避取引の実質否認',
+    statement:
+      '事業目的の法理（Business Purpose Doctrine）とは、租税回避のみを目的とし独立した事業上の意義を欠く取引を、たとえ制定法の文言に形式上合致していても課税上は無視するという米国税法上の判例法理である。1935年の連邦最高裁判所グレゴリー対ヘルベリング事件（Gregory v. Helvering, 293 U.S. 465）が起源であり、原告エブリン・グレゴリーは子会社設立と即時清算という組織再編の形式を用いて保有株式を移転し、通常配当所得としての課税を回避してキャピタルゲイン課税のみで済ませようとした。連邦最高裁はサザーランド判事の法廷意見において、当該取引が制定法上の要件には形式的に適合するものの、租税回避以外に何ら独立した事業目的を欠くため、制定法が予定する「組織再編」には該当しないと判示し、租税回避目的の動機自体は問題としないという一般原則を維持しつつも、取引の実質に着目してこれを否認した。この判断は、法形式ではなく経済的実質を重視する実質優先原則（Substance over Form Doctrine）の判例法上の礎ともなった。後年、複数の形式的に独立した段階的取引を一体の取引として評価する段階取引の法理（Step Transaction Doctrine）へと発展し、拘束的合意基準・相互依存性基準・最終結果基準という三つの基準によって諸段階を統合すべきか否かが判定される。両法理は2010年の医療保険改革法に伴う内国歳入法典7701条(o)による経済的実質法理の成文化にも継承され、今日でも企業買収・組織再編・租税回避スキームの税務プランニングおよびその司法審査における中核的規律として機能し続けている。',
+    keyFigures: 'Sutherland, George （1935 Gregory v. Helvering, 293 U.S. 465, majority opinion）／Gregory, Evelyn （respondent taxpayer）／Hand, Learned （Second Circuit opinion below）／Elkins, David （2024 "Gregory v. Helvering: A Red Herring that Shaped Tax Jurisprudence," Berkeley Business Law Journal）',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://www.law.cornell.edu/supremecourt/text/293/465', type: 'government', label: 'Gregory v. Helvering, 293 U.S. 465 (1935) — full opinion, Cornell Law School Legal Information Institute' },
+      { url: 'https://supreme.justia.com/cases/federal/us/293/465/', type: 'government', label: 'Gregory v. Helvering, 293 U.S. 465 (1935) — case text and syllabus, Justia US Supreme Court Center' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4575780', type: 'academic', label: 'Elkins, D. (2024) "Gregory v. Helvering: A Red Herring that Shaped Tax Jurisprudence," Berkeley Business Law Journal, Vol. 21, p. 171' },
+    ],
+  },
+  {
+    id: 'infosoc-preference-falsification-kuran',
+    discipline: 'information-sociology',
+    title: '選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換',
+    statement:
+      '選好偽装（preference falsification）とは、人が知覚された社会的圧力の下で、自らの本当の選好（私的選好）とは異なる選好を公然と表明する現象を指す。トルコ系米国人の経済学者ティムール・クランが1987年の論文で用語を提起し、1989年の論文「Sparks and Prairie Fires: A Theory of Unanticipated Political Revolution」（Public Choice誌）で理論の骨格を示した後、1995年の著書『Private Truths, Public Lies: The Social Consequences of Preference Falsification』（ハーバード大学出版局）で体系的に展開した。人は本音（私的選好）を胸に秘めたまま、周囲の視線や制裁を恐れて建前（公的選好）を語るため、社会全体で観察される公的選好の分布は、実際の私的選好の分布から大きく乖離しうる。クランはこの乖離が三つの帰結を生むと論じる。すなわち、誤った情報に基づく「社会的決定の歪み」、人々が互いの本心を見誤り自己や他者の理解を誤らせる「私的知識の歪み」、そして体制や政策が突如崩壊する「予期せぬ社会的断絶」である。特に権威主義体制下では反対派の実際の規模を誰も正確に知り得ないため、些細な出来事がきっかけとなり、本音表明の個人的閾値を超えた人々から連鎖的に離反が広がり、革命的なバンドワゴン（雪崩的便乗）を引き起こす。クランはこの理論を用いて、1989年の東欧革命のような、事前にはほぼ誰にも予見されなかった体制転換の突発性と予測不能性を説明した。',
+    keyFigures: 'クラン, ティムール（Kuran, Timur　1995『Private Truths, Public Lies: The Social Consequences of Preference Falsification』）／初出論文: Kuran (1989)「Sparks and Prairie Fires」Public Choice誌／関連概念: 選好偽装の閾値・革命的バンドワゴン・多元的無知',
+    asOf: '2026-06',
+    sources: [
+      { url: 'https://doi.org/10.1007/BF00116762', type: 'academic', label: 'Kuran, T. (1989) "Sparks and Prairie Fires: A Theory of Unanticipated Political Revolution", Public Choice 61(1), 41–74（理論の原典論文）' },
+      { url: 'https://www.hup.harvard.edu/books/9780674707580', type: 'academic', label: 'Kuran, T. (1995) Private Truths, Public Lies: The Social Consequences of Preference Falsification, Harvard University Press（理論を体系化した原著書、出版元公式ページ）' },
+      { url: 'https://en.wikipedia.org/wiki/Preference_falsification', type: 'reference', label: 'Wikipedia — Preference falsification（定義・私的/公的選好・革命的バンドワゴンの概説）' },
+    ],
+  },
 ];
 // Stryker restore all
