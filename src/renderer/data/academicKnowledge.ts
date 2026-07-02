@@ -115,22 +115,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-seci-model',
-    discipline: 'management',
-    title: 'SECIモデル（組織的知識創造理論）',
-    statement:
-      'SECIモデルは、野中郁次郎と竹内弘高が1995年の著書『The Knowledge-Creating Company（知識創造企業）』で体系化した組織的知識創造の理論で、言語化しにくい「暗黙知」と言葉・図で表せる「形式知」の相互変換により新たな知識が生まれると説く。' +
-      '変換は、共同化（Socialization：暗黙知→暗黙知）・表出化（Externalization：暗黙知→形式知）・連結化（Combination：形式知→形式知）・内面化（Internalization：形式知→暗黙知）の4モードからなり、これらが組織内で螺旋的に循環する「知識スパイラル」を形成する。' +
-      '後に知識創造が生起する共有された文脈・場としての「場（ば）」の概念が加えられた。',
-    keyFigures: '野中郁次郎・竹内弘高（1995『The Knowledge-Creating Company』）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'academic', label: 'Oxford University Press — The Knowledge-Creating Company (Nonaka & Takeuchi, 1995)' },
-      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02730/full', type: 'academic', label: 'Frontiers in Psychology (2019) — Nonaka’s SECI Model Operationalization' },
-      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia — SECI model of knowledge dimensions' },
-    ],
-  },
-  {
     id: 'human-prospect-theory',
     discipline: 'human-science',
     title: 'プロスペクト理論（行動経済学）',
@@ -234,22 +218,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/biography/Leon-Festinger/Cognitive-dissonance', type: 'reference', label: 'Encyclopaedia Britannica — Leon Festinger: Cognitive dissonance' },
       { url: 'https://psychclassics.yorku.ca/Festinger/', type: 'academic', label: 'York University Classics — Festinger & Carlsmith (1959) 原典全文' },
       { url: 'https://en.wikipedia.org/wiki/Cognitive_dissonance', type: 'reference', label: 'Wikipedia — Cognitive dissonance' },
-    ],
-  },
-  {
-    id: 'bizlaw-product-liability',
-    discipline: 'business-law',
-    title: '製造物責任法（PL法）',
-    statement:
-      '製造物責任法（PL法、平成6年法律第85号）は1995年（平成7年）7月1日に施行された、製造物の欠陥により人の生命・身体・財産に損害が生じた場合の製造業者等の損害賠償責任を定める法律。民法の不法行為の特則として「無過失責任」を採用し、被害者は製造業者等の過失を' +
-      '証明しなくても、製造物に「欠陥」があったこと・損害の発生・両者の因果関係を証明すれば賠償を請求できる（3条）。対象は「製造又は加工された動産」に限られ、不動産・未加工農林水産物・ソフトウェア単体・サービス等は原則対象外（2条）。引渡し時の科学・技術の知見では欠陥を認識できなかったことを証明すれば免責される' +
-      '「開発危険の抗弁」等の免責事由（4条）や、損害・賠償義務者を知った時から3年（人身は5年）／引渡しから10年の期間制限（5条）がある。所管は消費者庁。',
-    keyFigures: '製造物責任法（平成6年法律第85号・1995/7/1施行）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.caa.go.jp/policies/policy/consumer_safety/other/pl_qa.html', type: 'government', label: '消費者庁 製造物責任法の概要Q&A' },
-      { url: 'https://laws.e-gov.go.jp/law/406AC0000000085', type: 'government', label: 'e-Gov法令検索 製造物責任法' },
-      { url: 'https://ja.wikipedia.org/wiki/製造物責任法', type: 'reference', label: 'Wikipedia 日本語版 — 製造物責任法' },
     ],
   },
   {
@@ -808,21 +776,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-laffer-curve',
-    discipline: 'economics',
-    title: 'ラッファー曲線（Laffer curve）',
-    statement:
-      '税率と税収の関係を示す曲線。税率0%では税収はゼロであり、税率100%でも労働・生産・投資のインセンティブが消失して課税対象が縮小するため税収はゼロに近づく。したがってその間に税収を最大化する税率が存在し、曲線は逆U字型（山型）になるという考え方である。' +
-      '税率がこの最適点を超えて高い領域では、減税がかえって税収を増やしうると主張され、1980年代の供給側経済学（レーガノミクス）の理論的根拠の一つとなった。米国の経済学者アーサー・ラッファーにちなんで名付けられたが、ラッファー自身はこの着想の起源を14世紀のイブン・ハルドゥーンやJ.M.ケインズらに帰しており自らの発明ではないとしている。ただし税収最大化税率の具体的水準は学説により大きく異なり（推計は概ね30%台〜70%程度に分散）、現実の多くの先進国の税率が実際にその点を超えているかについては実証的な異論が多い。',
-    keyFigures: 'アーサー・ラッファー（1970年代に普及）／供給側経済学／着想の先駆: イブン・ハルドゥーン（14世紀）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/topic/Laffer-curve', type: 'reference', label: 'Encyclopaedia Britannica — Laffer curve' },
-      { url: 'https://en.wikipedia.org/wiki/Laffer_curve', type: 'reference', label: 'Wikipedia — Laffer curve（起源・批判・実証推計）' },
-      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_2088-1', type: 'academic', label: 'The New Palgrave Dictionary of Economics (Springer) — Laffer curve' },
-    ],
-  },
-  {
     id: 'mgmt-learning-organization',
     discipline: 'management',
     title: '学習する組織（learning organization）',
@@ -925,21 +878,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 — 優越的地位の濫用に関する独占禁止法上の考え方（ガイドライン）' },
       { url: 'https://www.jftc.go.jp/dk/dkgaiyo/kisei.html', type: 'government', label: '公正取引委員会 — 独占禁止法の規制内容（不公正な取引方法・19条・排除措置/課徴金）' },
       { url: 'https://laws.e-gov.go.jp/law/322AC0000000054/', type: 'government', label: 'e-Gov法令検索 — 私的独占の禁止及び公正取引の確保に関する法律（昭和22年法律第54号）' },
-    ],
-  },
-  {
-    id: 'infosoc-uses-gratifications',
-    discipline: 'information-sociology',
-    title: '利用と満足理論（uses and gratifications theory）',
-    statement:
-      '「メディアが人々に何をするか」ではなく「人々がメディアを使って何をするか（どんな欲求を満たすか）」に着目する、能動的オーディエンス観に立つマスコミュニケーション理論。受け手は情報・娯楽・社会的つながり・自己確認・現実逃避などの欲求を満たすため能動的にメディアを選択・利用すると捉える。' +
-      '受け手を一方的に影響を受ける受動的存在とみなす皮下注射モデル（強力効果論）への反動として、ラジオ番組の聴取動機を問うた1940年代の研究（H.ヘルツォークによる連続ラジオドラマ研究など）に萌芽し、エリフ・カッツ、ジェイ・ブラムラー、マイケル・グレヴィッチらが1970年代（特に1974年の論考）に体系化した。SNS・スマホ時代の能動的なメディア利用の説明にも援用される一方、受け手の合理性・自覚性を過度に前提しているとの批判もある。',
-    keyFigures: 'E.カッツ／J.ブラムラー／M.グレヴィッチ（1970年代体系化）／先駆: H.ヘルツォーク（1944）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/uses-and-gratifications-theory', type: 'academic', label: 'EBSCO Research Starters — Uses and gratifications theory' },
-      { url: 'https://en.wikipedia.org/wiki/Uses_and_gratifications_theory', type: 'reference', label: 'Wikipedia — Uses and gratifications theory' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/009365027900600102', type: 'academic', label: 'Blumler (1979) The Role of Theory in Uses and Gratifications Studies, Communication Research（SAGE 査読誌）' },
     ],
   },
   {
@@ -1633,36 +1571,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-self-efficacy',
-    discipline: 'human-science',
-    title: '自己効力感（self-efficacy）',
-    statement:
-      'ある課題や状況において、必要な行動をうまく遂行できるという、自分の能力に対する主観的な確信・信念。心理学者アルバート・バンデューラが1977年の論文で提唱し、社会的認知理論（social cognitive theory）の中核概念とした。自己効力感が高いほど、困難な課題に挑戦し、努力を持続し、ストレス下でも粘り強く行動する傾向がある。' +
-      '効力感を形成する主な情報源は、(1)達成経験（自分で成功した経験。最も強力）、(2)代理経験（他者の成功の観察・モデリング）、(3)言語的説得（他者からの励まし）、(4)生理的・情動的状態（緊張や気分の解釈）の4つである。「結果期待（ある行動が特定の結果を生むという予期）」とは区別される——人は何をすれば成功するかを理解していても、それを実行できるかを疑うことがあるためである。教育・健康行動・キャリア・臨床（不安や恐怖症の治療）など広範な領域に応用されている。',
-    keyFigures: 'アルバート・バンデューラ（1977）／社会的認知理論／4つの情報源（達成経験・代理経験・言語的説得・生理的情動的状態）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.apa.org/research-practice/conduct-research/self-efficacy-human-agency', type: 'academic', label: 'American Psychological Association (APA) — Self-efficacy: the theory at the heart of human agency' },
-      { url: 'https://www.britannica.com/biography/Albert-Bandura', type: 'reference', label: 'Encyclopaedia Britannica — Albert Bandura' },
-      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia — Self-efficacy' },
-    ],
-  },
-  {
-    id: 'bizlaw-good-faith-principle',
-    discipline: 'business-law',
-    title: '信義誠実の原則（信義則）',
-    statement:
-      '権利の行使及び義務の履行は、信義に従い誠実に行わなければならない、とする民法の基本原則（民法1条2項）。私法全体を貫く一般条項・帝王条項であり、具体的な規定がない場面でも当事者間の信頼を保護し、形式的な権利行使が実質的な公平に反する場合にこれを修正する機能を持つ。' +
-      '判例・学説により多くの派生原則が発展しており、自らの先行行為と矛盾する態度を禁じる「禁反言（エストッペル）の法理」、長期間の権利不行使の後の突然の行使を制限する「権利失効の原則」、契約締結前の交渉段階における「契約締結上の過失」、契約後の著しい事情変動に対応する「事情変更の原則」などが導かれる。民法1条には信義則のほか、公共の福祉（1項）・権利濫用の禁止（3項）も定められ、これらと並ぶ民法の指導原理を構成する。',
-    keyFigures: '信義誠実の原則＝民法1条2項／派生: 禁反言・権利失効・契約締結上の過失・事情変更の原則／民法1条(公共の福祉/権利濫用の禁止)',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 — 民法 第1条（公共の福祉・信義誠実の原則・権利濫用の禁止）' },
-      { url: 'https://ja.wikibooks.org/wiki/%E6%B0%91%E6%B3%95%E7%AC%AC1%E6%9D%A1', type: 'reference', label: 'Wikibooks — 民法第1条（条文・基本原則の解説）' },
-      { url: 'https://www.nta.go.jp/about/organization/ntc/kenkyu/ronsou/08/67/hajimeni.htm', type: 'government', label: '国税庁 税務大学校 研究論叢 — 税法における信義則の適用について' },
-    ],
-  },
-  {
     id: 'infosoc-strength-of-weak-ties',
     discipline: 'information-sociology',
     title: '弱い紐帯の強さ（the strength of weak ties）',
@@ -1690,21 +1598,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nber.org/system/files/working_papers/w2101/w2101.pdf', type: 'academic', label: 'Raff & Summers — Did Henry Ford Pay Efficiency Wages? NBER WP 2101' },
       { url: 'https://academic.oup.com/qje/article-abstract/97/4/543/1846076', type: 'academic', label: 'Akerlof (1982) Labor Contracts as Partial Gift Exchange, QJE 97(4):543-569' },
       { url: 'https://econ.lse.ac.uk/staff/bpetrong/ec423/lecture3.pdf', type: 'academic', label: 'London School of Economics EC423 — Efficiency Wages（講義ノート）' },
-    ],
-  },
-  {
-    id: 'econ-money-neutrality',
-    discipline: 'economics',
-    title: '貨幣の中立性と古典派の二分法',
-    statement:
-      '貨幣の中立性とは、貨幣供給量の変化が長期的には物価・名目賃金・名目為替レートといった名目変数のみに比例的に影響し、生産量・雇用・実質賃金などの実質変数には影響を与えない、とする命題である。' +
-      'これと表裏をなすのが古典派の二分法で、実質変数は実物的要因（技術・選好・資源）で決まり、名目変数は貨幣的要因で決まるとして、両者を分離して分析できるとする見方である。貨幣数量説と整合的であり、古典派・新古典派マクロ経済学の基礎をなす。多くの経済学者は長期的中立性を受け入れる一方、短期では価格の硬直性や調整の遅れにより貨幣が実質変数に影響しうる（短期的には非中立）とケインジアンは主張する。さらに、貨幣供給量の「水準」だけでなく「成長率」の変化も実質変数に影響しないとする、より強い概念として貨幣の超中立性（superneutrality）がある。',
-    keyFigures: '古典派の二分法／貨幣数量説と整合・古典派/新古典派マクロの基礎／短期は価格硬直性で非中立(ケインジアン)／超中立性',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Neutrality_of_money', type: 'reference', label: 'Wikipedia — Neutrality of money（中立性・超中立性・長期/短期）' },
-      { url: 'https://en.wikipedia.org/wiki/Classical_dichotomy', type: 'reference', label: 'Wikipedia — Classical dichotomy（実質変数と名目変数の分離）' },
-      { url: 'https://www.princeton.edu/~mwatson/papers/King_Watson_TestingLongRunNeutrality_FRBR_1997.pdf', type: 'academic', label: 'King & Watson — Testing Long-Run Neutrality（Princeton/Richmond Fed, 長期中立性の実証検証）' },
     ],
   },
   {
@@ -2708,22 +2601,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-culture',
-    discipline: 'management',
-    title: '組織文化（シャインの3レベル）',
-    statement:
-      '組織文化とは、組織のメンバーに共有された価値観・信念・規範・行動様式・象徴・言語などの総体で、メンバーに共通のアイデンティティを与え、意思決定や行動を方向づけるものである。' +
-      '組織心理学者でMITスローン経営大学院の教授だったエドガー・シャイン（1928–2023）は、1980年代に組織文化を3つのレベルで捉えるモデルを提示した：(1)人工物（artifacts）＝建築・服装・オフィスのレイアウト・儀礼など、外部の人にも目に見える表層、(2)標榜される価値観（espoused values）＝公式の理念・戦略・目標など、組織が言明する価値、(3)基本的前提（basic underlying assumptions）＝メンバーが当然視し意識すらしない、最も深層の無意識的な信念・前提。' +
-      'シャインは、この深層の基本的前提こそが文化の本質であり、表層の人工物や標榜される価値観だけを見ても文化は理解できず、文化変革は3レベル全て（特に基本的前提）に働きかけて初めて根づくと論じた。さらにシャインは文化が戦略を「決定し制約する」とも述べ、組織文化は戦略実行や変革の成否を大きく左右する。',
-    keyFigures: 'E.シャイン（MITスローン、組織心理学者、1928–2023、1980年代提唱）の3レベル：人工物(表層)・標榜される価値観・基本的前提(深層)／深層の基本的前提が文化の本質／文化は戦略を決定し制約する／（「文化は戦略を朝食に食べる」は帰属不確実のため不採用）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/topic/organizational-culture', type: 'reference', label: 'Encyclopædia Britannica「Organizational culture」（文化＝共有された信念・前提・価値・規範・人工物・象徴・言語の総体）' },
-      { url: 'https://mitsloan.mit.edu/ideas-made-to-matter/5-enduring-management-ideas-mit-sloans-edgar-schein', type: 'academic', label: 'MIT Sloan School of Management（シャインの所属大学／3レベルモデルと経歴）' },
-      { url: 'https://en.wikipedia.org/wiki/Edgar_Schein', type: 'reference', label: 'Wikipedia「Edgar Schein」（1928–2023・MITスローン教授・1980年代提唱）' },
-    ],
-  },
-  {
     id: 'human-hindsight-bias',
     discipline: 'human-science',
     title: '後知恵バイアス',
@@ -2925,23 +2802,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-flow',
-    discipline: 'human-science',
-    title: 'フロー',
-    statement:
-      'ある活動に完全に没入し、時間を忘れ、行為と意識が融合したような最適経験（optimal experience）の心理状態。「ゾーン」とも呼ばれる。ハンガリー系アメリカ人の心理学者ミハイ・チクセントミハイが提唱し、ポジティブ心理学の中心概念の一つとなった。' +
-      'フローが生じる条件として、明確な目標、即座のフィードバック、そして課題の難易度と自分のスキルの高い水準での釣り合いが挙げられる（挑戦が高すぎると不安、低すぎると退屈になる）。フロー中は、集中の深まり、自意識の消失、強い統制感、活動自体が報酬となる自己目的的（autotelic）な性質などが体験される。' +
-      'スポーツ・芸術・仕事・学習などで見られ、幸福感や高いパフォーマンス、内発的動機づけと結びつくとされ、教育・職場設計・ゲームデザイン等に応用される。',
-    keyFigures: 'M.チクセントミハイが提唱（ポジティブ心理学の共同創始者）／活動への完全な没入＝最適経験(ゾーン)／条件：明確な目標・即時フィードバック・課題難易度とスキルの釣り合い／自意識消失・時間感覚の変容・自己目的的(autotelic)／内発的動機づけ・幸福と関連',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.ebsco.com/research-starters/psychology/flow-psychology', type: 'reference', label: 'EBSCO Research Starters — Flow (psychology)（査読付き参照記事）' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7551835/', type: 'academic', label: 'A Review on the Role of the Neuroscience of Flow States in the Modern World (NCBI/PMC, 査読論文)' },
-      { url: 'https://www.cgu.edu/people/mihaly-csikszentmihalyi/', type: 'academic', label: 'Claremont Graduate University — Mihaly Csikszentmihalyi (所属大学の公式略歴)' },
-      { url: 'https://link.springer.com/book/10.1007/978-94-017-9088-8', type: 'academic', label: 'Flow and the Foundations of Positive Psychology: The Collected Works of Mihaly Csikszentmihalyi (Springer)' },
-    ],
-  },
-  {
     id: 'bizlaw-e-bookkeeping',
     discipline: 'business-law',
     title: '電子帳簿保存法',
@@ -3071,23 +2931,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/biography/Benedict-Anderson', type: 'reference', label: 'Encyclopaedia Britannica — Benedict Anderson (biography, political scientist)' },
       { url: 'https://news.cornell.edu/stories/2015/12/benedict-anderson-who-wrote-imagined-communities-dies', type: 'academic', label: 'Cornell Chronicle (Cornell University) — Benedict Anderson obituary / Imagined Communities' },
       { url: 'https://en.wikipedia.org/wiki/Imagined_Communities', type: 'reference', label: 'Wikipedia — Imagined Communities (corroborating reference)' },
-    ],
-  },
-  {
-    id: 'econ-optimal-currency-area',
-    discipline: 'economics',
-    title: '最適通貨圏（OCA）',
-    statement:
-      '複数の国や地域が共通通貨を採用する（あるいは為替を固定する）ことが経済的に最適となる条件を論じる理論。ロバート・マンデルが1961年の論文「A Theory of Optimum Currency Areas」で提唱した。' +
-      '共通通貨は為替変動リスクや両替コストをなくす利益がある一方、各国・各地域が独立した金融政策や為替調整という景気対策手段を失う費用を伴う。この費用が小さく利益が上回るための条件として、(1)労働など生産要素の地域間移動性が高いこと、(2)賃金・物価の伸縮性、(3)財政の移転（リスク分担）の仕組み、(4)各地域の景気変動（非対称ショック）が似ていること、などが挙げられる（マッキノンの開放度、ケネンの生産の多様性なども補完する）。' +
-      'ユーロ（欧州通貨統合）が最適通貨圏の条件をどこまで満たすかという議論の理論的基礎であり、マンデルは1999年にノーベル経済学賞を受賞した（マンデル＝フレミング・モデルとは別概念）。',
-    keyFigures: 'R.マンデル1961提唱／共通通貨の利益(為替リスク・コスト減)対費用(独立した金融政策・為替調整の喪失)／条件：要素移動性・賃金物価の伸縮性・財政移転・対称的な景気変動(マッキノンの開放度・ケネンの多様性が補完)／ユーロ評価の理論的基礎／マンデル1999ノーベル賞',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'reference', label: 'NobelPrize.org — 1999年経済学賞（マンデル、最適通貨圏の分析）' },
-      { url: 'https://www.britannica.com/money/optimum-currency-area', type: 'reference', label: 'Britannica Money — Optimum currency area（定義・利益と費用・基準）' },
-      { url: 'https://www.imf.org/en/News/Articles/2015/09/28/04/54/vc121399', type: 'government', label: 'IMF — Mundell and the Theoretical Foundation for the European Monetary Union' },
-      { url: 'https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp138.pdf', type: 'government', label: 'ECB Working Paper No.138 — "New" views on the optimum currency area theory（OCA基準の整理）' },
     ],
   },
   {
@@ -3643,23 +3486,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.chicagofed.org/publications/chicago-fed-letter/2012/november-304', type: 'government', label: 'Federal Reserve Bank of Chicago — Asset Price Bubbles: Causes, Consequences, and Public Policy Options (2012)' },
       { url: 'https://www.federalreserve.gov/newsevents/speech/mishkin20080515a.htm', type: 'government', label: 'Federal Reserve Board — F. Mishkin, "How Should We Respond to Asset Price Bubbles?" (2008)' },
       { url: 'https://www.imf.org/external/pubs/ft/wp/2013/wp1345.pdf', type: 'government', label: 'IMF Working Paper WP/13/45 — A. Scherbina, "Asset Price Bubbles: A Selective Survey"' },
-    ],
-  },
-  {
-    id: 'mgmt-bullwhip-effect',
-    discipline: 'management',
-    title: 'ブルウィップ効果',
-    statement:
-      'サプライチェーン上で、最終消費者の需要のわずかな変動が、小売→卸→メーカー→部品供給者と川上にさかのぼるほど増幅され、各段階の発注量・在庫変動が大きく振れる現象。鞭（むち）の手元のわずかな動きが先端で大きく振れる様子になぞらえて名づけられた。スタンフォード大学のハウ・リー（Hau L. Lee）らが1997年の論文（Management Science誌）で要因を分析した。' +
-      '主な原因として、(1)需要予測の更新（各段階が自分の受注をもとに予測し安全在庫を上乗せ）、(2)発注のバッチ化（まとめ発注）、(3)価格変動・販促による先買い（フォワード・バイイング）、(4)品薄時の水増し発注と割当（配給ゲーム）が挙げられる。結果として過剰在庫・品切れ・コスト増・サービス低下を招く。' +
-      '対策として、実需要情報の共有（POS連携・EDIによる情報の可視化）、リードタイム短縮、EDLP（毎日低価格）による価格安定、VMI（ベンダー主導型在庫管理）などが有効とされる。MITスローン校発祥の「ビールゲーム」でも体験的に示される。',
-    keyFigures: '消費者需要の小変動が川上ほど増幅される／鞭の比喩／スタンフォード H.リーら1997(Management Science 43, 546-558)が要因分析／原因：需要予測更新・発注バッチ化・先買い・配給ゲーム／過剰在庫・品切れを招く／対策：需要情報共有・リードタイム短縮・EDLP・VMI／ビールゲーム',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sloanreview.mit.edu/article/the-bullwhip-effect-in-supply-chains/', type: 'academic', label: 'Lee, Padmanabhan & Whang, "The Bullwhip Effect in Supply Chains", MIT Sloan Management Review (1997)' },
-      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/bullwhip-effect', type: 'academic', label: 'ScienceDirect Topics (Elsevier) — Bullwhip Effect overview' },
-      { url: 'https://en.wikipedia.org/wiki/Bullwhip_effect', type: 'reference', label: 'Wikipedia — Bullwhip effect（定義・原因・対策・ビールゲーム）' },
-      { url: 'https://www.gsb.stanford.edu/faculty-research/publications/information-transmission-bullwhip-effect-empirical-investigation', type: 'academic', label: 'Stanford Graduate School of Business — bullwhip effect research（Hau Lee 所属確認）' },
     ],
   },
   {
@@ -4446,38 +4272,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-absorptive-capacity',
-    discipline: 'management',
-    title: '吸収能力',
-    statement:
-      '吸収能力（absorptive capacity）とは、企業が外部の新しい情報・知識の価値を認識し、それを吸収・同化（assimilate）し、商業的目的に応用（apply／exploit）する能力を指す、組織学習・イノベーション論の中核概念である。コーエン＆レビンサール（1990）は、この能力が単なる外部知識への接触ではなく、既存の関連知識（事前知識）の蓄積に大きく依存し、自社のR&D投資の副産物としても高まると論じた。' +
-      'そのため経路依存的・累積的な性質を持ち、過去の知識基盤が将来の学習・革新能力を規定する。のちにザーラ＆ジョージ（2002）は、知識の取得・同化からなる「潜在的吸収能力（potential）」と、変換・活用からなる「実現的吸収能力（realized）」へと再概念化した。知識移転・技術導入・イノベーション能力を説明する鍵概念であり、ダイナミック・ケイパビリティ等とは区別される独立概念である。',
-    keyFigures: 'ウェズリー・M・コーエン／ダニエル・A・レビンサール（提唱者, Cohen & Levinthal, 1990, Administrative Science Quarterly 35(1):128-152）／シャカー・A・ザーラ & ジェラルド・ジョージ（潜在的／実現的吸収能力への再概念化, 2002, Academy of Management Review 27(2):185-203）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://eric.ed.gov/?id=EJ406851', type: 'government', label: 'ERIC（米国教育省 教育資源情報センター）— Cohen & Levinthal (1990) “Absorptive Capacity”, Administrative Science Quarterly 書誌情報' },
-      { url: 'https://en.wikipedia.org/wiki/Absorptive_capacity', type: 'reference', label: 'Wikipedia「Absorptive capacity」— 定義・事前知識依存・Zahra & George (2002) の区分' },
-      { url: 'https://journals.aom.org/doi/10.5465/amc.2021.0008', type: 'academic', label: 'Academy of Management Collections「The Past and Future of Absorptive Capacity」— 概念史と再概念化の学会公式レビュー' },
-      { url: 'https://link.springer.com/rwe/10.1007/978-1-4419-1428-6_1620', type: 'reference', label: 'Springer「Absorptive Capacity and Organizational Learning」— 経営学リファレンス事典項目' },
-    ],
-  },
-  {
-    id: 'human-mental-accounting',
-    discipline: 'human-science',
-    title: 'メンタル・アカウンティング（心の会計）',
-    statement:
-      '人々がお金を、その出所や使途に応じて心の中で複数の別々の「勘定（mental account）」に分類・管理し、本来は完全に代替可能（fungible）なはずのお金を、あたかも色分けされているかのように扱う認知的傾向。リチャード・セイラーが体系化した枠組みで、お金を符号化・分類・評価する一連の認知操作を指す。例えば、あぶく銭（ボーナスやギャンブルの儲け）は浪費しやすく、同額の給料は慎重に使う、といった行動が生じる。' +
-      '経済学が前提とするお金の代替可能性に反し、勘定ごとの予算管理・評価頻度・選択の括り方（ブラケッティング）を通じて、消費・貯蓄・投資の判断に体系的な歪みをもたらす。プロスペクト理論のS字型価値関数（参照点・損失回避）と結びつき、利得は分離し損失は統合するといった心的符号化を説明する。',
-    keyFigures: '提唱者：リチャード・セイラー（Richard H. Thaler）／主要文献：1985年「Mental Accounting and Consumer Choice」（Marketing Science）、1999年「Mental Accounting Matters」（Journal of Behavioral Decision Making, 12:183-206）／2017年ノーベル経済学賞受賞',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1099-0771(199909)12:3%3C183::AID-BDM318%3E3.0.CO;2-F', type: 'academic', label: 'Thaler, R. H. (1999) “Mental Accounting Matters”, Journal of Behavioral Decision Making 12(3):183-206（Wiley、原典）' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/mksc.1070.0330', type: 'academic', label: 'Thaler, R. H. “Mental Accounting and Consumer Choice”, Marketing Science（INFORMS）' },
-      { url: 'https://people.bath.ac.uk/mnsrf/Teaching%202011/Thaler-99.pdf', type: 'academic', label: 'University of Bath が公開する Thaler (1999) 全文PDF' },
-      { url: 'https://en.wikipedia.org/wiki/Mental_accounting', type: 'reference', label: 'Wikipedia「Mental accounting」' },
-    ],
-  },
-  {
     id: 'bizlaw-creditor-subrogation',
     discipline: 'business-law',
     title: '債権者代位権（民法423条）',
@@ -4522,22 +4316,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.britannica.com/topic/path-dependence', type: 'reference', label: 'Encyclopaedia Britannica, “Path dependence”' },
       { url: 'https://sites.santafe.edu/~wbarthur/Books/IR_Book_Preface.pdf', type: 'academic', label: 'Santa Fe Institute — W. Brian Arthur, “Increasing Returns and Path Dependence in the Economy” (Preface)' },
       { url: 'https://www.cambridge.org/core/books/evolutionary-foundations-of-economics/path-dependence-in-economic-processes-implications-for-policy-analysis-in-dynamical-system-contexts/93AFD05279B914C7FA74B5F9912D45E2', type: 'academic', label: 'Cambridge University Press — P. David, “Path dependence in economic processes”' },
-    ],
-  },
-  {
-    id: 'econ-mundell-fleming',
-    discipline: 'economics',
-    title: 'マンデル＝フレミング・モデル',
-    statement:
-      '閉鎖経済を前提とするIS-LMモデルを、資本移動のある開放経済へ拡張した国際マクロ経済学の基本モデル（IS-LM-BPモデルとも呼ぶ）。財市場の均衡を示すIS曲線、貨幣市場の均衡を示すLM曲線、国際収支の均衡を示すBP曲線の同時均衡を分析し、為替相場制度（固定相場制か変動相場制か）と国際資本移動性の程度に応じて財政・金融政策の有効性が変化することを明らかにする。' +
-      '資本移動が完全な場合、変動相場制では金融政策が有効で財政政策は無効、固定相場制ではその逆となる。これは「国際金融のトリレンマ（不可能の三角形）」――自由な資本移動・固定相場・独立した金融政策の3つは同時に2つまでしか達成できない――の理論的基礎を与える。',
-    keyFigures: 'ロバート・マンデル（Robert A. Mundell, “Capital Mobility and Stabilization Policy under Fixed and Flexible Exchange Rates”, 1963）／マーカス・フレミング（J. Marcus Fleming, IMF Staff Papers, vol.9, 1962, pp.369–380）が1960年代前半に独立に展開／マンデルは1999年ノーベル経済学賞受賞',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1999/summary/', type: 'government', label: 'NobelPrize.org — 1999年経済学賞: マンデルの受賞理由（異なる為替相場制度下の金融・財政政策、最適通貨圏）' },
-      { url: 'https://www.elibrary.imf.org/view/journals/024/1962/003/article-A004-en.xml', type: 'government', label: 'IMF eLibrary — Fleming (1962) “Domestic Financial Policies under Fixed and under Floating Exchange Rates”, IMF Staff Papers 9(3)' },
-      { url: 'https://www.nber.org/system/files/working_papers/w2321/w2321.pdf', type: 'academic', label: 'NBER WP No.2321 (Frenkel & Razin) “The Mundell-Fleming Model: A Quarter Century Later”' },
-      { url: 'https://en.wikipedia.org/wiki/Mundell%E2%80%93Fleming_model', type: 'reference', label: 'Wikipedia — Mundell–Fleming model（IS-LM-BoP、政策有効性、不可能の三角形）' },
     ],
   },
   {
@@ -5649,21 +5427,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.science.org/doi/10.1126/science.1167742', type: 'academic', label: 'Lazer, D. et al. “Computational Social Science,” Science 323(5915):721–723 (2009)（分野の基礎論文）' },
       { url: 'https://en.wikipedia.org/wiki/Computational_social_science', type: 'reference', label: 'Wikipedia「Computational social science」（定義・手法・ビッグデータの位置づけ）' },
       { url: 'https://www.sydney.edu.au/arts/news-and-events/news/2022/06/23/what-is-computational-social-science.html', type: 'academic', label: 'University of Sydney「What is computational social science?」（大学による分野解説）' },
-    ],
-  },
-  {
-    id: 'econ-overlapping-generations',
-    discipline: 'economics',
-    title: '世代重複モデル（OLG）',
-    statement:
-      '各時点に生まれた時期の異なる複数の世代（典型的には若年期と老年期の2世代）が同時に存在し、世代が部分的に重なり合いながら入れ替わっていく状況をモデル化したマクロ経済学の分析枠組み。各個人は有限の寿命を持ち、若年期に働いて所得を得て一部を貯蓄し、老年期にそれを取り崩して消費する（ライフサイクル的行動）。無限に生きる代表的個人を仮定するラムゼイ＝キャス＝クープマンス型モデルと対比される。' +
-      '重要な含意として、市場均衡（競争均衡）が必ずしもパレート効率的でない（第一厚生定理が成立せず、動学的非効率＝過剰貯蓄・過剰資本蓄積が生じうる）こと、公的年金（賦課方式）・国債・貨幣の役割を分析できることがある。年金・財政・世代間の資源配分・公的債務の持続可能性の分析に広く用いられる。',
-    keyFigures: 'ポール・サミュエルソン（1958年「An Exact Consumption-Loan Model of Interest...」, Journal of Political Economy、消費貸借モデルとして定式化）／ピーター・ダイアモンド（1965年、資本蓄積を組み込んで一般化＝ダイアモンド成長モデル）／先駆としてモーリス・アレ（1947年）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Overlapping_generations_model', type: 'reference', label: 'Wikipedia「Overlapping generations model」（提唱史・Ramseyモデルとの対比・第一厚生定理の不成立）' },
-      { url: 'https://economics.mit.edu/sites/default/files/inline-files/Lecture%208%20-%20Overlapping%20Generations_1.pdf', type: 'academic', label: 'D. Acemoglu, MIT 14.452 Economic Growth, Lecture 8: Overlapping Generations' },
-      { url: 'https://eml.berkeley.edu/~jsteinsson/teaching/OLG.pdf', type: 'academic', label: 'J. Steinsson, UC Berkeley 講義ノート「The OLG Model」（動学的効率性・社会保障・国債・貨幣）' },
     ],
   },
   {
@@ -7345,23 +7108,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Eliyahu_M._Goldratt', type: 'reference', label: 'Wikipedia: Eliyahu M. Goldratt（提唱者・略歴・TOC派生手法）' },
       { url: 'https://www.leanproduction.com/theory-of-constraints/', type: 'media', label: 'LeanProduction: Theory of Constraints（5 Focusing Steps / POOGI 解説）' },
       { url: 'https://www.tocinstitute.org/five-focusing-steps.html', type: 'reference', label: 'Theory of Constraints Institute: Five Focusing Steps' },
-    ],
-  },
-  {
-    id: 'human-moral-foundations',
-    discipline: 'human-science',
-    title: '道徳基盤理論（ハイト）',
-    statement:
-      '道徳基盤理論（MFT）は、人間の道徳的判断が複数の生得的・進化的な直観の基盤に支えられるとする道徳心理学の理論で、ジョナサン・ハイト、ジェシー・グレアム、クレイグ・ジョセフらが提唱した。道徳はまず速い情動的直観によって駆動され、推論は多くの場合その後づけの正当化だとする（社会的直観モデル）。' +
-      '当初の主要5基盤は、ケア／危害、公正／欺瞞、忠誠／背信、権威／転覆、神聖／堕落であり、のちに自由／抑圧が加えられた。政治的リベラルは主にケアと公正を重視するのに対し、保守は5〜6基盤をより均等に重視する傾向があり、これが政治的・道徳的対立を説明する。測定には道徳基盤質問紙（MFQ）が用いられる。',
-    keyFigures:
-      'ジョナサン・ハイト（Jonathan Haidt）／ジェシー・グレアム（Jesse Graham）／クレイグ・ジョセフ（Craig Joseph）／5＋1基盤（ケア・公正・忠誠・権威・神聖＋自由）／測定＝道徳基盤質問紙（MFQ）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://moralfoundations.org/', type: 'academic', label: 'MoralFoundations.org — 理論提唱者らによる公式解説サイト（5＋1基盤・MFQ）' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/21244182/', type: 'academic', label: 'Graham et al. (2011) “Mapping the Moral Domain”, J. Personality and Social Psychology 101:366-385（査読論文・MFQ・リベラル/保守の差）' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/11699120/', type: 'academic', label: 'Haidt (2001) “The emotional dog and its rational tail”, Psychological Review（社会的直観モデルの基礎論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Moral_foundations_theory', type: 'reference', label: 'Wikipedia「Moral foundations theory」（百科事典級の概観・6基盤）' },
     ],
   },
   {
@@ -10463,21 +10209,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-dutch-disease',
-    discipline: 'economics',
-    title: 'オランダ病',
-    statement:
-      'オランダ病とは、天然資源の輸出ブームや大規模な資本流入によって実質為替レートが増価し、製造業など他の貿易（輸出）部門が国際競争力を失って衰退する現象を指す。名称は、1960年代に北海で天然ガスを発見し輸出を拡大したオランダで製造業が衰退した事例にちなみ、1977年に英誌The Economistが命名した。' +
-      'メカニズムは2つに整理される。資源部門の好況が労働などの生産要素を製造業から引き抜く「資源移動効果」と、資源収入の増加が非貿易財への需要を高め実質為替レートを押し上げる「支出効果」であり、いずれも製造業の脱工業化を招く。この理論は1982年のW・マックス・コーデンとJ・ピーター・ニアリーのモデルによって定式化され、資源の呪いを論じる際の中心的枠組みとなっている。',
-    keyFigures: 'The Economist（1977命名）／W・マックス・コーデン／J・ピーター・ニアリー（1982モデル）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://kotobank.jp/word/%E3%82%AA%E3%83%A9%E3%83%B3%E3%83%80%E7%97%85-688209', type: 'reference', label: 'コトバンク（知恵蔵ほか）「オランダ病」' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8609513/', type: 'academic', label: '40 Years of Dutch Disease Literature (NCBI/PMC, 査読論文)' },
-      { url: 'https://link.springer.com/article/10.1007/s10640-023-00827-w', type: 'academic', label: 'The Dutch disease revisited (SpringerLink, Environ. Resour. Econ.)' },
-    ],
-  },
-  {
     id: 'mgmt-ge-mckinsey-matrix',
     discipline: 'management',
     title: 'GE・マッキンゼー・マトリクス（ビジネス・スクリーン）',
@@ -12062,21 +11793,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-yerkes-dodson',
-    discipline: 'human-science',
-    title: 'ヤーキーズ＝ドッドソンの法則',
-    statement:
-      '覚醒（緊張・ストレス・動機づけ）と遂行成績の関係を逆U字曲線で説明する法則。覚醒水準が高まるにつれて成績は向上するが、最適点を超えてさらに覚醒が高まると、過度の緊張や不安によって成績はかえって低下する。さらに最適な覚醒水準は課題の難易度に依存し、' +
-      '難しく複雑な課題では低めの覚醒が最適である一方、易しい・十分に習熟した課題では高い覚醒でも成績は向上しやすい。ロバート・ヤーキーズとジョン・ドッドソンが1908年にネズミの弁別学習実験から導いたもので、試験・スポーツ・職務遂行など、ストレスや不安と成績の関係を理解する枠組みとして広く応用されている。',
-    keyFigures: 'ロバート・ヤーキーズ／ジョン・ドッドソン（1908）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://psychclassics.yorku.ca/Yerkes/Law/', type: 'academic', label: 'Yerkes & Dodson (1908) "The Relation of Strength of Stimulus to Rapidity of Habit-Formation"（York University, Classics in the History of Psychology）' },
-      { url: 'https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(24)00078-0', type: 'academic', label: 'Trends in Cognitive Sciences「Arousal and performance: revisiting the famous inverted-U-shaped curve」' },
-      { url: 'https://www.simplypsychology.org/what-is-the-yerkes-dodson-law.html', type: 'reference', label: 'SimplyPsychology「Yerkes-Dodson Law of Arousal and Performance」' },
-    ],
-  },
-  {
     id: 'bizlaw-payment-services-act',
     discipline: 'business-law',
     title: '資金決済法',
@@ -12103,21 +11819,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.oreilly.com/pub/a/web2/archive/what-is-web-20.html', type: 'academic', label: 'Tim O\'Reilly, "What Is Web 2.0" (2005, O\'Reilly Media) — 原典' },
       { url: 'https://www.britannica.com/topic/Web-20', type: 'reference', label: 'Encyclopaedia Britannica — "Web 2.0"' },
-    ],
-  },
-  {
-    id: 'econ-gravity-trade',
-    discipline: 'economics',
-    title: '貿易の重力モデル',
-    statement:
-      'ニュートンの万有引力の法則に類比して国際貿易を説明する実証モデルで、2国間の貿易量は両国の経済規模（GDP・GNP）の積に比例し、両国間の距離（および関税・国境などの貿易コスト）に反比例すると予測する。ヤン・ティンバーゲンが1962年に導入し、距離や経済規模との関係は時代・国・手法を超えて安定的で、経済学で最も実証的に頑健な関係の一つとされる。' +
-      '当初は確たる理論的基礎を欠くと批判されたが、後にアンダーソン（1979）やアンダーソン＆ヴァン・ウィンクープ（2003）が、各国の相対的な貿易障壁を表す「多角的抵抗（multilateral resistance）」の概念を導入してミクロ経済学的基礎づけを与えた。今日では国境効果・通貨同盟・貿易協定など貿易政策の効果推定に広く用いられている。',
-    keyFigures: 'ヤン・ティンバーゲン（Jan Tinbergen, 1962）／アンダーソン＆ヴァン・ウィンクープ（James Anderson & Eric van Wincoop, 2003）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.aeaweb.org/articles?id=10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop (2003) "Gravity with Gravitas", American Economic Review 93(1) — 多角的抵抗による理論的基礎づけ' },
-      { url: 'https://www.nber.org/system/files/working_papers/w19285/w19285.pdf', type: 'academic', label: 'Head & Mayer, "The Gravity Equation in International Trade", NBER Working Paper — ティンバーゲン1962導入・実証的頑健性' },
-      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-34529-7_4', type: 'reference', label: 'Springer "The Gravity Model of Trade" — ニュートン万有引力との類比・GDP積比例/距離反比例' },
     ],
   },
   {
@@ -12295,21 +11996,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://academic.oup.com/qje/article-abstract/80/2/190/1868595', type: 'academic', label: 'Vernon, R. (1966) "International Investment and International Trade in the Product Cycle," The Quarterly Journal of Economics, 80(2), 190–207 (Oxford Academic)' },
       { url: 'https://en.wikipedia.org/wiki/Product_life-cycle_theory', type: 'reference', label: 'Product life-cycle theory — Wikipedia' },
-    ],
-  },
-  {
-    id: 'econ-effective-protection-rate',
-    discipline: 'economics',
-    title: '実効保護率',
-    statement:
-      '名目関税率は完成品の価格に対して課されるが、実効保護率（ERP）は国内の生産過程で生み出される付加価値に与えられる保護の度合いを測る指標である。すなわち自由貿易時と比べ、関税構造（最終財への関税と輸入投入財への関税の両方）によって産出物一単位あたりの付加価値がどれだけ増加するかを百分率で表す。' +
-      '完成品への関税は当該産業の付加価値の保護を高める一方、輸入投入財への関税はそれを引き下げる。付加価値は産出価格の一部にすぎないため、実効保護率は名目関税率よりかなり高くなりやすく、投入財への関税が産出への関税を上回れば負にもなりうる。加工段階が進むほど関税が高くなる「関税エスカレーション」もこの枠組みで説明される。理論はハリー・ジョンソンとW・マックス・コーデンにより1960年代に確立された。',
-    keyFigures: 'W・マックス・コーデン／ハリー・ジョンソン（1960年代）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.semanticscholar.org/paper/The-Structure-of-a-Tariff-System-and-the-Effective-Corden/d9007c4652390aa10586c11b74cf97be688a68d6', type: 'academic', label: 'W. M. Corden, "The Structure of a Tariff System and the Effective Protective Rate" (J. Political Economy, 1966)' },
-      { url: 'https://en.wikipedia.org/wiki/Effective_rate_of_protection', type: 'reference', label: 'Wikipedia — Effective rate of protection' },
-      { url: 'https://www.wto.org/english/thewto_e/glossary_e/tariff_escalation_e.htm', type: 'government', label: 'WTO Glossary — tariff escalation' },
     ],
   },
   {
@@ -12684,21 +12370,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jimcollins.com/article_topics/articles/the-flywheel-effect.html', type: 'reference', label: 'Jim Collins（公式サイト）— The Flywheel Effect' },
       { url: 'https://marketbrief.edweek.org/strategy-operations/good-to-great-author-jim-collins-shares-how-to-drive-flywheel-momentum-in-your-company/2019/05', type: 'media', label: 'Education Week — Jim Collins on Driving Flywheel Momentum (2019)' },
       { url: 'https://feedvisor.com/resources/amazon-trends/amazon-flywheel-explained/', type: 'media', label: 'Feedvisor — The Amazon Flywheel Explained (Bezos/Collins)' },
-    ],
-  },
-  {
-    id: 'human-weapon-focus',
-    discipline: 'human-science',
-    title: '凶器注目効果',
-    statement:
-      '凶器注目効果（武器注目効果）とは、犯罪場面に銃やナイフなどの武器が存在すると、目撃者の視覚的注意が凶器に強く引きつけられ、加害者の顔や容貌・服装といった他の細部に対する記憶や同定能力が損なわれる現象をいう。ロフタスら（Loftus, Loftus & Messo, 1987）は視線計測を用い、統制条件（小切手）に比べ凶器条件で対象への注視回数と注視時間が増え、加害者の記憶が低下することを実証した。' +
-      'ステブレイ（Steblay, 1992）のメタ分析も、武器の存在が加害者特徴の再生やラインナップ同定の正確さを下げることを支持している。説明は二説あり、(1)武器の脅威による高い覚醒が注意の範囲を狭めるとする覚醒・手がかり利用説（イースターブルック）、(2)予期せぬ新奇な物体が脅威の有無にかかわらず注意を引くとする新奇性説である。本効果は目撃証言の信頼性や法的・科学捜査の文脈で重要な含意をもつ。',
-    keyFigures: 'エリザベス・ロフタス（Elizabeth Loftus, 1987）／ナンシー・ステブレイ（Nancy Steblay, 1992メタ分析）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://link.springer.com/article/10.1007/BF01062971', type: 'academic', label: 'Loftus, Loftus & Messo (1987) "Some facts about weapon focus", Law and Human Behavior' },
-      { url: 'https://link.springer.com/article/10.1007/BF02352267', type: 'academic', label: 'Steblay (1992) "A meta-analytic review of the weapon focus effect", Law and Human Behavior' },
-      { url: 'https://en.wikipedia.org/wiki/Weapon_focus', type: 'reference', label: 'Wikipedia: Weapon focus (definition, arousal vs unusualness accounts)' },
     ],
   },
   {
@@ -13560,20 +13231,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-garbage-can',
-    discipline: 'management',
-    title: 'ゴミ箱モデル',
-    statement:
-      'コーエン・マーチ・オルセンが1972年に Administrative Science Quarterly 誌で提唱した、「組織化された無秩序（organized anarchy）」における意思決定モデル。組織化された無秩序とは、目標が一貫しない曖昧な選好、成員が過程を十分理解していない不明確な技術、参加者が時間や労力に応じて入れ替わる流動的な参加を特徴とする組織（大学等）を指す。' +
-      'ここでの決定は問題→解という秩序立った過程ではない。選択機会という「ゴミ箱」に、問題・解・参加者・選択機会という独立した4つの流れが投げ込まれ、それらが偶然に結びついたときに決定が生じる。ゆえに解が問題を探す事態も起こり、結果はタイミングや運に大きく左右される。決定は問題を実際に解く resolution、問題に注意を払わぬまま下す oversight、問題が離れて成立する flight のいずれかで生じる。',
-    keyFigures: 'マイケル・コーエン／ジェームズ・マーチ／ヨハン・オルセン（1972）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://perguntasaopo.files.wordpress.com/2012/02/cohen_olsen_1972_a-garbage-can-model-of-organizational-choice.pdf', type: 'academic', label: 'Cohen, March & Olsen, "A Garbage Can Model of Organizational Choice," Administrative Science Quarterly 17 (1972), 1-25 (原典PDF)' },
-      { url: 'https://en.wikipedia.org/wiki/Garbage_can_model', type: 'reference', label: 'Wikipedia: Garbage can model（組織化された無秩序・4つの流れ・原典の帰属）' },
-    ],
-  },
-  {
     id: 'human-moral-licensing',
     discipline: 'human-science',
     title: 'モラル・ライセンシング（道徳的自己許可）',
@@ -13721,36 +13378,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-j-curve',
-    discipline: 'economics',
-    title: 'Jカーブ効果',
-    statement:
-      '自国通貨の減価（平価切下げ）の後、貿易収支（経常収支）はまず悪化してから改善し、時間軸上でアルファベットのJの字を描く現象。短期には輸出入数量が硬直的で（取引の多くが長期契約済みであり、輸入代替財を国内で見つけたり生産を切り替えたりするのに時間がかかる）数量がすぐには動かないため、減価直後は輸入品の自国通貨建て価格上昇という価格効果が勝り、収支はかえって悪化する。' +
-      'やがて時間が経つと相対価格の変化に応じて数量が調整され、輸出が増え輸入が減って収支は改善し、最終的には出発点の水準を上回る。これは、減価が貿易収支を改善させるには輸出入の需要の価格弾力性の絶対値の和が1を超える必要があるというマーシャル＝ラーナー条件が、短期には満たされず（和<1）長期には満たされる（和>1）ために生じる。',
-    keyFigures: 'Jカーブ効果／マーシャル＝ラーナー条件',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.imf.org/external/pubs/ft/wp/2004/wp0465.pdf', type: 'government', label: 'IMF Working Paper WP/04/65 — Exchange Rate Change and the Trade Balance (J-curve)' },
-      { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia — Marshall–Lerner condition and the J-curve effect' },
-      { url: 'https://ja.wikipedia.org/wiki/J%E3%82%AB%E3%83%BC%E3%83%96%E5%8A%B9%E6%9E%9C_(%E7%B5%8C%E6%B8%88%E5%AD%A6)', type: 'reference', label: 'ウィキペディア — Jカーブ効果（経済学）' },
-    ],
-  },
-  {
-    id: 'mgmt-upper-echelons',
-    discipline: 'management',
-    title: 'アッパー・エシュロン理論（経営上層部理論）',
-    statement:
-      '組織の戦略的選択や業績は、経営上層部（トップマネジメントチーム）の特性を部分的に反映するとする理論。経営者は複雑な状況を完全かつ客観的には把握できず、自らの認知基盤と価値観によって形作られた個人的な解釈（構築）に基づいて行動する。' +
-      'そのため、年齢・職能経歴・学歴・出自・在任期間などの観察可能な特性が認知基盤や価値観の代理変数となり、戦略決定や組織成果を部分的に予測しうるとされる。ハンブリック&メイソンが1984年にAcademy of Management Reviewで提唱し、ハンブリック（2007）は経営者の裁量や職務要求を調整要因として精緻化した。',
-    keyFigures: 'ドナルド・ハンブリック／フィリス・メイソン（1984）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, "Upper Echelons Theory: An Update," Academy of Management Review (2007)' },
-      { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Wikipedia: Upper echelons theory' },
-      { url: 'https://open.ncl.ac.uk/theories/13/pdf/upper-echelons-theory/', type: 'academic', label: 'Newcastle University (Open Lab): Upper Echelons Theory' },
-    ],
-  },
-  {
     id: 'human-pratfall-effect',
     discipline: 'human-science',
     title: '失態効果（プラットフォール効果）',
@@ -13793,21 +13420,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118783764.wbieme0091', type: 'reference', label: 'Spears, "Social Identity Model of Deindividuation Effects", Wiley International Encyclopedia of Media Effects' },
       { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2192573', type: 'academic', label: 'Reicher, Spears & Postmes (1995) A Social Identity Model of Deindividuation Phenomena, European Review of Social Psychology 6, 161–198' },
       { url: 'https://journals.sagepub.com/doi/10.1177/01461672012710001', type: 'academic', label: 'Postmes, Spears, Sakhel & de Groot (2001) Social Influence in Computer-Mediated Communication, PSPB' },
-    ],
-  },
-  {
-    id: 'econ-credit-rationing',
-    discipline: 'economics',
-    title: '信用割当',
-    statement:
-      '信用割当（クレジット・レーショニング）とは、貸し手が金利を引き上げて貸出資金の需給を均衡させるのではなく信用供給そのものを制限し、より高い金利を払う意思があっても借りられない、あるいは希望額に満たない借り手が生じる状況をいう。ジョセフ・スティグリッツとアンドリュー・ワイスは1981年の論文で、情報の非対称性のもとでは金利水準そのものが借り手プールのリスクを変えると示した。' +
-      'すなわち金利上昇は、逆選択（安全な借り手が借入を諦めて去り、危険な借り手が残る）と、モラルハザード／誘因効果（借り手がより危険な事業を選ぶ）を通じて貸出の質を悪化させる。このため銀行の期待収益は金利に対し単調増加せず、期待収益を最大化する「銀行最適金利」が存在し、それを超えて金利を上げると期待収益はむしろ低下する。したがって銀行は金利を市場均衡水準より低く据え置き、均衡においても貸出需要の超過を残したまま信用を割り当てる。',
-    keyFigures: 'ジョセフ・スティグリッツ／アンドリュー・ワイス（1981）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://ideas.repec.org/a/aea/aecrev/v71y1981i3p393-410.html', type: 'academic', label: 'Stiglitz & Weiss, "Credit Rationing in Markets with Imperfect Information," American Economic Review 71(3), 393-410 (1981) — RePEc/IDEAS record' },
-      { url: 'https://web.econ.keio.ac.jp/staff/masaya/ja/class07/SW_model.pdf', type: 'academic', label: '慶應義塾大学 講義資料「Stiglitz and Weiss の均衡信用割当の理論」' },
-      { url: 'https://epub.uni-regensburg.de/15577/1/sw.pdf', type: 'academic', label: 'Univ. of Regensburg, "On the Possibility of Credit Rationing in the Stiglitz-Weiss Model"' },
     ],
   },
   {
@@ -14120,21 +13732,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page09_00001.html', type: 'government', label: '厚生労働省「高年齢者雇用安定法の概要」' },
       { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000061607', type: 'government', label: '日本法令索引（国立国会図書館）高年齢者等の雇用の安定等に関する法律 昭和46年法律第68号' },
-    ],
-  },
-  {
-    id: 'infosoc-affordance',
-    discipline: 'information-sociology',
-    title: 'アフォーダンス',
-    statement:
-      '生態心理学者ジェームズ・J・ギブソンが1979年の著書『生態学的視覚論』で造語した概念で、環境が動物に与える・提供する行為の可能性を指し、物や環境と行為者の能力・意図との関係のうちに存在する（面は支持や歩行を、取っ手は把持をアフォードする）。デザイン研究者ドナルド・ノーマンが1988年の『誰のためのデザイン?（元題The Psychology of Everyday Things）』でこの語をデザイン/HCIに導入し、' +
-      '物の知覚可能な行為可能性すなわち使い方の手がかりの意で用いた。彼は後に実在のアフォーダンス・知覚されたアフォーダンス・シグニファイア（使い方を示す手がかり）を区別した。さらにメディア/技術論やSTSではイアン・ハッチビーが2001年に、技術の物質的特性が特定の利用を可能にしつつ同時に制約すると論じ、技術決定論と社会構築主義の中間の立場を示した。この発想はSNSの分析にも応用されている。',
-    keyFigures: 'ジェームズ・J・ギブソン（James J. Gibson, 1979）／ドナルド・ノーマン（Donald Norman, 1988）／イアン・ハッチビー（2001）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/S0038038501000219', type: 'academic', label: 'Ian Hutchby, "Technologies, Texts and Affordances," Sociology 35(2): 441–456 (2001)' },
-      { url: 'https://www.interaction-design.org/literature/book/the-encyclopedia-of-human-computer-interaction-2nd-ed/affordances', type: 'reference', label: 'Interaction Design Foundation, Encyclopedia of HCI 2nd Ed. "Affordances"' },
-      { url: 'https://en.wikipedia.org/wiki/Affordance', type: 'reference', label: 'Wikipedia "Affordance"（Gibson 1979の定義・関係的性質）' },
     ],
   },
   {
@@ -15799,21 +15396,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://shleifer.scholars.harvard.edu/publications/theory-yardstick-competition', type: 'academic', label: 'Andrei Shleifer (Harvard) — "A Theory of Yardstick Competition," RAND J. Econ. 16(3):319–327 (1985)' },
       { url: 'https://econpapers.repec.org/RePEc:rje:randje:v:16:y:1985:i:autumn:p:319-327', type: 'reference', label: 'EconPapers/RePEc — Shleifer (1985), RAND Journal of Economics 16(3):319–327' },
       { url: 'https://www.staff.city.ac.uk/~sj355/yardstick.pdf', type: 'academic', label: 'City, University of London — lecture notes on yardstick competition (incentive regulation, benchmarking)' },
-    ],
-  },
-  {
-    id: 'econ-averch-johnson',
-    discipline: 'economics',
-    title: 'アバーチ＝ジョンソン効果',
-    statement:
-      'ハーヴェイ・アバーチとリーランド・ジョンソンが1962年（American Economic Review「Behavior of the Firm Under Regulatory Constraint」）で示した、独占企業への総括原価方式（公正報酬率規制＝レートベースに一定の公正報酬率を認める方式）の下で生じる過剰資本投資の現象。認められる報酬率が企業の実際の資本コストを上回ると、その差は純利潤となり、資本（レートベース）を増やすほど許容利潤が増えるため、' +
-      '企業は費用最小化水準を超えて非効率に資本を拡大し、他の投入を資本で代替する（金メッキ＝ゴールドプレーティング）。結果として資本集約的すぎる生産方法・高コスト・割高な価格・厚生損失を招く。総括原価／レートベース規制への古典的批判であり、プライスキャップ等のインセンティブ規制を支持する論拠となる。自然独占やラムゼー価格、規制の虜、ヤードスティック競争とは区別される。',
-    keyFigures: 'ハーヴェイ・アバーチ／リーランド・ジョンソン（Averch & Johnson, 1962）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://link.springer.com/10.1057/978-1-349-95121-5_388-1', type: 'reference', label: 'The New Palgrave Dictionary of Economics, "Averch–Johnson Effect" (Springer)' },
-      { url: 'https://www.cirje.e.u-tokyo.ac.jp/research/workshops/micro/micropaper04/micro_thesis/maeda.pdf', type: 'academic', label: '日本の電気事業におけるアヴァーチ・ジョンソン効果に関する実証分析（東京大学 CIRJE）' },
-      { url: 'https://en.wikipedia.org/wiki/Averch%E2%80%93Johnson_effect', type: 'reference', label: 'Wikipedia: Averch–Johnson effect' },
     ],
   },
   {
@@ -17585,21 +17167,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-quantity-theory-money',
-    discipline: 'economics',
-    title: '貨幣数量説',
-    statement:
-      '貨幣供給量と物価水準のあいだに比例的な関係を説く理論。アーヴィング・フィッシャーが1911年に定式化した交換方程式 MV=PT（M:貨幣量、V:流通速度、P:物価水準、T:取引量）はその代表で、VとTを一定とみなせば貨幣量Mの増加は物価Pの上昇に直結する。' +
-      'マーシャルやピグーらケンブリッジ学派は貨幣需要に着目した現金残高方程式 M=kPY（k:保有比率、Y:実質所得）を提示した。古典派では貨幣供給の変化は名目変数のみを動かし産出・雇用など実質変数に影響しない「貨幣の中立性」が前提される。20世紀後半にはミルトン・フリードマンが貨幣需要理論として再定式化し、マネタリズムの中核となった。',
-    keyFigures: 'アーヴィング・フィッシャー／アルフレッド・マーシャル／アーサー・ピグー／ミルトン・フリードマン 等',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://link.springer.com/chapter/10.1007/978-3-030-05177-8_3', type: 'academic', label: 'Springer Nature Link — Revitalizing the Quantity Theory of Money: From the Fisher Relation to the Fisher Equation' },
-      { url: 'https://en.wikipedia.org/wiki/Quantity_theory_of_money', type: 'reference', label: 'Wikipedia — Quantity theory of money' },
-      { url: 'https://en.wikipedia.org/wiki/Cambridge_equation', type: 'reference', label: 'Wikipedia — Cambridge equation' },
-    ],
-  },
-  {
     id: 'human-dual-coding',
     discipline: 'human-science',
     title: '二重符号化理論',
@@ -17840,21 +17407,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-permanent-income',
-    discipline: 'economics',
-    title: '恒常所得仮説',
-    statement:
-      'ミルトン・フリードマンが1957年の著書『消費の経済理論（A Theory of the Consumption Function）』で提唱した消費理論。消費は当期の実際の所得ではなく、生涯にわたり見込まれる平均的・恒常的な所得（恒常所得）に基づいて決まるとする。実際の所得は恒常所得と一時所得（臨時収入や変動分）に分けられ、一時所得の限界消費性向はほぼゼロでその大部分は貯蓄に回る。' +
-      'これによりケインズの絶対所得仮説（消費は当期所得の関数）を修正し、短期と長期で限界消費性向が異なる「消費のパズル」を説明した。一時的な減税が消費をあまり刺激しないという政策含意を持ち、モディリアーニのライフサイクル仮説と親近する。後にホールが合理的期待を加え、消費は予測不能なランダムウォークに従うとする仮説へ発展させた。フリードマンは1976年にノーベル経済学賞を受賞した。',
-    keyFigures: 'ミルトン・フリードマン（Milton Friedman, 1957）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nber.org/books-and-chapters/theory-consumption-function/permanent-income-hypothesis', type: 'academic', label: 'NBER: The Permanent Income Hypothesis (Friedman, A Theory of the Consumption Function)' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1976/summary/', type: 'reference', label: 'NobelPrize.org: Economic Sciences 1976 (Milton Friedman)' },
-      { url: 'https://en.wikipedia.org/wiki/Permanent_income_hypothesis', type: 'reference', label: 'Wikipedia: Permanent income hypothesis' },
-    ],
-  },
-  {
     id: 'mgmt-emotional-intelligence',
     discipline: 'management',
     title: '感情知性（EQ）',
@@ -17956,20 +17508,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'cognitive-dissonance',
-    discipline: 'human-science',
-    title: '認知的不協和理論',
-    statement:
-      '認知的不協和理論とは、1957年にレオン・フェスティンガーが著書『A Theory of Cognitive Dissonance』で提唱した社会心理学の理論である。個人が矛盾する二つ以上の認知（信念・態度・行動についての知識）を同時に抱えると、不協和と呼ばれる心理的不快感が生じる。' +
-      'この不快感を低減するため、人は(1)既存の信念や態度を変更する、(2)矛盾を正当化する新たな認知を追加する、(3)矛盾する認知の重要性を低下させる、といった方略を用いる。フェスティンガーとカールスミスの古典的実験（1ドル/20ドル実験、1959年）では、不十分な報酬条件の被験者ほど態度変容が大きいことが示され、理論の中核的予測が実証された。消費者行動・意思決定・説得研究に広く応用されている。',
-    keyFigures: 'レオン・フェスティンガー（Leon Festinger, 1919–1989）（1957年提唱）／エリオット・アロンソン（Elliot Aronson, 1932–、自己概念との関連で理論拡張）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.apa.org/topics/cognitive-dissonance', type: 'academic', label: 'American Psychological Association — Cognitive Dissonance（心理学専門学会）' },
-      { url: 'https://plato.stanford.edu/entries/cognition-belief/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Cognition and Belief（査読済み学術百科事典）' },
-    ],
-  },
-  {
     id: 'antimonopoly-surcharge',
     discipline: 'business-law',
     title: '課徴金制度（独占禁止法）',
@@ -17998,34 +17536,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'learned-helplessness',
-    discipline: 'human-science',
-    title: '学習性無力感',
-    statement:
-      '学習性無力感とは、回避不可能な嫌悪刺激に繰り返し曝された個体が、その後逃避可能な状況においても行動を起こさなくなる現象である。1967年にマーティン・セリグマンとスティーブン・マイヤーが犬を用いた電撃実験で発見した。' +
-      'セリグマンは後にエイブラムソン、ティーズデールと共に帰属スタイル理論を組み込んだ改訂モデル（1978年）を提唱し、うつ病の認知理論の基礎を築いた。統制不可能性の知覚が動機づけ・認知・情動の欠損を引き起こすとされ、組織行動論・PTSD研究・教育心理学にも広く応用されている。セリグマンは後にポジティブ心理学の創始者としても知られる。',
-    keyFigures: 'マーティン・セリグマン（Martin E. P. Seligman, 1942–）／スティーブン・マイヤー（Steven F. Maier, 1945–）（1967年共同発見）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/h0024514', type: 'academic', label: 'Seligman & Maier (1967) "Failure to escape traumatic shock", Journal of Experimental Psychology 74(1), 1–9（原著論文）' },
-      { url: 'https://www.apa.org/topics/learned-helplessness', type: 'academic', label: 'American Psychological Association — Learned Helplessness（心理学専門学会）' },
-    ],
-  },
-  {
-    id: 'spiral-of-silence',
-    discipline: 'information-sociology',
-    title: '沈黙の螺旋理論',
-    statement:
-      '沈黙の螺旋理論は、エリーザベト・ノエル＝ノイマンが1974年にJournal of Communication誌で提唱した世論形成モデルである。人々は自らの意見が少数派であると知覚すると社会的孤立への恐怖から沈黙し、多数派と感じる者が積極的に発言することで、支配的意見がさらに増幅される螺旋的過程が生じるとした。' +
-      '個人は「準統計的感覚（quasi-statistical sense）」により周囲の意見分布を直感的に把握するとされる。マスメディアは意見気候の知覚に影響を与え、螺旋を加速させる役割を果たす。集団主義社会と個人主義社会での適用差異や、SNS時代における理論の妥当性が批判的に検討されており、現代のフィルターバブルやエコーチェンバー研究とも接続する。',
-    keyFigures: 'エリーザベト・ノエル＝ノイマン（Elisabeth Noelle-Neumann, 1916–2010）（1974年提唱）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1111/j.1460-2466.1974.tb00367.x', type: 'academic', label: 'Noelle-Neumann, E. (1974) "The Spiral of Silence: A Theory of Public Opinion", Journal of Communication 24(2), 43–51（原著論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Spiral_of_silence', type: 'reference', label: 'Wikipedia — Spiral of silence（包括的参考文献付き）' },
-    ],
-  },
-  {
     id: 'agile-development',
     discipline: 'management',
     title: 'アジャイルソフトウェア開発',
@@ -18037,48 +17547,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://agilemanifesto.org/', type: 'academic', label: 'Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）' },
       { url: 'https://scrumguides.org/', type: 'academic', label: 'The Scrum Guide — Schwaber & Sutherland（Scrum公式定義）' },
-    ],
-  },
-  {
-    id: 'bystander-effect',
-    discipline: 'human-science',
-    title: '傍観者効果',
-    statement:
-      '傍観者効果とは、緊急事態において周囲に他者が多く存在するほど、個人が援助行動を起こしにくくなる社会心理学的現象である。1964年のキティ・ジェノヴィーズ事件を契機に、ジョン・ダーリーとビブ・ラタネが1968年に実験的に実証した。' +
-      '主要なメカニズムとして、責任の分散（他者も助けるだろうという想定）、多元的無知（他者の無反応を手がかりに緊急性を過小評価）、評価懸念（介入による否定的評価への恐れ）の三つが挙げられる。傍観者の数が増加するほど援助行動の確率と速度が低下することが繰り返し確認されている。災害時の避難行動や組織内の不正通報行動の分析にも応用される。',
-    keyFigures: 'ジョン・ダーリー（John M. Darley, 1938–2018）／ビブ・ラタネ（Bibb Latané, 1937–）（1968年実験で実証）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/h0025589', type: 'academic', label: 'Darley & Latané (1968) "Bystander intervention in emergencies: Diffusion of responsibility", Journal of Personality and Social Psychology 8(4), 377–383（原著論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Bystander_effect', type: 'reference', label: 'Wikipedia — Bystander effect（包括的参考文献付き）' },
-    ],
-  },
-  {
-    id: 'uses-and-gratifications',
-    discipline: 'information-sociology',
-    title: '利用と満足理論',
-    statement:
-      '利用と満足理論は、1970年代にエリフ・カッツ、ジェイ・ブラムラー、マイケル・グレヴィッチによって体系化されたメディア研究の理論である。従来の「メディアが人々に何をするか」という効果研究の視点を転換し、「人々がメディアをどう利用するか」を問う。' +
-      '受け手は能動的にメディアを選択し、認知的欲求（情報獲得）、感情的欲求（娯楽・美的体験）、個人的統合欲求（自信・地位の確認）、社会的統合欲求（家族・友人との結合）、緊張解消欲求（逃避・気晴らし）という五つのカテゴリーの充足を求めるとされる。デジタルメディア時代においてもSNS利用行動の分析枠組みとして広く応用されている。',
-    keyFigures: 'エリフ・カッツ（Elihu Katz, 1926–2021）／ジェイ・ブラムラー（Jay Blumler, 1924–2024）／マイケル・グレヴィッチ（Michael Gurevitch, 1930–2008）（1974年体系化）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1086/268109', type: 'academic', label: 'Katz, Blumler & Gurevitch (1974) "Uses and Gratifications Research", Public Opinion Quarterly 37(4), 509–523（原著論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Uses_and_gratifications_theory', type: 'reference', label: 'Wikipedia — Uses and gratifications theory（包括的参考文献付き）' },
-    ],
-  },
-  {
-    id: 'labor-standards-act',
-    discipline: 'business-law',
-    title: '労働基準法',
-    statement:
-      '労働基準法（昭和22年法律第49号）は、1947年に制定された日本の労働条件の最低基準を定める基本法である。労働時間（週40時間・1日8時間）、時間外労働の規制、休日・年次有給休暇、解雇規制（30日前予告）、賃金支払の四原則（通貨払・直接払・全額払・毎月一回以上定期払）、児童労働の禁止、母性保護等を規定する。' +
-      '労働基準監督署が事業場への臨検・是正勧告等により履行を確保する。2018年の働き方改革関連法により、時間外労働の罰則付き上限規制（原則月45時間・年360時間、特別条項でも年720時間以内）が導入され、労働者の健康確保と長時間労働の是正が図られている。',
-    keyFigures: '労働基準法（昭和22年法律第49号、1947年制定）／厚生労働省所管・労働基準監督署が執行／2018年働き方改革関連法で時間外上限規制導入',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://elaws.e-gov.go.jp/document?lawid=322AC0000000049', type: 'government', label: 'e-Gov法令検索 — 労働基準法（昭和22年法律第49号）' },
-      { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/index.html', type: 'government', label: '厚生労働省 — 労働基準法の基礎知識' },
     ],
   },
   {
@@ -18275,20 +17743,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.jstor.org/stable/2822435', type: 'academic', label: 'Trivers, R. L. (1971) "The Evolution of Reciprocal Altruism" The Quarterly Review of Biology 46(1)' },
       { url: 'https://en.wikipedia.org/wiki/Reciprocal_altruism', type: 'reference', label: 'Wikipedia — Reciprocal altruism' },
-    ],
-  },
-  {
-    id: 'econ-elasticity-pessimism',
-    discipline: 'economics',
-    title: '弾力性ペシミズム',
-    statement:
-      '弾力性ペシミズムとは、1940〜50年代に貿易経済学者の間で広まった見解で、輸出入の価格弾力性が低いため為替レートの切り下げ（減価）では貿易収支を改善できないとする悲観論である。マーシャル＝ラーナー条件（輸出入の価格弾力性の絶対値の和が1を超えれば切り下げが貿易収支を改善する）が満たされないと主張した。' +
-      'オーカット（1950）は推計手法の集計バイアスにより弾力性が過小推定されていると批判し、後の実証研究で多くの国の弾力性がマーシャル＝ラーナー条件を満たすことが示され、弾力性ペシミズムは克服された。この論争は国際収支調整の弾力性アプローチの発展に寄与した。',
-    keyFigures: 'フリッツ・マハループ（Fritz Machlup, 1902–1983）／ガイ・H・オーカット（Guy H. Orcutt, 1917–2006）／アバ・ラーナー（Abba P. Lerner, 1903–1982）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1927418', type: 'academic', label: 'Orcutt, G. H. (1950) "Measurement of Price Elasticities in International Trade" Review of Economics and Statistics 32(2)' },
-      { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia — Marshall–Lerner condition' },
     ],
   },
   {
@@ -20812,20 +20266,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-neuroplasticity',
-    discipline: 'human-science',
-    title: '神経可塑性（ニューロプラスティシティ）',
-    statement:
-      '神経可塑性（neuroplasticity）とは、脳・脊髄・末梢神経系が経験・学習・損傷などに応じてその構造や機能的結合（シナプス強度・神経回路・皮質地図）を生涯にわたって変化させる能力をいう。ヘッブ則「共に発火するニューロンは共に結びつく」がその細胞レベルの基盤を簡潔に表す。' +
-      'ドナルド・ヘッブが1949年に理論化し、長期増強（LTP）・樹状突起スパイン変化・皮質再編成の実験的発見が実証的基盤を与えた。脳卒中リハビリ・楽器習得・語学学習・認知行動療法の神経基盤として応用され、「成人の脳は変化しない」という通念を覆した。教育・発達・精神医学の現代理論に不可欠な概念である。',
-    keyFigures: 'ドナルド・O・ヘッブ（Donald O. Hebb, 1904–1985, 1949『The Organization of Behavior』）／長期増強（LTP）の発見（Bliss & Lømo, 1973）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/science/neuroplasticity', type: 'reference', label: 'Encyclopaedia Britannica — Neuroplasticity（定義・シナプス可塑性・皮質再編成・ヘッブ則の解説）' },
-      { url: 'https://www.apa.org/topics/brain-nervous-system', type: 'reference', label: 'American Psychological Association — Brain and Nervous System（神経可塑性を含む脳科学の概説）' },
-    ],
-  },
-  {
     id: 'econ-cobra-effect',
     discipline: 'economics',
     title: 'コブラ効果（意図せざる結果の法則）',
@@ -22308,21 +21748,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-essential-facilities',
-    discipline: 'business-law',
-    title: '不可欠施設の法理（Essential Facilities Doctrine）',
-    statement:
-      '不可欠施設の法理（Essential Facilities Doctrine）とは、独占的地位にある事業者が競争に不可欠なインフラストラクチャー施設を支配している場合、合理的条件での競争者へのアクセス提供義務を課す反トラスト法（競争法）上の法理である。米国では1983年のMCI Communications Corp. v. AT&T Co.事件（第7巡回区控訴裁判所）で四要件テストが定式化された：（1）独占者による不可欠施設の支配、（2）競争者による施設の合理的複製不可能性、（3）競争者へのアクセス拒否、（4）アクセス提供の実行可能性。' +
-      'EU競争法では、Magill事件（1995年欧州司法裁判所）およびBronner事件（1998年）でより厳格な適用基準が確立された。ただし米国連邦最高裁判所はVerizon Communications v. Law Offices of Curtis V. Trinko事件（2004年）で本法理に懐疑的見解を示し、規制当局によるアクセス強制が存在する場合には反トラスト法上の義務は不要としたため、米国での適用範囲は縮小している。近年はデジタルプラットフォーム（Google、Apple、Amazon等）への適用可能性が議論されており、EUのデジタル市場法（DMA, 2022年）は本法理の精神を立法化した側面がある。本法理の曖昧性と規制的過剰介入のリスクについての批判も存在する。',
-    keyFigures: 'MCI Communications v. AT&T（1983 第7巡回区・四要件テスト定式化）／EU Magill事件（1995）・Bronner事件（1998）／Trinko事件（2004 米最高裁の懐疑的見解）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Essential_facilities_doctrine', type: 'reference', label: 'Wikipedia — Essential Facilities Doctrine' },
-      { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/708/1081/330445/', type: 'government', label: 'Justia — MCI Communications Corp. v. AT&T Co., 708 F.2d 1081 (7th Cir. 1983)' },
-      { url: 'https://www.justice.gov/archives/atr/refusals-deal-and-essential-facilities-r-hewitt-pate-statement', type: 'government', label: 'DOJ Antitrust Division — Refusals to Deal and Essential Facilities (Pate Statement)' },
-    ],
-  },
-  {
     id: 'infosoc-algorithmic-gatekeeping',
     discipline: 'information-sociology',
     title: 'アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）',
@@ -22695,21 +22120,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/abs/10.1177/1461444816661553', type: 'academic', label: 'Plantin et al. (2018) Infrastructure studies meet platform studies — New Media & Society' },
       { url: 'https://eprints.lse.ac.uk/67571/', type: 'academic', label: 'Plantin et al. (2018) — LSE Research Online' },
       { url: 'https://journals.sagepub.com/doi/10.1177/1461444809342738', type: 'academic', label: 'Gillespie (2010) The Politics of Platforms — New Media & Society (foundational)' },
-    ],
-  },
-  {
-    id: 'mgmt-behavioral-strategy',
-    discipline: 'management',
-    title: '行動戦略（Behavioral Strategy）',
-    statement:
-      '行動戦略（Behavioral Strategy）とは、認知心理学および社会心理学の知見を戦略経営理論・実践に統合する学際的研究領域であり、認知バイアス・ヒューリスティクス・感情・社会的力学が戦略的意思決定にいかに体系的に影響するかを解明する。トーマス・パウエル（Thomas C. Powell）、ダン・ロヴァロ（Dan Lovallo）、クレイグ・フォックス（Craig R. Fox）が2011年にStrategic Management Journal（Vol.32, No.13, pp.1369-1386）の特集号「Psychological Foundations of Strategic Management」で体系化した。' +
-      '従来の完全合理性を前提とする経済学的戦略論とは異なり、限定合理性（bounded rationality）に基づく現実的な人間行動の理解を戦略管理論に組み込む。行動経済学とは区別され、戦略経営に固有の意思決定問題（競争判断・資源配分・M&A評価等）に焦点を当てる。パウエルはStrategic Management Societyの行動戦略Interest Groupの創設議長を務めた。',
-    keyFigures: 'トーマス・パウエル、ダン・ロヴァロ＆クレイグ・フォックス（2011 Strategic Management Journal 32(13):1369-1386 — 行動戦略特集号）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.968', type: 'academic', label: 'Powell, Lovallo & Fox (2011) Behavioral Strategy — SMJ 32(13)' },
-      { url: 'https://encyclopedia.pub/entry/29359', type: 'reference', label: 'Behavioral Strategy — MDPI Encyclopedia' },
-      { url: 'https://www.cambridge.org/core/elements/behavioral-strategy/9F53A14AF285B0A3F6C95ACE64CDE8AA', type: 'academic', label: 'Behavioral Strategy — Cambridge University Press Elements' },
     ],
   },
   {
@@ -23283,21 +22693,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-platform-labor',
-    discipline: 'information-sociology',
-    title: 'プラットフォーム労働（Platform Labor / Digital Labor）',
-    statement:
-      'プラットフォーム労働（Platform Labor）とは、デジタル・プラットフォーム上でタスク化・データ化された労働が自動システムの訓練に使用される新しい労働形態の総体を分析する概念枠組みである。アントニオ・カシッリ（Antonio A. Casilli）が2019年の著書『En attendant les robots: Enquête sur le travail du clic』（Éditions du Seuil）で体系化した。' +
-      'オンデマンド労働（Uberドライバー等がデータベースを充実しアルゴリズムを精緻化する労働）、マイクロワーク（画像分類等の単純反復的クリック作業）、ソーシャルネットワーク労働（SNS利用者の無償参加とクリックファーム等による人為的バイラリティ創出）の三類型に分類した。人工知能のイデオロギー的言説を脱構築し、デジタル労働の隠蔽と地理的再配置の二重運動を分析した。',
-    keyFigures: 'アントニオ・カシッリ（2019 En attendant les robots, Seuil）／テラノヴァ（2000 Free Labor）／フックス（2014 Digital Labour and Karl Marx）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.cairn.info/en-attendant-les-robots-enquete-sur-le-travail-du---9782021401882.html', type: 'academic', label: 'Casilli (2019) En attendant les robots — Cairn.info / Seuil' },
-      { url: 'https://journals.openedition.org/sdt/30398?lang=fr', type: 'academic', label: 'Casilli (2019) Book Review — Sociologie du travail / OpenEdition' },
-      { url: 'https://www.casilli.fr/publications-2/', type: 'reference', label: 'Antonio Casilli — Publications Page' },
-    ],
-  },
-  {
     id: 'econ-backus-smith',
     discipline: 'economics',
     title: 'バッカス＝スミス・パズル（Backus-Smith Puzzle）',
@@ -23463,21 +22858,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-team-mental-models',
-    discipline: 'management',
-    title: 'チーム・メンタルモデル（Team Mental Models）',
-    statement:
-      'チーム・メンタルモデル（Team Mental Models / Shared Mental Models）とは、チームメンバーがタスク要件・手順・役割責任について共通または重複する認知的表象を保持することで、明示的なコミュニケーションなしにも行動の調整・互換的な意思決定・適切な行為の遂行を可能にするチーム認知の理論である。ジャニス・キャノン＝バウアーズ（Janis Cannon-Bowers）とエドゥアルド・サラス（Eduardo Salas）が1993年に体系化した。' +
-      'チームメンバーが知識を共有すると、手がかりの類似的解釈、両立可能な意思決定、将来のメンバー行動とタスク状態の正確な予測、効率的な意味伝達が可能となる。内容領域としてタスク焦点型TSMM（業務目標・遂行要件）とチーム焦点型TSMM（対人相互作用）に大別される。メタ分析により共有メンタルモデルとチーム業績・プロセスの正の関連が確認されている。',
-    keyFigures: 'ジャニス・キャノン＝バウアーズ＆エドゥアルド・サラス（1993 共有メンタルモデル体系化）／デチャーチ＆メスマー＝マグナス（2010 メタ分析）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/154193129103501917', type: 'academic', label: 'Converse, Cannon-Bowers & Salas (1991) Team Member Shared Mental Models — Human Factors Society (SAGE)' },
-      { url: 'https://atlas.northwestern.edu/papers/sharedTeam.pdf', type: 'academic', label: 'DeChurch & Mesmer-Magnus (2010) Measuring Shared Team Mental Models: A Meta-Analysis — Northwestern' },
-      { url: 'https://psychiatry.ucsd.edu/research/programs-centers/instep/tools-resource/definitions/emergent-states/cognitive-emergent-states/shared-mental-model.html', type: 'reference', label: 'Shared Mental Model — UCSD INSTEP Resource' },
-    ],
-  },
-  {
     id: 'infosoc-mediatization-theory',
     discipline: 'information-sociology',
     title: 'メディアタイゼーション理論（Mediatization Theory）',
@@ -23550,21 +22930,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Clausula_rebus_sic_stantibus', type: 'reference', label: 'Wikipedia: Clausula Rebus Sic Stantibus' },
       { url: 'https://www.unidroit.org/english/publications/review/articles/2010-1-veneziano-e.pdf', type: 'academic', label: 'Veneziano (2010) UNIDROIT Principles and CISG: Change of Circumstances — UNIDROIT' },
       { url: 'https://www.arnoldporter.com/-/media/files/perspectives/publications/2006/04/hardship-and-changed-circumstances-as-grounds-fo__/files/publication/fileattachment/hardship_excuse_article.pdf', type: 'academic', label: 'Hardship and Changed Circumstances as Grounds for Excuse — Arnold & Porter' },
-    ],
-  },
-  {
-    id: 'mgmt-strategic-flexibility',
-    discipline: 'management',
-    title: '戦略的柔軟性（Strategic Flexibility）',
-    statement:
-      '戦略的柔軟性（Strategic Flexibility）とは、外部環境の変化を認識し、非効果的な戦略的意思決定を逆転させ、資源を迅速に再配分して対応する組織的準備態勢を指す。清水勝彦（Katsuhiko Shimizu）とマイケル・ヒット（Michael Hitt）が2004年にStrategic Management Journalで「Strategic Flexibility: Organizational Preparedness to Reverse Ineffective Strategic Decisions」として体系化した。' +
-      '戦略的柔軟性は認知的側面（問題認識と方向転換の能力）と資源的側面（迅速な資源再配分能力）を含む。ダイナミック・ケイパビリティ理論と密接に関連し、吸収能力（absorptive capacity）・両利き経営（ambidexterity）・継続的変態（continuous morphing）の3つの動的能力がその基盤とされる。21世紀の組織における競争優位の源泉として広く認識されている。',
-    keyFigures: '清水勝彦＆マイケル・ヒット（2004 Strategic Management Journal）／ヒット他（1998 Academy of Management Executive）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/4166123', type: 'academic', label: 'Shimizu & Hitt (2004) Strategic Flexibility: Organizational Preparedness to Reverse Ineffective Strategic Decisions — JSTOR / Strategic Management Journal' },
-      { url: 'https://journals.aom.org/doi/10.5465/ame.1998.1333922', type: 'academic', label: 'Hitt, Keats & DeMarie (1998) Navigating in the New Competitive Landscape — Academy of Management Executive' },
-      { url: 'https://link.springer.com/chapter/10.1007/978-81-322-1560-8_3', type: 'academic', label: 'Defining Strategic Flexibility — Springer' },
     ],
   },
   {
@@ -23688,21 +23053,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-gravity-model-trade',
-    discipline: 'economics',
-    title: '貿易の重力モデル（Gravity Model of Trade）',
-    statement:
-      '貿易の重力モデル（Gravity Model of Trade）とは、二国間の貿易量がそれぞれの経済規模（GDP）に比例し、両国間の距離に反比例するとするニュートンの万有引力法則に類比された経験的モデルである。ヤン・ティンバーゲン（Jan Tinbergen）が1962年に、ペンッティ・ポイホネン（Pentti Pöyhönen）が1963年に独立に定式化した。' +
-      '相対的な経済規模が貿易相手としての吸引力を決定し、経済的距離（貿易費用）が大きいほど吸引力は弱まる。距離の代理変数として地理的距離に加え、言語・植民地関係・共通通貨・貿易協定等が拡張変数として導入される。異なる国のサンプル・方法論・時期にわたって驚くほど安定的かつ頑健な実証的規則性を示し、経済学における最も成功した経験的モデルの一つとされる。アンダーソン＆ヴァン・ウィンクープ（2003）が理論的基礎付けを精緻化した。',
-    keyFigures: 'ヤン・ティンバーゲン（1962 重力モデル提唱）／ペンッティ・ポイホネン（1963 独立定式化）／アンダーソン＆ヴァン・ウィンクープ（2003 理論的基礎付け）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nber.org/system/files/working_papers/w19285/w19285.pdf', type: 'academic', label: 'Head & Mayer (2013) The Gravity Equation in International Trade — NBER WP 19285' },
-      { url: 'https://unctad.org/system/files/official-document/gds2012d2_ch3_en.pdf', type: 'academic', label: 'Analyzing Bilateral Trade Using the Gravity Equation — UNCTAD' },
-      { url: 'https://maseconomics.com/the-gravity-model-of-trade-predicting-bilateral-trade-flows-and-why-it-still-rules/', type: 'reference', label: 'The Gravity Model of Trade: Predicting Bilateral Trade Flows — MAS Economics' },
-    ],
-  },
-  {
     id: 'human-statistical-learning',
     discipline: 'human-science',
     title: '統計的学習（Statistical Learning）',
@@ -23745,21 +23095,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=47530', type: 'academic', label: 'Hill et al. (2014) Collective Genius: The Art and Practice of Leading Innovation — Harvard Business School' },
       { url: 'https://collectivegeniusbook.com/', type: 'reference', label: 'Collective Genius — Official Book Website' },
       { url: 'https://www.amazon.com/Collective-Genius-Practice-Leading-Innovation/dp/1422130029', type: 'reference', label: 'Collective Genius — Amazon' },
-    ],
-  },
-  {
-    id: 'infosoc-techno-feudalism',
-    discipline: 'information-sociology',
-    title: 'テクノ封建主義（Techno-Feudalism）',
-    statement:
-      'テクノ封建主義（Techno-Feudalism）とは、デジタルプラットフォーム独占企業（Amazon・Google・Apple等）がクラウドインフラの私的所有を通じて中世の封建領主のように経済活動を支配し、利潤ではなくデジタルレント（地代）を抽出する新たな経済秩序が資本主義を超克したとする批判的概念である。ヤニス・ヴァルファキス（Yanis Varoufakis）が2023年に『Technofeudalism: What Killed Capitalism』として体系化した。' +
-      'ヴァルファキスはプラットフォームが「クラウド資本」を通じてレントを抽出し、市場と利潤という資本主義社会の二つの中心的特徴を廃止するデジタル封建領地を形成すると論じた。セドリック・デュラン（Cédric Durand）はBig Tech企業が検索・クラウド・物流・決済という社会的に不可欠なインフラの所有・管理を通じて価値を抽出する構造を分析した。批判者はこの現象を封建制ではなくなお資本主義の変種と見なす。',
-    keyFigures: 'ヤニス・ヴァルファキス（2023 Technofeudalism）／セドリック・デュラン（How Silicon Valley Unleashed Techno-Feudalism）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://developingeconomics.org/2025/05/05/digital-lords-or-capitalist-titans-critiquing-the-techno-feudalism-narrative/', type: 'academic', label: 'Digital Lords or Capitalist Titans? Critiquing the Techno-Feudalism Narrative — Developing Economics' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/1468795X241269293', type: 'academic', label: 'Gane (2025) Capitalism Is Capitalism, Not Technofeudalism — Sociology (SAGE)' },
-      { url: 'https://americanaffairsjournal.org/2025/08/technofeudalism-versus-total-capitalism/', type: 'media', label: 'Technofeudalism Versus Total Capitalism — American Affairs Journal' },
     ],
   },
   {
@@ -24478,20 +23813,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-structural-inertia',
-    discipline: 'management',
-    title: '構造的慣性（Structural Inertia）',
-    statement:
-      '組織が埋没費用・政治的連合・規範的合意・正当性障壁などの内外制約により構造変革に抵抗する傾向。ハナン＆フリーマン（1984）は淘汰圧が信頼性と説明責任を持つ（=慣性の強い）組織を選好すると論じ、根本的再編は「新しさの負債」を再設定して死亡リスクを高めると主張した。',
-    keyFigures: 'マイケル・T・ハナン＆ジョン・フリーマン（1984 American Sociological Review）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan & Freeman (1984) Structural Inertia and Organizational Change — ASR / JSTOR' },
-      { url: 'https://www.semanticscholar.org/paper/Structural-Inertia-and-Organizational-Change-Hannan-Freeman/44c3c5de35c79e5bd1d93e3ae0cff7cf45443e5b', type: 'academic', label: 'Hannan & Freeman (1984) — Semantic Scholar' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Organizational Ecology — Wikipedia' },
-    ],
-  },
-  {
     id: 'infosoc-domestication-theory',
     discipline: 'information-sociology',
     title: '家庭化理論（Domestication Theory）',
@@ -24532,20 +23853,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/1882916', type: 'academic', label: 'Samuelson (1966) A Summing Up — Quarterly Journal of Economics / JSTOR' },
       { url: 'https://www.semanticscholar.org/paper/Production-of-Commodities-by-Means-of-Commodities-Sraffa/afb1e50a24e5c74e28c0e8a478637c9a0f1c55cb', type: 'academic', label: 'Sraffa (1960) Production of Commodities — Semantic Scholar' },
       { url: 'https://en.wikipedia.org/wiki/Cambridge_capital_controversy', type: 'reference', label: 'Cambridge Capital Controversy — Wikipedia' },
-    ],
-  },
-  {
-    id: 'human-tip-of-tongue',
-    discipline: 'human-science',
-    title: '舌先現象（Tip-of-the-Tongue Phenomenon）',
-    statement:
-      'ある語を確実に知っているという強い感覚がありながら即座に想起できないメタ認知的状態。ブラウン＆マクニール（1966）は定義文を用いてTOT状態を実験的に誘発し、目標語の頭文字・音節数・韻律といった部分情報が想起可能であることを見出した。語彙アクセスの二段階モデルを支持し、再認と想起の解離を示す。',
-    keyFigures: 'ロジャー・ブラウン＆デイヴィッド・マクニール（1966 Journal of Verbal Learning and Verbal Behavior）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1016/S0022-5371(66)80040-3', type: 'academic', label: 'Brown & McNeill (1966) The "Tip of the Tongue" Phenomenon — JVLVB / Elsevier' },
-      { url: 'https://www.semanticscholar.org/paper/The-%22tip-of-the-tongue%22-phenomenon.-Brown-McNeill/d54b9e3ac4fbb64a59a60dfd8bd5e15ddb72fadc', type: 'academic', label: 'Brown & McNeill (1966) — Semantic Scholar' },
-      { url: 'https://en.wikipedia.org/wiki/Tip_of_the_tongue', type: 'reference', label: 'Tip of the Tongue — Wikipedia' },
     ],
   },
   {
@@ -24934,22 +24241,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   // human-serial-position-effect, mgmt-real-options-theory,
   // bizlaw-respondeat-superior, infosoc-information-asymmetry-online
   {
-    id: 'human-serial-position-effect',
-    discipline: 'human-science',
-    title: '系列位置効果',
-    statement:
-      '系列位置効果とは、リストの項目を記憶・再生する際に、先頭付近の項目（初頭効果 primacy effect）と末尾付近の項目（新近効果 recency effect）の再生率が中間の項目より有意に高くなる現象であり、U字型の系列位置曲線として表れる。' +
-      'ヘルマン・エビングハウスが1885年の記憶研究で最初に観察し、ベネット・マードック（1962, Journal of Experimental Psychology 64(5):482-488）がリスト長・呈示速度を系統的に操作して系列位置曲線を精密に記述した。' +
-      'アトキンソン＆シフリン（1968）の二重貯蔵モデルでは、初頭効果は長期記憶へのリハーサルによる転送、新近効果は短期記憶の残存として説明され、記憶の多重貯蔵構造を支持する主要な証拠とされている。',
-    keyFigures: 'ヘルマン・エビングハウス（Hermann Ebbinghaus, 1885 記憶の実験的研究の創始者）／ベネット・B・マードック（Bennet B. Murdock Jr., 1962 JEP 系列位置曲線の精密化）／リチャード・C・アトキンソン＆リチャード・M・シフリン（Atkinson & Shiffrin, 1968 二重貯蔵モデルによる理論的説明）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/h0045106', type: 'academic', label: 'Murdock, B.B. Jr. (1962) The serial position effect of free recall, JEP 64(5):482-488' },
-      { url: 'https://doi.org/10.1016/S0079-7421(08)60422-3', type: 'academic', label: 'Atkinson, R.C. & Shiffrin, R.M. (1968) Human Memory: A Proposed System, in Psychology of Learning and Motivation Vol.2' },
-      { url: 'https://en.wikipedia.org/wiki/Serial-position_effect', type: 'reference', label: 'Wikipedia — Serial-position effect' },
-    ],
-  },
-  {
     id: 'mgmt-real-options-theory',
     discipline: 'management',
     title: 'リアル・オプション理論',
@@ -25205,22 +24496,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-entire-fairness-doctrine',
-    discipline: 'business-law',
-    title: '完全公正基準',
-    statement:
-      '完全公正基準（Entire Fairness Doctrine）とは、米国デラウェア州会社法における司法審査基準のうち最も厳格なものであり、取締役が利益相反取引に関与した場合に適用される。' +
-      '裁判所は「公正な取引過程（fair dealing）」と「公正な価格（fair price）」の二要素を統一的に審査し、被告取締役側が取引の完全な公正性を立証する責任を負う。' +
-      'Weinberger v. UOP, Inc.（1983年）で確立され、Kahn v. M&F Worldwide Corp.（2014年）により独立取締役委員会の承認と少数株主過半数の賛成を事前に具備した場合には経営判断原則への引下げが認められた。',
-    keyFigures: 'William T. Allen／Leo E. Strine Jr.／Reinier Kraakman／John C. Coffee Jr.',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://law.justia.com/cases/delaware/supreme-court/1983/457-a-2d-701-4.html', type: 'reference', label: 'Weinberger v. UOP, Inc., 457 A.2d 701 (Del. 1983)' },
-      { url: 'https://corpgov.law.harvard.edu/2014/03/29/kahn-v-mf-worldwide-corp/', type: 'academic', label: 'Kahn v. M&F Worldwide Corp. 解説 — Harvard Law School Forum on Corporate Governance' },
-      { url: 'https://delcode.delaware.gov/title8/c001/sc04/index.html', type: 'government', label: 'Delaware General Corporation Law, Title 8, Subchapter IV' },
-    ],
-  },
-  {
     id: 'infosoc-algorithmic-experience',
     discipline: 'information-sociology',
     title: 'アルゴリズム経験',
@@ -25254,22 +24529,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2977633', type: 'academic', label: 'Vickrey, W. (1961) Counterspeculation, Auctions, and Competitive Sealed Tenders, Journal of Finance 16(1):8-37' },
       { url: 'https://doi.org/10.1287/moor.6.1.58', type: 'academic', label: 'Myerson, R.B. (1981) Optimal Auction Design, Mathematics of Operations Research 6(1):58-73' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2020/summary/', type: 'reference', label: 'Nobel Prize 2020 — Milgrom & Wilson: Improvements to auction theory and inventions of new auction formats' },
-    ],
-  },
-  {
-    id: 'human-executive-function-model',
-    discipline: 'human-science',
-    title: '実行機能モデル',
-    statement:
-      '実行機能とは、目標指向的な行動を制御するトップダウン型の高次認知プロセス群であり、ワーキングメモリ・抑制制御・認知的柔軟性の3つの中核要素から構成される。' +
-      'Miyake et al.（2000, Cognitive Psychology）は確認的因子分析を用いてこれら3要素が相互に関連しつつも分離可能であること（unity and diversity）を実証し、実行機能研究の理論的枠組みを確立した。' +
-      'Luriaの前頭葉機能研究を基盤としDiamond（2013）が発達的観点を統合した包括的レビューを行い、ADHD・加齢・教育成果の理解に不可欠な概念となっている。',
-    keyFigures: 'Akira Miyake／Adele Diamond／Alexander Luria／Naomi P. Friedman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1016/S0010-0285(99)00734-9', type: 'academic', label: 'Miyake et al. (2000) The Unity and Diversity of Executive Functions, Cognitive Psychology 41(1):49-100' },
-      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013) Executive Functions, Annual Review of Psychology 64:135-168' },
-      { url: 'https://doi.org/10.1177/0963721411429458', type: 'academic', label: 'Miyake, A. & Friedman, N.P. (2012) The Nature and Organization of Individual Differences in Executive Functions, CDPS 21(1):8-14' },
     ],
   },
   {
@@ -25351,21 +24610,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic, FRB Minneapolis Quarterly Review 5(3)' },
       { url: 'https://en.wikipedia.org/wiki/Unpleasant_monetarist_arithmetic', type: 'reference', label: 'Wikipedia — Unpleasant monetarist arithmetic' },
-    ],
-  },
-  {
-    id: 'human-broaden-and-build-theory',
-    discipline: 'human-science',
-    title: '拡張−形成理論',
-    statement:
-      '拡張−形成理論は、喜び・感謝・安らぎ・興味などのポジティブ感情が人の一時的な思考−行動レパートリーを拡張（broaden）し、その拡張された認知・行動が知的・身体的・社会的・心理的な持続的個人資源を形成（build）するとする理論である。' +
-      'バーバラ・フレドリクソンが1998年に原型を発表し2001年に体系化した。ネガティブ感情が特定行動傾向を狭めるのに対し、ポジティブ感情は思考と行動の幅を広げ上向きスパイラルを生むとされる。',
-    keyFigures: 'Barbara L. Fredrickson',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson (2001) The Role of Positive Emotions in Positive Psychology, American Psychologist 56(3):218-226' },
-      { url: 'https://doi.org/10.1098/rstb.2004.1512', type: 'academic', label: 'Fredrickson (2004) The Broaden-and-Build Theory of Positive Emotions, Phil. Trans. R. Soc. B 359(1449):1367-1378' },
-      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia — Broaden-and-build' },
     ],
   },
   {
@@ -25467,21 +24711,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   // human-relational-frame-theory, mgmt-organizational-justice-theory,
   // bizlaw-entire-fairness-standard, infosoc-information-ecology
   {
-    id: 'econ-real-options-theory',
-    discipline: 'economics',
-    title: 'リアル・オプション理論',
-    statement:
-      'リアル・オプション理論は、金融オプション価格理論を実物資産の投資意思決定に応用し、事業の延期・拡張・縮小・撤退といった経営上の柔軟性（フレキシビリティ）に定量的な価値を付与する理論である。' +
-      '不確実性が高い環境下での段階的投資判断において、従来のNPV法では捉えきれない戦略的オプション価値を評価できる。',
-    keyFigures: 'Stewart C. Myers（1977 coined "real options"）／Avinash K. Dixit／Robert S. Pindyck',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1016/0304-405X(77)90015-0', type: 'academic', label: 'Myers, S.C. (1977) Determinants of Corporate Borrowing, JFE 5(2):147-175' },
-      { url: 'https://press.princeton.edu/books/paperback/9780691034102/investment-under-uncertainty', type: 'academic', label: 'Dixit & Pindyck (1994) Investment Under Uncertainty, Princeton University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia — Real options valuation' },
-    ],
-  },
-  {
     id: 'human-relational-frame-theory',
     discipline: 'human-science',
     title: '関係フレーム理論（RFT）',
@@ -25494,21 +24723,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Relational_frame_theory', type: 'reference', label: 'Wikipedia — Relational frame theory' },
       { url: 'https://doi.org/10.1007/978-1-4757-3357-4', type: 'academic', label: 'Hayes, Barnes-Holmes & Roche (2001) Relational Frame Theory, Springer' },
       { url: 'https://contextualscience.org/relational_frame_theory', type: 'reference', label: 'Association for Contextual Behavioral Science — RFT' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-justice-theory',
-    discipline: 'management',
-    title: '組織的公正理論',
-    statement:
-      '組織的公正理論は、職場における公正さの知覚を分配的公正（結果の公正さ）・手続き的公正（意思決定プロセスの公正さ）・対人的公正（対人的処遇の質）・情報的公正（説明の適切さ）の4次元で捉え、従業員の態度・行動・業績への影響を体系的に分析する理論枠組みである。' +
-      'コルキットが2001年にメタ分析を通じて4次元モデルを実証的に確立した。',
-    keyFigures: 'Jason A. Colquitt／Jerald Greenberg／Robert J. Bies／John W. Thibaut／Laurens Walker',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0021-9010.86.3.386', type: 'academic', label: 'Colquitt, J.A. (2001) On the Dimensionality of Organizational Justice, JAP 86(3):386-400' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_justice', type: 'reference', label: 'Wikipedia — Organizational justice' },
-      { url: 'https://doi.org/10.1146/annurev-orgpsych-032414-111457', type: 'academic', label: 'Colquitt & Zipay (2015) Justice, Fairness, and Employee Reactions, AROP 2:75-99' },
     ],
   },
   {
@@ -25627,22 +24841,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-self-determination-theory',
-    discipline: 'human-science',
-    title: '自己決定理論',
-    statement:
-      '自己決定理論（SDT）は、人間には自律性・有能性・関係性という3つの基本的心理欲求が生得的に備わっており、環境がこれらを支援するほど内発的動機づけとウェルビーイングが高まるとする動機づけの巨視的理論である。' +
-      'Edward L. Deci と Richard M. Ryan が1985年の著書で体系化し、2000年の American Psychologist 論文で広く普及させた。' +
-      '動機づけは「無動機」から外的調整・取り入れ的調整・同一化的調整・統合的調整を経て内発的動機づけへ至る連続体として捉えられ、教育・職場・医療など多様な領域で応用されている。',
-    keyFigures: 'Edward L. Deci／Richard M. Ryan',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://selfdeterminationtheory.org/theory/', type: 'reference', label: 'Self-Determination Theory 公式サイト — Theory Overview' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/11392867/', type: 'academic', label: 'Ryan & Deci (2000) Self-determination theory and the facilitation of intrinsic motivation, American Psychologist 55:68-78' },
-      { url: 'https://en.wikipedia.org/wiki/Self-determination_theory', type: 'reference', label: 'Wikipedia — Self-determination theory' },
-    ],
-  },
-  {
     id: 'mgmt-strategic-alignment-model',
     discipline: 'management',
     title: '戦略的アラインメント・モデル',
@@ -25707,36 +24905,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/1806983', type: 'academic', label: 'Hansen (1939) Economic Progress and Declining Population Growth, AER 29(1):1-15' },
       { url: 'https://www.foreignaffairs.com/articles/united-states/2016-02-15/age-secular-stagnation', type: 'media', label: 'Summers (2016) The Age of Secular Stagnation, Foreign Affairs' },
       { url: 'https://www.nber.org/papers/w20574', type: 'academic', label: 'Eggertsson & Mehrotra (2014) A Model of Secular Stagnation, NBER WP 20574' },
-    ],
-  },
-  {
-    id: 'econ-transfer-pricing-arms-length',
-    discipline: 'economics',
-    title: '移転価格税制と独立企業間原則',
-    statement:
-      '独立企業間原則（アームズ・レングス原則）とは、多国籍企業グループ内の関連者間取引の価格を独立した第三者間で成立する価格と一致させることを求める国際的な移転価格税制の基本原則であり、OECDが1979年に初版の移転価格ガイドラインで確立し、1995年・2017年・2022年の改訂を経て精緻化した。' +
-      '独立価格比準法（CUP）・再販売価格基準法・原価基準法・取引単位営業利益法（TNMM）・利益分割法の5つの算定手法が規定され、BEPS行動計画8-10（2015年）では価値創造との整合性とDEMPE分析（無形資産の開発・改良・維持・保護・活用）が強化された。',
-    keyFigures: 'OECD租税委員会／Stanley S. Surrey／Reuven S. Avi-Yonah',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.oecd.org/en/topics/sub-issues/transfer-pricing.html', type: 'government', label: 'OECD — Transfer Pricing（移転価格税制トピックページ）' },
-      { url: 'https://www.oecd.org/en/publications/aligning-transfer-pricing-outcomes-with-value-creation-actions-8-10-2015-final-reports_9789264241244-en.html', type: 'government', label: 'OECD BEPS Actions 8-10 Final Reports (2015)' },
-      { url: 'https://en.wikipedia.org/wiki/Transfer_pricing', type: 'reference', label: 'Wikipedia — Transfer pricing' },
-    ],
-  },
-  {
-    id: 'human-regulatory-focus-theory',
-    discipline: 'human-science',
-    title: '制御焦点理論',
-    statement:
-      '制御焦点理論は、E・トーリー・ヒギンズが1997年の American Psychologist 論文「Beyond Pleasure and Pain」で提唱した自己制御の理論であり、人間の動機づけを理想自己・利得追求を志向する「促進焦点」と義務自己・損失回避を志向する「予防焦点」という二つの独立したシステムで説明する。' +
-      '制御適合（regulatory fit）の概念は、個人の焦点と目標追求の方略が一致するとき動機づけ強度と意思決定の確信感が高まることを示し、説得・消費者行動・組織行動など広範な領域で応用されている。',
-    keyFigures: 'E. Tory Higgins／Nira Liberman／Jens Förster',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.52.12.1280', type: 'academic', label: 'Higgins (1997) Beyond Pleasure and Pain, American Psychologist 52(12):1280-1300' },
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118900772.etrds0279', type: 'reference', label: 'Higgins (2015) Regulatory Focus Theory, Emerging Trends in the Social and Behavioral Sciences, Wiley' },
-      { url: 'https://en.wikipedia.org/wiki/Regulatory_focus_theory', type: 'reference', label: 'Wikipedia — Regulatory focus theory' },
     ],
   },
   {
@@ -25832,25 +25000,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://link.springer.com/chapter/10.1007/978-1-4613-9564-5_10', type: 'academic', label: 'Greenberg, Pyszczynski & Solomon (1986) The Causes and Consequences of a Need for Self-Esteem: A Terror Management Theory, in Baumeister (Ed.) Public Self and Private Self pp.189-212' },
       { url: 'https://doi.org/10.1037/0022-3514.57.4.681', type: 'academic', label: 'Rosenblatt et al. (1989) Evidence for Terror Management Theory I, JPSP 57(4):681-690' },
       { url: 'https://doi.org/10.1177/1088868309352321', type: 'academic', label: 'Burke, Martens & Faucher (2010) Two Decades of TMT: A Meta-Analysis, Personality and Social Psychology Review 14(2):155-195' },
-    ],
-  },
-  {
-    id: 'mgmt-behavioral-theory-of-firm',
-    discipline: 'management',
-    title: '企業の行動理論',
-    statement:
-      'Cyert & March（1963）の『企業の行動理論』は、新古典派経済学が前提とする利潤最大化主体としての企業像を否定し、' +
-      '相互に矛盾する目標を持つ個人の連合体（coalition）として組織を捉え、「満足化（satisficing）」行動原理を中核に据えた。' +
-      '同理論は、組織的スラック（organizational slack）・問題志向型探索（problematic search）・不確実性回避・' +
-      '準解決的対立処理（quasi-resolution of conflict）・組織学習という五つのプロセスを通じて、企業行動の動態的メカニズムを説明する。' +
-      'March & Simon（1958）の限定合理性概念を組織レベルへ拡張した本理論は、戦略経営・組織学習・進化経済学の基礎的準拠枠となっており、' +
-      'Gavetti et al.（2012）および Argote & Greve（2007）による包括的レビューがその理論的射程と後継研究を体系化している。',
-    keyFigures: 'Richard M. Cyert／James G. March／Herbert A. Simon',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.cambridge.org/core/journals/american-political-science-review/article/abs/behavioral-theory-of-the-firm-by-richard-m-cyert-and-james-g-march-englewood-cliffs-n-j-prenticehall-1963-pp-ix-332-900/5F63B021D4463F0C55A3EAE0C1C5A56D', type: 'academic', label: 'Cyert & March (1963) A Behavioral Theory of the Firm — Cambridge Core review record' },
-      { url: 'https://pubsonline.informs.org/doi/abs/10.1287/orsc.1070.0280', type: 'academic', label: 'Argote & Greve (2007) A Behavioral Theory of the Firm — 40 Years and Counting, Organization Science 18(3):337-349' },
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520.2012.656841', type: 'academic', label: 'Gavetti et al. (2012) The Behavioral Theory of the Firm: Assessment and Prospects, Academy of Management Annals 6(1):1-40' },
     ],
   },
   {
@@ -25970,23 +25119,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-corporate-veil-piercing',
-    discipline: 'business-law',
-    title: '法人格否認の法理（コーポレート・ヴェール・ピアシング）',
-    statement:
-      '法人格否認の法理とは、会社の独立した法人格を裁判所が否認し、株主に会社債務の個人的責任を負わせる衡平法上の救済原則である。' +
-      'Salomon v A Salomon & Co Ltd [1897] AC 22（英国貴族院）が確立した法人格独立の原則に対し、米国法ではアルター・エゴ法理・手段理論（instrumentality rule）・過少資本化を根拠として例外が発展した。' +
-      'Thompson（1991）の実証研究は1,600件超の判例を分析し、契約事件での否認率が不法行為事件を上回ることを示した。' +
-      'Easterbrook & Fischel（1985）は有限責任の経済的合理性を論証し、Hansmann & Kraakman（1991）は不法行為損害に対する株主の無限連帯責任を提唱した。',
-    keyFigures: 'Robert B. Thompson／Frank H. Easterbrook／Daniel R. Fischel／Henry Hansmann／Reinier Kraakman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://scholarship.law.cornell.edu/clr/vol76/iss5/2/', type: 'academic', label: 'Thompson (1991) Piercing the Corporate Veil: An Empirical Study, 76 Cornell L. Rev. 1036' },
-      { url: 'https://chicagounbound.uchicago.edu/uclrev/vol52/iss1/3/', type: 'academic', label: 'Easterbrook & Fischel (1985) Limited Liability and the Corporation, 52 U. Chi. L. Rev. 89' },
-      { url: 'https://openyls.law.yale.edu/handle/20.500.13051/8625', type: 'academic', label: 'Hansmann & Kraakman (1991) Toward Unlimited Shareholder Liability for Corporate Torts, 100 Yale L.J. 1879' },
-    ],
-  },
-  {
     id: 'infosoc-digital-labor-theory',
     discipline: 'information-sociology',
     title: 'デジタル労働理論',
@@ -26017,22 +25149,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://ideas.repec.org/b/elg/eebook/1668.html', type: 'academic', label: 'Wray (1998) Understanding Modern Money: The Key to Full Employment and Price Stability, Edward Elgar' },
       { url: 'https://econpapers.repec.org/bookchap/elgeechap/3506_5f5.htm', type: 'academic', label: 'Tcherneva (2006) Chartalism and the Tax-Driven Approach to Money, in Handbook of Alternative Monetary Economics, pp. 69-86' },
       { url: 'https://www.cambridge.org/core/journals/economics-and-philosophy/article/abs/deficit-myth-modern-monetary-theory-and-the-birth-of-the-peoples-economy-stephanie-kelton-public-affairs-2020-325-pages/7CF88986E1DF34B0E3DA8112E0CC7AAB', type: 'academic', label: 'Kelton (2020) The Deficit Myth: Modern Monetary Theory, PublicAffairs [Cambridge Core review]' },
-    ],
-  },
-  {
-    id: 'human-cognitive-appraisal-theory',
-    discipline: 'human-science',
-    title: '認知的評価理論（ストレスと情動の認知的評価理論）',
-    statement:
-      '認知的評価理論は、ストレスや情動的反応が出来事そのものではなく、個人がその出来事をどのように評価（appraisal）するかによって決まるとする心理学理論である。' +
-      'Lazarus & Folkman（1984）は、一次的評価（脅威・挑戦・害の判断）と二次的評価（対処資源の見積もり）の二段階プロセスが感情の質と強度を規定し、コーピング戦略の選択にも直結すると論じた。' +
-      'Smith & Ellsworth（1985）はこの枠組みを発展させ、快・確実性・努力・責任の帰属など複数の評価次元が異なる感情を体系的に弁別することを実証した。',
-    keyFigures: 'Richard S. Lazarus／Susan Folkman／Craig A. Smith',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.amazon.com/Stress-Appraisal-Coping-Richard-Lazarus/dp/0826141919', type: 'academic', label: 'Lazarus & Folkman (1984) Stress, Appraisal, and Coping, Springer Publishing' },
-      { url: 'https://www.amazon.com/Emotion-Adaptation-Richard-S-Lazarus/dp/0195069943', type: 'academic', label: 'Lazarus (1991) Emotion and Adaptation, Oxford University Press' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/3886875/', type: 'academic', label: 'Smith & Ellsworth (1985) Patterns of Cognitive Appraisal in Emotion, J. Personality and Social Psychology 48(4):813-838' },
     ],
   },
   {
@@ -26586,21 +25702,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-hyperbolic-discounting',
-    discipline: 'economics',
-    title: '双曲割引理論',
-    statement:
-      '双曲割引理論とは、人々が将来の報酬を割り引く際に、近い将来ほど急激に割り引き、遠い将来ほど緩やかに割り引くという時間非整合的な選好パターンを記述する理論である。Laibson（1997）はβ-δモデルを用いて、この現在バイアスが流動性の低い資産への「コミットメント需要」を生むことを示し、消費行動の実証的謎を説明した。' +
-      'O\'Donoghue & Rabin（1999）はさらに「今やるか後でやるか」の枠組みで、現在バイアスが先延ばし行動（procrastination）や過早着手（preproperation）を引き起こすメカニズムを解明した。',
-    keyFigures: 'David Laibson ／ Ted O\'Donoghue ／ Matthew Rabin ／ George Ainslie',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1162/003355397555253', type: 'academic', label: 'Laibson (1997) Golden Eggs and Hyperbolic Discounting — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.1257/aer.89.1.103', type: 'academic', label: 'O\'Donoghue & Rabin (1999) Doing It Now or Later — American Economic Review' },
-      { url: 'https://en.wikipedia.org/wiki/Hyperbolic_discounting', type: 'reference', label: 'Wikipedia — Hyperbolic discounting' },
-    ],
-  },
-  {
     id: 'human-biopsychosocial-model',
     discipline: 'human-science',
     title: '生物心理社会モデル',
@@ -26643,21 +25744,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1017/S0008197308000342', type: 'academic', label: 'Etherton (2008) Constructive Trusts: A New Model for Equity and Unjust Enrichment — Cambridge Law Journal' },
       { url: 'https://ir.lawnet.fordham.edu/cgi/viewcontent.cgi?article=1118&context=flr', type: 'academic', label: 'Scott (1955) Some Reflections on the Restatement of the Law of Trusts — Fordham Law Review' },
       { url: 'https://www.law.cornell.edu/wex/constructive_trust', type: 'reference', label: 'Legal Information Institute — Constructive Trust (Cornell Law School Wex)' },
-    ],
-  },
-  {
-    id: 'infosoc-platform-economy-theory',
-    discipline: 'information-sociology',
-    title: 'プラットフォーム経済論',
-    statement:
-      'プラットフォーム経済論は、デジタルプラットフォームが生産者と消費者を媒介する多面的市場を形成し、ネットワーク外部性を通じて経済的価値を創出するメカニズムを分析する理論的枠組みである。Rochet・Tirole（2003）の二面的市場理論はその経済学的基礎を与え、Srnicek（2017）はプラットフォーム資本主義の概念のもとにデータの商品化と新たな資本蓄積様式を論じた。' +
-      'Parker・Van Alstyne・Choudary（2016）は、プラットフォームが伝統的なパイプライン型企業に代わる支配的ビジネスモデルとして情報産業を再編することを示した。',
-    keyFigures: 'Jean-Charles Rochet ／ Jean Tirole ／ Nick Srnicek ／ Geoffrey Parker ／ Marshall Van Alstyne ／ Sangeet Paul Choudary',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1162/154247603322493212', type: 'academic', label: 'Rochet & Tirole (2003) Platform Competition in Two-Sided Markets — Journal of the European Economic Association' },
-      { url: 'https://doi.org/10.1287/mnsc.1050.0400', type: 'academic', label: 'Parker & Van Alstyne (2005) Two-Sided Network Effects — Management Science' },
-      { url: 'https://doi.org/10.1787/53e5f593-en', type: 'reference', label: 'OECD — An Introduction to Online Platforms and Their Role in the Digital Transformation (2019)' },
     ],
   },
   {
@@ -26718,21 +25804,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/1469540509354673', type: 'academic', label: 'Ritzer & Jurgenson (2010) Production, Consumption, Prosumption — Journal of Consumer Culture' },
       { url: 'https://doi.org/10.1177/0038038513479755', type: 'academic', label: 'Ritzer (2014) Prosumption: Evolution, Revolution, or Eternal Return of the Same? — Sociology' },
       { url: 'https://en.wikipedia.org/wiki/Prosumer', type: 'reference', label: 'Wikipedia — Prosumer' },
-    ],
-  },
-  {
-    id: 'econ-twin-deficits-hypothesis',
-    discipline: 'economics',
-    title: '双子の赤字仮説',
-    statement:
-      '双子の赤字仮説とは、政府の財政赤字が拡大すると経常収支赤字も同時に悪化するという命題であり、Feldstein（1986）はマンデル＝フレミング・モデルに基づき、財政赤字が金利上昇→資本流入→為替高騰→輸入拡大という連鎖を通じて貿易収支を悪化させると論じた。' +
-      'Bernheim（1988）は米国と主要貿易相手国の実証分析を通じて財政赤字が経常収支の悪化に有意に寄与するという証拠を示した。',
-    keyFigures: 'Martin Feldstein ／ B. Douglas Bernheim ／ Robert Alexander Mundell ／ John Marcus Fleming',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nber.org/papers/w1898', type: 'academic', label: 'Feldstein (1986) The Budget Deficit and the Dollar — NBER Working Paper 1898' },
-      { url: 'https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-2', type: 'academic', label: 'Bernheim (1988) Budget Deficits and the Balance of Trade — Tax Policy and the Economy, Vol. 2, NBER' },
-      { url: 'https://en.wikipedia.org/wiki/Twin_deficits_hypothesis', type: 'reference', label: 'Wikipedia — Twin deficits hypothesis' },
     ],
   },
   {
@@ -26991,21 +26062,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-place-identity-theory',
-    discipline: 'human-science',
-    title: '場所アイデンティティ理論',
-    statement:
-      '場所アイデンティティ理論とは、個人の自己同一性（セルフ・アイデンティティ）の一部として、特定の物理的環境に関する意識的・無意識的な認知・記憶・感情・価値観・行動傾向が複雑なパターンをなして組み込まれているという理論である（Proshansky（1978））。' +
-      'Proshansky・Fabian・Kaminoff（1983）はこれを「自己の物理世界による社会化」として定式化し、人は成長の過程で場所を自己概念の基盤として内面化すると論じた。この理論は、場所の喪失や強制移転が自己アイデンティティの危機につながる現象を説明する枠組みとして環境心理学に広く援用されている。',
-    keyFigures: 'Harold M. Proshansky ／ Abbe K. Fabian ／ Robert Kaminoff',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/0013916578102002', type: 'academic', label: 'Proshansky (1978) "The City and Self-Identity" — Environment and Behavior' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0272494483800218', type: 'academic', label: 'Proshansky, Fabian & Kaminoff (1983) "Place-identity: Physical world socialization of the self" — Journal of Environmental Psychology' },
-      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.00294/full', type: 'reference', label: 'Droseltis & Vignoles (2020) "Place Identity: How Far Have We Come in Exploring Its Meanings?" — Frontiers in Psychology' },
-    ],
-  },
-  {
     id: 'mgmt-tempered-radicalism',
     discipline: 'management',
     title: '穏健な急進主義',
@@ -27038,22 +26094,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-platformization-theory',
-    discipline: 'information-sociology',
-    title: 'プラットフォーム化理論',
-    statement:
-      'プラットフォーム化理論とは、FacebookやUberなどのプラットフォーム企業がウェブおよび社会の基盤的・経済的モデルとして台頭し、外部のデータを「プラットフォーム対応」へと変換しながら他領域へ拡張するプロセスを指す（Helmond（2015））。' +
-      'van Dijck et al.（2018）はさらに、データ化・商品化・選別という三つのメカニズムがプラットフォーム化を駆動し、ニュース・交通・医療・教育など社会の主要セクターに浸透すると論じた。' +
-      'この理論は情報社会学において、デジタル権力の集中とパブリックバリューの再編を分析する枠組みとして広く援用されている。',
-    keyFigures: 'Anne Helmond ／ José van Dijck ／ Thomas Poell ／ Martijn de Waal ／ David Nieborg',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/2056305115603080', type: 'academic', label: 'Helmond, A. (2015). The Platformization of the Web: Making Web Data Platform Ready. Social Media + Society, 1(2).' },
-      { url: 'https://policyreview.info/concepts/platformisation', type: 'academic', label: 'Poell, T., Nieborg, D., & van Dijck, J. (2019). Platformisation. Internet Policy Review, 8(4). DOI: 10.14763/2019.4.1425.' },
-      { url: 'https://www.amazon.com/Platform-Society-Public-Values-Connective/dp/0190889772', type: 'reference', label: 'van Dijck, J., Poell, T., & de Waal, M. (2018). The Platform Society: Public Values in a Connective World. Oxford University Press.' },
-    ],
-  },
-  {
     id: 'econ-productivity-paradox',
     discipline: 'economics',
     title: '生産性パラドックス',
@@ -27070,22 +26110,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-strategic-intent-theory',
-    discipline: 'management',
-    title: '戦略的意図論',
-    statement:
-      'Hamel & Prahalad（1989）は、企業の競争優位は段階的な計画ではなく、リソースと野望の間に意図的なギャップを生み出す「戦略的意図」——長期的かつ野心的なビジョン——によって形成されると主張した。' +
-      'キャノンのゼロックスへの挑戦やコマツのキャタピラー包囲戦略を事例として、西洋企業が模倣・効率化に注力する一方で、日本企業はストレッチ目標を組織全体の動員原理として活用し競争優位を獲得したと論じた。' +
-      'Hamel & Prahalad（1994）はさらに、戦略的意図とコアコンピタンスの育成を統合することが「未来のための競争」に不可欠であると強調し、トップダウンではなく全階層を巻き込む戦略対話の重要性を示した。',
-    keyFigures: 'Gary Hamel ／ C. K. Prahalad',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://hbr.org/1989/05/strategic-intent-2', type: 'academic', label: 'Hamel, G. & Prahalad, C.K. (1989) "Strategic Intent," Harvard Business Review, May–June, pp. 63–76' },
-      { url: 'https://www.cambridge.org/core/journals/journal-of-management-and-organization/article/strategic-intent-the-literature-the-construct-and-its-role-in-predicting-organization-performance/599D1DFBE2BFA4CAD4BB425AEB02352B', type: 'academic', label: 'O\'Shannassy, T.F. (2016) "Strategic intent: The literature, the construct and its role in predicting organization performance," Journal of Management & Organization, 22(5), pp. 583–598' },
-      { url: 'https://www.valuebasedmanagement.net/methods_hamel_prahalad_strategic_intent.html', type: 'reference', label: 'Value Based Management — Summary of Strategic Intent (Hamel & Prahalad)' },
-    ],
-  },
-  {
     id: 'human-hedonic-adaptation',
     discipline: 'human-science',
     title: '快楽順応',
@@ -27099,22 +26123,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.semanticscholar.org/paper/Lottery-winners-and-accident-victims:-is-happiness-Brickman-Coates/9db47b8ba0d46807b9b7d318617d50faf91c7d04', type: 'academic', label: 'Brickman, Coates & Janoff-Bulman (1978) — Lottery Winners and Accident Victims: Is Happiness Relative? Journal of Personality and Social Psychology, 36, 917–927' },
       { url: 'https://www.scirp.org/reference/referencespapers?referenceid=1734656', type: 'academic', label: 'Frederick & Loewenstein (1999) — Hedonic Adaptation. In Kahneman, Diener & Schwarz (Eds.), Well-Being: The Foundations of Hedonic Psychology (pp. 302–329). Russell Sage Foundation' },
       { url: 'https://www.behavioraleconomics.com/resources/mini-encyclopedia-of-be/hedonic-adaptation/', type: 'reference', label: 'Hedonic Adaptation — BehavioralEconomics.com Mini-Encyclopedia of Behavioral Economics' },
-    ],
-  },
-  {
-    id: 'bizlaw-unconscionability-doctrine',
-    discipline: 'business-law',
-    title: '非良心性の法理',
-    statement:
-      'Leff（1967）は、契約における非良心性（unconscionability）を「手続的非良心性」（交渉過程の不公正）と「実体的非良心性」（契約条項自体の過度な一方性）に区別する分析枠組みを提示し、UCC § 2-302の解釈論に決定的な影響を与えた。' +
-      'UCCの起草者であるLlewellynは、裁判所が付合契約を含む不当な契約条項を無効化できるよう同条項を設計した。' +
-      'Fleming（2014）は、Williams v. Walker-Thomas Furniture Co.（1965年）判決を立法史の文脈に位置づけ、非良心性の法理が消費者保護法制の変遷とともに「貧者の法」として台頭し衰退した過程を実証的に解明した。',
-    keyFigures: 'Arthur Allen Leff ／ Karl Llewellyn ／ Anne Fleming',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://scholarship.law.upenn.edu/penn_law_review/vol115/iss4/1/', type: 'academic', label: 'Leff, Arthur Allen — "Unconscionability and the Code: The Emperor\'s New Clause" — 115 U. Pa. L. Rev. 485 (1967)' },
-      { url: 'https://scholarship.law.georgetown.edu/facpub/1369/', type: 'academic', label: 'Fleming, Anne — "The Rise and Fall of Unconscionability as the \'Law of the Poor\'" — 102 Geo. L.J. 1383 (2014)' },
-      { url: 'https://en.wikipedia.org/wiki/Unconscionability', type: 'reference', label: 'Unconscionability — Wikipedia' },
     ],
   },
   {
@@ -27234,22 +26242,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-information-foraging-theory',
-    discipline: 'information-sociology',
-    title: '情報採餌理論',
-    statement:
-      '情報採餌理論（Information Foraging Theory）は、行動生態学の最適採餌理論を人間の情報探索行動に応用した認知・情報科学理論であり、PirolliとCardが1999年に定式化した。' +
-      '人々は「情報の匂い（information scent）」と呼ばれる手がかりを利用して情報パッチ間を移動し、単位時間あたりに獲得できる有益情報量を最大化するよう行動や環境を適応的に修正するとPirolliは主張する。' +
-      'Pirolliは2007年の著書でこの枠組みをウェブナビゲーションや文書クラスタリングなど広範な情報インタラクションに拡張し、Chiらは情報の匂いを定量化するモデルを用いてウェブ上のユーザ行動を実証的に検証した。',
-    keyFigures: 'Peter Pirolli ／ Stuart Card',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.106.4.643', type: 'academic', label: 'Pirolli, P. & Card, S. (1999). Information foraging. Psychological Review, 106(4), 643–675.' },
-      { url: 'https://dl.acm.org/doi/10.1145/365024.365325', type: 'academic', label: 'Chi, E., Pirolli, P., Chen, K. & Pitkow, J. (2001). Using information scent to model user information needs and actions on the Web. CHI \'01, pp. 490–497.' },
-      { url: 'https://en.wikipedia.org/wiki/Information_foraging', type: 'reference', label: 'Wikipedia: Information foraging' },
-    ],
-  },
-  {
     id: 'econ-heckscher-ohlin-model',
     discipline: 'economics',
     title: 'ヘクシャー＝オリーンモデル',
@@ -27264,23 +26256,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/3149288', type: 'academic', label: 'Leontief, W. (1953). Domestic Production and Foreign Trade: The American Capital Position Re-Examined. Proceedings of the American Philosophical Society, 97, 332–349.' },
       { url: 'https://academic.oup.com/ej/article-abstract/58/230/163/5259961', type: 'academic', label: 'Samuelson, P. A. (1948). International Trade and the Equalisation of Factor Prices. The Economic Journal, 58(230), 163–184.' },
       { url: 'https://en.wikipedia.org/wiki/Heckscher%E2%80%93Ohlin_model', type: 'reference', label: 'Wikipedia — Heckscher–Ohlin model' },
-    ],
-  },
-  {
-    id: 'econ-resource-curse-thesis',
-    discipline: 'economics',
-    title: '資源の呪いテーゼ',
-    statement:
-      '「資源の呪い（Resource Curse）」とは、豊富な天然資源を持つ国が、資源の乏しい国と比較して経済成長が低く、民主主義の定着が妨げられ、開発成果が劣る傾向を示すパラドックスである。' +
-      'Auty が1993年に命名し、Sachs & Warner（1995／2001）は1971〜89年のクロスカントリーデータを用いてこの負の相関を実証した。' +
-      'Ross（2001）はさらに113カ国のパネルデータ分析により、石油輸出が権威主義体制を強化し民主化を阻害することを示した。' +
-      'この現象の主なメカニズムとして、レントの政治経済学（レンティア国家効果）、製造業・農業競争力の喪失（オランダ病）、および天然資源収入を巡る政治的腐敗・内紛の助長が挙げられる。',
-    keyFigures: 'Richard M. Auty ／ Jeffrey D. Sachs ／ Andrew M. Warner ／ Michael L. Ross',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nber.org/papers/w5398', type: 'academic', label: 'Sachs & Warner (1995) "Natural Resource Abundance and Economic Growth," NBER Working Paper 5398' },
-      { url: 'https://www.cambridge.org/core/journals/world-politics/article/abs/does-oil-hinder-democracy/67665D8D240C8F43CD4A2DCB35894071', type: 'academic', label: 'Ross (2001) "Does Oil Hinder Democracy?," World Politics 53: 325–361' },
-      { url: 'https://en.wikipedia.org/wiki/Resource_curse', type: 'reference', label: 'Wikipedia: Resource curse' },
     ],
   },
   {
@@ -27402,23 +26377,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-network-society-theory',
-    discipline: 'information-sociology',
-    title: 'ネットワーク社会論',
-    statement:
-      'ネットワーク社会論とは、情報通信技術の高度化を背景に、産業社会から「情報時代」へと移行する現代社会を、ネットワークを基本的組織原理として分析する社会理論の総称である。' +
-      'Castells（1996）は三部作『情報の時代』第1巻でこの理論を体系化し、資本・情報・技術が電子回路を通じて循環する「フローの空間」が「場所の空間」に対し構造的に優位に立つと論じた。' +
-      'van Dijk（2006）はCastellsと異なり、社会の基本単位を依然として個人・集団・組織に置き、ネットワークはそれらを結ぶ組織形態にすぎないと主張し、ネットワーク社会論と「情報社会論」を区別した。' +
-      '両者の共通点は、ネットワーク構造への移行が権力・アイデンティティ・格差のあり方を根本から変えるという認識にある。',
-    keyFigures: 'Manuel Castells ／ Jan van Dijk',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781444319514', type: 'academic', label: 'Castells, M. (1996/2010) The Rise of the Network Society — Wiley Online Library (The Information Age Vol.1, 2nd ed.)' },
-      { url: 'https://books.google.com/books/about/The_Network_Society.html?id=b7ktTPViIYMC', type: 'academic', label: 'van Dijk, J. (2006) The Network Society: Social Aspects of New Media (2nd ed.) — Sage Publications' },
-      { url: 'https://en.wikipedia.org/wiki/Network_society', type: 'reference', label: 'Wikipedia — Network society' },
-    ],
-  },
-  {
     id: 'econ-fiscal-theory-price-level',
     discipline: 'economics',
     title: '物価水準の財政理論',
@@ -27485,23 +26443,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.law.cornell.edu/wex/duty_of_care', type: 'reference', label: 'Duty of Care — Wex Legal Dictionary, Cornell Law School LII' },
       { url: 'https://en.wikipedia.org/wiki/Smith_v._Van_Gorkom', type: 'reference', label: 'Smith v. Van Gorkom (Del. 1985) — Wikipedia' },
       { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=894921', type: 'academic', label: 'Outside Director Liability — Bernard S. Black, Brian R. Cheffins & Michael Klausner, Stanford Law Review (2006), SSRN' },
-    ],
-  },
-  {
-    id: 'infosoc-digital-commons-theory',
-    discipline: 'information-sociology',
-    title: 'デジタル・コモンズ理論',
-    statement:
-      'デジタル・コモンズ理論は、オープンソースソフトウェア・Wikipedia・クリエイティブ・コモンズ・コンテンツなどの共有デジタル資源を、私的所有権や国家規制ではなくコミュニティの規範によって統治される「コモンズ」として分析する理論的枠組みである。' +
-      'Ostrom and Hess（2007）は共著 *Understanding Knowledge as a Commons* において、Ostromが自然資源共有地で確立した制度分析の設計原則を知識・情報財へ拡張し、知的財産制度の過剰規制がもたらす「知識の囲い込み」に対抗する統治設計を提示した。' +
-      'Benkler（2006）は「コモンズに基づくピア生産（commons-based peer production）」概念により、市場シグナルも管理命令も用いない分散協調的な情報生産が既存の市場・国家モデルと並立する第三の生産様式を形成すると論じた。' +
-      'これらの議論は、デジタル公共財のガバナンス設計・オープンデータ政策・プラットフォーム規制の理論的基盤として広く参照されている。',
-    keyFigures: 'Elinor Ostrom ／ Charlotte Hess ／ Yochai Benkler',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://direct.mit.edu/books/edited-volume/3807/Understanding-Knowledge-as-a-CommonsFrom-Theory-to', type: 'academic', label: 'Hess & Ostrom (eds.) "Understanding Knowledge as a Commons: From Theory to Practice" — MIT Press (2007)' },
-      { url: 'https://en.wikipedia.org/wiki/Commons-based_peer_production', type: 'reference', label: 'Wikipedia: Commons-based peer production (Yochai Benkler)' },
-      { url: 'https://policyreview.info/concepts/digital-commons', type: 'academic', label: 'Internet Policy Review: "Digital commons" — institutional analysis & governance design principles' },
     ],
   },
   {
@@ -27680,23 +26621,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-imprinting-theory',
-    discipline: 'management',
-    title: '組織的刻印理論',
-    statement:
-      'Stinchcombe（1965）は、組織の構造や戦略は設立時の社会的・経済的環境条件に強く形成され、その後の環境変化にもかかわらず長期にわたって持続するという命題を提唱し、これが組織的刻印論の出発点となった。' +
-      'Johnson（2007）はパリ・オペラ座の設立事例を通じて、この「組織的刻印仮説」を文化的企業家精神の観点から理論化し、設立期の環境要素が選択・埋め込まれることで数十年・数百年にわたる組織特性として定着することを示した。' +
-      'Marquis and Tilcsik（2013）は多水準理論へと発展させ、刻印を「感受性期間中に焦点エンティティが環境の顕著な特徴を反映し、その特徴が以後の環境変化にもかかわらず持続する過程」と定義した。' +
-      'この理論は、産業・組織・サブユニット・個人という複数の分析レベルに適用でき、組織生態学・制度理論・キャリア研究など幅広い分野に応用されている。',
-    keyFigures: 'Arthur L. Stinchcombe ／ Christopher Marquis ／ András Tilcsik ／ Victoria Johnson',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Imprinting_(organizational_theory)', type: 'reference', label: 'Imprinting (organizational theory) — Wikipedia' },
-      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2198954', type: 'academic', label: 'Marquis & Tilcsik (2013) Imprinting: Toward A Multilevel Theory — SSRN' },
-      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/517899', type: 'academic', label: 'Johnson (2007) What Is Organizational Imprinting? — American Journal of Sociology' },
-    ],
-  },
-  {
     id: 'infosoc-platform-labor-theory',
     discipline: 'information-sociology',
     title: 'プラットフォーム労働論',
@@ -27862,21 +26786,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-behavioral-integration-theory',
-    discipline: 'management',
-    title: '行動的統合理論',
-    statement: 'Hambrick（1994）は、トップマネジメントチーム（TMT）研究において「行動的統合（behavioral integration）」という包括的メタ構成概念を提唱し、チームが相互・集合的な相互作用をどの程度行うかを捉えようとした。この概念は三つの次元から構成される：①協働的行動（collaborative behavior）、②情報交換の量と質（quantity and quality of information exchange）、③共同意思決定（joint decision-making）であり、これらは相互強化的に機能してチームの統一性と一体感を形成する。Hambrick & Mason（1984）が提唱したアッパー・エシェロン理論（上位階層理論）が経営幹部の背景特性を通じて組織成果を説明したのに対し、行動的統合理論はそのプロセス側面を精緻化した拡張として位置づけられる。Simsek・Veiga・Lubatkin・Dino（2005）はCEO・チーム・企業レベルの三層から行動的統合の決定要因をモデル化し、402社のデータを用いて構成概念の信頼性ある測定尺度を確立した。Lubatkin・Simsek・Ling・Veiga（2006）の実証研究では、行動的統合の高いTMTが組織の両利き経営（ambidexterity）を促進し、中小企業の相対的業績向上に寄与することが確認されており、戦略的意思決定の質と組織パフォーマンスへの貢献が理論的・実証的に支持されている。',
-    keyFigures: 'Donald C. Hambrick ／ Phyllis A. Mason ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin ／ Albert A. Cannella',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review' },
-      { url: 'https://journals.aom.org/doi/10.5465/amj.2005.15993139', type: 'academic', label: 'Simsek, Veiga, Lubatkin & Dino (2005) Modeling the Multilevel Determinants of TMT Behavioral Integration — Academy of Management Journal' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/0149206306290712', type: 'academic', label: 'Lubatkin, Simsek, Ling & Veiga (2006) Ambidexterity & Performance in SMEs: The Pivotal Role of TMT Behavioral Integration — Journal of Management' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick (2007) Upper Echelons Theory: An Update — Academy of Management Review' },
-      { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Upper Echelons Theory — Wikipedia' },
-    ],
-  },
-  {
     id: 'infosoc-network-neutrality-theory',
     discipline: 'information-sociology',
     title: 'ネットワーク中立性理論',
@@ -27907,21 +26816,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-narrative-identity-theory',
-    discipline: 'human-science',
-    title: 'ナラティブ・アイデンティティ理論',
-    statement: 'ナラティブ・アイデンティティ理論とは、人々が自己のアイデンティティを内面化された人生物語の構築を通じて形成するという理論であり、過去の再構成・現在の知覚・未来への展望を統合することで生に統一性と意味をもたらすと主張する。McAdams（1993）は「ライフストーリーモデル」を提唱し、人格の第三水準として内面化・進化し続ける自己物語が個人にアイデンティティの統一感と目的意識を付与すると論じた。Ricoeur（1992）は哲学的観点から「同一性（idem）」と「自己性（ipse）」の区別を導入し、ナラティブ・アイデンティティが時間を通じた変化の中で自己の連続性を媒介すると主張した。McAdams & McLean（2013）はその後の研究を概観し、贖罪的意味づけや主体性テーマを含む人生物語を構築する語り手ほど、精神的健康・幸福感・成熟度が高いことを示した。この理論は人格心理学・発達心理学・臨床心理学にわたって広く応用され、青年期のアイデンティティ発達、トラウマ後の成長、精神病理の理解に重要な枠組みを提供している。',
-    keyFigures: 'Dan P. McAdams ／ Paul Ricoeur ／ Kate C. McLean ／ Tilmann Habermas',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/0963721413475622', type: 'academic', label: 'McAdams & McLean (2013) — Narrative Identity, Current Directions in Psychological Science' },
-      { url: 'https://books.google.com/books/about/The_Stories_We_Live_by.html?id=XC1-AAAAMAAJ', type: 'academic', label: 'McAdams (1993) — The Stories We Live By: Personal Myths and the Making of the Self' },
-      { url: 'https://www.goodreads.com/en/book/show/125875.Oneself_as_Another', type: 'reference', label: 'Ricoeur (1992) — Oneself as Another (Soi-même comme un autre)' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8376804/', type: 'academic', label: 'Narrative Identity in the Psychosis Spectrum: A Systematic Review and Developmental Model (PMC)' },
-      { url: 'https://link.springer.com/article/10.1007/s10964-019-01096-x', type: 'academic', label: 'Adolescents\' Identity Formation: Linking the Narrative and the Dual-Cycle Approach, Journal of Youth and Adolescence' },
-    ],
-  },
-  {
     id: 'bizlaw-doctrine-of-necessaries',
     discipline: 'business-law',
     title: '必需品の法理',
@@ -27934,21 +26828,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.uniformlaws.org/acts/ucc', type: 'government', label: 'Uniform Commercial Code — Uniform Law Commission' },
       { url: 'https://repository.law.umich.edu/cgi/viewcontent.cgi?article=3465&context=mlr', type: 'academic', label: 'The Unnecessary Doctrine of Necessaries — Michigan Law Review' },
       { url: 'https://scholarship.richmond.edu/cgi/viewcontent.cgi?article=1692&context=lawreview', type: 'academic', label: 'The New Doctrine of Necessaries in Virginia — University of Richmond Law Review' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-ecology-theory',
-    discipline: 'management',
-    title: '組織エコロジー理論',
-    statement: 'Hannan and Freeman（1977）は、個々の組織の適応ではなく組織群（ポピュレーション）レベルの選択プロセスに注目し、組織エコロジー理論の基礎を確立した。この理論の核心は「構造的慣性（structural inertia）」概念にあり、組織は環境変化への適応が困難なため、淘汰は主に組織の誕生・死滅という形で生じると主張する。Hannan and Carroll（1992）が体系化した「密度依存モデル（density dependence）」では、組織ポピュレーションの密度が低い段階では正当性獲得が設立率を高め、密度が高まると競争激化が死亡率を押し上げるという逆U字型の動態を説明する。Stinchcombe（1965）が提唱し Freeman, Carroll, and Hannan（1983）が実証した「新規性の負債（liability of newness）」は、設立直後の組織が信頼関係や役割慣行の未形成ゆえに高い死亡ハザードに直面することを示す。Carroll（1985）は資源分割理論（resource partitioning）を展開し、市場集中が進むとゼネラリスト型組織が大衆市場に特化する一方でスペシャリスト型組織の生存余地が拡大するメカニズムを明らかにした。これらの知見は組織変化の分析単位を個別企業から組織群へと転換させ、組織理論における進化論的・生態学的パラダイムを確立した。',
-    keyFigures: 'Michael T. Hannan ／ John Freeman ／ Glenn R. Carroll ／ Arthur L. Stinchcombe',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.journals.uchicago.edu/doi/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977) "The Population Ecology of Organizations" American Journal of Sociology 82(5)' },
-      { url: 'https://www.jstor.org/stable/2094584', type: 'academic', label: 'Freeman, Carroll & Hannan (1983) "The Liability of Newness: Age Dependence in Organizational Death Rates" American Sociological Review 48(5)' },
-      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/228210', type: 'academic', label: 'Carroll (1985) "Concentration and Specialization: Dynamics of Niche Width in Populations of Organizations" American Journal of Sociology 90(6)' },
-      { url: 'https://www.amazon.com/Organizational-Ecology-Michael-T-Hannan/dp/0674643496', type: 'reference', label: 'Hannan & Freeman (1989) Organizational Ecology — Harvard University Press' },
-      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-94848-2_612-1', type: 'reference', label: 'Organizational Ecology — SpringerLink Encyclopedia Entry' },
     ],
   },
   {
@@ -28274,20 +27153,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubmed.ncbi.nlm.nih.gov/21476360/', type: 'academic', label: 'Parham et al. (2011) — Development of a fidelity measure for research on the effectiveness of the Ayres Sensory Integration intervention. American Journal of Occupational Therapy.' },
       { url: 'https://www.ncbi.nlm.nih.gov/books/NBK559155/', type: 'reference', label: 'StatPearls — Sensory Integration (NIH/NCBI Bookshelf).' },
       { url: 'https://si-japan.net/', type: 'reference', label: '日本感覚統合学会 — The Japanese Academy of Sensory Integration 公式サイト。' },
-    ],
-  },
-  {
-    id: 'bizlaw-piercing-the-corporate-veil',
-    discipline: 'business-law',
-    title: '法人格否認の法理',
-    statement: '法人格否認の法理（hōjinkaku hinin no hōri）とは、会社の法人格を形式的に承認することが正義・衡平に反する場合に、裁判所がその法人格を否認し、株主や親会社に直接責任を負わせる法理である。米国では「アルター・エゴ（alter ego）」法理として知られ、Lowendahl v. Baltimore & Ohio Railroad 事件においてインストゥルメンタリティ・テストが確立され、支配・詐欺・損害の三要件が判断基準とされる。Thompson（1991）が1,600件以上の裁判例を実証分析した研究によれば、米国裁判所は約40%の事案でヴェールを貫通させており、特に緊密な閉鎖会社においてその傾向が顕著である。英国では Salomon v Salomon（1897年）が法人格の独立性を強固に確立し、ヴェール貫通は極めて例外的な法理として位置づけられている。日本においても最高裁判例を通じて同法理が承認されており、法人格が濫用されている場合や法人格が形骸化している場合に適用されると解されている。',
-    keyFigures: 'Robert B. Thompson ／ Frank H. Easterbrook ／ Daniel R. Fischel',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol48/iss5/3/', type: 'academic', label: 'Thompson, "Piercing the Corporate Veil: An Empirical Study" (1991) — Vanderbilt Law Review' },
-      { url: 'https://www.jstor.org/stable/1073148', type: 'academic', label: 'Easterbrook & Fischel, "Limited Liability and the Corporation" (1985) — University of Chicago Law Review' },
-      { url: 'https://www.bailii.org/uk/cases/UKHL/1896/1.html', type: 'reference', label: 'Salomon v Salomon & Co Ltd [1897] AC 22 — House of Lords' },
-      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=55280', type: 'government', label: '最高裁判所判例（法人格否認の法理に関する昭和44年判決）' },
     ],
   },
   {
@@ -29174,21 +28039,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-harberger-triangle-theory',
-    discipline: 'economics',
-    title: 'ハーバーガーの三角形理論',
-    statement: 'Harberger（1954）は、独占企業が限界費用を上回る価格を設定することで生じる厚生損失（死荷重）を、需要曲線・限界費用曲線・独占価格によって形成される三角形の面積として定式化した。この「ハーバーガーの三角形」は独占の社会的コストを視覚的かつ定量的に示す標準的な手法となり、Harberger は米国製造業のデータを用いた実証分析により、独占による厚生損失はGDPの約0.1%に過ぎないという小さな推定値を得た。しかし Leibenstein（1966）はX非効率性の概念を提唱し、独占による競争圧力の欠如が内部の組織的非効率を招き、実際のコストはハーバーガーの三角形よりもはるかに大きいと批判した。さらに Cowling & Mueller（1978）は広告費や独占利潤を考慮した再推計を行い、米国・英国ともに厚生損失はGDPの数パーセントに達すると主張した。これらの論争は、独占規制・競争政策の厳格さをどの程度に設定すべきかをめぐる規範的議論に大きな影響を与えた。',
-    keyFigures: 'Arnold C. Harberger ／ Harvey Leibenstein ／ Keith Cowling ／ Dennis C. Mueller',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1086/257492', type: 'academic', label: 'Harberger, A.C. (1954) "Monopoly and Resource Allocation", American Economic Review' },
-      { url: 'https://doi.org/10.2307/1823203', type: 'academic', label: 'Leibenstein, H. (1966) "Allocative Efficiency vs. X-Efficiency", American Economic Review' },
-      { url: 'https://doi.org/10.1017/S0022050700098491', type: 'academic', label: 'Cowling, K. & Mueller, D.C. (1978) "The Social Costs of Monopoly Power", Economic Journal' },
-      { url: 'https://www.econlib.org/library/Enc/DeadweightLoss.html', type: 'reference', label: 'Encyclopedia of Economics and Liberty — Deadweight Loss' },
-      { url: 'https://www.oecd.org/competition/abuse/1920511.pdf', type: 'government', label: 'OECD (1999) "Oligopoly" — discussion of welfare triangle in antitrust context' },
-    ],
-  },
-  {
     id: 'human-self-determination-theory-mini',
     discipline: 'human-science',
     title: '自己決定ミニ理論群',
@@ -29309,21 +28159,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dominant-logic-theory',
-    discipline: 'management',
-    title: 'ドミナント・ロジック理論',
-    statement: 'Prahalad & Bettis（1986）が提唱。多角化企業のトップ経営陣が持つ認知的枠組み（メンタルマップ）が戦略的意思決定の「概念化フィルター」として機能し、関連多角化では業績を高める一方、無関連多角化では阻害要因となる。Bettis & Prahalad（1995）は情報フィルター・組織的注意の視点で更新し、Von Krogh & Roosは知識論的拡張を行った。コア・コンピタンス理論と連動し、ドミナント・ロジックの機能不全時には「アンラーニング」が必要とされる。',
-    keyFigures: 'C. K. Prahalad ／ Richard A. Bettis ／ Georg von Krogh ／ Johan Roos',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250070602', type: 'academic', label: 'Prahalad & Bettis (1986) SMJ original' },
-      { url: 'https://doi.org/10.1002/smj.4250160104', type: 'academic', label: 'Bettis & Prahalad (1995) SMJ update' },
-      { url: 'https://doi.org/10.1002/smj.4250141003', type: 'academic', label: 'Von Krogh & Roos (1993) epistemological extension' },
-      { url: 'https://doi.org/10.1002/smj.4250141002', type: 'academic', label: 'Prahalad & Hamel (1990) core competence linkage' },
-      { url: 'https://doi.org/10.1177/014920639902500601', type: 'academic', label: 'Chesley & Wenger (1999) unlearning dominant logic' },
-    ],
-  },
-  {
     id: 'mgmt-stakeholder-salience-theory',
     discipline: 'management',
     title: 'ステークホルダー顕出性理論',
@@ -29398,20 +28233,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-network-gatekeeping-theory',
-    discipline: 'information-sociology',
-    title: 'ネットワーク・ゲートキーピング理論',
-    statement: 'Lewinの原概念とWhiteのニュース編集者研究を起点に、Shoemaker & Vosの多層モデルを経て、Barzilai-Nahonがネット環境のゲートキーパーと「ゲートされた者」の権力非対称を分析した理論。プラットフォームによる情報管理・選別メカニズムを体系化した。',
-    keyFigures: 'Kurt Lewin ／ David Manning White ／ Pamela J. Shoemaker ／ Timothy Vos ／ Karine Barzilai-Nahon',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1111/j.1083-6101.2008.00437.x', type: 'academic', label: 'Barzilai-Nahon 2008 Network Gatekeeping Theory' },
-      { url: 'https://doi.org/10.1177/107769909007200201', type: 'academic', label: 'White 1950 The Gatekeeper News Editor Study' },
-      { url: 'https://doi.org/10.4324/9780203931653', type: 'academic', label: 'Shoemaker & Vos 2009 Gatekeeping Theory' },
-      { url: 'https://doi.org/10.1080/19331681.2015.1100755', type: 'academic', label: 'Barzilai-Nahon 2015 Gatekeeping in the Digital Age' },
-    ],
-  },
-  {
     id: 'econ-hysteresis-unemployment-theory',
     discipline: 'economics',
     title: 'ヒステリシス失業理論',
@@ -29483,21 +28304,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick (2007) Upper Echelons Update AMR' },
       { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, Geletkanycz & Sanders (2004) JM' },
       { url: 'https://academic.oup.com/book/10716', type: 'reference', label: 'Finkelstein, Hambrick & Cannella (2009) Strategic Leadership' },
-    ],
-  },
-  {
-    id: 'infosoc-participatory-culture-theory',
-    discipline: 'information-sociology',
-    title: '参加型文化理論',
-    statement: '参加型文化とは芸術表現や市民参加への障壁が低く、成果物の共有と社会的繋がりを促す文化形態であり、デジタル環境において新たなメディア消費・生産の様式を生み出すとジェンキンスらが論じた。',
-    keyFigures: 'Henry Jenkins ／ Sam Ford ／ Joshua Green ／ Tiziana Terranova',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.4324/9780203879474', type: 'academic', label: 'Jenkins, Convergence Culture (2006)' },
-      { url: 'https://www.macfound.org/media/article_pdfs/JENKINS_WHITE_PAPER.PDF', type: 'academic', label: 'Jenkins et al., Confronting the Challenges of Participatory Culture (2009)' },
-      { url: 'https://doi.org/10.7551/mitpress/9109.001.0001', type: 'academic', label: 'Jenkins, Ford & Green, Spreadable Media (2013)' },
-      { url: 'https://doi.org/10.1080/09502380600550627', type: 'academic', label: 'Terranova, Free Labor (2000)' },
-      { url: 'https://doi.org/10.4159/9780674044463', type: 'academic', label: 'Jenkins, Textual Poachers (1992)' },
     ],
   },
   {
@@ -29717,20 +28523,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Cognitive_evaluation_theory', type: 'reference', label: 'Wikipedia: Cognitive Evaluation Theory' },
     ],
   },
-  {
-    id: 'infosoc-polymedia-theory',
-    discipline: 'information-sociology',
-    title: 'ポリメディア理論',
-    statement: 'Madianou & Millerが提唱。アクセス・低コスト・リテラシーの三条件が整うと複数プラットフォームは統合的機会構造として経験され、メディア選択が社会的・道徳的意味を帯びユーザーが選択責任を負う。',
-    keyFigures: 'Mirca Madianou ／ Daniel Miller',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1177/1367877912452486', type: 'academic', label: 'Madianou & Miller (2013) Polymedia: Towards a new theory of digital media — IJCS 16(2)' },
-      { url: 'https://www.routledge.com/Migration-and-New-Media-Transnational-Families-and-Polymedia/Madianou-Miller/p/book/9780415679299', type: 'academic', label: 'Madianou & Miller (2011) Migration and New Media — Routledge' },
-      { url: 'https://doi.org/10.1111/jcc4.12069', type: 'academic', label: 'Madianou (2014) Smartphones as Polymedia — JCMC 19(3)' },
-      { url: 'https://doi.org/10.1177/2056305115578675', type: 'academic', label: 'Madianou (2015) Polymedia and Ethnography — Social Media + Society 1(1)' },
-    ],
-  },
   // ── Batch 342 ─────────────────────────────────────
   {
     id: 'econ-dollar-hegemony-theory',
@@ -29846,34 +28638,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-strategic-cognition-theory',
-    discipline: 'management',
-    title: '戦略的認知理論',
-    statement: 'Walshが示すように、経営者のメンタルモデル・認知マップ・解釈スキーマが戦略的意思決定を規定し、Porac & Thomasは競合他社認識が認知コミュニティとして社会的に構成されることを論証した。',
-    keyFigures: 'James P. Walsh ／ Joseph F. Porac ／ Howard Thomas ／ Anne Sigismund Huff',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh (1995) Managerial and Organizational Cognition — Organization Science 6(3)' },
-      { url: 'https://doi.org/10.1111/j.1467-6486.1989.tb00736.x', type: 'academic', label: 'Porac, Thomas & Baden-Fuller (1989) Competitive Groups as Cognitive Communities — JMS 26(4)' },
-      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'reference', label: 'Huff (1990) Mapping Strategic Thought — John Wiley & Sons' },
-      { url: 'https://doi.org/10.1177/0149206310383986', type: 'academic', label: 'Narayanan, Zane & Kemmerer (2011) The Cognitive Perspective in Strategy — Journal of Management 37(1)' },
-    ],
-  },
-  {
-    id: 'infosoc-information-disorder-framework',
-    discipline: 'information-sociology',
-    title: '情報障害フレームワーク',
-    statement: 'Wardle & Derakhshanは「情報障害」を誤情報（虚偽・無害意図）、偽情報（虚偽・加害意図）、悪意情報（真実・加害意図）の三類型に分類し、フェイクニュース概念を超えた研究・政策の基礎枠組みを提示した。',
-    keyFigures: 'Claire Wardle ／ Hossein Derakhshan',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77', type: 'government', label: 'Wardle & Derakhshan (2018) Information Disorder — Council of Europe report' },
-      { url: 'https://edoc.coe.int/en/media/7495-information-disorder-toward-an-interdisciplinary-framework-for-research-and-policy-making.html', type: 'government', label: 'Council of Europe eDoc — Information Disorder (2017)' },
-      { url: 'https://zenodo.org/records/3931308', type: 'academic', label: 'Wardle & Derakhshan (2017) Information Disorder Framework — Zenodo' },
-      { url: 'https://policycommons.net/artifacts/421935/information-disorder/1392979/', type: 'reference', label: 'Policy Commons — Information Disorder (2017)' },
-    ],
-  },
-  {
     id: 'econ-debt-deflation-spiral-theory',
     discipline: 'economics',
     title: '債務デフレ・スパイラル理論',
@@ -29886,20 +28650,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.levyinstitute.org/pubs/wp74.pdf', type: 'academic', label: 'Minsky, "The Financial Instability Hypothesis," Levy Economics Institute WP 74, 1992' },
       { url: 'https://www.bis.org/publ/work176.pdf', type: 'government', label: 'BIS Working Paper No. 176 — Debt-deflation: concepts and a stylised model' },
       { url: 'https://en.wikipedia.org/wiki/Debt_deflation', type: 'reference', label: 'Wikipedia — Debt deflation' },
-    ],
-  },
-  {
-    id: 'human-prospective-memory-theory',
-    discipline: 'human-science',
-    title: '展望的記憶理論',
-    statement: '将来の意図した行動を適切な時点で想起する認知プロセス。EinsteinとMcDanielの多過程理論では、自発的（自動的）検索と戦略的モニタリングの二経路を区別し、事象依存型と時間依存型に分類される。',
-    keyFigures: 'Gilles O. Einstein ／ Mark A. McDaniel',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.tandfonline.com/doi/abs/10.1207/s15516709cog0000_21', type: 'academic', label: 'McDaniel & Einstein, "Prospective Memory: An Overview and Synthesis," Cognitive Science 31(1), 2007' },
-      { url: 'https://psycnet.apa.org/record/2007-02463-000', type: 'academic', label: 'McDaniel & Einstein, Prospective Memory (APA, 2007)' },
-      { url: 'https://dictionary.apa.org/prospective-memory', type: 'reference', label: 'APA Dictionary of Psychology — Prospective Memory' },
-      { url: 'https://www.britannica.com/science/prospective-memory', type: 'reference', label: 'Britannica — Prospective Memory' },
     ],
   },
   {
@@ -29984,20 +28734,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=3058&context=dlj', type: 'academic', label: 'Rabin, "Tort Recovery for Negligently Inflicted Economic Loss," Duke Law Journal (1985)' },
       { url: 'https://www.jstor.org/stable/1228823', type: 'academic', label: 'Bishop, "Economic Loss in Tort," Oxford Journal of Legal Studies (1982)' },
       { url: 'https://www.ali.org/publications/show/contracts/', type: 'reference', label: 'Restatement (Third) of Torts: Liability for Economic Harm, Section 1' },
-    ],
-  },
-  {
-    id: 'econ-second-best-theory',
-    discipline: 'economics',
-    title: '次善の理論',
-    statement: 'パレート最適の条件の一つが満たせない場合、残りの条件をすべて充足しても必ずしも厚生が改善するとは限らない（Lipsey・Lancaster）。部分的な歪みの除去は逆効果になりうる。',
-    keyFigures: 'Richard G. Lipsey ／ Kelvin J. Lancaster',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://academic.oup.com/restud/article-abstract/24/1/11/1542458', type: 'academic', label: 'Lipsey & Lancaster, "The General Theory of Second Best," Review of Economic Studies 24(1), 1956' },
-      { url: 'https://doi.org/10.2307/2296233', type: 'academic', label: 'JSTOR — Lipsey & Lancaster 1956 (DOI: 10.2307/2296233)' },
-      { url: 'https://en.wikipedia.org/wiki/Theory_of_the_second_best', type: 'reference', label: 'Wikipedia — Theory of the second best' },
-      { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/theory-second-best', type: 'reference', label: 'Encyclopedia.com — Theory of Second Best' },
     ],
   },
   {
@@ -30281,19 +29017,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-economic-duress-doctrine',
-    discipline: 'business-law',
-    title: '経済的強迫法理',
-    statement: '違法な経済的圧力により合理的な代替手段を奪われた当事者が契約を取り消し得るとする法理。英国貴族院のUniverse Tankships判決（1983年）およびRestatement第二版第176条が重要な発展を示す。',
-    keyFigures: 'P.S. Atiyah ／ John Dawson ／ Mindy Chen-Wishart',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.law.cornell.edu/restatement/contracts/scope-205', type: 'reference', label: 'Restatement (Second) of Contracts — Cornell LII' },
-      { url: 'https://www.cambridge.org/core/journals/cambridge-law-journal/article/economic-duress-and-the-overborne-will/', type: 'academic', label: 'Economic Duress & Overborne Will — Cambridge Law Journal' },
-      { url: 'https://www.bailii.org/uk/cases/UKHL/1982/7.html', type: 'reference', label: 'Universe Tankships v ITF [1983] AC 366 — BAILII' },
-    ],
-  },
-  {
     id: 'mgmt-managerial-grid-blake-mouton',
     discipline: 'management',
     title: 'マネジリアル・グリッド（Blake-Mouton）',
@@ -30418,20 +29141,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-framing-theory-entman',
-    discipline: 'information-sociology',
-    title: 'フレーミング理論（メディア・政治コミュニケーション）',
-    statement: 'Entman（1993）はフレーミングを「現実の認知された側面を選択・強調し、問題定義・原因解釈・道徳的評価・解決策推奨を促進すること」と定式化し、メディア研究と政治コミュニケーションの基盤概念とした。',
-    keyFigures: 'Robert M. Entman ／ Erving Goffman ／ Shanto Iyengar',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1111/j.1460-2466.1993.tb01304.x', type: 'academic', label: 'Entman (1993) Framing: Toward Clarification — Journal of Communication' },
-      { url: 'https://doi.org/10.2307/2111513', type: 'academic', label: 'Iyengar & Kinder (1987) News That Matters — APSR' },
-      { url: 'https://www.oxfordbibliographies.com/view/document/obo-9780199756841/obo-9780199756841-0153.xml', type: 'reference', label: 'Oxford Bibliographies: Framing Theory in Political Communication' },
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/10584600809480172', type: 'academic', label: 'Entman (2008) Theorizing Mediated Public Diplomacy — Press/Politics' },
-    ],
-  },
-  {
     id: 'human-place-cells-okeefe',
     discipline: 'human-science',
     title: '場所細胞と認知地図',
@@ -30468,20 +29177,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0021-9010.86.3.499', type: 'academic', label: 'Demerouti, Bakker et al. (2001) JD-R Model of Burnout — JAP' },
       { url: 'https://doi.org/10.1108/02683940710733115', type: 'academic', label: 'Bakker & Demerouti (2007) JD-R Model: State of the Art — JMP' },
       { url: 'https://doi.org/10.1037/ocp0000056', type: 'academic', label: 'Bakker & Demerouti (2017) JD-R Theory: Taking Stock — JOHP' },
-    ],
-  },
-  {
-    id: 'econ-ratchet-effect-duesenberry',
-    discipline: 'economics',
-    title: 'ラチェット効果（デューゼンベリー）',
-    statement: 'Duesenberryが1949年に提唱。所得が過去最高水準から低下しても消費は比例して減少せず、習慣形成と相対所得依存により短期消費関数は上方にのみシフトする。景気後退時の消費下方硬直性を説明する。',
-    keyFigures: 'James Duesenberry ／ Arthur Smithies',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://books.google.com/books/about/Income_Saving_and_the_Theory_of_Consumer.html?id=SyheAAAAIAAJ', type: 'academic', label: 'Duesenberry, Income Saving and Consumer Behavior (1949)' },
-      { url: 'https://scirp.org/reference/referencespapers?referenceid=2492331', type: 'reference', label: 'SCIRP reference entry for Duesenberry 1949' },
-      { url: 'https://link.springer.com/article/10.1007/s13132-025-02824-4', type: 'academic', label: 'Springer: Duesenberry ratchet effects analysis (2025)' },
-      { url: 'https://arxiv.org/abs/1812.10038', type: 'academic', label: 'arXiv: Duesenberry Habit, Learning, Ratcheting' },
     ],
   },
   {
@@ -31129,20 +29824,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-conservation-of-resources-hobfoll',
-    discipline: 'management',
-    title: '資源保存理論（COR理論）',
-    statement: '個人は対象・状態・条件などの「資源」を獲得・維持・保護しようとする動機を持ち、資源の喪失・喪失の脅威・投資に見合う利得の欠如によって心理的ストレスが生じるとするHobfollの理論。',
-    keyFigures: 'Stevan E. Hobfoll ／ Arie Shirom',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.semanticscholar.org/paper/Conservation-of-resources.-A-new-attempt-at-stress.-Hobfoll/9f6c12bc58c7b901be470398413732ea0037657d', type: 'academic', label: 'Hobfoll (1989) Conservation of resources: A new attempt at conceptualizing stress — American Psychologist' },
-      { url: 'https://en.wikipedia.org/wiki/Conservation_of_resources_theory', type: 'reference', label: 'Wikipedia — Conservation of resources theory' },
-      { url: 'https://www.researchgate.net/publication/232499443_Conservation_of_resources_theory_Applications_to_stress_and_management_in_the_workplace', type: 'academic', label: 'Hobfoll & Shirom (2000) Conservation of resources theory: Applications to stress and management in the workplace' },
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/9781118993811.ch27', type: 'academic', label: 'Hobfoll (2017) Conservation of Resources Theory — The Handbook of Stress and Health (Wiley)' },
-    ],
-  },
-  {
     id: 'mgmt-self-concordance-model',
     discipline: 'management',
     title: '自己一致モデル（セルフ・コンコーダンス）',
@@ -31787,20 +30468,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-sraffian-price-theory',
-    discipline: 'economics',
-    title: 'スラッファ価格理論（商品による商品の生産）',
-    statement: 'Sraffa（1960）は需要・供給や限界生産性を用いずに、物的投入産出関係から相対価格と利潤率を決定する体系を構築し、GaregnaniやPasinettiら新リカード派の基盤となりケンブリッジ資本論争を主導した。',
-    keyFigures: 'Piero Sraffa ／ Pierangelo Garegnani ／ Luigi Pasinetti',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Piero_Sraffa', type: 'reference', label: 'Wikipedia — Piero Sraffa' },
-      { url: 'https://en.wikipedia.org/wiki/Neo-Ricardianism', type: 'reference', label: 'Wikipedia — Neo-Ricardianism' },
-      { url: 'https://en.wikipedia.org/wiki/Cambridge_capital_controversy', type: 'reference', label: 'Wikipedia — Cambridge capital controversy' },
-      { url: 'https://www.ineteconomics.org/perspectives/blog/sraffas-revolution-in-economic-theory', type: 'academic', label: 'INET Economics — Sraffa\'s Revolution in Economic Theory' },
-    ],
-  },
-  {
     id: 'human-biopsychosocial-model-engel',
     discipline: 'human-science',
     title: '生物心理社会モデル（Engel, 1977）',
@@ -31857,20 +30524,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-harris-todaro-model',
-    discipline: 'economics',
-    title: 'ハリス＝トダロ・モデル（農村都市間移住理論）',
-    statement: 'HarrisとTodaroが1970年に提唱した開発経済学モデル。農村から都市への移住は実際の賃金ではなく「期待都市賃金（名目賃金×就業確率）」に基づくと説明し、高い都市失業率下でも移住が継続するパラドックスを解明した。',
-    keyFigures: 'John R. Harris ／ Michael P. Todaro',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.aeaweb.org/aer/top20/60.1.126-142.pdf', type: 'academic', label: 'Harris & Todaro (1970) — Migration, Unemployment & Development, AER' },
-      { url: 'https://en.wikipedia.org/wiki/Harris%E2%80%93Todaro_model', type: 'reference', label: 'Wikipedia — Harris-Todaro model' },
-      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_1093-1', type: 'academic', label: 'Springer — Harris-Todaro Model encyclopedia entry' },
-      { url: 'https://documents1.worldbank.org/curated/en/251941620915451700/pdf/Rural-Urban-Migration-in-Developing-Countries-Lessons-from-the-Literature.pdf', type: 'government', label: 'World Bank — Rural-Urban Migration in Developing Countries' },
-    ],
-  },
-  {
     id: 'human-social-baseline-theory',
     discipline: 'human-science',
     title: '社会的ベースライン理論',
@@ -31896,20 +30549,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://cbr.cba.org/index.php/cbr/article/download/3582/3575/', type: 'academic', label: 'MacIntosh (1991) — The Oppression Remedy: Personal or Derivative?, Can Bar Rev' },
       { url: 'https://en.wikipedia.org/wiki/Oppression_remedy', type: 'reference', label: 'Wikipedia — Oppression Remedy' },
       { url: 'https://laws-lois.justice.gc.ca/eng/acts/C-44/section-241.html', type: 'government', label: 'Canada Business Corporations Act s.241 — statutory text' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-hypocrisy',
-    discipline: 'management',
-    title: '組織的偽善：トーク・決定・行動の分離',
-    statement: 'Brunssonが提唱した理論。組織は複数のステークホルダーの矛盾した要求を処理するため、トーク・決定・行動を意図的に分離し、偽善を正当性維持の合理的戦略として機能させる。MeyerとRowanの制度的デカップリング論とも連動する。',
-    keyFigures: 'Nils Brunsson ／ John W. Meyer ／ Brian Rowan',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Nils_Brunsson', type: 'reference', label: 'Wikipedia — Nils Brunsson' },
-      { url: 'https://archive.org/details/organizationofhy0000brun', type: 'academic', label: 'Brunsson (1989) — The Organization of Hypocrisy, Internet Archive' },
-      { url: 'https://www.journals.uchicago.edu/doi/10.1086/229767', type: 'academic', label: 'American Journal of Sociology — review of The Organization of Hypocrisy' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0361368214001044', type: 'academic', label: 'Organized hypocrisy, organizational facades, and sustainability reporting (2015)' },
     ],
   },
   {
@@ -32755,21 +31394,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-dual-coding-theory',
-    discipline: 'human-science',
-    title: '二重符号化理論：言語的・非言語的認知システムの二元的構造が学習・記憶・教育設計に与える理論的基盤',
-    statement:
-      '二重符号化理論（Dual Coding Theory）は、認知心理学者パイビオが1971年に提唱した理論で、人間の認知は互いに独立した「言語システム」と「非言語（イメージ）システム」の二チャンネルで情報を処理するという考え方に基づく。両システムは独立しながらも相互に連結・強化でき、具体語は両方を同時に活性化するが抽象語は主に言語システムのみを活性化するとされる。この二重符号化が記憶・学習を促進する。サドスキはパイビオとともに理論を精緻化し、メイヤーはこれをマルチメディア学習理論に発展させ、視覚・言語チャンネルの適切な活用が教育効果を高めることを示した。',
-    keyFigures: 'アラン・パイビオ ／ マーク・サドスキ ／ リチャード・メイヤー',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://www.worldcat.org/title/imagery-and-verbal-processes/oclc/172476', type: 'reference', label: 'Paivio 1971 — Imagery and Verbal Processes, Holt, Rinehart and Winston' },
-      { url: 'https://www.worldcat.org/isbn/9780195360158', type: 'reference', label: 'Paivio 1986 — Mental Representations: A Dual Coding Approach, Oxford University Press' },
-      { url: 'https://www.worldcat.org/isbn/9780805840049', type: 'academic', label: 'Sadoski & Paivio 2001 — Imagery and Text: A Dual Coding Theory of Reading and Writing, Lawrence Erlbaum Associates' },
-      { url: 'https://doi.org/10.1037/0022-0663.83.4.484', type: 'academic', label: 'Mayer & Anderson 1991 — Animations Need Narrations: An Experimental Test of a Dual-Coding Hypothesis, Journal of Educational Psychology 83(4):484-490' },
-    ],
-  },
-  {
     id: 'bizlaw-securities-regulation',
     discipline: 'business-law',
     title: '証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み',
@@ -33130,20 +31754,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-public-goods-theory',
-    discipline: 'economics',
-    title: '公共財理論：非排除性・非競合性と集合行為問題',
-    statement: '公共財理論は、サミュエルソン（1954）が定式化した非排除性・非競合性を持つ財の最適供給条件を分析する。マスグレイブは公共財・民間財・混合財の三分類を提示。オルソン（1965）は集合行為問題でフリーライダー現象を解明し、オストロム（2009年ノーベル経済学賞）はコモンズの自治管理が悲劇を回避できることを実証した。',
-    keyFigures: 'ポール・サミュエルソン ／ マンサー・オルソン ／ エリノア・オストロム',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1925895', type: 'academic', label: 'Samuelson 1954 — The Pure Theory of Public Expenditure, Review of Economics and Statistics 36(4):387-389' },
-      { url: 'https://www.hup.harvard.edu/catalog.php?isbn=9780674537514', type: 'academic', label: 'Olson 1965 — The Logic of Collective Action: Public Goods and the Theory of Groups, Harvard University Press' },
-      { url: 'https://www.cambridge.org/core/books/governing-the-commons/A8BB63BC4A1433A50A3FB92EDBBB97D5', type: 'academic', label: 'Ostrom 1990 — Governing the Commons: The Evolution of Institutions for Collective Action, Cambridge University Press' },
-      { url: 'https://www.worldcat.org/title/theory-of-public-finance-a-study-in-public-economy/oclc/254575', type: 'reference', label: 'Musgrave 1959 — The Theory of Public Finance: A Study in Public Economy, McGraw-Hill' },
-    ],
-  },
-  {
     id: 'mgmt-institutional-logics',
     discipline: 'management',
     title: '制度ロジック：信念体系が組織行動を形成するメカニズム',
@@ -33404,19 +32014,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-stress-coping-theory',
-    discipline: 'human-science',
-    title: 'ストレスとコーピング理論：認知的評価モデルと対処方略の心理学的研究',
-    statement: 'ハンス・セリエ（1956年『ストレスの生活』）は汎適応症候群（警告期・抵抗期・疲弊期）を提唱し、ストレスを非特異的な生体反応として定式化した。リチャード・ラザルス＆スーザン・フォルクマン（1984年『Stress, Appraisal, and Coping』）は認知的評価理論を体系化し、一次的評価（脅威・挑戦・損失の判断）と二次的評価（対処資源の査定）の二段階プロセスを示した。対処方略は問題焦点型（ストレッサーへの直接介入）と情動焦点型（感情調整）に大別される。',
-    keyFigures: 'リチャード・ラザルス ／ スーザン・フォルクマン ／ ハンス・セリエ',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://www.cambridge.org/core/journals/behavioural-and-cognitive-psychotherapy/article/abs/stress-appraisal-and-copings-lazarus-and-s-folkman-new-york-springer-1984-pp-444-3195/766CA58D77E604CBDF389F6FF21A8ADE', type: 'academic', label: 'Lazarus R.S. & Folkman S. 1984 Stress, Appraisal, and Coping. Springer, New York.' },
-      { url: 'https://www.nature.com/articles/138032a0', type: 'academic', label: 'Selye H. 1936 A Syndrome Produced by Diverse Nocuous Agents. Nature, 138, 32.' },
-      { url: 'https://journals.sagepub.com/doi/10.1002/per.2410010304', type: 'academic', label: 'Lazarus R.S. & Folkman S. 1987 Transactional theory and research on emotions and coping. European Journal of Personality, 1(3), 141-169.' },
-    ],
-  },
-  {
     id: 'infosoc-meme-culture',
     discipline: 'information-sociology',
     title: 'インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析',
@@ -33496,32 +32093,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-affordance-theory',
-    discipline: 'information-sociology',
-    title: 'アフォーダンス理論：技術が可能にする行為とデジタルメディアの社会的利用の分析',
-    statement: '知覚心理学者ジェームズ・J・ギブソンが『生態学的視覚論』（1979年）で提唱したアフォーダンス概念は、環境が行為者に提供する行為可能性を指す。ドナルド・ノーマン『誰のためのデザイン?』（1988年）はこれを「知覚されたアフォーダンス」としてデザイン論へ応用した。情報社会学ではイアン・ハッチビーが「Technologies, Texts and Affordances」（Sociology誌、2001年）で技術決定論と社会構築主義を架橋し、人工物の制約と可能性の両義性を論じた。トリーム＆レオナルディ（2012年）は可視性・持続性・編集可能性・連結性というソーシャルメディアのアフォーダンスを定式化した。',
-    keyFigures: 'ジェームズ・ギブソン ／ ドナルド・ノーマン ／ イアン・ハッチビー',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/S0038038501000219', type: 'academic', label: 'Hutchby, I. 2001 Technologies, Texts and Affordances, Sociology 35(2), 441-456' },
-      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2129853', type: 'academic', label: 'Treem, J. W. & Leonardi, P. M. 2012 Social Media Use in Organizations: Visibility, Editability, Persistence, and Association, Communication Yearbook 36, 143-189' },
-      { url: 'https://www.routledge.com/The-Ecological-Approach-to-Visual-Perception-Classic-Edition/Gibson/p/book/9781848725782', type: 'academic', label: 'Gibson, J. J. 1979 The Ecological Approach to Visual Perception, Houghton Mifflin' },
-    ],
-  },
-  {
-    id: 'bizlaw-trust-law',
-    discipline: 'business-law',
-    title: '信託法：受託者の忠実義務と財産管理・受益者保護の法理論',
-    statement: '信託は英米のコモン・ローとエクイティ（衡平法）に起源を持ち、フレデリック・メイトランドは講義録『Equity』（1909年）で信託を「英国法律家の最も顕著な達成」と評した。委託者・受託者・受益者の三者構造をとり、受託者は受益者のため忠実義務（信託法30条）と善管注意義務（同29条）を負う。日本は2006年に信託法を全面改正（平成18年法律第108号）し、利益相反規制等を整備した。国際的にはハーグ信託準拠法条約（1985年）が承認枠組みを定める。',
-    keyFigures: 'フレデリック・メイトランド ／ オースティン・スコット ／ ジョン・ラングバイン',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://archive.org/details/equityalsoformso00mait', type: 'academic', label: 'Maitland 1909 Equity: A Course of Lectures, Cambridge University Press' },
-      { url: 'https://laws.e-gov.go.jp/law/418AC0000000108', type: 'government', label: '信託法（平成18年法律第108号）e-Gov法令検索' },
-      { url: 'https://www.hcch.net/en/instruments/conventions/full-text/?cid=59', type: 'government', label: 'HCCH Convention on the Law Applicable to Trusts and on their Recognition 1985' },
-    ],
-  },
-  {
     id: 'econ-environmental-economics',
     discipline: 'economics',
     title: '環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み',
@@ -33546,19 +32117,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2391875', type: 'academic', label: 'Weick, K. E. 1976 Educational Organizations as Loosely Coupled Systems, Administrative Science Quarterly 21(1)' },
       { url: 'https://doi.org/10.1002/bs.3830180202', type: 'academic', label: 'Glassman, R. B. 1973 Persistence and Loose Coupling in Living Systems, Behavioral Science 18(2)' },
       { url: 'https://doi.org/10.2307/258154', type: 'academic', label: 'Orton, J. D. & Weick, K. E. 1990 Loosely Coupled Systems: A Reconceptualization, Academy of Management Review 15(2)' },
-    ],
-  },
-  {
-    id: 'human-psychological-capital',
-    discipline: 'human-science',
-    title: '心理的資本（PsyCap）：希望・効力感・レジリエンス・楽観性の統合的人的資源理論',
-    statement: '心理的資本（PsyCap）は、フレッド・ルーサンス、キャロライン・ユセフ＝モーガン、ブルース・アボリオ（2007年）が体系化した概念で、希望（Hope）・自己効力感（Efficacy）・レジリエンス（Resilience）・楽観性（Optimism）の4要素（HERO）から構成される。人的資本（知識・スキル）や社会関係資本（ネットワーク）と区別され、測定可能かつ開発可能なポジティブ心理的資源として定義される。PCQ-24尺度で測定され、メタ分析により職務満足・業績・組織市民行動との正の関連が実証されている。',
-    keyFigures: 'フレッド・ルーサンス ／ キャロライン・ユセフ＝モーガン ／ ブルース・アボリオ',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.1093/acprof:oso/9780195187526.001.0001', type: 'academic', label: 'Luthans, Youssef & Avolio 2007 Psychological Capital: Developing the Human Competitive Edge, Oxford University Press' },
-      { url: 'https://doi.org/10.1002/job.1916', type: 'academic', label: 'Avey, Reichard, Luthans & Mhatre 2011 Meta-Analysis of the Impact of Positive Psychological Capital on Employee Attitudes, Behaviors, and Performance, Human Resource Development Quarterly 22(2)' },
-      { url: 'https://doi.org/10.1177/0149206307308910', type: 'academic', label: 'Luthans, Avolio, Avey & Norman 2007 Positive Psychological Capital: Measurement and Relationship with Performance and Satisfaction, Personnel Psychology 60(3)' },
     ],
   },
   {
@@ -34124,20 +32682,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-battle-of-forms',
-    discipline: 'business-law',
-    title: '書式の戦い（Battle of the Forms）：約款の矛盾と契約成立の法理',
-    statement: '書式の戦い（Battle of the Forms）とは、契約交渉において当事者双方が自己に有利な約款・標準書式を交換し、相互の条件が矛盾したまま契約成立の有無及び適用条件が争われる法的問題である。英国ではButler Machine Tool Co v Ex-Cell-O Corp (1979) において、デニング卿が従来の鏡像原則（mirror image rule）に代わり書類全体から合意内容を判断すべきと論じたが、判決自体は最終書式送付者の条件が優先する「ラストショット・ルール」を適用した。米国では統一商事法典（UCC）第2-207条（1952年制定）が鏡像原則を修正し、追加的・異なる条件を含む承諾も有効とし、商人間取引では追加条件が実質的変更に該当しない限り契約に組み込まれるとした。日本民法では2020年改正により定型約款規定（第548条の2〜4）が新設され、約款の組入要件と不当条項規制が明文化されたが、書式の矛盾に関する明示的規定はなく、UNIDROITの国際商事契約原則第2.1.22条のノックアウト・ルール（矛盾条項を相殺し共通条件のみ存続させる方式）の導入が学説上議論されている。',
-    keyFigures: 'アルフレッド・デニング ／ カール・ルウェリン ／ アーサー・コービン',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1979/1.html', type: 'academic', label: 'Butler Machine Tool Co v Ex-Cell-O Corp [1979] 1 WLR 401 (Court of Appeal)' },
-      { url: 'https://www.law.cornell.edu/ucc/2/2-207', type: 'reference', label: 'Uniform Commercial Code § 2-207: Additional Terms in Acceptance or Confirmation' },
-      { url: 'https://www.japaneselawtranslation.go.jp/en/laws/view/4580', type: 'government', label: 'Japanese Civil Code (2020 Amendment) Articles 548-2 to 548-4: Standardized Terms' },
-      { url: 'https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/', type: 'academic', label: 'UNIDROIT Principles of International Commercial Contracts (2016) Art. 2.1.22: Battle of Forms' },
-    ],
-  },
-  {
     id: 'infosoc-information-pollution',
     discipline: 'information-sociology',
     title: '情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム',
@@ -34190,20 +32734,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly' },
       { url: 'https://doi.org/10.5465/amr.2006.21318802', type: 'academic', label: 'Lane, Koka & Pathak (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review' },
       { url: 'https://doi.org/10.5465/amr.2007.25275513', type: 'academic', label: 'Todorova & Durisin (2007) Absorptive Capacity: Valuing a Reconceptualization — Academy of Management Review' },
-    ],
-  },
-  {
-    id: 'bizlaw-respondeat-superior-doctrine',
-    discipline: 'business-law',
-    title: '使用者責任の法理（Respondeat Superior）：被用者の行為に対する使用者の代位責任',
-    statement: 'Respondeat superior（「主人をして答えしめよ」）は、被用者が事業の執行につき第三者に損害を与えた場合に使用者が代位責任を負う法理である。英国ではJones v Hart事件（1698年）でホルト首席裁判官が「他人を使用する者はその者について責任を負う」と判示し、ブラックストーンがローマ法の主人責任を近代的雇用者責任へ発展させた。日本民法715条は報償責任・危険責任の原理に基づき使用者責任を規定し、最高裁は外形標準説を採用して職務行為の外形から事業執行性を判断する（最判昭和42年11月2日）。求償権につき最判昭和51年7月8日は信義則上の制限を認め、最判令和2年2月28日（民集74巻2号106頁）は被用者から使用者への逆求償を初めて肯定し、損害の公平な分担という理念を確立した。',
-    keyFigures: 'ジョン・ホルト ／ ウィリアム・ブラックストーン ／ オリバー・ウェンデル・ホームズ・ジュニア',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://www.law.cornell.edu/wex/respondeat_superior', type: 'reference', label: 'Cornell LII Wex — Respondeat Superior Definition & Scope of Employment' },
-      { url: 'https://www.ritsumei.ac.jp/acd/cg/law/lex/21-56/040wadashinichi.pdf', type: 'academic', label: '和田真一 (2021) 民法715条における使用者の負担部分 — 最高裁令和2年2月28日判決に関する覚書' },
-      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=89270', type: 'government', label: '裁判所 (2020) 最判令和2年2月28日 民集74巻2号106頁 — 被用者の使用者に対する逆求償' },
-      { url: 'https://scholarship.law.bu.edu/cgi/viewcontent.cgi?article=2034&context=faculty_scholarship', type: 'academic', label: 'Van Loo (2020) The Revival of Respondeat Superior and Evolution of Gatekeeper Liability' },
     ],
   },
   {
@@ -36620,20 +35150,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/amr.1996.9602161568', type: 'academic', label: 'Lumpkin, G. T. & Dess, G. G. (1996) Clarifying the Entrepreneurial Orientation Construct and Linking It to Performance — Academy of Management Review, 21(1), 135–172（五次元モデル）' },
       { url: 'https://doi.org/10.5465/amj.2009.44773175', type: 'academic', label: 'Rauch, A. et al. (2009) Entrepreneurial Orientation and Business Performance: An Assessment of Past Research and Suggestions for the Future — Entrepreneurship Theory and Practice, 33(3), 761–787（メタ分析）' },
       { url: 'https://en.wikipedia.org/wiki/Entrepreneurial_orientation', type: 'reference', label: 'Wikipedia: Entrepreneurial orientation — Miller, Covin & Slevin, Lumpkin & Dess five dimensions, meta-analysis' },
-    ],
-  },
-  {
-    id: 'human-self-perception-theory-bem',
-    discipline: 'human-science',
-    title: '自己知覚理論（ベム）',
-    statement: '自己知覚理論（self-perception theory）は、ベム（1967, 1972）が提唱した、人が自分の内的状態（態度・感情・動機）を直接内省するのでなく、自分の行動と状況的手がかりを外部観察者と同様に観察することで推測するという社会心理学的理論である。フェスティンガーの認知的不協和理論（1957）への代替説明として提唱され、足がかり操作（foot-in-the-door）効果などを「一貫した自己像の形成」でなく「自己行動の観察による態度更新」で説明した。「おだてると本当に好きになる」「笑顔を作ると楽しくなる（顔面フィードバック）」「体を拡張すると自信が増す」などのエビデンスが自己知覚理論と整合するとされる一方、顔面フィードバック仮説の再現性問題（スラック他 2019のメタ分析）が議論となった。内発的動機とアンダーマイニング効果（デシ 1971）は自己知覚理論の応用であり、外的報酬が行動の自己観察を「外因的」に書き換え内発動機を低下させると説明される。',
-    keyFigures: 'ダリル・ベム ／ レオン・フェスティンガー ／ エドワード・デシ ／ リチャード・ニスベット',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/h0024835', type: 'academic', label: 'Bem, D. J. (1967) Self-Perception: An Alternative Interpretation of Cognitive Dissonance Phenomena — Psychological Review, 74(3), 183–200（自己知覚理論の原典）' },
-      { url: 'https://doi.org/10.1037/h0034747', type: 'academic', label: 'Bem, D. J. (1972) Self-Perception Theory — Advances in Experimental Social Psychology, 6, 1–62（理論の拡張）' },
-      { url: 'https://doi.org/10.1037/bul0000194', type: 'academic', label: 'Coles, N. A., et al. (2022) A Multi-Lab Test of the Facial Feedback Hypothesis by the Many Smiles Collaboration — Nature Human Behaviour, 6, 1589–1601（顔面フィードバック多施設再現研究）' },
-      { url: 'https://en.wikipedia.org/wiki/Self-perception_theory', type: 'reference', label: 'Wikipedia: Self-perception theory — Bem, foot-in-the-door, facial feedback, intrinsic motivation undermining' },
     ],
   },
   {
@@ -45624,19 +44140,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-behavioral-theory-firm-cyert',
-    discipline: 'management',
-    title: '企業の行動理論——限定合理性下の組織的意思決定プロセス',
-    statement: 'リチャード・サイアートとジェームズ・マーチが1963年に発表した「企業の行動理論（A Behavioral Theory of the Firm）」は、新古典派経済学の利潤最大化モデルを批判し、現実の企業における意思決定プロセスを記述的に分析した画期的な著作である。この理論の核心は四つの概念にある。第一に「準解決された対立（quasi-resolution of conflict）」——組織は矛盾する複数の目標を同時に保持し、局所的合理性と逐次的注意配分により表面的に調整する。第二に「不確実性の回避（uncertainty avoidance）」——組織は長期的な最適化よりも短期的なフィードバック・ルールと交渉環境の構築を通じて不確実性に対処する。第三に「問題主導型探索（problemistic search）」——目標と成果の乖離が生じたときにのみ局所的な代替案の探索が開始される。第四に「組織学習」——過去の経験が意思決定ルール・注意配分パターン・目標水準を漸次的に変化させる。この理論は進化経済学・組織ルーティン研究の基盤となった。',
-    keyFigures: 'リチャード・サイアート ／ ジェームズ・マーチ ／ ハーバート・サイモン ／ ネルソン・ウィンター',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2228397', type: 'academic', label: 'Cyert, R.M. & March, J.G. (1963) A Behavioral Theory of the Firm — Prentice-Hall' },
-      { url: 'https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm', type: 'reference', label: 'Wikipedia: A Behavioral Theory of the Firm — Cyert & March organizational decision-making' },
-      { url: 'https://doi.org/10.1287/orsc.18.3.523', type: 'academic', label: 'Gavetti, G., Greve, H.R., Levinthal, D.A. & Ocasio, W. (2012) The Behavioral Theory of the Firm — AMR 6(1)' },
-    ],
-  },
-  {
     id: 'human-isolation-effect-restorff',
     discipline: 'human-science',
     title: '孤立効果——均質なリスト中の異質項目が優先的に記憶される現象',
@@ -46999,19 +45502,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1257/aer.88.2.35', type: 'academic', label: 'Calvo (1998) Capital Flows and Capital-Market Crises: The Simple Economics of Sudden Stops — Journal of Applied Economics' },
       { url: 'https://doi.org/10.1016/S0022-1996(99)00023-9', type: 'academic', label: 'Calvo & Reinhart (2000) When Capital Inflows Come to a Sudden Stop: Consequences and Policy Options — in Key Issues in Reform of the International Monetary and Financial System' },
       { url: 'https://en.wikipedia.org/wiki/Sudden_stop_(economics)', type: 'reference', label: 'Wikipedia: Sudden stop — 資本流入の突然の停止と新興国危機の概説' },
-    ],
-  },
-  {
-    id: 'human-self-efficacy-bandura',
-    discipline: 'human-science',
-    title: '自己効力感——行動の遂行可能性に対する信念と動機づけの社会的認知理論',
-    statement: '自己効力感（Self-Efficacy）とは、特定の課題を遂行するために必要な行動を組織し実行する自己の能力に対する信念を指し、バンデューラが1977年に社会的学習理論（後の社会的認知理論）の中核概念として提唱した。バンデューラは自己効力感が四つの情報源——遂行行動の達成（mastery experience）、代理経験（vicarious experience）、言語的説得（verbal persuasion）、生理的・情動的状態（physiological and affective states）——によって形成・変容されることを理論化した。自己効力感は課題選択、努力投入量、困難に対する持続性、ストレス反応を媒介し、実際の行動遂行を予測する最も強力な認知変数の一つであることが膨大な実証研究により確認されている。教育、健康行動、スポーツ、キャリア発達、組織行動等の広範な領域において介入研究が行われ、自己効力感の強化が行動変容の有効な戦略であることが示されている。',
-    keyFigures: 'アルバート・バンデューラ ／ ジェームズ・マドックス ／ デイル・シャンク',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura (1977) Self-Efficacy: Toward a Unifying Theory of Behavioral Change — Psychological Review' },
-      { url: 'https://doi.org/10.1017/CBO9780511527692', type: 'academic', label: 'Bandura (1997) Self-Efficacy: The Exercise of Control — W.H. Freeman' },
-      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia: Self-efficacy — 自己効力感の理論と応用の概説' },
     ],
   },
   {
@@ -48380,19 +46870,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-shareholder-derivative-action',
-    discipline: 'business-law',
-    title: '株主代表訴訟——取締役の義務違反に対する間接的救済',
-    statement: '株主代表訴訟（derivative action / derivative suit）は、会社の取締役・役員が受認者義務（fiduciary duty）に違反して会社に損害を与えた場合に、会社自身が訴訟を提起しない・できないとき、個々の株主が会社のために（on behalf of the corporation）取締役の責任を追及する訴訟形態である。英国法のFoss v Harbottle原則（1843年）は会社の内部問題について訴訟権限は会社自身にあるとする「内部自治の原則」を確立したが、取締役自身の利益相反がある場合の例外として代表訴訟が認められた。米国デラウェア州のAronson v. Lewis基準（1984年）は、原告株主が事前の提訴請求（demand）の無益性（futility）を立証する「demand futility test」を確立した。日本の株主代表訴訟制度（会社法847条）は1993年の商法改正で提訴手数料が一律化され訴訟件数が急増し、蛇の目ミシン事件等の主要判例が取締役の善管注意義務の具体的基準を形成した。',
-    keyFigures: 'アラン・パルメイター ／ デイヴィッド・トンプソン ／ ロバート・クラーク ／ ジョン・コーヒー ／ ラインハルト・クラークマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511662904', type: 'academic', label: 'Clark, R. C. (1986) Corporate Law — Little, Brown & Co.' },
-      { url: 'https://doi.org/10.1093/acprof:oso/9780199565845.001.0001', type: 'academic', label: 'Kraakman, R. et al. (2017) The Anatomy of Corporate Law, 3rd ed. — Oxford Univ Press' },
-      { url: 'https://en.wikipedia.org/wiki/Derivative_suit', type: 'reference', label: 'Wikipedia: Derivative suit — 各法域の株主代表訴訟制度' },
-    ],
-  },
-  {
     id: 'infosoc-digital-divide-second-level-hargittai',
     discipline: 'information-sociology',
     title: '第二レベルのデジタルデバイド——アクセスからスキル格差へ',
@@ -48705,19 +47182,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-j-curve-effect-trade-balance',
-    discipline: 'economics',
-    title: 'Jカーブ効果——為替減価後の貿易収支の動態的調整',
-    statement: 'Jカーブ効果とは、自国通貨の減価（切り下げ）直後に貿易収支が一時的に悪化し、一定期間後に改善に転じる現象であり、時系列的な貿易収支の軌跡がアルファベットのJの字を描くことからこの名称が与えられた。短期的には既存契約が外貨建てで固定されているため輸入金額が増大する一方、輸出数量の増加には時間を要し（マーシャル＝ラーナー条件の短期的不充足）、貿易収支は悪化する。中長期的には相対価格変化に対する輸出入数量の調整が進み、マーシャル＝ラーナー条件が充足されれば貿易収支は改善に転じる。マギーは為替変動の貿易収支効果を通貨契約期間・パススルー期間・数量調整期間の三段階で分析し、バーミルとクリーガーのメタ分析は主要国の実証研究を統合してJカーブ効果の存在を概ね支持しつつも、調整期間が国・時期により大きく異なることを確認した。',
-    keyFigures: 'スティーヴン・マギー ／ アルフレッド・マーシャル ／ アバ・ラーナー ／ モハメド・バーミル ／ ティモシー・ハットン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1882243', type: 'academic', label: 'Magee, S. P. (1973) "Currency Contracts, Pass-Through, and Devaluation" — Brookings Papers' },
-      { url: 'https://doi.org/10.1016/j.jimonfin.2005.08.010', type: 'academic', label: 'Bahmani-Oskooee, M. & Ratha, A. (2004) "The J-Curve: A Literature Review" — Applied Economics' },
-      { url: 'https://en.wikipedia.org/wiki/J_curve', type: 'reference', label: 'Wikipedia: J curve — 為替減価と貿易収支調整の理論' },
-    ],
-  },
-  {
     id: 'econ-rybczynski-theorem-factor-growth',
     discipline: 'economics',
     title: 'リプチンスキー定理——要素賦存変化と産出構成の変動',
@@ -48962,32 +47426,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/amr.2002.6587999', type: 'academic', label: 'Seo, M.-G. & Creed, W. E. D. (2002) "Institutional Contradictions, Praxis, and Institutional Change" — AMR' },
       { url: 'https://doi.org/10.1177/0170840606067995', type: 'academic', label: 'Battilana, J. (2006) "Agency and Institutions" — Organization Studies' },
       { url: 'https://en.wikipedia.org/wiki/Institutional_entrepreneur', type: 'reference', label: 'Wikipedia: Institutional entrepreneur — 制度的企業家と埋め込まれたエージェンシー' },
-    ],
-  },
-  {
-    id: 'human-regulatory-focus-theory-higgins',
-    discipline: 'human-science',
-    title: '制御焦点理論——促進焦点と予防焦点の動機づけ二重過程',
-    statement: 'エドワード・トーリー・ヒギンズが1997年に提唱した制御焦点理論（regulatory focus theory）は、自己調整における二つの動機づけシステム——促進焦点（promotion focus: 理想・成長・達成への接近動機）と予防焦点（prevention focus: 義務・安全・損失回避の動機）——を区別し、各焦点が目標追求戦略・情報処理・意思決定・感情経験を体系的に異ならせることを理論化した。促進焦点の個人は熱意的（eager）戦略を採り、成功の確保を優先し、ヒットとミスの信号検出感度が高い。予防焦点の個人は警戒的（vigilant）戦略を採り、失敗の回避を優先し、正確棄却と誤警報に敏感である。ヒギンズの「制御適合」（regulatory fit）理論は、目標追求手段が自己の制御焦点と一致するとき動機づけ強度と課題評価が向上する現象を説明し、説得・交渉・リーダーシップ・消費者行動の各領域で広範な応用研究を生んでいる。',
-    keyFigures: 'エドワード・トーリー・ヒギンズ ／ アナトール・クロスティアン ／ ジェームズ・シャー ／ ロレイン・チェン・イデソン ／ ヘザー・ロック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.52.12.1280', type: 'academic', label: 'Higgins, E. T. (1997) "Beyond Pleasure and Pain" — American Psychologist' },
-      { url: 'https://doi.org/10.1016/S0065-2601(06)38002-1', type: 'academic', label: 'Higgins, E. T. (2006) "Value From Hedonic Experience and Engagement" — Psychological Review' },
-      { url: 'https://en.wikipedia.org/wiki/Regulatory_focus_theory', type: 'reference', label: 'Wikipedia: Regulatory focus theory — 促進焦点・予防焦点の理論と応用' },
-    ],
-  },
-  {
-    id: 'bizlaw-piercing-corporate-veil-doctrine',
-    discipline: 'business-law',
-    title: '法人格否認の法理——有限責任の例外と法人格の濫用',
-    statement: '法人格否認の法理（piercing the corporate veil）は、法人の独立した法的人格と株主の有限責任を原則としつつ、法人格が詐欺・不正目的に濫用され、または法人が支配株主の道具（alter ego / instrumentality）と化している場合に、裁判所が法人格の壁を透過して背後の支配者に直接責任を負わせる衡平法上の法理である。米国ではサンボーン判事のBerkey v. Third Avenue Railway判決（1926年）に端を発し、Thompson の実証研究は米国裁判例における法人格否認の認容率が約40%であり、不十分な資本充実（undercapitalization）、法人と株主の財産混同（commingling）、法人手続の不遵守が主要な認容要因であることを示した。ドイツ法のDurchgriffshaftung、日本法の法人格否認の法理（最判昭和44年）、英国法のlifting the veilは各法域で類似の機能を果たすが、その適用基準と射程は大きく異なり、比較法的分析が活発に行われている。',
-    keyFigures: 'ロバート・トンプソン ／ フレデリック・パウエル ／ スティーヴン・バインブリッジ ／ ヘンリー・ハンスマン ／ ラインハルト・クラークマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/796184', type: 'academic', label: 'Thompson, R. B. (1991) "Piercing the Corporate Veil" — Cornell Law Review' },
-      { url: 'https://doi.org/10.2307/1073424', type: 'academic', label: 'Bainbridge, S. M. (2000) "Abolishing Veil Piercing" — Journal of Corporation Law' },
-      { url: 'https://en.wikipedia.org/wiki/Piercing_the_corporate_veil', type: 'reference', label: 'Wikipedia: Piercing the corporate veil — 各法域の適用基準と比較' },
     ],
   },
   {
@@ -50668,19 +49106,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'bizlaw-insolvency-law-cross-border',
-    discipline: 'business-law',
-    title: '国際倒産法とUNCITRALモデル法——クロスボーダー債務処理の法的枠組み',
-    statement: '国際倒産法は、複数法域にまたがる資産・債権者を有する企業の倒産処理における管轄権・承認・協力・適用法の問題を規律する法領域である。UNCITRAL国際倒産モデル法（1997年採択、2013年・2018年補充）は、外国倒産手続の承認メカニズムと裁判所間の協力枠組みを提供し、50以上の法域で採用されている。モデル法は「主たる利益の中心（COMI）」概念に基づき、主手続と従手続を区別し、外国管財人のアクセス権と自動的保全措置を規定する。EU倒産規則（Regulation 2015/848）はCOMI基準をEU域内で統一的に適用し、相互承認を制度化した。日本の外国倒産処理手続の承認援助法（2000年制定）もモデル法に準拠している。イアン・フレッチャーとルック・ウェスルスの学術的貢献が本領域の理論的基盤を形成し、ジェイ・ウェストブルックの普遍主義理論が国際倒産法の規範的方向性を提示した。',
-    keyFigures: 'ジェイ・ウェストブルック ／ イアン・フレッチャー ／ ルック・ウェスルス ／ UNCITRAL事務局',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://uncitral.un.org/en/texts/insolvency/modellaw/cross-border_insolvency', type: 'government', label: 'UNCITRAL (1997) Model Law on Cross-Border Insolvency — United Nations' },
-      { url: 'https://doi.org/10.1093/law/9780199580033.001.0001', type: 'academic', label: 'Fletcher, I. (2005) Insolvency in Private International Law — Oxford University Press' },
-      { url: 'https://en.wikipedia.org/wiki/UNCITRAL_Model_Law_on_Cross-Border_Insolvency', type: 'reference', label: 'Wikipedia: UNCITRAL Model Law on Cross-Border Insolvency — モデル法の概要' },
-    ],
-  },
-  {
     id: 'infosoc-affordance-theory-gibson-norman',
     discipline: 'information-sociology',
     title: 'アフォーダンス理論——ギブソンの生態学的知覚論からノーマンのデザイン原則への展開',
@@ -51659,18 +50084,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-terror-management-theory-greenberg',
-    discipline: 'human-science',
-    title: '恐怖管理理論——死の顕現性と文化的世界観防衛のメカニズム',
-    statement: 'ジェフ・グリーンバーグ，シェルドン・ソロモン，トム・ピジンスキーは1986年以降の一連の研究において，アーネスト・ベッカーの『死の拒絶（The Denial of Death）』（1973年）に触発された「恐怖管理理論（Terror Management Theory: TMT）」を展開した。この理論は，人間が自己の必然的な死（mortality）への意識（恐怖）に対処するために，文化的世界観（宗教的信念，国家的アイデンティティ，価値体系）への信奉と自尊心の維持という二重の防衛メカニズムを用いると主張する。実験的パラダイムとしての「死の顕現性（mortality salience）」操作——被験者に自身の死を想起させる——は，世界観を脅かす異文化集団への否定的態度の増大，自文化的価値への同調圧力の強化，カリスマ的リーダーへの支持増加など，多様な社会心理学的効果を実証している。この理論は偏見・差別，ナショナリズム，宗教的原理主義，消費行動，テロリズムへの反応など，広範な社会現象の説明枠組みとして援用されている。',
-    keyFigures: 'ジェフ・グリーンバーグ ／ シェルドン・ソロモン ／ トム・ピジンスキー ／ アーネスト・ベッカー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/S0065-2601(08)60010-7', type: 'academic', label: 'Greenberg, J., Solomon, S. & Pyszczynski, T. (1997) Terror Management Theory — Advances in Experimental Social Psychology' },
-      { url: 'https://en.wikipedia.org/wiki/Terror_management_theory', type: 'reference', label: 'Wikipedia: Terror management theory — mortality salience, cultural worldview defense' },
-    ],
-  },
-  {
     id: 'bizlaw-product-liability-strict-liability',
     discipline: 'business-law',
     title: '製造物責任と厳格責任——PL法の理論的基盤と消費者保護',
@@ -51932,18 +50345,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2393449', type: 'academic', label: 'March, J.G. (1991) Exploration and Exploitation — Organization Science' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — exploration and exploitation' },
-    ],
-  },
-  {
-    id: 'human-social-identity-theory-tajfel-turner',
-    discipline: 'human-science',
-    title: '社会的アイデンティティ理論——タジフェルとターナーの集団帰属・内集団えこひいきとカテゴリー化',
-    statement: '社会的アイデンティティ理論（Social Identity Theory: SIT）は，ハンリー・タジフェルとジョン・ターナーが1979年および1986年に体系化した，個人が自己概念の一部として社会的集団（内集団）への所属を取り込み，内集団を外集団と比較することで自尊心を維持・高揚させようとするという理論である。最小集団パラダイム実験では，任意の基準（絵画の好み・コイン投げ）で分割された集団においても内集団えこひいき（ingroup favoritism）が即座に生じることを示した。社会的カテゴリー化（分類）→社会的アイデンティティ（集団所属感）→社会的比較（内外集団評価）→積極的差別化（内集団優越化）という過程が理論の核を成す。自己カテゴリー化理論（ターナー1987年）がSITを個人レベルに拡張した。SITは偏見・差別・民族紛争・国家アイデンティティ・職場の集団間対立・ソーシャルメディアの「われわれvsかれら」分極化を説明する枠組みとして広く応用される。',
-    keyFigures: 'ハンリー・タジフェル ／ ジョン・ターナー ／ マイケル・ホッグ ／ ドミニク・エイブラムス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://psycnet.apa.org/doi/10.1002/ejsp.2420140102', type: 'academic', label: 'Tajfel, H. & Turner, J.C. (1986) Social Identity Theory — Psychology of Intergroup Relations' },
-      { url: 'https://en.wikipedia.org/wiki/Social_identity_theory', type: 'reference', label: 'Wikipedia: Social identity theory — intergroup relations' },
     ],
   },
   {
@@ -52595,18 +50996,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-secular-stagnation-hansen-summers',
-    discipline: 'economics',
-    title: '長期停滞論——ハンセンからサマーズへの論脈と低成長・低金利・需要不足の構造的解釈',
-    statement: '長期停滞（secular stagnation）は，1930年代の大恐慌期にアルヴィン・ハンセンが提唱した概念であり，人口増加の停滞・技術フロンティアの枯渇・フロンティア地域の消滅によって貯蓄が投資を上回り，経済が恒常的な低成長・低金利・需要不足に陥るという仮説である。ラリー・サマーズは2013年のIMFスピーチで，2008年世界金融危機後の回復の弱さを説明するために長期停滞論を復活させ，自然利子率のゼロ以下への低下が金融政策の有効性を制約すると論じた。原因としては少子高齢化（貯蓄超過）・所得格差拡大（消費傾向低下）・資本財価格の下落・デジタル経済の低物的投資依存が挙げられる。政策含意として，財政出動・インフラ投資・フラット・インフレ目標引き上げ・ネガティブ金利が論じられる。ゴードン（生産性停滞説）とサマーズ（需要側停滞説）の論争が続く。日本の「失われた30年」は長期停滞の先行実例として分析される。',
-    keyFigures: 'アルヴィン・ハンセン ／ ラリー・サマーズ ／ ロバート・ゴードン ／ ベン・バーナンキ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1257/aer.p20151091', type: 'academic', label: 'Summers, L.H. (2015) Demand Side Secular Stagnation — AER Papers & Proceedings' },
-      { url: 'https://en.wikipedia.org/wiki/Secular_stagnation', type: 'reference', label: 'Wikipedia: Secular stagnation — economic theory and debate' },
-    ],
-  },
-  {
     id: 'econ-price-discrimination-monopoly',
     discipline: 'economics',
     title: '価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意',
@@ -53082,19 +51471,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-design-thinking-ideo-brown',
-    discipline: 'management',
-    title: 'デザイン思考——IDEOのティム・ブラウンによる人間中心設計と革新的問題解決プロセス',
-    statement: 'デザイン思考（Design Thinking）は、デザイナーが問題解決に用いる思考プロセスを組織的イノベーション方法論として一般化したもので、IDEOのティム・ブラウンとスタンフォードd.schoolのデービッド・ケリーが普及させた。標準モデルは①共感（Empathize）→②定義（Define）→③概念化（Ideate）→④プロトタイプ（Prototype）→⑤テスト（Test）の五段階で構成され、「ユーザーの潜在ニーズ発掘」「素早い試作と失敗を通じた学習」「学際的チームによる協働」を特徴とする。ダブルダイアモンドモデル（英国デザインカウンシル）は問題発散・収束（問題の定義）と解決策発散・収束（解決策の開発）の二つの菱形として視覚化する。医療・教育・行政サービスへの「社会的デザイン思考」への応用が拡大し、アジャイル開発・リーン・スタートアップとの連携が進んでいる。',
-    keyFigures: 'ティム・ブラウン ／ デービッド・ケリー ／ ハーバート・サイモン ／ ロジャー・マーティン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://hbr.org/2008/06/design-thinking', type: 'media', label: 'Brown (2008) Design Thinking — Harvard Business Review' },
-      { url: 'https://doi.org/10.1093/oso/9780198862437.001.0001', type: 'academic', label: 'Cross (2011) Design Thinking: Understanding How Designers Think and Work — Berg Publishers' },
-      { url: 'https://en.wikipedia.org/wiki/Design_thinking', type: 'reference', label: 'Wikipedia: Design thinking — デザイン思考の理論と企業応用' },
-    ],
-  },
-  {
     id: 'human-alexithymia-emotional-regulation',
     discipline: 'human-science',
     title: 'アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連',
@@ -53173,19 +51549,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-moral-foundations-theory-haidt',
-    discipline: 'human-science',
-    title: '道徳基盤理論——ハイトによる道徳判断の直観優位性と多元的価値基盤の心理学',
-    statement: 'ジョナサン・ハイトが提唱する道徳基盤理論（MFT）は、人間の道徳判断が「理性」よりも「直観」と「感情」に先導され、理性はその事後的正当化を行うに過ぎないという「社会的直観主義モデル」に立脚する。MFTは人類進化の中で機能してきた六つの道徳基盤——①ケア/危害、②公正/欺瞞、③忠誠/裏切り、④権威/転覆、⑤神聖/堕落、⑥自由/抑圧——を特定し、リベラルは①②（特にケア・公正）を重視し保守派は全六基盤を均等に重視する傾向があるとする。政治的分極化・ポリコレ論争・宗教と世俗の対立などを「道徳基盤の非対称な共有」として説明する枠組みは、政治心理学・倫理学・組織文化研究に広く援用されている。',
-    keyFigures: 'ジョナサン・ハイト ／ ジェシー・グラハム ／ クレイグ・ジョセフ ／ ジャン・ヴァン・ランゲ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.108.4.814', type: 'academic', label: 'Haidt (2001) The Emotional Dog and Its Rational Tail — Psychological Review' },
-      { url: 'https://doi.org/10.1177/1745691611402057', type: 'academic', label: 'Graham et al. (2011) Mapping the Moral Domain — Journal of Personality & Social Psychology' },
-      { url: 'https://en.wikipedia.org/wiki/Moral_foundations_theory', type: 'reference', label: 'Wikipedia: Moral foundations theory — 道徳基盤理論の概念と批判' },
-    ],
-  },
-  {
     id: 'bizlaw-antitrust-merger-remedies',
     discipline: 'business-law',
     title: 'M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認',
@@ -53248,19 +51611,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/amr.2006.21318917', type: 'academic', label: 'Rousseau (2006) Is There Such a Thing as Evidence-Based Management? — Academy of Management Review' },
       { url: 'https://doi.org/10.1111/j.1744-6570.2007.00075.x', type: 'academic', label: 'Pfeffer & Sutton (2006) Hard Facts, Dangerous Half-Truths — Harvard Business School Press' },
       { url: 'https://en.wikipedia.org/wiki/Evidence-based_management', type: 'reference', label: 'Wikipedia: Evidence-based management — EBMgtの概念と実践' },
-    ],
-  },
-  {
-    id: 'human-somatic-marker-hypothesis-damasio',
-    discipline: 'human-science',
-    title: 'ソマティック・マーカー仮説——ダマシオによる感情・身体・意思決定の神経科学的統合',
-    statement: 'アントニオ・ダマシオが1994年の著書『デカルトの誤り』で提唱したソマティック・マーカー仮説は、「理性的」意思決定が実は身体感覚（内臓反応・心拍・皮膚電気活動など）に根ざした感情信号「ソマティック・マーカー」に大きく依存することを主張する。腹内側前頭前野（vmPFC）が損傷した患者は知能・言語・記憶が保たれているにもかかわらず日常の意思決定が著しく障害されるという臨床所見（フィニアス・ゲージや「エリオット」症例）が理論の根拠となっている。身体からのフィードバックが「良い選択肢」に紐づく正の信号・「悪い選択肢」に紐づく負の信号として機能し、選択肢の絞り込みを助ける。この仮説は感情が合理的判断の妨げではなく不可欠な補助機能であることを示し、哲学的デカルト二元論への反証として神経科学と哲学の境界を横断する議論を呼んだ。',
-    keyFigures: 'アントニオ・ダマシオ ／ アントワーヌ・べシャラ ／ ハンナ・ダマシオ ／ ジョセフ・ルドゥー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0028-3932(94)90018-3', type: 'academic', label: 'Damasio et al. (1994) Insensitivity to Future Consequences Following Damage to Human Prefrontal Cortex — Cognition' },
-      { url: 'https://doi.org/10.1126/science.272.5269.1711', type: 'academic', label: 'Bechara et al. (1996) Failure to Respond Autonomically to Anticipated Future Outcomes Following vmPFC Damage — Science' },
-      { url: 'https://en.wikipedia.org/wiki/Somatic_marker_hypothesis', type: 'reference', label: 'Wikipedia: Somatic marker hypothesis — ソマティック・マーカー仮説の神経科学' },
     ],
   },
   {
@@ -55180,18 +53530,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-price-discrimination-theory',
-    discipline: 'economics',
-    title: '価格差別理論と消費者余剰の搾取・厚生分析',
-    statement: '価格差別（price discrimination）とは、同一財・サービスを異なる消費者・市場セグメントに対して異なる価格で販売する戦略であり、アーサー・ピグーが1920年に第1・第2・第3度の価格差別という分類体系を確立した。第1度（完全価格差別）は各消費者の留保価格で個別に価格設定し消費者余剰を完全に搾取する理論的極端であり、第2度はブロック価格や二部料金制（two-part tariff）など数量に応じた価格差別、第3度は市場分割（学生割引・地域差別）による差別化を指す。価格差別の厚生効果は曖昧で、より多くの消費者がサービスにアクセスできる一方、独占企業が余剰を独占するため分配上の問題を生じる。航空運賃・ソフトウェアライセンス・医薬品価格など現代のデジタル市場で価格差別は広範に採用され、アルゴリズム的価格差別（動的価格決定）が競争法上の新たな課題となっている。',
-    keyFigures: 'アーサー・ピグー ／ ジャン・ティロール ／ ヴァリアン・ハル ／ マーク・アームストロング',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2552019', type: 'academic', label: 'Pigou (1920) The Economics of Welfare, Ch.17: Discriminating Monopoly — Macmillan' },
-      { url: 'https://en.wikipedia.org/wiki/Price_discrimination', type: 'reference', label: 'Wikipedia: Price discrimination — Pigou, degrees, welfare, digital markets, algorithmic pricing' },
-    ],
-  },
-  {
     id: 'mgmt-employee-engagement-kahn',
     discipline: 'management',
     title: '従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）',
@@ -55648,18 +53986,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-polyvagal-theory-porges',
-    discipline: 'human-science',
-    title: 'ポリヴェーガル理論と自律神経系の進化的階層（ポージェス）',
-    statement: 'ポリヴェーガル理論（Polyvagal Theory）は、スティーブン・ポージェスが1994年に提唱した自律神経系の神経生理学的理論であり、迷走神経（vagus nerve）の系統発生的階層を基盤として社会的・防衛的行動の神経学的基盤を説明する。理論は三つの神経回路を階層化する：①腹側迷走神経系（社会的交流・穏やかな交流）②交感神経系（闘争・逃走反応）③背側迷走神経系（凍り付き・シャットダウン）。外傷（トラウマ）体験により「神経的安全性（neuroception of safety）」が損なわれ、慢性的な防衛状態や解離が生じると論じ、トラウマ療法・身体指向療法・発達障害支援への応用が拡大している。学術的には交感・副交感のシンプルな二分法を超える実証的根拠に批判もあるが、臨床実践・教育・組織論において広く引用されている。',
-    keyFigures: 'スティーブン・ポージェス ／ デブ・デイナ ／ ビーセル・ファン・デア・コルク ／ ピーター・レバイン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1111/j.1469-8986.1995.tb01013.x', type: 'academic', label: 'Porges, S.W. (1995). Orienting in a defensive world — Psychophysiology' },
-      { url: 'https://en.wikipedia.org/wiki/Polyvagal_theory', type: 'reference', label: 'Wikipedia: Polyvagal theory — autonomic nervous system hierarchy' },
-    ],
-  },
-  {
     id: 'bizlaw-class-action-collective-redress',
     discipline: 'business-law',
     title: '集団訴訟と集合的救済制度の比較法',
@@ -55864,18 +54190,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-psychological-safety-edmondson',
-    discipline: 'human-science',
-    title: '心理的安全性（エドモンドソン）とチーム学習行動',
-    statement: '心理的安全性（psychological safety）とは、チームメンバーが対人リスクを冒すこと（発言・質問・ミスの開示・反論）に対して安全だと感じる共有信念であり、エイミー・エドモンドソンが1999年の論文で概念化した。エドモンドソンは医療チームの研究において、心理的安全性が高いチームほどエラー報告率が高く、それがチーム学習と患者安全に寄与することを示した。その後グーグルの「Project Aristotle」が職場チームの高業績予測因子として心理的安全性を最重要要因として報告したことで広く普及した。心理的安全性はチームレベルの構成概念であり、個人の特性（低不安・外向性）や組織文化（開放性・失敗への寛容）と区別される。近年は「多様性・公平性・包括性（DEI）」との接点・リモートワーク環境での促進・測定尺度の妥当性検討が研究フロンティアとなっている。',
-    keyFigures: 'エイミー・エドモンドソン ／ ウィリアム・カーン ／ アンクー・バラタ ／ マーティン・グッドマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2666999', type: 'academic', label: 'Edmondson, A. (1999). Psychological safety and learning behavior — Administrative Science Quarterly' },
-      { url: 'https://en.wikipedia.org/wiki/Psychological_safety', type: 'reference', label: 'Wikipedia: Psychological safety — team learning behavior' },
-    ],
-  },
-  {
     id: 'bizlaw-environmental-liability-polluter-pays',
     discipline: 'business-law',
     title: '環境責任と汚染者負担原則の法制度比較',
@@ -55993,18 +54307,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.4135/9781452229775', type: 'academic', label: 'van Dijk, J. (2005). The Deepening Divide — Sage Publications' },
       { url: 'https://en.wikipedia.org/wiki/Digital_divide', type: 'reference', label: 'Wikipedia: Digital divide — information stratification' },
-    ],
-  },
-  {
-    id: 'human-cognitive-load-theory-sweller',
-    discipline: 'human-science',
-    title: '認知負荷理論（スウェラー）と教育設計の科学',
-    statement: '認知負荷理論（Cognitive Load Theory: CLT）は、ジョン・スウェラーが1988年に提唱した学習科学の基盤理論であり、ミラーの7±2則を継承しつつ作業記憶（working memory）の容量制限が学習効率を規定すると論じる。CLTは認知負荷を三種に分類する：①内在的負荷（intrinsic load、素材固有の複雑さ）②外在的負荷（extraneous load、不適切な教授設計による余剰負荷）③生成的負荷（germane load、スキーマ構築を促す有効な負荷）。研究から導出された教育設計原則として、分割注意効果・冗長効果・専門家逆転効果・ワークドエグザンプル効果などが実証されており、教科書・マルチメディア学習・e-ラーニング設計への応用が広い。リチャード・メイヤーのマルチメディア学習理論と統合されてSWELLER-MAYER理論体系を形成している。',
-    keyFigures: 'ジョン・スウェラー ／ フレッド・パス ／ ジョルジー・ファン・メリエンボア ／ リチャード・メイヤー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1207/s15516709cog1202_4', type: 'academic', label: 'Sweller, J. (1988). Cognitive load during problem solving — Cognitive Science' },
-      { url: 'https://en.wikipedia.org/wiki/Cognitive_load', type: 'reference', label: 'Wikipedia: Cognitive load — instructional design' },
     ],
   },
   {
@@ -56513,18 +54815,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-mediatization-hjarvard',
-    discipline: 'information-sociology',
-    title: 'メディア化理論（ヒャルヴァール）',
-    statement: 'ヒャルヴァール（Stig Hjarvard）は2008年の著書『The Mediatization of Society』で，メディア化（mediatization）を「社会制度・文化過程がメディアの論理（media logic）に徐々に従属・変容していく過程」として概念化した。宗教・政治・スポーツ・家族などの社会的領域がメディアの形式・時間感覚・視認性・価値評価に適応するよう構造変化を遂げるという長期的プロセスを指す。「メディアによる媒介（mediation）」が一回的な通信行為であるのに対し，「メディア化」は制度変容の歴史的過程であるとする区別が理論の核心である。スノウとアルセイドの「メディア・ロジック」論（1979）を発展させ，デジタル化・ソーシャルメディア・プラットフォーム化による「デジタル・メディア化」の分析枠組みとして現代メディア研究の中心概念となっている。',
-    keyFigures: 'スティグ・ヒャルヴァール ／ ニック・コールドリー ／ アンドレアス・ヘップ ／ マティアス・ラーセン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1177/017407610800300103', type: 'academic', label: 'Hjarvard, S. (2008) The Mediatization of Society: A Theory of the Media as Agents of Social and Cultural Change — Nordicom Review 29(2), 105–134（メディア化理論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Mediatization_(media)', type: 'reference', label: 'Wikipedia: Mediatization (media) — メディア化理論の概説' },
-    ],
-  },
-  {
     id: 'mgmt-corporate-entrepreneurship-burgelman',
     discipline: 'management',
     title: 'コーポレート・アントレプレナーシップ（バーゲルマン）',
@@ -56558,18 +54848,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1287/mnsc.48.11.1408.268', type: 'academic', label: 'Gittell, J.H. (2002) Coordinating Mechanisms in Care Provider Groups: Relational Coordination as a Mediator — Management Science 48(11), 1408–1426（リレーショナル・コーディネーションの原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Relational_coordination', type: 'reference', label: 'Wikipedia: Relational coordination — リレーショナル・コーディネーションの概説' },
-    ],
-  },
-  {
-    id: 'human-construal-level-theory-trope',
-    discipline: 'human-science',
-    title: '解釈レベル理論（トロープ＆リーバーマン）',
-    statement: 'トロープ（Yaacov Trope）とリーバーマン（Nira Liberman）は2003年に，心理的距離（時間的・空間的・社会的・仮説的距離）が増大するにつれ，人は対象を抽象的・本質的（高レベル解釈）に表象し，距離が縮まると具体的・付随的（低レベル解釈）に表象するという解釈レベル理論（Construal Level Theory, CLT）を提唱した。遠い未来の出来事は「なぜ（why）」で考え，近い未来のことは「どのように（how）」で考えるという非対称性が意思決定・自己制御・説得・態度変容に影響する。CLTは時間割引・感情予測・ステレオタイプ・説得効果など幅広い社会心理学現象を統一的に説明する中範囲理論として，実証研究が爆発的に蓄積されている。',
-    keyFigures: 'ヤーコフ・トロープ ／ ニラ・リーバーマン ／ カレブ・ハービアン ／ コンスタンティン・セダキデス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.110.3.403', type: 'academic', label: 'Trope, Y. & Liberman, N. (2003) Temporal Construal — Psychological Review 110(3), 403–421（解釈レベル理論の主要論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Construal_level_theory', type: 'reference', label: 'Wikipedia: Construal level theory — 解釈レベル理論の概説' },
     ],
   },
   {
@@ -56762,18 +55040,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://academic.oup.com/restud/article/1/3/196/1544271', type: 'academic', label: 'Hicks, J.R. & Allen, R.G.D. (1934) A Reconsideration of the Theory of Value — Review of Economic Studies 1(3), 196–219（序数的効用と無差別曲線分析の原論文）' },
       { url: 'https://en.wikipedia.org/wiki/Hicksian_demand_function', type: 'reference', label: 'Wikipedia: Hicksian demand function — 補償需要関数と序数的効用の概説' },
-    ],
-  },
-  {
-    id: 'mgmt-effectuation-sarasvathy',
-    discipline: 'management',
-    title: 'エフェクチュエーション理論（サラスバシー）',
-    statement: 'サラスバシー（Saras D. Sarasvathy）は2001年の論文で，熟練した起業家がゴールを先に設定してから手段を集めるコーゼーション（causation）ではなく，現在利用可能な手段（誰であるか・何を知っているか・誰を知っているか）から出発してゴールを動的に形成するエフェクチュエーション（effectuation）ロジックを用いることを発見した。許容損失原則（affordable loss），交渉可能なコミットメント（crazy quilt），偶発性活用（lemonade principle），コントロール可能未来（pilot-in-the-plane）など五原則から構成され，不確実な環境での企業家的意思決定を記述する。この枠組みは，リーン・スタートアップやアジャイル開発のような実践とも整合しており，起業教育・ベンチャー研究において計画的合理性モデルへの重要な対抗軸として広く採用されている。',
-    keyFigures: 'サラス・サラスバシー ／ スチュアート・リード ／ ニコライ・フォス ／ スコット・シェーン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S.D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review 26(2), 243–263（エフェクチュエーション理論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Effectuation', type: 'reference', label: 'Wikipedia: Effectuation — エフェクチュエーション理論の概説' },
     ],
   },
   {
