@@ -60832,5 +60832,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ftc.gov/business-guidance/resources/native-advertising-guide-businesses', type: 'government', label: 'Federal Trade Commission — Native Advertising: A Guide for Businesses (2015 Enforcement Policy Statement)' },
     ],
   },
+  {
+    id: 'econ-grossman-helpman-protection-for-sale',
+    discipline: 'economics',
+    title: '保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学',
+    statement:
+      '保護の販売（Protection for Sale）モデルは、ジーン・グロスマンとエルハナン・ヘルプマンが1994年にAmerican Economic Review誌で発表した、貿易保護の政治経済学における基準モデルである。従来の貿易理論が自由貿易の効率性を説くにもかかわらず、現実の政府が関税や輸入数量制限といった非効率な保護政策を採用するのはなぜかという問いに対し、同モデルは貿易政策が利益団体と政府の間で事実上「売買」される過程を定式化して答えた。組織化された産業別ロビーは、バーンハイムとウィンストンのメニュー・オークション（共通エージェンシー）理論に基づき、政府が選びうる政策の各々に対応する政治献金スケジュールを提示する。政府は献金と社会厚生の加重和を最大化するように貿易政策を決定するため、均衡の保護構造は明快な比較静学を持つ。すなわち、組織化された産業ほど高い保護を受け、保護率は輸入浸透度と輸入需要弾力性に反比例し、政府が厚生を重視するほど、また有権者のうちロビーに組織化された割合が大きいほど保護水準は低下する。ゴールドバーグとマッジ（1999）らによる構造推定は、米国の保護構造がモデルの予測と整合的である一方、推定される政府の厚生ウェイトが献金ウェイトを大きく上回ることを示した。特殊要素モデルが示す所得分配上の対立を利益団体形成の基礎に据え、レントシーキング論を厳密なゲーム理論的基礎の上に再構成した本モデルは、貿易協定の内生的決定やWTO交渉、ロビイング規制の分析へと拡張され、通商政策の政治経済分析における標準的枠組みとなっている。',
+    keyFigures: 'グロスマン, ジーン （1994年 Protection for Sale, American Economic Review 84(4): 833-850）／ヘルプマン, エルハナン （共著者）／バーンハイム, B・ダグラス （メニュー・オークション理論の基礎）／ウィンストン, マイケル （同）／ゴールドバーグ, ピネロピ （1999年 実証検証）／マッジ, ジョバンニ （同）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.nber.org/papers/w4149', type: 'academic', label: 'Grossman & Helpman (1992/1994) "Protection for Sale," NBER Working Paper 4149（AER 84(4): 833-850として刊行）' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v84y1994i4p833-50.html', type: 'academic', label: 'IDEAS/RePEc — Grossman, G. M. & Helpman, E. (1994) "Protection for Sale," American Economic Review 84(4): 833-850' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.89.5.1135', type: 'academic', label: 'Goldberg, P. K. & Maggi, G. (1999) "Protection for Sale: An Empirical Investigation," American Economic Review 89(5): 1135-1155' },
+    ],
+  },
+  {
+    id: 'econ-harsanyi-purification-theorem',
+    discipline: 'economics',
+    title: 'ハルサーニの純化定理——混合戦略は私的情報に基づく確定的行動の極限である',
+    statement:
+      '純化定理（purification theorem）は、ジョン・ハルサーニが1973年の論文「Games with Randomly Disturbed Payoffs」で示した、混合戦略ナッシュ均衡の解釈をめぐるゲーム理論の基本定理である。混合戦略均衡には古くから解釈上の難点があった。均衡において各プレイヤーは、正の確率を割り当てる複数の純粋戦略の間で無差別であるにもかかわらず、相手を無差別にするような特定の確率で意図的にランダム化しなければならない。なぜ合理的な主体がそのような動機の乏しいランダム化を正確に実行するのか、という疑問である。ハルサーニの答えは、混合戦略を意図的なくじ引きではなく、観察されない私的情報に基づく確定的な行動として再解釈することにあった。すなわち、各プレイヤーの利得が、本人だけが知る微小なランダムな撹乱を受ける不完備情報ゲーム（撹乱ゲーム）を考える。この撹乱ゲームでは、ほとんどすべての利得の実現値に対して各プレイヤーの最適な純粋戦略は一意に定まり、誰もランダム化しない。しかし相手からは撹乱の値が見えないため、その行動は確率的に、つまり混合戦略のように見える。定理は、撹乱の大きさをゼロに近づける極限で、この撹乱ゲームの純粋戦略均衡の列が元のゲームの混合戦略均衡に収束し、ほとんどすべての正規形ゲームにおいて任意の混合戦略均衡がこの方法で純化できることを主張する。競合企業の価格設定や税務調査・抜き打ち検査の対象選定が不規則に見えるのは、当事者がサイコロを振っているからではなく、外部から観察できないコストや選好の小さな変動に応じて最適に反応しているからだと理解できる。この摂動の発想はゼルテンの震える手の完全均衡やグローバルゲームによる均衡選択にも通じ、ハルサーニは1994年にノーベル経済学賞を受賞した。',
+    keyFigures: 'Harsanyi, John C.（1973 Games with Randomly Disturbed Payoffs: A New Rationale for Mixed-Strategy Equilibrium Points, International Journal of Game Theory／1994年ノーベル経済学賞）／Govindan, Srihari・Reny, Philip J.・Robson, Arthur J.（2003 A Short Proof of Harsanyi\'s Purification Theorem, Games and Economic Behavior）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1007/BF01737554', type: 'academic', label: 'Harsanyi, J. C. (1973) Games with randomly disturbed payoffs: A new rationale for mixed-strategy equilibrium points — International Journal of Game Theory 2, 1–23' },
+      { url: 'https://en.wikipedia.org/wiki/Purification_theorem', type: 'reference', label: 'Wikipedia: Purification theorem — Harsanyi, disturbed game, pure-strategy reinterpretation of mixed equilibria' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/harsanyi-lecture.pdf', type: 'government', label: 'Harsanyi, J. C. (1994) Games with Incomplete Information — Nobel Lecture, NobelPrize.org' },
+    ],
+  },
+  {
+    id: 'mgmt-multimarket-contact-mutual-forbearance',
+    discipline: 'management',
+    title: '多市場接触と相互自制の理論（マルチマーケット・コンペティション）',
+    statement:
+      '多市場接触と相互自制の理論とは、複数の市場で同時に競合し合う企業同士は、単一市場でのみ対峙する企業同士よりも競争強度を相互に抑制するという競争戦略・産業組織論の理論である。起源はEdwards（1955）が全米経済研究所の論文集で提示した「相互自制（mutual forbearance）」仮説であり、多角化した大企業同士は多数の接点で対峙するため、一つの市場での攻撃が他の市場での報復を招くことを予期し、互いに攻撃を手控えると論じた。Karnani & Wernerfelt（1985）はこれを多地点競争として戦略論に導入し、攻撃を受けた企業が相手の本拠市場へ反撃する対抗的攻撃や、相手の重要市場に小規模な足場（foothold）を築いて抑止力とする戦略を類型化した。Bernheim & Whinston（1990）は繰り返しゲームの枠組みで、多市場接触が各市場の懲罰力をプールし、企業間や市場間に非対称性が存在する場合に共謀維持の誘因両立制約を緩和して暗黙的協調を促進することを厳密に定式化した。実証面では、Gimeno（1999）が米国航空産業において、企業が競合他社のハブ空港路線に足場を維持することで相互の勢力圏（spheres of influence）を尊重し合い、自社の重要市場における支配的地位を守ることを示し、Baum & Korn（1996）は多市場接触と市場参入・撤退率との間の逆U字型関係を明らかにした。同理論は、競争分析の単位を個別市場から企業間関係の全体へと拡張した点に意義があり、多角化戦略・参入抑止・価格水準の説明に加え、コングロマリット合併に対する競争政策上の評価にも含意を持つ。競争が企業を鍛えるとする赤の女王競争理論とは対照的に、多市場接触は競争を沈静化させる構造条件を特定するものであり、両者は競争ダイナミクス研究の補完的な二側面を構成している。',
+    keyFigures: 'Edwards, Corwin D. （1955 Conglomerate Bigness as a Source of Power）／Karnani, Aneel & Wernerfelt, Birger （1985 Multiple Point Competition, SMJ）／Bernheim, B. Douglas & Whinston, Michael D. （1990 RAND Journal of Economics）／Gimeno, Javier （1999 SMJ）／Baum, Joel A. C. & Korn, Helaine J. （1996 AMJ）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.nber.org/books-and-chapters/business-concentration-and-price-policy/conglomerate-bigness-source-power', type: 'academic', label: 'Edwards, C. D. (1955) "Conglomerate Bigness as a Source of Power," in Business Concentration and Price Policy, NBER / Princeton University Press, 331–359（相互自制仮説の原典）' },
+      { url: 'https://ideas.repec.org/a/rje/randje/v21y1990ispringp1-26.html', type: 'academic', label: 'Bernheim, B. D. & Whinston, M. D. (1990) "Multimarket Contact and Collusive Behavior," RAND Journal of Economics 21(1): 1–26（多市場接触の理論的定式化）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199902)20:2%3C101::AID-SMJ12%3E3.0.CO;2-4', type: 'academic', label: 'Gimeno, J. (1999) "Reciprocal Threats in Multimarket Rivalry: Staking Out \'Spheres of Influence\' in the U.S. Airline Industry," Strategic Management Journal 20(2): 101–128' },
+    ],
+  },
+  {
+    id: 'human-predictive-coding-psychosis',
+    discipline: 'human-science',
+    title: '精神病の予測符号化理論（予測誤差による幻覚・妄想の計算論的説明）',
+    statement:
+      '精神病の予測符号化理論（予測誤差説）とは、統合失調症の陽性症状である幻覚と妄想を、脳の階層的ベイズ推論の障害として統一的に説明する計算論的精神医学の枠組みである。予測処理の観点では、知覚は事前信念（トップダウン予測）と感覚入力（ボトムアップ信号）の統合であり、両者の不一致が予測誤差として学習と信念更新を駆動する。フレッチャーとフリスは2009年の論文「Perceiving is believing」において、幻覚も妄想も同一の中核的異常——予測誤差に依存した信念更新の攪乱——に由来すると論じ、両者を経験と信念の別個の問題として扱う必要はないと主張した。この枠組みでは、感覚的予測誤差に過剰な精度（precision）が割り当てられることで実在しない知覚（幻覚）が生じ、妄想はそうした異常な信号を説明するために構築される事後的な説明モデルとして理解される。パワーズら（2017年）は、パヴロフ型条件づけによって健常者にも幻聴を誘発できること、そして幻聴を生じやすい者ほど事前信念（プライア）を過大に重みづけすることを実証した。アダムズら（2013年）はこの障害の計算論的解剖を提示し、皮質の予測誤差信号の精度を調整する神経修飾（ドーパミン・NMDA受容体を介するゲイン制御）の破綻を精神病の生物学的基盤として位置づけた。同様の精度重みづけの枠組みは自閉スペクトラム症など他の精神疾患にも拡張され、横断的な計算論的説明として展開されている。もっとも、本理論は柔軟性が高く反証が難しいこと、精度重みづけの異常に関する実証的証拠が一貫しないこと、幻覚を「プライアの過大重みづけ」とする説明と「弱い事前信念」とする説明の間に緊張が残ることなど、批判も存在する。',
+    keyFigures: 'Fletcher, Paul C.／Frith, Christopher D.（2009 Nature Reviews Neuroscience）／Sterzer, Philipp（2018 Biological Psychiatry）／Powers, Albert R.（2017 Science）／Corlett, Philip R.／Adams, Rick A.（2013 Frontiers in Psychiatry）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.nature.com/articles/nrn2536', type: 'academic', label: 'Fletcher, P. C. & Frith, C. D. (2009). Perceiving is believing: a Bayesian approach to explaining the positive symptoms of schizophrenia. Nature Reviews Neuroscience, 10(1), 48–58' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0006322318315324', type: 'academic', label: 'Sterzer, P. et al. (2018). The Predictive Coding Account of Psychosis. Biological Psychiatry, 84(9), 634–643' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5802347/', type: 'academic', label: 'Powers, A. R., Mathys, C. & Corlett, P. R. (2017). Pavlovian conditioning–induced hallucinations result from overweighting of perceptual priors. Science, 357(6351), 596–600' },
+    ],
+  },
+  {
+    id: 'bizlaw-sec-rule-14a8-shareholder-proposals',
+    discipline: 'business-law',
+    title: 'SEC規則14a-8（株主提案の委任状記載制度）',
+    statement:
+      'SEC規則14a-8（17 C.F.R. §240.14a-8）は、1934年証券取引所法14条(a)に基づく連邦委任状規制の一部として、一定の要件を満たす株主が自らの提案を会社費用で作成される委任状説明書（proxy statement）に掲載させることを認める制度である。1942年に導入された本規則は、分散した株主が経営陣に議題を提起する数少ない連邦法上の経路であり、米国コーポレート・ガバナンスにおける株主関与の中核的手段とされる。提案株主は、2020年改正後は2,000ドル・1万5,000ドル・2万5,000ドル相当の株式をそれぞれ3年・2年・1年以上保有するという段階的要件を満たす必要があり、提案は500語以内、1株主1提案に限られる。会社側は規則所定の13の除外事由に該当すれば提案を委任状説明書から排除でき、実務上はSEC企業金融部へのノーアクション・レター手続を通じて排除の可否が事前に判断される。最も争われるのは(i)(7)の通常業務除外であり、日常的経営事項への株主介入を防ぐ一方、重要な政策問題を提起する提案は除外できないとされ、他方で過度に詳細な指示は「ミクロマネジメント」として除外が許容される。(i)(5)の経済的関連性除外は総資産・売上高の5%基準により提案の重要性を画する。Medical Committee for Human Rights v. SEC（1970）やTrinity Wall Street v. Wal-Mart Stores（2015）等の判例が除外事由の解釈を形成し、近年は気候変動・人的資本等のESG提案の急増を背景に、2020年改正による提出・再提出要件の引上げや2021年スタッフ法務公報14Lによる政策問題基準の拡張など、規制の振り子をめぐる改革論争が続いている。日本の会社法303条の株主提案権が株主総会への直接の議題提案権であるのに対し、規則14a-8は会社の委任状勧誘書類への掲載請求権という構造を採る点に特徴がある。',
+    keyFigures: 'Medical Committee for Human Rights v. SEC （1970）／Trinity Wall Street v. Wal-Mart Stores （2015）／Roberta Romano （2001）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.ecfr.gov/current/title-17/chapter-II/part-240/subpart-A/subject-group-ECFR8c9733e13b955d6/section-240.14a-8', type: 'government', label: 'eCFR — 17 CFR §240.14a-8 Shareholder proposals（規則本文・現行版）' },
+      { url: 'https://www.law.cornell.edu/cfr/text/17/240.14a-8', type: 'reference', label: 'Cornell LII — 17 CFR §240.14a-8 Shareholder proposals' },
+      { url: 'https://corpgov.law.harvard.edu/2020/10/12/sec-increases-rule-14a-8-thresholds/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance — SEC Increases Rule 14a-8 Thresholds (2020)' },
+    ],
+  },
+  {
+    id: 'infosoc-proteus-effect',
+    discipline: 'information-sociology',
+    title: 'プロテウス効果——アバターの外見が利用者自身の行動を変える',
+    statement:
+      'プロテウス効果（Proteus effect）とは、仮想環境においてユーザーに割り当てられたアバターの外見的特徴が、他者からの扱われ方とは独立に、ユーザー自身の行動・態度をそのアバターに結び付いたステレオタイプへと同調させる現象である。スタンフォード大学のニック・イーとジェレミー・ベイレンソンが2007年の論文「The Proteus Effect: The Effect of Transformed Self-Representation on Behavior」（Human Communication Research誌）で提唱し、変幻自在に姿を変えるギリシャ神話の海神プロテウスにちなんで命名した。没入型仮想環境での実験では、魅力的なアバターを割り当てられた参加者は対人距離を縮め自己開示が増加し、背の高いアバターを与えられた参加者は交渉課題でより自信をもって強気に振る舞った。理論的基盤としては、自分の行動を外的手がかりから推論するベムの自己知覚理論と、没個性化状況で集団的アイデンティティへの同調が強まるSIDEモデルが援用され、アバターという自己表象が行動スキーマを活性化させると説明される。イー、ベイレンソン、デュシュノーによる2009年の追試研究では、仮想世界で生じた効果がその後の対面的相互作用にも持ち越されることが示され、ラタンらによる2020年のメタ分析（46実験）は小から中程度（相関係数0.22〜0.26）の一貫した効果量を確認した。VR・メタバース・オンラインゲームの設計、教育・リハビリテーション・ダイバーシティ研修への応用が進むほか、VTuberやアバターワークなど「なりたい自己」を介した就労・自己変容の議論にも接続され、デジタル自己表象が現実の自己に及ぼす影響を示す基礎理論として、メディア心理学とHCI研究の双方で重要性を増している。',
+    keyFigures: 'Yee, Nick （2007 The Proteus Effect, Human Communication Research）／Bailenson, Jeremy N. （2007 同上共著・スタンフォード大学VHIL創設者）／Ducheneaut, Nicolas （2009 Transformed Digital Self-Representation, Communication Research）／Ratan, Rabindra （2020 Media Psychology メタ分析）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1111/j.1468-2958.2007.00299.x', type: 'academic', label: 'Yee, N. & Bailenson, J.N. (2007) "The Proteus Effect: The Effect of Transformed Self-Representation on Behavior" — Human Communication Research 33(3):271–290（原典・Wiley）' },
+      { url: 'https://www.tandfonline.com/doi/full/10.1080/15213269.2019.1623698', type: 'academic', label: 'Ratan, Beyea, Li & Graciano (2020) "Avatar characteristics induce users\' behavioral conformity with small-to-medium effect sizes: a meta-analysis of the proteus effect" — Media Psychology 23(5)（46実験メタ分析）' },
+      { url: 'https://en.wikipedia.org/wiki/Proteus_effect', type: 'reference', label: 'Wikipedia: Proteus effect — Yee & Bailenson (2007)、自己知覚理論・SIDEモデルによる説明、追試・メタ分析の概観' },
+    ],
+  },
 ];
 // Stryker restore all
