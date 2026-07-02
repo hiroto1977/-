@@ -3,9 +3,14 @@ import {
   buildCorpus,
   KNOWLEDGE_CORPUS,
   extractTerms,
+  extractWeightedTerms,
+  extractContentRuns,
   retrieve,
+  retrieveScored,
   retrieveServices,
+  titleSimilarity,
   buildSystemPrompt,
+  buildOfflineKnowledgeAnswer,
   formatKnowledgeSection,
   formatServiceSection,
   ASSISTANT_BASE_INSTRUCTIONS,
@@ -111,5 +116,138 @@ describe('prompt assembly', () => {
     const prompt = buildSystemPrompt('補助金について教えて', services);
     expect(prompt).toContain('参考ナレッジ');
     expect(prompt).toContain('資金調達レーダー');
+  });
+
+  it('buildSystemPrompt accepts a multi-turn joined query (follow-up support)', () => {
+    const prompt = buildSystemPrompt('オークンの法則とは？\nそれを詳しく', []);
+    expect(prompt).toContain('オークン');
+  });
+});
+
+describe('buildCorpus v2', () => {
+  it('includes 経済史 yearly entries with structured titles', () => {
+    const hist = KNOWLEDGE_CORPUS.filter((d) => d.kind === '経済史');
+    expect(hist.length).toBeGreaterThan(50);
+    expect(hist[0]?.title).toMatch(/^\d{4}年（.+）の世界と日本の経済$/);
+  });
+
+  it('spans the full verified knowledge base (>4000 docs)', () => {
+    expect(KNOWLEDGE_CORPUS.length).toBeGreaterThan(4000);
+  });
+
+  it('injects the first source label into academic bodies', () => {
+    const academic = KNOWLEDGE_CORPUS.find((d) => d.kind === '学術概念');
+    expect(academic?.body).toContain('［出典:');
+  });
+});
+
+describe('extractWeightedTerms', () => {
+  it('gives weight 1 to ascii words and kanji/katakana bigrams', () => {
+    const w = new Map(extractWeightedTerms('GDP 補助金').map((x) => [x.t, x.w]));
+    expect(w.get('gdp')).toBe(1);
+    expect(w.get('補助')).toBe(1);
+  });
+
+  it('downweights hiragana-only (glue) bigrams below 1', () => {
+    const terms = extractWeightedTerms('について');
+    expect(terms.length).toBeGreaterThan(0);
+    for (const t of terms) expect(t.w).toBeLessThan(1);
+  });
+
+  it('keeps a lone kanji at weight 0.5', () => {
+    const w = new Map(extractWeightedTerms('税').map((x) => [x.t, x.w]));
+    expect(w.get('税')).toBe(0.5);
+  });
+});
+
+describe('extractContentRuns', () => {
+  it('extracts concept-name runs spanning katakana + kanji', () => {
+    expect(extractContentRuns('プロテウス効果とは？')).toContain('プロテウス効果');
+  });
+
+  it('returns [] for hiragana-only queries', () => {
+    expect(extractContentRuns('これはなんですか')).toEqual([]);
+  });
+});
+
+describe('titleSimilarity', () => {
+  it('is 1 for identical titles and 0 for disjoint ones', () => {
+    expect(titleSimilarity('オークンの法則', 'オークンの法則')).toBe(1);
+    expect(titleSimilarity('オークンの法則', 'ハドリー循環')).toBe(0);
+  });
+});
+
+describe('retrieveScored', () => {
+  const mk = (id: string, title: string, body: string): KnowledgeDoc => ({
+    id,
+    kind: '学術概念',
+    title,
+    body,
+  });
+
+  it('ranks rare terms above ubiquitous ones (IDF)', () => {
+    // 「経済」は全文書に現れ、「外部性」は 1 件のみ — 稀な語が勝つこと。
+    const corpus = [
+      mk('common1', '経済成長の基礎', '経済の話'),
+      mk('common2', '経済政策の概要', '経済の話'),
+      mk('common3', '経済史の視点', '経済の話'),
+      mk('rare', '外部性の理論', '経済における外部性の分析'),
+    ];
+    const out = retrieveScored('経済の外部性', 4, corpus);
+    expect(out[0]?.doc.id).toBe('rare');
+  });
+
+  it('drops documents matched only by glue (hiragana-only) bigrams', () => {
+    const corpus = [mk('glue', 'あるとき', 'それについて')];
+    expect(retrieveScored('これについて', 5, corpus)).toEqual([]);
+  });
+
+  it('returns scores in descending order', () => {
+    const out = retrieveScored('オークンの法則');
+    expect(out.length).toBeGreaterThan(0);
+    for (let i = 1; i < out.length; i++) {
+      expect(out[i]!.score).toBeLessThanOrEqual(out[i - 1]!.score);
+    }
+  });
+
+  it('collapses near-duplicate titles to one representative', () => {
+    const corpus = [
+      mk('d1', 'ネットワーク外部性', 'ネットワーク外部性の説明その1'),
+      mk('d2', 'ネットワーク外部性（補遺）', 'ネットワーク外部性の説明その2'),
+      mk('d3', 'メニューコスト', '価格変更の費用'),
+    ];
+    const ids = retrieveScored('ネットワーク外部性', 3, corpus).map((s) => s.doc.id);
+    expect(ids).toContain('d1');
+    expect(ids).not.toContain('d2');
+  });
+
+  it('finds a named concept via phrase bonus on the real corpus', () => {
+    const out = retrieve('プロテウス効果とは？', 3);
+    expect(out.some((d) => d.title.includes('プロテウス効果'))).toBe(true);
+  });
+});
+
+describe('buildOfflineKnowledgeAnswer', () => {
+  it('answers a named-concept query from the real corpus with provenance note', () => {
+    const out = buildOfflineKnowledgeAnswer('オークンの法則とは？');
+    expect(out).not.toBeNull();
+    expect(out!).toContain('確証済みナレッジ');
+    expect(out!).toContain('オークン');
+    expect(out!).toContain('AI 生成ではありません');
+  });
+
+  it('returns null when nothing clears the threshold', () => {
+    const corpus: KnowledgeDoc[] = [
+      { id: 'x', kind: '学術概念', title: 'メニューコスト', body: '価格変更の費用' },
+    ];
+    expect(buildOfflineKnowledgeAnswer('天気予報について', corpus)).toBeNull();
+  });
+});
+
+describe('ASSISTANT_BASE_INSTRUCTIONS v2', () => {
+  it('mandates citation footers, verbatim figures and clarifying questions', () => {
+    expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('参照:');
+    expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('出典 URL を創作しない');
+    expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('確認の質問');
   });
 });

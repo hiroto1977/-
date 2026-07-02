@@ -16,7 +16,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
-import { buildSystemPrompt, retrieveServices, type AssistantService } from '../data/assistantContext';
+import {
+  buildOfflineKnowledgeAnswer,
+  buildSystemPrompt,
+  retrieveServices,
+  type AssistantService,
+} from '../data/assistantContext';
 import { parseMarkdown, type Block, type InlineToken } from '../data/assistantMarkdown';
 import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
@@ -343,6 +348,20 @@ export function AssistantPage() {
   /** ルールエンジンによるオフライン応答 (フォールバック)。 */
   const replyOffline = (text: string) => {
     const reply = replyTo(text, chatContext);
+    // 解釈不能 (fallback) のときだけ確証済みナレッジの直答を先に試す。危機対応・
+    // 手取り計算・案内などの決定論インテントはルールエンジンの優先順位を維持する。
+    if (reply.kind === 'fallback') {
+      const knowledge = buildOfflineKnowledgeAnswer(text);
+      if (knowledge) {
+        append({
+          role: 'assistant',
+          text: knowledge,
+          services: retrieveServices(text, serviceCatalog),
+          offline: true,
+        });
+        return;
+      }
+    }
     const services = reply.navigateTo
       ? serviceCatalog.filter((s) => s.id === reply.navigateTo)
       : retrieveServices(text, serviceCatalog);
@@ -365,7 +384,11 @@ export function AssistantPage() {
       const turns = history
         .slice(-TURN_WINDOW)
         .map((m) => ({ role: m.role, content: m.text }));
-      const system = buildSystemPrompt(text, serviceCatalog);
+      // 追問 (「それを詳しく」等) で RAG 文脈が切れないよう、直前のユーザー発話を
+      // 検索クエリへ連結する (AI へ渡す会話履歴 turns とは別物)。
+      const prevUser = [...messages].reverse().find((m) => m.role === 'user')?.text ?? '';
+      const ragQuery = prevUser && prevUser !== text ? `${prevUser}\n${text}` : text;
+      const system = buildSystemPrompt(ragQuery, serviceCatalog);
       const res = await hub.invoke<{ text: string; model?: string; provider?: string }>(
         'assistant',
         'chat',
