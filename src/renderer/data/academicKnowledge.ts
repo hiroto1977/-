@@ -61172,5 +61172,91 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/0263276411424420', type: 'reference', label: 'SAGE Journals — Cheney-Lippold (2011), Theory, Culture & Society（査読誌掲載ページ・measurable type / soft biopolitics）' },
     ],
   },
+  {
+    id: 'econ-hirshleifer-private-social-value-information',
+    discipline: 'economics',
+    title: '情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる',
+    statement:
+      '情報の私的価値と社会的価値の乖離は、ジャック・ハーシュライファーが1971年の論文『情報の私的価値・社会的価値と発明活動への報酬』（American Economic Review誌61巻4号）で示した、私的に価値のある情報が社会全体には価値を生まない——時に負の価値すら持つ——という命題である。彼は情報を二種類に区別した。第一は「予見（foreknowledge）」で、時間が経てば自然に判明する事象（天候・収穫量・価格変動など）を人より早く知ることである。第二は「発見（discovery）」で、既に存在するが未知の事実（技術的発明や鉱床など）を突き止めることである。中心的な洞察は、予見的情報の私的価値がしばしばその社会的価値を大きく上回る点にある。予見は生産可能性そのものを変えず、実物の資源を増やさない。それは、情報を持つ者が持たない者を出し抜いて投機的取引で利得を得ることを可能にするだけで、その利得は社会全体で見れば一方から他方への純粋な再分配（ゼロサムの移転）にすぎない。したがって社会は、予見的情報の取得に社会的に最適な水準を超えて過剰に投資しうる——私的誘因が社会的便益を上回るためである。この論理は特許政策にも及ぶ。発明者は特許がなくとも、発明が価格に及ぼす影響を投機的に先取りして関連資産を売買することで報酬を得られるため、発明者が社会的価値を十分に専有できないという特許正当化論は過大評価されている可能性がある。この命題は情報の経済学の基礎をなし、インサイダー取引規制の根拠、金融市場での情報獲得競争がしばしば私的に有利でも社会的に浪費的でありうるという議論（レント消散）、R&Dや特許制度の設計へと広く影響した。',
+    keyFigures: 'ジャック・ハーシュライファー（1971 予見／発見を区別し情報の私的価値＞社会的価値を提示）／ケネス・アロー（1962 発明の専有困難による過少投資論、本論文の対比軸）／サンフォード・グロスマン＆ジョセフ・スティグリッツ（1980 情報獲得の私的誘因の精緻化）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v61y1971i4p561-74.html', type: 'academic', label: 'Hirshleifer, J. (1971) "The Private and Social Value of Information and the Reward to Inventive Activity" — American Economic Review 61(4):561-574（RePEc/IDEAS 書誌情報）' },
+      { url: 'https://people.duke.edu/~qc2/BA532/1971%20AER%20Hirshleifer.pdf', type: 'academic', label: 'Hirshleifer, J. (1971) 同論文フルテキストPDF（Duke University 配布）' },
+      { url: 'https://www.semanticscholar.org/paper/The-Private-and-Social-Value-of-Information-and-the-Hirshleifer/61834260451736f541841b90b81be476a52b5231', type: 'reference', label: 'Semantic Scholar — Hirshleifer (1971) 論文記録（被引用・関連文献一覧）' },
+    ],
+  },
+  {
+    id: 'econ-maskin-monotonicity-nash-implementation',
+    discipline: 'economics',
+    title: 'マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件',
+    statement:
+      '遂行理論（implementation theory）は、各主体が私的な選好をもち戦略的に行動する状況で、社会的に望ましい結果を定める社会選択ルールを、そのナッシュ均衡の集合がルールの指定と常に一致するようなゲーム形式（メカニズム）として実現できるかを問う分野である。エリック・マスキンが1977年のMIT草稿（1999年に『Review of Economic Studies』66巻1号23-38頁「Nash Equilibrium and Welfare Optimality」として公刊）で基礎を築いた。中心概念「マスキン単調性」は、ある結果aが選好プロファイルRで選ばれ、別のプロファイルR′でaの相対的順位が誰にとっても下がらない（全員について弱く上昇する）ならば、aはR′でも選ばれねばならない、という条件である。マスキンは、この単調性がナッシュ遂行可能性の必要条件であり、主体が3人以上のとき単調性と「拒否権不在（no-veto-power）」を併せれば十分条件となることを、各主体が状態・結果・整数を申告する正準メカニズムの構成によって示した。含意として、直観的に望ましい多くのルール（一部の交渉解など）は単調性を満たさずナッシュ遂行不能となり、分権的制度で達成しうる社会目標の境界が明確化される。本結果は遂行理論を創始し、部分ゲーム完全遂行（ムーア＝レプロ）、ベイジアン遂行（ジャクソン、パルフリー＝スリヴァスタヴァ）、仮想遂行（アブレウ＝セン）へと展開し、マスキンは2007年にハーヴィッツ・マイヤーソンと共にノーベル経済学賞を受賞した。私的情報下でも自己利益的な主体の均衡行動が常に意図した結果を生むよう制度・報酬・投票規則を設計できるかという頑健性の問いを与え、組織統治とインセンティブ設計の理論的基礎をなす。',
+    keyFigures: 'エリック・マスキン（1999 マスキン単調性＝ナッシュ遂行の必要条件、単調性＋拒否権不在で十分性を証明）／レオニード・ハーヴィッツ（1972 メカニズム設計・誘因両立性の創始）／ジョン・ムーア＆ジョン・レプロ（1988 部分ゲーム完全遂行への拡張）／トマス・パルフリー＆サンジェイ・スリヴァスタヴァ（1987 ベイジアン遂行への一般化）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1111/1467-937X.00076', type: 'academic', label: 'Maskin, E. (1999) Nash Equilibrium and Welfare Optimality — The Review of Economic Studies, 66(1), 23-38' },
+      { url: 'https://ideas.repec.org/a/oup/restud/v66y1999i1p23-38..html', type: 'academic', label: 'RePEc/IDEAS — Maskin (1999) Nash Equilibrium and Welfare Optimality, Review of Economic Studies 66(1):23-38' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'government', label: 'Nobel Committee (2007) Scientific Background: Mechanism Design Theory — implementation theory, Maskin monotonicity and Nash implementation' },
+    ],
+  },
+  {
+    id: 'mgmt-enabling-coercive-bureaucracy',
+    discipline: 'management',
+    title: 'イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる',
+    statement:
+      'イネーブリング官僚制とは、組織の規則・手続き・公式化（フォーマライゼーション）が従業員に及ぼす効果は、その「量」ではなく「型」と設計プロセスに依存するとし、支援的（enabling）と強制的（coercive）の二類型を対置する組織論である。ポール・S・アドラーとブライアン・ボリスが1996年に『Administrative Science Quarterly』誌の論文「Two Types of Bureaucracy: Enabling and Coercive」で提唱した。公式化が職務満足を高めるという知見と、疎外や不満を招くという知見が併存する矛盾を、両者は装置・技術の設計論から借用して解消した。すなわち規則を、従業員の熟達を助ける「良い道具」として設計するか、怠業者に服従を強いる管理・監視の手段として設計するかで効果が分かれる。支援型を特徴づけるのは四つの設計属性——修復可能性（利用者が不具合を直し改良できる）、内部透明性（局所的プロセスの論理の可視化）、全体透明性（システム全体の中での位置づけの理解）、柔軟性（利用者による修正・逸脱の許容）——であり、高度な公式化であっても支援的たりうると論じた。この枠組みは組織行動論・人的資源管理・生産管理に広く波及し、トヨタ生産方式を支援型官僚制と捉える議論や、管理会計におけるイネーブリング・コントロール（アーレンズ＆チャップマン2004）へと展開した。マネジャーは規則や業績評価システムを、透明で柔軟かつ参加的に設計することで、効率と従業員のコミットメントを両立できるという実践的示唆を与える。',
+    keyFigures: 'ポール・S・アドラー（Paul S. Adler, 1996・イネーブリング／強制的官僚制の二類型を提唱）／ブライアン・ボリス（Bryan Borys, 1996・共著者）／トマス・アーレンズ＆クリストファー・S・チャップマン（Ahrens & Chapman, 2004・管理会計の制御システムへ拡張しイネーブリング・コントロールを実証）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.jstor.org/stable/2393986', type: 'academic', label: 'Adler, P. S. & Borys, B. (1996) "Two Types of Bureaucracy: Enabling and Coercive," Administrative Science Quarterly 41(1):61-89 (JSTOR)' },
+      { url: 'https://faculty.marshall.usc.edu/Paul-Adler/research/ASQ%20copy-1.pdf', type: 'academic', label: 'Adler & Borys (1996) full text — Paul S. Adler faculty page, USC Marshall School of Business (author-hosted primary source)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1506/VJR6-RP75-7GUX-XH0X', type: 'academic', label: 'Ahrens, T. & Chapman, C. S. (2004) "Accounting for Flexibility and Efficiency: A Field Study of Management Control Systems in a Restaurant Chain," Contemporary Accounting Research 21(2):271-301 (Wiley) — enabling/coercive control extension' },
+    ],
+  },
+  {
+    id: 'human-biological-motion-johansson',
+    discipline: 'human-science',
+    title: 'バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象',
+    statement:
+      'バイオロジカルモーション（生物学的運動）とは、ヒトや動物の身体運動を関節部に付けた十数個の光点（ポイントライト）の動きだけで提示しても、観察者がそれを瞬時に生きた人物の歩行や動作として知覚する現象を指す。スウェーデンの知覚心理学者グンナー・ヨハンソンが1973年の論文（Perception & Psychophysics誌）で確立した。頭・肩・肘・手首・腰・膝・足首などに光点を付した人物を暗所で撮影すると、静止した一枚では無意味な点の集合にしか見えないが、いったん動き出すとおよそ0.1〜0.2秒で観察者は明確に「歩く人」を知覚する。しかも点の相対運動だけから、歩行者の性別・個人の同定・情動・動作の種類まで読み取れることが後続研究で示された。ヨハンソンは、視覚系が点群の運動を共通運動と相対運動へ階層的に分解し関節構造を復元すると説明した（ベクトル分析モデル）。この知覚は全体的処理に依存し、刺激を上下反転させると成績が著しく低下する（倒立効果）。頑健性はきわめて高く、生後まもない乳児やふ化直後のヒヨコも直立した生物運動を選好することから、進化的に古い生得的な検出機構の存在が示唆される（シミオンら2008）。神経基盤としては後部上側頭溝（pSTS）が中心的役割を担い、自閉スペクトラム症では感度の低下が報告される。ビジネス面では、映像・ゲーム制作のモーションキャプチャ、遠距離からの本人特定に用いる歩容認証、自動運転車の歩行者検知、アバターやロボットの自然な動作生成など、人物の動きを読み解く技術の理論的基盤となっている。',
+    keyFigures: 'グンナー・ヨハンソン（1973・光点表示による生物学的運動知覚の確立） ／ ジェームズ・カッティング＆リン・コズロウスキー（1977・光点歩行者からの性別・個人の識別） ／ ランドルフ・ブレイク＆マギー・シフラー（2007・総説と後部上側頭溝の役割） ／ フランチェスカ・シミオン（2008・新生児の生得的選好）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.3758/BF03212378', type: 'academic', label: 'Johansson, G. (1973) Visual Perception of Biological Motion and a Model for Its Analysis — Perception & Psychophysics, 14(2), 201-211（バイオロジカルモーションと光点表示の原典）' },
+      { url: 'https://doi.org/10.1146/annurev.psych.57.102904.190152', type: 'academic', label: 'Blake, R. & Shiffrar, M. (2007) Perception of Human Motion — Annual Review of Psychology, 58, 47-73（生物学的運動知覚の総説・後部上側頭溝の役割）' },
+      { url: 'https://doi.org/10.1073/pnas.0707021105', type: 'academic', label: 'Simion, F., Regolin, L. & Bulf, H. (2008) A Predisposition for Biological Motion in the Newborn Baby — PNAS, 105(2), 809-813（新生児の生得的選好の実証）' },
+      { url: 'https://en.wikipedia.org/wiki/Biological_motion_perception', type: 'reference', label: 'Wikipedia: Biological motion perception — Johansson point-light walker, posterior STS, inversion effect, applications (gait recognition, motion capture)' },
+    ],
+  },
+  {
+    id: 'bizlaw-assumption-of-risk',
+    discipline: 'business-law',
+    title: '危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁',
+    statement:
+      '危険の引受（assumption of risk）とは、原告が特定の危険を現実に認識・理解した上で任意にこれを引き受けた場合、その危険の現実化により生じた損害について被告の不法行為責任を否定するコモンロー上の積極的抗弁であり、「承諾する者に不法行為は成立しない（volenti non fit injuria）」とのローマ法起源の法諺に淵源する。成立には①当該危険の現実的な認識・評価と②その自発的な引受という二要件を要する。Cardozo判事のMurphy v. Steeplechase Amusement Co., 250 N.Y. 479 (1929)——遊園地の遊具「The Flopper」で転倒した客の請求を斥け「臆病な者は家にいればよい」と述べた判決——が、活動に内在し明白かつ不可避な危険を参加者は引き受けるとの古典的定式を示した。Restatement (Second) of Torts §496A以下（1965）は、契約による明示的引受と黙示的引受を区別し、後者を、被告が注意義務自体を負わない一次的引受（活動内在的危険）と、被告の過失が生んだ既知の危険にあえて接近する二次的引受とに分けた。Knight v. Jewett, 3 Cal. 4th 296 (1992)はこの一次・二次の枠組みを比較過失時代に確立した指導判例である。もっとも1970年代以降、寄与過失（完全免責）から比較過失への転換に伴い、二次的黙示的引受は比較過失に吸収され独立の抗弁性を失う州が多く、Restatement (Third): Apportionment of Liability §2（2000）もこれを責任分配に統合し、明示的引受と無責構成の一次的引受のみを存置した。重過失・無謀行為には及ばず、引受が真に任意でない場合にも成立しない。本法理は、スポーツ・フィットネス・アドベンチャー観光・イベント運営等の事業が用いる免責同意書・自己責任条項の理論的基盤をなし、事業のリスク配分と保険設計に直結する実務的意義を持つ。',
+    keyFigures: 'ベンジャミン・カードーゾ判事（Murphy v. Steeplechase Amusement Co., 1929）／Knight v. Jewett, 3 Cal. 4th 296（Cal. 1992）／Fleming James Jr.（"Assumption of Risk", 61 Yale L.J. 141, 1952）／Restatement (Second) of Torts §496A（ALI, 1965）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://openyls.law.yale.edu/bitstream/handle/20.500.13051/13846/22_61YaleLJ141_1952_.pdf', type: 'academic', label: 'Fleming James, Jr., "Assumption of Risk," 61 Yale Law Journal 141 (1952)' },
+      { url: 'https://law.justia.com/cases/california/supreme-court/4th/3/296.html', type: 'reference', label: 'Justia — Knight v. Jewett, 3 Cal. 4th 296, 834 P.2d 696 (Cal. 1992) (primary vs. secondary assumption of risk)' },
+      { url: 'https://www.courtlistener.com/opinion/3595079/murphy-v-steeplechase-amusement-co/', type: 'reference', label: 'CourtListener — Murphy v. Steeplechase Amusement Co., 250 N.Y. 479, 166 N.E. 173 (1929) (Cardozo, J.)' },
+      { url: 'https://www.uclalawreview.org/wp-content/uploads/2019/09/32_50UCLALRev4812002-2003.pdf', type: 'academic', label: 'Kenneth W. Simons, "Reflections on Assumption of Risk," 50 UCLA Law Review 481 (2002)' },
+    ],
+  },
+  {
+    id: 'infosoc-technical-code',
+    discipline: 'information-sociology',
+    title: '技術的コード——技術設計に埋め込まれ中立を装う支配的社会利害',
+    statement:
+      '技術的コード（technical code）とは、技術設計そのものに支配的な社会集団の利害・価値・イデオロギーが埋め込まれ、それがあたかも中立的な技術的必然であるかのように制度化される様式を指す概念である。アンドリュー・フィーンバーグが『技術批判理論』（Critical Theory of Technology, オックスフォード大学出版局, 1991）で定式化し、『技術への問い』（Questioning Technology, Routledge, 1999）で精緻化した。ヘルベルト・マルクーゼに学んだフィーンバーグは、フランクフルト学派の批判理論とSTS（科学技術社会論）の構築主義を接合し、技術は「過少決定（underdetermination）」される——同じ課題に対し技術的合理性だけでは設計は一意に定まらず複数の実行可能解が残る——と論じる。その余剰を埋めるのが社会的利害であり、いったん選択された解は技術的コードとして凍結され、支配集団の覇権的合理性を再生産する。彼はこの過程を一次道具化（機能化・脱文脈化）と二次道具化（社会的文脈への再埋め込み）から成る道具化理論として整理した。19世紀の児童労働や労働日の長さが技術的必然ではなく資本の利害を体現したコードだった例や、フランスの通信端末ミニテルが設計者の意図に反し利用者により対話メディアへ転用された例（民主的合理化）が挙げられる。批判理論とSCOTの橋渡しと評価される一方、民主的合理化の楽観性への批判もある。技術ガバナンス・参加型設計や、企業のプロダクト設計に潜む価値選択の可視化に示唆を与える。',
+    keyFigures: 'アンドリュー・フィーンバーグ（1991『Critical Theory of Technology』／1999『Questioning Technology』）／ヘルベルト・マルクーゼ（批判理論・師）／対比: ピンチ＆バイカー（SCOT）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.4324/9780203022313', type: 'academic', label: 'Feenberg, A. (1999) Questioning Technology. London/New York: Routledge (DOI 10.4324/9780203022313) — 技術的コードの定義・道具化理論・ミニテル事例' },
+      { url: 'https://doi.org/10.1080/00201749208602296', type: 'academic', label: 'Feenberg, A. (1992) "Subversive Rationalization: Technology, Power, and Democracy," Inquiry 35(3-4), 301-322 (DOI 10.1080/00201749208602296) — 過少決定・民主的合理化' },
+      { url: 'https://en.wikipedia.org/wiki/Andrew_Feenberg', type: 'reference', label: 'Wikipedia: Andrew Feenberg — critical theory of technology, technical code, instrumentalization theory, student of Herbert Marcuse' },
+    ],
+  },
 ];
 // Stryker restore all
