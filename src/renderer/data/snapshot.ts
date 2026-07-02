@@ -21,7 +21,7 @@ export const SNAPSHOT = {
     isMock: true,
   },
   assistant: {
-    note: 'AI アシスタントは Claude を頭脳に、確証済みナレッジと全サービスを統合して応答します',
+    note: 'AI アシスタントは選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、確証済みナレッジと全サービスを統合して応答します',
     capabilities: [
       '質問への的確な回答',
       '経営・法務・労務・税務のアドバイス (確証済みナレッジに基づく)',

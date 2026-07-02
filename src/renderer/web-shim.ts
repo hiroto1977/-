@@ -99,6 +99,13 @@ import {
   type Transport,
 } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
+import { AI_PROVIDERS } from '../shared/ai/providers';
+import {
+  parseAiCredentials,
+  providerStatuses,
+  resolveProvider,
+} from '../shared/ai/credentials';
+import { runAiChat } from '../shared/ai/chat';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
@@ -525,10 +532,11 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   return ok(entry);
 }
 
-// --- Anthropic AI アシスタント (browser-direct) -----------------------
+// --- マルチエージェント AI アシスタント (browser) ----------------------
 // assistant/chat: renderer が組み立てた system プロンプト + 会話履歴を、Vault の
-// 'assistant'（無ければ共有の 'anthropic'）キーで直接 Anthropic へ中継する。
-const ASSISTANT_MODEL_WEB = 'claude-sonnet-4-6';
+// 'assistant'（無ければ共有の 'anthropic'）スロットの資格情報 (JSON マルチプロバイダ
+// または生 Anthropic キー) で解決したプロバイダへ、共有レイヤ (shared/ai) 経由で中継。
+// CORS 直呼び出し不可のプロバイダ (OpenAI / 互換 API) は BYO プロキシを使う。
 
 interface AssistantTurnWeb {
   role: 'user' | 'assistant';
@@ -550,6 +558,24 @@ function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
   return out.slice(-40);
 }
 
+/** Vault の assistant (fallback: anthropic) スロットから資格情報文字列を読む。 */
+async function readAssistantCredsRaw(): Promise<
+  { ok: true; raw: string | null } | { ok: false; res: ActionResult<never> }
+> {
+  try {
+    const raw = (await vault.getToken('assistant')) ?? (await vault.getToken('anthropic'));
+    return { ok: true, raw };
+  } catch {
+    return {
+      ok: false,
+      res: err(
+        'not_configured',
+        'Vault がロックされています。再読み込みしてマスターパスワードを入力してください',
+      ),
+    };
+  }
+}
+
 async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
   const turns = sanitizeAssistantTurns(payload['messages']);
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
@@ -557,53 +583,65 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   }
   const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
 
-  let apiKey: string | null = null;
-  try {
-    apiKey = (await vault.getToken('assistant')) ?? (await vault.getToken('anthropic'));
-  } catch {
-    return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
-  }
-  if (!apiKey) {
-    return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
+  const credsRead = await readAssistantCredsRaw();
+  if (!credsRead.ok) return credsRead.res;
+  if (!credsRead.raw) {
+    return err(
+      'not_configured',
+      'AI プロバイダが未設定です。アシスタントの「エージェント設定」または「設定」ページから API キーを保存してください',
+    );
   }
 
-  let res: Response;
+  const creds = parseAiCredentials(credsRead.raw);
+  const requested = typeof payload['provider'] === 'string' ? (payload['provider'] as string) : undefined;
+  let resolved;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: ASSISTANT_MODEL_WEB,
-        max_tokens: 2048,
-        ...(system ? { system } : {}),
-        messages: turns,
-      }),
-    });
+    resolved = resolveProvider(creds, requested && requested.length > 0 ? requested : undefined);
   } catch (e) {
-    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
+    return err('not_configured', e instanceof Error ? e.message : String(e));
   }
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    return err('action_failed', `Anthropic API ${res.status}: ${body.slice(0, 200)}`);
+
+  // CORS 直呼び出し不可のプロバイダは BYO プロキシ (Cloudflare Worker) を経由する。
+  const spec = AI_PROVIDERS[resolved.id];
+  let fetchFn: typeof fetch | undefined;
+  if (!spec.browserDirect) {
+    const proxyCfg = await getProxyConfig().catch(() => null);
+    if (!proxyCfg) {
+      return err(
+        'not_configured',
+        `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
+      );
+    }
+    fetchFn = (input, init) => fetchViaProxy(String(input), init ?? {}, proxyCfg);
   }
-  let parsed: { content?: { type: string; text?: string }[] };
+
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
-  } catch {
-    return err('action_failed', 'API 応答が JSON ではありません');
+    const result = await runAiChat({
+      provider: resolved.id,
+      cfg: { ...resolved.cfg, browser: true },
+      request: {
+        model:
+          typeof payload['model'] === 'string' && (payload['model'] as string).length > 0
+            ? (payload['model'] as string)
+            : undefined,
+        system: system || undefined,
+        messages: turns,
+        maxTokens: 2048,
+      },
+      fetchFn,
+    });
+    return ok(result);
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
   }
-  const text = (parsed.content ?? [])
-    .filter((b) => b.type === 'text' && typeof b.text === 'string')
-    .map((b) => b.text as string)
-    .join('')
-    .trim();
-  if (text.length === 0) return err('action_failed', 'API 応答にテキストブロックがありません');
-  return ok({ text, model: ASSISTANT_MODEL_WEB });
+}
+
+/** assistant/providers: 各 AI プロバイダの設定状況 (エージェント選択 UI 用)。 */
+async function callAssistantProviders(): Promise<ActionResult<unknown>> {
+  const credsRead = await readAssistantCredsRaw();
+  if (!credsRead.ok) return credsRead.res;
+  const creds = parseAiCredentials(credsRead.raw);
+  return ok({ providers: providerStatuses(creds) });
 }
 
 interface SnapshotBusinessUnit {
@@ -1013,9 +1051,13 @@ const shim = {
       return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
     }
 
-    // AI アシスタント (Anthropic) — direct browser call with Vault-stored key.
+    // マルチエージェント AI アシスタント — Vault の資格情報で解決したプロバイダ
+    // (Claude/ChatGPT/Gemini/Ollama/互換API) を直接または BYO プロキシ経由で呼ぶ。
     if (serviceId === 'assistant' && action === 'chat') {
       return (await callAssistantChat(payload)) as ActionResult<T>;
+    }
+    if (serviceId === 'assistant' && action === 'providers') {
+      return (await callAssistantProviders()) as ActionResult<T>;
     }
 
     // Business advisor (Anthropic) — direct browser call with Vault-stored key.

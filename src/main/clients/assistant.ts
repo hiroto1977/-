@@ -1,31 +1,40 @@
 /**
- * Assistant service — the knowledge-grounded AI チャットボット の頭脳 (Claude API)。
+ * Assistant service — マルチエージェント AI ハブの頭脳。
+ *
+ * `src/shared/ai/` のプロバイダ非依存レイヤを介して、Anthropic (Claude) /
+ * OpenAI (ChatGPT) / Google Gemini / Ollama (ローカル) / OpenAI 互換 API
+ * (LiteLLM・Groq・DeepSeek・LM Studio 等) のいずれとも会話できる。
  *
  * このモジュールは Electron main プロセス側の**薄い中継層**に徹する:
  *   - `fetchAssistantSnapshot` — トークン設定状況だけを返す (会話状態は renderer)。
  *   - `ACTIONS.chat` — renderer が組み立てた system プロンプト (確証済みナレッジ +
- *     サービスカタログを RAG 注入したもの) と会話履歴を Anthropic Messages API へ
- *     中継し、アシスタントの本文 (Markdown) を返す。
+ *     サービスカタログを RAG 注入したもの) と会話履歴を、payload.provider (省略時は
+ *     資格情報の既定プロバイダ) の API へ中継し、本文 (Markdown) を返す。
+ *   - `ACTIONS.providers` — 各プロバイダの設定状況 (UI のエージェント選択用)。
  *
  * RAG の文脈構築・成果物 (表など) の描画は renderer 側 (`data/assistantContext.ts` /
  * `data/assistantMarkdown.ts` / `pages/AssistantPage.tsx`) の責務。ここでは I/O と
  * 入力検証・整形だけを行い、純粋ヘルパーは単体テスト用に export する。
  *
- * トークンは 'assistant' スロットの ANTHROPIC API キー (ctx.token)。ブラウザ版は
- * web-shim が Vault の 'assistant' / 'anthropic' キーで直接 Anthropic を呼ぶ。
+ * トークンは 'assistant' スロット (ctx.token)。JSON 形式のマルチプロバイダ資格情報
+ * (`src/shared/ai/credentials.ts` 参照) と、生の Anthropic API キー (後方互換) の
+ * 両方を受け付ける。ブラウザ版は web-shim が Vault の 'assistant' / 'anthropic'
+ * キーで同じ共有レイヤ経由の呼び出しを行う。
  */
 
+import type { ActionContext, ActionMap, FetchContext } from './types';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 import {
-  jsonFetch,
-  type ActionContext,
-  type ActionMap,
-  type FetchContext,
-} from './types';
+  parseAiCredentials,
+  providerStatuses,
+  resolveProvider,
+} from '../../shared/ai/credentials';
+import { runAiChat } from '../../shared/ai/chat';
 
 // Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 
-/** 既定モデル: バランス型の Sonnet (既存の business / stocks アドバイザーと統一)。 */
-export const ASSISTANT_MODEL = 'claude-sonnet-4-6';
+/** 既定モデル: Anthropic プロバイダの既定 (後方互換の再エクスポート)。 */
+export const ASSISTANT_MODEL = AI_PROVIDERS.anthropic.defaultModel;
 /** 応答の最大トークン (表・箇条書きなどの成果物に十分な余裕)。 */
 export const ASSISTANT_MAX_TOKENS = 2048;
 
@@ -54,7 +63,7 @@ const CAPABILITIES: readonly string[] = [
 
 export function fetchAssistantSnapshot(ctx: FetchContext): Promise<AssistantSnapshot> {
   return Promise.resolve({
-    note: 'AI アシスタントは Claude を頭脳に、確証済みナレッジと全サービスを統合して応答します',
+    note: 'AI アシスタントは選択した AI エージェント (Claude / ChatGPT / Gemini / Ollama / 互換API) を頭脳に、確証済みナレッジと全サービスを統合して応答します',
     capabilities: CAPABILITIES,
     keyConfigured: Boolean(ctx.token),
   });
@@ -71,6 +80,8 @@ interface ChatPayload {
   messages?: unknown;
   system?: unknown;
   model?: unknown;
+  /** 呼び出す AI プロバイダ ('anthropic'|'openai'|'gemini'|'ollama'|'compat')。省略時は既定。 */
+  provider?: unknown;
 }
 interface AnthropicResponse {
   content: Array<{ type: string; text?: string }>;
@@ -106,43 +117,52 @@ export function extractAssistantText(res: AnthropicResponse): string {
   return parts.join('').trim();
 }
 
-async function chat(ctx: ActionContext): Promise<{ text: string; model: string }> {
-  const { messages, system, model } = ctx.payload as unknown as ChatPayload;
+async function chat(
+  ctx: ActionContext,
+): Promise<{ text: string; model: string; provider: string }> {
+  const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
   if (turns[turns.length - 1]?.role !== 'user') {
     throw new Error('最後の発話は user である必要があります');
   }
-  if (!ctx.token) throw new Error('Anthropic API キーが必要です (assistant のトークンを設定してください)');
+  if (!ctx.token) {
+    throw new Error(
+      'AI プロバイダの API キーが必要です (assistant のトークンに API キーまたは JSON 資格情報を設定してください)',
+    );
+  }
 
   const sys = typeof system === 'string' ? system.slice(0, MAX_SYSTEM) : '';
-  const useModel = typeof model === 'string' && model.length > 0 ? model : ASSISTANT_MODEL;
 
-  const res = await jsonFetch<AnthropicResponse>(
-    'https://api.anthropic.com/v1/messages',
-    {
-      method: 'POST',
-      headers: {
-        'x-api-key': ctx.token,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: useModel,
-        max_tokens: ASSISTANT_MAX_TOKENS,
-        ...(sys ? { system: sys } : {}),
-        messages: turns.map((t) => ({ role: t.role, content: t.content })),
-      }),
-    },
-    { fetch: ctx.fetch, serviceId: 'assistant' },
+  // トークンを資格情報として解析 (生キーは Anthropic として後方互換)、
+  // payload.provider (省略時は既定プロバイダ) を解決して共有レイヤで実行する。
+  const creds = parseAiCredentials(ctx.token);
+  const resolved = resolveProvider(
+    creds,
+    typeof provider === 'string' && provider.length > 0 ? provider : undefined,
   );
+  const result = await runAiChat({
+    provider: resolved.id,
+    cfg: resolved.cfg,
+    request: {
+      model: typeof model === 'string' && model.length > 0 ? model : undefined,
+      system: sys || undefined,
+      messages: turns,
+      maxTokens: ASSISTANT_MAX_TOKENS,
+    },
+    fetchFn: ctx.fetch,
+  });
+  return { text: result.text, model: result.model, provider: result.provider };
+}
 
-  const text = extractAssistantText(res);
-  if (text.length === 0) throw new Error('Anthropic がテキスト応答を返しませんでした');
-  return { text, model: useModel };
+/** 各 AI プロバイダの設定状況 (UI のエージェント選択・接続チップ用)。 */
+async function providers(ctx: ActionContext): Promise<{ providers: unknown[] }> {
+  const creds = parseAiCredentials(ctx.token);
+  return Promise.resolve({ providers: providerStatuses(creds) });
 }
 
 export const ACTIONS: ActionMap = {
   chat,
+  providers,
 };
 // Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
