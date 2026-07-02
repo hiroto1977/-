@@ -61087,5 +61087,90 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1177/13548565211070409', type: 'academic', label: 'Martínez, C. & Olsson, T. (2022) The warm expert — a warm teacher? Learning about digital media in intergenerational interaction — Convergence 28(6)' },
     ],
   },
+  {
+    id: 'econ-baumol-oates-standards-charges',
+    discipline: 'economics',
+    title: 'ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する',
+    statement:
+      '標準・価格アプローチ（standards-and-charges approach）は、ウィリアム・ボーモルとウォレス・オーツが1971年にSwedish Journal of Economics（73巻1号、42-54頁）に発表した論文「環境保護のための標準と価格の利用」で提示した、実行可能な環境政策の設計原理である。ピグー税が汚染の限界社会的費用（限界損害）を正確に把握し社会的最適点で課税することを要求するのに対し、現実には損害関数の計測が極めて困難なため、両者はこの「最適」の探求を断念する。代わりに、まず政治的・行政的判断で環境質の到達目標（許容水準＝スタンダード）を外生的に設定し、次に全排出源へ一律の排出課徴金（単位当たり料金）を課し、目標が達成されるまで試行錯誤的に料金水準を調整すればよいと説いた。核心は、一律の課徴金が各排出源の限界削減費用を課徴金額に等しくなる点まで削減させるため、削減費用の低い主体ほど多く削減し、与えられた総削減目標を社会全体で最小費用（費用効率的）に達成できるという最小費用定理にある。企業ごとに一律の排出基準を課す直接規制（command-and-control）は限界削減費用を均等化できず、同じ環境目標をより高い費用でしか達成できない点で劣る。この構想は排出課徴金・環境税を現実的な政策手段として正当化し、後の主著『環境政策の理論』（1975年、第2版1988年）で体系化されて環境経済学の基礎理論となり、ピグー税やデイルズ＝モンゴメリーの排出量取引と並ぶ市場ベース手段の中核をなす。炭素税や産業排水課徴金の制度設計に直接応用され、目標達成と費用最小化を両立させる指針を実務に与えている。',
+    keyFigures: 'William J. Baumol（1922-2017、1971年論文の共著者・標準・価格アプローチと最小費用定理）／Wallace E. Oates（共著者・『環境政策の理論』1975で体系化）／A.C. ピグー（1920・限界損害に基づく最適点課税＝ピグー税との対比）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.jstor.org/stable/3439132', type: 'academic', label: 'Baumol, W. J. & Oates, W. E. (1971) "The Use of Standards and Prices for Protection of the Environment", The Swedish Journal of Economics 73(1): 42-54 (JSTOR)' },
+      { url: 'https://doi.org/10.1017/CBO9781139173513', type: 'academic', label: 'Baumol, W. J. & Oates, W. E. (1988) The Theory of Environmental Policy, 2nd ed., Cambridge University Press（標準・価格アプローチと最小費用定理の体系化）' },
+      { url: 'https://www.epa.gov/environmental-economics/economic-incentives', type: 'government', label: 'U.S. EPA "Economic Incentives" — pollution taxes/fees・emissions charges を費用効率的な環境規制手段として解説' },
+    ],
+  },
+  {
+    id: 'econ-chamley-judd-theorem',
+    discipline: 'economics',
+    title: 'チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである',
+    statement:
+      'チャムリー＝ジャッド定理とは、無限期間を生きる代表的家計（または遺産で連なる王朝的家計）を想定する動学的一般均衡モデルにおいて、長期（定常状態）の最適な資本所得税率はゼロになるという公共経済学・最適課税論の中心的命題である。ケネス・ジャッドが1985年に『Journal of Public Economics』誌（28巻1号）で資本家と労働者から成るモデルにより、またクリストフ・チャムリーが1986年に『Econometrica』誌（54巻3号）でラムゼー型成長モデルにより、それぞれ独立に導いた。核心の論理は、一定率の資本所得課税が遠い将来の消費に対して時間とともに複利的に拡大（発散）する暗黙の税を課すことに等しく、異時点間の限界代替に無限に増大する歪みを生むという点にある。この発散する歪みを避けるには、長期の資本所得税をゼロとし、労働所得税・消費税と既存資本への一括的な初期課税（移行期の高率課税は許容される）に依存すべきだと結論づける。含意として貯蓄・投資への長期課税を効率性の観点から強く戒め、支出税・二元的所得税など資本軽課の税制改革論を支えた。アトキンソン＝スティグリッツ定理と整合的である一方、ストラウブ＝ワーニング（2020年『American Economic Review』）は異時点間代替弾力性が1未満なら長期でも正の資本課税が最適になりうると示し、私的情報を扱う新動学的公共財政の研究とともにゼロ命題の頑健性を問い直している。',
+    keyFigures: 'ケネス・ジャッド（1985 Journal of Public Economicsで再分配モデルにより長期資本税ゼロを導出）／クリストフ・チャムリー（1986 Econometricaで無限期間の一般均衡モデルにより独立に証明）／ルートヴィヒ・ストラウブ＆イヴァン・ワーニング（2020 ゼロ命題の頑健性を再検討し弾力性次第で正の長期資本課税を示す）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.jstor.org/stable/1911310', type: 'academic', label: 'Chamley, C. (1986) Optimal Taxation of Capital Income in General Equilibrium with Infinite Lives — Econometrica 54(3): 607-622' },
+      { url: 'https://doi.org/10.1016/0047-2727(85)90020-9', type: 'academic', label: 'Judd, K. L. (1985) Redistributive Taxation in a Simple Perfect Foresight Model — Journal of Public Economics 28(1): 59-83' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.20150210', type: 'academic', label: 'Straub, L. & Werning, I. (2020) Positive Long-Run Capital Taxation: Chamley-Judd Revisited — American Economic Review 110(1): 86-119' },
+    ],
+  },
+  {
+    id: 'mgmt-time-based-competition',
+    discipline: 'management',
+    title: '時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム',
+    statement:
+      '時間ベース競争（タイムベース競争）とは、製品開発・生産・受注から納品までに要する時間そのものを、コストや品質と並ぶ第三の競争優位の源泉と位置づける戦略パラダイムである。ボストン・コンサルティング・グループのジョージ・スタルク・ジュニアが1988年にHarvard Business Review誌の論文「Time—The Next Source of Competitive Advantage」で提唱し、トーマス・ハウトとの共著『Competing Against Time』（1990年）で体系化した。中核となる論理は、企業のバリューチェーンにおいて実際に付加価値を生んでいる時間は総リードタイムの数%に過ぎず、大半は在庫・待ち・停滞に費やされているという観察にある。したがって工程間の滞留を削減し時間を圧縮すれば、在庫と間接費が減り、需要変動への応答が速まり、製品の多様化と市場投入速度が同時に高まるという好循環（自己強化ループ）が生じる。実証的にはトヨタ生産方式、ホンダとヤマハのオートバイをめぐる競争（H-Y戦争）、家電・工具・複写機などの日本企業の分析からこの原理が抽出され、リードタイムを競合の数分の一に短縮した企業が価格プレミアムとシェア拡大を実現した事例が示された。本概念はその後のリーン生産、クイック・レスポンス、コンカレント・エンジニアリング、アジャイル開発、タイム・トゥ・マーケット論へと発展し、時間を管理指標とする経営の基礎を築いた。実務的には、開発・製造・物流・サービスの各プロセスで滞留時間を可視化し削減することが、コスト削減と差別化を同時に達成する有力な打ち手となることを示唆する。',
+    keyFigures: 'ジョージ・スタルク・ジュニア（George Stalk Jr., 1988 HBR論文で提唱）／トーマス・ハウト（Thomas M. Hout, 1990『Competing Against Time』共著）／ボストン・コンサルティング・グループ（BCG, 日本企業分析から概念を抽出）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage', type: 'academic', label: 'Stalk, G. Jr. (1988) "Time—The Next Source of Competitive Advantage," Harvard Business Review 66(4):41-51（時間ベース競争の提唱原典）' },
+      { url: 'https://link.springer.com/chapter/10.1007/978-3-642-27922-5_16', type: 'academic', label: 'Stalk, G. Jr. "Time — The Next Source of Competitive Advantage" — SpringerLink（原論文の書籍再録・書誌）' },
+      { url: 'https://www.referenceforbusiness.com/management/Str-Ti/Time-Based-Competition.html', type: 'reference', label: 'Reference for Business — "Time-Based Competition"（付加価値時間比率・事例・派生概念の概説）' },
+    ],
+  },
+  {
+    id: 'human-face-inversion-effect-yin',
+    discipline: 'human-science',
+    title: '顔倒立効果——倒立させると顔だけが不釣り合いに認識困難になる現象',
+    statement:
+      '顔倒立効果（face inversion effect）とは、上下逆さまに提示された顔の同定・再認成績が直立時に比べて著しく低下し、しかもその低下幅が家屋や飛行機など他の物体を倒立させた場合よりはるかに大きいという知覚現象である。ロバート・K・インが1969年に『Journal of Experimental Psychology』誌の論文「Looking at upside-down faces」で報告した。インは顔・家屋・飛行機・棒人間の再認記憶を直立条件と倒立条件で比較し、いずれの刺激も倒立で成績が落ちるが顔だけが不釣り合いに大きな損失を被ることを示した。この非対称性は、直立顔が目・鼻・口といった部分の空間的配置（第二次関係情報）を一括処理する「全体的（ホリスティック／配置的）処理」に依存する一方、倒立するとこの処理が破綻し部分を個別に照合する特徴ベースの処理へ切り替わるためと説明される。ピーター・トンプソンが1980年に示したサッチャー錯視（倒立顔では目や口を反転させても異様さに気づきにくい）、タナカとファラの部分-全体課題（1993）、合成顔効果はいずれも全体的処理仮説を支持する。他方、顔が特別なのか（ドメイン固有説、カンウィッシャーの紡錘状回顔領域）、熟達で獲得される処理様式なのか（ダイアモンドとキャリーの専門性説、グリーブル実験）という論争を生み、顔知覚研究の中心的パラダイムとなった。この知見は相貌失認や自人種バイアスの理解に加え、目撃者による人物識別の信頼性評価、UIや広告における顔画像の設計、AI顔認識の頑健性検証にも示唆を与える。',
+    keyFigures: 'ロバート・K・イン（Robert K. Yin, 1969 顔倒立効果の発見）／ピーター・トンプソン（Peter Thompson, 1980 サッチャー錯視）／ジェームズ・タナカ＆マーサ・ファラ（1993 部分-全体課題・全体的処理）／スーザン・キャリー（Diamond & Carey, 1986 専門性説）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0027474', type: 'academic', label: 'Yin, R. K. (1969) Looking at Upside-Down Faces — Journal of Experimental Psychology 81(1), 141-145' },
+      { url: 'https://doi.org/10.1068/p090483', type: 'academic', label: 'Thompson, P. (1980) Margaret Thatcher: A New Illusion — Perception 9(4), 483-484' },
+      { url: 'https://doi.org/10.1080/14640749308401045', type: 'academic', label: 'Tanaka, J. W. & Farah, M. J. (1993) Parts and Wholes in Face Recognition — Quarterly Journal of Experimental Psychology 46A(2), 225-245' },
+      { url: 'https://doi.org/10.1037/0096-3445.115.2.107', type: 'academic', label: 'Diamond, R. & Carey, S. (1986) Why Faces Are and Are Not Special: An Effect of Expertise — Journal of Experimental Psychology: General 115(2), 107-117' },
+    ],
+  },
+  {
+    id: 'bizlaw-substantive-consolidation',
+    discipline: 'business-law',
+    title: '実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済',
+    statement:
+      '実体的併合（substantive consolidation）とは、法的に別個の複数の債務者（典型的には親子会社など企業グループ内の関連会社）の資産と負債を一つの財団にプールし、単一の債務者として扱って、会社相互間の債権や重複保証を消去し、全債権者を共通原資から按分弁済させる米国倒産法上の衡平法的救済である。手続の便宜で事件を併せて管理するにすぎない手続的併合と異なり、実体的併合は各法人の別個の人格を配当目的で否定する点に特徴がある。連邦最高裁のSampsell v. Imperial Paper & Color Corp., 313 U.S. 215（1941）が先駆けとされ、倒産法典に明文規定はなく裁判所は第105条(a)の一般的衡平権を根拠とする。適用基準は判例で精緻化され、Chemical Bank v. Kheel, 369 F.2d 845（第2巡回区, 1966）は資産の分離が過大な費用を要する場合を認め、In re Auto-Train Corp., 810 F.2d 270（D.C.巡回区, 1987）は実質的同一性と併合の必要性を要件とする衡量テストを、In re Augie/Restivo Baking Co., 860 F.2d 515（第2巡回区, 1988）は「債権者が両社を一体と扱い別個性に依拠しなかったか」または「財産が不可分に絡み合い併合が全債権者の利益になるか」という二要素テストを示した。In re Owens Corning, 419 F.3d 195（第3巡回区, 2005、アンブロ判事）は、これを最後の手段たる「大まかな正義」と位置づけ、法人の別個性とそれに依拠した債権者の期待を重視して厳格に限定した。会社の別個性という倒産前の前提を覆すため濫用への警戒が強く、証券化やプロジェクトファイナンスの実務では倒産隔離目的の特別目的会社（SPE）と非併合意見書（non-consolidation opinion）によって併合リスクを遮断することが、企業グループの資金調達とM&Aにおける信用設計上の中核論点となっている。',
+    keyFigures: 'Sampsell v. Imperial Paper & Color Corp. (1941) ／ In re Augie/Restivo Baking Co. (2d Cir. 1988) ／ In re Owens Corning（アンブロ判事, 3d Cir. 2005） ／ Douglas G. Baird・J. Stephen Gilbert（学者）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://supreme.justia.com/cases/federal/us/313/215/', type: 'government', label: 'Sampsell v. Imperial Paper & Color Corp., 313 U.S. 215 (1941) — U.S. Supreme Court, early recognition of pooling a controlled corporation\'s assets into the debtor\'s estate (Justia)' },
+      { url: 'https://scholarship.law.vanderbilt.edu/cgi/viewcontent.cgi?article=2504&context=vlr', type: 'academic', label: 'J. Stephen Gilbert, "Substantive Consolidation in Bankruptcy: A Primer," 43 Vanderbilt Law Review 207 (1990)' },
+      { url: 'https://chicagounbound.uchicago.edu/cgi/viewcontent.cgi?article=2020&context=journal_articles', type: 'academic', label: 'Douglas G. Baird, "Substantive Consolidation Today," 47 Boston College Law Review 5 (2005)' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-identity',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」',
+    statement:
+      'アルゴリズム的アイデンティティ（algorithmic identity）とは、個人が自ら名乗る身元とは独立に、閲覧・クリック・位置情報などの断片的データからアルゴリズムが統計的に推論し付与するデジタル上の属性（性別・人種・年齢・階層・関心）の束を指す概念である。メディア研究者ジョン・チェイニー＝リッポルドが2011年の論文「A New Algorithmic Identity: Soft Biopolitics and the Modulation of Control」（Theory, Culture & Society 28巻6号）で提唱し、著書『We Are Data』（NYU Press, 2017）で体系化した。中核は「測定可能な類型（measurable type）」で、広告配信システムはある利用者の行動が過去に「女性」と分類された人々のパターンに合致すれば、本人の自認や生物学的性別に関わらず統計的に「女性」と見なす。かくしてアイデンティティは本人の宣言ではなくデータの相関から外部的に再定義され、市場の需要に応じて流動的に組み替えられる。彼はこれをフーコーの生政治を援用した「ソフト・バイオポリティクス」、ドゥルーズの管理社会論を継ぐ「統制の変調（modulation of control）」として理論化し、規律ではなくカテゴリーの微調整により主体を穏やかに方向づける権力を描いた。ハガティらの「データ・ダブル」やブッヒャーの「アルゴリズム的想像」と対をなす批判的アルゴリズム／データ研究の基礎概念であり、推論データ（inferred data）規制やGDPRのプロファイリング条項、ターゲティング広告のオーディエンス・セグメンテーションと価格・機会の差別的振り分けをめぐる、企業のデータガバナンスとUX倫理の中心的論点をなす。',
+    keyFigures: 'ジョン・チェイニー＝リッポルド（John Cheney-Lippold, 2011 論文提唱・2017『We Are Data』で体系化）／ジル・ドゥルーズ（管理社会・「変調」概念の源流）／ミシェル・フーコー（生政治＝ソフト・バイオポリティクスの下敷き）／タイナ・ブッヒャー（アルゴリズム的想像で隣接展開）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1177/0263276411424420', type: 'academic', label: 'Cheney-Lippold, J. (2011) A New Algorithmic Identity: Soft Biopolitics and the Modulation of Control — Theory, Culture & Society 28(6): 164-181' },
+      { url: 'https://nyupress.org/9781479857593/we-are-data/', type: 'academic', label: 'Cheney-Lippold, J. (2017) We Are Data: Algorithms and the Making of Our Digital Selves — New York University Press' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0263276411424420', type: 'reference', label: 'SAGE Journals — Cheney-Lippold (2011), Theory, Culture & Society（査読誌掲載ページ・measurable type / soft biopolitics）' },
+    ],
+  },
 ];
 // Stryker restore all
