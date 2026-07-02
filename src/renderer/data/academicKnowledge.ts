@@ -60916,5 +60916,89 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Proteus_effect', type: 'reference', label: 'Wikipedia: Proteus effect — Yee & Bailenson (2007)、自己知覚理論・SIDEモデルによる説明、追試・メタ分析の概観' },
     ],
   },
+  {
+    id: 'econ-misallocation-tfp-hsieh-klenow',
+    discipline: 'economics',
+    title: '資源配分の非効率と集計的生産性——シェ＝クレノウのミスアロケーション理論（Misallocation and Aggregate TFP）',
+    statement:
+      '資源配分の非効率（ミスアロケーション、misallocation）と集計的全要素生産性の理論は、チャンタイ・シェとピーター・クレノウが2009年の論文で定量化した、国家間の生産性・所得格差の源泉をめぐる開発マクロ経済学の枠組みである。標準的な議論では、豊かな国と貧しい国の差は、資本蓄積の多寡や、経済全体の技術水準（集計的全要素生産性）の差として説明されてきた。これに対し両者は、たとえ各企業が同じ技術を持っていても、限られた資本と労働が生産性の高い企業と低い企業のあいだにどう配分されるか——その配分の効率性——が、経済全体の生産性を大きく左右すると論じた。効率的な経済では、資本と労働は、その限界生産物（正確には限界収入生産物）がすべての企業で等しくなるように配分される。生産性の高い企業の限界生産物が高いままなら、そこへ資源を移すことで経済全体の産出を増やせるからである。ところが現実には、税・補助金・金融摩擦・参入規制・縁故や政治的優遇といった企業ごとに異なる「歪み（くさび）」が、企業間で限界生産物を乖離させる。両者はこれを、独占的競争のモデルのもとで、収入で測った生産性（TFPR）の企業間のばらつきとして計測した。歪みがなければTFPRは企業間で均等化するはずであり、そのばらつきの大きさが資源配分の歪みの度合いを示す。中国とインドの製造業事業所データによる計測では、資源をアメリカと同程度に効率的に再配分できたなら、製造業の全要素生産性は中国で三〇〜五〇％、インドで四〇〜六〇％も上昇しうるとされた。すなわち同じ企業・同じ技術のままでも、配分を改善するだけで大幅な生産性向上が可能だということである。この研究は、国家間の所得格差を技術や要素蓄積だけでなく資源配分の効率性から説明する「ミスアロケーション」研究の潮流を切り開き、レストゥッチャとロジャーソン（2008）と並ぶ基礎的文献となっている。',
+    keyFigures: 'シェ, チャンタイ （2009 Quarterly Journal of Economics）／クレノウ, ピーター・J. （2009 Quarterly Journal of Economics）／レストゥッチャ, ディエゴ （2008 Review of Economic Dynamics）／ロジャーソン, リチャード （2008 Review of Economic Dynamics）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/124/4/1403/1917179', type: 'academic', label: 'Hsieh, C.-T. & Klenow, P. J. (2009) "Misallocation and Manufacturing TFP in China and India," Quarterly Journal of Economics 124(4): 1403-1448' },
+      { url: 'https://www.nber.org/papers/w13290', type: 'academic', label: 'Hsieh & Klenow, "Misallocation and Manufacturing TFP in China and India," NBER Working Paper No. 13290' },
+      { url: 'https://ideas.repec.org/a/oup/qjecon/v124y2009i4p1403-1448..html', type: 'reference', label: 'IDEAS/RePEc bibliographic record — Hsieh & Klenow (2009), QJE 124(4):1403-1448' },
+    ],
+  },
+  {
+    id: 'econ-allingham-sandmo-tax-evasion',
+    discipline: 'economics',
+    title: 'アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス',
+    statement:
+      'アリンガム＝サンドモ・モデルは、マイケル・アリンガムとアグナー・サンドモが1972年の論文「所得税の脱税——理論的分析」（Journal of Public Economics）で提示した、脱税を合理的な危険選択として分析する税務コンプライアンス経済学の基礎理論である。ゲイリー・ベッカーの犯罪の経済学と期待効用理論を租税に応用し、納税者を「所得のうちどれだけを過少申告するか」を選ぶ賭博者として描く。申告を減らせば税負担は軽くなるが、一定の確率pで税務調査により発覚すれば、隠した所得に罰金率を乗じた制裁を課される。危険回避的な納税者は、発覚しない場合の利得と発覚した場合の損失を比較衡量し、期待効用を最大化する申告水準を選ぶ。比較静学によれば、調査確率pや罰金率の引き上げは脱税を確実に減らす一方、税率引き上げの効果は代替効果と所得効果が逆方向に働くため一義的に定まらない。イツハキ（1974）は、罰金を隠した所得ではなく免れた税額に比例させる現実の制度に即した定式化では、税率上昇がむしろ申告所得を増やすことを示した（イツハキ・パズル）。このモデルは税務行政に「調査確率×罰則」という抑止設計の枠組みを与えたが、重大なパズルも残した。現実の税務調査率と罰則水準は低く、モデルの予測どおりなら人々ははるかに大規模に脱税するはずであるのに、実際の納税遵守率は著しく高いのである。アンドレオーニ・エラード・ファインスタインによる1998年のサーベイ以降、この乖離は納税道徳（タックス・モラール）、社会規範や罪悪感、源泉徴収と第三者情報申告による捕捉などで説明され、行動経済学的なコンプライアンス研究や督促状のナッジ実験など税務行政の実務改革へ発展した。企業の税務リスク管理においても、抑止と規範の両面から申告行動を捉える出発点となる理論である。',
+    keyFigures: 'アリンガム, マイケル・G（1972 Income Tax Evasion: A Theoretical Analysis）／サンドモ, アグナー（1972 同論文）／イツハキ, シュロモ（1974 罰金定式化の修正）／アンドレオーニ, ジェームズ（1998 Tax Compliance サーベイ）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://ideas.repec.org/a/eee/pubeco/v1y1972i3-4p323-338.html', type: 'academic', label: 'Allingham, M. G. & Sandmo, A. (1972) Income Tax Evasion: A Theoretical Analysis — Journal of Public Economics, 1(3-4), 323-338（RePEc/IDEAS）' },
+      { url: 'https://eml.berkeley.edu/~saez/course/Allingham&SandmoJPubE(1972).pdf', type: 'academic', label: 'Allingham & Sandmo (1972) 原論文フルテキスト（U.C. Berkeley・E. Saez 講義資料、オープンアクセスPDF）' },
+      { url: 'https://ideas.repec.org/a/aea/jeclit/v36y1998i2p818-860.html', type: 'reference', label: 'Andreoni, J., Erard, B. & Feinstein, J. (1998) Tax Compliance — Journal of Economic Literature, 36(2), 818-860（RePEc/IDEAS）' },
+    ],
+  },
+  {
+    id: 'mgmt-simmelian-ties-krackhardt',
+    discipline: 'management',
+    title: 'ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯',
+    statement:
+      'ジンメリアン・タイ（Simmelian tie）とは、カーネギーメロン大学のデービッド・クラックハートが1998年の論文「Simmelian Ties: Super Strong and Sticky」と1999年の論文「The Ties That Torture」で提唱した社会ネットワーク分析の概念であり、二者間の強い相互的紐帯のうち、双方が共通の第三者とも強い相互的紐帯で結ばれ、三者組（トライアド）やクリークの内部に埋め込まれているものを指す。理論的基盤はゲオルク・ジンメルの形式社会学にある。ジンメルは二者関係と三者関係が質的に異なり、第三者の存在によって個人の交渉力が弱まり、対立が緩和され、集団規範が超個人的な拘束力を帯びることを論じた。クラックハートはこの洞察をネットワーク分析に導入し、三者関係に埋め込まれた紐帯は孤立した二者的紐帯よりも強く、時間的に安定・持続的で、同調への圧力が大きい「超強力で粘着的」な関係であることを示した。さらに1999年の研究では、ソフトウェア企業における労働組合結成投票の事例分析を通じ、複数のクリークにジンメリアン・タイで埋め込まれた個人が各集団の相反する規範的期待の板挟みになる現象を明らかにし、バートの構造的空隙論が仲介者に帰属させる構造的自律とは逆に、集団間の架橋がかえって個人への拘束を強め得ると論じた。トルトリエロとクラックハートによる2010年の実証研究は、研究開発部門の科学者・技術者276名の分析から、組織の境界を越える架橋的紐帯はそれ自体ではイノベーション創出に寄与せず、ジンメリアン・タイである場合にのみ革新を有意に促進することを示した。本概念は、グラノヴェッターの弱い紐帯やバートの構造的空隙と並ぶネットワーク理論の基礎概念として、チームの結束と協力の持続、規範の執行、組織内非公式ネットワークの設計、イノベーション管理に重要な示唆を与えている。',
+    keyFigures: 'Krackhardt, David （1998 「Simmelian Ties: Super Strong and Sticky」・1999 「The Ties That Torture」）／Simmel, Georg （1908 『社会学』・二者関係と三者関係の形式社会学）／Tortoriello, Marco （2010 Academy of Management Journal・架橋的ジンメリアン・タイとイノベーションの実証）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://sk.sagepub.com/book/edvol/power-and-influence-in-organizations/chpt/simmelian-ties-super-strong-sticky', type: 'academic', label: 'Krackhardt, D. (1998) "Simmelian Ties: Super Strong and Sticky" — in Kramer, R.M. & Neale, M.A. (eds.) Power and Influence in Organizations, pp. 21–38, Sage' },
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2010.48037420', type: 'academic', label: 'Tortoriello, M. & Krackhardt, D. (2010) "Activating Cross-Boundary Knowledge: The Role of Simmelian Ties in the Generation of Innovations" — Academy of Management Journal 53(1), 167–181' },
+      { url: 'https://en.wikipedia.org/wiki/Simmelian_tie', type: 'reference', label: 'Wikipedia: Simmelian tie — 定義・三者関係への埋め込み・強度と安定性と拘束の性質' },
+    ],
+  },
+  {
+    id: 'human-habituation',
+    discipline: 'human-science',
+    title: '馴化（habituation）——単一刺激の反復による反応減弱と非連合学習',
+    statement:
+      '馴化（habituation）とは、ある刺激が反復して呈示されると、それに対する反応が次第に減弱していく学習現象であり、二つの事象間の連合を必要としない「非連合学習」の代表例である。刺激と結果の対呈示（随伴）を前提とする古典的条件づけやオペラント条件づけと異なり、単一刺激の反復のみで生じる、最も単純かつ生物界に普遍的な学習形態とされる。トンプソンとスペンサー（1966）は脊髄ネコの屈曲反射を用い、馴化を神経機構研究の「モデル現象」と位置づけ、反応の自発的回復、刺激特異性、頻回かつ弱い刺激ほど馴化が速いこと、新奇な強刺激による脱馴化など、およそ九つのパラメトリックな特徴を体系化した。馴化は感覚受容器の疲労（感覚順応）や効果器の疲労とは区別される中枢性の過程であり、脱馴化が生じうることがその証左となる。グローブスとトンプソン（1970）は二重過程説を提唱し、いかなる有効刺激も減衰性の過程（馴化）と増強性の過程（鋭敏化）という独立した二過程を中枢に生じさせ、観察される反応はその競合の帰結であると説いた。この見方では、脱馴化は馴化の解除ではなく鋭敏化が重畳した結果と理解される。ランキンら（2009）はこれらの特徴を十項目へ改訂し、現代的な合意を与えた。神経・分子レベルではカンデルがアメフラシの鰓引き込み反射を用い、馴化が感覚ニューロンからの神経伝達物質放出の減少、鋭敏化がその増大によることを解明し、学習の細胞的基盤を示して2000年にノーベル生理学・医学賞を受賞した。馴化は無関係な反復刺激を濾過して注意資源を節約する適応的機能をもち、広告の摩耗効果、警報や通知への慣れ、曝露療法による恐怖の低減などの理解にも広く応用される。',
+    keyFigures: 'Thompson, Richard F.／Spencer, W. Alden （1966 Psychological Review「Habituation: A Model Phenomenon for the Study of Neuronal Substrates of Behavior」）／Groves, Philip M. （1970 二重過程説「Habituation: A Dual-Process Theory」）／Rankin, Catharine H. ほか （2009 Neurobiology of Learning and Memory「Habituation Revisited」）／Kandel, Eric R. （2000 ノーベル生理学・医学賞・アメフラシの馴化/鋭敏化の分子機構）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/5324565/', type: 'academic', label: 'Thompson, R. F. & Spencer, W. A. (1966) "Habituation: A model phenomenon for the study of neuronal substrates of behavior", Psychological Review 73(1):16–43 — foundational paper defining the parametric characteristics of habituation (PubMed)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2754195/', type: 'academic', label: 'Rankin, C. H. et al. (2009) "Habituation revisited: An updated and revised description of the behavioral characteristics of habituation", Neurobiology of Learning and Memory 92(2):135–138 — open-access full text' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2714193/', type: 'academic', label: '"Habituation: A History" (Neurobiology of Learning and Memory, 2009) — peer-reviewed review covering Groves & Thompson\'s dual-process theory and Kandel\'s Aplysia work (open-access, PMC)' },
+    ],
+  },
+  {
+    id: 'bizlaw-perfect-tender-rule',
+    discipline: 'business-law',
+    title: '完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準',
+    statement:
+      '完全履行提供の原則（perfect tender rule）とは、物品売買契約においてアメリカ統一商事法典（UCC）第2-601条が定める法理であり、売主が引き渡した物品または引渡しの提供が「いかなる点においても契約に適合しない」場合、買主は全部を拒絶するか、全部を受領するか、または商業的単位ごとに一部を受領して残りを拒絶することができるとするものである。これは、軽微な不履行では契約解除を認めず損害賠償のみを許容する伝統的コモン・ローの実質的履行（substantial performance）の法理よりも厳格な基準であり、役務・建設契約に妥当する実質的履行原則と鋭く対比される。もっとも、この厳格性は複数の制度によって緩和される。第一に売主の治癒権（第2-508条）であり、履行期が未到来であれば売主は適合物を再提供でき、履行期経過後も適合すると信ずる合理的理由があった場合には合理的期間内の治癒が認められる。第二に分割履行契約の例外（第2-612条）であり、各分割部分の不適合が当該分割の価値を実質的に損ない治癒しえない場合にのみ拒絶が認められる。第三に、拒絶権の行使には信義誠実（good faith）の制約が及び、些細な不適合を口実に市場変動を利用して契約を免れようとする機会主義的拒絶は制限される。ラミレス対オートスポート事件（Ramirez v. Autosport, 1982）は、完全履行提供の原則と治癒権とを調和的に運用した代表的先例として知られる。国連国際物品売買条約（CISG）が重大な契約違反を解除要件とするのと対照的に、UCCは形式的厳格性を出発点としつつ治癒権等によって実質的均衡を回復する構造をとる点に特徴がある。',
+    keyFigures: 'UCC §2-601（1952 統一商事法典・完全履行提供の原則）／UCC §2-508（売主の治癒権）／UCC §2-612（分割履行契約の例外）／Ramirez v. Autosport（1982 ニュージャージー州最高裁）／カール・ルウェリン（UCC第2編主起草者）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/perfect_tender_rule', type: 'reference', label: 'Cornell Legal Information Institute (Wex): Perfect Tender Rule — UCC Article 2, buyer\'s right to reject nonconforming goods' },
+      { url: 'https://repository.law.umich.edu/mlr/vol69/iss1/5/', type: 'academic', label: 'Michigan Law Review (1970) Note: Uniform Commercial Code—Sales—Sections 2-508 and 2-608—Limitations on the Perfect-Tender Rule' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-601', type: 'reference', label: 'Cornell LII — UCC § 2-601: Buyer\'s Rights on Improper Delivery (statutory text; installment §2-612 and remedy-limitation exceptions)' },
+    ],
+  },
+  {
+    id: 'infosoc-main-model-credibility',
+    discipline: 'information-sociology',
+    title: 'MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）',
+    statement:
+      'MAINモデル（MAIN model）は、S・シャイアム・スンダル（S. Shyam Sundar）が2008年の論考「The MAIN Model: A Heuristic Approach to Understanding Technology Effects on Credibility」（メッツガー＆フラナギン編『Digital Media, Youth, and Credibility』MIT出版、マッカーサー財団シリーズ所収）で提唱した、デジタルメディアの技術的特性が情報の信憑性判断に及ぼす影響を説明する枠組みである。中核的主張は、デジタル技術のアフォーダンス（機能的特性）がインターフェース上に多様な手がかり（cue）を発し、それが利用者の認知的ヒューリスティック（判断の近道・経験則）を賦活することで、内容そのものの精査を経ずに信憑性評価が形成される、という点にある。すなわち信憑性判断の起点が、送り手や内容から技術的・構造的特性へと移りうると論じる。MAINとは四つのアフォーダンス類型の頭字語である。モダリティ（提示様式）は文字・音声・画像・動画といった形式で、現実に近く見えるものは信じやすいとする「リアリズム・ヒューリスティック」等を喚起する。エージェンシー（作用主体）は情報の出所や選別主体で、機械が選んだものは客観的とみなす「マシン・ヒューリスティック」や、多数の支持を信頼の証とする「バンドワゴン・ヒューリスティック」、権威の手がかりに依拠する「権威ヒューリスティック」を喚起する。インタラクティビティ（双方向性）は利用者が内容へ働きかけられる度合い、ナビゲーション可能性（回遊性）はメニューやリンク等の移動支援であり、それぞれ活動性や目立ちやすさに関わる手がかりを通じて評価に影響する。本モデルはオンライン情報の信頼性、偽情報、推薦システム、生成AIが作る情報の受容などの分析に広く応用される。一方、こうした手がかりは内容の実際の質と独立に信憑性の印象を操作しうるため、設計倫理上の含意や、効果が手がかり・文脈により変動する点にも留意を要する。',
+    keyFigures: 'スンダル, S・シャイアム（Sundar, S. Shyam, ペンシルベニア州立大学 Media Effects Research Laboratory）／初出: Sundar, S. S. （2008「The MAIN Model: A Heuristic Approach to Understanding Technology Effects on Credibility」, in M. J. Metzger & A. J. Flanagin eds. 『Digital Media, Youth, and Credibility』MIT Press, pp. 73-100, John D. and Catherine T. MacArthur Foundation Series on Digital Media and Learning）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.issuelab.org/resources/875/875.pdf', type: 'academic', label: 'Sundar, S. S. (2008) "The MAIN Model: A Heuristic Approach to Understanding Technology Effects on Credibility," in Digital Media, Youth, and Credibility (MIT Press) — open-access full text (IssueLab / Candid)' },
+      { url: 'https://mediawell.ssrc.org/citations/the-main-model-a-heuristic-approach-to-understanding-technology-effects-on-credibility/', type: 'academic', label: 'Social Science Research Council, MediaWell — citation & research review of Sundar\'s MAIN Model' },
+      { url: 'https://mitpress.mit.edu/9780262562324/digital-media-youth-and-credibility/', type: 'reference', label: 'MIT Press — Digital Media, Youth, and Credibility (Metzger & Flanagin eds., MacArthur Foundation Series)' },
+    ],
+  },
 ];
 // Stryker restore all
