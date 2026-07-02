@@ -61000,5 +61000,92 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://mitpress.mit.edu/9780262562324/digital-media-youth-and-credibility/', type: 'reference', label: 'MIT Press — Digital Media, Youth, and Credibility (Metzger & Flanagin eds., MacArthur Foundation Series)' },
     ],
   },
+  {
+    id: 'econ-population-growth-technological-change-kremer',
+    discipline: 'economics',
+    title: 'クレマーの人口成長と技術変化——紀元前100万年からの超長期データが示すアイデア駆動型成長',
+    statement:
+      '人口成長と技術変化の理論は、マイケル・クレマーが1993年にQuarterly Journal of Economics誌の論文「Population Growth and Technological Change: One Million B.C. to 1990」で提示した長期経済成長の理論・実証研究である。核心となる論理は、技術の源泉であるアイデアが非競合的であり、一人の発明が社会全体で利用できるため、人口が多いほど潜在的な発明者の数が増え、技術進歩率が人口規模とともに高まるという点にある。この仮説を、技術水準が扶養可能な人口を規定するというマルサス的な人口調整と組み合わせると、産業革命以前の世界では人口増加率が人口規模にほぼ比例して上昇するという予測が導かれる。クレマーは紀元前100万年から1990年に至る超長期データを用い、世界人口の成長率が実際に人口規模とともに加速してきた双曲線的成長の存在を示した。さらに、氷期の終焉に伴う海面上昇で約1万年間相互に隔絶された旧大陸、南北アメリカ、オーストラリア、タスマニア、フリンダーズ島という五地域を自然実験として利用し、初期人口が大きい地域ほど再接触時の技術水準と人口密度が高かったという理論どおりの順位を確認した。この研究は、内生的成長理論が想定するアイデア駆動型のスケール効果を人類史の尺度で裏づけ、ローマーの内生的技術変化モデルの実証的基礎を補強するとともに、ジョーンズの半内生的成長理論や統一成長理論など後続の長期成長研究に大きな影響を与えた。人口を単なる資源制約と見る悲観論に対し、人間こそが技術進歩の源であることを示した点でも重要である。クレマーは開発経済学への実験的アプローチにより2019年にノーベル経済学賞を受賞したが、本論文はオーリング理論と並ぶ理論的代表作であり、研究開発人材の規模と知識の非競合性が成長を駆動するという含意は、人的資本投資や知識集約型事業の戦略的意義を経営の観点からも示している。',
+    keyFigures: 'Kremer, Michael （1993 Population Growth and Technological Change: One Million B.C. to 1990, QJE 108(3)）／Romer, Paul （1990 Endogenous Technological Change）／Jones, Charles I. （1995 R&D-Based Models of Economic Growth）／Boserup, Ester （1965 The Conditions of Agricultural Growth）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.2307/2118405', type: 'academic', label: 'Kremer, M. (1993) Population Growth and Technological Change: One Million B.C. to 1990 — Quarterly Journal of Economics 108(3), 681-716' },
+      { url: 'https://ideas.repec.org/a/oup/qjecon/v108y1993i3p681-716..html', type: 'academic', label: 'IDEAS/RePEc — Kremer (1993) Population Growth and Technological Change, QJE bibliographic record' },
+      { url: 'https://academic.oup.com/qje/article-abstract/108/3/681/1881850', type: 'academic', label: 'Oxford Academic — The Quarterly Journal of Economics 108(3): 681-716, official article page' },
+    ],
+  },
+  {
+    id: 'econ-oaxaca-blinder-decomposition',
+    discipline: 'economics',
+    title: 'オアハカ＝ブラインダー分解——賃金格差を「属性の差」と「評価の差」に切り分ける',
+    statement:
+      'オアハカ＝ブラインダー分解は、二つの集団（典型的には男性と女性）の平均賃金格差を、教育年数・経験年数など観察可能な属性の差で「説明される部分」と、同じ属性への市場の評価（回帰係数）の差に起因する「説明されない部分」とに切り分ける計量経済学の標準手法である。ロナルド・オアハカが1973年にInternational Economic Review誌（14巻3号、693-709頁）で、アラン・ブラインダーが同じ1973年にJournal of Human Resources誌（8巻4号、436-455頁）で独立に定式化し、人口学者イヴリン・キタガワが1955年に示した率の差の要因分解を先駆とするため、キタガワ＝オアハカ＝ブラインダー分解とも呼ばれる。仕組みは、集団ごとにミンサー型賃金関数を別々に推定し、平均対数賃金の差を「属性の平均値の差に一方の係数を掛けた属性効果」と「係数の差に属性の平均値を掛けた評価効果」の和へ恒等的に分解するもので、後者は同じ学歴や経験が集団により異なって報酬づけられる度合いを表し、労働市場差別の大きさの指標（上限）として解釈されてきた。どちらの集団の賃金構造を無差別の基準とみなすかで結果が変わる「指数問題」があり、ニューマーク（1988）のプール回帰係数などの対処が提案された。実証の代表例として、ブラウ＝カーンは2017年のJournal of Economic Literature誌の展望論文でこの手法により米国の男女格差を分析し、2010年時点では人的資本変数が格差をほとんど説明せず、職業・産業の差と説明されない部分が残ることを示した。その後、ジュン＝マーフィー＝ピアース（1993）の分布分解や再中心化影響関数（RIF）回帰など分布全体への拡張が発展し、フォルタン＝ルミュー＝フィルポ（2011）が『労働経済学ハンドブック』第4A巻の章として方法論を体系化した。今日では企業の同一賃金監査や男女間賃金差異の情報開示において「調整済み賃金格差」を測る実務標準としても定着している。',
+    keyFigures: 'ロナルド・オアハカ（1973 International Economic Review・男女賃金格差の分解）／アラン・ブラインダー（1973 Journal of Human Resources・賃金差別の推定）／イヴリン・キタガワ（1955 率の差の要因分解の先駆）／ニコル・フォルタン（2011 Handbook of Labor Economics・分解手法の体系化）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.2307/2525981', type: 'academic', label: 'Oaxaca, R. L. (1973) Male-Female Wage Differentials in Urban Labor Markets — International Economic Review 14(3), 693-709' },
+      { url: 'https://doi.org/10.2307/144855', type: 'academic', label: 'Blinder, A. S. (1973) Wage Discrimination: Reduced Form and Structural Estimates — Journal of Human Resources 8(4), 436-455' },
+      { url: 'https://ideas.repec.org/h/eee/labchp/4-01.html', type: 'academic', label: 'Fortin, N., Lemieux, T. & Firpo, S. (2011) Decomposition Methods in Economics — Handbook of Labor Economics Vol. 4A, Ch. 1, 1-102 (Elsevier)' },
+      { url: 'https://en.wikipedia.org/wiki/Kitagawa%E2%80%93Oaxaca%E2%80%93Blinder_decomposition', type: 'reference', label: 'Wikipedia: Kitagawa-Oaxaca-Blinder decomposition — explained/unexplained components, Kitagawa (1955) precursor, discrimination measurement' },
+    ],
+  },
+  {
+    id: 'mgmt-behavioral-agency-model',
+    discipline: 'management',
+    title: '行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する',
+    statement:
+      '行動エージェンシー・モデル（Behavioral Agency Model）とは、経営者のリスクテイク行動を損失回避の観点から説明する理論であり、ロバート・ワイズマンとルイス・ゴメス＝メヒアが1998年にAcademy of Management Review誌（23巻1号）で提唱した。標準的なエージェンシー理論が代理人を一貫してリスク回避的と仮定するのに対し、本モデルはプロスペクト理論と行動的意思決定研究をエージェンシー理論に統合し、経営者は期待効用ではなく参照点からの損得によって選択肢をフレーミングし、既に賦与されたと知覚する報酬資産（ストックオプション価値など）の喪失を新たな利得の獲得よりも重く嫌う存在だと捉え直した。中核はリスク負担（risk bearing）とリスクテイク（risk taking）の区別であり、報酬契約が経営者の富を企業業績に強く連動させるほどリスク負担が高まり、利得局面では賦与資産を守る保守的選択が、損失局面ではリスク追求的選択が生じると予測する。この論理は、挑戦を促すはずのストックオプションがかえって挑戦を抑制しうるという逆説を導く。Larraza-Kintanaらが2007年にStrategic Management Journal誌で行ったIPO企業の実証は、雇用リスクと報酬変動性がリスクテイクを高める一方、下方リスクとオプションの本源的価値がそれを抑えることを示し、Martinらの2013年Academy of Management Journal論文はオプションを利得と損失が併存する「混合ギャンブル」として再定式化した。本モデルはファミリー企業の社会情緒的資産（SEW）理論の直接の理論的基盤となり、PepperとGoreの行動エージェンシー理論へも発展して経営者報酬とコーポレートガバナンス研究を刷新しており、実務においても役員報酬の設計やインセンティブが挑戦意欲を損なう条件の診断に有効な枠組みを提供する。',
+    keyFigures: 'ロバート・ワイズマン（1998 Academy of Management Review で行動エージェンシー・モデルを提唱）／ルイス・ゴメス＝メヒア（1998 同論文共著、SEW理論への展開）／マルティン・ラーラサ＝キンタナ（2007 SMJ でIPO企業により実証）／ジェフリー・マーティン（2013 AMJ で混合ギャンブルとして再定式化）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.1998.192967', type: 'academic', label: 'Wiseman, R.M. & Gómez-Mejía, L.R. (1998) A Behavioral Agency Model of Managerial Risk Taking — Academy of Management Review 23(1): 133-153' },
+      { url: 'https://www.jstor.org/stable/259103', type: 'academic', label: 'JSTOR — A Behavioral Agency Model of Managerial Risk Taking, Academy of Management Review 23(1)' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.624', type: 'academic', label: 'Larraza-Kintana, Wiseman, Gómez-Mejía & Welbourne (2007) Disentangling Compensation and Employment Risks Using the Behavioral Agency Model — Strategic Management Journal 28(10): 1001-1019' },
+    ],
+  },
+  {
+    id: 'human-latent-inhibition',
+    discipline: 'human-science',
+    title: '潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象',
+    statement:
+      '潜在制止（latent inhibition, LI）とは、結果を伴わずに繰り返し呈示されて馴染みとなった刺激は、その後に条件刺激（CS）として無条件刺激（US）と対呈示されても、新奇な刺激に比べて連合の学習が遅れるという古典的条件づけの現象である。ロバート・E・ルボウとA・U・ムーアが1959年に『Journal of Comparative and Physiological Psychology』誌でヒツジ・ヤギを用いて報告し（潜在学習の条件づけ版として構想された）、命名の由来は、効果が事前呈示の段階では現れず後の条件づけテスト段階で初めて学習遅延として顕在化する「潜在性」と、学習が抑制される点にある。中心的な説明は注意理論で、何も予測しない刺激に対して有機体が注意・連合可能性を失う「無関連刺激を無視する学習」として捉えられ、マッキントッシュやピアース＝ホール（1980）の連合可能性モデルに取り込まれた。一方バウトンらは、事前呈示とテストの文脈が変わるとLIが消失することから、学習の失敗ではなく想起・検索段階での干渉とみなす文脈依存説を唱え、論争が続く。効果はラット・ウサギ・ヒトなど多くの種と手続きで頑健に再現される。臨床面での影響が大きく、急性期の統合失調症や高スキゾタイピー者ではLIが減弱し、無関係な刺激に過剰な意味づけを行う「顕著性の異常付与（aberrant salience）」仮説と結びつく。ドーパミン作動薬アンフェタミンはLIを破壊し、定型・非定型の抗精神病薬はこれを回復させるため、LIは抗精神病薬スクリーニングの標準的動物モデル（ワイナーの「二頭」モデル等）として用いられる。さらにカーソンら（2003）は、認知的統合能力が高い人ではLIの低さがむしろ高い創造的達成と結びつくことを示した。実務的にも、慣れた刺激への「学習された無視」（広告のバナー・ブラインドネス等）や、情報を効率的に濾過することと新奇な連合への開放性（創造性）のトレードオフを理解する鍵となる概念である。',
+    keyFigures: 'ロバート・E・ルボウ（Robert E. Lubow, 1959 潜在制止の発見・条件性注意理論） ／ A・U・ムーア（A. U. Moore, 1959 共同発見） ／ イナ・ワイナー（Ina Weiner, 抗精神病薬スクリーニングの「二頭」モデル） ／ シェリー・カーソン（Shelley Carson, 2003 創造的達成との関連）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://doi.org/10.1037/h0046700', type: 'academic', label: 'Lubow, R. E., & Moore, A. U. (1959). Latent inhibition: The effect of nonreinforced pre-exposure to the conditional stimulus. Journal of Comparative and Physiological Psychology, 52(4), 415-419.' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8774194/', type: 'academic', label: 'Behavioral and neural mechanisms of latent inhibition (review) — PMC / NCBI (attentional vs. retrieval accounts, dopaminergic/hippocampal substrates, schizophrenia relevance).' },
+      { url: 'https://www.sciencedirect.com/topics/psychology/latent-inhibition', type: 'reference', label: '"Latent Inhibition" — overview, ScienceDirect Topics (definition, pre-exposure paradigm, selective attention, schizophrenia and antipsychotic screening).' },
+      { url: 'https://doi.org/10.1037/0022-3514.85.3.499', type: 'academic', label: 'Carson, S. H., Peterson, J. B., & Higgins, D. M. (2003). Decreased latent inhibition is associated with increased creative achievement in high-functioning individuals. Journal of Personality and Social Psychology, 85(3), 499-506.' },
+    ],
+  },
+  {
+    id: 'bizlaw-noerr-pennington-doctrine',
+    discipline: 'business-law',
+    title: 'ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理',
+    statement:
+      'ノア・ペニントン法理（Noerr-Pennington doctrine）とは、事業者が単独または共同で立法・行政・司法など政府に働きかける請願活動は、競争者排除の意図や反競争的効果を伴ってもシャーマン法等の反トラスト法上の責任を生じないとする米国判例法理である。Eastern Railroad Presidents Conference v. Noerr Motor Freight, 365 U.S. 127 (1961)で連邦最高裁（Black裁判官・全員一致）は、鉄道24社によるトラック業界排斥の広報キャンペーンにつき、立法や法執行への働きかけの試みはシャーマン法違反を構成しないと判示し、United Mine Workers v. Pennington, 381 U.S. 657 (1965)が行政官への共同の働きかけに、California Motor Transport Co. v. Trucking Unlimited, 404 U.S. 508 (1972)が裁判所・行政審判手続への申立てにこれを拡張した。根拠は合衆国憲法修正1条の請願権保障と、代議制下の政府への情報流通を保つシャーマン法の限定解釈にある。最大の例外が「シャム（見せかけ）」例外であり、Professional Real Estate Investors v. Columbia Pictures, 508 U.S. 49 (1993)は、(1)訴訟が客観的に根拠を欠き（合理的当事者が勝訴を現実に期待し得ない）、(2)手続の結果でなく手続それ自体で競争者の事業を直接妨害する意図がある場合に限り免責が失われるとの二段階基準を確立した。同法理はロビイング・業界団体活動・規制申立て・特許訴訟戦略の適法性を画するが、医薬品業界の規制・特許手続の濫用等を背景に、FTCが2006年スタッフ報告書で過度に広い適用への懸念を示すなど射程を巡る論争が続く。企業には、政府への働きかけが強く保護される反面、根拠なき反復的申立てはシャム例外で免責を失うため、ロビイング戦略と訴訟リスク管理の設計上の重要性が高い。',
+    keyFigures: 'Eastern Railroad Presidents Conference v. Noerr Motor Freight（365 U.S. 127・1961）／United Mine Workers v. Pennington（381 U.S. 657・1965）／Professional Real Estate Investors v. Columbia Pictures（508 U.S. 49・1993）／Einer Elhauge（1992・請願免責理論の体系化）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://www.jstor.org/stable/3480739', type: 'academic', label: 'Elhauge, "Making Sense of Antitrust Petitioning Immunity," 80 California Law Review 1177 (1992)' },
+      { url: 'https://www.law.cornell.edu/supremecourt/text/365/127', type: 'reference', label: 'Eastern Railroad Presidents Conference v. Noerr Motor Freight, Inc., 365 U.S. 127 (1961) — Cornell LII' },
+      { url: 'https://www.ftc.gov/reports/ftc-staff-report-concerning-enforcement-perspectives-noerr-pennington-doctrine', type: 'government', label: 'FTC Staff Report, "Enforcement Perspectives on the Noerr-Pennington Doctrine" (2006)' },
+      { url: 'https://supreme.justia.com/cases/federal/us/508/49/', type: 'government', label: 'Professional Real Estate Investors, Inc. v. Columbia Pictures Industries, Inc., 508 U.S. 49 (1993) — Justia U.S. Supreme Court' },
+    ],
+  },
+  {
+    id: 'infosoc-warm-expert-bakardjieva',
+    discipline: 'information-sociology',
+    title: 'ウォーム・エキスパート——身近な技術支援者が生活世界とシステム世界を橋渡しする',
+    statement:
+      'ウォーム・エキスパート（warm expert）とは、家族・友人・同僚など利用者の身近にいて、専門的な、あるいは相対的に高い技術知識をもち、初心者のインターネットやコンピュータの利用を日常生活の文脈に即して手助けする仲介者を指す概念である。カナダ・カルガリー大学のメディア社会学者マリア・バカルジェヴァが、カナダの一般家庭を対象とした訪問インタビュー調査に基づく著書『Internet Society: The Internet in Everyday Life』（SAGE、2005年）で提唱した。シュッツの現象学的社会学（生活世界論）を援用し、ウォーム・エキスパートは技術のシステム世界で得た知識・技能をもつと同時に、利用者の生活世界に身近な他者として存在するという二重性を特徴とし、コールセンターやマニュアルのような「冷たい」専門的支援と対照的に、技術の普遍的な論理を新規利用者の具体的な状況・必要・背景へ翻訳する点に本質がある。成人した子が親のパソコンを設定する、同僚が隣席でソフトの使い方を教えるといった非公式支援が典型で、技術のドメスティケーション（家庭化）過程を支える見えない労働として位置づけられた。この概念は高齢者のデジタル包摂研究に強い影響を与え、オルソンとヴィスコヴィ（2018年）やハンニネンら（2021年、New Media & Society）がスマートフォン時代の支援実態を実証し、代理利用（proxy internet use）研究にも継承された。一方で、支援が特定の家族（しばしば若年世代や女性）へのケア負担として偏ること、身近な支援者を欠く人々の排除を深めること、過剰な代行が本人のスキル習得を妨げうることも批判的に指摘される。企業にとっても、顧客オンボーディングや社内DX研修、高齢者向けデジタルサービスの支援設計を、公式ヘルプのみならず身近な仲介者の存在を想定して構築する視点を与える概念である。',
+    keyFigures: 'マリア・バカルジェヴァ（2005 『Internet Society』でウォーム・エキスパート概念を提唱）／トビアス・オルソン（2018 高齢者を支えるウォーム・エキスパートの実証研究）／リッタ・ハンニネン（2021 高齢者ICT利用におけるウォーム・エキスパート研究）／サカリ・タイパレ（2021 デジタル家族と世代間技術支援の研究）',
+    asOf: '2026-07',
+    sources: [
+      { url: 'https://uk.sagepub.com/en-gb/eur/internet-society/book226188', type: 'academic', label: 'Bakardjieva, M. (2005) Internet Society: The Internet in Everyday Life — SAGE Publications（ウォーム・エキスパート概念の初出書・出版社書誌ページ）' },
+      { url: 'https://doi.org/10.1177/1461444820917353', type: 'academic', label: 'Hänninen, R., Taipale, S. & Luostari, R. (2021) Exploring heterogeneous ICT use among older adults: The warm experts\' perspective — New Media & Society 23(6)' },
+      { url: 'https://doi.org/10.1177/13548565211070409', type: 'academic', label: 'Martínez, C. & Olsson, T. (2022) The warm expert — a warm teacher? Learning about digital media in intergenerational interaction — Convergence 28(6)' },
+    ],
+  },
 ];
 // Stryker restore all
