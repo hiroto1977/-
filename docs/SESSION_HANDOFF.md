@@ -23,8 +23,30 @@
 | **直近完了バッチ** | Batch 718（2026-07-01） |
 | **Knowledge Vault** | 5,092 files |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
-| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチを蓄積、まだ未マージ — マージは都度行わず蓄積する運用に変化） |
+| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ再構築を蓄積、まだ未マージ） |
 | **次のアクション** | Batch 719 の候補選定 & デデュプ検証（「作業を継続して」で自動着手） |
+
+### 🤖 マルチエージェント AI ハブ (2026-07-02 再構築完了)
+
+`assistant` サービスを **Claude / ChatGPT (OpenAI) / Gemini / Ollama / OpenAI 互換 API
+(LiteLLM・Groq・DeepSeek・LM Studio 等)** を呼び分けるハブに再構築済み。
+
+- **中核**: `src/shared/ai/`（providers.ts=プロバイダレジストリ+総当たり不変条件 /
+  credentials.ts=JSON 資格情報(1スロット複数キー・生キーは Anthropic 後方互換) /
+  chat.ts=runAiChat）。**新しい AI 呼び出しは必ずこの層を経由すること。**
+- Electron main (`clients/assistant.ts`) とブラウザ (`web-shim.ts`) の両対応。
+  ブラウザで CORS 不可の OpenAI/互換 API は BYO プロキシ経由。
+- UI: AssistantPage にエージェント選択・接続チップ・⚙エージェント設定パネル
+  (hub.setToken('assistant', JSON) で保存)。
+- MCP コネクタ 25 個 + ChatGPT(mcp-remote)/LiteLLM ブリッジを ConnectorsPage で可視化
+  (`src/shared/connectors/mcpConnectors.ts`、docs/MCP_SETUP.md と件数同期)。
+- **修正した罠**: inline-html.cjs の standalone CSP が `connect-src 'none'` で
+  ブラウザ版の全外部 API 呼び出しを無言でブロックしていた → https:+localhost 許可に修正。
+- **残 follow-up**: ①business/stocks/skills/emotions アドバイザーの shared/ai 移行
+  (エラー文字列・モデル既定まで mutation テストで固定されているため、opt-in の
+  provider パラメータ方式で慎重に) ②shared/ai の Stryker mutate スコープ追加検討
+  ③GH Pages 配信版 (dist/index.html) の CSP は connect-src 'self' のままで外部 API
+  不可 — standalone.html の利用を案内するか要検討。
 
 **直近バッチ履歴**（詳細は PR #707 の説明欄に全件記載）:
 
