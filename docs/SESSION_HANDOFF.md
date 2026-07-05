@@ -20,22 +20,27 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,625**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パスで 4,350→3,625・**−725（−16.7%）**） |
-| **直近完了作業** | 🏡 AIの村（音声自然化含む）出荷＋薄いエントリ増強 tranche-1（27 件を 600-900 字へ・検証済み） |
+| **直近完了作業** | 🏡 AIの村 見やすさ再設計 v2（建物カード＋街区クラスタ＋クリック拡大・音声自然化含む）＋薄いエントリ増強 tranche-1（27 件を 600-900 字へ・検証済み） |
 | **サービス数** | **70**（village 追加） |
 | **Knowledge Vault** | 4,397 files |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
 | **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ + チャットボット v2 + 重複統合 + AIの村 + 増強 を蓄積、まだ未マージ） |
 | **次のアクション** | 大規模システム柱 B（知識グラフ+教育の 100 万行基盤 Phase 0〜3）に着手中。プラン: `.claude/plans/mighty-imagining-salamander.md`。並行残: ①薄いエントリ増強の残 34 件（verify がセッション上限で中断→再実行）＋残トランシェ ②新規概念 Batch 724 |
 
-### 🏡 AIの村（2026-07-05 出荷）
+### 🏡 AIの村（2026-07-05 出荷・見やすさ再設計 v2）
 
 AI オーケストレーション組織 143 体（CEO/COO/役員5/秘書室20/管理職8/一般職108）をどうぶつの森風の
 全画面シーンに村人として可視化し、画面に話しかけて対話できる 70 番目のサービス。
-- `data/villageData.ts`（registry.json から純導出・決定論）＋`data/villageLayout.ts`（区画パッキング＋
-  三角関数徘徊・乱数なし）＋`pages/VillagePage.tsx`（絵文字/CSS のみ・setInterval で徘徊＋PDCA タスクループ）。
+- `data/villageData.ts`（registry.json から純導出・決定論）＋`data/villageLayout.ts`（街区パッキング＋
+  三角関数徘徊・乱数なし・`villageLayout.test.ts` 20 テスト）＋`pages/VillagePage.tsx`（絵文字/CSS/インライン
+  SVG のみ・setInterval で徘徊＋PDCA タスクループ）。
+- **見やすさ再設計 v2**（「もっと見やすくして」対応）: 143 体が細い列に密集して読めなかったのを解消。
+  ①役員ごとの**建物カード**で街区分離（色ヘッダ＋チーム数）②街区内はチームを**部長ごとにクラスタ**配置
+  ③**建物クリックで街区を全画面拡大**（チーム名まで読める・「← 全体マップ」で戻る）④足元の影＋名前チップ
+  ⑤情景（太陽/雲/池/小道＝SVG、木/花＝絵文字）。`layoutDistrict`/`computeDistrictFocus`/`FOCUS_RECT` 追加。
 - 音声（両対応）: `voice/speechAdapter`（認識）→`chatOrg.routeTopicScored` で担当キャラ選定→`chatbot.replyTo`
-  即応＋AI 設定時 `assistant/chat`→新規 `voice/ttsAdapter`（speechSynthesis 読み上げ・非対応は degrade）。
-- バンドル制約順守: 大量データは足さず registry（既存 import）＋純導出のみ。standalone.html は 9.9→10.0MB。
+  即応＋AI 設定時 `assistant/chat`→`voice/ttsAdapter`（高品質日本語ボイス選択＋読み上げ整形・非対応は degrade）。
+- バンドル制約順守: 大量データは足さず registry（既存 import）＋純導出のみ。standalone.html は ~10.0MB。
 - **今後の大規模化（柱 B）は非バンドルの vault/knowledge-graph に置く**（`src/renderer/data` は standalone に
   インライン化されるため肥大化厳禁）。
 
