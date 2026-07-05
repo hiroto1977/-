@@ -186,7 +186,7 @@ export function VillagePage() {
     const reply = replyTo(text, chatContext);
     const offlineText = reply.text;
     setVoiceBubble(targetId, offlineText);
-    speak(stripForSpeech(offlineText));
+    speak(offlineText);
 
     // AI プロバイダ設定時は裏で高精度化し、返ったら差し替え。
     const hub = window.serviceHub;
@@ -199,7 +199,7 @@ export function VillagePage() {
           });
           if (res.ok && res.data.text) {
             setVoiceBubble(targetId, res.data.text);
-            speak(stripForSpeech(res.data.text));
+            speak(res.data.text);
           }
         } catch {
           /* オフライン応答のまま */
@@ -340,15 +340,6 @@ export function VillagePage() {
       <VoiceFooter transcript={transcript} onSubmit={submitText} />
     </div>
   );
-}
-
-/** 音声用に記号や改行を削り、読み上げやすくする。 */
-function stripForSpeech(text: string): string {
-  return text
-    .replace(/[|#*_`>~-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 220);
 }
 
 /** 村の返答用の簡易 system プロンプト（AI 経路のみ）。 */
