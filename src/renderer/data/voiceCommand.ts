@@ -131,6 +131,7 @@ export function normalizeUtterance(text: string): string {
 // Stryker disable all
 const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   home: ['ほーむ', 'とっぷ', 'top', 'home'],
+  village: ['むら', 'village', 'ゔぃれっじ', 'どうぶつのもり', 'aiのむら', 'えーあいのむら'],
   github: ['github', 'ぎっとはぶ', 'ぎっと'],
   wordpress: ['wordpress', 'わーどぷれす', 'wp'],
   atlassian: ['atlassian', 'あとらしあん', 'jira', 'じら', 'confluence', 'こんふるえんす'],

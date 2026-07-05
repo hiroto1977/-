@@ -65,6 +65,7 @@ import { CompliancePage } from './pages/CompliancePage';
 import { ObsidianPage } from './pages/ObsidianPage';
 import { DockerPage } from './pages/DockerPage';
 import { AssistantPage } from './pages/AssistantPage';
+import { VillagePage } from './pages/VillagePage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -629,6 +630,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'AI',
     description: 'Claude を頭脳に確証済みナレッジと全サービスを統合 — 質問・助言・表/成果物の生成',
     page: AssistantPage,
+    category: 'featured',
+  },
+  {
+    id: 'village',
+    label: 'AIの村',
+    icon: '🏡',
+    description: 'AI 組織 143 体が働く様子をどうぶつの森風に可視化 — 画面に話しかけて対話できる',
+    page: VillagePage,
     category: 'featured',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

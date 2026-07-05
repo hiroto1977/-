@@ -18,6 +18,7 @@ import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './busines
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 import { fetchHomeSnapshot } from './home';
+import { fetchVillageSnapshot } from './village';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
 import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
@@ -75,6 +76,7 @@ export type { ServiceId };
 
 export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unknown>> = {
   home: fetchHomeSnapshot,
+  village: fetchVillageSnapshot,
   github: fetchGithubSnapshot,
   wordpress: fetchWordPressSnapshot,
   atlassian: fetchAtlassianSnapshot,
@@ -172,6 +174,8 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  token is not an error here. */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
+  // AIの村: registry.json から renderer 側で導出する全画面シーン。認証不要。
+  'village',
   'skills',
   'security',
   'emotions',

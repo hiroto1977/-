@@ -259,7 +259,7 @@ export function App() {
   const activeOrder = SERVICE_ORDER.get(active.id) ?? 0;
   // 設定・ホームは常に開放: 設定は招待コードでの全機能無償化やマスターパスワード等の
   // 基盤機能を含むため、プランでロックしない (ロックすると無償化に辿り着けない)。
-  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home']);
+  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home', 'village']);
   const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
   const requiredPlan = requiredPlanForServiceIndex(activeOrder);
 
