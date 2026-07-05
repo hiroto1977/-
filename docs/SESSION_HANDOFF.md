@@ -20,11 +20,24 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,625**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パスで 4,350→3,625・**−725（−16.7%）**） |
-| **直近完了作業** | 知識ベース重複統合 3 パス完了（2026-07-02。パス3は 98 エージェントの判定＋懐疑検証 Workflow） |
+| **直近完了作業** | 🏡 AIの村（70 番目のサービス・どうぶつの森風オーケストレーション可視化＋音声対話）を出荷（2026-07-05） |
+| **サービス数** | **70**（village 追加） |
 | **Knowledge Vault** | 4,397 files |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
-| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ再構築 + チャットボット精度 v2 + 重複統合を蓄積、まだ未マージ） |
-| **次のアクション** | ①薄いエントリ（<300字）の出典付き増強（重複統合後に再集計してから）②新規概念 Batch 724。**別エントリ内で名称＋機構＋出典が既述なら専用エントリがなくても却下**する規律を厳守 |
+| **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ再構築 + チャットボット精度 v2 + 重複統合 + AIの村 を蓄積、まだ未マージ） |
+| **次のアクション** | 大規模システム柱 B（知識グラフ+教育の 100 万行基盤 Phase 0〜3）。プラン: `.claude/plans/mighty-imagining-salamander.md`。並行して①薄いエントリ増強②新規概念 Batch 724 |
+
+### 🏡 AIの村（2026-07-05 出荷）
+
+AI オーケストレーション組織 143 体（CEO/COO/役員5/秘書室20/管理職8/一般職108）をどうぶつの森風の
+全画面シーンに村人として可視化し、画面に話しかけて対話できる 70 番目のサービス。
+- `data/villageData.ts`（registry.json から純導出・決定論）＋`data/villageLayout.ts`（区画パッキング＋
+  三角関数徘徊・乱数なし）＋`pages/VillagePage.tsx`（絵文字/CSS のみ・setInterval で徘徊＋PDCA タスクループ）。
+- 音声（両対応）: `voice/speechAdapter`（認識）→`chatOrg.routeTopicScored` で担当キャラ選定→`chatbot.replyTo`
+  即応＋AI 設定時 `assistant/chat`→新規 `voice/ttsAdapter`（speechSynthesis 読み上げ・非対応は degrade）。
+- バンドル制約順守: 大量データは足さず registry（既存 import）＋純導出のみ。standalone.html は 9.9→10.0MB。
+- **今後の大規模化（柱 B）は非バンドルの vault/knowledge-graph に置く**（`src/renderer/data` は standalone に
+  インライン化されるため肥大化厳禁）。
 
 ### 🧹 知識ベース重複統合（2026-07-02 完了）
 
