@@ -133,7 +133,10 @@ export function roleOf(team: Pick<RawTeam, 'role'>): TeamRole {
 function shortTitle(title: string): string {
   // 例: "最高財務責任者 (CFO)" → "CFO"、"税務部長" → "税務部長"
   const inner = title.match(/\(([^)]+)\)/)?.[1];
-  return inner ? inner.trim() : title;
+  if (!inner) return title;
+  // 括弧内が「CIO / Chief Investment Officer」のように別名併記のときは、
+  // 先頭の略称だけを使う（建物カードのヘッダが溢れないように）。
+  return (inner.split('/')[0] ?? inner).trim();
 }
 
 /** ドメイン文字列から短いチーム名（区分名）を取り出す。例: "税務(所得税)" → "所得税"。 */

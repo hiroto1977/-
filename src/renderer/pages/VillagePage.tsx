@@ -455,10 +455,10 @@ function BuildingCard({
           whiteSpace: 'nowrap',
         }}
       >
-        <span>
+        <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {emoji} {label}
         </span>
-        <span style={{ opacity: 0.8, fontWeight: 700 }}>{sub}</span>
+        <span style={{ opacity: 0.8, fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
       </div>
     </div>
   );

@@ -82,6 +82,17 @@ describe('buildRegions', () => {
     expect(r.find((x) => x.id === 'coo')).toBeTruthy();
     expect(r.filter((x) => x.kind === 'exec').length).toBe(REG.org.executives.length);
   });
+
+  it('shortens exec labels to the acronym so building-card headers do not overflow', () => {
+    // 「最高投資責任者 (CIO / Chief Investment Officer)」→「CIO」。別名併記でもヘッダが溢れない。
+    const execRegions = buildRegions(REG).filter((x) => x.kind === 'exec');
+    for (const r of execRegions) {
+      expect(r.label).not.toContain('/');
+      expect(r.label.length).toBeLessThanOrEqual(6);
+    }
+    const cio = execRegions.find((x) => x.execId === 'cio');
+    expect(cio?.label).toBe('CIO');
+  });
 });
 
 describe('teamChain', () => {
