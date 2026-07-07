@@ -4,8 +4,8 @@ id: econ-islamic-finance
 category: "economics"
 category_ja: "経済学"
 title: "イスラム金融とシャリア准拠の融資メカニズム"
-as_of: "2024-12-31"
-source_count: 2
+as_of: "2026-07"
+source_count: 3
 authoritative: true
 tags:
   - collection/academic
@@ -17,17 +17,18 @@ aliases:
 
 # イスラム金融とシャリア准拠の融資メカニズム
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2024-12-31 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-07 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-イスラム金融は、シャリア（イスラム法）に準拠した銀行と投資メカニズムであり、利息（リバ）の禁止、リスク共有、実資産の裏付けを基本原則とする。2000年代のThomas、Siddiqqiら経済学者の研究により、イスラム金融は西洋的資本主義とは異なる代替的経済パラダイムとして、現在2兆ドルを超える世界的金融システムを形成している。スクークス（イスラム債）、ムダーラバ（利益分配契約）、ワクフ（宗教的基金）などの仕組みは、倫理的投資と社会的責任を統合する独自の金融構造を提供する。
+イスラム金融は、シャリア（イスラム法）に準拠した銀行と投資メカニズムであり、利息（リバ）の禁止、リスク共有、実資産の裏付けを基本原則とする。Siddiqi、Chapra、Mirakhor ら経済学者の研究により、イスラム金融は西洋的資本主義とは異なる代替的経済パラダイムとして確立され、世界のイスラム金融総資産は 2024 年時点で約 4〜6 兆ドル（IFSB 集計約 3.9 兆ドル、LSEG/ICD 集計約 5.4〜6 兆ドル。2029 年には 9.7 兆ドル到達見込み）に達し、スクーク（イスラム債）残高も 2024 年に 1 兆ドルを突破した。ムダーラバ（利益分配契約）、ワクフ（宗教的基金）などの仕組みは、倫理的投資と社会的責任を統合する独自の金融構造を提供する。
 
 ## 提唱者・初出
-Iqbal, Zamir （2011 Cambridge University Press）／Mirakhor, Abbas ／Thomas, Abdulkader ／Siddiqqui, Muhammad Nejatullah
+Iqbal, Zamir （2011 An Introduction to Islamic Finance, Wiley）／Mirakhor, Abbas ／Siddiqi, Muhammad Nejatullah ／Chapra, M. Umer
 
 ## 出典
-- [Iqbal, Z., & Mirakhor, A. (2011) Islamic Finance: A Modern Perspective, Cambridge University Press](https://www.cambridge.org/jp/academic/subjects/economics/financial-econometrics-and-risk-management/islamic-finance-modern-perspective) `リファレンス`
-- [Thomas, A. (2009) Islamic Banking and Finance: A Global Perspective, Journal of Emerging Market Finance 8(1): 71–89](https://journals.sagepub.com/doi/abs/10.1177/097265270900800105) `学術`
+- [Iqbal, Z., & Mirakhor, A. (2011) An Introduction to Islamic Finance: Theory and Practice, 2nd ed., John Wiley & Sons](https://books.google.com/books?id=SbVUt5X0R5MC) `リファレンス`
+- [IFSB (2025) Islamic Financial Services Industry Stability Report 2025（2024 年総資産約 3.88 兆ドル・前年比 14.9% 増）](https://www.ifsb.org/press-releases/islamic-financial-services-industry-stability-report-2025-need-for-coordinated-action-to-deepen-markets-and-sustain-growth-momentum/) `公的`
+- [LSEG & ICD (2025) Islamic Finance Development Indicator Report（2029 年 9.7 兆ドル到達予測）](https://icd-ps.org/en/news/lseg-and-icd-announce-findings-of-the-2025-islamic-finance-development-indicator-report-global-islamic-finance-assets-projected-to-reach-us97-trillion-by-2029) `メディア`
 
 ## 関連
 - コレクション: [[学術概念]]

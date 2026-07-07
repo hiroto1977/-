@@ -864,23 +864,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'legal-superior-bargaining',
-      domain: 'legal',
-      title: '優越的地位の濫用（独占禁止法）',
-      statement:
-        '取引上優越した地位にある事業者が、取引先に正常な商慣習に照らして不当に不利益を与える行為であり、' +
-        '独占禁止法が不公正な取引方法の一類型として禁止する。課徴金納付命令の対象となる。',
-      authority: '所管: 公正取引委員会（独占禁止法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 優越的地位の濫用の考え方' },
-      { url: 'https://www.jftc.go.jp/dk/dk_qa.html', type: 'government', label: '公正取引委員会 独禁法FAQ' },
-      { url: 'https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8', type: 'media', label: '優越的地位の濫用 概説' },
-    ],
-  },
-  {
-    value: {
       id: 'legal-premium-regulation',
       domain: 'legal',
       title: '景品表示法の景品規制',
@@ -1683,24 +1666,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mhlw.go.jp/seisakunitsuite/bunya/koyou_roudou/koyoukintou/ryouritsu/kaigo/leave/', type: 'government', label: '厚生労働省 介護休業制度特設サイト' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000158665.html', type: 'government', label: '厚生労働省 Q&A 介護休業給付（67%）' },
       { url: 'https://www.katei-ryouritsu.metro.tokyo.lg.jp/kaigo/workers/workers-2/w-2-12/', type: 'municipality', label: '東京都 両立支援ポータル 介護休業中の給与' },
-    ],
-  },
-  {
-    value: {
-      id: 'legal-freelance-protection',
-      domain: 'legal',
-      title: 'フリーランス・事業者間取引適正化等法（フリーランス保護法）',
-      statement:
-        '「特定受託事業者に係る取引の適正化等に関する法律」は2024年11月1日に施行され、業務委託をする発注事業者に対し、' +
-        'フリーランス（特定受託事業者）への取引条件の書面等による明示、報酬の支払期日（給付受領日から原則60日以内）の設定・支払、' +
-        '受領拒否・報酬減額・買いたたき等の禁止、ハラスメント対策の体制整備等を義務付ける。',
-      authority: '所管: 公正取引委員会・中小企業庁・厚生労働省（フリーランス保護法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.jftc.go.jp/fllaw_limited.html', type: 'government', label: '公正取引委員会 フリーランスの取引適正化' },
-      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/law_freelance.html', type: 'government', label: '中小企業庁 フリーランス・事業者間取引適正化等法' },
-      { url: 'https://www.gov-online.go.jp/article/202408/entry-6301.html', type: 'media', label: '政府広報オンライン フリーランス新法 2024年11月開始' },
     ],
   },
   {
@@ -4574,24 +4539,6 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'tax-cfc-rules',
-      domain: 'tax',
-      title: '外国子会社合算税制（タックスヘイブン対策税制）',
-      statement:
-        '外国子会社合算税制（タックスヘイブン対策税制／CFC税制）は、内国法人等が税負担の著しく低い国・地域に設立した外国関係会社を' +
-        '通じて所得を留保することによる租税回避を防止するため、一定の要件のもとで、その外国関係会社の所得に相当する金額を株主である' +
-        '内国法人等の所得とみなして合算し課税する制度である。経済活動基準を満たす実体を伴う事業所得は、原則として合算対象から除かれる。',
-      authority: '所管: 国税庁（租税特別措置法）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.mof.go.jp/tax_policy/summary/international/175.htm', type: 'government', label: '財務省 外国子会社合算税制の概要' },
-      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180111/index.htm', type: 'government', label: '国税庁 外国子会社合算税制に関するQ&A' },
-      { url: 'https://www.ma-cp.com/about-ma/cfc-taxation/', type: 'media', label: '外国子会社合算税制（CFC税制）解説' },
-    ],
-  },
-  {
-    value: {
       id: 'tax-platform-taxation',
       domain: 'tax',
       title: '消費税のプラットフォーム課税（特定プラットフォーム事業者制度）',
@@ -4633,7 +4580,8 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       statement:
         '2025年（令和7年）4月1日施行の雇用保険法改正により「出生後休業支援給付金」が新設された。子の出生後一定期間に被保険者とその配偶者が' +
         'ともに育児休業（産後パパ育休等）を取得した場合等に、一定要件のもと最大28日分について休業開始時賃金日額の13%相当を、通常の育児休業給付' +
-        '（67%）に上乗せして支給するもので、社会保険料免除等と併せて休業前の手取り実質10割相当を目指す制度である（配偶者が無業・自営等の場合は配偶者の育休取得を要しない例外あり）。',
+        '（67%）に上乗せして支給するもので、社会保険料免除等と併せて休業前の手取り実質10割相当を目指す制度である（配偶者が無業・自営等の場合は配偶者の育休取得を要しない例外あり）。' +
+        '支給には、本人とその配偶者がそれぞれ14日以上の育児休業（出生時育児休業を含む）を取得することが要件となる。給付は非課税で、出生時育児休業給付金への上乗せも対象。',
       authority: '所管: 厚生労働省（雇用保険法）',
       asOf: '2026-06',
     },
@@ -4641,6 +4589,9 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000135090_00001.html', type: 'government', label: '厚生労働省 育児休業等給付について' },
       { url: 'https://jsite.mhlw.go.jp/kanagawa-roudoukyoku/content/contents/002098800.pdf', type: 'government', label: '神奈川労働局 出生後休業支援給付金リーフレット' },
       { url: 'https://www.st-works.com/column/labor-law/houkaisei_33', type: 'media', label: '出生後休業支援給付金の創設 解説' },
+      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_childcareleave.html', type: 'government', label: '厚生労働省 ハローワークインターネットサービス 育児休業等給付' },
+      { url: 'https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html', type: 'government', label: 'ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）' },
+      { url: 'https://canon.jp/biz/solution/smb/tips/trend/202411-romu1', type: 'operator', label: 'キヤノンMJ 2025年4月新設の出生後休業支援給付・育児時短就業給付の解説' },
     ],
   },
   {
@@ -6221,31 +6172,14 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
   },
   {
     value: {
-      id: 'labor-postbirth-leave-support-benefit',
-      domain: 'labor',
-      title: '出生後休業支援給付金（2025年4月1日創設・両親育休で実質手取り10割）',
-      statement:
-        '出生後休業支援給付金は雇用保険法改正により2025年（令和7年）4月1日に創設された給付で、両親がともに子の出生後一定期間内に育児休業を取得した場合に、出生時育児休業給付・育児休業給付に' +
-        '上乗せして支給される。既存の給付率（賃金の67%相当）に上乗せすることで合計約80%となり、給付が非課税かつ育休中の社会保険料が免除されることと相まって実質手取り10割相当に引き上げる。' +
-        '被保険者とその配偶者がそれぞれ一定日数以上（14日以上）の育児休業を取得することが要件とされる（上乗せ率13%・支給上限日数28日等の数値は要確認）。',
-      authority: '所管: 厚生労働省（職業安定局雇用保険課／ハローワーク）',
-      asOf: '2026-06',
-    },
-    sources: [
-      { url: 'https://www.hellowork.mhlw.go.jp/insurance/insurance_childcareleave.html', type: 'government', label: '厚生労働省 ハローワークインターネットサービス 育児休業等給付' },
-      { url: 'https://jsite.mhlw.go.jp/tokyo-hellowork/list/shibuya/important_topics/070116_00001.html', type: 'government', label: 'ハローワーク渋谷（東京労働局）出生後休業支援給付金の創設（令和7年4月1日）' },
-      { url: 'https://canon.jp/biz/solution/smb/tips/trend/202411-romu1', type: 'operator', label: 'キヤノンMJ 2025年4月新設の出生後休業支援給付・育児時短就業給付の解説' },
-    ],
-  },
-  {
-    value: {
       id: 'legal-freelance-protection-act',
       domain: 'legal',
       title: 'フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）',
       statement:
         '特定受託事業者に係る取引の適正化等に関する法律（フリーランス・事業者間取引適正化等法、令和5年法律第25号）は2024年（令和6年）11月1日に施行された。発注事業者がフリーランス' +
         '（特定受託事業者）に業務委託する際、取引条件を書面又は電磁的方法で直ちに明示する義務を課し、報酬支払期日を物品等の受領日から起算して60日以内のできる限り早い日に設定することを' +
-        '義務付ける。あわせて募集情報の的確表示、育児介護等への配慮、ハラスメント対策の体制整備等が定められ、取引適正化を公正取引委員会・中小企業庁が、就業環境の整備を厚生労働省が所管する。',
+        '義務付ける。あわせて募集情報の的確表示、育児介護等への配慮、ハラスメント対策の体制整備等が定められ、取引適正化を公正取引委員会・中小企業庁が、就業環境の整備を厚生労働省が所管する。' +
+        '同法は発注事業者の禁止行為として、受領拒否・報酬の減額・返品・買いたたき・不当な給付内容の変更、やり直しの強制等を定めている。',
       authority: '所管: 公正取引委員会・中小企業庁（取引適正化）／厚生労働省（就業環境の整備）',
       asOf: '2026-06',
     },
@@ -6253,6 +6187,9 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jftc.go.jp/freelancelaw_2024/', type: 'government', label: '公正取引委員会 2024年フリーランス法特設サイト' },
       { url: 'https://www.mhlw.go.jp/content/001470693.pdf', type: 'government', label: '厚生労働省 フリーランス法のあらまし（就業環境の整備関係）' },
       { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/download/freelance/law_02.pdf', type: 'government', label: '中小企業庁・公正取引委員会 説明資料（令和6年11月1日施行）' },
+      { url: 'https://www.jftc.go.jp/fllaw_limited.html', type: 'government', label: '公正取引委員会 フリーランスの取引適正化' },
+      { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/law_freelance.html', type: 'government', label: '中小企業庁 フリーランス・事業者間取引適正化等法' },
+      { url: 'https://www.gov-online.go.jp/article/202408/entry-6301.html', type: 'media', label: '政府広報オンライン フリーランス新法 2024年11月開始' },
     ],
   },
   {
@@ -6770,6 +6707,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.mof.go.jp/tax_policy/summary/international/175.htm', type: 'government', label: '財務省 外国子会社合算税制の概要' },
       { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180516/pdf/01.pdf', type: 'government', label: '国税庁 内国法人の外国関係会社に係る所得の課税の特例（制度の概要）' },
       { url: 'https://www.ma-cp.com/about-ma/cfc-taxation/', type: 'media', label: 'M&Aキャピタルパートナーズ 外国子会社合算税制（CFC税制）の解説' },
+      { url: 'https://www.nta.go.jp/law/joho-zeikaishaku/hojin/180111/index.htm', type: 'government', label: '国税庁 外国子会社合算税制に関するQ&A' },
     ],
   },
   {
@@ -7123,6 +7061,8 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       { url: 'https://www.jftc.go.jp/dk/guideline/unyoukijun/yuetsutekichii.html', type: 'government', label: '公正取引委員会 優越的地位の濫用に関する独占禁止法上の考え方' },
       { url: 'https://www.jftc.go.jp/houdou/pressrelease/2019/dec/191217_dpfgl.html', type: 'government', label: '公正取引委員会 デジタルPF事業者と消費者の取引における優越的地位の濫用の考え方' },
       { url: 'https://www.businesslawyers.jp/practices/675', type: 'media', label: 'BUSINESS LAWYERS 優越的地位の濫用とは 解説' },
+      { url: 'https://www.jftc.go.jp/dk/dk_qa.html', type: 'government', label: '公正取引委員会 独禁法FAQ' },
+      { url: 'https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8', type: 'media', label: '優越的地位の濫用 概説' },
     ],
   },
 ];

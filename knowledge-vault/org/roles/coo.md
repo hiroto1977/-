@@ -18,14 +18,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全675件）
+### 学術概念 / 経営学（全672件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-analysis|3C分析]]
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
-- …ほか 669 件 → [[学術概念]]
+- …ほか 666 件 → [[学術概念]]
 
 ### 学術概念 / ビジネス法務（全700件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
@@ -36,59 +36,59 @@ aliases:
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
 - …ほか 694 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全963件）
+### 学術概念 / 経済学（全960件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 957 件 → [[学術概念]]
+- …ほか 954 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全653件）
+### 学術概念 / 人間科学（全650件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 647 件 → [[学術概念]]
+- …ほか 644 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全634件）
+### 学術概念 / 情報社会学（全625件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 628 件 → [[学術概念]]
+- …ほか 619 件 → [[学術概念]]
 
-### 法務・税務・労務 / 労務（全127件）
+### 法務・税務・労務 / 労務（全126件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
 - [[labor-break-time|休憩時間（労働基準法34条）]]
 - [[labor-care-leave|介護休業と介護休業給付金]]
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
-- …ほか 121 件 → [[法務・税務・労務]]
+- …ほか 120 件 → [[法務・税務・労務]]
 
-### 法務・税務・労務 / 法務（全140件）
+### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]]
 - [[legal-agency|民法の代理（代理権・無権代理・表見代理）]]
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]]
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]]
-- …ほか 134 件 → [[法務・税務・労務]]
+- …ほか 132 件 → [[法務・税務・労務]]
 
-### 法務・税務・労務 / 税務（全135件）
+### 法務・税務・労務 / 税務（全134件）
 - [[tax-amended-return|修正申告・期限後申告と加算税]]
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]]
 - [[tax-asset-replacement|特定の事業用資産の買換えの場合の譲渡所得の課税の特例]]
 - [[tax-automobile-tax|自動車税（種別割）]]
 - [[tax-bad-debt|法人税の貸倒損失と貸倒引当金]]
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]
-- …ほか 129 件 → [[法務・税務・労務]]
+- …ほか 128 件 → [[法務・税務・労務]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]

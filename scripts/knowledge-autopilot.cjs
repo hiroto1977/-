@@ -7,7 +7,7 @@
  * 人手（または定期実行）で 1 コマンド叩くだけで、機械化できる工程を全て実行し、
  * LLM の判断が必要な残作業だけを機械可読な「作業キュー」に落とす:
  *
- *   1. AUDIT    全 4,256+ 項目を監査 → 増強/再検証/重複疑い/出典衛生/リンク切れ を検出
+ *   1. AUDIT    全項目（4,200+）を監査 → 増強/再検証/重複疑い/出典衛生/リンク切れ を検出
  *   2. REGEN    派生成果物を再生成（Obsidian vault・NotebookLM エクスポート）
  *   3. VERIFY   確証ゲート（verify:knowledge）と vault 同期（vault:check）を強制
  *   4. REPORT   orchestration/knowledge-queue.json（gitignore 済み）と要約を出力

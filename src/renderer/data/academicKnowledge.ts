@@ -1507,7 +1507,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '政府が国債発行で財政支出を拡大すると、貸付資金市場での資金需要が増大して利子率が上昇し、それが民間投資（や利子感応的な消費）を抑制・減少させ、財政政策の景気刺激効果が相殺・減殺される現象。' +
       '利子率の上昇を通じて生じる金融的クラウディングアウトが代表的だが、完全雇用下では実物資源（労働・資本）の取り合いによる実物的クラウディングアウトも論じられる。IS-LMの枠組みでは、政府支出増がIS曲線を右シフトさせ均衡所得と利子率を押し上げる。LM曲線の傾きが急なほど効果が大きく、垂直なら完全クラウディングアウト、水平（流動性の罠）ならゼロとなる。' +
-      '不況・流動性の罠では利子率が動かずクラウディングアウトは小さい、とケインジアンは主張する一方、マネタリストやリカード派は効果を重視し財政政策に懐疑的である。実証では程度（部分的か完全か）をめぐり論争が続く。',
+      '不況・流動性の罠では利子率が動かずクラウディングアウトは小さい、とケインジアンは主張する一方、マネタリストやリカード派は効果を重視し財政政策に懐疑的である。実証では程度（部分的か完全か）をめぐり論争が続く。' +
+      'なお、政府支出の財源調達を見越した家計の貯蓄行動が乗数効果を相殺するという「リカードの等価定理」（バロー、1974）の視点や、不況下では公共投資がむしろ民間投資を誘発する「クラウディングイン」の概念も、この議論の重要な派生である。',
     keyFigures: 'IS-LM分析：政府支出増→IS右シフト→利子率上昇→民間投資減／金融的クラウディングアウト＝利子率上昇経由／LM曲線が急なほど効果大・水平（流動性の罠）でゼロ／ケインジアンは不況下では弱いと主張、マネタリスト・リカード派は重視',
     asOf: '2026-06',
     sources: [
@@ -1515,6 +1516,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://openstax.org/books/principles-economics-3e/pages/31-4-fiscal-policy-investment-and-economic-growth', type: 'academic', label: 'OpenStax, Principles of Economics 3e §31.4 — Fiscal Policy, Investment, and Crowding Out' },
       { url: 'https://pages.stern.nyu.edu/~nroubini/NOTES/CHAP9.HTM', type: 'academic', label: 'NYU Stern (N. Roubini) — The IS-LM Model（LM曲線の傾きとクラウディングアウト）' },
       { url: 'https://www.pgpf.org/article/the-national-debt-can-crowd-out-investments-in-the-economy-heres-how/', type: 'media', label: 'Peter G. Peterson Foundation（CBO推計：赤字1ドル増→民間投資約33セント減）' },
+      { url: 'https://doi.org/10.1086/260266', type: 'academic', label: 'Barro, R.J. (1974) Are Government Bonds Net Wealth? — Journal of Political Economy 82(6)' },
+      { url: 'https://en.wikipedia.org/wiki/Crowding_out_(economics)', type: 'reference', label: 'Wikipedia: Crowding Out — fiscal expansion reducing private investment' },
+      { url: 'https://doi.org/10.1257/aer.101.5.2083', type: 'academic', label: 'Auerbach, A.J. & Gorodnichenko, Y. (2012) Fiscal Multipliers in Recession and Expansion — AER P&P 102(3)' },
     ],
   },
   {
@@ -2354,7 +2358,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     statement:
       '中央銀行が政策金利をどの水準に設定すべきかを、インフレ率と産出（GDP）ギャップに反応させる形で示した金融政策の指針（ルール）。経済学者ジョン・B・テイラーが1993年の論文で提示した。' +
       '基本形は、政策金利＝均衡実質金利＋目標インフレ率＋a×（実際のインフレ率−目標インフレ率）＋b×（産出ギャップ）で、a・bは反応係数（テイラーの原型はともに0.5、均衡実質金利・目標インフレ率はともに2％と置かれた）。インフレが目標を上回れば金利を引き上げ、景気が過熱（産出ギャップがプラス）でも引き上げる。特にインフレ率に対する名目金利の反応が1を超える（名目金利をインフレ以上に動かし実質金利を上げる）べきとする「テイラー原理」は物価安定の条件とされる。' +
-      '裁量的政策に対しルールに基づく政策の利点を示すものとして、また実際の中央銀行行動を記述・評価するベンチマークとして広く使われる。',
+      '裁量的政策に対しルールに基づく政策の利点を示すものとして、また実際の中央銀行行動を記述・評価するベンチマークとして広く使われる。' +
+      '後続研究では、ウッドフォードが動学的確率的一般均衡（DSGE）モデルの枠組みでルールの最適性を基礎づけ、クラリダ＝ガリ＝ガートラーが各国中央銀行の政策反応関数として実証した。',
     keyFigures: 'J.B.テイラー1993提唱／政策金利をインフレ率と産出ギャップに反応させるルール／反応係数(原型は各0.5、均衡実質金利・目標インフレ率は各2%)／テイラー原理＝インフレへの反応>1で実質金利を上げ物価安定／ルールに基づく政策・中央銀行行動のベンチマーク',
     asOf: '2026-06',
     sources: [
@@ -2362,6 +2367,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy', type: 'government', label: 'Federal Reserve Bank of St. Louis — Output Gaps, Taylor Rule and the Stance of Monetary Policy' },
       { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'reference', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?' },
       { url: 'https://www.frbsf.org/wp-content/uploads/3-16.pdf', type: 'government', label: 'Federal Reserve Bank of San Francisco — Taylor\'s Rule and the Fed: 1970–1997' },
+      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor, J. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series' },
+      { url: 'https://doi.org/10.1162/003355300554692', type: 'academic', label: 'Clarida, R. et al. (2000) Monetary Policy Rules and Macroeconomic Stability — QJE' },
+      { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — テイラー・ルールの概要' },
     ],
   },
   {
@@ -2696,22 +2704,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-porter-diamond',
-    discipline: 'management',
-    title: 'ポーターのダイヤモンド・モデル（国の競争優位）',
-    statement:
-      'なぜ特定の国・地域が特定の産業で国際競争力をもつのかを説明する枠組み。マイケル・ポーターが著書『国の競争優位（The Competitive Advantage of Nations）』（1990）で示した。10カ国・4年間の研究に基づき、国の競争優位は相互に関連する4つの決定要因（ダイヤモンドの4頂点）の相互作用から生まれるとする。' +
-      '(1)要素条件（熟練労働・インフラ・技術・資本など生産要素の質）、(2)需要条件（自国の需要の規模と質。目の肥えた厳しい顧客が企業を高度化させる）、(3)関連・支援産業（競争力ある供給業者や関連産業の集積＝クラスター）、(4)企業の戦略・構造・競争（国内の競争の激しさや経営慣行）。これに「政府」と「偶然（チャンス）」が補助要因として加わり各決定要因に影響する。' +
-      '各要因が相互に強化し合うことで産業クラスターが形成され持続的な国際競争力が生まれるとし、産業政策・地域クラスター論の基礎となった。',
-    keyFigures: 'M.ポーター『国の競争優位』1990／国の競争優位を決める4要因(ダイヤモンド)：要素条件・需要条件・関連支援産業・企業の戦略構造競争／政府と偶然が補助／10カ国4年間の研究／産業クラスター論の基礎',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'academic', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
-      { url: 'https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html', type: 'academic', label: 'Saylor Academy open textbook — "Clustering: Porter\'s National Diamond"' },
-      { url: 'https://www.ebsco.com/research-starters/economics/diamond-model', type: 'reference', label: 'EBSCO Research Starters (Economics) — "Diamond Model"' },
-    ],
-  },
-  {
     id: 'human-representativeness',
     discipline: 'human-science',
     title: '代表性ヒューリスティック',
@@ -2741,23 +2733,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://laws.e-gov.go.jp/law/334AC0000000127', type: 'government', label: 'e-Gov法令検索「商標法（昭和三十四年法律第百二十七号）」' },
       { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/seidogaiyo/chizai08.html', type: 'government', label: '特許庁「商標制度の概要」（存続期間10年・更新／商標の機能／先願主義）' },
       { url: 'https://www.jpo.go.jp/system/trademark/gaiyo/newtype/index.html', type: 'government', label: '特許庁「新しいタイプの商標の保護制度」（平成27年4月開始）' },
-    ],
-  },
-  {
-    id: 'infosoc-media-richness',
-    discipline: 'information-sociology',
-    title: 'メディア・リッチネス理論',
-    statement:
-      'コミュニケーション・メディアによって伝えられる情報の「豊かさ（richness）」には差があり、課題の曖昧さ（equivocality）・不確実性に応じて適切なメディアを選ぶべきだとする理論。リチャード・L・ダフトとロバート・H・レンゲルが1986年の論文（Management Science）で体系化した（1980年代に提唱）。' +
-      'メディアのリッチネスは、(1)即時のフィードバックの速さ、(2)複数の手がかり（声の調子・表情・身振り等の伝達チャネル）、(3)自然言語・数値の多様性、(4)個人的な焦点（感情や個別性への適合）、の4基準で評価される。原典では対面コミュニケーションが最もリッチで、電話、宛先のある文書（手紙・メモ）、公式文書、数値資料の順にリーン（希薄）になるとされた。' +
-      '曖昧で多義的な課題（対立の調整・交渉等）にはリッチなメディアが、定型的で明確な課題には効率的なリーンメディアが適合し、ミスマッチは過剰簡略化や過剰複雑化を招くとする。電子メール・SNS・リモートワークのメディア選択を論じる基礎理論として広く参照されている。',
-    keyFigures: 'R.ダフト&R.レンゲルが提唱（原典1986年 Management Science）／メディアのリッチネス4基準：即時フィードバック・複数手がかり・言語多様性・個人的焦点／対面が最リッチ〜数値・公式文書がリーン／曖昧な課題にはリッチ・定型課題にはリーンが適合／メール・リモートワークのメディア選択の基礎',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-richness-theory', type: 'reference', label: 'EBSCO Research Starters — Media Richness Theory（百科事典的レファレンス）' },
-      { url: 'https://en.wikipedia.org/wiki/Media_richness_theory', type: 'reference', label: 'Wikipedia — Media richness theory（4基準・序列・1986年原典）' },
-      { url: 'https://collablab.northwestern.edu/CollabolabDistro/nucmc/DaftAndLengel-OrgInfoReq-MediaRichnessAndStructuralDesign-MngmtSci-1986.pdf', type: 'academic', label: 'Daft & Lengel (1986) "Organizational Information Requirements, Media Richness and Structural Design", Management Science 32:554–571（原典PDF, Northwestern University ホスト）' },
-      { url: 'https://is.theorizeit.org/wiki/Media_richness_theory', type: 'academic', label: 'IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory' },
     ],
   },
   {
@@ -3452,7 +3427,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'レントシーキング',
     statement:
       'レントシーキング（rent-seeking）とは、公共選択論における概念で、新たな富や価値を生み出すのではなく、既存の富（レント＝独占的・規制的に保護された超過利益）を自らに移転させることで利得を得ようとする活動を指す。典型例は、補助金・関税・輸入許可・参入規制・独占的地位といった政府が創出する便宜を獲得・防衛するために、企業や利益集団がロビイング・陳情・広報・贈賄等へ資源を投じる行為である。' +
-      'これらの支出はそれ自体は何の財も生まないため社会的に非生産的であり、資源配分を歪めて死荷重（厚生損失）を拡大させる。独占の社会的費用は価格歪みだけでなく、独占権を巡る競争に費やされる資源まで含めて測るべきだ、という点が核心。腐敗・所得格差・競争低下を招く政府の失敗の一形態として論じられる。',
+      'これらの支出はそれ自体は何の財も生まないため社会的に非生産的であり、資源配分を歪めて死荷重（厚生損失）を拡大させる。独占の社会的費用は価格歪みだけでなく、独占権を巡る競争に費やされる資源まで含めて測るべきだ、という点が核心。腐敗・所得格差・競争低下を招く政府の失敗の一形態として論じられる。' +
+      '概念の帰属史としては、タロック（1967）が独占の厚生損失を先駆的に定式化（タロックの矩形）し、クルーガー（1974）が「レントシーキング」と命名してインド・トルコの輸入ライセンス制度による損失を推計したことで定着した。',
     keyFigures: 'ゴードン・タロック（Gordon Tullock, 1967「The Welfare Costs of Tariffs, Monopolies, and Theft」で現象を分析、ただし命名はせず）／アン・クルーガー（Anne O. Krueger, 1974「The Political Economy of the Rent-Seeking Society」で “rent-seeking” の語を命名・定着）',
     asOf: '2026-06',
     sources: [
@@ -3460,6 +3436,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.econlib.org/library/Enc/RentSeeking.html', type: 'reference', label: 'The Concise Encyclopedia of Economics (Econlib / Liberty Fund) — “Rent Seeking”' },
       { url: 'https://link.springer.com/article/10.1007/s11127-019-00646-y', type: 'academic', label: 'Public Choice (Springer, 査読誌) — “Rent seeking at 52: an introduction to a special issue”' },
       { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1465-7295.1967.tb01923.x', type: 'academic', label: 'Gordon Tullock (1967) “The Welfare Costs of Tariffs, Monopolies, and Theft”, Economic Inquiry / Western Economic Journal（原典）' },
+      { url: 'https://doi.org/10.1086/467455', type: 'academic', label: 'Krueger, A.O. (1974) The Political Economy of the Rent-Seeking Society — AER' },
+      { url: 'https://en.wikipedia.org/wiki/Rent-seeking', type: 'reference', label: 'Wikipedia: Rent-seeking — political economy' },
     ],
   },
   {
@@ -4869,22 +4847,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-lean-startup',
-    discipline: 'management',
-    title: 'リーン・スタートアップ',
-    statement:
-      '新事業・新製品開発のように不確実性が高い状況で、時間と資源の浪費を避けるために、最小限の機能を備えた試作品（MVP＝Minimum Viable Product、実用最小限の製品）を素早く市場に出し、顧客の反応をデータで計測し、その学びに基づいて製品・戦略を改善するか方向転換（ピボット）するかを判断する起業・経営手法。「構築（Build）→計測（Measure）→学習（Learn）」のフィードバックループを高速で回し、仮説を実地で検証する「検証による学習（validated learning）」を目標に据え、市場投入前の完璧主義を避ける点が核心である。' +
-      'トヨタ生産方式（リーン生産）のムダ排除の思想、スティーブ・ブランクの顧客開発（customer development）モデル、アジャイル開発を基盤とし、エリック・リースが体系化・命名した。',
-    keyFigures: 'エリック・リース（Eric Ries／提唱者・命名者、2008年のブログで命名し2011年の著書『The Lean Startup』で体系化）／スティーブ・ブランク（Steve Blank／顧客開発モデルの提唱者、基盤理論）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://hbr.org/2013/05/why-the-lean-start-up-changes-everything', type: 'media', label: 'Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）' },
-      { url: 'https://www.lean.org/lexicon-terms/lean-startup/', type: 'academic', label: 'Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）' },
-      { url: 'https://theleanstartup.com/principles', type: 'media', label: 'Eric Ries, The Lean Startup — Methodology / Principles（提唱者本人による一次情報源）' },
-      { url: 'https://en.wikipedia.org/wiki/Lean_startup', type: 'reference', label: 'Wikipedia: “Lean startup”' },
-    ],
-  },
-  {
     id: 'human-theory-of-mind',
     discipline: 'human-science',
     title: '心の理論',
@@ -5358,7 +5320,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'デジタルディバイド（情報格差）',
     statement:
       'デジタルディバイド（情報格差）とは、インターネットやパソコン等の情報通信技術（ICT）にアクセスし利活用できる人・集団・地域と、できない人・集団・地域との間に生じる格差を指す。OECDは社会経済的水準の異なる個人・世帯・企業・地域間でのICT利用機会の差と定義する。一般に3層で論じられ、(1)アクセス格差（first-level＝物理的・物質的にICTや回線を利用できるか）、' +
-      '(2)利用・スキル格差（second-level＝Hargittaiやvan Dijkらが論じた利用能力・リテラシー・利用の質の差）、(3)成果格差（third-level＝ICT利用から得られる便益・成果の差）に区分される。要因は所得・教育・年齢・地域（都市/地方）・国家間など多岐にわたり、既存の社会的不平等を再生産・拡大させうる点が問題視される。米国NTIAの1990年代報告「Falling Through the Net」を契機に広く認知され、日本では総務省『情報通信白書』が地域間・個人間集団間・国際間の3類型で扱う。',
+      '(2)利用・スキル格差（second-level＝Hargittaiやvan Dijkらが論じた利用能力・リテラシー・利用の質の差）、(3)成果格差（third-level＝ICT利用から得られる便益・成果の差）に区分される。要因は所得・教育・年齢・地域（都市/地方）・国家間など多岐にわたり、既存の社会的不平等を再生産・拡大させうる点が問題視される。米国NTIAの1990年代報告「Falling Through the Net」を契機に広く認知され、日本では総務省『情報通信白書』が地域間・個人間集団間・国際間の3類型で扱う。' +
+      'ノリス（2001）はこの格差をグローバル（国家間）・ソーシャル（国内階層間）・デモクラティック（政治参加）の3層に分類し、ウォーシャワーは機器の有無よりスキルや社会的支援を含む「実効的アクセス」を重視すべきだと論じた。COVID-19 下の遠隔化と SDGs 目標 9.c は、この格差を国際的課題として再浮上させた。',
     keyFigures:
       '普及の契機＝米NTIA「Falling Through the Net」（初版1995年／「Defining the Digital Divide」1999年）／3層モデル: first-level(アクセス)・second-level(スキル/利用、Hargittai 2002)・third-level(成果)／主要研究者＝Jan A.G.M. van Dijk・Eszter Hargittai・Alexander van Deursen／総務省『情報通信白書』分類＝地域間／個人間・集団間／国際間',
     asOf: '2026-06',
@@ -5367,6 +5330,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ntia.gov/sites/default/files/data/fttn99/FTTN.pdf', type: 'government', label: '米国NTIA「Falling Through the Net: Defining the Digital Divide」(1999)' },
       { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h23/html/nc222100.html', type: 'government', label: '総務省『平成23年版 情報通信白書』— 日本での定義と3類型' },
       { url: 'https://journals.sagepub.com/doi/10.1177/1461444818797082', type: 'academic', label: 'van Deursen & van Dijk (2019), New Media & Society — first/second-level divide の査読論文' },
+      { url: 'https://doi.org/10.1017/CBO9781139164887', type: 'academic', label: 'Norris, P. (2001) Digital Divide — Cambridge University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_divide', type: 'reference', label: 'Wikipedia: Digital divide — access, skills, usage gaps, global North-South' },
     ],
   },
   {
@@ -5558,7 +5523,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'ブルー・オーシャン戦略',
     statement:
       'W・チャン・キムとレネ・モボルニュ（ともにINSEAD教授）が提唱した経営戦略論で、2005年の同名著書（Harvard Business School Press）で広く知られた。既存需要を奪い合う競争の激しい市場空間を「レッド・オーシャン（赤い海）」と呼ぶのに対し、競争のない未知の市場空間を新たに創造することを「ブルー・オーシャン（青い海）」と呼ぶ。' +
-      '核心は、従来トレードオフとされた「差別化（価値向上）」と「低コスト」を同時に追求する「バリュー・イノベーション（value innovation）」にある。分析ツールとして競争要因と提供価値を可視化する「戦略キャンバス（strategy canvas）」、価値を再構築する「4つのアクション＝ERRCグリッド」（取り除く eliminate／減らす reduce／増やす raise／付け加える create）があり、シルク・ドゥ・ソレイユや米サウスウエスト航空が代表事例とされる。',
+      '核心は、従来トレードオフとされた「差別化（価値向上）」と「低コスト」を同時に追求する「バリュー・イノベーション（value innovation）」にある。分析ツールとして競争要因と提供価値を可視化する「戦略キャンバス（strategy canvas）」、価値を再構築する「4つのアクション＝ERRCグリッド」（取り除く eliminate／減らす reduce／増やす raise／付け加える create）があり、シルク・ドゥ・ソレイユや米サウスウエスト航空が代表事例とされる。' +
+      '任天堂 Wii のような非ユーザー層の開拓が現代の代表例に挙げられ、ポーターの「差別化か低コストかのトレードオフ」論への対抗軸としても位置づけられる。',
     keyFigures:
       'W・チャン・キム（W. Chan Kim, INSEAD教授）／レネ・モボルニュ（Renée Mauborgne, INSEAD教授）／2005年著書『Blue Ocean Strategy』（HBR初出2004）／中核概念＝バリュー・イノベーション・戦略キャンバス・ERRCグリッド',
     asOf: '2026-06',
@@ -5567,6 +5533,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://hbr.org/2004/10/blue-ocean-strategy', type: 'academic', label: 'Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)' },
       { url: 'https://www.britannica.com/money/blue-ocean-strategy-explained', type: 'reference', label: 'Encyclopædia Britannica Money — Blue Ocean Strategy Explained（戦略キャンバス・ERRCグリッド・事例）' },
       { url: 'https://en.wikipedia.org/wiki/Blue_Ocean_Strategy', type: 'reference', label: 'Wikipedia — Blue Ocean Strategy（出版情報・定義）' },
+      { url: 'https://doi.org/10.1016/j.lrp.2015.09.002', type: 'academic', label: 'Kim, W.C. & Mauborgne, R. (2005) Blue Ocean Strategy — HBS Press' },
     ],
   },
   {
@@ -6290,6 +6257,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://experts.umn.edu/en/publications/self-monitoring-of-expressive-behavior/', type: 'academic', label: 'University of Minnesota (Experts@Minnesota) — Snyder, M. (1974). Self-monitoring of expressive behavior, J. Personality and Social Psychology, 30(4), 526-537' },
       { url: 'https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/self-monitoring', type: 'reference', label: 'Encyclopedia.com — Self-Monitoring（概念・スナイダー起源・高低自己監視者）' },
       { url: 'https://en.wikipedia.org/wiki/Self-monitoring', type: 'reference', label: 'Wikipedia — Self-monitoring（尺度・因子構造・改訂版の議論）' },
+      { url: 'https://doi.org/10.1037/h0037039', type: 'academic', label: 'Snyder, M. (1974) Self-Monitoring of Expressive Behavior — Journal of Personality and Social Psychology 30(4)' },
     ],
   },
   {
@@ -6579,7 +6547,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'ダークパターン（欺瞞的デザイン）',
     statement:
       'ダークパターン（dark patterns）とは、ウェブサイトやアプリのユーザーインターフェース（UI）に意図的に組み込まれ、利用者を欺き・操作・誘導して、本来しないはずの行動（不要な購入、サブスク登録、個人情報の過剰提供、解約の断念など）を取らせる設計上の手口を指す。UXデザイナーのハリー・ブリヌル（Harry Brignull）が2010年に造語し当初の類型を整理した（現在は中立的に「欺瞞的デザイン deceptive design」とも呼ばれる）。' +
-      '代表的類型に、こっそり（sneaking、隠れた費用・無断のカゴ追加）、偽の緊急性・希少性、確認シェイミング（confirmshaming）、妨害（ローチモーテル＝登録は容易だが解約困難）、強制、誘導的初期設定や視覚的干渉（misdirection、プリチェック同意）があり、プライバシー領域でも問題視される。透明で利用者の利益に資する「ナッジ」とは異なり、利用者の自律性を損なう操作である点が本質。OECD・米FTC・EU（DSA第25条が禁止）・日本（消費者庁／特定商取引法のサブスク規制）が規制・報告を進める。',
+      '代表的類型に、こっそり（sneaking、隠れた費用・無断のカゴ追加）、偽の緊急性・希少性、確認シェイミング（confirmshaming）、妨害（ローチモーテル＝登録は容易だが解約困難）、強制、誘導的初期設定や視覚的干渉（misdirection、プリチェック同意）があり、プライバシー領域でも問題視される。透明で利用者の利益に資する「ナッジ」とは異なり、利用者の自律性を損なう操作である点が本質。OECD・米FTC・EU（DSA第25条が禁止）・日本（消費者庁／特定商取引法のサブスク規制）が規制・報告を進める。' +
+      'EU では EDPB ガイドライン 3/2022 が SNS 上のダークパターンを類型化するなど、規制の具体化が進んでいる。',
     keyFigures:
       'ハリー・ブリヌル（Harry Brignull、概念の提唱者・2010年造語）／OECD（2022「Dark commercial patterns」報告）／米FTC（2022「Bringing Dark Patterns to Light」報告）／EU（Digital Services Act 第25条で禁止）／日本・消費者庁',
     asOf: '2026-06',
@@ -6588,6 +6557,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.ftc.gov/reports/bringing-dark-patterns-light', type: 'government', label: 'U.S. Federal Trade Commission (2022) “Bringing Dark Patterns to Light”' },
       { url: 'https://www.deceptive.design/', type: 'reference', label: 'Harry Brignull, Deceptive Design (旧 darkpatterns.org, 2010〜) 概念の一次情報源' },
       { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）' },
+      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction (CSCW), 3, 1–32' },
+      { url: 'https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf', type: 'government', label: 'EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board' },
+      { url: 'https://doi.org/10.1145/3313831.3376600', type: 'academic', label: 'Gray, C. M. et al. (2020) The Dark Side of UX Design — CHI 2020 Extended Abstracts（dark pattern類型とUX倫理）' },
     ],
   },
   {
@@ -9248,20 +9220,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://elaws.e-gov.go.jp/document?lawid=347AC0000000113_20250601_504AC0000000068', type: 'government', label: 'e-Gov法令検索「雇用の分野における男女の均等な機会及び待遇の確保等に関する法律」' },
       { url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyoukintou/danjokintou/index.html', type: 'government', label: '厚生労働省「雇用における男女の均等な機会と待遇の確保のために」' },
-    ],
-  },
-  {
-    id: 'infosoc-cyberbalkanization',
-    discipline: 'information-sociology',
-    title: 'サイバーバルカン化',
-    statement:
-      'マーシャル・ヴァン・アルスタインとエリック・ブリニョルフソンが1996年の論文「電子コミュニティ——地球村かサイバーバルカンか」で提起した概念で、情報技術の発達によりネット社会が同質的で孤立した小集団へと分断される現象を指す。「バルカン化」は歴史的に細かく分裂したバルカン半島の政治的断片化になぞらえた表現である。' +
-      '人々は膨大な情報をフィルタリングし、自らの関心や価値観を共有する相手とだけ選択的に接触できるため、異なる立場や多様な視点への接触が減少し、重なり合わない情報圏が生じうると論じた。後に普及するエコーチェンバーやフィルターバブルの議論を先取りし枠づける先駆的概念とされ、技術が地球村による統合と集団の断片化のいずれをも招きうる二面性を指摘した点に意義がある。',
-    keyFigures: 'マーシャル・ヴァン・アルスタイン／エリック・ブリニョルフソン（1996）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf', type: 'academic', label: 'Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.1050.0363', type: 'academic', label: 'Van Alstyne & Brynjolfsson (2005), Management Science 51(6):851-868 (INFORMS)' },
     ],
   },
   {
@@ -15888,20 +15846,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-twin',
-    discipline: 'information-sociology',
-    title: 'デジタル・ツイン',
-    statement:
-      'デジタル・ツインとは、物理的な実体（製品・設備・都市・人体など）のリアルタイムデータを収集し、サイバー空間に精密な仮想複製を構築する技術・概念である。IoTセンサーが現実世界の状態を絶えず送信し、仮想モデルが物理実体の挙動を高精度に再現することで、故障予測・プロセス最適化・設計検証をシミュレーション上で行う。' +
-      '概念の起源はNASAのアポロ計画（1960年代）における宇宙船の地上複製モデルにあり、2002年にミシガン大学のマイケル・グリーブスが製品ライフサイクル管理（PLM）の文脈で体系化した。製造業（スマートファクトリー）・都市計画（スマートシティ）・医療・サプライチェーンへの応用が広がり、インダストリー4.0の中核技術とされる。',
-    keyFigures: 'マイケル・グリーブス（Michael Grieves, 2002体系化）／NASAのアポロ計画（起源）／インダストリー4.0（第4次産業革命との関連）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/technology/digital-twin', type: 'reference', label: 'Encyclopaedia Britannica — Digital twin（定義・NASAの起源・製造業・スマートシティ・IoT応用）' },
-      { url: 'https://www.meti.go.jp/policy/digital_transformation/digital_twin.html', type: 'government', label: '経済産業省 — デジタルツイン（製造業DX・スマートシティへの活用・政策的位置付け）' },
-    ],
-  },
-  {
     id: 'mgmt-csr',
     discipline: 'management',
     title: '企業の社会的責任（CSR）',
@@ -18245,12 +18189,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'データフェミニズム（Data Feminism）',
     statement:
       'データフェミニズム（data feminism）とは、米国の情報学者キャサリン・ディグナツィオ（Catherine D\'Ignazio, マサチューセッツ工科大学都市研究計画学科）とローレン・F・クライン（Lauren F. Klein, エモリー大学デジタル人文学研究所）が2020年の著書『Data Feminism』（MIT Press, ISBN: 978-0-262-04400-4, Creative Commonsライセンスによるオープンアクセス公開）において体系化した、交差的フェミニズム（intersectional feminism）の原理をデータサイエンスの全過程に適用し、データの収集・分析・可視化・コミュニケーションに内在する権力構造を批判的に検討する理論的・実践的枠組みである。ディグナツィオとクラインは、キンバリー・クレンショー（Kimberlé Crenshaw, 1989）の交差性理論（intersectionality）、パトリシア・ヒル・コリンズ（Patricia Hill Collins）の支配のマトリクス（matrix of domination）、サンドラ・ハーディング（Sandra Harding）のフェミニスト立場認識論（feminist standpoint epistemology）を理論的基盤として、データサイエンスの実践が既存の人種・ジェンダー・階級の不平等構造を再生産するメカニズムを分析した。' +
-      '本書は7つの原則を提示する。(1) 権力を検証する（Examine Power）：データサイエンスが誰に利益をもたらし誰を害するかを問う。(2) 権力に挑戦する（Challenge Power）：不公正なデータ実践・システムに対抗する。(3) 感情と具体性を高める（Elevate Emotion and Embodiment）：データの背後にある人間の経験を可視化する。(4) 二項対立を再考する（Rethink Binaries and Hierarchies）：ジェンダー・人種等の分類体系の恣意性を認識する。(5) 多元性を受容する（Embrace Pluralism）：単一の「客観的」視点への批判と多様な知の統合。(6) 文脈を考慮する（Consider Context）：データが生成・収集された社会的文脈の重要性。(7) 労働を可視化する（Make Labor Visible）：データ作業に関わる不可視の労働を認知し評価する。本書はMIT Pressからオープンアクセスで全文公開されており、データ倫理教育・批判的データ研究（critical data studies）・アルゴリズム公正性研究において教科書的テキストとして広く参照されている。',
+      '本書は7つの原則を提示する。(1) 権力を検証する（Examine Power）：データサイエンスが誰に利益をもたらし誰を害するかを問う。(2) 権力に挑戦する（Challenge Power）：不公正なデータ実践・システムに対抗する。(3) 感情と具体性を高める（Elevate Emotion and Embodiment）：データの背後にある人間の経験を可視化する。(4) 二項対立を再考する（Rethink Binaries and Hierarchies）：ジェンダー・人種等の分類体系の恣意性を認識する。(5) 多元性を受容する（Embrace Pluralism）：単一の「客観的」視点への批判と多様な知の統合。(6) 文脈を考慮する（Consider Context）：データが生成・収集された社会的文脈の重要性。(7) 労働を可視化する（Make Labor Visible）：データ作業に関わる不可視の労働を認知し評価する。本書はMIT Pressからオープンアクセスで全文公開されており、データ倫理教育・批判的データ研究（critical data studies）・アルゴリズム公正性研究において教科書的テキストとして広く参照されている。' +
+      'データフェミニズムは、ノーブルやベンジャミンらのアルゴリズム的抑圧研究と並ぶ、批判的データ研究の代表的枠組みとして位置づけられる。',
     keyFigures: 'Catherine D\'Ignazio（MIT）& Lauren F. Klein（Emory University）（MIT Press, 2020, 体系化）',
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/11805.001.0001', type: 'academic', label: 'D\'Ignazio & Klein (2020) Data Feminism — MIT Press（オープンアクセス全文）' },
       { url: 'https://en.wikipedia.org/wiki/Data_Feminism', type: 'reference', label: 'Data Feminism — Wikipedia（7原則・理論的基盤・影響の概要）' },
+      { url: 'https://en.wikipedia.org/wiki/Data_feminism', type: 'reference', label: 'Wikipedia: Data feminism — intersectionality, power, classification, critical data studies' },
     ],
   },
   {
@@ -18301,12 +18247,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'テクノナショナリズム（Techno-nationalism）',
     statement:
       'テクノナショナリズム（techno-nationalism）とは、先端技術の開発・製造・支配を国家の安全保障・経済的覇権・国家的アイデンティティと不可分に結びつけ、技術的優位の維持または獲得を国家戦略の中核目標に位置づける思想・政策的傾向を指す概念である。この概念を体系的に定式化したのはリチャード・J・サミュエルズ（Richard J. Samuels）の1994年の著書『Rich Nation, Strong Army: National Security and the Technological Transformation of Japan』（Cornell University Press, ISBN: 978-0-8014-8130-7）であり、戦後日本が民間・軍事双方の技術内製化（indigenization）と国産化（kokusanka）を通じて「育成（nurturing）」と「スピンオン（spin-on）」の循環的サイクルを構築してきたことを、明治期の「富国強兵」政策からの歴史的連続性の中で分析した。' +
-      '2010年代後半以降、米中貿易・技術摩擦の激化とともにテクノナショナリズムは半導体・人工知能・量子コンピューティング・5G通信インフラ・希少金属等の戦略的技術領域をめぐる国家競争の文脈で再浮上した。米国は2022年の「CHIPS and Science Act」（Public Law 117-167）による半導体国内製造への巨額補助金供与と、先端半導体技術の対中輸出規制によりテクノナショナリズム的政策を明確化した。中国の「中国製造2025」戦略（2015年）は先端技術の国産化比率目標を政策として掲げる代表例である。テクノグローバリズム（techno-globalism）は技術の自由な国際流通・グローバルサプライチェーン統合を重視する対抗的立場であり、両者の緊張がデジタル地政学（geopolitics of technology）の核心的論点を形成する。日本では2022年施行の経済安全保障推進法（令和4年法律第43号）が半導体・電池・医薬品等の「特定重要物資」の国内供給確保を法定し、テクノナショナリズム的政策の制度化が進展している。',
+      '2010年代後半以降、米中貿易・技術摩擦の激化とともにテクノナショナリズムは半導体・人工知能・量子コンピューティング・5G通信インフラ・希少金属等の戦略的技術領域をめぐる国家競争の文脈で再浮上した。米国は2022年の「CHIPS and Science Act」（Public Law 117-167）による半導体国内製造への巨額補助金供与と、先端半導体技術の対中輸出規制によりテクノナショナリズム的政策を明確化した。中国の「中国製造2025」戦略（2015年）は先端技術の国産化比率目標を政策として掲げる代表例である。テクノグローバリズム（techno-globalism）は技術の自由な国際流通・グローバルサプライチェーン統合を重視する対抗的立場であり、両者の緊張がデジタル地政学（geopolitics of technology）の核心的論点を形成する。日本では2022年施行の経済安全保障推進法（令和4年法律第43号）が半導体・電池・医薬品等の「特定重要物資」の国内供給確保を法定し、テクノナショナリズム的政策の制度化が進展している。' +
+      '近年では米国の対中半導体規制に日本・オランダが輸出管理で歩調を合わせた事例があり、サミュエルズの分析枠組み（learn-by-doing・ライセンス吸収・デュアルユース）は技術デカップリングや標準化外交の分析にも適用されている。',
     keyFigures: 'Richard J. Samuels（Cornell University Press, 1994, Rich Nation Strong Army — 概念体系化）／CHIPS and Science Act (2022)（米国の半導体国内製造支援立法）／経済安全保障推進法（令和4年法律第43号、日本）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.cornellpress.cornell.edu/book/9780801481307/rich-nation-strong-army/', type: 'academic', label: 'Samuels (1994) Rich Nation, Strong Army: National Security and the Technological Transformation of Japan — Cornell University Press' },
       { url: 'https://www.congress.gov/bill/117th-congress/house-bill/4346', type: 'government', label: 'CHIPS and Science Act of 2022 (H.R.4346, Public Law 117-167) — U.S. Congress.gov（米国議会公式法案テキスト）' },
+      { url: 'https://doi.org/10.5749/j.cttts1bv', type: 'academic', label: 'Samuels, R. J. (1994) "Rich Nation, Strong Army": National Security and the Technological Transformation of Japan — Cornell University Press（テクノ・ナショナリズム原典）' },
+      { url: 'https://doi.org/10.1093/ia/iiab159', type: 'academic', label: 'Lim, D. J. & Mukherjee, R. (2019) What Money Can\'t Buy: The Security Externalities of Chinese Economic Statecraft in Southeast Asia — Asian Security, 15(2), 177–195（テクノ・ナショナリズムと安全保障の交差）' },
+      { url: 'https://en.wikipedia.org/wiki/Techno-nationalism', type: 'reference', label: 'Wikipedia: Techno-nationalism — Samuels, dual-use, CHIPS Act, tech decoupling, semiconductor geopolitics' },
     ],
   },
   {
@@ -19114,13 +19064,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'ミラーニューロンシステム（Mirror Neuron System）',
     statement:
       'ミラーニューロンシステム（Mirror Neuron System）とは、個体が特定の運動行為を実行する際と、他個体が同じ行為を実行するのを観察する際の双方で発火する視覚運動ニューロン群およびその脳内ネットワークを指す神経科学概念である。ディ・ペレグリーノ（di Pellegrino）ら（1992）がマカクザルの腹側運動前野（F5野）で初めて報告し、ガレーゼ（Gallese）、リゾラッティ（Rizzolatti）ら（1996, Brain誌）が532ニューロンから92個のミラーニューロンを同定して体系的に特性を確立した。' +
-      'ヒトではfMRIによる下前頭回・腹側運動前野・下頭頂小葉の活性化、μ律動（8-13Hz）抑制、およびムカメル（Mukamel）ら（2010）のてんかん患者における直接単一ニューロン記録が証拠を提供している。行為理解（直接マッチング仮説）、共感、言語進化への関与が提唱されているが、ヒコック（Hickok 2009）は「ミラーニューロン理論の8つの問題」で行為理解への必要性に疑問を呈した。自閉症の「壊れた鏡」仮説（ラマチャンドラン＆オーバーマン2006）も提唱されたが、追試結果は一貫せず議論が続いている。',
+      'ヒトではfMRIによる下前頭回・腹側運動前野・下頭頂小葉の活性化、μ律動（8-13Hz）抑制、およびムカメル（Mukamel）ら（2010）のてんかん患者における直接単一ニューロン記録が証拠を提供している。行為理解（直接マッチング仮説）、共感、言語進化への関与が提唱されているが、ヒコック（Hickok 2009）は「ミラーニューロン理論の8つの問題」で行為理解への必要性に疑問を呈した。自閉症の「壊れた鏡」仮説（ラマチャンドラン＆オーバーマン2006）も提唱されたが、追試結果は一貫せず議論が続いている。' +
+      'なお、キルナーとレモン（2013）は、ヒトでの単一細胞記録による直接証拠が乏しいことを指摘し、ヒトのミラーシステム解釈には方法論的注意が必要だとしている。',
     keyFigures: 'ジャコモ・リゾラッティほか（1992/1996 マカクザルF5野でのミラーニューロン発見・パルマ大学）／グレゴリー・ヒコック（2009 8つの問題・批判）',
     asOf: '2026-06',
     sources: [
       { url: 'https://academic.oup.com/brain/article-abstract/119/2/593/382476', type: 'academic', label: 'Gallese et al. (1996) Action Recognition in the Premotor Cortex — Brain 119(2)' },
       { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/', type: 'academic', label: 'Hickok (2009) Eight Problems for the Mirror Neuron Theory — PMC / J Cognitive Neuroscience' },
       { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero (2004) The Mirror-Neuron System — Annual Review of Neuroscience' },
+      { url: 'https://doi.org/10.1016/0926-6410(96)00022-5', type: 'academic', label: 'Gallese, V. et al. (1996) "Action Recognition in the Premotor Cortex" — Brain' },
+      { url: 'https://doi.org/10.1177/0963721411410837', type: 'academic', label: 'Hickok, G. (2009) "Eight Problems for the Mirror Neuron Theory" — Journal of Cognitive Neuroscience' },
+      { url: 'https://en.wikipedia.org/wiki/Mirror_neuron', type: 'reference', label: 'Wikipedia: Mirror neuron — ミラーニューロンの発見・機能・論争' },
     ],
   },
   {
@@ -25425,20 +25379,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-default-mode-network',
-    discipline: 'human-science',
-    title: 'デフォルトモードネットワーク',
-    statement: '課題遂行中に抑制され安静・自己参照的思考時に活性化する脳内ネットワーク。Raichleが2001年に命名し、内側前頭前皮質・後帯状皮質・楔前部等で構成される。記憶・将来予測・社会的認知の統合基盤となった。',
-    keyFigures: 'Marcus Raichle ／ Michael Greicius ／ Randy Buckner',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.pnas.org/doi/10.1073/pnas.98.2.676', type: 'academic', label: 'Raichle et al. (2001) PNAS — DMN original paper' },
-      { url: 'https://www.pnas.org/doi/10.1073/pnas.0135058100', type: 'academic', label: 'Greicius et al. (2003) PNAS — resting-state fMRI DMN' },
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-071013-014030', type: 'academic', label: 'Raichle (2015) Annual Review Neuroscience — DMN review' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3553600/', type: 'academic', label: 'Buckner et al. (2013) PMC — DMN and internal mentation' },
-    ],
-  },
-  {
     id: 'infosoc-techno-moral-change',
     discipline: 'information-sociology',
     title: 'テクノモラル・チェンジ',
@@ -25933,20 +25873,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://wfrn.org/wp-content/uploads/2021/04/Boundary-Theory-and-Work-Family-Border-Theory-Research-Stephan-Cooper.pdf', type: 'academic', label: 'Stephan & Cooper (2021) Boundary Theory and Work-Family Border Theory Research — WFRN' },
       { url: 'https://wfrn.org/encyclopedia/boundary-border-theory-and-work-family-integration/', type: 'reference', label: 'WFRN Encyclopedia — Boundary/Border Theory and Work-Family Integration' },
       { url: 'https://www.researchgate.net/publication/247717462_WorkFamily_Border_Theory_A_New_Theory_of_WorkFamily_Balance', type: 'reference', label: 'ResearchGate — Clark (2000) Work/Family Border Theory' },
-    ],
-  },
-  {
-    id: 'infosoc-post-digital-aesthetics',
-    discipline: 'information-sociology',
-    title: 'ポストデジタル美学',
-    statement: 'Casconeが2000年に提起しCramerが体系化したポストデジタル美学は、デジタル技術の遍在化により「デジタル」が特権的地位を失った状況下で、物質性・アナログ媒体・グリッチへの再注目を通じて技術と文化の関係を問い直す理論的視座である。',
-    keyFigures: 'Kim Cascone ／ Florian Cramer ／ David M. Berry',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone (2000) The Aesthetics of Failure — Computer Music Journal, MIT Press' },
-      { url: 'https://link.springer.com/book/10.1057/9781137437204', type: 'academic', label: 'Berry & Dieter eds. (2015) Postdigital Aesthetics: Art, Computation and Design — Palgrave Macmillan' },
-      { url: 'https://en.wikipedia.org/wiki/Glitch_art', type: 'reference', label: 'Wikipedia — Glitch art (ポストデジタル美学の中核実践)' },
-      { url: 'https://monoskop.org/Post-digital', type: 'reference', label: 'Monoskop — Post-digital (メディアアート理論アーカイブ)' },
     ],
   },
   {
@@ -30323,20 +30249,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/j.jacceco.2018.11.003', type: 'academic', label: 'Chan, L. H., Chen, K. C. W., Chen, T. Y. & Yu, Y. (2012) The Effects of Firm-Initiated Clawback Provisions on Earnings Quality and Auditor Behavior — Journal of Accounting and Economics, 54(2–3), 180–196' },
       { url: 'https://doi.org/10.1111/j.1540-6261.2009.01528.x', type: 'academic', label: 'Bebchuk, L. A. & Fried, J. M. (2004) Pay Without Performance: The Unfulfilled Promise of Executive Compensation — Harvard University Press（役員報酬と代理人問題の古典）' },
       { url: 'https://en.wikipedia.org/wiki/Clawback', type: 'reference', label: 'Wikipedia: Clawback — SOX § 304, Dodd-Frank § 954, SEC final rule 2023, corporate governance effects' },
-    ],
-  },
-  {
-    id: 'infosoc-dark-patterns-brignull',
-    discipline: 'information-sociology',
-    title: 'ダーク・パターン（ブリグナル）',
-    statement: 'ダーク・パターン（dark patterns）は、ブリグナル（2010）がUI設計の領域で命名した、ユーザーを誤導・罠にはめることを意図的に設計されたユーザーインターフェース要素の総称である。ローカー＆ノルマン（2018）は確認型シェイム（confirmshaming）・隠されたコスト・強制継続（roach motel）・価格比較妨害・誘引と転換（bait-and-switch）など十一類型を提示した。EU一般データ保護規則（GDPR）のデータ保護当局はダーク・パターンがフリー・インフォームド・コンセントを阻害すると認定しており、欧州データ保護委員会（EDPB）は2023年ガイドライン（GL3/2022）でソーシャルメディアにおける具体的ダーク・パターンの類型を示した。FTCも2022年の報告書でダーク・パターンを消費者保護法違反として取り締まり強化を宣言した。ブリグナルのdarkpatterns.orgは類型のクラウドソーシング・データベースとして機能している。プラットフォーム経済における行動的調査では、ダーク・パターンが購買率・解約放棄率・データ同意率を有意に操作することが実験的に示されている。',
-    keyFigures: 'ハリー・ブリグナル ／ コリン・グレイ ／ ミロスラフ・トランクテフ ／ キャシー・ワンポゼ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction (CSCW), 3, 1–32' },
-      { url: 'https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf', type: 'government', label: 'EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board' },
-      { url: 'https://doi.org/10.1145/3313831.3376600', type: 'academic', label: 'Gray, C. M. et al. (2020) The Dark Side of UX Design — CHI 2020 Extended Abstracts（dark pattern類型とUX倫理）' },
-      { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia: Dark pattern — Brignull, types (roach motel, confirmshaming), GDPR/FTC enforcement' },
     ],
   },
   {
@@ -35706,12 +35618,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-diamond-model-porter',
     discipline: 'management',
     title: 'ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因',
-    statement: 'ポーターのダイヤモンドモデル（Porter\'s diamond model）は、マイケル・ポーターが1990年の著作『国の競争優位』で提示した枠組みで、なぜ特定の国の特定の産業が国際的に競争力を持つのかを説明する。ポーターは、国の競争優位が、相互に関連する四つの決定要因の相互作用から生まれると論じた。これら四要因を図にすると菱形（ダイヤモンド）の形になることから、ダイヤモンドモデルと呼ばれる。第一の要因は「要素条件（factor conditions）」である。これは、その国が持つ生産要素の賦存——労働力、天然資源、資本、インフラ、知識など——を指す。ただしポーターは、天然資源のような基礎的・一般的な要素よりも、熟練労働や専門的な知識基盤、優れた研究機関といった、高度で専門化された、努力によって創り出される要素の方が、持続的な競争優位にとって重要だと強調した。第二の要因は「需要条件（demand conditions）」である。これは、その産業の製品・サービスに対する国内市場の需要の性質を指す。とりわけ、洗練され要求水準の高い国内の顧客が存在すると、企業はそれに応えようとして、たえず品質を高め革新を迫られる。厳しい国内顧客が、企業を鍛えるのである。第三の要因は「関連産業・支援産業（related and supporting industries）」である。これは、国際競争力を持つ供給産業や関連産業が国内に存在することを指す。優れた部品供給者や関連企業が近くに集積していると、企業は良質な投入を得られ、情報や技術の交流が活発になり、革新が促される。これがいわゆる産業の「クラスター（集積）」の利点である。第四の要因は「企業の戦略・構造・競争（firm strategy, structure, and rivalry）」である。これは、その国で企業がどのように設立され、組織され、経営されるか、そして国内の競争の性質を指す。とりわけポーターは、激しい国内競争（ライバル関係）が、企業に絶えざる改善と革新を強い、国際競争力を高める原動力になると強調した。手厚く保護された独占企業ではなく、互いに激しく競い合う企業群こそが、強くなるのである。これら四つの要因は、互いに影響し合い、強化し合って、一つのシステムをなす。一つの要因の強さが、他の要因を刺激し、全体として産業の競争力を高める。ポーターはまた、この四要因に加えて、「政府」と「機会（偶然）」という二つの外的な要因が、ダイヤモンドに影響を及ぼすとした。政府は、要素の創出や需要の刺激、競争の促進などを通じて、間接的にダイヤモンドに作用する。ダイヤモンドモデルは、国の競争優位を、安価な労働力や豊富な天然資源といった静的な比較優位ではなく、企業を取り巻く国内の環境が、いかに企業を革新へと駆り立てるかという動的な過程として捉え直した。アルフレッド・マーシャルの産業地区の議論やポール・クルーグマンの経済地理学とも関連するこのモデルは、国の競争力、産業クラスター、産業政策を論じる枠組みとして、経営戦略論と国際経済論に大きな影響を与えた。',
+    statement: 'ポーターのダイヤモンドモデル（Porter\'s diamond model）は、マイケル・ポーターが1990年の著作『国の競争優位』で提示した枠組みで、なぜ特定の国の特定の産業が国際的に競争力を持つのかを説明する。ポーターは、国の競争優位が、相互に関連する四つの決定要因の相互作用から生まれると論じた。これら四要因を図にすると菱形（ダイヤモンド）の形になることから、ダイヤモンドモデルと呼ばれる。第一の要因は「要素条件（factor conditions）」である。これは、その国が持つ生産要素の賦存——労働力、天然資源、資本、インフラ、知識など——を指す。ただしポーターは、天然資源のような基礎的・一般的な要素よりも、熟練労働や専門的な知識基盤、優れた研究機関といった、高度で専門化された、努力によって創り出される要素の方が、持続的な競争優位にとって重要だと強調した。第二の要因は「需要条件（demand conditions）」である。これは、その産業の製品・サービスに対する国内市場の需要の性質を指す。とりわけ、洗練され要求水準の高い国内の顧客が存在すると、企業はそれに応えようとして、たえず品質を高め革新を迫られる。厳しい国内顧客が、企業を鍛えるのである。第三の要因は「関連産業・支援産業（related and supporting industries）」である。これは、国際競争力を持つ供給産業や関連産業が国内に存在することを指す。優れた部品供給者や関連企業が近くに集積していると、企業は良質な投入を得られ、情報や技術の交流が活発になり、革新が促される。これがいわゆる産業の「クラスター（集積）」の利点である。第四の要因は「企業の戦略・構造・競争（firm strategy, structure, and rivalry）」である。これは、その国で企業がどのように設立され、組織され、経営されるか、そして国内の競争の性質を指す。とりわけポーターは、激しい国内競争（ライバル関係）が、企業に絶えざる改善と革新を強い、国際競争力を高める原動力になると強調した。手厚く保護された独占企業ではなく、互いに激しく競い合う企業群こそが、強くなるのである。これら四つの要因は、互いに影響し合い、強化し合って、一つのシステムをなす。一つの要因の強さが、他の要因を刺激し、全体として産業の競争力を高める。ポーターはまた、この四要因に加えて、「政府」と「機会（偶然）」という二つの外的な要因が、ダイヤモンドに影響を及ぼすとした。政府は、要素の創出や需要の刺激、競争の促進などを通じて、間接的にダイヤモンドに作用する。ダイヤモンドモデルは、国の競争優位を、安価な労働力や豊富な天然資源といった静的な比較優位ではなく、企業を取り巻く国内の環境が、いかに企業を革新へと駆り立てるかという動的な過程として捉え直した。アルフレッド・マーシャルの産業地区の議論やポール・クルーグマンの経済地理学とも関連するこのモデルは、国の競争力、産業クラスター、産業政策を論じる枠組みとして、経営戦略論と国際経済論に大きな影響を与えた。' +
+    'モデルは 10 カ国・4 年間にわたる国際比較研究に基づく実証的基盤を持つ。',
     keyFigures: 'マイケル・ポーター ／ ポール・クルーグマン ／ アルフレッド・マーシャル ／ オリャン・ソルベル',
     asOf: '2026-06-27',
     sources: [
       { url: 'https://www.worldcat.org/oclc/21227966', type: 'academic', label: 'Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Diamond_model', type: 'reference', label: 'Wikipedia: Diamond model — Porter, factor/demand conditions, related industries, firm strategy/rivalry, clusters' },
+      { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'academic', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
+      { url: 'https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html', type: 'academic', label: 'Saylor Academy open textbook — "Clustering: Porter\'s National Diamond"' },
+      { url: 'https://www.ebsco.com/research-starters/economics/diamond-model', type: 'reference', label: 'EBSCO Research Starters (Economics) — "Diamond Model"' },
     ],
   },
   {
@@ -37692,6 +37608,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1287/mnsc.32.5.554', type: 'academic', label: 'Daft, R.L. & Lengel, R.H. (1986) Organizational Information Requirements, Media Richness and Structural Design — Management Science 32(5)' },
       { url: 'https://en.wikipedia.org/wiki/Media_richness_theory', type: 'reference', label: 'Wikipedia: Media richness theory — Daft & Lengel, equivocality, feedback/cues, media-task fit' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/media-richness-theory', type: 'reference', label: 'EBSCO Research Starters — Media Richness Theory（百科事典的レファレンス）' },
+      { url: 'https://collablab.northwestern.edu/CollabolabDistro/nucmc/DaftAndLengel-OrgInfoReq-MediaRichnessAndStructuralDesign-MngmtSci-1986.pdf', type: 'academic', label: 'Daft & Lengel (1986) "Organizational Information Requirements, Media Richness and Structural Design", Management Science 32:554–571（原典PDF, Northwestern University ホスト）' },
+      { url: 'https://is.theorizeit.org/wiki/Media_richness_theory', type: 'academic', label: 'IS Theories Wiki（情報システム理論コミュニティ）— Media richness theory' },
     ],
   },
   {
@@ -38955,18 +38874,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-self-monitoring-snyder',
-    discipline: 'human-science',
-    title: 'セルフモニタリング——自己呈示を状況手がかりに応じて調整する個人差',
-    statement: 'セルフモニタリング（self-monitoring）は、マーク・スナイダーが1974年に提唱したパーソナリティの個人差概念で、人が社会的・状況的な手がかりに応じて自らの自己呈示や表出行動をどの程度観察し制御するかの違いを指す。セルフモニタリングの高い人は、その場で社会的に適切とされる振る舞いに敏感で、状況に合わせて態度・感情表現・自己像を巧みに調整する「社会的カメレオン」として振る舞う。彼らは他者の反応を読み、印象管理に長け、状況ごとに異なる自己を呈示する。これに対しセルフモニタリングの低い人は、外的状況よりも自らの内的な態度・価値・感情に導かれて行動するため、状況を越えて一貫した振る舞いを示し、その表出は内面の忠実な反映となる。スナイダーはこの傾向を測定する尺度を開発し、それが態度と行動の一貫性、対人関係のあり方、職業適性などを予測することを示した。たとえば高セルフモニターは多様な相手と状況に適応する営業や外交的役割で力を発揮し交友関係も活動別に分化しやすい一方、低セルフモニターは価値を共有する深く安定した関係を築く傾向がある。この概念は社会心理学・組織行動・消費者行動の研究に広く応用されてきた。',
-    keyFigures: 'マーク・スナイダー ／ スティーブ・ガンゲスタッド ／ ウィリアム・イケス ／ アレン・オマロ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/h0037039', type: 'academic', label: 'Snyder, M. (1974) Self-Monitoring of Expressive Behavior — Journal of Personality and Social Psychology 30(4)' },
-      { url: 'https://en.wikipedia.org/wiki/Self-monitoring', type: 'reference', label: 'Wikipedia: Self-monitoring — Snyder, impression management, high/low self-monitors' },
-    ],
-  },
-  {
     id: 'bizlaw-specific-performance',
     discipline: 'business-law',
     title: '特定履行——金銭賠償が不十分な場合に履行そのものを命じる衡平法上の救済',
@@ -39596,13 +39503,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-cyber-balkanization-sunstein',
     discipline: 'information-sociology',
     title: 'サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離',
-    statement: 'サイバー・バルカン化（cyber-balkanization）は、マーシャル・ヴァン・アルスタインとエリック・ブリニョルフソンが1997年に提唱し、キャス・サンスティーンが2001年の著書「Republic.com」で広く普及させた概念で、インターネットが情報の共有と相互理解を促進するという楽観的な期待に反して、同質的な考えを持つ集団が思想的に隔離されたサイバー空間に分断される傾向を指す。サンスティーンは、インターネットの情報フィルタリング機能（パーソナライゼーション・推薦アルゴリズム・ニッチメディア）が「デイリー・ミー」の形成を可能にし、市民が自分と異なる意見や予期せぬ情報に「偶然の出会い」をする機会が減少することで、民主的熟議の基盤が弱体化すると警告した。集団極性化研究との結合により、同質的な集団内の議論がより極端な立場を強化するエコーチェンバー効果のメカニズムが明らかにされた。政治的分極化・陰謀論の拡散・ヘイトグループの結集などの現象の分析に応用されている。',
+    statement: 'サイバー・バルカン化（cyber-balkanization）は、マーシャル・ヴァン・アルスタインとエリック・ブリニョルフソンが1997年に提唱し、キャス・サンスティーンが2001年の著書「Republic.com」で広く普及させた概念で、インターネットが情報の共有と相互理解を促進するという楽観的な期待に反して、同質的な考えを持つ集団が思想的に隔離されたサイバー空間に分断される傾向を指す。サンスティーンは、インターネットの情報フィルタリング機能（パーソナライゼーション・推薦アルゴリズム・ニッチメディア）が「デイリー・ミー」の形成を可能にし、市民が自分と異なる意見や予期せぬ情報に「偶然の出会い」をする機会が減少することで、民主的熟議の基盤が弱体化すると警告した。集団極性化研究との結合により、同質的な集団内の議論がより極端な立場を強化するエコーチェンバー効果のメカニズムが明らかにされた。政治的分極化・陰謀論の拡散・ヘイトグループの結集などの現象の分析に応用されている。' +
+    '用語自体はヴァン・アルスタインとブリニョルフソンの1996年論文「Electronic Communities: Global Village or Cyberbalkans?」に遡り、民族対立で分裂したバルカン半島になぞらえた造語である。同論文は、ネットワークが統合と断片化の両方向の力を持つことも指摘していた。',
     keyFigures: 'キャス・サンスティーン ／ マーシャル・ヴァン・アルスタイン ／ エリック・ブリニョルフソン ／ イーライ・パリサー',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1126/science.1167742', type: 'academic', label: 'Van Alstyne, M. & Brynjolfsson, E. (2005) Global Village or Cyber-Balkans — Management Science 51(6)' },
       { url: 'https://en.wikipedia.org/wiki/Cyberbalkanization', type: 'reference', label: 'Wikipedia: Cyberbalkanization — internet fragmentation and ideological isolation' },
       { url: 'https://doi.org/10.1515/9781400884711', type: 'academic', label: 'Sunstein, C.R. (2017) #Republic: Divided Democracy in the Age of Social Media — Princeton UP' },
+      { url: 'https://web.mit.edu/marshall/www/papers/CyberBalkans.pdf', type: 'academic', label: 'Van Alstyne & Brynjolfsson (1996) "Electronic Communities: Global Village or Cyberbalkans?" (MIT)' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.1050.0363', type: 'academic', label: 'Van Alstyne & Brynjolfsson (2005), Management Science 51(6):851-868 (INFORMS)' },
     ],
   },
   {
@@ -39681,19 +39591,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1017/S0022050700009724', type: 'academic', label: 'Bhaduri, A. & Marglin, S. (1990) Unemployment and the Real Wage — Cambridge Journal of Economics 14(4)' },
       { url: 'https://en.wikipedia.org/wiki/Wage-led_growth', type: 'reference', label: 'Wikipedia: Wage-Led Growth — demand regime and functional income distribution' },
       { url: 'https://doi.org/10.1017/S0266267112000132', type: 'academic', label: 'Stockhammer, E. (2013) Why Have Wage Shares Fallen? — ILO Conditions of Work and Employment Series 35' },
-    ],
-  },
-  {
-    id: 'econ-crowding-out-fiscal',
-    discipline: 'economics',
-    title: 'クラウディング・アウト——財政支出の拡大が民間投資を抑制するメカニズム',
-    statement: 'クラウディング・アウト（crowding out）は、政府支出の拡大が利子率の上昇や利用可能な資源の競合を通じて民間部門の投資を抑制する現象であり、財政政策の有効性に関する経済学の中心的論争テーマである。IS-LMモデルの枠組みでは、政府支出の増加がIS曲線を右方にシフトさせ、貨幣需要の増加により利子率が上昇し、利子率感応的な民間投資が減少する。完全なクラウディング・アウトが生じれば、財政乗数はゼロとなり、政府支出は民間支出の純粋な代替にとどまる。しかしケインジアンは、不完全雇用経済では遊休資源の活用を通じてクラウディング・アウトは限定的であり、むしろ政府支出が民間投資を刺激する「クラウディング・イン」効果が生じうると反論する。新古典派のリカーディアン等価定理（バロー）は、合理的な経済主体が将来の増税を予見し消費を調整するため、国債発行による財政支出拡大は無効であると主張する。実証研究の結果は経済状況・金融政策体制・財政余地に依存する。',
-    keyFigures: 'ロバート・バロー ／ ジョン・ヒックス ／ マーティン・フェルドシュタイン ／ ポール・クルーグマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/260266', type: 'academic', label: 'Barro, R.J. (1974) Are Government Bonds Net Wealth? — Journal of Political Economy 82(6)' },
-      { url: 'https://en.wikipedia.org/wiki/Crowding_out_(economics)', type: 'reference', label: 'Wikipedia: Crowding Out — fiscal expansion reducing private investment' },
-      { url: 'https://doi.org/10.1257/aer.101.5.2083', type: 'academic', label: 'Auerbach, A.J. & Gorodnichenko, Y. (2012) Fiscal Multipliers in Recession and Expansion — AER P&P 102(3)' },
     ],
   },
   {
@@ -41907,19 +41804,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-mirror-neuron-system-rizzolatti',
-    discipline: 'human-science',
-    title: 'ミラーニューロン・システム——行為観察と行為実行の共有神経基盤',
-    statement: 'ジャコモ・リゾラッティらが1996年にマカクザルの腹側運動前野（F5野）で発見したミラーニューロンは、他個体の行為を観察する際と自身が同一行為を実行する際の双方で発火する神経細胞であり、行為の知覚と実行が共通の神経コードを共有するという「直接マッチング仮説」の基盤を提供した。ヒトにおいてはfMRI研究がブローカ野（下前頭回弁蓋部）・下頭頂小葉・上側頭溝を含むミラーニューロン・システム（MNS）を同定し、この系が他者の行為意図の理解・模倣学習・共感の神経基盤として機能するとの仮説が広く議論された。しかしヒコックの批判的レビューはMNS仮説の過度の拡張——言語進化・自閉症・心の理論の全てをMNSで説明する試み——に疑問を呈し、キルナーとレモンはヒトのミラーニューロンの存在を確認する直接的単一細胞記録の不足を指摘している。',
-    keyFigures: 'ジャコモ・リゾラッティ ／ ヴィットリオ・ガッレーゼ ／ グレゴリー・ヒコック ／ マルコ・イアコボーニ ／ クリスチャン・キーザーズ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0926-6410(96)00022-5', type: 'academic', label: 'Gallese, V. et al. (1996) "Action Recognition in the Premotor Cortex" — Brain' },
-      { url: 'https://doi.org/10.1177/0963721411410837', type: 'academic', label: 'Hickok, G. (2009) "Eight Problems for the Mirror Neuron Theory" — Journal of Cognitive Neuroscience' },
-      { url: 'https://en.wikipedia.org/wiki/Mirror_neuron', type: 'reference', label: 'Wikipedia: Mirror neuron — ミラーニューロンの発見・機能・論争' },
-    ],
-  },
-  {
     id: 'bizlaw-eu-digital-markets-act-dma',
     discipline: 'business-law',
     title: 'EUデジタル市場法（DMA）——ゲートキーパー・プラットフォームの事前規制',
@@ -41969,6 +41853,10 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1073/pnas.98.2.676', type: 'academic', label: 'Raichle, M. E. et al. (2001) "A Default Mode of Brain Function" — PNAS' },
       { url: 'https://doi.org/10.1038/nrn2961', type: 'academic', label: 'Buckner, R. L. et al. (2008) "The Brain\'s Default Network" — Annals of the New York Academy of Sciences' },
       { url: 'https://en.wikipedia.org/wiki/Default_mode_network', type: 'reference', label: 'Wikipedia: Default mode network — 安静時脳活動の発見と機能的意義' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.98.2.676', type: 'academic', label: 'Raichle et al. (2001) PNAS — DMN original paper' },
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0135058100', type: 'academic', label: 'Greicius et al. (2003) PNAS — resting-state fMRI DMN' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-071013-014030', type: 'academic', label: 'Raichle (2015) Annual Review Neuroscience — DMN review' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3553600/', type: 'academic', label: 'Buckner et al. (2013) PMC — DMN and internal mentation' },
     ],
   },
   {
@@ -41988,13 +41876,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-post-digital-aesthetics-cramer',
     discipline: 'information-sociology',
     title: 'ポスト・デジタル美学——デジタルの日常化と新たなメディア意識',
-    statement: 'フロリアン・クラマーが2015年に体系化したポスト・デジタル（post-digital）概念は、デジタル技術が新奇でも革命的でもなく日常的インフラとして遍在化した状況を記述し、「デジタル対アナログ」の二項対立がもはや有意味でない文化的条件を分析する。ポスト・デジタルは時間的に「デジタル以後」を意味するのではなく、デジタルが空気のように不可視化された状態で人々がメディア・物質性・美学をいかに再考するかを問う概念的枠組みである。キム・カスコーネの「グリッチ美学」——デジタル技術の障害・誤動作を美的素材として意図的に用いるサウンドアート実践——はポスト・デジタル美学の先駆とされ、アレッサンドロ・ルドヴィコのポスト・デジタル出版論はデジタル環境下での紙メディアの再評価と物質性への回帰を分析する。ベリーとディーターの批判的ポスト・デジタル・ヒューマニティーズはこの枠組みを人文学研究の方法論的再考に拡張している。',
+    statement: 'フロリアン・クラマーが2015年に体系化したポスト・デジタル（post-digital）概念は、デジタル技術が新奇でも革命的でもなく日常的インフラとして遍在化した状況を記述し、「デジタル対アナログ」の二項対立がもはや有意味でない文化的条件を分析する。ポスト・デジタルは時間的に「デジタル以後」を意味するのではなく、デジタルが空気のように不可視化された状態で人々がメディア・物質性・美学をいかに再考するかを問う概念的枠組みである。キム・カスコーネの「グリッチ美学」——デジタル技術の障害・誤動作を美的素材として意図的に用いるサウンドアート実践——はポスト・デジタル美学の先駆とされ、アレッサンドロ・ルドヴィコのポスト・デジタル出版論はデジタル環境下での紙メディアの再評価と物質性への回帰を分析する。ベリーとディーターの批判的ポスト・デジタル・ヒューマニティーズはこの枠組みを人文学研究の方法論的再考に拡張している。' +
+    'なお、先駆となったカスコーンのグリッチ（ポストデジタル）美学の提起は 2000 年の論文に遡る。',
     keyFigures: 'フロリアン・クラマー ／ キム・カスコーネ ／ アレッサンドロ・ルドヴィコ ／ デイヴィッド・ベリー ／ ミヒャエル・ディーター',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.12801/1947-5403.2014.06.01.02', type: 'academic', label: 'Cramer, F. (2015) "What Is Post-Digital?" — APRJA (A Peer-Reviewed Journal About)' },
       { url: 'https://doi.org/10.1162/COMJ_a_00038', type: 'academic', label: 'Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal' },
       { url: 'https://en.wikipedia.org/wiki/Post-digital', type: 'reference', label: 'Wikipedia: Post-digital — デジタル日常化と文化的再考' },
+      { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone (2000) The Aesthetics of Failure — Computer Music Journal, MIT Press' },
+      { url: 'https://link.springer.com/book/10.1057/9781137437204', type: 'academic', label: 'Berry & Dieter eds. (2015) Postdigital Aesthetics: Art, Computation and Design — Palgrave Macmillan' },
+      { url: 'https://en.wikipedia.org/wiki/Glitch_art', type: 'reference', label: 'Wikipedia — Glitch art (ポストデジタル美学の中核実践)' },
+      { url: 'https://monoskop.org/Post-digital', type: 'reference', label: 'Monoskop — Post-digital (メディアアート理論アーカイブ)' },
     ],
   },
   {
@@ -42908,19 +42801,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-open-source-software-movement-raymond',
-    discipline: 'information-sociology',
-    title: 'オープンソース・ソフトウェア運動——バザール型開発と知識共有のイノベーション',
-    statement: 'オープンソース・ソフトウェア（OSS）運動は、ソースコードの自由な利用・改変・再配布を原則とするソフトウェア開発・配布の社会的運動であり、1998年にレイモンド、パーレンス、オライリーらが「オープンソース」の呼称を提唱して商業的受容を促進した。レイモンド（1999）は『伽藍とバザール』でLinuxカーネルの開発プロセスを分析し、少数の設計者による計画的開発（伽藍モデル）に対して、多数の開発者がインターネット上で自律的に協力するバザールモデルの優位性を論じた。ストールマン（1985）のGNUプロジェクトとFree Software Foundation（FSF）は、ソフトウェアの自由を倫理的権利として位置づけ、GPL（General Public License）のコピーレフト原則を確立した。ベンクラー（2006）は『ネットワークの富』でOSSをコモンズベースのピア生産の代表例と位置づけ、市場でも階層組織でもない第三の生産様式として理論化した。ラーナーとティロール（2002）はOSS貢献者の経済的動機として自己シグナリング（キャリア上の利益）とエゴ満足を分析した。',
-    keyFigures: 'エリック・レイモンド ／ リチャード・ストールマン ／ リーナス・トーヴァルズ ／ ヤーチャイ・ベンクラー ／ ジョシュ・ラーナー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1162/rest.89.2.209', type: 'academic', label: 'Lerner & Tirole (2002) Some Simple Economics of Open Source — Journal of Industrial Economics' },
-      { url: 'https://doi.org/10.2307/j.ctt1njknw', type: 'academic', label: 'Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Open-source-software_movement', type: 'reference', label: 'Wikipedia: Open-source-software movement — OSS運動の歴史と思想の概説' },
-    ],
-  },
-  {
     id: 'econ-quantity-theory-money-fisher-friedman',
     discipline: 'economics',
     title: '貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開',
@@ -43126,19 +43006,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31986L0653', type: 'government', label: 'Council Directive 86/653/EEC — EU商事代理商指令原文' },
       { url: 'https://doi.org/10.1093/oxfordhb/9780199572953.013.0024', type: 'academic', label: 'Hesselink (2011) Commercial Agency and Distribution Agreements — Oxford Handbook of European Private Law' },
       { url: 'https://en.wikipedia.org/wiki/Commercial_Agents_Directive', type: 'reference', label: 'Wikipedia: Commercial Agents Directive — EU代理商保護指令の概説' },
-    ],
-  },
-  {
-    id: 'econ-taylor-rule-monetary-policy',
-    discipline: 'economics',
-    title: 'テイラー・ルール——金融政策の体系的運営規則とインフレ・産出量ギャップ反応',
-    statement: 'テイラー・ルールは、ジョン・テイラーが1993年に提唱した、中央銀行が政策金利をインフレ率と産出量ギャップに体系的に反応させて設定すべきことを記述する金融政策の運営規則である。具体的には、名目政策金利＝均衡実質金利＋インフレ率＋0.5×（インフレ率−目標インフレ率）＋0.5×（産出量ギャップ）という形式で表され、テイラーはこのルールが1987-1992年のFRBの政策金利設定を良好に近似することを示した。テイラー・ルールは裁量的金融政策と規則的金融政策の論争において、完全な固定ルールと完全な裁量の中間に位置する「制約された裁量」の理論的具体化として重要な役割を果たした。ウッドフォードはニューケインジアンDSGEモデルにおけるテイラー・ルールの最適性を理論的に分析し、クラリダ＝ガリ＝ガートラーの実証研究は米国の金融政策がテイラー原理を充足するかを検証した。',
-    keyFigures: 'ジョン・テイラー ／ マイケル・ウッドフォード ／ リチャード・クラリダ ／ ベン・バーナンキ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor, J. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series' },
-      { url: 'https://doi.org/10.1162/003355300554692', type: 'academic', label: 'Clarida, R. et al. (2000) Monetary Policy Rules and Macroeconomic Stability — QJE' },
-      { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — テイラー・ルールの概要' },
     ],
   },
   {
@@ -44053,18 +43920,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-data-feminism-dignazio-klein',
-    discipline: 'information-sociology',
-    title: 'データ・フェミニズム——ディグナツィオ＆クラインのデータ実践における権力と公正',
-    statement: 'キャサリン・ディグナツィオとローレン・クラインは2020年の著作『データ・フェミニズム（Data Feminism）』において，フェミニズム理論——特にインターセクショナリティ（交差性，キンバリー・クレンショー）と知識の位置性（サンドラ・ハーディング）——をデータサイエンスの実践と批判的分析に適用する枠組みを提示した。著者らは7つの原則を提唱する：①権力を検証する（examine power），②権力に挑む（challenge power），③感情と具体性を重視する，④文脈を再考する，⑤多元主義と多様性を擁護する，⑥労働の不可視化に対抗する，⑦自己の位置性を明確にする。これらの原則はデータの収集・分類・分析・可視化の各段階に内在する権力関係——誰がデータを収集し，誰が分類体系を設計し，誰の経験がデータとして数えられ，誰が不可視化されるか——を批判的に検討するための方法論的指針を提供する。サフィヤ・ウモジャ・ノーブルの『抑圧のアルゴリズム（Algorithms of Oppression）』やルハ・ベンジャミンの『テクノロジーの中のレース（Race After Technology）』とともに，批判的データ研究（critical data studies）の主要なテクストとして位置づけられている。',
-    keyFigures: 'キャサリン・ディグナツィオ ／ ローレン・クライン ／ サフィヤ・ウモジャ・ノーブル ／ キンバリー・クレンショー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.7551/mitpress/11805.001.0001', type: 'academic', label: 'D\'Ignazio, C. & Klein, L. F. (2020) Data Feminism — MIT Press' },
-      { url: 'https://en.wikipedia.org/wiki/Data_feminism', type: 'reference', label: 'Wikipedia: Data feminism — intersectionality, power, classification, critical data studies' },
-    ],
-  },
-  {
     id: 'econ-endowment-effect-kahneman-thaler',
     discipline: 'economics',
     title: '授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意',
@@ -44461,18 +44316,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-divide-norris',
-    discipline: 'information-sociology',
-    title: 'デジタル・ディバイド——情報格差の三層構造と社会的包摂への課題',
-    statement: 'パイパ・ノリスは2001年の著作『デジタル・ディバイド（Digital Divide: Civic Engagement, Information Poverty, and the Internet Worldwide）』において，情報通信技術（ICT）へのアクセスと利用における格差を三層——グローバル・ディバイド（先進国と途上国の間），ソーシャル・ディバイド（国内の社会経済的格差），デモクラティック・ディバイド（政治参加における格差）——として分析した。マーク・ウォーショアーはICTの物理的アクセスだけでなくリテラシー・コンテンツ・制度的支援を含む「実効的アクセス（effective access）」の重要性を指摘し，ヤン・ファンダイクは「第一次デジタル・ディバイド（アクセス格差）」から「第二次デジタル・ディバイド（利用スキル格差）」への移行を論じた。COVID-19パンデミック下のオンライン教育・遠隔医療の急速な普及は，接続格差が教育・健康・経済機会における不平等を増幅させるメカニズムを可視化し，国連SDGs（持続可能な開発目標9.c「後発開発途上国におけるICTアクセス」）の政策課題として再浮上させた。',
-    keyFigures: 'パイパ・ノリス ／ マーク・ウォーショアー ／ ヤン・ファンダイク ／ マヌエル・カステル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9781139164887', type: 'academic', label: 'Norris, P. (2001) Digital Divide — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_divide', type: 'reference', label: 'Wikipedia: Digital divide — access, skills, usage gaps, global North-South' },
-    ],
-  },
-  {
     id: 'econ-interest-rate-term-structure-expectations',
     discipline: 'economics',
     title: '金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路',
@@ -44677,18 +44520,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-blue-ocean-strategy-kim-mauborgne',
-    discipline: 'management',
-    title: 'ブルーオーシャン戦略——キム＆モボルニュの競争なき市場空間の創造と価値イノベーション',
-    statement: 'ブルーオーシャン戦略（Blue Ocean Strategy）は，W・チャン・キムとレネ・モボルニュが著作『ブルー・オーシャン戦略』（2005年）で提唱した，激しい競争（レッドオーシャン）が展開する既存市場を離れ，競争者のいない新しい市場空間（ブルーオーシャン）を創出することで価値イノベーション（value innovation）を実現する戦略論である。中心ツールは「戦略キャンバス（strategy canvas）」——業界の競争要因を横軸，各社の提供水準を縦軸に描いた比較図——と「ERRC（Eliminate-Reduce-Raise-Create）グリッド」——既存要因の廃除・削減・増強・創造を整理する枠組みである。シルク・ドゥ・ソレイユ（サーカス業界の革新）・Wii（ゲームの非ユーザー層開拓）・南西航空（格安航空と利便性の融合）がブルーオーシャン事例として挙げられる。競争戦略（ポーター）が差別化と低コストはトレードオフとみなすのに対し，両立を主張する点が対立軸を形成する。',
-    keyFigures: 'W・チャン・キム ／ レネ・モボルニュ ／ マイケル・ポーター ／ デービッド・コリス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/j.lrp.2015.09.002', type: 'academic', label: 'Kim, W.C. & Mauborgne, R. (2005) Blue Ocean Strategy — HBS Press' },
-      { url: 'https://en.wikipedia.org/wiki/Blue_Ocean_Strategy', type: 'reference', label: 'Wikipedia: Blue Ocean Strategy — value innovation' },
-    ],
-  },
-  {
     id: 'bizlaw-competition-law-abuse-dominance',
     discipline: 'business-law',
     title: '競争法と支配的地位の濫用——EU競争法102条と日本の私的独占・優越的地位濫用規制',
@@ -44860,12 +44691,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'mgmt-lean-startup-ries-build-measure-learn',
     discipline: 'management',
     title: 'リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略',
-    statement: 'リーンスタートアップ（Lean Startup）は，エリック・リースが著作『リーン・スタートアップ』（2011年）で提唱したスタートアップ及びイノベーション管理の方法論である。トヨタ生産方式のリーン思想とスティーブ・ブランクのカスタマー・ディベロップメント（顧客開発）を融合し，「構築（Build）→計測（Measure）→学習（Learn）」の反復サイクルを通じて，最小限の実行可能製品（MVP：Minimum Viable Product）で仮説を素早く検証することを中心に置く。「バニティメトリクス（見栄えの良い指標）」ではなく「アクショナブル・メトリクス（行動を促す指標）」を重視し，仮説が反証された際には「ピボット（pivot）」（方向転換）によって戦略を修正する。リーンスタートアップはシリコンバレーを中心に広く採用され，企業内イノベーション（コーポレート・スタートアップ）・政府デジタルサービス（US Digital Service・GDS英国）・非営利部門にも応用が広がった。',
+    statement: 'リーンスタートアップ（Lean Startup）は，エリック・リースが著作『リーン・スタートアップ』（2011年）で提唱したスタートアップ及びイノベーション管理の方法論である。トヨタ生産方式のリーン思想とスティーブ・ブランクのカスタマー・ディベロップメント（顧客開発）を融合し，「構築（Build）→計測（Measure）→学習（Learn）」の反復サイクルを通じて，最小限の実行可能製品（MVP：Minimum Viable Product）で仮説を素早く検証することを中心に置く。「バニティメトリクス（見栄えの良い指標）」ではなく「アクショナブル・メトリクス（行動を促す指標）」を重視し，仮説が反証された際には「ピボット（pivot）」（方向転換）によって戦略を修正する。リーンスタートアップはシリコンバレーを中心に広く採用され，企業内イノベーション（コーポレート・スタートアップ）・政府デジタルサービス（US Digital Service・GDS英国）・非営利部門にも応用が広がった。' +
+    '中核概念は仮説を実験で確かめながら進む「検証による学習（validated learning）」であり、アジャイル開発の思想も方法論の基盤の一つである。',
     keyFigures: 'エリック・リース ／ スティーブ・ブランク ／ アッシュ・モーリャ ／ デービッド・ランドール',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1007/978-1-4302-4463-4', type: 'academic', label: 'Ries, E. (2011) The Lean Startup — Crown Business' },
       { url: 'https://en.wikipedia.org/wiki/Lean_startup', type: 'reference', label: 'Wikipedia: Lean startup — build-measure-learn methodology' },
+      { url: 'https://hbr.org/2013/05/why-the-lean-start-up-changes-everything', type: 'media', label: 'Steve Blank, “Why the Lean Start-Up Changes Everything,” Harvard Business Review, May 2013（共同提唱者による解説）' },
+      { url: 'https://www.lean.org/lexicon-terms/lean-startup/', type: 'academic', label: 'Lean Enterprise Institute, Lean Lexicon: “Lean Startup”（専門機関の用語集）' },
+      { url: 'https://theleanstartup.com/principles', type: 'media', label: 'Eric Ries, The Lean Startup — Methodology / Principles（提唱者本人による一次情報源）' },
     ],
   },
   {
@@ -45070,18 +44905,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/9780262036542.001.0001', type: 'academic', label: 'Gillespie, T. (2018) Custodians of the Internet — MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Content_moderation', type: 'reference', label: 'Wikipedia: Content moderation — platform governance' },
-    ],
-  },
-  {
-    id: 'econ-rent-seeking-tullock-krueger',
-    discipline: 'economics',
-    title: 'レント・シーキング——タロックとクルーガーの政治的利権追求と社会的損失',
-    statement: 'レント・シーキング（rent-seeking）とは，競争的市場ではなく政治的プロセス（ロビー活動・規制要請・補助金獲得）を通じて経済的レント（超過利益）を追求する行動であり，社会的に非生産的な資源配分をもたらす現象である。ゴードン・タロックは1967年の論文で，独占から生じる真のコストは三角形の死荷重だけでなく，独占地位を獲得・維持するための競争的支出（ロビーイングコスト）を含む「タロックの四角形」として示した。アン・クルーガーは1974年の論文でこの行動を「レント・シーキング」と命名し，インド・トルコ等の輸入割当制度下での損失額を推計した。レント・シーキングは規制産業・特許・公共調達・政府ライセンス制度で発生しやすく，政府の規模と腐敗度と相関する。制度経済学的観点では，財産権制度・透明性・競争政策の充実がレント・シーキングを抑制する条件とされる。',
-    keyFigures: 'ゴードン・タロック ／ アン・クルーガー ／ ジェームズ・ブキャナン ／ ムリス・ロバーツ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/467455', type: 'academic', label: 'Krueger, A.O. (1974) The Political Economy of the Rent-Seeking Society — AER' },
-      { url: 'https://en.wikipedia.org/wiki/Rent-seeking', type: 'reference', label: 'Wikipedia: Rent-seeking — political economy' },
     ],
   },
   {
@@ -46194,13 +46017,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-open-source-software-movement',
     discipline: 'information-sociology',
     title: 'オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ',
-    statement: 'オープンソースソフトウェア（OSS）運動は、リチャード・ストールマンが1983年に開始した「GNUプロジェクト」と1985年の「フリーソフトウェア財団（FSF）」による倫理的・政治的主張から始まった。ストールマンは「自由（Freedom）」を「価格（Free Beer）」と区別し、利用・改変・配布・派生物公開の四自由をGPL（GNU一般公衆利用許諾契約書）ライセンスとして制度化した。エリック・レイモンドは1997年の論文「大聖堂とバザール」でLinuxの分散的・協調的開発モデル——「バザール開発」——が中央集権的「大聖堂型」に勝る品質を生み出すことを示した。経済社会学的にはヨハイ・ベンクラーが「コモンズ型ピア生産（Commons-Based Peer Production）」として概念化し、市場・国家に還元できない第三の生産組織原理として位置づけた。Linux・Apache・Python・Kubernetes等のOSSはクラウドインフラの基盤となり、企業戦略としてのOSSコミュニティ参加・デュアルライセンス・オープンコアモデルが一般化している。AI/LLMのオープンソース（Meta Llama・Mistral等）をめぐる公益性・安全性の議論も活発化している。',
+    statement: 'オープンソースソフトウェア（OSS）運動は、リチャード・ストールマンが1983年に開始した「GNUプロジェクト」と1985年の「フリーソフトウェア財団（FSF）」による倫理的・政治的主張から始まった。ストールマンは「自由（Freedom）」を「価格（Free Beer）」と区別し、利用・改変・配布・派生物公開の四自由をGPL（GNU一般公衆利用許諾契約書）ライセンスとして制度化した。エリック・レイモンドは1997年の論文「大聖堂とバザール」でLinuxの分散的・協調的開発モデル——「バザール開発」——が中央集権的「大聖堂型」に勝る品質を生み出すことを示した。経済社会学的にはヨハイ・ベンクラーが「コモンズ型ピア生産（Commons-Based Peer Production）」として概念化し、市場・国家に還元できない第三の生産組織原理として位置づけた。Linux・Apache・Python・Kubernetes等のOSSはクラウドインフラの基盤となり、企業戦略としてのOSSコミュニティ参加・デュアルライセンス・オープンコアモデルが一般化している。AI/LLMのオープンソース（Meta Llama・Mistral等）をめぐる公益性・安全性の議論も活発化している。' +
+    '1998年にはレイモンドやブルース・ペレンス、ティム・オライリーらが「オープンソース」という呼称を提唱して商業的受容を広げ、ラーナーとティロール（2002）は貢献者の動機をキャリア・シグナリングとエゴ充足の経済学として分析した。',
     keyFigures: 'リチャード・ストールマン ／ エリック・レイモンド ／ リーナス・トーバルズ ／ ヨハイ・ベンクラー',
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.gnu.org/philosophy/free-sw.html', type: 'reference', label: 'GNU Project (1996) What is Free Software? — Free Software Foundation' },
       { url: 'https://www.catb.org/~esr/writings/cathedral-bazaar/', type: 'academic', label: 'Raymond, E.S. (1999) The Cathedral and the Bazaar — O\'Reilly Media' },
       { url: 'https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9', type: 'reference', label: 'Wikipedia: オープンソース — フリーソフトウェア運動とバザール開発の解説' },
+      { url: 'https://doi.org/10.1162/rest.89.2.209', type: 'academic', label: 'Lerner & Tirole (2002) Some Simple Economics of Open Source — Journal of Industrial Economics' },
+      { url: 'https://doi.org/10.2307/j.ctt1njknw', type: 'academic', label: 'Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Open-source-software_movement', type: 'reference', label: 'Wikipedia: Open-source-software movement — OSS運動の歴史と思想の概説' },
     ],
   },
   {
@@ -49597,7 +49424,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-digital-twin-grieves',
     discipline: 'information-sociology',
     title: 'デジタルツイン（グリーブス）',
-    statement: 'デジタルツイン（digital twin）は、グリーブス（2003）がPLM（Product Lifecycle Management）の文脈で提唱した、物理的対象物——製品・設備・インフラ・都市——とその完全なデジタル複製が双方向にリアルタイム同期することで、シミュレーション・予知保全・最適化・意思決定支援を可能にする概念・技術体系である。NASAのアポロ13号（1970）で管制室が飛行中のモジュールを地上でシミュレートした事例が先行実践として挙げられるが、概念の明示的体系化はグリーブス（2003）のUMホワイトペーパーが初出とされる。産業応用としてはSiemens・GE・PTC等がCAD/CAM・IoTセンサー・AI分析を統合したデジタルツイン・プラットフォームを製造業・航空・エネルギー分野で展開している。EU「デジタルツイン・オーシャン」・シンガポール「バーチャル・シンガポール」・日本「デジタルツイン実現会議」はスマートシティへの適用を推進する。認識論的問題として、デジタルツインが「現実の真実（ground truth）」として機能し始める際のモデルと現実の乖離（model drift）・バイアス・責任帰属が論じられている。',
+    statement: 'デジタルツイン（digital twin）は、グリーブス（2003）がPLM（Product Lifecycle Management）の文脈で提唱した、物理的対象物——製品・設備・インフラ・都市——とその完全なデジタル複製が双方向にリアルタイム同期することで、シミュレーション・予知保全・最適化・意思決定支援を可能にする概念・技術体系である。NASAのアポロ13号（1970）で管制室が飛行中のモジュールを地上でシミュレートした事例が先行実践として挙げられるが、概念の明示的体系化はグリーブス（2003）のUMホワイトペーパーが初出とされる。産業応用としてはSiemens・GE・PTC等がCAD/CAM・IoTセンサー・AI分析を統合したデジタルツイン・プラットフォームを製造業・航空・エネルギー分野で展開している。EU「デジタルツイン・オーシャン」・シンガポール「バーチャル・シンガポール」・日本「デジタルツイン実現会議」はスマートシティへの適用を推進する。認識論的問題として、デジタルツインが「現実の真実（ground truth）」として機能し始める際のモデルと現実の乖離（model drift）・バイアス・責任帰属が論じられている。' +
+    'なお提唱年については 2002 年とする資料もある。応用は製造業にとどまらず、医療（患者・臓器のツイン）やサプライチェーン最適化にも広がり、インダストリー4.0 の中核技術の一つと位置づけられる。',
     keyFigures: 'マイケル・グリーブス ／ ジョン・ヴィッカーズ ／ フアン・ルイス・ロサーレス ／ 平井卓也',
     asOf: '2026-06-26',
     sources: [
@@ -49605,6 +49433,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1007/s00170-015-7256-0', type: 'academic', label: 'Tao, F. et al. (2019) Digital Twins and Cyber–Physical Systems toward Smart Manufacturing and Industry 4.0 — Engineering, 5(4), 653–661（製造業デジタルツインの体系化）' },
       { url: 'https://www.meti.go.jp/policy/digital_transformation/digital_twin.html', type: 'government', label: '経済産業省 (2022) デジタルツイン実現会議報告書（スマートシティ・インフラへのデジタルツイン適用）' },
       { url: 'https://en.wikipedia.org/wiki/Digital_twin', type: 'reference', label: 'Wikipedia: Digital twin — Grieves, IoT, PLM, smart city, NASA Apollo 13, model drift' },
+      { url: 'https://www.britannica.com/technology/digital-twin', type: 'reference', label: 'Encyclopaedia Britannica — Digital twin（定義・NASAの起源・製造業・スマートシティ・IoT応用）' },
     ],
   },
   {
@@ -49675,20 +49504,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.legislation.gov.uk/ukpga/1986/45/section/214', type: 'government', label: 'UK Government (1986) Insolvency Act 1986 s.214 — Wrongful Trading（英国不正取引規定）' },
       { url: 'https://doi.org/10.1111/j.1468-2230.2008.00702.x', type: 'academic', label: 'Goode, R. (2011) Principles of Corporate Insolvency Law — Sweet & Maxwell（倒産法の体系書）' },
       { url: 'https://en.wikipedia.org/wiki/Insolvent_trading', type: 'reference', label: 'Wikipedia: Insolvent trading — Corporations Act 2001, wrongful trading UK, Chapter 11, director liability' },
-    ],
-  },
-  {
-    id: 'infosoc-techno-nationalism-samuels',
-    discipline: 'information-sociology',
-    title: 'テクノ・ナショナリズム（サミュエルズ）',
-    statement: 'テクノ・ナショナリズム（techno-nationalism）は、リチャード・サミュエルズ（1994）が『Rich Nation, Strong Army: National Security and the Technological Transformation of Japan』で体系化した、国家が技術的能力を安全保障・経済的国力の中核として位置付け、技術の自立・国内開発・商業化を戦略的に追求する政策思想・イデオロギーである。日本の航空機産業・原子力・防衛技術における「技術的内製（technonationalist strategy）」——開発を通じた学習（learn-by-doing）、ライセンス購入後の技術の自国吸収（indigenous development）、商業・軍事の両用性（dual-use）——を歴史的に分析した。冷戦後から2000年代にかけてはグローバルサプライチェーン・FDI・技術移転の自由化によりテクノ・グローバリズムが主流となったが、米中技術覇権競争・半導体規制（2022年CHIPS法・日蘭輸出規制）・量子・AI・バイオの戦略技術化によりテクノ・ナショナリズムが再帰している。フラグメント化されたグローバル技術秩序（「技術的分断（tech decoupling）」）が経済安全保障・産業政策・標準化外交の主要論点となっている。',
-    keyFigures: 'リチャード・サミュエルズ ／ ジョセフ・ナイ ／ ダレン・リム ／ 西村康稔',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5749/j.cttts1bv', type: 'academic', label: 'Samuels, R. J. (1994) "Rich Nation, Strong Army": National Security and the Technological Transformation of Japan — Cornell University Press（テクノ・ナショナリズム原典）' },
-      { url: 'https://doi.org/10.1093/ia/iiab159', type: 'academic', label: 'Lim, D. J. & Mukherjee, R. (2019) What Money Can\'t Buy: The Security Externalities of Chinese Economic Statecraft in Southeast Asia — Asian Security, 15(2), 177–195（テクノ・ナショナリズムと安全保障の交差）' },
-      { url: 'https://www.congress.gov/bill/117th-congress/house-bill/4346', type: 'government', label: 'US Congress (2022) CHIPS and Science Act — H.R.4346（半導体国内生産・テクノ・ナショナリズムの立法化）' },
-      { url: 'https://en.wikipedia.org/wiki/Techno-nationalism', type: 'reference', label: 'Wikipedia: Techno-nationalism — Samuels, dual-use, CHIPS Act, tech decoupling, semiconductor geopolitics' },
     ],
   },
   {
@@ -49809,58 +49624,65 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'クラウドファンディングと資本市場の民主化',
     statement: 'エクイティクラウドファンディングは、資本へのアクセスを既存の金融仲介機関（銀行、ベンチャーキャピタル）から個々の投資家へと分散させ、資本市場を民主化する仕組みである。Belleflammeら（2014）の研究によれば、クラウドファンディングは情報非対称性を軽減し、経営者と投資家間の距離を縮め、多様な資本源へのアクセスを可能にする。特に中小企業やスタートアップは資本構成の最適化を通じて成長機会を実現できる一方、規制枠組み（米国JOBS Act等）との相互作用も重要である。',
     keyFigures: 'Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／Schwienbacher, Armin ／Mollick, Ethan',
-    asOf: '2024-12-31',
+    asOf: '2026-07',
     sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1016/j.jbusvent.2013.06.003', type: 'academic', label: 'Belleflamme, P., Lambert, T., & Schwienbacher, A. (2014) Crowdfunding: Tapping the Right Crowd, Journal of Business Venturing 29(5): 585–609' },
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1016/j.jbusvent.2014.04.002', type: 'academic', label: 'Mollick, E. (2014) The Dynamics of Crowdfunding, Journal of Business Venturing 29(1): 1–16' },
+      { url: 'https://doi.org/10.1016/j.jbusvent.2013.07.003', type: 'academic', label: 'Belleflamme, P., Lambert, T., & Schwienbacher, A. (2014) Crowdfunding: Tapping the Right Crowd, Journal of Business Venturing 29(5): 585–609 (Elsevier)' },
+      { url: 'https://doi.org/10.1016/j.jbusvent.2013.06.005', type: 'academic', label: 'Mollick, E. (2014) The Dynamics of Crowdfunding: An Exploratory Study, Journal of Business Venturing 29(1): 1–16 (Elsevier)' },
     ],
   },
   {
     id: 'econ-islamic-finance',
     discipline: 'economics',
     title: 'イスラム金融とシャリア准拠の融資メカニズム',
-    statement: 'イスラム金融は、シャリア（イスラム法）に準拠した銀行と投資メカニズムであり、利息（リバ）の禁止、リスク共有、実資産の裏付けを基本原則とする。2000年代のThomas、Siddiqqiら経済学者の研究により、イスラム金融は西洋的資本主義とは異なる代替的経済パラダイムとして、現在2兆ドルを超える世界的金融システムを形成している。スクークス（イスラム債）、ムダーラバ（利益分配契約）、ワクフ（宗教的基金）などの仕組みは、倫理的投資と社会的責任を統合する独自の金融構造を提供する。',
-    keyFigures: 'Iqbal, Zamir （2011 Cambridge University Press）／Mirakhor, Abbas ／Thomas, Abdulkader ／Siddiqqui, Muhammad Nejatullah',
-    asOf: '2024-12-31',
+    statement: 'イスラム金融は、シャリア（イスラム法）に準拠した銀行と投資メカニズムであり、利息（リバ）の禁止、リスク共有、実資産の裏付けを基本原則とする。Siddiqi、Chapra、Mirakhor ら経済学者の研究により、イスラム金融は西洋的資本主義とは異なる代替的経済パラダイムとして確立され、世界のイスラム金融総資産は 2024 年時点で約 4〜6 兆ドル（IFSB 集計約 3.9 兆ドル、LSEG/ICD 集計約 5.4〜6 兆ドル。2029 年には 9.7 兆ドル到達見込み）に達し、スクーク（イスラム債）残高も 2024 年に 1 兆ドルを突破した。ムダーラバ（利益分配契約）、ワクフ（宗教的基金）などの仕組みは、倫理的投資と社会的責任を統合する独自の金融構造を提供する。',
+    keyFigures: 'Iqbal, Zamir （2011 An Introduction to Islamic Finance, Wiley）／Mirakhor, Abbas ／Siddiqi, Muhammad Nejatullah ／Chapra, M. Umer',
+    asOf: '2026-07',
     sources: [
-      { url: 'https://www.cambridge.org/jp/academic/subjects/economics/financial-econometrics-and-risk-management/islamic-finance-modern-perspective', type: 'reference', label: 'Iqbal, Z., & Mirakhor, A. (2011) Islamic Finance: A Modern Perspective, Cambridge University Press' },
-      { url: 'https://journals.sagepub.com/doi/abs/10.1177/097265270900800105', type: 'academic', label: 'Thomas, A. (2009) Islamic Banking and Finance: A Global Perspective, Journal of Emerging Market Finance 8(1): 71–89' },
+      { url: 'https://books.google.com/books?id=SbVUt5X0R5MC', type: 'reference', label: 'Iqbal, Z., & Mirakhor, A. (2011) An Introduction to Islamic Finance: Theory and Practice, 2nd ed., John Wiley & Sons' },
+      { url: 'https://www.ifsb.org/press-releases/islamic-financial-services-industry-stability-report-2025-need-for-coordinated-action-to-deepen-markets-and-sustain-growth-momentum/', type: 'government', label: 'IFSB (2025) Islamic Financial Services Industry Stability Report 2025（2024 年総資産約 3.88 兆ドル・前年比 14.9% 増）' },
+      { url: 'https://icd-ps.org/en/news/lseg-and-icd-announce-findings-of-the-2025-islamic-finance-development-indicator-report-global-islamic-finance-assets-projected-to-reach-us97-trillion-by-2029', type: 'media', label: 'LSEG & ICD (2025) Islamic Finance Development Indicator Report（2029 年 9.7 兆ドル到達予測）' },
     ],
   },
   {
     id: 'mgmt-guanxi-network-capitalism',
     discipline: 'management',
     title: 'グアンシ関係資本主義と東アジアの経営システム',
-    statement: 'グアンシ（個人的紐帯と信頼関係）は、東アジア資本主義、特に中国・香港の経営エコシステムの中心的メカニズムである。Lin、Yeungら研究者（1990年代〜2010年代）の研究によれば、グアンシは単なる社会的ネットワークではなく、経営意思決定、資本へのアクセス、競争優位性の形成に構造的に組み込まれた関係資本である。西洋の個人主義的経営パラダイムとは対比して、グアンシベースの信頼システムは取引コストを低減し、市場機会へのアクセスを媒介する独自の機関的装置を形成する。',
-    keyFigures: 'Yeung, Henry Wai-chung （2007 Asia Pacific Viewpoint）／Lin, Yen-Ching ／Boisot, Max ／Child, John',
-    asOf: '2024-12-31',
+    statement: 'グアンシ（個人的紐帯と信頼関係）は、東アジア資本主義、特に中国・香港の経営エコシステムの中心的メカニズムである。Lin、Yeungら研究者（1990年代〜2010年代）の研究によれば、グアンシは単なる社会的ネットワークではなく、経営意思決定、資本へのアクセス、競争優位性の形成に構造的に組み込まれた関係資本である。西洋の個人主義的経営パラダイムとは対比して、グアンシベースの信頼システムは取引コストを低減し、市場機会へのアクセスを媒介する独自の機関的装置を形成する。' +
+      'なお、市場制度の発展に伴いグアンシの経済的意義は低下するとしたガスリー（1998）以降、その持続性をめぐる論争が続いており、意義は文脈依存的に評価される。',
+    keyFigures: 'Boisot, Max ／Child, John （1996 Administrative Science Quarterly）／Yeung, Henry Wai-chung （2004 Chinese Capitalism in a Global Era）／Redding, Gordon',
+    asOf: '2026-07',
     sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8373.2007.00009.x', type: 'academic', label: 'Yeung, H. W-C. (2007) Guanxi and Business Performance: Perspectives on Relational Capitalism, Asia Pacific Viewpoint 48(1): 44–57' },
-      { url: 'https://academic.oup.com/book/301', type: 'reference', label: 'Lin, Y-C., & Redding, G. (2000) The Evolution of Guanxi Networks in Chinese Business, Oxford University Press' },
+      { url: 'https://psycnet.apa.org/record/1997-02187-002', type: 'academic', label: 'Boisot, M., & Child, J. (1996) From Fiefs to Clans and Network Capitalism: Explaining China\'s Emerging Economic Order, Administrative Science Quarterly 41(4): 600–628' },
+      { url: 'https://www.cambridge.org/core/journals/management-and-organization-review/article/chinese-guanxi-an-integrative-review-and-newdirections-for-future-research/01B691E6A8EFA2F0E1AC05E9013C0E39', type: 'academic', label: 'Chen, C. C., Chen, X-P., & Huang, S. (2013) Chinese Guanxi: An Integrative Review and New Directions for Future Research, Management and Organization Review 9(1): 167–207' },
+      { url: 'https://www.worldscientific.com/worldscibooks/10.1142/6256', type: 'reference', label: 'Luo, Y. — Guanxi and Business, World Scientific (Asia-Pacific Business Series)' },
     ],
   },
   {
     id: 'human-cultural-cognition',
     discipline: 'human-science',
     title: '文化的認知と世界観による動機付けられた推論',
-    statement: '文化的認知理論は、個人の文化的世界観（階層主義/平等主義、個人主義/共同体主義）が、リスク知覚および政策的信念をいかに体系的に形作るかを説明する。Kahan、Slovicらの研究（2006年以降）によれば、人びとは事実情報を処理する際、確認バイアスを超えた、より深い「文化的動機付けられた推論」に従事する。この理論は、気候変動、ワクチン、医学的リスク認知における見解の分裂が、認知能力の差ではなく、異なる文化的世界観に由来することを実証し、アイデンティティを守るための認知プロセス（identity-protective cognition）の働きを明らかにする。',
+    statement: '文化的認知理論は、個人の文化的世界観（階層主義/平等主義、個人主義/共同体主義）が、リスク知覚および政策的信念をいかに体系的に形作るかを説明する。Kahan、Slovicらの研究（2006年以降）によれば、人びとは事実情報を処理する際、確認バイアスを超えた、より深い「文化的動機付けられた推論」に従事する。この理論は、気候変動、ワクチン、医学的リスク認知における見解の分裂が、認知能力の差ではなく、異なる文化的世界観に由来することを実証し、アイデンティティを守るための認知プロセス（identity-protective cognition）の働きを明らかにする。' +
+      'ただし、関連する「動機づけられた数的処理」効果は事前登録追試（Persson ら、2021, Cognition）で再現に失敗し、23 カ国比較研究（2022）でも再現性は弱いと報告されており、効果の頑健性をめぐる論争が続いている。',
     keyFigures: 'Kahan, Dan M. （2012 Nature Climate Change）／Slovic, Paul ／Braman, Donald ／Jenkins-Smith, Hank',
-    asOf: '2024-12-31',
+    asOf: '2026-07',
     sources: [
       { url: 'https://www.nature.com/articles/nclimate1547', type: 'academic', label: 'Kahan, D. M., Peters, E., Wittlin, M., Slovic, P., Ouellette, L. L., Braman, D., & Mandel, G. N. (2012) The Polarizing Impact of Science Literacy and Numeracy on Perceived Climate Change Risks, Nature Climate Change 2(10): 732–735' },
-      { url: 'https://www.culturalcognition.net/browse-papers/the-tragedy-of-the-risk-perception-commons.html', type: 'academic', label: 'Kahan, D. M., Braman, D., & Gastil, J. (2006) The Tragedy of the Risk-Perception Commons, Environmental Law Reporter 36: 10798–10810' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1871503', type: 'academic', label: 'Kahan, D. M., Wittlin, M., Peters, E., Slovic, P., Ouellette, L. L., Braman, D., & Mandel, G. N. (2011) The Tragedy of the Risk-Perception Commons, Cultural Cognition Project Working Paper No. 89 (SSRN)' },
+      { url: 'https://www.culturalcognition.net/browse-papers/the-tragedy-of-the-risk-perception-commons-culture-conflict.html', type: 'reference', label: 'Cultural Cognition Project — The Tragedy of the Risk-Perception Commons 論文ページ' },
     ],
   },
   {
     id: 'bizlaw-corporate-governance-structures',
     discipline: 'business-law',
     title: 'コーポレート・ガバナンス構造の比較制度分析',
-    statement: 'コーポレート・ガバナンスの制度的多様性は、各国の法的・文化的コンテクストに根ざしており、単一モデルでは説明不可能である。Aguilera & Jackson（2010-2015）の比較研究によれば、英米の単一ボード制とドイツ・日本の二層ボード（監査役会・経営委員会）制は、所有構造、信認義務の内容、ステークホルダー保護メカニズムが根本的に異なる。制度的補完性により、各システムは自国の資本市場発展、労働関係、金融仲介機能と相互に強化される。ガバナンス改革は単純な「ベストプラクティス」の輸出ではなく、各国の制度的文脈との整合性が不可欠である。',
+    statement: 'コーポレート・ガバナンスの制度的多様性は、各国の法的・文化的コンテクストに根ざしており、単一モデルでは説明不可能である。Aguilera & Jackson（2003, 2010）の比較研究によれば、英米の単一ボード制とドイツの二層ボード（監査役会 Aufsichtsrat と執行役会 Vorstand）制では、所有構造、信認義務の内容、ステークホルダー保護メカニズムが根本的に異なる。制度的補完性により、各システムは自国の資本市場発展、労働関係、金融仲介機能と相互に強化される。ガバナンス改革は単純な「ベストプラクティス」の輸出ではなく、各国の制度的文脈との整合性が不可欠である。' +
+      'なお日本は監査役会設置会社という独自類型を持ち、2015 年施行の会社法改正以降は監査等委員会設置会社・指名委員会等設置会社を含む 3 類型が併存する。2025 年には東証プライム上場会社で一層型の監査等委員会設置会社が監査役会設置会社を初めて上回り、制度は現在も流動的である。',
     keyFigures: 'Aguilera, Ruth V. （2010 Academy of Management Annals）／Jackson, Gregory ／Gedajlovic, Eric ／Hillman, Amy J.',
-    asOf: '2024-12-31',
+    asOf: '2026-07',
     sources: [
-      { url: 'https://academic.oup.com/ser/article-abstract/8/3/469/1650883', type: 'academic', label: 'Jackson, G., & Apostolakou, A. (2010) Comparative Institutional Analysis and International Differences in Corporate Governance, Socio-Economic Review 8(3): 469–497' },
-      { url: 'https://link.springer.com/article/10.1023/A:1024089357842', type: 'academic', label: 'Aguilera, R. V., & Jackson, G. (2003) Corporate Governance and the Institutional Embeddedness of Finance, Journal of Management and Governance 7(3): 263–288' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2003.10196772', type: 'academic', label: 'Aguilera, R. V., & Jackson, G. (2003) The Cross-National Diversity of Corporate Governance: Dimensions and Determinants, Academy of Management Review 28(3): 447–465' },
+      { url: 'https://journals.aom.org/doi/10.5465/19416520.2010.495525', type: 'academic', label: 'Aguilera, R. V., & Jackson, G. (2010) Comparative and International Corporate Governance, Academy of Management Annals 4(1): 485–556' },
+      { url: 'https://www.fsa.go.jp/singi/revision_corporategovernance/siryo/20251021/05.pdf', type: 'government', label: '金融庁 CG コード改訂関連会議資料（2025 年 10 月）— 東証上場会社の機関設計データ（監査等委員会設置会社がプライムで最多）' },
     ],
   },
   {
@@ -49869,10 +49691,11 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'エピステミック・コミュニティと専門知の流通構造',
     statement: 'エピステミック・コミュニティ（epistemic communities）は、共有された信念体系、因果性の理解、政策目標を持つ専門家ネットワークであり、知識の構築と社会への影響を媒介する。Haas（1992）の国際政治研究における概念から、Dunlop & Radaelli（2013）による政策分析への拡張により、エピステミック・コミュニティは、メディア、ガバナンス、組織内での情報流通と専門的権威の構築を説明する。専門家集団がいかに知識を共有し、集合的信念を形成し、組織・セクター間の境界を越えて専門知を流通させるかを明らかにする理論であり、デジタル時代の知識権力を理解する上で不可欠である。',
     keyFigures: 'Haas, Peter M. （1992 International Organization）／Dunlop, Claire A. ／Radaelli, Claudio M. ／Adler, Emanuel',
-    asOf: '2024-12-31',
+    asOf: '2026-07',
     sources: [
-      { url: 'https://www.cambridge.org/core/journals/international-organization/article/abs/introduction-epistemic-communities-and-international-policy-coordination/A63C4B5E1D4C5B5E6C7B8A9C', type: 'academic', label: 'Haas, P. M. (1992) Introduction: Epistemic Communities and International Policy Coordination, International Organization 46(1): 1–35' },
-      { url: 'https://www.cambridge.org/core/journals/journal-of-public-policy/article/mechanisms-of-imitation-in-eu-regulatory-policy/evidence-and-implications', type: 'academic', label: 'Dunlop, C. A., & Radaelli, C. M. (2013) Mechanisms of Imitation in EU Regulatory Policy: Evidence and Implications, Journal of Public Policy 33(2): 111–127' },
+      { url: 'https://www.cambridge.org/core/journals/international-organization/article/abs/introduction-epistemic-communities-and-international-policy-coordination/CE9CFC049E0F2A14635F1E3EB51960C9', type: 'academic', label: 'Haas, P. M. (1992) Introduction: Epistemic Communities and International Policy Coordination, International Organization 46(1): 1–35' },
+      { url: 'https://journals.sagepub.com/doi/10.1111/j.1467-9248.2012.00982.x', type: 'academic', label: 'Dunlop, C. A., & Radaelli, C. M. (2013) Systematising Policy Learning: From Monolith to Dimensions, Political Studies 61(3): 599–619' },
+      { url: 'https://www.cambridge.org/core/journals/review-of-international-studies/article/abs/rethinking-epistemic-communities-twenty-years-later/C7057E942EAFAED773470752746F8454', type: 'academic', label: 'Cross, M. K. D. (2013) Rethinking Epistemic Communities Twenty Years Later, Review of International Studies 39(1): 137–160' },
     ],
   },
   {
