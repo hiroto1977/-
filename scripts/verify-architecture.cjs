@@ -307,6 +307,30 @@ const METRICS = [
       return total;
     },
   },
+  {
+    name: 'tracked line count (floor)',
+    // 「≥ N」の下限メトリクス（mode: 'gte'）。100 万行基盤（柱 B）の成長を
+    // フロアで自己検証する — 正確な行数は変動するため固定値比較にしない。
+    docPattern: /追跡行数（リポジトリ全体・下限） \| \*\*≥ (\d+)\*\* /,
+    mode: 'gte',
+    compute: () => {
+      const { execSync } = require('node:child_process');
+      const names = execSync('git ls-files -z', { cwd: REPO_ROOT, maxBuffer: 64 * 1024 * 1024 })
+        .toString('utf8')
+        .split('\u0000')
+        .filter(Boolean);
+      let total = 0;
+      for (const n of names) {
+        try {
+          const b = fs.readFileSync(path.join(REPO_ROOT, n));
+          for (let i = 0; i < b.length; i++) if (b[i] === 10) total++;
+        } catch {
+          /* 削除予定・シンボリックリンク等は読み飛ばす */
+        }
+      }
+      return total;
+    },
+  },
 ];
 
 function verifyMetrics(archText) {
@@ -333,14 +357,18 @@ function verifyMetrics(archText) {
       });
       continue;
     }
-    if (claimed !== actual) {
+    const pass = metric.mode === 'gte' ? actual >= claimed : claimed === actual;
+    if (!pass) {
       failures.push({
         archLine: null,
         ref: `metric: ${metric.name}`,
-        reason: `doc says ${claimed}, source says ${actual}`,
+        reason:
+          metric.mode === 'gte'
+            ? `doc floor is ${claimed}, source says ${actual}`
+            : `doc says ${claimed}, source says ${actual}`,
       });
     } else {
-      ok.push(`${metric.name} = ${actual}`);
+      ok.push(metric.mode === 'gte' ? `${metric.name} = ${actual} (>= ${claimed})` : `${metric.name} = ${actual}`);
     }
   }
   return { ok, failures };

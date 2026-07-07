@@ -31,8 +31,8 @@ LLM の判断が必要な仕事だけを機械可読キューに落とす**」�
 | フェーズ | 内容 |
 |---|---|
 | **AUDIT** | 全項目を監査して 6 種のキューを生成（下表） |
-| **REGEN** | 派生成果物を再生成: Obsidian vault（4,375 ノート）+ NotebookLM エクスポート（17 パート） |
-| **VERIFY** | 確証ゲート `verify:knowledge`（出典 2+・権威 1+）と `vault:check`（byte 同期）を強制 |
+| **REGEN** | 派生成果物を再生成: Obsidian vault（4,375 ノート）+ 知識グラフ・教育素材（`knowledge-graph/*.ndjson` — ノード/エッジ/フラッシュカード/クイズ）+ NotebookLM エクスポート（17 パート） |
+| **VERIFY** | 確証ゲート `verify:knowledge`（出典 2+・権威 1+）・`vault:check`（byte 同期）・`verify:graph`（グラフ再計算 byte 一致＋構造＋教育整合）を強制 |
 | **REPORT** | `orchestration/knowledge-queue.json`（gitignore 済み）+ コンソール / CI 要約 |
 
 ### 検出キュー

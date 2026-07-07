@@ -62,8 +62,8 @@ export default tseslint.config(
     },
   },
   {
-    // Scripts (CommonJS) — relax rules.
-    files: ['scripts/**/*.cjs', '*.config.{js,cjs,mjs}'],
+    // Scripts / オーケストレーション (CommonJS) — relax rules.
+    files: ['scripts/**/*.cjs', 'orchestration/**/*.cjs', '*.config.{js,cjs,mjs}'],
     languageOptions: {
       globals: {
         require: 'readonly',

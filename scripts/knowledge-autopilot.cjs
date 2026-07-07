@@ -236,12 +236,14 @@ function run(label, file, args = []) {
   // 2. REGEN（派生成果物 — 決定論なのでクリーンな作業樹なら diff ゼロ）
   if (!args['skip-regen']) {
     run('Obsidian vault 再生成', 'build-knowledge-vault.cjs');
+    run('知識グラフ+教育素材 再生成', 'build-knowledge-graph.cjs');
     run('NotebookLM エクスポート再生成', 'export-notebooklm.cjs');
   }
 
-  // 3. VERIFY（確証ゲート + vault 同期）
+  // 3. VERIFY（確証ゲート + vault/グラフ同期）
   run('確証ゲート verify:knowledge', 'verify-knowledge-provenance.cjs');
   run('vault 同期 vault:check', 'build-knowledge-vault.cjs', ['--check']);
+  run('知識グラフ検証 verify:graph', 'verify-graph.cjs');
 
   // 4. REPORT
   const queue = {

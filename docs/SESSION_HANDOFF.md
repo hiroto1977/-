@@ -20,12 +20,12 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,607**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パス+オートパイロット第1回で 4,350→3,607・**−743**） |
-| **直近完了作業** | 🔄 オートパイロット・キュー第1回消化: 重複 22 ペア裁定（判定4+懐疑3エージェント・全 UPHELD → 22 統合・固有情報17件と出典54本を移植）＋鮮度切れ 6 件を web 再検証（5 件で実在しない書誌/無効 URL を発見→修正）＋経済史 86 件へ asOf 付与。キュー: 重複0/再検証0/asOf欠落0 |
+| **直近完了作業** | 🕸️ 柱B Phase 0 出荷: 知識グラフ基盤（`orchestration/knowledge-graph.cjs`+`education.cjs`・`knowledge-graph/*.ndjson` 4,234ノード/24,665エッジ/カード4,234/クイズ4,231≒39.8k行）+ 新ゲート `verify:graph`（verify:all/ci.yml/オートパイロットに配線）+ 追跡行数フロアメトリクス（≥800k・gte モード）＋キュー第1回消化（重複22統合・再検証6・経済史asOf） |
 | **サービス数** | **70**（village 追加） |
 | **Knowledge Vault** | 4,375 files |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
 | **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ + チャットボット v2 + 重複統合 + AIの村 + 増強 を蓄積、まだ未マージ） |
-| **次のアクション** | ①大規模システム柱 B（知識グラフ+教育の 100 万行基盤 Phase 0〜3、プラン: `.claude/plans/mighty-imagining-salamander.md`）②増強バックログ 510 件をトランシェ消化（`orchestration/knowledge-queue.json` 先頭から）③新規概念 Batch 724 |
+| **次のアクション** | ①柱 B Phase 1: 全ノートに「## 関連概念」（グラフ上位10を vault へ注入・+3.8万行）→Phase 2 人物/出典ページ→Phase 3 年表/教育 MOC（100万行超え・フロアを 1,000,000 へ引上げ）②増強バックログ 510 件のトランシェ消化 ③新規概念 Batch 724 |
 
 ### 🏡 AIの村（2026-07-05 出荷・見やすさ再設計 v2）
 
