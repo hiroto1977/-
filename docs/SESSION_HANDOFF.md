@@ -20,12 +20,12 @@
 | 項目 | 値 |
 |---|---|
 | **現在の概念総数** | **3,625**（`grep -c "    id: '" src/renderer/data/academicKnowledge.ts`。重複統合 3 パスで 4,350→3,625・**−725（−16.7%）**） |
-| **直近完了作業** | 📓 NotebookLM 記憶エクスポート（全知識+開発史を 19 ファイル/10.3MB に再パッケージ・`scripts/export-notebooklm.cjs` で再生成可）＋🏡 AIの村 見やすさ再設計 v2（建物カード＋街区クラスタ＋クリック拡大） |
+| **直近完了作業** | 🤖 知識オートパイロット構築（`npm run knowledge:auto`・週次 CI knowledge-auto.yml・裁定済みペア台帳 84・docs/KNOWLEDGE_AUTOPILOT.md）＋📓 NotebookLM 記憶エクスポート（19 ファイル/10.3MB・`knowledge:export`） |
 | **サービス数** | **70**（village 追加） |
 | **Knowledge Vault** | 4,397 files |
 | **開発ブランチ** | `claude/eager-brown-7cev3c` |
 | **累積 PR** | [#707](https://github.com/hiroto1977/-/pull/707)（draft・複数バッチ + AI ハブ + チャットボット v2 + 重複統合 + AIの村 + 増強 を蓄積、まだ未マージ） |
-| **次のアクション** | 大規模システム柱 B（知識グラフ+教育の 100 万行基盤 Phase 0〜3）に着手中。プラン: `.claude/plans/mighty-imagining-salamander.md`。並行残: ①薄いエントリ増強の残 34 件（verify がセッション上限で中断→再実行）＋残トランシェ ②新規概念 Batch 724 |
+| **次のアクション** | ①知識オートパイロットのキュー消化（増強 517 / 重複疑い 22 / 再検証 6 / 経済史 asOf 一括付与 — `orchestration/knowledge-queue.json`、手順 `docs/KNOWLEDGE_AUTOPILOT.md`）②大規模システム柱 B（知識グラフ+教育の 100 万行基盤 Phase 0〜3、プラン: `.claude/plans/mighty-imagining-salamander.md`）③新規概念 Batch 724 |
 
 ### 🏡 AIの村（2026-07-05 出荷・見やすさ再設計 v2）
 

@@ -67,6 +67,8 @@ npm run lint:test-coverage # every service must have a test + an action register
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run verify:all         # all of the above (verify:arch + lint:forbidden/imports/docs/test-coverage/shell)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
+npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+                           #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
 ```
 
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker

@@ -1,0 +1,89 @@
+name: knowledge-auto
+
+# 知識オートパイロットの定期実行 — 週 1 回（毎週月曜 06:00 JST = 日曜 21:00 UTC）。
+# 機械化できる工程（監査・派生物再生成・確証ゲート・出典 URL 死活）を無人で回し、
+# LLM の判断が必要な残作業を Issue とアーティファクトに積む。
+# 無料枠の Actions 分数を配慮して単一ジョブ・週次（ci.yml と同じ方針）。
+
+on:
+  schedule:
+    - cron: '0 21 * * 0'
+  workflow_dispatch: {}
+
+concurrency:
+  group: knowledge-auto
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  autopilot:
+    name: 知識オートパイロット（監査 + 再生成 + 検証 + 報告）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+
+      # 監査 + 派生物再生成 + 確証ゲート + 出典 URL 死活（週替わり 100 件ローテーション）
+      - run: node scripts/knowledge-autopilot.cjs --ci --links=100
+
+      # 派生成果物（knowledge-vault 等）が本体データと完全同期している証明:
+      # 再生成後の作業樹に diff が出たら、決定論が壊れているので fail。
+      - name: 派生成果物ドリフトなしを検証
+        run: git diff --exit-code
+
+      - name: 作業キューをアーティファクトとして保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: knowledge-queue
+          path: orchestration/knowledge-queue.json
+          retention-days: 90
+
+      # LLM 作業が待機している場合、常設 Issue を作成/更新して見えるようにする。
+      - name: 作業キューを Issue に反映
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const q = JSON.parse(fs.readFileSync('orchestration/knowledge-queue.json', 'utf8'));
+            const s = q.summary;
+            const actionable = s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.sourceHygiene + s.deadLinks;
+            const title = '📚 知識オートパイロット報告（自動更新）';
+            const body = [
+              `基準日 **${q.generatedAt}** ／ 対象 **${q.totals.entries}** 項目`,
+              '',
+              '| キュー | 件数 |',
+              '|---|---:|',
+              `| 増強待ち（薄い項目） | ${s.enrich} |`,
+              `| 再検証待ち（鮮度切れ） | ${s.reverify} |`,
+              `| asOf 欠落 | ${s.missingAsOf} |`,
+              `| 重複疑い（裁定済み除外後） | ${s.dedupe} |`,
+              `| 出典衛生 | ${s.sourceHygiene} |`,
+              `| リンク切れ | ${s.deadLinks}（要確認 ${s.suspectLinks} ／ 検査 ${s.linksChecked}） |`,
+              '',
+              `合計 **${actionable} 件**の LLM 作業が待機中。詳細は Actions run の artifact ` +
+                '`knowledge-queue` を参照。消化手順は `docs/KNOWLEDGE_AUTOPILOT.md`。',
+              '',
+              '_この Issue は knowledge-auto ワークフローが毎週自動更新します。_',
+            ].join('\n');
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
+            });
+            const existing = issues.find((i) => i.title === title);
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body,
+                state: actionable > 0 ? 'open' : 'closed',
+              });
+            } else if (actionable > 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo, title, body,
+              });
+            }
