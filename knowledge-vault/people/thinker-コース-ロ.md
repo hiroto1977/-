@@ -1,0 +1,36 @@
+---
+title: "ロナルド・コース"
+type: thinker
+person_key: "コース|ロ"
+concept_count: 14
+tags:
+  - person
+  - index
+---
+
+# ロナルド・コース
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **14 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（14件）
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 契約理論は、情報の非対称性下でのインセンティブ設計と契約の不完備性を分析する。
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 法の経済分析とは、経済学の手法——特に価格理論・ミクロ経済学——を法制度の評価と設計に適用する学問分野である。
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — ラーニッド・ハンドの定式（LearnedHandformula、過失算定式）は、アメリカの裁判官ラーニッド・ハンドが1…
+- [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 排出量取引（capandtrade、キャップ・アンド・トレード）は、汚染物質の排出を市場メカニズムで制御する政策手法で…
+- [[econ-coase-conjecture|コースの推測（耐久財独占）]] — コースの推測（コース予想）は、ロナルド・コースが1972年に提唱した耐久財独占に関する命題である。
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 取引費用がゼロ（または無視できるほど小さく）かつ所有権が明確に定義・執行可能であれば、外部性が存在しても当事者間の自発…
+- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 耐久財独占（durablegoodsmonopoly）の問題は、ロナルド・コースが1972年の論文「耐久性と独占」で提…
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 環境経済学は、アーサー・ピグー（1920年『厚生経済学』）が提唱した外部性理論とピグー税の概念を基礎とし、ロナルド・コ…
+- [[econ-environmental-pigouvian-tax|ピグー税と外部性の内部化——環境経済学の政策論的基盤]] — ピグー税（Pigouviantax）とは、経済活動が生み出す負の外部性（negativeexternality）——大…
+- [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]] — 外部性（externality）とは，ある経済主体の活動が市場取引を経ずに他者の厚生に影響を与える現象であり，正の外部…
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 新制度経済学（NewInstitutionalEconomics:NIE）は、ダグラス・ノース・オリバー・ウィリアムソ…
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — ピグー的外部性（Pigouvianexternality）とピグー税（Pigouviantax）は、アーサー・ピグーが…
+- [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 財産権の生成理論は、ハロルド・デムゼッツが1967年の論文「財産権の理論に向けて」で提示した、財産権がなぜ、どのように…
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 取引コスト理論（取引費用経済学、TCE）は、経済取引を市場で行うか企業組織の内部で行うか（make-or-buy＝内製…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

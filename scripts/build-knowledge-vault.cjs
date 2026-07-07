@@ -113,6 +113,117 @@ function entryNote(e, related = []) {
   return parts.join('\n');
 }
 
+// ---------------------------------------------------------------------------
+// 人物ページ・出典ドメインページ（柱 B Phase 2）
+// ---------------------------------------------------------------------------
+/** 人物キー / ホスト名 → ファイル slug（衝突時は昇順で -2, -3 を付す）。 */
+function makeSlugger(prefix) {
+  const used = new Map();
+  return (raw) => {
+    const base = `${prefix}-${String(raw).replace(/[|.]/g, '-').replace(/-+/g, '-').replace(/-+$/, '')}`;
+    const n = used.get(base) || 0;
+    used.set(base, n + 1);
+    return n === 0 ? base : `${base}-${n + 1}`;
+  };
+}
+
+/**
+ * 人物ごとに関連概念を束ねる（2 概念以上の人物のみページ化 — 1 件のみの
+ * 人物ページはナビゲーション価値が薄くスタブを 5,000 枚生むため）。
+ * display は最長の表記を代表とする（情報量最大・決定論）。
+ */
+function collectThinkers(entries) {
+  const byKey = new Map(); // key → {displays:Set, items:[entry]}
+  for (const e of entries) {
+    const metaText = (e.meta || []).map((m) => m.value).join('／');
+    for (const { key, display } of kg.extractAuthorNames(metaText)) {
+      if (!byKey.has(key)) byKey.set(key, { displays: [], items: [] });
+      const t = byKey.get(key);
+      t.displays.push(display);
+      t.items.push(e);
+    }
+  }
+  const thinkers = [];
+  for (const [key, t] of byKey) {
+    if (t.items.length < 2) continue;
+    const display = [...t.displays].sort((a, b) => b.length - a.length || (a < b ? -1 : 1))[0];
+    t.items.sort((a, b) => (a.id < b.id ? -1 : 1));
+    thinkers.push({ key, display, items: t.items });
+  }
+  thinkers.sort((a, b) => (a.key < b.key ? -1 : 1));
+  return thinkers;
+}
+
+function thinkerNote(t) {
+  const fm = ['---', `title: ${yamlStr(t.display)}`, 'type: thinker', `person_key: ${yamlStr(t.key)}`, `concept_count: ${t.items.length}`, 'tags:', '  - person', '  - index', '---'];
+  const parts = [fm.join('\n'), '', `# ${t.display}`, '', `> [!info] 人物索引 ・ 関連する検証済み概念 **${t.items.length} 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）`, ''];
+  const groups = new Map();
+  for (const e of t.items) {
+    const g = groups.get(e.collectionLabel) || [];
+    g.push(e);
+    groups.set(e.collectionLabel, g);
+  }
+  for (const [label, items] of [...groups.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    parts.push(`## ${label}（${items.length}件）`);
+    for (const e of items) parts.push(`- [[${e.id}|${e.title}]] — ${kc.oneLiner(e.summary, 60)}`);
+    parts.push('');
+  }
+  parts.push('## 関連', '- 索引: [[人物索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+/** ホストごとに引用元の概念を束ねる（全ホスト）。 */
+function collectSourceDomains(entries) {
+  const byHost = new Map(); // host → {items:[{entry, label, type}]}
+  for (const e of entries) {
+    for (const s of e.sources || []) {
+      const h = kg.hostOf(s.url);
+      if (!h) continue;
+      if (!byHost.has(h)) byHost.set(h, []);
+      byHost.get(h).push({ entry: e, label: s.label, type: s.type });
+    }
+  }
+  const hosts = [];
+  for (const [host, items] of byHost) {
+    items.sort((a, b) => (a.entry.id < b.entry.id ? -1 : a.entry.id > b.entry.id ? 1 : a.label < b.label ? -1 : 1));
+    hosts.push({ host, items });
+  }
+  hosts.sort((a, b) => (a.host < b.host ? -1 : 1));
+  return hosts;
+}
+
+function sourceDomainNote(d) {
+  const typeCount = new Map();
+  for (const it of d.items) typeCount.set(it.type, (typeCount.get(it.type) || 0) + 1);
+  const typeLine = [...typeCount.entries()]
+    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
+    .map(([t, n]) => `${kc.SOURCE_TYPE_LABEL[t] || t} ${n}`)
+    .join(' ・ ');
+  const fm = ['---', `title: ${yamlStr(d.host)}`, 'type: source-domain', `host: ${yamlStr(d.host)}`, `cite_count: ${d.items.length}`, 'tags:', '  - source-domain', '  - index', '---'];
+  const parts = [fm.join('\n'), '', `# ${d.host}`, '', `> [!info] 出典ドメイン索引 ・ 引用 **${d.items.length} 件**（${typeLine}）`, '', '## このドメインを出典とする項目', ''];
+  for (const it of d.items) parts.push(`- [[${it.entry.id}|${it.entry.title}]] — ${kc.oneLiner(it.label, 70)}`);
+  parts.push('', '## 関連', '- 索引: [[出典ドメイン索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function thinkerIndexNote(thinkers, slugOf) {
+  const fm = ['---', 'title: 人物索引', 'type: MOC', `person_count: ${thinkers.length}`, 'tags:', '  - MOC', '  - person', '---'];
+  const parts = [fm.join('\n'), '', '# 人物索引 — 思想家・研究者から概念を辿る', '', `検証済み知識に 2 概念以上で登場する人物 **${thinkers.length} 名**。関連概念数の降順。`, ''];
+  const sorted = [...thinkers].sort((a, b) => b.items.length - a.items.length || (a.key < b.key ? -1 : 1));
+  for (const t of sorted) parts.push(`- [[${slugOf.get(t.key)}|${t.display}]]（${t.items.length}件）`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
+function sourceDomainIndexNote(domains, slugOf) {
+  const fm = ['---', 'title: 出典ドメイン索引', 'type: MOC', `domain_count: ${domains.length}`, 'tags:', '  - MOC', '  - source-domain', '---'];
+  const parts = [fm.join('\n'), '', '# 出典ドメイン索引 — 引用元から概念を辿る', '', `全出典 URL のドメイン **${domains.length} 件**。引用数の降順。`, ''];
+  const sorted = [...domains].sort((a, b) => b.items.length - a.items.length || (a.host < b.host ? -1 : 1));
+  for (const d of sorted) parts.push(`- [[${slugOf.get(d.host)}|${d.host}]]（${d.items.length}件）`);
+  parts.push('', '## 関連', '- [[Home]]', '', '---', GENERATED_NOTE, '');
+  return parts.join('\n');
+}
+
 /** カテゴリ昇順（key 文字列）でグルーピング。 */
 function groupByCategory(entries) {
   const groups = new Map();
@@ -150,6 +261,10 @@ function homeNote(byCollection, total) {
     '',
     '## コレクション別MOC',
     lines,
+    '',
+    '## 横断索引（柱 B）',
+    '- [[人物索引]] — 思想家・研究者から概念を辿る（2 概念以上で登場する人物）',
+    '- [[出典ドメイン索引]] — 引用元ドメインから概念を辿る',
     '',
     '## AIオーケストレーション連携',
     '- [[Organization]] — 組織図（CEO→COO→役員→秘書室／管理職→一般職）とサイクル。各役員ノートに知識ブリーフを相互リンク',
@@ -446,6 +561,21 @@ function buildFiles() {
     for (const e of list)
       files[path.join('notes', e.collection, e.category, `${e.id}.md`)] = entryNote(e, related.get(e.id) || []);
   }
+
+  // 柱 B Phase 2: 人物ページ（2 概念以上の人物）と出典ドメインページ（全ホスト）+ 索引 MOC。
+  const thinkers = collectThinkers(entries);
+  const thinkerSlug = makeSlugger('thinker');
+  const thinkerSlugOf = new Map();
+  for (const t of thinkers) thinkerSlugOf.set(t.key, thinkerSlug(t.key));
+  for (const t of thinkers) files[path.join('people', `${thinkerSlugOf.get(t.key)}.md`)] = thinkerNote(t);
+  files[path.join('MOC', '人物索引.md')] = thinkerIndexNote(thinkers, thinkerSlugOf);
+
+  const domains = collectSourceDomains(entries);
+  const domainSlug = makeSlugger('source');
+  const domainSlugOf = new Map();
+  for (const d of domains) domainSlugOf.set(d.host, domainSlug(d.host));
+  for (const d of domains) files[path.join('sources', `${domainSlugOf.get(d.host)}.md`)] = sourceDomainNote(d);
+  files[path.join('MOC', '出典ドメイン索引.md')] = sourceDomainIndexNote(domains, domainSlugOf);
 
   for (const [name, content] of Object.entries(METHODOLOGY)) files[path.join('methodology', `${name}.md`)] = content;
 

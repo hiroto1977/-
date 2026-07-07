@@ -1,0 +1,25 @@
+---
+title: "フレッド・ルーサンス"
+type: thinker
+person_key: "ルーサンス|フ"
+concept_count: 3
+tags:
+  - person
+  - index
+---
+
+# フレッド・ルーサンス
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（3件）
+- [[human-positive-organizational-behavior|ポジティブ組織行動（POB）と心理的資本（PsyCap）の理論と実践]] — ポジティブ組織行動（POB）は、フレッド・ルーサンスが2002年に提唱した概念で、測定・開発・管理可能なポジティブな人…
+- [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — フレッド・ルーサンスが2007年に体系化した心理的資本（PsyCap）は、ポジティブ組織行動論の中核構成概念として、自…
+- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — オーセンティック・リーダーシップ（authenticleadership、真正のリーダーシップ）は、リーダーの自己への…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

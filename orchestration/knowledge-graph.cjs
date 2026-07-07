@@ -91,8 +91,14 @@ const AUTHOR_STOPWORDS = new Set([
  *      裸のカタカナ 1 トークンは「パート全体が名前」か「直後に（西暦」の
  *      場合のみ受理する。
  */
-function extractAuthorSurnames(text) {
-  const out = new Set();
+function extractAuthorNames(text) {
+  const out = [];
+  const seen = new Set();
+  const push = (key, display) => {
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push({ key, display });
+  };
   const s = String(text || '').normalize('NFKC');
   if (!s) return out;
   // 氏名リストの区切り（／ ; ＆）。カンマ・中黒は氏名内部の区切りなので割らない。
@@ -106,14 +112,14 @@ function extractAuthorSurnames(text) {
     let m = beforeParen.match(/^([A-Za-z'’-]{3,})\s*,\s*([A-Za-z]?)/);
     if (m) {
       const sur = m[1].toLowerCase();
-      if (okSur(sur)) out.add(`${sur}|${(m[2] || '').toLowerCase()}`);
+      if (okSur(sur)) push(`${sur}|${(m[2] || '').toLowerCase()}`, beforeParen);
       continue;
     }
     // b) カタカナ "姓, 名" → 姓+名イニシャル
     m = beforeParen.match(/^([ァ-ヴー]{2,})\s*[,，]\s*([ァ-ヴー]?)/);
     if (m) {
       const sur = m[1];
-      if (sur.length >= 3 && okSur(sur)) out.add(`${sur}|${m[2] || ''}`);
+      if (sur.length >= 3 && okSur(sur)) push(`${sur}|${m[2] || ''}`, beforeParen);
       continue;
     }
     // c) カタカナ中黒氏名「ジョン・メイナード・ケインズ」→ ケインズ+ジ
@@ -121,29 +127,34 @@ function extractAuthorSurnames(text) {
     if (m) {
       const toks = m[1].split('・');
       const sur = toks[toks.length - 1];
-      if (sur.length >= 2 && okSur(sur)) out.add(`${sur}|${toks[0][0] || ''}`);
+      if (sur.length >= 2 && okSur(sur)) push(`${sur}|${toks[0][0] || ''}`, m[1]);
       continue;
     }
     // d) ラテン語列 "Milton Friedman" → 末尾語+先頭イニシャル（1 語なら裸）
     const words = beforeParen.match(/[A-Za-z'’-]{3,}/g) || [];
     if (words.length >= 2) {
       const sur = words[words.length - 1].toLowerCase();
-      if (okSur(sur)) out.add(`${sur}|${words[0][0].toLowerCase()}`);
+      if (okSur(sur)) push(`${sur}|${words[0][0].toLowerCase()}`, words.join(' '));
       continue;
     }
     if (words.length === 1) {
       const sur = words[0].toLowerCase();
-      if (sur.length >= 4 && okSur(sur)) out.add(`${sur}|`);
+      if (sur.length >= 4 && okSur(sur)) push(`${sur}|`, words[0]);
       continue;
     }
     // e) 裸のカタカナ 1 トークン: パート全体が名前 or 直後に（西暦 のときだけ人名と認める
     m = p.match(/^([ァ-ヴー]{3,})$/) || p.match(/^([ァ-ヴー]{3,})\s*[（(]\s*(?:1[5-9]|20)\d\d/);
     if (m) {
       const sur = m[1];
-      if (okSur(sur)) out.add(`${sur}|`);
+      if (okSur(sur)) push(`${sur}|`, sur);
     }
   }
   return out;
+}
+
+/** 後方互換: 人物キーのみの Set（グラフの shares-thinker 用）。 */
+function extractAuthorSurnames(text) {
+  return new Set(extractAuthorNames(text).map((x) => x.key));
 }
 
 /** URL → ホスト名（www. は剥がす）。不正 URL は null。 */
@@ -426,6 +437,7 @@ function computeGraph(entries, opts = {}) {
 module.exports = {
   computeGraph,
   extractWeightedTerms,
+  extractAuthorNames,
   extractAuthorSurnames,
   hostOf,
   firstYear,

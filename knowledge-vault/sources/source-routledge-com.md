@@ -1,0 +1,46 @@
+---
+title: "routledge.com"
+type: source-domain
+host: "routledge.com"
+cite_count: 23
+tags:
+  - source-domain
+  - index
+---
+
+# routledge.com
+
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 19 ・ リファレンス 4）
+
+## このドメインを出典とする項目
+
+- [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — Jackson,T.(2017)ProsperityWithoutGrowth:EconomicsforaFinitePlanet—Rou…
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — Schumpeter1942—Capitalism,SocialismandDemocracy,Harper&Brothers
+- [[human-affordance-theory|アフォーダンス理論]] — JamesJ.Gibson,TheEcologicalApproachtoVisualPerception,HoughtonMifflin…
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — Merleau-Ponty,M.(1945/2012)PhenomenologyofPerception—Routledge
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — Morgan&Demutheds.(1996)SignaltoSyntax—Routledge(LEA)
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — Stoljar,N.&Voigt,K.(Eds.)(2021)AutonomyandEquality:RelationalApproach…
+- [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — Robinson,P.(2002)TheCNNEffect:TheMythofNews,ForeignPolicyandIntervent…
+- [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — Hepp(2020)DeepMediatization—Routledge
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — Lupton,D.(2016)TheQuantifiedSelf—PolityPress
+- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — Hepp(2020)DeepMediatization—Routledge
+- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — Fuchs,C.(2014)DigitalLabourandKarlMarx—Routledge
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — Fuchs(2014)DigitalLabourandKarlMarx,Routledge
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — Scholz(ed.)(2013)DigitalLabor:TheInternetasPlaygroundandFactory,Routl…
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — ChristianFuchs,DigitalLabourandKarlMarx(Routledge,2014)—出版社書誌ページ
+- [[infosoc-information-worlds-theory|情報世界理論]] — Jaeger&Burnett2010book(Routledge)
+- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — Guo,L.&McCombs,M.(eds.)(2016)ThePowerofInformationNetworks:NewDirecti…
+- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — Schuler&Namioka(1993)ParticipatoryDesign:PrinciplesandPractices—Routl…
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — Madianou&Miller,MigrationandNewMedia:TransnationalFamiliesandPolymedi…
+- [[infosoc-selective-exposure|選択的接触理論]] — Zillmann,D.&Bryant,J.(1985)SelectiveExposuretoCommunication,LawrenceE…
+- [[mgmt-convivial-design-illich|楽しい環境設計（コンヴィヴィアル・デザイン）]] — Comeau,Y.(2022)IvanIllich:APhilosophicalPerspectiveonScience,Technolo…
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — Dweck,C.S.(1999).Self-Theories:TheirRoleinMotivation,Personality,andD…
+- [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — Akao,Yoji(1990)QualityFunctionDeployment:IntegratingCustomerRequireme…
+- [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — ShigeoShingo(trans.AndrewP.Dillon),ARevolutioninManufacturing:TheSMED…
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

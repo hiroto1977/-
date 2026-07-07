@@ -1,0 +1,165 @@
+---
+title: "ja.wikipedia.org"
+type: source-domain
+host: "ja.wikipedia.org"
+cite_count: 142
+tags:
+  - source-domain
+  - index
+---
+
+# ja.wikipedia.org
+
+> [!info] 出典ドメイン索引 ・ 引用 **142 件**（リファレンス 139 ・ メディア 3）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — Wikipedia宇奈月温泉事件（大判昭10.10.5民集14巻1965頁・事案・判旨）
+- [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — Wikipedia「電子消費者契約に関する民法の特例に関する法律」
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — Wikipedia「行政代執行法」
+- [[bizlaw-administrative-guidance|行政指導（行政手続法）]] — Wikipedia「行政手続法」（条文構成・2014年改正の概観）
+- [[bizlaw-administrative-litigation|行政事件訴訟法]] — ウィキペディア「行政事件訴訟法」
+- [[bizlaw-administrative-procedure-act|行政手続法]] — ウィキペディア「行政手続法」
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — Wikipedia:海外腐敗行為防止法—FCPAと国際腐敗防止規制の解説
+- [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — Wikipedia:デジタル市場法—DMAとプラットフォーム規制の解説
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — Wikipedia「債務引受」
+- [[bizlaw-bills-act|手形法]] — Wikipedia「手形法」（ジュネーヴ統一手形法の国内法化・1932制定）
+- [[bizlaw-business-judgment-rule-japan|経営判断の原則（日本会社法）]] — Wikipedia—経営判断の原則
+- [[bizlaw-civil-preservation|民事保全法]] — ウィキペディア「民事保全法」
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — ウィキペディア「会社更生法」（会社更生との対比・対象法人）
+- [[bizlaw-companies-act|会社法]] — Wikipedia「会社法」
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — Wikipedia:企業結合—合併規制と競争法の解説
+- [[bizlaw-copyright|著作権法]] — Wikipedia—著作権法
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — Wikipedia:コーポレートガバナンス・コード—日本のCGコード概要
+- [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — Wikipedia:スチュワードシップ・コード—機関投資家の責任と議決権行使の解説
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — Wikipedia:民事再生法—事業再生手続きと倒産法制の解説
+- [[bizlaw-culpa-in-contrahendo|契約締結上の過失]] — 契約締結上の過失—Wikipedia（信義則根拠・類型・信頼利益/履行利益）
+- [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — Wikipedia「株主代表訴訟」（手数料・改正経緯の概観）
+- [[bizlaw-digital-platform-transparency|デジタルプラットフォーム取引透明化法]] — Wikipedia（日本語）特定デジタルプラットフォームの透明性及び公正性の向上に関する法律
+- [[bizlaw-electronic-consumer-contract|電子消費者契約法]] — Wikipedia電子消費者契約に関する民法の特例に関する法律
+- [[bizlaw-employment-discrimination-law|雇用差別禁止法と均等待遇原則——労働法における性差別・合理的配慮と多様性政策]] — Wikipedia:雇用差別—均等待遇と合理的配慮の法的解説
+- [[bizlaw-food-labeling|食品表示法]] — Wikipedia「食品表示法」
+- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — Wikipedia「信義誠実の原則」（権利失効の原則・Verwirkung・消滅時効との区別）
+- [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — Wikipedia:フランチャイズ—フランチャイズ法制と契約の解説
+- [[bizlaw-geographical-indication|地理的表示法（GI法）]] — Wikipedia「特定農林水産物等の名称の保護に関する法律」
+- [[bizlaw-health-insurance|健康保険法]] — ウィキペディア「健康保険法」（1922年制定・日本初の社会保険・保険者）
+- [[bizlaw-information-disclosure|情報公開法]] — Wikipedia「行政機関の保有する情報の公開に関する法律」（平成11年法律第42号、第3条何人も開示請求）
+- [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — Wikipedia:インサイダー取引—金商法規制と市場の公正性の解説
+- [[bizlaw-insurance-act|保険法]] — Wikipedia—保険法
+- [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — Wikipedia:営業秘密—不正競争防止法と情報保護の解説
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — Wikipedia：上場企業会計改革および投資家保護法（米国SOX法2002年）
+- [[bizlaw-joint-venture-law|合弁事業の法的構造——ジョイント・ベンチャーの契約設計と独禁法上の問題]] — Wikipedia:ジョイント・ベンチャー—合弁事業の法的構造と契約の解説
+- [[bizlaw-labor-relations-adjustment|労働関係調整法]] — Wikipedia「労働関係調整法」
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — Wikipedia—労働審判法
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — Wikipedia「混同」（物権・債権共通の消滅原因／民法179条・520条）
+- [[bizlaw-minimum-wage-act|最低賃金法]] — ウィキペディア「最低賃金法」
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — Wikipedia「著作者人格権」（公表権・氏名表示権・同一性保持権と一身専属性）
+- [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — Wikipedia「事務管理」—法定債権・継続義務・費用償還の概説
+- [[bizlaw-prize-advertisement|懸賞広告（民法529条）]] — ウィキペディア「懸賞広告」（法的性質・契約説／単独行為説）
+- [[bizlaw-pse-act|電気用品安全法（PSE法）]] — Wikipedia「電気用品安全法」
+- [[bizlaw-public-records-management|公文書管理法]] — Wikipedia「公文書等の管理に関する法律」（制定・施行・対象・情報公開法との関係）
+- [[bizlaw-real-estate-registration|不動産登記法]] — Wikipedia「不動産登記法」（全部改正・相続登記義務化）
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — Wikipedia「行政事件訴訟法」（制度全体の概観）
+- [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — Wikipedia—根抵当権（元本確定前の付従性・随伴性の否定）
+- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — ウィキペディア「日本国憲法第21条」
+- [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — Wikipedia:株主アクティビズム—委任状争奪戦とコーポレートガバナンスの解説
+- [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]] — ウィキペディア：匿名組合—商法535条以下、営業者と匿名組合員、出資財産の帰属（536条）、有限責任、任意組合（民法667条）との対比
+- [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]] — Wikipedia「同時履行の抗弁権」（要件・効果・留置権との異同）
+- [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — Wikipedia「日本国憲法第17条」（国家賠償請求権と国家賠償法の制定根拠）
+- [[bizlaw-statutory-lien|先取特権（民法303条）]] — Wikipedia「先取特権」（一般・動産・不動産の3種と各条文の概説）
+- [[bizlaw-unauthorized-access|不正アクセス禁止法]] — Wikipedia不正アクセス行為の禁止等に関する法律（公布・施行日、2012年改正）
+- [[bizlaw-utility-model|実用新案法]] — Wikipedia「実用新案法」（小発明・無審査登録制度・沿革）
+- [[bizlaw-women-empowerment-act|女性活躍推進法]] — Wikipedia「女性の職業生活における活躍の推進に関する法律」
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — Wikipedia:エージェンシー理論—所有経営分離とインセンティブ設計の解説
+- [[econ-behavioral-nudge-thaler-sunstein|行動経済学のナッジと自由主義的温情主義——選択アーキテクチャによる政策介入]] — Wikipedia:ナッジ—選択アーキテクチャと行動経済学の政策応用
+- [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — Wikipedia:炭素国境調整—CBAMとカーボンリーケージの解説
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — Wikipedia:大推進論—協調の失敗と発展経済学の解説
+- [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — Wikipedia:通貨危機—第一・第二・第三世代モデルの解説
+- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — Wikipedia:デフレーション—債務デフレーションと金融危機の解説
+- [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]] — Wikipedia:従属人口指数—少子高齢化と経済的依存比率の解説
+- [[econ-difference-in-differences|差の差分析（DID）]] — ウィキペディア日本語版「差分の差分法」
+- [[econ-fei-ranis|フェイ＝ラニス・モデル]] — ウィキペディア日本語版:フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）
+- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
+- [[econ-fiscal-multiplier-theory|財政乗数理論]] — Wikipedia日本語版—乗数効果
+- [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — Wikipedia:全要素生産性—ソロー残差と技術進歩の計測の解説
+- [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — Wikipedia:ヘリコプターマネー—財政金融統合政策と中央銀行論の解説
+- [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — Wikipedia:ケース＝シラー指数—住宅市場バブルと行動経済学の解説
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — Wikipedia:ジニ係数—所得不平等の計測とローレンツ曲線の解説
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — Wikipedia:比較優位—リカードとH-O定理の解説
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — Wikipedia:乗数効果—ケインズ乗数の解説
+- [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — Wikipedia:ネットワーク外部性—標準化競争と互換性の解説
+- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — Wikipedia:最適課税—ミルリーズ理論と効率性・公平性の解説
+- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — Wikipedia:公共財—非競合性・非排除性と市場の失敗の解説
+- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — Wikipedia:実期的景気循環理論—RBCモデルとDSGE分析の解説
+- [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — Wikipedia:国家債務—ソブリン債務危機と再編の解説
+- [[econ-time-preference|時間選好]] — ウィキペディア日本語版「時間選好」—時間選好率の定義・異時点間選択・割引
+- [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]] — Wikipedia:産業政策—戦略的通商政策とインダストリアル・ポリシーの解説
+- [[econ-walras-law|ワルラスの法則]] — ワルラスの法則—Wikipedia日本語版（超過需要総和ゼロ・均衡か否かによらず成立）
+- [[eh-1951|1951年（昭和26年）]] — Wikipedia—朝鮮特需（特需・鉱工業生産の戦前水準回復）
+- [[eh-1955|1955年（昭和30年）]] — Wikipedia—神武景気（1954/12〜1957/6・高度成長の起点）
+- [[eh-1956|1956年（昭和31年）]] — Wikipedia—神武景気（設備投資ブーム）
+- [[eh-1957|1957年（昭和32年）]] — Wikipedia—なべ底不況（神武景気終焉後の金融引き締め不況）
+- [[eh-1958|1958年（昭和33年）]] — Wikipedia—岩戸景気（1958/7〜1961/12）
+- [[eh-1959|1959年（昭和34年）]] — Wikipedia—岩戸景気（投資が投資を呼ぶ）
+- [[eh-1960|1960年（昭和35年）]] — Wikipedia—所得倍増計画（1960/12/27閣議決定）
+- [[eh-1961|1961年（昭和36年）]] — Wikipedia—岩戸景気（1961/12にピーク・国際収支悪化）
+- [[eh-1963|1963年（昭和38年）]] — Wikipedia—高度経済成長（貿易自由化・GATT11条国移行）
+- [[eh-1966|1966年（昭和41年）]] — Wikipedia—いざなぎ景気（3C・本格化）
+- [[eh-1969|1969年（昭和44年）]] — Wikipedia—いざなぎ景気（期間・成長率・GNP世界第2位）
+- [[eh-1981|1981年（昭和56年）]] — Wikipedia—第二次臨時行政調査会（土光臨調）
+- [[eh-1985|1985年（昭和60年）]] — Wikipedia—日本電信電話公社（NTT1985/4/1民営化）
+- [[eh-1988|1988年（昭和63年）]] — Wikipedia（日本語）—リクルート事件（1988/6/18発覚）
+- [[eh-1989|1989年（昭和64/平成元年）]] — Wikipedia（日本語）—バブル景気（日経平均38,915.87円・1989/12/29）
+- [[eh-1990|1990年（平成2年）]] — Wikipedia（日本語）—ドイツ再統一（1990/10/3）
+- [[eh-1993|1993年（平成5年）]] — Wikipedia（日本語）—1993年米騒動（平成の米騒動・緊急輸入259万トン）
+- [[eh-1995|1995年（平成7年）]] — Wikipedia（日本語）—阪神・淡路大震災（1995/1/17）
+- [[eh-2001|2001年（平成13年）]] — Wikipedia（日本語）—牛海綿状脳症（BSE国内初確認2001年・千葉県）
+- [[eh-2005|2005年（平成17年）]] — Wikipedia（日本語）—第44回衆議院議員総選挙（9/11郵政解散・自民圧勝）
+- [[eh-2009|2009年（平成21年）]] — Wikipedia（日本語）—鳩山由紀夫内閣（政権交代・経済対策）
+- [[eh-2010|2010年（平成22年）]] — Wikipedia（日本語）—尖閣諸島中国漁船衝突事件
+- [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — Wikipedia:流動性知能—キャッテルのGf-Gcモデルと老化の解説
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — Wikipedia:ヴィゴツキー—最近接発達領域と文化歴史的発達理論の解説
+- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — Wikipedia:実行機能—作動記憶と認知制御の解説
+- [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — Wikipedia:メルロ＝ポンティ—知覚の現象学と身体論の解説
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — Wikipedia:ポジティブ心理学—PERMAモデルと幸福科学の解説
+- [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — Wikipedia:レジリエンス—逆境後の心理的回復力の解説
+- [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — Wikipedia:自己制御—エゴ枯渇と自己制御理論の解説
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — Wikipedia:社会的比較理論—フェスティンガーと自己評価の解説
+- [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — Wikipedia:心の理論—誤信念課題とASD研究の解説
+- [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]] — Wikipedia:トランスパーソナル心理学—至高体験と自己超越の解説
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — アクターネットワーク理論—Wikipedia（日本語）
+- [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — Wikipedia:アルゴリズム的意思決定—統治性とデータ権力の解説
+- [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — Wikipedia:ソーシャルボット—自動化された情報操作と世論の解説
+- [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — Wikipedia:ダークパターン—UX欺瞞設計と規制の解説
+- [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]] — Wikipedia:クオンティファイド・セルフ—定量的自己追跡と情報社会の解説
+- [[infosoc-deepfake-synthetic-media-ethics|ディープフェイクと合成メディア倫理——生成AI時代の真正性の危機と規制の展望]] — Wikipedia:ディープフェイク—生成AI・合成メディアと真正性危機の解説
+- [[infosoc-digital-divide-age-grey|高齢者のデジタル格差——第三のデジタルデバイドと情報社会の包摂課題]] — Wikipedia:デジタルデバイド—高齢者と情報格差の解説
+- [[infosoc-limited-effects|限定効果論]] — ウィキペディア「メディア効果論」
+- [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — Wikipedia:誤情報—ミスインフォメーションとデジタル情報環境の解説
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — Wikipedia:オープンソース—フリーソフトウェア運動とバザール開発の解説
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — Wikipedia:プラットフォーム経済—多面市場とネットワーク外部性の解説
+- [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — Wikipedia:ギグエコノミー—プラットフォーム労働と雇用分類の解説
+- [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — Wikipedia:青少年の精神健康—SNSとスマートフォンの影響に関する論争の解説
+- [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — Wikipedia「情報産業」（内胚葉=農業／中胚葉=工業／外胚葉=情報の発展段階説）
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 雇用調整助成金（雇用安定事業）解説
+- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 優越的地位の濫用概説
+- [[legal-product-liability|製造物責任法（PL法）]] — 製造物責任法概説
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — Wikipedia:組織文化と統制理論—大内のクラン・官僚制・市場の解説
+- [[mgmt-family-business-governance|ファミリービジネスのガバナンス——世代間継承・エージェンシー問題・長期志向経営]] — Wikipedia:ファミリービジネス—オーナーシップと継承問題の解説
+- [[mgmt-integrative-social-contracts-theory|統合的社会契約理論（ISCT）——ビジネス倫理の普遍的規範と地域的規範の二層構造]] — Wikipedia:ビジネス倫理—社会契約理論と企業倫理の解説
+- [[mgmt-kanban|かんばん方式]] — ウィキペディア「大野耐一」—TPS体系化・後工程引取り・かんばん
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 狩野モデル—ウィキペディア日本語版
+- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Wikipedia:知識移転—多国籍企業における知識管理の解説
+- [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — Wikipedia:組織変革—コッターの8ステップと変革管理の解説
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — Wikipedia:心理的契約—雇用関係における暗黙の期待の解説
+- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — Wikipedia:ステークホルダー—ステークホルダー理論と管理の解説
+- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Wikipedia:戦略的提携—アライアンスと協調戦略の解説
+- [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — Wikipedia:サプライチェーン—レジリエンスと断絶リスク管理の解説
+- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — Wikipedia:ダイバーシティ—多様性と組織パフォーマンスの解説
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

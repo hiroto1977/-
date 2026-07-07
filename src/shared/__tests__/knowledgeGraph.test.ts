@@ -219,6 +219,17 @@ describe('extractAuthorSurnames — 人物キーの正規化（姓+名イニシ�
     expect(kg.extractAuthorSurnames('クルーガー（1974）').size).toBe(1);
     expect(kg.extractAuthorSurnames('労働契約の民事的ルールを定める法').size).toBe(0);
   });
+  it('extractAuthorNames はキーと表示名の対を返す（人物ページの素材）', () => {
+    const names = kg.extractAuthorNames('ジョン・メイナード・ケインズ（1936）／Kahan, Dan M. （2012）');
+    expect(names.length).toBe(2);
+    expect(names[0].display).toBe('ジョン・メイナード・ケインズ');
+    expect(names[0].key).toContain('ケインズ');
+    expect(names[1].display).toContain('Kahan');
+  });
+  it('extractAuthorNames は同一キーを重複させない', () => {
+    const names = kg.extractAuthorNames('クルーガー（1974）／クルーガー（1991）');
+    expect(names.length).toBe(1);
+  });
 });
 
 describe('education — 幻覚ゼロの学習素材', () => {
